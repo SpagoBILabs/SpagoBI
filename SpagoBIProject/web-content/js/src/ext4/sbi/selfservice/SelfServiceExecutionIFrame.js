@@ -35,30 +35,66 @@ Ext.define('Sbi.selfservice.SelfServiceExecutionIFrame', {
 			iconCls : 'icon-saveas' 
 			, tooltip: LN('sbi.execution.executionpage.toolbar.saveas')
 			, scope : this
-		    , handler : this.saveWorksheet
+		    , handler : this.saveDocument
 		});
 		
 	}
 	
-	,saveWorksheet : function() {
-		
+	, saveDocument : function() {
 		var theWindow = this.iframe.getWin();
-		Sbi.debug('[WorksheetEditorIframePanelExt3.saveWorksheet]: got window');
+		Sbi.debug('[SelfServiceExecutionIFrame.saveWorksheet]: got window');
 		
-		//the worksheet has been constructed starting from a qbe document
-		var thePanel = theWindow.qbe;
-		Sbi.debug('[WorksheetEditorIframePanelExt3.saveWorksheet]: qbe panel is ' + thePanel);
-		if (thePanel == null) {
-			Sbi.debug('[WorksheetEditorIframePanelExt3.saveWorksheet]: qbe panel is null, getting woskheet panel ...');
-			//the worksheet is alone with out the qbe
-			thePanel = theWindow.workSheetPanel;
-			Sbi.debug('[WorksheetEditorIframePanelExt3.saveWorksheet]: woskheet panel is ' + thePanel);
+		if(theWindow.qbe != null) {
+			var template = theWindow.qbe.validate();	
+			this.saveWorksheet(template);
+		} else if(theWindow.workSheetPanel != null) {
+			var template = theWindow.workSheetPanel.validate();
+			this.saveWorksheet(template);
+		} else if (theWindow.geoReportPanel != null){
+			var template = theWindow.geoReportPanel.validate();
+			this.saveGeoReport(template);
+		} else {
+			alert("Impossible to save document of type [unknown]");
 		}
 		
-    	var template = thePanel.validate();	
-    	if (template == null){
+	}
+	
+	, saveGeoReport : function(template) {
+		
+    	if (template == null) {
+    		alert("Impossible to get template");
     		return;
     	}
+    	
+    	Sbi.debug('[SelfServiceExecutionIFrame.saveGeoReport]: ' + template);
+    	
+		var documentWindowsParams = {
+				'OBJECT_TYPE': 'MAP',
+				'OBJECT_TEMPLATE': template,
+				'model_name': this.modelName,
+				'typeid': 'GEOREPORT' 
+		};
+
+		if(this.datasetLabel!=null){
+			documentWindowsParams.dataset_label= this.datasetLabel;
+			documentWindowsParams.MESSAGE_DET= 'DOC_SAVE_FROM_DATASET';
+		} else if(this.modelName!=null){
+			documentWindowsParams.model_name= this.modelName;
+			documentWindowsParams.MESSAGE_DET= 'DOC_SAVE_FROM_MODEL';
+		}
+		
+		this.win_saveDoc = Ext.create("Sbi.execution.SaveDocumentWindowExt4", documentWindowsParams);
+		this.win_saveDoc.show();
+    
+    }
+	
+	, saveWorksheet : function(template) {
+	
+    	if (template == null) {
+    		alert("Impossible to get template");
+    		return;
+    	}
+    	
     	var templateJSON = Ext.JSON.decode(template);
 		var wkDefinition = templateJSON.OBJECT_WK_DEFINITION;
 		var worksheetQuery = templateJSON.OBJECT_QUERY;

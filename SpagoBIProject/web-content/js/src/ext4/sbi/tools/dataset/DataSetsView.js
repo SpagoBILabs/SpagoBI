@@ -159,23 +159,34 @@ Ext.define('Sbi.tools.dataset.DataSetsView', {
         var actionDetail = e.getTarget('img.action-detail', 10, true);
         var actionDelete = e.getTarget('img.action-delete', 10, true);
         var actionWorksheet = e.getTarget('img.action-worksheet', 10, true);
+        var actionGeoreport = e.getTarget('img.action-georeport', 10, true);
         
         delete record.data.actions; 
         if (actionDetail != null){
         	Sbi.debug('DataSetView view detail raise event...');        	
         	scope.fireEvent('detail', record.data);   
-        }else if (actionDelete != null){
+        } else if (actionDelete != null){
         	Sbi.debug('DataSetView delete dataset raise event...');        	
         	scope.fireEvent('delete', record.data);
-        }else{ //if (actionWorksheet != null){
+        } else if (actionWorksheet != null){
         	Sbi.debug('DataSetView actionWorksheet raise event...'); 
         	if (record.data.pars != undefined && record.data.pars != ''){
         		Sbi.exception.ExceptionHandler.showInfoMessage(LN('sbi.ds.noWorksheetDesigner'));
         		return true;
         	}
    			scope.fireEvent('executeDocument','WORKSHEET','DATASET',record);
-
+        } else if (actionGeoreport != null){
+        	Sbi.debug('DataSetView actionGeoreport raise event...'); 
+        	if (record.data.pars != undefined && record.data.pars != ''){
+        		Sbi.exception.ExceptionHandler.showInfoMessage(LN('sbi.ds.noGeoreportDesigner'));
+        		return true;
+        	}
+   			scope.fireEvent('executeDocument','GEOREPORT','DATASET',record);
+        } else {
+        	alert("Action not supported");
         }
+        
+        
         return true;
     }
 

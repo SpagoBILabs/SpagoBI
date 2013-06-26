@@ -24,72 +24,72 @@ Ext.define('Sbi.execution.SaveDocumentWindowExt4', {
 	
 	,constructor: function(config) {
 
-	this.services = new Array();
-	
-	var saveDocParams= {
-		LIGHT_NAVIGATOR_DISABLED: 'TRUE'
-	};
-	
-	// case coming from createWorksheetObject.jsp
-	if(config.MESSAGE_DET != undefined && config.MESSAGE_DET != null ){
-		saveDocParams.MESSAGE_DET = config.MESSAGE_DET;
-	
-		if(config.dataset_label != undefined && config.dataset_label != null ){
-			saveDocParams.dataset_label = config.dataset_label;
+		this.services = new Array();
+		
+		var saveDocParams= {
+			LIGHT_NAVIGATOR_DISABLED: 'TRUE'
+		};
+		
+		// case coming from createWorksheetObject.jsp
+		if(config.MESSAGE_DET != undefined && config.MESSAGE_DET != null ){
+			saveDocParams.MESSAGE_DET = config.MESSAGE_DET;
+		
+			if(config.dataset_label != undefined && config.dataset_label != null ){
+				saveDocParams.dataset_label = config.dataset_label;
+			}
+			
+			if(config.business_metadata != undefined && config.business_metadata != null ){
+				saveDocParams.business_metadata = Ext.JSON.encode(config.business_metadata);
+			}
+			
+			if(config.model_name != undefined && config.model_name != null ){
+				saveDocParams.model_name = config.model_name;
+			}
+			
+			
+		} else{
+			saveDocParams.MESSAGE_DET = 'DOC_SAVE';		
 		}
 		
-		if(config.business_metadata != undefined && config.business_metadata != null ){
-			saveDocParams.business_metadata = Ext.JSON.encode(config.business_metadata);
-		}
+	
+		this.services['saveDocumentService'] = Sbi.config.serviceRegistry.getServiceUrl({
+			serviceName: 'SAVE_DOCUMENT_ACTION'
+			, baseParams: saveDocParams
+		});
 		
-		if(config.model_name != undefined && config.model_name != null ){
-			saveDocParams.model_name = config.model_name;
-		}
+		this.SBI_EXECUTION_ID = config.SBI_EXECUTION_ID;
+		this.OBJECT_ID = config.OBJECT_ID;
+		this.OBJECT_TYPE = config.OBJECT_TYPE;
+		this.OBJECT_ENGINE = config.OBJECT_ENGINE;
+		this.OBJECT_TEMPLATE = config.OBJECT_TEMPLATE;
+		this.OBJECT_DATA_SOURCE = config.OBJECT_DATA_SOURCE;
+		this.OBJECT_WK_DEFINITION = config.OBJECT_WK_DEFINITION;
+		this.OBJECT_QUERY = config.OBJECT_QUERY;
+		this.OBJECT_FORM_VALUES = config.OBJECT_FORM_VALUES;
 		
+		this.initFormPanel();
 		
-	} else{
-		saveDocParams.MESSAGE_DET = 'DOC_SAVE';		
+		var c = Ext.apply({}, config, {
+			id:'popup_docSave',
+			layout:'fit',
+			width:640,
+			height:350,
+			closeAction: 'destroy',
+			buttons:[{ 
+				  iconCls: 'icon-save' 	
+				, handler: this.saveDocument
+				, scope: this
+				, text: LN('sbi.generic.update')
+	           }],
+			title: LN('sbi.execution.saveDocument'),
+			items: this.saveDocumentForm
+		});   
+		
+		Ext.apply(this,c);
+		
+	    this.callParent(arguments);
+	    
 	}
-	
-
-	this.services['saveDocumentService'] = Sbi.config.serviceRegistry.getServiceUrl({
-		serviceName: 'SAVE_DOCUMENT_ACTION'
-		, baseParams: saveDocParams
-	});
-	
-	this.SBI_EXECUTION_ID = config.SBI_EXECUTION_ID;
-	this.OBJECT_ID = config.OBJECT_ID;
-	this.OBJECT_TYPE = config.OBJECT_TYPE;
-	this.OBJECT_ENGINE = config.OBJECT_ENGINE;
-	this.OBJECT_TEMPLATE = config.OBJECT_TEMPLATE;
-	this.OBJECT_DATA_SOURCE = config.OBJECT_DATA_SOURCE;
-	this.OBJECT_WK_DEFINITION = config.OBJECT_WK_DEFINITION;
-	this.OBJECT_QUERY = config.OBJECT_QUERY;
-	this.OBJECT_FORM_VALUES = config.OBJECT_FORM_VALUES;
-	
-	this.initFormPanel();
-	
-	var c = Ext.apply({}, config, {
-		id:'popup_docSave',
-		layout:'fit',
-		width:640,
-		height:350,
-		closeAction: 'destroy',
-		buttons:[{ 
-			  iconCls: 'icon-save' 	
-			, handler: this.saveDocument
-			, scope: this
-			, text: LN('sbi.generic.update')
-           }],
-		title: LN('sbi.execution.saveDocument'),
-		items: this.saveDocumentForm
-	});   
-	
-	Ext.apply(this,c);
-	
-    this.callParent(arguments);
-    
-}
 
 	
 	,initFormPanel: function (){
@@ -218,7 +218,6 @@ Ext.define('Sbi.execution.SaveDocumentWindowExt4', {
 					wk_definition: wk_definition,
 					query: query,
 					formValues: formValues,
-					//engineid: this.OBJECT_ENGINE,
 					template: this.OBJECT_TEMPLATE,
 					datasourceid: this.OBJECT_DATA_SOURCE,
 					SBI_EXECUTION_ID: this.SBI_EXECUTION_ID,
