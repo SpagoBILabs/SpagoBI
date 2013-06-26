@@ -15,7 +15,7 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 	,
 	constructor : function(config) {
 		this.initConfig(config);
-		this.user = '';
+//		this.user = '';
 		this.initServices();
 		this.initStore();
 		this.initToolbar();
@@ -106,23 +106,25 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 	}
 	
 	, initToolbar: function() {
+		
 		if (this.displayToolbar) {
-			var newDatasetButton = new Ext.button.Button({
-		    	//tooltip: LN('sbi.generic.add'),
-		    	text : LN('sbi.generic.add'),
-				iconCls:'icon-add',
-				width:70,
-				listeners: {
-					'click': {
-		          		fn: this.addNewDataset,
-		          		scope: this
-		        	} 
-				}
-		    });
-		     
-			var additionalButtons = [];
-			additionalButtons.push(newDatasetButton);
-			
+			if (this.user !== '' && this.user !== 'public_user'){
+				//the button add isn't able for public user
+				var newDatasetButton = new Ext.button.Button({
+			    	text : LN('sbi.generic.add'),
+					iconCls:'icon-add',
+					width:70,
+					listeners: {
+						'click': {
+			          		fn: this.addNewDataset,
+			          		scope: this
+			        	} 
+					}
+			    });
+			     
+				var additionalButtons = [];
+				additionalButtons.push(newDatasetButton);
+			}
 			var ordersCombo = new Ext.form.ComboBox({
 	//			fieldLabel: LN('sbi.ds.orderComboLabel') ,
 				store : this.sortersCombo,
