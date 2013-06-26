@@ -157,6 +157,34 @@ Ext.extend(Sbi.georeport.MainPanel, Ext.Panel, {
 		}
 	}
 	
+	, validate: function (successHandler, failureHandler, scope) {
+		var template = {};
+		
+		template.mapName = this.mapName;
+		template.analysisType = this.analysisType;
+		
+		template.analysisConf = Ext.util.JSON.encode(this.controlPanel.getAnalysisConf())
+		template.feautreInfo = this.feautreInfo;
+		template.indicators = this.indicators;
+		template.businessId = this.businessId;
+		template.geoId = this.geoId;
+		template.selectedBaseLayer = this.selectedBaseLayer;
+		console.log( Ext.util.JSON.encode(this.targetLayerConf) );
+		template.targetLayerConf = this.targetLayerConf;
+		
+		//console.log( Ext.util.JSON.encode(this.controlPanelConf) );
+		//template.controlPanelConf = this.controlPanelConf;
+		//console.log( Ext.util.JSON.encode(this.toolbarConf) );
+		//template.toolbarConf = this.toolbarConf;
+		//template.role = this.role;
+		
+		template.lon = this.lon;
+		template.lat = this.lat;
+		template.zoomLevel = this.zoomLevel;
+		
+		return Ext.util.JSON.encode(template);
+	}
+	
 	// -----------------------------------------------------------------------------------------------------------------
     // accessor methods
 	// -----------------------------------------------------------------------------------------------------------------
