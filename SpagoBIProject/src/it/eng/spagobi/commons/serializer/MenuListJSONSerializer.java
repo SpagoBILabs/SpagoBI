@@ -44,6 +44,8 @@ public class MenuListJSONSerializer implements Serializer {
 	public static final String XTYPE ="xtype";
 	public static final String PATH ="path";
 	public static final String HREF ="href";
+	public static final String FIRST_URL ="firstUrl";
+	
 	
 	public static final String MENU ="menu";
 
@@ -262,7 +264,7 @@ public class MenuListJSONSerializer implements Serializer {
 				menuItem.put(HREF, "javascript:execUrl('"+contextName+href+"')");
 			}
 		}
-		
+		menuItem.put(FIRST_URL, contextName+href);
 		return menuItem;
 	}
 	
@@ -358,7 +360,6 @@ public class MenuListJSONSerializer implements Serializer {
 			}else if(childElem.getFunctionality()!=null){					
 				String finalUrl = "javascript:execDirectUrl('"+DetailMenuModule.findFunctionalityUrl(childElem, contextName)+"', '"+path+"')";
 				temp2.put(HREF, finalUrl);
-
 			}else if(childElem.getExternalApplicationUrl()!=null){
 				temp2.put(HREF, "javascript:callExternalApp('"+StringEscapeUtils.escapeJavaScript(childElem.getExternalApplicationUrl())+"', '"+path+"')");
 			}else if (childElem.isAdminsMenu() && childElem.getUrl()!=null){							
