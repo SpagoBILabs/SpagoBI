@@ -1181,6 +1181,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 		dataSet.setUserProfileAttributes(UserProfileUtils.getProfileAttributes( profile ));
 		dataSet.setParamsMap(parametersFilled);		
 		try {
+			checkQbeDataset(dataSet);
 			dataSet.loadData(start, limit, GeneralUtilities.getDatasetMaxResults());
 			IDataStore dataStore = dataSet.getDataStore();
 			DatasetMetadataParser dsp = new DatasetMetadataParser();
