@@ -27,6 +27,8 @@ import it.eng.spagobi.tools.dataset.bo.FileDataSet;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.behaviour.UserProfileUtils;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.common.datastore.IField;
+import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
@@ -514,8 +516,19 @@ public class SelfServiceDataSetCRUD {
 			for(int i=0; i<metaData.getFieldCount(); i++){
 				IFieldMetaData ifmd = metaData.getFieldMeta(i);
 				
+				String gussedType = guessColumnType(dataStore, i);
+				
 				//Setting mandatory property to defaults, if specified they will be overridden
-				ifmd.setFieldType(IFieldMetaData.FieldType.ATTRIBUTE);
+				if("Double".equalsIgnoreCase(gussedType)) {
+					ifmd.setFieldType(IFieldMetaData.FieldType.MEASURE);
+					Class type = Class.forName("java.lang.Double");
+					ifmd.setType(type);	
+				} else {
+					ifmd.setFieldType(IFieldMetaData.FieldType.ATTRIBUTE);
+					Class type = Class.forName("java.lang.String");
+					ifmd.setType(type);	
+				}
+				
 
 				
 				for(int j=0; j<columnsMetadataArray.length(); j++){
@@ -531,8 +544,11 @@ public class SelfServiceDataSetCRUD {
 							if (propertyValue.equalsIgnoreCase("MEASURE")){
 								ifmd.setFieldType(IFieldMetaData.FieldType.MEASURE);
 							} else {
-								//Default is ATTRIBUTE
-								ifmd.setFieldType(IFieldMetaData.FieldType.ATTRIBUTE);
+								if("Double".equalsIgnoreCase(gussedType)) {
+									ifmd.setFieldType(IFieldMetaData.FieldType.MEASURE);
+								} else {
+									ifmd.setFieldType(IFieldMetaData.FieldType.ATTRIBUTE);
+								}
 							}
 						} 
 						//Type is a mandatory property
@@ -544,9 +560,14 @@ public class SelfServiceDataSetCRUD {
 								Class type = Class.forName("java.lang.Double");
 								ifmd.setType(type);	
 							} else {
-								//Default Type is String
-								Class type = Class.forName("java.lang.String");
-								ifmd.setType(type);
+								if("Double".equalsIgnoreCase(gussedType)) {
+									Class type = Class.forName("java.lang.Double");
+									ifmd.setType(type);	
+								} else {
+									Class type = Class.forName("java.lang.String");
+									ifmd.setType(type);
+								}
+								
 							}
 						}
 						else {
@@ -571,6 +592,29 @@ public class SelfServiceDataSetCRUD {
 		return dsMetadata;
 	}
 	
+	/**
+	 * @param dataStore
+	 * @param i
+	 * @return
+	 */
+	private String guessColumnType(IDataStore dataStore, int columnIndex) {
+		boolean isNumeric = true;
+		for(int i = 0; i < Math.min(10, dataStore.getRecordsCount()); i++) {
+			IRecord record = dataStore.getRecordAt(i);
+			IField field = record.getFieldAt(columnIndex);
+			Object value = field.getValue();
+			try {
+				Double.parseDouble(value.toString());
+			} catch(Throwable t) {
+				isNumeric = false;
+				break;
+			}
+		}
+
+		return isNumeric? "Double": "String";
+	}
+
+
 	public JSONArray getDatasetColumns(IDataSet dataSet,  IEngUserProfile profile) throws Exception{
 		logger.debug("IN");
 
