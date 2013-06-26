@@ -43,6 +43,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 
 <%@ include file="/WEB-INF/jsp/commons/portlet_base311.jsp"%>
 <script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/service/ServiceRegistry.js")%>'></script>
+<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/lib/raphael-min.js")%>'></script>
 <LINK rel='StyleSheet' 
       href='<%=urlBuilder.getResourceLinkByTheme(request, "css/kpi/kpi.css",currTheme)%>' 
       type='text/css' />
@@ -172,6 +173,9 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 		var grid = {
 			subtitle: '<%= subTitle%>',		
 			autoScroll	:true,
+			autoHeight : true,
+			//autoWidth: true,
+			border: false,
 			json: <%=kpiRowsArray%>
 		};
 		var accordion ={SBI_EXECUTION_ID: '<%=EXECUTION_ID%>', 
@@ -199,5 +203,3 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 
 
 <%@ include file="/WEB-INF/jsp/commons/footer.jsp"%>
-
-		

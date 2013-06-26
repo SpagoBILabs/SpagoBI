@@ -40,7 +40,8 @@ Sbi.kpi.KpiGridPanel =  function(config, json) {
 	        region: 'center',
 	        flex:1,
 	        fill: true,
-	        autoScroll : true,
+			autoScroll	:false,
+			autoHeight : true,
 	        enableDD: true
 			,loader: new Ext.tree.TreeLoader() // Note: no dataurl, register a TreeLoader to make use of createNode()
 			,root: new Ext.tree.AsyncTreeNode({
@@ -74,8 +75,9 @@ Ext.extend(Sbi.kpi.KpiGridPanel ,Ext.ux.tree.TreeGrid, {
 	, enableHdMenu : false
 	, enableSort : false
 
+
 	, initGrid: function(){
-        
+
 		var kpiColumns = new Array();
 
 		var ids = this.ids;
