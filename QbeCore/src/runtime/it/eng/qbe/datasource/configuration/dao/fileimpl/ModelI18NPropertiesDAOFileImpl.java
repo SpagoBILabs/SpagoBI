@@ -85,10 +85,9 @@ public class ModelI18NPropertiesDAOFileImpl implements IModelI18NPropertiesDAO {
 			} 		
 			
 			return properties;
-		}catch(IOException ioe){
+		} catch(IOException ioe){
 			throw new SpagoBIRuntimeException("Impossible to load properties from file [" + zipEntry + "]");
 		}
-
 	}
 	
 	private String getI18NPropertiesFileName(Locale locale) {
