@@ -183,7 +183,7 @@ Ext.define('Sbi.tools.dataset.DataSetsView', {
         	}
    			scope.fireEvent('executeDocument','GEOREPORT','DATASET',record);
         } else {
-        	alert("Action not supported");
+        	scope.fireEvent('detail', record.data);  
         }
         
         
