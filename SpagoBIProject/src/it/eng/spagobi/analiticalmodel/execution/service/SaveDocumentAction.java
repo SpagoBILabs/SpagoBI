@@ -149,6 +149,8 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 			String type = documentJSON.getString("type");
 			if(SpagoBIConstants.WORKSHEET_TYPE_CODE.equalsIgnoreCase(type)) {
 				insertWorksheetDocument(request);
+			} else if("MAP".equalsIgnoreCase(type)) {
+				insertGeoreportDocument(request);
 			} else {
 				throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to create a document of type [" + type + "]");
 			}		
@@ -161,6 +163,83 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 		}
 	}
 	
+	private void insertGeoreportDocument(JSONObject request) {
+		
+		logger.debug("IN");
+		
+		try {
+			String sourceModelName = getAttributeAsString("model_name");
+			JSONObject documentJSON = request.optJSONObject("document");
+			JSONArray foldersJSON = request.optJSONArray("folders");
+			JSONObject customDataJSON = request.optJSONObject("customData");
+			Assert.assertNotNull( customDataJSON , "Custom data object cannot be null");
+		
+			if(request.has("sourceDataset")) {
+				JSONObject sourceDatasetJSON = request.getJSONObject("sourceDataset");
+				insertGeoReportDocumentCreatedOnDataset(sourceDatasetJSON, documentJSON, customDataJSON, foldersJSON);
+			}  else if(sourceModelName != null) {
+				throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to create geo document defined on a metamodel");
+				//insertWorksheetDocumentCreatedOnModel(sourceModelName, documentJSON, customDataJSON, foldersJSON);
+			} else {
+				throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to create geo document because both sourceModel and sourceDataset are null");
+			}
+		} catch (SpagoBIServiceException e) {
+			throw e;
+		} catch (Exception e) {
+			throw new SpagoBIServiceException(SERVICE_NAME, "An unexpected error occured while creating geo document", e);
+		} finally {
+			logger.debug("OUT");
+		}
+	}
+	
+	private void insertGeoReportDocumentCreatedOnDataset(
+			JSONObject sourceDatasetJSON
+			, JSONObject documentJSON
+			, JSONObject customDataJSON
+			, JSONArray foldersJSON
+	) {
+		
+		logger.debug("IN");
+		
+		String sourceDatasetLabel = null;
+		try {
+			
+			sourceDatasetLabel = sourceDatasetJSON.optString("label");
+			Assert.assertNotNull( StringUtilities.isNotEmpty( sourceDatasetLabel ) , "Source dataset's label cannot be null or empty");
+			
+			IDataSet sourceDataset = null;
+			try {
+				sourceDataset = DAOFactory.getDataSetDAO().loadDataSetByLabel(sourceDatasetLabel);
+			} catch (Throwable t ) {
+				throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to load source datset [" + sourceDatasetLabel + "]");
+			}
+			if(sourceDataset == null) {
+				throw new SpagoBIServiceException(SERVICE_NAME, "Source datset [" + sourceDatasetLabel + "] does not exist");
+			}
+			
+				
+			BIObject document = createBaseDocument(documentJSON, null, foldersJSON);				
+			ObjTemplate template = buildDocumentTemplate(customDataJSON, null);
+								
+			document.setDataSetId(sourceDataset.getId());
+			
+										
+			documentManagementAPI.saveDocument(document, template);					
+			documentManagementAPI.propagateDatasetParameters(sourceDataset, document);
+			JSONArray metadataJSON = documentJSON.optJSONArray("metadata");
+			if(metadataJSON != null) {
+				documentManagementAPI.saveDocumentMetadataProperties(document, null, metadataJSON);
+			}
+		} catch (SpagoBIServiceException e) {
+			throw e;			
+		} catch (Throwable e) {
+			throw new SpagoBIServiceException(SERVICE_NAME,"An unexpected error occured while inserting geo document created on datset [" + sourceDatasetLabel + "]", e);
+		} finally {
+			logger.debug("OUT");
+		}
+	}
+	
+
 	private void insertWorksheetDocument(JSONObject request) {
 		
 		logger.debug("IN");
@@ -403,6 +482,13 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 				List<Engine> engines = DAOFactory.getEngineDAO().loadAllEnginesForBIObjectType(type);
 				if ( engines != null && !engines.isEmpty() ){
 					engine = engines.get(0);
+					if("MAP".equalsIgnoreCase(type)) {
+						for(Engine e : engines) {
+							if(e.getLabel().equals("SpagoBIGisEngine")) {
+								engine = e;
+							}
+						}
+					} 	
 				} else {
 					throw new SpagoBIServiceException(SERVICE_NAME,	"No suitable engine found for document type [" + type + "]");
 				}

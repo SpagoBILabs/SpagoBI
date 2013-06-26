@@ -26,6 +26,30 @@ public class ExecuteAdHocUtility {
 		return getEngineByDocumentType(SpagoBIConstants.DATAMART_TYPE_CODE);
 	}
 	
+	public static Engine getGeoreportEngine() {
+		return getEngineByLabel("SpagoBIGisEngine");
+	}
+	
+	
+	public static Engine getEngineByLabel(String engineLabel) {
+		Engine engine;
+		
+		engine = null;
+		try {
+			Assert.assertNotNull(DAOFactory.getEngineDAO(), "EngineDao cannot be null");
+			engine = DAOFactory.getEngineDAO().loadEngineByLabel(engineLabel);
+			if (engine == null) {
+				throw new SpagoBIRuntimeException("There are no engines with label equal to [" + engineLabel + "] available");
+			}
+		} catch(Throwable t) {
+			throw new SpagoBIRuntimeException( "Impossible to load a valid engine whose label is equal to [" + engineLabel + "]", t);				
+		} finally {
+			logger.debug("OUT");
+		}
+		
+		return engine;
+	}
+	
 	public static Engine getEngineByDocumentType(String type) {
 		Engine engine;
 		List<Engine> engines;

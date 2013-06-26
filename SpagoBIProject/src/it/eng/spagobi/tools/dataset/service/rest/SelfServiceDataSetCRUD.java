@@ -88,23 +88,27 @@ public class SelfServiceDataSetCRUD {
 			JSONObject detailAction = new JSONObject();
 			detailAction.put("name", "detail");
 			detailAction.put("description", "Dataset detail");	
+			
 			JSONObject deleteAction = new JSONObject();
 			deleteAction.put("name", "delete");
 			deleteAction.put("description", "Delete dataset");
+			
 			JSONObject worksheetAction = new JSONObject();
 			worksheetAction.put("name", "worksheet");
 			worksheetAction.put("description", "Show Worksheet");
-//			JSONObject geoAction = new JSONObject();
-//			geoAction.put("name", "worksheet");
-//			geoAction.put("description", "Show Geo");
-//			actions.put(geoAction);
-			JSONArray datasetsJSONReturn = new JSONArray();
-				
+			
+			JSONObject georeportAction = new JSONObject();
+			georeportAction.put("name", "georeport");
+			georeportAction.put("description", "Show Map");
+			
+			
+			JSONArray datasetsJSONReturn = new JSONArray();	
 			for(int i = 0; i < datasetsJSONArray.length(); i++) {
 				JSONArray actions = new JSONArray();
 				JSONObject datasetJSON = datasetsJSONArray.getJSONObject(i);
 				actions.put(detailAction);		
 				actions.put(worksheetAction);
+				actions.put(georeportAction);
 				if (profile.getUserUniqueIdentifier().toString().equals(datasetJSON.get("owner"))){
 					//the delete action is able only for private dataset
 					actions.put(deleteAction);
