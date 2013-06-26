@@ -113,111 +113,161 @@ public class FileDatasetXlsDataReader extends AbstractDataReader {
  	private DataStore readXls( InputStream inputDataStream ) throws Exception {
  		
     	DataStore dataStore = null;
-		MetaData dataStoreMeta;
+    	
+    	logger.debug("IN");
+    	
     	dataStore = new DataStore();
-		dataStoreMeta = new MetaData();
-		dataStore.setMetaData(dataStoreMeta);
+		try {	
+			HSSFWorkbook wb = new HSSFWorkbook(inputDataStream);
+			HSSFSheet sheet = getSheet(wb);
+			
+	
+			int initialRow = 0;		
+			if ((skipRows != null) && (!skipRows.isEmpty())){
+				initialRow = Integer.parseInt(skipRows);
+				logger.debug("Skipping first "+skipRows+" rows");
+	
+			}
+			
+			int rowsLimit;
+			if ((limitRows != null) && (!limitRows.isEmpty())){
+				rowsLimit = initialRow+Integer.parseInt(limitRows)-1;
+				//if the calculated limit exceed the physical number of rows, just read all the rows
+				if (rowsLimit > sheet.getPhysicalNumberOfRows()){
+					rowsLimit = sheet.getPhysicalNumberOfRows();
+				}
+			} else {
+				rowsLimit = sheet.getPhysicalNumberOfRows();
+			}
+			
+			for (int r = initialRow; r <= rowsLimit; r++) {
+				
+				HSSFRow row = sheet.getRow(r);
+				if (row == null) {
+					continue;
+				}
+				
+				if (r == initialRow){
+					try {
+						MetaData dataStoreMeta = parseHeader(dataStore, row);
+						dataStore.setMetaData(dataStoreMeta);
+					} catch (Throwable t) {
+						throw new RuntimeException("Impossible to parse header row", t);
+					}
+				} else {
+					try {
+						IRecord record = parseRow(dataStore, row);
+						dataStore.appendRecord(record);	
+					} catch (Throwable t) {
+						throw new RuntimeException("Impossible to parse row [" + r + "]", t);
+					}
+				}
+			}
+		} catch(Throwable t) {
+			throw new RuntimeException("Impossible to parse XLS file", t);
+		} finally {
+			logger.debug("OUT");
+		}
 		
-		
-		//HSSFWorkbook wb = HSSFReadWrite.readFile(fileName);
-		logger.debug("Reading XSL File :\n");
-
-		HSSFWorkbook wb = new HSSFWorkbook(inputDataStream);
-
-		
-		
-		int numberOfSheets = wb.getNumberOfSheets();
-		HSSFSheet sheet;
+	    return dataStore;
+	}
+ 	
+ 	private HSSFSheet getSheet(HSSFWorkbook workbook) {
+ 		HSSFSheet sheet;
+ 		
+ 		int numberOfSheets = workbook.getNumberOfSheets();
 		if ((xslSheetNumber != null) && (!xslSheetNumber.isEmpty())){
 			
 			int sheetNumber = Integer.parseInt(xslSheetNumber)-1;
 			if (sheetNumber > numberOfSheets){
 				logger.error("Wrong sheet number, using first sheet as default");
 				//if not specified take first sheet
-				sheet = wb.getSheetAt(0);
+				sheet = workbook.getSheetAt(0);
 			}
-			sheet = wb.getSheetAt(sheetNumber);
+			sheet = workbook.getSheetAt(sheetNumber);
 
 		} else {
 			//if not specified take first sheet
-			sheet = wb.getSheetAt(0);
+			sheet = workbook.getSheetAt(0);
 
-		}
-
-		int initialRow = 0;		
-		if ((skipRows != null) && (!skipRows.isEmpty())){
-			initialRow = Integer.parseInt(skipRows);
-			logger.debug("Skipping first "+skipRows+" rows");
-
-		}
-		int rowsLimit;
-		if ((limitRows != null) && (!limitRows.isEmpty())){
-			rowsLimit = initialRow+Integer.parseInt(limitRows)-1;
-			//if the calculated limit exceed the physical number of rows, just read all the rows
-			if (rowsLimit > sheet.getPhysicalNumberOfRows()){
-				rowsLimit = sheet.getPhysicalNumberOfRows();
-			}
-		} else {
-			rowsLimit = sheet.getPhysicalNumberOfRows();
-		}
-		for (int r = initialRow; r <= rowsLimit; r++) {
-			//get entire spreadsheet row
-			HSSFRow row = sheet.getRow(r);
-			if (row == null) {
-				continue;
-			}
-			//create new Dataset record
-			IRecord record = new Record(dataStore);
-			
-			int cells = row.getPhysicalNumberOfCells();
-			logger.debug("\nROW " + row.getRowNum() + " has " + cells
-					+ " cell(s).");
-			for (int c = 0; c < cells; c++) {
-				//get single cell
-				HSSFCell cell = row.getCell(c);
-				String value = null;
-				String valueField = null;
-				
-				switch (cell.getCellType()) {
-
-				case HSSFCell.CELL_TYPE_FORMULA:
-					value = "FORMULA value=" + cell.getCellFormula();
-					valueField = cell.getCellFormula().toString();
-					break;
-
-				case HSSFCell.CELL_TYPE_NUMERIC:
-					value = "NUMERIC value=" + cell.getNumericCellValue();
-					valueField = String.valueOf(cell.getNumericCellValue());
-					break;
-
-				case HSSFCell.CELL_TYPE_STRING:
-					value = "STRING value=" + cell.getStringCellValue();
-					valueField = cell.getStringCellValue();
-					break;
-
-				default:
-				}
-				//IMPORTANT: First row read is used as header
-				if (r == initialRow){
-					FieldMetadata fieldMeta = new FieldMetadata();
-					fieldMeta.setName(valueField);
-					fieldMeta.setType(String.class);
-					dataStoreMeta.addFiedMeta(fieldMeta);
-				} else {
-					IField field = new Field(valueField);
-					record.appendField(field);
-				}
-
-				logger.debug("CELL col=" + cell.getColumnIndex() + " VALUE="
-						+ value);
-
-			}
-			if (r != initialRow){
-				dataStore.appendRecord(record);	
-			}
 		}
 		
-	        return dataStore;
-	}
+		return sheet;
+ 	}
+ 	
+ 	private MetaData parseHeader(DataStore dataStore, HSSFRow row)  {
+ 		MetaData dataStoreMeta = new MetaData();
+ 		
+ 		int cells = row.getPhysicalNumberOfCells();
+		logger.debug("\nROW " + row.getRowNum() + " has " + cells
+				+ " cell(s).");
+		for (int c = 0; c < cells; c++) {
+			//get single cell
+			HSSFCell cell = row.getCell(c);
+			
+			String valueField = null;
+			try {
+				valueField = parseCell(cell);
+			} catch(Throwable t) {
+				throw new RuntimeException("Impossible to parse cell [" + c + "]", t);
+			}
+			
+			FieldMetadata fieldMeta = new FieldMetadata();
+			fieldMeta.setName(valueField);
+			fieldMeta.setType(String.class);
+			dataStoreMeta.addFiedMeta(fieldMeta);
+		}
+		
+		return dataStoreMeta;
+ 	}
+ 	
+ 	private IRecord parseRow(DataStore dataStore, HSSFRow row)  {
+ 		
+ 		IRecord record = new Record(dataStore);
+ 		
+ 		int cells = row.getPhysicalNumberOfCells();
+		logger.debug("\nROW " + row.getRowNum() + " has " + cells
+				+ " cell(s).");
+		for (int c = 0; c < cells; c++) {
+			//get single cell
+			HSSFCell cell = row.getCell(c);
+			
+			String valueField = null;
+			try {
+				valueField = parseCell(cell);
+			} catch(Throwable t) {
+				throw new RuntimeException("Impossible to parse cell [" + c + "]", t);
+			}
+			
+			IField field = new Field(valueField);
+			record.appendField(field);
+		}
+		
+		return record;
+ 	}
+ 	
+ 	private String parseCell(HSSFCell cell) {
+ 		String valueField = null;
+ 		
+ 		if(cell == null) return "";
+ 		
+ 		switch (cell.getCellType()) {
+			case HSSFCell.CELL_TYPE_FORMULA:
+				valueField = cell.getCellFormula().toString();
+				break;
+	
+			case HSSFCell.CELL_TYPE_NUMERIC:
+				valueField = String.valueOf(cell.getNumericCellValue());
+				break;
+	
+			case HSSFCell.CELL_TYPE_STRING:
+				valueField = cell.getStringCellValue();
+				break;
+	
+			default:
+		}
+ 		
+ 		return valueField;
+ 	}
 
 }
