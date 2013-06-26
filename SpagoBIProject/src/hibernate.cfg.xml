@@ -8,9 +8,8 @@
 
     	<property name="hibernate.connection.datasource">java:/comp/env/jdbc/spagobi</property>
 
-       
-        <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
-        <!-- 
+		 <property name="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</property>
+       <!-- 
         <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
         <property name="hibernate.dialect">org.hibernate.dialect.SQLServerDialect</property>
         <property name="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</property>

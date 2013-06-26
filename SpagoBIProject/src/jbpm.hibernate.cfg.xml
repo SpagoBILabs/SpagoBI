@@ -6,10 +6,12 @@
 
 <hibernate-configuration>
   <session-factory>
-
+	
+	<property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
+	
     <!-- jdbc connection properties -->
     <!-- property name="hibernate.dialect">org.hibernate.dialect.HSQLDialect</property-->
-    <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
+    <!-- property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property-->
     <!-- property name="hibernate.dialect">org.hibernate.dialect.IngresDialect</property-->
     <!-- property name="hibernate.dialect">org.hibernate.dialect.SQLServerDialect</property-->
      
