@@ -271,8 +271,9 @@ public class GeoReportEngineStartEditAction extends AbstractEngineStartServlet {
 			JSONArray info;
 			for(IFieldMetaData field : fields) {
 				info = new JSONArray();
-				info.put(field.getName());
+			
 				info.put( field.getAlias() != null? field.getAlias(): field.getName() );
+				info.put(field.getName().toUpperCase());
 				featureInfo.put(info);
 			}
 		} catch (Throwable t) {
