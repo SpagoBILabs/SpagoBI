@@ -6,6 +6,7 @@
 package it.eng.spagobi.tools.dataset.persist;
 
 import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IField;
@@ -182,7 +183,7 @@ public class PersistedTableManager {
 					if (fmd.getFieldType().equals(FieldType.MEASURE) && fmd.getType().toString().contains("String")) {
 						logger.debug("Column type is string but the field is measure: converting it into a double");
 						// only for primitive type is necessary to use setNull method if value is null
-						if (field.getValue() == null){
+						if (StringUtilities.isEmpty((String)field.getValue()) ){
 							toReturn.setNull(i2+1, java.sql.Types.DOUBLE);
 						 }else{
 					        toReturn.setDouble(i2+1, Double.parseDouble(field.getValue().toString()));
