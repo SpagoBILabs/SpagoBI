@@ -226,9 +226,11 @@ public class FileDatasetXlsDataReader extends AbstractDataReader {
  		IRecord record = new Record(dataStore);
  		
  		int cells = row.getPhysicalNumberOfCells();
+ 		int lastColumn = row.getLastCellNum();
+ 		
 		logger.debug("\nROW " + row.getRowNum() + " has " + cells
 				+ " cell(s).");
-		for (int c = 0; c < cells; c++) {
+		for (int c = 0; c < lastColumn; c++) {
 			//get single cell
 			HSSFCell cell = row.getCell(c);
 			
