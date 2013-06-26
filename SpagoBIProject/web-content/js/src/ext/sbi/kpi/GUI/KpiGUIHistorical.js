@@ -93,6 +93,7 @@ Ext.extend(Sbi.kpi.KpiGUIHistorical , Ext.form.FormPanel, {
 			fieldLabel: LN('sbi.generic.from'),
 			format: config.localeExtDateFormat,	
 			allowBlank: false,
+			//x:20,
 			value: tmpDateFrom
 		});
 		this.fieldDateTo = new Ext.form.DateField({
@@ -102,6 +103,7 @@ Ext.extend(Sbi.kpi.KpiGUIHistorical , Ext.form.FormPanel, {
 			fieldLabel: LN('sbi.generic.to'), 
 			format: config.localeExtDateFormat,		
 			allowBlank: false,
+			x: 150,
 			value: new Date()
 		});
 		this.btnUpdate = new Ext.Button({

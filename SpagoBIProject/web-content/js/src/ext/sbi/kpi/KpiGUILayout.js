@@ -61,21 +61,17 @@ Ext.extend(Sbi.kpi.KpiGUILayout , Ext.Panel, {
 	kpiGridPanel: null,
 	kpiAccordionPanel: null,
 	kpiMainPanel: null,
+	autoScroll:false,
 	
 	intPanels : function(config){
 		var gridconf= config.grid;
 		var accordionconf = config.accordion;
 		
 		this.kpiMainPanel = new Ext.Panel({
-			//collapsible: false,
-			//layout: 'vbox',
 			region: 'center',
-			//layout : 'fit',
-			autoScroll:true,
+			border: false,
 			layoutConfig: {
 				padding: '2',
-				border: false,
-				autoScroll:true,
 				align: 'left'
 			} });
 
@@ -98,9 +94,8 @@ Ext.extend(Sbi.kpi.KpiGUILayout , Ext.Panel, {
 				var kpiPanel = new Ext.Panel({
 					title: resource,
 					collapsible: true,
-					style: 'width: 100%; border: 1px solid white;',
-					maxHeight: 300,
 					layout:'fit',
+					border: false,
 					items: [kpiGridPan],
 					layoutConfig: {
 						padding: '5',
