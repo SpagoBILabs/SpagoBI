@@ -652,6 +652,9 @@ public class SelfServiceDataSetCRUD {
 			}
 
 		}
+		catch (RuntimeException re){
+			throw re;
+		}
 		catch (Exception e) {
 			logger.error("Error while getting dataset columns",e);
 			return null;		
