@@ -87,6 +87,7 @@ public class ChangeLanguage extends AbstractHttpAction{
 
 		String language=(String)serviceRequest.getAttribute("language_id");
 		String country=(String)serviceRequest.getAttribute("country_id");
+		String isPublicUser=(String)serviceRequest.getAttribute("IS_PUBLIC_USER");
 		logger.debug("language selected: "+language);
 		IEngUserProfile profile = (IEngUserProfile)permSess.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 		userProfile=null;
@@ -142,7 +143,11 @@ public class ChangeLanguage extends AbstractHttpAction{
 		 	docTest = functionalities.contains("DocumentTestManagement");
 		}
 		
-		serviceResponse.setAttribute(SpagoBIConstants.PUBLISHER_NAME, "userhome");
+		if (isPublicUser != null && isPublicUser.equalsIgnoreCase("TRUE")){
+			serviceResponse.setAttribute(SpagoBIConstants.PUBLISHER_NAME, "userhomePublicUser");
+		}else{
+			serviceResponse.setAttribute(SpagoBIConstants.PUBLISHER_NAME, "userhome");
+		}
 		logger.debug("OUT");
 	}
 

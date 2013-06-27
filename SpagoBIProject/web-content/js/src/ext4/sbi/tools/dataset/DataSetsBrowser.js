@@ -9,7 +9,8 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 		height: 600,
 		user : '',
 		datasetsServicePath: '',
-		displayToolbar: true
+		displayToolbar: true,
+		PUBLIC_USER: 'public_user'
 	}
 
 	,
@@ -108,7 +109,7 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 	, initToolbar: function() {
 		
 		if (this.displayToolbar) {
-			if (this.user !== '' && this.user !== 'public_user'){
+			if (this.user !== '' && this.user !== this.PUBLIC_USER){
 				//the button add isn't able for public user
 				var newDatasetButton = new Ext.button.Button({
 			    	text : LN('sbi.generic.add'),
