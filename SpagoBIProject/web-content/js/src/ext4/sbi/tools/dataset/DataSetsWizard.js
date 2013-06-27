@@ -269,11 +269,7 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
 		
 		Sbi.debug("[DatasetWizard.uploadFileButtonHandler]: OUT");
 	}
-	
-	, disableButton: function(btn){
-		 Ext.getCmp(btn).setDisabled(true);		
-	}
-	
+
 	, goBack: function(n){
 		 var newTabId  = parseInt(this.wizardPanel.getActiveTab().itemId)-n;
 		 var numTabs  = (this.wizardPanel.items.length-1);		 
@@ -281,6 +277,18 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
 		 Ext.getCmp('move-prev').setDisabled(newTabId==0);
 		 Ext.getCmp('move-next').setDisabled(newTabId==numTabs);
 	}
+	
+	, goNext: function(n){
+		 var newTabId  = parseInt(this.wizardPanel.getActiveTab().itemId)+n;
+		 var numTabs  = (this.wizardPanel.items.length-1);		 
+		 this.wizardPanel.setActiveTab(newTabId);
+		 Ext.getCmp('move-prev').setDisabled(newTabId==0);
+		 Ext.getCmp('move-next').setDisabled(newTabId==numTabs);
+	}
+	
+	, disableButton: function(btn){
+		 Ext.getCmp(btn).setDisabled(true);		
+	}	
 	
 	, enableButton: function(btn){
 		 Ext.getCmp(btn).setDisabled(false);
