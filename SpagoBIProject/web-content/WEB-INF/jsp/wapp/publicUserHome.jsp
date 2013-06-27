@@ -69,14 +69,12 @@ sessionExpiredSpagoBIJS = 'sessionExpiredSpagoBIJS';
 	}
     String firstPublicUrlToCall = "";
     String firstUrlToCall = "";
-    if (jsonMenuList.get(0) instanceof JSONObject){
+    if (jsonMenuList.get(0) != null && jsonMenuList.get(0) instanceof JSONObject){
     	JSONObject firstItem = (JSONObject)jsonMenuList.get(0);
-	    if (firstItem != null){
+	    if (firstItem != null && firstItem.getString("firstUrl") != null){
 	    	firstUrlToCall =  firstItem.getString("firstUrl");
-	    	//firstUrlToCall = firstItem.getString("href");
 	    } else{			
 	    	firstUrlToCall = contextName+"/themes/" + currTheme + "/html/publicUserIntro.html";	
-	    	//firstUrlToCall = firstPublicUrlToCall;
 		}
     }else{
     	firstUrlToCall = contextName+"/themes/" + currTheme + "/html/publicUserIntro.html";
@@ -161,7 +159,7 @@ function execUrl(url){
 }
 //returns the language url to be called in the language menu
 function getLanguageUrl(config){
-  var languageUrl = "javascript:execUrl('"+Sbi.config.contextName+"/servlet/AdapterHTTP?ACTION_NAME=CHANGE_LANGUAGE&LANGUAGE_ID="+config.language+"&COUNTRY_ID="+config.country+"')";
+  var languageUrl = "javascript:execUrl('"+Sbi.config.contextName+"/servlet/AdapterHTTP?ACTION_NAME=CHANGE_LANGUAGE&LANGUAGE_ID="+config.language+"&COUNTRY_ID="+config.country+"&IS_PUBLIC_USER=TRUE')";
   return languageUrl;
 }
 function role(){
