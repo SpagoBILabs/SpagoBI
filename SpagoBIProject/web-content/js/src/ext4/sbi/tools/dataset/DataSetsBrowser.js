@@ -375,7 +375,7 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 							var newMetaDecoded =  Ext.decode(newMeta);				 
 							this.wizardWin.metaInfo.updateData(newMetaDecoded.datasetColumns);
 							this.wizardWin.metaInfo.updateGridData(newMetaDecoded.meta);
-							if (this.user !== '' && this.user !== this.PUBLIC_USER){
+							if (this.wizardWin.isOwner){
 								this.wizardWin.enableButton('confirm');
 							}
 						}

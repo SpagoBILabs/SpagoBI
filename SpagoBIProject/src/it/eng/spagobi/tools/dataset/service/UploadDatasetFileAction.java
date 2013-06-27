@@ -11,6 +11,8 @@ import it.eng.spagobi.commons.services.AbstractSpagoBIAction;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.SpagoBIServiceExceptionHandler;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
+import it.eng.spagobi.tools.dataset.common.datareader.FileDatasetCsvDataReader;
+import it.eng.spagobi.tools.dataset.common.datareader.FileDatasetXlsDataReader;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.service.IServiceResponse;
 import it.eng.spagobi.utilities.service.JSONResponse;
@@ -131,6 +133,14 @@ public class UploadDatasetFileAction extends AbstractSpagoBIAction {
 			if (uploaded.getSize() > maxSize) {
 				throw new SpagoBIServiceException(getActionName(), "The uploaded file exceeds the maximum size, that is " + maxSize + " bytes");
 			}
+			// check if the extension is valid (XLS, CSV)
+			String fileExtension =  uploaded.getName().lastIndexOf('.') > 0 ?  
+					uploaded.getName().substring( uploaded.getName().lastIndexOf('.') + 1) : null;
+			logger.debug("File extension: [" + fileExtension +"]");			
+			if(!"CSV".equalsIgnoreCase( fileExtension )&& !"XLS".equalsIgnoreCase( fileExtension )) {
+				throw new SpagoBIServiceException(getActionName(), "The uploaded file has an invalid extension. Choose a CSV or XLS file.");
+			} 
+				
 		} finally {
 			logger.debug("OUT");
 		}

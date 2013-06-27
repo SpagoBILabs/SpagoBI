@@ -239,6 +239,7 @@ Ext.define('Sbi.widgets.wizard.WizardWindow', {
 			 margin: '2 0 0 10',
 			displayField : tmpValueText,
 			valueField : tmpValueField,
+			readOnly: f.readOnly || false,
 //			labelStyle:'font-weight:bold;', 
 			emptyText:'Select ...',
 			typeAhead : true, forceSelection : true,

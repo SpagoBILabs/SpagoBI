@@ -1,7 +1,7 @@
 Ext.define('Sbi.tools.dataset.DataSetsWizard', {
 	extend: 'Sbi.widgets.wizard.WizardWindow'
 
-	,config: {
+	,config: {	
 		fieldsStep1: null,
 		fieldsStep2: null,
 		fieldsStep3: null,
@@ -13,11 +13,18 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
 		isNew:true, 
 		user:'',
 		fileUpload:null,
-		metaInfo:null
+		metaInfo:null,
+		isOwner: false
 	}
 
 	, constructor: function(config) {
-		this.initConfig(config);		
+		this.initConfig(config);
+		if (this.record.owner !== undefined && this.record.owner !== this.user) {
+			this.isOwner = false;
+		}else{
+			this.isOwner = true;
+		}
+		
 		this.configureSteps();
 		
 		config.title =  LN('sbi.ds.wizard'); 	
@@ -62,20 +69,20 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
 		
 		toReturn = [{label:"Id", name:"id",type:"text",hidden:"true", value:this.record.id},
          {label: LN('sbi.ds.dsTypeCd'), name:"type",type:"text",hidden:"true", value:this.record.dsTypeCd || 'File'},
-         {label: LN('sbi.ds.label'), name:"label", type:"text", mandatory:true, readOnly:(this.isNew)?false:true, value:this.record.label}, 
-         {label: LN('sbi.ds.name'), name:"name", type:"text", mandatory:true, value:this.record.name},
-         {label: LN('sbi.ds.description'), name:"description", type:"textarea", value:this.record.description}];
+         {label: LN('sbi.ds.label'), name:"label", type:"text", mandatory:true, readOnly:(this.isNew || this.isOwner)?false:true, value:this.record.label}, 
+         {label: LN('sbi.ds.name'), name:"name", type:"text", mandatory:true, readOnly:(!this.isOwner), value:this.record.name},
+         {label: LN('sbi.ds.description'), name:"description", type:"textarea", readOnly:(!this.isOwner), value:this.record.description}];
 		
-		toReturn.push({label:LN('sbi.ds.catType'), name:"catTypeVn", type:"combo", valueCol:"VALUE_ID", descCol:"VALUE_DS", value:this.record.catTypeVn, data:this.categoriesStore});
+		toReturn.push({label:LN('sbi.ds.catType'), name:"catTypeVn", type:"combo", valueCol:"VALUE_ID", descCol:"VALUE_DS", readOnly:!this.isOwner, value:this.record.catTypeVn, data:this.categoriesStore});
 		var valueScope = (this.record.isPublic==true)?'true':'false' ;
-		toReturn.push({label:LN('sbi.ds.scope'), name:"isPublic", type:"combo", valueCol:"field", descCol:"value", value:valueScope, data:this.scopeStore});
+		toReturn.push({label:LN('sbi.ds.scope'), name:"isPublic", type:"combo", valueCol:"field", descCol:"value", readOnly:!this.isOwner, value:valueScope, data:this.scopeStore});
 		
 		return toReturn;
 	}
 	
 	, getFieldsTab2: function(){
 		//upload details tab
-		this.fileUpload = new Sbi.tools.dataset.FileDatasetPanel({fromWizard:true});
+		this.fileUpload = new Sbi.tools.dataset.FileDatasetPanel({fromWizard:true, isOwner: this.isOwner});
 		if (this.record !== undefined){
 			this.fileUpload.setFormState(this.record);
 		}
@@ -107,7 +114,7 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
 		config.meta = this.record.meta;
 		config.datasetPropertiesStore = this.datasetPropertiesStore;
 		config.datasetValuesStore = this.datasetValuesStore;
-
+		config.isOwner = this.isOwner;
 		this.metaInfo = new Sbi.tools.dataset.ManageDatasetFieldMetadata(config);
 		return this.metaInfo;
 	}
@@ -116,7 +123,7 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
 		for (var i=0; i<bar.length; i++){
 			var btn = bar[i];
 			if (btn.id === 'confirm'){
-				if (this.record.owner !== undefined && this.record.owner !== this.user) {
+				if (!this.isOwner) {
 					btn.disabled = true;
 				}
 			}				
