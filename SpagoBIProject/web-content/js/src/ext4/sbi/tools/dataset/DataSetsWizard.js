@@ -271,7 +271,15 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
 	}
 	
 	, disableButton: function(btn){
-		 Ext.getCmp(btn).setDisabled(true);
+		 Ext.getCmp(btn).setDisabled(true);		
+	}
+	
+	, goBack: function(n){
+		 var newTabId  = parseInt(this.wizardPanel.getActiveTab().itemId)-n;
+		 var numTabs  = (this.wizardPanel.items.length-1);		 
+		 this.wizardPanel.setActiveTab(newTabId);
+		 Ext.getCmp('move-prev').setDisabled(newTabId==0);
+		 Ext.getCmp('move-next').setDisabled(newTabId==numTabs);
 	}
 	
 	, enableButton: function(btn){
