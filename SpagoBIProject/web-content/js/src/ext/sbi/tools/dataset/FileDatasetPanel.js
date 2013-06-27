@@ -41,7 +41,7 @@ Sbi.tools.dataset.FileDatasetPanel = function(config) {
 	var defaultSettings =  {
 	        labelWidth: 75, 
 	        frame:false,
-	        defaultType: 'textfield'	        	
+	        defaultType: 'textfield'        	
 		};
 
 
@@ -78,21 +78,24 @@ Ext.extend(Sbi.tools.dataset.FileDatasetPanel, Ext.Panel, {
 			fieldLabel : LN('sbi.ds.file.xsl.skiprows'),
 			allowBlank : true,
 			name: 'skipRows',
-			width: 100
+			width: 100,
+			readOnly: !this.isOwner || false
 		});
 		
 		this.limitRowsField = new Ext.form.NumberField({
 			fieldLabel : LN('sbi.ds.file.xsl.limitrows'),
 			allowBlank : true,
 			name: 'limitRows',
-			width: 100
+			width: 100,
+			readOnly: !this.isOwner || false
 		});
 		
 		this.sheetNumberField = new Ext.form.NumberField({
 			fieldLabel : LN('sbi.ds.file.xsl.sheetnumber'),
 			allowBlank : true,
 			name: 'xslSheetNumber',
-			width: 100
+			width: 100,
+			readOnly: !this.isOwner || false
 		});		
 		
 		
@@ -131,7 +134,8 @@ Ext.extend(Sbi.tools.dataset.FileDatasetPanel, Ext.Panel, {
 			selectOnFocus : true, 
 			editable : false,
 			allowBlank : false, 
-			validationEvent : false
+			validationEvent : false,
+			readOnly: !this.isOwner || false
 		});	
 		
 		
@@ -155,7 +159,8 @@ Ext.extend(Sbi.tools.dataset.FileDatasetPanel, Ext.Panel, {
 			selectOnFocus : true, 
 			editable : false,
 			allowBlank : false, 
-			validationEvent : false
+			validationEvent : false,
+			readOnly: !this.isOwner || false
 		});	
 		
 		this.csvDelimiterCombo = new Ext.form.ComboBox({
@@ -178,7 +183,8 @@ Ext.extend(Sbi.tools.dataset.FileDatasetPanel, Ext.Panel, {
 			selectOnFocus : true, 
 			editable : false,
 			allowBlank : false, 
-			validationEvent : false
+			validationEvent : false,
+			readOnly: !this.isOwner || false
 		});	
 		
 		
@@ -215,7 +221,8 @@ Ext.extend(Sbi.tools.dataset.FileDatasetPanel, Ext.Panel, {
 			selectOnFocus : true, 
 			editable : false,
 			allowBlank : false, 
-			validationEvent : false
+			validationEvent : false,
+			readOnly: !this.isOwner || false
 		});		
 		this.fileTypeCombo.addListener('select',this.activateFileTypePanel, this);
 
@@ -225,7 +232,8 @@ Ext.extend(Sbi.tools.dataset.FileDatasetPanel, Ext.Panel, {
 			allowBlank : false,
 			id: 'fileNameField',
 			name: 'fileName',
-			readOnly:true
+			readOnly:true,
+			hidden: !this.isOwner || false
 		});
 		
 		this.uploadField = new Ext.form.TextField({
@@ -234,12 +242,14 @@ Ext.extend(Sbi.tools.dataset.FileDatasetPanel, Ext.Panel, {
 			allowBlank : false,
 			width: (this.fromWizard)? 500 : 300,
 			id: 'fileUploadField',
-			name: 'fileUpload'
+			name: 'fileUpload',
+			 hidden: !this.isOwner || false
 		});
 		
 		this.uploadButton = new Ext.Button({
 	        text: LN('sbi.ds.file.upload.button'),
-	        id: 'fileUploadButton'	
+	        id: 'fileUploadButton',
+	        hidden: !this.isOwner || false
 	    });
 		
 		//Main Panel
