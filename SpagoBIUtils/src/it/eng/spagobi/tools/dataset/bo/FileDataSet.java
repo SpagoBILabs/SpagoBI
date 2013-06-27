@@ -121,7 +121,7 @@ public class FileDataSet extends ConfigurableDataSet{
 			fileType = fileExtension;
 		}
 
-		
+		 
 		if("CSV".equalsIgnoreCase( fileType )) {
 			logger.info("File format: [CSV]");
 			//setDataReader( new CsvDataReader() );
@@ -131,10 +131,10 @@ public class FileDataSet extends ConfigurableDataSet{
 			logger.info("File format: [XLS Office 2003]");
 			setDataReader( new FileDatasetXlsDataReader(jsonConf) );
 		}		
-		else if ("xml".equalsIgnoreCase( fileExtension ) || "txt".equalsIgnoreCase( fileExtension )) {
-			logger.info("File format: [XML]");
-			setDataReader( new XmlDataReader() );
-		} 
+//		else if ("xml".equalsIgnoreCase( fileExtension ) || "txt".equalsIgnoreCase( fileExtension )) {
+//			logger.info("File format: [XML]");
+//			setDataReader( new XmlDataReader() );
+//		} 
 		
 		else {
 			throw new  IllegalArgumentException("[" + fileExtension+ "] is not a supported file type");
