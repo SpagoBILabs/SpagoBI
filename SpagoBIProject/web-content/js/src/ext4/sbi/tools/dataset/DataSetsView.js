@@ -136,7 +136,43 @@ Ext.define('Sbi.tools.dataset.DataSetsView', {
 	 	          '</div>',
 	 	        '</div>');
 		
-
+		this.tpl = new Ext.XTemplate(
+				'<div id="dataset-view">', 	            
+	 	           '<div class="dataset-group-view">',
+	 	            '<ul>',
+	 	            	'<tpl if="root.length == 0">',
+	 	            		'<div id="empty-group-message">',
+	 	            		noItem,
+	 	            		'</div>',
+	 	            	'</tpl>', 
+	 	            	'<tpl for=".">',
+							'<dd class="box">',
+								'<a href="#" class="box-link">',
+									'<div class="box-map">',
+										'<img src="/SpagoBI/themes/sbi_default/img/dataset/csv-xls.png" alt=" " />',
+										'<span class="shadow"></span>',
+									'</div>',
+									'<div class="box-text">',
+										'<h2>{name}</h2>',
+										'<p>{description}</p>',
+										'<p class="modified">Modificata il {dateIn}</p>',
+									'</div>',
+								'</a>',
+								'<div class="fav-container" style="width:{actions.length*45}px">',
+									'<tpl for="actions">',   
+										'<div class="fav">',
+											'<span class="icon-{name}" title="{description}"></span>',
+										'</div>',
+									'</tpl>',
+								'</div>',
+							'</dd>',
+						 '</tpl>',	 
+						 '<div style="clear:left"></div>',
+					'</ul>',
+				'</div>',
+			'</div>'
+		);
+     
 		Sbi.debug('DataViewPanel tpl built.');
 
 		return this.tpl;
@@ -150,16 +186,17 @@ Ext.define('Sbi.tools.dataset.DataSetsView', {
 	, 
 	onClick : function(obj, record, item, index, e, eOpts) {
 		var scope = this;
-        // is of type Ext.EventObject		
-        var group = e.getTarget('div[class=group-header]', 10, true);
-        if(group){
-            group.up('div[class*=group]').toggleClass('collapsed');
-        }
+       
         
-        var actionDetail = e.getTarget('img.action-detail', 10, true);
-        var actionDelete = e.getTarget('img.action-delete', 10, true);
-        var actionWorksheet = e.getTarget('img.action-worksheet', 10, true);
-        var actionGeoreport = e.getTarget('img.action-georeport', 10, true);
+//        var actionDetail = e.getTarget('img.action-detail', 10, true);
+//        var actionDelete = e.getTarget('img.action-delete', 10, true);
+//        var actionWorksheet = e.getTarget('img.action-worksheet', 10, true);
+//        var actionGeoreport = e.getTarget('img.action-georeport', 10, true);
+        
+        var actionDetail = e.getTarget('span.icon-detail', 10, true);
+        var actionDelete = e.getTarget('span.icon-delete', 10, true);
+        var actionWorksheet = e.getTarget('span.icon-worksheet', 10, true);
+        var actionGeoreport = e.getTarget('span.icon-georeport', 10, true);
         
         delete record.data.actions; 
         if (actionDetail != null){
