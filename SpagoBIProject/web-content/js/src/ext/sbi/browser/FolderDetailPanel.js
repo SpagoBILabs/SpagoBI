@@ -101,22 +101,25 @@ Sbi.browser.FolderDetailPanel = function(config) {
         	} 
 		}
     });
-    
+    var toolbarItems = [];
+    toolbarItems.push(ttbarTextItem);
+    toolbarItems.push('->');	 
+    if (this.isAbleToCreateDocument()){
+    	toolbarItems.push(newDocumentButton);
+    }
+    toolbarItems.push(ttbarToggleViewButton);
     this.toolbar = new Ext.Toolbar({
       //cls: 'top-toolbar'
-      items: [
-          ttbarTextItem
-          ,'->'
-          , newDocumentButton
-          , ttbarToggleViewButton  
-      ]
+      items: toolbarItems
     });
     this.toolbar.breadcrumbs = new Array();
     this.toolbar.breadcrumbs.push(ttbarTextItem);
     //this.toolbar.text = ttbarTextItem;
     this.toolbar.buttonsL = new Array();
     this.toolbar.buttonsL['toggleView'] = ttbarToggleViewButton;
-    this.toolbar.buttonsL['newDocument'] = newDocumentButton;
+    if (this.isAbleToCreateDocument()){
+    	this.toolbar.buttonsL['newDocument'] = newDocumentButton;
+    }
     
     
     if(config.modality && (
@@ -166,14 +169,17 @@ Sbi.browser.FolderDetailPanel = function(config) {
 
 
 Ext.extend(Sbi.browser.FolderDetailPanel, Ext.Panel, {
-    
-	services: null
+	//constants
+      CREATE_DOCUMENT: 'CreateDocument'
+    //variables
+	, services: null
     , modality: null // list-view || group-view
     , store: null
     , toolbar: null
     , folderView: null
     , loadingMask: null
     , folderId: null
+
     
     , toggleDisplayModality: function() {
       this.loadingMask.show();
@@ -342,17 +348,21 @@ Ext.extend(Sbi.browser.FolderDetailPanel, Ext.Panel, {
             	} 
     		}
         });
-        this.toolbar.buttonsL['newDocument'] = new Ext.Toolbar.Button({
-        	tooltip: LN('sbi.generic.add'),
-    		iconCls:'icon-add',
-    		listeners: {
-    			'click': {
-              		fn: this.addNewDocument,
-              		scope: this
-            	} 
-    		}
-        });
-        this.toolbar.add('->', this.toolbar.buttonsL['toggleView'], this.toolbar.buttonsL['newDocument']);
+        if (this.isAbleToCreateDocument()){
+	        this.toolbar.buttonsL['newDocument'] = new Ext.Toolbar.Button({
+	        	tooltip: LN('sbi.generic.add'),
+	    		iconCls:'icon-add',
+	    		listeners: {
+	    			'click': {
+	              		fn: this.addNewDocument,
+	              		scope: this
+	            	} 
+	    		}
+	        });
+	        this.toolbar.add('->', this.toolbar.buttonsL['toggleView'], this.toolbar.buttonsL['newDocument']);
+        }else{
+        	this.toolbar.add('->', this.toolbar.buttonsL['toggleView']);
+        }
     }
    
     
@@ -516,7 +526,19 @@ Ext.extend(Sbi.browser.FolderDetailPanel, Ext.Panel, {
     	}
     }
     
-    
+    , isAbleToCreateDocument: function(){
+    	var funcs = Sbi.user.functionalities;
+    	if (funcs == null || funcs == undefined) return false;
+    	
+    	for (f in funcs){
+    		if (funcs[f] == this.CREATE_DOCUMENT){
+    			return true;
+    			break;
+    		}
+    	}
+    	
+    	return false;
+    }
     
     
    
