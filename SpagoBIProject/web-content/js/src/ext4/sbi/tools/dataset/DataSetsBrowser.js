@@ -367,12 +367,14 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 				if(response !== undefined  && response.responseText !== undefined && response.statusText=="OK") {
 					if(response.responseText!=null && response.responseText!=undefined){
 						if(response.responseText.indexOf("error.mesage.description")>=0){
+							this.wizardWin.disableButton('confirm');
 							Sbi.exception.ExceptionHandler.handleFailure(response);
 						}else{			
 							var newMeta = response.responseText;
 							var newMetaDecoded =  Ext.decode(newMeta);				 
 							this.wizardWin.metaInfo.updateData(newMetaDecoded.datasetColumns);
 							this.wizardWin.metaInfo.updateGridData(newMetaDecoded.meta);
+							this.wizardWin.enableButton('confirm');
 						}
 					}
 				} else {

@@ -107,21 +107,8 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
 		config.meta = this.record.meta;
 		config.datasetPropertiesStore = this.datasetPropertiesStore;
 		config.datasetValuesStore = this.datasetValuesStore;
-//		if (config.meta == undefined || config.meta.length == 0){
-//			this.metaInfo = new Ext.form.DisplayField({
-//				value : LN('sbi.ds.field.metadata.nosaved'),
-//				width:'100%',
-//				readOnly:true,
-//				 style: {
-//			            width: '95%',
-//			            marginBottom: '10px',
-//			            'text-align': 'center'
-//			        },
-//				fieldStyle:'font-weight:bold;align:center;'
-//			});
-//		}else{
-			this.metaInfo = new Sbi.tools.dataset.ManageDatasetFieldMetadata(config);
-//		}
+
+		this.metaInfo = new Sbi.tools.dataset.ManageDatasetFieldMetadata(config);
 		return this.metaInfo;
 	}
 	, initWizardBar: function() {
@@ -281,6 +268,14 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
 		});		
 		
 		Sbi.debug("[DatasetWizard.uploadFileButtonHandler]: OUT");
+	}
+	
+	, disableButton: function(btn){
+		 Ext.getCmp(btn).setDisabled(true);
+	}
+	
+	, enableButton: function(btn){
+		 Ext.getCmp(btn).setDisabled(false);
 	}
 	
 });

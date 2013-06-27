@@ -770,6 +770,7 @@ Sbi.locale.ln["error.mesage.description.data.source.saving.duplicated"]="Impossi
 Sbi.locale.ln["error.mesage.description.data.set.cannot.be.null"]= "The label of the data set can not be null";
 Sbi.locale.ln["error.mesage.description.data.set.deleting.inuse"] = "Impossible to delete the data set because it is in use";
 Sbi.locale.ln["error.mesage.description.data.set.saving.duplicated"]="Impossible to save the data set because there is another one with the same label";
+Sbi.locale.ln["error.mesage.description.data.set.parsing.error"]="Impossible to parse file. Check its content and upload it again";
 
 //===================================================================
 //Sbi.execution.toolbar.SaveDatasetWindow : AD-HOC REPORTING 

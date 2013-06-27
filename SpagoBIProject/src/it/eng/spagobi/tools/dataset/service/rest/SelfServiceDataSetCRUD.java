@@ -70,6 +70,7 @@ public class SelfServiceDataSetCRUD {
 	static private String deleteInUseDSError = "error.mesage.description.data.set.deleting.inuse";
 	static private String canNotFillResponseError = "error.mesage.description.generic.can.not.responce";
 	static private String saveDuplicatedDSError = "error.mesage.description.data.set.saving.duplicated";
+	static private String parsingDSError = "error.mesage.description.data.set.parsing.error";
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
@@ -266,7 +267,7 @@ public class SelfServiceDataSetCRUD {
 			return JSONReturn.toString();
 		} catch (SpagoBIRuntimeException ex) {
 			logger.error("Cannot fill response container", ex);
-			updateAudit(req, profile, "DATA_SET.SAVE", null, "ERR");
+			updateAudit(req, profile, "DATA_SET.TEST", null, "ERR");
 			logger.debug(ex.getMessage());
 			try {
 				return ( ExceptionUtilities.serializeException(ex.getMessage(),null));
@@ -275,9 +276,20 @@ public class SelfServiceDataSetCRUD {
 				throw new SpagoBIRuntimeException(
 						"Cannot fill response container", e);
 			}
-		} catch (Exception ex) {
+		} catch (RuntimeException ex) {
 			logger.error("Cannot fill response container", ex);
-			updateAudit(req, profile, "DATA_SET.SAVE", null, "ERR");
+			updateAudit(req, profile, "DATA_SET.TEST", null, "ERR");
+			logger.debug(canNotFillResponseError);	
+			try {
+				return ( ExceptionUtilities.serializeException(parsingDSError,null));
+			} catch (Exception e) {
+				logger.debug("Cannot fill response container.");
+				throw new SpagoBIRuntimeException(
+						"Cannot fill response container", e);
+			}
+		}catch (Exception ex) {
+			logger.error("Cannot fill response container", ex);
+			updateAudit(req, profile, "DATA_SET.TEST", null, "ERR");
 			logger.debug(canNotFillResponseError);
 			try {
 				return ( ExceptionUtilities.serializeException(canNotFillResponseError,null));
