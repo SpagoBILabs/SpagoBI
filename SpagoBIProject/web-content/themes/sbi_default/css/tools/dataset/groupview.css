@@ -30,20 +30,20 @@ a:focus{outline:none}
 .box p{line-height:137%;font-size:1.1em;margin:0 0 5px 0}
 .box p.modified{position:absolute;left:2px;bottom:0;color:#b1b1b1;font-size:0.91em;margin:0}
 .box:hover .box-link p.modified{color:#a5a5a5}
-.box .fav-container{cursor:pointer;height:39px;width:45px;position:absolute;top:-8px;right:20px;padding:8px 0 0 0;background:url(../images/bg-fav-top.png) 0 0 no-repeat}
+.box .fav-container{cursor:pointer;height:39px;width:45px;position:absolute;top:-8px;right:20px;padding:8px 0 0 0;background:url(../../../img/dataset/bg-fav-top.png) 0 0 repeat-x}
 .box .fav-container .fav{float:right; position:relative;height:40px;width:45px;background:url(../../../img/dataset/bg-fav-bottom.png) 0 bottom no-repeat}
 
-.box .fav .icon-delete{cursor:pointer;position:absolute;left:13px;top:6px;display:block;width:19px;height:16px;background:url(../../../img/dataset/ico-delete.png) 0 0 no-repeat}
-.box .fav .icon-delete:hover{background-position:0 -16px}
+.box .fav .icon-delete{cursor:pointer;position:absolute;left:13px;top:6px;display:block;width:19px;height:16px;background:url(../../../img/dataset/ico-delete.png) 0 -1px no-repeat}
+.box .fav .icon-delete:hover{background-position:0 -19px}
 	
 .box .fav .icon-worksheet{cursor:pointer;position:absolute;left:13px;top:6px;display:block;width:19px;height:16px;background:url(../../../img/dataset/ico-worksheet.png) 0 0 no-repeat}
-.box .fav .icon-worksheet:hover{background-position:0 -16px}
+.box .fav .icon-worksheet:hover{background-position:0 -17px}
 	
 .box .fav .icon-georeport{cursor:pointer;position:absolute;left:13px;top:6px;display:block;width:19px;height:16px;background:url(../../../img/dataset/ico-georeport.png) 0 0 no-repeat}
 .box .fav .icon-georeport:hover{background-position:0 -16px}
 	
 .box .fav .icon-detail{cursor:pointer;position:absolute;left:13px;top:6px;display:block;width:19px;height:16px;background:url(../../../img/dataset/ico-details.png) 0 0 no-repeat}
-.box .fav .icon-detail:hover{background-position:0 -16px}
+.box .fav .icon-detail:hover{background-position:0 -18px}
 
 
 
