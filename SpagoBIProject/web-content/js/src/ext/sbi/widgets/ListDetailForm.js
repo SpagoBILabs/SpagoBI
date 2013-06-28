@@ -29,6 +29,7 @@
  * [list]
  * 
  * Authors - Chiara Chiarelli (chiara.chiarelli@eng.it)
+ *  * Monica Franceschini (monica.franceshini@eng.it)
  */
 
 /*
@@ -257,7 +258,7 @@ Sbi.widgets.ListDetailForm = function(config) {
  			 	}, 
  			 	this);  	
  		
- 		this.mainElementsStore.load();	
+ 		this.mainElementsStore.load();
  		
  	var c = {
  		layout: 'fit',
