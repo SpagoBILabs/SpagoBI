@@ -170,9 +170,10 @@ public class GetChartDataAction extends AbstractSpagoBIAction {
 				throw new SpagoBIServiceException(SERVICE_NAME,"sbi.ds.deleteDsError", e);
 			}
 		}else if (serviceType != null	&& serviceType.equalsIgnoreCase(DataSetConstants.DATASET_VERSION_DELETE)) {
-			Integer dsVersionID = getAttributeAsInteger(DataSetConstants.VERSION_ID);
+			Integer dsVersionNum = getAttributeAsInteger(DataSetConstants.VERSION_NUM);
+			Integer dsId = getAttributeAsInteger(DataSetConstants.DS_ID);
 			try {
-				boolean deleted = dsDao.deleteInactiveDataSetVersion(dsVersionID);	
+				boolean deleted = dsDao.deleteInactiveDataSetVersion(dsVersionNum, dsId);	
 				if(deleted){
 					logger.debug("Dataset Version deleted");
 					writeBackToClient( new JSONAcknowledge("Operation succeded") );
