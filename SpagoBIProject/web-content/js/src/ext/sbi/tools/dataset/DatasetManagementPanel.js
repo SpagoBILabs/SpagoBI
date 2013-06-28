@@ -29,6 +29,7 @@
  * [list]
  * 
  * Authors - Chiara Chiarelli (chiara.chiarelli@eng.it)
+ * Monica Franceschini (monica.franceshini@eng.it)
  */
 //var thisPanel;
 
@@ -79,7 +80,8 @@ Sbi.tools.dataset.DatasetManagementPanel = function(config) {
 	//this.configurationObject.getDatamartsService = Sbi.config.qbeGetDatamartsUrl;
 
 	this.initConfigObject();
-
+	
+	
 	this.configurationObject.filter = true;
 	this.configurationObject.columnName = [['label', LN('sbi.generic.label')],
 	                                       ['name', LN('sbi.generic.name')],
@@ -100,7 +102,7 @@ Sbi.tools.dataset.DatasetManagementPanel = function(config) {
 	var c = Ext.apply({}, config || {}, {});
 
 	Sbi.tools.dataset.DatasetManagementPanel.superclass.constructor.call(this, c);
-
+	
 	this.rowselModel.addListener('rowselect', function(sm, row, rec) {
 		this.activateDsTypeForm(null, rec, row);
 		this.activateTransfForm(null, rec, row);
@@ -115,6 +117,7 @@ Sbi.tools.dataset.DatasetManagementPanel = function(config) {
 			this.qbeDataSetBuilder.destroy();
 			this.qbeDataSetBuilder = null;
 		}
+		this.manageFormsEnabling();
 	}, this);
 	
 	this.tabs.addListener('tabchange', this.modifyToolbar, this);
@@ -127,6 +130,10 @@ Sbi.tools.dataset.DatasetManagementPanel = function(config) {
     Ext.Ajax.on('requestcomplete', this.hideMask, this);            
     // invokes if exception occured 
     Ext.Ajax.on('requestexception', this.hideMask, this); 
+
+	this.manageFormsDisabling();
+
+
 };
 
 Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm, {
@@ -162,6 +169,13 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 	qbeDataSetBuilder: null,
 	customDataGrid: null
 
+	
+	, manageFormsDisabling: function(){
+		this.tabs.disable();
+	}
+	, manageFormsEnabling: function(){
+		this.tabs.enable();		
+	}
 	,
 	modifyToolbar : function(tabpanel, panel) {
 		var itemId = panel.getItemId();
@@ -669,8 +683,8 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 								},
 								border : true,
 								items : [ this.manageDsVersionsGrid ],
-								scope : this,
-					});
+								scope : this
+							});
 
 					this.detailTab = new Ext.Panel(
 							{
@@ -1580,6 +1594,9 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 				// OVERRIDING METHOD
 				,
 				addNewItem : function() {
+					if(this.tabs.disabled){
+						this.manageFormsEnabling();
+					}
 					this.newRecord = new Ext.data.Record(
 							{	id : null,
 								name : '', label : '', description : '',
