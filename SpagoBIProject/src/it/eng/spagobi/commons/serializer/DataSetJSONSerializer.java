@@ -114,8 +114,8 @@ public class DataSetJSONSerializer implements Serializer {
 			}
 			
 			//result.put(CATEGORY_TYPE_VN, ds.getCategoryValueName());
-			result.put(CATEGORY_TYPE_VN, ds.getCategoryId()); 
-			result.put(CATEGORY_TYPE_CD, ds.getCategoryCd()); 
+			result.put(CATEGORY_TYPE_VN, ds.getCategoryCd()); 
+			//result.put(CATEGORY_TYPE_CD, ds.getCategoryCd()); 
 
 			JSONArray parsListJSON = new JSONArray();
 			String pars = ds.getParameters();

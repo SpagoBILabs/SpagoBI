@@ -152,6 +152,8 @@ Sbi.widgets.ListDetailForm = function(config) {
 	this.rowselModel = conf.rowselModel;
 	this.filter = conf.filter;
 	this.filtercolumnName = conf.columnName;
+	
+	
 	if(conf.filterWidth !== undefined){
 		this.filterWidth = conf.filterWidth;
 	}
@@ -206,6 +208,7 @@ Sbi.widgets.ListDetailForm = function(config) {
 	 /*
  	   *    Here is where we create the Form
  	   */
+	/*
  	  this.gridForm = {
  	          frame: true,
  	          autoScroll: true,
@@ -226,11 +229,24 @@ Sbi.widgets.ListDetailForm = function(config) {
  	 			},
  	          items: [
  	              this.mainGrid
- 	              , this.tabs           	  		
+ 	              //, this.tabs           	  		
  	          ]
  	          
  	      };
+ 	      */   
+ 	      
  	   
+	
+	this.mainGrid.region = "west";
+	
+	
+	this.gridForm = {
+			layout: 'border',
+			items: [this.mainGrid, {region: "center", layout:'fit', items: [this.tabs]}]
+	};
+	
+	
+	
  	  this.mainElementsStore.on('load', 
  				function(){
  		  			if(config.toBeSelected!=null && config.toBeSelected!=undefined){
@@ -242,8 +258,12 @@ Sbi.widgets.ListDetailForm = function(config) {
  			 	this);  	
  		
  		this.mainElementsStore.load();	
-   	
-	var c = Ext.apply({}, config, this.gridForm);
+ 		
+ 	var c = {
+ 		layout: 'fit',
+ 		items: [this.gridForm]
+ 	};
+ 		
    	Sbi.widgets.ListDetailForm.superclass.constructor.call(this,c);	
    	this.doLayout(true,true);
    	
@@ -278,7 +298,7 @@ Ext.extend(Sbi.widgets.ListDetailForm, Ext.FormPanel, {
 	
 	
 	,initWidget: function(){
-
+		
         this.selectColumn = new Ext.grid.ButtonColumn({
 		       header:  ' '
 		       ,iconCls: 'icon-select'
@@ -344,12 +364,12 @@ Ext.extend(Sbi.widgets.ListDetailForm, Ext.FormPanel, {
            enableTabScroll : true
            , activeTab : 0
            , tabPosition: 'top'
-           //, columnWidth : 1
            , autoScroll : true
            , deferredRender: false
            , width: this.tabPanelWidth         
            , height: this.baseHeight
            , autoScroll  : true
+		   //, layout: 'fit'
            , itemId: 'tabs' 
            , tbar: this.tbSave
            , scope: this
@@ -425,11 +445,18 @@ Ext.extend(Sbi.widgets.ListDetailForm, Ext.FormPanel, {
 	                  colModel: this.colModel,
 	                  plugins: pluginsToAdd ,
 	                  selModel: this.rowselModel,
-	                  height: this.baseHeight,
-//	                  autoHeight: true,
-	                  autoWidth: true,
-	                  autoScroll  : true,
-	                  width: this.gridWidth,
+	                  width: '35%',
+					  //autoWidth: true,
+					  frame: true,
+					  border:true,  	        
+				      collapsible:false,
+					  loadMask: true,
+					  viewConfig: {
+							forceFit:false,
+							autoFill: false,
+							enableRowBody:true,
+							showPreview:true
+					  },
 	                  scope: this,
 	                  title: this.listTitle,
 		              bbar: pagingBar,
