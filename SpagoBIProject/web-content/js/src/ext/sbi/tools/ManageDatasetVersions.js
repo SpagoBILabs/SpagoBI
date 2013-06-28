@@ -234,9 +234,10 @@ Ext.extend(Sbi.tools.ManageDatasetVersions, Ext.grid.EditorGridPanel, {
     
     ,onDelete: function() {   	
     	var rec = this.getSelectionModel().getSelected();
-        var dsVersId = rec.get('versId');
+        var dsVersNum = rec.get('versNum');
+        var dsId = rec.get('dsId');
         
-        if (dsVersId != null && dsVersId!=undefined && dsVersId!=0){       	
+        if (dsVersNum != null && dsVersNum!=undefined && dsVersNum!=0 ){       	
         	Ext.MessageBox.confirm(
     			LN('sbi.generic.pleaseConfirm'),
     			LN('sbi.generic.confirmDelete'),            
@@ -244,7 +245,7 @@ Ext.extend(Sbi.tools.ManageDatasetVersions, Ext.grid.EditorGridPanel, {
                     if (btn=='yes') {
 						Ext.Ajax.request({
 				            url: this.services['deleteDsVersionService'],
-				            params: {'versId': dsVersId},
+				            params: {'versNum': dsVersNum, 'dsId': dsId},
 				            method: 'GET',
 				            success: function(response, options) {
 								if (response !== undefined) {

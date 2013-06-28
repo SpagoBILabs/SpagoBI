@@ -669,8 +669,8 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 								},
 								border : true,
 								items : [ this.manageDsVersionsGrid ],
-								scope : this
-							});
+								scope : this,
+					});
 
 					this.detailTab = new Ext.Panel(
 							{

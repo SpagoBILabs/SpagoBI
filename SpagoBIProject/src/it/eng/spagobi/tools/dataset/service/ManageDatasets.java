@@ -276,9 +276,10 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 	}
 
 	private void datatsetVersionDelete(IDataSetDAO dsDao, Locale locale){
-		Integer dsVersionID = getAttributeAsInteger(DataSetConstants.VERSION_ID);
+		Integer dsVersionNum = getAttributeAsInteger(DataSetConstants.VERSION_NUM);
+		Integer dsId = getAttributeAsInteger(DataSetConstants.DS_ID);
 		try {
-			boolean deleted = dsDao.deleteInactiveDataSetVersion(dsVersionID);	
+			boolean deleted = dsDao.deleteInactiveDataSetVersion(dsVersionNum, dsId);	
 			if(deleted){
 				logger.debug("Dataset Version deleted");
 				writeBackToClient( new JSONAcknowledge("Operation succeded") );
