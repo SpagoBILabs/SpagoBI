@@ -1936,7 +1936,24 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 						);
 					}
 				}
-				
+				/**
+				 * Opens the loading mask 
+				 */
+			    , showMask : function(){  
+			    	if (this.loadMask == null) {
+			    		this.loadMask = new Ext.LoadMask(this, {msg: "Saving..."});    		
+			    	}
+			    	this.loadMask.show();
+			    }
+
+				/**
+				 * Closes the loading mask
+				*/
+				, hideMask: function() {
+			    	if (this.loadMask != null) {	
+			    		this.loadMask.hide();
+			    	}
+				} 
 				, doSave : function(recalculateMetadata) {
 					var values = this.getValues();
 					
@@ -2304,7 +2321,7 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 			    , showMask : function(){
 			    	this.un('afterlayout',this.showMask,this);
 			    	if (this.loadMask == null) {    		
-			    		this.loadMask = new Ext.LoadMask(Ext.getBody(), {msg: "  Wait...  "});
+			    		this.loadMask = new Ext.LoadMask(Ext.getBody(), {msg: "  Saving...  "});
 			    	}
 			    	if (this.loadMask){
 			    		this.loadMask.show();

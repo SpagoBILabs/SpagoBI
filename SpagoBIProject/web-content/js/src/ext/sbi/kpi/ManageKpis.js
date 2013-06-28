@@ -123,6 +123,7 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 	, gridColumnNumber: null
 	, detailTab: null
 	, detailFieldIsAdditive: null
+	, layout: 'fit'
 
 	,initConfigObject:function(){
 
@@ -189,7 +190,7 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 		this.configurationObject.dragndropGroup ='grid2treeAndDetail';
 		
 		this.configurationObject.filter = true;
-		
+
 		this.initTabItems();			
     }
 
@@ -483,7 +484,7 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 	        title: LN('sbi.generic.details')
 	        , itemId: 'detail'
 	        , width: 350
-	        , scope: this
+	        , scope: this			
 	        , items: {
 		   			 scope: this,
 		   		 id: 'kpis-detail',   	
@@ -511,6 +512,7 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 		    	title: LN('sbi.generic.advanced')
 		        , itemId: 'advanced'
 		        , width: 350
+				, layout: 'fit'
 		        , items: {
 			   		 id: 'advanced-detail',   	
 		 		   	 itemId: 'advanced-detail',   	              
@@ -520,7 +522,7 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 		             labelWidth: 110,
 		             defaults: {width: this.fieldsDefaultWidth, border:false},    
 		             defaultType: 'textfield',
-		             autoHeight: true,
+		             autoHeight: false,					 
 		             autoScroll  : true,
 		             bodyStyle: Ext.isIE ? 'padding:0 0 10px 15px;' : 'padding:10px 15px;',
 		             border: false,
@@ -847,7 +849,7 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
 		this.kpiLinksGrid = new Ext.grid.GridPanel ({
 			id: 'kpilinks-grid',
 			store: this.parameterStore,
-			autoHeight : true,
+			autoHeight : false,
 			viewConfig : {
 	            forceFit: true,
 	            scrollOffset: 2 // the grid will never have scrollbars
@@ -862,6 +864,7 @@ Ext.extend(Sbi.kpi.ManageKpis, Sbi.widgets.ListDetailForm, {
             //width: 300,
 			//frame: true,
 			forceFit: true,
+
 	        singleSelect : true,
 	        scope:this
 	    }); 
