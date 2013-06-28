@@ -1553,7 +1553,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 	 * @return true if the version whose id is equal to <code>datasetVersionId</code> is deleted from database.
 	 * false otherwise (the version does not exist or it exists but it is active).
 	 */
-	public boolean deleteInactiveDataSetVersion(Integer datasetVersionId) {
+	public boolean deleteInactiveDataSetVersion(Integer datasetVersionNum, Integer dsId) {
 		Session session;
 		Transaction transaction;		
 		boolean deleted;
@@ -1566,8 +1566,8 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 		
 		try {
 			
-			if(datasetVersionId == null) {				
-				throw new IllegalArgumentException("Input parameter [datasetVersionId] cannot be null");
+			if(datasetVersionNum == null) {				
+				throw new IllegalArgumentException("Input parameter [datasetVersionNum] cannot be null");
 			}
 			
 			try {
@@ -1580,9 +1580,10 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			}
 
 			//SbiDataSet sbiDataSet = (SbiDataSet) session.load(SbiDataSet.class, datasetVersionId);
-			Query countQuery = session.createQuery("from SbiDataSet ds where ds.active = ? and ds.id.versionNum = ?");
+			Query countQuery = session.createQuery("from SbiDataSet ds where ds.active = ? and ds.id.versionNum = ? and ds.id.dsId = ?");
 			countQuery.setBoolean(0, false);
-			countQuery.setInteger(1, datasetVersionId);
+			countQuery.setInteger(1, datasetVersionNum);
+			countQuery.setInteger(2, dsId);
 			SbiDataSet sbiDataSet = (SbiDataSet)countQuery.uniqueResult();
 			if(sbiDataSet != null && sbiDataSet.isActive() == false ){
 				session.delete(sbiDataSet);
@@ -1595,7 +1596,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				transaction.rollback();
 			}
 			throw new SpagoBIDOAException("An unexpected error occured while deleting dataset version" +
-					"whose id is equal to [" + datasetVersionId + "]", t);
+					"whose version num is equal to [" + datasetVersionNum + "]", t);
 		} finally {
 			if (session != null && session.isOpen()) {
 				session.close();
