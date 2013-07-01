@@ -68,7 +68,7 @@ Sbi.worksheet.designer.DesignToolsPanel = function(config) {
         	//type:'vbox',
             //align:'stretch'
         },
-        items:[this.designToolsFieldsPanel, this.designToolsPallettePanel, this.designToolsLayoutPanel]
+        items:[ this.designToolsPallettePanel, this.designToolsFieldsPanel, this.designToolsLayoutPanel]
 	};
 	
 	Sbi.worksheet.designer.DesignToolsPanel.superclass.constructor.call(this, c);
@@ -83,6 +83,9 @@ Ext.extend(Sbi.worksheet.designer.DesignToolsPanel, Ext.Panel, {
 	fieldsOptions: null, // JSON object that contains options for attributes (code/description visualization) and measures (scale factor)
 
 	initPanels: function() {
+
+		this.designToolsPallettePanel = new Sbi.worksheet.designer.DesignToolsPallettePanel({region : 'north'});
+		
 		
 		this.designToolsFieldsPanel = new Sbi.formbuilder.QueryFieldsPanel({
 			displayRefreshButton : false,
@@ -91,7 +94,7 @@ Ext.extend(Sbi.worksheet.designer.DesignToolsPanel, Ext.Panel, {
 				ddGroup: 'worksheetDesignerDDGroup'
 	        	, type: 'queryFieldsPanel'
 	        },
-			region : 'north',
+			region : 'center',
 			split: true,
 			height : 120,
 			services : this.services
@@ -101,11 +104,12 @@ Ext.extend(Sbi.worksheet.designer.DesignToolsPanel, Ext.Panel, {
 		this.designToolsFieldsPanel.grid.on('rowdblclick', this.fieldDblClickHandler, this);
 		this.designToolsFieldsPanel.grid.on('rowcontextmenu', this.fieldRightClickHandler, this);
 		
-		this.designToolsPallettePanel = new Sbi.worksheet.designer.DesignToolsPallettePanel({region : 'center'});
+
 		this.designToolsLayoutPanel = new Sbi.worksheet.designer.DesignToolsLayoutPanel({region : 'south', height : 130 , split: true});
-//		this.designToolsFieldsPanel.flex = 1;
-//		this.designToolsPallettePanel.flex = 1;
-//		this.designToolsLayoutPanel.flex = 1;
+
+		//		this.designToolsFieldsPanel.flex = 1;
+		//		this.designToolsPallettePanel.flex = 1;
+		//		this.designToolsLayoutPanel.flex = 1;
 		this.designToolsLayoutPanel.on('layoutchange', function(sheetLayout){
 			var change = {
 				'sheetLayout' : sheetLayout
