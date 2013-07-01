@@ -765,7 +765,8 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 					this.fileUploadFormPanel = new Sbi.tools.dataset.FileDatasetPanel(config);
 					var uploadButton = this.fileUploadFormPanel.getComponent('fileUploadPanel').getComponent('fileUploadButton');
 					
-					uploadButton.setHandler(this.uploadFileButtonHandler);
+					uploadButton.setHandler(this.uploadFileButtonHandler, this);
+
 					
 				
 
@@ -937,6 +938,17 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 						validationEvent : true,
 						name : 'jclassName'
 					});
+					
+					this.detailJclassNameForCustom = new Ext.form.TextField({
+						maxLength : 100,
+						minLength : 1,
+						width : 350,
+						regexText : LN('sbi.roles.alfanumericString'),
+						fieldLabel : LN('sbi.ds.jclassName'),
+						allowBlank : false,
+						validationEvent : true,
+						name : 'jclassName'
+					});
 
 					this.customDataGrid = new Sbi.tools.dataset.CustomDataGrid();
 					
@@ -1027,7 +1039,7 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 											: "-5px")
 											: "3px"
 								},
-								items : [ this.detailJclassName, this.customDataGrid ]
+								items : [ this.detailJclassNameForCustom, this.customDataGrid ]
 							});
 
 						this.fileDetail = new Ext.form.FieldSet({
@@ -1200,7 +1212,17 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 				                Ext.Msg.alert('Failure', 'Ajax communication failed');
 				                break;
 				            case Ext.form.Action.SERVER_INVALID:
-				               Ext.Msg.alert('Failure', action.result.msg);
+				            	if(action.result.msg && action.result.msg.indexOf("NonBlockingError:")>=0){
+				            		var error = Ext.util.JSON.decode(action.result.msg);
+				            		if(error.error=='USED'){//the file is used from more than one dataset
+				            			Sbi.exception.ExceptionHandler.showErrorMessage(LN('sbi.ds.'+error.error)+error.used+" datasets",LN("sbi.ds.failedToUpload") );
+				            		}else{
+				            			Sbi.exception.ExceptionHandler.showErrorMessage(LN('sbi.ds.'+error.error),LN("sbi.ds.failedToUpload"));
+				            		}
+				            		
+				            	}else{
+				            		Sbi.exception.ExceptionHandler.showErrorMessage(action.result.msg,'Failure');
+				            	}
 							}
 						},
 						scope : this

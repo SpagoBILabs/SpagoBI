@@ -87,7 +87,7 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
 			this.fileUpload.setFormState(this.record);
 		}
 		var uploadButton = this.fileUpload.getComponent('fileUploadPanel').getComponent('fileUploadButton');		
-		uploadButton.setHandler(this.uploadFileButtonHandler);
+		uploadButton.setHandler(this.uploadFileButtonHandler,this);
 		var toReturn = new  Ext.FormPanel({
 			  id: 'datasetForm',
 			  fileUpload: true, // this is a multipart form!!
@@ -268,7 +268,18 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
 	                Ext.Msg.alert('Failure', 'Ajax communication failed');
 	                break;
 	            case Ext.form.Action.SERVER_INVALID:
-	               Ext.Msg.alert('Failure', action.result.msg);
+	            	if(action.result.msg && action.result.msg.indexOf("NonBlockingError:")>=0){
+	            		var error = Ext.JSON.decode(action.result.msg);
+	            		if(error.error=='USED'){//the file is used from more than one dataset
+	            			Sbi.exception.ExceptionHandler.showErrorMessage(LN('sbi.ds.'+error.error)+error.used+" datasets",LN("sbi.ds.failedToUpload") );
+	            		}else{
+	            			Sbi.exception.ExceptionHandler.showErrorMessage(LN('sbi.ds.'+error.error),LN("sbi.ds.failedToUpload"));
+	            		}
+	            		
+	            	}else{
+	            		Sbi.exception.ExceptionHandler.showErrorMessage(action.result.msg,'Failure');
+	            	}
+	               
 				}
 			},
 			scope : this

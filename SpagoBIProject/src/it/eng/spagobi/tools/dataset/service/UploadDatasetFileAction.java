@@ -5,12 +5,16 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.tools.dataset.service;
 
+import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.services.AbstractSpagoBIAction;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.SpagoBIServiceExceptionHandler;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.tools.dataset.common.datareader.FileDatasetCsvDataReader;
 import it.eng.spagobi.tools.dataset.common.datareader.FileDatasetXlsDataReader;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
@@ -19,6 +23,8 @@ import it.eng.spagobi.utilities.service.JSONResponse;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Iterator;
+import java.util.List;
 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.log4j.Logger;
@@ -36,6 +42,8 @@ public class UploadDatasetFileAction extends AbstractSpagoBIAction {
 	/** Logger component. */
     private static transient Logger logger = Logger.getLogger(UploadDatasetFileAction.class);
     
+    private static final String UPLOADED_FILE= "UPLOADED_FILE";
+    private static final String SKIP_CHECKS= "SKIP_CHECKS";
 		
     public void doService() {
     	
@@ -43,7 +51,13 @@ public class UploadDatasetFileAction extends AbstractSpagoBIAction {
     	
     	try {
 			
-			FileItem uploaded = (FileItem) getAttribute("UPLOADED_FILE");
+			FileItem uploaded = (FileItem) getAttribute(UPLOADED_FILE);
+			Object skipChecksObject = getAttribute(SKIP_CHECKS);
+			Boolean skipChecks = false;
+			if(skipChecksObject!=null){
+				skipChecks =((String)skipChecksObject).equals("on");
+			}
+			
 			if (uploaded == null) {
 				throw new SpagoBIServiceException(getActionName(), "No file was uploaded");
 			}
@@ -54,8 +68,15 @@ public class UploadDatasetFileAction extends AbstractSpagoBIAction {
 			
 			checkUploadedFile(uploaded);
 			
+			
+			File file = checkAndCreateDir(uploaded);
+			
+			if(!skipChecks){
+				checkFile(uploaded, file);
+			}
+			
 			logger.debug("Saving file...");
-			saveFile(uploaded);
+			saveFile(uploaded, file);
 			logger.debug("File saved");
 			
 			replayToClient( null );
@@ -146,7 +167,10 @@ public class UploadDatasetFileAction extends AbstractSpagoBIAction {
 		}
 	}
 
-	private void saveFile(FileItem uploaded) {
+	
+	
+	
+	private File checkAndCreateDir(FileItem uploaded) {
 		logger.debug("IN");
 		try {
 			String fileName = SpagoBIUtilities.getRelativeFileNames(uploaded.getName());
@@ -162,13 +186,19 @@ public class UploadDatasetFileAction extends AbstractSpagoBIAction {
 				}
 			}
 
-			File saveTo = new File(datasetFileDir, fileName);
-			// check if the file already exists
-			if (saveTo.exists()){
-				//Overwriting existing file
-				logger.debug("Overwriting existing file " + fileName);
-			}
-			
+			return new File(datasetFileDir, fileName);
+		} catch (Throwable t) {
+			logger.error("Error while saving file into server: " + t);
+			throw new SpagoBIServiceException(getActionName(),
+					"Error while saving file into server", t);
+		} finally {
+			logger.debug("OUT");
+		}
+	}
+	
+	private void saveFile(FileItem uploaded, File saveTo) {
+		logger.debug("IN");
+		try {
 			uploaded.write(saveTo);
 		} catch (Throwable t) {
 			logger.error("Error while saving file into server: " + t);
@@ -177,6 +207,59 @@ public class UploadDatasetFileAction extends AbstractSpagoBIAction {
 		} finally {
 			logger.debug("OUT");
 		}
+	}
+	
+	private void checkFile(FileItem uploaded, File saveTo){
+		
+		int used = getDatasetsNumberUsingFile(uploaded);
+		if(used>0){
+			throw new SpagoBIServiceException(getActionName(), "{NonBlockingError: true, error:\"USED\", used:\""+used+"\"}");
+		}
+		boolean alreadyExist = 	checkFileIfExist(saveTo);
+		if(alreadyExist){
+			throw new SpagoBIServiceException(getActionName(), "{NonBlockingError: true, error:\"EXISTS\"}");
+		}
+
+		
+	}
+	
+
+	
+	private boolean checkFileIfExist(File file){
+		return (file.exists());
+	}
+	
+	/**
+	 * Gets the number of datasets that use the fiel
+	 * @param fileName the name of the file
+	 * @return the number of datasets using the file
+	 * @throws EMFUserError
+	 */
+	private int getDatasetsNumberUsingFile(FileItem uploaded){
+		String configuration;
+		String fileName = SpagoBIUtilities.getRelativeFileNames(uploaded.getName());
+		String fileToSearch = "\"fileName\":\""+fileName+"\"";
+		IDataSet iDataSet;
+		int datasetUisng = 0;
+
+		try {
+			IDataSetDAO ds = DAOFactory.getDataSetDAO();
+			List<IDataSet> datasets = ds.loadAllActiveDataSets();
+			if(datasets!=null){
+				for (Iterator<IDataSet> iterator = datasets.iterator(); iterator.hasNext();) {
+					iDataSet =  iterator.next();
+					configuration = iDataSet.getConfiguration();
+					if(configuration.indexOf(fileToSearch)>=0){
+						datasetUisng++;
+					}
+				}
+			}
+		} catch (Exception e) {
+			logger.error("Error checking if the file is used by other datasets ", e);
+			throw new SpagoBIServiceException(getActionName(),"Error checking if the file is used by other datasets ", e);
+		}
+		return datasetUisng;
+
 	}
 	
 
