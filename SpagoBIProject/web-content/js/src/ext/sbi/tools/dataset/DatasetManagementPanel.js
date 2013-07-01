@@ -98,6 +98,10 @@ Sbi.tools.dataset.DatasetManagementPanel = function(config) {
 	config.isUpload=true;
 	config.method='POST';
     config.enctype='multipart/form-data';
+    
+
+    config.tabPanelWidth ='69%'; // 520;
+    config.gridWidth = '31%'; //470;
 
 	var c = Ext.apply({}, config || {}, {});
 
@@ -454,23 +458,23 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 					this.configurationObject.gridColItems = [ {
 						id : 'label',
 						header : LN('sbi.generic.label'),
-						width : 150,
+						width : 105,
 						sortable : true,
 						locked : false,
 						dataIndex : 'label'
 					}, {
 						header : LN('sbi.generic.name'),
-						width : 150,
+						width : 105,
 						sortable : true,
 						dataIndex : 'name'
 					}, {
 						header : LN('sbi.generic.type'),
-						width : 70,
+						width : 60,
 						sortable : true,
 						dataIndex : 'dsTypeCd'
 					}, {
 						header : LN('sbi.ds.numDocs'),
-						width : 60,
+						width : 55,
 						sortable : true,
 						dataIndex : 'usedByNDocs'
 					} ];
