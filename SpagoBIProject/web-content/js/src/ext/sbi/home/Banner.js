@@ -435,8 +435,10 @@ Ext.extend(Sbi.home.Banner, Ext.Panel, {
 		var win_info_1;
 		if(!win_info_1){
 			win_info_1= new Ext.Window({
+			frame: false,
+			style:"background-color: white",
 			id:'win_info_1',
-			autoLoad: {url: Sbi.config.contextName+'/themes/'+Sbi.config.currTheme+'/html/infos.html'},             				
+			autoLoad: {url: Sbi.config.contextName+'/themes/'+Sbi.config.currTheme+'/html/infos.jsp'},             				
 			layout:'fit',
 			width:210,
 			height:180,
