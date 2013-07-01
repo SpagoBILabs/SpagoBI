@@ -107,7 +107,9 @@ Ext.define('Sbi.tools.dataset.DataSetsView', {
 		Sbi.debug('DataViewPanel bulding the tpl...');
 
 		var noItem = LN('sbi.browser.folderdetailpanel.emptytext');
+		var changed = LN('sbi.ds.changedon');
 		var title = LN('sbi.ds.listTitle');
+		/*
 		this.tpl = new Ext.XTemplate(
 				'<div id="sample-ct">', 	            
 	 	           '<div class="group-view">',
@@ -136,7 +138,11 @@ Ext.define('Sbi.tools.dataset.DataSetsView', {
 		          '</ul>',
 	 	          '</div>',
 	 	        '</div>');
-		
+		*/
+		var img = "csv-xls.png";
+		if (!this.fromMyDataCtx ){
+			img = "csv-xls-small.png";
+		}
 		this.tpl = new Ext.XTemplate(
 				'<div id="dataset-view">', 	            
 	 	           '<div class="dataset-group-view">',
@@ -150,13 +156,13 @@ Ext.define('Sbi.tools.dataset.DataSetsView', {
 							'<dd class="box">',
 								'<a href="#" class="box-link">',
 									'<div class="box-map">',
-										'<img src="/SpagoBI/themes/sbi_default/img/dataset/csv-xls.png" alt=" " />',
+										'<img  align="center" src="/SpagoBI/themes/sbi_default/img/dataset/'+img+'" alt=" " />',
 										'<span class="shadow"></span>',
 									'</div>',
 									'<div class="box-text">',
 										'<h2>{name}</h2>',
 										'<p>{description}</p>',
-										'<p class="modified">Modificata il {dateIn}</p>',
+										'<p class="modified">'+changed+' {dateIn}</p>',
 									'</div>',
 								'</a>',
 								'<div class="fav-container" style="width:{actions.length*45}px">',

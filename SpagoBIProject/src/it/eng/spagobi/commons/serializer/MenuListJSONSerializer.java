@@ -226,7 +226,7 @@ public class MenuListJSONSerializer implements Serializer {
 		if (isAbleTo(SpagoBIConstants.SEE_MY_DATA, funcs)){
 			JSONObject myData = createMenuItem(
 					"my_data",
-					"/servlet/AdapterHTTP?ACTION_NAME=SELF_SERVICE_DATASET_START_ACTION&LIGHT_NAVIGATOR_RESET_INSERT=TRUE",
+					"/servlet/AdapterHTTP?ACTION_NAME=SELF_SERVICE_DATASET_START_ACTION&LIGHT_NAVIGATOR_RESET_INSERT=TRUE&MYDATA=TRUE",
 					messageBuilder.getMessage("menu.MyData", locale), true, null);
 			tempMenuList.put(myData);
 		}
