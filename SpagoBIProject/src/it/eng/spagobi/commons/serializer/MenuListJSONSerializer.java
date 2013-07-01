@@ -208,20 +208,21 @@ public class MenuListJSONSerializer implements Serializer {
 					messageBuilder.getMessage("menu.CreateDocument", locale), true, null);
 			tempMenuList.put(createDoc);
 		}
-		if (isAbleTo(SpagoBIConstants.SEE_SUBSCRIPTIONS, funcs)){
-			JSONObject subscription = createMenuItem(
-					"edit",
-					"/servlet/AdapterHTTP?PAGE=ListDistributionListUserPage&LIGHT_NAVIGATOR_RESET_INSERT=TRUE",
-					messageBuilder.getMessage("menu.Subscriptions", locale), true, null);
-			tempMenuList.put(subscription);
-		}
-		if (isAbleTo(SpagoBIConstants.SEE_TODO_LIST, funcs)){
-			JSONObject toDoList = createMenuItem(
-					"list",
-					"/servlet/AdapterHTTP?PAGE=WorkflowToDoListPage&WEBMODE=TRUE&LIGHT_NAVIGATOR_RESET_INSERT=TRUE",
-					messageBuilder.getMessage("menu.ToDoList", locale), true, null);
-			tempMenuList.put(toDoList);
-		}
+		
+//		if (isAbleTo(SpagoBIConstants.SEE_SUBSCRIPTIONS, funcs)){
+//			JSONObject subscription = createMenuItem(
+//					"edit",
+//					"/servlet/AdapterHTTP?PAGE=ListDistributionListUserPage&LIGHT_NAVIGATOR_RESET_INSERT=TRUE",
+//					messageBuilder.getMessage("menu.Subscriptions", locale), true, null);
+//			tempMenuList.put(subscription);
+//		}
+//		if (isAbleTo(SpagoBIConstants.SEE_TODO_LIST, funcs)){
+//			JSONObject toDoList = createMenuItem(
+//					"list",
+//					"/servlet/AdapterHTTP?PAGE=WorkflowToDoListPage&WEBMODE=TRUE&LIGHT_NAVIGATOR_RESET_INSERT=TRUE",
+//					messageBuilder.getMessage("menu.ToDoList", locale), true, null);
+//			tempMenuList.put(toDoList);
+//		}
 		if (isAbleTo(SpagoBIConstants.SEE_MY_DATA, funcs)){
 			JSONObject myData = createMenuItem(
 					"my_data",
