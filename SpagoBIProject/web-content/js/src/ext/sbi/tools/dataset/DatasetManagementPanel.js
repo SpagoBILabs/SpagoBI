@@ -427,7 +427,7 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 							'catTypeVn', 'isPublic', 'usedByNDocs', 'fileName','fileType','csvDelimiter','csvQuote','skipRows','limitRows','xslSheetNumber',
 							'query', 'queryScript', 'queryScriptLanguage','dataSource', 'wsAddress',
 							'wsOperation', 'script', 'scriptLanguage',
-							'jclassName', 'customData', 'pars', 'trasfTypeCd',
+							'jclassName', 'jclassNameForCustom', 'customData', 'pars', 'trasfTypeCd',
 							'pivotColName', 'pivotColValue',
 							'pivotRowName', 'pivotIsNumRows', 'dsVersions',
 							'isPersisted','dataSourcePersist',
@@ -442,7 +442,7 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 								csvDelimiter: '', fileType: '',csvQuote: '', skipRows: '', limitRows: '', xslSheetNumber: '',
 								fileName : '', query : '', queryScript : '', queryScriptLanguage : '', dataSource : '',
 								wsAddress : '', wsOperation : '', script : '',
-								scriptLanguage : '', jclassName : '', customData: '', pars : [],
+								scriptLanguage : '', jclassName : '',jclassNameForCustom:'', customData: '', pars : [],
 								trasfTypeCd : '', pivotColName : '', pivotColValue : '',								
 								pivotRowName : '', pivotIsNumRows : '', 
 								isPersisted:'', dataSourcePersist:'',
@@ -947,7 +947,7 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 						fieldLabel : LN('sbi.ds.jclassName'),
 						allowBlank : false,
 						validationEvent : true,
-						name : 'jclassName'
+						name : 'jclassNameForCustom'
 					});
 
 					this.customDataGrid = new Sbi.tools.dataset.CustomDataGrid();
@@ -1626,7 +1626,7 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 								csvDelimiter: '', fileType: '' ,csvQuote:'', skipRows:'', limitRows:'', xslSheetNumber:'',
 								fileName : '', query : '', queryScript : '', queryScriptLanguage : '', dataSource : '',
 								wsAddress : '', wsOperation : '', script : '',
-								scriptLanguage : '', jclassName : '', customData : '', pars : [],
+								scriptLanguage : '', jclassName : '', jclassNameForCustom:'', customData : '', pars : [],
 								trasfTypeCd : '', pivotColName : '', pivotColValue : '',
 								pivotRowName : '', pivotIsNumRows : '',
 								isPersisted:'', dataSourcePersist:'',
@@ -1768,6 +1768,7 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 						scriptLanguage : values['scriptLanguage'],
 						customData : values['customData'],
 						jclassName : values['jclassName'],
+						jclassNameForCustom : values['jclassNameForCustom'],
 						trasfTypeCd : values['trasfTypeCd'],
 						pivotColName : values['pivotColName'],
 						pivotColValue : values['pivotColValue'],
@@ -1864,6 +1865,7 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 					record.set('script',values['script']);
 					record.set('scriptLanguage',values['scriptLanguage']);
 					record.set('jclassName',values['jclassName']);
+					record.set('jclassNameForCustom',values['jclassName']);
 					record.set('customData',values['customData']);					
 					record.set('trasfTypeCd',values['trasfTypeCd']);
 					record.set('pivotColName',values['pivotColName']);
@@ -1944,13 +1946,18 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 					values = Ext.apply(values, this.queryDetail.getFormState());
 					// ----------------------------------------------------------
 					
+					if(this.customDataDetail.isVisible()){
+						values.jclassName = values.jclassNameForCustom;
+					}
+					
 					return values;
 					
 				}
 				
 				, setValues: function(record) {
+					record.data.jclassNameForCustom = record.data.jclassName;
 					this.getForm().loadRecord(record);
-				
+					
 					// in the refactored architecture all detail parts will be
 					// implemented as external widgets. The state of each widget
 					// will be set using the method setFormState. QueryDetail is
