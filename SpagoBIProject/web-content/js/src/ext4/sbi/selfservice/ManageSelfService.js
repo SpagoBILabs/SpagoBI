@@ -46,7 +46,6 @@ Ext.define('Sbi.selfservice.ManageSelfService', {
 				, datasetsServicePath : config.datasetsServicePath
 		};
 		this.datasetPanelTab = Ext.create('Sbi.tools.dataset.DataSetsBrowser', browserConf );
-		//this.modelstPanelTab = Ext.create('Sbi.tools.model.MetaModelsBrowser',{title: LN("sbi.tools.model.metamodelsbrowser.title")});
 		
 		this.items = [ this.datasetPanelTab ];
 

@@ -720,6 +720,8 @@ Sbi.locale.ln['sbi.ds.USED']= 'The file is used from another ';
 Sbi.locale.ln['sbi.ds.EXISTS']= 'The file already exists';
 Sbi.locale.ln['sbi.ds.failedToUpload']= 'Failed to upload';
 Sbi.locale.ln['sbi.ds.skip.checks']='Overwrite existing';
+Sbi.locale.ln['sbi.ds.changedon']='Modified ';
+
 
 //===================================================================
 //MESSAGE BOX BUTTONS

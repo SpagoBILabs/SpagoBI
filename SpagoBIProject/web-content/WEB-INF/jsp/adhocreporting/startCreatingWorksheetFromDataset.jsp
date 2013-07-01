@@ -39,7 +39,6 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
     });
     
     Ext.onReady(function(){
-    
     	Ext.QuickTips.init();
     	
         var editorPanel = new Sbi.worksheet.WorksheetFromDatasetPanel({
