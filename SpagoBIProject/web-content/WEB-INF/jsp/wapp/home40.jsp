@@ -269,17 +269,20 @@ function role(){
 function info(){
 
 	if(!win_info_1){
+
 		win_info_1= new Ext.Window({
-		id:'win_info_1',
-		autoLoad: {url: Sbi.config.contextName+'/themes/'+Sbi.config.currTheme+'/html/infos.html'},             				
-		layout:'fit',
-		width:210,
-		height:180,
-		closeAction:'hide',
-		//closeAction:'close',
-		buttonAlign : 'left',
-		plain: true,
-		title: LN('sbi.home.Info')
+			frame: false,
+			style:"background-color: white",
+			id:'win_info_1',
+			autoLoad: {url: Sbi.config.contextName+'/themes/'+Sbi.config.currTheme+'/html/infos.jsp'},             				
+			layout:'fit',
+			width:210,
+			height:180,
+			closeAction:'hide',
+			//closeAction:'close',
+			buttonAlign : 'left',
+			plain: true,
+			title: LN('sbi.home.Info')
 		});
 	}		
 	win_info_1.show();

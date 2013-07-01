@@ -174,7 +174,9 @@ function info(){
 	if(!win_info_1){
 		win_info_1= new Ext.Window({
 		id:'win_info_1',
-		autoLoad: {url: Sbi.config.contextName+'/themes/'+Sbi.config.currTheme+'/html/infos.html'},             				
+		frame: false,
+		style:"background-color: white",
+		autoLoad: {url: Sbi.config.contextName+'/themes/'+Sbi.config.currTheme+'/html/infos.jsp'},             				
 		layout:'fit',
 		width:210,
 		height:180,
