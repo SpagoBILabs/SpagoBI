@@ -10,7 +10,7 @@ Ext.define('Sbi.tools.datasource.DataSourceListDetailPanel', {
 		this.services =[];
 		this.initServices();
 		this.detailPanel =  Ext.create('Sbi.tools.datasource.DataSourceDetailPanel',{services: this.services});
-		this.columns = [{dataIndex:"DATASOURCE_LABEL", header:"Name"}, {dataIndex:"DESCRIPTION", header:"description"}];
+		this.columns = [{dataIndex:"DATASOURCE_LABEL", header:'sbi.generic.name'}, {dataIndex:"DESCRIPTION", header:'sbi.generic.descr'}];
 		this.fields = ["DATASOURCE_ID","DATASOURCE_LABEL","DESCRIPTION","DRIVER","DIALECT_ID","DIALECT_CLASS","DIALECT_NAME","JNDI_URL","USER","PASSWORD","SCHEMA","MULTISCHEMA","CONNECTION_URL"];
 		this.detailPanel.on("save",this.onFormSave,this);
 		this.detailPanel.on("test",this.onFormTest,this);
