@@ -246,6 +246,13 @@ Ext.extend(Sbi.tools.dataset.FileDatasetPanel, Ext.Panel, {
 			 hidden: !this.isOwner || false
 		});
 		
+		this.noChecks = new  Ext.form.Checkbox({
+			fieldLabel : LN('sbi.ds.skip.checks'),
+			checked: false,
+			id: 'noChecks',
+			name: 'SKIP_CHECKS'
+		});
+		
 		this.uploadButton = new Ext.Button({
 	        text: LN('sbi.ds.file.upload.button'),
 	        id: 'fileUploadButton',
@@ -261,7 +268,7 @@ Ext.extend(Sbi.tools.dataset.FileDatasetPanel, Ext.Panel, {
 		  defaultType: 'textfield',
 		  fileUpload: true,
 		  id: 'fileUploadPanel',
-		  items: [this.fileNameField, this.uploadField, this.uploadButton, this.fileTypeCombo, this.csvOptionsPanel, this.xlsOptionsPanel]
+		  items: [this.fileNameField, this.uploadField, this.noChecks,this.uploadButton, this.fileTypeCombo, this.csvOptionsPanel, this.xlsOptionsPanel]
 
 		});
 		if (!this.fromWizard) {

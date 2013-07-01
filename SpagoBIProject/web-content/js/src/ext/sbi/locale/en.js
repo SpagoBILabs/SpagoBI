@@ -716,6 +716,10 @@ Sbi.locale.ln['sbi.ds.orderComboLabel']= 'Order by...';
 Sbi.locale.ln['sbi.ds.filterLabel']= 'Filter by ...';
 Sbi.locale.ln['sbi.ds.moreRecent']= 'Recent';
 Sbi.locale.ln['sbi.ds.owner']= 'Autor';
+Sbi.locale.ln['sbi.ds.USED']= 'The file is used from another ';
+Sbi.locale.ln['sbi.ds.EXISTS']= 'The file already exists';
+Sbi.locale.ln['sbi.ds.failedToUpload']= 'Failed to upload';
+Sbi.locale.ln['sbi.ds.skip.checks']='Overwrite existing';
 
 //===================================================================
 //MESSAGE BOX BUTTONS

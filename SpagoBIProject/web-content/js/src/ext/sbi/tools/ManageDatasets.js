@@ -870,7 +870,7 @@ Ext.extend(
 											: "-5px")
 											: "3px"
 								},
-								items : [ this.detailJclassName ]
+								items : [ this.detailJclassName , this.customDataGrid ]
 							});
 					
 					

@@ -633,6 +633,10 @@ Sbi.locale.ln['sbi.ds.orderComboLabel']= 'Ordina per ...';
 Sbi.locale.ln['sbi.ds.filterLabel']= 'Filtra per ...';
 Sbi.locale.ln['sbi.ds.moreRecent']= 'Recenti';
 Sbi.locale.ln['sbi.ds.owner']= 'Autore';
+Sbi.locale.ln['sbi.ds.USED']= 'Il file viene utilizzato da altri ';
+Sbi.locale.ln['sbi.ds.EXISTS']= 'Il file è già presente nel server';
+Sbi.locale.ln['sbi.ds.failedToUpload']= 'File non caricato';
+Sbi.locale.ln['sbi.ds.skip.checks']='Sovrascrivi il file';
 
 Sbi.locale.ln['sbi.datasource.label']= 'Etichetta';
 Sbi.locale.ln['sbi.datasource.description']= 'Descrizione';
