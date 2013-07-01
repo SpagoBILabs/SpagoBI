@@ -5,7 +5,6 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. **/
 
 /**
- * TODO anto: aggiornare documentazione!!!
  * 
  * Data view for a browser style. It define a layout and provides the stubs
  * methods for the icons browser. This methods should be overridden to define
@@ -66,7 +65,9 @@ Ext.define('Sbi.tools.dataset.DataSetsView', {
 		
 		sorters : new Array(),
 		
-		autoScroll : true
+		autoScroll : true,
+		
+		fromMyDataCtx : true
 
 	}
 
@@ -100,7 +101,7 @@ Ext.define('Sbi.tools.dataset.DataSetsView', {
 		this.addEvents('detail');		
 	}
 	
-	,
+	, 
 	initTemplate : function() {
 		// BUILD THE TPL
 		Sbi.debug('DataViewPanel bulding the tpl...');
@@ -186,17 +187,13 @@ Ext.define('Sbi.tools.dataset.DataSetsView', {
 	, 
 	onClick : function(obj, record, item, index, e, eOpts) {
 		var scope = this;
-       
-        
-//        var actionDetail = e.getTarget('img.action-detail', 10, true);
-//        var actionDelete = e.getTarget('img.action-delete', 10, true);
-//        var actionWorksheet = e.getTarget('img.action-worksheet', 10, true);
-//        var actionGeoreport = e.getTarget('img.action-georeport', 10, true);
-        
+
         var actionDetail = e.getTarget('span.icon-detail', 10, true);
         var actionDelete = e.getTarget('span.icon-delete', 10, true);
         var actionWorksheet = e.getTarget('span.icon-worksheet', 10, true);
         var actionGeoreport = e.getTarget('span.icon-georeport', 10, true);
+        
+        if (!this.fromMyDataCtx) actionWorksheet = true;
         
         delete record.data.actions; 
         if (actionDetail != null){
@@ -220,7 +217,7 @@ Ext.define('Sbi.tools.dataset.DataSetsView', {
         	}
    			scope.fireEvent('executeDocument','GEOREPORT','DATASET',record);
         } else {
-        	scope.fireEvent('detail', record.data);  
+        	scope.fireEvent('detail', record.data);          	
         }
         
         

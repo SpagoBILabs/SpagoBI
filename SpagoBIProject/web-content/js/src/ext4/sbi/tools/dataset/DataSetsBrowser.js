@@ -170,6 +170,7 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 		config.actions = this.actions;
 		config.user = this.user;
 		config.autoScroll = true;
+		config.fromMyDataCtx = this.displayToolbar;
 		this.viewPanel = Ext.create('Sbi.tools.dataset.DataSetsView', config);
 		this.viewPanel.on('detail', this.modifyDataset, this);
 		this.viewPanel.on('delete', this.deleteDataset, this);
