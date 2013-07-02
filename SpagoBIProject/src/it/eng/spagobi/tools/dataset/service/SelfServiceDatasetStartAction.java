@@ -124,8 +124,8 @@ public class SelfServiceDatasetStartAction extends ManageDatasets  {
 				throw new SpagoBIRuntimeException("Error loading the datasource of the worksheet engine", e);
 			}
 		} else{
-			logger.error("No default engine defined for the worksheet engine");
-			throw new SpagoBIRuntimeException("No default engine defined for the worksheet engine");
+			logger.error("No default data source defined for the worksheet engine");
+			throw new SpagoBIRuntimeException("No default data source defined for the worksheet engine");
 		}
 
 		// create the WorkSheet Edit Service's URL
@@ -160,8 +160,8 @@ public class SelfServiceDatasetStartAction extends ManageDatasets  {
 				throw new SpagoBIRuntimeException("Error loading the datasource of the engine qbe", e);
 			}
 		}else{
-			logger.error("No default engine defined for the qbe engine");
-			throw new SpagoBIRuntimeException("No default engine defined for the qbe engine");
+			logger.error("No default data source defined for the qbe engine");
+			throw new SpagoBIRuntimeException("No default data source defined for the qbe engine");
 		}
 
 
