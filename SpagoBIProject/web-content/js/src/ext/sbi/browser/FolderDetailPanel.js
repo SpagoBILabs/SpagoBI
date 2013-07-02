@@ -170,7 +170,7 @@ Sbi.browser.FolderDetailPanel = function(config) {
 
 Ext.extend(Sbi.browser.FolderDetailPanel, Ext.Panel, {
 	//constants
-      CREATE_DOCUMENT: 'CreateDocument'
+      DETAIL_DOCUMENT: 'DocumentDetailManagement'
     //variables
 	, services: null
     , modality: null // list-view || group-view
@@ -531,7 +531,7 @@ Ext.extend(Sbi.browser.FolderDetailPanel, Ext.Panel, {
     	if (funcs == null || funcs == undefined) return false;
     	
     	for (f in funcs){
-    		if (funcs[f] == this.CREATE_DOCUMENT){
+    		if (funcs[f] == this.DETAIL_DOCUMENT){
     			return true;
     			break;
     		}
