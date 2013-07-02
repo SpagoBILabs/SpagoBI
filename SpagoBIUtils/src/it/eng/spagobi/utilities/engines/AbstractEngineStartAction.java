@@ -489,12 +489,11 @@ public class AbstractEngineStartAction extends AbstractBaseHttpAction {
 
 		 copyRequestParametersIntoEnv(env, getSpagoBIRequestContainer());
 		 try {
-			 
+			 env.put(EngineConstants.ENV_DATASOURCE, getDataSource());
 		 } catch (Exception e){
-			 
+			 logger.debug("Error loading the datasource in the getEnv",e);
 		 }
 
-		 env.put(EngineConstants.ENV_DATASOURCE, getDataSource());
 		  // document id can be null (when using QbE for dataset definition)
 		 if (getDocumentId() != null) {
 			 env.put(EngineConstants.ENV_DOCUMENT_ID, getDocumentId());
