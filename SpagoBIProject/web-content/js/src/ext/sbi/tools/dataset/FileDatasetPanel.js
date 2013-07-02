@@ -45,8 +45,6 @@ Sbi.tools.dataset.FileDatasetPanel = function(config) {
 		};
 
 
-
-
 	var c = Ext.apply(defaultSettings, config || {});
 	Ext.apply(this, c);
 
@@ -72,6 +70,7 @@ Ext.extend(Sbi.tools.dataset.FileDatasetPanel, Ext.Panel, {
 	
 	
 	initUploadForm : function(items,config){
+		if (this.isOwner == undefined) this.isOwner = true;
 		
 		//XLS Options Panel
 		this.skipRowsField = new Ext.form.NumberField({
@@ -243,7 +242,7 @@ Ext.extend(Sbi.tools.dataset.FileDatasetPanel, Ext.Panel, {
 			width: (this.fromWizard)? 500 : 300,
 			id: 'fileUploadField',
 			name: 'fileUpload',
-			 hidden: !this.isOwner || false
+			hidden: !this.isOwner || false
 		});
 		
 		this.noChecks = new  Ext.form.Checkbox({
