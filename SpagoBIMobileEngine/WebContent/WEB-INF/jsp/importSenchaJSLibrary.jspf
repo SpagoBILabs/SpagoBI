@@ -12,7 +12,7 @@
 <link rel="stylesheet" href="../css/Ext.ux.grid.View.css" type="text/css"/>
 
 <!-- script type="text/javascript" src="../js/sencha_2.1.1/sencha-touch-debug.js"></script-->
-<script type="text/javascript" src="../js/sencha_2.1.1/sencha-touch-all-debug.js"></script>
+<script type="text/javascript" src="../js/sencha_2.1.1/sencha-touch-all.js"></script>
 <script type="text/javascript" src="../js/sencha_2.1.1/override-sencha-2.1.1.js"></script>
 <script type="text/javascript" src="../js/sencha_2.1.1/sencha_220/chart/series/Gauge.js"></script>
 <script type="text/javascript" src="../js/sencha_2.1.1/sencha_220/chart/SpaceFillingChart.js"></script>
