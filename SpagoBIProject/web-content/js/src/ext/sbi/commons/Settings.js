@@ -52,6 +52,8 @@ Sbi.settings.browser = {
 				showJobDetails: false
 			}
 		}
+	  , showLeftPanels: true
+	  , showBreadCrumbs: true
 }
 
 Sbi.settings.invisibleParameters = {

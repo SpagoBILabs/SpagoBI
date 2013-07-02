@@ -9,7 +9,6 @@ Ext.ns("Sbi.execution");
 
 Sbi.execution.ExecutionPanel = function(config, doc) {
 	
-	
 	// declare exploited services
 	var params = {LIGHT_NAVIGATOR_DISABLED: 'TRUE', SBI_EXECUTION_ID: null};
 	this.services = new Array();
@@ -317,9 +316,9 @@ Ext.extend(Sbi.execution.ExecutionPanel, Ext.Panel, {
 		
 		this.activeDocument = new Sbi.execution.ExecutionWizard( {preferences: config.preferences, isFromCross: true}, config.document );
 		this.documentsStack.push( this.activeDocument );
-			
-		this.activeDocument.on('beforetoolbarinit', this.setBreadcrumbs, this);
-		
+		if (Sbi.settings.browser.showBreadCrumbs !== undefined && Sbi.settings.browser.showBreadCrumbs){	
+			this.activeDocument.on('beforetoolbarinit', this.setBreadcrumbs, this);
+		}
 		this.activeDocument.documentExecutionPage.on('expandpagerequest', function() {
 			sendMessage({}, 'collapse2'); 
 		}, this);
@@ -340,7 +339,6 @@ Ext.extend(Sbi.execution.ExecutionPanel, Ext.Panel, {
 	 * @method 
 	 */
 	, setBreadcrumbs: function(tb) {
-		
 		tb.addSpacer();
 		tb.addDom('<image width="12" height="12" src="../themes/sbi_default/img/analiticalmodel/execution/link16x16.gif"></image>');
 		tb.addSpacer();

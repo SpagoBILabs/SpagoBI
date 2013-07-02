@@ -259,7 +259,7 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 			    	this.fireEvent('click', this, "backToRolePage");
 			    }
 			}));
-			this.toolbar.addSeparator();
+			if (this.toolbar !== undefined) this.toolbar.addSeparator();
 			drawRoleBack = true;
 		}
 		
