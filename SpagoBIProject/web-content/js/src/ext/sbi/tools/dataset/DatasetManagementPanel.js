@@ -100,8 +100,8 @@ Sbi.tools.dataset.DatasetManagementPanel = function(config) {
     config.enctype='multipart/form-data';
     
 
-    config.tabPanelWidth ='69%'; // 520;
-    config.gridWidth = '31%'; //470;
+    config.tabPanelWidth ='70%'; // 520;
+    config.gridWidth = '30%'; //470;
 
 	var c = Ext.apply({}, config || {}, {});
 
