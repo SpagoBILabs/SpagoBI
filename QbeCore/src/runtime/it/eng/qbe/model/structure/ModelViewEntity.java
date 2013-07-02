@@ -290,10 +290,12 @@ public class ModelViewEntity extends ModelEntity {
 
 		//only outbound relationship from view are added as subentities
 		//String subEntityPath;
-		for(ViewRelationship relationship : viewRelationships){
-			if (relationship.isOutbound()){
-				IModelEntity me = (relationship.getDestinationEntity()).clone(this, null);
-				this.addSubEntity(me);
+		if (this.getStructure().getMaxRecursionLevel() > 0) {
+			for(ViewRelationship relationship : viewRelationships){
+				if (relationship.isOutbound()){
+					IModelEntity me = (relationship.getDestinationEntity()).clone(this, null);
+					this.addSubEntity(me);
+				}
 			}
 		}
 		

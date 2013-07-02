@@ -345,5 +345,13 @@ public class FilteredModelEntity implements IModelEntity{
 	public void setModelName(String modelName) {
 		wrappedModelEntity.setModelName(modelName);
 	}
+
+	public int getDepth() {
+		if (this.getParent() != null) {
+			return 1 + this.getParent().getDepth();
+		} else {
+			return 0;
+		}
+	}
 	
 }

@@ -101,6 +101,11 @@ public class ModelEntity extends AbstractModelNode implements IModelEntity {
 	}
 
 	
+	@Override
+	public int hashCode() {
+		return this.getUniqueName().hashCode();
+	}
+
 	public String getUniqueType() {
 		String entityType = getType();
 		if ( !StringUtilities.isEmpty( getRole() ) ) {
@@ -429,6 +434,14 @@ public class ModelEntity extends AbstractModelNode implements IModelEntity {
 	 */
 	public List<ModelViewEntity> getParentViews() {
 		return super.getParentViews(this);
+	}
+
+	public int getDepth() {
+		if (this.getParent() != null) {
+			return 1 + this.getParent().getDepth();
+		} else {
+			return 0;
+		}
 	}
 
 	

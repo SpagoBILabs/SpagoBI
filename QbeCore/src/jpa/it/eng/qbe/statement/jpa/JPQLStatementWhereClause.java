@@ -101,7 +101,7 @@ public class JPQLStatementWhereClause extends AbstractJPQLStatementFilteringClau
 		try {
 			addUserProvidedConditions(buffer, query, entityAliasesMaps);
 			addProfilingConditions(buffer, query, entityAliasesMaps);
-			addJoinConditions(buffer, query, entityAliasesMaps);
+//			addJoinConditions(buffer, query, entityAliasesMaps);
 		} catch(Throwable t) {
 			throw new StatementCompositionException("Impossible to build where clause", t);
 		} finally {
@@ -321,6 +321,7 @@ public class JPQLStatementWhereClause extends AbstractJPQLStatementFilteringClau
 		return buffer;
 	}
 	
+	/*
 	private StringBuffer addJoinConditions(StringBuffer buffer, Query query, Map entityAliasesMaps) {
 	
 		Map<String, String> entityAliases;
@@ -388,6 +389,7 @@ public class JPQLStatementWhereClause extends AbstractJPQLStatementFilteringClau
 		return buffer;
 		
 	}
+	*/
 	
 	
 	protected String injectAutoJoins(String whereClause, Query query, Map entityAliasesMaps) {

@@ -175,4 +175,8 @@ public interface IModelStructure extends IModelObject {
 		public void addCalculatedField(String entityName, ModelCalculatedField calculatedFiled) ;
 
 		public void removeCalculatedField(String entityName, ModelCalculatedField calculatedFiled) ;
+		
+		public void setMaxRecursionLevel(int maxRecursionLevel);
+		
+		public int getMaxRecursionLevel();
 }
