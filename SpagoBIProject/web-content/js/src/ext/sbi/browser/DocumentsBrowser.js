@@ -3,9 +3,7 @@
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. **/
- 
-  
- 
+
   
 
 /**
@@ -22,59 +20,7 @@ Sbi.browser.DocumentsBrowser = function(config) {
 	this.tabbedBrowser = config.parentTab;
 	this.rootFolderId = config.rootFolderId || null;
 	this.selectedFolderId = this.rootFolderId;
-	
-	this.treePanel = new Sbi.browser.DocumentsTree({
-        border: true
-        , rootNodeId: this.selectedFolderId 
-    });
-	
-	this.filterPanel = new Sbi.browser.FilterPanel({
-        title: LN('sbi.browser.filtrpanel.title')
-        , border:true
-        , metaFolder: config.metaFolder
-        , metaDocument: config.metaDocument	
-    });
-	
-	if (Sbi.user.functionalities.contains('DoMassiveExportFunctionality')) {
-		this.progressPanel = new Sbi.browser.ProgressPanel({
-			title: LN('sbi.browser.progresspanel.title')
-			, border:true
-			, metaFolder: config.metaFolder
-			, metaDocument: config.metaDocument	
-		});
-	}
-	
-	
-	this.searchPanel = new Sbi.browser.SearchPanel({
-        title: LN('sbi.browser.searchpanel.title')
-        , border:true
-        , metaDocument: config.metaDocument	
-    });
-		
-	this.westRegionContainer = new Ext.Panel({
-	       id:'westRegionContainer',
-	       split:true,
-	       border:true,
-	       frame:true,
-	       collapsible: true,
-	       //margins:'0 0 0 15',
-	       layout:'accordion',
-	       layoutConfig:{
-	          animate:true
-	       },
-	       items: [
-	               this.treePanel
-	               , this.filterPanel
-	               , this.searchPanel
-	       ]
-	});
 
-	if(this.progressPanel){
-	// defined and added only if user has massive export functionality	
-		this.westRegionContainer.add(this.progressPanel);
-	}
-	
-	
 	this.detailPanel = new Sbi.browser.FolderDetailPanel({ 
 		layout: 'fit'
         , metaFolder: config.metaFolder
@@ -88,7 +34,7 @@ Sbi.browser.DocumentsBrowser = function(config) {
 //		 , defaults: {autoScroll:true}	
 
 		 , items: [this.detailPanel]
-		,layout: 'fit'
+		 , layout: 'fit'
 	});
 	config.baseLayout = config.baseLayout || {}; 	
 	var c = Ext.apply({}, config.baseLayout, {
@@ -98,24 +44,7 @@ Sbi.browser.DocumentsBrowser = function(config) {
 	    items: [ 
 	            // CENTER REGION ---------------------------------------------------------
 	            this.centerContainerPanel, 
-	            // WEST REGION -----------------------------------------------------------
-	            new Ext.Panel({               
-	                region: 'west',
-	                border: false,
-	                frame: false,
-	                //margins: '0 0 3 3',
-	                collapsible: true,
-	                collapsed: false,
-	                hideCollapseTool: true,
-	                titleCollapse: true,
-	                collapseMode: 'mini',
-	                split: true,
-	                autoScroll: false,
-	                width: 280,
-	                minWidth: 280,
-	                layout: 'fit',
-	                items: [this.westRegionContainer]
-	              })
+	           
 	            // NORTH HREGION -----------------------------------------------------------
 	            /*
 	          	,new Sbi.browser.Toolbar({
@@ -128,32 +57,99 @@ Sbi.browser.DocumentsBrowser = function(config) {
 	          	*/
 	        ]
 	});   
+	
+	if (Sbi.settings.browser.showLeftPanels !== undefined && Sbi.settings.browser.showLeftPanels){
+		 // WEST REGION -----------------------------------------------------------
+		this.treePanel = new Sbi.browser.DocumentsTree({
+	        border: true
+	        , rootNodeId: this.selectedFolderId 
+	    });
+	    this.treePanel.addListener('click', this.onTreeNodeClick, this);
+		
+		this.filterPanel = new Sbi.browser.FilterPanel({
+	        title: LN('sbi.browser.filtrpanel.title')
+	        , border:true
+	        , metaFolder: config.metaFolder
+	        , metaDocument: config.metaDocument	
+	    });
+		this.filterPanel.addListener('onsort', this.onSort, this);
+	    this.filterPanel.addListener('ongroup', this.onGroup, this);
+	    this.filterPanel.addListener('onfilter', this.onFilter, this);
+		    
+		if (Sbi.user.functionalities.contains('DoMassiveExportFunctionality')) {
+			this.progressPanel = new Sbi.browser.ProgressPanel({
+				title: LN('sbi.browser.progresspanel.title')
+				, border:true
+				, metaFolder: config.metaFolder
+				, metaDocument: config.metaDocument	
+			});
+			this.progressPanel.addListener('click', this.onTreeNodeClick, this);
+		}		
+		
+		this.searchPanel = new Sbi.browser.SearchPanel({
+	        title: LN('sbi.browser.searchpanel.title')
+	        , border:true
+	        , metaDocument: config.metaDocument	
+	    });
+	    this.searchPanel.addListener('onsearch', this.onSearch, this);
+	    this.searchPanel.addListener('onreset', this.onReset, this);
+
+			
+		this.westRegionContainer = new Ext.Panel({
+		       id:'westRegionContainer',
+		       split:true,
+		       border:true,
+		       frame:true,
+		       collapsible: true,
+		       //margins:'0 0 0 15',
+		       layout:'accordion',
+		       layoutConfig:{
+		          animate:true
+		       },
+		       items: [
+		               this.treePanel
+		               , this.filterPanel
+		               , this.searchPanel
+		       ]
+		});
+	
+		if(this.progressPanel){
+		// defined and added only if user has massive export functionality	
+			this.westRegionContainer.add(this.progressPanel);
+		}
+		
+		var westRegion = 
+            new Ext.Panel({               
+                region: 'west',
+                border: false,
+                frame: false,
+                //margins: '0 0 3 3',
+                collapsible: true,
+                collapsed: false,
+                hideCollapseTool: true,
+                titleCollapse: true,
+                collapseMode: 'mini',
+                split: true,
+                autoScroll: false,
+                width: 280,
+                minWidth: 280,
+                layout: 'fit',
+                items: [this.westRegionContainer]
+              });
+		c.items.push(westRegion);
+	}
 	config.baseLayout = config.baseLayout || {}; 	
    
     Sbi.browser.DocumentsBrowser.superclass.constructor.call(this, c);
-	
 
-	
-    this.treePanel.addListener('click', this.onTreeNodeClick, this);
  
     this.detailPanel.addListener('onfolderload', this.onFolderLoad, this);
     this.detailPanel.addListener('ondocumentclick', this.onDocumentClick, this);
     
     this.detailPanel.addListener('onfolderclick', this.onFolderClick, this);
-    this.detailPanel.addListener('onbreadcrumbclick', this.onBreadCrumbClick, this);
-    
-    this.searchPanel.addListener('onsearch', this.onSearch, this);
-    this.searchPanel.addListener('onreset', this.onReset, this);
-    
-    this.filterPanel.addListener('onsort', this.onSort, this);
-    this.filterPanel.addListener('ongroup', this.onGroup, this);
-    this.filterPanel.addListener('onfilter', this.onFilter, this);
-   
-    if(this.progressPanel){ 
-    	this.progressPanel.addListener('click', this.onTreeNodeClick, this);
+    if (Sbi.settings.browser.showBreadCrumbs !== undefined && Sbi.settings.browser.showBreadCrumbs){
+    	this.detailPanel.addListener('onbreadcrumbclick', this.onBreadCrumbClick, this);
     }
-    
-    
 }
 
 

@@ -78,8 +78,14 @@ Sbi.browser.FolderDetailPanel = function(config) {
     });
     
     // -- toolbar -----------------------------------------------------------
-    var ttbarTextItem = new Ext.Toolbar.TextItem('> ?');  
-    ttbarTextItem.isBreadcrumb = true;
+    var toolbarItems = [];
+    
+    if (Sbi.settings.browser.showBreadCrumbs !== undefined && Sbi.settings.browser.showBreadCrumbs){
+	    var ttbarTextItem = new Ext.Toolbar.TextItem('> ?');  
+	    ttbarTextItem.isBreadcrumb = true;	   
+	    toolbarItems.push(ttbarTextItem);
+    }
+    
     var ttbarToggleViewButton = new Ext.Toolbar.Button({
     	tooltip: LN('sbi.browser.folderdetailpanel.listviewTT'),
 		iconCls:'icon-list-view',
@@ -90,7 +96,6 @@ Sbi.browser.FolderDetailPanel = function(config) {
         	} 
 		}
     });
-    
     var newDocumentButton = new Ext.Toolbar.Button({
     	tooltip: LN('sbi.generic.add'),
 		iconCls:'icon-add',
@@ -101,8 +106,8 @@ Sbi.browser.FolderDetailPanel = function(config) {
         	} 
 		}
     });
-    var toolbarItems = [];
-    toolbarItems.push(ttbarTextItem);
+    
+   
     toolbarItems.push('->');	 
     if (this.isAbleToCreateDocument()){
     	toolbarItems.push(newDocumentButton);
@@ -112,8 +117,11 @@ Sbi.browser.FolderDetailPanel = function(config) {
       //cls: 'top-toolbar'
       items: toolbarItems
     });
-    this.toolbar.breadcrumbs = new Array();
-    this.toolbar.breadcrumbs.push(ttbarTextItem);
+    
+    if (Sbi.settings.browser.showBreadCrumbs !== undefined && Sbi.settings.browser.showBreadCrumbs){
+    	this.toolbar.breadcrumbs = new Array();
+	    this.toolbar.breadcrumbs.push(ttbarTextItem);
+    }
     //this.toolbar.text = ttbarTextItem;
     this.toolbar.buttonsL = new Array();
     this.toolbar.buttonsL['toggleView'] = ttbarToggleViewButton;
@@ -159,8 +167,10 @@ Sbi.browser.FolderDetailPanel = function(config) {
     
     Sbi.browser.FolderDetailPanel.superclass.constructor.call(this, c);   
     
-    this.addEvents("onfolderload", "ondocumentclick", "beforeperformactionondocument", "onfolderclick", "beforeperformactiononfolder", "onbreadcrumbclick");
-    
+    this.addEvents("onfolderload", "ondocumentclick", "beforeperformactionondocument", "onfolderclick", "beforeperformactiononfolder");
+    if (Sbi.settings.browser.showBreadCrumbs !== undefined && Sbi.settings.browser.showBreadCrumbs){
+    	 this.addEvents("onbreadcrumbclick");
+    }
     //this.store.load();   
     this.loadFolder(config.folderId, config.folderId);
 }
@@ -250,7 +260,9 @@ Ext.extend(Sbi.browser.FolderDetailPanel, Ext.Panel, {
 	      		if(response.responseText !== undefined) {
 	      			var content = Ext.util.JSON.decode( response.responseText );
 	      			if(content !== undefined) {
-	      				this.setBreadcrumbs(content);
+	      				if (Sbi.settings.browser.showBreadCrumbs !== undefined && Sbi.settings.browser.showBreadCrumbs){
+	      					this.setBreadcrumbs(content);
+	      				}
 	      				this.fireEvent('onfolderload', this);
 	      			} 
 	      		} else {
@@ -281,7 +293,6 @@ Ext.extend(Sbi.browser.FolderDetailPanel, Ext.Panel, {
     }
     
     , setBreadcrumbs: function(breadcrumbs) {
-    	
     	this.resetToolbar();
     	
     	this.toolbar.addSpacer();
