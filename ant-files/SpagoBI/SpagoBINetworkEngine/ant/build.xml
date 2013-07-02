@@ -171,8 +171,6 @@
 		<concat destfile="${build}/${webapp_name}/js/spagobi/sbi-network-all-debug.js" append="true">
 			<filelist dir="${build}/${webapp_name}/js">
 
-				<file name='./spagobi/commons/Settings.js' />
-				<file name='./spagobi/overrides/overrides.js' />
 
 				<file name='./spagobi/exception/ExceptionHandler.js' />
 				<file name='./spagobi/service/ServiceRegistry.js' />
