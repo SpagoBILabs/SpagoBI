@@ -83,7 +83,6 @@ Ext.define('Sbi.service.ServiceRegistry', {
 	     		serviceUrl += '&' + p + '=' + params[p];
 	     	}
 	     }
-	     
 	     return serviceUrl;
 	 }     
 	 

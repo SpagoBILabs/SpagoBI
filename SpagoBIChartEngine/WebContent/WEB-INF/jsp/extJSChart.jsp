@@ -124,7 +124,8 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 															baseUrl: {contextPath: '<%= spagobiContext %>'}
 														  , baseParams: {LIGHT_NAVIGATOR_DISABLED: 'TRUE'}
 												});
-			
+			console.log(Sbi.config.serviceRegistry);
+			console.log(Sbi.config.spagobiServiceRegistry);
 			function exportChart(exportType) {								
 			  	var top = 0,
 				  	width = 0,
