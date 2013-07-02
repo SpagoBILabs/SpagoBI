@@ -21,6 +21,7 @@ import org.jboss.resteasy.core.ResourceMethod;
 import org.jboss.resteasy.core.ServerResponse;
 import org.jboss.resteasy.spi.Failure;
 import org.jboss.resteasy.spi.HttpRequest;
+import org.jboss.resteasy.spi.interception.PostProcessInterceptor;
 import org.jboss.resteasy.spi.interception.PreProcessInterceptor;
 
 /**
@@ -32,10 +33,10 @@ import org.jboss.resteasy.spi.interception.PreProcessInterceptor;
  */
 @Provider
 @ServerInterceptor
-public class TenantRestPreProcessInterceptor implements PreProcessInterceptor {
+public class TenantRestProcessInterceptor implements PreProcessInterceptor, PostProcessInterceptor {
 
 	private static Logger logger = Logger
-			.getLogger(TenantRestPreProcessInterceptor.class);
+			.getLogger(TenantRestProcessInterceptor.class);
 
 	@Context
 	private HttpServletRequest servletRequest;
@@ -60,5 +61,16 @@ public class TenantRestPreProcessInterceptor implements PreProcessInterceptor {
 		logger.debug("OUT");
 		return null;
 	}
+	
+
+	/**
+	 * Post-processes all the REST requests. Remove tenant's information from thread
+	 */
+	public void postProcess(ServerResponse response){
+		logger.debug("IN");
+		TenantManager.unset();
+		logger.debug("OUT");
+	}
+
 
 }
