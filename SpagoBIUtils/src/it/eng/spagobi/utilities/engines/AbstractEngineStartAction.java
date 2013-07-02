@@ -299,7 +299,7 @@ public class AbstractEngineStartAction extends AbstractBaseHttpAction {
 		 if(dataSource == null) {
 			 dataSource = getDataSourceServiceProxy().getDataSource( getDocumentId() );   
 			 if(dataSource == null) {
-				 logger.error("Datasource is not defined.");
+				 logger.warn("Datasource is not defined.");
 				 throw new SpagoBIEngineRuntimeException("Datasource is not defined.");
 			 }
 			 if (dataSource.checkIsMultiSchema()){
