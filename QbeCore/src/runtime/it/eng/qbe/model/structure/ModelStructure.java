@@ -207,6 +207,8 @@ public class ModelStructure extends AbstractModelObject implements IModelStructu
 	
 	protected long nextId;	
 	
+	protected int maxRecursionLevel;
+	
 	protected ModelRootEntitiesMap modelRootEntitiesMap;
 	//protected Map<String, Map<String,IModelEntity>> rootEntities;	// modelName->(entityUniqueName->entity)
 	
@@ -523,6 +525,26 @@ public class ModelStructure extends AbstractModelObject implements IModelStructu
 		}
 	}
 
+
+	public void setMaxRecursionLevel(int maxRecursionLevel) {
+		this.maxRecursionLevel = maxRecursionLevel;
+	}
+	
+
+	public int getMaxRecursionLevel() {
+		return this.maxRecursionLevel;
+	}
+
+	public List<ModelViewEntity> getViewsEntities(String modelName) {
+		List<ModelViewEntity> toReturn = new ArrayList<ModelViewEntity>();
+		List<IModelEntity> entities = this.getRootEntities(modelName);
+		for (IModelEntity entity : entities) {
+			if (entity instanceof ModelViewEntity) {
+				toReturn.add((ModelViewEntity) entity);
+			}
+		}
+		return toReturn;
+	}
 
 	
 }

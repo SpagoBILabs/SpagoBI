@@ -79,7 +79,7 @@ public class JPQLStatement extends AbstractStatement {
 		String orderByClause = null;
 		String fromClause = null;
 		String havingClause = null;
-		String viewRelation = null;
+//		String viewRelation = null;
 		
 		Assert.assertNotNull(query, "Input parameter 'query' cannot be null");
 		Assert.assertTrue(!query.isEmpty(), "Input query cannot be empty (i.e. with no selected fields)");
@@ -87,14 +87,14 @@ public class JPQLStatement extends AbstractStatement {
 		// let's start with the query at hand
 		entityAliasesMaps.put(query.getId(), new LinkedHashMap<String, String>());
 		
-		JPQLBusinessViewUtility viewsUtility = new JPQLBusinessViewUtility(this);
+//		JPQLBusinessViewUtility viewsUtility = new JPQLBusinessViewUtility(this);
 		
 		selectClause = JPQLStatementSelectClause.build(this, query, entityAliasesMaps);
 		whereClause = JPQLStatementWhereClause.build(this, query, entityAliasesMaps);
 		groupByClause = JPQLStatementGroupByClause.build(this, query, entityAliasesMaps);
 		orderByClause = JPQLStatementOrderByClause.build(this, query, entityAliasesMaps);
 		havingClause = JPQLStatementHavingClause.build(this, query, entityAliasesMaps);
-		viewRelation = viewsUtility.buildViewsRelations(entityAliasesMaps, query, whereClause);
+//		viewRelation = viewsUtility.buildViewsRelations(entityAliasesMaps, query, whereClause);
 		
 		whereClause = JPQLStatementWhereClause.injectAutoJoins(this, whereClause, query, entityAliasesMaps);
 		
@@ -105,7 +105,7 @@ public class JPQLStatement extends AbstractStatement {
 		queryStr = selectClause    + " " 
 				   + fromClause    + " " 
 				   + whereClause   + " "
-				   + viewRelation  + " " 
+//				   + viewRelation  + " " 
 				   + groupByClause + " " 
 				   + havingClause  + " " 
 				   + orderByClause;

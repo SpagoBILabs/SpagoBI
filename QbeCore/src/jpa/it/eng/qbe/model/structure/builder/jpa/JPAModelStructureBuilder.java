@@ -18,6 +18,8 @@ import it.eng.qbe.model.structure.ModelCalculatedField;
 import it.eng.qbe.model.structure.ModelEntity;
 import it.eng.qbe.model.structure.ModelStructure;
 import it.eng.qbe.model.structure.ModelStructure.RootEntitiesGraph;
+import it.eng.qbe.model.structure.ModelViewEntity.Join;
+import it.eng.qbe.model.structure.ModelViewEntity.ViewRelationship;
 import it.eng.qbe.model.structure.ModelViewEntity;
 import it.eng.qbe.model.structure.builder.IModelStructureBuilder;
 import it.eng.spagobi.utilities.assertion.Assert;
@@ -88,6 +90,7 @@ public class JPAModelStructureBuilder implements IModelStructureBuilder {
 		
 		try {
 			modelStructure = new ModelStructure();
+			modelStructure.setMaxRecursionLevel(this.maxRecursionLevel);
 	
 			modelName = getDataSource().getConfiguration().getModelName();
 			Assert.assertNotNull(getDataSource(), "datasource cannot be null");	
@@ -99,8 +102,9 @@ public class JPAModelStructureBuilder implements IModelStructureBuilder {
 			modelStructure.setCalculatedFields(calculatedFields);
 				
 			addRootEntities(modelStructure);
-			addRelationshipsBetweenRootEntities(modelStructure);
 			addViews(modelStructure);
+			addRelationshipsBetweenRootEntities(modelStructure);
+			addRelationshipsBetweenViews(modelStructure);
 
 			logger.info("Model structure for model [" + modelName + "] succesfully built");
 			
@@ -114,6 +118,55 @@ public class JPAModelStructureBuilder implements IModelStructureBuilder {
 	}
 	
 	
+	private void addRelationshipsBetweenViews(ModelStructure modelStructure) {
+		
+		String modelName = getDataSource().getConfiguration().getModelName();
+		List<ModelViewEntity> entities = modelStructure.getViewsEntities(modelName);
+		
+		for (ModelViewEntity view : entities) {
+			List<ViewRelationship> viewRelationships = view.getRelationships();
+			
+			List<Join> joins = view.getJoins();
+			
+			for (Join join : joins) {
+				
+				IModelEntity sourceEntity = join.getSourceEntity();
+				List<IModelField> sourceFields = join.getSourceFileds();
+				
+				IModelEntity destinationEntity = join.getDestinationEntity();
+				List<IModelField> destinationFields = join.getDestinationFileds();
+
+				try {
+					modelStructure.addRootEntityRelationship(modelName, sourceEntity, sourceFields, destinationEntity, destinationFields, "many-to-one");
+					logger.debug("Succesfully added relationship between [" + sourceEntity.getName() + "] and [" + destinationEntity.getName() + "]");
+				} catch (Throwable t) {
+					logger.error("Impossible to add relationship between [" + sourceEntity.getName() + "] and [" + destinationEntity.getName() + "]", t);
+				}
+				
+			}
+			
+			
+			for (ViewRelationship relationship : viewRelationships) {
+				
+				IModelEntity sourceEntity = relationship.getSourceEntity();
+				List<IModelField> sourceFields = relationship.getSourceFileds();
+				
+				IModelEntity destinationEntity = relationship.getDestinationEntity();
+				List<IModelField> destinationFields = relationship.getDestinationFileds();
+
+				try {
+					modelStructure.addRootEntityRelationship(modelName, sourceEntity, sourceFields, destinationEntity, destinationFields, "many-to-one");
+					logger.debug("Succesfully added relationship between [" + sourceEntity.getName() + "] and [" + destinationEntity.getName() + "]");
+				} catch (Throwable t) {
+					logger.error("Impossible to add relationship between [" + sourceEntity.getName() + "] and [" + destinationEntity.getName() + "]", t);
+				}
+				
+			}
+			
+		}
+		
+	}
+
 	private void addRootEntities(ModelStructure modelStructure) {
 		Metamodel jpaMetamodel;
 		Set<EntityType<?>> jpaEntities;
@@ -139,6 +192,7 @@ public class JPAModelStructureBuilder implements IModelStructureBuilder {
 		// add relationship between rootEntities
 		RootEntitiesGraph rootEntitiesGraph = modelStructure.getRootEntitiesGraph(modelName, false);
 		List<IModelRelationshipDescriptor> relationships = getDataSource().getConfiguration().loadRelationships();
+		
 		for(IModelRelationshipDescriptor relationship: relationships) {
 			if(relationship.getType().equals("many-to-one") == false 
 					&& relationship.getType().equals("optional-many-to-one") == false) continue;
@@ -183,8 +237,7 @@ public class JPAModelStructureBuilder implements IModelStructureBuilder {
 			}
 		}
 	}
-	
-	
+
 	private void addViews(ModelStructure modelStructure) {
 		
 		try {
@@ -211,37 +264,41 @@ public class JPAModelStructureBuilder implements IModelStructureBuilder {
 			 * 2) Re-scan model structure to add nodes referencing view (inbound relations to Business Views)
 			 */
 			
-			//visit all entities
-			List<IModelEntity> allEntities = visitModelStructure(modelStructure,modelName);
-			
-			for (int i=0; i<list.size(); i++){
-				IModelViewEntityDescriptor viewDescriptor = list.get(i);
-				List<IModelViewRelationshipDescriptor> viewRelationshipsDescriptors = viewDescriptor.getRelationshipDescriptors();
-				for (IModelViewRelationshipDescriptor  viewRelationshipDescriptor : viewRelationshipsDescriptors){
-					if (!viewRelationshipDescriptor.isOutbound()){
-						String sourceEntityUniqueName = viewRelationshipDescriptor.getSourceEntityUniqueName();
-						IModelEntity entity = modelStructure.getEntity(sourceEntityUniqueName);	
-						logger.debug("Source Entity Unique name: "+entity.getUniqueName());
-						
-						//Add node for first level entities (using UniqueName)
-						ModelViewEntity viewEntity = new ModelViewEntity(viewDescriptor, modelName, modelStructure, entity);
-						addCalculatedFieldsForViews(viewEntity);
-						propertiesInitializer.addProperties(viewEntity);
-						entity.addSubEntity(viewEntity);
-						
-						//Add node for subentities (using Entity Type matching)
-						for(IModelEntity modelEntity : allEntities){
-							logger.debug("Searched Entity type: "+entity.getType());
-							logger.debug("Current Entity type: "+modelEntity.getType());
-							if (modelEntity.getType().equals(entity.getType())){
-								ModelViewEntity viewEntitySub = new ModelViewEntity(viewDescriptor, modelName, modelStructure, modelEntity);
-								addCalculatedFieldsForViews(viewEntitySub);
-								propertiesInitializer.addProperties(viewEntitySub);
-								logger.debug(" ** Found matching for: "+modelEntity.getType()+" with "+entity.getType());
-								modelEntity.addSubEntity(viewEntitySub);
-								addedViewsEntities.add(viewEntitySub);
-							}
-						}	
+			if (this.maxRecursionLevel >= 1) {
+				//visit all entities
+				List<IModelEntity> allEntities = visitModelStructure(modelStructure,modelName);
+				
+				for (int i=0; i<list.size(); i++){
+					IModelViewEntityDescriptor viewDescriptor = list.get(i);
+					List<IModelViewRelationshipDescriptor> viewRelationshipsDescriptors = viewDescriptor.getRelationshipDescriptors();
+					for (IModelViewRelationshipDescriptor  viewRelationshipDescriptor : viewRelationshipsDescriptors){
+						if (!viewRelationshipDescriptor.isOutbound()){
+							String sourceEntityUniqueName = viewRelationshipDescriptor.getSourceEntityUniqueName();
+							IModelEntity entity = modelStructure.getEntity(sourceEntityUniqueName);	
+							logger.debug("Source Entity Unique name: "+entity.getUniqueName());
+							
+							//Add node for first level entities (using UniqueName)
+							ModelViewEntity viewEntity = new ModelViewEntity(viewDescriptor, modelName, modelStructure, entity);
+							addCalculatedFieldsForViews(viewEntity);
+							propertiesInitializer.addProperties(viewEntity);
+							this.addSubEntity(entity, viewEntity, 1);
+							//entity.addSubEntity(viewEntity);
+							
+							//Add node for subentities (using Entity Type matching)
+							for(IModelEntity modelEntity : allEntities){
+								logger.debug("Searched Entity type: "+entity.getType());
+								logger.debug("Current Entity type: "+modelEntity.getType());
+								if (modelEntity.getType().equals(entity.getType())){
+									ModelViewEntity viewEntitySub = new ModelViewEntity(viewDescriptor, modelName, modelStructure, modelEntity);
+									addCalculatedFieldsForViews(viewEntitySub);
+									propertiesInitializer.addProperties(viewEntitySub);
+									logger.debug(" ** Found matching for: "+modelEntity.getType()+" with "+entity.getType());
+									this.addSubEntity(modelEntity, viewEntitySub, modelEntity.getDepth());
+									//modelEntity.addSubEntity(viewEntitySub);
+									addedViewsEntities.add(viewEntitySub);
+								}
+							}	
+						}
 					}
 				}
 			}

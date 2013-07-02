@@ -23,6 +23,8 @@ public class FilteredModelStructure extends AbstractModelObject implements IMode
 	private IDataSource dataSource;
 	private IModelStructure wrappedModelStructure;
 	
+	private int maxRecursionLevel;
+	
 	public FilteredModelStructure(IModelStructure wrappedModelStructure, IDataSource dataSource, QbeTreeFilter qbeTreeFilter){
 		this.qbeTreeFilter=qbeTreeFilter;
 		this.dataSource=dataSource;
@@ -267,7 +269,15 @@ public class FilteredModelStructure extends AbstractModelObject implements IMode
 		return filteredModelEntity;
 	}
 
- 
+
+	public void setMaxRecursionLevel(int maxRecursionLevel) {
+		this.maxRecursionLevel = maxRecursionLevel;
+	}
+	
+
+	public int getMaxRecursionLevel() {
+		return this.maxRecursionLevel;
+	}
 	
 
 }

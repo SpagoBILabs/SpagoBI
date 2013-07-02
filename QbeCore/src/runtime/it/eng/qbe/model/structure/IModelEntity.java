@@ -36,6 +36,7 @@ public interface IModelEntity extends IModelNode {
 		public List<IModelField> getAllFieldOccurencesOnSubEntity(String entityName, String fieldName);
 		public String toString();
 		public String getPath();
+		public int getDepth();
 		
 		public IModelField addNormalField(String fieldName);
 		public IModelField addKeyField(String fieldName);
