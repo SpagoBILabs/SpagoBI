@@ -27,6 +27,7 @@ import it.eng.spagobi.engines.drivers.generic.GenericDriver;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.messages.IEngineMessageBuilder;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -36,7 +37,11 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.StringTokenizer;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
 import org.apache.log4j.Logger;
+import org.w3c.dom.Document;
 
 
 
@@ -61,13 +66,14 @@ public class ChartDriver extends GenericDriver {
 	 */
 	public Map getParameterMap(Object analyticalDocument, IEngUserProfile profile, String roleName) {
 		Map parameters;
-		BIObject biObject;
+		BIObject biObject=null;
 		
 		logger.debug("IN");
 		
 		try {
+			if(analyticalDocument instanceof BIObject) biObject=(BIObject) analyticalDocument;
 			parameters = super.getParameterMap(analyticalDocument, profile, roleName);
-			parameters = applyService(parameters, null);
+			parameters = applyService(parameters, biObject);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -130,12 +136,27 @@ public class ChartDriver extends GenericDriver {
 		
 		logger.debug("IN");
 		
+		String family = null;
 		try {
-			//template = getTemplate(biObject);
+			template = getTemplate(biObject);
+			DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+			Document doc = builder.parse(new ByteArrayInputStream(template.getContent()));
+			family = doc.getChildNodes().item(0).getAttributes().getNamedItem("family").getNodeValue();
+		} catch (Throwable t){}
+		
+		try {
 			Assert.assertNotNull(parameters, "Input [parameters] cannot be null");
 			//at the moment the initial aztion_name is fixed for extJS... in the future it will be set
 			//by the template content (firstTag EXTCHART,...)
-			parameters.put(PARAM_SERVICE_NAME, "CHART_ENGINE_EXTJS_START_ACTION");
+			if("D3".equalsIgnoreCase(family))
+			{
+				parameters.put(PARAM_SERVICE_NAME, "CHART_ENGINE_D3_START_ACTION");
+			}
+			else
+			{
+				parameters.put(PARAM_SERVICE_NAME, "CHART_ENGINE_EXTJS_START_ACTION");
+			}
+			
 			parameters.put(PARAM_MODALITY, "VIEW");			
 			parameters.put(PARAM_NEW_SESSION, "TRUE");
 		} catch(Throwable t) {

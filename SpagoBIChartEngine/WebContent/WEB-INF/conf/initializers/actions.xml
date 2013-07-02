@@ -8,6 +8,11 @@
 			scope="REQUEST">
 		<CONFIG></CONFIG>
 	</ACTION>
+	<ACTION name="CHART_ENGINE_D3_START_ACTION" 
+			class="it.eng.spagobi.engines.chart.services.initializers.ChartEngineD3StartAction" 
+			scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>
 	
 </ACTIONS>
 
