@@ -108,6 +108,8 @@ Ext.define('Sbi.tools.datasource.DataSourceListDetailPanel', {
 					var responceText = Ext.decode(response.responseText);
 					if(responceText.error){
 						Sbi.exception.ExceptionHandler.showErrorMessage(responceText.error, 'Service Error');
+					}else if(responceText.error==""){
+						Sbi.exception.ExceptionHandler.showErrorMessage(LN('sbi.datasource.test.failed'), 'Service Error');
 					}else{
 						Sbi.exception.ExceptionHandler.showInfoMessage(LN('sbi.datasource.tested'));
 					}

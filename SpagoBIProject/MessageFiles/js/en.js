@@ -579,7 +579,7 @@ Sbi.locale.ln['sbi.datasource.tested']= 'Test OK';
 Sbi.locale.ln['sbi.datasource.deleted']= 'Data source correctly deleted';
 Sbi.locale.ln['sbi.datasource.tested']= 'Data source correctly tested';
 Sbi.locale.ln['sbi.datasource.validation.error']= 'There is some error in the data source configuration. Check the marked fields.';
-
+Sbi.locale.ln['sbi.datasource.test.failed']= 'Error testing the datasource';
 
 //Datasets
 Sbi.locale.ln['sbi.ds.clearOldVersion'] = 'Clear All';

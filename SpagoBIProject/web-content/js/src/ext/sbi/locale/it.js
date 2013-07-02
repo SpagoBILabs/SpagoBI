@@ -720,6 +720,7 @@ Sbi.locale.ln['sbi.datasource.saved']= 'Data source salvato correttamente';
 Sbi.locale.ln['sbi.datasource.deleted']= 'Data source cancellato correttamente';
 Sbi.locale.ln['sbi.datasource.tested']= 'Data source configurato correttamente';
 Sbi.locale.ln['sbi.datasource.validation.error']= 'Ci sono degli errori di validazione. Controlla i campi marcati.';
+Sbi.locale.ln['sbi.datasource.test.failed']= 'Errore nel test del datasource';
 
 //===================================================================
 //MESSAGE BOX BUTTONS
