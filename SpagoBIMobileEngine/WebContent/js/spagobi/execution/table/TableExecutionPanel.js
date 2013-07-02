@@ -81,49 +81,49 @@ Ext.define('app.views.TableExecutionPanel',{
 		}
 		
 		
-		
-		if(this.header){
-			var h =0;
-			try{
-				h = this.header.getHeight();
-				if(!h){
-					h = this.header.getStyle().height;
-					h = h.replace('px','');
-					h = h.replace('em','');
-					h = h.replace('pt','');
-					h = parseFloat(h);
-				}
-			}catch(e){
-				
-			}
-			
-			
-			headerFooter = headerFooter+ h;
-		}
-		if(this.footer){
-			var h =0;
-			try{
-				h = this.footer.getHeight();
-				if(!h){
-					h = this.footer.getStyle().height;
-					h = h.replace('px','');
-					h = h.replace('em','');
-					h = h.replace('pt','');
-					h = parseFloat(h);
-				}
-			}catch(e){
-				
-			}
-			
-			
-			headerFooter = headerFooter+ h;
-		}
-		
-		if(!tbConfig.style){
-			tbConfig.style =""; 
-		}
-		
-		tbConfig.style = tbConfig.style + "margin-top: "+headerFooter+";";
+//		
+//		if(this.header){
+//			var h =0;
+//			try{
+//				h = this.header.getHeight();
+//				if(!h){
+//					h = this.header.getStyle().height;
+//					h = h.replace('px','');
+//					h = h.replace('em','');
+//					h = h.replace('pt','');
+//					h = parseFloat(h);
+//				}
+//			}catch(e){
+//				
+//			}
+//			
+//			
+//			headerFooter = headerFooter+ h;
+//		}
+//		if(this.footer){
+//			var h =0;
+//			try{
+//				h = this.footer.getHeight();
+//				if(!h){
+//					h = this.footer.getStyle().height;
+//					h = h.replace('px','');
+//					h = h.replace('em','');
+//					h = h.replace('pt','');
+//					h = parseFloat(h);
+//				}
+//			}catch(e){
+//				
+//			}
+//			
+//			
+//			headerFooter = headerFooter+ h;
+//		}
+//		
+//		if(!tbConfig.style){
+//			tbConfig.style =""; 
+//		}
+//		
+//		tbConfig.style = tbConfig.style + "margin-top: "+headerFooter+";";
 		
 		var table =new Ext.ux.touch.grid.List(tbConfig);
 		
