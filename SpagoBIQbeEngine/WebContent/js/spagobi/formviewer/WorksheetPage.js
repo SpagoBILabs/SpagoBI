@@ -39,8 +39,8 @@ Ext.ns("Sbi.formviewer");
 
 Sbi.formviewer.WorksheetPage = function(config) {	
 	var defaultSettings = {
-		title: LN('sbi.worksheet.title')
-		, layout: 'fit'
+		//title: LN('sbi.worksheet.title')
+		layout: 'fit'
 		, autoScroll: true
 	};
 		

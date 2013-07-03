@@ -41,8 +41,8 @@ Sbi.formviewer.FormViewerPage = function(template, config, formValues) {
 	
 	var defaultSettings = {
 		// set default values here
-		title: LN('sbi.formviewer.formviewerpage.title')
-		, layout: 'fit'
+		//title: LN('sbi.formviewer.formviewerpage.title')
+		layout: 'fit'
 		, autoScroll: true
 		//, bodyStyle: 'padding:30px'
 		, showSaveFormButton : true
