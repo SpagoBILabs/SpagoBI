@@ -2734,7 +2734,7 @@ public class ImportUtilities {
 				existingKpi.setSbiDataSet(null);
 			}
 			else{
-				Query hibQuery = sessionCurrDB.createQuery("from SbiDataSet h where h.active = ? and h.id_dsId = ?" );
+				Query hibQuery = sessionCurrDB.createQuery("from SbiDataSet h where h.active = ? and h.id.dsId = ?" );
 				hibQuery.setBoolean(0, true);
 				hibQuery.setInteger(1, newDataSetId);					
 				SbiDataSet newSbiDataset =(SbiDataSet)hibQuery.uniqueResult();
@@ -2939,7 +2939,7 @@ public class ImportUtilities {
 			logger.debug("OUT");
 		}
 		catch (Exception e) {
-			logger.error("Error inc reating new kpi "+thresholdValue.getLabel());			
+			logger.error("Error inc reating new kpi threshold Value "+thresholdValue.getLabel());			
 		}
 		finally{
 
@@ -3087,7 +3087,7 @@ public class ImportUtilities {
 			logger.debug("OUT");
 		}
 		catch (Exception e) {
-			logger.error("Error inc reating new kpi "+threshold.getCode());			
+			logger.error("Error inc reating new kpi Threshold "+threshold.getCode());			
 		}
 		finally{
 
@@ -3475,7 +3475,7 @@ public class ImportUtilities {
 			logger.debug("OUT");
 		}
 		catch (Exception e) {
-			logger.error("Error inc reating new kpi "+resource.getResourceName());			
+			logger.error("Error inc reating new kpi Resource "+resource.getResourceName());			
 		}
 		finally{
 
@@ -3683,7 +3683,7 @@ public class ImportUtilities {
 			logger.debug("OUT");
 		}
 		catch (Exception e) {
-			logger.error("Error inc reating new kpi "+periodicity.getName());			
+			logger.error("Error inc reating new kpi Periodicity "+periodicity.getName());			
 		}
 		finally{
 
