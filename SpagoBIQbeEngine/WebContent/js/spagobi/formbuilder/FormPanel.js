@@ -62,6 +62,9 @@ Sbi.formbuilder.FormPanel = function(config) {
 		
 	Ext.apply(this, c);
 	
+	this.initButtons();
+	this.prevButton.toggle(true, true);
+	
 	this.formBuilderPage = new Sbi.formbuilder.FormBuilderPage({
 		closable: false,
 		template: config.template
@@ -70,11 +73,12 @@ Sbi.formbuilder.FormPanel = function(config) {
 	
 	c = Ext.apply(c, {
 		border: false
-		, tabPosition: 'bottom'
-  		, activeTab: 0
+		, layout: 'card'
+  		, activeItem: 0
       	, items: [this.formBuilderPage, this.formPreviewPage]
+		, tbar: ['->', this.prevButton, this.nextButton]
 	});
-
+	
 	// constructor
 	Sbi.formbuilder.FormPanel.superclass.constructor.call(this, c);
 	
@@ -99,9 +103,59 @@ Sbi.formbuilder.FormPanel = function(config) {
  * 
  * FormPanel
  */
-Ext.extend(Sbi.formbuilder.FormPanel, Ext.TabPanel, {
+Ext.extend(Sbi.formbuilder.FormPanel, Ext.Panel, {
 	
 	services: null
+	, prevButton: null
+	, nextButton: null
+	
+	,
+	initButtons : function () {
+		this.prevButton =  new Ext.Button({
+		    text: '&laquo; ' + LN('sbi.qbe.qbecardspanel.designer')
+			, enableToggle : true
+			, allowDepress : false
+		});
+		this.prevButton.on(
+				'toggle',
+				function (button, pressed) {
+					if (pressed) {
+						this.setActiveItem(0);
+						this.nextButton.toggle(false, true);
+					}
+				}, 
+				this
+		);
+		
+		
+		this.nextButton =  new Ext.Button({
+		    text: LN('sbi.qbe.qbecardspanel.preview') + ' &raquo;'
+			, enableToggle : true
+			, allowDepress : false
+		});
+		this.nextButton.on(
+				'toggle',
+				function (button, pressed) { 
+					if (pressed) {
+						this.setActiveItem(1);
+						this.prevButton.toggle(false, true);
+					}
+				}, 
+				this
+		);
+	}
+	
+	,
+	setActiveItem: function(pageIndex) {
+		this.getLayout().setActiveItem( pageIndex );
+	}
+
+	, 
+	getActiveItemIndex : function () {
+		var activeItem = this.getLayout().activeItem;
+		var index = this.items.indexOf(activeItem);
+		return index;
+	}
 
 	, setFormBuilderState: function(successCallback, failureCallback, scope) {
 		var state = this.formBuilderPage.templateEditorPanel.getContents();
