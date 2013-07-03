@@ -40,7 +40,7 @@ Ext.ns("Sbi.formbuilder");
 Sbi.formbuilder.FormBuilderPage = function(config) {
 	
 	var defaultSettings = {
-		title: LN('sbi.formbuilder.formbuilderpage.title')
+		//title: LN('sbi.formbuilder.formbuilderpage.title')
 	};
 		
 	if(Sbi.settings && Sbi.settings.formbuilder && Sbi.settings.formbuilder.formBuilderPage) {

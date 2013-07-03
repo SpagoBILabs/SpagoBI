@@ -40,8 +40,8 @@ Ext.ns("Sbi.formbuilder");
 Sbi.formbuilder.FormPreviewPage = function(config) {
 	
 	var defaultSettings = {
-		title: LN('sbi.formbuilder.formpreviewpage.title')
-		, defaultSrc: 'about:blank'
+		//title: LN('sbi.formbuilder.formpreviewpage.title')
+		defaultSrc: 'about:blank'
 		, autoLoad: true
         , loadMask: {msg: 'Loading...'}
         , fitToParent: true  // not valid in a layout
