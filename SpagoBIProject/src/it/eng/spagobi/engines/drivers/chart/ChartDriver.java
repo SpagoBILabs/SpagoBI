@@ -141,14 +141,14 @@ public class ChartDriver extends GenericDriver {
 			template = getTemplate(biObject);
 			DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 			Document doc = builder.parse(new ByteArrayInputStream(template.getContent()));
-			family = doc.getChildNodes().item(0).getAttributes().getNamedItem("family").getNodeValue();
+			family = doc.getChildNodes().item(0).getNodeName();
 		} catch (Throwable t){}
 		
 		try {
 			Assert.assertNotNull(parameters, "Input [parameters] cannot be null");
 			//at the moment the initial aztion_name is fixed for extJS... in the future it will be set
 			//by the template content (firstTag EXTCHART,...)
-			if("D3".equalsIgnoreCase(family))
+			if("D3CHART".equalsIgnoreCase(family))
 			{
 				parameters.put(PARAM_SERVICE_NAME, "CHART_ENGINE_D3_START_ACTION");
 			}

@@ -4,7 +4,9 @@ Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competenc
 This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
 If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. --%>
  
-  <%@ page language="java" 
+  <%@page import="java.util.HashMap"%>
+<%@page import="org.json.JSONObject"%>
+<%@ page language="java" 
 	     contentType="text/html; charset=ISO-8859-1" 
 	     pageEncoding="ISO-8859-1"%>	
 
@@ -86,8 +88,46 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
     } 
      actionName= "GET_CHART_DATA_ACTION";
      lightNavigator= request.getParameter("LIGHT_NAVIGATOR_DISABLED");
-   String chartTemplate = chartEngineInstance.getTemplate().toString();
+     
+ 	JSONObject template = chartEngineInstance.getTemplate();
+ 	String chartTemplate = chartEngineInstance.getTemplate().toString();
+ 	
+ 	Map<String,String> mapParams=new HashMap<String,String>();
+ 	mapParams.put("titleTxt", "TreeMap");
+ 	mapParams.put("titleColor", "#000000");
+ 	mapParams.put("titleFontSize", "16px");
+ 	mapParams.put("titleFontWeight", "bold");
+
+ 	try{
+	    JSONObject title=(JSONObject)template.opt("title");
+	    mapParams.put("titleTxt", title.opt("text").toString());
+	    JSONObject style=(JSONObject)title.opt("style");
+	    mapParams.put("titleColor", style.opt("color").toString());
+	    mapParams.put("titleFontSize", style.opt("fontSize").toString());
+	    mapParams.put("titleFontWeight", style.opt("fontWeight").toString());
+ 	} catch(Exception ex)
+ 	{
+ 		// Use default value
+ 	}
  
+ 	mapParams.put("subtitleTxt", "TreeMap");
+ 	mapParams.put("subtitleColor", "#000000");
+ 	mapParams.put("subtitleFontSize", "14px");
+ 	mapParams.put("subtitleFontWeight", "bold");
+
+ 	try{
+	    JSONObject title=(JSONObject)template.opt("subtitle");
+	    mapParams.put("subtitleTxt", title.opt("text").toString());
+	    JSONObject style=(JSONObject)title.opt("style");
+	    mapParams.put("subtitleColor", style.opt("color").toString());
+	    mapParams.put("subtitleFontSize", style.opt("fontSize").toString());
+	    mapParams.put("subtitleFontWeight", style.opt("fontWeight").toString());
+ 	} catch(Exception ex)
+ 	{
+ 		// Use default value
+ 	} 	
+   
+   	
     // gets analytical driver
    // Map analyticalDrivers  = chartEngineInstance.getAnalyticalDrivers();
  	//String JSONUrl = "http://localhost:8080/SpagoBIChartEngine/servlet/AdapterHTTP?ACTION_NAME=CHART_ENGINE_D3_START_ACTION&SBI_EXECUTION_ID="+executionId+"&ds_label=treemap&LIGHT_NAVIGATOR_DISABLED=null";
@@ -106,14 +146,30 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 	</head>
 	
 	<body>		
-	    <div id="<%=executionId%>_title" align="center" style="width:90%;"></div>
-	    <div id="<%=executionId%>_subtitle" align="center" style="width:90%;"></div>
+	    <div id="<%=executionId%>_title" align="center" style="width:90%;color:<%=mapParams.get("titleColor") %>;font-size:<%=mapParams.get("titleFontSize") %>;font-weight:<%=mapParams.get("titleFontWeight") %>"><%=mapParams.get("titleTxt") %></div>
+	    <div id="<%=executionId%>_subtitle" align="center" style="width:90%;color:<%=mapParams.get("subtitleColor") %>;font-size:<%=mapParams.get("subtitleFontSize") %>;font-weight:<%=mapParams.get("subtitleFontWeight") %>"><%=mapParams.get("subtitleTxt") %></div>
 	    <div id="chartD3" align="center" style="width:90%;"></div>   	
 	
     <script type="text/javascript">  
    
-       	var w = 1280 - 80,
-        h = 800 - 180,
+    function returnValues(item, template){
+    	console.log('template');	
+    	console.log(template);	
+    	if (item=='width') {
+    		return template.width;	
+    	} else if (item =='height') {	
+    		return template.height;
+    	} 
+    }
+    	
+    var width = returnValues('width',<%=chartTemplate%>);
+    var height = returnValues('height',<%=chartTemplate%>);
+    var title = returnValues('title',<%=chartTemplate%>);
+    
+    var subtitle = returnValues('subtitle',<%=chartTemplate%>);
+    
+       	var w = width - 80,
+        h = height - 180,
         x = d3.scale.linear().range([0, w]),
         y = d3.scale.linear().range([0, h]),
         color = d3.scale.category20c(),
@@ -141,7 +197,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
     	var label = template.label.field;
     	var key = template.key.field;
     	var parentKey = template.parentkey.field;
-    	var value = template.value.field;
+    	var value = (template.value)?template.value.field:null;
     	
  		fields = data.metaData.fields;
     	rows = data.rows;
@@ -152,23 +208,25 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 			var variabile = fields[index].header;
            		if(variabile == label){
          			var decodificaLabel = fields[index].dataIndex;
-    	      		}else if(variabile == key){
+    	      	}else if(variabile == key){
     	      			var decodificaKey = fields[index].dataIndex;
-    	      		}else if(variabile == parentKey){
+    	      	}else if(variabile == parentKey){
     	      			var decodificaParentKey = fields[index].dataIndex;
-    	      		}else if(variabile == value){
+    	      	}else if(variabile == value){
     	      			var decodificaSerie = fields[index].dataIndex;
-    	      		}
-    	      		else {
-           					var decodificaSerie = 1;
-    	      		}
+    	      	}
+           		/*
+    	      	else {
+           				var decodificaSerie = 1;
+    	      	}
+           		*/
      		};  
      	
      	var root = {nome:"root",children:[]};
      	var map = new Object;
      	for (index = 0; index < rows.length; ++index) {
-     		var nodo = { name: rows[index][decodificaLabel], key: rows[index][decodificaKey], parentKey:rows[index][decodificaParentKey], size:rows[index][decodificaSerie]};
-     	
+     		/*var nodo = { name: rows[index][decodificaLabel], key: rows[index][decodificaKey], parentKey:rows[index][decodificaParentKey], size:rows[index][decodificaSerie]};*/
+     		var nodo = { name: rows[index][decodificaLabel], key: rows[index][decodificaKey], parentKey:rows[index][decodificaParentKey], size:(decodificaSerie)?rows[index][decodificaSerie]:1};
      		map[nodo.key]=nodo;
      	};
      	
