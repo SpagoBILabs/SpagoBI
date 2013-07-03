@@ -39,6 +39,7 @@ Sbi.worksheet.designer.WorksheetDesignerPanel = function(config) {
 	var defaultSettings = {
 		//title: LN('sbi.worksheet.designer.worksheetdesignerpanel.title')
 		engineAlreadyInitialized : false
+		, border : false
 	};
 
 	if(Sbi.settings && Sbi.settings.worksheet && Sbi.settings.worksheet.designer && Sbi.settings.worksheet.designer.worksheetDesignerPanel) {

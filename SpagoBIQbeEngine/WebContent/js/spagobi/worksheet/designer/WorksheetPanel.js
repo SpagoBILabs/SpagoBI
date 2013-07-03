@@ -85,7 +85,11 @@ Sbi.worksheet.designer.WorksheetPanel = function(config) {
 	
 	this.initWorksheetPanel(config);
 	
-	// JavaScript Toolbar
+	var toolbarButtons = ['->', this.prevButton, this.nextButton];
+	if (config.extraButtons && config.extraButtons.length > 0) {
+		toolbarButtons = toolbarButtons.concat(config.extraButtons);
+	}
+	
 	c = Ext.apply(c, {
 			//id:'WorksheetPanel', 
 			items: [this.worksheetDesignerPanel, this.worksheetPreviewPanel]
@@ -96,7 +100,7 @@ Sbi.worksheet.designer.WorksheetPanel = function(config) {
 			, height: 100
 			, style: 'margin-top: 0px; margin-left: auto; margin-right: auto;'
 			, width: 250
-			, tbar: ['->', this.prevButton, this.nextButton]
+			, tbar: toolbarButtons
 	});
 	
 	Sbi.worksheet.designer.QueryFieldsCardPanel.superclass.constructor.call(this, c);
