@@ -59,6 +59,9 @@ public class MetadataAssociations {
 	private Map objparAssociation = new HashMap();
 	private Map datasourcesIDAssociation = new HashMap();
 	private Map datasetsIDAssociation = new HashMap();
+	private Map metaModelIDAssociation = new HashMap();
+	private Map artifactIDAssociation = new HashMap();
+
 	private Map mapsIDAssociation = new HashMap();
 	private Map featuresIDAssociation = new HashMap();
 	private Map kpiIDAssociation = new HashMap();
@@ -183,6 +186,10 @@ public class MetadataAssociations {
 			return false;
 		if(!ouGrantNodesAssociation.keySet().isEmpty())
 			return false;
+		if(!metaModelIDAssociation.keySet().isEmpty())
+			return false;
+		if(!artifactIDAssociation.keySet().isEmpty())
+			return false;
 		return true;
 	}
 
@@ -247,6 +254,8 @@ public class MetadataAssociations {
 		ouNodesAssociation = new TreeMap();
 		ouGrantAssociation = new HashMap();
 		ouGrantNodesAssociation = new HashMap();
+		metaModelIDAssociation = new HashMap();
+		artifactIDAssociation = new HashMap();	
 	}
 
 
@@ -807,6 +816,47 @@ public class MetadataAssociations {
 		datasetsIDAssociation.put(exp, curr);
 	}
 
+	/**
+	 * Inserts a couple of metaMdel id into the associations.
+	 * 
+	 * @param exp the exp
+	 * @param curr the curr
+	 */
+	
+	public void insertCoupleMetaModel(Integer exp, Integer curr) {
+		metaModelIDAssociation.put(exp, curr);
+	}
+	
+	/**
+	 * Gets the Map of associations between current and exported metamodel.
+	 * 
+	 * @return Map of associations
+	 */
+	public Map getMetaModelIDAssociation() {
+		return metaModelIDAssociation;
+	}
+
+	/**
+	 * Inserts a couple of artifacts id into the associations.
+	 * 
+	 * @param exp the exp
+	 * @param curr the curr
+	 */
+	
+	public void insertCoupleArtifact(Integer exp, Integer curr) {
+		artifactIDAssociation.put(exp, curr);
+	}
+	
+	/**
+	 * Gets the Map of associations between current and exported artifact.
+	 * 
+	 * @return Map of associations
+	 */
+	public Map getArtifactIDAssociation() {
+		return artifactIDAssociation;
+	}
+	
+	
 	/**
 	 * Gets the Map of associations between current and exported maps.
 	 * 

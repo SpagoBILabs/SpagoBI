@@ -558,6 +558,11 @@ public class ExportManager implements IExportManager {
 			if (typeManager != null)
 				typeManager.manageExport(biobj, session);
 
+			
+			// if it is qb, registry or smartfilter export associated model
+			
+			
+			
 
 			//maps kpi export
 			//			boolean isKpi = false;

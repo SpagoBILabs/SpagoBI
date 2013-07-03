@@ -21,7 +21,14 @@ public class TypesExportManagerFactory {
 	 */
 	private static final String KPI = "KPI";
 	private static final String CONSOLE = "CONSOLE";
+	private static final String DATAMART = "DATAMART";
+	private static final String WORKSHEET = "WORKSHEET";
+	private static final String SMART_FILTER = "SMART_FILTER";
+	private static final String OLAP = "OLAP";
 
+	
+	
+	
 	private static String getObjType(BIObject biobj, Engine engine){
 		if (biobj.getBiObjectTypeCode().equalsIgnoreCase(KPI) 
 				&& engine.getClassName() != null && engine.getClassName().equals("it.eng.spagobi.engines.kpi.SpagoBIKpiInternalEngine")) {
@@ -32,6 +39,21 @@ public class TypesExportManagerFactory {
 			return CONSOLE;
 		}
 
+		if (biobj.getBiObjectTypeCode().equalsIgnoreCase(DATAMART) ) {
+			return DATAMART;
+		}
+
+		if (biobj.getBiObjectTypeCode().equalsIgnoreCase(WORKSHEET) ) {
+			return WORKSHEET;
+		}
+
+		if (biobj.getBiObjectTypeCode().equalsIgnoreCase(SMART_FILTER) ) {
+			return SMART_FILTER;
+		}
+
+		if (biobj.getBiObjectTypeCode().equalsIgnoreCase(OLAP) ) {
+			return OLAP;
+		}
 
 		return null;
 	}
@@ -46,16 +68,25 @@ public class TypesExportManagerFactory {
 
 		if (type != null){
 
-			if(type.equals("KPI")){
+			if(type.equals(KPI)){
 				logger.debug("kpi export manager");
 				toReturn = new KPIExportManager(type, exporter, manager);
 			}
 
-			if(type.equals("CONSOLE")){
+			if(type.equals(CONSOLE)){
 				logger.debug("console export manager");
 				toReturn = new ConsoleExportManager(type, exporter, manager);
 			}
 
+			if(type.equals(WORKSHEET) || type.equals(DATAMART) || type.equals(SMART_FILTER)){
+				logger.debug("Meta model export manager");
+				toReturn = new MetaModelsNeedExportManager(type, exporter, manager);
+			}
+			
+			if(type.equals(OLAP)){
+				logger.debug("Olap export manager");
+				toReturn = new OlapExportManager(type, exporter, manager);
+			}
 
 		}
 

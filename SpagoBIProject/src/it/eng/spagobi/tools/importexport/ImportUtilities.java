@@ -66,6 +66,10 @@ import it.eng.spagobi.kpi.ou.metadata.SbiOrgUnitNodes;
 import it.eng.spagobi.kpi.threshold.metadata.SbiThreshold;
 import it.eng.spagobi.kpi.threshold.metadata.SbiThresholdValue;
 import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
+import it.eng.spagobi.tools.catalogue.metadata.SbiArtifact;
+import it.eng.spagobi.tools.catalogue.metadata.SbiArtifactContent;
+import it.eng.spagobi.tools.catalogue.metadata.SbiMetaModel;
+import it.eng.spagobi.tools.catalogue.metadata.SbiMetaModelContent;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
 import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
@@ -89,6 +93,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.security.spec.ECPoint;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -1546,6 +1551,286 @@ public class ImportUtilities {
 		return newDsConfig;
 	}	*/
 
+	
+	/**
+	 * Make new Artifact.
+	 * 
+	 * @param dataProxy the ds
+	 * 
+	 * @return the sbi Artifact
+	 */
+	public static SbiArtifact makeNew(SbiArtifact exportedArtifact, Session sessionCurrDB, IEngUserProfile profile){
+		logger.debug("IN");
+		SbiArtifact newArtifact  = new SbiArtifact();
+		
+
+		newArtifact.setName(exportedArtifact.getName());			
+		newArtifact.setDescription(exportedArtifact.getDescription());
+		newArtifact.setType(exportedArtifact.getType());
+
+		
+		SbiCommonInfo i = new SbiCommonInfo();
+		String userid = "biadmin";
+		if(profile!=null){
+			userid =(String) profile.getUserUniqueIdentifier();
+		}
+		i.setTimeIn(new Date());
+		i.setUserIn(userid);
+		i.setSbiVersionIn(SbiCommonInfo.SBI_VERSION);
+
+		newArtifact.setCommonInfo(i);
+
+		
+		//sessionCurrDB.save(newDataset);			
+
+		logger.debug("OUT");
+		return newArtifact;
+	}	
+	
+	
+	/**
+	 * Load an existing artifact and make modifications as per the exported artifact in input
+	 * 
+	 * @param exportedartifact the exported artifact
+	 * @param sessionCurrDB the session curr db
+	 * @param existingId the existing id
+	 * 
+	 * @return the existing metamodel modified as per the exported dataset in input
+	 * 
+	 * @throws EMFUserError 	 */
+	public static SbiArtifact modifyExisting(SbiArtifact exportedArtifact,
+			Session sessionCurrDB, Integer existingId, Session sessionExpDB, IEngUserProfile profile) throws Exception{
+		logger.debug("IN");
+		SbiArtifact existArtifact=null;
+		try {
+			Query hibQueryArtifact =  sessionCurrDB.createQuery("from SbiArtifact h where h.id= ?" );
+			hibQueryArtifact.setInteger(0, existingId);	
+			existArtifact = (SbiArtifact)hibQueryArtifact.uniqueResult();	
+			
+			existArtifact.setName(exportedArtifact.getName());			
+			existArtifact.setDescription(exportedArtifact.getDescription());
+			existArtifact.setType(exportedArtifact.getType());
+			
+			SbiCommonInfo i = new SbiCommonInfo();
+			String userid = "biadmin";
+			if(profile!=null){
+				userid =(String) profile.getUserUniqueIdentifier();
+			}
+			i.setTimeIn(new Date());
+			i.setUserIn(userid);
+			i.setSbiVersionIn(SbiCommonInfo.SBI_VERSION);
+			existArtifact.setCommonInfo(i);
+			
+			sessionCurrDB.update(existArtifact);
+			
+			// delete previous meta content and add new one
+			Query query = sessionCurrDB.createQuery(" from SbiArtifactContent a where a.artifact.id = " + existingId);
+			List contents = query.list();
+			if (contents!= null) {
+				Iterator it = contents.iterator();
+				while (it.hasNext()) {
+					SbiArtifactContent sbiArtifactContent = (SbiArtifactContent) it.next();
+					sessionCurrDB.delete(sbiArtifactContent);
+				}			
+			}
+	
+		}
+		catch (Exception e) {
+			logger.error("Error in modifying exported meta model "+exportedArtifact.getName(), e);
+		throw e;
+		}
+		finally {
+			logger.debug("OUT");
+		}
+		return existArtifact;
+	}
+
+	
+	public static SbiArtifact associateWithExistingEntities(SbiArtifact newArtifact,
+			SbiArtifact exportedArtifact, SbiArtifactContent exportedArtifactContent, Session sessionCurrDB,
+			ImporterMetadata importer, MetadataAssociations metaAss) throws EMFUserError {
+		
+		logger.debug("IN");
+		// No operations at the moment
+		logger.debug("OUT");
+		return newArtifact;
+	}
+	
+	
+	public static SbiArtifact insertArtifactContent(SbiArtifact newArtifact,
+			SbiArtifact exportedArtifact, SbiArtifactContent exportedArtifactContent, Session sessionCurrDB,
+			ImporterMetadata importer, MetadataAssociations metaAss) throws EMFUserError {
+		
+		logger.debug("IN");
+	
+
+		SbiArtifactContent newContent = new SbiArtifactContent();
+		newContent.setActive(true);
+		newContent.setContent(exportedArtifactContent.getContent());
+		newContent.setCreationDate(exportedArtifactContent.getCreationDate());
+		newContent.setCreationUser(exportedArtifactContent.getCreationUser());
+		newContent.setDimension(exportedArtifactContent.getDimension());
+		newContent.setFileName(exportedArtifactContent.getFileName());
+		newContent.setArtifact(newArtifact);
+
+		newContent.setCommonInfo(newArtifact.getCommonInfo());
+		sessionCurrDB.save(newContent);
+		logger.debug("New Artifact Content saved");
+		
+		
+		logger.debug("OUT");
+		return newArtifact;
+	}
+	
+	
+	/**
+	 * Make new Meta MOdel
+	 * 
+	 * @param dataProxy the ds
+	 * 
+	 * @return the Meta Model
+	 */
+	public static SbiMetaModel makeNew(SbiMetaModel exportedMetaModel, Session sessionCurrDB, IEngUserProfile profile){
+		logger.debug("IN");
+		SbiMetaModel newMetaModel  = new SbiMetaModel();
+		
+
+		newMetaModel.setName(exportedMetaModel.getName());			
+		newMetaModel.setDescription(exportedMetaModel.getDescription());
+		newMetaModel.setCategory(exportedMetaModel.getCategory());
+
+		
+		SbiCommonInfo i = new SbiCommonInfo();
+		String userid = "biadmin";
+		if(profile!=null){
+			userid =(String) profile.getUserUniqueIdentifier();
+		}
+		i.setTimeIn(new Date());
+		i.setUserIn(userid);
+		i.setSbiVersionIn(SbiCommonInfo.SBI_VERSION);
+		newMetaModel.setCommonInfo(i);
+
+		
+		//sessionCurrDB.save(newDataset);			
+
+		logger.debug("OUT");
+		return newMetaModel;
+	}	
+
+	
+
+	/**
+	 * Load an existing metamodel and make modifications as per the exported metamodel in input
+	 * 
+	 * @param exportedmetamodel the exported metamodel
+	 * @param sessionCurrDB the session curr db
+	 * @param existingId the existing id
+	 * 
+	 * @return the existing metamodel modified as per the exported dataset in input
+	 * 
+	 * @throws EMFUserError 	 */
+	public static SbiMetaModel modifyExisting(SbiMetaModel exportedMeta,
+			Session sessionCurrDB, Integer existingId, Session sessionExpDB, IEngUserProfile profile) throws Exception{
+		logger.debug("IN");
+		SbiMetaModel existMeta=null;
+		try {
+			Query hibQueryMeta =  sessionCurrDB.createQuery("from SbiMetaModel h where h.id= ?" );
+			hibQueryMeta.setInteger(0, existingId);	
+			existMeta = (SbiMetaModel)hibQueryMeta.uniqueResult();	
+			
+			existMeta.setName(exportedMeta.getName());			
+			existMeta.setDescription(exportedMeta.getDescription());
+			existMeta.setCategory(exportedMeta.getCategory());
+			
+			SbiCommonInfo i = new SbiCommonInfo();
+			String userid = "biadmin";
+			if(profile!=null){
+				userid =(String) profile.getUserUniqueIdentifier();
+			}
+			i.setTimeIn(new Date());
+			i.setUserIn(userid);
+			i.setSbiVersionIn(SbiCommonInfo.SBI_VERSION);
+			existMeta.setCommonInfo(i);
+			
+			sessionCurrDB.update(existMeta);
+			
+			// delete previous meta content and add new one
+			Query query = sessionCurrDB.createQuery(" from SbiMetaModelContent a where a.model.id = " + existingId);
+			List contents = query.list();
+			if (contents!= null) {
+				Iterator it = contents.iterator();
+				while (it.hasNext()) {
+					SbiMetaModelContent sbiMetaModelContent = (SbiMetaModelContent) it.next();
+					sessionCurrDB.delete(sbiMetaModelContent);
+				}			
+			}
+	
+		}
+		catch (Exception e) {
+			logger.error("Error in modifying exported meta model "+exportedMeta.getName(), e);
+		throw e;
+		}
+		finally {
+			logger.debug("OUT");
+		}
+		return existMeta;
+	}
+	
+	
+	public static SbiMetaModel associateWithExistingEntities(SbiMetaModel newMetaModel,
+			SbiMetaModel exportedMetaModel, SbiMetaModelContent exportedMetaModelContent, Session sessionCurrDB,
+			ImporterMetadata importer, MetadataAssociations metaAss) throws EMFUserError {
+		
+		logger.debug("IN");
+		
+		//Data Source
+		
+		SbiDataSource expDs = exportedMetaModel.getDataSource();
+		if(expDs != null){
+			SbiDataSource newDs = null;
+			Integer id = expDs.getDsId();
+			Integer newDsID = (Integer)metaAss.getDataSourceIDAssociation().get(id);
+	
+			newDs  = (SbiDataSource) sessionCurrDB.load(SbiDataSource.class, newDsID);
+			if(newDs != null){
+				newMetaModel.setDataSource(newDs);
+				logger.debug("Set datasource "+newDs.getDescr());
+			}
+			
+		}
+		
+		logger.debug("OUT");
+		return newMetaModel;
+	}
+	
+	
+	public static SbiMetaModel insertMetaModelContent(SbiMetaModel newMetaModel,
+			SbiMetaModel exportedMetaModel, SbiMetaModelContent exportedMetaModelContent, Session sessionCurrDB,
+			ImporterMetadata importer, MetadataAssociations metaAss) throws EMFUserError {
+		
+		logger.debug("IN");
+	
+
+		SbiMetaModelContent newContent = new SbiMetaModelContent();
+		newContent.setActive(true);
+		newContent.setContent(exportedMetaModelContent.getContent());
+		newContent.setCreationDate(exportedMetaModelContent.getCreationDate());
+		newContent.setCreationUser(exportedMetaModelContent.getCreationUser());
+		newContent.setDimension(exportedMetaModelContent.getDimension());
+		newContent.setFileName(exportedMetaModelContent.getFileName());
+		newContent.setModel(newMetaModel);
+
+		newContent.setCommonInfo(newMetaModel.getCommonInfo());
+		sessionCurrDB.save(newContent);
+		logger.debug("New MetaModel Content saved");
+		
+		
+		logger.debug("OUT");
+		return newMetaModel;
+	}
+	
+	
+	
 	/**
 	 * Make new data set.
 	 * 
