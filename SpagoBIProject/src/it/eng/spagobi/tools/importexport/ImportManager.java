@@ -68,6 +68,10 @@ import it.eng.spagobi.mapcatalogue.metadata.SbiGeoFeatures;
 import it.eng.spagobi.mapcatalogue.metadata.SbiGeoMapFeatures;
 import it.eng.spagobi.mapcatalogue.metadata.SbiGeoMapFeaturesId;
 import it.eng.spagobi.mapcatalogue.metadata.SbiGeoMaps;
+import it.eng.spagobi.tools.catalogue.metadata.SbiArtifact;
+import it.eng.spagobi.tools.catalogue.metadata.SbiArtifactContent;
+import it.eng.spagobi.tools.catalogue.metadata.SbiMetaModel;
+import it.eng.spagobi.tools.catalogue.metadata.SbiMetaModelContent;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
 import it.eng.spagobi.tools.datasource.bo.DataSource;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
@@ -310,6 +314,10 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 		importAlarmContact(overwrite);
 		metaLog.log("-------Alarm-----");
 		importAlarm(overwrite);
+		metaLog.log("-------MetaModel-----");
+		importMetaModel(overwrite);
+		metaLog.log("-------Artifact-----");
+		importArtifact(overwrite);
 		metaLog.log("-------SbiKpiModel Attr-----");
 		//		importKpiModelAttr(overwrite);
 		metaLog.log("-------SbiKpiModel Attr Value-----");
@@ -798,10 +806,15 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 				} else {
 					existingDatasourceId = (Integer) dsIdAss.get(oldId);
 				}
+				
+				// if association made by user has prvilege
+				existingDatasourceId = getUserAssociation().getDsExportedToUser().get(oldId);
 
+				
+				
 				// if association made by user do not update!
-				if(!getUserAssociation().isDataSourceAssociated(oldId)){
-					if (existingDatasourceId != null) {
+//				if(!getUserAssociation().isDataSourceAssociated(oldId)){
+				if (existingDatasourceId != null) {
 						logger.debug("The data source with label:[" + dataSource.getLabel() + "] is just present. It will be updated.");
 						metaLog.log("The data source with label = [" + dataSource.getLabel() + "] will be updated.");
 						SbiDataSource existingDs = ImportUtilities.modifyExisting(dataSource, sessionCurrDB, existingDatasourceId);
@@ -817,12 +830,12 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 						logger.debug("Inserted new datasource " + newDS.getLabel());
 						metaAss.insertCoupleDataSources(oldId, newId);
 					}
-				}
-				else{
-					metaLog.log("Not inserted data source with ID " + oldId);		
-					logger.debug("Not inserted data source with ID " + oldId);
-				}
 			}
+//				else{
+//					metaLog.log("Not inserted nor update data source with ID " + oldId+" because has been associated by user" );		
+//					logger.debug("Not inserted nor update data source with ID " + oldId+" because has been associated by user");
+//				
+//			}
 		}  
 		catch (EMFUserError he) {
 			throw he;
@@ -905,6 +918,175 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 		}
 	}
 
+	
+	
+	
+	
+	private void importMetaModel(boolean overwrite) throws EMFUserError {
+		logger.debug("IN");
+		SbiMetaModel exportedMetaModel = null;
+		try {				
+
+			List exportedMetaModels = importer.getAllExportedSbiObjects(sessionExpDB, "SbiMetaModel", null);
+			if(exportedMetaModels == null)return;
+			Iterator iterSbiMetaModel = exportedMetaModels.iterator();
+
+			while (iterSbiMetaModel.hasNext()) {
+				exportedMetaModel = (SbiMetaModel) iterSbiMetaModel.next();
+				logger.debug("Importing exported MetaModel with id "+exportedMetaModel.getId() + " and name"+exportedMetaModel.getName());
+
+				// get MetaContent, only active have been exported
+				List metaContents = importer.getFilteredExportedSbiObjects(sessionExpDB, "SbiMetaModelContent", "model.id", exportedMetaModel.getId());
+				if(metaContents == null){
+					logger.warn("could not find exportd meta content for exported metamodel "+exportedMetaModel.getName());
+				}
+				else if(metaContents.size()>1){
+					logger.warn("too many exportd meta contents dor exported metamodel "+exportedMetaModel.getName());
+				}
+				SbiMetaModelContent exportedMetaContent = (SbiMetaModelContent)metaContents.get(0);
+				
+				
+				Integer oldId = new Integer(exportedMetaModel.getId());
+				Integer existingMetaModelId = null;
+				Map metaModelAss = metaAss.getMetaModelIDAssociation();
+				Set metaModelAssSet = metaModelAss.keySet();
+				if (metaModelAssSet.contains(oldId) && !overwrite) {
+					metaLog.log("Exported metaModel " + exportedMetaModel.getName() + " not inserted"
+							+ " because exist metaModel with the same name ");
+					logger.debug("Exported metaModel " + exportedMetaModel.getName() + " not inserted"
+							+ " because exist metaModel with the same name");
+					continue;
+				} else {
+					existingMetaModelId = (Integer) metaModelAss.get(oldId);
+				}
+				if (existingMetaModelId != null) {
+					logger.debug("The MetaModel with label:[" + exportedMetaModel.getName() + "] is just present. It will be updated. Existing one has id "+existingMetaModelId);
+					metaLog.log("The MetaModel with label = [" + exportedMetaModel.getName() + "] will be updated.");
+					// close previous and insert new
+					SbiMetaModel newMetaModel = ImportUtilities.modifyExisting(exportedMetaModel, sessionCurrDB, existingMetaModelId, sessionExpDB, this.getUserProfile());
+					newMetaModel = ImportUtilities.associateWithExistingEntities(newMetaModel, exportedMetaModel, exportedMetaContent, sessionCurrDB, importer, metaAss);
+					this.updateSbiCommonInfo4Update(newMetaModel);
+					sessionCurrDB.save(newMetaModel);
+					ImportUtilities.insertMetaModelContent(newMetaModel, exportedMetaModel, exportedMetaContent, sessionCurrDB, importer, metaAss);
+
+				} else {
+					SbiMetaModel newMetaModel = ImportUtilities.makeNew(exportedMetaModel, sessionCurrDB, this.getUserProfile());
+					this.updateSbiCommonInfo4Insert(newMetaModel);
+					newMetaModel = ImportUtilities.associateWithExistingEntities(newMetaModel, exportedMetaModel, exportedMetaContent, sessionCurrDB, importer, metaAss);
+					sessionCurrDB.save(newMetaModel);
+					ImportUtilities.insertMetaModelContent(newMetaModel, exportedMetaModel, exportedMetaContent, sessionCurrDB, importer, metaAss);
+					
+					logger.debug("Inserted new MetaModel " + newMetaModel.getName());
+					metaLog.log("Inserted new metaModel	 " + newMetaModel.getName());
+					Integer newId = new Integer(newMetaModel.getId());
+					metaAss.insertCoupleMetaModel(oldId, newId);
+				}
+			}
+		}  
+		catch (EMFUserError he) {
+			throw he;
+		}
+		catch (Exception e) {
+			if (exportedMetaModel != null) {
+				logger.error("Error while importing exported metaModel with label [" + exportedMetaModel.getName() + "].", e);
+			}
+			logger.error("Error while inserting object ", e);
+			List params = new ArrayList();
+			params.add("SbiMetaModel");
+			if(exportedMetaModel != null)params.add(exportedMetaModel.getName());
+			else params.add("");
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params, ImportManager.messageBundle);
+		} finally {
+			logger.debug("OUT");
+		}
+	}
+	
+	
+	
+	
+	
+	
+	
+	private void importArtifact(boolean overwrite) throws EMFUserError {
+		logger.debug("IN");
+		SbiArtifact exportedArtifact = null;
+		try {				
+
+			List exportedArtifacts = importer.getAllExportedSbiObjects(sessionExpDB, "SbiArtifact", null);
+			if(exportedArtifacts == null)return;
+			Iterator iterSbiArtifact = exportedArtifacts.iterator();
+
+			while (iterSbiArtifact.hasNext()) {
+				exportedArtifact = (SbiArtifact) iterSbiArtifact.next();
+				logger.debug("Importing exported Artifact with id "+exportedArtifact.getId() + " and name"+exportedArtifact.getName());
+
+				// get MetaContent, only active have been exported
+				List metaContents = importer.getFilteredExportedSbiObjects(sessionExpDB, "SbiArtifactContent", "artifact.id", exportedArtifact.getId());
+				if(metaContents == null){
+					logger.warn("could not find exportd meta content for exported artifact "+exportedArtifact.getName());
+				}
+				else if(metaContents.size()>1){
+					logger.warn("too many exportd meta contents dor exported artifact "+exportedArtifact.getName());
+				}
+				SbiArtifactContent exportedMetaContent = (SbiArtifactContent)metaContents.get(0);
+				
+				
+				Integer oldId = new Integer(exportedArtifact.getId());
+				Integer existingArtifactId = null;
+				Map artifactAss = metaAss.getArtifactIDAssociation();
+				Set artifactAssSet = artifactAss.keySet();
+				if (artifactAssSet.contains(oldId) && !overwrite) {
+					metaLog.log("Exported artifact " + exportedArtifact.getName() + " not inserted"
+							+ " because exist artifact with the same name ");
+					logger.debug("Exported artifact " + exportedArtifact.getName() + " not inserted"
+							+ " because exist artifact with the same name");
+					continue;
+				} else {
+					existingArtifactId = (Integer) artifactAss.get(oldId);
+				}
+				if (existingArtifactId != null) {
+					logger.debug("The Artifact with label:[" + exportedArtifact.getName() + "] is just present. It will be updated. Existing one has id "+existingArtifactId);
+					metaLog.log("The Artifact with label = [" + exportedArtifact.getName() + "] will be updated.");
+					// close previous and insert new
+					SbiArtifact newArtifact = ImportUtilities.modifyExisting(exportedArtifact, sessionCurrDB, existingArtifactId, sessionExpDB, this.getUserProfile());
+					newArtifact = ImportUtilities.associateWithExistingEntities(newArtifact, exportedArtifact, exportedMetaContent, sessionCurrDB, importer, metaAss);
+					this.updateSbiCommonInfo4Update(newArtifact);
+					sessionCurrDB.save(newArtifact);
+					ImportUtilities.insertArtifactContent(newArtifact, exportedArtifact, exportedMetaContent, sessionCurrDB, importer, metaAss);
+
+				} else {
+					SbiArtifact newArtifact = ImportUtilities.makeNew(exportedArtifact, sessionCurrDB, this.getUserProfile());
+					this.updateSbiCommonInfo4Insert(newArtifact);
+					newArtifact = ImportUtilities.associateWithExistingEntities(newArtifact, exportedArtifact, exportedMetaContent, sessionCurrDB, importer, metaAss);
+					sessionCurrDB.save(newArtifact);
+					ImportUtilities.insertArtifactContent(newArtifact, exportedArtifact, exportedMetaContent, sessionCurrDB, importer, metaAss);
+					
+					logger.debug("Inserted new Artifact " + newArtifact.getName());
+					metaLog.log("Inserted new artifact	 " + newArtifact.getName());
+					Integer newId = new Integer(newArtifact.getId());
+					metaAss.insertCoupleArtifact(oldId, newId);
+				}
+			}
+		}  
+		catch (EMFUserError he) {
+			throw he;
+		}
+		catch (Exception e) {
+			if (exportedArtifact != null) {
+				logger.error("Error while importing exported artifact with label [" + exportedArtifact.getName() + "].", e);
+			}
+			logger.error("Error while inserting object ", e);
+			List params = new ArrayList();
+			params.add("SbiArtifact");
+			if(exportedArtifact != null)params.add(exportedArtifact.getName());
+			else params.add("");
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params, ImportManager.messageBundle);
+		} finally {
+			logger.debug("OUT");
+		}
+	}
+	
+	
 	/**
 	 * Imports exported functionalities
 	 * 
@@ -3190,7 +3372,42 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 			}
 		}
 
+		List exportedMetaModel = importer.getAllExportedSbiObjects(sessionExpDB, "SbiMetaModel", null);
+		if(exportedMetaModel != null){
+			Iterator iterSbiMetaModel = exportedMetaModel.iterator();
+			while (iterSbiMetaModel.hasNext()) {
+				SbiMetaModel dsExp = (SbiMetaModel) iterSbiMetaModel.next();
+				String name = dsExp.getName();
+				Object existObj = importer.checkExistence(name, sessionCurrDB, new SbiMetaModel());
+				if (existObj != null) {
+					SbiMetaModel dsCurr = (SbiMetaModel) existObj;
+					metaAss.insertCoupleMetaModel(dsExp.getId(),dsCurr.getId());
+					logger.debug("Found an existing MetaModel " + dsCurr.getName() + " with "
+							+ "the same label of one exported MetaModel");
+					metaLog.log("Found an existing MetaModel " + dsCurr.getName() + " with "
+							+ "the same label of one exported MetaModel");
+				}
+			}
+		}
 
+		List exportedArtifact = importer.getAllExportedSbiObjects(sessionExpDB, "SbiArtifact", null);
+		if(exportedArtifact != null){
+			Iterator iterSbiArtifact = exportedArtifact.iterator();
+			while (iterSbiArtifact.hasNext()) {
+				SbiArtifact dsExp = (SbiArtifact) iterSbiArtifact.next();
+				String name = dsExp.getName();
+				Object existObj = importer.checkExistence(name, sessionCurrDB, new SbiArtifact());
+				if (existObj != null) {
+					SbiArtifact dsCurr = (SbiArtifact) existObj;
+					metaAss.insertCoupleArtifact(dsExp.getId(),dsCurr.getId());
+					logger.debug("Found an existing Artifact " + dsCurr.getName() + " with "
+							+ "the same label of one exported Artifact");
+					metaLog.log("Found an existing Artifact " + dsCurr.getName() + " with "
+							+ "the same label of one exported Artifact");
+				}
+			}
+		}
+		
 		List exportedThreshold = importer.getAllExportedSbiObjects(sessionExpDB, "SbiThreshold", null);
 		Iterator iterSbiTh = exportedThreshold.iterator();
 		while (iterSbiTh.hasNext()) {

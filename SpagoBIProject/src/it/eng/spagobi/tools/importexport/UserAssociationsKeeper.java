@@ -313,5 +313,16 @@ public class UserAssociationsKeeper {
 	}
 
 
+	public SourceBean getDatasourceAssSB() {
+		return datasourceAssSB;
+	}
+
+
+	public void setDatasourceAssSB(SourceBean datasourceAssSB) {
+		this.datasourceAssSB = datasourceAssSB;
+	}
+
+	
+
 
 }

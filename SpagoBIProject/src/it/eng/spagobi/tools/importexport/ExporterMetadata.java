@@ -124,6 +124,13 @@ import it.eng.spagobi.mapcatalogue.metadata.SbiGeoFeatures;
 import it.eng.spagobi.mapcatalogue.metadata.SbiGeoMapFeatures;
 import it.eng.spagobi.mapcatalogue.metadata.SbiGeoMapFeaturesId;
 import it.eng.spagobi.mapcatalogue.metadata.SbiGeoMaps;
+import it.eng.spagobi.tools.catalogue.bo.Artifact;
+import it.eng.spagobi.tools.catalogue.bo.Content;
+import it.eng.spagobi.tools.catalogue.bo.MetaModel;
+import it.eng.spagobi.tools.catalogue.metadata.SbiArtifact;
+import it.eng.spagobi.tools.catalogue.metadata.SbiArtifactContent;
+import it.eng.spagobi.tools.catalogue.metadata.SbiMetaModel;
+import it.eng.spagobi.tools.catalogue.metadata.SbiMetaModelContent;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
@@ -460,6 +467,246 @@ public class ExporterMetadata {
 		}
 	}
 
+	
+	/**
+	 * Insert Artifact if not already present
+	 * @param artifact
+	 * @throws EMFUserError the EMF user error
+	 * 
+	 */
+	public boolean insertArtifact(Artifact artifact, Session session) throws EMFUserError {
+		logger.debug("IN");
+		Transaction tx = null;
+		Transaction tx2 = null;
+		Transaction tx3 = null;
+
+		
+		try {
+			// check if it's not already present a artifact with id 
+			Query hibQuery = session.createQuery("from SbiArtifact sb where sb.id = ? ");
+			hibQuery.setInteger(0, artifact.getId());	
+			List hibList = hibQuery.list();
+			if(!hibList.isEmpty()) {
+					logger.debug("Artifact with id "+artifact.getId()+" already inserted");
+				return false;
+			}
+			
+			SbiArtifact sbiArtifact = new SbiArtifact();
+			
+			sbiArtifact.setType(artifact.getType());
+			sbiArtifact.setDescription(artifact.getDescription());
+			sbiArtifact.setName(artifact.getName());
+			sbiArtifact.setId(artifact.getId());
+			
+
+			tx2 = session.beginTransaction();
+			session.save(sbiArtifact);
+			tx2.commit();
+			return true;
+			
+		} catch (HibernateException he) {
+			logger.error("Error while inserting the New Artifact ", he);
+			if (tx != null)
+				tx.rollback();
+			if (tx2 != null)
+				tx2.rollback();
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+		} finally {
+			//if (session!=null){
+			//	if (session.isOpen()) session.close();
+			logger.debug("OUT");
+		}
+	}
+	
+	
+	
+	/**
+	 * Insert ArtifactCOntent if not already present
+	 * @param artifact
+	 * @throws EMFUserError the EMF user error
+	 * 
+	 */
+	public void insertArtifactContent(Artifact artifact, Content content,  Session session) throws EMFUserError {
+		logger.debug("IN");
+		Transaction tx = null;
+		Transaction tx2 = null;
+
+		
+		try {
+			
+			SbiArtifactContent sbiContent = new SbiArtifactContent();
+
+			sbiContent.setActive(true);
+			sbiContent.setContent(content.getContent());
+			sbiContent.setCreationDate(content.getCreationDate());
+			sbiContent.setCreationUser(content.getCreationUser());
+			sbiContent.setDimension(content.getDimension());
+			sbiContent.setFileName(content.getFileName());
+			sbiContent.setId(content.getId());
+			
+			// get Artifact
+			
+			Query queryDS = session.createQuery(" from SbiArtifact a where a.id= " + artifact.getId());
+			Object obj = queryDS.uniqueResult();
+
+			if(obj != null){
+				logger.debug("add to content Artifact with label "+artifact.getName());
+				SbiArtifact sbiArtifact = (SbiArtifact)obj;
+				sbiContent.setArtifact(sbiArtifact);
+			}
+			else{
+				logger.debug("no artifact found to add to content in file"+content.getFileName());
+			}
+
+			tx2 = session.beginTransaction();
+			session.save(sbiContent);
+			tx2.commit();
+			
+		} catch (HibernateException he) {
+			logger.error("Error while inserting the New  Artifact COntent", he);
+			if (tx != null)
+				tx.rollback();
+			if (tx2 != null)
+				tx2.rollback();
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+		} finally {
+			//if (session!=null){
+			//	if (session.isOpen()) session.close();
+			logger.debug("OUT");
+		}
+	}
+	
+	
+	/**
+	 * Insert MetaModel if not already present
+	 * @param metaModel
+	 * @throws EMFUserError the EMF user error
+	 * 
+	 */
+	public boolean insertMetaModel(MetaModel metaModel, Session session) throws EMFUserError {
+		logger.debug("IN");
+		Transaction tx = null;
+		Transaction tx2 = null;
+		Transaction tx3 = null;
+
+		
+		try {
+			// check if it's not already present a metaModel with id 
+			Query hibQuery = session.createQuery("from SbiMetaModel sb where sb.id = ? ");
+			hibQuery.setInteger(0, metaModel.getId());	
+			List hibList = hibQuery.list();
+			if(!hibList.isEmpty()) {
+					logger.debug("meta Model with id "+metaModel.getId()+" already inserted");
+				return false;
+			}
+			
+			SbiMetaModel sbiMetaModel = new SbiMetaModel();
+			
+			sbiMetaModel.setCategory(metaModel.getCategory());
+			sbiMetaModel.setDescription(metaModel.getDescription());
+			sbiMetaModel.setName(metaModel.getName());
+			sbiMetaModel.setId(metaModel.getId());
+			
+			// get Data SOurce
+
+			if(metaModel.getDataSourceLabel()!=null){
+				Query queryDS = session.createQuery(" from SbiDataSource a where a.label = '" + metaModel.getDataSourceLabel()+"'");
+				Object obj = queryDS.uniqueResult();
+
+				if(obj != null){
+					logger.debug("add dataSource with label "+metaModel.getDataSourceLabel());
+					SbiDataSource sbiDataSource = (SbiDataSource)obj;
+					sbiMetaModel.setDataSource(sbiDataSource);
+				}
+				else{
+					logger.debug("no DataSource found with label "+metaModel.getDataSourceLabel());
+				}
+			}
+			tx2 = session.beginTransaction();
+			session.save(sbiMetaModel);
+			tx2.commit();
+			return true;
+			
+		} catch (HibernateException he) {
+			logger.error("Error while inserting the Model ", he);
+			if (tx != null)
+				tx.rollback();
+			if (tx2 != null)
+				tx2.rollback();
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+		} finally {
+			//if (session!=null){
+			//	if (session.isOpen()) session.close();
+			logger.debug("OUT");
+		}
+	}
+	
+	
+	
+	/**
+	 * Insert MetaModel if not already present
+	 * @param metaModel
+	 * @throws EMFUserError the EMF user error
+	 * 
+	 */
+	public void insertMetaModelContent(MetaModel metaModel, Content content,  Session session) throws EMFUserError {
+		logger.debug("IN");
+		Transaction tx = null;
+		Transaction tx2 = null;
+
+		
+		try {
+			
+			SbiMetaModelContent sbiContent = new SbiMetaModelContent();
+
+			sbiContent.setActive(true);
+			sbiContent.setContent(content.getContent());
+			sbiContent.setCreationDate(content.getCreationDate());
+			sbiContent.setCreationUser(content.getCreationUser());
+			sbiContent.setDimension(content.getDimension());
+			sbiContent.setFileName(content.getFileName());
+			sbiContent.setId(content.getId());
+			
+			// get Model
+			
+			Query queryDS = session.createQuery(" from SbiMetaModel a where a.id= " + metaModel.getId());
+			Object obj = queryDS.uniqueResult();
+
+			if(obj != null){
+				logger.debug("add to content model with label "+metaModel.getName());
+				SbiMetaModel sbiMetaModel = (SbiMetaModel)obj;
+				sbiContent.setModel(sbiMetaModel);
+			}
+			else{
+				logger.debug("no model found to add to content with file "+content.getFileName());
+			}
+
+			tx2 = session.beginTransaction();
+			session.save(sbiContent);
+			tx2.commit();
+			
+		} catch (HibernateException he) {
+			logger.error("Error while inserting the new Model content ", he);
+			if (tx != null)
+				tx.rollback();
+			if (tx2 != null)
+				tx2.rollback();
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+		} finally {
+			//if (session!=null){
+			//	if (session.isOpen()) session.close();
+			logger.debug("OUT");
+		}
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	/**
 	 * Insert data set.
 	 * 

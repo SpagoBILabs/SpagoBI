@@ -69,6 +69,11 @@
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiOrgUnitNodes.hbm.xml" />
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiOrgUnitGrant.hbm.xml" />
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiOrgUnitGrantNodes.hbm.xml" />
+        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiMetaModel.hbm.xml" />
+        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiMetaModelContent.hbm.xml" />
+        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiArtifact.hbm.xml" />
+        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiArtifactContent.hbm.xml" />
+
                 <!-- User Defined Attributes -->
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiUdp.hbm.xml" />
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiUdpValue.hbm.xml" />

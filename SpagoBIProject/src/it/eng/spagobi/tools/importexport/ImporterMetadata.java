@@ -47,6 +47,8 @@ import it.eng.spagobi.kpi.threshold.metadata.SbiThresholdValue;
 import it.eng.spagobi.mapcatalogue.metadata.SbiGeoFeatures;
 import it.eng.spagobi.mapcatalogue.metadata.SbiGeoMapFeatures;
 import it.eng.spagobi.mapcatalogue.metadata.SbiGeoMaps;
+import it.eng.spagobi.tools.catalogue.metadata.SbiArtifact;
+import it.eng.spagobi.tools.catalogue.metadata.SbiMetaModel;
 import it.eng.spagobi.tools.dataset.dao.DataSetFactory;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
 import it.eng.spagobi.tools.datasource.metadata.SbiDataSource;
@@ -179,8 +181,13 @@ public class ImporterMetadata {
 			logger.error("Error while getting exported sbi objects from table "+table, he);
 			List params = new ArrayList();
 			params.add(table);
-			throw new EMFUserError(EMFErrorSeverity.ERROR, "8014", params, ImportManager.messageBundle);
-		} finally {
+			
+			// this in order to make work import export among 4.0 RC and 4.0, TODO remove with next release
+			if(!table.equals("SbiMetaModel") && !table.equals("SbiArtifact")){
+				throw new EMFUserError(EMFErrorSeverity.ERROR, "8014", params, ImportManager.messageBundle);
+			}
+			
+			} finally {
 			logger.debug("OUT");
 		}
 		return hibList;
@@ -731,7 +738,23 @@ public class ImporterMetadata {
 			hqlQuery = sessionCurrDB.createQuery(hql);
 			SbiOrgUnitGrantNodes hibOu = (SbiOrgUnitGrantNodes) hqlQuery.uniqueResult();
 			return hibOu;		
+		}else if (hibObj instanceof SbiMetaModel) {
+			param = "SbiMetaModel";
+			String name = (String) unique;
+			hql = "from SbiMetaModel n where n.name = '" + name+"'";
+			hqlQuery = sessionCurrDB.createQuery(hql);
+			SbiMetaModel hibOu = (SbiMetaModel) hqlQuery.uniqueResult();
+			return hibOu;		
+		}else if (hibObj instanceof SbiArtifact) {
+			param = "SbiArtifact";
+			String name = (String) unique;
+			hql = "from SbiArtifact n where n.name = '" + name+"'";
+			hqlQuery = sessionCurrDB.createQuery(hql);
+			SbiArtifact hibOu = (SbiArtifact) hqlQuery.uniqueResult();
+			return hibOu;		
 		}
+		
+		
 		}
 		catch (Exception e) {
 			logger.error("HibObj is of type "+hibObj.getClass().toString());			
