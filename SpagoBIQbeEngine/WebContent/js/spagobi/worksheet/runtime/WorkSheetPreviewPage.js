@@ -42,6 +42,7 @@ Sbi.worksheet.runtime.WorkSheetPreviewPage = function(config) {
 	var defaultSettings = {
 		//title: LN('sbi.worksheet.runtime.worksheetpreviewpage.title')
 		defaultSrc: 'about:blank'
+		, border : false
 		, autoLoad: true
         , loadMask: {msg: 'Loading...'}
         , fitToParent: true  // not valid in a layout

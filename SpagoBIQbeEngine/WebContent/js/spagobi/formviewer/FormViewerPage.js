@@ -44,6 +44,7 @@ Sbi.formviewer.FormViewerPage = function(template, config, formValues) {
 		//title: LN('sbi.formviewer.formviewerpage.title')
 		layout: 'fit'
 		, autoScroll: true
+		, border : false
 		//, bodyStyle: 'padding:30px'
 		, showSaveFormButton : true
 		, showWorksheetButton : true

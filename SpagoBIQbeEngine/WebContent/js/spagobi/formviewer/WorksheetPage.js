@@ -42,6 +42,7 @@ Sbi.formviewer.WorksheetPage = function(config) {
 		//title: LN('sbi.worksheet.title')
 		layout: 'fit'
 		, autoScroll: true
+		, border : false
 	};
 		
 	if(Sbi.settings && Sbi.settings.formviewer && Sbi.settings.formviewer.worksheetPage) {
@@ -68,24 +69,12 @@ Sbi.formviewer.WorksheetPage = function(config) {
 	var c = Ext.apply(defaultSettings, config || {});
 	
 	Ext.apply(this, c);
-		
-	this.toolbar = new Ext.Toolbar({
-		items: [
-		    '->'
-		    , {
-				text: LN('sbi.formviewer.resultspage.backtoform'),
-				handler: function() {this.fireEvent('edit');},
-				scope: this
-		    }
-		  ]
-	});
 	
 	this.init(c);
 	
 	c = Ext.apply(c, {
-	    tbar: this.toolbar,
-	    style: 'padding:3px;',
-	    items: [this.tabs]
+	    //style: 'padding:3px;',
+	    items: [this.worksheetPanel]
 	});
 		
 	// constructor
@@ -97,6 +86,9 @@ Sbi.formviewer.WorksheetPage = function(config) {
 Ext.extend(Sbi.formviewer.WorksheetPage, Ext.Panel, {
 
 	formState: null
+	, worksheetDesignerPanel : null
+	, worksheetPreviewPanel : null
+	, worksheetPanel : null
 	
     // -- public methods -----------------------------------------------------------------------
 
@@ -112,11 +104,7 @@ Ext.extend(Sbi.formviewer.WorksheetPage, Ext.Panel, {
 
 	, init: function (c) {
 		
-		var items = [];
-	
 		this.worksheetDesignerPanel = new Sbi.worksheet.designer.WorksheetDesignerPanel(Ext.apply(c||{},{smartFilter: true}));
-		
-		items.push(this.worksheetDesignerPanel);
 		
 		this.worksheetPreviewPanel = new Sbi.worksheet.runtime.WorkSheetPreviewPage({id : 'WorkSheetPreviewPage', closable: false});
 			
@@ -140,15 +128,22 @@ Ext.extend(Sbi.formviewer.WorksheetPage, Ext.Panel, {
 				//		this.setWorksheetState(this.refreshWorksheetPreview, Sbi.exception.ExceptionHandler.handleFailure, this);
 		//	}
 		}, this);
-			
-		items.push(this.worksheetPreviewPanel);
-
 		
-		this.tabs = new Ext.TabPanel({
-			border: false,
-	  		activeTab: 0,
-	  		items: items
+		this.worksheetPanel = new Sbi.worksheet.designer.WorksheetPanel({
+			id : 'WorksheetPanel'
+			, title : ''
+			, worksheetDesignerPanel : this.worksheetDesignerPanel
+			, worksheetPreviewPanel : this.worksheetPreviewPanel
+			, extraButtons : [
+ 			    '-'
+ 			    , {
+ 					text: LN('sbi.formviewer.resultspage.backtoform'),
+ 					handler: function() {this.fireEvent('edit');},
+ 					scope: this
+ 			    }
+ 			 ]
 		});
+
 	}
 
 	/**
@@ -159,7 +154,8 @@ Ext.extend(Sbi.formviewer.WorksheetPage, Ext.Panel, {
 	 * 
 	 */
 	, updateWorksheetEngine : function(){
-		this.tabs.setActiveTab(0);
+		this.worksheetPanel.setActiveItem(0);
+		this.worksheetPanel.prevButton.toggle(true, true);
 		var worksheetEngineInitialized = this.engineInitialized;
 		if (worksheetEngineInitialized === undefined || worksheetEngineInitialized == false) {
 			if (!this.notFirstTimeDesignPanelOpened) {
@@ -218,12 +214,6 @@ Ext.extend(Sbi.formviewer.WorksheetPage, Ext.Panel, {
 	, validate : function () {
 		return this.worksheetDesignerPanel.validate();
 	}
-
-  	, showCrosstabPreview: function(crosstabDefinition) {
-  		this.crosstabPreviewPanel.on('beforeload', this.addFormStateParameter, this);
-  		this.tabs.activate(this.crosstabPreviewPanel);
-  		this.crosstabPreviewPanel.load(crosstabDefinition);
-  	}
   	
   	, addFormStateParameter: function(crosstabPreviewPanel, requestParameters) {
   		requestParameters.formstate = Ext.util.JSON.encode(this.getFormState());
