@@ -10,7 +10,6 @@ import it.eng.spagobi.engines.qbe.QbeEngine;
 import it.eng.spagobi.engines.qbe.QbeEngineAnalysisState;
 import it.eng.spagobi.engines.qbe.QbeEngineInstance;
 import it.eng.spagobi.engines.qbe.registry.bo.RegistryConfiguration;
-import it.eng.spagobi.engines.qbe.registry.parser.RegistryConfigurationXMLParser;
 import it.eng.spagobi.engines.qbe.registry.serializer.RegistryConfigurationJSONSerializer;
 import it.eng.spagobi.engines.qbe.template.QbeTemplateParseException;
 import it.eng.spagobi.engines.worksheet.WorksheetEngineInstance;
@@ -19,14 +18,10 @@ import it.eng.spagobi.utilities.engines.AbstractEngineStartAction;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineStartupException;
 
-import java.util.Iterator;
-import java.util.List;
 import java.util.Locale;
 
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
-
-import com.ingres.gcf.jdbc.DrvRsrc;
 
 
 /**
