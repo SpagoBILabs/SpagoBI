@@ -120,7 +120,7 @@ Sbi.tools.ManageDatasetParameters = function(config) {
 	        cm: cm,
 	        sm: sm,
 	        width: 370,
-	        height: 300, //120,
+	        height: 200, //120,
 	        //autoExpandColumn: 'label', // column with this id will be expanded
 	        frame: true,
 	        clicksToEdit: 2,
