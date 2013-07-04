@@ -173,7 +173,7 @@ public class ConnectionDescriptor {
 		 * @return true, if is jndi conncetion
 		 */
 		public boolean isJndiConncetion() {
-			return (jndiName != null);
+			return (jndiName != null && !jndiName.trim().equals(""));
 		}
 	    
 }
