@@ -89,7 +89,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 	input.login    {
 	display:block;
 	border: 1px solid #a9a9a9; 
-	color: #908989;
+	color: #7b7575;
 	background: #d4d4d4; 
 	height: 25px;
 	width: 300px;
@@ -222,7 +222,7 @@ a:hover{
 				<table border=0>
 					<tr>
 						<td></td>
-						<td><img src='<%=urlBuilder.getResourceLinkByTheme(request, "/img/wapp/spagobi40logo.png", currTheme)%>' width='150px' height='51px'/></td>
+						<td><img src='<%=urlBuilder.getResourceLinkByTheme(request, "/img/wapp/spagobi40logo.png", currTheme)%>' width='180px' height='51px'/></td>
 						<td></td>
 					</tr>
 					<tr>
@@ -272,9 +272,10 @@ a:hover{
 								</tr>
 								
 								<tr>
-									<td class='login-label'><a
+								<!-- Uncommet this for adding the Change Password Link -->
+									<!-- <td class='login-label'><a
 										href="<%=contextName %>/ChangePwdServlet?start_url=<%=startUrl%>">
-											<%=msgBuilder.getMessage("changePwd")%> </a></td>
+											<%=msgBuilder.getMessage("changePwd")%> </a></td> -->
 									<td>&nbsp;</td>
 									<td class='login-label' width="150px"></td>
 								</tr>
@@ -283,13 +284,35 @@ a:hover{
 						<td style="padding-top: 20px">&nbsp;&nbsp;</td>
 					</tr>
 							<tr>
-								<td>&nbsp;</td>
+								<td></td>
 								<td class='header-title-column-portlet-section-nogrey'>
 									<div class="header-row-portlet-section" style = "line-height: 130%; margin-top: 10px; font-size:9pt;">														
-										SpagoBI Demo users' credentials:<br/>
-										&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" onclick="setUser('biuser','biuser')"><b>biuser/biuser</b></a>(business user)<br/>
-										&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" onclick="setUser('bidemo','bidemo')"><b>bidemo/bidemo</b></a> (showcase user)<br/>
-										&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" onclick="setUser('biadmin','biadmin')"><b>biadmin/biadmin</b></a> (administrator)
+										
+										<table style ="width: 85% !important">
+										<tr>
+											<td align="center">
+											<a href="#" onclick="setUser('biuser','biuser'); login.submit()"><img src='<%=urlBuilder.getResourceLinkByTheme(request, "/img/wapp/biuser_icon.png", currTheme)%>' width='68px' height='47px'/></a>
+											</td>
+											<td align="center">
+											<a href="#" onclick="setUser('bidemo','bidemo'); login.submit()"><img src='<%=urlBuilder.getResourceLinkByTheme(request, "/img/wapp/bidemo_icon.png", currTheme)%>' width='75px' height='47px'/></a>
+											</td>
+											<td align="center">
+											<a href="#" onclick="setUser('biadmin','biadmin'); login.submit()"><img src='<%=urlBuilder.getResourceLinkByTheme(request, "/img/wapp/biadmin_icon.png", currTheme)%>' width='69px' height='47px'/></a>										
+											</td>
+										</tr>
+										<tr>
+											<td align="center">
+											<a href="#" onclick="setUser('biuser','biuser'); login.submit()"><b>biuser/biuser</b></a>
+											</td>
+											<td align="center">
+											<a href="#" onclick="setUser('bidemo','bidemo'); login.submit()"><b>bidemo/bidemo</b></a> 
+											</td>
+											<td align="center">
+											<a href="#" onclick="setUser('biadmin','biadmin'); login.submit()"><b>biadmin/biadmin</b></a>
+											</td>
+										</tr>
+										</table>
+										
 									</div>
 								</td>
 							</tr>
@@ -301,7 +324,7 @@ a:hover{
 
 				</table>
 			</div>
-					<div style="float:right;background-image:url('/SpagoBI/themes/sbi_default/img/wapp/sfodno_login.png');width:330px;height:310px;margin-top:110px;margin-right:20px;"></div>
+					<div style="float:right;background-image:url('/SpagoBI/themes/sbi_default/img/wapp/background_login.png');width:416px;height:287px;margin-top:110px;margin-right:20px;"></div>
 	        </div>
         </form>
         <spagobi:error/>
