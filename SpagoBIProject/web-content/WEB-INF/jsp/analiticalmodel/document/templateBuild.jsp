@@ -106,18 +106,7 @@ Ext.onReady(function(){
 		, handler : function() {window.location.href = '<%= backUrl %>';}
     });
 
-    var expandButton = new Ext.Toolbar.Button({
-    	iconCls: 'icon-expand'
-		, scope: this
-		, handler : function() {sendMessage({}, 'collapse2');}
-    });
-
-    var items;
-    if (Sbi.user.ismodeweb) {
-    	items = ['->', backButton, expandButton];
-    } else {
-    	items = ['->', backButton];
-    }
+    var items = ['->', backButton];
     
     var toolbar = new Ext.Toolbar({
       items: items
