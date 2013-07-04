@@ -284,11 +284,11 @@ Sbi.locale.ln['sbi.execution.parametersselection.toolbar.clear']  = 'Cancella va
 Sbi.locale.ln['sbi.execution.parametersselection.toolbar.save']  = 'Salva valori inseriti nel form dei parametri come viewpoint';
 Sbi.locale.ln['sbi.execution.parametersselection.toolbar.next']  = 'Esegui il documento';
 Sbi.locale.ln['sbi.execution.parametersselection.message.page2.fillFormAndExecute']  = 'Riempi il form sottostante e clicca sul pulsante in alto a destra per eseguire il documento';
-Sbi.locale.ln['sbi.execution.parametersselection.message.page2.execute']  = 'Clicca sul pulsante in alto a destra per eseguire il documento';
-Sbi.locale.ln['sbi.execution.parametersselection.message.page2.qbe.powerUserMessageWithoutParameters']  = 'Clicca sul pulsante in alto a destra per eseguire il documento principale oppure fai doppio click su una query salvata presente nella lista sottostante';
-Sbi.locale.ln['sbi.execution.parametersselection.message.page2.qbe.powerUserMessageWithParameters']  = 'Riempi il form sottostante, poi clicca sul pulsante in alto a destra per eseguire il documento principale oppure fai doppio click su una query salvata presente nella lista sottostante';
-Sbi.locale.ln['sbi.execution.parametersselection.message.page2.qbe.readOnlyUserMessageWithoutParameters']  = 'Non hai i diritti per eseguire il documento principale; fai doppio click su una query salvata presente nella lista sottostante';
-Sbi.locale.ln['sbi.execution.parametersselection.message.page2.qbe.readOnlyUserMessageWithParameters']  = 'Non hai i diritti per eseguire il documento principale; riempi il form sottostante e fai doppio click su una query salvata presente nella lista sottostante';
+Sbi.locale.ln['sbi.execution.parametersselection.message.page2.execute']  = 'Clicca sul pulsante di esecuzione per vedere i risultati';
+Sbi.locale.ln['sbi.execution.parametersselection.message.page2.qbe.powerUserMessageWithoutParameters']  = 'Clicca sul pulsante di esecuzione per vedere i risultati';
+Sbi.locale.ln['sbi.execution.parametersselection.message.page2.qbe.powerUserMessageWithParameters']  = 'Riempi il form sottostante, poi clicca sul pulsante in alto a destra per eseguire il documento principale oppure seleziona una vista dalla lista delle viste customizzate';
+Sbi.locale.ln['sbi.execution.parametersselection.message.page2.qbe.readOnlyUserMessageWithoutParameters']  = 'Clicca sul pulsante di esecuzione per vedere i risultati';
+Sbi.locale.ln['sbi.execution.parametersselection.message.page2.qbe.readOnlyUserMessageWithParameters']  = 'Riempi il form sottostante e clicca sul pulsante di esecuzione per vedere i risultati';
 Sbi.locale.ln['sbi.execution.parametersselection.message.page3.fillFormAndRefresh']  = 'Riempi il form sottostante e clicca sul pulsante di refresh sulla barra per rieseguire il documento';
 Sbi.locale.ln['sbi.execution.parametersselection.message.page3.refresh']  = 'Clicca sul pulsante di refresh sulla barra per rieseguire il documento';
 
