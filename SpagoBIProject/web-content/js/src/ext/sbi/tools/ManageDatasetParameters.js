@@ -114,19 +114,18 @@ Sbi.tools.ManageDatasetParameters = function(config) {
 	    var grid = {
 	    	xtype: 'grid',
 	        store: this.store,
-	        layout: 'fit',
-	        autoHeight: true,
+//	        layout: 'fit',
+//	        autoHeight: true,
 	        autoScroll: true,
 	        cm: cm,
 	        sm: sm,
 	        width: 370,
-	        height: 120,
+	        height: 300, //120,
 	        //autoExpandColumn: 'label', // column with this id will be expanded
 	        frame: true,
 	        clicksToEdit: 2,
 	        tbar: tb,
-	        //autoHeight: false,
-	        boxMaxHeight: 300,
+	        boxMaxHeight: 200,
 	        boxMinHeight: 100
 	    };
 
