@@ -297,6 +297,7 @@ Sbi.locale.ln['sbi.execution.executionpage.toolbar.bookmark'] = 'Marcador docume
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.annotate'] = 'Anotar documento';
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.metadata'] = 'Mostrar los metadatos document';
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.qberefresh'] = 'Actualizaci\u00F3n de la p\u00E1gina har\u00E1 que la p\u00E9rdida de valores reales de QBE: seguir adelante?';
+Sbi.locale.ln['sbi.execution.executionpage.tabs.overMaxNum']  = 'El n\U00FAmero de documentos abiertos ha superado el m\u00E1ximo. Cierre la ejecuci\u00F3n anterior y vuelva a ejecutar el documento.';
 
 Sbi.locale.ln['sbi.execution.viewpoints.title'] = 'Par\u00e1metros guardados';
 Sbi.locale.ln['sbi.execution.viewpoints.emptyText'] = '[Documento no tiene par\u00e1metros guardados]';
@@ -592,6 +593,42 @@ Sbi.locale.ln['sbi.ds.isPersisted'] = 'Persistir en la Tabla';
 Sbi.locale.ln['sbi.ds.flat'] = 'Configuraci\u00F3n dataset plano';
 Sbi.locale.ln['sbi.ds.isFlatDataset'] = 'Dataset plano';
 Sbi.locale.ln['sbi.ds.flatTableName'] = 'Nombre de la Tabla';
+Sbi.locale.ln['sbi.ds.saved']= 'Dataset correctamente guardado';
+
+Sbi.locale.ln['sbi.ds.deleted']= 'Data set correctamente borrado';
+Sbi.locale.ln['sbi.ds.wizard']= 'Asitente Dataset';
+Sbi.locale.ln['sbi.ds.label']= 'Etiqueta';
+Sbi.locale.ln['sbi.ds.name']= 'Nombre';
+Sbi.locale.ln['sbi.ds.description']= 'Descripci\u00F3n';
+Sbi.locale.ln['sbi.ds.wizard.general']= 'General';
+Sbi.locale.ln['sbi.ds.wizard.detail']= 'Detalle';
+Sbi.locale.ln['sbi.ds.wizard.metadata']= 'Metadatos';
+Sbi.locale.ln['sbi.ds.wizard.back']= '< Anterior';
+Sbi.locale.ln['sbi.ds.wizard.next']= 'Siguiente >';
+Sbi.locale.ln['sbi.ds.wizard.confirm']= 'Confirmar';
+Sbi.locale.ln['sbi.ds.wizard.cancel']= 'Cancelar';
+Sbi.locale.ln['sbi.ds.scope'] = '\u00C1mbito';
+Sbi.locale.ln['sbi.ds.noDataset']= 'No datasets disponibles';
+Sbi.locale.ln['sbi.ds.mandatoryFields']= '¡Por favor insertar los campos obligatorios!';
+Sbi.locale.ln['sbi.ds.noWorksheetDesigner']= '¡El Diseñador Worksheet  no est\u00E1 disponible en dataset paramétricos!';
+Sbi.locale.ln['sbi.ds.file.type'] = 'Tipo';
+Sbi.locale.ln['sbi.ds.file.upload.button'] = 'Carga de archivos';
+Sbi.locale.ln['sbi.ds.file.csv.delimiter'] = 'Delimitaci\u00F3n de caracteres';
+Sbi.locale.ln['sbi.ds.file.csv.quote'] = 'Cita Car\u00E1cter';
+Sbi.locale.ln['sbi.ds.file.xsl.sheetnumber'] = 'N\u00FAmero de hoja';
+Sbi.locale.ln['sbi.ds.file.xsl.limitrows'] = 'Limite el n\u00FAmero de l\u00EDneas';
+Sbi.locale.ln['sbi.ds.file.xsl.skiprows'] = 'Ir l\u00EDneas';
+Sbi.locale.ln['sbi.ds.mandatoryUploadFile']= '¡Es necesario cargar el archivo!';
+Sbi.locale.ln['sbi.ds.orderComboLabel']= 'Ordenar por...';
+Sbi.locale.ln['sbi.ds.filterLabel']= 'Filtrar por ...';
+Sbi.locale.ln['sbi.ds.moreRecent']= 'Reciente';
+Sbi.locale.ln['sbi.ds.owner']= 'Autor';
+Sbi.locale.ln['sbi.ds.USED']= 'El archivo esta siendo usado por otro ';
+Sbi.locale.ln['sbi.ds.EXISTS']= 'El archivo ya existe';
+Sbi.locale.ln['sbi.ds.failedToUpload']= 'carga fallida';
+Sbi.locale.ln['sbi.ds.skip.checks']='Sobreescribir el archivo existente';
+Sbi.locale.ln['sbi.ds.changedon']='Modificado';
+
 
 
 //===================================================================

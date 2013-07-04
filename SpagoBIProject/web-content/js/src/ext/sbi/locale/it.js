@@ -350,6 +350,7 @@ Sbi.locale.ln['sbi.execution.executionpage.toolbar.saveas'] = 'Salva come ...';
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.view'] = 'Vedi documento';
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.edit'] = 'Modifica';
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.breadcrumbback'] = 'Torna al documento precedente';
+Sbi.locale.ln['sbi.execution.executionpage.tabs.overMaxNum']  = 'Il numero di documenti aperti ha raggiunto il massimo. Chiudere la precedente esecuzione ed eseguire nuovamente il documento.';
 
 Sbi.locale.ln['sbi.execution.viewpoints.title'] = 'Parametri Salvati';
 Sbi.locale.ln['sbi.execution.viewpoints.emptyText'] = '[Il documento non ha parametri salvati]';
