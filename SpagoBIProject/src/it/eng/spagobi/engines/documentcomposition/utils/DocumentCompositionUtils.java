@@ -234,7 +234,7 @@ public class DocumentCompositionUtils {
 				UUIDGenerator uuidGen  = UUIDGenerator.getInstance();
 				UUID uuid = uuidGen.generateRandomBasedUUID();
 				urlReturn += "&" + LightNavigationManager.LIGHT_NAVIGATOR_ID + "=" + uuid.toString();
-				if(document.getSnapshot() != null){
+				if(document.getSnapshot() != null && document.getSnapshot()){
 					Snapshot snap = DAOFactory.getSnapshotDAO().getLastSnapshot(objId);		
 					if(snap != null){
 						urlReturn += "&SNAPSHOT_ID=" + snap.getId();
