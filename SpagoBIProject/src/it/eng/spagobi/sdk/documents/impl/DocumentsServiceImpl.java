@@ -921,31 +921,31 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 			/***********************************************************************************************************/
 			/* STEP 1: uploads the datamart document */
 			/***********************************************************************************************************/
-//			try {
-//				uploadFisicalFile(sdkTemplate, DATAMART_FILE_NAME);
-//				logger.debug("datamart.jar file uploaded");
-//			} catch (Exception e) {
-//				logger.error("Could not upload datamart.jar file", e);
-//				throw new SpagoBIRuntimeException(
-//						"Could not upload datamart.jar file: " + e.getMessage());
-//			}
+			try {
+				uploadFisicalFile(sdkTemplate, DATAMART_FILE_NAME);
+				logger.debug("datamart.jar file uploaded");
+			} catch (Exception e) {
+				logger.error("Could not upload datamart.jar file", e);
+				throw new SpagoBIRuntimeException(
+						"Could not upload datamart.jar file: " + e.getMessage());
+			}
 
-//			try {
-//				/***********************************************************************************************************/
-//				/* STEP 1,5: if present uploads also the calculatedFields xml */
-//				/***********************************************************************************************************/
-//				if (calculatedFields.getContent() != null) {
-//					logger.debug("Upload calculatedFields xml: cfields.xml ");
-//					uploadFisicalFile(calculatedFields, CFIELDS_FILE_NAME);
-//					logger.debug("cfields.xml file uploaded");
-//				} else {
-//					logger.debug("No cfields xml recevied");
-//				}
-//			} catch (Exception e) {
-//				logger.error("Could not upload cfields file", e);
-//				throw new SpagoBIRuntimeException(
-//						"Could not upload cfieldds.xml file: " + e.getMessage());
-//			}
+			try {
+				/***********************************************************************************************************/
+				/* STEP 1,5: if present uploads also the calculatedFields xml */
+				/***********************************************************************************************************/
+				if (calculatedFields != null && calculatedFields.getContent() != null) {
+					logger.debug("Upload calculatedFields xml: cfields.xml ");
+					uploadFisicalFile(calculatedFields, CFIELDS_FILE_NAME);
+					logger.debug("cfields.xml file uploaded");
+				} else {
+					logger.debug("No cfields xml recevied");
+				}
+			} catch (Exception e) {
+				logger.error("Could not upload cfields file", e);
+				throw new SpagoBIRuntimeException(
+						"Could not upload cfieldds.xml file: " + e.getMessage());
+			}
 			
 			InputStream is = null;
 			DataHandler dh = null;

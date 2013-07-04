@@ -29,10 +29,14 @@ public class RegistryConfigurationJSONSerializer {
 	public static String ENTITY = "entity";
 	public static String FILTERS = "filters";
 	public static String COLUMNS = "columns";
+	public static String CONFIGURATIONS = "configurations";
 
 	public static String TITLE = "title";
 	public static String FIELD = "field";
 	public static String PRESENTATION = "presentation";
+
+	public static String NAME = "name";
+	public static String VALUE = "value";
 	
 	public static String EDITABLE = "editable";
 	public static String VISIBLE = "visible";
@@ -53,6 +57,8 @@ public class RegistryConfigurationJSONSerializer {
 			toReturn.put(FILTERS, filtersJSON);
 			JSONArray columnsJSON = serializeColumns(conf);
 			toReturn.put(COLUMNS, columnsJSON);
+			JSONArray configurationsJSON = serializeConfigurations(conf);
+			toReturn.put(CONFIGURATIONS, configurationsJSON);
 		} catch (Exception e) {
 			throw new SerializationException("Error while serializating RegistryConfiguration", e);
 		} finally {
@@ -114,5 +120,25 @@ public class RegistryConfigurationJSONSerializer {
 		}
 		return columnsJSON;
 	}
+	
+	private JSONArray serializeConfigurations(RegistryConfiguration conf) throws JSONException {
+		List<RegistryConfiguration.Configuration> configurations = conf.getConfigurations();
+		JSONArray configurationsJSON = new JSONArray();
+		if(configurations != null){
+		Iterator<RegistryConfiguration.Configuration> it = configurations.iterator();
+		while (it.hasNext()) {
+			RegistryConfiguration.Configuration configuration = it.next();
+			JSONObject configurationJSON = new JSONObject();
+			String name = configuration.getName();
+			String value = configuration.getValue();
+			
+			configurationJSON.put(NAME, name);
+			configurationJSON.put(VALUE, value);
+			configurationsJSON.put(configurationJSON);
+		}
+		}
+		return configurationsJSON;
+	}
+	
 	
 }

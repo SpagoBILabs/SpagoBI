@@ -10,6 +10,17 @@ import it.eng.spagobi.engines.qbe.registry.bo.RegistryConfiguration;
 import org.json.JSONObject;
 
 public interface IPersistenceManager {
+	
 	void updateRecord(JSONObject aRecord,
 			RegistryConfiguration registryConf);
+	
+	Integer insertRecord(JSONObject aRecord,
+			RegistryConfiguration registryConf, boolean autoLoadPK);
+
+	void deleteRecord(JSONObject aRecord,
+			RegistryConfiguration registryConf);
+
+	
+	String getKeyColumn(JSONObject aRecord, RegistryConfiguration registryConf);
+	
 }

@@ -12,6 +12,7 @@ import java.util.List;
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.engines.qbe.registry.bo.RegistryConfiguration;
 import it.eng.spagobi.engines.qbe.registry.bo.RegistryConfiguration.Column;
+import it.eng.spagobi.engines.qbe.registry.bo.RegistryConfiguration.Configuration;
 import it.eng.spagobi.engines.qbe.registry.bo.RegistryConfiguration.Filter;
 import it.eng.spagobi.utilities.assertion.Assert;
 
@@ -34,11 +35,14 @@ public class RegistryConfigurationXMLParser {
 	public static String TAG_FILTER = "FILTER";
 	public static String TAG_COLUMNS = "COLUMNS";
 	public static String TAG_COLUMN = "COLUMN";
+	public static String TAG_CONFIGURATIONS = "CONFIGURATIONS";
+	public static String TAG_CONFIGURATION = "CONFIGURATION";
 
 	public static String ATTRIBUTE_NAME = "name";
 	public static String ATTRIBUTE_TITLE = "title";
 	public static String ATTRIBUTE_FIELD = "field";
 	public static String ATTRIBUTE_PRESENTATION = "presentation";
+	public static String ATTRIBUTE_VALUE = "value";
 	
 	public static String ATTRIBUTE_EDITOR = "editor";
 	public static String ATTRIBUTE_EDITABLE = "editable";
@@ -51,9 +55,12 @@ public class RegistryConfigurationXMLParser {
 	public static String ATTRIBUTE_COLUMN_SIZE = "size";
 	public static String ATTRIBUTE_SORTER = "sorter";
 	public static String ATTRIBUTE_UNSIGNED = "unsigned";
-
+	public static String  ATTRIBUTE_DRIVER_NAME = "driverName";
+	
 	public static String PRESENTATION_TYPE_MANUAL = "MANUAL";
 	public static String PRESENTATION_TYPE_COMBO = "COMBO";
+	public static String PRESENTATION_TYPE_DRIVER = "DRIVER";
+
 	
 	public static final String EDITOR_TYPE_TEXT = "TEXT";
 	public static final String EDITOR_TYPE_COMBO = "COMBO";
@@ -72,8 +79,10 @@ public class RegistryConfigurationXMLParser {
 			toReturn.setEntity(entity);
 			List<RegistryConfiguration.Filter> filters = parseFilters(entitySB, toReturn);
 			List<RegistryConfiguration.Column> columns = parseColumns(entitySB, toReturn);
+			List<RegistryConfiguration.Configuration> configurations = parseConfigurations(entitySB, toReturn);
 			toReturn.setFilters(filters);
 			toReturn.setColumns(columns);
+			toReturn.setConfigurations(configurations);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -93,15 +102,33 @@ public class RegistryConfigurationXMLParser {
 						.getAttribute(ATTRIBUTE_FIELD);
 				String title = (String) aFilter
 						.getAttribute(ATTRIBUTE_TITLE);
-				String presentationType = PRESENTATION_TYPE_COMBO
-						.equalsIgnoreCase((String) aFilter
-								.getAttribute(ATTRIBUTE_PRESENTATION)) ? Filter.PRESENTATION_TYPE_COMBO
-						: Filter.PRESENTATION_TYPE_MANUAL;
+				String presentationType = 
+						PRESENTATION_TYPE_COMBO.equalsIgnoreCase((String) aFilter.getAttribute(ATTRIBUTE_PRESENTATION)) ? 
+								Filter.PRESENTATION_TYPE_COMBO
+						: 
+							(
+									PRESENTATION_TYPE_DRIVER.equalsIgnoreCase((String) aFilter.getAttribute(ATTRIBUTE_PRESENTATION)) ? 
+											Filter.PRESENTATION_TYPE_DRIVER
+											: 
+											Filter.PRESENTATION_TYPE_MANUAL												
+									);
+							
+				String driverName = null;
+				if(presentationType.equals(Filter.PRESENTATION_TYPE_DRIVER)){
+					driverName = aFilter.getAttribute(ATTRIBUTE_DRIVER_NAME) != null ? aFilter.getAttribute(ATTRIBUTE_DRIVER_NAME).toString() : null;
+				}
+							
+
+				
+				
+				
 				logger.debug("Filter: title " + title + ", field " + field + ", presentation " + presentationType + "");
 				Assert.assertTrue(field != null && title != null, "A filter must contain at least attributes " + ATTRIBUTE_TITLE + " and " + ATTRIBUTE_FIELD);
 				filter.setField(field);
 				filter.setTitle(title);
 				filter.setPresentationType(presentationType);
+				filter.setDriverName(driverName);
+				
 				list.add(filter);
 			}
 		}
@@ -196,4 +223,37 @@ public class RegistryConfigurationXMLParser {
 	}
 
 
+	
+	
+	private List<Configuration> parseConfigurations(SourceBean entitySB, RegistryConfiguration toReturn) {
+		List<RegistryConfiguration.Configuration> list = new ArrayList<RegistryConfiguration.Configuration>();
+		
+		SourceBean configurationsSB = (SourceBean) entitySB.getAttribute(TAG_CONFIGURATIONS);
+		List configurations = configurationsSB == null ? null : configurationsSB.getAttributeAsList(TAG_CONFIGURATION);
+		if (configurations != null && configurations.size() > 0) {
+			Iterator it = configurations.iterator();
+			while (it.hasNext()) {
+				SourceBean aFilter = (SourceBean) it.next();
+				RegistryConfiguration.Configuration configuration = toReturn.new Configuration();
+				String name = (String) aFilter
+						.getAttribute(ATTRIBUTE_NAME);
+				String value = (String) aFilter
+						.getAttribute(ATTRIBUTE_VALUE);
+				
+				logger.debug("Configuration: name " + name + ", value " + value);
+				Assert.assertTrue(name != null && value != null, "A configuration must contain a name and a value");
+				configuration.setName(name);
+				configuration.setValue(value);
+				list.add(configuration);
+			}
+		}
+		return list;
+	}
+	
+	
+	
+	
+	
+	
+	
 }

@@ -10,6 +10,7 @@ import it.eng.spagobi.engines.qbe.QbeEngine;
 import it.eng.spagobi.engines.qbe.QbeEngineAnalysisState;
 import it.eng.spagobi.engines.qbe.QbeEngineInstance;
 import it.eng.spagobi.engines.qbe.registry.bo.RegistryConfiguration;
+import it.eng.spagobi.engines.qbe.registry.parser.RegistryConfigurationXMLParser;
 import it.eng.spagobi.engines.qbe.registry.serializer.RegistryConfigurationJSONSerializer;
 import it.eng.spagobi.engines.qbe.template.QbeTemplateParseException;
 import it.eng.spagobi.engines.worksheet.WorksheetEngineInstance;
@@ -18,10 +19,14 @@ import it.eng.spagobi.utilities.engines.AbstractEngineStartAction;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineStartupException;
 
+import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
+
+import com.ingres.gcf.jdbc.DrvRsrc;
 
 
 /**
@@ -40,7 +45,8 @@ public class QbeEngineStartAction extends AbstractEngineStartAction {
 	// SESSION PARAMETRES	
 	public static final String ENGINE_INSTANCE = EngineConstants.ENGINE_INSTANCE;
 	public static final String REGISTRY_CONFIGURATION = "REGISTRY_CONFIGURATION";
-	
+
+
 	
 	/** Logger component. */
     private static transient Logger logger = Logger.getLogger(QbeEngineStartAction.class);
@@ -110,7 +116,28 @@ public class QbeEngineStartAction extends AbstractEngineStartAction {
 				RegistryConfigurationJSONSerializer serializer = new RegistryConfigurationJSONSerializer();
 				JSONObject registryConfJSON = serializer.serialize(registryConf);
 				setAttribute(REGISTRY_CONFIGURATION, registryConfJSON);
-
+				
+				// add also serialization of drivers values
+//				List<RegistryConfiguration.Filter> filters = registryConf.getFilters();
+//				
+//				String driversStringToPass = "";
+//				for (Iterator iterator = filters.iterator(); iterator.hasNext();) {
+//					RegistryConfiguration.Filter filter = (RegistryConfiguration.Filter) iterator.next();
+//					if(filter.getPresentationType().equals(RegistryConfigurationXMLParser.PRESENTATION_TYPE_DRIVER)){
+//						String driverName = filter.getDriverName();
+//						
+//						Object values = getAttributeAsList(driverName);
+//						setAttribute(driverName, values);
+//						driversStringToPass+=driverName+": "+values+",";
+//					}
+//				}
+//				if(driversStringToPass.endsWith(",")) {
+//					int length = driversStringToPass.length();
+//					driversStringToPass = driversStringToPass.substring(0, length-1 );
+//				}
+//				if(!driversStringToPass.equals(""))setAttribute("ANALYTICAL_DRIVERS", driversStringToPass);
+//				
+				
 			}else{
 				logger.debug("Qbe document");
 				getServiceResponse().setAttribute("DOCTYPE", "QBE");
