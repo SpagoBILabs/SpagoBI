@@ -284,21 +284,24 @@ Ext.extend(Sbi.formbuilder.StaticCloseFilterWizard, Ext.Window, {
 	    		    dataIndex: 'alias',
 	    		    width: 75
 	    		}
-    		])
+    		]),
+    		width:250
     	});
     	this.leftOperandField.on('change', this.onFormStateChange, this);
     	items.push(this.leftOperandField);
     	
     	this.operatorField = new Sbi.qbe.FilterComboBox({
     		fieldLabel: LN('sbi.formbuilder.staticclosefilterwizard.fields.operator.label'),
-    		name: 'operator'
+    		name: 'operator',
+    		width:250
     	});
     	this.operatorField.on('change', this.onFormStateChange, this);
     	items.push(this.operatorField);
     	
     	this.rightOperandField = new Ext.form.TextField({
     		fieldLabel: LN('sbi.formbuilder.staticclosefilterwizard.fields.rightoperand.label'),
-			name:'rightOperand'
+			name:'rightOperand',
+			width:250
     	});
     	this.rightOperandField.on('change', this.onFormStateChange, this);
     	this.rightOperandField.on('keydown', this.onFormStateChangeX, this);    	
@@ -314,6 +317,7 @@ Ext.extend(Sbi.formbuilder.StaticCloseFilterWizard, Ext.Window, {
     		//, titleCollapse: true
     		//, collapsed: true
     		gridHeight: 140
+    		, width: 450
     		, gridStyle: 'padding:0px'
     		, sm: sm
     		, enableTbExpWizardBtn: false
@@ -343,7 +347,7 @@ Ext.extend(Sbi.formbuilder.StaticCloseFilterWizard, Ext.Window, {
     		frame:true,
     		labelWidth: 80,
     		defaults: {
-    			width: 225
+    			//width: 225
     		},
     	    bodyStyle:'padding:5px 5px 0',
     	    buttonAlign : 'center',
