@@ -353,7 +353,7 @@ Sbi.locale.ln['sbi.execution.executionpage.toolbar.view'] = 'View document';
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.edit'] = 'Edit';
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.breadcrumbback'] = 'Go back to previous document';
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.expand'] = 'Expand/Reduce';
-
+Sbi.locale.ln['sbi.execution.executionpage.tabs.overMaxNum']  = 'The number of open documents has reached the maximum. Close the previous run and re-execute the document.';
 
 Sbi.locale.ln['sbi.execution.viewpoints.title'] = 'Saved parameters';
 Sbi.locale.ln['sbi.execution.viewpoints.emptyText'] = '[Document has no saved parameters]';

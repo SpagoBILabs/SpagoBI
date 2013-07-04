@@ -602,6 +602,33 @@ Sbi.locale.ln['sbi.ds.isPersisted'] = 'Persistent';
 Sbi.locale.ln['sbi.ds.flat'] = 'Configuratione flat dataset';
 Sbi.locale.ln['sbi.ds.isFlatDataset'] = 'Dataset plat';
 Sbi.locale.ln['sbi.ds.flatTableName'] = 'Nom de la table';
+Sbi.locale.ln['sbi.ds.saved']= 'Data set correctement sauv\u00e9';
+Sbi.locale.ln['sbi.ds.deleted']= ' Data set correctement supprim\u00e9';
+Sbi.locale.ln['sbi.ds.wizard']= 'Dataset Wizard';
+Sbi.locale.ln['sbi.ds.label']= 'Libell\u00e9';
+Sbi.locale.ln['sbi.ds.name']= 'Nom';
+Sbi.locale.ln['sbi.ds.description']= 'Description';
+Sbi.locale.ln['sbi.ds.wizard.general']= 'G\u00e9n\u00e9ral';
+Sbi.locale.ln['sbi.ds.wizard.detail']= ' D\u00e9tail';
+Sbi.locale.ln['sbi.ds.wizard.metadata']= ' M\u00e9tadonn\u00e9es ';
+Sbi.locale.ln['sbi.ds.wizard.back']= '< Retour ';
+Sbi.locale.ln['sbi.ds.wizard.next']= ' Suivant >';
+Sbi.locale.ln['sbi.ds.wizard.confirm']= ' Confirmez ';
+Sbi.locale.ln['sbi.ds.wizard.cancel']= 'Annuler ';
+Sbi.locale.ln['sbi.ds.scope'] = 'Domaine;
+Sbi.locale.ln['sbi.ds.noDataset']= 'Pas de donn\u00e9es disponibles ';
+Sbi.locale.ln['sbi.ds.mandatoryFields']= 'S\'il vous plaît insérer le champ obligatoire!';
+Sbi.locale.ln['sbi.ds.noWorksheetDesigner']= 'Worksheet designer n\'est disponible sur dataset param\u00e9trique!';
+Sbi.locale.ln['sbi.ds.mandatoryUploadFile']= 'T\u00e9l\u00e9charger le fichier!';
+Sbi.locale.ln['sbi.ds.orderComboLabel']= 'Ordre par… ';
+Sbi.locale.ln['sbi.ds.filterLabel']= 'Filtrer par...';
+Sbi.locale.ln['sbi.ds.moreRecent']= ' R\u00e9cents';
+Sbi.locale.ln['sbi.ds.owner']= ' Auteur ';
+Sbi.locale.ln['sbi.ds.USED']= ' Le fichier est utilis\u00e9 par un autre ';
+Sbi.locale.ln['sbi.ds.EXISTS']= ' Le fichier existe d\u00e9jà';
+Sbi.locale.ln['sbi.ds.failedToUpload']= 'Impossible de t\u00e9l\u00e9charger ';
+Sbi.locale.ln['sbi.ds.skip.checks']='Ecraser';
+Sbi.locale.ln['sbi.ds.changedon']='Modifi\u00e9 ';
 
 //===================================================================
 //MESSAGE BOX BUTTONS

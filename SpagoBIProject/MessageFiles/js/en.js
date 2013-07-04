@@ -263,13 +263,9 @@ Sbi.locale.ln['sbi.browser.defaultRole.noDefRole']  = 'No default role';
 Sbi.locale.ln['sbi.browser.defaultRole.save']  = 'Save';
 Sbi.locale.ln['sbi.browser.defaultRole.cancel']  = 'Cancel';
 
-
 Sbi.locale.ln['sbi.execution.error']  = 'An error has occured while executing document';
 Sbi.locale.ln['sbi.execution.error.nodocid']  = 'Document id is required in order to execute a document';
 Sbi.locale.ln['sbi.execution.error.novalidrole']  = 'User have no valid roles for the execution of the selected document';
-
-
-
 
 Sbi.locale.ln['sbi.execution.roleselection.title']  = 'Role selection';
 Sbi.locale.ln['sbi.execution.roleselection.fieldlabel']  = 'Role';
@@ -308,6 +304,8 @@ Sbi.locale.ln['sbi.execution.executionpage.toolbar.saveas'] = 'Save as ...';
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.view'] = 'View document';
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.edit'] = 'Edit';
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.breadcrumbback'] = 'Go back to previous document';
+
+Sbi.locale.ln['sbi.execution.executionpage.tabs.overMaxNum']  = 'The number of open documents has reached the maximum. Close the previous run and re-execute the document.';
 
 
 Sbi.locale.ln['sbi.execution.viewpoints.title'] = 'Saved parameters';

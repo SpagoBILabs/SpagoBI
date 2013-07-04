@@ -287,6 +287,7 @@ Sbi.locale.ln['sbi.execution.executionpage.toolbar.saveas']='Enregistrer sous...
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.view']='Voir Document';
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.edit']='Editer';
 
+Sbi.locale.ln['sbi.execution.executionpage.tabs.overMaxNum']  = 'Le nombre de documents ouverts a atteint le maximum. Fermez la pr\u00E9c\u00E9dente ex\u00E9cution et r\u00E9ex\u00E9cuter le raport';
 
 Sbi.locale.ln['sbi.execution.viewpoints.title']='Param\u00E8tres Enregistr\u00E9s';
 Sbi.locale.ln['sbi.execution.viewpoints.emptyText']='[Le document n\'a pas de param\u00E8tres enregistr\u00E9s]';
@@ -563,8 +564,42 @@ Sbi.locale.ln['sbi.ds.pivotIsNumRows']='Numeration automatique des Colonnes?';
 Sbi.locale.ln['sbi.ds.openQbeQizard']='Ouvrir l\'assistant QbE';
 Sbi.locale.ln['sbi.ds.help']='Aide';
 Sbi.locale.ln['sbi.ds.pars']='Attributs de profil disponibles';
-Sbi.locale.ln['sbi.ds.recalculatemetadataconfirm.title'] = 'Recalculate metadata?';
-Sbi.locale.ln['sbi.ds.recalculatemetadataconfirm.msg'] = 'Do you want the system to recalculate dataset\'s metadata? (the dataset will be executed by the system: this is required if you modified the dataset significantly)';
+Sbi.locale.ln['sbi.ds.recalculatemetadataconfirm.title'] = 'Recalculer les métadonnées?';
+Sbi.locale.ln['sbi.ds.recalculatemetadataconfirm.msg'] = 'Voulez-vous que le système recalcule les métadonnées? (l\'ensemble des données sera exécuté par le système: cela est nécessaire si vous avez modifié l\'ensemble des données de manière significative)';
+Sbi.locale.ln['sbi.ds.advancedTab'] = 'Avancème';
+Sbi.locale.ln['sbi.ds.helpAdvanced'] = 'Aide';
+Sbi.locale.ln['sbi.ds.persist'] = 'Configuration de dataset persistants';
+Sbi.locale.ln['sbi.ds.isPersisted'] = 'Persistent';
+Sbi.locale.ln['sbi.ds.flat'] = 'Configuratione flat dataset';
+Sbi.locale.ln['sbi.ds.isFlatDataset'] = 'Dataset plat';
+Sbi.locale.ln['sbi.ds.flatTableName'] = 'Nom de la table';
+Sbi.locale.ln['sbi.ds.saved']= 'Data set correctement sauvé';
+Sbi.locale.ln['sbi.ds.deleted']= ' Data set correctement supprimé';
+Sbi.locale.ln['sbi.ds.wizard']= 'Dataset Wizard';
+Sbi.locale.ln['sbi.ds.label']= 'Libellé';
+Sbi.locale.ln['sbi.ds.name']= 'Nom';
+Sbi.locale.ln['sbi.ds.description']= 'Description';
+Sbi.locale.ln['sbi.ds.wizard.general']= 'Général';
+Sbi.locale.ln['sbi.ds.wizard.detail']= ' Détail';
+Sbi.locale.ln['sbi.ds.wizard.metadata']= ' Métadonnées ';
+Sbi.locale.ln['sbi.ds.wizard.back']= '< Retour ';
+Sbi.locale.ln['sbi.ds.wizard.next']= ' Suivant >';
+Sbi.locale.ln['sbi.ds.wizard.confirm']= ' Confirmez ';
+Sbi.locale.ln['sbi.ds.wizard.cancel']= 'Annuler ';
+Sbi.locale.ln['sbi.ds.scope'] = 'Domaine;
+Sbi.locale.ln['sbi.ds.noDataset']= 'Pas de données disponibles ';
+Sbi.locale.ln['sbi.ds.mandatoryFields']= S'il vous plaît insérer le champ obligatoire!';
+Sbi.locale.ln['sbi.ds.noWorksheetDesigner']= 'Worksheet designer n\'est disponible sur dataset paramétrique!';
+Sbi.locale.ln['sbi.ds.mandatoryUploadFile']= 'Télécharger le fichier!';
+Sbi.locale.ln['sbi.ds.orderComboLabel']= 'Ordre par… ';
+Sbi.locale.ln['sbi.ds.filterLabel']= 'Filtrer par...';
+Sbi.locale.ln['sbi.ds.moreRecent']= ' Récents';
+Sbi.locale.ln['sbi.ds.owner']= ' Auteur ';
+Sbi.locale.ln['sbi.ds.USED']= ' Le fichier est utilisé par un autre ';
+Sbi.locale.ln['sbi.ds.EXISTS']= ' Le fichier existe déjà';
+Sbi.locale.ln['sbi.ds.failedToUpload']= 'Impossible de télécharger ';
+Sbi.locale.ln['sbi.ds.skip.checks']='Ecraser';
+Sbi.locale.ln['sbi.ds.changedon']='Modifié ';
 
 
 //===================================================================
