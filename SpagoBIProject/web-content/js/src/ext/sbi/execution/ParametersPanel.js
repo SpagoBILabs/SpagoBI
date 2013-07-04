@@ -253,11 +253,11 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 			
 			this.viewpointsPanel.on('executionrequest', function(viewpoint) {
 				thisPanel.fireEvent('viewpointexecutionrequest', viewpoint);
-				thisPanel.showViewpointWin.close();
+				thisPanel.showViewpointWin.hide();
 		    }, this);
 			this.viewpointsPanel.on('applyviewpoint', function(viewpoint) {
 				thisPanel.applyViewPoint(viewpoint);
-				thisPanel.showViewpointWin.close();
+				thisPanel.showViewpointWin.hide();
 		    }, this);
 		}
 	}
