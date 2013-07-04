@@ -70,7 +70,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 	input.login    {
 	display:block;
 	border: 1px solid #a9a9a9; 
-	color: #908989;
+	color: #7b7575;
 	background: #d4d4d4; 
 	height: 25px;
 	width: 300px;
@@ -136,7 +136,7 @@ a:hover{
       		<table border=0>
       			<tr>
 						<td></td>
-						<td><img src='<%=urlBuilder.getResourceLinkByTheme(request, "/img/wapp/spagobi40logo.png", currTheme)%>' width='150px' height='51px'/></td>
+						<td><img src='<%=urlBuilder.getResourceLinkByTheme(request, "/img/wapp/spagobi40logo.png", currTheme)%>' width='180px' height='51px'/></td>
 						<td></td>
 					</tr>
       			<tr>
