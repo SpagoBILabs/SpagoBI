@@ -263,11 +263,11 @@ Sbi.locale.ln['sbi.execution.parametersselection.toolbar.clear']='r\u00E9initial
 Sbi.locale.ln['sbi.execution.parametersselection.toolbar.save']='Enregistrer les param\u00E8tres comme vue pr\u00E9d\u00E9finie';
 Sbi.locale.ln['sbi.execution.parametersselection.toolbar.next']='ex\u00E9cuter le document';
 Sbi.locale.ln['sbi.execution.parametersselection.message.page2.fillFormAndExecute']='Remplir le formulaire ci-dessous et cliquer sur le bouton ex\u00E9cuter pour lancer le document';
-Sbi.locale.ln['sbi.execution.parametersselection.message.page2.execute']='Cliquer sur le bouton pour ex\u00E9cuter le document';
-Sbi.locale.ln['sbi.execution.parametersselection.message.page2.qbe.powerUserMessageWithoutParameters']='Cliquer sur le bouton pour ex\u00E9cuter le document principal ou double-cliquer sur les vues customiz\u00E9es dans la liste ci-dessous';
-Sbi.locale.ln['sbi.execution.parametersselection.message.page2.qbe.powerUserMessageWithParameters']='Remplir la forme ci-dessous et cliquer sur le bouton pour ex\u00E9cuter le document principal ou double-cliquer sur les vues customiz\u00E9es dans la liste ci-dessous';
-Sbi.locale.ln['sbi.execution.parametersselection.message.page2.qbe.readOnlyUserMessageWithoutParameters']='Impossible d\'ex\u00E9cuter le document principal. Double-cliquez sur les vues customiz\u00E9es dans la liste dessous';
-Sbi.locale.ln['sbi.execution.parametersselection.message.page2.qbe.readOnlyUserMessageWithParameters']='Impossible d\'ex\u00E9cuter le document principal. Remplissez le formulaire ci-dessous et double-cliquer sur la vue customiz\u00E9e dans la liste ci-dessous';
+Sbi.locale.ln['sbi.execution.parametersselection.message.page2.execute']  = 'Click on the execution button to see results';
+Sbi.locale.ln['sbi.execution.parametersselection.message.page2.qbe.powerUserMessageWithoutParameters']  = 'Click on the execution button to see results';
+Sbi.locale.ln['sbi.execution.parametersselection.message.page2.qbe.powerUserMessageWithParameters']  = 'Fill the form below, then click on the top-right button to execute the main document or execute a saved query from the customized views\' list';
+Sbi.locale.ln['sbi.execution.parametersselection.message.page2.qbe.readOnlyUserMessageWithoutParameters']  = 'Click on the execution button to see results';
+Sbi.locale.ln['sbi.execution.parametersselection.message.page2.qbe.readOnlyUserMessageWithParameters']  = 'Fill the form below and click on the execution button to see results';
 Sbi.locale.ln['sbi.execution.parametersselection.message.page3.fillFormAndRefresh']='Remplir le formulaire ci-dessous et cliquer sur le bouton actualiser dans la barre d\'outil pour re-ex\u00E9cuter le document';
 Sbi.locale.ln['sbi.execution.parametersselection.message.page3.refresh']='cliquer sur le bouton actualiser dans la toolbar pour re-ex\u00E9cuter le document';
 
