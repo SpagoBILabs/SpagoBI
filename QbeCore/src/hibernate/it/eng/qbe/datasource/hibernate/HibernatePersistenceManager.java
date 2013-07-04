@@ -200,4 +200,22 @@ public class HibernatePersistenceManager implements IPersistenceManager {
 		return result.get(0);
 	}
 
+	public Integer insertRecord(JSONObject aRecord,
+			RegistryConfiguration registryConf, boolean autoLoadPK) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public void deleteRecord(JSONObject aRecord,
+			RegistryConfiguration registryConf) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public String getKeyColumn(JSONObject aRecord,
+			RegistryConfiguration registryConf) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

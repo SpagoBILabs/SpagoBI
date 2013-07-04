@@ -19,8 +19,11 @@ public class RegistryConfiguration {
 
 	public static transient Logger logger = Logger.getLogger(RegistryConfiguration.class);
 	
+	private String keyField = null;
+	
 	private List<Filter> filters = null;
 	private List<Column> columns = null;
+	private List<Configuration> configurations = null;
 
 	private String entity = null;
 	private String columnsMaxSize = null;
@@ -58,6 +61,24 @@ public class RegistryConfiguration {
 		this.columns = columns;
 	}
 	
+	
+	
+	public List<Configuration> getConfigurations() {
+		return configurations;
+	}
+
+	public void setConfigurations(List<Configuration> configurations) {
+		this.configurations = configurations;
+	}
+
+	public String getKeyField() {
+		return keyField;
+	}
+
+	public void setKeyField(String keyField) {
+		this.keyField = keyField;
+	}
+
 	public Column getColumnConfiguration(String fieldName) {
 		if (this.columns == null || this.columns.size() == 0) {
 			logger.warn("No columns are defined. Column for field " + fieldName + " not found");
@@ -73,18 +94,42 @@ public class RegistryConfiguration {
 		logger.warn("Column for field " + fieldName + " not found");
 		return null;
 	}
+	
+	
+	
+	public String getConfiguration(String name) {
+		String toReturn = null;
+		boolean found = false;
+		for (Iterator iterator = configurations.iterator(); iterator.hasNext() && !found;) {
+			Configuration conf = (Configuration) iterator.next();
+			if(conf.getName().equalsIgnoreCase(name)){
+				found = true;
+				toReturn = conf.getValue();
+			}
+		}
+		return toReturn;
+	}
+	
+	
+	
 
 	public class Filter {
 		
 		public static final String PRESENTATION_TYPE_MANUAL = "MANUAL";
 		
 		public static final String PRESENTATION_TYPE_COMBO = "COMBO";
+
+		public static final String PRESENTATION_TYPE_DRIVER = "DRIVER";
+
 		
 		private String title = null;
 
 		private String presentationType = PRESENTATION_TYPE_MANUAL;
 		
 		private String field = null;
+		
+		private String driverName = null;
+		
 		
 		public String getTitle() {
 			return title;
@@ -109,8 +154,48 @@ public class RegistryConfiguration {
 		public void setField(String field) {
 			this.field = field;
 		}
+
+		public String getDriverName() {
+			return driverName;
+		}
+
+		public void setDriverName(String driverName) {
+			this.driverName = driverName;
+		}
+
 		
 	}
+	
+	public class Configuration {
+		
+		public static final String  ENABLE_BUTTONs= "enableButtons";
+		
+		public static final String IS_PK_AUTO_LOAD = "isPkAutoLoad";
+
+		
+		private String name = null;
+
+		private String value = null;
+
+		public String getName() {
+			return name;
+		}
+
+		public void setName(String name) {
+			this.name = name;
+		}
+
+		public String getValue() {
+			return value;
+		}
+
+		public void setValue(String value) {
+			this.value = value;
+		}
+		
+	}
+	
+	
 	
 	public class Column {
 		
@@ -231,5 +316,11 @@ public class RegistryConfiguration {
 		}
 		
 	}
+	
+	
+	
+	
+	
+	
 	
 }

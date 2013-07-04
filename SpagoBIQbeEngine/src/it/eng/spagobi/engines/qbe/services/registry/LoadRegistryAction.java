@@ -9,21 +9,34 @@ import it.eng.qbe.datasource.IDataSource;
 import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.model.structure.IModelField;
 import it.eng.qbe.model.structure.IModelStructure;
+import it.eng.qbe.query.CriteriaConstants;
+import it.eng.qbe.query.ExpressionNode;
 import it.eng.qbe.query.Query;
+import it.eng.qbe.query.WhereField;
+import it.eng.qbe.statement.AbstractStatement;
 import it.eng.qbe.statement.IStatement;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
 import it.eng.spagobi.engines.qbe.QbeEngineInstance;
 import it.eng.spagobi.engines.qbe.registry.bo.RegistryConfiguration;
 import it.eng.spagobi.engines.qbe.registry.bo.RegistryConfiguration.Column;
+import it.eng.spagobi.engines.qbe.registry.bo.RegistryConfiguration.Filter;
+import it.eng.spagobi.engines.qbe.registry.parser.RegistryConfigurationXMLParser;
 import it.eng.spagobi.engines.qbe.registry.serializer.RegistryJSONDataWriter;
 import it.eng.spagobi.engines.qbe.services.core.ExecuteQueryAction;
 import it.eng.spagobi.engines.qbe.template.QbeTemplate;
+import it.eng.spagobi.services.proxy.ContentServiceProxy;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.utilities.ParametersDecoder;
+import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Vector;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -57,8 +70,11 @@ public class LoadRegistryAction extends ExecuteQueryAction {
 	
 	@Override
 	public void service(SourceBean request, SourceBean response)  {
+
 		try {
+			if(!request.containsAttribute(START))
 			request.setAttribute(START, new Integer(0));
+			if(!request.containsAttribute(LIMIT))
 			request.setAttribute(LIMIT, Integer.MAX_VALUE);
 		} catch (SourceBeanException e) {
 			throw new SpagoBIEngineServiceException(getActionName(), e);
@@ -139,6 +155,9 @@ public class LoadRegistryAction extends ExecuteQueryAction {
 		logger.debug("IN");
 		Query query = null;
 		try {
+			QbeEngineInstance qbeEngineInstance = getEngineInstance();
+			Map env = qbeEngineInstance.getEnv();
+			
 			query = new Query();
 			query.setDistinctClauseEnabled(false);
 			IModelEntity entity = getSelectedEntity();
@@ -150,6 +169,9 @@ public class LoadRegistryAction extends ExecuteQueryAction {
 			columnMaxSize = registryConfig.getColumnsMaxSize();
 			Iterator<Column> it = columns.iterator();
 			String orderCol = null;
+			
+			Map<String, String> fieldNameIdMap = new HashMap<String, String>();
+			
 			while (it.hasNext()) {
 				Column column = it.next();
 				getMandatoryMetadata(column);
@@ -164,13 +186,141 @@ public class LoadRegistryAction extends ExecuteQueryAction {
 						name = field.getName();
 					}
 					query.addSelectFiled(field.getUniqueName(), "NONE", field.getName(), true, true, false, orderCol, field.getPropertyAsString("format"));
+					fieldNameIdMap.put(column.getField(), field.getUniqueName());
 				}
 			}
+			
+			// get Drivers and filters
+			
+			List<RegistryConfiguration.Filter> filters =  registryConfig.getFilters();
+			int i= 0;
+			ArrayList<ExpressionNode> expressionNodes = new ArrayList<ExpressionNode>();
+			for (Iterator iterator = filters.iterator(); iterator.hasNext();) {
+				Filter filter = (Filter) iterator.next();
+				addFilter(i, query, env, fieldNameIdMap, filter, expressionNodes);
+				i++;
+			}
+			// put together expression nodes
+			if(expressionNodes.size()==1){
+				query.setWhereClauseStructure(expressionNodes.get(0));
+			}
+			else if(expressionNodes.size()>1){
+				ExpressionNode exprNodeAnd = new ExpressionNode("NODE_OP", "AND");
+				exprNodeAnd.setChildNodes(expressionNodes);
+				query.setWhereClauseStructure(exprNodeAnd);
+			}
+			
 		} finally {
 			logger.debug("OUT");
 		}
 		return query;
 	}
+	
+	
+	private void addSort(int i, Query query, Map env, Map<String,String> fieldNameIdMap,Filter filter, ArrayList<ExpressionNode> expressionNodes) {
+		logger.debug("IN");
+		if(requestContainsAttribute("sort")){
+			String sortField = getAttributeAsString("sort");
+			logger.debug("Sort by "+sortField);
+
+			//query.getO
+			
+			
+			// sorting by 
+			
+		}
+		
+		logger.debug("OUT");		
+	}
+
+	private void addFilter(int i, Query query, Map env, Map<String,String> fieldNameIdMap,Filter filter, ArrayList<ExpressionNode> expressionNodes) {
+		logger.debug("IN");
+		
+		ExpressionNode node = query.getWhereClauseStructure();
+		ExpressionNode nodeToInsert = new ExpressionNode("NODE_OP", "AND");
+
+		// in case it is a driver
+		if(filter.getPresentationType().equals(RegistryConfigurationXMLParser.PRESENTATION_TYPE_DRIVER)){
+			String driverName = filter.getDriverName();
+			String fieldName = filter.getField(); 
+
+			Object value = env.get(driverName);
+			
+			if(value != null && !value.toString().equals("")){
+				
+				//TODO, change this behaviour
+				if(value.toString().contains(",")){
+					value = "{,{"+value+"}}";
+				}
+				List valuesList = new ParametersDecoder().decode(value.toString());
+				String[] valuesArr = new String[valuesList.size()];
+				
+				for (int j = 0; j < valuesList.size(); j++) {
+					String val = valuesList.get(j).toString();
+					valuesArr[j] = val;
+				}
+				
+				logger.debug("Set filter from analytical deriver "+driverName+": "+filter.getField()+"="+value);
+
+				String fieldId = fieldNameIdMap.get(fieldName);
+				String[] fields = new String[]{fieldId};
+				WhereField.Operand left = new WhereField.Operand(fields, "driverName", AbstractStatement.OPERAND_TYPE_SIMPLE_FIELD, null, null);
+
+				WhereField.Operand right = new WhereField.Operand(valuesArr, "value", AbstractStatement.OPERAND_TYPE_STATIC, null, null);
+
+				if(valuesArr.length>1){
+					query.addWhereField("Driver_"+i, driverName, false, left, CriteriaConstants.IN, right, "AND");						
+				}
+				else{
+					query.addWhereField("Driver_"+i, driverName, false, left, CriteriaConstants.EQUALS_TO, right, "AND");					
+				}
+							
+				ExpressionNode newFilterNode = new ExpressionNode("NODE_CONST", "$F{" + "Driver_"+i + "}");
+				//query.setWhereClauseStructure(newFilterNode);
+				expressionNodes.add(newFilterNode);
+			}
+			
+			//query.setWhereClauseStructure(whereClauseStructure)
+		}
+		// in case it is a filter and has a value setted
+		else if(requestContainsAttribute(filter.getField())){
+
+			String value = getAttribute(filter.getField()).toString();			
+			if(value != null && !value.equalsIgnoreCase("")){
+				logger.debug("Set filter "+filter.getField()+"="+value);
+
+				String fieldId = fieldNameIdMap.get(filter.getField());
+				String[] fields = new String[]{fieldId};
+				String[] values = new String[]{value};
+				
+				WhereField.Operand left = new WhereField.Operand(fields, "filterName", AbstractStatement.OPERAND_TYPE_SIMPLE_FIELD, null, null);
+
+				WhereField.Operand right = new WhereField.Operand(values, "value", AbstractStatement.OPERAND_TYPE_STATIC, null, null);
+
+				// if filter type is manual use it as string starting, else as equals
+				if(filter.getPresentationType().equals(RegistryConfigurationXMLParser.PRESENTATION_TYPE_COMBO)){
+					query.addWhereField("Filter_"+i, filter.getField(), false, left, CriteriaConstants.EQUALS_TO, right, "AND");
+				}
+				else{
+					query.addWhereField("Filter_"+i, filter.getField(), false, left, CriteriaConstants.STARTS_WITH, right, "AND");					
+				}
+							
+				ExpressionNode newFilterNode = new ExpressionNode("NODE_CONST", "$F{" + "Filter_"+i + "}");
+				//query.setWhereClauseStructure(newFilterNode);
+				expressionNodes.add(newFilterNode);
+
+			}
+		}
+		logger.debug("OUT");
+	}
+
+	
+	
+	
+	
+	
+	
+	
 
 	private IModelField getColumnModelField(Column column, IModelEntity entity) {
 		if (column.getSubEntity() != null) { // in case it is a subEntity attribute, look for the field inside it

@@ -14,5 +14,11 @@
 		<CONFIG></CONFIG>
 	</ACTION>
 	
+	   <ACTION name="DELETE_RECORDS_ACTION" 
+            class="it.eng.spagobi.engines.qbe.services.registry.DeleteRecordsAction" 
+            scope="REQUEST">
+        <CONFIG></CONFIG>
+    </ACTION>
+	
 </ACTIONS>
 

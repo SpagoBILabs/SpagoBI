@@ -212,6 +212,14 @@ font-weight:bold;
 	background-image: url('../img/formviewer/clear16.gif') !important;
 }
 
+.icon-add {
+    background-image:url(../img/actions/add.gif) !important;
+}
+
+.icon-delete {
+    background-image:url(../img/actions/delete.gif) !important;
+}
+
 
 
 /*******************************************************************************************************

@@ -75,11 +75,44 @@ Ext.extend(Sbi.registry.RegistryPanel, Ext.Panel, {
 	registryConfiguration : null
 	
 	, init: function () {
+		
+		
+		this.warningMessageItem = new Ext.Toolbar.TextItem('<font color="red">' 
+				+ LN('sbi.qbe.datastorepanel.grid.beforeoverflow') 
+				//+ ' [' + Sbi.config.queryLimit.maxRecords + '] '
+				+ LN('sbi.qbe.datastorepanel.grid.afteroverflow') 
+				+ '</font>');
+		
+		this.pagingTBar = new Ext.PagingToolbar({
+            pageSize: 25,
+            store: this.store,
+            displayInfo: true,
+            displayMsg: LN('sbi.qbe.datastorepanel.grid.displaymsg'),
+            emptyMsg: LN('sbi.qbe.datastorepanel.grid.emptymsg'),
+            beforePageText: LN('sbi.qbe.datastorepanel.grid.beforepagetext'),
+            afterPageText: LN('sbi.qbe.datastorepanel.grid.afterpagetext'),
+            firstText: LN('sbi.qbe.datastorepanel.grid.firsttext'),
+            prevText: LN('sbi.qbe.datastorepanel.grid.prevtext'),
+            nextText: LN('sbi.qbe.datastorepanel.grid.nexttext'),
+            lastText: LN('sbi.qbe.datastorepanel.grid.lasttext'),
+            refreshText: LN('sbi.qbe.datastorepanel.grid.refreshtext')
+
+        });
+		this.pagingTBar.on('render', function() {
+			this.pagingTBar.addItem(this.warningMessageItem);
+			this.warningMessageItem.setVisible(false);
+		}, this);
+		
+		
+		
+		
+		
+		
 		this.registryGridPanel = new Sbi.registry.RegistryEditorGridPanel({
 			registryConfiguration : this.registryConfiguration || {}
 		});
 		this.registryGridPanel.on('afterrender', function () {
-			this.registryGridPanel.load();
+			this.registryGridPanel.load({});
 		}, this);
 	}
 

@@ -23,6 +23,7 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
+import javax.persistence.Query;
 import javax.persistence.metamodel.Attribute;
 import javax.persistence.metamodel.Attribute.PersistentAttributeType;
 import javax.persistence.metamodel.EntityType;
@@ -53,6 +54,184 @@ public class JPAPersistenceManager implements IPersistenceManager {
 		this.dataSource = dataSource;
 	}
 
+	
+	
+	public String getKeyColumn(JSONObject aRecord, RegistryConfiguration registryConf){
+		String toReturn = null;
+
+		logger.debug("IN");
+		EntityManager entityManager = null;
+		try {
+			Assert.assertNotNull(aRecord, "Input parameter [record] cannot be null");
+			Assert.assertNotNull(aRecord, "Input parameter [registryConf] cannot be null");
+			
+			logger.debug("New record: " + aRecord.toString(3));
+			logger.debug("Target entity: " + registryConf.getEntity());
+			
+			entityManager = dataSource.getEntityManager();
+			Assert.assertNotNull(entityManager, "entityManager cannot be null");
+						
+			EntityType targetEntity = getTargetEntity(registryConf, entityManager);
+			String keyAttributeName = getKeyAttributeName(targetEntity);
+			logger.debug("Key attribute name is equal to " + keyAttributeName);	
+
+			toReturn = keyAttributeName;
+			
+		} catch (Throwable t) {
+			logger.error(t);
+			throw new SpagoBIRuntimeException("Error searching for key column", t);
+		} finally {
+			if ( entityManager != null ) {
+				if ( entityManager.isOpen() ) {
+					entityManager.close();
+				}
+			}
+		}
+		
+		logger.debug("OUT");		
+		return toReturn;
+		}
+	
+	private synchronized Integer getPKValue(EntityType targetEntity, String keyColumn, EntityManager entityManager){
+		logger.debug("IN");	
+		Integer toReturn = 0;
+		String name = targetEntity.getName();
+
+		Query maxQuery = entityManager.createQuery("SELECT max(p."+keyColumn+") as c FROM "+targetEntity.getName()+" p");
+	
+		
+		Object result = maxQuery.getSingleResult();
+		
+		if(result != null){
+			toReturn = Integer.valueOf(result.toString());
+			toReturn++;
+		}
+		
+		logger.debug("New PK is "+toReturn);
+		logger.debug("OUT");	
+		return toReturn;
+	}
+	
+	
+	
+	public Integer insertRecord(JSONObject aRecord, RegistryConfiguration registryConf, boolean autoLoadPK) {
+		
+		EntityTransaction entityTransaction = null;
+		Integer toReturn = null;
+		
+		logger.debug("IN");
+		EntityManager entityManager = null;
+		try {
+			Assert.assertNotNull(aRecord, "Input parameter [record] cannot be null");
+			Assert.assertNotNull(aRecord, "Input parameter [registryConf] cannot be null");
+			
+			logger.debug("New record: " + aRecord.toString(3));
+			logger.debug("Target entity: " + registryConf.getEntity());
+			
+			entityManager = dataSource.getEntityManager();
+			Assert.assertNotNull(entityManager, "entityManager cannot be null");
+			
+			entityTransaction = entityManager.getTransaction();
+			
+			EntityType targetEntity = getTargetEntity(registryConf, entityManager);
+			String keyAttributeName = getKeyAttributeName(targetEntity);
+			logger.debug("Key attribute name is equal to " + keyAttributeName);
+// 			targetEntity.getI
+			
+//			if(autoLoadPK == true){
+//				//remove key attribute
+//				aRecord.remove(keyAttributeName);
+//			}
+			
+			Iterator it = aRecord.keys(); 
+
+			Object newObj = null;
+			Class classToCreate = targetEntity.getJavaType();
+
+			newObj = classToCreate.newInstance();
+			logger.debug("Key column class is equal to [" + newObj.getClass().getName() + "]");
+				
+			while (it.hasNext()) {
+				String attributeName = (String) it.next();
+				logger.debug("Processing column [" + attributeName + "] ...");
+				
+				if (keyAttributeName.equals(attributeName)) {
+					logger.debug("Skip column [" + attributeName + "] because it is the key of the table");
+					continue;
+				}
+				Column column = registryConf.getColumnConfiguration(attributeName);
+				
+				if (column.getSubEntity() != null) {
+					logger.debug("Column [" + attributeName + "] is a foreign key");
+					if(aRecord.get(attributeName) != null && !aRecord.get(attributeName).equals("")){
+						logger.debug("search foreign reference for value "+aRecord.get(attributeName));
+						manageForeignKey(targetEntity, column, newObj, attributeName, aRecord, entityManager);					
+					}
+					else{
+						// no value in column, insert null
+						logger.debug("No value for "+attributeName+": keep it null");
+					}
+					
+				} else {
+					logger.debug("Column [" + attributeName + "] is a normal column");
+					manageProperty(targetEntity, newObj, attributeName, aRecord);
+				}
+			}
+			
+			// calculate PK
+			if(true || autoLoadPK == false){
+				String keyColumn = getKeyColumn(aRecord, registryConf);
+				logger.debug("calculate max value +1 for key column "+keyColumn+" in table "+targetEntity.getName());
+				Integer pkValue = getPKValue(targetEntity, keyColumn, entityManager);
+				setKeyProperty(targetEntity, newObj, keyColumn, pkValue);
+				toReturn = pkValue;
+			}
+			
+			if(!entityTransaction.isActive()){
+				entityTransaction.begin();
+			}
+			
+	
+			entityManager.persist(newObj);
+			entityManager.flush();				    
+			entityTransaction.commit();
+		
+			
+			
+		} catch (Throwable t) {
+			if ( entityTransaction != null && entityTransaction.isActive() ) {
+				entityTransaction.rollback();
+			}
+			logger.error(t);
+			throw new SpagoBIRuntimeException("Error saving entity", t);
+		} finally {
+			if ( entityManager != null ) {
+				if ( entityManager.isOpen() ) {
+					entityManager.close();
+				}
+			}
+			logger.debug("OUT");
+		}
+		return toReturn;
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	public void updateRecord(JSONObject aRecord, RegistryConfiguration registryConf) {
 		
 		EntityTransaction entityTransaction = null;
@@ -83,7 +262,7 @@ public class JPAPersistenceManager implements IPersistenceManager {
 			Attribute a = targetEntity.getAttribute(keyAttributeName);
 			Object obj = entityManager.find(targetEntity.getJavaType(), this.convertValue(keyColumnValue, a));
 			logger.debug("Key column class is equal to [" + obj.getClass().getName() + "]");
-				
+
 			while (it.hasNext()) {
 				String attributeName = (String) it.next();
 				logger.debug("Processing column [" + attributeName + "] ...");
@@ -128,6 +307,88 @@ public class JPAPersistenceManager implements IPersistenceManager {
 		}
 		
 	}
+	
+	
+	
+	
+public void deleteRecord(JSONObject aRecord, RegistryConfiguration registryConf) {
+		
+		EntityTransaction entityTransaction = null;
+		
+		logger.debug("IN");
+		EntityManager entityManager = null;
+		try {
+			Assert.assertNotNull(aRecord, "Input parameter [record] cannot be null");
+			Assert.assertNotNull(aRecord, "Input parameter [registryConf] cannot be null");
+			
+			logger.debug("Record: " + aRecord.toString(3));
+			logger.debug("Target entity: " + registryConf.getEntity());
+			
+			entityManager = dataSource.getEntityManager();
+			Assert.assertNotNull(entityManager, "entityManager cannot be null");
+			
+			entityTransaction = entityManager.getTransaction();
+			
+			EntityType targetEntity = getTargetEntity(registryConf, entityManager);
+			String keyAttributeName = getKeyAttributeName(targetEntity);
+			logger.debug("Key attribute name is equal to " + keyAttributeName);
+			
+			Iterator it = aRecord.keys();
+				
+			Object keyColumnValue = aRecord.get(keyAttributeName);
+			logger.debug("Key of record is equal to " + keyColumnValue);
+			logger.debug("Key column java type equal to [" + targetEntity.getJavaType() + "]");
+			Attribute a = targetEntity.getAttribute(keyAttributeName);
+			Object obj = entityManager.find(targetEntity.getJavaType(), this.convertValue(keyColumnValue, a));
+			logger.debug("Key column class is equal to [" + obj.getClass().getName() + "]");
+
+			if(!entityTransaction.isActive()){
+				entityTransaction.begin();
+			}
+			
+			//String q = "DELETE from "+targetEntity.getName()+" o WHERE o."+keyAttributeName+"="+keyColumnValue.toString();
+			String q = "DELETE from "+targetEntity.getName()+" WHERE "+keyAttributeName+"="+keyColumnValue.toString();
+			logger.debug("create Query "+q);
+			Query deleteQuery = entityManager.createQuery(q);
+			
+			
+			int deleted = deleteQuery.executeUpdate();
+		
+			
+//			entityManager.remove(obj);
+//			entityManager.flush();				    
+			entityTransaction.commit();
+			
+					
+		} catch (Throwable t) {
+			if ( entityTransaction != null && entityTransaction.isActive() ) {
+				entityTransaction.rollback();
+			}
+			logger.error(t);
+			throw new SpagoBIRuntimeException("Error deleting entity", t);
+		} finally {
+			if ( entityManager != null ) {
+				if ( entityManager.isOpen() ) {
+					entityManager.close();
+				}
+			}
+			logger.debug("OUT");
+		}
+		
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	public EntityType getTargetEntity(RegistryConfiguration registryConf, EntityManager entityManager) {
 		
@@ -224,6 +485,27 @@ public class JPAPersistenceManager implements IPersistenceManager {
 		}
 	}
 	
+	
+	private void setKeyProperty(EntityType targetEntity, Object obj, String aKey, Integer value) {
+		
+		logger.debug("IN");
+		
+		try {
+			Attribute a = targetEntity.getAttribute(aKey);
+			Class clas = targetEntity.getJavaType();
+			Field f =clas.getDeclaredField(aKey);
+			f.setAccessible(true);
+			Object valueConverted = this.convertValue(value, a);			
+			f.set(obj, valueConverted);
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException("Error setting Field " + aKey + "", e);
+		}  finally {
+			logger.debug("OUT");
+		}
+	}
+	
+	
+	
 	private String getTargetEntityName(RegistryConfiguration registryConf) {
 		String entityName = registryConf.getEntity();
 		int lastPkgDot = entityName.lastIndexOf(".");
@@ -243,7 +525,7 @@ public class JPAPersistenceManager implements IPersistenceManager {
 		logger.error("Field type: " + clazzName);
 		
 		if( Number.class.isAssignableFrom(clazz) ) {
-			if(value.equals("NaN") || value.equals("null")){
+			if(value.equals("NaN") || value.equals("null") || value.equals("")){
 				toReturn = null;
 				return toReturn;
 			}
@@ -279,13 +561,20 @@ public class JPAPersistenceManager implements IPersistenceManager {
 			}else
 				toReturn = value;
 		} else if( Timestamp.class.isAssignableFrom(clazz) ) {
+			Date date;
 			SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
+			//SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss");
+			if(!value.equals("") && !value.contains(":")){
+				value+= " 00:00:00";
+			}
 			try {
-				toReturn = sdf.parse(value);
+				date = sdf.parse(value);
+				toReturn = new Timestamp(date.getTime());
+
 			} catch (ParseException e) {
 				logger.error("Unparsable timestamp", e);
 			}
-
+			
 		} else if( Date.class.isAssignableFrom(clazz) ) {
 			// TODO manage dates
 			SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");

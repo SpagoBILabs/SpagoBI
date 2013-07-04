@@ -30,15 +30,15 @@ import org.json.JSONObject;
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
 /**
- * @author Davide Zerbetto (davide.zerbetto@eng.it)
+ * @author Giulio Gavardi 
  *
  */
 
-public class UpdateRecordsAction extends AbstractQbeEngineAction {
+public class DeleteRecordsAction extends AbstractQbeEngineAction {
 	
 	private static final long serialVersionUID = -642121076148276452L;
 
-	public static transient Logger logger = Logger.getLogger(UpdateRecordsAction.class);
+	public static transient Logger logger = Logger.getLogger(DeleteRecordsAction.class);
 	
 	// INPUT PARAMETERS
 	public static final String RECORDS = "records";
@@ -58,7 +58,7 @@ public class UpdateRecordsAction extends AbstractQbeEngineAction {
 			
 			totalTimeMonitor = MonitorFactory.start("QbeEngine.updateRecordsAction.totalTime");
 
-			Vector<Integer> idsToReturn = executeUpdate();
+			Vector<Integer> idsToReturn = executeDelete();
 			
 			try {
 				JSONArray arrays = new JSONArray();
@@ -97,17 +97,17 @@ public class UpdateRecordsAction extends AbstractQbeEngineAction {
 		}	
 	}
 
-	private Vector<Integer> executeUpdate() throws Exception {
+	private Vector<Integer> executeDelete() throws Exception {
 		QbeEngineInstance qbeEngineInstance = null;
 		RegistryConfiguration registryConf = null;
-		JSONArray modifiedRecords = null;
+		JSONArray selectedRecords = null;
 		Vector<Integer> idsToReturn = null;
 		
 		
-		modifiedRecords = this.getAttributeAsJSONArray(RECORDS);
-		logger.debug(modifiedRecords);
-		if (modifiedRecords == null || modifiedRecords.length() == 0) {
-			logger.warn("No records to update....");
+		selectedRecords = this.getAttributeAsJSONArray(RECORDS);
+		logger.debug(selectedRecords);
+		if (selectedRecords == null || selectedRecords.length() == 0) {
+			logger.warn("No records to delete....");
 			return null;
 		}
 		
@@ -119,89 +119,59 @@ public class UpdateRecordsAction extends AbstractQbeEngineAction {
 
 		idsToReturn = new Vector<Integer>();
 		
-		for (int i = 0; i < modifiedRecords.length(); i++) {
-			JSONObject aRecord = modifiedRecords.getJSONObject(i);
+		for (int i = 0; i < selectedRecords.length(); i++) {
+			JSONObject aRecord = selectedRecords.getJSONObject(i);
 			
 			// if id field is null have to inserts
 			IDataSource genericDatasource = qbeEngineInstance.getDataSource();
 			keyColumn = genericDatasource.getPersistenceManager().getKeyColumn(aRecord, registryConf);
 			
 			Object keyValueObject = aRecord.get(keyColumn);
-			
-			if(keyValueObject == null || keyValueObject.toString().equalsIgnoreCase("")){
-				logger.debug("Insert a new Row");
-				
-				// check if pk is autoload 
-				boolean autoLoadPK = false;
-				String isAutoLoad = registryConf.getConfiguration(RegistryConfiguration.Configuration.IS_PK_AUTO_LOAD);
-				if(isAutoLoad != null && isAutoLoad.equalsIgnoreCase("true")){
-					autoLoadPK = true;
-				}
-				Integer id = insertRecord(aRecord, qbeEngineInstance, registryConf, autoLoadPK);
-				idsToReturn.add(id);
+			logger.debug(keyColumn+" to delete is "+keyValueObject);
+			if(keyValueObject != null){
+				deleteRecord(aRecord, qbeEngineInstance, registryConf);
+				idsToReturn.add(Integer.valueOf(keyValueObject.toString()));
+				logger.debug("deleted record with "+keyColumn+" = "+keyValueObject);
 			}
 			else{
-				logger.debug("Update Row with id "+keyColumn+" = "+keyValueObject.toString());				
-				updateRecord(aRecord, qbeEngineInstance, registryConf);
-			
+				logger.warn("cannot delete record with "+keyColumn+" = null");
 			}
+
+			
+			//			
+//			
+//			
+//			
+//			if(keyValueObject == null || keyValueObject.toString().equalsIgnoreCase("")){
+//				logger.debug("Insert a new Row");
+//				
+//				// check if pk is autoload 
+//				boolean autoLoadPK = false;
+//				String isAutoLoad = registryConf.getConfiguration(RegistryConfiguration.Configuration.IS_PK_AUTO_LOAD);
+//				if(isAutoLoad != null && isAutoLoad.equalsIgnoreCase("true")){
+//					autoLoadPK = true;
+//				}
+//				Integer id = insertRecord(aRecord, qbeEngineInstance, registryConf, autoLoadPK);
+//				idsToReturn.add(id);
+//			}
+//			else{
+//				logger.debug("Update Row with id "+keyColumn+" = "+keyValueObject.toString());				
+//				updateRecord(aRecord, qbeEngineInstance, registryConf);
+//			
+//			}
 		}
 		
 		return idsToReturn;
 		
 	}
 	
-	/** The Id column is the one not editable
-	 * 
-	 * @param registryConfiguration
-	 * @return
-	 * @throws Exception 
-	 */
-	
-//	private String getFieldId(RegistryConfiguration registryConfiguration) throws Exception{
-//		logger.debug("IN");
-//		String toReturn = null;
-//		List<RegistryConfiguration.Column> columns = registryConfiguration.getColumns();
-//		for (Iterator iterator = columns.iterator(); iterator.hasNext() && toReturn == null;) {
-//			RegistryConfiguration.Column column = (RegistryConfiguration.Column) iterator.next();
-//			boolean editable = column.isEditable();
-//			if(!editable){
-//				toReturn = column.getField();
-//			}
-//		}
-//		logger.debug("ID field is "+toReturn);
-//		
-//		if(toReturn == null){
-//			logger.error("Cannot insert new record because no logical primary key could be found (field with editable = false)");
-//			throw new Exception("Cannot insert new record because no logical primary key could be found (field with editable = false)");
-//		}
-//		
-//		logger.debug("OUT");
-//		return toReturn;
-//	}
-	
-	
-	
-	private void updateRecord(JSONObject aRecord,
+
+	private void deleteRecord(JSONObject aRecord,
 			QbeEngineInstance qbeEngineInstance,
 			RegistryConfiguration registryConf) {
 		logger.debug("IN");
 		IDataSource genericDatasource = qbeEngineInstance.getDataSource();
-		genericDatasource.getPersistenceManager().updateRecord(aRecord, registryConf);
+		genericDatasource.getPersistenceManager().deleteRecord(aRecord, registryConf);
 		logger.debug("OUT");
 	}
-	
-	
-	private Integer insertRecord(JSONObject aRecord,
-			QbeEngineInstance qbeEngineInstance,
-			RegistryConfiguration registryConf, boolean autoLoadPK) {
-		logger.debug("IN");
-		IDataSource genericDatasource = qbeEngineInstance.getDataSource();
-		Integer id = genericDatasource.getPersistenceManager().insertRecord(aRecord, registryConf, autoLoadPK);
-		logger.debug("OUT");
-		return id;
-	}
-	
-	
-	
 }
