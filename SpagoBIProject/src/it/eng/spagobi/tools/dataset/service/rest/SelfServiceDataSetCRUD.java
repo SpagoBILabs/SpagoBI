@@ -111,7 +111,7 @@ public class SelfServiceDataSetCRUD {
 				JSONObject datasetJSON = datasetsJSONArray.getJSONObject(i);
 				actions.put(detailAction);		
 				actions.put(worksheetAction);
-				actions.put(georeportAction);
+//				actions.put(georeportAction); // Annotated view map action to release SpagoBI 4
 				if (profile.getUserUniqueIdentifier().toString().equals(datasetJSON.get("owner"))){
 					//the delete action is able only for private dataset
 					actions.put(deleteAction);
