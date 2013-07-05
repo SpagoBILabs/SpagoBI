@@ -199,7 +199,7 @@ Ext.define('Sbi.tools.dataset.DataSetsView', {
         var actionWorksheet = e.getTarget('span.icon-worksheet', 10, true);
         var actionGeoreport = e.getTarget('span.icon-georeport', 10, true);
         
-        if (!this.fromMyDataCtx) actionWorksheet = true;
+        //if (!this.fromMyDataCtx) actionWorksheet = true;
         
         delete record.data.actions; 
         if (actionDetail != null){
@@ -223,7 +223,12 @@ Ext.define('Sbi.tools.dataset.DataSetsView', {
         	}
    			scope.fireEvent('executeDocument','GEOREPORT','DATASET',record);
         } else {
-        	scope.fireEvent('detail', record.data);          	
+        	Sbi.debug('DataSetView default click event...'); 
+        	if (record.data.pars != undefined && record.data.pars != ''){
+        		Sbi.exception.ExceptionHandler.showInfoMessage(LN('sbi.ds.noWorksheetDesigner'));
+        		return true;
+        	}
+   			scope.fireEvent('executeDocument','WORKSHEET','DATASET',record);      	
         }
         
         
