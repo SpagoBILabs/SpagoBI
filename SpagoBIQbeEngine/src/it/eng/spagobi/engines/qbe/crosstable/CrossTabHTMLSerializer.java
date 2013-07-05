@@ -23,6 +23,7 @@ import java.util.Locale;
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 public class CrossTabHTMLSerializer {
 	
@@ -115,6 +116,16 @@ public class CrossTabHTMLSerializer {
 				aColumn.setCharacters(EngineMessageBundle.getMessage("sbi.crosstab.runtime.headers.data", this.getLocale()));
 				aRow.setAttribute(aColumn);
 				table.setAttribute(aRow);
+				JSONObject config = crossTab.getCrosstabDefinition().getConfig();
+				String rowsTotals =  config.optString("calculatetotalsoncolumns");
+				if (rowsTotals != null && rowsTotals.equals("on")) {
+					SourceBean totalRow = new SourceBean(ROW_TAG);
+					SourceBean totalColumn = new SourceBean(COLUMN_TAG);
+					totalColumn.setAttribute(CLASS_ATTRIBUTE, MEMBER_CLASS);
+					totalColumn.setCharacters(CrossTab.TOTAL);
+					totalRow.setAttribute(totalColumn);
+					table.setAttribute(totalRow);
+				}
 			}
 		} else {
 			List<SourceBean> rows = new ArrayList<SourceBean>();
