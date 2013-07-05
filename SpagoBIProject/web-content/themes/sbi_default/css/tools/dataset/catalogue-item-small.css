@@ -20,15 +20,15 @@ a:focus{outline:none}
 
 .dataset-group-view{background:#f9f9f9;}
 .box{align:center; cursor:pointer; float: left; margin: 5px 5px 5px 10px; color:#434343;font-family: 'Cabin', sans-serif;width:230px;height:250px;background:#fff;position:relative;border:1px solid #eeeeee;-webkit-border-radius:2px;-moz-border-radius:2px;border-radius:2px}
-.box .box-link{cursor:pointer;color:#434343;padding:13px;width:200px;height:230px;display:block;-webkit-border-radius:2px;-moz-border-radius:2px;border-radius:2px}
+.box .box-link{cursor:pointer;color:#434343;padding:13px;width:220px;height:230px;display:block;-webkit-border-radius:2px;-moz-border-radius:2px;border-radius:2px}
 .box:hover .box-link{color:#2b2b2b;/*background:#fcfcfc*/}
-.box .box-map{margin-bottom:15px;width:200px;height:127px;position:relative;align:center}
+.box .box-map{margin-bottom:15px;width:200px;height:100px;position:relative;align:center}
 .box:hover .box-link .box-map{align:center;opacity:0.85;filter:alpha(opacity = 85)}
-.box .box-map .shadow{width:200px;height:140px;background:url(../../../img/dataset/shadow.png) 0 0 no-repeat;display:block;position:absolute;top:0;left:0}
-.box .box-text{height:66px;position:relative;padding:0 2px}
-.box h2{line-height:100%;font-weight:normal;font-size:1.41em;margin:0 0 6px 0}
+.box .box-map .shadow{width:152px;height:100px;background:url(../../../img/dataset/shadow-smaller.png) 0 0 no-repeat;display:block;position:absolute;top:0;left:0}
+.box .box-text{height:110px;position:relative;padding:0 2px}
+.box h2{line-height:100%;font-weight:normal;font-size:1.25em;margin:0 0 6px 0}
 .box p{line-height:107%;font-size:1.1em;margin:0 0 5px 0}
-.box p.modified{position:absolute;left:2px;bottom:0;color:#b1b1b1;font-size:0.91em;margin:0}
+.box p.modified{position:absolute;right:0px;bottom:0;color:#b1b1b1;font-size:0.91em;margin:0}
 .box:hover .box-link p.modified{color:#a5a5a5}
 .box .fav-container{cursor:pointer;height:39px;width:45px;position:absolute;top:-8px;right:20px;padding:8px 0 0 0;background:url(../../../img/dataset/bg-fav-top.png) 0 0 repeat-x}
 .box .fav-container .fav{float:right; position:relative;height:40px;width:45px;background:url(../../../img/dataset/bg-fav-bottom.png) 0 bottom no-repeat}
