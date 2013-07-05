@@ -165,7 +165,7 @@ Sbi.locale.ln['sbi.qbe.filtergridpanel.headers.delete'] = 'Tout supprimer';
 Sbi.locale.ln['sbi.qbe.filtergridpanel.headers.boperator'] = 'Op\u00E9rateur bool\u00E9en';
 
 //column tooltip
-Sbi.locale.ln['sbi.qbe.filtergridpanel.tooltip.notdef'] = 'infobulle pas encore d\u00E9finie';
+Sbi.locale.ln['sbi.qbe.filtergridpanel.tooltip.notdef'] = 'Infobulle pas encore d\u00E9finie';
 
 Sbi.locale.ln['sbi.qbe.filtergridpanel.tooltip.name'] = 'Identifiant du filtre';
 Sbi.locale.ln['sbi.qbe.filtergridpanel.tooltip.desc'] = 'Description de l\'objectif du filtre';
@@ -453,5 +453,5 @@ Sbi.locale.ln['sbi.qbe.bands.range.title'] = 'Limite d\u00E9finition ';
 Sbi.locale.ln['sbi.qbe.bands.range.invalid'] = 'Le range n\'est pas correctement d\u00E9fini';
 
 
-Sbi.locale.ln['sbi.qbe.filtergridpanel.headers.boperator.desc'] = 'Bol.Connector between the condition';
-Sbi.locale.ln['sbi.qbe.filtergridpanel.headers.isfree.desc'] = 'The user can select the value in a popup when the query is executed';
+Sbi.locale.ln['sbi.qbe.filtergridpanel.headers.boperator.desc'] = 'Connecteur booléens entre les conditions';
+Sbi.locale.ln['sbi.qbe.filtergridpanel.headers.isfree.desc'] = 'L\'utilisateur peut sélectionner la valeur dans une fenêtre popup lorsque la requête est exécutée';
