@@ -209,8 +209,8 @@ a:hover{
         	} 
         	%>
         	
-	        <div id="content" style="width:100%;height:100%">
-		        	<div style="float:left;!important;width:570px;height:310px;margin-top:80px;margin-left:50px; " >
+	        <div id="content" style="height:100%">
+		        	<div style="padding: 80px " >
 		        	<!--
 		        	DO NOT DELETE THIS COMMENT
 		        	If you change the tag table with this one  you can have the border of the box with the shadow via css
@@ -219,16 +219,20 @@ a:hover{
 		     		<table style="background: none repeat scroll 0 0 #fff; border-radius: 10px 10px 10px 10px;  box-shadow: 0 0 10px #888; color: #009DC3; display: block; font-size: 14px; line-height: 18px; padding: 20px;">
 		        	 -->
 
-				<table border=0>
+				<table border=0 align="center" style="background: none repeat scroll 0 0; border-radius: 5px 5px 5px 5px;  box-shadow: 0px 0px 10px #888;  -webkit-box-shadow:  0px 0px 10px #888;  -moz-box-shadow:  0px 0px 10px #888; color: #009DC3; display: block; font-size: 14px; line-height: 18px; padding: 20px;">
 					<tr>
 						<td></td>
-						<td><img src='<%=urlBuilder.getResourceLinkByTheme(request, "/img/wapp/spagobi40logo.png", currTheme)%>' width='180px' height='51px'/></td>
+						<td><img
+							src='<%=urlBuilder.getResourceLinkByTheme(request, "/img/wapp/spagobi40logo.png", currTheme)%>'
+							width='180px' height='51px' style="margin: 20px 0px"/>
+						</td>
+						<td width='50px'></td>
 						<td></td>
 					</tr>
 					<tr>
 						<td width="120px">&nbsp;</td>
-						<td width="350px"> 
-						
+						<td width="350px">
+
 							<table border=0>
 								<tr class='header-row-portlet-section'>
 									<td class='login-label' width="90px" align="left"><%=msgBuilder.getMessage("username")%>:
@@ -238,7 +242,8 @@ a:hover{
 								</tr>
 								<tr>
 									<td><input id="userID" name="userID" type="text" size="25"
-										class="login"></td>
+										class="login">
+									</td>
 									<td></td>
 
 								</tr>
@@ -248,11 +253,10 @@ a:hover{
 									<td width="25px">&nbsp;</td>
 
 								</tr>
-								
+
 								<tr>
 									<td><input id="password" name="password" type="password"
-										size="25" class="login">
-									</td>
+										size="25" class="login"></td>
 									<td></td>
 
 								</tr>
@@ -263,68 +267,83 @@ a:hover{
 									<td><input type="image" align="right"
 										src='<%=urlBuilder.getResourceLinkByTheme(request, "/img/wapp/login40.png", currTheme)%>'
 										title='<%=msgBuilder.getMessage("login")%>'
-										alt='<%=msgBuilder.getMessage("login")%>'></td>
+										alt='<%=msgBuilder.getMessage("login")%>'>
+									</td>
 									<td></td>
 
 								</tr>
 								<tr>
 									<td colspan=3 height="30px">&nbsp;</td>
 								</tr>
-								
+
 								<tr>
-								<!-- Uncommet this for adding the Change Password Link -->
+									<!-- Uncommet this for adding the Change Password Link -->
 									<!-- <td class='login-label'><a
 										href="<%=contextName %>/ChangePwdServlet?start_url=<%=startUrl%>">
 											<%=msgBuilder.getMessage("changePwd")%> </a></td> -->
 									<td>&nbsp;</td>
 									<td class='login-label' width="150px"></td>
 								</tr>
-								
-							</table></td>
-						<td style="padding-top: 20px">&nbsp;&nbsp;</td>
+
+							</table>
+						</td>
+						<td width='100px'></td>
+						<td style="padding-top: 20px"><img
+							src="<%=urlBuilder.getResourceLinkByTheme(request, "/img/wapp/background_login.png", currTheme)%>"
+							width="416px" height="287px" />
+						</td>
 					</tr>
-							<tr>
-								<td></td>
-								<td class='header-title-column-portlet-section-nogrey'>
-									<div class="header-row-portlet-section" style = "line-height: 130%; margin-top: 10px; font-size:9pt;">														
-										
-										<table style ="width: 85% !important">
-										<tr>
-											<td align="center">
-											<a href="#" onclick="setUser('biuser','biuser'); login.submit()"><img src='<%=urlBuilder.getResourceLinkByTheme(request, "/img/wapp/biuser_icon.png", currTheme)%>' width='68px' height='47px'/></a>
-											</td>
-											<td align="center">
-											<a href="#" onclick="setUser('bidemo','bidemo'); login.submit()"><img src='<%=urlBuilder.getResourceLinkByTheme(request, "/img/wapp/bidemo_icon.png", currTheme)%>' width='75px' height='47px'/></a>
-											</td>
-											<td align="center">
-											<a href="#" onclick="setUser('biadmin','biadmin'); login.submit()"><img src='<%=urlBuilder.getResourceLinkByTheme(request, "/img/wapp/biadmin_icon.png", currTheme)%>' width='69px' height='47px'/></a>										
-											</td>
-										</tr>
-										<tr>
-											<td align="center">
-											<a href="#" onclick="setUser('biuser','biuser'); login.submit()"><b>biuser/biuser</b></a>
-											</td>
-											<td align="center">
-											<a href="#" onclick="setUser('bidemo','bidemo'); login.submit()"><b>bidemo/bidemo</b></a> 
-											</td>
-											<td align="center">
-											<a href="#" onclick="setUser('biadmin','biadmin'); login.submit()"><b>biadmin/biadmin</b></a>
-											</td>
-										</tr>
-										</table>
-										
-									</div>
-								</td>
-							</tr>
+					<tr>
+						<td></td>
+						<td class='header-title-column-portlet-section-nogrey'>
+							<div class="header-row-portlet-section"
+								style="line-height: 130%; margin-top: 10px; font-size: 9pt;">
+
+								<table style="width: 85% !important">
+									<tr>
+										<td align="center"><a href="#"
+											onclick="setUser('biuser','biuser'); login.submit()"><img
+												src='<%=urlBuilder.getResourceLinkByTheme(request, "/img/wapp/biuser_icon.png", currTheme)%>'
+												width='68px' height='47px' />
+										</a></td>
+										<td align="center"><a href="#"
+											onclick="setUser('bidemo','bidemo'); login.submit()"><img
+												src='<%=urlBuilder.getResourceLinkByTheme(request, "/img/wapp/bidemo_icon.png", currTheme)%>'
+												width='75px' height='47px' />
+										</a></td>
+										<td align="center"><a href="#"
+											onclick="setUser('biadmin','biadmin'); login.submit()"><img
+												src='<%=urlBuilder.getResourceLinkByTheme(request, "/img/wapp/biadmin_icon.png", currTheme)%>'
+												width='69px' height='47px' />
+										</a></td>
+									</tr>
+									<tr>
+										<td align="center"><a href="#"
+											onclick="setUser('biuser','biuser'); login.submit()"><b>biuser/biuser</b>
+										</a></td>
+										<td align="center"><a href="#"
+											onclick="setUser('bidemo','bidemo'); login.submit()"><b>bidemo/bidemo</b>
+										</a></td>
+										<td align="center"><a href="#"
+											onclick="setUser('biadmin','biadmin'); login.submit()"><b>biadmin/biadmin</b>
+										</a></td>
+									</tr>
+								</table>
+
+							</div></td>
+						<td></td>
+						<td></td>
+					</tr>
 					<tr>
 						<td>&nbsp;</td>
 						<td style='color: red; font-size: 11pt;'><br /><%=authFailed%></td>
+						<td></td>
 						<td>&nbsp;</td>
 					</tr>
 
 				</table>
 			</div>
-					<div style="float:right;background-image:url('/SpagoBI/themes/sbi_default/img/wapp/background_login.png');width:416px;height:287px;margin-top:110px;margin-right:20px;"></div>
+				<!--  	<div style="float:right;background-image:url('/SpagoBI/themes/sbi_default/img/wapp/background_login.png');width:416px;height:287px;margin-top:110px;margin-right:20px;"></div> -->
 	        </div>
         </form>
         <spagobi:error/>
