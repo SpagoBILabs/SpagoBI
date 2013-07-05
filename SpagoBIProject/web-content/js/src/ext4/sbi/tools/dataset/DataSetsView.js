@@ -139,10 +139,10 @@ Ext.define('Sbi.tools.dataset.DataSetsView', {
 	 	          '</div>',
 	 	        '</div>');
 		*/
-		var img = "csv-xls.png";
-		if (!this.fromMyDataCtx ){
-			img = "csv-xls-small.png";
-		}
+		var img = "csv-xls-smaller.png";
+//		if (!this.fromMyDataCtx ){
+//			img = "csv-xls-small.png";
+//		}
 		this.tpl = new Ext.XTemplate(
 				'<div id="dataset-view">', 	            
 	 	           '<div class="dataset-group-view">',
@@ -161,7 +161,7 @@ Ext.define('Sbi.tools.dataset.DataSetsView', {
 									'</div>',
 									'<div class="box-text">',
 										'<h2>{name}</h2>',
-										'<p>{description}</p>',
+										'<p>{[Ext.String.ellipsis(values.description, 100, false)]}</p>',
 										'<p class="modified">'+changed+' {dateIn}</p>',
 									'</div>',
 								'</a>',
