@@ -3,7 +3,7 @@
 Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
 This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
 If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. --%>
- 
+
   
 <%@ page language="java"
          extends="it.eng.spago.dispatching.httpchannel.AbstractHttpJspPagePortlet"
@@ -219,7 +219,7 @@ a:hover{
 		     		<table style="background: none repeat scroll 0 0 #fff; border-radius: 10px 10px 10px 10px;  box-shadow: 0 0 10px #888; color: #009DC3; display: block; font-size: 14px; line-height: 18px; padding: 20px;">
 		        	 -->
 
-				<table border=0 align="center" style="background: none repeat scroll 0 0; border-radius: 5px 5px 5px 5px;  box-shadow: 0px 0px 10px #888;  -webkit-box-shadow:  0px 0px 10px #888;  -moz-box-shadow:  0px 0px 10px #888; color: #009DC3; display: block; font-size: 14px; line-height: 18px; padding: 20px;">
+				<table border=0 align="center" style="border-collapse:separate; background: none repeat scroll 0 0; border-radius: 5px 5px 5px 5px;  box-shadow: 0px 0px 10px #888;  -webkit-box-shadow:  0px 0px 10px #888;  -moz-box-shadow:  0px 0px 10px #888; color: #009DC3; display: block; font-size: 14px; line-height: 18px; padding: 20px;">
 					<tr>
 						<td></td>
 						<td><img
@@ -343,7 +343,6 @@ a:hover{
 
 				</table>
 			</div>
-				<!--  	<div style="float:right;background-image:url('/SpagoBI/themes/sbi_default/img/wapp/background_login.png');width:416px;height:287px;margin-top:110px;margin-right:20px;"></div> -->
 	        </div>
         </form>
         <spagobi:error/>
