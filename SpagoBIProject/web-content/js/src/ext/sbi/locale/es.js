@@ -723,12 +723,6 @@ Sbi.locale.ln['Sbi.office.zoomIn'] = 'El aumento de las dimensiones';
 Sbi.locale.ln['Sbi.office.zoomOut'] = 'Reduce las dimensiones';
 
 
-
-
-
-
-
-
 if(Ext.DatePicker){
 Ext.override(Ext.DatePicker, {
 todayText : "Hoy",
