@@ -1,125 +1,112 @@
-/** SpagoBI, the Open Source Business Intelligence suite
-
- * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
- * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. **/
- 
-  
- 
- Ext.ns("Sbi.locale");
+Ext.ns("Sbi.locale");
 Sbi.locale.ln = new Array();
 
-Sbi.locale.ln['sbi.browser.documentstree.title'] = 'Funcionalidad del \u00E1rbol';
-Sbi.locale.ln['sbi.browser.documentstree.root']  = 'Ra\u00EDz';
+Sbi.locale.ln['sbi.browser.documentstree.title'] = '\u00c1rbol de Funcionalidades';
+Sbi.locale.ln['sbi.browser.documentstree.root']  = 'Ra\u00edz';
 
-Sbi.locale.ln['sbi.general.yes'] = 'Si';
+Sbi.locale.ln['sbi.general.yes'] = 'S\u00ed';
 Sbi.locale.ln['sbi.general.No'] = 'No';
 
-Sbi.locale.ln['sbidomains.ds.Generic_Node'] = 'Nodo Gen\u00E9rico';
-Sbi.locale.ln['sbidomains.ds.Generic_root'] = 'La ra\u00EDz gen\u00E9rica';
+Sbi.locale.ln['sbidomains.ds.Generic_Node'] = 'Nodo Gen\u00e9rico';
+Sbi.locale.ln['sbidomains.ds.Generic_root'] = 'Ra\u00edz Gen\u00e9rico';
 
-Sbi.locale.ln['sbidomains.nm.Generic_Node'] = 'Nodo Gen\u00E9rico';
-Sbi.locale.ln['sbidomains.nm.Generic_root'] = 'La ra\u00EDz gen\u00E9rica';
-Sbi.locale.ln['sbidomains.nm.Generic_Node'] = 'Nodo Gen\u00E9rico';
-Sbi.locale.ln['sbidomains.nm.Generic_root'] = 'La ra\u00EDz gen\u00E9rica';
- 
+Sbi.locale.ln['sbidomains.nm.Generic_Node'] = 'Nodo Gen\u00e9rico';
+Sbi.locale.ln['sbidomains.nm.Generic_root'] = 'Ra\u00edz Gen\u00e9rico';
+Sbi.locale.ln['sbidomains.nm.Generic_Node'] = 'Nodo Gen\u00e9rico';
+Sbi.locale.ln['sbidomains.nm.Generic_root'] = 'Ra\u00edz Gen\u00e9rico';
+
 Sbi.locale.ln['sbidomains.nm.user'] = 'Usuario';
 Sbi.locale.ln['sbidomains.nm.admin'] = 'Administrador';
-Sbi.locale.ln['sbidomains.nm.dev_role'] = 'Promotor';
-Sbi.locale.ln['sbidomains.nm.test_role'] = 'Usuario de Prueba';
-Sbi.locale.ln['sbidomains.nm.model_admin'] = 'Administrador de Modelo';
+Sbi.locale.ln['sbidomains.nm.dev_role'] = 'Desarrollador';
+Sbi.locale.ln['sbidomains.nm.test_role'] = 'Prueba de Usuario';
+Sbi.locale.ln['sbidomains.nm.model_admin'] = 'Modelo Administrador';
 //START Generic messages
 //Buttons
 Sbi.locale.ln['sbi.generic.clone'] = 'Clonar';
-Sbi.locale.ln['sbi.generic.add'] = 'A\u00F1adir';
+Sbi.locale.ln['sbi.generic.add'] = 'A\u00f1adir';
 Sbi.locale.ln['sbi.generic.delete'] = 'Borrar';
 Sbi.locale.ln['sbi.generic.update'] = 'Guardar';
 Sbi.locale.ln['sbi.generic.details'] = 'Detalle';
 Sbi.locale.ln['sbi.generic.advanced'] = 'Avanzado';
 Sbi.locale.ln['sbi.generic.select'] = 'Seleccionar';
 Sbi.locale.ln['sbi.generic.confirmRestore'] = 'Restaurar';
-Sbi.locale.ln['sbi.generic.run'] = 'Ejecutar';
-Sbi.locale.ln['sbi.generic.upload'] = 'Subir';
-Sbi.locale.ln['sbi.generic.download'] = 'Descargar';
-Sbi.locale.ln['sbi.generic.update2'] = 'Actualizaciones';
-Sbi.locale.ln['sbi.kpi.trend.title'] = 'Tendencia de los recursos ';
-Sbi.locale.ln['sbi.kpi.trend.nodata'] = 'No se encontraron datos! Seleccione el nodo especï¿½fico para ver los datos de tendencia. ';
-
 //Fields
 Sbi.locale.ln['sbi.generic.name'] = 'Nombre';
 Sbi.locale.ln['sbi.generic.descr'] = 'Descripci\u00f3n';
-Sbi.locale.ln['sbi.generic.code'] = 'C\u00F3digo';
+Sbi.locale.ln['sbi.generic.code'] = 'C\u00f3digo';
 Sbi.locale.ln['sbi.generic.type'] = 'Tipo';
 Sbi.locale.ln['sbi.generic.label'] = 'Etiqueta';
 Sbi.locale.ln['sbi.generic.engine'] = 'Motor';
-Sbi.locale.ln['sbi.generic.state'] = 'Estado';
+Sbi.locale.ln['sbi.generic.state'] = 'Stado';
 Sbi.locale.ln['sbi.generic.value'] = 'Valor';
+Sbi.locale.ln['sbi.generic.upload'] = 'Subir';
+Sbi.locale.ln['sbi.generic.download'] = 'Descargar';
 Sbi.locale.ln['sbi.generic.udpValues'] = 'Udp Valor';
 
 Sbi.locale.ln['sbi.generic.kpi'] = 'Kpi';
-Sbi.locale.ln['sbi.generic.nodetype'] = 'Tipo Nodo';
-Sbi.locale.ln['sbi.generic.nodedescr'] = 'Nodo Descripci\u00F3n';
+Sbi.locale.ln['sbi.generic.nodetype'] = 'Tipo nodo';
+Sbi.locale.ln['sbi.generic.nodedescr'] = 'Descripci\u00f3n nodo';
 //Messages
-Sbi.locale.ln['sbi.generic.validationError'] = 'Error de validaci\u00F3n';
+Sbi.locale.ln['sbi.generic.validationError'] = 'Error de validaci\u00f3n';
 Sbi.locale.ln['sbi.generic.error'] = 'Error';
-Sbi.locale.ln['sbi.generic.error.msg'] = 'Error en la operaci\u00F3n';
-Sbi.locale.ln['sbi.generic.ok'] = 'Informaci\u00F3n';
-Sbi.locale.ln['sbi.generic.ok.msg'] = 'Operaci\u00F3n con \u00E9xito termin\u00F3';
-Sbi.locale.ln['sbi.generic.resultMsg'] = 'Operaci\u00F3n succeded';
-Sbi.locale.ln['sbi.generic.result'] = 'Actualizaciones salvado';
-Sbi.locale.ln['sbi.generic.serviceError'] = 'Error de servicio';
-Sbi.locale.ln['sbi.generic.serviceResponseEmpty'] = 'Respuesta del servidor est\u00E1 vac\u00EDo';
-Sbi.locale.ln['sbi.generic.savingItemError'] = 'Error al guardar el punto';
-Sbi.locale.ln['sbi.generic.deletingItemError'] = 'Error al borrar el punto. Control de elementos posibles a los que est\u00E1 asociado y luego tratar de eliminar de nuevo!';
+Sbi.locale.ln['sbi.generic.error.msg'] = 'Operaci\u00f3n fallida';
+Sbi.locale.ln['sbi.generic.ok'] = 'Informaci\u00f3n';
+Sbi.locale.ln['sbi.generic.ok.msg'] = 'Operaci\u00f3n terminada con \u00e9xito';
+Sbi.locale.ln['sbi.generic.resultMsg'] = 'Operaci\u00f3n realizada con \u00e9xito';
+Sbi.locale.ln['sbi.generic.result'] = 'Actualizaciones guardadas';
+Sbi.locale.ln['sbi.generic.serviceError'] = 'Error Servicio';
+Sbi.locale.ln['sbi.generic.serviceResponseEmpty'] = 'Respuesta servidor vac\u00eda';
+Sbi.locale.ln['sbi.generic.savingItemError'] = 'Error mientras guardaba elemento';
+Sbi.locale.ln['sbi.generic.deletingItemError'] = 'Error mientras borraba elemento \u00a1Controlar los elementos que estan asociados e intentar borrar nuevamente!';
 Sbi.locale.ln['sbi.generic.warning'] = 'Advertencia';
 Sbi.locale.ln['sbi.generic.pleaseConfirm'] = 'Por favor, confirme';
-Sbi.locale.ln['sbi.generic.confirmDelete'] = 'Confirmar el punto eliminarlo?';
-Sbi.locale.ln['sbi.generic.confirmChangeNode'] = 'Hay cambios no guardados. Confirmar el cambio de nodo ra\u00EDz?';
-Sbi.locale.ln['sbi.generic.deleteKpi'] = 'Eliminar Kpi';
+Sbi.locale.ln['sbi.generic.confirmDelete'] = '\u00bfBorrar elemento?';
+Sbi.locale.ln['sbi.generic.confirmChangeNode'] = 'Hay cambios sin guardar. \u00bfDesea guardarlos?';
+Sbi.locale.ln['sbi.generic.deleteKpi'] = 'Borrar Kpi';
 Sbi.locale.ln['sbi.generic.attributes'] = 'Atributos';
 //END Generic messages
 
 //START List Detail messages
-Sbi.locale.ln['sbi.resources.panelTitle'] = 'Gesti\u00F3n de Recursos';
+Sbi.locale.ln['sbi.resources.panelTitle'] = 'Gesti\u00f3n de Recursos';
 Sbi.locale.ln['sbi.resources.listTitle'] = 'Lista de Recursos';
-Sbi.locale.ln['sbi.thresholds.panelTitle'] = 'Los umbrales de Gesti\u00F3n';
-Sbi.locale.ln['sbi.thresholds.listTitle'] = 'Umbrales de la lista';
-Sbi.locale.ln['sbi.kpis.panelTitle'] = 'Gesti\u00F3n de KPI';
-Sbi.locale.ln['sbi.kpis.listTitle'] = 'Lista de Kpis';
-Sbi.locale.ln['sbi.kpis.linksTitle'] = 'Kpi Enlaces';
-Sbi.locale.ln['sbi.kpis.parameter'] = 'Par\u00E1metro';
-Sbi.locale.ln['sbi.models.panelTitle'] = 'Modelos de Gesti\u00F3n';
-Sbi.locale.ln['sbi.models.listTitle'] = 'Lista de modelos';
+Sbi.locale.ln['sbi.thresholds.panelTitle'] = 'Gesti\u00f3n Umbrales';
+Sbi.locale.ln['sbi.thresholds.listTitle'] = 'Lista de Umbrales';
+Sbi.locale.ln['sbi.kpis.panelTitle'] = 'Gesti\u00f3n Kpis';
+Sbi.locale.ln['sbi.kpis.listTitle'] = 'Lista Kpis';
+Sbi.locale.ln['sbi.kpis.linksTitle'] = 'Links Kpi';
+Sbi.locale.ln['sbi.kpis.parameter'] = 'Par\u00e1metro';
+Sbi.locale.ln['sbi.models.panelTitle'] = 'Gesti\u00f3n Modelos';
+Sbi.locale.ln['sbi.models.listTitle'] = 'Lista Modelos';
 Sbi.locale.ln['sbi.models.treeTitle'] = 'Modelos';
-Sbi.locale.ln['sbi.models.DDKpiMsg'] = 'Arrastre y suelte un KPI de la lista de KPI aqu\u00ED';
-Sbi.locale.ln['sbi.models.DDNoParentMsg'] = 'Seleccione nodo padre';
-Sbi.locale.ln['sbi.models.confirmSaveParent'] = 'Para insertar el nodo aqu\u00ED nodo padre debe estar guardada. Guardar ahora?';
-Sbi.locale.ln['sbi.models.selectNode'] = 'Seleccionar nodo para eliminar';
+Sbi.locale.ln['sbi.models.DDKpiMsg'] = 'Arrastra y suelta un KPI de la lista Kpi aqu\u00ed';
+Sbi.locale.ln['sbi.models.DDNoParentMsg'] = 'Seleccionar nodo padre';
+Sbi.locale.ln['sbi.models.confirmSaveParent'] = 'Para insertar un nuevo nodo debe previamente haber salvado el nodo padre. \u00bfGuardar ahora?';
+Sbi.locale.ln['sbi.models.selectNode'] = 'Seleccionar nodo para borrar';
 
-Sbi.locale.ln['sbi.models.remodeNode'] = 'Eliminar el nodo Modelo';
-Sbi.locale.ln['sbi.models.addNode'] = 'A\u00F1adir el nodo Modelo';
-Sbi.locale.ln['sbi.modelinstances.panelTitle'] = 'Modelo de Gesti\u00F3n de Casos';
-Sbi.locale.ln['sbi.modelinstances.listTitle'] = 'Instancias Lista Modelo';
-Sbi.locale.ln['sbi.modelinstances.treeTitle'] = 'Instancias de los modelos';
+Sbi.locale.ln['sbi.models.remodeNode'] = 'Eliminar Nodo Modelo';
+Sbi.locale.ln['sbi.models.addNode'] = 'A\u00f1adir nodo Modelo';
+Sbi.locale.ln['sbi.modelinstances.panelTitle'] = 'Gesti\u00f3n Instancias Modelos';
+Sbi.locale.ln['sbi.modelinstances.listTitle'] = 'Lista Instancias Modelos';
+Sbi.locale.ln['sbi.modelinstances.treeTitle'] = 'Instancias Modelos';
 Sbi.locale.ln['sbi.modelinstances.resourcesTab'] = 'Recursos';
-Sbi.locale.ln['sbi.modelinstances.importCheck'] = 'Importaci\u00F3n sub-\u00E1rbol tambi\u00E9n';
-Sbi.locale.ln['sbi.modelinstances.saveFirstMsg'] = 'Guardar copia del modelo primero';
-Sbi.locale.ln['sbi.modelinstances.kpiInstance'] = 'Kpi Instancia';
-Sbi.locale.ln['sbi.modelinstances.srcNode'] = 'Fuente nodo';
-Sbi.locale.ln['sbi.modelinstances.periodicitiesList'] = 'Lista de periodicidades';
+Sbi.locale.ln['sbi.modelinstances.importCheck'] = 'Importar tambi\u00e9n sub-tree';
+Sbi.locale.ln['sbi.modelinstances.saveFirstMsg'] = 'Guardar primera instancia Modelo';
+Sbi.locale.ln['sbi.modelinstances.kpiInstance'] = 'Instancia Kpi ';
+Sbi.locale.ln['sbi.modelinstances.srcNode'] = 'Nodo fuente';
+Sbi.locale.ln['sbi.modelinstances.periodicitiesList'] = 'Lista Periodicidades';
 
 Sbi.locale.ln['sbi.modelinstances.periodicity'] = 'Periodicidad';
-Sbi.locale.ln['sbi.modelinstances.periodicityAdd'] = 'A\u00F1adir Periodicity';
-Sbi.locale.ln['sbi.modelinstances.chartType'] = 'Tipo de gr\u00E1fico';
+Sbi.locale.ln['sbi.modelinstances.periodicityAdd'] = 'A\u00f1adir Periodicidad';
+Sbi.locale.ln['sbi.modelinstances.chartType'] = 'Tipo Gr\u00e1fico';
 Sbi.locale.ln['sbi.modelinstances.saveHistory'] = 'Guardar historial';
 Sbi.locale.ln['sbi.modelinstances.restoreDefault'] = 'Restaurar valores predeterminados';
-Sbi.locale.ln['sbi.modelinstances.DDKpiMsg'] = 'Arrastre y suelte un KPI de la lista de KPI aqu\u00ED';
-Sbi.locale.ln['sbi.modelinstances.DDHierarchy'] = 'Jerarqu\u00EDa de los nodos deben ser respetados!';
-Sbi.locale.ln['sbi.modelinstances.remodeNode'] = 'Eliminar el nodo Modelo Instancia';
-Sbi.locale.ln['sbi.modelinstances.selectNode'] = 'Seleccionar nodo para eliminar';
+Sbi.locale.ln['sbi.modelinstances.DDKpiMsg'] = 'Arrastra y suelta un KPI de la lista Kpi aqu\u00ed';
+Sbi.locale.ln['sbi.modelinstances.DDHierarchy'] = 'La jerarqu\u00eda de nodos debe ser respetada!';
+Sbi.locale.ln['sbi.modelinstances.remodeNode'] = 'Eliminar nodo Instancia Modelo';
+Sbi.locale.ln['sbi.modelinstances.selectNode'] = 'Seleccione el nodo para eliminar';
 Sbi.locale.ln['sbi.modelinstances.target'] = 'Objetivo';
-Sbi.locale.ln['sbi.modelinstances.code'] = 'Cï¿½digo de modelo ';
-Sbi.locale.ln['sbi.modelinstances.copyalltree'] = 'Copiar todo el \u00E1rbol del modelo';
+Sbi.locale.ln['sbi.modelinstances.code'] = 'C\u00f3digo Modelo';
+Sbi.locale.ln['sbi.modelinstances.copyalltree'] = 'Copia todo el \u00e1rbol del modelo';
 //END List Detail messages
 
 //START GRANTS messages
@@ -142,6 +129,7 @@ Sbi.locale.ln['sbi.grants.contextmenu.disable.children'] = 'Desactivar todos los
 Sbi.locale.ln['sbi.grants.unavailable.during.save'] = 'Grant no est\u00E1 disponible. Operaci\u00F3n en curso.';
 //END GRANTS messages
 
+
 //START GOALS messages
 Sbi.locale.ln['sbi.goals.listTitle'] = 'Lista de Objetivos';
 Sbi.locale.ln['sbi.goals.nogrant'] = 'Debe seleccionar una subvenci\u00F3n'
@@ -156,32 +144,33 @@ Sbi.locale.ln['sbi.goals.threshold'] = 'Umbral';
 	
 //END GOALS messages
 
+
 //START kpi interface messages
-Sbi.locale.ln['sbi.resources.tablename'] = 'Nombre de la tabla';
-Sbi.locale.ln['sbi.resources.columnname'] = 'Nombre de columna';
+Sbi.locale.ln['sbi.resources.tablename'] = 'Nombre Tabla';
+Sbi.locale.ln['sbi.resources.columnname'] = 'Nombre Columna';
 
 Sbi.locale.ln['sbi.kpis.threshold'] = 'Umbral';
-Sbi.locale.ln['sbi.kpis.weight'] = 'Peso';
-Sbi.locale.ln['sbi.kpis.dataset'] = 'Donjunto de datos';
+Sbi.locale.ln['sbi.kpis.weight'] = 'Pesos';
+Sbi.locale.ln['sbi.kpis.dataset'] = 'Dataset';
 Sbi.locale.ln['sbi.kpis.documents'] = 'Documentos';
-Sbi.locale.ln['sbi.kpis.interpretation'] = 'Interpretaci\u00F3n';
-Sbi.locale.ln['sbi.kpis.algDescr'] = 'Algoritmo Descripci\u00F3n';
-Sbi.locale.ln['sbi.kpis.inputAttr'] = 'Atributo de entrada';
-Sbi.locale.ln['sbi.kpis.modelRef'] = 'Modelo de Referencia';
-Sbi.locale.ln['sbi.kpis.targAud'] = 'Destinatarios';
-Sbi.locale.ln['sbi.kpis.kpiType'] = 'Kpi Tipo';
-Sbi.locale.ln['sbi.kpis.metricScale'] = 'Escala m\u00E9trica';
-Sbi.locale.ln['sbi.kpis.measType'] = 'Medida de tipo';
+Sbi.locale.ln['sbi.kpis.interpretation'] = 'Interpretaci\u00f3n';
+Sbi.locale.ln['sbi.kpis.algDescr'] = 'Algoritmo Descripci\u00f3n';
+Sbi.locale.ln['sbi.kpis.inputAttr'] = 'Entrada Atributo';
+Sbi.locale.ln['sbi.kpis.modelRef'] = 'Modelo de referencia';
+Sbi.locale.ln['sbi.kpis.targAud'] = 'Detinatario objetivo';
+Sbi.locale.ln['sbi.kpis.kpiType'] = 'Tipo Kpi';
+Sbi.locale.ln['sbi.kpis.metricScale'] = 'Escala m\u00e9trica';
+Sbi.locale.ln['sbi.kpis.measType'] = 'Tipo medida';
 Sbi.locale.ln['sbi.kpis.months'] = 'Meses';
-Sbi.locale.ln['sbi.kpis.days'] = 'D\u00EDas';
+Sbi.locale.ln['sbi.kpis.days'] = 'D\u00edas';
 Sbi.locale.ln['sbi.kpis.hours'] = 'Horas';
 Sbi.locale.ln['sbi.kpis.mins'] = 'Minutos';
 
-Sbi.locale.ln['sbi.thresholds.position'] = 'Posic\u00F3ï¿½n';
-Sbi.locale.ln['sbi.thresholds.include'] = 'Incluir?';
+Sbi.locale.ln['sbi.thresholds.position'] = 'Posici\u00f3n';
+Sbi.locale.ln['sbi.thresholds.include'] = '\u00bfIncluir?';
 Sbi.locale.ln['sbi.thresholds.min'] = 'Min';
 Sbi.locale.ln['sbi.thresholds.max'] = 'Max';
-Sbi.locale.ln['sbi.thresholds.minVal'] = 'Valor m\u00EDnimo';
+Sbi.locale.ln['sbi.thresholds.minVal'] = 'Min Valor';
 Sbi.locale.ln['sbi.thresholds.maxVal'] = 'Max Valor';
 Sbi.locale.ln['sbi.thresholds.severity'] = 'Gravedad';
 Sbi.locale.ln['sbi.thresholds.color'] = 'Color';
@@ -197,7 +186,7 @@ Sbi.locale.ln['sbi.browser.filtrpanel.filtergroup.opt.folders']  = 'carpetas';
 Sbi.locale.ln['sbi.browser.filtrpanel.filtergroup.opt.documents']  = 'documentos';
 
 Sbi.locale.ln['sbi.browser.filtrpanel.groupgroup.title']  = 'Grupo';
-Sbi.locale.ln['sbi.browser.filtrpanel.sortgroup.title']  = 'Tipo';
+Sbi.locale.ln['sbi.browser.filtrpanel.sortgroup.title']  = 'Ordenar';
 
 Sbi.locale.ln['sbi.browser.searchpanel.title']  = 'Buscar';
 Sbi.locale.ln['sbi.browser.searchpanel.opt.scope']  = 'Buscar';
@@ -205,89 +194,87 @@ Sbi.locale.ln['sbi.browser.searchpanel.opt.scope']  = 'Buscar';
 
 
 
-Sbi.locale.ln['sbi.browser.folderdetailpanel.emptytext']  = 'La carpeta seleccionada est\u00E1 vac\u00EDa';
-Sbi.locale.ln['sbi.browser.folderdetailpanel.listviewTT']  = 'Ver la lista de';
-Sbi.locale.ln['sbi.browser.folderdetailpanel.groupviewTT']  = 'Vista del grupo';
-Sbi.locale.ln['sbi.browser.folderdetailpanel.waitmsg']  = 'Por favor, espere ...';
+Sbi.locale.ln['sbi.browser.folderdetailpanel.emptytext']  = 'La carpeta seleccionada est\u00e1 vac\u00eda';
+Sbi.locale.ln['sbi.browser.folderdetailpanel.listviewTT']  = 'Vista de lista';
+Sbi.locale.ln['sbi.browser.folderdetailpanel.groupviewTT']  = 'Vista de grupo';
+Sbi.locale.ln['sbi.browser.folderdetailpanel.waitmsg']  = 'Por favor esperar ...';
 
 Sbi.locale.ln['sbi.browser.searchpanel.attribute']        = 'Atributo';
-Sbi.locale.ln['sbi.browser.searchpanel.attributes.all']  = 'todo';
-Sbi.locale.ln['sbi.browser.searchpanel.attributes.label']  = 'etiqueta';
-Sbi.locale.ln['sbi.browser.searchpanel.attributes.name']  = 'nombre';
-Sbi.locale.ln['sbi.browser.searchpanel.attributes.description']  = 'descripci\u00F3n';
-Sbi.locale.ln['sbi.browser.searchpanel.attributes.categories']  = 'categor\u00EDas';
+Sbi.locale.ln['sbi.browser.searchpanel.attributes.all']  = 'Todo';
+Sbi.locale.ln['sbi.browser.searchpanel.attributes.label']  = 'Etiqueta';
+Sbi.locale.ln['sbi.browser.searchpanel.attributes.name']  = 'Nombre';
+Sbi.locale.ln['sbi.browser.searchpanel.attributes.description']  = 'Descripci\u00f3n';
+Sbi.locale.ln['sbi.browser.searchpanel.attributes.categories']  = 'Categor\u00edas';
 
 Sbi.locale.ln['sbi.browser.searchpanel.attributes'] = 'Buscar en';
-Sbi.locale.ln['sbi.browser.searchpanel.query'] = 'Pregunta';
+Sbi.locale.ln['sbi.browser.searchpanel.query'] = 'Query';
 Sbi.locale.ln['sbi.browser.searchpanel.advanced'] = 'Opciones avanzadas';
 Sbi.locale.ln['sbi.browser.searchpanel.similar'] = 'Buscar palabras similares';
 
-Sbi.locale.ln['sbi.browser.misc.x']  = 'por';
-Sbi.locale.ln['sbi.browser.misc.ungroup']  = 'desagrupar';
+Sbi.locale.ln['sbi.browser.misc.x']  = 'Por';
+Sbi.locale.ln['sbi.browser.misc.ungroup']  = 'Desagrupar';
 
-Sbi.locale.ln['engine']  = 'motor';
-Sbi.locale.ln['description']  = 'descripci\u00F3n';
-Sbi.locale.ln['sbi.browser.document.label']  = 'etiqueta';
-Sbi.locale.ln['sbi.browser.document.name']  = 'nombre';
-Sbi.locale.ln['sbi.browser.document.extendedDescription']  = 'descripci\u00F3n larga';
-Sbi.locale.ln['sbi.browser.document.description']  = 'breve descripci\u00F3n';
-Sbi.locale.ln['sbi.browser.document.engine']  = 'motor';
-Sbi.locale.ln['sbi.browser.document.creationUser']  = 'usuario';
-Sbi.locale.ln['sbi.browser.document.creationDate']  = 'fecha de creation';
-Sbi.locale.ln['sbi.browser.document.typeCode']  = 'tipo';
-Sbi.locale.ln['sbi.browser.document.encrypt']  = 'cifrado de la bandera';
-Sbi.locale.ln['sbi.browser.document.profiledVisibility']  = 'condiciones de visibilidad';
-Sbi.locale.ln['sbi.browser.document.datasource']  = 'fuente de datos';
-Sbi.locale.ln['sbi.browser.document.dataset']  = 'conjunto de datos';
+Sbi.locale.ln['engine']  = 'Motor';
+Sbi.locale.ln['description']  = 'Descripci\u00f3n';
+Sbi.locale.ln['sbi.browser.document.label']  = 'Etiqueta';
+Sbi.locale.ln['sbi.browser.document.name']  = 'Nombre';
+Sbi.locale.ln['sbi.browser.document.extendedDescription']  = 'Larga Descripci\u00f3n';
+Sbi.locale.ln['sbi.browser.document.description']  = 'Corta Descripci\u00f3n';
+Sbi.locale.ln['sbi.browser.document.engine']  = 'Motor';
+Sbi.locale.ln['sbi.browser.document.creationUser']  = 'Usuario';
+Sbi.locale.ln['sbi.browser.document.creationDate']  = 'Fecha de creaci\u00f3n';
+Sbi.locale.ln['sbi.browser.document.typeCode']  = 'Tipo';
+Sbi.locale.ln['sbi.browser.document.encrypt']  = 'Marca de cifrado';
+Sbi.locale.ln['sbi.browser.document.profiledVisibility']  = 'Condiciones de Visibilidad';
+Sbi.locale.ln['sbi.browser.document.datasource']  = 'Fuente de datos';
+Sbi.locale.ln['sbi.browser.document.dataset']  = 'dataset';
 Sbi.locale.ln['sbi.browser.document.uuid']  = 'uuid';
 Sbi.locale.ln['sbi.browser.document.relname']  = 'relname';
-Sbi.locale.ln['sbi.browser.document.stateCode']  = 'c\u00F3digo de estado';
-Sbi.locale.ln['sbi.browser.document.stateId']  = 'Identificaci\u00F3n del estado';
-Sbi.locale.ln['sbi.browser.document.functionalities']  = 'funcionalidades';
-Sbi.locale.ln['sbi.browser.document.language']  = 'language';
+Sbi.locale.ln['sbi.browser.document.stateCode']  = 'C\u00f3digo del estado';
+Sbi.locale.ln['sbi.browser.document.stateId']  = 'Id del estado';
+Sbi.locale.ln['sbi.browser.document.functionalities']  = 'functionalidades';
+Sbi.locale.ln['sbi.browser.document.language']  = 'idioma';
 Sbi.locale.ln['sbi.browser.document.objectve']  = 'objetivo';
 Sbi.locale.ln['sbi.browser.document.keywords']  = 'palabras clave';
-Sbi.locale.ln['sbi.browser.document.refreshSeconds']  = 'intervalo de actualizaci\u00F3n';
-Sbi.locale.ln['sbi.document.saveWarning']  = 'Antes de guardar el documento de escribir el nombre y la etiqueta y seleccionar al menos una carpeta en la que se coloque';
+Sbi.locale.ln['sbi.browser.document.refreshSeconds']  = 'intervalo de actualizaci\u00f3n';
+Sbi.locale.ln['sbi.document.saveWarning']  = 'Antes de guardar el documento complete Nombre y Etiqueta y seleccione al menos una carpeta d\u00f3nde colocarla';
 
-Sbi.locale.ln['sbi.execution.saveDocument']  = 'Rellene el formulario y coloque el documento en al menos una carpeta y luego Guardar';
-Sbi.locale.ln['sbi.browser.defaultRole.title']  = 'Seleccione una funci\u00F3n por defecto';
-Sbi.locale.ln['sbi.browser.defaultRole.role']  = 'Papel: ';
-Sbi.locale.ln['sbi.browser.defaultRole.noDefRole']  = 'Ning\u00FAn papel predeterminado';
-Sbi.locale.ln['sbi.browser.defaultRole.save']  = 'Ahorrar';
+Sbi.locale.ln['sbi.execution.saveDocument']  = 'Rellene el formulario y coloque el documento en al menos una carpeta y luego Guardela';
+Sbi.locale.ln['sbi.browser.defaultRole.title']  = 'Seleccione un rol predeterminado';
+Sbi.locale.ln['sbi.browser.defaultRole.role']  = 'Rol: ';
+Sbi.locale.ln['sbi.browser.defaultRole.noDefRole']  = 'Ning\u00fan rol predeterminado';
+Sbi.locale.ln['sbi.browser.defaultRole.save']  = 'Guardar';
 Sbi.locale.ln['sbi.browser.defaultRole.cancel']  = 'Cancelar';
 
 
-Sbi.locale.ln['sbi.execution.error']  = 'Ha ocurrido un error durante la ejecuci\u00F3n de document';
-Sbi.locale.ln['sbi.execution.error.nodocid']  = 'Identificaci\u00F3n del documento se requiere para ejecutar un Documento';
-Sbi.locale.ln['sbi.execution.error.novalidrole']  = 'Usuario no tienen papeles v\u00E1lidos para la ejecuciï¿½n del seleccionado document';
-
-
+Sbi.locale.ln['sbi.execution.error']  = 'Un errore ha ocurrdio mientras ejecutaba el documento';
+Sbi.locale.ln['sbi.execution.error.nodocid']  = 'Se requiere ID de documento con el fin de ejecutar un documento';
+Sbi.locale.ln['sbi.execution.error.novalidrole']  = 'El usuario no tiene roles v\u00e1lidos para la ejecuci\u00f3n del documento seleccionado';
 
 
 Sbi.locale.ln['sbi.execution.roleselection.title']  = 'Seleccionar rol';
-Sbi.locale.ln['sbi.execution.roleselection.fieldlabel']  = 'Rol';
+Sbi.locale.ln['sbi.execution.roleselection.fieldlabel']  = 'Role';
 Sbi.locale.ln['sbi.execution.roleselection.emptytext']  = 'Seleccionar rol ...';
-Sbi.locale.ln['sbi.execution.roleselection.loadingmsg']  = 'Loading roles ...';
-Sbi.locale.ln['sbi.execution.roleselection.toolbar.next']  = 'Confirm rol selection';
+Sbi.locale.ln['sbi.execution.roleselection.loadingmsg']  = 'Cargando roles ...';
+Sbi.locale.ln['sbi.execution.roleselection.toolbar.next']  = 'Confirmar selecci\u00f3n de rol';
 
-Sbi.locale.ln['sbi.execution.parametersselection.loadingmsg']  = 'Carga de los parï¿½metros de ...';
-Sbi.locale.ln['sbi.execution.parametersselection.noParametersToBeFilled']  = '[Documento no tiene par\u00E1metros para ser llenados]';
+Sbi.locale.ln['sbi.execution.parametersselection.loadingmsg']  = 'Cargando par\u00e1metros ...';
+Sbi.locale.ln['sbi.execution.parametersselection.noParametersToBeFilled']  = '[El documento no tiene par\u00e1metros por cubrir]';
 Sbi.locale.ln['sbi.execution.parametersselection.toolbar.back']  = 'Cambiar el rol seleccionado';
-Sbi.locale.ln['sbi.execution.parametersselection.toolbar.clear']  = 'Restablecer los par\u00E1metros de forma';
-Sbi.locale.ln['sbi.execution.parametersselection.toolbar.save']  = 'Guardar estado los par\u00E1metros de la forma como el punto de vista';
-Sbi.locale.ln['sbi.execution.parametersselection.toolbar.next']  = 'Ejecutar el documento';
-Sbi.locale.ln['sbi.execution.parametersselection.message.page2.fillFormAndExecute']  = 'Rellene el siguiente formulario y haga clic en el bot\u00F3n superior derecho para ejecutar el documento';
-Sbi.locale.ln['sbi.execution.parametersselection.message.page2.execute']  = 'Click on the execution button to see results';
-Sbi.locale.ln['sbi.execution.parametersselection.message.page2.qbe.powerUserMessageWithoutParameters']  = 'Click on the execution button to see results';
-Sbi.locale.ln['sbi.execution.parametersselection.message.page2.qbe.powerUserMessageWithParameters']  = 'Fill the form below, then click on the top-right button to execute the main document or execute a saved query from the customized views\' list';
-Sbi.locale.ln['sbi.execution.parametersselection.message.page2.qbe.readOnlyUserMessageWithoutParameters']  = 'Click on the execution button to see results';
-Sbi.locale.ln['sbi.execution.parametersselection.message.page2.qbe.readOnlyUserMessageWithParameters']  = 'Fill the form below and click on the execution button to see results';
-Sbi.locale.ln['sbi.execution.parametersselection.message.page3.fillFormAndRefresh']  = 'Rellene el siguiente formulario y haga clic en el bot\u00F3n Actualizar en la barra de herramientas para volver a ejecutar el documento';
-Sbi.locale.ln['sbi.execution.parametersselection.message.page3.refresh']  = 'Haga clic en el bot\u00F3n Actualizar en la barra de herramientas para volver a ejecutar el documento';
+Sbi.locale.ln['sbi.execution.parametersselection.toolbar.clear']  = 'Restablecer formulario de par\u00e1metros';
+Sbi.locale.ln['sbi.execution.parametersselection.toolbar.save']  = 'Guardar los formularios de par\u00e1metros de estado forma como perspectiva';
+Sbi.locale.ln['sbi.execution.parametersselection.toolbar.next']  = 'Ejecutar documento';
+Sbi.locale.ln['sbi.execution.parametersselection.message.page2.fillFormAndExecute']  = 'Rellene el siguiente formulario y haga clic en el bot\u00f3n de arriba a la derecha para ejecutar el documento';
+Sbi.locale.ln['sbi.execution.parametersselection.message.page2.execute']  = 'Haga clic en el bot\u00f3n de ejecuci\u00f3n para ver los resultados';
+Sbi.locale.ln['sbi.execution.parametersselection.message.page2.qbe.powerUserMessageWithoutParameters']  = 'Haga clic en el bot\u00f3n de ejecuci\u00f3n para ver los resultados';
+Sbi.locale.ln['sbi.execution.parametersselection.message.page2.qbe.powerUserMessageWithParameters']  = 'Rellene el siguiente formulario y haga clic en el bot\u00f3n superior derecho para ejecutar el documento principal o ejecutar una consulta guardada desde la lista de vistas personalizadas';
+Sbi.locale.ln['sbi.execution.parametersselection.message.page2.qbe.readOnlyUserMessageWithoutParameters']  = 'Haga clic en el bot\u00f3n de ejecuci\u00f3n para ver los resultados';
+Sbi.locale.ln['sbi.execution.parametersselection.message.page2.qbe.readOnlyUserMessageWithParameters']  = 'Rellene el siguiente formulario y haga clic en el bot\u00f3n de ejecuci\u00f3n para ver los resultados';
+Sbi.locale.ln['sbi.execution.parametersselection.message.page3.fillFormAndRefresh']  = 'Rellene el siguiente formulario y haga clic en el bot\u00f3n Actualizar en la barra de herramientas para volver a ejecutar el documento';
+Sbi.locale.ln['sbi.execution.parametersselection.message.page3.refresh']  = 'Haga clic en el bot\u00f3n Actualizar de la barra de herramientas para volver a ejecutar el documento';
 
-Sbi.locale.ln['sbi.execution.executionpage.toolbar.back'] = 'Volver a la p\u00E1gina de selecciï¿½n de los par\u00E1metros';
-Sbi.locale.ln['sbi.execution.executionpage.toolbar.documentView'] = 'Volver a la p\u00E1gina de selecci\u00F3n de document';
+Sbi.locale.ln['sbi.execution.executionpage.toolbar.back'] = 'Volver a la p\u00e1gina de selecci\u00f3n par\u00e1metros';
+Sbi.locale.ln['sbi.execution.executionpage.toolbar.documentView'] = 'Volver a la p\u00e1gina de selecci\u00f3n documentos';
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.refresh'] = 'Recargar ejecuci\u00f3n documento';
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.rating'] = 'Vote este documento';
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.print'] = 'Imprimir';
@@ -295,45 +282,45 @@ Sbi.locale.ln['sbi.execution.executionpage.toolbar.send'] = 'Enviar';
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.saveintopersonalfolder'] = 'Guardar en la carpeta personal';
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.bookmark'] = 'Marcador documento';
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.annotate'] = 'Anotar documento';
-Sbi.locale.ln['sbi.execution.executionpage.toolbar.metadata'] = 'Mostrar los metadatos document';
-Sbi.locale.ln['sbi.execution.executionpage.toolbar.qberefresh'] = 'Actualizaci\u00F3n de la p\u00E1gina har\u00E1 que la p\u00E9rdida de valores reales de QBE: seguir adelante?';
-Sbi.locale.ln['sbi.execution.executionpage.tabs.overMaxNum']  = 'El n\U00FAmero de documentos abiertos ha superado el m\u00E1ximo. Cierre la ejecuci\u00F3n anterior y vuelva a ejecutar el documento.';
+Sbi.locale.ln['sbi.execution.executionpage.toolbar.metadata'] = 'Mostrar documento metadata';
+Sbi.locale.ln['sbi.execution.executionpage.toolbar.qberefresh'] = 'La actualizaci\u00f3n de la p\u00e1gina causar\u00e1 la p\u00e9rdida de la configuraci\u00f3n actual del QBE: \u00bfContinuar?';
+Sbi.locale.ln['sbi.execution.executionpage.tabs.overMaxNum']  = 'El n\u00famero de documentos abiertos ha superado el m\u00e1ximo. Cierre la ejecuci\u00f3n anterior y vuelva a ejecutar el documento.';
 
 Sbi.locale.ln['sbi.execution.viewpoints.title'] = 'Par\u00e1metros guardados';
 Sbi.locale.ln['sbi.execution.viewpoints.emptyText'] = '[Documento no tiene par\u00e1metros guardados]';
-Sbi.locale.ln['sbi.execution.viewpoints.name'] = 'nombre';
-Sbi.locale.ln['sbi.execution.viewpoints.description'] = 'descripci\u00f3n';
-Sbi.locale.ln['sbi.execution.viewpoints.owner'] = 'due\u00F1o';
-Sbi.locale.ln['sbi.execution.viewpoints.creationDate'] = 'fecha de creaci\u00F3n';
-Sbi.locale.ln['sbi.execution.viewpoints.scope'] = 'alcance';
-Sbi.locale.ln['sbi.execution.viewpoints.msg.saved'] = 'Par\u00e1metros guardados con \u00E9xito';
+Sbi.locale.ln['sbi.execution.viewpoints.name'] = 'Nombre';
+Sbi.locale.ln['sbi.execution.viewpoints.description'] = 'Descripci\u00f3n';
+Sbi.locale.ln['sbi.execution.viewpoints.owner'] = 'Propietario';
+Sbi.locale.ln['sbi.execution.viewpoints.creationDate'] = 'Fecha de creaci\u00f3n';
+Sbi.locale.ln['sbi.execution.viewpoints.scope'] = ' \u00c1mbito';
+Sbi.locale.ln['sbi.execution.viewpoints.msg.saved'] = 'Par\u00e1metros guardados satisfactoriamente';
 
-Sbi.locale.ln['sbi.execution.snapshots.title'] = 'Ejecuciones Programadas';
-Sbi.locale.ln['sbi.execution.snapshots.emptyText'] = '[Documento no tiene el programa de ejecuciones]';
-Sbi.locale.ln['sbi.execution.snapshots.name'] = 'nombre';
-Sbi.locale.ln['sbi.execution.snapshots.description'] = 'descripci\u00f3n';
-Sbi.locale.ln['sbi.execution.snapshots.creationDate'] = 'fecha de creaci\u00f3n';
+Sbi.locale.ln['sbi.execution.snapshots.title'] = 'Ejecuciones programadas';
+Sbi.locale.ln['sbi.execution.snapshots.emptyText'] = '[El documento no tiene ejecuciones programadas]';
+Sbi.locale.ln['sbi.execution.snapshots.name'] = 'Nombre';
+Sbi.locale.ln['sbi.execution.snapshots.description'] = 'Descripci\u00f3n';
+Sbi.locale.ln['sbi.execution.snapshots.creationDate'] = 'Fecha de creaci\u00f3n';
 Sbi.locale.ln['sbi.execution.snapshots.deleteSelected'] = 'Borrar';
-Sbi.locale.ln['sbi.execution.snapshots.deleteSelectedTooltip'] = 'Borrar selected scheduled executions';
-Sbi.locale.ln['sbi.execution.snapshots.noSnapshotsSelected'] = 'No scheduled executions selected';
+Sbi.locale.ln['sbi.execution.snapshots.deleteSelectedTooltip'] = 'Borrar ejecuciones programadas seleccionadas';
+Sbi.locale.ln['sbi.execution.snapshots.noSnapshotsSelected'] = 'No ejecuciones programadas seleccionadas';
 
 Sbi.locale.ln['sbi.execution.subobjects.title'] = 'Vistas personalizadas';
 Sbi.locale.ln['sbi.execution.subobjects.emptyText'] = '[Documento no tiene vistas personalizadas]';
-Sbi.locale.ln['sbi.execution.subobjects.name'] = 'nombre';
-Sbi.locale.ln['sbi.execution.subobjects.description'] = 'descripci\u00f3n';
-Sbi.locale.ln['sbi.execution.subobjects.owner'] = 'due\u00F1o';
-Sbi.locale.ln['sbi.execution.subobjects.creationDate'] = 'fecha de creaci\u00f3n';
-Sbi.locale.ln['sbi.execution.subobjects.lastModificationDate'] = 'fecha de \u00f9ltima modificaci\u00f3n';
-Sbi.locale.ln['sbi.execution.subobjects.visibility'] = 'visibilidad';
+Sbi.locale.ln['sbi.execution.subobjects.name'] = 'Nombre';
+Sbi.locale.ln['sbi.execution.subobjects.description'] = 'Descripci\u00f3n';
+Sbi.locale.ln['sbi.execution.subobjects.owner'] = 'Propietario';
+Sbi.locale.ln['sbi.execution.subobjects.creationDate'] = 'Fecha de creaci\u00f3n';
+Sbi.locale.ln['sbi.execution.subobjects.lastModificationDate'] = 'Fecha de \u00faltima modificaci\u00f3n';
+Sbi.locale.ln['sbi.execution.subobjects.visibility'] = 'Visibilidad';
 
-Sbi.locale.ln['sbi.execution.subobjects.visibility.public'] = 'P\u00FAblico';
-Sbi.locale.ln['sbi.execution.subobjects.visibility.private'] = 'Privada';
+Sbi.locale.ln['sbi.execution.subobjects.visibility.public'] = 'P\u00fablico';
+Sbi.locale.ln['sbi.execution.subobjects.visibility.private'] = 'Privado';
 
 Sbi.locale.ln['sbi.execution.subobjects.deleteSelected'] = 'Borrar';
-Sbi.locale.ln['sbi.execution.subobjects.deleteSelectedTooltip'] = 'Borrar seleccionados vistas personalizadas';
+Sbi.locale.ln['sbi.execution.subobjects.deleteSelectedTooltip'] = 'Eliminar vistas personalizadas seleccionadas';
 Sbi.locale.ln['sbi.execution.subobjects.execute'] = 'Ejecutar';
-Sbi.locale.ln['sbi.execution.subobjects.noSubObjectsSelected'] = 'No tiene visitas personalizadas seleccionado';
-Sbi.locale.ln['sbi.execution.subobjects.cannotDeleteSubObject'] = 'No se puede borrar vistas personalizadas';
+Sbi.locale.ln['sbi.execution.subobjects.noSubObjectsSelected'] = 'No hay vistas personalizadas seleccionadas';
+Sbi.locale.ln['sbi.execution.subobjects.cannotDeleteSubObject'] = 'No se peude borrar vistas personalizadas';
 
 //Metadata
 Sbi.locale.ln['sbi.execution.metadata'] = 'Metadatos';
@@ -343,160 +330,143 @@ Sbi.locale.ln['sbi.execution.metadata.metavalue'] = 'Valor';
 Sbi.locale.ln['sbi.execution.metadata.generalmetadata'] = 'Metadatos Generales (Non Editabiles)';
 Sbi.locale.ln['sbi.execution.metadata.shorttextmetadata'] = 'Metadatos Corto';
 Sbi.locale.ln['sbi.execution.metadata.longtextmetadata'] = 'Metadatos Largo';
-Sbi.locale.ln['sbi.execution.metadata.waitmessage'] = 'Por favor, espere .... ';
-Sbi.locale.ln['sbi.execution.metadata.waittitle'] = 'Metadatos de ahorro';
+Sbi.locale.ln['sbi.execution.metadata.waitmessage'] = 'Por favor, espere....';
+Sbi.locale.ln['sbi.execution.metadata.waittitle'] = 'Guardando metadatos';
 
-//UDP - User Defined Properties
-Sbi.locale.ln['sbi.udp.udpManagement'] = 'Propiedades definidas por el usuario';
-Sbi.locale.ln['sbi.udp.udpList'] = 'Lista Proprerty';
-Sbi.locale.ln['sbi.udp.add'] = 'A\u00F1adir';
-Sbi.locale.ln['sbi.udp.detail'] = 'Detalle';
-Sbi.locale.ln['sbi.udp.save'] = 'Guardar';
-Sbi.locale.ln['sbi.udp.name'] = 'Nombre';
-Sbi.locale.ln['sbi.udp.label'] = 'Etiqueta';
-Sbi.locale.ln['sbi.udp.description'] = 'Descripci\u00F3n';
-Sbi.locale.ln['sbi.udp.multivalue'] = 'M\u00FAltiples valores';
-Sbi.locale.ln['sbi.udp.family'] = 'Familia';
-Sbi.locale.ln['sbi.udp.type'] = 'Tipo';
-Sbi.locale.ln['sbi.udp.validString'] = 'Cadena alfanum\u00E9rico necesario ';
-Sbi.locale.ln['sbi.udp.error'] = 'Error';
-
+Sbi.locale.ln['sbi.execution.parametersselection.message.page2.fillFormAndExecute.additionalinformation1']=' '
+Sbi.locale.ln['sbi.execution.parametersselection.message.page2.fillFormAndExecute.additionalinformation2']=' '
 // Profile Management
-Sbi.locale.ln['sbi.attributes.add'] = 'A\u00F1adir';
+Sbi.locale.ln['sbi.attributes.add'] = 'Aa\u00f1adir';
 Sbi.locale.ln['sbi.attributes.delete'] = 'Borrar';
-Sbi.locale.ln['sbi.attributes.title'] = 'Los atributos del perfil';
+Sbi.locale.ln['sbi.attributes.title'] = 'Atributos de perfil';
 Sbi.locale.ln['sbi.attributes.update'] = 'Guardar';
-Sbi.locale.ln['sbi.attributes.validationError'] = 'Error de Validation';
+Sbi.locale.ln['sbi.attributes.validationError'] = 'Error de Validaci\u00f3n';
 Sbi.locale.ln['sbi.attributes.headerName'] = 'Nombre';
 Sbi.locale.ln['sbi.attributes.headerDescr'] = 'Descripci\u00f3n';
 Sbi.locale.ln['sbi.attributes.error'] = 'Error';
-Sbi.locale.ln['sbi.attributes.error.msg'] = 'Error en la operaci\u00F3n';
-Sbi.locale.ln['sbi.attributes.ok'] = 'Informaci\u00F3n';
-Sbi.locale.ln['sbi.attributes.ok.msg'] = 'Operaci\u00F3n correcta';
+Sbi.locale.ln['sbi.attributes.error.msg'] = 'Operaci\u00f3n fallida';
+Sbi.locale.ln['sbi.attributes.ok'] = 'Informaci\u00f3n';
+Sbi.locale.ln['sbi.attributes.ok.msg'] = 'Operaci\u00f3n sucedida';
 Sbi.locale.ln['sbi.attributes.result'] = 'Actualizaciones guardadas';
-Sbi.locale.ln['sbi.attributes.resultMsg'] = 'Salir y volver a entrar SpagoBI';
-Sbi.locale.ln['sbi.roles.resultMsg'] = 'Operaci\u00F3n correcta';
+Sbi.locale.ln['sbi.attributes.resultMsg'] = 'Salir y volver a entrar en SpagoBI';
+Sbi.locale.ln['sbi.roles.resultMsg'] = 'Operaci\u00f3n sucedida';
 
 Sbi.locale.ln['sbi.roles.save'] = 'Guardar';
-Sbi.locale.ln['sbi.roles.savePersonalFolder'] = 'Guardar in carpeta personal';
+Sbi.locale.ln['sbi.roles.savePersonalFolder'] = 'Guardar en carpeta personal';
 Sbi.locale.ln['sbi.roles.saveMeta'] = 'Guardar Metadatos';
 Sbi.locale.ln['sbi.roles.saveRemember'] = 'Guardar Recordarme';
 Sbi.locale.ln['sbi.roles.saveSubobj'] = 'Guardar Vistas Personalizadas';
 Sbi.locale.ln['sbi.roles.see'] = 'Ver';
 Sbi.locale.ln['sbi.roles.seeMeta'] = 'Ver Metadatos';
-Sbi.locale.ln['sbi.roles.seeNotes'] = 'Ver Notes';
-Sbi.locale.ln['sbi.roles.seeSnapshot'] = 'Ver las instant\u00E1neas';
+Sbi.locale.ln['sbi.roles.seeNotes'] = 'Ver Notas';
+Sbi.locale.ln['sbi.roles.seeSnapshot'] = 'Ver instant\u00e1neas';
 Sbi.locale.ln['sbi.roles.seeSubobj'] = 'Ver Vistas Personalizadas';
 Sbi.locale.ln['sbi.roles.seeViewpoints'] = 'Ver Parametros Guardados';
 Sbi.locale.ln['sbi.roles.sendMail'] = 'Enviar Mail';
 Sbi.locale.ln['sbi.roles.send'] = 'Enviar';
 Sbi.locale.ln['sbi.roles.build'] = 'Construir';
 Sbi.locale.ln['sbi.roles.buildQbe'] = 'Construir QBE';
-Sbi.locale.ln['sbi.roles.export'] = 'Exportar';
-Sbi.locale.ln['sbi.roles.doMassiveExport'] = 'Exportaciï¿½n masiva';
-Sbi.locale.ln['sbi.roles.manage'] = 'Gesti\u00F3n';
-Sbi.locale.ln['sbi.roles.manageUsers'] = 'Usuarios';
 Sbi.locale.ln['sbi.roles.headerName'] = 'Nombre';
 Sbi.locale.ln['sbi.roles.headerDescr'] = 'Descripci\u00f3n';
-Sbi.locale.ln['sbi.roles.headerCode'] = 'C\u00F3digo';
-Sbi.locale.ln['sbi.roles.headerRoleType'] = 'Rol Tipo';
+Sbi.locale.ln['sbi.roles.headerCode'] = 'C\u00f3digo';
+Sbi.locale.ln['sbi.roles.headerRoleType'] = 'Tipo de Rol';
 Sbi.locale.ln['sbi.roles.detail'] = 'Detalle';
 Sbi.locale.ln['sbi.roles.details'] = 'Detalles';
-Sbi.locale.ln['sbi.roles.authorizations'] = 'Autorizaciones ';
-Sbi.locale.ln['sbi.roles.alfanumericString'] = 'alfanum\u00E9rico cadena requerida (\ x2F incluido)';
-Sbi.locale.ln['sbi.roles.alfanumericString2'] = 'Cadena alfanum\u00E9rico necesario';
-Sbi.locale.ln['sbi.roles.rolesManagement'] = 'Gesti\u00F3n de roles';
+Sbi.locale.ln['sbi.roles.authorizations'] = 'Autorizaciones';
+Sbi.locale.ln['sbi.roles.alfanumericString'] = 'Cadena Alfanum\u00e9rica requerida (\x2F included)';
+Sbi.locale.ln['sbi.roles.alfanumericString2'] = 'Cadena alfanum\u00e9rica necesaria';
+Sbi.locale.ln['sbi.roles.rolesManagement'] = 'Gesti\u00f3n de Roles';
 Sbi.locale.ln['sbi.roles.rolesList'] = 'Lista de roles';
 Sbi.locale.ln['sbi.roles.error'] = 'Error';
-Sbi.locale.ln['sbi.roles.result'] = 'Resultados';
+Sbi.locale.ln['sbi.roles.result'] = 'Resultado';
 Sbi.locale.ln['sbi.roles.rolesSynchronization'] = 'Sincronizar';
-Sbi.locale.ln['sbi.roles.businessModels'] = 'Business Models';
+Sbi.locale.ln['sbi.roles.businessModels'] = 'Modelos de Negocio';
 
-Sbi.locale.ln['sbi.users.fullName'] = 'Nombre completo';
+Sbi.locale.ln['sbi.users.fullName'] = 'Nombre Completo';
 Sbi.locale.ln['sbi.users.userId'] = 'ID de usuario';
-Sbi.locale.ln['sbi.users.pwd'] = 'Contrase\u00F1a';
-Sbi.locale.ln['sbi.users.confPwd'] = 'Confirmar  Contrase\u00F1a';
-Sbi.locale.ln['sbi.users.changePwd'] = 'Cambiar  Contrase\u00F1a';
-Sbi.locale.ln['sbi.users.wrongFormat'] = 'Formato errato';
+Sbi.locale.ln['sbi.users.pwd'] = 'Contrase\u00f1a';
+Sbi.locale.ln['sbi.users.confPwd'] = 'Confirmar contrase\u00f1a';
+Sbi.locale.ln['sbi.users.changePwd'] = 'Cambiar contrase\u00f1a';
+Sbi.locale.ln['sbi.users.wrongFormat'] = 'Formato incorrecto';
 Sbi.locale.ln['sbi.users.roles'] = 'Roles';
 Sbi.locale.ln['sbi.users.attributes'] = 'Atributos';
-Sbi.locale.ln['sbi.users.manageUsers'] = 'Gesti\u00F3n de Usuarios';
-Sbi.locale.ln['sbi.users.usersList'] = 'Lista de usuarios';
+Sbi.locale.ln['sbi.users.manageUsers'] = 'Gesti\u00f3n de Usuarios';
+Sbi.locale.ln['sbi.users.usersList'] = 'Lista de Usuarios';
 Sbi.locale.ln['sbi.users.headerValue'] = 'Valor';
-Sbi.locale.ln['sbi.users.pwdNotMatching'] = 'Campos Contrase\u00F1a y confirmar contrase\u00F1a debe ser igual!';
-Sbi.locale.ln['sbi.users.confirm'] = 'Por favor confirmar';
-Sbi.locale.ln['sbi.users.confirmDelete'] = 'Confirmar la eliminaci\u00F3n del usuario?';
+Sbi.locale.ln['sbi.users.pwdNotMatching'] = '\u00a1Campos Contrase\u00f1a y Confirmar contrase\u00f1a deben ser iguales!';
+Sbi.locale.ln['sbi.users.confirm'] = 'Por favor, confirme';
+Sbi.locale.ln['sbi.users.confirmDelete'] = '\u00bfConfirmar la eliminaci\u00f3n de usuario?';
 
 //KPI ALARMS
-Sbi.locale.ln['sbi.alarmcontact.contactsManagement'] = 'Gesti\u00F3n de Contactos';
-Sbi.locale.ln['sbi.alarmcontact.contactsList'] = 'Lista de contactos';
+Sbi.locale.ln['sbi.alarmcontact.contactsManagement'] = 'Gesti\u00f3n de contactos';
+Sbi.locale.ln['sbi.alarmcontact.contactsList'] = 'Lista de Contactos';
 Sbi.locale.ln['sbi.alarmcontact.name'] = 'Nombre';
-Sbi.locale.ln['sbi.alarmcontact.email'] = 'Correo electr\u00F3nico';
-Sbi.locale.ln['sbi.alarmcontact.mobile'] = 'Mobile';
+Sbi.locale.ln['sbi.alarmcontact.email'] = 'E-mail';
+Sbi.locale.ln['sbi.alarmcontact.mobile'] = 'M\u00f3vil';
 Sbi.locale.ln['sbi.alarmcontact.resources'] = 'Recursos';
 Sbi.locale.ln['sbi.alarmcontact.save'] = 'Guardar';
-Sbi.locale.ln['sbi.alarmcontact.add'] = 'A\u00F1adir';
+Sbi.locale.ln['sbi.alarmcontact.add'] = 'A\u00f1adir';
 Sbi.locale.ln['sbi.alarmcontact.detail'] = 'Detalle';
-Sbi.locale.ln['sbi.alarmcontact.validString'] = 'Alfanum\u00E9rico cadena requerida (\ x2F - incluido)';
-Sbi.locale.ln['sbi.alarmcontact.validEmailString'] = 'Tipo de correo electr\u00F3nico requiere';
-Sbi.locale.ln['sbi.alarmcontact.validMobileString'] = 'S\u00F3lo se permiten dï¿½gitos';
+Sbi.locale.ln['sbi.alarmcontact.validString'] = 'Cadena Alfanum\u00e9rica requerida (\x2F included)';
+Sbi.locale.ln['sbi.alarmcontact.validEmailString'] = 'Tipo de Email requerido';
+Sbi.locale.ln['sbi.alarmcontact.validMobileString'] = 'S\u00f3lo d\u00edgitos permitidos';
 Sbi.locale.ln['sbi.alarmcontact.error'] = 'Error';
-Sbi.locale.ln['sbi.alarmcontact.result'] = 'Resultados';
-Sbi.locale.ln['sbi.alarmcontact.validationError'] = 'Error de validaci\u00F3n';
+Sbi.locale.ln['sbi.alarmcontact.result'] = 'Resultado';
+Sbi.locale.ln['sbi.alarmcontact.validationError'] = 'Error de validaci\u00f3n';
 
 Sbi.locale.ln['sbi.alarms.options'] = 'Opciones';
-Sbi.locale.ln['sbi.alarms.alarmSingleEvent'] = 'Evento';
-Sbi.locale.ln['sbi.alarms.alarmAutoDisabled'] = 'Automatica';
+Sbi.locale.ln['sbi.alarms.alarmSingleEvent'] = 'Evento individual';
+Sbi.locale.ln['sbi.alarms.alarmAutoDisabled'] = 'Autom\u00e1tico';
 Sbi.locale.ln['sbi.alarms.alarmName'] = 'Nombre';
 Sbi.locale.ln['sbi.alarms.alarmLabel'] = 'Etiqueta';
-Sbi.locale.ln['sbi.alarms.alarmDescr'] = 'Descripci\u00F3n';
+Sbi.locale.ln['sbi.alarms.alarmDescr'] = 'Descripci\u00f3n';
 Sbi.locale.ln['sbi.alarms.alarmModality'] = 'Modalidad';
 Sbi.locale.ln['sbi.alarms.SMS'] = 'SMS';
-Sbi.locale.ln['sbi.alarms.MAIL'] = 'Correo';
+Sbi.locale.ln['sbi.alarms.MAIL'] = 'MAIL';
 Sbi.locale.ln['sbi.alarms.alarmMailUrl'] = 'Url';
-Sbi.locale.ln['sbi.alarms.alarmMailText'] = 'Correo de texto';
+Sbi.locale.ln['sbi.alarms.alarmMailText'] = 'Mail Texto';
 
-Sbi.locale.ln['sbi.alarms.manageAlarms'] = 'Gestionar las alarmas';
-Sbi.locale.ln['sbi.alarms.alarmsList'] = 'Gestionar las alarmas';
+Sbi.locale.ln['sbi.alarms.manageAlarms'] = 'Gestor de alarmas';
+Sbi.locale.ln['sbi.alarms.alarmsList'] = 'Lista de alarmas';
 Sbi.locale.ln['sbi.alarms.details'] = 'Detalle';
 Sbi.locale.ln['sbi.alarms.update'] = 'Guardar';
-Sbi.locale.ln['sbi.alarms.add'] = 'A\u00F1adir';
-Sbi.locale.ln['sbi.alarms.validString'] = 'Alfanum\u00E9rico cadena requerida (\ x2F - incluido)';
-Sbi.locale.ln['sbi.alarms.validEmailString'] = 'Email obligatorio';
-Sbi.locale.ln['sbi.alarms.validMobileString'] = 'S\u00F3lo los nï¿½meros permitidos';
+Sbi.locale.ln['sbi.alarms.add'] = 'A\u00f1adir';
+Sbi.locale.ln['sbi.alarms.validString'] = 'Cadena Alfanum\u00e9rica requerida (\x2F included)';
+Sbi.locale.ln['sbi.alarms.validEmailString'] = 'Email Requerido';
+Sbi.locale.ln['sbi.alarms.validMobileString'] = 'S\u00f3lo d\u00edgitos permitidos';
 Sbi.locale.ln['sbi.alarms.error'] = 'Error';
-Sbi.locale.ln['sbi.alarms.result'] = 'Resultados';
-Sbi.locale.ln['sbi.alarms.validationError'] = 'Error de validaci\u00F3n';
-Sbi.locale.ln['sbi.alarms.confirm'] = 'Confirmar?';
-Sbi.locale.ln['sbi.alarms.confirmDelete'] = 'ï¿½Est\u00F3s seguro que quieres eliminar esta alarma?';
+Sbi.locale.ln['sbi.alarms.result'] = 'Resultado';
+Sbi.locale.ln['sbi.alarms.validationError'] = 'Error de validaci\u00f3n';
+Sbi.locale.ln['sbi.alarms.confirm'] = '\u00bfConfirmar?';
+Sbi.locale.ln['sbi.alarms.confirmDelete'] = '\u00bfEst\u00e1s seguro que quieres eliminar esta alarma?';
 Sbi.locale.ln['sbi.alarms.alarmKpiThreshold'] = 'Umbral';
 Sbi.locale.ln['sbi.alarms.kpis'] = 'KPI';
 Sbi.locale.ln['sbi.alarms.contacts'] = 'Contactos';
-Sbi.locale.ln['sbi.alarms.kpiInstanceIdHeader'] = 'Id Instancia KPI;';
-Sbi.locale.ln['sbi.alarms.kpiModelHeader'] = 'Kpi Modelo';
-Sbi.locale.ln['sbi.alarms.kpiNameHeader'] = 'Nombre de KPI';
-Sbi.locale.ln['sbi.alarms.noThrOrKpiI'] = 'No umbral y / o Instancia KPI seleccionado lo que desea guardar la alarma de todos modos?';
+Sbi.locale.ln['sbi.alarms.kpiInstanceIdHeader'] = 'Id instancia Kpi';
+Sbi.locale.ln['sbi.alarms.kpiModelHeader'] = 'Modelo Kpi';
+Sbi.locale.ln['sbi.alarms.kpiNameHeader'] = 'Nombre Kpi';
+Sbi.locale.ln['sbi.alarms.noThrOrKpiI'] = 'No umbral y/o Kpi Instancia seleccionado \u00bfquieres guardar la alarma de todos modos?';
 
 // Toolbar 
 Sbi.locale.ln['sbi.execution.sendTo'] = 'Enviar a';
 // Save into personal folder
 Sbi.locale.ln['sbi.execution.stpf.ok'] = 'Documento guardado correctamente';
 Sbi.locale.ln['sbi.execution.stpf.alreadyPresent'] = 'Ya presente en la Carpeta personal';
-Sbi.locale.ln['sbi.execution.stpf.error'] = 'documento no se guard\u00F3 debido a problemas t\u00E9cnicos';
+Sbi.locale.ln['sbi.execution.stpf.error'] = 'El documento no se guard\u00f3 por problemas t\u00e9cnicos';
 
 // Remember me
-Sbi.locale.ln['sbi.execution.saveRememberMe'] = 'Recu\u00E9rdame! (salvar a esta ejecuci\u00F3n como mi Hot Link)';
+Sbi.locale.ln['sbi.execution.saveRememberMe'] = 'Recu\u00e9rdame!! (guardar esta ejecuci\u00f3n como mi Hot Enlace)';
 Sbi.locale.ln['sbi.rememberme.name'] = 'Nombre';
 Sbi.locale.ln['sbi.rememberme.descr'] = 'Descripci\u00f3n';
 Sbi.locale.ln['sbi.rememberme.save'] = 'Guardar';
-Sbi.locale.ln['sbi.rememberme.missingName'] = 'Nombre falta';
-Sbi.locale.ln['sbi.rememberme.saveOk'] = 'Ejecuci\u00F3n guardar como Hot Link correctamente';
-Sbi.locale.ln['sbi.rememberme.alreadyExisting'] = 'La ejecuci\u00F3n se que ya existe en Hot Links';
-Sbi.locale.ln['sbi.rememberme.errorWhileSaving'] = 'Error al guardar';
+Sbi.locale.ln['sbi.rememberme.missingName'] = 'Falta Nombre';
+Sbi.locale.ln['sbi.rememberme.saveOk'] = 'Ejecuci\u00f3n guardada como Hot Enlace correctamente';
+Sbi.locale.ln['sbi.rememberme.alreadyExisting'] = 'Ejecuci\u00f3n ya existente en Hot Links';
+Sbi.locale.ln['sbi.rememberme.errorWhileSaving'] = 'Error mientras se guardaba';
 
 
 Sbi.locale.ln['sbi.execution.rating'] = 'Puntuaci\u00f3n del documento';
-Sbi.locale.ln['sbi.execution.rating.vote'] = 'Votar';
+Sbi.locale.ln['sbi.execution.rating.vote'] = 'Vote';
 
 Sbi.locale.ln['sbi.execution.notes.owner'] = 'Proprietario ';
 Sbi.locale.ln['sbi.execution.notes.creationDate'] = 'Creada ';
@@ -510,19 +480,18 @@ Sbi.locale.ln['sbi.execution.notes.lastModificationDate'] = 'Modificada por \u00
 Sbi.locale.ln['sbi.execution.notes.goBack'] = 'Volver a la lista';
 Sbi.locale.ln['sbi.execution.notes.insertNotes'] = 'Mostrar notas';
 Sbi.locale.ln['sbi.execution.notes.savenotes'] = 'Salvar';
-Sbi.locale.ln['sbi.execution.notes.notedSaved'] = 'notas guardadas correctamente';
-Sbi.locale.ln['sbi.execution.notes.noteDeleted'] = 'Nota suprimido';
-Sbi.locale.ln['sbi.execution.notes.notesConflict'] = 'Error al guardar notas: notas han sido modificados por otro usuario mientras se modifing ellos. Por favor, vuelva a abrir esta ventana y vuelva a intentarlo!';
-Sbi.locale.ln['sbi.execution.notes.printnotesPDF'] = 'Exportar en formato PDF';
-Sbi.locale.ln['sbi.execution.notes.printnotesRTF'] = 'Exportar en formato RTF';
+Sbi.locale.ln['sbi.execution.notes.notedSaved'] = 'Notas guardadas correctamente';
+Sbi.locale.ln['sbi.execution.notes.noteDeleted'] = 'Nota suprimida';
+Sbi.locale.ln['sbi.execution.notes.notesConflict'] = 'Error al guardar notas: notas han sido modificadas por otro usuario mientras los modificabas. \u00a1Por favor, vuelva a abrir esta ventana y vuelva a intentarlo!';
+Sbi.locale.ln['sbi.execution.notes.printnotesPDF'] = 'Exportar in PDF';
+Sbi.locale.ln['sbi.execution.notes.printnotesRTF'] = 'Exportar in RTF';
 
 Sbi.locale.ln['sbi.lookup.Confirm'] = 'Confirmar';
 Sbi.locale.ln['sbi.lookup.Annulla'] = 'Cancelar';
-Sbi.locale.ln['sbi.lookup.Select']= 'Seleccionar valor ...';
+Sbi.locale.ln['sbi.lookup.Select']= 'Seleccionar Valor ...';
 
 Sbi.locale.ln['sbi.execution.PdfExport'] = 'PDF';
 Sbi.locale.ln['sbi.execution.XlsExport'] = 'XLS';
-Sbi.locale.ln['sbi.execution.XlsxExport'] = 'XLSX';
 Sbi.locale.ln['sbi.execution.CsvExport'] = 'CSV';
 Sbi.locale.ln['sbi.execution.JpgExport'] = 'JPG';
 Sbi.locale.ln['sbi.execution.XmlExport'] = 'XML';
@@ -538,14 +507,15 @@ Sbi.locale.ln['sbi.execution.export.qbe.crosstab'] = 'Tabla de referencias cruza
 Sbi.locale.ln['sbi.worksheet.export.previewtab.msg'] = 'Por favor, abra la pesta\u00F1a de vista previa de hoja de c\u00E1lculo para exportar el documento';
 Sbi.locale.ln['sbi.worksheet.export.previewtab.title'] = 'Advertencia de exportaci\u00F3n';
 
-Sbi.locale.ln['sbi.execution.executionpage.toolbar.expand'] = 'Ampliar / Reducir';
+
+Sbi.locale.ln['sbi.execution.executionpage.toolbar.expand'] = 'Expandir/Reducir';
 
 Sbi.locale.ln['sbi.home.Welcome'] = 'Bienvenido: ';
 Sbi.locale.ln['sbi.home.Exit'] = 'Cerrar sesi\u00f3n';
 Sbi.locale.ln['sbi.home.Info'] = 'Informaci\u00f3n sobre SpagoBI';
 
 Sbi.locale.ln['sbi.lookup.ValueOfColumn'] ='El valor de la columna';
-Sbi.locale.ln['sbi.lookup.asA'] = 'como una';
+Sbi.locale.ln['sbi.lookup.asA'] = 'como a';
 Sbi.locale.ln['sbi.lookup.asString'] = 'Cadena';
 Sbi.locale.ln['sbi.lookup.asNumber'] = 'N\u00FAmero';
 Sbi.locale.ln['sbi.lookup.asDate'] = 'Fecha';
@@ -553,53 +523,53 @@ Sbi.locale.ln['sbi.lookup.Contains'] = 'Contiene';
 Sbi.locale.ln['sbi.lookup.StartsWith'] = 'Comience con';
 Sbi.locale.ln['sbi.lookup.EndsWith'] = 'Termina con';
 
+
 //Datasets
 Sbi.locale.ln['sbi.ds.clearOldVersion'] = 'Borrar todo';
-Sbi.locale.ln['sbi.ds.deleteVersion'] = 'Borrar Version';
+Sbi.locale.ln['sbi.ds.deleteVersion'] = 'Borrar Versi\u00f3n';
 Sbi.locale.ln['sbi.ds.restore'] = 'Restaurar';
-Sbi.locale.ln['sbi.ds.dateIn'] = 'Fecha de Creaci\u00F3n';
-Sbi.locale.ln['sbi.ds.userIn'] = 'El usuario de Creaci\u00F3n';
+Sbi.locale.ln['sbi.ds.dateIn'] = 'Fecha de Creaci\u00f3n';
+Sbi.locale.ln['sbi.ds.userIn'] = 'El usuario de Creaci\u00f2n';
 Sbi.locale.ln['sbi.ds.versionPanel'] = 'Un conjunto de datos de versiones anteriores';
 Sbi.locale.ln['sbi.ds.test'] = 'Prueba';
-Sbi.locale.ln['sbi.ds.fillPars'] = 'Rellene los valores para todos los par\u00E1metros';
+Sbi.locale.ln['sbi.ds.fillPars'] = 'Rellene los valores para todos los par\u00e1metros';
 Sbi.locale.ln['sbi.ds.numDocs'] = 'Utilizado por';
 Sbi.locale.ln['sbi.ds.panelTitle'] = 'Administrar los conjuntos de datos';
 Sbi.locale.ln['sbi.ds.listTitle'] = 'Lista de conjuntos de datos';
-Sbi.locale.ln['sbi.ds.catType'] = 'Categor\u00EDa';
+Sbi.locale.ln['sbi.ds.catType'] = 'Categor\u00eda';
 Sbi.locale.ln['sbi.ds.dsTypeCd'] = 'Tipo conjunto de datos';
 Sbi.locale.ln['sbi.ds.fileName'] = 'Nombre de archivo';
 Sbi.locale.ln['sbi.ds.dataSource'] = 'Fuente';
 Sbi.locale.ln['sbi.ds.query'] = 'Consulta';
-Sbi.locale.ln['sbi.ds.wsAddress'] = 'Direcci\u00F3n de servicios Web';
-Sbi.locale.ln['sbi.ds.wsOperation'] = 'Operaci\u00F3n del Servicio Web ';
+Sbi.locale.ln['sbi.ds.wsAddress'] = 'Direcci\u00f3n de servicios Web';
+Sbi.locale.ln['sbi.ds.wsOperation'] = 'Operaci\u00f3n del Servicio Web ';
 Sbi.locale.ln['sbi.ds.script'] = 'Script';
 Sbi.locale.ln['sbi.ds.scriptLanguage'] = 'Lenguaje de secuencias de comandos';
 Sbi.locale.ln['sbi.ds.jclassName'] = 'Nombre de clase de Java';
-Sbi.locale.ln['sbi.ds.transfType'] = 'Transformaci\u00F3n';
-Sbi.locale.ln['sbi.ds.trasfTypeCd'] = 'Tipo de Transformaci\u00F3n';
-Sbi.locale.ln['sbi.ds.pivotColName'] = 'Nombre de la columna de categorï¿½a para ser dinamizado';
-Sbi.locale.ln['sbi.ds.pivotColValue'] = 'Nombre de la columna Valor para hacer pivotar';
+Sbi.locale.ln['sbi.ds.transfType'] = 'Transformaci\u00f3n';
+Sbi.locale.ln['sbi.ds.trasfTypeCd'] = 'Tipo de Transformaci\u00f3n';
+Sbi.locale.ln['sbi.ds.pivotColName'] = 'Nombre de la columna de categor\u00eda para ser dinamizado';
+Sbi.locale.ln['sbi.ds.pivotColValue'] = 'Nombre de la columna valor para pivotar';
 Sbi.locale.ln['sbi.ds.pivotRowName'] = 'Nombre de la columna no debe ser dinamizado';
-Sbi.locale.ln['sbi.ds.pivotIsNumRows'] = 'Columnas de numeraci\u00F3n autom\u00E1tica?';
+Sbi.locale.ln['sbi.ds.pivotIsNumRows'] = '\u00bfColumnas de numeraci\u00f3n autom\u00e1tica?';
 Sbi.locale.ln['sbi.ds.help'] = 'Ayuda';
 Sbi.locale.ln['sbi.ds.pars'] = 'Los atributos del perfil disponibles';
 Sbi.locale.ln['sbi.ds.customData'] = 'Atributos';
-Sbi.locale.ln['sbi.ds.recalculatemetadataconfirm.title'] = 'Volver a calcular los metadatos?';
-Sbi.locale.ln['sbi.ds.recalculatemetadataconfirm.msg'] = 'ï¿½Usted desea que el sistema vuelva a calcular la base de datos de metadatos? (El conjunto de datos se ejecutar\u00E1 por el sistema: esto es necesario si se ha modificado de manera significativa el conjunto de datos)';
+Sbi.locale.ln['sbi.ds.recalculatemetadataconfirm.title'] = '\u00bfVolver a calcular los metadatos?';
+Sbi.locale.ln['sbi.ds.recalculatemetadataconfirm.msg'] = '\u00bfUsted desea que el sistema vuelva a calcular la base de datos de metadatos? (El conjunto de datos se ejecutar\u00e1 por el sistema: esto es necesario si se ha modificado de manera significativa el conjunto de datos)';
 Sbi.locale.ln['sbi.ds.advancedTab'] = 'Avanzado';
 Sbi.locale.ln['sbi.ds.helpAdvanced'] = 'Ayudar';
-Sbi.locale.ln['sbi.ds.persist'] = 'Registrada configuraci\u00F3n del dataset';
+Sbi.locale.ln['sbi.ds.persist'] = 'Registrada configuraci\u00f3n del dataset';
 Sbi.locale.ln['sbi.ds.isPersisted'] = 'Persistir en la Tabla';
-Sbi.locale.ln['sbi.ds.flat'] = 'Configuraci\u00F3n dataset plano';
+Sbi.locale.ln['sbi.ds.flat'] = 'Configuraci\u00f3n dataset plano';
 Sbi.locale.ln['sbi.ds.isFlatDataset'] = 'Dataset plano';
 Sbi.locale.ln['sbi.ds.flatTableName'] = 'Nombre de la Tabla';
 Sbi.locale.ln['sbi.ds.saved']= 'Dataset correctamente guardado';
-
-Sbi.locale.ln['sbi.ds.deleted']= 'Data set correctamente borrado';
+Sbi.locale.ln['sbi.ds.deleted']= 'Dataset correctamente borrado';
 Sbi.locale.ln['sbi.ds.wizard']= 'Asitente Dataset';
 Sbi.locale.ln['sbi.ds.label']= 'Etiqueta';
 Sbi.locale.ln['sbi.ds.name']= 'Nombre';
-Sbi.locale.ln['sbi.ds.description']= 'Descripci\u00F3n';
+Sbi.locale.ln['sbi.ds.description']= 'Descripci\u00f3n';
 Sbi.locale.ln['sbi.ds.wizard.general']= 'General';
 Sbi.locale.ln['sbi.ds.wizard.detail']= 'Detalle';
 Sbi.locale.ln['sbi.ds.wizard.metadata']= 'Metadatos';
@@ -607,35 +577,36 @@ Sbi.locale.ln['sbi.ds.wizard.back']= '< Anterior';
 Sbi.locale.ln['sbi.ds.wizard.next']= 'Siguiente >';
 Sbi.locale.ln['sbi.ds.wizard.confirm']= 'Confirmar';
 Sbi.locale.ln['sbi.ds.wizard.cancel']= 'Cancelar';
-Sbi.locale.ln['sbi.ds.scope'] = '\u00C1mbito';
+Sbi.locale.ln['sbi.ds.scope'] = '\u00c1mbito';
 Sbi.locale.ln['sbi.ds.noDataset']= 'No datasets disponibles';
-Sbi.locale.ln['sbi.ds.mandatoryFields']= '¡Por favor insertar los campos obligatorios!';
-Sbi.locale.ln['sbi.ds.noWorksheetDesigner']= '¡El Diseñador Worksheet  no est\u00E1 disponible en dataset paramétricos!';
+Sbi.locale.ln['sbi.ds.mandatoryFields']= '\u00a1Por favor insertar los campos obligatorios!';
+Sbi.locale.ln['sbi.ds.noWorksheetDesigner']= '\u00a1El Dise\u00f1ador Worksheet  no est\u00e1 disponible en dataset param\u00e9tricos!';
 Sbi.locale.ln['sbi.ds.file.type'] = 'Tipo';
 Sbi.locale.ln['sbi.ds.file.upload.button'] = 'Carga de archivos';
-Sbi.locale.ln['sbi.ds.file.csv.delimiter'] = 'Delimitaci\u00F3n de caracteres';
-Sbi.locale.ln['sbi.ds.file.csv.quote'] = 'Cita Car\u00E1cter';
-Sbi.locale.ln['sbi.ds.file.xsl.sheetnumber'] = 'N\u00FAmero de hoja';
-Sbi.locale.ln['sbi.ds.file.xsl.limitrows'] = 'Limite el n\u00FAmero de l\u00EDneas';
-Sbi.locale.ln['sbi.ds.file.xsl.skiprows'] = 'Ir l\u00EDneas';
-Sbi.locale.ln['sbi.ds.mandatoryUploadFile']= '¡Es necesario cargar el archivo!';
+Sbi.locale.ln['sbi.ds.file.csv.delimiter'] = 'Delimitaci\u00f3n de caracteres';
+Sbi.locale.ln['sbi.ds.file.csv.quote'] = 'Cita Car\u00e1cter';
+Sbi.locale.ln['sbi.ds.file.xsl.sheetnumber'] = 'N\u00famero de hoja';
+Sbi.locale.ln['sbi.ds.file.xsl.limitrows'] = 'L\u00edmite el n\u00famero de l\u00edneas';
+Sbi.locale.ln['sbi.ds.file.xsl.skiprows'] = 'Ir l\u00edneas';
+
+Sbi.locale.ln['sbi.ds.mandatoryUploadFile']= '\u00a1Es necesario cargar el archivo!';
 Sbi.locale.ln['sbi.ds.orderComboLabel']= 'Ordenar por...';
 Sbi.locale.ln['sbi.ds.filterLabel']= 'Filtrar por ...';
 Sbi.locale.ln['sbi.ds.moreRecent']= 'Reciente';
 Sbi.locale.ln['sbi.ds.owner']= 'Autor';
 Sbi.locale.ln['sbi.ds.USED']= 'El archivo esta siendo usado por otro ';
 Sbi.locale.ln['sbi.ds.EXISTS']= 'El archivo ya existe';
-Sbi.locale.ln['sbi.ds.failedToUpload']= 'carga fallida';
+Sbi.locale.ln['sbi.ds.failedToUpload']= 'Carga fallida';
 Sbi.locale.ln['sbi.ds.skip.checks']='Sobreescribir el archivo existente';
 Sbi.locale.ln['sbi.ds.changedon']='Modificado';
-
-
 
 //===================================================================
 //MESSAGE BOX BUTTONS
 //===================================================================
-Ext.Msg.buttonText.yes = 'S\u00ED'; 
+Ext.Msg.buttonText.yes = 'S\u00ed'; 
 Ext.Msg.buttonText.no = 'No';
+
+
 
 //===================================================================
 //MESSAGE BOX BUTTONS
@@ -750,6 +721,11 @@ Sbi.locale.ln['sbi.execution.parametersselection.message.page2.fillFormAndExecut
 //OFFICE DOCUMENTS - ZOOM 
 Sbi.locale.ln['Sbi.office.zoomIn'] = 'El aumento de las dimensiones';
 Sbi.locale.ln['Sbi.office.zoomOut'] = 'Reduce las dimensiones';
+
+
+
+
+
 
 
 
