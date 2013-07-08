@@ -67,7 +67,8 @@ public class JPQLStatementFromClause extends AbstractJPQLStatementClause {
 
 				IModelEntity modelEntity = parentStatement.getDataSource()
 						.getModelStructure().getEntity(entityUniqueName);
-				if (modelEntity.getProperty("type") == "cube") {
+				String type = (String) modelEntity.getProperty("type");
+				if ("cube".equalsIgnoreCase( type )) {
 					cubes.add(modelEntity);
 				} else {
 					normalEntities.add(modelEntity);
