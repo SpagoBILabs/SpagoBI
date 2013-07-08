@@ -141,7 +141,7 @@ Ext.define('Sbi.tools.dataset.ManageDatasetFieldMetadata', {
 			editable : false,
 			allowBlank : false, 
 			validationEvent : false,	
-			queryMode: 'local',
+			queryMode: 'local'
 			});	
 		
 		this.comboProperties = new Ext.form.ComboBox({
@@ -157,7 +157,7 @@ Ext.define('Sbi.tools.dataset.ManageDatasetFieldMetadata', {
 			editable : false,
 			allowBlank : false, 
 			validationEvent : false,	
-			queryMode: 'local',
+			queryMode: 'local'
 			});	
 		
 		this.comboValues = new Ext.form.ComboBox({
