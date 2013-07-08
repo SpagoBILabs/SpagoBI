@@ -555,7 +555,11 @@ public class SelfServiceDataSetCRUD {
 						if (propertyName.equalsIgnoreCase("fieldType")){
 							if (propertyValue.equalsIgnoreCase("MEASURE")){
 								ifmd.setFieldType(IFieldMetaData.FieldType.MEASURE);
-							} else {
+							} 
+							else if(propertyValue.equalsIgnoreCase("ATTRIBUTE")) {
+								ifmd.setFieldType(IFieldMetaData.FieldType.ATTRIBUTE);
+							}
+							else {
 								if("Double".equalsIgnoreCase(gussedType)) {
 									ifmd.setFieldType(IFieldMetaData.FieldType.MEASURE);
 								} else {
@@ -571,7 +575,11 @@ public class SelfServiceDataSetCRUD {
 							} else if(propertyValue.equalsIgnoreCase("Double")){
 								Class type = Class.forName("java.lang.Double");
 								ifmd.setType(type);	
-							} else {
+							} else if(propertyValue.equalsIgnoreCase("String")){
+								Class type = Class.forName("java.lang.String");
+								ifmd.setType(type);	
+							}
+							else {
 								if("Double".equalsIgnoreCase(gussedType)) {
 									Class type = Class.forName("java.lang.Double");
 									ifmd.setType(type);	
