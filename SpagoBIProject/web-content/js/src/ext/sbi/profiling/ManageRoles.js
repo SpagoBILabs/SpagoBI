@@ -344,7 +344,7 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
 					this.getRange().forEach(function(record){
 						checkBoxConfigs.push({ //pushing into array
 					        id:record.data.VALUE_ID,
-					        boxLabel:record.data.VALUE_NM,
+					        boxLabel:record.data.VALUE_NM
 					    });
 
 					});
