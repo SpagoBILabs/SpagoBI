@@ -602,7 +602,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 			} else {
 				logger.debug("Null resource setted");
 			}	
-			hql += "group by s.beginDt order by s.beginDt desc";         
+			hql += "group by s.beginDt, s.value order by s.beginDt desc";         
 
 			Query hqlQuery = aSession.createQuery(hql);
 			hqlQuery.setInteger(0, kpiInstId);
