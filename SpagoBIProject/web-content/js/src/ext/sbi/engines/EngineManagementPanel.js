@@ -104,7 +104,7 @@ Ext
 							 Sbi.config.serviceRegistry.getServiceUrl({
 								 serviceName : 'MANAGE_ENGINE_ACTION',
 								 baseParams : {
-									 MESSAGE_DET : "ENGINE_DATASOURCES", 
+									 MESSAGE_DET : "ENGINE_DATASOURCES"
 								 }
 							 });
 
@@ -424,7 +424,7 @@ Ext
 							selectOnFocus : true,
 							editable : false,
 							allowBlank : true,
-							validationEvent : true,
+							validationEvent : true
 						});
 						
 						this.detailFieldClass = new Ext.form.TextField ({
