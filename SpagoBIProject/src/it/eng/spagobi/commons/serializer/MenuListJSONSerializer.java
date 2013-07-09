@@ -171,6 +171,7 @@ public class MenuListJSONSerializer implements Serializer {
 				tempFirstLevelMenuList = createEndUserMenu(locale, 1, tempFirstLevelMenuList);
 			}
 			
+
 			tempFirstLevelMenuList = createFixedMenu(locale, 1, tempFirstLevelMenuList);
 			result = tempFirstLevelMenuList;
 		} catch (Throwable t) {
@@ -240,6 +241,12 @@ public class MenuListJSONSerializer implements Serializer {
 							+ persFoldId, messageBuilder.getMessage("menu.MyFolder", locale), true, null);
 			tempMenuList.put(myFolder);
 		}
+		
+//		
+//		JSONObject logo = new JSONObject();
+//		logo.put("xtype", "tbtext");
+//		logo.put("text", "<DIV style=\"WIDTH: 25px; HEIGHT: 100px; margin-left: 10px; background-image: url(/SpagoBI/themes/sbi_default/img/logo_toolbar.png);\" align=\"center\"> &nbsp; </DIV>");
+//		tempMenuList.put(logo);
 
 		return tempMenuList;
 	}
@@ -273,6 +280,14 @@ public class MenuListJSONSerializer implements Serializer {
 
 		MessageBuilder messageBuilder = new MessageBuilder();
 
+
+		tempMenuList.put("->");
+		JSONObject logo = new JSONObject();
+		logo.put("xtype", "tbtext");
+		logo.put("text", "<DIV style=\"WIDTH: 25px; HEIGHT: 100px; margin-left: 10px; background-image: url(/SpagoBI/themes/sbi_default/img/logo_toolbar.png);\" align=\"center\"> &nbsp; </DIV>");
+		tempMenuList.put(logo);
+		
+		
 		JSONObject spacer = new JSONObject();
 		JSONObject lang = createMenuItem("flag", "",
 				messageBuilder.getMessage("menu.Languages", locale), false,
