@@ -213,3 +213,6 @@ commit;
 INSERT into SBI_DOMAINS (VALUE_ID,VALUE_CD,VALUE_NM,DOMAIN_CD,DOMAIN_NM,VALUE_DS, USER_IN, TIME_IN) values ((SELECT next_val FROM hibernate_sequences WHERE sequence_name = 'SBI_DOMAINS'),'Double','Double','DS_META_VALUE','Data Set Metadata Value','Data Set Metadata Value','biadmin', current_timestamp);
 update hibernate_sequences set next_val = next_val+1 where  sequence_name = 'SBI_DOMAINS';
 commit;
+
+update sbi_engines set label = 'SpagoBIGisEngine' where label = 'GeoReportEngine';
+commit;
