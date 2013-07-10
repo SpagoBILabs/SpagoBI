@@ -150,7 +150,7 @@ Sbi.browser.DocumentsBrowser = function(config) {
     if (Sbi.settings.browser.showBreadCrumbs !== undefined && Sbi.settings.browser.showBreadCrumbs){
     	this.detailPanel.addListener('onbreadcrumbclick', this.onBreadCrumbClick, this);
     }
-}
+};
 
 
 Ext.extend(Sbi.browser.DocumentsBrowser, Ext.Panel, {
@@ -262,7 +262,9 @@ Ext.extend(Sbi.browser.DocumentsBrowser, Ext.Panel, {
 	}
 	
 	, onSearch: function(panel, q) {
-		if(this.rootFolderId) q.rootFolderId = this.rootFolderId;
+		if(this.rootFolderId) {
+			q.rootFolderId = this.rootFolderId;
+		}
 		this.detailPanel.searchFolder(q);
 	}
 	

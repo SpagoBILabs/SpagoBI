@@ -614,3 +614,19 @@
 		    }
 	});
 	
+	/* =============================================================================
+	* Added by Davide Zerbetto (August 2013)
+	* IE9 does not support createContextualFragment function
+	* See https://spagobi.eng.it/jira/browse/SPAGOBI-1266#comment-33990
+	* See http://www.marcolecce.com/blog/2011/05/19/sencha-extjs-createcontextualfragment-non-supportato-in-ie-9/
+	============================================================================= */
+	if (Ext.isIE && (typeof Range !== 'undefined') && !Range.prototype.createContextualFragment) {
+		  Range.prototype.createContextualFragment = function(html) {
+		    var frag = document.createDocumentFragment(),
+		    div = document.createElement('div');
+		    frag.appendChild(div);
+		    div.outerHTML = html;
+		    return frag;
+		  };
+	}
+	

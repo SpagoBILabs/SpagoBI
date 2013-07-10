@@ -60,8 +60,13 @@ Sbi.browser.FolderDetailPanel = function(config) {
 	});	
 
 	this.store.on('loadexception', Sbi.exception.ExceptionHandler.handleFailure);
-	this.store.on('beforeload', function(){if(this.loadingMask) this.loadingMask.show();}, this);
-	this.store.on('load', function(){if(this.loadingMask) this.loadingMask.hide();}, this);
+	this.store.on('beforeload', 
+			function(){
+				if(this.loadingMask) {
+					this.loadingMask.show();
+				}
+			}, this);
+	this.store.on('load', function(){if(this.loadingMask) {this.loadingMask.hide();}}, this);
 	
 	// -- folderView ----------------------------------------------------
     this.folderView = new Sbi.browser.FolderView({
@@ -80,8 +85,9 @@ Sbi.browser.FolderDetailPanel = function(config) {
     // -- toolbar -----------------------------------------------------------
     var toolbarItems = [];
     
+    var ttbarTextItem = null;
     if (Sbi.settings.browser.showBreadCrumbs !== undefined && Sbi.settings.browser.showBreadCrumbs){
-	    var ttbarTextItem = new Ext.Toolbar.TextItem('> ?');  
+    	ttbarTextItem = new Ext.Toolbar.TextItem('> ?');  
 	    ttbarTextItem.isBreadcrumb = true;	   
 	    toolbarItems.push(ttbarTextItem);
     }
@@ -173,7 +179,7 @@ Sbi.browser.FolderDetailPanel = function(config) {
     }
     //this.store.load();   
     this.loadFolder(config.folderId, config.folderId);
-}
+};
 
 
 
@@ -305,7 +311,8 @@ Ext.extend(Sbi.browser.FolderDetailPanel, Ext.Panel, {
     			breadcrumbs[0].name = titleLn;
     	}
     	
-        for(var i=0; i<breadcrumbs.length-1; i++) {
+    	
+        for (var i = 0; i < breadcrumbs.length - 1; i++) {
         	this.toolbar.add({
         		text: breadcrumbs[i].name
         		, breadcrumb: breadcrumbs[i]
@@ -506,7 +513,7 @@ Ext.extend(Sbi.browser.FolderDetailPanel, Ext.Panel, {
     	if(this.fireEvent('beforeperformactiononfolder', this, dirRecord, action) !== false){
     	
     		var services = [];
-    		serviceConf = {
+    		var serviceConf = {
     			baseParams: new Object()
     		};
     		

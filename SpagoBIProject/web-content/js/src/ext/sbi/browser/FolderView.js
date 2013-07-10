@@ -200,8 +200,8 @@ Ext.extend(Sbi.browser.FolderView, Ext.DataView, {
     	    {name: 'samples', type: 'string'}
     	]);
     	
-    	for(p in distinctValues) {
-    		var newGroup = collection.filter(attributeName, p)
+    	for(var p in distinctValues) {
+    		var newGroup = collection.filter(attributeName, p);
     		this.store.add([
     		          	  new GroupRecord({
     		          		  title: p
