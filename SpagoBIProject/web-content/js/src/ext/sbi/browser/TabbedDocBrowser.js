@@ -15,10 +15,9 @@
 
 Ext.ns("Sbi.browser");
 
-Sbi.browser.TabbedDocBrowser = function(config) {    
+Sbi.browser.TabbedDocBrowser = function (config) {    
 
-	
-	config.baseLayout = config.baseLayout || {}; 	
+	config.baseLayout = config.baseLayout || {};
 	config.parentTab = this;
     var browser = new Sbi.browser.DocumentsBrowser(config);
     this.brTab = new Ext.TabPanel({
@@ -26,12 +25,12 @@ Sbi.browser.TabbedDocBrowser = function(config) {
 	    items: [browser]
     });
     
-	var c = ({
-			title: 'Browser'
-			,layout: 'fit'
-	        ,items: [this.brTab]
-
-	});        
+	var c = {
+		title: 'Browser'
+		, layout: 'fit'
+        , items: [this.brTab]
+	};
+	
     Sbi.browser.TabbedDocBrowser.superclass.constructor.call(this, c);
 	// if browser is IE, re-inject parent.execCrossNavigation function in order to solve parent variable conflict that occurs when 
 	// more iframes are built and the same function in injected: it is a workaround that let cross navigation work properly
@@ -67,7 +66,7 @@ Sbi.browser.TabbedDocBrowser = function(config) {
 	   }
 	   , this
 	);
-}
+};
 
 
 Ext.extend(Sbi.browser.TabbedDocBrowser, Ext.Panel, {
