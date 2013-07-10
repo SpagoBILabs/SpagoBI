@@ -20,7 +20,7 @@ Ext.define('Sbi.selfservice.SelfServiceExecutionIFrame', {
 
 	
 	, init: function(config){
-		this.callParent(config);
+		this.callParent(arguments);
 		//adds the toolbar
 		this.initToolbar();
 		
