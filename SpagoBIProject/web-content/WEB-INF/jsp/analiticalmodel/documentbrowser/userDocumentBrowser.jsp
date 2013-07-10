@@ -89,8 +89,6 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
  	 
     
     <% } %>
-    
-    
-    
-    
-    
+
+
+<%@ include file="/WEB-INF/jsp/commons/footer.jsp"%>
