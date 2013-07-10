@@ -43,7 +43,7 @@ Sbi.browser.DocumentsBrowser = function(config) {
 	    title:'Document browser',
 	    items: [ 
 	            // CENTER REGION ---------------------------------------------------------
-	            this.centerContainerPanel, 
+	            this.centerContainerPanel
 	           
 	            // NORTH HREGION -----------------------------------------------------------
 	            /*
