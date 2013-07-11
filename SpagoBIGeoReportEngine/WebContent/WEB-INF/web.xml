@@ -138,6 +138,21 @@
 		</servlet-class>
 	</servlet>
 	  
+	
+	<servlet>
+      <servlet-name>GetTargetDataset</servlet-name>
+      <servlet-class>
+			it.eng.spagobi.engines.georeport.services.GetTargetDatasetAction
+		</servlet-class>
+	</servlet>
+	
+	<servlet>
+      <servlet-name>GetTargetLayer</servlet-name>
+      <servlet-class>
+			it.eng.spagobi.engines.georeport.services.GetTargetLayerAction
+		</servlet-class>
+	</servlet>
+	
 	<servlet>
       <servlet-name>MapOl</servlet-name>
       <servlet-class>
@@ -194,6 +209,16 @@
     	<url-pattern>/GetLayersFromWMS</url-pattern>
   	</servlet-mapping>
   	 	    
+  	<servlet-mapping>
+    	<servlet-name>GetTargetDataset</servlet-name>
+    	<url-pattern>/GetTargetDataset</url-pattern>
+  	</servlet-mapping>
+  	
+  	<servlet-mapping>
+    	<servlet-name>GetTargetLayer</servlet-name>
+    	<url-pattern>/GetTargetLayer</url-pattern>
+  	</servlet-mapping>
+  	
   	<servlet-mapping>
     	<servlet-name>MapOl</servlet-name>
     	<url-pattern>/MapOl</url-pattern>

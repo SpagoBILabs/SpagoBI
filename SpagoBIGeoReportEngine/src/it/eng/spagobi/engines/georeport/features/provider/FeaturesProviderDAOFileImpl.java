@@ -25,6 +25,7 @@ import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureCollections;
 import org.geotools.feature.FeatureIterator;
 import org.geotools.geojson.feature.FeatureJSON;
+import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeature;
 
 /**
@@ -32,8 +33,9 @@ import org.opengis.feature.simple.SimpleFeature;
  */
 public class FeaturesProviderDAOFileImpl implements IFeaturesProviderDAO {
 
+	File resourceFolder;
 	String indexOnAttribute;
-	Map<Object, SimpleFeature> lookupTable;
+	Map<String, SimpleFeature> lookupTable;
 	
 	public static final String GEOID_PNAME = "geoIdPName";
 	public static final String GEOID_PVALUE = "geoIdPValue";
@@ -41,41 +43,67 @@ public class FeaturesProviderDAOFileImpl implements IFeaturesProviderDAO {
 	/** Logger component. */
     private static transient Logger logger = Logger.getLogger(FeaturesProviderDAOFileImpl.class);
     
+    public FeaturesProviderDAOFileImpl(File resourceFolder) {
+    	this.resourceFolder = resourceFolder;
+    }
 	
-	public FeatureCollection getFeatures(Object featureProviderEndPoint, Map parameters) {
-		SimpleFeatureCollection featureCollection = FeatureCollections.newCollection();
+	/* (non-Javadoc)
+	 * @see it.eng.spagobi.engines.georeport.features.provider.IFeaturesProviderDAO#getFeatureById(java.lang.Object, java.util.Map)
+	 */
+	public SimpleFeature getFeatureById(Object featureProviderEndPoint, String layerName, Map parameters) {
 		
-		String geoIdPName;
-		String geoIdPValue;
 		SimpleFeature feature;
+		String geoIdPValue;
 		
 		logger.debug("IN");
 		
+		feature = null;
+		geoIdPValue = null;
 		try {
-			geoIdPName = (String)parameters.get(GEOID_PNAME);
+			String geoIdPName = (String)parameters.get(GEOID_PNAME);
 			logger.debug("Parameter [" + GEOID_PNAME + "] is equal to [" + geoIdPName + "]");
-			
+			Assert.assertNotNull(geoIdPName, "Parameter [" + GEOID_PNAME + "] cannot be null");
+				
 			geoIdPValue = (String)parameters.get(GEOID_PVALUE);
 			logger.debug("Parameter [" + GEOID_PVALUE + "] is equal to [" + geoIdPValue + "]");
-	
+			Assert.assertNotNull(geoIdPName, "Parameter [" + GEOID_PNAME + "] cannot be null");
+			
 			if(!geoIdPName.equalsIgnoreCase(indexOnAttribute)) {
 				createIndex((String)featureProviderEndPoint, geoIdPName);
 			}
 			
+			logger.debug("Searching for feature [" + geoIdPValue +"] ...");		
 			feature = lookupTable.get(geoIdPValue);
-			logger.debug("Feature [" + geoIdPValue +"] is equal to [" + feature + "]");
-			
-			
-			if(feature != null) { 
-				featureCollection.add(feature);
-				logger.debug("Decoded object is of type [" + feature.getClass().getName() + "]");
-				logger.debug("Feature [" + geoIdPValue + "] added to result features' collection");
-			} else {
-				logger.warn("Impossible to find feature [" + geoIdPValue + "]");
-			}
-						
+			logger.debug("Feature [" + geoIdPValue +"] succesfully found");						
+		} catch(FeaturesProviderRuntimeException t) {
+			throw t;
 		} catch(Throwable t) {
-			throw new SpagoBIRuntimeException(t);
+			throw new FeaturesProviderRuntimeException("An error occured while retrieving feature with id [" + geoIdPValue + "] from endpoint [" + featureProviderEndPoint + "]", t);
+		} finally {
+			logger.debug("OUT");
+		}
+		
+		return feature;
+	}
+	
+	/* (non-Javadoc)
+	 * @see it.eng.spagobi.engines.georeport.features.provider.IFeaturesProviderDAO#getAllFeatures(java.lang.Object)
+	 */
+	public FeatureCollection getAllFeatures(Object featureProviderEndPoint, String layerName) {
+		FeatureCollection featureCollection;
+		
+		logger.debug("IN");
+		
+		featureCollection = null;
+		try {
+			String fileName = (String)featureProviderEndPoint;
+			File targetFile = new File(resourceFolder, fileName);
+			logger.debug("Target file full name is equal to [" + targetFile + "]");
+			featureCollection = loadFeaturesFromFile( targetFile );
+		} catch(FeaturesProviderRuntimeException t) {
+			throw t;
+		} catch(Throwable t) {
+			throw new SpagoBIRuntimeException("An unexpected error occured while retrieving features from endpoint [" + featureProviderEndPoint + "]", t);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -83,55 +111,66 @@ public class FeaturesProviderDAOFileImpl implements IFeaturesProviderDAO {
 		return featureCollection;
 	}
 	
+	
+	// =======================================================================================================
+	// Private methods
+	// =======================================================================================================
+	
 	private void createIndex(String filename, String geoIdPName) {
 		
-		String resourcesDir;
 		File targetFile;
 		
 		logger.debug("IN");
 		
 		try {
-			
 			Assert.assertTrue(!StringUtilities.isEmpty(filename), "Input parameter [filename] cannot be null or empty");
 			Assert.assertTrue(!StringUtilities.isEmpty(geoIdPName), "Input parameter [filename] cannot be null or empty");
 			
 			logger.debug("Indexing file [" + filename + "] on attribute [" + geoIdPName + "] ...");
 			
 			indexOnAttribute = geoIdPName;
-			lookupTable = new HashMap();
+			lookupTable = new HashMap<String, SimpleFeature>();
 			
-			resourcesDir = GeoReportEngine.getConfig().getEngineConfig().getResourcePath() + "/georeport";
-			logger.debug("Resource dir is equal to [" + resourcesDir + "]");
-			
-			targetFile = new File(resourcesDir, filename);
+			logger.debug("Resource dir is equal to [" + resourceFolder + "]");
+			targetFile = new File(resourceFolder, filename);
 			logger.debug("Target file full name is equal to [" + targetFile + "]");
 			
-			FeatureCollection fc = loadFile( targetFile );
+			FeatureCollection featureCollection = loadFeaturesFromFile( targetFile );
 
-			logger.debug("Target file contains [" + fc.size() + "] features to index");
-			if ( fc.size() == 0){
-				throw new NullReferenceException("Impossible to find attribute [features in file [" + filename +"]");
+			logger.debug("Target file contains [" + featureCollection.size() + "] features to index");
+			if ( featureCollection.size() == 0) {
+				throw new FeaturesProviderRuntimeException("Impossible to find features in file [" + filename +"]");
 			}
 			
-			FeatureIterator iterator = fc.features();
+			FeatureIterator iterator = featureCollection.features();
 	    	while (iterator.hasNext()) {
-	    		SimpleFeature feature = (SimpleFeature) iterator.next();
-	    		Object idx = feature.getProperty(geoIdPName).getValue();
-	    		lookupTable.put(idx.toString(), feature);
+	    		Feature feature = iterator.next();
+	    		if( (feature instanceof SimpleFeature) == false ) {
+	    			throw new FeaturesProviderRuntimeException("Feature [" + feature.getIdentifier() + "] is not a simple feature");
+	    		}
+	    		
+	    		SimpleFeature simpleFeature = (SimpleFeature)feature; 
+	    		Object idx = simpleFeature.getProperty(geoIdPName).getValue();
+	    		lookupTable.put(idx.toString(), simpleFeature);
 				logger.debug("Feature [" + idx + "] added to the index");
 	    	}
 			
 			logger.debug("File [" + filename + "] indexed succesfully on attribute [" + geoIdPName + "]");
+			
+		} catch(FeaturesProviderRuntimeException t) {
+			indexOnAttribute = null;
+			lookupTable = null;
+			throw new SpagoBIRuntimeException("Impossible to create index on file [" + filename + "]", t);
 		} catch(Throwable t) {
 			indexOnAttribute = null;
 			lookupTable = null;
-			throw new SpagoBIRuntimeException(t);
+			throw new SpagoBIRuntimeException("An unexpected error occured while creating index on file [" + filename + "]", t);
 		} finally {
 			logger.debug("OUT");
 		}
 	}
 	
-	private FeatureCollection loadFile(File targetFile) {
+	private FeatureCollection loadFeaturesFromFile(File targetFile) {
 		
 		FeatureCollection result;
 		BufferedReader reader;
@@ -139,6 +178,11 @@ public class FeaturesProviderDAOFileImpl implements IFeaturesProviderDAO {
 		String line;
 		
 		try {
+			Assert.assertNotNull(targetFile, "Input parameter [targetFile] cannot be null");
+			
+			if(targetFile.exists() == false && targetFile.canRead() == false) {
+				throw new FeaturesProviderRuntimeException("Impossible to load features. File [" + targetFile + "] cannot be read");
+			}
 			reader = new BufferedReader(new FileReader( targetFile ));
 	        buffer = new StringBuffer();
 	
@@ -157,5 +201,4 @@ public class FeaturesProviderDAOFileImpl implements IFeaturesProviderDAO {
          
         return result;
 	}
-
 }
