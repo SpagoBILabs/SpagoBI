@@ -22,9 +22,9 @@
   * - Andrea Gioia (adrea.gioia@eng.it), Fabio D'Ovidio (f.dovidio@inovaos.it)
   */
 
-Ext.ns("Sbi.georeport");
+Ext.ns("Sbi.geo.utils");
 
-Sbi.georeport.LayerFactory = function(){
+Sbi.geo.utils.LayerFactory = function(){
  
 	return {
 		
@@ -36,7 +36,7 @@ Sbi.georeport.LayerFactory = function(){
 					layerConf.params, layerConf.options
 				);
 			} else if(layerConf.type === 'TMS') {
-				layerConf.options.getURL = Sbi.georeport.GeoReportUtils.osm_getTileURL;
+				layerConf.options.getURL = Sbi.geo.utils.GeoReportUtils.osm_getTileURL;
 				layer = new OpenLayers.Layer.TMS(
 					layerConf.name, layerConf.url, layerConf.options
 				);

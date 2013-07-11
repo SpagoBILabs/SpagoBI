@@ -22,9 +22,9 @@
   * - Andrea Gioia (adrea.gioia@eng.it), Fabio D'Ovidio (f.dovidio@inovaos.it)
   */
 
-Ext.ns("Sbi.georeport");
+Ext.ns("Sbi.geo.utils");
 
-Sbi.georeport.GeoReportUtils = function(){
+Sbi.geo.utils.GeoReportUtils = function(){
  
 	return {
 		

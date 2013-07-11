@@ -23,9 +23,9 @@
   * - Marco Battaglia (marco.battaglia@quantyca.it)
   */
 
-Ext.ns("Sbi.georeport");
+Ext.ns("Sbi.geo.utils");
 
-Sbi.georeport.ContextFactory = function(){
+Sbi.geo.utils.ContextFactory = function(){
  
 	return {
 		
