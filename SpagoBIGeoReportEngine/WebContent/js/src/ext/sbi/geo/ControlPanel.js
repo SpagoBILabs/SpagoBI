@@ -31,12 +31,12 @@
   * - Andrea Gioia (andrea.gioia@eng.it)
   */
 
-Ext.ns("Sbi.georeport");
+Ext.ns("Sbi.geo");
 
-Sbi.georeport.ControlPanel = function(config) {
+Sbi.geo.ControlPanel = function(config) {
 	
 	var defaultSettings = {
-		title       : LN('sbi.georeport.controlpanel.title'),
+		title       : LN('Sbi.geo.controlpanel.title'),
 		region      : 'east',
 		split       : true,
 		width       : 315,
@@ -70,16 +70,16 @@ Sbi.georeport.ControlPanel = function(config) {
 	});
 		
 	// constructor
-	Sbi.georeport.ControlPanel.superclass.constructor.call(this, c);
+	Sbi.geo.ControlPanel.superclass.constructor.call(this, c);
 };
 
 /**
- * @class Sbi.georeport.ControlPanel
+ * @class Sbi.geo.ControlPanel
  * @extends Ext.Panel
  * 
  * ...
  */
-Ext.extend(Sbi.georeport.ControlPanel, Ext.Panel, {
+Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
     
 	controlPanelItemsConfig: null
 	
@@ -127,7 +127,7 @@ Ext.extend(Sbi.georeport.ControlPanel, Ext.Panel, {
 	, initEarthControlPanel: function() {
 		if(this.earthPanelEnabled === true) {
 			this.controlPanelItemsConfig.push({
-				title: LN('sbi.georeport.earthpanel.title'),
+				title: LN('Sbi.geo.earthpanel.title'),
 				collapsible: false,
 				split: true,
 				height: 300,
@@ -143,7 +143,7 @@ Ext.extend(Sbi.georeport.ControlPanel, Ext.Panel, {
 		if(this.layerPanelEnabled === true) {			
 			
 			this.layersControlPanel = new mapfish.widgets.LayerTree(Ext.apply({
-	        	title: LN('sbi.georeport.layerpanel.title'),
+	        	title: LN('Sbi.geo.layerpanel.title'),
 	            collapsible: true,
 	            collapsed: false,
 	            autoHeight: true,
@@ -164,7 +164,7 @@ Ext.extend(Sbi.georeport.ControlPanel, Ext.Panel, {
 		if(this.analysisPanelEnabled === true) {
 			
 			this.analysisControlPanel = new Ext.Panel(Ext.apply({
-	        	title: LN('sbi.georeport.analysispanel.title'),
+	        	title: LN('Sbi.geo.analysispanel.title'),
 	            collapsible: true,
 	            bodyStyle:'padding:6px 6px 6px 6px; background-color:#FFFFFF',
 	            items: [this.geostatistic]
@@ -261,7 +261,7 @@ Ext.extend(Sbi.georeport.ControlPanel, Ext.Panel, {
 		if(this.legendPanelEnabled === true) {
 			
 			this.legendControlPanel = new Ext.Panel(Ext.apply({
-		           title: LN('sbi.georeport.legendpanel.title'),
+		           title: LN('Sbi.geo.legendpanel.title'),
 		           collapsible: true,
 		           bodyStyle:'padding:6px 6px 6px 6px; background-color:#FFFFFF',
 		           height: 180,

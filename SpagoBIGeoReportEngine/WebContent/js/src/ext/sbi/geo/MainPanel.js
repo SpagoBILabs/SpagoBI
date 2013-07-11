@@ -4,16 +4,16 @@
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. **/
  
-Ext.ns("Sbi.georeport");
+Ext.ns("Sbi.geo");
 
-Sbi.georeport.MainPanel = function(config) {
+Sbi.geo.MainPanel = function(config) {
 	
 	this.validateConfigObject(config);
 	this.adjustConfigObject(config);
 	
 	
 	var defaultSettings = {
-		mapName: 'sbi.georeport.mappanel.title'
+		mapName: 'Sbi.geo.mappanel.title'
 		, controlPanelConf: {
 			layerPanelEnabled: true
 			, analysisPanelEnabled: true
@@ -62,7 +62,7 @@ Sbi.georeport.MainPanel = function(config) {
 	});
 
 	// constructor
-	Sbi.georeport.MainPanel.superclass.constructor.call(this, c);
+	Sbi.geo.MainPanel.superclass.constructor.call(this, c);
 	
 	this.on('render', function() {
 		this.setCenter();
@@ -77,12 +77,12 @@ Sbi.georeport.MainPanel = function(config) {
 };
 
 /**
- * @class Sbi.georeport.MainPanel
+ * @class Sbi.geo.MainPanel
  * @extends Ext.Panel
  * 
  * ...
  */
-Ext.extend(Sbi.georeport.MainPanel, Ext.Panel, {
+Ext.extend(Sbi.geo.MainPanel, Ext.Panel, {
     
 	// =================================================================================================================
 	// PROPERTIES
@@ -220,7 +220,7 @@ Ext.extend(Sbi.georeport.MainPanel, Ext.Panel, {
       	this.zoomLevel = center.zoomLevel || this.zoomLevel;
         
         if(this.map.projection == "EPSG:900913"){            
-            this.centerPoint = Sbi.georeport.GeoReportUtils.lonLatToMercator(new OpenLayers.LonLat(this.lon, this.lat));
+            this.centerPoint = Sbi.geo.utils.GeoReportUtils.lonLatToMercator(new OpenLayers.LonLat(this.lon, this.lat));
             this.map.setCenter(this.centerPoint, this.zoomLevel);
         } else if(this.map.projection == "EPSG:4326") {
         	this.centerPoint = new OpenLayers.LonLat(this.lon, this.lat);
@@ -321,7 +321,7 @@ Ext.extend(Sbi.georeport.MainPanel, Ext.Panel, {
 		if(this.baseLayersConf && this.baseLayersConf.length > 0) {
 			for(var i = 0; i < this.baseLayersConf.length; i++) {
 				if(this.baseLayersConf[i].enabled === true) {
-					var l = Sbi.georeport.LayerFactory.createLayer( this.baseLayersConf[i] );
+					var l = Sbi.geo.utils.LayerFactory.createLayer( this.baseLayersConf[i] );
 					if(l.name === this.selectedBaseLayer) {
 						l.selected = true;
 					} else {
@@ -341,7 +341,7 @@ Ext.extend(Sbi.georeport.MainPanel, Ext.Panel, {
 			for(var i = 0; i < this.baseControlsConf.length; i++) {
 				if(this.baseControlsConf[i].enabled === true) {
 					this.baseControlsConf[i].mapOptions = this.baseMapOptions;
-					var c = Sbi.georeport.ControlFactory.createControl( this.baseControlsConf[i] );
+					var c = Sbi.geo.utils.ControlFactory.createControl( this.baseControlsConf[i] );
 					this.map.addControl( c );
 				}
 			}			
@@ -357,7 +357,7 @@ Ext.extend(Sbi.georeport.MainPanel, Ext.Panel, {
 	    if(this.map.projection == "EPSG:900913"){
 	        
 	    	var earth = new mapfish.Earth(this.map, 'map3dContainer', {
-	    		lonLat: Sbi.georeport.GeoReportUtils.lonLatToMercator(new OpenLayers.LonLat(this.lon, this.lat)),
+	    		lonLat: Sbi.geo.utils.GeoReportUtils.lonLatToMercator(new OpenLayers.LonLat(this.lon, this.lat)),
 	            altitude: 50, //da configurare
 	            heading: -60, //da configurare
 	            tilt: 70,     //da configurare
@@ -409,7 +409,7 @@ Ext.extend(Sbi.georeport.MainPanel, Ext.Panel, {
 		if (this.analysisType === this.PROPORTIONAL_SYMBOLS) {
 			this.initProportionalSymbolsAnalysis();
 			geostatConf.layer = this.targetLayer;
-			this.geostatistic = new mapfish.widgets.geostat.ProportionalSymbol(geostatConf);
+			this.geostatistic = new Sbi.geo.stat.ProportionalSymbol(geostatConf);
 			this.geostatistic.analysisConf = this.analysisConf;
 		} else if(this.analysisType === this.GRAPHIC) {
 			this.initGraphicAnalysis();
@@ -420,13 +420,13 @@ Ext.extend(Sbi.georeport.MainPanel, Ext.Panel, {
 			this.map.chartType = this.chartType;
 			this.map.totalField= this.totalField;
 			this.map.fieldsToShow= this.fieldsToShow;
-			this.geostatistic = new mapfish.widgets.geostat.Choropleth(geostatConf);//da ridefinire
+			this.geostatistic = new Sbi.geo.stat.Choropleth(geostatConf);//da ridefinire
 			this.geostatistic.analysisConf = this.analysisConf;
 		} else if (this.analysisType === this.CHOROPLETH) {
 			this.initChoroplethAnalysis();
 			geostatConf.layer = this.targetLayer;
 			//this.geostatistic = new mapfish.widgets.geostat.Choropleth(geostatConf);
-			this.geostatistic = new Sbi.geobi.Choropleth(geostatConf);
+			this.geostatistic = new Sbi.geo.stat.Choropleth(geostatConf);
 			this.geostatistic.analysisConf = this.analysisConf;
 		} else {
 			alert('error: unsupported analysis type [' + this.analysisType + ']');
@@ -475,7 +475,7 @@ Ext.extend(Sbi.georeport.MainPanel, Ext.Panel, {
 	
 	, initGraphicAnalysis: function() {
 
-		var context = Sbi.georeport.ContextFactory.createContext();
+		var context = Sbi.geo.utils.ContextFactory.createContext();
 
         var template = {
 			fillColor: "${getColor}",
@@ -605,7 +605,7 @@ Ext.extend(Sbi.georeport.MainPanel, Ext.Panel, {
 			this.toolbarConf.map = this.map;
 			this.toolbarConf.analysisLayerSelectControl = this.analysisLayerSelectControl;
 			this.toolbarConf.featureHandler = this.featureHandler;
-			this.toolbar = new Sbi.georeport.Toolbar(this.toolbarConf);
+			this.toolbar = new Sbi.geo.Toolbar(this.toolbarConf);
 			mapPanelConf.tbar = this.toolbar;
 		}
 	 
@@ -646,7 +646,7 @@ Ext.extend(Sbi.georeport.MainPanel, Ext.Panel, {
 	, initControlPanel: function() {		
 		this.controlPanelConf.map = this.map;
 		this.controlPanelConf.geostatistic = this.geostatistic;
-		this.controlPanel = new Sbi.georeport.ControlPanel(this.controlPanelConf);
+		this.controlPanel = new Sbi.geo.ControlPanel(this.controlPanelConf);
 	}
 	
 
