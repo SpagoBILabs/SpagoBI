@@ -1,9 +1,0 @@
-TODO list:
-
-- extract "role" property from UserProfile and remove it from template
-- add credits, include Fabio and other inova's devs to authors tag
-- add jmon support 
-- localize in french and spanish
-- add a doc page on the wiki
-- add ComponentItem on jira
-
