@@ -36,6 +36,7 @@ import org.geotools.feature.FeatureIterator;
 import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
 import org.geotools.geojson.feature.FeatureJSON;
+import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
@@ -224,19 +225,11 @@ public class MapOlAction extends AbstractBaseServlet {
 		SimpleFeature feature;
 		
 		Map<String, String> parameters = new HashMap<String, String>();
-		parameters.put("layerName", layerName);
 		parameters.put("geoIdPName", geoIdPName);
 		parameters.put("geoIdPValue", geoIdPValue);
 		    
-		FeatureCollection featureCollection = featuresProvider.getFeatures(featureSource, parameters);
-		FeatureIterator iterator = featureCollection.features();
+		feature = featuresProvider.getFeatureById(featureSource, layerName, parameters);
 		
-        if (featureCollection.size() > 0){
-        	feature = (SimpleFeature) iterator.next(); //get the first element
-        }else{
-        	feature = null;
-        }
-        
         return feature;
 	}
 	

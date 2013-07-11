@@ -8,10 +8,13 @@ package it.eng.spagobi.engines.georeport.features.provider;
 import java.util.Map;
 
 import org.geotools.feature.FeatureCollection;
+import org.opengis.feature.simple.SimpleFeature;
 
 /**
  * @authors Andrea Gioia (andrea.gioia@eng.it), Fabio D'Ovidio (f.dovidio@inovaos.it)
  */
 public interface IFeaturesProviderDAO {
-	FeatureCollection getFeatures(Object fetureProviderEndPoint, Map parameters);
+	
+	SimpleFeature getFeatureById(Object fetureProviderEndPoint, String layerName, Map parameters);
+	FeatureCollection getAllFeatures(Object fetureProviderEndPoint, String layerName);
 }

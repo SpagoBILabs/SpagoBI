@@ -18,6 +18,7 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.geojson.feature.FeatureJSON;
+import org.opengis.feature.simple.SimpleFeature;
 
 /**
  * @authors Andrea Gioia (andrea.gioia@eng.it), Fabio D'Ovidio (f.dovidio@inovaos.it)
@@ -32,11 +33,10 @@ public class FeaturesProviderDAOWFSImpl implements IFeaturesProviderDAO {
     private static transient Logger logger = Logger.getLogger(FeaturesProviderDAOWFSImpl.class);
     
     
-	public FeatureCollection getFeatures(Object fetureProviderEndPoint, Map parameters) {
+	public SimpleFeature getFeatureById(Object fetureProviderEndPoint, String layerName, Map parameters) {
 		FeatureCollection featureCollection;
 		
 		String wfsUrl;
-		String layerName;
 		String geoIdPName;
 		String geoIdPValue;
 		URL url;
@@ -45,9 +45,6 @@ public class FeaturesProviderDAOWFSImpl implements IFeaturesProviderDAO {
 		
 		try {
 			wfsUrl = (String)fetureProviderEndPoint;
-			
-			layerName = (String)parameters.get(LAYER_NAME);
-			logger.debug("Parameter [" + LAYER_NAME + "] is equal to [" + layerName + "]");
 			
 			geoIdPName = (String)parameters.get(GEOID_PNAME);
 			logger.debug("Parameter [" + GEOID_PNAME + "] is equal to [" + geoIdPName + "]");
@@ -88,7 +85,17 @@ public class FeaturesProviderDAOWFSImpl implements IFeaturesProviderDAO {
 	    }finally {
 	    	
 	    }		
-		return featureCollection;
+
+	    return (SimpleFeature)featureCollection.features().next();
+	}
+
+
+	/* (non-Javadoc)
+	 * @see it.eng.spagobi.engines.georeport.features.provider.IFeaturesProviderDAO#getAllFeatures(java.lang.Object)
+	 */
+	public FeatureCollection getAllFeatures(Object featureProviderEndPoint, String layerName) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

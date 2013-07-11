@@ -5,6 +5,9 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.engines.georeport.features.provider;
 
+import it.eng.spagobi.engines.georeport.GeoReportEngine;
+
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,13 +21,15 @@ public class FeaturesProviderDAOFactory {
 	static {
 		mappings = new HashMap();
 		mappings.put("wfs", new FeaturesProviderDAOWFSImpl());
-		mappings.put("file", new FeaturesProviderDAOFileImpl());
+		File resourcesFolder = new File(GeoReportEngine.getConfig().getEngineConfig().getResourcePath() + "/georeport");
+		mappings.put("file", new FeaturesProviderDAOFileImpl(resourcesFolder));
 	}
 	
 	public static void initMappings() {
 		mappings = new HashMap();
 		mappings.put("wfs", new FeaturesProviderDAOWFSImpl());
-		mappings.put("file", new FeaturesProviderDAOFileImpl());
+		File resourcesFolder = new File(GeoReportEngine.getConfig().getEngineConfig().getResourcePath() + "/georeport");
+		mappings.put("file", new FeaturesProviderDAOFileImpl(resourcesFolder));
 	}
 	
 	public static IFeaturesProviderDAO getFeaturesProviderDAO(String featureSourceType) {
