@@ -1843,3 +1843,5 @@ INSERT into SBI_DOMAINS (VALUE_ID,VALUE_CD,VALUE_NM,DOMAIN_CD,DOMAIN_NM,VALUE_DS
 update hibernate_sequences set next_val = next_val+1 where  sequence_name = 'SBI_DOMAINS';
 commit;
 
+-- 11/07/2013 Antonella: Added PREVIEW_FILE on SBI_OBJECTS to manage img under resources/preview/images
+ALTER TABLE SBI_OBJECTS ADD COLUMN PREVIEW_FILE VARCHAR(100);
