@@ -32,6 +32,7 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 
 
 
+<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/widgets/FileUploadPanel.js")%>'></script>
 
 <script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext4/sbi/widgets/store/InMemoryFilteredStore.js")%>'></script>
 <script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext4/sbi/widgets/store/DynamicStore.js")%>'></script>
