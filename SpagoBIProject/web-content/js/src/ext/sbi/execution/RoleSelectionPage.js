@@ -72,7 +72,7 @@ Sbi.execution.RoleSelectionPage = function(config, doc) {
 	        	},
 	        	scope: this
 	      	}
-	    }    
+	    } 
 	});   	
 	
     Sbi.execution.RoleSelectionPage.superclass.constructor.call(this, c);
@@ -104,7 +104,7 @@ Ext.extend(Sbi.execution.RoleSelectionPage, Ext.FormPanel, {
     // public methods
 	// ---------------------------------------------------------------------------
 	
-	, synchronize: function( executionInstance ) {
+	, synchronize: function( executionInstance ) {	
 	 	if(this.fireEvent('beforesynchronize', this, executionInstance, this.executionInstance) !== false){
 	 		this.executionInstance = executionInstance;
 	 		this.synchronizeToolbar( executionInstance );
@@ -121,7 +121,8 @@ Ext.extend(Sbi.execution.RoleSelectionPage, Ext.FormPanel, {
 		
 		this.fireEvent('beforetoolbarinit', this, this.toolbar);
 		
-		this.toolbar.addFill();
+//		 if (Sbi.settings.browser.typeLayout == undefined || Sbi.settings.browser.typeLayout == 'tab') 
+			 this.toolbar.addFill();
 		
 		
 						// 20100505

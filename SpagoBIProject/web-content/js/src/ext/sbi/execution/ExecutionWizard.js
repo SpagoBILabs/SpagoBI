@@ -26,7 +26,7 @@ Sbi.execution.ExecutionWizard = function(config, doc) {
 		activeItem: this.activePanel || 0,
 		items: [
 		 this.roleSelectionPage
-		 , this.documentExecutionPage
+	   , this.documentExecutionPage
 		 //, this.errorPage 
 		]		        
 	});
@@ -220,7 +220,7 @@ Ext.extend(Sbi.execution.ExecutionWizard, Ext.Panel, {
 		
 		 this.roleSelectionPage.on('synchronize', this.onRolesForExecutionLoaded, this);
 		 this.roleSelectionPage.on('synchronizeexception', this.onRolesForExecutionLoadException, this);    	
-		
+	    
 		return this.roleSelectionPage;
 	}
 	
@@ -307,7 +307,7 @@ Ext.extend(Sbi.execution.ExecutionWizard, Ext.Panel, {
 	
 		// up-hill ->
 		if(this.prevActivePageNumber == this.ROLE_SELECTION_PAGE_NUMBER && this.activePageNumber == this.EXECUTION_PAGE_NUMBER) {
-			this.roleSelectionPage.loadingMask.hide();
+		    this.roleSelectionPage.loadingMask.hide();
 			this.startExecution();
 		}
 		
@@ -315,8 +315,9 @@ Ext.extend(Sbi.execution.ExecutionWizard, Ext.Panel, {
 		if(this.prevActivePageNumber == this.EXECUTION_PAGE_NUMBER && this.activePageNumber == this.ROLE_SELECTION_PAGE_NUMBER) {
 			// just change page. Do nothinh else
 		}
-		
+				
 		this.getLayout().setActiveItem( this.activePageNumber );
+	
 	}
 	
 	// 20100505
@@ -342,7 +343,8 @@ Ext.extend(Sbi.execution.ExecutionWizard, Ext.Panel, {
 	 * @method 
 	 */
     , execute : function() {
-    	this.roleSelectionPage.loadingMask.show();
+    	if (this.roleSelectionPage.loadingMask) this.roleSelectionPage.loadingMask.show();
+//    	this.roleSelectionPage.loadingMask.show();
 		if(!this.document || (!this.document.id && !this.document.label) ) {
 			Sbi.exception.ExceptionHandler.showErrorMessage(LN('sbi.execution.error.nodocid'), 'Intenal Error');
 		}

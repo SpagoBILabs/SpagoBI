@@ -306,6 +306,12 @@ Ext.extend(Sbi.execution.ExecutionPanel, Ext.Panel, {
 	 * @method 
 	 */
 	, executeCrossNavInline: function(config) {
+//		var maxNumOfExecutionDocs = Sbi.settings.browser.maxNumberOfExecutionTabs || 0;
+//		var numOfExecutionDocs =  this.documentsStack.length;
+//		if (maxNumOfExecutionDocs > 1 && numOfExecutionDocs >= maxNumOfExecutionDocs){
+//			alert(LN('sbi.execution.executionpage.tabs.overMaxNum'));
+//			return
+//		}
 		//save the original document
 		var oldDoc = this.activeDocument;
 		
