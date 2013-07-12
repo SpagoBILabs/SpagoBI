@@ -38,6 +38,7 @@
 <DOMAIN valueCd="SUSP" valueNm="sbidomains.nm.susp" domainCd="STATE" domainNm="Object state" valueDs="sbidomains.ds.susp"/>
 <DOMAIN valueCd="LOW_FUNCT" valueNm="sbidomains.nm.low_funct" domainCd="FUNCT_TYPE" domainNm="Functionality" valueDs="sbidomains.ds.low_funct"/>
 <DOMAIN valueCd="USER_FUNCT" valueNm="sbidomains.nm.user_funct" domainCd="FUNCT_TYPE" domainNm="Functionality" valueDs="sbidomains.ds.user_funct"/>
+<DOMAIN valueCd="COMMUNITY_FUNCT" valueNm="sbidomains.nm.community_funct" domainCd="FUNCT_TYPE" domainNm="Functionality" valueDs="sbidomains.ds.community_funct"/>
 <DOMAIN valueCd="DEV" valueNm="sbidomains.nm.dev" domainCd="STATE" domainNm="Object state" valueDs="sbidomains.ds.dev"/>
 <DOMAIN valueCd="TEST" valueNm="sbidomains.nm.test" domainCd="STATE" domainNm="Object state" valueDs="sbidomains.ds.test"/>
 <DOMAIN valueCd="REL" valueNm="sbidomains.nm.rel" domainCd="STATE" domainNm="Object state" valueDs="sbidomains.ds.rel"/>

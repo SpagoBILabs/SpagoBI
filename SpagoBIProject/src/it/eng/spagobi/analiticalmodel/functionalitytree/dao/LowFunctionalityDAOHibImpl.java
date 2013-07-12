@@ -1715,4 +1715,77 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 		logger.debug( "OUT" );
 		return realResult;
 	}
+
+
+	public Integer insertCommunityFunctionality(LowFunctionality aLowFunctionality, IEngUserProfile profile)
+			throws EMFUserError {
+		logger.debug( "IN" );
+		Session aSession = null;
+		Transaction tx = null;
+		Integer result = null;
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+			SbiFunctions hibFunct = new SbiFunctions();
+
+			// recover sbidomain of the user functionality 
+			Criterion vcdEQusfunct = Expression.eq("valueCd", "COMMUNITY_FUNCT");
+			Criteria criteria = aSession.createCriteria(SbiDomains.class);
+			criteria.add(vcdEQusfunct);
+			SbiDomains functTypeDomain = (SbiDomains) criteria.uniqueResult();
+
+			hibFunct.setFunctType(functTypeDomain);
+			hibFunct.setCode(aLowFunctionality.getCode());
+			hibFunct.setFunctTypeCd(functTypeDomain.getValueCd());
+			hibFunct.setDescr(aLowFunctionality.getDescription());
+			hibFunct.setName(aLowFunctionality.getName());
+			hibFunct.setPath(aLowFunctionality.getPath());
+
+			Integer parentId = aLowFunctionality.getParentId();
+			SbiFunctions hibParentFunct = null;
+			if (parentId != null) {
+				// if it is not the root controls if the parent functionality exists
+				Criteria parentCriteria = aSession.createCriteria(SbiFunctions.class);
+				Criterion parentCriterion = Expression.eq("functId", parentId);
+				parentCriteria.add(parentCriterion);
+				hibParentFunct = (SbiFunctions) parentCriteria.uniqueResult();
+				if (hibParentFunct == null){
+					logger.error("The parent Functionality with id = " + parentId + " does not exist.");
+					throw new EMFUserError(EMFErrorSeverity.ERROR, 1038);
+				}
+			}
+			// if it is the root the parent functionality is null
+			hibFunct.setParentFunct(hibParentFunct);
+
+			// manages prog column that determines the folders order
+			if (hibParentFunct == null) hibFunct.setProg(new Integer(1));
+			else {
+				// loads sub functionalities
+				
+				Query hibQuery = aSession.createQuery("select max(s.prog) from SbiFunctions s where s.parentFunct.functId = ? and s.functTypeCd = ?" );
+				hibQuery.setInteger(0, parentId.intValue());
+				hibQuery.setString(1, "COMMUNITY_FUNCT");
+				Integer maxProg = (Integer) hibQuery.uniqueResult();
+				if (maxProg != null) hibFunct.setProg(new Integer(maxProg.intValue() + 1));
+				else hibFunct.setProg(new Integer(1));
+			}
+			
+			updateSbiCommonInfo4Insert(hibFunct);
+			
+			result = (Integer)aSession.save(hibFunct);
+
+			tx.commit();
+		} catch (HibernateException he) {
+			logger.error( "HibernateException",he );
+			if (tx != null)
+				tx.rollback();
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+		} finally {
+			if (aSession!=null){
+				if (aSession.isOpen()) aSession.close();
+				logger.debug( "OUT" );
+			}
+		}
+		return result;
+	}
 }

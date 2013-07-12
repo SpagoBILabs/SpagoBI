@@ -30,6 +30,7 @@ import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterDAO;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterUseDAO;
 import it.eng.spagobi.behaviouralmodel.check.dao.ICheckDAO;
 import it.eng.spagobi.behaviouralmodel.lov.dao.IModalitiesValueDAO;
+import it.eng.spagobi.community.dao.ISbiCommunityDAO;
 import it.eng.spagobi.engines.config.dao.IEngineDAO;
 import it.eng.spagobi.engines.dossier.dao.IDossierDAO;
 import it.eng.spagobi.engines.dossier.dao.IDossierPartsTempDAO;
@@ -780,6 +781,10 @@ public class DAOFactory {
 	
 	public static IArtifactsDAO getArtifactsDAO() {
 		return (IArtifactsDAO)createDAOInstance("ArtifactsDAO");
+	}
+	
+	public static ISbiCommunityDAO getCommunityDAO() {
+		return (ISbiCommunityDAO)createDAOInstance("SbiCommunityDAOImpl");
 	}
 
 }
