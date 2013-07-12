@@ -208,7 +208,7 @@ Sbi.locale.ln['sbi.goals.threshold'] = 'Soglia';
 
 //END GOALS messages
 
-
+Sbi.locale.ln['sbi.browser.goTo']  = 'Vai ai Documenti';
 Sbi.locale.ln['sbi.browser.documentstree.title'] = 'Albero delle funzionalit\u00e0';
 Sbi.locale.ln['sbi.browser.documentstree.root']  = 'Radice';
 
@@ -350,7 +350,7 @@ Sbi.locale.ln['sbi.execution.executionpage.toolbar.saveas'] = 'Salva come ...';
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.view'] = 'Vedi documento';
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.edit'] = 'Modifica';
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.breadcrumbback'] = 'Torna al documento precedente';
-Sbi.locale.ln['sbi.execution.executionpage.tabs.overMaxNum']  = 'Il numero di documenti aperti ha raggiunto il massimo. Chiudere la precedente esecuzione ed eseguire nuovamente il documento.';
+Sbi.locale.ln['sbi.execution.executionpage.tabs.overMaxNum']  = 'E\' stato raggiunto il numero massimo di documenti aperti. Chiudere la precedente esecuzione ed eseguire nuovamente il documento.';
 
 Sbi.locale.ln['sbi.execution.viewpoints.title'] = 'Parametri Salvati';
 Sbi.locale.ln['sbi.execution.viewpoints.emptyText'] = '[Il documento non ha parametri salvati]';
