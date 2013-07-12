@@ -150,5 +150,11 @@
 
 <CONFIG label="SPAGOBI.SECURITY.USE_PUBLIC_USER" name="SPAGOBI.SECURITY.USE_PUBLIC_USER" description="Enables the use of the public user. Usable only without SSO!" isActive="false" valueCheck="false" valueType="STRING" category="SECURITY"/>
 
+<CONFIG label="SPAGOBI.DOCUMENTBROWSER.HOME" name="SPAGOBI DOCUMENT BROWSER HOME" description="Default folder (by label) to visualize when opening document browser." isActive="false" valueCheck="" valueType="STRING" category="GENERIC_CONFIGURATION"/>
+
+<CONFIG label="SPAGOBI.DOCUMENTBROWSER.FLAT" name="SPAGOBI DOCUMENT BROWSER FLAT VIEW" description="Use a flat view to visualize only documents inside a folder" isActive="false" valueCheck="false" valueType="STRING" category="GENERIC_CONFIGURATION"/>
+<CONFIG label="SPAGOBI.DOCUMENTBROWSER.RECURSIVE" name="SPAGOBI DOCUMENT BROWSER RECURSIVE VIEW" description="Use a recursive view to visualize documents inside a folder and all his subfolders" isActive="false" valueCheck="false" valueType="STRING" category="GENERIC_CONFIGURATION"/>
+
+
 </CONFIGS>
 

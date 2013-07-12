@@ -12,6 +12,7 @@ import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.axis.utils.StringUtils;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -19,6 +20,7 @@ import org.json.JSONObject;
 
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
+import it.eng.spagobi.commons.bo.Config;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.serializer.FoldersJSONSerializer;
 import it.eng.spagobi.commons.serializer.SerializerFactory;
@@ -60,6 +62,33 @@ public class GetFolderPathAction extends AbstractBaseHttpAction{
 			
 			logger.debug("Parameter [" + FOLDER_ID + "] is equal to [" + functID + "]");
 			logger.debug("Parameter [" + ROOT_FOLDER_ID + "] is equal to [" + rootFolderID + "]");
+			
+			//Check if there is folder specified as home for the document browser (Property in SBI_CONFIG with label SPAGOBI.DOCUMENTBROWSER.HOME)
+			if (functID == null){
+				Config documentBrowserHomeConfig = DAOFactory.getSbiConfigDAO().loadConfigParametersByLabel("SPAGOBI.DOCUMENTBROWSER.HOME");
+				if (documentBrowserHomeConfig != null){
+					if (documentBrowserHomeConfig.isActive()){
+						
+						String folderLabel = documentBrowserHomeConfig.getValueCheck();
+						
+						if (!StringUtils.isEmpty(folderLabel)){
+							LowFunctionality funct = DAOFactory.getLowFunctionalityDAO().loadLowFunctionalityByCode(folderLabel, false);
+							
+							if (funct != null){
+								functID = String.valueOf(funct.getId());
+
+							}
+							
+						}
+
+					}
+				}
+
+				
+			}
+			//------------------
+			
+			
 			
 			if (functID == null || functID.equalsIgnoreCase(ROOT_NODE_ID)){
 				//getting default folder (root)

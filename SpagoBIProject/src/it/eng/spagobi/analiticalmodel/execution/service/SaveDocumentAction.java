@@ -66,6 +66,8 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 	private final String OBJECT_WK_DEFINITION = "wk_definition";
 	private final String OBJECT_QUERY = "query";
 	private final String FORMVALUES = "formValues";
+	private final String VISIBILITY = "visibility";
+
 	
 
 	public static final String OBJ_DATASET_ID ="dataSetId";
@@ -422,16 +424,21 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 	// TODO consolidate the following 2 methods
 	private BIObject createBaseDocument(JSONObject documentJSON, JSONObject sourceDocumentJSON, JSONArray folderJSON) {
 		BIObject sourceDocument = null;
+		String visibility = "true"; //default value
 		
 		try {
 			if(sourceDocumentJSON != null) {
 				String sourceDocumentId = sourceDocumentJSON.getString("id").trim();
 				sourceDocument = documentManagementAPI.getDocument(new Integer(sourceDocumentId));
 			}
+			if (documentJSON.getString("visibility") != null){
+				visibility = documentJSON.getString("visibility");//overriding default value
+			}
 			
 			return createBaseDocument(documentJSON.getString("label")
 					, documentJSON.getString("name")
 					, documentJSON.getString("description")
+					, visibility
 					, documentJSON.getString("type") 
 					, documentJSON.optString("engineId"), sourceDocument, folderJSON);
 		} catch(Throwable t) {
@@ -440,7 +447,7 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 	}
 	
 	
-	private BIObject createBaseDocument(String label, String name,  String description
+	private BIObject createBaseDocument(String label, String name,  String description, String visibility
 			, String type, String engineId, BIObject sourceDocument, JSONArray foldersJSON) {
 		
 		BIObject document = new BIObject();
@@ -449,7 +456,8 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 		document.setName(name);
 		document.setDescription(description);
 		setDocumentEngine(document, type, engineId);
-		document.setVisible(true);
+		Boolean isVisible = Boolean.parseBoolean(visibility);
+		document.setVisible(isVisible);
 		
 		if(sourceDocument != null) {
 			setDatasource(document, sourceDocument);
@@ -702,6 +710,9 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 			
 			String description = getAttributeAsString(DESCRIPTION);
 			if(description != null) document.put("description", description);
+			
+			String visibility = getAttributeAsString(VISIBILITY);
+			if(visibility != null) document.put("visibility", visibility);
 			
 			String type = getAttributeAsString(TYPE);
 			if(type != null) document.put("type", type);

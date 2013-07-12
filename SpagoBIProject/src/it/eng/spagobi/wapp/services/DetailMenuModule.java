@@ -445,7 +445,7 @@ public class DetailMenuModule extends AbstractHttpModule {
 			menu.setHideSliders(false);
 			String functionality = (String) request.getAttribute("functionality");
 			menu.setFunctionality(functionality);
-			if (functionality.equals("DocumentUserManagement")) {
+			if (functionality.equals(SpagoBIConstants.DOCUMENT_BROWSER_USER)) {
 				String initialPath = (String) request.getAttribute("initialPath");
 				menu.setInitialPath(initialPath);
 			} else {
@@ -666,7 +666,7 @@ public class DetailMenuModule extends AbstractHttpModule {
 					url = (String) config.getAttribute("link");
 					url = url.replaceAll("\\$\\{SPAGOBI_CONTEXT\\}", contextPath);
 					url = url.replaceAll("\\$\\{SPAGO_ADAPTER_HTTP\\}", GeneralUtilities.getSpagoAdapterHttpUrl());
-					if (functionality.equals(SpagoBIConstants.DOCUMENT_MANAGEMENT_USER)) {
+					if (functionality.equals(SpagoBIConstants.DOCUMENT_BROWSER_USER)) {
 						String initialPath = menu.getInitialPath();
 						if (initialPath != null && !initialPath.trim().equals("")) {
 							url += "&" + BIObjectsModule.MODALITY + "=" + BIObjectsModule.FILTER_TREE + "&" + TreeObjectsModule.PATH_SUBTREE + "=" + initialPath;

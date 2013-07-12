@@ -11,6 +11,7 @@ import java.sql.Connection;
 import javax.portlet.PortletPreferences;
 import javax.portlet.PortletRequest;
 
+import org.apache.axis.utils.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -20,6 +21,8 @@ import it.eng.spago.base.SourceBean;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
+import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.services.PortletLoginAction;
 import it.eng.spagobi.commons.utilities.AuditLogUtilities;
 import it.eng.spagobi.commons.utilities.HibernateUtil;
@@ -45,6 +48,8 @@ public class UserDocumentsBrowserPortletStartAction extends PortletLoginAction {
 		String labelSubTreeNode = null;
 		String height = null;
 		String channelType;
+
+		
 		
 		logger.debug("IN");
 		//Start writing log in the DB
@@ -73,6 +78,8 @@ public class UserDocumentsBrowserPortletStartAction extends PortletLoginAction {
 			
 			logger.info("[DAJS]:: channelType: " + channelType);
 			
+
+			
 			if( PORTLET.equalsIgnoreCase(channelType) ) {
 				logger.info("[DAJS]:: mode: " + PORTLET);
 				PortletRequest portReq = PortletUtilities.getPortletRequest();
@@ -97,7 +104,34 @@ public class UserDocumentsBrowserPortletStartAction extends PortletLoginAction {
 			} else {
 				logger.info("[DAJS]:: mode: " + channelType);
 				DocumentsBrowserConfig config = DocumentsBrowserConfig.getInstance();
+				
+				//If this is a "custom" Document Browser we have a subtree path as parameter
+				String functID = null;
+
+				String subTree = (String)request.getAttribute(LABEL_SUBTREE_NODE);
+				if (subTree != null)
+				{
+					
+					if (!StringUtils.isEmpty(subTree)){
+						LowFunctionality funct = DAOFactory.getLowFunctionalityDAO().loadLowFunctionalityByPath(subTree, false);
+						if (funct != null){
+							functID = String.valueOf(funct.getId());
+						}
+					}
+					
+
+					
+				} 
+
+				//----------------------------------------------
+				
+				
 				JSONObject jsonObj  = config.toJSON();
+				
+				if (functID != null){
+					jsonObj.put("defaultFolderId", functID);
+				}
+
 				// read value from db
 				//labelSubTreeNode = ...;
 				//jsonObj.put("labelSubTreeNode", labelSubTreeNode);
