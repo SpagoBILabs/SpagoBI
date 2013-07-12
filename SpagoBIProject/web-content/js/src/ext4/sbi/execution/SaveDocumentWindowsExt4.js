@@ -219,8 +219,8 @@ Ext.define('Sbi.execution.SaveDocumentWindowExt4', {
 		
 		if(docName == null || docName == undefined || docName == '' ||
 		   docLabel == null || docLabel == undefined || docLabel == '' ||
-		   functs == null || functs == undefined || 
-		   fileUpload == null || fileUpload == '' 
+		   functs == null || functs == undefined  
+		   //|| fileUpload == null || fileUpload == '' 
 		   || functs.length == 0){
 				Ext.MessageBox.show({
 	                title: LN('sbi.generic.warning'),
