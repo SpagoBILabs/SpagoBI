@@ -51,6 +51,7 @@ public class SbiObjects  extends SbiHibernateModel {
 	private Date creationDate=null;
 	private String creationUser=null;
 	private Integer refreshSeconds=null;     
+	private String previewFile=null;
 	//private SbiDataSet dataSet=null;
 	private Integer dataSet=null;
 	private Set sbiKpiDocumentses = new HashSet(0);
@@ -572,6 +573,22 @@ public class SbiObjects  extends SbiHibernateModel {
 	 */
 	public Integer getDataSet() {
 		return dataSet;
+	}
+
+
+	/**
+	 * @return the previewFile
+	 */
+	public String getPreviewFile() {
+		return previewFile;
+	}
+
+
+	/**
+	 * @param previewFile the previewFile to set
+	 */
+	public void setPreviewFile(String previewFile) {
+		this.previewFile = previewFile;
 	}
 
 
