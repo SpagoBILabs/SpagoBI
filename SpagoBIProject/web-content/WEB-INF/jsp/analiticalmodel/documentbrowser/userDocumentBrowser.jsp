@@ -59,7 +59,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
     
     Ext.onReady(function(){
       Ext.QuickTips.init();              
-      var tabbedBrowser = new Sbi.browser.TabbedDocBrowser(browserConfig);
+      var tabbedBrowser = new Sbi.browser.DocBrowserContainer(browserConfig);
       var viewport = new Ext.Viewport(tabbedBrowser);     
     });
     
