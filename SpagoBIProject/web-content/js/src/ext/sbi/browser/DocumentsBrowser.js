@@ -20,12 +20,19 @@ Sbi.browser.DocumentsBrowser = function(config) {
 	this.containerBrowser = config.parentTab;
 	this.rootFolderId = config.rootFolderId || null;
 	this.selectedFolderId = this.rootFolderId;
+	this.defaultFolderId = null;
 
+	//for "custom" Document Browser we have a defaultFolder id
+	if ((config.defaultFolderId != null) && (config.defaultFolderId != undefined )){
+		this.defaultFolderId = config.defaultFolderId ;
+	}
+	
 	this.detailPanel = new Sbi.browser.FolderDetailPanel({ 
 		layout: 'fit'
         , metaFolder: config.metaFolder
         , metaDocument: config.metaDocument	
         , folderId: this.selectedFolderId
+        , defaultFolderId: this.defaultFolderId
     });
 
 	this.centerContainerPanel = new Ext.Panel({
