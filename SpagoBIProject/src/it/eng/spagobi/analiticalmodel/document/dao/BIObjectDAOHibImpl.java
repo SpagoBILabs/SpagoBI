@@ -1794,7 +1794,8 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 					if (!profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN) &&
 							!profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_DEV)){
-						buffer.append(" and o.visible = 1" ); //only visible objetcs (1 means true)
+						//only visible objects (1 means true) and object created by the current user
+						buffer.append(" and ((o.visible = 0 and o.creationUser = '"+profile.getUserUniqueIdentifier()+"') OR (o.visible = 1)) " );
 					}
 					buffer.append(" order by o.name"); 
 				} else {
@@ -1808,7 +1809,9 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 					if (!profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN) &&
 							!profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_DEV)){
-						buffer.append(" and o.visible = 1" ); //only visible objetcs (1 means true)
+						//only visible objects (1 means true) and object created by the current user
+						buffer.append(" and ((o.visible = 0 and o.creationUser = '"+profile.getUserUniqueIdentifier()+"') OR (o.visible = 1)) " );
+
 					}
 					buffer.append(" order by o.name"); 
 				}
