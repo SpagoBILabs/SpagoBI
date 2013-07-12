@@ -85,7 +85,9 @@ public class BIObject implements Serializable {
 
 	private List<DocumentMetadataProperty> objMetaDataAndContents = null;
 	
-	private String tenant = null;	
+	private String tenant = null;
+	
+	private String previewFile = null;	
 
 	/**
 	 * Gets the id.
@@ -536,6 +538,20 @@ public class BIObject implements Serializable {
 		this.tenant = tenant;
 	}
 	
+	/**
+	 * @return the previewFile
+	 */
+	public String getPreviewFile() {
+		return previewFile;
+	}
+
+	/**
+	 * @param previewFile the previewFile to set
+	 */
+	public void setPreviewFile(String previewFile) {
+		this.previewFile = previewFile;
+	}
+
 	@Override
 	public String toString() {
 		return "Document [label=" + label + "]";

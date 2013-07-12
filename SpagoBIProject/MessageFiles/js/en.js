@@ -194,7 +194,7 @@ Sbi.locale.ln['sbi.thresholds.color'] = 'Color';
 Sbi.locale.ln['sbi.thresholds.value'] = 'Value';
 Sbi.locale.ln['sbi.thresholds.values'] = 'Values';
 //END kpi interface messages
-
+Sbi.locale.ln['sbi.browser.goTo']  = 'Go to documents';
 Sbi.locale.ln['sbi.browser.filtrpanel.title']  = 'Sort, group and filter';
 
 Sbi.locale.ln['sbi.browser.filtrpanel.filtergroup.title']  = 'Filter';
@@ -207,8 +207,6 @@ Sbi.locale.ln['sbi.browser.filtrpanel.sortgroup.title']  = 'Sort';
 
 Sbi.locale.ln['sbi.browser.searchpanel.title']  = 'Search';
 Sbi.locale.ln['sbi.browser.searchpanel.opt.scope']  = 'Search';
-
-
 
 
 Sbi.locale.ln['sbi.browser.folderdetailpanel.emptytext']  = 'The selected folder is empty';

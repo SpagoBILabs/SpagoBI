@@ -134,6 +134,9 @@
   <property generated="never" lazy="false" name="refreshSeconds" type="integer">
    <column name="REFRESH_SECONDS"/>
   </property>
+  <property generated="never" lazy="false" name="previewFile" type="string">
+   <column length="100" name="PREVIEW_FILE"/>
+  </property>
   <set inverse="true" name="sbiObjPars" sort="unsorted">
    <key>
     <column name="biobj_id" not-null="true"/>

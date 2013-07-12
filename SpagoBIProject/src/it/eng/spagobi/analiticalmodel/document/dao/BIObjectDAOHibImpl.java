@@ -484,6 +484,8 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			hibBIObject.setObjectTypeCode(biObject.getBiObjectTypeCode());
 
 			hibBIObject.setRefreshSeconds(biObject.getRefreshSeconds());
+			
+			hibBIObject.setPreviewFile(biObject.getPreviewFile());
 
 			// functionalities erasing
 			Set hibFunctionalities = hibBIObject.getSbiObjFuncs();
@@ -657,7 +659,9 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			UUID uuidObj = uuidGenerator.generateTimeBasedUUID();
 			String uuid = uuidObj.toString();
 			hibBIObject.setUuid(uuid);
-
+			
+			hibBIObject.setPreviewFile(obj.getPreviewFile()+"__"+uuid);
+			
 			hibBIObject.setCreationDate(new Date());
 			hibBIObject.setCreationUser(obj.getCreationUser());
 
@@ -1159,7 +1163,9 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 		aBIObject.setCreationDate(hibBIObject.getCreationDate());
 		aBIObject.setCreationUser(hibBIObject.getCreationUser());
 
-		aBIObject.setRefreshSeconds(hibBIObject.getRefreshSeconds());
+		aBIObject.setRefreshSeconds(hibBIObject.getRefreshSeconds());		
+		aBIObject.setPreviewFile(hibBIObject.getPreviewFile());
+		
 		logger.debug("OUT");
 		return aBIObject;
 	}

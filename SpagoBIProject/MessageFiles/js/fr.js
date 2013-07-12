@@ -177,7 +177,7 @@ Sbi.locale.ln['sbi.thresholds.color']='Coleur';
 Sbi.locale.ln['sbi.thresholds.value']='Valeur';
 Sbi.locale.ln['sbi.thresholds.values']='Valeurs';
 //END kpi interface messages
-
+Sbi.locale.ln['sbi.browser.goTo']  = 'Aller aux documents';
 Sbi.locale.ln['sbi.browser.filtrpanel.title']='Ordonner, grouper et filtrer';
 
 Sbi.locale.ln['sbi.browser.filtrpanel.filtergroup.title']='Filtrer';
