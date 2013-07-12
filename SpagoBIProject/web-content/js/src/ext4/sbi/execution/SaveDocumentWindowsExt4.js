@@ -20,6 +20,7 @@ Ext.define('Sbi.execution.SaveDocumentWindowExt4', {
 	,OBJECT_TEMPLATE: null
 	,OBJECT_DATA_SOURCE: null
 	,OBJECT_PARS: null
+	,OBJECT_PREVIEW_FILE: null
 
 	
 	,constructor: function(config) {
@@ -66,6 +67,7 @@ Ext.define('Sbi.execution.SaveDocumentWindowExt4', {
 		this.OBJECT_WK_DEFINITION = config.OBJECT_WK_DEFINITION;
 		this.OBJECT_QUERY = config.OBJECT_QUERY;
 		this.OBJECT_FORM_VALUES = config.OBJECT_FORM_VALUES;
+		this.OBJECT_PREVIEW_FILE = config.OBJECT_PREVIEW_FILE;
 		
 		this.initFormPanel();
 		
@@ -126,6 +128,17 @@ Ext.define('Sbi.execution.SaveDocumentWindowExt4', {
 	        height: 80,
 			fieldLabel: LN('sbi.generic.descr')  
 	    });
+		
+		this.docVisibility = Ext.create("Ext.form.field.Checkbox",{
+			fieldLabel:'Document Visibility',
+			id:'docVisibility',
+	        boxLabel  : 'Visible',
+            name      : 'docVisibility',
+            inputValue: 1,
+            checked   : true
+           });
+		
+//		this.fileUpload = this.initFileUpload();
 	    
 	    this.inputForm =  Ext.create("Ext.Panel",{
 	         itemId: 'detail'
@@ -143,7 +156,7 @@ Ext.define('Sbi.execution.SaveDocumentWindowExt4', {
 	                 "margin-left": "4px",
 	                 "margin-top": "25px"
 	             },
-	             items: [this.docLabel,this.docName,this.docDescr]
+	             items: [this.docLabel,this.docName,this.docDescr,this.docVisibility,this.fileUpload]
 	    	}
 	    });
 	    
@@ -161,6 +174,7 @@ Ext.define('Sbi.execution.SaveDocumentWindowExt4', {
 		          autoWidth: true,
 		          height: 350,
 		          layout: 'column',
+		          columnWidth:	0.1,
 		          scope:this,
 		          forceLayout: true,
 		          trackResetOnLoad: true,
@@ -182,10 +196,12 @@ Ext.define('Sbi.execution.SaveDocumentWindowExt4', {
 		var docName = this.docName.getValue();
 		var docLabel = this.docLabel.getValue();
 		var docDescr = this.docDescr.getValue();
+		var docVisibility = this.docVisibility.getValue();
 		var functs = this.treePanel.returnCheckedIdNodesArray();
 		var query = this.OBJECT_QUERY;
 		var formValues = this.OBJECT_FORM_VALUES;// the values of the form for the smart filter
 		var wk_definition = this.OBJECT_WK_DEFINITION;
+		var fileUpload = this.OBJECT_PREVIEW_FILE
 		
 		if(formValues!=undefined && formValues!=null){
 			formValues=Ext.encode(formValues);
@@ -197,9 +213,14 @@ Ext.define('Sbi.execution.SaveDocumentWindowExt4', {
 			wk_definition = Ext.JSON.encode(wk_definition);
 		}
 		
+		if(fileUpload!=undefined && fileUpload!=null){
+			fileUpload = Ext.JSON.encode(fileUpload);
+		}
+		
 		if(docName == null || docName == undefined || docName == '' ||
 		   docLabel == null || docLabel == undefined || docLabel == '' ||
-		   functs == null || functs == undefined 
+		   functs == null || functs == undefined || 
+		   fileUpload == null || fileUpload == '' 
 		   || functs.length == 0){
 				Ext.MessageBox.show({
 	                title: LN('sbi.generic.warning'),
@@ -213,9 +234,11 @@ Ext.define('Sbi.execution.SaveDocumentWindowExt4', {
 		        	name :  docName,
 		        	label : docLabel,
 		        	description : docDescr,
+		        	visibility: docVisibility,
 		        	obj_id: this.OBJECT_ID,
 					typeid: this.OBJECT_TYPE,
 					wk_definition: wk_definition,
+					fileUpload: fileUpload,
 					query: query,
 					formValues: formValues,
 					template: this.OBJECT_TEMPLATE,
@@ -255,5 +278,99 @@ Ext.define('Sbi.execution.SaveDocumentWindowExt4', {
 			});
 		}
 	}
+	, initFileUpload: function(){
+		//upload preview file
+		var fileUpload = new Sbi.widgets.FileUploadPanel({fromExt4:true, isEnabled: true});
+//		if (this.record !== undefined){
+//			this.fileUpload.setFormState(this.record);
+//		}
+		var uploadButton = fileUpload.getComponent('fileUploadPanel').getComponent('fileUploadButton');		
+		uploadButton.setHandler(this.uploadFileButtonHandler,this);
+		var toReturn = new  Ext.FormPanel({
+			  id: 'previewFileForm',
+			  fileUpload: true, // this is a multipart form!!
+			  isUpload: true,
+			  border:false,
+			  method: 'POST',
+			  enctype: 'multipart/form-data',
+//  		      margins: '10 10 10 10',
+	          labelAlign: 'left',
+	          bodyStyle:'padding:5px',
+	          autoScroll:true,
+//	          width: 650,
+//	          height: 600,
+	          trackResetOnLoad: true,
+	          items: fileUpload
+	      });
+		
+		return toReturn;
+	}
 	
+	//handler for the upload file button
+	,uploadFileButtonHandler: function(btn, e) {
+		
+		Sbi.debug("[PreviewFileWizard.uploadFileButtonHandler]: IN");
+		
+        var form = Ext.getCmp('previewFileForm').getForm();
+        
+        Sbi.debug("[PreviewFileWizard.uploadFileButtonHandler]: form is equal to [" + form + "]");
+		
+        var completeUrl =  Sbi.config.serviceRegistry.getServiceUrl({
+					    		serviceName : 'UPLOAD_PREVIEW_FILE_ACTION',
+					    		baseParams : {LIGHT_NAVIGATOR_DISABLED: 'TRUE'}
+					    	});
+		var baseUrl = completeUrl.substr(0, completeUrl
+				.indexOf("?"));
+		
+		Sbi.debug("[PreviewFileWizard.uploadFileButtonHandler]: base url is equal to [" + baseUrl + "]");
+		
+		var queryStr = completeUrl.substr(completeUrl.indexOf("?") + 1);
+		var params = Ext.urlDecode(queryStr);
+
+		Sbi.debug("[PreviewFileWizard.uploadFileButtonHandler]: form is valid [" + form.isValid() + "]");		
+		var fileNameUploaded = Ext.getCmp('fileUploadField').getValue();
+		fileNameUploaded = fileNameUploaded.replace("C:\\fakepath\\", "");
+		
+		form.submit({
+			clientValidation: false,
+			url : baseUrl // a multipart form cannot
+							// contain parameters on its
+							// main URL; they must POST
+							// parameters
+			,
+			params : params,
+			waitMsg : LN('sbi.generic.wait'),
+			success : function(form, action) {
+				Ext.MessageBox.alert('Success!','File Uploaded to the Server');
+				Ext.getCmp('fileNameField').setValue(fileNameUploaded);
+			},
+			failure : function(form, action) {
+				switch (action.failureType) {
+	            case Ext.form.Action.CLIENT_INVALID:
+	                Ext.Msg.alert('Failure', 'Form fields may not be submitted with invalid values');
+	                break;
+	            case Ext.form.Action.CONNECT_FAILURE:
+	                Ext.Msg.alert('Failure', 'Ajax communication failed');
+	                break;
+	            case Ext.form.Action.SERVER_INVALID:
+	            	if(action.result.msg && action.result.msg.indexOf("NonBlockingError:")>=0){
+	            		var error = Ext.JSON.decode(action.result.msg);
+//	            		if(error.error=='USED'){//the file is used from more than one dataset
+//	            			Sbi.exception.ExceptionHandler.showErrorMessage(LN('sbi.ds.'+error.error)+error.used+" datasets",LN("sbi.ds.failedToUpload") );
+//	            		}else{
+	            			Sbi.exception.ExceptionHandler.showErrorMessage(LN('sbi.ds.'+error.error),LN("sbi.ds.failedToUpload"));
+//	            		}
+	            		
+	            	}else{
+	            		Sbi.exception.ExceptionHandler.showErrorMessage(action.result.msg,'Failure');
+	            	}
+	               
+				}
+			},
+			scope : this
+		});		
+		
+		Sbi.debug("[PreviewFileWizard.uploadFileButtonHandler]: OUT");
+	}
+
 });
