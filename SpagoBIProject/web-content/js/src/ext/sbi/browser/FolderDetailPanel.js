@@ -177,8 +177,15 @@ Sbi.browser.FolderDetailPanel = function(config) {
     if (Sbi.settings.browser.showBreadCrumbs !== undefined && Sbi.settings.browser.showBreadCrumbs){
     	 this.addEvents("onbreadcrumbclick");
     }
-    //this.store.load();   
-    this.loadFolder(config.folderId, config.folderId);
+    //this.store.load();  
+    
+	//for "custom" Document Browser we have a defaultFolder id
+    if (config.defaultFolderId != null){
+        this.loadFolder(config.defaultFolderId, null);
+
+    } else {
+        this.loadFolder(config.folderId, config.folderId);
+    }
 };
 
 
