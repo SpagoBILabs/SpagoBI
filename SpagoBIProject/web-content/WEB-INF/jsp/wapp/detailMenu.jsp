@@ -614,8 +614,10 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 				<option value="<%= SpagoBIConstants.DOCUMENT_BROWSER_USER %>" <%= (menu.getFunctionality() != null && menu.getFunctionality().equals(SpagoBIConstants.DOCUMENT_BROWSER_USER)) ? "selected='selected'" : ""%>>
 					<spagobi:message key="menu.Browser" />
 				</option>
+				<!--  
 				<option value="<%= SpagoBIConstants.DOCUMENT_MANAGEMENT_USER %>" <%= (menu.getFunctionality() != null && menu.getFunctionality().equals(SpagoBIConstants.DOCUMENT_MANAGEMENT_USER)) ? "selected='selected'" : ""%>>
 					<spagobi:message key="tree.objectstree.name" />
+				-->	
 				</option>
 				<option value="<%= SpagoBIConstants.WORKLIST_MANAGEMENT %>" <%= (menu.getFunctionality() != null && menu.getFunctionality().equals(SpagoBIConstants.WORKLIST_MANAGEMENT)) ? "selected='selected'" : ""%>>
 					<spagobi:message key="menu.Worklist" />
@@ -642,7 +644,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 		function changeInitialPathVisibility(selectObj) {
 			var initialPathDiv = document.getElementById('initialPathDiv');
 			var selectedOption = selectObj.options[selectObj.selectedIndex];
-			if (selectedOption.value == '<%= SpagoBIConstants.DOCUMENT_MANAGEMENT_USER %>') { 
+			if (selectedOption.value == '<%= SpagoBIConstants.DOCUMENT_BROWSER_USER %>') { 
 				initialPathDiv.style.display = 'inline';
 			} else {
 				initialPathDiv.style.display = 'none';
@@ -651,7 +653,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 		</script>
 		
 		<%-- Documents tree initial path div --%>
-		<div id="initialPathDiv" name="initialPathDiv" style="display: <%= (menu.getFunctionality() != null && menu.getFunctionality().equals("DocumentUserManagement")) ? "inline" : "none" %>"> 
+		<div id="initialPathDiv" name="initialPathDiv" style="display: <%= (menu.getFunctionality() != null && menu.getFunctionality().equals(SpagoBIConstants.DOCUMENT_BROWSER_USER)) ? "inline" : "none" %>"> 
 			<div class='div_detail_label'>	 
 				 <span class='portlet-form-field-label'>
 					<spagobi:message key = "SBISet.menu.initialPath" />
