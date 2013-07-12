@@ -14,10 +14,10 @@
 Ext.ns("Sbi.browser");
 
 Sbi.browser.DocumentsBrowser = function(config) {    
-   
+  
 	// sub-components   
 	
-	this.tabbedBrowser = config.parentTab;
+	this.containerBrowser = config.parentTab;
 	this.rootFolderId = config.rootFolderId || null;
 	this.selectedFolderId = this.rootFolderId;
 
@@ -57,7 +57,7 @@ Sbi.browser.DocumentsBrowser = function(config) {
 	          	*/
 	        ]
 	});   
-	
+	 
 	if (Sbi.settings.browser.showLeftPanels !== undefined && Sbi.settings.browser.showLeftPanels){
 		 // WEST REGION -----------------------------------------------------------
 		this.treePanel = new Sbi.browser.DocumentsTree({
@@ -142,10 +142,9 @@ Sbi.browser.DocumentsBrowser = function(config) {
    
     Sbi.browser.DocumentsBrowser.superclass.constructor.call(this, c);
 
- 
     this.detailPanel.addListener('onfolderload', this.onFolderLoad, this);
     this.detailPanel.addListener('ondocumentclick', this.onDocumentClick, this);
-    
+
     this.detailPanel.addListener('onfolderclick', this.onFolderClick, this);
     if (Sbi.settings.browser.showBreadCrumbs !== undefined && Sbi.settings.browser.showBreadCrumbs){
     	this.detailPanel.addListener('onbreadcrumbclick', this.onBreadCrumbClick, this);
@@ -172,12 +171,12 @@ Ext.extend(Sbi.browser.DocumentsBrowser, Ext.Panel, {
     , selectFolder: function(folderId) {
 		this.detailPanel.loadFolder(folderId, this.rootFolderId);
 		this.selectedFolderId = folderId;
-		this.searchPanel.selectedFolderId = folderId;
+		if (this.searchPanel) this.searchPanel.selectedFolderId = folderId;
 	}
 	
 	, onFolderLoad: function(panel) {
-//		if(this.brTab.getActiveTab() != this.detailPanel) {
-//			this.brTab.setActiveTab(this.detailPanel);
+//		if(this.brSheet.getActiveTab() != this.detailPanel) {
+//			this.brSheet.setActiveTab(this.detailPanel);
 //			
 //		}
 //		this.detailPanel.show();
@@ -189,6 +188,13 @@ Ext.extend(Sbi.browser.DocumentsBrowser, Ext.Panel, {
 	}
     
     , onOpenFavourite: function(doc){
+    	var maxNumberOfExecutionTabs = Sbi.settings.browser.maxNumberOfExecutionTabs || 0;
+		var numOfExecutionDocs =  this.containerBrowser.brSheet.items.length-1;
+		if (maxNumberOfExecutionTabs > 1 && numOfExecutionDocs >= maxNumberOfExecutionTabs){
+			alert(LN('sbi.execution.executionpage.tabs.overMaxNum'));
+			return
+		}
+		
     	var executionPanel = new Sbi.execution.ExecutionPanel({
 			title: doc.title !== undefined ? doc.title : doc.name
 			, closable: true
@@ -197,9 +203,7 @@ Ext.extend(Sbi.browser.DocumentsBrowser, Ext.Panel, {
 		
 		executionPanel.addListener('crossnavigationonothertab', this.onCrossNavigation, this);
 		executionPanel.addListener('openfavourite', this.onOpenFavourite, this);
-		
-		
-		this.tabbedBrowser.brTab.add(executionPanel).show();
+		this.addPanelToSheet(executionPanel);
 		
 		executionPanel.execute();
 	}
@@ -223,19 +227,30 @@ Ext.extend(Sbi.browser.DocumentsBrowser, Ext.Panel, {
 		}else{
 			config.title = name;
 		}
+		var maxNumberOfExecutionTabs = Sbi.settings.browser.maxNumberOfExecutionTabs || 0;
+		var numOfExecutionDocs =  this.containerBrowser.brSheet.items.length-1;
+		if (maxNumberOfExecutionTabs > 1 && numOfExecutionDocs >= maxNumberOfExecutionTabs){
+			alert(LN('sbi.execution.executionpage.tabs.overMaxNum'));
+			return
+		}
 		
 		var executionPanel = new Sbi.execution.ExecutionPanel(config, r.document);
 		executionPanel.tabType = 'document';
 		
 		executionPanel.addListener('crossnavigationonothertab', this.onCrossNavigation, this);
 		executionPanel.addListener('openfavourite', this.onOpenFavourite, this);
-		
-		this.tabbedBrowser.brTab.add(executionPanel).show();
+		this.addPanelToSheet(executionPanel);
 		
 		executionPanel.execute();
 	}
 
 	, onDocumentClick: function(panel, doc) {
+		var maxNumberOfExecutionTabs = Sbi.settings.browser.maxNumberOfExecutionTabs || 0;
+		var numOfExecutionDocs =  this.containerBrowser.brSheet.items.length-1;
+		if (maxNumberOfExecutionTabs > 1 && numOfExecutionDocs >= maxNumberOfExecutionTabs){
+			alert(LN('sbi.execution.executionpage.tabs.overMaxNum'));
+			return
+		}
 		
 		var executionPanel = new Sbi.execution.ExecutionPanel({
 			title: doc.title !== undefined ? doc.title : doc.name
@@ -246,9 +261,7 @@ Ext.extend(Sbi.browser.DocumentsBrowser, Ext.Panel, {
 		executionPanel.addListener('crossnavigationonothertab', this.onCrossNavigation, this);
 		executionPanel.addListener('openfavourite', this.onOpenFavourite, this);
 		
-		
-		this.tabbedBrowser.brTab.add(executionPanel).show();
-		
+		this.addPanelToSheet(executionPanel);
 		executionPanel.execute();
 	}
 	
@@ -282,5 +295,48 @@ Ext.extend(Sbi.browser.DocumentsBrowser, Ext.Panel, {
 	
 	, onFilter: function(panel, cb) {
 		this.detailPanel.filter(cb.inputValue);
+	}
+	
+	,enableBBarButtons: function(nCard){
+		
+		switch (nCard)
+		{
+		case 0:
+			Ext.getCmp('close').setVisible(false);
+			Ext.getCmp('close-all').setDisabled(true);
+		  break;
+		case 1:
+			Ext.getCmp('close').setVisible(false);
+			Ext.getCmp('close-all').setDisabled(false);
+		  break;		
+		default:
+			Ext.getCmp('close').setVisible(true);
+			Ext.getCmp('close-all').setDisabled(false);
+		}		
+	}
+	
+	, addPanelToSheet: function(panel){
+		var maxNumberOfExecutionTabs = Sbi.settings.browser.maxNumberOfExecutionTabs || 0;
+		var numOfExecutionDocs =  this.containerBrowser.brSheet.items.length-1;
+
+		if (maxNumberOfExecutionTabs == 1 && maxNumberOfExecutionTabs == numOfExecutionDocs){
+			//replace the first document panel
+			var lastTab = this.containerBrowser.brSheet.getComponent(1);
+			if (lastTab !== undefined && lastTab !== null){ 
+				this.containerBrowser.brSheet.remove(lastTab, true);
+			}
+		}
+		if (Sbi.settings.browser.typeLayout !== undefined && Sbi.settings.browser.typeLayout == 'card'){
+			var newExecDoc = this.containerBrowser.brSheet.add(panel);	
+			this.containerBrowser.brSheet.getLayout().setActiveItem(newExecDoc);		
+			newExecDoc.getEl().slideIn('r', {
+		         easing: 'easeOut'
+//		       , duration: 1000
+		     });			
+			this.enableBBarButtons(this.containerBrowser.brSheet.items.length-1);
+			
+		}else{
+			this.containerBrowser.brSheet.add(panel).show();
+		}
 	}
 });
