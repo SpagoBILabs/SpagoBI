@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<BUSINESS_MAP>
+	<MAP_ACTIONS>
+		<MAP_ACTION actionName="MANAGE_DATASETS_ACTION"  businessProcess="DatasetManagement"/>
+	</MAP_ACTIONS>
+
+	<MAP_PAGE_MODULES>
+	</MAP_PAGE_MODULES>
+	
+	<MAP_REST_SERVICES>	 						
+		<MAP_REST_SERVICE serviceUrl="/uploadfiles" businessProcess="UserSaveDocumentFunctionality" />			
+		<MAP_REST_SERVICE serviceUrl="/uploadfiles/save" businessProcess="UserSaveDocumentFunctionality" />
+	</MAP_REST_SERVICES>
+	
+</BUSINESS_MAP>
