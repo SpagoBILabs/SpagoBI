@@ -47,3 +47,7 @@ k.icon-ftree-rootx {
      border:0 none;
      border-top:0px solid #d0d0d0;
 }
+
+.uploadImgIcon {
+	 background-image:url('../../../img/analiticalmodel/browser/browser_globe_upload.png') !important;
+}
