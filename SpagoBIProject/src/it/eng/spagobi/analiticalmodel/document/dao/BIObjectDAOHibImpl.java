@@ -659,8 +659,12 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			UUID uuidObj = uuidGenerator.generateTimeBasedUUID();
 			String uuid = uuidObj.toString();
 			hibBIObject.setUuid(uuid);
-			
-			hibBIObject.setPreviewFile(obj.getPreviewFile()+"__"+uuid);
+			if (obj.getPreviewFile() != null && !"".equals(obj.getPreviewFile())){
+//				String fileName = obj.getPreviewFile().substring(0,obj.getPreviewFile().indexOf("."));
+//				String fileExt = obj.getPreviewFile().substring(obj.getPreviewFile().indexOf("."));
+//				hibBIObject.setPreviewFile(fileName+"__"+uuid+fileExt);
+				hibBIObject.setPreviewFile(obj.getPreviewFile());
+			}
 			
 			hibBIObject.setCreationDate(new Date());
 			hibBIObject.setCreationUser(obj.getCreationUser());
