@@ -7,12 +7,10 @@
   
 Ext.define('Sbi.execution.SaveDocumentWindowExt4', {
 	extend: 'Ext.Window'
-		
-
-
 	
-	, inputForm: null
+	,inputForm: null
 	,saveDocumentForm: null
+	,fileNameUploaded: null
 	,SBI_EXECUTION_ID: null
 	,OBJECT_ID: null
 	,OBJECT_TYPE: null
@@ -74,7 +72,7 @@ Ext.define('Sbi.execution.SaveDocumentWindowExt4', {
 		var c = Ext.apply({}, config, {
 			id:'popup_docSave',
 			layout:'fit',
-			width:640,
+			width:700,//640,
 			height:350,
 			closeAction: 'destroy',
 			buttons:[{ 
@@ -138,7 +136,7 @@ Ext.define('Sbi.execution.SaveDocumentWindowExt4', {
             checked   : true
            });
 		
-//		this.fileUpload = this.initFileUpload();
+		this.fileUpload = this.initFileUpload();
 	    
 	    this.inputForm =  Ext.create("Ext.Panel",{
 	         itemId: 'detail'
@@ -201,7 +199,7 @@ Ext.define('Sbi.execution.SaveDocumentWindowExt4', {
 		var query = this.OBJECT_QUERY;
 		var formValues = this.OBJECT_FORM_VALUES;// the values of the form for the smart filter
 		var wk_definition = this.OBJECT_WK_DEFINITION;
-		var fileUpload = this.OBJECT_PREVIEW_FILE
+		var previewFile =  this.fileNameUploaded;
 		
 		if(formValues!=undefined && formValues!=null){
 			formValues=Ext.encode(formValues);
@@ -213,14 +211,13 @@ Ext.define('Sbi.execution.SaveDocumentWindowExt4', {
 			wk_definition = Ext.JSON.encode(wk_definition);
 		}
 		
-		if(fileUpload!=undefined && fileUpload!=null){
-			fileUpload = Ext.JSON.encode(fileUpload);
+		if(previewFile!=undefined && previewFile!=null){
+			previewFile = Ext.JSON.encode(previewFile.replace('"','\''));
 		}
 		
 		if(docName == null || docName == undefined || docName == '' ||
 		   docLabel == null || docLabel == undefined || docLabel == '' ||
-		   functs == null || functs == undefined  
-		   //|| fileUpload == null || fileUpload == '' 
+		   functs == null || functs == undefined 
 		   || functs.length == 0){
 				Ext.MessageBox.show({
 	                title: LN('sbi.generic.warning'),
@@ -238,7 +235,7 @@ Ext.define('Sbi.execution.SaveDocumentWindowExt4', {
 		        	obj_id: this.OBJECT_ID,
 					typeid: this.OBJECT_TYPE,
 					wk_definition: wk_definition,
-					fileUpload: fileUpload,
+					previewFile: previewFile,
 					query: query,
 					formValues: formValues,
 					template: this.OBJECT_TEMPLATE,
@@ -280,11 +277,24 @@ Ext.define('Sbi.execution.SaveDocumentWindowExt4', {
 	}
 	, initFileUpload: function(){
 		//upload preview file
-		var fileUpload = new Sbi.widgets.FileUploadPanel({fromExt4:true, isEnabled: true});
+		var config={
+				fromExt4:true, 
+				isEnabled: true, 
+				labelFileName:'Preview file'				
+		};
+		var c = {};
+		if (Sbi.settings.widgets.FileUploadPanel && Sbi.settings.widgets.FileUploadPanel.imgUpload)
+			c = Ext.apply({}, config, Sbi.settings.widgets.FileUploadPanel.imgUpload); 		
+		else
+			c = Ext.apply({}, config); 	
+		Ext.apply(this,c);
+		
+		this.fileUpload = new Sbi.widgets.FileUploadPanel(c);
 //		if (this.record !== undefined){
 //			this.fileUpload.setFormState(this.record);
 //		}
-		var uploadButton = fileUpload.getComponent('fileUploadPanel').getComponent('fileUploadButton');		
+//		var uploadButton = this.fileUpload.getComponent('fileUploadPanel').getComponent('fileUploadButton');	
+		var uploadButton = this.fileUpload.fileUploadFormPanel.getComponent('fileUploadButton');	
 		uploadButton.setHandler(this.uploadFileButtonHandler,this);
 		var toReturn = new  Ext.FormPanel({
 			  id: 'previewFileForm',
@@ -293,14 +303,11 @@ Ext.define('Sbi.execution.SaveDocumentWindowExt4', {
 			  border:false,
 			  method: 'POST',
 			  enctype: 'multipart/form-data',
-//  		      margins: '10 10 10 10',
 	          labelAlign: 'left',
-	          bodyStyle:'padding:5px',
+	          bodyStyle:'padding:1px',
 	          autoScroll:true,
-//	          width: 650,
-//	          height: 600,
 	          trackResetOnLoad: true,
-	          items: fileUpload
+	          items: this.fileUpload
 	      });
 		
 		return toReturn;
@@ -316,21 +323,26 @@ Ext.define('Sbi.execution.SaveDocumentWindowExt4', {
         Sbi.debug("[PreviewFileWizard.uploadFileButtonHandler]: form is equal to [" + form + "]");
 		
         var completeUrl =  Sbi.config.serviceRegistry.getServiceUrl({
-					    		serviceName : 'UPLOAD_PREVIEW_FILE_ACTION',
+					    		serviceName : 'MANAGE_FILE_ACTION',
 					    		baseParams : {LIGHT_NAVIGATOR_DISABLED: 'TRUE'}
 					    	});
+
 		var baseUrl = completeUrl.substr(0, completeUrl
 				.indexOf("?"));
 		
 		Sbi.debug("[PreviewFileWizard.uploadFileButtonHandler]: base url is equal to [" + baseUrl + "]");
-		
+	 	
 		var queryStr = completeUrl.substr(completeUrl.indexOf("?") + 1);
 		var params = Ext.urlDecode(queryStr);
-
+		params.operation = 'UPLOAD';
+		params.directory = this.directory || '';
+		params.maxSize = this.maxSizeFile || '';
+		params.extFiles = this.extFiles || '';
+ 
 		Sbi.debug("[PreviewFileWizard.uploadFileButtonHandler]: form is valid [" + form.isValid() + "]");		
-		var fileNameUploaded = Ext.getCmp('fileUploadField').getValue();
-		fileNameUploaded = fileNameUploaded.replace("C:\\fakepath\\", "");
-		
+		this.fileNameUploaded = Ext.getCmp('fileUploadField').getValue();
+		this.fileNameUploaded = this.fileNameUploaded.replace("C:\\fakepath\\", "");
+
 		form.submit({
 			clientValidation: false,
 			url : baseUrl // a multipart form cannot
@@ -342,7 +354,7 @@ Ext.define('Sbi.execution.SaveDocumentWindowExt4', {
 			waitMsg : LN('sbi.generic.wait'),
 			success : function(form, action) {
 				Ext.MessageBox.alert('Success!','File Uploaded to the Server');
-				Ext.getCmp('fileNameField').setValue(fileNameUploaded);
+				this.fileNameUploaded = action.result.fileName.replace('"','');
 			},
 			failure : function(form, action) {
 				switch (action.failureType) {
