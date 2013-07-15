@@ -62,6 +62,7 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 	private final String TYPE = "typeid";
 	private final String TEMPLATE = "template";
 	private final String FUNCTS = "functs";
+	private final String PREVIEW_FILE = "previewFile";
 	private final String BUSINESS_METADATA = "business_metadata";
 	private final String OBJECT_WK_DEFINITION = "wk_definition";
 	private final String OBJECT_QUERY = "query";
@@ -437,8 +438,9 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 			
 			return createBaseDocument(documentJSON.getString("label")
 					, documentJSON.getString("name")
-					, documentJSON.getString("description")
+					, documentJSON.getString("description")					
 					, visibility
+					, documentJSON.getString("previewFile")
 					, documentJSON.getString("type") 
 					, documentJSON.optString("engineId"), sourceDocument, folderJSON);
 		} catch(Throwable t) {
@@ -446,15 +448,18 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 		}
 	}
 	
-	
-	private BIObject createBaseDocument(String label, String name,  String description, String visibility
-			, String type, String engineId, BIObject sourceDocument, JSONArray foldersJSON) {
+		
+	private BIObject createBaseDocument(String label, String name,  String description, String visibility,
+			String previewFile, String type, String engineId, BIObject sourceDocument, JSONArray foldersJSON) {
 		
 		BIObject document = new BIObject();
 		
 		document.setLabel(label);
 		document.setName(name);
 		document.setDescription(description);
+		if(previewFile != null) {
+			document.setPreviewFile(previewFile);
+		}
 		setDocumentEngine(document, type, engineId);
 		Boolean isVisible = Boolean.parseBoolean(visibility);
 		document.setVisible(isVisible);
@@ -463,7 +468,7 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 			setDatasource(document, sourceDocument);
 			setDataset(document, sourceDocument);
 		}
-		
+				
 		setDocumentState(document);
 		setFolders(document, foldersJSON);
 		setCreationUser(document);
@@ -720,6 +725,10 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 			String engineId = getAttributeAsString(ENGINE); 
 			if(engineId != null) document.put("engineId", engineId);
 			
+			// preview file
+			String previewFile = getAttributeAsString(PREVIEW_FILE);
+			if(previewFile != null) document.put("previewFile", previewFile);
+			
 			String businessMetadata = getAttributeAsString( BUSINESS_METADATA );
 			if(StringUtilities.isNotEmpty( businessMetadata )) {
 				JSONObject businessMetadataJSON =  new JSONObject(businessMetadata);
@@ -763,7 +772,7 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 					&& StringUtilities.isNotEmpty( getAttributeAsString(FUNCTS)) ) {
 				JSONArray foldersJSON = getAttributeAsJSONArray(FUNCTS);
 				if(foldersJSON != null) request.put("folders", foldersJSON);
-			}
+			}						
 			
 			logger.debug("Request succesfully parsed: " + request.toString(3));
 			
