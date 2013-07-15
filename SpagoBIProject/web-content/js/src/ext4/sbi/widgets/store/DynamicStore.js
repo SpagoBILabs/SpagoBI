@@ -52,12 +52,18 @@ Ext.define('Sbi.widgets.store.DynamicStore', {
         });
         
 		this.model= modelname;
+		
+		var dataRoot = "root";
+		if(config.dataRoot){
+			dataRoot=config.dataRoot;
+		}
+		
 		this.proxy= {
 			type: 'ajax',
 			url:  this.serviceUrl,
 			reader: {
 				type:"json",
-				root: "root"
+				root: dataRoot
 			}
 		};
     	
