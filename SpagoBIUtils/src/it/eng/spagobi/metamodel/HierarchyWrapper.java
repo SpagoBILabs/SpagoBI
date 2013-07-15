@@ -19,7 +19,7 @@ public class HierarchyWrapper{
 	private  it.eng.spagobi.meta.model.olap.Hierarchy wrappedHierarchy;
 	
 	
-	public HierarchyWrapper( Hierarchy wrappedHierarchyl){
+	public HierarchyWrapper( Hierarchy wrappedHierarchy){
 		this.wrappedHierarchy = wrappedHierarchy;
 	}
 	
