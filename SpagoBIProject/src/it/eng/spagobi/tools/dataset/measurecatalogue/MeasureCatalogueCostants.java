@@ -9,7 +9,7 @@ package it.eng.spagobi.tools.dataset.measurecatalogue;
 public class MeasureCatalogueCostants {
 	public static final String modelConfigLabel = "SPAGOBI.CUBE.MODEL.NAME";
 	public static final String MEASURE = "MEASURE";
-	public static final String[] dimensionHierarchyTypes = {"geo","tyme"};
+	public static final String[] dimensionHierarchyTypes = {"geo","time"};
 	public static final String dimensionHierarchyTypesRefSuffix = "_ref";
 	public static final String dimensionHierarchyTypesLevelSuffix = "_level";
 }

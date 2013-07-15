@@ -10,6 +10,7 @@ import it.eng.spagobi.metamodel.MetaModelWrapper;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -36,7 +37,7 @@ public class MeasureCatalogueMeasure {
 	public MeasureCatalogueMeasure( MetaModelWrapper metaModel){
 		this.metaModel = metaModel;
 		datasets = new HashSet<IDataSet>();
-
+		datasetDimensionMap = new HashMap<IDataSet, Set<MeasureCatalogueDimension>>();
 	}
 	
 	public MeasureCatalogueMeasure( IFieldMetaData field, MetaModelWrapper metaModel){

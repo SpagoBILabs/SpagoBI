@@ -16,6 +16,8 @@ import it.eng.spagobi.commons.serializer.SerializationException;
 import it.eng.spagobi.commons.serializer.SerializerFactory;
 import it.eng.spagobi.commons.utilities.AuditLogUtilities;
 import it.eng.spagobi.services.exceptions.ExceptionUtilities;
+import it.eng.spagobi.tools.dataset.measurecatalogue.MeasureCatalogue;
+import it.eng.spagobi.tools.dataset.measurecatalogue.MeasureCatalogueSingleton;
 import it.eng.spagobi.tools.datasource.bo.DataSource;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
@@ -79,6 +81,11 @@ public class DataSourceCRUD {
 			throw new SpagoBIServiceException(
 					"An unexpected error occured while instatiating the dao", t);
 		}
+		
+		
+		MeasureCatalogue mc = MeasureCatalogueSingleton.getMeasureCatologue();
+		MeasureCatalogue mc2 = MeasureCatalogueSingleton.getMeasureCatologue();
+		
 		return datasorcesJSON.toString();
 
 	}

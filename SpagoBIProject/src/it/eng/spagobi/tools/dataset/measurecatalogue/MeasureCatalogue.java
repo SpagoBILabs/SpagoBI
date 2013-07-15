@@ -40,6 +40,7 @@ public class MeasureCatalogue {
 	
 	public MeasureCatalogue(){
 		initModel();
+		initMeasures();
 	}
 	
 	/**
