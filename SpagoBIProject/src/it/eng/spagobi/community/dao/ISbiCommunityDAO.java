@@ -11,13 +11,15 @@ import it.eng.spagobi.community.mapping.SbiCommunity;
 
 import java.util.List;
 
-public interface ISbiCommunityDAO extends ISpagoBIDao{
+public interface ISbiCommunityDAO extends ISpagoBIDao {
 	
 	public SbiCommunity loadSbiCommunityByName(String name) throws EMFUserError;
 
 	public Integer saveSbiComunity(SbiCommunity community) throws EMFUserError;
 	
-	public List<SbiCommunity> loadSbiCommunityByUser(Integer userId) throws EMFUserError;
+	public void saveSbiComunityUsers(SbiCommunity community, String userID) throws EMFUserError;
 	
-	public List<SbiCommunity> loadSbiCommunityByOwner(Integer userId) throws EMFUserError;
+	public List<SbiCommunity> loadSbiCommunityByUser(String userID) throws EMFUserError;
+	
+	public List<SbiCommunity> loadSbiCommunityByOwner(String userID) throws EMFUserError;
 }
