@@ -11,10 +11,13 @@ import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.metadata.SbiExtRoles;
 import it.eng.spagobi.community.mapping.SbiCommunity;
+import it.eng.spagobi.community.mapping.SbiCommunityUsers;
+import it.eng.spagobi.community.mapping.SbiCommunityUsersId;
 import it.eng.spagobi.profiling.bean.SbiUser;
 import it.eng.spagobi.profiling.dao.SbiAttributeDAOHibImpl;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -54,6 +57,8 @@ public class SbiCommunityDAOImpl extends AbstractHibernateDAO implements ISbiCom
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
+			community.setCreationDate(new Date());
+			community.setLastChangeDate(new Date());
 			updateSbiCommonInfo4Insert(community);
 			Integer id = (Integer) aSession.save(community);
 
@@ -73,7 +78,7 @@ public class SbiCommunityDAOImpl extends AbstractHibernateDAO implements ISbiCom
 		}
 	}
 
-	public List<SbiCommunity> loadSbiCommunityByUser(Integer userId)
+	public List<SbiCommunity> loadSbiCommunityByUser(String userId)
 			throws EMFUserError {
 		logger.debug("IN");
 
@@ -82,9 +87,9 @@ public class SbiCommunityDAOImpl extends AbstractHibernateDAO implements ISbiCom
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
-			String q = "select cu.sbiCommunity from SbiCommunityUsers cu where cu.sbiUser = :userId";
+			String q = "select cu.sbiCommunity from SbiCommunityUsers cu where cu.id.userId = :userId";
 			Query query = aSession.createQuery(q);
-			query.setInteger("userId", userId);
+			query.setString("userId", userId);
 
 			ArrayList<SbiCommunity> result = (ArrayList<SbiCommunity>)query.list();
 			return result;
@@ -101,7 +106,7 @@ public class SbiCommunityDAOImpl extends AbstractHibernateDAO implements ISbiCom
 		}
 	}
 
-	public List<SbiCommunity> loadSbiCommunityByOwner(Integer userId)
+	public List<SbiCommunity> loadSbiCommunityByOwner(String owner)
 			throws EMFUserError {
 		logger.debug("IN");
 
@@ -110,9 +115,9 @@ public class SbiCommunityDAOImpl extends AbstractHibernateDAO implements ISbiCom
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
-			String q = "select cu.sbiCommunity from SbiCommunityUsers cu where cu.sbiCommunity.owner = :userId";
+			String q = "from SbiCommunity c where c.owner = :userId";
 			Query query = aSession.createQuery(q);
-			query.setInteger("userId", userId);
+			query.setString("userId", owner);
 
 			ArrayList<SbiCommunity> result = (ArrayList<SbiCommunity>)query.list();
 			return result;
@@ -152,6 +157,43 @@ public class SbiCommunityDAOImpl extends AbstractHibernateDAO implements ISbiCom
 			logger.debug("OUT");
 			if (aSession!=null){
 				if (aSession.isOpen()) aSession.close();
+			}
+		}
+	}
+
+	public void saveSbiComunityUsers(SbiCommunity community, String userID)
+			throws EMFUserError {
+		logger.debug("IN");
+		Session aSession = null;
+		Transaction tx = null;
+		SbiCommunityUsers commUsers = new SbiCommunityUsers();
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+			
+			commUsers.setCreationDate(new Date());
+			commUsers.setLastChangeDate(new Date());
+			SbiCommunityUsersId id = new SbiCommunityUsersId();
+			id.setCommunityId(community.getCommunityId());
+			id.setUserId(userID);
+			
+			commUsers.setId(id);
+			
+			updateSbiCommonInfo4Insert(commUsers);
+			aSession.save(commUsers);
+
+			tx.commit();
+			logger.debug("OUT");
+
+		} catch (HibernateException he) {
+			logger.error(he.getMessage(),he);
+			if (tx != null)
+				tx.rollback();
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+		} finally {
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
 			}
 		}
 	}

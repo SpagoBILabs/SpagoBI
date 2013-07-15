@@ -784,7 +784,7 @@ public class DAOFactory {
 	}
 	
 	public static ISbiCommunityDAO getCommunityDAO() {
-		return (ISbiCommunityDAO)createDAOInstance("SbiCommunityDAOImpl");
+		return (ISbiCommunityDAO)createDAOInstance("CommunityDAO");
 	}
 
 }
