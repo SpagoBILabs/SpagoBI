@@ -297,6 +297,7 @@ CREATE TABLE SBI_OBJECTS (
        KEYWORDS			    VARCHAR(250),
        REFRESH_SECONDS      INTEGER,
        PROF_VISIBILITY      VARCHAR(400) NULL,
+       PREVIEW_FILE 		VARCHAR(100),
        USER_IN              VARCHAR(100) NOT NULL,
        USER_UP              VARCHAR(100),
        USER_DE              VARCHAR(100),
