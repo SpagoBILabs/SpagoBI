@@ -60,7 +60,7 @@ public class RestExceptionMapper implements ExceptionMapper<Throwable>
 			String serviceUrl = InterceptorUtilities.getServiceUrl(request);
 			logger.error("Error in the service "+serviceUrl);
 		}
-
+		logger.error("Application Error",e);
 		
 		Response response =  Response.status(500).entity(ex).build();
 		logger.debug("RestExceptionMapper:toResponse OUT");

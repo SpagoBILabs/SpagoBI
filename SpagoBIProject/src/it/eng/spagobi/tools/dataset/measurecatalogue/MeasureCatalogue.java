@@ -11,6 +11,7 @@ import it.eng.spagobi.commons.bo.Config;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IConfigDAO;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
+import it.eng.spagobi.meta.model.Model;
 import it.eng.spagobi.metamodel.MetaModelLoader;
 import it.eng.spagobi.metamodel.MetaModelWrapper;
 import it.eng.spagobi.services.common.EnginConf;
@@ -40,6 +41,11 @@ public class MeasureCatalogue {
 	
 	public MeasureCatalogue(){
 		initModel();
+		initMeasures();
+	}
+	
+	public MeasureCatalogue(Model model){
+		metamodelWrapper = new MetaModelWrapper(model);
 		initMeasures();
 	}
 	
@@ -88,22 +94,21 @@ public class MeasureCatalogue {
 			for(int i=0; i<datasets.size();i++){
 				IDataSet aDs = datasets.get(i);
 				List<IFieldMetaData> aDsMeasures = getMeasures(aDs);
+				Set<MeasureCatalogueDimension> datasetDimension = null;
 				for(int j=0; j<aDsMeasures.size(); j++){
 					/**
 					 * Search the measure in the list of measures
 					 */
-					MeasureCatalogueMeasure aDsMeasure = getMeasure(aDsMeasures.get(j));
+					MeasureCatalogueMeasure aDsMeasure = getMeasure(aDsMeasures.get(j),aDs);
 					if(aDsMeasure==null){
 						/**
 						 * The measures has not been already saved, so we create it
 						 */
-						aDsMeasure = new MeasureCatalogueMeasure(aDsMeasures.get(j), metamodelWrapper);
+						aDsMeasure = new MeasureCatalogueMeasure(aDsMeasures.get(j), metamodelWrapper, aDs, datasetDimension);
 						measures.add(aDsMeasure);
+						datasetDimension = aDsMeasure.getDatasetDimension();
 					}
-					/**
-					 * Refresh the datasets linked to the measure
-					 */
-					aDsMeasure.refrehDataSet(aDs);
+
 				}
 			}
 		}
@@ -152,13 +157,21 @@ public class MeasureCatalogue {
      * @param field
      * @return
      */
-    public MeasureCatalogueMeasure getMeasure(IFieldMetaData field){
+    public MeasureCatalogueMeasure getMeasure(IFieldMetaData field, IDataSet ds){
     	for (Iterator<MeasureCatalogueMeasure> iterator = measures.iterator(); iterator.hasNext();) {
     		MeasureCatalogueMeasure measure =  iterator.next();
-			if(measure.isEqual(field)){
+			if(measure.isEqual(field, ds)){
 				return measure;
 			}
 		}
     	return null;
     }
+
+	public Set<MeasureCatalogueMeasure> getMeasures() {
+		return measures;
+	}
+    
+    
+    
+
 }

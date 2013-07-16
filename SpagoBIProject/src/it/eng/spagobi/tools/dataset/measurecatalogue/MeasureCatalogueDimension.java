@@ -13,9 +13,11 @@ public class MeasureCatalogueDimension {
 	IFieldMetaData dimensionMetadata;
 	HierarchyWrapper hierarchy;
 	String hierarchyLevel;
+	int hierarchyLevelPosition;
 
 	public MeasureCatalogueDimension(IFieldMetaData dimensionMetadata, MetaModelWrapper metaModel, IDataSet ds){
 		this.dimensionMetadata = dimensionMetadata;
+		hierarchyLevelPosition = -1;
 		
 		//load the hierarchy
 		for(int i=0; i<MeasureCatalogueCostants.dimensionHierarchyTypes.length; i++){
@@ -26,6 +28,10 @@ public class MeasureCatalogueDimension {
 				hierarchyLevel =  (String) ds.getMetadata().getProperty(aDimensionType+ MeasureCatalogueCostants.dimensionHierarchyTypesLevelSuffix);
 				break;
 			}
+		}
+		
+		if(hierarchy!=null){
+			hierarchyLevelPosition = hierarchy.getLevel(hierarchyLevel);
 		}
 	}
 	
@@ -44,6 +50,10 @@ public class MeasureCatalogueDimension {
 			}
 		}
 	}
+	
+	public boolean hasHierarchy() {
+		return hierarchy!=null;
+	}
 
 	public HierarchyWrapper getHierarchy() {
 		return hierarchy;
@@ -52,8 +62,11 @@ public class MeasureCatalogueDimension {
 	public String getHierarchyLevel() {
 		return hierarchyLevel;
 	}
+
+	public int getHierarchyLevelPosition() {
+		return hierarchyLevelPosition;
+	}
 	
 	
-	
-	
+
 }
