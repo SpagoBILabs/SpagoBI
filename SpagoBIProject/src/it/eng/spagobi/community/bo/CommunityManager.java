@@ -26,17 +26,20 @@ public class CommunityManager {
 	
 	static private Logger logger = Logger.getLogger(CommunityManager.class);
 	
-	public Integer saveCommunity(String communityName, UserProfile profile){
+	public Integer saveCommunity(String communityName, String userId){
 		Integer communityId = null;
 		//if user is registering to SpagoBI and inserts a community,
 		//the systems checks for community existence by its name.
 		ISbiCommunityDAO commDAO = DAOFactory.getCommunityDAO();
-
+		
 		
 		try {
 			ISbiAttributeDAO attrsDAO = DAOFactory.getSbiAttributeDAO();
 			ISbiUserDAO userDao = DAOFactory.getSbiUserDAO();
 			SbiCommunity community = commDAO.loadSbiCommunityByName(communityName);
+			//loads the user:
+			SbiUser user = userDao.loadSbiUserByUserId(userId);
+			
 			if(community != null){
 				//if exists a mail is sent to the owner of the community that accepts him as 
 				//member or refuse him
@@ -51,13 +54,12 @@ public class CommunityManager {
 				
 				//2. sends the email
 				CommunityUtilities communityUtil = new CommunityUtilities();
-				boolean result = communityUtil.dispatchMail(communityName, profile, owner, emailValue);
+				boolean result = communityUtil.dispatchMail(communityName, user, owner, emailValue);
 				
 			}else{
 				//if doesn't exist then the community is created, together with a new folder with 
 				//the name of the community (functionality code)	
-				//SbiDomains domain = DAOFactory.getDomainDAO().loadSbiDomainByCodeAndValue("FUNCT_TYPE", "COMMUNITY_FUNCT");
-				
+			
 				Random generator = new Random();
 				int randomInt = generator.nextInt();
 				//1.creates a folder:
@@ -67,17 +69,14 @@ public class CommunityManager {
 				String code = "community"+Integer.valueOf(randomInt).toString();
 				aLowFunctionality.setCode(code);
 				aLowFunctionality.setName(communityName);
-				aLowFunctionality.setPath("/"+communityName);
+				aLowFunctionality.setPath("/"+communityName);				
 				
-				Integer functId = DAOFactory.getLowFunctionalityDAO().insertCommunityFunctionality(aLowFunctionality, profile);
 				//2.populates community bean
-				if(functId != null){
-					community = populateCommunity((String)profile.getUserId(), communityName, code);					
-					//3.saves it
-					communityId = commDAO.saveSbiComunity(community);
-					//4. saves user-community relashionship
-					commDAO.saveSbiComunityUsers(community, (String)profile.getUserId());
-				}
+				community = populateCommunity(userId, communityName, code);					
+				//4. saves community and user-community relashionship
+				commDAO.saveSbiComunityUsers(community, userId);
+				
+				Integer functId = DAOFactory.getLowFunctionalityDAO().insertCommunityFunctionality(aLowFunctionality);
 			}
 		} catch (EMFUserError e) {
 			logger.error(e.getMessage());

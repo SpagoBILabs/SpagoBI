@@ -113,6 +113,7 @@ public class SbiCommunityDAOImpl extends AbstractHibernateDAO implements ISbiCom
 		Session aSession = null;
 		Transaction tx = null;
 		try {
+
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 			String q = "from SbiCommunity c where c.owner = :userId";
@@ -168,21 +169,26 @@ public class SbiCommunityDAOImpl extends AbstractHibernateDAO implements ISbiCom
 		Transaction tx = null;
 		SbiCommunityUsers commUsers = new SbiCommunityUsers();
 		try {
-			aSession = getSession();
-			tx = aSession.beginTransaction();
 			
-			commUsers.setCreationDate(new Date());
-			commUsers.setLastChangeDate(new Date());
-			SbiCommunityUsersId id = new SbiCommunityUsersId();
-			id.setCommunityId(community.getCommunityId());
-			id.setUserId(userID);
+			Integer res = saveSbiComunity(community);
+			if(res != null){
 			
-			commUsers.setId(id);
-			
-			updateSbiCommonInfo4Insert(commUsers);
-			aSession.save(commUsers);
-
-			tx.commit();
+				aSession = getSession();
+				tx = aSession.beginTransaction();
+				
+				commUsers.setCreationDate(new Date());
+				commUsers.setLastChangeDate(new Date());
+				SbiCommunityUsersId id = new SbiCommunityUsersId();
+				id.setCommunityId(community.getCommunityId());
+				id.setUserId(userID);
+				
+				commUsers.setId(id);
+				
+				updateSbiCommonInfo4Insert(commUsers);
+				aSession.save(commUsers);
+	
+				tx.commit();
+			}
 			logger.debug("OUT");
 
 		} catch (HibernateException he) {

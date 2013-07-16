@@ -83,6 +83,7 @@
             <one-to-many entity-name="it.eng.spagobi.profiling.bean.SbiUserAttributes" />
 
         </set>
+
         <filter name="tenantFilter" condition="organization=:tenant"/>  
     </class>
 	<filter-def name="tenantFilter">
