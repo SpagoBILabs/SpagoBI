@@ -6,12 +6,14 @@
 
 package it.eng.spagobi.tools.dataset.measurecatalogue;
 
+import it.eng.spagobi.metamodel.HierarchyWrapper;
 import it.eng.spagobi.metamodel.MetaModelWrapper;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -24,50 +26,44 @@ import java.util.Set;
 
 public class MeasureCatalogueMeasure {
 	
-	private String name;
+	private String alias;
+	private String columnName;
 	private Class dataType;
-	private Map<IDataSet, Set<MeasureCatalogueDimension>> datasetDimensionMap;
+	private IDataSet dataset;
+	private Set<MeasureCatalogueDimension> datasetDimension;
 	private MetaModelWrapper metaModel;
 	
-	/**
-	 * List of datasets that contains the measure
-	 */
-	private Set<IDataSet> datasets = null;
+
 	
 	public MeasureCatalogueMeasure( MetaModelWrapper metaModel){
 		this.metaModel = metaModel;
-		datasets = new HashSet<IDataSet>();
-		datasetDimensionMap = new HashMap<IDataSet, Set<MeasureCatalogueDimension>>();
+		datasetDimension = new HashSet<MeasureCatalogueDimension>();
 	}
 	
-	public MeasureCatalogueMeasure( IFieldMetaData field, MetaModelWrapper metaModel){
+	
+	public MeasureCatalogueMeasure( IFieldMetaData field, MetaModelWrapper metaModel, IDataSet ds, Set<MeasureCatalogueDimension> datasetDimension){
 		this(metaModel);
-		this.name=field.getAlias();
-		if(this.name==null){
-			this.name=field.getName();
+		this.alias=field.getAlias();
+		if(this.alias==null){
+			this.alias=field.getName();
 		}
 		this.dataType = field.getType();
-	}
-
-	
-	/**
-	 * If the dataset is already present in the linked datasets list we update it.
-	 * If it's not present we add it.
-	 * @param ds
-	 */
-	public void refrehDataSet(IDataSet ds){
-		if(!isDataSetContained(ds)){
-			datasets.remove(ds);
+		columnName = this.alias;
+		if(datasetDimension!=null){
+			this.dataset = ds;
+			this.datasetDimension = datasetDimension;
+		}else{
+			refreshDataSet(ds);
 		}
-		datasets.add(ds);
-		refreshDataSetDimension(ds);
 	}
+	
 	
 	/**
 	 * Refresh the list of dimensions linked to the measure and the dataset
 	 * @param ds
 	 */
-	public void refreshDataSetDimension(IDataSet ds){
+	public void refreshDataSet(IDataSet ds){
+		this.dataset = ds;
 		Set<MeasureCatalogueDimension> dimensions = new HashSet<MeasureCatalogueDimension>();
 		int fields = ds.getMetadata().getFieldCount();
 		for(int i=0; i<fields; i++){
@@ -76,7 +72,7 @@ public class MeasureCatalogueMeasure {
 				dimensions.add(new MeasureCatalogueDimension(aFieldMetadata,metaModel, ds));
 			}
 		}
-		datasetDimensionMap.put(ds, dimensions);
+		datasetDimension = dimensions;
 	}
 	
 	/**
@@ -84,14 +80,28 @@ public class MeasureCatalogueMeasure {
 	 * @param measure IFieldMetaData
 	 * @return
 	 */
-	public boolean isEqual(IFieldMetaData measure) {
+	public boolean isEqual(IFieldMetaData measure, IDataSet ds) {
 		String alias = measure.getAlias();
 		if(alias==null){
 			alias = measure.getName();
 		}
-		return alias.equals(name);
+		return ds.equals(dataset) && alias.equals(alias);
 	}
 
+	/**
+	 * Get the hierarchies of the associated dataset
+	 * @return
+	 */
+	public Set<HierarchyWrapper> getHierarchies(){
+		Set<HierarchyWrapper> hierarchies = new HashSet<HierarchyWrapper>();
+		for (Iterator<MeasureCatalogueDimension> iterator = datasetDimension.iterator(); iterator.hasNext();) {
+			MeasureCatalogueDimension dimensionWrapper = (MeasureCatalogueDimension) iterator.next();
+			hierarchies.add(dimensionWrapper.getHierarchy());
+		}
+		return hierarchies;
+	}
+	
+	
 	/**
 	 * Utility method that check if a field of a dataset is a measure
 	 * @param fieldMetadata
@@ -100,10 +110,29 @@ public class MeasureCatalogueMeasure {
 	public static boolean isMeasure(IFieldMetaData fieldMetadata){
 		return (fieldMetadata.getFieldType()!=null && fieldMetadata.getFieldType().name().equals(MeasureCatalogueCostants.MEASURE));
 	}
+	
 
 	
-	public boolean isDataSetContained(IDataSet aDs){
-		return datasets.contains(aDs);
+	public Set<MeasureCatalogueDimension> getDatasetDimension() {
+		return datasetDimension;
+	}
+	
+	
+	public IDataSet getDataset() {
+		return dataset;
+	}
+	
+	
+	
+
+
+	public String getColumnName() {
+		return columnName;
+	}
+
+
+	public String getAlias() {
+		return alias;
 	}
 
 
@@ -111,7 +140,8 @@ public class MeasureCatalogueMeasure {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result + ((alias == null) ? 0 : alias.hashCode());
+		result = prime * result + ((dataset == null) ? 0 : dataset.hashCode());
 		return result;
 	}
 
@@ -125,13 +155,21 @@ public class MeasureCatalogueMeasure {
 		if (getClass() != obj.getClass())
 			return false;
 		MeasureCatalogueMeasure other = (MeasureCatalogueMeasure) obj;
-		if (name == null) {
-			if (other.name != null)
+		if (alias == null) {
+			if (other.alias != null)
 				return false;
-		} else if (!name.equals(other.name))
+		} else if (!alias.equals(other.alias))
+			return false;
+		if (dataset == null) {
+			if (other.dataset != null)
+				return false;
+		} else if (!dataset.equals(other.dataset))
 			return false;
 		return true;
 	}
+
+
+
 	
 
 	

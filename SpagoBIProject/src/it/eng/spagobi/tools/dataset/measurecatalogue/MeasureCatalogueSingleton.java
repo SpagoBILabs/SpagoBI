@@ -35,4 +35,13 @@ public class MeasureCatalogueSingleton {
 		return measureCatologue;
 	}	
 	
+	public synchronized static void refreshCatologue() {
+		logger.debug("IN");
+
+		logger.debug("refresh catalogue");
+		measureCatologue = new MeasureCatalogue();
+	
+
+	}	
+	
 }
