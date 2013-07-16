@@ -458,7 +458,7 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 		document.setName(name);
 		document.setDescription(description);
 		if(previewFile != null) {
-			document.setPreviewFile(previewFile);
+			document.setPreviewFile(previewFile.replace("\"", ""));
 		}
 		setDocumentEngine(document, type, engineId);
 		Boolean isVisible = Boolean.parseBoolean(visibility);
