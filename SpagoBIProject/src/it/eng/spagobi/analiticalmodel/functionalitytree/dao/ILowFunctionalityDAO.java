@@ -297,10 +297,9 @@ public interface ILowFunctionalityDAO extends ISpagoBIDao{
 	 * into the input <code>LowFunctionality</code> object.
 	 * 
 	 * @param aLowFunctionality The object containing all insert information
-	 * @param profile the profile
 	 * 
 	 * @throws EMFUserError If an Exception occurred
 	 */
-	public Integer insertCommunityFunctionality(LowFunctionality aLowFunctionality, IEngUserProfile profile) throws EMFUserError;
+	public Integer insertCommunityFunctionality(LowFunctionality aLowFunctionality) throws EMFUserError;
 	
 }

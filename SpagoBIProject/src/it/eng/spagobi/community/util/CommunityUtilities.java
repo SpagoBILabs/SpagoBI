@@ -13,13 +13,19 @@ import it.eng.spagobi.profiling.bean.SbiUser;
 import java.security.Security;
 import java.util.Properties;
 
+import javax.activation.DataHandler;
+import javax.activation.DataSource;
+import javax.activation.FileDataSource;
 import javax.mail.Authenticator;
+import javax.mail.BodyPart;
 import javax.mail.Message;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
 
 import org.apache.log4j.Logger;
 
@@ -28,13 +34,32 @@ public class CommunityUtilities {
     final String DEFAULT_SSL_FACTORY = "javax.net.ssl.SSLSocketFactory";
     final String CUSTOM_SSL_FACTORY = "it.eng.spagobi.commons.services.DummySSLSocketFactory";
 	
-	public boolean dispatchMail(String communityName, UserProfile userToAccept, SbiUser owner, String ownerEmail) {
+	public boolean dispatchMail(String communityName, SbiUser userToAccept, SbiUser owner, String ownerEmail) {
 
 		String mailSubj = "Community "+communityName+" membership request";
-
-		String mailTxt = "Dear "+ owner.getFullName()+", \n user "+userToAccept.getUserName()+ " wants to join "+communityName+" community";
-		mailTxt += "Select whether to accept hime or not, clicking the one of following links:";
-		mailTxt += "\n <a href=\"http://www.google.it\" >Accept</a>";
+		StringBuffer sb = new StringBuffer();
+		sb.append("<HTML>");
+		sb.append("<HEAD>");
+		sb.append("<TITLE>Community Membership Request</TITLE>");
+		sb.append("</HEAD>");
+		sb.append("<BODY>");
+		sb.append("<p style=\"width:100%; text-align:center;\">");
+		sb.append("Dear "+ owner.getFullName()+", <br/> user "+userToAccept.getFullName()+ " wants to join "+communityName+" community");
+		sb.append("<br/> Select whether to accept "+userToAccept.getFullName()+" or not, clicking the following image:");		
+		
+		sb.append("<br/><a href=\"http://localhost:8080/SpagoBI/CommunityRequest.jsp?owner="+owner.getUserId()+"&userToAccept="+userToAccept.getUserId()+"&community="+communityName+"\">");
+		sb.append("<img alt=\"Accept/Reject\" src=\"http://localhost:8080/SpagoBI/themes/sbi_default/img/go-community.png\"></a>");
+		/*
+		sb.append("\n<form name=\"input\" action=\"http://localhost:8080/SpagoBI/CommunityRequest.jsp\" method=\"get\">");
+		sb.append("\n<input type=\"hidden\" name=\"userToAccept\" value=\""+userToAccept.getUserName()+"\"/>");
+		sb.append("\n<input type=\"hidden\" name=\"owner\" value=\""+owner.getUserId()+"\"/>");
+		sb.append("\n<input type=\"hidden\" name=\"community\" value=\""+communityName+"\"/>");
+		sb.append("\n<input type=\"submit\" value=\"Accept/reject\"/>");
+		sb.append("\n</form>");
+		*/
+		sb.append("</p>");
+		sb.append("</BODY>");
+		String mailTxt = sb.toString();
 		logger.debug("IN");
 		try{
 
@@ -122,6 +147,7 @@ public class CommunityUtilities {
 			// Setting the Subject 
 			msg.setSubject(mailSubj);
 			msg.setContent(mailTxt, "text/html");
+
 
 			// send message
 	    	if ((smtpssl.equals("true")) && (!StringUtilities.isEmpty(user)) &&  (!StringUtilities.isEmpty(pass))){

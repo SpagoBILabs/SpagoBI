@@ -19,6 +19,7 @@ import it.eng.spagobi.commons.serializer.SerializationException;
 import it.eng.spagobi.commons.serializer.SerializerFactory;
 import it.eng.spagobi.commons.services.AbstractSpagoBIAction;
 import it.eng.spagobi.commons.utilities.AuditLogUtilities;
+import it.eng.spagobi.community.bo.CommunityManager;
 import it.eng.spagobi.dao.PagedList;
 import it.eng.spagobi.dao.QueryFilters;
 import it.eng.spagobi.dao.QueryStaticFilter;
@@ -228,6 +229,8 @@ public class ManageUserAction extends AbstractSpagoBIAction {
 			try {
 				deserializeAttributesJSONArray(user);
 				deserializeRolesJSONArray(user);
+
+
 			} catch (JSONException e) {
 				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "PROF_USERS"+((insertModality)?"ADD":"MODIFY"),logParam , "ERR");
 				throw new SpagoBIServiceException(SERVICE_NAME, "Exception occurred while deserializing attributes and roles", e);
@@ -240,6 +243,13 @@ public class ManageUserAction extends AbstractSpagoBIAction {
 			
 			try {
 				id = userDao.fullSaveOrUpdateSbiUser(user);
+				
+				String communityName ="";
+				String email ="";
+				CommunityManager cm = new CommunityManager();				
+				
+				cm.saveCommunity(getCommunityAttr(user), userId);
+
 				logger.debug("User updated or Inserted");
 			} catch (Throwable t) {
 				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "PROF_USERS."+((insertModality)?"ADD":"MODIFY"),logParam , "KO");
@@ -280,7 +290,24 @@ public class ManageUserAction extends AbstractSpagoBIAction {
 					"Exception occurred while saving user", e);
 		}
 	}
+	private String getCommunityAttr(SbiUser user)throws Exception {
+		String communityName="";
+		JSONArray attributesJSON = getAttributeAsJSONArray(ATTRIBUTES);
+		for (int i = 0; i < attributesJSON.length(); i++) {
+			JSONObject obj = (JSONObject) attributesJSON.get(i);
+			Integer key = obj.getInt("id");
+			String value = obj.getString("value");
 
+			String name = obj.getString("name");
+			
+			if(name.equalsIgnoreCase("community")){
+				communityName=obj.getString("value");
+			}
+
+		}
+		return communityName;
+
+	}
 
 	protected void checkIfCurrentUserIsAbleToSaveOrModifyUser(SbiUser user) throws EMFUserError,
 			EMFInternalError {
@@ -489,9 +516,9 @@ public class ManageUserAction extends AbstractSpagoBIAction {
 				attributeId.setAttributeId(key);
 				attribute.setId(attributeId);
 				SbiAttribute sbiAttribute = DAOFactory.getSbiAttributeDAO().loadSbiAttributeById(key);
+			
 				attribute.setSbiAttribute(sbiAttribute);
-	
-				attributes.add(attribute);
+				attributes.add(attribute);	
 			//}
 		}
 		user.setSbiUserAttributeses(attributes);

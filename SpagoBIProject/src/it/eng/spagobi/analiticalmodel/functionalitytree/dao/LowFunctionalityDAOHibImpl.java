@@ -1717,7 +1717,7 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 	}
 
 
-	public Integer insertCommunityFunctionality(LowFunctionality aLowFunctionality, IEngUserProfile profile)
+	public Integer insertCommunityFunctionality(LowFunctionality aLowFunctionality)
 			throws EMFUserError {
 		logger.debug( "IN" );
 		Session aSession = null;
