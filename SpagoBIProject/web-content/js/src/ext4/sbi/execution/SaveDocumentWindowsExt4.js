@@ -212,7 +212,7 @@ Ext.define('Sbi.execution.SaveDocumentWindowExt4', {
 		}
 		
 		if(previewFile!=undefined && previewFile!=null){
-			previewFile = Ext.JSON.encode(previewFile.replace('"','\''));
+			previewFile = Ext.JSON.encode(previewFile);
 		}
 		
 		if(docName == null || docName == undefined || docName == '' ||
@@ -353,10 +353,12 @@ Ext.define('Sbi.execution.SaveDocumentWindowExt4', {
 			params : params,
 			waitMsg : LN('sbi.generic.wait'),
 			success : function(form, action) {
+//				alert("success");
 				Ext.MessageBox.alert('Success!','File Uploaded to the Server');
-				this.fileNameUploaded = action.result.fileName.replace('"','');
+				this.fileNameUploaded = action.result.fileName;
 			},
 			failure : function(form, action) {
+//				alert("failure");
 				switch (action.failureType) {
 	            case Ext.form.Action.CLIENT_INVALID:
 	                Ext.Msg.alert('Failure', 'Form fields may not be submitted with invalid values');
@@ -367,12 +369,7 @@ Ext.define('Sbi.execution.SaveDocumentWindowExt4', {
 	            case Ext.form.Action.SERVER_INVALID:
 	            	if(action.result.msg && action.result.msg.indexOf("NonBlockingError:")>=0){
 	            		var error = Ext.JSON.decode(action.result.msg);
-//	            		if(error.error=='USED'){//the file is used from more than one dataset
-//	            			Sbi.exception.ExceptionHandler.showErrorMessage(LN('sbi.ds.'+error.error)+error.used+" datasets",LN("sbi.ds.failedToUpload") );
-//	            		}else{
-	            			Sbi.exception.ExceptionHandler.showErrorMessage(LN('sbi.ds.'+error.error),LN("sbi.ds.failedToUpload"));
-//	            		}
-	            		
+	            		Sbi.exception.ExceptionHandler.showErrorMessage(LN('sbi.ds.'+error.error),LN("sbi.ds.failedToUpload"));
 	            	}else{
 	            		Sbi.exception.ExceptionHandler.showErrorMessage(action.result.msg,'Failure');
 	            	}

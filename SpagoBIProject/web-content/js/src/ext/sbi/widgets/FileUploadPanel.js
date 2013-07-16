@@ -67,30 +67,20 @@ Ext.extend(Sbi.widgets.FileUploadPanel, Ext.Panel, {
 		this.uploadField = new Ext.form.TextField({
 			inputType:	'file',
 			fieldLabel : config.labelFileName || LN('sbi.ds.fileName'),
-			//anchor:			'95%',
 			id: 'fileUploadField',
 			style: 'padding-left: 5px',
-//			width: '90%',
 			columnWidth: 0.8,
 			allowBlank: true
 		});
-		
-		this.imgFileFormPanel = new Ext.FormPanel({
-			border: false,
-			columnWidth: 1,
-			fileUpload: true,
-			items: [this.uploadField]
-		});
-		
+
 		this.uploadButton = new Ext.Button({
-//	        text: LN('sbi.ds.file.upload.button'),
 			id: 			'fileUploadButton',			
 			xtype:          'button',
         	handler:		this.uploadImgButtonHandler,
         	columnWidth:	0.1,
         	scope: 			this,
-        	tooltip: 		LN('sbi.worksheet.designer.sheettitlepanel.uploadimage'),
-        	style:			'padding-left: 2px',
+//        	tooltip: 		LN('sbi.worksheet.designer.sheettitlepanel.uploadimage'),
+        	style:			'padding-left: 10px',
         	iconCls:		'uploadImgIcon',
         	hidden: 		!this.isEnabled || false
 	    });
@@ -102,7 +92,6 @@ Ext.extend(Sbi.widgets.FileUploadPanel, Ext.Panel, {
 //			frame: true,
 			header: false,
 			border: false,
-//			padding: '2 2 2 2',
 			items: [this.uploadField,			        
 			        this.uploadButton
 			        ]
