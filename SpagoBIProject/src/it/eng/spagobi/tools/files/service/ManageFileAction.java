@@ -68,7 +68,9 @@ public class ManageFileAction extends AbstractSpagoBIAction{ //AbstractHttpActio
 			JSONObject jsonToReturn = new JSONObject();
 			if (OPER_UPLOAD.equalsIgnoreCase(operation)){
 				jsonToReturn = uploadFile();
-				writeBackToClient(jsonToReturn.toString());
+				String jsonResponse = jsonToReturn.toString();
+				logger.info("Returned response: " + jsonResponse);
+				writeBackToClient(jsonResponse);
 			}else if (OPER_DOWNLOAD.equalsIgnoreCase(operation)){				
 				freezeHttpResponse();
 				String fileName = (String)getAttribute("fileName");
