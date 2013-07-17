@@ -30,14 +30,14 @@ public class MeasureCatalogueMeasure {
 	private String columnName;
 	private Class dataType;
 	private IDataSet dataset;
-	private Set<MeasureCatalogueDimension> datasetDimension;
+	private Set<MeasureCatalogueDimension> datasetDimensions;
 	private MetaModelWrapper metaModel;
 	
 
 	
 	public MeasureCatalogueMeasure( MetaModelWrapper metaModel){
 		this.metaModel = metaModel;
-		datasetDimension = new HashSet<MeasureCatalogueDimension>();
+		datasetDimensions = new HashSet<MeasureCatalogueDimension>();
 	}
 	
 	
@@ -51,7 +51,7 @@ public class MeasureCatalogueMeasure {
 		columnName = this.alias;
 		if(datasetDimension!=null){
 			this.dataset = ds;
-			this.datasetDimension = datasetDimension;
+			this.datasetDimensions = datasetDimension;
 		}else{
 			refreshDataSet(ds);
 		}
@@ -72,7 +72,7 @@ public class MeasureCatalogueMeasure {
 				dimensions.add(new MeasureCatalogueDimension(aFieldMetadata,metaModel, ds));
 			}
 		}
-		datasetDimension = dimensions;
+		datasetDimensions = dimensions;
 	}
 	
 	/**
@@ -94,7 +94,7 @@ public class MeasureCatalogueMeasure {
 	 */
 	public Set<HierarchyWrapper> getHierarchies(){
 		Set<HierarchyWrapper> hierarchies = new HashSet<HierarchyWrapper>();
-		for (Iterator<MeasureCatalogueDimension> iterator = datasetDimension.iterator(); iterator.hasNext();) {
+		for (Iterator<MeasureCatalogueDimension> iterator = datasetDimensions.iterator(); iterator.hasNext();) {
 			MeasureCatalogueDimension dimensionWrapper = (MeasureCatalogueDimension) iterator.next();
 			hierarchies.add(dimensionWrapper.getHierarchy());
 		}
@@ -114,7 +114,7 @@ public class MeasureCatalogueMeasure {
 
 	
 	public Set<MeasureCatalogueDimension> getDatasetDimension() {
-		return datasetDimension;
+		return datasetDimensions;
 	}
 	
 	

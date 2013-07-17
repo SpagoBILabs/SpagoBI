@@ -19,20 +19,15 @@ public class MeasureCatalogueDimension {
 		this.dimensionMetadata = dimensionMetadata;
 		hierarchyLevelPosition = -1;
 		
-		//load the hierarchy
-		for(int i=0; i<MeasureCatalogueCostants.dimensionHierarchyTypes.length; i++){
-			String aDimensionType = MeasureCatalogueCostants.dimensionHierarchyTypes[i];
-			String aDimensionRef = (String) ds.getMetadata().getProperty(aDimensionType+ MeasureCatalogueCostants.dimensionHierarchyTypesRefSuffix);
-			if(aDimensionRef!=null && aDimensionRef.equals(getAlias())){
-				setHierarchy(aDimensionType, metaModel);
-				hierarchyLevel =  (String) ds.getMetadata().getProperty(aDimensionType+ MeasureCatalogueCostants.dimensionHierarchyTypesLevelSuffix);
-				break;
+		if(dimensionMetadata.getProperties()!=null){
+			String hierarchyName = (String) dimensionMetadata.getProperty(MeasureCatalogueCostants.dimensionHierarchyMetadata);
+			if(hierarchyName!=null){
+				setHierarchy(hierarchyName, metaModel);
+				hierarchyLevel =  (String) dimensionMetadata.getProperty(MeasureCatalogueCostants.dimensionHierarchyMetadataLevel);
+				hierarchyLevelPosition = hierarchy.getLevel(hierarchyLevel);
 			}
 		}
-		
-		if(hierarchy!=null){
-			hierarchyLevelPosition = hierarchy.getLevel(hierarchyLevel);
-		}
+
 	}
 	
 	public String getAlias(){
