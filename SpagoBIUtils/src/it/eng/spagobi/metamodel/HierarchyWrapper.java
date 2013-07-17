@@ -12,6 +12,7 @@ import org.eclipse.emf.common.util.EList;
 
 import it.eng.spagobi.meta.model.olap.Hierarchy;
 import it.eng.spagobi.meta.model.olap.Level;
+import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 
 /**
  * 
@@ -37,6 +38,9 @@ public class HierarchyWrapper{
 		return this.wrappedHierarchy.getMembersMapBetweenLevels(columnName1, columnName2);
 	}
 
+	public IDataStore getMembers(String columnName1){
+		return this.wrappedHierarchy.getMembers(columnName1);
+	}
 	
 	public EList<Level> getLevels(){
 		return this.wrappedHierarchy.getLevels();
