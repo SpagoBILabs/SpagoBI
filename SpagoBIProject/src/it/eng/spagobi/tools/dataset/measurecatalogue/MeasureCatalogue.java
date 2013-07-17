@@ -170,6 +170,20 @@ public class MeasureCatalogue {
 	public Set<MeasureCatalogueMeasure> getMeasures() {
 		return measures;
 	}
+
+	/**
+	 * @return the metamodelWrapper
+	 */
+	public MetaModelWrapper getMetamodelWrapper() {
+		return metamodelWrapper;
+	}
+
+	/**
+	 * @param metamodelWrapper the metamodelWrapper to set
+	 */
+	public void setMetamodelWrapper(MetaModelWrapper metamodelWrapper) {
+		this.metamodelWrapper = metamodelWrapper;
+	}
     
     
     
