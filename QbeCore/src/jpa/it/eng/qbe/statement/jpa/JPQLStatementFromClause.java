@@ -56,7 +56,7 @@ public class JPQLStatementFromClause extends AbstractJPQLStatementClause {
 			List<IModelEntity> normalEntities = new ArrayList<IModelEntity>();
 			Map<String, String> clauses = new HashMap<String, String>();
 
-			Iterator it = entityAliases.keySet().iterator();
+			Iterator<String> it = entityAliases.keySet().iterator();
 			while (it.hasNext()) {
 				String entityUniqueName = (String) it.next();
 				logger.debug("entity [" + entityUniqueName + "]");
@@ -67,6 +67,7 @@ public class JPQLStatementFromClause extends AbstractJPQLStatementClause {
 
 				IModelEntity modelEntity = parentStatement.getDataSource()
 						.getModelStructure().getEntity(entityUniqueName);
+				
 				String type = (String) modelEntity.getProperty("type");
 				if ("cube".equalsIgnoreCase( type )) {
 					cubes.add(modelEntity);
@@ -101,10 +102,6 @@ public class JPQLStatementFromClause extends AbstractJPQLStatementClause {
 				if (normalEntitiesIt.hasNext()) {
 					buffer.append(",");
 				}
-			}
-
-			for (IModelEntity cube : cubes) {
-
 			}
 		} finally {
 			logger.debug("OUT");
