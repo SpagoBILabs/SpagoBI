@@ -49,6 +49,12 @@ Ext.define('Sbi.widgets.grid.DynamicGridPanel', {
 	
     	Sbi.debug('DynamicGridPanel build store');
     	config.storeConfig = Ext.apply(config.storeConfig||{},{serviceUrl: config.serviceUrl});
+    	if ((config.usePost != null) && (config.usePost != undefined ) ){
+        	config.storeConfig.params = config.params;
+        	config.storeConfig.usePost = config.usePost;
+    	}
+
+
     	var store = Ext.create('Sbi.widgets.store.DynamicStore', config.storeConfig ||{});
       	this.store = store;
       	

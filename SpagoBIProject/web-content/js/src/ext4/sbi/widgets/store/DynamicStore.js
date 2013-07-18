@@ -58,14 +58,29 @@ Ext.define('Sbi.widgets.store.DynamicStore', {
 			dataRoot=config.dataRoot;
 		}
 		
-		this.proxy= {
-			type: 'ajax',
-			url:  this.serviceUrl,
-			reader: {
-				type:"json",
-				root: dataRoot
-			}
-		};
+		
+    	if ((config.usePost != null) && (config.usePost != undefined ) ){
+    		this.proxy= {
+    				type: 'ajax',
+    				url:  this.serviceUrl,
+    				extraParams: this.params,
+    				actionMethods:{ create:'POST', read:'POST', update:'POST', destroy:'POST' },
+    				reader: {
+    					type:"json",
+    					root: dataRoot
+    				}
+    		};
+      	} else {
+      		this.proxy= {
+      				type: 'ajax',
+      				url:  this.serviceUrl,
+      				reader: {
+      					type:"json",
+      					root: dataRoot
+      				}
+      		};
+      	}
+
     	
     	this.callParent([config]);
         
