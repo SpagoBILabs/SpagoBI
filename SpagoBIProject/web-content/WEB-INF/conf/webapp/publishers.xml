@@ -33,23 +33,28 @@
       		</RESOURCES>
     	</RENDERING>
   	</PUBLISHER>
-  	
+  	 
   	<PUBLISHER name="userhome">
     	<RENDERING channel="HTTP" mode="FORWARD" type="JSP">
       		<RESOURCES>
-        		<ITEM prog="0" resource="/WEB-INF/jsp/wapp/home40.jsp"/>
+        		<ITEM prog="0" resource="/WEB-INF/jsp/wapp/homeBase.jsp"/>
       		</RESOURCES>
     	</RENDERING>
   	</PUBLISHER>
   	
-  	<PUBLISHER name="userhomePublicUser">
+  	 <PUBLISHER name="PublicUserPublisher">
+    	<RENDERING channel="PORTLET" mode="FORWARD" type="JSP">
+      		<RESOURCES>
+        		<ITEM mode="VIEW" resource="/WEB-INF/jsp/wapp/homeBase.jsp"/>
+        		<!-- <ITEM mode="VIEW" resource="/WEB-INF/jsp/wapp/publicUserhomeBase.jsp"/> -->
+      		</RESOURCES>
+    	</RENDERING>
     	<RENDERING channel="HTTP" mode="FORWARD" type="JSP">
       		<RESOURCES>
-        		<ITEM prog="0" resource="/WEB-INF/jsp/wapp/publicUserHome.jsp"/>
+        		<ITEM prog="0" resource="/WEB-INF/jsp/wapp/homeBase.jsp"/>
       		</RESOURCES>
     	</RENDERING>
   	</PUBLISHER>
-  	
   	
   	<PUBLISHER name="chiron">
     	<RENDERING channel="HTTP" mode="FORWARD" type="JSP">
