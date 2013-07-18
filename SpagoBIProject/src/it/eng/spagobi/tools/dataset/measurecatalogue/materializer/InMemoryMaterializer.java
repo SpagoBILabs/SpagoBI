@@ -41,6 +41,10 @@ public class InMemoryMaterializer implements IMaterializer {
 		//STEP1: gets the common dimensions
 		List<List<MeasureCatalogueDimension>> commonDimensions =  getCommonDimensions(measures.get(0),measures.get(1));
 		
+		if(commonDimensions.size()>0 && commonDimensions.get(0).size()==0 ){
+			throw new RuntimeException("No common dimensions found");
+		}
+		
 		List<List<MeasureCatalogueDimension>> commonDimensionsFilterd = new ArrayList<List<MeasureCatalogueDimension>>();
 		for(int i=0; i<commonDimensions.size(); i++){
 			commonDimensionsFilterd.add(filterHierarchies(commonDimensions.get(i)));
@@ -386,32 +390,77 @@ public class InMemoryMaterializer implements IMaterializer {
     	private Map<MeasureCatalogueDimension, IFieldMetaData> mapDimensionsFields;
     	private Map<IFieldMetaData, MeasureCatalogueDimension> mapFieldsDimensions;
     	private List<IRecord> records;
-    	private List<Integer> recordsCount;
-    	private int measureColumnIndex;
+    	private List<List<Object>> recordsMeasuresValues;//for each record a list with the values of the measures
+    	private int measureColumnIndex;//index of the measure in the record
     	
     	public InMemoryAggregator(IAggregationFunction aggreationFunction, int measureColumnIndex, List<IFieldMetaData> newDataStoreFieldMetaData, Map<MeasureCatalogueDimension, IFieldMetaData> mapDimensionsFields,	Map<IFieldMetaData, MeasureCatalogueDimension> mapFieldsDimensions){
     		this.aggreationFunction = aggreationFunction;
     		this.measureColumnIndex = measureColumnIndex;
     		records = new ArrayList<IRecord>();
-    		recordsCount = new ArrayList<Integer>();
+    		recordsMeasuresValues = new ArrayList<List<Object>>();
     		filedsMetadata = newDataStoreFieldMetaData;
     		this.mapDimensionsFields = mapDimensionsFields;
     		this.mapFieldsDimensions = mapFieldsDimensions;
     	}
     	
     	public void addRecord(IRecord record){
-    		int indexOfRecord = records.indexOf(record);
-    		if(indexOfRecord>=0){
-    			int recordCount = recordsCount.get(indexOfRecord);
-    			recordsCount.set(indexOfRecord, recordCount+1);
-    		}else{
-    			records.add(record);
-    			recordsCount.add(1);
-    		}
+
+    		//check if the record already exists
+    		boolean recordFound = false;
+			for(int i=0; i<records.size(); i++){
+				recordFound = true;
+				for(int j=0; j<records.get(i).getFields().size(); j++){
+					
+					if(j!=measureColumnIndex && !//checks only dimensions
+							(records.get(i).getFieldAt(j).equals(record.getFieldAt(j)))){//if a dimension is not equal
+						recordFound = false;
+						break;
+					}
+				}
+				if(recordFound){
+					List<Object> recordsMeasuresValue = recordsMeasuresValues.get(i);
+					recordsMeasuresValue.add(record.getFieldAt(measureColumnIndex).getValue());//record found 
+		    		break;
+				}
+			}
+			
+			if(!recordFound){
+	   			records.add(record);
+	   			List<Object> recordsMeasuresValue = new ArrayList<Object>();
+	   			recordsMeasuresValue.add(record.getFieldAt(measureColumnIndex).getValue());
+	   			recordsMeasuresValues.add(recordsMeasuresValue);
+			}
+
+
     	}
     	
     	public List<IRecord> aggregate(){
+    		
+    			for(int i=0; i<records.size(); i++){
+    				Double value = null;
+    				if(aggreationFunction.equals( AggregationFunctions.AVG_FUNCTION)){
+    					List<Object> recordsMeasuresValue = recordsMeasuresValues.get(i);
+    					value = (Double)executeSum(recordsMeasuresValue);
+    					value = value/recordsMeasuresValue.size();
+    				}else {//if(aggreationFunction.equals( AggregationFunctions.SUM_FUNCTION)){
+    					List<Object> recordsMeasuresValue = recordsMeasuresValues.get(i);
+    					value = (Double)executeSum(recordsMeasuresValue);
+    				}
+    				//update the value of the measure in the record with the one aggregated
+    				records.get(i).getFieldAt(measureColumnIndex).setValue(value);
+    				records.get(i).getFieldAt(measureColumnIndex).setDescription(value);	
+    			}
+
+    		
     		return records;
+    	}
+    	
+    	private Number executeSum(List<Object> values){
+			Double sum = 0d;
+			for(int j=0; j<values.size();j++){
+				sum = sum+ ((Number)values.get(j)).doubleValue();
+			}
+			return sum;
     	}
 
 		public List<IFieldMetaData> getFiledsMetadata() {
@@ -424,13 +473,8 @@ public class InMemoryMaterializer implements IMaterializer {
 		
 		public MeasureCatalogueDimension getDimension(IFieldMetaData fieldMetadata){
 			return mapFieldsDimensions.get(fieldMetadata);
-		}
-    	
-    	
+		}	
     }
-
-
-
-    
+ 
 
 }
