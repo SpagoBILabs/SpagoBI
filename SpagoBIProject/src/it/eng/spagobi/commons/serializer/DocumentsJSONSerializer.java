@@ -49,6 +49,7 @@ public class DocumentsJSONSerializer implements Serializer {
 	public static final String CREATIONDATE = "creationDate";
 	public static final String CREATIONUSER = "creationUser";
 	public static final String REFRESHSECONDS = "refreshSeconds";
+	public static final String PREVIEWFILE = "previewFile";
 	public static final String ACTIONS = "actions";
 	public static final String EXPORTERS = "exporters";
 	
@@ -100,6 +101,7 @@ public class DocumentsJSONSerializer implements Serializer {
 			result.put(CREATIONDATE, obj.getCreationDate());
 			result.put(CREATIONUSER, obj.getCreationUser());
 			result.put(REFRESHSECONDS, obj.getRefreshSeconds());
+			result.put(PREVIEWFILE, obj.getPreviewFile());
 			result.put(ACTIONS, new JSONArray());
 			 
 			Integer engineId=null;
