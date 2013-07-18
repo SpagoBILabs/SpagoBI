@@ -24,7 +24,7 @@ import java.util.Set;
  *
  */
 
-public class MeasureCatalogueMeasure {
+public class MeasureCatalogueMeasure implements IMeasureCatalogueField {
 	
 	private String alias;
 	private String columnName;
