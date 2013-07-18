@@ -9,7 +9,7 @@ import java.util.List;
 
 
 
-public class MeasureCatalogueDimension {
+public class MeasureCatalogueDimension implements IMeasureCatalogueField{
 	IFieldMetaData dimensionMetadata;
 	HierarchyWrapper hierarchy;
 	String hierarchyLevel;
@@ -61,6 +61,40 @@ public class MeasureCatalogueDimension {
 	public int getHierarchyLevelPosition() {
 		return hierarchyLevelPosition;
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((hierarchy == null) ? 0 : hierarchy.hashCode());
+		result = prime * result
+				+ ((hierarchyLevel == null) ? 0 : hierarchyLevel.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		MeasureCatalogueDimension other = (MeasureCatalogueDimension) obj;
+		if (hierarchy == null) {
+			if (other.hierarchy != null)
+				return false;
+		} else if (!hierarchy.equals(other.hierarchy))
+			return false;
+		if (hierarchyLevel == null) {
+			if (other.hierarchyLevel != null)
+				return false;
+		} else if (!hierarchyLevel.equals(other.hierarchyLevel))
+			return false;
+		return true;
+	}
+	
 	
 	
 
