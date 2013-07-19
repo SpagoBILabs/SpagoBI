@@ -47,15 +47,17 @@ public class MenageCommunityAction {
 	private final String PUBLISH_TO_COMMUNITY = "PUBLISH_TO_COMMUNITY";
 	
 	
-	@POST
+/*	@POST
 	@Path("/accept")
-	@Produces(MediaType.APPLICATION_JSON)
-	public void accept(@Context HttpServletRequest req) {
+	@Produces(MediaType.TEXT_HTML)
+	public String accept(@Context HttpServletRequest req) {
 		
 		
 		String owner = (String)req.getParameter("owner");
 		String userToAccept = (String)req.getParameter("userToAccept");
 		String community = (String)req.getParameter("community");
+		
+		String result="Operation succeded: "+userToAccept+" added to the community "+community;
 		
 		SbiCommunity sbiComm;
 		try {
@@ -64,41 +66,50 @@ public class MenageCommunityAction {
 
 			sbiComm = communityDao.loadSbiCommunityByName(community);
 			communityDao.addCommunityMember(sbiComm, userToAccept);
-
+			
 			
 		} catch (EMFUserError e) {
 			logger.error(e.getMessage());
+			result= "Operation failed";
 		}		
-
-
 		logger.debug("OUT");
-	}
+		return result;
+		
+	}*/
 	
 	@GET
 	@Path("/accept")
-	@Produces(MediaType.APPLICATION_JSON)
-	public void accepst(@Context HttpServletRequest req) {
+	@Produces(MediaType.TEXT_HTML)
+	public String accept(@Context HttpServletRequest req) {
 		
-		
-		String owner = (String)req.getParameter("owner");
+		IEngUserProfile profile = (IEngUserProfile) req.getSession()
+				.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 		String userToAccept = (String)req.getParameter("userToAccept");
 		String community = (String)req.getParameter("community");
+		String owner = (String)req.getParameter("owner");
+		String result="Operation succeded: "+userToAccept+" added to the community "+community;
 		
-		SbiCommunity sbiComm;
-		try {
-			ISbiCommunityDAO communityDao;
-			communityDao = DAOFactory.getCommunityDAO();
-
-			sbiComm = communityDao.loadSbiCommunityByName(community);
-			communityDao.addCommunityMember(sbiComm, userToAccept);
+		if(profile.getUserUniqueIdentifier().equals(owner)){
 
 			
-		} catch (EMFUserError e) {
-			logger.error(e.getMessage());
-		}		
-
-
+			SbiCommunity sbiComm;
+			try {
+				ISbiCommunityDAO communityDao;
+				communityDao = DAOFactory.getCommunityDAO();
+	
+				sbiComm = communityDao.loadSbiCommunityByName(community);
+				communityDao.addCommunityMember(sbiComm, userToAccept);
+	
+				
+			} catch (EMFUserError e) {
+				logger.error(e.getMessage());
+				result= "Operation failed";
+			}		
+		}else{
+			result= "User cannot perform action";
+		}
 		logger.debug("OUT");
+		return result;
 	}
 	
 	

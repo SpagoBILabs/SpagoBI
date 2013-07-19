@@ -185,7 +185,13 @@ public class LoginModule extends AbstractHttpModule {
 					// fill response
 					MenuUtilities.getMenuItems(request, response, profile);
 					// set publisher name
-					response.setAttribute(SpagoBIConstants.PUBLISHER_NAME, "userhome");
+					
+					if(backUrl == null){
+						response.setAttribute(SpagoBIConstants.PUBLISHER_NAME, "userhome");
+					}else{
+						servletRequest.getSession().setAttribute(IEngUserProfile.ENG_USER_PROFILE, profile);
+						getHttpResponse().sendRedirect(backUrl);
+					}
 					return;
 				} else {
 					// user must authenticate
