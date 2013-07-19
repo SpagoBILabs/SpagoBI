@@ -182,7 +182,7 @@ public class SecurityServerInterceptor implements PreProcessInterceptor, Accepte
 
 	public boolean accept(Class arg0, Method arg1) {
 		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 
