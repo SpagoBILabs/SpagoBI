@@ -183,11 +183,11 @@ sessionExpiredSpagoBIJS = 'sessionExpiredSpagoBIJS';
  <%}%>	
  --%>
 <%if (action != null && action.indexOf("START_ACTION_PUBLIC_USER")>=0) {%>
-  	<%@ include file="/themes/geobi/jsp/publicUserHome.jsp"%>
+  	<%@ include file="/themes/sbi_default/jsp/publicUserHome.jsp"%>
  <%}else if (isTechnicalUser){ %>
- 	 <%@ include file="/themes/geobi/jsp/adminHome.jsp"%>
+ 	 <%@ include file="/themes/sbi_default/jsp/adminHome.jsp"%>
  <%}else{ %>
-	 <%@ include file="/themes/geobi/jsp/userHome.jsp"%>
+	 <%@ include file="/themes/sbi_default/jsp/userHome.jsp"%>
  <%}%>	
  
 
