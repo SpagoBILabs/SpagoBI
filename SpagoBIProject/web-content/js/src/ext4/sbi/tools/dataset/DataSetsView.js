@@ -109,37 +109,10 @@ Ext.define('Sbi.tools.dataset.DataSetsView', {
 		var noItem = LN('sbi.browser.folderdetailpanel.emptytext');
 		var changed = LN('sbi.ds.changedon');
 		var title = LN('sbi.ds.listTitle');
-		/*
-		this.tpl = new Ext.XTemplate(
-				'<div id="sample-ct">', 	            
-	 	           '<div class="group-view">',
-	 	            '<ul>',
-	 	            	'<tpl if="root.length == 0">',
-	 	            		'<div id="empty-group-message">',
-	 	            		noItem,
-	 	            		'</div>',
-	 	            	'</tpl>',        
-	 	            	'<tpl for=".">',
-		                    '<dd class="group-item">',
-				                '<div class="item-control-panel">',	 
-			                    	'<tpl for="actions">',   
-			                        	'<div class="button"><img class="action-{name}" title="{description}" src="' + Ext.BLANK_IMAGE_URL + '"/></div>',
-			                        '</tpl>',
-			                    '</div>',			                    								
-								'<div class="dataset-view">' +
-									'<img src="/SpagoBI/themes/sbi_default/img/dataset/csv-xls.png" width="110" style="margin-left: 40px; margin-top: 10px;">' ,
-									'<p><b>{name}</b></p>',
-									'<p>{description}</p>',
-									'<p>{dateIn}</p><br/>',
-								'</div>',
-							'</dd>',
-		                '</tpl>',	              
-	 	            '<div style="clear:left"></div>',
-		          '</ul>',
-	 	          '</div>',
-	 	        '</div>');
-		*/
-		var img = "csv-xls-smaller.png";
+	
+	
+		var img = Sbi.config.contextName + '/themes/'+ Sbi.config.currTheme	+ '/img/dataset/img-dataset-1.jpg';
+//		var img = "csv-xls-smaller.png";
 //		if (!this.fromMyDataCtx ){
 //			img = "csv-xls-small.png";
 //		}
@@ -154,10 +127,20 @@ Ext.define('Sbi.tools.dataset.DataSetsView', {
 	 	            	'</tpl>', 
 	 	            	'<tpl for=".">',
 							'<dd class="box">',
-								'<a href="#" class="box-link">',
-									'<div class="box-map">',
-										'<img  align="center" src="/SpagoBI/themes/sbi_default/img/dataset/'+img+'" alt=" " />',
+								'<a href="#" class="box-container">',
+									'<div class="box-figure">',
+										//'<img  align="center" src="/SpagoBI/themes/sbi_default/img/dataset/'+img+'" alt=" " />',
+										'<img  align="center" src="'+img+'" alt=" " />',
 										'<span class="shadow"></span>',
+//										'<div class="hover">',
+//		                                	'<div class="box-actions-container">',
+//		                                    '    <ul class="box-actions">',
+//		                                    '        <li class="view"><a href="#">Visualizza dataset</a></li>',
+//		                                    '        <li class="new-map last"><a href="#">Usa dataset in una nuova mappa</a></li>',
+//		                                    '    </ul>',
+//		                                    '</div>',
+//		                                    '<a href="#" class="delete">Cancella</a>',
+//		                                '</div>',
 									'</div>',
 									'<div class="box-text">',
 										'<h2>{name}</h2>',
