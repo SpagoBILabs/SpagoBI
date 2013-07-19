@@ -17,45 +17,82 @@
 Ext.ns("Sbi.browser");
 
 Sbi.browser.FolderViewTemplate = function(config) { 
-	
-	//alert('->' + config.metaFolder.toSource());
-	//alert('->' + config.metaDocument.toSource());	
+
 	var documentAttributes = '';
 	var attributeNameView = '';
+
 	for(var i = 0; i < config.metaDocument.length; i++) {
 
 		var meta = config.metaDocument[i];
+//		if(meta.visible) {		
+//			// translate meta.id if present
+//			attributeNameView = LN(meta.id);
+//			documentAttributes += '<p id="' + meta.id + '">';
+//			if(meta.showLabel) {
+//				//documentAttributes += '<span class="field-label">' + meta.id + ':</span>';
+//				documentAttributes += '<span class="field-label">' + attributeNameView + ':</span>';
+//			}
+//			if(meta.maxChars) {
+//				documentAttributes += '<span class="field-value" title="{' + meta.id + '}"> {[Ext.util.Format.ellipsis(values.' + meta.id + ', ' + meta.maxChars + ')]}</span>';
+//			} else {
+//				documentAttributes += '<span class="field-value"> {' + meta.id + '}</span>';
+//			}
+//
+//			documentAttributes += '</p>';
+//		}
 		if(meta.visible) {		
 			// translate meta.id if present
 			attributeNameView = LN(meta.id);
 			documentAttributes += '<p id="' + meta.id + '">';
 			if(meta.showLabel) {
-				//documentAttributes += '<span class="field-label">' + meta.id + ':</span>';
-				documentAttributes += '<span class="field-label">' + attributeNameView + ':</span>';
+				documentAttributes += '<span><h2>{'+attributeNameView+'}</h2></span>';
 			}
 			if(meta.maxChars) {
-				documentAttributes += '<span class="field-value" title="{' + meta.id + '}"> {[Ext.util.Format.ellipsis(values.' + meta.id + ', ' + meta.maxChars + ')]}</span>';
+				documentAttributes += '<span> {[Ext.util.Format.ellipsis(values.' + meta.id + ', ' + meta.maxChars + ')]}</span>';
 			} else {
-				documentAttributes += '<span class="field-value"> {' + meta.id + '}</span>';
+				documentAttributes += '<span> {' + meta.id + '}</span>';
 			}
-
 			documentAttributes += '</p>';
-		}
+			
+		}		
 	}
 
-	var documentTpl = '' +
-	'<div id="document-item-icon" class="document-item-icon">' +
+//	var documentTpl = '' +
+//	'<div id="document-item-icon" class="document-item-icon">' +
+//	
+//	'<tpl if="this.isSearchResult(summary) == true">'+
+//		'<img src="' + Ext.BLANK_IMAGE_URL + '" class="{typeCode}-icon" ext:qtip="<b>{views}</b><br/>{summary}"></img>' +
+//	'</tpl>'+
+//	'<tpl if="this.isSearchResult(summary) == false">'+
+//		'<img src="' + Ext.BLANK_IMAGE_URL + '" class="{typeCode}-icon"></img>' +
+//	'</tpl>'+	    
+//	'</div>' +
+//    '<div class="item-desc">' +
+//    documentAttributes +
+//    '</div>';
+		
+	//dinamicizzare img con preview se esiste
+	var img = Sbi.config.contextName + '/themes/'+ Sbi.config.currTheme	+ '/img/dataset/img-map.jpg';
+	var classImg = "";
 	
-	'<tpl if="this.isSearchResult(summary) == true">'+
-		'<img src="' + Ext.BLANK_IMAGE_URL + '" class="{typeCode}-icon" ext:qtip="<b>{views}</b><br/>{summary}"></img>' +
-	'</tpl>'+
-	'<tpl if="this.isSearchResult(summary) == false">'+
-		'<img src="' + Ext.BLANK_IMAGE_URL + '" class="{typeCode}-icon"></img>' +
-	'</tpl>'+	    
-	'</div>' +
-    '<div class="item-desc">' +
-    documentAttributes +
-    '</div>';
+//	img = Ext.BLANK_IMAGE_URL ;
+//	classImg = ' class="{typeCode}-icon" ';
+	
+	//alert('<img  align="center" src="'+img+'" alt=" " '+classImg+'/>');
+	var documentTpl = ''+
+	'<a href="#" class="box-container">'+
+		'<div id="document-item-icon"  class="box-figure">'+
+			'<img  align="center" src="'+img+'" alt=" " '+classImg+'/>'+
+//			'<tpl if="this.isSearchResult(summary) == true">'+
+//				'<img src="' + Ext.BLANK_IMAGE_URL + '" class="{typeCode}-icon" ext:qtip="<b>{views}</b><br/>{summary}"></img>' +
+//			'</tpl>'+
+//			'<tpl if="this.isSearchResult(summary) == false">'+
+//				'<img src="' + Ext.BLANK_IMAGE_URL + '" class="{typeCode}-icon"></img>' +
+//			'</tpl>'+	
+			'<span class="shadow"></span>'+
+		'</div>'+
+		'<div class="box-text">'+documentAttributes +'</div>';		
+	'</a>';
 	
 	
 	
@@ -119,15 +156,32 @@ Sbi.browser.FolderViewTemplate = function(config) {
 	                	'{[engine=""]}',
 	                	'{[summary=""]}',
 	                	'{[views=""]}',
-	                    '<dd class="group-item">',
-	                        '<div class="item-control-panel">',	 
-	                        	'<tpl for="actions">',   
-	                            	'<div class="button"><img class="action-{name}" title="{description}" src="' + Ext.BLANK_IMAGE_URL + '"/></div>',
-	                            '</tpl>',
-	                        '</div>',
+	                	'<tpl if="this.exists(engine) == true">',
+	                		'<dd class="box">', //document
+	                    '</tpl>',
+	                    '<tpl if="this.exists(engine) == false">',
+	                    	'<dd class="group-item">', //Folder
+	                    '</tpl>',
+	                    //'<dd class="group-item">',
+//	                        '<div class="item-control-panel">',	 
+//	                        	'<tpl for="actions">',   
+//	                            	'<div class="button"><img class="action-{name}" title="{description}" src="' + Ext.BLANK_IMAGE_URL + '"/></div>',
+//	                            '</tpl>',
+//	                        '</div>',
+	                    	'{[actions=""]}',
+		                    '<div class="fav-container" style="width:{actions.length*45}px">',              	
+								'<tpl for="actions">',   
+									'<div class="fav">',
+										'<span class="action-{name}" title="{description}"></span>',
+									'</div>',
+								'</tpl>',
+							'</div>',
 	                        // -- DOCUMENT -----------------------------------------------
 	                        '<tpl if="this.exists(engine) == true">',
 	                        	documentTpl,
+	                        '</tpl>',
+	                        '<tpl if="this.exists(description) == false">',
+	                        	'<br>',
 	                        '</tpl>',
 	                        // -- FOLDER -----------------------------------------------
 	                        '<tpl if="this.exists(engine) == false">',
