@@ -169,20 +169,26 @@ sessionExpiredSpagoBIJS = 'sessionExpiredSpagoBIJS';
  %>
  
 <script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext4/sbi/wapp/HomeBase.js")%>'></script> 
-
+<%--
  <%if (action != null && action.indexOf("START_ACTION_PUBLIC_USER")>=0) {%>
   	<%@ include file="/themes/sbi_default/jsp/publicUserHome.jsp"%>
  <%}else{ %>
 	 <%@ include file="/themes/sbi_default/jsp/home.jsp"%>
  <%}%>	
- <%--
+ 
  <%if (action != null && action.indexOf("START_ACTION_PUBLIC_USER")>=0) {%>
-  	<%@ include file="/themes/geoBI/jsp/publicUserHome.jsp"%>
+  	<%@ include file="/themes/geobi/jsp/publicUserHome.jsp"%>
  <%}else{ %>
-	 <%@ include file="/themes/geoBI/jsp/home.jsp"%>
+	 <%@ include file="/themes/geobi/jsp/home.jsp"%>
  <%}%>	
  --%>
-
+<%if (action != null && action.indexOf("START_ACTION_PUBLIC_USER")>=0) {%>
+  	<%@ include file="/themes/sbi_default/jsp/publicUserHome.jsp"%>
+ <%}else if (isTechnicalUser){ %>
+ 	 <%@ include file="/themes/sbi_default/jsp/adminHome.jsp"%>
+ <%}else{ %>
+	 <%@ include file="/themes/sbi_default/jsp/userHome.jsp"%>
+ <%}%>	
  
 
 
