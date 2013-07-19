@@ -13,9 +13,9 @@ import it.eng.spagobi.services.exceptions.ExceptionUtilities;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.io.IOException;
+import java.lang.reflect.Method;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
@@ -30,8 +30,8 @@ import org.jboss.resteasy.core.ServerResponse;
 import org.jboss.resteasy.spi.Failure;
 import org.jboss.resteasy.spi.HttpRequest;
 import org.jboss.resteasy.spi.LoggableFailure;
+import org.jboss.resteasy.spi.interception.AcceptedByMethod;
 import org.jboss.resteasy.spi.interception.MessageBodyWriterContext;
-import org.jboss.resteasy.spi.interception.MessageBodyWriterInterceptor;
 import org.jboss.resteasy.spi.interception.PreProcessInterceptor;
 
 /**
@@ -44,14 +44,12 @@ import org.jboss.resteasy.spi.interception.PreProcessInterceptor;
 @Provider
 @ServerInterceptor
 @Precedence("SECURITY")
-public class SecurityServerInterceptor implements MessageBodyWriterInterceptor , PreProcessInterceptor{
+public class SecurityServerInterceptor implements PreProcessInterceptor, AcceptedByMethod {
 
 	static private Logger logger = Logger.getLogger(SecurityServerInterceptor.class);
 	
 	@Context
 	private HttpServletRequest servletRequest;
-	@Context
-	private HttpServletResponse servletResponse;
 	
 	/**
 	 * Preprocess all the REST requests..
@@ -153,11 +151,6 @@ public class SecurityServerInterceptor implements MessageBodyWriterInterceptor ,
 		}
 		return ret;
 	}
-	public void write(MessageBodyWriterContext arg0) throws IOException,
-			WebApplicationException {
-		// TODO Auto-generated method stub
-		
-	}
 	
 	/**
 	 * Finds the user identifier from http request or from SSO system (by the
@@ -185,6 +178,11 @@ public class SecurityServerInterceptor implements MessageBodyWriterInterceptor ,
 			logger.debug("OUT");
 		}
 		return userId;
+	}
+
+	public boolean accept(Class arg0, Method arg1) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 
