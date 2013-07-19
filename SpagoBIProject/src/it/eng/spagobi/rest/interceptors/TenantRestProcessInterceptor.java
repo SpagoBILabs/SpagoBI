@@ -5,6 +5,8 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.rest.interceptors;
 
+import java.lang.reflect.Method;
+
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.tenant.Tenant;
@@ -22,6 +24,7 @@ import org.jboss.resteasy.core.ResourceMethod;
 import org.jboss.resteasy.core.ServerResponse;
 import org.jboss.resteasy.spi.Failure;
 import org.jboss.resteasy.spi.HttpRequest;
+import org.jboss.resteasy.spi.interception.AcceptedByMethod;
 import org.jboss.resteasy.spi.interception.PostProcessInterceptor;
 import org.jboss.resteasy.spi.interception.PreProcessInterceptor;
 
@@ -35,7 +38,7 @@ import org.jboss.resteasy.spi.interception.PreProcessInterceptor;
 @Provider
 @ServerInterceptor
 @Precedence("ENCODER")
-public class TenantRestProcessInterceptor implements PreProcessInterceptor, PostProcessInterceptor {
+public class TenantRestProcessInterceptor implements PreProcessInterceptor, PostProcessInterceptor, AcceptedByMethod {
 
 	private static Logger logger = Logger
 			.getLogger(TenantRestProcessInterceptor.class);
@@ -74,6 +77,12 @@ public class TenantRestProcessInterceptor implements PreProcessInterceptor, Post
 		logger.debug("IN");
 		TenantManager.unset();
 		logger.debug("OUT");
+	}
+
+
+	public boolean accept(Class arg0, Method arg1) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 
