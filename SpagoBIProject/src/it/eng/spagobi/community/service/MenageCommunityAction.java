@@ -42,7 +42,7 @@ public class MenageCommunityAction {
 	
 	@GET
 	@Path("/accept")
-	@Produces(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.TEXT_HTML)
 	public String accept(@Context HttpServletRequest req) {
 		
 		IEngUserProfile profile = (IEngUserProfile) req.getSession()
