@@ -41,6 +41,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 <HTML>
 <HEAD>
+  <script type="text/javascript">
+	function reject(user, community){
+		alert('You refused user '+user+' to become member of the community ' +community);
+
+	}
+  </script>
 <TITLE>Community Membership Request</TITLE> 
 
 </HEAD>
@@ -48,23 +54,17 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 <h2>Community Membership Request</h2> 
 <div width="100%" style="float:left; width:100%;">
 <p style="float:left; width:100%;">User <%=userToAccept%> requests to become memeber of <%=community%> community:</p>
-<span style="float:left; width: 30%;">
-<form name="input" action="<%=communityMngURL %>" method="post">
-<input type="hidden" name="owner" value="<%=owner%>"/>
-<input type="hidden" name="userToAccept" value="<%=userToAccept%>"/>
-<input type="hidden" name="community" value="<%=community%>"/>
-<input type="hidden" name="REJECT_MEMBER" value="REJECT_MEMBER"/>
-<input type="submit" value="Reject">
-</form>
-</span>
-<span style="float:left; width: 30%;">
-<form name="input" action="<%=communityMngURL %>" method="post" >
+
+<span style="float:left; width: 60%; text-align:center;">
+<form name="input" method="post" action="<%=communityMngURL %>" >
 <input type="hidden" name="owner" value="<%=owner%>"/>
 <input type="hidden" name="userToAccept" value="<%=userToAccept%>"/>
 <input type="hidden" name="community" value="<%=community%>"/>
 <input type="hidden" name="MESSAGE_DET" value="ACCEPT_MEMBER"/>
+<input type="button" value="Reject" onClick="javascript:reject('<%=userToAccept %>','<%=community %>');">
 <input type="submit" value="Accept">
 </form>
+
 </span>
 
 </div>
