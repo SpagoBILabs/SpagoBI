@@ -21,8 +21,8 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
        
     <script type="text/javascript">
     Ext.BLANK_IMAGE_URL = '<%=urlBuilder.getResourceLink(request, "/js/lib/ext-2.0.1/resources/images/default/s.gif")%>';
-    
-    Sbi.config = {};
+
+    if (Sbi.config == undefined) Sbi.config = {};
 
     // the user language
     Sbi.config.language = '<%= locale.getLanguage() %>';
