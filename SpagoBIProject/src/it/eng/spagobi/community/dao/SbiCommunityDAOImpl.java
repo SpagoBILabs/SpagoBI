@@ -56,18 +56,16 @@ public class SbiCommunityDAOImpl extends AbstractHibernateDAO implements ISbiCom
 		Transaction tx = null;
 		Integer id = null;
 		try {
-			SbiCommunity sbicommExists = loadSbiCommunityByName(community.getName());
-			if(sbicommExists != null){
-				aSession = getSession();
-				tx = aSession.beginTransaction();
-				community.setCreationDate(new Date());
-				community.setLastChangeDate(new Date());
-				updateSbiCommonInfo4Insert(community);
-				id = (Integer)aSession.save(community);
-	
-				tx.commit();
-				
-				}
+
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+			community.setCreationDate(new Date());
+			community.setLastChangeDate(new Date());
+			updateSbiCommonInfo4Insert(community);
+			id = (Integer)aSession.save(community);
+
+			tx.commit();
+
 			logger.debug("OUT");
 			return id;
 		} catch (HibernateException he) {
