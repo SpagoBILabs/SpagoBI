@@ -26,52 +26,65 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 <%@page import="java.util.Enumeration"%>
 
 
-<%      
-	String contextName = ChannelUtilities.getSpagoBIContextName(request);
+<%
+	String contextName = ChannelUtilities.getSpagoBIContextName(request);	
+
+
 	String authFailed = "";
 	String startUrl = "";
-	ResponseContainer aResponseContainer = ResponseContainerAccess.getResponseContainer(request);
+	ResponseContainer aResponseContainer = ResponseContainerAccess
+			.getResponseContainer(request);
 	//RequestContainer requestContainer = RequestContainerAccess.getRequestContainer(request); 
-	RequestContainer requestContainer = RequestContainer.getRequestContainer();
+	RequestContainer requestContainer = RequestContainer
+			.getRequestContainer();
 	//SessionContainer sessionContainer = requestContainer.getSessionContainer();
-	
+
 	SingletonConfig serverConfig = SingletonConfig.getInstance();
-	String strInternalSecurity = serverConfig.getConfigValue("SPAGOBI.SECURITY.PORTAL-SECURITY-CLASS.className");
-	boolean isInternalSecurity = (strInternalSecurity.indexOf("InternalSecurity")>0)?true:false;
-	String roleToCheckLbl  =  SingletonConfig.getInstance().getConfigValue("SPAGOBI.SECURITY.ROLE_LOGIN");
+	String strInternalSecurity = serverConfig
+			.getConfigValue("SPAGOBI.SECURITY.PORTAL-SECURITY-CLASS.className");
+	boolean isInternalSecurity = (strInternalSecurity
+			.indexOf("InternalSecurity") > 0) ? true : false;
+	String roleToCheckLbl = SingletonConfig.getInstance()
+			.getConfigValue("SPAGOBI.SECURITY.ROLE_LOGIN");
 	String roleToCheckVal = "";
-	if (!("").equals(roleToCheckLbl)){
-		roleToCheckVal = (request.getParameter(roleToCheckLbl)!=null)?request.getParameter(roleToCheckLbl):"";	
-		if (("").equals(roleToCheckVal)){
-//			roleToCheckVal = ( sessionContainer.getAttribute(roleToCheckLbl)!=null)?
-//						(String)sessionContainer.getAttribute(roleToCheckLbl):"";
-			roleToCheckVal = ( session.getAttribute(roleToCheckLbl)!=null)?
-					(String)session.getAttribute(roleToCheckLbl):"";
+	if (!("").equals(roleToCheckLbl)) {
+		roleToCheckVal = (request.getParameter(roleToCheckLbl) != null) ? request
+				.getParameter(roleToCheckLbl) : "";
+		if (("").equals(roleToCheckVal)) {
+			//			roleToCheckVal = ( sessionContainer.getAttribute(roleToCheckLbl)!=null)?
+			//						(String)sessionContainer.getAttribute(roleToCheckLbl):"";
+			roleToCheckVal = (session.getAttribute(roleToCheckLbl) != null) ? (String) session
+					.getAttribute(roleToCheckLbl) : "";
 		}
 	}
-	
-	
-	
-	String currTheme=ThemesManager.getCurrentTheme(requestContainer);
-	if(currTheme==null)currTheme=ThemesManager.getDefaultTheme();
-	 
-	if(aResponseContainer!=null) {
-		SourceBean aServiceResponse = aResponseContainer.getServiceResponse();
-		if(aServiceResponse!=null) {
-			SourceBean loginModuleResponse = (SourceBean)aServiceResponse.getAttribute("LoginModule");
-			if(loginModuleResponse!=null) {
-				String authFailedMessage = (String)loginModuleResponse.getAttribute(SpagoBIConstants.AUTHENTICATION_FAILED_MESSAGE);
-				startUrl = (loginModuleResponse.getAttribute("start_url")==null)?"":(String)loginModuleResponse.getAttribute("start_url");
-				if(authFailedMessage!=null) {
+
+	String currTheme = ThemesManager.getCurrentTheme(requestContainer);
+	if (currTheme == null)
+		currTheme = ThemesManager.getDefaultTheme();
+
+	if (aResponseContainer != null) {
+		SourceBean aServiceResponse = aResponseContainer
+				.getServiceResponse();
+		if (aServiceResponse != null) {
+			SourceBean loginModuleResponse = (SourceBean) aServiceResponse
+					.getAttribute("LoginModule");
+			if (loginModuleResponse != null) {
+				String authFailedMessage = (String) loginModuleResponse
+						.getAttribute(SpagoBIConstants.AUTHENTICATION_FAILED_MESSAGE);
+				startUrl = (loginModuleResponse
+						.getAttribute("start_url") == null) ? ""
+						: (String) loginModuleResponse
+								.getAttribute("start_url");
+				if (authFailedMessage != null) {
 					authFailed = authFailedMessage;
-				}				
+				}
 			}
 		}
 	}
 
-	
-	IMessageBuilder msgBuilder = MessageBuilderFactory.getMessageBuilder();
-	
+	IMessageBuilder msgBuilder = MessageBuilderFactory
+			.getMessageBuilder();
+
 	String sbiMode = "WEB";
 	IUrlBuilder urlBuilder = null;
 	urlBuilder = UrlBuilderFactory.getUrlBuilder(sbiMode);
@@ -177,7 +190,16 @@ a:hover{
         <form name="login" action="<%=contextName%>/servlet/AdapterHTTP?PAGE=LoginPage&NEW_SESSION=TRUE" method="POST" onsubmit="return escapeUserName()">
         	<input type="hidden" id="isInternalSecurity" name="isInternalSecurity" value="<%=isInternalSecurity %>" />        	
         	<input type="hidden" id="<%=roleToCheckLbl%>" name="<%=roleToCheckLbl%>" value="<%=roleToCheckVal%>" />
-        	<%
+        	<%	
+        	//manages backUrl after login
+        	String backUrl = (String)request.getAttribute(SpagoBIConstants.BACK_URL);
+        	if (backUrl != null && !backUrl.equals("")) {
+			%>
+			
+			<input type="hidden" name="<%= SpagoBIConstants.BACK_URL %>" value="<%= backUrl %>" />
+			<input type="hidden" name="fromLogin" value="true" />
+			<%
+        	}
         	// propagates parameters (if any) for document execution
         	if (request.getParameter(ObjectsTreeConstants.OBJECT_LABEL) != null) {
         		String label = request.getParameter(ObjectsTreeConstants.OBJECT_LABEL);

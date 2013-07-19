@@ -32,40 +32,18 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	String owner = request.getParameter("owner");
 	String userToAccept = request.getParameter("userToAccept");
 	String community = request.getParameter("community");
-	
-	//default url
-	String contextName = ChannelUtilities.getSpagoBIContextName(request);
-	String communityMngURL = contextName + "/restful-services/community/accept";
 
 %>
 
 <HTML>
 <HEAD>
-<TITLE>Community Membership Request</TITLE> 
+<TITLE>Community Membership</TITLE> 
 
 </HEAD>
 <BODY>
-<h2>Community Membership Request</h2> 
+<h2>Accepted Community Membership Request</h2> 
 <div width="100%" style="float:left; width:100%;">
-<p style="float:left; width:100%;">User <%=userToAccept%> requests to become memeber of <%=community%> community:</p>
-<span style="float:left; width: 30%;">
-<form name="input" action="<%=communityMngURL %>" method="post">
-<input type="hidden" name="owner" value="<%=owner%>"/>
-<input type="hidden" name="userToAccept" value="<%=userToAccept%>"/>
-<input type="hidden" name="community" value="<%=community%>"/>
-<input type="hidden" name="REJECT_MEMBER" value="REJECT_MEMBER"/>
-<input type="submit" value="Reject">
-</form>
-</span>
-<span style="float:left; width: 30%;">
-<form name="input" action="<%=communityMngURL %>" method="post" >
-<input type="hidden" name="owner" value="<%=owner%>"/>
-<input type="hidden" name="userToAccept" value="<%=userToAccept%>"/>
-<input type="hidden" name="community" value="<%=community%>"/>
-<input type="hidden" name="MESSAGE_DET" value="ACCEPT_MEMBER"/>
-<input type="submit" value="Accept">
-</form>
-</span>
+<p style="float:left; width:100%;">User <%=userToAccept%> became memeber of <%=community%> community, thanks to your approval.</p>
 
 </div>
 </BODY>

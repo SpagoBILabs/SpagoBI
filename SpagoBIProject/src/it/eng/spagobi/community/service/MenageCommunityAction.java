@@ -6,63 +6,148 @@
 package it.eng.spagobi.community.service;
 
 import it.eng.spago.error.EMFUserError;
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.dao.IDomainDAO;
 import it.eng.spagobi.commons.services.AbstractSpagoBIAction;
 import it.eng.spagobi.community.dao.ISbiCommunityDAO;
+import it.eng.spagobi.community.mapping.SbiCommunity;
+import it.eng.spagobi.tools.dataset.measurecatalogue.MeasureCatalogue;
+import it.eng.spagobi.tools.dataset.measurecatalogue.MeasureCatalogueSingleton;
+import it.eng.spagobi.tools.datasource.bo.DataSource;
+import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
+import java.util.List;
 import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
 
 import org.apache.log4j.Logger;
+import org.json.JSONObject;
 
-public class MenageCommunityAction extends AbstractSpagoBIAction {
+@Path("/community")
+public class MenageCommunityAction {
 	
 	private static Logger logger = Logger.getLogger(MenageCommunityAction.class);
 	
 	private final String MESSAGE_DET = "MESSAGE_DET";
 	private final String SAVE_COMMUNITY = "SAVE_COMMUNITY";
+	private final String ACCEPT_MEMBER = "ACCEPT_MEMBER";
+	private final String REJECT_MEMBER = "REJECT_MEMBER";
 	private final String LIST_COMMUNITIES = "LIST_COMMUNITIES";
 	private final String PUBLISH_TO_COMMUNITY = "PUBLISH_TO_COMMUNITY";
 	
-	@Override
-	public void doService() {
-
-		logger.debug("IN");
-		ISbiCommunityDAO communityDao;
-		UserProfile profile = (UserProfile) this.getUserProfile();
-		communityDao = DAOFactory.getCommunityDAO();
-		communityDao.setUserProfile(getUserProfile());
-		HttpServletRequest httpRequest = getHttpRequest();
-
-		Locale locale = getLocale();
-
-		String serviceType = this.getAttributeAsString(MESSAGE_DET);
-		logger.debug("Service type "+serviceType);
+	
+	@POST
+	@Path("/accept")
+	@Produces(MediaType.APPLICATION_JSON)
+	public void accept(@Context HttpServletRequest req) {
 		
 		
-		if (serviceType != null && serviceType.contains(SAVE_COMMUNITY)) {
-			//if user is registering to SpagoBI and inserts a community,
-			//the systems checks for community existence.
+		String owner = (String)req.getParameter("owner");
+		String userToAccept = (String)req.getParameter("userToAccept");
+		String community = (String)req.getParameter("community");
+		
+		SbiCommunity sbiComm;
+		try {
+			ISbiCommunityDAO communityDao;
+			communityDao = DAOFactory.getCommunityDAO();
+
+			sbiComm = communityDao.loadSbiCommunityByName(community);
+			communityDao.addCommunityMember(sbiComm, userToAccept);
+
 			
-			//if exists a mail is sent to the owner of the community that accepts him as 
-			//member or refuse him
-			
-			//if doesn't exist then the community is created, together with a new folder with 
-			//the name of the community (label?)
-			
-			
-		}else if (serviceType != null && serviceType.contains(LIST_COMMUNITIES)) {
-			//gets the list of the communities for a specific user
-			
-		}else if (serviceType != null && serviceType.contains(PUBLISH_TO_COMMUNITY)) {
-			//when user saves a document for a community
-			//the document is saved inside the community folder
-			
-		}
+		} catch (EMFUserError e) {
+			logger.error(e.getMessage());
+		}		
+
+
 		logger.debug("OUT");
 	}
+	
+	@GET
+	@Path("/accept")
+	@Produces(MediaType.APPLICATION_JSON)
+	public void accepst(@Context HttpServletRequest req) {
+		
+		
+		String owner = (String)req.getParameter("owner");
+		String userToAccept = (String)req.getParameter("userToAccept");
+		String community = (String)req.getParameter("community");
+		
+		SbiCommunity sbiComm;
+		try {
+			ISbiCommunityDAO communityDao;
+			communityDao = DAOFactory.getCommunityDAO();
+
+			sbiComm = communityDao.loadSbiCommunityByName(community);
+			communityDao.addCommunityMember(sbiComm, userToAccept);
+
+			
+		} catch (EMFUserError e) {
+			logger.error(e.getMessage());
+		}		
+
+
+		logger.debug("OUT");
+	}
+	
+	
+	
+//	
+//	@Override
+//	public void doService() {
+//
+//		logger.debug("IN");
+//		ISbiCommunityDAO communityDao;
+//		UserProfile profile = (UserProfile) this.getUserProfile();
+//		communityDao = DAOFactory.getCommunityDAO();
+//		communityDao.setUserProfile(getUserProfile());
+//		HttpServletRequest httpRequest = getHttpRequest();
+//
+//		Locale locale = getLocale();
+//
+//		String serviceType = this.getAttributeAsString(MESSAGE_DET);
+//		logger.debug("Service type "+serviceType);
+//		
+//		ISbiCommunityDAO commDAO = DAOFactory.getCommunityDAO();
+//		
+//		if (serviceType != null && serviceType.contains(ACCEPT_MEMBER)) {
+//			//owner of the community accepts membership
+//			String owner = this.getAttributeAsString("owner");
+//			String userToAccept = this.getAttributeAsString("userToAccept");
+//			String community = this.getAttributeAsString("community");
+//			
+//			SbiCommunity sbiComm;
+//			try {
+//				sbiComm = commDAO.loadSbiCommunityByName(community);
+//				commDAO.saveSbiComunityUsers(sbiComm, userToAccept);
+//				getRequestContainer().setAttribute("owner", owner);
+//				getRequestContainer().setAttribute("community", community);
+//				getRequestContainer().setAttribute("userToAccept", userToAccept);
+//				
+//			} catch (EMFUserError e) {
+//				logger.error(e.getMessage());
+//			}			
+//			
+//		}else if (serviceType != null && serviceType.contains(LIST_COMMUNITIES)) {
+//			//gets the list of the communities for a specific user
+//			
+//		}else if (serviceType != null && serviceType.contains(PUBLISH_TO_COMMUNITY)) {
+//			//when user saves a document for a community
+//			//the document is saved inside the community folder
+//			
+//		}
+//		logger.debug("OUT");
+//	}
 
 }

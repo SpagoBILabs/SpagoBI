@@ -6,21 +6,29 @@
 
 package it.eng.spagobi.rest.interceptors;
 
-import java.util.HashMap;
-
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.utilities.AuditLogUtilities;
+import it.eng.spagobi.commons.utilities.ChannelUtilities;
 import it.eng.spagobi.services.exceptions.ExceptionUtilities;
 
+import java.net.URI;
+import java.util.HashMap;
+
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
 import org.apache.log4j.Logger;
+import org.jboss.resteasy.core.Dispatcher;
+import org.jboss.resteasy.mock.MockDispatcherFactory;
 import org.jboss.resteasy.spi.HttpRequest;
+import org.jboss.resteasy.spi.HttpResponse;
+import org.jboss.resteasy.spi.LoggableFailure;
 
 /**
  * 
@@ -39,13 +47,38 @@ public class RestExceptionMapper implements ExceptionMapper<Throwable>
 	@Context
 	private HttpRequest request;
 	@Context
+	private HttpResponse httpresponse;
+	@Context
 	private HttpServletRequest servletRequest;
+	@Context
+	private HttpServletResponse servletResponse;
 	
 	public Response toResponse(Throwable e) {
 		logger.debug("RestExceptionMapper:toResponse IN");
 		String ex = "Service Exception";
 		try {
 			String serviceUrl = InterceptorUtilities.getServiceUrl(request);
+			//checks for LoggableFailure excepyion (with userId info)
+			if(e instanceof LoggableFailure){
+				//missing authentication --> go to login page
+			      {
+			    	 logger.debug("Missing authentication");
+			         String contextName = ChannelUtilities.getSpagoBIContextName(servletRequest);
+			         String addr= servletRequest.getLocalAddr();
+			         Integer port=servletRequest.getLocalPort();
+			         String proto =servletRequest.getScheme();
+			         String backUrl= request.getUri().getRequestUri().getPath();
+			         String community= (String)servletRequest.getParameter("community");
+			         String owner= (String)servletRequest.getParameter("owner");
+			         String userToAccept= (String)servletRequest.getParameter("userToAccept");
+			         String url= proto+"://"+addr+":"+port+""+contextName+"/servlet/AdapterHTTP?PAGE=LoginPage&NEW_SESSION=TRUE&"+SpagoBIConstants.BACK_URL+"="+backUrl
+			        		 +"&community="+community+"&owner="+owner+"&userToAccept="+userToAccept;
+			         return Response.status(302).location(URI.create(url)).build();
+
+			      }
+				
+			}
+
 			HashMap<String,String> parameters = InterceptorUtilities.getRequestParameters(request, servletRequest);
 			ex = ExceptionUtilities.serializeException(e.getMessage(),null);
 			parameters.put("Exception", ex);
@@ -67,7 +100,6 @@ public class RestExceptionMapper implements ExceptionMapper<Throwable>
 		
 		return response;
 	}
-	
 	
 
 

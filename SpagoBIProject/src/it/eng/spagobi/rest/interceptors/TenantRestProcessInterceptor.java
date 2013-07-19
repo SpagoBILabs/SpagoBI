@@ -16,6 +16,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.ext.Provider;
 
 import org.apache.log4j.Logger;
+import org.jboss.resteasy.annotations.interception.Precedence;
 import org.jboss.resteasy.annotations.interception.ServerInterceptor;
 import org.jboss.resteasy.core.ResourceMethod;
 import org.jboss.resteasy.core.ServerResponse;
@@ -33,6 +34,7 @@ import org.jboss.resteasy.spi.interception.PreProcessInterceptor;
  */
 @Provider
 @ServerInterceptor
+@Precedence("ENCODER")
 public class TenantRestProcessInterceptor implements PreProcessInterceptor, PostProcessInterceptor {
 
 	private static Logger logger = Logger
@@ -51,13 +53,15 @@ public class TenantRestProcessInterceptor implements PreProcessInterceptor, Post
 		logger.debug("IN");
 		UserProfile profile = (UserProfile) servletRequest.getSession()
 				.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
-		logger.debug("User profile retrieved [" + profile + "]");
-		// retrieving tenant id
-		String tenantId = profile.getOrganization();
-		logger.debug("Tenant identifier is [" + tenantId + "]");
-		// putting tenant id on thread local
-		Tenant tenant = new Tenant(tenantId);
-		TenantManager.setTenant(tenant);
+		if(profile != null){
+			logger.debug("User profile retrieved [" + profile + "]");
+			// retrieving tenant id
+			String tenantId = profile.getOrganization();
+			logger.debug("Tenant identifier is [" + tenantId + "]");
+			// putting tenant id on thread local
+			Tenant tenant = new Tenant(tenantId);
+			TenantManager.setTenant(tenant);
+		}
 		logger.debug("OUT");
 		return null;
 	}
