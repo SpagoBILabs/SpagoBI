@@ -56,9 +56,12 @@ public class AuditRestPostInterceptor implements PostProcessInterceptor{
 		try {	
 			String serviceUrl = InterceptorUtilities.getServiceUrl(request);
 			HashMap<String,String> parameters = InterceptorUtilities.getRequestParameters(request, servletRequest);
-			String reponseBody = response.getEntity().toString();
-			parameters.put("Response Body", reponseBody);
-			
+			Object responseBody = response.getEntity();
+			if(responseBody!=null){
+				String responseBodyString = response.getEntity().toString();
+				parameters.put("Response Body", responseBodyString);
+			}
+
 			
 			UserProfile profile = (UserProfile) servletRequest.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 				

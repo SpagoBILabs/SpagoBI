@@ -15,6 +15,7 @@ import it.eng.spago.base.Constants;
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.SessionContainer;
 import it.eng.spago.base.SourceBean;
+import it.eng.spago.base.SourceBeanAttribute;
 import it.eng.spago.dispatching.module.AbstractHttpModule;
 import it.eng.spago.error.EMFErrorHandler;
 import it.eng.spago.error.EMFErrorSeverity;
@@ -29,6 +30,7 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IConfigDAO;
 import it.eng.spagobi.commons.metadata.SbiExtRoles;
 import it.eng.spagobi.commons.utilities.AuditLogUtilities;
+import it.eng.spagobi.commons.utilities.ChannelUtilities;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.HibernateUtil;
 import it.eng.spagobi.commons.utilities.StringUtilities;
@@ -51,8 +53,10 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
@@ -89,6 +93,7 @@ public class LoginModule extends AbstractHttpModule {
 	public void service(SourceBean request, SourceBean response) throws Exception {
 		logger.debug("IN");
 
+		
 		String theme_name=(String)request.getAttribute(ChangeTheme.THEME_NAME);
 		logger.debug("theme selected: "+theme_name);
 
@@ -136,10 +141,32 @@ public class LoginModule extends AbstractHttpModule {
 
 		// Set BACK URL if present
 		String backUrl=(String)request.getAttribute(SpagoBIConstants.BACK_URL);
+		String fromLogin=(String)request.getAttribute("fromLogin");
 
-		if (backUrl!=null && !backUrl.equalsIgnoreCase("")){
-			//permSess.setAttribute(SpagoBIConstants.BACK_URL, backUrl);
-			httpSession.setAttribute(SpagoBIConstants.BACK_URL, backUrl);		
+		if (backUrl!=null && !backUrl.equalsIgnoreCase("") && fromLogin == null){
+			String parametersStr="";
+			List params = request.getContainedAttributes();
+		    ListIterator it = params.listIterator();
+		    int count =0;
+
+		    while (it.hasNext()) {
+
+				SourceBeanAttribute par = (SourceBeanAttribute) it.next();
+				String name = (String)par.getKey();
+				String val = (String)par.getValue();
+				if(count == 0){
+					parametersStr+="?"+name+"="+val;
+				}else{
+					parametersStr+="&"+name+"="+val;
+				}
+				count++;
+						
+				
+		    }
+		  //append to back url	
+		    backUrl+=parametersStr;
+		    getHttpRequest().setAttribute(SpagoBIConstants.BACK_URL, backUrl);
+			
 		}
 
 		errorHandler = getErrorHandler();
@@ -362,7 +389,13 @@ public class LoginModule extends AbstractHttpModule {
 	
 			MenuUtilities.getMenuItems(request, response, profile);
 	
-			response.setAttribute(SpagoBIConstants.PUBLISHER_NAME, "userhome");
+			
+			if(backUrl == null){
+				response.setAttribute(SpagoBIConstants.PUBLISHER_NAME, "userhome");
+			}else{
+				servletRequest.getSession().setAttribute(IEngUserProfile.ENG_USER_PROFILE, profile);
+				getHttpResponse().sendRedirect(backUrl);
+			}
 		
         } finally {
         	// since TenantManager uses a ThreadLocal, we must clean  after request processed in each case

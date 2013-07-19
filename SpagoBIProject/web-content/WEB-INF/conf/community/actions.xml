@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<ACTIONS>
+
+ <ACTION name="MANAGE_COMMUNITIES_ACTION" class="it.eng.spagobi.community.service.MenageCommunityAction" scope="REQUEST">
+ 	<CONFIG/>
+ </ACTION>
+ 
+</ACTIONS>
+

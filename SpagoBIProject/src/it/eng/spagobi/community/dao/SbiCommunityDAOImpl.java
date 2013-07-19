@@ -50,19 +50,24 @@ public class SbiCommunityDAOImpl extends AbstractHibernateDAO implements ISbiCom
 
 	}
 
-	public Integer saveSbiComunity(SbiCommunity community) throws EMFUserError {
+	private Integer saveSbiComunity(SbiCommunity community) throws EMFUserError {
 		logger.debug("IN");
 		Session aSession = null;
 		Transaction tx = null;
+		Integer id = null;
 		try {
-			aSession = getSession();
-			tx = aSession.beginTransaction();
-			community.setCreationDate(new Date());
-			community.setLastChangeDate(new Date());
-			updateSbiCommonInfo4Insert(community);
-			Integer id = (Integer) aSession.save(community);
-
-			tx.commit();
+			SbiCommunity sbicommExists = loadSbiCommunityByName(community.getName());
+			if(sbicommExists != null){
+				aSession = getSession();
+				tx = aSession.beginTransaction();
+				community.setCreationDate(new Date());
+				community.setLastChangeDate(new Date());
+				updateSbiCommonInfo4Insert(community);
+				id = (Integer)aSession.save(community);
+	
+				tx.commit();
+				
+				}
 			logger.debug("OUT");
 			return id;
 		} catch (HibernateException he) {
@@ -189,6 +194,44 @@ public class SbiCommunityDAOImpl extends AbstractHibernateDAO implements ISbiCom
 	
 				tx.commit();
 			}
+			logger.debug("OUT");
+
+		} catch (HibernateException he) {
+			logger.error(he.getMessage(),he);
+			if (tx != null)
+				tx.rollback();
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+		} finally {
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
+			}
+		}
+	}
+
+	public void addCommunityMember(SbiCommunity community, String userID)
+			throws EMFUserError {
+		logger.debug("IN");
+		Session aSession = null;
+		Transaction tx = null;
+		SbiCommunityUsers commUsers = new SbiCommunityUsers();
+		try {
+			
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+			
+			commUsers.setCreationDate(new Date());
+			commUsers.setLastChangeDate(new Date());
+			SbiCommunityUsersId id = new SbiCommunityUsersId();
+			id.setCommunityId(community.getCommunityId());
+			id.setUserId(userID);
+			
+			commUsers.setId(id);
+			
+			updateSbiCommonInfo4Insert(commUsers);
+			aSession.save(commUsers);
+
+			tx.commit();
 			logger.debug("OUT");
 
 		} catch (HibernateException he) {
