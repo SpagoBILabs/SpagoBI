@@ -7,24 +7,30 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 <%@page language="java" 
 	contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"
 %>
-
+    
 <!-- Include Ext stylesheets here: -->
 <link id="extall"     rel="styleSheet" href ="/SpagoBI/js/lib/ext-4.1.1a/resources/css/ext-all.css" type="text/css" />
 <link id="theme-gray" rel="styleSheet" href ="/SpagoBI/js/lib/ext-4.1.1a/resources/css/ext-all-gray.css" type="text/css" />
 <script type="text/javascript" src="/SpagoBI/js/lib/ext-4.1.1a/overrides/overrides.js"></script>
 
 <link id="spagobi-ext-4" rel="styleSheet" href ="/SpagoBI/js/lib/ext-4.1.1a/overrides/resources/css/spagobi.css" type="text/css" />
-<link id="spagobi-ext-4" rel="styleSheet" href ="/SpagoBI/themes/geobi/css/home40/layout.css" type="text/css" />
+<link id="spagobi-ext-4" rel="styleSheet" href ="/SpagoBI/themes/sbi_default/css/home40/layout.css" type="text/css" />
 <script type="text/javascript">
     Ext.BLANK_IMAGE_URL = '/SpagoBI/js/lib/ext-4.1.1a/resources/themes/images/default/tree/s.gif';
-  
+</script>
+
+<%-- Javascript object useful for session expired management (see also sessionExpired.jsp) --%>
+<script>
+sessionExpiredSpagoBIJS = 'sessionExpiredSpagoBIJS';
+
 Ext.onReady(function () {
-	var firstPublicUrl =  '<%= StringEscapeUtils.escapeJavaScript(firstUrlToCall) %>';  
-	firstUrlTocallvar = firstPublicUrl;
+	
+	var firstUrl =  '<%= StringEscapeUtils.escapeJavaScript(firstUrlToCall) %>';  
+	firstUrlTocallvar = firstUrl;
     Ext.tip.QuickTipManager.init();
     this.mainframe = Ext.create('Ext.ux.IFrame', 
     			{ xtype: 'uxiframe'
-  	  			, src: firstPublicUrl
+  	  			, src: firstUrl
   	  			, height: '100%'
   	  			});
     
@@ -49,7 +55,12 @@ Ext.onReady(function () {
 			if(Sbi.user.roles && Sbi.user.roles.length == 1){
 				menuItem.hidden=true;
 			}
+		}else if(menuItem.itemLabel != null && menuItem.itemLabel == "HOME"){
+			menuItem.tooltip = '<p style="color: blue; ">'+LN('sbi.home.Welcome')+'<b>'+ 
+			'<p style="color: white; font-weight: bold;">'+Sbi.user.userName+'</p>'
+								+'<b></p>'
 		}
+		
 	}
 	function hideItem( menu, e, eOpts){
         console.log('bye bye ');
@@ -63,14 +74,14 @@ Ext.onReady(function () {
     	    mainframe]
     	, dockedItems: [{
 	   	    xtype: 'toolbar',
-	   	    dock: 'top',
+	   	    dock: 'left',
 	   	    items: itemsM
     	}]
     });
     
     Ext.create('Ext.Viewport', {
     	
-        layout: 'top',
+        layout: 'fit',
         items: [this.mainpanel]
     });
     
@@ -79,3 +90,4 @@ Ext.onReady(function () {
 
 	
 </script>
+ 
