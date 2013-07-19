@@ -64,8 +64,8 @@ public class RestExceptionMapper implements ExceptionMapper<Throwable>
 			      {
 			    	 logger.debug("Missing authentication");
 			         String contextName = ChannelUtilities.getSpagoBIContextName(servletRequest);
-			         String addr= servletRequest.getLocalAddr();
-			         Integer port=servletRequest.getLocalPort();
+			         String addr= servletRequest.getServerName();
+			         Integer port=servletRequest.getServerPort();
 			         String proto =servletRequest.getScheme();
 			         String backUrl= request.getUri().getRequestUri().getPath();
 			         String community= (String)servletRequest.getParameter("community");
