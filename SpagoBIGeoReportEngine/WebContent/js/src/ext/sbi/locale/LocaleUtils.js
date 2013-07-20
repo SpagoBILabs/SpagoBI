@@ -18,21 +18,21 @@ Sbi.locale.formatters = {
 };
 
 
-if(Sbi.qbe.commons.Format){
+if(Sbi.commons.Format){
 	if(Sbi.locale.formats) {
-		Sbi.locale.formatters.int  = Sbi.qbe.commons.Format.numberRenderer(Sbi.locale.formats['int']);		
-		Sbi.locale.formatters.float  = Sbi.qbe.commons.Format.numberRenderer(Sbi.locale.formats['float']);		
-		Sbi.locale.formatters.string  = Sbi.qbe.commons.Format.stringRenderer(Sbi.locale.formats['string']);		
-		Sbi.locale.formatters.date    = Sbi.qbe.commons.Format.dateRenderer(Sbi.locale.formats['date']);		
-		Sbi.locale.formatters.boolean = Sbi.qbe.commons.Format.booleanRenderer(Sbi.locale.formats['boolean']);
-		Sbi.locale.formatters.html    = Sbi.qbe.commons.Format.htmlRenderer();
+		Sbi.locale.formatters.int  = Sbi.commons.Format.numberRenderer(Sbi.locale.formats['int']);		
+		Sbi.locale.formatters.float  = Sbi.commons.Format.numberRenderer(Sbi.locale.formats['float']);		
+		Sbi.locale.formatters.string  = Sbi.commons.Format.stringRenderer(Sbi.locale.formats['string']);		
+		Sbi.locale.formatters.date    = Sbi.commons.Format.dateRenderer(Sbi.locale.formats['date']);		
+		Sbi.locale.formatters.boolean = Sbi.commons.Format.booleanRenderer(Sbi.locale.formats['boolean']);
+		Sbi.locale.formatters.html    = Sbi.commons.Format.htmlRenderer();
 	} else {
-		Sbi.locale.formatters.int  = Sbi.qbe.commons.Format.numberRenderer( );	
-		Sbi.locale.formatters.float  = Sbi.qbe.commons.Format.numberRenderer( );	
-		Sbi.locale.formatters.string  = Sbi.qbe.commons.Format.stringRenderer( );		
-		Sbi.locale.formatters.date    = Sbi.qbe.commons.Format.dateRenderer( );		
-		Sbi.locale.formatters.boolean = Sbi.qbe.commons.Format.booleanRenderer( );
-		Sbi.locale.formatters.html    = Sbi.qbe.commons.Format.htmlRenderer();
+		Sbi.locale.formatters.int  = Sbi.commons.Format.numberRenderer( );	
+		Sbi.locale.formatters.float  = Sbi.commons.Format.numberRenderer( );	
+		Sbi.locale.formatters.string  = Sbi.commons.Format.stringRenderer( );		
+		Sbi.locale.formatters.date    = Sbi.commons.Format.dateRenderer( );		
+		Sbi.locale.formatters.boolean = Sbi.commons.Format.booleanRenderer( );
+		Sbi.locale.formatters.html    = Sbi.commons.Format.htmlRenderer();
 	}
 };
 
