@@ -11,6 +11,7 @@ import it.eng.spagobi.services.proxy.DataSetServiceProxy;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
+import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.utilities.engines.BaseServletIOManager;
 import it.eng.spagobi.utilities.engines.EngineConstants;
@@ -52,6 +53,15 @@ public class GetTargetDatasetAction extends AbstractBaseServlet {
 			
 			//Datastore 
 			dataStore = dataSet.getDataStore();
+			
+			for(int i = 0; i < dataStore.getMetaData().getFieldCount(); i++) {
+				IFieldMetaData fieldMeta = dataStore.getMetaData().getFieldMeta(i);
+				fieldMeta.setName(fieldMeta.getName().toUpperCase());
+				if(fieldMeta.getAlias() != null) {
+					fieldMeta.setAlias(fieldMeta.getAlias().toUpperCase());
+				}
+			}
+			
 			
 			JSONDataWriter dataWriter = new JSONDataWriter();
 			JSONObject result = (JSONObject)dataWriter.write(dataStore);
