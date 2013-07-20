@@ -409,7 +409,7 @@ Ext.extend(Sbi.geo.MainPanel, Ext.Panel, {
 		if (this.analysisType === this.PROPORTIONAL_SYMBOLS) {
 			this.initProportionalSymbolsAnalysis();
 			geostatConf.layer = this.targetLayer;
-			this.geostatistic = new Sbi.geo.stat.ProportionalSymbol(geostatConf);
+			this.geostatistic = new Sbi.geo.stat.ProportionalSymbolControlPanel(geostatConf);
 			this.geostatistic.analysisConf = this.analysisConf;
 		} else if(this.analysisType === this.GRAPHIC) {
 			this.initGraphicAnalysis();
@@ -420,13 +420,16 @@ Ext.extend(Sbi.geo.MainPanel, Ext.Panel, {
 			this.map.chartType = this.chartType;
 			this.map.totalField= this.totalField;
 			this.map.fieldsToShow= this.fieldsToShow;
-			this.geostatistic = new Sbi.geo.stat.Choropleth(geostatConf);//da ridefinire
+			this.geostatistic = new Sbi.geo.stat.ChoroplethControlPanel(geostatConf);//da ridefinire
 			this.geostatistic.analysisConf = this.analysisConf;
 		} else if (this.analysisType === this.CHOROPLETH) {
 			this.initChoroplethAnalysis();
 			geostatConf.layer = this.targetLayer;
-			//this.geostatistic = new mapfish.widgets.geostat.Choropleth(geostatConf);
-			this.geostatistic = new Sbi.geo.stat.Choropleth(geostatConf);
+			geostatConf.store = new Ext.data.JsonStore({
+				url: this.services['GetTargetDataset']
+			})
+			geostatConf.store.load({});
+			this.geostatistic = new Sbi.geo.stat.ChoroplethControlPanel(geostatConf);
 			this.geostatistic.analysisConf = this.analysisConf;
 		} else {
 			alert('error: unsupported analysis type [' + this.analysisType + ']');

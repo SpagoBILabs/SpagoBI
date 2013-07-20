@@ -8,7 +8,8 @@
       	
       	<p><b>Menu</b>
       	<p><ul>
-      	<li><a href='html/api/index.html'>API doc</a>
+      	<li><a href='/SpagoBIDoc/engine/georeport/javadoc/index.html'>Java API doc</a>
+      	<li><a href='/SpagoBIDoc/engine/georeport/jsdoc/index.html'>Javascript API doc</a>
       	<li><a href='html/template/index.html'>Template structure specifications</a>
       	<li><a href='jamon/menu.jsp'>Performance monitor (JAMon)</a>
       	</ul>

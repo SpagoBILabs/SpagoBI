@@ -22,9 +22,9 @@
   * - Andrea Gioia (adrea.gioia@eng.it)
   */
 
-Ext.ns("Sbi.qbe.commons");
+Ext.ns("Sbi.commons");
 
-Sbi.qbe.commons.Format = function(){
+Sbi.commons.Format = function(){
  
 	return {
 		/**
@@ -64,7 +64,7 @@ Sbi.qbe.commons.Format = function(){
          */
         , dateRenderer : function(format){
             return function(v){
-                return Sbi.qbe.commons.Format.date(v, format);
+                return Sbi.commons.Format.date(v, format);
             };
         }
         
@@ -128,7 +128,7 @@ Sbi.qbe.commons.Format = function(){
         
         , numberRenderer : function(format){
             return function(v){
-                return Sbi.qbe.commons.Format.number(v, format);
+                return Sbi.commons.Format.number(v, format);
             };
         }
         
@@ -172,7 +172,7 @@ Sbi.qbe.commons.Format = function(){
         
         , stringRenderer : function(format){
             return function(v){
-                return Sbi.qbe.commons.Format.string(v, format);
+                return Sbi.commons.Format.string(v, format);
             };
         }
         
@@ -196,7 +196,7 @@ Sbi.qbe.commons.Format = function(){
         
         , booleanRenderer : function(format){
             return function(v){
-                return Sbi.qbe.commons.Format.boolean(v, format);
+                return Sbi.commons.Format.boolean(v, format);
             };
         }
         
@@ -209,7 +209,7 @@ Sbi.qbe.commons.Format = function(){
         
         , htmlRenderer : function(format){
             return function(v){
-                return Sbi.qbe.commons.Format.html(v, format);
+                return Sbi.commons.Format.html(v, format);
             };
         }
         

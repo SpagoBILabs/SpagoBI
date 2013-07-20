@@ -2,26 +2,27 @@
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
- * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. **/
+ * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. 
+ 
+ **/
 
 Ext.ns("Sbi.geo.stat");
 
 /**
- * @requires core/GeoStat/Choropleth.js
- * @requires core/Color.js
+ * @requires core/GeoStat/ProportionalSymbol.js
  */
 
+Ext.ns('Sbi.geo.stat');
 
 /**
- * Class: mapfish.widgets.geostat.Choropleth
- * Use this class to create a widget allowing to display choropleths
- * on the map.
+ * Class: Sbi.geo.stat.ProportionalSymbolControlPanel
+ * Use this class to create a widget allowing to display proportional
+ * symbols on the map.
  *
  * Inherits from:
  * - {Ext.FormPanel}
  */
-
-Sbi.geo.stat.Choropleth = Ext.extend(Ext.FormPanel, {
+Sbi.geo.stat.ProportionalSymbolControlPanel = Ext.extend(Ext.FormPanel, {
 
     /**
      * APIProperty: layer
@@ -59,7 +60,7 @@ Sbi.geo.stat.Choropleth = Ext.extend(Ext.FormPanel, {
      *      Only applies if featureSelection is true.
      */
     nameAttribute: null,
-
+    
     /**
      * APIProperty: indicator
      * {String} (read-only) The feature attribute currently chosen
@@ -67,7 +68,7 @@ Sbi.geo.stat.Choropleth = Ext.extend(Ext.FormPanel, {
      *     and 'featureunselected' events
      */
     indicator: null,
-
+    
     /**
      * APIProperty: indicatorText
      * {String} (read-only) The raw value of the currently chosen indicator
@@ -78,10 +79,10 @@ Sbi.geo.stat.Choropleth = Ext.extend(Ext.FormPanel, {
     indicatorText: null,
 
     /**
-     * Property: coreComp
+     * Property: thematizer
      * {<mapfish.GeoStat.ProportionalSymbol>} The core component object.
      */
-    coreComp: null,
+    thematizer: null,
 
     /**
      * Property: classificationApplied
@@ -100,7 +101,7 @@ Sbi.geo.stat.Choropleth = Ext.extend(Ext.FormPanel, {
      *     Styling border
      */
     border: false,
-
+    
     /**
      * APIProperty: loadMask
      *     An Ext.LoadMask config or true to mask the widget while loading (defaults to false).
@@ -108,13 +109,7 @@ Sbi.geo.stat.Choropleth = Ext.extend(Ext.FormPanel, {
     loadMask : false,
 
     /**
-     * APIProperty: labelGenerator
-     *     Generator for bin labels
-     */
-    labelGenerator: null,
-
-    /**
-     * Constructor: mapfish.widgets.geostat.Choropleth
+     * Constructor: Sbi.geo.stat.ProportionalSymbolControlPanel
      *
      * Parameters:
      * config - {Object} Config object.
@@ -133,89 +128,35 @@ Sbi.geo.stat.Choropleth = Ext.extend(Ext.FormPanel, {
             valueField: 'value',
             displayField: 'text',
             mode: 'local',
-            emptyText: 'Select an indicator',
+            emptyText: 'select an indicator',
             triggerAction: 'all',
             store: new Ext.data.SimpleStore({
                 fields: ['value', 'text'],
                 data : this.indicators
-            }),
-            listeners: {
-                'select': {
-                    fn: function() {this.classify(false)},
-                    scope: this
-                }
-            }
+            })
         },{
-            xtype: 'combo',
-            fieldLabel: 'Method',
-            name: 'method',
-            hiddenName: 'method',
-            editable: false,
-            valueField: 'value',
-            displayField: 'text',
-            mode: 'local',
-            emptyText: 'Select a method',
-            triggerAction: 'all',
-            store: new Ext.data.SimpleStore({
-                fields: ['value', 'text'],
-                data : [['CLASSIFY_BY_EQUAL_INTERVALS', 'Equal Intervals'],
-                        ['CLASSIFY_BY_QUANTILS', 'Quantils']]
-            }),
-            listeners: {
-                'select': {
-                    fn: function() {this.classify(false)},
-                    scope: this
-                }
-            }
+            xtype: 'numberfield',
+            fieldLabel:'Min Size',
+            name: 'minSize',
+            width: 30,
+            value: 2,
+            maxValue: 20
         },{
-            xtype: 'combo',
-            fieldLabel: 'Number of classes',
-            name: 'numClasses',
-            editable: false,
-            valueField: 'value',
-            displayField: 'value',
-            mode: 'local',
-            value: 5,
-            triggerAction: 'all',
-            store: new Ext.data.SimpleStore({
-                fields: ['value'],
-                data: [[0], [1], [2], [3], [4], [5], [6], [7], [8], [9]]
-            }),
-            listeners: {
-                'select': {
-                    fn: function() {this.classify(false)},
-                    scope: this
-                }
-            }
-        },{
-            xtype: 'colorfield',
-            fieldLabel: 'Color',
-            name: 'colorA',
-            width: 100,
-            allowBlank: false,
-            value: "#FFFF00",
-            listeners: {
-                'valid': {
-                    fn: function() {this.classify(false)},
-                    scope: this
-                }
-            }
-        },{
-            xtype: 'colorfield',
-            fieldLabel: 'Color',
-            name: 'colorB',
-            width: 100,
-            allowBlank: false,
-            value: "#FF0000",
-            listeners: {
-                'valid': {
-                    fn: function() {this.classify(false)},
-                    scope: this
-                }
-            }
+            xtype: 'numberfield',
+            fieldLabel:'Max Size',
+            name: 'maxSize',
+            width: 30,
+            value: 20,
+            maxValue: 50
         }];
-
-        Sbi.geo.stat.Choropleth.superclass.initComponent.apply(this);
+        
+        
+        this.buttons = [{
+            text: 'OK',
+            handler: this.classify,
+            scope: this
+        }];
+        Sbi.geo.stat.ProportionalSymbolControlPanel.superclass.initComponent.apply(this);
     },
 
     /**
@@ -225,13 +166,11 @@ Sbi.geo.stat.Choropleth = Ext.extend(Ext.FormPanel, {
      */
     requestSuccess: function(request) {
         this.ready = true;
-
+        
         // if widget is rendered, hide the optional mask
         if (this.loadMask && this.rendered) {
             this.loadMask.hide();
         }
-        
-        this.fireEvent('ready', this);
     },
 
     /**
@@ -242,60 +181,35 @@ Sbi.geo.stat.Choropleth = Ext.extend(Ext.FormPanel, {
     requestFailure: function(request) {
         OpenLayers.Console.error('Ajax request failed');
     },
-
-    /**
-     * Method: getColors
-     *    Retrieves the colors from form elements
-     *
-     * Returns:
-     * {Array(<mapfish.Color>)} an array of two colors (start, end)
-     */
-    getColors: function() {
-        var colorA = new mapfish.ColorRgb();
-        colorA.setFromHex(this.form.findField('colorA').getValue());
-        var colorB = new mapfish.ColorRgb();
-        colorB.setFromHex(this.form.findField('colorB').getValue());
-        return [colorA, colorB];
-    },
-
+        
     /**
      * Method: classify
-     *
-     * Parameters:
-     * exception - {Boolean} If true show a message box to user if either
-     *      the widget isn't ready, or no indicator is specified, or no
-     *      method is specified.
+     *    Reads the features to get the different value for
+     *    the field given for indicator
+     *    Creates a new Distribution and related Classification
+     *    Then creates an new ProportionalSymbols and applies classification
      */
-    classify: function(exception) {
+    classify: function() {
         if (!this.ready) {
             if (exception) {
                 Ext.MessageBox.alert('Error', 'Component init not complete');
             }
             return;
         }
-        var options = {};
         this.indicator = this.form.findField('indicator').getValue();
         this.indicatorText = this.form.findField('indicator').getRawValue();
-        options.indicator = this.indicator;
-        if (!options.indicator) {
-            if (exception) {
-                Ext.MessageBox.alert('Error', 'You must choose an indicator');
-            }
+        if (!this.indicator) {
+            Ext.MessageBox.alert('Error', 'You must choose an indicator');
             return;
         }
-        options.method = this.form.findField('method').getValue();
-        if (!options.method) {
-            if (exception) {
-                Ext.MessageBox.alert('Error', 'You must choose a method');
-            }
-            return;
-        }
-        
-        options.method = mapfish.GeoStat.Distribution[options.method];
-        options.numClasses = this.form.findField('numClasses').getValue();
-        options.colors = this.getColors();
-        this.coreComp.updateOptions(options);
-        this.coreComp.applyClassification();
+        var minSize = this.form.findField('minSize').getValue();
+        var maxSize = this.form.findField('maxSize').getValue();
+        this.thematizer.updateOptions({
+            'indicator': this.indicator,
+            'minSize': minSize,
+            'maxSize': maxSize
+        });
+        this.thematizer.thematize();
         this.classificationApplied = true;
     },
 
@@ -304,26 +218,24 @@ Sbi.geo.stat.Choropleth = Ext.extend(Ext.FormPanel, {
      * Called by EXT when the component is rendered.
      */
     onRender: function(ct, position) {
-    	Sbi.geo.stat.Choropleth.superclass.onRender.apply(this, arguments);
+        Sbi.geo.stat.Choropleth.superclass.onRender.apply(
+                this, arguments);
+        
         if(this.loadMask){
             this.loadMask = new Ext.LoadMask(this.bwrap,
                     this.loadMask);
             this.loadMask.show();
         }
-
-        var coreOptions = {
+        
+        this.thematizer = new Sbi.geo.stat.ProportionalSymbolThematizer(this.map, {
             'layer': this.layer,
             'format': this.format,
             'url': this.url,
             'requestSuccess': this.requestSuccess.createDelegate(this),
             'requestFailure': this.requestFailure.createDelegate(this),
             'featureSelection': this.featureSelection,
-            'nameAttribute': this.nameAttribute,
-            'legendDiv': this.legendDiv,
-            'labelGenerator': this.labelGenerator
-        };
-
-        this.coreComp = new mapfish.GeoStat.Choropleth(this.map, coreOptions);
+            'nameAttribute': this.nameAttribute
+        });
     }
 });
-Ext.reg('choropleth', Sbi.geo.stat.Choropleth);
+Ext.reg('proportionalsymbol', Sbi.geo.stat.ProportionalSymbolControlPanel);
