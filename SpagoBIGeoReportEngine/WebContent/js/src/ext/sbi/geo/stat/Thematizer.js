@@ -30,26 +30,7 @@ Sbi.geo.stat.Thematizer = function(map, config) {
 	this.adjustConfigObject(config);
 
 	this.initialize(map, config);
-//	
-//	// init properties...
-//	var defaultSettings = {
-//		// set default values here
-//	};
-//	
-//	if (Sbi.settings && Sbi.settings.xxx && Sbi.settings.xxx.xxxx) {
-//		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.xxx.xxxx);
-//	}
-//	
-//	var c = Ext.apply(defaultSettings, config || {});	
-//	Ext.apply(this, c);
-//	
-//	// init events...
-//	this.addEvents();
-//	
-//	this.initServices();
-//	this.init();
-	
-	// constructor
+
 	Sbi.geo.stat.Thematizer.superclass.constructor.call(this, config);
 };
 
@@ -77,7 +58,6 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
 	 */
     indicator: null
     
-    
     /**
      * @property {String} indicatorContainer
      * Defines the object that contain the values of the specified indicator. It can be equal to:
@@ -88,7 +68,7 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
      *  
      * By default it is equal to 'layer'
      */
-    , indicatorContainer: 'layer' //'layer' - 'store'
+    , indicatorContainer: 'store' //'layer' - 'store'
     	
 	/**
      * @property {OpenLayers.Layer.Vector} layer
@@ -97,6 +77,12 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
      */
     , layer: null
     
+	/**
+	 * @property {String} layerId
+	 * Defines the name of the property of the feature that contains its the unique identifier
+	 */
+    , layerId: 'NAME_3'
+    
     /**
      * @property {Ext.data.Store} store
      * The store containing the values of the indicator used to thematize the map. Only apply if 
@@ -104,6 +90,17 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
      */
     , store: null
     
+    /**
+	 * @property {String} storeId
+	 * Defines the name of the field of the record that contains its the unique identifier. Only apply if 
+     * #indicatorContainer is equal to 'store'
+	 */
+    , storeId: 'COMUNE_ITA'
+    
+    /**
+	 * @property {String} indicator
+	 * Defines the name of the property of the feature that contains its the unique identifier
+	 */
 
     /**
      * @property {OpenLayers.Format} format
@@ -392,72 +389,91 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
      * @method 
      *  
      * @param {String} indicator the name of indicator whose values we want to extract
+     * @return {Sbi.geo.stat.Distribution} the extracted distribution
      */
-    , getValues: function(indicator) {
+    , getDistribution: function(indicator) {
     	
-    	Sbi.trace("[Thematizer.getValues] : IN");
+    	Sbi.trace("[Thematizer.getDistribution] : IN");
     	
-    	Sbi.trace("[Thematizer.getValues] : Extract values for indicator [" + indicator + "] from [" + this.indicatorContainer + "]");
+    	Sbi.trace("[Thematizer.getDistribution] : Extract values for indicator [" + indicator + "] from [" + this.indicatorContainer + "]");
     	
    	 	var values;
    	 	if(this.indicatorContainer === 'layer') {
-   	 		values = this.getValuesFromLayer(indicator);
+   	 		values = this.getDistributionFromLayer(indicator, this.layerId);
    	 	} else if(this.indicatorContainer === 'store') {
-   	 		values = this.getValuesFromStore(indicator);
+   	 		values = this.getDistributionFromStore(indicator, this.storeId);
    	 	} else {
-   	 		Sbi.error("[Thematizer.getValues] : Impossible to extract indicators from a container of type [" + indicatorContainer + "]");
+   	 		Sbi.error("[Thematizer.getDistribution] : Impossible to extract indicators from a container of type [" + indicatorContainer + "]");
    	 	}
    	 	
-   	 	Sbi.trace("[Thematizer.getValues] : Extracted [" + values.length + "] values for indicator [" + indicator + "]");
+   	 	Sbi.trace("[Thematizer.getDistribution] : Extracted [" + values.length + "] values for indicator [" + indicator + "]");
         
-   	 	Sbi.trace("[Thematizer.getValues] : OUT");
+   	 	Sbi.trace("[Thematizer.getDistribution] : OUT");
    	 
         return values;
     }
     
-    , getValuesFromLayer: function(indicator) {
-    	var values = [];
+    , getDistributionFromLayer: function(indicator, id) {
+    	var distribution = new Sbi.geo.stat.Distribution();;
     	
     	var features = this.layer.features;
-   	 	Sbi.trace("[Thematizer.getValues] : Features number is equal to [" + features.length + "]");
+   	 	Sbi.trace("[Thematizer.getDistributionFromLayer] : Features number is equal to [" + features.length + "]");
         for (var i = 0; i < features.length; i++) {
-        	var value = features[i].attributes[indicator];
-        	var numericValue = this.convertToNumber(value);
-        	if(isNaN(numericValue) == true) {
-				Sbi.trace("[Thematizer.getValues] : Value [" + value + "] will be discarded because it is not a number");
+        	var idValue = features[i].attributes[id];
+        	var indicatorValue = features[i].attributes[indicator];
+        	var numericIndicatorValue = this.convertToNumber(indicatorValue);
+        	if(isNaN(numericIndicatorValue) == true) {
+				Sbi.trace("[Thematizer.getDistributionFromLayer] : Value [" + indicatorValue + "] will be discarded because it is not a number");
 			} else {
-				values.push(numericValue);
+				var dataPoint = new Sbi.geo.stat.DataPoint({
+					coordinates: [idValue]
+					, value: numericIndicatorValue
+				});
+				distribution.addDataPoint( dataPoint );
 			}
         }
         
-        return values;
+        return distribution;
     }
     
-    , getValuesFromStore: function(indicator) {
-    	var values = [];
+    , getDistributionFromStore: function(indicator, id) {
+    	var distribution = new Sbi.geo.stat.Distribution();
     	var records = this.store.getRange();
-	 	Sbi.trace("[Thematizer.getValues] : Records number is equal to [" + records.length + "]");
+	 	Sbi.trace("[Thematizer.getDistributionFromStore] : Records number is equal to [" + records.length + "]");
    	 	
-	 	var indicatorFiledName;
+	 	var indicatorFiledName, idFiledName;
 	 	for(var n = 0; n < records[0].fields.getCount(); n++) {
 	 		var field = records[0].fields.itemAt(n);
 	 		if(field.header == indicator) {
 	 			indicatorFiledName = field.name;
-	 			break;
 	 		}
-	 		//Sbi.trace("[Thematizer.getValues] : Field [" + Sbi.toSource(records[i].fields.itemAt(n)) + "]");
+	 		if(field.header == id) {
+	 			idFiledName = field.name;
+	 		}
+	 		
+	 		if(indicatorFiledName && idFiledName) break;
+	 	}
+	 	
+	 	if(!idFiledName) {
+	 		alert("Impossible to find a column was header is equal to [" + id + "]");
 	 	}
 	 	
 	 	for (var i = 0; i < records.length; i++) {	
-   	 		var value = records[i].get(indicatorFiledName);
-   	 		var numericValue = this.convertToNumber(value);
-        	if(isNaN(numericValue) == true) {
-				Sbi.trace("[Thematizer.getValues] : Value [" + value + "] will be discarded because it is not a number");
+	 		var idValue = records[i].get(idFiledName);
+   	 		var indicatorValue = records[i].get(indicatorFiledName);
+   	 		var numericIndicatorValue = this.convertToNumber(indicatorValue);
+        	if(isNaN(numericIndicatorValue) == true) {
+				Sbi.trace("[Thematizer.getDistributionFromStore] : Value [" + indicatorValue + "] will be discarded because it is not a number");
 			} else {
-				values.push(numericValue);
+				Sbi.trace("[Thematizer.getDistributionFromStore] : Add datapoint [" + indicatorValue + " - " + idValue + "] to distribution");
+				var dataPoint = new Sbi.geo.stat.DataPoint({
+					coordinates: [idValue]
+					, value: numericIndicatorValue
+				});
+				distribution.addDataPoint( dataPoint );
 			}
         }
-    	return values;
+    	return distribution;
     }
     
     
@@ -533,6 +549,61 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
     }
 });
 
+
+
+
+
+/* Copyright (c) 2006-2011 by OpenLayers Contributors (see authors.txt for 
+ * full list of contributors). Published under the Clear BSD license.  
+ * See http://svn.openlayers.org/trunk/openlayers/license.txt for the
+ * full text of the license. */
+
+/**
+ * @requires OpenLayers/Filter.js
+ */
+
+/**
+ * Class: OpenLayers.Filter.Function
+ * This class represents a filter function.
+ * We are using this class for creation of complex 
+ * filters that can contain filter functions as values.
+ * Nesting function as other functions parameter is supported.
+ * 
+ * Inherits from
+ * - <OpenLayers.Filter>
+ */
+OpenLayers.Filter.Function = OpenLayers.Class(OpenLayers.Filter, {
+
+    /**
+     * APIProperty: name
+     * {String} Name of the function.
+     */
+    name: null,
+    
+    /**
+     * APIProperty: params
+     * {Array(<OpenLayers.Filter.Function> || String || Number)} Function parameters
+     * For now support only other Functions, String or Number
+     */
+    params: null,  
+    
+    /** 
+     * Constructor: OpenLayers.Filter.Function
+     * Creates a filter function.
+     *
+     * Parameters:
+     * options - {Object} An optional object with properties to set on the
+     *     function.
+     * 
+     * Returns:
+     * {<OpenLayers.Filter.Function>}
+     */
+    initialize: function(options) {
+        OpenLayers.Filter.prototype.initialize.apply(this, [options]);
+    },
+
+    CLASS_NAME: "OpenLayers.Filter.Function"
+});
 
 
 

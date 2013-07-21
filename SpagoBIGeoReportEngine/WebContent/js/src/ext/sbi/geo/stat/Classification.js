@@ -7,12 +7,137 @@
 
 Ext.ns("Sbi.geo.stat");
 
+//=====================================================================================
+//Data Point Class
+//======================================================================================
+Sbi.geo.stat.DataPoint = function(config) {
+	this.initialize(config.coordinates, config.value);
+	Sbi.geo.stat.DataPoint.superclass.constructor.call(this, config);
+};
+
+/**
+* @class Sbi.geo.stat.DataPoint
+* @extends Ext.util.Observable
+*/
+Ext.extend(Sbi.geo.stat.DataPoint, Ext.util.Observable, {
+ 
+	coordinates: null
+	, value: null
+	
+
+	, initialize: function(coordinates, value) {
+		this.coordinates =  coordinates || [];
+		this.value = value;
+	}
+
+	, getValue: function() {
+		return this.value;
+	}
+	
+	, coordinatesAreEqualTo: function(c) {
+		for(var i = 0; i < this.coordinates.length; i++) {
+			if(this.coordinates[i] != c[i]) return false;
+		}
+		return true;
+	}
+});
+
+//=====================================================================================
+//Distribution Class
+//======================================================================================
+Sbi.geo.stat.Distribution = function(config) {
+	config = config || {};
+	this.initialize(config.dataPoints);
+	Sbi.geo.stat.Distribution.superclass.constructor.call(this, config);
+};
+
+/**
+* @class Sbi.geo.stat.Distribution
+* @extends Ext.util.Observable
+*/
+Ext.extend(Sbi.geo.stat.Distribution, Ext.util.Observable, {
+
+	dataPoints: null
+
+	, initialize: function(dataPoints) {
+		this.dataPoints =  dataPoints || [];
+	}
+
+	, getSize: function() {
+		return this.dataPoints.length;
+	}
+	
+	, getDataPointAt: function(index) {
+		return this.dataPoints[index];
+	}
+	
+	, addDataPoint: function(dataPoint) {
+		this.dataPoints.push(dataPoint);
+	}
+	
+	, getDataPoint: function(coordinates){
+		
+	}
+	
+	/**
+     * @method 
+     * the max data point.
+     */
+    , getMaxDataPoint: function() {
+    	
+    	var maxVal = Number.MIN_VALUE;
+    	var maxDataPoint = null;
+    	for(var i = 0; i < this.dataPoints.length; i++) {
+    		if(this.dataPoints[i].value > maxVal) {
+    			maxVal = this.dataPoints[i].value;
+    			maxDataPoint = this.dataPoints[i];
+    		}
+    	}
+    	
+        return maxDataPoint;
+    }
+
+    /**
+     * @method 
+     * the min data point.
+     */
+    , getMinDataPoint: function() {
+    	
+    	Sbi.trace("[Distribution.getMinDataPoint] : IN");
+    	
+    	var minVal = Number.MAX_VALUE;
+    	var minDataPoint = null;
+    	for(var i = 0; i < this.dataPoints.length; i++) {
+    		if(this.dataPoints[i].getValue() < minVal) {
+    			minVal = this.dataPoints[i].getValue();
+    			minDataPoint = this.dataPoints[i];
+    		}
+    		Sbi.trace("[Distribution.getMinDataPoint] : last value read is equal to [" + this.dataPoints[i].getValue() + "]. Min val found so far is equal to [" + minVal + "]");
+    	}
+    	
+    	Sbi.trace("[Distribution.getMinDataPoint] : OUT");
+    	
+        return minDataPoint;
+    }
+    
+    , getValues: function() {
+    	var values = [];
+    	for(var i = 0; i < this.dataPoints.length; i++) {
+    		values.push( this.dataPoints[i].getValue() );
+    	}
+    	return values;
+    }
+});
+
+
+
+
 
 // =====================================================================================
 // Bin Class
 //======================================================================================
 Sbi.geo.stat.Bin = function(config) {
-	this.initialize(config.nbVal, config.lowerBound, config.upperBound, config.isLast);
+	this.initialize(config.nbVal, config.dataPoints, config.lowerBound, config.upperBound, config.isLast);
 	Sbi.geo.stat.Bin.superclass.constructor.call(this, config);
 };
 
@@ -27,12 +152,14 @@ Sbi.geo.stat.Bin = function(config) {
 Ext.extend(Sbi.geo.stat.Bin, Ext.util.Observable, {
     label: null
     , nbVal: null
+    , dataPoints: null
     , lowerBound: null
     , upperBound: null
     , isLast: false
 
-    , initialize: function(nbVal, lowerBound, upperBound, isLast) {
+    , initialize: function(nbVal, dataPoints, lowerBound, upperBound, isLast) {
         this.nbVal = nbVal;
+        this.dataPoints = dataPoints;
         this.lowerBound = lowerBound;
         this.upperBound = upperBound;
         this.isLast = isLast;
@@ -68,6 +195,20 @@ Ext.extend(Sbi.geo.stat.Classification, Ext.util.Observable, {
             bounds.push(this.bins[this.bins.length - 1].upperBound);
         }
         return bounds;
+    }
+    
+    , getBins: function() {
+    	return this.bins;
+    }
+    
+    , getBin: function(dataPointCoordinates) {
+    	for(var i = 0; i < bin.length; i++) {
+    		for(var j = 0; j < bin.length; j++) {
+    			bin[i].dataPoints[j].coordinatesAreEqualTo(dataPointCoordinates);
+    			return bin;
+    		}
+    	}
+    	return null;
     }
 });
 
