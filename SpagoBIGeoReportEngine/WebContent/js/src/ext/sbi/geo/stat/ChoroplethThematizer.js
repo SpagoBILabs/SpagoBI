@@ -129,20 +129,49 @@ Ext.extend(Sbi.geo.stat.ChoroplethThematizer, Sbi.geo.stat.Thematizer, {
     		}
         }
     	  
-        var boundsArray = this.classification.getBoundsArray();
-        var rules = new Array(boundsArray.length - 1);
-        for (var i = 0; i < boundsArray.length -1; i++) {
+    	var bins = this.classification.getBins(); 
+    	var rules = new Array(bins.length);
+        for (var i = 0; i < bins.length; i++) {
+        	var filter = new OpenLayers.Filter.Function({
+            	evaluate: function(attributes) {
+//            		Sbi.trace("[ChoroplethThematizer.thematize.filter] : IN");
+//            		for(a in attributes) {
+//            			Sbi.trace("[ChoroplethThematizer.thematize.filter] : Attribute [" + a +"] is equal to [" + attributes[a] + "]");
+//            		}
+            		//Sbi.trace("[ChoroplethThematizer.thematize] : filter [" + this.binIndex + "] will evaluate feature [" + attributes[this.layerId] + "] against [" + this.dataPoints.length +"] data points");
+            		
+        	        for(var j = 0; j < this.dataPoints.length; j++) {
+        	        	//Sbi.trace("[ChoroplethThematizer.thematize] : Feature [" + attributes[this.layerId] + "] compared againtst data point [" + this.dataPoints[j].coordinates[0] + "]");
+        	        	if(this.dataPoints[j].coordinatesAreEqualTo([attributes[this.layerId]])) return true;
+        	        }
+        	        return false;
+        	    }
+        	});
+        	filter.layerId = this.layerId;
+        	filter.binIndex = i;
+        	filter.dataPoints = bins[i].dataPoints;
+        
             var rule = new OpenLayers.Rule({
                 symbolizer: {fillColor: this.colorInterpolation[i].toHexString()},
-                filter: new OpenLayers.Filter.Comparison({
-                    type: OpenLayers.Filter.Comparison.BETWEEN,
-                    property: this.indicator,
-                    lowerBoundary: boundsArray[i],
-                    upperBoundary: boundsArray[i + 1]
-                })
+                filter: filter
             });
             rules[i] = rule;
         }
+    	
+//        var boundsArray = this.classification.getBoundsArray();
+//        var rules = new Array(boundsArray.length - 1);
+//        for (var i = 0; i < boundsArray.length -1; i++) {
+//            var rule = new OpenLayers.Rule({
+//                symbolizer: {fillColor: this.colorInterpolation[i].toHexString()},
+//                filter: new OpenLayers.Filter.Comparison({
+//                    type: OpenLayers.Filter.Comparison.BETWEEN,
+//                    property: this.indicator,
+//                    lowerBoundary: boundsArray[i],
+//                    upperBoundary: boundsArray[i + 1]
+//                })
+//            });
+//            rules[i] = rule;
+//        }
         this.extendStyle(rules);
         
         Sbi.geo.stat.ChoroplethThematizer.superclass.thematize.call(this, arguments);
@@ -157,15 +186,15 @@ Ext.extend(Sbi.geo.stat.ChoroplethThematizer, Sbi.geo.stat.Thematizer, {
     , setClassification: function() {
     	Sbi.trace("[ChoroplethThematizer.setClassification] : IN");
         
-    	var values = this.getValues(this.indicator);
-    	Sbi.debug("[ChoroplethThematizer.setClassification] : Extracted [" + values.length + "] values for indicator [" + this.indicator + "]");
+    	var distribution = this.getDistribution(this.indicator);
+    	Sbi.debug("[ChoroplethThematizer.setClassification] : Extracted [" + distribution.getSize() + "] values for indicator [" + this.indicator + "]");
         
-        var distOptions = {
+        var classificationOptions = {
             'labelGenerator' : this.options.labelGenerator
         };
         
-        var dist = new Sbi.geo.stat.Classifier(values, distOptions);
-        this.classification = dist.classify(
+        var classifier = new Sbi.geo.stat.Classifier({distribution: distribution, classificationOptions: classificationOptions});
+        this.classification = classifier.classify(
             this.method,
             this.numClasses,
             null

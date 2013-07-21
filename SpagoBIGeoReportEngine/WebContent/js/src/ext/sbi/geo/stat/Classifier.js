@@ -12,10 +12,12 @@ Ext.ns("Sbi.geo.stat");
 
 Sbi.geo.stat.Classifier = function(config) {
 	
+	config = config || {};
+	
 	this.validateConfigObject(config);
 	this.adjustConfigObject(config);
 
-	this.initialize(config);
+	this.initialize(config.distribution, config.classificationOptions);
 
 	Sbi.geo.stat.Classifier.superclass.constructor.call(this, config);
 };
@@ -28,7 +30,7 @@ Sbi.geo.stat.Classifier.CLASSIFY_BY_QUANTILS =  2;
  * @class Sbi.geo.stat.Classifier
  * @extends Ext.util.Observable
  * 
- * Ditribution class
+ * Classifier class
  */
 Ext.extend(Sbi.geo.stat.Classifier, Ext.util.Observable, {
 	
@@ -37,10 +39,9 @@ Ext.extend(Sbi.geo.stat.Classifier, Ext.util.Observable, {
 	// =================================================================================================================
 	
 	/**
-	 * @property {String} values
-	 * values of the series
+	 * @property {Sbi.geo.stat.Distribution} distribution
 	 */
-    values: null
+	distribution: null
 
     /**
 	 * @property {String} nbVal
@@ -103,21 +104,21 @@ Ext.extend(Sbi.geo.stat.Classifier, Ext.util.Observable, {
 	 * 
 	 * Called by the constructor to initialize this object
 	 * 
-	 * @param {OpenLayers.Map} values values of the indicator
+	 * @param {OpenLayers.Map} distribution distribution of the indicator
 	 * @param {Object} options of extra options
 	 */
-    , initialize: function(values, options) {
-        //OpenLayers.Util.extend(this, values);
-        this.setValues(values);
+    , initialize: function(distribution, options) {
+        //OpenLayers.Util.extend(this, distribution);
+        this.setDistribution(distribution);
     }
 
     // -----------------------------------------------------------------------------------------------------------------
     // accessor methods
 	// -----------------------------------------------------------------------------------------------------------------
     
-    , setValues: function(values) {
-    	this.values = values || [];
-        this.nbVal = values.length;
+    , setDistribution: function(distribution) {
+    	this.distribution = distribution;
+        this.nbVal = this.distribution.getSize();
         this.minVal = null;
         this.maxVal = null;
     }
@@ -127,10 +128,10 @@ Ext.extend(Sbi.geo.stat.Classifier, Ext.util.Observable, {
      * the max value.
      */
     , getMax: function() {
-    	if(this.minVal == null) {
-    		this.minVal = this.nbVal ? Math.max.apply({}, this.values): 0;
+    	if(this.maxVal == null) {
+    		this.maxVal = this.nbVal ? this.distribution.getMaxDataPoint().getValue(): 0;
     	}
-        return this.minVal;
+        return this.maxVal;
     }
 
     /**
@@ -138,10 +139,10 @@ Ext.extend(Sbi.geo.stat.Classifier, Ext.util.Observable, {
      * @return {Number} the min value.
      */
     , getMin: function() {
-    	if(this.maxVal == null) {
-    		this.maxVal = this.nbVal ? Math.min.apply({}, this.values): 0;
+    	if(this.minVal == null) {
+    		this.minVal = this.nbVal ? this.distribution.getMinDataPoint().getValue(): 0;
     	}
-        return this.maxVal;
+        return this.minVal;
     }
     
     // -----------------------------------------------------------------------------------------------------------------
@@ -223,14 +224,15 @@ Ext.extend(Sbi.geo.stat.Classifier, Ext.util.Observable, {
     , classifyByQuantils: function(nbBins) {
     	Sbi.trace("[Classifier.classifyByQuantils] : IN");
         
-    	var values = this.values;
+    	var values = this.distribution.getValues();
+    	Sbi.debug("[Classifier.classifyByQuantils] : Total number of value extracted from distribution is equal to [" + values.length + "];");
         values.sort(function(a,b) {a = a || 0; b = b || 0; return a-b;});
         
        
-        Sbi.debug("[Classifier.classifyByEqIntervals] : Sorted values array is equal to [" + this.arrayToString(values) + "];");
+        Sbi.debug("[Classifier.classifyByQuantils] : Sorted values array is equal to [" + this.arrayToString(values) + "];");
         
-        var binSize = Math.round(this.values.length / nbBins);
-        Sbi.debug("[Classifier.classifyByEqIntervals] : Each one of the [" + nbBins + "] bins will contain [" + binSize + "] values");
+        var binSize = Math.round(values.length  / nbBins);
+        Sbi.debug("[Classifier.classifyByQuantils] : Each one of the [" + nbBins + "] bins will contain [" + binSize + "] values");
 
         var bounds = [];
         var boundsStr = '';
@@ -259,27 +261,31 @@ Ext.extend(Sbi.geo.stat.Classifier, Ext.util.Observable, {
     	
         var bins = [];
         var binCount = [];
-        var sortedValues = [];
-        for (var i = 0; i < this.values.length; i++) {
-            sortedValues.push(this.values[i]);
+        var binDataPoints = [];
+        var sortedDataPoints = [];
+        for (var i = 0; i < this.distribution.getSize(); i++) {
+            sortedDataPoints.push(this.distribution.getDataPointAt(i));
         }
-        sortedValues.sort(function(a,b) {a = a || 0; b = b || 0; return a-b;});
-        Sbi.debug("[Classifier.classifyByEqIntervals] : Sorted values array is equal to [" + this.arrayToString(sortedValues) + "];");
+        sortedDataPoints.sort(function(a,b) {return a.getValue() - b.getValue();});
+        Sbi.debug("[Classifier.classifyByEqIntervals] : Sorted values array is equal to [" + this.arrayToString(sortedDataPoints) + "];");
         
         
         var nbBins = bounds.length - 1;
         for (var i = 0; i < nbBins; i++) {
             binCount[i] = 0;
+            binDataPoints[i] = [];
         }
 
         for (var i = 0; i < nbBins - 1; i) {
-            if (sortedValues[0] < bounds[i + 1]) {
-            	Sbi.debug("[Classifier.classifyByEqIntervals] : Added value [" + sortedValues[0] + "] of type [" + (typeof sortedValues[0]) + "] to bin [" + (i+1) + "] becuase it is less than bin ub [" + bounds[i + 1]+ "]");
+            if (sortedDataPoints[0].getValue() < bounds[i + 1]) {
+            	Sbi.debug("[Classifier.classifyByEqIntervals] : Added value [" + sortedDataPoints[0].getValue() + "] of type [" + (typeof sortedDataPoints[0].getValue()) + "] to bin [" + (i+1) + "] becuase it is less than bin ub [" + bounds[i + 1]+ "]");
                 binCount[i] = binCount[i] + 1;
-                sortedValues.shift();
+                binDataPoints[i].push(sortedDataPoints[0]);
+                sortedDataPoints.shift();
+                Sbi.trace("[Classifier.classifyWithBounds] : bin [" + (i+1) + "] now contains [" + binDataPoints[i].length+ "] data points");
             } else {
                 i++;
-                Sbi.trace("[Classifier.classifyWithBounds] : Increment to bin [" + (i+1)+ "] because value [" + sortedValues[0] + "] is greater then lb [" + bounds[i + 1] + "] of type [" + (typeof bounds[i + 1]) + "]");
+                Sbi.trace("[Classifier.classifyWithBounds] : Increment to bin [" + (i+1)+ "] because value [" + sortedDataPoints[0].getValue() + "] is greater then lb [" + bounds[i + 1] + "] of type [" + (typeof bounds[i + 1]) + "]");
             }
         }
 
@@ -289,11 +295,12 @@ Ext.extend(Sbi.geo.stat.Classifier, Ext.util.Observable, {
         	
         	bins[i] = new Sbi.geo.stat.Bin({
         		nbVal: binCount[i]
+        		, dataPoints: binDataPoints[i]
         		, lowerBound: bounds[i]
         		, upperBound: bounds[i + 1]
         		, isLast: i == (nbBins - 1)
         	});
-        	Sbi.trace("[Classifier.classifyWithBounds] : Bin [" + (i+1) + "] is equal to [" + bounds[i]+ " - " + bounds[i + 1] + "]and contains [" + binCount[i] + "] values");
+        	Sbi.trace("[Classifier.classifyWithBounds] : Bin [" + (i+1) + "] is equal to [" + bounds[i]+ " - " + bounds[i + 1] + "] and contains [" + binDataPoints[i].length + "] data points");
           
             //var labelGenerator = this.labelGenerator || this.defaultLabelGenerator;
             bins[i].label = this.labelGenerator(bins[i], i, nbBins);
