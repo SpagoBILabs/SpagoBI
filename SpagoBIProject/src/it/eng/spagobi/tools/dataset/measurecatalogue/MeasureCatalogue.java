@@ -19,6 +19,7 @@ import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
+import it.eng.spagobi.tools.dataset.event.DataSetEvent;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.io.File;
@@ -26,13 +27,15 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.Set;
 
 import junit.framework.Assert;
 
 import org.apache.log4j.Logger;
 
-public class MeasureCatalogue {
+public class MeasureCatalogue implements Observer {
 
 	
 	public static transient Logger logger = Logger.getLogger(MeasureCatalogue.class);
@@ -48,6 +51,16 @@ public class MeasureCatalogue {
 		metamodelWrapper = new MetaModelWrapper(model);
 		initMeasures();
 	}
+	
+	/**
+	 * Update the catalogue after a change in the dataset list
+	 */
+	public void update(Observable o, Object arg) {
+		DataSetEvent event = (DataSetEvent) arg;
+		logger.debug("Updating the measures catalogue after a change in the dataset list");
+		initMeasures();
+	 }
+	
 	
 	/**
 	 * Initialize the model. Get the name of the model form SbiConfig and load he model from the *.sbimodelfile

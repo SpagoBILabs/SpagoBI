@@ -11,6 +11,7 @@ import it.eng.spagobi.commons.dao.SpagoBIDOAException;
 import it.eng.spagobi.commons.metadata.SbiDomains;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
+import it.eng.spagobi.tools.dataset.event.DataSetEventManager;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSetId;
 import it.eng.spagobi.tools.datasource.metadata.SbiDataSource;
@@ -153,6 +154,8 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			idToReturn = hibDataSet.getId().getDsId();
 			transaction.commit();
 	
+			DataSetEventManager.getInstance().notifyInsert(dataSet);
+			
 		} catch (Throwable t) {
 			if (transaction != null && transaction.isActive()) {
 				transaction.rollback();
@@ -1366,6 +1369,9 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				session.save(hibDataSet);
 
 				transaction.commit();
+				
+				
+				DataSetEventManager.getInstance().notifyChange(dataSet);
 			}
 		} catch (Throwable t) {
 			if (transaction != null && transaction.isActive()) {
@@ -1471,12 +1477,16 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			List<SbiDataSet> sbiDataSetList = hibernateQuery.list();
 			for (SbiDataSet sbiDataSet : sbiDataSetList) {
 				if(sbiDataSet != null){
+					IDataSet toReturn = DataSetFactory.toDataSet(sbiDataSet);
 					session.delete(sbiDataSet);		
+					DataSetEventManager.getInstance().notifyDelete(toReturn);
 				}
 			}
 
 
 			transaction.commit();			
+			
+			
 			
 		}  catch (Throwable t) {
 			if (transaction != null && transaction.isActive()) {
@@ -1505,6 +1515,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 		Session session = null;
 		Transaction transaction = null;
 		IDataSet toReturn = null;
+		IDataSet oldDataSet = null;
 		try {
 			session = getSession();
 			transaction = session.beginTransaction();
@@ -1514,8 +1525,9 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				hibQuery.setBoolean(0, true);
 				hibQuery.setInteger(1, dsId);	
 				SbiDataSet dsActiveDetail =(SbiDataSet)hibQuery.uniqueResult();
+				oldDataSet = DataSetFactory.toDataSet(dsActiveDetail);
 				dsActiveDetail.setActive(false);
-	
+				
 				Query hibernateQuery = session.createQuery("from SbiDataSet h where h.id.versionNum = ? and h.id.dsId = ?" );
 				hibernateQuery.setInteger(0, dsVersion);
 				hibernateQuery.setInteger(1, dsId);	
@@ -1527,6 +1539,9 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				transaction.commit();
 				//toReturn = DataSetFactory.toGuiDataSet(dsDetail);
 				toReturn = DataSetFactory.toDataSet(dsDetail);
+				
+				DataSetEventManager.getInstance().notifyRestoreVersion(oldDataSet,toReturn );
+				
 			}
 		} catch (Throwable t) {
 			if (transaction != null && transaction.isActive()) {

@@ -6,6 +6,7 @@
 
 package it.eng.spagobi.tools.dataset.measurecatalogue;
 
+import it.eng.spagobi.tools.dataset.event.DataSetEventManager;
 import it.eng.spagobi.tools.dataset.service.ManageDatasets;
 
 import org.apache.log4j.Logger;
@@ -25,11 +26,14 @@ public class MeasureCatalogueSingleton {
 	public synchronized static MeasureCatalogue getMeasureCatologue() {
 		logger.debug("IN");
 
-		//if (measureCatologue == null){
+		if (measureCatologue == null){
 			logger.debug("The measure catalogue is not defined yet. Creating it..");
 			measureCatologue = new MeasureCatalogue();
 			logger.debug("Measure catalogue created");
-		//}
+			
+			DataSetEventManager.getInstance().addEventListener(measureCatologue);
+			
+		}
 		
 		logger.debug("OUT");
 		return measureCatologue;
