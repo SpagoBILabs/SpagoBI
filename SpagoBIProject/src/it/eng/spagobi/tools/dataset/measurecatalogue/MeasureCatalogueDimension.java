@@ -31,7 +31,7 @@ public class MeasureCatalogueDimension implements IMeasureCatalogueField{
 			if(hierarchyName!=null){
 				setHierarchy(hierarchyName, metaModel);
 				hierarchyLevel =  (String) dimensionMetadata.getProperty(MeasureCatalogueCostants.dimensionHierarchyMetadataLevel);
-				hierarchyLevelPosition = hierarchy.getLevel(hierarchyLevel);
+				hierarchyLevelPosition = hierarchy.getLevelPosition(hierarchyLevel);
 			}
 		}
 
