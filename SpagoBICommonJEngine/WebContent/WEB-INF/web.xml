@@ -184,11 +184,6 @@ END-CAS -->
 	</servlet-mapping>	
 	
 -->
-
-		<servlet-mapping>
-		<servlet-name>AdapterHTTP</servlet-name>
-		<url-pattern>/servlet/AdapterHTTPBackEnd/*</url-pattern>
-	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>AdapterHTTP</servlet-name>
 		<url-pattern>/servlet/AdapterHTTPBackEnd/*</url-pattern>
