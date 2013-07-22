@@ -282,25 +282,24 @@ li:hover .login-panel .not-registered a:hover,.login-panel .not-registered a:hov
 }
 
 .box .box-figure .DASH-icon {
-	/*width: 96px;
-	height: 96px;*/
+	width: 96px;
+	height: 96px;
 	background-image:
 		url('../../../img/analiticalmodel/browser/document_chart.png')
 		!important;
 }
 
 .box .box-figure .CHART-icon {
-	/*width: 96px;
-	height: 96px;*/
+	width: 96px;
+	height: 96px;
 	background-image:
 		url('../../../img/analiticalmodel/browser/document_chart.png')
 		!important;
 }
 
 .box .box-figure .DOCUMENT_COMPOSITE-icon {
-	/*width: 96px;
-	height: 96px;*/
-	display:block;
+	width: 96px;
+	height: 96px;
 	background-image:
 		url('../../../img/analiticalmodel/browser/document_idashboard.png')
 		!important;
