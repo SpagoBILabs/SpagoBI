@@ -57,32 +57,35 @@ Sbi.browser.FolderViewTemplate = function(config) {
 		}		
 	}
 
-//	var documentTpl = '' +
-//	'<div id="document-item-icon" class="document-item-icon">' +
-//	
-//	'<tpl if="this.isSearchResult(summary) == true">'+
-//		'<img src="' + Ext.BLANK_IMAGE_URL + '" class="{typeCode}-icon" ext:qtip="<b>{views}</b><br/>{summary}"></img>' +
-//	'</tpl>'+
-//	'<tpl if="this.isSearchResult(summary) == false">'+
-//		'<img src="' + Ext.BLANK_IMAGE_URL + '" class="{typeCode}-icon"></img>' +
-//	'</tpl>'+	    
-//	'</div>' +
-//    '<div class="item-desc">' +
-//    documentAttributes +
-//    '</div>';
+	var documentTpl = '' +
+	'<div id="document-item-icon" class="document-item-icon">' +
+	
+	'<tpl if="this.isSearchResult(summary) == true">'+
+		'<img src="' + Ext.BLANK_IMAGE_URL + '" class="{typeCode}-icon" ext:qtip="<b>{views}</b><br/>{summary}"></img>' +
+	'</tpl>'+
+	'<tpl if="this.isSearchResult(summary) == false">'+
+		'<img src="' + Ext.BLANK_IMAGE_URL + '" class="{typeCode}-icon"></img>' +
+	'</tpl>'+	    
+	'</div>' +
+    '<div class="item-desc">' +
+    documentAttributes +
+    '</div>';
 		
 	//dinamicizzare img con preview se esiste
 	var img = Sbi.config.contextName + '/themes/'+ Sbi.config.currTheme	+ '/img/dataset/img-map.jpg';
 	var classImg = "";
 	
-//	img = Ext.BLANK_IMAGE_URL ;
-//	classImg = ' class="{typeCode}-icon" ';
+	img = Ext.BLANK_IMAGE_URL ;
+	classImg = ' class="{typeCode}-icon" ';
+
 	
-	//alert('<img  align="center" src="'+img+'" alt=" " '+classImg+'/>');
+//	alert('<img  align="center" src="'+img+'" alt=" " '+classImg+'/>');
 	var documentTpl = ''+
-	'<a href="#" class="box-container">'+
+////	'<a href="#" class="box-container">'+
 		'<div id="document-item-icon"  class="box-figure">'+
+//		'<div id="document-item-icon"  class="document-item-icon">'+
 			'<img  align="center" src="'+img+'" alt=" " '+classImg+'/>'+
+//			'<img src="' + Ext.BLANK_IMAGE_URL + '" class="{typeCode}-icon"></img>' +
 //			'<tpl if="this.isSearchResult(summary) == true">'+
 //				'<img src="' + Ext.BLANK_IMAGE_URL + '" class="{typeCode}-icon" ext:qtip="<b>{views}</b><br/>{summary}"></img>' +
 //			'</tpl>'+
@@ -92,8 +95,8 @@ Sbi.browser.FolderViewTemplate = function(config) {
 			'<span class="shadow"></span>'+
 		'</div>'+
 		'<div class="box-text">'+documentAttributes +'</div>';		
-	'</a>';
-	
+////	'</a>';
+//	
 	
 	
 	var folderAttributes = '';
