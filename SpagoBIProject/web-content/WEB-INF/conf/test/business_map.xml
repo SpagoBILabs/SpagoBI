@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<BUSINESS_MAP>
+	<MAP_ACTIONS>
+	</MAP_ACTIONS>
+	<MAP_PAGE_MODULES>
+	</MAP_PAGE_MODULES>
+	
+    <MAP_REST_SERVICES>
+        <MAP_REST_SERVICE serviceUrl="/test/inmemorymaterializer/join_full_noday" businessProcess="publicFunctionality" />
+        <MAP_REST_SERVICE serviceUrl="/test/inmemorymaterializer/join_full_geo" businessProcess="publicFunctionality" />    
+        <MAP_REST_SERVICE serviceUrl="/test/inmemorymaterializer/join_full_time" businessProcess="publicFunctionality" />    
+        <MAP_REST_SERVICE serviceUrl="/test/inmemorymaterializer/join_geo_time" businessProcess="publicFunctionality" />                
+    </MAP_REST_SERVICES>
+    
+</BUSINESS_MAP>

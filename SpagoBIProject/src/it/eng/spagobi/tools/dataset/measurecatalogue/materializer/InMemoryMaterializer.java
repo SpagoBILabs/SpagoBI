@@ -34,14 +34,14 @@ import edu.emory.mathcs.backport.java.util.Collections;
 
 public class InMemoryMaterializer implements IMaterializer {
 	
-	private IAggregationFunction aggreationFunction =  AggregationFunctions.AVG_FUNCTION;
+	private IAggregationFunction aggreationFunction =  AggregationFunctions.SUM_FUNCTION;
 	 
 	public IDataStore joinMeasures(List<MeasureCatalogueMeasure> measures){
     	
 		//STEP1: gets the common dimensions
 		List<List<MeasureCatalogueDimension>> commonDimensions =  getCommonDimensions(measures.get(0),measures.get(1));
 		
-		if(commonDimensions.size()>0 && commonDimensions.get(0).size()==0 ){
+		if(commonDimensions.size()==0 || commonDimensions.get(0).size()==0 ){
 			throw new RuntimeException("No common dimensions found");
 		}
 		
@@ -175,8 +175,8 @@ public class InMemoryMaterializer implements IMaterializer {
     	IDataStore dataStore;
     	List<Integer> hierarchiesColumnsIndexInDataSet = new ArrayList<Integer>();//columns of the datastore that contains data of the dimensions
     	int measureColumnIndex = -1;
-    	List<IRecord> aggregatedRecords;
-    	IMetaData aggregatedDataSourceMetadata;
+    	//List<IRecord> aggregatedRecords;
+    	//IMetaData aggregatedDataSourceMetadata;
     	List<IFieldMetaData> newDataStoreFieldMetaData = new ArrayList<IFieldMetaData>();
     	Map<MeasureCatalogueDimension, IFieldMetaData> mapDimensionsFields = new HashMap<MeasureCatalogueDimension, IFieldMetaData>();
     	Map<IFieldMetaData, MeasureCatalogueDimension> mapFieldsDimensions = new HashMap<IFieldMetaData, MeasureCatalogueDimension>();
@@ -218,7 +218,7 @@ public class InMemoryMaterializer implements IMaterializer {
     	
     	
     	//A2: aggregate
-    	InMemoryAggregator inMemoryAggregator = new InMemoryAggregator(aggreationFunction, measureColumnIndex, newDataStoreFieldMetaData, mapDimensionsFields, mapFieldsDimensions);
+    	InMemoryAggregator inMemoryAggregator = new InMemoryAggregator(aggreationFunction, measureColumnIndex, newDataStoreFieldMetaData, mapDimensionsFields, mapFieldsDimensions, dataSet);
     	
     	if(dataStore.getRecordsCount()>0){
     		int recordLength = dataStore.getRecordAt(0).getFields().size();
@@ -307,14 +307,32 @@ public class InMemoryMaterializer implements IMaterializer {
 		
 		//gets the fields metadata of records1
 		for(int i=0; i<rolledUpMeasures1.getFiledsMetadata().size(); i++){
-			metadata.addFiedMeta(rolledUpMeasures1.getFiledsMetadata().get(i));
+			IFieldMetaData fieldMetadata = rolledUpMeasures1.getFiledsMetadata().get(i);
+			String alias = fieldMetadata.getAlias();
+			String name = fieldMetadata.getName();
+			if(alias!=null){
+				fieldMetadata.setAlias(rolledUpMeasures1.getDataSet().getLabel()+"_"+alias);
+			}
+			if(name!=null){
+				fieldMetadata.setName(rolledUpMeasures1.getDataSet().getLabel()+"_"+name);
+			}
+			metadata.addFiedMeta(fieldMetadata);
 		}
 		
 		//gets the fields metadata of the measures of records2
 		for(int i=0; i<rolledUpMeasures2.getFiledsMetadata().size(); i++){
-			IFieldMetaData field = rolledUpMeasures2.getFiledsMetadata().get(i);
-			if(field.getType().equals(FieldType.MEASURE)){
-				metadata.addFiedMeta(field);
+			IFieldMetaData fieldMetadata = rolledUpMeasures2.getFiledsMetadata().get(i);
+			if(fieldMetadata.getFieldType().equals(FieldType.MEASURE)){
+				
+				String alias = fieldMetadata.getAlias();
+				String name = fieldMetadata.getName();
+				if(alias!=null){
+					fieldMetadata.setAlias(rolledUpMeasures2.getDataSet().getLabel()+"_"+alias);
+				}
+				if(name!=null){
+					fieldMetadata.setName(rolledUpMeasures2.getDataSet().getLabel()+"_"+name);
+				}
+				metadata.addFiedMeta(fieldMetadata);
 			}
 		}
 		
@@ -376,8 +394,7 @@ public class InMemoryMaterializer implements IMaterializer {
 					return false;
 				}
 			}else{
-				//it's a measure because there is no entry in the dimension map
-				return true;
+				//it's a measure because there is no entry in the dimension map. So don't do anything
 			}
 		}
 		
@@ -386,6 +403,7 @@ public class InMemoryMaterializer implements IMaterializer {
     
     private class InMemoryAggregator{
     	private IAggregationFunction aggreationFunction;
+    	private IDataSet dataSet;
     	private List<IFieldMetaData> filedsMetadata;
     	private Map<MeasureCatalogueDimension, IFieldMetaData> mapDimensionsFields;
     	private Map<IFieldMetaData, MeasureCatalogueDimension> mapFieldsDimensions;
@@ -393,7 +411,7 @@ public class InMemoryMaterializer implements IMaterializer {
     	private List<List<Object>> recordsMeasuresValues;//for each record a list with the values of the measures
     	private int measureColumnIndex;//index of the measure in the record
     	
-    	public InMemoryAggregator(IAggregationFunction aggreationFunction, int measureColumnIndex, List<IFieldMetaData> newDataStoreFieldMetaData, Map<MeasureCatalogueDimension, IFieldMetaData> mapDimensionsFields,	Map<IFieldMetaData, MeasureCatalogueDimension> mapFieldsDimensions){
+    	public InMemoryAggregator(IAggregationFunction aggreationFunction, int measureColumnIndex, List<IFieldMetaData> newDataStoreFieldMetaData, Map<MeasureCatalogueDimension, IFieldMetaData> mapDimensionsFields,	Map<IFieldMetaData, MeasureCatalogueDimension> mapFieldsDimensions,IDataSet dataSet){
     		this.aggreationFunction = aggreationFunction;
     		this.measureColumnIndex = measureColumnIndex;
     		records = new ArrayList<IRecord>();
@@ -401,6 +419,7 @@ public class InMemoryMaterializer implements IMaterializer {
     		filedsMetadata = newDataStoreFieldMetaData;
     		this.mapDimensionsFields = mapDimensionsFields;
     		this.mapFieldsDimensions = mapFieldsDimensions;
+    		this.dataSet = dataSet;
     	}
     	
     	public void addRecord(IRecord record){
@@ -430,8 +449,6 @@ public class InMemoryMaterializer implements IMaterializer {
 	   			recordsMeasuresValue.add(record.getFieldAt(measureColumnIndex).getValue());
 	   			recordsMeasuresValues.add(recordsMeasuresValue);
 			}
-
-
     	}
     	
     	public List<IRecord> aggregate(){
@@ -473,8 +490,13 @@ public class InMemoryMaterializer implements IMaterializer {
 		
 		public MeasureCatalogueDimension getDimension(IFieldMetaData fieldMetadata){
 			return mapFieldsDimensions.get(fieldMetadata);
+		}
+
+		public IDataSet getDataSet() {
+			return dataSet;
 		}	
+		
+		
     }
- 
 
 }
