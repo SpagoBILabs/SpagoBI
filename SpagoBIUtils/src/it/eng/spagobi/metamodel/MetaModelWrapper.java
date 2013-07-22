@@ -47,10 +47,31 @@ public class MetaModelWrapper {
 			}
 		}
 	}
-
-
+	
+	/**
+	 * Returns the list of hierarchies
+	 */
 	public List<HierarchyWrapper> getHierarchies() {
 		return hierarchies;
 	}
+	
+	/**
+	 * 
+	 * Returns a hierarchy with the passed name.
+	 * If it does not exist
+	 * 
+	 * */
+	public HierarchyWrapper getHierarchy(String HierarchyName){
+		if(hierarchies!=null){
+			for(int i=0; i<hierarchies.size(); i++){
+				HierarchyWrapper h = hierarchies.get(i);
+				if(h.getName().equals(HierarchyName)){
+					return h;
+				}
+			}
+		}
+		return null;
+	}
+	
 
 }

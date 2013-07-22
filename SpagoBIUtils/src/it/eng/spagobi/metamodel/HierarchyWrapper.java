@@ -46,7 +46,11 @@ public class HierarchyWrapper{
 		return this.wrappedHierarchy.getLevels();
 	}
 	
-	public int getLevel(String levelAlias){
+	/**
+	 * Gets the position of the level in the hierarchy.
+	 * The root of the hierarchy has level position =0 
+	 */
+	public int getLevelPosition(String levelAlias){
 		int position =-1;
 		for(int i=0; i<wrappedHierarchy.getLevels().size();i++){
 			Level l =  wrappedHierarchy.getLevels().get(i);
@@ -55,6 +59,20 @@ public class HierarchyWrapper{
 			}
 		}
 		return position;
+	}
+	
+	/**
+	 * Gets the Level of the hierarchy with name = levelAlias
+	 * It returns null if it can not find the level
+	 */
+	public Level getLevel(String levelAlias){
+		for(int i=0; i<wrappedHierarchy.getLevels().size();i++){
+			Level l =  wrappedHierarchy.getLevels().get(i);
+			if(l.getName().equals(levelAlias)){
+				return l;
+			}
+		}
+		return null;
 	}
 	
 	@Override
