@@ -950,3 +950,12 @@ Sbi.locale.ln["sbi.execution.toolbar.savedatasetwindow.fields.datasource"]="Data
 Sbi.locale.ln["sbi.tools.dataset.datasetbrowser.title"]="Datasets";
 Sbi.locale.ln["sbi.tools.model.metamodelsbrowser.title"]="Models";
 
+//===================================================================
+//COMMUNITY
+//===================================================================
+Sbi.locale.ln["sbi.community.title"]="Communities";
+Sbi.locale.ln["sbi.community.name"]="Name";
+Sbi.locale.ln["sbi.community.descr"]="Description";
+Sbi.locale.ln["sbi.community.owner"]="Owner";
+Sbi.locale.ln["sbi.community.id"]="Id";
+

@@ -41,17 +41,17 @@ Ext.define('Sbi.community.CommunityDetailPanel', {
 		});
 		this.name = Ext.create("Ext.form.field.Text",{
 			name: "name",
-			fieldLabel: LN('sbi.datasource.label'),
+			fieldLabel: LN('sbi.community.name'),
 			allowBlank: false
 		});
 		this.description = Ext.create("Ext.form.field.Text",{
 			name: "description",
-			fieldLabel: LN('sbi.datasource.description')
+			fieldLabel: LN('sbi.community.descr')
 		});
 
 		this.owner = Ext.create("Ext.form.field.Text",{
 			name: "owner",
-			fieldLabel: LN('sbi.datasource.dialect'),
+			fieldLabel: LN('sbi.community.owner'),
 			allowBlank: false
 		});	   
    
