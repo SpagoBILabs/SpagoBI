@@ -6,6 +6,9 @@
 
 package it.eng.spagobi.rest.interceptors;
 
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.utilities.ChannelUtilities;
+
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -118,5 +121,15 @@ public class InterceptorUtilities {
 		parameters.putAll(formParameters);
 		InterceptorUtilities.addGenericMap(parameters, requestParameters);
 		return parameters;
+	}
+	
+	public static String createUrlPrefix (HttpRequest request, HttpServletRequest servletRequest){
+        String contextName = ChannelUtilities.getSpagoBIContextName(servletRequest);
+        String addr= servletRequest.getServerName();
+        Integer port=servletRequest.getServerPort();
+        String proto =servletRequest.getScheme();
+        String url= proto+"://"+addr+":"+port+""+contextName;
+        return url;
+		
 	}
 }

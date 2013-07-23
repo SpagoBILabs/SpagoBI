@@ -3,7 +3,7 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <!-- Generated 15-lug-2013 11.45.55 by Hibernate Tools 3.4.0.CR1 -->
 <hibernate-mapping>
-    <class name="it.eng.spagobi.community.mapping.SbiCommunityUsers" table="sbi_community_users" catalog="spagobi">
+    <class name="it.eng.spagobi.community.mapping.SbiCommunityUsers" table="sbi_community_users">
         <composite-id name="id" class="it.eng.spagobi.community.mapping.SbiCommunityUsersId">
             <key-property name="communityId" type="int">
                 <column name="COMMUNITY_ID" />

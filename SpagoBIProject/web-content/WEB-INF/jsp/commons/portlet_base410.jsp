@@ -72,8 +72,17 @@ commented by Davide Zerbetto on 12/10/2009: there are problems with MIF (Ext Man
 		// case of web mode
 		//aRequestContainer = RequestContainerAccess.getRequestContainer(request);
 		aRequestContainer = RequestContainer.getRequestContainer();
+		if(aRequestContainer == null){
+			//case of REST 
+			aRequestContainer = RequestContainerAccess.getRequestContainer(request);
+		}
+		
 		//aResponseContainer = ResponseContainerAccess.getResponseContainer(request);
 		aResponseContainer = ResponseContainer.getResponseContainer();
+		if(aResponseContainer == null){
+			//case of REST
+			aResponseContainer = ResponseContainerAccess.getResponseContainer(request);
+		}
 	}
 	
 	String channelType = aRequestContainer.getChannelType();
