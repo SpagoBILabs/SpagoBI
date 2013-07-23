@@ -52,7 +52,7 @@ public class SbiCommunityDAOImpl extends AbstractHibernateDAO implements ISbiCom
 
 	}
 
-	private Integer saveSbiComunity(SbiCommunity community) throws EMFUserError {
+	public Integer saveSbiComunity(SbiCommunity community) throws EMFUserError {
 		logger.debug("IN");
 		Session aSession = null;
 		Transaction tx = null;
@@ -279,6 +279,67 @@ public class SbiCommunityDAOImpl extends AbstractHibernateDAO implements ISbiCom
 			logger.debug("OUT");
 			if (aSession!=null){
 				if (aSession.isOpen()) aSession.close();
+			}
+		}
+	}
+
+	public void deleteCommunityById(Integer id) throws EMFUserError {
+		logger.debug("IN");
+		Session aSession = null;
+		Transaction tx = null;
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+			SbiCommunity hibComm = (SbiCommunity) aSession.load(SbiCommunity.class,id);
+
+			aSession.delete(hibComm);
+			tx.commit();
+		} catch (HibernateException he) {
+			logger.error("Error while erasing the community with id " + id, he);
+
+			if (tx != null)
+				tx.rollback();
+
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+
+		} finally {
+			if (aSession!=null){
+				if (aSession.isOpen()) aSession.close();
+				logger.debug("OUT");
+			}
+		}
+		
+	}
+
+	public Integer updateSbiComunity(SbiCommunity community)
+			throws EMFUserError {
+		logger.debug("IN");
+		Session aSession = null;
+		Transaction tx = null;
+		Integer id = community.getCommunityId();
+		try {
+
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+			community.setCreationDate(new Date());
+			community.setLastChangeDate(new Date());
+			updateSbiCommonInfo4Insert(community);
+			aSession.update(community);
+
+			tx.commit();
+
+			logger.debug("OUT");
+			return id;
+		} catch (HibernateException he) {
+			logger.error(he.getMessage(),he);
+			
+			if (tx != null)
+				tx.rollback();
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+		} finally {
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
 			}
 		}
 	}

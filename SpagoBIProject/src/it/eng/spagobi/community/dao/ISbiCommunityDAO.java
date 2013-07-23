@@ -13,6 +13,8 @@ import java.util.List;
 
 public interface ISbiCommunityDAO extends ISpagoBIDao {
 	
+	public void deleteCommunityById(Integer id) throws EMFUserError;
+	
 	public SbiCommunity loadSbiCommunityByName(String name) throws EMFUserError;
 
 	public void saveSbiComunityUsers(SbiCommunity community, String userID) throws EMFUserError;
@@ -24,4 +26,8 @@ public interface ISbiCommunityDAO extends ISpagoBIDao {
 	public List<SbiCommunity> loadSbiCommunityByOwner(String userID) throws EMFUserError;
 	
 	public void addCommunityMember(SbiCommunity community, String userID) throws EMFUserError;
+	
+	public Integer saveSbiComunity(SbiCommunity community) throws EMFUserError;
+	
+	public Integer updateSbiComunity(SbiCommunity community) throws EMFUserError;
 }
