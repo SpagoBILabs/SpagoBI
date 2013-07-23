@@ -74,7 +74,7 @@ if (browsername.contains("MSIE")){
 <%  }	
 }else{
 %>	
-	<link id="spagobi-ext-4" rel="styleSheet" href ="/SpagoBI/themes/geobi/css/home40/standard.css" media="screen,projection,print" type="text/css" />
+	<link rel='stylesheet' type='text/css' href='<%=urlBuilder.getResourceLinkByTheme(request, "css/home40/standard.css",currTheme)%>'/>
 <%} %>
 <script>
 sessionExpiredSpagoBIJS = 'sessionExpiredSpagoBIJS';
@@ -104,7 +104,7 @@ Ext.onReady(function () {
 		'			<a href="#" id="logo">GeoBI - Geographic Business Intelligence</a> '+
 		'	        <nav class="main-buttons"> '+
 		'	        	<ul> '+
-		'	            	<li class="btn-maps active"><a href="<%=mapsUrl%>">Mappe<span></span></a></li> '+
+		'	            	<li class="btn-maps"><a href="<%=mapsUrl%>">Mappe<span></span></a></li> '+
 		'	                <li class="btn-datasets"><a href="<%=datasetUrl%>">Dataset<span></span></a></li> '+
 		'	            </ul> '+
 		'	        </nav> '+

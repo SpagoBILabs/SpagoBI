@@ -92,7 +92,7 @@ a {text-decoration:none}
 .main-buttons .btn-datasets.active a:hover span{background-position:0 -7px}
 
 
-.top-bar{height:33px;width:100%;background:url(../../../images/bg-top-bar.gif) 0 0 repeat-x;position:absolute;top:0;left:0}
+.top-bar{height:33px;width:100%;background:url(../../../images/bg-x.gif) 0 0 repeat-x;position:absolute;top:0;left:0}
 
 /* ATTENTION! start MODIFIED lines */
 .top-menu{float:right;margin:0 4px 0 0}
@@ -225,6 +225,9 @@ li:hover .login-panel .not-registered a:hover,.login-panel .not-registered a:hov
 .box-fav .fav .icon{background-position:0 -16px}
 .box .fav .icon:hover{background-position:0 -16px}
 .box .fav .counter{display:none;width:45px;text-align:center;position:absolute;top:31px;color:#adadad;font-size:1.08em}
+.box .fav .showmetadata{cursor:pointer;position:absolute;left:13px;top:6px;display:block;width:19px;height:16px;background:url('../../../img/analiticalmodel/browser/metadata.png'); 0 0 no-repeat}
+.box-fav .fav .showmetadata{background-position:0 -16px}
+.box .fav .showmetadata:hover{background-position:0 -16px}
 
 .box .hover{display:none;position:absolute;top:0;left:0;width:100%;height:100%;background:url(../../../images/bg-hover.png) 0 0 repeat}
 .box:hover .hover{display:block}
@@ -236,176 +239,226 @@ li:hover .login-panel .not-registered a:hover,.login-panel .not-registered a:hov
 .box .hover .box-actions li{float:left;margin:0 9px 0 0}
 .box .hover .box-actions li.last{margin-left:0}
 .box .hover .box-actions a{width:49px;height:45px;background:#fff;display:block;-webkit-border-radius:4px;-moz-border-radius:4px;border-radius:4px}
-.box .hover .box-actions .view a{background-position:9px 11px;background-repeat:no-repeat}
-.main-datasets-list .box .hover .box-actions .view a{background-image:url(../../../images/ico-view-cian.png)}
+.box .hover .box-actions .detail a{background-position:9px 11px;background-repeat:no-repeat}
+/*.main-datasets-list .box .hover .box-actions .view a{background-image:url(../../../images/ico-view-cian.png)}
 .main-maps-list .box .hover .box-actions .view a{background-image:url(../../../images/ico-view-green.png)}
-.box .hover .box-actions .view a:hover{background-position:9px -28px}
-.box .hover .box-actions .new-map a{background-image:url(../../../images/ico-newmap.png);background-position:13px 10px;background-repeat:no-repeat}
-.box .hover .box-actions .new-map a:hover{background-position:13px -30px}
+*/
+.box .hover .box-actions .detail a{background-image:url(../../../images/ico-view-green.png);background-position:9px -28px;background-repeat: no-repeat;}
+.box .hover .box-actions .detail a:hover{background-position:9px -28px;background-repeat: no-repeat;}
+.box .hover .box-actions .showmetadata a{background-image:url('../../../img/analiticalmodel/browser/metadata.png');background-repeat: no-repeat;background-position: center center;}
+.box .hover .box-actions .showmetadata a:hover{background-position:9px -28px;background-repeat: no-repeat;}
+/*dataset:*/
+.box .hover .box-actions .georeport a{background-image:url(../../../images/ico-newmap.png);background-position:13px 10px;background-repeat:no-repeat}
+.box .hover .box-actions .georeport a:hover{background-position:13px -30px}
+.box .hover .box-actions .detaildataset a{background-image:url('../../../img/analiticalmodel/browser/metadata.png');background-repeat: no-repeat;background-position: center center;}
+.box .hover .box-actions .detaildataset a:hover{background-position:9px -28px;background-repeat: no-repeat;}	
+.box .hover .box-actions .worksheet a{background-image:url('../../../img/analiticalmodel/browser/document_worksheet.png');background-repeat: no-repeat;background-position: center center;}
+.box .hover .box-actions .worksheet a:hover{background-position:9px -28px;background-repeat: no-repeat;}	
+
 .box .hover .delete{position:absolute;right:11px;bottom:11px;width:35px;height:32px;display:block;background:#333333 url(../../../images/ico-delete.png) 9px 6px no-repeat;-webkit-border-radius:4px;-moz-border-radius:4px;border-radius:4px}
 .box .hover .delete:hover{/*background-position:9px -25px*/background-color:#2b2b2b}
-
-/* ============================================================= */
+	
+	/* ============================================================= */
 	/*	item icon layout					  			 		     */
 	/* ============================================================= */
-.box .box-figure {margin: 5px 0 0 5px;float: left;}
-
-.box .box-figure img {
-	width: 96px;
-	height: 96px;
-	background-image:
-		url('../../../img/analiticalmodel/browser/document.png') !important;
-}
-
-.box .box-figure .REPORT-icon {
-	width: 96px;
-	height: 96px;
-	background-image:
-		url('../../../img/analiticalmodel/browser/document_report.png')
-		!important;
-}
-
-.box .box-figure .OLAP-icon {
-	width: 96px;
-	height: 96px;
-	background-image:
-		url('../../../img/analiticalmodel/browser/document_olap.png')
-		!important;
-}
-
-.box .box-figure .OFFICE_DOC-icon {
-	width: 96px;
-	height: 96px;
-	background-image:
-		url('../../../img/analiticalmodel/browser/document_officedoc.png')
-		!important;
-}
-
-.box .box-figure .DASH-icon {
-	/*width: 96px;
-	height: 96px;*/
-	background-image:
-		url('../../../img/analiticalmodel/browser/document_chart.png')
-		!important;
-}
-
-.box .box-figure .CHART-icon {
-	/*width: 96px;
-	height: 96px;*/
-	background-image:
-		url('../../../img/analiticalmodel/browser/document_chart.png')
-		!important;
-}
-
-.box .box-figure .DOCUMENT_COMPOSITE-icon {
-	/*width: 96px;
-	height: 96px;*/
+/*
+.box .box-figure img {background-image:url('../../../img/analiticalmodel/browser/document.png') !important;
 	display:block;
-	background-image:
-		url('../../../img/analiticalmodel/browser/document_idashboard.png')
-		!important;
+	width:100%;
+	background-size: contain;
+	background-position: center center;
+	background-repeat: no-repeat;
+}*/
+
+.box .box-figure .preview-icon {
+	display:block;
+	width:100%;
+	height:200px;
+	background-size: contain;
+	background-position: center center;
+	background-repeat: no-repeat;
+}
+	
+.box .box-figure .REPORT-icon {background-image:url('../../../img/analiticalmodel/browser/document_report.png')!important;
+	display:block;
+	width:100%;
+	height:200px;
+	background-size: contain;
+	background-position: center center;
+	background-repeat: no-repeat;
 }
 
-.box .box-figure .ETL-icon {
-	width: 96px;
-	height: 96px;
-	background-image:
-		url('../../../img/analiticalmodel/browser/document_etl.png')
-		!important;
+.box .box-figure .OLAP-icon {background-image:url('../../../img/analiticalmodel/browser/document_olap.png')!important;
+	display:block;
+	width:100%;
+	height:200px;
+	background-size: contain;
+	background-position: center center;
+	background-repeat: no-repeat;
 }
 
-.box .box-figure .DATA_MINING-icon {
-	width: 96px;
-	height: 96px;
-	background-image:
-		url('../../../img/analiticalmodel/browser/document_datamining.png')
-		!important;
+.box .box-figure .OFFICE_DOC-icon {background-image:url('../../../img/analiticalmodel/browser/document_officedoc.png')!important;
+	display:block;
+	width:100%;
+	height:200px;
+	background-size: contain;
+	background-position: center center;
+	background-repeat: no-repeat;
 }
 
-.box .box-figure .MAP-icon {
-	width: 96px;
-	height: 96px;
-	background-image:
-		url('../../../img/analiticalmodel/browser/document_geo.png')
-		!important;
+.box .box-figure .DASH-icon {background-image:	url('../../../img/analiticalmodel/browser/document_chart.png')!important;
+	display:block;
+	width:100%;
+	height:200px;
+	background-size: contain;
+	background-position: center center;
+	background-repeat: no-repeat;
 }
 
-.box .box-figure .DATAMART-icon {
-	width: 96px;
-	height: 96px;
-	background-image:
-		url('../../../img/analiticalmodel/browser/document_qbe.png')
-		!important;
+.box .box-figure .CHART-icon {background-image:	url('../../../img/analiticalmodel/browser/document_chart.png')!important;
+	display:block;
+	width:100%;
+	height:200px;
+	background-size: contain;
+	background-position: center center;
+	background-repeat: no-repeat;
 }
 
-.box .box-figure .DOSSIER-icon {
-	width: 96px;
-	height: 96px;
-	background-image:
-		url('../../../img/analiticalmodel/browser/document_dossier.png')
-		!important;
+.box .box-figure .DOCUMENT_COMPOSITE-icon {background-image:url('../../../img/analiticalmodel/browser/document_idashboard.png')!important;
+	width:100%;
+	height:200px;
+	display:block;	
+	background-position: center center;
+	background-size: contain;
+	background-repeat: no-repeat;
+	
 }
 
-.box .box-figure .KPI-icon {
-	width: 96px;
-	height: 96px;
-	background-image:
-		url('../../../img/analiticalmodel/browser/document_kpi.png')
-		!important;
+.box .box-figure .ETL-icon {background-image:url('../../../img/analiticalmodel/browser/document_etl.png')!important;
+	display:block;
+	width:100%;
+	height:200px;
+	background-size: contain;
+	background-position: center center;
+	background-repeat: no-repeat;
 }
 
-.box .box-figure .SMART_FILTER-icon {
-	width: 96px;
-	height: 96px;
-	background-image:
-		url('../../../img/analiticalmodel/browser/document_smart_filter.png')
-		!important;
+.box .box-figure .DATA_MINING-icon {background-image:url('../../../img/analiticalmodel/browser/document_datamining.png')!important;
+	display:block;
+	width:100%;
+	height:200px;
+	background-size: contain;
+	background-position: center center;
+	background-repeat: no-repeat;
 }
 
-.box .box-figure .WORKSHEET-icon {
-	width: 96px;
-	height: 96px;
-	background-image:
-		url('../../../img/analiticalmodel/browser/document_worksheet.png')
-		!important;
+.box .box-figure .MAP-icon {background-image:url('../../../img/analiticalmodel/browser/document_geo.png')!important;
+	display:block;
+	width:100%;
+	height:200px;	
+	background-size: contain;
+	background-position: top center;
+	background-repeat: no-repeat;
+	border: 0px;
 }
 
-.box .box-figure .ACCESSIBLE_HTML-icon {
-	width: 96px;
-	height: 96px;
-	background-image:
-		url('../../../img/analiticalmodel/browser/document_acc.png')
-		!important;
+.box .box-figure .DATAMART-icon {background-image:url('../../../img/analiticalmodel/browser/document_qbe.png')	!important;
+	display:block;
+	width:100%;
+	height:200px;
+	background-size: contain;
+	background-position: center center;
+	background-repeat: no-repeat;
 }
 
-.box .box-figure .CONSOLE-icon {
-   	width:96px;
-    height:96px;
-    background-image:url('../../../img/analiticalmodel/browser/document_console.gif')!important;
+.box .box-figure .DOSSIER-icon {background-image:url('../../../img/analiticalmodel/browser/document_dossier.png')!important;
+	display:block;
+	width:100%;
+	height:200px;
+	background-size: contain;
+	background-position: center center;
+	background-repeat: no-repeat;
 }
 
-.box .box-figure .MOBILE_REPORT-icon {
-   	width:96px;
-    height:96px;
-    background-image:url('../../../img/analiticalmodel/browser/document_mobile_report.png')!important;
+.box .box-figure .KPI-icon {background-image:url('../../../img/analiticalmodel/browser/document_kpi.png')!important;
+	display:block;
+	width:100%;
+	height:200px;
+	background-size: contain;
+	background-position: center center;
+	background-repeat: no-repeat;
 }
 
-.box .box-figure .MOBILE_CHART-icon {
-   	width:96px;
-    height:96px;
-    background-image:url('../../../img/analiticalmodel/browser/document_mobile_chart.png')!important;
+.box .box-figure .SMART_FILTER-icon {background-image:url('../../../img/analiticalmodel/browser/document_smart_filter.png')	!important;
+	display:block;
+	width:100%;
+	height:200px;
+	background-size: contain;
+	background-position: center center;
+	background-repeat: no-repeat;
 }
 
-.box .box-figure .MOBILE_COCKPIT-icon {
-   	width:96px;
-    height:96px;
-    background-image:url('../../../img/analiticalmodel/browser/document_mobile_cockpit.png')!important;
+.box .box-figure .WORKSHEET-icon {background-image:	url('../../../img/analiticalmodel/browser/document_worksheet.png')!important;
+	display:block;
+	width:100%;
+	height:200px;
+	background-size: contain;
+	background-position: top center;
+	background-repeat: no-repeat;
 }
 
-.box .box-figure .NETWORK-icon {
-   	width:96px;
-    height:96px;
-    background-image:url('../../../img/analiticalmodel/browser/document_network.png')!important;
+.box .box-figure .ACCESSIBLE_HTML-icon {background-image:url('../../../img/analiticalmodel/browser/document_acc.png')!important;
+	display:block;
+	width:100%;
+	height:200px;
+	background-size: contain;
+	background-position: center center;
+	background-repeat: no-repeat;
+}
+
+.box .box-figure .CONSOLE-icon {background-image:url('../../../img/analiticalmodel/browser/document_console.gif')!important;
+	display:block;
+	width:100%;
+	height:200px;
+	background-size: contain;
+	background-position: center center;
+	background-repeat: no-repeat;
+}
+
+.box .box-figure .MOBILE_REPORT-icon {background-image:url('../../../img/analiticalmodel/browser/document_mobile_report.png')!important;
+	display:block;
+	width:100%;
+	height:200px;
+	background-size: contain;
+	background-position: center center;
+	background-repeat: no-repeat;
+}
+
+.box .box-figure .MOBILE_CHART-icon {background-image:url('../../../img/analiticalmodel/browser/document_mobile_chart.png')!important;
+	display:block;
+	width:100%;
+	height:200px;
+	background-size: contain;
+	background-position: center center;
+	background-repeat: no-repeat;
+}
+
+.box .box-figure .MOBILE_COCKPIT-icon {background-image:url('../../../img/analiticalmodel/browser/document_mobile_cockpit.png')!important;
+	display:block;
+	width:100%;
+	height:200px;
+	background-size: contain;
+	background-position: center center;
+	background-repeat: no-repeat;
+}
+
+.box .box-figure .NETWORK-icon {background-image:url('../../../img/analiticalmodel/browser/document_network.png')!important;
+	display:block;
+	width:100%;
+	height:200px;
+	background-size: contain;
+	background-position: center center;
+	background-repeat: no-repeat;
 }
 
 /* ----------- MAP --------------------------------------------------------------------------------------------------------------------------------------------------------------------- */
@@ -560,7 +613,7 @@ li:hover .login-panel .not-registered a:hover,.login-panel .not-registered a:hov
 
 
 
-/* ----------- FOOTER --------------------------------------------------------------------------------------------------------------------------------------------------------------------- */
+/* ----------- FOOTER --------------------------------------------------------------------------------------------------------------------------------------------------------------------- 
 
 .footer{font-family:cabinregular, sans-serif;width:100%;background:#fff;float:left;border-top:1px solid #ededed}
 .map-body .footer{z-index:99999;position:fixed !important;position:absolute;bottom:0;left:0}
@@ -579,7 +632,7 @@ li:hover .login-panel .not-registered a:hover,.login-panel .not-registered a:hov
 .footer .logos .pab a:hover{background-position:0 0}
 .footer .logos .ue a{width:61px;height:39px;background:url(../../../images/logo-ue.gif) 0 -39px no-repeat}
 .footer .logos .ue a:hover{background-position:0 0}
-	
+*/	
 	
 /* ----- IE 10 ------*/
 	

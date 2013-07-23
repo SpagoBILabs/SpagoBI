@@ -71,7 +71,7 @@ a {text-decoration:none}
 
 /* ----------- STRUCTURE --------------------------------------------------------------------------------------------------------------------------------------------------------------------- */
 
-.header{border-bottom:1px solid #ededed;background:#fff;position:relative;z-index:10000;width:100%;float:left;padding:33px 0 0 0;height:108px}
+.header{border-bottom:1px solid #ededed;background:#fff;position:relative;z-index:10000;width:100%;float:left;padding:33px 0 0 0;height:142px}
 .map-body .header{position:fixed;top:0;left:0} /* ATTENTION! ADDED */
 
 #logo{position:absolute;top:23px;left:33px;width:228px;height:61px;display:block;background:url(../../images/logo.gif) 0 0 no-repeat;text-indent:-9999px;font-size:0;line-height:0} /* ATTENTION! MODIFIED left:33px*/
@@ -80,7 +80,7 @@ a {text-decoration:none}
 .main-buttons{float:right;padding:33px 0 0 0}
 .main-buttons ul{float:left}
 .main-buttons li{float:left;margin:0 0 0 26px}
-.main-buttons a{font-family:cabinbold, sans-serif;position:relative;position:relative;font-size:1.25em;padding:15px 0 0 16px;width:119px;height:26px;color:#fff;text-transform:uppercase;display:block;-webkit-border-radius:4px;-moz-border-radius:4px;border-radius:4px}
+.main-buttons a{font-family:cabinbold, sans-serif;position:relative;position:relative;font-size:1.25em;padding:15px 0 0 16px;width:135px;height:41px;color:#fff;text-transform:uppercase;display:block;-webkit-border-radius:4px;-moz-border-radius:4px;border-radius:4px}
 .main-buttons .active a span{position:absolute;bottom:-7px;left:59px;display:block;height:7px;width:17px;background-image:url(../../images/btn-arrow.gif);background-repeat:no-repeat}
 .main-buttons .btn-maps a{background:#75b407 url(../../images/bg-btn-maps.png) 103px 10px no-repeat}
 .main-buttons .btn-maps a:hover{background-color:#7bbf04}
@@ -149,7 +149,7 @@ li:hover .login-panel .not-registered a:hover,.login-panel .not-registered a:hov
 
 
 
-/* ----------- LISTING MAPS - LISTING DATASETS --------------------------------------------------------------------------------------------------------------------------------------------------------------------- */
+/* ----------- LISTING MAPS - LISTING DATASETS --------------------------------------------------------------------------------------------------------------------------------------------------------------------- 
 
 .list-actions-container{z-index:900;position:relative;width:100%;float:left;margin:0 0 29px 0;height:43px}
 
@@ -237,26 +237,29 @@ li:hover .login-panel .not-registered a:hover,.login-panel .not-registered a:hov
 .box .hover .box-actions li.last{margin-left:0}
 .box .hover .box-actions a{width:49px;height:45px;background:#fff;display:block;-webkit-border-radius:4px;-moz-border-radius:4px;border-radius:4px}
 .box .hover .box-actions .view a{background-position:9px 11px;background-repeat:no-repeat}
-.main-datasets-list .box .hover .box-actions .view a{background-image:url(../../images/ico-view-cian.png)}
-.main-maps-list .box .hover .box-actions .view a{background-image:url(../../images/ico-view-green.png)}
-.box .hover .box-actions .view a:hover{background-position:9px -28px}
+//.main-datasets-list .box .hover .box-actions .view a{background-image:url(../../images/ico-view-cian.png)}
+//.main-maps-list .box .hover .box-actions .view a{background-image:url(../../images/ico-view-green.png)}
+
+.box .hover .box-actions .detail a{background-image:url(../../images/ico-view-cian.png)}
+.box .hover .box-actions .detail a{background-image:url(../../images/ico-view-green.png)}
+.box .hover .box-actions .detail a:hover{background-position:9px -28px}
 .box .hover .box-actions .new-map a{background-image:url(../../images/ico-newmap.png);background-position:13px 10px;background-repeat:no-repeat}
 .box .hover .box-actions .new-map a:hover{background-position:13px -30px}
 .box .hover .delete{position:absolute;right:11px;bottom:11px;width:35px;height:32px;display:block;background:#333333 url(../../images/ico-delete.png) 9px 6px no-repeat;-webkit-border-radius:4px;-moz-border-radius:4px;border-radius:4px}
-.box .hover .delete:hover{/*background-position:9px -25px*/background-color:#2b2b2b}
+.box .hover .delete:hover{background-color:#2b2b2b}
 
+*/
 
-
-/* ----------- MAP --------------------------------------------------------------------------------------------------------------------------------------------------------------------- */
+/* ----------- MAP --------------------------------------------------------------------------------------------------------------------------------------------------------------------- 
 
 
 .map-container{overflow:hidden;width:100%;height:100%}
-.map-container img{width:100%;display:block} /* ATTENTION! Delete this line when you insert the real map - map placeholder */
+.map-container img{width:100%;display:block} //ATTENTION! Delete this line when you insert the real map - map placeholder 
 
 .panel{font-family:cabinregular, sans-serif, arial, helvetica;color:#434343;box-shadow:7px 7px 10px #000;width:362px;height:100%;position:absolute;top:0;right:0;background:#f3f3f3}
 .panel-form{width:100%;height:100%;float:left}
 .panel .scroll{max-height:500px;overflow:hidden;position:relative;width:298px;float:left;background:#f9f9f9;border-bottom:1px solid #e4e4e4;padding:0 32px}
-.panel .scroll-content{float:left;padding:32px 0 12px 0;width:298px;-webkit-transform: translateZ(0);-moz-transform: translateZ(0);-ms-transform: translateZ(0);-o-transform: translateZ(0);transform: translateZ(0);-webkit-touch-callout: none;-webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;-webkit-text-size-adjust: none;-moz-text-size-adjust: none;-ms-text-size-adjust: none;-o-text-size-adjust: none;text-size-adjust: none} /*float*/
+.panel .scroll-content{float:left;padding:32px 0 12px 0;width:298px;-webkit-transform: translateZ(0);-moz-transform: translateZ(0);-ms-transform: translateZ(0);-o-transform: translateZ(0);transform: translateZ(0);-webkit-touch-callout: none;-webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;-webkit-text-size-adjust: none;-moz-text-size-adjust: none;-ms-text-size-adjust: none;-o-text-size-adjust: none;text-size-adjust: none} //float
 .panel h1{margin:0 0 14px 0;line-height:120%;font-size:1.66em;font-family:cabinmedium, sans-serif, arial, helvetica;font-weight:normal}
 .panel h2{font-size:1.4em;margin:0 0 15px 0;font-family:cabinmedium, sans-serif, arial, helvetica;font-weight:normal}
 .panel p{margin:0 0 8px 0;font-size:1.05em;line-height:175%}
@@ -288,7 +291,7 @@ li:hover .login-panel .not-registered a:hover,.login-panel .not-registered a:hov
 
 .panel .indicators{float:left;width:100%;padding:0 0 27px 0}
 
-.panel .group{width:100%;float:left;margin:0 0 18px 0;border:1px solid #eae8e8;background:#fbfbfb;with:296px;-webkit-border-radius:4px;-moz-border-radius:4px;border-radius:4px} /*float*/
+.panel .group{width:100%;float:left;margin:0 0 18px 0;border:1px solid #eae8e8;background:#fbfbfb;with:296px;-webkit-border-radius:4px;-moz-border-radius:4px;border-radius:4px} //float
 .panel .group li{position:relative;float:left;width:100%;border-bottom:1px solid #eae8e8}
 .panel .group li.last{border-bottom:0}
 .panel .group .button{cursor:pointer;font-size:1.25em;display:block;position:relative;background:#fefefe;height:27px;color:#434343;padding:15px 0 0 59px}
@@ -323,11 +326,11 @@ li:hover .login-panel .not-registered a:hover,.login-panel .not-registered a:hov
 .panel .radio .radio-option label{float:left;padding:2px 0 0 0;color:#a0a0a0}
 .panel .radio .radio-option.checked label{color:#434343}
 
-/*.iScrollVerticalScrollbar{border:1px solid #eae8e8;position:absolute;z-index:9999;width:11px;bottom:11px;top:32px;right:8px;background:#ffffff;-webkit-border-radius:5px;-moz-border-radius:5px;border-radius:5px;background:#f2f1f1;background-image: -ms-linear-gradient(left, #F2F1F1 0%, #F7F7F7 100%);background-image: -moz-linear-gradient(left, #F2F1F1 0%, #F7F7F7 100%);background-image: -o-linear-gradient(left, #F2F1F1 0%, #F7F7F7 100%);background-image: -webkit-gradient(linear, left top, right top, color-stop(0, #F2F1F1), color-stop(1, #F7F7F7));background-image: -webkit-linear-gradient(left, #F2F1F1 0%, #F7F7F7 100%);background-image: linear-gradient(to right, #F2F1F1 0%, #F7F7F7 100%)}
-.iScrollVerticalScrollbar.hidden{display:none}
-.iScrollIndicator{height:52px;cursor: url(../../images/openhand.cur), default;left:-3px;width:17px;background:#535353 url(../../images/bg-scrollbar-indicator.gif) center center no-repeat;position:absolute;-webkit-border-radius:3px;-moz-border-radius:3px;border-radius:3px}
-.iScrollIndicator.grabbing{cursor: url(https://mail.google.com/mail/images/2/closedhand.cur), default}
-.iScrollIndicator:hover{background-color:#4a4a4a}*/
+//.iScrollVerticalScrollbar{border:1px solid #eae8e8;position:absolute;z-index:9999;width:11px;bottom:11px;top:32px;right:8px;background:#ffffff;-webkit-border-radius:5px;-moz-border-radius:5px;border-radius:5px;background:#f2f1f1;background-image: -ms-linear-gradient(left, #F2F1F1 0%, #F7F7F7 100%);background-image: -moz-linear-gradient(left, #F2F1F1 0%, #F7F7F7 100%);background-image: -o-linear-gradient(left, #F2F1F1 0%, #F7F7F7 100%);background-image: -webkit-gradient(linear, left top, right top, color-stop(0, #F2F1F1), color-stop(1, #F7F7F7));background-image: -webkit-linear-gradient(left, #F2F1F1 0%, #F7F7F7 100%);background-image: linear-gradient(to right, #F2F1F1 0%, #F7F7F7 100%)}
+//.iScrollVerticalScrollbar.hidden{display:none}
+//.iScrollIndicator{height:52px;cursor: url(../../images/openhand.cur), default;left:-3px;width:17px;background:#535353 url(../../images/bg-scrollbar-indicator.gif) center center no-repeat;position:absolute;-webkit-border-radius:3px;-moz-border-radius:3px;border-radius:3px}
+//.iScrollIndicator.grabbing{cursor: url(https://mail.google.com/mail/images/2/closedhand.cur), default}
+//.iScrollIndicator:hover{background-color:#4a4a4a}
 
 .iScrollVerticalScrollbar{position:absolute;z-index:9999;width:5px;bottom:11px;top:32px;right:8px}
 .iScrollVerticalScrollbar.hidden{display:none}
@@ -372,7 +375,7 @@ li:hover .login-panel .not-registered a:hover,.login-panel .not-registered a:hov
 .map-tools h3{font-size:1.5em;font-family:cabinbold,aria,helvetica, sans-serif;font-weight:normal;margin:0 0 14px 0}
 .map-tools-element{position:relative;display:inline-block;height:34px}
 .map-tools-element.layers{margin-left:8px}
-.map-tools .tools-content{/*display:none;*/position:absolute;bottom:0;right:0}
+.map-tools .tools-content{/position:absolute;bottom:0;right:0}
 .map-tools .layers .tools-content{width:258px}
 .map-tools-element .icon{cursor:pointer;background-image:url(../../images/ico-map-tools.png);background-repeat:no-repeat;float:right;display:block;width:34px;height:34px}
 .map-tools-element.legend .icon{background-position:-34px 0}
@@ -397,7 +400,7 @@ li:hover .login-panel .not-registered a:hover,.login-panel .not-registered a:hov
 .overlay .btn-close{cursor:pointer;display:block;position:absolute;top:-9px;right:-9px;background:#535353 url(../../images/ico-close.png) center center no-repeat;width:32px;height:32px;-webkit-border-radius:16px;-moz-border-radius:16px;border-radius:16px}
 .overlay .btn-close:hover{background-color:#3C3C3C}
 
-
+*/
 
 /* ----------- FOOTER --------------------------------------------------------------------------------------------------------------------------------------------------------------------- */
 

@@ -401,16 +401,33 @@ Ext.extend(Sbi.browser.FolderDetailPanel, Ext.Panel, {
     
     , onClick: function(dataview, i, node, e) {
     	
-    	var button = e.getTarget('div[class=button]', 10, true);
+//    	var button = e.getTarget('div[class=button]', 10, true);
+//    	if(button) {
+//		var buttonImg = button.down('img');
+//		var startIndex = (' '+buttonImg.dom.className+' ').indexOf(' action-');
+//		if(startIndex != -1) {
+//			action = buttonImg.dom.className.substring(startIndex).trim().split(' ')[0];
+//			action = action.split('-')[1];
+//		}    		
+//	}
+    	
+    	var actionDetail = e.getTarget('li[class=detail]', 10, true);
+    	var actionMetaData = e.getTarget('li[class=showmetadata]', 10, true);
+        var actionDelete = e.getTarget('a[class=delete]', 10, true);
+        var actionFavourite = e.getTarget('span.icon', 10, true); //TBD
+      
     	var action = null;
-    	if(button) {
-    		var buttonImg = button.down('img');
-    		var startIndex = (' '+buttonImg.dom.className+' ').indexOf(' action-');
-    		if(startIndex != -1) {
-    			action = buttonImg.dom.className.substring(startIndex).trim().split(' ')[0];
-    			action = action.split('-')[1];
-    		}    		
-    	}
+
+    	 if (actionDetail != null){
+         	Sbi.debug('view detail ');        	
+         	action = actionDetail.dom.className;
+    	 }else if (actionDelete != null){
+         	Sbi.debug('delete');        	
+         	action = actionDelete.dom.className;
+    	 }else if (actionMetaData != null){
+         	Sbi.debug('showMetadata');        	
+         	action = actionMetaData.dom.className;
+    	 }         	
     	
     	var r = this.folderView.getRecord(i);
     	if(r.engine) {

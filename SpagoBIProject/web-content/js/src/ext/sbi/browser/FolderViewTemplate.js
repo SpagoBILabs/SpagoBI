@@ -20,26 +20,27 @@ Sbi.browser.FolderViewTemplate = function(config) {
 
 	var documentAttributes = '';
 	var attributeNameView = '';
+	var img = Ext.BLANK_IMAGE_URL ;
+	var classImg = ' class="{typeCode}-icon" ';
+	var pathPreview = '';
+	if (Sbi.settings.widgets.FileUploadPanel && Sbi.settings.widgets.FileUploadPanel.imgUpload){
+		pathPreview = Sbi.settings.widgets.FileUploadPanel.imgUpload.directory || '';		
+	}
+	
+	this.services = this.services || new Array();
+	
+	var params = {LIGHT_NAVIGATOR_DISABLED: 'TRUE'};
+	params.directory = pathPreview;
+	params.operation = 'DOWNLOAD';
+	this.services['getImageContent'] = this.services['getImageContent'] || Sbi.config.serviceRegistry.getServiceUrl({
+		serviceName: 'MANAGE_FILE_ACTION'
+		, baseParams: params
+	});
 
 	for(var i = 0; i < config.metaDocument.length; i++) {
 
 		var meta = config.metaDocument[i];
-//		if(meta.visible) {		
-//			// translate meta.id if present
-//			attributeNameView = LN(meta.id);
-//			documentAttributes += '<p id="' + meta.id + '">';
-//			if(meta.showLabel) {
-//				//documentAttributes += '<span class="field-label">' + meta.id + ':</span>';
-//				documentAttributes += '<span class="field-label">' + attributeNameView + ':</span>';
-//			}
-//			if(meta.maxChars) {
-//				documentAttributes += '<span class="field-value" title="{' + meta.id + '}"> {[Ext.util.Format.ellipsis(values.' + meta.id + ', ' + meta.maxChars + ')]}</span>';
-//			} else {
-//				documentAttributes += '<span class="field-value"> {' + meta.id + '}</span>';
-//			}
-//
-//			documentAttributes += '</p>';
-//		}
+
 		if(meta.visible) {		
 			// translate meta.id if present
 			attributeNameView = LN(meta.id);
@@ -53,50 +54,53 @@ Sbi.browser.FolderViewTemplate = function(config) {
 				documentAttributes += '<span> {' + meta.id + '}</span>';
 			}
 			documentAttributes += '</p>';
-			
 		}		
 	}
 
-	var documentTpl = '' +
-	'<div id="document-item-icon" class="document-item-icon">' +
-	
-	'<tpl if="this.isSearchResult(summary) == true">'+
-		'<img src="' + Ext.BLANK_IMAGE_URL + '" class="{typeCode}-icon" ext:qtip="<b>{views}</b><br/>{summary}"></img>' +
-	'</tpl>'+
-	'<tpl if="this.isSearchResult(summary) == false">'+
-		'<img src="' + Ext.BLANK_IMAGE_URL + '" class="{typeCode}-icon"></img>' +
-	'</tpl>'+	    
-	'</div>' +
-    '<div class="item-desc">' +
-    documentAttributes +
-    '</div>';
-		
-	//dinamicizzare img con preview se esiste
-	var img = Sbi.config.contextName + '/themes/'+ Sbi.config.currTheme	+ '/img/dataset/img-map.jpg';
-	var classImg = "";
-	
-	img = Ext.BLANK_IMAGE_URL ;
-	classImg = ' class="{typeCode}-icon" ';
-
-	
-//	alert('<img  align="center" src="'+img+'" alt=" " '+classImg+'/>');
 	var documentTpl = ''+
-////	'<a href="#" class="box-container">'+
+	'<div class="box-container">'+
 		'<div id="document-item-icon"  class="box-figure">'+
-//		'<div id="document-item-icon"  class="document-item-icon">'+
-			'<img  align="center" src="'+img+'" alt=" " '+classImg+'/>'+
-//			'<img src="' + Ext.BLANK_IMAGE_URL + '" class="{typeCode}-icon"></img>' +
-//			'<tpl if="this.isSearchResult(summary) == true">'+
-//				'<img src="' + Ext.BLANK_IMAGE_URL + '" class="{typeCode}-icon" ext:qtip="<b>{views}</b><br/>{summary}"></img>' +
-//			'</tpl>'+
-//			'<tpl if="this.isSearchResult(summary) == false">'+
-//				'<img src="' + Ext.BLANK_IMAGE_URL + '" class="{typeCode}-icon"></img>' +
-//			'</tpl>'+	
+			'<tpl if="this.isSearchResult(summary) == true">'+
+				'<tpl if="this.exists(previewFile) == true">'+
+					'<img align="center" class="preview-icon" src="'+this.services['getImageContent']+'&fileName={previewFile}" + ext:qtip="<b>{views}</b><br/>{summary}"></img>' +
+				'</tpl>' +
+				'<tpl if="this.exists(previewFile) == false">'+
+					'<img align="center" src="' + img + '" '+ classImg+'" + ext:qtip="<b>{views}</b><br/>{summary}"></img>' +
+				'</tpl>' +				
+			'</tpl>'+
+			'<tpl if="this.isSearchResult(summary) == false">'+ 
+				'<tpl if="this.exists(previewFile) == true">'+
+					'<img align="center" class="preview-icon" src="'+this.services['getImageContent']+'&fileName={previewFile}"></img>' +
+				'</tpl>' +
+				'<tpl if="this.exists(previewFile) == false">'+
+					'<img align="center" src="' + img + '" '+ classImg+'" ></img>' +
+				'</tpl>' +
+			'</tpl>'+	
 			'<span class="shadow"></span>'+
+			'<div class="hover">'+
+	        	'<div class="box-actions-container">'+
+	            '    <ul class="box-actions">'+	    
+	            '		<tpl for="actions">'+  
+//	        	' 			<tpl if="this.isAction(name) == true && this.isAbleToCreateDocument(name) ">'+
+	            ' 			<tpl if="name != \'delete\'">'+
+		        ' 	       		<li class="{name}"><a href="#"></a></li>'+
+		        '			</tpl>'+
+		        '		</tpl>'+
+	            '    </ul>'+
+	            '</div>'+
+	            '<a href="#" class="delete">Cancella</a>'+
+	        '</div>'+
 		'</div>'+
-		'<div class="box-text">'+documentAttributes +'</div>';		
-////	'</a>';
-//	
+		'<div class="box-text">'+documentAttributes +'</div>'+
+		'  <div class="fav-container"> '+
+		'    <div class="fav"> '+
+		'         <span class="icon"></span> '+
+		'         <span class="counter">12</span> '+
+		'     </div> '+
+		'  </div>' +
+	'</div>';
+
+
 	
 	
 	var folderAttributes = '';
@@ -119,7 +123,7 @@ Sbi.browser.FolderViewTemplate = function(config) {
 	
 	var folderTpl = '' + 
 	'<tpl if="this.isHomeFolder(codType) == true">' +
-		'<div id="icon" class="folder_home"></div>' +
+		'<div id="icon" class="folder_home" ></div>' +
     '</tpl>' +
     '<tpl if="this.isHomeFolder(codType) == false">' + 
     	'<div id="icon" class="folder"></div>' + 
@@ -147,40 +151,24 @@ Sbi.browser.FolderViewTemplate = function(config) {
 	Sbi.browser.FolderViewTemplate.superclass.constructor.call(this, 
 			 '<div id="sample-ct">',
 	            '<tpl for=".">',
-	            '<div class="group">',
-	            '<h2><div class="group-header">{titleLabel} ({[values.samples.length]})</div></h2>',
-	            '<dl class="group-body">',
-	            	'<tpl if="samples.length == 0">',
-	            		'<div id="empty-group-message">',
-	            		noItem,
-	            		'</div>',
-	            	'</tpl>',
+//	            '<tpl if="{[values.samples.length]} &gt; 0">',
+	            	'<div class="group">',
+	            	'<h2><div class="group-header">{titleLabel} ({[values.samples.length]})</div></h2>',
+	            	'<dl class="group-body">',
+	            		'<tpl if="samples.length == 0">',
+	            			'<div id="empty-group-message">',
+	            			noItem,
+	            			'</div>',
+	            		'</tpl>',
+//	            	'</tpl>',
 	                '<tpl for="samples">',   
 	                	'{[engine=""]}',
 	                	'{[summary=""]}',
 	                	'{[views=""]}',
-	                	'<tpl if="this.exists(engine) == true">',
-	                		'<dd class="box">', //document
-	                    '</tpl>',
-	                    '<tpl if="this.exists(engine) == false">',
-	                    	'<dd class="group-item">', //Folder
-	                    '</tpl>',
-	                    //'<dd class="group-item">',
-//	                        '<div class="item-control-panel">',	 
-//	                        	'<tpl for="actions">',   
-//	                            	'<div class="button"><img class="action-{name}" title="{description}" src="' + Ext.BLANK_IMAGE_URL + '"/></div>',
-//	                            '</tpl>',
-//	                        '</div>',
-	                    	'{[actions=""]}',
-		                    '<div class="fav-container" style="width:{actions.length*45}px">',              	
-								'<tpl for="actions">',   
-									'<div class="fav">',
-										'<span class="action-{name}" title="{description}"></span>',
-									'</div>',
-								'</tpl>',
-							'</div>',
+	                	'{[previewFile=""]}',
 	                        // -- DOCUMENT -----------------------------------------------
 	                        '<tpl if="this.exists(engine) == true">',
+	                        	'<dd class="box">', //document
 	                        	documentTpl,
 	                        '</tpl>',
 	                        '<tpl if="this.exists(description) == false">',
@@ -188,6 +176,7 @@ Sbi.browser.FolderViewTemplate = function(config) {
 	                        '</tpl>',
 	                        // -- FOLDER -----------------------------------------------
 	                        '<tpl if="this.exists(engine) == false">',
+	                        	'<dd class="group-item">', //Folder
 	                        	folderTpl,
 	                        '</tpl>',
 	                    '</dd>',
@@ -209,12 +198,38 @@ Sbi.browser.FolderViewTemplate = function(config) {
 	        		}
 	        		
 	        	}
+	        	, isAction: function(o) {
+	        		if(typeof o != undefined  && o != null && o!='delete'){
+	        			return true;
+	        		}else{
+	        			return false;
+	        		}
+	        		
+	        	}
+	        	, isAbleToCreateDocument: function(o){
+	        		if (o!='detail') return true;
+	        		
+	    	    	var funcs = Sbi.user.functionalities;
+	    	    	if (funcs == null || funcs == undefined) return false;
+	    	    	
+	    	    	for (f in funcs){
+	    	    		if (funcs[f] == this.DETAIL_DOCUMENT || funcs[f] == this.CREATE_DOCUMENT){	    	    			
+	    	    			return true;
+	    	    			break;
+	    	    		}
+	    	    	}
+	    	    	
+	    	    	return false;
+	    	    }
 	        }
 	);
 }; 
    
     
 Ext.extend(Sbi.browser.FolderViewTemplate, Ext.XTemplate, {
-	
+	//constants
+    DETAIL_DOCUMENT: 'DocumentDetailManagement'
+  , CREATE_DOCUMENT: 'CreateDocument'
+  , services : null
 });
 

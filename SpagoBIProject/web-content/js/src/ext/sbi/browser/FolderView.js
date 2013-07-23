@@ -52,6 +52,7 @@ Ext.extend(Sbi.browser.FolderView, Ext.DataView, {
         return Sbi.browser.FolderView.superclass.onClick.apply(this, arguments);
     }
     
+	
     , onMouseOver : function(e) {    
       var group = e.getTarget('div[class=group-header]', 10, true);
       if(!group){
