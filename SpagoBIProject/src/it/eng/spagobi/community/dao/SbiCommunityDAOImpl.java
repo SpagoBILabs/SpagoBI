@@ -291,7 +291,18 @@ public class SbiCommunityDAOImpl extends AbstractHibernateDAO implements ISbiCom
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 			SbiCommunity hibComm = (SbiCommunity) aSession.load(SbiCommunity.class,id);
-
+			//get community users
+			String q = "from SbiCommunityUsers cu where cu.id.communityId = :id";
+			Query query = aSession.createQuery(q);
+			query.setInteger("id", id);
+			List hibList = query.list();
+			Iterator it = hibList.iterator();
+			//delete all users for community
+			while(it.hasNext()){
+				SbiCommunityUsers scu = (SbiCommunityUsers)it.next();
+				aSession.delete(scu);
+			}
+			
 			aSession.delete(hibComm);
 			tx.commit();
 		} catch (HibernateException he) {
