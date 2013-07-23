@@ -36,6 +36,7 @@ public class JSONDataWriter implements IDataWriter {
 	
 	private boolean putIDs = true;
 	private boolean adjust = false;
+	private boolean setRenderer = false;
 	private JSONArray fieldsOptions;
 	
 	private static final SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat( "dd/MM/yyyy" );
@@ -208,6 +209,10 @@ public class JSONDataWriter implements IDataWriter {
 				}
 				fieldMetaDataJSON.put("header", fieldHeader);						
 				fieldMetaDataJSON.put("dataIndex", fieldName);
+				//This will enable the use of a custom renderer in a Ext Grid
+				if(isSetRenderer()){
+					fieldMetaDataJSON.put("renderer", "myRenderer");
+				}
 
 				
 				addMeasuresScaleFactor(fieldsOptions,fieldMetaData.getName(),fieldMetaDataJSON);
@@ -318,6 +323,20 @@ public class JSONDataWriter implements IDataWriter {
 				}
 			}
 		}
+	}
+
+	/**
+	 * @return the setRenderer
+	 */
+	public boolean isSetRenderer() {
+		return setRenderer;
+	}
+
+	/**
+	 * @param setRenderer the setRenderer to set
+	 */
+	public void setSetRenderer(boolean setRenderer) {
+		this.setRenderer = setRenderer;
 	}
 
 }
