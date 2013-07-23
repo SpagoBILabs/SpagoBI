@@ -35,6 +35,7 @@ public interface IDataStore {
     
     List getFieldValues(int fieldIndex);    
     Set getFieldDistinctValues(int fieldIndex);
+    Set<String> getFieldDistinctValuesAsString(int fieldIndex);
     
     void sortRecords(int fieldIndex);    
     void sortRecords(int fieldIndex, Comparator filedComparator);    

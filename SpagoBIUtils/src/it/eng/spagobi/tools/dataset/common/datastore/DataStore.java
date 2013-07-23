@@ -178,11 +178,45 @@ public class DataStore implements IDataStore {
     		IField field = record.getFieldAt(fieldIndex);
     		if(field.getValue() != null) {
     			results.add(field.getValue());
-    		}
+    		} 
     	}
     	
     	return results;
     }
+    
+    public Set<String> getFieldDistinctValuesAsString(int fieldIndex) {
+    	Set<String> results;
+    	Iterator it;
+    	
+    	results = new LinkedHashSet();
+    	
+    	it = iterator();
+    	while( it.hasNext() ) {
+    		IRecord record = (IRecord)it.next();
+    		IField field = record.getFieldAt(fieldIndex);
+    		if(field.getValue() != null) {
+    			String normalizedValue;
+    			if (field.getValue() instanceof Number){
+    				Number number = (Number)field.getValue();
+    				Double numericValue = number.doubleValue();
+    				if ((numericValue == Math.floor(numericValue)) && !Double.isInfinite(numericValue)) {
+    				    //the number is an integer, this will remove the .0 trailing zeros
+    					int numericInt = numericValue.intValue();
+    					normalizedValue = String.valueOf(numericInt);
+    				} else {
+    					normalizedValue = String.valueOf(numericValue);
+
+    				}
+    			}
+    			
+    			normalizedValue = String.valueOf(field.getValue());
+    			results.add(normalizedValue);
+    		} 
+    	}
+    	
+    	return results;
+    }
+    
     
    public void sortRecords(int fieldIndex) {
     	final int fIndex = fieldIndex;
