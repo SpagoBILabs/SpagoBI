@@ -947,3 +947,12 @@ Sbi.locale.ln["error.mesage.description.data.set.parsing.error"]="Impossibile an
 
 Sbi.locale.ln["sbi.tools.dataset.datasetbrowser.title"]="Datasets";
 Sbi.locale.ln["sbi.tools.model.metamodelsbrowser.title"]="Modelli";
+
+//===================================================================
+//COMMUNITY
+//===================================================================
+Sbi.locale.ln["sbi.community.title"]="Community";
+Sbi.locale.ln["sbi.community.name"]="Nome";
+Sbi.locale.ln["sbi.community.descr"]="Descrizione";
+Sbi.locale.ln["sbi.community.owner"]="Proprietario";
+Sbi.locale.ln["sbi.community.id"]="Id";

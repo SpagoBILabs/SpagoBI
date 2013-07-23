@@ -10,7 +10,7 @@ Ext.define('Sbi.community.CommunityListDetailPanel', {
 		this.services =[];
 		this.initServices();
 		this.detailPanel =  Ext.create('Sbi.community.CommunityDetailPanel',{services: this.services});
-		this.columns = [{dataIndex:"communityId", header:'sbi.generic.name'},  {dataIndex:"name", header:'sbi.generic.descr'}];
+		this.columns = [{dataIndex:"communityId", header:'sbi.community.id'},  {dataIndex:"name", header:'sbi.community.name'}];
 		this.fields = ["communityId","name","description","owner"];
 		
 		this.detailPanel.on("save",this.onFormSave,this);

@@ -742,3 +742,11 @@ format : "dd/mm/yyyyy",
 startDay : 1
 });
 }
+//===================================================================
+//COMMUNITY
+//===================================================================
+Sbi.locale.ln["sbi.community.title"]="Communities";
+Sbi.locale.ln["sbi.community.name"]="Name";
+Sbi.locale.ln["sbi.community.descr"]="Description";
+Sbi.locale.ln["sbi.community.owner"]="Owner";
+Sbi.locale.ln["sbi.community.id"]="Id";
