@@ -38,7 +38,9 @@ public class PublisherService {
 
 		try {
 			String publisher = req.getParameter(PUBLISHER);
-			req.getRequestDispatcher(publisher).forward(req, servletResponse);
+			if(publisher!= null){
+				req.getRequestDispatcher(publisher).forward(req, servletResponse);
+			}
 
 		} catch (ServletException e) {
 			logger.error("Error dispatching request");
