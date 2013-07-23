@@ -15,9 +15,11 @@ import it.eng.spagobi.community.mapping.SbiCommunityUsers;
 import it.eng.spagobi.community.mapping.SbiCommunityUsersId;
 import it.eng.spagobi.profiling.bean.SbiUser;
 import it.eng.spagobi.profiling.dao.SbiAttributeDAOHibImpl;
+import it.eng.spagobi.tools.datasource.metadata.SbiDataSource;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -86,6 +88,7 @@ public class SbiCommunityDAOImpl extends AbstractHibernateDAO implements ISbiCom
 		logger.debug("IN");
 
 		Session aSession = null;
+		List<SbiCommunity> result = null;
 		Transaction tx = null;
 		try {
 			aSession = getSession();
@@ -94,7 +97,9 @@ public class SbiCommunityDAOImpl extends AbstractHibernateDAO implements ISbiCom
 			Query query = aSession.createQuery(q);
 			query.setString("userId", userId);
 
-			ArrayList<SbiCommunity> result = (ArrayList<SbiCommunity>)query.list();
+			List hibList = query.list();
+			Iterator it = hibList.iterator();
+
 			return result;
 		} catch (HibernateException he) {
 			logger.error(he.getMessage(), he);
@@ -114,6 +119,7 @@ public class SbiCommunityDAOImpl extends AbstractHibernateDAO implements ISbiCom
 		logger.debug("IN");
 
 		Session aSession = null;
+		List<SbiCommunity> result = null;
 		Transaction tx = null;
 		try {
 
@@ -123,7 +129,9 @@ public class SbiCommunityDAOImpl extends AbstractHibernateDAO implements ISbiCom
 			Query query = aSession.createQuery(q);
 			query.setString("userId", owner);
 
-			ArrayList<SbiCommunity> result = (ArrayList<SbiCommunity>)query.list();
+			List hibList = query.list();
+			Iterator it = hibList.iterator();
+
 			return result;
 		} catch (HibernateException he) {
 			logger.error(he.getMessage(), he);
@@ -143,6 +151,7 @@ public class SbiCommunityDAOImpl extends AbstractHibernateDAO implements ISbiCom
 
 		Session aSession = null;
 		Transaction tx = null;
+		SbiCommunity result = null;
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
@@ -150,8 +159,9 @@ public class SbiCommunityDAOImpl extends AbstractHibernateDAO implements ISbiCom
 			Query query = aSession.createQuery(q);
 			query.setString("name", name);
 
-			SbiCommunity result = (SbiCommunity)query.uniqueResult();
-			return result;
+			result = (SbiCommunity) query.uniqueResult();
+
+			return  result;
 		} catch (HibernateException he) {
 			logger.error(he.getMessage(), he);
 			if (tx != null)
@@ -241,6 +251,34 @@ public class SbiCommunityDAOImpl extends AbstractHibernateDAO implements ISbiCom
 			if (aSession != null) {
 				if (aSession.isOpen())
 					aSession.close();
+			}
+		}
+	}
+
+	public List<SbiCommunity> loadAllSbiCommunities() throws EMFUserError {
+		logger.debug("IN");
+		List<SbiCommunity> result = null;
+		Session aSession = null;
+		Transaction tx = null;
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+			String q = "from SbiCommunity";
+			Query query = aSession.createQuery(q);
+
+			result = query.list();
+
+
+			return result;
+		} catch (HibernateException he) {
+			logger.error(he.getMessage(), he);
+			if (tx != null)
+				tx.rollback();
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+		} finally {
+			logger.debug("OUT");
+			if (aSession!=null){
+				if (aSession.isOpen()) aSession.close();
 			}
 		}
 	}

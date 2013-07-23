@@ -63,16 +63,7 @@ public class RestExceptionMapper implements ExceptionMapper<Throwable>
 				//missing authentication --> go to login page
 			      {
 			    	 logger.debug("Missing authentication");
-			         String contextName = ChannelUtilities.getSpagoBIContextName(servletRequest);
-			         String addr= servletRequest.getServerName();
-			         Integer port=servletRequest.getServerPort();
-			         String proto =servletRequest.getScheme();
-			         String backUrl= request.getUri().getRequestUri().getPath();
-			         String community= (String)servletRequest.getParameter("community");
-			         String owner= (String)servletRequest.getParameter("owner");
-			         String userToAccept= (String)servletRequest.getParameter("userToAccept");
-			         String url= proto+"://"+addr+":"+port+""+contextName+"/servlet/AdapterHTTP?PAGE=LoginPage&NEW_SESSION=TRUE&"+SpagoBIConstants.BACK_URL+"="+backUrl
-			        		 +"&community="+community+"&owner="+owner+"&userToAccept="+userToAccept;
+			    	 String url = createUrl(request, servletRequest);
 			         return Response.status(302).location(URI.create(url)).build();
 
 			      }
@@ -101,7 +92,20 @@ public class RestExceptionMapper implements ExceptionMapper<Throwable>
 		return response;
 	}
 	
-
+	private String createUrl (HttpRequest request, HttpServletRequest servletRequest){
+        String contextName = ChannelUtilities.getSpagoBIContextName(servletRequest);
+        String addr= servletRequest.getServerName();
+        Integer port=servletRequest.getServerPort();
+        String proto =servletRequest.getScheme();
+        String backUrl= request.getUri().getRequestUri().getPath();
+        String community= (String)servletRequest.getParameter("community");
+        String owner= (String)servletRequest.getParameter("owner");
+        String userToAccept= (String)servletRequest.getParameter("userToAccept");
+        String url= proto+"://"+addr+":"+port+""+contextName+"/servlet/AdapterHTTP?PAGE=LoginPage&NEW_SESSION=TRUE&"+SpagoBIConstants.BACK_URL+"="+backUrl
+       		 +"&community="+community+"&owner="+owner+"&userToAccept="+userToAccept;
+        return url;
+		
+	}
 
 
 }

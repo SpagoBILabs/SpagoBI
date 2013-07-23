@@ -103,6 +103,10 @@
 					functionality="MenuManagement"
 					url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=MenuConfigurationPage"
 					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/wapp/menu16.png" />
+			<ITEM	title="#community.mng"
+					functionality="MenuManagement"
+					url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/community/ManageCommunity.jsp"
+					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/wapp/community.png" />
 		</ITEM>
 		<ITEM	code="tree_mng" 
 			title="#menu.TreeMng"
