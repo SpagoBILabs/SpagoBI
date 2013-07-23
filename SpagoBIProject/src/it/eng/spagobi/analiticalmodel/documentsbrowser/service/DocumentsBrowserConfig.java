@@ -8,6 +8,8 @@ package it.eng.spagobi.analiticalmodel.documentsbrowser.service;
 
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.configuration.ConfigSingleton;
+import it.eng.spagobi.commons.SingletonConfig;
+import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.container.SpagoBISourceBeanContainer;
 
 import java.util.HashMap;
@@ -82,6 +84,7 @@ public class DocumentsBrowserConfig {
 		documentFields.put("objectve", "objectve");
 		documentFields.put("keywords", "keywords");
 		documentFields.put("refreshSeconds", "refreshSeconds");
+		documentFields.put("resourcesPath", "resourcesPath");
 		
 		documentSearchableFields = new HashMap();
 		documentSearchableFields.put("label", "label");
@@ -171,7 +174,10 @@ public class DocumentsBrowserConfig {
 				if(c.get("maxChars") != null) {
 					attrD.put("maxChars", c.getInteger("maxChars"));
 				}
-					
+				SingletonConfig configSingleton = SingletonConfig.getInstance();
+				String path  = configSingleton.getConfigValue("SPAGOBI.RESOURCE_PATH_JNDI_NAME");
+				String resourcePath= SpagoBIUtilities.readJndiResource(path);
+				attrD.put("pathResources", resourcePath);
 				jsonDocs.put(attrD);
 			} else {
 				logger.info("field id [" + c.getString("id") + "] is not valid. The configuration row will be ignored");

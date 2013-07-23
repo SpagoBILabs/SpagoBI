@@ -5,15 +5,19 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.commons.serializer;
 
+import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
+import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IDomainDAO;
+import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.engines.config.bo.Exporters;
 import it.eng.spagobi.engines.config.dao.IEngineDAO;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -50,6 +54,7 @@ public class DocumentsJSONSerializer implements Serializer {
 	public static final String CREATIONUSER = "creationUser";
 	public static final String REFRESHSECONDS = "refreshSeconds";
 	public static final String PREVIEWFILE = "previewFile";
+	public static final String PATH_RESOURCES ="pathResources";
 	public static final String ACTIONS = "actions";
 	public static final String EXPORTERS = "exporters";
 	
@@ -101,7 +106,13 @@ public class DocumentsJSONSerializer implements Serializer {
 			result.put(CREATIONDATE, obj.getCreationDate());
 			result.put(CREATIONUSER, obj.getCreationUser());
 			result.put(REFRESHSECONDS, obj.getRefreshSeconds());
-			result.put(PREVIEWFILE, obj.getPreviewFile());
+			if (obj.getPreviewFile() != null){
+				SingletonConfig configSingleton = SingletonConfig.getInstance();
+				String path  = configSingleton.getConfigValue("SPAGOBI.RESOURCE_PATH_JNDI_NAME");
+				String resourcePath= SpagoBIUtilities.readJndiResource(path);
+				result.put(PATH_RESOURCES,resourcePath);
+				result.put(PREVIEWFILE,obj.getPreviewFile());
+			}
 			result.put(ACTIONS, new JSONArray());
 			 
 			Integer engineId=null;

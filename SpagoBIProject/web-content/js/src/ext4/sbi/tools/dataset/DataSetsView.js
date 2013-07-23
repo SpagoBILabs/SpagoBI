@@ -67,7 +67,10 @@ Ext.define('Sbi.tools.dataset.DataSetsView', {
 		
 		autoScroll : true,
 		
-		fromMyDataCtx : true
+		fromMyDataCtx : true,
+		
+	    DETAIL_DOCUMENT: 'DocumentDetailManagement',
+	    CREATE_DOCUMENT: 'CreateDocument'
 
 	}
 
@@ -116,10 +119,12 @@ Ext.define('Sbi.tools.dataset.DataSetsView', {
 //		if (!this.fromMyDataCtx ){
 //			img = "csv-xls-small.png";
 //		}
+		
+		
 		this.tpl = new Ext.XTemplate(
-				'<div id="dataset-view">', 	            
-	 	           '<div class="dataset-group-view">',
-	 	            '<ul>',
+				'<div id="list-container" class="main-datasets-list">', 	            
+//	 	           '<div class="dataset-group-view">',
+//	 	            '<ul>',
 	 	            	'<tpl if="root.length == 0">',
 	 	            		'<div id="empty-group-message">',
 	 	            		noItem,
@@ -127,39 +132,41 @@ Ext.define('Sbi.tools.dataset.DataSetsView', {
 	 	            	'</tpl>', 
 	 	            	'<tpl for=".">',
 							'<dd class="box">',
-								'<a href="#" class="box-container">',
+								'<div class="box-container">',
 									'<div class="box-figure">',
-										//'<img  align="center" src="/SpagoBI/themes/sbi_default/img/dataset/'+img+'" alt=" " />',
 										'<img  align="center" src="'+img+'" alt=" " />',
 										'<span class="shadow"></span>',
-//										'<div class="hover">',
-//		                                	'<div class="box-actions-container">',
-//		                                    '    <ul class="box-actions">',
-//		                                    '        <li class="view"><a href="#">Visualizza dataset</a></li>',
-//		                                    '        <li class="new-map last"><a href="#">Usa dataset in una nuova mappa</a></li>',
-//		                                    '    </ul>',
-//		                                    '</div>',
-//		                                    '<a href="#" class="delete">Cancella</a>',
-//		                                '</div>',
+										'<div class="hover">',
+			                                '<div class="box-actions-container">'+
+								            '    <ul class="box-actions">'+	    
+								            '		<tpl for="actions">'+  
+								        	' 			<tpl if="name != \'delete\' ">'+
+									        ' 	       		<li class="{name}"><a href="#"></a></li>'+
+									        '			</tpl>'+
+									        '		</tpl>'+
+								            '    </ul>'+
+								            '</div>'+
+								            '<a href="#" class="delete">Cancella</a>'+
+		                                '</div>',
 									'</div>',
 									'<div class="box-text">',
 										'<h2>{name}</h2>',
 										'<p>{[Ext.String.ellipsis(values.description, 100, false)]}</p>',
 										'<p class="modified">'+changed+' {dateIn}</p>',
 									'</div>',
-								'</a>',
-								'<div class="fav-container" style="width:{actions.length*45}px">',
-									'<tpl for="actions">',   
+								'</div>',
+								'<div class="fav-container" >',
+//									'<tpl for="favs">',   
 										'<div class="fav">',
-											'<span class="icon-{name}" title="{description}"></span>',
+											'<span class="icon" title="{description}"></span>',
 										'</div>',
-									'</tpl>',
+//									'</tpl>',
 								'</div>',
 							'</dd>',
 						 '</tpl>',	 
 						 '<div style="clear:left"></div>',
-					'</ul>',
-				'</div>',
+//					'</ul>',
+//				'</div>',
 			'</div>'
 		);
      
@@ -177,10 +184,16 @@ Ext.define('Sbi.tools.dataset.DataSetsView', {
 	onClick : function(obj, record, item, index, e, eOpts) {
 		var scope = this;
 
-        var actionDetail = e.getTarget('span.icon-detail', 10, true);
-        var actionDelete = e.getTarget('span.icon-delete', 10, true);
-        var actionWorksheet = e.getTarget('span.icon-worksheet', 10, true);
-        var actionGeoreport = e.getTarget('span.icon-georeport', 10, true);
+//        var actionDetail = e.getTarget('span.icon-detail', 10, true);
+//        var actionDelete = e.getTarget('span.icon-delete', 10, true);
+//        var actionWorksheet = e.getTarget('span.icon-worksheet', 10, true);
+//        var actionGeoreport = e.getTarget('span.icon-georeport', 10, true);
+
+    	var actionDetail = e.getTarget('li[class=detaildataset]', 10, true);
+    	var actionWorksheet = e.getTarget('li[class=worksheet]', 10, true);
+    	var actionGeoreport = e.getTarget('li[class=georeport]', 10, true);
+        var actionDelete = e.getTarget('a[class=delete]', 10, true);       
+        var actionFavourite = e.getTarget('span.icon', 10, true); //TBD
         
         //if (!this.fromMyDataCtx) actionWorksheet = true;
         
@@ -251,6 +264,31 @@ Ext.define('Sbi.tools.dataset.DataSetsView', {
 		
 		return true;
 	}
+
+	, isAction: function(o) {
+	
+		if((typeof o != undefined) && o != null && o=='delete'){
+			return false;
+		}else{
+			return true;
+		}
+		
+	}
+	, isAbleToCreateDocument: function(o){
+		if (o!='detail') return true;
+		
+    	var funcs = Sbi.user.functionalities;
+    	if (funcs == null || funcs == undefined) return false;
+    	
+    	for (f in funcs){
+    		if (funcs[f] == this.DETAIL_DOCUMENT || funcs[f] == this.CREATE_DOCUMENT){	    	    			
+    			return true;
+    			break;
+    		}
+    	}
+    	
+    	return false;
+    }
 
 
 });

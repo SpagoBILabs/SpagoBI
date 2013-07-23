@@ -42,6 +42,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
    String langIT = "#";
    String langEN = "#";
    String langDE = "#";
+   String logoutUrl="#";
 
    for(int i=0; i< jsonMenuList.length(); i++){
 	   Object menuObj = jsonMenuList.get(i);
@@ -52,6 +53,8 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 				mapsUrl = menuItem.getString("href").replace("'","\\'");
 			}else if(menuItem.has("iconCls") && menuItem.getString("iconCls").equalsIgnoreCase("my_data")){
 				datasetUrl = menuItem.getString("href").replace("'","\\'");
+			}else if(menuItem.has("iconCls") && menuItem.getString("iconCls").equalsIgnoreCase("power")){
+				logoutUrl = menuItem.getString("href").replace("'","\\'");
 			}else if(menuItem.has("itemLabel") && menuItem.getString("itemLabel") == "LANG"){
 				langEN = "javascript:execUrl(\\'/SpagoBI/servlet/AdapterHTTP?ACTION_NAME=CHANGE_LANGUAGE&LANGUAGE_ID=en&COUNTRY_ID=US\\')";
 				langIT = "javascript:execUrl(\\'/SpagoBI/servlet/AdapterHTTP?ACTION_NAME=CHANGE_LANGUAGE&LANGUAGE_ID=itn&COUNTRY_ID=IT\\')";
@@ -71,7 +74,7 @@ if (browsername.contains("MSIE")){
 <%  }	
 }else{
 %>	
-	<link id="spagobi-ext-4" rel="styleSheet" href ="/SpagoBI/themes/geobi/css/home40/standard.css" media="screen,projection,print" type="text/css" />
+	<link rel='stylesheet' type='text/css' href='<%=urlBuilder.getResourceLinkByTheme(request, "css/home40/standard.css",currTheme)%>'/>
 <%} %>
 <script>
 sessionExpiredSpagoBIJS = 'sessionExpiredSpagoBIJS';
@@ -101,18 +104,23 @@ Ext.onReady(function () {
 		'			<a href="#" id="logo">GeoBI - Geographic Business Intelligence</a> '+
 		'	        <nav class="main-buttons"> '+
 		'	        	<ul> '+
-		'	            	<li class="btn-maps active"><a href="<%=mapsUrl%>">Mappe<span></span></a></li> '+
+		'	            	<li class="btn-maps"><a href="<%=mapsUrl%>">Mappe<span></span></a></li> '+
 		'	                <li class="btn-datasets"><a href="<%=datasetUrl%>">Dataset<span></span></a></li> '+
 		'	            </ul> '+
 		'	        </nav> '+
 		'	    </div> '+
-		'	    <div class="top-bar" id="top-bar"> '+
+		'	    <div class="top-bar user-logged" id="top-bar"> '+
 		'	        <nav class="aux"> '+
 		'	            <ul class="top-menu" id="top-menu"> '+
 		'	                <li class="first"><a href="#">GeoBI Project</a></li> '+
 		'	                <li><a href="#">Tutorial</a></li> '+
 		'	                <li><a href="#">Termini e condizioni</a></li> '+
-		'	                <li class="user last"><a href="#"><span class="name">Emma Hofer</span> - <span class="company">ASTAT</span></a></li> '+
+		'	                <li class="user last"><a href="#"><span class="name">'+Sbi.user.userName+'</span> - <span class="company">ASTAT</span></a>'+
+		'						<ul> '+		
+        '                           <li><a href="#">Il mio account</a></li> '+
+        '                           <li class="last"><a href="<%=logoutUrl%>">Logout</a></li> '+
+        '                       </ul> '+
+        '					</li> '+
 		'	            </ul> '+
 		'	            <ul class="language-switcher"> '+
 		'	                <li class="active"><a href="<%=langIT%>">IT</a></li> '+

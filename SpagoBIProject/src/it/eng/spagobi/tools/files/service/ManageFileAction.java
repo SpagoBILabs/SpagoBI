@@ -77,12 +77,14 @@ public class ManageFileAction extends AbstractSpagoBIAction{ //AbstractHttpActio
 				HttpServletResponse response = getHttpResponse();	
 				response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\";");
 				FileInputStream fis = downloadFile(fileName);
-				byte[] content = GeneralUtilities.getByteArrayFromInputStream(fis);
-				response.setContentLength(content.length);
-				response.getOutputStream().write(content);
-				response.getOutputStream().flush();
-				if (fis != null)
-					fis.close();
+				if (fis != null){
+					byte[] content = GeneralUtilities.getByteArrayFromInputStream(fis);
+					response.setContentLength(content.length);
+					response.getOutputStream().write(content);
+					response.getOutputStream().flush();
+					if (fis != null)
+						fis.close();
+				}
 			}else{
 				throw new SpagoBIServiceException(getActionName(), "No valid operation [UPLOAD, DOWNLAOD] is required. ");
 			}
@@ -143,7 +145,7 @@ public class ManageFileAction extends AbstractSpagoBIAction{ //AbstractHttpActio
 			}else{
 				resourcePath += File.separatorChar+"files"; //default: is correct?
 			}
-			File file = new File(resourcePath);
+			File file = new File(resourcePath + File.separatorChar+ fileName);
 			if (!file.exists()){					
 				throw new SpagoBIServiceException(getActionName(), "Cannot found files or directory into server resources");
 			}
