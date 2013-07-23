@@ -10,30 +10,34 @@ import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
 
 import org.apache.log4j.Logger;
 
+/**
+ * PublisherService Rest service can be used to display a jsp. It can be called passing the
+ * request parameter "PUBLISHER" containing the uri to the requested resource.
+ * i.e. PUBLISHER=PUBLISHER=/WEB-INF/jsp/community/XXX.jsp 
+ * 
+ * @author franceschini
+ *
+ */
 
 @Path("/publish")
 public class PublisherService {
 	@Context
 	private HttpServletResponse servletResponse;
-	@Context
-	HttpSession session;
+
 	private static Logger logger = Logger.getLogger(PublisherService.class);
+	private static String PUBLISHER ="PUBLISHER";
 
 	@GET
-	@Produces(MediaType.APPLICATION_JSON)
 	public void publish(@Context HttpServletRequest req) {
 
 		try {
-			String publisher = req.getParameter("PUBLISHER");
+			String publisher = req.getParameter(PUBLISHER);
 			req.getRequestDispatcher(publisher).forward(req, servletResponse);
 
 		} catch (ServletException e) {
