@@ -48,13 +48,17 @@ public class CommunityManager {
 				SbiUser owner = userDao.loadSbiUserByUserId(community.getOwner());
 				
 				SbiAttribute attrMail = attrsDAO.loadSbiAttributeByName("email");
-				Integer attrId = attrMail.getAttributeId();
-				SbiUserAttributes userAttr= attrsDAO.loadSbiAttributesByUserAndId(owner.getId(), attrId);
-				String emailValue = userAttr.getAttributeValue();
-				
-				//2. sends the email
-				CommunityUtilities communityUtil = new CommunityUtilities();
-				boolean result = communityUtil.dispatchMail(communityName, user, owner, emailValue);
+				if(attrMail != null){
+					Integer attrId = attrMail.getAttributeId();
+					SbiUserAttributes userAttr= attrsDAO.loadSbiAttributesByUserAndId(owner.getId(), attrId);
+					String emailValue = userAttr.getAttributeValue();
+					
+					//2. sends the email
+					CommunityUtilities communityUtil = new CommunityUtilities();
+					boolean result = communityUtil.dispatchMail(communityName, user, owner, emailValue);
+				}else{
+					logger.info("Owner doesn't have an email address");
+				}
 				
 			}else{
 				//if doesn't exist then the community is created, together with a new folder with 
