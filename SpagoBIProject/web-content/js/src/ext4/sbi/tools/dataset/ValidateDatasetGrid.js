@@ -39,6 +39,7 @@ Ext.define('Sbi.tools.dataset.ValidateDatasetGrid', {
 	, constructor: function(config) {
 		
 		thisPanel = this;
+		Ext.QuickTips.init();
 
 		var defaultConf = {
 				//pagingConfig:{}, 
@@ -64,7 +65,7 @@ Ext.define('Sbi.tools.dataset.ValidateDatasetGrid', {
 			,baseParams: {}
     	});
 		
-		
+		/*
       	this.viewConfig = {
       	        getRowClass: function(record, index) {
       	            var c = record.get('column_1'); //example
@@ -82,11 +83,41 @@ Ext.define('Sbi.tools.dataset.ValidateDatasetGrid', {
 
       	        }
       	};
+      	*/
+      	
+      	Ext.util.Format.myRenderer = function(value,metaData,record,rowIndex,colIndex) {
+
+      		var validationErrors = thisPanel.store.getValidationErrors(); 
+      		if ((validationErrors != null) && (validationErrors != undefined)){
+  	            for (var i=0; i<validationErrors.length; i++) {
+     	        	 if (validationErrors[i].id == rowIndex){
+     	        		var val = validationErrors[i];
+     	        		 for(j in val){
+
+     	        	       var sub_key = j;
+     	        	       var sub_val = val[j];
+     	        	       var cIndex = sub_key.replace("column_","")
+     	        	       if (cIndex == colIndex){
+     	     	        		metaData.tdCls = 'custom-error';
+     	     	        		metaData.tdAttr = 'data-qtip="'+sub_val+'"';
+     	        	       }
+
+     	        	    } 
+
+     	        	 }
+     	           }
+	            }
+
+      		  
+      		return value;
+      	}
     	
     	this.callParent([defaultConf]);
     	this.store.on('load',function(){this.fireEvent('storeLoad')},this);
     	Sbi.debug('ValidateDatasetGrid costructor OUT');
     }
+
+
     
 	
 });

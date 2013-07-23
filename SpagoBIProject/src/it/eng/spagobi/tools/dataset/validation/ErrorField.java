@@ -31,12 +31,37 @@ public class ErrorField {
 	
 	private int columnIndex;
 	private IField field;
+	private String errorDescription;
+	
 	
 	public ErrorField(int columnIndex, IField field){
 		this.columnIndex = columnIndex;
 		this.field = field;
 	}
 	
+	public ErrorField(int columnIndex, IField field, String errorDescription){
+		this.columnIndex = columnIndex;
+		this.field = field;
+		this.errorDescription = errorDescription;
+	}
+	
+	
+	
+	/**
+	 * @return the errorDescription
+	 */
+	public String getErrorDescription() {
+		return errorDescription;
+	}
+
+	/**
+	 * @param errorDescription the errorDescription to set
+	 */
+	public void setErrorDescription(String errorDescription) {
+		this.errorDescription = errorDescription;
+	}
+
+
 	/**
 	 * @return the columnIndex
 	 */

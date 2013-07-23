@@ -54,15 +54,15 @@ public class ValidationErrors {
 	/*
 	 * add error on a specific rowNumber and columnNumber
 	 */
-	public void addError(Integer rowNumber ,Integer columnNumber, IField field){
+	public void addError(Integer rowNumber ,Integer columnNumber, IField field, String errorDescription){
 		List <ErrorField> errorsOnRecord = errorsMap.get(rowNumber);
 		if (errorsOnRecord == null){
 			errorsOnRecord = new ArrayList<ErrorField>();
-			ErrorField errorField = new ErrorField(columnNumber, field);
+			ErrorField errorField = new ErrorField(columnNumber, field, errorDescription);
 			errorsOnRecord.add(errorField);
 			errorsMap.put(rowNumber, errorsOnRecord);
 		} else {
-			ErrorField errorField = new ErrorField(columnNumber, field);
+			ErrorField errorField = new ErrorField(columnNumber, field, errorDescription);
 			errorsOnRecord.add(errorField);
 			errorsMap.put(rowNumber, errorsOnRecord);
 		}
