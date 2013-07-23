@@ -677,6 +677,7 @@ Sbi.locale.ln['sbi.ds.description']= 'Descrizione';
 Sbi.locale.ln['sbi.ds.wizard.general']= 'Generale';
 Sbi.locale.ln['sbi.ds.wizard.detail']= 'Dettaglio';
 Sbi.locale.ln['sbi.ds.wizard.metadata']= 'Metadata';
+Sbi.locale.ln['sbi.ds.wizard.validation']= 'Validazione';
 Sbi.locale.ln['sbi.ds.wizard.back']= '< Indietro';
 Sbi.locale.ln['sbi.ds.wizard.next']= 'Sucessivo >';
 Sbi.locale.ln['sbi.ds.wizard.confirm']= 'Conferma';
