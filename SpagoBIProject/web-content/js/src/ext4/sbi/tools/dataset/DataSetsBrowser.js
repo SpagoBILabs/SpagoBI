@@ -52,6 +52,10 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 			serviceName: 'selfservicedataset/testDataSet',
 			baseParams: baseParams
 		});
+		this.services["getDataStore"]= Sbi.config.serviceRegistry.getRestServiceUrl({
+			serviceName: 'selfservicedataset/getDataStore',
+			baseParams: baseParams
+		});
 	}
 	
 	,
@@ -268,6 +272,7 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 		this.wizardWin =  Ext.create('Sbi.tools.dataset.DataSetsWizard',config);	
 		this.wizardWin.on('save', this.saveDataset, this);
 		this.wizardWin.on('getMetaValues', this.getMetaValues, this);
+		//this.wizardWin.on('getDataStore', this.getDataStore, this);
     	this.wizardWin.show();
 	}
 	
@@ -286,6 +291,7 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 			this.wizardWin.on('save', this.saveDataset, this);
 			this.wizardWin.on('delete', this.deleteDataset, this);
 			this.wizardWin.on('getMetaValues', this.getMetaValues, this);
+			//this.wizardWin.on('getDataStore', this.getDataStore, this);
 	    	this.wizardWin.show();
 		}
 	}
@@ -390,6 +396,41 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 		});
 		
 	}
+	//TODO: to delete
+	,
+	getDataStore: function(values){ 
+		
+		var params = values;
+		
+		Ext.Ajax.request({
+			url: this.services["getDataStore"],
+			params: params,			
+			success : function(response, options) {				
+				if(response !== undefined  && response.responseText !== undefined && response.statusText=="OK") {
+					if(response.responseText!=null && response.responseText!=undefined){
+						if(response.responseText.indexOf("error.mesage.description")>=0){
+							//this.wizardWin.disableButton('confirm');
+							//this.wizardWin.goBack(1);
+							Sbi.exception.ExceptionHandler.handleFailure(response);
+						}else{			
+							//var newMeta = response.responseText;
+							//var newMetaDecoded =  Ext.decode(newMeta);				 
+							//this.wizardWin.metaInfo.updateData(newMetaDecoded.datasetColumns);
+							//this.wizardWin.metaInfo.updateGridData(newMetaDecoded.meta);
+							//if (this.wizardWin.isOwner){
+							//	this.wizardWin.enableButton('confirm');
+							//}
+						}
+					}
+				} else {
+					Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
+				}
+			},
+			scope: this,
+			failure: Sbi.exception.ExceptionHandler.handleFailure      
+		});
+		
+	}	
 	
 	/**
 	 * Opens the loading mask 

@@ -39,7 +39,7 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
 		this.addListener('navigate', this.navigate, this);
 		this.addListener('confirm', this.save, this);		
 		
-		this.addEvents('save','delete','getMetaValues');	
+		this.addEvents('save','delete','getMetaValues','getDataStore');	
 		
 	}
 	
@@ -50,6 +50,9 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
 		this.fieldsStep2 =  this.getFieldsTab2(); 
 			
 		this.fieldsStep3 =  this.getFieldsTab3(); 
+		
+		this.fieldsStep4 =  this.getFieldsTab4(); 
+
 
 	}
 	, initSteps: function(){
@@ -59,6 +62,7 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
 		steps.push({itemId:'0', title:LN('sbi.ds.wizard.general'), items: Sbi.tools.dataset.DataSetsWizard.superclass.createStepFieldsGUI(this.fieldsStep1)});
 		steps.push({itemId:'1', title:LN('sbi.ds.wizard.detail'), items: this.fieldsStep2});
 		steps.push({itemId:'2', title:LN('sbi.ds.wizard.metadata'), items: this.fieldsStep3});
+		steps.push({itemId:'3', title:LN('sbi.ds.wizard.validation'), items: this.fieldsStep4});
 		
 		return steps;
 	}
@@ -118,6 +122,18 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
 		this.metaInfo = new Sbi.tools.dataset.ManageDatasetFieldMetadata(config);
 		return this.metaInfo;
 	}
+	
+	, getFieldsTab4: function() {
+		//dataset validation tab
+		var config = {};
+		//create empty panel
+		this.validateDatasetInfo = new Sbi.tools.dataset.ValidateDataset(config);
+		return this.validateDatasetInfo;
+	}
+	
+	
+	
+	
 	, initWizardBar: function() {
 		var bar = this.callParent();
 		for (var i=0; i<bar.length; i++){
@@ -161,6 +177,14 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
 					}
 					this.fireEvent('getMetaValues', values);
 				}
+			 }
+			 if (newTabId == 3){
+				 var values = Sbi.tools.dataset.DataSetsWizard.superclass.getFormState();
+				 var fileValues = this.fileUpload.getFormState();
+				 Ext.apply(values, fileValues);
+				 var datasetMetadata = this.fieldsStep3.getFormState();
+				 values.datasetMetadata = Ext.JSON.encode(datasetMetadata) ;
+				 this.fieldsStep4.createDynamicGrid(values);
 			 }
 		 }else{			
 			newTabId -= (newTabId <= numTabs)?1:0;					
