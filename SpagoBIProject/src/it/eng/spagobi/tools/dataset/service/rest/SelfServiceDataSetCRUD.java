@@ -29,11 +29,18 @@ import it.eng.spagobi.tools.dataset.common.behaviour.UserProfileUtils;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IField;
 import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
+import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.tools.dataset.utils.DatasetMetadataParser;
+import it.eng.spagobi.tools.dataset.validation.ErrorField;
+import it.eng.spagobi.tools.dataset.validation.HierarchyLevel;
+import it.eng.spagobi.tools.dataset.validation.GeoDatasetValidatorFactory;
+import it.eng.spagobi.tools.dataset.validation.IDatasetValidator;
+import it.eng.spagobi.tools.dataset.validation.IDatasetValidatorFactory;
+import it.eng.spagobi.tools.dataset.validation.ValidationErrors;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
@@ -43,6 +50,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
@@ -57,6 +65,9 @@ import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 
 /**
  * @authors Antonella Giachino (antonella.giachino@eng.it)
@@ -300,6 +311,206 @@ public class SelfServiceDataSetCRUD {
 			}
 		}
 	}
+	
+	@POST
+	@Path("/getDataStore")
+	@Produces(MediaType.APPLICATION_JSON)
+	public String getDataStore(@Context HttpServletRequest req) {
+		IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+		Integer start = new Integer(0);
+		Integer limit = new Integer(10);
+		Integer resultNumber = null;
+		Integer maxSize = null;
+
+
+		try {
+			IDataSetDAO dao=DAOFactory.getDataSetDAO();
+			dao.setUserProfile(profile);
+			String datasetMetadata = (String)req.getParameter("datasetMetadata");
+
+			
+			IDataSet dataSet = recoverDataSetDetails(req, null);
+			String dsMetadata = getDatasetTestMetadata(dataSet, profile, datasetMetadata);
+			dataSet.setDsMetadata(dsMetadata);	
+			
+			
+			dataSet.loadData(start, limit, GeneralUtilities.getDatasetMaxResults());
+			IDataStore dataStore = dataSet.getDataStore(); 
+			
+			
+
+			
+			
+					
+			resultNumber = (Integer)dataStore.getMetaData().getProperty("resultNumber");
+
+			logger.debug("Total records: " + resultNumber);	
+			
+			boolean overflow = maxSize != null && resultNumber >= maxSize;
+			if (overflow) {
+				logger.warn("Query results number [" + resultNumber + "] exceeds max result limit that is [" + maxSize + "]");
+//				auditlogger.info("[" + userProfile.getUserId() + "]:: max result limit [" + maxSize + "] exceeded with SQL: " + sqlQuery);
+			}
+			
+			JSONDataWriter dataSetWriter = new JSONDataWriter();
+			JSONObject gridDataFeed = (JSONObject)dataSetWriter.write(dataStore);
+			//remove the recNo inside fields that is not managed by DynamicGridPanel
+			JSONObject metadata = gridDataFeed.getJSONObject("metaData");
+			if (metadata != null){
+				JSONArray fieldsArray = metadata.getJSONArray("fields");
+				boolean elementFound = false;
+				int i = 0;
+				for (; i < fieldsArray.length(); i++) {
+				    String element = fieldsArray.getString(i);
+				   if (element.equals("recNo")){
+					   elementFound = true;
+					   break;
+				   }
+				}
+				if (elementFound){
+					fieldsArray.remove(i);
+				}
+
+			}
+			
+			//TODO: Added validation
+			if (datasetMetadata != null)	{
+				Map<String, HierarchyLevel> hierarchiesColumnsToCheck = getHierarchiesColumnsToCheck(datasetMetadata);
+			
+				if (!hierarchiesColumnsToCheck.isEmpty()){
+					//Validate only if there are the proper metadata set
+					IDatasetValidatorFactory geoValidatorFactory = new GeoDatasetValidatorFactory();
+					//TODO: ottenere la categoria del dataset e passarla alla factory (adesso schiantato GEOBI)
+					IDatasetValidator geoValidator = geoValidatorFactory.getValidator("GEOBI");
+					//Validate the dataset and return the fields not valid
+					ValidationErrors validationErrors = geoValidator.validateDataset(dataStore,hierarchiesColumnsToCheck);
+				
+					if (!validationErrors.isEmpty()){
+						//this create an array containing the fields with error for each rows
+						JSONArray errorsArray  = validationErrorsToJSONObject(validationErrors);
+						gridDataFeed.put("validationErrors", errorsArray);
+
+					}
+				}
+
+			}		
+			//----------------------------
+			
+			return gridDataFeed.toString();
+			
+			
+			
+			
+		} catch (SpagoBIRuntimeException ex) {
+			logger.error("Cannot fill response container", ex);
+			updateAudit(req, profile, "DATA_SET.GETDATASTORE", null, "ERR");
+			logger.debug(ex.getMessage());
+			try {
+				return ( ExceptionUtilities.serializeException(ex.getMessage(),null));
+			} catch (Exception e) {
+				logger.debug("Cannot fill response container.");
+				throw new SpagoBIRuntimeException(
+						"Cannot fill response container", e);
+			}
+		} catch (RuntimeException ex) {
+			logger.error("Cannot fill response container", ex);
+			updateAudit(req, profile, "DATA_SET.GETDATASTORE", null, "ERR");
+			logger.debug(canNotFillResponseError);	
+			try {
+				return ( ExceptionUtilities.serializeException(parsingDSError,null));
+			} catch (Exception e) {
+				logger.debug("Cannot fill response container.");
+				throw new SpagoBIRuntimeException(
+						"Cannot fill response container", e);
+			}
+		}catch (Exception ex) {
+			logger.error("Cannot fill response container", ex);
+			updateAudit(req, profile, "DATA_SET.GETDATASTORE", null, "ERR");
+			logger.debug(canNotFillResponseError);
+			try {
+				return ( ExceptionUtilities.serializeException(canNotFillResponseError,null));
+			} catch (Exception e) {
+				logger.debug("Cannot fill response container.");
+				throw new SpagoBIRuntimeException(
+						"Cannot fill response container", e);
+			}
+		}
+	}
+	
+	public JSONArray validationErrorsToJSONObject(ValidationErrors validationErrors) throws JSONException{
+		
+		JSONArray errorsArray = new JSONArray();		
+		Map<Integer, List<ErrorField>> allErrors = validationErrors.getAllErrors();
+		
+		for (Map.Entry<Integer, List<ErrorField>> entry : allErrors.entrySet())
+		{
+		   JSONObject rowJSONObject = new JSONObject();
+		   rowJSONObject.put("id", String.valueOf(entry.getKey()));
+		    
+		   List<ErrorField> rowErrors = entry.getValue();
+		   for (ErrorField  errorColumn : rowErrors){
+			   rowJSONObject.put("column_"+errorColumn.getColumnIndex(),"error");
+		   }
+		   
+		   errorsArray.put(rowJSONObject);
+		}
+		return errorsArray;
+		
+		
+		
+	}
+	
+	private Map<String,HierarchyLevel> getHierarchiesColumnsToCheck(String datasetMetadata) throws JsonMappingException, JsonParseException, JSONException, IOException{
+		JSONObject metadataObject = null;
+		
+		Map<String,HierarchyLevel> hierarchiesColumnsToCheck = new HashMap<String,HierarchyLevel>();
+		
+		
+		if ((!datasetMetadata.equals("")) && (!datasetMetadata.equals("[]")))	{
+			metadataObject = JSONUtils.toJSONObject(datasetMetadata);			
+			JSONArray columnsMetadataArray =  metadataObject.getJSONArray("columns");
+			//JSONArray datasetMetadataArray =  metadataObject.getJSONArray("dataset");
+			
+			for(int j=0; j<columnsMetadataArray.length(); j++){
+				JSONObject columnJsonObject = columnsMetadataArray.getJSONObject(j);
+				String columnName = columnJsonObject.getString("column");					
+				String propertyName = columnJsonObject.getString("pname");
+				String propertyValue = columnJsonObject.getString("pvalue");
+				
+				
+				if (propertyName.equals("hierarchy")){
+					HierarchyLevel hierarchyLevel = hierarchiesColumnsToCheck.get(columnName);
+					
+					if (hierarchyLevel == null){
+						hierarchyLevel = new HierarchyLevel();	
+						hierarchyLevel.setHierarchy_name(propertyValue);
+						hierarchiesColumnsToCheck.put(columnName, hierarchyLevel);
+					} else {
+						hierarchyLevel.setHierarchy_name(propertyValue);
+						hierarchiesColumnsToCheck.put(columnName, hierarchyLevel);
+					}
+				}
+				if (propertyName.equals("hierarchy_level")){
+					HierarchyLevel hierarchyLevel = hierarchiesColumnsToCheck.get(columnName);
+					
+					if (hierarchyLevel == null){
+						hierarchyLevel = new HierarchyLevel();
+						hierarchyLevel.setLevel_name(propertyValue);
+						hierarchiesColumnsToCheck.put(columnName, hierarchyLevel);
+					} else {
+						hierarchyLevel.setLevel_name(propertyValue);
+						hierarchiesColumnsToCheck.put(columnName, hierarchyLevel);
+					}
+				}
+				
+				
+			}
+
+		}	
+		return hierarchiesColumnsToCheck;
+	}
+	
+	
 	private static void updateAudit(HttpServletRequest request,
 			IEngUserProfile profile, String action_code,
 			HashMap<String, String> parameters, String esito) {
