@@ -10,7 +10,7 @@ Ext.define('Sbi.community.CommunityListDetailPanel', {
 		this.services =[];
 		this.initServices();
 		this.detailPanel =  Ext.create('Sbi.community.CommunityDetailPanel',{services: this.services});
-		this.columns = [{dataIndex:"communityId", header:'sbi.community.id'},  {dataIndex:"name", header:'sbi.community.name'}];
+		this.columns = [{dataIndex:"communityId", header:LN('sbi.community.id')},  {dataIndex:"name", header:LN('sbi.community.name')}];
 		this.fields = ["communityId","name","description","owner"];
 		
 		this.detailPanel.on("save",this.onFormSave,this);
@@ -40,7 +40,7 @@ Ext.define('Sbi.community.CommunityListDetailPanel', {
 						if(response.responseText.indexOf("error.mesage.description")>=0){
 							Sbi.exception.ExceptionHandler.handleFailure(response);
 						}else{
-							Sbi.exception.ExceptionHandler.showInfoMessage(LN('sbi.datasource.deleted'));
+							Sbi.exception.ExceptionHandler.showInfoMessage(LN('sbi.community.deleted'));
 							this.grid.store.remove(record);
 							this.grid.store.commitChanges();
 						}
@@ -70,7 +70,7 @@ Ext.define('Sbi.community.CommunityListDetailPanel', {
 							if(respoceJSON.communityId){
 								record.communityId = respoceJSON.communityId;
 							}
-							Sbi.exception.ExceptionHandler.showInfoMessage(LN('sbi.datasource.saved'));
+							Sbi.exception.ExceptionHandler.showInfoMessage(LN('sbi.community.saved'));
 							var selectedRow = this.grid.getSelectionModel().getSelection();
 							
 							
