@@ -11,9 +11,9 @@ Ext.define('Sbi.community.CommunityListDetailPanel', {
 		this.initServices();
 		this.detailPanel =  Ext.create('Sbi.community.CommunityDetailPanel',{services: this.services});
 		this.columns = [{dataIndex:"communityId", header:'sbi.generic.name'},  {dataIndex:"name", header:'sbi.generic.descr'}];
-		//this.fields = ["DATASOURCE_ID","DATASOURCE_LABEL","DESCRIPTION","DRIVER","DIALECT_ID","DIALECT_CLASS","DIALECT_NAME","JNDI_URL","USER","PASSWORD","SCHEMA","MULTISCHEMA","CONNECTION_URL"];
+		this.fields = ["communityId","name","description","owner"];
+		
 		this.detailPanel.on("save",this.onFormSave,this);
-		this.detailPanel.on("test",this.onFormTest,this);
 		this.filteredProperties = ["name", "owner"];
 		this.buttonToolbarConfig = {
 				newButton: true
