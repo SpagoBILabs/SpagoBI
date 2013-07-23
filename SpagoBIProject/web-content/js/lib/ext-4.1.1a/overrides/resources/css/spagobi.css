@@ -39,8 +39,8 @@ Styles for the component Ext.ux.RadioColumn
 }
 
 
-.custom-error .x-grid-cell { 
-    background-color: #ffa; 
-    color: #cc2a36; 
+.custom-error  { 
+	background-color: #ffe2e2 !important; 
+    color: #900; 
 } 
 

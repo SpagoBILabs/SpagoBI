@@ -16,6 +16,7 @@ import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.dao.IDomainDAO;
 import it.eng.spagobi.commons.serializer.DataSetJSONSerializer;
 import it.eng.spagobi.commons.serializer.SerializationException;
 import it.eng.spagobi.commons.serializer.SerializerFactory;
@@ -336,12 +337,7 @@ public class SelfServiceDataSetCRUD {
 			
 			dataSet.loadData(start, limit, GeneralUtilities.getDatasetMaxResults());
 			IDataStore dataStore = dataSet.getDataStore(); 
-			
-			
 
-			
-			
-					
 			resultNumber = (Integer)dataStore.getMetaData().getProperty("resultNumber");
 
 			logger.debug("Total records: " + resultNumber);	
@@ -353,6 +349,7 @@ public class SelfServiceDataSetCRUD {
 			}
 			
 			JSONDataWriter dataSetWriter = new JSONDataWriter();
+			dataSetWriter.setSetRenderer(true);
 			JSONObject gridDataFeed = (JSONObject)dataSetWriter.write(dataStore);
 			//remove the recNo inside fields that is not managed by DynamicGridPanel
 			JSONObject metadata = gridDataFeed.getJSONObject("metaData");
@@ -373,28 +370,43 @@ public class SelfServiceDataSetCRUD {
 
 			}
 			
-			//TODO: Added validation
+			//Dataset Validation ---------------------------------------------
 			if (datasetMetadata != null)	{
 				Map<String, HierarchyLevel> hierarchiesColumnsToCheck = getHierarchiesColumnsToCheck(datasetMetadata);
 			
 				if (!hierarchiesColumnsToCheck.isEmpty()){
-					//Validate only if there are the proper metadata set
-					IDatasetValidatorFactory geoValidatorFactory = new GeoDatasetValidatorFactory();
-					//TODO: ottenere la categoria del dataset e passarla alla factory (adesso schiantato GEOBI)
-					IDatasetValidator geoValidator = geoValidatorFactory.getValidator("GEOBI");
-					//Validate the dataset and return the fields not valid
-					ValidationErrors validationErrors = geoValidator.validateDataset(dataStore,hierarchiesColumnsToCheck);
-				
-					if (!validationErrors.isEmpty()){
-						//this create an array containing the fields with error for each rows
-						JSONArray errorsArray  = validationErrorsToJSONObject(validationErrors);
-						gridDataFeed.put("validationErrors", errorsArray);
+					//We get the category of the dataset and with this we search for the appropriate validator
+					Integer categoryId = dataSet.getCategoryId();
+					if (categoryId != null){
+						IDomainDAO domainDao = DAOFactory.getDomainDAO();
+						Domain domain = domainDao.loadDomainById(categoryId);
+						String categoryValueName = domain.getValueName();
+						
+						//Validate only if there are the proper metadata set
+						IDatasetValidatorFactory geoValidatorFactory = new GeoDatasetValidatorFactory();
+						
+						IDatasetValidator geoValidator = geoValidatorFactory.getValidator(categoryValueName);
+						
+						if (geoValidator != null){
 
-					}
+							//Validate the dataset and return the fields not valid
+							ValidationErrors validationErrors = geoValidator.validateDataset(dataStore,hierarchiesColumnsToCheck);
+						
+							if (!validationErrors.isEmpty()){
+								//this create an array containing the fields with error for each rows
+								JSONArray errorsArray  = validationErrorsToJSONObject(validationErrors);
+								gridDataFeed.put("validationErrors", errorsArray);
+
+							}
+						}
+	
+					}					
+					
+
 				}
 
 			}		
-			//----------------------------
+			//-----------------------------------------------------------------
 			
 			return gridDataFeed.toString();
 			
@@ -449,7 +461,7 @@ public class SelfServiceDataSetCRUD {
 		    
 		   List<ErrorField> rowErrors = entry.getValue();
 		   for (ErrorField  errorColumn : rowErrors){
-			   rowJSONObject.put("column_"+errorColumn.getColumnIndex(),"error");
+			   rowJSONObject.put("column_"+errorColumn.getColumnIndex(),errorColumn.getErrorDescription());
 		   }
 		   
 		   errorsArray.put(rowJSONObject);

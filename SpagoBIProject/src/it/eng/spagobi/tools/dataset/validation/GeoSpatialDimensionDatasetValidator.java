@@ -94,12 +94,12 @@ public class GeoSpatialDimensionDatasetValidator  extends AbstractDatasetValidat
 				    	    		if(fieldValue != null)  {
 				    	    			if (!admissibleValues.contains(fieldValue))
 				    	    			{
-				    	    				//add error TODO: check if index are 0-based o 1-based
-				    	    				validationErrors.addError(rowNumber, columnIndex+1, field);
+				    	    				String errorDescription = "Error in validation: "+fieldValue+" is not valid for hierarchy "+GEO_HIERARCHY_NAME+" on level "+levelName;
+				    	    				validationErrors.addError(rowNumber, columnIndex, field, errorDescription);
 				    	    			}
 				    	    		} else {
-			    	    				//add error TODO: check if index are 0-based o 1-based
-			    	    				validationErrors.addError(rowNumber, columnIndex+1, field);
+			    	    				String errorDescription = "Error in validation: null is not valid for hierarchy "+GEO_HIERARCHY_NAME+" on level "+levelName;
+			    	    				validationErrors.addError(rowNumber, columnIndex, field, errorDescription);
 				    	    		}
 				    	    		rowNumber++;
 				    	    	}
