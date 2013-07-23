@@ -144,15 +144,15 @@ public class CommunityCRUDAction {
 			id = Integer.valueOf(idStr);
 		}
 		String name = (String)requestBodyJSON.opt("name");	
-		String description = (String)requestBodyJSON.opt("decsription");	
+		String description = (String)requestBodyJSON.opt("description");	
 		String owner = (String)requestBodyJSON.opt("owner");
-
+		String functCode = (String)requestBodyJSON.opt("functCode");
 		
 		com.setCommunityId(id);
 		com.setName(name);
 		com.setDescription(description);
 		com.setOwner(owner);
-				
+		com.setFunctCode(functCode);
 		return com;
 	}
 }

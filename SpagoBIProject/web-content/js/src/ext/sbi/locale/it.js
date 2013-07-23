@@ -955,6 +955,7 @@ Sbi.locale.ln["sbi.community.title"]="Community";
 Sbi.locale.ln["sbi.community.name"]="Nome";
 Sbi.locale.ln["sbi.community.descr"]="Descrizione";
 Sbi.locale.ln["sbi.community.owner"]="Proprietario";
+Sbi.locale.ln["sbi.community.functCode"]="Funzionalità";
 Sbi.locale.ln["sbi.community.id"]="Id";
 Sbi.locale.ln['sbi.community.saved']= 'Community salvata correttamente';
 Sbi.locale.ln['sbi.community.deleted']= 'Community cancellata correttamente';

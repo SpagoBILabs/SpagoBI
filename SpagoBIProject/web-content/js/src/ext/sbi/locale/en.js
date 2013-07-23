@@ -957,6 +957,7 @@ Sbi.locale.ln["sbi.community.title"]="Communities";
 Sbi.locale.ln["sbi.community.name"]="Name";
 Sbi.locale.ln["sbi.community.descr"]="Description";
 Sbi.locale.ln["sbi.community.owner"]="Owner";
+Sbi.locale.ln["sbi.community.functCode"]="Functionality";
 Sbi.locale.ln["sbi.community.id"]="Id";
 Sbi.locale.ln['sbi.community.saved']= 'Data source correctly saved';
 Sbi.locale.ln['sbi.community.deleted']= 'Data source correctly deleted';
