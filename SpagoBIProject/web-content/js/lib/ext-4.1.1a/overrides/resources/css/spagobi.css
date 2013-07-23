@@ -38,3 +38,9 @@ Styles for the component Ext.ux.RadioColumn
 	background-image:url('../img/form/question-trigger.gif');
 }
 
+
+.custom-error .x-grid-cell { 
+    background-color: #ffa; 
+    color: #cc2a36; 
+} 
+
