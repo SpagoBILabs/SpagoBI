@@ -259,7 +259,16 @@ public class FileDatasetXlsDataReader extends AbstractDataReader {
 				break;
 	
 			case HSSFCell.CELL_TYPE_NUMERIC:
-				valueField = String.valueOf(cell.getNumericCellValue());
+				Double numericValue = cell.getNumericCellValue();
+				//testing if the double is an integer value
+				if ((numericValue == Math.floor(numericValue)) && !Double.isInfinite(numericValue)) {
+				    //the number is an integer, this will remove the .0 trailing zeros
+					int numericInt = numericValue.intValue();
+					valueField = String.valueOf(numericInt);
+				} else {
+					valueField = String.valueOf(cell.getNumericCellValue());
+
+				}
 				break;
 	
 			case HSSFCell.CELL_TYPE_STRING:
