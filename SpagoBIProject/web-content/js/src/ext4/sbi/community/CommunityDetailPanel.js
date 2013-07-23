@@ -14,11 +14,7 @@ Ext.define('Sbi.community.CommunityDetailPanel', {
         border: false,
         services:[]
     }
-/*	fields: [
-	         "communityId",
-	         "name",
-	         "description",
-	         "owner"]*/
+
 	, constructor: function(config) {
 		this.initConfig(config);
 		this.initFields();
@@ -40,46 +36,42 @@ Ext.define('Sbi.community.CommunityDetailPanel', {
     }
 
 	, initFields: function(){
-		this.dataSourceId = Ext.create("Ext.form.field.Hidden",{
+		this.communityId = Ext.create("Ext.form.field.Hidden",{
 			name: "communityId"
 		});
-		this.dataSourceLabel = Ext.create("Ext.form.field.Text",{
+		this.name = Ext.create("Ext.form.field.Text",{
 			name: "name",
 			fieldLabel: LN('sbi.datasource.label'),
 			allowBlank: false
 		});
-		this.dataSourceDescription = Ext.create("Ext.form.field.Text",{
+		this.description = Ext.create("Ext.form.field.Text",{
 			name: "description",
 			fieldLabel: LN('sbi.datasource.description')
 		});
 
-		Ext.create("Ext.form.field.Text",{
+		this.owner = Ext.create("Ext.form.field.Text",{
 			name: "owner",
 			fieldLabel: LN('sbi.datasource.dialect'),
 			allowBlank: false
 		});	   
-    	
-
-		
+   
 	}
-//
-//	
-//	, validateForm: function(){
-//		var valid = true;
-//		var v = this.getValues();
-//
-//		valid = valid && (v.DIALECT_ID!=null && v.DIALECT_ID!=undefined &&  v.DIALECT_ID!="");
-//		valid = valid && (v.DATASOURCE_LABEL!=null && v.DATASOURCE_LABEL!=undefined &&  v.DATASOURCE_LABEL!="");
-//		if(v.TYPE == 'jndi'){
-//			valid = valid && (v.JNDI_URL!=null && v.JNDI_URL!=undefined &&  v.JNDI_URL!="");
-//		}else{
-//			valid = valid && (v.CONNECTION_URL!=null && v.CONNECTION_URL!=undefined &&  v.CONNECTION_URL!="");
-//			valid = valid && (v.USER!=null && v.USER!=undefined &&  v.USER!="");
-//			valid = valid && (v.PASSWORD!=null && v.PASSWORD!=undefined &&  v.PASSWORD!="");
-//			valid = valid && (v.DRIVER!=null && v.DRIVER!=undefined &&  v.DRIVER!="");
-//		}
-//		return valid;
-//	}
+	, setFormState: function(values){
+		var v = values;
+
+		this.getForm().setValues(v);
+	}
+	, getValues: function(){
+		var values = this.callParent();
+		return values;
+	}
+
+	
+	, validateForm: function(){
+		var valid = true;
+		
+		return valid;
+	}
 	
 });
     
