@@ -113,16 +113,54 @@ Sbi.browser.FolderDetailPanel = function(config) {
 		}
     });
     
+    var bannerHTML = ''+
+ 		'<div class="aux"> '+
+//		'    <div class="list-actions-container"> '+
+		'		<ul class="list-tab"> '+
+		'	    	<li class="active first"><a href="#">Tutte</a></li> '+
+		'	        <li><a href="#">ASTAT</a></li> '+
+		'	        <li class="favourite last"><a href="#">Favoriti</a></li> '+
+		'		</ul> '+
+		'	    <div class="list-actions"> '+
+		'	        <a href="#" class="btn-add" onClick="addNewDocument()"><span class="highlighted">Carica</span> mappa<span class="plus">+</span></a> '+
+//		'	        <form action="#" method="get" class="search-form"> '+
+//		'	            <fieldset> '+
+//		'	                <div class="field"> '+
+//		'	                    <label for="search">Cerca fra i dataset</label> '+
+//		'	                    <input type="text" name="search" id="search" value="Cerca per parola chiave..." /> '+
+//		'	                </div> '+
+//		'	                <div class="submit"> '+
+//		'	                    <input type="submit" value="Cerca" /> '+
+//		'	                </div> '+
+//		'	            </fieldset> '+
+//		'	        </form> '+
+		'	        <ul class="order"> '+
+		'	            <li class="active"><a href="#">Recenti<span class="arrow"></span></a></li> '+
+		'	            <li><a href="#">Valore 2</a></li> '+
+		'	            <li><a href="#">Altro valore</a></li> '+
+		'	        </ul> '+
+//		'	    </div> '+
+		'</div>' ;
+		
+		var bannerPanel = new Ext.Panel({
+			region: 'north',
+		   	autoScroll: false,
+//		    layout: 'fit',
+//		   	height: 100,
+		   	html: bannerHTML
+		});
    
     toolbarItems.push('->');	 
     if (this.isAbleToCreateDocument()){
     	toolbarItems.push(newDocumentButton);
     }
     toolbarItems.push(ttbarToggleViewButton);
-    this.toolbar = new Ext.Toolbar({
-      //cls: 'top-toolbar'
+
+    this.toolbar = new Ext.Toolbar({     
       items: toolbarItems
     });
+
+
     
     if (Sbi.settings.browser.showBreadCrumbs !== undefined && Sbi.settings.browser.showBreadCrumbs){
     	this.toolbar.breadcrumbs = new Array();
@@ -154,7 +192,7 @@ Sbi.browser.FolderDetailPanel = function(config) {
         , autoHeight: false
         , autoScroll:true
                
-        , items: this.folderView        
+        , items:[bannerPanel, this.folderView]        
         , tbar: this.toolbar 
         
         , listeners: {
@@ -330,12 +368,12 @@ Ext.extend(Sbi.browser.FolderDetailPanel, Ext.Panel, {
                 	} 
         	}
         	});
-        	
+        	 
         	this.toolbar.addSpacer();
         	this.toolbar.addDom('<image width="3" height="6" src="../themes/sbi_default/img/analiticalmodel/execution/c-sep.gif"></image>');
         	this.toolbar.addSpacer();
         }
-        
+
         this.toolbar.add({
     		text: breadcrumbs[breadcrumbs.length-1].name
     		, breadcrumb: breadcrumbs[breadcrumbs.length-1]
@@ -343,7 +381,7 @@ Ext.extend(Sbi.browser.FolderDetailPanel, Ext.Panel, {
     		, cls: 'sbi-last-folder'
     	});
         
-        this.reinitToolbar();
+       this.reinitToolbar();
     }
     
     , resetToolbar: function() {
