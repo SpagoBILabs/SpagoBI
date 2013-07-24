@@ -18,7 +18,7 @@ Ext.define('Sbi.community.CommunityDetailPanel', {
 	, constructor: function(config) {
 		this.initConfig(config);
 		this.initFields();
-		this.items=[this.communityId, this.name, this.description , this.owner, this.functCode]
+		this.items=[this.communityId, this.name, this.description , this.owner]
 		
 		this.addEvents('save');
 		this.tbar = Sbi.widget.toolbar.StaticToolbarBuilder.buildToolbar({items:[{name:'->'},{name:'save'}]},this);
@@ -55,12 +55,12 @@ Ext.define('Sbi.community.CommunityDetailPanel', {
 			allowBlank: false
 		});	   
 		
-		this.functCode = Ext.create("Ext.form.field.Text",{
-			name: "functCode",
-			fieldLabel: LN('sbi.community.functCode'),
-			readOnly : true,
-			allowBlank: true
-		});	
+//		this.functCode = Ext.create("Ext.form.field.Text",{
+//			name: "functCode",
+//			fieldLabel: LN('sbi.community.functCode'),
+//			readOnly : true,
+//			allowBlank: true
+//		});	
    
 	}
 	, setFormState: function(values){
