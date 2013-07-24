@@ -250,7 +250,7 @@ li:hover .login-panel .not-registered a:hover,.login-panel .not-registered a:hov
 /*dataset:*/
 .box .hover .box-actions .georeport a{background-image:url(../../../images/ico-newmap.png);background-position:13px 10px;background-repeat:no-repeat}
 .box .hover .box-actions .georeport a:hover{background-position:13px -30px}
-.box .hover .box-actions .detaildataset a{background-image:url('../../../img/analiticalmodel/browser/metadata.png');background-repeat: no-repeat;background-position: center center;}
+.box .hover .box-actions .detaildataset a{background-image:url('../../../images/ico-view-cian.png');background-repeat: no-repeat;background-position:9px 11px;}
 .box .hover .box-actions .detaildataset a:hover{background-position:9px -28px;background-repeat: no-repeat;}	
 .box .hover .box-actions .worksheet a{background-image:url('../../../img/analiticalmodel/browser/document_worksheet.png');background-repeat: no-repeat;background-position: center center;}
 .box .hover .box-actions .worksheet a:hover{background-position:9px -28px;background-repeat: no-repeat;}	
