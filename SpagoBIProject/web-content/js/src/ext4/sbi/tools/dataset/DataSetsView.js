@@ -146,7 +146,11 @@ Ext.define('Sbi.tools.dataset.DataSetsView', {
 									        '		</tpl>'+
 								            '    </ul>'+
 								            '</div>'+
-								            '<a href="#" class="delete">Cancella</a>'+
+								            '<tpl for="actions">'+   //TO OPTIMIZE WITHOUT CICLE ON ACTIONS!!!!
+								            '	<tpl if="name == \'delete\'">'+
+								            '		<a href="#" class="delete">Cancella</a>'+
+								            '	</tpl>' +
+								            '</tpl>' +
 		                                '</div>',
 									'</div>',
 									'<div class="box-text">',
