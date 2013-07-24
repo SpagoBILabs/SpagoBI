@@ -7,17 +7,10 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 <%@page language="java" 
 	contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"
 %>
+<%@ include file="/WEB-INF/jsp/wapp/homeBase.jsp"%>
     
 <!-- Include Ext stylesheets here: -->
-<link id="extall"     rel="styleSheet" href ="/SpagoBI/js/lib/ext-4.1.1a/resources/css/ext-all.css" type="text/css" />
-<link id="theme-gray" rel="styleSheet" href ="/SpagoBI/js/lib/ext-4.1.1a/resources/css/ext-all-gray.css" type="text/css" />
-<script type="text/javascript" src="/SpagoBI/js/lib/ext-4.1.1a/overrides/overrides.js"></script>
-
-<link id="spagobi-ext-4" rel="styleSheet" href ="/SpagoBI/js/lib/ext-4.1.1a/overrides/resources/css/spagobi.css" type="text/css" />
 <link id="spagobi-ext-4" rel="styleSheet" href ="/SpagoBI/themes/geobi/css/home40/layout.css" type="text/css" />
-<script type="text/javascript">
-    Ext.BLANK_IMAGE_URL = '/SpagoBI/js/lib/ext-4.1.1a/resources/themes/images/default/tree/s.gif';
-</script>
 
 <%-- Javascript object useful for session expired management (see also sessionExpired.jsp) --%>
 <script>
@@ -78,7 +71,7 @@ Ext.onReady(function () {
 	   	    items: itemsM
     	}]
     });
-    
+
     Ext.create('Ext.Viewport', {
     	
         layout: 'fit',

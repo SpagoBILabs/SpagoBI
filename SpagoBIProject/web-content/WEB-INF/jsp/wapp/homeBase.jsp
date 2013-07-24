@@ -28,9 +28,6 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 <%@ include file="/WEB-INF/jsp/commons/portlet_base410.jsp"%>
 <%@ include file="/WEB-INF/jsp/commons/importSbiJS410.jspf"%>
     
-<script type="text/javascript">
-    Ext.BLANK_IMAGE_URL = '/SpagoBI/js/lib/ext-4.1.1a/resources/themes/images/default/tree/s.gif';
-</script>
 
 <%
 	String contextName = ChannelUtilities.getSpagoBIContextName(request);
@@ -40,10 +37,12 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 	if(moduleResponse==null) moduleResponse=aServiceResponse;
 	
 	List lstMenu = new ArrayList();
-	
-	if (moduleResponse.getAttribute(MenuUtilities.LIST_MENU) != null){
-		lstMenu = (List)moduleResponse.getAttribute(MenuUtilities.LIST_MENU);
+	if (session.getAttribute(MenuUtilities.LIST_MENU) != null){
+		lstMenu = (List)session.getAttribute(MenuUtilities.LIST_MENU);
 	}
+	//if (moduleResponse.getAttribute(MenuUtilities.LIST_MENU) != null){
+	//	lstMenu = (List)moduleResponse.getAttribute(MenuUtilities.LIST_MENU);
+	//}
 	List filteredMenuList = MenuUtilities.filterListForUser(lstMenu, userProfile);
 	MenuListJSONSerializer serializer = new MenuListJSONSerializer(userProfile);
 	JSONArray jsonMenuList = (JSONArray) serializer.serialize(filteredMenuList,locale);
@@ -164,31 +163,12 @@ sessionExpiredSpagoBIJS = 'sessionExpiredSpagoBIJS';
 		}
 		
 	}
-	
-	String action = (String)aServiceRequest.getAttribute("ACTION_NAME");
  %>
- 
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext4/sbi/wapp/HomeBase.js")%>'></script> 
-<%--
- <%if (action != null && action.indexOf("START_ACTION_PUBLIC_USER")>=0) {%>
-  	<%@ include file="/themes/sbi_default/jsp/publicUserHome.jsp"%>
- <%}else{ %>
-	 <%@ include file="/themes/sbi_default/jsp/home.jsp"%>
- <%}%>	
- 
- <%if (action != null && action.indexOf("START_ACTION_PUBLIC_USER")>=0) {%>
-  	<%@ include file="/themes/geobi/jsp/publicUserHome.jsp"%>
- <%}else{ %>
-	 <%@ include file="/themes/geobi/jsp/home.jsp"%>
- <%}%>	
- --%>
-<%if (action != null && action.indexOf("START_ACTION_PUBLIC_USER")>=0) {%>
-  	<%@ include file="/themes/sbi_default/jsp/publicUserHome.jsp"%>
- <%}else if (isTechnicalUser){ %>
- 	 <%@ include file="/themes/sbi_default/jsp/adminHome.jsp"%>
- <%}else{ %>
-	 <%@ include file="/themes/sbi_default/jsp/userHome.jsp"%>
- <%}%>	
- 
+ <!-- Include Ext stylesheets here: -->
+<link id="extall"     	 rel="styleSheet" href ="/SpagoBI/js/lib/ext-4.1.1a/resources/css/ext-all.css" type="text/css" />
+<link id="theme-gray" 	 rel="styleSheet" href ="/SpagoBI/js/lib/ext-4.1.1a/resources/css/ext-all-gray.css" type="text/css" />
+<link id="spagobi-ext-4" rel="styleSheet" href ="/SpagoBI/js/lib/ext-4.1.1a/overrides/resources/css/spagobi.css" type="text/css" />
 
+<script type="text/javascript" src="/SpagoBI/js/lib/ext-4.1.1a/overrides/overrides.js"></script>
 
+<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext4/sbi/wapp/HomeBase.js")%>'></script>
