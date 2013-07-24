@@ -51,6 +51,8 @@ Ext.define('Sbi.tools.dataset.ValidateDatasetGrid', {
         this.height = 350;
         this.width = '100%';
         this.autoscroll =  true;
+        
+        this.firedValidationErrorFound = false;
 
 		//defaultConf = Ext.apply( defaultConf,config ||{} );
         defaultConf.params = config;
@@ -100,6 +102,13 @@ Ext.define('Sbi.tools.dataset.ValidateDatasetGrid', {
      	        	       if (cIndex == colIndex){
      	     	        		metaData.tdCls = 'custom-error';
      	     	        		metaData.tdAttr = 'data-qtip="'+sub_val+'"';
+     	     	        		
+     	     	        		if (!thisPanel.firedValidationErrorFound){
+         	     	        		this.fireEvent('validationErrorFound');
+         	     	        		thisPanel.firedValidationErrorFound = true;
+     	     	        		}
+     	     	        		
+
      	        	       }
 
      	        	    } 
@@ -113,9 +122,12 @@ Ext.define('Sbi.tools.dataset.ValidateDatasetGrid', {
       	}
     	
     	this.callParent([defaultConf]);
+		this.addEvents('validationErrorFound');	
+
     	this.store.on('load',function(){this.fireEvent('storeLoad')},this);
     	Sbi.debug('ValidateDatasetGrid costructor OUT');
     }
+	
 
 
     

@@ -81,7 +81,8 @@ public class GeoSpatialDimensionDatasetValidator  extends AbstractDatasetValidat
 			    				String levelName = level.getName();
 				    			IDataStore dataStoreLevel = hierarchy.getMembers(levelName); //return a dataStore with one column only
 
-				    			Set admissibleValues = dataStoreLevel.getFieldDistinctValuesAsString(0);
+				    			Set<String> admissibleValues = dataStoreLevel.getFieldDistinctValuesAsString(0);
+				    			String hint = generateHintValues(admissibleValues);
 
 				    			//Iterate the datastore (of the dataset) and check if values are ammissible
 				    			Iterator it = dataStore.iterator();
@@ -94,11 +95,11 @@ public class GeoSpatialDimensionDatasetValidator  extends AbstractDatasetValidat
 				    	    		if(fieldValue != null)  {
 				    	    			if (!admissibleValues.contains(fieldValue))
 				    	    			{
-				    	    				String errorDescription = "Error in validation: "+fieldValue+" is not valid for hierarchy "+GEO_HIERARCHY_NAME+" on level "+levelName;
+				    	    				String errorDescription = "Error in validation: "+fieldValue+" is not valid for hierarchy "+GEO_HIERARCHY_NAME+" on level "+levelName+". "+hint+"...";
 				    	    				validationErrors.addError(rowNumber, columnIndex, field, errorDescription);
 				    	    			}
 				    	    		} else {
-			    	    				String errorDescription = "Error in validation: null is not valid for hierarchy "+GEO_HIERARCHY_NAME+" on level "+levelName;
+			    	    				String errorDescription = "Error in validation: null is not valid for hierarchy "+GEO_HIERARCHY_NAME+" on level "+levelName+". "+hint+"...";
 			    	    				validationErrors.addError(rowNumber, columnIndex, field, errorDescription);
 				    	    		}
 				    	    		rowNumber++;
@@ -125,6 +126,25 @@ public class GeoSpatialDimensionDatasetValidator  extends AbstractDatasetValidat
 
 		
 		return validationErrors;
+	}
+	
+	//Generate a String with some possible admissible values as an hint
+	public String generateHintValues(Set<String> admissibleValues){
+		String hint = "Some possible values are: ";
+		
+		Iterator<String> it = admissibleValues.iterator();
+		int counter = 0;
+        while (it.hasNext()) {
+        	if (counter < 3){
+            	hint = hint+it.next()+", ";
+                counter++;
+        	} else {
+        		break;
+        	}
+
+        } 
+        return hint;
+		
 	}
 	
 	public boolean checkValue(Set admissibleValues, Object fieldValue){

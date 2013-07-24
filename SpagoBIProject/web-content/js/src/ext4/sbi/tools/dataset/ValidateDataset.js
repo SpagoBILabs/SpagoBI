@@ -123,7 +123,14 @@ Ext.define('Sbi.tools.dataset.ValidateDataset', {
 	    });
 		//----------------------------------------------
 		*/
-		
+    	this.warningMessage = new Ext.form.Label({
+			text : 'The validation didn\'t find errors.',
+			width:  400,
+			name: 'warningMessage',
+			readOnly:true,
+			style: 'color: #1ec31b'
+		});
+		//this.warningMessage.setVisible(false);
 
 		
 		// Main Panel ----------------------
@@ -132,7 +139,7 @@ Ext.define('Sbi.tools.dataset.ValidateDataset', {
 			  margins: '50 50 50 50',
 	          labelAlign: 'left',
 	          bodyStyle:'padding:5px',
-			  defaultType: 'textfield',
+			  defaultType: 'displayfield',
 			  height:500,
 			  layout: 'form',
 			  items: []
@@ -144,6 +151,14 @@ Ext.define('Sbi.tools.dataset.ValidateDataset', {
 	//Public Methods
 	
 	, createDynamicGrid: function(values){
+		this.mainPanel.remove(this.warningMessage);
+    	this.warningMessage = new Ext.form.Label({
+			text : 'The validation didn\'t find errors.',
+			width:  400,
+			name: 'warningMessage',
+			readOnly:true,
+			style: 'color: #1ec31b'
+		});
 		//remove previous instance of grid (if any)
 		if ((this.gridDataset != null) && (this.gridDataset != undefined)){
 			this.mainPanel.remove(this.gridDataset);
@@ -151,6 +166,25 @@ Ext.define('Sbi.tools.dataset.ValidateDataset', {
 		}
 		this.gridDataset = new Sbi.tools.dataset.ValidateDatasetGrid(values);
 		this.mainPanel.add(this.gridDataset);
+    	this.mainPanel.add(this.warningMessage);
+
+		
+		this.gridDataset.on('validationErrorFound', this.showError, this);
+
+	}
+	
+	, showError: function(){
+    	Sbi.debug('ValidateDataset SHOWING ERROR');
+		this.mainPanel.remove(this.warningMessage);
+    	this.warningMessage = new Ext.form.Label({
+			text : 'The validation has found some errors.',
+			width:  400,
+			name: 'warningMessage',
+			readOnly:true,
+			style: 'color: #900'
+		});
+    	this.mainPanel.add(this.warningMessage);
+		//this.warningMessage.setVisible(true);
 	}
 	
 	
