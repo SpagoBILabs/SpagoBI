@@ -114,7 +114,7 @@ Ext.define('Sbi.widgets.store.DynamicStore', {
 		return this.proxy.reader.jsonData.metaData.fields;
 	}
 	, getValidationErrors : function(){
-		Sbi.debug('store.getValidationErrors');
+		//Sbi.debug('store.getValidationErrors');
 		if ((this.proxy.reader.jsonData.validationErrors != null) && (this.proxy.reader.jsonData.validationErrors != undefined))
 		{ 
 			return this.proxy.reader.jsonData.validationErrors;
