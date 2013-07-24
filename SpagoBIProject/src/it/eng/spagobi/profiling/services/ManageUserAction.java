@@ -24,8 +24,6 @@ import it.eng.spagobi.dao.PagedList;
 import it.eng.spagobi.dao.QueryFilters;
 import it.eng.spagobi.dao.QueryStaticFilter;
 import it.eng.spagobi.profiling.bean.SbiAttribute;
-import it.eng.spagobi.profiling.bean.SbiExtUserRoles;
-import it.eng.spagobi.profiling.bean.SbiExtUserRolesId;
 import it.eng.spagobi.profiling.bean.SbiUser;
 import it.eng.spagobi.profiling.bean.SbiUserAttributes;
 import it.eng.spagobi.profiling.bean.SbiUserAttributesId;
@@ -244,11 +242,11 @@ public class ManageUserAction extends AbstractSpagoBIAction {
 			try {
 				id = userDao.fullSaveOrUpdateSbiUser(user);
 				
-				String communityName ="";
-				String email ="";
 				CommunityManager cm = new CommunityManager();				
-				
-				cm.saveCommunity(getCommunityAttr(user), userId);
+				String commName = getCommunityAttr(user);
+				if(commName!= null && !commName.equals("")){
+					cm.saveCommunity(commName, userId);
+				}
 
 				logger.debug("User updated or Inserted");
 			} catch (Throwable t) {

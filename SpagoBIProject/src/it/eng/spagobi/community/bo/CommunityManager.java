@@ -7,6 +7,7 @@ package it.eng.spagobi.community.bo;
 
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
+import it.eng.spagobi.analiticalmodel.functionalitytree.dao.ILowFunctionalityDAO;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.community.dao.ISbiCommunityDAO;
@@ -69,18 +70,22 @@ public class CommunityManager {
 				//1.creates a folder:
 				LowFunctionality aLowFunctionality = new LowFunctionality();
 				
+				ILowFunctionalityDAO lowFunct = DAOFactory.getLowFunctionalityDAO();
+				LowFunctionality root = lowFunct.loadRootLowFunctionality(false);
+				
 				aLowFunctionality.setCodType("COMMUNITY_FUNCT");
 				String code = "community"+Integer.valueOf(randomInt).toString();
 				aLowFunctionality.setCode(code);
 				aLowFunctionality.setName(communityName);
-				aLowFunctionality.setPath("/"+communityName);				
+				aLowFunctionality.setPath("/"+communityName);	
+				aLowFunctionality.setParentId(root.getId());
 				
 				//2.populates community bean
 				community = populateCommunity(userId, communityName, code);					
 				//4. saves community and user-community relashionship
 				commDAO.saveSbiComunityUsers(community, userId);
 				
-				Integer functId = DAOFactory.getLowFunctionalityDAO().insertCommunityFunctionality(aLowFunctionality);
+				Integer functId = lowFunct.insertCommunityFunctionality(aLowFunctionality);
 			}
 		} catch (EMFUserError e) {
 			logger.error(e.getMessage());

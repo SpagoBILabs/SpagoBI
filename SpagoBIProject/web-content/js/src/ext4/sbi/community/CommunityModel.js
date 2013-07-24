@@ -21,5 +21,6 @@ Ext.define('Sbi.community.CommunityModel', {
 	         "communityId",
 	         "name",
 	         "description",
-	         "owner"]
+	         "owner",
+	         "functCode"]
 });
