@@ -3,15 +3,18 @@
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. **/
- 
-  
- 
-  
 
 /**
  * 
  * @author Andrea Gioia (andrea.gioia@eng.it)
  */
+
+function myAdd(){
+	alert("myAdd");
+	var io = Ext.get("ciccio");
+//	Ext.get("doc-details").addNewDocument();
+	io.addNewDocument;
+}
 
 Ext.ns("Sbi.browser");
 
@@ -47,8 +50,6 @@ Sbi.browser.FolderDetailPanel = function(config) {
 		, serviceName: 'DetailBIObjectPage'
 		, baseParams: {LIGHT_NAVIGATOR_DISABLED: 'FALSE', MESSAGEDET: 'DETAIL_NEW'}
 	});
-	
-	
 	
 	// -- store -------------------------------------------------------
 	this.store = new Ext.data.JsonStore({
@@ -115,40 +116,49 @@ Sbi.browser.FolderDetailPanel = function(config) {
     
     var bannerHTML = ''+
  		'<div class="aux"> '+
-//		'    <div class="list-actions-container"> '+
+		'    <div class="list-actions-container"> '+
 		'		<ul class="list-tab"> '+
 		'	    	<li class="active first"><a href="#">Tutte</a></li> '+
 		'	        <li><a href="#">ASTAT</a></li> '+
 		'	        <li class="favourite last"><a href="#">Favoriti</a></li> '+
 		'		</ul> '+
 		'	    <div class="list-actions"> '+
-		'	        <a href="#" class="btn-add" onClick="addNewDocument()"><span class="highlighted">Carica</span> mappa<span class="plus">+</span></a> '+
-//		'	        <form action="#" method="get" class="search-form"> '+
-//		'	            <fieldset> '+
-//		'	                <div class="field"> '+
-//		'	                    <label for="search">Cerca fra i dataset</label> '+
-//		'	                    <input type="text" name="search" id="search" value="Cerca per parola chiave..." /> '+
-//		'	                </div> '+
-//		'	                <div class="submit"> '+
-//		'	                    <input type="submit" value="Cerca" /> '+
-//		'	                </div> '+
-//		'	            </fieldset> '+
-//		'	        </form> '+
+//		'	        <a href="#" class="btn-add" onClick="addNewDocument()"><span class="highlighted">Carica</span> mappa<span class="plus">+</span></a> '+
+		'	        <a id="newDocument" href="#" onclick="myAdd()" class="btn-add"><span class="highlighted">Carica</span> mappa<span class="plus">+</span></a> '+
+//		'	        <a id="newDocument" href="#"  class="btn-add"><span class="highlighted">Carica</span> mappa<span class="plus">+</span></a> '+
+		'	        <form action="#" method="get" class="search-form"> '+
+		'	            <fieldset> '+
+		'	                <div class="field"> '+
+		'	                    <label for="search">Cerca fra i dataset</label> '+
+		'	                    <input type="text" name="search" id="search" value="Cerca per parola chiave..." /> '+
+		'	                </div> '+
+		'	                <div class="submit"> '+
+		'	                    <input type="submit" value="Cerca" /> '+
+		'	                </div> '+
+		'	            </fieldset> '+
+		'	        </form> '+
 		'	        <ul class="order"> '+
 		'	            <li class="active"><a href="#">Recenti<span class="arrow"></span></a></li> '+
 		'	            <li><a href="#">Valore 2</a></li> '+
 		'	            <li><a href="#">Altro valore</a></li> '+
 		'	        </ul> '+
-//		'	    </div> '+
+		'	    </div> '+
 		'</div>' ;
-		
-		var bannerPanel = new Ext.Panel({
-			region: 'north',
-		   	autoScroll: false,
-//		    layout: 'fit',
+    
+       
+	
+	var bannerPanel = new Ext.Panel({
+		id:'banner-doc',
+	   	autoScroll: false,
+	   	layout:'fit',
+//		   	margin:'30',
 //		   	height: 100,
-		   	html: bannerHTML
-		});
+	   	html: bannerHTML   
+	});
+//	bannerPanel.on('onclick',this.addNewDocument,this);
+	
+	
+	
    
     toolbarItems.push('->');	 
     if (this.isAbleToCreateDocument()){
@@ -184,9 +194,10 @@ Sbi.browser.FolderDetailPanel = function(config) {
     
     // -- mainPanel -----------------------------------------------------------
     this.mainPanel = new Ext.Panel({
-        id:'doc-details'
+//    	layout:'border',
+         id:'doc-details'
         , cls: this.modality
-        , autoHeight: true
+//        , autoHeight: true
         , collapsible: true
         , frame: true
         , autoHeight: false
@@ -198,7 +209,7 @@ Sbi.browser.FolderDetailPanel = function(config) {
         , listeners: {
 		    'render': {
             	fn: function() {
-          	 	this.loadingMask = new Sbi.decorator.LoadMask(this.mainPanel.body, {msg:LN('sbi.browser.folderdetailpanel.waitmsg')}); 
+            		this.loadingMask = new Sbi.decorator.LoadMask(this.mainPanel.body, {msg:LN('sbi.browser.folderdetailpanel.waitmsg')}); 
             	},
             	scope: this
           	}
@@ -224,6 +235,10 @@ Sbi.browser.FolderDetailPanel = function(config) {
     } else {
         this.loadFolder(config.folderId, config.folderId);
     }
+    
+    var newDoc =  Ext.select("#newDocument");
+//    var newDoc =  Ext.get("newDocument");
+	newDoc.on('onclick', this.addNewDocument, this);
 };
 
 
@@ -240,6 +255,8 @@ Ext.extend(Sbi.browser.FolderDetailPanel, Ext.Panel, {
     , folderView: null
     , loadingMask: null
     , folderId: null
+    
+    , id:'ciccio'
 
     
     , toggleDisplayModality: function() {
@@ -275,6 +292,7 @@ Ext.extend(Sbi.browser.FolderDetailPanel, Ext.Panel, {
       this.loadingMask.hide();
     }
 	, addNewDocument: function() {
+		alert("addNewDocument");
 		var urlToCall = this.services['newDocument'];
 		
 		if(this.folderId != null){
