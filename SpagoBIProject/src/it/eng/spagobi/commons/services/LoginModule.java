@@ -30,7 +30,6 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IConfigDAO;
 import it.eng.spagobi.commons.metadata.SbiExtRoles;
 import it.eng.spagobi.commons.utilities.AuditLogUtilities;
-import it.eng.spagobi.commons.utilities.ChannelUtilities;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.HibernateUtil;
 import it.eng.spagobi.commons.utilities.StringUtilities;
@@ -45,34 +44,33 @@ import it.eng.spagobi.services.security.service.ISecurityServiceSupplier;
 import it.eng.spagobi.services.security.service.SecurityServiceSupplierFactory;
 import it.eng.spagobi.tenant.Tenant;
 import it.eng.spagobi.tenant.TenantManager;
+import it.eng.spagobi.utilities.themes.ThemesManager;
 import it.eng.spagobi.wapp.services.ChangeTheme;
 import it.eng.spagobi.wapp.util.MenuUtilities;
 
-import java.sql.Connection;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
-import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
-import org.apache.log4j.jdbc.JDBCAppender;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
-import org.hibernate.Transaction;
 
 public class LoginModule extends AbstractHttpModule {
 
 	static Logger logger = Logger.getLogger(LoginModule.class);
 
 	private static final String PROP_NODE = "changepwd.";
+	public static final String LIST_MENU = "LIST_MENU";
 
 	/**  The format date to manage the data validation. */
 	private static final String DATE_FORMAT = "yyyy-MM-dd";
@@ -96,6 +94,7 @@ public class LoginModule extends AbstractHttpModule {
 		
 		String theme_name=(String)request.getAttribute(ChangeTheme.THEME_NAME);
 		logger.debug("theme selected: "+theme_name);
+		String currTheme = "";
 
 		String activeStr = SingletonConfig.getInstance().getConfigValue("SPAGOBI_SSO.ACTIVE");
 		boolean activeSoo=false;
@@ -112,8 +111,12 @@ public class LoginModule extends AbstractHttpModule {
 		// Set THEME
 		if (theme_name!=null && theme_name.length()>0){
 			permSess.setAttribute(SpagoBIConstants.THEME, theme_name);
+			currTheme = theme_name;
+		}else{
+			currTheme=ThemesManager.getCurrentTheme(reqCont);
+	    	if(currTheme==null)currTheme=ThemesManager.getDefaultTheme();			
 		}
-
+		logger.debug("currTheme: "+currTheme);
 
 
 		// updates locale information on permanent container for Spago messages mechanism
@@ -183,11 +186,17 @@ public class LoginModule extends AbstractHttpModule {
 					// user is authenticated, nothing to do
 					logger.debug("User is authenticated");
 					// fill response
-					MenuUtilities.getMenuItems(request, response, profile);
-					// set publisher name
-					
+					List lstMenu = MenuUtilities.getMenuItems(profile);					
 					if(backUrl == null){
-						response.setAttribute(SpagoBIConstants.PUBLISHER_NAME, "userhome");
+						String url = "/themes/" + currTheme	+ "/jsp/";
+						if (UserUtilities.isTechnicalUser(profile)){
+							url += "adminHome.jsp";
+						}else{
+							url += "userHome.jsp";
+						}
+						servletRequest.getSession().setAttribute(LIST_MENU, lstMenu);
+						getHttpRequest().getRequestDispatcher(url).forward(getHttpRequest(), getHttpResponse());
+						//response.setAttribute(SpagoBIConstants.PUBLISHER_NAME, "userhome");
 					}else{
 						servletRequest.getSession().setAttribute(IEngUserProfile.ENG_USER_PROFILE, profile);
 						getHttpResponse().sendRedirect(backUrl);
@@ -217,9 +226,17 @@ public class LoginModule extends AbstractHttpModule {
 					// user is authenticated, nothing to do
 					logger.debug("User is authenticated");
 					// fill response
-					MenuUtilities.getMenuItems(request, response, profile);
+					List lstMenu = MenuUtilities.getMenuItems(profile);			
 					// set publisher name
-					response.setAttribute(SpagoBIConstants.PUBLISHER_NAME, "userhome");
+					String url = "/themes/" + currTheme	+ "/jsp/";
+					if (UserUtilities.isTechnicalUser(profile)){
+						url += "adminHome.jsp";
+					}else{
+						url += "userHome.jsp";
+					}						
+					servletRequest.getSession().setAttribute(LIST_MENU, lstMenu);
+					getHttpRequest().getRequestDispatcher(url).forward(getHttpRequest(), getHttpResponse());
+					//response.setAttribute(SpagoBIConstants.PUBLISHER_NAME, "userhome");
 					return;
 				} 
 			}	
@@ -393,11 +410,19 @@ public class LoginModule extends AbstractHttpModule {
 			}
 			//End writing log in the DB
 	
-			MenuUtilities.getMenuItems(request, response, profile);
-	
+			List lstMenu = MenuUtilities.getMenuItems(profile);
+			
 			
 			if(backUrl == null){
-				response.setAttribute(SpagoBIConstants.PUBLISHER_NAME, "userhome");
+				String url = "/themes/" + currTheme	+ "/jsp/";
+				if (UserUtilities.isTechnicalUser(profile)){
+					url += "adminHome.jsp";
+				}else{
+					url += "userHome.jsp";
+				}				
+				servletRequest.getSession().setAttribute(LIST_MENU, lstMenu);				
+				getHttpRequest().getRequestDispatcher(url).forward(getHttpRequest(), getHttpResponse());
+				//response.setAttribute(SpagoBIConstants.PUBLISHER_NAME, "userhome");
 			}else{
 				servletRequest.getSession().setAttribute(IEngUserProfile.ENG_USER_PROFILE, profile);
 				getHttpResponse().sendRedirect(backUrl);

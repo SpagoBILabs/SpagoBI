@@ -163,6 +163,66 @@ public class MenuUtilities {
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 500, new Vector(), params);
 		}
 	}
+	
+	/**
+	 * Gets the elements of menu relative by the user logged. It reaches the role from the request and 
+	 * asks to the DB all detail
+	 * menu information, by calling the method <code>loadMenuByRoleId</code>.
+	 *   
+	 * @param request The request Source Bean
+	 * @param response The response Source Bean
+	 * @throws EMFUserError If an exception occurs
+	 */   
+	public static List getMenuItems(IEngUserProfile profile) throws EMFUserError {
+		try {	
+			List lstFinalMenu = new ArrayList();
+			boolean technicalMenuLoaded = false;
+
+			Collection lstRolesForUser = ((UserProfile)profile).getRolesForUse();
+			logger.debug("** Roles for user: " + lstRolesForUser.size());
+
+			Object[] arrRoles = lstRolesForUser.toArray();
+			Integer levelItem = 1;			
+			for (int i=0; i< arrRoles.length; i++) {
+				logger.debug("*** arrRoles[i]): " + arrRoles[i]);
+				Role role = (Role)DAOFactory.getRoleDAO().loadByName((String)arrRoles[i]);
+				if (role != null) {	
+					
+					List menuItemsForARole  = DAOFactory.getMenuRolesDAO().loadMenuByRoleId(role.getId());
+					if (menuItemsForARole != null) {
+						mergeMenuItems(lstFinalMenu, menuItemsForARole);
+					} else {
+						logger.debug("Not found menu items for user role " + (String) arrRoles[i] );
+					}
+					
+					if (!technicalMenuLoaded && UserUtilities.isTechnicalUser(profile)){ 
+						//list technical user menu
+						technicalMenuLoaded = true;						
+						List firstLevelItems = ConfigSingleton.getInstance().getAttributeAsList("TECHNICAL_USER_MENU.ITEM");
+						Iterator it = firstLevelItems.iterator();
+						while (it.hasNext()) {
+							SourceBean itemSB = (SourceBean) it.next();
+							if (isAbleToSeeItem(itemSB, profile)) {
+
+								lstFinalMenu.add(getAdminItemRec(itemSB, levelItem, profile, null));
+								levelItem++;
+							}
+						}						
+					}			      		        										
+				}
+				else
+					logger.debug("Role " + (String)arrRoles[i] + " not found on db");
+			}		
+
+			logger.debug("List Menu Size " + lstFinalMenu.size());
+			return lstFinalMenu;
+		} catch (Exception ex) {
+			logger.error("Cannot fill response container" + ex.getLocalizedMessage());	
+			HashMap params = new HashMap();
+			params.put(AdmintoolsConstants.PAGE, MODULE_PAGE);
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 500, new Vector(), params);
+		}
+	}
 
 	private static void mergeMenuItems(List finalMenuList, List menuItemsForARole) {
 		for (int j = 0; j < menuItemsForARole.size(); j++) {

@@ -101,7 +101,7 @@ public class SelfServiceDataSetCRUD {
 			
 			//sets action to modify dataset			
 			JSONObject detailAction = new JSONObject();
-			detailAction.put("name", "detail");
+			detailAction.put("name", "detaildataset");
 			detailAction.put("description", "Dataset detail");	
 			
 			JSONObject deleteAction = new JSONObject();
