@@ -8,16 +8,12 @@ package it.eng.spagobi.community.dao;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.analiticalmodel.functionalitytree.metadata.SbiFunctions;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
-import it.eng.spagobi.commons.metadata.SbiExtRoles;
 import it.eng.spagobi.community.mapping.SbiCommunity;
 import it.eng.spagobi.community.mapping.SbiCommunityUsers;
 import it.eng.spagobi.community.mapping.SbiCommunityUsersId;
-import it.eng.spagobi.profiling.bean.SbiUser;
-import it.eng.spagobi.profiling.dao.SbiAttributeDAOHibImpl;
-import it.eng.spagobi.tools.datasource.metadata.SbiDataSource;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -302,7 +298,23 @@ public class SbiCommunityDAOImpl extends AbstractHibernateDAO implements ISbiCom
 				SbiCommunityUsers scu = (SbiCommunityUsers)it.next();
 				aSession.delete(scu);
 			}
-			
+			//get functionalities
+			String fq = "from SbiFunctions f where f.code = :code";
+			Query queryF = aSession.createQuery(fq);
+			queryF.setString("code", hibComm.getFunctCode());
+
+			List functs = queryF.list();
+			Iterator itF = functs.iterator();
+			//delete all functions for community
+			while(itF.hasNext()){
+				try{								
+					SbiFunctions fu = (SbiFunctions)itF.next();
+					aSession.delete(fu);		
+					
+				}catch(Exception e){
+					logger.debug("No such functionality element ");
+				}
+			}
 			aSession.delete(hibComm);
 			tx.commit();
 		} catch (HibernateException he) {
