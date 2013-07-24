@@ -36,9 +36,11 @@ public abstract class AbstractDatasetValidator implements IDatasetValidator {
     public ValidationErrors validateDataset(IDataStore dataStore, Map<String, HierarchyLevel> hierarchiesColumnsToCheck) {
     	ValidationErrors errors = new ValidationErrors();
         if(childValidator != null) {
-            errors.addAll( childValidator.validateDataset( dataStore, hierarchiesColumnsToCheck ) )  ;    
+        	ValidationErrors childValidationErrors = childValidator.validateDataset( dataStore, hierarchiesColumnsToCheck );
+            errors.addAll( childValidationErrors )  ;    
         }
-        errors.addAll(doValidateDataset( dataStore, hierarchiesColumnsToCheck));
+        ValidationErrors validationErrors = doValidateDataset( dataStore, hierarchiesColumnsToCheck);
+        errors.addAll(validationErrors);
         return errors;
     }
 
