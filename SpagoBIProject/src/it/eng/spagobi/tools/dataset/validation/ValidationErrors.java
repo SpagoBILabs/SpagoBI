@@ -118,7 +118,21 @@ public class ValidationErrors {
 	 */
 	public void addAll(ValidationErrors validationErrors){
 		Map<Integer, List<ErrorField>> otherErrorsMap = validationErrors.getAllErrors();
-		errorsMap.putAll(otherErrorsMap);
+		if (errorsMap.isEmpty()){
+			errorsMap.putAll(otherErrorsMap);
+		}{
+			//merge the two maps, adding values to the List<ErrorField> for the same Key
+			for (Map.Entry<Integer, List<ErrorField>> entry : otherErrorsMap.entrySet()) {
+				List<ErrorField> errorFields = errorsMap.get(entry.getKey());
+				if (errorFields != null){
+					errorFields.addAll(entry.getValue());
+					errorsMap.put(entry.getKey(), errorFields);
+				} else {
+					errorFields = otherErrorsMap.get(entry.getKey());
+					errorsMap.put(entry.getKey(), errorFields);
+				}
+			}
+		}
 	}
 	
 
