@@ -23,12 +23,8 @@ Ext.define('Sbi.tools.dataset.ValidateDataset', {
 		
 		thisDatasetValidationPanel = this;
 
-
-		
 		Ext.apply(this, config || {});
-
-
-		
+	
 	    this.callParent(arguments);
 	    
 		//invokes before each ajax request 
@@ -41,88 +37,7 @@ Ext.define('Sbi.tools.dataset.ValidateDataset', {
 	
 	,initDatasetValidationPanel : function(items,config){
 		
-		
 
-		
-	
-		//Store for Columns Grid Dataset validation
-		/*
-		this.storeDataset = new Ext.data.JsonStore({
-		    id : 'datasetStoreData',
-		    fields: ['column', 'pname','pvalue' ],
-		    idIndex: 0,
-		    data: []
-		});
-		*/
-		
-		//Load Metadata if already present
-//		if ((config.meta != undefined) && (config.meta.columns != undefined)){
-//			//iterate store to modify type and remove prefix java.lang.
-//			var typeValue;
-//			for (var i = 0; i < config.meta.columns.length; i++) {
-//				var element = config.meta.columns[i];
-//				if (element.pname.toUpperCase() == 'type'.toUpperCase()){
-//					typeValue = element.pvalue;
-//					typeValue = typeValue.replace("java.lang.","");
-//					element.pvalue = typeValue;
-//				}
-//			}
-//
-//			this.storeMetadata.loadData(config.meta.columns,false); 
-//			this.doLayout();	
-//		}
-		
-
-		
-		
-		//-----------------------------------------
-		
-
-
-		
-		// Columns Metadata Grid  --------	
-
-		/*
-		var columnsDefinition =  [
-				             		{
-				             	    	header: 'Column', 
-				             	    	width: '33%', 
-				            			sortable: true, 
-				             			id:'column',
-				             			dataIndex:'column'
-				             			
-				             	    },{
-				             	    	header: 'Attribute', 
-				             	    	width: '33%', 
-				            			sortable: true, 
-				             			id:'pname',
-				             			dataIndex:'pname'
-				             	    },{
-				             	    	header: 'Value', 
-				             	    	width: '33%', 
-				            			sortable: true, 
-				             			id:'pvalue',
-				             			dataIndex:'pvalue'
-				             	    }			
-				             	];		
-		
-		
-		
-	
-		
-		this.gridDatasetValidation = new Ext.grid.Panel({        
-	        store: this.storeDataset,
-	        columns: columnsDefinition,
-	        width: '100%',
-	        height: 320,
-	        title: 'Dataset Validation',
-	        autoscroll: true,
-			selModel: {selType: 'rowmodel'}
-			//plugins: [cellEditing],
-	        //tbar: toolbarColumnsMetadata
-	    });
-		//----------------------------------------------
-		*/
     	this.warningMessage = new Ext.form.Label({
 			text : 'The validation didn\'t find errors.',
 			width:  400,
@@ -130,7 +45,6 @@ Ext.define('Sbi.tools.dataset.ValidateDataset', {
 			readOnly:true,
 			style: 'color: #1ec31b'
 		});
-		//this.warningMessage.setVisible(false);
 
 		
 		// Main Panel ----------------------
@@ -184,77 +98,8 @@ Ext.define('Sbi.tools.dataset.ValidateDataset', {
 			style: 'color: #900'
 		});
     	this.mainPanel.add(this.warningMessage);
-		//this.warningMessage.setVisible(true);
-	}
-	
-	
-	/*
-	,loadItems: function(fieldsColumns, record){
-  		this.record = record;
-  		if(fieldsColumns){
-  			this.fieldStore.loadData(fieldsColumns);
-  			this.emptyStore = false;
-  		}else{
-  			this.emptyStore = true;
-  		}
 	}
 
-	,getFormState: function(){
-
-		var data = this.storeMetadata.data.items;
-		var values =[];
-		for(var i=0; i<data.length; i++){
-			values.push(data[i].data);
-		}
-		
-		var dataDs = this.datasetMetadataStore.data.items;
-		var valuesDs =[];
-		for(var i=0; i<dataDs.length; i++){
-			valuesDs.push(dataDs[i].data);
-		}
-		
-		var jsonData = {				
-					version: 1,
-					dataset: [],
-					columns: []		
-		};
-
-		jsonData.columns = values;	
-		jsonData.dataset = valuesDs;				
-
-
-		return jsonData;
-	}
-
-	,updateRecord: function(){
-
-		this.record.data.meta = this.getFormState();
-	}
-
-	,updateData: function(columnlist){
-		this.fieldStore.loadData(columnlist,false);
-		this.doLayout();	
-	}
-	
-	//Update the Store of the Dataset Grid and Column Grid
-	,updateGridData: function(meta){
-		if ((meta != undefined) && (meta.dataset != undefined)){
-			this.datasetMetadataStore.loadData(meta.dataset,false); 			
-		}
-		
-		
-		
-		this.doLayout();	
-	}
-	*/
-	
-	
-
-	
-
-	
-
-	
 	
 	/**
 	 * Opens the loading mask 

@@ -345,7 +345,6 @@ public class SelfServiceDataSetCRUD {
 			boolean overflow = maxSize != null && resultNumber >= maxSize;
 			if (overflow) {
 				logger.warn("Query results number [" + resultNumber + "] exceeds max result limit that is [" + maxSize + "]");
-//				auditlogger.info("[" + userProfile.getUserId() + "]:: max result limit [" + maxSize + "] exceeded with SQL: " + sqlQuery);
 			}
 			
 			JSONDataWriter dataSetWriter = new JSONDataWriter();
@@ -375,7 +374,7 @@ public class SelfServiceDataSetCRUD {
 				Map<String, HierarchyLevel> hierarchiesColumnsToCheck = getHierarchiesColumnsToCheck(datasetMetadata);
 			
 				if (!hierarchiesColumnsToCheck.isEmpty()){
-					//We get the category of the dataset and with this we search for the appropriate validator
+					//We get the category of the dataset and with this we search the appropriate validator
 					Integer categoryId = dataSet.getCategoryId();
 					if (categoryId != null){
 						IDomainDAO domainDao = DAOFactory.getDomainDAO();
