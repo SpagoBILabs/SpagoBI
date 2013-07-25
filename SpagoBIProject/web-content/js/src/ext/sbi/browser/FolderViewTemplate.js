@@ -41,22 +41,23 @@ Sbi.browser.FolderViewTemplate = function(config) {
 
 		var meta = config.metaDocument[i];
 
-		if(meta.visible) {		
-			// translate meta.id if present
-			attributeNameView = LN(meta.id);
-			documentAttributes += '<p id="' + meta.id + '">';
-			if(meta.showLabel) {
-				documentAttributes += '<span><h2>{'+attributeNameView+'}</h2></span>';
-			}
-			if(meta.maxChars) {
-				documentAttributes += '<span> {[Ext.util.Format.ellipsis(values.' + meta.id + ', ' + meta.maxChars + ')]}</span>';
-			} else {
-				documentAttributes += '<span> {' + meta.id + '}</span>';
-			}
-			documentAttributes += '</p>';
-		}		
+//			if(meta.visible) {		
+//			// translate meta.id if present
+//			attributeNameView = LN(meta.id);
+//			documentAttributes += '<p id="' + meta.id + '">';
+//			if(meta.showLabel) {
+//				documentAttributes += '<span><h2>{'+attributeNameView+'}</h2></span>';
+//			}
+//			if(meta.maxChars) {
+//				documentAttributes += '<span> {[Ext.util.Format.ellipsis(values.' + meta.id + ', ' + meta.maxChars + ')]}</span>';
+//			} else {
+//				documentAttributes += '<span> {' + meta.id + '}</span>';
+//			}
+//			documentAttributes += '</p>';
+//		}	
 	}
 
+	var changed = LN('sbi.ds.changedon');
 	var documentTpl = ''+
 	'<div class="box-container">'+
 		'<div id="document-item-icon"  class="box-figure">'+
@@ -81,7 +82,6 @@ Sbi.browser.FolderViewTemplate = function(config) {
 	        	'<div class="box-actions-container">'+
 	            '    <ul class="box-actions">'+	    
 	            '		<tpl for="actions">'+  
-//	        	' 			<tpl if="this.isAction(name) == true && this.isAbleToCreateDocument(name) ">'+
 	            ' 			<tpl if="name != \'delete\'">'+
 		        ' 	       		<li class="{name}"><a href="#"></a></li>'+
 		        '			</tpl>'+
@@ -93,15 +93,21 @@ Sbi.browser.FolderViewTemplate = function(config) {
 	            '		<a href="#" class="delete">Cancella</a>'+
 	            '	</tpl>' +
 	            '</tpl>' +
-	        '</div>'+
+	        '</div>'+ //hover
+		'</div>'+ //box-figure
+//	ORIG:	'<div class="box-text">'+documentAttributes +'</div>'+
+		'<div class="box-text">'+
+			'<h2>{name}</h2>'+
+//			'<p>{[Ext.String.ellipsis(values.description, 100, false)]}</p>'+
+			'<p>{description}</p>'+
+			'<p class="modified">'+changed+' {creationDate}</p>'+
 		'</div>'+
-		'<div class="box-text">'+documentAttributes +'</div>'+
-		'  <div class="fav-container"> '+
-		'    <div class="fav"> '+
+		'<div class="fav-container"> '+
+		'  	<div class="fav"> '+
 		'         <span class="icon"></span> '+
 		'         <span class="counter">12</span> '+
-		'     </div> '+
-		'  </div>' +
+		'   </div> '+
+		'</div>' +
 	'</div>';
 
 
@@ -135,8 +141,6 @@ Sbi.browser.FolderViewTemplate = function(config) {
     '<div class="item-desc">' +
         folderAttributes +
     '</div>';
-	
-	
 
 	
 	var summaryTpl =''+
@@ -163,11 +167,10 @@ Sbi.browser.FolderViewTemplate = function(config) {
 	}
 
 	Sbi.browser.FolderViewTemplate.superclass.constructor.call(this, 
-			 '<div id="sample-ct">',
+			 '<div id="sample-ct" class="main-datasets-list">',
 	            '<tpl for=".">',
-	            	'<div class="group">',
 	            	groups,
-	            	'<dl class="group-body">',
+	            	'<dl>',
 	            		noMsg,
 		                '<tpl for="samples">',   
 		                	'{[engine=""]}',
@@ -191,7 +194,6 @@ Sbi.browser.FolderViewTemplate = function(config) {
 		                 '</tpl>', // '<tpl for="samples">',   
 		                '<div style="clear:left"></div>',
 		            '</dl>',
-		          '</div>',
 	            '</tpl>',
 	        '</div>', {
 	        	exists: function(o){
