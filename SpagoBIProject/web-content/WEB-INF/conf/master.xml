@@ -283,7 +283,17 @@
     <CONFIGURATOR path="/WEB-INF/conf/adhocreporting/presentation.xml" />
     <CONFIGURATOR path="/WEB-INF/conf/adhocreporting/publishers.xml" />
     <CONFIGURATOR path="/WEB-INF/conf/adhocreporting/business_map.xml" />
+
 	
 	 <!-- community -->
 	<CONFIGURATOR path="/WEB-INF/conf/community/business_map.xml" /> 
+	
+	<!-- measures -->
+	<CONFIGURATOR path="/WEB-INF/conf/tools/measure/business_map.xml" /> 
+	
+	
+	
+
+    <!-- TestServices -->
+    <CONFIGURATOR path="/WEB-INF/conf/test/business_map.xml" />
 </MASTER>
