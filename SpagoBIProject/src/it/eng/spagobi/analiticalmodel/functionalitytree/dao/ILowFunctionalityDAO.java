@@ -301,5 +301,5 @@ public interface ILowFunctionalityDAO extends ISpagoBIDao{
 	 * @throws EMFUserError If an Exception occurred
 	 */
 	public Integer insertCommunityFunctionality(LowFunctionality aLowFunctionality) throws EMFUserError;
-	
+
 }

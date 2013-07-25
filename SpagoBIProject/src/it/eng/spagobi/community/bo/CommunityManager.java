@@ -8,8 +8,10 @@ package it.eng.spagobi.community.bo;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
 import it.eng.spagobi.analiticalmodel.functionalitytree.dao.ILowFunctionalityDAO;
-import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.bo.Role;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.dao.IRoleDAO;
+import it.eng.spagobi.commons.metadata.SbiExtRoles;
 import it.eng.spagobi.community.dao.ISbiCommunityDAO;
 import it.eng.spagobi.community.mapping.SbiCommunity;
 import it.eng.spagobi.community.util.CommunityUtilities;
@@ -19,6 +21,7 @@ import it.eng.spagobi.profiling.bean.SbiUserAttributes;
 import it.eng.spagobi.profiling.dao.ISbiAttributeDAO;
 import it.eng.spagobi.profiling.dao.ISbiUserDAO;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 import org.apache.log4j.Logger;
@@ -80,12 +83,31 @@ public class CommunityManager {
 				aLowFunctionality.setPath("/"+communityName);	
 				aLowFunctionality.setParentId(root.getId());
 				
+				/*
+				IRoleDAO roledao= DAOFactory.getRoleDAO();
+				ArrayList<Role> roles = new ArrayList<Role>();
+				ArrayList<SbiExtRoles> userRoles = userDao.loadSbiUserRolesById(user.getId());
+				for(int i =0; i<userRoles.size();i++){
+					SbiExtRoles extr = userRoles.get(i);
+					Integer extRID= extr.getExtRoleId();
+					Role r = roledao.loadByID(extRID);
+					roles.add(r);					
+				}
+				Role [] rolesArr = roles.toArray(new Role[roles.size()]);
+				aLowFunctionality.setDevRoles(rolesArr);
+				aLowFunctionality.setExecRoles(rolesArr);
+				aLowFunctionality.setTestRoles(rolesArr);
+				aLowFunctionality.setCreateRoles(rolesArr);*/
+				
 				//2.populates community bean
 				community = populateCommunity(userId, communityName, code);					
 				//4. saves community and user-community relashionship
 				commDAO.saveSbiComunityUsers(community, userId);
 				
 				Integer functId = lowFunct.insertCommunityFunctionality(aLowFunctionality);
+				
+				//add roles for the user				
+				addRolesToFunctionality(userId, code);
 			}
 		} catch (EMFUserError e) {
 			logger.error(e.getMessage());
@@ -104,5 +126,38 @@ public class CommunityManager {
 		
 		return community;
 		
+	}
+	public void addRolesToFunctionality(String userId, String functCode) throws EMFUserError{
+		ISbiUserDAO userDao = DAOFactory.getSbiUserDAO();
+		IRoleDAO roledao= DAOFactory.getRoleDAO();
+		ILowFunctionalityDAO lowFunctDao = DAOFactory.getLowFunctionalityDAO();
+		SbiUser user = userDao.loadSbiUserByUserId(userId);
+		
+		ArrayList<SbiExtRoles> userRoles = userDao.loadSbiUserRolesById(user.getId());
+		LowFunctionality funct = lowFunctDao.loadLowFunctionalityByCode(functCode, false);
+		Role [] execRole4Funct = funct.getExecRoles();
+		ArrayList<Role> roles = new ArrayList<Role>();
+		for(int j=0; j<execRole4Funct.length; j++){
+			Role alreadySetRole = execRole4Funct[j];
+			roles.add(alreadySetRole);
+
+		}
+		for(int i =0; i<userRoles.size();i++){
+			SbiExtRoles extr = userRoles.get(i);
+			Integer extRID= extr.getExtRoleId();
+			Role r = roledao.loadByID(extRID);
+			if(!roles.contains(r)){
+				roles.add(r);
+			}					
+		}
+		Role [] rolesArr = roles.toArray(new Role[roles.size()]);
+		
+		
+		funct.setDevRoles(rolesArr);
+		funct.setExecRoles(rolesArr);
+		funct.setTestRoles(rolesArr);
+		funct.setCreateRoles(rolesArr);
+		
+		lowFunctDao.modifyLowFunctionality(funct);
 	}
 }

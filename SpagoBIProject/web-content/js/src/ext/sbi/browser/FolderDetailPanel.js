@@ -3,6 +3,10 @@
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. **/
+ 
+  
+ 
+  
 
 /**
  * 
@@ -11,7 +15,7 @@
 
 function myAdd(){
 	alert("myAdd");
-	var io = Ext.get("ciccio");
+	var io = Ext.get("this");
 //	Ext.get("doc-details").addNewDocument();
 	io.addNewDocument;
 }
@@ -49,6 +53,14 @@ Sbi.browser.FolderDetailPanel = function(config) {
 		serviceType: 'PAGE'
 		, serviceName: 'DetailBIObjectPage'
 		, baseParams: {LIGHT_NAVIGATOR_DISABLED: 'FALSE', MESSAGEDET: 'DETAIL_NEW'}
+	});
+
+	this.services['getCommunities'] =  Sbi.config.serviceRegistry.getRestServiceUrl({
+		serviceName: 'community/user'
+			, baseParams: {
+				LIGHT_NAVIGATOR_DISABLED: 'TRUE',
+				EXT_VERSION: "3"
+			}
 	});
 	
 	// -- store -------------------------------------------------------
@@ -113,52 +125,31 @@ Sbi.browser.FolderDetailPanel = function(config) {
         	} 
 		}
     });
+    this.communities;
+    Ext.Ajax.request({
+        url: this.services['getCommunities'],
+        callback : function(options , success, response){
+  	  	if(success && response !== undefined) {   
+	      		if(response.responseText == undefined) {
+	      			Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
+	      		}else{
+	      			var content = Ext.util.JSON.decode( response.responseText );
+	      			if(content !== undefined) {
+	      				this.createBannerHtml(content);
+		      		} 
+	      		}
+  	  	}
+        }
+       , scope: this
+       , failure: Sbi.exception.ExceptionHandler.handleFailure  
+     });
     
-    var bannerHTML = ''+
- 		'<div class="aux"> '+
-		'    <div class="list-actions-container"> '+
-		'		<ul class="list-tab"> '+
-		'	    	<li class="active first"><a href="#">Tutte</a></li> '+
-		'	        <li><a href="#">ASTAT</a></li> '+
-		'	        <li class="favourite last"><a href="#">Favoriti</a></li> '+
-		'		</ul> '+
-		'	    <div class="list-actions"> '+
-//		'	        <a href="#" class="btn-add" onClick="addNewDocument()"><span class="highlighted">Carica</span> mappa<span class="plus">+</span></a> '+
-		'	        <a id="newDocument" href="#" onclick="myAdd()" class="btn-add"><span class="highlighted">Carica</span> mappa<span class="plus">+</span></a> '+
-//		'	        <a id="newDocument" href="#"  class="btn-add"><span class="highlighted">Carica</span> mappa<span class="plus">+</span></a> '+
-		'	        <form action="#" method="get" class="search-form"> '+
-		'	            <fieldset> '+
-		'	                <div class="field"> '+
-		'	                    <label for="search">Cerca fra i dataset</label> '+
-		'	                    <input type="text" name="search" id="search" value="Cerca per parola chiave..." /> '+
-		'	                </div> '+
-		'	                <div class="submit"> '+
-		'	                    <input type="submit" value="Cerca" /> '+
-		'	                </div> '+
-		'	            </fieldset> '+
-		'	        </form> '+
-		'	        <ul class="order"> '+
-		'	            <li class="active"><a href="#">Recenti<span class="arrow"></span></a></li> '+
-		'	            <li><a href="#">Valore 2</a></li> '+
-		'	            <li><a href="#">Altro valore</a></li> '+
-		'	        </ul> '+
-		'	    </div> '+
-		'</div>' ;
-    
-       
-	
-	var bannerPanel = new Ext.Panel({
-		id:'banner-doc',
+		
+	this.bannerPanel = new Ext.Panel({
+		layout: 'fit',
 	   	autoScroll: false,
-	   	layout:'fit',
-//		   	margin:'30',
-//		   	height: 100,
-	   	html: bannerHTML   
+	   	style:"float: left; width:100%;"
 	});
-//	bannerPanel.on('onclick',this.addNewDocument,this);
-	
-	
-	
    
     toolbarItems.push('->');	 
     if (this.isAbleToCreateDocument()){
@@ -202,8 +193,8 @@ Sbi.browser.FolderDetailPanel = function(config) {
         , frame: true
         , autoHeight: false
         , autoScroll:true
-               
-        , items:[bannerPanel, this.folderView]        
+
+        , items:[this.bannerPanel, this.folderView]        
         , tbar: this.toolbar 
         
         , listeners: {
@@ -256,8 +247,7 @@ Ext.extend(Sbi.browser.FolderDetailPanel, Ext.Panel, {
     , loadingMask: null
     , folderId: null
     
-    , id:'ciccio'
-
+    , id:'this'
     
     , toggleDisplayModality: function() {
       this.loadingMask.show();
@@ -638,7 +628,51 @@ Ext.extend(Sbi.browser.FolderDetailPanel, Ext.Panel, {
     	return false;
     }
     
-    
+    , createBannerHtml: function(communities){
+    	var communityString = '';
+        for(i=0; i< communities.root.length; i++){
+        	var funct = communities.root[i].functId;
+        	communityString += '<li><a href="#" onclick="javascript:Ext.getCmp(\'this\').loadFolder('+funct+', null)">';
+        	communityString += communities.root[i].name;
+        	communityString +='</a></li>';
+        }
+        
+        
+        var bannerHTML = ''+
+     		'<div class="aux"> '+
+//    		'    <div class="list-actions-container"> '+
+    		'		<ul class="list-tab"> '+
+    		'	    	<li class="active first"><a href="#">Tutte</a></li> '+
+    					communityString+
+    		'	        <li class="favourite last"><a href="#">Favoriti</a></li> '+
+    		'		</ul> '+
+    		'	    <div class="list-actions"> '+
+//    		'	        <a href="#" class="btn-add" onClick="addNewDocument()"><span class="highlighted">Carica</span> mappa<span class="plus">+</span></a> '+
+    		'	        <a id="newDocument" href="#" onclick="myAdd()" class="btn-add"><span class="highlighted">Carica</span> mappa<span class="plus">+</span></a> '+
+//    		'	        <a id="newDocument" href="#"  class="btn-add"><span class="highlighted">Carica</span> mappa<span class="plus">+</span></a> '+
+    		'	        <form action="#" method="get" class="search-form"> '+
+    		'	            <fieldset> '+
+    		'	                <div class="field"> '+
+    		'	                    <label for="search">Cerca fra i dataset</label> '+
+    		'	                    <input type="text" name="search" id="search" value="Cerca per parola chiave..." /> '+
+    		'	                </div> '+
+    		'	                <div class="submit"> '+
+    		'	                    <input type="submit" value="Cerca" /> '+
+    		'	                </div> '+
+    		'	            </fieldset> '+
+    		'	        </form> '+
+    		'	        <ul class="order"> '+
+    		'	            <li class="active"><a href="#">Recenti<span class="arrow"></span></a></li> '+
+    		'	            <li><a href="#">Valore 2</a></li> '+
+    		'	            <li><a href="#">Altro valore</a></li> '+
+    		'	        </ul> '+
+    		'	    </div> '+
+    		'</div>' ;
+        var dh = Ext.DomHelper;
+        var b = this.bannerPanel.getEl().update(bannerHTML);
+
+    }
+    , 
    
 });
 

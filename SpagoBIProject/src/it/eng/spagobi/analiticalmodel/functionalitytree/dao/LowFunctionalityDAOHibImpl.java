@@ -1421,7 +1421,7 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 			} else if (onlyFirstLevel){
 				String queryStr;
 				if(UserUtilities.isAdministrator(profile)){
-					queryStr = " from SbiFunctions s where ((s.functTypeCd = 'LOW_FUNCT' and s.parentFunct.functId = ?) or s.functTypeCd = 'USER_FUNCT' )  order by s.parentFunct.functId, s.prog";
+					queryStr = " from SbiFunctions s where ((s.functTypeCd = 'LOW_FUNCT' and s.parentFunct.functId = ?) or s.functTypeCd = 'USER_FUNCT' or s.functTypeCd = 'COMMUNITY_FUNCT' )  order by s.parentFunct.functId, s.prog";
 					hibQuery = aSession.createQuery(queryStr);
 					hibQuery.setInteger(0, tmpParentId.intValue());
 				}else{
@@ -1479,7 +1479,7 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 			//maintains functionalities that have the same user's role
 			while (it.hasNext()) {
 				SbiFunctions tmpFunc = (SbiFunctions) it.next();
-				if(tmpFunc.getFunctTypeCd().equalsIgnoreCase("USER_FUNCT")){
+				if(tmpFunc.getFunctTypeCd().equalsIgnoreCase("USER_FUNCT") || tmpFunc.getFunctTypeCd().equalsIgnoreCase("COMMUNITY_FUNCT")){
 					realResult.add(toLowFunctionality(tmpFunc, recoverBIObjects));
 				}else{
 					Object[] tmpRole = tmpFunc.getSbiFuncRoles().toArray();
@@ -1788,4 +1788,6 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 		}
 		return result;
 	}
+
+
 }
