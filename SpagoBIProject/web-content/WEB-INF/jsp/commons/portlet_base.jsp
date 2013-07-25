@@ -167,6 +167,7 @@ commented by Davide Zerbetto on 12/10/2009: there are problems with MIF (Ext Man
 	String parameterMementoPersistenceScope = SingletonConfig.getInstance().getConfigValue("SPAGOBI.EXECUTION.PARAMETERS.mementoPersistenceScope");
 	String parameterMementoPersistenceDepth = SingletonConfig.getInstance().getConfigValue("SPAGOBI.EXECUTION.PARAMETERS.mementoPersistenceDepth");
 	
+	String flatViewModality = SingletonConfig.getInstance().getConfigValue("SPAGOBI.DOCUMENTBROWSER.FLAT");
 	%>
 
 
@@ -242,7 +243,10 @@ commented by Davide Zerbetto on 12/10/2009: there are problems with MIF (Ext Man
         	parameterMementoPersistenceDepth: <%= parameterMementoPersistenceDepth %>,
         	<%}%>
         	
+        	flatViewModality: <%= flatViewModality%>,
+        	
         	isSSOEnabled: <%= GeneralUtilities.isSSOEnabled() %>
+        	
         };
     }();
 

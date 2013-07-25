@@ -151,41 +151,47 @@ Sbi.browser.FolderViewTemplate = function(config) {
 	}); 
 
 	var noItem = LN('sbi.browser.folderdetailpanel.emptytext');
-	
+	var noMsg = '';
+	var groups = '';
+	if (!Sbi.config.flatViewModality){
+		groups += '<h2><div class="group-header">{titleLabel} ({[values.samples.length]})</div></h2>';
+		noMsg += '<tpl if="samples.length == 0">'+
+        			'<div id="empty-group-message">'+
+        				noItem+
+        			'</div>'+
+        		 '</tpl>';
+	}
+
 	Sbi.browser.FolderViewTemplate.superclass.constructor.call(this, 
 			 '<div id="sample-ct">',
 	            '<tpl for=".">',
-//	            '<tpl if="{[values.samples.length]} &gt; 0">',
 	            	'<div class="group">',
-	            	'<h2><div class="group-header">{titleLabel} ({[values.samples.length]})</div></h2>',
+	            	groups,
 	            	'<dl class="group-body">',
-	            		'<tpl if="samples.length == 0">',
-	            			'<div id="empty-group-message">',
-	            			noItem,
-	            			'</div>',
-	            		'</tpl>',
-//	            	'</tpl>',
-	                '<tpl for="samples">',   
-	                	'{[engine=""]}',
-	                	'{[summary=""]}',
-	                	'{[views=""]}',
-	                	'{[previewFile=""]}',
-	                        // -- DOCUMENT -----------------------------------------------
-	                        '<tpl if="this.exists(engine) == true">',
-	                        	'<dd class="box">', //document
-	                        	documentTpl,
-	                        '</tpl>',
-	                        '<tpl if="this.exists(description) == false">',
-	                        	'<br>',
-	                        '</tpl>',
-	                        // -- FOLDER -----------------------------------------------
-	                        '<tpl if="this.exists(engine) == false">',
-	                        	'<dd class="group-item">', //Folder
-	                        	folderTpl,
-	                        '</tpl>',
-	                    '</dd>',
-	                '</tpl>',
-	            '<div style="clear:left"></div></dl></div>',
+	            		noMsg,
+		                '<tpl for="samples">',   
+		                	'{[engine=""]}',
+		                	'{[summary=""]}',
+		                	'{[views=""]}',
+		                	'{[previewFile=""]}',
+		                        // -- DOCUMENT -----------------------------------------------
+		                        '<tpl if="this.exists(engine) == true">',
+		                        	'<dd class="box">', //document
+		                        	documentTpl,
+		                        '</tpl>',
+		                        '<tpl if="this.exists(description) == false">',
+		                        	'<br>',
+		                        '</tpl>',
+		                        // -- FOLDER -----------------------------------------------
+		                        '<tpl if="this.exists(engine) == false">',
+		                        	'<dd class="group-item">', //Folder
+		                        	folderTpl,
+		                        '</tpl>',
+		                        '</dd>',
+		                 '</tpl>', // '<tpl for="samples">',   
+		                '<div style="clear:left"></div>',
+		            '</dl>',
+		          '</div>',
 	            '</tpl>',
 	        '</div>', {
 	        	exists: function(o){
@@ -235,5 +241,21 @@ Ext.extend(Sbi.browser.FolderViewTemplate, Ext.XTemplate, {
     DETAIL_DOCUMENT: 'DocumentDetailManagement'
   , CREATE_DOCUMENT: 'CreateDocument'
   , services : null
+  
+  , isAbleToCreateDocument: function(){
+    	var funcs = Sbi.user.functionalities;
+    	if (funcs == null || funcs == undefined) return false;
+    	
+    	for (f in funcs){
+    		if (funcs[f] == this.CREATE_DOCUMENT){	    	    			
+    			return true;
+    			break;
+    		}
+    	}
+    	
+    	return false;
+    }
+
+	
 });
 

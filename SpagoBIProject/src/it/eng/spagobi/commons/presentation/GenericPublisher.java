@@ -50,7 +50,7 @@ public abstract class GenericPublisher implements PublisherDispatcherIFace {
 	    logger.debug("OUT");
 	    return publisherName;
 	} else {
-	    logger.error("Publisher name attribute not found");
+	   // logger.error("Publisher name attribute not found");
 	    EMFUserError error = new EMFUserError(EMFErrorSeverity.ERROR, 10);
 	    errorHandler.addError(error);
 	    logger.debug("OUT");
