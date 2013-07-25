@@ -100,7 +100,7 @@ a {text-decoration:none}
 .top-menu .first{border-left:0}
 .top-menu .last{border-right:1px solid #363636}
 .top-menu a,
-.top-menu .reserved span{cursor:pointer;font-size:0.91em;display:block;height:21px;padding:12px 15px 0 15px;color:#a1a1a1}
+.top-menu .reserved span{cursor:pointer;font-size:0.91em;display:block;height:33px;padding:12px 15px 0 15px;color:#a1a1a1}
 .top-menu .reserved span{padding-left:35px;background:url(../../images/ico-lock-small.png) 12px 11px no-repeat}
 .top-menu .reserved.open span{color:#cbcbcb;background-color:#2c2c2c;box-shadow:0 0 3px #181818 inset}
 .top-menu li:hover a,
