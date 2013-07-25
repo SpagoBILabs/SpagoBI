@@ -36,11 +36,11 @@ Sbi.browser.FolderViewTemplate = function(config) {
 		serviceName: 'MANAGE_FILE_ACTION'
 		, baseParams: params
 	});
-
-	for(var i = 0; i < config.metaDocument.length; i++) {
-
-		var meta = config.metaDocument[i];
-
+//
+//	for(var i = 0; i < config.metaDocument.length; i++) {
+//
+//		var meta = config.metaDocument[i];
+//
 //			if(meta.visible) {		
 //			// translate meta.id if present
 //			attributeNameView = LN(meta.id);
@@ -55,7 +55,7 @@ Sbi.browser.FolderViewTemplate = function(config) {
 //			}
 //			documentAttributes += '</p>';
 //		}	
-	}
+//	}
 
 	var changed = LN('sbi.ds.changedon');
 	var documentTpl = ''+
@@ -110,37 +110,45 @@ Sbi.browser.FolderViewTemplate = function(config) {
 		'</div>' +
 	'</div>';
 
-
-	
 	
 	var folderAttributes = '';
-	for(var i = 0; i < config.metaFolder.length; i++) {
-		var meta = config.metaFolder[i];
-		if(meta.visible) {		
-			
-			folderAttributes += '<p id="' + meta.id + '">';
-			if(meta.showLabel) {
-				folderAttributes += '<span class="field-label">' + meta.id + ':</span>';
-			}
-			if(meta.maxChars) {
-				folderAttributes += '<span class="field-value"> {[Ext.util.Format.ellipsis(values.' + meta.id + ', ' + meta.maxChars + ')]}</span>';
-			} else {
-				folderAttributes += '<span class="field-value"> {' + meta.id + '}</span>';
-			}
-			folderAttributes += '</p>';
-		}
-	}
+//	for(var i = 0; i < config.metaFolder.length; i++) {
+//		var meta = config.metaFolder[i];
+//		if(meta.visible) {		
+//			
+//			folderAttributes += '<p id="' + meta.id + '"/>';
+//			if(meta.showLabel) {
+//				folderAttributes += '<h2 class="field-label">' + meta.id + ':</h2>';
+//			}
+//			if(meta.maxChars) {
+//				folderAttributes += '<p class="field-value"> {[Ext.util.Format.ellipsis(values.' + meta.id + ', ' + meta.maxChars + ')]}</p>';
+//			} else {
+//				folderAttributes += '<p class="field-value"> {' + meta.id + '}</p>';
+//			}
+//			folderAttributes += '</p>';
+//		}
+//	}
+//	
 	
 	var folderTpl = '' + 
-	'<tpl if="this.isHomeFolder(codType) == true">' +
-		'<div id="icon" class="folder_home" ></div>' +
-    '</tpl>' +
-    '<tpl if="this.isHomeFolder(codType) == false">' + 
-    	'<div id="icon" class="folder"></div>' + 
-	'</tpl>' +
-    '<div class="item-desc">' +
-        folderAttributes +
-    '</div>';
+	'<div class="box-container">'+
+		'<div id="document-item-icon"  class="box-figure">'+
+			'<tpl if="this.isHomeFolder(codType) == true">' +
+				'<div id="icon" class="folder_home" ></div>' +
+		    '</tpl>' +
+		    '<tpl if="this.isHomeFolder(codType) == false">' + 
+		    	'<div id="icon" class="folder"></div>' + 
+			'</tpl>' +
+			'<span class="shadow"></span>'+
+			'<div class="hover"/>'+
+		'</div>'+ 	
+//    '<div class="item-desc">' +
+//        folderAttributes +
+		'<div class="box-text">'+
+			'<h2>{name}</h2>'+
+			'<p>{description}</p>'+
+	    '</div>'+
+	 '</div>';
 
 	
 	var summaryTpl =''+
@@ -157,6 +165,7 @@ Sbi.browser.FolderViewTemplate = function(config) {
 	var noItem = LN('sbi.browser.folderdetailpanel.emptytext');
 	var noMsg = '';
 	var groups = '';
+
 	if (!Sbi.config.flatViewModality){
 		groups += '<h2><div class="group-header">{titleLabel} ({[values.samples.length]})</div></h2>';
 		noMsg += '<tpl if="samples.length == 0">'+
@@ -187,7 +196,8 @@ Sbi.browser.FolderViewTemplate = function(config) {
 		                        '</tpl>',
 		                        // -- FOLDER -----------------------------------------------
 		                        '<tpl if="this.exists(engine) == false">',
-		                        	'<dd class="group-item">', //Folder
+//		                        	'<dd class="group-item">', //Folder
+		                        	'<dd class="box-folder">', //Folder
 		                        	folderTpl,
 		                        '</tpl>',
 		                        '</dd>',
@@ -218,46 +228,13 @@ Sbi.browser.FolderViewTemplate = function(config) {
 	        		}
 	        		
 	        	}
-	        	, isAbleToCreateDocument: function(o){
-	        		if (o!='detail') return true;
-	        		
-	    	    	var funcs = Sbi.user.functionalities;
-	    	    	if (funcs == null || funcs == undefined) return false;
-	    	    	
-	    	    	for (f in funcs){
-	    	    		if (funcs[f] == this.DETAIL_DOCUMENT || funcs[f] == this.CREATE_DOCUMENT){	    	    			
-	    	    			return true;
-	    	    			break;
-	    	    		}
-	    	    	}
-	    	    	
-	    	    	return false;
-	    	    }
 	        }
 	);
 }; 
    
     
 Ext.extend(Sbi.browser.FolderViewTemplate, Ext.XTemplate, {
-	//constants
-    DETAIL_DOCUMENT: 'DocumentDetailManagement'
-  , CREATE_DOCUMENT: 'CreateDocument'
-  , services : null
+    services : null
   
-  , isAbleToCreateDocument: function(){
-    	var funcs = Sbi.user.functionalities;
-    	if (funcs == null || funcs == undefined) return false;
-    	
-    	for (f in funcs){
-    		if (funcs[f] == this.CREATE_DOCUMENT){	    	    			
-    			return true;
-    			break;
-    		}
-    	}
-    	
-    	return false;
-    }
-
-	
 });
 

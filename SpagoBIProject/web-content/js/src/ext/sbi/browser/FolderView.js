@@ -34,7 +34,7 @@ Sbi.browser.FolderView = function(config) {
 Ext.extend(Sbi.browser.FolderView, Ext.DataView, {
     frame:true
     , itemSelector: 'dd'
-    , overClass: 'over'
+//    , overClass: 'over'
     , groups: null
     , lookup: null
     , viewState: null
@@ -54,31 +54,31 @@ Ext.extend(Sbi.browser.FolderView, Ext.DataView, {
     
 	
     , onMouseOver : function(e) {    
-      var group = e.getTarget('div[class=group-header]', 10, true);
-      if(!group){
-            var d = e.getTarget('[class*=group-item]', 5, true);
-            if(d){
-                var t = d.first('div[class*=item-control-panel]', false);
-                if(t){   
-                  t.applyStyles('visibility:visible');
-                }
-            }
-        }
-        return Sbi.browser.FolderView.superclass.onMouseOver.apply(this, arguments);
+//      var group = e.getTarget('div[class=group-header]', 10, true);
+//      if(!group){
+//            var d = e.getTarget('[class*=group-item]', 5, true);
+//            if(d){
+//                var t = d.first('div[class*=item-control-panel]', false);
+//                if(t){   
+//                  t.applyStyles('visibility:visible');
+//                }
+//            }
+//        }
+//        return Sbi.browser.FolderView.superclass.onMouseOver.apply(this, arguments);
     }
     
     , onMouseOut : function(e){
-        var group = e.getTarget('div[class=group-header]', 10, true);
-        if(!group){
-            var d = e.getTarget('[class*=group-item]', 5, true);
-            if(d){
-                var t = d.first('div[class*=item-control-panel]', false);
-                if(t){   
-                  t.applyStyles('visibility:hidden');
-                }
-            }
-        }
-        return Sbi.browser.FolderView.superclass.onMouseOut.apply(this, arguments);
+//        var group = e.getTarget('div[class=group-header]', 10, true);
+//        if(!group){
+//            var d = e.getTarget('[class*=group-item]', 5, true);
+//            if(d){
+//                var t = d.first('div[class*=item-control-panel]', false);
+//                if(t){   
+//                  t.applyStyles('visibility:hidden');
+//                }
+//            }
+//        }
+//        return Sbi.browser.FolderView.superclass.onMouseOut.apply(this, arguments);
     }
     
     , onLoad : function(s, r) {

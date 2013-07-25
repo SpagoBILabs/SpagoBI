@@ -156,12 +156,24 @@
         float:left;
     }
     
-    .folder  {
-		background-image: url('../../../img/analiticalmodel/browser/folder.png') !important;
+	.folder {
+		background-image: url('../../../img/analiticalmodel/browser/folder.png')!important;
+		display:block;
+		width:100%;
+		height:130px;
+		background-size: contain;
+		background-position: center center;
+		background-repeat: no-repeat;
 	}
 	
-	.folder_home  {
-		background-image: url('../../../img/analiticalmodel/browser/folder_home.png') !important;
+	.folder_home {
+		background-image:url('../../../img/analiticalmodel/browser/folder_home.png') !important;
+		display:block;
+		width:100%;
+		height:130px;
+		background-size: contain;
+		background-position: center center;
+		background-repeat: no-repeat;
 	}
 	
 	.document  {
