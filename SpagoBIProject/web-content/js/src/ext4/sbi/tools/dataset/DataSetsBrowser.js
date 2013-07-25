@@ -52,10 +52,12 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 			serviceName: 'selfservicedataset/testDataSet',
 			baseParams: baseParams
 		});
+		/*
 		this.services["getDataStore"]= Sbi.config.serviceRegistry.getRestServiceUrl({
 			serviceName: 'selfservicedataset/getDataStore',
 			baseParams: baseParams
 		});
+		*/
 	}
 	
 	,
@@ -272,7 +274,6 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 		this.wizardWin =  Ext.create('Sbi.tools.dataset.DataSetsWizard',config);	
 		this.wizardWin.on('save', this.saveDataset, this);
 		this.wizardWin.on('getMetaValues', this.getMetaValues, this);
-		//this.wizardWin.on('getDataStore', this.getDataStore, this);
     	this.wizardWin.show();
 	}
 	
@@ -291,7 +292,6 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 			this.wizardWin.on('save', this.saveDataset, this);
 			this.wizardWin.on('delete', this.deleteDataset, this);
 			this.wizardWin.on('getMetaValues', this.getMetaValues, this);
-			//this.wizardWin.on('getDataStore', this.getDataStore, this);
 	    	this.wizardWin.show();
 		}
 	}
@@ -397,6 +397,7 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 		
 	}
 	//TODO: to delete
+	/*
 	,
 	getDataStore: function(values){ 
 		
@@ -430,7 +431,8 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 			failure: Sbi.exception.ExceptionHandler.handleFailure      
 		});
 		
-	}	
+	}
+	*/	
 	
 	/**
 	 * Opens the loading mask 

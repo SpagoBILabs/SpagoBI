@@ -61,7 +61,6 @@ public class GeoSpatialDimensionDatasetValidator  extends AbstractDatasetValidat
 		MeasureCatalogue measureCatalogue = new MeasureCatalogue();
 		
 		MetaModelWrapper metamodelWrapper = measureCatalogue.getMetamodelWrapper();
-		//List<HierarchyWrapper> hierarchyWrappers = metamodelWrapper.getHierarchies();
 		
 		for (Map.Entry<String, HierarchyLevel> entry : hierarchiesColumnsToCheck.entrySet())
 		{
@@ -86,7 +85,7 @@ public class GeoSpatialDimensionDatasetValidator  extends AbstractDatasetValidat
 
 				    			//Iterate the datastore (of the dataset) and check if values are ammissible
 				    			Iterator it = dataStore.iterator();
-				    			int columnIndex = dataStore.getMetaData().getFieldIndex(columnName); //TODO: check se può dar problemi usare questo metodo deprecato
+				    			int columnIndex = dataStore.getMetaData().getFieldIndex(columnName); 
 				    			int rowNumber = 0;
 				    			while( it.hasNext() ) {
 				    	    		IRecord record = (IRecord)it.next();
