@@ -21,10 +21,12 @@ Ext.define('Sbi.tools.measure.MeasuresCatalogue', {
 				text    : 'Join',
 				tooltip :'Join',
 				hidden	:true,
+				//scope: thisPanel,
 				handler : function() {
 					this.hide();
 					selectMeasuresButton.show();
 					thisPanel.columns[thisPanel.columns.length-1].hide();
+					thisPanel.executeJoin();
 				}
 			});
 
@@ -81,9 +83,6 @@ Ext.define('Sbi.tools.measure.MeasuresCatalogue', {
 
 			this.callParent([myconfig]);
 
-//			this.on("render",function(){
-//				this.columns[this.columns.length-1].hide();
-//			},this);
 		},
 
 		buildColumns: function(){
@@ -121,11 +120,25 @@ Ext.define('Sbi.tools.measure.MeasuresCatalogue', {
 			    model: 'Sbi.tools.measure.MeasureModel',
 			    autoLoad: true
 			});
-			store.on("load",function(a,b,c,d,e){
-				var t=2;
-				},this);
-			return store;
 
+			return store;
+		},
+		
+		executeJoin: function(){
+			var measuresIds = new Array();
+			var selected = this.getSelectionModel().getSelection();
+			if(selected!=null && selected!=undefined && selected.length>0){
+				for(var i=0; i<selected.length; i++){
+					measuresIds.push(selected[i].data.id);
+				}
+				//var encoded = Ext.JSON.encode(measuresIds);
+				Ext.Ajax.request({
+					url: Sbi.config.serviceRegistry.getRestServiceUrl({serviceName: 'measures/join'}),
+					params: {ids: measuresIds},
+					success : function(response, options) {},
+					scope: this
+				});
+			}
 		}
 
 });

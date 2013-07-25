@@ -74,8 +74,8 @@ public class InMemoryMaterializerTest  {
 		
 		while(it.hasNext()){
 			measure1 = it.next();
-			s = measure1.getDataset().getLabel();
-			if(measure1.getDataset().getLabel().equals(dsLabel1)){
+			s = measure1.getDataSet().getLabel();
+			if(measure1.getDataSet().getLabel().equals(dsLabel1)){
 				break;
 			}
 		}
@@ -84,8 +84,8 @@ public class InMemoryMaterializerTest  {
 		
 		while(it.hasNext()){
 			measure2 = it.next();
-			s = measure2.getDataset().getLabel();
-			if(measure2.getDataset().getLabel().equals(dsLabel2)){
+			s = measure2.getDataSet().getLabel();
+			if(measure2.getDataSet().getLabel().equals(dsLabel2)){
 				break;
 			}
 		}
