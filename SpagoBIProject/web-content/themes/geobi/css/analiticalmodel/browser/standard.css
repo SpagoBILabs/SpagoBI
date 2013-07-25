@@ -247,7 +247,7 @@ li:hover .login-panel .not-registered a:hover,.login-panel .not-registered a:hov
 */
 .box .hover .box-actions .detail a{background-image:url(../../../images/ico-view-green.png);background-position:9px -28px;background-repeat: no-repeat;}
 .box .hover .box-actions .detail a:hover{background-position:9px -28px;background-repeat: no-repeat;}
-.box .hover .box-actions .showmetadata a{background-image:url('../../../img/analiticalmodel/browser/metadata.png');background-repeat: no-repeat;background-position: center center;}
+.box .hover .box-actions .showmetadata a{background-image:url('../../../img/analiticalmodel/browser/metadata.png');background-position:9px 10px;background-repeat: no-repeat;}
 .box .hover .box-actions .showmetadata a:hover{background-position:9px -28px;background-repeat: no-repeat;}
 /*dataset:*/
 .box .hover .box-actions .georeport a{background-image:url(../../../images/ico-newmap.png);background-position:13px 10px;background-repeat:no-repeat}
