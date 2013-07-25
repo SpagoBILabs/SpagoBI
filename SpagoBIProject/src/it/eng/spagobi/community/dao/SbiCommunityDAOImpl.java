@@ -93,8 +93,7 @@ public class SbiCommunityDAOImpl extends AbstractHibernateDAO implements ISbiCom
 			Query query = aSession.createQuery(q);
 			query.setString("userId", userId);
 
-			List hibList = query.list();
-			Iterator it = hibList.iterator();
+			result = query.list();
 
 			return result;
 		} catch (HibernateException he) {
