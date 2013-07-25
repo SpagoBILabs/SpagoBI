@@ -51,6 +51,7 @@ public class FileDatasetXlsDataReader extends AbstractDataReader {
 	private String skipRows;
 	private String limitRows;
 	private String xslSheetNumber;
+	private int numberOfColumns = 0;
 
 
 	public FileDatasetXlsDataReader(JSONObject jsonConf) {
@@ -199,6 +200,7 @@ public class FileDatasetXlsDataReader extends AbstractDataReader {
  		MetaData dataStoreMeta = new MetaData();
  		
  		int cells = row.getPhysicalNumberOfCells();
+ 		this.setNumberOfColumns(cells);
 		logger.debug("\nROW " + row.getRowNum() + " has " + cells
 				+ " cell(s).");
 		for (int c = 0; c < cells; c++) {
@@ -226,7 +228,9 @@ public class FileDatasetXlsDataReader extends AbstractDataReader {
  		IRecord record = new Record(dataStore);
  		
  		int cells = row.getPhysicalNumberOfCells();
- 		int lastColumn = row.getLastCellNum();
+ 		//int lastColumn = row.getLastCellNum();
+ 		int lastColumn =  this.getNumberOfColumns();
+
  		
 		logger.debug("\nROW " + row.getRowNum() + " has " + cells
 				+ " cell(s).");
@@ -280,5 +284,19 @@ public class FileDatasetXlsDataReader extends AbstractDataReader {
  		
  		return valueField;
  	}
+
+	/**
+	 * @return the numberOfColumns
+	 */
+	public int getNumberOfColumns() {
+		return numberOfColumns;
+	}
+
+	/**
+	 * @param numberOfColumns the numberOfColumns to set
+	 */
+	public void setNumberOfColumns(int numberOfColumns) {
+		this.numberOfColumns = numberOfColumns;
+	}
 
 }
