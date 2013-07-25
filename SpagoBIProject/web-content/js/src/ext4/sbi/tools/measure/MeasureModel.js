@@ -21,5 +21,12 @@ Ext.define('Sbi.tools.measure.MeasureModel', {
 	         "id",
 	         "alias",
 	         "columnName",
+	         "dsType",
+	         "dsId",
+	         "dsCategory",
+	         "dsName",
+	         "dsLabel"
 	         ]
 });
+
+
