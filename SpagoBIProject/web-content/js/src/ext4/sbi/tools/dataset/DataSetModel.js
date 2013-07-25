@@ -25,6 +25,7 @@
             "description",
             "catTypeVn",
             "catTypeCd",
+            "catTypeId",
             "dsTypeCd",
             "configuration",
             "pars",

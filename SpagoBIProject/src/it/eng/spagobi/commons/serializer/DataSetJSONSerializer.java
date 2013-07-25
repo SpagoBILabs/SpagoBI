@@ -46,6 +46,8 @@ public class DataSetJSONSerializer implements Serializer {
 	
 	private static final String CATEGORY_TYPE_VN = "catTypeVn";
 	private static final String CATEGORY_TYPE_CD = "catTypeCd";
+	private static final String CATEGORY_TYPE_ID = "catTypeId";
+
 		
 	private static final String PARS = "pars";
 	private static final String METADATA = "meta";
@@ -115,6 +117,7 @@ public class DataSetJSONSerializer implements Serializer {
 			
 			//result.put(CATEGORY_TYPE_VN, ds.getCategoryValueName());
 			result.put(CATEGORY_TYPE_VN, ds.getCategoryCd()); 
+			result.put(CATEGORY_TYPE_ID, ds.getCategoryId()); 
 			//result.put(CATEGORY_TYPE_CD, ds.getCategoryCd()); 
 
 			JSONArray parsListJSON = new JSONArray();
