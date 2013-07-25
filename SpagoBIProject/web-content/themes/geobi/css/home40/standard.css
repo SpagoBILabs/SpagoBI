@@ -138,7 +138,7 @@ li:hover .login-panel .not-registered a:hover,.login-panel .not-registered a:hov
 .language-switcher li{display:none;background:#1e1e1e;border-top:1px solid #2e2e2e;border-bottom:1px solid #1f1f1f}
 .language-switcher li.active{display:block;border-top:0;border-bottom:0}
 .language-switcher:hover li{display:block}
-.language-switcher li a{font-weight:bold;font-size:0.91em;color:#919191;text-transform:uppercase;font-family: 'Cabin', sans-serif;text-align:center;padding:12px 0 0 0;height:21px;display:block}
+.language-switcher li a{font-weight:bold;font-size:0.91em;color:#919191;text-transform:uppercase;font-family: 'Cabin', sans-serif;text-align:center;padding:12px 0 0 0;height:32px;display:block}
 .language-switcher li.active a{background:url(../../images/bg-language-switcher.gif) 0 0 no-repeat}
 .language-switcher li a:hover{/*color:#e6e6e6*/background:#262626}
 .language-switcher:hover li.active a{box-shadow:0 0 3px #161616 inset}
