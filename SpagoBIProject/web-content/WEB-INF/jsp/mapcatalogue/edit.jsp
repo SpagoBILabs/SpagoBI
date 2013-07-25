@@ -42,7 +42,6 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 		String roleName = roleSB;
 		if (roles.contains(roleName)) {
 			hasPortletEditPermissionRoles = true;
-			break;
 		}
 	}
 	

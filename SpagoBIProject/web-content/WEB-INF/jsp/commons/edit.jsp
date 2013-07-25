@@ -44,7 +44,6 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 		String roleName = configSingleton.getConfigValue("SPAGOBI.PORTLET_EDIT_MODE_ROLES.ROLE.name");
 		if (roles.contains(roleName)) {
 			hasPortletEditPermissionRoles = true;
-			break;
 		}
 	}
 	

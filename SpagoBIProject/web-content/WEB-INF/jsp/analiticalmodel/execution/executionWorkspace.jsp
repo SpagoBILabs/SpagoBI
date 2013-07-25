@@ -8,6 +8,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
  
 
 
+
 <%@ include file="/WEB-INF/jsp/commons/portlet_base.jsp"%>
 
 <%@page import="it.eng.spagobi.analiticalmodel.document.handlers.ExecutionInstance"%>
@@ -23,7 +24,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 <%@page import="it.eng.spagobi.analiticalmodel.document.handlers.ExecutionManager"%>
 <%@page import="it.eng.spagobi.commons.utilities.urls.UrlUtilities"%>
 <%@page import="it.eng.spago.base.SessionContainer"%>
-
+<%@page import="it.eng.spago.configuration.ConfigSingleton"%>
 
 <div class="div_no_background">
 	
