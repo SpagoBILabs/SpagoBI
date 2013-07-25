@@ -44,8 +44,6 @@ public class MeasureCatalogueSingleton {
 
 		logger.debug("refresh catalogue");
 		measureCatologue = new MeasureCatalogue();
-	
-
 	}	
 	
 }

@@ -50,10 +50,13 @@ public class InMemoryMaterializer implements IMaterializer {
 			commonDimensionsFilterd.add(filterHierarchies(commonDimensions.get(i)));
 		}
 		
-		
+		List<InMemoryAggregator> rolledUpMeasures = new ArrayList<InMemoryAggregator>();
+		for(int i=0; i<commonDimensions.size(); i++){
+			rolledUpMeasures.add(groupBy(measures.get(0), commonDimensionsFilterd.get(0), aggreationFunction));
+		}		
     	
-    	//STEP2: execute the roll up 
-    	List<InMemoryAggregator> rolledUpMeasures = rollUpMeasures(measures.get(0), measures.get(1), commonDimensionsFilterd.get(0), commonDimensionsFilterd.get(1));
+//    	//STEP2: execute the roll up 
+//    	List<InMemoryAggregator> rolledUpMeasures = rollUpMeasures(measures.get(0), measures.get(1), commonDimensionsFilterd.get(0), commonDimensionsFilterd.get(1));
 
     	return joinAggreteMeasures(rolledUpMeasures);
 	}
@@ -71,6 +74,77 @@ public class InMemoryMaterializer implements IMaterializer {
 		 resultSets.add(groupMeasure2);
 		 
     	return resultSets;
+    }
+
+
+	
+    
+    
+    /**
+     * 
+     * @param measures
+     * @return
+     */
+    private List<List<MeasureCatalogueDimension>> getCommonDimensions(List<MeasureCatalogueMeasure> measures){	
+    	
+    	/**
+    	 * 1) Take the first measure
+    	 * 2) for each dimension of the first measure check if it exist in all the other measures
+    	 * 2a) if it exists add it in the map to return (the arry to return contains one array for measure. The array contains the dimensions for each measure.
+    	 * we use an array for each dimension because we are interested also in the level of the hierarchy of the dimension)
+    	 */
+    	
+    	List<List<MeasureCatalogueDimension>> commonDimensions = new ArrayList<List<MeasureCatalogueDimension>>();
+    	
+    	//Temp array with the common dimensions.
+    	List<MeasureCatalogueDimension> measureDimensionsCommonTemp;
+
+    	
+    	//Take all the dimensions of a measure and check if the other dataset contains it
+    	
+    	if(measures!= null && measures.size()>=2){
+    		
+        	//init the array to return
+        	for(int i=0; i<measures.size(); i++){
+        		commonDimensions.add( new ArrayList<MeasureCatalogueDimension>());
+        	}
+    		
+    		Set<MeasureCatalogueDimension> measure1Dimensions = (measures.get(0).getDatasetDimension());
+    		//for all the dimemsions of measure1
+        	for (Iterator<MeasureCatalogueDimension> iterator1 = measure1Dimensions.iterator(); iterator1.hasNext();) {
+    			MeasureCatalogueDimension dimension1 = (MeasureCatalogueDimension) iterator1.next();
+    			boolean dimensionIncommon = true;
+    			measureDimensionsCommonTemp = new ArrayList<MeasureCatalogueDimension>();
+    			measureDimensionsCommonTemp.add(dimension1);
+    			//we check if the dimension of the measure 1 is contained in the other measures
+    			for(int i=1; i<measures.size(); i++){
+    				Set<MeasureCatalogueDimension> measureiDimensions = (measures.get(i).getDatasetDimension());
+    				for (Iterator<MeasureCatalogueDimension> iterator2 = measureiDimensions.iterator(); iterator2.hasNext();) {
+        				MeasureCatalogueDimension dimensioni = (MeasureCatalogueDimension) iterator2.next();
+        				//we take all the levels of the same hierarchy
+        				if(dimension1.getHierarchy() == null || dimensioni.getHierarchy()== null || !dimension1.getHierarchy().equals(dimensioni.getHierarchy()) || !dimension1.getHierarchyLevel().equals(dimensioni.getHierarchyLevel())){
+        					dimensionIncommon = false;
+        					break;
+        				}else{
+        					 measureDimensionsCommonTemp.add(dimensioni);
+        				}
+        			} 
+    				if(!dimensionIncommon){
+    					break;
+    				}
+    			}
+    			if(dimensionIncommon){
+    				for(int i=0; i<measures.size(); i++){
+    					commonDimensions.get(i).add(measureDimensionsCommonTemp.get(i));
+    				}
+				}
+    			
+        	}
+      	}
+    	
+    	
+    	
+    	return commonDimensions;
     }
     
     /**
@@ -183,7 +257,7 @@ public class InMemoryMaterializer implements IMaterializer {
     	
     	
     	//execute dataset
-    	dataSet = measure.getDataset();
+    	dataSet = measure.getDataSet();
     	dataSet.loadData();
     	dataStore = dataSet.getDataStore();
     	
@@ -495,6 +569,15 @@ public class InMemoryMaterializer implements IMaterializer {
 		public IDataSet getDataSet() {
 			return dataSet;
 		}	
+		
+//		public IDataStore getDataStore() {
+//			if(dataStore==null && dataSet!=null){
+//				dataSet.loadData();
+//				dataStore = dataSet.getDataStore();
+//			}
+//			return dataStore;
+//		}	
+		
 		
 		
     }

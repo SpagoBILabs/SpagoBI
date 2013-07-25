@@ -10,12 +10,18 @@ import it.eng.spagobi.metamodel.HierarchyWrapper;
 import it.eng.spagobi.metamodel.MetaModelWrapper;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+
+import org.apache.log4j.Logger;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * 
@@ -26,28 +32,35 @@ import java.util.Set;
 
 public class MeasureCatalogueMeasure implements IMeasureCatalogueField {
 	
+	public static transient Logger logger = Logger.getLogger(MeasureCatalogueMeasure.class);
+	
 	private String alias;
+	private Integer id;
 	private String columnName;
 	private Class dataType;
 	private IDataSet dataset;
 	private Set<MeasureCatalogueDimension> datasetDimensions;
 	private MetaModelWrapper metaModel;
-	
+	private IFieldMetaData fieldMetadata;
+	private Map<String, Object> measureProperties;
 
 	
-	public MeasureCatalogueMeasure( MetaModelWrapper metaModel){
+	public MeasureCatalogueMeasure(MetaModelWrapper metaModel, int measureId){
+		this.id = measureId;
 		this.metaModel = metaModel;
 		datasetDimensions = new HashSet<MeasureCatalogueDimension>();
+		measureProperties = new HashMap<String, Object>();
 	}
 	
 	
-	public MeasureCatalogueMeasure( IFieldMetaData field, MetaModelWrapper metaModel, IDataSet ds, Set<MeasureCatalogueDimension> datasetDimension){
-		this(metaModel);
-		this.alias=field.getAlias();
+	public MeasureCatalogueMeasure( IFieldMetaData fieldMetadata, MetaModelWrapper metaModel, IDataSet ds, Set<MeasureCatalogueDimension> datasetDimension, int measureId){
+		this(metaModel, measureId);
+		this.fieldMetadata = fieldMetadata;
+		this.alias=fieldMetadata.getAlias();
 		if(this.alias==null){
-			this.alias=field.getName();
+			this.alias=fieldMetadata.getName();
 		}
-		this.dataType = field.getType();
+		this.dataType = fieldMetadata.getType();
 		columnName = this.alias;
 		if(datasetDimension!=null){
 			this.dataset = ds;
@@ -88,19 +101,6 @@ public class MeasureCatalogueMeasure implements IMeasureCatalogueField {
 		return ds.equals(dataset) && alias.equals(alias);
 	}
 
-	/**
-	 * Get the hierarchies of the associated dataset
-	 * @return
-	 */
-	public Set<HierarchyWrapper> getHierarchies(){
-		Set<HierarchyWrapper> hierarchies = new HashSet<HierarchyWrapper>();
-		for (Iterator<MeasureCatalogueDimension> iterator = datasetDimensions.iterator(); iterator.hasNext();) {
-			MeasureCatalogueDimension dimensionWrapper = (MeasureCatalogueDimension) iterator.next();
-			hierarchies.add(dimensionWrapper.getHierarchy());
-		}
-		return hierarchies;
-	}
-	
 	
 	/**
 	 * Utility method that check if a field of a dataset is a measure
@@ -112,30 +112,93 @@ public class MeasureCatalogueMeasure implements IMeasureCatalogueField {
 	}
 	
 
+
+	public Object getProperty(String prop){
+		Object obj = measureProperties.get(prop);
+		if(obj==null && fieldMetadata!=null){
+			obj = fieldMetadata.getProperty(prop);
+		}
+		return obj;
+	}
+
 	
+	//*************************************************
+	//RESOURCES TO IGNORE IN THE SERIALIZATION
+	//*************************************************
+	@JsonIgnore
+	public IFieldMetaData getFieldMetadata() {
+		return fieldMetadata;
+	}
+	
+
+	@JsonIgnore
 	public Set<MeasureCatalogueDimension> getDatasetDimension() {
 		return datasetDimensions;
 	}
 	
-	
-	public IDataSet getDataset() {
-		return dataset;
+
+	/**
+	 * Get the hierarchies of the associated dataset
+	 * @return
+	 */
+	@JsonIgnore
+	public Set<HierarchyWrapper> getHierarchies(){
+		Set<HierarchyWrapper> hierarchies = new HashSet<HierarchyWrapper>();
+		for (Iterator<MeasureCatalogueDimension> iterator = datasetDimensions.iterator(); iterator.hasNext();) {
+			MeasureCatalogueDimension dimensionWrapper = (MeasureCatalogueDimension) iterator.next();
+			hierarchies.add(dimensionWrapper.getHierarchy());
+		}
+		return hierarchies;
 	}
 	
-	
-	
+	@JsonIgnore
+	public IDataSet getDataSet(){
+		return dataset;
+	}
 
+
+	
+	//*************************************************
+	//RESOURCES TO INCLUDE IN THE SERIALIZATION
+	//*************************************************
 
 	public String getColumnName() {
 		return columnName;
 	}
 
-
 	public String getAlias() {
 		return alias;
 	}
+	
+	public Integer getId() {
+		return id;
+	}
+	
 
+	public String getDsLabel() {
+		return dataset.getLabel();
+	}
+	
+	public String getDsName() {
+		return dataset.getName();
+	}
+	
+	public String getDsCategory() {
+		return dataset.getCategoryCd();
+	}
 
+	public int getDsId() {
+		return dataset.getId();
+	}
+	
+	public String getDsType() {
+		return dataset.getDsType();
+	}
+
+	//*************************************************
+	//CLASS METHODS
+	//*************************************************
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -168,7 +231,20 @@ public class MeasureCatalogueMeasure implements IMeasureCatalogueField {
 		return true;
 	}
 
-
+    public String toString(){
+		ObjectMapper mapper = new ObjectMapper();    
+		try {
+			
+//			SimpleModule simpleModule = new SimpleModule("SimpleModule", new Version(1,0,0,null));
+//			simpleModule.addSerializer(IDataSet.class, new IDataSetJaksonSerializer());
+//			mapper.registerModule(simpleModule);
+		
+			return  mapper.writeValueAsString(this);
+		} catch (Exception e) {
+			logger.error("Error serializing the measure catalogue",e);
+			throw new SpagoBIRuntimeException("Error serializing the measure catalogue",e);
+		}
+    }
 
 	
 

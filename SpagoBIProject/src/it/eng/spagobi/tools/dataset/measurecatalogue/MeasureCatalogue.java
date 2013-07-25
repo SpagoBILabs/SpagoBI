@@ -35,19 +35,25 @@ import junit.framework.Assert;
 
 import org.apache.log4j.Logger;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 public class MeasureCatalogue implements Observer {
 
 	
 	public static transient Logger logger = Logger.getLogger(MeasureCatalogue.class);
 	private MetaModelWrapper metamodelWrapper;
 	private Set<MeasureCatalogueMeasure> measures;
+	private int measureIdProgress;
 	
 	public MeasureCatalogue(){
+		measureIdProgress = 0;
 		initModel();
 		initMeasures();
 	}
 	
 	public MeasureCatalogue(Model model){
+		measureIdProgress = 0;
 		metamodelWrapper = new MetaModelWrapper(model);
 		initMeasures();
 	}
@@ -117,7 +123,8 @@ public class MeasureCatalogue implements Observer {
 						/**
 						 * The measures has not been already saved, so we create it
 						 */
-						aDsMeasure = new MeasureCatalogueMeasure(aDsMeasures.get(j), metamodelWrapper, aDs, datasetDimension);
+						aDsMeasure = new MeasureCatalogueMeasure(aDsMeasures.get(j), metamodelWrapper, aDs, datasetDimension, measureIdProgress);
+						measureIdProgress++;
 						measures.add(aDsMeasure);
 						datasetDimension = aDsMeasure.getDatasetDimension();
 					}
@@ -127,25 +134,7 @@ public class MeasureCatalogue implements Observer {
 		}
 	}
 	
-	/**
-	 * Gets the path to the model with the hierarchies
-	 * @return
-	 */
-    public String getResourcePath() {
-    	String resPath;
-		try {
-			String jndiName = SingletonConfig.getInstance().getConfigValue("SPAGOBI.RESOURCE_PATH_JNDI_NAME");
-			resPath = SpagoBIUtilities.readJndiResource(jndiName);
-		} catch (Throwable t) {
-			logger.debug(t);
-			resPath = EnginConf.getInstance().getResourcePath();
-		}
 
-		if (resPath == null) {
-			throw new SpagoBIRuntimeException("Resource path not found!!!");
-		}
-		return resPath;
-	}
     
     /**
      * Gets the list of the measures of a dataset
@@ -180,25 +169,87 @@ public class MeasureCatalogue implements Observer {
     	return null;
     }
 
-	public Set<MeasureCatalogueMeasure> getMeasures() {
-		return measures;
-	}
+    /**
+     * Get measure by id
+     * @param measureId
+     * @return
+     */
+	public MeasureCatalogueMeasure getMeasureById(int measureId){
+    	for (Iterator<MeasureCatalogueMeasure> iterator = measures.iterator(); iterator.hasNext();) {
+    		MeasureCatalogueMeasure measure =  iterator.next();
+			if(measure.getId()==measureId){
+				return measure;
+			}
+		}
+    	return null;
+    }
 
-	/**
-	 * @return the metamodelWrapper
-	 */
-	public MetaModelWrapper getMetamodelWrapper() {
-		return metamodelWrapper;
-	}
-
+	
 	/**
 	 * @param metamodelWrapper the metamodelWrapper to set
 	 */
 	public void setMetamodelWrapper(MetaModelWrapper metamodelWrapper) {
 		this.metamodelWrapper = metamodelWrapper;
 	}
+	
+
+	
+	//*************************************************
+	//RESOURCES TO IGNORE IN THE SERIALIZATION
+	//*************************************************
+
+	/**
+	 * @return the metamodelWrapper
+	 */
+	@JsonIgnore
+	public MetaModelWrapper getMetamodelWrapper() {
+		return metamodelWrapper;
+	}
+	
+	/**
+	 * Gets the path to the model with the hierarchies
+	 * @return
+	 */
+	@JsonIgnore
+    public String getResourcePath() {
+    	String resPath;
+		try {
+			String jndiName = SingletonConfig.getInstance().getConfigValue("SPAGOBI.RESOURCE_PATH_JNDI_NAME");
+			resPath = SpagoBIUtilities.readJndiResource(jndiName);
+		} catch (Throwable t) {
+			logger.debug(t);
+			resPath = EnginConf.getInstance().getResourcePath();
+		}
+
+		if (resPath == null) {
+			throw new SpagoBIRuntimeException("Resource path not found!!!");
+		}
+		return resPath;
+	}
+
+	
+	//*************************************************
+	//RESOURCES TO INCLUDE IN THE SERIALIZATION
+	//*************************************************
+	
+	public Set<MeasureCatalogueMeasure> getMeasures() {
+		return measures;
+	}
+	
+	
     
-    
+    public String toString(){
+		ObjectMapper mapper = new ObjectMapper();    
+		try {
+//			SimpleModule simpleModule = new SimpleModule("SimpleModule", new Version(1,0,0,null));
+//			simpleModule.addSerializer(IDataSet.class, new IDataSetJaksonSerializer());
+//			mapper.registerModule(simpleModule);
+			return  mapper.writeValueAsString(this);
+		} catch (Exception e) {
+			logger.error("Error serializing the measure catalogue",e);
+			throw new SpagoBIRuntimeException("Error serializing the measure catalogue",e);
+		}
+    }
     
 
 }
