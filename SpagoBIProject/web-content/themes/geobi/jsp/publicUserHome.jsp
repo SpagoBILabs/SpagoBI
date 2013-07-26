@@ -115,30 +115,6 @@ Ext.onReady(function () {
 		'	                <li><a href="#">Tutorial</a></li> '+
 		'	                <li><a href="#">Termini e condizioni</a></li> '+
 		'	                <li class="reserved last"><a href="<%=loginUrl%>">Area riservata</a></li> '+		
-		//'	                <li class="reserved last"> '+
-		//'	                	<span>Area riservata</span> '+		
-		//'	                    <div class="login-panel"> '+
-		//'	                    	<form action="<%=loginUrl%>" method="post"> '+
-		//'	                        	<fieldset> '+
-		//'	                            	<p class="title">Accedi</p> '+
-		//'	                                <p class="not-registered">Non sei registrato? <a href="#">Registrati</a></p> '+
-		//'	                                <div class="field"> '+
-		//'	                                	<label for="l-username">Username</label> '+
-		//'	                                    <input type="text" name="l-username" id="l-username" value="Username" /> '+
-		//'	                                </div> '+
-		//'	                                <div class="field last"> '+
-		//'	                                	<label for="l-password">Password</label> '+
-		//'	                                    <input type="text" name="l-password" id="l-password" value="Password" /> '+
-		//'	                                </div> '+
-		//'	                                <div class="submit"> '+
-		//'	                                	<input type="submit" value="Login" /> '+
-		//'	                                </div> '+
-		//'	                                <a href="#" class="forgot-password">Password dimenticata?</a> '+
-		//'	                            </fieldset> '+
-		//'	                        </form> '+
-		//'	                    </div> '+
-		
-		//'	                </li> '+
 		'	            </ul> '+
 		'	            <ul class="language-switcher"> '+
 		'	                <li class="active"><a href="#">IT</a></li> '+
@@ -149,18 +125,6 @@ Ext.onReady(function () {
 		'	    </div> '+
 		'	</header>';
 		
-		
-		
-	var bannerBar = Ext.create("Ext.toolbar.Toolbar",{
-		/*layout: {
-		    //type: 'vbox',
-		    align: 'left'
-		},*/
-    	autoScroll: false,
-    	height: 130,
-    	html: bannerHTML
-    });
- 
 	var footerHtml = 
 			'<footer class="footer" id="footer"> '+
 		    	'<div class="aux">' +
@@ -177,27 +141,36 @@ Ext.onReady(function () {
 				'</div>' +
 			'</footer>';
 		
-	var footerBar = Ext.create("Ext.toolbar.Toolbar",{
-		/*layout: {
-		//    type: 'vbox',
-		    align: 'left'
-		},*/
+	var bannerPanel = Ext.create("Ext.panel.Panel",{
+		region: 'north',
+	   	autoScroll: false,
+	   	height: 142,
+	   	html: bannerHTML
+	});
+			
+	var footerPanel = Ext.create("Ext.panel.Panel",{
+		region: 'south',
     	autoScroll: false,
     	height:100,
     	html: footerHtml
     });
 	
-    this.mainpanel =  Ext.create("Ext.panel.Panel",{
+    var mainPanel =  Ext.create("Ext.panel.Panel",{
     	autoScroll: false,
+    	region: 'center',
     	height: 700,
-    	items: [mainframe],
-    	fbar:footerBar,
-    	tbar: bannerBar    	
+    	items: [mainframe]  	
     });
-
+    
+    this.pagePanel =  Ext.create("Ext.panel.Panel",{
+    	layout: 'border',
+    	autoScroll: false,
+    	items: [bannerPanel, mainPanel, footerPanel]	
+    });
+    
     Ext.create('Ext.Viewport', {    	
         layout: 'fit',
-        items: [this.mainpanel]
+        items: [this.pagePanel]
     });
     
     
