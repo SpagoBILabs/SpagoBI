@@ -615,7 +615,7 @@
 	});
 	
 	/* =============================================================================
-	* Added by Davide Zerbetto (August 2013)
+	* Added by Davide Zerbetto (July 2013)
 	* IE9 does not support createContextualFragment function
 	* See https://spagobi.eng.it/jira/browse/SPAGOBI-1266#comment-33990
 	* See http://www.marcolecce.com/blog/2011/05/19/sencha-extjs-createcontextualfragment-non-supportato-in-ie-9/
