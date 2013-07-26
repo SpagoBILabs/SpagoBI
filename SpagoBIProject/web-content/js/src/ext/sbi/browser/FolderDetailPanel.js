@@ -45,12 +45,6 @@ Sbi.browser.FolderDetailPanel = function(config) {
 		, baseParams: {LIGHT_NAVIGATOR_DISABLED: 'FALSE', MESSAGEDET: 'DETAIL_NEW'}
 	});
 	
-	this.services['newGeoDocument'] = Sbi.config.serviceRegistry.getServiceUrl({
-		serviceType: 'PAGE'
-		, serviceName: 'DetailBIObjectPage'
-		, baseParams: {LIGHT_NAVIGATOR_DISABLED: 'FALSE', MESSAGEDET: 'DETAIL_NEW'}
-	});
-
 	this.services['getCommunities'] =  Sbi.config.serviceRegistry.getRestServiceUrl({
 		serviceName: 'community/user'
 			, baseParams: {
@@ -87,8 +81,8 @@ Sbi.browser.FolderDetailPanel = function(config) {
     		}
     	}
     	, emptyText: LN('sbi.browser.folderdetailpanel.emptytext')
-    	, metaFolder: config.metaFolder
-        , metaDocument: config.metaDocument	
+    	, metaFolder: (config.browserConfig)?config.browserConfig.metaFolder:null
+        , metaDocument: (config.browserConfig)?config.browserConfig.metaDocument:null	
     });
     
     // -- toolbar -----------------------------------------------------------
@@ -185,6 +179,11 @@ Sbi.browser.FolderDetailPanel = function(config) {
     } else {
         this.loadFolder(config.folderId, config.folderId);
     }
+    
+    if (config.engineUrls.georeportServiceUrl != null){
+        this.georeportServiceUrl = config.engineUrls.georeportServiceUrl;
+    }
+
 };
 
 
@@ -202,6 +201,7 @@ Ext.extend(Sbi.browser.FolderDetailPanel, Ext.Panel, {
     , folderView: null
     , loadingMask: null
     , folderId: null
+    , georeportServiceUrl: null
     
     , id:'this'
     
@@ -213,7 +213,7 @@ Ext.extend(Sbi.browser.FolderDetailPanel, Ext.Panel, {
 				urlToCall += '&FUNCT_ID='+this.folderId;
 			}
 		}else if(type !== undefined || type !=='georeport'){
-		  urlToCall = this.services['newGeoDocument'];
+			urlToCall =  this.georeportServiceUrl;
 		}		
 		
 		window.location.href=urlToCall;	

@@ -151,4 +151,18 @@ Sbi.browser.DocBrowserContainer = function(config) {
 
 Ext.extend(Sbi.browser.DocBrowserContainer, Ext.Panel, {
 	brSheet: null
+	
+	, executeGeoreport: function(inputType, record){
+		if(inputType == "DATASET"){
+			var datasetLabel = record.data.label;
+			var dataSourceLabel = record.data.dataSource;
+			
+			var url =  this.georeportEngineBaseUrl+ '&dataset_label=' + datasetLabel ;
+			if(dataSourceLabel || dataSourceLabel!=""){
+				url = url+ '&datasource_label=' + dataSourceLabel;
+			}
+			this.documentexecution.load(url);
+			this.documentexecution.datasetLabel = datasetLabel;
+		}
+	}
 });

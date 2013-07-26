@@ -37,9 +37,9 @@ Sbi.browser.FolderViewTemplate = function(config) {
 		, baseParams: params
 	});
 //
-//	for(var i = 0; i < config.metaDocument.length; i++) {
+//	for(var i = 0; i < config.browserConfig.metaDocument.length; i++) {
 //
-//		var meta = config.metaDocument[i];
+//		var meta = config.browserConfig.metaDocument[i];
 //
 //			if(meta.visible) {		
 //			// translate meta.id if present
@@ -112,8 +112,8 @@ Sbi.browser.FolderViewTemplate = function(config) {
 
 	
 	var folderAttributes = '';
-//	for(var i = 0; i < config.metaFolder.length; i++) {
-//		var meta = config.metaFolder[i];
+//	for(var i = 0; i < config.browserConfig.metaFolder.length; i++) {
+//		var meta = config.browserConfig.metaFolder[i];
 //		if(meta.visible) {		
 //			
 //			folderAttributes += '<p id="' + meta.id + '"/>';

@@ -6,29 +6,40 @@
 package it.eng.spagobi.analiticalmodel.documentsbrowser.service;
 
 
-import java.sql.Connection;
-
-import javax.portlet.PortletPreferences;
-import javax.portlet.PortletRequest;
-
-import org.apache.axis.utils.StringUtils;
-import org.apache.log4j.Logger;
-import org.hibernate.HibernateException;
-import org.hibernate.Session;
-import org.json.JSONObject;
-
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.analiticalmodel.execution.service.ExecuteAdHocUtility;
 import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
+import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.services.PortletLoginAction;
 import it.eng.spagobi.commons.utilities.AuditLogUtilities;
+import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.HibernateUtil;
 import it.eng.spagobi.commons.utilities.PortletUtilities;
 import it.eng.spagobi.commons.utilities.UserUtilities;
+import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
+import it.eng.spagobi.engines.config.bo.Engine;
+import it.eng.spagobi.services.common.SsoServiceInterface;
 import it.eng.spagobi.utilities.exceptions.SpagoBIException;
+
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+
+import javax.portlet.PortletPreferences;
+import javax.portlet.PortletRequest;
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.axis.utils.StringUtils;
+import org.apache.log4j.LogMF;
+import org.apache.log4j.Logger;
+import org.hibernate.HibernateException;
+import org.hibernate.Session;
+import org.json.JSONObject;
 
 /**
  * @author Antonella Giachino (antonella.giachino@eng.it)
@@ -41,6 +52,10 @@ public class UserDocumentsBrowserPortletStartAction extends PortletLoginAction {
 	public static final String LABEL_SUBTREE_NODE = "PATH_SUBTREE";
 	public static final String HEIGHT = "HEIGHT";
 	public static final String PORTLET = "PORTLET";
+	public static final String OUTPUT_PARAMETER_GEOREPORT_EDIT_SERVICE_URL = "georeportServiceUrl";
+	
+	private Locale locale;
+	IEngUserProfile profile;
 	
 
 	public void service(SourceBean request, SourceBean response) throws Exception {
@@ -60,7 +75,7 @@ public class UserDocumentsBrowserPortletStartAction extends PortletLoginAction {
 			//Connection jdbcConnection = HibernateUtil.getConnection(aSession);
 			//TODO
 			
-			IEngUserProfile profile = UserUtilities.getUserProfile();
+			profile = UserUtilities.getUserProfile();
 			AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "ACTIVITY.DOCUMENTSBROWSERMENU", null, "OK");
 		} catch (HibernateException he) {
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
@@ -73,6 +88,10 @@ public class UserDocumentsBrowserPortletStartAction extends PortletLoginAction {
 		
 		try {
 			super.service(request, response);
+			
+			HttpServletRequest httpRequest = getHttpRequest();
+			MessageBuilder m = new MessageBuilder();
+			locale = m.getLocale(httpRequest);
 			
 			channelType = getRequestContainer().getChannelType();
 			
@@ -122,7 +141,14 @@ public class UserDocumentsBrowserPortletStartAction extends PortletLoginAction {
 
 					
 				} 
-
+				//----------------------------------------------
+				//Defining action urls
+				String executionId = ExecuteAdHocUtility.createNewExecutionId();
+				String geoereportEditActionUrl = buildGeoreportEditServiceUrl(executionId);
+				JSONObject jsonUrlObj  = config.toJSON();
+				if (geoereportEditActionUrl != null){
+					jsonUrlObj.put(OUTPUT_PARAMETER_GEOREPORT_EDIT_SERVICE_URL, geoereportEditActionUrl);
+				}
 				//----------------------------------------------
 				
 				
@@ -136,6 +162,7 @@ public class UserDocumentsBrowserPortletStartAction extends PortletLoginAction {
 				//labelSubTreeNode = ...;
 				//jsonObj.put("labelSubTreeNode", labelSubTreeNode);
 				response.setAttribute("metaConfiguration", jsonObj);
+				response.setAttribute("engineUrls", jsonUrlObj);
 			}			
 			
 		} catch (Throwable t) {
@@ -144,5 +171,47 @@ public class UserDocumentsBrowserPortletStartAction extends PortletLoginAction {
 		} finally {
 			logger.debug("OUT");
 		}
-	}	
+	}
+	
+	protected String buildGeoreportEditServiceUrl(String executionId) {
+		Map<String, String> parametersMap = buildGeoreportEditServiceBaseParametersMap();
+		parametersMap.put("SBI_EXECUTION_ID" , executionId);
+		
+		Engine georeportEngine = ExecuteAdHocUtility.getGeoreportEngine();
+		// GeoReportEngineStartEditAction
+		
+		String baseEditUrl = georeportEngine.getUrl().replace("GeoReportEngineStartAction", "GeoReportEngineStartEditAction");
+		String georeportEditActionUrl = GeneralUtilities.getUrl(baseEditUrl, parametersMap);
+		LogMF.debug(logger, "Georeport edit service invocation url is equal to [{}]", georeportEditActionUrl);
+		
+		return georeportEditActionUrl;
+	}
+	
+	protected Map<String, String> buildGeoreportEditServiceBaseParametersMap() {
+		Map<String, String> parametersMap = buildServiceBaseParametersMap();
+		
+		return parametersMap;
+	}
+	
+	protected Map<String, String> buildServiceBaseParametersMap() {
+		HashMap<String, String> parametersMap = new HashMap<String, String>();
+		
+
+
+		
+		parametersMap.put("NEW_SESSION", "TRUE");
+
+		parametersMap.put(SpagoBIConstants.SBI_CONTEXT, GeneralUtilities.getSpagoBiContext());
+		parametersMap.put(SpagoBIConstants.SBI_HOST, GeneralUtilities.getSpagoBiHost());
+
+		parametersMap.put(SpagoBIConstants.SBI_LANGUAGE, locale.getLanguage());
+		parametersMap.put(SpagoBIConstants.SBI_COUNTRY, locale.getCountry());
+
+		if (!GeneralUtilities.isSSOEnabled()) {
+			UserProfile userProfile = (UserProfile)profile;
+			parametersMap.put(SsoServiceInterface.USER_ID, (String)userProfile.getUserId());
+		}
+
+		return parametersMap;
+	}
 }
