@@ -4,21 +4,11 @@
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. **/
  
-  
- 
-  
 
 /**
  * 
  * @author Andrea Gioia (andrea.gioia@eng.it)
  */
-
-function myAdd(){
-	alert("myAdd");
-	var io = Ext.get("this");
-//	Ext.get("doc-details").addNewDocument();
-	io.addNewDocument;
-}
 
 Ext.ns("Sbi.browser");
 
@@ -50,6 +40,12 @@ Sbi.browser.FolderDetailPanel = function(config) {
 	});
   
 	this.services['newDocument'] = Sbi.config.serviceRegistry.getServiceUrl({
+		serviceType: 'PAGE'
+		, serviceName: 'DetailBIObjectPage'
+		, baseParams: {LIGHT_NAVIGATOR_DISABLED: 'FALSE', MESSAGEDET: 'DETAIL_NEW'}
+	});
+	
+	this.services['newGeoDocument'] = Sbi.config.serviceRegistry.getServiceUrl({
 		serviceType: 'PAGE'
 		, serviceName: 'DetailBIObjectPage'
 		, baseParams: {LIGHT_NAVIGATOR_DISABLED: 'FALSE', MESSAGEDET: 'DETAIL_NEW'}
@@ -96,35 +92,19 @@ Sbi.browser.FolderDetailPanel = function(config) {
     });
     
     // -- toolbar -----------------------------------------------------------
+    this.displayToolbar = false;   
+    this.toolbar = new Ext.Toolbar({hidden:true});
     var toolbarItems = [];
     
     var ttbarTextItem = null;
     if (Sbi.settings.browser.showBreadCrumbs !== undefined && Sbi.settings.browser.showBreadCrumbs){
+    	this.displayToolbar = true;
     	ttbarTextItem = new Ext.Toolbar.TextItem('> ?');  
 	    ttbarTextItem.isBreadcrumb = true;	   
 	    toolbarItems.push(ttbarTextItem);
     }
     
-    var ttbarToggleViewButton = new Ext.Toolbar.Button({
-    	tooltip: LN('sbi.browser.folderdetailpanel.listviewTT'),
-		iconCls:'icon-list-view',
-		listeners: {
-			'click': {
-          		fn: this.toggleDisplayModality,
-          		scope: this
-        	} 
-		}
-    });
-    var newDocumentButton = new Ext.Toolbar.Button({
-    	tooltip: LN('sbi.generic.add'),
-		iconCls:'icon-add',
-		listeners: {
-			'click': {
-          		fn: this.addNewDocument,
-          		scope: this
-        	} 
-		}
-    });
+
     this.communities;
     Ext.Ajax.request({
         url: this.services['getCommunities'],
@@ -147,47 +127,26 @@ Sbi.browser.FolderDetailPanel = function(config) {
 		
 	this.bannerPanel = new Ext.Panel({
 		layout: 'fit',
+		baseCls:'list-actions-container',
 	   	autoScroll: false,
 	   	style:"float: left; width:100%;"
 	});
-   
-    toolbarItems.push('->');	 
-    if (this.isAbleToCreateDocument()){
-    	toolbarItems.push(newDocumentButton);
-    }
-    toolbarItems.push(ttbarToggleViewButton);
 
-    this.toolbar = new Ext.Toolbar({     
-      items: toolbarItems
-    });
-
-
-    
-    if (Sbi.settings.browser.showBreadCrumbs !== undefined && Sbi.settings.browser.showBreadCrumbs){
-    	this.toolbar.breadcrumbs = new Array();
+	
+	if (this.displayToolbar){		
+	    toolbarItems.push('->');	 
+	    this.toolbar = new Ext.Toolbar({     
+	      items: toolbarItems
+	    });
+	    this.toolbar.breadcrumbs = new Array();
 	    this.toolbar.breadcrumbs.push(ttbarTextItem);
-    }
-    //this.toolbar.text = ttbarTextItem;
-    this.toolbar.buttonsL = new Array();
-    this.toolbar.buttonsL['toggleView'] = ttbarToggleViewButton;
-    if (this.isAbleToCreateDocument()){
-    	this.toolbar.buttonsL['newDocument'] = newDocumentButton;
-    }
-    
-    
-    if(config.modality && (
-      config.modality === 'list-view' || 'group-view'
-    )) {
-      this.modality = config.modality;
-    } else {
-      this.modality = 'group-view';
-    }
-    
+	    this.toolbar.setVisible(true);
+	}
+
     // -- mainPanel -----------------------------------------------------------
     this.mainPanel = new Ext.Panel({
-//    	layout:'border',
          id:'doc-details'
-        , cls: this.modality
+        , cls: 'group-view' 
 //        , autoHeight: true
         , collapsible: true
         , frame: true
@@ -195,8 +154,8 @@ Sbi.browser.FolderDetailPanel = function(config) {
         , autoScroll:true
 
         , items:[this.bannerPanel, this.folderView]        
-        , tbar: this.toolbar 
-        
+//    	, tbar: (this.displayToolbar)?this.toolbar:[]
+        , tbar: this.toolbar
         , listeners: {
 		    'render': {
             	fn: function() {
@@ -226,10 +185,6 @@ Sbi.browser.FolderDetailPanel = function(config) {
     } else {
         this.loadFolder(config.folderId, config.folderId);
     }
-    
-    var newDoc =  Ext.select("#newDocument");
-//    var newDoc =  Ext.get("newDocument");
-	newDoc.on('onclick', this.addNewDocument, this);
 };
 
 
@@ -238,9 +193,10 @@ Sbi.browser.FolderDetailPanel = function(config) {
 Ext.extend(Sbi.browser.FolderDetailPanel, Ext.Panel, {
 	//constants
       DETAIL_DOCUMENT: 'DocumentDetailManagement'
+    , CREATE_DOCUMENT: 'CreateDocument'    	  
     //variables
 	, services: null
-    , modality: null // list-view || group-view
+	, displayToolbar: null
     , store: null
     , toolbar: null
     , folderView: null
@@ -249,48 +205,20 @@ Ext.extend(Sbi.browser.FolderDetailPanel, Ext.Panel, {
     
     , id:'this'
     
-    , toggleDisplayModality: function() {
-      this.loadingMask.show();
-      var b = this.toolbar.buttonsL['toggleView'];
-      if(this.modality === 'list-view') {
-        this.mainPanel.getEl().removeClass('list-view');
-        this.mainPanel.addClass('group-view');
-        this.modality = 'group-view';
-        
-        b.tooltip = 'List view';
-        b.setIconClass('icon-list-view');
-      } else {
-        this.mainPanel.getEl().removeClass('group-view');
-        this.mainPanel.addClass('list-view');
-        this.modality = 'list-view';
-        
-        b.tooltip = LN('sbi.browser.folderdetailpanel.groupviewTT');
-        b.setIconClass('icon-group-view');        
-      }
-      
-       var btnEl = b.el.child(b.buttonSelector);
-       if(b.tooltip){
-            if(typeof b.tooltip == 'object'){
-                Ext.QuickTips.register(Ext.apply({
-                      target: btnEl.id
-                }, b.tooltip));
-            } else {
-                btnEl.dom[b.tooltipType] = b.tooltip;
-            }
-        }   
-      
-      this.loadingMask.hide();
-    }
-	, addNewDocument: function() {
-		alert("addNewDocument");
-		var urlToCall = this.services['newDocument'];
-		
-		if(this.folderId != null){
-			urlToCall += '&FUNCT_ID='+this.folderId;
-		}
+	, addNewDocument: function(type) {
+		var urlToCall = '';
+		if (type == undefined || type==''){
+		  urlToCall = this.services['newDocument'];
+			if(this.folderId != null){
+				urlToCall += '&FUNCT_ID='+this.folderId;
+			}
+		}else if(type !== undefined || type !=='georeport'){
+		  urlToCall = this.services['newGeoDocument'];
+		}		
 		
 		window.location.href=urlToCall;	
 	}
+
     , loadFolder: function(folderId, rootFolderId) {
       
       this.folderId = folderId;	
@@ -319,7 +247,7 @@ Ext.extend(Sbi.browser.FolderDetailPanel, Ext.Panel, {
 	      		if(response.responseText !== undefined) {
 	      			var content = Ext.util.JSON.decode( response.responseText );
 	      			if(content !== undefined) {
-	      				if (Sbi.settings.browser.showBreadCrumbs !== undefined && Sbi.settings.browser.showBreadCrumbs){
+	      				if (this.displayToolbar){
 	      					this.setBreadcrumbs(content);
 	      				}
 	      				this.fireEvent('onfolderload', this);
@@ -338,7 +266,9 @@ Ext.extend(Sbi.browser.FolderDetailPanel, Ext.Panel, {
     	this.store.proxy.conn.url = this.store.searchUrl;
         this.store.baseParams = params || {};
         this.store.load();  
-        this.setTitle('Query results ...');
+        if (this.displayToolbar){
+        	this.setTitle('Query results ...');
+        }
     }
     
    
@@ -348,7 +278,7 @@ Ext.extend(Sbi.browser.FolderDetailPanel, Ext.Panel, {
     		xtype: 'tbtext'
     		, text: title || ''
     	});
-    	this.reinitToolbar();
+    	this.toolbar.add('->');
     }
     
     , setBreadcrumbs: function(breadcrumbs) {
@@ -389,7 +319,7 @@ Ext.extend(Sbi.browser.FolderDetailPanel, Ext.Panel, {
     		, cls: 'sbi-last-folder'
     	});
         
-       this.reinitToolbar();
+        this.toolbar.add('->');
     }
     
     , resetToolbar: function() {
@@ -397,45 +327,7 @@ Ext.extend(Sbi.browser.FolderDetailPanel, Ext.Panel, {
             this.items.remove(item);
             item.destroy();           
         }, this.toolbar.items); 
-    }
-    
-    , reinitToolbar: function() {
-    	var tt;
-        var cls;
-        if(this.modality === 'list-view') {
-        	tt = LN('sbi.browser.folderdetailpanel.groupviewTT');
-        	cls = 'icon-group-view';
-        } else {
-        	tt = LN('sbi.browser.folderdetailpanel.listviewTT');
-        	cls = 'icon-list-view';
-        }
-        this.toolbar.buttonsL['toggleView'] = new Ext.Toolbar.Button({
-        	tooltip: tt,
-    		iconCls: cls,
-    		listeners: {
-    			'click': {
-              		fn: this.toggleDisplayModality,
-              		scope: this
-            	} 
-    		}
-        });
-        if (this.isAbleToCreateDocument()){
-	        this.toolbar.buttonsL['newDocument'] = new Ext.Toolbar.Button({
-	        	tooltip: LN('sbi.generic.add'),
-	    		iconCls:'icon-add',
-	    		listeners: {
-	    			'click': {
-	              		fn: this.addNewDocument,
-	              		scope: this
-	            	} 
-	    		}
-	        });
-	        this.toolbar.add('->', this.toolbar.buttonsL['toggleView'], this.toolbar.buttonsL['newDocument']);
-        }else{
-        	this.toolbar.add('->', this.toolbar.buttonsL['toggleView']);
-        }
-    }
-   
+    }   
     
     , onBreadCrumbClick: function(b, e) {    	
     	this.fireEvent('onbreadcrumbclick', this, b.breadcrumb, e);
@@ -446,17 +338,6 @@ Ext.extend(Sbi.browser.FolderDetailPanel, Ext.Panel, {
     // private methods 
     
     , onClick: function(dataview, i, node, e) {
-    	
-//    	var button = e.getTarget('div[class=button]', 10, true);
-//    	if(button) {
-//		var buttonImg = button.down('img');
-//		var startIndex = (' '+buttonImg.dom.className+' ').indexOf(' action-');
-//		if(startIndex != -1) {
-//			action = buttonImg.dom.className.substring(startIndex).trim().split(' ')[0];
-//			action = action.split('-')[1];
-//		}    		
-//	}
-    	
     	var actionDetail = e.getTarget('li[class=detail]', 10, true);
     	var actionMetaData = e.getTarget('li[class=showmetadata]', 10, true);
         var actionDelete = e.getTarget('a[class=delete]', 10, true);
@@ -619,7 +500,7 @@ Ext.extend(Sbi.browser.FolderDetailPanel, Ext.Panel, {
     	if (funcs == null || funcs == undefined) return false;
     	
     	for (f in funcs){
-    		if (funcs[f] == this.DETAIL_DOCUMENT){
+    		if (funcs[f] == this.CREATE_DOCUMENT){
     			return true;
     			break;
     		}
@@ -627,6 +508,20 @@ Ext.extend(Sbi.browser.FolderDetailPanel, Ext.Panel, {
     	
     	return false;
     }
+    
+    , isAbleToManageDocument: function(){		
+		var funcs = Sbi.user.functionalities;
+		if (funcs == null || funcs == undefined) return false;
+		
+		for (f in funcs){
+			if (funcs[f] == this.DETAIL_DOCUMENT){	    	    			
+				return true;
+				break;
+			}
+		}
+		
+		return false;
+	} 
     
     , createBannerHtml: function(communities){
     	var communityString = '';
@@ -637,6 +532,12 @@ Ext.extend(Sbi.browser.FolderDetailPanel, Ext.Panel, {
         	communityString +='</a></li>';
         }
         
+        var createButton = '';
+        if (this.isAbleToManageDocument()){
+        	createButton += ' <a id="newDocument" href="#" onclick="javascript:Ext.getCmp(\'this\').addNewDocument(\'\')" class="btn-add"><span class="highlighted">Crea</span> documento<span class="plus">+</span></a> ';
+        }else  if (this.isAbleToCreateDocument()){
+        	createButton += ' <a id="newDocument" href="#" onclick="javascript:Ext.getCmp(\'this\').addNewDocument(\'georeport\')"" class="btn-add"><span class="highlighted">Carica</span> mappa<span class="plus">+</span></a> ';
+        } 
         
         var bannerHTML = ''+
      		'<div class="aux"> '+
@@ -647,9 +548,7 @@ Ext.extend(Sbi.browser.FolderDetailPanel, Ext.Panel, {
     		'	        <li class="favourite last"><a href="#">Favoriti</a></li> '+
     		'		</ul> '+
     		'	    <div class="list-actions"> '+
-//    		'	        <a href="#" class="btn-add" onClick="addNewDocument()"><span class="highlighted">Carica</span> mappa<span class="plus">+</span></a> '+
-    		'	        <a id="newDocument" href="#" onclick="myAdd()" class="btn-add"><span class="highlighted">Carica</span> mappa<span class="plus">+</span></a> '+
-//    		'	        <a id="newDocument" href="#"  class="btn-add"><span class="highlighted">Carica</span> mappa<span class="plus">+</span></a> '+
+    					createButton +
     		'	        <form action="#" method="get" class="search-form"> '+
     		'	            <fieldset> '+
     		'	                <div class="field"> '+
