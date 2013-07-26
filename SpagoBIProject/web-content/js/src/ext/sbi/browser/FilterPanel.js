@@ -37,29 +37,30 @@ Sbi.browser.FilterPanel = function(config) {
 	);
 	
 	// load other values
-	for(var i = 0; i < config.metaDocument.length; i++) {
-		var meta = config.metaDocument[i];
-		
-		if(meta.sortable && meta.id != 'name') {
-			label = LN('sbi.browser.misc.x') + ' ' + LN('sbi.browser.document.' + meta.id);
-			this.sortRadioGroup.push(
-					new Ext.form.Radio({
-						boxLabel: label, name: 'sort', hideLabel: true, inputValue: meta.id
-						//boxLabel: 'by ' + meta.id, name: 'sort', hideLabel: true, inputValue: meta.id
-					})
-			);
+	if (config.browserConfig &&  config.browserConfig.metaDocument){
+		for(var i = 0; i < config.browserConfig.metaDocument.length; i++) {
+			var meta = config.browserConfig.metaDocument[i];
+			
+			if(meta.sortable && meta.id != 'name') {
+				label = LN('sbi.browser.misc.x') + ' ' + LN('sbi.browser.document.' + meta.id);
+				this.sortRadioGroup.push(
+						new Ext.form.Radio({
+							boxLabel: label, name: 'sort', hideLabel: true, inputValue: meta.id
+							//boxLabel: 'by ' + meta.id, name: 'sort', hideLabel: true, inputValue: meta.id
+						})
+				);
+			}
+			
+			if(meta.groupable) {
+				label = LN('sbi.browser.misc.x') + ' ' + LN('sbi.browser.document.' + meta.id);
+				this.groupRadioGroup.push(
+						new Ext.form.Radio({
+							boxLabel: label, name: 'group', hideLabel: true, inputValue: meta.id
+						})
+				);
+			}
 		}
-		
-		if(meta.groupable) {
-			label = LN('sbi.browser.misc.x') + ' ' + LN('sbi.browser.document.' + meta.id);
-			this.groupRadioGroup.push(
-					new Ext.form.Radio({
-						boxLabel: label, name: 'group', hideLabel: true, inputValue: meta.id
-					})
-			);
-		}
-	}
-	
+	}	
 	// init check boxes
 	for(var i = 0; i < this.sortRadioGroup.length; i++) {
 		this.sortRadioGroup[i].on('check', this.onSortGroupClick, this);

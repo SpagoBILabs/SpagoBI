@@ -18,7 +18,9 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
    
    	<%@ include file="/WEB-INF/jsp/commons/importSbiJS.jspf"%>
    	 
-       
+    <%
+    String georeportEditActionUrl = (String) aResponseContainer.getServiceResponse().getAttribute("georeportServiceUrl");
+    %>
     <script type="text/javascript">
     Ext.BLANK_IMAGE_URL = '<%=urlBuilder.getResourceLink(request, "/js/lib/ext-2.0.1/resources/images/default/s.gif")%>';
 
@@ -55,11 +57,16 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
         , baseParams: params
     });
 
-    var browserConfig = <%= aServiceResponse.getAttribute("metaConfiguration")%>;
+    var browserConfig = <%= aServiceResponse.getAttribute("metaConfiguration")%>;    
+    var engineUrls =  <%= aServiceResponse.getAttribute("engineUrls")%>;
+    
+    var config = {};
+    config.browserConfig = browserConfig;
+    config.engineUrls = engineUrls;
     
     Ext.onReady(function(){
       Ext.QuickTips.init();              
-      var tabbedBrowser = new Sbi.browser.DocBrowserContainer(browserConfig);
+      var tabbedBrowser = new Sbi.browser.DocBrowserContainer(config);      
       var viewport = new Ext.Viewport(tabbedBrowser);     
     });
     

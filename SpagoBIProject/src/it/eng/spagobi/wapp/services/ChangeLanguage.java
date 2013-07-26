@@ -36,13 +36,18 @@ import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
+import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
+import it.eng.spagobi.utilities.themes.ThemesManager;
 import it.eng.spagobi.wapp.util.MenuUtilities;
 
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 
@@ -71,6 +76,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 public class ChangeLanguage extends AbstractHttpAction{
 
 	static private Logger logger = Logger.getLogger(ChangeLanguage.class);
+	
+	public static final String LIST_MENU = "LIST_MENU";
 
 	
     UserProfile userProfile = null;
@@ -82,6 +89,9 @@ public class ChangeLanguage extends AbstractHttpAction{
 		RequestContainer reqCont = RequestContainer.getRequestContainer();
 		SessionContainer sessCont = reqCont.getSessionContainer();
 		SessionContainer permSess = sessCont.getPermanentContainer();
+		
+		HttpServletRequest servletRequest=getHttpRequest();
+		HttpSession httpSession=servletRequest.getSession();
 
 		Locale locale = MessageBuilder.getBrowserLocaleFromSpago();		
 
@@ -89,6 +99,10 @@ public class ChangeLanguage extends AbstractHttpAction{
 		String country=(String)serviceRequest.getAttribute("country_id");
 		String isPublicUser=(String)serviceRequest.getAttribute("IS_PUBLIC_USER");
 		logger.debug("language selected: "+language);
+		String currTheme=(String)serviceRequest.getAttribute(ChangeTheme.THEME_NAME);
+		if (currTheme == null) ThemesManager.getDefaultTheme();	
+		logger.debug("theme used: "+currTheme);
+		
 		IEngUserProfile profile = (IEngUserProfile)permSess.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 		userProfile=null;
 		String lang="";
@@ -130,7 +144,8 @@ public class ChangeLanguage extends AbstractHttpAction{
 			}
 		}
 
-		MenuUtilities.getMenuItems(serviceRequest, serviceResponse, profile);
+//		MenuUtilities.getMenuItems(serviceRequest, serviceResponse, profile);
+		List lstMenu = MenuUtilities.getMenuItems(profile);	
 		
 		serviceResponse.setAttribute("MENU_MODE", "ALL_TOP");
 		Collection functionalities = profile.getFunctionalities();
@@ -143,6 +158,14 @@ public class ChangeLanguage extends AbstractHttpAction{
 		 	docTest = functionalities.contains("DocumentTestManagement");
 		}
 		
+		String url = "/themes/" + currTheme	+ "/jsp/";
+		if (UserUtilities.isTechnicalUser(profile)){
+			url += "adminHome.jsp";
+		}else{
+			url += "userHome.jsp";
+		}
+		servletRequest.getSession().setAttribute(LIST_MENU, lstMenu);
+		getHttpRequest().getRequestDispatcher(url).forward(getHttpRequest(), getHttpResponse());
 		if (isPublicUser != null && isPublicUser.equalsIgnoreCase("TRUE")){
 			serviceResponse.setAttribute(SpagoBIConstants.PUBLISHER_NAME, "userhomePublicUser");
 		}else{
@@ -151,7 +174,7 @@ public class ChangeLanguage extends AbstractHttpAction{
 		logger.debug("OUT");
 	}
 
-	
+
 	
 }
 

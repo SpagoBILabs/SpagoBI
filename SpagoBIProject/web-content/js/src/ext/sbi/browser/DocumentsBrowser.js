@@ -29,8 +29,9 @@ Sbi.browser.DocumentsBrowser = function(config) {
 	
 	this.detailPanel = new Sbi.browser.FolderDetailPanel({ 
 		layout: 'fit'
-        , metaFolder: config.metaFolder
-        , metaDocument: config.metaDocument	
+        , metaFolder: config.browserConfig.metaFolder
+        , metaDocument: config.browserConfig.metaDocument	
+        , engineUrls: config.engineUrls	
         , folderId: this.selectedFolderId
         , defaultFolderId: this.defaultFolderId
     });
@@ -76,8 +77,8 @@ Sbi.browser.DocumentsBrowser = function(config) {
 		this.filterPanel = new Sbi.browser.FilterPanel({
 	        title: LN('sbi.browser.filtrpanel.title')
 	        , border:true
-	        , metaFolder: config.metaFolder
-	        , metaDocument: config.metaDocument	
+	        , metaFolder: config.browserConfig.metaFolder
+	        , metaDocument: config.browserConfig.metaDocument	
 	    });
 		this.filterPanel.addListener('onsort', this.onSort, this);
 	    this.filterPanel.addListener('ongroup', this.onGroup, this);
@@ -87,8 +88,8 @@ Sbi.browser.DocumentsBrowser = function(config) {
 			this.progressPanel = new Sbi.browser.ProgressPanel({
 				title: LN('sbi.browser.progresspanel.title')
 				, border:true
-				, metaFolder: config.metaFolder
-				, metaDocument: config.metaDocument	
+				, metaFolder: config.browserConfig.metaFolder
+				, metaDocument: config.browserConfig.metaDocument	
 			});
 			this.progressPanel.addListener('click', this.onTreeNodeClick, this);
 		}		
@@ -96,7 +97,7 @@ Sbi.browser.DocumentsBrowser = function(config) {
 		this.searchPanel = new Sbi.browser.SearchPanel({
 	        title: LN('sbi.browser.searchpanel.title')
 	        , border:true
-	        , metaDocument: config.metaDocument	
+	        , metaDocument: config.browserConfig.metaDocument	
 	    });
 	    this.searchPanel.addListener('onsearch', this.onSearch, this);
 	    this.searchPanel.addListener('onreset', this.onReset, this);
