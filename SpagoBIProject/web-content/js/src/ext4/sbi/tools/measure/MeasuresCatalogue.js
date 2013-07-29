@@ -161,7 +161,21 @@ Ext.define('Sbi.tools.measure.MeasuresCatalogue', {
 				Ext.Ajax.request({
 					url: Sbi.config.serviceRegistry.getRestServiceUrl({serviceName: 'measures/join'}),
 					params: {ids: measuresIds},
-					success : function(response, options) {},
+					success : function(response, options) {
+						if(response !== undefined && response.responseText !== undefined && response.statusText=="OK") {
+							if(response.responseText!=null && response.responseText!=undefined){
+								if(response.responseText.indexOf("error.mesage.description")>=0){
+									Sbi.exception.ExceptionHandler.handleFailure(response);
+								}else{
+									alert("Join ok.. look at the responce");
+								}
+							}
+						} else {
+							Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
+						}
+					},
+					scope: this,
+					failure: Sbi.exception.ExceptionHandler.handleFailure,  
 					scope: this
 				});
 			}
