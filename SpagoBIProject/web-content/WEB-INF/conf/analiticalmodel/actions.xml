@@ -202,10 +202,6 @@
  	class="it.eng.spagobi.analiticalmodel.execution.service.CreateDatasetForWorksheetAction" scope="REQUEST">
  	<CONFIG/>
  </ACTION>
- <ACTION name="GET_COMMUNITIES_CONTENT_ACTION" 
-			class="it.eng.spagobi.analiticalmodel.documentsbrowser.service.GetCommunitiesContentAction"  
-			scope="REQUEST">
-		<CONFIG></CONFIG>
- </ACTION>
+
 </ACTIONS>
 

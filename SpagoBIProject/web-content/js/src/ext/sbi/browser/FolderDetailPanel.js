@@ -52,10 +52,7 @@ Sbi.browser.FolderDetailPanel = function(config) {
 				EXT_VERSION: "3"
 			}
 	});
-	this.services['loadCommunitiesContentService'] = Sbi.config.serviceRegistry.getServiceUrl({
-		serviceName: 'GET_COMMUNITIES_CONTENT_ACTION'
-		, baseParams: params
-	});
+
 	
 	// -- store -------------------------------------------------------
 	this.store = new Ext.data.JsonStore({
@@ -210,6 +207,7 @@ Ext.extend(Sbi.browser.FolderDetailPanel, Ext.Panel, {
     
     , id:'this'
     , communities: null
+    , fId: null
     
 	, addNewDocument: function(type) {
 		var urlToCall = '';
@@ -225,8 +223,8 @@ Ext.extend(Sbi.browser.FolderDetailPanel, Ext.Panel, {
 		window.location.href=urlToCall;	
 	}
 
-    , loadFolder: function(folderId, rootFolderId) {
-      
+    , loadFolder: function(folderId, rootFolderId, what) {
+
       this.folderId = folderId;	
       
       var p = {};
@@ -238,7 +236,9 @@ Ext.extend(Sbi.browser.FolderDetailPanel, Ext.Panel, {
       if(rootFolderId) {
     	  p.rootFolderId = rootFolderId;
       }
-     
+      if(what && what != null && what == 'ALL'){
+    	  p.folderId = this.fId;
+      }
       
       this.store.proxy.conn.url = this.store.browseUrl;
       this.store.baseParams = p || {};
@@ -268,23 +268,7 @@ Ext.extend(Sbi.browser.FolderDetailPanel, Ext.Panel, {
   		  failure: Sbi.exception.ExceptionHandler.handleFailure      
        });
     }
-    
-    , loadAllCommunities: function() {
-    	var p = {};
-    	var comms= '[';
-    	for(i=0; i<this.communities.length; i++){
-    		var c = this.communities[i].functId;
-    		comms += ''+c;
-    		if(i!= this.communities.length-1){
-    			comms += ',';
-    		}
-    	}
-    	comms+=']';
-    	p.folderIds =comms;
-        this.store.proxy.conn.url = this.services['loadCommunitiesContentService'];
-        this.store.baseParams = p || {};
-        this.store.load();
-      }
+
     , searchFolder: function(params) {       
     	this.store.proxy.conn.url = this.store.searchUrl;
         this.store.baseParams = params || {};
@@ -566,7 +550,7 @@ Ext.extend(Sbi.browser.FolderDetailPanel, Ext.Panel, {
      		'<div class="aux"> '+
 //    		'    <div class="list-actions-container"> '+
     		'		<ul class="list-tab"> '+
-    		'	    	<li class="active first"><a href="#" onclick="javascript:Ext.getCmp(\'this\').loadAllCommunities()">Tutte</a></li> '+
+    		'	    	<li class="active first"><a href="#" onclick="javascript:Ext.getCmp(\'this\').loadFolder(null, null, \'ALL\')">Tutte</a></li> '+
     					communityString+
     		'	        <li class="favourite last"><a href="#">Favoriti</a></li> '+
     		'		</ul> '+
