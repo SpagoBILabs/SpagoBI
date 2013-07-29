@@ -90,42 +90,7 @@ public class MenageCommunityAction {
 				//add missing roles to the folder, in order that docs are executable by the accepted user
 				CommunityManager cm = new CommunityManager();
 				cm.addRolesToFunctionality(userToAccept, sbiComm.getFunctCode());
-//				
-//				ISbiUserDAO userDao = DAOFactory.getSbiUserDAO();
-//				IRoleDAO roledao= DAOFactory.getRoleDAO();
-//				ILowFunctionalityDAO lowFunctDao = DAOFactory.getLowFunctionalityDAO();
-//				
-//				
-//				SbiUser user = userDao.loadSbiUserByUserId(userToAccept);
-//				
-//				ArrayList<SbiExtRoles> userRoles = userDao.loadSbiUserRolesById(user.getId());
-//				LowFunctionality funct = lowFunctDao.loadLowFunctionalityByCode(sbiComm.getFunctCode(), false);
-//				Role [] execRole4Funct = funct.getExecRoles();
-//				ArrayList<Role> roles = new ArrayList<Role>();
-//				for(int j=0; j<execRole4Funct.length; j++){
-//					Role alreadySetRole = execRole4Funct[j];
-//					roles.add(alreadySetRole);
-//
-//				}
-//				for(int i =0; i<userRoles.size();i++){
-//					SbiExtRoles extr = userRoles.get(i);
-//					Integer extRID= extr.getExtRoleId();
-//					Role r = roledao.loadByID(extRID);
-//					if(!roles.contains(r)){
-//						roles.add(r);
-//					}					
-//				}
-//				Role [] rolesArr = roles.toArray(new Role[roles.size()]);
-//				
-//				
-//				funct.setDevRoles(rolesArr);
-//				funct.setExecRoles(rolesArr);
-//				funct.setTestRoles(rolesArr);
-//				funct.setCreateRoles(rolesArr);
-//				
-//				lowFunctDao.modifyLowFunctionality(funct);
 	
-				
 			} catch (EMFUserError e) {
 				logger.error(e.getMessage());
 				result= msgBuilder.getMessage("community.save.membership.ko", "messages", locale);

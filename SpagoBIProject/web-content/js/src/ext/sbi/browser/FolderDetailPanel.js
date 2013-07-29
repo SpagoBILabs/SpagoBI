@@ -52,6 +52,10 @@ Sbi.browser.FolderDetailPanel = function(config) {
 				EXT_VERSION: "3"
 			}
 	});
+	this.services['loadCommunitiesContentService'] = Sbi.config.serviceRegistry.getServiceUrl({
+		serviceName: 'GET_COMMUNITIES_CONTENT_ACTION'
+		, baseParams: params
+	});
 	
 	// -- store -------------------------------------------------------
 	this.store = new Ext.data.JsonStore({
@@ -98,8 +102,8 @@ Sbi.browser.FolderDetailPanel = function(config) {
 	    toolbarItems.push(ttbarTextItem);
     }
     
-
-    this.communities;
+    this.communities = new Array();
+    
     Ext.Ajax.request({
         url: this.services['getCommunities'],
         callback : function(options , success, response){
@@ -110,6 +114,7 @@ Sbi.browser.FolderDetailPanel = function(config) {
 	      			var content = Ext.util.JSON.decode( response.responseText );
 	      			if(content !== undefined) {
 	      				this.createBannerHtml(content);
+	      				this.communities = content.root;
 		      		} 
 	      		}
   	  	}
@@ -204,6 +209,7 @@ Ext.extend(Sbi.browser.FolderDetailPanel, Ext.Panel, {
     , georeportServiceUrl: null
     
     , id:'this'
+    , communities: null
     
 	, addNewDocument: function(type) {
 		var urlToCall = '';
@@ -251,6 +257,7 @@ Ext.extend(Sbi.browser.FolderDetailPanel, Ext.Panel, {
 	      					this.setBreadcrumbs(content);
 	      				}
 	      				this.fireEvent('onfolderload', this);
+
 	      			} 
 	      		} else {
 	      			Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
@@ -262,6 +269,22 @@ Ext.extend(Sbi.browser.FolderDetailPanel, Ext.Panel, {
        });
     }
     
+    , loadAllCommunities: function() {
+    	var p = {};
+    	var comms= '[';
+    	for(i=0; i<this.communities.length; i++){
+    		var c = this.communities[i].functId;
+    		comms += ''+c;
+    		if(i!= this.communities.length-1){
+    			comms += ',';
+    		}
+    	}
+    	comms+=']';
+    	p.folderIds =comms;
+        this.store.proxy.conn.url = this.services['loadCommunitiesContentService'];
+        this.store.baseParams = p || {};
+        this.store.load();
+      }
     , searchFolder: function(params) {       
     	this.store.proxy.conn.url = this.store.searchUrl;
         this.store.baseParams = params || {};
@@ -543,7 +566,7 @@ Ext.extend(Sbi.browser.FolderDetailPanel, Ext.Panel, {
      		'<div class="aux"> '+
 //    		'    <div class="list-actions-container"> '+
     		'		<ul class="list-tab"> '+
-    		'	    	<li class="active first"><a href="#">Tutte</a></li> '+
+    		'	    	<li class="active first"><a href="#" onclick="javascript:Ext.getCmp(\'this\').loadAllCommunities()">Tutte</a></li> '+
     					communityString+
     		'	        <li class="favourite last"><a href="#">Favoriti</a></li> '+
     		'		</ul> '+
