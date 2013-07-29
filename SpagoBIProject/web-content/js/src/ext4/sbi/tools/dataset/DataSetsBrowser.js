@@ -455,6 +455,8 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
     		this.loadMask.hide();
     	}
 	} 
+	
+	
 
 });
   
