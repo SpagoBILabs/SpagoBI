@@ -55,6 +55,9 @@ sessionExpiredSpagoBIJS = 'sessionExpiredSpagoBIJS';
 <%-- End javascript object useful for session expired management (see also sessionExpired.jsp) --%>
 <!-- I want to execute if there is an homepage, only for user!-->
 <%
+//	String currTheme = ThemesManager.getCurrentTheme(requestContainer);
+	if (currTheme == null)
+		currTheme = ThemesManager.getDefaultTheme();
 
 	String characterEncoding = response.getCharacterEncoding();
 	if (characterEncoding == null) {

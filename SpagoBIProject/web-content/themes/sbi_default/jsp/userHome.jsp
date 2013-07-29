@@ -34,6 +34,7 @@ Ext.onReady(function () {
 	 		var languagesMenuItems = [];
 	 		for (var j = 0; j < Sbi.config.supportedLocales.length ; j++) {
 	 			var aLocale = Sbi.config.supportedLocales[j];
+	 			aLocale.currTheme = '<%=currTheme%>';
  				var aLanguagesMenuItem = new Ext.menu.Item({
 					id: '',
 					text: aLocale.language,
