@@ -631,7 +631,7 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 	}
 	*/
 	/**
-	 * Deletes a BI Object choosed by user. If the folder id is specified, it deletes only the instance 
+	 * Deletes a BI Object chosen by user. If the folder id is specified, it deletes only the instance 
 	 * of the object in that folder. If the folder id is not specified: if the user is an administrator 
 	 * the object is deleted from all the folders, else it is deleted from the folder on which the user 
 	 * is a developer.

@@ -17,19 +17,20 @@ import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 
 /**
- *
+ * Founds the content of all the user's communities
  */
-public class GetFolderContentAction extends AbstractBaseHttpAction{
+public class GetCommunitiesContentAction extends AbstractBaseHttpAction{
 
 	// REQUEST PARAMETERS
-	public static final String FOLDER_ID = "folderId";
+	public static final String FOLDER_IDS = "folderIds";
 
 	// logger component
-	private static Logger logger = Logger.getLogger(GetFolderContentAction.class);
+	private static Logger logger = Logger.getLogger(GetCommunitiesContentAction.class);
 
 	public void service(SourceBean request, SourceBean response) throws Exception {
 
@@ -39,15 +40,28 @@ public class GetFolderContentAction extends AbstractBaseHttpAction{
 			setSpagoBIRequestContainer( request );
 			setSpagoBIResponseContainer( response );
 
-			String functID = getAttributeAsString(FOLDER_ID);		
-			logger.debug("Parameter [" + FOLDER_ID + "] is equal to [" + functID + "]");
+			String functIDs = getAttributeAsString(FOLDER_IDS);	
+			JSONArray objIDS = new JSONArray(functIDs);
+			logger.debug("Parameter [" + FOLDER_IDS + "] are equal to [" + functIDs + "]");
 			
 			FolderContentUtil fcUtil = new FolderContentUtil();
 			
 			HttpServletRequest httpRequest = getHttpRequest();
 			SessionContainer sessCont = getSessionContainer();
-			
-			JSONObject folderContent = fcUtil.getFolderContent(functID, request, response, httpRequest, sessCont);
+			JSONObject folderContent = null;
+
+			JSONArray documents= new JSONArray();
+			JSONArray folders = new JSONArray();
+			for(int i=0; i<objIDS.length(); i++){
+				String functID = (String)objIDS.get(i);
+				JSONObject commContent = fcUtil.getFolderContent(functID, request, response, httpRequest, sessCont);
+				documents.put((JSONArray) (fcUtil.getDocuments()).get("samples"));
+				folders.put((JSONArray) (fcUtil.getFolders()).get("samples"));
+			}
+			JSONObject jsondocs= fcUtil.createJSONResponseDocuments(documents);
+			JSONObject jsonfuncts= fcUtil.createJSONResponseFolders(folders);
+			JSONObject canAddResponseJSON =null;
+			folderContent = fcUtil.createJSONResponse(jsonfuncts, jsondocs, canAddResponseJSON);
 			try {
 				writeBackToClient( new JSONSuccess( folderContent ) );
 			} catch (IOException e) {
