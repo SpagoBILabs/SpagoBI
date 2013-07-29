@@ -18,8 +18,8 @@ Ext.define('Sbi.tools.measure.MeasuresCatalogue', {
 			var columns = this.buildColumns();
 			thisPanel = this;
 			var joinMeasuresButton = Ext.create('Ext.Button', {
-				text    : 'Join',
-				tooltip :'Join',
+				text    : LN('sbi.tools.catalogue.measures.join.btn'),
+				tooltip : LN('sbi.tools.catalogue.measures.join.tooltip'),
 				hidden	:true,
 				//scope: thisPanel,
 				handler : function() {
@@ -31,8 +31,8 @@ Ext.define('Sbi.tools.measure.MeasuresCatalogue', {
 			});
 
 			var selectMeasuresButton = Ext.create('Ext.Button', {
-				text    : 'Select',
-				tooltip :'Select',
+				text    : LN('sbi.tools.catalogue.measures.select.btn'),
+				tooltip : LN('sbi.tools.catalogue.measures.select.tooltip'),
 				handler : function() {
 					this.hide();
 					joinMeasuresButton.show();
@@ -75,7 +75,33 @@ Ext.define('Sbi.tools.measure.MeasuresCatalogue', {
 					plugins: [{
 						ptype: 'rowexpander',
 						rowBodyTpl : [
-						              'ssssssssssss'
+						              '<div class="htmltable">',
+'<div class="measure-detail-container"><div class="group-view"><h2><div class="group-header" style="background-image: none!important">'+LN('sbi.tools.catalogue.measures.measure.properties')+'</div></h2></div>',
+'<table>',
+'		<tr style="height: 90px">',
+'			<td class="measure-detail-measure">',
+'			</td>',
+'			<td><table>',
+'					<tr><td style="width: 100px"><p><b>Name:</b></td><td><p>{alias}</p></td></tr>',
+'					<tr><td><p><b>Type:</b></td><td><p>{classType}</p></td>	</tr>',
+'					<tr><td><p><b>Column Name:</b></td><td><p>{columnName}</p></td>	</tr>',
+'			</table></td>',			
+'		</tr>',
+'</table></div>',
+'<div class="dataset-detail-container"><div class="group-view"><h2><div class="group-header" style="background-image: none!important">'+LN('sbi.tools.catalogue.measures.dataset.properties')+'</div></h2></div>',
+'<table>',
+'		<tr style="height: 100px">',
+'			<td class="measure-detail-dataset">',
+'			</td>',
+'			<td><table>',
+'					<tr><td style="width: 100px"><p><b>Label:</b></td><td><p>{dsLabel}</p></td></tr>',
+'					<tr><td><p><b>Name:</b></td><td><p>{dsName}</p></td></tr>',
+'					<tr><td><p><b>Category:</b></td><td><p>{dsCategory}</p></td></tr>',
+'					<tr><td><p><b>Type:</b></td><td><p>{dsType}</p></td></tr>',
+'			</table></td>',
+'		</tr>',
+'</table></div>',
+'</div>'
 						              ]
 					}]
 			};

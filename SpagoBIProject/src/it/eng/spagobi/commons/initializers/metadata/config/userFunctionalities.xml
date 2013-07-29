@@ -50,4 +50,5 @@
 <USER_FUNCTIONALITY name="CreateWorksheetFromDatasetUserFunctionality" description="CreateWorksheetFromDatasetUserFunctionality"/>
 <USER_FUNCTIONALITY name="SelfServiceDatasetManagement" description="SelfServiceDatasetManagement"/>
 <USER_FUNCTIONALITY name="SelfServiceMetaModelManagement" description="SelfServiceMetaModelManagement"/>
+<USER_FUNCTIONALITY name="MeasuresCatalogueManagement" description="MeasuresCatalogueManagement"/>
 </USER_FUNCTIONALITIES>

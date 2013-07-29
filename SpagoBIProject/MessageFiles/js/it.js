@@ -799,3 +799,20 @@ Sbi.locale.ln["sbi.execution.toolbar.savedatasetwindow.fields.datasource"]="Salv
 
 Sbi.locale.ln["sbi.tools.dataset.datasetbrowser.title"]="Datasets";
 Sbi.locale.ln["sbi.tools.model.metamodelsbrowser.title"]="Modelli";
+
+//===================================================================
+//WIDGET GROUPPED GRID
+//===================================================================
+Sbi.locale.ln["sbi.widget.grid.groupped.toggle"]="Gruppi esplosi";
+Sbi.locale.ln["sbi.widget.grid.groupped.disable.group"]="Disabilita il ragruppamento";
+
+
+//===================================================================
+//MEASURES CATALOGUE
+//===================================================================
+Sbi.locale.ln["sbi.tools.catalogue.measures.measure.properties"]="Proprietà delle misure";
+Sbi.locale.ln["sbi.tools.catalogue.measures.dataset.properties"]="Proprietà dei dataset";
+Sbi.locale.ln["sbi.tools.catalogue.measures.join.btn"]="Join";
+Sbi.locale.ln["sbi.tools.catalogue.measures.join.tooltip"]="Esegui il Join tra le misure selezioate";
+Sbi.locale.ln["sbi.tools.catalogue.measures.select.tooltip"]="Permette di selezioanre le righe";
+Sbi.locale.ln["sbi.tools.catalogue.measures.select.btn"]="Selezione";

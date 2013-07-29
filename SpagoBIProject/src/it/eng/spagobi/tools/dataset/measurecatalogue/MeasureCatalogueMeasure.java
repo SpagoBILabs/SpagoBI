@@ -174,6 +174,22 @@ public class MeasureCatalogueMeasure implements IMeasureCatalogueField {
 		return id;
 	}
 	
+	public String getClassType() {
+		String type = "";
+		if(dataType!=null){
+			String  s = dataType.getName();
+			if(s!=null){
+				int pos = s.lastIndexOf(".");
+				if(pos>0){
+					type = s.substring(pos+1);
+				}
+			}
+			
+			
+		}
+		return type;
+	}
+	
 
 	public String getDsLabel() {
 		return dataset.getLabel();
