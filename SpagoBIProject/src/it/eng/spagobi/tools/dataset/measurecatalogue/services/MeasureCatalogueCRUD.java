@@ -6,18 +6,17 @@
 
 package it.eng.spagobi.tools.dataset.measurecatalogue.services;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
+import it.eng.spagobi.services.exceptions.ExceptionUtilities;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
 import it.eng.spagobi.tools.dataset.measurecatalogue.MeasureCatalogue;
 import it.eng.spagobi.tools.dataset.measurecatalogue.MeasureCatalogueMeasure;
 import it.eng.spagobi.tools.dataset.measurecatalogue.MeasureCatalogueSingleton;
 import it.eng.spagobi.tools.dataset.measurecatalogue.materializer.InMemoryMaterializer;
-import it.eng.spagobi.utilities.json.JSONUtils;
-import it.eng.spagobi.utilities.rest.RestUtilities;
+import it.eng.spagobi.tools.dataset.measurecatalogue.materializer.exception.NoCommonDimensionsRuntimeException;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
@@ -29,8 +28,6 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
@@ -41,6 +38,8 @@ import org.json.JSONObject;
 
 @Path("/measures")
 public class MeasureCatalogueCRUD {
+	
+	static private String noCommonDimensionsRuntimeException = "error.mesage.description.measure.join.no.common.dimension";
 	
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
@@ -55,9 +54,9 @@ public class MeasureCatalogueCRUD {
 	@Produces(MediaType.APPLICATION_JSON)
 	public String join(@Context HttpServletRequest req, MultivaluedMap<String, String> form) {
 		MeasureCatalogue catalogue = MeasureCatalogueSingleton.getMeasureCatologue();
+		IDataStore dataStore;
 		
 		List<String> ids = form.get("ids");
-
 		
 		List<MeasureCatalogueMeasure> measures= new ArrayList<MeasureCatalogueMeasure>();
 		
@@ -69,7 +68,12 @@ public class MeasureCatalogueCRUD {
 		}
 
 		InMemoryMaterializer imm = new InMemoryMaterializer();
-		IDataStore dataStore =  imm.joinMeasures(measures);
+		try {
+			dataStore =  imm.joinMeasures(measures);
+		} catch (NoCommonDimensionsRuntimeException e) {
+			return ( ExceptionUtilities.serializeException(noCommonDimensionsRuntimeException,null));
+		}
+		
 		
 		JSONDataWriter dataSetWriter = new JSONDataWriter();
 		JSONObject dataStroreJSON =  (JSONObject) dataSetWriter.write(dataStore);

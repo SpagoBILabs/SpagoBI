@@ -937,6 +937,10 @@ Sbi.locale.ln["error.mesage.description.data.set.deleting.inuse"] = "Impossible 
 Sbi.locale.ln["error.mesage.description.data.set.saving.duplicated"]="Impossible to save the data set because there is another one with the same label";
 Sbi.locale.ln["error.mesage.description.data.set.parsing.error"]="Impossible to parse file. Check its content and upload it again";
 
+//MEASURES
+Sbi.locale.ln["error.mesage.description.measure.join.no.common.dimension"]= "Impossible to execute the join between measures. The associated datasets haven't any dimension in common.";
+
+
 //===================================================================
 //Sbi.execution.toolbar.SaveDatasetWindow : AD-HOC REPORTING 
 //===================================================================

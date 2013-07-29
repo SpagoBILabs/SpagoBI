@@ -21,6 +21,7 @@ import it.eng.spagobi.tools.dataset.common.query.AggregationFunctions;
 import it.eng.spagobi.tools.dataset.common.query.IAggregationFunction;
 import it.eng.spagobi.tools.dataset.measurecatalogue.MeasureCatalogueDimension;
 import it.eng.spagobi.tools.dataset.measurecatalogue.MeasureCatalogueMeasure;
+import it.eng.spagobi.tools.dataset.measurecatalogue.materializer.exception.NoCommonDimensionsRuntimeException;
 import it.eng.spagobi.utilities.assertion.Assert;
 
 import java.util.ArrayList;
@@ -30,19 +31,28 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
+
+
+
 import edu.emory.mathcs.backport.java.util.Collections;
 
 public class InMemoryMaterializer implements IMaterializer {
 	
 	private IAggregationFunction aggreationFunction =  AggregationFunctions.SUM_FUNCTION;
-	 
+	private static Logger logger = Logger.getLogger(InMemoryMaterializer.class);
+	
+	/**
+	 * Execute the joins between measures
+	 */
 	public IDataStore joinMeasures(List<MeasureCatalogueMeasure> measures){
     	
 		//STEP1: gets the common dimensions
 		List<List<MeasureCatalogueDimension>> commonDimensions =  getCommonDimensions(measures);
 		
 		if(commonDimensions.size()==0 || commonDimensions.get(0).size()==0 ){
-			throw new RuntimeException("No common dimensions found");
+			logger.debug("Impossible to join measures. No common dimensions found");
+			throw new NoCommonDimensionsRuntimeException("No common dimensions found");
 		}
 		
 		List<List<MeasureCatalogueDimension>> commonDimensionsFilterd = new ArrayList<List<MeasureCatalogueDimension>>();

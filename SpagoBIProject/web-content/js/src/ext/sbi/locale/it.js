@@ -941,6 +941,11 @@ Sbi.locale.ln["error.mesage.description.data.set.deleting.inuse"] = "Impossibile
 Sbi.locale.ln["error.mesage.description.data.set.saving.duplicated"]="Impossibile salvare il dataset: label duplicata";			   
 Sbi.locale.ln["error.mesage.description.data.set.parsing.error"]="Impossibile analizzare il file. Controlla il contenuto e caricalo di nuovo sul server";
 
+//MEASURES
+Sbi.locale.ln["error.mesage.description.measure.join.no.common.dimension"]= "Non \u00e8 possibile eseguire il join tra le misure selezionate. I dataset corrispondenti non contengono alcuna misura in comune.";
+
+
+
 //===================================================================
 //SELF SERVICE
 //===================================================================
@@ -970,8 +975,8 @@ Sbi.locale.ln["sbi.widget.grid.groupped.disable.group"]="Disabilita il ragruppam
 //===================================================================
 //MEASURES CATALOGUE
 //===================================================================
-Sbi.locale.ln["sbi.tools.catalogue.measures.measure.properties"]="Proprietà delle misure";
-Sbi.locale.ln["sbi.tools.catalogue.measures.dataset.properties"]="Proprietà dei dataset";
+Sbi.locale.ln["sbi.tools.catalogue.measures.measure.properties"]="Propriet\u00e0 delle misure";
+Sbi.locale.ln["sbi.tools.catalogue.measures.dataset.properties"]="Propriet\u00e0 dei dataset";
 Sbi.locale.ln["sbi.tools.catalogue.measures.join.btn"]="Join";
 Sbi.locale.ln["sbi.tools.catalogue.measures.join.tooltip"]="Esegui il Join tra le misure selezioate";
 Sbi.locale.ln["sbi.tools.catalogue.measures.select.tooltip"]="Permette di selezioanre le righe";

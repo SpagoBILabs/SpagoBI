@@ -6,6 +6,11 @@
 
 package it.eng.spagobi.tools.dataset.measurecatalogue.materializer;
 
-public interface IMaterializer {
+import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.measurecatalogue.MeasureCatalogueMeasure;
 
+import java.util.List;
+
+public interface IMaterializer {
+	IDataStore joinMeasures(List<MeasureCatalogueMeasure> measures);
 }
