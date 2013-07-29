@@ -179,7 +179,10 @@ Ext.extend(Sbi.browser.DocumentsBrowser, Ext.Panel, {
     , selectFolder: function(folderId) {
 		this.detailPanel.loadFolder(folderId, this.rootFolderId);
 		this.selectedFolderId = folderId;
-		if (this.searchPanel) this.searchPanel.selectedFolderId = folderId;
+		if (this.searchPanel) 
+			this.searchPanel.selectedFolderId = folderId;
+		if (this.detailPanel) 
+			this.detailPanel.fId = folderId;
 	}
 	
 	, onFolderLoad: function(panel) {
