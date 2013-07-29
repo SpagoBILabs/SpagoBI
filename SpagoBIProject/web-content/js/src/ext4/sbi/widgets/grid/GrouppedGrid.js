@@ -76,23 +76,23 @@ Ext.define('Sbi.widgets.grid.GroupedGrid', {
             }
         }
 
-        var dockedItemsTop = this.getDockedItems('toolbar[dock="top"]');
-        if(dockedItemsTop==null || dockedItemsTop==undefined || dockedItemsTop.length==0){
-        	dockedItemsTop = Ext.create('Ext.toolbar.Toolbar', {
-        		 dock: 'top',
-        		 items: ['->']
-        	});
-        	this.addDocked(dockedItemsTop);
-        }else{
-        	dockedItemsTop = dockedItemsTop[0];
-        	dockedItemsTop.add(['->']);
-        }
-        
-        dockedItemsTop.add({
-                text: 'sbi.widget.grid.groupped.toggle',
-                destroyMenu: true,
-                menu: toggleMenu
-        });
+//        var dockedItemsTop = this.getDockedItems('toolbar[dock="top"]');
+//        if(dockedItemsTop==null || dockedItemsTop==undefined || dockedItemsTop.length==0){
+//        	dockedItemsTop = Ext.create('Ext.toolbar.Toolbar', {
+//        		 dock: 'top',
+//        		 items: ['->']
+//        	});
+//        	this.addDocked(dockedItemsTop);
+//        }else{
+//        	dockedItemsTop = dockedItemsTop[0];
+//        	dockedItemsTop.add(['->']);
+//        }
+//        
+//        dockedItemsTop.add({
+//                text: 'sbi.widget.grid.groupped.toggle',
+//                destroyMenu: true,
+//                menu: toggleMenu
+//        });
         
         /**
          * Creates the bottom toolbar
@@ -111,12 +111,19 @@ Ext.define('Sbi.widgets.grid.GroupedGrid', {
         }
         
         dockedItemsBottom.add({
-        	text:'sbi.widget.grid.groupped.disable.group',
+        	text:LN('sbi.widget.grid.groupped.disable.group'),
+        	name:'sbi.widget.grid.groupped.disable.group',
         	iconCls: 'icon-clear-group',
         	scope: this,
         	handler: this.onDisableGroupingClick
     	});
         
+        dockedItemsBottom.add({
+            text: LN('sbi.widget.grid.groupped.toggle'),
+            name: 'sbi.widget.grid.groupped.toggle',
+            destroyMenu: true,
+            menu: toggleMenu
+        });
 
 
         this.mon(this.store, 'groupchange', this.onGroupChange, this);
@@ -146,12 +153,12 @@ Ext.define('Sbi.widgets.grid.GroupedGrid', {
             toggleMenuItems, len, i = 0;
 
         // Clear grouping button only valid if the store is grouped
-        this.down('[text=sbi.widget.grid.groupped.disable.group]').setDisabled(!grouped);
+        this.down('[name=sbi.widget.grid.groupped.disable.group]').setDisabled(!grouped);
         
         if (grouped) {
-        	this.down('[text=sbi.widget.grid.groupped.toggle]').enable();
+        	this.down('[name=sbi.widget.grid.groupped.toggle]').enable();
         	var groups =  store.getGroups();
-    		var menu = this.down('button[text=sbi.widget.grid.groupped.toggle]').menu;
+    		var menu = this.down('button[name=sbi.widget.grid.groupped.toggle]').menu;
     		menu.removeAll();
         	for(var i=0; i<groups.length; i++){
         		menu.add({
@@ -163,14 +170,14 @@ Ext.define('Sbi.widgets.grid.GroupedGrid', {
         	}
         	
         	// Sync state of group toggle checkboxes
-            toggleMenuItems = this.down('button[text=sbi.widget.grid.groupped.toggle]').menu.items.items;
+            toggleMenuItems = this.down('button[name=sbi.widget.grid.groupped.toggle]').menu.items.items;
             for (var i=0; i < toggleMenuItems.length; i++) {
                 toggleMenuItems[i].setChecked(false);
             }
             this.on('afterlayout', this.collapseGroups, this);
             
         }else{
-        	this.down('[text=sbi.widget.grid.groupped.toggle]').disable();
+        	this.down('[name=sbi.widget.grid.groupped.toggle]').disable();
         }
     },
     
@@ -195,13 +202,13 @@ Ext.define('Sbi.widgets.grid.GroupedGrid', {
     
 
     onGroupCollapse: function(v, n, groupName) {
-        if (!this.down('[text=sbi.widget.grid.groupped.toggle]').disabled) {
+        if (!this.down('[name=sbi.widget.grid.groupped.toggle]').disabled) {
             this.down('menucheckitem[text=' + groupName + ']').setChecked(false, true);
         }
     },
 
     onGroupExpand: function(v, n, groupName) {
-        if (!this.down('[text=sbi.widget.grid.groupped.toggle]').disabled) {
+        if (!this.down('[name=sbi.widget.grid.groupped.toggle]').disabled) {
             this.down('menucheckitem[text=' + groupName + ']').setChecked(true, true);
         }
     }

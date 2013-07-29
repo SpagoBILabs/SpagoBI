@@ -105,4 +105,5 @@
 <ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="SelfServiceMetaModelManagement" roleType="DEV_ROLE" />
 <ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="SelfServiceMetaModelManagement" roleType="TEST_ROLE" />
 <ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="SelfServiceMetaModelManagement" roleType="MODEL_ADMIN" />
+<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="MeasuresCatalogueManagement" roleType="ADMIN" />
 </ROLE_TYPE_USER_FUNCTIONALITIES>
