@@ -160,11 +160,9 @@ Ext.define('Sbi.tools.dataset.DataSetsView', {
 									'</div>',
 								'</div>',
 								'<div class="fav-container" >',
-//									'<tpl for="favs">',   
 										'<div class="fav">',
 											'<span class="icon" title="{description}"></span>',
 										'</div>',
-//									'</tpl>',
 								'</div>',
 							'</dd>',
 						 '</tpl>',	 
@@ -187,11 +185,6 @@ Ext.define('Sbi.tools.dataset.DataSetsView', {
 	, 
 	onClick : function(obj, record, item, index, e, eOpts) {
 		var scope = this;
-
-//        var actionDetail = e.getTarget('span.icon-detail', 10, true);
-//        var actionDelete = e.getTarget('span.icon-delete', 10, true);
-//        var actionWorksheet = e.getTarget('span.icon-worksheet', 10, true);
-//        var actionGeoreport = e.getTarget('span.icon-georeport', 10, true);
 
     	var actionDetail = e.getTarget('li[class=detaildataset]', 10, true);
     	var actionWorksheet = e.getTarget('li[class=worksheet]', 10, true);

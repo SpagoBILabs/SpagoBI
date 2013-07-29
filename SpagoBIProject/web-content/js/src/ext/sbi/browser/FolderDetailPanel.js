@@ -223,6 +223,14 @@ Ext.extend(Sbi.browser.FolderDetailPanel, Ext.Panel, {
 		window.location.href=urlToCall;	
 	}
 
+	, filterStore: function(value) {
+		this.folderView.inMemoryFilter(value);
+	}
+	
+	, sortStore: function(value) {
+		this.folderView.inMemorySort(value);
+	}	
+
     , loadFolder: function(folderId, rootFolderId, what) {
 
       this.folderId = folderId;	
@@ -257,7 +265,6 @@ Ext.extend(Sbi.browser.FolderDetailPanel, Ext.Panel, {
 	      					this.setBreadcrumbs(content);
 	      				}
 	      				this.fireEvent('onfolderload', this);
-
 	      			} 
 	      		} else {
 	      			Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
@@ -548,7 +555,7 @@ Ext.extend(Sbi.browser.FolderDetailPanel, Ext.Panel, {
         
         var bannerHTML = ''+
      		'<div class="aux"> '+
-//    		'    <div class="list-actions-container"> '+
+//    		'    <div class="list-actions-container"> '+ //setted into the container panel
     		'		<ul class="list-tab"> '+
     		'	    	<li class="active first"><a href="#" onclick="javascript:Ext.getCmp(\'this\').loadFolder(null, null, \'ALL\')">Tutte</a></li> '+
     					communityString+
@@ -560,26 +567,32 @@ Ext.extend(Sbi.browser.FolderDetailPanel, Ext.Panel, {
     		'	            <fieldset> '+
     		'	                <div class="field"> '+
     		'	                    <label for="search">Cerca fra i dataset</label> '+
-    		'	                    <input type="text" name="search" id="search" value="Cerca per parola chiave..." /> '+
+    		'	                    <input type="text" name="search" id="search" onclick="this.value=\'\'" onkeyup="javascript:Ext.getCmp(\'this\').filterStore(this.value)" value="Cerca per parola chiave..." /> '+
     		'	                </div> '+
     		'	                <div class="submit"> '+
-    		'	                    <input type="submit" value="Cerca" /> '+
+    		'	                    <input type="text" value="Cerca" /> '+
     		'	                </div> '+
     		'	            </fieldset> '+
     		'	        </form> '+
     		'	        <ul class="order"> '+
-    		'	            <li class="active"><a href="#">Recenti<span class="arrow"></span></a></li> '+
-    		'	            <li><a href="#">Valore 2</a></li> '+
-    		'	            <li><a href="#">Altro valore</a></li> '+
+//    		'	            <li class="active"><a href="#" onclick="javascript:Ext.getCmp(\'this\').sortStore(\'creationDate\')">'+LN('sbi.ds.moreRecent')+'<span class="arrow"></span></a></li> '+
+    		'	            <li class="active"><a href="#" onclick="javascript:Ext.getCmp(\'this\').sortStore(\'name\')">'+LN('sbi.ds.moreRecent')+'<span class="arrow"></span></a></li> '+
+    		'	            <li><a href="#" onclick="javascript:Ext.getCmp(\'this\').sortStore(\'label\')">'+LN('sbi.ds.label')+'</a></li> '+
+    		'	            <li><a href="#" onclick="javascript:Ext.getCmp(\'this\').sortStore(\'name\')">'+LN('sbi.ds.name')+'</a></li> '+
+    		'	            <li><a href="#" onclick="javascript:Ext.getCmp(\'this\').sortStore(\'creationUser\')">'+LN('sbi.ds.owner')+'</a></li> '+
     		'	        </ul> '+
+//    		'	        <select name=order class="order" onchange="javascript:Ext.getCmp(\'this\').sortStore(this)> '+
+//    		'	            <option name=\'date\' value=\'date\'> '+LN('sbi.ds.moreRecent')+' </option> '+
+//    		'	            <option name=\'label\' value=\'label\'> '+LN('sbi.ds.label')+' </option> '+
+//    		'	            <option name=\'name\' value=\'name\'> '+LN('sbi.ds.name')+' </option> '+
+//    		'	            <option name=\'creationUser\' value=\'creationUser\'>'+LN('sbi.ds.owner')+' </option> '+
+//    		'	        </select> '+
     		'	    </div> '+
     		'</div>' ;
         var dh = Ext.DomHelper;
         var b = this.bannerPanel.getEl().update(bannerHTML);
 
     }
-    , 
-   
 });
 
 

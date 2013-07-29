@@ -27,6 +27,7 @@ Sbi.browser.FolderView = function(config) {
 		, groupAttribute: 'ungroup'
 	};
     config.store.on('load', this.onLoad, this, {groupIndex: 'samples'});
+       
     Sbi.browser.FolderView.superclass.constructor.call(this, config);
 }; 
     
@@ -39,7 +40,7 @@ Ext.extend(Sbi.browser.FolderView, Ext.DataView, {
     , lookup: null
     , viewState: null
     , ready: false
-    
+    , filteredProperties: null
     , tpl : null
 
     , onClick : function(e){
@@ -225,6 +226,75 @@ Ext.extend(Sbi.browser.FolderView, Ext.DataView, {
     	*/
     }
     
+    , inMemoryFilter : function(value) {
+    	var foldersProperties = [ "code", "name","description"];
+    	var documentsProperties = [ "code", "name","description","creationUser", "engine", "stateCode", "typeCode", "label"];
+    	var newSamples = [];
+    	
+    	this.reset();
+    	
+    	var GroupRecord = Ext.data.Record.create([
+			                                  	    {name: 'title', type: 'string'},
+			                                  	    {name: 'icon', type: 'string'}, 
+			                                  	    {name: 'samples', type: 'string'}
+			                                  	]);    	
+    	
+    	//filter on folders and documents
+    	var folders = this.getCollection('Folders');    	    	
+    	for (var i=0; i< foldersProperties.length;i++){
+    		var property = foldersProperties[i];
+    		var newFoldersGroup = folders.filter(property, value);
+    		var tmpValues = newFoldersGroup.getRange();
+    		if (tmpValues != null && tmpValues.length > 0){    			
+    			newSamples = this.mergeArrays(newSamples,tmpValues);
+    		}
+    	}
+    	var documents = this.getCollection('Documents');
+    	for (var i=0; i< documentsProperties.length;i++){
+    		var property = documentsProperties[i];
+    		var newDocumentsGroup = documents.filter(property, value);
+    		var tmpValues = newDocumentsGroup.getRange();
+    		if (tmpValues != null && tmpValues.length > 0){    			
+    			newSamples = this.mergeArrays(newSamples,tmpValues);
+    		}
+    	}
+		
+    	this.store.removeAll(); 
+    	//add folders if present
+    	if (newSamples.length > 0){
+			this.store.add([
+				          	  new GroupRecord({
+				          		  title: value
+				          		  , icon: 'document.png'
+				          		  , samples: newSamples
+				          	  })
+				          	]);
+    	}
+    }
+    
+    , inMemorySort : function(attributeName) {
+//    	this.sort('Documents', attributeName);
+    //	this.applySort('Documents', attributeName);
+    	this.reset();
+    	var collection = this.getCollection('Documents');
+    	if(collection == null) return;
+    	var type = 'ASC';
+    	if (attributeName == 'creationDate') type = 'DESC';
+    	collection.sort(type);
+    	
+    	collection.sort(type, function(r1, r2) {
+            var v1 = r1[attributeName], v2 = r2[attributeName];
+            var result = v1 > v2 ? 1 : (v1 < v2 ? -1 : 0);
+//            alert('v1: ' +v1 + ' - v2: ' + v2 + ' - result: ' + result);
+            return result;
+        });
+    	
+    	var groupIndex = this.store.find('title', 'Documents');    	
+    	var group = this.store.getAt( groupIndex );    	
+    	group.data['samples'] = collection.getRange();
+    	this.refresh();
+    }
+    
     , applyFilter: function(type) {
     	if(type === 'folders') {
     		var groupIndex = this.store.find('title', 'Folders'); 
@@ -242,5 +312,18 @@ Ext.extend(Sbi.browser.FolderView, Ext.DataView, {
     	}    	
     }
     
-     
+    ,mergeArrays: function(array1, array2){
+		if(array1){
+			if(array2){
+				for(var i=0; i<array2.length; i++){
+					if(array1.indexOf(array2[i])<0){
+						array1.push(array2[i]);
+					}
+				}
+			}
+			return  array1
+		}else{
+			return  array2;
+		}
+	}
 });
