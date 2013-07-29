@@ -56,10 +56,10 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 				datasetUrl = menuItem.getString("href").replace("'","\\'");
 			}else if(menuItem.has("iconCls") && menuItem.getString("iconCls").equalsIgnoreCase("power")){
 				logoutUrl = menuItem.getString("href").replace("'","\\'");
-			}else if(menuItem.has("itemLabel") && menuItem.getString("itemLabel") == "LANG"){
-				langEN = "javascript:execUrl(\\'/SpagoBI/servlet/AdapterHTTP?ACTION_NAME=CHANGE_LANGUAGE&LANGUAGE_ID=en&COUNTRY_ID=US\\')";
-				langIT = "javascript:execUrl(\\'/SpagoBI/servlet/AdapterHTTP?ACTION_NAME=CHANGE_LANGUAGE&LANGUAGE_ID=itn&COUNTRY_ID=IT\\')";
-				langDE = "javascript:execUrl(\\'/SpagoBI/servlet/AdapterHTTP?ACTION_NAME=CHANGE_LANGUAGE&LANGUAGE_ID=en&COUNTRY_ID=US\\')";
+			}else if(menuItem.has("itemLabel") && menuItem.getString("itemLabel") == "LANG"){				
+				langEN = "javascript:execUrl(\\'/SpagoBI/servlet/AdapterHTTP?ACTION_NAME=CHANGE_LANGUAGE&LANGUAGE_ID=en&COUNTRY_ID=US&THEME_NAME="+currTheme+"\\')";
+				langIT = "javascript:execUrl(\\'/SpagoBI/servlet/AdapterHTTP?ACTION_NAME=CHANGE_LANGUAGE&LANGUAGE_ID=itn&COUNTRY_ID=IT&THEME_NAME="+currTheme+"\\')";
+				langDE = "javascript:execUrl(\\'/SpagoBI/servlet/AdapterHTTP?ACTION_NAME=CHANGE_LANGUAGE&LANGUAGE_ID=en&COUNTRY_ID=US&THEME_NAME="+currTheme+"\\')";
 			}	
 	   }		
 	}
