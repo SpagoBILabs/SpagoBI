@@ -6,11 +6,13 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 		modelName : "Sbi.tools.dataset.DataSetModel",
 		dataView : null,
 		tbar : null,
-		height: 600,
+//		bannerPanel : null,
+		height: 400, //600,
 		user : '',
 		datasetsServicePath: '',
 		displayToolbar: true,
-		PUBLIC_USER: 'public_user'
+		PUBLIC_USER: 'public_user',
+	    id:'this'
 	}
 
 	,
@@ -21,7 +23,8 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 		this.initStore();
 		this.initToolbar();
 		this.initViewPanel();
-		this.layout='fit';
+//		this.layout='fit';
+//		this.items = [this.bannerPanel,this.viewPanel];
 		this.items = [this.viewPanel];
 		this.callParent(arguments);
 		
@@ -115,56 +118,68 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 	, initToolbar: function() {
 		
 		if (this.displayToolbar) {
-			if (this.user !== '' && this.user !== this.PUBLIC_USER){
-				//the button add isn't able for public user
-				var newDatasetButton = new Ext.button.Button({
-			    	text : LN('sbi.generic.add'),
-					iconCls:'icon-add',
-					width:70,
-					listeners: {
-						'click': {
-			          		fn: this.addNewDataset,
-			          		scope: this
-			        	} 
-					}
-			    });
-			     
-				var additionalButtons = [];
-				additionalButtons.push(newDatasetButton);
-			}
-			var ordersCombo = new Ext.form.ComboBox({
-	//			fieldLabel: LN('sbi.ds.orderComboLabel') ,
-				store : this.sortersCombo,
-				name : 'ordersCombo',			
-				width : 'auto',
-				margin: '2 0 0 10',
-				displayField : 'description', 
-				valueField : 'property',
-	//			labelStyle:'font-weight:bold;', 
-				emptyText:LN('sbi.ds.orderComboLabel'),
-				typeAhead : true, forceSelection : true,
-				mode : 'local',
-				triggerAction : 'all',
-				selectOnFocus : true, editable : false,		   
-				xtype : 'combo'	
+			
+			var bannerHTML = this.createBannerHtml({});
+			this.bannerPanel = new Ext.Panel({
+				region: 'north',
+//				layout: 'fit',
+				baseCls:'list-actions-container',
+			   	autoScroll: false,
+			   	style:"float: left; width:100%;",
+			   	height:100,
+			   	html: bannerHTML
 			});
 			
-			var additionalSorters = [];
-			additionalSorters.push(ordersCombo);
-			
-			var config = Ext.apply({store: this.store, additionalButtons:additionalButtons, additionalSorters:additionalSorters});
-			config.alignToRight = true;
-			config.emptyLabel = LN('sbi.ds.filterLabel');
-			var toolbar =  Ext.create('Sbi.widgets.toolbar.InLineFilterAndOrder',config);
-			toolbar.on("filter",function(filterConfig){
-	      		this.filterString = filterConfig.filterString;
-	      	},this);	
-			toolbar.on("order",function(renderConfig){			
-				this.store.sort(renderConfig.property, renderConfig.direction);
-				this.viewPanel.refresh();
-	      	},this);
-	
-			this.tbar = toolbar;
+//			if (this.user !== '' && this.user !== this.PUBLIC_USER){
+//				//the button add isn't able for public user
+//				var newDatasetButton = new Ext.button.Button({
+//			    	text : LN('sbi.generic.add'),
+//					iconCls:'icon-add',
+//					width:70,
+//					listeners: {
+//						'click': {
+//			          		fn: this.addNewDataset,
+//			          		scope: this
+//			        	} 
+//					}
+//			    });
+//			     
+//				var additionalButtons = [];
+//				additionalButtons.push(newDatasetButton);
+//			}
+//			var ordersCombo = new Ext.form.ComboBox({
+//	//			fieldLabel: LN('sbi.ds.orderComboLabel') ,
+//				store : this.sortersCombo,
+//				name : 'ordersCombo',			
+//				width : 'auto',
+//				margin: '2 0 0 10',
+//				displayField : 'description', 
+//				valueField : 'property',
+//	//			labelStyle:'font-weight:bold;', 
+//				emptyText:LN('sbi.ds.orderComboLabel'),
+//				typeAhead : true, forceSelection : true,
+//				mode : 'local',
+//				triggerAction : 'all',
+//				selectOnFocus : true, editable : false,		   
+//				xtype : 'combo'	
+//			});
+//			
+//			var additionalSorters = [];
+//			additionalSorters.push(ordersCombo);
+//			
+//			var config = Ext.apply({store: this.store, additionalButtons:additionalButtons, additionalSorters:additionalSorters});
+//			config.alignToRight = true;
+//			config.emptyLabel = LN('sbi.ds.filterLabel');
+//			var toolbar =  Ext.create('Sbi.widgets.toolbar.InLineFilterAndOrder',config);
+//			toolbar.on("filter",function(filterConfig){
+//	      		this.filterString = filterConfig.filterString;
+//	      	},this);	
+//			toolbar.on("order",function(renderConfig){			
+//				this.store.sort(renderConfig.property, renderConfig.direction);
+//				this.viewPanel.refresh();
+//	      	},this);
+//	
+//			this.tbar = toolbar;
 		}
 	}
 	
@@ -176,6 +191,7 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 		config.actions = this.actions;
 		config.user = this.user;
 		config.autoScroll = true;
+		config.region ='center';
 		config.fromMyDataCtx = this.displayToolbar;
 		this.viewPanel = Ext.create('Sbi.tools.dataset.DataSetsView', config);
 		this.viewPanel.on('detail', this.modifyDataset, this);
@@ -396,43 +412,7 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 		});
 		
 	}
-	//TODO: to delete
-	/*
-	,
-	getDataStore: function(values){ 
-		
-		var params = values;
-		
-		Ext.Ajax.request({
-			url: this.services["getDataStore"],
-			params: params,			
-			success : function(response, options) {				
-				if(response !== undefined  && response.responseText !== undefined && response.statusText=="OK") {
-					if(response.responseText!=null && response.responseText!=undefined){
-						if(response.responseText.indexOf("error.mesage.description")>=0){
-							//this.wizardWin.disableButton('confirm');
-							//this.wizardWin.goBack(1);
-							Sbi.exception.ExceptionHandler.handleFailure(response);
-						}else{			
-							//var newMeta = response.responseText;
-							//var newMetaDecoded =  Ext.decode(newMeta);				 
-							//this.wizardWin.metaInfo.updateData(newMetaDecoded.datasetColumns);
-							//this.wizardWin.metaInfo.updateGridData(newMetaDecoded.meta);
-							//if (this.wizardWin.isOwner){
-							//	this.wizardWin.enableButton('confirm');
-							//}
-						}
-					}
-				} else {
-					Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
-				}
-			},
-			scope: this,
-			failure: Sbi.exception.ExceptionHandler.handleFailure      
-		});
-		
-	}
-	*/	
+	
 	
 	/**
 	 * Opens the loading mask 
@@ -456,6 +436,70 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
     	}
 	} 
 	
+	, filterStore: function(filterString) {
+		this.filterString = filterString;
+	}
+	
+	, sortStore: function(value) {
+		this.store.sort(renderConfig.property, renderConfig.direction);
+		this.viewPanel.refresh();
+	}	
+
+	, createBannerHtml: function(communities){
+    	var communityString = '';
+//        for(i=0; i< communities.root.length; i++){
+//        	var funct = communities.root[i].functId;
+//        	communityString += '<li><a href="#" onclick="javascript:Ext.getCmp(\'this\').loadFolder('+funct+', null)">';
+//        	communityString += communities.root[i].name;
+//        	communityString +='</a></li>';
+//        }
+//        
+        var createButton = '';
+        if (this.user !== '' && this.user !== this.PUBLIC_USER){
+        	createButton += ' <a id="newDataset" href="#" onclick="javascript:Ext.getCmp(\'this\').addNewDataset(\'\')" class="btn-add"><span class="highlighted">Crea</span> dataset<span class="plus">+</span></a> ';
+        }
+        
+        var bannerHTML = ''+
+     		'<div class="aux"> '+
+//    		'    <div class="list-actions-container"> '+ //setted into the container panel
+    		'		<ul class="list-tab"> '+
+    		'	    	<li class="active first"><a href="#" onclick="javascript:Ext.getCmp(\'this\').loadFolder(null, null, \'ALL\')">Tutte</a></li> '+
+    					communityString+
+    		'	        <li class="favourite last"><a href="#">Favoriti</a></li> '+
+    		'		</ul> '+
+    		'	    <div class="list-actions"> '+
+    					createButton +
+    		'	        <form action="#" method="get" class="search-form"> '+
+    		'	            <fieldset> '+
+    		'	                <div class="field"> '+
+    		'	                    <label for="search">Cerca fra i dataset</label> '+
+    		'	                    <input type="text" name="search" id="search" onclick="this.value=\'\'" onkeyup="javascript:Ext.getCmp(\'this\').filterStore(this.value)" value="Cerca per parola chiave..." /> '+
+    		'	                </div> '+
+    		'	                <div class="submit"> '+
+    		'	                    <input type="text" value="Cerca" /> '+
+    		'	                </div> '+
+    		'	            </fieldset> '+
+    		'	        </form> '+
+    		'	        <ul class="order"> '+
+//    		'	            <li class="active"><a href="#" onclick="javascript:Ext.getCmp(\'this\').sortStore(\'creationDate\')">'+LN('sbi.ds.moreRecent')+'<span class="arrow"></span></a></li> '+
+    		'	            <li class="active"><a href="#" onclick="javascript:Ext.getCmp(\'this\').sortStore(\'name\')">'+LN('sbi.ds.moreRecent')+'<span class="arrow"></span></a></li> '+
+    		'	            <li><a href="#" onclick="javascript:Ext.getCmp(\'this\').sortStore(\'label\')">'+LN('sbi.ds.label')+'</a></li> '+
+    		'	            <li><a href="#" onclick="javascript:Ext.getCmp(\'this\').sortStore(\'name\')">'+LN('sbi.ds.name')+'</a></li> '+
+    		'	            <li><a href="#" onclick="javascript:Ext.getCmp(\'this\').sortStore(\'owner\')">'+LN('sbi.ds.owner')+'</a></li> '+
+    		'	        </ul> '+
+//    		'	        <select name=order class="order" onchange="javascript:Ext.getCmp(\'this\').sortStore(this)> '+
+//    		'	            <option name=\'date\' value=\'date\'> '+LN('sbi.ds.moreRecent')+' </option> '+
+//    		'	            <option name=\'label\' value=\'label\'> '+LN('sbi.ds.label')+' </option> '+
+//    		'	            <option name=\'name\' value=\'name\'> '+LN('sbi.ds.name')+' </option> '+
+//    		'	            <option name=\'creationUser\' value=\'creationUser\'>'+LN('sbi.ds.owner')+' </option> '+
+//    		'	        </select> '+
+    		'	    </div> '+
+    		'</div>' ;
+//        var dh = Ext.DomHelper;
+//        var b = this.bannerPanel.getEl().update(bannerHTML);
+
+        return bannerHTML;
+    }
 	
 
 });

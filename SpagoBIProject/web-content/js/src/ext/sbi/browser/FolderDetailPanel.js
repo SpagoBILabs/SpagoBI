@@ -537,6 +537,10 @@ Ext.extend(Sbi.browser.FolderDetailPanel, Ext.Panel, {
 		return false;
 	} 
     
+    , addClass: function(el, cls){
+            el.addClass(cls);
+    }
+    
     , createBannerHtml: function(communities){
     	var communityString = '';
         for(i=0; i< communities.root.length; i++){
@@ -575,18 +579,12 @@ Ext.extend(Sbi.browser.FolderDetailPanel, Ext.Panel, {
     		'	            </fieldset> '+
     		'	        </form> '+
     		'	        <ul class="order"> '+
-    		'	            <li class="active"><a href="#" onclick="javascript:Ext.getCmp(\'this\').sortStore(\'creationDate\')">'+LN('sbi.ds.moreRecent')+'<span class="arrow"></span></a></li> '+
-//    		'	            <li class="active"><a href="#" onclick="javascript:Ext.getCmp(\'this\').sortStore(\'name\')">'+LN('sbi.ds.moreRecent')+'<span class="arrow"></span></a></li> '+
+    		'	            <li class="active"><a href="#" onclick="javascript:Ext.getCmp(\'this\').sortStore(\'creationDate\')">'+LN('sbi.ds.moreRecent')+'</a> ' +
+    		'					<span class="sortArrow"><a href="#" onclick="javascript:Ext.getCmp(\'this\').addClass(this,\'open\')"></a></span></li> '+
     		'	            <li><a href="#" onclick="javascript:Ext.getCmp(\'this\').sortStore(\'label\')">'+LN('sbi.ds.label')+'</a></li> '+
     		'	            <li><a href="#" onclick="javascript:Ext.getCmp(\'this\').sortStore(\'name\')">'+LN('sbi.ds.name')+'</a></li> '+
     		'	            <li><a href="#" onclick="javascript:Ext.getCmp(\'this\').sortStore(\'creationUser\')">'+LN('sbi.ds.owner')+'</a></li> '+
     		'	        </ul> '+
-//    		'	        <select name=order class="order" onchange="javascript:Ext.getCmp(\'this\').sortStore(this)> '+
-//    		'	            <option name=\'date\' value=\'date\'> '+LN('sbi.ds.moreRecent')+' </option> '+
-//    		'	            <option name=\'label\' value=\'label\'> '+LN('sbi.ds.label')+' </option> '+
-//    		'	            <option name=\'name\' value=\'name\'> '+LN('sbi.ds.name')+' </option> '+
-//    		'	            <option name=\'creationUser\' value=\'creationUser\'>'+LN('sbi.ds.owner')+' </option> '+
-//    		'	        </select> '+
     		'	    </div> '+
     		'</div>' ;
         var dh = Ext.DomHelper;
