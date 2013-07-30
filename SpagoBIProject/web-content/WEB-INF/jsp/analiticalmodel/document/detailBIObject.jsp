@@ -12,6 +12,8 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 <%@page import="it.eng.spagobi.engines.config.bo.Engine"%>
 <%@page import="it.eng.spagobi.analiticalmodel.document.dao.IObjTemplateDAO"%>
 <%@page import="it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate"%>
+<%@page import="it.eng.spagobi.community.mapping.SbiCommunity"%>
+<%@page import="it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality"%>
 <%@page import="java.util.GregorianCalendar"%>
 <%@page import="java.util.Calendar"%>
 <%@page import="it.eng.spagobi.tools.datasource.bo.DataSource"%>
@@ -45,6 +47,10 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 			.getAttribute(DetailBIObjectModule.NAME_ATTR_LIST_DATASET);
 	if (listDataSet == null)
 		listDataSet = new ArrayList();
+	List listCommunities = (List) moduleResponse
+			.getAttribute(DetailBIObjectModule.NAME_ATTR_LIST_COMMUNITIES);
+	if (listCommunities == null)
+		listCommunities = new ArrayList();
 
 	String modality = (String) moduleResponse
 			.getAttribute(ObjectsTreeConstants.MODALITY);
@@ -586,7 +592,44 @@ function saveDocument(goBack) {
 		    <%
   		    	}
   		    %>
-                   
+                <div class='div_detail_label' id="community" >
+					<span class='portlet-form-field-label'>
+						<spagobi:message key = "SBISet.eng.community" />
+					</span>
+				</div>
+				
+			
+				<div class='div_detail_form' id="communityForm" >
+		      		<select class='portlet-form-input-field' style='width:230px;' 
+							name="community" id="doc_community"  >
+							<option></option>
+					<%
+						Iterator iterComm = listCommunities.iterator();
+						while (iterComm.hasNext()) {
+							SbiCommunity comm = (SbiCommunity) iterComm.next();
+							String functCd = comm.getFunctCode();
+							String commName = comm.getName();
+							LowFunctionality commFunction = DAOFactory.getLowFunctionalityDAO().loadLowFunctionalityByCode(functCd, false);
+							Integer idCommFunct = commFunction.getId();
+							boolean isComm = false;
+							List functionalities = obj.getFunctionalities();
+							for (Iterator it = functionalities.iterator(); it.hasNext(); ) {
+								Integer functId = (Integer) it.next();
+								
+	      						if (idCommFunct.equals(functId)) {
+	      							isComm = true;
+	      						}
+								
+							}
+
+					%>
+		      			<option value="<%=functCd%>"<%if (isComm)
+							out.print(" selected='selected' ");%>><%=commName%></option>
+		      		<%
+		      			}
+		      		%>
+		      		</select>
+				</div>
 				<div class='div_detail_label'>
 					<span class='portlet-form-field-label'>
 						<spagobi:message key ="SBIDev.docConf.docDet.refreshField" />

@@ -25,6 +25,7 @@ import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
 import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
 import it.eng.spagobi.analiticalmodel.document.utils.DetBIObjModHelper;
 import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
+import it.eng.spagobi.analiticalmodel.functionalitytree.dao.ILowFunctionalityDAO;
 import it.eng.spagobi.analiticalmodel.functionalitytree.service.TreeObjectsModule;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
@@ -41,6 +42,7 @@ import it.eng.spagobi.commons.utilities.ChannelUtilities;
 import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
 import it.eng.spagobi.commons.utilities.SessionMonitor;
 import it.eng.spagobi.commons.utilities.indexing.LuceneIndexer;
+import it.eng.spagobi.community.mapping.SbiCommunity;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -76,6 +78,7 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 	public final static String NAME_ATTR_LIST_LANGUAGES = "languages";
 	public final static String NAME_ATTR_LIST_DATASET = "datasets";
 	public final static String LOADING_PARS_DC = "loadingParsDC";
+	public final static String NAME_ATTR_LIST_COMMUNITIES = "community";
 
 	
 	//private String actor = null;
@@ -487,7 +490,27 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 		return objPar;
 	}
 
-
+	private BIObject manageCommunities(BIObject obj, SourceBean request) throws SourceBeanException,
+			EMFUserError {
+		List<SbiCommunity> communities = DAOFactory.getCommunityDAO().loadSbiCommunityByUser(profile.getUserUniqueIdentifier().toString());
+		ILowFunctionalityDAO functDao = DAOFactory.getLowFunctionalityDAO();
+		String codeFcomm = (String)request.getAttribute(NAME_ATTR_LIST_COMMUNITIES);
+		if(codeFcomm != null && !codeFcomm.equals("")){
+			if(communities != null){
+				for(int i=0; i<communities.size(); i++){
+					SbiCommunity community = communities.get(i);
+					String functCode = community.getFunctCode();
+					if(codeFcomm.equals(functCode)){
+						LowFunctionality funct= functDao.loadLowFunctionalityByCode(functCode, false);
+						Integer functId = funct.getId();
+						List functIds= obj.getFunctionalities();
+						functIds.add(functId);
+					}
+				}
+			}
+		}
+		return obj;
+	}
 
 	/**
 	 * Fills the response SourceBean with the elements that will be displayed in the BIObject detail page: 
@@ -546,6 +569,7 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 		
 		
 		response.setAttribute(ObjectsTreeConstants.MODALITY, detail_mod);
+		//prepareCommunities(response);
 		
 		if (initialBIObject) {
 			BIObject objClone = DetBIObjModHelper.clone(obj);
@@ -754,8 +778,9 @@ public class DetailBIObjectModule extends AbstractHttpModule {
             List functionalitites = new ArrayList();
 
             obj.setFunctionalities(functionalitites);
-            response.setAttribute(NAME_ATTR_OBJECT, obj);
 
+            response.setAttribute(NAME_ATTR_OBJECT, obj);
+            
             helper.fillResponse(initialPath); 
 
 		} catch (Exception ex) {
@@ -888,7 +913,8 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DOCUMENT.MODIFY_VALIDATION_ERROR",logParam , "ERR");				
 				return;
 			}
-			
+			//manage communities
+			manageCommunities(obj, request);
 			// based on the modality do different tasks
 			if(mod.equalsIgnoreCase(SpagoBIConstants.DETAIL_INS)) {
 				//if data source value is not specified, it gets the default data source associated at the engine
