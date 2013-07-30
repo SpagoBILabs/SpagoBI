@@ -194,4 +194,12 @@ Sbi.settings.georeport = {
 		]     	
 		
 	}
+
+	,tools:{
+		measurecatalogue:{
+			columnsRef: ['alias','dsName', 'dsLabel', 'dsCategory', 'dsType'],
+			measuresProperties: [{header:'Alias', dataIndex:'alias'},{header:'Type', dataIndex:'classType'},{header:'Column', dataIndex:'columnName'}],
+			datasetsProperties: [{header:'Name', dataIndex:'dsName'},{header:'Label', dataIndex:'dsLabel'},{header:'Category', dataIndex:'dsCategory'},{header:'Type', dataIndex:'dsType'}]
+		}
+	} 
 };

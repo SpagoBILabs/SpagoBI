@@ -40,8 +40,11 @@ OpenLayers.Util.extend(OpenLayers.Lang.en, {
     'sbi.tools.catalogue.measures.select.tooltip':'Open the selection frame',
     'sbi.tools.catalogue.measures.select.btn':'Selection',
     'sbi.tools.catalogue.measures.window.title': 'Measures Catalogue',
-    'error.mesage.description.measure.join.no.common.dimension':'Impossible to execute the join between measures. The associated datasets haven\'t any dimension in common.'
-
-
+    'error.mesage.description.measure.join.no.common.dimension':'Impossible to execute the join between measures. The associated datasets haven\'t any dimension in common.',
+    'sbi.tools.catalogue.measures.column.header.alias':'Alias',
+    'sbi.tools.catalogue.measures.column.header.dsName':'Name',
+    'sbi.tools.catalogue.measures.column.header.dsLabel':'Label',
+    'sbi.tools.catalogue.measures.column.header.dsCategory':'Category',
+    'sbi.tools.catalogue.measures.column.header.dsType':'Type'
 });
 
