@@ -32,6 +32,7 @@ import it.eng.spagobi.commons.utilities.ChannelUtilities;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
 import it.eng.spagobi.commons.utilities.SpagoBITracer;
+import it.eng.spagobi.community.mapping.SbiCommunity;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
@@ -364,13 +365,17 @@ public class DetBIObjModHelper {
 	        List states = domaindao.loadListDomainsByType("STATE");
 	        List engines =  DAOFactory.getEngineDAO().loadAllEngines();
 	        List datasource =  DAOFactory.getDataSourceDAO().loadAllDataSources();
-	       List dataset=DAOFactory.getDataSetDAO().loadAllActiveDataSets();
+	        List dataset=DAOFactory.getDataSetDAO().loadAllActiveDataSets();
+			List<SbiCommunity> communities = DAOFactory.getCommunityDAO().loadSbiCommunityByUser(profile.getUserUniqueIdentifier().toString());
+			
+			
 	        // List languages = ConfigSingleton.getInstance().getFilteredSourceBeanAttributeAsList("LANGUAGE_SUPPORTED", "LANGUAGE", "language");
 		    response.setAttribute(DetailBIObjectModule.NAME_ATTR_LIST_ENGINES, engines);
 		    response.setAttribute(DetailBIObjectModule.NAME_ATTR_LIST_DS, datasource);
 		    response.setAttribute(DetailBIObjectModule.NAME_ATTR_LIST_DATASET, dataset);
 		    response.setAttribute(DetailBIObjectModule.NAME_ATTR_LIST_OBJ_TYPES, types);
 		    response.setAttribute(DetailBIObjectModule.NAME_ATTR_LIST_STATES, states);
+		    response.setAttribute(DetailBIObjectModule.NAME_ATTR_LIST_COMMUNITIES, communities);
 		   // response.setAttribute(DetailBIObjectModule.NAME_ATTR_LIST_LANGUAGES, languages);
 			List functionalities = new ArrayList();
 			try {
