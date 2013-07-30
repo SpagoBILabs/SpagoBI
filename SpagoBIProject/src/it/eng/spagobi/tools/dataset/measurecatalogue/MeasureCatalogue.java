@@ -95,6 +95,7 @@ public class MeasureCatalogue implements Observer {
 	 * Init the set of measures 
 	 */
 	public void initMeasures(){
+		
 		measures = new HashSet<MeasureCatalogueMeasure>();
 		List<IDataSet> datasets = new ArrayList<IDataSet>();
 		
@@ -112,23 +113,27 @@ public class MeasureCatalogue implements Observer {
 		if(datasets!=null){
 			for(int i=0; i<datasets.size();i++){
 				IDataSet aDs = datasets.get(i);
-				List<IFieldMetaData> aDsMeasures = getMeasures(aDs);
-				Set<MeasureCatalogueDimension> datasetDimension = null;
-				for(int j=0; j<aDsMeasures.size(); j++){
-					/**
-					 * Search the measure in the list of measures
-					 */
-					MeasureCatalogueMeasure aDsMeasure = getMeasure(aDsMeasures.get(j),aDs);
-					if(aDsMeasure==null){
+				try {
+					List<IFieldMetaData> aDsMeasures = getMeasures(aDs);
+					Set<MeasureCatalogueDimension> datasetDimension = null;
+					for(int j=0; j<aDsMeasures.size(); j++){
 						/**
-						 * The measures has not been already saved, so we create it
+						 * Search the measure in the list of measures
 						 */
-						aDsMeasure = new MeasureCatalogueMeasure(aDsMeasures.get(j), metamodelWrapper, aDs, datasetDimension, measureIdProgress);
-						measureIdProgress++;
-						measures.add(aDsMeasure);
-						datasetDimension = aDsMeasure.getDatasetDimension();
+						MeasureCatalogueMeasure aDsMeasure = getMeasure(aDsMeasures.get(j),aDs);
+						if(aDsMeasure==null){
+							/**
+							 * The measures has not been already saved, so we create it
+							 */
+							aDsMeasure = new MeasureCatalogueMeasure(aDsMeasures.get(j), metamodelWrapper, aDs, datasetDimension, measureIdProgress);
+							measureIdProgress++;
+							measures.add(aDsMeasure);
+							datasetDimension = aDsMeasure.getDatasetDimension();
+						}
+	
 					}
-
+				} catch(Throwable t) {
+					throw new SpagoBIRuntimeException("An unexpected error occured while extracting measures from dataset [" + aDs.getLabel() + "]", t);
 				}
 			}
 		}
