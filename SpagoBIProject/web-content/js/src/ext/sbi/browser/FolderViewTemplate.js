@@ -191,9 +191,9 @@ Sbi.browser.FolderViewTemplate = function(config) {
 		                        	'<dd class="box">', //document
 		                        	documentTpl,
 		                        '</tpl>',
-		                        '<tpl if="this.exists(description) == false">',
-		                        	'<br>',
-		                        '</tpl>',
+		                        //'<tpl if="this.exists(description) == false">',
+		                        	//'<br>',
+		                        //'</tpl>',
 		                        // -- FOLDER -----------------------------------------------
 		                        '<tpl if="this.exists(engine) == false">',
 //		                        	'<dd class="group-item">', //Folder
