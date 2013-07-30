@@ -206,7 +206,7 @@ li:hover .login-panel .not-registered a:hover,.login-panel .not-registered a:hov
 .main-datasets-list .list-actions .order a:hover{color:#3d90d4}
 .main-maps-list .list-actions .order a:hover{color:#75b407}
 .list-actions .order li.active a .arrow{top:18px;right:17px;width:13px;height:6px;display:block;position:absolute;background:url(../../../images/bg-arrow-order.gif) 0 0 no-repeat}
-
+.sortArrow{top:18px;right:17px;width:13px;height:6px;display:block;position:absolute;background:url(../../../images/bg-arrow-order.gif) 0 0 no-repeat}
 
 .list-container{padding:0 0 25px 0;width:100%;float:left}
 	
