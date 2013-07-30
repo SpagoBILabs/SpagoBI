@@ -19,6 +19,7 @@ Ext.define('Sbi.execution.SaveDocumentWindowExt4', {
 	,OBJECT_DATA_SOURCE: null
 	,OBJECT_PARS: null
 	,OBJECT_PREVIEW_FILE: null
+	,OBJECT_COMMUNITY: null
 
 	
 	,constructor: function(config) {
@@ -55,6 +56,13 @@ Ext.define('Sbi.execution.SaveDocumentWindowExt4', {
 			serviceName: 'SAVE_DOCUMENT_ACTION'
 			, baseParams: saveDocParams
 		});
+		this.services['getCommunities'] =  Sbi.config.serviceRegistry.getRestServiceUrl({
+			serviceName: 'community/user'
+				, baseParams: {
+					LIGHT_NAVIGATOR_DISABLED: 'TRUE',
+					EXT_VERSION: "3"
+				}
+		});
 		
 		this.SBI_EXECUTION_ID = config.SBI_EXECUTION_ID;
 		this.OBJECT_ID = config.OBJECT_ID;
@@ -66,6 +74,7 @@ Ext.define('Sbi.execution.SaveDocumentWindowExt4', {
 		this.OBJECT_QUERY = config.OBJECT_QUERY;
 		this.OBJECT_FORM_VALUES = config.OBJECT_FORM_VALUES;
 		this.OBJECT_PREVIEW_FILE = config.OBJECT_PREVIEW_FILE;
+		this.OBJECT_COMMUNITY = config.OBJECT_COMMUNITY;
 		
 		this.initFormPanel();
 		
@@ -135,6 +144,34 @@ Ext.define('Sbi.execution.SaveDocumentWindowExt4', {
             inputValue: 1,
             checked   : true
            });
+		// The data store holding the communities
+		var storeComm = Ext.create('Ext.data.Store', {
+			proxy:{
+				type: 'rest',
+				url : this.services['getCommunities'],
+				reader: {
+					type: 'json',
+					root: 'root'
+				}
+			},
+
+			fields: [
+			         "communityId",
+			         "name",
+			         "description",
+			         "owner",
+			         "functCode"],
+		    autoLoad: true
+		});
+
+		this.docCommunity = Ext.create('Ext.form.ComboBox', {
+		    fieldLabel: 'Community',
+		    queryMode: 'local',
+		    store: storeComm,
+		    displayField: 'name',
+		    valueField: 'functCode',
+		    allowBlank: true
+		});
 		
 		this.fileUpload = this.initFileUpload();
 	    
@@ -154,7 +191,7 @@ Ext.define('Sbi.execution.SaveDocumentWindowExt4', {
 	                 "margin-left": "4px",
 	                 "margin-top": "25px"
 	             },
-	             items: [this.docLabel,this.docName,this.docDescr,this.docVisibility,this.fileUpload]
+	             items: [this.docLabel,this.docName,this.docDescr,this.docVisibility,this.fileUpload, this.docCommunity]
 	    	}
 	    });
 	    
@@ -200,6 +237,7 @@ Ext.define('Sbi.execution.SaveDocumentWindowExt4', {
 		var formValues = this.OBJECT_FORM_VALUES;// the values of the form for the smart filter
 		var wk_definition = this.OBJECT_WK_DEFINITION;
 		var previewFile =  this.fileNameUploaded;
+		var docCommunity = this.docCommunity.getValue();
 		
 		if(formValues!=undefined && formValues!=null){
 			formValues=Ext.encode(formValues);
@@ -240,6 +278,7 @@ Ext.define('Sbi.execution.SaveDocumentWindowExt4', {
 					formValues: formValues,
 					template: this.OBJECT_TEMPLATE,
 					datasourceid: this.OBJECT_DATA_SOURCE,
+					communityid: docCommunity,
 					SBI_EXECUTION_ID: this.SBI_EXECUTION_ID,
 					functs: functs
 		        };

@@ -18,6 +18,7 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.services.AbstractSpagoBIAction;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.commons.utilities.UserUtilities;
+import it.eng.spagobi.community.mapping.SbiCommunity;
 import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.engines.drivers.worksheet.WorksheetDriver;
@@ -68,6 +69,7 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 	private final String OBJECT_QUERY = "query";
 	private final String FORMVALUES = "formValues";
 	private final String VISIBILITY = "visibility";
+	private final String COMMUNITY = "communityId";
 
 	
 
@@ -744,6 +746,7 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 				}
 				document.put("metadata", metaProperties);
 			}
+
 			
 			request.put("document", document);
 			
@@ -768,12 +771,20 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 			request.put("customData", customData);
 			
 			// folders
+			JSONArray foldersJSON = new JSONArray();
 			if( requestContainsAttribute(FUNCTS) 
 					&& StringUtilities.isNotEmpty( getAttributeAsString(FUNCTS)) ) {
-				JSONArray foldersJSON = getAttributeAsJSONArray(FUNCTS);
+				foldersJSON= getAttributeAsJSONArray(FUNCTS);
 				if(foldersJSON != null) request.put("folders", foldersJSON);
 			}						
-			
+			//COMMUNITY
+			String communityFCode = getAttributeAsString(COMMUNITY); 
+			if(communityFCode != null) {
+				//add community folder to functionalities community folder
+				LowFunctionality commF= DAOFactory.getLowFunctionalityDAO().loadLowFunctionalityByCode(communityFCode, false);
+				Integer commFId= commF.getId();
+				foldersJSON.put(commFId);
+			}
 			logger.debug("Request succesfully parsed: " + request.toString(3));
 			
 			return request;
