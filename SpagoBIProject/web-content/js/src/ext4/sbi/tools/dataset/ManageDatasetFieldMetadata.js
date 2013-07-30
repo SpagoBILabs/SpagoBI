@@ -10,7 +10,8 @@ Ext.define('Sbi.tools.dataset.ManageDatasetFieldMetadata', {
 		emptyStore: true,
         store: null,		        
         frame: true,
-        autoscroll: true
+        autoscroll: true,
+        layout: 'fit'
 	}
 
 
@@ -115,7 +116,8 @@ Ext.define('Sbi.tools.dataset.ManageDatasetFieldMetadata', {
 			selectOnFocus : true, 
 			editable : false,
 			allowBlank : false, 
-			validationEvent : false
+			validationEvent : false,
+			region: 'north'
 		});	
 		this.metadataType.addListener('select',this.activateMetadataGrid, this);
 
@@ -245,12 +247,17 @@ Ext.define('Sbi.tools.dataset.ManageDatasetFieldMetadata', {
 	        store: this.storeMetadata,
 	        columns: columnsDefinition,
 	        width: '100%',
-	        height: 320,
+	        autoHeight:true,
 	        title: 'Columns Metadata',
 	        autoscroll: true,
 			selModel: {selType: 'rowmodel'},
 			plugins: [cellEditing],
-	        tbar: toolbarColumnsMetadata
+	        tbar: toolbarColumnsMetadata,
+			region: 'center',
+			layout: 'fit',
+			split: true
+
+
 	    });
 		//----------------------------------------------
 		
@@ -314,12 +321,16 @@ Ext.define('Sbi.tools.dataset.ManageDatasetFieldMetadata', {
 	        store: this.datasetMetadataStore,
 	        columns: datasetGridColumnsDefinition,
 	        width: '100%',
-	        height: 320,
+	        autoHeight:true,
 	        title: 'Dataset Metadata',
 	        autoscroll: true,
 			selModel: {selType: 'rowmodel'},
 			plugins: [cellEditingDs],
-	        tbar: toolbarDatasetMetadata 
+	        tbar: toolbarDatasetMetadata,
+			region: 'center',
+			layout: 'fit',
+			split: true
+
 	    });
 		this.gridDatasetMetadata.setVisible(false); //hide by default
 
@@ -335,8 +346,9 @@ Ext.define('Sbi.tools.dataset.ManageDatasetFieldMetadata', {
 	          labelAlign: 'left',
 	          bodyStyle:'padding:5px',
 			  defaultType: 'textfield',
-			  height:500,
-			  layout: 'form',
+			  height:320,
+		      autoscroll: true,
+			  layout: 'border',
 			  items: [this.metadataType, this.gridColumnsMetadata, this.gridDatasetMetadata]
 			});
 		

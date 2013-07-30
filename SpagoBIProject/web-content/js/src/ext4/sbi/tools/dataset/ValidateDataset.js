@@ -54,7 +54,7 @@ Ext.define('Sbi.tools.dataset.ValidateDataset', {
 	          labelAlign: 'left',
 	          bodyStyle:'padding:5px',
 			  defaultType: 'displayfield',
-			  height:500,
+			  height:330,
 			  layout: 'form',
 			  items: []
 			});
