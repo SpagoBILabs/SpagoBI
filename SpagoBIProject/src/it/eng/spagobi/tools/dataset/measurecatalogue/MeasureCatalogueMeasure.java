@@ -98,7 +98,7 @@ public class MeasureCatalogueMeasure implements IMeasureCatalogueField {
 		if(alias==null){
 			alias = measure.getName();
 		}
-		return ds.equals(dataset) && alias.equals(alias);
+		return ds.equals(dataset) && alias.equals(this.alias);
 	}
 
 	
