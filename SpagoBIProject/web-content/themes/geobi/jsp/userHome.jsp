@@ -125,7 +125,7 @@ Ext.onReady(function () {
 		'	            </ul> '+
 		'	            <ul class="language-switcher"> '+
 		'	                <li class="active"><a href="<%=langIT%>">IT</a></li> '+
-		'	                <li><a href="<%=langEN%>">DE</a></li> '+
+		//'	                <li><a href="<%=langEN%>">DE</a></li> '+
 		'	                <li><a href="<%=langEN%>">EN</a></li> '+
 		'	            </ul> '+
 		'	        </nav> '+

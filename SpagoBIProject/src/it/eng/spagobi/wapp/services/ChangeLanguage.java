@@ -161,16 +161,18 @@ public class ChangeLanguage extends AbstractHttpAction{
 		String url = "/themes/" + currTheme	+ "/jsp/";
 		if (UserUtilities.isTechnicalUser(profile)){
 			url += "adminHome.jsp";
-		}else{
+		}else if (isPublicUser != null && isPublicUser.equalsIgnoreCase("TRUE")){			
+			url += "publicUserHome.jsp";
+		}else{			
 			url += "userHome.jsp";
 		}
 		servletRequest.getSession().setAttribute(LIST_MENU, lstMenu);
 		getHttpRequest().getRequestDispatcher(url).forward(getHttpRequest(), getHttpResponse());
-		if (isPublicUser != null && isPublicUser.equalsIgnoreCase("TRUE")){
-			serviceResponse.setAttribute(SpagoBIConstants.PUBLISHER_NAME, "userhomePublicUser");
-		}else{
-			serviceResponse.setAttribute(SpagoBIConstants.PUBLISHER_NAME, "userhome");
-		}
+//		if (isPublicUser != null && isPublicUser.equalsIgnoreCase("TRUE")){
+//			serviceResponse.setAttribute(SpagoBIConstants.PUBLISHER_NAME, "userhomePublicUser");
+//		}else{
+//			serviceResponse.setAttribute(SpagoBIConstants.PUBLISHER_NAME, "userhome");
+//		}
 		logger.debug("OUT");
 	}
 
