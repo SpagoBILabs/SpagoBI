@@ -201,12 +201,22 @@ li:hover .login-panel .not-registered a:hover,.login-panel .not-registered a:hov
 .main-maps-list .list-actions .search-form .submit input:hover{background-position:10px -106px}
 
 
-.list-actions .order{position:relative;height:39px;float:left;background:#f5f5f5;border:1px solid #eae8e8;-webkit-border-radius:4px;-moz-border-radius:4px;border-radius:4px;overflow:hidden}
+/*.list-actions .order{position:relative;height:39px;float:left;background:#f5f5f5;border:1px solid #eae8e8;-webkit-border-radius:4px;-moz-border-radius:4px;border-radius:4px;overflow:hidden}
 .list-actions .order a{font-family:cabinregular, sans-serif;position:relative;color:#939393;font-size:1.08em;display:block;height:24px;padding:15px 53px 0 18px}
 .main-datasets-list .list-actions .order a:hover{color:#3d90d4}
 .main-maps-list .list-actions .order a:hover{color:#75b407}
-.list-actions .order li.active a .arrow{top:18px;right:17px;width:13px;height:6px;display:block;position:absolute;background:url(../../../images/bg-arrow-order.gif) 0 0 no-repeat}
-.sortArrow{top:18px;right:17px;width:13px;height:6px;display:block;position:absolute;background:url(../../../images/bg-arrow-order.gif) 0 0 no-repeat}
+.list-actions .order li.active a .arrow{top:18px;right:17px;width:13px;height:6px;display:block;position:absolute;background:url(../../../images/bg-arrow-order.gif) 0 0 no-repeat} 
+.sortArrow{top:18px;right:17px;width:13px;height:6px;display:block;position:absolute;background:url(../../../images/bg-arrow-order.gif) 0 0 no-repeat}*/
+
+.list-actions .order{float:left;width:57px;height:39px;position:relative;top:0;right:0;background:#f5f5f5;border:1px solid #eae8e8;-webkit-border-radius:4px;-moz-border-radius:4px;}
+.list-actions .order li{display:none;border-top:0px solid #2e2e2e;border-bottom:0px solid #1f1f1f}
+.list-actions .order li.active{display:block;border-top:0;border-bottom:0}
+.list-actions .order:hover li{display:block}
+.list-actions .order li a{font-weight:bold;font-size:0.91em;background:#f5f5f5;color:#919191;text-transform:uppercase;font-family: 'Cabin', sans-serif;text-align:center;padding:12px 0 0 0;height:25px;display:block}
+.list-actions .order li.active a{0 0 no-repeat}
+.list-actions .order li a:hover{color:#75b407}
+.list-actions .order:hover li.active a{box-shadow:0 0 3px #f5f5f5 inset}
+	
 
 .list-container{padding:0 0 25px 0;width:100%;float:left}
 	

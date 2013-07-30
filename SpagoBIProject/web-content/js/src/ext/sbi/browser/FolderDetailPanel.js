@@ -538,7 +538,12 @@ Ext.extend(Sbi.browser.FolderDetailPanel, Ext.Panel, {
 	} 
     
     , addClass: function(el, cls){
-            el.addClass(cls);
+//            el.addClass(cls);
+//            Ext.get(el.parentElement).addClass(cls);
+    	var list = Ext.get(el);
+    	list.addClass(cls);
+    	list.height=200;
+    	this.doLayout();
     }
     
     , createBannerHtml: function(communities){
@@ -578,13 +583,19 @@ Ext.extend(Sbi.browser.FolderDetailPanel, Ext.Panel, {
     		'	                </div> '+
     		'	            </fieldset> '+
     		'	        </form> '+
-    		'	        <ul class="order"> '+
-    		'	            <li class="active"><a href="#" onclick="javascript:Ext.getCmp(\'this\').sortStore(\'creationDate\')">'+LN('sbi.ds.moreRecent')+'</a> ' +
-    		'					<span class="sortArrow"><a href="#" onclick="javascript:Ext.getCmp(\'this\').addClass(this,\'open\')"></a></span></li> '+
+    		'	        <ul class="order" id="sortList"> '+
+    		'	            <li class="active"><a href="#" onclick="javascript:Ext.getCmp(\'this\').sortStore(\'creationDate\')">'+LN('sbi.ds.moreRecent')+'</a> </li> '+
     		'	            <li><a href="#" onclick="javascript:Ext.getCmp(\'this\').sortStore(\'label\')">'+LN('sbi.ds.label')+'</a></li> '+
     		'	            <li><a href="#" onclick="javascript:Ext.getCmp(\'this\').sortStore(\'name\')">'+LN('sbi.ds.name')+'</a></li> '+
     		'	            <li><a href="#" onclick="javascript:Ext.getCmp(\'this\').sortStore(\'creationUser\')">'+LN('sbi.ds.owner')+'</a></li> '+
     		'	        </ul> '+
+//    		'			 <ul class="order" id="sortList"> '+
+//    		'	            <li class="active"><a href="#" onclick="javascript:Ext.getCmp(\'this\').sortStore(\'creationDate\')">'+LN('sbi.ds.moreRecent')+'</a> ' +
+//    		'					<span class="sortArrow"><a href="#" onclick="javascript:Ext.getCmp(\'this\').addClass(\'sortList\',\'open\')"></a></span></li> '+
+//    		'	            <li><a href="#" onclick="javascript:Ext.getCmp(\'this\').sortStore(\'label\')">'+LN('sbi.ds.label')+'</a></li> '+
+//    		'	            <li><a href="#" onclick="javascript:Ext.getCmp(\'this\').sortStore(\'name\')">'+LN('sbi.ds.name')+'</a></li> '+
+//    		'	            <li><a href="#" onclick="javascript:Ext.getCmp(\'this\').sortStore(\'creationUser\')">'+LN('sbi.ds.owner')+'</a></li> '+
+//    		'	        </ul> '+    		
     		'	    </div> '+
     		'</div>' ;
         var dh = Ext.DomHelper;
