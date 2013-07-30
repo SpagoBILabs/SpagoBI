@@ -14,7 +14,8 @@ Sbi.geo.tools.MeasureCatalogue = function(config) {
 			contextPath: "SpagoBI",
 			columnsRef: ['dsName', 'dsLabel', 'dsCategory', 'dsType'],
 			measuresProperties: [{header:'Alias', dataIndex:'alias'},{header:'Type', dataIndex:'classType'},{header:'Column', dataIndex:'columnName'}],
-			datasetsProperties: [{header:'Name', dataIndex:'dsName'},{header:'Label', dataIndex:'dsLabel'},{header:'Category', dataIndex:'dsCategory'},{header:'Type', dataIndex:'dsType'}]
+			datasetsProperties: [{header:'Name', dataIndex:'dsName'},{header:'Label', dataIndex:'dsLabel'},{header:'Category', dataIndex:'dsCategory'},{header:'Type', dataIndex:'dsType'}],
+			filteringProperties:['alias','dsName', 'dsLabel', 'dsCategory', 'dsType']
 	};
 
 	
@@ -25,10 +26,10 @@ Sbi.geo.tools.MeasureCatalogue = function(config) {
 	
 	Ext.apply(this,defaultSettings);
 	
-	var tb =  this.getToolbar(this);
-	var expander = this.getExpander();
+	var tb =  this.buildToolbar(this);
+	var expander = this.buildexpander();
 	var sm = new Ext.grid.CheckboxSelectionModel({SingleSelect:false, hideable:true});
-	var cm = this.getColumns(sm, expander);
+	var cm = this.buildColumns(sm, expander);
 	
 	var c = ({
 		store: this.buildStore(),
@@ -51,7 +52,7 @@ Sbi.geo.tools.MeasureCatalogue = function(config) {
 
 Ext.extend(Sbi.geo.tools.MeasureCatalogue, Ext.grid.GridPanel, {
 
-	getColumns: function(sm, expander){
+	buildColumns: function(sm, expander){
 		var thisPanel = this;
 		
 		var highlightSearchString = function (value, a, b) {
@@ -64,14 +65,19 @@ Ext.extend(Sbi.geo.tools.MeasureCatalogue, Ext.grid.GridPanel, {
 		
 		var columnsDesc = [expander];
 		
+		//Builds the columns of the grid
 		for(var i=0; i<this.columnsRef.length; i++){
 			var column = this.columnsRef[i];
-			columnsDesc.push({
-				header: OpenLayers.Lang.translate('sbi.tools.catalogue.measures.column.header.'+column),
-				sortable: true,
-				dataIndex: column,
-				renderer: highlightSearchString
-			});
+			var object = {
+					header: OpenLayers.Lang.translate('sbi.tools.catalogue.measures.column.header.'+column),
+					sortable: true,
+					dataIndex: column
+				};
+			//if the column is involved in the filter we should add the renderer 
+			if(this.filteringProperties.indexOf(column)>=0){
+				object.renderer=highlightSearchString;
+			}
+			columnsDesc.push(object);
 		}
 		columnsDesc.push(sm);
 		
@@ -108,7 +114,7 @@ Ext.extend(Sbi.geo.tools.MeasureCatalogue, Ext.grid.GridPanel, {
 		});
 	},
 	
-	getToolbar: function(grid){
+	buildToolbar: function(grid){
 		
 		var thisPanel = this;
 		
@@ -159,14 +165,16 @@ Ext.extend(Sbi.geo.tools.MeasureCatalogue, Ext.grid.GridPanel, {
 					var data = record.data;
 					if(data!=null && data!=undefined){
 						for(var p in data){
-							if(data[p]!=null && data[p]!=undefined && ((""+data[p]).toUpperCase()).indexOf(value.toUpperCase())>=0){
-								return true;
+							if(this.filteringProperties.indexOf(p)>=0){//if the column should be considered by the filter
+								if(data[p]!=null && data[p]!=undefined && ((""+data[p]).toUpperCase()).indexOf(value.toUpperCase())>=0){
+									return true;
+								}
 							}
 						}
 					}
 				}
 				return false;		
-			});
+			},this);
 		}else{
 			this.getStore().clearFilter();
 		}
@@ -206,7 +214,7 @@ Ext.extend(Sbi.geo.tools.MeasureCatalogue, Ext.grid.GridPanel, {
 		}
 	},
 	
-	getExpander: function(){
+	buildexpander: function(){
 		
     	var measuresProperties = "";
     	for(var i=0; i<this.measuresProperties.length; i++){
