@@ -79,6 +79,8 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 	, legendControlPanel: null
 	, logoControlPanel: null
 	, debugControlPanel: null
+	
+	, measureCatalogueWindow: null
    
     // public methods
     
@@ -283,12 +285,36 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 				    		this.store.load({params: p});
 		           		},
 		           		scope: this
+				    }), new Ext.Button({
+				    	text: 'Measure Catalogue',
+				        width: 30,
+				        handler: function() {
+				        	this.showMeasureCatalogueWindow();
+		           		},
+		           		scope: this
 				    })]
 		    });
 			
 			
 			this.controlPanelItemsConfig.push(this.debugControlPanel);
 		}
+	}
+	
+	, showMeasureCatalogueWindow: function(){
+		if(this.measureCatalogueWindow==null){
+
+			this.measureCatalogueWindow = new Ext.Window({
+	            layout      : 'fit',
+		        width		: 700,
+		        height		: 450,
+	            closeAction :'hide',
+	            plain       : true,
+	            title		: OpenLayers.Lang.translate('sbi.tools.catalogue.measures.window.title'),
+	            items       : [new Sbi.geo.tools.MeasureCatalogue()]
+			});
+
+		}
+		this.measureCatalogueWindow.show();
 	}
 	
     // private methods
