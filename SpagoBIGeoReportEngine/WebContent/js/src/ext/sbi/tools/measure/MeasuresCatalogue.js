@@ -4,7 +4,7 @@
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. **/
 
-
+ 
 Ext.ns("Sbi.geo.tools");
 
 Sbi.geo.tools.MeasureCatalogue = function(config) {
@@ -14,24 +14,27 @@ Sbi.geo.tools.MeasureCatalogue = function(config) {
 			contextPath: "SpagoBI"
 	};
 
+	
+	
 	if(Sbi.settings && Sbi.settings.geo && Sbi.settings.geo.tools && Sbi.settings.geo.tools.measurecatalogue) {
 		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.geo.tools.measurecatalogue);
 	}
 	
 	Ext.apply(this,defaultSettings);
 	
+	var tb =  this.getToolbar(this);
 	var expander = this.getExpander();
 	var sm = new Ext.grid.CheckboxSelectionModel({SingleSelect:false, hideable:true});
 	var cm = this.getColumns(sm, expander);
 	
 	var c = ({
-		store: this.getStore(),
+		store: this.buildStore(),
 		view: new Ext.grid.GroupingView({
 			forceFit:true,
 			groupTextTpl: '{text} ({[values.rs.length]} {[values.rs.length > 1 ? "Items" : "Item"]})'
 		}),
 		
-		tbar: this.getToolbar(this),
+		tbar: tb,
 		cm: cm,
 		sm: new Ext.grid.CheckboxSelectionModel({SingleSelect:false}),
 		plugins: expander
@@ -46,43 +49,53 @@ Sbi.geo.tools.MeasureCatalogue = function(config) {
 Ext.extend(Sbi.geo.tools.MeasureCatalogue, Ext.grid.GridPanel, {
 
 	getColumns: function(sm, expander){
+		var thisPanel = this;
+		
+		var highlightSearchString = function (value, a, b) {
+			var searchString = thisPanel.search.getValue().toUpperCase();
+			if (value != undefined && value != null && searchString != '') {
+				return thisPanel.highlightSearchStringInternal(value, 0, searchString, thisPanel);
+			}
+			return value;
+		};
+		
 		return new Ext.grid.ColumnModel([
 		                                 expander,
 		                    			{id: 'alias',
 		                    				header: 'Alias',
 		                    				sortable: true,
 		                    				dataIndex: 'alias',
-		                    				width: 20
+		                    				renderer: highlightSearchString
 		                    			},
 		                    			{
 		                    				header: 'DS Name',
 		                    				sortable: true,
 		                    				dataIndex: 'dsName',
-		                    				width: 20
+		                    				renderer: highlightSearchString
 		                    			},
 		                    			{
 		                    				header: 'DS Label',
 		                    				sortable: true,
 		                    				dataIndex: 'dsLabel',
-		                    				width: 20
+		                    				renderer: highlightSearchString
 		                    			},
 		                    			{
 		                    				header: 'DS Category',
 		                    				sortable: true,
 		                    				dataIndex: 'dsCategory',
-		                    				width: 20
+		                    				renderer: highlightSearchString
 		                    			},
 		                    			{
 		                    				header: 'DS Type',
 		                    				sortable: true,
 		                    				dataIndex: 'dsType',
-		                    				width: 20
+		                    				renderer: highlightSearchString
 		                    			},
 		                    			sm
 		                    		]);
 	},
 
-	getStore: function(){
+	buildStore: function(){
 		return new Ext.data.GroupingStore({
 
 			proxy:new Ext.data.HttpProxy({
@@ -124,10 +137,56 @@ Ext.extend(Sbi.geo.tools.MeasureCatalogue, Ext.grid.GridPanel, {
 			}
 		});
 
-		var tb = new Ext.Toolbar([joinMeasuresButton]);
+		this.search = new Ext.form.TriggerField({
+			enableKeyEvents: true,
+			cls: ' x-form-text-search',
+			triggerClass:'x-form-clear-trigger',
+	    	onTriggerClick: function(e) {
+	    		if(this.el.dom.className.indexOf("x-form-text-search")<0){
+            		this.el.dom.className+=" x-form-text-search";
+            	}
+	    		this.setValue("");
+	    		thisPanel.filter("")
+			},
+			listeners:{
+				keyup:function(textField, event){
+					thisPanel.filter(textField.getValue());
+	            	if(textField.getValue()==""){
+	            		textField.el.dom.className+=" x-form-text-search";
+	            	}else if(textField.el.dom.className.indexOf("x-form-text-search")>=0){
+	            		textField.el.dom.className=textField.el.dom.className.replace("x-form-text-search","");
+	            	}
+				},
+				scope: thisPanel
+			}
+		});
+
+		
+		var tb = new Ext.Toolbar([joinMeasuresButton,'->',this.search]);
 
 		return tb;
 		
+	},
+	
+	filter: function(value){
+		if(value!=null && value!=undefined && value!=''){
+			this.getStore().filterBy(function(record,id){
+				
+				if(record!=null && record!=undefined){
+					var data = record.data;
+					if(data!=null && data!=undefined){
+						for(var p in data){
+							if(data[p]!=null && data[p]!=undefined && ((""+data[p]).toUpperCase()).indexOf(value.toUpperCase())>=0){
+								return true;
+							}
+						}
+					}
+				}
+				return false;		
+			});
+		}else{
+			this.getStore().clearFilter();
+		}
 	},
 	
 	executeJoin: function(){
@@ -200,6 +259,28 @@ Ext.extend(Sbi.geo.tools.MeasureCatalogue, Ext.grid.GridPanel, {
 		
 		
 	    return expander;
+	},
+	
+
+
+	
+	/**
+	 * @Private
+	 */
+	highlightSearchStringInternal: function (value, startIndex, searchString, thisPanel) {
+        var startPosition = value.toLowerCase().indexOf(searchString.toLowerCase(), startIndex);
+        if (startPosition >= 0 ) {
+            var prefix = "";
+            if (startPosition > 0 ) {
+                prefix = value.substring(0, startPosition);
+            }
+            var filterSpan = "<span class='x-livesearch-match'>" + value.substring(startPosition, startPosition + searchString.length) + "</span>";
+            var suffix = value.substring(startPosition + searchString.length);
+            var newValue = prefix + filterSpan + suffix;
+            return thisPanel.highlightSearchStringInternal(newValue, startPosition + filterSpan.length, searchString, thisPanel);
+        } else {
+        	return value;
+        }
 	}
 
 });
