@@ -197,8 +197,11 @@ Sbi.settings.georeport = {
 
 	,tools:{
 		measurecatalogue:{
+			//The list of columns in the measure catalogue
 			columnsRef: ['alias','dsName', 'dsLabel', 'dsCategory', 'dsType'],
+			//The properties of the measure to show in the detail of the measure
 			measuresProperties: [{header:'Alias', dataIndex:'alias'},{header:'Type', dataIndex:'classType'},{header:'Column', dataIndex:'columnName'}],
+			//The properties of the dataset to show in the detail of the measure
 			datasetsProperties: [{header:'Name', dataIndex:'dsName'},{header:'Label', dataIndex:'dsLabel'},{header:'Category', dataIndex:'dsCategory'},{header:'Type', dataIndex:'dsType'}]
 		}
 	} 
