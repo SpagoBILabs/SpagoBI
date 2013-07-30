@@ -56,7 +56,7 @@ Sbi.exception.ExceptionHandler = function(){
         			if(content.errors !== undefined && content.errors.length > 0) {
         				errMessage = '';
         				for(var i = 0; i < content.errors.length; i++) {
-        					errMessage += content.errors[i].message + '<br>';
+        					errMessage += OpenLayers.Lang.translate(content.errors[i].message) + '<br>';
         				}
         			} 
         		} 

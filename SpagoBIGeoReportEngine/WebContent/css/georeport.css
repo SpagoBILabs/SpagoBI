@@ -87,4 +87,38 @@
 	.delWms {
 			background-image:url(/SpagoBIGeoReportEngine/js/lib/mapfish/client/ext/examples/shared/icons/fam/delete.gif) !important;
 	}
+	
+	.measure-detail-measure{
+		background: url('../img/measures-big.png') no-repeat;
+		width: 90px;
+		background-position:5px 10px;
+	}
+	
+	.measure-detail-dataset{
+		background: url('../img/img-dataset-1.jpg') no-repeat;
+		width: 90px;
+		background-position:5px 20px;
+	}
+	
+	.htmltable p{
+		line-height:13px;
+		 font-family: tahoma,arial,verdana,sans-serif; 
+		 font-size: 11px;
+		 margin: 3px;
+	}
+	
+	.measure-detail-container{
+		padding-left: 10px;
+	}
+	
+	.dataset-detail-container{
+		padding-left: 10px;
+	}
+	
+	.measure-detail-title{
+		border-bottom: 1px solid lightblue;
+	}
+	
+		
+	
  </style>
