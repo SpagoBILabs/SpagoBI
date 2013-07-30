@@ -164,7 +164,7 @@ li:hover .login-panel .not-registered a:hover,.login-panel .not-registered a:hov
 .list-tab .favourite a{padding-left:0;padding-right:0;width:65px;background:url(../../../images/bg-fav-list-tab.png) 23px 14px no-repeat;text-indent:-9999px;font-size:0;line-height:0;color:#fff}
 .list-tab .favourite a:hover{background-position:23px -30px}
 .list-tab .active a{font-family:cabinbold, sans-serif}
-.main-datasets-list {background:#f9f9f9;}	
+.main-datasets-list {background:#f9f9f9; min-height: 100%; }	
 .main-datasets-list .list-tab .active a{color:#3d90d4}
 .main-maps-list .list-tab .active a{color:#659a08}
 .list-tab a:hover{color:#838383}
@@ -240,7 +240,12 @@ li:hover .login-panel .not-registered a:hover,.login-panel .not-registered a:hov
 .box .box-figure .shadow{opacity:0.20;filter:alpha(opacity = 20);width:100%;height:100%;display:block;position:absolute;top:0;left:0;box-shadow:0 0 10px #000 inset}
 .main-datasets-list .box .box-figure .shadow{opacity:0.05;filter:alpha(opacity = 5)}
 .box .box-text{min-height:66px;height:auto !important;height:66px;position:relative;padding:0 2px 20px 2px}
-.box h2{font-family:cabinmedium, sans-serif;line-height:140%;font-weight:normal;font-size:1.60em;margin:0 0 5px 0}
+.box h2{font-family:cabinmedium, sans-serif;line-height:140%;font-weight:normal;font-size:1.60em;margin:0 0 5px 0;
+	white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;  // IE 6+, FF 7+, Op 11+, Saf 1.3+, Chr 1+
+    -o-text-overflow: ellipsis;  // for Opera 9 & 10 
+}
 .box p{
 	line-height:137%;font-size:1.1em;margin:0 0 5px 0;  
 	white-space: nowrap;
