@@ -2,7 +2,7 @@
 	#content {
 		line-height: 1em;
 	}
-    
+     
     .zoomin {
           background-image:url(/SpagoBIGeoReportEngine/js/lib/mapfish/client/mfbase/mapfish/img/icon_zoomin.png) !important;
           height:20px !important;
@@ -118,7 +118,14 @@
 	.measure-detail-title{
 		border-bottom: 1px solid lightblue;
 	}
-	
+	.x-livesearch-match {
+    	font-weight: bold;
+    	background-color: yellow;
+	}
+	.x-form-text-search{
+		background-image: url('../img/form/text-bg-search.gif') !important;
+		background-repeat: no-repeat;
+	}
 		
 	
  </style>
