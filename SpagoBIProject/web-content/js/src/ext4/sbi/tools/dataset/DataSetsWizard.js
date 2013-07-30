@@ -6,6 +6,7 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
 		fieldsStep2: null,
 		fieldsStep3: null,
 		categoriesStore: null,
+		height: 440,
 		datasetPropertiesStore: null,
 		datasetValuesStore: null,
 		scopeStore: null,
