@@ -48,7 +48,7 @@ Ext.define('Sbi.tools.dataset.ValidateDatasetGrid', {
 		//this.filterConfig={};
 		this.border = true;
 		//this.region = 'south';
-        this.height = 350;
+        this.height = 300;
         this.width = '100%';
         this.autoscroll =  true;
         
