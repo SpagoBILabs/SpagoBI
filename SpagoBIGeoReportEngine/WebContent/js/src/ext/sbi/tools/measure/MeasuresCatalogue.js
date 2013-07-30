@@ -11,13 +11,16 @@ Sbi.geo.tools.MeasureCatalogue = function(config) {
 
 	var defaultSettings = {
 			layout: 'fit',
-			contextPath: "SpagoBI"
+			contextPath: "SpagoBI",
+			columnsRef: ['dsName', 'dsLabel', 'dsCategory', 'dsType'],
+			measuresProperties: [{header:'Alias', dataIndex:'alias'},{header:'Type', dataIndex:'classType'},{header:'Column', dataIndex:'columnName'}],
+			datasetsProperties: [{header:'Name', dataIndex:'dsName'},{header:'Label', dataIndex:'dsLabel'},{header:'Category', dataIndex:'dsCategory'},{header:'Type', dataIndex:'dsType'}]
 	};
 
 	
 	
-	if(Sbi.settings && Sbi.settings.geo && Sbi.settings.geo.tools && Sbi.settings.geo.tools.measurecatalogue) {
-		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.geo.tools.measurecatalogue);
+	if(Sbi.settings && Sbi.settings.georeport && Sbi.settings.georeport.tools && Sbi.settings.georeport.tools.measurecatalogue) {
+		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.georeport.tools.measurecatalogue);
 	}
 	
 	Ext.apply(this,defaultSettings);
@@ -59,40 +62,20 @@ Ext.extend(Sbi.geo.tools.MeasureCatalogue, Ext.grid.GridPanel, {
 			return value;
 		};
 		
-		return new Ext.grid.ColumnModel([
-		                                 expander,
-		                    			{id: 'alias',
-		                    				header: 'Alias',
-		                    				sortable: true,
-		                    				dataIndex: 'alias',
-		                    				renderer: highlightSearchString
-		                    			},
-		                    			{
-		                    				header: 'DS Name',
-		                    				sortable: true,
-		                    				dataIndex: 'dsName',
-		                    				renderer: highlightSearchString
-		                    			},
-		                    			{
-		                    				header: 'DS Label',
-		                    				sortable: true,
-		                    				dataIndex: 'dsLabel',
-		                    				renderer: highlightSearchString
-		                    			},
-		                    			{
-		                    				header: 'DS Category',
-		                    				sortable: true,
-		                    				dataIndex: 'dsCategory',
-		                    				renderer: highlightSearchString
-		                    			},
-		                    			{
-		                    				header: 'DS Type',
-		                    				sortable: true,
-		                    				dataIndex: 'dsType',
-		                    				renderer: highlightSearchString
-		                    			},
-		                    			sm
-		                    		]);
+		var columnsDesc = [expander];
+		
+		for(var i=0; i<this.columnsRef.length; i++){
+			var column = this.columnsRef[i];
+			columnsDesc.push({
+				header: OpenLayers.Lang.translate('sbi.tools.catalogue.measures.column.header.'+column),
+				sortable: true,
+				dataIndex: column,
+				renderer: highlightSearchString
+			});
+		}
+		columnsDesc.push(sm);
+		
+		return new Ext.grid.ColumnModel(columnsDesc);
 	},
 
 	buildStore: function(){
@@ -146,7 +129,7 @@ Ext.extend(Sbi.geo.tools.MeasureCatalogue, Ext.grid.GridPanel, {
             		this.el.dom.className+=" x-form-text-search";
             	}
 	    		this.setValue("");
-	    		thisPanel.filter("")
+	    		thisPanel.filter("");
 			},
 			listeners:{
 				keyup:function(textField, event){
@@ -225,7 +208,21 @@ Ext.extend(Sbi.geo.tools.MeasureCatalogue, Ext.grid.GridPanel, {
 	
 	getExpander: function(){
 		
+    	var measuresProperties = "";
+    	for(var i=0; i<this.measuresProperties.length; i++){
+    		measuresProperties = measuresProperties+'<tr><td style="width: 100px"><p><b>'+this.measuresProperties[i].header+':</b></td><td><p>{'+this.measuresProperties[i].dataIndex+'}</p></td></tr>';
+    	}
+    	
+    	var datasetsProperties = "";
+    	for(var i=0; i<this.datasetsProperties.length; i++){
+    		datasetsProperties = datasetsProperties+'<tr><td style="width: 100px"><p><b>'+this.datasetsProperties[i].header+':</b></td><td><p>{'+this.datasetsProperties[i].dataIndex+'}</p></td></tr>';
+    	}
+    	
+		
 	    var expander = new Ext.grid.RowExpander({
+
+	    	
+
 	        tpl : new Ext.Template(
 	        		'<div class="htmltable">',
 	        		'<div class="measure-detail-container"><div class="measure-detail-title"><h2><div class="group-header" style="background-image: none!important">'+OpenLayers.Lang.translate('sbi.tools.catalogue.measures.measure.properties')+'</div></h2></div>',
@@ -234,9 +231,7 @@ Ext.extend(Sbi.geo.tools.MeasureCatalogue, Ext.grid.GridPanel, {
 	        		'			<td class="measure-detail-measure">',
 	        		'			</td>',
 	        		'			<td><table>',
-	        		'					<tr><td style="width: 100px"><p><b>Name:</b></td><td><p>{alias}</p></td></tr>',
-	        		'					<tr><td><p><b>Type:</b></td><td><p>{classType}</p></td>	</tr>',
-	        		'					<tr><td><p><b>Column Name:</b></td><td><p>{columnName}</p></td>	</tr>',
+	        						measuresProperties,
 	        		'			</table></td>',			
 	        		'		</tr>',
 	        		'</table></div>',
@@ -246,10 +241,7 @@ Ext.extend(Sbi.geo.tools.MeasureCatalogue, Ext.grid.GridPanel, {
 	        		'			<td class="measure-detail-dataset">',
 	        		'			</td>',
 	        		'			<td><table>',
-	        		'					<tr><td style="width: 100px"><p><b>Label:</b></td><td><p>{dsLabel}</p></td></tr>',
-	        		'					<tr><td><p><b>Name:</b></td><td><p>{dsName}</p></td></tr>',
-	        		'					<tr><td><p><b>Category:</b></td><td><p>{dsCategory}</p></td></tr>',
-	        		'					<tr><td><p><b>Type:</b></td><td><p>{dsType}</p></td></tr>',
+	        						datasetsProperties,
 	        		'			</table></td>',
 	        		'		</tr>',
 	        		'</table></div>',
