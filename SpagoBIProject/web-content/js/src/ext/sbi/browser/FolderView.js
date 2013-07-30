@@ -264,34 +264,36 @@ Ext.extend(Sbi.browser.FolderView, Ext.DataView, {
     	if (newSamples.length > 0){
 			this.store.add([
 				          	  new GroupRecord({
-				          		  title: value
+				          		  title: 'Documents'
 				          		  , icon: 'document.png'
 				          		  , samples: newSamples
 				          	  })
 				          	]);
     	}
+    	this.inMemorySort('creationDate');
     }
     
     , inMemorySort : function(attributeName) {
-//    	this.sort('Documents', attributeName);
-    //	this.applySort('Documents', attributeName);
-    	this.reset();
     	var collection = this.getCollection('Documents');
     	if(collection == null) return;
     	var type = 'ASC';
-    	if (attributeName == 'creationDate') type = 'DESC';
-    	collection.sort(type);
-    	
+    	if (attributeName == 'creationDate') type = 'DESC';  	
     	collection.sort(type, function(r1, r2) {
-            var v1 = r1[attributeName], v2 = r2[attributeName];
-            var result = v1 > v2 ? 1 : (v1 < v2 ? -1 : 0);
-//            alert('v1: ' +v1 + ' - v2: ' + v2 + ' - result: ' + result);
+            var v1 =(r1[attributeName]==undefined)?0:r1[attributeName].toUpperCase();
+            var v2 = (r2[attributeName]==undefined)?0:r2[attributeName].toUpperCase();
+            var result;
+            if (type == 'DESC'){
+            	result = v1 < v2 ? 1 : (v1 > v2 ? -1 : 0);            	
+            }else{
+            	result = v1 > v2 ? 1 : (v1 < v2 ? -1 : 0);
+            }
             return result;
         });
     	
     	var groupIndex = this.store.find('title', 'Documents');    	
-    	var group = this.store.getAt( groupIndex );    	
+    	var group = this.store.getAt( groupIndex );        	
     	group.data['samples'] = collection.getRange();
+    	
     	this.refresh();
     }
     
