@@ -8,8 +8,13 @@ package it.eng.spagobi.community.dao;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjFunc;
+import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
+import it.eng.spagobi.analiticalmodel.functionalitytree.dao.ILowFunctionalityDAO;
+import it.eng.spagobi.analiticalmodel.functionalitytree.dao.LowFunctionalityDAOHibImpl;
 import it.eng.spagobi.analiticalmodel.functionalitytree.metadata.SbiFunctions;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
+import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.community.mapping.SbiCommunity;
 import it.eng.spagobi.community.mapping.SbiCommunityUsers;
 import it.eng.spagobi.community.mapping.SbiCommunityUsersId;
@@ -297,18 +302,41 @@ public class SbiCommunityDAOImpl extends AbstractHibernateDAO implements ISbiCom
 				SbiCommunityUsers scu = (SbiCommunityUsers)it.next();
 				aSession.delete(scu);
 			}
+			
 			//get functionalities
 			String fq = "from SbiFunctions f where f.code = :code";
 			Query queryF = aSession.createQuery(fq);
-			queryF.setString("code", hibComm.getFunctCode());
-
+			queryF.setString("code", hibComm.getFunctCode());		
+			
+			
 			List functs = queryF.list();
+			
+			//delete relation with documents associated to community folder
+
+//			String hql = "select distinct a from SbiObjects a " +
+//	                "join a.sbiObjFuncs t " +
+//	                "where t.id.sbiFunctions in (:functions)";
+			String hql = "from SbiObjFunc a " +
+            "where a.id.sbiFunctions in (:functions)";
+			Query queryDoc = aSession.createQuery(hql);
+			queryDoc.setParameterList("functions", functs);
+			List<SbiObjFunc> objs = queryDoc.list();
+			Iterator itd = objs.iterator();
+			//delete all users for community
+			while(itd.hasNext()){
+				SbiObjFunc rel = (SbiObjFunc)itd.next();
+				aSession.delete(rel);	
+			}
+			aSession.flush();
+
 			Iterator itF = functs.iterator();
 			//delete all functions for community
+			ILowFunctionalityDAO functDao = DAOFactory.getLowFunctionalityDAO();
 			while(itF.hasNext()){
 				try{								
 					SbiFunctions fu = (SbiFunctions)itF.next();
-					aSession.delete(fu);		
+					LowFunctionality lowf= ((LowFunctionalityDAOHibImpl)functDao).toLowFunctionality(fu, false);
+					functDao.eraseLowFunctionality(lowf, null);
 					
 				}catch(Exception e){
 					logger.debug("No such functionality element ");
@@ -316,6 +344,7 @@ public class SbiCommunityDAOImpl extends AbstractHibernateDAO implements ISbiCom
 			}
 			aSession.delete(hibComm);
 			tx.commit();
+			
 		} catch (HibernateException he) {
 			logger.error("Error while erasing the community with id " + id, he);
 
