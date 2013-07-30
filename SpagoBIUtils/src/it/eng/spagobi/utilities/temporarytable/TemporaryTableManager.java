@@ -377,7 +377,7 @@ public class TemporaryTableManager {
 	private static void createTableInternal(String baseQuery, String tableName, IDataSource dataSource) throws Exception {
 		logger.debug("IN");
 		String dialect = dataSource.getHibDialectClass().toUpperCase();
-		if (dialect.contains("HSQL") || dialect.contains("SQLServer")) {
+		if (dialect.contains("HSQL") || dialect.contains("SQLSERVER")) {
 			// command in SELECT .... INTO table_name FROM ....
 			String sql = "SELECT * INTO " + tableName + " FROM ( " + baseQuery + " ) T ";
 			executeStatement(sql, dataSource);
@@ -438,7 +438,7 @@ public class TemporaryTableManager {
 					throw e;
 				}
 			}
-		} else if (dialect.contains("SQLServer")) { // SQLServer has a different command 
+		} else if (dialect.toUpperCase().contains("SQLSERVER")) { // SQLServer has a different command 
 			// see http://www.webdevblog.info/database/drop-table-if-exists-in-oracle-nd-sql-server/
 			executeStatement("IF EXISTS (SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES " +
 					" WHERE TABLE_NAME = '" + tableName + "') " +
