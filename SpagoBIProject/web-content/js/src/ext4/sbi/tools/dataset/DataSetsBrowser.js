@@ -5,9 +5,8 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 	config : {
 		modelName : "Sbi.tools.dataset.DataSetModel",
 		dataView : null,
-		tbar : null,
-//		bannerPanel : null,
-		height: 400, //600,
+//		tbar : null,
+		height: 600,
 		user : '',
 		datasetsServicePath: '',
 		displayToolbar: true,
@@ -18,15 +17,15 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 	,
 	constructor : function(config) {
 		this.initConfig(config);
-//		this.user = '';
 		this.initServices();
 		this.initStore();
 		this.initToolbar();
 		this.initViewPanel();
-//		this.layout='fit';
-//		this.items = [this.bannerPanel,this.viewPanel];
-		this.items = [this.viewPanel];
+		this.layout= 'border', //'border'; //'fit';
+		this.items = [this.bannerPanel,this.viewPanel];
+//		this.items = [this.viewPanel];
 		this.callParent(arguments);
+//		this.doLayout();
 		
 		this.addEvents('order');
 	}
@@ -122,11 +121,10 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 			var bannerHTML = this.createBannerHtml({});
 			this.bannerPanel = new Ext.Panel({
 				region: 'north',
+//				height: 80,
 //				layout: 'fit',
-				baseCls:'list-actions-container',
 			   	autoScroll: false,
-			   	style:"float: left; width:100%;",
-			   	height:100,
+			   	style:"float:left;width:100%;",
 			   	html: bannerHTML
 			});
 			
@@ -191,7 +189,8 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 		config.actions = this.actions;
 		config.user = this.user;
 		config.autoScroll = true;
-		config.region ='center';
+		config.layout='fit';
+//		config.region ='center';
 		config.fromMyDataCtx = this.displayToolbar;
 		this.viewPanel = Ext.create('Sbi.tools.dataset.DataSetsView', config);
 		this.viewPanel.on('detail', this.modifyDataset, this);
@@ -437,11 +436,18 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 	} 
 	
 	, filterStore: function(filterString) {
-		this.filterString = filterString;
+		this.store.load({filterString: filterString});
 	}
 	
 	, sortStore: function(value) {
-		this.store.sort(renderConfig.property, renderConfig.direction);
+		
+		for (sort in this.sorters){
+			var s = this.sorters[sort];
+			if (s.property == value){
+				this.store.sort(s.property, s.direction);
+				break;
+			}
+		}
 		this.viewPanel.refresh();
 	}	
 
@@ -460,8 +466,9 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
         }
         
         var bannerHTML = ''+
-     		'<div class="aux"> '+
-//    		'    <div class="list-actions-container"> '+ //setted into the container panel
+//     		'<div class="aux"> '+
+     		'<div class="main-datasets-list"> '+
+    		'    <div class="list-actions-container"> '+ //setted into the container panel
     		'		<ul class="list-tab"> '+
     		'	    	<li class="active first"><a href="#" onclick="javascript:Ext.getCmp(\'this\').loadFolder(null, null, \'ALL\')">Tutte</a></li> '+
     					communityString+
@@ -480,20 +487,14 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
     		'	                </div> '+
     		'	            </fieldset> '+
     		'	        </form> '+
-    		'	        <ul class="order"> '+
-//    		'	            <li class="active"><a href="#" onclick="javascript:Ext.getCmp(\'this\').sortStore(\'creationDate\')">'+LN('sbi.ds.moreRecent')+'<span class="arrow"></span></a></li> '+
-    		'	            <li class="active"><a href="#" onclick="javascript:Ext.getCmp(\'this\').sortStore(\'name\')">'+LN('sbi.ds.moreRecent')+'<span class="arrow"></span></a></li> '+
+    		'	         <ul class="order" id="sortList">'+
+    		'	            <li class="active"><a href="#" onclick="javascript:Ext.getCmp(\'this\').sortStore(\'dateIn\')">'+LN('sbi.ds.moreRecent')+'</a> </li> '+
     		'	            <li><a href="#" onclick="javascript:Ext.getCmp(\'this\').sortStore(\'label\')">'+LN('sbi.ds.label')+'</a></li> '+
     		'	            <li><a href="#" onclick="javascript:Ext.getCmp(\'this\').sortStore(\'name\')">'+LN('sbi.ds.name')+'</a></li> '+
     		'	            <li><a href="#" onclick="javascript:Ext.getCmp(\'this\').sortStore(\'owner\')">'+LN('sbi.ds.owner')+'</a></li> '+
     		'	        </ul> '+
-//    		'	        <select name=order class="order" onchange="javascript:Ext.getCmp(\'this\').sortStore(this)> '+
-//    		'	            <option name=\'date\' value=\'date\'> '+LN('sbi.ds.moreRecent')+' </option> '+
-//    		'	            <option name=\'label\' value=\'label\'> '+LN('sbi.ds.label')+' </option> '+
-//    		'	            <option name=\'name\' value=\'name\'> '+LN('sbi.ds.name')+' </option> '+
-//    		'	            <option name=\'creationUser\' value=\'creationUser\'>'+LN('sbi.ds.owner')+' </option> '+
-//    		'	        </select> '+
     		'	    </div> '+
+    		'	</div> '+
     		'</div>' ;
 //        var dh = Ext.DomHelper;
 //        var b = this.bannerPanel.getEl().update(bannerHTML);

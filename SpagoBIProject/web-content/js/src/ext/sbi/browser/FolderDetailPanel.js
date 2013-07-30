@@ -563,7 +563,8 @@ Ext.extend(Sbi.browser.FolderDetailPanel, Ext.Panel, {
         } 
         
         var bannerHTML = ''+
-     		'<div class="aux"> '+
+//     		'<div class="aux"> '+
+     		'<div class="main-maps-list"> '+
 //    		'    <div class="list-actions-container"> '+ //setted into the container panel
     		'		<ul class="list-tab"> '+
     		'	    	<li class="active first"><a href="#" onclick="javascript:Ext.getCmp(\'this\').loadFolder(null, null, \'ALL\')">Tutte</a></li> '+
