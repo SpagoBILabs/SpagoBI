@@ -28,7 +28,7 @@ a:focus{outline:none}
 .box .box-text{height:110px;position:relative;padding:0 2px}
 .box h2{line-height:100%;font-weight:normal;font-size:1.25em;margin:0 0 6px 0}
 .box p{line-height:107%;font-size:1.1em;margin:0 0 5px 0}
-.box p.modified{position:absolute;right:0px;bottom:2;color:#b1b1b1;font-size:0.91em;margin:0}
+.box p.modified{position:absolute;bottom:2;color:#b1b1b1;font-size:0.91em;margin:0}
 .box:hover .box-link p.modified{color:#a5a5a5}
 .box .fav-container{cursor:pointer;height:39px;width:45px;position:absolute;top:-8px;right:20px;padding:8px 0 0 0;background:url(../../../img/dataset/bg-fav-top.png) 0 0 repeat-x}
 .box .fav-container .fav{float:right; position:relative;height:40px;width:45px;background:url(../../../img/dataset/bg-fav-bottom.png) 0 bottom no-repeat}
