@@ -23,6 +23,7 @@ import it.eng.spagobi.tools.dataset.measurecatalogue.MeasureCatalogueDimension;
 import it.eng.spagobi.tools.dataset.measurecatalogue.MeasureCatalogueMeasure;
 import it.eng.spagobi.tools.dataset.measurecatalogue.materializer.exception.NoCommonDimensionsRuntimeException;
 import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -62,7 +63,11 @@ public class InMemoryMaterializer implements IMaterializer {
 		
 		List<InMemoryAggregator> rolledUpMeasures = new ArrayList<InMemoryAggregator>();
 		for(int i=0; i<commonDimensions.size(); i++){
-			rolledUpMeasures.add(groupBy(measures.get(i), commonDimensionsFilterd.get(i), aggreationFunction));
+			InMemoryAggregator groupped = groupBy(measures.get(i), commonDimensionsFilterd.get(i), aggreationFunction);
+			if(groupped==null){
+				logger.debug("The result of the groupping of the measure [alias: "+measures.get(i).getAlias()+", dataset label"+measures.get(i).getDataSet().getLabel()+"is empty");
+			}
+			rolledUpMeasures.add(groupped);
 		}		
 
 		return joinAggreteMeasures(rolledUpMeasures);
@@ -71,17 +76,17 @@ public class InMemoryMaterializer implements IMaterializer {
 
 	
 	
-    public List<InMemoryAggregator> rollUpMeasures(MeasureCatalogueMeasure measure1, MeasureCatalogueMeasure measure2, List<MeasureCatalogueDimension> commonDimensions1, List<MeasureCatalogueDimension> commonDimensions2){
-    	List<InMemoryAggregator> resultSets = new ArrayList<InMemoryAggregator>();
-
-    	 InMemoryAggregator groupMeasure1 =  groupBy(measure1, commonDimensions1, aggreationFunction);
-    	 InMemoryAggregator groupMeasure2 =  groupBy(measure2, commonDimensions2, aggreationFunction);
-		 
-		 resultSets.add(groupMeasure1);
-		 resultSets.add(groupMeasure2);
-		 
-    	return resultSets;
-    }
+//    private List<InMemoryAggregator> rollUpMeasures(MeasureCatalogueMeasure measure1, MeasureCatalogueMeasure measure2, List<MeasureCatalogueDimension> commonDimensions1, List<MeasureCatalogueDimension> commonDimensions2){
+//    	List<InMemoryAggregator> resultSets = new ArrayList<InMemoryAggregator>();
+//
+//    	 InMemoryAggregator groupMeasure1 =  groupBy(measure1, commonDimensions1, aggreationFunction);
+//    	 InMemoryAggregator groupMeasure2 =  groupBy(measure2, commonDimensions2, aggreationFunction);
+//		 
+//		 resultSets.add(groupMeasure1);
+//		 resultSets.add(groupMeasure2);
+//		 
+//    	return resultSets;
+//    }
 
 
 	
@@ -221,6 +226,8 @@ public class InMemoryMaterializer implements IMaterializer {
     	IDataStore dataStore;
     	List<Integer> hierarchiesColumnsIndexInDataSet = new ArrayList<Integer>();//columns of the datastore that contains data of the dimensions
     	int measureColumnIndex = -1;
+    	InMemoryAggregator inMemoryAggregator=null;
+    	
     	//List<IRecord> aggregatedRecords;
     	//IMetaData aggregatedDataSourceMetadata;
     	List<IFieldMetaData> newDataStoreFieldMetaData = new ArrayList<IFieldMetaData>();
@@ -261,13 +268,32 @@ public class InMemoryMaterializer implements IMaterializer {
     	
     	Assert.assertNotNull(dataStore, "the datastore is null");
     	Assert.assertTrue(measureColumnIndex>=0, "no measures found in teh datastore");
-    	
-    	
+
     	//A2: aggregate
-    	InMemoryAggregator inMemoryAggregator = new InMemoryAggregator(aggreationFunction, measureColumnIndex, newDataStoreFieldMetaData, mapDimensionsFields, mapFieldsDimensions, dataSet);
+    	
     	
     	if(dataStore.getRecordsCount()>0){
+    		
+    		
+
+    		int measurePosition=0;
     		int recordLength = dataStore.getRecordAt(0).getFields().size();
+    		
+    		for(int j=0; j<recordLength;j++){
+    			if(hierarchiesColumnsIndexInDataSet.contains(j)){
+    				measurePosition++;
+    			}else if(j==measureColumnIndex){
+    				break;
+    			}else if(j==recordLength-1){
+    				//it's impossible that the dataset does not contains the measure
+    				logger.error("No measure found in the dataset"+dataSet.getLabel()+". It should contains "+measure.getAlias());
+    				throw new SpagoBIRuntimeException("No measure found in the dataset"+dataSet.getLabel()+". It should contains "+measure.getAlias());
+    				
+    			}
+    		}
+    		
+    		inMemoryAggregator = new InMemoryAggregator(aggreationFunction,measurePosition, newDataStoreFieldMetaData, mapDimensionsFields, mapFieldsDimensions, dataSet);
+    		
         	//scan the datastore
         	for(int i=0; i<dataStore.getRecordsCount(); i++){
         		IRecord dataStoreRecord = dataStore.getRecordAt(i);
@@ -300,8 +326,11 @@ public class InMemoryMaterializer implements IMaterializer {
 			for(int i=0; i<joinedMeasure.getFiledsMetadata().size(); i++){
 				metadata.addFiedMeta(joinedMeasure.getFiledsMetadata().get(i));
 			}
-			dataStore.setMetaData(metadata);
 			List<IRecord> records = joinedMeasure.getAggregatedRecords();
+			
+			metadata.setProperty("resultNumber",records.size());
+			dataStore.setMetaData(metadata);
+			
 			for(int i=0; i<records.size(); i++){
 				dataStore.appendRecord(records.get(i));
 			}
@@ -529,6 +558,8 @@ public class InMemoryMaterializer implements IMaterializer {
     		this.dataSet = dataSet;
     	}
     	
+    	public InMemoryAggregator(){};
+    	
     	public void addRecord(IRecord record){
 
     		//check if the record already exists
@@ -583,7 +614,17 @@ public class InMemoryMaterializer implements IMaterializer {
     	private Number executeSum(List<Object> values){
 			Double sum = 0d;
 			for(int j=0; j<values.size();j++){
-				sum = sum+ ((Number)values.get(j)).doubleValue();
+				Object value = values.get(j);
+				if(value!=null){
+					String valueString = values.get(j).toString();
+					if(!valueString.equals("")){
+						try {
+							sum = sum+ new Double(""+valueString);
+						} catch (Exception e) {
+							logger.debug("Error parsing teh value"+valueString,e);
+						}
+					}
+				}
 			}
 			return sum;
     	}
