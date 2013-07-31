@@ -31,6 +31,11 @@ Sbi.locale.ln['sbi.generic.details'] = 'Dettaglio';
 Sbi.locale.ln['sbi.generic.advanced'] = 'Avanzato';
 Sbi.locale.ln['sbi.generic.select'] = 'Seleziona';
 Sbi.locale.ln['sbi.generic.confirmRestore'] = 'Restore';
+Sbi.locale.ln['sbi.generic.create'] = 'Crea';
+Sbi.locale.ln['sbi.generic.load'] = 'Carica';
+Sbi.locale.ln['sbi.generic.document'] = 'Documento';
+Sbi.locale.ln['sbi.generic.map'] = 'Mappa';
+Sbi.locale.ln['sbi.generic.all'] = 'Tutte';
 //Fields
 Sbi.locale.ln['sbi.generic.name'] = 'Nome';
 Sbi.locale.ln['sbi.generic.descr'] = 'Descrizione';
@@ -263,6 +268,11 @@ Sbi.locale.ln['sbi.browser.document.language']  = 'lingua';
 Sbi.locale.ln['sbi.browser.document.objectve']  = 'scopo';
 Sbi.locale.ln['sbi.browser.document.keywords']  = 'parole chiave';
 Sbi.locale.ln['sbi.browser.document.refreshSeconds']  = 'intervallo di aggiornamento';
+Sbi.locale.ln['sbi.browser.document.favourites']  = 'Favoriti';
+Sbi.locale.ln['sbi.browser.document.searchDatasets']  = 'Cerca fra i dataset';
+Sbi.locale.ln['sbi.browser.document.searchDocuments']  = 'Cerca fra i documenti';
+Sbi.locale.ln['sbi.browser.document.searchKeyword']  = 'Cerca per parola chiave...';
+
 Sbi.locale.ln['sbi.document.saveWarning']  = 'Prima di salvare il documento, riempire i campi Nome e Label e selezionare almeno una cartella dove posizionare il documento';
 
 Sbi.locale.ln['sbi.execution.saveDocument']  = 'Riempi la Form, posiziona il tuo documento in una o più cartelle e Salva';

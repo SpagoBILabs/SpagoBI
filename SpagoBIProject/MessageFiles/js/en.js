@@ -30,6 +30,11 @@ Sbi.locale.ln['sbi.generic.advanced'] = 'Advanced';
 Sbi.locale.ln['sbi.generic.select'] = 'Select';
 Sbi.locale.ln['sbi.generic.confirmRestore'] = 'Restore';
 Sbi.locale.ln['sbi.generic.filter'] = 'Filter';
+Sbi.locale.ln['sbi.generic.create'] = 'Create';
+Sbi.locale.ln['sbi.generic.load'] = 'Load';
+Sbi.locale.ln['sbi.generic.document'] = 'Document';
+Sbi.locale.ln['sbi.generic.map'] = 'Map';
+Sbi.locale.ln['sbi.generic.all'] = 'All';
 
 
 //Fields
@@ -252,6 +257,11 @@ Sbi.locale.ln['sbi.browser.document.language']  = 'language';
 Sbi.locale.ln['sbi.browser.document.objectve']  = 'objectve';
 Sbi.locale.ln['sbi.browser.document.keywords']  = 'keywords';
 Sbi.locale.ln['sbi.browser.document.refreshSeconds']  = 'refresh interval';
+Sbi.locale.ln['sbi.browser.document.favourites']  = 'Favourits';
+Sbi.locale.ln['sbi.browser.document.searchDatasets']  = 'Search for datasets';
+Sbi.locale.ln['sbi.browser.document.searchDocuments']  = 'Search for documents';
+Sbi.locale.ln['sbi.browser.document.searchKeyword']  = 'Search by keyword...';
+
 Sbi.locale.ln['sbi.document.saveWarning']  = 'Before saving the document fill in Name and Label and select at least one folder where to place it';
 
 Sbi.locale.ln['sbi.execution.saveDocument']  = 'Fill in the Form and place your document in at least one folder then Save';

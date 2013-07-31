@@ -205,7 +205,7 @@ li:hover .login-panel .not-registered a:hover,.login-panel .not-registered a:hov
 .list-actions .search-form fieldset{float:left}
 .list-actions .search-form .field{float:left}
 .list-actions .search-form .field label{display:none}
-.list-actions .search-form .field input{font-family:cabinregular, sans-serif;border:0;width:165px;padding:1px 20px 0 16px;height:39px;background:#f5f5f5;color:#939393;font-size:1.08em}
+.list-actions .search-form .field input{font-family:cabinregular, sans-serif;border:0;/*width:165px;*/padding:1px 20px 0 16px;height:39px;background:#f5f5f5;color:#939393;font-size:1.08em}
 .main-datasets-list .list-actions .search-form .field input:focus{color:#3d90d4}
 .main-maps-list .list-actions .search-form .field input:focus{color:#75b407}
 .list-actions .search-form .submit{float:right}
@@ -234,7 +234,7 @@ li:hover .login-panel .not-registered a:hover,.login-panel .not-registered a:hov
 .main-datasets-list .list-actions .order li{float:none;display:none;border-top:0px solid #2e2e2e;border-bottom:0px solid #1f1f1f}
 .main-datasets-list .list-actions .order li.active{display:block;border-top:0;border-bottom:0}
 .main-datasets-list .list-actions .order:hover li{display:block;z-index:20000;}
-.main-datasets-list .list-actions .order li a{z-index:90000;font-weight:bold;font-size:0.91em;background:#f5f5f5;color:#919191;/*text-transform:uppercase;*/font-family: 'Cabin', sans-serif;text-align:center;padding:12px 0 0 0;height:25px;display:block}
+.main-datasets-list .list-actions .order li a{z-index:90000;/*font-weight:bold;*/font-size:0.91em;background:#f5f5f5;color:#919191;/*text-transform:uppercase;*/font-family: 'Cabin', sans-serif;text-align:center;padding:12px 0 0 0;height:25px;display:block}
 .main-datasets-list .list-actions .order li.active a{0 0 no-repeat}
 .main-maps-list .list-actions .order li a:hover{color:#75b407}
 .main-maps-list .list-actions .order{float:left;width:57px;height:39px;position:relative;top:0;right:0;background:#f5f5f5;border:1px solid #eae8e8;-webkit-border-radius:4px;-moz-border-radius:4px;}
