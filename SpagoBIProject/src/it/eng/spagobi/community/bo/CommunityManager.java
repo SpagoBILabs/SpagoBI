@@ -82,9 +82,10 @@ public class CommunityManager {
 				aLowFunctionality.setPath("/"+communityName);	
 				aLowFunctionality.setParentId(root.getId());
 
-				
 				//2.populates community bean
-				community = populateCommunity(userId, communityName, code);					
+				if(community == null){
+					community = populateCommunity(userId, communityName, code);				
+				}
 				//4. saves community and user-community relashionship
 				communityId = commDAO.saveSbiComunityUsers(community, userId);
 				
@@ -105,6 +106,7 @@ public class CommunityManager {
 			String functCode){
 		SbiCommunity community = new SbiCommunity();
 		community.setName(communityName);
+		community.setDescription(communityName);
 		community.setFunctCode(functCode);
 		community.setOwner(userId);
 		
