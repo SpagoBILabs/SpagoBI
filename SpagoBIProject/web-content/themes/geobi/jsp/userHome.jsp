@@ -40,10 +40,9 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
    browserversion = info[1];
    String mapsUrl="#";
    String datasetUrl = "#";
-   String langIT = "#";
-   String langEN = "#";
-   String langDE = "#";
    String logoutUrl="#";
+   
+   Map langUrls = new HashMap();
 
    for(int i=0; i< jsonMenuList.length(); i++){
 	   Object menuObj = jsonMenuList.get(i);
@@ -56,10 +55,15 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 				datasetUrl = menuItem.getString("href").replace("'","\\'");
 			}else if(menuItem.has("iconCls") && menuItem.getString("iconCls").equalsIgnoreCase("power")){
 				logoutUrl = menuItem.getString("href").replace("'","\\'");
-			}else if(menuItem.has("itemLabel") && menuItem.getString("itemLabel") == "LANG"){				
-				langEN = "javascript:execUrl(\\'/SpagoBI/servlet/AdapterHTTP?ACTION_NAME=CHANGE_LANGUAGE&LANGUAGE_ID=en&COUNTRY_ID=US&THEME_NAME="+currTheme+"\\')";
-				langIT = "javascript:execUrl(\\'/SpagoBI/servlet/AdapterHTTP?ACTION_NAME=CHANGE_LANGUAGE&LANGUAGE_ID=itn&COUNTRY_ID=IT&THEME_NAME="+currTheme+"\\')";
-				langDE = "javascript:execUrl(\\'/SpagoBI/servlet/AdapterHTTP?ACTION_NAME=CHANGE_LANGUAGE&LANGUAGE_ID=en&COUNTRY_ID=US&THEME_NAME="+currTheme+"\\')";
+			}else if(menuItem.has("itemLabel") && menuItem.getString("itemLabel") == "LANG"){	
+				List localesList = GeneralUtilities.getSupportedLocales();				
+				for (int j = 0; j < localesList.size() ; j++) {
+					String langUrl = "javascript:execUrl(\\'/SpagoBI/servlet/AdapterHTTP?ACTION_NAME=CHANGE_LANGUAGE&THEME_NAME="+currTheme;
+					Locale aLocale = (Locale)localesList.get(j);
+					langUrl += "&LANGUAGE_ID="+aLocale.getLanguage()+"&COUNTRY_ID="+aLocale.getCountry();
+					langUrl += "\\')";
+	 				langUrls.put( aLocale.getLanguage(), langUrl);
+				}
 			}	
 	   }		
 	}
@@ -98,7 +102,7 @@ Ext.onReady(function () {
         menu.hide();
     }
 	
-
+    var activeClass = '';
  	var bannerHTML = 
  		'	<header class="header" id="header"> '+
 		'		<div class="aux"> '+
@@ -124,9 +128,18 @@ Ext.onReady(function () {
         '					</li> '+
 		'	            </ul> '+
 		'	            <ul class="language-switcher"> '+
-		'	                <li class="active"><a href="<%=langIT%>">IT</a></li> '+
-		//'	                <li><a href="<%=langEN%>">DE</a></li> '+
-		'	                <li><a href="<%=langEN%>">EN</a></li> '+
+					<%  java.util.Set keys = langUrls.keySet();
+						Iterator iterKeys = keys.iterator();
+						while(iterKeys.hasNext()) {
+							String key = iterKeys.next().toString();
+							String value = langUrls.get(key).toString();
+							String activeClass = "";
+							if (key.equalsIgnoreCase(curr_language)){
+								activeClass = "class=\"active\"";
+							}
+						%>
+		'					 <li <%=activeClass%>><a href="<%=value%>"><%=key%></a></li> '+
+						<%}%>
 		'	            </ul> '+
 		'	        </nav> '+
 		'	    </div> '+

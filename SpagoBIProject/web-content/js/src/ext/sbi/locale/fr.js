@@ -42,7 +42,11 @@ Sbi.locale.ln['sbi.generic.download'] = 'T\u00E9l\u00E9charger';
 Sbi.locale.ln['sbi.generic.update2'] = 'Mise \u00e0 jour';
 Sbi.locale.ln['sbi.kpi.trend.title'] = 'Tendance de la ressource ';
 Sbi.locale.ln['sbi.kpi.trend.nodata'] = 'Aucune donn\u00E9e trouv\u00E9e! S\u00E9lectionnez le noeud sp\u00E9cifique pour afficher la tendance des donn\u00E9es. ';
-
+Sbi.locale.ln['sbi.generic.create'] = 'Cr\u00E9er';
+Sbi.locale.ln['sbi.generic.load'] = 'Charger';
+Sbi.locale.ln['sbi.generic.document'] = 'Document';
+Sbi.locale.ln['sbi.generic.map'] = 'Carte';
+Sbi.locale.ln['sbi.generic.all'] = 'Tous';
 
 //Fields
 Sbi.locale.ln['sbi.generic.name']='Nom';
@@ -249,6 +253,10 @@ Sbi.locale.ln['sbi.browser.document.language']='langue';
 Sbi.locale.ln['sbi.browser.document.objectve']='objectif';
 Sbi.locale.ln['sbi.browser.document.keywords']='mots cl\u00E9s';
 Sbi.locale.ln['sbi.browser.document.refreshSeconds']='fr\u00E9quence d\'actualisation';
+Sbi.locale.ln['sbi.browser.document.favourites']  = 'S\u00E9lection';
+Sbi.locale.ln['sbi.browser.document.searchDatasets']  = 'Rechercher des ensembles de donn\u00E9es';
+Sbi.locale.ln['sbi.browser.document.searchDocuments']  = 'Recherche de documents';
+Sbi.locale.ln['sbi.browser.document.searchKeyword']  = 'Recherche par mots cl\u00E9s ...';
 
 Sbi.locale.ln['sbi.browser.defaultRole.title']='selectiones une default r\u00F4le';
 Sbi.locale.ln['sbi.browser.defaultRole.role']='R\u00F4le: ';

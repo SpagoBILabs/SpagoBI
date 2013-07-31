@@ -537,14 +537,6 @@ Ext.extend(Sbi.browser.FolderDetailPanel, Ext.Panel, {
 		return false;
 	} 
     
-    , addClass: function(el, cls){
-//            el.addClass(cls);
-//            Ext.get(el.parentElement).addClass(cls);
-    	var list = Ext.get(el);
-    	list.addClass(cls);
-    	list.height=200;
-    	this.doLayout();
-    }
     
     , createBannerHtml: function(communities){
     	var communityString = '';
@@ -557,30 +549,28 @@ Ext.extend(Sbi.browser.FolderDetailPanel, Ext.Panel, {
         
         var createButton = '';
         if (this.isAbleToManageDocument()){
-        	createButton += ' <a id="newDocument" href="#" onclick="javascript:Ext.getCmp(\'this\').addNewDocument(\'\')" class="btn-add"><span class="highlighted">Crea</span> documento<span class="plus">+</span></a> ';
+        	createButton += ' <a id="newDocument" href="#" onclick="javascript:Ext.getCmp(\'this\').addNewDocument(\'\')" class="btn-add"><span class="highlighted">'+LN('sbi.generic.create')+'</span> '+LN('sbi.generic.document')+'<span class="plus">+</span></a> ';
         }else  if (this.isAbleToCreateDocument()){
-        	createButton += ' <a id="newDocument" href="#" onclick="javascript:Ext.getCmp(\'this\').addNewDocument(\'georeport\')"" class="btn-add"><span class="highlighted">Carica</span> mappa<span class="plus">+</span></a> ';
+        	createButton += ' <a id="newDocument" href="#" onclick="javascript:Ext.getCmp(\'this\').addNewDocument(\'georeport\')"" class="btn-add"><span class="highlighted">'+LN('sbi.generic.load')+'</span> '+LN('sbi.generic.map')+'<span class="plus">+</span></a> ';
         } 
-        
         var bannerHTML = ''+
 //     		'<div class="aux"> '+
      		'<div class="main-maps-list"> '+
 //    		'    <div class="list-actions-container"> '+ //setted into the container panel
     		'		<ul class="list-tab"> '+
-    		'	    	<li class="active first"><a href="#" onclick="javascript:Ext.getCmp(\'this\').loadFolder(null, null, \'ALL\')">Tutte</a></li> '+
+    		'	    	<li class="active first"><a href="#" onclick="javascript:Ext.getCmp(\'this\').loadFolder(null, null, \'ALL\')">'+LN('sbi.generic.all')+'</a></li> '+
     					communityString+
-    		'	        <li class="favourite last"><a href="#">Favoriti</a></li> '+
+    		'	        <li class="favourite last"><a href="#">'+LN('sbi.browser.document.favourites')+'</a></li> '+
     		'		</ul> '+
     		'	    <div class="list-actions"> '+
     					createButton +
     		'	        <form action="#" method="get" class="search-form"> '+
     		'	            <fieldset> '+
     		'	                <div class="field"> '+
-    		'	                    <label for="search">Cerca fra i dataset</label> '+
-    		'	                    <input type="text" name="search" id="search" onclick="this.value=\'\'" onkeyup="javascript:Ext.getCmp(\'this\').filterStore(this.value)" value="Cerca per parola chiave..." /> '+
+    		'	                    <input type="text" name="search" id="search" onclick="this.value=\'\'" onkeyup="javascript:Ext.getCmp(\'this\').filterStore(this.value)" value="'+LN('sbi.browser.document.searchKeyword')+'" /> '+
     		'	                </div> '+
     		'	                <div class="submit"> '+
-    		'	                    <input type="text" value="Cerca" /> '+
+    		'	                    <input type="text" value="Cerca"> '+
     		'	                </div> '+
     		'	            </fieldset> '+
     		'	        </form> '+
@@ -589,14 +579,7 @@ Ext.extend(Sbi.browser.FolderDetailPanel, Ext.Panel, {
     		'	            <li><a href="#" onclick="javascript:Ext.getCmp(\'this\').sortStore(\'label\')">'+LN('sbi.ds.label')+'</a></li> '+
     		'	            <li><a href="#" onclick="javascript:Ext.getCmp(\'this\').sortStore(\'name\')">'+LN('sbi.ds.name')+'</a></li> '+
     		'	            <li><a href="#" onclick="javascript:Ext.getCmp(\'this\').sortStore(\'creationUser\')">'+LN('sbi.ds.owner')+'</a></li> '+
-    		'	        </ul> '+
-//    		'			 <ul class="order" id="sortList"> '+
-//    		'	            <li class="active"><a href="#" onclick="javascript:Ext.getCmp(\'this\').sortStore(\'creationDate\')">'+LN('sbi.ds.moreRecent')+'</a> ' +
-//    		'					<span class="sortArrow"><a href="#" onclick="javascript:Ext.getCmp(\'this\').addClass(\'sortList\',\'open\')"></a></span></li> '+
-//    		'	            <li><a href="#" onclick="javascript:Ext.getCmp(\'this\').sortStore(\'label\')">'+LN('sbi.ds.label')+'</a></li> '+
-//    		'	            <li><a href="#" onclick="javascript:Ext.getCmp(\'this\').sortStore(\'name\')">'+LN('sbi.ds.name')+'</a></li> '+
-//    		'	            <li><a href="#" onclick="javascript:Ext.getCmp(\'this\').sortStore(\'creationUser\')">'+LN('sbi.ds.owner')+'</a></li> '+
-//    		'	        </ul> '+    		
+    		'	        </ul> '+   		
     		'	    </div> '+
     		'</div>' ;
         var dh = Ext.DomHelper;
