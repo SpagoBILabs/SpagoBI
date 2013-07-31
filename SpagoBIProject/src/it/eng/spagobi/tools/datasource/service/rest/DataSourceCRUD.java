@@ -16,10 +16,6 @@ import it.eng.spagobi.commons.serializer.SerializationException;
 import it.eng.spagobi.commons.serializer.SerializerFactory;
 import it.eng.spagobi.commons.utilities.AuditLogUtilities;
 import it.eng.spagobi.services.exceptions.ExceptionUtilities;
-import it.eng.spagobi.tools.dataset.measurecatalogue.MeasureCatalogue;
-import it.eng.spagobi.tools.dataset.measurecatalogue.MeasureCatalogueMeasure;
-import it.eng.spagobi.tools.dataset.measurecatalogue.MeasureCatalogueSingleton;
-import it.eng.spagobi.tools.dataset.measurecatalogue.materializer.InMemoryMaterializer;
 import it.eng.spagobi.tools.datasource.bo.DataSource;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
@@ -30,7 +26,6 @@ import it.eng.spagobi.utilities.rest.RestUtilities;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -84,9 +79,7 @@ public class DataSourceCRUD {
 			throw new SpagoBIServiceException(
 					"An unexpected error occured while instatiating the dao", t);
 		}
-		
-	
-		
+
 		return datasorcesJSON.toString();
 
 	}
@@ -249,7 +242,7 @@ public class DataSourceCRUD {
 		String schemaAttr = (String)requestBodyJSON.opt("SCHEMA");
 		String multiSchema = (String)requestBodyJSON.opt("MULTISCHEMA");
 		Boolean isMultiSchema = false;
-		if(multiSchema!=null && multiSchema.equals("true")){
+		if(multiSchema!=null && (multiSchema.equals("on") || multiSchema.equals("true"))){
 			isMultiSchema = true;
 		}
 		
