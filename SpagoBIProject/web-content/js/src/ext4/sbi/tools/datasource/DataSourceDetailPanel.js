@@ -233,6 +233,10 @@ Ext.define('Sbi.tools.datasource.DataSourceDetailPanel', {
 		}else{
 			v.TYPE='jdbc';
 		}
+		if(v.SCHEMA && v.SCHEMA!=""){
+			v.MULTISCHEMA='on';
+		}
+		
 		this.getForm().setValues(v);
 	}
 	
