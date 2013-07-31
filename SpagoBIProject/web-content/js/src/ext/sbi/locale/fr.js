@@ -46,6 +46,7 @@ Sbi.locale.ln['sbi.generic.create'] = 'Cr\u00E9er';
 Sbi.locale.ln['sbi.generic.load'] = 'Charger';
 Sbi.locale.ln['sbi.generic.document'] = 'Document';
 Sbi.locale.ln['sbi.generic.map'] = 'Carte';
+Sbi.locale.ln['sbi.generic.maps'] = 'Cartes';
 Sbi.locale.ln['sbi.generic.all'] = 'Tous';
 
 //Fields
