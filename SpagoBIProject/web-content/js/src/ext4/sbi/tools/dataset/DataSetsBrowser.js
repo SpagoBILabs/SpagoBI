@@ -5,10 +5,9 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 	config : {
 		modelName : "Sbi.tools.dataset.DataSetModel",
 		dataView : null,
-//		tbar : null,
-		height: 600,
 		user : '',
 		datasetsServicePath: '',
+		autoScroll:true,
 		displayToolbar: true,
 		PUBLIC_USER: 'public_user',
 	    id:'this'
@@ -21,9 +20,7 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 		this.initStore();
 		this.initToolbar();
 		this.initViewPanel();
-		this.layout= 'border', //'border'; //'fit';
 		this.items = [this.bannerPanel,this.viewPanel];
-//		this.items = [this.viewPanel];
 		this.callParent(arguments);
 //		this.doLayout();
 		
@@ -120,10 +117,9 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 			
 			var bannerHTML = this.createBannerHtml({});
 			this.bannerPanel = new Ext.Panel({
-				region: 'north',
 				height: 125,
 			   	autoScroll: false,
-			   	style:"position:'absolute';z-index:800000;float:left;width:100%;",
+			   //	style:"position:'absolute';z-index:800000;float:left;width:100%;",
 			   	html: bannerHTML
 			});
 			
@@ -187,9 +183,6 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 		config.store = this.store;
 		config.actions = this.actions;
 		config.user = this.user;
-		config.autoScroll = true;
-//		config.layout='fit';
-		config.region ='center';
 		config.fromMyDataCtx = this.displayToolbar;
 		this.viewPanel = Ext.create('Sbi.tools.dataset.DataSetsView', config);
 		this.viewPanel.on('detail', this.modifyDataset, this);

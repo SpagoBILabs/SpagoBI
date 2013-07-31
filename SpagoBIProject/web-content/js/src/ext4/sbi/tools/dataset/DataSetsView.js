@@ -65,7 +65,7 @@ Ext.define('Sbi.tools.dataset.DataSetsView', {
 		
 		sorters : new Array(),
 		
-		autoScroll : true,
+		autoScroll : false,
 		
 		fromMyDataCtx : true,
 		
