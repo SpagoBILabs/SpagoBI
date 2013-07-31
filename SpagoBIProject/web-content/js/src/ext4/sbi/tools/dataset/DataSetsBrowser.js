@@ -121,10 +121,9 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 			var bannerHTML = this.createBannerHtml({});
 			this.bannerPanel = new Ext.Panel({
 				region: 'north',
-//				height: 80,
-//				layout: 'fit',
+				height: 125,
 			   	autoScroll: false,
-			   	style:"float:left;width:100%;",
+			   	style:"position:'absolute';z-index:800000;float:left;width:100%;",
 			   	html: bannerHTML
 			});
 			
@@ -189,8 +188,8 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 		config.actions = this.actions;
 		config.user = this.user;
 		config.autoScroll = true;
-		config.layout='fit';
-//		config.region ='center';
+//		config.layout='fit';
+		config.region ='center';
 		config.fromMyDataCtx = this.displayToolbar;
 		this.viewPanel = Ext.create('Sbi.tools.dataset.DataSetsView', config);
 		this.viewPanel.on('detail', this.modifyDataset, this);
