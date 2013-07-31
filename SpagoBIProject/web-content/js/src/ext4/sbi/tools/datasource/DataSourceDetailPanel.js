@@ -41,10 +41,10 @@ Ext.define('Sbi.tools.datasource.DataSourceDetailPanel', {
 				Sbi.exception.ExceptionHandler.showErrorMessage('sbi.datasource.validation.error','sbi.generic.validationError');
 			}
 			
-		},this)
+		},this);
 		this.tbar.on("test",function(){
 			this.fireEvent("test", this.getValues());
-		},this)
+		},this);
 		this.callParent(arguments);
 		this.on("render",function(){this.hide()},this);
     }
