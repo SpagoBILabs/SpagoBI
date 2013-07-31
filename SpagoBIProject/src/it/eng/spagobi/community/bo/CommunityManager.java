@@ -30,21 +30,20 @@ public class CommunityManager {
 	
 	static private Logger logger = Logger.getLogger(CommunityManager.class);
 	
-	public Integer saveCommunity(String communityName, String userId){
+	public Integer saveCommunity(SbiCommunity community, String communityName, String userId){
 		Integer communityId = null;
 		//if user is registering to SpagoBI and inserts a community,
 		//the systems checks for community existence by its name.
 		ISbiCommunityDAO commDAO = DAOFactory.getCommunityDAO();
-		
-		
+
 		try {
 			ISbiAttributeDAO attrsDAO = DAOFactory.getSbiAttributeDAO();
 			ISbiUserDAO userDao = DAOFactory.getSbiUserDAO();
-			SbiCommunity community = commDAO.loadSbiCommunityByName(communityName);
+			
 			//loads the user:
 			SbiUser user = userDao.loadSbiUserByUserId(userId);
-			
-			if(community != null){
+
+			if(community != null  && community.getCommunityId() != null){
 				//if exists a mail is sent to the owner of the community that accepts him as 
 				//member or refuse him
 				
@@ -82,27 +81,12 @@ public class CommunityManager {
 				aLowFunctionality.setName(communityName);
 				aLowFunctionality.setPath("/"+communityName);	
 				aLowFunctionality.setParentId(root.getId());
-				
-				/*
-				IRoleDAO roledao= DAOFactory.getRoleDAO();
-				ArrayList<Role> roles = new ArrayList<Role>();
-				ArrayList<SbiExtRoles> userRoles = userDao.loadSbiUserRolesById(user.getId());
-				for(int i =0; i<userRoles.size();i++){
-					SbiExtRoles extr = userRoles.get(i);
-					Integer extRID= extr.getExtRoleId();
-					Role r = roledao.loadByID(extRID);
-					roles.add(r);					
-				}
-				Role [] rolesArr = roles.toArray(new Role[roles.size()]);
-				aLowFunctionality.setDevRoles(rolesArr);
-				aLowFunctionality.setExecRoles(rolesArr);
-				aLowFunctionality.setTestRoles(rolesArr);
-				aLowFunctionality.setCreateRoles(rolesArr);*/
+
 				
 				//2.populates community bean
 				community = populateCommunity(userId, communityName, code);					
 				//4. saves community and user-community relashionship
-				commDAO.saveSbiComunityUsers(community, userId);
+				communityId = commDAO.saveSbiComunityUsers(community, userId);
 				
 				Integer functId = lowFunct.insertCommunityFunctionality(aLowFunctionality);
 				

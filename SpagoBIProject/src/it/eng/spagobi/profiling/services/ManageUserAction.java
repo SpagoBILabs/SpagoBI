@@ -20,6 +20,7 @@ import it.eng.spagobi.commons.serializer.SerializerFactory;
 import it.eng.spagobi.commons.services.AbstractSpagoBIAction;
 import it.eng.spagobi.commons.utilities.AuditLogUtilities;
 import it.eng.spagobi.community.bo.CommunityManager;
+import it.eng.spagobi.community.mapping.SbiCommunity;
 import it.eng.spagobi.dao.PagedList;
 import it.eng.spagobi.dao.QueryFilters;
 import it.eng.spagobi.dao.QueryStaticFilter;
@@ -245,7 +246,8 @@ public class ManageUserAction extends AbstractSpagoBIAction {
 				CommunityManager cm = new CommunityManager();				
 				String commName = getCommunityAttr(user);
 				if(commName!= null && !commName.equals("")){
-					cm.saveCommunity(commName, userId);
+					SbiCommunity community = DAOFactory.getCommunityDAO().loadSbiCommunityByName(commName);
+					cm.saveCommunity(community, commName, userId);
 				}
 
 				logger.debug("User updated or Inserted");

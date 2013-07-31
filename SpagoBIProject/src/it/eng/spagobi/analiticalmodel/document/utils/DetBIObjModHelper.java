@@ -161,15 +161,22 @@ public class DetBIObjModHelper {
 		// TRY TO LOAD ALL THE FUNCTIONALITIES ASSOCIATED (into request) TO THE BIOBEJCT
 		List functionalities = new ArrayList();
 		List functionalitiesStr = request.getAttributeAsList(ObjectsTreeConstants.FUNCT_ID);
-		if (functionalitiesStr.size() == 0) {
+		String communityFunctCode = (String)request.getAttribute(DetailBIObjectModule.NAME_ATTR_LIST_COMMUNITIES);
+		if (functionalitiesStr.size() == 0 && (communityFunctCode == null || communityFunctCode.equals(""))) {
 			EMFValidationError error = new EMFValidationError(EMFErrorSeverity.ERROR, ObjectsTreeConstants.FUNCT_ID, "1008");
 			this.respCont.getErrorHandler().addError(error);
 		} else {
-			for (Iterator it = functionalitiesStr.iterator(); it.hasNext(); ) {
-				String functIdStr = (String) it.next();
-				Integer functId = new Integer (functIdStr);
-				functionalities.add(functId);
+			if(functionalitiesStr!= null && functionalitiesStr.size() != 0){
+				for (Iterator it = functionalitiesStr.iterator(); it.hasNext(); ) {
+					String functIdStr = (String) it.next();
+					Integer functId = new Integer (functIdStr);
+					functionalities.add(functId);
+				}
 			}
+//			if(communityFunctCode != null && !communityFunctCode.equals("")){
+//				LowFunctionality commF = DAOFactory.getLowFunctionalityDAO().loadLowFunctionalityByCode(communityFunctCode, false);
+//				functionalities.add(commF.getId());
+//			}
 		}
 		// lOAD ALL THE FUNCTIONALITIES ASSOCIATED TO THE BIOBJECT (but not into request)
 		// First case: the current user is not an administrator (so he cannot see all the functionalities)
