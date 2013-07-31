@@ -9,9 +9,11 @@ import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjFunc;
+import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects;
 import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
 import it.eng.spagobi.analiticalmodel.functionalitytree.dao.ILowFunctionalityDAO;
 import it.eng.spagobi.analiticalmodel.functionalitytree.dao.LowFunctionalityDAOHibImpl;
+import it.eng.spagobi.analiticalmodel.functionalitytree.metadata.SbiFuncRole;
 import it.eng.spagobi.analiticalmodel.functionalitytree.metadata.SbiFunctions;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.dao.DAOFactory;
@@ -175,15 +177,16 @@ public class SbiCommunityDAOImpl extends AbstractHibernateDAO implements ISbiCom
 		}
 	}
 
-	public void saveSbiComunityUsers(SbiCommunity community, String userID)
+	public Integer saveSbiComunityUsers(SbiCommunity community, String userID)
 			throws EMFUserError {
 		logger.debug("IN");
 		Session aSession = null;
 		Transaction tx = null;
+		Integer res = null;
 		SbiCommunityUsers commUsers = new SbiCommunityUsers();
 		try {
 			
-			Integer res = saveSbiComunity(community);
+			res = saveSbiComunity(community);
 			if(res != null){
 			
 				aSession = getSession();
@@ -215,6 +218,7 @@ public class SbiCommunityDAOImpl extends AbstractHibernateDAO implements ISbiCom
 					aSession.close();
 			}
 		}
+		return res;
 	}
 
 	public void addCommunityMember(SbiCommunity community, String userID)
@@ -304,37 +308,70 @@ public class SbiCommunityDAOImpl extends AbstractHibernateDAO implements ISbiCom
 			}
 			
 			//get functionalities
-			String fq = "from SbiFunctions f where f.code = :code";
+			String fq = "from SbiFunctions f where f.code = :code and f.functTypeCd = 'COMMUNITY_FUNCT'";
 			Query queryF = aSession.createQuery(fq);
 			queryF.setString("code", hibComm.getFunctCode());		
 			
 			
 			List functs = queryF.list();
 			
+			//find relation with documents associated to community folder
+			String hql1 = "from SbiObjFunc a " +
+					"where a.id.sbiFunctions in (:functions)";
+			if(functs != null && !functs.isEmpty()){
+				Query queryDoc = aSession.createQuery(hql1);
+				queryDoc.setParameterList("functions", functs);
+				List<SbiObjFunc> objs = queryDoc.list();
+				Iterator itd = objs.iterator();
+				//delete all users for community
+				while(itd.hasNext()){
+					SbiObjFunc rel = (SbiObjFunc)itd.next();
+					aSession.delete(rel);	
+				}
+				aSession.flush();
+			}		
+					
 			//delete relation with documents associated to community folder
-
-//			String hql = "select distinct a from SbiObjects a " +
-//	                "join a.sbiObjFuncs t " +
-//	                "where t.id.sbiFunctions in (:functions)";
-			String hql = "from SbiObjFunc a " +
-            "where a.id.sbiFunctions in (:functions)";
-			Query queryDoc = aSession.createQuery(hql);
-			queryDoc.setParameterList("functions", functs);
-			List<SbiObjFunc> objs = queryDoc.list();
-			Iterator itd = objs.iterator();
-			//delete all users for community
-			while(itd.hasNext()){
-				SbiObjFunc rel = (SbiObjFunc)itd.next();
-				aSession.delete(rel);	
+			if(functs != null && !functs.isEmpty()){
+				String hql = "select a from SbiObjects a " +
+		                "join a.sbiObjFuncs t " +
+		                "where t.id.sbiFunctions in (:functions)";
+				Query queryDoc = aSession.createQuery(hql);
+				queryDoc.setParameterList("functions", functs);
+				List<SbiObjects> objs = queryDoc.list();
+				Iterator itd = objs.iterator();
+				//delete all users for community
+				while(itd.hasNext()){
+					SbiObjects obj = (SbiObjects)itd.next();
+					if(obj.getSbiObjFuncs().size() ==0){
+						aSession.delete(obj);	
+					}
+				}
+				aSession.flush();
 			}
-			aSession.flush();
-
+			
+			//delete all funct_roles associated to community folder
+			String hql2 = "from SbiFuncRole a " +
+					"where a.id.function in (:functions)";
+			if(functs != null && !functs.isEmpty()){
+				Query queryRoles = aSession.createQuery(hql2);
+				queryRoles.setParameterList("functions", functs);
+				List<SbiObjFunc> roles = queryRoles.list();
+				Iterator itr = roles.iterator();
+				//delete all roles association for community folder
+				while(itr.hasNext()){
+					SbiFuncRole role = (SbiFuncRole)itr.next();
+					aSession.delete(role);	
+				}
+				aSession.flush();
+			}	
 			Iterator itF = functs.iterator();
 			//delete all functions for community
 			ILowFunctionalityDAO functDao = DAOFactory.getLowFunctionalityDAO();
 			while(itF.hasNext()){
 				try{								
 					SbiFunctions fu = (SbiFunctions)itF.next();
+					aSession.refresh(fu);
 					LowFunctionality lowf= ((LowFunctionalityDAOHibImpl)functDao).toLowFunctionality(fu, false);
 					functDao.eraseLowFunctionality(lowf, null);
 					

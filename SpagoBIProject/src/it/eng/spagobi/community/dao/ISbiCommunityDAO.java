@@ -17,7 +17,7 @@ public interface ISbiCommunityDAO extends ISpagoBIDao {
 	
 	public SbiCommunity loadSbiCommunityByName(String name) throws EMFUserError;
 
-	public void saveSbiComunityUsers(SbiCommunity community, String userID) throws EMFUserError;
+	public Integer saveSbiComunityUsers(SbiCommunity community, String userID) throws EMFUserError;
 	
 	public List<SbiCommunity> loadSbiCommunityByUser(String userID) throws EMFUserError;
 	

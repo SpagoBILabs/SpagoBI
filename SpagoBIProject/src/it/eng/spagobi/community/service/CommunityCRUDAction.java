@@ -9,6 +9,7 @@ import it.eng.spago.base.SourceBeanException;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.community.bo.CommunityManager;
 import it.eng.spagobi.community.dao.ISbiCommunityDAO;
 import it.eng.spagobi.community.mapping.SbiCommunity;
 import it.eng.spagobi.services.exceptions.ExceptionUtilities;
@@ -80,8 +81,9 @@ public class CommunityCRUDAction {
 			JSONObject requestBodyJSON = RestUtilities.readBodyAsJSONObject(req);
 			String id = (String) requestBodyJSON.opt("communityId");
 			commDao = DAOFactory.getCommunityDAO();
-			
-			commDao.deleteCommunityById(Integer.valueOf(id));
+			if(id != null && !id.equals("")){
+				commDao.deleteCommunityById(Integer.valueOf(id));
+			}
 			
 
 		} catch (Throwable t) {
@@ -111,7 +113,10 @@ public class CommunityCRUDAction {
 				id= community.getCommunityId()+"";
 			}else{
 				//insert
-				Integer idInt = commDao.saveSbiComunity(community);
+
+				CommunityManager cm = new CommunityManager();
+
+				Integer idInt = cm.saveCommunity(community, community.getName(), community.getOwner());
 				if(idInt != null){
 					id = idInt+"";
 				}
