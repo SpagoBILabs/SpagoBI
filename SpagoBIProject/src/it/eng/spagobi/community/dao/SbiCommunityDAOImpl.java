@@ -8,22 +8,44 @@ package it.eng.spagobi.community.dao;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
+import it.eng.spagobi.analiticalmodel.document.bo.Snapshot;
+import it.eng.spagobi.analiticalmodel.document.bo.SubObject;
+import it.eng.spagobi.analiticalmodel.document.bo.Viewpoint;
+import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
+import it.eng.spagobi.analiticalmodel.document.dao.IObjNoteDAO;
+import it.eng.spagobi.analiticalmodel.document.dao.ISnapshotDAO;
+import it.eng.spagobi.analiticalmodel.document.dao.ISubObjectDAO;
+import it.eng.spagobi.analiticalmodel.document.dao.ISubreportDAO;
+import it.eng.spagobi.analiticalmodel.document.dao.IViewpointDAO;
 import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjFunc;
+import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjPar;
+import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjTemplates;
 import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects;
 import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
 import it.eng.spagobi.analiticalmodel.functionalitytree.dao.ILowFunctionalityDAO;
 import it.eng.spagobi.analiticalmodel.functionalitytree.dao.LowFunctionalityDAOHibImpl;
 import it.eng.spagobi.analiticalmodel.functionalitytree.metadata.SbiFuncRole;
 import it.eng.spagobi.analiticalmodel.functionalitytree.metadata.SbiFunctions;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.BIObjectParameterDAOHibImpl;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.metadata.SbiBinContents;
 import it.eng.spagobi.community.mapping.SbiCommunity;
 import it.eng.spagobi.community.mapping.SbiCommunityUsers;
 import it.eng.spagobi.community.mapping.SbiCommunityUsersId;
+import it.eng.spagobi.engines.dossier.dao.IDossierPartsTempDAO;
+import it.eng.spagobi.engines.dossier.dao.IDossierPresentationsDAO;
+import it.eng.spagobi.tools.objmetadata.bo.ObjMetacontent;
+import it.eng.spagobi.tools.objmetadata.bo.ObjMetadata;
+import it.eng.spagobi.tools.objmetadata.dao.IObjMetacontentDAO;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
@@ -306,81 +328,181 @@ public class SbiCommunityDAOImpl extends AbstractHibernateDAO implements ISbiCom
 				SbiCommunityUsers scu = (SbiCommunityUsers)it.next();
 				aSession.delete(scu);
 			}
-			
+			aSession.flush();
+			aSession.refresh(hibComm);
 			//get functionalities
 			String fq = "from SbiFunctions f where f.code = :code and f.functTypeCd = 'COMMUNITY_FUNCT'";
 			Query queryF = aSession.createQuery(fq);
 			queryF.setString("code", hibComm.getFunctCode());		
 			
-			
 			List functs = queryF.list();
-			
-			//find relation with documents associated to community folder
-			String hql1 = "from SbiObjFunc a " +
-					"where a.id.sbiFunctions in (:functions)";
 			if(functs != null && !functs.isEmpty()){
-				Query queryDoc = aSession.createQuery(hql1);
-				queryDoc.setParameterList("functions", functs);
-				List<SbiObjFunc> objs = queryDoc.list();
-				Iterator itd = objs.iterator();
-				//delete all users for community
-				while(itd.hasNext()){
-					SbiObjFunc rel = (SbiObjFunc)itd.next();
-					aSession.delete(rel);	
-				}
-				aSession.flush();
-			}		
-					
-			//delete relation with documents associated to community folder
-			if(functs != null && !functs.isEmpty()){
-				String hql = "select a from SbiObjects a " +
-		                "join a.sbiObjFuncs t " +
-		                "where t.id.sbiFunctions in (:functions)";
-				Query queryDoc = aSession.createQuery(hql);
-				queryDoc.setParameterList("functions", functs);
-				List<SbiObjects> objs = queryDoc.list();
-				Iterator itd = objs.iterator();
-				//delete all users for community
-				while(itd.hasNext()){
-					SbiObjects obj = (SbiObjects)itd.next();
-					if(obj.getSbiObjFuncs().size() ==0){
-						aSession.delete(obj);	
-					}
-				}
-				aSession.flush();
-			}
-			
-			//delete all funct_roles associated to community folder
-			String hql2 = "from SbiFuncRole a " +
-					"where a.id.function in (:functions)";
-			if(functs != null && !functs.isEmpty()){
-				Query queryRoles = aSession.createQuery(hql2);
-				queryRoles.setParameterList("functions", functs);
-				List<SbiObjFunc> roles = queryRoles.list();
-				Iterator itr = roles.iterator();
-				//delete all roles association for community folder
-				while(itr.hasNext()){
-					SbiFuncRole role = (SbiFuncRole)itr.next();
-					aSession.delete(role);	
-				}
-				aSession.flush();
-			}	
 			Iterator itF = functs.iterator();
 			//delete all functions for community
 			ILowFunctionalityDAO functDao = DAOFactory.getLowFunctionalityDAO();
+			IBIObjectDAO objDao = DAOFactory.getBIObjectDAO();
 			while(itF.hasNext()){
+				SbiFunctions function = (SbiFunctions)itF.next();
+				
+				//find relation with documents associated to community folder
+				String hql1 = "from SbiObjFunc a " +
+						"where a.id.sbiFunctions in (:functions)";
+
+				Query queryDoc = aSession.createQuery(hql1);
+				queryDoc.setParameterList("functions", functs);
+				List<SbiObjFunc> objsF = queryDoc.list();
+				Iterator itdF = objsF.iterator();
+
+				while(itdF.hasNext()){
+					SbiObjFunc rel = (SbiObjFunc)itdF.next();
+					if(rel.getId().getSbiFunctions().getCode().equals(function.getCode())){
+						aSession.delete(rel);
+						aSession.flush();
+						
+						aSession.refresh(function);
+						
+						//delete the object only if there are no other relations:						
+						BIObject objBI = objDao.loadBIObjectById(rel.getId().getSbiObjects().getBiobjId());
+						SbiObjects hibBIObject = rel.getId().getSbiObjects();
+						ArrayList otherFuncts = (ArrayList)objBI.getFunctionalities();
+						
+						otherFuncts.remove(rel.getId().getSbiFunctions().getFunctId());
+						if(otherFuncts.size() == 0){
+							// delete templates
+							String hql = "from SbiObjTemplates sot where sot.sbiObject.biobjId="+hibBIObject.getBiobjId();
+							Query query5 = aSession.createQuery(hql);
+							List templs = query5.list();
+							Iterator iterTempls = templs.iterator();
+							while(iterTempls.hasNext()) {
+								SbiObjTemplates hibObjTemp = (SbiObjTemplates)iterTempls.next();
+								SbiBinContents hibBinCont = hibObjTemp.getSbiBinContents();
+								aSession.delete(hibObjTemp);
+								aSession.delete(hibBinCont);
+
+							}
+
+							//delete subobjects eventually associated
+							ISubObjectDAO subobjDAO = DAOFactory.getSubObjectDAO();
+							List subobjects =  subobjDAO.getSubObjects(hibBIObject.getBiobjId());
+							for (int i=0; i < subobjects.size(); i++){
+								SubObject s = (SubObject) subobjects.get(i);
+								//subobjDAO.deleteSubObject(s.getId());
+								subobjDAO.deleteSubObjectSameConnection(s.getId(), aSession);
+							}
+
+							//delete viewpoints eventually associated
+							List viewpoints = new ArrayList();
+							IViewpointDAO biVPDAO = DAOFactory.getViewpointDAO();
+							viewpoints =  biVPDAO.loadAllViewpointsByObjID(hibBIObject.getBiobjId());
+							for (int i=0; i<viewpoints.size(); i++){
+								Viewpoint vp =(Viewpoint)viewpoints.get(i);
+								biVPDAO.eraseViewpoint(vp.getVpId());
+							}
+
+							//delete snapshots eventually associated
+							ISnapshotDAO snapshotsDAO = DAOFactory.getSnapshotDAO();
+							List snapshots = snapshotsDAO.getSnapshots(hibBIObject.getBiobjId());
+							for (int i=0; i < snapshots.size(); i++){
+								Snapshot aSnapshots = (Snapshot) snapshots.get(i);
+								snapshotsDAO.deleteSnapshot(aSnapshots.getId());
+							}
+
+							//delete notes eventually associated
+							IObjNoteDAO objNoteDAO = DAOFactory.getObjNoteDAO();
+							objNoteDAO.eraseNotes(hibBIObject.getBiobjId());
+
+							//delete metadata eventually associated
+							List metadata = DAOFactory.getObjMetadataDAO().loadAllObjMetadata();
+							IObjMetacontentDAO objMetaContentDAO = DAOFactory.getObjMetacontentDAO();
+							if (metadata != null && !metadata.isEmpty()) {
+								Iterator itM = metadata.iterator();
+								while (itM.hasNext()) {
+									ObjMetadata objMetadata = (ObjMetadata) itM.next();
+									ObjMetacontent objMetacontent = (ObjMetacontent) DAOFactory.getObjMetacontentDAO().loadObjMetacontent(objMetadata.getObjMetaId(), hibBIObject.getBiobjId(), null);
+									if(objMetacontent!=null){
+										objMetaContentDAO.eraseObjMetadata(objMetacontent);
+									}
+								}
+							}			
+
+
+							// delete parameters associated
+							// before deleting parameters associated is needed to delete all dependencies,
+							// otherwise in case there could be error if is firstly deleted a parameter from wich some else is dependant
+							// (thought priority parameter is not costraining dependencies definition)
+							
+							Set objPars = hibBIObject.getSbiObjPars();
+							
+							Iterator itObjParDep = objPars.iterator();
+							BIObjectParameterDAOHibImpl objParDAO = new BIObjectParameterDAOHibImpl();
+							while (itObjParDep.hasNext()) {
+								SbiObjPar aSbiObjPar = (SbiObjPar) itObjParDep.next();
+								BIObjectParameter aBIObjectParameter = new BIObjectParameter();
+								aBIObjectParameter.setId(aSbiObjPar.getObjParId());			
+								objParDAO.eraseBIObjectParameterDependencies(aBIObjectParameter, aSession);
+							}
+								
+							Iterator itObjPar = objPars.iterator();
+							while (itObjPar.hasNext()) {
+								SbiObjPar aSbiObjPar = (SbiObjPar) itObjPar.next();
+								BIObjectParameter aBIObjectParameter = new BIObjectParameter();
+								aBIObjectParameter.setId(aSbiObjPar.getObjParId());
+								
+								objParDAO.eraseBIObjectParameter(aBIObjectParameter, aSession, false);
+							}
+
+							// delete dossier temp parts eventually associated
+							IDossierPartsTempDAO dptDAO = DAOFactory.getDossierPartsTempDAO();
+							dptDAO.eraseDossierParts(hibBIObject.getBiobjId());
+							// delete dossier presentations eventually associated
+							IDossierPresentationsDAO dpDAO = DAOFactory.getDossierPresentationDAO();
+							dpDAO.deletePresentations(hibBIObject.getBiobjId());
+
+							// update subreports table 
+							ISubreportDAO subrptdao = DAOFactory.getSubreportDAO();
+							subrptdao.eraseSubreportByMasterRptId(hibBIObject.getBiobjId());
+							subrptdao.eraseSubreportBySubRptId(hibBIObject.getBiobjId());
+
+							// delete object
+							aSession.delete(hibBIObject);
+							logger.debug("OUT");
+							aSession.flush();
+							aSession.refresh(function);
+						}
+					}
+				}
+
+
 				try{								
-					SbiFunctions fu = (SbiFunctions)itF.next();
-					aSession.refresh(fu);
-					LowFunctionality lowf= ((LowFunctionalityDAOHibImpl)functDao).toLowFunctionality(fu, false);
-					functDao.eraseLowFunctionality(lowf, null);
+
+					Set oldRoles = function.getSbiFuncRoles();
+					Iterator iterOldRoles = oldRoles.iterator();
+					while (iterOldRoles.hasNext()) {
+						SbiFuncRole role = (SbiFuncRole) iterOldRoles.next();
+						aSession.delete(role);
+					}
+
+					// update prog column in other functions
+
+					if(function.getParentFunct()!=null){
+						String hqlUpdateProg = "update SbiFunctions s set s.prog = (s.prog - 1) where s.prog > ? " 
+							+ " and s.parentFunct.functId = ?" ;
+						Query query4 = aSession.createQuery(hqlUpdateProg);
+						query4.setInteger(0, function.getProg().intValue());
+						query4.setInteger(1, function.getParentFunct().getFunctId().intValue());
+						query4.executeUpdate();
+					}
+
+					aSession.delete(function);
 					
 				}catch(Exception e){
 					logger.debug("No such functionality element ");
 				}
+				}
+				aSession.delete(hibComm);
+				tx.commit();
 			}
-			aSession.delete(hibComm);
-			tx.commit();
+			
 			
 		} catch (HibernateException he) {
 			logger.error("Error while erasing the community with id " + id, he);
@@ -390,6 +512,13 @@ public class SbiCommunityDAOImpl extends AbstractHibernateDAO implements ISbiCom
 
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
+		} catch (Exception e) {
+			logger.error("Error while erasing the community with id " + id, e);
+
+			if (tx != null)
+				tx.rollback();
+
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
 			if (aSession!=null){
 				if (aSession.isOpen()) aSession.close();
