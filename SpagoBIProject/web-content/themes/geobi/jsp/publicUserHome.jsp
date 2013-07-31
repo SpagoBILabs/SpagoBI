@@ -107,8 +107,8 @@ Ext.onReady(function () {
 		'			<a href="#" id="logo">GeoBI - Geographic Business Intelligence</a> '+
 		'	        <nav class="main-buttons"> '+
 		'	        	<ul> '+
-		'	            	<li class="btn-maps"><a href="<%=mapsUrl%>">Mappe<span></span></a></li> '+
-		'	                <li class="btn-datasets"><a href="<%=datasetUrl%>">Dataset<span></span></a></li> '+
+		'	            	<li class="btn-maps"><a href="<%=mapsUrl%>">'+LN('sbi.generic.maps')+'<span></span></a></li> '+
+		'	                <li class="btn-datasets"><a href="<%=datasetUrl%>">'+LN('sbi.browser.document.dataset')+'<span></span></a></li> '+
 		'	            </ul> '+
 		'	        </nav> '+
 		'	    </div> '+
@@ -164,7 +164,7 @@ Ext.onReady(function () {
 	var footerPanel = Ext.create("Ext.panel.Panel",{
 		region: 'south',
     	autoScroll: false,
-    	height:100,
+    	height:60,
     	html: footerHtml
     });
 	

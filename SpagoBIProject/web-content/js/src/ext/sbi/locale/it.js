@@ -50,6 +50,7 @@ Sbi.locale.ln['sbi.generic.create'] = 'Crea';
 Sbi.locale.ln['sbi.generic.load'] = 'Carica';
 Sbi.locale.ln['sbi.generic.document'] = 'Documento';
 Sbi.locale.ln['sbi.generic.map'] = 'Mappa';
+Sbi.locale.ln['sbi.generic.maps'] = 'Mappe';
 Sbi.locale.ln['sbi.generic.all'] = 'Tutte';
 
 Sbi.locale.ln['sbi.kpi.trend.title'] = 'Andamento valori del Kpi ';

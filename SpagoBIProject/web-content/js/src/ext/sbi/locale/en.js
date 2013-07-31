@@ -51,6 +51,7 @@ Sbi.locale.ln['sbi.generic.create'] = 'Create';
 Sbi.locale.ln['sbi.generic.load'] = 'Load';
 Sbi.locale.ln['sbi.generic.document'] = 'Document';
 Sbi.locale.ln['sbi.generic.map'] = 'Map';
+Sbi.locale.ln['sbi.generic.maps'] = 'Maps';
 Sbi.locale.ln['sbi.generic.all'] = 'All';
 
 //Fields
