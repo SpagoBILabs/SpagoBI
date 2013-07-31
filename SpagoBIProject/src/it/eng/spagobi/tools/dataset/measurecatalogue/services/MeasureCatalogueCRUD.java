@@ -14,6 +14,7 @@ import it.eng.spagobi.tools.dataset.measurecatalogue.MeasureCatalogueMeasure;
 import it.eng.spagobi.tools.dataset.measurecatalogue.MeasureCatalogueSingleton;
 import it.eng.spagobi.tools.dataset.measurecatalogue.materializer.InMemoryMaterializer;
 import it.eng.spagobi.tools.dataset.measurecatalogue.materializer.exception.NoCommonDimensionsRuntimeException;
+import it.eng.spagobi.tools.dataset.measurecatalogue.materializer.exception.NoCompleteCommonDimensionsRuntimeException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +41,7 @@ import org.json.JSONObject;
 public class MeasureCatalogueCRUD {
 	
 	static private String noCommonDimensionsRuntimeException = "error.mesage.description.measure.join.no.common.dimension";
+	static private String noCompleteCommonDimensionsRuntimeException = "error.mesage.description.measure.join.no.complete.common.dimension";
 	
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
@@ -72,9 +74,11 @@ public class MeasureCatalogueCRUD {
 			dataStore =  imm.joinMeasures(measures);
 		} catch (NoCommonDimensionsRuntimeException e) {
 			return ( ExceptionUtilities.serializeException(noCommonDimensionsRuntimeException,null));
+		} catch (NoCompleteCommonDimensionsRuntimeException e) {
+			return ( ExceptionUtilities.serializeException(noCompleteCommonDimensionsRuntimeException,null));
 		}
 		
-		
+
 		JSONDataWriter dataSetWriter = new JSONDataWriter();
 		JSONObject dataStroreJSON =  (JSONObject) dataSetWriter.write(dataStore);
 		

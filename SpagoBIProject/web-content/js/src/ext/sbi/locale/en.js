@@ -951,7 +951,7 @@ Sbi.locale.ln["error.mesage.description.data.set.parsing.error"]="Impossible to 
 
 //MEASURES
 Sbi.locale.ln["error.mesage.description.measure.join.no.common.dimension"]= "Impossible to execute the join between measures. The associated datasets haven't any dimension in common.";
-
+Sbi.locale.ln["error.mesage.description.measure.join.no.complete.common.dimension"]="Impossible to execute the join between measures. The associated datasets haven't any complete dimension in common.";
 
 //===================================================================
 //Sbi.execution.toolbar.SaveDatasetWindow : AD-HOC REPORTING 

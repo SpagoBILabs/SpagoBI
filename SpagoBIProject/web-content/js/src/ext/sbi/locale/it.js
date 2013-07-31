@@ -953,8 +953,8 @@ Sbi.locale.ln["error.mesage.description.data.set.saving.duplicated"]="Impossibil
 Sbi.locale.ln["error.mesage.description.data.set.parsing.error"]="Impossibile analizzare il file. Controlla il contenuto e caricalo di nuovo sul server";
 
 //MEASURES
-Sbi.locale.ln["error.mesage.description.measure.join.no.common.dimension"]= "Non \u00e8 possibile eseguire il join tra le misure selezionate. I dataset corrispondenti non contengono alcuna misura in comune.";
-
+Sbi.locale.ln["error.mesage.description.measure.join.no.common.dimension"]= "Non \u00e8 possibile eseguire il join tra le misure selezionate. I dataset corrispondenti non contengono alcuna dimensione in comune.";
+Sbi.locale.ln["error.mesage.description.measure.join.no.complete.common.dimension"]="Non \u00e8 possibile eseguire il join tra le misure selezionate. I dataset corrispondenti non contengono alcuna dimensione completa in comune.";
 
 
 //===================================================================

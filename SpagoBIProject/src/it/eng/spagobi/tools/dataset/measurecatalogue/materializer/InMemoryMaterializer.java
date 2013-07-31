@@ -22,6 +22,7 @@ import it.eng.spagobi.tools.dataset.common.query.IAggregationFunction;
 import it.eng.spagobi.tools.dataset.measurecatalogue.MeasureCatalogueDimension;
 import it.eng.spagobi.tools.dataset.measurecatalogue.MeasureCatalogueMeasure;
 import it.eng.spagobi.tools.dataset.measurecatalogue.materializer.exception.NoCommonDimensionsRuntimeException;
+import it.eng.spagobi.tools.dataset.measurecatalogue.materializer.exception.NoCompleteCommonDimensionsRuntimeException;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
@@ -52,13 +53,18 @@ public class InMemoryMaterializer implements IMaterializer {
 		List<List<MeasureCatalogueDimension>> commonDimensions =  getCommonDimensions(measures);
 		
 		if(commonDimensions.size()==0 || commonDimensions.get(0).size()==0 ){
-			logger.debug("Impossible to join measures. No common dimensions found");
+			logger.error("Impossible to join measures. No common dimensions found");
 			throw new NoCommonDimensionsRuntimeException("No common dimensions found");
 		}
 		
 		List<List<MeasureCatalogueDimension>> commonDimensionsFilterd = new ArrayList<List<MeasureCatalogueDimension>>();
 		for(int i=0; i<commonDimensions.size(); i++){
 			commonDimensionsFilterd.add(filterHierarchies(commonDimensions.get(i)));
+		}
+		
+		if(commonDimensionsFilterd.size()==0 || commonDimensionsFilterd.get(0).size()==0 ){
+			logger.error("Impossible to join measures. No complete hierarchies found");
+			throw new NoCompleteCommonDimensionsRuntimeException("No complete hierarchies found");
 		}
 		
 		List<InMemoryAggregator> rolledUpMeasures = new ArrayList<InMemoryAggregator>();
@@ -190,7 +196,7 @@ public class InMemoryMaterializer implements IMaterializer {
     		List<Integer> hierarchyPositions = hierarchiesLevels.get(hierarchy);
     		Collections.sort(hierarchyPositions);
     		hierarchiesLevelsValid.put(hierarchy, true);
-    		if(hierarchyPositions.size()>1){
+    		if(hierarchyPositions.size()>=1){
     			 
         		for(int i=0; i<hierarchyPositions.size(); i++){
 
@@ -206,6 +212,8 @@ public class InMemoryMaterializer implements IMaterializer {
     	for(int i=0; i<dimensions.size(); i++){
     		if(hierarchiesLevelsValid.get(dimensions.get(i).getHierarchy())){
     			filteredDimensions.add(dimensions.get(i));
+    		}else{
+    			logger.debug("The hierarchy "+dimensions.get(i).getHierarchy().getName()+" is not complete");
     		}
     	}
     	
