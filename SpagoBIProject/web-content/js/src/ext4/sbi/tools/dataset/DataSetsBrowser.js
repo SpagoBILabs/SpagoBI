@@ -461,7 +461,7 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 //        
         var createButton = '';
         if (this.user !== '' && this.user !== this.PUBLIC_USER){
-        	createButton += ' <a id="newDataset" href="#" onclick="javascript:Ext.getCmp(\'this\').addNewDataset(\'\')" class="btn-add"><span class="highlighted">Crea</span> dataset<span class="plus">+</span></a> ';
+        	createButton += ' <a id="newDataset" href="#" onclick="javascript:Ext.getCmp(\'this\').addNewDataset(\'\')" class="btn-add"><span class="highlighted">'+LN('sbi.generic.create')+'</span> '+LN('sbi.browser.document.dataset')+'<span class="plus">+</span></a> ';
         }
         
         var bannerHTML = ''+
@@ -469,17 +469,17 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
      		'<div class="main-datasets-list"> '+
     		'    <div class="list-actions-container"> '+ //setted into the container panel
     		'		<ul class="list-tab"> '+
-    		'	    	<li class="active first"><a href="#" onclick="javascript:Ext.getCmp(\'this\').loadFolder(null, null, \'ALL\')">Tutte</a></li> '+
+    		'	    	<li class="active first"><a href="#" onclick="javascript:Ext.getCmp(\'this\').loadFolder(null, null, \'ALL\')">'+LN('sbi.generic.all')+'</a></li> '+
     					communityString+
-    		'	        <li class="favourite last"><a href="#">Favoriti</a></li> '+
+    		'	        <li class="favourite last"><a href="#">'+LN('sbi.browser.document.favourites')+'</a></li> '+
     		'		</ul> '+
     		'	    <div class="list-actions"> '+
     					createButton +
     		'	        <form action="#" method="get" class="search-form"> '+
     		'	            <fieldset> '+
     		'	                <div class="field"> '+
-    		'	                    <label for="search">Cerca fra i dataset</label> '+
-    		'	                    <input type="text" name="search" id="search" onclick="this.value=\'\'" onkeyup="javascript:Ext.getCmp(\'this\').filterStore(this.value)" value="Cerca per parola chiave..." /> '+
+    		'	                    <label for="search">'+LN('sbi.browser.document.searchDatasets')+'</label> '+
+    		'	                    <input type="text" name="search" id="search" onclick="this.value=\'\'" onkeyup="javascript:Ext.getCmp(\'this\').filterStore(this.value)" value="'+LN('sbi.browser.document.searchKeyword')+'" /> '+
     		'	                </div> '+
     		'	                <div class="submit"> '+
     		'	                    <input type="text" value="Cerca" /> '+
