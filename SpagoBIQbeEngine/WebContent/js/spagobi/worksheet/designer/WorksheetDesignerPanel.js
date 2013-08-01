@@ -126,7 +126,7 @@ Ext.extend(Sbi.worksheet.designer.WorksheetDesignerPanel, Ext.Panel, {
 			params: {},
 			success: config.onSuccessHandler,
 			scope: config.scope,
-			failure: Sbi.exception.ExceptionHandler.handleFailure,
+			failure: Sbi.exception.ExceptionHandler.handleFailure
 		});
 	}
 	
