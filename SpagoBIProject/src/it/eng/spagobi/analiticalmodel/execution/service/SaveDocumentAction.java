@@ -779,7 +779,7 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 			}						
 			//COMMUNITY
 			String communityFCode = getAttributeAsString(COMMUNITY); 
-			if(communityFCode != null) {
+			if(communityFCode != null && !"".equalsIgnoreCase(communityFCode)) {
 				//add community folder to functionalities community folder
 				LowFunctionality commF= DAOFactory.getLowFunctionalityDAO().loadLowFunctionalityByCode(communityFCode, false);
 				Integer commFId= commF.getId();
