@@ -353,7 +353,13 @@ public class MenuListJSONSerializer implements Serializer {
 				text = childElem.getName();
 			}
 		}
-		temp2.put(ID, new Double(Math.random()).toString());
+		/*
+		 * Cannot set a static ID as a random number!!!!
+		 * See https://www.spagoworld.org/jira/browse/SPAGOBI-1268
+		 * See https://www.spagoworld.org/jira/browse/SPAGOBI-1269
+		 * The following line was the cause of the above issues!!
+		 */
+		//temp2.put(ID, new Double(Math.random()).toString());
 
 
 		level ++;
