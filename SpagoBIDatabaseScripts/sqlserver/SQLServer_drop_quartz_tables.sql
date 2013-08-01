@@ -1,14 +1,13 @@
 
-DROP TABLE QRTZ_JOB_LISTENERS;
-DROP TABLE QRTZ_TRIGGER_LISTENERS;
-DROP TABLE QRTZ_FIRED_TRIGGERS;
+drop table qrtz_job_listeners;
+drop table qrtz_trigger_listeners;
+drop table qrtz_fired_triggers;
 DROP TABLE QRTZ_PAUSED_TRIGGER_GRPS;
 DROP TABLE QRTZ_SCHEDULER_STATE;
 DROP TABLE QRTZ_LOCKS;
-DROP TABLE QRTZ_SIMPLE_TRIGGERS;
-DROP TABLE QRTZ_CRON_TRIGGERS;
+drop table qrtz_simple_triggers;
+drop table qrtz_cron_triggers;
 DROP TABLE QRTZ_BLOB_TRIGGERS;
-DROP TABLE QRTZ_TRIGGERS;
-DROP TABLE QRTZ_JOB_DETAILS;
-DROP TABLE QRTZ_CALENDARS;
-
+drop table qrtz_triggers;
+drop table qrtz_job_details;
+drop table qrtz_calendars;
