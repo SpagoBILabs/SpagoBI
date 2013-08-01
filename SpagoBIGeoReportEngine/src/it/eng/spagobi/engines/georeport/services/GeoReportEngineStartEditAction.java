@@ -9,8 +9,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import it.eng.spagobi.engines.georeport.GeoReportEngine;
+import it.eng.spagobi.engines.georeport.GeoReportEngineConfig;
 import it.eng.spagobi.engines.georeport.GeoReportEngineInstance;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
@@ -34,10 +36,12 @@ import org.json.JSONObject;
  */
 public class GeoReportEngineStartEditAction extends AbstractEngineStartServlet {
 
-	private static final long serialVersionUID = 1L;
-
-	private static final String ENGINE_NAME = "GeoReportEngine";
 	
+	private static final String DEFAULT_MAP_NAME = "Sud Tirol";
+	private static final String DEFAULT_ANALYSIS_TYPE = "choropleth";
+	
+	private static final long serialVersionUID = 1L;
+	private static final String ENGINE_NAME = "GeoReportEngine";
 	private static final String REQUEST_DISPATCHER_URL = "/WEB-INF/jsp/geoReport.jsp";
 	
 	/** Logger component. */
@@ -86,7 +90,7 @@ public class GeoReportEngineStartEditAction extends AbstractEngineStartServlet {
         }        
 
 	}
-
+	
 	private JSONObject buildTemplate(IDataSet dataSet) {
 		JSONObject template;
 		
@@ -94,21 +98,31 @@ public class GeoReportEngineStartEditAction extends AbstractEngineStartServlet {
 		
 		template = new JSONObject();
 		try {
-			template.put("mapName", "Sud Tirol");
-			template.put("analysisType", "choropleth");
+			template.put("mapName", DEFAULT_MAP_NAME);
+			template.put("analysisType", DEFAULT_ANALYSIS_TYPE);
 			template.put("analysisConf", buildAnalysisConf(dataSet));
 			template.put("feautreInfo", buildFeatureInfo(dataSet));
 			template.put("indicators", buildIndicators(dataSet));
-			template.put("businessId", "comune_ita");
-			template.put("geoId", "NAME_3");
+			
+			IFieldMetaData geoIdFieldMeta = getGeoIdFiledMeta(dataSet);
+			String businessId = (String)geoIdFieldMeta.getName();
+			String levelName = (String)geoIdFieldMeta.getProperty("hierarchy_level");
+			
+			template.put("businessId", businessId);
+			template.put("geoId", getGeoId(levelName));
+			
 			template.put("selectedBaseLayer", "GoogleMap");
-			template.put("targetLayerConf", buildTargetLayerConf(dataSet));
+			template.put("targetLayerConf", buildTargetLayerConf(levelName));
+			
 			template.put("controlPanelConf", buildControlPanelConf(dataSet));
 			template.put("toolbarConf", buildToolbarConf(dataSet));
-			template.put("role", "spagobi/admin");
-			template.put("lon", "11.400");
-			template.put("lat", "46.650");
-			template.put("zoomLevel", "9");
+			
+			//template.put("role", "spagobi/admin");
+			Properties levelProps = GeoReportEngineConfig.getInstance().getLevelByName(levelName);
+			String centralPoint = levelProps.getProperty("layer_cetral_point");
+			template.put("lon", centralPoint.split(" ")[0]);
+			template.put("lat", centralPoint.split(" ")[1]);
+			template.put("zoomLevel", levelProps.getProperty("layer_zoom") );
 		} catch (Throwable t) {
 			throw new RuntimeException(
 					"An unexpected error occured while executing building template",
@@ -119,6 +133,37 @@ public class GeoReportEngineStartEditAction extends AbstractEngineStartServlet {
 		
 		return template;
 	}
+	
+	
+	private IFieldMetaData getGeoIdFiledMeta(IDataSet dataSet) {
+		List<IFieldMetaData> geoFieldsMeta = new ArrayList<IFieldMetaData>();
+		for(int i = 0; i < dataSet.getMetadata().getFieldCount(); i++) {
+			IFieldMetaData fieldMeta = dataSet.getMetadata().getFieldMeta(i);
+			if(fieldMeta.getProperties().containsKey("hierarchy")) {
+				String level = (String)fieldMeta.getProperty("hierarchy_level");
+				if(level == null) {
+					logger.warn("Field [] referentiate dimension geo but not specify at which level (i.e. attribute [hierarchy_level]). It will be ignored");
+				}
+				geoFieldsMeta.add(fieldMeta);
+			}
+		}
+		
+		if(geoFieldsMeta.size() == 0) {
+			throw new RuntimeException("The dataset [" + dataSet.getName() + "] does not cntain any columns that point to the geographical dimension");
+		}
+		
+		if(geoFieldsMeta.size() > 1) {
+			logger.warn("There are morethen one columns that point the geographical dimension. Only the first one will be considered as georef");
+		}
+		
+		return geoFieldsMeta.get(0);
+	}
+	
+	private String getGeoId(String levelName) {		
+		Properties levelProps = GeoReportEngineConfig.getInstance().getLevelByName(levelName);
+		return levelProps.getProperty("layerId");
+	}
+	
 	
 	/**
 	 * @param dataSet
@@ -186,16 +231,18 @@ public class GeoReportEngineStartEditAction extends AbstractEngineStartServlet {
 	 * @param dataSet
 	 * @return
 	 */
-	private JSONObject buildTargetLayerConf(IDataSet dataSet) {
+	private JSONObject buildTargetLayerConf(String levelName) {
 		JSONObject targetLayerConf;
 		
 		logger.debug("IN");
 		
+		Properties levelProps = GeoReportEngineConfig.getInstance().getLevelByName(levelName);
+		
 		targetLayerConf = new JSONObject();
 		try {
-			targetLayerConf.put("text", "Comuni");
-			targetLayerConf.put("name", "gadm_ita_comuni");
-			targetLayerConf.put("data", "comuni_sudtirol.json");
+			targetLayerConf.put("text", levelProps.getProperty("layerLabel"));
+			targetLayerConf.put("name", levelProps.getProperty("layerName"));
+			targetLayerConf.put("data", levelProps.getProperty("layer_file"));
 		} catch (Throwable t) {
 			throw new RuntimeException(
 					"An unexpected error occured while building target layer conf block",
@@ -298,8 +345,19 @@ public class GeoReportEngineStartEditAction extends AbstractEngineStartServlet {
 		
 		analysisConf = new JSONObject();
 		try {
+			// select the first indicator...
+			String firstIndicatorName = null;
+			for(int i = 0; i < dataSet.getMetadata().getFieldCount(); i++) {
+				IFieldMetaData fieldMeta = dataSet.getMetadata().getFieldMeta(i);
+				if(fieldMeta.getFieldType() ==  FieldType.MEASURE) {
+					firstIndicatorName = fieldMeta.getName();
+					break;
+				}
+			}
+			
+			
 			analysisConf.put("type", "choropleth");
-			analysisConf.put("indicator", "arrivi_totale_2012");
+			analysisConf.put("indicator", firstIndicatorName);
 			analysisConf.put("method", "CLASSIFY_BY_EQUAL_INTERVALS"); // "CLASSIFY_BY_QUANTILS"
 			analysisConf.put("classes", "7");
 			analysisConf.put("fromColor", "#FFFF00");
