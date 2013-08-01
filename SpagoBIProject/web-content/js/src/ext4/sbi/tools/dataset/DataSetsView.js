@@ -141,14 +141,14 @@ Ext.define('Sbi.tools.dataset.DataSetsView', {
 								            '    <ul class="box-actions">'+	    
 								            '		<tpl for="actions">'+  
 								        	' 			<tpl if="name != \'delete\' ">'+
-									        ' 	       		<li class="{name}"><a href="#"></a></li>'+
+									        ' 	       		<li class="{name}"><a href="#" title="{description}"></a></li>'+
 									        '			</tpl>'+
 									        '		</tpl>'+
 								            '    </ul>'+
 								            '</div>'+
 								            '<tpl for="actions">'+   //TO OPTIMIZE WITHOUT CICLE ON ACTIONS!!!!
 								            '	<tpl if="name == \'delete\'">'+
-								            '		<a href="#" class="delete">Cancella</a>'+
+								            '		<a href="#" class="delete" title="{description}">Cancella</a>'+
 								            '	</tpl>' +
 								            '</tpl>' +
 		                                '</div>',
@@ -161,9 +161,9 @@ Ext.define('Sbi.tools.dataset.DataSetsView', {
 									'</div>',
 								'</div>',
 								'<div class="fav-container" >',
-										'<div class="fav">',
-											'<span class="icon" title="{description}"></span>',
-										'</div>',
+									'<div class="fav"  title="Favourites">',
+									'    <span class="icon"><a href="#" onclick="alert(\'Functionality not supported again!\');"/></span> '+
+									'</div>',
 								'</div>',
 							'</dd>',
 						 '</tpl>',	 
@@ -216,14 +216,14 @@ Ext.define('Sbi.tools.dataset.DataSetsView', {
         		return true;
         	}
    			scope.fireEvent('executeDocument','GEOREPORT','DATASET',record);
-        } else {
+        }/* else {
         	Sbi.debug('DataSetView default click event...'); 
         	if (record.data.pars != undefined && record.data.pars != ''){
         		Sbi.exception.ExceptionHandler.showInfoMessage(LN('sbi.ds.noWorksheetDesigner'));
         		return true;
         	}
    			scope.fireEvent('executeDocument','WORKSHEET','DATASET',record);      	
-        }
+        }*/
         
         
         return true;

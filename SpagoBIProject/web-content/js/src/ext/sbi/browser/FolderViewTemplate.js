@@ -36,26 +36,6 @@ Sbi.browser.FolderViewTemplate = function(config) {
 		serviceName: 'MANAGE_FILE_ACTION'
 		, baseParams: params
 	});
-//
-//	for(var i = 0; i < config.browserConfig.metaDocument.length; i++) {
-//
-//		var meta = config.browserConfig.metaDocument[i];
-//
-//			if(meta.visible) {		
-//			// translate meta.id if present
-//			attributeNameView = LN(meta.id);
-//			documentAttributes += '<p id="' + meta.id + '">';
-//			if(meta.showLabel) {
-//				documentAttributes += '<span><h2>{'+attributeNameView+'}</h2></span>';
-//			}
-//			if(meta.maxChars) {
-//				documentAttributes += '<span> {[Ext.util.Format.ellipsis(values.' + meta.id + ', ' + meta.maxChars + ')]}</span>';
-//			} else {
-//				documentAttributes += '<span> {' + meta.id + '}</span>';
-//			}
-//			documentAttributes += '</p>';
-//		}	
-//	}
 
 	var changed = LN('sbi.ds.changedon');
 	var documentTpl = ''+
@@ -83,19 +63,18 @@ Sbi.browser.FolderViewTemplate = function(config) {
 	            '    <ul class="box-actions">'+	    
 	            '		<tpl for="actions">'+  
 	            ' 			<tpl if="name != \'delete\'">'+
-		        ' 	       		<li class="{name}"><a href="#"></a></li>'+
+		        ' 	       		<li class="{name}"><a href="#" title="{description}"></a></li>'+
 		        '			</tpl>'+
 		        '		</tpl>'+
 	            '    </ul>'+
 	            '</div>'+
 	            '<tpl for="actions">'+   //TO OPTIMIZE WITHOUT CICLE ON ACTIONS!!!!
 	            '	<tpl if="name == \'delete\'">'+
-	            '		<a href="#" class="delete">Cancella</a>'+
+	            '		<a href="#" class="delete" title="{description}">Cancella</a>'+
 	            '	</tpl>' +
 	            '</tpl>' +
 	        '</div>'+ //hover
 		'</div>'+ //box-figure
-//	ORIG:	'<div class="box-text">'+documentAttributes +'</div>'+
 		'<div class="box-text">'+
 			'<h2>{name}</h2>'+
 //			'<p>{[Ext.String.ellipsis(values.description, 100, false)]}</p>'+
@@ -104,33 +83,15 @@ Sbi.browser.FolderViewTemplate = function(config) {
 			'<p class="modified">'+changed+' {creationDate}</p>'+
 		'</div>'+
 		'<div class="fav-container"> '+
-		'  	<div class="fav"> '+
-		'         <span class="icon"></span> '+
+		'  	<div class="fav" title="Favourites" > '+
+		'         <span class="icon"><a href="#" onclick="javascript:alert(\'Functionality not supported again!\');"/></span> '+
 		'         <span class="counter">12</span> '+
 		'   </div> '+
 		'</div>' +
 	'</div>';
 
 	
-	var folderAttributes = '';
-//	for(var i = 0; i < config.browserConfig.metaFolder.length; i++) {
-//		var meta = config.browserConfig.metaFolder[i];
-//		if(meta.visible) {		
-//			
-//			folderAttributes += '<p id="' + meta.id + '"/>';
-//			if(meta.showLabel) {
-//				folderAttributes += '<h2 class="field-label">' + meta.id + ':</h2>';
-//			}
-//			if(meta.maxChars) {
-//				folderAttributes += '<p class="field-value"> {[Ext.util.Format.ellipsis(values.' + meta.id + ', ' + meta.maxChars + ')]}</p>';
-//			} else {
-//				folderAttributes += '<p class="field-value"> {' + meta.id + '}</p>';
-//			}
-//			folderAttributes += '</p>';
-//		}
-//	}
-//	
-	
+	var folderAttributes = '';	
 	var folderTpl = '' + 
 	'<div class="box-container">'+
 		'<div id="document-item-icon"  class="box-figure">'+
@@ -226,6 +187,17 @@ Sbi.browser.FolderViewTemplate = function(config) {
 	        			return true;
 	        		}else{
 	        			return false;
+	        		}
+	        		
+	        	}
+	        	, getTitle: function(n) {
+	        		if(typeof n != undefined  && n != null ){
+	        			//normalization for ln function
+	        			if (n == 'detail') n = 'details';
+	        			else if (n == 'showmetadata') 
+	        			return LN('sbi.generic.'+n);
+	        		}else{
+	        			return '';
 	        		}
 	        		
 	        	}
