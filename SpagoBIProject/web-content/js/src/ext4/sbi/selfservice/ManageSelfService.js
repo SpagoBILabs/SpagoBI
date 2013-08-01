@@ -13,7 +13,8 @@
  
   
 Ext.define('Sbi.selfservice.ManageSelfService', {
-	extend: 'Ext.tab.Panel',
+//	extend: 'Ext.tab.Panel',
+	extend: 'Ext.Panel',
 
     config: {
     	executionPanel: null,
@@ -41,10 +42,15 @@ Ext.define('Sbi.selfservice.ManageSelfService', {
 		this.layout = 'fit';
 		
 		var browserConf = {
-				title: LN("sbi.tools.dataset.datasetbrowser.title")
-				, user: Sbi.user.userId
+				//title: LN("sbi.tools.dataset.datasetbrowser.title")
+				  user: Sbi.user.userId
 				, datasetsServicePath : config.datasetsServicePath
 		};
+		
+		if (Sbi.settings.browser.showTitle !== undefined && Sbi.settings.browser.showTitle){
+			browserConf.title =  LN("sbi.tools.dataset.datasetbrowser.title");
+		}
+		 
 		this.datasetPanelTab = Ext.create('Sbi.tools.dataset.DataSetsBrowser', browserConf );
 		
 		this.items = [ this.datasetPanelTab ];

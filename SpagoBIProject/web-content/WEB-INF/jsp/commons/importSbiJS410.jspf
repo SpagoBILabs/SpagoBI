@@ -101,9 +101,10 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext4/sbi-all-ext410-4.0.0.js")%>'></script>
 
  END-PRODUCTION -->
-
-
-
+ 
+<%-- js custom overrides --%>
+<script type="text/javascript" src="<%=urlBuilder.getResourceLinkByTheme(request, "js/commons/Settings.js",currTheme)%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourceLinkByTheme(request, "js/locale/"+locale.getLanguage()+".js",currTheme)%>"></script>
 <!-- 
 <script type="text/javascript">
 Ext.Ajax.timeout = 300000;

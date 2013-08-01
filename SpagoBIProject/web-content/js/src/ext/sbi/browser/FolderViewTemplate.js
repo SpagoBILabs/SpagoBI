@@ -100,6 +100,7 @@ Sbi.browser.FolderViewTemplate = function(config) {
 			'<h2>{name}</h2>'+
 //			'<p>{[Ext.String.ellipsis(values.description, 100, false)]}</p>'+
 			'<p>{description}</p>'+
+			'<p>{creationUser}</p>'+
 			'<p class="modified">'+changed+' {creationDate}</p>'+
 		'</div>'+
 		'<div class="fav-container"> '+

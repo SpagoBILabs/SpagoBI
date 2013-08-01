@@ -45,10 +45,11 @@ Sbi.browser.DocumentsBrowser = function(config) {
 		 , layout: 'fit'
 	});
 	config.baseLayout = config.baseLayout || {}; 	
+	
 	var c = Ext.apply({}, config.baseLayout, {
 		layout: 'border',
 	    border: false,
-	    title:'Document browser',
+	   // title:'',//'Document browser',
 	    items: [ 
 	            // CENTER REGION ---------------------------------------------------------
 	            this.centerContainerPanel
@@ -65,6 +66,15 @@ Sbi.browser.DocumentsBrowser = function(config) {
 	          	*/
 	        ]
 	});   
+	
+	if (Sbi.settings.browser.showTitle !== undefined && Sbi.settings.browser.showTitle){
+		c.title = 'Document browser';
+		
+	}else{
+		c.title='';
+		c.header = false;
+		c.headerAsText=false;
+	}
 	 
 	if (Sbi.settings.browser.showLeftPanels !== undefined && Sbi.settings.browser.showLeftPanels){
 		 // WEST REGION -----------------------------------------------------------
