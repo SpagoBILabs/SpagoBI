@@ -8,6 +8,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 	contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"
 %>
 <%@ include file="/WEB-INF/jsp/wapp/homeBase.jsp"%>
+
     
 <!-- Include Ext stylesheets here: 
 <link id="spagobi-ext-4" rel="styleSheet" href ="/SpagoBI/themes/geobi/css/home40/layout.css" type="text/css" />
@@ -116,10 +117,10 @@ Ext.onReady(function () {
 		'			<div class="top-bar" id="top-bar"> '+
 		'	        <nav class="aux"> '+
 		'	            <ul class="top-menu" id="top-menu"> '+
-		'	                <li class="first"><a href="#">GeoBI Project</a></li> '+
-		'	                <li><a href="#">Tutorial</a></li> '+
-		'	                <li><a href="#">Termini e condizioni</a></li> '+
-		'	                <li class="reserved last"><a href="<%=loginUrl%>">Area riservata</a></li> '+		
+		'	                <li class="first"><a href="#">'+LN('home.header.geoBIProject')+'</a></li> '+
+		'	                <li><a href="#">'+LN('home.header.tutorial')+'</a></li> '+
+		'	                <li><a href="#">'+LN('home.herader.conditions')+'</a></li> '+
+		'	                <li class="reserved last"><a href="<%=loginUrl%>">'+LN('home.header.reservedArea')+'</a></li> '+		
 		'	            </ul> '+
 		'	            <ul class="language-switcher"> '+
 						<%java.util.Set keys = langUrls.keySet();
@@ -128,7 +129,8 @@ Ext.onReady(function () {
 								String key = iterKeys.next().toString();
 								String value = langUrls.get(key).toString();
 								String activeClass = "";
-								if (key.equalsIgnoreCase(curr_language)){
+								//if (key.equalsIgnoreCase(curr_language)){
+								if (key.equalsIgnoreCase(locale.getLanguage())){
 									activeClass = "class=\"active\"";
 								}
 						%>
@@ -148,9 +150,9 @@ Ext.onReady(function () {
 				    ' 	<p><a href="#">Impressum & Privacy</a> | <a href="#">Forum & FAQs</a></p>' +
 				    '</div>' +
 				    '<ul class="logos">' +
-				    '	<li class="tis"><a href="#">TIS - Innovation Park</a></li>' +
-				    '   <li class="pab"><a href="#">Provincia Autonoma di Bolzano Alto Adige - Autonome Provinz Bozen Sudtirol</a></li>' +
-				    '    <li class="ue"><a href="#">Unione Europea - Provincia Autonoma di Bolzano - Alto Adige</a></li>' +
+				    '	<li class="tis"><a href="#">'+LN('home.footer.logo.tis')+'</a></li>' +
+				    '   <li class="pab"><a href="#">'+LN('home.footer.logo.pab')+'</a></li>' +
+				    '    <li class="ue"><a href="#">'+LN('home.footer.logo.ue')+'</a></li>' +
 				    '</ul>' +
 				'</div>' +
 			'</footer>';

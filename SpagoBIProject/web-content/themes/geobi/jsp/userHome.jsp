@@ -8,6 +8,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 	contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"
 %>
 <%@ include file="/WEB-INF/jsp/wapp/homeBase.jsp"%> 
+
 <!-- Include Ext stylesheets here: -->
 <link id="extall"     rel="styleSheet" href ="/SpagoBI/js/lib/ext-4.1.1a/resources/css/ext-all.css" type="text/css" />
 <link id="theme-gray" rel="styleSheet" href ="/SpagoBI/js/lib/ext-4.1.1a/resources/css/ext-all-gray.css" type="text/css" />
@@ -119,12 +120,13 @@ Ext.onReady(function () {
 		'	    <div class="top-bar user-logged" id="top-bar"> '+
 		'	        <nav class="aux"> '+
 		'	            <ul class="top-menu" id="top-menu"> '+
-		'	                <li class="first"><a href="#">GeoBI Project</a></li> '+
-		'	                <li><a href="#">Tutorial</a></li> '+
-		'	                <li><a href="#">Termini e condizioni</a></li> '+
-		'	                <li class="user last"><a href="#"><span class="name">'+Sbi.user.userName+'</span> - <span class="company">ASTAT</span></a>'+
+		'	                <li class="first"><a href="#">'+LN('home.header.geoBIProject')+'</a></li> '+
+		'	                <li><a href="#">'+LN('home.header.tutorial')+'</a></li> '+
+		'	                <li><a href="#">'+LN('home.herader.conditions')+'</a></li> '+
+		'	                <li class="user last"><a href="#"><span class="name">'+Sbi.user.userName+'</a>'+
+		//'	                <li class="user last"><a href="#"><span class="name">'+Sbi.user.userName+'</span> - <span class="company">ASTAT</span></a>'+
 		'						<ul> '+		
-        '                           <li><a href="#">Il mio account</a></li> '+
+        '                           <li><a href="#">'+LN('home.header.myAccount')+'</a></li> '+
         '                           <li class="last"><a href="<%=logoutUrl%>">Logout</a></li> '+
         '                       </ul> '+
         '					</li> '+
@@ -156,9 +158,9 @@ Ext.onReady(function () {
 				    ' 	<p><a href="#">Impressum & Privacy</a> | <a href="#">Forum & FAQs</a></p>' +
 				    '</div>' +
 				    '<ul class="logos">' +
-				    '	<li class="tis"><a href="#">TIS - Innovation Park</a></li>' +
-				    '   <li class="pab"><a href="#">Provincia Autonoma di Bolzano Alto Adige - Autonome Provinz Bozen Sudtirol</a></li>' +
-				    '    <li class="ue"><a href="#">Unione Europea - Provincia Autonoma di Bolzano - Alto Adige</a></li>' +
+				    '	<li class="tis"><a href="#">'+LN('home.footer.logo.tis')+'</a></li>' +
+				    '   <li class="pab"><a href="#">'+LN('home.footer.logo.pab')+'</a></li>' +
+				    '   <li class="ue"><a href="#">'+LN('home.footer.logo.ue')+'</a></li>' +
 				    '</ul>' +
 				'</div>' +
 			'</footer>';

@@ -66,11 +66,11 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 		this.filteredProperties = [ "label", "name","description","fileName","fileType", "catTypeCd","owner" ];
 		
 		this.sorters = [{property : 'dateIn', direction: 'DESC', description: LN('sbi.ds.moreRecent')}, 
-//		                {property : 'label', direction: 'ASC', description:  LN('sbi.ds.label')}, 
+		                {property : 'label', direction: 'ASC', description:  LN('sbi.ds.label')}, 
 		                {property : 'name', direction: 'ASC', description: LN('sbi.ds.name')}, 
-//		                {property : 'fileName', direction: 'ASC', description:  LN('sbi.ds.fileName')},	
-//		                {property : 'fileType', direction: 'ASC', description: LN('sbi.ds.file.type')}, 
-//		                {property : 'catTypeCd', direction: 'ASC', description: LN('sbi.ds.catType')},						
+		                {property : 'fileName', direction: 'ASC', description:  LN('sbi.ds.fileName')},	
+		                {property : 'fileType', direction: 'ASC', description: LN('sbi.ds.file.type')}, 
+		                {property : 'catTypeCd', direction: 'ASC', description: LN('sbi.ds.catType')},						
 						{property : 'owner', direction: 'ASC', description: LN('sbi.ds.owner')}];
 		
 
