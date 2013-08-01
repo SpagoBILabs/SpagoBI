@@ -6,6 +6,8 @@
 
 package it.eng.spagobi.tools.dataset.measurecatalogue.services;
 
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.services.exceptions.ExceptionUtilities;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
@@ -46,7 +48,8 @@ public class MeasureCatalogueCRUD {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public String getAllMeasures(@Context HttpServletRequest req) {
-		String measures =  MeasureCatalogueSingleton.getMeasureCatologue().toString();
+		IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+		String measures =  MeasureCatalogueSingleton.getMeasureCatologue().toString(profile.getUserUniqueIdentifier().toString(), UserUtilities.isAdministrator(profile));
 		return measures;
 	}
 	
