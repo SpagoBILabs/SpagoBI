@@ -11,6 +11,7 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -27,6 +28,8 @@ public class GeoReportEngineConfig {
 	
 	private Map<String, List> includes;
 	private Set<String> enabledIncludes;
+	
+	List<Properties> levels;
 	
 	private static transient Logger logger = Logger.getLogger(GeoReportEngineConfig.class);
 
@@ -68,6 +71,34 @@ public class GeoReportEngineConfig {
 		
 		
 		return results;
+	}
+	
+	public List<Properties> getLevels() {
+		
+		if(levels == null) {
+			initGeoDimensionLevels();
+		}
+		
+		return levels;
+	}
+	
+	public Properties getLevelByName(String name) {
+		
+		Properties levelProps = null;
+		
+		if(name == null) return null;
+		
+		if(levels == null) {
+			initGeoDimensionLevels();
+		}
+		
+		for(Properties props : levels) {
+			if(name.equals(props.getProperty("name"))) {
+				levelProps = props;
+			}
+		}
+		
+		return levelProps;
 	}
 	
 	
@@ -121,6 +152,47 @@ public class GeoReportEngineConfig {
 				enabledIncludes.add(name);
 			}
 		}		
+	}
+	
+	private final static String GEO_DIMENSION_TAG = "GEO_DIMENSION";
+	private final static String LEVELS_TAG = "LEVELS";
+	private final static String LEVEL_TAG = "LEVEL";
+	
+	public void initGeoDimensionLevels() {
+		SourceBean geoDimensionSB = (SourceBean) getConfigSourceBean().getAttribute(GEO_DIMENSION_TAG);
+		SourceBean levelsSB = (SourceBean) geoDimensionSB.getAttribute(LEVELS_TAG);
+		List<SourceBean> levelList = levelsSB.getAttributeAsList(LEVEL_TAG);
+		levels = new ArrayList<Properties>();
+		
+		/*
+		 <LEVEL name="comune_ita" 
+				layerName="gadm_ita_comuni" 
+				layerLabel="Comuni" 
+				layerId="NAME_3" 
+				layer_file="comuni_sudtirol.json"
+				layer_zoom="" 
+				layer_cetral_point=""/>
+		 */
+		for(SourceBean level : levelList) {
+			String name = (String)level.getAttribute("name");
+			String layerName = (String)level.getAttribute("layerName");
+			String layerLabel = (String)level.getAttribute("layerLabel");
+			String layerId = (String)level.getAttribute("layerId");
+			String layer_file = (String)level.getAttribute("layer_file");
+			String layer_zoom = (String)level.getAttribute("layer_zoom");
+			String layer_cetral_point = (String)level.getAttribute("layer_cetral_point");
+			
+			Properties props = new Properties();
+			props.setProperty("name", name);
+			props.setProperty("layerName", layerName);
+			props.setProperty("layerLabel", layerLabel);
+			props.setProperty("layerId", layerId);
+			props.setProperty("layer_file", layer_file);
+			props.setProperty("layer_zoom", layer_zoom);
+			props.setProperty("layer_cetral_point", layer_cetral_point);
+			
+			levels.add(props);
+		}
 	}
 	
 	// -- ACCESS Methods  -----------------------------------------------

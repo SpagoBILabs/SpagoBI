@@ -28,6 +28,18 @@
 				
 	</INCLUDES>
 	
+	<GEO_DIMENSION>
+		<LEVELS>
+			<LEVEL name="Comune ita" 
+				layerName="gadm_ita_comuni" 
+				layerLabel="Comuni" 
+				layerId="NAME_3" 
+				layer_file="comuni_sudtirol.json"
+				layer_zoom="9" 
+				layer_cetral_point="11.400 46.650"/>
+		</LEVELS>
+	</GEO_DIMENSION>
+	
 	
 	<!-- ====================================================================================== -->
 	<!--  INTERNAL SETTINGS 																    --> 
