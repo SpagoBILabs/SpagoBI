@@ -53,6 +53,8 @@ Sbi.locale.ln['sbi.generic.document'] = 'Document';
 Sbi.locale.ln['sbi.generic.map'] = 'Map';
 Sbi.locale.ln['sbi.generic.maps'] = 'Maps';
 Sbi.locale.ln['sbi.generic.all'] = 'All';
+Sbi.locale.ln['sbi.generic.showmetadata'] = 'Show Metadata';
+
 
 //Fields
 Sbi.locale.ln['sbi.generic.name'] = 'Name';

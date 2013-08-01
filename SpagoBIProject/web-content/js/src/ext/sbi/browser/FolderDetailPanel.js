@@ -368,8 +368,12 @@ Ext.extend(Sbi.browser.FolderDetailPanel, Ext.Panel, {
     	 }else if (actionMetaData != null){
          	Sbi.debug('showMetadata');        	
          	action = actionMetaData.dom.className;
+    	 }else if (actionFavourite != null){
+         	Sbi.debug('favourites');        	
+         	action = actionFavourite.dom.className;
+         	//temporary until favourites aren't managed:
+         	return;
     	 }         	
-    	
     	var r = this.folderView.getRecord(i);
     	if(r.engine) {
     		if(action !== null) {
