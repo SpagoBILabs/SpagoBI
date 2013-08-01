@@ -131,8 +131,8 @@ Ext.extend(Sbi.geo.stat.ChoroplethThematizer, Sbi.geo.stat.Thematizer, {
     	  
     	var bins = this.classification.getBins(); 
     	var rules = new Array(bins.length);
-        for (var i = 0; i < bins.length; i++) {
-        	var filter = new OpenLayers.Filter.Function({
+         for (var i = 0; i < bins.length; i++) {
+         	var filter = new OpenLayers.Filter.Function({
             	evaluate: function(attributes) {
 //            		Sbi.trace("[ChoroplethThematizer.thematize.filter] : IN");
 //            		for(a in attributes) {
