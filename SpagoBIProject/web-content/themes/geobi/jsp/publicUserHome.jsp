@@ -63,6 +63,9 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 	   }		
 	}
 %>
+
+<link rel='stylesheet' type='text/css' href='<%=urlBuilder.getResourceLinkByTheme(request, "css/home40/standard.css",currTheme)%>'/>
+
 <% 
 if (browsername.contains("MSIE")){
 	if (browserversion.contains("7")){ %>
@@ -72,10 +75,8 @@ if (browsername.contains("MSIE")){
 <%  }else{ %>
 	<link href="/SpagoBI/themes/geobi/css/home40/ie9.css" rel="stylesheet" media="screen,projection,print" type="text/css" />
 <%  }	
-}else{
-%>	
-	<link rel='stylesheet' type='text/css' href='<%=urlBuilder.getResourceLinkByTheme(request, "css/home40/standard.css",currTheme)%>'/>
-<%} %>
+}
+%>
 
 
 
@@ -83,7 +84,7 @@ if (browsername.contains("MSIE")){
 sessionExpiredSpagoBIJS = 'sessionExpiredSpagoBIJS';
 
 Ext.onReady(function () {
-	
+	//alert('<%=browsername%> - <%=browserversion%>');
 	var firstUrl =  '<%= StringEscapeUtils.escapeJavaScript(firstUrlToCall) %>';  
 	firstUrlTocallvar = firstUrl;
     Ext.tip.QuickTipManager.init();
