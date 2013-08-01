@@ -227,6 +227,7 @@ Ext.extend(Sbi.browser.FolderView, Ext.DataView, {
     }
     
     , inMemoryFilter : function(value) {
+    	var RE = new RegExp(value, "ig");
     	var foldersProperties = [ "code", "name","description"];
     	var documentsProperties = [ "code", "name","description","creationUser", "engine", "stateCode", "typeCode", "label"];
     	var newSamples = [];
@@ -242,8 +243,8 @@ Ext.extend(Sbi.browser.FolderView, Ext.DataView, {
     	//filter on folders and documents
     	var folders = this.getCollection('Folders');    	    	
     	for (var i=0; i< foldersProperties.length;i++){
-    		var property = foldersProperties[i];
-    		var newFoldersGroup = folders.filter(property, value);
+    		var property = foldersProperties[i];    		
+    		var newFoldersGroup = folders.filter(property, RE);
     		var tmpValues = newFoldersGroup.getRange();
     		if (tmpValues != null && tmpValues.length > 0){    			
     			newSamples = this.mergeArrays(newSamples,tmpValues);
@@ -252,7 +253,7 @@ Ext.extend(Sbi.browser.FolderView, Ext.DataView, {
     	var documents = this.getCollection('Documents');
     	for (var i=0; i< documentsProperties.length;i++){
     		var property = documentsProperties[i];
-    		var newDocumentsGroup = documents.filter(property, value);
+    		var newDocumentsGroup = documents.filter(property, RE);
     		var tmpValues = newDocumentsGroup.getRange();
     		if (tmpValues != null && tmpValues.length > 0){    			
     			newSamples = this.mergeArrays(newSamples,tmpValues);
