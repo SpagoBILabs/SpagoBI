@@ -33,7 +33,8 @@ Ext.define('Sbi.widgets.wizard.WizardWindow', {
 		title: '',
 		buttonAlign : 'center',
 		wizardPanel: null,		
-		fieldMap: {}
+		fieldMap: {},
+		resizable: false
     } 
    
 	/**
