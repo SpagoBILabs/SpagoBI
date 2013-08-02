@@ -38,6 +38,7 @@ Sbi.browser.FolderViewTemplate = function(config) {
 	});
 
 	var changed = LN('sbi.ds.changedon');
+	var author = LN('sbi.generic.author');
 	var documentTpl = ''+
 	'<div class="box-container">'+
 		'<div id="document-item-icon"  class="box-figure">'+
@@ -79,7 +80,7 @@ Sbi.browser.FolderViewTemplate = function(config) {
 			'<h2>{name}</h2>'+
 //			'<p>{[Ext.String.ellipsis(values.description, 100, false)]}</p>'+
 			'<p>{description}</p>'+
-			'<p>{creationUser}</p>'+
+			'<p><b>'+author+':</b> {creationUser}</p>'+
 			'<p class="modified">'+changed+' {creationDate}</p>'+
 		'</div>'+
 		'<div class="fav-container"> '+
