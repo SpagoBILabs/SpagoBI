@@ -391,12 +391,10 @@ Ext.define('Sbi.execution.SaveDocumentWindowExt4', {
 			params : params,
 			waitMsg : LN('sbi.generic.wait'),
 			success : function(form, action) {
-//				alert("success");
 				Ext.MessageBox.alert('Success!','File Uploaded to the Server');
 				this.fileNameUploaded = action.result.fileName;
 			},
 			failure : function(form, action) {
-//				alert("failure");
 				switch (action.failureType) {
 	            case Ext.form.Action.CLIENT_INVALID:
 	                Ext.Msg.alert('Failure', 'Form fields may not be submitted with invalid values');
