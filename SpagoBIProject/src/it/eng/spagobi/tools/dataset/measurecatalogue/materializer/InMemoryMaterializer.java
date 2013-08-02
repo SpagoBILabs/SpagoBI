@@ -57,9 +57,11 @@ public class InMemoryMaterializer implements IMaterializer {
 			throw new NoCommonDimensionsRuntimeException("No common dimensions found");
 		}
 		
+		Map<HierarchyWrapper, Integer> minHierarchyLeveMap = buildMinHierarchyLeveMap(commonDimensions);
+		
 		List<List<MeasureCatalogueDimension>> commonDimensionsFilterd = new ArrayList<List<MeasureCatalogueDimension>>();
 		for(int i=0; i<commonDimensions.size(); i++){
-			commonDimensionsFilterd.add(filterHierarchies(commonDimensions.get(i)));
+			commonDimensionsFilterd.add(filterHierarchies(commonDimensions.get(i), minHierarchyLeveMap));
 		}
 		
 		if(commonDimensionsFilterd.size()==0 || commonDimensionsFilterd.get(0).size()==0 ){
@@ -172,7 +174,8 @@ public class InMemoryMaterializer implements IMaterializer {
      * @param dimensions 
      * @return
      */
-    private List<MeasureCatalogueDimension> filterHierarchies( List<MeasureCatalogueDimension> dimensions){
+    private List<MeasureCatalogueDimension> filterHierarchies( List<MeasureCatalogueDimension> dimensions, Map<HierarchyWrapper, Integer> minHierarchyLeveMap ){
+    	int minLevel;
     	//map with the hiearchy and the list of levels
     	Map<HierarchyWrapper, List<Integer>> hierarchiesLevels = new HashMap<HierarchyWrapper, List<Integer>>();
     	Map<HierarchyWrapper, Boolean> hierarchiesLevelsValid = new HashMap<HierarchyWrapper, Boolean>();
@@ -196,11 +199,12 @@ public class InMemoryMaterializer implements IMaterializer {
     		List<Integer> hierarchyPositions = hierarchiesLevels.get(hierarchy);
     		Collections.sort(hierarchyPositions);
     		hierarchiesLevelsValid.put(hierarchy, true);
+    		
     		if(hierarchyPositions.size()>=1){
-    			 
+    			minLevel = minHierarchyLeveMap.get(hierarchy);
         		for(int i=0; i<hierarchyPositions.size(); i++){
 
-        			if(hierarchyPositions.get(i)!=i){
+        			if(hierarchyPositions.get(i)!=minLevel+i){
         				hierarchiesLevelsValid.put(hierarchy, false);
         				break; 
         			}
@@ -218,6 +222,45 @@ public class InMemoryMaterializer implements IMaterializer {
     	}
     	
     	return filteredDimensions;
+
+    }
+    
+    
+	/**
+	 * Builds a map that maps the hierarchy wit the min level of the hierarchy.
+	 * The min level of the hierarchy is used because all the dimensions in common must have the same min level io order to perform the join operation.
+	 * @param commonDimensionsFormMeasures
+	 * @return
+	 */
+    private Map<HierarchyWrapper, Integer> buildMinHierarchyLeveMap(List<List<MeasureCatalogueDimension>> commonDimensionsFormMeasures){
+    	MeasureCatalogueDimension dimension;
+    	HierarchyWrapper hierarchy;
+    	Integer minLevelForHierarchy;
+    	Integer minLevelForHierarchyTemp;
+    	
+    	//map with the hiearchy and the list of levels
+    	Map<HierarchyWrapper, Integer> minHierarchyLeveMap = new HashMap<HierarchyWrapper, Integer>();
+
+    	
+    	if(commonDimensionsFormMeasures!=null && commonDimensionsFormMeasures.size()>0){
+    		int commonDimensionNumber = commonDimensionsFormMeasures.get(0).size();
+    		
+    		//for each dimension in common we should find the min level in the hierarcy
+        	//so:
+    		for(int i=0; i<commonDimensionNumber; i++){//for each dimension
+        		for(int j=0; j<commonDimensionsFormMeasures.size(); j++){//for each measure
+        			dimension= commonDimensionsFormMeasures.get(j).get(i);
+        			hierarchy = dimension.getHierarchy();
+        			minLevelForHierarchy = dimension.getHierarchyLevelPosition();
+        			minLevelForHierarchyTemp = minHierarchyLeveMap.get(hierarchy);
+        			if(minLevelForHierarchyTemp==null || minLevelForHierarchyTemp>minLevelForHierarchy){
+        				minHierarchyLeveMap.put(hierarchy, minLevelForHierarchy);
+        			}
+            	}
+        	}
+    	}
+    	
+    	return minHierarchyLeveMap;
 
     }
     
