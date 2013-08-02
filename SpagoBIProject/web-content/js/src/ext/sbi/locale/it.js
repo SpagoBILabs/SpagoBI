@@ -956,6 +956,9 @@ Sbi.locale.ln["error.mesage.description.data.set.parsing.error"]="Impossibile an
 Sbi.locale.ln["error.mesage.description.measure.join.no.common.dimension"]= "Non \u00e8 possibile eseguire il join tra le misure selezionate. I dataset corrispondenti non contengono alcuna dimensione in comune.";
 Sbi.locale.ln["error.mesage.description.measure.join.no.complete.common.dimension"]="Non \u00e8 possibile eseguire il join tra le misure selezionate. I dataset corrispondenti non contengono alcuna dimensione completa in comune.";
 
+//LAYER
+Sbi.locale.ln["error.mesage.description.layer.validation.file"]= "Il nome del file non \u00e8 valido. Non sono ammissibili i caratteri  [/,\\]";
+
 
 //===================================================================
 //SELF SERVICE
@@ -992,3 +995,17 @@ Sbi.locale.ln["sbi.tools.catalogue.measures.join.btn"]="Join";
 Sbi.locale.ln["sbi.tools.catalogue.measures.join.tooltip"]="Esegui il Join tra le misure selezioate";
 Sbi.locale.ln["sbi.tools.catalogue.measures.select.tooltip"]="Permette di selezioanre le righe";
 Sbi.locale.ln["sbi.tools.catalogue.measures.select.btn"]="Selezione";
+
+//===================================================================
+//LAYERS CATALOGUE
+//===================================================================
+Sbi.locale.ln['sbi.layer.saved']= 'Layer salvato correttamente';
+Sbi.locale.ln['sbi.layer.deleted']= 'Layer cancellato correttamente';
+Sbi.locale.ln['sbi.tools.layer.validation.error']= 'Ci sono degli errori di validazione. Controlla i campi marcati.';
+Sbi.locale.ln['sbi.tools.layer.props.name'] = "Nome del Layer";
+Sbi.locale.ln['sbi.tools.layer.props.label'] = "Label del Layer";
+Sbi.locale.ln['sbi.tools.layer.props.zoom'] = "Zoom del Layer";
+Sbi.locale.ln['sbi.tools.layer.props.id'] = "Id del Layer";
+Sbi.locale.ln['sbi.tools.layer.props.central.point']= "Layer central point";
+Sbi.locale.ln['sbi.tools.layer.props.url']= "Url";
+Sbi.locale.ln['sbi.tools.layer.props.file']= "File";
