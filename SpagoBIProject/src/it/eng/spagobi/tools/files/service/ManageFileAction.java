@@ -68,9 +68,7 @@ public class ManageFileAction extends AbstractSpagoBIAction{ //AbstractHttpActio
 			JSONObject jsonToReturn = new JSONObject();
 			if (OPER_UPLOAD.equalsIgnoreCase(operation)){
 				jsonToReturn = uploadFile();
-				String jsonResponse = jsonToReturn.toString();
-				logger.info("Returned response: " + jsonResponse);
-				writeBackToClient(jsonResponse);
+				replayToClient( null, jsonToReturn );
 			}else if (OPER_DOWNLOAD.equalsIgnoreCase(operation)){				
 				freezeHttpResponse();
 				String fileName = (String)getAttribute("fileName");
@@ -93,7 +91,7 @@ public class ManageFileAction extends AbstractSpagoBIAction{ //AbstractHttpActio
     	} catch (Throwable t) {
     		logger.error("Error while uploading file", t);
     		SpagoBIServiceException e = SpagoBIServiceExceptionHandler.getInstance().getWrappedException(this.getActionName(), t);
-    		replayToClient( e );
+    		replayToClient( e, null );
 		} finally {
 			logger.debug("OUT");
 		}	
@@ -120,10 +118,10 @@ public class ManageFileAction extends AbstractSpagoBIAction{ //AbstractHttpActio
 		saveFile(uploaded, file);
 		logger.debug("File saved");
 		
-//		replayToClient( null );
 		JSONObject toReturn = new JSONObject();
 		try {				
 			toReturn.put("success", true);
+			toReturn.put("file","null");
 			toReturn.put("fileName", file.getName());
 		} catch (JSONException jSONException) {
 			logger.error(jSONException);
@@ -155,7 +153,7 @@ public class ManageFileAction extends AbstractSpagoBIAction{ //AbstractHttpActio
 		} catch (Exception e) {
     		logger.error("Error while uploading file", e);
     		SpagoBIServiceException e2 = SpagoBIServiceExceptionHandler.getInstance().getWrappedException(this.getActionName(), e);
-    		replayToClient( e2 );
+    		replayToClient( e2, null);
 		} 
 		return toReturn;
 	}
@@ -163,7 +161,7 @@ public class ManageFileAction extends AbstractSpagoBIAction{ //AbstractHttpActio
 	 /*
      * see Ext.form.BasicForm for file upload
      */
-	private void replayToClient(final SpagoBIServiceException e) {
+	private void replayToClient(final SpagoBIServiceException e, final JSONObject jr) {
 		
 		try {
 			
@@ -198,6 +196,9 @@ public class ManageFileAction extends AbstractSpagoBIAction{ //AbstractHttpActio
 						} catch (JSONException jSONException) {
 							logger.error(jSONException);
 						}
+					}
+					if ( jr != null) {						
+						return jr.toString();
 					}
 					return "{success:true, file:null}";
 				}
@@ -299,6 +300,7 @@ public class ManageFileAction extends AbstractSpagoBIAction{ //AbstractHttpActio
 	private boolean checkFileIfExist(File file){
 		return (file.exists());
 	}
+	
 	
 	
 }
