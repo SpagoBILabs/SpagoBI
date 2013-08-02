@@ -51,4 +51,5 @@
 <USER_FUNCTIONALITY name="SelfServiceDatasetManagement" description="SelfServiceDatasetManagement"/>
 <USER_FUNCTIONALITY name="SelfServiceMetaModelManagement" description="SelfServiceMetaModelManagement"/>
 <USER_FUNCTIONALITY name="MeasuresCatalogueManagement" description="MeasuresCatalogueManagement"/>
+<USER_FUNCTIONALITY name="GeoLayersManagement" description="GeoLayersManagement"/>
 </USER_FUNCTIONALITIES>
