@@ -112,6 +112,7 @@ Sbi.worksheet.designer.WorksheetPanel = function(config) {
 	
 	this.on('activate', function(thePanel){
 		// recalculate current fields in store and fires validateInvalidFieldsAfterLoad event
+		var activeItem = this.getLayout().activeItem;
 		var index = this.getActiveItemIndex();
 		if (index == 1) {
 			activeItem.fireEvent('activate', activeItem); // force refresh
