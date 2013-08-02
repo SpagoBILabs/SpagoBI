@@ -84,7 +84,7 @@ Sbi.browser.FolderViewTemplate = function(config) {
 		'</div>'+
 		'<div class="fav-container"> '+
 		'  	<div class="fav" title="Favourites" > '+
-		'         <span class="icon"><a href="#" onclick="javascript:alert(\'Functionality not supported again!\');"/></span> '+
+		'         <span class="icon"><a href="#" onclick="javascript:alert(\'Functionality not supported yet!\');"></a></span> '+
 		'         <span class="counter">12</span> '+
 		'   </div> '+
 		'</div>' +
