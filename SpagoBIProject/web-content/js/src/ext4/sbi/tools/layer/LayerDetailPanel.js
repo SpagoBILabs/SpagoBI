@@ -106,7 +106,7 @@ Ext.define('Sbi.tools.layer.LayerDetailPanel', {
 			if(descr=="File"){
 				this.propsFile.show();
 				this.propsUrl.hide();
-			}else if(descr=="Wfs"){
+			}else if(descr=="WFS"){
 				this.propsUrl.show();
 				this.propsFile.hide();
 			}
@@ -116,7 +116,7 @@ Ext.define('Sbi.tools.layer.LayerDetailPanel', {
 		var propertiesItems = [];
 		this.buildCommonProperties(propertiesItems);
 		this.buildFileProperties(propertiesItems);
-		this.buildWfsProperties(propertiesItems);
+		this.buildWFSProperties(propertiesItems);
 
 		
 		this.topDetails = new Ext.create("Ext.form.FieldSet",{
@@ -187,7 +187,7 @@ Ext.define('Sbi.tools.layer.LayerDetailPanel', {
 		return props;
 	}
 	
-	, buildWfsProperties: function(props){
+	, buildWFSProperties: function(props){
 		this.propsUrl = Ext.create("Ext.form.field.Text",{
 			name: "propsUrl",
 			fieldLabel: LN('sbi.tools.layer.props.url'),
