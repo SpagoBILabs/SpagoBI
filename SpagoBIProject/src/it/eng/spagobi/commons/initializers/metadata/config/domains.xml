@@ -151,4 +151,6 @@
 <DOMAIN valueCd="Double" valueNm="Double" domainCd="DS_META_VALUE" domainNm="Data Set Metadata Value" valueDs="Data Set Metadata Value"/>
 <DOMAIN valueCd="SBI Model Category 1" valueNm="SBI Model Category 1" domainCd="BM_CATEGORY" domainNm="Category Meta Model" valueDs="Category Meta Model"/>
 <DOMAIN valueCd="SBI Model Category 2" valueNm="SBI Model Category 2" domainCd="BM_CATEGORY" domainNm="Category Meta Model" valueDs="Category Meta Model"/>
+<DOMAIN valueCd="File" valueNm="file" domainCd="LAYER_TYPE" domainNm="Layer Type" valueDs="Layer Type"/>
+<DOMAIN valueCd="Wfl" valueNm="wfl" domainCd="LAYER_TYPE" domainNm="Layer Type" valueDs="Layer Type"/>
 </DOMAINS>

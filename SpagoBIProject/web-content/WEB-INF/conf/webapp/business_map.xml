@@ -19,6 +19,8 @@
 	</MAP_PAGE_MODULES>
 	<MAP_REST_SERVICES>
 		<MAP_REST_SERVICE serviceUrl="/publish" businessProcess="publicFunctionality" />
-		<MAP_REST_SERVICE serviceUrl="/community/user" businessProcess="publicFunctionality" />		
+		<MAP_REST_SERVICE serviceUrl="/community/user" businessProcess="publicFunctionality" />
+		<MAP_REST_SERVICE serviceUrl="/layers" businessProcess="publicFunctionality" />
+		<MAP_REST_SERVICE serviceUrl="/domains/listValueDescriptionByType" businessProcess="publicFunctionality" />					
 	</MAP_REST_SERVICES>
 </BUSINESS_MAP>

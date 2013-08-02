@@ -55,6 +55,7 @@ import it.eng.spagobi.kpi.ou.dao.IOrganizationalUnitDAO;
 import it.eng.spagobi.kpi.threshold.dao.IThresholdDAO;
 import it.eng.spagobi.kpi.threshold.dao.IThresholdValueDAO;
 import it.eng.spagobi.mapcatalogue.dao.ISbiGeoFeaturesDAO;
+import it.eng.spagobi.mapcatalogue.dao.ISbiGeoLayersDAO;
 import it.eng.spagobi.mapcatalogue.dao.ISbiGeoMapFeaturesDAO;
 import it.eng.spagobi.mapcatalogue.dao.ISbiGeoMapsDAO;
 import it.eng.spagobi.profiling.dao.ISbiAttributeDAO;
@@ -75,6 +76,8 @@ import it.eng.spagobi.wapp.dao.IMenuDAO;
 import it.eng.spagobi.wapp.dao.IMenuRolesDAO;
 
 import org.apache.log4j.Logger;
+
+
 
 /**
  * Contains all the data access object for all the BO objects defined into
@@ -785,6 +788,10 @@ public class DAOFactory {
 	
 	public static ISbiCommunityDAO getCommunityDAO() {
 		return (ISbiCommunityDAO)createDAOInstance("CommunityDAO");
+	}
+	
+	public static ISbiGeoLayersDAO getSbiGeoLayerDao() {
+		return (ISbiGeoLayersDAO)createDAOInstance("GeoLayersDAO");
 	}
 
 }

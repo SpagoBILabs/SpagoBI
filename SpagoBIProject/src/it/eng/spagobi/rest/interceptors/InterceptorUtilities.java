@@ -115,10 +115,15 @@ public class InterceptorUtilities {
 	public static HashMap getRequestParameters(HttpRequest request, HttpServletRequest servletRequest){
 		HashMap<String,String> parameters = new HashMap<String, String>();
 		HashMap<String,String> pathParameters = InterceptorUtilities.getPathParameters(request);
-		HashMap<String,String> formParameters = InterceptorUtilities.fromMultivaluedMapToHashMap(request.getDecodedFormParameters());
+		String strContentType = servletRequest.getContentType(); 
+		if(strContentType!=null && strContentType.equals("application/x-www-form-urlencoded")){
+			HashMap<String,String> formParameters = InterceptorUtilities.fromMultivaluedMapToHashMap(request.getDecodedFormParameters());
+			parameters.putAll(formParameters);
+		}
+		
 		Map requestParameters = servletRequest.getParameterMap();
 		parameters.putAll(pathParameters);
-		parameters.putAll(formParameters);
+		
 		InterceptorUtilities.addGenericMap(parameters, requestParameters);
 		return parameters;
 	}

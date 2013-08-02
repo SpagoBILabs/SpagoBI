@@ -582,7 +582,6 @@ Sbi.locale.ln['sbi.datasource.type.jdbc.url']= 'URL';
 Sbi.locale.ln['sbi.datasource.type.jdbc.password']= 'Password';
 Sbi.locale.ln['sbi.datasource.jndiname.info']= 'For the data source configuration you should specify the connection pool configured inside the application server. For example: <ul><li>Tomcat :  java:comp/env/jdbc/foodmart</li> <li> JBoss:     java:comp/env/jdbc/foodmart</li></ul>';
 Sbi.locale.ln['sbi.datasource.saved']= 'Data source correctly saved';
-Sbi.locale.ln['sbi.datasource.tested']= 'Test OK';
 Sbi.locale.ln['sbi.datasource.deleted']= 'Data source correctly deleted';
 Sbi.locale.ln['sbi.datasource.tested']= 'Data source correctly tested';
 Sbi.locale.ln['sbi.datasource.validation.error']= 'There is some error in the data source configuration. Check the marked fields.';
@@ -788,6 +787,9 @@ Sbi.locale.ln["error.mesage.description.data.set.parsing.error"]="Impossible to 
 Sbi.locale.ln["error.mesage.description.measure.join.no.common.dimension"]= "Impossible to execute the join between measures. The associated datasets haven't any dimension in common.";
 Sbi.locale.ln["error.mesage.description.measure.join.no.complete.common.dimension"]= "Impossible to execute the join between measures. The associated datasets haven't any complete dimension in common.";
 
+//LAYER
+Sbi.locale.ln["error.mesage.description.layer.validation.file"]= "The file name is not valid. It can't contain [/,\\]";
+
 //===================================================================
 //Sbi.execution.toolbar.SaveDatasetWindow : AD-HOC REPORTING 
 //===================================================================
@@ -817,3 +819,17 @@ Sbi.locale.ln["sbi.tools.catalogue.measures.join.btn"]="Join";
 Sbi.locale.ln["sbi.tools.catalogue.measures.join.tooltip"]="Execute join between the selected measures";
 Sbi.locale.ln["sbi.tools.catalogue.measures.select.tooltip"]="Open the selection frame";
 Sbi.locale.ln["sbi.tools.catalogue.measures.select.btn"]="Selection";
+
+//===================================================================
+//LAYERS CATALOGUE
+//===================================================================
+Sbi.locale.ln['sbi.layer.saved']= 'Layer correctly saved';
+Sbi.locale.ln['sbi.layer.deleted']= 'Layer correctly deleted';
+Sbi.locale.ln['sbi.tools.layer.validation.error']= 'There is some error in the layer configuration. Check the marked fields.';
+Sbi.locale.ln['sbi.tools.layer.props.name'] = "Layer name";
+Sbi.locale.ln['sbi.tools.layer.props.label'] = "Layer label";
+Sbi.locale.ln['sbi.tools.layer.props.zoom'] = "Layer zoom";
+Sbi.locale.ln['sbi.tools.layer.props.id'] = "Layer id";
+Sbi.locale.ln['sbi.tools.layer.props.central.point']= "Layer central point";
+Sbi.locale.ln['sbi.tools.layer.props.url']= "Url";
+Sbi.locale.ln['sbi.tools.layer.props.file']= "File";
