@@ -122,6 +122,14 @@ Sbi.qbe.QbePanel = function(config) {
 			id : 'WorkSheetPreviewPage',
 			closable: false
 		});
+		
+		/*
+		 * Workaround (Work-around) : the following instruction is needed because in some cases, in IE, events are suspended!!!
+		 * This was causing https://spagobi.eng.it/jira/browse/SPAGOBI-1291 : IE bug: When designing a Worksheet starting from a Qbe document, Worksheet preview is not displayed
+		 */
+		if (Ext.isIE) {
+			this.worksheetPreviewPanel.resumeEvents();
+		}
 
 		this.worksheetPreviewPanel.on('activate', function() {
 			
