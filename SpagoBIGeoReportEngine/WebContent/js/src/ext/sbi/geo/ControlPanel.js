@@ -80,6 +80,7 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 	, logoControlPanel: null
 	, debugControlPanel: null
 	
+	, resultsetWindow: null
 	, measureCatalogueWindow: null
    
     // public methods
@@ -137,6 +138,7 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 	}
 	
 	, initAnalysisControlPanel: function() {
+		
 		if(this.analysisPanelEnabled === true) {
 			
 			this.analysisControlPanel = new Ext.Panel(Ext.apply({
@@ -147,72 +149,45 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 	        }, this.analysisPanelConf));
 			
 			this.geostatistic.on('ready', function(){
-				
+				Sbi.debug("[AnalysisControlPanel]: [ready] event fired");
 				this.setAnalysisConf( this.geostatistic.analysisConf );
-				
-				/*
-				var analysisConf = this.geostatistic.analysisConf || {};
-				
-				var method = analysisConf.method || 'CLASSIFY_BY_QUANTILS';
-				this.geostatistic.form.findField('method').setValue(method);
-				//this.geostatistic.form.findField('method').setValue('CLASSIFY_BY_EQUAL_INTERVALS');
-				//this.geostatistic.form.findField('method').setValue('CLASSIFY_BY_QUANTILS');
-				
-				var classes =  analysisConf.classes || 5;
-				this.geostatistic.form.findField('numClasses').setValue(classes);
-				
-				var fromColor =  analysisConf.fromColor || '#FFFF99';
-				this.geostatistic.form.findField('colorA').setValue(fromColor);
-				var toColor =  analysisConf.toColor || '#FF6600';
-				this.geostatistic.form.findField('colorB').setValue(toColor);
-				
-				if(analysisConf.indicator) analysisConf.indicator = analysisConf.indicator.toUpperCase();
-				var indicator = analysisConf.indicator || this.geostatistic.indicators[0][0];
-				this.geostatistic.form.findField('indicator').setValue(indicator);
-				
-				this.geostatistic.classify();
-				*/
 			}, this);
-			
 			
 			this.controlPanelItemsConfig.push(this.analysisControlPanel);
 		}
 	}
 	
 	, setAnalysisConf: function(analysisConf) {
+		Sbi.debug("[ControlPanel.setAnalysisConf]: IN");
 		
-		analysisConf = analysisConf || {};
+		Sbi.debug("[ControlPanel.setAnalysisConf]: analysisConf = " + Sbi.toSource(analysisConf));
 		
-		var method = analysisConf.method || 'CLASSIFY_BY_QUANTILS';
-		this.geostatistic.form.findField('method').setValue(method);
-		//this.geostatistic.form.findField('method').setValue('CLASSIFY_BY_EQUAL_INTERVALS');
-		//this.geostatistic.form.findField('method').setValue('CLASSIFY_BY_QUANTILS');
+		var formState = Ext.apply({}, analysisConf || {});
 		
-		var classes =  analysisConf.classes || 5;
-		this.geostatistic.form.findField('numClasses').setValue(classes);
 		
-		var fromColor =  analysisConf.fromColor || '#FFFF99';
-		this.geostatistic.form.findField('colorA').setValue(fromColor);
-		var toColor =  analysisConf.toColor || '#FF6600';
-		this.geostatistic.form.findField('colorB').setValue(toColor);
 		
-		if(analysisConf.indicator) analysisConf.indicator = analysisConf.indicator.toUpperCase();
-		var indicator = analysisConf.indicator || this.geostatistic.indicators[0][0];
-		this.geostatistic.form.findField('indicator').setValue(indicator);
+		formState.method = formState.method || 'CLASSIFY_BY_QUANTILS';
+		formState.classes =  formState.classes || 5;
+		
+		formState.fromColor =  formState.fromColor || '#FFFF99';
+		formState.toColor =  formState.toColor || '#FF6600';
+	
+		if(formState.indicator && this.indicatorContainer === 'layer') {
+			formState.indicator = formState.indicator.toUpperCase();
+		}
+		if(!formState.indicator && this.geostatistic.indicators && this.geostatistic.indicators.length > 0) {
+			formState.indicator = this.geostatistic.indicators[0][0];
+		}
+		
+		this.geostatistic.setFormState(formState);
 		
 		this.geostatistic.classify();
+		
+		Sbi.debug("[ControlPanel.setAnalysisConf]: OUT");
 	}
 	
 	, getAnalysisConf: function() {
-		var analysisConf = {};
-		
-		analysisConf.method = this.geostatistic.form.findField('method').getValue();
-		analysisConf.classes = this.geostatistic.form.findField('numClasses').getValue();
-		analysisConf.fromColor = this.geostatistic.form.findField('colorA').getValue();
-		analysisConf.toColor = this.geostatistic.form.findField('colorB').getValue();
-		analysisConf.indicator = this.geostatistic.form.findField('indicator').getValue();
-		
-		return analysisConf;
+		return this.geostatistic.getFormState();
 	}
 	
 	, initMeasureControlPanel: function() {
@@ -267,22 +242,26 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 		if(this.debugPanelEnabled === true) {
 			
 			this.store = this.debugPanelConf.store;
-			this.initWin();
+			this.initResultSetWin();
 			
 			this.debugControlPanel = new Ext.Panel({
 		           title: 'Debug',
 		           collapsible: true,
 		           height: 85,
 		           items: [new Ext.Button({
-				    	text: 'Debug',
+				    	text: 'Reload dataset',
 				        width: 30,
 				        handler: function() {
-				        	this.win.show();
-				        	var p = Ext.apply({}, this.params, {
-				    			//start: this.start
-				    			//, limit: this.limit
-				    		});
-				    		this.store.load({params: p});
+				        	if(this.resultsetWindow != null) {
+				        		this.resultsetWindow.show();
+					        	var p = Ext.apply({}, this.params, {
+					    			//start: this.start
+					    			//, limit: this.limit
+					    		});
+					    		this.store.load({params: p});
+				        	} else {
+				        		alert("No physical dataset associated to the map. This can happen if the indicatr conatiner is of type layer or if the indictaor container is of type store but the store type is equal to visrtual store");
+				        	}
 		           		},
 		           		scope: this
 				    }), new Ext.Button({
@@ -302,98 +281,128 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 	
 	, showMeasureCatalogueWindow: function(){
 		if(this.measureCatalogueWindow==null){
-
+			var measureCatalogue = new Sbi.geo.tools.MeasureCatalogue();
+			measureCatalogue.on('storeLoad', this.onStoreLoad, this);
+			
 			this.measureCatalogueWindow = new Ext.Window({
 	            layout      : 'fit',
 		        width		: 700,
-		        height		: 450,
+		        height		: 350,
 	            closeAction :'hide',
 	            plain       : true,
 	            title		: OpenLayers.Lang.translate('sbi.tools.catalogue.measures.window.title'),
-	            items       : [new Sbi.geo.tools.MeasureCatalogue()]
+	            items       : [measureCatalogue]
 			});
-
 		}
+		
+		
 		this.measureCatalogueWindow.show();
 	}
 	
+	, onStoreLoad: function(measureCatalogue, options, store, meta) {
+		this.geostatistic.thematizer.setData(store, meta);
+		this.geostatistic.storeType = 'virtualStore';
+		var s = "";
+		for(o in options) s += o + ";"
+		Sbi.debug("[ControlPanel.onStoreLoad]: options.url = " + options.url);
+		Sbi.debug("[ControlPanel.onStoreLoad]: options.params = " + Sbi.toSource(options.params));
+		this.geostatistic.storeConfig = {
+			url: options.url
+			, params: options.params
+		};
+	}
+	
     // private methods
-    , initWin: function() {
+	
+	/**
+	 * @method
+	 * 
+	 * Initialize the window that shows the dataset used to thematize the map
+	 */
+    , initResultSetWin: function() {
 		
-    	this.store.on('loadexception', function(store, options, response, e) {
-			Sbi.exception.ExceptionHandler.handleFailure(response, options);
-		});
-    	
-    	this.store.on('metachange', function( store, meta ) {
-    		this.updateMeta( meta );
-    	}, this);
-    	
-    	if(!this.cm){
-			this.cm = new Ext.grid.ColumnModel([
-			   new Ext.grid.RowNumberer(),
-		       {
-		       	  header: "Data",
-		          dataIndex: 'data',
-		          width: 75
-		       }
-		    ]);
+    	if(!this.store) {
+    		return false;
     	}
     	
-    	var pagingBar = null;
-    	pagingBar = new Ext.PagingToolbar({
-    	        pageSize: this.limit,
-    	        store: this.store,
-    	        displayInfo: true,
-    	        displayMsg: '', //'Displaying topics {0} - {1} of {2}',
-    	        emptyMsg: "No topics to display",
-    	        
-    	        items:[
-    	               '->'
-    	               , {
-    	            	   text: LN('sbi.lookup.Annulla')
-    	            	   , listeners: {
-    		           			'click': {
-    		                  		fn: this.onCancel,
-    		                  		scope: this
-    		                	} 
-    	               		}
-    	               } , {
-    	            	   text: LN('sbi.lookup.Confirm')
-    	            	   , listeners: {
-    		           			'click': {
-    		                  		fn: this.onOk,
-    		                  		scope: this
-    		                	} 
-    	               		}
-    	               }
-    	        ]
-    	});
-  
-		
-    	this.grid = new Ext.grid.GridPanel({
-			store: this.store
-   	     	, cm: this.cm
-   	     	, frame: false
-   	     	, border:false  
-   	     	, collapsible:false
-   	     	, loadMask: true
-   	     	, viewConfig: {
-   	        	forceFit:false
-   	        	, enableRowBody:true
-   	        	, showPreview:true
-   	     	}	
-	        //, bbar: pagingBar
-		});
-		
-		this.win = new Ext.Window({
-			title: LN('sbi.lookup.Select') ,   
-            layout      : 'fit',
-            width       : 580,
-            height      : 300,
-            closeAction :'hide',
-            plain       : true,
-            items       : [this.grid]
-		});
+    	if(this.resultsetWindow == null) {
+    		this.store.on('loadexception', function(store, options, response, e) {
+    			Sbi.exception.ExceptionHandler.handleFailure(response, options);
+    		});
+        	
+        	this.store.on('metachange', function( store, meta ) {
+        		this.updateMeta( meta );
+        	}, this);
+        	
+        	if(!this.cm){
+    			this.cm = new Ext.grid.ColumnModel([
+    			   new Ext.grid.RowNumberer(),
+    		       {
+    		       	  header: "Data",
+    		          dataIndex: 'data',
+    		          width: 75
+    		       }
+    		    ]);
+        	}
+        	
+        	var pagingBar = null;
+        	pagingBar = new Ext.PagingToolbar({
+        	        pageSize: this.limit,
+        	        store: this.store,
+        	        displayInfo: true,
+        	        displayMsg: '', //'Displaying topics {0} - {1} of {2}',
+        	        emptyMsg: "No topics to display",
+        	        
+        	        items:[
+        	               '->'
+        	               , {
+        	            	   text: LN('sbi.lookup.Annulla')
+        	            	   , listeners: {
+        		           			'click': {
+        		                  		fn: this.onCancel,
+        		                  		scope: this
+        		                	} 
+        	               		}
+        	               } , {
+        	            	   text: LN('sbi.lookup.Confirm')
+        	            	   , listeners: {
+        		           			'click': {
+        		                  		fn: this.onOk,
+        		                  		scope: this
+        		                	} 
+        	               		}
+        	               }
+        	        ]
+        	});
+      
+    		
+        	this.grid = new Ext.grid.GridPanel({
+    			store: this.store
+       	     	, cm: this.cm
+       	     	, frame: false
+       	     	, border:false  
+       	     	, collapsible:false
+       	     	, loadMask: true
+       	     	, viewConfig: {
+       	        	forceFit:false
+       	        	, enableRowBody:true
+       	        	, showPreview:true
+       	     	}	
+    	        //, bbar: pagingBar
+    		});
+    		
+    		this.resultsetWindow = new Ext.Window({
+    			title: LN('sbi.lookup.Select') ,   
+                layout      : 'fit',
+                width       : 580,
+                height      : 300,
+                closeAction :'hide',
+                plain       : true,
+                items       : [this.grid]
+    		});
+    	}
+    	
+    	return true;
 	}
     
     , updateMeta: function(meta) {

@@ -45,14 +45,13 @@ Sbi.geo.MainPanel = function(config) {
 	this.toolbarConfOrignal = Ext.apply({}, this.toolbarConf);
 	
 	this.initServices();
+	this.initStore();
 	
 	// enable disable debug panel
 	this.controlPanelConf.debugPanelEnabled = true;
 	this.controlPanelConf.debugPanelConf = {
-		store: new Ext.data.JsonStore({
-			url: this.services['GetTargetDataset']
-		})
-	};
+			store: this.store
+		};
 	
 	this.init();
 	
@@ -171,17 +170,31 @@ Ext.extend(Sbi.geo.MainPanel, Ext.Panel, {
 	}
 	
 	, validate: function (successHandler, failureHandler, scope) {
+		Sbi.trace("[MainPanel.validate]: IN");
+		
+		var thematizationControlPanel = this.controlPanel.geostatistic;
+		
 		var template = {};
 		
 		template.mapName = this.mapName;
 		template.analysisType = this.analysisType;
+	
+		template.indicatorContainer = thematizationControlPanel.indicatorContainer;
+		template.storeType = thematizationControlPanel.storeType;
 		
-		template.analysisConf = this.controlPanel.getAnalysisConf();
-		template.feautreInfo = this.feautreInfo;
-		template.indicators = this.indicators;
-		template.businessId = this.businessId;
+		if(template.storeType === 'virtualStore') {
+			template.storeConfig = thematizationControlPanel.storeConfig;
+		} else { // it's a physicalStore
+			template.feautreInfo = this.feautreInfo;
+			template.indicators = this.indicators;
+			template.businessId = this.businessId;	
+		}
+		
+		
 		template.geoId = this.geoId;
-		
+				
+		template.analysisConf = this.controlPanel.getAnalysisConf();
+				
 		template.selectedBaseLayer = this.selectedBaseLayer;
 		for(var i=0; i < this.map.getNumLayers(); i++) {
 			var layer = this.map.getLayerIndex(i);
@@ -189,8 +202,6 @@ Ext.extend(Sbi.geo.MainPanel, Ext.Panel, {
 				template.selectedBaseLayer = layer.name;
 			}
 		}
-		
-		
 		
 		template.targetLayerConf = this.targetLayerConf;
 
@@ -206,7 +217,10 @@ Ext.extend(Sbi.geo.MainPanel, Ext.Panel, {
 		template.lat = this.lat;
 		template.zoomLevel = this.zoomLevel;
 		
-		return Ext.util.JSON.encode(template);
+		var templeteStr = Ext.util.JSON.encode(template);
+		Sbi.trace("[MainPanel.validate]: template = " + templeteStr);
+		Sbi.trace("[MainPanel.validate]: IN");
+		return templeteStr;
 	}
 	
 	// -----------------------------------------------------------------------------------------------------------------
@@ -219,14 +233,14 @@ Ext.extend(Sbi.geo.MainPanel, Ext.Panel, {
       	this.lat = center.lat || this.lat;
       	this.zoomLevel = center.zoomLevel || this.zoomLevel;
         
-        if(this.map.projection == "EPSG:900913"){            
+        if(this.map.projection == 'EPSG:900913'){            
             this.centerPoint = Sbi.geo.utils.GeoReportUtils.lonLatToMercator(new OpenLayers.LonLat(this.lon, this.lat));
             this.map.setCenter(this.centerPoint, this.zoomLevel);
-        } else if(this.map.projection == "EPSG:4326") {
+        } else if(this.map.projection == 'EPSG:4326') {
         	this.centerPoint = new OpenLayers.LonLat(this.lon, this.lat);
         	this.map.setCenter(this.centerPoint, this.zoomLevel);
         } else{
-        	alert("Map Projection not supported yet!");
+        	alert('Map Projection [' + this.map.projection + '] not supported yet');
         }
          
      }
@@ -240,7 +254,9 @@ Ext.extend(Sbi.geo.MainPanel, Ext.Panel, {
 	 * 
 	 * Initialize the following services exploited by this component:
 	 * 
-	 *    - MapOl: ... (by default MapOl)
+	 *    - MapOl: ...
+	 *    - GetTargetDataset: ...
+	 *    - GetTargetLayer: ...
 	 *    
 	 */
 	, initServices: function() {
@@ -276,7 +292,43 @@ Ext.extend(Sbi.geo.MainPanel, Ext.Panel, {
 		});
 	}
 	
-
+	/**
+	 * @method 
+	 * 
+	 * initialize store
+	 */
+	, initStore: function() { 
+		Sbi.trace("[MainPanel.initStore]: IN");
+		if(this.indicatorContainer === "store") {
+			if(this.storeType === "physicalStore") {
+				Sbi.debug("[MainPanel.initStore]: Store will be loaded using service [GetTargetDataset] because " +
+						"property [indicatorContainer] is equal to [" + this.indicatorContainer+ "] " +
+						"and property [storeType] is equal to [physicalStore");
+				
+				this.store = new Ext.data.JsonStore({
+					url: this.services['GetTargetDataset']
+					, autoLoad: false
+				})
+			} else if(this.storeType === "virtualStore") {
+				Sbi.debug("[MainPanel.initStore]: Store will be loaded using service [MeasureJoin] because " +
+						"property [indicatorContainer] is equal to [" + this.indicatorContainer+ "] " +
+						"and property [storeType] is equal to [physicalStore");
+				
+				this.store = null;
+			} else {
+				Sbi.warn("Impossible to load initialize store because the value [" + this.storeType + "] of property [storeType] is not valid");
+				this.store = null;
+			}
+		} else {
+			Sbi.debug("[MainPanel.initStore]: Store will be loaded using service [MapOl] because property [indicatorContainer] is equal to [" + this.indicatorContainer+ "]");
+			this.store = new Ext.data.JsonStore({
+				url: this.services['MapOl']
+				, autoLoad: false
+			})
+		}
+		Sbi.trace("[MainPanel.initStore]: OUT");
+	}
+	
 	/**
 	 * @method 
 	 * 
@@ -287,6 +339,8 @@ Ext.extend(Sbi.geo.MainPanel, Ext.Panel, {
 		this.initMapPanel();
 		this.initControlPanel();
 	}
+	
+	
 	
 	, initMap: function() {  
 		var o = this.baseMapOptions;
@@ -380,24 +434,43 @@ Ext.extend(Sbi.geo.MainPanel, Ext.Panel, {
 	  
 	  }
 	
+	, isStoreVirtual: function() {
+		return this.indicatorContainer === "store" && this.storeType === "virtualStore";
+	}
+	
 	, initAnalysis: function() {
 		var upperIndicators = [];
-		for (var i = 0; i < this.indicators.length; i++){
-			var value = this.indicators[i];
-			value[0] = value[0].toUpperCase();
-			upperIndicators.push(value);
+		if(this.isStoreVirtual() == false)  {
+			for (var i = 0; i < this.indicators.length; i++){
+				var value = this.indicators[i];
+				value[0] = value[0].toUpperCase();
+				upperIndicators.push(value);
+			}
 		}
+		
+		this.indicatorContainer = this.indicatorContainer  || 'layer';
+		
+		var loadLayerUrl = null
+		if(this.indicatorContainer == 'layer') {
+			loadLayerUrl = this.services['MapOl'];
+		} else if(this.indicatorContainer == 'store') {
+			loadLayerUrl = this.services['GetTargetLayer'];
+		}
+			
 		var geostatConf = {
 			map: this.map,
 			layer: null, // this.targetLayer not yet defined here
+			indicatorContainer: this.indicatorContainer || 'layer',
+			storeType: this.storeType || 'physicalStore',
+			storeConfig: this.storeConfig,
 			indicators: upperIndicators, // this.indicators,			
-			url: this.services['MapOl'],
+			url: loadLayerUrl,
 			loadMask : {msg: 'Analysis...', msgCls: 'x-mask-loading'},
 			legendDiv : 'myChoroplethLegendDiv',
 			featureSelection: false,
 			listeners: {}
 		};
-
+		
 		if(this.map.projection == "EPSG:900913") {
 			 geostatConf.format = new OpenLayers.Format.GeoJSON({
 				 externalProjection: new OpenLayers.Projection("EPSG:4326"),
@@ -425,10 +498,9 @@ Ext.extend(Sbi.geo.MainPanel, Ext.Panel, {
 		} else if (this.analysisType === this.CHOROPLETH) {
 			this.initChoroplethAnalysis();
 			geostatConf.layer = this.targetLayer;
-			geostatConf.store = new Ext.data.JsonStore({
-				url: this.services['GetTargetDataset']
-			})
-			geostatConf.store.load({});
+			geostatConf.businessId = this.businessId;
+			geostatConf.geoId = this.geoId;
+			geostatConf.store = this.store;
 			this.geostatistic = new Sbi.geo.stat.ChoroplethControlPanel(geostatConf);
 			this.geostatistic.analysisConf = this.analysisConf;
 		} else {

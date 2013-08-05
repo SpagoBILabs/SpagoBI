@@ -44,7 +44,7 @@ Sbi.geo.tools.MeasureCatalogue = function(config) {
 		plugins: expander
 	});
 
-
+	this.addEvents('storeLoad');
 
 	Sbi.geo.tools.MeasureCatalogue.superclass.constructor.call(this,c);
 };
@@ -188,7 +188,8 @@ Ext.extend(Sbi.geo.tools.MeasureCatalogue, Ext.grid.GridPanel, {
 				measuresIds.push(selected[i].data.id);
 			}
 			if(measuresIds.length<2){
-				alert("daasdas");
+				alert("Only one measure selected. Nothing to join"); 
+				return;
 			}
 
 			Ext.Ajax.request({
@@ -201,6 +202,14 @@ Ext.extend(Sbi.geo.tools.MeasureCatalogue, Ext.grid.GridPanel, {
 								Sbi.exception.ExceptionHandler.handleFailure(response);
 							}else{
 								alert("Join ok.. look at the responce");
+								//Sbi.debug(response.responseText);
+								var r = Ext.util.JSON.decode(response.responseText);
+						
+								var store = new Ext.data.JsonStore({
+								    fields: r.metaData.fields
+								});
+								store.loadData(r.rows);
+								this.fireEvent("storeLoad", this, options, store, r.metaData);
 							}
 						}
 					} else {
@@ -208,8 +217,7 @@ Ext.extend(Sbi.geo.tools.MeasureCatalogue, Ext.grid.GridPanel, {
 					}
 				},
 				scope: this,
-				failure: Sbi.exception.ExceptionHandler.handleFailure,  
-				scope: this
+				failure: Sbi.exception.ExceptionHandler.handleFailure
 			});
 		}
 	},

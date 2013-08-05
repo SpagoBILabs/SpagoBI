@@ -121,60 +121,64 @@ Ext.extend(Sbi.geo.stat.ChoroplethThematizer, Sbi.geo.stat.Thematizer, {
            
     	Sbi.trace("[ChoroplethThematizer.thematize] : IN");
     	
-    	if (options) {
-    		if(options.resetClassification) {
-    			this.setClassification();
-    		} else {
-    			this.updateOptions(options);
-    		}
-        }
-    	  
-    	var bins = this.classification.getBins(); 
-    	var rules = new Array(bins.length);
-         for (var i = 0; i < bins.length; i++) {
-         	var filter = new OpenLayers.Filter.Function({
-            	evaluate: function(attributes) {
-//            		Sbi.trace("[ChoroplethThematizer.thematize.filter] : IN");
-//            		for(a in attributes) {
-//            			Sbi.trace("[ChoroplethThematizer.thematize.filter] : Attribute [" + a +"] is equal to [" + attributes[a] + "]");
-//            		}
-            		//Sbi.trace("[ChoroplethThematizer.thematize] : filter [" + this.binIndex + "] will evaluate feature [" + attributes[this.layerId] + "] against [" + this.dataPoints.length +"] data points");
-            		
-        	        for(var j = 0; j < this.dataPoints.length; j++) {
-        	        	//Sbi.trace("[ChoroplethThematizer.thematize] : Feature [" + attributes[this.layerId] + "] compared againtst data point [" + this.dataPoints[j].coordinates[0] + "]");
-        	        	if(this.dataPoints[j].coordinatesAreEqualTo([attributes[this.layerId]])) return true;
-        	        }
-        	        return false;
-        	    }
-        	});
-        	filter.layerId = this.layerId;
-        	filter.binIndex = i;
-        	filter.dataPoints = bins[i].dataPoints;
-        
-            var rule = new OpenLayers.Rule({
-                symbolizer: {fillColor: this.colorInterpolation[i].toHexString()},
-                filter: filter
-            });
-            rules[i] = rule;
-        }
-    	
-//        var boundsArray = this.classification.getBoundsArray();
-//        var rules = new Array(boundsArray.length - 1);
-//        for (var i = 0; i < boundsArray.length -1; i++) {
-//            var rule = new OpenLayers.Rule({
-//                symbolizer: {fillColor: this.colorInterpolation[i].toHexString()},
-//                filter: new OpenLayers.Filter.Comparison({
-//                    type: OpenLayers.Filter.Comparison.BETWEEN,
-//                    property: this.indicator,
-//                    lowerBoundary: boundsArray[i],
-//                    upperBoundary: boundsArray[i + 1]
-//                })
-//            });
-//            rules[i] = rule;
-//        }
-        this.extendStyle(rules);
-        
-        Sbi.geo.stat.ChoroplethThematizer.superclass.thematize.call(this, arguments);
+    //	try {
+	    	if (options) {
+	    		if(options.resetClassification) {
+	    			this.setClassification();
+	    		} else {
+	    			this.updateOptions(options);
+	    		}
+	        }
+	    	  
+	    	var bins = this.classification.getBins(); 
+	    	var rules = new Array(bins.length);
+	         for (var i = 0; i < bins.length; i++) {
+	         	var filter = new OpenLayers.Filter.Function({
+	            	evaluate: function(attributes) {
+	//            		Sbi.trace("[ChoroplethThematizer.thematize.filter] : IN");
+	//            		for(a in attributes) {
+	//            			Sbi.trace("[ChoroplethThematizer.thematize.filter] : Attribute [" + a +"] is equal to [" + attributes[a] + "]");
+	//            		}
+	            		//Sbi.trace("[ChoroplethThematizer.thematize] : filter [" + this.binIndex + "] will evaluate feature [" + attributes[this.layerId] + "] against [" + this.dataPoints.length +"] data points");
+	            		
+	        	        for(var j = 0; j < this.dataPoints.length; j++) {
+	        	        	//Sbi.trace("[ChoroplethThematizer.thematize] : Feature [" + attributes[this.layerId] + "] compared againtst data point [" + this.dataPoints[j].coordinates[0] + "]");
+	        	        	if(this.dataPoints[j].coordinatesAreEqualTo([attributes[this.layerId]])) return true;
+	        	        }
+	        	        return false;
+	        	    }
+	        	});
+	        	filter.layerId = this.layerId;
+	        	filter.binIndex = i;
+	        	filter.dataPoints = bins[i].dataPoints;
+	        
+	            var rule = new OpenLayers.Rule({
+	                symbolizer: {fillColor: this.colorInterpolation[i].toHexString()},
+	                filter: filter
+	            });
+	            rules[i] = rule;
+	        }
+	    	
+	//        var boundsArray = this.classification.getBoundsArray();
+	//        var rules = new Array(boundsArray.length - 1);
+	//        for (var i = 0; i < boundsArray.length -1; i++) {
+	//            var rule = new OpenLayers.Rule({
+	//                symbolizer: {fillColor: this.colorInterpolation[i].toHexString()},
+	//                filter: new OpenLayers.Filter.Comparison({
+	//                    type: OpenLayers.Filter.Comparison.BETWEEN,
+	//                    property: this.indicator,
+	//                    lowerBoundary: boundsArray[i],
+	//                    upperBoundary: boundsArray[i + 1]
+	//                })
+	//            });
+	//            rules[i] = rule;
+	//        }
+	        this.extendStyle(rules);
+	        
+	        Sbi.geo.stat.ChoroplethThematizer.superclass.thematize.call(this, arguments);
+//    	} catch (e) {
+//    		Sbi.exception.ExceptionHandler.showErrorMessage(e, "Thematization error");
+//    	}
         
         Sbi.trace("[ChoroplethThematizer.thematize] : OUT");
     }

@@ -30,6 +30,8 @@ Sbi.geo.stat.Thematizer = function(map, config) {
 	this.adjustConfigObject(config);
 
 	this.initialize(map, config);
+	
+	this.addEvents('indicatorsChanged');
 
 	Sbi.geo.stat.Thematizer.superclass.constructor.call(this, config);
 };
@@ -81,7 +83,7 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
 	 * @property {String} layerId
 	 * Defines the name of the property of the feature that contains its the unique identifier
 	 */
-    , layerId: 'NAME_3'
+    , layerId: null //'NAME_3'
     
     /**
      * @property {Ext.data.Store} store
@@ -95,12 +97,16 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
 	 * Defines the name of the field of the record that contains its the unique identifier. Only apply if 
      * #indicatorContainer is equal to 'store'
 	 */
-    , storeId: 'COMUNE_ITA'
+    , storeId: null //'COMUNE_ITA'
     
     /**
-	 * @property {String} indicator
-	 * Defines the name of the property of the feature that contains its the unique identifier
-	 */
+     * @property {Boolean} storeReload
+     * Define if the store must be reloaded at the end of thematizer initialization or not. 
+     * Defalut to true. Only apply if #indicatorContainer is equal to 'store'
+     */
+    , storeReload: true
+    
+    
 
     /**
      * @property {OpenLayers.Format} format
@@ -195,6 +201,46 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
 	 */
 	, validateConfigObject: function(config) {
 		
+		Sbi.trace("[Thematizer.validateConfigObject] : IN");
+		
+		if(!config) {
+			throw "Impossible to build thematizer. Config object is undefined";
+		}
+		
+		if(!config.layerId) {
+			throw "Impossible to build thematizer. Config property [layerId] is undefined";
+		}
+		
+		if(config.indicatorContainer == 'store') {
+			
+			if(!config.storeType) {
+				throw "Impossible to build thematizer. Configuration property [indicatorContainer] is equal to [store] but property [storeType] is undefined ";
+			}
+			
+			if(config.storeType === "physicalStore") {
+				if(!config.store) {
+					throw "Impossible to build thematizer. Configuration property [indicatorContainer] is equal to [store] " +
+							"and configuration property [storeType] is equal to [physicalStore] but property [store] is undefined ";
+				}
+				
+				if(!config.storeId) {
+					throw "Impossible to build thematizer. Configuration property [indicatorContainer] is equal to [store] " +
+					"and configuration property [storeType] is equal to [physicalStore] but property [storeId] is undefined ";
+				}
+			} else if(config.storeType === "virtualStore"){
+				if(!config.storeConfig) {
+					config.storeConfig = {};
+					Sbi.warn("Configuration property [indicatorContainer] is equal to [store] " +
+					"and configuration property [storeType] is equal to [visrtualStore] but property [storeConfig] is undefined. " +
+					"The thematizer will be initialized but the thematization cannot be performed until the virtual store's config wont be set properly");
+				}
+			} else {
+				throw "Value [" + config.storeType + "] is not valid for property [storeType]";
+			}
+			
+		}
+		
+		Sbi.trace("[Thematizer.validateConfigObject] : OUT");
 	}
 
 	/**
@@ -209,122 +255,30 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
 	 * 
 	 */
 	, adjustConfigObject: function(config) {
-		
+		if(config.storeId) {
+			config.storeId = config.storeId.toUpperCase();
+		}
 	}
 	
+	
 	// -----------------------------------------------------------------------------------------------------------------
-    // init methods
+    // abstract methods
 	// -----------------------------------------------------------------------------------------------------------------
 	
 	/**
-	 * @method 
-	 * 
-	 * Called by the constructor to initialize this object
-	 * 
-	 * @param {OpenLayers.Map} OpenLayers map object
-	 * @param {Object} Hashtable of extra options
-	 */
-
-     , initialize: function(map, options) {
-        this.map = map;
-        this.setOptions(options);
-        if (!this.layer) {
-        	Sbi.debug("[Thematizer.initialize]: target layer not specified. A new one will be created");
-        	this.initLayer();
-        } else {
-        	Sbi.debug("[Thematizer.initialize]: target layer already defined");
-        }
-        
-        if (this.featureSelection) {
-        	Sbi.debug("[Thematizer.initialize]: feature selection enabled. A feature selection control will be created");
-        	this.initFeatureSelectionControl();
-        } else {
-        	Sbi.debug("[Thematizer.initialize]: feature selection disabled");
-        }
-        
-        // get features from web service if a url is specified
-        if (this.url) {
-        	Sbi.debug("[Thematizer.initialize]: Url attribute has been valorized to [" + Sbi.toSource(url) + "]. Features will be loded from it");
-            OpenLayers.loadURL(
-                this.url, '', this, this.onSuccess, this.onFailure);
-        }
-        this.legendDiv = Ext.get(options.legendDiv);
-    }
-
-     /**
-      * @method 
-      * create layer that will contains thematized features
-      */
-     , initLayer: function() {
-    	 var styleMap = new OpenLayers.StyleMap({
-             'default': new OpenLayers.Style(
-                 OpenLayers.Util.applyDefaults(
-                     this.defaultSymbolizer,
-                     OpenLayers.Feature.Vector.style['default']
-                 )
-             ),
-             'select': new OpenLayers.Style(this.selectSymbolizer)
-         });
-         var layer = new OpenLayers.Layer.Vector('geostat', {
-             'displayInLayerSwitcher': false,
-             'visibility': false,
-             'styleMap': styleMap
-         });
-         map.addLayer(layer);
-         this.layer = layer;
-     }
-
-     /**
-      * @method 
-      * create select feature control so that popups can
-      * be displayed on feature selection
-      */
-     , initFeatureSelectionControl: function() {
-    	 this.layer.events.on({
-             'featureselected': this.showDetails,
-             'featureunselected': this.hideDetails,
-             scope: this
-         });
-         var selectFeature = new OpenLayers.Control.SelectFeature(
-             this.layer,
-             {'hover': true}
-         );
-         map.addControl(selectFeature);
-         selectFeature.activate();
-     }
-     
-     
-    /**
-     * @method 
-     *
-     * @param {Object} request
+     * @method
+     * Creates the classification that will be used for map thematization. 
+     * It must be properly implemented by subclasses
      */
-    , onSuccess: function(request) {
-        var doc = request.responseXML;
-        if (!doc || !doc.documentElement) {
-            doc = request.responseText;
-        }
-        var format = this.format || new OpenLayers.Format.GeoJSON()
-        this.layer.addFeatures(format.read(doc));
-        this.requestSuccess(request);
+    , setClassification: function() {
+    	// implement this in subclasses
     }
-
-    /**
-     * @method 
-     *
-     * @param {Object} request
-     */
-    , onFailure: function(request) {
-        this.requestFailure(request);
-    }
-
-	
+    
 	// -----------------------------------------------------------------------------------------------------------------
     // public methods
 	// -----------------------------------------------------------------------------------------------------------------
 	
-    
-    /**
+	 /**
      * @method
      * To be overriden by subclasses.
      *
@@ -339,10 +293,44 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
         Sbi.trace("[Thematizer.thematize] : OUT");
     }
     
+    /**
+     * TODO: move this method in a proper utilities file
+     */
+    , convertToNumber: function(value) {
+    	if(typeof value == "Number") return value;
+    	return parseFloat(value);
+    }
+    
 	// -----------------------------------------------------------------------------------------------------------------
     // accessor methods
 	// -----------------------------------------------------------------------------------------------------------------
 	
+    
+    /**
+     * @method
+     * Method used to update the properties. It call #setOptions the check if some properties value is changed. If so
+     * regenerate the classification on which the thematization is built on calling #setClassification method. It should
+     * be overwritten by subclasses if not all the properties contained in options object can trigger a classification recalculation
+     * but only a subset of them.
+     * 
+     * @param {Object} options object
+     */
+    , updateOptions: function(newOptions) {
+        var oldOptions = Ext.apply({}, this.options);
+        this.setOptions(newOptions);
+        if (newOptions) {
+        	var isSomethingChanged = false;
+            for(o in newOptions) {
+            	if(newOptions[o] !== oldOptions[o]) {
+            		isSomethingChanged = true;
+            		break;
+            	}
+            }
+            if(isSomethingChanged) {
+            	this.setClassification();
+            }            
+        }
+    } 
     
     /**
      * @method 
@@ -352,9 +340,8 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
      * method does not replace the old options just update them. To substitute
      * the old object with the one passed in use instead the #resetOption method. Finally
      * this method just update the value of the options without forcing also the update
-     * of thematization. In order to update options and then also update the thematization 
-     * if needed use #updateOptions method .
-     * 
+     * of classification on which the thematization is built on. 
+     * In order to update options and then also update the classification use #updateOptions method.
      */
     , setOptions: function(newOptions) {
         if (newOptions) {
@@ -379,16 +366,80 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
     	return this.options || {};
     }
     
-    , convertToNumber: function(value) {
-    	if(typeof value == "Number") return value;
-    	return parseFloat(value);
-    }
     
+    
+    /**
+     * @method 
+     *
+     * @param {Ext.data.Store} store the store that contains data used to generate the new thematization
+     * @param {Object} meta the store's metadata as returned from measure catalogue service
+     */
+    , setData: function(store, meta) {
+    	Sbi.trace("[Thematizer.setData] : IN");
+    	
+    	// field metadata contained in metadata object are generated by method buildJoinedFieldMetdata of class InMemoryMaterializer
+    	// and enriched by method join of class MeasureCatalogueCRUD
+    	Sbi.trace("[Thematizer.setData] : store's metadata is equal to: " + Sbi.toSource(meta));
+    	
+    	if(!store) {
+    		Sbi.warn("[Thematizer.setData] : Store input parameter is not defined");
+    		return null;
+    	}
+    	
+    	this.indicatorContainer = 'store';
+    	this.store = store;
+    	Sbi.debug("[Thematizer.setData] : The new store contains [" + store.getCount() + "] records");
+    	
+    	if(!meta) {
+    		Sbi.warn("[Thematizer.setData] : Metadata input parameter is not specified so all other thematization property will be keep unchanged");
+    		return null;
+    	}
+    	
+    	
+    	if(meta.geoId) {
+    		this.storeId = meta.geoId;
+    		Sbi.debug("[Thematizer.setData] : The new store id is equal to [" + this.storeId + "]");
+    	} else {
+    		Sbi.debug("[Thematizer.setData] : Property [storeId] is not specified in store's metadata so it will be used as [storeId] the old one that is equal to [" + this.storeId + "]");
+    	}
+    	
+    	if(meta.geoIdHierarchyLevel) {
+    		Sbi.warn("[Thematizer.setData] : For the moment we are not able to dinamicaly load the [layerId] associated to hierarchy level [" + meta.geoIdHierarchyLevel + "] so it will remain equal to [" + this.layerId + "]");
+    	} else {
+    		Sbi.debug("[Thematizer.setData] : Property [geoIdHierarchyLevel] is not specified in store's metadata it will be used as [layerId] the old one that is equal to [" + this.layerId + "]");
+    	}
+    	
+    	var indicators = [];
+    	var selectedIndictaor = null;
+    	for(var i = 0; i < meta.fields.length; i++) {
+    		var field = meta.fields[i];
+    		Sbi.debug("[Thematizer.setData] : Scanning field [" + Sbi.toSource(field) + "]");
+    		Sbi.debug("[Thematizer.setData] : Property role is equal to [" + field.role + "]");
+    		if(field.role == 'MEASURE')  {
+    			Sbi.debug("[Thematizer.setData] : new indicator found. It is equal to [" + field.header + "]");
+    			selectedIndictaor = field.header;
+    			indicators.push([field.header, field.header]);
+    		}
+    	}
+    	if(selectedIndictaor != null) {
+    		Sbi.debug("[Thematizer.setData] : The indicator will be set equal to [" + selectedIndictaor + "]");
+    		this.indicator = selectedIndictaor;
+    	} else {
+    		Sbi.debug("[Thematizer.setData] : Indicator not specified in store's metadata so the ld one will be used [" + this.indicator + "]");
+    	}
+    	
+    	this.thematize({resetClassification: true});
+    	Sbi.trace("[Thematizer.setData] : OUT");
+    	
+    	this.fireEvent('indicatorsChanged', this, indicators, this.indicator);
+    }
+   
     
     /**
      * @method 
      *  
      * @param {String} indicator the name of indicator whose values we want to extract
+     * 
      * @return {Sbi.geo.stat.Distribution} the extracted distribution
      */
     , getDistribution: function(indicator) {
@@ -399,8 +450,14 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
     	
    	 	var values;
    	 	if(this.indicatorContainer === 'layer') {
+   	 		if(!this.layerId)  {
+	 			throw "Impossible to get distribution from layer. Configuration property [layerId] not defined";
+	 		}
    	 		values = this.getDistributionFromLayer(indicator, this.layerId);
    	 	} else if(this.indicatorContainer === 'store') {
+   	 		if(!this.storeId)  {
+   	 			throw "Impossible to get distribution from store. Configuration property [storeId] not defined";
+   	 		}
    	 		values = this.getDistributionFromStore(indicator, this.storeId);
    	 	} else {
    	 		Sbi.error("[Thematizer.getDistribution] : Impossible to extract indicators from a container of type [" + indicatorContainer + "]");
@@ -546,6 +603,200 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
         for (var i = map.popups.length - 1; i >= 0; --i) {
             map.removePopup(map.popups[i]);
         }
+    }
+	
+	// -----------------------------------------------------------------------------------------------------------------
+    // init methods
+	// -----------------------------------------------------------------------------------------------------------------
+	
+	/**
+	 * @method 
+	 * 
+	 * Called by the constructor to initialize this object
+	 * 
+	 * @param {OpenLayers.Map} OpenLayers map object
+	 * @param {Object} Hashtable of extra options
+	 */
+
+     , initialize: function(map, options) {
+        this.map = map;
+        this.setOptions(options);
+        if (!this.layer) {
+        	Sbi.debug("[Thematizer.initialize]: target layer not specified. A new one will be created");
+        	this.initLayer();
+        } else {
+        	Sbi.debug("[Thematizer.initialize]: target layer already defined");
+        }
+        
+        if (this.featureSelection) {
+        	Sbi.debug("[Thematizer.initialize]: feature selection enabled. A feature selection control will be created");
+        	this.initFeatureSelectionControl();
+        } else {
+        	Sbi.debug("[Thematizer.initialize]: feature selection disabled");
+        }
+        
+        // get features from web service if a url is specified
+        if (this.url) {
+        	Sbi.debug("[Thematizer.initialize]: Url attribute has been valorized to [" + Sbi.toSource(url) + "]. Features will be loaded from it");
+            OpenLayers.loadURL(
+                this.url, '', this, this.onSuccess, this.onFailure);
+        } else {
+        	Sbi.debug("[Thematizer.initialize]: Url attribute has not been valorized");
+        }
+        
+        this.legendDiv = Ext.get(options.legendDiv);
+        
+        if(this.indicatorContainer == 'store') {
+        	
+        	Sbi.debug("[Thematizer.initialize]: Property [indicatorContainer] is equal to [store]");
+        	
+        	if(this.storeType === 'physicalStore') {
+        		this.store.on('load', this.onPhysicalStoreLoaded, this);
+            	if(this.storeReload == true) {
+            		this.loadPhysicalStore();
+            	}
+        	} else if(this.storeType === 'virtualStore') {
+        		if(this.storeConfig.params) {
+	        		this.loadVirtualStore();
+	        	}
+        	} else {
+        		Sbi.debug("[Thematizer.initialize]: Property [storeType] value [" + this.storeType + "] is not valid");
+        	}
+        } else if(this.indicatorContainer == 'layer') {
+        	Sbi.debug("[Thematizer.initialize]: Property [indicatorContainer] is equal to [layer]");
+        } else {
+        	Sbi.warn("[Thematizer.initialize]: Property [indicatorContainer] is equal to [" + this.indicatorContainer + "]");
+        }
+     }
+     
+     , loadPhysicalStore: function() {
+    	 Sbi.debug("[Thematizer.loadPhysicalStore]: IN");
+    	 this.store.load({});
+    	 Sbi.debug("[Thematizer.loadPhysicalStore]: OUT");
+     }
+     
+     , loadVirtualStore: function() {
+    	 
+    	 Sbi.debug("[Thematizer.loadPhysicalStore]: OUT");
+    	 
+    	 if(!this.storeConfig.params) {
+    		 Sbi.warn("Impossible to load virtual store because property [storeConfig.params] is undefined");
+    	 }
+    	 
+    	 if(!this.storeConfig.url) {
+    		 Sbi.warn("Impossible to load virtual store because property [storeConfig.url] is undefined");
+    	 }
+    	 
+    	 Ext.Ajax.request({
+			url: this.storeConfig.url
+			, params: this.storeConfig.params
+			, success : this.onVirtualStoreLoaded
+			, failure: Sbi.exception.ExceptionHandler.handleFailure
+			, scope: this
+    	 });
+    	 
+    	 Sbi.debug("[Thematizer.loadPhysicalStore]: OUT");
+     }
+     
+     /**
+      * @method 
+      *
+      * @param {Object} request
+      */
+     , onPhysicalStoreLoaded: function(store, records, options) {
+        alert('store reloaded');
+     }
+     
+     , onVirtualStoreLoaded: function(response, options) {
+    	 if(response !== undefined && response.responseText !== undefined && response.statusText=="OK") {
+    		 if(response.responseText!=null && response.responseText!=undefined) {
+				if(response.responseText.indexOf("error.mesage.description")>=0){
+					Sbi.exception.ExceptionHandler.handleFailure(response);
+				} else {
+					alert("Join Join");
+					//Sbi.debug(response.responseText);
+					var r = Ext.util.JSON.decode(response.responseText);
+			
+					var store = new Ext.data.JsonStore({
+					    fields: r.metaData.fields
+					});
+					store.loadData(r.rows);
+					this.setData(store, r.metaData);
+				}
+			}
+		} else {
+			Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
+		}
+	}
+
+     /**
+      * @method 
+      * create layer that will contains thematized features
+      */
+     , initLayer: function() {
+    	 var styleMap = new OpenLayers.StyleMap({
+             'default': new OpenLayers.Style(
+                 OpenLayers.Util.applyDefaults(
+                     this.defaultSymbolizer,
+                     OpenLayers.Feature.Vector.style['default']
+                 )
+             ),
+             'select': new OpenLayers.Style(this.selectSymbolizer)
+         });
+         var layer = new OpenLayers.Layer.Vector('geostat', {
+             'displayInLayerSwitcher': false,
+             'visibility': false,
+             'styleMap': styleMap
+         });
+         map.addLayer(layer);
+         this.layer = layer;
+     }
+
+     /**
+      * @method 
+      * create select feature control so that popups can
+      * be displayed on feature selection
+      */
+     , initFeatureSelectionControl: function() {
+    	 this.layer.events.on({
+             'featureselected': this.showDetails,
+             'featureunselected': this.hideDetails,
+             scope: this
+         });
+         var selectFeature = new OpenLayers.Control.SelectFeature(
+             this.layer,
+             {'hover': true}
+         );
+         map.addControl(selectFeature);
+         selectFeature.activate();
+     }
+     
+     // -----------------------------------------------------------------------------------------------------------------
+     // private methods
+ 	 // -----------------------------------------------------------------------------------------------------------------
+ 	
+    /**
+     * @method 
+     *
+     * @param {Object} request
+     */
+    , onSuccess: function(request) {
+        var doc = request.responseXML;
+        if (!doc || !doc.documentElement) {
+            doc = request.responseText;
+        }
+        var format = this.format || new OpenLayers.Format.GeoJSON()
+        this.layer.addFeatures(format.read(doc));
+        this.requestSuccess(request);
+    }
+
+    /**
+     * @method 
+     *
+     * @param {Object} request
+     */
+    , onFailure: function(request) {
+        this.requestFailure(request);
     }
 });
 
