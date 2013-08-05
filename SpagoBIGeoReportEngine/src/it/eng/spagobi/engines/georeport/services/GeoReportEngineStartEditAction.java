@@ -51,18 +51,29 @@ public class GeoReportEngineStartEditAction extends AbstractEngineStartServlet {
 	public void doService( EngineStartServletIOManager servletIOManager ) throws SpagoBIEngineException {
 		
 		GeoReportEngineInstance engineInstance;
-		IDataSet dataSet;
 		RequestDispatcher requestDispatcher;
 		
          
         logger.debug("IN");
         
         try {
-        	dataSet = servletIOManager.getDataSet();
         	String datasetLabel = (String)servletIOManager.getParameter("dataset_label");
-        	dataSet = servletIOManager.getDataSetServiceProxy().getDataSetByLabel(datasetLabel);
         	
-        	JSONObject template = buildTemplate(dataSet);
+        	JSONObject template = null;
+        	IDataSet dataSet = null;
+        	
+        	if(datasetLabel != null) {
+        		logger.debug("Creating map on dataset [" + datasetLabel + "]");
+        		dataSet = servletIOManager.getDataSetServiceProxy().getDataSetByLabel(datasetLabel);
+        		if(dataSet == null) {
+        			throw new RuntimeException("Impossible to load dataset [" + datasetLabel + "]");
+        		}
+        		template = buildTemplateOverDataset(dataSet);
+        	} else {
+        		logger.debug("Creating map on measure catalogue");
+        		template = buildTemplateOverMeasureCatalogue();
+        	}
+     
         	
         	// create a new engine instance
         	engineInstance = GeoReportEngine.createInstance(
@@ -90,8 +101,50 @@ public class GeoReportEngineStartEditAction extends AbstractEngineStartServlet {
         }        
 
 	}
+	private JSONObject buildTemplateOverMeasureCatalogue() {
+		JSONObject template;
+		
+		logger.debug("IN");
+		
+		template = new JSONObject();
+		try {
+			
+			template.put("indicatorContainer", "store");
+			template.put("storeType", "virtualStore");
+			
+			template.put("mapName", DEFAULT_MAP_NAME);
+			template.put("analysisType", DEFAULT_ANALYSIS_TYPE);
+			template.put("analysisConf", buildAnalysisConf(null));
+			//template.put("feautreInfo", buildFeatureInfo(dataSet));
+			//template.put("indicators", buildIndicators(dataSet));
+				
+			//template.put("businessId", businessId);
+			template.put("geoId", getGeoId("Comune ita"));
+			
+			template.put("selectedBaseLayer", "GoogleMap");
+			template.put("targetLayerConf", buildTargetLayerConf("Comune ita"));
+			
+			template.put("controlPanelConf", buildControlPanelConf(null));
+			template.put("toolbarConf", buildToolbarConf(null));
+			
+			//template.put("role", "spagobi/admin");
+			Properties levelProps = GeoReportEngineConfig.getInstance().getLevelByName("Comune ita");
+			String centralPoint = levelProps.getProperty("layer_cetral_point");
+			template.put("lon", centralPoint.split(" ")[0]);
+			template.put("lat", centralPoint.split(" ")[1]);
+			template.put("zoomLevel", levelProps.getProperty("layer_zoom") );
+		} catch (Throwable t) {
+			throw new RuntimeException(
+					"An unexpected error occured while executing building template",
+					t);
+		} finally {
+			logger.debug("OUT");
+		}
+		
+		return template;
+	}
 	
-	private JSONObject buildTemplate(IDataSet dataSet) {
+	private JSONObject buildTemplateOverDataset(IDataSet dataSet) {
 		JSONObject template;
 		
 		logger.debug("IN");
@@ -345,19 +398,23 @@ public class GeoReportEngineStartEditAction extends AbstractEngineStartServlet {
 		
 		analysisConf = new JSONObject();
 		try {
-			// select the first indicator...
-			String firstIndicatorName = null;
-			for(int i = 0; i < dataSet.getMetadata().getFieldCount(); i++) {
-				IFieldMetaData fieldMeta = dataSet.getMetadata().getFieldMeta(i);
-				if(fieldMeta.getFieldType() ==  FieldType.MEASURE) {
-					firstIndicatorName = fieldMeta.getName();
-					break;
-				}
-			}
-			
 			
 			analysisConf.put("type", "choropleth");
-			analysisConf.put("indicator", firstIndicatorName);
+			
+			// select the first indicator...
+			String firstIndicatorName = null;
+			if(dataSet != null) {
+				for(int i = 0; i < dataSet.getMetadata().getFieldCount(); i++) {
+					IFieldMetaData fieldMeta = dataSet.getMetadata().getFieldMeta(i);
+					if(fieldMeta.getFieldType() ==  FieldType.MEASURE) {
+						firstIndicatorName = fieldMeta.getName();
+						break;
+					}
+				}
+				analysisConf.put("indicator", firstIndicatorName);
+			}
+						
+			
 			analysisConf.put("method", "CLASSIFY_BY_EQUAL_INTERVALS"); // "CLASSIFY_BY_QUANTILS"
 			analysisConf.put("classes", "7");
 			analysisConf.put("fromColor", "#FFFF00");
