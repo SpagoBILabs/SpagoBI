@@ -56,9 +56,9 @@ public class GetTargetDatasetAction extends AbstractBaseServlet {
 			
 			for(int i = 0; i < dataStore.getMetaData().getFieldCount(); i++) {
 				IFieldMetaData fieldMeta = dataStore.getMetaData().getFieldMeta(i);
-				fieldMeta.setName(fieldMeta.getName().toUpperCase());
+				fieldMeta.setName(fieldMeta.getName());
 				if(fieldMeta.getAlias() != null) {
-					fieldMeta.setAlias(fieldMeta.getAlias().toUpperCase());
+					fieldMeta.setAlias(fieldMeta.getAlias());
 				}
 			}
 			
