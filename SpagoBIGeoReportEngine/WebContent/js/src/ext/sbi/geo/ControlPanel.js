@@ -164,8 +164,6 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 		
 		var formState = Ext.apply({}, analysisConf || {});
 		
-		
-		
 		formState.method = formState.method || 'CLASSIFY_BY_QUANTILS';
 		formState.classes =  formState.classes || 5;
 		
@@ -179,9 +177,7 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 			formState.indicator = this.geostatistic.indicators[0][0];
 		}
 		
-		this.geostatistic.setFormState(formState);
-		
-		this.geostatistic.classify();
+		this.geostatistic.setFormState(formState, true);
 		
 		Sbi.debug("[ControlPanel.setAnalysisConf]: OUT");
 	}

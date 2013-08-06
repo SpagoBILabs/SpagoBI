@@ -439,12 +439,10 @@ Ext.extend(Sbi.geo.MainPanel, Ext.Panel, {
 	}
 	
 	, initAnalysis: function() {
-		var upperIndicators = [];
-		if(this.isStoreVirtual() == false)  {
+		
+		if(this.indicatorContainer === "layer")  {
 			for (var i = 0; i < this.indicators.length; i++){
-				var value = this.indicators[i];
-				value[0] = value[0].toUpperCase();
-				upperIndicators.push(value);
+				this.indicators[i][0] = this.indicators[i][0].toUpperCase();
 			}
 		}
 		
@@ -463,7 +461,7 @@ Ext.extend(Sbi.geo.MainPanel, Ext.Panel, {
 			indicatorContainer: this.indicatorContainer || 'layer',
 			storeType: this.storeType || 'physicalStore',
 			storeConfig: this.storeConfig,
-			indicators: upperIndicators, // this.indicators,			
+			indicators: this.indicators,			
 			url: loadLayerUrl,
 			loadMask : {msg: 'Analysis...', msgCls: 'x-mask-loading'},
 			legendDiv : 'myChoroplethLegendDiv',

@@ -276,20 +276,20 @@ Ext.extend(Sbi.geo.stat.Classifier, Ext.util.Observable, {
             binDataPoints[i] = [];
         }
 
-        for (var i = 0; i < nbBins - 1; i) {
+        for (var i = 0; i < nbBins; i) {
             if (sortedDataPoints[0].getValue() < bounds[i + 1]) {
-            	Sbi.debug("[Classifier.classifyByEqIntervals] : Added value [" + sortedDataPoints[0].getValue() + "] of type [" + (typeof sortedDataPoints[0].getValue()) + "] to bin [" + (i+1) + "] becuase it is less than bin ub [" + bounds[i + 1]+ "]");
+            	Sbi.debug("[Classifier.classifyByEqIntervals] : Added value [" + sortedDataPoints[0].getValue() + "] of type [" + (typeof sortedDataPoints[0].getValue()) + "] to bin [" + i + "] becuase it is less than bin ub [" + bounds[i + 1]+ "]");
                 binCount[i] = binCount[i] + 1;
                 binDataPoints[i].push(sortedDataPoints[0]);
                 sortedDataPoints.shift();
-                Sbi.trace("[Classifier.classifyWithBounds] : bin [" + (i+1) + "] now contains [" + binDataPoints[i].length+ "] data points");
+                Sbi.trace("[Classifier.classifyWithBounds] : bin [" + i + "] now contains [" + binDataPoints[i].length+ "] data points");
             } else {
                 i++;
-                Sbi.trace("[Classifier.classifyWithBounds] : Increment to bin [" + (i+1)+ "] because value [" + sortedDataPoints[0].getValue() + "] is greater then lb [" + bounds[i + 1] + "] of type [" + (typeof bounds[i + 1]) + "]");
+                Sbi.trace("[Classifier.classifyWithBounds] : Increment to bin [" + i + "] because value [" + sortedDataPoints[0].getValue() + "] is greater then lb [" + bounds[i + 1] + "] of type [" + (typeof bounds[i + 1]) + "]");
             }
         }
 
-        binCount[nbBins - 1] = this.nbVal - mapfish.Util.sum(binCount);
+        //binCount[nbBins - 1] = this.nbVal - mapfish.Util.sum(binCount);
 
         for (var i = 0; i < nbBins; i++) {
         	
@@ -300,7 +300,7 @@ Ext.extend(Sbi.geo.stat.Classifier, Ext.util.Observable, {
         		, upperBound: bounds[i + 1]
         		, isLast: i == (nbBins - 1)
         	});
-        	Sbi.trace("[Classifier.classifyWithBounds] : Bin [" + (i+1) + "] is equal to [" + bounds[i]+ " - " + bounds[i + 1] + "] and contains [" + binDataPoints[i].length + "] data points");
+        	Sbi.trace("[Classifier.classifyWithBounds] : Bin [" + i + "] is equal to [" + bounds[i]+ " - " + bounds[i + 1] + "] and contains [" + binDataPoints[i].length + "] data points");
           
             //var labelGenerator = this.labelGenerator || this.defaultLabelGenerator;
             bins[i].label = this.labelGenerator(bins[i], i, nbBins);
