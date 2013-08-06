@@ -120,74 +120,75 @@ Ext.extend(Sbi.geo.stat.ChoroplethThematizer, Sbi.geo.stat.Thematizer, {
     , thematize: function(options) {
            
     	Sbi.trace("[ChoroplethThematizer.thematize] : IN");
-    	
-    //	try {
-	    	if (options) {
-	    		if(options.resetClassification) {
-	    			this.setClassification();
-	    		} else {
-	    			this.updateOptions(options);
-	    		}
-	        }
-	    	  
-	    	var bins = this.classification.getBins(); 
-	    	var rules = new Array(bins.length);
-	         for (var i = 0; i < bins.length; i++) {
-	         	var filter = new OpenLayers.Filter.Function({
-	            	evaluate: function(attributes) {
-	//            		Sbi.trace("[ChoroplethThematizer.thematize.filter] : IN");
-	//            		for(a in attributes) {
-	//            			Sbi.trace("[ChoroplethThematizer.thematize.filter] : Attribute [" + a +"] is equal to [" + attributes[a] + "]");
-	//            		}
-	            		//Sbi.trace("[ChoroplethThematizer.thematize] : filter [" + this.binIndex + "] will evaluate feature [" + attributes[this.layerId] + "] against [" + this.dataPoints.length +"] data points");
-	            		
-	        	        for(var j = 0; j < this.dataPoints.length; j++) {
-	        	        	//Sbi.trace("[ChoroplethThematizer.thematize] : Feature [" + attributes[this.layerId] + "] compared againtst data point [" + this.dataPoints[j].coordinates[0] + "]");
-	        	        	if(this.dataPoints[j].coordinatesAreEqualTo([attributes[this.layerId]])) return true;
-	        	        }
-	        	        return false;
-	        	    }
-	        	});
-	        	filter.layerId = this.layerId;
-	        	filter.binIndex = i;
-	        	filter.dataPoints = bins[i].dataPoints;
-	        
-	            var rule = new OpenLayers.Rule({
-	                symbolizer: {fillColor: this.colorInterpolation[i].toHexString()},
-	                filter: filter
-	            });
-	            rules[i] = rule;
-	        }
+    	   
+    	if (options) {
+    		if(options.resetClassification) {
+    			this.setClassification();
+    		} else {
+    			this.updateOptions(options);
+    		}
+        }
+    	  
+    	var bins = this.classification.getBins(); 
+    	var filters = new Array(bins.length);
+    	var rules = new Array(bins.length);
+        for (var i = 0; i < bins.length; i++) {
+        	
+        	filters[i] = this.createClassFilter(bins[i], i);
+            var rule = new OpenLayers.Rule({
+                symbolizer: {fillColor: this.colorInterpolation[i].toHexString()},
+                filter: filters[i]
+            });
+            rules[i] = rule;
+        }
 	    	
-	//        var boundsArray = this.classification.getBoundsArray();
-	//        var rules = new Array(boundsArray.length - 1);
-	//        for (var i = 0; i < boundsArray.length -1; i++) {
-	//            var rule = new OpenLayers.Rule({
-	//                symbolizer: {fillColor: this.colorInterpolation[i].toHexString()},
-	//                filter: new OpenLayers.Filter.Comparison({
-	//                    type: OpenLayers.Filter.Comparison.BETWEEN,
-	//                    property: this.indicator,
-	//                    lowerBoundary: boundsArray[i],
-	//                    upperBoundary: boundsArray[i + 1]
-	//                })
-	//            });
-	//            rules[i] = rule;
-	//        }
-	        this.extendStyle(rules);
-	        
-	        Sbi.geo.stat.ChoroplethThematizer.superclass.thematize.call(this, arguments);
-//    	} catch (e) {
-//    		Sbi.exception.ExceptionHandler.showErrorMessage(e, "Thematization error");
-//    	}
+	
+        this.extendStyle(rules);
+        
+        Sbi.geo.stat.ChoroplethThematizer.superclass.thematize.call(this, arguments);
+        
+        for (var i = 0; i < rules.length; i++) {
+        	Sbi.trace("Features thematized succesfully for class [" + i + "] are [" + filters[i].filteredFeatures + "] on [" + filters[i].dataPoints.length +"] expected");
+        }
         
         Sbi.trace("[ChoroplethThematizer.thematize] : OUT");
     }
     
     /**
      * @method
+     * Create a feature filter that returns only features belonging to the specified class
+     * 
+     * @param {Sbi.geo.stat.Bin} bin the class's bin
+     * @param {Integer} the class index
+     */
+    , createClassFilter: function(bin, binIndex) {
+    	var filter = new OpenLayers.Filter.Function({
+        	evaluate: function(attributes) { 
+        		this.invoked = true;
+    	        for(var j = 0; j < this.dataPoints.length; j++) {
+    	        	if(this.dataPoints[j].coordinatesAreEqualTo([attributes[this.layerId]])) {
+    	        		Sbi.trace("Feature [" + attributes[this.layerId]+ "] belong to class [" + binIndex + "]");
+    	        		this.filteredFeatures++;
+    	        		return true;
+    	        	}
+    	        }
+    	        return false;
+    	    }
+    	});
+    	filter.filteredFeatures = 0;
+    	filter.layerId = this.layerId;
+    	filter.binIndex = binIndex;
+    	filter.dataPoints = bin.dataPoints;
+    	filter.invoked = false;
+    	
+    	return filter;
+    }
+    
+    /**
+     * @method
      * Creates the classification that will be used for map thematization
      */
-    , setClassification: function() {
+    , classify: function() {
     	Sbi.trace("[ChoroplethThematizer.setClassification] : IN");
         
     	var distribution = this.getDistribution(this.indicator);
@@ -208,6 +209,14 @@ Ext.extend(Sbi.geo.stat.ChoroplethThematizer, Sbi.geo.stat.Thematizer, {
         Sbi.trace("[ChoroplethThematizer.setClassification] : OUT");
     }
     
+    /**
+     * @method
+     * @deperecated use #classify instead
+     */
+    , setClassification: function() {
+    	this.classify();
+    }
+    
     
     
     /**
@@ -221,6 +230,7 @@ Ext.extend(Sbi.geo.stat.ChoroplethThematizer, Sbi.geo.stat.Thematizer, {
      * @param {Object} options object
      */
     , updateOptions: function(newOptions) {
+    	Sbi.trace("[ChoroplethThematizer.updateOptions] : IN");
         var oldOptions = Ext.apply({}, this.options);
         this.setOptions(newOptions);
         if (newOptions) {
@@ -234,6 +244,7 @@ Ext.extend(Sbi.geo.stat.ChoroplethThematizer, Sbi.geo.stat.Thematizer, {
                 this.createColorInterpolation();
             }
         }
+        Sbi.trace("[ChoroplethThematizer.updateOptions] : OUT");
     }  
 
     /**

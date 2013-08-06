@@ -106,8 +106,6 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
      */
     , storeReload: true
     
-    
-
     /**
      * @property {OpenLayers.Format} format
      * The OpenLayers format used to get features from
@@ -150,8 +148,6 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
 	 */
     , nameAttribute: null
 
-    
- 
     /**
 	 * @property {Object} defaultSymbolizer
 	 * This symbolizer is used in the constructor to define
@@ -240,6 +236,8 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
 			
 		}
 		
+		Sbi.trace("[Thematizer.validateConfigObject] : Config object passed to constructor has been succesfully validated");
+		
 		Sbi.trace("[Thematizer.validateConfigObject] : OUT");
 	}
 
@@ -255,9 +253,9 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
 	 * 
 	 */
 	, adjustConfigObject: function(config) {
-		if(config.storeId) {
-			config.storeId = config.storeId.toUpperCase();
-		}
+//		if(indicatorContainer === "layer" && config.storeId) {
+//			config.storeId = config.storeId.toUpperCase();
+//		}
 	}
 	
 	
@@ -619,6 +617,7 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
 	 */
 
      , initialize: function(map, options) {
+    	Sbi.trace("[Thematizer.initialize]: IN");
         this.map = map;
         this.setOptions(options);
         if (!this.layer) {
@@ -667,6 +666,8 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
         } else {
         	Sbi.warn("[Thematizer.initialize]: Property [indicatorContainer] is equal to [" + this.indicatorContainer + "]");
         }
+        
+        Sbi.trace("[Thematizer.initialize]: OUT");
      }
      
      , loadPhysicalStore: function() {
@@ -704,16 +705,17 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
       * @param {Object} request
       */
      , onPhysicalStoreLoaded: function(store, records, options) {
-        alert('store reloaded');
+    	Sbi.trace("[Thematizer.onPhysicalStoreLoaded]: IN");
+    	Sbi.trace("[Thematizer.onPhysicalStoreLoaded]: OUT");
      }
      
      , onVirtualStoreLoaded: function(response, options) {
+    	 Sbi.trace("[Thematizer.onVirtualStoreLoaded]: IN");
     	 if(response !== undefined && response.responseText !== undefined && response.statusText=="OK") {
     		 if(response.responseText!=null && response.responseText!=undefined) {
 				if(response.responseText.indexOf("error.mesage.description")>=0){
 					Sbi.exception.ExceptionHandler.handleFailure(response);
 				} else {
-					alert("Join Join");
 					//Sbi.debug(response.responseText);
 					var r = Ext.util.JSON.decode(response.responseText);
 			
@@ -727,6 +729,8 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
 		} else {
 			Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
 		}
+    	 
+    	Sbi.trace("[Thematizer.onVirtualStoreLoaded]: OUT");
 	}
 
      /**

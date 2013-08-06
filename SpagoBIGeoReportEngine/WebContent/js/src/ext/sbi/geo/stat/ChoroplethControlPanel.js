@@ -127,10 +127,10 @@ Sbi.geo.stat.ChoroplethControlPanel = Ext.extend(Ext.FormPanel, {
     , thematizer: null
 
     /**
-     * Property: classificationApplied
-     * {Boolean} true if the classify was applied
+     * Property: thematizationApplied
+     * {Boolean} true if the thematization was applied
      */
-    , classificationApplied: false
+    , thematizationApplied: false
 
     /**
      * Property: ready
@@ -170,108 +170,204 @@ Sbi.geo.stat.ChoroplethControlPanel = Ext.extend(Ext.FormPanel, {
     // public methods
 	// -----------------------------------------------------------------------------------------------------------------
     /**
-     * Perform classification
+     * Perform thematization
      * 
      * @param {Boolean} exception If true show a message box to user if either
      * the widget isn't ready, or no indicator is specified, or no
      * method is specified.
      */
-    , classify: function(exception) {
+    , thematize: function(exception) {
+    	Sbi.trace("[ChoropletControlPanel.thematize] : IN");
+    	
+    	var doThematization = true;
+    	
         if (!this.ready) {
-            if (exception) {
+            if (exception === true) {
                 Ext.MessageBox.alert('Error', 'Component init not complete');
             }
-            return;
+            doThematization = false;
         }
-        var options = {};
-        this.indicator = this.form.findField('indicator').getValue();
-        this.indicatorText = this.form.findField('indicator').getRawValue();
-        options.indicator = this.indicator;
+        var options = this.getThemathizerOptions();
+       
         if (!options.indicator) {
-            if (exception) {
+            if (exception === true) {
                 Ext.MessageBox.alert('Error', 'You must choose an indicator');
             }
-            return;
+            doThematization = false;
         }
-        options.method = this.form.findField('method').getValue();
         if (!options.method) {
-            if (exception) {
+            if (exception === true) {
                 Ext.MessageBox.alert('Error', 'You must choose a method');
             }
-            return;
+            doThematization = false;
+        }
+
+        if(doThematization) {
+        	this.thematizer.thematize(options);
+            this.thematizationApplied = true;
+        } else {
+        	this.thematizer.setOptions(options);
         }
         
-        options.method = Sbi.geo.stat.Classifier[options.method];
-        options.numClasses = this.form.findField('numClasses').getValue();
-        options.colors = this.getColors();
-        this.thematizer.updateOptions(options);
-        this.thematizer.thematize();
-        this.classificationApplied = true;
+        
+        Sbi.trace("[ChoropletControlPanel.thematize] : OUT");
     }
 	
     // -----------------------------------------------------------------------------------------------------------------
     // accessor methods
 	// -----------------------------------------------------------------------------------------------------------------
     
-	, setFormState: function(formState, riseEvents) {
-		Sbi.trace("[ChoropletControlPanel.setFormState] : IN");
-		
+	, getThemathizerOptions: function() {
+		Sbi.trace("[ChoropletControlPanel.getThemathizerOptions] : IN");
+		var formState = this.getFormState();
 		var options = {};
 		
-		if(formState.method) {
-			var m = Sbi.geo.stat.Classifier[formState.method];
-			if(m) {
-				this.form.findField('method').setValue(formState.method);
-				options.method = m;
-			} else {
-				Sbi.warn("[ChoropletControlPanel.setFormState] : Classification method [" + formState.method + "] is not valid");
-			}	
-		}
+		options.method = Sbi.geo.stat.Classifier[formState.method];
+		options.numClasses = formState.classes;
+		options.colors = new Array(2);
+		options.colors[0] = new mapfish.ColorRgb();
+		options.colors[0].setFromHex(formState.fromColor);
+		options.colors[1] = new mapfish.ColorRgb();
+		options.colors[1].setFromHex(formState.toColor);
+		options.indicator = formState.indicator;
 		
-		if(formState.classes) {
-			this.form.findField('numClasses').setValue(formState.classes);
-			options.numClasses = formState.classes;
-		} 
+		Sbi.trace("[ChoropletControlPanel.getThemathizerOptions] : OUT");
 		
-		if(formState.fromColor || formState.toColor) {
-			options.colors = this.getColors();
-		}
+		return options;
+	}
+
+	, getFormState: function() {
+		var formState = {};
 		
-		if(formState.fromColor) {
-			this.form.findField('colorA').setValue(formState.fromColor);
-			options.colors[0] = new mapfish.ColorRgb();
-			options.colors[0].setFromHex(formState.fromColor);
-		}
+		formState.method = this.getMethod();
+		formState.classes = this.getNumberOfClasses();
+		formState.fromColor = this.getToColor();
+		formState.toColor = this.getFromColor();
+		formState.indicator = this.getIndicator();
 		
-		if(formState.toColor) {
-			this.form.findField('colorB').setValue(formState.toColor);
-			options.colors[1] = new mapfish.ColorRgb();
-			options.colors[1].setFromHex(formState.toColor);
-		}
+		return formState;
+	}
+	
+	/**
+	 * @method
+	 * 
+	 * @return {String} the selected classification method
+	 */
+	, getMethod: function() {
+		return this.form.findField('method').getValue();
+	}
+	
+	/**
+	 * @method
+	 * 
+	 * @return {String} the selected number of classes 
+	 */
+	, getNumberOfClasses: function() {
+		return this.form.findField('numClasses').getValue();
+	}
+	
+	/**
+	 * @method
+	 * 
+	 * @return {String} the selected lowerBoundColor
+	 */
+	, getToColor: function() {
+		return this.form.findField('colorA').getValue();
+	}
+	
+	/**
+	 * @method
+	 * 
+	 * @return {String} the selected upper bound color
+	 */
+	, getFromColor: function() {
+		return this.form.findField('colorB').getValue();
+	}
+	
+	/**
+	 * @method
+	 * 
+	 * @return {String} the selected indicator
+	 */
+	, getIndicator: function() {
+		return this.form.findField('indicator').getValue();
+	}
+	
+	, setFormState: function(formState, riseEvent) {
+		Sbi.trace("[ChoropletControlPanel.setFormState] : IN");
+	
+		this.setMethod(formState.method);
+		this.setNumberOfClasses(formState.classes);
+		this.setFromColor(formState.fromColor);
+		this.setToColor(formState.toColor);
+		this.setIndicator(formState.indicator);
 		
-		if(formState.indicator) {
-			this.form.findField('indicator').setValue(formState.indicator);
-			options.indicator = formState.indicator;
-		}
-		
-		this.thematizer.setOptions(options);
+		if(riseEvent === true) { this.onConfigurationChange(); }
 		
 		Sbi.trace("[ChoropletControlPanel.setFormState] : OUT");
 	}
 	
-	, getFormState: function() {
-		var formState = {};
-		
-		formState.method = this.form.findField('method').getValue();
-		formState.classes = this.form.findField('numClasses').getValue();
-		formState.fromColor = this.form.findField('colorA').getValue();
-		formState.toColor = this.form.findField('colorB').getValue();
-		formState.indicator = this.form.findField('indicator').getValue();
-		
-		return formState;
+	, setMethod: function(method, riseEvent) {
+		if(method) {
+			var m = Sbi.geo.stat.Classifier[method];
+			if(m) {
+				this.form.findField('method').setValue(method);	
+			} else {
+				Sbi.warn("[ChoropletControlPanel.setMethod] : Classification method [" + formState.method + "] is not valid");
+			}	
+			if(riseEvent === true) {this.onConfigurationChange();}
+		}
 	}
-
-
+	
+	, setNumberOfClasses: function(classes, riseEvent) {
+		if(classes) {
+			this.form.findField('numClasses').setValue(classes);
+			if(riseEvent === true) {this.onConfigurationChange();}
+		} 
+	}
+	
+	, setFromColor: function(color, riseEvent) {
+		if(color) {
+			this.form.findField('colorA').setValue(color);
+			if(riseEvent === true) {this.onConfigurationChange();}
+		} 
+	}
+	
+	, setToColor: function(color, riseEvent) {
+		if(color) {
+			this.form.findField('colorB').setValue(color);
+			if(riseEvent === true) {this.onConfigurationChange();}
+		} 
+	}
+	
+	, setIndicator: function(indicatorName, riseEvents) {
+		Sbi.trace("[ChoropletControlPanel.setIndicator] : IN");
+		Sbi.trace("[ChoropletControlPanel.setIndicator] : Looking for indicator [" + indicatorName + "] ...");
+		
+		if(indicatorName) {
+			var indicator = null;
+			for(var i = 0; i < this.indicators.length; i++) {
+				Sbi.trace("[ChoropletControlPanel.setIndicator] : Comparing indicator [" + indicatorName + "] with indicator [" + this.indicators[i][0] +"]");
+				if (indicatorName == this.indicators[i][0]) {
+					indicator = this.indicators[i];
+					break;
+				}
+	        }
+			if(indicator != null) {
+				Sbi.trace("[ChoropletControlPanel.setIndicator] : Indicator [" + indicatorName + "] succesfully found");
+				this.indicatorSelectionField.setValue(indicator[0]);
+				this.indicator = indicator[0][0];
+				this.indicatorText = indicator[0][1];
+				
+				if(riseEvents === true) { this.onConfigurationChange(); }
+			} else {
+				Sbi.warn("[ChoropletControlPanel.setIndicator] : Impossible to find indicator [" + indicatorName + "]");
+			}
+		}
+		
+		Sbi.trace("[ChoropletControlPanel.setIndicator] : OUT");
+	}
+    
 	/**
 	 * @method 
 	 * Set a new list of indicators usable to generate the thematization
@@ -303,49 +399,7 @@ Sbi.geo.stat.ChoroplethControlPanel = Ext.extend(Ext.FormPanel, {
         Sbi.trace("[ChoropletControlPanel.setIndicators] : OUT");      
     }
 	
-	, setIndicator: function(indicatorName, riseEvents) {
-		Sbi.trace("[ChoropletControlPanel.setIndicator] : IN");
-		Sbi.trace("[ChoropletControlPanel.setIndicator] : Looking for indicator [" + indicatorName + "] ...");
-		var indicator = null;
-		for(var i = 0; i < this.indicators.length; i++) {
-			Sbi.trace("[ChoropletControlPanel.setIndicator] : Comparing indicator [" + indicatorName + "] with indicator [" + this.indicators[i][0] +"]");
-			if (indicatorName == this.indicators[i][0]) {
-				indicator = this.indicators[i];
-				break;
-			}
-        }
-		if(indicator != null) {
-			Sbi.trace("[ChoropletControlPanel.setIndicator] : Indicator [" + indicatorName + "] succesfully found");
-			if(riseEvents === true) {
-				// TODO: this is a workaround. We call the callback but the select event is never
-				// fired. Try to overrides this behaviour.
-				 this.onConfigurationChange();
-				//this.indicatorSelectionField.showOnPending(indicator[0]);
-			}
-			this.indicatorSelectionField.setValue(indicator[0]);
-			this.indicator = indicator[0][0];
-			this.indicatorText = indicator[0][1];
-		} else {
-			Sbi.warn("[ChoropletControlPanel.setIndicator] : Impossible to find indicator [" + indicatorName + "]");
-		}
-		
-		Sbi.trace("[ChoropletControlPanel.setIndicator] : OUT");
-	}
-    
-    /**
-     * Method: getColors
-     *    Retrieves the colors from form elements
-     *
-     * Returns:
-     * {Array(<mapfish.Color>)} an array of two colors (start, end)
-     */
-    , getColors: function() {
-        var colorA = new mapfish.ColorRgb();
-        colorA.setFromHex(this.form.findField('colorA').getValue());
-        var colorB = new mapfish.ColorRgb();
-        colorB.setFromHex(this.form.findField('colorB').getValue());
-        return [colorA, colorB];
-    }
+	
     
     //-----------------------------------------------------------------------------------------------------------------
 	// init methods
@@ -425,8 +479,8 @@ Sbi.geo.stat.ChoroplethControlPanel = Ext.extend(Ext.FormPanel, {
             listeners: {
                 'select': {
                     fn: function() {
-                    	alert("indicator change");
-                    	this.classify(false);
+                    	//alert("indicator change");
+                    	this.thematize(false);
                     },
                     scope: this
                 }
@@ -460,8 +514,8 @@ Sbi.geo.stat.ChoroplethControlPanel = Ext.extend(Ext.FormPanel, {
             listeners: {
                 'select': {
                 	fn: function() {
-                    	alert("method change");
-                    	this.classify(false);
+                    	//alert("method change");
+                    	this.thematize(false);
                     },
                     scope: this
                 }
@@ -493,8 +547,8 @@ Sbi.geo.stat.ChoroplethControlPanel = Ext.extend(Ext.FormPanel, {
             listeners: {
                 'select': {
                 	fn: function() {
-                    	alert("numClasses change");
-                    	this.classify(false);
+                    	//alert("numClasses change");
+                    	this.thematize(false);
                     },
                     scope: this
                 }
@@ -519,7 +573,7 @@ Sbi.geo.stat.ChoroplethControlPanel = Ext.extend(Ext.FormPanel, {
                 'select': {
                     fn: function() {
                     	alert("colorA change");
-                    	this.classify(false);
+                    	this.thematize(false);
                     },
                     scope: this
                 }
@@ -543,8 +597,8 @@ Sbi.geo.stat.ChoroplethControlPanel = Ext.extend(Ext.FormPanel, {
             listeners: {
                 'select': {
                     fn: function() {
-                    	alert("colorB change");
-                    	this.classify(false);
+                    	//alert("colorB change");
+                    	this.thematize(false);
                     },
                     scope: this
                 }
@@ -559,8 +613,8 @@ Sbi.geo.stat.ChoroplethControlPanel = Ext.extend(Ext.FormPanel, {
 	// -----------------------------------------------------------------------------------------------------------------
     
     , onConfigurationChange: function() {
-    	alert("Classification change");
-    	this.classify(false);
+    	//alert("Classification change");
+    	this.thematize(false);
     }
     
     /**
