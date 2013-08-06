@@ -151,6 +151,10 @@ public class GeoReportEngineStartEditAction extends AbstractEngineStartServlet {
 		
 		template = new JSONObject();
 		try {
+			
+			template.put("indicatorContainer", "store");
+			template.put("storeType", "physicalStore");
+			
 			template.put("mapName", DEFAULT_MAP_NAME);
 			template.put("analysisType", DEFAULT_ANALYSIS_TYPE);
 			template.put("analysisConf", buildAnalysisConf(dataSet));
@@ -373,7 +377,7 @@ public class GeoReportEngineStartEditAction extends AbstractEngineStartServlet {
 				info = new JSONArray();
 			
 				info.put( field.getAlias() != null? field.getAlias(): field.getName() );
-				info.put(field.getName().toUpperCase());
+				info.put(field.getName());
 				featureInfo.put(info);
 			}
 		} catch (Throwable t) {
