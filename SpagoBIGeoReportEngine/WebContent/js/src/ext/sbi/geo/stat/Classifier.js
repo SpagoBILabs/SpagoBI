@@ -288,9 +288,16 @@ Ext.extend(Sbi.geo.stat.Classifier, Ext.util.Observable, {
                 Sbi.trace("[Classifier.classifyWithBounds] : Increment to bin [" + i + "] because value [" + sortedDataPoints[0].getValue() + "] is greater then lb [" + bounds[i + 1] + "] of type [" + (typeof bounds[i + 1]) + "]");
             }
         }
-
+        
         //binCount[nbBins - 1] = this.nbVal - mapfish.Util.sum(binCount);
-
+        Sbi.trace("[Classifier.classifyWithBounds]: datapoints not classified [" + sortedDataPoints.length + "]");
+        for(var i = 0; i < sortedDataPoints.length; i++) {
+        	Sbi.trace("[Classifier.classifyWithBounds]: datapoint [" + sortedDataPoints[i].coordinates[0] + "] whose value is equal to [" + sortedDataPoints[0].getValue() + "] has been not classified. It will be added to the last bin");
+        	binCount[nbBins - 1] = binCount[nbBins - 1] + 1;
+        	binDataPoints[nbBins - 1].push(sortedDataPoints[i]);
+        }
+        
+        var classifiedDataPoint = 0;
         for (var i = 0; i < nbBins; i++) {
         	
         	bins[i] = new Sbi.geo.stat.Bin({
@@ -300,11 +307,13 @@ Ext.extend(Sbi.geo.stat.Classifier, Ext.util.Observable, {
         		, upperBound: bounds[i + 1]
         		, isLast: i == (nbBins - 1)
         	});
+        	classifiedDataPoint += binDataPoints[i].length;
         	Sbi.trace("[Classifier.classifyWithBounds] : Bin [" + i + "] is equal to [" + bounds[i]+ " - " + bounds[i + 1] + "] and contains [" + binDataPoints[i].length + "] data points");
           
             //var labelGenerator = this.labelGenerator || this.defaultLabelGenerator;
             bins[i].label = this.labelGenerator(bins[i], i, nbBins);
         }
+        Sbi.trace("[Classifier.classifyWithBounds] : data points classified [" + classifiedDataPoint + "] over a total of [" + this.distribution.getSize() +"]");
         
         Sbi.trace("[Classifier.classifyWithBounds] : OUT");
         
