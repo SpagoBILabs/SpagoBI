@@ -10,7 +10,7 @@ Ext.ns("Sbi.geo");
 Sbi.geo.ControlPanel = function(config) {
 	
 	var defaultSettings = {
-		title       : LN('Sbi.geo.controlpanel.title'),
+		title       : LN('sbi.geo.controlpanel.title'),
 		region      : 'east',
 		split       : true,
 		width       : 315,
@@ -104,7 +104,7 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 	, initEarthControlPanel: function() {
 		if(this.earthPanelEnabled === true) {
 			this.controlPanelItemsConfig.push({
-				title: LN('Sbi.geo.earthpanel.title'),
+				title: LN('sbi.geo.earthpanel.title'),
 				collapsible: false,
 				split: true,
 				height: 300,
@@ -120,7 +120,7 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 		if(this.layerPanelEnabled === true) {			
 			
 			this.layersControlPanel = new mapfish.widgets.LayerTree(Ext.apply({
-	        	title: LN('Sbi.geo.layerpanel.title'),
+	        	title: LN('sbi.geo.layerpanel.title'),
 	            collapsible: true,
 	            collapsed: false,
 	            autoHeight: true,
@@ -142,7 +142,7 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 		if(this.analysisPanelEnabled === true) {
 			
 			this.analysisControlPanel = new Ext.Panel(Ext.apply({
-	        	title: LN('Sbi.geo.analysispanel.title'),
+	        	title: LN('sbi.geo.analysispanel.title'),
 	            collapsible: true,
 	            bodyStyle:'padding:6px 6px 6px 6px; background-color:#FFFFFF',
 	            items: [this.geostatistic]
@@ -208,7 +208,7 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 		if(this.legendPanelEnabled === true) {
 			
 			this.legendControlPanel = new Ext.Panel(Ext.apply({
-		           title: LN('Sbi.geo.legendpanel.title'),
+		           title: LN('sbi.geo.legendpanel.title'),
 		           collapsible: true,
 		           bodyStyle:'padding:6px 6px 6px 6px; background-color:#FFFFFF',
 		           height: 180,

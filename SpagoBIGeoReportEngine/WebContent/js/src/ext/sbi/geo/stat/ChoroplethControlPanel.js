@@ -447,7 +447,8 @@ Sbi.geo.stat.ChoroplethControlPanel = Ext.extend(Ext.FormPanel, {
      */
     , initComponent : function() {
         this.items = [
-            this.initIndicatorSelectionField()
+            this.initAddIndicatorsButton()          
+            , this.initIndicatorSelectionField()
             , this.initMethodSelectionField()
             , this.initClassesNumberSelectionField()
             , this.initFromColorSelectionField()
@@ -457,20 +458,79 @@ Sbi.geo.stat.ChoroplethControlPanel = Ext.extend(Ext.FormPanel, {
         Sbi.geo.stat.ChoroplethControlPanel.superclass.initComponent.apply(this);
     }
     
+    
+    /**
+     * @private
+     * Initialize the indicators' selection field
+     */
+    , initAddIndicatorsButton: function() {
+    	this.addIndicatorButton = new Ext.Button({
+	    	text: LN('sbi.geo.analysispanel.addindicators'),
+	        width: 30,
+	        handler: function() {
+	        	this.showMeasureCatalogueWindow();
+       		},
+       		scope: this
+	    });
+    	
+    	var panel = new Ext.Panel({
+    		border: false
+    		, frame: false
+    		, bodyStyle: {padding: "2px 10px 10px 80px"}
+    		, buttonAllign: 'center' 
+    		, items: [this.addIndicatorButton]
+    	});
+    	
+    	return panel;
+    }
+    
+    , measureCatalogueWindow : null
+    , showMeasureCatalogueWindow: function(){
+		if(this.measureCatalogueWindow==null){
+			var measureCatalogue = new Sbi.geo.tools.MeasureCatalogue();
+			measureCatalogue.on('storeLoad', this.onStoreLoad, this);
+			
+			this.measureCatalogueWindow = new Ext.Window({
+	            layout      : 'fit',
+		        width		: 700,
+		        height		: 350,
+	            closeAction :'hide',
+	            plain       : true,
+	            title		: OpenLayers.Lang.translate('sbi.tools.catalogue.measures.window.title'),
+	            items       : [measureCatalogue]
+			});
+		}
+		
+		this.measureCatalogueWindow.show();
+	}
+    
+    , onStoreLoad: function(measureCatalogue, options, store, meta) {
+		this.thematizer.setData(store, meta);
+		this.storeType = 'virtualStore';
+		var s = "";
+		for(o in options) s += o + ";"
+		Sbi.debug("[ControlPanel.onStoreLoad]: options.url = " + options.url);
+		Sbi.debug("[ControlPanel.onStoreLoad]: options.params = " + Sbi.toSource(options.params));
+		this.storeConfig = {
+			url: options.url
+			, params: options.params
+		};
+	}
+    
     /**
      * @private
      * Initialize the indicators' selection field
      */
     , initIndicatorSelectionField: function() {
     	this.indicatorSelectionField = new Ext.form.ComboBox  ({
-            fieldLabel: 'Indicator',
+            fieldLabel: LN('sbi.geo.analysispanel.indicator'),
             name: 'indicator',
             editable: false,
             valueField: 'value',
             displayField: 'text',
             mode: 'local',
-            emptyText: 'Select an indicator',
-            valueNotFoundText: 'Select an indicator',
+            emptyText: LN('sbi.geo.analysispanel.emptytext'),
+            valueNotFoundText: LN('sbi.geo.analysispanel.emptytext'),
             triggerAction: 'all',
             store: new Ext.data.SimpleStore({
                 fields: ['value', 'text'],
@@ -497,7 +557,7 @@ Sbi.geo.stat.ChoroplethControlPanel = Ext.extend(Ext.FormPanel, {
     , initMethodSelectionField: function() {
     	this.methodSelectionField = new Ext.form.ComboBox  ({
             xtype: 'combo',
-            fieldLabel: 'Method',
+            fieldLabel: LN('sbi.geo.analysispanel.method'),
             name: 'method',
             hiddenName: 'method',
             editable: false,
@@ -532,7 +592,7 @@ Sbi.geo.stat.ChoroplethControlPanel = Ext.extend(Ext.FormPanel, {
     , initClassesNumberSelectionField: function() {
     	this.classesNumberSelectionField = new Ext.form.ComboBox  ({
             xtype: 'combo',
-            fieldLabel: 'Number of classes',
+            fieldLabel: LN('sbi.geo.analysispanel.classes'),
             name: 'numClasses',
             editable: false,
             valueField: 'value',
@@ -564,7 +624,7 @@ Sbi.geo.stat.ChoroplethControlPanel = Ext.extend(Ext.FormPanel, {
      */
     , initFromColorSelectionField: function() {
     	this.fromColorSelectionField = new Ext.ux.ColorField({
-            fieldLabel: 'From color',
+            fieldLabel: LN('sbi.geo.analysispanel.fromcolor'),
             name: 'colorA',
             width: 100,
             allowBlank: false,
@@ -589,7 +649,7 @@ Sbi.geo.stat.ChoroplethControlPanel = Ext.extend(Ext.FormPanel, {
     , initToColorSelectionField: function() {
     	this.toColorSelectionField = new Ext.ux.ColorField({
             xtype: 'colorfield',
-            fieldLabel: 'To color',
+            fieldLabel: LN('sbi.geo.analysispanel.tocolor'),
             name: 'colorB',
             width: 100,
             allowBlank: false,

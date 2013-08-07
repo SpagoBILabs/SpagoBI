@@ -77,11 +77,20 @@ Sbi.locale.formats = {
 //===================================================================
 // CONTROL PANEL
 //===================================================================
-Sbi.locale.ln['sbi.georeport.controlpanel.title'] = 'Navigation';
-Sbi.locale.ln['sbi.georeport.layerpanel.title'] = 'Layers';
-Sbi.locale.ln['sbi.georeport.analysispanel.title'] = 'Analyses';
-Sbi.locale.ln['sbi.georeport.legendpanel.title'] = 'L\u00E9gende';
-Sbi.locale.ln['sbi.georeport.earthpanel.title'] = 'Navigation 3D';
+Sbi.locale.ln['sbi.geo.controlpanel.title'] = 'Navigation';
+Sbi.locale.ln['sbi.geo.layerpanel.title'] = 'Layers';
+
+Sbi.locale.ln['sbi.geo.analysispanel.title'] = 'Analysis';
+Sbi.locale.ln['sbi.geo.analysispanel.addindicators'] = 'Add indicators';
+Sbi.locale.ln['sbi.geo.analysispanel.indicator'] = 'Indicator';
+Sbi.locale.ln['sbi.geo.analysispanel.emptytext'] = 	'Select an indicator';
+Sbi.locale.ln['sbi.geo.analysispanel.method'] = 'Method';
+Sbi.locale.ln['sbi.geo.analysispanel.classes'] = 'Number of classes';
+Sbi.locale.ln['sbi.geo.analysispanel.fromcolor'] = 'From color';
+Sbi.locale.ln['sbi.geo.analysispanel.tocolor'] = 'To color';
+
+Sbi.locale.ln['sbi.geo.legendpanel.title'] = 'L\u00E9gende';
+Sbi.locale.ln['sbi.geo.earthpanel.title'] = 'Navigation 3D';
 
 
 
@@ -90,4 +99,4 @@ Sbi.locale.ln['sbi.georeport.earthpanel.title'] = 'Navigation 3D';
 //===================================================================
 // MAP PANEL
 //===================================================================
-Sbi.locale.ln['sbi.georeport.mappanel.title'] = 'Carte';
+Sbi.locale.ln['sbi.geo.mappanel.title'] = 'Carte';
