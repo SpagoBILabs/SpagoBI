@@ -118,17 +118,20 @@ public class GeoReportEngineStartEditAction extends AbstractEngineStartServlet {
 			//template.put("feautreInfo", buildFeatureInfo(dataSet));
 			//template.put("indicators", buildIndicators(dataSet));
 				
+			Properties level = GeoReportEngineConfig.getInstance().getLevels().get(0);
+			String levelName = level.getProperty("name");
+			
 			//template.put("businessId", businessId);
-			template.put("geoId", getGeoId("Comune ita"));
+			template.put("geoId", getGeoId(levelName));
 			
 			template.put("selectedBaseLayer", "GoogleMap");
-			template.put("targetLayerConf", buildTargetLayerConf("Comune ita"));
+			template.put("targetLayerConf", buildTargetLayerConf(levelName));
 			
 			template.put("controlPanelConf", buildControlPanelConf(null));
 			template.put("toolbarConf", buildToolbarConf(null));
 			
 			//template.put("role", "spagobi/admin");
-			Properties levelProps = GeoReportEngineConfig.getInstance().getLevelByName("Comune ita");
+			Properties levelProps = GeoReportEngineConfig.getInstance().getLevelByName(levelName);
 			String centralPoint = levelProps.getProperty("layer_cetral_point");
 			template.put("lon", centralPoint.split(" ")[0]);
 			template.put("lat", centralPoint.split(" ")[1]);
