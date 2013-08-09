@@ -632,7 +632,7 @@ Sbi.geo.stat.ChoroplethControlPanel = Ext.extend(Ext.FormPanel, {
             listeners: {
                 'select': {
                     fn: function() {
-                    	alert("colorA change");
+                    	//alert("colorA change");
                     	this.thematize(false);
                     },
                     scope: this
