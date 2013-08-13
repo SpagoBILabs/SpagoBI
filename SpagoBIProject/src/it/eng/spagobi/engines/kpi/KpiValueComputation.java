@@ -396,11 +396,14 @@ public class KpiValueComputation {
 				logger.debug("New value calculated");
 				if (engine.templateConfiguration.isRegister_values()) {
 					if (doSave) {
+						logger.debug("Kpi value is equal to: " + kVal.getValue());
+						logger.debug("Kpi value descr is equal to: " + kVal.getValueDescr());
+						logger.debug("Kpi value xml is equal to: " + kVal.getValueXml());
 						// Insert new Value into the DB
 						Integer kpiValueId = DAOFactory.getKpiDAO()
 								.insertKpiValue(kVal);
 						kVal.setKpiValueId(kpiValueId);
-						logger.debug("New value inserted in the DB");
+						logger.debug("New value inserted in the DB with id [" + kpiValueId + "]");
 					}
 				}
 				// Checks if the value is alarming (out of a certain range)
