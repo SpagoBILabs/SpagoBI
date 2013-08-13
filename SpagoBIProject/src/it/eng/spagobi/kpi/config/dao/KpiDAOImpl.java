@@ -828,11 +828,12 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 			kpiValueId = (Integer)aSession.save(hibKpiValue);
 			tx.commit();
 			return kpiValueId;
-		} catch (HibernateException he) {
+		} catch (Throwable he) {
 			logger.error(
 					"Error while inserting the KpiValue related to the KpiInstance with id "
 					+ ((value.getKpiInstanceId() == null) ? "" : value
 							.getKpiInstanceId().toString()), he);
+			he.printStackTrace();
 
 			if (tx != null)
 				tx.rollback();
