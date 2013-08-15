@@ -124,7 +124,9 @@ public class GeoReportEngineStartEditAction extends AbstractEngineStartServlet {
 			//template.put("businessId", businessId);
 			template.put("geoId", getGeoId(levelName));
 			
-			template.put("selectedBaseLayer", "GoogleMap");
+			//template.put("selectedBaseLayer", "GoogleMap");
+			template.put("selectedBaseLayer", "OpenStreetMap");
+			
 			template.put("targetLayerConf", buildTargetLayerConf(levelName));
 			
 			template.put("controlPanelConf", buildControlPanelConf(null));
@@ -171,7 +173,8 @@ public class GeoReportEngineStartEditAction extends AbstractEngineStartServlet {
 			template.put("businessId", businessId);
 			template.put("geoId", getGeoId(levelName));
 			
-			template.put("selectedBaseLayer", "GoogleMap");
+			//template.put("selectedBaseLayer", "GoogleMap");
+			template.put("selectedBaseLayer", "OpenStreetMap");
 			template.put("targetLayerConf", buildTargetLayerConf(levelName));
 			
 			template.put("controlPanelConf", buildControlPanelConf(dataSet));
