@@ -186,7 +186,8 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 				throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to create geo document defined on a metamodel");
 				//insertWorksheetDocumentCreatedOnModel(sourceModelName, documentJSON, customDataJSON, foldersJSON);
 			} else {
-				throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to create geo document because both sourceModel and sourceDataset are null");
+				insertGeoReportDocumentCreatedOnDataset(null, documentJSON, customDataJSON, foldersJSON);
+				//throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to create geo document because both sourceModel and sourceDataset are null");
 			}
 		} catch (SpagoBIServiceException e) {
 			throw e;
@@ -208,29 +209,31 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 		
 		String sourceDatasetLabel = null;
 		try {
-			
-			sourceDatasetLabel = sourceDatasetJSON.optString("label");
-			Assert.assertNotNull( StringUtilities.isNotEmpty( sourceDatasetLabel ) , "Source dataset's label cannot be null or empty");
-			
-			IDataSet sourceDataset = null;
-			try {
-				sourceDataset = DAOFactory.getDataSetDAO().loadDataSetByLabel(sourceDatasetLabel);
-			} catch (Throwable t ) {
-				throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to load source datset [" + sourceDatasetLabel + "]");
-			}
-			if(sourceDataset == null) {
-				throw new SpagoBIServiceException(SERVICE_NAME, "Source datset [" + sourceDatasetLabel + "] does not exist");
-			}
-			
-				
 			BIObject document = createBaseDocument(documentJSON, null, foldersJSON);				
 			ObjTemplate template = buildDocumentTemplate("template.sbigeoreport", customDataJSON, null);
-								
-			document.setDataSetId(sourceDataset.getId());
+				
+			IDataSet sourceDataset = null;
+			if(sourceDatasetJSON != null) {
+				sourceDatasetLabel = sourceDatasetJSON.optString("label");
+				Assert.assertNotNull( StringUtilities.isNotEmpty( sourceDatasetLabel ) , "Source dataset's label cannot be null or empty");
+				
+				try {
+					sourceDataset = DAOFactory.getDataSetDAO().loadDataSetByLabel(sourceDatasetLabel);
+				} catch (Throwable t ) {
+					throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to load source datset [" + sourceDatasetLabel + "]");
+				}
+				if(sourceDataset == null) {
+					throw new SpagoBIServiceException(SERVICE_NAME, "Source datset [" + sourceDatasetLabel + "] does not exist");
+				}
+				document.setDataSetId(sourceDataset.getId());
+			}
 			
 										
-			documentManagementAPI.saveDocument(document, template);					
-			documentManagementAPI.propagateDatasetParameters(sourceDataset, document);
+			documentManagementAPI.saveDocument(document, template);		
+			if(sourceDataset != null) {
+				documentManagementAPI.propagateDatasetParameters(sourceDataset, document);
+			}
+			
 			JSONArray metadataJSON = documentJSON.optJSONArray("metadata");
 			if(metadataJSON != null) {
 				documentManagementAPI.saveDocumentMetadataProperties(document, null, metadataJSON);

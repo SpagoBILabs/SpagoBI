@@ -61,6 +61,10 @@ public class GeoSpatialDimensionDatasetValidator  extends AbstractDatasetValidat
 		MeasureCatalogue measureCatalogue = new MeasureCatalogue();
 		
 		MetaModelWrapper metamodelWrapper = measureCatalogue.getMetamodelWrapper();
+		List<HierarchyWrapper> hierachies = metamodelWrapper.getHierarchies();
+		for(HierarchyWrapper h : hierachies) {
+			 logger.debug("Supported hierarchy [" + h.getName() + "]");
+		}
 		
 		for (Map.Entry<String, HierarchyLevel> entry : hierarchiesColumnsToCheck.entrySet())
 		{
