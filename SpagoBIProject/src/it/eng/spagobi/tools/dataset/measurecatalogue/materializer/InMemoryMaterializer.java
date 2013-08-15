@@ -434,7 +434,6 @@ public class InMemoryMaterializer implements IMaterializer {
 			}
 		}
 		
-		
 		joinedAggregator.setFiledsMetadata(buildJoinedFieldMetdata(joinedAggregator, rolledUpMeasures2));
 		
 		for(int i=0; i<joinedRecords.size(); i++){
@@ -455,15 +454,24 @@ public class InMemoryMaterializer implements IMaterializer {
 		//gets the fields metadata of records1
 		for(int i=0; i<rolledUpMeasures1.getFiledsMetadata().size(); i++){
 			IFieldMetaData fieldMetadata = rolledUpMeasures1.getFiledsMetadata().get(i);
-//			String alias = fieldMetadata.getAlias();
-//			String name = fieldMetadata.getName();
-//			if(alias!=null){
-//				fieldMetadata.setAlias(rolledUpMeasures1.getDataSet().getLabel()+"_"+alias);
-//			}
-//			if(name!=null){
-//				fieldMetadata.setName(rolledUpMeasures1.getDataSet().getLabel()+"_"+name);
-//			}
-			fieldsMetadata.add(fieldMetadata);
+			if(fieldMetadata.getFieldType().equals(FieldType.MEASURE)){
+				String alias = fieldMetadata.getAlias();
+				String name = fieldMetadata.getName();
+				if(alias!=null){
+					fieldMetadata.setAlias(alias);
+				} else {
+					if(name!=null) fieldMetadata.setAlias(name);
+				}
+				if(name!=null){
+					fieldMetadata.setName(rolledUpMeasures1.getDataSet().getLabel()+"_"+name);
+				}
+				fieldMetadata.setProperty("dataset", rolledUpMeasures1.getDataSet().getLabel());
+				
+				fieldsMetadata.add(fieldMetadata);
+			} else {
+				fieldsMetadata.add(fieldMetadata);
+			}
+			
 		}
 		
 		//gets the fields metadata of the measures of records2
@@ -474,11 +482,15 @@ public class InMemoryMaterializer implements IMaterializer {
 				String alias = fieldMetadata.getAlias();
 				String name = fieldMetadata.getName();
 				if(alias!=null){
-					fieldMetadata.setAlias(rolledUpMeasures2.getDataSet().getLabel()+"_"+alias);
+					fieldMetadata.setAlias(alias);
+				} else {
+					if(name!=null) fieldMetadata.setAlias(name);
 				}
 				if(name!=null){
 					fieldMetadata.setName(rolledUpMeasures2.getDataSet().getLabel()+"_"+name);
 				}
+				fieldMetadata.setProperty("dataset", rolledUpMeasures2.getDataSet().getLabel());
+				
 				fieldsMetadata.add(fieldMetadata);
 			}
 		}
