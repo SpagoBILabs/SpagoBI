@@ -33,6 +33,11 @@ Sbi.browser.FolderDetailPanel = function(config) {
 		serviceName: 'DELETE_OBJECT_ACTION'
 		, baseParams: params
 	});
+	this.services['createDocument'] = Sbi.config.serviceRegistry.getServiceUrl({
+		serviceName: 'DOCUMENT_USER_BROWSER_CREATE_DOCUMENT'
+		, baseParams: {LIGHT_NAVIGATOR_DISABLED: 'FALSE', MESSAGEDET: 'DETAIL_SELECT'}
+	});
+	
 	this.services['detailDocument'] = Sbi.config.serviceRegistry.getServiceUrl({
 		serviceType: 'PAGE'
 		, serviceName: 'DetailBIObjectPage'
@@ -218,9 +223,25 @@ Ext.extend(Sbi.browser.FolderDetailPanel, Ext.Panel, {
 			}
 		}else if(type !== undefined || type !=='georeport'){
 			urlToCall =  this.georeportServiceUrl;
-		}		
+		}
 		
-		window.location.href=urlToCall;	
+		if (Sbi.settings.browser.typeLayout !== undefined && Sbi.settings.browser.typeLayout == 'card'){
+			// for TIS
+			var urlToCallBase = urlToCall.split("?")[0];
+			var urlToCallParams = urlToCall.split("?")[1];
+			urlToCallParams = Ext.urlDecode(urlToCallParams);
+			urlToCallParams = Ext.util.JSON.encode(urlToCallParams);
+			
+			var url = this.services['createDocument'];
+			url += "&urlToCallBase=" + urlToCallBase;
+			url += "&urlToCallParams=" + urlToCallParams;
+			//alert("url to call: " + url);
+			window.location.href=url;	
+		} else{
+			window.location.href=urlToCall;	
+		}
+		
+		
 	}
 
 	, filterStore: function(value) {

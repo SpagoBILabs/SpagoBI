@@ -103,7 +103,7 @@ Ext.define('Sbi.tools.layer.LayerDetailPanel', {
 		this.layerType.on("change", function(field, newValue, oldValue, eOpts){
 			var descr = field.rawValue; 
 			this.propertiesDetails.show();
-			if(descr=="File"){
+			if(descr=="FILE"){
 				this.propsFile.show();
 				this.propsUrl.hide();
 			}else if(descr=="WFS"){
@@ -219,7 +219,7 @@ Ext.define('Sbi.tools.layer.LayerDetailPanel', {
 		valid = valid && (v.label!=null && v.label!=undefined &&  v.label!="");
 		valid = valid && (v.name!=null && v.name!=undefined &&  v.name!="");
 		valid = valid && (v.type!=null && v.type!=undefined &&  v.type!="");
-		if(v.type == 'File'){
+		if(v.type == 'FILE'){
 			valid = valid && (v.propsFile!=null && v.propsFile!=undefined &&  v.propsFile!="");
 		}else{
 			valid = valid && (v.propsUrl!=null && v.propsUrl!=undefined &&  v.propsUrl!="");
