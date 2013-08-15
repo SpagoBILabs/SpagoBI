@@ -344,7 +344,7 @@ Sbi.geo.stat.ChoroplethControlPanel = Ext.extend(Ext.FormPanel, {
 		Sbi.trace("[ChoropletControlPanel.setIndicator] : IN");
 		Sbi.trace("[ChoropletControlPanel.setIndicator] : Looking for indicator [" + indicatorName + "] ...");
 		
-		if(indicatorName) {
+		if(indicatorName && this.indicators) {
 			var indicator = null;
 			for(var i = 0; i < this.indicators.length; i++) {
 				Sbi.trace("[ChoropletControlPanel.setIndicator] : Comparing indicator [" + indicatorName + "] with indicator [" + this.indicators[i][0] +"]");
