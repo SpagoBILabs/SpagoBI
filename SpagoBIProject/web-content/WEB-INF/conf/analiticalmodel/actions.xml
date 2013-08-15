@@ -50,6 +50,11 @@
  		Document Browser
       ================================================================================= -->
  
+ 
+  <ACTION name="DOCUMENT_USER_BROWSER_CREATE_DOCUMENT" 
+ 	class="it.eng.spagobi.analiticalmodel.documentsbrowser.service.CreateDocumentAction" scope="REQUEST">
+ 	<CONFIG/>
+ </ACTION>
   
  <ACTION name="DOCUMENT_USER_BROWSER_START_ACTION" 
  	class="it.eng.spagobi.analiticalmodel.documentsbrowser.service.UserDocumentsBrowserPortletStartAction" scope="REQUEST">
