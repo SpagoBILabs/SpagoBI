@@ -156,5 +156,9 @@
 <CONFIG label="SPAGOBI.DOCUMENTBROWSER.RECURSIVE" name="SPAGOBI DOCUMENT BROWSER RECURSIVE VIEW" description="Use a recursive view to visualize documents inside a folder and all his subfolders" isActive="false" valueCheck="false" valueType="STRING" category="GENERIC_CONFIGURATION"/>
 
 
+<CONFIG label="SPAGOBI.CUBE.MODEL.NAME" name="Model Name" description="The name of the model used to extract valid dimension definitions" isActive="false" valueCheck="validation" valueType="STRING" category="GENERIC_CONFIGURATION"/>
+
+
+
 </CONFIGS>
 
