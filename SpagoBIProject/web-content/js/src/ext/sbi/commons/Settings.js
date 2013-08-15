@@ -53,9 +53,10 @@ Sbi.settings.browser = {
 			}
 		}
 	  , showLeftPanels: true
-	  , showBreadCrumbs: true
-//	  , maxNumberOfExecutionTabs: 5 //the maximum number of tabs to open on execution of documents if valorized
-	  , typeLayout: 'tab' //possible values: 'tab' or 'card'
+	  , showBreadCrumbs: false
+	  , maxNumberOfExecutionTabs: 1 //the maximum number of tabs to open on execution of documents if valorized
+	  , typeLayout: 'card' //possible values: 'tab' or 'card'
+	  , showTitle: false 
 	  , showTitle: true 
 } 
 
