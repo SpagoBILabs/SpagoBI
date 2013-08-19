@@ -59,6 +59,13 @@ public class MenuListJSONSerializer implements Serializer {
 	public static final String HOME ="HOME";
 	public static final String TARGET ="hrefTarget";
 	
+	private static final String HREF_DOC_BROWSER ="/servlet/AdapterHTTP?ACTION_NAME=DOCUMENT_USER_BROWSER_START_ACTION&LIGHT_NAVIGATOR_RESET_INSERT=TRUE";
+	private static final String HREF_BOOKMARK ="/servlet/AdapterHTTP?PAGE=HOT_LINK_PAGE&OPERATION=GET_HOT_LINK_LIST&LIGHT_NAVIGATOR_RESET_INSERT=TRUE";
+	private static final String HREF_PENCIL ="/servlet/AdapterHTTP?ACTION_NAME=CREATE_DOCUMENT_START_ACTION&LIGHT_NAVIGATOR_RESET_INSERT=TRUE";
+	private static final String HREF_MYDATA ="/servlet/AdapterHTTP?ACTION_NAME=SELF_SERVICE_DATASET_START_ACTION&LIGHT_NAVIGATOR_RESET_INSERT=TRUE&MYDATA=TRUE";
+	private static final String HREF_LOGIN ="/servlet/AdapterHTTP?ACTION_NAME=LOGOUT_ACTION&LIGHT_NAVIGATOR_DISABLED=TRUE";
+	private static final String HREF_LOGOUT ="/servlet/AdapterHTTP?ACTION_NAME=LOGOUT_ACTION&LIGHT_NAVIGATOR_DISABLED=TRUE";
+	
 	public String contextName = "";
 	public String defaultThemePath="/themes/sbi_default";
 	
@@ -152,6 +159,9 @@ public class MenuListJSONSerializer implements Serializer {
 							temp.put(SCALE, "large");
 							temp.put(PATH, path);
 							temp.put(TARGET, "_self");
+							if(menuElem.getCode() != null && menuElem.getCode().equals("analyticalModel")){
+								temp.put(HREF, "javascript:javascript:execDirectUrl('"+contextName+HREF_DOC_BROWSER+"', '"+text+"')");
+							}
 							
 							if (menuElem.getHasChildren()){		
 	
@@ -191,21 +201,21 @@ public class MenuListJSONSerializer implements Serializer {
 		if (isAbleTo(SpagoBIConstants.SEE_DOCUMENT_BROWSER, funcs)){
 			JSONObject browser = createMenuItem(
 					"folder_open",
-					"/servlet/AdapterHTTP?ACTION_NAME=DOCUMENT_USER_BROWSER_START_ACTION&LIGHT_NAVIGATOR_RESET_INSERT=TRUE",
+					HREF_DOC_BROWSER,
 					messageBuilder.getMessage("menu.Browser", locale), true, null);
 			tempMenuList.put(browser);
 		}
 		if (isAbleTo(SpagoBIConstants.SEE_FAVOURITES, funcs)){
 			JSONObject favourites = createMenuItem(
 					"bookmark",
-					"/servlet/AdapterHTTP?PAGE=HOT_LINK_PAGE&OPERATION=GET_HOT_LINK_LIST&LIGHT_NAVIGATOR_RESET_INSERT=TRUE",
+					HREF_BOOKMARK,
 					messageBuilder.getMessage("menu.MyFavorites", locale), true, null);
 			tempMenuList.put(favourites);
 		}
 		if (isAbleTo(SpagoBIConstants.CREATE_DOCUMENT, funcs)){
 			JSONObject createDoc = createMenuItem(
 					"pencil",
-					"/servlet/AdapterHTTP?ACTION_NAME=CREATE_DOCUMENT_START_ACTION&LIGHT_NAVIGATOR_RESET_INSERT=TRUE",
+					HREF_PENCIL,
 					messageBuilder.getMessage("menu.CreateDocument", locale), true, null);
 			tempMenuList.put(createDoc);
 		}
@@ -227,7 +237,7 @@ public class MenuListJSONSerializer implements Serializer {
 		if (isAbleTo(SpagoBIConstants.SEE_MY_DATA, funcs)){
 			JSONObject myData = createMenuItem(
 					"my_data",
-					"/servlet/AdapterHTTP?ACTION_NAME=SELF_SERVICE_DATASET_START_ACTION&LIGHT_NAVIGATOR_RESET_INSERT=TRUE&MYDATA=TRUE",
+					HREF_MYDATA,
 					messageBuilder.getMessage("menu.MyData", locale), true, null);
 			tempMenuList.put(myData);
 		}
@@ -313,13 +323,13 @@ public class MenuListJSONSerializer implements Serializer {
 		if (userProfile.getUserUniqueIdentifier().toString().equalsIgnoreCase(SpagoBIConstants.PUBLIC_USER_ID)){
 			JSONObject login = createMenuItem(
 					"login",
-					"/servlet/AdapterHTTP?ACTION_NAME=LOGOUT_ACTION&LIGHT_NAVIGATOR_DISABLED=TRUE",
+					HREF_LOGIN,
 					messageBuilder.getMessage("menu.login", locale), false, null);
 			tempMenuList.put(login);
 		}else{
 			JSONObject power = createMenuItem(
 				"power",
-				"/servlet/AdapterHTTP?ACTION_NAME=LOGOUT_ACTION&LIGHT_NAVIGATOR_DISABLED=TRUE",
+				HREF_LOGOUT,
 				messageBuilder.getMessage("menu.logout", locale), false, null);
 			tempMenuList.put(power);
 		}
