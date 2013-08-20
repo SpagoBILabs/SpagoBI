@@ -732,10 +732,11 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 	 * Returns List of all existent IDataSets with current active version for the owner
 	 * @param offset starting element
 	 * @param fetchSize number of elements to retrieve
+	 * @param isPublic to false if just private datasets
 	 * @return List of all existent IDataSets with current active version
 	 * @throws EMFUserError the EMF user error
 	 */
-	public List<IDataSet> loadPagedDatasetList(Integer offset, Integer fetchSize, String owner) {
+	public List<IDataSet> loadPagedDatasetList(Integer offset, Integer fetchSize, String owner, Boolean isPublic) {
 
 		List<IDataSet> toReturn;
 		Session session;
@@ -780,7 +781,11 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 			Query listQuery = session.createQuery("from SbiDataSet h where h.active = ? and (h.publicDS = ? or h.owner = ?) order by h.name " );
 			listQuery.setBoolean(0, true);
-			listQuery.setBoolean(1, true);
+			if(isPublic == null || isPublic){
+				listQuery.setBoolean(1, true);
+			}else{
+				listQuery.setBoolean(1, false);
+			}
 			listQuery.setString(2, owner);
 			listQuery.setFirstResult(offset);
 			if(fetchSize > 0) listQuery.setMaxResults(fetchSize);			
@@ -799,7 +804,11 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 						Query hibQuery = session.createQuery("from SbiDataSet h where h.active = ? and h.id.dsId = ?  and (h.publicDS = ? or h.owner = ?)  " );
 						hibQuery.setBoolean(0, false);
 						hibQuery.setInteger(1, dsId);	
-						hibQuery.setBoolean(2, true);
+						if(isPublic == null || isPublic){
+							hibQuery.setBoolean(2, true);
+						}else{
+							hibQuery.setBoolean(2, false);
+						}
 						hibQuery.setString(3, owner);
 
 						List<SbiDataSet> olderTemplates = hibQuery.list();

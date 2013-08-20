@@ -40,16 +40,25 @@ Ext.define('Sbi.adhocreporting.AdhocreportingTabsPanel', {
 		
 		this.layout = 'fit';
 		
-		var browserConf = {
-				title: LN("sbi.tools.dataset.datasetbrowser.title")
+		var browserConfPubl = {
+				title: LN("sbi.tools.dataset.public.datasetbrowser.title")
 				, user: Sbi.user.userId
 				, datasetsServicePath : config.datasetsServicePath
 				, displayToolbar : false
+				, isPublic: true
 		};
-		this.datasetPanelTab = Ext.create('Sbi.tools.dataset.DataSetsBrowser', browserConf );
+		var browserConfPriv = {
+				title: LN("sbi.tools.dataset.private.datasetbrowser.title")
+				, user: Sbi.user.userId
+				, datasetsServicePath : config.datasetsServicePath
+				, displayToolbar : false
+				, isPublic: false
+		};
+		this.datasetPanelTabPubl = Ext.create('Sbi.tools.dataset.DataSetsBrowser', browserConfPubl );
+		this.datasetPanelTabPriv = Ext.create('Sbi.tools.dataset.DataSetsBrowser', browserConfPriv );
 		this.modelstPanelTab = Ext.create('Sbi.tools.model.MetaModelsBrowser',{title: LN("sbi.tools.model.metamodelsbrowser.title")});
 		
-		this.items = [ this.datasetPanelTab, this.modelstPanelTab  ];
+		this.items = [ this.datasetPanelTabPubl, this.datasetPanelTabPriv, this.modelstPanelTab  ];
 
 		this.callParent(arguments);
 		this.addEvents(
@@ -65,9 +74,12 @@ Ext.define('Sbi.adhocreporting.AdhocreportingTabsPanel', {
 		this.modelstPanelTab.on('executeDocument',function(docType, inputType, record){
 			this.fireEvent('executeDocument',docType,inputType,record);
 		},this);
-		this.datasetPanelTab.on('executeDocument',function(docType, inputType, record){
+		this.datasetPanelTabPubl.on('executeDocument',function(docType, inputType, record){
 			this.fireEvent('executeDocument',docType,inputType,record);
 		},this);
+		this.datasetPanelTabPriv.on('executeDocument',function(docType, inputType, record){
+			this.fireEvent('executeDocument',docType,inputType,record);
+		},this);		
 	}
 
     

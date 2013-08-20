@@ -36,7 +36,7 @@ public interface IDataSetDAO extends ISpagoBIDao {
 	public List<IDataSet> loadFilteredDatasetList(String hsql, Integer offset, Integer fetchSize);
 	public List<IDataSet> loadPagedDatasetList(Integer offset, Integer fetchSize);
 	public List<IDataSet> loadFilteredDatasetList(String hsql, Integer offset, Integer fetchSize, String owner);
-	public List<IDataSet> loadPagedDatasetList(Integer offset, Integer fetchSize, String owner);
+	public List<IDataSet> loadPagedDatasetList(Integer offset, Integer fetchSize, String owner, Boolean isPublic);
 	public IDataSet loadDataSetById(Integer dsId) ;
 	public IDataSet loadDataSetByLabel(String dsLabel);
 	public IDataSet loadDataSetByOwner(String owner);
