@@ -82,6 +82,7 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 	
 	, resultsetWindow: null
 	, measureCatalogueWindow: null
+	, shareMapWindow: null
    
     // public methods
     
@@ -267,6 +268,22 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 				        	this.showMeasureCatalogueWindow();
 		           		},
 		           		scope: this
+				    }), new Ext.Button({
+				    	text: 'Share map link',
+				        width: 30,
+				        disabled :(Sbi.config.docLabel=="")?true:false,
+				        handler: function() {
+				        	this.showShareMapWindow('link');
+		           		},
+		           		scope: this
+				    }), new Ext.Button({
+				    	text: 'Share map html',
+				        width: 30,
+				        disabled :(Sbi.config.docLabel=="")?true:false,
+				        handler: function() {
+				        	this.showShareMapWindow('html');
+		           		},
+		           		scope: this
 				    })]
 		    });
 			
@@ -293,6 +310,28 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 		
 		
 		this.measureCatalogueWindow.show();
+	}
+	
+	, showShareMapWindow: function(type){
+		if(this.shareMapWindow != null){			
+			this.shareMapWindow.destroy();
+			this.shareMapWindow.close();
+		}
+		var shareMap = this.getShareMapContent(type);			
+		var shareMapPanel = new Ext.Panel({items:[shareMap]});
+		
+		this.shareMapWindow = new Ext.Window({
+            layout      : 'fit',
+	        width		: 700,
+	        height		: 350,
+            closeAction :'destroy',
+            plain       : true,
+//	            title		: OpenLayers.Lang.translate('sbi.tools.catalogue.measures.window.title'),
+            title		: 'Share map',
+            items       : [shareMapPanel]
+		});
+		
+		this.shareMapWindow.show();
 	}
 	
 	, onStoreLoad: function(measureCatalogue, options, store, meta) {
@@ -461,6 +500,47 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 		];
 		
 		return model;
+	}
+	
+	, getShareMapContent: function(type){
+		var toReturn;
+		var url = Sbi.config.serviceRegistry.baseUrl.protocol +'://' + Sbi.config.serviceRegistry.baseUrl.host+':'+
+		 		  Sbi.config.serviceRegistry.baseUrl.port+'/SpagoBI/servlet/AdapterHTTP?PAGE=LoginPage&NEW_SESSION=TRUE&'+
+		 		  'OBJECT_LABEL='+ Sbi.config.docLabel;
+		
+		
+		if (type=='link'){
+			var toReturn = new Ext.form.TextArea({
+		  		  fieldLabel: 'Map link:' 
+		  			  , name: 'shareText'
+			          , width: 690 
+					  , xtype : 'textarea'
+					  , hideLabel: false
+					  , multiline: true
+			          , margin: '0 0 0 0'
+			          , readOnly: true
+			          , labelStyle:'font-weight:bold;'
+			          , value: url
+			        });
+			 
+		}else if (type == 'html'){
+			var htmlCode = '<iframe name="htmlMap"  width="100%" height="100%"  src="'+url+'"></iframe>';
+			var toReturn = new Ext.form.TextArea({
+		  		  fieldLabel: 'Map html:' 
+		  			  , name: 'shareText'
+			          , width: 690 
+					  , xtype : 'textarea'
+					  , hideLabel: false
+					  , multiline: true
+			          , margin: '0 0 0 0'
+			          , readOnly: true
+			          , labelStyle:'font-weight:bold;'
+			          , value: htmlCode
+			        });
+		}else{
+			alert('WARNING: Is possible to share only the link url or the html of the map!');
+		}
+		return toReturn;
 	}
     
    
