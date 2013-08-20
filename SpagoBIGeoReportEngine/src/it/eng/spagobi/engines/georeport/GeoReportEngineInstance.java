@@ -60,6 +60,10 @@ public class GeoReportEngineInstance extends AbstractEngineInstance {
 		return (Locale)this.getEnv().get(EngineConstants.ENV_LOCALE);
 	}
 	
+	public String getDocumentLabel() {
+		return (String)this.getEnv().get(EngineConstants.ENV_DOCUMENT_LABEL);
+	}
+	
 	public AuditServiceProxy getAuditServiceProxy() {
 		return (AuditServiceProxy)this.getEnv().get(EngineConstants.ENV_AUDIT_SERVICE_PROXY);
 	}
