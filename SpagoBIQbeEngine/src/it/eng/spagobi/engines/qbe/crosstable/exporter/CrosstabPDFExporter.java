@@ -213,7 +213,12 @@ public class CrosstabPDFExporter {
 
 			}
 			JSONObject aNode = (JSONObject) columnNodes.get(i);
-			String text = (String) aNode.get(Node.CROSSTAB_NODE_JSON_DESCRIPTION);
+			String text = (String) aNode.opt(Node.CROSSTAB_NODE_JSON_DESCRIPTION);
+			if(text==null || text.equals("")){
+				text =  (String) aNode.opt(Node.CROSSTAB_NODE_JSON_KEY);
+			}
+
+			
 			int descendants = aNode.getInt(CrosstabExporterUtility.CROSSTAB_JSON_DESCENDANTS_NUMBER);
 		    
 			PdfPCell cell = new PdfPCell(new Phrase(text,cellFont));
