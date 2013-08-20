@@ -10,7 +10,8 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 		autoScroll:true,
 		displayToolbar: true,
 		PUBLIC_USER: 'public_user',
-	    id:'this'
+	    //id:'this',
+	    isPublic: false
 	}
 
 	,
@@ -30,7 +31,12 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 	,
 	initServices : function(baseParams) {
 		this.services = [];
-
+		
+		if(baseParams == undefined){
+			baseParams ={};
+		}
+		baseParams.isPublic =this.config.isPublic;
+		
 		this.services["list"] = Sbi.config.serviceRegistry.getRestServiceUrl({
 			serviceName : this.datasetsServicePath,
 			baseParams : baseParams

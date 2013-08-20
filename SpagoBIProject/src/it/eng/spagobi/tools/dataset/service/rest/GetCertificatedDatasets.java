@@ -53,10 +53,14 @@ public class GetCertificatedDatasets {
 		try {
 			dataSetDao = DAOFactory.getDataSetDAO();
 			dataSetDao.setUserProfile(profile);
-
+			String isPublic = req.getParameter("isPublic");
+			Boolean isPubl = true;
+			if(isPublic != null && isPublic.equals("false")){
+				isPubl = false;
+			}
 			dataSets = dataSetDao.loadPagedDatasetList(0,
 					Integer.MAX_VALUE, profile.getUserUniqueIdentifier()
-							.toString());
+							.toString(), isPubl);
 
 			datasetsJSONArray = (JSONArray) SerializerFactory.getSerializer(
 					"application/json").serialize(dataSets, null);

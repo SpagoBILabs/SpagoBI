@@ -970,6 +970,8 @@ Sbi.locale.ln["sbi.execution.toolbar.savedatasetwindow.fields.datasource"]="Data
 // SELF SERVICE
 //===================================================================
 
+Sbi.locale.ln["sbi.tools.dataset.private.datasetbrowser.title"]="Private Datasets";
+Sbi.locale.ln["sbi.tools.dataset.public.datasetbrowser.title"]="Public Datasets";
 Sbi.locale.ln["sbi.tools.dataset.datasetbrowser.title"]="Datasets";
 Sbi.locale.ln["sbi.tools.model.metamodelsbrowser.title"]="Models";
 

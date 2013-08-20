@@ -964,6 +964,8 @@ Sbi.locale.ln["error.mesage.description.layer.validation.file"]= "Il nome del fi
 //SELF SERVICE
 //===================================================================
 
+Sbi.locale.ln["sbi.tools.dataset.private.datasetbrowser.title"]="Datasets Privati";
+Sbi.locale.ln["sbi.tools.dataset.public.datasetbrowser.title"]="Datasets Pubblici";
 Sbi.locale.ln["sbi.tools.dataset.datasetbrowser.title"]="Datasets";
 Sbi.locale.ln["sbi.tools.model.metamodelsbrowser.title"]="Modelli";
 
