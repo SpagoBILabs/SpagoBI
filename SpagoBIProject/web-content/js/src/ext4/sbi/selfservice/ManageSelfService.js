@@ -45,6 +45,7 @@ Ext.define('Sbi.selfservice.ManageSelfService', {
 				//title: LN("sbi.tools.dataset.datasetbrowser.title")
 				  user: Sbi.user.userId
 				, datasetsServicePath : config.datasetsServicePath
+				, id: 'this'
 		};
 		
 		if (Sbi.settings.browser.showTitle !== undefined && Sbi.settings.browser.showTitle){
