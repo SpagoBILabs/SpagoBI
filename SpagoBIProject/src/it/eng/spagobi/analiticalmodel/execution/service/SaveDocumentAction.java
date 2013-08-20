@@ -431,21 +431,24 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 	private BIObject createBaseDocument(JSONObject documentJSON, JSONObject sourceDocumentJSON, JSONArray folderJSON) {
 		BIObject sourceDocument = null;
 		String visibility = "true"; //default value
+		String previewFile = "false"; 
 		
 		try {
 			if(sourceDocumentJSON != null) {
 				String sourceDocumentId = sourceDocumentJSON.getString("id").trim();
 				sourceDocument = documentManagementAPI.getDocument(new Integer(sourceDocumentId));
 			}
-			if (documentJSON.getString("visibility") != null){
+			if (documentJSON.optString("visibility") != null && !documentJSON.optString("visibility").equals("")){
 				visibility = documentJSON.getString("visibility");//overriding default value
 			}
-			
+			if (documentJSON.optString("previewFile") != null && !documentJSON.optString("previewFile").equals("")){
+				visibility = documentJSON.getString("previewFile");//overriding default value
+			}
 			return createBaseDocument(documentJSON.getString("label")
 					, documentJSON.getString("name")
 					, documentJSON.getString("description")					
 					, visibility
-					, documentJSON.getString("previewFile")
+					, previewFile
 					, documentJSON.getString("type") 
 					, documentJSON.optString("engineId"), sourceDocument, folderJSON);
 		} catch(Throwable t) {
