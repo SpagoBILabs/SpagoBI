@@ -19,8 +19,7 @@ public class StatementTockenizer extends StringTokenizer{
 	private static final String DELIMITERS = "+-|*/()<>=!";
 	private static final String[] ADDITIONALS_DELIMITERS_SUBSTRING_FUNCTIONS = {" like ", "case when", " then ", " end ", "not in ", " in ", " between", "is not null ", "is null ", "is not empty " , "is empty ", "not member of", "member of"};
 	
-	//private static final String[] ADDITIONALS_DELIMITERS_FUNCTIONS = {"concat", "current_date", "current_time", "current_timestamp","substring", "trim", "lower", "upper", "length", "locate", "abs", "sqrt", "bit_length", "mod", "coalesce","nullif","str","size", "minelement", "maxelement", "minindex", "maxindex","elements","sign","trunc","rtrim","sin"};
-	
+
 	/**
 	 * @param str
 	 */
