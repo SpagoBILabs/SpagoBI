@@ -70,3 +70,47 @@ INSERT INTO SBI_ROLE_TYPE_USER_FUNC (ROLE_TYPE_ID, USER_FUNCT_ID)
     VALUES ((SELECT VALUE_ID FROM SBI_DOMAINS WHERE VALUE_CD = 'MODEL_ADMIN' AND DOMAIN_CD = 'ROLE_TYPE'), 
     (SELECT USER_FUNCT_ID FROM SBI_USER_FUNC WHERE NAME = 'CreateWorksheetFromDatasetUserFunctionality'));\p\g
 commit;\p\g
+
+CREATE TABLE SBI_GEO_LAYERS (
+  LAYER_ID INTEGER NOT NULL,
+  LABEL varchar(100) NOT NULL,
+  NAME varchar(100),
+  DESCR varchar(100),
+  LAYER_DEFINITION LONG BYTE NOT NULL,
+  TYPE varchar(40),
+        USER_IN              VARCHAR(100) NOT NULL,
+        USER_UP              VARCHAR(100),
+        USER_DE              VARCHAR(100),
+        TIME_IN              TIMESTAMP NOT NULL,
+        TIME_UP              TIMESTAMP NULL DEFAULT NULL,
+        TIME_DE              TIMESTAMP NULL DEFAULT NULL,
+        SBI_VERSION_IN       VARCHAR(10),
+        SBI_VERSION_UP       VARCHAR(10),
+        SBI_VERSION_DE       VARCHAR(10),
+        META_VERSION         VARCHAR(100),
+        ORGANIZATION         VARCHAR(20), 
+  CONSTRAINT SBI_GEO_LAYERS UNIQUE (LABEL, ORGANIZATION),
+  PRIMARY KEY (LAYER_ID)
+) ;\p\g
+
+
+INSERT into SBI_DOMAINS (VALUE_ID, VALUE_CD,VALUE_NM,DOMAIN_CD,DOMAIN_NM,VALUE_DS, USER_IN) 
+values ((SELECT next_val FROM hibernate_sequences WHERE sequence_name = 'SBI_DOMAINS'),'file','File','LAYER_TYPE','Layer Type','Layer Type','');\p\g
+UPDATE hibernate_sequences SET next_val = (SELECT MAX(VALUE_ID) + 1 FROM SBI_DOMAINS) WHERE sequence_name = 'SBI_DOMAINS';\p\g  
+
+INSERT into SBI_DOMAINS (VALUE_ID, VALUE_CD,VALUE_NM,DOMAIN_CD,DOMAIN_NM,VALUE_DS, USER_IN) 
+values ((SELECT next_val FROM hibernate_sequences WHERE sequence_name = 'SBI_DOMAINS'),'wfs','Wfs','LAYER_TYPE','Layer Type','Layer Type','');\p\g
+UPDATE hibernate_sequences SET next_val = (SELECT MAX(VALUE_ID) + 1 FROM SBI_DOMAINS) WHERE sequence_name = 'SBI_DOMAINS';\p\g  
+
+INSERT INTO SBI_USER_FUNC (USER_FUNCT_ID, NAME, DESCRIPTION, USER_IN, TIME_IN)
+    VALUES ((SELECT next_val FROM hibernate_sequences WHERE sequence_name = 'SBI_USER_FUNC'), 
+    'GeoLayersManagement','GeoLayersManagement', 'server', current_timestamp);\p\g
+update hibernate_sequences set next_val = next_val+1 where sequence_name = 'SBI_USER_FUNC';\p\g
+
+INSERT INTO SBI_ROLE_TYPE_USER_FUNC (ROLE_TYPE_ID, USER_FUNCT_ID)
+    VALUES ((SELECT VALUE_ID FROM SBI_DOMAINS WHERE VALUE_CD = 'ADMIN' AND DOMAIN_CD = 'ROLE_TYPE'), 
+    (SELECT USER_FUNCT_ID FROM SBI_USER_FUNC WHERE NAME = 'GeoLayersManagement'));\p\g
+commit;\p\g
+
+
+ALTER TABLE SBI_COMMUNITY ADD UNIQUE INDEX NAME_UNIQUE (ORGANIZATION, NAME ASC) ;\p\g 

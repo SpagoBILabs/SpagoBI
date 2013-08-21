@@ -59,6 +59,7 @@ INSERT INTO @tbldroplist (TblName) VALUES ('SBI_DOMAINS');
 INSERT INTO @tbldroplist (TblName) VALUES ('SBI_GEO_MAP_FEATURES');
 INSERT INTO @tbldroplist (TblName) VALUES ('SBI_GEO_FEATURES');
 INSERT INTO @tbldroplist (TblName) VALUES ('SBI_GEO_MAPS');
+INSERT INTO @tbldroplist (TblName) VALUES ('SBI_GEO_LAYERS');
 INSERT INTO @tbldroplist (TblName) VALUES ('SBI_VIEWPOINTS');
 INSERT INTO @tbldroplist (TblName) VALUES ('SBI_DATA_SOURCE');
 INSERT INTO @tbldroplist (TblName) VALUES ('SBI_MENU_ROLE');
