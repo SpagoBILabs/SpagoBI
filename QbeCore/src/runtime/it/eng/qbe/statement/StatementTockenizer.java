@@ -16,7 +16,10 @@ public class StatementTockenizer extends StringTokenizer{
 	private String satement;
 	private String currentToken;
 	
-	private static final String DELIMITERS = "+-|*/()";
+	private static final String DELIMITERS = "+-|*/()<>=!";
+	private static final String[] ADDITIONALS_DELIMITERS_SUBSTRING_FUNCTIONS = {" like ", "case when", " then ", " end ", "not in ", " in ", " between", "is not null ", "is null ", "is not empty " , "is empty ", "not member of", "member of"};
+	
+	//private static final String[] ADDITIONALS_DELIMITERS_FUNCTIONS = {"concat", "current_date", "current_time", "current_timestamp","substring", "trim", "lower", "upper", "length", "locate", "abs", "sqrt", "bit_length", "mod", "coalesce","nullif","str","size", "minelement", "maxelement", "minindex", "maxindex","elements","sign","trunc","rtrim","sin"};
 	
 	/**
 	 * @param str
@@ -33,10 +36,10 @@ public class StatementTockenizer extends StringTokenizer{
 		nextToken = null;
 		try {
 			nextToken =  super.nextToken();
-			if(nextToken != null) nextToken = nextToken.trim();
-//			if(nextToken.contains("::")){
-//				nextToken =  nextToken + super.nextToken("+-|*/");
-//			}		
+			if(nextToken != null){
+				nextToken = cleanTockenFromKeyWords(nextToken);
+				nextToken = nextToken.trim();
+			} 	
 			currentToken = nextToken;
 		} catch(Throwable t) {
 			throw new RuntimeException("An unexpected error occured during tokenization of statement [" + satement + "] (current token: [" + currentToken + "]; next: token: [" + nextToken + "])", t);
@@ -44,5 +47,15 @@ public class StatementTockenizer extends StringTokenizer{
 		
 		return nextToken;
 	}
+	
+	public String cleanTockenFromKeyWords(String tocken){
+		for(int i=0; i<ADDITIONALS_DELIMITERS_SUBSTRING_FUNCTIONS.length; i++){
+			tocken = tocken.replace( ADDITIONALS_DELIMITERS_SUBSTRING_FUNCTIONS[i], "");
+		}
+		return tocken;
+		
+	}
+	
+
 
 }
