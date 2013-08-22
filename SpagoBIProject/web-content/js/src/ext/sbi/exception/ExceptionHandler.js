@@ -70,7 +70,17 @@ Sbi.exception.ExceptionHandler = function(){
         		        	return;
         				} else if (content.errors[0].message === 'not-enabled-to-call-service') {
         					Sbi.exception.ExceptionHandler.showErrorMessage(LN('not-enabled-to-call-service'), 'Service Error')
-        				} else {
+        				}  else if (content.message === 'validation-error') {
+        					for (var count = 0; count < content.errors.length; count++) {
+        						var anError = content.errors[count];
+        						if (anError.message !== undefined && anError.message !== '') {
+			        				errMessage += anError.message;
+			        			}
+			        			if (count < content.errors.length - 1) {
+			        				errMessage += '<br/>';
+			        			}
+        					}
+        				}else {
         					for (var count = 0; count < content.errors.length; count++) {
         						var anError = content.errors[count];
         						if (anError.message !== undefined && anError.message !== '' && anError.message.indexOf(errorSeparator)>=0) {

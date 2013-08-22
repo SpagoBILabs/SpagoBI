@@ -23,6 +23,7 @@ import it.eng.spagobi.commons.serializer.SerializerFactory;
 import it.eng.spagobi.commons.utilities.AuditLogUtilities;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.container.ObjectUtils;
+import it.eng.spagobi.rest.annotations.ToValidate;
 import it.eng.spagobi.services.exceptions.ExceptionUtilities;
 import it.eng.spagobi.tools.dataset.bo.FileDataSet;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
@@ -37,8 +38,8 @@ import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.tools.dataset.utils.DatasetMetadataParser;
 import it.eng.spagobi.tools.dataset.validation.ErrorField;
-import it.eng.spagobi.tools.dataset.validation.HierarchyLevel;
 import it.eng.spagobi.tools.dataset.validation.GeoDatasetValidatorFactory;
+import it.eng.spagobi.tools.dataset.validation.HierarchyLevel;
 import it.eng.spagobi.tools.dataset.validation.IDatasetValidator;
 import it.eng.spagobi.tools.dataset.validation.IDatasetValidatorFactory;
 import it.eng.spagobi.tools.dataset.validation.ValidationErrors;
@@ -185,6 +186,7 @@ public class SelfServiceDataSetCRUD {
 	
 	@POST
 	@Path("/save")
+	@ToValidate(typeName= "dataset")
 	@Produces(MediaType.APPLICATION_JSON)
 	public String saveDataSet(@Context HttpServletRequest req) {
 		IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
@@ -448,6 +450,63 @@ public class SelfServiceDataSetCRUD {
 		}
 	}
 	
+	private Map<String, HierarchyLevel> getHierarchiesColumnsToCheck(
+			String datasetMetadata) throws JsonMappingException,
+			JsonParseException, JSONException, IOException {
+		JSONObject metadataObject = null;
+
+		Map<String, HierarchyLevel> hierarchiesColumnsToCheck = new HashMap<String, HierarchyLevel>();
+
+		if ((!datasetMetadata.equals("")) && (!datasetMetadata.equals("[]"))) {
+			metadataObject = JSONUtils.toJSONObject(datasetMetadata);
+			JSONArray columnsMetadataArray = metadataObject
+					.getJSONArray("columns");
+			// JSONArray datasetMetadataArray =
+			// metadataObject.getJSONArray("dataset");
+
+			for (int j = 0; j < columnsMetadataArray.length(); j++) {
+				JSONObject columnJsonObject = columnsMetadataArray
+						.getJSONObject(j);
+				String columnName = columnJsonObject.getString("column");
+				String propertyName = columnJsonObject.getString("pname");
+				String propertyValue = columnJsonObject.getString("pvalue");
+
+				if (propertyName.equals("hierarchy")) {
+					HierarchyLevel hierarchyLevel = hierarchiesColumnsToCheck
+							.get(columnName);
+
+					if (hierarchyLevel == null) {
+						hierarchyLevel = new HierarchyLevel();
+						hierarchyLevel.setHierarchy_name(propertyValue);
+						hierarchiesColumnsToCheck.put(columnName,
+								hierarchyLevel);
+					} else {
+						hierarchyLevel.setHierarchy_name(propertyValue);
+						hierarchiesColumnsToCheck.put(columnName,
+								hierarchyLevel);
+					}
+				}
+				if (propertyName.equals("hierarchy_level")) {
+					HierarchyLevel hierarchyLevel = hierarchiesColumnsToCheck
+							.get(columnName);
+
+					if (hierarchyLevel == null) {
+						hierarchyLevel = new HierarchyLevel();
+						hierarchyLevel.setLevel_name(propertyValue);
+						hierarchiesColumnsToCheck.put(columnName,
+								hierarchyLevel);
+					} else {
+						hierarchyLevel.setLevel_name(propertyValue);
+						hierarchiesColumnsToCheck.put(columnName,
+								hierarchyLevel);
+					}
+				}
+
+			}
+
+		}
+		return hierarchiesColumnsToCheck;
+	}
 	public JSONArray validationErrorsToJSONObject(ValidationErrors validationErrors) throws JSONException{
 		
 		JSONArray errorsArray = new JSONArray();		
@@ -469,56 +528,6 @@ public class SelfServiceDataSetCRUD {
 		
 		
 		
-	}
-	
-	private Map<String,HierarchyLevel> getHierarchiesColumnsToCheck(String datasetMetadata) throws JsonMappingException, JsonParseException, JSONException, IOException{
-		JSONObject metadataObject = null;
-		
-		Map<String,HierarchyLevel> hierarchiesColumnsToCheck = new HashMap<String,HierarchyLevel>();
-		
-		
-		if ((!datasetMetadata.equals("")) && (!datasetMetadata.equals("[]")))	{
-			metadataObject = JSONUtils.toJSONObject(datasetMetadata);			
-			JSONArray columnsMetadataArray =  metadataObject.getJSONArray("columns");
-			//JSONArray datasetMetadataArray =  metadataObject.getJSONArray("dataset");
-			
-			for(int j=0; j<columnsMetadataArray.length(); j++){
-				JSONObject columnJsonObject = columnsMetadataArray.getJSONObject(j);
-				String columnName = columnJsonObject.getString("column");					
-				String propertyName = columnJsonObject.getString("pname");
-				String propertyValue = columnJsonObject.getString("pvalue");
-				
-				
-				if (propertyName.equals("hierarchy")){
-					HierarchyLevel hierarchyLevel = hierarchiesColumnsToCheck.get(columnName);
-					
-					if (hierarchyLevel == null){
-						hierarchyLevel = new HierarchyLevel();	
-						hierarchyLevel.setHierarchy_name(propertyValue);
-						hierarchiesColumnsToCheck.put(columnName, hierarchyLevel);
-					} else {
-						hierarchyLevel.setHierarchy_name(propertyValue);
-						hierarchiesColumnsToCheck.put(columnName, hierarchyLevel);
-					}
-				}
-				if (propertyName.equals("hierarchy_level")){
-					HierarchyLevel hierarchyLevel = hierarchiesColumnsToCheck.get(columnName);
-					
-					if (hierarchyLevel == null){
-						hierarchyLevel = new HierarchyLevel();
-						hierarchyLevel.setLevel_name(propertyValue);
-						hierarchiesColumnsToCheck.put(columnName, hierarchyLevel);
-					} else {
-						hierarchyLevel.setLevel_name(propertyValue);
-						hierarchiesColumnsToCheck.put(columnName, hierarchyLevel);
-					}
-				}
-				
-				
-			}
-
-		}	
-		return hierarchiesColumnsToCheck;
 	}
 	
 	

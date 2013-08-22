@@ -10,8 +10,6 @@ import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.tenant.Tenant;
 import it.eng.spagobi.tenant.TenantManager;
 
-import java.lang.reflect.Method;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
@@ -78,11 +76,6 @@ public class TenantRestProcessInterceptor implements PreProcessInterceptor, Post
 		logger.debug("OUT");
 	}
 
-
-	public boolean accept(Class arg0, Method arg1) {
-		// TODO Auto-generated method stub
-		return false;
-	}
 
 
 }
