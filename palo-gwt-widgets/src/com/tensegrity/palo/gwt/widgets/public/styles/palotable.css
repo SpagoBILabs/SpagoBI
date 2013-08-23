@@ -1,0 +1,50 @@
+.palo-gwt-palotable .header .item {
+}
+.palo-gwt-palotable .header .item-caption {
+	color: black;
+	font-family: Tahoma;
+	font-size: 8pt;
+	font-weight: normal;
+	white-space: nowrap;
+	cursor: pointer;	
+}
+.palo-gwt-palotable .header .item-icon-plus {		
+	width: 11px;
+	height: 11px;
+	background-image: url(../images/plus.gif);
+	background-position: 0 0;
+	background-repeat: no-repeat;
+}
+.palo-gwt-palotable .header .item-icon-minus {
+	width: 11px;
+	height: 11px;	
+	background-image: url(../images/minus.gif);
+	background-position: 0 0;
+	background-repeat: no-repeat;
+}
+.palo-gwt-palotable .header .item-icon-menu {
+	width: 11px;
+	height: 11px;	
+	background-image: url(../images/menu.gif);
+	background-position: 0 0;
+	background-repeat: no-repeat;
+}
+
+.palo-gwt-palotable .header .item-icon-hidden {
+	width: 0px;
+	height: 0px;
+	margin: 0px;
+}
+
+.palo-gwt-palotable .level-selector {
+}
+
+.x-insert-bar {
+  position: absolute;
+  z-index: 99999;
+}
+
+.x-insert-bar td {
+  line-height: 1px;
+  font-size: 1px;
+}
