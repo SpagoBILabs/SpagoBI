@@ -175,8 +175,9 @@ Sbi.geo.stat.ChoroplethControlPanel = Ext.extend(Ext.FormPanel, {
      * @param {Boolean} exception If true show a message box to user if either
      * the widget isn't ready, or no indicator is specified, or no
      * method is specified.
+     * @param {Object} additional options to pass to the thematizer.
      */
-    , thematize: function(exception) {
+    , thematize: function(exception, additionaOptions) {
     	Sbi.trace("[ChoropletControlPanel.thematize] : IN");
     	
     	var doThematization = true;
@@ -202,13 +203,14 @@ Sbi.geo.stat.ChoroplethControlPanel = Ext.extend(Ext.FormPanel, {
             doThematization = false;
         }
 
+        options = Ext.apply(options, additionaOptions||{});
+        
         if(doThematization) {
         	this.thematizer.thematize(options);
             this.thematizationApplied = true;
         } else {
         	this.thematizer.setOptions(options);
-        }
-        
+        }        
         
         Sbi.trace("[ChoropletControlPanel.thematize] : OUT");
     }
@@ -397,8 +399,86 @@ Sbi.geo.stat.ChoroplethControlPanel = Ext.extend(Ext.FormPanel, {
         this.setIndicator(indicator, riseEvents);
         
         Sbi.trace("[ChoropletControlPanel.setIndicators] : OUT");      
+    },
+	
+    /**
+     * Create the filter comboboxes
+     * @param filters the fiters definition
+     */
+	setFilters: function(filters){
+		if(!this.filters){
+			this.filters = new Array();
+		}
+		
+		//remove the old filters
+		for(var i=0; i<this.filters.length; i++){
+			this.remove(this.filters[i],true);
+		}
+		this.filters = new Array();
+		
+		//build the new filters
+		for(var i=0; i<filters.length; i++){
+			var filterDef = filters[i];
+			var filter =new Ext.form.ComboBox  ({
+	            fieldLabel: filterDef.header,
+	            name: filterDef.name,
+	            editable: false,
+	            mode: 'local',
+	            allowBlank: true,
+	            valueField: 'val',
+	            displayField: 'val',
+	            emptyText: 'Select a value',
+	            triggerAction: 'all',
+	            store: new Ext.data.SimpleStore({
+	            	fields: ['val'],
+	                data : 	filterDef.values
+	            }),
+	            listeners: {
+	                'select': {
+	                    fn: function() {
+	                    	this.filterDataSet();
+	                    },
+	                    scope: this
+	                }
+	            }
+	        });
+
+			this.filters.push(filter);
+			this.add(filter);
+		}
+		this.doLayout();
+		
+	}
+    
+    /**
+     * Execute the filters
+     */
+    , filterDataSet: function(){
+    	Sbi.trace("[ChoropletControlPanel.filterDataSet] : IN");      
+    	//get filter values
+    	var filters = this.getFilters();
+    	//filter the store
+    	this.thematizer.filterStore(filters);
+    	//update the thematization
+    	this.thematize(false, {resetClassification: true});
+    	Sbi.trace("[ChoropletControlPanel.filterDataSet] : OUT");      
     }
 	
+    , getFilters:function(){
+    	Sbi.trace("[ChoropletControlPanel.getFilters] : IN.. Get the values of the filters"); 
+    	var filters =new Array();
+		if(this.filters){
+			for(var i=0; i<this.filters.length; i++){
+				var filter = this.filters[i];
+				filters.push({
+					field: filter.name,
+					value: filter.getValue()
+				});
+			}
+		}
+		Sbi.trace("[ChoropletControlPanel.getFilters] : OUT");
+		return filters;
+    }
 	
     
     //-----------------------------------------------------------------------------------------------------------------
@@ -438,6 +518,10 @@ Sbi.geo.stat.ChoroplethControlPanel = Ext.extend(Ext.FormPanel, {
         
         this.thematizer.on('indicatorsChanged', function(thematizer, indicators, selectedIndicator){
 			this.setIndicators(indicators, selectedIndicator, false);
+		}, this);
+        
+        this.thematizer.on('filtersChanged', function(thematizer, filters){
+			this.setFilters(filters);
 		}, this);
     }
     
