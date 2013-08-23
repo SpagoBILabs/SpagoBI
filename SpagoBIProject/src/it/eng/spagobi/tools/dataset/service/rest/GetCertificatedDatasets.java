@@ -64,8 +64,22 @@ public class GetCertificatedDatasets {
 
 			datasetsJSONArray = (JSONArray) SerializerFactory.getSerializer(
 					"application/json").serialize(dataSets, null);
+			
+			JSONObject worksheetAction = new JSONObject();
+			worksheetAction.put("name", "worksheet");
+			worksheetAction.put("description", "Show Worksheet");
+			
+			JSONArray datasetsJSONReturn = new JSONArray();	
+			for(int i = 0; i < datasetsJSONArray.length(); i++) {
+				JSONArray actions = new JSONArray();
+				JSONObject datasetJSON = datasetsJSONArray.getJSONObject(i);		
+				actions.put(worksheetAction);
+				datasetJSON.put("actions", actions);
+				datasetsJSONReturn.put(datasetJSON);
+			}
 
-			JSONReturn.put("root", datasetsJSONArray);
+
+			JSONReturn.put("root", datasetsJSONReturn);
 
 		} catch (Throwable t) {
 			throw new SpagoBIServiceException(
