@@ -32,6 +32,7 @@ Sbi.geo.stat.Thematizer = function(map, config) {
 	this.initialize(map, config);
 	
 	this.addEvents('indicatorsChanged');
+	this.addEvents('filtersChanged');
 
 	Sbi.geo.stat.Thematizer.superclass.constructor.call(this, config);
 };
@@ -426,10 +427,93 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
     		Sbi.debug("[Thematizer.setData] : Indicator not specified in store's metadata so the ld one will be used [" + this.indicator + "]");
     	}
     	
+    	var filters = this.getAttributeFilters(store, meta);
+    	
     	this.thematize({resetClassification: true});
     	Sbi.trace("[Thematizer.setData] : OUT");
     	
     	this.fireEvent('indicatorsChanged', this, indicators, this.indicator);
+    	this.fireEvent('filtersChanged', this, filters);
+    }
+    
+    /**
+     * Apply the filters to the store
+     */
+    , filterStore: function(filters){
+    	Sbi.debug("[Thematizer.filterStore] : IN");
+    	if(filters){
+    		Sbi.debug("[Thematizer.filterStore] :  filtering the store for"+filters);
+    		
+    		var filterFunction = function(record, id){
+    			for(var i=0; i<filters.length; i++){
+	        		var field = filters[i].field;
+	        		var value = filters[i].value;
+	        		if(field && value!=null && value!=undefined && value!=""){
+	        			if(record.data[field]!=value){
+	        				return false;
+	        			}
+	        		}else{
+	        			Sbi.debug("[Thematizer.filterStore] : there are filters with no field defined");
+	        		}
+	    		}
+    			
+    			return true;
+    		};
+    		
+    		this.store.filterBy(filterFunction, this);
+    	}
+    	Sbi.debug("[Thematizer.filterStore] : OUT");
+    }
+    
+    , getAttributeFilters: function(store, meta){
+    	Sbi.debug("[Thematizer.getAttributeFilters] :IN");
+    	
+    	var filtersNames = new Array();//array with the name of the filters: all the attributes except the geoId
+    	var filtersValueMap = new Array();//array with the values of the filters
+    	var filters = new Array();//array with filters: contains definitions and values
+    	//the order of the 3 arrays is the same. The values of the filter with name filtersNames[j] stay in filtersValueMap[j]
+    	
+    	Sbi.debug("[Thematizer.getAttributeFilters] : Building the array of filters positions");
+    	for(var i = 0; i < meta.fields.length; i++) {
+    		var field = meta.fields[i];
+    		Sbi.debug("[Thematizer.getAttributeFilters] : Scanning field [" + Sbi.toSource(field) + "]");
+    		Sbi.debug("[Thematizer.getAttributeFilters] : Property role is equal to [" + field.role + "]");
+    		if(field.role == 'ATTRIBUTE' && !((meta.geoId) && (meta.geoId==field.header)) )  {
+    			Sbi.debug("[Thematizer.getAttributeFilters] : new filter found. It is equal to [" + field.header + "]");
+    			filtersNames.push(field.name);
+    			filtersValueMap.push(new Array());
+    			filters.push(field);
+    		}
+    	}
+    	
+    	Sbi.debug("[Thematizer.getAttributeFilters] : Building the map of the filters values");
+    	for(var i = 0; i < store.data.length; i++) {
+    		var row = store.data.items[i].data;
+        	for(var j = 0; j < filtersNames.length; j++) {
+        		var value = row[filtersNames[j]];
+        		var filterValues = filtersValueMap[j];
+        		if(filterValues.indexOf(value)<0){
+        			filterValues.push(value);
+        		}
+        	}
+    	}
+    	Sbi.debug("[Thematizer.getAttributeFilters] : Built the map of the filters values");
+    	
+    	Sbi.debug("[Thematizer.getAttributeFilters] : Building the filters");
+    	for(var j = 0; j < filtersNames.length; j++) {
+
+    		filters[j].values = new Array();
+    		
+        	for(var i = 0; i < filtersValueMap[j].length; i++) {
+        		var value = filtersValueMap[j][i];
+        		filters[j].values.push([value]);
+        	}
+    		
+//    		filters[j].values = filtersValueMap[j];
+    	}
+    	Sbi.debug("[Thematizer.getAttributeFilters] : Built the filters");
+    	
+    	return filters;
     }
    
     
