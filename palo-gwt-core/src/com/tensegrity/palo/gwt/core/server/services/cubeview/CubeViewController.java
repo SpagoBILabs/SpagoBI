@@ -129,14 +129,11 @@ public class CubeViewController {
 		System.out.println("getController .. spagoBIState:: "+spagoBIState);
 		if (controller == null) {
 			try {			
-				System.out.println("++++++++++1");
 				if(spagoBIState != null && !spagoBIState.equals("")){
-					System.out.println("++++++++++2");
 					ViewService viewService = ServiceProvider.getViewService(user);
 					viewService.setDefinition(spagoBIState, forView);
 				}
 				CubeView cv = forView.createCubeView(user, sessionId);
-				System.out.println("++++++++++3 cube view:" +cv.getName());
 				controller = new CubeViewController(forView, cv);
 				viewControllers.put(viewId, controller);
 			} catch (PaloIOException e) {
@@ -293,7 +290,6 @@ public class CubeViewController {
 		//create the hierarchy index:
 		Cube cube = cubeView.getCube();
 		Dimension[] cubeDims = cube.getDimensions();
-		System.out.println("++++++++++4 createHierarchyIndexMap:" +cubeDims);
 		hierarchyIndex = new HashMap<Hierarchy, Integer>();
 		for(int i=0;i<cubeDims.length;++i)
 			hierarchyIndex.put(cubeDims[i].getDefaultHierarchy(), i);

@@ -127,9 +127,7 @@ public class CubeViewService extends BasePaloServiceServlet {
 		try {
 			Account accountToUse = null;
 			AuthUser user = getLoggedInUser(sessionId);
-			System.out.println("+++++++++++++++++"+user);
 			Account referenceAccount = (Account) MapperRegistry.getInstance().getAccountManagement().find(xView.getAccountId());
-			System.out.println("+++++++++++++++++"+referenceAccount);
 			if (referenceAccount != null) {
 				for (Account acc: user.getAccounts()) {
 					if (acc.getId().equals(referenceAccount.getId())) {
@@ -151,9 +149,6 @@ public class CubeViewService extends BasePaloServiceServlet {
 							}
 					}
 				}
-				System.out.println("+++++++++++++++++"+accountToUse.getLoginName());
-				System.out.println("+++++++++++++++++"+accountToUse.getConnection().getName());
-				System.out.println("+++++++++++++++++"+accountToUse.getUser().getLoginName());
 				if (accountToUse == null) {
 					throw new PaloGwtCoreException("No account for this view");
 				}
