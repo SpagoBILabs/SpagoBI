@@ -160,6 +160,12 @@ Sbi.geo.stat.ChoroplethControlPanel = Ext.extend(Ext.FormPanel, {
      * Generator for bin labels
      */
     , labelGenerator: null
+    
+    /**
+     * @property {Array} The list of user filters (combobox objects)
+     * The user can filter the store by the dimension not equals to the geoId
+     */
+    , filters: null
 
     
     // =================================================================================================================
@@ -246,7 +252,7 @@ Sbi.geo.stat.ChoroplethControlPanel = Ext.extend(Ext.FormPanel, {
 		formState.fromColor = this.getToColor();
 		formState.toColor = this.getFromColor();
 		formState.indicator = this.getIndicator();
-		
+		formState.filtersDefaultValues = this.getFiltersDefaultValues();
 		return formState;
 	}
 	
@@ -295,6 +301,25 @@ Sbi.geo.stat.ChoroplethControlPanel = Ext.extend(Ext.FormPanel, {
 		return this.form.findField('indicator').getValue();
 	}
 	
+	/**
+	 * @method
+	 * 
+	 * @return {Array} the default values of the filters
+	 */
+	, getFiltersDefaultValues: function() {
+		var values = new Array();
+		if(this.filters){
+			for(var i=0; i<this.filters.length; i++){
+				var filter = this.filters[i];
+				values.push({
+					name: filter.name,
+					value : filter.filterDefaultValue
+				});
+			}
+		}
+		return values;
+	}
+	
 	, setFormState: function(formState, riseEvent) {
 		Sbi.trace("[ChoropletControlPanel.setFormState] : IN");
 	
@@ -303,7 +328,7 @@ Sbi.geo.stat.ChoroplethControlPanel = Ext.extend(Ext.FormPanel, {
 		this.setFromColor(formState.fromColor);
 		this.setToColor(formState.toColor);
 		this.setIndicator(formState.indicator);
-		
+		this.setFiltersDefaultValues(formState.filtersDefaultValues);
 		if(riseEvent === true) { this.onConfigurationChange(); }
 		
 		Sbi.trace("[ChoropletControlPanel.setFormState] : OUT");
@@ -369,6 +394,23 @@ Sbi.geo.stat.ChoroplethControlPanel = Ext.extend(Ext.FormPanel, {
 		
 		Sbi.trace("[ChoropletControlPanel.setIndicator] : OUT");
 	}
+	
+	/**
+	 * @method
+	 * 
+	 * @param {Array} the default values of the filters
+	 */
+	, setFiltersDefaultValues: function(filters) {
+		if(filters){
+			for(var i=0; i<filters.length; i++){
+				var combo = this.form.findField(filters[i].name);
+				if(combo && filters[i].value && filters[i].value!=""){
+					combo.setValue(filters[i].value);
+					combo.fireEvent("select");
+				}
+			}
+		}
+	}
     
 	/**
 	 * @method 
@@ -409,7 +451,12 @@ Sbi.geo.stat.ChoroplethControlPanel = Ext.extend(Ext.FormPanel, {
 		if(!this.filters){
 			this.filters = new Array();
 		}
+
+		if(this.setDefaultsValuesToFiltersButton){
+			this.remove(setDefaultsValuesToFiltersButton, true);
+		}
 		
+	
 		//remove the old filters
 		for(var i=0; i<this.filters.length; i++){
 			this.remove(this.filters[i],true);
@@ -446,6 +493,20 @@ Sbi.geo.stat.ChoroplethControlPanel = Ext.extend(Ext.FormPanel, {
 			this.filters.push(filter);
 			this.add(filter);
 		}
+		
+		if((Sbi.config.docLabel=="")){
+			this.setDefaultsValuesToFiltersButton =  new Ext.Button({
+		    	text: 'Set default',
+		        width: 30,
+		        handler: function() {
+		        	this.saveDefaultFiltersValue();
+           		},
+           		scope: this
+			});
+			this.add(this.setDefaultsValuesToFiltersButton);
+			
+		}
+		
 		this.doLayout();
 		
 	}
@@ -464,6 +525,9 @@ Sbi.geo.stat.ChoroplethControlPanel = Ext.extend(Ext.FormPanel, {
     	Sbi.trace("[ChoropletControlPanel.filterDataSet] : OUT");      
     }
 	
+    /**
+     * Gets filters values
+     */
     , getFilters:function(){
     	Sbi.trace("[ChoropletControlPanel.getFilters] : IN.. Get the values of the filters"); 
     	var filters =new Array();
@@ -480,6 +544,19 @@ Sbi.geo.stat.ChoroplethControlPanel = Ext.extend(Ext.FormPanel, {
 		return filters;
     }
 	
+    /**
+     * Save the default value of the filter in the filter as filterDefaultValue 
+     */
+    , saveDefaultFiltersValue:function(){
+    	Sbi.trace("[ChoropletControlPanel.saveDefaultFiltersValue] : IN"); 
+		if(this.filters){
+			for(var i=0; i<this.filters.length; i++){
+				var filter = this.filters[i];
+				filter.filterDefaultValue =  filter.getValue();
+			}
+		}
+		Sbi.trace("[ChoropletControlPanel.saveDefaultFiltersValue] : OUT");
+    }
     
     //-----------------------------------------------------------------------------------------------------------------
 	// init methods
