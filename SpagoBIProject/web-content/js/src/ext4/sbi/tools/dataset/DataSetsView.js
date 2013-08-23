@@ -217,14 +217,14 @@ Ext.define('Sbi.tools.dataset.DataSetsView', {
         		return true;
         	}
    			scope.fireEvent('executeDocument','GEOREPORT','DATASET',record);
-        }/* else {
+        } else {
         	Sbi.debug('DataSetView default click event...'); 
         	if (record.data.pars != undefined && record.data.pars != ''){
         		Sbi.exception.ExceptionHandler.showInfoMessage(LN('sbi.ds.noWorksheetDesigner'));
         		return true;
         	}
    			scope.fireEvent('executeDocument','WORKSHEET','DATASET',record);      	
-        }*/
+        }
         
         
         return true;
