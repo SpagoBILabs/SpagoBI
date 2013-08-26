@@ -110,12 +110,24 @@ Ext.extend(Sbi.kpi.KpiGridPanel ,Ext.ux.tree.TreeGrid, {
 			      ,'</tpl>'
 
 			);
+
 	    var tplStringForScale = '<tpl if="values.scaleName !== undefined && values.scaleName === \'Day scale\'">'//days
 	      +' gg'	     
 	      +'</tpl>'
 		  +'<tpl if="values.scaleName !== undefined && values.scaleName === \'Ratio scale\'">'//percentage
 	      +' %'	     
 	      +'</tpl>'
+		  +'<tpl if="values.scaleName !== undefined && values.scaleName === \'Bytes/s\'"> B/s </tpl>'
+		  +'<tpl if="values.scaleName !== undefined && values.scaleName === \'Mega Bytes\'"> MB </tpl>'
+		  +'<tpl if="values.scaleName !== undefined && values.scaleName === \'Bytes\'"> B </tpl>'
+		  +'<tpl if="values.scaleName !== undefined && values.scaleName === \'Kilo Bytes\'"> KB </tpl>'
+		  +'<tpl if="values.scaleName !== undefined && values.scaleName === \'Giga Bytes\'"> GB </tpl>'
+		  +'<tpl if="values.scaleName !== undefined && values.scaleName === \'Tera Bytes\'"> TB </tpl>'
+		  +'<tpl if="values.scaleName !== undefined && values.scaleName === \'Milliseconds\'"> ms </tpl>'
+		  +'<tpl if="values.scaleName !== undefined && values.scaleName === \'Seconds\'"> s </tpl>'
+		  +'<tpl if="values.scaleName !== undefined && values.scaleName === \'Minutes\'"> m </tpl>'
+		  +'<tpl if="values.scaleName !== undefined && values.scaleName === \'Hours\'"> h </tpl>'
+		  +'<tpl if="values.scaleName !== undefined && values.scaleName === \'KBit/s\'"> Kb/s </tpl>'
 	      +'</tpl>';
 	    var tplTarget = new Ext.XTemplate(
 	    		
