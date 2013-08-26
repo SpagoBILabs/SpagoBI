@@ -42,6 +42,7 @@ import it.eng.spagobi.tools.dataset.validation.GeoDatasetValidatorFactory;
 import it.eng.spagobi.tools.dataset.validation.HierarchyLevel;
 import it.eng.spagobi.tools.dataset.validation.IDatasetValidator;
 import it.eng.spagobi.tools.dataset.validation.IDatasetValidatorFactory;
+import it.eng.spagobi.tools.dataset.validation.NumericColumnValidator;
 import it.eng.spagobi.tools.dataset.validation.ValidationErrors;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
@@ -373,6 +374,27 @@ public class SelfServiceDataSetCRUD {
 			
 			//Dataset Validation ---------------------------------------------
 			if (datasetMetadata != null)	{
+				ValidationErrors validationErrors = new ValidationErrors();
+				
+				
+				//first check Numeric Columns Values
+				List <String> numericColumnsToCheck = getNumericColumnsToCheck(datasetMetadata);
+				if (!numericColumnsToCheck.isEmpty()){
+					NumericColumnValidator numericColumnValidator = new NumericColumnValidator();
+					
+					Map<String, HierarchyLevel> numericColumnsMapToCheck = new HashMap<String, HierarchyLevel>();
+					for (String numericColumn : numericColumnsToCheck){
+						numericColumnsMapToCheck.put(numericColumn, null);
+					}
+					
+					ValidationErrors numericColumnsValidationErrors = numericColumnValidator.doValidateDataset(dataStore, numericColumnsMapToCheck);
+					if (!numericColumnsValidationErrors.isEmpty()){
+						validationErrors.addAll(numericColumnsValidationErrors);
+					}
+				}
+				
+				
+				//validation of columns with specified Hierarchies
 				Map<String, HierarchyLevel> hierarchiesColumnsToCheck = getHierarchiesColumnsToCheck(datasetMetadata);
 			
 				if (!hierarchiesColumnsToCheck.isEmpty()){
@@ -391,21 +413,25 @@ public class SelfServiceDataSetCRUD {
 						if (geoValidator != null){
 
 							//Validate the dataset and return the fields not valid
-							ValidationErrors validationErrors = geoValidator.validateDataset(dataStore,hierarchiesColumnsToCheck);
-						
-							if (!validationErrors.isEmpty()){
-								//this create an array containing the fields with error for each rows
-								JSONArray errorsArray  = validationErrorsToJSONObject(validationErrors);
-								gridDataFeed.put("validationErrors", errorsArray);
-
+							ValidationErrors hierarchiesColumnsValidationErrors = geoValidator.validateDataset(dataStore,hierarchiesColumnsToCheck);
+							if (!hierarchiesColumnsValidationErrors.isEmpty()){
+								validationErrors.addAll(hierarchiesColumnsValidationErrors);
 							}
+							
 						}
 	
 					}					
 					
 
 				}
+				if (!validationErrors.isEmpty()){
+					//this create an array containing the fields with error for each rows
+					JSONArray errorsArray  = validationErrorsToJSONObject(validationErrors);
+					gridDataFeed.put("validationErrors", errorsArray);
 
+				}	
+				
+				
 			}		
 			//-----------------------------------------------------------------
 			
@@ -450,12 +476,40 @@ public class SelfServiceDataSetCRUD {
 		}
 	}
 	
+	private List<String> getNumericColumnsToCheck(String datasetMetadata)throws JsonMappingException,
+	JsonParseException, JSONException, IOException {
+		JSONObject metadataObject = null;
+		List<String> numericColumnsToCheck =  new ArrayList<String>();
+		if ((!datasetMetadata.equals("")) && (!datasetMetadata.equals("[]"))) {
+			metadataObject = JSONUtils.toJSONObject(datasetMetadata);
+			JSONArray columnsMetadataArray = metadataObject.getJSONArray("columns");
+			for (int j = 0; j < columnsMetadataArray.length(); j++) {
+				JSONObject columnJsonObject = columnsMetadataArray.getJSONObject(j);
+				String columnName = columnJsonObject.getString("column");
+				String propertyName = columnJsonObject.getString("pname");
+				String propertyValue = columnJsonObject.getString("pvalue");
+
+				if (propertyName.equalsIgnoreCase("Type")){
+					if(propertyValue.equalsIgnoreCase("Integer")){
+						//Numeric Column to Check
+						numericColumnsToCheck.add(columnName);
+					} else if(propertyValue.equalsIgnoreCase("Double")){
+						//Numeric Column to Check
+						numericColumnsToCheck.add(columnName);
+					} 
+				}
+			}
+		}
+		return numericColumnsToCheck;
+	}
+	
 	private Map<String, HierarchyLevel> getHierarchiesColumnsToCheck(
 			String datasetMetadata) throws JsonMappingException,
 			JsonParseException, JSONException, IOException {
 		JSONObject metadataObject = null;
 
 		Map<String, HierarchyLevel> hierarchiesColumnsToCheck = new HashMap<String, HierarchyLevel>();
+		
 
 		if ((!datasetMetadata.equals("")) && (!datasetMetadata.equals("[]"))) {
 			metadataObject = JSONUtils.toJSONObject(datasetMetadata);
