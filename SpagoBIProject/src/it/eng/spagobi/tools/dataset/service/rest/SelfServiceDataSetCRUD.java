@@ -378,6 +378,7 @@ public class SelfServiceDataSetCRUD {
 				
 				
 				//first check Numeric Columns Values
+				/*
 				List <String> numericColumnsToCheck = getNumericColumnsToCheck(datasetMetadata);
 				if (!numericColumnsToCheck.isEmpty()){
 					NumericColumnValidator numericColumnValidator = new NumericColumnValidator();
@@ -392,9 +393,10 @@ public class SelfServiceDataSetCRUD {
 						validationErrors.addAll(numericColumnsValidationErrors);
 					}
 				}
+				*/
 				
 				
-				//validation of columns with specified Hierarchies
+				//validation of columns with specified Hierarchies and with numeric Type
 				Map<String, HierarchyLevel> hierarchiesColumnsToCheck = getHierarchiesColumnsToCheck(datasetMetadata);
 			
 				if (!hierarchiesColumnsToCheck.isEmpty()){
@@ -554,6 +556,21 @@ public class SelfServiceDataSetCRUD {
 						hierarchiesColumnsToCheck.put(columnName,
 								hierarchyLevel);
 					}
+				}
+				if (propertyName.equalsIgnoreCase("Type")){
+					if(( propertyValue.equalsIgnoreCase("Integer")) || (propertyValue.equalsIgnoreCase("Double")) ){
+						HierarchyLevel hierarchyLevel = hierarchiesColumnsToCheck.get(columnName);
+						if (hierarchyLevel == null) {
+							hierarchyLevel = new HierarchyLevel();
+							hierarchyLevel.setColumn_type("numeric");
+							hierarchiesColumnsToCheck.put(columnName,
+									hierarchyLevel);
+						} else {
+							hierarchyLevel.setColumn_type("numeric");
+							hierarchiesColumnsToCheck.put(columnName,
+									hierarchyLevel);
+						}
+					} 
 				}
 
 			}

@@ -45,6 +45,10 @@ public class TimeDimensionDatasetValidator  extends AbstractDatasetValidator {
 	
 	public static transient Logger logger = Logger.getLogger(TimeDimensionDatasetValidator.class);
 	public final String TIME_HIERARCHY_NAME = "time"; //this validator check only hierarchies with this name
+	
+	public TimeDimensionDatasetValidator(IDatasetValidator child){
+		childValidator = child;
+	}
 
     /* (non-Javadoc)
      * @see it.eng.spagobi.tools.dataset.validation.IDatasetValidator#validateDataset(it.eng.spagobi.tools.dataset.common.datastore.IDataStore)

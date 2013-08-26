@@ -29,6 +29,7 @@ public class HierarchyLevel {
 	
 	private String hierarchy_name;
 	private String level_name;
+	private String column_type;
 	
 	/**
 	 * @param column_name
@@ -38,11 +39,20 @@ public class HierarchyLevel {
 		
 		this.hierarchy_name = hierarchy_name;
 		this.level_name = level_name;
+		this.column_type = null;
+
+	}
+	
+	public HierarchyLevel(String hierarchy_name, String level_name, String column_type){
+		this.hierarchy_name = hierarchy_name;
+		this.level_name = level_name;
+		this.column_type = column_type;
 	}
 	
 	public HierarchyLevel(){
 		this.hierarchy_name = null;
 		this.level_name = null;
+		this.column_type = null;
 	}
 
 	/**
@@ -73,6 +83,20 @@ public class HierarchyLevel {
 		this.level_name = level_name;
 	}
 	
+	/**
+	 * @return the column_type
+	 */
+	public String getColumn_type() {
+		return column_type;
+	}
+
+	/**
+	 * @param column_type the column_type to set
+	 */
+	public void setColumn_type(String column_type) {
+		this.column_type = column_type;
+	}
+
 	public boolean isValidEntry(){
 		if ((this.level_name != null) && (this.hierarchy_name != null)){
 			return true;

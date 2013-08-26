@@ -31,6 +31,7 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 
 /**
+ * 	This validator checks that the numeric columns contains numeric values
  * @author Marco Cortella (marco.cortella@eng.it)
  *
  */
@@ -38,7 +39,6 @@ public class NumericColumnValidator extends AbstractDatasetValidator {
 	
 	public static transient Logger logger = Logger.getLogger(NumericColumnValidator.class);
 	
-	//This validator checks that the numeric columns contains numeric values
 
 
 	/* (non-Javadoc)
@@ -52,27 +52,34 @@ public class NumericColumnValidator extends AbstractDatasetValidator {
 		{
 			logger.debug("Column Name= "+entry.getKey());
 		    String columnName = entry.getKey();
+		    HierarchyLevel hierarchyLevel = entry.getValue();
+		    String columnType = hierarchyLevel.getColumn_type();
 		    
-		    //Iterate the datastore (of the dataset) and check if values are ammissible
-			Iterator it = dataStore.iterator();
-			int columnIndex = dataStore.getMetaData().getFieldIndex(columnName); 
-			int rowNumber = 0;
-			while( it.hasNext() ) {
-				IRecord record = (IRecord)it.next();
-	    		IField field = record.getFieldAt(columnIndex);
-	    		Object fieldValue = field.getValue(); 
-	    		if(fieldValue != null)  {
-		    		if (!isNumeric(fieldValue)){
-	    				String errorDescription = "Error in validation: "+fieldValue+" is not a numeric value ";
+		    //Check only columns marked with numeric types
+		    if ((columnType != null) && (columnType.equalsIgnoreCase("numeric"))){
+			    //Iterate the datastore (of the dataset) and check if values are ammissible
+				Iterator it = dataStore.iterator();
+				int columnIndex = dataStore.getMetaData().getFieldIndex(columnName); 
+				int rowNumber = 0;
+				while( it.hasNext() ) {
+					IRecord record = (IRecord)it.next();
+		    		IField field = record.getFieldAt(columnIndex);
+		    		Object fieldValue = field.getValue(); 
+		    		if(fieldValue != null)  {
+			    		if (!isNumeric(fieldValue)){
+		    				String errorDescription = "Error in validation: "+fieldValue+" is not a numeric value ";
+		    				validationErrors.addError(rowNumber, columnIndex, field, errorDescription);
+			    		}
+		    		}else {
+	    				String errorDescription = "Error in validation: null is not valid for a valid numeric value";
 	    				validationErrors.addError(rowNumber, columnIndex, field, errorDescription);
 		    		}
-	    		}else {
-    				String errorDescription = "Error in validation: null is not valid for a valid numeric value";
-    				validationErrors.addError(rowNumber, columnIndex, field, errorDescription);
-	    		}
-	    		rowNumber++;
+		    		rowNumber++;
 
-			}
+				}
+		    }
+		    
+
 		}
 		
 		
