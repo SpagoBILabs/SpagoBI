@@ -94,6 +94,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 	//filter on resources if selected through AD ParKpiResource or ParKpiResources
 	ArrayList parKpiResource = new ArrayList();
 	ArrayList parKpiResources = new ArrayList();
+	String parKpiDateStr = "";
 	String parsToDetailDocs = "";
 	   if(instance!=null && instance.getBIObject()!=null){
 	   List pars = instance.getBIObject().getBiObjectParameters();			
@@ -109,6 +110,8 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 						parKpiResource.add(value);
 					}else if(url.equals("ParKpiResources")){
 						parKpiResources.add(value);
+					}else if(url.equals("ParKpiDate")){					
+						parKpiDateStr = "'"+value+"'";
 					}
 				}
 				
@@ -142,6 +145,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 				modelInstJson.put("resourceName", resourceName);
 				kpiRowsArray.put(modelInstJson);
 			}
+
 				
 		}			
 	}
@@ -178,12 +182,26 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 			border: false,
 			json: <%=kpiRowsArray%>
 		};
+		var dt ='';
+		<%
+		if(parKpiDateStr!= null && !parKpiDateStr.equals("")){
+		%>
+			dt = Sbi.commons.Format.date(<%=parKpiDateStr%>, Sbi.config.clientServerDateFormat);
+
+		<%
+		}else{
+		%>
+			dt = Sbi.commons.Format.date(new Date(), Sbi.config.clientServerDateFormat);
+		<% 
+		}
+		%>
 		var accordion ={SBI_EXECUTION_ID: '<%=EXECUTION_ID%>', 
 						customChartName: '<%=customChartName%>',
 						localeExtDateFormat: '<%=localeExtDateFormat%>',
 						serverExtTimestampFormat: '<%=serverExtTimestampFormat%>',
 						serverDateFormat: '<%=serverDateFormat%>',
-						chartBaseUrl: '/<%= engineContext %>/js/lib/ext-3.1.1/resources/charts.swf'
+						chartBaseUrl: '/<%= engineContext %>/js/lib/ext-3.1.1/resources/charts.swf',
+						titleDate: dt+' '
 						};
 		
 		var config ={grid: grid, accordion: accordion};
@@ -193,7 +211,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 			var item = new Sbi.kpi.KpiGUILayout(config);
 
 		    var viewport = new Ext.Viewport({
-		        layout:'fit',
+		        layout:'fit',		        
 		        items:[item]
 		    });
 
