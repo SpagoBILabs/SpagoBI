@@ -28,7 +28,6 @@ public class DatasetFieldsValidator implements IFieldsValidator {
 	
 	private static transient Logger logger = Logger.getLogger(DatasetFieldsValidator.class);
 
-	@Override
 	public JSONArray validateFields(MultivaluedMap<String, String> parameters) {
 		JSONArray validationErrors = new JSONArray();
 
