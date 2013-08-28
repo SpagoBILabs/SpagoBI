@@ -61,6 +61,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -260,6 +261,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 		logParam.put("TYPE", ds.getDsType());
 		try {
 			dsDao.deleteDataSet(dsID);
+			deleteDatasetFile(ds); //for FileDatase
 			logger.debug("Dataset deleted"); 
 			AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DATA_SET.DELETE",logParam , "OK");
 			writeBackToClient( new JSONAcknowledge("Operation succeded") );
@@ -403,7 +405,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 	
 		if (name != null && label != null && datasetTypeName!=null && !datasetTypeName.equals("")) {
 			try{
-				ds = getDataSet(datasetTypeName);
+				ds = getDataSet(datasetTypeName,true);
 				if(ds!=null){
 					ds.setLabel(label);
 					ds.setName(name);
@@ -488,7 +490,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 					IDataSet dsRecalc = null;		
 					try {
 						if (datasetTypeName != null && !datasetTypeName.equals("")) {
-							dsRecalc = getDataSet(datasetTypeName);
+							dsRecalc = getDataSet(datasetTypeName,true);
 							if (dsRecalc != null) {
 								if (trasfTypeCd != null && !trasfTypeCd.equals("")) {
 									dsRecalc = setTransformer(dsRecalc, trasfTypeCd);
@@ -843,7 +845,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 			if ( datasetTypeName == null) {
 				throw new SpagoBIServiceException(SERVICE_NAME,	"Impossible to resolve dataset type whose code is equal to [" + datasetTypeCode + "]");
 			}
-			dataSet = getDataSet(datasetTypeName);
+			dataSet = getDataSet(datasetTypeName,false);
 		} catch(Throwable t) {
 			if(t instanceof SpagoBIServiceException) throw (SpagoBIServiceException)t;
 			throw new SpagoBIServiceException(SERVICE_NAME,	"An unexpected error occured while retriving dataset from request", t);
@@ -851,13 +853,15 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 		return dataSet;
 	}
 
-	private IDataSet getDataSet(String datasetTypeName) throws Exception{
+	private IDataSet getDataSet(String datasetTypeName, boolean savingDataset) throws Exception{
 
 		IDataSet dataSet = null;
 		JSONObject jsonDsConfig = new JSONObject();		
 
 		if(datasetTypeName.equalsIgnoreCase(DataSetConstants.DS_FILE)){	
 			//added
+			String dsId = getAttributeAsString(DataSetConstants.DS_ID);
+			String dsLabel = getAttributeAsString(DataSetConstants.LABEL);
 			String fileType = getAttributeAsString(DataSetConstants.FILE_TYPE);
 			
 			String csvDelimiter = getAttributeAsString(DataSetConstants.CSV_FILE_DELIMITER_CHARACTER);
@@ -866,6 +870,11 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 			String skipRows = getAttributeAsString(DataSetConstants.XSL_FILE_SKIP_ROWS);
 			String limitRows = getAttributeAsString(DataSetConstants.XSL_FILE_LIMIT_ROWS);
 			String xslSheetNumber = getAttributeAsString(DataSetConstants.XSL_FILE_SHEET_NUMBER);
+			
+			Boolean newFileUploaded = false;
+			if (getAttributeAsString("fileUploaded") != null){
+				newFileUploaded = Boolean.valueOf(getAttributeAsString("fileUploaded"));
+			}
 			
 			
 			jsonDsConfig.put(DataSetConstants.FILE_TYPE, fileType);
@@ -880,10 +889,64 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 			String fileName = getAttributeAsString(DataSetConstants.FILE_NAME);
 			File pathFile = new File(fileName);
 			fileName = pathFile.getName();
-			jsonDsConfig.put(DataSetConstants.FILE_NAME, fileName);
+			if (savingDataset){
+				//when saving the dataset the file associated will get the dataset label name
+				if (dsLabel != null){
+					jsonDsConfig.put(DataSetConstants.FILE_NAME, dsLabel+"."+fileType.toLowerCase());
+				}
+			} else {
+				jsonDsConfig.put(DataSetConstants.FILE_NAME, fileName);
+			}
+			
+			
 			dataSet.setConfiguration(jsonDsConfig.toString());
+			
+			if ((dsId == null) || (dsId.isEmpty())){
+				//creating a new dataset, the file uploaded has to be renamed and moved
+				((FileDataSet)dataSet).setUseTempFile(true);
+				
+				if (savingDataset){
+					//rename and move the file
+					String resourcePath = ((FileDataSet)dataSet).getResourcePath();
+					if (dsLabel != null){
+						renameAndMoveDatasetFile(fileName,dsLabel,resourcePath, fileType);
+						((FileDataSet)dataSet).setUseTempFile(false);
+					}
+
+
+				}
+
+			} else {
+				//reading or modifying a existing dataset
+
+				if (newFileUploaded){
+					//modifying an existing dataset with a new file uploaded
+					((FileDataSet)dataSet).setUseTempFile(true);
+					
+					//saving the existing dataset with a new file associated
+					if (savingDataset){
+						//rename and move the file
+						String resourcePath = ((FileDataSet)dataSet).getResourcePath();
+						if (dsLabel != null){
+							renameAndMoveDatasetFile(fileName,dsLabel,resourcePath, fileType);
+							((FileDataSet)dataSet).setUseTempFile(false);
+						}
+					}
+
+				} else {
+					//using existing dataset file, file in correct place
+					((FileDataSet)dataSet).setUseTempFile(false);
+				}
+			}
+			
 			((FileDataSet)dataSet).setFileType(fileType);		
-			((FileDataSet)dataSet).setFileName(fileName);				
+			
+			if (savingDataset){
+				//the file used will have the name equals to dataset's label
+				((FileDataSet)dataSet).setFileName(dsLabel+"."+fileType.toLowerCase());
+			} else {
+				((FileDataSet)dataSet).setFileName(fileName);
+			}				
 			
 		} 
 
@@ -980,6 +1043,55 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 		}
 		dataSet.setConfiguration(jsonDsConfig.toString());		
 		return dataSet;
+	}
+	
+	//This method rename a file and move it from resources\dataset\files\temp to resources\dataset\files
+	private void renameAndMoveDatasetFile(String originalFileName, String newFileName, String resourcePath, String fileType){
+		String filePath = resourcePath + File.separatorChar+"dataset"+File.separatorChar+"files"+File.separatorChar+"temp"+File.separatorChar;
+		String fileNewPath = resourcePath + File.separatorChar+"dataset"+File.separatorChar+"files"+File.separatorChar;
+		
+		File originalDatasetFile = new File(filePath + originalFileName); 
+		File newDatasetFile = new File (fileNewPath + newFileName + "."+fileType.toLowerCase());
+		if (originalDatasetFile.exists()){
+			/*
+			 *  This method copies the contents of the specified source file to the specified destination file.
+			 *  The directory holding the destination file is created if it does not exist. 
+			 *  If the destination file exists, then this method will overwrite it. 
+			 */
+			try {
+				FileUtils.copyFile(originalDatasetFile, newDatasetFile);
+				
+				//Then delete temp file
+				originalDatasetFile.delete();
+			} catch (IOException e) {
+				logger.debug("Cannot move dataset File");
+				throw new SpagoBIRuntimeException("Cannot move dataset File", e);
+			}
+		}
+
+	}	
+	
+	public void deleteDatasetFile(IDataSet dataset){
+		if (dataset instanceof VersionedDataSet){
+			VersionedDataSet versionedDataset = (VersionedDataSet)dataset;
+			IDataSet wrappedDataset = versionedDataset.getWrappedDataset();
+			
+			if (wrappedDataset instanceof FileDataSet){
+				FileDataSet fileDataset = (FileDataSet)wrappedDataset;
+				String resourcePath = fileDataset.getResourcePath();
+				String fileName = fileDataset.getFileName();
+				String filePath = resourcePath + File.separatorChar+"dataset"+File.separatorChar+"files"+File.separatorChar;
+				File datasetFile = new File(filePath+fileName);
+				
+				if (datasetFile.exists()){
+					boolean isDeleted = datasetFile.delete();
+					if (isDeleted){
+						logger.debug("Dataset File "+fileName+" has been deleted");
+					}
+				}
+			}
+		}
+		
 	}
 
 	private IDataSet setTransformer(IDataSet ds,String trasfTypeCd){

@@ -53,7 +53,7 @@ public class UploadDatasetFileAction extends AbstractSpagoBIAction {
 			
 			FileItem uploaded = (FileItem) getAttribute(UPLOADED_FILE);
 			Object skipChecksObject = getAttribute(SKIP_CHECKS);
-			Boolean skipChecks = false;
+			Boolean skipChecks = false; 
 			if(skipChecksObject!=null){
 				skipChecks =((String)skipChecksObject).equals("on");
 			}
@@ -71,9 +71,11 @@ public class UploadDatasetFileAction extends AbstractSpagoBIAction {
 			
 			File file = checkAndCreateDir(uploaded);
 			
+			/*
 			if(!skipChecks){
 				checkFile(uploaded, file);
 			}
+			*/
 			
 			logger.debug("Saving file...");
 			saveFile(uploaded, file);
@@ -177,9 +179,9 @@ public class UploadDatasetFileAction extends AbstractSpagoBIAction {
 			SingletonConfig configSingleton = SingletonConfig.getInstance();
 			String path  = configSingleton.getConfigValue("SPAGOBI.RESOURCE_PATH_JNDI_NAME");
 			String resourcePath= SpagoBIUtilities.readJndiResource(path);
-			File datasetFileDir = new File(resourcePath+File.separatorChar+"dataset"+File.separatorChar+"files");
+			File datasetFileDir = new File(resourcePath+File.separatorChar+"dataset"+File.separatorChar+"files"+File.separatorChar+"temp");
 			if (!datasetFileDir.exists()){
-				//Create Directory \dataset\files under \resources if don't exists
+				//Create Directory \dataset\files\temp under \resources if don't exists
 				boolean mkdirResult = datasetFileDir.mkdirs();
 				if (!mkdirResult) {
 					throw new SpagoBIServiceException(getActionName(), "Cannot create \\dataset\\files directory into server resources");
