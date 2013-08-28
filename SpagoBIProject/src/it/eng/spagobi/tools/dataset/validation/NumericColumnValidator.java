@@ -66,10 +66,12 @@ public class NumericColumnValidator extends AbstractDatasetValidator {
 		    		IField field = record.getFieldAt(columnIndex);
 		    		Object fieldValue = field.getValue(); 
 		    		if(fieldValue != null)  {
-			    		if (!isNumeric(fieldValue)){
-		    				String errorDescription = "Error in validation: "+fieldValue+" is not a numeric value ";
-		    				validationErrors.addError(rowNumber, columnIndex, field, errorDescription);
-			    		}
+		    			if (!fieldValue.toString().isEmpty()){
+				    		if (!isNumeric(fieldValue)){
+			    				String errorDescription = "Error in validation: "+fieldValue+" is not a numeric value ";
+			    				validationErrors.addError(rowNumber, columnIndex, field, errorDescription);
+				    		}
+		    			}
 		    		}else {
 	    				String errorDescription = "Error in validation: null is not valid for a valid numeric value";
 	    				validationErrors.addError(rowNumber, columnIndex, field, errorDescription);
