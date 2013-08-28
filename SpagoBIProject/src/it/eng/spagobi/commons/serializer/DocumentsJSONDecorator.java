@@ -6,11 +6,13 @@
 package it.eng.spagobi.commons.serializer;
 
 import java.util.Collection;
+import java.util.Locale;
 
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
 import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
+import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import org.apache.log4j.Logger;
@@ -45,13 +47,18 @@ public class DocumentsJSONDecorator {
 	}
 	
 	public static JSONObject decorateDocument(JSONObject document, IEngUserProfile profile, LowFunctionality folder) {
+		return decorateDocument(document, profile, folder, null);
+	}
+	
+	public static JSONObject decorateDocument(JSONObject document, IEngUserProfile profile, LowFunctionality folder, Locale locale) {
 		JSONObject decorators = new JSONObject();
 		try {
 			document.put(DECORATORS, decorators);
 			addExecutabilityToFunctionalities(document, profile);
-			addDeleteAction(document, profile, folder);
-			addDetailAction(document, profile);
-			addShowMetadataAction(document, profile);
+			addDeleteAction(document, profile, folder, locale);
+			addCloneAction(document, profile, folder, locale);
+			addDetailAction(document, profile, locale);
+			addShowMetadataAction(document, profile, locale);
 		} catch (Exception e) {
 			throw new SpagoBIRuntimeException("Error while decorating document", e);
 		}
@@ -59,22 +66,24 @@ public class DocumentsJSONDecorator {
 	}
 	
 	private static void addShowMetadataAction(JSONObject document,
-			IEngUserProfile profile) throws JSONException, EMFInternalError {
+			IEngUserProfile profile, Locale locale) throws JSONException, EMFInternalError {
 		Collection userFunctionalities = profile.getFunctionalities();
 		if (userFunctionalities.contains("SeeMetadataFunctionality")) {
 			JSONObject showmetadataAction = new JSONObject();
-			showmetadataAction.put("name", "showmetadata");
-			showmetadataAction.put("description", "Show Metadata");
+			MessageBuilder msgBuild=new MessageBuilder();
+			showmetadataAction.put("name", msgBuild.getMessage( "sbiobjects.actions.metadata.name", locale));
+			showmetadataAction.put("description", msgBuild.getMessage( "sbiobjects.actions.metadata.description", locale));
 			document.getJSONArray(DocumentsJSONSerializer.ACTIONS).put(
 					showmetadataAction);
 		}
 	}
 
 	private static void addDetailAction(JSONObject document,
-			IEngUserProfile profile) throws JSONException {
+			IEngUserProfile profile, Locale locale) throws JSONException {
 		JSONObject detailAction = new JSONObject();
-		detailAction.put("name", "detail");
-		detailAction.put("description", "Document detail");
+		MessageBuilder msgBuild=new MessageBuilder();
+		detailAction.put("name", msgBuild.getMessage( "sbiobjects.actions.detail.name", locale));
+		detailAction.put("description", msgBuild.getMessage( "sbiobjects.actions.detail.description", locale));
 		if (ObjectsAccessVerifier
 				.canDevBIObject(document.getInt(DocumentsJSONSerializer.ID), profile)) {
 			document.getJSONArray(DocumentsJSONSerializer.ACTIONS).put(detailAction);
@@ -82,7 +91,7 @@ public class DocumentsJSONDecorator {
 	}
 
 	private static void addDeleteAction(JSONObject document,
-			IEngUserProfile profile, LowFunctionality folder) throws JSONException {
+			IEngUserProfile profile, LowFunctionality folder, Locale locale) throws JSONException {
 		boolean canDelete = false;
 		if (folder == null) {
 			canDelete = ObjectsAccessVerifier.canDeleteBIObject(document.getInt(DocumentsJSONSerializer.ID), profile);
@@ -91,10 +100,29 @@ public class DocumentsJSONDecorator {
 		}
 		if (canDelete) {
 			JSONObject deleteAction = new JSONObject();
-			deleteAction.put("name", "delete");
-			deleteAction.put("description", "Delete this item");
+			MessageBuilder msgBuild=new MessageBuilder();
+			deleteAction.put("name", msgBuild.getMessage( "sbiobjects.actions.delete.name", locale));
+			deleteAction.put("description", msgBuild.getMessage( "sbiobjects.actions.delete.description", locale));
 			document.getJSONArray(DocumentsJSONSerializer.ACTIONS).put(
 					deleteAction);
+		}
+	}
+	
+	private static void addCloneAction(JSONObject document,
+			IEngUserProfile profile, LowFunctionality folder, Locale locale) throws JSONException {
+		boolean canClone = false;
+		if (folder == null) {
+			canClone = ObjectsAccessVerifier.canCloneBIObject(document.getInt(DocumentsJSONSerializer.ID), profile);
+		} else {
+			canClone = ObjectsAccessVerifier.canCloneBIObject(document.getInt(DocumentsJSONSerializer.ID), profile, folder);
+		}
+		if (canClone) {
+			JSONObject cloneAction = new JSONObject();
+			MessageBuilder msgBuild=new MessageBuilder();
+			cloneAction.put("name", msgBuild.getMessage( "sbiobjects.actions.clone.name", locale));
+			cloneAction.put("description", msgBuild.getMessage( "sbiobjects.actions.clone.description", locale));
+			document.getJSONArray(DocumentsJSONSerializer.ACTIONS).put(
+					cloneAction);
 		}
 	}
 

@@ -48,7 +48,7 @@ Sbi.browser.FolderViewTemplate = function(config) {
 				'</tpl>' +
 				'<tpl if="this.exists(previewFile) == false">'+
 					'<img align="center" src="' + img + '" '+ classImg+'" + ext:qtip="<b>{views}</b><br/>{summary}"></img>' +
-				'</tpl>' +				
+				'</tpl>' +
 			'</tpl>'+
 			'<tpl if="this.isSearchResult(summary) == false">'+ 
 				'<tpl if="this.exists(previewFile) == true">'+
@@ -63,7 +63,7 @@ Sbi.browser.FolderViewTemplate = function(config) {
 	        	'<div class="box-actions-container">'+
 	            '    <ul class="box-actions">'+	    
 	            '		<tpl for="actions">'+  
-	            ' 			<tpl if="name != \'delete\'">'+
+	            ' 			<tpl if="name != \'delete\' && name != \'clone\'">'+
 		        ' 	       		<li class="{name}"><a href="#" title="{description}"></a></li>'+
 		        '			</tpl>'+
 		        '		</tpl>'+
@@ -72,6 +72,9 @@ Sbi.browser.FolderViewTemplate = function(config) {
 	            '<tpl for="actions">'+   //TO OPTIMIZE WITHOUT CICLE ON ACTIONS!!!!
 	            '	<tpl if="name == \'delete\'">'+
 	            '		<a href="#" class="delete" title="{description}">Cancella</a>'+
+	            '	</tpl>' +
+	            '	<tpl if="name == \'clone\'">'+
+	            '		<a href="#" class="clone" title="{description}">Clone</a>'+
 	            '	</tpl>' +
 	            '</tpl>' +
 	        '</div>'+ //hover

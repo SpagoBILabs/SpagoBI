@@ -70,6 +70,8 @@ Sbi.locale.ln['sbi.generic.confirmDelete'] = '¿Borrar elemento?';
 Sbi.locale.ln['sbi.generic.confirmChangeNode'] = 'Hay cambios sin guardar. ¿Desea guardarlos?';
 Sbi.locale.ln['sbi.generic.deleteKpi'] = 'Borrar Kpi';
 Sbi.locale.ln['sbi.generic.attributes'] = 'Atributos';
+
+Sbi.locale.ln['sbi.generic.confirmClone'] = 'Confirm item clone?';
 //END Generic messages
 
 //START List Detail messages
@@ -211,6 +213,8 @@ Sbi.locale.ln['sbi.browser.document.favourites']  = 'Preferidos';
 Sbi.locale.ln['sbi.browser.document.searchDatasets']  = 'Buscar de bases de datos';
 Sbi.locale.ln['sbi.browser.document.searchDocuments']  = 'Buscar de documentos';
 Sbi.locale.ln['sbi.browser.document.searchKeyword']  = 'Buscar por palabra clave ...';
+Sbi.locale.ln['sbi.browser.document.delete.success']  = 'Document/s deleted succesfully';
+Sbi.locale.ln['sbi.browser.document.clone.success']  = 'Document cloned succesfully';
 
 Sbi.locale.ln['sbi.document.saveWarning']  = 'Antes de guardar el documento complete Nombre y Etiqueta y seleccione al menos una carpeta dónde colocarla';
 

@@ -1120,5 +1120,39 @@ public class ObjectsAccessVerifier {
 		}
 		return canDelete;
 	}
+
+	
+	/**
+	 * Returns true if the user in input is able to clone the input object everywhere
+	 * 
+	 * It consider the same conditions of the delete operation
+	 * 
+	 * @param biobjectId The id of the document to be cloned
+	 * @param profile The user profile object
+	 * @return true if the user in input is able to clone the input object everywhere
+	 */
+	public static boolean canCloneBIObject(int biobjectId, IEngUserProfile profile) {
+		logger.debug("IN");
+		return canDeleteBIObject(biobjectId, profile);
+	}
+	
+	/**
+	 * Returns true if the user in input is able to clone the input object in the specified position (folder)
+	 * 
+	 * It consider the same conditions of the delete operation
+	 * 
+	 * @param biobjectId The id of the document to be cloned
+	 * @param profile The user profile object
+	 * @param lowFunctionality The folder
+	 * @return true if the user in input is able to clone the input object in the specified position (folder)
+	 */
+	public static boolean canCloneBIObject(int biobjectId, IEngUserProfile profile,	LowFunctionality lowFunctionality) {
+		logger.debug("IN");
+		return canDeleteBIObject(biobjectId, profile, lowFunctionality);
+	}
+	
+	
+	
+	
 	
 }

@@ -14,7 +14,7 @@ import java.util.Date;
 
 import org.apache.log4j.Logger;
 
-public class ObjTemplate implements Serializable {
+public class ObjTemplate implements Serializable, Cloneable {
 
 	static private Logger logger = Logger.getLogger(ObjTemplate.class);
 	
@@ -232,7 +232,22 @@ public class ObjTemplate implements Serializable {
 	    this.creationUser = creationUser;
 	}
 
-
+	/**
+	 * Clone the object.. NOTE: it does not clone the id property
+	 */
+	public ObjTemplate clone(){
+		ObjTemplate clone = new ObjTemplate();
+		clone.setBiobjId(biobjId);
+		clone.setBinId(binId);
+		clone.setName(name);
+		clone.setProg(prog);
+		clone.setCreationDate(creationDate);
+		clone.setActive(active);
+		clone.setContent(content);
+		clone.setDimension(dimension);
+		clone.setCreationUser(creationUser);
+	    return clone;    
+	}
 	
 	
 }

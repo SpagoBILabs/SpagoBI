@@ -84,6 +84,8 @@ Sbi.locale.ln['sbi.generic.confirmDelete']='Confirmer la suppression de l\'\u00E
 Sbi.locale.ln['sbi.generic.confirmChangeNode']='Certaines modifications n\'ont pas \u00E9t\u00E9 enregistr\u00E9es. Confirmer le changement de racine ?';
 Sbi.locale.ln['sbi.generic.deleteKpi']='Supprimer le Kpi';
 Sbi.locale.ln['sbi.generic.attributes']='Attributs';
+
+Sbi.locale.ln['sbi.generic.confirmClone'] = 'Confirm item clone?';
 //END Generic messages
 
 //START List Detail messages
@@ -258,6 +260,8 @@ Sbi.locale.ln['sbi.browser.document.favourites']  = 'S\u00E9lection';
 Sbi.locale.ln['sbi.browser.document.searchDatasets']  = 'Rechercher des ensembles de donn\u00E9es';
 Sbi.locale.ln['sbi.browser.document.searchDocuments']  = 'Recherche de documents';
 Sbi.locale.ln['sbi.browser.document.searchKeyword']  = 'Recherche par mots cl\u00E9s ...';
+Sbi.locale.ln['sbi.browser.document.delete.success']  = 'Document/s deleted succesfully';
+Sbi.locale.ln['sbi.browser.document.clone.success']  = 'Document cloned succesfully';
 
 Sbi.locale.ln['sbi.browser.defaultRole.title']='selectiones une default r\u00F4le';
 Sbi.locale.ln['sbi.browser.defaultRole.role']='R\u00F4le: ';
