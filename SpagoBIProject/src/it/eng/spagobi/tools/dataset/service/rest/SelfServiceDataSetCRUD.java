@@ -27,7 +27,9 @@ import it.eng.spagobi.rest.annotations.ToValidate;
 import it.eng.spagobi.services.exceptions.ExceptionUtilities;
 import it.eng.spagobi.tools.dataset.bo.FileDataSet;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
 import it.eng.spagobi.tools.dataset.common.behaviour.UserProfileUtils;
+import it.eng.spagobi.tools.dataset.common.dataproxy.FileDataProxy;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IField;
 import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
@@ -49,6 +51,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.json.JSONUtils;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -63,6 +66,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -160,6 +164,7 @@ public class SelfServiceDataSetCRUD {
 			IDataSet ds = DAOFactory.getDataSetDAO().loadActiveIDataSetByID(new Integer(id));
 			try{
 				DAOFactory.getDataSetDAO().deleteDataSet(ds.getId());
+				deleteDatasetFile(ds);
 			}catch(Exception ex){
 				if (ex.getMessage().startsWith("[deleteInUseDSError]")){
 					updateAudit(req, profile, "DATA_SET.DELETE", logParam, "KO");
@@ -185,6 +190,29 @@ public class SelfServiceDataSetCRUD {
 		}
 	}
 	
+	public void deleteDatasetFile(IDataSet dataset){
+		if (dataset instanceof VersionedDataSet){
+			VersionedDataSet versionedDataset = (VersionedDataSet)dataset;
+			IDataSet wrappedDataset = versionedDataset.getWrappedDataset();
+			
+			if (wrappedDataset instanceof FileDataSet){
+				FileDataSet fileDataset = (FileDataSet)wrappedDataset;
+				String resourcePath = fileDataset.getResourcePath();
+				String fileName = fileDataset.getFileName();
+				String filePath = resourcePath + File.separatorChar+"dataset"+File.separatorChar+"files"+File.separatorChar;
+				File datasetFile = new File(filePath+fileName);
+				
+				if (datasetFile.exists()){
+					boolean isDeleted = datasetFile.delete();
+					if (isDeleted){
+						logger.debug("Dataset File "+fileName+" has been deleted");
+					}
+				}
+			}
+		}
+		
+	}
+	
 	@POST
 	@Path("/save")
 	@ToValidate(typeName= "dataset")
@@ -198,7 +226,7 @@ public class SelfServiceDataSetCRUD {
 			String meta = (String)req.getParameter(DataSetConstants.METADATA);			
 			
 			IDataSet ds  = dao.loadActiveDataSetByLabel(label);
-			IDataSet dsNew = recoverDataSetDetails(req, ds);
+			IDataSet dsNew = recoverDataSetDetails(req, ds, true);
 			
 			logger.debug("Recalculating dataset's metadata: executing the dataset...");
 			String dsMetadata = null;
@@ -263,7 +291,7 @@ public class SelfServiceDataSetCRUD {
 			String label = (String)req.getParameter("label");			
 			String meta = (String)req.getParameter(DataSetConstants.METADATA);			
 			
-			IDataSet dsToTest = recoverDataSetDetails(req, null);
+			IDataSet dsToTest = recoverDataSetDetails(req, null, false);
 			
 			logger.debug("Recalculating dataset's metadata: executing the dataset...");
 			String dsMetadata = null;
@@ -333,7 +361,7 @@ public class SelfServiceDataSetCRUD {
 			String datasetMetadata = (String)req.getParameter("datasetMetadata");
 
 			
-			IDataSet dataSet = recoverDataSetDetails(req, null);
+			IDataSet dataSet = recoverDataSetDetails(req, null, false);
 			String dsMetadata = getDatasetTestMetadata(dataSet, profile, datasetMetadata);
 			dataSet.setDsMetadata(dsMetadata);	
 			
@@ -374,27 +402,7 @@ public class SelfServiceDataSetCRUD {
 			
 			//Dataset Validation ---------------------------------------------
 			if (datasetMetadata != null)	{
-				ValidationErrors validationErrors = new ValidationErrors();
-				
-				
-				//first check Numeric Columns Values
-				/*
-				List <String> numericColumnsToCheck = getNumericColumnsToCheck(datasetMetadata);
-				if (!numericColumnsToCheck.isEmpty()){
-					NumericColumnValidator numericColumnValidator = new NumericColumnValidator();
-					
-					Map<String, HierarchyLevel> numericColumnsMapToCheck = new HashMap<String, HierarchyLevel>();
-					for (String numericColumn : numericColumnsToCheck){
-						numericColumnsMapToCheck.put(numericColumn, null);
-					}
-					
-					ValidationErrors numericColumnsValidationErrors = numericColumnValidator.doValidateDataset(dataStore, numericColumnsMapToCheck);
-					if (!numericColumnsValidationErrors.isEmpty()){
-						validationErrors.addAll(numericColumnsValidationErrors);
-					}
-				}
-				*/
-				
+				ValidationErrors validationErrors = new ValidationErrors();				
 				
 				//validation of columns with specified Hierarchies and with numeric Type
 				Map<String, HierarchyLevel> hierarchiesColumnsToCheck = getHierarchiesColumnsToCheck(datasetMetadata);
@@ -478,32 +486,7 @@ public class SelfServiceDataSetCRUD {
 		}
 	}
 	
-	private List<String> getNumericColumnsToCheck(String datasetMetadata)throws JsonMappingException,
-	JsonParseException, JSONException, IOException {
-		JSONObject metadataObject = null;
-		List<String> numericColumnsToCheck =  new ArrayList<String>();
-		if ((!datasetMetadata.equals("")) && (!datasetMetadata.equals("[]"))) {
-			metadataObject = JSONUtils.toJSONObject(datasetMetadata);
-			JSONArray columnsMetadataArray = metadataObject.getJSONArray("columns");
-			for (int j = 0; j < columnsMetadataArray.length(); j++) {
-				JSONObject columnJsonObject = columnsMetadataArray.getJSONObject(j);
-				String columnName = columnJsonObject.getString("column");
-				String propertyName = columnJsonObject.getString("pname");
-				String propertyValue = columnJsonObject.getString("pvalue");
 
-				if (propertyName.equalsIgnoreCase("Type")){
-					if(propertyValue.equalsIgnoreCase("Integer")){
-						//Numeric Column to Check
-						numericColumnsToCheck.add(columnName);
-					} else if(propertyValue.equalsIgnoreCase("Double")){
-						//Numeric Column to Check
-						numericColumnsToCheck.add(columnName);
-					} 
-				}
-			}
-		}
-		return numericColumnsToCheck;
-	}
 	
 	private Map<String, HierarchyLevel> getHierarchiesColumnsToCheck(
 			String datasetMetadata) throws JsonMappingException,
@@ -624,7 +607,7 @@ public class SelfServiceDataSetCRUD {
 		return dataSetsJSON;
 	}
 
-	private IDataSet recoverDataSetDetails (HttpServletRequest req, IDataSet dataSet) throws EMFUserError, SourceBeanException, IOException  {
+	private IDataSet recoverDataSetDetails (HttpServletRequest req, IDataSet dataSet, boolean savingDataset) throws EMFUserError, SourceBeanException, IOException  {
 		JSONObject jsonDsConfig = new JSONObject();	
 		boolean insertion = (dataSet == null);
 		Integer id=-1;
@@ -648,6 +631,11 @@ public class SelfServiceDataSetCRUD {
 		String meta = (String)req.getParameter(DataSetConstants.METADATA);		
 		
 		Boolean isPublic = Boolean.valueOf((req.getParameter("isPublic")==null)?"false":(String)req.getParameter("isPublic"));
+		Boolean newFileUploaded = false;
+		if (req.getParameter("fileUploaded") != null){
+			newFileUploaded = Boolean.valueOf(((String)req.getParameter("fileUploaded")));
+		}
+
 				
 		try{
 			String config = "{}";
@@ -656,7 +644,12 @@ public class SelfServiceDataSetCRUD {
 			
 			JSONObject jsonConf  = ObjectUtils.toJSONObject(config);			
 			jsonDsConfig.put(DataSetConstants.FILE_TYPE, fileType);
-			jsonDsConfig.put(DataSetConstants.FILE_NAME, fileName);
+			if (savingDataset){
+				//when saving the dataset the file associated will get the dataset label name
+				jsonDsConfig.put(DataSetConstants.FILE_NAME, label+"."+fileType.toLowerCase());
+			} else {
+				jsonDsConfig.put(DataSetConstants.FILE_NAME, fileName);
+			}
 			jsonDsConfig.put(DataSetConstants.CSV_FILE_DELIMITER_CHARACTER, csvDelimiter);
 			jsonDsConfig.put(DataSetConstants.CSV_FILE_QUOTE_CHARACTER, csvQuote);
 			jsonDsConfig.put(DataSetConstants.XSL_FILE_SKIP_ROWS, skipRows);
@@ -693,9 +686,50 @@ public class SelfServiceDataSetCRUD {
 			
 
 		}
+		
+		if (id == -1){
+			//creating a new dataset, the file uploaded has to be renamed and moved
+			((FileDataSet)toReturn).setUseTempFile(true);
+			
+			if (savingDataset){
+				//rename and move the file
+				String resourcePath = ((FileDataSet)toReturn).getResourcePath();
+				renameAndMoveDatasetFile(fileName,label,resourcePath, fileType);
+				((FileDataSet)toReturn).setUseTempFile(false);
+			}
+		} else {
+			//reading or modifying a existing dataset
+			
+			if (newFileUploaded){
+				//modifying an existing dataset with a new file uploaded
+				((FileDataSet)toReturn).setUseTempFile(true);
+				
+				//saving the existing dataset with a new file associated
+				if (savingDataset){
+					//rename and move the file
+					String resourcePath = ((FileDataSet)toReturn).getResourcePath();
+					renameAndMoveDatasetFile(fileName,label,resourcePath, fileType);
+					((FileDataSet)toReturn).setUseTempFile(false);
+				}
+
+			} else {
+				//using existing dataset file, file in correct place
+				((FileDataSet)toReturn).setUseTempFile(false);
+			}
+
+		}
+		
+		
+
+		
 		//next steps are necessary to define a valid dataProxy
 		((FileDataSet)toReturn).setConfiguration(jsonDsConfig.toString());
-		((FileDataSet)toReturn).setFileName(fileName);
+		if (savingDataset){
+			//the file used will have the name equals to dataset's label
+			((FileDataSet)toReturn).setFileName(label+"."+fileType.toLowerCase());
+		} else {
+			((FileDataSet)toReturn).setFileName(fileName);
+		}
 				
 		//update general informations
 		toReturn.setDsType(type);
@@ -718,6 +752,32 @@ public class SelfServiceDataSetCRUD {
 		toReturn.setPublic(isPublic);
 				
 		return toReturn;
+	}
+	
+	//This method rename a file and move it from resources\dataset\files\temp to resources\dataset\files
+	private void renameAndMoveDatasetFile(String originalFileName, String newFileName, String resourcePath, String fileType){
+		String filePath = resourcePath + File.separatorChar+"dataset"+File.separatorChar+"files"+File.separatorChar+"temp"+File.separatorChar;
+		String fileNewPath = resourcePath + File.separatorChar+"dataset"+File.separatorChar+"files"+File.separatorChar;
+		
+		File originalDatasetFile = new File(filePath + originalFileName); 
+		File newDatasetFile = new File (fileNewPath + newFileName + "."+fileType.toLowerCase());
+		if (originalDatasetFile.exists()){
+			/*
+			 *  This method copies the contents of the specified source file to the specified destination file.
+			 *  The directory holding the destination file is created if it does not exist. 
+			 *  If the destination file exists, then this method will overwrite it. 
+			 */
+			try {
+				FileUtils.copyFile(originalDatasetFile, newDatasetFile);
+				
+				//Then delete temp file
+				originalDatasetFile.delete();
+			} catch (IOException e) {
+				logger.debug("Cannot move dataset File");
+				throw new SpagoBIRuntimeException("Cannot move dataset File", e);
+			}
+		}
+
 	}
 	
 
@@ -804,6 +864,11 @@ public class SelfServiceDataSetCRUD {
 		dataSet.setUserProfileAttributes(UserProfileUtils.getProfileAttributes( profile ));
 	
 		try {
+			if (dataSet instanceof FileDataSet){
+				FileDataSet fileDataSet = (FileDataSet)dataSet;
+				FileDataProxy fileDataProxy = fileDataSet.getDataProxy();
+				fileDataProxy.setUseTempFile(fileDataSet.useTempFile); //inform the DataProxy to use a tempFile or not
+			}
 			dataSet.loadData(start, limit, GeneralUtilities.getDatasetMaxResults());
 			IDataStore dataStore = dataSet.getDataStore();
 			DatasetMetadataParser dsp = new DatasetMetadataParser();

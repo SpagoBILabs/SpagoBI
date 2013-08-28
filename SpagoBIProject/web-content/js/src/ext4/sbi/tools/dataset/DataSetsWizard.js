@@ -19,6 +19,8 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
 	}
 
 	, constructor: function(config) {
+		thisPanel = this;
+		thisPanel.fileUploaded = false; //default value
 		this.initConfig(config);
 		if (this.record.owner !== undefined && this.record.owner !== this.user) {
 			this.isOwner = false;
@@ -176,6 +178,8 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
 						var metaValues = this.metaInfo.getFormState();
 						values.meta = metaValues;
 					}
+					//If true a new file is uploaded
+					values.fileUploaded = thisPanel.fileUploaded;
 					this.fireEvent('getMetaValues', values);
 				}
 			 }
@@ -183,6 +187,8 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
 				 var values = Sbi.tools.dataset.DataSetsWizard.superclass.getFormState();
 				 var fileValues = this.fileUpload.getFormState();
 				 Ext.apply(values, fileValues);
+				 //If true a new file is uploaded
+				 values.fileUploaded = thisPanel.fileUploaded;
 				 var datasetMetadata = this.fieldsStep3.getFormState();
 				 values.datasetMetadata = Ext.JSON.encode(datasetMetadata) ;
 				 this.fieldsStep4.createDynamicGrid(values);
@@ -210,6 +216,8 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
 				var metaValues = this.metaInfo.getFormState();
 				values.meta = metaValues;
 			}
+			//If true a new file is uploaded
+			values.fileUploaded = thisPanel.params.fileUploaded;
 			this.fireEvent('save', values);
 		}
 	}
@@ -283,6 +291,7 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
 			success : function(form, action) {
 				Ext.MessageBox.alert('Success!','File Uploaded to the Server');
 				Ext.getCmp('fileNameField').setValue(fileNameUploaded);
+				thisPanel.fileUploaded = true;
 			},
 			failure : function(form, action) {
 				switch (action.failureType) {

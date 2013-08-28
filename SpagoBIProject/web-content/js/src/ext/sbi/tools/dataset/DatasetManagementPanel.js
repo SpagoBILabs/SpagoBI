@@ -107,6 +107,8 @@ Sbi.tools.dataset.DatasetManagementPanel = function(config) {
 
 	Sbi.tools.dataset.DatasetManagementPanel.superclass.constructor.call(this, c);
 	
+	this.fileUploaded = false; //used to warn that a new Dataset File is uploaded
+	
 	this.rowselModel.addListener('rowselect', function(sm, row, rec) {
 		this.activateDsTypeForm(null, rec, row);
 		this.activateTransfForm(null, rec, row);
@@ -122,6 +124,8 @@ Sbi.tools.dataset.DatasetManagementPanel = function(config) {
 			this.qbeDataSetBuilder = null;
 		}
 		this.manageFormsEnabling();
+		this.fileUploaded = false; //reset to default
+
 	}, this);
 	
 	this.tabs.addListener('tabchange', this.modifyToolbar, this);
@@ -361,6 +365,7 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 					var requestParameters = {
 						start : 0,
 						limit : 25,
+						dsId : values['id'],
 						dsTypeCd : values['dsTypeCd'],
 						fileName : values['fileName'],
 						csvDelimiter : values['csvDelimiter'],
@@ -400,7 +405,8 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 						dateIn: values['dateIn'],
 						versNum: values['versNum'],
 						versId: values['versId'],
-						meta: values['meta']
+						meta: values['meta'],
+						fileUploaded: thisPanel.fileUploaded
 					};
 					arrayPars = this.parsGrid.getParametersValues();
 					if (arrayPars) {
@@ -1207,6 +1213,7 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 							var fileNameUploaded = Ext.getCmp('fileUploadField').getValue();
 							fileNameUploaded = fileNameUploaded.replace("C:\\fakepath\\", "");
 							Ext.getCmp('fileNameField').setValue(fileNameUploaded);
+							thisPanel.fileUploaded = true;
 						},
 						failure : function(form, action) {
 							switch (action.failureType) {
@@ -1841,7 +1848,8 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 							dateIn: values['dateIn'],
 							versNum: values['versNum'],
 							versId: values['versId'],
-							meta: values['meta']
+							meta: values['meta'],
+							fileUploaded : thisPanel.fileUploaded
 						};
 					return params;
 				}
@@ -1955,6 +1963,8 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 						values.jclassName = values.jclassNameForCustom;
 					}
 					
+					values.fileUploaded = thisPanel.fileUploaded;
+					
 					return values;
 					
 				}
@@ -2013,6 +2023,7 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 					var newDsVersion;
 					var isNewRec = false;
 					var params = this.buildParamsToSendToServer(values);
+					params.dsId = idRec;
 					params.recalculateMetadata = recalculateMetadata;
 					var arrayPars = this.manageParsGrid.getParsArray();
 					var customString = this.customDataGrid.getDataString();
@@ -2093,6 +2104,19 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 										   	        var tempRecord = this.mainElementsStore.getAt(i);
 										   	        if(tempRecord.data.id==itemId){
 										   	        	tempRecord.set('meta',meta);
+										   	        	
+										   	        	var dsType = tempRecord.get('dsTypeCd');
+										   	        	//update filename if the dataset is a FileDataset
+										   	        	if ((dsType != undefined) && (dsType =='File')){
+										   	        		var fileType = tempRecord.get('fileType');
+										   	        		fileType = fileType.toLowerCase();
+										   	        		var dsLabel = tempRecord.get('label');
+										   	        		var updatedFileName = dsLabel + '.' +fileType
+										   	        		tempRecord.set('fileName',updatedFileName); //update record in JsonStore
+															Ext.getCmp('fileNameField').setValue(updatedFileName); //update field in GUI
+
+										   	        	}
+										   	        	
 										   	        	tempRecord.commit();
 										   	        	this.manageDatasetFieldMetadataGrid.loadItems(meta,tempRecord);
 										   	        	break;
@@ -2120,6 +2144,17 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 											   	        	tempRecord.set('versId',versId);
 											   	        	tempRecord.set('versNum',versNum);
 											   	        	tempRecord.set('meta',meta);
+											   	        	//update filename if the dataset is a FileDataset
+											   	        	var dsType = tempRecord.get('dsTypeCd');
+											   	        	if ((dsType != undefined) && (dsType =='File')){
+											   	        		var fileType = tempRecord.get('fileType');
+											   	        		fileType = fileType.toLowerCase();
+											   	        		var dsLabel = tempRecord.get('label');
+											   	        		var updatedFileName = dsLabel + '.' +fileType
+											   	        		tempRecord.set('fileName',updatedFileName); //update record in JsonStore
+																Ext.getCmp('fileNameField').setValue(updatedFileName); //update field in GUI
+
+											   	        	}
 											   	        	tempRecord.commit();
 											   	        	this.detailFieldId.setValue(itemId);
 											   	        	this.detailFieldUserIn.setValue(userIn);
@@ -2140,6 +2175,7 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 												if (isNewRec) {
 													this.rowselModel.selectLastRow();
 												}
+												thisPanel.fileUploaded = false //reset to default
 												Ext.MessageBox
 														.show({
 															title : LN('sbi.generic.result'),
