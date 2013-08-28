@@ -10,6 +10,7 @@ import it.eng.spagobi.tools.dataset.common.datareader.IDataReader;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,6 +28,7 @@ public class FileDataProxy extends AbstractDataProxy {
 	
 	String fileName;
 	private String resourcePath = null;
+	boolean useTempFile = false;
 	
 	private static transient Logger logger = Logger.getLogger(FileDataProxy.class);
 			
@@ -64,9 +66,14 @@ public class FileDataProxy extends AbstractDataProxy {
 	}
 
 	private String getCompleteFilePath() {
+				
 		String filePath = resourcePath;
-		filePath += "/dataset/files";
-		filePath += "/" + fileName;
+		if (useTempFile){
+			filePath += File.separatorChar+"dataset"+File.separatorChar+"files"+File.separatorChar+"temp";
+		} else {
+			filePath += File.separatorChar+"dataset"+File.separatorChar+"files";
+		}
+		filePath += File.separatorChar + fileName;
 		return filePath;
 	}
 
@@ -121,5 +128,19 @@ public class FileDataProxy extends AbstractDataProxy {
 		String encoded = encoder.encode(checksum);
 		logger.debug("OUT: returning [" + encoded + "]");
 		return encoded;
+	}
+
+	/**
+	 * @return the useTempFile
+	 */
+	public boolean isUseTempFile() {
+		return useTempFile;
+	}
+
+	/**
+	 * @param useTempFile the useTempFile to set
+	 */
+	public void setUseTempFile(boolean useTempFile) {
+		this.useTempFile = useTempFile;
 	}
 }
