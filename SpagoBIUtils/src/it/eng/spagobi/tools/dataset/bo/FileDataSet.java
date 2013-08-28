@@ -42,6 +42,8 @@ public class FileDataSet extends ConfigurableDataSet{
 
 	public String fileType;
 	
+	public boolean useTempFile = false; //if true we use a file in resources\dataset\files\temp for reading
+	
 	private static transient Logger logger = Logger.getLogger(FileDataSet.class);
     
     /**
@@ -149,6 +151,12 @@ public class FileDataSet extends ConfigurableDataSet{
 		if(dataProxy == null) {
 			setDataProxy( new FileDataProxy(this.getResourcePath()) );
 			dataProxy = getDataProxy();
+			if (useTempFile){
+				if (dataProxy instanceof FileDataProxy){
+					((FileDataProxy)dataProxy).setUseTempFile(true);
+
+				}
+			}
 		}
 		
 		if(!(dataProxy instanceof  FileDataProxy)) throw new RuntimeException("DataProxy cannot be of type [" + 
@@ -228,5 +236,19 @@ public class FileDataSet extends ConfigurableDataSet{
 	@Override
 	public String getSignature() {
 		return this.getDataProxy().getMD5Checksum();
+	}
+
+	/**
+	 * @return the useTempFile
+	 */
+	public boolean isUseTempFile() {
+		return useTempFile;
+	}
+
+	/**
+	 * @param useTempFile the useTempFile to set
+	 */
+	public void setUseTempFile(boolean useTempFile) {
+		this.useTempFile = useTempFile;
 	}
 }
