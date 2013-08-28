@@ -33,6 +33,10 @@ Sbi.browser.FolderDetailPanel = function(config) {
 		serviceName: 'DELETE_OBJECT_ACTION'
 		, baseParams: params
 	});
+	
+	this.services['cloneDocument'] = Sbi.config.serviceRegistry.getRestServiceUrl({serviceName: 'documents/clone'});
+	
+	
 	this.services['createDocument'] = Sbi.config.serviceRegistry.getServiceUrl({
 		serviceName: 'DOCUMENT_USER_BROWSER_CREATE_DOCUMENT'
 		, baseParams: {LIGHT_NAVIGATOR_DISABLED: 'FALSE', MESSAGEDET: 'DETAIL_SELECT'}
@@ -376,6 +380,7 @@ Ext.extend(Sbi.browser.FolderDetailPanel, Ext.Panel, {
     	var actionDetail = e.getTarget('li[class=detail]', 10, true);
     	var actionMetaData = e.getTarget('li[class=showmetadata]', 10, true);
         var actionDelete = e.getTarget('a[class=delete]', 10, true);
+        var actionClone = e.getTarget('a[class=clone]', 10, true);
         var actionFavourite = e.getTarget('span.icon', 10, true); //TBD
       
     	var action = null;
@@ -386,6 +391,9 @@ Ext.extend(Sbi.browser.FolderDetailPanel, Ext.Panel, {
     	 }else if (actionDelete != null){
          	Sbi.debug('delete');        	
          	action = actionDelete.dom.className;
+    	 }else if (actionClone != null){
+         	Sbi.debug('clone');        	
+         	action = actionClone.dom.className;
     	 }else if (actionMetaData != null){
          	Sbi.debug('showMetadata');        	
          	action = actionMetaData.dom.className;
@@ -450,7 +458,42 @@ Ext.extend(Sbi.browser.FolderDetailPanel, Ext.Panel, {
 	   	      		if(response.responseText !== undefined) {
 	   	      			Ext.MessageBox.show({
 		      				title: 'Status',
-		      				msg: 'Documnt/s deleted succesfully',
+		      				msg: LN('sbi.browser.document.delete.success'),
+		      				modal: false,
+		      				buttons: Ext.MessageBox.OK,
+		      				width:300,
+		      				icon: Ext.MessageBox.INFO 			
+		      			});
+	   	      			this.loadFolder(this.folderId);
+	   	      		} else {
+	   	      			Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
+	   	      		}
+	       	  	}
+             },
+             scope: this,
+     		 failure: Sbi.exception.ExceptionHandler.handleFailure      
+       });
+    }
+    
+    , cloneDocument: function(docId) {
+    	
+    	var p = {};
+        
+        if(docId) {
+      	  p.docId = docId;
+      	  p.folderId = this.folderId;
+        }
+        
+    	Ext.Ajax.request({
+             url: this.services['cloneDocument'],
+             params: p,
+             method: "POST",
+             callback : function(options , success, response){
+	       	  	 if(success && response !== undefined) {   
+	   	      		if(response.responseText !== undefined) {
+	   	      			Ext.MessageBox.show({
+		      				title: 'Status',
+		      				msg: LN('sbi.browser.document.clone.success'),
 		      				modal: false,
 		      				buttons: Ext.MessageBox.OK,
 		      				width:300,
@@ -482,6 +525,18 @@ Ext.extend(Sbi.browser.FolderDetailPanel, Ext.Panel, {
     		            , function(btn, text) {
     		                if ( btn == 'yes' ) {
     		                	this.deleteDocument(docRecord.id);
+    		                }
+    					}
+    					, this
+    				);
+    			
+    		} else if(action === 'clone') {
+    			Ext.MessageBox.confirm(
+    					LN('sbi.generic.pleaseConfirm')
+    					, LN('sbi.generic.confirmClone')
+    		            , function(btn, text) {
+    		                if ( btn == 'yes' ) {
+    		                	this.cloneDocument(docRecord.id);
     		                }
     					}
     					, this

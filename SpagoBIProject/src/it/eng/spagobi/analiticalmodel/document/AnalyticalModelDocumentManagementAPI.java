@@ -6,10 +6,13 @@
 package it.eng.spagobi.analiticalmodel.document;
 
 import it.eng.spago.base.SourceBean;
+import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
+import it.eng.spagobi.analiticalmodel.document.bo.SubObject;
 import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
+import it.eng.spagobi.analiticalmodel.document.dao.SubObjectDAOHibImpl;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IBIObjectParameterDAO;
@@ -47,12 +50,15 @@ public class AnalyticalModelDocumentManagementAPI {
 	private IBIObjectParameterDAO documentParameterDAO;
 	private IObjMetacontentDAO documentMetadataPropertyDAO;
 	private IObjMetadataDAO metadataPropertyDAO;
+	private IObjMetacontentDAO metadataContentDAO;
+	private SubObjectDAOHibImpl subObjectDAO;
 	
 	// default for document parameters
 	public static final Integer REQUIRED = 0;
 	public static final Integer MODIFIABLE = 1;
 	public static final Integer MULTIVALUE = 0;
 	public static final Integer VISIBLE = 1;
+	public static final String COPY_OF = "Copy of ";
 	
 	private static Logger logger = Logger.getLogger(AnalyticalModelDocumentManagementAPI.class);
 	
@@ -69,6 +75,12 @@ public class AnalyticalModelDocumentManagementAPI {
 			
 			metadataPropertyDAO = new ObjMetadataDAOHibImpl();
 			metadataPropertyDAO.setUserProfile(userProfile);
+			
+			metadataContentDAO =  DAOFactory.getObjMetacontentDAO();
+			metadataContentDAO.setUserProfile(userProfile);
+			
+			subObjectDAO = new SubObjectDAOHibImpl();
+			subObjectDAO.setUserProfile(userProfile);
 			
 		} catch (Throwable t) {
 			throw new SpagoBIRuntimeException("Impossible to instatiate BIObjectDAO", t);
@@ -241,6 +253,128 @@ public class AnalyticalModelDocumentManagementAPI {
 	
 
 	/**
+	 * Clone a document
+	 * @param document The document id of the document to clone
+	 */
+	public void cloneDocument(Integer documentId) {
+		logger.debug("IN");
+
+		
+		Assert.assertNotNull(documentId, "Input parameter [documentId] cannot be null");
+		
+		if( documentId!=null ){
+			BIObject document = getDocument(documentId);
+			logger.debug("Cloning the document");
+			BIObject clonedDocument = document.clone();
+			
+			logger.debug("Cloning the template");
+			ObjTemplate clonedTemplate =  document.getActiveTemplate();
+			if(clonedTemplate!=null){
+				clonedTemplate = clonedTemplate.clone();
+			}
+			try {
+				logger.debug("Udapting label and name of the clone");
+				updateClonedDocumentProperties(clonedDocument);
+
+				
+				//document
+				logger.debug("Saving the clone of the document");
+				Integer clonedDocumentId = documentDAO.insertBIObject(clonedDocument, clonedTemplate);
+				clonedDocument.setId(clonedDocumentId);
+				
+				//parameters
+				logger.debug("Coping parameters");
+				copyParameters(document, clonedDocument);
+//				
+//				//subobjects
+//				copySubobjects(document, clonedDocument);
+				
+				//metadata
+				logger.debug("Coping metadata");
+				copyMetadata(document, clonedDocument);
+				
+			} catch (Throwable t) {
+				logger.error("Impossible to update object [" + document.getLabel() + "]", t);
+				throw new SpagoBIRuntimeException("Impossible to update object [" + document.getLabel() + "]", t);
+			}
+
+			logger.debug("Document [" + document.getLabel() + "] succesfully cloned");
+		} 
+
+	}
+	
+	private void updateClonedDocumentProperties(BIObject document){
+		int version=0;
+		while(true){
+			String newLabel = buildCopiedString(document.getLabel(),version);
+			BIObject doc=null;
+			try {
+				doc = documentDAO.loadBIObjectByLabel(newLabel);
+			} catch (EMFUserError e) {
+				throw new SpagoBIRuntimeException("Impossible to look if the docuemnt with label [" + newLabel + "] already exists", e);
+			}
+			if(doc==null){
+				break;
+			}
+			version++;
+		}
+		
+		document.setLabel(buildCopiedString(document.getLabel(),version));
+		document.setName(buildCopiedString(document.getName(),version));
+	}
+	
+	private String buildCopiedString(String toCopy, int newVersion){
+		String copied = toCopy;
+		if(newVersion>0){
+			int openBrackets =  toCopy.lastIndexOf("(");
+			if(openBrackets==-1){
+				openBrackets =toCopy.length();
+			}
+			copied = toCopy.substring(0,openBrackets)+"("+newVersion+")";			
+		}
+
+		if(copied.indexOf(COPY_OF)<0){
+			copied = COPY_OF+copied;
+		}
+		
+		return copied;
+	}
+	
+	
+	
+//	private String buildCopiedString(String toCopy, int newVersion){
+//		String copied = "";
+//		if(toCopy.indexOf(COPY_OF)==0){//already a copy
+//			try {
+//				int copiedVersion = 1;
+//				int openBrackets = 0;
+//				int closeBrackets = toCopy.lastIndexOf(")");
+//				if(newVersion==0){
+//					if(closeBrackets == toCopy.length()-1){
+//						openBrackets =  toCopy.lastIndexOf("(");
+//						if(openBrackets>=0){
+//							String version = toCopy.substring(openBrackets+1,closeBrackets);
+//							Integer versionNumber = new Integer(version);
+//							copiedVersion = versionNumber+1;
+//						}
+//					}
+//				}else{
+//					copiedVersion = newVersion;
+//				}
+//				copied = toCopy.substring(0,openBrackets)+copiedVersion+")";
+//			} catch (Exception e) {
+//				copied = COPY_OF+toCopy;
+//			}
+//
+//		}else{
+//			copied = COPY_OF+toCopy;
+//		}
+//		return copied;
+//	}
+//	
+	
+	
+	/**
 	 * 
 	 * @param documentDescriptor The descriptor of the target document
 	 * @param subObjectId The id of the target subobject (optional). If it is nos specified the metadata properties 
@@ -373,7 +507,7 @@ public class AnalyticalModelDocumentManagementAPI {
 					parameter.setBiObjectID( destinationDocument.getId() );
 					parameter.setId(null);
 					try {
-						DAOFactory.getBIObjectParameterDAO().insertBIObjectParameter(parameter);
+						documentParameterDAO.insertBIObjectParameter(parameter);
 					} catch(Throwable t) {
 						throw new SpagoBIRuntimeException("Impossible to copy parameter [" + parameter.getLabel() + "] from document [" + sourceDocumentLabel + "] to document [" + destinationDocumentLabel + "]",t);
 					}
@@ -386,7 +520,95 @@ public class AnalyticalModelDocumentManagementAPI {
 		}
 	}
 	
-
+	/**
+	 * Copy all the subobjects associated with sourceDocument to destinationDocument
+	 * 
+	 * @param sourceDocument can be an object of type BIObject or an Integer 
+	 * representing the id of the source document
+	 * @param destinationDocument can be an object of type BIObject or an Integer 
+	 * representing the id of the destination document
+	 */
+	
+	public void copySubobjects(Object sourceDocument, Object destinationDocument) {
+		copySubobjects(getDocument(sourceDocument), getDocument(destinationDocument));
+	}
+	
+	
+	private void copySubobjects(BIObject sourceDocument, BIObject destinationDocument) {
+		
+		String sourceDocumentLabel = null;
+		String destinationDocumentLabel = null;
+		
+		try {
+			
+			Assert.assertNotNull(sourceDocument, "Input parameter [sourceDocument] cannot be null");
+			Assert.assertNotNull(destinationDocument, "Input parameter [destinationDocument] cannot be null");
+			
+			sourceDocumentLabel = sourceDocument.getLabel();
+			destinationDocumentLabel = destinationDocument.getLabel();
+			
+			List<SubObject> subobjects = subObjectDAO.getSubObjects(sourceDocument.getId());
+			if(subobjects!=null){
+				for(int i=0; i<subobjects.size(); i++){
+					subObjectDAO.saveSubObject(destinationDocument.getId(), subobjects.get(i));
+				}
+			}
+			
+			
+		} catch (EMFUserError e) {
+			throw new SpagoBIRuntimeException("An unexpected error occured while copying subobjects from document [" + sourceDocumentLabel + "] to document [" + destinationDocumentLabel + "]", e);
+		}
+	}
+	
+	
+	/**
+	 * Copy all the metadata associated with sourceDocument to destinationDocument.
+	 * It does not copy the metdata of subjocts of the source document
+	 * 
+	 * @param sourceDocument can be an object of type BIObject or an Integer 
+	 * representing the id of the source document
+	 * @param destinationDocument can be an object of type BIObject or an Integer 
+	 * representing the id of the destination document
+	 */
+	
+	public void copyMetadata(Object sourceDocument, Object destinationDocument) {
+		copyMetadata(getDocument(sourceDocument), getDocument(destinationDocument));
+	}
+	
+	private void copyMetadata(BIObject sourceDocument, BIObject destinationDocument) {
+		
+		String sourceDocumentLabel = null;
+		String destinationDocumentLabel = null;
+		
+		try {
+			
+			Assert.assertNotNull(sourceDocument, "Input parameter [sourceDocument] cannot be null");
+			Assert.assertNotNull(destinationDocument, "Input parameter [destinationDocument] cannot be null");
+			
+			sourceDocumentLabel = sourceDocument.getLabel();
+			destinationDocumentLabel = destinationDocument.getLabel();
+			
+			List<ObjMetacontent> metadata =  metadataContentDAO.loadObjOrSubObjMetacontents(sourceDocument.getId(),null);
+			if(metadata!=null){
+				for(int i=0; i<metadata.size(); i++){
+					ObjMetacontent md = metadata.get(i);
+					if(md.getSubobjId().equals(null)){//save only the metadata of the document.. not metadata of subojects
+						md.setBiobjId(sourceDocument.getId());
+						md.setObjmetaId(destinationDocument.getId());
+						md.setObjmetaId(null);
+						metadataContentDAO.insertObjMetacontent(md);
+					}
+				}
+			}
+		
+		} catch (EMFUserError e) {
+			throw new SpagoBIRuntimeException("An unexpected error occured while copying metadata from document [" + sourceDocumentLabel + "] to document [" + destinationDocumentLabel + "]", e);
+		}
+	}
+	
+	
+	
+	
 	/**
 	 * This method add a parameter to the document for each parameter associated with the dataset. The added parameters
 	 * will point to analytical drivers whose label match with the corresponding dataset parameter's name. If for one

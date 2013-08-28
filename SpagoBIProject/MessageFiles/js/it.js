@@ -88,6 +88,8 @@ Sbi.locale.ln['sbi.generic.attributes'] = 'Attributi';
 Sbi.locale.ln['not-enabled-to-call-service'] = 'L\'utente non ha il permesso di eseguire questa operazione';
 Sbi.locale.ln['sbi.generic.select.toclone'] = 'Selezionare la riga da clonare';
 Sbi.locale.ln['sbi.generic.filter'] = 'Filter';
+
+Sbi.locale.ln['sbi.generic.confirmClone'] = 'Confermi la clonazione dell\'oggetto?';
 //END Generic messages
 
 //START List Detail messages
@@ -273,6 +275,8 @@ Sbi.locale.ln['sbi.browser.document.favourites']  = 'Favoriti';
 Sbi.locale.ln['sbi.browser.document.searchDatasets']  = 'Cerca fra i dataset';
 Sbi.locale.ln['sbi.browser.document.searchDocuments']  = 'Cerca fra i documenti';
 Sbi.locale.ln['sbi.browser.document.searchKeyword']  = 'Cerca per parola chiave...';
+Sbi.locale.ln['sbi.browser.document.delete.success']  = 'Documento eliminato con successo';
+Sbi.locale.ln['sbi.browser.document.clone.success']  = 'Documento clonato con successo';
 
 Sbi.locale.ln['sbi.document.saveWarning']  = 'Prima di salvare il documento, riempire i campi Nome e Label e selezionare almeno una cartella dove posizionare il documento';
 

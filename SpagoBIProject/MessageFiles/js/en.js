@@ -82,6 +82,7 @@ Sbi.locale.ln['sbi.generic.deletingItemError'] = 'Error while deleting item. Con
 Sbi.locale.ln['sbi.generic.warning'] = 'Warning';
 Sbi.locale.ln['sbi.generic.pleaseConfirm'] = 'Please confirm';
 Sbi.locale.ln['sbi.generic.confirmDelete'] = 'Confirm item delete?';
+Sbi.locale.ln['sbi.generic.confirmClone'] = 'Confirm item clone?';
 Sbi.locale.ln['sbi.generic.confirmChangeNode'] = 'There are unsaved changes. Confirm root node change?';
 Sbi.locale.ln['sbi.generic.deleteKpi'] = 'Delete Kpi';
 Sbi.locale.ln['sbi.generic.attributes'] = 'Attributes';
@@ -262,6 +263,8 @@ Sbi.locale.ln['sbi.browser.document.favourites']  = 'Favourits';
 Sbi.locale.ln['sbi.browser.document.searchDatasets']  = 'Search for datasets';
 Sbi.locale.ln['sbi.browser.document.searchDocuments']  = 'Search for documents';
 Sbi.locale.ln['sbi.browser.document.searchKeyword']  = 'Search by keyword...';
+Sbi.locale.ln['sbi.browser.document.delete.success']  = 'Document/s deleted succesfully';
+Sbi.locale.ln['sbi.browser.document.clone.success']  = 'Document cloned succesfully';
 
 Sbi.locale.ln['sbi.document.saveWarning']  = 'Before saving the document fill in Name and Label and select at least one folder where to place it';
 

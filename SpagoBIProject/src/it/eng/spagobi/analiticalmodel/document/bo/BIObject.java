@@ -20,7 +20,7 @@ import java.util.List;
  * Defines a Business Intelligence object.
 
  */
-public class BIObject implements Serializable {
+public class BIObject implements Serializable, Cloneable {
 
 	// BIOBJ_ID NUMBER N Business Intelligence Object identifier
 	private Integer id = null;
@@ -557,9 +557,36 @@ public class BIObject implements Serializable {
 		return "Document [label=" + label + "]";
 	}
 
-	
-	
-	
-	
+	/**
+	 * Clone the object.. NOTE: it does not clone the id property
+	 */
+	public BIObject clone(){
+		BIObject clone = new BIObject();
+		clone.setEngine(this.engine);
+		clone.setDataSourceId(dataSourceId);
+		clone.setDataSetId(dataSetId);
+		clone.setName(name);
+		clone.setDescription(description);
+		clone.setLabel(label);
+		clone.setEncrypt(encrypt);
+		clone.setVisible(visible);
+		clone.setProfiledVisibility(profiledVisibility);
+		clone.setRelName(relName);
+		clone.setStateID(stateID);
+		clone.setStateCode(stateCode);
+		clone.setBiObjectTypeID(biObjectTypeID);
+		clone.setBiObjectTypeCode(biObjectTypeCode);
+		clone.setBiObjectParameters(biObjectParameters);
+		clone.setPath(path);
+		clone.setUuid(uuid);
+		clone.setFunctionalities(functionalities);
+		clone.setCreationDate(creationDate);
+		clone.setCreationUser(creationUser);
+		clone.setRefreshSeconds(refreshSeconds);
+		clone.setObjMetaDataAndContents(objMetaDataAndContents);
+		clone.setTenant(tenant);
+		clone.setPreviewFile(previewFile);
+		return clone;
+	}
 
 }
