@@ -35,7 +35,8 @@ public class MeasureCatalogueMeasure implements IMeasureCatalogueField {
 	public static transient Logger logger = Logger.getLogger(MeasureCatalogueMeasure.class);
 	
 	private String alias;
-	private Integer id;
+	private String label;
+	//private Integer id;
 	private String columnName;
 	private Class dataType;
 	private IDataSet dataset;
@@ -45,21 +46,21 @@ public class MeasureCatalogueMeasure implements IMeasureCatalogueField {
 	private Map<String, Object> measureProperties;
 
 	
-	public MeasureCatalogueMeasure(MetaModelWrapper metaModel, int measureId){
-		this.id = measureId;
+	private MeasureCatalogueMeasure(MetaModelWrapper metaModel){
 		this.metaModel = metaModel;
 		datasetDimensions = new HashSet<MeasureCatalogueDimension>();
 		measureProperties = new HashMap<String, Object>();
 	}
 	
 	
-	public MeasureCatalogueMeasure( IFieldMetaData fieldMetadata, MetaModelWrapper metaModel, IDataSet ds, Set<MeasureCatalogueDimension> datasetDimension, int measureId){
-		this(metaModel, measureId);
+	public MeasureCatalogueMeasure( IFieldMetaData fieldMetadata, MetaModelWrapper metaModel, IDataSet ds, Set<MeasureCatalogueDimension> datasetDimension){
+		this(metaModel);
 		this.fieldMetadata = fieldMetadata;
 		this.alias=fieldMetadata.getAlias();
 		if(this.alias==null){
 			this.alias=fieldMetadata.getName();
 		}
+		this.label = this.alias+ds.getLabel();
 		this.dataType = fieldMetadata.getType();
 		columnName = this.alias;
 		if(datasetDimension!=null){
@@ -170,8 +171,12 @@ public class MeasureCatalogueMeasure implements IMeasureCatalogueField {
 		return alias;
 	}
 	
-	public Integer getId() {
-		return id;
+//	public Integer getId() {
+//		return id;
+//	}
+	
+	public String getLabel(){
+		return label;
 	}
 	
 	public String getClassType() {

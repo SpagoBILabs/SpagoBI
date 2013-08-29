@@ -67,12 +67,12 @@ public class MeasureCatalogueCRUD {
 		MeasureCatalogue catalogue = MeasureCatalogueSingleton.getMeasureCatologue();
 		IDataStore dataStore;
 		
-		List<String> ids = form.get("ids");
+		List<String> labels = form.get("labels");
 		
 		List<MeasureCatalogueMeasure> measures= new ArrayList<MeasureCatalogueMeasure>();
 		
-		for(int i=0; i<ids.size(); i++){
-			MeasureCatalogueMeasure aMeasure = catalogue.getMeasureById(new Integer(ids.get(i)));
+		for(int i=0; i<labels.size(); i++){
+			MeasureCatalogueMeasure aMeasure = catalogue.getMeasureByLabel(labels.get(i));
 			if(aMeasure!=null){
 				measures.add(aMeasure);
 			}
