@@ -16,7 +16,7 @@ public class StatementTockenizer extends StringTokenizer{
 	private String satement;
 	private String currentToken;
 	
-	private static final String DELIMITERS = "+-|*/()<>=!";
+	private static final String DELIMITERS = "+-|*/()<>=!,";
 	private static final String[] ADDITIONALS_DELIMITERS_SUBSTRING_FUNCTIONS = {" like ", "case when", " then ", " end ", "not in ", " in ", " between", "is not null ", "is null ", "is not empty " , "is empty ", "not member of", "member of"};
 	
 
