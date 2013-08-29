@@ -33,6 +33,7 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 	Locale locale;
 	String template;
 	String docLabel;
+	String docVersion;
 	List<String> includes;
 	
 	engineInstance = (GeoReportEngineInstance)request.getSession().getAttribute(EngineConstants.ENGINE_INSTANCE);
@@ -42,6 +43,7 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 	executionRole = (String)env.get(EngineConstants.ENV_EXECUTION_ROLE);
 	template = engineInstance.getGuiSettings().toString();
 	docLabel = (engineInstance.getDocumentLabel()==null)?"":engineInstance.getDocumentLabel().toString();
+	docVersion = (engineInstance.getDocumentVersion()==null)?"":engineInstance.getDocumentVersion().toString();
 	includes = engineInstance.getIncludes();
 	
 	
@@ -148,7 +150,8 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 		    });
 
 		    Sbi.config.docLabel = '<%=docLabel%>';
-		
+		    Sbi.config.docVersion = '<%=docVersion%>';
+		    
 		    var geoReportPanel = null;
 		    
 			Ext.onReady(function(){

@@ -269,7 +269,7 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 		           		},
 		           		scope: this
 				    }), new Ext.Button({
-				    	text: 'Share map link',
+				    	text: 'Share map as link',
 				        width: 30,
 				        disabled :(Sbi.config.docLabel=="")?true:false,
 				        handler: function() {
@@ -277,7 +277,7 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 		           		},
 		           		scope: this
 				    }), new Ext.Button({
-				    	text: 'Share map html',
+				    	text: 'Share map as html',
 				        width: 30,
 				        disabled :(Sbi.config.docLabel=="")?true:false,
 				        handler: function() {
@@ -506,9 +506,9 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 		var toReturn;
 		var url = Sbi.config.serviceRegistry.baseUrl.protocol +'://' + Sbi.config.serviceRegistry.baseUrl.host+':'+
 		 		  Sbi.config.serviceRegistry.baseUrl.port+'/SpagoBI/servlet/AdapterHTTP?PAGE=LoginPage&NEW_SESSION=TRUE&'+
-		 		  'OBJECT_LABEL='+ Sbi.config.docLabel;
+		 		  'OBJECT_LABEL='+ Sbi.config.docLabel+'&OBJECT_VERSION=' + Sbi.config.docVersion;
 		
-		
+		 
 		if (type=='link'){
 			var toReturn = new Ext.form.TextArea({
 		  		  fieldLabel: 'Map link:' 
