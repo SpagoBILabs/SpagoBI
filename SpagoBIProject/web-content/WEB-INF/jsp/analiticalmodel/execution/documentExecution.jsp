@@ -137,8 +137,8 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 		<%
 	} else {
 		%>
-		var object = <%= biobjectJSON.toString() %>
-		<%
+		var object = <%= biobjectJSON.toString()%>
+	<%		
 	}
 	%>
 

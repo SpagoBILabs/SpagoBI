@@ -19,7 +19,7 @@ Sbi.execution.ExecutionPanel = function(config, doc) {
 	
 	this.document = doc;
 	this.documentsStack = [];
-	
+	 
 	var title = config.title;
 	var closable = config.closable !== undefined || true;
 	if(config.title !== undefined) delete config.title;

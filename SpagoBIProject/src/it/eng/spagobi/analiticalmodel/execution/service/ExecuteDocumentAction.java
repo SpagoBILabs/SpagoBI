@@ -66,7 +66,13 @@ public class ExecuteDocumentAction extends AbstractSpagoBIAction {
 					}		 
 		    		logger.error("User [" + profile.getUserId() + "] cannot see document [id: '" + obj.getId() + "', label: '" + obj.getLabel() + "'].");
 		    	} else {
+		    		//add the template version as object property if it's present into the request url
+					Integer objVersion = this.getAttributeAsInteger(ObjectsTreeConstants.OBJECT_VERSION);
+		    		if (objVersion != null){
+						obj.setDocVersion(objVersion);	
+					}
 					this.getServiceResponse().setAttribute(SpagoBIConstants.OBJECT, obj);
+	
 					SubObject subObject = getRequiredSubObject(obj);
 					if (subObject != null) {
 						logParam.put("SUBOJECT NAME", subObject.getName());

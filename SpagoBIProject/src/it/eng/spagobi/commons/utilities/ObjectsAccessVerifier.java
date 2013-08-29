@@ -843,7 +843,9 @@ public class ObjectsAccessVerifier {
 						|| profile.isAbleToExecuteAction(SpagoBIConstants.PARAMETER_MANAGEMENT)) {  // for behavioral model administrators
 					canSee = true;
 				} else {
-					canSee = checkProfileVisibility(obj, profile);
+					if (obj.isPublicDoc()  || (!obj.isPublicDoc() && profile.getUserUniqueIdentifier().equals(obj.getCreationUser()))) {					
+						canSee = checkProfileVisibility(obj, profile);
+					}
 				}
 				break;
 			}

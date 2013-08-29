@@ -114,8 +114,10 @@ public class ExecutionInstance implements Serializable{
 	 * @throws Exception 
 	 */
 	public ExecutionInstance (IEngUserProfile userProfile, String flowId, String executionId, Integer biobjectId, String executionRole, String executionModality, Locale locale) throws Exception {
+		
 		logger.debug("IN: input parameters: userProfile = [" + userProfile + "]; flowId = [" + flowId + "]; executionId = [" + executionId + "]; " +
 				"biobjectId" + biobjectId + "]; executionRole = [" + executionRole + "]");
+		
 		if (userProfile == null || flowId == null || executionId == null || biobjectId == null) {
 			throw new Exception("Invalid arguments.");
 		}
@@ -135,12 +137,19 @@ public class ExecutionInstance implements Serializable{
 		this(userProfile, flowId, executionId, biobjectId, executionRole, executionModality, locale);
 		this.displayToolbar = displayToolbar;
 	}
-
+	
 	public ExecutionInstance (IEngUserProfile userProfile, String flowId, String executionId, Integer biobjectId, 
 			String executionRole, String executionModality, boolean displayToolbar, boolean displaySliders, Locale locale) throws Exception {
 		this(userProfile, flowId, executionId, biobjectId, executionRole, executionModality, displayToolbar, locale);
 		this.displaySliders = displaySliders;
 	}
+	
+	public ExecutionInstance (IEngUserProfile userProfile, String flowId, String executionId, Integer biobjectId, Integer biobjectVersion, 
+			String executionRole, String executionModality, boolean displayToolbar, boolean displaySliders, Locale locale) throws Exception {
+		this(userProfile, flowId, executionId, biobjectId, executionRole, executionModality, displayToolbar, displaySliders, locale);
+		this.object.setDocVersion(biobjectVersion);
+	}
+	
 	/**Used by Kpi Engine for detail documents
 	 * @param userProfile
 	 * @param flowId

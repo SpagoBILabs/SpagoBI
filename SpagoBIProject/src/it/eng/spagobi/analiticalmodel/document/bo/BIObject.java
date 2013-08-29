@@ -89,6 +89,9 @@ public class BIObject implements Serializable, Cloneable {
 	
 	private String previewFile = null;	
 
+	private boolean publicDoc = false;	
+	
+	private Integer docVersion =null; //defines the version of template if is different by the default (last version)
 	/**
 	 * Gets the id.
 	 * 
@@ -551,11 +554,41 @@ public class BIObject implements Serializable, Cloneable {
 	public void setPreviewFile(String previewFile) {
 		this.previewFile = previewFile;
 	}
+	
+
+	/**
+	 * @return the publicDoc
+	 */
+	public boolean isPublicDoc() {
+		return publicDoc;
+	}
+
+	/**
+	 * @param publicDoc the publicDoc to set
+	 */
+	public void setPublicDoc(boolean publicDoc) {
+		this.publicDoc = publicDoc;
+	}
+
+	/**
+	 * @return the docVersion
+	 */
+	public Integer getDocVersion() {
+		return docVersion;
+	}
+
+	/**
+	 * @param docVersion the docVersion to set
+	 */
+	public void setDocVersion(Integer docVersion) {
+		this.docVersion = docVersion;
+	}
 
 	@Override
 	public String toString() {
 		return "Document [label=" + label + "]";
 	}
+
 
 	/**
 	 * Clone the object.. NOTE: it does not clone the id property
@@ -586,6 +619,8 @@ public class BIObject implements Serializable, Cloneable {
 		clone.setObjMetaDataAndContents(objMetaDataAndContents);
 		clone.setTenant(tenant);
 		clone.setPreviewFile(previewFile);
+		clone.setPublicDoc(publicDoc);
+		clone.setDocVersion(docVersion);
 		return clone;
 	}
 

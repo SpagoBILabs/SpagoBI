@@ -3,7 +3,7 @@
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. **/
- 
+
   
 Ext.define('Sbi.execution.SaveDocumentWindowExt4', {
 	extend: 'Ext.Window'
@@ -20,6 +20,7 @@ Ext.define('Sbi.execution.SaveDocumentWindowExt4', {
 	,OBJECT_PARS: null
 	,OBJECT_PREVIEW_FILE: null
 	,OBJECT_COMMUNITY: null
+	,OBJECT_SCOPE: null
 
 	
 	,constructor: function(config) {
@@ -73,8 +74,9 @@ Ext.define('Sbi.execution.SaveDocumentWindowExt4', {
 		this.OBJECT_WK_DEFINITION = config.OBJECT_WK_DEFINITION;
 		this.OBJECT_QUERY = config.OBJECT_QUERY;
 		this.OBJECT_FORM_VALUES = config.OBJECT_FORM_VALUES;
-		this.OBJECT_PREVIEW_FILE = config.OBJECT_PREVIEW_FILE;
+		this.OBJECT_PREVIEW_FILE = config.OBJECT_PREVIEW_FILE;		
 		this.OBJECT_COMMUNITY = config.OBJECT_COMMUNITY;
+		this.OBJECT_SCOPE = config.OBJECT_SCOPE;
 		
 		this.initFormPanel();
 		
@@ -82,7 +84,7 @@ Ext.define('Sbi.execution.SaveDocumentWindowExt4', {
 			id:'popup_docSave',
 			layout:'fit',
 			width:700,//640,
-			height:350,
+			height:450,
 			closeAction: 'destroy',
 			buttons:[{ 
 				  iconCls: 'icon-save' 	
@@ -173,6 +175,23 @@ Ext.define('Sbi.execution.SaveDocumentWindowExt4', {
 		    allowBlank: true
 		});
 		
+		var storeScope = Ext.create('Ext.data.Store', {
+		    fields: ['field', 'value'],
+		    data : [
+		        {"field":"true", "value":"Public"},
+		        {"field":"false", "value":"Private"}
+		    ]
+		});
+		
+		this.isPublic = Ext.create('Ext.form.ComboBox', {
+		    fieldLabel: 'Scope',
+//		    queryMode: 'local',
+		    store: storeScope,
+		    displayField: 'value',
+		    valueField: 'field',
+		    allowBlank: false
+		});
+		
 		this.fileUpload = this.initFileUpload();
 	    
 	    this.inputForm =  Ext.create("Ext.Panel",{
@@ -191,7 +210,7 @@ Ext.define('Sbi.execution.SaveDocumentWindowExt4', {
 	                 "margin-left": "4px",
 	                 "margin-top": "25px"
 	             },
-	             items: [this.docLabel,this.docName,this.docDescr,this.docVisibility,this.fileUpload, this.docCommunity]
+	             items: [this.docLabel,this.docName,this.docDescr,this.docVisibility,this.fileUpload, this.docCommunity, this.isPublic]
 	    	}
 	    });
 	    
@@ -238,6 +257,7 @@ Ext.define('Sbi.execution.SaveDocumentWindowExt4', {
 		var wk_definition = this.OBJECT_WK_DEFINITION;
 		var previewFile =  this.fileNameUploaded;
 		var docCommunity = this.docCommunity.getValue();
+		var isPublic = this.isPublic.getValue();
 		
 		if(formValues!=undefined && formValues!=null){
 			formValues=Ext.encode(formValues);
@@ -255,6 +275,7 @@ Ext.define('Sbi.execution.SaveDocumentWindowExt4', {
 		
 		if(docName == null || docName == undefined || docName == '' ||
 		   docLabel == null || docLabel == undefined || docLabel == '' ||
+//		   isPublic == null || isPublic == undefined || isPublic == '' ||
 		   ((functs == null || functs == undefined || functs.length == 0) && (docCommunity == null || docCommunity == undefined || docCommunity == ''))){
 				Ext.MessageBox.show({
 	                title: LN('sbi.generic.warning'),
@@ -278,6 +299,7 @@ Ext.define('Sbi.execution.SaveDocumentWindowExt4', {
 					template: this.OBJECT_TEMPLATE,
 					datasourceid: this.OBJECT_DATA_SOURCE,
 					communityid: docCommunity,
+					isPublic: isPublic,
 					SBI_EXECUTION_ID: this.SBI_EXECUTION_ID,
 					functs: functs
 		        };
