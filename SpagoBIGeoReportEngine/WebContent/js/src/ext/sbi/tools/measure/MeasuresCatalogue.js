@@ -93,6 +93,7 @@ Ext.extend(Sbi.geo.tools.MeasureCatalogue, Ext.grid.GridPanel, {
 			}),
 			reader: new  Ext.data.JsonReader({
 				fields: [
+				         "label",
 				         "id",
 				         "alias",
 				         "columnName",
@@ -181,20 +182,20 @@ Ext.extend(Sbi.geo.tools.MeasureCatalogue, Ext.grid.GridPanel, {
 	},
 	
 	executeJoin: function(){
-		var measuresIds = new Array();
+		var measuresLabels = new Array();
 		var selected = this.getSelectionModel().getSelections();
 		if(selected!=null && selected!=undefined && selected.length>0){
 			for(var i=0; i<selected.length; i++){
-				measuresIds.push(selected[i].data.id);
+				measuresLabels.push(selected[i].data.label);
 			}
-			if(measuresIds.length<2){
+			if(measuresLabels.length<2){
 				alert("Only one measure selected. Nothing to join"); 
 				return;
 			}
 
 			Ext.Ajax.request({
 				url: Sbi.config.serviceRegistry.getRestServiceUrl({serviceName: 'measures/join', baseUrl:{contextPath: this.contextPath}}),
-				params: {ids: measuresIds},
+				params: {labels: measuresLabels},
 				success : function(response, options) {
 					if(response !== undefined && response.responseText !== undefined && response.statusText=="OK") {
 						if(response.responseText!=null && response.responseText!=undefined){

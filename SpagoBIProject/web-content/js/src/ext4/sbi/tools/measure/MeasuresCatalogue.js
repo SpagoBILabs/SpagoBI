@@ -151,16 +151,16 @@ Ext.define('Sbi.tools.measure.MeasuresCatalogue', {
 		},
 		
 		executeJoin: function(){
-			var measuresIds = new Array();
+			var measuresLabels = new Array();
 			var selected = this.getSelectionModel().getSelection();
 			if(selected!=null && selected!=undefined && selected.length>0){
 				for(var i=0; i<selected.length; i++){
-					measuresIds.push(selected[i].data.id);
+					measuresLabels.push(selected[i].data.label);
 				}
 				//var encoded = Ext.JSON.encode(measuresIds);
 				Ext.Ajax.request({
 					url: Sbi.config.serviceRegistry.getRestServiceUrl({serviceName: 'measures/join'}),
-					params: {ids: measuresIds},
+					params: {labels: measuresLabels},
 					success : function(response, options) {
 						if(response !== undefined && response.responseText !== undefined && response.statusText=="OK") {
 							if(response.responseText!=null && response.responseText!=undefined){

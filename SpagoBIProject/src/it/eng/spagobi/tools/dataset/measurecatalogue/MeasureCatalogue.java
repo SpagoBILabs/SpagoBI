@@ -44,16 +44,13 @@ public class MeasureCatalogue implements Observer {
 	public static transient Logger logger = Logger.getLogger(MeasureCatalogue.class);
 	private MetaModelWrapper metamodelWrapper;
 	private Set<MeasureCatalogueMeasure> measures;
-	private int measureIdProgress;
 	
 	public MeasureCatalogue(){
-		measureIdProgress = 0;
 		initModel();
 		initMeasures();
 	}
 	
 	public MeasureCatalogue(Model model){
-		measureIdProgress = 0;
 		metamodelWrapper = new MetaModelWrapper(model);
 		initMeasures();
 	}
@@ -125,8 +122,7 @@ public class MeasureCatalogue implements Observer {
 							/**
 							 * The measures has not been already saved, so we create it
 							 */
-							aDsMeasure = new MeasureCatalogueMeasure(aDsMeasures.get(j), metamodelWrapper, aDs, datasetDimension, measureIdProgress);
-							measureIdProgress++;
+							aDsMeasure = new MeasureCatalogueMeasure(aDsMeasures.get(j), metamodelWrapper, aDs, datasetDimension);
 							measures.add(aDsMeasure);
 							datasetDimension = aDsMeasure.getDatasetDimension();
 						}
@@ -179,10 +175,10 @@ public class MeasureCatalogue implements Observer {
      * @param measureId
      * @return
      */
-	public MeasureCatalogueMeasure getMeasureById(int measureId){
+	public MeasureCatalogueMeasure getMeasureByLabel(String measureLabel){
     	for (Iterator<MeasureCatalogueMeasure> iterator = measures.iterator(); iterator.hasNext();) {
     		MeasureCatalogueMeasure measure =  iterator.next();
-			if(measure.getId()==measureId){
+			if(measure.getLabel().equals(measureLabel)){
 				return measure;
 			}
 		}

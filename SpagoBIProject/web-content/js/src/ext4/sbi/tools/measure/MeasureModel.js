@@ -18,6 +18,7 @@ Ext.define('Sbi.tools.measure.MeasureModel', {
 	},
 
 	fields: [
+	         "label",
 	         "id",
 	         "alias",
 	         "columnName",
