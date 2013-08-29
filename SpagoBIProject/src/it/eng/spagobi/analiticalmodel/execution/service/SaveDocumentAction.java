@@ -70,6 +70,7 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 	private final String FORMVALUES = "formValues";
 	private final String VISIBILITY = "visibility";
 	private final String COMMUNITY = "communityId";
+	private final String IS_PUBLIC = "isPublic";
 
 	
 
@@ -431,7 +432,8 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 	private BIObject createBaseDocument(JSONObject documentJSON, JSONObject sourceDocumentJSON, JSONArray folderJSON) {
 		BIObject sourceDocument = null;
 		String visibility = "true"; //default value
-		String previewFile = "false"; 
+		boolean isPublic = false; //default value
+		String previewFile = ""; 
 		
 		try {
 			if(sourceDocumentJSON != null) {
@@ -441,14 +443,18 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 			if (documentJSON.optString("visibility") != null && !documentJSON.optString("visibility").equals("")){
 				visibility = documentJSON.getString("visibility");//overriding default value
 			}
+			if (documentJSON.optString("isPublic") != null && !documentJSON.optString("isPublic").equals("")){
+				visibility = documentJSON.getString("isPublic");//overriding default value
+			}
 			if (documentJSON.optString("previewFile") != null && !documentJSON.optString("previewFile").equals("")){
-				visibility = documentJSON.getString("previewFile");//overriding default value
+				previewFile = documentJSON.getString("previewFile");//overriding default value
 			}
 			return createBaseDocument(documentJSON.getString("label")
 					, documentJSON.getString("name")
 					, documentJSON.getString("description")					
 					, visibility
 					, previewFile
+					, isPublic
 					, documentJSON.getString("type") 
 					, documentJSON.optString("engineId"), sourceDocument, folderJSON);
 		} catch(Throwable t) {
@@ -458,7 +464,7 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 	
 		
 	private BIObject createBaseDocument(String label, String name,  String description, String visibility,
-			String previewFile, String type, String engineId, BIObject sourceDocument, JSONArray foldersJSON) {
+			String previewFile, boolean isPublic, String type, String engineId, BIObject sourceDocument, JSONArray foldersJSON) {
 		
 		BIObject document = new BIObject();
 		
@@ -468,6 +474,7 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 		if(previewFile != null) {
 			document.setPreviewFile(previewFile.replace("\"", ""));
 		}
+		document.setPublicDoc(isPublic);
 		setDocumentEngine(document, type, engineId);
 		Boolean isVisible = Boolean.parseBoolean(visibility);
 		document.setVisible(isVisible);
@@ -737,6 +744,10 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 			String previewFile = getAttributeAsString(PREVIEW_FILE);
 			if(previewFile != null) document.put("previewFile", previewFile);
 			
+			//document scope
+			boolean isPublic = getAttributeAsBoolean(IS_PUBLIC);			
+			document.put("isPublic", isPublic);
+			
 			String businessMetadata = getAttributeAsString( BUSINESS_METADATA );
 			if(StringUtilities.isNotEmpty( businessMetadata )) {
 				JSONObject businessMetadataJSON =  new JSONObject(businessMetadata);
@@ -791,6 +802,7 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 				Integer commFId= commF.getId();
 				foldersJSON.put(commFId);
 			}
+			
 			logger.debug("Request succesfully parsed: " + request.toString(3));
 			
 			return request;

@@ -42,6 +42,7 @@ public class StartNewExecutionProcess extends AbstractSpagoBIAction {
 	
 	// request parameters
 	public static String DOCUMENT_ID = ObjectsTreeConstants.OBJECT_ID;
+	public static String DOCUMENT_VERSION = ObjectsTreeConstants.OBJECT_VERSION;	
 	public static String DOCUMENT_LABEL = ObjectsTreeConstants.OBJECT_LABEL;
 	public static String EXECUTION_ROLE = SpagoBIConstants.ROLE;
 	
@@ -54,6 +55,7 @@ public class StartNewExecutionProcess extends AbstractSpagoBIAction {
 		
 		Integer documentId;
 		String documentLabel;
+		Integer documentVersion;
 		String executionRole;
 		String userProvidedParametersStr;
 		
@@ -67,12 +69,14 @@ public class StartNewExecutionProcess extends AbstractSpagoBIAction {
 			
 			profile = getUserProfile();
 			documentId = requestContainsAttribute( DOCUMENT_ID )? getAttributeAsInteger( DOCUMENT_ID ): null;
-			documentLabel = getAttributeAsString( DOCUMENT_LABEL );
+			documentVersion = requestContainsAttribute( DOCUMENT_VERSION )? getAttributeAsInteger( DOCUMENT_VERSION ): null;
+			documentLabel = getAttributeAsString( DOCUMENT_LABEL );			
 			executionRole = getAttributeAsString( EXECUTION_ROLE );
 			userProvidedParametersStr = getAttributeAsString(ObjectsTreeConstants.PARAMETERS);
 			
 			logger.debug("Parameter [" + DOCUMENT_ID + "] is equals to [" + documentId + "]");
 			logger.debug("Parameter [" + DOCUMENT_LABEL + "] is equals to [" + documentLabel + "]");
+			logger.debug("Parameter [" + DOCUMENT_VERSION + "] is equals to [" + documentVersion + "]");			
 			logger.debug("Parameter [" + EXECUTION_ROLE + "] is equals to [" + executionRole + "]");
 			
 			Assert.assertTrue(!StringUtilities.isEmpty( documentLabel ) || documentId != null, 
@@ -103,6 +107,8 @@ public class StartNewExecutionProcess extends AbstractSpagoBIAction {
 			}
 			Assert.assertNotNull(obj, "Impossible to load document");
 			logger.debug("... docuemnt loaded succesfully");
+			//if into the request is specified a version of the template to use it's signed into the object.  
+			if (documentVersion!=null) obj.setDocVersion(documentVersion);
 			
 			// retrive roles for execution
 			try {
@@ -128,7 +134,7 @@ public class StartNewExecutionProcess extends AbstractSpagoBIAction {
 			
 			CoreContextManager ccm = createContext( executionContextId );
 			   // so far so good: everything has been validated successfully. Let's create a new ExecutionInstance.
-			instance = createExecutionInstance(obj.getId(), executionRole, executionContextId, getLocale());
+			instance = createExecutionInstance(obj.getId(), obj.getDocVersion(), executionRole, executionContextId, getLocale());
 			   
 			createContext( executionContextId ).set(ExecutionInstance.class.getName(), instance);
 			
@@ -147,7 +153,7 @@ public class StartNewExecutionProcess extends AbstractSpagoBIAction {
 			JSONObject responseJSON = null;
 			responseJSON = new JSONObject();
 			try {
-				responseJSON.put("execContextId", executionContextId);
+				responseJSON.put("execContextId", executionContextId);				
 			} catch (JSONException e) {
 				throw new SpagoBIServiceException("Impossible to serialize response", e);
 			}
@@ -163,7 +169,7 @@ public class StartNewExecutionProcess extends AbstractSpagoBIAction {
 		}
 	}
 	
-	private ExecutionInstance createExecutionInstance(Integer biobjectId, String aRoleName, String execId, Locale locale) {
+	private ExecutionInstance createExecutionInstance(Integer biobjectId,Integer biobjectVersion,  String aRoleName, String execId, Locale locale) {
 		String executionFlowId = getAttributeAsString("EXECUTION_FLOW_ID");
 		Boolean displayToolbar = getAttributeAsBoolean(SpagoBIConstants.TOOLBAR_VISIBLE, true);
 		Boolean displaySlider = getAttributeAsBoolean(SpagoBIConstants.SLIDERS_VISIBLE, true);
@@ -182,7 +188,7 @@ public class StartNewExecutionProcess extends AbstractSpagoBIAction {
 		// create new execution instance
 		ExecutionInstance instance = null;
 		try {
-			instance = new ExecutionInstance(getUserProfile(), executionFlowId, execId, biobjectId, aRoleName, modality, 
+			instance = new ExecutionInstance(getUserProfile(), executionFlowId, execId, biobjectId, biobjectVersion, aRoleName, modality, 
 					displayToolbar.booleanValue(), displaySlider.booleanValue(), locale);
 		} catch (Exception e) {
 			logger.error(e);

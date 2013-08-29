@@ -352,6 +352,7 @@ Ext.extend(Sbi.execution.ExecutionWizard, Ext.Panel, {
 		this.executionInstance = {}
 		if(this.document.id) this.executionInstance.OBJECT_ID = this.document.id;
 		if(this.document.label) this.executionInstance.OBJECT_LABEL = this.document.label;
+		if(this.document.docVersion) this.executionInstance.OBJECT_VERSION = this.document.docVersion;
 		this.executionInstance.document = this.document;
 		this.executionInstance.isFromCross = this.isFromCross;
 		

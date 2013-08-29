@@ -486,6 +486,8 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			hibBIObject.setRefreshSeconds(biObject.getRefreshSeconds());
 			
 			hibBIObject.setPreviewFile(biObject.getPreviewFile());
+			hibBIObject.setPublicDoc(biObject.isPublicDoc());
+			
 
 			// functionalities erasing
 			Set hibFunctionalities = hibBIObject.getSbiObjFuncs();
@@ -660,12 +662,9 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			String uuid = uuidObj.toString();
 			hibBIObject.setUuid(uuid);
 			if (obj.getPreviewFile() != null && !"".equals(obj.getPreviewFile())){
-//				String fileName = obj.getPreviewFile().substring(0,obj.getPreviewFile().indexOf("."));
-//				String fileExt = obj.getPreviewFile().substring(obj.getPreviewFile().indexOf("."));
-//				hibBIObject.setPreviewFile(fileName+"__"+uuid+fileExt);
 				hibBIObject.setPreviewFile(obj.getPreviewFile());
 			}
-			
+			hibBIObject.setPublicDoc(obj.isPublicDoc());
 			hibBIObject.setCreationDate(new Date());
 			hibBIObject.setCreationUser(obj.getCreationUser());
 
@@ -1169,6 +1168,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 		aBIObject.setRefreshSeconds(hibBIObject.getRefreshSeconds());		
 		aBIObject.setPreviewFile(hibBIObject.getPreviewFile());
+		aBIObject.setPublicDoc(hibBIObject.isPublicDoc());
 		
 		logger.debug("OUT");
 		return aBIObject;
@@ -1779,9 +1779,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 							" and fr.id.function.functId = f.functId " + 
 					" and f.functId = :FOLDER_ID  " );
 
-					if(profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN)){
-//						buffer.append(" and ( fr.id.state.valueId = o.state OR o.stateCode = 'SUSP') " ); 
-						
+					if(profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN)){						
 						buffer.append(" and (" +
 								"(fr.id.state.valueCd = '" + SpagoBIConstants.PERMISSION_ON_FOLDER_TO_DEVELOP + "' AND o.state.valueCd = '" + SpagoBIConstants.DOC_STATE_DEV + "') OR" +
 								"(fr.id.state.valueCd = '" + SpagoBIConstants.PERMISSION_ON_FOLDER_TO_TEST + "' AND o.state.valueCd = '" + SpagoBIConstants.DOC_STATE_TEST + "') OR " +
@@ -1799,11 +1797,13 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 					if (!profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN) &&
 							!profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_DEV)){
 						//only visible objects (1 means true) and object created by the current user
-						buffer.append(" and ((o.visible = 0 and o.creationUser = '"+profile.getUserUniqueIdentifier()+"') OR (o.visible = 1)) " );
+						buffer.append(" and ((o.visible = 0 and o.creationUser = '"+profile.getUserUniqueIdentifier()+"') OR (o.visible = 1)) " +
+								" and ((o.publicDoc = 0 and o.creationUser = '"+profile.getUserUniqueIdentifier()+"') OR (o.publicDoc = 1))  ");
 					}
 					buffer.append(" order by o.name"); 
 				} else {
-					buffer.append("select objects from SbiObjects as objects ");
+					buffer.append("select objects from SbiObjects  as objects where objects.publicDoc=1 or ( objects.publicDoc=0 " +
+							" and objects.creationUser = '"+profile.getUserUniqueIdentifier()+"')");
 				}		
 			}else{
 				if (folderID != null ){
@@ -1814,7 +1814,8 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 					if (!profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN) &&
 							!profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_DEV)){
 						//only visible objects (1 means true) and object created by the current user
-						buffer.append(" and ((o.visible = 0 and o.creationUser = '"+profile.getUserUniqueIdentifier()+"') OR (o.visible = 1)) " );
+						buffer.append(" and ((o.visible = 0 and o.creationUser = '"+profile.getUserUniqueIdentifier()+"') OR (o.visible = 1)) " +
+								" and ((o.publicDoc = 0 and o.creationUser = '"+profile.getUserUniqueIdentifier()+"') OR (o.publicDoc = 1))  ");
 
 					}
 					buffer.append(" order by o.name"); 
@@ -1899,11 +1900,6 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			//definition of the the search query 
 			if (roles != null && roles.size() > 0 ) {
 				bufferSelect.append(" select distinct o ");
-				/*bufferSelect.append(" select distinct o.biobjId, o.sbiEngines, o.descr, o.label, o.path, o.relName, o.state, "+
-								" o.stateCode, o.objectTypeCode, o.objectType, o.schedFl, "+
-								" o.execMode, o.stateConsideration, o.execModeCode, o.stateConsiderationCode, o.name, o.visible, o.uuid, " +
-								" o.extendedDescription, o.objectve, o.language, o.creationDate, o.creationUser, "+
-								" o.keywords, o.refreshSeconds, o.profiledVisibility ");*/
 				bufferFrom.append(" from SbiObjects as o, SbiObjFunc as sof, SbiFunctions as f,  SbiFuncRole as fr "); 	
 				bufferWhere.append(" where sof.id.sbiFunctions.functId = f.functId and o.biobjId = sof.id.sbiObjects.biobjId and " +
 						" ((fr.id.role.extRoleId IN (select extRoleId from SbiExtRoles e  where  e.name in (:ROLES)) " +

@@ -39,6 +39,7 @@ public class GenericDriver extends AbstractDriver implements IEngineDriver {
 	private final static String PARAM_NEW_SESSION = "NEW_SESSION";
     public static final String DOCUMENT_ID = "document";
     public static final String DOCUMENT_LABEL = "DOCUMENT_LABEL";
+    public static final String DOCUMENT_VERSION = "DOCUMENT_VERSION";
 
     public static final String COUNTRY = "country";
     public static final String LANGUAGE = "language";
@@ -146,9 +147,16 @@ public class GenericDriver extends AbstractDriver implements IEngineDriver {
 		pars = new Hashtable();
 		try {
 		
-			objtemplate = DAOFactory.getObjTemplateDAO().getBIObjectActiveTemplate(biobj.getId());		    
+			if (biobj.getDocVersion() != null){
+				objtemplate = DAOFactory.getObjTemplateDAO().loadBIObjectTemplate(biobj.getDocVersion()); //specific template version (not active version)
+				logger.info("Used template version id " + biobj.getDocVersion());
+			}else{
+				objtemplate = DAOFactory.getObjTemplateDAO().getBIObjectActiveTemplate(biobj.getId()); //default
+				logger.info("Used active template (default) ");
+			}
+			
 			if (objtemplate == null) {
-		    	throw new Exception("Active Template null");
+		    	throw new Exception("Template null");
 		    }
 			
 			template = DAOFactory.getBinContentDAO().getBinContent(objtemplate.getBinId());		    
@@ -163,6 +171,9 @@ public class GenericDriver extends AbstractDriver implements IEngineDriver {
 			documentlabel = biobj.getLabel().toString();
 		    pars.put(DOCUMENT_LABEL, documentlabel);
 		    logger.debug("Add " + DOCUMENT_LABEL + " parameter: " + documentlabel);
+		    pars.put(DOCUMENT_VERSION, objtemplate.getId());
+		    logger.debug("Add " + DOCUMENT_VERSION + " parameter: " + objtemplate.getId());
+
 	        
 			pars = addBIParameters(biobj, pars);
 			pars = addBIParameterDescriptions(biobj, pars);

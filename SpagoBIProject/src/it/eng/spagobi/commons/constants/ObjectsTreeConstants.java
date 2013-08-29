@@ -45,6 +45,7 @@ public class ObjectsTreeConstants {
 	public static final String ROLE = "ROLE";
 	
 	public static final String OBJECT_ID = "OBJECT_ID";
+	public static final String OBJECT_VERSION = "OBJECT_VERSION";
 	public static final String OBJECT_LABEL = "OBJECT_LABEL";
 	public static final String FUNCT_ID = "FUNCT_ID";
 	

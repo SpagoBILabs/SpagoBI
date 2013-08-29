@@ -57,7 +57,8 @@ public class DocumentsJSONSerializer implements Serializer {
 	public static final String PATH_RESOURCES ="pathResources";
 	public static final String ACTIONS = "actions";
 	public static final String EXPORTERS = "exporters";
-	
+	public static final String IS_PUBLIC = "isPublic";
+	public static final String DOC_VERSION = "docVersion";
 	
 	public Object serialize(Object o, Locale locale) throws SerializationException {
 		JSONObject  result = null;
@@ -113,6 +114,8 @@ public class DocumentsJSONSerializer implements Serializer {
 				result.put(PATH_RESOURCES,resourcePath);
 				result.put(PREVIEWFILE,obj.getPreviewFile());
 			}
+			result.put(IS_PUBLIC, obj.isPublicDoc());
+			if (obj.getDocVersion()!=null)	result.put(DOC_VERSION, obj.getDocVersion());
 			result.put(ACTIONS, new JSONArray());
 			 
 			Integer engineId=null;

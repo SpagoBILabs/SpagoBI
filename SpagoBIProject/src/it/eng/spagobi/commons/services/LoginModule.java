@@ -21,6 +21,7 @@ import it.eng.spago.error.EMFErrorHandler;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.Config;
 import it.eng.spagobi.commons.bo.Role;
@@ -58,7 +59,6 @@ import java.util.ListIterator;
 import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
@@ -145,7 +145,14 @@ public class LoginModule extends AbstractHttpModule {
 		// Set BACK URL if present
 		String backUrl=(String)request.getAttribute(SpagoBIConstants.BACK_URL);
 		String fromLogin=(String)request.getAttribute("fromLogin");
-
+		String docLabel=(String)request.getAttribute(SpagoBIConstants.OBJECT_LABEL);
+		boolean isPublicDoc = false;
+		boolean isPublicUser = false;
+		if (docLabel != null){
+			BIObject obj = DAOFactory.getBIObjectDAO().loadBIObjectByLabel(docLabel);
+			if (obj.isPublicDoc()) isPublicDoc=true;
+		}
+		
 		if (backUrl!=null && !backUrl.equalsIgnoreCase("") && fromLogin == null){
 			String parametersStr="";
 			List params = request.getContainedAttributes();
@@ -178,7 +185,12 @@ public class LoginModule extends AbstractHttpModule {
 
 		String userId=null;
 		if (!activeSoo) {
-			userId = (String)request.getAttribute("userID");
+			if (isPublicDoc){
+				userId = SpagoBIConstants.PUBLIC_USER_ID;
+				isPublicUser = true;
+			}else{
+				userId = (String)request.getAttribute("userID");
+			}
 			logger.debug("userID="+userId);
 			if (userId == null) {
 				if (previousProfile != null) {
@@ -247,7 +259,7 @@ public class LoginModule extends AbstractHttpModule {
 		// If SSO is not active, check username and password, i.e. performs the authentication;
 		// instead, if SSO is active, the authentication mechanism is provided by the SSO itself, so SpagoBI does not make 
 		// any authentication, just creates the user profile object and puts it into Spago permanent container
-		if (!activeSoo) {
+		if (!activeSoo && !isPublicUser) {
 			String pwd=(String)request.getAttribute("password");       
 			try {
 				Object ris=supplier.checkAuthentication(userId, pwd);

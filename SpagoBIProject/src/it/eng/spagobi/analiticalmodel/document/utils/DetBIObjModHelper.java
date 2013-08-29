@@ -107,6 +107,7 @@ public class DetBIObjModHelper {
 		String refreshSecondsString = (String) request.getAttribute("refreshseconds");
 		if(refreshSecondsString==null || refreshSecondsString.equalsIgnoreCase(""))refreshSecondsString="0";
 		Integer refreshSeconds=Integer.valueOf(refreshSecondsString);
+		boolean isPublic = Boolean.valueOf( (String)request.getAttribute("isPublic"));
 		/*String longDescription = (String) request.getAttribute("longDescription");
 		String objective = (String) request.getAttribute("objective");
 		String language = (String) request.getAttribute("language");
@@ -240,6 +241,7 @@ public class DetBIObjModHelper {
 		obj.setCreationUser(userId);
 		//obj.setRating(Rating == null ? null : new Short(Rating));
 		obj.setRefreshSeconds(refreshSeconds);
+		obj.setPublicDoc(isPublic);
 		// RETURN OBJECT
 		return obj;
 	}
@@ -459,6 +461,7 @@ public class DetBIObjModHelper {
 		objClone.setStateCode(obj.getStateCode());
 		objClone.setStateID(obj.getStateID());
 		objClone.setRefreshSeconds(obj.getRefreshSeconds());
+		objClone.setPublicDoc(obj.isPublicDoc());
 		return objClone;
 	}
 
