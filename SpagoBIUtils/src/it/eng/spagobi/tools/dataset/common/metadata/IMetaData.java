@@ -88,5 +88,5 @@ public interface IMetaData {
 	void deleteFieldMetaDataAt(int pivotFieldIndex); 
 	
 	void changeFieldAlias(int fieldIndex, String newAlias);
-
+	
 }

@@ -17,7 +17,8 @@ Ext.define('Sbi.selfservice.ManageSelfServiceContainer', {
 
 	congig:{
     	worksheetEngineBaseUrl : '',
-        qbeEngineBaseUrl : '',
+    	qbeFromBMBaseUrl : '',
+    	qbeFromDataSetBaseUrl : '',
         georeportEngineBaseUrl :  '',
         user : '',
         datasetsServicePath: ''
@@ -81,7 +82,7 @@ Ext.define('Sbi.selfservice.ManageSelfServiceContainer', {
 		if(inputType == "MODEL"){
 			var modelName = record.data.name;
 			var dataSourceLabel = record.data.data_source_label;
-			var url = this.qbeEngineBaseUrl+"&MODEL_NAME="+modelName;
+			var url = this.qbeFromBMBaseUrl+"&MODEL_NAME="+modelName;
 			if(dataSourceLabel || dataSourceLabel!=""){
 				url = url+ 
 				'&DATA_SOURCE_LABEL=' + dataSourceLabel;
@@ -89,16 +90,20 @@ Ext.define('Sbi.selfservice.ManageSelfServiceContainer', {
 			this.documentexecution.modelName = modelName;
 			this.documentexecution.load(url);
 		}
+		if(inputType == "DATASET"){
+			var datasetLabel = record.data.label;
+			var dataSourceLabel = record.data.dataSource;
+			var url =  this.qbeFromDataSetBaseUrl+ '&dataset_label=' + datasetLabel;
+			this.documentexecution.load(url);
+			this.documentexecution.datasetLabel = datasetLabel;
+		}
 	}
 	
 	, executeWorksheet: function(inputType, record){
 		if(inputType == "DATASET"){
 			var datasetLabel = record.data.label;
 			var dataSourceLabel = record.data.dataSource;
-			var url =  this.worksheetEngineBaseUrl+ '&dataset_label=' + datasetLabel ;
-			if(dataSourceLabel || dataSourceLabel!=""){
-				url = url+ '&datasource_label=' + dataSourceLabel;
-			}
+			var url = this.worksheetEngineBaseUrl+ '&dataset_label=' + datasetLabel;
 			this.documentexecution.load(url);
 			this.documentexecution.datasetLabel = datasetLabel;
 			

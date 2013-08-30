@@ -122,19 +122,21 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			hibDataSet.setNumRows(dataSet.isNumRows());
 			
 			//manage of persistence fields
-			if (dataSet.getDataSourcePersistId() != null){
-				Integer dataSourcePersist = dataSet.getDataSourcePersistId();
+			if (dataSet.getDataSourcePersist() != null){
+				Integer dataSourcePersist = dataSet.getDataSourcePersist().getDsId();
 				Criterion labelCriterrion = Expression.eq("dsId", dataSourcePersist);
 				Criteria criteria = session.createCriteria(SbiDataSource.class);
 				criteria.add(labelCriterrion);	
 				SbiDataSource hibDataSourcePersist = (SbiDataSource) criteria.uniqueResult();
 				hibDataSet.setDataSourcePersist(hibDataSourcePersist);
 			}
+			
 			hibDataSet.setPersisted(dataSet.isPersisted());
+			hibDataSet.setPersistTableName(dataSet.getPersistTableName());
 			//manage of flat fields
 			hibDataSet.setFlatDataset(dataSet.isFlatDataset());
-			if (dataSet.getDataSourceFlatId() != null){
-				Integer dataSourceFlat = dataSet.getDataSourceFlatId();
+			if (dataSet.getDataSourceFlat() != null){
+				Integer dataSourceFlat = dataSet.getDataSourceFlat().getDsId();
 				Criterion labelCriterrion = Expression.eq("dsId", dataSourceFlat);
 				Criteria criteria = session.createCriteria(SbiDataSource.class);
 				criteria.add(labelCriterrion);	
@@ -1332,8 +1334,8 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				
 				//manage of persistence fields
 			
-				if (dataSet.getDataSourcePersistId() != null){
-					Integer dataSourcePersist = dataSet.getDataSourcePersistId();
+				if (dataSet.getDataSourcePersist() != null){
+					Integer dataSourcePersist = dataSet.getDataSourcePersist().getDsId();
 					Criterion labelCriterrion = Expression.eq("id", dataSourcePersist);
 					Criteria criteria = session.createCriteria(SbiDataSource.class);
 					criteria.add(labelCriterrion);	
@@ -1341,10 +1343,11 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 					hibDataSet.setDataSourcePersist(hibDataSourcePersist);
 				}
 				hibDataSet.setPersisted(dataSet.isPersisted());
+				hibDataSet.setPersistTableName(dataSet.getPersistTableName());
 				//manage of flat fields
 				hibDataSet.setFlatDataset(dataSet.isFlatDataset());
-				if (dataSet.getDataSourceFlatId() != null){
-					Integer dataSourceFlat = dataSet.getDataSourceFlatId();
+				if (dataSet.getDataSourceFlat() != null){
+					Integer dataSourceFlat = dataSet.getDataSourceFlat().getDsId();
 					Criterion labelCriterrion = Expression.eq("id", dataSourceFlat);
 					Criteria criteria = session.createCriteria(SbiDataSource.class);
 					criteria.add(labelCriterrion);	

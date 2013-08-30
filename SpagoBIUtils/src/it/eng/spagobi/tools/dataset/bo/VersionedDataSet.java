@@ -14,7 +14,6 @@ import it.eng.spagobi.tools.dataset.common.transformer.IDataStoreTransformer;
 import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 
-import java.sql.Connection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -297,12 +296,12 @@ public class VersionedDataSet implements IDataSet {
 		wrappedDataset.setPersisted(persisted);
 	}
 	
-	public Integer getDataSourcePersistId(){
-		return wrappedDataset.getDataSourcePersistId();
+	public IDataSource getDataSourcePersist(){
+		return wrappedDataset.getDataSourcePersist();
 	}
 	
-	public void setDataSourcePersistId(Integer dataSourcePersistId){
-		wrappedDataset.setDataSourcePersistId(dataSourcePersistId);
+	public void setDataSourcePersist(IDataSource dataSourcePersist){
+		wrappedDataset.setDataSourcePersist(dataSourcePersist);
 	}
 	
 	public boolean isFlatDataset(){
@@ -312,11 +311,11 @@ public class VersionedDataSet implements IDataSet {
 		wrappedDataset.setFlatDataset(flatDataset);
 	}
 	
-	public Integer getDataSourceFlatId(){
-		return wrappedDataset.getDataSourceFlatId();
+	public IDataSource getDataSourceFlat(){
+		return wrappedDataset.getDataSourceFlat();
 	}
-	public void setDataSourceFlatId(Integer dataSourceFlatId){
-		wrappedDataset.setDataSourceFlatId(dataSourceFlatId);
+	public void setDataSourceFlat(IDataSource dataSourceFlat){
+		wrappedDataset.setDataSourceFlat(dataSourceFlat);
 	}
 	
 	public String getFlatTableName(){
@@ -407,6 +406,30 @@ public class VersionedDataSet implements IDataSet {
 	
 	public void setCalculateResultNumberOnLoad(boolean enabled){
 		wrappedDataset.setCalculateResultNumberOnLoad(enabled);
+	}
+
+	public void setDataSource(IDataSource dataSource) {
+		wrappedDataset.setDataSource(dataSource);
+	}
+
+	public IDataSource getDataSource() {
+		return wrappedDataset.getDataSource();
+	}
+
+	public String getPeristedTableName() {
+		return wrappedDataset.getPeristedTableName();
+	}
+
+	public IDataSource getDataSourceForReading() {
+		return wrappedDataset.getDataSourceForReading();
+	}
+
+	public String getPersistTableName() {
+		return wrappedDataset.getPersistTableName();
+	}
+
+	public void setPersistTableName(String persistTableName) {
+		wrappedDataset.setPersistTableName(persistTableName);
 	}
 	
 	

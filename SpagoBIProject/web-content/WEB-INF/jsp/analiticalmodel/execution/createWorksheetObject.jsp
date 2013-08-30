@@ -6,8 +6,8 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
  
   
  
-  
-
+<%@page import="it.eng.spagobi.analiticalmodel.execution.service.SelectDatasetAction"%>
+<%@page import="java.util.HashMap"%>
 <%@page import="org.json.JSONObject"%>
 <%@page import="it.eng.spagobi.analiticalmodel.execution.service.CreateDatasetForWorksheetAction"%>
 <%@page import="org.apache.commons.lang.StringEscapeUtils"%>
@@ -19,13 +19,19 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 	src='<%=urlBuilder.getResourceLink(request, "/js/lib/ext-2.0.1/ux/miframe/miframe-min.js")%>'></script>
 
 <%
-	String executionId = (String) aResponseContainer.getServiceResponse().getAttribute(CreateDatasetForWorksheetAction.OUTPUT_PARAMETER_EXECUTION_ID);
-	String worksheetEditActionUrl = (String) aResponseContainer.getServiceResponse().getAttribute(CreateDatasetForWorksheetAction.OUTPUT_PARAMETER_WORKSHEET_EDIT_SERVICE_URL);
-	String datasetLabel = (String) aResponseContainer.getServiceResponse().getAttribute(CreateDatasetForWorksheetAction.OUTPUT_PARAMETER_DATASET_LABEL);
+	String executionId = (String) aResponseContainer.getServiceResponse().getAttribute(SelectDatasetAction.OUTPUT_PARAMETER_EXECUTION_ID);
+    String worksheetEditActionUrl = (String) aResponseContainer.getServiceResponse().getAttribute(SelectDatasetAction.OUTPUT_PARAMETER_WORKSHEET_EDIT_SERVICE_URL);
+	String datasetLabel = (String) aResponseContainer.getServiceResponse().getAttribute(SelectDatasetAction.OUTPUT_PARAMETER_DATASET_LABEL);
+
 	Map<String, String> datasetParameterValuesMap = (Map<String, String>) aResponseContainer.getServiceResponse().getAttribute(CreateDatasetForWorksheetAction.OUTPUT_PARAMETER_DATASET_PARAMETERS);
+	if(datasetParameterValuesMap == null) datasetParameterValuesMap=new HashMap<String, String>();
 	String businessMetadata = (String) aResponseContainer.getServiceResponse().getAttribute(CreateDatasetForWorksheetAction.OUTPUT_PARAMETER_BUSINESS_METADATA);
+
+    String selectedDatasourceLabel = (String) aResponseContainer.getServiceResponse().getAttribute(SelectDatasetAction.OUTPUT_PARAMETER_DATASOURCE_LABEL);
 	
 	String title ="";
+	String engine = (String) aRequestContainer.getServiceRequest().getAttribute("ENGINE");
+
 %>
 
 <script type="text/javascript">
@@ -56,7 +62,9 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 			, defaultSrc: '<%= StringEscapeUtils.escapeJavaScript(worksheetEditActionUrl) %>'
 			, businessMetadata : <%= businessMetadata %>
 			, datasetLabel : '<%= datasetLabel %>'
+	        , datasourceLabel : '<%= selectedDatasourceLabel%>'
 			, datasetParameters : <%= new JSONObject(datasetParameterValuesMap).toString() %>
+	        , engine : '<%= engine %>'
 		});
 	
 		

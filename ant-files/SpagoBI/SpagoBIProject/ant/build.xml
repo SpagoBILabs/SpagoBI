@@ -426,7 +426,8 @@
 				<file name="./src/ext/sbi/execution/toolbar/SaveRememberMeWindow.js" /> 
 				<file name="./src/ext/sbi/execution/toolbar/NotesWindow.js" /> 
 				<file name="./src/ext/sbi/execution/toolbar/MetadataWindow.js" /> 
-				<file name="./src/ext/sbi/execution/toolbar/RatingWindow.js" /> 
+				<file name="./src/ext/sbi/execution/toolbar/RatingWindow.js" />
+				<file name="./src/ext/sbi/execution/toolbar/SaveDatasetWindow.js" />
 				<file name="./src/ext/sbi/home/Footer.js" /> 
 				<file name="./src/ext/sbi/home/Banner.js" /> 
 				<file name="./src/ext/sbi/execution/toolbar/ListNotesWindow.js" />  
@@ -572,7 +573,8 @@
 				<file name="./src/ext/sbi/execution/SaveDocumentWindow.js" /> 
 				<file name="./src/ext/sbi/worksheet/DatasetsListPanel.js" /> 
 				<file name="./src/ext/sbi/worksheet/WorksheetEditorIframePanelExt3.js" /> 
-				<file name="./src/ext/sbi/worksheet/WorksheetFromDatasetPanel.js" /> 
+				<file name="./src/ext/sbi/worksheet/WorksheetFromDatasetPanel.js" />
+				<file name="./src/ext/sbi/execution/toolbar/SaveDatasetWindow.js" />
 
 				
 			</filelist>
@@ -642,7 +644,8 @@
 
 				<file name="./src/ext4/sbi/selfservice/ManageSelfService.js" /> 
 				<file name="./src/ext4/sbi/selfservice/ManageSelfServiceContainer.js" /> 
-				<file name="./src/ext4/sbi/selfservice/SelfServiceExecutionIFrame.js" /> 
+				<file name="./src/ext4/sbi/selfservice/SelfServiceExecutionIFrame.js" />
+				<file name="./src/ext4/sbi/selfservice/SaveDatasetWindow.js" /> 
 
 				<file name="./src/ext4/sbi/adhocreporting/AdhocreportingTabsPanel.js" /> 
 				<file name="./src/ext4/sbi/adhocreporting/AdhocreportingContainer.js" /> 

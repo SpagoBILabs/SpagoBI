@@ -6,6 +6,7 @@
 package it.eng.qbe.statement.jpa;
 
 import it.eng.qbe.query.CriteriaConstants;
+import it.eng.qbe.statement.IConditionalOperator;
 import it.eng.spagobi.utilities.StringUtils;
 import it.eng.spagobi.utilities.assertion.Assert;
 
@@ -18,9 +19,7 @@ import java.util.Map;
  */
 public class JPQLStatementConditionalOperators {
 	
-	public static interface IConditionalOperator {	
-		String apply(String leftHandValue, String[] rightHandValues);
-	}
+
 	
 	private static Map<String, IConditionalOperator> conditionalOperators;
 	

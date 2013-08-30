@@ -19,6 +19,7 @@ import it.eng.spagobi.tools.dataset.common.transformer.PivotDataSetTransformer;
 import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
 import it.eng.spagobi.tools.dataset.persist.PersistedTableManager;
 import it.eng.spagobi.tools.dataset.utils.DatasetMetadataParser;
+import it.eng.spagobi.tools.datasource.bo.DataSourceFactory;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.StringUtils;
 import it.eng.spagobi.utilities.engines.EngineConstants;
@@ -85,12 +86,14 @@ public abstract class AbstractDataSet implements IDataSet {
     protected String queryScriptLanguage;	
 
     protected boolean persisted;
-    protected Integer dataSourcePersistId;
+    protected IDataSource dataSourcePersist;
+    protected String persistTableName;	
     protected boolean flatDataset;
-    protected Integer dataSourceFlatId;
+    protected IDataSource dataSourceFlat;
     protected String flatTableName;	
     protected String configuration;
     protected List noActiveVersions;
+    private IDataSource dataSourceForReading;
     
     protected String owner;
     protected boolean isPublic;
@@ -119,6 +122,16 @@ public abstract class AbstractDataSet implements IDataSet {
 		setPivotColumnValue(dataSet.getPivotColumnValue());
 		setNumRows(dataSet.isNumRows());
 		setDsMetadata(dataSet.getDsMetadata());
+		setFlatDataset(dataSet.isFlatDataset());
+		setPersisted(dataSet.isPersisted());
+		setPersistTableName(dataSet.getPersistTableName());
+		setFlatTableName(dataSet.getFlatTableName());
+		if (dataSet.getDataSourceFlat() != null) {
+			setDataSourceFlat(DataSourceFactory.getDataSource(dataSet.getDataSourceFlat()));
+		}
+		if (dataSet.getDataSourcePersist() != null) {
+			setDataSourcePersist(DataSourceFactory.getDataSource(dataSet.getDataSourcePersist()));
+		}
 		
 		if(this.getPivotColumnName() != null 
 				&& this.getPivotColumnValue() != null
@@ -147,6 +160,16 @@ public abstract class AbstractDataSet implements IDataSet {
 		sbd.setPivotRowName(getPivotRowName());
 		sbd.setPivotColumnValue(getPivotColumnValue());
 		sbd.setNumRows(isNumRows());
+		sbd.setPersisted(isPersisted());
+		sbd.setPersistTableName(getPersistTableName());
+		sbd.setFlatTableName(getFlatTableName());
+		sbd.setFlatDataset(isFlatDataset());
+		if (this.getDataSourceFlat() != null) {
+			sbd.setDataSourceFlat(this.getDataSourceFlat().toSpagoBiDataSource());
+		}
+		if (this.getDataSourcePersist() != null) {
+			sbd.setDataSourcePersist(this.getDataSourcePersist().toSpagoBiDataSource());
+		}
 		return sbd;
 	}
     
@@ -433,18 +456,12 @@ public abstract class AbstractDataSet implements IDataSet {
 		this.persisted = persisted;
 	}
 
-	/**
-	 * @return the dataSourcePersistId
-	 */
-	public Integer getDataSourcePersistId() {
-		return dataSourcePersistId;
+	public IDataSource getDataSourcePersist() {
+		return dataSourcePersist;
 	}
 
-	/**
-	 * @param dataSourcePersistId the dataSourcePersistId to set
-	 */
-	public void setDataSourcePersistId(Integer dataSourcePersistId) {
-		this.dataSourcePersistId = dataSourcePersistId;
+	public void setDataSourcePersist(IDataSource dataSourcePersist) {
+		this.dataSourcePersist = dataSourcePersist;
 	}
 
 	
@@ -465,15 +482,12 @@ public abstract class AbstractDataSet implements IDataSet {
 	/**
 	 * @return the dataSourceFlatId
 	 */
-	public Integer getDataSourceFlatId() {
-		return dataSourceFlatId;
+	public IDataSource getDataSourceFlat() {
+		return dataSourceFlat;
 	}
 
-	/**
-	 * @param dataSourceFlatId the dataSourceFlatId to set
-	 */
-	public void setDataSourceFlatId(Integer dataSourceFlatId) {
-		this.dataSourceFlatId = dataSourceFlatId;
+	public void setDataSourceFlat(IDataSource dataSourceFlat) {
+		this.dataSourceFlat = dataSourceFlat;
 	}
 
 	/**
@@ -490,6 +504,20 @@ public abstract class AbstractDataSet implements IDataSet {
 		this.flatTableName = flatTableName;
 	}
 
+	
+	/**
+	 * @return the persistTableName
+	 */
+	public String getPersistTableName() {
+		return persistTableName;
+	}
+
+	/**
+	 * @param persistTableName the persistTableName to set
+	 */
+	public void setPersistTableName(String persistTableName) {
+		this.persistTableName = persistTableName;
+	}
 	
 	/**
 	 * @return the configuration
@@ -587,13 +615,23 @@ public abstract class AbstractDataSet implements IDataSet {
 	public void loadData(int offset, int fetchSize, int maxResults) {
 		throw new RuntimeException("Unsupported method");
 	}
+	
+	public String getPeristedTableName() {
+		if (isPersisted()) {
+			return getPersistTableName();
+		} else if (isFlatDataset()) {
+			return getFlatTableName();
+		} else {
+			return null;
+			//throw new RuntimeException("Dataset is not persisted");
+		}
+	}
 
 	public IDataSetTableDescriptor persist(String tableName,
 			IDataSource dataSource) {
 		PersistedTableManager persister = new PersistedTableManager();
-		persister.setTableName(tableName);
 		try {
-			persister.persistDataSet(this, dataSource);
+			persister.persistDataSet(this, dataSource, tableName);
 		} catch (Exception e) {
 			throw new SpagoBIRuntimeException("Error while persisting dataset", e);
 		}
@@ -691,6 +729,16 @@ public abstract class AbstractDataSet implements IDataSet {
 			throw new SpagoBIRuntimeException("Unsupported operation: cannot filter on a fild type " + clazz.getName());
 		}
 		return toReturn;
+	}
+	
+	public IDataSource getDataSourceForReading() {
+		if (isPersisted()) {
+			return getDataSourcePersist();
+		} else if (isFlatDataset()) {
+			return getDataSourceFlat();
+		} else {
+			return null;
+		}
 	}
 	
 }

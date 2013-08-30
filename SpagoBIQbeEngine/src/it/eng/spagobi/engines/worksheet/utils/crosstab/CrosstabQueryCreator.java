@@ -314,13 +314,12 @@ public class CrosstabQueryCreator {
 	public static String getTableQuery(List<String> fieldsName,
 			boolean distinct, IDataSetTableDescriptor descriptor,
 			List<WhereField> whereFields, String orderBy,
-			List<String> orderByFieldsName, IDataSource dataSource) {
+			List<String> orderByFieldsName) {
 		logger.debug("IN");
 
-		String query = getTableQuery(fieldsName, distinct, descriptor,
-				whereFields, dataSource);
+		String query = getTableQuery(fieldsName, distinct, descriptor, whereFields, descriptor.getDataSource());
 		StringBuffer buffer = new StringBuffer(query);
-		putOrderByClause(buffer, orderByFieldsName, orderBy, descriptor, dataSource);
+		putOrderByClause(buffer, orderByFieldsName, orderBy, descriptor, descriptor.getDataSource());
 		String toReturn = buffer.toString();
 
 		logger.debug("OUT: returning " + toReturn);

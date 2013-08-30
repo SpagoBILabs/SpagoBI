@@ -40,12 +40,14 @@ public class QbeTemplateParser implements IQbeTemplateParser{
 		IQbeTemplateParser parser;
 		
 		qbeTemplate = null;
-		
-		if(!parsers.containsKey(template.getClass().getName())) {
-			throw new QbeTemplateParseException("Impossible to parse template of type [" + template.getClass().getName() + "]");
-		} else {
-			parser = parsers.get(template.getClass().getName());
-			qbeTemplate = parser.parse(template);
+
+		if(template != null ){
+			if(!parsers.containsKey(template.getClass().getName())) {
+				throw new QbeTemplateParseException("Impossible to parse template of type [" + template.getClass().getName() + "]");
+			} else {
+				parser = parsers.get(template.getClass().getName());
+				qbeTemplate = parser.parse(template);
+			}
 		}
 		
 		return qbeTemplate;

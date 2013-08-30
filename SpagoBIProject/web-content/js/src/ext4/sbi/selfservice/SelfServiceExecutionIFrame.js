@@ -35,19 +35,18 @@ Ext.define('Sbi.selfservice.SelfServiceExecutionIFrame', {
 			iconCls : 'icon-saveas' 
 			, tooltip: LN('sbi.execution.executionpage.toolbar.saveas')
 			, scope : this
-		    , handler : this.saveDocument
+		    , handler : this.saveHandler
 		});
 		
 	}
 	
-	, saveDocument : function() {
+	, saveHandler : function() {
 		var theWindow = this.iframe.getWin();
 		Sbi.debug('[SelfServiceExecutionIFrame.saveWorksheet]: got window');
 		
-		if(theWindow.qbe != null) {
-			var template = theWindow.qbe.validate();	
-			this.saveWorksheet(template);
-		} else if(theWindow.workSheetPanel != null) {
+		if (theWindow.qbe != null) {
+			this.saveQbe();
+		} else if (theWindow.workSheetPanel != null) {
 			var template = theWindow.workSheetPanel.validate();
 			this.saveWorksheet(template);
 		} else if (theWindow.geoReportPanel != null){
@@ -88,6 +87,32 @@ Ext.define('Sbi.selfservice.SelfServiceExecutionIFrame', {
     
     }
 	
+	,
+	saveQbe : function () {
+		//try {
+			// May be we have to save a new dataset or a worksheet document
+			var qbeWindow = this.iframe.getWin();
+			var qbePanel = qbeWindow.qbe;
+			var anActiveTab = qbePanel.tabs.getActiveTab();
+			var activeTabId = anActiveTab.getId();
+			var isBuildingWorksheet = (activeTabId === 'WorksheetPanel');
+			if (isBuildingWorksheet) {
+				// save worksheet as document
+				var template = qbePanel.validate();
+				this.saveWorksheet(template);
+			} else {
+				// save query as new dataset
+				var queryDefinition = this.getQbeQueryDefinition();
+				var saveDatasetWindow = Ext.create("Sbi.selfservice.SaveDatasetWindow", { queryDefinition : queryDefinition } );
+				saveDatasetWindow.on('save', function(theWindow, formState) { theWindow.close(); }, this);
+				saveDatasetWindow.show();
+			}
+		//} catch (err) {
+		//	alert('Sorry, cannot perform operation.');
+		//	throw err;
+		//}
+	}
+	
 	, saveWorksheet : function(template) {
 	
     	if (template == null) {
@@ -120,6 +145,20 @@ Ext.define('Sbi.selfservice.SelfServiceExecutionIFrame', {
     
     }
 	
-		
+	,
+	getQbeQueryDefinition : function () {
+		Sbi.debug('[SelfServiceExecutionIFrame.getQbeQueryDefinition]: IN');
+		var qbeWindow = this.iframe.getWin();
+		Sbi.debug('[SelfServiceExecutionIFrame.getQbeQueryDefinition]: got window');
+		var qbePanel = qbeWindow.qbe;
+		Sbi.debug('[SelfServiceExecutionIFrame.getQbeQueryDefinition]: got qbe panel object');
+		var queries = qbePanel.getQueriesCatalogue();
+		Sbi.debug('[SelfServiceExecutionIFrame.getQbeQueryDefinition]: got queries');
+		var toReturn = {};
+		toReturn.queries = queries;
+		//toReturn.datasourceLabel = this.getDatasourceLabel();
+		//toReturn.sourceDatasetLabel = this.getDatasetLabel();
+		return toReturn;
+	}	
 	
 });

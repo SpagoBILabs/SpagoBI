@@ -101,7 +101,8 @@ public class WorksheetXMLTemplateParser implements IWorksheetTemplateParser{
 				} else {
 					qbeTemplate = (SourceBean) template.getAttribute(TAG_QBE_COMPOSITE);
 				}
-				QbeEngineInstance qbeEngineInstance = startQbeEngine(qbeTemplate, env);
+				QbeEngineInstance qbeEngineInstance;
+				qbeEngineInstance = startQbeEngine(qbeTemplate, env);
 				worksheetTemplate.setQbeEngineInstance(qbeEngineInstance);
 			}
 

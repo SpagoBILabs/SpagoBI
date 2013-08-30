@@ -8,7 +8,10 @@ package it.eng.qbe.dataset;
 import it.eng.qbe.datasource.ConnectionDescriptor;
 import it.eng.qbe.datasource.DriverManager;
 import it.eng.qbe.datasource.configuration.CompositeDataSourceConfiguration;
+import it.eng.qbe.datasource.configuration.DataSetDataSourceConfiguration;
 import it.eng.qbe.datasource.configuration.FileDataSourceConfiguration;
+import it.eng.qbe.datasource.dataset.DataSetDataSource;
+import it.eng.qbe.datasource.dataset.DataSetDriver;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.query.catalogue.QueryCatalogue;
 import it.eng.qbe.statement.AbstractQbeDataSet;
@@ -16,14 +19,19 @@ import it.eng.qbe.statement.QbeDatasetFactory;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
+import it.eng.spagobi.tools.dataset.bo.AbstractDataSet;
 import it.eng.spagobi.tools.dataset.bo.ConfigurableDataSet;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStoreFilter;
+import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
+import it.eng.spagobi.tools.dataset.exceptions.DataSetNotLoadedYetException;
 import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
+import it.eng.spagobi.tools.dataset.utils.DatasetMetadataParser;
 import it.eng.spagobi.tools.dataset.utils.datamart.IQbeDataSetDatamartRetriever;
 import it.eng.spagobi.tools.datasource.bo.DataSourceFactory;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
@@ -31,6 +39,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.jar.JarEntry;
@@ -82,6 +91,15 @@ public static String DS_TYPE = "SbiQbeDataSet";
 		IDataSource dataSource = DataSourceFactory.getDataSource( dataSetConfig.getDataSource() ) ;
 		this.setDataSource(dataSource);
 		
+		if (dataSetConfig.getDataSourcePersist() != null) {
+			IDataSource dataSourcePersist = DataSourceFactory.getDataSource( dataSetConfig.getDataSourcePersist() ) ;
+			this.setDataSourcePersist(dataSourcePersist);
+		}
+		
+		if (dataSetConfig.getDataSourceFlat() != null) {
+			IDataSource dataSourceFlat = DataSourceFactory.getDataSource( dataSetConfig.getDataSourceFlat() ) ;
+			this.setDataSourceFlat(dataSourceFlat);
+		}
 	}
     
     public QbeDataSet(AbstractQbeDataSet ds) {
@@ -104,6 +122,12 @@ public static String DS_TYPE = "SbiQbeDataSet";
     		ds.setPivotRowName(pivotRowName);
     		ds.setNumRows(numRows);
     		ds.setDataStoreTransformer(dataSetTransformer);
+    		((AbstractDataSet)ds).setPersisted(persisted);
+    		((AbstractDataSet)ds).setPersistTableName(persistTableName);
+    		ds.setDataSourcePersist(getDataSourcePersist());
+    		ds.setFlatDataset(flatDataset);
+    		ds.setFlatTableName(flatTableName);
+    		ds.setDataSourceFlat(getDataSourceFlat());
     	}
     }
     
@@ -150,6 +174,9 @@ public static String DS_TYPE = "SbiQbeDataSet";
     }
     
     public IDataStore getDataStore() {
+    	if (ds == null) {
+    		throw new DataSetNotLoadedYetException();
+    	}
     	return ds.getDataStore();
     }
     
@@ -185,6 +212,15 @@ public static String DS_TYPE = "SbiQbeDataSet";
 		if(getDataSource() != null) {
 			sbd.setDataSource(getDataSource().toSpagoBiDataSource());
 		}
+		
+		if (getDataSourcePersist() != null) {
+			sbd.setDataSourcePersist(getDataSourcePersist().toSpagoBiDataSource());
+		}
+		
+		if (getDataSourceFlat() != null) {
+			sbd.setDataSourceFlat(getDataSourceFlat().toSpagoBiDataSource());
+		}
+		
 		/* next informations are already loaded in method super.toSpagoBiDataSet() through the table field configuration 
 		try{
 			JSONObject jsonConf  = new JSONObject();
@@ -198,6 +234,14 @@ public static String DS_TYPE = "SbiQbeDataSet";
 		//sbd.setDatamarts(getDatamarts());
 
 		return sbd;
+	}
+	
+	@Override
+	public void setPersisted(boolean persisted) {
+		super.setPersisted(persisted);
+		if (ds != null) {
+			ds.setPersisted(persisted);
+		}
 	}
 	
 	public it.eng.qbe.datasource.IDataSource getQbeDataSource() {
@@ -219,7 +263,41 @@ public static String DS_TYPE = "SbiQbeDataSet";
 
         dataSourceProperties.put("connection", connection);
         dataSourceProperties.put("dblinkMap", new HashMap());
+        
+		if (dataSourceProperties.get(EngineConstants.ENV_DATASETS) != null) {
+			return getDataSourceFromDataSet(dataSourceProperties, useCache);
+		} else {
+			return getORMDataSource(modelNames, dataSourceProperties,
+					useCache);
+		}
 
+	}
+	
+	public it.eng.qbe.datasource.IDataSource getDataSourceFromDataSet(Map<String, Object> dataSourceProperties, boolean useCache) {
+		
+		it.eng.qbe.datasource.IDataSource dataSource;
+		List<IDataSet> dataSets = (List<IDataSet>)dataSourceProperties.get(EngineConstants.ENV_DATASETS);
+		dataSourceProperties.remove(EngineConstants.ENV_DATASETS);
+		
+		CompositeDataSourceConfiguration compositeConfiguration = new CompositeDataSourceConfiguration(DataSetDataSource.EMPTY_MODEL_NAME);
+		Iterator<String> it = dataSourceProperties.keySet().iterator();
+		while(it.hasNext()) {
+			String propertyName = it.next();
+			compositeConfiguration.loadDataSourceProperties().put(propertyName, dataSourceProperties.get(propertyName));
+		}
+
+		for(int i = 0; i < dataSets.size(); i++) {
+			DataSetDataSourceConfiguration c = new DataSetDataSourceConfiguration((dataSets.get(i)).getLabel(), dataSets.get(i));
+			compositeConfiguration.addSubConfiguration(c);
+		}
+
+		dataSource = DriverManager.getDataSource(DataSetDriver.DRIVER_ID, compositeConfiguration, useCache);
+		
+		return dataSource;
+	}
+	
+	private it.eng.qbe.datasource.IDataSource getORMDataSource(List<String> dataMartNames, Map<String, Object> dataSourceProperties, boolean useCache) {
+		
 	    File modelJarFile = null;
 	    List<File> modelJarFiles = new ArrayList<File>();
 	    CompositeDataSourceConfiguration compositeConfiguration = new CompositeDataSourceConfiguration();
@@ -231,11 +309,11 @@ public static String DS_TYPE = "SbiQbeDataSet";
 	    if (retriever == null) {
 	    	throw new SpagoBIRuntimeException("Missing datamart retriever, cannot proceed.");
 	    }
-	    modelJarFile = retriever.retrieveDatamartFile(modelNames.get(0));
+	    modelJarFile = retriever.retrieveDatamartFile(dataMartNames.get(0));
 	    modelJarFiles.add(modelJarFile);
-	    compositeConfiguration.addSubConfiguration(new FileDataSourceConfiguration(modelNames.get(0), modelJarFile));
+	    compositeConfiguration.addSubConfiguration(new FileDataSourceConfiguration(dataMartNames.get(0), modelJarFile));
 	
-	    logger.debug("OUT: Finish to load the data source for the model names "+modelNames+"..");
+	    logger.debug("OUT: Finish to load the data source for the model names "+dataMartNames+"..");
 	    return DriverManager.getDataSource(getDriverName(modelJarFile), compositeConfiguration, this.useCache);
 	}
 	
@@ -339,4 +417,19 @@ public static String DS_TYPE = "SbiQbeDataSet";
 		this.useCache = useCache;
 	}
 	
+	/**
+	* TODO check this
+	*/
+	@Override
+	public IMetaData getMetadata() {
+		IMetaData metadata = null;
+		try {
+			DatasetMetadataParser dsp = new DatasetMetadataParser();
+			metadata =  dsp.xmlToMetadata( getDsMetadata() );
+		} catch (Exception e) {
+			logger.error("Error loading the metadata",e);
+			throw new SpagoBIEngineRuntimeException("Error loading the metadata",e);
+		}
+		return metadata;
+	}
 }

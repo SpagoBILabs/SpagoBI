@@ -9,6 +9,7 @@ import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.SessionContainer;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
+import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.bo.DocumentMetadataProperty;
@@ -25,11 +26,15 @@ import it.eng.spagobi.commons.serializer.MetadataJSONSerializer;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.ParameterValuesEncoder;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
+import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.engines.drivers.AbstractDriver;
 import it.eng.spagobi.engines.drivers.EngineURL;
 import it.eng.spagobi.engines.drivers.IEngineDriver;
 import it.eng.spagobi.engines.drivers.exceptions.InvalidOperationRequest;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.engines.EngineConstants;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -97,10 +102,28 @@ public class WorksheetDriver extends AbstractDriver implements IEngineDriver {
 			parameters = applySecurity(parameters, profile);
 			//parameters = addDocumentParametersInfo(parameters, biObject);
 			parameters = applyService(parameters, biObject);
+			parameters = applyEngineDatasource(parameters, biObject);
 		} finally {
 			logger.debug("OUT");
 		}
 
+		return parameters;
+	}
+
+	private Map applyEngineDatasource(Map parameters, BIObject biObject) {
+		Engine engine = biObject.getEngine();
+		Integer id = engine.getDataSourceId();
+		if (id == null) {
+			throw new SpagoBIRuntimeException("Engine has no datasources associated");
+		}
+		IDataSource dataSource;
+		try {
+			dataSource = DAOFactory.getDataSourceDAO().loadDataSourceByID(id);
+		} catch (EMFUserError e) {
+			throw new SpagoBIRuntimeException("Error while loading datasource with id " + id, e);
+		}
+		String datasourceLabel = dataSource.getLabel();
+		parameters.put(EngineConstants.ENGINE_DATASOURCE_LABEL, datasourceLabel);
 		return parameters;
 	}
 
@@ -145,6 +168,7 @@ public class WorksheetDriver extends AbstractDriver implements IEngineDriver {
 			parameters = applySecurity(parameters, profile);
 			//parameters = addDocumentParametersInfo(parameters, biObject);
 			parameters = applyService(parameters, biObject);
+			parameters = applyEngineDatasource(parameters, biObject);
 			parameters.put("isFromCross", "false");
 
 		} finally {
@@ -191,6 +215,11 @@ public class WorksheetDriver extends AbstractDriver implements IEngineDriver {
 			addBIParameterDescriptions(biObject, parameters);
 
 			addMetadataAndContent(biObject, parameters);
+			Integer engineDataSource =  biObject.getEngine().getDataSourceId();
+			if(engineDataSource!=null){
+				parameters.put(EngineConstants.ENGINE_DATASOURCE_ID,engineDataSource);
+			}
+			
 
 		} finally {
 			logger.debug("OUT");
@@ -406,6 +435,7 @@ public class WorksheetDriver extends AbstractDriver implements IEngineDriver {
 		worksheetDefinitionSB.setCharacters(worksheetDefinition);
 		templateSB.setAttribute(worksheetDefinitionSB);
 		if(modelName!=null && !modelName.equals("")){
+			// case when starting from a model
 			SourceBean templateQBE = new SourceBean(TAG_QBE);
 			SourceBean templateDatamart = new SourceBean(DATAMART);
 			templateDatamart.setAttribute("name", modelName);
@@ -414,8 +444,14 @@ public class WorksheetDriver extends AbstractDriver implements IEngineDriver {
 			templateQuery.setCharacters(query);
 			templateQBE.setAttribute(templateQuery);
 			templateSB.setAttribute(templateQBE);
+		} else 	if (query != null && !query.trim().equals("")) {
+			// case when starting from a dataset
+			SourceBean qbeSB = new SourceBean(TAG_QBE);
+			SourceBean queryDefinitionSB = new SourceBean(QUERY);
+			queryDefinitionSB.setCharacters(query);
+			qbeSB.setAttribute(queryDefinitionSB);
+			templateSB.setAttribute(qbeSB);
 		}
-		
 		String template = templateSB.toXML(false);	
 		return template;
 	}

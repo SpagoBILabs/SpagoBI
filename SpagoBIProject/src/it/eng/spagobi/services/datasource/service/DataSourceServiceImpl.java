@@ -94,6 +94,37 @@ public class DataSourceServiceImpl extends AbstractServiceImpl implements
 			logger.debug("OUT");
 		}
 	}
+	
+	/**
+	 * Gets the data source by label.
+	 * 
+	 * @param token
+	 *            String
+	 * @param user
+	 *            String
+	 * @param id
+	 *            int
+	 * 
+	 * @return SpagoBiDataSource
+	 */
+	
+	public SpagoBiDataSource getDataSourceById(String token, String user,	Integer id) {
+		logger.debug("IN");
+		Monitor monitor = MonitorFactory
+				.start("spagobi.service.datasource.getDataSourceById");
+		try {
+			validateTicket(token, user);
+			this.setTenantByUserId(user);
+			return supplier.getDataSourceById(id);
+		} catch (Exception e) {
+			logger.error("Error while getting datasource with id  " + id, e);
+			return null;
+		} finally {
+			this.unsetTenant();
+			monitor.stop();
+			logger.debug("OUT");
+		}
+	}
 
 	/**
 	 * Gets the all data source.
@@ -123,4 +154,6 @@ public class DataSourceServiceImpl extends AbstractServiceImpl implements
 		}
 
 	}
+
+
 }

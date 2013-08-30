@@ -6,5 +6,8 @@
         <wb-resource deploy-path="/" source-path="/src/hibernate"/>
         <wb-resource deploy-path="/" source-path="/src/serialization"/>
         <wb-resource deploy-path="/" source-path="/src/test"/>
+        <wb-resource deploy-path="/" source-path="/src/dataset"/>
+        <wb-resource deploy-path="/" source-path="/src/hive"/>
+        <wb-resource deploy-path="/" source-path="/src/sql"/>
 </wb-module>
 </project-modules>

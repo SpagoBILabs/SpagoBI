@@ -199,7 +199,7 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 	      	qbeConfig.westConfig = {};
 	      	qbeConfig.westConfig.datamartsName = <%= datamartNamesBuffer.toString() %>;
 
-	      	qbeConfig.externalServicesConfig = <%= qbeEngineInstance.getTemplate().getExternalServiceConfigurationsAsJSONArray() %>;
+	      	qbeConfig.externalServicesConfig = <%= qbeEngineInstance.getTemplate() != null ? qbeEngineInstance.getTemplate().getExternalServiceConfigurationsAsJSONArray() : "[]"%>;
 
 	      	qbeConfig.worksheet = {};
 	      	qbeConfig.worksheet.engineInitialized = <%= worksheetEngineInstance != null %>;

@@ -1,3 +1,9 @@
+/* SpagoBI, the Open Source Business Intelligence suite
+
+ * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 package it.eng.spagobi.tools.dataset.bo;
 
 import it.eng.spagobi.container.ObjectUtils;
@@ -9,6 +15,7 @@ import it.eng.spagobi.tools.dataset.common.dataproxy.JDBCDataProxy;
 import it.eng.spagobi.tools.dataset.common.datareader.JDBCStandardDataReader;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStoreFilter;
+import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
 import it.eng.spagobi.tools.dataset.utils.DatasetMetadataParser;
@@ -23,7 +30,6 @@ import it.eng.spagobi.utilities.sql.SQLStatementConditionalOperators.IConditiona
 import it.eng.spagobi.utilities.sql.SqlUtils;
 import it.eng.spagobi.utilities.temporarytable.TemporaryTableManager;
 
-import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -226,8 +232,35 @@ public abstract class AbstractJDBCDataset extends ConfigurableDataSet {
 		}
 	}
 	
-	@Override
 	public IDataStore getDomainValues(String fieldName, Integer start, Integer limit, IDataStoreFilter filter) {
+		if(isPersisted() || isFlatDataset()){
+			return  getDomainValuesForPersistedOrFlat(fieldName, start, limit, filter);
+		}else{
+			return getDomainValuesFromTemporaryTable(fieldName, start, limit, filter);
+		}
+	}
+	
+	private IDataStore getDomainValuesForPersistedOrFlat(String fieldName, Integer start, Integer limit, IDataStoreFilter filter) {
+
+		StringBuffer buffer = new StringBuffer("Select DISTINCT " + fieldName + " FROM " + getPeristedTableName());
+		manageFilterOnDomainValues(buffer, fieldName, filter);
+
+		AbstractJDBCDataset dataset =null;
+		if(this instanceof JDBCHiveDataSet){
+			dataset = new JDBCHiveDataSet();
+		}else{
+			dataset = new JDBCDataSet();
+		}
+		dataset.setQuery( buffer.toString() );
+		dataset.setDataSource(  getDataSourceForReading() );
+
+		dataset.loadData(start, limit, -1);
+
+		return dataset.getDataStore();
+
+	}
+	
+	public IDataStore getDomainValuesFromTemporaryTable(String fieldName, Integer start, Integer limit, IDataStoreFilter filter) {
 		IDataStore toReturn = null;
 		try{
 			String tableName = this.getTemporaryTableName();
@@ -272,6 +305,31 @@ public abstract class AbstractJDBCDataset extends ConfigurableDataSet {
 			buffer.append(" WHERE " + temp);
 		}
 	}
+	
+	private void manageFilterOnDomainValues(StringBuffer buffer, String fieldName, IDataStoreFilter filter) {
+		if (filter != null) {
+			
+			//get The fieldByAlias
+			IMetaData md = getMetadata();
+			IFieldMetaData fmd = null;
+			int i=0;
+			if(md!=null){
+				for(i=0; i<md.getFieldCount(); i++){
+					fmd = md.getFieldMeta(i);
+					if(fieldName.equals(fmd.getAlias()) || fieldName.equals(fmd.getName())){
+						break;
+					}
+				}
+			}
+			Class clazz = fmd.getType();
+			String value = getFilterValue(filter.getValue(), clazz);
+			IConditionalOperator conditionalOperator = SQLStatementConditionalOperators.getOperator(filter.getOperator());
+			String temp = conditionalOperator.apply(encapsulateColumnName(fieldName, getDataSourceForReading()), new String[] { value });
+			buffer.append(" WHERE " + temp);
+
+		}
+	}
+
 	
 	private String getFilterValue(String value, Class clazz) {
 		String toReturn = null;

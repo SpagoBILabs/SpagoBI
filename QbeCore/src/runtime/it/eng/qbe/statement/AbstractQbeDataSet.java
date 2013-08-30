@@ -9,10 +9,12 @@ import it.eng.qbe.datasource.AbstractDataSource;
 import it.eng.qbe.datasource.ConnectionDescriptor;
 import it.eng.qbe.model.structure.IModelField;
 import it.eng.qbe.query.CalculatedSelectField;
+import it.eng.qbe.query.HavingField;
 import it.eng.qbe.query.ISelectField;
 import it.eng.qbe.query.InLineCalculatedSelectField;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.query.SimpleSelectField;
+import it.eng.qbe.query.WhereField;
 import it.eng.qbe.query.serializer.json.QueryJSONSerializer;
 import it.eng.qbe.query.serializer.json.QuerySerializationConstants;
 import it.eng.qbe.statement.hibernate.HQLStatement;
@@ -20,6 +22,7 @@ import it.eng.qbe.statement.hibernate.HQLStatement.IConditionalOperator;
 import it.eng.spagobi.services.common.SsoServiceInterface;
 import it.eng.spagobi.tools.dataset.bo.AbstractDataSet;
 import it.eng.spagobi.tools.dataset.bo.DataSetVariable;
+import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.Field;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
@@ -77,7 +80,7 @@ public abstract class AbstractQbeDataSet extends AbstractDataSet {
 		return dataStore;
 	}
 
-	private MetaData getDataStoreMeta(Query query) {
+	protected MetaData getDataStoreMeta(Query query) {
 		MetaData dataStoreMeta;
 		ISelectField queryFiled;
 		FieldMetadata dataStoreFieldMeta;
@@ -316,25 +319,52 @@ public abstract class AbstractQbeDataSet extends AbstractDataSet {
 		return statement.getSqlQueryString();
 	}
 
-
-	/**
-	 * This method overrides basic persistence, since it uses the CREATE TABLE AS SELECT strategy.
-	 * The datasource provided in input IS NOT CONSIDERED: dataset's datasource is considered instead 
-	 * (but they must be the same datasource of course). 
-	 */
 	public IDataSetTableDescriptor persist(String tableName, IDataSource dataSource) {
-		IDataSource datasetDataSource = getDataSource();
-		try {
-			String sql = getSQLQuery();
-			List<String> fields = getDataSetSelectedFields(statement.getQuery());
-			return TemporaryTableManager.createTable(fields, sql, tableName, datasetDataSource);
-		} catch (Exception e) {
-			logger.error("Error creating the temporary table with name " + tableName, e);
-			throw new SpagoBIEngineRuntimeException("Error creating the temporary table with name " + tableName, e);
+		IDataSource dataSourceForReading = this.getDataSourceForReading();
+		if (dataSourceForReading == null) {
+			// dataset is neither flat nor persisted
+			dataSourceForReading = this.getDataSource();
 		}
+		if (dataSource.getLabel().equals(dataSourceForReading.getLabel())) {
+			// case when datasource for reading is the same for writing --> use TT table with CREATE AS SELECT
+			logger.debug("Datasource for reading is the same for writing --> use TT table with CREATE AS SELECT");
+			try {
+				String sql = getSQLQuery();
+				List<String> fields = getDataSetSelectedFields(statement.getQuery());
+				return TemporaryTableManager.createTable(fields, sql, tableName, dataSource);
+			} catch (Exception e) {
+				logger.error("Error creating the temporary table with name " + tableName, e);
+				throw new SpagoBIEngineRuntimeException("Error creating the temporary table with name " + tableName, e);
+			}
+		} else {
+			// case when datasource for reading is not the same for writing --> use super method, i.e. load datastore and write it into destination
+			logger.debug("Datasource for reading is not the same for writing --> use super method, i.e. load datastore and write it into destination");
+			return super.persist(tableName, dataSource);
+		}
+
 	}
 
 	public IDataStore getDomainValues(String fieldName, Integer start, Integer limit, IDataStoreFilter filter) {
+		if(isPersisted() || isFlatDataset()){
+			int index = this.getStatement().getQuery().getSelectFieldIndex(fieldName);
+			String alias = (this.getStatement().getQuery().getSelectFieldByIndex(index)).getAlias();
+			return  getDomainValuesForPersistedOrFlat(alias, start, limit, filter);
+		}else{
+			return getDomainValuesFromTemporaryTable(fieldName, start, limit, filter);
+		}
+	}
+	
+	private IDataStore getDomainValuesForPersistedOrFlat(String fieldName, Integer start, Integer limit, IDataStoreFilter filter) {
+		StringBuffer buffer = new StringBuffer("Select DISTINCT " + fieldName + " FROM " + getPeristedTableName());
+		manageFilterOnDomainValues(buffer, fieldName, filter);
+		JDBCDataSet dataset = new JDBCDataSet();
+		dataset.setQuery(buffer.toString());
+		dataset.setDataSource( getDataSourceForReading() );
+		dataset.loadData(start, limit, -1);
+		return dataset.getDataStore();
+	}
+	
+	private IDataStore getDomainValuesFromTemporaryTable(String fieldName, Integer start, Integer limit, IDataStoreFilter filter) {
 		IDataStore toReturn = null;
 		try {
 			String tableName = this.getTemporaryTableName();
@@ -346,10 +376,12 @@ public abstract class AbstractQbeDataSet extends AbstractDataSet {
 			IDataSource dataSource = getDataSource();
 			String sql = getSQLQuery();
 			IDataSetTableDescriptor tableDescriptor = null;
+					
 			if (sql.equals(TemporaryTableManager.getLastDataSetSignature(tableName))) {
 				// signature matches: no need to create a TemporaryTable
 				tableDescriptor = TemporaryTableManager.getLastDataSetTableDescriptor(tableName);
 			} else {
+				
 				List<String> fields = getDataSetSelectedFields(statement.getQuery());
 				tableDescriptor = TemporaryTableManager.createTable(fields, sql, tableName, dataSource);
 			}
@@ -381,6 +413,37 @@ public abstract class AbstractQbeDataSet extends AbstractDataSet {
 			IConditionalOperator conditionalOperator = (IConditionalOperator) HQLStatement.conditionalOperators.get(filter.getOperator());
 			String temp = conditionalOperator.apply(columnName, new String[] { value });
 			buffer.append(" WHERE " + temp);
+		}
+	}
+	
+	private void manageFilterOnDomainValues(StringBuffer buffer, String fieldName, IDataStoreFilter filter) {
+		if (filter != null) {
+			
+			//get The fieldByAlias
+			IMetaData md = getMetadata();
+			IFieldMetaData fmd = null;
+			int i=0;
+			if(md!=null){
+				for(i=0; i<md.getFieldCount(); i++){
+					fmd = md.getFieldMeta(i);
+					if(fieldName.equals(fmd.getAlias()) || fieldName.equals(fmd.getName())){
+						break;
+					}
+				}
+			}
+			if(i<md.getFieldCount()){
+				Class clazz = fmd.getType();
+				String value = getFilterValue(filter.getValue(), clazz);
+				IConditionalOperator conditionalOperator = (IConditionalOperator) HQLStatement.conditionalOperators.get(filter.getOperator());
+				String temp = conditionalOperator.apply(fieldName, new String[] { value });
+				buffer.append(" WHERE " + temp);
+			}else{
+				throw new SpagoBIRuntimeException("Field name [" + fieldName + "] not found");
+			}
+
+			
+			
+
 		}
 	}
 
@@ -449,7 +512,7 @@ public abstract class AbstractQbeDataSet extends AbstractDataSet {
 	 * to build a JDBCDataSet
 	 * @return
 	 */
-	private IDataSource getDataSource(){
+	public IDataSource getDataSource(){
 		if(dataSource==null){
 			dataSource = new DataSource();
 			ConnectionDescriptor connectionDescriptor = ((AbstractDataSource)statement.getDataSource()).getConnection();
@@ -519,5 +582,75 @@ public abstract class AbstractQbeDataSet extends AbstractDataSet {
 	public void setCalculateResultNumberOnLoad(boolean enabled) {
 		calculateResultNumberOnLoad = enabled;
 	}
+	
+	public void updateParameters(it.eng.qbe.query.Query query, Map parameters) {
+		logger.debug("IN");
+		List whereFields = query.getWhereFields();
+		Iterator whereFieldsIt = whereFields.iterator();
+		while (whereFieldsIt.hasNext()) {
+			WhereField whereField = (WhereField) whereFieldsIt.next();
+			if (whereField.isPromptable()) {
+				String key = getParameterKey(whereField.getRightOperand().values[0]);
+				if (key != null) {
+					String parameterValues = (String) parameters.get(key);
+					if (parameterValues != null) {
+						String[] promptValues = new String[] {parameterValues}; // TODO how to manage multi-values prompts?
+						logger.debug("Read prompts " + promptValues + " for promptable filter " + whereField.getName() + ".");
+						whereField.getRightOperand().lastValues = promptValues;
+					}
+				}
+			}
+		}
+		List havingFields = query.getHavingFields();
+		Iterator havingFieldsIt = havingFields.iterator();
+		while (havingFieldsIt.hasNext()) {
+			HavingField havingField = (HavingField) havingFieldsIt.next();
+			if (havingField.isPromptable()) {
+				String key = getParameterKey(havingField.getRightOperand().values[0]);
+				if (key != null) {
+					String parameterValues = (String) parameters.get(key);
+					if (parameterValues != null) {
+						String[] promptValues = new String[] {parameterValues}; // TODO how to manage multi-values prompts?
+						logger.debug("Read prompt value " + promptValues + " for promptable filter " + havingField.getName() + ".");
+						havingField.getRightOperand().lastValues = promptValues; 
+					}
+				}
+			}
+		}
+		logger.debug("OUT");
+	}
+	
+	protected String getParameterKey(String fieldValue) {
+		int beginIndex = fieldValue.indexOf("P{");
+		int endIndex = fieldValue.indexOf("}");
+		if (beginIndex > 0 && endIndex > 0 && endIndex > beginIndex) {
+			return fieldValue.substring(beginIndex + 2, endIndex);
+		} else {
+			return null;
+		}
+	}
 
+	
+	
+	/**
+	 * Adjusts the metadata of the datastore retrieved by a JDBCDataSet, since
+	 * executed JDBC dataset does not contain correct metadata (name, alias,
+	 * attribute/measure) therefore we need to merge metadata
+	 * 
+	 * @param jdbcMetadata the metadata retrieved by executing the JDBC dataset
+	 * @param qbeQueryMetaData the metadata of the Qbe query
+	 */
+	protected IMetaData mergeMetadata(IMetaData jdbcMetadata, IMetaData qbeQueryMetaData) {
+		int count = jdbcMetadata.getFieldCount();
+		for (int i = 0; i < count; i++) {
+			IFieldMetaData jdbcFieldMeta = jdbcMetadata.getFieldMeta(i);
+			// positional matching between the 2 metadata
+			IFieldMetaData qbeFieldMeta = qbeQueryMetaData.getFieldMeta(i);
+			jdbcFieldMeta.setFieldType(qbeFieldMeta.getFieldType());
+			jdbcFieldMeta.setName(qbeFieldMeta.getName());
+			jdbcFieldMeta.setAlias(qbeFieldMeta.getAlias());
+		}
+		return jdbcMetadata;
+	}
+	
 }

@@ -130,17 +130,7 @@ public class JPQLStatement extends AbstractStatement {
 	}
 
 	
-	public static String getNextAlias(Map entityAliasesMaps) {
-		int aliasesCount = 0;
-		Iterator it = entityAliasesMaps.keySet().iterator();
-		while(it.hasNext()) {
-			String key = (String)it.next();
-			Map entityAliases = (Map)entityAliasesMaps.get(key);
-			aliasesCount += entityAliases.keySet().size();
-		}
-		
-		return "t_" + aliasesCount;
-	}
+
 	
 	public Set getSelectedEntities() {
 		Set selectedEntities;

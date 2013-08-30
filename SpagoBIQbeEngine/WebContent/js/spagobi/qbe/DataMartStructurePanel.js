@@ -503,7 +503,8 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 	        useArrows 		 : true,
 	        loader           : this.treeLoader,
 	        preloadTree		 : this.preloadTree,
-	        root 			 : this.rootNode
+	        root 			 : this.rootNode,
+	        rootVisible		 : false
 	    });	
 		
 		this.tree.type = this.type;

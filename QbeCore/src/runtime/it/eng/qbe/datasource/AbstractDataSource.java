@@ -99,7 +99,7 @@ public abstract class AbstractDataSource implements IDataSource {
 		ds.setHibDialectClass(getConnection().getDialect());
 		ds.setHibDialectName("");
 		ds.setJndi(getConnection().getJndiName());
-		ds.setLabel(getName());
+		ds.setLabel(getConnection().getName());
 		ds.setPwd(getConnection().getPassword());
 		ds.setUrlConnection(getConnection().getUrl());
 		ds.setUser(getConnection().getUsername());

@@ -100,11 +100,11 @@ public class MeasureCatalogueSearchManager {
         			continue;
         		}
 
-        		if(dataSetLabel.getDataSourceFlatId()!=null && (measureDataSet.getDataSourceFlatId()==null || measureDataSet.getDataSourceFlatId().equals( dataSetLabel.getDataSourceFlatId()))){
+        		if(dataSetLabel.getDataSourceFlat()!=null && (measureDataSet.getDataSourceFlat()==null || measureDataSet.getDataSourceFlat().equals( dataSetLabel.getDataSourceFlat()))){
         			continue;
         		}
         		
-        		if(dataSetLabel.getDataSourcePersistId()!=null && (measureDataSet.getDataSourcePersistId()==null || measureDataSet.getDataSourcePersistId().equals( dataSetLabel.getDataSourcePersistId()))){
+        		if(dataSetLabel.getDataSourcePersist()!=null && (measureDataSet.getDataSourcePersist()==null || measureDataSet.getDataSourcePersist().equals( dataSetLabel.getDataSourcePersist()))){
         			continue;
         		}
         		

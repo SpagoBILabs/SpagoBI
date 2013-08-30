@@ -99,6 +99,8 @@ public class GetValuesForCrosstabAttributesAction extends AbstractWorksheetEngin
 			Assert.assertNotNull(engineInstance, "It's not possible to execute " + this.getActionName() + " service before having properly created an instance of WorksheetEngineInstance class");
 	
 			IDataSet dataset = engineInstance.getDataSet();
+			persistDataSet();
+			
 			Assert.assertNotNull(dataset, "The engine instance is missing the dataset!!");
 			// set all filters, because getDomainValues() method may depend on them
 			if (dataset.hasBehaviour(FilteringBehaviour.ID)) {
@@ -120,7 +122,7 @@ public class GetValuesForCrosstabAttributesAction extends AbstractWorksheetEngin
 				logger.debug("Setting filters on domain values : " + filters);
 				filteringBehaviour.setFilters(filters);
 			}
-			
+
 			dataStore = dataset.getDomainValues(fieldName, start, limit, filter);
 			if (alias != null) {
 				IMetaData metadata = dataStore.getMetaData();

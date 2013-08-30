@@ -533,4 +533,17 @@ public class FakeDataset extends AbstractCustomDataSet {
 	}
 
 
+	public void setDataSource(IDataSource dataSource) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	public IDataSource getDataSource() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	
+
 }

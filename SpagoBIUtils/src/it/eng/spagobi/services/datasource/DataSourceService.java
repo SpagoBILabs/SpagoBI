@@ -31,6 +31,14 @@ public interface DataSourceService {
     SpagoBiDataSource getDataSourceByLabel(String token,String user,String label);    
     /**
      * 
+     * @param token  String
+     * @param user String
+     * @param id int
+     * @return SpagoBiDataSource
+     */
+    SpagoBiDataSource getDataSourceById(String token,String user,Integer id);    
+    /**
+     * 
      * @param token String
      * @param user String
      * @return SpagoBiDataSource[]

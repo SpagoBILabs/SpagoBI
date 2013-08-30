@@ -17,7 +17,8 @@ Ext.define('Sbi.adhocreporting.AdhocreportingContainer', {
 
 	congig:{
     	worksheetEngineBaseUrl : '',
-        qbeEngineBaseUrl : '',
+    	qbeFromBMBaseUrl : '',
+    	qbeFromDataSetBaseUrl : '',
         user : '',
         datasetsServicePath: ''
 	},
@@ -77,13 +78,20 @@ Ext.define('Sbi.adhocreporting.AdhocreportingContainer', {
 		if(inputType == "MODEL"){
 			var modelName = record.data.name;
 			var dataSourceLabel = record.data.data_source_label;
-			var url = this.qbeEngineBaseUrl+"&MODEL_NAME="+modelName;
+			var url = this.qbeFromBMBaseUrl+"&MODEL_NAME="+modelName;
 			if(dataSourceLabel || dataSourceLabel!=""){
 				url = url+ 
 				'&DATA_SOURCE_LABEL=' + dataSourceLabel;
 			}
 			this.documentexecution.modelName = modelName;
 			this.documentexecution.load(url);
+		}
+		if(inputType == "DATASET"){
+			var datasetLabel = record.data.label;
+			var dataSourceLabel = record.data.dataSource;
+			var url =  this.qbeFromDataSetBaseUrl+ '&dataset_label=' + datasetLabel;
+			this.documentexecution.load(url);
+			this.documentexecution.datasetLabel = datasetLabel;
 		}
 	}
 	
@@ -92,10 +100,7 @@ Ext.define('Sbi.adhocreporting.AdhocreportingContainer', {
 		if(inputType == "DATASET"){
 			var datasetLabel = record.data.label;
 			var datasourceLabel = record.data.dataSource;
-			var url =  this.worksheetEngineBaseUrl+ '&dataset_label=' + datasetLabel ;
-			if(datasourceLabel || datasourceLabel!=""){
-				url = url+ '&datasource_label=' + datasourceLabel;
-			}
+			var url = this.worksheetEngineBaseUrl+ '&dataset_label=' + datasetLabel;
 			this.documentexecution.load(url);
 			this.documentexecution.datasetLabel = datasetLabel;
 			

@@ -7,16 +7,14 @@ package it.eng.qbe.statement.hibernate;
 
 import it.eng.qbe.datasource.hibernate.IHibernateDataSource;
 import it.eng.qbe.datasource.transaction.hibernate.HibernateTransaction;
-import it.eng.qbe.query.HavingField;
 import it.eng.qbe.query.Query;
-import it.eng.qbe.query.WhereField;
 import it.eng.qbe.statement.AbstractQbeDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
 import it.eng.spagobi.tools.dataset.common.dataproxy.JDBCSharedConnectionDataProxy;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -147,53 +145,60 @@ public class HQLDataSet extends AbstractQbeDataSet {
 
 	}
 
-	public void updateParameters(Query query, Map parameters) {
-		logger.debug("IN");
-		List whereFields = query.getWhereFields();
-		Iterator whereFieldsIt = whereFields.iterator();
-		while (whereFieldsIt.hasNext()) {
-			WhereField whereField = (WhereField) whereFieldsIt.next();
-			if (whereField.isPromptable()) {
-				String key = getParameterKey(whereField.getRightOperand().values[0]);
-				if (key != null) {
-					String parameterValues = (String) parameters.get(key);
-					if (parameterValues != null) {
-						String[] promptValues = new String[] {parameterValues}; // TODO how to manage multi-values prompts?
-						logger.debug("Read prompts " + promptValues + " for promptable filter " + whereField.getName() + ".");
-						whereField.getRightOperand().lastValues = promptValues;
-					}
-				}
-			}
-		}
-		List havingFields = query.getHavingFields();
-		Iterator havingFieldsIt = havingFields.iterator();
-		while (havingFieldsIt.hasNext()) {
-			HavingField havingField = (HavingField) havingFieldsIt.next();
-			if (havingField.isPromptable()) {
-				String key = getParameterKey(havingField.getRightOperand().values[0]);
-				if (key != null) {
-					String parameterValues = (String) parameters.get(key);
-					if (parameterValues != null) {
-						String[] promptValues = new String[] {parameterValues}; // TODO how to manage multi-values prompts?
-						logger.debug("Read prompt value " + promptValues + " for promptable filter " + havingField.getName() + ".");
-						havingField.getRightOperand().lastValues = promptValues; 
-					}
-				}
-			}
-		}
-		logger.debug("OUT");
+//	public void updateParameters(Query query, Map parameters) {
+//		logger.debug("IN");
+//		List whereFields = query.getWhereFields();
+//		Iterator whereFieldsIt = whereFields.iterator();
+//		while (whereFieldsIt.hasNext()) {
+//			WhereField whereField = (WhereField) whereFieldsIt.next();
+//			if (whereField.isPromptable()) {
+//				String key = getParameterKey(whereField.getRightOperand().values[0]);
+//				if (key != null) {
+//					String parameterValues = (String) parameters.get(key);
+//					if (parameterValues != null) {
+//						String[] promptValues = new String[] {parameterValues}; // TODO how to manage multi-values prompts?
+//						logger.debug("Read prompts " + promptValues + " for promptable filter " + whereField.getName() + ".");
+//						whereField.getRightOperand().lastValues = promptValues;
+//					}
+//				}
+//			}
+//		}
+//		List havingFields = query.getHavingFields();
+//		Iterator havingFieldsIt = havingFields.iterator();
+//		while (havingFieldsIt.hasNext()) {
+//			HavingField havingField = (HavingField) havingFieldsIt.next();
+//			if (havingField.isPromptable()) {
+//				String key = getParameterKey(havingField.getRightOperand().values[0]);
+//				if (key != null) {
+//					String parameterValues = (String) parameters.get(key);
+//					if (parameterValues != null) {
+//						String[] promptValues = new String[] {parameterValues}; // TODO how to manage multi-values prompts?
+//						logger.debug("Read prompt value " + promptValues + " for promptable filter " + havingField.getName() + ".");
+//						havingField.getRightOperand().lastValues = promptValues; 
+//					}
+//				}
+//			}
+//		}
+//		logger.debug("OUT");
+//	}
+//
+//
+//	private String getParameterKey(String fieldValue) {
+//		int beginIndex = fieldValue.indexOf("P{");
+//		int endIndex = fieldValue.indexOf("}");
+//		if (beginIndex > 0 && endIndex > 0 && endIndex > beginIndex) {
+//			return fieldValue.substring(beginIndex + 2, endIndex);
+//		} else {
+//			return null;
+//		}
+//
+//	}
+
+	public void setDataSource(IDataSource dataSource) {
+		// TODO Auto-generated method stub
+		
 	}
 
-
-	private String getParameterKey(String fieldValue) {
-		int beginIndex = fieldValue.indexOf("P{");
-		int endIndex = fieldValue.indexOf("}");
-		if (beginIndex > 0 && endIndex > 0 && endIndex > beginIndex) {
-			return fieldValue.substring(beginIndex + 2, endIndex);
-		} else {
-			return null;
-		}
-
-	}
-
+	
+	
 }

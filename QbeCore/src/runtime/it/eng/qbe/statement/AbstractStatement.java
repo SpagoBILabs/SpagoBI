@@ -8,6 +8,7 @@ package it.eng.qbe.statement;
 import it.eng.qbe.datasource.IDataSource;
 import it.eng.qbe.query.Query;
 
+import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -16,15 +17,7 @@ import java.util.Map;
 public abstract class  AbstractStatement implements IStatement {
 
 	
-	public static final String OPERAND_TYPE_STATIC = "Static Content";
-	public static final String OPERAND_TYPE_SUBQUERY = "Subquery";
-	
-	
-	public static final String OPERAND_TYPE_SIMPLE_FIELD = "Field Content";
-	public static final String OPERAND_TYPE_CALCULATED_FIELD = "calculated.field";
-	public static final String OPERAND_TYPE_INLINE_CALCULATED_FIELD = "inline.calculated.field";
-	
-	public static final String OPERAND_TYPE_PARENT_FIELD = "Parent Field Content";
+
 	
 	
 	IDataSource dataSource;
@@ -155,5 +148,21 @@ public abstract class  AbstractStatement implements IStatement {
 	}
 
 	public abstract String getValueBounded(String operandValueToBound, String operandType);
+	
+	public String getNextAlias(Map entityAliasesMaps) {
+		int aliasesCount = 0;
+		Iterator it = entityAliasesMaps.keySet().iterator();
+		while(it.hasNext()) {
+			String key = (String)it.next();
+			Map entityAliases = (Map)entityAliasesMaps.get(key);
+			aliasesCount += entityAliases.keySet().size();
+		}
+		
+		return "t_" + aliasesCount;
+	}
+	
+	public String getFieldAlias(String rootEntityAlias, String queryName){
+		return  rootEntityAlias + "." + queryName;
+	}
 
 }

@@ -343,12 +343,8 @@ public class JPQLBusinessViewUtility {
 		}
 	
 		Map entityAliases = (Map)entityAliasesMaps.get(query.getId());
-		String rootEntityAlias = (String)entityAliases.get(rootEntity.getUniqueName());
-				
-		if(rootEntityAlias == null) {
-			rootEntityAlias = statement.getNextAlias(entityAliasesMaps);
-			entityAliases.put(rootEntity.getUniqueName(), rootEntityAlias);
-		}
+		String rootEntityAlias = getEntityAlias(rootEntity, entityAliases, entityAliasesMaps);
+
 				
 		return rootEntityAlias + "." + queryName.substring(0,1).toLowerCase()+queryName.substring(1);
 	}
@@ -416,6 +412,15 @@ public class JPQLBusinessViewUtility {
 			}
 			return true;
 		}
+	}
+	
+	protected String getEntityAlias(IModelEntity entity, Map entityAliases, Map entityAliasesMaps){
+		String rootEntityAlias = (String)entityAliases.get(entity.getUniqueName());
+		if(rootEntityAlias == null) {
+			rootEntityAlias = statement.getNextAlias(entityAliasesMaps);
+			entityAliases.put(entity.getUniqueName(), rootEntityAlias);
+		}	
+		return rootEntityAlias;
 	}
 	
 }

@@ -89,6 +89,7 @@ public class DataSetConstants {
 	public static final String FLAT_TABLE_NAME = "flatTableName";
 	public static final String DATA_SOURCE_FLAT = "dataSourceFlat";
 	public static final String IS_PUBLIC = "isPublic";
+	public static final String PERSIST_TABLE_NAME = "persistTableName";
 	
 	public static final String START = "start";
 	public static final String LIMIT = "limit";
@@ -105,6 +106,5 @@ public class DataSetConstants {
 	public static final String XSL_FILE_SKIP_ROWS = "skipRows";
 	public static final String XSL_FILE_LIMIT_ROWS = "limitRows";
 	public static final String XSL_FILE_SHEET_NUMBER = "xslSheetNumber";
-	
 	
 }

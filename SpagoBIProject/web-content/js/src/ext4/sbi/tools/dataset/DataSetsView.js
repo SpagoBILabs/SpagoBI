@@ -190,6 +190,7 @@ Ext.define('Sbi.tools.dataset.DataSetsView', {
 
     	var actionDetail = e.getTarget('li[class=detaildataset]', 10, true);
     	var actionWorksheet = e.getTarget('li[class=worksheet]', 10, true);
+    	var actionQbe = e.getTarget('li[class=qbe]', 10, true);
     	var actionGeoreport = e.getTarget('li[class=georeport]', 10, true);
         var actionDelete = e.getTarget('a[class=delete]', 10, true);       
         var actionFavourite = e.getTarget('span.icon', 10, true); //TBD
@@ -210,6 +211,13 @@ Ext.define('Sbi.tools.dataset.DataSetsView', {
         		return true;
         	}
    			scope.fireEvent('executeDocument','WORKSHEET','DATASET',record);
+        } else if (actionQbe != null){
+        	Sbi.debug('DataSetView actionQbe raise event...'); 
+        	if (record.data.pars != undefined && record.data.pars != ''){
+        		Sbi.exception.ExceptionHandler.showInfoMessage(LN('sbi.ds.noQbeDesigner'));
+        		return true;
+        	}
+   			scope.fireEvent('executeDocument','QBE','DATASET',record);
         } else if (actionGeoreport != null){
         	Sbi.debug('DataSetView actionGeoreport raise event...'); 
         	if (record.data.pars != undefined && record.data.pars != ''){

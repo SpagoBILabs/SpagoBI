@@ -23,6 +23,10 @@ public class EngineConstants {
 	
 	public static final String ENV_DATASOURCE = "DATASOURCE";
 	public static final Object ENV_DATASET = "DATASET";
+	public static final Object ENV_DATASET_LABEL = "datasetLabel";
+	public static final Object ENV_DATASOURCE_LABEL = "datasourceLabel";
+
+	public static final String ENV_DATASETS = "DATASETS";
 	public static final String ENV_DATASET_PROXY = "ENV_DATASET_PROXY";
 	public static final String ENV_DATASOURCE_PROXY = "ENV_DATASOURCE_PROXY";
 	public static final String ENV_DOCUMENT_ID = "DOCUMENT_ID";
@@ -38,6 +42,10 @@ public class EngineConstants {
 	public static final String ENV_USER_DATE_FORMAT = "ENV_USER_DATE_FORMAT";
 	public static final String ENV_DB_DATE_FORMAT = "ENV_DB_DATE_FORMAT";
 	public static final Object ENV_METAMODEL_PROXY = "ENV_METAMODEL_PROXY";	
+		
+	public static final String ENGINE_DATASOURCE = "ENGINE_DATASOURCE";
+	public static final String ENGINE_DATASOURCE_LABEL = "ENGINE_DATASOURCE_LABEL";
+	public static final String ENGINE_DATASOURCE_ID = "ENGINE_DATASOURCE_ID";
 	
 	public static final String MODEL_NAME = "MODEL_NAME";
 	

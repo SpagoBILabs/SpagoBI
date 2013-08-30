@@ -15,6 +15,7 @@ import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.services.common.SsoServiceInterface;
 import it.eng.spagobi.tools.dataset.DatasetManagementAPI;
+import it.eng.spagobi.tools.dataset.bo.CustomDataSet;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
 import it.eng.spagobi.tools.datasource.bo.DataSource;
@@ -137,24 +138,23 @@ public class CreateDatasetForWorksheetAction extends ExecuteDocumentAction {
 			logger.debug("OUT");
 		}
 	}
-
 	
-	protected Engine getWorksheetEngine() {
-		Engine worksheetEngine;
+	protected Engine getEngineByDocumentType(String type) {
+		Engine engine;
 		List<Engine> engines;
 		
-		worksheetEngine = null;
+		engine = null;
 		try {
 			Assert.assertNotNull(DAOFactory.getEngineDAO(), "EngineDao cannot be null");
-			engines = DAOFactory.getEngineDAO().loadAllEnginesForBIObjectType(SpagoBIConstants.WORKSHEET_TYPE_CODE);
+			engines = DAOFactory.getEngineDAO().loadAllEnginesForBIObjectType(type);
 			if (engines == null || engines.size() == 0) {
-				throw new SpagoBIServiceException(SERVICE_NAME, "There are no engines for documents of type [WORKSHEET] available");
+				throw new SpagoBIServiceException(SERVICE_NAME, "There are no engines for documents of type [" + type + "] available");
 			} else {
-				worksheetEngine = (Engine) engines.get(0);
+				engine = (Engine) engines.get(0);
 				if (engines.size() > 1) {
-					LogMF.warn(logger, "There are more than one engine for document of type [WORKSHEET]. We will use the one whose label is equal to [{0}]", worksheetEngine.getLabel());
+					LogMF.warn(logger, "There are more than one engine for document of type [WORKSHEET]. We will use the one whose label is equal to [{0}]", engine.getLabel());
 				} else {
-					LogMF.debug(logger, "Using worksheet engine with label [{0}]", worksheetEngine.getLabel());
+					LogMF.debug(logger, "Using worksheet engine with label [{0}]", engine.getLabel());
 				}
 			}
 		} catch(Throwable t) {
@@ -163,7 +163,15 @@ public class CreateDatasetForWorksheetAction extends ExecuteDocumentAction {
 			logger.debug("OUT");
 		}
 		
-		return worksheetEngine;
+		return engine;
+	}
+	
+	protected Engine getWorksheetEngine() {
+		return getEngineByDocumentType(SpagoBIConstants.WORKSHEET_TYPE_CODE);
+	}
+	
+	protected Engine getQbeEngine() {
+		return getEngineByDocumentType(SpagoBIConstants.DATAMART_TYPE_CODE);
 	}
 
 	private String getDatasourceLabel(Engine engine) {
@@ -207,8 +215,7 @@ public class CreateDatasetForWorksheetAction extends ExecuteDocumentAction {
 		
 		return parametersMap;
 	}
-
-
+	
 //	protected String createNewExecutionId() {
 //		String executionId;
 //		
@@ -295,21 +302,22 @@ public class CreateDatasetForWorksheetAction extends ExecuteDocumentAction {
 			} 
 			
 			logger.trace("Attributes used to build the new dataset succesfully read from request");
-	
-			//TODO anto : gestire la vecchia versione del dettaglio
-			//CustomDataSetDetail customDataSetDetail = new CustomDataSetDetail();
-			//customDataSetDetail.setCustomData(customData);
-			//customDataSetDetail.setJavaClassName(jClassName);
-			//customDataSetDetail.setParameters(parametersDefinitionXML);
-			//customDataSetDetail.setDsType(DataSetConstants.DS_CUSTOM);
-			//if(!StringUtilities.isEmpty(metadata)) {
-			//	customDataSetDetail.setDsMetadata(metadata);
-			//}
 			
 			logger.trace("Building the dataset bean...");
+			
+			datasetBean = new CustomDataSet();
 			datasetBean.setLabel(label);
 			datasetBean.setName(name);
 			datasetBean.setDescription(description);
+			
+			((CustomDataSet) datasetBean).setCustomData(customData);
+			((CustomDataSet) datasetBean).setJavaClassName(jClassName);
+			datasetBean.setParameters(parametersDefinitionXML);
+			datasetBean.setDsType(DataSetConstants.DS_CUSTOM);
+			if (!StringUtilities.isEmpty(metadata)) {
+				datasetBean.setDsMetadata(metadata);
+			}
+			
 			try{
 				JSONObject jsonConf  = new JSONObject();
 				jsonConf.put(CUSTOM_DATA, customData);

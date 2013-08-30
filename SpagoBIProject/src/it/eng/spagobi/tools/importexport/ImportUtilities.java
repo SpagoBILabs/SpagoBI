@@ -1857,6 +1857,7 @@ public class ImportUtilities {
 		newDataset.setNumRows(exportedDataset.isNumRows());
 		newDataset.setParameters(exportedDataset.getParameters());
 		newDataset.setPersisted(exportedDataset.isPersisted());
+		newDataset.setPersistTableName(exportedDataset.getPersistTableName());
 		newDataset.setPivotColumnName(exportedDataset.getPivotColumnName());
 		newDataset.setPivotColumnValue(exportedDataset.getPivotColumnName());
 		newDataset.setPivotRowName(exportedDataset.getPivotRowName());
@@ -1973,6 +1974,7 @@ public class ImportUtilities {
 			newDataset.setNumRows(exportedDataset.isNumRows());
 			newDataset.setParameters(exportedDataset.getParameters());
 			newDataset.setPersisted(exportedDataset.isPersisted());
+			newDataset.setPersistTableName(exportedDataset.getPersistTableName());
 			newDataset.setPivotColumnName(exportedDataset.getPivotColumnName());
 			newDataset.setPivotColumnValue(exportedDataset.getPivotColumnName());
 			newDataset.setPivotRowName(exportedDataset.getPivotRowName());

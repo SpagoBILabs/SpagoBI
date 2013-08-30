@@ -176,7 +176,13 @@ public class QueryJSONSerializer implements IQuerySerializer {
 						if(datamartLabels != null) {
 							label = datamartLabels.getProperty(datamartField.getParent(), "label");
 						}
-						label = StringUtilities.isEmpty(label)? datamartField.getParent().getName(): label;
+						
+						String parentLabel= datamartField.getParent().getName();
+						if(datamartField.getParent().getProperties()!= null && datamartField.getParent().getProperty("label")!=null){
+							parentLabel = (String) datamartField.getParent().getProperty("label");
+						}
+						
+						label = StringUtilities.isEmpty(label)? parentLabel: label;
 						fieldJSON.put(QuerySerializationConstants.FIELD_ENTITY, label);
 
 						// localize field name

@@ -21,7 +21,7 @@
       <parameter name="wsdlPortType" value="DataSetService"/>
       <parameter name="typeMappingVersion" value="1.2"/>
       <parameter name="allowedMethods" value="*"/>
-      <parameter name="scope" value="Session"/>
+      <parameter name="scope" value="Application"/>
 
       <typeMapping
         xmlns:ns="http://bo.dataset.services.spagobi.eng.it"
