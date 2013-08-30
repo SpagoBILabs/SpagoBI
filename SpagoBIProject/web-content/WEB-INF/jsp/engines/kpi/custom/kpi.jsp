@@ -185,7 +185,6 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 		var dt ='';
 		<%
 		if(parKpiDateStr!= null && !parKpiDateStr.equals("")){
-			System.out.println(parKpiDateStr);
 		%>
 
 			dt = <%=parKpiDateStr%>;
