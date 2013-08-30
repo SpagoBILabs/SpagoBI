@@ -244,7 +244,7 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 			this.debugControlPanel = new Ext.Panel({
 		           title: 'Debug',
 		           collapsible: true,
-		           height: 85,
+		           height: 100,
 		           items: [new Ext.Button({
 				    	text: 'Reload dataset',
 				        width: 30,
@@ -284,6 +284,14 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 				        	this.showShareMapWindow('html');
 		           		},
 		           		scope: this
+				    }), new Ext.Button({
+				    	text: 'Send Feedback',
+				        width: 30,
+				        disabled :(Sbi.config.docLabel=="")?true:false,
+				        handler: function() {
+				        	this.showFeedbackWindow();
+		           		},
+		           		scope: this
 				    })]
 		    });
 			
@@ -310,6 +318,62 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 		
 		
 		this.measureCatalogueWindow.show();
+	}
+	, showFeedbackWindow: function(){
+		if(this.feedbackWindow != null){			
+			this.feedbackWindow.destroy();
+			this.feedbackWindow.close();
+		}
+		
+		/*
+		this.subjectField = new Ext.form.TextField({
+			fieldLabel: 'Subject',
+            name: 'subject'
+		});
+		*/
+		
+		this.messageField = new Ext.form.TextArea({
+			fieldLabel: 'Message text',
+            width: '100%',
+            name: 'message',
+            maxLength: 2000,
+            height: 100,
+            autoCreate: {tag: 'textArea', type: 'text',  autocomplete: 'off', maxlength: '2000'}
+		});
+		
+		this.sendButton = new Ext.Button({
+			xtype: 'button',
+			handler: function() {
+				var msgToSend = this.messageField.getValue();
+				sendMessage({'label': Sbi.config.docLabel, 'msg': msgToSend},'sendFeedback');
+       		},
+       		scope: this ,
+       		text:'Send',
+	        width: '100%'
+		});
+
+		
+		var feedbackWindowPanel = new Ext.form.FormPanel({
+			layout: 'form',
+			defaults: {
+	            xtype: 'textfield'
+	        },
+
+	        items: [this.messageField,this.sendButton]
+		});
+		
+		
+		this.feedbackWindow = new Ext.Window({
+            layout      : 'fit',
+	        width		: 700,
+	        height		: 170,
+            closeAction :'destroy',
+            plain       : true,
+            title		: 'Send Feedback',
+            items       : [feedbackWindowPanel]
+		});
+		
+		this.feedbackWindow.show();
 	}
 	
 	, showShareMapWindow: function(type){
