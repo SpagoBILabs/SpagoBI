@@ -226,6 +226,11 @@ Ext.extend(Sbi.execution.DocumentPage, Ext.Panel, {
 			serviceName: 'GET_URL_FOR_EXECUTION_ACTION'
 			, baseParams: params
 		});
+		
+		this.services['sendFeedback']= Sbi.config.serviceRegistry.getRestServiceUrl({
+			serviceName: 'documents/sendFeedback',
+			baseParams: params
+		});
 	}
 
 
@@ -285,6 +290,8 @@ Ext.extend(Sbi.execution.DocumentPage, Ext.Panel, {
     	listeners['message:worksheetexporttaberror'] = this.initWorksheetExportTabErrorMessageListner();
 		listeners['message:crossnavigation'] = this.initCrossNavigationaMessageListner();
 		listeners['message:managebutton'] = this.initManageButton();
+		listeners['message:sendFeedback'] = this.initSendFeedbackListner();
+
 		
 		listeners['domready'] = this.initDomReadyListner();
 		listeners['documentloaded'] = this.initDocumentLoadedListner();
@@ -323,6 +330,54 @@ Ext.extend(Sbi.execution.DocumentPage, Ext.Panel, {
     		}
     		, scope: this
     	};
+	}
+	
+	/**
+	 * @method
+	 * 
+	 * init the listner for event 'message:sendFeedback'
+	 */
+	, initSendFeedbackListner: function() {
+		return {
+    		fn: function(srcFrame, message) {
+    			Sbi.debug('[DocumentPage.SendFeedbackListner] : IN' );
+
+				var paramsToSend = {};
+				if (message.data != undefined){
+					
+					paramsToSend.msg = message.data.msg;
+					paramsToSend.label = message.data.label;
+				}
+				
+				
+				Ext.Ajax.request({
+			        url: this.services['sendFeedback'],
+			        params: paramsToSend,
+			        success: function(response, options) {
+			      		if(response !== undefined && response.responseText !== undefined) {
+			      			var content = Ext.util.JSON.decode( response.responseText );
+			      			if(content !== undefined) {
+			      				if(content.errors !== undefined && content.errors.length > 0) {
+			      					this.state = 'FAILURE';
+									Sbi.exception.ExceptionHandler.handleFailure(response);
+			      				} else {
+			      					this.state = 'LOADING';
+									Sbi.exception.ExceptionHandler.showInfoMessage('Feedback sent to document\'s creator' );
+			      				}
+			      			} 
+			      		} else {
+			      			Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
+			      		}
+			        },
+			        scope: this,
+					failure: Sbi.exception.ExceptionHandler.handleFailure      
+			   });
+				
+    		}
+    		, scope: this
+    	};
+		Sbi.debug('[DocumentPage.SendFeedbackListner] : OUT' );
+
 	}
 	
 	
