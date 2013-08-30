@@ -74,6 +74,9 @@
          <property name="flatDataset" type="boolean">
             <column name="IS_FLAT_DATASET" />
         </property>
+        <property name="persistTableName" type="string">
+            <column name="PERSIST_TABLE_NAME" length="50" not-null="false" />
+        </property>
         <property name="flatTableName" type="string">
             <column name="FLAT_TABLE_NAME" length="50" not-null="false" />
         </property>

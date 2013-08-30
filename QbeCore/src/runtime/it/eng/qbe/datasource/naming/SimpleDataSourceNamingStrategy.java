@@ -67,11 +67,14 @@ public class SimpleDataSourceNamingStrategy implements IDataSourceNamingStrategy
 	
 	private String getDatasourceUnqualifiedName(List datamartNames, ConnectionDescriptor connection) {
 		String datasourceName = getDatamartName(datamartNames);
-		if (connection.isJndiConncetion()) {
-			datasourceName += "@" + connection.getJndiName();
-		} else {
-			datasourceName += "@" + connection.getUsername() + "@" + connection.getUrl();
+		if(connection!= null){
+			if ( connection.isJndiConncetion()) {
+				datasourceName += "@" + connection.getJndiName();
+			} else {
+				datasourceName += "@" + connection.getUsername() + "@" + connection.getUrl();
+			}
 		}
+
 		logger.info("Using " + datasourceName + " as datasource unqualified name");
 		return datasourceName;
 	}

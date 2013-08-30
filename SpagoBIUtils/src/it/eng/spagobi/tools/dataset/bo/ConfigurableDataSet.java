@@ -10,7 +10,7 @@ import it.eng.spagobi.tools.dataset.common.behaviour.QuerableBehaviour;
 import it.eng.spagobi.tools.dataset.common.dataproxy.IDataProxy;
 import it.eng.spagobi.tools.dataset.common.datareader.IDataReader;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
-import it.eng.spagobi.tools.dataset.common.datastore.IDataStoreFilter;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -76,54 +76,66 @@ public class ConfigurableDataSet extends AbstractDataSet {
 
 	public void loadData(int offset, int fetchSize, int maxResults) {
 		
-		Map parameters = cleanNullParametersValues(getParamsMap());
-
-		dataProxy.setParameters(parameters);
-
-		dataProxy.setProfile(getUserProfileAttributes());
-		dataProxy.setResPath(resPath);
+		if (persisted) {
+			
+			JDBCDataSet dataset = new JDBCDataSet();
+			dataset.setDataSource(getDataSourceForReading());
+			dataset.setQuery("select * from " + getPeristedTableName());
+			dataset.loadData(offset, fetchSize, maxResults);
+			dataStore = dataset.getDataStore();
+			
+		} else {
+			
+			Map parameters = cleanNullParametersValues(getParamsMap());
+	
+			dataProxy.setParameters(parameters);
+	
+			dataProxy.setProfile(getUserProfileAttributes());
+			dataProxy.setResPath(resPath);
+			
+			// check if the proxy is able to manage results pagination
+			if(dataProxy.isOffsetSupported()) {
+				dataProxy.setOffset(offset);
+			} else if(dataReader.isOffsetSupported()){
+				dataReader.setOffset(offset);
+			} else {
+	
+			}
+	
+			if(dataProxy.isFetchSizeSupported()) {
+				dataProxy.setFetchSize(fetchSize);
+			} else if(dataReader.isOffsetSupported()){
+				dataReader.setFetchSize(fetchSize);
+			} else {
+	
+			}
+	
+			// check if the proxy is able to manage results limit
+			if(dataProxy.isMaxResultsSupported()) {
+				dataProxy.setMaxResults(maxResults);
+			} else if(dataReader.isOffsetSupported()){
+				dataReader.setMaxResults(maxResults);
+			} else {
+	
+			}
+	
+	
+			if( hasBehaviour(QuerableBehaviour.class.getName()) ) { 
+				QuerableBehaviour querableBehaviour = (QuerableBehaviour)getBehaviour(QuerableBehaviour.class.getName()) ;
+				String stm = querableBehaviour.getStatement();
+				stm = stm.replaceAll("''", "'");
+				dataProxy.setStatement(stm);
+			}
+			
+			dataProxy.setCalculateResultNumberOnLoad(this.isCalculateResultNumberOnLoadEnabled());
+	
+			dataStore = dataProxy.load(dataReader); 
+	
+	
+			if(hasDataStoreTransformer()) {
+				getDataStoreTransformer().transform(dataStore);
+			}
 		
-		// check if the proxy is able to manage results pagination
-		if(dataProxy.isOffsetSupported()) {
-			dataProxy.setOffset(offset);
-		} else if(dataReader.isOffsetSupported()){
-			dataReader.setOffset(offset);
-		} else {
-
-		}
-
-		if(dataProxy.isFetchSizeSupported()) {
-			dataProxy.setFetchSize(fetchSize);
-		} else if(dataReader.isOffsetSupported()){
-			dataReader.setFetchSize(fetchSize);
-		} else {
-
-		}
-
-		// check if the proxy is able to manage results limit
-		if(dataProxy.isMaxResultsSupported()) {
-			dataProxy.setMaxResults(maxResults);
-		} else if(dataReader.isOffsetSupported()){
-			dataReader.setMaxResults(maxResults);
-		} else {
-
-		}
-
-
-		if( hasBehaviour(QuerableBehaviour.class.getName()) ) { 
-			QuerableBehaviour querableBehaviour = (QuerableBehaviour)getBehaviour(QuerableBehaviour.class.getName()) ;
-			String stm = querableBehaviour.getStatement();
-			stm = stm.replaceAll("''", "'");
-			dataProxy.setStatement(stm);
-		}
-		
-		dataProxy.setCalculateResultNumberOnLoad(this.isCalculateResultNumberOnLoadEnabled());
-
-		dataStore = dataProxy.load(dataReader); 
-
-
-		if(hasDataStoreTransformer()) {
-			getDataStoreTransformer().transform(dataStore);
 		}
 	}
 
@@ -227,4 +239,16 @@ public class ConfigurableDataSet extends AbstractDataSet {
 		calculateResultNumberOnLoad = enabled;
 	}
 
+	public void setDataSource(IDataSource dataSource) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public IDataSource getDataSource() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	
+	
 }

@@ -13,12 +13,15 @@ import it.eng.spagobi.engines.qbe.registry.bo.RegistryConfiguration;
 import it.eng.spagobi.engines.qbe.registry.serializer.RegistryConfigurationJSONSerializer;
 import it.eng.spagobi.engines.qbe.template.QbeTemplateParseException;
 import it.eng.spagobi.engines.worksheet.WorksheetEngineInstance;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.AbstractEngineStartAction;
 import it.eng.spagobi.utilities.engines.EngineConstants;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineStartupException;
 
 import java.util.Locale;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
@@ -75,10 +78,12 @@ public class QbeEngineStartAction extends AbstractEngineStartAction {
 			} else {
 				logger.debug("Audit enabled: [FALSE]");
 			}
-			
+
+			//Add the datyaset
+			Map env = addDatasetsToEnv();
 			logger.debug("Creating engine instance ...");
 			try {
-				qbeEngineInstance = QbeEngine.createInstance( templateBean, getEnv() );
+				qbeEngineInstance = QbeEngine.createInstance( templateBean,env);
 			} catch(Throwable t) {
 				SpagoBIEngineStartupException serviceException;
 				String msg = "Impossible to create engine instance for document [" + getDocumentId() + "].";
@@ -196,4 +201,40 @@ public class QbeEngineStartAction extends AbstractEngineStartAction {
 
 		
 	}    
+    
+    public Map addDatasetsToEnv(){
+		Map env = getEnv();
+		return env;
+    }
+    
+    public Map  getEnv() {
+    	Map env = super.getEnv();
+    	String schema = null;
+        String attrname = null;
+    
+        String datasourceLabel = this.getAttributeAsString(EngineConstants.ENGINE_DATASOURCE_LABEL);
+        IDataSource dataSource = getDataSourceServiceProxy().getDataSourceByLabel(datasourceLabel);
+        if(dataSource!=null){
+        	if (dataSource.checkIsMultiSchema()){
+                logger.debug("Datasource [" + dataSource.getLabel() + "] is defined on multi schema");
+                try {            
+                    logger.debug("Retriving target schema for datasource [" + dataSource.getLabel() + "]");
+                    attrname = dataSource.getSchemaAttribute();
+                    logger.debug("Datasource's schema attribute name is equals to [" + attrname + "]");                                 
+                    Assert.assertNotNull(attrname, "Datasource's schema attribute name cannot be null in order to retrive the target schema");
+                    schema = (String)getUserProfile().getUserAttribute(attrname);
+                    Assert.assertNotNull(schema, "Impossible to retrive the value of attribute [" + attrname + "] form user profile");
+                    dataSource.setJndi( dataSource.getJndi() + schema);
+                    logger.debug("Target schema for datasource  [" + dataSource.getLabel() + "] is [" + dataSource.getJndi()+ "]");
+                } catch (Throwable t) {
+                    throw new SpagoBIEngineRuntimeException("Impossible to retrive target schema for datasource [" + dataSource.getLabel() + "]", t);
+                }
+                logger.debug("Target schema for datasource  [" + dataSource.getLabel() + "] retrieved succesfully"); 
+            }            
+    		env.put(EngineConstants.ENGINE_DATASOURCE,dataSource);
+        }
+        
+		return env;
+    }
+
 }

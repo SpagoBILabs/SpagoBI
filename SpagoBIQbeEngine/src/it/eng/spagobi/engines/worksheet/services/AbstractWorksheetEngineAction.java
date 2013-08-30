@@ -11,6 +11,7 @@ import it.eng.qbe.query.WhereField;
 import it.eng.qbe.query.WhereField.Operand;
 import it.eng.qbe.serializer.SerializationManager;
 import it.eng.qbe.statement.AbstractStatement;
+import it.eng.qbe.statement.hive.HiveQLDataSet;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.engines.qbe.QbeEngineConfig;
 import it.eng.spagobi.engines.worksheet.WorksheetEngineInstance;
@@ -25,6 +26,8 @@ import it.eng.spagobi.engines.worksheet.exceptions.WrongConfigurationForFiltersO
 import it.eng.spagobi.engines.worksheet.serializer.json.WorkSheetSerializationUtils;
 import it.eng.spagobi.engines.worksheet.utils.crosstab.CrosstabQueryCreator;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
+import it.eng.spagobi.tools.dataset.bo.JDBCHiveDataSet;
 import it.eng.spagobi.tools.dataset.common.behaviour.FilteringBehaviour;
 import it.eng.spagobi.tools.dataset.common.behaviour.SelectableFieldsBehaviour;
 import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
@@ -34,7 +37,9 @@ import it.eng.spagobi.tools.dataset.common.metadata.FieldMetadata;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
+import it.eng.spagobi.tools.dataset.persist.DataSetTableDescriptor;
 import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
+import it.eng.spagobi.tools.dataset.persist.PersistedTableManager;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.AbstractEngineAction;
@@ -67,37 +72,34 @@ import org.safehaus.uuid.UUIDGenerator;
  * @author Davide Zerbetto (davide.zerbetto@eng.it)
  */
 public abstract class AbstractWorksheetEngineAction extends AbstractEngineAction {
-	
-	private static final long serialVersionUID = 6446776217192515816L;
-	
-	/** Logger component. */
-    private static transient Logger logger = Logger.getLogger(AbstractWorksheetEngineAction.class);
-    public static transient Logger auditlogger = Logger.getLogger("audit.query");
-    
-    public IDataStore executeWorksheetQuery (String worksheetQuery, Integer start, Integer limit) {
-    	
-    	IDataStore dataStore = null;
-    	
-//		if (!TemporaryTableManager.isEnabled()) {
-//			logger.warn("TEMPORARY TABLE STRATEGY IS DISABLED!!! " +
-//				"Using inline view construct, therefore performance will be very low");			
-//			dataStore = useInLineViewStrategy(worksheetQuery, baseQuery, start, limit);
-//		} else {
-//			logger.debug("Using temporary table strategy....");			
-//			dataStore = useTemporaryTableStrategy(worksheetQuery, baseQuery,
-//					start, limit);
-//		}
 
-		logger.debug("Using temporary table strategy....");			
-		dataStore = useTemporaryTableStrategy(worksheetQuery, start, limit);
-		
+	private static final long serialVersionUID = 6446776217192515816L;
+
+	/** Logger component. */
+	private static transient Logger logger = Logger.getLogger(AbstractWorksheetEngineAction.class);
+	public static transient Logger auditlogger = Logger.getLogger("audit.query");
+
+	public IDataStore executeWorksheetQuery (String worksheetQuery, Integer start, Integer limit) {
+
+		IDataStore dataStore = null;
+		IDataSet dataset = getDataSet();
+
+		if(dataset.isFlatDataset() || dataset.isPersisted()){
+			dataStore = useDataSetStrategy(worksheetQuery, dataset, start, limit);
+		}else{
+			logger.debug("Using temporary table strategy....");			
+			dataStore = useTemporaryTableStrategy(worksheetQuery, start, limit);
+		}
+
+
+
 		Assert.assertNotNull(dataStore, "The dataStore cannot be null");
 		logger.debug("Query executed succesfully");
-		
+
 		Integer resultNumber = (Integer) dataStore.getMetaData().getProperty("resultNumber");
 		Assert.assertNotNull(resultNumber, "property [resultNumber] of the dataStore returned by queryTemporaryTable method of the class [" + TemporaryTableManager.class.getName()+ "] cannot be null");
 		logger.debug("Total records: " + resultNumber);			
-		
+
 		UserProfile userProfile = (UserProfile)getEnv().get(EngineConstants.ENV_USER_PROFILE);
 		Integer maxSize = QbeEngineConfig.getInstance().getResultLimit();
 		boolean overflow = maxSize != null && resultNumber >= maxSize;
@@ -105,33 +107,75 @@ public abstract class AbstractWorksheetEngineAction extends AbstractEngineAction
 			logger.warn("Query results number [" + resultNumber + "] exceeds max result limit that is [" + maxSize + "]");
 			auditlogger.info("[" + userProfile.getUserId() + "]:: max result limit [" + maxSize + "] exceeded with SQL: " + worksheetQuery);
 		}
-		
+
 		return dataStore;
-    }
+	}
+
+	private IDataStore useDataSetStrategy(String worksheetQuery, IDataSet dataset, Integer start, Integer limit) {
+		IDataStore dataStore = null;
+
+		UserProfile userProfile = (UserProfile)getEnv().get(EngineConstants.ENV_USER_PROFILE);
+
+		logger.debug("Querying temporary table: user [" + userProfile.getUserId() + "] (SQL): [" + worksheetQuery + "]");
+
+		auditlogger.info("Querying temporary table: user [" + userProfile.getUserId() + "] (SQL): [" + worksheetQuery + "]");
+
+		try {
+
+			logger.debug("SQL statement is [" + worksheetQuery + "]");
+			IDataSet newdataset;
+			if (dataset instanceof JDBCHiveDataSet) {
+				newdataset = new JDBCHiveDataSet();
+				((JDBCHiveDataSet) newdataset).setQuery(worksheetQuery);
+			} else {
+				newdataset = new JDBCDataSet();
+				((JDBCDataSet) newdataset).setQuery(worksheetQuery);
+			}
+
+			newdataset.setDataSource(dataset.getDataSourceForReading());
+			if (start == null && limit == null) {
+				newdataset.loadData();
+			} else {
+				newdataset.loadData(start, limit, -1);
+			}
+			dataStore = (DataStore) newdataset.getDataStore();
+			logger.debug("Data store retrieved successfully");
+			logger.debug("OUT");
+			return dataStore;
+		} catch (Exception e) {
+			logger.debug("Query execution aborted because of an internal exception");
+			String message = "An error occurred in " + getActionName() + " service while querying temporary table";				
+			SpagoBIEngineServiceException exception = new SpagoBIEngineServiceException(getActionName(), message, e);
+			exception.addHint("Check if the crosstab's query is properly formed: [" + worksheetQuery + "]");
+			exception.addHint("Check connection configuration: connection's user must have DROP and CREATE privileges");
+			throw exception;
+		}
+	}
+
 
 	private IDataStore useTemporaryTableStrategy(String worksheetQuery,
 			Integer start, Integer limit) {
-		
+
 		IDataStore dataStore = null;
-		
+
 		UserProfile userProfile = (UserProfile)getEnv().get(EngineConstants.ENV_USER_PROFILE);
-//		ConnectionDescriptor connection = (ConnectionDescriptor)getDataSource().getConfiguration().loadDataSourceProperties().get("connection");
-//		DataSource dataSource = getDataSource(connection);
+		//		ConnectionDescriptor connection = (ConnectionDescriptor)getDataSource().getConfiguration().loadDataSourceProperties().get("connection");
+		//		DataSource dataSource = getDataSource(connection);
 		IDataSource dataSource = getDataSource();
-		
-//		logger.debug("Temporary table definition for user [" + userProfile.getUserId() + "] (SQL): [" + baseQuery + "]");
+
+		//		logger.debug("Temporary table definition for user [" + userProfile.getUserId() + "] (SQL): [" + baseQuery + "]");
 		logger.debug("Querying temporary table: user [" + userProfile.getUserId() + "] (SQL): [" + worksheetQuery + "]");
-		
-//		auditlogger.info("Temporary table definition for user [" + userProfile.getUserId() + "]:: SQL: " + baseQuery);
+
+		//		auditlogger.info("Temporary table definition for user [" + userProfile.getUserId() + "]:: SQL: " + baseQuery);
 		auditlogger.info("Querying temporary table: user [" + userProfile.getUserId() + "] (SQL): [" + worksheetQuery + "]");
-		
+
 		try {
 			dataStore = TemporaryTableManager.queryTemporaryTable(worksheetQuery, dataSource, start, limit);
 		} catch (Exception e) {
 			logger.debug("Query execution aborted because of an internal exception");
 			String message = "An error occurred in " + getActionName() + " service while querying temporary table";				
 			SpagoBIEngineServiceException exception = new SpagoBIEngineServiceException(getActionName(), message, e);
-//			exception.addHint("Check if the base query is properly formed: [" + baseQuery + "]");
+			//			exception.addHint("Check if the base query is properly formed: [" + baseQuery + "]");
 			exception.addHint("Check if the crosstab's query is properly formed: [" + worksheetQuery + "]");
 			exception.addHint("Check connection configuration: connection's user must have DROP and CREATE privileges");
 			throw exception;
@@ -139,66 +183,91 @@ public abstract class AbstractWorksheetEngineAction extends AbstractEngineAction
 		return dataStore;
 	}
 
-//	private IDataStore useInLineViewStrategy(String worksheetQuery,
-//			String baseQuery, Integer start, Integer limit) {
-//
-//		IDataStore dataStore = null;
-//		
-//		UserProfile userProfile = (UserProfile)getEnv().get(EngineConstants.ENV_USER_PROFILE);
-//		ConnectionDescriptor connection = (ConnectionDescriptor)getDataSource().getConfiguration().loadDataSourceProperties().get("connection");
-//		DataSource dataSource = getDataSource(connection);
-//		
-//		int beginIndex = worksheetQuery.toUpperCase().indexOf(" FROM ") + " FROM ".length(); 
-//		int endIndex = worksheetQuery.indexOf(" ", beginIndex);
-//		String inlineSQLQuery = worksheetQuery.substring(0, beginIndex) + " ( " + baseQuery + " ) TEMP " + worksheetQuery.substring(endIndex);
-//		logger.debug("Executable query for user [" + userProfile.getUserId() + "] (SQL): [" + inlineSQLQuery + "]");
-//		auditlogger.info("[" + userProfile.getUserId() + "]:: SQL: " + inlineSQLQuery);
-//		JDBCDataSet dataSet = new JDBCDataSet();
-//		dataSet.setDataSource(dataSource);
-//		dataSet.setQuery(inlineSQLQuery);
-//		if (start != null && limit != null) {
-//			dataSet.loadData(start, limit, -1);
-//		} else {
-//			dataSet.loadData();
-//		}
-//		dataStore = (DataStore) dataSet.getDataStore();
-//		return dataStore;
-//	}
-	
-    public WorksheetEngineInstance getEngineInstance() {
-    	return (WorksheetEngineInstance) getAttributeFromSession( WorksheetEngineInstance.class.getName() );
-    }
-    
-    public void setEngineInstance(WorksheetEngineInstance engineInstance) {
-    	setAttributeInSession( WorksheetEngineInstance.class.getName() , engineInstance );
-    }
-    
+	//	private IDataStore useInLineViewStrategy(String worksheetQuery,
+	//			String baseQuery, Integer start, Integer limit) {
+	//
+	//		IDataStore dataStore = null;
+	//		
+	//		UserProfile userProfile = (UserProfile)getEnv().get(EngineConstants.ENV_USER_PROFILE);
+	//		ConnectionDescriptor connection = (ConnectionDescriptor)getDataSource().getConfiguration().loadDataSourceProperties().get("connection");
+	//		DataSource dataSource = getDataSource(connection);
+	//		
+	//		int beginIndex = worksheetQuery.toUpperCase().indexOf(" FROM ") + " FROM ".length(); 
+	//		int endIndex = worksheetQuery.indexOf(" ", beginIndex);
+	//		String inlineSQLQuery = worksheetQuery.substring(0, beginIndex) + " ( " + baseQuery + " ) TEMP " + worksheetQuery.substring(endIndex);
+	//		logger.debug("Executable query for user [" + userProfile.getUserId() + "] (SQL): [" + inlineSQLQuery + "]");
+	//		auditlogger.info("[" + userProfile.getUserId() + "]:: SQL: " + inlineSQLQuery);
+	//		JDBCDataSet dataSet = new JDBCDataSet();
+	//		dataSet.setDataSource(dataSource);
+	//		dataSet.setQuery(inlineSQLQuery);
+	//		if (start != null && limit != null) {
+	//			dataSet.loadData(start, limit, -1);
+	//		} else {
+	//			dataSet.loadData();
+	//		}
+	//		dataStore = (DataStore) dataSet.getDataStore();
+	//		return dataStore;
+	//	}
+
+	public WorksheetEngineInstance getEngineInstance() {
+		return (WorksheetEngineInstance) getAttributeFromSession( WorksheetEngineInstance.class.getName() );
+	}
+
+	public void setEngineInstance(WorksheetEngineInstance engineInstance) {
+		setAttributeInSession( WorksheetEngineInstance.class.getName() , engineInstance );
+	}
+
 	public IDataSource getDataSource() {
 		WorksheetEngineInstance engineInstance  = getEngineInstance();
-    	if (engineInstance == null) {
-    		return null;
-    	}
-    	return engineInstance.getDataSource();
+		if (engineInstance == null) {
+			return null;
+		}
+		return engineInstance.getDataSource();
+	}
+
+	public IDataSet getDataSet() {
+		WorksheetEngineInstance engineInstance  = getEngineInstance();
+		if (engineInstance == null) {
+			return null;
+		}
+		return engineInstance.getDataSet();
 	}
 
 	public void setDataSource(IDataSource dataSource) {
 		WorksheetEngineInstance engineInstance  = getEngineInstance();
-    	if (engineInstance == null) {
-    		return;
-    	}
-    	engineInstance.setDataSource(dataSource);
+		if (engineInstance == null) {
+			return;
+		}
+		engineInstance.setDataSource(dataSource);
 	}
-	
+
 	public IDataSetTableDescriptor persistDataSet() {
-		
+
 		WorksheetEngineInstance engineInstance = getEngineInstance();
-		
-		// get temporary table name
-		String tableName = engineInstance.getTemporaryTableName();
-		logger.debug("Temporary table name is [" + tableName + "]");
-		
-		// set all filters into dataset, because dataset's getSignature() and persist() methods may depend on them
 		IDataSet dataset = engineInstance.getDataSet();
+
+		if (dataset.isPersisted() || dataset.isFlatDataset()) {
+			return getDescriptorFromDatasetMeta(dataset);
+		} else {
+			String tableName = engineInstance.getTemporaryTableName();
+			return persistDataSetWithTemporaryTable(dataset, tableName);
+		}
+
+	}
+
+	/**
+	 * Persist the data set in the db and returns the descriptor of the created table
+	 * @param dataset
+	 * @param tableName
+	 * @return
+	 */
+	private IDataSetTableDescriptor persistDataSetWithTemporaryTable(IDataSet dataset, String tableName){
+		// get temporary table name
+
+		logger.debug("Temporary table name is [" + tableName + "]");
+
+		// set all filters into dataset, because dataset's getSignature() and persist() methods may depend on them
+
 		Assert.assertNotNull(dataset, "The engine instance is missing the dataset!!");
 		Map<String, List<String>> filters = getFiltersOnDomainValues();
 		if (dataset.hasBehaviour(FilteringBehaviour.ID)) {
@@ -207,7 +276,7 @@ public abstract class AbstractWorksheetEngineAction extends AbstractEngineAction
 			logger.debug("Setting filters on domain values : " + filters);
 			filteringBehaviour.setFilters(filters);
 		}
-		
+
 		if (dataset.hasBehaviour(SelectableFieldsBehaviour.ID)) {
 			logger.debug("Dataset has SelectableFieldsBehaviour.");
 			List<String> fields = getAllFields();
@@ -215,7 +284,7 @@ public abstract class AbstractWorksheetEngineAction extends AbstractEngineAction
 			logger.debug("Setting list of fields : " + fields);
 			selectableFieldsBehaviour.setSelectedFields(fields);
 		}
-		
+
 		String signature = dataset.getSignature();
 		logger.debug("Dataset signature : " + signature);
 		if (signature.equals(TemporaryTableManager.getLastDataSetSignature(tableName))) {
@@ -223,67 +292,46 @@ public abstract class AbstractWorksheetEngineAction extends AbstractEngineAction
 			logger.debug("Signature matches: no need to create a TemporaryTable");
 			return TemporaryTableManager.getLastDataSetTableDescriptor(tableName);
 		}
-		
+
 		//drop the temporary table if one exists
 		try {
 			logger.debug("Signature does not match: dropping TemporaryTable " + tableName + " if it exists...");
-			TemporaryTableManager.dropTableIfExists(tableName, getEngineInstance().getDataSource());
+			TemporaryTableManager.dropTableIfExists(tableName, getEngineInstance().getDataSourceForWriting());
 		} catch (Exception e) {
 			logger.error("Impossible to drop the temporary table with name " + tableName, e);
 			throw new SpagoBIEngineRuntimeException("Impossible to drop the temporary table with name " + tableName, e);
 		}
-		
-//		Connection connection = null;
+
 		IDataSetTableDescriptor td = null;
-		
+
 		try {
-//			connection = getConnection();
-//			logger.debug("Cheking autocommit ...");
-//			try {
-//				if (!connection.getAutoCommit()) {
-//					logger.debug("Autocommit is false, setting to true ...");
-//					connection.setAutoCommit(true);
-//					logger.debug("Autocommit setted to true successfully");
-//				}
-//			} catch (SQLException e) {
-//				logger.error("Cannot set autocommit to true", e);
-//			}
-//			logger.debug("Persisting dataset ...");
-//			td = dataset.persist(tableName, connection);
-			
 			logger.debug("Persisting dataset ...");
-			td = dataset.persist(tableName, this.getDataSource());
 			
-			this.recordTemporaryTable(tableName, getEngineInstance().getDataSource());
+			td = dataset.persist(tableName, getEngineInstance().getDataSourceForWriting());
+			this.recordTemporaryTable(tableName, getEngineInstance().getDataSourceForWriting());
 			
-//			try {
-//				if (!connection.getAutoCommit() && !connection.isClosed()) {
-//					logger.debug("Committing changes ...");
-//					connection.commit();
-//					logger.debug("Changes committed successfully");
-//				}
-//			} catch (SQLException e) {
-//				logger.error("Error while committing changes", e);
-//				throw new SpagoBIRuntimeException("Error while committing changes", e);
-//			}
+			logger.debug("Dataset persisted");
 		} catch (Throwable t) {
 			logger.error("Error while persisting dataset", t);
 			throw new SpagoBIRuntimeException("Error while persisting dataset", t);
-		} finally {
-//			if ( connection != null ) {
-//				try {
-//					if (!connection.isClosed()) {
-//						connection.close();
-//					}
-//				} catch (SQLException e) {
-//					logger.error("Error while closing connection", e);
-//				}
-//			}
 		}
 		
 		logger.debug("Dataset persisted successfully. Table descriptor : " + td);
 		TemporaryTableManager.setLastDataSetSignature(tableName, signature);
 		TemporaryTableManager.setLastDataSetTableDescriptor(tableName, td);
+		return td;
+	}
+	
+	/**
+	 * The table is already present in the db because the dataset is flat or persisted.
+	 * So we take the descriptor of the table from the metadata of the dataset
+	 * @param dataset
+	 * @return
+	 */
+	private IDataSetTableDescriptor getDescriptorFromDatasetMeta(IDataSet dataset){
+		logger.debug("Getting the TableDescriptor for the dataset with label [" + dataset.getLabel() + "]");
+		IDataSetTableDescriptor td = new DataSetTableDescriptor(dataset);
+		logger.debug("Table descriptor successully created : " + td);
 		return td;
 	}
 
@@ -297,33 +345,6 @@ public abstract class AbstractWorksheetEngineAction extends AbstractEngineAction
 		this.getHttpSession().setAttribute(attributeName, recorder);
 	}
 
-//	public Connection getConnection() {
-//		try {
-//			IDataSource datasource = this.getDataSource();
-//			Boolean multiSchema = datasource.getMultiSchema();
-//			logger.debug("Datasource is multischema: " + multiSchema);
-//			String schema;
-//			if (multiSchema == null || !multiSchema.booleanValue()) {
-//				schema = null;
-//			} else {
-//				String attributeName = datasource.getSchemaAttribute();
-//				logger.debug("Datasource multischema attribute name: " + attributeName);
-//				UserProfile userProfile = (UserProfile)getEnv().get(EngineConstants.ENV_USER_PROFILE);
-//				logger.debug("Looking for attribute " + attributeName + " for user " + userProfile + " ...");
-//				Object attributeValue = userProfile.getUserAttribute(attributeName);
-//				logger.debug("Atribute " + attributeName + " for user " + userProfile.getUserId() + " is " + attributeValue);
-//				if (attributeValue == null) {
-//					throw new RuntimeException("No attribute with name " + attributeName + " found for user " + userProfile.getUserId());
-//				} else {
-//					schema = attributeValue.toString();
-//				}
-//			}
-//			return this.getDataSource().getConnection(schema);
-//		} catch (Exception e) {
-//			throw new SpagoBIEngineRuntimeException("Cannot get connection to datasource", e);
-//		}
-//	}
-	
 	public Map<String, List<String>> getFiltersOnDomainValues() {
 		WorksheetEngineInstance engineInstance = this.getEngineInstance();
 		WorkSheetDefinition workSheetDefinition = (WorkSheetDefinition) engineInstance.getAnalysisState();
@@ -335,7 +356,7 @@ public abstract class AbstractWorksheetEngineAction extends AbstractEngineAction
 		}
 		return toReturn;
 	}
-	
+
 	public Map<String, List<String>> getSheetFiltersOnDomainValues(String sheetName) {
 		WorksheetEngineInstance engineInstance = this.getEngineInstance();
 		WorkSheetDefinition workSheetDefinition = (WorkSheetDefinition) engineInstance.getAnalysisState();
@@ -349,14 +370,14 @@ public abstract class AbstractWorksheetEngineAction extends AbstractEngineAction
 		}
 		return toReturn;
 	}
-	
+
 	public Map<String, List<String>> getGlobalFiltersOnDomainValues() {
 		WorksheetEngineInstance engineInstance = this.getEngineInstance();
 		WorkSheetDefinition workSheetDefinition = (WorkSheetDefinition) engineInstance.getAnalysisState();
 		Map<String, List<String>> toReturn = workSheetDefinition.getGlobalFiltersAsMap();
 		return toReturn;
 	}
-	
+
 	public List<String> getAllFields() {
 		WorksheetEngineInstance engineInstance = this.getEngineInstance();
 		WorkSheetDefinition workSheetDefinition = (WorkSheetDefinition) engineInstance.getAnalysisState();
@@ -369,12 +390,12 @@ public abstract class AbstractWorksheetEngineAction extends AbstractEngineAction
 		}
 		return toReturn;
 	}
-	
+
 	public static List<WhereField> transformIntoWhereClauses(
 			Map<String, List<String>> filters) throws JSONException {
-		
+
 		List<WhereField> whereFields = new ArrayList<WhereField>();
-		
+
 		Set<String> keys = filters.keySet();
 		Iterator<String> it = keys.iterator();
 		while (it.hasNext()) {
@@ -391,10 +412,10 @@ public abstract class AbstractWorksheetEngineAction extends AbstractEngineAction
 				whereFields.add(whereField);
 			}
 		}
-		
+
 		return whereFields;
 	}
-	
+
 	public List<WhereField> getOptionalFilters(JSONObject optionalUserFilters) throws JSONException {
 		if (optionalUserFilters != null) {
 			return transformIntoWhereClauses(optionalUserFilters);
@@ -402,7 +423,7 @@ public abstract class AbstractWorksheetEngineAction extends AbstractEngineAction
 			return new ArrayList<WhereField>();
 		}
 	}
-	
+
 	public static List<WhereField> transformIntoWhereClauses(JSONObject optionalUserFilters) throws JSONException {
 		String[] fields = JSONObject.getNames(optionalUserFilters);
 		List<WhereField> whereFields = new ArrayList<WhereField>();
@@ -444,7 +465,7 @@ public abstract class AbstractWorksheetEngineAction extends AbstractEngineAction
 		}
 		return whereFields;
 	}
-	
+
 	/**
 	 * Sets the worksheet definition into the worksheet engine instance
 	 * @param worksheetDefinitionJSON The worksheet definition in JSON format
@@ -459,22 +480,22 @@ public abstract class AbstractWorksheetEngineAction extends AbstractEngineAction
 		WorksheetEngineInstance worksheetEngineInstance = getEngineInstance();
 		worksheetEngineInstance.setAnalysisState(workSheetDefinition);
 	}
-	
-	
-	
-	
+
+
+
+
 	protected void adjustMetadata(DataStore dataStore,
 			IDataSet dataset,
 			IDataSetTableDescriptor descriptor) {
 		adjustMetadata(dataStore, dataset, descriptor, null);
 	}
-		
-	
+
+
 	protected void adjustMetadata(DataStore dataStore,
 			IDataSet dataset,
 			IDataSetTableDescriptor descriptor,
 			JSONArray fieldOptions) {
-		
+
 		IMetaData dataStoreMetadata = dataStore.getMetaData();
 		IMetaData dataSetMetadata = dataset.getMetadata();
 		MetaData newdataStoreMetadata = new MetaData();
@@ -506,7 +527,7 @@ public abstract class AbstractWorksheetEngineAction extends AbstractEngineAction
 		newdataStoreMetadata.setProperties(dataStoreMetadata.getProperties());
 		dataStore.setMetaData(newdataStoreMetadata);
 	}
-	
+
 	private void addMeasuresScaleFactor(JSONArray fieldOptions, String fieldId,
 			FieldMetadata newFieldMetadata) {
 		if (fieldOptions != null) {
@@ -520,9 +541,9 @@ public abstract class AbstractWorksheetEngineAction extends AbstractEngineAction
 							.optString(WorkSheetSerializationUtils.WORKSHEETS_ADDITIONAL_DATA_FIELDS_OPTIONS_SCALE_FACTOR);
 					if (afieldId.equals(fieldId) && scaleFactor != null) {
 						newFieldMetadata
-								.setProperty(
-										WorkSheetSerializationUtils.WORKSHEETS_ADDITIONAL_DATA_FIELDS_OPTIONS_SCALE_FACTOR,
-										scaleFactor);
+						.setProperty(
+								WorkSheetSerializationUtils.WORKSHEETS_ADDITIONAL_DATA_FIELDS_OPTIONS_SCALE_FACTOR,
+								scaleFactor);
 						return;
 					}
 				} catch (Exception e) {
@@ -533,20 +554,20 @@ public abstract class AbstractWorksheetEngineAction extends AbstractEngineAction
 			}
 		}
 	}
-	
+
 	public it.eng.spagobi.tools.dataset.common.datastore.IDataStore getUserSheetFilterValues(String sheetName, String fieldName) throws JSONException{
-		
+
 		it.eng.spagobi.tools.dataset.common.datastore.IDataStore dataStore = null;
 		JSONObject gridDataFeed = null;
-		
+
 
 		WorksheetEngineInstance engineInstance = getEngineInstance();
 		Assert.assertNotNull(engineInstance, "It's not possible to execute " + this.getActionName() + " service before having properly created an instance of EngineInstance class");
-		
+
 		// persist dataset into temporary table	
 		IDataSetTableDescriptor descriptor = this.persistDataSet();
 		IDataSet dataset = engineInstance.getDataSet();
-		
+
 		//Get the order type of the field values in the field metadata
 		int fieldIndex = dataset.getMetadata().getFieldIndex(fieldName);
 		IFieldMetaData dataSetFieldMetadata = dataset.getMetadata().getFieldMeta(fieldIndex);
@@ -555,7 +576,7 @@ public abstract class AbstractWorksheetEngineAction extends AbstractEngineAction
 		if(orderTypeMeta!=null && (orderTypeMeta.equals(AbstractSelectField.ORDER_ASC)||orderTypeMeta.equals(AbstractSelectField.ORDER_DESC))){
 			orderType = orderTypeMeta;
 		}
-		
+
 		// build SQL query against temporary table
 		List<WhereField> whereFields = new ArrayList<WhereField>();
 		if (!dataset.hasBehaviour(FilteringBehaviour.ID)) {
@@ -566,7 +587,7 @@ public abstract class AbstractWorksheetEngineAction extends AbstractEngineAction
 		Map<String, List<String>> sheetFilters = getSheetFiltersOnDomainValues(sheetName);
 		List<WhereField> temp = transformIntoWhereClauses(sheetFilters);
 		whereFields.addAll(temp);
-		
+
 		String worksheetQuery = this.buildSqlStatement(fieldName, descriptor, whereFields, orderType);
 		// execute SQL query against temporary table
 		logger.debug("Executing query on temporary table : " + worksheetQuery);
@@ -574,9 +595,9 @@ public abstract class AbstractWorksheetEngineAction extends AbstractEngineAction
 		LogMF.debug(logger, "Query on temporary table executed successfully; datastore obtained: {0}", dataStore);
 		Assert.assertNotNull(dataStore, "Datastore obatined is null!!");
 		/* since the datastore, at this point, is a JDBC datastore, 
-		* it does not contain information about measures/attributes, fields' name...
-		* therefore we adjust its metadata
-		*/
+		 * it does not contain information about measures/attributes, fields' name...
+		 * therefore we adjust its metadata
+		 */
 		this.adjustMetadata((it.eng.spagobi.tools.dataset.common.datastore.DataStore) dataStore, dataset, descriptor);
 		LogMF.debug(logger, "Adjusted metadata: {0}", dataStore.getMetaData());
 		it.eng.spagobi.tools.dataset.common.datastore.DataStore clone = this.clone(dataStore);
@@ -584,7 +605,7 @@ public abstract class AbstractWorksheetEngineAction extends AbstractEngineAction
 		this.applyOptions(dataStore);
 		dataStore = dataset.decode(dataStore);
 		LogMF.debug(logger, "Dataset decoded: {0}", dataStore);
-		
+
 		IMetaData metadata = dataStore.getMetaData();
 		IFieldMetaData fieldMetadata = metadata.getFieldMeta(0);
 		IMetaData newMetadata = new MetaData();
@@ -598,11 +619,11 @@ public abstract class AbstractWorksheetEngineAction extends AbstractEngineAction
 			String description = field.getDescription() != null ? field.getDescription().toString() : field.getValue().toString();
 			record.appendField(new it.eng.spagobi.tools.dataset.common.datastore.Field(description));
 		}
-		
+
 		return clone;
-		
+
 	}
-	
+
 	public void applyOptions(IDataStore dataStore) {
 		WorksheetEngineInstance engineInstance = this.getEngineInstance();
 		WorkSheetDefinition definition = engineInstance.getTemplate().getWorkSheetDefinition();
@@ -630,7 +651,7 @@ public abstract class AbstractWorksheetEngineAction extends AbstractEngineAction
 				logger.debug("Field [name : " + fieldMetadata.getName() + " ; alias : " + fieldMetadata.getAlias() + "] has no options set");
 			}
 		}
-		
+
 	}
 
 	private it.eng.spagobi.tools.dataset.common.datastore.DataStore clone(it.eng.spagobi.tools.dataset.common.datastore.IDataStore dataStore) {
@@ -652,8 +673,7 @@ public abstract class AbstractWorksheetEngineAction extends AbstractEngineAction
 	protected String buildSqlStatement(String fieldName, IDataSetTableDescriptor descriptor, List<WhereField> filters, String ordeType) {
 		List<String> fieldNames = new ArrayList<String>();
 		fieldNames.add(fieldName);
-		IDataSource dataSource = this.getDataSource();
-		return CrosstabQueryCreator.getTableQuery(fieldNames, true, descriptor, filters, ordeType, fieldNames, dataSource);
+		return CrosstabQueryCreator.getTableQuery(fieldNames, true, descriptor, filters, ordeType, fieldNames);
 	}
-	
+
 }

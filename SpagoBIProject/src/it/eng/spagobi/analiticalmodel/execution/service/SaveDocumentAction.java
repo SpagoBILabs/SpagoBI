@@ -640,7 +640,7 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 			} else if(worksheetData!=null && query!=null && sourceDocument!=null){
 				template = documentTemplateBuilder.buildSmartFilterDocumentTemplate(templateName, templateAuthor, sourceDocument, query, worksheetData, smartFilterData, null);
 			} else if(action.equals(SAVE_WORKSHEET_FROM_DATASET) && worksheetData!=null){
-				template = documentTemplateBuilder.buildSmartFilterDocumentTemplate(templateName, templateAuthor, null, null, worksheetData, null,null);
+				template = documentTemplateBuilder.buildSmartFilterDocumentTemplate(templateName, templateAuthor, null, query, worksheetData, null,null);
 			} else if(modelName!=null && worksheetData!=null){
 				template = documentTemplateBuilder.buildSmartFilterDocumentTemplate(templateName, templateAuthor, null, query, worksheetData, null,modelName);
 			}else{

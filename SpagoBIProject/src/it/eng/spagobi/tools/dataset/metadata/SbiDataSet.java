@@ -53,6 +53,7 @@ public class SbiDataSet extends SbiHibernateModel {
 	private boolean numRows = false;
 
 	private boolean persisted = false;
+	private String persistTableName = null;
 	private SbiDataSource dataSourcePersist;
 
 	private boolean flatDataset = false;
@@ -327,6 +328,21 @@ public class SbiDataSet extends SbiHibernateModel {
 	public void setPersisted(boolean isPersisted) {
 		this.persisted = isPersisted;
 	}
+	
+	/**
+	 * @param persistTableName the persistTableName to set
+	 */
+	public void setPersistTableName(String persistTableName) {
+		this.persistTableName = persistTableName;
+	}
+
+	/**
+	 * @return the persistTableName
+	 */
+	public String getPersistTableName() {
+		return persistTableName;
+	}
+
 
 	/**
 	 * @return the dataSourcePersist

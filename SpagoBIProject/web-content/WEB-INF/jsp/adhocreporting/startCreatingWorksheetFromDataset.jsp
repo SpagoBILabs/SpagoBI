@@ -8,12 +8,14 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 <%@page language="java" 
     contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1" %>
 <%@page import="it.eng.spagobi.analiticalmodel.execution.service.CreateDatasetForWorksheetAction"%>
+<%@page import="it.eng.spagobi.adhocreporting.services.StartCreatingWorksheetFromDatasetAction"%>
 
 <%@ include file="/WEB-INF/jsp/commons/portlet_base311.jsp"%>
 
 <%
     String executionId = (String) aResponseContainer.getServiceResponse().getAttribute(CreateDatasetForWorksheetAction.OUTPUT_PARAMETER_EXECUTION_ID);
     String worksheetEditActionUrl = (String) aResponseContainer.getServiceResponse().getAttribute(CreateDatasetForWorksheetAction.OUTPUT_PARAMETER_WORKSHEET_EDIT_SERVICE_URL);
+    String qbeEditActionUrl = (String) aResponseContainer.getServiceResponse().getAttribute(StartCreatingWorksheetFromDatasetAction.OUTPUT_PARAMETER_QBE_EDIT_SERVICE_URL);
 %>
 
 
@@ -43,6 +45,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
     	
         var editorPanel = new Sbi.worksheet.WorksheetFromDatasetPanel({
         	worksheetEngineBaseUrl : '<%= StringEscapeUtils.escapeJavaScript(worksheetEditActionUrl) %>'
+        	, qbeEngineBaseUrl : '<%= StringEscapeUtils.escapeJavaScript(qbeEditActionUrl) %>'
         });
     
         

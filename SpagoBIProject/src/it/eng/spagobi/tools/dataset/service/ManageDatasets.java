@@ -152,6 +152,10 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 
 	protected void datasetInsert(IDataSetDAO dsDao, Locale locale){
 		IDataSet ds = getGuiGenericDatasetToInsert();
+		datasetInsert(ds, dsDao, locale);
+	}
+	
+	protected void datasetInsert(IDataSet ds, IDataSetDAO dsDao, Locale locale){
 		JSONObject attributesResponseSuccessJSON = new JSONObject();
 		HashMap<String, String> logParam = new HashMap();
 
@@ -173,6 +177,11 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 					attributesResponseSuccessJSON.put("userIn", ds.getUserIn());
 					attributesResponseSuccessJSON.put("meta", DataSetJSONSerializer.metadataSerializerChooser(ds.getDsMetadata()));										
 				}else{
+					IDataSet existing = dsDao.loadActiveDataSetByLabel(ds.getLabel());
+					if (existing != null) {
+						throw new SpagoBIServiceException(SERVICE_NAME,	"sbi.ds.labelAlreadyExistent");
+					}
+				
 					Integer dsID = dsDao.insertDataSet(ds);
 					VersionedDataSet dsSaved = (VersionedDataSet) dsDao.loadDataSetById(dsID);
 					logger.debug("New Resource inserted");					
@@ -197,7 +206,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 						logger.error("The dataset cannot be persisted because uses parameters!");
 						throw new SpagoBIServiceException(SERVICE_NAME,"sbi.ds.dsCannotPersist");
 					}
-					IDataSource datasource = DAOFactory.getDataSourceDAO().loadDataSourceByID(ds.getDataSourcePersistId());
+					IDataSource datasource = ds.getDataSourcePersist();
 					PersistedTableManager ptm = new PersistedTableManager(profile);
 					ptm.persistDataSet(dataset, datasource);										
 					logger.debug("Persistence ended succesfully!");
@@ -447,43 +456,6 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 						ds = setTransformer(ds, trasfTypeCd);
 					}
 								
-					Boolean isPersisted = getAttributeAsBoolean(DataSetConstants.IS_PERSISTED);
-					if(isPersisted != null){
-						ds.setPersisted(isPersisted.booleanValue());
-					}
-					if (isPersisted){
-						String dataSourcePersistLabel = getAttributeAsString(DataSetConstants.DATA_SOURCE_PERSIST);
-						if (dataSourcePersistLabel != null){
-							IDataSource dataSource = DAOFactory.getDataSourceDAO().loadDataSourceByLabel(dataSourcePersistLabel);
-							Integer dataSourcePersistId = dataSource.getDsId();
-							if(dataSourcePersistId != null){
-								ds.setDataSourcePersistId(dataSourcePersistId);
-							}
-						}						
-					}else{
-						ds.setDataSourcePersistId(null);
-					}
-					Boolean isFlatDataset = getAttributeAsBoolean(DataSetConstants.IS_FLAT_DATASET);
-					if(isFlatDataset != null){
-						ds.setFlatDataset(isFlatDataset.booleanValue());
-					}
-					if (isFlatDataset){
-						String dataSourceFlatLabel = getAttributeAsString(DataSetConstants.DATA_SOURCE_PERSIST);
-						if (dataSourceFlatLabel != null){
-							IDataSource dataSource = DAOFactory.getDataSourceDAO().loadDataSourceByLabel(dataSourceFlatLabel);
-							Integer dataSourceFlatId = dataSource.getDsId();
-							if(dataSourceFlatId != null){
-								ds.setDataSourceFlatId(dataSourceFlatId);
-							}
-						}	
-						String flatTableName = getAttributeAsString(DataSetConstants.FLAT_TABLE_NAME);
-						if(flatTableName != null){
-							ds.setFlatTableName(flatTableName);
-						}
-					}else{
-						ds.setDataSourceFlatId(null);
-						ds.setFlatTableName("");
-					}	
 					Boolean isPublic = getAttributeAsBoolean(DataSetConstants.IS_PUBLIC);
 					ds.setPublic(isPublic);										
 					
@@ -504,6 +476,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 									parametersMap = getDataSetParametersAsMap();
 									
 									IEngUserProfile profile = getUserProfile();
+									ds.setPersisted(false);
 									dsMetadata = getDatasetTestMetadata(dsRecalc,	parametersMap, profile, meta);
 									LogMF.debug(logger, "Dataset executed, metadata are [{0}]", dsMetadata);
 								} else {
@@ -530,15 +503,68 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 					} catch (Exception e) {
 						logger.error("Error while getting dataset metadataa", e);
 					}
-				}else{
+				} else {
 					logger.error("DataSet type is not existent");
 					throw new SpagoBIServiceException(SERVICE_NAME,	"sbi.ds.dsTypeError");
 				}
+				
+				getPersistenceInfo(ds);
+				
+				getFlatDatasetInfo(ds);
+				
 			} catch (Exception e) {
-				logger.error("Error while getting dataset metadataa", e);
+				logger.error("Error while getting dataset metadata", e);
 			}
 		}    
 		return ds;
+	}
+
+	private void getFlatDatasetInfo(IDataSet ds) throws EMFUserError {
+		Boolean isFlatDataset = getAttributeAsBoolean(DataSetConstants.IS_FLAT_DATASET);
+		if (isFlatDataset != null) {
+			ds.setFlatDataset(isFlatDataset.booleanValue());
+		}
+		if (isFlatDataset) {
+			String dataSourceFlatLabel = getAttributeAsString(DataSetConstants.DATA_SOURCE_PERSIST);
+			if (dataSourceFlatLabel != null) {
+				IDataSource dataSource = DAOFactory.getDataSourceDAO()
+						.loadDataSourceByLabel(dataSourceFlatLabel);
+				if (dataSource != null) {
+					ds.setDataSourceFlat(dataSource);
+				}
+			}
+			String flatTableName = getAttributeAsString(DataSetConstants.FLAT_TABLE_NAME);
+			if (flatTableName != null) {
+				ds.setFlatTableName(flatTableName);
+			}
+		} else {
+			ds.setDataSourceFlat(null);
+			ds.setFlatTableName("");
+		}
+	}
+
+	private void getPersistenceInfo(IDataSet ds) throws EMFUserError {
+		Boolean isPersisted = getAttributeAsBoolean(DataSetConstants.IS_PERSISTED);
+		if (isPersisted != null) {
+			ds.setPersisted(isPersisted.booleanValue());
+		}
+		if (isPersisted) {
+			String dataSourcePersistLabel = getAttributeAsString(DataSetConstants.DATA_SOURCE_PERSIST);
+			if (dataSourcePersistLabel != null) {
+				IDataSource dataSource = DAOFactory.getDataSourceDAO()
+						.loadDataSourceByLabel(dataSourcePersistLabel);
+				if (dataSource != null) {
+					ds.setDataSourcePersist(dataSource);
+				}
+			}
+			String persistTableName = getAttributeAsString(DataSetConstants.PERSIST_TABLE_NAME);
+			if (persistTableName != null) {
+				ds.setPersistTableName(persistTableName);
+			}
+		} else {
+			ds.setDataSourcePersist(null);
+			ds.setPersistTableName("");
+		}
 	}
 
 	/*

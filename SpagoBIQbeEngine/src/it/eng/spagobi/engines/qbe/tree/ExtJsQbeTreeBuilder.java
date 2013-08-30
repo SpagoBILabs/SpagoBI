@@ -79,6 +79,9 @@ public class ExtJsQbeTreeBuilder  {
 	private String geEntityLabel(IModelEntity entity) {
 		String label;
 		label = getDatamartLabels().getProperty(entity, "label");
+		if (label == null) {
+			label = entity.getPropertyAsString("label");
+		}
 		return StringUtilities.isEmpty(label)? entity.getName(): label;
 	}
 	

@@ -18,6 +18,13 @@ import java.util.Set;
  */
 public interface IStatement {
 	
+	public static final String OPERAND_TYPE_STATIC = "Static Content";
+	public static final String OPERAND_TYPE_SUBQUERY = "Subquery";
+	public static final String OPERAND_TYPE_SIMPLE_FIELD = "Field Content";
+	public static final String OPERAND_TYPE_CALCULATED_FIELD = "calculated.field";
+	public static final String OPERAND_TYPE_INLINE_CALCULATED_FIELD = "inline.calculated.field";
+	public static final String OPERAND_TYPE_PARENT_FIELD = "Parent Field Content";
+	
 	public IDataSource getDataSource();
 	
 	public void setQuery(Query query);	
@@ -51,6 +58,8 @@ public interface IStatement {
 	public Map getParameters();
 	public void setParameters(Map parameters);
 	
-	
+	public String getNextAlias(Map entityAliasesMaps);
+	public String getFieldAlias(String rootEntityAlias, String queryName);
+
 	
 }

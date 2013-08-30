@@ -124,6 +124,34 @@ public final class DataSourceServiceProxy extends AbstractServiceProxy{
 		    logger.debug("OUT");
 		}
 		return dataSource;
+    }  
+    
+    /**
+     * Return the SpagoBiDataSource object, contains the information about
+     * the DWH connection.
+     * 
+     * @param id label of the datasource
+     * 
+     * @return SpagoBiDataSource object
+     */
+    public IDataSource getDataSourceById(int id) {
+    	IDataSource dataSource = null;
+    	SpagoBiDataSource dataSourceConfig = null;
+		
+    	
+    	logger.debug("IN.id="+id);
+
+		try {
+			dataSourceConfig = lookUp().getDataSourceById(readTicket(), userId,id);
+			if(dataSourceConfig != null) {
+				dataSource = DataSourceFactory.getDataSource( dataSourceConfig );
+			}
+		} catch (Exception e) {
+		    logger.error("Error during Service LookUp",e);
+		}finally{
+		    logger.debug("OUT");
+		}
+		return dataSource;
     }    
 
 }

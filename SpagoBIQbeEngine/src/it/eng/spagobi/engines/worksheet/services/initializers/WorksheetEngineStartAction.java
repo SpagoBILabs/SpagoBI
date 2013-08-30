@@ -8,7 +8,6 @@ package it.eng.spagobi.engines.worksheet.services.initializers;
 import it.eng.qbe.datasource.AbstractDataSource;
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.engines.qbe.QbeEngineInstance;
 import it.eng.spagobi.engines.worksheet.WorksheetEngine;
 import it.eng.spagobi.engines.worksheet.WorksheetEngineAnalysisState;
@@ -17,12 +16,16 @@ import it.eng.spagobi.engines.worksheet.WorksheetEngineInstance;
 import it.eng.spagobi.services.common.SsoServiceInterface;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.AbstractEngineStartAction;
 import it.eng.spagobi.utilities.engines.EngineConstants;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineStartupException;
 import it.eng.spagobi.utilities.service.JSONAcknowledge;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -42,6 +45,7 @@ public class WorksheetEngineStartAction extends AbstractEngineStartAction {
 	// OUTPUT PARAMETERS
 	public static final String LANGUAGE = "LANGUAGE";
 	public static final String COUNTRY = "COUNTRY";
+	public static final String IS_A_DATASET_LINKED_TO_DOC = "IS_A_DATASET_LINKED_TO_DOC";
 	
 	protected WorksheetEngineInstance worksheetEngineInstance = null;
 	
@@ -63,7 +67,7 @@ public class WorksheetEngineStartAction extends AbstractEngineStartAction {
 			SourceBean templateBean = getTemplateAsSourceBean();
 			logger.debug("User Id: " + getUserId());
 			logger.debug("Audit Id: " + getAuditId());
-			logger.debug("Document Id: " + getDocumentId());
+			//logger.debug("Document Id: " + getDocumentId());
 			logger.debug("Template: " + templateBean);
 						
 			if(getAuditServiceProxy() != null) {
@@ -75,7 +79,8 @@ public class WorksheetEngineStartAction extends AbstractEngineStartAction {
 			
 			logger.debug("Creating engine instance ...");
 			try {
-				worksheetEngineInstance = WorksheetEngine.createInstance(templateBean, getEnv());
+
+				worksheetEngineInstance = WorksheetEngine.createInstance(templateBean,  getEnv());
 				QbeEngineInstance qbeEngineInstance = this.getQbeEngineInstance(worksheetEngineInstance);
 				if (qbeEngineInstance != null) {
 					worksheetEngineInstance.setQbeEngineInstance(qbeEngineInstance);
@@ -240,5 +245,56 @@ public class WorksheetEngineStartAction extends AbstractEngineStartAction {
 		return documentId;   	
 	 }
     
-    
+	public Map getEnv() {
+		Map env = super.getEnv();
+		String schema = null;
+		String attrname = null;
+
+		String datasourceLabel = this
+				.getAttributeAsString(EngineConstants.ENGINE_DATASOURCE_LABEL);
+
+		if (datasourceLabel != null) {
+			IDataSource dataSource = getDataSourceServiceProxy()
+					.getDataSourceByLabel(datasourceLabel);
+			if (dataSource.checkIsMultiSchema()) {
+				logger.debug("Datasource [" + dataSource.getLabel()
+						+ "] is defined on multi schema");
+				try {
+					logger.debug("Retriving target schema for datasource ["
+							+ dataSource.getLabel() + "]");
+					attrname = dataSource.getSchemaAttribute();
+					logger.debug("Datasource's schema attribute name is equals to ["
+							+ attrname + "]");
+					Assert.assertNotNull(
+							attrname,
+							"Datasource's schema attribute name cannot be null in order to retrive the target schema");
+					schema = (String) getUserProfile().getUserAttribute(
+							attrname);
+					Assert.assertNotNull(schema,
+							"Impossible to retrive the value of attribute ["
+									+ attrname + "] form user profile");
+					dataSource.setJndi(dataSource.getJndi() + schema);
+					logger.debug("Target schema for datasource  ["
+							+ dataSource.getLabel() + "] is ["
+							+ dataSource.getJndi() + "]");
+				} catch (Throwable t) {
+					throw new SpagoBIEngineRuntimeException(
+							"Impossible to retrive target schema for datasource ["
+									+ dataSource.getLabel() + "]", t);
+				}
+				logger.debug("Target schema for datasource  ["
+						+ dataSource.getLabel() + "] retrieved succesfully");
+			}
+			env.put(EngineConstants.ENGINE_DATASOURCE, dataSource);
+		}
+
+		IDataSet dataSetLinkedToDoc = getDataSet();
+		if (dataSetLinkedToDoc != null) {
+			List<IDataSet> dataSets = new ArrayList<IDataSet>();
+			dataSets.add(dataSetLinkedToDoc);
+			env.put(EngineConstants.ENV_DATASETS, dataSets);
+		}
+		return env;
+	}
+        
 }

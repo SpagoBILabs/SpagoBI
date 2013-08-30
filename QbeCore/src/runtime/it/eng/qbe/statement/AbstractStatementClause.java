@@ -3,7 +3,8 @@
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
-package it.eng.qbe.statement.jpa;
+
+package it.eng.qbe.statement;
 
 import it.eng.qbe.datasource.ConnectionDescriptor;
 import it.eng.qbe.datasource.IDataSource;
@@ -18,8 +19,7 @@ import it.eng.qbe.query.InLineCalculatedSelectField;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.query.serializer.json.QuerySerializationConstants;
 import it.eng.qbe.serializer.SerializationManager;
-import it.eng.qbe.statement.IStatementClause;
-import it.eng.qbe.statement.StatementTockenizer;
+import it.eng.qbe.statement.hive.HiveQLStatement;
 import it.eng.spagobi.utilities.StringUtils;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
@@ -27,7 +27,6 @@ import it.eng.spagobi.utilities.objects.Couple;
 import it.eng.spagobi.utilities.sql.SqlUtils;
 
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -40,15 +39,14 @@ import org.apache.log4j.Logger;
 import org.json.JSONArray;
 
 /**
- * @author Andrea Gioia (andrea.gioia@eng.it)
- *
+ * @author Alberto Ghedin (alberto.ghedin@eng.it)
  */
-public abstract class AbstractJPQLStatementClause implements IStatementClause {
+
+public abstract class AbstractStatementClause implements IStatementClause {
 	
-	JPQLStatement parentStatement;
+	public static transient Logger logger = Logger.getLogger(AbstractStatementClause.class);
 	
-	private static final SimpleDateFormat TIMESTAMP_FORMATTER = new SimpleDateFormat( "dd/MM/yyyy HH:mm:ss" );
-	public static transient Logger logger = Logger.getLogger(JPQLStatementSelectClause.class);
+	protected IStatement parentStatement;
 	
 	public String parseInLinecalculatedField(InLineCalculatedSelectField cf, String slots, Query query, Map entityAliasesMaps){
 		String newExpression;
@@ -77,7 +75,6 @@ public abstract class AbstractJPQLStatementClause implements IStatementClause {
 		return newExpression;
 	}
 	
-
 	private String replaceFields(InLineCalculatedSelectField cf, boolean isTransientExpression, Query query, Map entityAliasesMaps) {
 		String newExpression;
 		IModelEntity rootEntity;
@@ -109,9 +106,7 @@ public abstract class AbstractJPQLStatementClause implements IStatementClause {
 				decodedToken = decodedToken.replaceAll("\\[", "(");
 				decodedToken = decodedToken.replaceAll("\\]", ")");
 				modelField = parentStatement.getDataSource().getModelStructure().getField(decodedToken);
-			
-				
-				
+
 				if(modelField != null) {
 					if(cf.getType().equals("undefined")){
 						if(modelField.getType().toLowerCase().contains("timestamp") || modelField.getType().toLowerCase().contains("date")){
@@ -130,17 +125,11 @@ public abstract class AbstractJPQLStatementClause implements IStatementClause {
 						rootEntity = modelField.getParent().getRoot(); 	
 					}
 					
-					rootEntityAlias = (String)entityAliases.get(rootEntity.getUniqueName());
-					if(rootEntityAlias == null) {
-						rootEntityAlias = parentStatement.getNextAlias(entityAliasesMaps);
-						entityAliases.put(rootEntity.getUniqueName(), rootEntityAlias);
-					}
+					rootEntityAlias = getEntityAlias(rootEntity, entityAliases, entityAliasesMaps);
 					
-					
-					queryName = rootEntityAlias + "." + queryName;
+					queryName = parentStatement.getFieldAlias(rootEntityAlias, queryName);
 					logger.debug("Expression token [" + token + "] query name is equal to [" + queryName + "]");
-					
-						
+	
 					fieldQueryNames.add(queryName);
 					fieldExpressionNames.add(token);
 				} else {
@@ -173,9 +162,7 @@ public abstract class AbstractJPQLStatementClause implements IStatementClause {
 		} finally {
 			logger.debug("OUT");
 		}
-		
 
-		
 		return newExpression;
 	}
 	
@@ -239,10 +226,7 @@ public abstract class AbstractJPQLStatementClause implements IStatementClause {
 		return inlineFunctionsMap;
 	}
 	
-	
-	
-	
-	
+
 	
 	private String replaceSlotDefinitions(String expr, String cfType, String s, Query query, Map entityAliasesMaps) {
 		String newExpr;
@@ -345,6 +329,7 @@ public abstract class AbstractJPQLStatementClause implements IStatementClause {
 		return newExpr;
 	}
 	
+	
 	/**
 	 * Parse the date: get the user locale and format the date in the db format
 	 * @param date the localized date
@@ -443,4 +428,25 @@ public abstract class AbstractJPQLStatementClause implements IStatementClause {
 		return toReturn;
 	}
 	
+	protected String getEntityAlias(IModelEntity entity, Map entityAliases, Map entityAliasesMaps){
+		if(parentStatement instanceof HiveQLStatement){
+			String rootEntityAlias = (String)entityAliases.get(entity.getName());
+			if(rootEntityAlias == null) {
+				rootEntityAlias = entity.getName();
+				entityAliases.put(entity.getUniqueName(), entity.getName());
+			}	
+			return rootEntityAlias;
+		}else{
+			String rootEntityAlias = (String)entityAliases.get(entity.getUniqueName());
+			if(rootEntityAlias == null) {
+				rootEntityAlias = parentStatement.getNextAlias(entityAliasesMaps);
+				entityAliases.put(entity.getUniqueName(), rootEntityAlias);
+			}	
+			return rootEntityAlias;	
+		}
+		
+	}
+	
+	
+
 }

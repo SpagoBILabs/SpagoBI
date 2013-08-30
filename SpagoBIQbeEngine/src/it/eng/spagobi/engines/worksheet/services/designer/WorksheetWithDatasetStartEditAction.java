@@ -22,12 +22,12 @@ public class WorksheetWithDatasetStartEditAction extends WorksheetEngineStartAct
 
 	// INPUT PARAMETERS
 	public static final String DATASET_LABEL = "dataset_label";
-	public static final String DATASOURCE_LABEL = "datasource_label";
 	public static final String ENGINE_DATASOURCE_LABEL = "ENGINE_DATASOURCE_LABEL";
 	
 	/** Logger component. */
 	private static transient Logger logger = Logger.getLogger(WorksheetWithDatasetStartEditAction.class);
 
+	private IDataSet dataSet;
 
 //	public void service(SourceBean serviceRequest, SourceBean serviceResponse) {
 //		logger.debug("IN");
@@ -73,25 +73,29 @@ public class WorksheetWithDatasetStartEditAction extends WorksheetEngineStartAct
 	
 	@Override
 	public IDataSet getDataSet() {
-		// dataset information is coming with the request
-		String datasetLabel = this.getAttributeAsString( DATASET_LABEL );
-		logger.debug("Parameter [" + DATASET_LABEL + "]  is equal to [" + datasetLabel + "]");
-		Assert.assertNotNull(datasetLabel, "Dataset not specified");
-		IDataSet dataSet = getDataSetServiceProxy().getDataSetByLabel(datasetLabel);  	
+		if (dataSet == null) {
+			// dataset information is coming with the request
+			String datasetLabel = this.getAttributeAsString( DATASET_LABEL );
+			logger.debug("Parameter [" + DATASET_LABEL + "]  is equal to [" + datasetLabel + "]");
+			Assert.assertNotNull(datasetLabel, "Dataset not specified");
+			dataSet = getDataSetServiceProxy().getDataSetByLabel(datasetLabel);
+		}
 		return dataSet;
 	}
 
 	@Override
 	public IDataSource getDataSource() {
-		// datasource information is coming with the request
-		String datasourceLabel = this.getAttributeAsString( DATASOURCE_LABEL );
-		if (datasourceLabel == null || datasourceLabel.trim().equals("")) {
-			 datasourceLabel = this.getAttributeAsString( ENGINE_DATASOURCE_LABEL );
-		}		
-		logger.debug("Parameter [" + DATASOURCE_LABEL + "]  is equal to [" + datasourceLabel + "]");
-		Assert.assertNotNull(datasourceLabel, "Data source not specified");
-		IDataSource dataSource = getDataSourceServiceProxy().getDataSourceByLabel(datasourceLabel);
-		return dataSource;
+		IDataSet dataset = this.getDataSet();
+		IDataSource datasetDatasource = dataset.getDataSource();
+		if (datasetDatasource == null) {
+			logger.debug("Dataset has no datasouce. Getting the engine's datasource...");
+			String datasourceLabel = this.getAttributeAsString( ENGINE_DATASOURCE_LABEL );
+			logger.debug("Parameter [" + ENGINE_DATASOURCE_LABEL + "]  is equal to [" + datasourceLabel + "]");
+			if (datasourceLabel != null) {
+				datasetDatasource = getDataSourceServiceProxy().getDataSourceByLabel(datasourceLabel);
+			}
+		}
+		return datasetDatasource;
 	}
 
 	@Override

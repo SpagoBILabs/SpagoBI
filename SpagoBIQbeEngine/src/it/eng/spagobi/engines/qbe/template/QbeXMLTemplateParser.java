@@ -164,9 +164,9 @@ public class QbeXMLTemplateParser implements IQbeTemplateParser{
 					if(maxRecursionLevel != null) {
 						qbeTemplate.setProperty("maxRecursionLevel", maxRecursionLevel);
 					}
-				} else {
-					Assert.assertUnreachable("Missing compolsury tag [" + TAG_DATAMART + "]");
-				}
+				}// else {
+					//Assert.assertUnreachable("Missing compolsury tag [" + TAG_DATAMART + "]");
+				//}
 				
 				// MODALITY block
 				if(template.containsAttribute(TAG_MODALITY)) {

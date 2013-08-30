@@ -122,9 +122,10 @@ public class DataSetFactory {
 		
 		//set persist values
 		toReturn.setPersisted(dataSet.isPersisted());
-		toReturn.setDataSourcePersistId(dataSet.getDataSourcePersistId());
+		toReturn.setDataSourcePersist(dataSet.getDataSourcePersist());
+		toReturn.setPersistTableName(dataSet.getPersistTableName());
 		toReturn.setFlatDataset(dataSet.isFlatDataset());
-		toReturn.setDataSourceFlatId(dataSet.getDataSourceFlatId());
+		toReturn.setDataSourceFlat(dataSet.getDataSourceFlat());
 		toReturn.setFlatTableName(dataSet.getFlatTableName());
 
 		return toReturn;
@@ -234,9 +235,10 @@ public class DataSetFactory {
 						new PivotDataSetTransformer(ds.getPivotColumnName(), ds.getPivotColumnValue(), ds.getPivotRowName(), ds.isNumRows()));
 			}
 			ds.setPersisted(sbiDataSet.isPersisted());
-			ds.setDataSourcePersistId((sbiDataSet.getDataSourcePersist()==null)?null:sbiDataSet.getDataSourcePersist().getDsId());
+			ds.setDataSourcePersist((sbiDataSet.getDataSourcePersist()==null)?null:DataSourceDAOHibImpl.toDataSource(sbiDataSet.getDataSourcePersist()));
+			ds.setPersistTableName(sbiDataSet.getPersistTableName());
 			ds.setFlatDataset(sbiDataSet.isFlatDataset());
-			ds.setDataSourceFlatId((sbiDataSet.getDataSourceFlat()==null)?null:sbiDataSet.getDataSourceFlat().getDsId());
+			ds.setDataSourceFlat((sbiDataSet.getDataSourceFlat()==null)?null:DataSourceDAOHibImpl.toDataSource(sbiDataSet.getDataSourceFlat()));
 			ds.setFlatTableName(sbiDataSet.getFlatTableName());
 			ds.setOwner(sbiDataSet.getOwner());
 			ds.setPublic(sbiDataSet.isPublicDS());

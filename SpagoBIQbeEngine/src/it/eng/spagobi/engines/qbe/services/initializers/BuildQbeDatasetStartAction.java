@@ -39,6 +39,7 @@ public class BuildQbeDatasetStartAction extends AbstractEngineStartAction {
 	public static final String DATAMART_NAME = "DATAMART_NAME";
 	public static final String DATASOURCE_LABEL = "DATASOURCE_LABEL";
 	
+	
 	// OUTPUT PARAMETERS
 	public static final String LANGUAGE = "LANGUAGE";
 	public static final String COUNTRY = "COUNTRY";
@@ -46,6 +47,8 @@ public class BuildQbeDatasetStartAction extends AbstractEngineStartAction {
 	
 	// SESSION PARAMETRES	
 	public static final String ENGINE_INSTANCE = EngineConstants.ENGINE_INSTANCE;
+	
+	
 	
 	/** Logger component. */
     private static transient Logger logger = Logger.getLogger(BuildQbeDatasetStartAction.class);
@@ -69,6 +72,7 @@ public class BuildQbeDatasetStartAction extends AbstractEngineStartAction {
 			
 			env = getEnv();
 
+			
 			String datamartName = this.getAttributeAsString(DATAMART_NAME);
 			logger.debug("Datamart's name: " + datamartName);
 			
@@ -210,5 +214,5 @@ public class BuildQbeDatasetStartAction extends AbstractEngineStartAction {
 
 		return dataSource;
     }
-	
+
 }

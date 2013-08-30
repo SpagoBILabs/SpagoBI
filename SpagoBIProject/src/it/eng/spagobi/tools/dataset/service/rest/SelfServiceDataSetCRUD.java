@@ -105,38 +105,8 @@ public class SelfServiceDataSetCRUD {
 			dataSets = dataSetDao.loadAllActiveDataSetsByOwnerAndType(profile.getUserUniqueIdentifier().toString(), DataSetConstants.DS_FILE);	
 			datasetsJSONArray = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(dataSets, null);
 			
-			//sets action to modify dataset			
-			JSONObject detailAction = new JSONObject();
-			detailAction.put("name", "detaildataset");
-			detailAction.put("description", "Dataset detail");	
-			
-			JSONObject deleteAction = new JSONObject();
-			deleteAction.put("name", "delete");
-			deleteAction.put("description", "Delete dataset");
-			
-			JSONObject worksheetAction = new JSONObject();
-			worksheetAction.put("name", "worksheet");
-			worksheetAction.put("description", "Show Worksheet");
-			
-			JSONObject georeportAction = new JSONObject();
-			georeportAction.put("name", "georeport");
-			georeportAction.put("description", "Show Map");
-			
-			
-			JSONArray datasetsJSONReturn = new JSONArray();	
-			for(int i = 0; i < datasetsJSONArray.length(); i++) {
-				JSONArray actions = new JSONArray();
-				JSONObject datasetJSON = datasetsJSONArray.getJSONObject(i);
-				actions.put(detailAction);		
-				actions.put(worksheetAction);
-				actions.put(georeportAction); // Annotated view map action to release SpagoBI 4
-				if (profile.getUserUniqueIdentifier().toString().equals(datasetJSON.get("owner"))){
-					//the delete action is able only for private dataset
-					actions.put(deleteAction);
-				}
-				datasetJSON.put("actions", actions);
-				datasetsJSONReturn.put(datasetJSON);
-			}
+			JSONArray datasetsJSONReturn = putActions(profile,
+					datasetsJSONArray);
 
 			JSONReturn.put("root", datasetsJSONReturn);
 
@@ -147,6 +117,49 @@ public class SelfServiceDataSetCRUD {
 		}
 		return JSONReturn.toString();
 
+	}
+
+
+	private JSONArray putActions(IEngUserProfile profile,
+			JSONArray datasetsJSONArray) throws JSONException {
+		//sets action to modify dataset			
+		JSONObject detailAction = new JSONObject();
+		detailAction.put("name", "detaildataset");
+		detailAction.put("description", "Dataset detail");	
+		
+		JSONObject deleteAction = new JSONObject();
+		deleteAction.put("name", "delete");
+		deleteAction.put("description", "Delete dataset");
+		
+		JSONObject worksheetAction = new JSONObject();
+		worksheetAction.put("name", "worksheet");
+		worksheetAction.put("description", "Show Worksheet");
+		
+		JSONObject georeportAction = new JSONObject();
+		georeportAction.put("name", "georeport");
+		georeportAction.put("description", "Show Map");
+		
+		JSONObject qbeAction = new JSONObject();
+		qbeAction.put("name", "qbe");
+		qbeAction.put("description", "Show Qbe");
+		
+		
+		JSONArray datasetsJSONReturn = new JSONArray();	
+		for(int i = 0; i < datasetsJSONArray.length(); i++) {
+			JSONArray actions = new JSONArray();
+			JSONObject datasetJSON = datasetsJSONArray.getJSONObject(i);
+			actions.put(detailAction);		
+			actions.put(worksheetAction);
+			actions.put(georeportAction); // Annotated view map action to release SpagoBI 4
+			actions.put(qbeAction);
+			if (profile.getUserUniqueIdentifier().toString().equals(datasetJSON.get("owner"))){
+				//the delete action is able only for private dataset
+				actions.put(deleteAction);
+			}
+			datasetJSON.put("actions", actions);
+			datasetsJSONReturn.put(datasetJSON);
+		}
+		return datasetsJSONReturn;
 	}
 
 
@@ -679,9 +692,9 @@ public class SelfServiceDataSetCRUD {
 			
 			//set persist values
 			toReturn.setPersisted(dataSet.isPersisted());
-			toReturn.setDataSourcePersistId(dataSet.getDataSourcePersistId());
+			toReturn.setDataSourcePersist(dataSet.getDataSourcePersist());
 			toReturn.setFlatDataset(dataSet.isFlatDataset());
-			toReturn.setDataSourceFlatId(dataSet.getDataSourceFlatId());
+			toReturn.setDataSourceFlat(dataSet.getDataSourceFlat());
 			toReturn.setFlatTableName(dataSet.getFlatTableName());
 			
 

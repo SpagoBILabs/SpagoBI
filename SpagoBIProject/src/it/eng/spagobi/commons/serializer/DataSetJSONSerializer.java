@@ -79,6 +79,7 @@ public class DataSetJSONSerializer implements Serializer {
 	
 	private static final String IS_PERSISTED = "isPersisted";
 	private static final String DATA_SOURCE_PERSIST = "dataSourcePersist";
+	private static final String PERSIST_TABLE_NAME = "persistTableName";
 	private static final String IS_FLAT_DATASET = "isFlatDataset";
 	private static final String FLAT_TABLE_NAME = "flatTableName";
 	private static final String DATA_SOURCE_FLAT = "dataSourceFlat";
@@ -266,19 +267,16 @@ public class DataSetJSONSerializer implements Serializer {
 			result.put(PIVOT_ROW_NAME,ds.getPivotRowName());	
 			result.put(PIVOT_IS_NUM_ROWS,ds.isNumRows());
 			result.put(IS_PERSISTED,ds.isPersisted());	
-			if  (ds.getDataSourcePersistId() != null){ 
-				IDataSource dataSource = DAOFactory.getDataSourceDAO().loadDataSourceByID(ds.getDataSourcePersistId() );
-				if (dataSource != null){
-					result.put(DATA_SOURCE_PERSIST,dataSource.getLabel());	
-				}			
-			}		
+			if  (ds.getDataSourcePersist() != null){ 
+				IDataSource dataSource = ds.getDataSourcePersist();
+				result.put(DATA_SOURCE_PERSIST,dataSource.getLabel());	
+			}
+			result.put(PERSIST_TABLE_NAME,ds.getPersistTableName());		
 			result.put(IS_FLAT_DATASET,ds.isFlatDataset());	
 			result.put(FLAT_TABLE_NAME,ds.getFlatTableName());
-			if  (ds.getDataSourceFlatId() != null){ 
-				IDataSource dataSource = DAOFactory.getDataSourceDAO().loadDataSourceByID(ds.getDataSourceFlatId() );
-				if (dataSource != null){
-					result.put(DATA_SOURCE_FLAT,dataSource.getLabel());	
-				}			
+			if  (ds.getDataSourceFlat() != null){ 
+				IDataSource dataSource = ds.getDataSourceFlat();
+				result.put(DATA_SOURCE_FLAT,dataSource.getLabel());	
 			}	
 			result.put(IS_PUBLIC, ds.isPublic());
 			result.put(OWNER, ds.getOwner());

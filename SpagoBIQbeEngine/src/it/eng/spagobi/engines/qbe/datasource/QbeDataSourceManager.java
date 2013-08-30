@@ -8,9 +8,14 @@ package it.eng.spagobi.engines.qbe.datasource;
 import it.eng.qbe.datasource.DriverManager;
 import it.eng.qbe.datasource.IDataSource;
 import it.eng.qbe.datasource.configuration.CompositeDataSourceConfiguration;
+import it.eng.qbe.datasource.configuration.DataSetDataSourceConfiguration;
 import it.eng.qbe.datasource.configuration.FileDataSourceConfiguration;
+import it.eng.qbe.datasource.dataset.DataSetDataSource;
+import it.eng.qbe.datasource.dataset.DataSetDriver;
 import it.eng.spagobi.services.proxy.MetamodelServiceProxy;
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.utils.datamart.DefaultEngineDatamartRetriever;
+import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.io.File;
@@ -41,7 +46,16 @@ public class QbeDataSourceManager {
 	}
 	
 	public IDataSource getDataSource(List<String> dataMartNames, Map<String, Object> dataSourceProperties, boolean useCache) {
+		if(dataSourceProperties!=null && dataSourceProperties.get(EngineConstants.ENV_DATASETS)!=null){
+			return getDataSourceFromDataSet(dataSourceProperties, useCache);
+		}else{
+			return getORMDataSource(dataMartNames, dataSourceProperties, useCache);
+		}
+	}
 		
+		
+	
+	private IDataSource getORMDataSource(List<String> dataMartNames, Map<String, Object> dataSourceProperties, boolean useCache) {		
 		IDataSource dataSource;
 		
 		CompositeDataSourceConfiguration compositeConfiguration = new CompositeDataSourceConfiguration();
@@ -50,8 +64,7 @@ public class QbeDataSourceManager {
 			String propertyName = it.next();
 			compositeConfiguration.loadDataSourceProperties().put(propertyName, dataSourceProperties.get(propertyName));
 		}
-		
-	
+
 		boolean isJPA = false;
 		File modelJarFile;
 		FileDataSourceConfiguration c;
@@ -79,6 +92,29 @@ public class QbeDataSourceManager {
 		
 		String driverName = isJPA? "jpa": "hibernate";
 		dataSource = DriverManager.getDataSource(driverName, compositeConfiguration, useCache);
+		
+		return dataSource;
+	}
+	
+	public IDataSource getDataSourceFromDataSet(Map<String, Object> dataSourceProperties, boolean useCache) {
+		
+		IDataSource dataSource;
+		List<IDataSet> dataSets = (List<IDataSet>)dataSourceProperties.get(EngineConstants.ENV_DATASETS);
+		dataSourceProperties.remove(EngineConstants.ENV_DATASETS);
+		
+		CompositeDataSourceConfiguration compositeConfiguration = new CompositeDataSourceConfiguration(DataSetDataSource.EMPTY_MODEL_NAME);
+		Iterator<String> it = dataSourceProperties.keySet().iterator();
+		while(it.hasNext()) {
+			String propertyName = it.next();
+			compositeConfiguration.loadDataSourceProperties().put(propertyName, dataSourceProperties.get(propertyName));
+		}
+
+		for(int i = 0; i < dataSets.size(); i++) {
+			DataSetDataSourceConfiguration c = new DataSetDataSourceConfiguration((dataSets.get(i)).getLabel(), dataSets.get(i));
+			compositeConfiguration.addSubConfiguration(c);
+		}
+
+		dataSource = DriverManager.getDataSource(DataSetDriver.DRIVER_ID, compositeConfiguration, useCache);
 		
 		return dataSource;
 	}

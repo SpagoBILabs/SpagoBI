@@ -5,14 +5,16 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.tools.dataset.persist;
 
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
+
 public interface IDataSetTableDescriptor {
 	
 	String getColumnName(String fieldName);
-	
 	Class getColumnType(String fieldName);
-	
 	String getFieldName(String columnName);
-	
 	String getTableName();
+	void setTableName(String tableName);
+	IDataSource getDataSource();
+	void setDataSource(IDataSource dataSource);
 
 }

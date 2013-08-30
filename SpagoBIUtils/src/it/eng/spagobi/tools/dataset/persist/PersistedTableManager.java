@@ -65,19 +65,20 @@ public class PersistedTableManager {
 		this.profile = profile;
 	}
 	public void persistDataSet(IDataSet dataset, IDataSource dsPersist) throws Exception {
+		String tableName = dataset.getPeristedTableName();
+		persistDataSet(dataset, dsPersist, tableName);
+	}
+	
+	public void persistDataSet(IDataSet dataset, IDataSource dsPersist, String tableName) throws Exception {
 		logger.debug("IN");
-
-		String tableName = this.getTableName();
-		logger.debug("Table name set is [" + tableName + "]");
-		if (tableName == null || tableName.trim().equals("")) {
-			logger.debug("Table name not set. Using dataset's label ...");
-			this.setTableName(dataset.getLabel());
-		}
+		
+		// get persisted table name
+		this.setTableName(tableName);
 		logger.debug("Persisted table name is [" + getTableName() + "]");
 		// set dialect of db
 		this.setDialect(dsPersist.getHibDialectClass());
 		logger.debug("DataSource target dialect is [" + getDialect() + "]");
-		
+		//for the first version not all target dialect are enable
 		if (getDialect().contains(DIALECT_SQLSERVER) || getDialect().contains(DIALECT_DB2) ||
 			getDialect().contains(DIALECT_INGRES) ||  getDialect().contains(DIALECT_TERADATA)){
 			logger.debug("Persistence management isn't able for " +  getDialect() + ".");
@@ -90,23 +91,8 @@ public class PersistedTableManager {
 			logger.debug("Signature matches: no need to create a Persistent Table");
 			return;
 		}
-		/*
-		if (dataset.getDsType().equalsIgnoreCase("QUERY")){			
-			//for dataset of query type uses a "create table as select ..." statement.
-			Connection connection = null;
-			try{
-				connection = dsPersist.getConnection();
-			} catch (Exception e) {
-				logger.error("Cannot get connection to target datasource. " , e);
-				throw new SpagoBIEngineRuntimeException("Cannot get connection to datasource", e);
-			}						
-			dataset.persist(tableName, connection);
-		}else{
-			//for dataset not query type uses a batch statement
-			dataset.loadData();
-			IDataStore datastore = dataset.getDataStore();
-			perstistNoQueryDatasetType(tableName, datastore, dsPersist);
-		}	*/	
+		
+		dataset.setPersisted(false);
 		dataset.loadData();
 		IDataStore datastore = dataset.getDataStore();		
 		persistDataset(datastore, dsPersist);
@@ -156,11 +142,12 @@ public class PersistedTableManager {
 		
 		for (int i=0, l=filedNo; i<l; i++){	
 			IFieldMetaData fmd = md.getFieldMeta(i);
-			query += " " + fmd.getName() + ((i<filedNo-1)?" , " : "");	
+			String columnName = getSQLColumnName(fmd);
+			query += " " + columnName + ((i<filedNo-1)?" , " : "");	
 			query += ((i==filedNo-1)?" ) " : "");
 			values += "?" + ((i<filedNo-1)?" , " : "");
 			values += ((i==filedNo-1)?" ) " : "");	
-			create +=  " " + fmd.getName() + getDBFieldType(fmd) + ((i<filedNo-1)?" , " : ")");	
+			create +=  " " + columnName + getDBFieldType(fmd) + ((i<filedNo-1)?" , " : ")");	
 		}
 		String totalQuery = query + values;
 		logger.debug("create table statement: " + create);
@@ -251,6 +238,11 @@ public class PersistedTableManager {
 				throw new SpagoBIEngineRuntimeException("Error persisting the dataset into table", e);
 		}			
 		return toReturn;
+	}
+	private String getSQLColumnName(IFieldMetaData fmd) {
+		String columnName = fmd.getAlias() != null ? fmd.getAlias() : fmd.getName();
+		logger.debug("Column name is " + columnName);
+		return columnName;
 	} 
 	
 	private String getDBFieldType(IFieldMetaData fieldMetaData){
@@ -342,8 +334,9 @@ public class PersistedTableManager {
 		String toReturn = "create table " + tableName + " (" ;
 		IMetaData md = datastore.getMetaData();	
 		for (int i=0, l=md.getFieldCount(); i<l; i++){				
-			 IFieldMetaData fmd = md.getFieldMeta(i);				 
-			 toReturn += " " + fmd.getName() + getDBFieldType(fmd);	
+			 IFieldMetaData fmd = md.getFieldMeta(i);
+			 String columnName = getSQLColumnName(fmd);
+			 toReturn += " " + columnName + getDBFieldType(fmd);	
 			 toReturn += ((i<l-1)?" , " : "");	
 		}
 		toReturn += " )";

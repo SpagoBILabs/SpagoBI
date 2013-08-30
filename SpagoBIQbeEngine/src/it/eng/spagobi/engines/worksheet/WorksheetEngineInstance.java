@@ -30,6 +30,7 @@ import org.apache.log4j.Logger;
 public class WorksheetEngineInstance extends AbstractEngineInstance {
 
 	IDataSource dataSource;
+	IDataSource dataSourceForWriting;
 	IDataSet dataSet;
 	WorksheetTemplate template;
 	/** The temporary table name to be considered for this analysis */
@@ -41,14 +42,17 @@ public class WorksheetEngineInstance extends AbstractEngineInstance {
 
 	protected WorksheetEngineInstance(Object template, Map env) throws WorksheetEngineException {
 		this( WorksheetTemplateParser.getInstance().parse(template, env), env );
+		setDataSourceForWriting((IDataSource)env.get(EngineConstants.ENGINE_DATASOURCE));
 	}
 
 	protected WorksheetEngineInstance(WorksheetTemplate template, Map env) throws WorksheetEngineException {
 		super( env );
+		setDataSourceForWriting((IDataSource)env.get(EngineConstants.ENGINE_DATASOURCE));
 		logger.debug("IN");
 		this.template = template;
 		this.setTemporaryTableName();
 		logger.debug("OUT");
+		
 	}
 
 	public void validate() throws QbeEngineException {
@@ -127,4 +131,22 @@ public class WorksheetEngineInstance extends AbstractEngineInstance {
 		return temporaryTableName;
 	}
 
+	public IDataSource getDataSourceForWriting() {
+		return dataSourceForWriting;
+//		if(dataSource.getHibDialectClass().toLowerCase().contains("hive")){
+//			if(dataSourceForWriting==null || dataSet.isPersisted()){
+//				return dataSet.getDataSourceForReading();
+//			}
+//			return dataSourceForWriting;
+//		}
+//		return dataSource;
+	}
+
+	public void setDataSourceForWriting(IDataSource dataSourceForWriting) {
+		
+		this.dataSourceForWriting = dataSourceForWriting;
+	}
+
+	
+	
 }

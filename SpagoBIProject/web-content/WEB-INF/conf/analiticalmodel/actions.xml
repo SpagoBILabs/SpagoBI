@@ -208,5 +208,10 @@
  	<CONFIG/>
  </ACTION>
 
+  <ACTION name="SELECT_DATASET_ACTION" 
+    class="it.eng.spagobi.analiticalmodel.execution.service.SelectDatasetAction" scope="REQUEST">
+    <CONFIG/>
+ </ACTION>
+
 </ACTIONS>
 

@@ -7,13 +7,11 @@ package it.eng.spagobi.engines.worksheet.services.runtime;
 
 import it.eng.qbe.query.WhereField;
 import it.eng.qbe.serializer.SerializationManager;
+import it.eng.qbe.statement.AbstractQbeDataSet;
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.commons.QbeEngineStaticVariables;
 import it.eng.spagobi.engines.qbe.crosstable.CrossTab;
 import it.eng.spagobi.engines.worksheet.WorksheetEngineInstance;
-import it.eng.spagobi.engines.worksheet.bo.WorkSheetDefinition;
-import it.eng.spagobi.engines.worksheet.bo.WorksheetFieldsOptions;
-import it.eng.spagobi.engines.worksheet.serializer.json.WorkSheetSerializationUtils;
 import it.eng.spagobi.engines.worksheet.services.AbstractWorksheetEngineAction;
 import it.eng.spagobi.engines.worksheet.utils.crosstab.CrosstabQueryCreator;
 import it.eng.spagobi.engines.worksheet.widgets.CrosstabDefinition;
@@ -35,7 +33,6 @@ import java.util.Map;
 
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.jamonapi.Monitor;
@@ -123,7 +120,15 @@ public class LoadCrosstabAction extends AbstractWorksheetEngineAction {
 			// deserialize crosstab definition
 			crosstabDefinition = (CrosstabDefinition) SerializationManager.deserialize(crosstabDefinitionJSON, "application/json", CrosstabDefinition.class);
 						
-			String worksheetQuery = this.buildSqlStatement(crosstabDefinition, descriptor, whereFields, engineInstance.getDataSource());
+			String worksheetQuery = null;
+			IDataSource dsForTheTemporaryTable = engineInstance.getDataSourceForWriting();
+//			if(engineInstance.getDataSet() instanceof AbstractQbeDataSet){
+//				dsForTheTemporaryTable =  engineInstance.getDataSourceForWriting();
+//			}else{
+//				dsForTheTemporaryTable = engineInstance.getDataSet().getDataSourceForReading();
+//			}
+			
+			worksheetQuery = this.buildSqlStatement(crosstabDefinition, descriptor, whereFields, dsForTheTemporaryTable);
 			// execute SQL query against temporary table
 			logger.debug("Executing query on temporary table : " + worksheetQuery);
 			valuesDataStore = this.executeWorksheetQuery(worksheetQuery, null, null);

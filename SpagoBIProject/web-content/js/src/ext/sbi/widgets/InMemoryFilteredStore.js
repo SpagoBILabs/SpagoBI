@@ -10,7 +10,7 @@ Sbi.widgets.store.InMemoryFilteredStore = function(config) {
 	
 	Sbi.widgets.store.InMemoryFilteredStore.superclass.constructor.call(this, config);
 	
-	this.on("load", function(theStore) {
+	this.on("load", function(theStore, records, options) {
 		if (!this.inMemoryData) {
 			this.inMemoryData = this.data.items.slice(0);//clone the items
 		}
@@ -51,8 +51,9 @@ Ext.extend(Sbi.widgets.store.InMemoryFilteredStore, Ext.data.Store, {
 		this.limit = (options && options.params && options.params.limit != undefined) ? options.params.limit : this.limit;
 		this.start = (options && options.params && options.params.start != undefined) ? options.params.start : this.start;
 		this.filter = (options && options.params && options.params.filter) ? options.params.filter : this.filter;
+		var forceRefresh = (options && options.forceRefresh) ? options.forceRefresh : false;
 		
-		if (this.useChache || this.inMemoryData == undefined || this.inMemoryData == null){
+		if (this.useChache || this.inMemoryData == undefined || this.inMemoryData == null || forceRefresh) {
 			//set null the paging configuration to load all the items from the store
 			Ext.apply(options, {params : {}});
 			this.inMemoryData = null;

@@ -478,6 +478,13 @@ getQueriesCatalogue: function () {
 }
 
 ,
+getQueriesCatalogueAsString: function () {
+	var catalogue = this.getQueriesCatalogue();
+	var toReturn = Ext.util.JSON.encode(catalogue);
+	return toReturn;
+}
+
+,
 setQueriesCatalogue: function (queriesCatalogue) {
 	if (this.queryEditorPanel != null) {
 		this.queryEditorPanel.setQueriesCatalogue(queriesCatalogue);

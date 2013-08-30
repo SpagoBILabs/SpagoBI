@@ -4,6 +4,8 @@
         <ResourceLink global="jdbc/foodmart" name="jdbc/foodmart" type="javax.sql.DataSource"/>
         <ResourceLink global="jdbc/validation" name="jdbc/validation" type="javax.sql.DataSource"/>
         <ResourceLink global="jdbc/foodmart_hsql" name="jdbc/foodmart_hsql" type="javax.sql.DataSource"/>
+        <ResourceLink global="jdbc/hive" name="jdbc/hive" type="javax.sql.DataSource"/>
+        <ResourceLink global="jdbc/spazzatura" name="jdbc/spazzatura" type="javax.sql.DataSource"/>
         <ResourceLink global="spagobi_resource_path" name="spagobi_resource_path" type="java.lang.String"/>
         <ResourceLink global="spagobi_sso_class" name="spagobi_sso_class" type="java.lang.String"/>
         <ResourceLink global="spagobi_host_url" name="spagobi_host_url" type="java.lang.String"/>

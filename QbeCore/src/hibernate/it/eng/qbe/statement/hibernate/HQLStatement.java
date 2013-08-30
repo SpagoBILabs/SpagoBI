@@ -225,7 +225,7 @@ public class HQLStatement extends AbstractStatement {
 	public static final String FROM = "FROM";
 	
 	
-	private String getNextAlias(Map entityAliasesMaps) {
+	public String getNextAlias(Map entityAliasesMaps) {
 		int aliasesCount = 0;
 		Iterator it = entityAliasesMaps.keySet().iterator();
 		while(it.hasNext()) {

@@ -6,6 +6,7 @@
 package it.eng.qbe.datasource;
 
 import it.eng.qbe.datasource.configuration.IDataSourceConfiguration;
+import it.eng.qbe.datasource.dataset.DataSetDriver;
 import it.eng.qbe.datasource.hibernate.HibernateDriver;
 import it.eng.qbe.datasource.hibernate.HibernateDriverWithClassLoader;
 import it.eng.qbe.datasource.jpa.JPADriver;
@@ -28,6 +29,7 @@ public class DriverManager {
 		drivers.put(HibernateDriver.DRIVER_ID, new HibernateDriver());
 		drivers.put(JPADriverWithClassLoader.DRIVER_ID, new JPADriverWithClassLoader());
 		drivers.put(HibernateDriverWithClassLoader.DRIVER_ID, new HibernateDriverWithClassLoader());
+		drivers.put(DataSetDriver.DRIVER_ID, new DataSetDriver());
 	}
 
 	/**

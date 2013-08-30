@@ -115,6 +115,48 @@ public class DataSourceSupplier {
 		logger.warn("The data source with label " + dsLabel + " is not found on the database.");
 		return null;
 	    }
+	    sbds = toSpagoBiDataSource(ds);
+	    
+	} catch (Exception e) {
+	    logger.error("The data source is not correctly returned", e);
+	}
+	logger.debug("OUT");
+	return sbds;
+    }
+    
+
+    /**
+     * Gets the data source by label.
+     * 
+     * @param dsLabel the ds label
+     * 
+     * @return the data source by label
+     */
+    public SpagoBiDataSource getDataSourceById(int id) {
+	logger.debug("IN");
+	SpagoBiDataSource sbds = new SpagoBiDataSource();
+
+	// gets data source data from database
+	try {
+	    IDataSource ds = DAOFactory.getDataSourceDAO().loadDataSourceByID(id);
+	    if (ds == null) {
+		logger.warn("The data source with id " + id + " is not found on the database.");
+		return null;
+	    }
+
+	    sbds = toSpagoBiDataSource(ds);
+
+	    
+	} catch (Exception e) {
+	    logger.error("The data source is not correctly returned", e);
+	}
+	logger.debug("OUT");
+	return sbds;
+    }
+    
+    
+    private SpagoBiDataSource toSpagoBiDataSource(IDataSource ds) throws Exception{
+    	SpagoBiDataSource sbds = new SpagoBiDataSource();
 	    sbds.setLabel(ds.getLabel());
 	    sbds.setJndiName(ds.getJndi());
 	    sbds.setUrl(ds.getUrlConnection());
@@ -123,18 +165,12 @@ public class DataSourceSupplier {
 	    sbds.setDriver(ds.getDriver());
 	    sbds.setMultiSchema(ds.getMultiSchema());
 	    sbds.setSchemaAttribute(ds.getSchemaAttribute());
-	    
-	  //gets dialect informations
+		  //gets dialect informations
 	    IDomainDAO domaindao = DAOFactory.getDomainDAO();
 	    Domain doDialect = domaindao.loadDomainById(ds.getDialectId());
 	    sbds.setHibDialectClass(doDialect.getValueCd());
 	    sbds.setHibDialectName(doDialect.getValueName());
-	    
-	} catch (Exception e) {
-	    logger.error("The data source is not correctly returned", e);
-	}
-	logger.debug("OUT");
-	return sbds;
+	    return sbds;
     }
 
     /**

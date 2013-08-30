@@ -3,7 +3,8 @@
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
-package it.eng.qbe.statement.jpa;
+
+package it.eng.qbe.statement;
 
 import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.model.structure.IModelField;
@@ -11,7 +12,6 @@ import it.eng.qbe.query.HavingField;
 import it.eng.qbe.query.InLineCalculatedSelectField;
 import it.eng.qbe.query.Operand;
 import it.eng.qbe.query.Query;
-import it.eng.qbe.statement.jpa.JPQLStatementConditionalOperators.IConditionalOperator;
 import it.eng.spagobi.tools.dataset.common.query.IAggregationFunction;
 import it.eng.spagobi.utilities.StringUtils;
 import it.eng.spagobi.utilities.assertion.Assert;
@@ -23,15 +23,12 @@ import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
 /**
- * @author Andrea Gioia (andrea.gioia@eng.it)
- *
+ * @author Alberto Ghedin (alberto.ghedin@eng.it)
  */
-public abstract class AbstractJPQLStatementFilteringClause  extends AbstractJPQLStatementClause {
+public abstract class AbstractStatementFilteringClause extends AbstractStatementClause {
 	
+	public static transient Logger logger = Logger.getLogger(AbstractStatementFilteringClause.class);
 	
-	public static transient Logger logger = Logger.getLogger(AbstractJPQLStatementFilteringClause.class);
-	
-
 	protected String buildInLineCalculatedFieldClause(String operator, Operand leftOperand, boolean isPromptable, Operand rightOperand, Query query, Map entityAliasesMaps, IConditionalOperator conditionalOperator){
 		String[] rightOperandElements;
 			
@@ -92,7 +89,7 @@ public abstract class AbstractJPQLStatementFilteringClause  extends AbstractJPQL
 		}
 	}
 	
-	String[] buildOperand(Operand operand, Query query, Map entityAliasesMaps) {
+	protected String[] buildOperand(Operand operand, Query query, Map entityAliasesMaps) {
 		String[] operandElement;
 		
 		logger.debug("IN");
@@ -120,7 +117,7 @@ public abstract class AbstractJPQLStatementFilteringClause  extends AbstractJPQL
 		return operandElement;
 	}
 	
-	String[] buildStaticOperand(Operand operand) {
+	protected String[] buildStaticOperand(Operand operand) {
 		String[] operandElement;
 		
 		logger.debug("IN");
@@ -134,7 +131,7 @@ public abstract class AbstractJPQLStatementFilteringClause  extends AbstractJPQL
 		return operandElement;
 	}
 	
-	String buildQueryOperand(Operand operand) {
+	protected String buildQueryOperand(Operand operand) {
 		String operandElement;
 		
 		logger.debug("IN");
@@ -157,7 +154,7 @@ public abstract class AbstractJPQLStatementFilteringClause  extends AbstractJPQL
 		return operandElement;
 	}
 	
-	String buildFieldOperand(Operand operand, Query query, Map entityAliasesMaps) {
+	protected String buildFieldOperand(Operand operand, Query query, Map entityAliasesMaps) {
 		String operandElement;
 		IModelField datamartField;
 		IModelEntity rootEntity;
@@ -190,9 +187,11 @@ public abstract class AbstractJPQLStatementFilteringClause  extends AbstractJPQL
 			
 			if(!targetQueryEntityAliasesMap.containsKey(rootEntity.getUniqueName())) {
 				logger.debug("Entity [" + rootEntity.getUniqueName() + "] require a new alias");
-				rootEntityAlias = parentStatement.getNextAlias(entityAliasesMaps);
+				rootEntityAlias = getEntityAlias(rootEntity, targetQueryEntityAliasesMap, entityAliasesMaps);
 				logger.debug("A new alias has been generated [" + rootEntityAlias + "]");				
-				targetQueryEntityAliasesMap.put(rootEntity.getUniqueName(), rootEntityAlias);
+				
+				
+				
 			}
 			rootEntityAlias = (String)targetQueryEntityAliasesMap.get( rootEntity.getUniqueName() );
 			logger.debug("where field root entity alias [" + rootEntityAlias + "]");
@@ -200,9 +199,9 @@ public abstract class AbstractJPQLStatementFilteringClause  extends AbstractJPQL
 			if (operand instanceof HavingField.Operand) {
 				HavingField.Operand havingFieldOperand = (HavingField.Operand) operand;
 				IAggregationFunction function = havingFieldOperand.function;
-				operandElement = function.apply(rootEntityAlias + "." + queryName);
+				operandElement = function.apply(parentStatement.getFieldAlias(rootEntityAlias, queryName));
 			} else {
-				operandElement = rootEntityAlias + "." + queryName;
+				operandElement = parentStatement.getFieldAlias(rootEntityAlias, queryName);
 			}
 			logger.debug("where element operand value [" + operandElement + "]");
 		} finally {
@@ -212,7 +211,7 @@ public abstract class AbstractJPQLStatementFilteringClause  extends AbstractJPQL
 		return operandElement;
 	}
 	
-	String buildParentFieldOperand(Operand operand, Query query, Map entityAliasesMaps) {
+	protected String buildParentFieldOperand(Operand operand, Query query, Map entityAliasesMaps) {
 		String operandElement;
 		
 		String[] chunks;
@@ -270,7 +269,7 @@ public abstract class AbstractJPQLStatementFilteringClause  extends AbstractJPQL
 			}
 			logger.debug("where right-hand field root entity alias [" + rootEntityAlias + "]");
 			
-			operandElement = rootEntityAlias + "." + queryName;
+			operandElement = parentStatement.getFieldAlias(rootEntityAlias, queryName);
 			logger.debug("where element right-hand field value [" + operandElement + "]");
 		} finally {
 			logger.debug("OUT");
@@ -279,7 +278,7 @@ public abstract class AbstractJPQLStatementFilteringClause  extends AbstractJPQL
 		return operandElement;
 	}
 	
-	String[] getTypeBoundedStaticOperand(Operand leadOperand, String operator, String[] operandValuesToBound) {
+	protected String[] getTypeBoundedStaticOperand(Operand leadOperand, String operator, String[] operandValuesToBound) {
 		String[] boundedValues = new String[operandValuesToBound.length];
 
 		for (int i = 0; i < operandValuesToBound.length; i++) {
@@ -328,7 +327,7 @@ public abstract class AbstractJPQLStatementFilteringClause  extends AbstractJPQL
 		return boundedValues;
 	}
 	
-	String getValueBounded(String operandValueToBound, String operandType) {
+	public String getValueBounded(String operandValueToBound, String operandType) {
 		
 		String boundedValue = operandValueToBound;
 		if (operandType.equalsIgnoreCase("STRING") || operandType.equalsIgnoreCase("CHARACTER") || operandType.equalsIgnoreCase("java.lang.String") || operandType.equalsIgnoreCase("java.lang.Character")) {
@@ -346,8 +345,4 @@ public abstract class AbstractJPQLStatementFilteringClause  extends AbstractJPQL
 		
 		return boundedValue;
 	}
-	
-
-	
-	
 }

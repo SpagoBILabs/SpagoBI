@@ -602,7 +602,13 @@ Sbi.locale.ln['sbi.ds.file.csv.quote'] = 'Cita Car\u00e1cter';
 Sbi.locale.ln['sbi.ds.file.xsl.sheetnumber'] = 'N\u00famero de hoja';
 Sbi.locale.ln['sbi.ds.file.xsl.limitrows'] = 'L\u00edmite el n\u00famero de l\u00edneas';
 Sbi.locale.ln['sbi.ds.file.xsl.skiprows'] = 'Ir l\u00edneas';
-
+Sbi.locale.ln['sbi.ds.advancedTab'] = 'Avanzado';
+Sbi.locale.ln['sbi.ds.helpAdvanced'] = 'Ayudar';
+Sbi.locale.ln['sbi.ds.persist'] = 'Registrada configuraci\u00F3n del dataset';
+Sbi.locale.ln['sbi.ds.isPersisted'] = 'Persistir en la Tabla';
+Sbi.locale.ln['sbi.ds.flat'] = 'Configuraci\u00F3n dataset plano';
+Sbi.locale.ln['sbi.ds.isFlatDataset'] = 'Dataset plano';
+Sbi.locale.ln['sbi.ds.flatTableName'] = 'Nombre de la Tabla';
 Sbi.locale.ln['sbi.ds.mandatoryUploadFile']= '\u00a1Es necesario cargar el archivo!';
 Sbi.locale.ln['sbi.ds.orderComboLabel']= 'Ordenar por...';
 Sbi.locale.ln['sbi.ds.filterLabel']= 'Filtrar por ...';

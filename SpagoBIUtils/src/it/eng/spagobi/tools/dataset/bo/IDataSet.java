@@ -126,20 +126,23 @@ public interface IDataSet {
 	boolean isPersisted();
 	void setPersisted(boolean persisted);
 	
-	Integer getDataSourcePersistId();
-	void setDataSourcePersistId(Integer dataSourcePersistId);
+	public IDataSource getDataSourcePersist();
+	void setDataSourcePersist(IDataSource dataSourcePersist);
 	
 	boolean isFlatDataset();
 	void setFlatDataset(boolean flatDataset);
 	
-	Integer getDataSourceFlatId();
-	void setDataSourceFlatId(Integer dataSourceFlatId);
+	IDataSource getDataSourceFlat();
+	void setDataSourceFlat(IDataSource dataSourceFlat);
 	
 	String getFlatTableName();
 	void setFlatTableName(String flatTableName);
 	
 	List getNoActiveVersions();
 	void setNoActiveVersions(List noActiveVersions);
+	
+	String getPersistTableName();
+	void setPersistTableName(String persistTableName);
 	
 	// TODO these methods do NOT belong to the dataset interface. remove them and refactor the code.
 	// --------------------------------------------------------------------------------------------------
@@ -167,5 +170,13 @@ public interface IDataSet {
 	boolean isCalculateResultNumberOnLoadEnabled();
 	
 	void setCalculateResultNumberOnLoad(boolean enabled); 
+	
+	public void setDataSource(IDataSource dataSource);
+	
+	public IDataSource getDataSource();
+	
+	public String getPeristedTableName();
+	
+	public IDataSource getDataSourceForReading();
 	
 }

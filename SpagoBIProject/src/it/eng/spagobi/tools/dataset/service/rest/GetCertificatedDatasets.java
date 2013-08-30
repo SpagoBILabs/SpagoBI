@@ -29,6 +29,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
@@ -65,19 +66,7 @@ public class GetCertificatedDatasets {
 			datasetsJSONArray = (JSONArray) SerializerFactory.getSerializer(
 					"application/json").serialize(dataSets, null);
 			
-			JSONObject worksheetAction = new JSONObject();
-			worksheetAction.put("name", "worksheet");
-			worksheetAction.put("description", "Show Worksheet");
-			
-			JSONArray datasetsJSONReturn = new JSONArray();	
-			for(int i = 0; i < datasetsJSONArray.length(); i++) {
-				JSONArray actions = new JSONArray();
-				JSONObject datasetJSON = datasetsJSONArray.getJSONObject(i);		
-				actions.put(worksheetAction);
-				datasetJSON.put("actions", actions);
-				datasetsJSONReturn.put(datasetJSON);
-			}
-
+			JSONArray datasetsJSONReturn = putActions(datasetsJSONArray);
 
 			JSONReturn.put("root", datasetsJSONReturn);
 
@@ -87,6 +76,28 @@ public class GetCertificatedDatasets {
 		}
 		return JSONReturn.toString();
 
+	}
+
+	private JSONArray putActions(JSONArray datasetsJSONArray)
+			throws JSONException {
+		JSONObject worksheetAction = new JSONObject();
+		worksheetAction.put("name", "worksheet");
+		worksheetAction.put("description", "Show Worksheet");
+		
+		JSONObject qbeAction = new JSONObject();
+		qbeAction.put("name", "qbe");
+		qbeAction.put("description", "Show Qbe");
+		
+		JSONArray datasetsJSONReturn = new JSONArray();	
+		for(int i = 0; i < datasetsJSONArray.length(); i++) {
+			JSONArray actions = new JSONArray();
+			JSONObject datasetJSON = datasetsJSONArray.getJSONObject(i);		
+			actions.put(worksheetAction);
+			actions.put(qbeAction);
+			datasetJSON.put("actions", actions);
+			datasetsJSONReturn.put(datasetJSON);
+		}
+		return datasetsJSONReturn;
 	}
 
 }
