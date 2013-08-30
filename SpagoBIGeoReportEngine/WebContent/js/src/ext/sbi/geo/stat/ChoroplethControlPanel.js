@@ -494,12 +494,13 @@ Sbi.geo.stat.ChoroplethControlPanel = Ext.extend(Ext.FormPanel, {
 			this.add(filter);
 		}
 		
-		if((Sbi.config.docLabel=="")){
+		if((Sbi.config.docLabel=="" && this.filters && this.filters.length>0)){
 			this.setDefaultsValuesToFiltersButton =  new Ext.Button({
-		    	text: 'Set default',
+		    	text: LN('sbi.geo.analysispanel.filter.default'),
 		        width: 30,
 		        handler: function() {
 		        	this.saveDefaultFiltersValue();
+		        	Sbi.exception.ExceptionHandler.showInfoMessage(LN('sbi.geo.analysispanel.filter.default.ok'));
            		},
            		scope: this
 			});

@@ -30,7 +30,7 @@
 	
 	<GEO_DIMENSION>
 		<LEVELS>
-			<LEVEL name="Comune ita" 
+			<LEVEL name="COMUNE ITA"
 				layerName="gadm_ita_comuni" 
 				layerLabel="Comuni" 
 				layerId="NAME_3" 
