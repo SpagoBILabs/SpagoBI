@@ -73,6 +73,9 @@ Sbi.locale.ln['sbi.geo.analysispanel.method'] = 'Method';
 Sbi.locale.ln['sbi.geo.analysispanel.classes'] = 'Number of classes';
 Sbi.locale.ln['sbi.geo.analysispanel.fromcolor'] = 'From color';
 Sbi.locale.ln['sbi.geo.analysispanel.tocolor'] = 'To color';
+Sbi.locale.ln['sbi.geo.analysispanel.filter.default'] = 'Set Default';
+Sbi.locale.ln['sbi.geo.analysispanel.filter.default.ok'] = 'Default values correctly set';
+
 	
 
 Sbi.locale.ln['sbi.geo.legendpanel.title'] = 'Legend';
