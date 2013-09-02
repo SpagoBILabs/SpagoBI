@@ -6,6 +6,7 @@
 package it.eng.spagobi.engines.worksheet.template;
 
 import it.eng.spago.base.SourceBean;
+import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 
 import java.util.HashMap;
@@ -54,4 +55,15 @@ public class WorksheetTemplateParser {
 		}
 		return worksheetTemplate;
 	}
+	
+	public boolean hasInnerQbeQuery(Object template) {
+		if(!parsers.containsKey(template.getClass().getName())) {
+			throw new SpagoBIEngineRuntimeException("Impossible to parse template of type [" + template.getClass().getName() + "]");
+		} else {
+			IWorksheetTemplateParser parser = parsers.get(template.getClass().getName());
+			return parser.hasInnerQbeQuery(template);
+		}
+	}
+	
+	
 }

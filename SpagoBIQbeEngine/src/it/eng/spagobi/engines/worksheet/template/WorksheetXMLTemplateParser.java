@@ -189,4 +189,12 @@ public class WorksheetXMLTemplateParser implements IWorksheetTemplateParser{
 		return toReturn;
 	}
 
+	public boolean hasInnerQbeQuery(Object template) {
+		Assert.assertNotNull(template, "Input parameter [template] cannot be null");
+		Assert.assertTrue(template instanceof SourceBean, "Input parameter [template] cannot be of type [" + template.getClass().getName() + "]");
+		SourceBean templateSourceBean = (SourceBean) template;
+		boolean toReturn = templateSourceBean.containsAttribute(TAG_QBE) || templateSourceBean.containsAttribute(TAG_QBE_COMPOSITE);
+		return toReturn;
+	}
+
 }

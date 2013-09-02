@@ -6,22 +6,30 @@
 package it.eng.spagobi.engines.worksheet.services.initializers;
 
 import it.eng.qbe.datasource.AbstractDataSource;
+import it.eng.qbe.statement.sql.SQLDataSet;
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.engines.qbe.QbeEngineInstance;
 import it.eng.spagobi.engines.worksheet.WorksheetEngine;
 import it.eng.spagobi.engines.worksheet.WorksheetEngineAnalysisState;
 import it.eng.spagobi.engines.worksheet.WorksheetEngineException;
 import it.eng.spagobi.engines.worksheet.WorksheetEngineInstance;
+import it.eng.spagobi.engines.worksheet.template.WorksheetTemplateParser;
 import it.eng.spagobi.services.common.SsoServiceInterface;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.AbstractEngineStartAction;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineStartupException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.service.JSONAcknowledge;
+import it.eng.spagobi.utilities.temporarytable.TemporaryTable;
+import it.eng.spagobi.utilities.temporarytable.TemporaryTableManager;
+import it.eng.spagobi.utilities.temporarytable.TemporaryTableRecorder;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -79,8 +87,11 @@ public class WorksheetEngineStartAction extends AbstractEngineStartAction {
 			
 			logger.debug("Creating engine instance ...");
 			try {
-
-				worksheetEngineInstance = WorksheetEngine.createInstance(templateBean,  getEnv());
+				
+				Map env = this.getEnv();
+				this.checkPersistence( env , templateBean );
+				
+				worksheetEngineInstance = WorksheetEngine.createInstance(templateBean, env);
 				QbeEngineInstance qbeEngineInstance = this.getQbeEngineInstance(worksheetEngineInstance);
 				if (qbeEngineInstance != null) {
 					worksheetEngineInstance.setQbeEngineInstance(qbeEngineInstance);
@@ -168,8 +179,31 @@ public class WorksheetEngineStartAction extends AbstractEngineStartAction {
 			logger.debug("OUT");
 		}		
 	}
-    
-    protected boolean goToWorksheetPreentation() {
+
+
+	/*
+     * This is useful when starting a worksheet document created starting from a non-persisted dataset and using also QBE.
+     * In this case the starting dataset must be persisted immediately.
+     */
+    private void checkPersistence(Map env, SourceBean template) {
+    	String documentId = null;
+    	try {
+    		documentId = this.getDocumentId();
+    	} catch (Exception e) {
+    		logger.debug("Error while getting document id, may be it is not defined since we are creating a new document", e);
+    	}
+    	// we check the document id because, if it is not null, the document may have a dataset
+    	if (documentId != null) {
+    		IDataSet dataset = this.getDataSet();
+    		boolean hasInnerQbe = WorksheetTemplateParser.getInstance().hasInnerQbeQuery(template);
+    		if (hasInnerQbe && dataset != null) {
+    			this.checkPersistence(dataset, env);
+    		}
+    	}
+		
+	}
+
+	protected boolean goToWorksheetPreentation() {
 		return true;
 	}
 
@@ -296,5 +330,7 @@ public class WorksheetEngineStartAction extends AbstractEngineStartAction {
 		}
 		return env;
 	}
+	
+
         
 }

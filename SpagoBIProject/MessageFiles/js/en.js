@@ -768,7 +768,10 @@ Sbi.locale.ln['sbi.worksheet.worksheetfromdatasetpanel.buttons.gotoqbe']='Create
 Sbi.locale.ln['sbi.worksheet.worksheeteditoriframepanelext3.toolbar.saveas']='Save as new document ...';
 Sbi.locale.ln['sbi.worksheet.worksheeteditoriframepanelext3.toolbar.export']='Export into one of the available formats ...';
 
-
+//===================================================================
+//Sbi.execution.toolbar.SaveDatasetWindow : AD-HOC REPORTING 
+//===================================================================
+Sbi.locale.ln["sbi.execution.toolbar.savedatasetwindow.title"]="Fill in the dataset details and click on Save";
 
 //===================================================================
 //ERRORS 
@@ -794,12 +797,6 @@ Sbi.locale.ln["error.mesage.description.measure.join.no.complete.common.dimensio
 
 //LAYER
 Sbi.locale.ln["error.mesage.description.layer.validation.file"]= "The file name is not valid. It can't contain [/,\\]";
-
-//===================================================================
-//Sbi.execution.toolbar.SaveDatasetWindow : AD-HOC REPORTING 
-//===================================================================
-Sbi.locale.ln["sbi.execution.toolbar.savedatasetwindow.title"]="Fill in the dataset details and click on Save";
-Sbi.locale.ln["sbi.execution.toolbar.savedatasetwindow.fields.datasource"]="Save data on";
 
 //===================================================================
 //SELF SERVICE

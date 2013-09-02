@@ -31,7 +31,7 @@ public class SaveDatasetUserAction extends ManageDatasets {
 
 	public static final String SERVICE_NAME = "SAVE_DATASET_USER_ACTION";
 	
-	public static final String PERSIST_TABLE_NAME_PREFIX = "persist_";
+	public static final String FLAT_TABLE_NAME_PREFIX = "flat_";
 	
 	// logger component
 	private static Logger logger = Logger.getLogger(SaveDatasetUserAction.class);
@@ -45,7 +45,7 @@ public class SaveDatasetUserAction extends ManageDatasets {
 			try {
 				dao = DAOFactory.getDataSetDAO();
 				dao.setUserProfile(profile);
-			} catch (EMFUserError e) {				
+			} catch (EMFUserError e) {
 				throw new SpagoBIServiceException(SERVICE_NAME, "Cannot access database", e);
 			}
 			Locale locale = getLocale();
@@ -54,20 +54,33 @@ public class SaveDatasetUserAction extends ManageDatasets {
 			try {
 				this.getRequestContainer().getServiceRequest().setAttribute(DataSetConstants.DS_TYPE_CD, "Qbe");
 				this.getRequestContainer().getServiceRequest().setAttribute(DataSetConstants.METADATA, "[]");
-				UUIDGenerator uuidGen  = UUIDGenerator.getInstance();
-				UUID uuid = uuidGen.generateTimeBasedUUID();
-				String persistTableName = PERSIST_TABLE_NAME_PREFIX + uuid.toString().replaceAll("-", "");
-				this.getRequestContainer().getServiceRequest().setAttribute(DataSetConstants.PERSIST_TABLE_NAME, persistTableName);
+
+				
+//				this.getRequestContainer().getServiceRequest().setAttribute(DataSetConstants.PERSIST_TABLE_NAME, persistTableName);
 			} catch (SourceBeanException e) {
 				throw new SpagoBIServiceException(SERVICE_NAME, "Cannot modify request", e);
 			}
 			
+			String persistTableName = getFlatTableName();
+			System.out.println(persistTableName);
 			IDataSet ds = getGuiGenericDatasetToInsert();
-			datasetInsert(ds, dao, locale);
+//			ds.persist(persistTableName, dataSource);
+			
+			System.out.println(ds);
+//			datasetInsert(ds, dao, locale);
 			
 		} finally {
 			logger.debug("OUT");
 		}
+	}
+
+	private String getFlatTableName() {
+		logger.debug("IN");
+		UUIDGenerator uuidGen  = UUIDGenerator.getInstance();
+		UUID uuid = uuidGen.generateTimeBasedUUID();
+		String persistTableName = FLAT_TABLE_NAME_PREFIX + uuid.toString().replaceAll("-", "");
+		logger.debug("OUT : returning [" + persistTableName + "]");
+		return persistTableName;
 	}
 
 }

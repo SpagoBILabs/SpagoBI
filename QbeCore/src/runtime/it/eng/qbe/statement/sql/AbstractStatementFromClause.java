@@ -65,7 +65,12 @@ public abstract class AbstractStatementFromClause extends AbstractStatementClaus
 					normalEntities.add(modelEntity);
 				}
 
-				String fromClauseElement = modelEntity.getName() + " "
+				String queryName = (String) modelEntity
+						.getProperty("queryName");
+				if (queryName == null || queryName.trim().equals("")) {
+					queryName = modelEntity.getName();
+				}
+				String fromClauseElement =queryName + " "
 						+ entityAlias;
 				logger.debug("from clause element [" + fromClauseElement + "]");
 

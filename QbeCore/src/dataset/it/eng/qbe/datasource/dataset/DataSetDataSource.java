@@ -150,10 +150,13 @@ public class DataSetDataSource  extends AbstractDataSource implements ISQLDataSo
 	}
 
 	private void initStatementType(){
-		
-		if(datasets.get(0).getDataSourceForReading().getHibDialectName().toLowerCase().contains("hive")){
-			statementType = HiveQLStatement.class;
+		IDataSource datasourceForReading = this.getDataSourceForReading();
+		if (datasourceForReading != null) {
+			if(datasourceForReading.getHibDialectName().toLowerCase().contains("hive")){
+				statementType = HiveQLStatement.class;
+			}
 		}
+
 	}
 	
 	public IDataSource getDataSourceForReading(){
