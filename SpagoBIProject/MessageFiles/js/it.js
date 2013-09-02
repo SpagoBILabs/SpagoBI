@@ -787,6 +787,11 @@ Sbi.locale.ln['sbi.worksheet.worksheeteditoriframepanelext3.toolbar.saveas']='Sa
 Sbi.locale.ln['sbi.worksheet.worksheeteditoriframepanelext3.toolbar.export']='Esporta in uno dei formati disponibili ...';
 
 //===================================================================
+//Sbi.execution.toolbar.SaveDatasetWindow : AD-HOC REPORTING 
+//===================================================================
+Sbi.locale.ln["sbi.execution.toolbar.savedatasetwindow.title"]="Riempi il form sottostante e clicca sul pulsante Salva";
+
+//===================================================================
 //ERRORS 
 //===================================================================
 		
@@ -811,12 +816,6 @@ Sbi.locale.ln["error.mesage.description.measure.join.no.complete.common.dimensio
 //LAYER
 Sbi.locale.ln["error.mesage.description.layer.validation.file"]= "Il nome del file non \u00e8 valido. Non sono ammissibili i caratteri  [/,\\]";
 
-//===================================================================
-//Sbi.execution.toolbar.SaveDatasetWindow : AD-HOC REPORTING 
-//===================================================================
-Sbi.locale.ln["sbi.execution.toolbar.savedatasetwindow.title"]="Riempi il form sottostante e clicca sul pulsante Salva";
-Sbi.locale.ln["sbi.execution.toolbar.savedatasetwindow.fields.datasource"]="Salva i dati in";
-	
 //===================================================================
 //SELF SERVICE
 //===================================================================

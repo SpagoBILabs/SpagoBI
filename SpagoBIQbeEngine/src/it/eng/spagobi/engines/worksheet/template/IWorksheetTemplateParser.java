@@ -13,4 +13,5 @@ import java.util.Map;
  */
 public interface IWorksheetTemplateParser {
 	WorksheetTemplate parse(Object template,  Map env);
+	boolean hasInnerQbeQuery(Object template);
 }

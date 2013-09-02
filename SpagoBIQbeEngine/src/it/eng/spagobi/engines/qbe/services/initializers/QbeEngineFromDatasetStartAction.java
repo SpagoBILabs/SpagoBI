@@ -6,7 +6,6 @@
 package it.eng.spagobi.engines.qbe.services.initializers;
 
 import it.eng.spago.base.SourceBean;
-import it.eng.spagobi.services.proxy.DataSetServiceProxy;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
@@ -97,27 +96,28 @@ public class QbeEngineFromDatasetStartAction extends QbeEngineStartAction {
 	 
 	 
 	 
-	   public Map addDatasetsToEnv(){
-			 Map env = super.getEnv();
-			 env.put(EngineConstants.ENV_LOCALE, getLocale()); 
-			 String datasetLabel = this.getAttributeAsString( DATASET_LABEL);
-			 env.put(EngineConstants.ENV_DATASET_LABEL, datasetLabel);
-			 
-			 IDataSet dataset = this.getDataSet();
-			 // substitute default engine's datasource with dataset one
-			 IDataSource dataSource = dataset.getDataSource();
-			 if (dataSource == null) {
-				 logger.debug("Dataset has no datasource.");
-			 } else {
-				 env.put(EngineConstants.ENV_DATASOURCE, dataSource); 
-			 }
+	public Map addDatasetsToEnv() {
+		Map env = super.getEnv();
+		env.put(EngineConstants.ENV_LOCALE, getLocale());
+		String datasetLabel = this.getAttributeAsString(DATASET_LABEL);
+		env.put(EngineConstants.ENV_DATASET_LABEL, datasetLabel);
 
-			 DataSetServiceProxy serviceProxy = getDataSetServiceProxy();
-			 List<IDataSet> dataSets = new ArrayList<IDataSet>();
-			 dataSets.add(serviceProxy.getDataSetByLabel(datasetLabel));
-			 env.put(EngineConstants.ENV_DATASETS, dataSets);
-			 return env;
-	   }
-	 
-	 
+		IDataSet dataset = this.getDataSet();
+		
+		// substitute default engine's datasource with dataset one
+		IDataSource dataSource = dataset.getDataSource();
+		if (dataSource == null) {
+			logger.debug("Dataset has no datasource.");
+		} else {
+			env.put(EngineConstants.ENV_DATASOURCE, dataSource);
+		}
+		
+		this.checkPersistence(dataset, env);
+
+		List<IDataSet> dataSets = new ArrayList<IDataSet>();
+		dataSets.add(dataset);
+		env.put(EngineConstants.ENV_DATASETS, dataSets);
+		return env;
+	}
+
 }

@@ -8,132 +8,279 @@ Ext.define('Sbi.selfservice.SaveDatasetWindow', {
 	extend: 'Ext.Window'
 
 	,
-	config: {	
+	config: {
 		queryDefinition : {}
-		, categoriesStore: null
-		, scopeStore: null
-		, title : LN('sbi.execution.toolbar.savedatasetwindow.title')
-		, bodyPadding : 10
-		, layout : 'fit'
 	}
-	
+
+	, categoriesStore : null
+	, scopesStore : null
 
 	,
 	constructor: function(config) {
 		
-		//this.initConfig(config);
+		this.initConfig(config);
 		
 		this.initServices();
-		this.categoriesStore = this.createCategoriesStore();
-		this.scopeStore = this.createScopeStore();
-
-		config.items = this.initItems();
-		//config.buttons = this.initWizardBar();
+		this.initCategoriesStore();
+		this.initScopeStore();
+		this.initFormPanel();
+		
+		var c = Ext.apply({}, config, {
+			layout : 'fit'
+			, width : 540
+			, height : 300
+			, closeAction : 'destroy'
+//			buttons:[{
+//				  iconCls: 'icon-save' 	
+//				, handler: this.saveDocument
+//				, scope: this
+//				, text: LN('sbi.generic.update')
+//	           }],
+			, items : this.inputForm
+			, title : LN('sbi.execution.toolbar.savedatasetwindow.title')
+		});   
+		
+		Ext.apply(this, c);
 		
 		this.callParent(arguments);
 	}
 	
-//	,
-//	initConfig : function (config) {
-//
-//	}
-	
+	,
+	initFormPanel: function () {
+		this.labelInput = Ext.create("Ext.form.TextField", {
+			id: 'label',
+			name: 'label',
+			allowBlank: false, 
+			maxLength: 50,
+			enforceMaxLength: true,
+			anchor: '95%',
+			fieldLabel: LN('sbi.generic.label') 
+		});
+		this.nameInput = Ext.create("Ext.form.TextField", {
+			id: 'name',
+			name: 'name',
+			allowBlank: false, 
+			maxLength: 50,
+			enforceMaxLength: true,
+			anchor: '95%',
+			fieldLabel: LN('sbi.generic.name') 
+		});
+		this.descriptionInput = Ext.create("Ext.form.field.TextArea", {
+			id: 'description',
+			name: 'description',
+			allowBlank: true, 
+			maxLength: 160,
+			enforceMaxLength: true,
+			anchor: '95%',
+			fieldLabel: LN('sbi.generic.descr') 
+		});
+		this.scopeInput = Ext.create('Ext.form.ComboBox', {
+		    fieldLabel: 'scope',
+		    queryMode: 'local',
+		    store: this.scopesStore,
+		    displayField: 'description',
+		    valueField: 'value',
+		    allowBlank: false
+		});
+		this.categoryInput = Ext.create('Ext.form.ComboBox', {
+		    fieldLabel: 'category',
+		    store: this.categoriesStore,
+		    displayField: 'VALUE_NM',
+		    valueField: 'VALUE_ID',
+		    allowBlank: false
+		});
+	    this.inputForm = Ext.create("Ext.Panel",{
+	         itemId: 'detail'
+	        , columnWidth: 0.6
+	        , border: false
+	        , items: {
+	 		   	 columnWidth: 0.4,
+	             xtype: 'fieldset',
+	             labelWidth: 80,
+	             defaults: { border : false },    
+	             defaultType: 'textfield',
+	             autoScroll: true,
+	             border: false,
+	             style: {
+	                 "margin-left": "4px",
+	                 "margin-top": "25px"
+	             },
+	             items: [ this.labelInput, this.nameInput, this.descriptionInput, this.scopeInput, this.categoryInput ]
+	    	},
+	        buttons: [{
+		       	text : LN('sbi.generic.update'),
+		       	formBind : true, //only enabled once the form is valid
+		       	//disabled: true,
+		       	handler : this.saveDatasetHandler,
+		       	scope : this
+	        }]
+	    });
+	}
 	
 	,
 	initServices : function() {
 		this.services = [];
 
-		this.services["getCategories"]= Sbi.config.serviceRegistry.getRestServiceUrl({
+		this.services["getCategories"] = Sbi.config.serviceRegistry.getRestServiceUrl({
 			serviceName: 'domainsforfinaluser/listValueDescriptionByType',
 			baseParams: {}
 		});
-	}
-	
-	,
-	initItems : function () {
+
+		var params = {
+			LIGHT_NAVIGATOR_DISABLED: 'TRUE'
+		};
 		
-		var form = Ext.create('Ext.form.Panel', {
-		    width: 350,
-
-		    // The form will submit an AJAX request to this URL when submitted
-		    //url: 'save-form.php',
-
-		    // Fields will be arranged vertically, stretched to full width
-		    layout: 'anchor',
-		    defaults: {
-		        anchor: '100%'
-		    },
-
-		    // The fields
-		    defaultType: 'textfield',
-		    items: [{
-		        fieldLabel: LN('sbi.generic.label'),
-		        name: 'label',
-		        allowBlank: false
-		    },{
-		        fieldLabel: LN('sbi.generic.name'),
-		        name: 'name',
-		        allowBlank: false
-		    },{
-		        fieldLabel: LN('sbi.generic.description'),
-		        name: 'description'
-		    }]
-
-		    // Reset and Submit buttons
-//		    buttons: [{
-//		        text: 'Reset',
-//		        handler: function() {
-//		            this.up('form').getForm().reset();
-//		        }
-//		    }, {
-//		        text: 'Submit',
-//		        formBind: true, //only enabled once the form is valid
-//		        disabled: true,
-//		        handler: function() {
-//		            var form = this.up('form').getForm();
-//		            if (form.isValid()) {
-//		                form.submit({
-//		                    success: function(form, action) {
-//		                       Ext.Msg.alert('Success', action.result.msg);
-//		                    },
-//		                    failure: function(form, action) {
-//		                        Ext.Msg.alert('Failed', action.result.msg);
-//		                    }
-//		                });
-//		            }
-//		        }
-//		    }],
-//		    renderTo: Ext.getBody()
+		this.services['saveDatasetService'] = Sbi.config.serviceRegistry.getServiceUrl({
+			serviceName: 'SAVE_DATASET_USER_ACTION'
+			, baseParams: params
 		});
-		
-		return form;
-//		var fields = this.initFields();
-//		var widget = Ext.create("Sbi.widgets.wizard.WizardWindow", {});
-//		return widget.createStepFieldsGUI(this.fields);
 	}
 	
 	,
-	initFields : function () {
-		var toReturn = [];
+	saveDatasetHandler: function () {
 		
-		toReturn = [{label:"Id", name:"id",type:"text",hidden:"true"},
-	     {label: LN('sbi.generic.label'), name:"label", type:"text", mandatory:true}, 
-	     {label: LN('sbi.generic.name'), name:"name", type:"text", mandatory:true},
-	     {label: LN('sbi.generic.description'), name:"description", type:"textarea"},
-		 {label: LN('sbi.generic.catType'), name:"catTypeVn", type:"combo", valueCol:"VALUE_ID", descCol:"VALUE_DS", data:this.categoriesStore},
-		 {label: LN('sbi.generic.scope'), name:"isPublic", type:"combo", valueCol:"field", descCol:"value", data:this.scopeStore}];
-		
-		return toReturn;
+		var params = this.getInfoToBeSentToServer();
+		Ext.MessageBox.wait(LN('sbi.generic.wait'));
+		Ext.Ajax.request({
+	        url : this.services['saveDatasetService']
+	        , params : params
+	        , success : this.datasetSavedSuccessHandler
+	        , scope : this
+			, failure : Sbi.exception.ExceptionHandler.handleFailure      
+		});
+
 	}
 	
 	,
-	createCategoriesStore: function(){
+	getFormState : function() {
+      	var formState = {};
+      	formState.label = this.labelInput.getValue();
+      	formState.name = this.nameInput.getValue();
+      	formState.description = this.descriptionInput.getValue();
+      	formState.isPublic = this.scopeInput.getValue() === 'true';
+      	formState.category = this.categoryInput.getValue();
+      	return formState;
+    }
+	
+	,
+	getInfoToBeSentToServer : function () {
+		var formState = this.getFormState();
+		formState.qbeJSONQuery = Ext.JSON.encode(this.queryDefinition.queries);
+		formState.qbeDataSource = this.queryDefinition.datasourceLabel;
+		formState.sourceDatasetLabel = this.queryDefinition.sourceDatasetLabel;
+		return formState;
+	}
+	
+	,
+	datasetSavedSuccessHandler : function (response , options) {
+  		if (response !== undefined && response.responseText !== undefined) {
+  			var content = Ext.JSON.decode( response.responseText );
+  			if (content.responseText !== 'Operation succeded') {
+                Ext.MessageBox.show({
+                    title: LN('sbi.generic.error'),
+                    msg: content,
+                    width: 150,
+                    buttons: Ext.MessageBox.OK
+               });
+      		} else {			      			
+      			Ext.MessageBox.show({
+                        title: LN('sbi.generic.result'),
+                        msg: LN('sbi.generic.resultMsg'),
+                        width: 200,
+                        buttons: Ext.MessageBox.OK
+                });
+      			this.fireEvent('save', this, this.getFormState());
+      		}  
+  		} else {
+  			Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
+  		}  	
+	}
+	
+//	,
+//	initItems : function () {
+//		
+//		var form = Ext.create('Ext.form.Panel', {
+//		    width: 350,
+//
+//		    // The form will submit an AJAX request to this URL when submitted
+//		    //url: 'save-form.php',
+//
+//		    // Fields will be arranged vertically, stretched to full width
+//		    layout: 'anchor',
+//		    defaults: {
+//		        anchor: '100%'
+//		    },
+//
+//		    // The fields
+//		    defaultType: 'textfield',
+//		    items: [{
+//		        fieldLabel: LN('sbi.generic.label'),
+//		        name: 'label',
+//		        allowBlank: false
+//		    },{
+//		        fieldLabel: LN('sbi.generic.name'),
+//		        name: 'name',
+//		        allowBlank: false
+//		    },{
+//		        fieldLabel: LN('sbi.generic.description'),
+//		        name: 'description'
+//		    }]
+//
+//		    // Reset and Submit buttons
+////		    buttons: [{
+////		        text: 'Reset',
+////		        handler: function() {
+////		            this.up('form').getForm().reset();
+////		        }
+////		    }, {
+////		        text: 'Submit',
+////		        formBind: true, //only enabled once the form is valid
+////		        disabled: true,
+////		        handler: function() {
+////		            var form = this.up('form').getForm();
+////		            if (form.isValid()) {
+////		                form.submit({
+////		                    success: function(form, action) {
+////		                       Ext.Msg.alert('Success', action.result.msg);
+////		                    },
+////		                    failure: function(form, action) {
+////		                        Ext.Msg.alert('Failed', action.result.msg);
+////		                    }
+////		                });
+////		            }
+////		        }
+////		    }],
+////		    renderTo: Ext.getBody()
+//		});
+//		
+//		return form;
+////		var fields = this.initFields();
+////		var widget = Ext.create("Sbi.widgets.wizard.WizardWindow", {});
+////		return widget.createStepFieldsGUI(this.fields);
+//	}
+	
+//	,
+//	initFields : function () {
+//		var toReturn = [];
+//		
+//		toReturn = [{label:"Id", name:"id",type:"text",hidden:"true"},
+//	     {label: LN('sbi.generic.label'), name:"label", type:"text", mandatory:true}, 
+//	     {label: LN('sbi.generic.name'), name:"name", type:"text", mandatory:true},
+//	     {label: LN('sbi.generic.description'), name:"description", type:"textarea"},
+//		 {label: LN('sbi.generic.catType'), name:"catTypeVn", type:"combo", valueCol:"VALUE_ID", descCol:"VALUE_DS", data:this.categoriesStore},
+//		 {label: LN('sbi.generic.scope'), name:"isPublic", type:"combo", valueCol:"field", descCol:"value", data:this.scopeStore}];
+//		
+//		return toReturn;
+//	}
+//	
+	,
+	initCategoriesStore: function() {
 		Ext.define("CategoriesModel", {
     		extend: 'Ext.data.Model',
             fields: ["VALUE_NM","VALUE_DS","VALUE_ID"]
     	});
     	
-    	var categoriesStore=  Ext.create('Ext.data.Store',{
+    	this.categoriesStore =  Ext.create('Ext.data.Store',{
     		model: "CategoriesModel",
     		proxy: {
     			type: 'ajax',
@@ -144,21 +291,18 @@ Ext.define('Sbi.selfservice.SaveDatasetWindow', {
     			}
     		}
     	});
-    	categoriesStore.load();
-    	
-    	return categoriesStore;
+//    	this.categoriesStore.load();
 	}
 	
 	,
-	createScopeStore : function () {
-		var store = Ext.create('Ext.data.Store', {
-		    fields: ['field', 'value'],
+	initScopeStore : function () {
+		this.scopesStore = Ext.create('Ext.data.Store', {
+		    fields: ['value', 'description'],
 		    data : [
-		        {"field":"true", "value":"Public"},
-		        {"field":"false", "value":"Private"}
+		        {"value":"true", "description":"Public"},
+		        {"value":"false", "description":"Private"}
 		    ]
 		});
-		return store;
 	}
 	
 });

@@ -19,9 +19,6 @@
 					<VALIDATOR validatorName="EXTENDED_ALFANUMERIC" />
 		 	 		<VALIDATOR validatorName="MAXLENGTH" arg0="160"/>
 				</FIELD>
-				<FIELD name="dataSourcePersist" label="dataSourcePersist">
-					<VALIDATOR validatorName="MANDATORY"/>
-				</FIELD>
 			</FIELDS>
 		</VALIDATION>
 	</SERVICE>

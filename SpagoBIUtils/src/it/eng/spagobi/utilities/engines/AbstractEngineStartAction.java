@@ -24,6 +24,7 @@ import it.eng.spago.base.SourceBeanAttribute;
 import it.eng.spago.base.SourceBeanException;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.container.ContextManager;
 import it.eng.spagobi.container.IBeanContainer;
 import it.eng.spagobi.container.IContainer;
@@ -36,10 +37,15 @@ import it.eng.spagobi.services.proxy.DataSetServiceProxy;
 import it.eng.spagobi.services.proxy.DataSourceServiceProxy;
 import it.eng.spagobi.services.proxy.MetamodelServiceProxy;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.ParametersDecoder;
 import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.service.AbstractBaseHttpAction;
+import it.eng.spagobi.utilities.temporarytable.TemporaryTable;
+import it.eng.spagobi.utilities.temporarytable.TemporaryTableManager;
+import it.eng.spagobi.utilities.temporarytable.TemporaryTableRecorder;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -580,5 +586,106 @@ public class AbstractEngineStartAction extends AbstractBaseHttpAction {
 
 		 return newParValue;
 	 }
+	 
+	protected void checkPersistence(IDataSet dataset, Map env) {
+		if (!dataset.isPersisted() && !dataset.isFlatDataset()) {
+			logger.debug("Dataset is neither persisted nor flat. Persisting dataset into a temporary table...");
+			IDataSource dataSource = (IDataSource) env
+					.get(EngineConstants.ENV_DATASOURCE);
+			String tableName = this.getPersistenceTableName();
+			this.persistDataSetWithTemporaryTable(dataset, tableName,
+					dataSource);
+			logger.debug("Dataset persisted.");
+			dataset.setPersisted(true);
+			dataset.setPersistTableName(tableName);
+			dataset.setDataSourcePersist(dataSource);
+		}
+	}
+
+	protected String getPersistenceTableName() {
+		logger.debug("IN");
+		String temporaryTableNameRoot = (String) this.getEnv().get(
+				SpagoBIConstants.TEMPORARY_TABLE_ROOT_NAME);
+		logger.debug("Temporary table name root specified on the environment : ["
+				+ temporaryTableNameRoot + "]");
+		// if temporaryTableNameRadix is not specified on the environment,
+		// create a new name using the user profile
+		if (temporaryTableNameRoot == null) {
+			logger.debug("Temporary table name root not specified on the environment, creating a new one using user identifier ...");
+			UserProfile userProfile = (UserProfile) getEnv().get(
+					EngineConstants.ENV_USER_PROFILE);
+			temporaryTableNameRoot = userProfile.getUserId().toString();
+		}
+		temporaryTableNameRoot = "qbe_" + temporaryTableNameRoot;
+		logger.debug("Temporary table root name : [" + temporaryTableNameRoot
+				+ "]");
+		String temporaryTableNameComplete = TemporaryTableManager
+				.getTableName(temporaryTableNameRoot);
+		logger.debug("Temporary table name : [" + temporaryTableNameComplete
+				+ "]. Putting it into the environment");
+		this.getEnv().put(SpagoBIConstants.TEMPORARY_TABLE_NAME,
+				temporaryTableNameComplete);
+		logger.debug("OUT : temporaryTableName = ["
+				+ temporaryTableNameComplete + "]");
+		return temporaryTableNameComplete;
+	}
+
+	protected IDataSetTableDescriptor persistDataSetWithTemporaryTable(
+			IDataSet dataset, String tableName, IDataSource dataSource) {
+
+		String signature = dataset.getSignature();
+		logger.debug("Dataset signature : " + signature);
+		if (signature.equals(TemporaryTableManager
+				.getLastDataSetSignature(tableName))) {
+			// signature matches: no need to create a TemporaryTable
+			logger.debug("Signature matches: no need to create a TemporaryTable");
+			return TemporaryTableManager
+					.getLastDataSetTableDescriptor(tableName);
+		}
+
+		// drop the temporary table if one exists
+		try {
+			logger.debug("Signature does not match: dropping TemporaryTable "
+					+ tableName + " if it exists...");
+			TemporaryTableManager.dropTableIfExists(tableName, dataSource);
+		} catch (Exception e) {
+			logger.error("Impossible to drop the temporary table with name "
+					+ tableName, e);
+			throw new SpagoBIEngineRuntimeException(
+					"Impossible to drop the temporary table with name "
+							+ tableName, e);
+		}
+
+		IDataSetTableDescriptor td = null;
+
+		try {
+			logger.debug("Persisting dataset ...");
+
+			td = dataset.persist(tableName, dataSource);
+			this.recordTemporaryTable(tableName, dataSource);
+
+			logger.debug("Dataset persisted");
+		} catch (Throwable t) {
+			logger.error("Error while persisting dataset", t);
+			throw new SpagoBIRuntimeException("Error while persisting dataset",
+					t);
+		}
+
+		logger.debug("Dataset persisted successfully. Table descriptor : " + td);
+		TemporaryTableManager.setLastDataSetSignature(tableName, signature);
+		TemporaryTableManager.setLastDataSetTableDescriptor(tableName, td);
+		return td;
+	}
+
+	protected void recordTemporaryTable(String tableName, IDataSource dataSource) {
+		String attributeName = TemporaryTableRecorder.class.getName();
+		TemporaryTableRecorder recorder = (TemporaryTableRecorder) this
+				.getHttpSession().getAttribute(attributeName);
+		if (recorder == null) {
+			recorder = new TemporaryTableRecorder();
+		}
+		recorder.addTemporaryTable(new TemporaryTable(tableName, dataSource));
+		this.getHttpSession().setAttribute(attributeName, recorder);
+	}
 
 }

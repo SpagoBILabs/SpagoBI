@@ -942,6 +942,11 @@ Sbi.locale.ln['sbi.worksheet.worksheeteditoriframepanelext3.toolbar.saveas']='Sa
 Sbi.locale.ln['sbi.worksheet.worksheeteditoriframepanelext3.toolbar.export']='Esporta in uno dei formati disponibili ...';
 
 //===================================================================
+//Sbi.execution.toolbar.SaveDatasetWindow : AD-HOC REPORTING 
+//===================================================================
+Sbi.locale.ln["sbi.execution.toolbar.savedatasetwindow.title"]="Riempi il form sottostante e clicca sul pulsante Salva";
+
+//===================================================================
 //ERRORS 
 //===================================================================
 			
