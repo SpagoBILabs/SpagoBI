@@ -7,6 +7,7 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
 		fieldsStep3: null,
 		categoriesStore: null,
 		height: 440,
+		datasetGenericPropertiesStore: null,
 		datasetPropertiesStore: null,
 		datasetValuesStore: null,
 		scopeStore: null,
@@ -119,6 +120,7 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
 		//metadata tab
 		var config = {};
 		config.meta = this.record.meta;
+		config.datasetGenericPropertiesStore = this.datasetGenericPropertiesStore;
 		config.datasetPropertiesStore = this.datasetPropertiesStore;
 		config.datasetValuesStore = this.datasetValuesStore;
 		config.isOwner = this.isOwner;

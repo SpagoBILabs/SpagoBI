@@ -176,9 +176,9 @@
 <DOMAIN valueCd="Month name" valueNm="Month name" domainCd="DS_META_VALUE" domainNm="Data Set Metadata Value" valueDs="Data Set Metadata Value"/>
 <DOMAIN valueCd="Day num" valueNm="Day num" domainCd="DS_META_VALUE" domainNm="Data Set Metadata Value" valueDs="Data Set Metadata Value"/>
 
-
-
 <DOMAIN valueCd="FILE" valueNm="FILE" domainCd="LAYER_TYPE" domainNm="Layer Type" valueDs="Layer Type"/>
 <DOMAIN valueCd="WFS" valueNm="WFS" domainCd="LAYER_TYPE" domainNm="Layer Type" valueDs="Layer Type"/>
+
+<DOMAIN valueCd="licence" valueNm="licence" domainCd="DS_GEN_META_PROPERTY" domainNm="Data Set General Metadata Property" valueDs="Data Set General Metadata Property"/>
 
 </DOMAINS>

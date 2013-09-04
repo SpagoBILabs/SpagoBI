@@ -101,6 +101,7 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 		this.store.load({});
 		
 		this.categoriesStore = this.createCategoriesStore();
+		this.datasetGenericPropertiesStore = this.createDatasetGenericPropertiesStore();
 		this.datasetPropertiesStore = this.createDatasetMetadataPropertiesStore();
 		this.datasetValuesStore = this.createDatasetMetadataValuesStore();
 
@@ -243,6 +244,28 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
     	return datasetPropertiesStore;
 	}
 	
+	, createDatasetGenericPropertiesStore: function(){
+		Ext.define("DatasetMetadataGenericPropertiesModel", {
+    		extend: 'Ext.data.Model',
+            fields: ["VALUE_NM","VALUE_DS","VALUE_ID"]
+    	});
+    	
+    	var datasetGenericPropertiesStore=  Ext.create('Ext.data.Store',{
+    		model: "DatasetMetadataGenericPropertiesModel",
+    		proxy: {
+    			type: 'ajax',
+    			extraParams : {DOMAIN_TYPE:"DS_GEN_META_PROPERTY"},
+    			url:  this.services['getCategories'],
+    			reader: {
+    				type:"json"
+    			}
+    		}
+    	});
+    	datasetGenericPropertiesStore.load();
+    	
+    	return datasetGenericPropertiesStore;
+	}
+	
 	, createDatasetMetadataValuesStore: function(){
 		Ext.define("DatasetMetadataValuesModel", {
     		extend: 'Ext.data.Model',
@@ -280,6 +303,7 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 	addNewDataset : function() {		 
 		var config =  {};
 		config.categoriesStore = this.categoriesStore;
+		config.datasetGenericPropertiesStore = this.datasetGenericPropertiesStore;
 		config.datasetPropertiesStore = this.datasetPropertiesStore;
 		config.datasetValuesStore = this.datasetValuesStore;
 		config.scopeStore = this.scopeStore;
@@ -296,6 +320,7 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 		if (rec != undefined){
 			var config =  {};
 			config.categoriesStore = this.categoriesStore;
+			config.datasetGenericPropertiesStore = this.datasetGenericPropertiesStore;
 			config.datasetPropertiesStore = this.datasetPropertiesStore;
 			config.datasetValuesStore = this.datasetValuesStore;
 			config.scopeStore = this.scopeStore;
