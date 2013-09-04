@@ -755,7 +755,12 @@ public class ObjectsAccessVerifier {
 				roleName = (String) iterRoles.next();
 				Role role = roleDAO.loadByName(roleName);
 				// if the role is DEV_ROLE role type and has development permission on folder, the user is able to develop in folder
-				if (role.getRoleTypeCD().equals("DEV_ROLE") && devRoleNames.contains(roleName)) {
+				if (
+						(role.getRoleTypeCD().equals("DEV_ROLE") || role.getRoleTypeCD().equals("ADMIN"))
+						
+						&& devRoleNames.contains(roleName)
+						
+						) {
 					toReturn = true;
 				}
 			}
