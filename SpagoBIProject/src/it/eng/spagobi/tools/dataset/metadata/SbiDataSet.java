@@ -55,10 +55,6 @@ public class SbiDataSet extends SbiHibernateModel {
 	private boolean persisted = false;
 	private String persistTableName = null;
 	private SbiDataSource dataSourcePersist;
-
-	private boolean flatDataset = false;
-	private String flatTableName = null;
-	private SbiDataSource dataSourceFlat;
 	
 	private String owner=null;
 	private boolean publicDS = false;
@@ -356,48 +352,6 @@ public class SbiDataSet extends SbiHibernateModel {
 	 */
 	public void setDataSourcePersist(SbiDataSource dataSourcePersist) {
 		this.dataSourcePersist = dataSourcePersist;
-	}
-
-	/**
-	 * @return the flatDataset
-	 */
-	public boolean isFlatDataset() {
-		return flatDataset;
-	}
-
-	/**
-	 * @param flatDataset the flatDataset to set
-	 */
-	public void setFlatDataset(boolean flatDataset) {
-		this.flatDataset = flatDataset;
-	}
-
-	/**
-	 * @return the flatTableName
-	 */
-	public String getFlatTableName() {
-		return flatTableName;
-	}
-
-	/**
-	 * @param flatTableName the flatTableName to set
-	 */
-	public void setFlatTableName(String flatTableName) {
-		this.flatTableName = flatTableName;
-	}
-
-	/**
-	 * @return the dataSourceFlat
-	 */
-	public SbiDataSource getDataSourceFlat() {
-		return dataSourceFlat;
-	}
-
-	/**
-	 * @param dataSourceFlat the dataSourceFlat to set
-	 */
-	public void setDataSourceFlat(SbiDataSource dataSourceFlat) {
-		this.dataSourceFlat = dataSourceFlat;
 	}
 
 	/**

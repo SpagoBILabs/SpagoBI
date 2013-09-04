@@ -44,7 +44,6 @@ import it.eng.spagobi.tools.dataset.validation.GeoDatasetValidatorFactory;
 import it.eng.spagobi.tools.dataset.validation.HierarchyLevel;
 import it.eng.spagobi.tools.dataset.validation.IDatasetValidator;
 import it.eng.spagobi.tools.dataset.validation.IDatasetValidatorFactory;
-import it.eng.spagobi.tools.dataset.validation.NumericColumnValidator;
 import it.eng.spagobi.tools.dataset.validation.ValidationErrors;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
@@ -693,11 +692,6 @@ public class SelfServiceDataSetCRUD {
 			//set persist values
 			toReturn.setPersisted(dataSet.isPersisted());
 			toReturn.setDataSourcePersist(dataSet.getDataSourcePersist());
-			toReturn.setFlatDataset(dataSet.isFlatDataset());
-			toReturn.setDataSourceFlat(dataSet.getDataSourceFlat());
-			toReturn.setFlatTableName(dataSet.getFlatTableName());
-			
-
 		}
 		
 		if (id == -1){

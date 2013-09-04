@@ -99,10 +99,6 @@ public class MeasureCatalogueSearchManager {
         		if(dataSetLabel.getConfiguration()!=null && (measureDataSet.getConfiguration()==null || measureDataSet.getConfiguration().equals( dataSetLabel.getConfiguration()))){
         			continue;
         		}
-
-        		if(dataSetLabel.getDataSourceFlat()!=null && (measureDataSet.getDataSourceFlat()==null || measureDataSet.getDataSourceFlat().equals( dataSetLabel.getDataSourceFlat()))){
-        			continue;
-        		}
         		
         		if(dataSetLabel.getDataSourcePersist()!=null && (measureDataSet.getDataSourcePersist()==null || measureDataSet.getDataSourcePersist().equals( dataSetLabel.getDataSourcePersist()))){
         			continue;

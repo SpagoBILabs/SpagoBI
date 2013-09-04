@@ -95,11 +95,7 @@ public static String DS_TYPE = "SbiQbeDataSet";
 			IDataSource dataSourcePersist = DataSourceFactory.getDataSource( dataSetConfig.getDataSourcePersist() ) ;
 			this.setDataSourcePersist(dataSourcePersist);
 		}
-		
-		if (dataSetConfig.getDataSourceFlat() != null) {
-			IDataSource dataSourceFlat = DataSourceFactory.getDataSource( dataSetConfig.getDataSourceFlat() ) ;
-			this.setDataSourceFlat(dataSourceFlat);
-		}
+
 	}
     
     public QbeDataSet(AbstractQbeDataSet ds) {
@@ -125,9 +121,6 @@ public static String DS_TYPE = "SbiQbeDataSet";
     		((AbstractDataSet)ds).setPersisted(persisted);
     		((AbstractDataSet)ds).setPersistTableName(persistTableName);
     		ds.setDataSourcePersist(getDataSourcePersist());
-    		ds.setFlatDataset(flatDataset);
-    		ds.setFlatTableName(flatTableName);
-    		ds.setDataSourceFlat(getDataSourceFlat());
     	}
     }
     
@@ -215,10 +208,6 @@ public static String DS_TYPE = "SbiQbeDataSet";
 		
 		if (getDataSourcePersist() != null) {
 			sbd.setDataSourcePersist(getDataSourcePersist().toSpagoBiDataSource());
-		}
-		
-		if (getDataSourceFlat() != null) {
-			sbd.setDataSourceFlat(getDataSourceFlat().toSpagoBiDataSource());
 		}
 		
 		/* next informations are already loaded in method super.toSpagoBiDataSet() through the table field configuration 
@@ -403,7 +392,6 @@ public static String DS_TYPE = "SbiQbeDataSet";
 		return ((AbstractQbeDataSet)ds).getDomainValues(fieldName, start, limit, filter);
 	}
 	
-	@Override
 	public String getSignature() {
 		init();
 		return ((AbstractQbeDataSet)ds).getSignature();

@@ -88,12 +88,8 @@ public abstract class AbstractDataSet implements IDataSet {
     protected boolean persisted;
     protected IDataSource dataSourcePersist;
     protected String persistTableName;	
-    protected boolean flatDataset;
-    protected IDataSource dataSourceFlat;
-    protected String flatTableName;	
     protected String configuration;
     protected List noActiveVersions;
-    private IDataSource dataSourceForReading;
     
     protected String owner;
     protected boolean isPublic;
@@ -122,13 +118,8 @@ public abstract class AbstractDataSet implements IDataSet {
 		setPivotColumnValue(dataSet.getPivotColumnValue());
 		setNumRows(dataSet.isNumRows());
 		setDsMetadata(dataSet.getDsMetadata());
-		setFlatDataset(dataSet.isFlatDataset());
 		setPersisted(dataSet.isPersisted());
 		setPersistTableName(dataSet.getPersistTableName());
-		setFlatTableName(dataSet.getFlatTableName());
-		if (dataSet.getDataSourceFlat() != null) {
-			setDataSourceFlat(DataSourceFactory.getDataSource(dataSet.getDataSourceFlat()));
-		}
 		if (dataSet.getDataSourcePersist() != null) {
 			setDataSourcePersist(DataSourceFactory.getDataSource(dataSet.getDataSourcePersist()));
 		}
@@ -162,11 +153,6 @@ public abstract class AbstractDataSet implements IDataSet {
 		sbd.setNumRows(isNumRows());
 		sbd.setPersisted(isPersisted());
 		sbd.setPersistTableName(getPersistTableName());
-		sbd.setFlatTableName(getFlatTableName());
-		sbd.setFlatDataset(isFlatDataset());
-		if (this.getDataSourceFlat() != null) {
-			sbd.setDataSourceFlat(this.getDataSourceFlat().toSpagoBiDataSource());
-		}
 		if (this.getDataSourcePersist() != null) {
 			sbd.setDataSourcePersist(this.getDataSourcePersist().toSpagoBiDataSource());
 		}
@@ -463,47 +449,25 @@ public abstract class AbstractDataSet implements IDataSet {
 	public void setDataSourcePersist(IDataSource dataSourcePersist) {
 		this.dataSourcePersist = dataSourcePersist;
 	}
-
 	
 	/**
 	 * @return the flatDataset
 	 */
 	public boolean isFlatDataset() {
-		return flatDataset;
+		return this instanceof FlatDataSet;
 	}
-
-	/**
-	 * @param flatDataset the flatDataset to set
-	 */
-	public void setFlatDataset(boolean flatDataset) {
-		this.flatDataset = flatDataset;
-	}
-
-	/**
-	 * @return the dataSourceFlatId
-	 */
-	public IDataSource getDataSourceFlat() {
-		return dataSourceFlat;
-	}
-
-	public void setDataSourceFlat(IDataSource dataSourceFlat) {
-		this.dataSourceFlat = dataSourceFlat;
-	}
-
+	
 	/**
 	 * @return the flatTableName
 	 */
 	public String getFlatTableName() {
-		return flatTableName;
+		if (!this.isFlatDataset()) {
+			throw new SpagoBIRuntimeException("This dataset is not a flat dataset!!!");
+		}
+		FlatDataSet thisDataSet = (FlatDataSet) this;
+		return thisDataSet.getTableName();
 	}
-
-	/**
-	 * @param flatTableName the flatTableName to set
-	 */
-	public void setFlatTableName(String flatTableName) {
-		this.flatTableName = flatTableName;
-	}
-
+	
 	
 	/**
 	 * @return the persistTableName
@@ -616,7 +580,7 @@ public abstract class AbstractDataSet implements IDataSet {
 		throw new RuntimeException("Unsupported method");
 	}
 	
-	public String getPeristedTableName() {
+	public String getTableNameForReading() {
 		if (isPersisted()) {
 			return getPersistTableName();
 		} else if (isFlatDataset()) {
@@ -735,7 +699,7 @@ public abstract class AbstractDataSet implements IDataSet {
 		if (isPersisted()) {
 			return getDataSourcePersist();
 		} else if (isFlatDataset()) {
-			return getDataSourceFlat();
+			return getDataSource();
 		} else {
 			return null;
 		}

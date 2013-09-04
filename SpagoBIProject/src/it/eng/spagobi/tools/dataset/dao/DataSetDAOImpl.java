@@ -130,20 +130,8 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				SbiDataSource hibDataSourcePersist = (SbiDataSource) criteria.uniqueResult();
 				hibDataSet.setDataSourcePersist(hibDataSourcePersist);
 			}
-			
 			hibDataSet.setPersisted(dataSet.isPersisted());
 			hibDataSet.setPersistTableName(dataSet.getPersistTableName());
-			//manage of flat fields
-			hibDataSet.setFlatDataset(dataSet.isFlatDataset());
-			if (dataSet.getDataSourceFlat() != null){
-				Integer dataSourceFlat = dataSet.getDataSourceFlat().getDsId();
-				Criterion labelCriterrion = Expression.eq("dsId", dataSourceFlat);
-				Criteria criteria = session.createCriteria(SbiDataSource.class);
-				criteria.add(labelCriterrion);	
-				SbiDataSource hibDataSourceFlat = (SbiDataSource) criteria.uniqueResult();
-				hibDataSet.setDataSourceFlat(hibDataSourceFlat);
-			}
-			hibDataSet.setFlatTableName(dataSet.getFlatTableName());
 
 			hibDataSet.setCategory(category);
 			hibDataSet.setParameters(dataSet.getParameters());
@@ -1344,18 +1332,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				}
 				hibDataSet.setPersisted(dataSet.isPersisted());
 				hibDataSet.setPersistTableName(dataSet.getPersistTableName());
-				//manage of flat fields
-				hibDataSet.setFlatDataset(dataSet.isFlatDataset());
-				if (dataSet.getDataSourceFlat() != null){
-					Integer dataSourceFlat = dataSet.getDataSourceFlat().getDsId();
-					Criterion labelCriterrion = Expression.eq("id", dataSourceFlat);
-					Criteria criteria = session.createCriteria(SbiDataSource.class);
-					criteria.add(labelCriterrion);	
-					SbiDataSource hibDataSourceFlat = (SbiDataSource) criteria.uniqueResult();
-					hibDataSet.setDataSourceFlat(hibDataSourceFlat);
-				}
-				
-				hibDataSet.setFlatTableName(dataSet.getFlatTableName());			
+		
 				hibDataSet.setLabel(dataSet.getLabel());
 				hibDataSet.setDescription(dataSet.getDescription());
 				hibDataSet.setName(dataSet.getName());	

@@ -29,9 +29,6 @@
         <many-to-one name="dataSourcePersist" class="it.eng.spagobi.tools.datasource.metadata.SbiDataSource">
             <column name="DATA_SOURCE_PERSIST_ID" not-null="false"/>
         </many-to-one>
-        <many-to-one name="dataSourceFlat" class="it.eng.spagobi.tools.datasource.metadata.SbiDataSource">
-            <column name="DATA_SOURCE_FLAT_ID" not-null="false"/>
-        </many-to-one>
          <many-to-one name="transformer" class="it.eng.spagobi.commons.metadata.SbiDomains">
             <column name="TRANSFORMER_ID" not-null="false"/>
         </many-to-one>
@@ -71,14 +68,8 @@
          <property name="persisted" type="boolean">
             <column name="IS_PERSISTED" />
         </property>
-         <property name="flatDataset" type="boolean">
-            <column name="IS_FLAT_DATASET" />
-        </property>
         <property name="persistTableName" type="string">
             <column name="PERSIST_TABLE_NAME" length="50" not-null="false" />
-        </property>
-        <property name="flatTableName" type="string">
-            <column name="FLAT_TABLE_NAME" length="50" not-null="false" />
         </property>
          <property name="configuration" type="string">
             <column name="CONFIGURATION" />

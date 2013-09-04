@@ -43,7 +43,7 @@ public class HiveQLDataSet extends AbstractQbeDataSet {
 		if (persisted) {
 			dataset = new JDBCDataSet();
 			dataset.setDataSource(getDataSourceForReading());
-			dataset.setQuery("select * from " + getPeristedTableName());
+			dataset.setQuery("select * from " + getTableNameForReading());
 			dataset.loadData(offset, fetchSize, maxResults);
 		} else {
 			DataSetDataSource ds = (DataSetDataSource) statement

@@ -61,6 +61,7 @@ public class DataSetConstants {
 	public static final String JAVA_CLASS = "Java Class";
 	public static final String WEB_SERVICE = "Web Service";
 	public static final String QBE = "Qbe";
+	public static final String FLAT = "Flat";
 	
 	public static final String TRASFORMER_TYPE_CD = "trasfTypeCd";
 	public static final String PIVOT_COL_NAME = "pivotColName";
@@ -77,6 +78,7 @@ public class DataSetConstants {
 	public static final String DS_SCRIPT = "SbiScriptDataSet";
 	public static final String DS_QBE = "SbiQbeDataSet";
 	public static final String DS_CUSTOM = "SbiCustomDataSet";
+	public static final String DS_FLAT = "SbiFlatDataSet";
 	
 	public static final String QBE_DATA_SOURCE = "qbeDataSource";
 	public static final String QBE_DATAMARTS = "qbeDatamarts";
@@ -85,7 +87,6 @@ public class DataSetConstants {
 	
 	public static final String IS_PERSISTED = "isPersisted";
 	public static final String DATA_SOURCE_PERSIST = "dataSourcePersist";
-	public static final String IS_FLAT_DATASET = "isFlatDataset";
 	public static final String FLAT_TABLE_NAME = "flatTableName";
 	public static final String DATA_SOURCE_FLAT = "dataSourceFlat";
 	public static final String IS_PUBLIC = "isPublic";

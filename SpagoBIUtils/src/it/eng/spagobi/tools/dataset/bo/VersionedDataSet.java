@@ -307,22 +307,9 @@ public class VersionedDataSet implements IDataSet {
 	public boolean isFlatDataset(){
 		return wrappedDataset.isFlatDataset();
 	}
-	public void setFlatDataset(boolean flatDataset){
-		wrappedDataset.setFlatDataset(flatDataset);
-	}
-	
-	public IDataSource getDataSourceFlat(){
-		return wrappedDataset.getDataSourceFlat();
-	}
-	public void setDataSourceFlat(IDataSource dataSourceFlat){
-		wrappedDataset.setDataSourceFlat(dataSourceFlat);
-	}
 	
 	public String getFlatTableName(){
 		return wrappedDataset.getFlatTableName();
-	}
-	public void setFlatTableName(String flatTableName){
-		wrappedDataset.setFlatTableName(flatTableName);
 	}
 	
 	public boolean isPublic(){
@@ -416,8 +403,8 @@ public class VersionedDataSet implements IDataSet {
 		return wrappedDataset.getDataSource();
 	}
 
-	public String getPeristedTableName() {
-		return wrappedDataset.getPeristedTableName();
+	public String getTableNameForReading() {
+		return wrappedDataset.getTableNameForReading();
 	}
 
 	public IDataSource getDataSourceForReading() {

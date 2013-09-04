@@ -9,6 +9,7 @@ import it.eng.qbe.dataset.QbeDataSet;
 import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.tools.dataset.bo.CustomDataSet;
 import it.eng.spagobi.tools.dataset.bo.FileDataSet;
+import it.eng.spagobi.tools.dataset.bo.FlatDataSet;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
 import it.eng.spagobi.tools.dataset.bo.JavaClassDataSet;
@@ -40,6 +41,7 @@ public class DataSetFactory {
 	public static final String WS_DS_TYPE = "Web Service";
 	public static final String QBE_DS_TYPE = "Qbe";
 	public static final String CUSTOM_DS_TYPE = "Custom";
+	public static final String FLAT_DS_TYPE = "Flat";
 	
 	static private Logger logger = Logger.getLogger(DataSetFactory.class);
 	
@@ -105,6 +107,10 @@ public class DataSetFactory {
 		if(dataSet instanceof CustomDataSet){			
 			toReturn.setDsType(CUSTOM_DS_TYPE);
 		}
+		
+		if(dataSet instanceof FlatDataSet){			
+			toReturn.setDsType(FLAT_DS_TYPE);
+		}
 
 		toReturn.setId(dataSet.getId());
 		toReturn.setName(dataSet.getName());
@@ -124,9 +130,6 @@ public class DataSetFactory {
 		toReturn.setPersisted(dataSet.isPersisted());
 		toReturn.setDataSourcePersist(dataSet.getDataSourcePersist());
 		toReturn.setPersistTableName(dataSet.getPersistTableName());
-		toReturn.setFlatDataset(dataSet.isFlatDataset());
-		toReturn.setDataSourceFlat(dataSet.getDataSourceFlat());
-		toReturn.setFlatTableName(dataSet.getFlatTableName());
 
 		return toReturn;
 	}
@@ -203,6 +206,19 @@ public class DataSetFactory {
 				ds.setDsType(QBE_DS_TYPE);
 				
 			}
+			
+			if(sbiDataSet.getType().equalsIgnoreCase(DataSetConstants.DS_FLAT)) { 
+				ds = new FlatDataSet();
+				ds.setConfiguration(sbiDataSet.getConfiguration());
+				DataSourceDAOHibImpl dataSourceDao = new DataSourceDAOHibImpl();
+				IDataSource dataSource = dataSourceDao
+						.loadDataSourceByLabel(jsonConf
+								.getString(DataSetConstants.DATA_SOURCE));
+				((FlatDataSet) ds).setDataSource(dataSource);
+				((FlatDataSet) ds).setTableName(jsonConf.getString(DataSetConstants.FLAT_TABLE_NAME));
+				ds.setDsType(FLAT_DS_TYPE);
+			}
+			
 		}catch (Exception e){
 			logger.error("Error while defining dataset configuration.  Error: " + e.getMessage());
 		}
@@ -237,9 +253,6 @@ public class DataSetFactory {
 			ds.setPersisted(sbiDataSet.isPersisted());
 			ds.setDataSourcePersist((sbiDataSet.getDataSourcePersist()==null)?null:DataSourceDAOHibImpl.toDataSource(sbiDataSet.getDataSourcePersist()));
 			ds.setPersistTableName(sbiDataSet.getPersistTableName());
-			ds.setFlatDataset(sbiDataSet.isFlatDataset());
-			ds.setDataSourceFlat((sbiDataSet.getDataSourceFlat()==null)?null:DataSourceDAOHibImpl.toDataSource(sbiDataSet.getDataSourceFlat()));
-			ds.setFlatTableName(sbiDataSet.getFlatTableName());
 			ds.setOwner(sbiDataSet.getOwner());
 			ds.setPublic(sbiDataSet.isPublicDS());
 			ds.setUserIn(sbiDataSet.getCommonInfo().getUserIn());

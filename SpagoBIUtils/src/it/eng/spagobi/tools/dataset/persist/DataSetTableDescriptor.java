@@ -62,7 +62,7 @@ public class DataSetTableDescriptor implements IDataSetTableDescriptor {
 				field2ClassMap.put(fieldMetadata.getName(), fieldMetadata.getType());
 			}
 		}
-		tableName = dataSet.getPeristedTableName();
+		tableName = dataSet.getTableNameForReading();
 	}
 	
 	public void addField(String fieldName, String columnName, Class type) {
