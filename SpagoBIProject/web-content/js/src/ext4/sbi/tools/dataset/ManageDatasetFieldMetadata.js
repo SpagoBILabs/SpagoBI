@@ -263,6 +263,22 @@ Ext.define('Sbi.tools.dataset.ManageDatasetFieldMetadata', {
 		
 		//Dataset Metadata Grid ---------------------------
 		
+		this.comboGenericProperties = new Ext.form.ComboBox({
+			name : 'comboGenericProperties',
+			store: config.datasetGenericPropertiesStore,
+			//width : 150,
+			displayField : 'VALUE_NM', 
+			valueField : 'VALUE_NM', 
+			typeAhead : true, forceSelection : false,
+			mode : 'local',
+			triggerAction : 'all',
+			selectOnFocus : true, 
+			editable : true,
+			allowBlank : false, 
+			validationEvent : false,	
+			queryMode: 'local'
+			});	
+		
 		var datasetGridColumnsDefinition =  [
 		                            {
 				             	    	header: 'Attribute', 
@@ -270,7 +286,8 @@ Ext.define('Sbi.tools.dataset.ManageDatasetFieldMetadata', {
 				            			sortable: true, 
 				             			id:'pnameDs',
 				             			dataIndex:'pname',
-				             			editor: this.attributeTextFieldEditor
+				             			//editor: this.attributeTextFieldEditor
+				             			editor: this.comboGenericProperties
 				             	    },{
 				             	    	header: 'Value', 
 				             	    	width: '49%', 

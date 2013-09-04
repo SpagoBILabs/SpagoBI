@@ -14,6 +14,9 @@ package it.eng.spagobi.tools.dataset.service.rest;
 import it.eng.spago.base.SourceBeanException;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
+import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
+import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IDomainDAO;
@@ -22,7 +25,12 @@ import it.eng.spagobi.commons.serializer.SerializationException;
 import it.eng.spagobi.commons.serializer.SerializerFactory;
 import it.eng.spagobi.commons.utilities.AuditLogUtilities;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
+import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.container.ObjectUtils;
+import it.eng.spagobi.profiling.bean.SbiAttribute;
+import it.eng.spagobi.profiling.bean.SbiUser;
+import it.eng.spagobi.profiling.bean.SbiUserAttributes;
+import it.eng.spagobi.profiling.dao.ISbiUserDAO;
 import it.eng.spagobi.rest.annotations.ToValidate;
 import it.eng.spagobi.services.exceptions.ExceptionUtilities;
 import it.eng.spagobi.tools.dataset.bo.FileDataSet;
@@ -52,11 +60,26 @@ import it.eng.spagobi.utilities.json.JSONUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.security.Security;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
 
+import javax.mail.Authenticator;
+import javax.mail.Message;
+import javax.mail.Multipart;
+import javax.mail.PasswordAuthentication;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
+import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -88,6 +111,7 @@ public class SelfServiceDataSetCRUD {
 	static private String canNotFillResponseError = "error.mesage.description.generic.can.not.responce";
 	static private String saveDuplicatedDSError = "error.mesage.description.data.set.saving.duplicated";
 	static private String parsingDSError = "error.mesage.description.data.set.parsing.error";
+	
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
@@ -261,6 +285,15 @@ public class SelfServiceDataSetCRUD {
 			} else {				
 				//update ds
 				dao.modifyDataSet(dsNew);
+				boolean licenceChanged = checkLicenceChange(ds,dsNew);
+				if (licenceChanged){
+					//notify that license is changed
+					try{
+						notifyLicenceChange(dsNew);
+					} catch(Exception e){
+						logger.error("Error notifying map authors about licence change", e);
+					}
+				}
 				updateAudit(req, profile, "DATA_SET.MODIFY", logParam, "OK");
 			}  
 			
@@ -289,6 +322,230 @@ public class SelfServiceDataSetCRUD {
 				throw new SpagoBIRuntimeException(
 						"Cannot fill response container", e);
 			}
+		}
+	}
+	
+	private boolean checkLicenceChange(IDataSet currentDataset, IDataSet updatedDataset) throws Exception{
+		
+		if ((currentDataset != null) && (updatedDataset != null)){
+			if (currentDataset instanceof VersionedDataSet ){
+				currentDataset = ((VersionedDataSet) currentDataset).getWrappedDataset();
+			}
+			
+			String currentDatasetMetadata = currentDataset.getDsMetadata();
+			String updatedDatasetMetadata = updatedDataset.getDsMetadata();
+			
+			DatasetMetadataParser dsp = new DatasetMetadataParser();
+			IMetaData currentMetadata = dsp.xmlToMetadata(currentDatasetMetadata);
+			IMetaData updatedMetadata = dsp.xmlToMetadata(updatedDatasetMetadata);
+			String currentLicence = (String)currentMetadata.getProperty("licence");
+			String updatedLicence = (String)updatedMetadata.getProperty("licence");
+			if (currentLicence != null){
+				if (updatedLicence != null){
+					//check if the licence is changed
+					if (!currentLicence.equals(updatedLicence)){
+						return true;
+					} else {
+						return false;
+					}
+				}
+			} else {
+				//no currentLicence, then check if licence is set for the first time
+				if ( (updatedLicence != null) && (!updatedLicence.isEmpty()) ){
+					return true;
+				}
+			}
+
+		}
+		
+		return false;
+		
+
+		
+		
+	}
+	
+	/*
+	 * This method notify authors of maps based on the passed dataset that the licence is changed
+	 */
+	private void notifyLicenceChange(IDataSet dataset) throws Exception{
+		//We have to get all the maps documents based on this dataset
+		int datasetId = dataset.getId();
+		
+		IBIObjectDAO biObjectDAO = DAOFactory.getBIObjectDAO();
+		ISbiUserDAO  biUserDAO = DAOFactory.getSbiUserDAO();
+
+		//get all the maps documents
+		List mapsDocuments = biObjectDAO.loadBIObjects("MAP", null, null);
+		//Set of email addresses to notify
+		Set<String> emailsAddressOfAuthors = new HashSet<String>();
+		
+		Iterator iterator = mapsDocuments.iterator();
+		while (iterator.hasNext()) {
+			Object document = iterator.next();
+			if (document instanceof BIObject){
+				BIObject sbiDocument = (BIObject)document;
+				//check if the document is using this dataset
+				if (sbiDocument.getDataSetId() == datasetId) {
+					String documentCreationUser = sbiDocument.getCreationUser();
+					SbiUser sbiUser = biUserDAO.loadSbiUserByUserId(documentCreationUser);
+					ArrayList<SbiUserAttributes> userAttributes = biUserDAO.loadSbiUserAttributesById(sbiUser.getId());
+					for (SbiUserAttributes userAttribute : userAttributes){
+						SbiAttribute sbiAttribute = userAttribute.getSbiAttribute();
+						String attributeName = sbiAttribute.getAttributeName();
+						if (attributeName.equalsIgnoreCase("email")){
+							//get email address of creation user
+							String emailAddressDocumentCreationUser = userAttribute.getAttributeValue();
+							if (!emailAddressDocumentCreationUser.isEmpty()){
+								emailsAddressOfAuthors.add(emailAddressDocumentCreationUser);
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		if (!emailsAddressOfAuthors.isEmpty()){
+	    	String[] recipients = emailsAddressOfAuthors.toArray(new String[0]);
+	    	
+	    	String subject = "The dataset "+dataset.getLabel()+" has changed is licence";
+	    	String emailContent = "The dataset "+dataset.getLabel()+" that you are using in a Map, has changed is licence";
+	    	
+	    	//send mail
+	    	sendMail(recipients, subject, emailContent);
+	    	logger.debug("Mail sent to Map Authors about licence change");
+		}
+		
+	}
+	
+	
+	private void sendMail(String[] emailAddresses, String subject, String emailContent) throws Exception{
+		
+	    final String DEFAULT_SSL_FACTORY = "javax.net.ssl.SSLSocketFactory";
+	    final String CUSTOM_SSL_FACTORY = "it.eng.spagobi.commons.services.DummySSLSocketFactory";
+	    
+		String smtphost = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.user.smtphost");
+	    String smtpport = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.user.smtpport");
+	    String smtpssl = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.user.useSSL"); 
+	    logger.debug(smtphost+" "+smtpport+" use SSL: "+smtpssl);
+	    
+	    //Custom Trusted Store Certificate Options
+	    String trustedStorePath = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.trustedStore.file"); 
+	    String trustedStorePassword = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.trustedStore.password"); 
+	    
+	    int smptPort=25;
+	    
+		if( (smtphost==null) || smtphost.trim().equals(""))
+			throw new Exception("Smtp host not configured");
+		if( (smtpport==null) || smtpport.trim().equals("")){
+			throw new Exception("Smtp host not configured");
+		}else{
+			smptPort=Integer.parseInt(smtpport);
+		}
+		
+		String from = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.user.from");
+		if( (from==null) || from.trim().equals(""))
+			from = "spagobi@eng.it";
+		String user = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.user.user");
+		if( (user==null) || user.trim().equals("")){
+			logger.debug("Smtp user not configured");	
+			user=null;
+		}
+		String pass = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.user.password");
+		if( (pass==null) || pass.trim().equals("")){
+		logger.debug("Smtp password not configured");	
+		}
+		
+		//Set the host smtp address
+		Properties props = new Properties();
+		props.put("mail.smtp.host", smtphost);
+		props.put("mail.smtp.port", Integer.toString(smptPort));
+		
+		// open session
+		Session session=null;
+		// create autheticator object
+		Authenticator auth = null;
+		if (user!=null) {
+			auth = new SMTPAuthenticator(user, pass);
+			props.put("mail.smtp.auth", "true");
+	 	    //SSL Connection
+	    	if (smtpssl.equals("true")){
+	            Security.addProvider(new com.sun.net.ssl.internal.ssl.Provider());	            
+			    props.put("mail.smtps.auth", "true");
+		        props.put("mail.smtps.socketFactory.port", Integer.toString(smptPort));
+	            if ((!StringUtilities.isEmpty(trustedStorePath)) ) {            	
+					/* Dynamic configuration of trustedstore for CA
+					 * Using Custom SSLSocketFactory to inject certificates directly from specified files
+					 */
+	            	
+			        props.put("mail.smtps.socketFactory.class", CUSTOM_SSL_FACTORY);
+
+	            } else {
+	            
+			        props.put("mail.smtps.socketFactory.class", DEFAULT_SSL_FACTORY);
+	            }
+		        props.put("mail.smtp.socketFactory.fallback", "false"); 
+	    	}
+			
+			session = Session.getInstance(props, auth);
+			logger.info("Session.getInstance(props, auth)");
+			
+		}else{
+			session = Session.getInstance(props);
+			logger.info("Session.getInstance(props)");
+		}
+		
+		// create a message
+		Message msg = new MimeMessage(session);
+		// set the from and to address
+		InternetAddress addressFrom = new InternetAddress(from);
+		msg.setFrom(addressFrom);
+		InternetAddress[] addressTo = new InternetAddress[emailAddresses.length];
+		for (int i = 0; i < emailAddresses.length; i++)  {
+			addressTo[i] = new InternetAddress(emailAddresses[i]);
+		}
+		msg.setRecipients(Message.RecipientType.BCC, addressTo);  
+		
+		// Setting the Subject and Content Type
+		msg.setSubject(subject);
+		// create and fill the first message part
+		MimeBodyPart mbp1 = new MimeBodyPart();
+		mbp1.setText(emailContent);
+		// create the Multipart and add its parts to it
+		Multipart mp = new MimeMultipart();
+		mp.addBodyPart(mbp1);
+		// add the Multipart to the message
+		msg.setContent(mp);
+		// send message
+    	if ((smtpssl.equals("true")) && (!StringUtilities.isEmpty(user)) &&  (!StringUtilities.isEmpty(pass))){
+    		//USE SSL Transport comunication with SMTPS
+	    	Transport transport = session.getTransport("smtps");
+	    	transport.connect(smtphost,smptPort,user,pass);
+	    	transport.sendMessage(msg, msg.getAllRecipients());
+	    	transport.close(); 
+    	}
+    	else {
+    		//Use normal SMTP
+	    	Transport.send(msg);
+    	}
+		
+		
+	}
+	
+	
+	private class SMTPAuthenticator extends javax.mail.Authenticator
+	{
+		private String username = "";
+		private String password = "";
+
+		public PasswordAuthentication getPasswordAuthentication()
+		{
+			return new PasswordAuthentication(username, password);
+		}
+
+		public SMTPAuthenticator(String user, String pass) {
+			this.username = user;
+			this.password = pass;
 		}
 	}
 
@@ -879,8 +1136,7 @@ public class SelfServiceDataSetCRUD {
 			dataSet.loadData(start, limit, GeneralUtilities.getDatasetMaxResults());
 			IDataStore dataStore = dataSet.getDataStore();
 			DatasetMetadataParser dsp = new DatasetMetadataParser();
-
-
+			
 			JSONObject metadataObject = new JSONObject();
 			JSONArray columnsMetadataArray = new JSONArray();
 			JSONArray datasetMetadataArray = new JSONArray();
@@ -896,7 +1152,7 @@ public class SelfServiceDataSetCRUD {
 			for(int i=0; i<datasetMetadataArray.length(); i++){
 				JSONObject datasetJsonObject = datasetMetadataArray.getJSONObject(i);
 				String propertyName = datasetJsonObject.getString("pname");
-				String propertyValue = datasetJsonObject.getString("pvalue");
+				String propertyValue = datasetJsonObject.getString("pvalue");				
 				metaData.setProperty(propertyName, propertyValue);
 			}
 			for(int i=0; i<metaData.getFieldCount(); i++){
