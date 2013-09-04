@@ -355,7 +355,7 @@ public abstract class AbstractQbeDataSet extends AbstractDataSet {
 	}
 	
 	private IDataStore getDomainValuesForPersistedOrFlat(String fieldName, Integer start, Integer limit, IDataStoreFilter filter) {
-		StringBuffer buffer = new StringBuffer("Select DISTINCT " + fieldName + " FROM " + getPeristedTableName());
+		StringBuffer buffer = new StringBuffer("Select DISTINCT " + fieldName + " FROM " + getTableNameForReading());
 		manageFilterOnDomainValues(buffer, fieldName, filter);
 		JDBCDataSet dataset = new JDBCDataSet();
 		dataset.setQuery(buffer.toString());

@@ -102,7 +102,7 @@ public class DataSetModelStructureBuilder implements IModelStructureBuilder {
 		
 		// the query name is used when building the SQL statement, because we need to know the name of the actual table that contains the data of the dataset
 		// i.e. we need to know the persistence table name
-		dataMartEntity.getProperties().put("queryName", entity.getPeristedTableName());
+		dataMartEntity.getProperties().put("queryName", entity.getTableNameForReading());
 		
 		propertiesInitializer.addProperties(dataMartEntity);
 		dataMartEntity.getProperties().put(FIELD_TYPE_PROPERTY,"cube");

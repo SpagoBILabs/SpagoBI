@@ -26,6 +26,7 @@ import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
 import it.eng.spagobi.tools.dataset.bo.CustomDataSet;
 import it.eng.spagobi.tools.dataset.bo.DataSetParametersList;
 import it.eng.spagobi.tools.dataset.bo.FileDataSet;
+import it.eng.spagobi.tools.dataset.bo.FlatDataSet;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCDatasetFactory;
@@ -195,7 +196,8 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 						attributesResponseSuccessJSON.put("meta", DataSetJSONSerializer.metadataSerializerChooser(dsSaved.getDsMetadata()));						
 					}					
 				}
-				String operation = (id != null && !id.equals("") && !id.equals("0"))?"DATA_SET.MODIFY":"DATA_SET.ADD";				
+				String operation = (id != null && !id.equals("") && !id.equals("0"))?"DATA_SET.MODIFY":"DATA_SET.ADD";
+				
 				if(ds.isPersisted()){
 				//Manage persistence of dataset if required. On modify it will drop and create the destination table!
 					logger.debug("Start persistence...");
@@ -510,37 +512,11 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 				
 				getPersistenceInfo(ds);
 				
-				getFlatDatasetInfo(ds);
-				
 			} catch (Exception e) {
 				logger.error("Error while getting dataset metadata", e);
 			}
 		}    
 		return ds;
-	}
-
-	private void getFlatDatasetInfo(IDataSet ds) throws EMFUserError {
-		Boolean isFlatDataset = getAttributeAsBoolean(DataSetConstants.IS_FLAT_DATASET);
-		if (isFlatDataset != null) {
-			ds.setFlatDataset(isFlatDataset.booleanValue());
-		}
-		if (isFlatDataset) {
-			String dataSourceFlatLabel = getAttributeAsString(DataSetConstants.DATA_SOURCE_PERSIST);
-			if (dataSourceFlatLabel != null) {
-				IDataSource dataSource = DAOFactory.getDataSourceDAO()
-						.loadDataSourceByLabel(dataSourceFlatLabel);
-				if (dataSource != null) {
-					ds.setDataSourceFlat(dataSource);
-				}
-			}
-			String flatTableName = getAttributeAsString(DataSetConstants.FLAT_TABLE_NAME);
-			if (flatTableName != null) {
-				ds.setFlatTableName(flatTableName);
-			}
-		} else {
-			ds.setDataSourceFlat(null);
-			ds.setFlatTableName("");
-		}
 	}
 
 	private void getPersistenceInfo(IDataSet ds) throws EMFUserError {
@@ -1067,6 +1043,19 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 			qbeDataSet.setDataSource(dataSource);		
 
 		}
+		
+		if (datasetTypeName.equalsIgnoreCase(DataSetConstants.DS_FLAT)) {
+			dataSet = new FlatDataSet();
+			FlatDataSet flatDataSet = (FlatDataSet) dataSet;
+			String tableName = getAttributeAsString(DataSetConstants.FLAT_TABLE_NAME);
+			String dataSourceLabel = getAttributeAsString(DataSetConstants.DATA_SOURCE_FLAT);
+			jsonDsConfig.put(DataSetConstants.FLAT_TABLE_NAME, tableName);
+			jsonDsConfig.put(DataSetConstants.DATA_SOURCE, dataSourceLabel);
+			flatDataSet.setTableName(tableName);
+			IDataSource dataSource = DAOFactory.getDataSourceDAO().loadDataSourceByLabel(dataSourceLabel);
+			flatDataSet.setDataSource(dataSource);
+		}
+		
 		dataSet.setConfiguration(jsonDsConfig.toString());		
 		return dataSet;
 	}

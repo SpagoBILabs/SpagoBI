@@ -130,13 +130,8 @@ public interface IDataSet {
 	void setDataSourcePersist(IDataSource dataSourcePersist);
 	
 	boolean isFlatDataset();
-	void setFlatDataset(boolean flatDataset);
-	
-	IDataSource getDataSourceFlat();
-	void setDataSourceFlat(IDataSource dataSourceFlat);
 	
 	String getFlatTableName();
-	void setFlatTableName(String flatTableName);
 	
 	List getNoActiveVersions();
 	void setNoActiveVersions(List noActiveVersions);
@@ -175,7 +170,7 @@ public interface IDataSet {
 	
 	public IDataSource getDataSource();
 	
-	public String getPeristedTableName();
+	public String getTableNameForReading();
 	
 	public IDataSource getDataSourceForReading();
 	

@@ -11,6 +11,7 @@ import it.eng.spagobi.tools.dataset.common.dataproxy.IDataProxy;
 import it.eng.spagobi.tools.dataset.common.datareader.IDataReader;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.utilities.assertion.UnreachableCodeException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,7 +24,7 @@ import org.apache.log4j.Logger;
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
  */
-public class ConfigurableDataSet extends AbstractDataSet {
+public abstract class ConfigurableDataSet extends AbstractDataSet {
 
 	IDataReader dataReader;
 	IDataProxy dataProxy;
@@ -32,9 +33,6 @@ public class ConfigurableDataSet extends AbstractDataSet {
 	protected boolean abortOnOverflow;	
 	protected Map bindings;
 	private boolean calculateResultNumberOnLoad = true;
-
-
-
 
 	Map<String, Object> userProfileParameters;
 
@@ -76,11 +74,11 @@ public class ConfigurableDataSet extends AbstractDataSet {
 
 	public void loadData(int offset, int fetchSize, int maxResults) {
 		
-		if (persisted) {
+		if (this.isPersisted() || this.isFlatDataset()) {
 			
 			JDBCDataSet dataset = new JDBCDataSet();
 			dataset.setDataSource(getDataSourceForReading());
-			dataset.setQuery("select * from " + getPeristedTableName());
+			dataset.setQuery("select * from " + getTableNameForReading());
 			dataset.loadData(offset, fetchSize, maxResults);
 			dataStore = dataset.getDataStore();
 			
@@ -221,11 +219,6 @@ public class ConfigurableDataSet extends AbstractDataSet {
 
 	}
 
-	public String getSignature() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 	public IDataStore decode(
 			IDataStore datastore) {
 		return datastore;
@@ -238,17 +231,19 @@ public class ConfigurableDataSet extends AbstractDataSet {
 	public void setCalculateResultNumberOnLoad(boolean enabled) {
 		calculateResultNumberOnLoad = enabled;
 	}
+	
+
+	public String getSignature() {
+		throw new UnreachableCodeException("getSignature method not implemented in class " + this.getClass().getName() + "!!!!");
+	}
 
 	public void setDataSource(IDataSource dataSource) {
-		// TODO Auto-generated method stub
-		
+		throw new UnreachableCodeException("setDataSource method not implemented in class " + this.getClass().getName() + "!!!!");
 	}
 
 	public IDataSource getDataSource() {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnreachableCodeException("getDataSource method not implemented in class " + this.getClass().getName() + "!!!!");
 	}
 
-	
 	
 }

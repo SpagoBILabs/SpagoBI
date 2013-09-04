@@ -190,7 +190,6 @@ public abstract class AbstractJDBCDataset extends ConfigurableDataSet {
 	 * plus the datasource signature (i.e. the JNDI url (with eventual schema name) or the JDBC connection string + JDBC user)
 	 * @return the signature of the dataset
 	 */
-	@Override
 	public String getSignature() {
 		logger.debug("IN");
 		String toReturn = null;
@@ -242,7 +241,7 @@ public abstract class AbstractJDBCDataset extends ConfigurableDataSet {
 	
 	private IDataStore getDomainValuesForPersistedOrFlat(String fieldName, Integer start, Integer limit, IDataStoreFilter filter) {
 
-		StringBuffer buffer = new StringBuffer("Select DISTINCT " + fieldName + " FROM " + getPeristedTableName());
+		StringBuffer buffer = new StringBuffer("Select DISTINCT " + fieldName + " FROM " + getTableNameForReading());
 		manageFilterOnDomainValues(buffer, fieldName, filter);
 
 		AbstractJDBCDataset dataset =null;

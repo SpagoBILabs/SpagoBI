@@ -16,8 +16,6 @@ public class SpagoBiDataSet  implements java.io.Serializable {
 
     private it.eng.spagobi.services.datasource.bo.SpagoBiDataSource dataSource;
 
-    private it.eng.spagobi.services.datasource.bo.SpagoBiDataSource dataSourceFlat;
-
     private it.eng.spagobi.services.datasource.bo.SpagoBiDataSource dataSourcePersist;
 
     private java.lang.String description;
@@ -25,8 +23,6 @@ public class SpagoBiDataSet  implements java.io.Serializable {
     private int dsId;
 
     private java.lang.String dsMetadata;
-
-    private boolean flatDataset;
 
     private java.lang.String flatTableName;
 
@@ -62,12 +58,10 @@ public class SpagoBiDataSet  implements java.io.Serializable {
            java.lang.Integer categoryId,
            java.lang.String configuration,
            it.eng.spagobi.services.datasource.bo.SpagoBiDataSource dataSource,
-           it.eng.spagobi.services.datasource.bo.SpagoBiDataSource dataSourceFlat,
            it.eng.spagobi.services.datasource.bo.SpagoBiDataSource dataSourcePersist,
            java.lang.String description,
            int dsId,
            java.lang.String dsMetadata,
-           boolean flatDataset,
            java.lang.String flatTableName,
            java.lang.String label,
            java.lang.String name,
@@ -85,12 +79,10 @@ public class SpagoBiDataSet  implements java.io.Serializable {
            this.categoryId = categoryId;
            this.configuration = configuration;
            this.dataSource = dataSource;
-           this.dataSourceFlat = dataSourceFlat;
            this.dataSourcePersist = dataSourcePersist;
            this.description = description;
            this.dsId = dsId;
            this.dsMetadata = dsMetadata;
-           this.flatDataset = flatDataset;
            this.flatTableName = flatTableName;
            this.label = label;
            this.name = name;
@@ -188,26 +180,6 @@ public class SpagoBiDataSet  implements java.io.Serializable {
 
 
     /**
-     * Gets the dataSourceFlat value for this SpagoBiDataSet.
-     * 
-     * @return dataSourceFlat
-     */
-    public it.eng.spagobi.services.datasource.bo.SpagoBiDataSource getDataSourceFlat() {
-        return dataSourceFlat;
-    }
-
-
-    /**
-     * Sets the dataSourceFlat value for this SpagoBiDataSet.
-     * 
-     * @param dataSourceFlat
-     */
-    public void setDataSourceFlat(it.eng.spagobi.services.datasource.bo.SpagoBiDataSource dataSourceFlat) {
-        this.dataSourceFlat = dataSourceFlat;
-    }
-
-
-    /**
      * Gets the dataSourcePersist value for this SpagoBiDataSet.
      * 
      * @return dataSourcePersist
@@ -284,26 +256,6 @@ public class SpagoBiDataSet  implements java.io.Serializable {
      */
     public void setDsMetadata(java.lang.String dsMetadata) {
         this.dsMetadata = dsMetadata;
-    }
-
-
-    /**
-     * Gets the flatDataset value for this SpagoBiDataSet.
-     * 
-     * @return flatDataset
-     */
-    public boolean isFlatDataset() {
-        return flatDataset;
-    }
-
-
-    /**
-     * Sets the flatDataset value for this SpagoBiDataSet.
-     * 
-     * @param flatDataset
-     */
-    public void setFlatDataset(boolean flatDataset) {
-        this.flatDataset = flatDataset;
     }
 
 
@@ -588,9 +540,6 @@ public class SpagoBiDataSet  implements java.io.Serializable {
             ((this.dataSource==null && other.getDataSource()==null) || 
              (this.dataSource!=null &&
               this.dataSource.equals(other.getDataSource()))) &&
-            ((this.dataSourceFlat==null && other.getDataSourceFlat()==null) || 
-             (this.dataSourceFlat!=null &&
-              this.dataSourceFlat.equals(other.getDataSourceFlat()))) &&
             ((this.dataSourcePersist==null && other.getDataSourcePersist()==null) || 
              (this.dataSourcePersist!=null &&
               this.dataSourcePersist.equals(other.getDataSourcePersist()))) &&
@@ -601,7 +550,6 @@ public class SpagoBiDataSet  implements java.io.Serializable {
             ((this.dsMetadata==null && other.getDsMetadata()==null) || 
              (this.dsMetadata!=null &&
               this.dsMetadata.equals(other.getDsMetadata()))) &&
-            this.flatDataset == other.isFlatDataset() &&
             ((this.flatTableName==null && other.getFlatTableName()==null) || 
              (this.flatTableName!=null &&
               this.flatTableName.equals(other.getFlatTableName()))) &&
@@ -656,9 +604,6 @@ public class SpagoBiDataSet  implements java.io.Serializable {
         if (getDataSource() != null) {
             _hashCode += getDataSource().hashCode();
         }
-        if (getDataSourceFlat() != null) {
-            _hashCode += getDataSourceFlat().hashCode();
-        }
         if (getDataSourcePersist() != null) {
             _hashCode += getDataSourcePersist().hashCode();
         }
@@ -669,7 +614,6 @@ public class SpagoBiDataSet  implements java.io.Serializable {
         if (getDsMetadata() != null) {
             _hashCode += getDsMetadata().hashCode();
         }
-        _hashCode += (isFlatDataset() ? Boolean.TRUE : Boolean.FALSE).hashCode();
         if (getFlatTableName() != null) {
             _hashCode += getFlatTableName().hashCode();
         }
@@ -738,12 +682,6 @@ public class SpagoBiDataSet  implements java.io.Serializable {
         elemField.setNillable(true);
         typeDesc.addFieldDesc(elemField);
         elemField = new org.apache.axis.description.ElementDesc();
-        elemField.setFieldName("dataSourceFlat");
-        elemField.setXmlName(new javax.xml.namespace.QName("", "dataSourceFlat"));
-        elemField.setXmlType(new javax.xml.namespace.QName("http://bo.datasource.services.spagobi.eng.it", "SpagoBiDataSource"));
-        elemField.setNillable(true);
-        typeDesc.addFieldDesc(elemField);
-        elemField = new org.apache.axis.description.ElementDesc();
         elemField.setFieldName("dataSourcePersist");
         elemField.setXmlName(new javax.xml.namespace.QName("", "dataSourcePersist"));
         elemField.setXmlType(new javax.xml.namespace.QName("http://bo.datasource.services.spagobi.eng.it", "SpagoBiDataSource"));
@@ -766,12 +704,6 @@ public class SpagoBiDataSet  implements java.io.Serializable {
         elemField.setXmlName(new javax.xml.namespace.QName("", "dsMetadata"));
         elemField.setXmlType(new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"));
         elemField.setNillable(true);
-        typeDesc.addFieldDesc(elemField);
-        elemField = new org.apache.axis.description.ElementDesc();
-        elemField.setFieldName("flatDataset");
-        elemField.setXmlName(new javax.xml.namespace.QName("", "flatDataset"));
-        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "boolean"));
-        elemField.setNillable(false);
         typeDesc.addFieldDesc(elemField);
         elemField = new org.apache.axis.description.ElementDesc();
         elemField.setFieldName("flatTableName");

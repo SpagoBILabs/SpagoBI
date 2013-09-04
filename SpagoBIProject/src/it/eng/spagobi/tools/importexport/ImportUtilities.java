@@ -1851,8 +1851,6 @@ public class ImportUtilities {
 		newDataset.setCategory(exportedDataset.getCategory());
 		newDataset.setOrganization(((UserProfile) profile).getOrganization());	
 		newDataset.setDsMetadata(exportedDataset.getDsMetadata());
-		newDataset.setFlatDataset(exportedDataset.isFlatDataset());
-		newDataset.setFlatTableName(exportedDataset.getFlatTableName());
 		newDataset.setMetaVersion(exportedDataset.getMetaVersion());
 		newDataset.setNumRows(exportedDataset.isNumRows());
 		newDataset.setParameters(exportedDataset.getParameters());
@@ -1968,8 +1966,6 @@ public class ImportUtilities {
 			newDataset.setCategory(exportedDataset.getCategory());
 			newDataset.setOrganization(((UserProfile) profile).getOrganization());	
 			newDataset.setDsMetadata(exportedDataset.getDsMetadata());
-			newDataset.setFlatDataset(exportedDataset.isFlatDataset());
-			newDataset.setFlatTableName(exportedDataset.getFlatTableName());
 			newDataset.setMetaVersion(exportedDataset.getMetaVersion());
 			newDataset.setNumRows(exportedDataset.isNumRows());
 			newDataset.setParameters(exportedDataset.getParameters());

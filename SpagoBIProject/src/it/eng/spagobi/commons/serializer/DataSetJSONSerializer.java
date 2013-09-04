@@ -80,7 +80,6 @@ public class DataSetJSONSerializer implements Serializer {
 	private static final String IS_PERSISTED = "isPersisted";
 	private static final String DATA_SOURCE_PERSIST = "dataSourcePersist";
 	private static final String PERSIST_TABLE_NAME = "persistTableName";
-	private static final String IS_FLAT_DATASET = "isFlatDataset";
 	private static final String FLAT_TABLE_NAME = "flatTableName";
 	private static final String DATA_SOURCE_FLAT = "dataSourceFlat";
 	
@@ -256,6 +255,9 @@ public class DataSetJSONSerializer implements Serializer {
 					if(jClass!=null){
 						result.put(JCLASS_NAME, jClass);
 					}		
+				} else if(ds.getDsType().equalsIgnoreCase(DataSetConstants.FLAT)){
+					result.put(DATA_SOURCE_FLAT, jsonConf.getString(DataSetConstants.DATA_SOURCE));
+					result.put(FLAT_TABLE_NAME, jsonConf.getString(DataSetConstants.FLAT_TABLE_NAME));
 				}
 			}catch (Exception e){
 				logger.error("Error while defining dataset configuration.  Error: " + e.getMessage());
@@ -272,12 +274,6 @@ public class DataSetJSONSerializer implements Serializer {
 				result.put(DATA_SOURCE_PERSIST,dataSource.getLabel());	
 			}
 			result.put(PERSIST_TABLE_NAME,ds.getPersistTableName());		
-			result.put(IS_FLAT_DATASET,ds.isFlatDataset());	
-			result.put(FLAT_TABLE_NAME,ds.getFlatTableName());
-			if  (ds.getDataSourceFlat() != null){ 
-				IDataSource dataSource = ds.getDataSourceFlat();
-				result.put(DATA_SOURCE_FLAT,dataSource.getLabel());	
-			}	
 			result.put(IS_PUBLIC, ds.isPublic());
 			result.put(OWNER, ds.getOwner());
 			result.put(DATE_IN, ds.getDateIn());
