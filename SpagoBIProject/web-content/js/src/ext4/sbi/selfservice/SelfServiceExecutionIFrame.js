@@ -102,10 +102,14 @@ Ext.define('Sbi.selfservice.SelfServiceExecutionIFrame', {
 				this.saveWorksheet(template);
 			} else {
 				// save query as new dataset
-				var queryDefinition = this.getQbeQueryDefinition();
-				var saveDatasetWindow = Ext.create("Sbi.selfservice.SaveDatasetWindow", { queryDefinition : queryDefinition } );
-				saveDatasetWindow.on('save', function(theWindow, formState) { theWindow.close(); }, this);
-				saveDatasetWindow.show();
+				
+				this.openQbeSaveDataSetWizard();
+				
+//				var queryDefinition = this.getQbeQueryDefinition();
+//				var saveDatasetWindow = Ext.create("Sbi.selfservice.SaveDatasetWindow", { queryDefinition : queryDefinition } );
+//				saveDatasetWindow.on('save', function(theWindow, formState) { theWindow.close(); }, this);
+//				saveDatasetWindow.show();
+				
 			}
 		//} catch (err) {
 		//	alert('Sorry, cannot perform operation.');
@@ -145,20 +149,29 @@ Ext.define('Sbi.selfservice.SelfServiceExecutionIFrame', {
     
     }
 	
+//	,
+//	getQbeQueryDefinition : function () {
+//		Sbi.debug('[SelfServiceExecutionIFrame.getQbeQueryDefinition]: IN');
+//		var qbeWindow = this.iframe.getWin();
+//		Sbi.debug('[SelfServiceExecutionIFrame.getQbeQueryDefinition]: got window');
+//		var qbePanel = qbeWindow.qbe;
+//		Sbi.debug('[SelfServiceExecutionIFrame.getQbeQueryDefinition]: got qbe panel object');
+//		var queries = qbePanel.getQueriesCatalogue();
+//		Sbi.debug('[SelfServiceExecutionIFrame.getQbeQueryDefinition]: got queries');
+//		var toReturn = {};
+//		toReturn.queries = queries;
+//		toReturn.sourceDatasetLabel = this.datasetLabel;
+//		return toReturn;
+//	}
+	
 	,
-	getQbeQueryDefinition : function () {
+	openQbeSaveDataSetWizard : function () {
 		Sbi.debug('[SelfServiceExecutionIFrame.getQbeQueryDefinition]: IN');
 		var qbeWindow = this.iframe.getWin();
 		Sbi.debug('[SelfServiceExecutionIFrame.getQbeQueryDefinition]: got window');
 		var qbePanel = qbeWindow.qbe;
 		Sbi.debug('[SelfServiceExecutionIFrame.getQbeQueryDefinition]: got qbe panel object');
-		var queries = qbePanel.getQueriesCatalogue();
-		Sbi.debug('[SelfServiceExecutionIFrame.getQbeQueryDefinition]: got queries');
-		var toReturn = {};
-		toReturn.queries = queries;
-		//toReturn.datasourceLabel = this.getDatasourceLabel();
-		//toReturn.sourceDatasetLabel = this.getDatasetLabel();
-		return toReturn;
+		qbePanel.openSaveDataSetWizard();
 	}	
 	
 });

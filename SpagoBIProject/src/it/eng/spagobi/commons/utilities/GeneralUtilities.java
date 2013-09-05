@@ -38,6 +38,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Random;
 import java.util.StringTokenizer;
 
 import org.apache.log4j.Logger;
@@ -55,7 +56,7 @@ public class GeneralUtilities extends SpagoBIUtilities{
 	public static final int MAX_DEFAULT_FILE_DATASET_SIZE = 10485760; // 10 mega byte
 	private static String SPAGOBI_HOST = null; 
 //	private static String SPAGOBI_DOMAIN = null;
-
+	
 	/**
 	 * Substitutes the substrings with sintax "${code,bundle}" or "${code}" (in
 	 * the second case bundle is assumed to be the default value "messages")
@@ -849,4 +850,5 @@ public class GeneralUtilities extends SpagoBIUtilities{
 		}
 		return maxResults;
 	}
+	
 }

@@ -26,6 +26,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Random;
 
 import org.apache.log4j.Logger;
 
@@ -36,7 +37,9 @@ import org.apache.log4j.Logger;
 public class StringUtilities {
 
 	private static transient Logger logger = Logger.getLogger(StringUtilities.class);
-
+	
+	private static final String AB = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+	private static Random random = new Random();
 
 	public static String substituteProfileAttributesInString(String str, IEngUserProfile profile) throws Exception {
 		return substituteParametersInString(str, UserProfileUtils.getProfileAttributes(profile));
@@ -724,6 +727,9 @@ public class StringUtilities {
 		return coll;
 	}
 
-
-
+	public static String getRandomString(int len) {
+		StringBuilder sb = new StringBuilder( len );
+		for( int i = 0; i < len; i++ ) sb.append( AB.charAt( random.nextInt(AB.length()) ) );
+		return sb.toString();
+	}
 }

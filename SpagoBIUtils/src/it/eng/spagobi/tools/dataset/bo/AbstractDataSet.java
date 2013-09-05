@@ -124,6 +124,8 @@ public abstract class AbstractDataSet implements IDataSet {
 			setDataSourcePersist(DataSourceFactory.getDataSource(dataSet.getDataSourcePersist()));
 		}
 		
+		setPublic(dataSet.is_public());
+		
 		if(this.getPivotColumnName() != null 
 				&& this.getPivotColumnValue() != null
 				&& this.getPivotRowName() != null){
@@ -156,6 +158,8 @@ public abstract class AbstractDataSet implements IDataSet {
 		if (this.getDataSourcePersist() != null) {
 			sbd.setDataSourcePersist(this.getDataSourcePersist().toSpagoBiDataSource());
 		}
+		sbd.set_public(isPublic());
+		
 		return sbd;
 	}
     

@@ -9,11 +9,15 @@ import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
+import it.eng.spagobi.tools.dataset.bo.DataSetFactory;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 
@@ -87,8 +91,12 @@ public class DataSetSupplier {
     	logger.debug("IN");
 
 		try {
-			ds = DAOFactory.getDataSetDAO().loadActiveDataSetByLabel( label );	
-			datasetConfig = ds.toSpagoBiDataSet();
+			ds = DAOFactory.getDataSetDAO().loadActiveDataSetByLabel( label );
+			if (ds != null) {
+				datasetConfig = ds.toSpagoBiDataSet();
+			} else {
+				logger.debug("Dataset with label [" + label + "] not found");
+			}
 		} catch (EMFUserError e) {
 			logger.error("Error getting dataset with label [" + label + "]", e);	
 		} finally {
@@ -137,4 +145,23 @@ public class DataSetSupplier {
 		
 		return dataSetsConfig;
     }
+
+	public SpagoBiDataSet saveDataSet(SpagoBiDataSet datasetConfig) {
+		SpagoBiDataSet toReturn = null;
+		
+		logger.debug("IN");
+		try {
+			IDataSet dataSet = DataSetFactory.getDataSet(datasetConfig);
+			Integer id = DAOFactory.getDataSetDAO().insertDataSet(dataSet);
+			dataSet.setId(id);
+			toReturn = dataSet.toSpagoBiDataSet();
+		} catch (Exception e) {
+		    logger.error("Error while saving dataset", e);
+		} finally {
+			logger.debug("OUT");
+		}
+		
+		return toReturn;
+	}
+
 }

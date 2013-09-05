@@ -1039,9 +1039,26 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 
 			qbeDataSet.setJsonQuery(jsonQuery);
 			qbeDataSet.setDatamarts(qbeDatamarts);
-			IDataSource dataSource = DAOFactory.getDataSourceDAO().loadDataSourceByLabel(dataSourceLabel);
-			qbeDataSet.setDataSource(dataSource);		
+			if (dataSourceLabel != null && !dataSourceLabel.trim().equals("")) {
+				IDataSource dataSource = DAOFactory.getDataSourceDAO().loadDataSourceByLabel(dataSourceLabel);
+				qbeDataSet.setDataSource(dataSource);
+			}
 
+			String sourceDatasetLabel = getAttributeAsString(DataSetConstants.SOURCE_DS_LABEL);
+			IDataSet sourceDataset = null;
+			if (sourceDatasetLabel != null && !sourceDatasetLabel.trim().equals("")) {
+				try {
+					sourceDataset = DAOFactory.getDataSetDAO().loadDataSetByLabel(sourceDatasetLabel);
+					if (sourceDataset == null) {
+						throw new SpagoBIRuntimeException("Dataset with label [" + sourceDatasetLabel + "] does not exist");
+					}
+					qbeDataSet.setSourceDataset(sourceDataset);
+					qbeDataSet.setDataSource(sourceDataset.getDataSource());	
+				} catch (Exception e) {
+					throw new SpagoBIServiceException(SERVICE_NAME,	"Cannot retrieve source dataset information", e);
+				}
+			}
+			
 		}
 		
 		if (datasetTypeName.equalsIgnoreCase(DataSetConstants.DS_FLAT)) {

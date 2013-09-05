@@ -36,7 +36,6 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Random;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.validator.GenericValidator;
@@ -60,9 +59,6 @@ public class QueryDetail  implements ILovDetail  {
 	private String databaseDialect = null;
 	private List treeLevelsColumns = null;
 	private String lovType = "simple";
-
-	static final String AB = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-	static Random random = new Random();
 
 	private static String ALIAS_DELIMITER = null;
 	private static String VALUE_ALIAS = "VALUE";
@@ -233,10 +229,8 @@ public class QueryDetail  implements ILovDetail  {
 		return result;
 	}
 
-	private String getRandomAlias(int len) {
-		StringBuilder sb = new StringBuilder( len );
-		for( int i = 0; i < len; i++ ) sb.append( AB.charAt( random.nextInt(AB.length()) ) );
-		return sb.toString();
+	private String getRandomAlias() {
+		return StringUtilities.getRandomString(8);
 	}
 
 	/**
@@ -704,7 +698,7 @@ public class QueryDetail  implements ILovDetail  {
 		buffer.append(getColumnSQLName(this.descriptionColumnName) + " AS \"" + DESCRIPTION_ALIAS + "\" ");
 		buffer.append("FROM (");
 		buffer.append(statement);
-		buffer.append(") " +  getRandomAlias(8) + " WHERE ");
+		buffer.append(") " +  getRandomAlias() + " WHERE ");
 		if (values.size() == 1) {
 			buffer.append(getColumnSQLName(this.valueColumnName) + " = ");
 			buffer.append(getSQLValue(biparam, values.get(0)));

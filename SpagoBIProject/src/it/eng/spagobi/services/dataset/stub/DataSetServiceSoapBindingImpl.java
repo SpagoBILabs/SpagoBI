@@ -23,5 +23,10 @@ public class DataSetServiceSoapBindingImpl implements it.eng.spagobi.services.da
     	DataSetServiceImpl supplier=new DataSetServiceImpl();
     	return supplier.getAllDataSet(in0, in1);
     }
+    
+    public it.eng.spagobi.services.dataset.bo.SpagoBiDataSet saveDataSet(java.lang.String in0, java.lang.String in1, it.eng.spagobi.services.dataset.bo.SpagoBiDataSet in2) throws java.rmi.RemoteException {
+    	DataSetServiceImpl supplier=new DataSetServiceImpl();
+    	return supplier.saveDataSet(in0, in1, in2);
+    }
 
 }

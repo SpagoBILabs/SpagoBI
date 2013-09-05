@@ -1,8 +1,9 @@
-/* SpagoBI, the Open Source Business Intelligence suite
-
- * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
- * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+/**
+ * DataSetServiceSoapBindingSkeleton.java
+ *
+ * This file was auto-generated from WSDL
+ * by the Apache Axis 1.4 Apr 22, 2006 (06:55:48 PDT) WSDL2Java emitter.
+ */
 
 package it.eng.spagobi.services.dataset.stub;
 
@@ -70,6 +71,20 @@ public class DataSetServiceSoapBindingSkeleton implements it.eng.spagobi.service
             _myOperations.put("getAllDataSet", new java.util.ArrayList());
         }
         ((java.util.List)_myOperations.get("getAllDataSet")).add(_oper);
+        _params = new org.apache.axis.description.ParameterDesc [] {
+            new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "in0"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"), java.lang.String.class, false, false), 
+            new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "in1"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"), java.lang.String.class, false, false), 
+            new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "in2"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://bo.dataset.services.spagobi.eng.it", "SpagoBiDataSet"), it.eng.spagobi.services.dataset.bo.SpagoBiDataSet.class, false, false), 
+        };
+        _oper = new org.apache.axis.description.OperationDesc("saveDataSet", _params, new javax.xml.namespace.QName("", "saveDataSetReturn"));
+        _oper.setReturnType(new javax.xml.namespace.QName("http://bo.dataset.services.spagobi.eng.it", "SpagoBiDataSet"));
+        _oper.setElementQName(new javax.xml.namespace.QName("urn:spagobidataset", "saveDataSet"));
+        _oper.setSoapAction("");
+        _myOperationsList.add(_oper);
+        if (_myOperations.get("saveDataSet") == null) {
+            _myOperations.put("saveDataSet", new java.util.ArrayList());
+        }
+        ((java.util.List)_myOperations.get("saveDataSet")).add(_oper);
     }
 
     public DataSetServiceSoapBindingSkeleton() {
@@ -94,6 +109,12 @@ public class DataSetServiceSoapBindingSkeleton implements it.eng.spagobi.service
     public it.eng.spagobi.services.dataset.bo.SpagoBiDataSet[] getAllDataSet(java.lang.String in0, java.lang.String in1) throws java.rmi.RemoteException
     {
         it.eng.spagobi.services.dataset.bo.SpagoBiDataSet[] ret = impl.getAllDataSet(in0, in1);
+        return ret;
+    }
+
+    public it.eng.spagobi.services.dataset.bo.SpagoBiDataSet saveDataSet(java.lang.String in0, java.lang.String in1, it.eng.spagobi.services.dataset.bo.SpagoBiDataSet in2) throws java.rmi.RemoteException
+    {
+        it.eng.spagobi.services.dataset.bo.SpagoBiDataSet ret = impl.saveDataSet(in0, in1, in2);
         return ret;
     }
 

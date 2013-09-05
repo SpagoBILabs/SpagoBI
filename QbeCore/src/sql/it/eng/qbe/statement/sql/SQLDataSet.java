@@ -9,6 +9,7 @@ package it.eng.qbe.statement.sql;
 import it.eng.qbe.datasource.dataset.DataSetDataSource;
 import it.eng.qbe.statement.AbstractQbeDataSet;
 import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
@@ -77,6 +78,25 @@ public class SQLDataSet extends AbstractQbeDataSet {
 		SQLStatement statement = (SQLStatement) this.getStatement();
 		DataSetDataSource ds = (DataSetDataSource)statement.getDataSource();
 		return ds.getDataSourceForReading();
+	}
+	
+	@Override
+	public Integer getCategoryId() {
+		IDataSet wrapped = this.getWrappedDataset();
+    	return wrapped.getCategoryId();
+	}
+
+	@Override
+	public String getCategoryCd() {
+		IDataSet wrapped = this.getWrappedDataset();
+    	return wrapped.getCategoryCd();
+	}
+	
+	private IDataSet getWrappedDataset() {
+		SQLStatement statement = (SQLStatement) this.getStatement();
+		DataSetDataSource ds = (DataSetDataSource)statement.getDataSource();
+		IDataSet toReturn = ds.getRootEntities().get(0);
+		return toReturn;
 	}
 	
 

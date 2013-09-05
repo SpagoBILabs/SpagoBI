@@ -5,6 +5,9 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.tools.dataset.constants;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Defines all SpagoBI's constants.
  */
@@ -85,6 +88,8 @@ public class DataSetConstants {
 	public static final String QBE_JSON_QUERY = "qbeJSONQuery";
 	public static final String QBE_SQL_QUERY = "qbeSQLQuery";
 	
+	public static final String SOURCE_DS_LABEL = "sourceDatasetLabel";
+	
 	public static final String IS_PERSISTED = "isPersisted";
 	public static final String DATA_SOURCE_PERSIST = "dataSourcePersist";
 	public static final String FLAT_TABLE_NAME = "flatTableName";
@@ -107,5 +112,33 @@ public class DataSetConstants {
 	public static final String XSL_FILE_SKIP_ROWS = "skipRows";
 	public static final String XSL_FILE_LIMIT_ROWS = "limitRows";
 	public static final String XSL_FILE_SHEET_NUMBER = "xslSheetNumber";
+	
+	public static final Map<String, String> name2Code;
+	
+	static {
+		name2Code = new HashMap<String, String>();
+		name2Code.put("Web Service", DataSetConstants.DS_WS );
+		name2Code.put("File", DataSetConstants.DS_FILE );
+		name2Code.put("Java Class", DataSetConstants.DS_JCLASS );
+		name2Code.put("Query", DataSetConstants.DS_QUERY );
+		name2Code.put("Script", DataSetConstants.DS_SCRIPT );
+		name2Code.put("Qbe", DataSetConstants.DS_QBE );
+		name2Code.put("Custom", DataSetConstants.DS_CUSTOM );
+		name2Code.put("Flat", DataSetConstants.DS_FLAT );
+	}
+	
+	public static final Map<String, String> code2name;
+	
+	static {
+		code2name = new HashMap<String, String>();
+		code2name.put(DataSetConstants.DS_WS, "Web Service");
+		code2name.put(DataSetConstants.DS_FILE, "File");
+		code2name.put(DataSetConstants.DS_JCLASS, "Java Class");
+		code2name.put(DataSetConstants.DS_QUERY, "Query");
+		code2name.put(DataSetConstants.DS_SCRIPT, "Script");
+		code2name.put(DataSetConstants.DS_QBE, "Qbe");
+		code2name.put(DataSetConstants.DS_CUSTOM, "Custom");
+		code2name.put(DataSetConstants.DS_FLAT, "Flat");
+	}
 	
 }
