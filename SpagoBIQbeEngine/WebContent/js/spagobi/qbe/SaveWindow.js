@@ -127,7 +127,7 @@ Ext.extend(Sbi.widgets.SaveWindow, Ext.Window, {
 	    	var scopeComboBoxStore = new Ext.data.SimpleStore({
 	    		fields: ['value', 'field', 'description'],
 	    		data : scopeComboBoxData 
-	    	});    		    
+	    	}); 
     		    
 	    	this.scopeField = new Ext.form.ComboBox({
 	    	   	tpl: '<tpl for="."><div ext:qtip="{field}: {description}" class="x-combo-list-item">{field}</div></tpl>',	

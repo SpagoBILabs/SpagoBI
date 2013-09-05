@@ -430,6 +430,14 @@ Ext.extend(Sbi.qbe.QbePanel, Ext.Panel, {
 	}, this);		
 }
 
+,
+openSaveDataSetWizard: function() {
+	var queries = this.getQueriesCatalogue();
+	var saveDatasetWindow = new Sbi.qbe.SaveDatasetWindow( { queries : queries } );
+	saveDatasetWindow.on('save', function(theWindow, formState) { theWindow.close(); }, this);
+	saveDatasetWindow.show();
+}
+
 /*
  * This method is invoked by Sbi.execution.DocumentExecutionPage on SpagoBI core!!!
  * See SpagoBI/js/src/ext/sbi/execution/DocumentExecutionPage.js, retrieveQbeCrosstabData method

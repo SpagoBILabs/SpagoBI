@@ -12,6 +12,12 @@
 			scope="REQUEST">
 		<CONFIG/>
 	</ACTION>
+	
+	<ACTION name="SAVE_DATASET_USER_ACTION" 
+			class="it.eng.spagobi.engines.qbe.services.dataset.SaveDatasetUserAction"  
+			scope="REQUEST">
+		<CONFIG/>
+	</ACTION>
 
 </ACTIONS>
 

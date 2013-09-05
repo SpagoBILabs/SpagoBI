@@ -11,6 +11,7 @@ import it.eng.spagobi.commons.dao.SpagoBIDOAException;
 import it.eng.spagobi.commons.metadata.SbiDomains;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
+import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
 import it.eng.spagobi.tools.dataset.event.DataSetEventManager;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSetId;
@@ -102,7 +103,14 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			hibDataSet.setLabel(dataSet.getLabel());
 			hibDataSet.setDescription(dataSet.getDescription());
 			hibDataSet.setName(dataSet.getName());
-			hibDataSet.setType(dataSet.getDsType());
+			
+			// TODO fix this!!!! the same method for dsType is used with 2 set of values: Qbe, File, .... and SbiQbeDataSet, SbiFileDataSet, ....!!!!!
+			String type = dataSet.getDsType();
+			if (DataSetConstants.name2Code.containsKey(type)) {
+				type = DataSetConstants.name2Code.get(type);
+			}
+			
+			hibDataSet.setType(type);
 			updateSbiCommonInfo4Insert(hibDataSet);
 
 			String userIn = hibDataSet.getCommonInfo().getUserIn();

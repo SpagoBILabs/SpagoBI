@@ -99,6 +99,33 @@ public final class DataSetServiceProxy extends AbstractServiceProxy{
     	return dataSet;
     }
     
+
+	public IDataSet saveDataSet(IDataSet dataset) {
+		IDataSet toReturn = null;
+		SpagoBiDataSet dataSetConfig = null;
+
+		logger.debug("IN.dataset=" + dataset);
+
+		if (dataset == null) {
+			logger.error("Input dataset is NULL");
+			return null;
+		}
+		try {
+			dataSetConfig = dataset.toSpagoBiDataSet();
+			SpagoBiDataSet returnedConfig = lookUp().saveDataSet(readTicket(),
+					userId, dataSetConfig);
+			if (returnedConfig != null) {
+				toReturn = DataSetFactory.getDataSet(returnedConfig);
+				addMetaModelProxy(toReturn);
+			}
+		} catch (Exception e) {
+			logger.error("Error during Service LookUp", e);
+		} finally {
+			logger.debug("OUT");
+		}
+		return toReturn;
+    }
+    
    
     private void addMetaModelProxy(IDataSet dataSet) {
 		// in case of qbe dataset, it need a MetamodelServiceProxy

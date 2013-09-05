@@ -1,8 +1,9 @@
-/* SpagoBI, the Open Source Business Intelligence suite
-
- * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
- * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+/**
+ * DataSetServiceServiceLocator.java
+ *
+ * This file was auto-generated from WSDL
+ * by the Apache Axis 1.4 Apr 22, 2006 (06:55:48 PDT) WSDL2Java emitter.
+ */
 
 package it.eng.spagobi.services.dataset.stub;
 
@@ -21,7 +22,7 @@ public class DataSetServiceServiceLocator extends org.apache.axis.client.Service
     }
 
     // Use to get a proxy class for DataSetService
-    private java.lang.String DataSetService_address = "http://localhost:8080/SpagoBI/services/DataSetService";
+    private java.lang.String DataSetService_address = "http://localhost:8181/SpagoBI/services/DataSetService";
 
     public java.lang.String getDataSetServiceAddress() {
         return DataSetService_address;

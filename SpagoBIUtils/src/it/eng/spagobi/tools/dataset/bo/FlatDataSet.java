@@ -9,7 +9,6 @@ package it.eng.spagobi.tools.dataset.bo;
 
 import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
-import it.eng.spagobi.tools.dataset.common.dataproxy.JDBCDataProxy;
 import it.eng.spagobi.tools.datasource.bo.DataSourceFactory;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
@@ -27,7 +26,8 @@ public class FlatDataSet extends ConfigurableDataSet {
 
 	public static String DS_TYPE = "SbiFlatDataSet";
 	
-	private static final String FLAT_TABLE_NAME = "flatTableName";
+	public static final String FLAT_TABLE_NAME = "flatTableName";
+	public static final String DATA_SOURCE = "dataSource";
 
 	private static transient Logger logger = Logger
 			.getLogger(FlatDataSet.class);
@@ -98,6 +98,7 @@ public class FlatDataSet extends ConfigurableDataSet {
 		try {
 			JSONObject jsonConf  = new JSONObject();
 			jsonConf.put(FLAT_TABLE_NAME, (this.getTableName() == null) ? "" : this.getTableName());
+			jsonConf.put(DATA_SOURCE, (this.getDataSource() == null) ? "" : this.getDataSource().getLabel());
 			toReturn.setConfiguration(jsonConf.toString());
 		} catch (Exception e) {
 			logger.error("Error while defining dataset configuration. Error:", e);
@@ -105,6 +106,11 @@ public class FlatDataSet extends ConfigurableDataSet {
 		}
 		
 		return toReturn;
+	}
+
+	@Override
+	public String getDsType() {
+		return DS_TYPE;
 	}
 
 }

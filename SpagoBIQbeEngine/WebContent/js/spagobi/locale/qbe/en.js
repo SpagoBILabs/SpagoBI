@@ -3,14 +3,9 @@
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. **/
- 
-  
- 
-  
- 
- Ext.ns("Sbi.locale");
-Sbi.locale.ln = Sbi.locale.ln || new Array();
 
+Ext.ns("Sbi.locale");
+Sbi.locale.ln = Sbi.locale.ln || new Array();
 
 //===================================================================
 //MESSAGE BOX BUTTONS
@@ -26,6 +21,18 @@ Sbi.locale.ln['sbi.qbe.messagewin.yes'] = 'Yes';
 Sbi.locale.ln['sbi.qbe.messagewin.no'] = 'No';
 Sbi.locale.ln['sbi.qbe.messagewin.cancel'] = 'Cancel';
 
+Sbi.locale.ln['sbi.generic.label'] = 'Label';
+Sbi.locale.ln['sbi.generic.name'] = 'Name';
+Sbi.locale.ln['sbi.generic.descr'] = 'Description';
+Sbi.locale.ln['sbi.generic.scope'] = 'Scope';
+Sbi.locale.ln['sbi.generic.scope.private'] = 'Private';
+Sbi.locale.ln['sbi.generic.scope.public'] = 'Public';
+Sbi.locale.ln['sbi.generic.actions.save'] = 'Save';
+
+Sbi.locale.ln['sbi.generic.wait'] = "Please wait...";
+Sbi.locale.ln['sbi.generic.error'] = "Error";
+Sbi.locale.ln['sbi.generic.success'] = "Success";
+Sbi.locale.ln['sbi.generic.operationSucceded'] = "Operation succeded";
 
 //===================================================================
 // MESSAGE WINDOW
@@ -465,3 +472,8 @@ Sbi.locale.ln['sbi.qbe.bands.wizard.invalid.operation.edit.msg'] = 'Node of type
 Sbi.locale.ln['sbi.qbe.bands.wizard.invalid.node'] = 'The node isn\'t a band';
 Sbi.locale.ln['sbi.qbe.bands.range.title'] = 'Limit definition';
 Sbi.locale.ln['sbi.qbe.bands.range.invalid'] = 'Range not correctly set';
+
+//===================================================================
+//SAVE DATASET WIZARD
+//===================================================================
+Sbi.locale.ln['sbi.qbe.savedatasetwindow.title'] = "Fill in the dataset details and click on Save";

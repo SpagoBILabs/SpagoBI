@@ -50,6 +50,7 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
      <element name="transformerId" nillable="true" type="soapenc:int"/>
      <element name="type" nillable="true" type="soapenc:string"/>
      <element name="versionNum" type="xsd:int"/>
+     <element name="public" type="xsd:boolean"/>
     </sequence>
    </complexType>
   </schema>
@@ -103,6 +104,22 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
 
    </wsdl:message>
 
+   <wsdl:message name="saveDataSetResponse">
+
+      <wsdl:part name="saveDataSetReturn" type="tns2:SpagoBiDataSet"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="saveDataSetRequest">
+
+      <wsdl:part name="in0" type="soapenc:string"/>
+
+      <wsdl:part name="in1" type="soapenc:string"/>
+
+      <wsdl:part name="in2" type="tns2:SpagoBiDataSet"/>
+
+   </wsdl:message>
+
    <wsdl:message name="getDataSetRequest">
 
       <wsdl:part name="in0" type="soapenc:string"/>
@@ -136,6 +153,14 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
          <wsdl:input message="impl:getAllDataSetRequest" name="getAllDataSetRequest"/>
 
          <wsdl:output message="impl:getAllDataSetResponse" name="getAllDataSetResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="saveDataSet" parameterOrder="in0 in1 in2">
+
+         <wsdl:input message="impl:saveDataSetRequest" name="saveDataSetRequest"/>
+
+         <wsdl:output message="impl:saveDataSetResponse" name="saveDataSetResponse"/>
 
       </wsdl:operation>
 
@@ -192,6 +217,24 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
          </wsdl:input>
 
          <wsdl:output name="getAllDataSetResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobidataset" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="saveDataSet">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="saveDataSetRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobidataset" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="saveDataSetResponse">
 
             <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobidataset" use="encoded"/>
 

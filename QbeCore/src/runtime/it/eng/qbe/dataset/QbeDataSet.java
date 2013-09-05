@@ -19,6 +19,7 @@ import it.eng.qbe.statement.QbeDatasetFactory;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
+import it.eng.spagobi.services.datasource.bo.SpagoBiDataSource;
 import it.eng.spagobi.tools.dataset.bo.AbstractDataSet;
 import it.eng.spagobi.tools.dataset.bo.ConfigurableDataSet;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
@@ -72,6 +73,8 @@ public static String DS_TYPE = "SbiQbeDataSet";
 	protected boolean useCache = false;
 	
 	protected IDataSource dataSource = null;
+	
+	private IDataSet sourceDataset = null;
 	
 	public QbeDataSet() {}
 	
@@ -253,6 +256,14 @@ public static String DS_TYPE = "SbiQbeDataSet";
         dataSourceProperties.put("connection", connection);
         dataSourceProperties.put("dblinkMap", new HashMap());
         
+		if (this.getSourceDataset() != null) {
+			List<IDataSet> dataSets = new ArrayList<IDataSet>();
+			dataSets.add(this.getSourceDataset());
+			dataSourceProperties.put(EngineConstants.ENV_DATASETS, dataSets);
+			SpagoBiDataSource ds = dataSource.toSpagoBiDataSource();
+			dataSourceProperties.put(DataSetDataSource.SPAGOBI_DATA_SOURCE, ds);
+		}
+        
 		if (dataSourceProperties.get(EngineConstants.ENV_DATASETS) != null) {
 			return getDataSourceFromDataSet(dataSourceProperties, useCache);
 		} else {
@@ -420,4 +431,25 @@ public static String DS_TYPE = "SbiQbeDataSet";
 		}
 		return metadata;
 	}
+	
+	public IDataSet getSourceDataset() {
+		return sourceDataset;
+	}
+
+	public void setSourceDataset(IDataSet sourceDataset) {
+		this.sourceDataset = sourceDataset;
+	}
+
+	@Override
+	public Integer getCategoryId() {
+    	init();
+    	return ds.getCategoryId();
+	}
+
+	@Override
+	public String getCategoryCd() {
+    	init();
+    	return ds.getCategoryCd();
+	}
+	
 }

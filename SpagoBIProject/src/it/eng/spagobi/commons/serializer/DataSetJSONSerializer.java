@@ -12,7 +12,6 @@ import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
 import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
-import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.json.JSONUtils;
 
@@ -170,7 +169,13 @@ public class DataSetJSONSerializer implements Serializer {
 			}
 			result.put(DS_OLD_VERSIONS, versionsListJSON);	
 			
-			result.put(DS_TYPE_CD, ds.getDsType());	
+			// TODO fix this!!!! the same method for dsType is used with 2 set of values: Qbe, File, .... and SbiQbeDataSet, SbiFileDataSet, ....!!!!!
+			String type = ds.getDsType();
+			if (DataSetConstants.code2name.containsKey(type)) {
+				type = DataSetConstants.code2name.get(type);
+			}
+			
+			result.put(DS_TYPE_CD, type);	
 			
 			result.put(USER_IN, ds.getUserIn());
 			result.put(VERSION_NUM, ((VersionedDataSet) ds).getVersionNum());
@@ -180,7 +185,7 @@ public class DataSetJSONSerializer implements Serializer {
 			String config = JSONUtils.escapeJsonString(ds.getConfiguration());		
 			JSONObject jsonConf  = ObjectUtils.toJSONObject(config);
 			try{
-				if(ds.getDsType().equalsIgnoreCase(DataSetConstants.FILE)){
+				if(type.equalsIgnoreCase(DataSetConstants.FILE)){
 					String fileName = jsonConf.getString(DataSetConstants.FILE_NAME);
 					if(fileName!=null){
 						result.put(FILE_NAME, fileName);				
@@ -210,17 +215,17 @@ public class DataSetJSONSerializer implements Serializer {
 						result.put(XSL_FILE_SHEET_NUMBER, xslSheetNumber);				
 					}
 					
-				}else if(ds.getDsType().equalsIgnoreCase(DataSetConstants.QUERY)){
+				}else if(type.equalsIgnoreCase(DataSetConstants.QUERY)){
 					result.put(QUERY, jsonConf.getString(DataSetConstants.QUERY));
 					result.put(QUERY_SCRIPT, jsonConf.getString(DataSetConstants.QUERY_SCRIPT));
 					result.put(QUERY_SCRIPT_LANGUAGE, jsonConf.getString(DataSetConstants.QUERY_SCRIPT_LANGUAGE));
 					result.put(DATA_SOURCE, jsonConf.getString(DataSetConstants.DATA_SOURCE));
-				}else if(ds.getDsType().equalsIgnoreCase(DataSetConstants.QBE)) {					
+				}else if(type.equalsIgnoreCase(DataSetConstants.QBE)) {					
 				//	result.put(QBE_SQL_QUERY, jsonConf.getString(DataSetConstants.QBE_SQL_QUERY));
 					result.put(QBE_JSON_QUERY,jsonConf.getString(DataSetConstants.QBE_JSON_QUERY));
 					result.put(QBE_DATA_SOURCE, jsonConf.getString(DataSetConstants.QBE_DATA_SOURCE));
 					result.put(QBE_DATAMARTS, jsonConf.getString(DataSetConstants.QBE_DATAMARTS));			
-				}else if(ds.getDsType().equalsIgnoreCase(DataSetConstants.WEB_SERVICE)){
+				}else if(type.equalsIgnoreCase(DataSetConstants.WEB_SERVICE)){
 					String ws_address = jsonConf.getString(DataSetConstants.WS_ADDRESS);
 					if(ws_address!=null){
 						result.put(WS_ADDRESS, ws_address);
@@ -229,7 +234,7 @@ public class DataSetJSONSerializer implements Serializer {
 					if(ws_operation!=null){
 						result.put(WS_OPERATION, ws_operation);
 					}	
-				}else if(ds.getDsType().equalsIgnoreCase(DataSetConstants.SCRIPT)){
+				}else if(type.equalsIgnoreCase(DataSetConstants.SCRIPT)){
 					String script = jsonConf.getString(DataSetConstants.SCRIPT);
 					if(script!=null){					
 						result.put(SCRIPT, script);
@@ -238,12 +243,12 @@ public class DataSetJSONSerializer implements Serializer {
 					if(script_language!=null){
 						result.put(SCRIPT_LANGUAGE, script_language);
 					}
-				}else if(ds.getDsType().equalsIgnoreCase(DataSetConstants.JAVA_CLASS)){
+				}else if(type.equalsIgnoreCase(DataSetConstants.JAVA_CLASS)){
 					String jClass =  jsonConf.getString(DataSetConstants.JCLASS_NAME);
 					if(jClass!=null){
 						result.put(JCLASS_NAME, jClass);
 					}
-				}else if(ds.getDsType().equalsIgnoreCase(CUSTOMS)){
+				}else if(type.equalsIgnoreCase(CUSTOMS)){
 					String customData =  jsonConf.getString(DataSetConstants.CUSTOM_DATA);
 					JSONObject customJSONObject = new JSONObject();
 					if(customData!=null && !customData.equals("")){
@@ -255,7 +260,7 @@ public class DataSetJSONSerializer implements Serializer {
 					if(jClass!=null){
 						result.put(JCLASS_NAME, jClass);
 					}		
-				} else if(ds.getDsType().equalsIgnoreCase(DataSetConstants.FLAT)){
+				} else if(type.equalsIgnoreCase(DataSetConstants.FLAT)){
 					result.put(DATA_SOURCE_FLAT, jsonConf.getString(DataSetConstants.DATA_SOURCE));
 					result.put(FLAT_TABLE_NAME, jsonConf.getString(DataSetConstants.FLAT_TABLE_NAME));
 				}

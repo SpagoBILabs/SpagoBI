@@ -209,6 +209,7 @@
 				<file name='./spagobi/qbe/HavingGridPanel.js' />
 				<file name='./spagobi/qbe/HavingGridDropTarget.js' />
 				<file name='./spagobi/qbe/SaveWindow.js' />
+				<file name="./spagobi/qbe/SaveDatasetWindow.js" />
 				<file name='./spagobi/qbe/QueryBuilderPanel.js' />
 				<file name='./spagobi/qbe/QbePanel.js' />
 				<file name='./spagobi/qbe/FreeConditionsWindow.js' />

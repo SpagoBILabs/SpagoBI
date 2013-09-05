@@ -14,7 +14,4 @@
  <ACTION name="GET_DATASOURCES_LIST_USER_ACTION" class="it.eng.spagobi.adhocreporting.services.GetDatasourcesListUserAction" scope="REQUEST">
     <CONFIG/>
  </ACTION>
- <ACTION name="SAVE_DATASET_USER_ACTION" class="it.eng.spagobi.adhocreporting.services.SaveDatasetUserAction" scope="REQUEST">
-    <CONFIG/>
- </ACTION>
 </ACTIONS>

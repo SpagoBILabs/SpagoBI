@@ -50,6 +50,8 @@ public class SpagoBiDataSet  implements java.io.Serializable {
 
     private int versionNum;
 
+    private boolean _public;
+
     public SpagoBiDataSet() {
     }
 
@@ -74,7 +76,8 @@ public class SpagoBiDataSet  implements java.io.Serializable {
            java.lang.String pivotRowName,
            java.lang.Integer transformerId,
            java.lang.String type,
-           int versionNum) {
+           int versionNum,
+           boolean _public) {
            this.active = active;
            this.categoryId = categoryId;
            this.configuration = configuration;
@@ -96,6 +99,7 @@ public class SpagoBiDataSet  implements java.io.Serializable {
            this.transformerId = transformerId;
            this.type = type;
            this.versionNum = versionNum;
+           this._public = _public;
     }
 
 
@@ -518,6 +522,26 @@ public class SpagoBiDataSet  implements java.io.Serializable {
         this.versionNum = versionNum;
     }
 
+
+    /**
+     * Gets the _public value for this SpagoBiDataSet.
+     * 
+     * @return _public
+     */
+    public boolean is_public() {
+        return _public;
+    }
+
+
+    /**
+     * Sets the _public value for this SpagoBiDataSet.
+     * 
+     * @param _public
+     */
+    public void set_public(boolean _public) {
+        this._public = _public;
+    }
+
     private java.lang.Object __equalsCalc = null;
     public synchronized boolean equals(java.lang.Object obj) {
         if (!(obj instanceof SpagoBiDataSet)) return false;
@@ -582,7 +606,8 @@ public class SpagoBiDataSet  implements java.io.Serializable {
             ((this.type==null && other.getType()==null) || 
              (this.type!=null &&
               this.type.equals(other.getType()))) &&
-            this.versionNum == other.getVersionNum();
+            this.versionNum == other.getVersionNum() &&
+            this._public == other.is_public();
         __equalsCalc = null;
         return _equals;
     }
@@ -647,6 +672,7 @@ public class SpagoBiDataSet  implements java.io.Serializable {
             _hashCode += getType().hashCode();
         }
         _hashCode += getVersionNum();
+        _hashCode += (is_public() ? Boolean.TRUE : Boolean.FALSE).hashCode();
         __hashCodeCalc = false;
         return _hashCode;
     }
@@ -781,6 +807,12 @@ public class SpagoBiDataSet  implements java.io.Serializable {
         elemField.setFieldName("versionNum");
         elemField.setXmlName(new javax.xml.namespace.QName("", "versionNum"));
         elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "int"));
+        elemField.setNillable(false);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("_public");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "public"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "boolean"));
         elemField.setNillable(false);
         typeDesc.addFieldDesc(elemField);
     }

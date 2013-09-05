@@ -96,4 +96,24 @@ public class DataSetServiceImpl extends AbstractServiceImpl implements
 		}
 	}
 
+	public SpagoBiDataSet saveDataSet(String token, String user,
+			SpagoBiDataSet dataset) {
+		logger.debug("IN");
+		Monitor monitor = MonitorFactory
+				.start("spagobi.service.dataset.saveDataSet");
+		try {
+			validateTicket(token, user);
+			this.setTenantByUserId(user);
+			return supplier.saveDataSet(dataset);
+		} catch (Exception e) {
+			logger.error("Errors saving dataset "
+					+ dataset, e);
+			return null;
+		} finally {
+			this.unsetTenant();
+			monitor.stop();
+			logger.debug("OUT");
+		}
+	}
+	
 }

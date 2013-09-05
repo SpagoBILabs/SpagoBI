@@ -143,10 +143,6 @@ public class SQLStatement extends AbstractStatement {
 		entityAliasesMaps.put( getQuery().getId(), new HashMap<String, String>());
 		
 		SQLStatementGroupByClause.build(this, getQuery(), entityAliasesMaps);
-		SQLStatementGroupByClause.build(this, getQuery(), entityAliasesMaps);
-		SQLStatementGroupByClause.build(this, getQuery(), entityAliasesMaps);
-		SQLStatementGroupByClause.build(this, getQuery(), entityAliasesMaps);
-		SQLStatementGroupByClause.build(this, getQuery(), entityAliasesMaps);
 		
 		Map entityAliases = (Map)entityAliasesMaps.get( getQuery().getId());
 		entityUniqueNamesIterator = entityAliases.keySet().iterator();
