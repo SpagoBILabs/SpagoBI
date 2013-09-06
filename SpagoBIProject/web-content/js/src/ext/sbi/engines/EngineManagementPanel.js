@@ -326,7 +326,7 @@ Ext
 							fieldLabel : LN('sbi.generic.name'),
 							allowBlank : false,
 							validationEvent : true,
-							name : 'name',
+							name : 'name'
 						});
 
 						this.detailFieldLabel = new Ext.form.TextField ({
