@@ -241,10 +241,13 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 			this.store = this.debugPanelConf.store;
 			this.initResultSetWin();
 			
+			var mapper = this.map;
+
+			
 			this.debugControlPanel = new Ext.Panel({
 		           title: 'Debug',
 		           collapsible: true,
-		           height: 100,
+		           height: 120,
 		           items: [new Ext.Button({
 				    	text: 'Reload dataset',
 				        width: 30,
@@ -292,13 +295,66 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 				        	this.showFeedbackWindow();
 		           		},
 		           		scope: this
-				    })]
+				    }), new Ext.Button({
+				    	text: 'Export',
+				        width: 30,
+				        disabled :(Sbi.config.docLabel=="")?true:false,
+				        handler: function() {
+				        	var printProvider = new GeoExt.data.PrintProvider({
+			                    capabilities: {"scales":[{"name":"1:25.000","value":"25000"},{"name":"1:50.000","value":"50000"},{"name":"1:100.000","value":"100000"},{"name":"1:200.000","value":"200000"},{"name":"1:500.000","value":"500000"},{"name":"1:1.000.000","value":"1000000"},{"name":"1:2.000.000","value":"2000000"},{"name":"1:4.000.000","value":"4000000"}],"dpis":[{"name":"56","value":"56"},{"name":"127","value":"127"},{"name":"190","value":"190"},{"name":"256","value":"256"}],"outputFormats":[{"name":"pdf"}],"layouts":[{"name":"A4 portrait","map":{"width":440,"height":483},"rotation":true}],"printURL":"http://localhost:8080/SpagoBIGeoReportEngine/pdf/print.pdf","createURL":"http://localhost:8080/SpagoBIGeoReportEngine/pdf/create.json"},
+			                    customParams: {
+			                        mapTitle: "Printing Demo",
+			                        title: "Printing Demo",
+			                        comment: "This is a simple map printed from GeoExt."
+			                    }
+				        	});
+				        	            var printPage = new GeoExt.data.PrintPage({
+				        	                printProvider: printProvider
+				        	            });
+				        	            printPage.fit(mapper, true);
+				        	            printProvider.print(mapper, printPage);
+				        	        
+				        	    
+		           		},
+		           		scope: this
+				    })
+		           ]
 		    });
 			
 			
 			this.controlPanelItemsConfig.push(this.debugControlPanel);
+			
+			
+			
+			
+//			var exportPanel  = new Ext.Window({
+//	            autoHeight: true,
+//	            width: 350,
+//	            items: [new GeoExt.PrintMapPanel({
+//	                sourceMap: 	mapper,
+//	                printProvider: {
+//	                    capabilities: {"scales":[{"name":"1:25,000","value":"25000"},{"name":"1:50,000","value":"50000"},{"name":"1:100,000","value":"100000"},{"name":"1:200,000","value":"200000"},{"name":"1:500,000","value":"500000"},{"name":"1:1,000,000","value":"1000000"},{"name":"1:2,000,000","value":"2000000"},{"name":"1:4,000,000","value":"4000000"}],"dpis":[{"name":"254","value":"254"},{"name":"190","value":"190"}],"layouts":[{"name":"A4 portrait","map":{"width":440,"height":483},"rotation":true},{"name":"Legal","map":{"width":440,"height":483},"rotation":false}],"printURL":"http://localhost:8080/SpagoBIGeoReportEngine/pdf/print.pdf","createURL":"http://localhost:8080/SpagoBIGeoReportEngine/pdf/create.json"},
+//	                    customParams: {
+//	                        mapTitle: "Printing Demo",
+//	                        title: "Printing Demo",
+//	                        comment: "This is a simple map printed from GeoExt."
+//	                    }
+//	                }
+//	            })],
+//	            bbar: [{
+//	                text: "Create PDF",
+//	                handler: function() {
+//	                	exportPanel.items.get(0).print();
+//	                }
+//	            }]
+//	        });
+//			exportPanel.show();
+//		}
 		}
+
 	}
+
+
 	
 	, showMeasureCatalogueWindow: function(){
 		if(this.measureCatalogueWindow==null){
