@@ -231,6 +231,14 @@ Ext.extend(Sbi.execution.DocumentPage, Ext.Panel, {
 			serviceName: 'documents/sendFeedback',
 			baseParams: params
 		});
+		
+		this.services['saveDocumentService'] = Sbi.config.serviceRegistry.getServiceUrl({
+			serviceName: 'SAVE_DOCUMENT_ACTION'
+			, baseParams: {
+				LIGHT_NAVIGATOR_DISABLED: 'TRUE',
+				MESSAGE_DET: 'MODIFY_GEOREPORT'
+			}
+		});
 	}
 
 
@@ -291,6 +299,8 @@ Ext.extend(Sbi.execution.DocumentPage, Ext.Panel, {
 		listeners['message:crossnavigation'] = this.initCrossNavigationaMessageListner();
 		listeners['message:managebutton'] = this.initManageButton();
 		listeners['message:sendFeedback'] = this.initSendFeedbackListner();
+		listeners['message:modifyGeoReportDocument'] = this.initModifyGeoReportDocumentListner();
+
 
 		
 		listeners['domready'] = this.initDomReadyListner();
@@ -377,6 +387,71 @@ Ext.extend(Sbi.execution.DocumentPage, Ext.Panel, {
     		, scope: this
     	};
 		Sbi.debug('[DocumentPage.SendFeedbackListner] : OUT' );
+
+	}
+	/**
+	 * @method
+	 * 
+	 * init the listner for event 'message:modifyGeoReportDocument'
+	 */
+	,initModifyGeoReportDocumentListner: function() {
+	return {
+		fn: function(srcFrame, message) {
+			Sbi.debug('[DocumentPage.ModifyGeoReportDocumentListner] : IN' );
+
+			
+			var theWindow = this.miframe.iframe.getWindow();
+			Sbi.debug('[DocumentPage.ModifyGeoReportDocumentListner]: got window');
+			
+			var label;
+			//information to send to the SaveDocumentAction
+			if (message.data != undefined){
+				
+				label = message.data.label;
+			}
+			
+			var template;
+			if (theWindow.geoReportPanel != null) {
+				template = theWindow.geoReportPanel.validate();
+			}
+			
+			var paramsToSend = {
+					'template': template,
+					//'model_name': this.modelName,
+					'typeid': 'MAP',
+					'label': label
+			};
+			
+			
+			
+			//TODO: invocazione request di salvataggio SaveDocumentAction
+			Ext.Ajax.request({
+		        url: this.services['saveDocumentService'],
+		        params: paramsToSend,
+		        success: function(response, options) {
+		      		if(response !== undefined && response.responseText !== undefined) {
+		      			var content = Ext.util.JSON.decode( response.responseText );
+		      			if(content !== undefined) {
+		      				if(content.errors !== undefined && content.errors.length > 0) {
+		      					this.state = 'FAILURE';
+								Sbi.exception.ExceptionHandler.handleFailure(response);
+		      				} else {
+		      					this.state = 'LOADING';
+								Sbi.exception.ExceptionHandler.showInfoMessage('Document saved' );
+		      				}
+		      			} 
+		      		} else {
+		      			Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
+		      		}
+		        },
+		        scope: this,
+				failure: Sbi.exception.ExceptionHandler.handleFailure      
+		   });
+			
+		}
+		, scope: this
+	};
+	Sbi.debug('[DocumentPage.ModifyGeoReportDocumentListner] : OUT' );
 
 	}
 	
