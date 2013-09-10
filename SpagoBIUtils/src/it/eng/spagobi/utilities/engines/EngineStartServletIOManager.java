@@ -49,6 +49,7 @@ public class EngineStartServletIOManager extends BaseServletIOManager {
 	private String userExecutionRole;
 	private String auditId;
 	private String documentId;
+	private String documentAuthor;
 	private Locale locale;
 
 	private String templateName;
@@ -68,6 +69,7 @@ public class EngineStartServletIOManager extends BaseServletIOManager {
 
 	public static final String AUDIT_ID = "SPAGOBI_AUDIT_ID";
 	public static final String DOCUMENT_ID = "document";
+	public static final String DOCUMENT_AUTHOR = "DOCUMENT_AUTHOR";
 	public static final String EXECUTION_ROLE = "SBI_EXECUTION_ROLE";
 
 	public static final String COUNTRY = "SBI_COUNTRY";
@@ -132,6 +134,17 @@ public class EngineStartServletIOManager extends BaseServletIOManager {
 		}
 
 		return documentId;
+	}
+	
+	public String getDocumentAuthor() {
+
+		if (documentAuthor == null) {
+			if (requestContainsParameter(DOCUMENT_AUTHOR)) {
+				documentAuthor = getParameterAsString(DOCUMENT_AUTHOR);
+			}
+		}
+
+		return documentAuthor;
 	}
 
 	/**
@@ -397,6 +410,8 @@ public class EngineStartServletIOManager extends BaseServletIOManager {
 			env.put(EngineConstants.ENV_LOCALE, getLocale());
 			env.put(EngineConstants.ENV_USER_PROFILE, getUserProfile());
 			env.put(EngineConstants.ENV_EXECUTION_ROLE, getUserExecutionRole());
+			env.put(EngineConstants.ENV_DOCUMENT_AUTHOR, getDocumentAuthor());
+
 		}
 
 		return env;

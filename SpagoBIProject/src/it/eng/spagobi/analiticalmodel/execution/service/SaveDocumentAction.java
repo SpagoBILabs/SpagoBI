@@ -9,6 +9,7 @@ import it.eng.spagobi.analiticalmodel.document.AnalyticalModelDocumentManagement
 import it.eng.spagobi.analiticalmodel.document.DocumentTemplateBuilder;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
+import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
 import it.eng.spagobi.analiticalmodel.document.handlers.ExecutionInstance;
 import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
 import it.eng.spagobi.commons.bo.Domain;
@@ -51,6 +52,7 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 	private final String SAVE_WORKSHEET_FROM_DATASET = "DOC_SAVE_FROM_DATASET";
 	private final String DOC_UPDATE = "DOC_UPDATE";
 	private final String SAVE_WORKSHEET_FROM_MODEL = "DOC_SAVE_FROM_MODEL";
+	private final String MODIFY_GEOREPORT = "MODIFY_GEOREPORT";
 	
 
 	// RES detail
@@ -115,6 +117,8 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 				doInsertDocument(request);
 			} else if ( DOC_UPDATE.equalsIgnoreCase( action ) ) {
 				updateWorksheetDocumentTemplate();
+			} else if ( MODIFY_GEOREPORT.equalsIgnoreCase( action ) ) {
+				modifyGeoreportDocument(request);
 			} else {
 				throw new SpagoBIServiceException(SERVICE_NAME, "sbi.document.unsupported.action");
 			}
@@ -164,6 +168,34 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 			throw e;
 		} catch (Exception e) {
 			throw new SpagoBIServiceException(SERVICE_NAME, "An unexpected error occured while creating document", e);
+		} finally {
+			logger.debug("OUT");
+		}
+	}
+	
+	
+	private void modifyGeoreportDocument(JSONObject request){
+		logger.debug("IN");
+		try {
+			JSONObject documentJSON = request.optJSONObject("document");
+			JSONObject customDataJSON = request.optJSONObject("customData");
+			Assert.assertNotNull( customDataJSON , "Custom data object cannot be null");
+			
+			//Load existing document
+			IBIObjectDAO biObjectDao = DAOFactory.getBIObjectDAO();
+			String documentLabel = documentJSON.getString("label");
+			BIObject document = biObjectDao.loadBIObjectByLabel(documentLabel);
+			String templateContent = customDataJSON.optString("templateContent");
+
+			ObjTemplate template = buildDocumentTemplate("template.sbigeoreport", templateContent,document, 
+					null, null, null, null);
+			documentManagementAPI.saveDocument(document, template);		
+
+
+		} catch (SpagoBIServiceException e) {
+			throw e;
+		} catch (Exception e) {
+			throw new SpagoBIServiceException(SERVICE_NAME, "An unexpected error occured while creating geo document", e);
 		} finally {
 			logger.debug("OUT");
 		}

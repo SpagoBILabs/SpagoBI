@@ -40,6 +40,8 @@ public class GenericDriver extends AbstractDriver implements IEngineDriver {
     public static final String DOCUMENT_ID = "document";
     public static final String DOCUMENT_LABEL = "DOCUMENT_LABEL";
     public static final String DOCUMENT_VERSION = "DOCUMENT_VERSION";
+    public static final String DOCUMENT_AUTHOR = "DOCUMENT_AUTHOR";
+
 
     public static final String COUNTRY = "country";
     public static final String LANGUAGE = "language";
@@ -173,6 +175,9 @@ public class GenericDriver extends AbstractDriver implements IEngineDriver {
 		    logger.debug("Add " + DOCUMENT_LABEL + " parameter: " + documentlabel);
 		    pars.put(DOCUMENT_VERSION, objtemplate.getId());
 		    logger.debug("Add " + DOCUMENT_VERSION + " parameter: " + objtemplate.getId());
+		    pars.put(DOCUMENT_AUTHOR, biobj.getCreationUser());
+		    logger.debug("Add " + DOCUMENT_AUTHOR + " parameter: " + biobj.getCreationUser());
+
 
 	        
 			pars = addBIParameters(biobj, pars);
