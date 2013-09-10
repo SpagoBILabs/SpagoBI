@@ -53,6 +53,8 @@ Sbi.geo.MainPanel = function(config) {
 			store: this.store
 		};
 	
+
+	
 	this.init();
 	
 	c = Ext.apply(c, {

@@ -64,6 +64,7 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 	, logoPanelEnabled: false
 	, legendPanelEnabled: false
 	, debugPanelEnabled: false
+	, saveButtonEnabled: false
 	
 	, earthPanelConf: null
 	, layerPanelConf: null
@@ -242,12 +243,19 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 			this.initResultSetWin();
 			
 			var mapper = this.map;
+			
+			this.saveButtonEnabled = false;
+			if ((Sbi.config.userId != undefined) && (Sbi.config.docAuthor != undefined)){
+				if (Sbi.config.userId == Sbi.config.docAuthor){
+					this.saveButtonEnabled = true;
+				}
+			}
 
 			
 			this.debugControlPanel = new Ext.Panel({
 		           title: 'Debug',
 		           collapsible: true,
-		           height: 120,
+		           height: 150,
 		           items: [new Ext.Button({
 				    	text: 'Reload dataset',
 				        width: 30,
@@ -315,6 +323,15 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 				        	            printProvider.print(mapper, printPage);
 				        	        
 				        	    
+		           		},
+		           		scope: this
+				    }) , new Ext.Button({
+				    	text: 'Save Document',
+				        width: 30,
+				        disabled : !this.saveButtonEnabled,
+				        handler: function() {
+							sendMessage({'label': Sbi.config.docLabel},'modifyGeoReportDocument');
+
 		           		},
 		           		scope: this
 				    })

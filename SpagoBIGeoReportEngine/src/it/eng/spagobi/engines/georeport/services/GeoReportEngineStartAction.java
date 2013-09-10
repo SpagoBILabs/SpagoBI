@@ -47,7 +47,8 @@ public class GeoReportEngineStartAction extends AbstractEngineStartServlet {
         	// log some contextual infos
         	logger.debug("User: [" + servletIOManager.getUserId() + "]");
         	logger.debug("Document: [" + servletIOManager.getDocumentId() + "]");
-        	
+        	logger.debug("Document Author: [" + servletIOManager.getDocumentAuthor() + "]");
+
         	dataSource = servletIOManager.getDataSource();
         	logger.debug("Datasource: [" + (dataSource == null? dataSource: dataSource.getLabel()) + "]");
         	 
@@ -59,6 +60,7 @@ public class GeoReportEngineStartAction extends AbstractEngineStartServlet {
         			servletIOManager.getTemplateAsString(), 
         			servletIOManager.getEnv()
         	);
+        	
         	
         	servletIOManager.getHttpSession().setAttribute(EngineConstants.ENGINE_INSTANCE, engineInstance);
         	

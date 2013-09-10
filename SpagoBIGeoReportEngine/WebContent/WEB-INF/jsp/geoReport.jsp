@@ -34,16 +34,23 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 	String template;
 	String docLabel;
 	String docVersion;
+	String docAuthor;
+	String userId;
 	List<String> includes;
 	
 	engineInstance = (GeoReportEngineInstance)request.getSession().getAttribute(EngineConstants.ENGINE_INSTANCE);
 	env = engineInstance.getEnv();
 	locale = engineInstance.getLocale();
-	
+
 	executionRole = (String)env.get(EngineConstants.ENV_EXECUTION_ROLE);
+	userId = (String)env.get("user_id");
 	template = engineInstance.getGuiSettings().toString();
 	docLabel = (engineInstance.getDocumentLabel()==null)?"":engineInstance.getDocumentLabel().toString();
 	docVersion = (engineInstance.getDocumentVersion()==null)?"":engineInstance.getDocumentVersion().toString();
+	docAuthor = (engineInstance.getDocumentAuthor()==null)?"":engineInstance.getDocumentAuthor().toString();
+
+
+
 	includes = engineInstance.getIncludes();
 	
 	
@@ -99,6 +106,8 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 			var executionRole = '<%= executionRole%>';
 			Sbi.template.role = executionRole || Sbi.template.role;
 			
+		    
+			
 			execDoc = function(docLab, role, params, dispToolbar, dispSlide,frameId, height) {
 
 				var h = height || '100%';
@@ -151,6 +160,9 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 
 		    Sbi.config.docLabel = '<%=docLabel%>';
 		    Sbi.config.docVersion = '<%=docVersion%>';
+		    Sbi.config.userId = '<%=userId%>';
+		    Sbi.config.docAuthor = '<%=docAuthor%>';
+
 		    
 		    var geoReportPanel = null;
 		    
