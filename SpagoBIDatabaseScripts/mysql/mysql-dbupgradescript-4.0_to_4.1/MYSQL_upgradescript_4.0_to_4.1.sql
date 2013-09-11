@@ -123,5 +123,5 @@ ALTER TABLE SBI_DATA_SET DROP COLUMN DATA_SOURCE_FLAT_ID;
 INSERT INTO SBI_DOMAINS (VALUE_ID, VALUE_CD,VALUE_NM,DOMAIN_CD,DOMAIN_NM,VALUE_DS, USER_IN, TIME_IN)
 	VALUES ((SELECT next_val FROM hibernate_sequences WHERE sequence_name = 'SBI_DOMAINS'),
 	'Flat','SbiFlatDataSet','DATA_SET_TYPE','Data Set Type','SbiFlatDataSet', 'biadmin', current_timestamp);
-update HIBERNATE_SEQUENCES set next_val = next_val+1 where  sequence_name = 'SBI_DOMAINS';
+update hibernate_sequences set next_val = next_val+1 where  sequence_name = 'SBI_DOMAINS';
 commit;
