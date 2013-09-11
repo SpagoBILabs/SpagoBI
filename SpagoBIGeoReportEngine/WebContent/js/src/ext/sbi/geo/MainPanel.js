@@ -59,7 +59,7 @@ Sbi.geo.MainPanel = function(config) {
 	
 	c = Ext.apply(c, {
          layout   : 'border',
-         items    : [this.controlPanel, this.mapPanel]
+         items    : [this.controlPanel, this.mapPanel, this.controlPanel2]
 	});
 
 	// constructor
@@ -722,6 +722,7 @@ Ext.extend(Sbi.geo.MainPanel, Ext.Panel, {
 		this.controlPanelConf.map = this.map;
 		this.controlPanelConf.geostatistic = this.geostatistic;
 		this.controlPanel = new Sbi.geo.ControlPanel(this.controlPanelConf);
+		this.controlPanel2 = new Sbi.geo.ControlPanel2({});
 	}
 	
 

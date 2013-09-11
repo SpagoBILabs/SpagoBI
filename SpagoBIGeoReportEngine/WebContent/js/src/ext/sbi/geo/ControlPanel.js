@@ -11,7 +11,7 @@ Sbi.geo.ControlPanel = function(config) {
 	
 	var defaultSettings = {
 		title       : LN('sbi.geo.controlpanel.title'),
-		region      : 'east',
+		region      : 'west', //region      : 'east',
 		split       : true,
 		width       : 315,
 		collapsible : true,
@@ -301,6 +301,20 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 				        disabled :(Sbi.config.docLabel=="")?true:false,
 				        handler: function() {
 				        	this.showFeedbackWindow();
+		           		},
+		           		scope: this
+				    }), new Ext.Button({
+				    	text: 'Get element',
+				        width: 30,
+				        disabled :(Sbi.config.docLabel=="")?true:false,
+				        handler: function() {
+							var el = Ext.get("authorButton");
+							if(el && el !== null) {
+								el.on('click', function() {
+									alert('Clicked on author button');
+								});
+								alert('Registered handler on element [authorButton]');
+							}
 		           		},
 		           		scope: this
 				    }), new Ext.Button({
