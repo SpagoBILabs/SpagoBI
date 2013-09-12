@@ -6,7 +6,7 @@
         Auto-generated mapping file from
         the hibernate.org cfg2hbm engine
 -->
-    <class name="it.eng.spagobi.analiticalmodel.document.metadata.SbiObjPar" table="sbi_obj_par" >
+    <class name="it.eng.spagobi.analiticalmodel.document.metadata.SbiObjPar" table="SBI_OBJ_PAR" >
         <id name="objParId" type="integer">
             <column name="obj_par_id" />
 

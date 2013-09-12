@@ -3,7 +3,7 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <!-- Generated 15-lug-2013 11.45.55 by Hibernate Tools 3.4.0.CR1 -->
 <hibernate-mapping>
-    <class name="it.eng.spagobi.community.mapping.SbiCommunity" table="sbi_community">
+    <class name="it.eng.spagobi.community.mapping.SbiCommunity" table="SBI_COMMUNITY">
         <id name="communityId" type="java.lang.Integer">
             <column name="COMMUNITY_ID" />
 		   <generator class="org.hibernate.id.enhanced.TableGenerator">
@@ -58,7 +58,7 @@
         <property name="functCode" type="string">
             <column name="FUNCT_CODE" length="40" />
         </property>
-        <set name="sbiCommunityUserses" table="sbi_community_users" inverse="true" lazy="false" fetch="select">
+        <set name="sbiCommunityUserses" table="SBI_COMMUNITY_USERS" inverse="true" lazy="false" fetch="select">
             <key>
                 <column name="COMMUNITY_ID" not-null="true" />
             </key>

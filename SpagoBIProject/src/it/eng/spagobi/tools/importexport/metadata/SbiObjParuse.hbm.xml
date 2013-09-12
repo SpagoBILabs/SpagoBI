@@ -6,7 +6,7 @@
         Auto-generated mapping file from
         the hibernate.org cfg2hbm engine
 -->
-    <class name="it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiObjParuse" table="sbi_obj_paruse">
+    <class name="it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiObjParuse" table="SBI_OBJ_PARUSE">
        <composite-id name="id" class="it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiObjParuseId">
             <key-many-to-one name="sbiParuse" class="it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParuse">
                 <column name="use_id" not-null="true"/>

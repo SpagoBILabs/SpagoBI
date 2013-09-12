@@ -6,7 +6,7 @@
         Auto-generated mapping file from
         the hibernate.org cfg2hbm engine
 -->
-    <class name="it.eng.spagobi.behaviouralmodel.check.metadata.SbiChecks" table="sbi_checks">
+    <class name="it.eng.spagobi.behaviouralmodel.check.metadata.SbiChecks" table="SBI_CHECKS">
         <id name="checkId" type="integer">
             <column name="check_id" />
         </id>
