@@ -8,11 +8,17 @@ package it.eng.spagobi.commons.filters;
 import it.eng.spago.base.Constants;
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.SessionContainer;
+import it.eng.spago.security.DefaultCipher;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.utilities.ChannelUtilities;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
+import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.services.common.SsoServiceFactory;
 import it.eng.spagobi.services.common.SsoServiceInterface;
+import it.eng.spagobi.services.security.bo.SpagoBIUserProfile;
+import it.eng.spagobi.services.security.service.ISecurityServiceSupplier;
+import it.eng.spagobi.services.security.service.SecurityServiceSupplierFactory;
 import it.eng.spagobi.tenant.Tenant;
 import it.eng.spagobi.tenant.TenantManager;
 
@@ -27,6 +33,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.log4j.Logger;
 
 /**
@@ -66,17 +73,32 @@ public class ProfileFilter implements Filter {
 				SessionContainer permanentSession = sessionContainer.getPermanentContainer();
 				IEngUserProfile profile = (IEngUserProfile) permanentSession.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 				if (profile == null) {
-					logger.debug("User profile not found in session, creating a new one and putting in session....");
 					// in case the profile does not exist, creates a new one
-					String userId = findUserId(httpRequest);
-					// in case the user is not specified, does nothing
-					if (userId == null || userId.trim().equals("")) {
-						logger.debug("User identifier not found.");
+					logger.debug("User profile not found in session, creating a new one and putting in session....");
+					
+					String userId = null;
+					
+					if (ChannelUtilities.isWebRunning() && !GeneralUtilities.isSSOEnabled()) {
+						// case of installation as web application without SSO
+						try {
+							userId = getUserIdInWebModeWithoutSSO(httpRequest);
+						} catch (Exception e) {
+							logger.error("Error authenticating user", e);
+							httpRequest.getRequestDispatcher("/WEB-INF/jsp/commons/silentLoginFailed.jsp").forward(request, response);
+							return;
+						}
+					} else {
+						// case of installation as portlet application and/or with SSO
+						userId = getUserIdWithSSO(httpRequest);
 					}
+
 					logger.debug("User id = " + userId);
-					if (userId!=null) {
+					if (userId != null && !userId.trim().equals("")) {
 						profile = GeneralUtilities.createNewUserProfile(userId);
-						permanentSession.setAttribute(IEngUserProfile.ENG_USER_PROFILE, profile);
+						permanentSession.setAttribute(
+								IEngUserProfile.ENG_USER_PROFILE, profile);
+					} else {
+						logger.debug("User identifier not found.");
 					}
 					
 				} else {
@@ -99,20 +121,75 @@ public class ProfileFilter implements Filter {
 				if (profile != null) {
 					manageTenant(profile);
 				}
-
+				
+				chain.doFilter(request, response);
 			}
 		} catch (Exception e) {
 			logger.error(e);
 		} finally {
-			//logger.debug("OUT");
-			try {
-				chain.doFilter(request, response);
-			} finally {
-				// since TenantManager uses a ThreadLocal, we must clean  after request processed in each case
-				TenantManager.unset();
-			}
-
+			// since TenantManager uses a ThreadLocal, we must clean  after request processed in each case
+			TenantManager.unset();
 		}
+	}
+
+	private String getUserIdInWebModeWithoutSSO(HttpServletRequest httpRequest) {
+		UsernamePasswordCredentials credentials = this.findUserCredentials(httpRequest);
+		if (credentials != null) {
+			logger.debug("User credentials found.");
+			if (!httpRequest.getMethod().equalsIgnoreCase("POST")) {
+				logger.error("Request method is not POST!!!");
+				throw new InvalidMethodException();
+			}
+			logger.debug("Authenticating user ...");
+			try {
+				this.authenticate(credentials);
+				logger.debug("User authenticated");
+			} catch (Throwable t) {
+				logger.error("Authentication failed", t);
+				throw new SilentAuthenticationFailedException();
+			}
+		} else {
+			logger.debug("User credentials not found.");
+		}
+		
+		String userId = credentials != null ? credentials.getUserName() : null;
+		return userId;
+	}
+	
+	private void authenticate(UsernamePasswordCredentials credentials) throws Throwable {
+		logger.debug("IN: userId = " + credentials.getUserName());
+		try {
+			ISecurityServiceSupplier supplier = SecurityServiceSupplierFactory.createISecurityServiceSupplier();
+			SpagoBIUserProfile profile = supplier.checkAuthentication(credentials.getUserName(), credentials.getPassword());
+			if (profile == null) {
+				logger.error("Authentication failed for user " + credentials.getUserName());
+				throw new SecurityException("Authentication failed");
+			}
+		} catch (Throwable t) {
+			logger.error("Error while authenticating userId = " + credentials.getUserName(), t);
+			throw t;
+		} finally {
+			logger.debug("OUT");
+		}
+		
+	}
+
+	private UsernamePasswordCredentials findUserCredentials(HttpServletRequest httpRequest) {
+		UsernamePasswordCredentials toReturn = null;
+		String userId = httpRequest.getParameter(SsoServiceInterface.USER_NAME_REQUEST_PARAMETER);
+		String password = httpRequest.getParameter(SsoServiceInterface.PASSWORD_REQUEST_PARAMETER);
+		if (!StringUtilities.isEmpty(userId) && !StringUtilities.isNull(password)) {
+			logger.debug("Read credentials from request: user id is [" + userId + "]");
+			String passwordMode = httpRequest.getParameter(SsoServiceInterface.PASSWORD_MODE_REQUEST_PARAMETER);
+			if (!StringUtilities.isEmpty(passwordMode) && passwordMode.equalsIgnoreCase(SsoServiceInterface.PASSWORD_MODE_ENCRYPTED)) {
+				logger.debug("Password mode is encrypted. Decripting password...");
+				DefaultCipher chiper = new DefaultCipher();
+				password = chiper.decrypt(password);
+				logger.debug("Password decrypted.");
+			}
+			toReturn = new UsernamePasswordCredentials(userId, password);
+		}
+		return toReturn;
 	}
 
 	private void manageTenant(IEngUserProfile profile) {
@@ -143,8 +220,7 @@ public class ProfileFilter implements Filter {
 	 *             in case the SSO is enabled and the user identifier specified
 	 *             on http request is different from the SSO detected one.
 	 */
-
-	private static String findUserId(HttpServletRequest request) throws Exception {
+	private static String getUserIdWithSSO(HttpServletRequest request) throws Exception {
 		logger.debug("IN");
 		String userId = null;
 		try {
@@ -154,6 +230,14 @@ public class ProfileFilter implements Filter {
 			logger.debug("OUT");
 		}
 		return userId;
+	}
+	
+	public class SilentAuthenticationFailedException extends RuntimeException {
+		
+	}
+	
+	public class InvalidMethodException extends RuntimeException {
+		
 	}
 
 }

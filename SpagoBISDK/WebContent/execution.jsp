@@ -44,7 +44,6 @@ if (user != null && password != null) {
 		}
 	}
 	session.setAttribute("spagobi_current_document", document);
-	String userId = (String) session.getAttribute("spagobi_user");
 	String role = (String) session.getAttribute("spagobi_role");
 	SDKDocumentParameter[] parameters = (SDKDocumentParameter[]) session.getAttribute("spagobi_document_parameters"); 
 	StringBuffer parameterValues = new StringBuffer();
@@ -66,7 +65,8 @@ if (user != null && password != null) {
 	%>
 	<spagobi:execution 
 			spagobiContext="http://localhost:8080/SpagoBI/"
-			userId="<%= userId %>" 
+			userId="<%= user %>" 
+			password="<%= password %>" 
 	        documentId="<%= documentId.toString() %>"
 	        iframeStyle="height:500px; width:100%" 
 	        executionRole="<%= role %>"
