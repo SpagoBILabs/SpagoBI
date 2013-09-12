@@ -6,7 +6,7 @@
         Auto-generated mapping file from
         the hibernate.org cfg2hbm engine
 -->
-    <class name="it.eng.spagobi.analiticalmodel.document.metadata.SbiObjState" table="sbi_obj_state" >
+    <class name="it.eng.spagobi.analiticalmodel.document.metadata.SbiObjState" table="SBI_OBJ_STATE" >
         <composite-id name="id" class="it.eng.spagobi.analiticalmodel.document.metadata.SbiObjStateId">
             <key-many-to-one name="sbiDomains" class="it.eng.spagobi.commons.metadata.SbiDomains">
                 <column name="state_id" />

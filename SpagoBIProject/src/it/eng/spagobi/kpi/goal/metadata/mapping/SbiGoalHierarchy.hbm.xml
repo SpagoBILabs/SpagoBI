@@ -63,13 +63,13 @@
         <property name="goal" type="string">
             <column name="GOAL" length="1000"/>
         </property>
-        <set name="sbiGoalKpis" inverse="true" lazy="true" table="sbi_goal_kpi" fetch="select">
+        <set name="sbiGoalKpis" inverse="true" lazy="true" table="SBI_GOAL_KPI" fetch="select">
             <key>
                 <column name="GOAL_HIERARCHY_ID" not-null="true" />
             </key>
             <one-to-many class="it.eng.spagobi.kpi.goal.metadata.SbiGoalKpi" />
         </set>
-        <set name="sbiGoalHierarchies" inverse="true" lazy="true" table="sbi_goal_hierarchy" fetch="select">
+        <set name="sbiGoalHierarchies" inverse="true" lazy="true" table="SBI_GOAL_HIERARCHY" fetch="select">
             <key>
                 <column name="PARENT_ID" />
             </key>

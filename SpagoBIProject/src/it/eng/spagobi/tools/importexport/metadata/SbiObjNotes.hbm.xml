@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
-    <class name="it.eng.spagobi.analiticalmodel.document.metadata.SbiObjNotes" table="sbi_object_notes" >
+    <class name="it.eng.spagobi.analiticalmodel.document.metadata.SbiObjNotes" table="SBI_OBJECT_NOTES" >
         <id name="objNoteId" type="integer">
             <column name="obj_note_id" />
         </id>   

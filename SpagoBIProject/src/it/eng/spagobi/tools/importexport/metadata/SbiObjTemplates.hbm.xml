@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
-    <class name="it.eng.spagobi.analiticalmodel.document.metadata.SbiObjTemplates" table="sbi_object_templates" >
+    <class name="it.eng.spagobi.analiticalmodel.document.metadata.SbiObjTemplates" table="SBI_OBJECT_TEMPLATES" >
         <id name="objTempId" type="integer">
             <column name="obj_temp_id" />
         </id>   

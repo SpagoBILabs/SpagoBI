@@ -6,7 +6,7 @@
         Auto-generated mapping file from
         the hibernate.org cfg2hbm engine
 -->
-    <class name="it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParameters" table="sbi_parameters">
+    <class name="it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParameters" table="SBI_PARAMETERS">
         <id name="parId" type="integer">
             <column name="par_id" />
         </id>
