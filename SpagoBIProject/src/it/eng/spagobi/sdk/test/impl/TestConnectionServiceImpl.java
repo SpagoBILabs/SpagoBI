@@ -24,7 +24,7 @@ public class TestConnectionServiceImpl extends AbstractSDKService implements Tes
         	if (profile != null) {
         		UserProfile userProfile = (UserProfile) profile;
         		logger.info("User recognized: " +
-        				"userUniqueIdentifier = [" + userProfile.getUserAttributeNames() + "]; " +
+        				"userUniqueIdentifier = [" + userProfile.getUserUniqueIdentifier() + "]; " +
         						"userId = [" + userProfile.getUserId() + "]; " +
         								"userName = [" + userProfile.getUserName() + "]");
         		toReturn = true;
