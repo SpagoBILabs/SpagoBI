@@ -95,6 +95,7 @@ Sbi.locale.ln['sbi.generic.deletingItemError'] = 'Errore nell\'eliminazione dell
 Sbi.locale.ln['sbi.generic.warning'] = 'Attenzione';
 Sbi.locale.ln['sbi.generic.pleaseConfirm'] = 'Per favore confermare';
 Sbi.locale.ln['sbi.generic.confirmDelete'] = 'Confermi l\'eliminazione dell\'oggetto?';
+Sbi.locale.ln['sbi.generic.confirmDeleteDataset'] = 'La cancellazione del dataset eliminera\' anche tutti i documenti che ne fanno uso. Confermare la cancellazione?';
 Sbi.locale.ln['sbi.generic.confirmChangeNode'] = 'Ci sono delle modifiche non salvate. Confermare il cambio di root?';
 Sbi.locale.ln['sbi.generic.deleteKpi'] = 'Elimina Kpi';
 Sbi.locale.ln['sbi.generic.attributes'] = 'Attributi';

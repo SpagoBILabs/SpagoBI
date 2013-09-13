@@ -53,6 +53,10 @@ import it.eng.spagobi.tools.dataset.validation.HierarchyLevel;
 import it.eng.spagobi.tools.dataset.validation.IDatasetValidator;
 import it.eng.spagobi.tools.dataset.validation.IDatasetValidatorFactory;
 import it.eng.spagobi.tools.dataset.validation.ValidationErrors;
+import it.eng.spagobi.tools.notification.AbstractEvent;
+import it.eng.spagobi.tools.notification.DatasetEvent;
+import it.eng.spagobi.tools.notification.DatasetNotificationManager;
+import it.eng.spagobi.tools.notification.EventConstans;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
@@ -198,9 +202,39 @@ public class SelfServiceDataSetCRUD {
 			String id = (String) req.getParameter("id");
 			Assert.assertNotNull(id,deleteNullIdDataSetError );
 			IDataSet ds = DAOFactory.getDataSetDAO().loadActiveIDataSetByID(new Integer(id));
+			//Create DatasetEvent but wait to notify
+			DatasetEvent datasetEvent = new DatasetEvent(EventConstans.DATASET_EVENT_DELETED_DATASET,"The dataset has been deleted",ds);
+			datasetEvent.retrieveEmailAddressesOfMapAuthors();
 			try{
+				
+				//Check if there are document associated to the dataset, delete them first and then delete dataset
+				IDataSetDAO datasetDao = DAOFactory.getDataSetDAO();
+				if (datasetDao.countBIObjAssociated(ds.getId())>0){
+					IBIObjectDAO biObjectDao = DAOFactory.getBIObjectDAO();
+					List<BIObject>  biObjects = biObjectDao.loadAllBIObjects();
+					for (BIObject biObject : biObjects){
+						if (biObject.getDataSetId() != null){
+							if (biObject.getDataSetId().intValue() == Integer.valueOf(id).intValue()){
+								biObjectDao.eraseBIObject(biObject, null);
+							}
+						}
+					}
+				}
+				
+				//Delete Dataset
 				DAOFactory.getDataSetDAO().deleteDataSet(ds.getId());
 				deleteDatasetFile(ds);
+				
+				//notify that dataset has been deleted 
+				try{
+					DatasetNotificationManager dsNotificationManager = new DatasetNotificationManager();
+					dsNotificationManager.handleEvent(datasetEvent);
+				} catch(Exception e) {
+					logger.error("Error during notification of Dataset Events", e);
+				}
+				
+				
+				
 			}catch(Exception ex){
 				if (ex.getMessage().startsWith("[deleteInUseDSError]")){
 					updateAudit(req, profile, "DATA_SET.DELETE", logParam, "KO");
@@ -285,15 +319,10 @@ public class SelfServiceDataSetCRUD {
 			} else {				
 				//update ds
 				dao.modifyDataSet(dsNew);
-				boolean licenceChanged = checkLicenceChange(ds,dsNew);
-				if (licenceChanged){
-					//notify that license is changed
-					try{
-						notifyLicenceChange(dsNew);
-					} catch(Exception e){
-						logger.error("Error notifying map authors about licence change", e);
-					}
-				}
+				
+				//Notifications Management -----------------------------------
+				notificationManagement(req,ds,dsNew);
+				
 				updateAudit(req, profile, "DATA_SET.MODIFY", logParam, "OK");
 			}  
 			
@@ -323,6 +352,211 @@ public class SelfServiceDataSetCRUD {
 						"Cannot fill response container", e);
 			}
 		}
+	}
+	
+	private void notificationManagement(HttpServletRequest req, IDataSet currentDataset, IDataSet updatedDataset) {
+
+		try{
+			DatasetNotificationManager dsNotificationManager = new DatasetNotificationManager();
+			List<AbstractEvent> datasetEvents = new ArrayList<AbstractEvent>();
+
+			//File change check
+			boolean newFileUploaded = false;
+			if (req.getParameter("fileUploaded") != null){
+				newFileUploaded = Boolean.valueOf(((String)req.getParameter("fileUploaded")));
+			}
+			if (newFileUploaded){
+				DatasetEvent datasetEvent = new DatasetEvent(EventConstans.DATASET_EVENT_FILE_CHANGED,"The dataset has changed his file",updatedDataset);
+				datasetEvents.add(datasetEvent);
+			}
+
+			//Metadata change check
+			boolean metadataChanged = checkMetadataChange(currentDataset,updatedDataset);
+			if (metadataChanged){
+				//notify that metadata is changed
+				DatasetEvent datasetEvent = new DatasetEvent(EventConstans.DATASET_EVENT_METADATA_CHANGED,"The dataset has changed his metadata",updatedDataset);
+				datasetEvents.add(datasetEvent);
+			}
+
+			//Licence change check
+			boolean licenceChanged = checkLicenceChange(currentDataset,updatedDataset);
+			if (licenceChanged){
+				//notify that license is changed
+				DatasetEvent datasetEvent = new DatasetEvent(EventConstans.DATASET_EVENT_LICENCE_CHANGED,"The dataset has changed his licence",updatedDataset);
+				datasetEvents.add(datasetEvent);
+
+			}
+
+			//Name change
+			boolean nameChanged = checkNameChange(currentDataset,updatedDataset);
+			if (nameChanged){
+				//notify that name is changed
+				DatasetEvent datasetEvent = new DatasetEvent(EventConstans.DATASET_EVENT_NAME_CHANGED,"The dataset has changed his name",updatedDataset);
+				datasetEvents.add(datasetEvent);
+			}
+
+			//Description change
+			boolean descriptionChanged = checkDescriptionChange(currentDataset,updatedDataset);
+			if (descriptionChanged){
+				//notify that Description is changed
+				DatasetEvent datasetEvent = new DatasetEvent(EventConstans.DATASET_EVENT_DESCRIPTION_CHANGED,"The dataset has changed his description",updatedDataset);
+				datasetEvents.add(datasetEvent);
+			}
+
+			boolean categoryChanged = checkCategoryChange(currentDataset,updatedDataset);
+			if (categoryChanged){
+				//notify that Category is changed
+				DatasetEvent datasetEvent = new DatasetEvent(EventConstans.DATASET_EVENT_CATEGORY_CHANGED,"The dataset has changed his category",updatedDataset);
+				datasetEvents.add(datasetEvent);
+			}
+
+			boolean scopeChanged = checkScopeChange(currentDataset,updatedDataset);
+			if (scopeChanged){
+				//notify that Scope (Public/Private)
+				DatasetEvent datasetEvent = new DatasetEvent(EventConstans.DATASET_EVENT_SCOPE_CHANGED,"The dataset has changed his scope",updatedDataset);
+				datasetEvents.add(datasetEvent);
+
+			}	
+			
+			//Sending notifications to Manager
+			
+			if(!datasetEvents.isEmpty()){
+				if (datasetEvents.size() == 1){
+					dsNotificationManager.handleEvent(datasetEvents.get(0));
+				} else {
+					dsNotificationManager.handleMultipleEvents(datasetEvents);
+
+				}
+			}
+			
+
+		} catch (Exception ex){
+			logger.error("Error during notification of Dataset Events", ex);
+
+		}
+
+	}
+	
+	private boolean checkScopeChange(IDataSet currentDataset, IDataSet updatedDataset)throws Exception {
+		if ((currentDataset != null) && (updatedDataset != null)){
+			if (currentDataset instanceof VersionedDataSet ){
+				currentDataset = ((VersionedDataSet) currentDataset).getWrappedDataset();
+			}
+			if(currentDataset.isPublic() == updatedDataset.isPublic()){
+				return false;
+			} else {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	
+	private boolean checkCategoryChange(IDataSet currentDataset, IDataSet updatedDataset)throws Exception {
+		if ((currentDataset != null) && (updatedDataset != null)){
+			if (currentDataset instanceof VersionedDataSet ){
+				currentDataset = ((VersionedDataSet) currentDataset).getWrappedDataset();
+			}
+			Integer currentDatasetCategory = currentDataset.getCategoryId();
+			Integer updatedDatasetCategory = updatedDataset.getCategoryId();
+			if (currentDatasetCategory == null){
+				if (updatedDatasetCategory == null){
+					return false;
+				} else {
+					return true;
+				}
+			} else {
+				if (currentDatasetCategory.intValue() == updatedDatasetCategory.intValue()){
+					return false;
+				} else {
+					return true;
+				}
+			}
+			
+
+		}
+		return false;
+	}
+	
+	private boolean checkDescriptionChange(IDataSet currentDataset, IDataSet updatedDataset)throws Exception {
+		if ((currentDataset != null) && (updatedDataset != null)){
+			if (currentDataset instanceof VersionedDataSet ){
+				currentDataset = ((VersionedDataSet) currentDataset).getWrappedDataset();
+			}
+			String currentDatasetDescription = currentDataset.getDescription();
+			String updatedDatasetDescription = updatedDataset.getDescription();
+			if (currentDatasetDescription == null){
+				if (updatedDatasetDescription == null){
+					return false;
+				} else {
+					return true;
+				}
+			} else {
+				if (currentDatasetDescription.equals(updatedDatasetDescription)){
+					return false;
+				} else {
+					return true;
+				}
+			}
+
+		}
+		return false;
+		
+	}
+	
+	private boolean checkNameChange(IDataSet currentDataset, IDataSet updatedDataset)throws Exception {
+		if ((currentDataset != null) && (updatedDataset != null)){
+			if (currentDataset instanceof VersionedDataSet ){
+				currentDataset = ((VersionedDataSet) currentDataset).getWrappedDataset();
+			}
+			String currentDatasetName = currentDataset.getName();
+			String updatedDatasetName = updatedDataset.getName();
+			
+			if (currentDatasetName == null){
+				if (updatedDatasetName == null){
+					return false;
+				} else {
+					return true;
+				}
+			} else {
+				if (currentDatasetName.equals(updatedDatasetName)){
+					return false;
+				} else {
+					return true;
+				}
+			}
+
+		}
+		return false;
+		
+	}
+	
+	private boolean checkMetadataChange(IDataSet currentDataset, IDataSet updatedDataset)throws Exception {
+		if ((currentDataset != null) && (updatedDataset != null)){
+			if (currentDataset instanceof VersionedDataSet ){
+				currentDataset = ((VersionedDataSet) currentDataset).getWrappedDataset();
+			}
+			
+			String currentDatasetMetadata = currentDataset.getDsMetadata();
+			String updatedDatasetMetadata = updatedDataset.getDsMetadata();
+			
+			if (currentDatasetMetadata == null){
+				if (updatedDatasetMetadata == null){
+					return false;
+				} else {
+					return true;
+				}
+			} else {
+				if(currentDatasetMetadata.equals(updatedDatasetMetadata)){
+					return false;
+				} else {
+					return true;
+				}
+			}
+			
+
+		}
+		return false;
 	}
 	
 	private boolean checkLicenceChange(IDataSet currentDataset, IDataSet updatedDataset) throws Exception{
@@ -365,189 +599,6 @@ public class SelfServiceDataSetCRUD {
 		
 	}
 	
-	/*
-	 * This method notify authors of maps based on the passed dataset that the licence is changed
-	 */
-	private void notifyLicenceChange(IDataSet dataset) throws Exception{
-		//We have to get all the maps documents based on this dataset
-		int datasetId = dataset.getId();
-		
-		IBIObjectDAO biObjectDAO = DAOFactory.getBIObjectDAO();
-		ISbiUserDAO  biUserDAO = DAOFactory.getSbiUserDAO();
-
-		//get all the maps documents
-		List mapsDocuments = biObjectDAO.loadBIObjects("MAP", null, null);
-		//Set of email addresses to notify
-		Set<String> emailsAddressOfAuthors = new HashSet<String>();
-		
-		Iterator iterator = mapsDocuments.iterator();
-		while (iterator.hasNext()) {
-			Object document = iterator.next();
-			if (document instanceof BIObject){
-				BIObject sbiDocument = (BIObject)document;
-				//check if the document is using this dataset
-				if (sbiDocument.getDataSetId() == datasetId) {
-					String documentCreationUser = sbiDocument.getCreationUser();
-					SbiUser sbiUser = biUserDAO.loadSbiUserByUserId(documentCreationUser);
-					ArrayList<SbiUserAttributes> userAttributes = biUserDAO.loadSbiUserAttributesById(sbiUser.getId());
-					for (SbiUserAttributes userAttribute : userAttributes){
-						SbiAttribute sbiAttribute = userAttribute.getSbiAttribute();
-						String attributeName = sbiAttribute.getAttributeName();
-						if (attributeName.equalsIgnoreCase("email")){
-							//get email address of creation user
-							String emailAddressDocumentCreationUser = userAttribute.getAttributeValue();
-							if (!emailAddressDocumentCreationUser.isEmpty()){
-								emailsAddressOfAuthors.add(emailAddressDocumentCreationUser);
-							}
-						}
-					}
-				}
-			}
-		}
-		
-		if (!emailsAddressOfAuthors.isEmpty()){
-	    	String[] recipients = emailsAddressOfAuthors.toArray(new String[0]);
-	    	
-	    	String subject = "The dataset "+dataset.getLabel()+" has changed is licence";
-	    	String emailContent = "The dataset "+dataset.getLabel()+" that you are using in a Map, has changed is licence";
-	    	
-	    	//send mail
-	    	sendMail(recipients, subject, emailContent);
-	    	logger.debug("Mail sent to Map Authors about licence change");
-		}
-		
-	}
-	
-	
-	private void sendMail(String[] emailAddresses, String subject, String emailContent) throws Exception{
-		
-	    final String DEFAULT_SSL_FACTORY = "javax.net.ssl.SSLSocketFactory";
-	    final String CUSTOM_SSL_FACTORY = "it.eng.spagobi.commons.services.DummySSLSocketFactory";
-	    
-		String smtphost = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.user.smtphost");
-	    String smtpport = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.user.smtpport");
-	    String smtpssl = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.user.useSSL"); 
-	    logger.debug(smtphost+" "+smtpport+" use SSL: "+smtpssl);
-	    
-	    //Custom Trusted Store Certificate Options
-	    String trustedStorePath = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.trustedStore.file"); 
-	    String trustedStorePassword = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.trustedStore.password"); 
-	    
-	    int smptPort=25;
-	    
-		if( (smtphost==null) || smtphost.trim().equals(""))
-			throw new Exception("Smtp host not configured");
-		if( (smtpport==null) || smtpport.trim().equals("")){
-			throw new Exception("Smtp host not configured");
-		}else{
-			smptPort=Integer.parseInt(smtpport);
-		}
-		
-		String from = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.user.from");
-		if( (from==null) || from.trim().equals(""))
-			from = "spagobi@eng.it";
-		String user = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.user.user");
-		if( (user==null) || user.trim().equals("")){
-			logger.debug("Smtp user not configured");	
-			user=null;
-		}
-		String pass = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.user.password");
-		if( (pass==null) || pass.trim().equals("")){
-		logger.debug("Smtp password not configured");	
-		}
-		
-		//Set the host smtp address
-		Properties props = new Properties();
-		props.put("mail.smtp.host", smtphost);
-		props.put("mail.smtp.port", Integer.toString(smptPort));
-		
-		// open session
-		Session session=null;
-		// create autheticator object
-		Authenticator auth = null;
-		if (user!=null) {
-			auth = new SMTPAuthenticator(user, pass);
-			props.put("mail.smtp.auth", "true");
-	 	    //SSL Connection
-	    	if (smtpssl.equals("true")){
-	            Security.addProvider(new com.sun.net.ssl.internal.ssl.Provider());	            
-			    props.put("mail.smtps.auth", "true");
-		        props.put("mail.smtps.socketFactory.port", Integer.toString(smptPort));
-	            if ((!StringUtilities.isEmpty(trustedStorePath)) ) {            	
-					/* Dynamic configuration of trustedstore for CA
-					 * Using Custom SSLSocketFactory to inject certificates directly from specified files
-					 */
-	            	
-			        props.put("mail.smtps.socketFactory.class", CUSTOM_SSL_FACTORY);
-
-	            } else {
-	            
-			        props.put("mail.smtps.socketFactory.class", DEFAULT_SSL_FACTORY);
-	            }
-		        props.put("mail.smtp.socketFactory.fallback", "false"); 
-	    	}
-			
-			session = Session.getInstance(props, auth);
-			logger.info("Session.getInstance(props, auth)");
-			
-		}else{
-			session = Session.getInstance(props);
-			logger.info("Session.getInstance(props)");
-		}
-		
-		// create a message
-		Message msg = new MimeMessage(session);
-		// set the from and to address
-		InternetAddress addressFrom = new InternetAddress(from);
-		msg.setFrom(addressFrom);
-		InternetAddress[] addressTo = new InternetAddress[emailAddresses.length];
-		for (int i = 0; i < emailAddresses.length; i++)  {
-			addressTo[i] = new InternetAddress(emailAddresses[i]);
-		}
-		msg.setRecipients(Message.RecipientType.BCC, addressTo);  
-		
-		// Setting the Subject and Content Type
-		msg.setSubject(subject);
-		// create and fill the first message part
-		MimeBodyPart mbp1 = new MimeBodyPart();
-		mbp1.setText(emailContent);
-		// create the Multipart and add its parts to it
-		Multipart mp = new MimeMultipart();
-		mp.addBodyPart(mbp1);
-		// add the Multipart to the message
-		msg.setContent(mp);
-		// send message
-    	if ((smtpssl.equals("true")) && (!StringUtilities.isEmpty(user)) &&  (!StringUtilities.isEmpty(pass))){
-    		//USE SSL Transport comunication with SMTPS
-	    	Transport transport = session.getTransport("smtps");
-	    	transport.connect(smtphost,smptPort,user,pass);
-	    	transport.sendMessage(msg, msg.getAllRecipients());
-	    	transport.close(); 
-    	}
-    	else {
-    		//Use normal SMTP
-	    	Transport.send(msg);
-    	}
-		
-		
-	}
-	
-	
-	private class SMTPAuthenticator extends javax.mail.Authenticator
-	{
-		private String username = "";
-		private String password = "";
-
-		public PasswordAuthentication getPasswordAuthentication()
-		{
-			return new PasswordAuthentication(username, password);
-		}
-
-		public SMTPAuthenticator(String user, String pass) {
-			this.username = user;
-			this.password = pass;
-		}
-	}
 
 	@POST
 	@Path("/testDataSet")
