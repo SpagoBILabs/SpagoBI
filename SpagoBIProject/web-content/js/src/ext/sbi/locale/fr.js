@@ -81,6 +81,7 @@ Sbi.locale.ln['sbi.generic.deletingItemError']='Erreur durant la suppression de 
 Sbi.locale.ln['sbi.generic.warning']='Avertissement';
 Sbi.locale.ln['sbi.generic.pleaseConfirm']='Veuillez confirmer';
 Sbi.locale.ln['sbi.generic.confirmDelete']='Confirmer la suppression de l\'\u00E9l\u00E9ment !';
+Sbi.locale.ln['sbi.generic.confirmDeleteDataset'] = 'Suppression de l\'ensemble de données va également supprimer les documents qui l\'utilisent. Confirmer la suppression?';
 Sbi.locale.ln['sbi.generic.confirmChangeNode']='Certaines modifications n\'ont pas \u00E9t\u00E9 enregistr\u00E9es. Confirmer le changement de racine ?';
 Sbi.locale.ln['sbi.generic.deleteKpi']='Supprimer le Kpi';
 Sbi.locale.ln['sbi.generic.attributes']='Attributs';

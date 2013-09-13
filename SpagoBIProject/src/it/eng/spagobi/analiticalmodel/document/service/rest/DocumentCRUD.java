@@ -8,6 +8,7 @@ package it.eng.spagobi.analiticalmodel.document.service.rest;
 
 import java.security.Security;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Properties;
 import java.util.Set;
 
@@ -24,6 +25,9 @@ import it.eng.spagobi.profiling.bean.SbiUser;
 import it.eng.spagobi.profiling.bean.SbiUserAttributes;
 import it.eng.spagobi.profiling.dao.ISbiUserDAO;
 import it.eng.spagobi.services.exceptions.ExceptionUtilities;
+import it.eng.spagobi.services.security.bo.SpagoBIUserProfile;
+import it.eng.spagobi.services.security.service.ISecurityServiceSupplier;
+import it.eng.spagobi.services.security.service.SecurityServiceSupplierFactory;
 import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
@@ -108,18 +112,14 @@ public class DocumentCRUD {
 			if ((label != null) && (!label.isEmpty()) ){
 				BIObject document = biObjectDao.loadBIObjectByLabel(label);
 				documentCreationUser = document.getCreationUser();
-				ISbiUserDAO  biUserDAO = DAOFactory.getSbiUserDAO();
-				SbiUser sbiUser = biUserDAO.loadSbiUserByUserId(documentCreationUser);
-				//Set<SbiUserAttributes> userAttributes = sbiUser.getSbiUserAttributeses();
-				ArrayList<SbiUserAttributes> userAttributes = biUserDAO.loadSbiUserAttributesById(sbiUser.getId());
-				for (SbiUserAttributes userAttribute : userAttributes){
-					SbiAttribute sbiAttribute = userAttribute.getSbiAttribute();
-					String attributeName = sbiAttribute.getAttributeName();
-					if (attributeName.equalsIgnoreCase("email")){
-						//get email address of creation user
-						emailAddressdocumentCreationUser = userAttribute.getAttributeValue();
-					}
+				
+				ISecurityServiceSupplier supplier = SecurityServiceSupplierFactory.createISecurityServiceSupplier();
+				SpagoBIUserProfile userProfile = supplier.createUserProfile(documentCreationUser);
+				HashMap userAttributes = userProfile.getAttributes();
+				if (userAttributes.get("email") != null){
+					emailAddressdocumentCreationUser =(String) userAttributes.get("email");					
 				}
+				
 			}
 			// 3 - content of the email to send
 			String message = (String)req.getParameter("msg");			
