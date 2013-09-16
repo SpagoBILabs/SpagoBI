@@ -317,6 +317,7 @@ public static String DS_TYPE = "SbiQbeDataSet";
 	    return DriverManager.getDataSource(getDriverName(modelJarFile), compositeConfiguration, this.useCache);
 	}
 	
+		
     private IQbeDataSetDatamartRetriever getDatamartRetriever() {
     	if (this.params == null || this.params.isEmpty()) {
     		return null;
@@ -442,14 +443,18 @@ public static String DS_TYPE = "SbiQbeDataSet";
 
 	@Override
 	public Integer getCategoryId() {
-    	init();
-    	return ds.getCategoryId();
+    	if (this.ds != null) {
+    		return ds.getCategoryId();
+    	}
+    	return super.getCategoryId();
 	}
 
 	@Override
 	public String getCategoryCd() {
-    	init();
-    	return ds.getCategoryCd();
+    	if (this.ds != null) {
+    		return ds.getCategoryCd();
+    	}
+    	return super.getCategoryCd();
 	}
 	
 }
