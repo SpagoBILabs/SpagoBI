@@ -156,6 +156,25 @@ public class MeasureCatalogue implements Observer {
     }
     
     /**
+     * Gets the list of the measures of a dataset
+     * @param ds
+     * @return
+     */
+    public List<MeasureCatalogueMeasure> getMeasureCatalogueMeasure(IDataSet ds){
+    	List<MeasureCatalogueMeasure> measuresToReturn = new ArrayList<MeasureCatalogueMeasure>();
+    	if(this.measures!=null){
+    		Iterator<MeasureCatalogueMeasure> it = this.measures.iterator();
+    		while (it.hasNext()) {
+    			MeasureCatalogueMeasure type = (MeasureCatalogueMeasure) it.next();
+    			if(type.getDataSet().getLabel().equals(ds.getLabel())){
+    				measuresToReturn.add(type);
+    			}
+			}
+    	}
+    	return measuresToReturn;
+    }
+    
+    /**
      * Get from the list of measures the measure equal to the field
      * @param field
      * @return
