@@ -1757,6 +1757,9 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 		Session aSession = null;
 		Transaction tx = null;
 		List realResult = new ArrayList();
+		boolean veroVariableInQuery = false;
+		boolean falsoVariableInQuery = false;
+		
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
@@ -1798,11 +1801,13 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 							!profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_DEV)){
 						//only visible objects (1 means true) and object created by the current user
 						buffer.append(" and ((o.visible = 0 and o.creationUser = '"+profile.getUserUniqueIdentifier()+"') OR (o.visible = 1)) " +
-								" and ((o.publicDoc = 0 and o.creationUser = '"+profile.getUserUniqueIdentifier()+"') OR (o.publicDoc = 1))  ");
+								" and ((o.publicDoc = :FALSO and o.creationUser = '"+profile.getUserUniqueIdentifier()+"') OR (o.publicDoc = :VERO))  ");
+						veroVariableInQuery = true;
+						falsoVariableInQuery = true;
 					}
 					buffer.append(" order by o.name"); 
 				} else {
-					buffer.append("select objects from SbiObjects  as objects where objects.publicDoc=1 or ( objects.publicDoc=0 " +
+					buffer.append("select objects from SbiObjects  as objects where objects.publicDoc='true' or ( objects.publicDoc='false' " +
 							" and objects.creationUser = '"+profile.getUserUniqueIdentifier()+"')");
 				}		
 			}else{
@@ -1815,8 +1820,9 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 							!profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_DEV)){
 						//only visible objects (1 means true) and object created by the current user
 						buffer.append(" and ((o.visible = 0 and o.creationUser = '"+profile.getUserUniqueIdentifier()+"') OR (o.visible = 1)) " +
-								" and ((o.publicDoc = 0 and o.creationUser = '"+profile.getUserUniqueIdentifier()+"') OR (o.publicDoc = 1))  ");
-
+								" and ((o.publicDoc = :FALSO and o.creationUser = '"+profile.getUserUniqueIdentifier()+"') OR (o.publicDoc = :VERO))  ");
+						veroVariableInQuery = true;
+						falsoVariableInQuery = true;
 					}
 					buffer.append(" order by o.name"); 
 				}
@@ -1825,6 +1831,13 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			String hql = buffer.toString();
 			Query query = aSession.createQuery(hql);
 
+			if(veroVariableInQuery){
+				query.setBoolean("VERO", true);
+			}
+			if(falsoVariableInQuery){
+				query.setBoolean("FALSO", false);
+			}
+			
 			if(!isPersonalFolder){
 				if (folderID != null && roles != null && roles.size() > 0 ) {
 					query.setInteger("FOLDER_ID", folderID.intValue());
