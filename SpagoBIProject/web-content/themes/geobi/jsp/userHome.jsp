@@ -185,12 +185,28 @@ Ext.onReady(function () {
     	height: 700,
     	items: [mainframe]  	
     });
-    
+    /*
     this.pagePanel =  Ext.create("Ext.panel.Panel",{
     	layout: 'border',
     	autoScroll: false,
     	items: [bannerPanel, mainPanel, footerPanel]	
     });
+*/
+    <%if (isDirectExec.equals("FALSE")){%>
+    this.pagePanel =  Ext.create("Ext.panel.Panel",{
+    	layout: 'border',
+    	autoScroll: false,
+    	items: [bannerPanel, mainPanel, footerPanel]	
+    });
+    	
+	<%}else{%>
+	 this.pagePanel =  Ext.create("Ext.panel.Panel",{
+	    	layout: 'border',
+	    	autoScroll: false,
+	    	items: [mainPanel]
+	    });
+	
+	<%}%>
 
     Ext.create('Ext.Viewport', {    	
         layout: 'fit',

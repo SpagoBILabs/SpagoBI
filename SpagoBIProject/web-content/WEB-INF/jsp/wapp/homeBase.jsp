@@ -35,6 +35,8 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 	SourceBean moduleResponse = (SourceBean)aServiceResponse.getAttribute("LoginModule"); 
 	boolean isTechnicalUser = UserUtilities.isTechnicalUser(userProfile);
 	
+	String isDirectExec = (String) aServiceRequest.getAttribute("DIRECT_EXEC");
+	if (isDirectExec==null) isDirectExec = "FALSE";
 	if(moduleResponse==null) moduleResponse=aServiceResponse;
 	
 	List lstMenu = new ArrayList();
