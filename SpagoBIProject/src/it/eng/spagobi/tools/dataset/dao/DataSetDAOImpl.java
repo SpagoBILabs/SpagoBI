@@ -1500,6 +1500,70 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 		}
 	}
 	
+	/**
+	 * Delete data set whose ID is equal to <code>datasetId</code> ALSO if is referenced by
+	 * some analytical documents.
+	 * 
+	 * @param datasetId the ID of the dataset to delete. Cannot be null.
+	 * 
+	 * 
+	 */
+	public void deleteDataSetNoChecks(Integer datasetId)  {
+		Session session;
+		Transaction transaction;
+		
+		logger.debug("IN");
+		
+		session = null;
+		transaction = null;
+		
+		try {
+			if(datasetId == null) {
+				throw new IllegalArgumentException("Input parameter [datasetId] cannot be null");
+			}
+			
+			try {
+				session = getSession();
+				Assert.assertNotNull(session, "session cannot be null");
+				transaction = session.beginTransaction();
+				Assert.assertNotNull(transaction, "transaction cannot be null");
+			} catch(Throwable t) {
+				throw new SpagoBIDOAException("An error occured while creating the new transaction", t);
+			}
+			
+
+			//deletes all versions of the dataset specified
+			Query hibernateQuery = session.createQuery("from SbiDataSet h where h.id.dsId = ? " );	
+			hibernateQuery.setInteger(0, datasetId);				
+			List<SbiDataSet> sbiDataSetList = hibernateQuery.list();
+			for (SbiDataSet sbiDataSet : sbiDataSetList) {
+				if(sbiDataSet != null){
+					IDataSet toReturn = DataSetFactory.toDataSet(sbiDataSet);
+					session.delete(sbiDataSet);		
+					DataSetEventManager.getInstance().notifyDelete(toReturn);
+				}
+			}
+
+
+			transaction.commit();			
+			
+			
+			
+		}  catch (Throwable t) {
+			if (transaction != null && transaction.isActive()) {
+				transaction.rollback();
+			}
+			String msg = (t.getMessage()!=null)?t.getMessage():"An unexpected error occured while deleting dataset " +
+					"whose id is equal to [" + datasetId + "]";
+			throw new SpagoBIDOAException(msg, t);
+		} finally {
+			if (session != null && session.isOpen()) {
+				session.close();
+			}
+			logger.debug("OUT");
+		}
+	}	
+	
 
 	/**
 	 * Restore an Older Version of the dataset

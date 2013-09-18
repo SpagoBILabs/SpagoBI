@@ -15,6 +15,7 @@ import it.eng.spago.base.SourceBeanException;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
+import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
 import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.Domain;
@@ -27,12 +28,16 @@ import it.eng.spagobi.commons.utilities.AuditLogUtilities;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.container.ObjectUtils;
+import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.profiling.bean.SbiAttribute;
 import it.eng.spagobi.profiling.bean.SbiUser;
 import it.eng.spagobi.profiling.bean.SbiUserAttributes;
 import it.eng.spagobi.profiling.dao.ISbiUserDAO;
 import it.eng.spagobi.rest.annotations.ToValidate;
 import it.eng.spagobi.services.exceptions.ExceptionUtilities;
+import it.eng.spagobi.services.security.bo.SpagoBIUserProfile;
+import it.eng.spagobi.services.security.service.ISecurityServiceSupplier;
+import it.eng.spagobi.services.security.service.SecurityServiceSupplierFactory;
 import it.eng.spagobi.tools.dataset.bo.FileDataSet;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
@@ -46,6 +51,9 @@ import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
+import it.eng.spagobi.tools.dataset.measurecatalogue.MeasureCatalogue;
+import it.eng.spagobi.tools.dataset.measurecatalogue.MeasureCatalogueMeasure;
+import it.eng.spagobi.tools.dataset.measurecatalogue.MeasureCatalogueSingleton;
 import it.eng.spagobi.tools.dataset.utils.DatasetMetadataParser;
 import it.eng.spagobi.tools.dataset.validation.ErrorField;
 import it.eng.spagobi.tools.dataset.validation.GeoDatasetValidatorFactory;
@@ -54,9 +62,9 @@ import it.eng.spagobi.tools.dataset.validation.IDatasetValidator;
 import it.eng.spagobi.tools.dataset.validation.IDatasetValidatorFactory;
 import it.eng.spagobi.tools.dataset.validation.ValidationErrors;
 import it.eng.spagobi.tools.notification.AbstractEvent;
-import it.eng.spagobi.tools.notification.DatasetEvent;
+import it.eng.spagobi.tools.notification.DatasetNotificationEvent;
 import it.eng.spagobi.tools.notification.DatasetNotificationManager;
-import it.eng.spagobi.tools.notification.EventConstans;
+import it.eng.spagobi.tools.notification.EventConstants;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
@@ -202,33 +210,27 @@ public class SelfServiceDataSetCRUD {
 			String id = (String) req.getParameter("id");
 			Assert.assertNotNull(id,deleteNullIdDataSetError );
 			IDataSet ds = DAOFactory.getDataSetDAO().loadActiveIDataSetByID(new Integer(id));
-			//Create DatasetEvent but wait to notify
-			DatasetEvent datasetEvent = new DatasetEvent(EventConstans.DATASET_EVENT_DELETED_DATASET,"The dataset has been deleted",ds);
-			datasetEvent.retrieveEmailAddressesOfMapAuthors();
+			//Create DatasetNotificationEvent but wait to notify
+			DatasetNotificationEvent datasetEvent = null;
 			try{
-				
-				//Check if there are document associated to the dataset, delete them first and then delete dataset
-				IDataSetDAO datasetDao = DAOFactory.getDataSetDAO();
-				if (datasetDao.countBIObjAssociated(ds.getId())>0){
-					IBIObjectDAO biObjectDao = DAOFactory.getBIObjectDAO();
-					List<BIObject>  biObjects = biObjectDao.loadAllBIObjects();
-					for (BIObject biObject : biObjects){
-						if (biObject.getDataSetId() != null){
-							if (biObject.getDataSetId().intValue() == Integer.valueOf(id).intValue()){
-								biObjectDao.eraseBIObject(biObject, null);
-							}
-						}
-					}
-				}
-				
-				//Delete Dataset
-				DAOFactory.getDataSetDAO().deleteDataSet(ds.getId());
+				datasetEvent = new DatasetNotificationEvent(EventConstants.DATASET_EVENT_DELETED_DATASET,"The dataset has been deleted",ds);
+				datasetEvent.retrieveEmailAddressesOfMapAuthors();
+			} catch(Exception e) {
+				logger.error("Error during creation of Dataset Events", e);
+			}
+
+			try{	
+
+				//ATTENTION! This Delete Dataset Also if there are documents using it, this could lead to missing link in documents
+				DAOFactory.getDataSetDAO().deleteDataSetNoChecks(ds.getId());
 				deleteDatasetFile(ds);
 				
 				//notify that dataset has been deleted 
 				try{
 					DatasetNotificationManager dsNotificationManager = new DatasetNotificationManager();
-					dsNotificationManager.handleEvent(datasetEvent);
+					if (datasetEvent != null){
+						dsNotificationManager.handleEvent(datasetEvent);
+					}
 				} catch(Exception e) {
 					logger.error("Error during notification of Dataset Events", e);
 				}
@@ -366,7 +368,7 @@ public class SelfServiceDataSetCRUD {
 				newFileUploaded = Boolean.valueOf(((String)req.getParameter("fileUploaded")));
 			}
 			if (newFileUploaded){
-				DatasetEvent datasetEvent = new DatasetEvent(EventConstans.DATASET_EVENT_FILE_CHANGED,"The dataset has changed his file",updatedDataset);
+				DatasetNotificationEvent datasetEvent = new DatasetNotificationEvent(EventConstants.DATASET_EVENT_FILE_CHANGED,"The dataset has changed his file",updatedDataset);
 				datasetEvents.add(datasetEvent);
 			}
 
@@ -374,7 +376,7 @@ public class SelfServiceDataSetCRUD {
 			boolean metadataChanged = checkMetadataChange(currentDataset,updatedDataset);
 			if (metadataChanged){
 				//notify that metadata is changed
-				DatasetEvent datasetEvent = new DatasetEvent(EventConstans.DATASET_EVENT_METADATA_CHANGED,"The dataset has changed his metadata",updatedDataset);
+				DatasetNotificationEvent datasetEvent = new DatasetNotificationEvent(EventConstants.DATASET_EVENT_METADATA_CHANGED,"The dataset has changed his metadata",updatedDataset);
 				datasetEvents.add(datasetEvent);
 			}
 
@@ -382,7 +384,7 @@ public class SelfServiceDataSetCRUD {
 			boolean licenceChanged = checkLicenceChange(currentDataset,updatedDataset);
 			if (licenceChanged){
 				//notify that license is changed
-				DatasetEvent datasetEvent = new DatasetEvent(EventConstans.DATASET_EVENT_LICENCE_CHANGED,"The dataset has changed his licence",updatedDataset);
+				DatasetNotificationEvent datasetEvent = new DatasetNotificationEvent(EventConstants.DATASET_EVENT_LICENCE_CHANGED,"The dataset has changed his licence",updatedDataset);
 				datasetEvents.add(datasetEvent);
 
 			}
@@ -391,7 +393,7 @@ public class SelfServiceDataSetCRUD {
 			boolean nameChanged = checkNameChange(currentDataset,updatedDataset);
 			if (nameChanged){
 				//notify that name is changed
-				DatasetEvent datasetEvent = new DatasetEvent(EventConstans.DATASET_EVENT_NAME_CHANGED,"The dataset has changed his name",updatedDataset);
+				DatasetNotificationEvent datasetEvent = new DatasetNotificationEvent(EventConstants.DATASET_EVENT_NAME_CHANGED,"The dataset has changed his name",updatedDataset);
 				datasetEvents.add(datasetEvent);
 			}
 
@@ -399,21 +401,21 @@ public class SelfServiceDataSetCRUD {
 			boolean descriptionChanged = checkDescriptionChange(currentDataset,updatedDataset);
 			if (descriptionChanged){
 				//notify that Description is changed
-				DatasetEvent datasetEvent = new DatasetEvent(EventConstans.DATASET_EVENT_DESCRIPTION_CHANGED,"The dataset has changed his description",updatedDataset);
+				DatasetNotificationEvent datasetEvent = new DatasetNotificationEvent(EventConstants.DATASET_EVENT_DESCRIPTION_CHANGED,"The dataset has changed his description",updatedDataset);
 				datasetEvents.add(datasetEvent);
 			}
 
 			boolean categoryChanged = checkCategoryChange(currentDataset,updatedDataset);
 			if (categoryChanged){
 				//notify that Category is changed
-				DatasetEvent datasetEvent = new DatasetEvent(EventConstans.DATASET_EVENT_CATEGORY_CHANGED,"The dataset has changed his category",updatedDataset);
+				DatasetNotificationEvent datasetEvent = new DatasetNotificationEvent(EventConstants.DATASET_EVENT_CATEGORY_CHANGED,"The dataset has changed his category",updatedDataset);
 				datasetEvents.add(datasetEvent);
 			}
 
 			boolean scopeChanged = checkScopeChange(currentDataset,updatedDataset);
 			if (scopeChanged){
 				//notify that Scope (Public/Private)
-				DatasetEvent datasetEvent = new DatasetEvent(EventConstans.DATASET_EVENT_SCOPE_CHANGED,"The dataset has changed his scope",updatedDataset);
+				DatasetNotificationEvent datasetEvent = new DatasetNotificationEvent(EventConstants.DATASET_EVENT_SCOPE_CHANGED,"The dataset has changed his scope",updatedDataset);
 				datasetEvents.add(datasetEvent);
 
 			}	
