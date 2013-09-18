@@ -76,7 +76,7 @@ public class CreateExportFileAction extends AbstractConsoleEngineAction {
 	//public static final String DEFAULT_FILE_EXTENSION = "txt";
 	public static final String DEFAULT_MIME_TYPE = "text/plain";
 	public static final String DEFAULT_FILE_EXTENSION = "txt";
-	public static final String QUERY = "Query";
+	public static final String QUERY = "query";
 
 	public static final String SERVICE_NAME = "CREATE_EXPORT_FILE_ACTION";
 
