@@ -61,24 +61,24 @@ public class DatasetNotificationManager implements INotificationManager {
 	public void handleEvent(AbstractEvent event) {
 		
 		try {
-			if (event instanceof DatasetEvent){
+			if (event instanceof DatasetNotificationEvent){
 				String eventName = event.getEventName();
-				DatasetEvent datasetEvent = (DatasetEvent)event;
-				if (eventName.equals(EventConstans.DATASET_EVENT_LICENCE_CHANGED)){
+				DatasetNotificationEvent datasetEvent = (DatasetNotificationEvent)event;
+				if (eventName.equals(EventConstants.DATASET_EVENT_LICENCE_CHANGED)){
 					notifyLicenceChange(datasetEvent);
-				} else if (eventName.equals(EventConstans.DATASET_EVENT_METADATA_CHANGED)){
+				} else if (eventName.equals(EventConstants.DATASET_EVENT_METADATA_CHANGED)){
 					notifyDatasetMetadataChanged(datasetEvent);
-				} else if (eventName.equals(EventConstans.DATASET_EVENT_FILE_CHANGED)){
+				} else if (eventName.equals(EventConstants.DATASET_EVENT_FILE_CHANGED)){
 					notifyDatasetFileChanged(datasetEvent);
-				} else if (eventName.equals(EventConstans.DATASET_EVENT_DELETED_DATASET)){
+				} else if (eventName.equals(EventConstants.DATASET_EVENT_DELETED_DATASET)){
 					notifyDatasetDeleted(datasetEvent);
-				} else if(eventName.equals(EventConstans.DATASET_EVENT_NAME_CHANGED)){
+				} else if(eventName.equals(EventConstants.DATASET_EVENT_NAME_CHANGED)){
 					notifyDatasetNameChanged(datasetEvent);
-				} else if(eventName.equals(EventConstans.DATASET_EVENT_DESCRIPTION_CHANGED)){
+				} else if(eventName.equals(EventConstants.DATASET_EVENT_DESCRIPTION_CHANGED)){
 					notifyDatasetDescriptionChanged(datasetEvent);
-				} else if(eventName.equals(EventConstans.DATASET_EVENT_CATEGORY_CHANGED)){
+				} else if(eventName.equals(EventConstants.DATASET_EVENT_CATEGORY_CHANGED)){
 					notifyDatasetCategoryChanged(datasetEvent);
-				} else if(eventName.equals(EventConstans.DATASET_EVENT_SCOPE_CHANGED)){
+				} else if(eventName.equals(EventConstants.DATASET_EVENT_SCOPE_CHANGED)){
 					notifyDatasetScopeChanged(datasetEvent);
 				}
 				
@@ -102,12 +102,12 @@ public class DatasetNotificationManager implements INotificationManager {
 	
 	private void notifyDatasetChanges(List<AbstractEvent> events) throws Exception{
 		String information = "";
-		DatasetEvent datasetEvent = null;
+		DatasetNotificationEvent datasetEvent = null;
 		
 		for (AbstractEvent event : events){
-			if (event instanceof DatasetEvent){
+			if (event instanceof DatasetNotificationEvent){
 				String datasetLabel = "";
-				datasetEvent = (DatasetEvent)event;
+				datasetEvent = (DatasetNotificationEvent)event;
 				if (event.getArgument() instanceof IDataSet){
 					IDataSet dataset = (IDataSet)event.getArgument();
 					datasetLabel = dataset.getLabel();
@@ -115,28 +115,28 @@ public class DatasetNotificationManager implements INotificationManager {
 				}
 				
 				String eventName = event.getEventName();
-				if (eventName.equals(EventConstans.DATASET_EVENT_LICENCE_CHANGED)){
+				if (eventName.equals(EventConstants.DATASET_EVENT_LICENCE_CHANGED)){
 					information = information +"The dataset "+datasetLabel+" that you are using in a Map, has changed his licence. \n";
 
-				} else if (eventName.equals(EventConstans.DATASET_EVENT_METADATA_CHANGED)){
+				} else if (eventName.equals(EventConstants.DATASET_EVENT_METADATA_CHANGED)){
 					information = information +"The dataset "+datasetLabel+" that you are using in a Map, has changed the associated metadata. \n";
 
-				} else if (eventName.equals(EventConstans.DATASET_EVENT_FILE_CHANGED)){
+				} else if (eventName.equals(EventConstants.DATASET_EVENT_FILE_CHANGED)){
 					information = information +"The dataset "+datasetLabel+" that you are using in a Map, has changed the associated file. \n";
 
-				} else if (eventName.equals(EventConstans.DATASET_EVENT_DELETED_DATASET)){
+				} else if (eventName.equals(EventConstants.DATASET_EVENT_DELETED_DATASET)){
 					information = information +"The dataset "+datasetLabel+" that you are using in a Map, has been deleted. \n";
 
-				} else if(eventName.equals(EventConstans.DATASET_EVENT_NAME_CHANGED)){
+				} else if(eventName.equals(EventConstants.DATASET_EVENT_NAME_CHANGED)){
 					information = information +"The dataset "+datasetLabel+" that you are using in a Map, has changed his name. \n";
 					
-				} else if(eventName.equals(EventConstans.DATASET_EVENT_DESCRIPTION_CHANGED)){
+				} else if(eventName.equals(EventConstants.DATASET_EVENT_DESCRIPTION_CHANGED)){
 					information = information +"The dataset "+datasetLabel+" that you are using in a Map, has changed his description. \n";
 
-				} else if(eventName.equals(EventConstans.DATASET_EVENT_CATEGORY_CHANGED)){
+				} else if(eventName.equals(EventConstants.DATASET_EVENT_CATEGORY_CHANGED)){
 					information = information +"The dataset "+datasetLabel+" that you are using in a Map, has changed his category. \n";
 				
-				} else if(eventName.equals(EventConstans.DATASET_EVENT_SCOPE_CHANGED)){
+				} else if(eventName.equals(EventConstants.DATASET_EVENT_SCOPE_CHANGED)){
 					information = information +"The dataset "+datasetLabel+" that you are using in a Map, has changed his scope. \n";
 
 				}
@@ -148,7 +148,7 @@ public class DatasetNotificationManager implements INotificationManager {
 		}
 	}
 	
-	private void notifyMapAuthorsMail(DatasetEvent datasetEvent, String subject, String emailContent) throws Exception{
+	private void notifyMapAuthorsMail(DatasetNotificationEvent datasetEvent, String subject, String emailContent) throws Exception{
 		
 		Set<String> emailsAddressOfAuthors = datasetEvent.retrieveEmailAddressesOfMapAuthors();
 		if (datasetEvent.getArgument() instanceof IDataSet){
@@ -168,7 +168,7 @@ public class DatasetNotificationManager implements INotificationManager {
 		}
 	}
 	
-	private void notifyDatasetNameChanged(DatasetEvent datasetEvent)throws Exception {
+	private void notifyDatasetNameChanged(DatasetNotificationEvent datasetEvent)throws Exception {
 		if (datasetEvent.getArgument() instanceof IDataSet){
 			IDataSet dataset = (IDataSet)datasetEvent.getArgument();
 			String subject = "The dataset "+dataset.getLabel()+" has changed the name";
@@ -181,7 +181,7 @@ public class DatasetNotificationManager implements INotificationManager {
 		}
 	}
 	
-	private void notifyDatasetDescriptionChanged(DatasetEvent datasetEvent)throws Exception {
+	private void notifyDatasetDescriptionChanged(DatasetNotificationEvent datasetEvent)throws Exception {
 		if (datasetEvent.getArgument() instanceof IDataSet){
 			IDataSet dataset = (IDataSet)datasetEvent.getArgument();
 			String subject = "The dataset "+dataset.getLabel()+" has changed the description";
@@ -194,7 +194,7 @@ public class DatasetNotificationManager implements INotificationManager {
 		}
 	}
 	
-	private void notifyDatasetCategoryChanged(DatasetEvent datasetEvent)throws Exception {
+	private void notifyDatasetCategoryChanged(DatasetNotificationEvent datasetEvent)throws Exception {
 		if (datasetEvent.getArgument() instanceof IDataSet){
 			IDataSet dataset = (IDataSet)datasetEvent.getArgument();
 			String subject = "The dataset "+dataset.getLabel()+" has changed the category";
@@ -207,7 +207,7 @@ public class DatasetNotificationManager implements INotificationManager {
 		}
 	}
 	
-	private void notifyDatasetScopeChanged(DatasetEvent datasetEvent)throws Exception {
+	private void notifyDatasetScopeChanged(DatasetNotificationEvent datasetEvent)throws Exception {
 		if (datasetEvent.getArgument() instanceof IDataSet){
 			IDataSet dataset = (IDataSet)datasetEvent.getArgument();
 			String subject = "The dataset "+dataset.getLabel()+" has changed the scope";
@@ -220,7 +220,7 @@ public class DatasetNotificationManager implements INotificationManager {
 		}
 	}
 	
-	private void notifyDatasetMetadataChanged(DatasetEvent datasetEvent)throws Exception {
+	private void notifyDatasetMetadataChanged(DatasetNotificationEvent datasetEvent)throws Exception {
 		if (datasetEvent.getArgument() instanceof IDataSet){
 			IDataSet dataset = (IDataSet)datasetEvent.getArgument();
 			String subject = "The dataset "+dataset.getLabel()+" has changed the metadata";
@@ -234,7 +234,7 @@ public class DatasetNotificationManager implements INotificationManager {
 	}
 	
 	
-	private void notifyDatasetFileChanged(DatasetEvent datasetEvent)throws Exception {
+	private void notifyDatasetFileChanged(DatasetNotificationEvent datasetEvent)throws Exception {
 		if (datasetEvent.getArgument() instanceof IDataSet){
 			IDataSet dataset = (IDataSet)datasetEvent.getArgument();
 			String subject = "The dataset "+dataset.getLabel()+" has changed the file";
@@ -248,11 +248,11 @@ public class DatasetNotificationManager implements INotificationManager {
 	}
 
 	
-	private void notifyDatasetDeleted(DatasetEvent datasetEvent)throws Exception {
+	private void notifyDatasetDeleted(DatasetNotificationEvent datasetEvent)throws Exception {
 		if (datasetEvent.getArgument() instanceof IDataSet){
 			IDataSet dataset = (IDataSet)datasetEvent.getArgument();
 			String subject = "The dataset "+dataset.getLabel()+" has been deleted";
-	    	String emailContent = "The dataset "+dataset.getLabel()+" that you are using in a Map, has been deleted. Also the Map has been deleted.";
+	    	String emailContent = "The dataset "+dataset.getLabel()+" that you are using in a Map, has been deleted.";
 	    	try {
 				notifyMapAuthorsMail(datasetEvent,subject,emailContent);
 	    	} catch (Exception e){
@@ -262,7 +262,7 @@ public class DatasetNotificationManager implements INotificationManager {
 		
 	}	
 	
-	private void notifyLicenceChange(DatasetEvent datasetEvent) throws Exception {
+	private void notifyLicenceChange(DatasetNotificationEvent datasetEvent) throws Exception {
 		if (datasetEvent.getArgument() instanceof IDataSet){
 			IDataSet dataset = (IDataSet)datasetEvent.getArgument();
 	    	String subject = "The dataset "+dataset.getLabel()+" has changed is licence";
@@ -318,6 +318,9 @@ public class DatasetNotificationManager implements INotificationManager {
 		Properties props = new Properties();
 		props.put("mail.smtp.host", smtphost);
 		props.put("mail.smtp.port", Integer.toString(smptPort));
+		//Set timeout limit for mail server to respond
+		props.put("mail.smtp.timeout", "5000");             
+        props.put("mail.smtp.connectiontimeout", "5000"); 
 
 		// open session
 		Session session=null;

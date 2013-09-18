@@ -209,6 +209,9 @@ public class DocumentCRUD {
 		Properties props = new Properties();
 		props.put("mail.smtp.host", smtphost);
 		props.put("mail.smtp.port", Integer.toString(smptPort));
+		//Set timeout limit for mail server to respond
+		props.put("mail.smtp.timeout", "5000");             
+        props.put("mail.smtp.connectiontimeout", "5000"); 
 		
 		// open session
 		Session session=null;

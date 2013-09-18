@@ -67,6 +67,7 @@ public interface IDataSetDAO extends ISpagoBIDao {
 	public void deleteDataSet(Integer dsID);
 	public boolean deleteInactiveDataSetVersion(Integer dsVerdionID, Integer dsId);
 	public boolean deleteAllInactiveDataSetVersions(Integer dsID);
+	public void deleteDataSetNoChecks(Integer dsID);
 
 	// ========================================================================================
 	// UTILITY methods

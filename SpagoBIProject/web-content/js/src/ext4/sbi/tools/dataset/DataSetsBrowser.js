@@ -370,7 +370,7 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 	deleteDataset: function(values){
 		Ext.MessageBox.confirm(
 				LN('sbi.generic.pleaseConfirm'),
-				LN('sbi.generic.confirmDeleteDataset'),
+				LN('sbi.generic.confirmDelete'),
 				function(btn, text){
 					if (btn=='yes') {
 						Ext.Ajax.request({

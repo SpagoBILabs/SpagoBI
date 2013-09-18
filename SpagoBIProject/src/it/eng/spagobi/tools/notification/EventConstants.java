@@ -25,7 +25,7 @@ package it.eng.spagobi.tools.notification;
  * @author Marco Cortella (marco.cortella@eng.it)
  *
  */
-public class EventConstans {
+public class EventConstants {
 
 	public static final String DATASET_EVENT_LICENCE_CHANGED = "DATASET_EVENT_LICENCE_CHANGED";
 	public static final String DATASET_EVENT_METADATA_CHANGED = "DATASET_EVENT_METADATA_CHANGED";
