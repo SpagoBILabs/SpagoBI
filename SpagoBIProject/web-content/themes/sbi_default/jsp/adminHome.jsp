@@ -59,18 +59,29 @@ Ext.onReady(function () {
         console.log('bye bye ');
         menu.hide();
     }
-    this.mainpanel =  Ext.create("Ext.panel.Panel",{
-    	autoScroll: true,
-    	height: '100%',
-    	items: [
-			//this.titlePath	,		
-    	    mainframe]
-    	, dockedItems: [{
-	   	    xtype: 'toolbar',
-	   	    dock: 'left',
-	   	    items: itemsM
-    	}]
-    });
+    
+    <%if (isDirectExec.equals("FALSE")){%>
+		this.mainpanel =  Ext.create("Ext.panel.Panel",{
+	    	autoScroll: true,
+	    	height: '100%',
+	    	items: [
+				//this.titlePath	,		
+	    	    mainframe]
+	    	, dockedItems: [{
+		   	    xtype: 'toolbar',
+		   	    dock: 'left',
+		   	    items: itemsM
+	    	}]
+	    });
+	<%}else{%>	
+		this.mainpanel =  Ext.create("Ext.panel.Panel",{
+			autoScroll: true,
+			height: '100%',
+			items: [
+				//this.titlePath	,		
+			    mainframe]		
+		});
+	<%}%>
     
     Ext.create('Ext.Viewport', {
     	

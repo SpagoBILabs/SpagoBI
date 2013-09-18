@@ -75,15 +75,9 @@ Ext.onReady(function () {
     	}]
     });
 */
-	this.mainpanel =  Ext.create("Ext.panel.Panel",{
-		autoScroll: true,
-		height: '100%',
-		items: [
-			//this.titlePath	,		
-		    mainframe]		
-	});
+	
 	<%if (isDirectExec.equals("FALSE")){%>
-	 this.mainpanel =  Ext.create("Ext.panel.Panel",{
+		this.mainpanel =  Ext.create("Ext.panel.Panel",{
 	    	autoScroll: true,
 	    	height: '100%',
 	    	items: [
@@ -96,14 +90,15 @@ Ext.onReady(function () {
 	    	}]
 	    });
 	<%}else{%>	
-	this.mainpanel =  Ext.create("Ext.panel.Panel",{
-		autoScroll: true,
-		height: '100%',
-		items: [
-			//this.titlePath	,		
-		    mainframe]		
-	});
+		this.mainpanel =  Ext.create("Ext.panel.Panel",{
+			autoScroll: true,
+			height: '100%',
+			items: [
+				//this.titlePath	,		
+			    mainframe]		
+		});
 	<%}%>
+	
     Ext.create('Ext.Viewport', {
     	
         layout: 'fit',
