@@ -25,6 +25,7 @@ package spagobi.birt.oda.impl.server;
 import it.eng.spagobi.services.proxy.DataSetServiceProxy;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 
 import java.math.BigDecimal;
@@ -140,6 +141,15 @@ public class Query implements IQuery
 				long numRec = dataStoreTemp.getRecordsCount();
 				logger.debug("Number of record retrieved: "+numRec);
 				dataStoreMeta = dataStoreTemp.getMetaData();
+				if(dataStoreMeta!=null){
+					for(int i=0; i<dataStoreMeta.getFieldCount(); i++){
+						IFieldMetaData fmd = dataStoreMeta.getFieldMeta(i);
+						if(fmd.getAlias()!=null){
+							fmd.setName(fmd.getAlias());	
+						}
+					}
+				}
+
 				logger.debug("Loaded Datastore Metadata");
 			}
 		}

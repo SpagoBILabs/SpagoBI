@@ -23,6 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package spagobi.birt.oda.impl.server;
 
 import it.eng.spagobi.services.proxy.DataSetServiceProxy;
+import it.eng.spagobi.services.proxy.MetamodelServiceProxy;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 
 import java.util.HashMap;
@@ -115,6 +116,7 @@ public class Connection implements IConnection
 			String userId = getUserId();
 			String secureAttributes = getSecureAttrs();
 			String serviceUrlStr = getServiceUrl();
+			String metamodelServiceUrlStr = getMetamodelServiceUrl();
 			String spagoBiServerURL = getSpagoBIServerUrl();
 			String token = getToken();
 			String pass = getPass();
@@ -123,7 +125,9 @@ public class Connection implements IConnection
 			userProfAttrs = getUserProfileMap();
 			groovyFileName = getGroovyFileName();
 			jsFileName = getJsFileName();
-			proxy = new DataSetServiceProxy(userId, secureAttributes, serviceUrlStr, spagoBiServerURL, token, pass);
+			
+			MetamodelServiceProxy metamodelproxy = new MetamodelServiceProxy( userId,secureAttributes,metamodelServiceUrlStr,spagoBiServerURL,token, pass);
+			proxy = new DataSetServiceProxy(userId, secureAttributes, serviceUrlStr, spagoBiServerURL, token, pass,metamodelproxy);
 			
 		} catch (Exception e) {
 			throw new RuntimeException("Error while getting DataSetServiceProxy from Birt runtime context", e);
@@ -211,6 +215,18 @@ public class Connection implements IConnection
 			throw new RuntimeException("Error while getting user id from Birt runtime context", e);
 		}
 	}
+	
+	private String getMetamodelServiceUrl() {
+		try {
+		    HashMap map = (HashMap) context;
+		    String serviceUrlStr = "/services/MetamodelService";
+		    return serviceUrlStr;
+		} catch (Exception e) {
+			throw new RuntimeException("Error while getting user id from Birt runtime context", e);
+		}
+	}
+	
+	
 	
 	private String getSpagoBIServerUrl() {
 		try {
