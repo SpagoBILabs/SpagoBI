@@ -62,6 +62,8 @@
 	<MAP_REST_SERVICES>
 		<MAP_REST_SERVICE serviceUrl="/community/user" businessProcess="UserSaveDocumentFunctionality" />
 		<MAP_REST_SERVICE serviceUrl="/documents/clone" businessProcess="publicFunctionality" />	
+		<MAP_REST_SERVICE serviceUrl="/geoexport/jpg" businessProcess="publicFunctionality" />	
 		<MAP_REST_SERVICE serviceUrl="/documents/sendFeedback" businessProcess="publicFunctionality" />	
+		
 	</MAP_REST_SERVICES>
 </BUSINESS_MAP>
