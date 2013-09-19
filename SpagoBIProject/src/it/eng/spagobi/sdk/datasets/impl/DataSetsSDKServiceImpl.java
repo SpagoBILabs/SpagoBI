@@ -5,6 +5,7 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.sdk.datasets.impl;
 
+import it.eng.qbe.dataset.QbeDataSet;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
@@ -20,6 +21,7 @@ import it.eng.spagobi.sdk.utilities.SDKObjectsConverter;
 import it.eng.spagobi.tools.dataset.bo.DataSetParameterItem;
 import it.eng.spagobi.tools.dataset.bo.DataSetParametersList;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
@@ -286,6 +288,19 @@ public class DataSetsSDKServiceImpl extends AbstractSDKService implements DataSe
 				}				
 				dataSet.setParamsMap(parametersFilled);
 			}
+			
+			
+			//add the jar retriver in case of a Qbe DataSet
+			if (dataSet instanceof QbeDataSet || (dataSet instanceof VersionedDataSet && ((VersionedDataSet)dataSet).getWrappedDataset() instanceof QbeDataSet )) {
+				SpagoBICoreDatamartRetriever retriever = new SpagoBICoreDatamartRetriever();
+				Map parameters = dataSet.getParamsMap();
+				if (parameters == null) {
+					parameters = new HashMap();
+					dataSet.setParamsMap(parameters);
+				}
+				dataSet.getParamsMap().put(SpagoBIConstants.DATAMART_RETRIEVER, retriever);
+			}
+			
 			dataSet.loadData();
 			//toReturn = dataSet.getDataStore().toXml();
 			

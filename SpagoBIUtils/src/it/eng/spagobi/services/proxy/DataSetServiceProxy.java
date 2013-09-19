@@ -36,6 +36,7 @@ public final class DataSetServiceProxy extends AbstractServiceProxy{
 	
     static private Logger logger = Logger.getLogger(DataSetServiceProxy.class);
 
+    private MetamodelServiceProxy metamodelServiceProxy;
 
 
     public DataSetServiceProxy(String user,HttpSession session) {
@@ -56,6 +57,12 @@ public final class DataSetServiceProxy extends AbstractServiceProxy{
     	if (serviceUrlStr==null) logger.error("serviceUrlStr NULL....");
     	if (spagoBiServerURL==null) logger.error("spagoBiServerURL IS NULL....");
     	if (token==null) logger.error("token IS NULL....");
+    }
+    
+    public DataSetServiceProxy(String user,String secureAttributes,String serviceUrlStr,String spagoBiServerURL,String token, String pass, MetamodelServiceProxy metamodelServiceProxy) {
+    	this( user,secureAttributes,serviceUrlStr,spagoBiServerURL,token, pass);
+    	this.metamodelServiceProxy = metamodelServiceProxy;
+
     }
     
     private it.eng.spagobi.services.dataset.stub.DataSetService lookUp() throws SecurityException {
@@ -129,7 +136,13 @@ public final class DataSetServiceProxy extends AbstractServiceProxy{
    
     private void addMetaModelProxy(IDataSet dataSet) {
 		// in case of qbe dataset, it need a MetamodelServiceProxy
-		MetamodelServiceProxy proxy = new MetamodelServiceProxy(userId, this.session);
+		MetamodelServiceProxy proxy;
+		if(this.session!=null && this.metamodelServiceProxy!=null){
+			proxy	= new MetamodelServiceProxy(userId, this.session);
+		}else{
+			proxy =  this.metamodelServiceProxy;
+		}
+		
 		IQbeDataSetDatamartRetriever retriever = new DefaultEngineDatamartRetriever(proxy);
 		Map parameters = dataSet.getParamsMap();
 		if (parameters == null) {

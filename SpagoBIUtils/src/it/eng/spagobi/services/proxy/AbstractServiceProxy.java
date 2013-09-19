@@ -37,7 +37,7 @@ public abstract class AbstractServiceProxy {
     protected String userId = null;
     protected boolean isSecure = true; // if false don't sent a valid ticket
     
-    private String pass = null;    
+    protected String pass = null;    
     protected String secureAttributes = null;
     protected String serviceUrlStr = null;
     protected String spagoBiServerURL = null;

@@ -46,6 +46,11 @@ public final class MetamodelServiceProxy extends AbstractServiceProxy {
 			logger.error("HttpSession IS NULL....");
 	}
 
+	public MetamodelServiceProxy(String user,String secureAttributes,String serviceUrlStr,String spagoBiServerURL,String token, String pass) {
+		super( user,secureAttributes,serviceUrlStr,spagoBiServerURL,token, pass);
+	}
+	
+	
 	private MetamodelServiceProxy() {
 		super();
 	}
