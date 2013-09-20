@@ -12,15 +12,23 @@
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
   <target name="svn.checkout" 
       description="Sincronizza l'applicazione con il repository">
+
+    <mkdir dir="${project.dir}/ingres"/>
     <exec dir="${project.dir}/ingres" executable="svn" >
       <arg line="checkout ${svn.base.location}/${project.name}/ingres ."/>
     </exec>	
+    
+    <mkdir dir="${project.dir}/mysql"/>
     <exec dir="${project.dir}/mysql" executable="svn" >
       <arg line="checkout ${svn.base.location}/${project.name}/mysql ."/>
     </exec> 
+    
+    <mkdir dir="${project.dir}/oracle"/>
     <exec dir="${project.dir}/oracle" executable="svn" >
       <arg line="checkout ${svn.base.location}/${project.name}/oracle ."/>
     </exec> 
+    
+    <mkdir dir="${project.dir}/postgres"/>
     <exec dir="${project.dir}/postgres" executable="svn" >
       <arg line="checkout ${svn.base.location}/${project.name}/postgres ."/>
     </exec> 
