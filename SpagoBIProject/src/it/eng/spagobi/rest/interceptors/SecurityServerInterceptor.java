@@ -7,6 +7,7 @@ import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
+import it.eng.spagobi.security.ExternalServiceController;
 import it.eng.spagobi.services.common.SsoServiceFactory;
 import it.eng.spagobi.services.common.SsoServiceInterface;
 import it.eng.spagobi.services.exceptions.ExceptionUtilities;
@@ -59,36 +60,47 @@ public class SecurityServerInterceptor implements PreProcessInterceptor, Accepte
 	public ServerResponse preProcess(HttpRequest req, ResourceMethod arg1)throws Failure, WebApplicationException {
 
 		HttpSession session = servletRequest.getSession();
-
-		boolean res = checkUserAuthentication(session, req.getUri().getRequestUri().getPath());
-		if(!res){
-			return null;
-		}
 		
-		boolean isTheUserEnabled = false;
-		logger.debug("SecurityServerInterceptor:preProcess IN");
 		String serviceUrl = InterceptorUtilities.getServiceUrl(req);
-		UserProfile profile = (UserProfile) servletRequest.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 		
-		logger.debug("Checking if the user ["+profile.getUserName()+"] has the rights to call the service ["+serviceUrl+"]");
-		
-		try {
-			isTheUserEnabled = profile.isAbleToExecuteService(serviceUrl);
-		} catch (EMFInternalError e) {
-			logger.debug("Error checking if the user ["+profile.getUserName()+"] has the rights to call the service ["+serviceUrl+"]",e);
-			throw new SpagoBIRuntimeException("Error checking if the user ["+profile.getUserName()+"] has the rights to call the service ["+serviceUrl+"]",e);
-		}
-		if(!isTheUserEnabled){
-			logger.error("NOT ENABLED TO EXECUTE SERVICE-- The user ["+profile.getUserName()+"] is not enabled to execute the service ["+serviceUrl+"]");
-			try {
-				return new ServerResponse( ExceptionUtilities.serializeException("not-enabled-to-call-service",null),	400, new Headers<Object>());
-			} catch (Exception e) {
-				throw new SpagoBIRuntimeException("Error checking if the user ["+profile.getUserName()+"] has the rights to call the service ["+serviceUrl+"]",e);
+		//Check for Services that can be invoked externally without user login in SpagoBI
+		ExternalServiceController externalServiceController = ExternalServiceController.getInstance();
+		boolean isExternalService = externalServiceController.isExternalService(serviceUrl);
+
+		if (!isExternalService){
+			//Other checks are required
+			boolean res = checkUserAuthentication(session, req.getUri().getRequestUri().getPath());
+			if(!res){
+				return null;
 			}
 			
-		}else{
-			logger.debug("The user ["+profile.getUserName()+"] is enabled to execute the service ["+serviceUrl+"]");
+			boolean isTheUserEnabled = false;
+			logger.debug("SecurityServerInterceptor:preProcess IN");
+			//String serviceUrl = InterceptorUtilities.getServiceUrl(req);
+			UserProfile profile = (UserProfile) servletRequest.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+			
+			logger.debug("Checking if the user ["+profile.getUserName()+"] has the rights to call the service ["+serviceUrl+"]");
+			
+			try {
+				isTheUserEnabled = profile.isAbleToExecuteService(serviceUrl);
+			} catch (EMFInternalError e) {
+				logger.debug("Error checking if the user ["+profile.getUserName()+"] has the rights to call the service ["+serviceUrl+"]",e);
+				throw new SpagoBIRuntimeException("Error checking if the user ["+profile.getUserName()+"] has the rights to call the service ["+serviceUrl+"]",e);
+			}
+			if(!isTheUserEnabled){
+				logger.error("NOT ENABLED TO EXECUTE SERVICE-- The user ["+profile.getUserName()+"] is not enabled to execute the service ["+serviceUrl+"]");
+				try {
+					return new ServerResponse( ExceptionUtilities.serializeException("not-enabled-to-call-service",null),	400, new Headers<Object>());
+				} catch (Exception e) {
+					throw new SpagoBIRuntimeException("Error checking if the user ["+profile.getUserName()+"] has the rights to call the service ["+serviceUrl+"]",e);
+				}
+				
+			}else{
+				logger.debug("The user ["+profile.getUserName()+"] is enabled to execute the service ["+serviceUrl+"]");
+			}
 		}
+		
+		
 		logger.debug("SecurityServerInterceptor:preProcess OUT");
 		return null;
 	}
