@@ -905,7 +905,7 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 
 
 	public void uploadDatamartTemplate(SDKTemplate sdkTemplate,
-			SDKTemplate calculatedFields, String dataSourceLabel) {
+			SDKTemplate calculatedFields, String dataSourceLabel, String categoryLabel) {
 		logger.debug("IN: template file name = [" + sdkTemplate.getFileName()
 				+ "] and optional calculatedFields file [" + calculatedFields
 				+ "]");
@@ -983,6 +983,18 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 					if(dataSourceLabel != null){
 						metaModel.setDataSourceLabel(dataSourceLabel);
 					}
+					
+					// retrieve Category Id
+					Domain  domain = DAOFactory.getDomainDAO().loadDomainByCodeAndValue("BM_CATEGORY", categoryLabel);
+					if(domain != null){
+						Integer id = domain.getValueId();
+						logger.debug("Associate domain with id: "+id+" and name "+categoryLabel);
+						metaModel.setCategory(id);
+					}
+					else{
+						logger.error("Could not find category domain with name "+categoryLabel+": deploy anyway");
+					}
+					
 					metaModelsDAO.insertMetaModel(metaModel);
 				}	
 
@@ -1105,6 +1117,14 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 		this.setTenant();
 		
 		try {
+			// check first if model is in service catalogue, otherwise return null
+			IMetaModelsDAO metaModelsDAO = DAOFactory.getMetaModelsDAO();			
+			Content content = metaModelsDAO.loadActiveMetaModelContentByName(folderName);
+			if(content == null){
+				logger.error("MetaModel "+folderName+" no more found on business service catalogue");
+				return null;
+			}
+			
 			FileInputStream isDatamartFile = downloadSingleFile(folderName, fileName);
 			//defines a content to return
 			byte[] templateContent = SpagoBIUtilities.getByteArrayFromInputStream(isDatamartFile);
@@ -1115,6 +1135,7 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 			MemoryOnlyDataSource mods = objConverter.new MemoryOnlyDataSource(templateContent, null);
 			DataHandler dhSource = new DataHandler(mods);
 			toReturn.setContent(dhSource);
+		
 		} catch(Exception e) {
 			logger.error("Error downloading datamart file", e);
 			logger.debug("Returning null");
@@ -1125,8 +1146,8 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 		}
 		return toReturn;
 	}
-
-
+	
+	
 	//download a zip file with datamart.jar and modelfile
 	public SDKTemplate downloadDatamartModelFiles(String folderName, String fileDatamartName , String fileModelName) {
 		logger.debug("IN");
@@ -1225,9 +1246,24 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 	public HashMap<String, String> getAllDatamartModels() {
 		logger.debug("IN");
 
-		this.setTenant();
-
 		HashMap<String, String> toReturn = new HashMap<String, String>();
+		
+		this.setTenant();
+		// Models list must be taken by database not by resources
+		List<MetaModel> metaModels = DAOFactory.getMetaModelsDAO().loadAllMetaModels();
+
+		
+		if(metaModels == null){
+		logger.warn("No models found");
+		 return toReturn;
+		}
+		
+		for (Iterator iterator = metaModels.iterator(); iterator.hasNext();) {
+			MetaModel metaModel = (MetaModel) iterator.next();
+			toReturn.put(metaModel.getName(), metaModel.getName()+".sbimodel");
+		}
+
+		// overwrite sbimodel files name if they are different form model name
 		try {
 			String pathDatatamartsDir = getResourcePath();
 			File datamartsDir = new File(pathDatatamartsDir);
@@ -1253,9 +1289,13 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 						return false;
 					}
 				});
-				for (int j = 0; j < models.length; j++) {
-					toReturn.put(dir.getName(), models[j].getName());
-				}
+				for (int j = 0; j < models.length; j++) { 
+					// return only if present in business service catalogue
+					if(toReturn.get(dir.getName()) != null){
+						logger.debug("overwrite model file name of model "+dir.getName()+" to "+models[j].getName());
+						toReturn.put(dir.getName(), models[j].getName());
+					}
+					}
 			}
 		} catch (Exception e) {
 			logger.error(e);

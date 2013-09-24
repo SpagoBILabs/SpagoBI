@@ -31,7 +31,8 @@
     value="{Element}{http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd}UsernameToken" />
   -->  
  </handler>
- <service name="DocumentsService" provider="java:RPC">
+
+<service name="DocumentsService" provider="java:RPC">
   <requestFlow>
 	<handler type="WSDoAllSender"/>
   </requestFlow>
@@ -62,6 +63,7 @@
   <arrayMapping innerType="ns47:SDKFunctionality" languageSpecificType="java:it.eng.spagobi.sdk.documents.bo.SDKFunctionality[]" qname="ns46:ArrayOf_tns2_SDKFunctionality" xmlns:ns46="urn:spagobisdkdocuments" xmlns:ns47="http://bo.documents.sdk.spagobi.eng.it"/>
   <arrayMapping innerType="ns49:SDKConstraint" languageSpecificType="java:it.eng.spagobi.sdk.documents.bo.SDKConstraint[]" qname="ns48:ArrayOf_tns2_SDKConstraint" xmlns:ns48="urn:spagobisdkdocuments" xmlns:ns49="http://bo.documents.sdk.spagobi.eng.it"/>
   </service>
+ 
  <service name="EnginesService" provider="java:RPC">
   <requestFlow>
 	<handler type="WSDoAllSender"/>
