@@ -6,7 +6,7 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <!-- Include GEO stylesheets -->
 <link rel="styleSheet" href ="./../css/geo.css" type="text/css" />
 
-<!-- START-DEBUG -->
+<!-- START-DEBUG
 
 <script type="text/javascript" src='../js/spagobi/commons/commons.js'/></script>
 <script type="text/javascript" src='../js/spagobi/commons/ComponentBuddy.js'/></script>
@@ -19,8 +19,8 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='../js/spagobi/geo/DrillControlPanel.js'/></script>
 <script type="text/javascript" src='../js/spagobi/geo/GeoApp.js'/></script>
 		
-<!-- END-DEBUG -->
+ END-DEBUG -->
 
-<!-- START-PRODUCTION
+<!-- START-PRODUCTION-->
 <script type="text/javascript" src='../js/spagobi/geo-all.js'></script>
- END-PRODUCTION -->
+<!-- END-PRODUCTION -->
