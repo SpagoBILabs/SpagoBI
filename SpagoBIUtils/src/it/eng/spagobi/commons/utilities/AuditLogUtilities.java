@@ -28,8 +28,6 @@ import nl.bitwalker.useragentutils.UserAgent;
 
 import org.apache.log4j.Logger;
 
-import com.sun.org.apache.xerces.internal.impl.xpath.regex.ParseException;
-
 /**
  * @author Chiara Chiarelli (chiara.chiarelli@eng.it) , Monia Spinelli (monia.spinelli@eng.it)
  *
@@ -88,7 +86,7 @@ public class AuditLogUtilities {
 				 strbuf.append("'");
 				 strbuf.append(customDate);
 		        }
-		        catch(ParseException pe) {
+		        catch(Exception e) {
 		            logger.error("ERROR: Cannot parse \"" + dateString + "\"");
 		        }
 		        strbuf.append("';'");
