@@ -12,7 +12,7 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <!-- START-DEBUG -->
 
 <!-- END-DEBUG -->
-
-<!-- START-PRODUCTION
+ 
+<!-- START-PRODUCTION -->
 <script type="text/javascript" src='../js/spagobi/xxx-all.js'></script>
- END-PRODUCTION -->
+ <!--  END-PRODUCTION -->
