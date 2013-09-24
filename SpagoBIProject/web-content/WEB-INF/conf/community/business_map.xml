@@ -12,7 +12,7 @@
 		
 	</MAP_REST_SERVICES>
 	<MAP_EXTERNAL_REST_SERVICES>
-		<MAP_EXTERNAL_REST_SERVICE serviceUrl="/subscribe/getUserInfo" businessProcess="publicFunctionality" />
+		<MAP_EXTERNAL_REST_SERVICE serviceUrl="/subscribe/getUserInfo" />
 	</MAP_EXTERNAL_REST_SERVICES>
 	
 	
