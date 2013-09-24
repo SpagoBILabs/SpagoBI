@@ -112,7 +112,7 @@ END-DEBUG -->
 
 <!-- START-PRODUCTION -->
 
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi-all-4.0.0.js")%>'></script>
+<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi-all-4.1.0.js")%>'></script>
 
 <!--  END-PRODUCTION -->
 
