@@ -158,10 +158,10 @@ public class DocumentsServiceProxy extends AbstractSDKServiceProxy implements Do
     return documentsService.executeDocument(in0, in1, in2, in3);
   }
   
-  public void uploadDatamartTemplate(it.eng.spagobi.sdk.documents.bo.SDKTemplate in0, it.eng.spagobi.sdk.documents.bo.SDKTemplate in1, java.lang.String in2) throws java.rmi.RemoteException, it.eng.spagobi.sdk.exceptions.NotAllowedOperationException{
+  public void uploadDatamartTemplate(it.eng.spagobi.sdk.documents.bo.SDKTemplate in0, it.eng.spagobi.sdk.documents.bo.SDKTemplate in1, java.lang.String in2, java.lang.String in3) throws java.rmi.RemoteException, it.eng.spagobi.sdk.exceptions.NotAllowedOperationException{
 	    if (documentsService == null)
 	      _initDocumentsServiceProxy();
-	     documentsService.uploadDatamartTemplate(in0, in1, in2);
+	     documentsService.uploadDatamartTemplate(in0, in1, in2, in3);
   }
   
   public void uploadDatamartModel(it.eng.spagobi.sdk.documents.bo.SDKTemplate in0) throws java.rmi.RemoteException, it.eng.spagobi.sdk.exceptions.NotAllowedOperationException{
@@ -193,4 +193,6 @@ public class DocumentsServiceProxy extends AbstractSDKServiceProxy implements Do
 	      _initDocumentsServiceProxy();
 	     documentsService.uploadMondrianSchema(in0);
   }
+
+
 }
