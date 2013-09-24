@@ -35,6 +35,7 @@ import it.eng.spagobi.sdk.documents.bo.SDKDocument;
 import it.eng.spagobi.sdk.documents.bo.SDKDocumentParameter;
 import it.eng.spagobi.sdk.documents.bo.SDKFunctionality;
 import it.eng.spagobi.sdk.documents.bo.SDKTemplate;
+import it.eng.spagobi.sdk.domains.bo.SDKDomain;
 import it.eng.spagobi.sdk.engines.bo.SDKEngine;
 import it.eng.spagobi.sdk.maps.bo.SDKFeature;
 import it.eng.spagobi.sdk.maps.bo.SDKMap;
@@ -442,6 +443,13 @@ public class SDKObjectsConverter {
 			toReturn.setType(type);
 			 */
 			toReturn.setType(spagoBiDataSet.getType());
+			
+			
+			// sets dataset's category domain
+			if (spagoBiDataSet.getCategoryId()!= null){
+				Domain category = DAOFactory.getDomainDAO().loadDomainById(spagoBiDataSet.getCategoryId());
+				toReturn.setCategory(category.getValueName());
+			}
 			
 			List dataSetParameterItemList = null;
 			String parametersXML=spagoBiDataSet.getParameters();
@@ -881,5 +889,33 @@ public class SDKObjectsConverter {
 		toReturn = sb.toXML(false);
 		return toReturn;
 	}
+	
+	
+	public SDKDomain fromDomainToSDKDomain(Domain domain) {
+		logger.debug("IN");
+		if (domain == null) {
+			logger.warn("domain in input is null!!");
+			return null;
+		}
+		SDKDomain sdkDomain = null;
+		try {
+			sdkDomain = new SDKDomain();
+			sdkDomain.setValueId(domain.getValueId());
+			sdkDomain.setDomainNm(domain.getDomainName());
+			sdkDomain.setValueCd(domain.getValueCd());
+			sdkDomain.setValueNm(domain.getValueName());
+			sdkDomain.setValueDs(domain.getValueDescription());
+		} catch (Exception e) {
+			logger.error("Error while converting domain into SDKDomain.", e);
+			logger.debug("Returning null.");
+			return null;
+		} finally {
+			logger.debug("OUT");
+		}
+		return sdkDomain;
+	}
+	
+
+	
 	
 }

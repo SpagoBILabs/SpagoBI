@@ -71,9 +71,9 @@ public class DocumentsServiceSoapBindingImpl implements it.eng.spagobi.sdk.docum
     	return impl.executeDocument(in0, in1, in2, in3);
     }
 
-    public void uploadDatamartTemplate(it.eng.spagobi.sdk.documents.bo.SDKTemplate in0, it.eng.spagobi.sdk.documents.bo.SDKTemplate in1, java.lang.String in2) throws java.rmi.RemoteException {
+    public void uploadDatamartTemplate(it.eng.spagobi.sdk.documents.bo.SDKTemplate in0, it.eng.spagobi.sdk.documents.bo.SDKTemplate in1, java.lang.String in2, java.lang.String in3) throws java.rmi.RemoteException {
       DocumentsServiceImpl impl = new DocumentsServiceImpl();
-    	impl.uploadDatamartTemplate(in0, in1, in2);
+    	impl.uploadDatamartTemplate(in0, in1, in2, in3);
     }
 
     public void uploadDatamartModel(it.eng.spagobi.sdk.documents.bo.SDKTemplate in0) throws java.rmi.RemoteException {
