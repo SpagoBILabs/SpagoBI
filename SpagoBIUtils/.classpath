@@ -32,6 +32,7 @@
 	<classpathentry kind="lib" path="lib/jackson-annotations-2.0.2.jar"/>
 	<classpathentry kind="lib" path="lib/jackson-core-2.0.2.jar"/>
 	<classpathentry kind="lib" path="lib/jackson-databind-2.0.2.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jst.server.core.container/org.eclipse.jst.server.tomcat.runtimeTarget/Apache Tomcat v6.0"/>
 	<classpathentry kind="lib" path="lib/hbql-0.90.0.1.jar"/>
 	<classpathentry kind="lib" path="lib/UserAgentUtils-1.6.jar"/>
 	<classpathentry kind="lib" path="lib/super-csv-2.1.0.jar"/>
@@ -50,6 +51,5 @@
 	<classpathentry kind="lib" path="lib/org.eclipse.emf.ecore_2.8.3.v20130125-0546.jar"/>
 	<classpathentry kind="lib" path="lib/org.eclipse.emf.ecore.xmi_2.8.1.v20130125-0546.jar"/>
 	<classpathentry kind="lib" path="lib/org.eclipse.wtp.xml.capabilities_1.0.100.v201005102000.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jst.server.core.container/org.eclipse.jst.server.tomcat.runtimeTarget/Apache Tomcat v6.0 D"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
