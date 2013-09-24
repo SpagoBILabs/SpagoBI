@@ -42,8 +42,6 @@ public class ExternalServiceController {
     private static ExternalServiceController instance = null;
 
     static private Logger logger = Logger.getLogger(ExternalServiceController.class);
-	private static final String PUBLIC_FUNCTIONALITY = "publicFunctionality";
-
     
     private HashMap mapRestServices = null;
 
@@ -66,9 +64,7 @@ public class ExternalServiceController {
     	    while (actionListIt.hasNext()) {
     		SourceBean mapAction = (SourceBean) actionListIt.next();
         	    	String serviceName = (String) mapAction.getAttribute("serviceUrl");
-        	    	String businessProcessName = (String) mapAction.getAttribute("businessProcess");
-        	    	//String actStr = "SERVICE[" + serviceName + "]";
-        	    	mapRestServices.put(serviceName.toUpperCase(), businessProcessName);
+        	    	mapRestServices.put(serviceName.toUpperCase(), null);
     	    }
     	}
   
@@ -77,10 +73,7 @@ public class ExternalServiceController {
     public boolean isExternalService(String serviceName){
     	serviceName = serviceName.toUpperCase();
     	if (mapRestServices.containsKey(serviceName)){
-    		String businessProcessName = (String)mapRestServices.get(serviceName);
-    		if (businessProcessName.equalsIgnoreCase(PUBLIC_FUNCTIONALITY)){
-    			return true;
-    		}
+    		return true;
     	}
     	return false;
     }
