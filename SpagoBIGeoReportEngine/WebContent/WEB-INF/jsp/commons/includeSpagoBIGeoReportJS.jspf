@@ -25,7 +25,7 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 
 
 
-<!-- START-DEBUG
+<!-- START-DEBUG -->
 <script type="text/javascript" src='./js/src/ext/sbi/commons/Settings.js'/></script>
 <script type="text/javascript" src='./js/src/ext/sbi/overrides/overrides.js'/></script>
 <script type="text/javascript" src='./js/src/ext/sbi/commons/Log.js'/></script>
@@ -58,11 +58,11 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 
 
 <script type="text/javascript" src='./js/src/ext/sbi/tools/measure/MeasuresCatalogue.js'/></script>
-END-DEBUG -->
+<!-- END-DEBUG -->
 
-<!-- START-PRODUCTION-->
+<!-- START-PRODUCTION
 <script type="text/javascript" src='../js/spagobi/qbe-all.js'></script>
-<!-- END-PRODUCTION -->
+END-PRODUCTION -->
 
 
 
