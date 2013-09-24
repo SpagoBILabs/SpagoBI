@@ -17,7 +17,7 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <!-- Include localized labels  -->
 <script type="text/javascript" src='../js/spagobi/locale/<%=locale.getLanguage()%>.js'/></script>
 
-<!-- START-DEBUG -->
+<!-- START-DEBUG 
 <script type="text/javascript" src='../js/spagobi/exception/ExceptionHandler.js'/></script>
 <script type="text/javascript" src='../js/spagobi/service/ServiceRegistry.js'/></script>
 <script type="text/javascript" src='../js/spagobi/commons/Format.js'/></script>
@@ -27,11 +27,11 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='../js/spagobi/network/NetworkInfoPanel.js'/></script>
 <script type="text/javascript" src='../js/spagobi/network/NetworkContainerPanel.js'/></script>
 
-<!-- END-DEBUG -->
+ END-DEBUG -->
 
-<!-- START-PRODUCTION
+<!-- START-PRODUCTION -->
 <script type="text/javascript" src='../js/spagobi/sbi-network-all-4.0.0.js'></script>
- END-PRODUCTION -->
+<!-- END-PRODUCTION -->
  
 <script type="text/javascript" src='../js/spagobi/commons/Settings.js'/></script>
 <script type="text/javascript" src='../js/spagobi/overrides/overrides.js'/></script>	
