@@ -11,7 +11,7 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='../user_messages/<%=locale.getLanguage()%>.js'/></script>
 
 
-<!-- START-DEBUG
+<!-- START-DEBUG -->
 <script type="text/javascript" src='../js/spagobi/commons/Settings.js'/></script>	
 <script type="text/javascript" src='../js/spagobi/overrides/overrides.js'/></script>
 <script type="text/javascript" src='../js/spagobi/exception/ExceptionHandler.js'/></script>
@@ -52,10 +52,10 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='../js/spagobi/console/DetailPage.js'/></script>
 <script type="text/javascript" src='../js/spagobi/console/DetailPanel.js'/></script>
 <script type="text/javascript" src='../js/spagobi/console/ConsolePanel.js'/></script>
- END-DEBUG -->
+ <!-- END-DEBUG -->
 
-<!-- START-PRODUCTION-->
+<!-- START-PRODUCTION
 <script type="text/javascript" src='../js/spagobi/console-all-4.1.0.js'></script>
-<!-- END-PRODUCTION -->
+END-PRODUCTION -->
  
 <script type="text/javascript" src='../js/spagobi/commons/Settings.js'/></script>	
