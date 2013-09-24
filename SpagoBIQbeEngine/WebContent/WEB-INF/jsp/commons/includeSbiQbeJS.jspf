@@ -29,7 +29,7 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 
 <script type="text/javascript" src='../js/spagobi/commons/Settings.js'></script>	
 
-<!-- START-DEBUG -->
+<!-- START-DEBUG 
 <script type="text/javascript" src='../js/spagobi/qbe/filterwizard/parser.js'></script>
 <script type="text/javascript" src='../js/spagobi/qbe/filterwizard/buttonColumn.js'></script>
 
@@ -212,11 +212,11 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='../js/spagobi/registry/RegistryEditorGridPanel.js'></script>
 
 
-<!-- END-DEBUG -->
+END-DEBUG -->
 
-<!-- START-PRODUCTION
+<!-- START-PRODUCTION-->
 <script type="text/javascript" src='../js/spagobi/qbe-all-4.0.0.js'></script>
-END-PRODUCTION -->
+<!-- END-PRODUCTION -->
 
 
 <script type="text/javascript" src='../js/spagobi/worksheet/config/Options.js'></script>
