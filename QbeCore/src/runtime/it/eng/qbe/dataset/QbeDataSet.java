@@ -450,11 +450,35 @@ public static String DS_TYPE = "SbiQbeDataSet";
 	}
 
 	@Override
+	public void setCategoryId(Integer id) {
+    	if (this.ds != null) {
+    		ds.setCategoryId(id);
+    	}
+    	super.setCategoryId(id);
+	}
+
+	
+
+	@Override
 	public String getCategoryCd() {
     	if (this.ds != null) {
     		return ds.getCategoryCd();
     	}
+    	else{
     	return super.getCategoryCd();
+    	}
+    }
+	
+	@Override
+	public void setCategoryCd(String cd) {
+    	if (this.ds != null) {
+    		ds.setCategoryCd(cd);
+    	}
+    	else{
+    		super.setCategoryCd(cd);
+    	}
 	}
+	
+	
 	
 }
