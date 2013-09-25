@@ -22,21 +22,27 @@ Ext.define('Sbi.selfservice.SelfServiceExecutionIFrame', {
 	, init: function(config){
 		this.callParent(arguments);
 		//adds the toolbar
-		this.initToolbar();
+		this.initToolbar(config);
 		
 	}
 
 
-	, initToolbar : function () {
+	, initToolbar : function (config) {
 
 		this.tbar  = Ext.create('Ext.toolbar.Toolbar');
 		this.tbar.add('->');
+		// passed by JSP userDocumentBrowserCreateDoc.jsp 
+		if(config.hideExtraSaveButton != undefined && config.hideExtraSaveButton == true){
+				// if in creation detail page in user browser do not use this save button
+		}
+		else{
 		this.tbar.add({
 			iconCls : 'icon-saveas' 
 			, tooltip: LN('sbi.execution.executionpage.toolbar.saveas')
 			, scope : this
 		    , handler : this.saveHandler
 		});
+		}
 		
 	}
 	
