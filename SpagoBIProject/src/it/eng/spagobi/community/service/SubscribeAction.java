@@ -55,7 +55,7 @@ public class SubscribeAction {
 				result.put("firstname", firstName);
 			}
 			if (lastName != null){
-				result.put("lastName", lastName);
+				result.put("lastname", lastName);
 			}
 		} catch (Throwable t) {
 			throw new SpagoBIServiceException(
