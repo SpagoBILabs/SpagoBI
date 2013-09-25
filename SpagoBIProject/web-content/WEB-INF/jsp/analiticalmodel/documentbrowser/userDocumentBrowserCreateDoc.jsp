@@ -28,7 +28,7 @@ if (isMyData.equalsIgnoreCase("FALSE")) {%>
 
 
     Ext.onReady(function(){
-		var selfService = Ext.create('Sbi.selfservice.SelfServiceExecutionIFrame',{});
+		var selfService = Ext.create('Sbi.selfservice.SelfServiceExecutionIFrame',{hideExtraSaveButton : true});
 		var datasetListViewport = Ext.create('Ext.container.Viewport', {
 			layout:'fit',
 	     	items: [selfService]	     	
