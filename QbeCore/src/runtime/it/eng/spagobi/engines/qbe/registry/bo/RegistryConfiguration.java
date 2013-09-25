@@ -172,6 +172,9 @@ public class RegistryConfiguration {
 		
 		public static final String IS_PK_AUTO_LOAD = "isPkAutoLoad";
 
+		public static final String TABLE_FOR_PK_MAX = "tableForPKMax";
+		public static final String COLUMN_FOR_PK_MAX = "columnForPKMax";
+
 		
 		private String name = null;
 
@@ -223,6 +226,16 @@ public class RegistryConfiguration {
 		//sets if the column of type number must be signed or unsigned (only positive numbers) by false or true values
 		private boolean unsigned = false;
 		
+		private String format = null;
+		
+
+		public String getFormat() {
+			return format;
+		}
+
+		public void setFormat(String format) {
+			this.format = format;
+		}
 
 		public boolean isUnsigned() {
 			return unsigned;
