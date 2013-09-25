@@ -97,6 +97,8 @@ public class JPAPersistenceManager implements IPersistenceManager {
 		Integer toReturn = 0;
 		String name = targetEntity.getName();
 
+		logger.debug("SELECT max(p."+keyColumn+") as c FROM "+targetEntity.getName()+" p");
+		//System.out.println("SELECT max(p."+keyColumn+") as c FROM "+targetEntity.getName()+" p");	
 		Query maxQuery = entityManager.createQuery("SELECT max(p."+keyColumn+") as c FROM "+targetEntity.getName()+" p");
 	
 		
@@ -113,8 +115,27 @@ public class JPAPersistenceManager implements IPersistenceManager {
 	}
 	
 	
+	private synchronized Integer getPKValueFromTemplateTable(String tableName, String keyColumn, EntityManager entityManager){
+		logger.debug("IN");	
+		Integer toReturn = 0;
+
+		Query maxQuery = entityManager.createQuery("SELECT max(p."+keyColumn+") as c FROM "+tableName+" p");
+		
+		Object result = maxQuery.getSingleResult();
+		
+		if(result != null){
+			toReturn = Integer.valueOf(result.toString());
+			toReturn++;
+		}
+		
+		logger.debug("New PK taken from table "+tableName+" is "+toReturn);
+		logger.debug("OUT");	
+		return toReturn;
+	}
 	
-	public Integer insertRecord(JSONObject aRecord, RegistryConfiguration registryConf, boolean autoLoadPK) {
+	
+	
+	public Integer insertRecord(JSONObject aRecord, RegistryConfiguration registryConf, boolean autoLoadPK, String tableForPkMax, String columnForPkMax) {
 		
 		EntityTransaction entityTransaction = null;
 		Integer toReturn = null;
@@ -180,10 +201,26 @@ public class JPAPersistenceManager implements IPersistenceManager {
 			
 			// calculate PK
 			if(true || autoLoadPK == false){
+				
+				Integer pkValue = null;
+				// check if an alternative table and column has been specified to retrieve PK
 				String keyColumn = getKeyColumn(aRecord, registryConf);
-				logger.debug("calculate max value +1 for key column "+keyColumn+" in table "+targetEntity.getName());
-				Integer pkValue = getPKValue(targetEntity, keyColumn, entityManager);
-				setKeyProperty(targetEntity, newObj, keyColumn, pkValue);
+				if(tableForPkMax != null && columnForPkMax != null){
+					logger.debug("Retrieve PK as max+1 from table: "+tableForPkMax+" / column: "+columnForPkMax);
+					pkValue = getPKValueFromTemplateTable(tableForPkMax, columnForPkMax, entityManager);
+					setKeyProperty(targetEntity, newObj, keyColumn, pkValue);
+				}
+				else{
+					logger.debug("calculate max value +1 for key column "+keyColumn+" in table "+targetEntity.getName());
+					pkValue = getPKValue(targetEntity, keyColumn, entityManager);
+					setKeyProperty(targetEntity, newObj, keyColumn, pkValue);
+				}
+				
+				if(pkValue == null){
+					logger.error("could not retrieve pk ");
+					throw new Exception("could not retrieve pk for table "+targetEntity.getName());
+				}
+				
 				toReturn = pkValue;
 			}
 			

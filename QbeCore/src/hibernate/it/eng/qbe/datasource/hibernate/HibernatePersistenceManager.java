@@ -201,7 +201,7 @@ public class HibernatePersistenceManager implements IPersistenceManager {
 	}
 
 	public Integer insertRecord(JSONObject aRecord,
-			RegistryConfiguration registryConf, boolean autoLoadPK) {
+			RegistryConfiguration registryConf, boolean autoLoadPK, String tableForPkMax, String columnForPkMax) {
 		// TODO Auto-generated method stub
 		return null;
 	}

@@ -15,7 +15,7 @@ public interface IPersistenceManager {
 			RegistryConfiguration registryConf);
 	
 	Integer insertRecord(JSONObject aRecord,
-			RegistryConfiguration registryConf, boolean autoLoadPK);
+			RegistryConfiguration registryConf, boolean autoLoadPK, String tableForPkMax, String columnForPkMax);
 
 	void deleteRecord(JSONObject aRecord,
 			RegistryConfiguration registryConf);
