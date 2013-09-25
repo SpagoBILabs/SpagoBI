@@ -48,6 +48,8 @@ public class RegistryConfigurationXMLParser {
 	public static String ATTRIBUTE_EDITABLE = "editable";
 	public static String ATTRIBUTE_VISIBLE = "visible";
 	public static String ATTRIBUTE_SUBENTITY = "subEntity";
+	public static String ATTRIBUTE_FORMAT = "format";
+	
 	public static String ATTRIBUTE_FOREIGNKEY = "foreignKey";
 	public static String ATTRIBUTE_MANDATORY_COLUMN = "mandatoryColumn";
 	public static String ATTRIBUTE_MANDATORY_VALUE = "mandatoryValue";
@@ -178,6 +180,9 @@ public class RegistryConfigurationXMLParser {
 						.getAttribute(ATTRIBUTE_EDITABLE));
 				boolean isVisible = !"false".equalsIgnoreCase((String) aColumn
 						.getAttribute(ATTRIBUTE_VISIBLE));
+
+				String format = aColumn.getAttribute(ATTRIBUTE_FORMAT) != null ? (String)aColumn.getAttribute(ATTRIBUTE_FORMAT) : null;;
+				
 				String editorType = EDITOR_TYPE_COMBO
 						.equalsIgnoreCase((String) aColumn
 								.getAttribute(ATTRIBUTE_EDITOR)) ? Column.EDITOR_TYPE_COMBO
@@ -201,6 +206,8 @@ public class RegistryConfigurationXMLParser {
 				column.setEditable(isEditable);
 				column.setVisible(isVisible);
 				column.setEditorType(editorType);
+				column.setFormat(format);
+				
 				String mandatoryColumn = (String) aColumn.getAttribute(ATTRIBUTE_MANDATORY_COLUMN);
 				if(mandatoryColumn != null){
 					column.setMandatoryColumn(mandatoryColumn)	;

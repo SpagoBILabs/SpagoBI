@@ -88,6 +88,7 @@ public class DeleteRecordsAction extends AbstractQbeEngineAction {
 			}
 			
 		} catch (Throwable t) {
+			logger.error("Error in deleting record ",t);
 			errorHitsMonitor = MonitorFactory.start("QbeEngine.updateRecordsAction.errorHits");
 			errorHitsMonitor.stop();
 			throw SpagoBIEngineServiceExceptionHandler.getInstance().getWrappedException(getActionName(), getEngineInstance(), t);

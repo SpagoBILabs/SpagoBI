@@ -537,7 +537,20 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 				if(meta.fields[i].type) {
 				   var t = meta.fields[i].type;
 				   if (t ==='float') { // format is applied only to numbers
-					   var format = Sbi.qbe.commons.Format.getFormatFromJavaPattern(meta.fields[i].format);
+					   
+					   //check if format is defined in template force it, else get it from model field
+					   var columnFromTemplate = this.registryConfiguration.columns[i]
+					   
+					   var formatToParse;
+					   if(columnFromTemplate.format){
+						   formatToParse = columnFromTemplate.format;
+					   }
+					   else{
+						   formatToParse = meta.fields[i].format;
+					   }
+					   
+					   
+					   var format = Sbi.qbe.commons.Format.getFormatFromJavaPattern(formatToParse);
 					   var f = Ext.apply( Sbi.locale.formats[t], format);
 					   meta.fields[i].renderer = Sbi.qbe.commons.Format.floatRenderer(f);
 				
@@ -845,7 +858,18 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 		
 		items.push({
 			iconCls: 'icon-delete',
-			handler : this.deleteRecord,
+			handler : function(){
+				Ext.MessageBox.confirm(
+						LN('sbi.worksheet.designer.msg.deletetab.title'),
+						LN('sbi.worksheet.designer.msg.deletetab.msg'),            
+			            function(btn, text) {
+			                if (btn=='yes') {
+			    				this.deleteRecord();
+			                }
+			            },
+			            this
+					);
+			},
 			scope : this
 		});
 		
@@ -1258,8 +1282,8 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 			success : 
 				function(response, opts) {
 				try {
-					for ( var j = 0; j < this.deletedRows.length; j++) {
-						var index = this.deletedRows[j];
+					for ( var int = 0; int < this.deletedRows.length; int++) {
+						var index = this.deletedRows[int];
 						this.store.removeAt(index);	
 					}
 					var params = {}

@@ -137,7 +137,15 @@ public class UpdateRecordsAction extends AbstractQbeEngineAction {
 				if(isAutoLoad != null && isAutoLoad.equalsIgnoreCase("true")){
 					autoLoadPK = true;
 				}
-				Integer id = insertRecord(aRecord, qbeEngineInstance, registryConf, autoLoadPK);
+				
+				String tableForPkMax = registryConf.getConfiguration(RegistryConfiguration.Configuration.TABLE_FOR_PK_MAX);
+				String columnForPkMax = registryConf.getConfiguration(RegistryConfiguration.Configuration.COLUMN_FOR_PK_MAX);
+
+				if(tableForPkMax == null || tableForPkMax.trim().equals("")) tableForPkMax = null;
+				if(columnForPkMax == null || columnForPkMax.trim().equals("")) columnForPkMax = null;
+				
+				
+				Integer id = insertRecord(aRecord, qbeEngineInstance, registryConf, autoLoadPK, tableForPkMax, columnForPkMax);
 				idsToReturn.add(id);
 			}
 			else{
@@ -194,10 +202,10 @@ public class UpdateRecordsAction extends AbstractQbeEngineAction {
 	
 	private Integer insertRecord(JSONObject aRecord,
 			QbeEngineInstance qbeEngineInstance,
-			RegistryConfiguration registryConf, boolean autoLoadPK) {
+			RegistryConfiguration registryConf, boolean autoLoadPK, String tableForPkMax, String columnForPkMax) {
 		logger.debug("IN");
 		IDataSource genericDatasource = qbeEngineInstance.getDataSource();
-		Integer id = genericDatasource.getPersistenceManager().insertRecord(aRecord, registryConf, autoLoadPK);
+		Integer id = genericDatasource.getPersistenceManager().insertRecord(aRecord, registryConf, autoLoadPK,tableForPkMax, columnForPkMax);
 		logger.debug("OUT");
 		return id;
 	}
