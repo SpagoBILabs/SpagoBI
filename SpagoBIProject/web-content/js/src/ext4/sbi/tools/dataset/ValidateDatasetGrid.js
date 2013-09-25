@@ -51,6 +51,7 @@ Ext.define('Sbi.tools.dataset.ValidateDatasetGrid', {
         this.height = 300;
         this.width = '100%';
         this.autoscroll =  true;
+        this.loadMask = true;
         
         this.firedValidationErrorFound = false;
 
