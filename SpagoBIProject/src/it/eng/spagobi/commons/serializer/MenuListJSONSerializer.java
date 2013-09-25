@@ -159,7 +159,7 @@ public class MenuListJSONSerializer implements Serializer {
 							temp.put(SCALE, "large");
 							temp.put(PATH, path);
 							temp.put(TARGET, "_self");
-							if(menuElem.getCode() != null && menuElem.getCode().equals("analyticalModel")){
+							if(menuElem.getCode() != null && menuElem.getCode().equals("doc_admin")){
 								temp.put(HREF, "javascript:javascript:execDirectUrl('"+contextName+HREF_DOC_BROWSER+"', '"+text+"')");
 							}
 							
@@ -294,7 +294,7 @@ public class MenuListJSONSerializer implements Serializer {
 		tempMenuList.put("->");
 		JSONObject logo = new JSONObject();
 		logo.put("xtype", "tbtext");
-		logo.put("text", "<DIV style=\"WIDTH: 25px; HEIGHT: 100px; margin-left: 10px; background-image: url(/SpagoBI/themes/sbi_default/img/logo_toolbar.png);\" align=\"center\"> &nbsp; </DIV>");
+		logo.put("text", "<DIV style=\"WIDTH: 25px; HEIGHT: 100px; margin-left: 10px; background-image: url("+contextName+"/themes/sbi_default/img/logo_toolbar.png);\" align=\"center\"> &nbsp; </DIV>");
 		tempMenuList.put(logo);
 		
 		
@@ -379,6 +379,7 @@ public class MenuListJSONSerializer implements Serializer {
 			temp2.put(COLUMNS, 1);
 			temp2.put(XTYPE, "buttongroup");
 		}else{
+
 			temp2.put(TEXT, text);
 			temp2.put("style", "text-align: left;");
 			temp2.put(SRC, childElem.getUrl());
@@ -402,6 +403,7 @@ public class MenuListJSONSerializer implements Serializer {
 
 				temp2.put(HREF, url+", '"+path+"')");
 			}
+	
 		}
 		if (childElem.getHasChildren()){
 			List childrenBis = childElem.getLstChildren();
@@ -410,8 +412,7 @@ public class MenuListJSONSerializer implements Serializer {
 				temp2.put(ITEMS, tempMenuList2);
 			}else{
 				temp2.put(MENU, tempMenuList2);
-			}
-			
+			}			
 		}
 
 
