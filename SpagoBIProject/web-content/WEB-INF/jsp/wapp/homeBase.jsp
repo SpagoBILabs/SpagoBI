@@ -171,10 +171,10 @@ sessionExpiredSpagoBIJS = 'sessionExpiredSpagoBIJS';
 	}
  %>
  <!-- Include Ext stylesheets here: -->
-<link id="extall"     	 rel="styleSheet" href ="/SpagoBI/js/lib/ext-4.1.1a/resources/css/ext-all.css" type="text/css" />
-<link id="theme-gray" 	 rel="styleSheet" href ="/SpagoBI/js/lib/ext-4.1.1a/resources/css/ext-all-gray.css" type="text/css" />
-<link id="spagobi-ext-4" rel="styleSheet" href ="/SpagoBI/js/lib/ext-4.1.1a/overrides/resources/css/spagobi.css" type="text/css" />
+<link id="extall"     	 rel="styleSheet" href ="<%=contextName %>/js/lib/ext-4.1.1a/resources/css/ext-all.css" type="text/css" />
+<link id="theme-gray" 	 rel="styleSheet" href ="<%=contextName %>/js/lib/ext-4.1.1a/resources/css/ext-all-gray.css" type="text/css" />
+<link id="spagobi-ext-4" rel="styleSheet" href ="<%=contextName %>/js/lib/ext-4.1.1a/overrides/resources/css/spagobi.css" type="text/css" />
 
-<script type="text/javascript" src="/SpagoBI/js/lib/ext-4.1.1a/overrides/overrides.js"></script>
+<script type="text/javascript" src="<%=contextName %>/js/lib/ext-4.1.1a/overrides/overrides.js"></script>
 
 <script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext4/sbi/wapp/HomeBase.js")%>'></script>

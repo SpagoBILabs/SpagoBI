@@ -5,6 +5,7 @@
 
 <%@page import="it.eng.spagobi.commons.bo.UserProfile"%>
 <%@page import="it.eng.spago.security.IEngUserProfile"%>
+<%@page import="it.eng.spagobi.commons.utilities.ChannelUtilities"%>
 
  </head>
  
@@ -21,11 +22,11 @@
 		userName=(String)((UserProfile)userProfile).getUserName();
 	}
 
-	
+	String contextName = ChannelUtilities.getSpagoBIContextName(request);
 	%>
  
 <body>
-<div style="float:left">&nbsp;<img src="/SpagoBI/themes/sbi_default/img/wapp/Logo_SpagoBI.gif"/></div>
+<div style="float:left">&nbsp;<img src="<%=contextName %>/themes/sbi_default/img/wapp/Logo_SpagoBI.gif"/></div>
 <br/>
 <br/>
 <div></div>
