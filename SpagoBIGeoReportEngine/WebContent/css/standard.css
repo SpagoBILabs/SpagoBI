@@ -275,6 +275,7 @@ li:hover .login-panel .not-registered a:hover,.login-panel .not-registered a:hov
 .map-type li:hover{background:#fff}
 .map-type li.last{border-bottom:0}
 .map-type li.active{background:#fefefe}
+.map-type:hover li{display:block} <!-- test anto -->
 .map-type li.active:hover{background-color:#fff}
 .map-type a{background-image:url(../img/controlpanel/ico-map-type.png);background-repeat:no-repeat;position:relative;display:block;height:27px;color:#434343;padding:15px 0 0 59px}
 .map-type .map-zone a{background-position:20px 10px}

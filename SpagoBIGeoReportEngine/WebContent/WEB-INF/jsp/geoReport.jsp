@@ -35,6 +35,9 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 	String docLabel;
 	String docVersion;
 	String docAuthor;
+	String docName;
+	String docDescription;
+	String docIsPublic;
 	String userId;
 	List<String> includes;
 	
@@ -48,6 +51,9 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 	docLabel = (engineInstance.getDocumentLabel()==null)?"":engineInstance.getDocumentLabel().toString();
 	docVersion = (engineInstance.getDocumentVersion()==null)?"":engineInstance.getDocumentVersion().toString();
 	docAuthor = (engineInstance.getDocumentAuthor()==null)?"":engineInstance.getDocumentAuthor().toString();
+	docName = (engineInstance.getDocumentName()==null)?"":engineInstance.getDocumentName().toString();
+	docDescription = (engineInstance.getDocumentDescription()==null)?"":engineInstance.getDocumentDescription().toString();
+	docIsPublic= (engineInstance.getDocumentIsPublic()==null)?"":engineInstance.getDocumentIsPublic().toString();
 
 
 
@@ -91,7 +97,6 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 		<!-- Include template here  -->
 		<!--   %@include file="tests/capoluoghiPropRemoteTemplate.jsp" % --> 
 		<!--  %@include file="tests/usastateChorLocalTemplate.jsp" % -->
-		
 		
 		
 		<script language="javascript" type="text/javascript">
@@ -162,6 +167,9 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 		    Sbi.config.docVersion = '<%=docVersion%>';
 		    Sbi.config.userId = '<%=userId%>';
 		    Sbi.config.docAuthor = '<%=docAuthor%>';
+		    Sbi.config.docName = '<%=docName%>';
+		    Sbi.config.docDescription = '<%=docDescription%>';
+		    Sbi.config.docIsPublic= '<%=docIsPublic%>';
 
 		    
 		    var geoReportPanel = null;
