@@ -14,7 +14,6 @@ Ext.ns("Sbi.geo");
  *  - ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml
  */
 Sbi.geo.ControlPanel2 = function(config) {
-	
 	this.validateConfigObject(config);
 	this.adjustConfigObject(config);
 	
@@ -139,114 +138,19 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 	 * Initialize the GUI
 	 */
 	, init: function() {
+		this.isFinalUser = (Sbi.template.role.indexOf('user') >= 0);
 		this.innerPanel = new Ext.Panel({
 			height: 900,
 			html: ' <main class="main main-map" id="main"> ' +
 					    '<div class="panel">' +
 					    	'<form class="panel-form" action="#" method="post">' +
 					            '<div class="scroll" id="scroll">' +
-					               '<div class="scroll-content">' +
-					                    '<div class="map-description">' +
-					                        '<h1 class="titleButton">Numero di letti nel turismo</h1>' +
-					                        '<p>Variazione del numero di letti nelle strutture ricettive dell\'Alto Adige tra il 2001 e il 2011.</p>' +
-					                		'<p id="author" class="published">Pubblicata da <a id="authorButton" class="authorButton" href="#">ASTAT</a> <span class="separator">/</span> <a href="#" class="feedback">invia feedback</a></p>' +
-					                    '</div>' +
-					                    '<ul class="map-type">' +
-					                    	'<li class="map-zone active"><a href="#">Mappa a <span>zone</span><span class="arrow"></span></a></li>' +
-					                        '<li class="map-comparation"><a href="#">Mappa di <span>comparazione</span></a></li>' +
-					                        '<li class="map-point"><a href="#">Mappa <span>puntiforme</span></a></li>' +
-					                        '<li class="map-heat last"><a href="#">Mappa di <span>calore</span></a></li>' +
-					                    '</ul>' +
-					                    '<div class="indicators">' +
-					                    	'<h2>Indicatori</h2>' +
-					                        '<ul class="group">' +
-					                        	'<li class="first">' +
-					                            	'<span class="button"><a href="#" class="tick"></a>Numero letti 2001<span class="arrow"></span></span>' +
-					                                '<div class="slider">' +
-					                                	'<p>Dati relativi al numero di letti presenti nelle strutture ricettive dell\'Alto Adige.</p>' +
-					                                	'<p class="published">Pubblicata da <a href="#">ASTAT</a> <span class="separator">/ aggiornati il 05/12/12</span></p>' +
-					                                	'<div class="select">' +
-					                                    	'<label for="select-1">Anno</label>' +
-					                                        '<select id="select-1" name="select-1">' +
-					                                        	'<option value="1">Tutti</option>' +
-					                                            '<option value="2">Hotel</option>' +
-					                                            '<option value="3">Agritur</option>' +
-					                                        '</select>' +
-					                                    '</div>' +
-					                                '</div>	' +
-					                            '</li>' +
-					                            '<li class="disabled">' +
-					                            	'<span class="button"><a href="#" class="tick"></a>Numero letti 2005<span class="arrow"></span></span>' +
-					                                '<div class="slider">' +
-					                                	'<p>Dati relativi al numero di letti presenti nelle strutture ricettive dell\'Alto Adige.</p>' +
-					                                	'<p class="published">Pubblicata da <a href="#">ASTAT</a> <span class="separator">/ aggiornati il 05/12/12</span></p>' +
-					                                	'<div class="select">' +
-					                                    	'<label for="select-2">Anno</label>' +
-					                                        '<select id="select-2" name="select-2">' +
-					                                        	'<option value="1">Tutti</option>' +
-					                                            '<option value="2">Hotel</option>' +
-					                                            '<option value="3">Agritur</option>' +
-					                                        '</select>' +
-					                                    '</div>' +
-					                                '</div>	' +
-					                            '</li>' +
-					                            '<li class="locked last">' +
-					                            	'<span class="button"><a href="#" class="tick"></a>Numero letti 2011<span class="arrow"></span></span>' +
-					                                '<div class="slider">' +
-					                                	'<p>Dati relativi al numero di letti presenti nelle strutture ricettive dell\'Alto Adige.</p>' +
-					                                	'<p class="published">Pubblicata da <a href="#">ASTAT</a> <span class="separator">/ aggiornati il 05/12/12</span></p>' +
-					                                	'<div class="select">' +
-					                                    	'<label for="select-3">Anno</label>' +
-					                                        '<select id="select-3" name="select-3">' +
-					                                        	'<option value="1">Tutti</option>' +
-					                                            '<option value="2">Hotel</option>' +
-					                                            '<option value="3">Agritur</option>' +
-					                                        '</select>' +
-					                                    '</div>' +
-					                                '</div>' +
-					                                '<span class="lock"></span>	' +
-					                            '</li>' +
-					                        '</ul>' +
-					                        '<span class="btn-2">Aggiungi</span>' +
-					                    '</div>' +
-										'<div class="map-permissions">' +
-					                    	'<div class="radio">' +
-					                        	'<span class="label">Questa mappa Ã¨:</span>' +
-					                            '<div class="radio-option checked">' +
-					                            	'<input id="permissions-1" type="radio" name="permissions" value="1" />' +
-					                                '<label for="permissions-1">Privata</label>' +
-					                            '</div>' +
-					                            '<div class="radio-option">' +
-					                            	'<input id="permissions-2" type="radio" name="permissions" value="1" />' +
-					                                '<label for="permissions-2">Pubblica</label>' +
-					                            '</div>' +
-					                        '</div>' +
-					                    '</div>' +
+					               '<div class="scroll-content">' +  
+					               		this.getMapTypeDiv() + 			
+					               		this.getIndicatorsDiv() +
+					                    this.getPermissionDiv() + 
 					                '</div>' +
-					            '</div>' +
-					            '<!-- // Mapper new map' +
-					                '<div class="panel-buttons-container">' +
-					                    '<div class="panel-buttons">	' +
-					                        '<input type="submit" class="btn-1" value="salva" />' +
-					                    '</div>' +
-					                '</div>' +
-					            '-->' +
-					            '<!-- // Mapper modify own map -->' +
-					               '<div class="panel-buttons-container map-owner">' +
-					                    '<div class="panel-buttons">' +
-					                        '<a href="#" class="btn-2">Annulla</a>' +
-					                        '<input type="submit" class="btn-1" value="Aggiorna" />' +
-					                    '</div>' +
-					                    '<p>salva <a href="#">nuova mappa</a></p>' +
-					                '</div>' +
-					           
-					            '<!-- // Mapper modify sombody else map ' +
-					            '<div class="panel-buttons-container">' +
-					                '<div class="panel-buttons">' +
-					                    '<a href="#" class="btn-2">Annulla</a>' +
-					                    '<input type="submit" class="btn-1" value="Salva nuova mappa" />' +
-					                '</div>' +
-					            '</div>-->' +
+					            '</div>' + this.getPanelButtonsDiv() + 
 					            '<div class="map-tools">' +
 					                '<div class="map-tools-element legend">' +
 					                	'<div class="tools-content overlay">' +
@@ -312,16 +216,111 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 	}
 	
 	, initInnerPannelCallbacks: function() {
+		var thisPanel = this;
 		//alert('initInnerPannelCallbacks');
-		var el = Ext.get("authorButton");
-		if(el && el !== null) {
-			el.on('click', function() {
-				alert('xxx');
+		var elAuthorBtn = Ext.get("authorButton");
+		if(elAuthorBtn && elAuthorBtn !== null) {
+			elAuthorBtn.on('click', function() {
+				//alert('xxx');
 			});
 			//alert('Registered handler on element [authorButton]');
 		} else {
 			//alert('Impossible to find element [authorButton]');
 		}
+		
+		var elFeedbackMail = Ext.get("feedback_mail");
+		if(elFeedbackMail && elFeedbackMail !== null) {
+			elFeedbackMail.on('click', function() {
+				this.showFeedbackWindow();
+			},this);
+			//alert('Registered handler on element [feedback_mail]');
+		} else {
+			//alert('Impossible to find element [feedback_mail]');
+		}
+		
+		var elPermissions1 = Ext.get("permissions-1");
+		if(elPermissions1 && elPermissions1 !== null) {
+			elPermissions1.on('click', function() {
+				//alert("permissions-1 "+ el.getValue());
+				var el1 =  Ext.get("div-perm1");
+				var el2 =  Ext.get("div-perm2");
+				Ext.fly(el2).removeClass('checked');
+				Ext.fly(el1).addClass('checked');
+			},this);
+			//alert('Registered handler on element [permission-1]');
+		} else {
+			//alert('Impossible to find element [permission-1]');
+		}
+		
+		var elPermissions2 = Ext.get("permissions-2");
+		if(elPermissions2 && elPermissions2 !== null) {
+			elPermissions2.on('click', function() {				
+				var el1 =  Ext.get("div-perm1");
+				var el2 =  Ext.get("div-perm2");
+				Ext.fly(el1).removeClass('checked');
+				Ext.fly(el2).addClass('checked');
+			},this);
+			//alert('Registered handler on element [permission-2]');
+		} else {
+			//alert('Impossible to find element [permission-2]');
+		}		
+		var flyUlEl = Ext.select('.map-type');
+		var elMapZone = Ext.get("li-map-zone");
+		if(elMapZone && elMapZone !== null) {
+			elMapZone.on('click', function() {
+					this.refreshList(elMapZone, flyUlEl);
+					isFirst = true;
+			}, thisPanel);
+		}				
+		var elMapComparation = Ext.get("li-map-comparation");
+		
+		if(elMapComparation && elMapComparation !== null) {
+			elMapComparation.on('click', function() {						
+					this.refreshList(elMapComparation, flyUlEl);
+					isFirst = true;
+			}, thisPanel);
+		}
+		var elMapPoint = Ext.get("li-map-point");
+		if(elMapPoint && elMapPoint !== null) {
+			elMapPoint.on('click', function() {
+					this.refreshList(elMapPoint, flyUlEl);
+					isFirst = true;
+			}, thisPanel);
+		}
+		var elMapHeat = Ext.get("li-map-heat");
+		if(elMapHeat && elMapHeat !== null) {
+			elMapHeat.on('click', function() {
+					this.refreshList(elMapHeat, flyUlEl);
+					isFirst = true;
+			}, thisPanel);
+		}
+		
+		var closeMapH = null;
+		var openMapH = null;
+		var elMapType = Ext.get("mapType");	
+		if(elMapType && elMapType !== null) {
+			elMapType.on('click', function() {				
+				
+				var el1 =  Ext.get("mapType");
+				
+				if (closeMapH == null){
+					closeMapH =  Ext.fly(el1).getHeight();
+					openMapH = closeMapH*4;
+				}
+				if (Ext.fly(el1).hasClass('open')){
+					Ext.fly(el1).dom.style.height = closeMapH-1; 
+					Ext.fly(el1).removeClass('open');
+				}else{
+					Ext.fly(el1).dom.style.height = openMapH; 
+					Ext.fly(el1).addClass('open');
+				}
+			});
+		} else {
+			//alert('Impossible to find element [maptype]');
+		}
+		
+		
+		
 	}
 	
 	// -----------------------------------------------------------------------------------------------------------------
@@ -331,7 +330,222 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 	// -----------------------------------------------------------------------------------------------------------------
     // private methods
 	// -----------------------------------------------------------------------------------------------------------------
+	, showFeedbackWindow: function(){
+		if(this.feedbackWindow != null){			
+			this.feedbackWindow.destroy();
+			this.feedbackWindow.close();
+		}
+		
+		this.messageField = new Ext.form.TextArea({
+			fieldLabel: 'Message text',
+            width: '100%',
+            name: 'message',
+            maxLength: 2000,
+            height: 100,
+            autoCreate: {tag: 'textArea', type: 'text',  autocomplete: 'off', maxlength: '2000'}
+		});
+		
+		this.sendButton = new Ext.Button({
+			xtype: 'button',
+			handler: function() {
+				var msgToSend = this.messageField.getValue();
+				sendMessage({'label': Sbi.config.docLabel, 'msg': msgToSend},'sendFeedback');
+       		},
+       		scope: this ,
+       		text:'Send',
+	        width: '100%'
+		});
 
+		
+		var feedbackWindowPanel = new Ext.form.FormPanel({
+			layout: 'form',
+			defaults: {
+	            xtype: 'textfield'
+	        },
+
+	        items: [this.messageField,this.sendButton]
+		});
+		
+		
+		this.feedbackWindow = new Ext.Window({
+            layout      : 'fit',
+	        width		: 700,
+	        height		: 170,
+            closeAction :'destroy',
+            plain       : true,
+            title		: 'Send Feedback',
+            items       : [feedbackWindowPanel]
+		});
+		
+		this.feedbackWindow.show();
+	}
+	
+	, getPermissionDiv: function(){
+		var toReturn = '';
+		
+		if (!this.isFinalUser){
+			toReturn = '<div class="map-permissions">' +
+		    	'<div class="radio">' +
+		        	'<span class="label">Questa mappa è:</span>' ;
+		
+			if (Sbi.config.docIsPublic == 'true'){
+				toReturn += '' +
+					'<div  id="div-perm1" class="radio-option checked">' +
+			        	'<input id="permissions-1" type="radio" name="permissions" value="1" checked />' +
+			            '<label for="permissions-1">Privata</label>' +
+		            '</div>' +
+		            '<div  id="div-perm2" class="radio-option">' +
+			        	'<input id="permissions-2" type="radio" name="permissions" value="1" />' +
+			            '<label for="permissions-2">Pubblica</label>' +
+			        '</div>';
+			}else{
+				toReturn += '' +
+					'<div id="div-perm1" class="radio-option ">' +
+			        	'<input id="permissions-1" type="radio" name="permissions" value="1"  />' +
+			            '<label for="permissions-1">Privata</label>' +
+		            '</div>' +
+		            '<div id="div-perm2" class="radio-option checked">' +
+			        	'<input id="permissions-2" type="radio" name="permissions" value="1" checked />' +
+			            '<label for="permissions-2">Pubblica</label>' +
+			        '</div>';
+			}
+			toReturn += '' +
+		        '</div>' +
+	        '</div>' ;
+		}
+		return toReturn;
+	}
+	
+	, getPanelButtonsDiv: function(){
+		var toReturn = '' ;
+		if (!this.isFinalUser){
+			toReturn += ''+
+				'<!-- // Mapper new map -->' +
+		         '<div class="panel-buttons-container">' +
+		             '<div class="panel-buttons">	' +
+		                 '<input type="submit" class="btn-1" value="salva" />' +
+		             '</div>' +
+		         '</div>';
+		}
+		if (Sbi.config.userId === Sbi.config.docAuthor){
+			toReturn += ''+
+				'<!-- // Mapper modify own map -->' +
+		        '<div class="panel-buttons-container map-owner">' +
+		             '<div class="panel-buttons">' +
+		                 '<a href="#" class="btn-2">Annulla</a>' +
+		                 '<input type="submit" class="btn-1" value="Aggiorna" />' +
+		             '</div>' +
+		             '<p>salva <a href="#">nuova mappa</a></p>' +
+		         '</div>';
+		}else if (!this.isFinalUser){
+			toReturn += ''+
+			     '<!-- // Mapper modify sombody else map -->' +
+			     '<div class="panel-buttons-container">' +
+			         '<div class="panel-buttons">' +
+			             '<a href="#" class="btn-2">Annulla</a>' +
+			             '<input type="submit" class="btn-1" value="Salva nuova mappa" />' +
+			         '</div>' +
+			     '</div>';
+		}
+		
+		return toReturn;
+	}
+	
+	
+	, getMapTypeDiv: function(){
+		var toReturn = '' +
+		 '<div class="map-description">' +
+	         '<h1 class="titleButton">'+Sbi.config.docName+'</h1>' +
+	         '<p>'+Sbi.config.docDescription+'</p>' +
+	 		'<p id="author" class="published">Pubblicata da <a id="authorButton" class="authorButton" href="#">'+Sbi.config.docAuthor+'</a> <span class="separator">/</span> <a id="feedback_mail" href="#" class="feedback">invia feedback</a></p>' +
+	     '</div>' +
+	     '<ul id="mapType" class="map-type">' +
+	     	'<li p=0 id="li-map-zone" class="map-zone active"><a href="#">Mappa a <span>zone</span><span class="arrow"></span></a></li>' +
+	        '<li p=1 id="li-map-comparation" class="map-comparation"><a  href="#">Mappa di <span>comparazione</span></a></li>' +
+	        '<li p=2 id="li-map-point" class="map-point"><a href="#">Mappa <span>puntiforme</span></a></li>' +
+	        '<li p=3 id="li-map-heat" class="map-heat last"><a href="#">Mappa di <span>calore</span></a></li>' +
+	     '</ul>' ;
+		
+		return toReturn;
+	}
+	
+	, getIndicatorsDiv: function(){
+		if ( this.geostatistic.indicators != null &&  this.geostatistic.indicators !== undefined){
+			
+			var toReturn = '' +
+			'<div class="indicators">' +
+		    	'<h2>Indicatori</h2>' +
+		        '<ul class="group">';		
+				for(var i=0; i< this.geostatistic.indicators.length; i++){
+					var indEl = this.geostatistic.indicators[i];
+					toReturn += ''+
+					'<li class="first">' +
+					'<span class="button"><a href="#" class="tick"></a>'+indEl[0]+'<span class="arrow"></span></span>' +
+		                '<div class="slider">' +
+		                	'<p>'+indEl[1]+'</p>' +
+		                	'<p class="published">Pubblicata da <a href="#">ASTAT</a> <span class="separator">/ aggiornati il 05/12/12</span></p>' +
+//		                	'<div class="select">' +
+//		                    	'<label for="select-1">Anno</label>' +
+//		                        '<select id="select-1" name="select-1">' +
+//		                        	'<option value="1">Tutti</option>' +
+//		                            '<option value="2">Hotel</option>' +
+//		                            '<option value="3">Agritur</option>' +
+//		                        '</select>' +
+//		                    '</div>' +
+		                '</div>	' +
+		            '</li>' ;	
+				}
+		       toReturn +=''+
+		       	'</ul>' +
+		        '<span class="btn-2">Aggiungi</span>' +
+		    '</div>';
+			
+			return toReturn;
+		}
+	}
+	
+	, refreshList: function(el, list){
+		if (el.id != list.item(0).first().id){
+			var items = Ext.query('.active');
+			Ext.each(items, function (item) {
+		        item = Ext.get(item);
+		        item.removeClass('active');
+		        item.addClass('last');	        
+		    }, this);
+							
+			//change position of arrow
+			var dh = Ext.DomHelper;								
+			Ext.fly(el).addClass('active');
+			var lItems = Ext.fly(el).down('a');
+			dh.append(lItems, '<span class=\"arrow\" />');
+			//refresh the list items (move the selected elem as first)
+			var len = list.item(0).dom.childElementCount;
+			var newList = [el.dom];
+			for(var z=0;z<len;z++){
+				var optEl =list.item(0).dom.childNodes[z];							
+				if (optEl !== undefined && el.id != optEl.id){
+					newList.push(optEl);
+				}
+			}
+			//clear			
+			this.clearList(list);
+			//add
+			this.addElemsToList(list, newList);
+
+		}
+	}
+	
+	, clearList: function(list){
+		for(var z=0;z<list.item(0).dom.childElementCount;z++){				
+			list.item(0).dom.childNodes[z].remove();
+		}
+	}
+	
+	, addElemsToList: function(list, elems){
+		for(var z=0;z<elems.length;z++){				
+			list.item(0).appendChild(elems[z]);
+		}
+	}
 	// =================================================================================================================
 	// EVENTS
 	// =================================================================================================================

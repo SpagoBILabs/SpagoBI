@@ -722,7 +722,7 @@ Ext.extend(Sbi.geo.MainPanel, Ext.Panel, {
 		this.controlPanelConf.map = this.map;
 		this.controlPanelConf.geostatistic = this.geostatistic;
 		this.controlPanel = new Sbi.geo.ControlPanel(this.controlPanelConf);
-		this.controlPanel2 = new Sbi.geo.ControlPanel2({});
+		this.controlPanel2 = new Sbi.geo.ControlPanel2(this.controlPanelConf);
 	}
 	
 

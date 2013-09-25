@@ -26,6 +26,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
  */
 public class GeoReportEngineInstance extends AbstractEngineInstance {
 	private JSONObject guiSettings;
+	private JSONObject docProperties;
 	private List<String> includes;
 
 	public GeoReportEngineInstance(String template, Map env) {
@@ -48,6 +49,16 @@ public class GeoReportEngineInstance extends AbstractEngineInstance {
 		return includes;
 	}
 	
+	public JSONObject getDocProperties() {
+		return docProperties;
+	}
+
+
+	public void setDocProperties(JSONObject docProperties) {
+		this.docProperties = docProperties;
+	}
+
+
 	public IDataSource getDataSource() {
 		return (IDataSource)this.getEnv().get(EngineConstants.ENV_DATASOURCE);
 	}
@@ -70,6 +81,19 @@ public class GeoReportEngineInstance extends AbstractEngineInstance {
 	
 	public String getDocumentAuthor() {
 		return (String)this.getEnv().get(EngineConstants.ENV_DOCUMENT_AUTHOR);
+	}
+	
+	public String getDocumentName() {
+		return (String)this.getEnv().get(EngineConstants.ENV_DOCUMENT_NAME);
+	}
+	
+	public String getDocumentDescription() {
+		return (String)this.getEnv().get(EngineConstants.ENV_DOCUMENT_DESCRIPTION);
+	}
+	
+	public String getDocumentIsPublic() {
+		return (String)this.getEnv().get(EngineConstants.ENV_DOCUMENT_IS_PUBLIC
+				);
 	}
 	
 	public AuditServiceProxy getAuditServiceProxy() {
