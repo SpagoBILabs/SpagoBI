@@ -42,7 +42,10 @@ public class EngineConstants {
 	public static final String ENV_USER_DATE_FORMAT = "ENV_USER_DATE_FORMAT";
 	public static final String ENV_DB_DATE_FORMAT = "ENV_DB_DATE_FORMAT";
 	public static final Object ENV_METAMODEL_PROXY = "ENV_METAMODEL_PROXY";	
-	public static final Object ENV_DOCUMENT_AUTHOR = "DOCUMENT_AUTHOR";	
+	public static final Object ENV_DOCUMENT_AUTHOR = "DOCUMENT_AUTHOR";
+	public static final Object ENV_DOCUMENT_NAME = "DOCUMENT_NAME";	
+	public static final Object ENV_DOCUMENT_DESCRIPTION = "DOCUMENT_DESCRIPTION";	
+	public static final Object ENV_DOCUMENT_IS_PUBLIC = "ENV_DOCUMENT_IS_PUBLIC";	
 
 		
 	public static final String ENGINE_DATASOURCE = "ENGINE_DATASOURCE";
