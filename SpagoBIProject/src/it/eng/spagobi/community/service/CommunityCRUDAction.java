@@ -31,6 +31,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
+import org.apache.http.HttpRequest;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
@@ -43,6 +44,7 @@ public class CommunityCRUDAction {
 	private HttpServletResponse servletResponse;
 	@Context
 	HttpSession session;
+
 	private static Logger logger = Logger.getLogger(CommunityCRUDAction.class);
 
 	@GET
@@ -116,7 +118,7 @@ public class CommunityCRUDAction {
 
 				CommunityManager cm = new CommunityManager();
 
-				Integer idInt = cm.saveCommunity(community, community.getName(), community.getOwner());
+				Integer idInt = cm.saveCommunity(community, community.getName(), community.getOwner(), req);
 				if(idInt != null){
 					id = idInt+"";
 				}
