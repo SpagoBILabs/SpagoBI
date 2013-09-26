@@ -69,7 +69,7 @@ public class CommunityUtilities {
 		sb.append("</p>");
 		sb.append("</BODY>");
 		String mailTxt = sb.toString();
-		System.out.println(mailTxt);
+
 		logger.debug("IN");
 		try{
 
