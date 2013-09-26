@@ -10,7 +10,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 <%@ include file="/WEB-INF/jsp/wapp/homeBase.jsp"%>
     
 <!-- Include Ext stylesheets here: -->
-<link id="spagobi-ext-4" rel="styleSheet" href ="/SpagoBI/themes/geobi/css/home40/layout.css" type="text/css" />
+<link id="spagobi-ext-4" rel="styleSheet" href ="<%=contextName %>/themes/geobi/css/home40/layout.css" type="text/css" />
 
 <%-- Javascript object useful for session expired management (see also sessionExpired.jsp) --%>
 <script>
