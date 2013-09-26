@@ -54,7 +54,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 			}else if(menuItem.has("itemLabel") && menuItem.getString("itemLabel") == "LANG"){
 				List localesList = GeneralUtilities.getSupportedLocales();				
 				for (int j = 0; j < localesList.size() ; j++) {
-					String langUrl = "javascript:execUrl(\\'/SpagoBI/servlet/AdapterHTTP?ACTION_NAME=CHANGE_LANGUAGE&IS_PUBLIC_USER=TRUE&THEME_NAME="+currTheme;
+					String langUrl = "javascript:execUrl(\\'"+contextName+"/servlet/AdapterHTTP?ACTION_NAME=CHANGE_LANGUAGE&IS_PUBLIC_USER=TRUE&THEME_NAME="+currTheme;
 					Locale aLocale = (Locale)localesList.get(j);
 					langUrl += "&LANGUAGE_ID="+aLocale.getLanguage()+"&COUNTRY_ID="+aLocale.getCountry();
 					langUrl += "\\')";
@@ -70,11 +70,11 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 <% 
 if (browsername.contains("MSIE")){
 	if (browserversion.contains("7")){ %>
-	 <link href="/SpagoBI/themes/geobi/css/home40/ie7.css" rel="stylesheet" media="screen,projection,print" type="text/css" />
+	 <link href="<%=contextName %>/themes/geobi/css/home40/ie7.css" rel="stylesheet" media="screen,projection,print" type="text/css" />
 <%  }if (browserversion.contains("8")){ %>
-	<link href="/SpagoBI/themes/geobi/css/home40/ie8.css" rel="stylesheet" media="screen,projection,print" type="text/css" />
+	<link href="<%=contextName %>/themes/geobi/css/home40/ie8.css" rel="stylesheet" media="screen,projection,print" type="text/css" />
 <%  }else{ %>
-	<link href="/SpagoBI/themes/geobi/css/home40/ie9.css" rel="stylesheet" media="screen,projection,print" type="text/css" />
+	<link href="<%=contextName %>/themes/geobi/css/home40/ie9.css" rel="stylesheet" media="screen,projection,print" type="text/css" />
 <%  }	
 }
 %>

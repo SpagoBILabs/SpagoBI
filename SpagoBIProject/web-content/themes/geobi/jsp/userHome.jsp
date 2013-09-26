@@ -10,12 +10,12 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 <%@ include file="/WEB-INF/jsp/wapp/homeBase.jsp"%> 
 
 <!-- Include Ext stylesheets here: -->
-<link id="extall"     rel="styleSheet" href ="/SpagoBI/js/lib/ext-4.1.1a/resources/css/ext-all.css" type="text/css" />
-<link id="theme-gray" rel="styleSheet" href ="/SpagoBI/js/lib/ext-4.1.1a/resources/css/ext-all-gray.css" type="text/css" />
-<link id="spagobi-ext-4" rel="styleSheet" href ="/SpagoBI/themes/geobi/css/home40/layout.css" type="text/css" />
+<link id="extall"     rel="styleSheet" href ="<%=contextName %>/js/lib/ext-4.1.1a/resources/css/ext-all.css" type="text/css" />
+<link id="theme-gray" rel="styleSheet" href ="<%=contextName %>/js/lib/ext-4.1.1a/resources/css/ext-all-gray.css" type="text/css" />
+<link id="spagobi-ext-4" rel="styleSheet" href ="<%=contextName %>/themes/geobi/css/home40/layout.css" type="text/css" />
 
 <script type="text/javascript">
-    Ext.BLANK_IMAGE_URL = '/SpagoBI/js/lib/ext-4.1.1a/resources/themes/geobi/default/tree/s.gif';
+    Ext.BLANK_IMAGE_URL = '<%=contextName %>/js/lib/ext-4.1.1a/resources/themes/geobi/default/tree/s.gif';
 </script>
 
 <%-- Javascript object useful for session expired management (see also sessionExpired.jsp) --%>
@@ -59,7 +59,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 			}else if(menuItem.has("itemLabel") && menuItem.getString("itemLabel") == "LANG"){	
 				List localesList = GeneralUtilities.getSupportedLocales();				
 				for (int j = 0; j < localesList.size() ; j++) {
-					String langUrl = "javascript:execUrl(\\'/SpagoBI/servlet/AdapterHTTP?ACTION_NAME=CHANGE_LANGUAGE&THEME_NAME="+currTheme;
+					String langUrl = "javascript:execUrl(\\'"+contextName+"/servlet/AdapterHTTP?ACTION_NAME=CHANGE_LANGUAGE&THEME_NAME="+currTheme;
 					Locale aLocale = (Locale)localesList.get(j);
 					langUrl += "&LANGUAGE_ID="+aLocale.getLanguage()+"&COUNTRY_ID="+aLocale.getCountry();
 					langUrl += "\\')";
@@ -75,11 +75,11 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 <% 
 if (browsername.contains("MSIE")){
 	if (browserversion.contains("7")){ %>
-	 <link href="/SpagoBI/themes/geobi/css/home40/ie7.css" rel="stylesheet" media="screen,projection,print" type="text/css" />
+	 <link href="<%=contextName %>/themes/geobi/css/home40/ie7.css" rel="stylesheet" media="screen,projection,print" type="text/css" />
 <%  }if (browserversion.contains("8")){ %>
-	<link href="/SpagoBI/themes/geobi/css/home40/ie8.css" rel="stylesheet" media="screen,projection,print" type="text/css" />
+	<link href="<%=contextName %>/themes/geobi/css/home40/ie8.css" rel="stylesheet" media="screen,projection,print" type="text/css" />
 <%  }else{ %>
-	<link href="/SpagoBI/themes/geobi/css/home40/ie9.css" rel="stylesheet" media="screen,projection,print" type="text/css" />
+	<link href="<%=contextName %>/themes/geobi/css/home40/ie9.css" rel="stylesheet" media="screen,projection,print" type="text/css" />
 <%  }	
 }
 %>

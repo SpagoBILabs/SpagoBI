@@ -103,7 +103,7 @@ Ext.define('Sbi.tools.model.MetaModelsView', {
 			 	            	'<dd class="box-no-border">',
 									'<a href="#" class="box-link">',
 										'<div class="box-map">',
-											'<img src="/SpagoBI/themes/sbi_default/img/metamodel/metamodel.png" alt=" " />',
+											'<img src="'+Sbi.config.contextName+'/themes/sbi_default/img/metamodel/metamodel.png" alt=" " />',
 //											'<span class="shadow"></span>',
 										'</div>',
 										'<div class="box-text">',
