@@ -67,13 +67,11 @@ public class LoginActionWeb extends AbstractBaseHttpAction {
 		String callback = null;
 		String theme;
 		String backUrl;
-		SourceBean settingSB;
 		boolean isSSOActive = false;
 		String usr = null;
 		String pwd;
 		
 		RequestContainer requestContainer = this.getRequestContainer();	
-		ResponseContainer responseContainer = this.getResponseContainer();	
 		SessionContainer session = requestContainer.getSessionContainer();
 		SessionContainer permanentSession = session.getPermanentContainer();
 		profile = (IEngUserProfile) permanentSession.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
@@ -81,11 +79,11 @@ public class LoginActionWeb extends AbstractBaseHttpAction {
 		
 		logger.debug("IN");
 
-		try {		
+		try {
 			setSpagoBIRequestContainer( request );
 			setSpagoBIResponseContainer( response );
 		
-			//Assert.assertNotNull(ConfigSingleton.getInstance(), "Impossible to load SpagoBI configuration file");
+			Assert.assertNotNull(ConfigSingleton.getInstance(), "Impossible to load SpagoBI configuration file");
 			
 			callback = getAttributeAsString( CALLBACK );
 			logger.debug("Parameter [" + CALLBACK + "] is equals to [" + callback + "]");
@@ -108,13 +106,8 @@ public class LoginActionWeb extends AbstractBaseHttpAction {
 			if (activeStr != null && activeStr.equalsIgnoreCase("true")) {
 				isSSOActive=true;
 			}
-			
-			//settingSB = (SourceBean)ConfigSingleton.getInstance().getAttribute( SSO_ACTIVE );
-//			Assert.assertNotNull(settingSB, "Impossible to read from static configuration the block [" + SSO_ACTIVE + "]");
-//			Assert.assertTrue(!StringUtilities.isEmpty(settingSB.getCharacters()), "Impossible to read from static configuration the value associated to block [" + SSO_ACTIVE + "]");
 			logger.debug("Configuration parameter [" + SSO_ACTIVE + "] is equals to [" + isSSOActive + "]");
-		
-			logger.info("SSO is " + (isSSOActive?"enabled" : "disabled"));
+			logger.info("SSO is " + (isSSOActive? "enabled" : "disabled"));
 			
 			
 						
@@ -179,11 +172,15 @@ public class LoginActionWeb extends AbstractBaseHttpAction {
 			}
 
 			MenuUtilities.getMenuItems(request, response, profile);	
+			logger.debug("Menu items for user [" + username + "] succesfully loaded");	
+			
 			try {
 				JSONObject results = new JSONObject();
 				results.put("username", username);
 				results.put("userid", profile.getUserUniqueIdentifier());
+				logger.debug("Response for [" + username + "] succesfully built");	
 				writeBackToClient( new JSONSuccess( results, callback ) );
+				logger.debug("Response for [" + username + "] succesfully written back to user");
 			} catch (IOException e) {
 				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "LOGIN", null, "KO");
 				throw new SpagoBIServiceException("Impossible to write back the responce to the client", e);
@@ -192,18 +189,10 @@ public class LoginActionWeb extends AbstractBaseHttpAction {
 			try {
 				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "LOGIN", null, "KO");
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			throw SpagoBIServiceExceptionHandler.getInstance().getWrappedException(SERVICE_NAME, t);
 		} finally {
-			//logger.info("User ["+ usr + "] has been logged in succesfully");
-			try {
-				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "LOGIN", null, "KO");
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
 			logger.debug("OUT");
 		}
 	}
