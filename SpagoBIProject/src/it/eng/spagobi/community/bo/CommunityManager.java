@@ -24,13 +24,15 @@ import it.eng.spagobi.profiling.dao.ISbiUserDAO;
 import java.util.ArrayList;
 import java.util.Random;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.log4j.Logger;
 
 public class CommunityManager {
 	
 	static private Logger logger = Logger.getLogger(CommunityManager.class);
 	
-	public Integer saveCommunity(SbiCommunity community, String communityName, String userId){
+	public Integer saveCommunity(SbiCommunity community, String communityName, String userId,HttpServletRequest request){
 		Integer communityId = null;
 		//if user is registering to SpagoBI and inserts a community,
 		//the systems checks for community existence by its name.
@@ -58,7 +60,7 @@ public class CommunityManager {
 					
 					//2. sends the email
 					CommunityUtilities communityUtil = new CommunityUtilities();
-					boolean result = communityUtil.dispatchMail(communityName, user, owner, emailValue);
+					boolean result = communityUtil.dispatchMail(communityName, user, owner, emailValue, request);
 				}else{
 					logger.info("Owner doesn't have an email address");
 				}
