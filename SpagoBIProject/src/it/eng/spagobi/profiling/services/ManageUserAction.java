@@ -87,6 +87,7 @@ public class ManageUserAction extends AbstractSpagoBIAction {
 		logger.debug("IN");
 		ISbiUserDAO userDao;
 		try {
+			
 			userDao = DAOFactory.getSbiUserDAO();
 			userDao.setUserProfile(getUserProfile());
 		} catch (EMFUserError e) {
@@ -247,7 +248,7 @@ public class ManageUserAction extends AbstractSpagoBIAction {
 				String commName = getCommunityAttr(user);
 				if(commName!= null && !commName.equals("")){
 					SbiCommunity community = DAOFactory.getCommunityDAO().loadSbiCommunityByName(commName);
-					cm.saveCommunity(community, commName, userId);
+					cm.saveCommunity(community, commName, userId, getHttpRequest());
 				}
 
 				logger.debug("User updated or Inserted");

@@ -6,26 +6,21 @@
 package it.eng.spagobi.community.util;
 
 import it.eng.spagobi.commons.SingletonConfig;
-import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.utilities.ChannelUtilities;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.profiling.bean.SbiUser;
 
 import java.security.Security;
 import java.util.Properties;
 
-import javax.activation.DataHandler;
-import javax.activation.DataSource;
-import javax.activation.FileDataSource;
 import javax.mail.Authenticator;
-import javax.mail.BodyPart;
 import javax.mail.Message;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMultipart;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
 
@@ -34,7 +29,8 @@ public class CommunityUtilities {
     final String DEFAULT_SSL_FACTORY = "javax.net.ssl.SSLSocketFactory";
     final String CUSTOM_SSL_FACTORY = "it.eng.spagobi.commons.services.DummySSLSocketFactory";
 	
-	public boolean dispatchMail(String communityName, SbiUser userToAccept, SbiUser owner, String ownerEmail) {
+	public boolean dispatchMail(String communityName, SbiUser userToAccept, SbiUser owner, String ownerEmail, HttpServletRequest request) {
+		String contextName = ChannelUtilities.getSpagoBIContextName(request);
 
 		String mailSubj = "Community "+communityName+" membership request";
 		StringBuffer sb = new StringBuffer();
@@ -46,20 +42,34 @@ public class CommunityUtilities {
 		sb.append("<p style=\"width:100%; text-align:center;\">");
 		sb.append("Dear "+ owner.getFullName()+", <br/> user "+userToAccept.getFullName()+ " wants to join "+communityName+" community");
 		sb.append("<br/> Select whether to accept "+userToAccept.getFullName()+" or not, clicking the following image:");		
+		String protocol = request.getProtocol();
+		if(protocol.equalsIgnoreCase("HTTP/1.1")){
+			protocol="http";
+		}else{
+			protocol="https";
+		}
+		String server= request.getServerName();
+		String port= request.getLocalPort()+"";
 		
-		sb.append("<br/><a href=\"http://localhost:8080/SpagoBI/CommunityRequest.jsp?owner="+owner.getUserId()+"&userToAccept="+userToAccept.getUserId()+"&community="+communityName+"\">");
-		sb.append("<img alt=\"Accept/Reject\" src=\"http://localhost:8080/SpagoBI/themes/sbi_default/img/go-community.png\"></a>");
-		/*
-		sb.append("\n<form name=\"input\" action=\"http://localhost:8080/SpagoBI/CommunityRequest.jsp\" method=\"get\">");
-		sb.append("\n<input type=\"hidden\" name=\"userToAccept\" value=\""+userToAccept.getUserName()+"\"/>");
-		sb.append("\n<input type=\"hidden\" name=\"owner\" value=\""+owner.getUserId()+"\"/>");
-		sb.append("\n<input type=\"hidden\" name=\"community\" value=\""+communityName+"\"/>");
-		sb.append("\n<input type=\"submit\" value=\"Accept/reject\"/>");
-		sb.append("\n</form>");
-		*/
+		sb.append("<br/><a href=\""
+				+protocol
+				+ "://"+server
+				+ ":"
+				+ port
+				+ contextName
+				+"/CommunityRequest.jsp?owner="+owner.getUserId()+"&userToAccept="+userToAccept.getUserId()+"&community="+communityName+"\">");
+		sb.append("<img alt=\"Accept/Reject\" src=\""
+				+protocol
+				+ "://"+server
+				+ ":"
+				+ port
+				+ contextName
+				+ "/themes/sbi_default/img/go-community.png\"></a>");
+
 		sb.append("</p>");
 		sb.append("</BODY>");
 		String mailTxt = sb.toString();
+		System.out.println(mailTxt);
 		logger.debug("IN");
 		try{
 
