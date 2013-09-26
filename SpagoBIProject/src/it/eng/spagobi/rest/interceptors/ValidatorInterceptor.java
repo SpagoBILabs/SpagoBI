@@ -56,7 +56,7 @@ public class ValidatorInterceptor implements PreProcessInterceptor, AcceptedByMe
 			return false;
 		}else{
 
-			if(validationAnnot.typeName().equals("dataset")){
+			if(validationAnnot.typeName() != null){
 				return true;
 			}else{
 				return false;
