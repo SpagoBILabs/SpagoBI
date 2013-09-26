@@ -19,20 +19,25 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 **/
-package it.eng.spagobi.tools.dataset.validation;
+package it.eng.spagobi.rest.validation;
 
-import java.util.Map;
-
-import javax.ws.rs.core.MultivaluedMap;
-
-import org.json.JSONArray;
+import it.eng.spagobi.tools.dataset.validation.DatasetFieldsValidator;
 
 /**
  * @author Monica Franceschini (monica.franceschini@eng.it)
  *
  */
-public interface IFieldsValidator {
+public class FieldsValidatorFactory {
 	
-	public JSONArray validateFields(MultivaluedMap<String, String> parameters);
+	
+	public final String DATASET = "dataset";
+	
+	public IFieldsValidator getValidator(String type) {
+		if ( type.equalsIgnoreCase(DATASET)){
+			return new DatasetFieldsValidator();
+		} else {
+			return null;
+		}
+	}
 
 }
