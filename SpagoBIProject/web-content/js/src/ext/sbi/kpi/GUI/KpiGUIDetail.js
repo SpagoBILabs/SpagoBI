@@ -284,7 +284,7 @@ Ext.extend(Sbi.kpi.KpiGUIDetail , Ext.form.FormPanel, {
 		//target
 		var target = field.attributes.target;
 		this.targetItem = new Ext.form.DisplayField({fieldLabel: 'Target', 
-													style: 'padding-left:5px;',
+													style: 'margin-left:5px; padding-left:5px;',
 													width: 145,
 													labelWidth:45,
 													value: target});
