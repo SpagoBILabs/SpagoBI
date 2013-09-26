@@ -142,7 +142,7 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 		this.innerPanel = new Ext.Panel({
 			height: 900,
 			html: ' <main class="main main-map" id="main"> ' +
-					    '<div class="panel">' +
+					    '<div id="panel" class="panel">' +
 					    	'<form class="panel-form" action="#" method="post">' +
 					            '<div class="scroll" id="scroll">' +
 					               '<div class="scroll-content">' +  
@@ -210,9 +210,31 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 					'</main>'
 		});
 		
-		this.innerPanel.on('render', function() {
+		this.innerPanel.on('render', function() {			
 			this.initInnerPannelCallbacks.defer(2000, this);
+			this.panelScroll.defer(2000, this);
 		}, this);
+	}
+	
+	, panelScroll: function(){
+//		var scrollVerticalBarPanel = Ext.query('.panel .scroll')[0];
+//		var panelS = Ext.query('.panel')[0];
+//		var panelHeight 	= panelS.getHeight();		
+//		var buttonsHeight	= Ext.query('.panel-buttons-container')[0].getOuterHeight();
+//		var maxHeight		= panelHeight - buttonsHeight - 1;
+//		Ext.fly(el1).dom.style.height = openMapH; 
+//		scrollVerticalBarPanel.dom.style.maxHeight = maxHeight;
+//		scrollVerticalBarPanel.style.maxHeight = '262px';
+		
+		var elScroll = Ext.get("scroll");
+		this.panelScrollElement = new IScroll(elScroll.dom, { scrollbars: 'custom', mouseWheel: true, interactiveScrollbars: true});
+		
+//		var scrollVerticalBar = Ext.query('.iScrollVerticalScrollbar')[0];		
+//		if(scrollVerticalBarPanel.getHeight() < maxHeight){			
+//			scrollVerticalBar.addClass('hidden');
+//		}else{
+//			scrollVerticalBar.removeClass('hidden');
+//		}
 	}
 	
 	, initInnerPannelCallbacks: function() {
@@ -268,30 +290,26 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 		var elMapZone = Ext.get("li-map-zone");
 		if(elMapZone && elMapZone !== null) {
 			elMapZone.on('click', function() {
-					this.refreshList(elMapZone, flyUlEl);
-					isFirst = true;
+					this.refreshList(elMapZone, flyUlEl);					
 			}, thisPanel);
 		}				
 		var elMapComparation = Ext.get("li-map-comparation");
 		
 		if(elMapComparation && elMapComparation !== null) {
 			elMapComparation.on('click', function() {						
-					this.refreshList(elMapComparation, flyUlEl);
-					isFirst = true;
+					this.refreshList(elMapComparation, flyUlEl);					
 			}, thisPanel);
 		}
 		var elMapPoint = Ext.get("li-map-point");
 		if(elMapPoint && elMapPoint !== null) {
 			elMapPoint.on('click', function() {
-					this.refreshList(elMapPoint, flyUlEl);
-					isFirst = true;
+					this.refreshList(elMapPoint, flyUlEl);					
 			}, thisPanel);
 		}
 		var elMapHeat = Ext.get("li-map-heat");
 		if(elMapHeat && elMapHeat !== null) {
 			elMapHeat.on('click', function() {
-					this.refreshList(elMapHeat, flyUlEl);
-					isFirst = true;
+					this.refreshList(elMapHeat, flyUlEl);					
 			}, thisPanel);
 		}
 		
@@ -421,7 +439,7 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 		if (!this.isFinalUser){
 			toReturn += ''+
 				'<!-- // Mapper new map -->' +
-		         '<div class="panel-buttons-container">' +
+		         '<div id="panel-buttons-container" class="panel-buttons-container">' +
 		             '<div class="panel-buttons">	' +
 		                 '<input type="submit" class="btn-1" value="salva" />' +
 		             '</div>' +
@@ -478,8 +496,9 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 		        '<ul class="group">';		
 				for(var i=0; i< this.geostatistic.indicators.length; i++){
 					var indEl = this.geostatistic.indicators[i];
+					var clsName = (i==0)?'first':'disabled';
 					toReturn += ''+
-					'<li class="first">' +
+					'<li class="'+clsName+'">' +
 					'<span class="button"><a href="#" class="tick"></a>'+indEl[0]+'<span class="arrow"></span></span>' +
 		                '<div class="slider">' +
 		                	'<p>'+indEl[1]+'</p>' +

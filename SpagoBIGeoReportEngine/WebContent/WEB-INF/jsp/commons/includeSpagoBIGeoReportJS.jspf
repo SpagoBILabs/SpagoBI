@@ -50,6 +50,7 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='./js/src/ext/sbi/geo/utils/ControlFactory.js'/></script>
 <script type="text/javascript" src='./js/src/ext/sbi/geo/utils/LayerFactory.js'/></script>
 
+<script type="text/javascript" src='./js/src/ext/sbi/geo/iscroll.js'/></script>
 <script type="text/javascript" src='./js/src/ext/sbi/geo/ImportWMSLayerForm.js'/></script>
 <script type="text/javascript" src='./js/src/ext/sbi/geo/ControlPanel.js'/></script>
 <script type="text/javascript" src='./js/src/ext/sbi/geo/ControlPanel2.js'/></script>
