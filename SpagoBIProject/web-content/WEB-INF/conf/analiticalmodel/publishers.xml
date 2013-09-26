@@ -531,16 +531,18 @@
   	<PUBLISHER name="detailBIObjectLoop">
     	<RENDERING channel="PORTLET" mode="" type="LOOP">
       		<RESOURCES>
-        		<PARAMETER name="PAGE" type="ABSOLUTE" scope="" value="BIObjectsPage" /> 
-      			<!-- <PARAMETER name="ACTOR" type="RELATIVE" scope="SERVICE_RESPONSE" value="DetailBIObjectModule.ACTOR" /> -->
+			<PARAMETER name="ACTION_NAME" type="ABSOLUTE" scope="" value="DOCUMENT_USER_BROWSER_START_ACTION" />         	
+<!-- 		<PARAMETER name="PAGE" type="ABSOLUTE" scope="" value="BIObjectsPage" /> 
       			<PARAMETER name="LIGHT_NAVIGATOR_BACK_TO" type="ABSOLUTE" scope="" value="1" />
+ -->        
       		</RESOURCES>
    	 	</RENDERING>
    	 	<RENDERING channel="HTTP" mode="" type="LOOP">
       		<RESOURCES>
-        		<PARAMETER name="PAGE" type="ABSOLUTE" scope="" value="BIObjectsPage" /> 
+			<PARAMETER name="ACTION_NAME" type="ABSOLUTE" scope="" value="DOCUMENT_USER_BROWSER_START_ACTION" /> 
+        	<!--  	<PARAMETER name="PAGE" type="ABSOLUTE" scope="" value="BIObjectsPage" /> -->
       		<!-- 	<PARAMETER name="ACTOR" type="RELATIVE" scope="SERVICE_RESPONSE" value="DetailBIObjectModule.ACTOR" /> -->
-      			<PARAMETER name="LIGHT_NAVIGATOR_BACK_TO" type="ABSOLUTE" scope="" value="1" />
+      		<!--	<PARAMETER name="LIGHT_NAVIGATOR_BACK_TO" type="ABSOLUTE" scope="" value="1" /> -->
       		</RESOURCES>
    	 	</RENDERING>
   	</PUBLISHER>
