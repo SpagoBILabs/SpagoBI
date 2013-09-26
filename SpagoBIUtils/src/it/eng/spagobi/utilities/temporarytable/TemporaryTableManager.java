@@ -307,7 +307,10 @@ public class TemporaryTableManager {
 			} else {
 				fieldName = columnName;
 			}
-			Class type = JDBCTypeMapper.getJavaType(resultSet.getShort("DATA_TYPE"));
+			short dataType = resultSet.getShort("DATA_TYPE");
+			logger.debug("Data type of field [" + columnName + "] is equal to [" + dataType + "]");
+			Class type = JDBCTypeMapper.getJavaType(dataType);
+			logger.debug("Type class of field [" + columnName + "] is equal to [" + ((type == null)? "null" : type.getName())  + "]");
 			tableDescriptor.addField(fieldName, columnName, type);
 			index++;
 		} while (resultSet.next());// && (index<fields.size()));
