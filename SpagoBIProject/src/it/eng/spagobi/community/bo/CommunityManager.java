@@ -32,7 +32,7 @@ public class CommunityManager {
 	
 	static private Logger logger = Logger.getLogger(CommunityManager.class);
 	
-	public Integer saveCommunity(SbiCommunity community, String communityName, String userId,HttpServletRequest request){
+	public Integer saveCommunity(SbiCommunity community, String communityName, String userId, HttpServletRequest request){
 		Integer communityId = null;
 		//if user is registering to SpagoBI and inserts a community,
 		//the systems checks for community existence by its name.
