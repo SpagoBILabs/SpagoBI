@@ -13,24 +13,26 @@ import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.model.structure.IModelField;
 import it.eng.qbe.model.structure.ModelCalculatedField;
 import it.eng.qbe.model.structure.ModelCalculatedField.Slot;
+import it.eng.qbe.model.structure.ModelStructure.RootEntitiesGraph.Relationship;
 import it.eng.qbe.model.structure.filter.QbeTreeFilter;
 import it.eng.qbe.query.serializer.json.QueryJSONSerializer;
 import it.eng.qbe.serializer.SerializationManager;
 import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.engines.qbe.serializer.json.QbeSerializationConstants;
+import it.eng.spagobi.utilities.engines.EngineMessageBundle;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.io.CharArrayWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
+import java.util.Set;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -55,6 +57,7 @@ public class ExtJsQbeTreeBuilder  {
 	public static final String NODE_TYPE_SIMPLE_FIELD = "field";
 	public static final String NODE_TYPE_CALCULATED_FIELD = "calculatedField";
 	public static final String NODE_TYPE_INLINE_CALCULATED_FIELD = "inLineCalculatedField";
+	public static final String NODE_TYPE_RELATION_FIELD = "relation";
 	
 	/**
 	 * Instantiates a new ext js qbe tree builder.
@@ -209,9 +212,9 @@ public class ExtJsQbeTreeBuilder  {
 			nodeAttributes.put("londDescription", londDescription);
 			entityNode.put("attributes", nodeAttributes);
 			entityNode.put("children", childrenNodes);
+
 		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new SpagoBIRuntimeException("error generating the relation node");
 		}
 		
 		nodes.put(entityNode);		
@@ -264,6 +267,21 @@ public class ExtJsQbeTreeBuilder  {
 			JSONObject jsObject = getCalculatedFieldNode(entity, field);
 			if(jsObject != null) {
 				children.put( jsObject );
+			}
+		}
+		
+		//add relations
+		Set<Relationship> relations =  entity.getStructure().getRootEntityDirectConnections(entity);
+		if(relations!=null){
+			Iterator<Relationship> iter = relations.iterator();
+			while (iter.hasNext()) {
+				Relationship relationship = (Relationship) iter.next();
+				//if the source entity refer to another entity more than one time, we print the relation name in the label of the relation field 
+				boolean needRelationInLabel = (entity.getStructure().getDirectConnections(entity, relationship.getTargetEntity())).size()>1;
+				JSONObject jsObject =getRelationFieldNode(relationship, entity,needRelationInLabel);
+				if(jsObject != null) {
+					children.put( jsObject );
+				}
 			}
 		}
 		
@@ -384,6 +402,69 @@ public class ExtJsQbeTreeBuilder  {
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
+
+		return fieldNode;
+	}
+	
+	public  JSONObject getRelationFieldNode(Relationship relation, IModelEntity parentEntity, boolean needRelationInLabel) {
+		String iconCls = "relation";	
+		List<IModelField> sources =  relation.getSourceFields();
+		List<IModelField> targets =  relation.getTargetFields();
+		String sourceText ="";
+		String targetText ="";
+		
+		
+		if(sources.size()>0){
+			for (int i = 0; i < sources.size(); i++) {
+				IModelField source = sources.get(i);
+				sourceText = sourceText+", "+ geFieldLabel( source );
+			}
+			sourceText = sourceText.substring(2);
+		}
+
+		if(sources.size()>0){
+			for (int i = 0; i < targets.size(); i++) {
+				IModelField target = targets.get(i);
+				targetText = targetText+", "+ geFieldLabel( target );
+			}
+			targetText = targetText.substring(2);
+		}
+		
+		
+		String targetEntityLabel = geEntityLabel( relation.getTargetFields().get(0).getParent() );
+		String relationString = targetEntityLabel;
+		String relationEntityString = "-->"+targetEntityLabel;
+		String relationName = relation.getName();
+		
+		if(needRelationInLabel){
+			relationEntityString = relationEntityString+"("+relationName+")";
+		}
+		
+		
+		String relationTooltip =(EngineMessageBundle.getMessage("sbi.qbe.tree.relation.name", this.getLocale()))+": "+relationName+"<br>"+
+								(EngineMessageBundle.getMessage("sbi.qbe.tree.source.fields", this.getLocale()))+": ["+sourceText+"]<br>"+
+								(EngineMessageBundle.getMessage("sbi.qbe.tree.target.entity", this.getLocale()))+": "+targetEntityLabel+"<br>"+
+								(EngineMessageBundle.getMessage("sbi.qbe.tree.target.fields", this.getLocale()))+": "+targetText+"<br>";
+		
+		JSONObject fieldNode = new JSONObject();
+		try {
+			fieldNode.put("id", relationString);
+			fieldNode.put("text", relationEntityString);
+			fieldNode.put("iconCls", iconCls);
+			fieldNode.put("leaf", true);
+			fieldNode.put("qtip", relationTooltip);
+			
+			JSONObject nodeAttributes = new JSONObject();
+			nodeAttributes.put("iconCls", iconCls);
+			nodeAttributes.put("type", NODE_TYPE_RELATION_FIELD);
+			nodeAttributes.put("entity", targetEntityLabel);
+			nodeAttributes.put("field", relationString);
+			nodeAttributes.put("longDescription", relationString);
+			fieldNode.put("attributes", nodeAttributes);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		
 
 		return fieldNode;
 	}

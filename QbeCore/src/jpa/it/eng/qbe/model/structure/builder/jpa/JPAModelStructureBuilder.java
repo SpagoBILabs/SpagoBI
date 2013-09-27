@@ -137,7 +137,7 @@ public class JPAModelStructureBuilder implements IModelStructureBuilder {
 				List<IModelField> destinationFields = join.getDestinationFileds();
 
 				try {
-					modelStructure.addRootEntityRelationship(modelName, sourceEntity, sourceFields, destinationEntity, destinationFields, "many-to-one");
+					modelStructure.addRootEntityRelationship(modelName, sourceEntity, sourceFields, destinationEntity, destinationFields, "many-to-one", "join");
 					logger.debug("Succesfully added relationship between [" + sourceEntity.getName() + "] and [" + destinationEntity.getName() + "]");
 				} catch (Throwable t) {
 					logger.error("Impossible to add relationship between [" + sourceEntity.getName() + "] and [" + destinationEntity.getName() + "]", t);
@@ -155,7 +155,7 @@ public class JPAModelStructureBuilder implements IModelStructureBuilder {
 				List<IModelField> destinationFields = relationship.getDestinationFileds();
 
 				try {
-					modelStructure.addRootEntityRelationship(modelName, sourceEntity, sourceFields, destinationEntity, destinationFields, "many-to-one");
+					modelStructure.addRootEntityRelationship(modelName, sourceEntity, sourceFields, destinationEntity, destinationFields, "many-to-one", "join");
 					logger.debug("Succesfully added relationship between [" + sourceEntity.getName() + "] and [" + destinationEntity.getName() + "]");
 				} catch (Throwable t) {
 					logger.error("Impossible to add relationship between [" + sourceEntity.getName() + "] and [" + destinationEntity.getName() + "]", t);
@@ -230,7 +230,7 @@ public class JPAModelStructureBuilder implements IModelStructureBuilder {
 				destinationFields.add(field);
 			}
 			try {
-				modelStructure.addRootEntityRelationship(modelName, sourceEntity, sourceFields, destinationEntity, destinationFields, relationship.getType());
+				modelStructure.addRootEntityRelationship(modelName, sourceEntity, sourceFields, destinationEntity, destinationFields, relationship.getType(), relationship.getName());
 				logger.debug("Succesfully added relationship between [" + sourceEntity.getName() + "] and [" + destinationEntity.getName() + "]");
 			} catch (Throwable t) {
 				logger.error("Impossible to add relationship between [" + sourceEntity.getName() + "] and [" + destinationEntity.getName() + "]", t);
