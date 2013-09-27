@@ -183,7 +183,7 @@ public class MassiveExportWork implements Work {
 				proxy.setSplittingFilter(splittingFilter);
 				proxy.setMimeType(outputMIMEType);
 				UserProfile scheduler = UserProfile.createSchedulerUserProfile();
-				returnByteArray = proxy.exec(scheduler, SpagoBIConstants.MASSIVE_EXPORT_MODALITY, output);
+				returnByteArray = proxy.exec(userProfile, SpagoBIConstants.MASSIVE_EXPORT_MODALITY, output);
 			}
 			catch (Throwable e) {
 				logger.error("Error while executing export for object with label "+document.getLabel(), e);
