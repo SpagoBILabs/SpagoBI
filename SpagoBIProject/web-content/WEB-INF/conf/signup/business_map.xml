@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<BUSINESS_MAP>
+	<MAP_ACTIONS>
+	
+	</MAP_ACTIONS>
+	<MAP_PAGE_MODULES>
+	
+	</MAP_PAGE_MODULES>
+	
+	<MAP_EXTERNAL_REST_SERVICES>
+		<MAP_EXTERNAL_REST_SERVICE serviceUrl="/signup/prepare" businessProcess="publicFunctionality" />
+		<MAP_EXTERNAL_REST_SERVICE serviceUrl="/signup/create" businessProcess="publicFunctionality" />
+	</MAP_EXTERNAL_REST_SERVICES>
+	
+</BUSINESS_MAP>

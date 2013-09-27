@@ -1,20 +1,12 @@
-/* SpagoBI, the Open Source Business Intelligence suite
-
- * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
- * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
-
 package it.eng.spagobi.rest.interceptors;
 
 import it.eng.spagobi.rest.annotations.ToValidate;
-import it.eng.spagobi.rest.validation.FieldsValidatorFactory;
 import it.eng.spagobi.rest.validation.IFieldsValidator;
+import it.eng.spagobi.tools.dataset.validation.FieldsValidatorFactory;
 
 import java.lang.reflect.Method;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.ext.Provider;
 
 import org.apache.log4j.Logger;
@@ -46,17 +38,13 @@ public class ValidatorInterceptor implements PreProcessInterceptor, AcceptedByMe
 
 	static private Logger logger = Logger.getLogger(ValidatorInterceptor.class);
 	
-	@Context
-	private HttpServletRequest servletRequest;
-	
 	public boolean accept(Class c, Method m) {
 
 		ToValidate validationAnnot = m.getAnnotation(ToValidate.class);
 		if(validationAnnot == null){
 			return false;
 		}else{
-
-			if(validationAnnot.typeName() != null){
+            if(validationAnnot.typeName() != null){
 				return true;
 			}else{
 				return false;
