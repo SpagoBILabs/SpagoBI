@@ -8,10 +8,13 @@ package it.eng.spagobi.behaviouralmodel.lov.service;
 
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -63,7 +66,20 @@ public class GridMetadataContainerJSONSerializer extends JsonSerializer<GridMeta
 			jgen.writeArrayFieldStart(value.getRootPropery());
 				for (Iterator<Map<String,String>> iterator3 = values.iterator(); iterator3.hasNext();) {
 					Map<String,String> object =  (Map<String,String>)iterator3.next();
-					jgen.writeObject(object);
+					Set<String> keys = object.keySet();
+					if(keys!=null){
+						Iterator<String> iter = keys.iterator();
+						Map<String,String> objectescaped = new HashMap<String, String>();
+						while(iter.hasNext()){
+							String mapKey = iter.next();
+							String mapValue = object.get(mapKey);
+							String keyEscaped = StringEscapeUtils.escapeJavaScript(mapKey);
+							String valueEscaped = StringEscapeUtils.escapeJavaScript(mapValue);
+							objectescaped.put(keyEscaped, valueEscaped);
+						}
+						jgen.writeObject(objectescaped);
+					}
+
 				}
 			jgen.writeEndArray();
 			

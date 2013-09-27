@@ -39,6 +39,7 @@ import it.eng.spagobi.commons.utilities.SpagoBITracer;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
+import it.eng.spagobi.utilities.json.JSONUtils;
 import it.eng.spagobi.utilities.service.JSONFailure;
 import it.eng.spagobi.utilities.service.JSONSuccess;
 
@@ -239,7 +240,7 @@ public class ListTestLovAction extends AbstractSpagoBIAction{
 				try {
 					logger.debug("OUT");
 					String toreturn = lovExecutionResult.toJSONString();
-					writeBackToClient( new JSONSuccess(new JSONObject(toreturn)) );
+					writeBackToClient( new JSONSuccess( JSONUtils.toJSONObject(toreturn)) );
 				} catch (IOException e) {
 					SpagoBIEngineServiceException serviceError = new SpagoBIEngineServiceException("Execution", "Error executing the cockpit");
 					try {
