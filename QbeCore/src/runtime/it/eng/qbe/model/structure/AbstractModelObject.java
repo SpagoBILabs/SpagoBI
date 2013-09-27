@@ -89,6 +89,36 @@ public abstract class AbstractModelObject implements IModelObject {
 	public void setProperties(Map<String,Object> properties) {
 		this.properties = properties;
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + (int) (id ^ (id >>> 32));
+		result = prime * result + ((name == null) ? 0 : name.toUpperCase().hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		AbstractModelObject other = (AbstractModelObject) obj;
+		if (id != other.id)
+			return false;
+		if (name == null) {
+			if (other.name != null)
+				return false;
+		} else if (!name.toUpperCase().equals(other.name.toUpperCase()))
+			return false;
+		return true;
+	}
+	
+
 	
 	
 }

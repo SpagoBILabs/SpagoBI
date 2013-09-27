@@ -165,8 +165,8 @@ public class FilteredModelStructure extends AbstractModelObject implements IMode
 	public void addRootEntityRelationship(String modelName, 
 			IModelEntity fromEntity, List<IModelField> fromFields,
 			IModelEntity toEntity, List<IModelField> toFields,
-			String type) {
-		wrappedModelStructure.addRootEntityRelationship(modelName, fromEntity, fromFields, toEntity, toFields, type);
+			String type, String name) {
+		wrappedModelStructure.addRootEntityRelationship(modelName, fromEntity, fromFields, toEntity, toFields, type, name);
 	}
 
 	public Set<Relationship> getRootEntitiesConnections(Set<IModelEntity> entities) {
@@ -277,6 +277,15 @@ public class FilteredModelStructure extends AbstractModelObject implements IMode
 
 	public int getMaxRecursionLevel() {
 		return this.maxRecursionLevel;
+	}
+
+	public Set<Relationship> getRootEntityDirectConnections(IModelEntity entity) {
+		return wrappedModelStructure.getRootEntityDirectConnections(entity);
+	}
+
+	public Set<Relationship> getDirectConnections(IModelEntity source,
+			IModelEntity target) {
+		return wrappedModelStructure.getDirectConnections(source, target);
 	}
 	
 

@@ -106,6 +106,10 @@ public interface IModelStructure extends IModelObject {
 		
 		public Set<Relationship> getRootEntitiesConnections(Set<IModelEntity> entities);
 		
+		public Set<Relationship> getDirectConnections(IModelEntity source, IModelEntity target);
+		
+		public  Set<Relationship> getRootEntityDirectConnections(IModelEntity entity);
+		
 		// ----------------------------------
 		// RootEntityRelationship
 		// ----------------------------------
@@ -122,7 +126,7 @@ public interface IModelStructure extends IModelObject {
 		void addRootEntityRelationship(String modelName, 
 				IModelEntity fromEntity, List<IModelField> fromFields,
 				IModelEntity toEntity, List<IModelField> toFields,
-				String type);
+				String type, String name);
 		
 		
 		// ----------------------------------
