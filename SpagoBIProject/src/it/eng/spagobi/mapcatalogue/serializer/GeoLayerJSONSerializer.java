@@ -28,6 +28,8 @@ public class GeoLayerJSONSerializer extends JsonSerializer<GeoLayer> {
 	private static final String NAME = "name";
 	private static final String LABEL = "label";
 	private static final String DESCRIPTION = "descr";
+	private static final String IS_BASE_LAYER = "baseLayer";
+
 	//private static final String LAYER_DEF = "layerDef";
 	
 	@Override
@@ -40,6 +42,7 @@ public class GeoLayerJSONSerializer extends JsonSerializer<GeoLayer> {
 		jgen.writeStringField(LABEL, value.getLabel());
 		jgen.writeStringField(DESCRIPTION, value.getDescr());
 		jgen.writeStringField(TYPE, value.getType());
+		jgen.writeBooleanField(IS_BASE_LAYER, value.isBaseLayer());
 		
 		if(value.getLayerDef()!=null){
 			JSONObject js = null;

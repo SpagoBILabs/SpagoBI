@@ -58,6 +58,9 @@
         <property name="type" type="string">
             <column name="TYPE" />
         </property>
+        <property name="baseLayer" type="boolean">
+            <column name="IS_BASE_LAYER" />
+        </property>   
         <property name="layerDef" type="binary">
             <column name="LAYER_DEFINITION" sql-type="longvarbinary"/>
         </property>

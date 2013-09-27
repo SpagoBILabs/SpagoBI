@@ -22,12 +22,15 @@ Ext.define('Sbi.tools.layer.LayerModel', {
 	         "name",
 	         "descr",
 	         "label", 
+	         "baseLayer",
 	         "propsFile",
 	         "propsUrl",
 	         "propsName",
 	         "propsLabel",
 	         "propsZoom",
 	         "propsId",
-	         "propsCentralPoint"
+	         "propsCentralPoint",
+	         "propsParams",
+	         "propsOptions"
 	         ]
 });

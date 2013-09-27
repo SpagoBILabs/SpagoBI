@@ -14,6 +14,7 @@ public class GeoLayer{
 	private String descr;
 	private String type;
 	private String label;
+	private boolean baseLayer;
 	private byte[] layerDef;
 	
 	public GeoLayer() {
@@ -62,6 +63,20 @@ public class GeoLayer{
 
 	public byte[] getLayerDef() {
 		return layerDef;
+	}
+
+	/**
+	 * @return the isBaseLayer
+	 */
+	public boolean isBaseLayer() {
+		return baseLayer;
+	}
+
+	/**
+	 * @param isBaseLayer the isBaseLayer to set
+	 */
+	public void setBaseLayer(boolean baseLayer) {
+		this.baseLayer = baseLayer;
 	}
 
 	public void setLayerDef(byte[] layerDef) {

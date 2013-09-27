@@ -73,6 +73,12 @@ Ext.define('Sbi.tools.layer.LayerDetailPanel', {
 			fieldLabel: LN('sbi.generic.descr')
 		});
 		
+		this.layerIsBaseLayer = Ext.create("Ext.form.field.Checkbox",{
+			fieldLabel: "Base Layer",
+			name: "baseLayer",
+			inputValue: 'true',
+		});
+		
     	Ext.define("LayerTypeModel", {
     		extend: 'Ext.data.Model',
             fields: ["VALUE_NM","VALUE_DS","VALUE_ID"]
@@ -106,9 +112,36 @@ Ext.define('Sbi.tools.layer.LayerDetailPanel', {
 			if(descr=="FILE"){
 				this.propsFile.show();
 				this.propsUrl.hide();
+				this.propsParams.hide();
+				this.propsOptions.hide();
 			}else if(descr=="WFS"){
 				this.propsUrl.show();
 				this.propsFile.hide();
+				this.propsParams.hide();
+				this.propsOptions.hide();
+			} else if (descr=="WMS"){
+				this.propsUrl.show();
+				this.propsFile.hide();
+				this.propsParams.show();
+				this.propsOptions.show();
+
+			} else if (descr=="TMS"){
+				this.propsUrl.show();
+				this.propsFile.hide();
+				this.propsParams.hide();
+				this.propsOptions.show();
+
+			} else if (descr=="Google"){
+				this.propsUrl.hide();
+				this.propsFile.hide();
+				this.propsParams.hide();
+				this.propsOptions.show();
+
+			} else if (descr=="OSM"){
+				this.propsFile.hide();
+				this.propsUrl.hide();
+				this.propsParams.hide();
+				this.propsOptions.hide();
 			}
 		},this);
 		
@@ -117,10 +150,11 @@ Ext.define('Sbi.tools.layer.LayerDetailPanel', {
 		this.buildCommonProperties(propertiesItems);
 		this.buildFileProperties(propertiesItems);
 		this.buildWFSProperties(propertiesItems);
+		this.buildOptionalProperties(propertiesItems);
 
 		
 		this.topDetails = new Ext.create("Ext.form.FieldSet",{
-			items : [this.layerId , this.layerLabel, this.layerName, this.layerDescription, this.layerType],
+			items : [this.layerId , this.layerLabel, this.layerName, this.layerDescription, this.layerIsBaseLayer, this.layerType],
 			border: false,
 	        layout: 'anchor'
 		});
@@ -176,6 +210,26 @@ Ext.define('Sbi.tools.layer.LayerDetailPanel', {
 		
 	}
 	
+	, buildOptionalProperties: function(props){
+		this.propsParams = Ext.create("Ext.form.field.TextArea",{
+			name: "propsParams",
+			fieldLabel: LN('sbi.tools.layer.props.params'),
+			hidden: true,
+			allowBlank: true
+		});
+		
+		this.propsOptions = Ext.create("Ext.form.field.TextArea",{
+			name: "propsOptions",
+			fieldLabel: LN('sbi.tools.layer.props.options'),
+			hidden: true,
+			allowBlank: true
+		});
+		
+		props.push(this.propsParams);
+		props.push(this.propsOptions);
+		return props;
+	}
+	
 	, buildFileProperties: function(props){
 		this.propsFile = Ext.create("Ext.form.field.Text",{
 			name: "propsFile",
@@ -209,6 +263,9 @@ Ext.define('Sbi.tools.layer.LayerDetailPanel', {
 	
 	, getValues: function(){
 		var values = this.callParent();
+		if((values.baseLayer == undefined) || (values.baseLayer == null) ){
+			values.baseLayer = 'false';
+		}
 		return values;
 	}
 	
