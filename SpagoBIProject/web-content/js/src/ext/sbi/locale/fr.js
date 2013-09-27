@@ -792,3 +792,19 @@ Sbi.locale.ln["sbi.community.name"]="Name";
 Sbi.locale.ln["sbi.community.descr"]="Description";
 Sbi.locale.ln["sbi.community.owner"]="Owner";
 Sbi.locale.ln["sbi.community.id"]="Id";
+//===================================================================
+//LAYERS CATALOGUE
+//===================================================================
+Sbi.locale.ln['sbi.layer.saved']= 'Layer correctly saved';
+Sbi.locale.ln['sbi.layer.deleted']= 'Layer correctly deleted';
+Sbi.locale.ln['sbi.tools.layer.validation.error']= 'There is some error in the layer configuration. Check the marked fields.';
+Sbi.locale.ln['sbi.tools.layer.props.name'] = "Layer name";
+Sbi.locale.ln['sbi.tools.layer.props.label'] = "Layer label";
+Sbi.locale.ln['sbi.tools.layer.props.zoom'] = "Layer zoom";
+Sbi.locale.ln['sbi.tools.layer.props.id'] = "Layer id";
+Sbi.locale.ln['sbi.tools.layer.props.central.point']= "Layer central point";
+Sbi.locale.ln['sbi.tools.layer.props.url']= "Url";
+Sbi.locale.ln['sbi.tools.layer.props.file']= "File";
+Sbi.locale.ln['sbi.tools.layer.baseLayer']= "Base Layer";
+Sbi.locale.ln['sbi.tools.layer.props.params']= "Params";
+Sbi.locale.ln['sbi.tools.layer.props.options']= "Options";

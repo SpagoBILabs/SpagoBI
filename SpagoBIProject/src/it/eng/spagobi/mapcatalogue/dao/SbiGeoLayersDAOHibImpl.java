@@ -131,6 +131,7 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 			hibLayer.setDescr(aLayer.getDescr());
 			hibLayer.setType(aLayer.getType());	
 			hibLayer.setLabel(aLayer.getLabel());
+			hibLayer.setBaseLayer(aLayer.isBaseLayer());
 			hibLayer.setLayerDef(aLayer.getLayerDef());
 			updateSbiCommonInfo4Update(hibLayer);
 			tx.commit();
@@ -172,6 +173,7 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 			hibLayer.setDescr(aLayer.getDescr());
 			hibLayer.setType(aLayer.getType());
 			hibLayer.setLabel(aLayer.getLabel());
+			hibLayer.setBaseLayer(aLayer.isBaseLayer());
 			hibLayer.setLayerDef(aLayer.getLayerDef());
 			updateSbiCommonInfo4Insert(hibLayer);
 			id = (Integer) tmpSession.save(hibLayer);

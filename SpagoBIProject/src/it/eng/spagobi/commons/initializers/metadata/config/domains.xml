@@ -178,6 +178,12 @@
 
 <DOMAIN valueCd="FILE" valueNm="FILE" domainCd="LAYER_TYPE" domainNm="Layer Type" valueDs="Layer Type"/>
 <DOMAIN valueCd="WFS" valueNm="WFS" domainCd="LAYER_TYPE" domainNm="Layer Type" valueDs="Layer Type"/>
+<DOMAIN valueCd="WMS" valueNm="WMS" domainCd="LAYER_TYPE" domainNm="Layer Type" valueDs="Layer Type"/>
+<DOMAIN valueCd="TMS" valueNm="TMS" domainCd="LAYER_TYPE" domainNm="Layer Type" valueDs="Layer Type"/>
+<DOMAIN valueCd="Google" valueNm="Google" domainCd="LAYER_TYPE" domainNm="Layer Type" valueDs="Layer Type"/>
+<DOMAIN valueCd="OSM" valueNm="OSM" domainCd="LAYER_TYPE" domainNm="Layer Type" valueDs="Layer Type"/>
+
+
 
 <DOMAIN valueCd="licence" valueNm="licence" domainCd="DS_GEN_META_PROPERTY" domainNm="Data Set General Metadata Property" valueDs="Data Set General Metadata Property"/>
 

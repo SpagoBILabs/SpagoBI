@@ -21,6 +21,7 @@ public class GeoLayerJSONDeserializer {
 	private static final String LABEL = "label";
 	private static final String DESCRIPTION = "descr";
 	private static final String TYPE = "type";
+	private static final String IS_BASE_LAYER = "baseLayer";
 
 	
 	
@@ -47,7 +48,10 @@ public class GeoLayerJSONDeserializer {
 							layer.setDescr(serialized.getString(properties[i]));
 						}else if(properties[i].equals(TYPE)){
 							layer.setType(serialized.getString(properties[i]));
-						}else {
+						}else if(properties[i].equals(IS_BASE_LAYER)){
+							layer.setBaseLayer(Boolean.parseBoolean(serialized.getString(properties[i])));
+						}
+						else {
 							layerDef.put(properties[i], serialized.get(properties[i]));
 						}	
 					} catch (JSONException e) {

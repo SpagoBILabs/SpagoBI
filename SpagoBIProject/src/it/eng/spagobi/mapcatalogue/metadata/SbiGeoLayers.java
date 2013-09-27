@@ -17,6 +17,7 @@ public class SbiGeoLayers extends SbiHibernateModel {
 	private String name;
 	private String descr;
 	private String type;
+	private boolean baseLayer = false;
 	private String label;
 	private byte[] layerDef;
 
@@ -72,6 +73,20 @@ public class SbiGeoLayers extends SbiHibernateModel {
 		this.layerDef = layerDef;
 	}
 
+	/**
+	 * @return the isBaseLayer
+	 */
+	public boolean isBaseLayer() {
+		return baseLayer;
+	}
+
+	/**
+	 * @param isBaseLayer the isBaseLayer to set
+	 */
+	public void setBaseLayer(boolean baseLayer) {
+		this.baseLayer = baseLayer;
+	}
+
 	public GeoLayer toGeoLayer(){	
 		GeoLayer geo = new GeoLayer();
 		geo.setDescr(getDescr());
@@ -80,6 +95,7 @@ public class SbiGeoLayers extends SbiHibernateModel {
 		geo.setName(name);
 		geo.setType(type);
 		geo.setLayerId(layerId);
+		geo.setBaseLayer(baseLayer);
 		return geo;
 	}
 

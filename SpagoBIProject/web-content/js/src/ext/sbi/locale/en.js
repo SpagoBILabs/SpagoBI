@@ -1026,6 +1026,8 @@ Sbi.locale.ln['sbi.tools.layer.props.id'] = "Layer id";
 Sbi.locale.ln['sbi.tools.layer.props.central.point']= "Layer central point";
 Sbi.locale.ln['sbi.tools.layer.props.url']= "Url";
 Sbi.locale.ln['sbi.tools.layer.props.file']= "File";
-
+Sbi.locale.ln['sbi.tools.layer.baseLayer']= "Base Layer";
+Sbi.locale.ln['sbi.tools.layer.props.params']= "Params";
+Sbi.locale.ln['sbi.tools.layer.props.options']= "Options";
 
 

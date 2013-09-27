@@ -29,13 +29,16 @@ Ext.define('Sbi.tools.layer.LayerListDetailPanel', {
 			         "name",
 			         "descr",
 			         "label", 
+			         "baseLayer",
 			         "propsFile",
 			         "propsUrl",
 			         "propsName",
 			         "propsLabel",
 			         "propsZoom",
 			         "propsId",
-			         "propsCentralPoint"
+			         "propsCentralPoint",
+			         "propsParams",
+			         "propsOptions"
 			         ];
 		this.detailPanel.on("save",this.onFormSave,this);
 		this.filteredProperties = ["label","type","descr"];
