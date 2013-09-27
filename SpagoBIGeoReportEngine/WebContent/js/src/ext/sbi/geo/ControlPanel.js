@@ -83,6 +83,7 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 	
 	, resultsetWindow: null
 	, measureCatalogueWindow: null
+	, layersCatalogueWindow: null
 	, shareMapWindow: null
    
     // public methods
@@ -250,12 +251,24 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 					this.saveButtonEnabled = true;
 				}
 			}
+			
+			this.addLayerButtonEnabled = false;
+			if (Sbi.config.docLabel=="") {
+				this.addLayerButtonEnabled = true;
+			} else {
+				if ((Sbi.config.userId != undefined) && (Sbi.config.docAuthor != undefined)){
+					if (Sbi.config.userId == Sbi.config.docAuthor){
+						this.addLayerButtonEnabled = true;
+					}
+				}
+			}
+
 
 			
 			this.debugControlPanel = new Ext.Panel({
 		           title: 'Debug',
 		           collapsible: true,
-		           height: 150,
+		           height: 200,
 		           items: [new Ext.Button({
 				    	text: 'Reload dataset',
 				        width: 30,
@@ -349,6 +362,15 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 		           		},
 		           		scope: this
 				    })
+		           	, new Ext.Button({
+				    	text: 'Add layer',
+				        width: 30,
+				        disabled : !this.addLayerButtonEnabled, //same visibility of the Save Button
+				        handler: function() {
+							this.showLayersCatalogueWindow();
+		           		},
+		           		scope: this
+				    })
 		           ]
 		    });
 			
@@ -405,6 +427,35 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 		
 		
 		this.measureCatalogueWindow.show();
+	}
+	, showLayersCatalogueWindow: function(){
+		var thisPanel = this;
+		if(this.layersCatalogueWindow==null){
+			var layersCatalogue = new Sbi.geo.tools.LayersCatalogue(); 
+			//layersCatalogue.on('storeLoad', this.onStoreLoad, this);
+			
+			this.layersCatalogueWindow = new Ext.Window({
+	            layout      : 'fit',
+		        width		: 700,
+		        height		: 350,
+	            closeAction :'hide',
+	            plain       : true,
+	            title		: 'Layers Catalogue',
+	            items       : [layersCatalogue],
+	            buttons		: [{
+                    text:'Add layers',
+                    handler: function(){
+                    	var selectedLayers = layersCatalogue.getSelectedLayers();
+                    	thisPanel.addSelectedLayers(selectedLayers);
+                    	thisPanel.layersCatalogueWindow.hide();
+                    }
+                }]
+	                      
+			});
+		}
+		
+		
+		this.layersCatalogueWindow.show();
 	}
 	, showFeedbackWindow: function(){
 		if(this.feedbackWindow != null){			
@@ -499,6 +550,111 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 	}
 	
     // private methods
+	
+	//TODO: to complete
+	, addSelectedLayers: function(layers) {
+		for (var i = 0; i < layers.length; i++) {
+		    var layerLabel = layers[i];
+		    //Do something
+
+		    //TODO: invoke service to retrive layers 
+		}
+		
+		//TO REMOVE: only for test
+		this.layers = new Array();
+		var exampleLayerConf = {};
+		exampleLayerConf.enabled = true;
+		exampleLayerConf.name = "NASA Global Mosaic";
+		exampleLayerConf.options = {};
+		exampleLayerConf.options.isBaseLayer=true;
+		exampleLayerConf.params = {};
+		//exampleLayerConf.params.layers = "landsat7";
+		exampleLayerConf.params.layers = "modis,global_mosaic";
+		exampleLayerConf.type= "WMS";
+		//exampleLayerConf.url="http://hypercube.telascience.org/cgi-bin/landsat7?";
+		exampleLayerConf.url="http://wms.jpl.nasa.gov/wms.cgi";
+		
+		var l = Sbi.geo.utils.LayerFactory.createLayer( exampleLayerConf );
+		this.layers.push( l	);
+		
+		//Another GoogleMap
+		/*
+		var anotherExampleLayerConf = {};
+		anotherExampleLayerConf.type="Google";
+		anotherExampleLayerConf.name="GoogleMap";
+		anotherExampleLayerConf.options = {};
+		anotherExampleLayerConf.options.sphericalMercator=true;
+		anotherExampleLayerConf.enabled=true;
+		var lGoogle = Sbi.geo.utils.LayerFactory.createLayer( anotherExampleLayerConf );
+		this.layers.push(lGoogle);
+		*/
+		
+		
+		var myTree = this.layersControlPanel;
+		this.map.addLayers(this.layers);
+		this.layersControlPanel.model = this.extractModel();
+		
+		
+		var node = new Ext.tree.TreeNode({text: l.name,
+              checked: false,
+              cls: '',
+              layerName: l.name,
+              leaf: true});
+		//myTree.getRootNode().appendChild(node,myTree.getRootNode().firstChild); 
+		node.attributes.uiProvider = mapfish.widgets.RadioTreeNodeUI;
+
+        if (node.ui)
+            node.ui = new mapfish.widgets.RadioTreeNodeUI(node);
+		myTree.root.childNodes[0].appendChild(node);
+		this.map.layerTree = this.layersControlPanel;
+
+		myTree.render();
+		
+		/*
+		this.layersControlPanel.initComponent();
+		this.map.layerTree = this.layersControlPanel;		
+		this.add(this.layersControlPanel);
+		this.layersControlPanel.doLayout();
+		this.doLayout();
+		*/
+
+		
+		/*
+		var currentModel = this.layersControlPanel.model;
+		this.layersControlPanel.model = this.extractModel();
+		this.map.layerTree = this.layersControlPanel;
+		this.layersControlPanel.getLoader().load(this.layersControlPanel.getRootNode());
+		this.doLayout();
+		*/
+		
+		
+		/*
+		if(this.layerPanelEnabled === true) {	
+			this.remove(this.layersControlPanel);
+
+			
+			this.layersControlPanel = new mapfish.widgets.LayerTree(Ext.apply({
+	        	title: LN('sbi.geo.layerpanel.title'),
+	            collapsible: true,
+	            collapsed: false,
+	            autoHeight: true,
+	            rootVisible: false,
+	            separator: '!',
+	            model: this.extractModel(),
+	            map: this.map,
+	            bodyStyle:'padding:6px 6px 6px 6px; background-color:#FFFFFF'
+	        }, this.layerPanelConf));
+			
+			this.map.layerTree = this.layersControlPanel;
+			
+			this.add(this.layersControlPanel);
+			this.doLayout();
+		}
+		*/
+		
+
+
+	}
 	
 	/**
 	 * @method
@@ -616,6 +772,10 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 		
 		for (var i = 0; i < mapLayers.length; i++) {
 			 var layer = mapLayers[i];
+			 //added
+			 if (layer.selected == undefined){
+				 layer.selected = false;
+			 }
 			 
 			 var className = '';
 	         if (!layer.displayInLayerSwitcher) {

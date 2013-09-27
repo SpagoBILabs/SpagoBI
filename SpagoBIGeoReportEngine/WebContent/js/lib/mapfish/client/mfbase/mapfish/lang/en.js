@@ -46,6 +46,10 @@ OpenLayers.Util.extend(OpenLayers.Lang.en, {
     'sbi.tools.catalogue.measures.column.header.dsName':'Name',
     'sbi.tools.catalogue.measures.column.header.dsLabel':'Label',
     'sbi.tools.catalogue.measures.column.header.dsCategory':'Category',
-    'sbi.tools.catalogue.measures.column.header.dsType':'Type'
+    'sbi.tools.catalogue.measures.column.header.dsType':'Type',
+    'sbi.tools.catalogue.layers.column.header.label':'Label',
+    'sbi.tools.catalogue.layers.column.header.descr':'Description',
+    'sbi.tools.catalogue.layers.column.header.type':'Type',
+    'sbi.tools.catalogue.layers.column.header.baseLayer':'Base Layer'
 });
 
