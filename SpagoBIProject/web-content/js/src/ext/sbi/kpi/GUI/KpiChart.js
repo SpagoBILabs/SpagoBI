@@ -6,182 +6,239 @@
  
   
  
- function drawDial(options) {
+function Gauge(placeholderName, configuration)
+{
+	this.placeholderName = placeholderName;
 
-var renderTo = options.renderTo,
-    value = options.value,
-    centerX = options.centerX,
-    centerY = options.centerY,
-    min = options.min,
-    max = options.max,
-    minAngle = options.minAngle,
-    maxAngle = options.maxAngle,
-    tickInterval = options.tickInterval,
-    ranges = options.ranges,
-    pivotLength = options.pivotLength,
-    backgroundRadius = options.backgroundRadius,
-    arcMinRadius = options.arcMinRadius,
-    arcMaxRadius = options.arcMaxRadius,
-    textRadius = options.textRadius,
-    renderX = options.renderX,
-    renderY = options.renderY
-    ;
-    
-var renderer = new Highcharts.Renderer(
-    document.getElementById(renderTo),
-    renderX,
-    renderY
-);
-var rangeElements = new Array();
-var maxValueElement;
-var tickPathElement;
-var tickTextElement;
-var circleElement;
+	var self = this; // some internal d3 functions do not "like" the "this" keyword, hence setting a local variable
 
-// internals
-var angle,
-    pivot;
+	this.configure = function(configuration)
+	{
+		this.config = configuration;
 
-function valueToAngle(value) {
-    return (maxAngle - minAngle) / (max - min) * value + minAngle;
-}
+		this.config.size = this.config.size * 0.9;
 
-function setValue(value) {
-    // the pivot
-    angle = valueToAngle(value);
-    
-    var path = [
-         'M',
-         centerX, centerY,
-         'L',
-         centerX + pivotLength * Math.cos(angle), centerY + pivotLength * Math.sin(angle)
-     ];//arrow
+		this.config.raduis = this.config.size * 0.97 / 2;
+		this.config.cx = this.config.size / 2;
+		this.config.cy = this.config.size / 2;
 
-		if(pivot != undefined){
-			pivot.destroy();
-		}
-        pivot = renderer.path(path)
-        .attr({
-            stroke: 'black',
-            'stroke-width': 3
-        })
-        .add();
+		this.config.min = configuration.min || 0; 
+		this.config.max = configuration.max || 100; 
+		this.config.range = this.config.max - this.config.min;
 
-}
-function setRanges(ranges){
-	for(i=0; i<rangeElements.length; i++){
-		rangeElements[i].destroy();
+		this.config.majorTicks = configuration.majorTicks || 5;
+		this.config.minorTicks = configuration.minorTicks || 2;
+		this.config.ranges = configuration.ranges;
+		this.renderTo = configuration.renderTo;
+
 	}
-	rangeElements = new Array();
-	// ranges
-	for(i=0; i<ranges.length; i++){
-		var rangesOptions = ranges[i];
-		if(rangesOptions.from != undefined && rangesOptions.from !== null &&
-				rangesOptions.to != undefined && rangesOptions.to !== null){
-			var rangeElement =renderer.arc(
-			        centerX,
-			        centerY,
-			        arcMaxRadius,
-			        arcMinRadius,
-			        valueToAngle(rangesOptions.from),
-			        valueToAngle(rangesOptions.to)
-			    )
-			    .attr({
-			        fill: rangesOptions.color
-			    })
-			    .add();
-			rangeElements.push(rangeElement);
-		}else{
-			continue;
+
+	this.render = function()
+	{
+		this.body = d3.select("#" + this.renderTo)
+							.append("svg:svg")
+	   						.attr("class", "gauge")
+	   						.attr("width", this.config.size)
+	   						.attr("height", this.config.size);
+		
+		console.log(this.body);
+
+		this.body.append("svg:circle")
+					.attr("cx", this.config.cx)						
+					.attr("cy", this.config.cy)								
+					.attr("r", this.config.raduis)
+					.style("fill", "#ccc")
+					.style("stroke", "#000")
+					.style("stroke-width", "0.5px");
+
+		this.body.append("svg:circle")							
+					.attr("cx", this.config.cx)						
+					.attr("cy", this.config.cy)								
+					.attr("r", 0.9 * this.config.raduis)
+					.style("fill", "#fff")
+					.style("stroke", "#e0e0e0")
+					.style("stroke-width", "2px");
+
+		for (var index in this.config.ranges)
+		{
+			this.drawBand(this.config.ranges[index].from, this.config.ranges[index].to, this.config.ranges[index].color);
+		}
+		if (undefined != this.config.label)
+		{
+			var fontSize = Math.round(this.config.size / 9);
+			this.body.append("svg:text")								
+						.attr("x", this.config.cx)
+						.attr("y", this.config.cy / 2 + fontSize / 2)			 			
+						.attr("dy", fontSize / 2)
+						.attr("text-anchor", "middle")
+						.text(this.config.label)
+						.style("font-size", fontSize + "px")
+						.style("fill", "#333")
+						.style("stroke-width", "0px");	
 		}
 
+		var fontSize = Math.round(this.config.size / 16);		
+		var majorDelta = this.config.range / (this.config.majorTicks - 1);
+		for (var major = this.config.min; major <= this.config.max; major += majorDelta)
+		{
+			var minorDelta = majorDelta / this.config.minorTicks;
+			for (var minor = major + minorDelta; minor < Math.min(major + majorDelta, this.config.max); minor += minorDelta)
+			{
+				var point1 = this.valueToPoint(minor, 0.75);
+				var point2 = this.valueToPoint(minor, 0.85);
+
+				this.body.append("svg:line")
+							.attr("x1", point1.x)
+							.attr("y1", point1.y)
+							.attr("x2", point2.x)
+							.attr("y2", point2.y)
+							.style("stroke", "#666")
+							.style("stroke-width", "1px");
+			}
+
+			var point1 = this.valueToPoint(major, 0.7);
+			var point2 = this.valueToPoint(major, 0.85);	
+
+			this.body.append("svg:line")
+						.attr("x1", point1.x)
+						.attr("y1", point1.y)
+						.attr("x2", point2.x)
+						.attr("y2", point2.y)
+						.style("stroke", "#333")
+						.style("stroke-width", "2px");
+
+			if (major == this.config.min || major == this.config.max)
+			{
+				var point = this.valueToPoint(major, 0.63);
+
+				this.body.append("svg:text")
+				 			.attr("x", point.x)
+				 			.attr("y", point.y)			 			
+				 			.attr("dy", fontSize / 3)
+				 			.attr("text-anchor", major == this.config.min ? "start" : "end")
+				 			.text(major)
+				 			.style("font-size", fontSize + "px")
+							.style("fill", "#333")
+							.style("stroke-width", "0px");
+			}
+		}		
+
+		var pointerContainer = this.body.append("svg:g").attr("class", "pointerContainer");		
+		this.drawPointer(0);
+		pointerContainer.append("svg:circle")								
+							.attr("cx", this.config.cx)						
+							.attr("cy", this.config.cy)								
+							.attr("r", 0.12 * this.config.raduis)
+							.style("fill", "#4684EE")
+							.style("stroke", "#666")
+							.style("opacity", 1);
 	}
 
-}
-function setMax(maximumn){
-	if(maxValueElement != undefined){
-		maxValueElement.destroy();
+	this.redraw = function(value)
+	{
+		this.drawPointer(value);
 	}
-	max = maximumn;
-	maxValueElement = renderer.arc(centerX, centerY, backgroundRadius, 0, minAngle, maxAngle)
-    .attr({
-        fill: {
-            linearGradient: [0, 0, min, max],
-            stops: [
-                [0, '#FFF'],
-                [1, '#DDD']
-            ]
-        },
-        stroke: 'silver',
-        'stroke-width': 1
-    })
-    .add();
-}
-// background area
 
-maxValueElement = setMax(max);
+	this.drawBand = function(start, end, color)
+	{
+		if (0 >= end - start) return;
 
-// ranges
-setRanges(ranges);
-
-function setTicks(maxim){
-	max = maxim
-	for (var i = min; i <= max; i += tickInterval) {
-	    
-	    angle = valueToAngle(i);
-	    
-	    // draw the tick marker
-	    tickPathElement = renderer.path([
-	            'M',
-	            centerX + arcMaxRadius * Math.cos(angle), centerY + arcMaxRadius * Math.sin(angle),
-	            'L',
-	            centerX + arcMinRadius * Math.cos(angle), centerY + arcMinRadius * Math.sin(angle)
-	        ])
-	        .attr({
-	            stroke: 'silver',
-	            'stroke-width': 2
-	        })
-	        .add();
-	    
-	    // draw the text
-	    tickTextElement = renderer.text(
-	            i,
-	            centerX + textRadius * Math.cos(angle),
-	            centerY + textRadius * Math.sin(angle)
-	        )
-	        .attr({
-	            align: 'center'
-	        })
-	        .add();
-	    
+		this.body.append("svg:path")
+					.style("fill", color)
+					.attr("d", d3.svg.arc()
+						.startAngle(this.valueToRadians(start))
+						.endAngle(this.valueToRadians(end))
+						.innerRadius(0.65 * this.config.raduis)
+						.outerRadius(0.85 * this.config.raduis))
+					.attr("transform", function() { return "translate(" + self.config.cx + ", " + self.config.cy + ") rotate(270)" });
 	}
-}
-setTicks(max);
-// the initial value
-setValue(value);
 
-// center disc
-function setCircle(){
-	if(circleElement != undefined){
-		circleElement.destroy();
+	this.drawPointer = function(value)
+	{
+		var valueToSet = value;
+		var tickColor ='#e5340b';
+		var tickBorder ="#c63310";
+		var valueText ="#000";
+		if(this.config.max < value){
+			value = this.config.max;
+			tickColor ='#57a8d7';
+			tickBorder ='#155ba4';
+			valueText= '#155ba4';
+		}else if(this.config.min > value){
+			value = this.config.min;
+			tickColor ='#57a8d7';
+			tickBorder ='#155ba4';
+			valueText= '#155ba4';
+		}
+		var delta = this.config.range / 13;
+
+		var head = this.valueToPoint(value, 0.85);
+		var head1 = this.valueToPoint(value - delta, 0.12);
+		var head2 = this.valueToPoint(value + delta, 0.12);
+
+		var tailValue = value -  (this.config.range * (1/(270/360)) / 2);
+		var tail = this.valueToPoint(tailValue, 0.28);
+		var tail1 = this.valueToPoint(tailValue - delta, 0.12);
+		var tail2 = this.valueToPoint(tailValue + delta, 0.12);
+
+		var data = [head, head1, tail2, tail, tail1, head2, head];
+
+		var line = d3.svg.line()
+							.x(function(d) { return d.x })
+							.y(function(d) { return d.y })
+							.interpolate("basis");
+
+		var pointerContainer = this.body.select(".pointerContainer");	
+
+		var pointer = pointerContainer.selectAll("path").data([data])										
+
+		pointer.enter()
+				.append("svg:path")
+					.attr("d", line)
+					.style("fill", tickColor)
+					.style("stroke", tickBorder)
+					.style("fill-opacity", 0.7)
+
+		pointer.transition()
+					.attr("d", line);
+
+		var fontSize = Math.round(this.config.size / 10);
+		pointerContainer.selectAll("text")
+							.data([valueToSet])
+								.text(Math.round(valueToSet))
+							.enter()
+								.append("svg:text")
+									.attr("x", this.config.cx)
+									.attr("y", this.config.size - this.config.cy / 4 - fontSize)			 			
+									.attr("dy", fontSize / 2)
+									.attr("text-anchor", "middle")
+									.text(Math.round(valueToSet))
+									.style("font-size", fontSize + "px")
+									.style("fill", valueText)
+									.style("stroke-width", "0px");
 	}
-	circleElement = renderer.circle(centerX, centerY, 10)
-	    .attr({
-	        fill: '#4572A7',
-	        stroke: 'black',
-	        'stroke-width': 1
-	    })
-	    .add();
-}
 
-setCircle();
+	this.valueToDegrees = function(value)
+	{
+		return value / this.config.range * 270 - 45;
+	}
 
-return {
-    setValue: setValue,
-    setMax: setMax,
-    setTicks : setTicks,
-    setRanges: setRanges,
-    setCircle: setCircle
-};
+	this.valueToRadians = function(value)
+	{
+		return this.valueToDegrees(value) * Math.PI / 180;
+	}
 
+	this.valueToPoint = function(value, factor)
+	{
+		var point = 
+		{
+			x: this.config.cx - this.config.raduis * factor * Math.cos(this.valueToRadians(value)),
+			y: this.config.cy - this.config.raduis * factor * Math.sin(this.valueToRadians(value))
+		}
+
+		return point;
+	}
+
+	// initialization
+	this.configure(configuration);	
 }

@@ -43,7 +43,8 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 
 <%@ include file="/WEB-INF/jsp/commons/portlet_base311.jsp"%>
 <script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/service/ServiceRegistry.js")%>'></script>
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/lib/raphael-min.js")%>'></script>
+<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/lib/d3/D3.js")%>'></script>
+<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/lib/d3/D3.layout.js")%>'></script>
 <LINK rel='StyleSheet' 
       href='<%=urlBuilder.getResourceLinkByTheme(request, "css/kpi/kpi.css",currTheme)%>' 
       type='text/css' />
@@ -220,5 +221,6 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 
 </script>
 
+<span id="chartContainer" style="border:1px solid red;"></span>
 
 <%@ include file="/WEB-INF/jsp/commons/footer.jsp"%>
