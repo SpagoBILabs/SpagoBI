@@ -138,34 +138,33 @@ Ext.extend(Sbi.kpi.KpiGUIDetail , Ext.form.FormPanel, {
 		}
 		if(this.dial == null){
 			// Build the dial
-			this.dial = drawDial({
-			    renderTo: this.chartid,
-			    value: value,
-			    centerX: 135,
-			    centerY: y,
-			    min: 0,
-			    max: this.maxChartValue,
-			    
-			    minAngle: -Math.PI,
-			    maxAngle: 0,
-			    tickInterval: 20,
-			    ranges: this.ranges
-			    , pivotLength: 70 //arrow length
-			    , backgroundRadius: 120
-			    , arcMinRadius : 70
-			    , arcMaxRadius : 100
-			    , textRadius : 105
-			    , renderX : 300 //width of the area of the chart
-			    , renderY : 145 //height of the area of the chart
-			});
+
+			var config = 
+			{
+				size: 250,
+				minorTicks: 5,
+				renderTo: this.chartid
+			}
+			config.ranges= this.ranges;
+			this.dial = new Gauge("chartContainer", config);			
+			this.dial.render();
+			//setInterval(this.updateGauge(value), 5000);
+			this.dial.redraw(value);
 		}else{
-			this.dial.setMax(this.maxChartValue);			
-			this.dial.setRanges(this.ranges);
-			this.dial.setTicks(this.maxChartValue);
-			this.dial.setValue(value);
-			this.dial.setCircle();
+			//this.dial.max=this.maxChartValue;			
+			//this.dial.ranges=this.ranges;
+			
+			//this.dial.render();
+			setInterval(this.updateGauge(value), 5000);
+			//this.dial.setTicks(this.maxChartValue);
+			//this.dial.setValue(value);
+			//this.dial.setCircle();
 		}
 		
+	}
+	,  updateGauge: function(value)
+	{
+		this.dial.redraw(value);
 	}
 	, cleanPanel: function(){
 
@@ -284,7 +283,7 @@ Ext.extend(Sbi.kpi.KpiGUIDetail , Ext.form.FormPanel, {
 		//target
 		var target = field.attributes.target;
 		this.targetItem = new Ext.form.DisplayField({fieldLabel: 'Target', 
-													style: 'margin-left:5px; padding-left:5px;',
+													style: 'padding-left:5px;',
 													width: 145,
 													labelWidth:45,
 													value: target});
