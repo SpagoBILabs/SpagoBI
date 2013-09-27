@@ -28,7 +28,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 
 <%
 	String contextName = ChannelUtilities.getSpagoBIContextName(request);	
-
+    
 
 	String authFailed = "";
 	String startUrl = "";
@@ -95,7 +95,8 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 
 
 
-<%@page import="it.eng.spagobi.commons.SingletonConfig"%><html>
+<%@page import="it.eng.spagobi.commons.SingletonConfig"%>
+<html>
   <head>
   <style media="screen" type="text/css">
 
@@ -147,6 +148,14 @@ a:hover{
   
   
   <script type="text/javascript">
+    function signup(){
+    	var form = document.getElementById('formId');
+    	var act = '/SpagoBI/restful-services/signup/prepare';
+    	alert(act);
+    	form.action = act;
+    	form.submit();
+    	
+    }
 	function escapeUserName(){
 	
 	userName = document.login.userID.value;
@@ -187,7 +196,7 @@ a:hover{
 
 
 	
-        <form name="login" action="<%=contextName%>/servlet/AdapterHTTP?PAGE=LoginPage&NEW_SESSION=TRUE" method="POST" onsubmit="return escapeUserName()">
+        <form id="formId" name="login" action="<%=contextName%>/servlet/AdapterHTTP?PAGE=LoginPage&NEW_SESSION=TRUE" method="POST" onsubmit="return escapeUserName()">
         	<input type="hidden" id="isInternalSecurity" name="isInternalSecurity" value="<%=isInternalSecurity %>" />        	
         	<input type="hidden" id="<%=roleToCheckLbl%>" name="<%=roleToCheckLbl%>" value="<%=roleToCheckVal%>" />
         	<%	
@@ -348,6 +357,9 @@ a:hover{
 										</a></td>
 										<td align="center"><a href="#"
 											onclick="setUser('biadmin','biadmin'); login.submit()"><b>biadmin/biadmin</b>
+										</a></td>
+										<td align="center"><a href="#"
+											onclick="signup();"><b>signup</b>
 										</a></td>
 									</tr>
 								</table>

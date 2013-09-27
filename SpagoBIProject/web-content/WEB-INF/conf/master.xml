@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <MASTER>
 
+<!-- signup -->
+	
+	<CONFIGURATOR path="/WEB-INF/conf/signup/business_map.xml" />
+	
+	
 <!--  commons -->	
 	<CONFIGURATOR path="/WEB-INF/conf/commons/audit.xml" />
 	<CONFIGURATOR path="/WEB-INF/conf/commons/actions.xml" />
