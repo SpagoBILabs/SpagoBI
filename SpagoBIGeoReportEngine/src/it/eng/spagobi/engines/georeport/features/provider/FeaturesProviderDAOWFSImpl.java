@@ -11,10 +11,12 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringReader;
+
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Map;
 
+import org.apache.commons.httpclient.URI;
 import org.apache.log4j.Logger;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.geojson.feature.FeatureJSON;
@@ -36,12 +38,14 @@ public class FeaturesProviderDAOWFSImpl implements IFeaturesProviderDAO {
 	public SimpleFeature getFeatureById(Object fetureProviderEndPoint, String layerName, Map parameters) {
 		FeatureCollection featureCollection;
 		
-		String wfsUrl;
-		String geoIdPName;
-		String geoIdPValue;
-		URL url;
-		URLConnection connection;
+		String wfsUrl = null;
+		String geoIdPName = null;
+		String geoIdPValue = null;
+		URL url = null;
+		URI uri = null;
+		URLConnection connection = null;
 		
+		logger.debug("IN");
 		
 		try {
 			wfsUrl = (String)fetureProviderEndPoint;
@@ -62,8 +66,9 @@ public class FeaturesProviderDAOWFSImpl implements IFeaturesProviderDAO {
 		    
 			
 			// wfs call
-	    
-	    	url = new URL(wfsUrl);
+			// we use apache URI to properly encode the url string according to RFC2396
+			uri = new URI(wfsUrl, false);
+	    	url = new URL(uri.toString());
 	    	connection = url.openConnection();
 	        
 	    	// Get the response
@@ -81,9 +86,9 @@ public class FeaturesProviderDAOWFSImpl implements IFeaturesProviderDAO {
 	    	FeatureJSON featureJSON = new FeatureJSON();
 		    featureCollection = featureJSON.readFeatureCollection(reader);
 	    } catch(Throwable t){
-	    	throw new SpagoBIRuntimeException(t);
+	    	throw new SpagoBIRuntimeException("An unexpected error occured while executing service call [" + wfsUrl + "]", t);
 	    }finally {
-	    	
+	    	logger.debug("OUT");
 	    }		
 
 	    return (SimpleFeature)featureCollection.features().next();
