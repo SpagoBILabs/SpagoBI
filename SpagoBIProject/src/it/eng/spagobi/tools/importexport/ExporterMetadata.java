@@ -5,6 +5,7 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.tools.importexport;
 
+import it.eng.qbe.dataset.QbeDataSet;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
@@ -127,6 +128,8 @@ import it.eng.spagobi.mapcatalogue.metadata.SbiGeoMaps;
 import it.eng.spagobi.tools.catalogue.bo.Artifact;
 import it.eng.spagobi.tools.catalogue.bo.Content;
 import it.eng.spagobi.tools.catalogue.bo.MetaModel;
+import it.eng.spagobi.tools.catalogue.dao.IArtifactsDAO;
+import it.eng.spagobi.tools.catalogue.dao.IMetaModelsDAO;
 import it.eng.spagobi.tools.catalogue.metadata.SbiArtifact;
 import it.eng.spagobi.tools.catalogue.metadata.SbiArtifactContent;
 import it.eng.spagobi.tools.catalogue.metadata.SbiMetaModel;
@@ -452,6 +455,32 @@ public class ExporterMetadata {
 				tx2 = session.beginTransaction();
 				session.save(sbiDataSet);
 				tx2.commit();
+				
+				IDataSet dataset = ( (VersionedDataSet) dataSet ).getWrappedDataset();
+				if (dataset instanceof QbeDataSet) {
+					IDataSource dataSource = ((QbeDataSet) dataset).getDataSource();
+					this.insertDataSource(dataSource, session);
+					String datamart = ((QbeDataSet) dataset).getDatamarts();
+					
+					IMetaModelsDAO modelsDAO = DAOFactory.getMetaModelsDAO();
+					MetaModel model = modelsDAO.loadMetaModelByName(datamart);
+
+					if(model != null){
+						Content content = modelsDAO.loadActiveMetaModelContentById(model.getId());
+						boolean inserted = this.insertMetaModel(model, session);
+						if (inserted) {
+							this.insertMetaModelContent(model, content, session);
+						}
+					}
+					else{
+						logger.debug("Could not ins datamart " + datamart);
+					}
+					
+				} else if (dataset instanceof JDBCDataSet) {
+					IDataSource dataSource = ((JDBCDataSet) dataset).getDataSource();
+					this.insertDataSource(dataSource, session);
+				}
+				
 			}
 		} catch (HibernateException he) {
 			logger.error("Error while inserting the New Data Set ", he);
