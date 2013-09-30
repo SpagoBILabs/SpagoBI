@@ -58,7 +58,7 @@ import com.jamonapi.MonitorFactory;
 public class DocumentCompositionUtils {
 	private static transient Logger logger=Logger.getLogger(DocumentCompositionUtils.class);
 	public static final String messageBundle = "component_spagobidocumentcompositionIE_messages";
-
+ 
 
 	/**
 	 * Returns an url for execute the document with the engine associated.
@@ -168,7 +168,8 @@ public class DocumentCompositionUtils {
 			}
 
 			String className = obj.getEngine().getClassName();
-			if (className == null || className.trim().equals("") && !document.getSnapshot()) {
+			if ((className == null || className.trim().equals("")) &&
+				(document.getSnapshot() == null || !document.getSnapshot())) {
 				// external engine
 				//baseUrlReturn = obj.getEngine().getUrl() + "?";
 				baseUrlReturn = obj.getEngine().getUrl();
@@ -246,6 +247,7 @@ public class DocumentCompositionUtils {
 					urlReturn += "&"+ObjectsTreeConstants.MODALITY + "=" + SpagoBIConstants.DOCUMENT_COMPOSITION;
 				}
 			}
+			
 			// I add passing of SBI_LANGUAGE and SBI_COUNTRY
 			// on session container they are called AF_COUNTRY and AF_LANGUAGE
 			SessionContainer sContainer=sessionContainer.getPermanentContainer();
