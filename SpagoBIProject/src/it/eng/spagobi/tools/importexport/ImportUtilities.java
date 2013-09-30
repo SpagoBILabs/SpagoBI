@@ -1754,17 +1754,6 @@ public class ImportUtilities {
 			
 			sessionCurrDB.update(existMeta);
 			
-			// delete previous meta content and add new one
-			Query query = sessionCurrDB.createQuery(" from SbiMetaModelContent a where a.model.id = " + existingId);
-			List contents = query.list();
-			if (contents!= null) {
-				Iterator it = contents.iterator();
-				while (it.hasNext()) {
-					SbiMetaModelContent sbiMetaModelContent = (SbiMetaModelContent) it.next();
-					sessionCurrDB.delete(sbiMetaModelContent);
-				}			
-			}
-	
 		}
 		catch (Exception e) {
 			logger.error("Error in modifying exported meta model "+exportedMeta.getName(), e);
@@ -1810,7 +1799,13 @@ public class ImportUtilities {
 		
 		logger.debug("IN");
 	
-
+		// set to not active the current active template
+		String hql = " update SbiMetaModelContent mmc set mmc.active = false where mmc.active = true and mmc.model.id = ? ";
+		Query query = sessionCurrDB.createQuery(hql);
+		query.setInteger(0, newMetaModel.getId());
+		logger.debug("Updates the current content of model " + newMetaModel + " with active = false.");
+		query.executeUpdate();
+		
 		SbiMetaModelContent newContent = new SbiMetaModelContent();
 		newContent.setActive(true);
 		newContent.setContent(exportedMetaModelContent.getContent());
