@@ -5,13 +5,12 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.security;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.configuration.ConfigSingleton;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class LdapConnectorFactory {
 
@@ -25,47 +24,47 @@ public class LdapConnectorFactory {
 		SourceBean configSingleton = (SourceBean)ConfigSingleton.getInstance();
 		SourceBean config = (SourceBean)configSingleton.getAttribute("LDAP_AUTHORIZATIONS.CONFIG");
 		
-		Map attr=new HashMap();
+		Map<String, Object> attrbutes = new HashMap<String, Object>();
 
+		attrbutes.put(LDAPConnector.ADMIN_USER, getAttribute(config, LDAPConnector.ADMIN_USER));
+		attrbutes.put(LDAPConnector.ADMIN_PSW, getAttribute(config, LDAPConnector.ADMIN_PSW));
+		attrbutes.put(LDAPConnector.HOST, getAttribute(config, LDAPConnector.HOST));
+		attrbutes.put(LDAPConnector.PORT, getAttribute(config, LDAPConnector.PORT));
+		attrbutes.put(LDAPConnector.BASE_DN, getAttribute(config, LDAPConnector.BASE_DN));
 		
-		String t=((SourceBean)config.getAttribute(LDAPConnector.ADMIN_USER)).getCharacters();
-	
+		attrbutes.put(LDAPConnector.USER_SEARCH_PATH, getAttribute(config, LDAPConnector.USER_SEARCH_PATH));
+		attrbutes.put(LDAPConnector.USER_OBJECT_CLASS, getAttribute(config, LDAPConnector.USER_OBJECT_CLASS));
+		attrbutes.put(LDAPConnector.USER_ID_ATTRIBUTE_NAME, getAttribute(config, LDAPConnector.USER_ID_ATTRIBUTE_NAME));
+		attrbutes.put(LDAPConnector.USER_MEMBEROF_ATTRIBUTE_NAME, getAttribute(config, LDAPConnector.USER_MEMBEROF_ATTRIBUTE_NAME));
 		
-		attr.put(LDAPConnector.ADMIN_USER, ((SourceBean)config.getAttribute(LDAPConnector.ADMIN_USER)).getCharacters());
-		attr.put(LDAPConnector.ADMIN_PSW, ((SourceBean)config.getAttribute(LDAPConnector.ADMIN_PSW)).getCharacters());
-		attr.put(LDAPConnector.HOST, ((SourceBean)config.getAttribute(LDAPConnector.HOST)).getCharacters());
-		attr.put(LDAPConnector.PORT, ((SourceBean)config.getAttribute(LDAPConnector.PORT)).getCharacters());
-		attr.put(LDAPConnector.OBJECTCLASS, ((SourceBean)config.getAttribute(LDAPConnector.OBJECTCLASS)).getCharacters());
-		attr.put(LDAPConnector.OU_ATTRIBUTE, ((SourceBean)config.getAttribute(LDAPConnector.OU_ATTRIBUTE)).getCharacters());
-		attr.put(LDAPConnector.SEARCH_ROOT, ((SourceBean)config.getAttribute(LDAPConnector.SEARCH_ROOT)).getCharacters());
-		attr.put(LDAPConnector.SEARCH_ROOT_GROUP, ((SourceBean)config.getAttribute(LDAPConnector.SEARCH_ROOT_GROUP)).getCharacters());
-		attr.put(LDAPConnector.OBJECTCLASS_GROUP, ((SourceBean)config.getAttribute(LDAPConnector.OBJECTCLASS_GROUP)).getCharacters());		
-		attr.put(LDAPConnector.USER_DN, ((SourceBean)config.getAttribute(LDAPConnector.USER_DN)).getCharacters());
-		
-		List attrList=config.getAttributeAsList(LDAPConnector.ATTRIBUTES_ID);
-		Iterator iterAttr=attrList.iterator();
-		String[] elencoAttributi=new String[attrList.size()];
+		List<SourceBean> userAttributesSB = config.getAttributeAsList(LDAPConnector.USER_ATTRIBUTE);
+		String[] userAttributes = new String[userAttributesSB.size()];
 		int i=0;
-		while (iterAttr.hasNext()){
-			SourceBean tmp=(SourceBean)iterAttr.next();
-			elencoAttributi[i]=tmp.getCharacters();
-			i++;
+		for (SourceBean userAttributeSB : userAttributesSB){
+			userAttributes[i++] = userAttributeSB.getCharacters();
 		}
-		attr.put(LDAPConnector.ATTRIBUTES_ID, elencoAttributi);
-
-
-		List attrListGroup=config.getAttributeAsList(LDAPConnector.ATTRIBUTES_ID_GROUP);
-		Iterator iterAttrGroup=attrListGroup.iterator();
-		String[] elencoAttributiGroup=new String[attrListGroup.size()];
+		attrbutes.put(LDAPConnector.USER_ATTRIBUTE, userAttributes);
+		
+		
+		attrbutes.put(LDAPConnector.GROUP_SEARCH_PATH, getAttribute(config, LDAPConnector.GROUP_SEARCH_PATH));
+		attrbutes.put(LDAPConnector.GROUP_OBJECT_CLASS, getAttribute(config, LDAPConnector.GROUP_OBJECT_CLASS));	
+		attrbutes.put(LDAPConnector.GROUP_ID_ATTRIBUTE_NAME, getAttribute(config, LDAPConnector.GROUP_ID_ATTRIBUTE_NAME));	
+		
+		List<SourceBean> roleAttributesSB = config.getAttributeAsList(LDAPConnector.GROUP_ATTRIBUTE);
+		String[] roleAttributes=new String[roleAttributesSB.size()];
 		int j=0;
-		while (iterAttrGroup.hasNext()){
-			SourceBean tmp=(SourceBean)iterAttrGroup.next();
-			elencoAttributiGroup[j]=tmp.getCharacters();
-			j++;
+		for(SourceBean roleAttributeSB : roleAttributesSB){
+			roleAttributes[j++]= roleAttributeSB.getCharacters();
 		}
-		attr.put(LDAPConnector.ATTRIBUTES_ID_GROUP, elencoAttributiGroup);
+		attrbutes.put(LDAPConnector.GROUP_ATTRIBUTE, roleAttributes);
 
-
-		return new LDAPConnector(attr);	
+		attrbutes.put(LDAPConnector.GROUP_MEMBERS_ATTRIBUTE_NAME, getAttribute(config, LDAPConnector.GROUP_MEMBERS_ATTRIBUTE_NAME));
+		attrbutes.put(LDAPConnector.ACCESS_GROUP_NAME, getAttribute(config, LDAPConnector.ACCESS_GROUP_NAME));
+		
+		return new LDAPConnector(attrbutes);	
+	}
+	
+	private static String getAttribute(SourceBean config, String attributeName) {
+		return ((SourceBean)config.getAttribute(attributeName)).getCharacters();
 	}
 }

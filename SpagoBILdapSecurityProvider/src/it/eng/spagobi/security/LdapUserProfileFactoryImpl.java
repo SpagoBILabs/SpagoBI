@@ -5,12 +5,9 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.security;
 
-import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.configuration.ConfigSingleton;
-import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.bo.Role;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.services.security.bo.SpagoBIUserProfile;
 import it.eng.spagobi.services.security.service.ISecurityServiceSupplier;
 
@@ -25,99 +22,89 @@ import org.apache.log4j.Logger;
 
 import com.novell.ldap.LDAPException;
 
-/**
- * Implementation of the IEngUserProfile interface Factory. Defines methods to
- * get a IEngUserProfile starting from the exo user information
- */
 public class LdapUserProfileFactoryImpl implements ISecurityServiceSupplier {
 
     static private Logger logger = Logger.getLogger(LdapUserProfileFactoryImpl.class);
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see it.eng.spagobi.services.security.service.ISecurityServiceSupplier#checkAuthorization(java.lang.String,
-     *      java.lang.String)
-     */
-    public boolean checkAuthorization(String userId, String pwd) {
-	logger.warn("NOT IMPLEMENTED!!!!!!!!");
-	return false;
-    }
-
-    public SpagoBIUserProfile checkAuthentication(String userId, String psw) {
-	logger.debug("IN");
-	LDAPConnector conn = LdapConnectorFactory.createLDAPConnector();
-	try {
-	    if ( conn.autenticateUser(userId, psw)){
-	    	SpagoBIUserProfile obj=new SpagoBIUserProfile();
-	    	obj.setUniqueIdentifier(userId);
-	    	obj.setUserId(userId);
-	    	obj.setUserName(userId);
-	    	return obj;
-	    }else{
-	    	return null;
-	    }
-	} catch (UnsupportedEncodingException e) {
-	    logger.error("UnsupportedEncodingException", e);
-	} catch (LDAPException e) {
-	    logger.error("LDAPException", e);
-	}
-	logger.debug("OUT.False");
-	return null;
-    }
-
-
-
     /**
-     * Return an IEngUserProfile implementation starting from the Principal of
-     * the user.
-     * 
-     * @param userId
-     *                the user id
-     * 
-     * @return The User Profile Interface implementation object
+     * @return The profile of the user if the provided credentials are valid. null otherwise. Note: the profile if returned contains
+     * only the user id and user name. All other properties are not initialized yet.
      */
-    public SpagoBIUserProfile createUserProfile(String userId) {
-	logger.debug("IN.userId="+userId);
-	SpagoBIUserProfile profile = new SpagoBIUserProfile();
-	profile.setUniqueIdentifier(userId);
-	profile.setUserId(userId);
+    public SpagoBIUserProfile checkAuthentication(String username, String password) {
+		
+    	SpagoBIUserProfile userProfile;
+    	
+    	logger.debug("IN");
+			
+    	userProfile = null;
+    	try {
+    		logger.debug("Authenticating user [" + username + "] ...");
+    		LDAPConnector ldapConnector = LdapConnectorFactory.createLDAPConnector();
+		    if ( ldapConnector.authenticateUser(username, password)){
+		    	userProfile = new SpagoBIUserProfile();
+		    	userProfile.setUniqueIdentifier(username);
+		    	userProfile.setUserId(username);
+		    	userProfile.setUserName(username);
+		    	logger.info("User [" + username + "] succesfully authenticated");
+		    } else {
+		    	logger.warn("Impossible to authenticate user [" + username + "]");
+		    }
+		} catch (Throwable t) {
+		    throw new RuntimeException("An unexpected error occure while loading profile of user [" + username + "]", t);
+		} finally {
+			logger.debug("OUT");
+		}
+		
+		return userProfile;
+    }
 
-	LDAPConnector conn = LdapConnectorFactory.createLDAPConnector();
-	List ldapRoles = null;
-	HashMap attributes = null;
-	try {
-	    ldapRoles = conn.getUserGroup(userId);
-	    attributes = conn.getUserAttributes(userId);
-	} catch (UnsupportedEncodingException e) {
-	    logger.error("UnsupportedEncodingException", e);
-	} catch (LDAPException e) {
-	    logger.error("LDAPException", e);
-	}
-	Iterator iterRoles = ldapRoles.iterator();
-	List roles = new ArrayList();
+
+
+    public SpagoBIUserProfile createUserProfile(String username) {
+		
+    	logger.debug("IN");
+  
+    	logger.debug("Creating user profile for user [" + username + "] ...");
+		
+    	SpagoBIUserProfile userProfile = new SpagoBIUserProfile();
+		userProfile.setUniqueIdentifier(username);
+		userProfile.setUserId(username);
+		userProfile.setUserName(username);
 	
-	while (iterRoles.hasNext()) {
-	    String roleName = (String) iterRoles.next();
-	    logger.debug("RoleName from LDAP:"+roleName);
-	    if (roleName!=null && !roleName.equals("Group")){
-		Role role = new Role(roleName, roleName);
-		roles.add(role);
-	    }
-	    
-	}
-
-	String[] roleStr = new String[roles.size()];
-	for (int i = 0; i < roles.size(); i++) {
-	    roleStr[i] = (String) ((Role)roles.get(i)).getName();
-	}
-	profile.setRoles(roleStr);
-	profile.setAttributes(createMapAttributes(attributes));
+		LDAPConnector ldapConnector = LdapConnectorFactory.createLDAPConnector();
+		List ldapRoles = null;
+		Map attributes = null;
+		try {
+		    ldapRoles = ldapConnector.getUserGroup(username);
+		    attributes = ldapConnector.getUserAttributes(username);
+		} catch (LDAPException e) {
+		    logger.error("LDAPException", e);
+		}
+		Iterator iterRoles = ldapRoles.iterator();
+		List roles = new ArrayList();
+		
+		while (iterRoles.hasNext()) {
+		    String roleName = (String) iterRoles.next();
+		    logger.debug("RoleName from LDAP:"+roleName);
+		    if (roleName!=null && !roleName.equals("Group")){
+			Role role = new Role(roleName, roleName);
+			roles.add(role);
+		    }
+		    
+		}
 	
-
-	logger.debug("OUT");
-
-	return profile;
+		String[] roleStr = new String[roles.size()];
+		for (int i = 0; i < roles.size(); i++) {
+		    roleStr[i] = (String) ((Role)roles.get(i)).getName();
+		}
+		userProfile.setRoles(roleStr);
+		
+		HashMap userAttributes = createMapAttributes(attributes);
+		userProfile.setAttributes(userAttributes);
+		
+		logger.debug("OUT");
+	
+		return userProfile;
     }
 
  
@@ -128,7 +115,7 @@ public class LdapUserProfileFactoryImpl implements ISecurityServiceSupplier {
 
 	SourceBean configSingleton = (SourceBean) ConfigSingleton.getInstance();
 	SourceBean config = (SourceBean) configSingleton.getAttribute("LDAP_AUTHORIZATIONS.CONFIG");
-	List attrList = config.getAttributeAsList(LDAPConnector.ATTRIBUTES_ID);
+	List attrList = config.getAttributeAsList(LDAPConnector.USER_ATTRIBUTE);
 	Iterator iterAttr = attrList.iterator();
 	while (iterAttr.hasNext()) {
 	    SourceBean tmp = (SourceBean) iterAttr.next();
@@ -147,5 +134,17 @@ public class LdapUserProfileFactoryImpl implements ISecurityServiceSupplier {
 		logger.error("checkAuthenticationWithToken NOT implemented");
 		return null;
 	}
+	
+	
+	// ================================================================================
+	// DEPRECATION TAIL
+	// ================================================================================
+	
+	/**
+     * @deprecated
+     */
+    public boolean checkAuthorization(String userId, String pwd) {
+    	throw new UnsupportedOperationException("Method not implemented because it is deprecated in the parent interface");
+    }
 
 }

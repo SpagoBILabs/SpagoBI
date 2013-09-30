@@ -7,14 +7,9 @@ package it.eng.spagobi.security;
 
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.configuration.ConfigSingleton;
-import it.eng.spago.error.EMFInternalError;
 import it.eng.spagobi.commons.bo.Role;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
-import it.eng.spagobi.commons.utilities.SpagoBITracer;
 
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -42,9 +37,7 @@ public class LdapSecurityProviderImpl implements ISecurityInfoProvider {
 	try {
 	    ldapRoles = conn.getAllGroups();
 
-	} catch (UnsupportedEncodingException e) {
-	    logger.error("UnsupportedEncodingException", e);
-	} catch (LDAPException e) {
+	}  catch (LDAPException e) {
 	    logger.error("LDAPException", e);
 	}
 
@@ -72,7 +65,7 @@ public class LdapSecurityProviderImpl implements ISecurityInfoProvider {
 	SourceBean configSingleton = (SourceBean) ConfigSingleton.getInstance();
 	SourceBean config = (SourceBean) configSingleton.getAttribute("LDAP_AUTHORIZATIONS.CONFIG");
 
-	List attrList = config.getAttributeAsList(LDAPConnector.ATTRIBUTES_ID);
+	List attrList = config.getAttributeAsList(LDAPConnector.USER_ATTRIBUTE);
 	Iterator iterAttr = attrList.iterator();
 	while (iterAttr.hasNext()) {
 	    SourceBean tmp = (SourceBean) iterAttr.next();
