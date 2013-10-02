@@ -159,39 +159,52 @@ public class GeoReportEngineConfig {
 	private final static String LEVEL_TAG = "LEVEL";
 	
 	public void initGeoDimensionLevels() {
-		SourceBean geoDimensionSB = (SourceBean) getConfigSourceBean().getAttribute(GEO_DIMENSION_TAG);
-		SourceBean levelsSB = (SourceBean) geoDimensionSB.getAttribute(LEVELS_TAG);
-		List<SourceBean> levelList = levelsSB.getAttributeAsList(LEVEL_TAG);
-		levels = new ArrayList<Properties>();
 		
-		/*
-		 <LEVEL name="comune_ita" 
-				layerName="gadm_ita_comuni" 
-				layerLabel="Comuni" 
-				layerId="NAME_3" 
-				layer_file="comuni_sudtirol.json"
-				layer_zoom="" 
-				layer_cetral_point=""/>
-		 */
-		for(SourceBean level : levelList) {
-			String name = (String)level.getAttribute("name");
-			String layerName = (String)level.getAttribute("layerName");
-			String layerLabel = (String)level.getAttribute("layerLabel");
-			String layerId = (String)level.getAttribute("layerId");
-			String layer_file = (String)level.getAttribute("layer_file");
-			String layer_zoom = (String)level.getAttribute("layer_zoom");
-			String layer_cetral_point = (String)level.getAttribute("layer_cetral_point");
+		logger.debug("IN");
+		
+		try {
+			SourceBean geoDimensionSB = (SourceBean) getConfigSourceBean().getAttribute(GEO_DIMENSION_TAG);
+			SourceBean levelsSB = (SourceBean) geoDimensionSB.getAttribute(LEVELS_TAG);
+			List<SourceBean> levelList = levelsSB.getAttributeAsList(LEVEL_TAG);
+			levels = new ArrayList<Properties>();
 			
-			Properties props = new Properties();
-			props.setProperty("name", name);
-			props.setProperty("layerName", layerName);
-			props.setProperty("layerLabel", layerLabel);
-			props.setProperty("layerId", layerId);
-			props.setProperty("layer_file", layer_file);
-			props.setProperty("layer_zoom", layer_zoom);
-			props.setProperty("layer_cetral_point", layer_cetral_point);
-			
-			levels.add(props);
+			/*
+			 <LEVEL name="comune_ita" 
+					layerName="gadm_ita_comuni" 
+					layerLabel="Comuni" 
+					layerId="NAME_3" 
+					layer_file="comuni_sudtirol.json"
+					layer_zoom="" 
+					layer_cetral_point=""/>
+			 */
+			for(SourceBean level : levelList) {
+				String name = (String)level.getAttribute("name");
+				String layerName = (String)level.getAttribute("layerName");
+				String layerLabel = (String)level.getAttribute("layerLabel");
+				String layerId = (String)level.getAttribute("layerId");
+				String layer_file = (String)level.getAttribute("layer_file");
+				String layer_url = (String)level.getAttribute("layer_url");
+				String layer_zoom = (String)level.getAttribute("layer_zoom");
+				String layer_cetral_point = (String)level.getAttribute("layer_cetral_point");
+				
+				Properties props = new Properties();
+				if(name != null) props.setProperty("name", name);
+				if(layerName != null) props.setProperty("layerName", layerName);
+				if(layerLabel != null) props.setProperty("layerLabel", layerLabel);
+				if(layerId != null) props.setProperty("layerId", layerId);
+				if(layer_file != null) props.setProperty("layer_file", layer_file);
+				if(layer_url != null) props.setProperty("layer_url", layer_url);
+				if(layer_zoom != null) props.setProperty("layer_zoom", layer_zoom);
+				if(layer_cetral_point != null) props.setProperty("layer_cetral_point", layer_cetral_point);
+				
+				levels.add(props);
+				
+				logger.debug("Level [" + name + "] succesfully initialized");
+			}
+		} catch(Throwable t) {
+			throw new RuntimeException("An error occured while loading geo dimension levels' properties from file engine-config.xml", t);
+		} finally {
+			logger.debug("OUT");
 		}
 	}
 	
