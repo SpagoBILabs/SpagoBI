@@ -30,11 +30,25 @@
 	
 	<GEO_DIMENSION>
 		<LEVELS>
-			<LEVEL name="Comune ita"
-				layerName="gadm_ita_comuni" 
+			<LEVEL name="regione"
+				layerName="regioni" 
+				layerLabel="Regioni" 
+				layerId="nome_reg" 
+				layer_url="http://localhost:6090/geoserver/wfs"
+				layer_zoom="9" 
+				layer_cetral_point="11.400 46.650"/>
+			<LEVEL name="provincia"
+				layerName="province" 
+				layerLabel="Province" 
+				layerId="nome_pro" 
+				layer_url="http://localhost:6090/geoserver/wfs"
+				layer_zoom="9" 
+				layer_cetral_point="11.400 46.650"/>
+			<LEVEL name="comune"
+				layerName="comuni" 
 				layerLabel="Comuni" 
-				layerId="NAME_3" 
-				layer_file="comuni_sudtirol.json"
+				layerId="nome_com" 
+				layer_url="http://localhost:6090/geoserver/wfs"
 				layer_zoom="9" 
 				layer_cetral_point="11.400 46.650"/>
 		</LEVELS>
