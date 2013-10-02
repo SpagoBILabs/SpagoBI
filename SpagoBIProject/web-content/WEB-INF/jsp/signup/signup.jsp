@@ -120,6 +120,8 @@ this.services["create"]= Sbi.config.serviceRegistry.getRestServiceUrl({
     String sbiMode = "WEB";
 	IUrlBuilder urlBuilder = null;
 	urlBuilder = UrlBuilderFactory.getUrlBuilder(sbiMode);
+	
+
 %>
 
 <link id="extall"     rel="styleSheet" href ="${pageContext.request.contextPath}/js/lib/ext-4.1.1a/resources/css/ext-all.css" type="text/css" />
@@ -208,225 +210,194 @@ a:hover{
 						<td width="350px">
 
 							<table border="0">
-							    <tr class='header-row-portlet-section'>
-									<td class='login-label' width="90px" align="left">* &nbsp;Nome:
-									</td>
+								<tr class='header-row-portlet-section'>
+									<td class='login-label' width="90px" align="left">*
+										&nbsp;Nome:</td>
 									<td width="25px">&nbsp;</td>
+
+									<td class='login-label'>Indirizzo:</td>
 
 								</tr>
 								<tr>
 									<td><input id="nome" name="nome" type="text" size="25"
-										class="login">
-									</td>
+										class="login"></td>
 									<td></td>
 
-								</tr>
-							    <tr class='header-row-portlet-section'>
-									<td class='login-label' width="90px" align="left">* &nbsp;Cognome:
+									<td><input id="indirizzo" name="indirizzo" type="text"
+										size="25" class="login">
 									</td>
-									<td width="25px">&nbsp;</td>
-
-								</tr>
-								<tr>
-									<td><input id="cognome" name="cognome" type="text" size="25"
-										class="login">
-									</td>
-									<td></td>
-
-								</tr>
-							    
-							    
-								<tr class='header-row-portlet-section'>
-									<td class='login-label' width="90px" align="left">* &nbsp;Username:
-									</td>
-									<td width="25px">&nbsp;</td>
-
-								</tr>
-								<tr>
-									<td><input id="username" name="username" type="text" size="25"
-										class="login">
-									</td>
-									<td></td>
 
 								</tr>
 								<tr class='header-row-portlet-section'>
-									<td class='login-label' width="90px" align="left">* &nbsp;Password:
-									</td>
+									<td class='login-label' width="90px" align="left">*
+										&nbsp;Cognome:</td>
 									<td width="25px">&nbsp;</td>
+
+									<td class='login-label'>Azienda:</td>
+
+								</tr>
+								<tr>
+									<td><input id="cognome" name="cognome" type="text"
+										size="25" class="login"></td>
+									<td></td>
+
+									<td><input id="azienda" name="azienda" type="text"
+										size="25" class="login">
+									</td>
+
+								</tr>
+
+
+								<tr class='header-row-portlet-section'>
+									<td class='login-label' width="90px" align="left">*
+										&nbsp;Username:</td>
+									<td width="25px">&nbsp;</td>
+
+									<td class='login-label'>Breve Biografia:</td>
+
+								</tr>
+								<tr>
+									<td valign="top"><input id="username" name="username" type="text"
+										size="25" class="login"></td>
+									<td></td>
+
+									<td><textarea class="login" rows="5" cols="35"
+											name="biografia" id="biografia"></textarea>
+									</td>
+
+								</tr>
+								<tr class='header-row-portlet-section'>
+									<td class='login-label' width="90px" align="left">*
+										&nbsp;Password:</td>
+									<td width="25px">&nbsp;</td>
+
+									<td class='login-label'>Lingua:</td>
 
 								</tr>
 
 								<tr>
 									<td><input id="password" name="password" type="password"
-										size="25" class="login"></td>
+										size="25" class="login">
+									</td>
 									<td></td>
 
-								</tr>
-								<tr class='header-row-portlet-section'>
-									<td class='login-label' width="90px" align="left">* &nbsp;Conferma Password:
-									</td>
-									<td width="25px">&nbsp;</td>
-
-								</tr>
-
-								<tr>
-									<td><input id="confermaPassword" name="confermaPassword" type="password"
-										size="25" class="login"></td>
-									<td></td>
-
-								</tr>
-								<tr class='header-row-portlet-section'>
-									<td class='login-label' width="90px" align="left">* &nbsp;Email:
-									</td>
-									<td width="25px">&nbsp;</td>
-
-								</tr>
-                                <tr>
-									<td><input id="email" name="email" type="text"
-										size="25" class="login"></td>
-									<td></td>
-
-								</tr>
-                                <tr class='header-row-portlet-section'>
-									<td class='login-label' width="90px" align="left">Sesso:
-									</td>
-									<td width="25px">&nbsp;</td>
-
-								</tr>
-								<tr>
-									<td>
-									<select class="login" name="sesso" id="sesso">
-									 <option value=""></option>
-									 <option value="Uomo">Uomo</option>
-									 <option value="Donna">Donna</option>
+									<td><select class="login" name="lingua" id="lingua">
+											<option value=""></option>
+											<option value="it_IT">Italiano</option>
+											<option value="en_US">Inglese</option>
+											<option value="fr_FR">Francese</option>
+											<option value="es_ES">Spagnolo</option>
 									</select>
 									</td>
-									<td></td>
 
 								</tr>
 								<tr class='header-row-portlet-section'>
-									<td class='login-label' width="90px" align="left">Data Nascita (dd/mm/yyyy):
-									</td>
+									<td class='login-label' width="90px" align="left">*
+										&nbsp;Conferma Password:</td>
 									<td width="25px">&nbsp;</td>
 
+									<td class='login-label'>*  Captcha:</td>
+
 								</tr>
+
 								<tr>
-									<td><input id="dataNascita" name="dataNascita" type="text" size="25"
-										class="login"/>
+									<td><input id="confermaPassword" name="confermaPassword"
+										type="password" size="25" class="login">
 									</td>
 									<td></td>
 
+									<td><input id="captcha" name="captcha" type="text"
+										size="20" class="login">
+									</td>
+
 								</tr>
 								<tr class='header-row-portlet-section'>
-									<td class='login-label' width="90px" align="left">Indirizzo:
-									</td>
+									<td class='login-label' width="90px" align="left">*
+										&nbsp;Email:</td>
 									<td width="25px">&nbsp;</td>
+
+									<td><img
+										src="${pageContext.request.contextPath}/stickyImg"
+										width="250px" height="75px">
+									</td>
 
 								</tr>
 								<tr>
-									<td><input id="indirizzo" name="indirizzo" type="text" size="25"
-										class="login"/>
+									<td valign="top"><input id="email" name="email" type="text" size="25"
+										class="login">
 									</td>
 									<td></td>
 
+									<td class='login-label'>Termini del servizio:</td>
+
 								</tr>
 								<tr class='header-row-portlet-section'>
-									<td class='login-label' width="90px" align="left">Azienda:
-									</td>
+									<td class='login-label' width="90px" align="left">Sesso:</td>
 									<td width="25px">&nbsp;</td>
+
+									<td><input type="checkbox" name="termini" id="termini"
+										class="login">
+									</td>
 
 								</tr>
 								<tr>
-									<td><input id="azienda" name="azienda" type="text" size="25"
-										class="login"/>
-									</td>
+									<td><select class="login" name="sesso" id="sesso">
+											<option value=""></option>
+											<option value="Uomo">Uomo</option>
+											<option value="Donna">Donna</option>
+									</select></td>
+									<td></td>
+
 									<td></td>
 
 								</tr>
-								<tr class='header-row-portlet-section'>
-									<td class='login-label' width="90px" align="left">Breve Biografia:
-									</td>
-									<td width="25px">&nbsp;</td>
 
-								</tr>
-								<tr>
-									<td>
-									<textarea class="login" rows="5" cols="35" name="biografia" id="biografia"></textarea>
-									</td>
-									<td></td>
 
-								</tr>
-								<tr class='header-row-portlet-section'>
-									<td class='login-label' width="90px" align="left">Lingua:
-									</td>
-									<td width="25px">&nbsp;</td>
 
-								</tr>
-								<tr>
-									<td>
-									  <select class="login" name="lingua" id="lingua">
-									    <option value=""></option>
-									    <option value="it_IT">Italiano</option>
-									    <option value="en_US">Inglese</option>
-									    <option value="fr_FR">Francese</option>
-									    <option value="es_ES">Spagnolo</option>
-									   </select>
-									</td>
-									<td></td>
-								</tr>
-								<tr class='header-row-portlet-section'>
-									<td class='login-label' width="90px" align="left">* &nbsp;Captcha:
-									</td>
-									<td width="25px">&nbsp;</td>
 
-								</tr>
-								<tr>
-								  <td>
-								    <input id="captcha" name="captcha" type="text" size="20" class="login"/>
-								  </td>
-								  <td></td>
-								</tr>
-								<tr>
-								  <td><img src='${pageContext.request.contextPath}/stickyImg' width='250px' height='75px'/></td>
-								  <td width="25px">&nbsp;</td>
-								</tr>
-								<tr class='header-row-portlet-section'>
-									<td class='login-label' width="90px" align="left">Termini del servizio:
-									</td>
-									<td width="25px">&nbsp;</td>
 
-								</tr>
-								<tr>
-									<td>
-									  <input type="checkbox" name="termini" id="termini" class="login"/>
-									</td>
-									<td></td>
-								</tr>
+
+
+
+
+
+
+
+
+
+
 								<tr>
 									<td colspan="2" height="30px">&nbsp;</td>
+									<td></td>
+
 								</tr>
 								<tr>
+									<td><img
+										src='${pageContext.request.contextPath}/themes/sbi_default/img/wapp/back.png'
+										width='100px' height='37px' /></td>
 									<td>
-									  <!--  
+										<!--  
 									  <input type="image" align="right" onclick="javascript:submitform();"
 										src='${pageContext.request.contextPath}/themes/sbi_default/img/wapp/login40.png'
 										title='registra'
-										alt='registra'>-->
-									  <input type="submit" value="registra" align="right"/>	
-									</td>
+										alt='registra'>--> <input type="image" value="registra"
+										align="left"
+										src='${pageContext.request.contextPath}/themes/sbi_default/img/wapp/register.png'
+										title="Register" alt="Register" /></td>
+
+
 									<td></td>
 
 								</tr>
 								<tr>
 									<td colspan="2" height="30px">&nbsp;</td>
+									<td></td>
+
 								</tr>
 
-						   </table>
-						</td>
+							</table></td>
 						<td width='100px'></td>
-						<td style="padding-top: 20px"><img
-							src="${pageContext.request.contextPath}/themes/sbi_default/img/wapp/background_login.png"
-							width="416px" height="287px" />
+						<td style="padding-top: 20px">
 						</td>
 					</tr>
 					
