@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -29,6 +30,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
 
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
@@ -46,6 +48,7 @@ public class LayerCRUD {
 	private static final String PROPS_FILE = "propsFile";
 	private static final String fileValidationError = "error.mesage.description.layer.validation.file";
 	public static final String LAYER_ID = "id";
+	public static final String LAYER_LABEL = "label";
 
 	
 	
@@ -179,55 +182,52 @@ public class LayerCRUD {
 		return "{}";
 	}
 	
-	@GET
+	@POST
 	@Path("/getLayerProperties")
+	@Consumes("application/x-www-form-urlencoded")
 	@Produces(MediaType.APPLICATION_JSON)
-	public String getLayerProperties(@Context HttpServletRequest req){
+	public String getLayerProperties(@Context HttpServletRequest req, MultivaluedMap<String, String> form){
 		logger.debug("IN");
 		
-		//TODO: temporary implementation to complete
 		String s="[]";
 
 		
-		String layerId = req.getParameter(LAYER_ID);
-		if ((layerId != null) && (!layerId.isEmpty())){
-			Integer id = -1;
-			try {
-				id = new Integer(layerId);
-			} catch (Exception e) {
-				logger.error("Error getting layer properties... Impossible to parse the id of the document "+layerId,e);
-				throw new SpagoBIRuntimeException("Error getting layer properties... Impossible to parse the id of the document "+layerId,e);
-			}
+		List<String> labels = form.get("labels");
+		List<GeoLayer> layers = new ArrayList<GeoLayer>();
+
+		for(int i=0; i<labels.size(); i++){
 			try {
 				ISbiGeoLayersDAO geoLayersDAO = DAOFactory.getSbiGeoLayerDao();
-				GeoLayer geoLayer = geoLayersDAO.loadLayerByID(id);
+				GeoLayer geoLayer = geoLayersDAO.loadLayerByLabel(labels.get(i));
 
 				if (geoLayer != null){
-					List<GeoLayer> layers = new ArrayList<GeoLayer>();
 					layers.add(geoLayer);
-					logger.debug("Serializing the layers");
-					ObjectMapper mapper = new ObjectMapper();
-					SimpleModule simpleModule = new SimpleModule("SimpleModule", new Version(1,0,0,null));
-					simpleModule.addSerializer(GeoLayer.class, new GeoLayerJSONSerializer());
-					mapper.registerModule(simpleModule);
-					try {
-						s = mapper.writeValueAsString(layers);
-					} catch (Exception e) {
-						logger.error("Error serializing the layers",e);
-						throw new SpagoBIRuntimeException("Error serializing the layers",e);
-					}
-					logger.debug("Layers serialized");
+
 				}
-				
-				
+
+
 			} catch (EMFUserError e) {
 				logger.error("Error getting layer properties",e);
 				throw new SpagoBIRuntimeException("Error getting layer properties",e);
 			}
 		}
+
+		logger.debug("Serializing the layers");
+		ObjectMapper mapper = new ObjectMapper();
+		SimpleModule simpleModule = new SimpleModule("SimpleModule", new Version(1,0,0,null));
+		simpleModule.addSerializer(GeoLayer.class, new GeoLayerJSONSerializer());
+		mapper.registerModule(simpleModule);
+		try {
+			s = mapper.writeValueAsString(layers);
+		} catch (Exception e) {
+			logger.error("Error serializing the layers",e);
+			throw new SpagoBIRuntimeException("Error serializing the layers",e);
+		}
+		logger.debug("Layers serialized");	
+
 		logger.debug("OUT");
 
-		return  "{root:"+s+"}";
+		return  "{\"root\":"+s+"}";
 
 	}
 	
