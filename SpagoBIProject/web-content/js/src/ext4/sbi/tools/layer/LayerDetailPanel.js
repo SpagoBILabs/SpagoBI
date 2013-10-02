@@ -279,7 +279,7 @@ Ext.define('Sbi.tools.layer.LayerDetailPanel', {
 		if(v.type == 'FILE'){
 			valid = valid && (v.propsFile!=null && v.propsFile!=undefined &&  v.propsFile!="");
 		}else{
-			valid = valid && (v.propsUrl!=null && v.propsUrl!=undefined &&  v.propsUrl!="");
+			//valid = valid && (v.propsUrl!=null && v.propsUrl!=undefined &&  v.propsUrl!="");
 		}
 		valid = valid && (v.propsName!=null && v.propsName!=undefined &&  v.propsName!="");
 		valid = valid && (v.propsLabel!=null && v.propsLabel!=undefined &&  v.propsLabel!="");
