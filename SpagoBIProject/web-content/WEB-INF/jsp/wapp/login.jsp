@@ -295,12 +295,31 @@ a:hover{
 									<td colspan=3 height="30px">&nbsp;</td>
 								</tr>
 								<tr>
-									<td><input type="image" align="right"
-										src='<%=urlBuilder.getResourceLinkByTheme(request, "/img/wapp/login40.png", currTheme)%>'
-										title='<%=msgBuilder.getMessage("login")%>'
-										alt='<%=msgBuilder.getMessage("login")%>'>
+									<td>
+									<table>
+										<tr> 
+											<td>
+												<a href="#"	onclick="signup();">
+												<img
+												src='<%=urlBuilder.getResourceLinkByTheme(request, "/img/wapp/signup.png", currTheme)%>'
+												width='100px' height='37px' />
+												</a>
+											<td>
+												<input type="image" align="right"
+												src='<%=urlBuilder.getResourceLinkByTheme(request, "/img/wapp/login40.png", currTheme)%>'
+												title='<%=msgBuilder.getMessage("login")%>'
+												alt='<%=msgBuilder.getMessage("login")%>'>
+											</td>
+											</td>
+										</tr>
+									
+									</table>
+									
+									
+
 									</td>
-									<td></td>
+
+									
 
 								</tr>
 								<tr>
@@ -358,9 +377,7 @@ a:hover{
 										<td align="center"><a href="#"
 											onclick="setUser('biadmin','biadmin'); login.submit()"><b>biadmin/biadmin</b>
 										</a></td>
-										<td align="center"><a href="#"
-											onclick="signup();"><b>signup</b>
-										</a></td>
+										
 									</tr>
 								</table>
 
