@@ -223,8 +223,18 @@ public class GeoReportEngineStartEditAction extends AbstractEngineStartServlet {
 	}
 	
 	private String getGeoId(String levelName) {		
-		Properties levelProps = GeoReportEngineConfig.getInstance().getLevelByName(levelName);
-		return levelProps.getProperty("layerId");
+		Properties levelProps = null;
+		levelProps = GeoReportEngineConfig.getInstance().getLevelByName(levelName);
+		if(levelProps == null) {
+			throw new RuntimeException("Impossible to load from engine-config.xml properties of hierachy level [" + levelName + "]");
+		}
+		
+		String layerID = levelProps.getProperty("layerId");
+		if(layerID == null) {
+			throw new RuntimeException("Compulsary propery [layerId] not found in between the defined properties of of hierachy level [" + levelName + "]");
+		}
+		
+		return layerID;
 	}
 	
 	
@@ -305,7 +315,14 @@ public class GeoReportEngineStartEditAction extends AbstractEngineStartServlet {
 		try {
 			targetLayerConf.put("text", levelProps.getProperty("layerLabel"));
 			targetLayerConf.put("name", levelProps.getProperty("layerName"));
-			targetLayerConf.put("data", levelProps.getProperty("layer_file"));
+			String layerFile = levelProps.getProperty("layer_file");
+			String layerUrl = levelProps.getProperty("layer_url");
+			if(layerFile != null) {
+				targetLayerConf.put("data", layerFile);
+			} else {
+				targetLayerConf.put("url", layerUrl);
+			}
+			
 		} catch (Throwable t) {
 			throw new RuntimeException(
 					"An unexpected error occured while building target layer conf block",
