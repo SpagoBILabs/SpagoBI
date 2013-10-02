@@ -59,6 +59,16 @@ this.services["create"]= Sbi.config.serviceRegistry.getRestServiceUrl({
 	var password         = document.getElementById("password").value;
 	var confermaPassword = document.getElementById("confermaPassword").value;
 	var email            = document.getElementById("email").value;
+	var sesso            = document.getElementById("sesso").value;
+	var dataNascita      = document.getElementById("dataNascita").value;
+	var indirizzo        = document.getElementById("indirizzo").value;
+	var azienda          = document.getElementById("azienda").value;
+	var biografia        = document.getElementById("biografia").value;
+	var lingua           = document.getElementById("lingua").value;
+	var captcha          = document.getElementById("captcha").value;
+	var check            = document.getElementById("termini");
+	var termini = 'false';
+    if( check.checked ) termini = 'true';
 	
 	var params = new Object();
 	params.nome     = nome;
@@ -68,6 +78,14 @@ this.services["create"]= Sbi.config.serviceRegistry.getRestServiceUrl({
 	params.confermaPassword 
 	                = confermaPassword;
 	params.email    = email;
+	params.sesso    = sesso;
+	params.dataNascita = dataNascita;
+	params.indirizzo   = indirizzo;
+	params.azienda     = azienda;
+	params.biografia   = biografia;
+	params.termini     = termini;
+	params.lingua      = lingua;
+	params.captcha     = captcha;
 	
      Ext.Ajax.request({
 	url: this.services["create"],
@@ -175,7 +193,7 @@ a:hover{
 		     		<table style="background: none repeat scroll 0 0 #fff; border-radius: 10px 10px 10px 10px;  box-shadow: 0 0 10px #888; color: #009DC3; display: block; font-size: 14px; line-height: 18px; padding: 20px;">
 		        	 -->
 
-				<table border=0 align="center" style="border-collapse:separate; background: none repeat scroll 0 0; border-radius: 5px 5px 5px 5px;  box-shadow: 0px 0px 10px #888;  -webkit-box-shadow:  0px 0px 10px #888;  -moz-box-shadow:  0px 0px 10px #888; color: #009DC3; display: block; font-size: 14px; line-height: 18px; padding: 20px;">
+				<table border="0" align="center" style="border-collapse:separate; background: none repeat scroll 0 0; border-radius: 5px 5px 5px 5px;  box-shadow: 0px 0px 10px #888;  -webkit-box-shadow:  0px 0px 10px #888;  -moz-box-shadow:  0px 0px 10px #888; color: #009DC3; display: block; font-size: 14px; line-height: 18px; padding: 20px;">
 					<tr>
 						<td></td>
 						<td><img
@@ -189,9 +207,9 @@ a:hover{
 						<td width="120px">&nbsp;</td>
 						<td width="350px">
 
-							<table border=0>
+							<table border="0">
 							    <tr class='header-row-portlet-section'>
-									<td class='login-label' width="90px" align="left">Nome:
+									<td class='login-label' width="90px" align="left">* &nbsp;Nome:
 									</td>
 									<td width="25px">&nbsp;</td>
 
@@ -204,7 +222,7 @@ a:hover{
 
 								</tr>
 							    <tr class='header-row-portlet-section'>
-									<td class='login-label' width="90px" align="left">Cognome:
+									<td class='login-label' width="90px" align="left">* &nbsp;Cognome:
 									</td>
 									<td width="25px">&nbsp;</td>
 
@@ -219,7 +237,7 @@ a:hover{
 							    
 							    
 								<tr class='header-row-portlet-section'>
-									<td class='login-label' width="90px" align="left">Username:
+									<td class='login-label' width="90px" align="left">* &nbsp;Username:
 									</td>
 									<td width="25px">&nbsp;</td>
 
@@ -232,7 +250,7 @@ a:hover{
 
 								</tr>
 								<tr class='header-row-portlet-section'>
-									<td class='login-label' width="90px" align="left">Password:
+									<td class='login-label' width="90px" align="left">* &nbsp;Password:
 									</td>
 									<td width="25px">&nbsp;</td>
 
@@ -245,7 +263,7 @@ a:hover{
 
 								</tr>
 								<tr class='header-row-portlet-section'>
-									<td class='login-label' width="90px" align="left">Conferma Password:
+									<td class='login-label' width="90px" align="left">* &nbsp;Conferma Password:
 									</td>
 									<td width="25px">&nbsp;</td>
 
@@ -258,20 +276,134 @@ a:hover{
 
 								</tr>
 								<tr class='header-row-portlet-section'>
-									<td class='login-label' width="90px" align="left">Email:
+									<td class='login-label' width="90px" align="left">* &nbsp;Email:
 									</td>
 									<td width="25px">&nbsp;</td>
 
 								</tr>
-
-								<tr>
+                                <tr>
 									<td><input id="email" name="email" type="text"
 										size="25" class="login"></td>
 									<td></td>
 
 								</tr>
+                                <tr class='header-row-portlet-section'>
+									<td class='login-label' width="90px" align="left">Sesso:
+									</td>
+									<td width="25px">&nbsp;</td>
+
+								</tr>
 								<tr>
-									<td colspan=3 height="30px">&nbsp;</td>
+									<td>
+									<select class="login" name="sesso" id="sesso">
+									 <option value=""></option>
+									 <option value="Uomo">Uomo</option>
+									 <option value="Donna">Donna</option>
+									</select>
+									</td>
+									<td></td>
+
+								</tr>
+								<tr class='header-row-portlet-section'>
+									<td class='login-label' width="90px" align="left">Data Nascita (dd/mm/yyyy):
+									</td>
+									<td width="25px">&nbsp;</td>
+
+								</tr>
+								<tr>
+									<td><input id="dataNascita" name="dataNascita" type="text" size="25"
+										class="login"/>
+									</td>
+									<td></td>
+
+								</tr>
+								<tr class='header-row-portlet-section'>
+									<td class='login-label' width="90px" align="left">Indirizzo:
+									</td>
+									<td width="25px">&nbsp;</td>
+
+								</tr>
+								<tr>
+									<td><input id="indirizzo" name="indirizzo" type="text" size="25"
+										class="login"/>
+									</td>
+									<td></td>
+
+								</tr>
+								<tr class='header-row-portlet-section'>
+									<td class='login-label' width="90px" align="left">Azienda:
+									</td>
+									<td width="25px">&nbsp;</td>
+
+								</tr>
+								<tr>
+									<td><input id="azienda" name="azienda" type="text" size="25"
+										class="login"/>
+									</td>
+									<td></td>
+
+								</tr>
+								<tr class='header-row-portlet-section'>
+									<td class='login-label' width="90px" align="left">Breve Biografia:
+									</td>
+									<td width="25px">&nbsp;</td>
+
+								</tr>
+								<tr>
+									<td>
+									<textarea class="login" rows="5" cols="35" name="biografia" id="biografia"></textarea>
+									</td>
+									<td></td>
+
+								</tr>
+								<tr class='header-row-portlet-section'>
+									<td class='login-label' width="90px" align="left">Lingua:
+									</td>
+									<td width="25px">&nbsp;</td>
+
+								</tr>
+								<tr>
+									<td>
+									  <select class="login" name="lingua" id="lingua">
+									    <option value=""></option>
+									    <option value="it_IT">Italiano</option>
+									    <option value="en_US">Inglese</option>
+									    <option value="fr_FR">Francese</option>
+									    <option value="es_ES">Spagnolo</option>
+									   </select>
+									</td>
+									<td></td>
+								</tr>
+								<tr class='header-row-portlet-section'>
+									<td class='login-label' width="90px" align="left">* &nbsp;Captcha:
+									</td>
+									<td width="25px">&nbsp;</td>
+
+								</tr>
+								<tr>
+								  <td>
+								    <input id="captcha" name="captcha" type="text" size="20" class="login"/>
+								  </td>
+								  <td></td>
+								</tr>
+								<tr>
+								  <td><img src='${pageContext.request.contextPath}/stickyImg' width='250px' height='75px'/></td>
+								  <td width="25px">&nbsp;</td>
+								</tr>
+								<tr class='header-row-portlet-section'>
+									<td class='login-label' width="90px" align="left">Termini del servizio:
+									</td>
+									<td width="25px">&nbsp;</td>
+
+								</tr>
+								<tr>
+									<td>
+									  <input type="checkbox" name="termini" id="termini" class="login"/>
+									</td>
+									<td></td>
+								</tr>
+								<tr>
+									<td colspan="2" height="30px">&nbsp;</td>
 								</tr>
 								<tr>
 									<td>
@@ -286,7 +418,7 @@ a:hover{
 
 								</tr>
 								<tr>
-									<td colspan=3 height="30px">&nbsp;</td>
+									<td colspan="2" height="30px">&nbsp;</td>
 								</tr>
 
 						   </table>

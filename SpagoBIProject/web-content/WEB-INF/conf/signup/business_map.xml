@@ -10,6 +10,8 @@
 	<MAP_EXTERNAL_REST_SERVICES>
 		<MAP_EXTERNAL_REST_SERVICE serviceUrl="/signup/prepare" businessProcess="publicFunctionality" />
 		<MAP_EXTERNAL_REST_SERVICE serviceUrl="/signup/create" businessProcess="publicFunctionality" />
+		<MAP_EXTERNAL_REST_SERVICE serviceUrl="/signup/prepareActive" businessProcess="publicFunctionality" />
+		<MAP_EXTERNAL_REST_SERVICE serviceUrl="/signup/active" businessProcess="publicFunctionality" />
 	</MAP_EXTERNAL_REST_SERVICES>
 	
 </BUSINESS_MAP>

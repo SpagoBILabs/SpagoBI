@@ -158,7 +158,10 @@
 
 <CONFIG label="SPAGOBI.CUBE.MODEL.NAME" name="Model Name" description="The name of the model used to extract valid dimension definitions" isActive="false" valueCheck="validation" valueType="STRING" category="GENERIC_CONFIGURATION"/>
 
-
+<!-- SIGNUP -->
+<CONFIG label="MAIL.SIGNUP.expired_time" name="Signup expired time" description="Signup expired time" isActive="false" valueCheck="1" valueType="STRING" category="GENERIC_CONFIGURATION"/>
+<CONFIG label="MAIL.SIGNUP.body" name="Signup mail body" description="Signup mail body" isActive="false" valueCheck="Per confermare l'attivazione dell'account utilizza il link riportato" valueType="STRING" category="GENERIC_CONFIGURATION"/>
+<CONFIG label="MAIL.SIGNUP.subject" name="Signup mail subject" description="Signup mail subject" isActive="false" valueCheck="Creazione account SpagoBI" valueType="STRING" category="GENERIC_CONFIGURATION"/>
 
 </CONFIGS>
 

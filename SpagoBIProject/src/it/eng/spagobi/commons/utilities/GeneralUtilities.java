@@ -77,6 +77,15 @@ public class GeneralUtilities extends SpagoBIUtilities{
 			return replaceInternationalizedMessages(message, startIndex);
 	}
 
+	public static String trim( String s ){
+	  if( s != null )
+		if( s.trim().length() == 0 ) 
+		  return null;
+		else
+		  return s.trim();
+	  return null;
+		
+	}
 	private static String replaceInternationalizedMessages(String message, int startIndex) {
 		logger.trace("IN");
 		IMessageBuilder msgBuilder = MessageBuilderFactory.getMessageBuilder();

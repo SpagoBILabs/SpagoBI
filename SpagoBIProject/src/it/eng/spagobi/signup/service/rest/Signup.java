@@ -1,8 +1,10 @@
 package it.eng.spagobi.signup.service.rest;
 
+import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.metadata.SbiExtRoles;
+import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.profiling.bean.SbiUser;
 import it.eng.spagobi.profiling.bean.SbiUserAttributes;
@@ -15,6 +17,7 @@ import it.eng.spagobi.tools.dataset.validation.FieldsValidatorFactory;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 import java.io.IOException;
+import java.net.URL;
 import java.security.Security;
 import java.util.HashSet;
 import java.util.Properties;
@@ -33,11 +36,14 @@ import javax.mail.internet.MimeMultipart;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+
+import nl.captcha.Captcha;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -46,29 +52,91 @@ import org.json.JSONObject;
 @Path("/signup")
 public class Signup {
 
+	
 	@Context
 	private HttpServletResponse servletResponse;
 
 	private static Logger logger = Logger.getLogger(PublisherService.class);
 
+	@GET
+	@Path("/prepareActive")
+	public void prepareActive(@Context HttpServletRequest req) {
+		
+	  try {
+		    req.getRequestDispatcher("/WEB-INF/jsp/signup/active.jsp").forward(req, servletResponse);
+		  } catch (ServletException e) {
+				logger.error("Error dispatching request");
+		  } catch (IOException e) {
+				logger.error("Error writing content");
+		  }
+    }
+    
+	@POST
+	@Path("/active")
+	public String active(@Context HttpServletRequest req) {
+		
+	  String id = req.getParameter("accountId");
+	  String expired_time = SingletonConfig.getInstance().getConfigValue("MAIL.SIGNUP.expired_time");
+	  
+	  try {
+		  ISbiUserDAO userDao = DAOFactory.getSbiUserDAO();
+		  SbiUser user = null;
+		  try{
+		    user = userDao.loadSbiUserById( Integer.parseInt( id ));
+		  }catch(EMFUserError emferr){}
+		  if( user == null ) 
+		    return new JSONObject("{message: 'utente sconosciuto'}").toString();
+		  
+		  if( !user.getFlgPwdBlocked() )
+		    return new JSONObject("{message: 'utente attivo'}").toString();
+			  
+		  long now = System.currentTimeMillis();
+		  if( now > user.getCommonInfo().getTimeIn().getTime() + Long.parseLong(expired_time) * 24 * 60 * 60 * 1000 )
+		    return new JSONObject("{message: 'scaduto termine per l'attivazione'}").toString();
+		  
+		  user.setFlgPwdBlocked(false);
+		  userDao.updateSbiUser(user, null );
+		  
+		  return new JSONObject("{message: 'utente attivo'}").toString();
+	  } catch (Throwable t) {
+			throw new SpagoBIServiceException(
+					"An unexpected error occured while executing the subscribe action", t);
+	  }
+	}
 	
-    @POST
+	@POST
 	@Path("/create")
 	@Produces(MediaType.APPLICATION_JSON)
 	@ToValidate(typeName=FieldsValidatorFactory.SIGNUP)
 	public String create(@Context HttpServletRequest req) {
 		
-    	
-        String nome     =  req.getParameter("nome");
-		String cognome  =  req.getParameter("cognome");
-		String username =  req.getParameter("username");
-		String password =  req.getParameter("password");
-		
-		String email    =  req.getParameter("email");
+		String nome     =  GeneralUtilities.trim(req.getParameter("nome"));
+		String cognome  =  GeneralUtilities.trim(req.getParameter("cognome"));
+		String username =  GeneralUtilities.trim(req.getParameter("username"));
+		String password =  GeneralUtilities.trim(req.getParameter("password"));
+		String email    =  GeneralUtilities.trim(req.getParameter("email"));
+		String sesso    =  GeneralUtilities.trim(req.getParameter("sesso"));
+		String dataNascita    
+		                =  GeneralUtilities.trim(req.getParameter("dataNascita"));
+		String indirizzo=  GeneralUtilities.trim(req.getParameter("indirizzo"));
+		String azienda  =  GeneralUtilities.trim(req.getParameter("azienda"));
+		String biografia=  GeneralUtilities.trim(req.getParameter("biografia"));
+		String lingua   =  GeneralUtilities.trim(req.getParameter("lingua"));
+		String captcha  =  GeneralUtilities.trim(req.getParameter("captcha"));
 		
 		try {
-		  ISbiUserDAO userDao = DAOFactory.getSbiUserDAO();
+		  Captcha c = (Captcha) req.getSession().getAttribute(Captcha.NAME);
+		  if( !c.isCorrect(captcha) ){
+		    JSONObject errorMsg = new JSONObject();
+			JSONArray errors = new JSONArray();
+			errors.put(new JSONObject("{message: 'Campo Captcha non verificato'}"));
+			errorMsg.put("errors", errors);
+			errorMsg.put("message", "validation-error");
+			return errorMsg.toString(); 	  
+				  
+		  }	
 		  
+		  ISbiUserDAO userDao = DAOFactory.getSbiUserDAO();
 		  if( userDao.isUserIdAlreadyInUse( username ) != null ){
 		    JSONObject errorMsg = new JSONObject();
 		    JSONArray errors = new JSONArray();
@@ -93,30 +161,47 @@ public class Signup {
 		  user.setSbiExtUserRoleses(roles);
 		  
 		  Set<SbiUserAttributes> attributes = new HashSet<SbiUserAttributes>();
-		  SbiUserAttributes aemail = new SbiUserAttributes();
-		  aemail.getCommonInfo().setOrganization("SPAGOBI");
-		  SbiUserAttributesId emailId = new SbiUserAttributesId();
-		  emailId.setAttributeId(5);
-		  aemail.setId(emailId);
-		  aemail.setAttributeValue(email);
-		  attributes.add(aemail);
 		  
+		  addAttribute(attributes, 5,  email);
+		  addAttribute(attributes, 6,  sesso);
+		  addAttribute(attributes, 7,  dataNascita);
+		  addAttribute(attributes, 8,  indirizzo);
+		  addAttribute(attributes, 9,  azienda);
+		  addAttribute(attributes, 10, biografia);
+		  addAttribute(attributes, 11, lingua);
+		 
 		  user.setSbiUserAttributeses(attributes);
-		  
 		  int id = userDao.fullSaveOrUpdateSbiUser(user);
 		  
-		  sendMail(email, "attivazione account", "ciao " +  id );
+		  String subject = SingletonConfig.getInstance().getConfigValue("MAIL.SIGNUP.subject");
+	      String body    = SingletonConfig.getInstance().getConfigValue("MAIL.SIGNUP.body");
+		  String host = req.getHeader("Host");
+		  int index = host.indexOf(":");
+			  
+		  URL url = new URL(req.getScheme(), host.substring(0, index), Integer.parseInt(host.substring(index+1)), req.getContextPath() + "/restful-services/signup/prepareActive?accountId=" + id );
+			  
+	      //sendMail(email, subject, body + " \r\n \r\n " + url.toExternalForm() );
 		  
-			
-			
+		  
 		} catch (Throwable t) {
 			throw new SpagoBIServiceException(
 					"An unexpected error occured while executing the subscribe action", t);
 		}
-
-		return new JSONObject().toString();
+        return new JSONObject().toString();
 	}
 	
+	private void addAttribute( Set<SbiUserAttributes> attributes, int attrId, String attrValue ){
+		
+	  if( attrValue != null ){	
+	    SbiUserAttributes a = new SbiUserAttributes();
+	    a.getCommonInfo().setOrganization("SPAGOBI");
+	    SbiUserAttributesId id = new SbiUserAttributesId();
+	    id.setAttributeId(attrId);
+	    a.setId(id);
+	    a.setAttributeValue(attrValue);
+	    attributes.add(a);
+	  }  
+	}
     @POST
 	@Path("/prepare")
 	public void prepare(@Context HttpServletRequest req) {
