@@ -136,7 +136,23 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 			
 			this.map.layerTree = this.layersControlPanel;
 			
+			
+			
+			
+			
+			this.newLayersControlPanel = new Ext.Panel(Ext.apply({
+				 id: 'layersPanel',
+	             title: 'New Layers Panel',
+	             collapsible: true,
+	             collapsed: false,
+		         autoHeight: true,
+	             //height: 150,
+	             items: []
+			 }));
+			
 			this.controlPanelItemsConfig.push(this.layersControlPanel);
+			this.controlPanelItemsConfig.push(this.newLayersControlPanel);
+
 		}
 	}
 	
@@ -551,16 +567,41 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 	
     // private methods
 	
-	//TODO: to complete
 	, addSelectedLayers: function(layers) {
-		for (var i = 0; i < layers.length; i++) {
-		    var layerLabel = layers[i];
-		    //Do something
+		var thisPanel = this;
+		
+		var layersLabels = new Array();
 
-		    //TODO: invoke service to retrive layers 
+		for (var i = 0; i < layers.length; i++) {
+		    var selectedLayerLabel = layers[i];
+		    layersLabels.push(selectedLayerLabel);
 		}
 		
+	    //invoke service for layers properties
+		Ext.Ajax.request({
+			url: Sbi.config.serviceRegistry.getRestServiceUrl({serviceName: 'layers/getLayerProperties',baseUrl:{contextPath: 'SpagoBI'}}),
+			params: {labels: layersLabels},
+			success : function(response, options) {
+				if(response !== undefined && response.responseText !== undefined && response.statusText=="OK") {
+					if(response.responseText!=null && response.responseText!=undefined){
+						if(response.responseText.indexOf("error.mesage.description")>=0){
+							Sbi.exception.ExceptionHandler.handleFailure(response);
+						}else{
+							var obj = JSON.parse(response.responseText);
+							thisPanel.createLayerPanel(obj);
+						}
+					}
+				} else {
+					Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
+				}
+			},
+			scope: this,
+			failure: Sbi.exception.ExceptionHandler.handleFailure,  
+			scope: this
+		});
+		
 		//TO REMOVE: only for test
+		/*
 		this.layers = new Array();
 		var exampleLayerConf = {};
 		exampleLayerConf.enabled = true;
@@ -576,6 +617,7 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 		
 		var l = Sbi.geo.utils.LayerFactory.createLayer( exampleLayerConf );
 		this.layers.push( l	);
+		*/
 		
 		//Another GoogleMap
 		/*
@@ -589,10 +631,14 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 		this.layers.push(lGoogle);
 		*/
 		
-		
+		/*
 		var myTree = this.layersControlPanel;
 		this.map.addLayers(this.layers);
 		this.layersControlPanel.model = this.extractModel();
+		
+		var mapLayers = this.map.layers;
+		
+		//this.layersControlPanel.map.setBaseLayer(l);
 		
 		
 		var node = new Ext.tree.TreeNode({text: l.name,
@@ -609,6 +655,7 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 		this.map.layerTree = this.layersControlPanel;
 
 		myTree.render();
+		*/
 		
 		/*
 		this.layersControlPanel.initComponent();
@@ -654,6 +701,105 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 		
 
 
+	}
+	
+	, createLayerPanel: function(layers){
+		var thisPanel = this;
+		if ((layers != undefined) && (layers != null) ){
+			if((layers.root != undefined) && (layers.root != null)){
+				this.layersToAdd = new Array();
+				
+				//Radio button items
+				var itemsInGroup = [];
+
+
+				var layersDefinitions = layers.root;
+				
+				for (var i = 0; i < layersDefinitions.length; i++) {
+				    var layerDef = layersDefinitions[i];
+				    
+				    var newLayerConf = {};
+				    newLayerConf.enabled = true;
+				    newLayerConf.type = layerDef.type;
+				    if ((layerDef.propsName != undefined) && (layerDef.propsName != null)){
+					    newLayerConf.name = layerDef.propsName;
+				    }
+				    if ((layerDef.propsUrl != undefined) && (layerDef.propsUrl != null)){
+				    	if(layerDef.propsUrl){
+					    	newLayerConf.url = layerDef.propsUrl;
+				    	}
+				    }
+				    if((layerDef.propsParams != undefined) && (layerDef.propsParams != null)){
+				    	if(layerDef.propsParams){
+					    	var parsedParams = JSON.parse(layerDef.propsParams);
+					    	newLayerConf.params = parsedParams;
+				    	}
+				    }
+				    if((layerDef.propsOptions != undefined) && (layerDef.propsOptions != null)){
+				    	if (layerDef.propsOptions){
+					    	var parsedOptions = JSON.parse(layerDef.propsOptions);
+					    	newLayerConf.options = parsedOptions;
+				    	}
+
+				    }
+
+				    //create new layer with Open Layer
+					var layerObject = Sbi.geo.utils.LayerFactory.createLayer( newLayerConf );
+					if ((layerObject != undefined) && (layerObject != null)){
+						this.layersToAdd.push(layerObject);
+						
+						//Create UI element
+						itemsInGroup.push( {
+						      boxLabel: layerDef.propsLabel, 
+							  boxMinHeight: 100, 
+						      name: 'baseLayer-radio', 
+						      inputValue: layerDef.propsName,
+						      handler: function(ctl, val) {
+						    	  if (val == true){
+									    //alert("radio button select "+ctl.boxLabel+ " Value: "+ctl.inputValue);
+									    var layers = thisPanel.map.layers;
+									    for (var i = 0; i < layers.length; i++) {
+									    	if(layers[i].name == ctl.inputValue){
+									    		thisPanel.map.setBaseLayer(layers[i]);
+									    	}
+									    }
+						    	  }
+								}
+						    });
+					}
+					
+					//check for existing layers
+					for (var i = 0; i < this.layersToAdd.length; i++) {
+						var layersFound = this.map.getLayersBy("name",this.layersToAdd[i].name);
+						if (layersFound.length > 0){
+							//layers already added
+							this.layersToAdd.splice(i, 1);
+						}
+						
+					}
+					
+					//Add layers to map object		
+					this.map.addLayers(this.layersToAdd);
+					
+					
+				}
+				
+				var myGroup = { 
+						  xtype: 'radiogroup', 
+						  fieldLabel: 'Base Layers', 
+						  autoHeight: true,
+						  columns: 1,
+						  //height:150,
+						  boxMinHeight: 100, 
+						  items: itemsInGroup
+						};
+				
+				this.newLayersControlPanel.removeAll(true);
+				this.newLayersControlPanel.add(myGroup);
+				this.newLayersControlPanel.doLayout();
+				
+			}
+		}
 	}
 	
 	/**

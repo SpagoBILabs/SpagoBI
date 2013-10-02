@@ -85,7 +85,7 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 		try {
 			tmpSession = getSession();
 			tx = tmpSession.beginTransaction();
-			Criterion labelCriterrion = Expression.eq("name", label);
+			Criterion labelCriterrion = Expression.eq("label", label);
 			Criteria criteria = tmpSession.createCriteria(SbiGeoLayers.class);
 			criteria.add(labelCriterrion);	
 			SbiGeoLayers hibLayer = (SbiGeoLayers) criteria.uniqueResult();
