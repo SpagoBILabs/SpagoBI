@@ -41,9 +41,7 @@ public class FeaturesProviderDAOWFSImpl implements IFeaturesProviderDAO {
 		String wfsUrl = null;
 		String geoIdPName = null;
 		String geoIdPValue = null;
-		URL url = null;
-		URI uri = null;
-		URLConnection connection = null;
+	
 		
 		logger.debug("IN");
 		
@@ -62,29 +60,8 @@ public class FeaturesProviderDAOWFSImpl implements IFeaturesProviderDAO {
 					  "&outputformat=json" +
 					  "&version=1.0.0";
 			
-			String result = null;
-		    
 			
-			// wfs call
-			// we use apache URI to properly encode the url string according to RFC2396
-			uri = new URI(wfsUrl, false);
-	    	url = new URL(uri.toString());
-	    	connection = url.openConnection();
-	        
-	    	// Get the response
-	        BufferedReader rd = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-	        StringBuffer sb = new StringBuffer();
-	        String line;
-	        while ((line = rd.readLine()) != null) {
-	        	sb.append(line);        
-	        }
-	        rd.close();
-	        result = sb.toString();
-	        logger.debug("Result for query [" + geoIdPName + "=" + geoIdPValue+ "]is equal to [" + result + "]");
-	      
-	    	Reader reader = new StringReader( result );
-	    	FeatureJSON featureJSON = new FeatureJSON();
-		    featureCollection = featureJSON.readFeatureCollection(reader);
+		    featureCollection = getFeatures(wfsUrl);
 	    } catch(Throwable t){
 	    	throw new SpagoBIRuntimeException("An unexpected error occured while executing service call [" + wfsUrl + "]", t);
 	    }finally {
@@ -98,9 +75,86 @@ public class FeaturesProviderDAOWFSImpl implements IFeaturesProviderDAO {
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.engines.georeport.features.provider.IFeaturesProviderDAO#getAllFeatures(java.lang.Object)
 	 */
-	public FeatureCollection getAllFeatures(Object featureProviderEndPoint, String layerName) {
-		// TODO Auto-generated method stub
-		return null;
+	public FeatureCollection getAllFeatures(Object fetureProviderEndPoint, String layerName) {
+		FeatureCollection featureCollection = null;
+		
+		String wfsUrl = null;
+		
+		logger.debug("IN");
+		
+		try {
+			wfsUrl = (String)fetureProviderEndPoint;
+			
+			wfsUrl += "?request=GetFeature" +
+					  "&typename=" + layerName + 
+					  "&outputformat=json" +
+					  "&version=1.0.0";
+			
+			
+		    featureCollection = getFeatures(wfsUrl);
+	    } catch(Throwable t){
+	    	throw new SpagoBIRuntimeException("An unexpected error occured while executing service call [" + wfsUrl + "]", t);
+	    }finally {
+	    	logger.debug("OUT");
+	    }		
+
+	    return featureCollection;
+	}
+	
+	public FeatureCollection getFeatures(String wfsUrl) {
+		FeatureCollection featureCollection = null;
+		URL url = null;
+		
+		URLConnection connection = null;
+		
+		logger.debug("IN");
+		
+		try {
+			String result = null;
+		    			
+			// wfs call
+			
+			url =  buildURL(wfsUrl);
+	    	connection = url.openConnection();
+	        
+	    	// Get the response
+	        BufferedReader rd = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+	        StringBuffer sb = new StringBuffer();
+	        String line;
+	        while ((line = rd.readLine()) != null) {
+	        	sb.append(line);        
+	        }
+	        rd.close();
+	        result = sb.toString();
+	       
+	      
+	    	Reader reader = new StringReader( result );
+	    	FeatureJSON featureJSON = new FeatureJSON();
+		    featureCollection = featureJSON.readFeatureCollection(reader);
+	    } catch(Throwable t){
+	    	throw new SpagoBIRuntimeException("An unexpected error occured while executing service call [" + wfsUrl + "]", t);
+	    }finally {
+	    	logger.debug("OUT");
+	    }		
+
+	    return featureCollection;
+	}
+	
+	private URL buildURL(String wfsUrl) {
+		URL url = null;
+		URI uri = null;
+		
+		logger.debug("IN");
+		
+		try {
+			// we use apache URI to properly encode the url string according to RFC2396
+			uri = new URI(wfsUrl, false);
+	    	url = new URL(uri.toString());
+		} catch(Throwable t) {
+			throw new SpagoBIRuntimeException("An unexpected error occured while buildin url for address [" + wfsUrl + "]", t);
+		}
+    	
+    	return url;
 	}
 
 }
