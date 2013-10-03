@@ -36,6 +36,7 @@ public class LDAPConnector {
     final public static String USER_SEARCH_PATH = "USER_SEARCH_PATH"; // base search path
     final public static String USER_OBJECT_CLASS = "USER_OBJECT_CLASS";
     final public static String USER_ID_ATTRIBUTE_NAME = "USER_ID_ATTRIBUTE_NAME";
+    final public static String USER_NAME_ATTRIBUTE_NAME = "USER_NAME_ATTRIBUTE_NAME";
     final public static String USER_MEMBEROF_ATTRIBUTE_NAME = "USER_MEMBEROF_ATTRIBUTE_NAME";
     final public static String USER_ATTRIBUTE = "USER_ATTRIBUTE";// attributes list
     

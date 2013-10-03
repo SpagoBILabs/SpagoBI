@@ -8,10 +8,10 @@ package it.eng.spagobi.security;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spagobi.commons.bo.Role;
+import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.services.security.bo.SpagoBIUserProfile;
 import it.eng.spagobi.services.security.service.ISecurityServiceSupplier;
 
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -101,6 +101,15 @@ public class LdapUserProfileFactoryImpl implements ISecurityServiceSupplier {
 		
 		HashMap userAttributes = createMapAttributes(attributes);
 		userProfile.setAttributes(userAttributes);
+		
+		String userNameAttributeKey = LdapConnectorFactory.getAttribute(LDAPConnector.USER_NAME_ATTRIBUTE_NAME);
+		if (!StringUtilities.isEmpty(userNameAttributeKey)) {
+			String userName = (String) userAttributes.get(userNameAttributeKey);
+			logger.debug("User name is [" + userName + "]");
+			if (!StringUtilities.isEmpty(userName)) {
+				userProfile.setUserName(userName);
+			}
+		}
 		
 		logger.debug("OUT");
 	

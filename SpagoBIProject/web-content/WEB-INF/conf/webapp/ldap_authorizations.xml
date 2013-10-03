@@ -13,6 +13,8 @@
 		<USER_SEARCH_PATH>ou=users,ou=system</USER_SEARCH_PATH> <!-- SpagoBI will look for users under this node -->
 		<USER_OBJECT_CLASS>person</USER_OBJECT_CLASS> <!-- class for users' objects -->
 		<USER_ID_ATTRIBUTE_NAME>sn</USER_ID_ATTRIBUTE_NAME> <!-- name of the attribute containing the user identifier -->
+		<USER_NAME_ATTRIBUTE_NAME>fullName</USER_NAME_ATTRIBUTE_NAME> <!-- name of the attribute(*) containing the user name -->
+		<!-- (*) SPAGOBI attribute, not LDAP attribute!!! It must match the "name" attribute of one USER_ATTRIBUTE tag below -->
 		<USER_MEMBEROF_ATTRIBUTE_NAME>memberOf</USER_MEMBEROF_ATTRIBUTE_NAME> <!-- this attribute has to contain the list of groups the user belongs to -->
 		
 		<!-- list of the users' attributes to be loaded when querying the LDAP -->

@@ -67,4 +67,10 @@ public class LdapConnectorFactory {
 	private static String getAttribute(SourceBean config, String attributeName) {
 		return ((SourceBean)config.getAttribute(attributeName)).getCharacters();
 	}
+
+	public static String getAttribute(String attributeName) {
+		SourceBean configSingleton = (SourceBean) ConfigSingleton.getInstance();
+		SourceBean config = (SourceBean) configSingleton.getAttribute("LDAP_AUTHORIZATIONS.CONFIG");
+		return getAttribute(config, attributeName);
+	}
 }
