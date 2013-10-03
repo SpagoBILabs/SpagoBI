@@ -142,7 +142,10 @@ background: -o-linear-gradient(top,  #dedede 0%,#efefef 100%); /* Opera 11.10+ *
 background: -ms-linear-gradient(top,  #dedede 0%,#efefef 100%); /* IE10+ */
 background: linear-gradient(to bottom,  #dedede 0%,#efefef 100%); /* W3C */
 filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dedede', endColorstr='#efefef',GradientType=0 ); /* IE6-9 */
-
+height: 100%;
+margin: 0;
+background-repeat: no-repeat;
+background-attachment: fixed;
 	}
 	td.login-label{
  	font-family: Tahoma,Verdana,Geneva,Helvetica,sans-serif;
