@@ -4,7 +4,7 @@
 <script type="text/javascript" src='./js/lib/mapfish/client/mfbase/openlayers/OpenLayers.js'/></script>
 -->
 
-<script type="text/javascript" src='./js/lib/mapfish/client/mfbase/openlayers/OpenLayers.js'/></script>
+<script type="text/javascript" src='./js/lib/mapfish/client/mfbase/openlayers/lib/OpenLayers.js'/></script>
 
 <script type="text/javascript" src='./js/lib/mapfish/client/mfbase/geoext_0.7/script/GeoExt.js'/></script>
 
