@@ -108,7 +108,7 @@ Sbi.exception.ExceptionHandler = function(){
            		, icon: Ext.MessageBox.INFO
            		, modal: false
        		},config||{}));
-        },
+        }
 
 	};
 }();
