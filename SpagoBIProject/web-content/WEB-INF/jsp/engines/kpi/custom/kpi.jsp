@@ -77,7 +77,8 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 	String customChartName =(String)sbModuleResponse.getAttribute("custom_chart_name");
 
 	List kpiRBlocks =(List)sbModuleResponse.getAttribute("kpiRBlocks");
-	KpiLineVisibilityOptions options = new KpiLineVisibilityOptions();
+
+	String tickInterval =(String)sbModuleResponse.getAttribute("tickInterval");
 	
 	//START creating resources list
 	if(!kpiRBlocks.isEmpty()){
@@ -203,7 +204,8 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 						serverExtTimestampFormat: '<%=serverExtTimestampFormat%>',
 						serverDateFormat: '<%=serverDateFormat%>',
 						chartBaseUrl: '/<%= engineContext %>/js/lib/ext-3.1.1/resources/charts.swf',
-						titleDate: dt+' '
+						titleDate: dt+' ',
+						tickInterval: <%=tickInterval%>
 						};
 		
 		var config ={grid: grid, accordion: accordion};
