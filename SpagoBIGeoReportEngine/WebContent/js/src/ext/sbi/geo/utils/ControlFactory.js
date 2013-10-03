@@ -41,6 +41,12 @@ Sbi.geo.utils.ControlFactory = function(){
 				control =  new OpenLayers.Control.Navigation();
 			} else if(controlConf.type === 'PanZoomBar') {
 				control =  new OpenLayers.Control.PanZoomBar();
+			}else if(controlConf.type === 'SbiActionsMap') {
+				control =  new OpenLayers.Control.SbiActionsMap();
+			}else if(controlConf.type === 'SbiLegendMap') {
+				control =  new OpenLayers.Control.SbiLegendMap();
+			}else if(controlConf.type === 'SbiLayersMap') {
+				control =  new OpenLayers.Control.SbiLayersMap();
 			} else {
 				Sbi.exception.ExceptionHandler.showErrorMessage(
 					'Control type [' + controlConf.type + '] not supported'
