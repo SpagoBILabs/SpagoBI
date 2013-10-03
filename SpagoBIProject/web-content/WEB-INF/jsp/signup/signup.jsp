@@ -183,9 +183,9 @@ a:hover{
   </head>
 
   <body>
-
+ <div id="content" style="height:100%">
     <form name="myForm" method="post" action="javascript:create()">
-        <div id="content" style="height:100%">
+       
 		        	<div style="padding: 80px " >
 		        	<!--
 		        	DO NOT DELETE THIS COMMENT
@@ -215,7 +215,7 @@ a:hover{
 										&nbsp;Nome:</td>
 									<td width="25px">&nbsp;</td>
 
-									<td class='login-label'>Indirizzo:</td>
+									<td class='login-label'>*  Cognome:</td>
 
 								</tr>
 								<tr>
@@ -223,52 +223,51 @@ a:hover{
 										class="login"></td>
 									<td></td>
 
-									<td><input id="indirizzo" name="indirizzo" type="text"
-										size="25" class="login">
-									</td>
-
-								</tr>
-								<tr class='header-row-portlet-section'>
-									<td class='login-label' width="90px" align="left">*
-										&nbsp;Cognome:</td>
-									<td width="25px">&nbsp;</td>
-
-									<td class='login-label'>Azienda:</td>
-
-								</tr>
-								<tr>
 									<td><input id="cognome" name="cognome" type="text"
 										size="25" class="login"></td>
-									<td></td>
-
-									<td><input id="azienda" name="azienda" type="text"
-										size="25" class="login">
-									</td>
 
 								</tr>
-
-
 								<tr class='header-row-portlet-section'>
 									<td class='login-label' width="90px" align="left">*
-										&nbsp;Username:</td>
-									<td width="25px">&nbsp;</td>
-
-									<td class='login-label'>Breve Biografia:</td>
+										 Username:</td>
+									<td width="25px"></td>
+									<td class='login-label'>*  Email:</td>
 
 								</tr>
 								<tr>
-									<td valign="top"><input id="username" name="username" type="text"
-										size="25" class="login"></td>
+									<td><input id="username" name="username" type="text"
+										size="25" class="login">
+									</td>
 									<td></td>
 
-									<td><textarea class="login" rows="5" cols="35"
-											name="biografia" id="biografia"></textarea>
+									<td><input id="email" name="email" type="text" size="25"
+										class="login">
+									</td>
+
+								</tr>
+
+
+								<tr class='header-row-portlet-section'>
+									<td class='login-label' width="90px" align="left">*
+										 Password:</td>
+									<td width="25px">&nbsp;</td>
+
+									<td class='login-label'>*  Conferma Password:</td>
+
+								</tr>
+								<tr>
+									<td valign="top"><input id="password" name="password"
+										type="password" size="25" class="login">
+									</td>
+									<td></td>
+
+									<td><input id="confermaPassword" name="confermaPassword"
+										type="password" size="25" class="login">
 									</td>
 
 								</tr>
 								<tr class='header-row-portlet-section'>
-									<td class='login-label' width="90px" align="left">*
-										&nbsp;Password:</td>
+									<td class='login-label' width="90px" align="left">Indirizzo:</td>
 									<td width="25px">&nbsp;</td>
 
 									<td class='login-label'>Lingua:</td>
@@ -276,12 +275,13 @@ a:hover{
 								</tr>
 
 								<tr>
-									<td><input id="password" name="password" type="password"
-										size="25" class="login">
+									<td><input id="indirizzo" name="indirizzo" type="text"
+										size="25" class="login" />
 									</td>
 									<td></td>
 
-									<td><select class="login" name="lingua" id="lingua">
+									<td><select class="login" name="lingua" id="lingua"
+										style="width: 205px">
 											<option value=""></option>
 											<option value="it_IT">Italiano</option>
 											<option value="en_US">Inglese</option>
@@ -292,63 +292,79 @@ a:hover{
 
 								</tr>
 								<tr class='header-row-portlet-section'>
-									<td class='login-label' width="90px" align="left">*
-										&nbsp;Conferma Password:</td>
-									<td width="25px">&nbsp;</td>
-
-									<td class='login-label'>*  Captcha:</td>
-
-								</tr>
-
-								<tr>
-									<td><input id="confermaPassword" name="confermaPassword"
-										type="password" size="25" class="login">
-									</td>
-									<td></td>
-
-									<td><input id="captcha" name="captcha" type="text"
-										size="20" class="login">
-									</td>
-
-								</tr>
-								<tr class='header-row-portlet-section'>
-									<td class='login-label' width="90px" align="left">*
-										&nbsp;Email:</td>
-									<td width="25px">&nbsp;</td>
-
-									<td><img
-										src="${pageContext.request.contextPath}/stickyImg"
-										width="250px" height="75px">
-									</td>
-
-								</tr>
-								<tr>
-									<td valign="top"><input id="email" name="email" type="text" size="25"
-										class="login">
-									</td>
-									<td></td>
-
-									<td class='login-label'>Termini del servizio:</td>
-
-								</tr>
-								<tr class='header-row-portlet-section'>
 									<td class='login-label' width="90px" align="left">Sesso:</td>
 									<td width="25px">&nbsp;</td>
 
-									<td><input type="checkbox" name="termini" id="termini"
-										class="login">
-									</td>
+									<td class='login-label'>Data Nascita (dd/mm/yyyy):</td>
 
 								</tr>
+
 								<tr>
-									<td><select class="login" name="sesso" id="sesso">
+									<td><select class="login" name="sesso" id="sesso"
+										style="width: 205px">
 											<option value=""></option>
 											<option value="Uomo">Uomo</option>
 											<option value="Donna">Donna</option>
-									</select></td>
+									</select>
+									</td>
 									<td></td>
 
+									<td><input id="dataNascita" name="dataNascita" type="text"
+										size="25" class="login" />
+									</td>
+
+								</tr>
+								<tr class='header-row-portlet-section'>
+									<td class='login-label' width="90px" align="left" >Azienda:</td>
 									<td></td>
+									<td class='login-label'></td>
+								</tr>
+								<tr>
+									<td><input id="azienda" name="azienda" type="text" size="25"
+										class="login"/></td>
+									<td></td>
+									<td></td>
+								</tr>
+								<tr class='header-row-portlet-section'>
+									<td class='login-label' width="90px" align="left">Breve
+										biografia:</td>
+									<td width="25px">&nbsp;</td>
+
+									<td></td>
+
+								</tr>
+								<tr>
+									<td colspan="3"><textarea style="width: 415px"
+											class="login" rows="5" cols="35" name="biografia"
+											id="biografia"></textarea>
+									</td>
+
+								</tr>
+								<tr class='header-row-portlet-section'>
+									<td class='login-label' width="90px" align="left">Captcha:</td>
+									<td width="25px">&nbsp;</td>
+
+									<td></td>
+
+								</tr>
+								<tr>
+									<td colspan="3"><input id="captcha" name="captcha"
+										type="text" size="25" class="login" />
+									</td>
+
+
+								</tr>
+								<tr height="5">
+									<td></td>
+									<td></td>
+									<td></td>
+								</tr>
+								<tr>
+									<td colspan="3"><img
+										src='${pageContext.request.contextPath}/stickyImg'
+										width='250px' height='75px' />
+									</td>
+
 
 								</tr>
 
@@ -365,9 +381,15 @@ a:hover{
 
 
 
-
 								<tr>
-									<td colspan="2" height="30px">&nbsp;</td>
+									<td class='login-label'>Termini di servizio:</td>
+									<td></td>
+									<td></td>
+								</tr>
+								<tr>
+									<td colspan="2" height="30px"><input type="checkbox"
+										name="termini" id="termini" class="login" />
+									</td>
 									<td></td>
 
 								</tr>
@@ -380,13 +402,13 @@ a:hover{
 									  <input type="image" align="right" onclick="javascript:submitform();"
 										src='${pageContext.request.contextPath}/themes/sbi_default/img/wapp/login40.png'
 										title='registra'
-										alt='registra'>--> <input type="image" value="registra"
-										align="left"
-										src='${pageContext.request.contextPath}/themes/sbi_default/img/wapp/register.png'
-										title="Register" alt="Register" /></td>
+										alt='registra'>--></td>
 
 
-									<td></td>
+									<td><input type="image" value="registra" align="left"
+										src="${pageContext.request.contextPath}/themes/sbi_default/img/wapp/register.png"
+										title="Register" alt="Register">
+									</td>
 
 								</tr>
 								<tr>
@@ -404,8 +426,9 @@ a:hover{
 
 				</table>
 			</div>
+			</form>
 	        </div>
-        </form>
+        
 
    
   </body>
