@@ -29,6 +29,7 @@ Sbi.geo.ControlPanel2 = function(config) {
 		margins     : '3 0 3 3',
 		cmargins    : '3 3 3 3',
 		autoScroll	 : true
+		, id:'this'
 	};
 	
 	if (Sbi.settings && Sbi.settings.geo && Sbi.settings.geo.ControlPanel2) {
@@ -226,8 +227,8 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 //		scrollVerticalBarPanel.dom.style.maxHeight = maxHeight;
 //		scrollVerticalBarPanel.style.maxHeight = '262px';
 		
-		var elScroll = Ext.get("scroll");
-		this.panelScrollElement = new IScroll(elScroll.dom, { scrollbars: 'custom', mouseWheel: true, interactiveScrollbars: true});
+//		var elScroll = Ext.get("scroll");
+//		this.panelScrollElement = new IScroll(elScroll.dom, { scrollbars: 'custom', mouseWheel: true, interactiveScrollbars: true});
 		
 //		var scrollVerticalBar = Ext.query('.iScrollVerticalScrollbar')[0];		
 //		if(scrollVerticalBarPanel.getHeight() < maxHeight){			
@@ -337,6 +338,13 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 			//alert('Impossible to find element [maptype]');
 		}
 		
+//		var elIndicators = Ext.get("ul-indicators");		
+//		if(elIndicators && elIndicators !== null) {
+//			elIndicators.on('click', function() {		
+//				alert(elIndicators.getId());
+//					this.openIndicatorDetail(elIndicators);					
+//			}, thisPanel);
+//		}
 		
 		
 	}
@@ -478,10 +486,10 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 	 		'<p id="author" class="published">Pubblicata da <a id="authorButton" class="authorButton" href="#">'+Sbi.config.docAuthor+'</a> <span class="separator">/</span> <a id="feedback_mail" href="#" class="feedback">invia feedback</a></p>' +
 	     '</div>' +
 	     '<ul id="mapType" class="map-type">' +
-	     	'<li p=0 id="li-map-zone" class="map-zone active"><a href="#">Mappa a <span>zone</span><span class="arrow"></span></a></li>' +
-	        '<li p=1 id="li-map-comparation" class="map-comparation"><a  href="#">Mappa di <span>comparazione</span></a></li>' +
-	        '<li p=2 id="li-map-point" class="map-point"><a href="#">Mappa <span>puntiforme</span></a></li>' +
-	        '<li p=3 id="li-map-heat" class="map-heat last"><a href="#">Mappa di <span>calore</span></a></li>' +
+	     	'<li id="li-map-zone" class="map-zone active"><a href="#">Mappa a <span>zone</span><span class="arrow"></span></a></li>' +
+	        '<li id="li-map-comparation" class="map-comparation"><a  href="#">Mappa di <span>comparazione</span></a></li>' +
+	        '<li id="li-map-point" class="map-point"><a href="#">Mappa <span>puntiforme</span></a></li>' +
+	        '<li id="li-map-heat" class="map-heat last"><a href="#">Mappa di <span>calore</span></a></li>' +
 	     '</ul>' ;
 		
 		return toReturn;
@@ -493,24 +501,25 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 			var toReturn = '' +
 			'<div class="indicators">' +
 		    	'<h2>Indicatori</h2>' +
-		        '<ul class="group">';		
+		        '<ul id="ul-indicators" class="group">';		
 				for(var i=0; i< this.geostatistic.indicators.length; i++){
 					var indEl = this.geostatistic.indicators[i];
 					var clsName = (i==0)?'first':'disabled';
 					toReturn += ''+
-					'<li class="'+clsName+'">' +
-					'<span class="button"><a href="#" class="tick"></a>'+indEl[0]+'<span class="arrow"></span></span>' +
+					'<li class="'+clsName+'"><span class="button">'+
+						'<a href="#" class="tick" onclick="javascript:Ext.getCmp(\'this\').openIndicatorDetail(\''+indEl[0]+'\');"></a>'+ indEl[1]+
+						'<span class="arrow"> <a href="#" onclick="javascript:Ext.getCmp(\'this\').openIndicatorDetail(\''+indEl[0]+'\');"></a></span></span>';
 		                '<div class="slider">' +
 		                	'<p>'+indEl[1]+'</p>' +
 		                	'<p class="published">Pubblicata da <a href="#">ASTAT</a> <span class="separator">/ aggiornati il 05/12/12</span></p>' +
-//		                	'<div class="select">' +
-//		                    	'<label for="select-1">Anno</label>' +
-//		                        '<select id="select-1" name="select-1">' +
-//		                        	'<option value="1">Tutti</option>' +
-//		                            '<option value="2">Hotel</option>' +
-//		                            '<option value="3">Agritur</option>' +
-//		                        '</select>' +
-//		                    '</div>' +
+		                	'<div class="select">' +
+		                    	'<label for="select-1">Anno</label>' +
+		                        '<select id="select-1" name="select-1">' +
+		                        	'<option value="1">Tutti</option>' +
+		                            '<option value="2">Hotel</option>' +
+		                            '<option value="3">Agritur</option>' +
+		                        '</select>' +
+		                    '</div>' +
 		                '</div>	' +
 		            '</li>' ;	
 				}
@@ -564,6 +573,10 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 		for(var z=0;z<elems.length;z++){				
 			list.item(0).appendChild(elems[z]);
 		}
+	}
+	
+	, openIndicatorDetail: function(el){
+		alert("openIndicatorDetail: " + el);
 	}
 	// =================================================================================================================
 	// EVENTS

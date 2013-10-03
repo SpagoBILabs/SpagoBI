@@ -172,7 +172,7 @@ Sbi.settings.georeport = {
 			 */
 			{
 				type: 'OverviewMap', 
-				enabled: true
+				enabled: false
 			}, 
 			
 			/**
@@ -190,7 +190,34 @@ Sbi.settings.georeport = {
 			{
 				type: 'PanZoomBar', 
 				enabled: false
-			}	
+			},
+			
+			/**
+			 * The SbiActionsMap is a visible control. By default it is displayed in the right corner of the map as 
+			 * a div with multiple options like print, favourites,....
+			 */
+			{
+				type: 'SbiActionsMap', 
+				enabled: true
+			},
+			
+			/**
+			 * The SbiLegendMap is a visible control. By default it is displayed in the right corner of the map as 
+			 * a button to view the legend
+			 */
+			{
+				type: 'SbiLegendMap', 
+				enabled: true
+			},
+			
+			/**
+			 * The SbiLayersMap is a visible control. By default it is displayed in the right corner of the map as 
+			 * a button to view the layers
+			 */
+			{
+				type: 'SbiLayersMap', 
+				enabled: true
+			}
 		]     	
 		
 	}

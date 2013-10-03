@@ -16,6 +16,7 @@
      */
     var singleFile = (typeof OpenLayers == "object" && OpenLayers.singleFile);
     
+    
     /**
      * Namespace: OpenLayers
      * The OpenLayers object provides a namespace for all things OpenLayers
@@ -27,6 +28,7 @@
          * {String} Relative path of this script.
          */
         _scriptName: (!singleFile) ? "lib/OpenLayers.js" : "OpenLayers.js",
+        		
 
         /**
          * Function: _getScriptLocation
@@ -38,6 +40,7 @@
         _getScriptLocation: function () {
             var scriptLocation = "";
             var scriptName = OpenLayers._scriptName;
+//            alert('scriptName: ' + scriptName);
          
             var scripts = document.getElementsByTagName('script');
             for (var i=0, len=scripts.length; i<len; i++) {
@@ -56,6 +59,7 @@
                     }
                 }
             }
+//            alert('scriptLocation: ' + scriptLocation);
             return scriptLocation;
          }
     };
@@ -69,6 +73,7 @@
      * When we *are* part of a SFL build we do not dynamically include the 
      * OpenLayers library code as it will be appended at the end of this file.
       */
+    
     if(!singleFile) {
         var jsfiles = new Array(
             "OpenLayers/Util.js",
@@ -238,16 +243,22 @@
             "OpenLayers/Control/ZoomOut.js",
             "OpenLayers/Control/ZoomPanel.js",
             "OpenLayers/Control/EditingToolbar.js",
+            "OpenLayers/Control/SbiActionsMap.js",
+            "OpenLayers/Control/SbiLegendMap.js",
+            "OpenLayers/Control/SbiLayersMap.js",
             "OpenLayers/Lang.js",
             "OpenLayers/Lang/en.js"
         ); // etc.
 
         var agent = navigator.userAgent;
-        var docWrite = (agent.match("MSIE") || agent.match("Safari"));
+//        alert('agent: ' + agent);
+        var docWrite = (agent.match("MSIE") || agent.match("Safari") || agent.match("Firefox"));
+//        alert('docWrite: '+docWrite) ;
         if(docWrite) {
             var allScriptTags = new Array(jsfiles.length);
         }
-        var host = OpenLayers._getScriptLocation() + "lib/";    
+        var host = OpenLayers._getScriptLocation() + "lib/";
+//        alert('host: ' + host);
         for (var i=0, len=jsfiles.length; i<len; i++) {
             if (docWrite) {
                 allScriptTags[i] = "<script src='" + host + jsfiles[i] +
