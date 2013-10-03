@@ -46,6 +46,10 @@ public class KpiTemplateConfiguration {
 	private boolean weighted_values;
 	private boolean dataset_multires;
 	
+	//new : set the tick interval for the new speedometer
+	private String tickInterval;
+	
+
 	//new for custom detail charts 
 	private String custom_chart_name;
 
@@ -62,7 +66,8 @@ public class KpiTemplateConfiguration {
 			boolean display_weight, boolean display_alarm,
 			boolean register_values, boolean recalculate_anyway,
 			boolean register_par_setted, boolean show_axis,
-			boolean weighted_values, boolean dataset_multires, String custom_chart_name) {
+			boolean weighted_values, boolean dataset_multires, 
+			String custom_chart_name, String tickInterval) {
 		this.publisher_Name = publisher_Name;
 		this.metadata_publisher_Name = metadata_publisher_Name;
 		this.trend_publisher_Name = trend_publisher_Name;
@@ -86,8 +91,17 @@ public class KpiTemplateConfiguration {
 		this.weighted_values = weighted_values;
 		this.dataset_multires = dataset_multires;
 		this.custom_chart_name = custom_chart_name;
+		this.tickInterval = tickInterval;
 	}
-	
+
+	public String getTickInterval() {
+		return tickInterval;
+	}
+
+	public void setTickInterval(String tickInterval) {
+		this.tickInterval = tickInterval;
+	}
+
 	public String getCustom_chart_name() {
 		return custom_chart_name;
 	}
@@ -492,6 +506,10 @@ public class KpiTemplateConfiguration {
 			if (dataParameters.get("custom_chart_name") != null && dataParameters.get("custom_chart_name") != "") {
 				String fil = (String) dataParameters.get("custom_chart_name");
 				if (fil!=null) setCustom_chart_name(fil);
+			}
+			if (dataParameters.get("tickInterval") != null && dataParameters.get("tickInterval") != "") {
+				String interv = (String) dataParameters.get("tickInterval");
+				if (interv!=null) setTickInterval(interv);
 			}
 		} catch (Exception e) {
 			SpagoBIKpiInternalEngine.logger.error("error in reading template parameters");

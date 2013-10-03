@@ -35,6 +35,11 @@ Ext.ns("Sbi.kpi");
 Sbi.kpi.KpiGUIDetail =  function(config) {
 	
 		this.customChartName= config.customChartName;
+		this.tickInterval= config.tickInterval;
+		if(this.tickInterval == null || this.tickInterval== undefined){
+			this.tickInterval=0;
+		}
+		
 		var defaultSettings = {};
 
 		if (Sbi.settings && Sbi.settings.kpi && Sbi.settings.kpi.kpiGUIDetail) {
@@ -62,11 +67,13 @@ Ext.extend(Sbi.kpi.KpiGUIDetail , Ext.form.FormPanel, {
 	//chart
 	dial: null,
 	maxChartValue: 0,
+	minChartValue: 0,
 	ranges: new Array(),
 	customChartName: null,
 	//custom chart
 	selectedThr: null,
 	val: null,
+	ticksNumber: 10,
 	
 	initDetail: function(){	
 		this.chartid = Ext.id();
@@ -126,6 +133,11 @@ Ext.extend(Sbi.kpi.KpiGUIDetail , Ext.form.FormPanel, {
 			this.maxChartValue = threshold.max;
 		}
 	}
+	,calculateMin: function(threshold){
+		if(threshold.min < this.minChartValue){
+			this.minChartValue = threshold.min;
+		}
+	}
 	, calculateRange: function(thr){
 		var range = {from: thr.min, to: thr.max, color: thr.color};
 		this.ranges.push(range);
@@ -138,14 +150,22 @@ Ext.extend(Sbi.kpi.KpiGUIDetail , Ext.form.FormPanel, {
 		}
 		if(this.dial == null){
 			// Build the dial
+			if(this.tickInterval && this.tickInterval != null){
+				this.ticksNumber = ((this.maxChartValue - this.minChartValue)/this.tickInterval)+1;
+			}
+			
 
 			var config = 
 			{
 				size: 250,
-				minorTicks: 5,
-				renderTo: this.chartid
+				minorTicks: 2,
+				majorTicks: this.ticksNumber,
+				renderTo: this.chartid,
+				max: this.maxChartValue,
+				min: this.minChartValue
 			}
 			config.ranges= this.ranges;
+
 			this.dial = new Gauge("chartContainer", config);			
 			this.dial.render();
 			//setInterval(this.updateGauge(value), 5000);
@@ -185,6 +205,7 @@ Ext.extend(Sbi.kpi.KpiGUIDetail , Ext.form.FormPanel, {
 			this.detailFields.remove(this.targetItem);
 		}
 		this.maxChartValue =0;
+		this.minChartValue =0;
 		this.ranges = new Array();
 	}
 	, updateEmpy: function(){
@@ -267,6 +288,7 @@ Ext.extend(Sbi.kpi.KpiGUIDetail , Ext.form.FormPanel, {
 				this.threshFields.add(thrLine);
 				//calculate chart options
 				this.calculateMax(thr);
+				this.calculateMin(thr);
 				this.calculateRange(thr);
 
 			}
@@ -339,4 +361,5 @@ Ext.extend(Sbi.kpi.KpiGUIDetail , Ext.form.FormPanel, {
 		}
 		return newX;
 	}
+	
 });
