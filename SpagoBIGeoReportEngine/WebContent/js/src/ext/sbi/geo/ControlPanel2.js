@@ -481,8 +481,10 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 	, getMapTypeDiv: function(){
 		var toReturn = '' +
 		 '<div class="map-description">' +
-	         '<h1 class="titleButton">'+Sbi.config.docName+'</h1>' +
-	         '<p>'+Sbi.config.docDescription+'</p>' +
+//	         '<h1 class="titleButton">'+Sbi.config.docName+'</h1>' +
+	         '<input class="titleButton" type="text" name="search" id="search" value="'+Sbi.config.docName+'" /> '+
+//	         '<p>'+Sbi.config.docDescription+'</p>' +
+	         '<input class="titleButton" type="text" name="search" id="search" value="'+Sbi.config.docDescription+'" /> '+	         
 	 		'<p id="author" class="published">Pubblicata da <a id="authorButton" class="authorButton" href="#">'+Sbi.config.docAuthor+'</a> <span class="separator">/</span> <a id="feedback_mail" href="#" class="feedback">invia feedback</a></p>' +
 	     '</div>' +
 	     '<ul id="mapType" class="map-type">' +
