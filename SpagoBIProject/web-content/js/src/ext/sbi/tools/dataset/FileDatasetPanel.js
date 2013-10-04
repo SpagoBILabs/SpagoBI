@@ -33,6 +33,19 @@
  * 		Marco Cortella  (marco.cortella@eng.it)
  * 		
  */
+
+//fix for IE BUG Array.isArray not supported
+
+(function () {
+    var toString = Object.prototype.toString,
+         strArray = Array.toString();
+ 
+    Array.isArray = Array.isArray || function (obj) {
+        return typeof obj == "object" && (toString.call(obj) == "[object Array]" || ("constructor" in obj && String(obj.constructor) == strArray));
+    }
+})();
+
+
 Ext.ns("Sbi.tools.dataset");
 
 Sbi.tools.dataset.FileDatasetPanel = function(config) {
