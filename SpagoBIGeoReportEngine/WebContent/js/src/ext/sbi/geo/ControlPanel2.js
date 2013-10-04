@@ -29,6 +29,7 @@ Sbi.geo.ControlPanel2 = function(config) {
 		margins     : '3 0 3 3',
 		cmargins    : '3 3 3 3',
 		autoScroll	 : true
+		, border: false
 		, id:'this'
 	};
 	
@@ -141,7 +142,7 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 	, init: function() {
 		this.isFinalUser = (Sbi.template.role.indexOf('user') >= 0);
 		this.innerPanel = new Ext.Panel({
-			height: 900,
+			height: 950,
 			html: ' <main class="main main-map" id="main"> ' +
 					    '<div id="panel" class="panel">' +
 					    	'<form class="panel-form" action="#" method="post">' +
@@ -482,9 +483,9 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 		var toReturn = '' +
 		 '<div class="map-description">' +
 //	         '<h1 class="titleButton">'+Sbi.config.docName+'</h1>' +
-	         '<input class="titleButton" type="text" name="search" id="search" value="'+Sbi.config.docName+'" /> '+
+	         '<input  type="text" name="docName" class="mapTitle" value="'+Sbi.config.docName+'" /> '+
 //	         '<p>'+Sbi.config.docDescription+'</p>' +
-	         '<input class="titleButton" type="text" name="search" id="search" value="'+Sbi.config.docDescription+'" /> '+	         
+	         '<textarea rows="2" cols="40" name="docDesc" class="mapDescription" />'+Sbi.config.docDescription+' </textarea>'+	         
 	 		'<p id="author" class="published">Pubblicata da <a id="authorButton" class="authorButton" href="#">'+Sbi.config.docAuthor+'</a> <span class="separator">/</span> <a id="feedback_mail" href="#" class="feedback">invia feedback</a></p>' +
 	     '</div>' +
 	     '<ul id="mapType" class="map-type">' +
