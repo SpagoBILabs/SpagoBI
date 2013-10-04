@@ -143,18 +143,14 @@ Ext.extend(Sbi.kpi.KpiGUIDetail , Ext.form.FormPanel, {
 		this.ranges.push(range);
 	}
 	
-	, drawChart: function(value){
-		var y = 130;
-		if(Ext.isIE && (this.customChartName === undefined || this.customChartName == null || this.customChartName === 'null')){
-			y = 155;
-		}
+	, drawD3Chart: function(value){
+
 		if(this.dial == null){
 			// Build the dial
 			if(this.tickInterval && this.tickInterval != null){
 				this.ticksNumber = ((this.maxChartValue - this.minChartValue)/this.tickInterval)+1;
 			}
 			
-
 			var config = 
 			{
 				size: 250,
@@ -168,20 +164,52 @@ Ext.extend(Sbi.kpi.KpiGUIDetail , Ext.form.FormPanel, {
 
 			this.dial = new Gauge("chartContainer", config);			
 			this.dial.render();
-			//setInterval(this.updateGauge(value), 5000);
 			this.dial.redraw(value);
 		}else{
-			//this.dial.max=this.maxChartValue;			
-			//this.dial.ranges=this.ranges;
-			
-			//this.dial.render();
 			setInterval(this.updateGauge(value), 5000);
-			//this.dial.setTicks(this.maxChartValue);
-			//this.dial.setValue(value);
-			//this.dial.setCircle();
 		}
 		
 	}
+	, drawHighChart: function(value){
+
+			var y = 130;
+			if(Ext.isIE && (this.customChartName === undefined || this.customChartName == null || this.customChartName === 'null')){
+				y = 155;
+			}
+			if(!this.tickInterval || this.tickInterval == null || this.tickInterval == 0){
+				this.tickInterval = 20;
+			}
+			if(this.dial == null){
+				// Build the dial
+				this.dial = drawDial({
+				    renderTo: this.chartid,
+				    value: value,
+				    centerX: 135,
+				    centerY: y,
+				    min: 0,
+				    max: this.maxChartValue,
+				    
+				    minAngle: -Math.PI,
+				    maxAngle: 0,
+				    tickInterval: this.tickInterval,
+				    ranges: this.ranges
+				    , pivotLength: 70 //arrow length
+				    , backgroundRadius: 120
+				    , arcMinRadius : 70
+				    , arcMaxRadius : 100
+				    , textRadius : 105
+				    , renderX : 300 //width of the area of the chart
+				    , renderY : 145 //height of the area of the chart
+				});
+			}else{
+				this.dial.setMax(this.maxChartValue);			
+				this.dial.setRanges(this.ranges);
+				this.dial.setTicks(this.maxChartValue);
+				this.dial.setValue(value);
+				this.dial.setCircle();
+			}
+			
+		}	
 	,  updateGauge: function(value)
 	{
 		this.dial.redraw(value);
@@ -224,7 +252,20 @@ Ext.extend(Sbi.kpi.KpiGUIDetail , Ext.form.FormPanel, {
 			this.detailFields.addClass( 'rounded-box' ) ;
 			if(this.customChartName === undefined || this.customChartName == null || this.customChartName === 'null'){
 				this.on('afterlayout',function(){
-					this.drawChart(this.val);
+					/***
+					 * STEP 2:
+					 * Very important fix to display and use Highcharts speedometer in case of IE8 or lower
+					 * while display and use D3 speedometer for other browsers.
+					 * See also STEP 1 in custom/kpi.jsp					 * 
+					 * */
+					if(typeof d3 !== 'undefined'){	
+						console.log('Not using IE');
+						this.drawD3Chart(this.val);
+					}else{
+						console.log('Using IE < 9');
+						this.drawHighChart(this.val);
+					}
+					
 				},this);
 			}else{
 				var x = this.calculateInnerThrChart(field);

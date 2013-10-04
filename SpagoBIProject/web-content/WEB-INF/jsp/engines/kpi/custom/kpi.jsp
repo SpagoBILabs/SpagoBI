@@ -43,8 +43,26 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 
 <%@ include file="/WEB-INF/jsp/commons/portlet_base311.jsp"%>
 <script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/service/ServiceRegistry.js")%>'></script>
+
+
+<!--
+ STEP 1:
+ * Very important fix to display and use Highcharts speedometer in case of IE8 or lower
+ * while display and use D3 speedometer for other browsers.
+ * See also STEP 2 in Sbi.kpi.KpiGUIDetail js -->
+
+<!--[if lt IE 9]>
+<!--  HighCharts -->
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/lib/highcharts-2.1.6/highcharts.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/lib/highcharts-2.1.6/modules/exporting.js")%>"></script>
+<![endif]-->
+<!--[if !IE]> -->
 <script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/lib/d3/D3.js")%>'></script>
 <script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/lib/d3/D3.layout.js")%>'></script>
+
+<!-- <![endif]-->
+
+
 <LINK rel='StyleSheet' 
       href='<%=urlBuilder.getResourceLinkByTheme(request, "css/kpi/kpi.css",currTheme)%>' 
       type='text/css' />
