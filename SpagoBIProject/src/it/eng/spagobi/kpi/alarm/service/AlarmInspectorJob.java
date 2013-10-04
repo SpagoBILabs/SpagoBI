@@ -224,7 +224,7 @@ public class AlarmInspectorJob  extends AbstractSpagoBIJob implements Job {
 				text.append(sbiAlarm.getName());
 				text.append("</b></font><ul>");
 
-				text.append("<li><font size=\"2\">Lable: ");
+				text.append("<li><font size=\"2\">Lebel: ");
 				text.append(sbiAlarm.getLabel());
 				text.append("</font></li>");
 				text.append("<li><font size=\"2\">Text: ");
