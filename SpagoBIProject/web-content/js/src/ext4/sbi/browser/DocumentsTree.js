@@ -96,16 +96,7 @@ Ext.define("Sbi.browser.DocumentsTree",{
 		
 		, updateCheckedNodesArray: function(node, checked) {
 			var nodeId = node.data.id;
-			if(!Array.indexOf){
-			    Array.prototype.indexOf = function(obj){
-			        for(var i=0; i<this.length; i++){
-			            if(this[i]==obj){
-			                return i;
-			            }
-			    }
-			    return -1;
-			    }
-			}
+
 			var nodeindex = this.checkedIdNodes.indexOf(nodeId);
 			if (nodeindex != -1){
 				this.checkedIdNodes.splice(nodeindex,1);

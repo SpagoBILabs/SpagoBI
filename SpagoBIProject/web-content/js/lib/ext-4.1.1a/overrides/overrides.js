@@ -69,3 +69,19 @@ Ext.override(Ext.menu.Menu, {
     }
 
 });
+/* =============================================================================
+* Added by Monica Franceschini (October 2013)
+* IE does not support Array.indexOf function
+* See https://www.spagoworld.org/jira/browse/SPAGOBI-1293
+* See http://coderesponsible.com/array-indexof-in-javascript-not-working-in-ie/
+============================================================================= */
+if(!Array.indexOf){
+    Array.prototype.indexOf = function(obj){
+        for(var i=0; i<this.length; i++){
+            if(this[i]==obj){
+                return i;
+            }
+    }
+    return -1;
+    }
+}
