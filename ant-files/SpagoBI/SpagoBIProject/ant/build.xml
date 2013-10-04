@@ -354,89 +354,86 @@
 	<target name="create-debug" depends="delete-debug">
 		<concat destfile="${build}/${webapp_name}/js/src/ext/sbi-all-debug.js" append="true">
 			<filelist dir="${build}/${webapp_name}/js">
-				<file name="./src/ext/sbi/commons/Format.js" /> 
-				<file name="./src/ext/sbi/locale/LocaleUtils.js" /> 
-				<file name="./src/ext/sbi/exception/ExceptionHandler.js" /> 
-				<file name="./src/ext/sbi/commons/Log.js" /> 
-				<file name="./src/ext/sbi/service/ServiceRegistry.js" /> 
-				<file name="./src/ext/sbi/decorator/LoadMask.js" /> 
-				<file name="./src/ext/sbi/commons/Format.js" /> 
-				<file name="./src/ext/sbi/commons/JSON.js" /> 
-				<file name="./src/ext/sbi/commons/Session.js" /> 		
+				<file name="./src/ext/sbi/commons/Format.js" />
+				<file name="./src/ext/sbi/locale/LocaleUtils.js" />
+				<file name="./src/ext/sbi/exception/ExceptionHandler.js" />
+				<file name="./src/ext/sbi/commons/Log.js" />
+				<file name="./src/ext/sbi/service/ServiceRegistry.js" />
+				<file name="./src/ext/sbi/decorator/LoadMask.js" />
+				<file name="./src/ext/sbi/commons/Format.js" />
+				<file name="./src/ext/sbi/commons/JSON.js" />
+				<file name="./src/ext/sbi/commons/Session.js" />		
 
-				<file name="./src/ext/sbi/browser/SampleData.js" /> 
-				<file name="./src/ext/sbi/browser/SearchField.js" /> 
-				<file name="./src/ext/sbi/browser/Toolbar.js" /> 
-				<file name="./src/ext/sbi/browser/DocumentsTree.js" /> 
-				<file name="./src/ext/sbi/browser/FilterPanel.js" /> 
-				<file name="./src/ext/sbi/browser/SearchPanel.js" /> 
-				<file name="./src/ext/sbi/browser/ProgressPanel.js" /> 
-				<file name="./src/ext/sbi/browser/FolderViewTemplate.js" /> 
-				<file name="./src/ext/sbi/browser/FolderView.js" /> 
-				<file name="./src/ext/sbi/browser/FolderDetailPanel.js" />   
+				<file name="./src/ext/sbi/browser/SampleData.js" />
+				<file name="./src/ext/sbi/browser/SearchField.js" />
+				<file name="./src/ext/sbi/browser/Toolbar.js" />
+				<file name="./src/ext/sbi/browser/DocumentsTree.js" />
+				<file name="./src/ext/sbi/browser/FilterPanel.js" />
+				<file name="./src/ext/sbi/browser/SearchPanel.js" />
+				<file name="./src/ext/sbi/browser/ProgressPanel.js" />
+				<file name="./src/ext/sbi/browser/FolderViewTemplate.js" />
+				<file name="./src/ext/sbi/browser/FolderView.js" />
+				<file name="./src/ext/sbi/browser/FolderDetailPanel.js" />  
 																										
-				<file name="./src/ext/sbi/browser/mexport/MassiveExportWizard.js" />  
-				<file name="./src/ext/sbi/browser/mexport/MassiveExportWizardTriggerPage.js" />  
-				<file name="./src/ext/sbi/browser/mexport/MassiveExportWizardOptionsPage.js" />  
-				<file name="./src/ext/sbi/browser/mexport/MassiveExportWizardParametersPage.js" /> 
+				<file name="./src/ext/sbi/browser/mexport/MassiveExportWizard.js" /> 
+				<file name="./src/ext/sbi/browser/mexport/MassiveExportWizardTriggerPage.js" /> 
+				<file name="./src/ext/sbi/browser/mexport/MassiveExportWizardOptionsPage.js" /> 
+				<file name="./src/ext/sbi/browser/mexport/MassiveExportWizardParametersPage.js" />
 
 
-				<file name="./src/ext/sbi/widgets/FilteringToolbar.js" />   
-				<file name="./src/ext/sbi/widgets/PagingToolbar.js" />       
-				<file name="./src/ext/sbi/widgets/LookupField.js" />   
-				<file name="./lib/ext-2.0.1/ux/ext-2.2.1-extensions/CheckboxGroup.js" /> 
-				<file name="./lib/ext-2.0.1/ux/ext-3.2.1-extensions/Slider.js" /> 
-				<file name="./lib/ext-2.0.1/ux/ext-3.2.1-extensions/SliderField.js" /> 
-				<file name="./lib/ext-2.0.1/ux/ext-3.2.1-extensions/SliderTip.js" /> 
-				<file name="./lib/ext-2.0.1/ux/ext-2.0.1-extensions/SliderField2.js" /> 
-				<file name="./src/ext/sbi/widgets/SliderField.js" /> 
-				<file name="./src/ext/sbi/widgets/CheckboxField.js" />  
-				<file name="./src/ext/sbi/widgets/RadioField.js" />  
-				<file name="./src/ext/sbi/widgets/SaveWindow.js" /> 
-				<file name="./src/ext/sbi/widgets/EditablePanel.js" />   
-				<file name="./src/ext/sbi/widgets/FileUploadPanel.js" />   
-				<file name="./src/ext/sbi/widgets/TreeLookUpField.js" /> 
+				<file name="./src/ext/sbi/widgets/FilteringToolbar.js" />  
+				<file name="./src/ext/sbi/widgets/PagingToolbar.js" />      
+				<file name="./src/ext/sbi/widgets/LookupField.js" />  
+				<file name="./lib/ext-2.0.1/ux/ext-2.2.1-extensions/CheckboxGroup.js" />
+				<file name="./lib/ext-2.0.1/ux/ext-3.2.1-extensions/Slider.js" />
+				<file name="./lib/ext-2.0.1/ux/ext-3.2.1-extensions/SliderField.js" />
+				<file name="./lib/ext-2.0.1/ux/ext-3.2.1-extensions/SliderTip.js" />
+				<file name="./lib/ext-2.0.1/ux/ext-2.0.1-extensions/SliderField2.js" />
+				<file name="./src/ext/sbi/widgets/SliderField.js" />
+				<file name="./src/ext/sbi/widgets/CheckboxField.js" /> 
+				<file name="./src/ext/sbi/widgets/RadioField.js" /> 
+				<file name="./src/ext/sbi/widgets/SaveWindow.js" />
+				<file name="./src/ext/sbi/widgets/EditablePanel.js" />  
+				<file name="./src/ext/sbi/widgets/TreeLookUpField.js" />
 
-				<file name="./src/ext/sbi/execution/SubobjectsPanel.js" /> 
-				<file name="./src/ext/sbi/execution/SnapshotsPanel.js" /> 
-				<file name="./src/ext/sbi/execution/ViewpointsPanel.js" /> 
-				<file name="./src/ext/sbi/execution/ShortcutsPanel.js" /> 
-				<file name="./src/ext/sbi/execution/HotlinksPanel.js" /> 
-				<file name="./src/ext/sbi/execution/ParametersPanel.js" /> 
-				<file name="./src/ext/sbi/execution/LookupFieldWithMaximize.js" /> 
-				<file name="./src/ext/sbi/execution/SessionParametersManager.js" /> 
-				<file name="./src/ext/sbi/execution/RoleSelectionPage.js" /> 
-				<file name="./src/ext/sbi/execution/InfoPage.js" /> 
-				<file name="./src/ext/sbi/execution/DocumentPage.js" /> 
-				<file name="./src/ext/sbi/execution/ParametersSelectionPage.js" /> 
-				<file name="./src/ext/sbi/execution/SaveDocumentWindow.js" /> 
-				<file name="./src/ext/sbi/execution/toolbar/ExportersMenu.js" /> 
-				<file name="./src/ext/sbi/execution/toolbar/DocumentExecutionPageToolbar.js" /> 
-				<file name="./src/ext/sbi/execution/DocumentExecutionPage.js" /> 
-				<file name="./src/ext/sbi/execution/ExecutionWizard.js" /> 
-				<file name="./src/ext/sbi/execution/ExecutionPanel.js" /> 
-				<file name="./src/ext/sbi/browser/DocumentsBrowser.js" /> 
-				<file name="./src/ext/sbi/browser/DocBrowserContainer.js" /> 
-				<file name="./lib/ext-2.0.1/ux/miframe/miframe-min.js" /> 
-				<file name="./lib/ext-2.0.1/ux/grid/Ext.grid.ButtonColumn.js" /> 
-				<file name="./lib/ext-2.0.1/ux/andrie/Select.js" /> 
+				<file name="./src/ext/sbi/execution/SubobjectsPanel.js" />
+				<file name="./src/ext/sbi/execution/SnapshotsPanel.js" />
+				<file name="./src/ext/sbi/execution/ViewpointsPanel.js" />
+				<file name="./src/ext/sbi/execution/ShortcutsPanel.js" />
+				<file name="./src/ext/sbi/execution/HotlinksPanel.js" />
+				<file name="./src/ext/sbi/execution/ParametersPanel.js" />
+				<file name="./src/ext/sbi/execution/LookupFieldWithMaximize.js" />
+				<file name="./src/ext/sbi/execution/SessionParametersManager.js" />
+				<file name="./src/ext/sbi/execution/RoleSelectionPage.js" />
+				<file name="./src/ext/sbi/execution/InfoPage.js" />
+				<file name="./src/ext/sbi/execution/DocumentPage.js" />
+				<file name="./src/ext/sbi/execution/ParametersSelectionPage.js" />
+				<file name="./src/ext/sbi/execution/SaveDocumentWindow.js" />
+				<file name="./src/ext/sbi/execution/toolbar/ExportersMenu.js" />
+				<file name="./src/ext/sbi/execution/toolbar/DocumentExecutionPageToolbar.js" />
+				<file name="./src/ext/sbi/execution/DocumentExecutionPage.js" />
+				<file name="./src/ext/sbi/execution/ExecutionWizard.js" />
+				<file name="./src/ext/sbi/execution/ExecutionPanel.js" />
+				<file name="./src/ext/sbi/browser/DocumentsBrowser.js" />
+				<file name="./src/ext/sbi/browser/DocBrowserContainer.js" />
+				<file name="./lib/ext-2.0.1/ux/miframe/miframe-min.js" />
+				<file name="./lib/ext-2.0.1/ux/grid/Ext.grid.ButtonColumn.js" />
+				<file name="./lib/ext-2.0.1/ux/andrie/Select.js" />
 
-				<file name="./src/ext/sbi/decorator/ComponentBuddy.js" /> 
-				<file name="./src/ext/sbi/execution/toolbar/SendToWindow.js" /> 
-				<file name="./src/ext/sbi/execution/toolbar/SaveRememberMeWindow.js" /> 
-				<file name="./src/ext/sbi/execution/toolbar/NotesWindow.js" /> 
-				<file name="./src/ext/sbi/execution/toolbar/MetadataWindow.js" /> 
+				<file name="./src/ext/sbi/decorator/ComponentBuddy.js" />
+				<file name="./src/ext/sbi/execution/toolbar/SendToWindow.js" />
+				<file name="./src/ext/sbi/execution/toolbar/SaveRememberMeWindow.js" />
+				<file name="./src/ext/sbi/execution/toolbar/NotesWindow.js" />
+				<file name="./src/ext/sbi/execution/toolbar/MetadataWindow.js" />
 				<file name="./src/ext/sbi/execution/toolbar/RatingWindow.js" />
-				<file name="./src/ext/sbi/home/Footer.js" /> 
-				<file name="./src/ext/sbi/home/Banner.js" /> 
-				<file name="./src/ext/sbi/execution/toolbar/ListNotesWindow.js" />  
-				<file name="./src/ext/sbi/home/DefaultRoleWindow.js" />  
+				<file name="./src/ext/sbi/home/Footer.js" />
+				<file name="./src/ext/sbi/home/Banner.js" />
+				<file name="./src/ext/sbi/execution/toolbar/ListNotesWindow.js" /> 
+				<file name="./src/ext/sbi/home/DefaultRoleWindow.js" /> 
 
-				<file name="./src/ext/sbi/widgets/KpiTreeOuTreePanel.js" />   
+				<file name="./src/ext/sbi/widgets/KpiTreeOuTreePanel.js" />  
 
-				<file name="./src/ext/sbi/worksheet/WorksheetEditorIframePanel.js" /> 
-
-
+				<file name="./src/ext/sbi/worksheet/WorksheetEditorIframePanel.js" />
 
 			</filelist>
 
@@ -445,133 +442,133 @@
 		<concat destfile="${build}/${webapp_name}/js/src/ext/sbi-all-ext311-debug.js" append="true">
 			<filelist dir="${build}/${webapp_name}/js">
 
-				<file name="./src/ext/sbi/commons/Log.js" /> 
-				<file name="./src/ext/sbi/commons/Format.js" /> 
-				<file name="./src/ext/sbi/locale/LocaleUtils.js" /> 
-				<file name="./src/ext/sbi/exception/ExceptionHandler.js" /> 
-				<file name="./src/ext/sbi/service/ServiceRegistry.js" /> 
-				<file name="./src/ext/sbi/commons/Session.js" /> 	
-				<file name="./lib/ext-3.1.1/ux/grid/Ext.grid.ButtonColumn.js" />  
-				<file name="./lib/ext-3.1.1/ux/grid/Ext.ux.ColorField.js" />  
-				<file name="./lib/ext-3.1.1/ux/grid/Ext.ux.grid.RowEditor.js" />  
+				<file name="./src/ext/sbi/commons/Log.js" />
+				<file name="./src/ext/sbi/commons/Format.js" />
+				<file name="./src/ext/sbi/locale/LocaleUtils.js" />
+				<file name="./src/ext/sbi/exception/ExceptionHandler.js" />
+				<file name="./src/ext/sbi/service/ServiceRegistry.js" />
+				<file name="./src/ext/sbi/commons/Session.js" />	
+				<file name="./lib/ext-3.1.1/ux/grid/Ext.grid.ButtonColumn.js" /> 
+				<file name="./lib/ext-3.1.1/ux/grid/Ext.ux.ColorField.js" />
+				<file name="./lib/ext-3.1.1/ux/grid/Ext.ux.grid.RowEditor.js" />
 
-				<file name="./lib/ext-3.1.1/ux/treegrid/TreeGridSorter.js" />  
-				<file name="./lib/ext-3.1.1/ux/treegrid/TreeGridColumnResizer.js" />  
-				<file name="./lib/ext-3.1.1/ux/treegrid/TreeGridNodeUI.js" />  
-				<file name="./lib/ext-3.1.1/ux/treegrid/TreeGridLoader.js" />  
-				<file name="./lib/ext-3.1.1/ux/treegrid/TreeGridColumns.js" />  
-				<file name="./lib/ext-3.1.1/ux/treegrid/TreeGrid.js" />  
+				<file name="./lib/ext-3.1.1/ux/treegrid/TreeGridSorter.js" />
+				<file name="./lib/ext-3.1.1/ux/treegrid/TreeGridColumnResizer.js" />
+				<file name="./lib/ext-3.1.1/ux/treegrid/TreeGridNodeUI.js" />
+				<file name="./lib/ext-3.1.1/ux/treegrid/TreeGridLoader.js" />
+				<file name="./lib/ext-3.1.1/ux/treegrid/TreeGridColumns.js" />
+				<file name="./lib/ext-3.1.1/ux/treegrid/TreeGrid.js" />
 				 
-				<file name="./lib/ext-3.1.1/ux/imageeditor/ImageEditor.js" />  
-				<file name="./lib/ext-3.1.1/ux/imageeditor/PanPanel.js" />  
+				<file name="./lib/ext-3.1.1/ux/imageeditor/ImageEditor.js" />
+				<file name="./lib/ext-3.1.1/ux/imageeditor/PanPanel.js" />
 
-				<file name="./src/ext/sbi/widgets/KpiTreeOuTreePanel.js" /> 
-				<file name="./src/ext/sbi/widgets/FilteringToolbar.js" /> 
-				<file name="./src/ext/sbi/widgets/PagingToolbar.js" /> 
-				<file name="./src/ext/sbi/widgets/ListGridPanel.js" /> 
-				<file name="./src/ext/sbi/widgets/ListDetailForm.js" /> 
-				<file name="./src/ext/sbi/widgets/LookupField.js" /> 
-				<file name="./src/ext/sbi/widgets/TreeDetailForm.js" /> 
-				<file name="./src/ext/sbi/widgets/TreeModelPanel.js" /> 
-				<file name="./src/ext/sbi/widgets/SimpleTreePanel.js" /> 
-				<file name="./src/ext/sbi/widgets/TreeSerializers.js" /> 
-				<file name="./src/ext/sbi/widgets/FilteringToolbarLight.js" /> 
-				<file name="./src/ext/sbi/widgets/ConfigurableTree.js" /> 
-				<file name="./src/ext/sbi/widgets/ModelInstanceTree.js" /> 
-				<file name="./src/ext/sbi/widgets/DataStorePanel.js" /> 
-				<file name="./src/ext/sbi/widgets/ButtonField.js" /> 
-				<file name="./src/ext/sbi/widgets/Catalogue.js" /> 
-				<file name="./src/ext/sbi/widgets/CatalogueVersionsGridPanel.js" /> 
-				<file name="./src/ext/sbi/widgets/InMemoryFilteredStore.js" /> 
+				<file name="./src/ext/sbi/widgets/KpiTreeOuTreePanel.js" />
+				<file name="./src/ext/sbi/widgets/FilteringToolbar.js" />
+				<file name="./src/ext/sbi/widgets/PagingToolbar.js" />
+				<file name="./src/ext/sbi/widgets/ListGridPanel.js" />
+				<file name="./src/ext/sbi/widgets/ListDetailForm.js" />
+				<file name="./src/ext/sbi/widgets/LookupField.js" />
+				<file name="./src/ext/sbi/widgets/TreeDetailForm.js" />
+				<file name="./src/ext/sbi/widgets/TreeModelPanel.js" />
+				<file name="./src/ext/sbi/widgets/SimpleTreePanel.js" />
+				<file name="./src/ext/sbi/widgets/TreeSerializers.js" />
+				<file name="./src/ext/sbi/widgets/FilteringToolbarLight.js" />
+				<file name="./src/ext/sbi/widgets/ConfigurableTree.js" />
+				<file name="./src/ext/sbi/widgets/ModelInstanceTree.js" />
+				<file name="./src/ext/sbi/widgets/DataStorePanel.js" />
+				<file name="./src/ext/sbi/widgets/ButtonField.js" />
+				<file name="./src/ext/sbi/widgets/Catalogue.js" />
+				<file name="./src/ext/sbi/widgets/CatalogueVersionsGridPanel.js" />
+				<file name="./src/ext/sbi/widgets/InMemoryFilteredStore.js" />
+				<file name="./src/ext/sbi/widgets/FileUploadPanel.js" />
 
-				<file name="./src/ext/sbi/udp/ManageUdp.js" /> 
-				<file name="./src/ext/sbi/udp/ManageUdpValues.js" /> 
+				<file name="./src/ext/sbi/udp/ManageUdp.js" />
+				<file name="./src/ext/sbi/udp/ManageUdpValues.js" />
 
-				<file name="./src/ext/sbi/profiling/ManageAttributes.js" /> 
-				<file name="./src/ext/sbi/profiling/ManageRoles.js" /> 
-				<file name="./src/ext/sbi/profiling/ManageUsers.js" /> 
-				<file name="./src/ext/sbi/alarm/ManageContacts.js" /> 
-				<file name="./src/ext/sbi/alarm/ManageAlarms.js" /> 
+				<file name="./src/ext/sbi/profiling/ManageAttributes.js" />
+				<file name="./src/ext/sbi/profiling/ManageRoles.js" />
+				<file name="./src/ext/sbi/profiling/ManageUsers.js" />
+				<file name="./src/ext/sbi/alarm/ManageContacts.js" />
+				<file name="./src/ext/sbi/alarm/ManageAlarms.js" />
 
-				<file name="./src/ext/sbi/kpi/ManageThresholdValues.js" /> 
-				<file name="./src/ext/sbi/kpi/ManageResources.js" /> 
-				<file name="./src/ext/sbi/kpi/ManageThresholds.js" /> 
-				<file name="./src/ext/sbi/kpi/ManageKpis.js" /> 
-				<file name="./src/ext/sbi/kpi/ManageModels.js" /> 
-				<file name="./src/ext/sbi/kpi/ManageModelsGrid.js" /> 
-				<file name="./src/ext/sbi/kpi/ManageModelsViewPort.js" /> 
-				<file name="./src/ext/sbi/kpi/ManagePeriodicities.js" /> 
+				<file name="./src/ext/sbi/kpi/ManageThresholdValues.js" />
+				<file name="./src/ext/sbi/kpi/ManageResources.js" />
+				<file name="./src/ext/sbi/kpi/ManageThresholds.js" />
+				<file name="./src/ext/sbi/kpi/ManageKpis.js" />
+				<file name="./src/ext/sbi/kpi/ManageModels.js" />
+				<file name="./src/ext/sbi/kpi/ManageModelsGrid.js" />
+				<file name="./src/ext/sbi/kpi/ManageModelsViewPort.js" />
+				<file name="./src/ext/sbi/kpi/ManagePeriodicities.js" />
 
-				<file name="./src/ext/sbi/kpi/ManageOUGrants.js" /> 
-				<file name="./src/ext/sbi/kpi/ManageOUGrantsViewPort.js" /> 
-				<file name="./src/ext/sbi/kpi/ManageModelInstances.js" /> 
-				<file name="./src/ext/sbi/kpi/ManageModelInstancesGrid.js" /> 
-				<file name="./src/ext/sbi/kpi/ManageOUGrantsGrid.js" /> 
-				<file name="./src/ext/sbi/kpi/ManageModelInstancesViewPort.js" /> 
-				<file name="./src/ext/sbi/kpi/ManageModelsTree.js" /> 
-				<file name="./src/ext/sbi/kpi/ManageAddModelPanel.js" /> 
-				<file name="./src/ext/sbi/kpi/ManageKpisGrid.js" /> 
-				<file name="./src/ext/sbi/kpi/ManageKpiWindow.js" /> 
+				<file name="./src/ext/sbi/kpi/ManageOUGrants.js" />
+				<file name="./src/ext/sbi/kpi/ManageOUGrantsViewPort.js" />
+				<file name="./src/ext/sbi/kpi/ManageModelInstances.js" />
+				<file name="./src/ext/sbi/kpi/ManageModelInstancesGrid.js" />
+				<file name="./src/ext/sbi/kpi/ManageOUGrantsGrid.js" />
+				<file name="./src/ext/sbi/kpi/ManageModelInstancesViewPort.js" />
+				<file name="./src/ext/sbi/kpi/ManageModelsTree.js" />
+				<file name="./src/ext/sbi/kpi/ManageAddModelPanel.js" />
+				<file name="./src/ext/sbi/kpi/ManageKpisGrid.js" />
+				<file name="./src/ext/sbi/kpi/ManageKpiWindow.js" />
 
-				<file name="./src/ext/sbi/kpi/ManageGoals.js" /> 
-				<file name="./src/ext/sbi/kpi/ManageGoalsOUTree.js" /> 
-				<file name="./src/ext/sbi/kpi/ManageGoalsDetailsPanel.js" /> 
-				<file name="./src/ext/sbi/kpi/ManageGoalsViewPort.js" /> 
-				<file name="./src/ext/sbi/kpi/ManageGoalsGrid.js" /> 
-				<file name="./src/ext/sbi/widgets/ColumnNodeUI.js" /> 
+				<file name="./src/ext/sbi/kpi/ManageGoals.js" />
+				<file name="./src/ext/sbi/kpi/ManageGoalsOUTree.js" />
+				<file name="./src/ext/sbi/kpi/ManageGoalsDetailsPanel.js" />
+				<file name="./src/ext/sbi/kpi/ManageGoalsViewPort.js" />
+				<file name="./src/ext/sbi/kpi/ManageGoalsGrid.js" />
+				<file name="./src/ext/sbi/widgets/ColumnNodeUI.js" />
 
-				<file name="./src/ext/sbi/tools/ManageDatasetVersions.js" /> 
-				<file name="./src/ext/sbi/tools/ManageDatasetParameters.js" /> 
-				<file name="./src/ext/sbi/tools/ParametersFillGrid.js" /> 
-				<file name="./src/ext/sbi/tools/dataset/DatasetManagementPanel.js" /> 
-				<file name="./src/ext/sbi/tools/dataset/QueryDatasetConfigurationPanel.js" /> 
-				<file name="./src/ext/sbi/tools/dataset/QueryDatasetScriptWizard.js" /> 
-				<file name="./src/ext/sbi/tools/dataset/ManageDatasetFieldMetadata.js" /> 
-				<file name="./src/ext/sbi/tools/dataset/FileDatasetPanel.js" /> 
+				<file name="./src/ext/sbi/tools/ManageDatasetVersions.js" />
+				<file name="./src/ext/sbi/tools/ManageDatasetParameters.js" />
+				<file name="./src/ext/sbi/tools/ParametersFillGrid.js" />
+				<file name="./src/ext/sbi/tools/dataset/DatasetManagementPanel.js" />
+				<file name="./src/ext/sbi/tools/dataset/QueryDatasetConfigurationPanel.js" />
+				<file name="./src/ext/sbi/tools/dataset/QueryDatasetScriptWizard.js" />
+				<file name="./src/ext/sbi/tools/dataset/ManageDatasetFieldMetadata.js" />
+				<file name="./src/ext/sbi/tools/dataset/FileDatasetPanel.js" />
 
-
-				<file name="./src/ext/sbi/engines/EngineManagementPanel.js" /> 
-
-
-				<file name="./src/ext/sbi/tools/dataset/QbeDatasetBuilder.js" /> 
-				<file name="./src/ext/sbi/tools/dataset/PreviewWindow.js" /> 
-				<file name="./src/ext/sbi/tools/dataset/CustomDataGrid.js" /> 
-
-				<file name="./src/ext/sbi/browser/mexport/MassiveExportWizard.js" />  
-				<file name="./src/ext/sbi/browser/mexport/MassiveExportWizardTriggerPage.js" />  
-				<file name="./src/ext/sbi/browser/mexport/MassiveExportWizardOptionsPage.js" />  
-
-				<file name="./src/ext/sbi/browser/mexport/MassiveExportWizardParametersPage.js" /> 
+				<file name="./src/ext/sbi/engines/EngineManagementPanel.js" />
 
 
-				<file name="./src/ext/sbi/domain/ManageDomains.js" /> 
-				<file name="./src/ext/sbi/config/ManageConfig.js" /> 
+				<file name="./src/ext/sbi/tools/dataset/QbeDatasetBuilder.js" />
+				<file name="./src/ext/sbi/tools/dataset/PreviewWindow.js" />
+				<file name="./src/ext/sbi/tools/dataset/CustomDataGrid.js" />
 
-				<file name="./src/ext/sbi/engines/chart/data/PagingStore.js" /> 
-				<file name="./src/ext/sbi/engines/chart/data/StoreManager.js" /> 
-				<file name="./src/ext/sbi/engines/chart/data/Store.js" /> 
+				<file name="./src/ext/sbi/browser/mexport/MassiveExportWizard.js" /> 
+				<file name="./src/ext/sbi/browser/mexport/MassiveExportWizardTriggerPage.js" /> 
+				<file name="./src/ext/sbi/browser/mexport/MassiveExportWizardOptionsPage.js" /> 
 
-				<file name="./src/ext/sbi/engines/chart/GenericChartPanel.js" /> 
-				<file name="./src/ext/sbi/engines/chart/HighchartsPanel.js" /> 
-				<file name="./src/ext/sbi/engines/chart/MasterDetailChartPanel.js" /> 
+				<file name="./src/ext/sbi/browser/mexport/MassiveExportWizardParametersPage.js" />
 
-				<file name="./src/ext/sbi/kpi/GUI/KpiChart.js" /> 
-				<file name="./src/ext/sbi/kpi/KpiGUILayout.js" /> 
-				<file name="./src/ext/sbi/kpi/KpiGridPanel.js" /> 
-				<file name="./src/ext/sbi/kpi/KpiAccordionPanel.js" /> 
-				<file name="./src/ext/sbi/kpi/GUI/KpiGUIDetail.js" /> 
-				<file name="./src/ext/sbi/kpi/GUI/KpiGUIDescription.js" /> 
-				<file name="./src/ext/sbi/kpi/GUI/KpiGUIDocCollegato.js" /> 
-				<file name="./src/ext/sbi/kpi/GUI/KpiGUIComments.js" /> 
-				<file name="./src/ext/sbi/kpi/GUI/KpiGUIHistorical.js" /> 
 
-				<file name="./src/ext/sbi/tools/catalogue/MetaModelsCatalogue.js" /> 
-				<file name="./src/ext/sbi/tools/catalogue/MondrianSchemasCatalogue.js" /> 
+				<file name="./src/ext/sbi/domain/ManageDomains.js" />
+				<file name="./src/ext/sbi/config/ManageConfig.js" />
 
-				<file name="./src/ext/sbi/browser/DocumentsTree.js" /> 
-				<file name="./src/ext/sbi/execution/SaveDocumentWindow.js" /> 
-				<file name="./src/ext/sbi/worksheet/DatasetsListPanel.js" /> 
-				<file name="./src/ext/sbi/worksheet/WorksheetEditorIframePanelExt3.js" /> 
+				<file name="./src/ext/sbi/engines/chart/data/PagingStore.js" />
+				<file name="./src/ext/sbi/engines/chart/data/StoreManager.js" />
+				<file name="./src/ext/sbi/engines/chart/data/Store.js" />
+
+				<file name="./src/ext/sbi/engines/chart/GenericChartPanel.js" />
+				<file name="./src/ext/sbi/engines/chart/HighchartsPanel.js" />
+				<file name="./src/ext/sbi/engines/chart/MasterDetailChartPanel.js" />
+
+				<file name="./src/ext/sbi/kpi/GUI/KpiChart.js" />
+				<file name="./src/ext/sbi/kpi/KpiGUILayout.js" />
+				<file name="./src/ext/sbi/kpi/KpiGridPanel.js" />
+				<file name="./src/ext/sbi/kpi/KpiAccordionPanel.js" />
+				<file name="./src/ext/sbi/kpi/GUI/KpiGUIDetail.js" />
+				<file name="./src/ext/sbi/kpi/GUI/KpiGUIDescription.js" />
+				<file name="./src/ext/sbi/kpi/GUI/KpiGUIDocCollegato.js" />
+				<file name="./src/ext/sbi/kpi/GUI/KpiGUIComments.js" />
+				<file name="./src/ext/sbi/kpi/GUI/KpiGUIHistorical.js" />
+
+				<file name="./src/ext/sbi/tools/catalogue/MetaModelsCatalogue.js" />
+				<file name="./src/ext/sbi/tools/catalogue/MondrianSchemasCatalogue.js" />
+
+				<file name="./src/ext/sbi/browser/DocumentsTree.js" />
+				<file name="./src/ext/sbi/execution/SaveDocumentWindow.js" />
+				<file name="./src/ext/sbi/worksheet/DatasetsListPanel.js" />
+				<file name="./src/ext/sbi/worksheet/WorksheetEditorIframePanelExt3.js" />
 				<file name="./src/ext/sbi/worksheet/WorksheetFromDatasetPanel.js" />
 				
 			</filelist>
@@ -582,73 +579,83 @@
 		<concat destfile="${build}/${webapp_name}/js/src/ext4/sbi-all-ext410-debug.js" append="true">
 			<filelist dir="${build}/${webapp_name}/js">
 
-				<file name="./src/ext/sbi/commons/Format.js" /> 
-				<file name="./src/ext/sbi/locale/LocaleUtils.js" /> 
-				<file name="./src/ext/sbi/exception/ExceptionHandler.js" /> 
-				<file name="./src/ext/sbi/decorator/LoadMask.js" /> 
-				<file name="./src/ext/sbi/commons/Format.js" /> 
-				<file name="./src/ext/sbi/commons/JSON.js" /> 
-				<file name="./src/ext/sbi/commons/Session.js" /> 	
-				<file name="./src/ext/sbi/commons/Log.js" /> 	
+				<file name="./src/ext/sbi/commons/Format.js" />
+				<file name="./src/ext/sbi/locale/LocaleUtils.js" />
+				<file name="./src/ext/sbi/exception/ExceptionHandler.js" />
+				<file name="./src/ext/sbi/decorator/LoadMask.js" />
+				<file name="./src/ext/sbi/commons/Format.js" />
+				<file name="./src/ext/sbi/commons/JSON.js" />
+				<file name="./src/ext/sbi/commons/Session.js" />	
+				<file name="./src/ext/sbi/commons/Log.js" />	
 
-				<file name="./src/ext/sbi/widgets/FileUploadPanel.js" /> 
 
-				<file name="./src/ext4/sbi/widgets/store/InMemoryFilteredStore.js" /> 
-				<file name="./src/ext4/sbi/widgets/store/DynamicStore.js" /> 
-				<file name="./src/ext4/sbi/widgets/grid/RadioColumn.js" /> 
-				<file name="./src/ext4/sbi/widgets/grid/StaticGridDecorator.js" /> 
-				<file name="./src/ext4/sbi/widgets/grid/CheckColumn.js" /> 
-				<file name="./src/ext4/sbi/widgets/grid/DynamicFilteringToolbar.js" /> 
-				<file name="./src/ext4/sbi/widgets/grid/DynamicGridPanel.js" /> 
-				<file name="./src/ext4/sbi/widgets/grid/FixedGridPanel.js" /> 
-				<file name="./src/ext4/sbi/widgets/grid/FixedGridPanelInMemoryFiltered.js" /> 
-				<file name="./src/ext4/sbi/widgets/grid/GrouppedGrid.js" /> 
-				<file name="./src/ext4/sbi/widgets/compositepanel/ListDetailPanel.js" /> 
-				<file name="./src/ext4/sbi/widgets/toolbar/InLineFilterAndOrder.js" /> 
-				<file name="./src/ext4/sbi/widgets/toolbar/StaticToolbarBuilder.js" /> 
-				<file name="./src/ext4/sbi/widgets/wizard/WizardWindow.js" /> 
-				<file name="./src/ext4/sbi/widgets/frame/EditorIFramePanel.js" /> 
-				<file name="./src/ext4/sbi/widgets/frame/EditorIFramePanelContainer.js" /> 
 
-				<file name="./src/ext4/sbi/browser/DocumentsTree.js" /> 
-				<file name="./src/ext4/sbi/execution/SaveDocumentWindowsExt4.js" /> 
+				<file name="./src/ext/sbi/widgets/FileUploadPanel.js" />
 
-				<file name="./src/ext4/sbi/behavioural/lov/TestLovTreePanel.js" /> 
-				<file name="./src/ext4/sbi/behavioural/lov/TestLovResultPanel.js" /> 
-				<file name="./src/ext4/sbi/behavioural/lov/TestLovConfigurationGridPanel.js" /> 
-				<file name="./src/ext4/sbi/behavioural/lov/TestLovPanel.js" /> 
+				<file name="./src/ext4/sbi/widgets/store/InMemoryFilteredStore.js" />
+				<file name="./src/ext4/sbi/widgets/store/DynamicStore.js" />
+				<file name="./src/ext4/sbi/widgets/grid/RadioColumn.js" />
+				<file name="./src/ext4/sbi/widgets/grid/StaticGridDecorator.js" />
+				<file name="./src/ext4/sbi/widgets/grid/CheckColumn.js" />
+				<file name="./src/ext4/sbi/widgets/grid/DynamicFilteringToolbar.js" />
+				<file name="./src/ext4/sbi/widgets/grid/DynamicGridPanel.js" />
+				<file name="./src/ext4/sbi/widgets/grid/FixedGridPanel.js" />
+				<file name="./src/ext4/sbi/widgets/grid/FixedGridPanelInMemoryFiltered.js" />
+				<file name="./src/ext4/sbi/widgets/grid/GrouppedGrid.js" />
+				<file name="./src/ext4/sbi/widgets/compositepanel/ListDetailPanel.js" />
+				<file name="./src/ext4/sbi/widgets/toolbar/InLineFilterAndOrder.js" />
+				<file name="./src/ext4/sbi/widgets/toolbar/StaticToolbarBuilder.js" />
+				<file name="./src/ext4/sbi/widgets/wizard/WizardWindow.js" />
+				<file name="./src/ext4/sbi/widgets/frame/EditorIFramePanel.js" />
+				<file name="./src/ext4/sbi/widgets/frame/EditorIFramePanelContainer.js" />
 
-				<file name="./src/ext4/sbi/tools/datasource/DataSourceModel.js" /> 
-				<file name="./src/ext4/sbi/tools/datasource/DataSourceListDetailPanel.js" /> 
-				<file name="./src/ext4/sbi/tools/datasource/DataSourceDetailPanel.js" /> 
+				<file name="./src/ext4/sbi/browser/DocumentsTree.js" />
+				<file name="./src/ext4/sbi/execution/SaveDocumentWindowsExt4.js" />
 
-				<file name="./src/ext/sbi/tools/dataset/FileDatasetPanel.js" /> 
 
-				<file name="./src/ext4/sbi/tools/dataset/ValidateDatasetGrid.js" /> 
-				<file name="./src/ext4/sbi/tools/dataset/ValidateDataset.js" /> 
-				<file name="./src/ext4/sbi/tools/dataset/ManageDatasetFieldMetadata.js" /> 
-				<file name="./src/ext4/sbi/tools/dataset/DataSetModel.js" /> 
-				<file name="./src/ext4/sbi/tools/dataset/DataSetsBrowser.js" /> 
-				<file name="./src/ext4/sbi/tools/dataset/DataSetsView.js" /> 
-				<file name="./src/ext4/sbi/tools/dataset/DataSetsWizard.js" /> 
+				<file name="./src/ext4/sbi/behavioural/lov/TestLovTreePanel.js" />
+				<file name="./src/ext4/sbi/behavioural/lov/TestLovResultPanel.js" />
+				<file name="./src/ext4/sbi/behavioural/lov/TestLovConfigurationGridPanel.js" />
+				<file name="./src/ext4/sbi/behavioural/lov/TestLovPanel.js" />
 
-				<file name="./src/ext4/sbi/tools/model/MetaModelsBrowser.js" /> 
-				<file name="./src/ext4/sbi/tools/model/MetaModelsView.js" /> 
-				<file name="./src/ext4/sbi/tools/model/MetaModelModel.js" /> 
+				<file name="./src/ext4/sbi/tools/datasource/DataSourceModel.js" />
+				<file name="./src/ext4/sbi/tools/datasource/DataSourceListDetailPanel.js" />
+				<file name="./src/ext4/sbi/tools/datasource/DataSourceDetailPanel.js" />
 
-				<file name="./src/ext4/sbi/tools/measure/MeasuresCatalogue.js" /> 
-				<file name="./src/ext4/sbi/tools/measure/MeasureModel.js" /> 
+				<file name="./src/ext/sbi/tools/dataset/FileDatasetPanel.js" />
 
-				<file name="./src/ext4/sbi/selfservice/ManageSelfService.js" /> 
-				<file name="./src/ext4/sbi/selfservice/ManageSelfServiceContainer.js" /> 
+				<file name="./src/ext4/sbi/tools/dataset/ValidateDatasetGrid.js" />
+				<file name="./src/ext4/sbi/tools/dataset/ValidateDataset.js" />
+				<file name="./src/ext4/sbi/tools/dataset/ManageDatasetFieldMetadata.js" />
+				<file name="./src/ext4/sbi/tools/dataset/DataSetModel.js" />
+				<file name="./src/ext4/sbi/tools/dataset/DataSetsBrowser.js" />
+				<file name="./src/ext4/sbi/tools/dataset/DataSetsView.js" />
+				<file name="./src/ext4/sbi/tools/dataset/DataSetsWizard.js" />
+
+				<file name="./src/ext4/sbi/tools/model/MetaModelsBrowser.js" />
+				<file name="./src/ext4/sbi/tools/model/MetaModelsView.js" />
+				<file name="./src/ext4/sbi/tools/model/MetaModelModel.js" />
+
+
+				<file name="./src/ext4/sbi/tools/measure/MeasuresCatalogue.js" />
+				<file name="./src/ext4/sbi/tools/measure/MeasureModel.js" />
+
+				<file name="./src/ext4/sbi/selfservice/ManageSelfService.js" />
+				<file name="./src/ext4/sbi/selfservice/ManageSelfServiceContainer.js" />
 				<file name="./src/ext4/sbi/selfservice/SelfServiceExecutionIFrame.js" />
 
-				<file name="./src/ext4/sbi/adhocreporting/AdhocreportingTabsPanel.js" /> 
-				<file name="./src/ext4/sbi/adhocreporting/AdhocreportingContainer.js" /> 
 
-				<file name="./src/ext4/sbi/community/CommunityDetailPanel.js" /> 
-				<file name="./src/ext4/sbi/community/CommunityListDetailPanel.js" /> 
-				<file name="./src/ext4/sbi/community/CommunityModel.js" /> 
+				<file name="./src/ext4/sbi/adhocreporting/AdhocreportingTabsPanel.js" />
+				<file name="./src/ext4/sbi/adhocreporting/AdhocreportingContainer.js" />
+
+				<file name="./src/ext4/sbi/community/CommunityDetailPanel.js" />
+				<file name="./src/ext4/sbi/community/CommunityListDetailPanel.js" />
+				<file name="./src/ext4/sbi/community/CommunityModel.js" />
+
+
+				<file name="./src/ext4/sbi/tools/layer/LayerModel.js" />
+				<file name="./src/ext4/sbi/tools/layer/LayerListDetailPanel.js" />
+				<file name="./src/ext4/sbi/tools/layer/LayerDetailPanel.js" />
 
 				
 			</filelist>
