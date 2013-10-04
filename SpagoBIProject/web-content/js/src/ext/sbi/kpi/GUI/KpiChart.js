@@ -35,13 +35,14 @@ function Gauge(placeholderName, configuration)
 
 	this.render = function()
 	{
+		
+		//append calls document.createElementNS which fails on IE
 		this.body = d3.select("#" + this.renderTo)
 							.append("svg:svg")
 	   						.attr("class", "gauge")
 	   						.attr("width", this.config.size)
 	   						.attr("height", this.config.size);
-		
-		console.log(this.body);
+
 
 		this.body.append("svg:circle")
 					.attr("cx", this.config.cx)						
@@ -123,7 +124,7 @@ function Gauge(placeholderName, configuration)
 			}
 		}		
 
-		var pointerContainer = this.body.append("svg:g").attr("class", "pointerContainer");		
+		var pointerContainer = self.body.append("svg:g").attr("class", "pointerContainer");		
 		this.drawPointer(0);
 		pointerContainer.append("svg:circle")								
 							.attr("cx", this.config.cx)						
