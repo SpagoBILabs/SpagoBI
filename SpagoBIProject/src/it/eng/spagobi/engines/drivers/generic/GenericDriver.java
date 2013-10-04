@@ -41,6 +41,9 @@ public class GenericDriver extends AbstractDriver implements IEngineDriver {
     public static final String DOCUMENT_LABEL = "DOCUMENT_LABEL";
     public static final String DOCUMENT_VERSION = "DOCUMENT_VERSION";
     public static final String DOCUMENT_AUTHOR = "DOCUMENT_AUTHOR";
+    public static final String DOCUMENT_NAME = "DOCUMENT_NAME";
+    public static final String DOCUMENT_DESCRIPTION = "DOCUMENT_DESCRIPTION";
+    public static final String DOCUMENT_IS_PUBLIC = "DOCUMENT_IS_PUBLIC";
 
 
     public static final String COUNTRY = "country";
@@ -177,8 +180,12 @@ public class GenericDriver extends AbstractDriver implements IEngineDriver {
 		    logger.debug("Add " + DOCUMENT_VERSION + " parameter: " + objtemplate.getId());
 		    pars.put(DOCUMENT_AUTHOR, biobj.getCreationUser());
 		    logger.debug("Add " + DOCUMENT_AUTHOR + " parameter: " + biobj.getCreationUser());
-
-
+		    pars.put(DOCUMENT_NAME, biobj.getName());
+		    logger.debug("Add " + DOCUMENT_NAME + " parameter: " + biobj.getName());
+		    pars.put(DOCUMENT_DESCRIPTION, biobj.getDescription());
+		    logger.debug("Add " + DOCUMENT_DESCRIPTION + " parameter: " + biobj.getDescription());
+		    pars.put(DOCUMENT_IS_PUBLIC, biobj.isPublicDoc());
+		    logger.debug("Add " + DOCUMENT_IS_PUBLIC + " parameter: " + biobj.isPublicDoc());
 	        
 			pars = addBIParameters(biobj, pars);
 			pars = addBIParameterDescriptions(biobj, pars);
