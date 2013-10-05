@@ -11,6 +11,8 @@ import it.eng.spagobi.kpi.config.bo.Kpi;
 import it.eng.spagobi.kpi.config.bo.KpiValue;
 import it.eng.spagobi.kpi.threshold.bo.ThresholdValue;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -75,6 +77,14 @@ public class KpiGUIUtil {
 			if (kpivalue != null) {
 				jsonToReturn.put("actual", kpiLine.getValue().getValue());
 				jsonToReturn.put("target", kpiLine.getValue().getTarget());
+				
+				SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
+				Date bdate = kpiLine.getValue().getBeginDate();
+				Date edate = kpiLine.getValue().getEndDate();
+				if(bdate != null && edate != null){
+					jsonToReturn.putOpt("beginDt", sdf.format(bdate));
+					jsonToReturn.putOpt("endDt", sdf.format(edate));
+				}
 
 				if(children != null && !children.isEmpty()){
 					jsonToReturn.put("iconCls", "folder");
