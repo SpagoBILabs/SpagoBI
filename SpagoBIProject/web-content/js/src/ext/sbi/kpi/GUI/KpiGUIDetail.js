@@ -232,6 +232,9 @@ Ext.extend(Sbi.kpi.KpiGUIDetail , Ext.form.FormPanel, {
 		if(this.targetItem != null){
 			this.detailFields.remove(this.targetItem);
 		}
+		if(this.validityItem != null){
+			this.detailFields.remove(this.validityItem);
+		}
 		this.maxChartValue =0;
 		this.minChartValue =0;
 		this.ranges = new Array();
@@ -336,7 +339,7 @@ Ext.extend(Sbi.kpi.KpiGUIDetail , Ext.form.FormPanel, {
 			this.threshFields.doLayout();
 		}
 		//value
-		this.valueItem = new Ext.form.DisplayField({fieldLabel: 'Valore', 
+		this.valueItem = new Ext.form.DisplayField({fieldLabel: LN('sbi.thresholds.value'), 
 													value: this.val, 
 													width: 0.49,
 													style: 'margin-left:5px; padding-left:5px; font-style: italic; font-weight: bold;'
@@ -345,7 +348,7 @@ Ext.extend(Sbi.kpi.KpiGUIDetail , Ext.form.FormPanel, {
 
 		//target
 		var target = field.attributes.target;
-		this.targetItem = new Ext.form.DisplayField({fieldLabel: 'Target', 
+		this.targetItem = new Ext.form.DisplayField({fieldLabel: LN('sbi.modelinstances.target'), 
 													style: 'padding-left:5px;',
 													width: 145,
 													labelWidth:45,
@@ -355,7 +358,7 @@ Ext.extend(Sbi.kpi.KpiGUIDetail , Ext.form.FormPanel, {
 		//weight
 		var weight = field.attributes.weight;
 		
-		this.weightItem = new Ext.form.DisplayField({fieldLabel: 'Peso',
+		this.weightItem = new Ext.form.DisplayField({fieldLabel: LN('sbi.kpis.weight'),
 													style: 'margin-left:5px;',
 													width: 145,
 													labelWidth:45,
@@ -365,6 +368,18 @@ Ext.extend(Sbi.kpi.KpiGUIDetail , Ext.form.FormPanel, {
 			this.detailFields.add(this.weightItem );
 		}
 		
+		//validity
+		var beginDt = field.attributes.beginDt ;
+		var endDt = field.attributes.endDt ;
+		if(beginDt !== undefined && beginDt != null && endDt !== undefined && endDt != null ){
+
+			this.validityItem = new Ext.form.DisplayField({fieldLabel: LN('sbi.kpi.validity'), 
+														style: 'padding-left:15px;',
+														width: 145,
+														labelWidth:50,
+														value: "  "+beginDt+" - "+endDt});
+			this.detailFields.add(this.validityItem );
+		}
 		this.doLayout();
         this.render();
 	}

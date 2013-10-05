@@ -175,6 +175,8 @@ Sbi.locale.ln['sbi.kpis.days'] = 'D\u00edas';
 Sbi.locale.ln['sbi.kpis.hours'] = 'Horas';
 Sbi.locale.ln['sbi.kpis.mins'] = 'Minutos';
 
+Sbi.locale.ln['sbi.kpi.validity'] = 'Validez';
+
 Sbi.locale.ln['sbi.thresholds.position'] = 'Posici\u00f3n';
 Sbi.locale.ln['sbi.thresholds.include'] = '\u00bfIncluir?';
 Sbi.locale.ln['sbi.thresholds.min'] = 'Min';
