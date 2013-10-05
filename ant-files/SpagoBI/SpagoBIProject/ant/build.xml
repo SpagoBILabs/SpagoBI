@@ -551,8 +551,9 @@
 				<file name="./src/ext/sbi/engines/chart/GenericChartPanel.js" />
 				<file name="./src/ext/sbi/engines/chart/HighchartsPanel.js" />
 				<file name="./src/ext/sbi/engines/chart/MasterDetailChartPanel.js" />
-
+				
 				<file name="./src/ext/sbi/kpi/GUI/KpiChart.js" />
+				<file name="./src/ext/sbi/kpi/GUI/KpiChartHighcharts.js" />
 				<file name="./src/ext/sbi/kpi/KpiGUILayout.js" />
 				<file name="./src/ext/sbi/kpi/KpiGridPanel.js" />
 				<file name="./src/ext/sbi/kpi/KpiAccordionPanel.js" />
