@@ -349,20 +349,20 @@ Ext.extend(Sbi.kpi.KpiGUIDetail , Ext.form.FormPanel, {
 		//target
 		var target = field.attributes.target;
 		this.targetItem = new Ext.form.DisplayField({fieldLabel: LN('sbi.modelinstances.target'), 
-													style: 'padding-left:5px;',
-													width: 145,
-													labelWidth:45,
-													value: target});
+													style: 'padding-left:15px;',
+													//width: 150,
+													//labelWidth:50,
+													value:  "  "+target});
 		this.detailFields.add(this.targetItem );
 		
 		//weight
 		var weight = field.attributes.weight;
 		
 		this.weightItem = new Ext.form.DisplayField({fieldLabel: LN('sbi.kpis.weight'),
-													style: 'margin-left:5px;',
-													width: 145,
-													labelWidth:45,
-													value: weight});
+													style: 'margin-left:15px;',
+													width: 150,
+													labelWidth:50,
+													value:  "  "+weight});
 		
 		if(weight !== undefined && weight != null && weight  != ''){
 			this.detailFields.add(this.weightItem );
