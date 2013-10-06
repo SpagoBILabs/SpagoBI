@@ -154,6 +154,7 @@ function Gauge(placeholderName, configuration)
 	this.drawPointer = function(value)
 	{
 		var valueToSet = value;
+		
 		var tickColor ='#57a8d7';//light blue
 		var tickBorder ='#155ba4';//dark blue
 		var valueText ="#000";
@@ -182,26 +183,20 @@ function Gauge(placeholderName, configuration)
 		var line = d3.svg.line()
 							.x(function(d) { return d.x })
 							.y(function(d) { return d.y })
-							.interpolate("basis");
+							.interpolate("linear");
 		
 		
 		var pointerContainer = this.body.select(".pointerContainer");	
 
-		var pointer = pointerContainer.selectAll("path").data([data])		
-		
-		pointer.enter()
-			.append("svg:path")
-				.attr("d", line)
-				.style("fill", "#000")
-				.style("stroke", "#000")
-				.style("fill-opacity", 1)
+		var pointer = pointerContainer.selectAll("path").data([data]);
 			
-/*		pointer.enter()
+		pointer.enter()
 				.append("svg:path")
 					.attr("d", line)
-					.style("fill", tickColor)
-					.style("stroke", tickBorder)
-					.style("fill-opacity", 0.7)*/
+					.style("fill", "#dc3912")
+					.style("stroke", "#c63310")
+					.style("fill-opacity", 0.7);
+					
 		
 		pointer.transition()
 					.attr("d", line);
