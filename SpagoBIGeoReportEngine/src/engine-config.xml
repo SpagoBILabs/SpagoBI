@@ -35,15 +35,15 @@
 				layerLabel="Regioni" 
 				layerId="nome_reg" 
 				layer_url="http://localhost:6090/geoserver/wfs"
-				layer_zoom="9" 
-				layer_cetral_point="11.400 46.650"/>
+				layer_zoom="5" 
+				layer_cetral_point="18.530 42.500"/>
 			<LEVEL name="provincia"
 				layerName="province" 
 				layerLabel="Province" 
 				layerId="nome_pro" 
 				layer_url="http://localhost:6090/geoserver/wfs"
-				layer_zoom="9" 
-				layer_cetral_point="11.400 46.650"/>
+				layer_zoom="5" 
+				layer_cetral_point="18.530 42.500"/>
 			<LEVEL name="comune"
 				layerName="comuni" 
 				layerLabel="Comuni" 
@@ -51,6 +51,7 @@
 				layer_url="http://localhost:6090/geoserver/wfs"
 				layer_zoom="9" 
 				layer_cetral_point="11.400 46.650"/>
+				
 		</LEVELS>
 	</GEO_DIMENSION>
 	
