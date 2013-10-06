@@ -145,30 +145,29 @@ Ext.extend(Sbi.kpi.KpiGUIDetail , Ext.form.FormPanel, {
 	
 	, drawD3Chart: function(value){
 
-		if(this.dial == null){
-			// Build the dial
-			if(this.tickInterval && this.tickInterval != null){
-				this.ticksNumber = ((this.maxChartValue - this.minChartValue)/this.tickInterval)+1;
-			}
+		if(this.dial != null){
 			
-			var config = 
-			{
-				size: 250,
-				minorTicks: 2,
-				majorTicks: this.ticksNumber,
-				renderTo: this.chartid,
-				max: this.maxChartValue,
-				min: this.minChartValue
-			}
-			config.ranges= this.ranges;
+			var gaugeEl = Ext.get(this.chartid);
+			gaugeEl.update('');
 
-			this.dial = new Gauge("chartContainer", config);			
-			this.dial.render();
-			this.dial.redraw(value);
-		}else{
-			setInterval(this.updateGauge(value), 5000);
 		}
-		
+		if(this.tickInterval && this.tickInterval != null){
+			this.ticksNumber = ((this.maxChartValue - this.minChartValue)/this.tickInterval)+1;
+		}
+		var config = 
+		{
+			size: 250,
+			minorTicks: 2,
+			majorTicks: this.ticksNumber,
+			renderTo: this.chartid,
+			max: this.maxChartValue,
+			min: this.minChartValue
+		}
+		config.ranges= this.ranges;
+
+		this.dial = new Gauge("chartContainer", config);			
+		this.dial.render();
+		this.dial.redraw(value);
 	}
 	, drawHighChart: function(value){
 
