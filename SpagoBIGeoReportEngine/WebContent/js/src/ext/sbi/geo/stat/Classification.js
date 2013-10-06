@@ -34,9 +34,18 @@ Ext.extend(Sbi.geo.stat.DataPoint, Ext.util.Observable, {
 		return this.value;
 	}
 	
-	, coordinatesAreEqualTo: function(c) {
+	/**
+	 * By default coordinates are not case sensitive so for example ['Milano', 'Gennaio'] identify
+	 * exactly the same datapoint of coordinate ['MILANO', 'geNNaio']
+	 */
+	, coordinatesAreEqualTo: function(c, isCaseSensitive) {
+		isCaseSensitive = isCaseSensitive || false;
 		for(var i = 0; i < this.coordinates.length; i++) {
-			if(this.coordinates[i] != c[i]) return false;
+			if(isCaseSensitive) {
+				if(this.coordinates[i] != c[i]) return false;
+			} else {
+				if(this.coordinates[i].toUpperCase() != c[i].toUpperCase()) return false;
+			}
 		}
 		return true;
 	}
