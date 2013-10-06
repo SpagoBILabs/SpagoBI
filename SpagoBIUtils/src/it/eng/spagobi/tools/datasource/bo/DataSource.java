@@ -145,9 +145,12 @@ public class DataSource implements Serializable, IDataSource {
     private Connection getDirectConnection() throws ClassNotFoundException, SQLException {
 		Connection connection = null;
 		
+		try {
 		Class.forName( getDriver() );
 		connection = DriverManager.getConnection(getUrlConnection(), getUser(), getPwd());
-		
+		} catch(Throwable t) {
+			throw new RuntimeException("Impossible to create a direct connection to database at host [" + getUrlConnection() + "] with user [" + getUser() + "]. Check if the database is running and if the password is correct.");
+		}
 		return connection;
     }
 	
