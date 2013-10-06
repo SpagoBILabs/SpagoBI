@@ -35,14 +35,11 @@ function Gauge(placeholderName, configuration)
 
 	this.render = function()
 	{
-		
-		//append calls document.createElementNS which fails on IE
 		this.body = d3.select("#" + this.renderTo)
 							.append("svg:svg")
 	   						.attr("class", "gauge")
 	   						.attr("width", this.config.size)
 	   						.attr("height", this.config.size);
-
 
 		this.body.append("svg:circle")
 					.attr("cx", this.config.cx)						
@@ -124,7 +121,7 @@ function Gauge(placeholderName, configuration)
 			}
 		}		
 
-		var pointerContainer = self.body.append("svg:g").attr("class", "pointerContainer");		
+		var pointerContainer = this.body.append("svg:g").attr("class", "pointerContainer");		
 		this.drawPointer(0);
 		pointerContainer.append("svg:circle")								
 							.attr("cx", this.config.cx)						
@@ -157,19 +154,17 @@ function Gauge(placeholderName, configuration)
 	this.drawPointer = function(value)
 	{
 		var valueToSet = value;
-		var tickColor ='#e5340b';
-		var tickBorder ="#c63310";
+		var tickColor ='#57a8d7';//light blue
+		var tickBorder ='#155ba4';//dark blue
 		var valueText ="#000";
 		if(this.config.max < value){
 			value = this.config.max;
-			tickColor ='#57a8d7';
-			tickBorder ='#155ba4';
-			valueText= '#155ba4';
+			tickColor ='#e5340b';//light red
+			tickBorder ="#c63310";//dark red			
 		}else if(this.config.min > value){
 			value = this.config.min;
-			tickColor ='#57a8d7';
-			tickBorder ='#155ba4';
-			valueText= '#155ba4';
+			tickColor ='#e5340b';//light red
+			tickBorder ="#c63310";//dark red	
 		}
 		var delta = this.config.range / 13;
 
@@ -188,22 +183,32 @@ function Gauge(placeholderName, configuration)
 							.x(function(d) { return d.x })
 							.y(function(d) { return d.y })
 							.interpolate("basis");
-
+		
+		
 		var pointerContainer = this.body.select(".pointerContainer");	
 
-		var pointer = pointerContainer.selectAll("path").data([data])										
-
+		var pointer = pointerContainer.selectAll("path").data([data])		
+		
 		pointer.enter()
+			.append("svg:path")
+				.attr("d", line)
+				.style("fill", "#000")
+				.style("stroke", "#000")
+				.style("fill-opacity", 1)
+			
+/*		pointer.enter()
 				.append("svg:path")
 					.attr("d", line)
 					.style("fill", tickColor)
 					.style("stroke", tickBorder)
-					.style("fill-opacity", 0.7)
-
+					.style("fill-opacity", 0.7)*/
+		
 		pointer.transition()
 					.attr("d", line);
 
+
 		var fontSize = Math.round(this.config.size / 10);
+		
 		pointerContainer.selectAll("text")
 							.data([valueToSet])
 								.text(Math.round(valueToSet))
@@ -215,7 +220,7 @@ function Gauge(placeholderName, configuration)
 									.attr("text-anchor", "middle")
 									.text(Math.round(valueToSet))
 									.style("font-size", fontSize + "px")
-									.style("fill", valueText)
+									.style("fill", "#000")
 									.style("stroke-width", "0px");
 	}
 
