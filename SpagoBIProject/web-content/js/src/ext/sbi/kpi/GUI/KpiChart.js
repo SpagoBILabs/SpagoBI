@@ -193,10 +193,12 @@ function Gauge(placeholderName, configuration)
 		pointer.enter()
 				.append("svg:path")
 					.attr("d", line)
-					.style("fill", "#dc3912")
-					.style("stroke", "#c63310")
+					.style("fill", tickColor)
+					.style("stroke", tickBorder)
 					.style("fill-opacity", 0.7);
-					
+		
+		pointer.style("fill", tickColor)
+		.style("stroke", tickBorder);
 		
 		pointer.transition()
 					.attr("d", line);
