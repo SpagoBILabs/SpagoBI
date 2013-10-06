@@ -70,6 +70,7 @@ public class MeasureCatalogue implements Observer {
 	 */
 	private void initModel(){
 		Config modelConfig=null;
+		
 		try {
 			IConfigDAO configDao = DAOFactory.getSbiConfigDAO();
 			modelConfig = configDao.loadConfigParametersByLabel(MeasureCatalogueCostants.modelConfigLabel);
@@ -81,11 +82,16 @@ public class MeasureCatalogue implements Observer {
 		Assert.assertNotNull("The model with the definition of the cube must be difined in the configs (property "+MeasureCatalogueCostants.modelConfigLabel+")", modelConfig);
 		
 		String modelname = modelConfig.getValueCheck();
+		logger.debug("Initilaizing model [" + modelname + "]");
 		
 		File modelFile = new File(getResourcePath()+File.separator+"qbe" + File.separator + "datamarts" + File.separator + modelname+File.separator+modelname+".sbimodel");
 		Assert.assertNotNull("The model with the definition of the cube must be uploaded in the server. The name of the model in the configs is "+modelname, modelFile);
 		
+		logger.debug("Model file name is equal to [" + modelname + "]");
+		
 		metamodelWrapper = new MetaModelWrapper(MetaModelLoader.load(modelFile));
+		
+		logger.debug("Model [" + modelname + "] succesfully initialized");
 	}
 	
 	/**
