@@ -148,7 +148,7 @@ Ext.extend(Sbi.geo.stat.ChoroplethThematizer, Sbi.geo.stat.Thematizer, {
         Sbi.geo.stat.ChoroplethThematizer.superclass.thematize.call(this, arguments);
         
         for (var i = 0; i < rules.length; i++) {
-        	Sbi.trace("Features thematized succesfully for class [" + i + "] are [" + filters[i].filteredFeatures + "] on [" + filters[i].dataPoints.length +"] expected");
+        	Sbi.trace("[ChoroplethThematizer.thematize] : Features thematized succesfully for class [" + i + "] are [" + filters[i].filteredFeatures + "] on [" + filters[i].dataPoints.length +"] expected");
         }
         
         Sbi.trace("[ChoroplethThematizer.thematize] : OUT");
@@ -164,14 +164,24 @@ Ext.extend(Sbi.geo.stat.ChoroplethThematizer, Sbi.geo.stat.Thematizer, {
     , createClassFilter: function(bin, binIndex) {
     	var filter = new OpenLayers.Filter.Function({
         	evaluate: function(attributes) { 
+        		
         		this.invoked = true;
     	        for(var j = 0; j < this.dataPoints.length; j++) {
     	        	if(this.dataPoints[j].coordinatesAreEqualTo([attributes[this.layerId]])) {
     	        		Sbi.trace("Feature [" + attributes[this.layerId]+ "] belong to class [" + binIndex + "]");
     	        		this.filteredFeatures++;
     	        		return true;
-    	        	}
+    	        	} 
     	        }
+    	        
+    	        if(attributes[this.layerId] == undefined || attributes[this.layerId] == null) {
+    	        	var s = "";
+    	    		for(a in attributes) s += a + ";";
+        			Sbi.trace("[Filter(" + this.binIndex + ").evaluate] :  feature does not contains attribute [" + this.layerId+ "]. Available attributes are [" + s + "]");
+        		} else {
+        			//Sbi.trace("[Filter(" + this.binIndex + ").evaluate] :  feature whose attribute [" + this.layerId + "] is equal to [" + attributes[this.layerId] + "] do not belong to this class");
+        		}
+    	        
     	        return false;
     	    }
     	});
