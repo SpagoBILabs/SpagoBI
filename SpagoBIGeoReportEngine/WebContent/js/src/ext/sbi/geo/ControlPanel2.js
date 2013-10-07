@@ -23,7 +23,7 @@ Sbi.geo.ControlPanel2 = function(config) {
 		title       : LN('sbi.geo.controlpanel.title'),
 		region      : 'east',
 		split       : true,
-		width       : 380,
+		width       : 365,
 		collapsible : true,
 		collapsed   : false,
 		margins     : '3 0 3 3',
@@ -31,6 +31,7 @@ Sbi.geo.ControlPanel2 = function(config) {
 		autoScroll	 : true
 		, border: false
 		, id:'this'
+		,layout: 'fit'
 	};
 	
 	if (Sbi.settings && Sbi.settings.geo && Sbi.settings.geo.ControlPanel2) {
@@ -142,7 +143,8 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 	, init: function() {
 		this.isFinalUser = (Sbi.template.role.indexOf('user') >= 0);
 		this.innerPanel = new Ext.Panel({
-			height: 950,
+			layout: 'fit', 
+			autoScroll: true,
 			html: ' <main class="main main-map" id="main"> ' +
 					    '<div id="panel" class="panel">' +
 					    	'<form class="panel-form" action="#" method="post">' +
@@ -153,61 +155,7 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 					                    this.getPermissionDiv() + 
 					                '</div>' +
 					            '</div>' + this.getPanelButtonsDiv() + 
-					            '<div class="map-tools">' +
-					                '<div class="map-tools-element legend">' +
-					                	'<div class="tools-content overlay">' +
-					                    	'<h3>Legenda</h3>' +
-					                        '<img src="images/placeholders/img-legenda.jpg" alt=" " />' +
-					                        '<span class="btn-close"></span>' +
-					                    '</div>' +
-					                	'<span class="icon"></span>' +
-					                '</div>' +
-					                '<div class="map-tools-element layers">' +
-					                	'<div class="tools-content overlay">' +
-					                    	'<h3>Livelli</h3>' +
-					                        '<div class="select">' +
-					                        	'<label for="cartografia">Cartografia</label>' +
-					                            '<select name="cartografia" id="cartografia">' +
-					                            	'<option value="cart-1">Google Maps</option>' +
-					                                '<option value="cart-2">Map 2</option>' +
-					                                '<option value="cart-3">Map 3</option>' +
-					                            '</select>' +
-					                        '</div>' +
-					                        '<div class="check-group">' +
-					                        	'<div class="checkbox">' +
-					                            	'<input type="checkbox" name="check-1" id="check-1" />' +
-					                                '<label for="check-1">Fermate bus</label>' +
-					                            '</div>' +
-					                            '<div class="checkbox right">' +
-					                            	'<input type="checkbox" name="check-2" id="check-2" />' +
-					                                '<label for="check-2">Comuni e città </label>' +
-					                            '</div>' +
-					                            '<div class="checkbox">' +
-					                            	'<input type="checkbox" name="check-3" id="check-3" />' +
-					                                '<label for="check-3">Strade</label>' +
-					                            '</div>' +
-					                            '<div class="checkbox right">' +
-					                            	'<input type="checkbox" name="check-4" id="check-4" />' +
-					                                '<label for="check-4">Icone</label>' +
-					                            '</div>' +
-					                            '<div class="checkbox">' +
-					                            	'<input type="checkbox" name="check-5" id="check-5" />' +
-					                                '<label for="check-5">Fiumi</label>' +
-					                            '</div>' +
-					                        '</div>' +
-					                        '<span class="btn-close"></span>' +
-					                    '</div>' +
-					                	'<span class="icon"></span>' +
-					                '</div>' +
-					            '</div>' +
 					        '</form>' +
-					        '<ul class="panel-actions">' +
-					        	'<li class="btn-toggle open first"><span></span></li>' +
-					            '<li class="btn-print"><span>Print this map</span></li>' +
-					            '<li class="btn-share"><span>Share this map</span></li>' +
-					            '<li class="btn-download"><a href="#">Download this map</a></li>' +
-					            '<li class="btn-favourite last"><a href="#">Make this map favourite</a></li>' +
-					        '</ul>' +
 					    '</div>' +
 					'</main>'
 		});
