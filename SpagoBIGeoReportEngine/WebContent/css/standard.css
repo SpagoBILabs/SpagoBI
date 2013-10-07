@@ -283,7 +283,7 @@ li:hover .login-panel .not-registered a:hover,.login-panel .not-registered a:hov
 
 .panel{font-family:cabinregular, sans-serif, arial, helvetica;color:#434343;box-shadow:7px 7px 10px #000;width:362px;height:100%;position:absolute;top:0;right:0;background:#f3f3f3}
 .panel-form{width:100%;height:100%;float:left}
-.panel .scroll{max-height:850px;overflow:hidden;position:relative;width:298px;float:left;background:#f9f9f9;border-bottom:1px solid #e4e4e4;padding:0 32px}
+.panel .scroll{overflow:hidden;position:relative;width:298px;float:left;background:#f9f9f9;border-bottom:1px solid #e4e4e4;padding:0 32px}
 .panel .scroll-content{float:left;padding:32px 0 12px 0;width:298px;-webkit-transform: translateZ(0);-moz-transform: translateZ(0);-ms-transform: translateZ(0);-o-transform: translateZ(0);transform: translateZ(0);-webkit-touch-callout: none;-webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;-webkit-text-size-adjust: none;-moz-text-size-adjust: none;-ms-text-size-adjust: none;-o-text-size-adjust: none;text-size-adjust: none} /*float*/
 .panel h1{margin:0 0 14px 0;line-height:120%;font-size:1.66em;font-family:cabinmedium, sans-serif, arial, helvetica;font-weight:normal}
 .panel h2{font-size:1.4em;margin:0 0 15px 0;font-family:cabinmedium, sans-serif, arial, helvetica;font-weight:normal}
