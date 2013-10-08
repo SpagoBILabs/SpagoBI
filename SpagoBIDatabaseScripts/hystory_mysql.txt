@@ -1982,26 +1982,23 @@ ALTER TABLE SBI_DATA_SET DROP COLUMN DATA_SOURCE_FLAT_ID;
 ALTER TABLE SBI_GEO_LAYERS ADD COLUMN IS_BASE_LAYER BOOLEAN DEFAULT FALSE;
 
 -- Fabrizio Pajalunga 02/10/2013: added user attributes
-INSERT INTO sbi_attribute (attribute_name,description,attribute_id,user_in,time_in,sbi_version_in,organization) values ('sesso','sesso',(SELECT next_val FROM hibernate_sequences WHERE sequence_name = 'sbi_attribute'),'server_init',sysdate(),'4.0','SPAGOBI');
+INSERT INTO sbi_attribute (attribute_name,description,attribute_id,user_in,time_in,sbi_version_in,organization) values ('gender','gender',(SELECT next_val FROM hibernate_sequences WHERE sequence_name = 'sbi_attribute'),'server_init',sysdate(),'4.0','SPAGOBI');
 update hibernate_sequences set next_val = next_val+1 where sequence_name = 'SBI_ATTRIBUTE';
 commit;
 
-INSERT INTO sbi_attribute (attribute_name,description,attribute_id,user_in,time_in,sbi_version_in,organization) values ('data_nascita','data nascita',(SELECT next_val FROM hibernate_sequences WHERE sequence_name = 'sbi_attribute'),'server_init',sysdate(),'4.0','SPAGOBI');
+INSERT INTO sbi_attribute (attribute_name,description,attribute_id,user_in,time_in,sbi_version_in,organization) values ('location','location',(SELECT next_val FROM hibernate_sequences WHERE sequence_name = 'sbi_attribute'),'server_init',sysdate(),'4.0','SPAGOBI');
 update hibernate_sequences set next_val = next_val+1 where sequence_name = 'SBI_ATTRIBUTE';
 commit;
 
-INSERT INTO sbi_attribute (attribute_name,description,attribute_id,user_in,time_in,sbi_version_in,organization) values ('indirizzo','indirizzo',(SELECT next_val FROM hibernate_sequences WHERE sequence_name = 'sbi_attribute'),'server_init',sysdate(),'4.0','SPAGOBI');
+INSERT INTO sbi_attribute (attribute_name,description,attribute_id,user_in,time_in,sbi_version_in,organization) values ('company','company',(SELECT next_val FROM hibernate_sequences WHERE sequence_name = 'sbi_attribute'),'server_init',sysdate(),'4.0','SPAGOBI');
 update hibernate_sequences set next_val = next_val+1 where sequence_name = 'SBI_ATTRIBUTE';
 commit;
 
-INSERT INTO sbi_attribute (attribute_name,description,attribute_id,user_in,time_in,sbi_version_in,organization) values ('azienda','azienda',(SELECT next_val FROM hibernate_sequences WHERE sequence_name = 'sbi_attribute'),'server_init',sysdate(),'4.0','SPAGOBI');
+INSERT INTO sbi_attribute (attribute_name,description,attribute_id,user_in,time_in,sbi_version_in,organization) values ('short_bio','short_bio',(SELECT next_val FROM hibernate_sequences WHERE sequence_name = 'sbi_attribute'),'server_init',sysdate(),'4.0','SPAGOBI');
 update hibernate_sequences set next_val = next_val+1 where sequence_name = 'SBI_ATTRIBUTE';
 commit;
 
-INSERT INTO sbi_attribute (attribute_name,description,attribute_id,user_in,time_in,sbi_version_in,organization) values ('biografia','biografia',(SELECT next_val FROM hibernate_sequences WHERE sequence_name = 'sbi_attribute'),'server_init',sysdate(),'4.0','SPAGOBI');
+INSERT INTO sbi_attribute (attribute_name,description,attribute_id,user_in,time_in,sbi_version_in,organization) values ('language','language',(SELECT next_val FROM hibernate_sequences WHERE sequence_name = 'sbi_attribute'),'server_init',sysdate(),'4.0','SPAGOBI');
 update hibernate_sequences set next_val = next_val+1 where sequence_name = 'SBI_ATTRIBUTE';
 commit;
 
-INSERT INTO sbi_attribute (attribute_name,description,attribute_id,user_in,time_in,sbi_version_in,organization) values ('lingua','lingua',(SELECT next_val FROM hibernate_sequences WHERE sequence_name = 'sbi_attribute'),'server_init',sysdate(),'4.0','SPAGOBI');
-update hibernate_sequences set next_val = next_val+1 where sequence_name = 'SBI_ATTRIBUTE';
-commit;
