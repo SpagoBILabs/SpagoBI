@@ -330,7 +330,7 @@ public class Signup {
 			  
 		  URL url = new URL(req.getScheme(), host.substring(0, index), Integer.parseInt(host.substring(index+1)), req.getContextPath() + "/restful-services/signup/prepareActive?accountId=" + id );
 			  
-	      //sendMail(email, subject, body + " \r\n \r\n " + url.toExternalForm() );
+	      sendMail(email, subject, body + " \r\n \r\n " + url.toExternalForm() );
 		  
 		  
 		} catch (Throwable t) {
