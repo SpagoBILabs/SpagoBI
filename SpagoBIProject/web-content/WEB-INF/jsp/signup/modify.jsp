@@ -6,6 +6,7 @@
          import="it.eng.spago.base.*,
                  it.eng.spagobi.commons.constants.SpagoBIConstants"
 %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page import="it.eng.spagobi.commons.utilities.ChannelUtilities"%>
 <%@page import="it.eng.spagobi.commons.utilities.messages.IMessageBuilder"%>
 <%@page import="it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory"%>
@@ -27,7 +28,7 @@
 Ext.ns("Sbi.config");
 Sbi.config.loginUrl = "";
 
-function register() {
+function modify() {
 
 	
   //Service Registry creation
@@ -47,48 +48,39 @@ function register() {
 this.services = [];
 
 //Adding a new service to the registry
-this.services["create"]= Sbi.config.serviceRegistry.getRestServiceUrl({
-	serviceName: 'signup/create',
+this.services["update"]= Sbi.config.serviceRegistry.getRestServiceUrl({
+	serviceName: 'signup/update',
 	baseParams: {}
 });
 
     var form             = document.myForm;
-	var nome             = document.getElementById("nome").value;
-	var cognome          = document.getElementById("cognome").value;
-	var username         = document.getElementById("username").value;
+	
+    var nome             = document.getElementById("nome").value;
+    var cognome          = document.getElementById("cognome").value;
 	var password         = document.getElementById("password").value;
-	var confermaPassword = document.getElementById("confermaPassword").value;
-	var email            = document.getElementById("email").value;
-	var sesso            = document.getElementById("sesso").value;
+    var email            = document.getElementById("email").value;
 	var dataNascita      = document.getElementById("dataNascita").value;
 	var indirizzo        = document.getElementById("indirizzo").value;
 	var azienda          = document.getElementById("azienda").value;
 	var biografia        = document.getElementById("biografia").value;
 	var lingua           = document.getElementById("lingua").value;
-	var captcha          = document.getElementById("captcha").value;
-	var check            = document.getElementById("termini");
-	var termini = 'false';
-    if( check.checked ) termini = 'true';
+	
 	
 	var params = new Object();
-	params.nome     = nome;
-	params.cognome  = cognome;
-	params.username = username;
-	params.password = password;
-	params.confermaPassword 
-	                = confermaPassword;
-	params.email    = email;
-	params.sesso    = sesso;
+	
+	params.nome        = nome;
+	params.cognome     = cognome;
+	params.password    = password;
+	params.email       = email;
 	params.dataNascita = dataNascita;
 	params.indirizzo   = indirizzo;
 	params.azienda     = azienda;
 	params.biografia   = biografia;
-	params.termini     = termini;
 	params.lingua      = lingua;
-	params.captcha     = captcha;
+	params.modify      = true;
 	
      Ext.Ajax.request({
-	url: this.services["create"],
+	url: this.services["update"],
 	method: "POST",
 	params: params,			
 	success : function(response, options) {	
@@ -99,7 +91,7 @@ this.services["create"]= Sbi.config.serviceRegistry.getRestServiceUrl({
 		    if( jsonData.message != undefined && jsonData.message != null && jsonData.message == 'validation-error' ){
 		      Sbi.exception.ExceptionHandler.handleFailure(response);
 		    }else{
-		      Sbi.exception.ExceptionHandler.showInfoMessage('Register', 'OK', {});
+		      Sbi.exception.ExceptionHandler.showInfoMessage('Saved', 'Saved OK', {});
 		    }		
 		  }		
 		}
@@ -110,7 +102,7 @@ this.services["create"]= Sbi.config.serviceRegistry.getRestServiceUrl({
     },
 	scope: this,
 	failure: Sbi.exception.ExceptionHandler.handleFailure
-});
+  });
 }
 </script>
 <script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext/sbi/service/ServiceRegistry.js'/></script>
@@ -120,8 +112,6 @@ this.services["create"]= Sbi.config.serviceRegistry.getRestServiceUrl({
     String sbiMode = "WEB";
 	IUrlBuilder urlBuilder = null;
 	urlBuilder = UrlBuilderFactory.getUrlBuilder(sbiMode);
-	
-
 %>
 
 <link id="extall"     rel="styleSheet" href ="${pageContext.request.contextPath}/js/lib/ext-4.1.1a/resources/css/ext-all.css" type="text/css" />
@@ -142,10 +132,7 @@ background: -o-linear-gradient(top,  #dedede 0%,#efefef 100%); /* Opera 11.10+ *
 background: -ms-linear-gradient(top,  #dedede 0%,#efefef 100%); /* IE10+ */
 background: linear-gradient(to bottom,  #dedede 0%,#efefef 100%); /* W3C */
 filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dedede', endColorstr='#efefef',GradientType=0 ); /* IE6-9 */
-height: 100%;
-margin: 0;
-background-repeat: no-repeat;
-background-attachment: fixed;
+
 	}
 	td.login-label{
  	font-family: Tahoma,Verdana,Geneva,Helvetica,sans-serif;
@@ -186,9 +173,9 @@ a:hover{
   </head>
 
   <body>
- <div id="content" style="height:100%">
-    <form name="myForm" method="post" action="${pageContext.request.contextPath}/">
-       
+
+    <form name="myForm" method="post">
+        <div id="content" style="height:100%">
 		        	<div style="padding: 80px " >
 		        	<!--
 		        	DO NOT DELETE THIS COMMENT
@@ -208,208 +195,203 @@ a:hover{
 						<td width='50px'></td>
 						<td></td>
 					</tr>
-					<tr>
+					<tr valign="top">
 						<td width="120px">&nbsp;</td>
 						<td width="350px">
 
 							<table border="0">
-								<tr class='header-row-portlet-section'>
-									<td class='login-label' width="90px" align="left">*&nbsp;Name:</td>
+							    <tr class='header-row-portlet-section'>
+									<td class='login-label' width="90px" align="left">*&nbsp;Name:
+									</td>
 									<td width="25px">&nbsp;</td>
 
-									<td class='login-label'>*&nbsp;Surname:</td>
-
 								</tr>
-								<tr>
-									<td><input id="nome" name="nome" type="text" size="25"
-										class="login"></td>
+                                <tr>
+									<td><input id="nome" name="nome" type="text"
+										size="25" class="login" value="${data['name']}"></td>
 									<td></td>
 
-									<td><input id="cognome" name="cognome" type="text"
+								</tr>
+							
+							    <tr class='header-row-portlet-section'>
+									<td class='login-label' width="90px" align="left">New Password:
+									</td>
+									<td width="25px">&nbsp;</td>
+
+								</tr>
+                                <tr>
+									<td><input id="password" name="password" type="password"
 										size="25" class="login"></td>
-
-								</tr>
-								<tr class='header-row-portlet-section'>
-									<td class='login-label' width="90px" align="left">*
-										 Username:</td>
-									<td width="25px"></td>
-									<td class='login-label'>*&nbsp;Email:</td>
-
-								</tr>
-								<tr>
-									<td><input id="username" name="username" type="text"
-										size="25" class="login">
-									</td>
 									<td></td>
 
-									<td><input id="email" name="email" type="text" size="25"
-										class="login">
-									</td>
-
 								</tr>
-
-
 								<tr class='header-row-portlet-section'>
-									<td class='login-label' width="90px" align="left">*&nbsp;Password:</td>
+									<td class='login-label' width="90px" align="left">*&nbsp;Email:
+									</td>
 									<td width="25px">&nbsp;</td>
 
-									<td class='login-label'>*&nbsp;Confirm Password:</td>
-
 								</tr>
-								<tr>
-									<td valign="top"><input id="password" name="password"
-										type="password" size="25" class="login">
-									</td>
+                                <tr>
+									<td><input id="email" name="email" type="text"
+										size="25" class="login" value="${data['email']}"></td>
 									<td></td>
 
-									<td><input id="confermaPassword" name="confermaPassword"
-										type="password" size="25" class="login">
-									</td>
-
 								</tr>
-								<tr class='header-row-portlet-section'>
-									<td class='login-label' width="90px" align="left">Location:</td>
+                                <tr class='header-row-portlet-section'>
+									<td class='login-label' width="90px" align="left">Birthday (dd/mm/yyyy):
+									</td>
 									<td width="25px">&nbsp;</td>
 
-									<td class='login-label'>Language:</td>
-
 								</tr>
-
 								<tr>
-									<td><input id="indirizzo" name="indirizzo" type="text"
-										size="25" class="login" />
+									<td><input id="dataNascita" name="dataNascita" type="text" size="25"
+										class="login" value="${data['birth_date']}"/>
 									</td>
 									<td></td>
 
-									<td><select class="login" name="lingua" id="lingua"
-										style="width: 205px">
-											<option value=""></option>
-											<option value="it_IT">Italian</option>
-											<option value="en_US">English</option>
-											<option value="fr_FR">Franch</option>
-											<option value="es_ES">Spanis</option>
-									</select>
-									</td>
-
 								</tr>
-								<tr class='header-row-portlet-section'>
-									<td class='login-label' width="90px" align="left">Gender:</td>
+								
+								<tr>
+									<td colspan="2" height="30px">&nbsp;</td>
+								</tr>
+								
+								<tr>
+									<td colspan="2" height="30px">&nbsp;</td>
+								</tr>
+
+						   </table>
+						</td>
+						<td width='50px'></td>
+						<td width="350px">
+						  <table border="0">
+						    
+						        <tr class='header-row-portlet-section'>
+									<td class='login-label' width="90px" align="left">*&nbsp;Surname:
+									</td>
 									<td width="25px">&nbsp;</td>
 
-									<td class='login-label'>Birthday (dd/mm/yyyy):</td>
-
 								</tr>
-
-								<tr>
-									<td><select class="login" name="sesso" id="sesso"
-										style="width: 205px">
-											<option value=""></option>
-											<option value="Uomo">Man</option>
-											<option value="Donna">Woman</option>
-									</select>
-									</td>
+                                <tr>
+									<td><input id="cognome" name="cognome" type="text"
+										size="25" class="login" value="${data['surname']}"></td>
 									<td></td>
-
-									<td><input id="dataNascita" name="dataNascita" type="text"
-										size="25" class="login" />
-									</td>
 
 								</tr>
 								<tr class='header-row-portlet-section'>
-									<td class='login-label' width="90px" align="left" >Company:</td>
+									<td class='login-label' width="90px" align="left">Location:
+									</td>
+									<td width="25px">&nbsp;</td>
+
+								</tr>
+								<tr>
+									<td><input id="indirizzo" name="indirizzo" type="text" size="25"
+										class="login" value="${data['location']}"/>
+									</td>
 									<td></td>
-									<td class='login-label'></td>
+
+								</tr>
+								<tr class='header-row-portlet-section'>
+									<td class='login-label' width="90px" align="left">Company:
+									</td>
+									<td width="25px">&nbsp;</td>
+
 								</tr>
 								<tr>
 									<td><input id="azienda" name="azienda" type="text" size="25"
-										class="login"/></td>
-									<td></td>
-									<td></td>
-								</tr>
-								<tr class='header-row-portlet-section'>
-									<td class='login-label' width="90px" align="left">Short Biografy:</td>
-									<td width="25px">&nbsp;</td>
-
-									<td></td>
-
-								</tr>
-								<tr>
-									<td colspan="3"><textarea style="width: 415px"
-											class="login" rows="5" cols="35" name="biografia"
-											id="biografia"></textarea>
+										class="login" value="${data['company']}"/>
 									</td>
+									<td></td>
 
 								</tr>
 								<tr class='header-row-portlet-section'>
-									<td class='login-label' width="90px" align="left">Captcha:</td>
+									<td class='login-label' width="90px" align="left">Short biography:
+									</td>
 									<td width="25px">&nbsp;</td>
-
-									<td></td>
-
-								</tr>
-								<tr>
-									<td colspan="3"><input id="captcha" name="captcha"
-										type="text" size="25" class="login" />
-									</td>
-
-
-								</tr>
-								<tr height="5">
-									<td></td>
-									<td></td>
-									<td></td>
-								</tr>
-								<tr>
-									<td colspan="3"><img
-										src='${pageContext.request.contextPath}/stickyImg'
-										width='250px' height='75px' />
-									</td>
-
-
-								</tr>
-								<tr>
-									<td class='login-label'>I Agree with the terms of service:</td>
-									<td></td>
-									<td></td>
-								</tr>
-								<tr>
-									<td colspan="2" height="30px"><input type="checkbox"
-										name="termini" id="termini" class="login" />
-									</td>
-									<td></td>
 
 								</tr>
 								<tr>
 									<td>
-									  <a href="${pageContext.request.contextPath}/" >
-									    <img src='${pageContext.request.contextPath}/themes/sbi_default/img/wapp/back.png' width='100px' height='37px' />
-									  </a>
+									<textarea class="login" rows="5" cols="35" name="biografia" id="biografia" >${data['short_bio']}</textarea>
 									</td>
-									<td>
-									  <a href="#" onclick="javascript:register();">
-									    <img src='${pageContext.request.contextPath}/themes/sbi_default/img/wapp/register.png' title="Register" alt="Register" />
-									  </a>
-									</td>
-
-								</tr>
-								<tr>
-									<td colspan="2" height="30px">&nbsp;</td>
 									<td></td>
 
 								</tr>
+								<tr class='header-row-portlet-section'>
+									<td class='login-label' width="90px" align="left">Language:
+									</td>
+									<td width="25px">&nbsp;</td>
 
-							</table></td>
-						<td width='100px'></td>
-						<td style="padding-top: 20px">
+								</tr>
+								<tr>
+									<td>
+									  <select class="login" name="lingua" id="lingua">
+									    <c:choose>
+									      <c:when test="${data['language'] == ''}">
+									        <option value="" selected="selected"></option>
+									      </c:when>
+									      <c:otherwise>
+									        <option value=""></option>
+									      </c:otherwise>
+									    </c:choose>
+									    <c:choose>
+									      <c:when test="${data['language'] == 'it_IT'}">
+									        <option value="it_IT" selected="selected">Italian</option>
+									      </c:when>
+									      <c:otherwise>
+									        <option value="it_IT">Italian</option>
+									      </c:otherwise>
+									    </c:choose>
+									    <c:choose>
+									      <c:when test="${data['language'] == 'en_US'}">
+									        <option value="en_US" selected="selected">English</option>
+									      </c:when>
+									      <c:otherwise>
+									        <option value="en_US">English</option>
+									      </c:otherwise>
+									    </c:choose>
+									    <c:choose>
+									      <c:when test="${data['language'] == 'fr_FR'}">
+									        <option value="fr_FR" selected="selected">French</option>
+									      </c:when>
+									      <c:otherwise>
+									        <option value="fr_FR">French</option>
+									      </c:otherwise>
+									    </c:choose>
+									    <c:choose>
+									      <c:when test="${data['language'] == 'es_ES'}">
+									        <option value="es_ES" selected="selected">Spanish</option>
+									      </c:when>
+									      <c:otherwise>
+									        <option value="es_ES">Spanish</option>
+									      </c:otherwise>
+									    </c:choose>
+									    
+									 </select>
+									</td>
+									<td></td>
+								</tr>
+														  
+						  </table>
 						</td>
+					</tr>
+					<tr>
+					  <td colspan="4" align="center">
+									  
+					    <a href="#" onclick="javascript:modify();">
+						  <img src='${pageContext.request.contextPath}/themes/geobi/img/wapp/confirm_button.png' title="aggiorna" alt="aggiorna"/>
+						</a>
+						<a href="${pageContext.request.contextPath}/restful-services/signup/delete" >
+						  <img src='${pageContext.request.contextPath}/themes/geobi/img/wapp/cancel_button.png' title="elimina" alt="elimina"/>
+						</a>			  	
+					  </td>
+					  
 					</tr>
 					
 
 				</table>
 			</div>
-			</form>
 	        </div>
-        
+        </form>
 
    
   </body>

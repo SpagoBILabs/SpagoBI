@@ -1,14 +1,20 @@
 package it.eng.spagobi.signup.service.rest;
 
 import it.eng.spago.error.EMFUserError;
+import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.SingletonConfig;
+import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.metadata.SbiCommonInfo;
 import it.eng.spagobi.commons.metadata.SbiExtRoles;
+import it.eng.spagobi.commons.utilities.ChannelUtilities;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.profiling.bean.SbiUser;
 import it.eng.spagobi.profiling.bean.SbiUserAttributes;
 import it.eng.spagobi.profiling.bean.SbiUserAttributesId;
+import it.eng.spagobi.profiling.dao.ISbiAttributeDAO;
 import it.eng.spagobi.profiling.dao.ISbiUserDAO;
 import it.eng.spagobi.rest.annotations.ToValidate;
 import it.eng.spagobi.rest.publishers.PublisherService;
@@ -19,7 +25,9 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import java.io.IOException;
 import java.net.URL;
 import java.security.Security;
+import java.util.Date;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
@@ -59,6 +67,146 @@ public class Signup {
 	private static Logger logger = Logger.getLogger(PublisherService.class);
 
 	@GET
+	@Path("/prepareUpdate")
+	public void prepareUpdate(@Context HttpServletRequest req) {
+		
+	  try{
+		  UserProfile profile = (UserProfile)req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+		  ISbiUserDAO userDao = DAOFactory.getSbiUserDAO();
+		  SbiUser user = userDao.loadSbiUserByUserId((String)profile.getUserId());
+		  int i = user.getFullName().indexOf(" ");
+		  Map<String,String> data = profile.getUserAttributes(); 
+		  data.put("name", user.getFullName().substring(0, i));
+		  data.put("surname", user.getFullName().substring(i+1));
+		  req.setAttribute("data", data );
+		  
+	  }catch (Throwable t) {
+	    throw new SpagoBIServiceException(
+					"An unexpected error occured while executing the subscribe action", t);
+	  }
+	  try {
+		    req.getRequestDispatcher("/WEB-INF/jsp/signup/modify.jsp").forward(req, servletResponse);
+		  } catch (ServletException e) {
+				logger.error("Error dispatching request");
+		  } catch (IOException e) {
+				logger.error("Error writing content");
+		  }
+    }
+	@GET
+	@Path("/delete")
+    public void delete(@Context HttpServletRequest req) {
+		
+	  try{	
+		UserProfile profile = (UserProfile)req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+	    ISbiUserDAO userDao = DAOFactory.getSbiUserDAO();
+	    SbiUser user = userDao.loadSbiUserByUserId((String)profile.getUserId());
+	    
+	    userDao.deleteSbiUserById( user.getId() );
+	    req.getSession().setAttribute(IEngUserProfile.ENG_USER_PROFILE, null);
+	    
+	    SingletonConfig serverConfig = SingletonConfig.getInstance();
+		String strUsePublicUser = serverConfig.getConfigValue(SpagoBIConstants.USE_PUBLIC_USER);
+		Boolean usePublicUser = (strUsePublicUser == null)?false:Boolean.valueOf(strUsePublicUser);
+		String callLogin = (req.getParameter("login")==null)?"false":(String)req.getParameter("login");
+		//default url
+		String contextName = ChannelUtilities.getSpagoBIContextName(req);
+		String redirectURL = contextName + "/servlet/AdapterHTTP?PAGE=LoginPage&NEW_SESSION=TRUE";
+		if (usePublicUser && callLogin.equals("false")){
+			redirectURL = contextName + "/servlet/AdapterHTTP?ACTION_NAME=START_ACTION_PUBLIC_USER&NEW_SESSION=TRUE";
+		}
+		
+		servletResponse.sendRedirect(redirectURL);
+	  
+	  }
+	  catch (Throwable t) {
+	    throw new SpagoBIServiceException(
+					"An unexpected error occured while executing the subscribe action", t);
+	  }
+	  
+		
+	}
+	private void updAttribute(ISbiUserDAO userDao, ISbiAttributeDAO dao, String attributeValue, String userId, int id, int attributeId ) throws EMFUserError{
+		
+	  if( attributeValue != null ){	
+        SbiUserAttributes	userAttribute = dao.loadSbiAttributesByUserAndId(id, attributeId);
+	    if( userAttribute != null ){
+          userAttribute.getCommonInfo().setTimeUp(new Date(System.currentTimeMillis()));
+          userAttribute.getCommonInfo().setUserUp(userId);
+          userAttribute.getCommonInfo().setSbiVersionUp(SbiCommonInfo.SBI_VERSION);
+	    }
+	    else{
+		  userAttribute = new SbiUserAttributes();
+		  userAttribute.getCommonInfo().setOrganization("SPAGOBI");
+		  userAttribute.getCommonInfo().setTimeIn(new Date(System.currentTimeMillis()));
+		  userAttribute.getCommonInfo().setUserIn(userId);
+		  userAttribute.getCommonInfo().setSbiVersionIn(SbiCommonInfo.SBI_VERSION);
+	    
+	      SbiUserAttributesId pk = new SbiUserAttributesId();
+	      pk.setAttributeId(attributeId);
+	      pk.setId(id);
+	      userAttribute.setId(pk);
+	    }
+	    userAttribute.setAttributeValue(attributeValue);
+	    userDao.updateSbiUserAttributes(userAttribute);
+	  }else{
+	     try{ userDao.deleteSbiUserAttributeById(id, attributeId); }catch(EMFUserError err){}  
+	  }
+    }
+	@POST
+	@Path("/update")
+	@Produces(MediaType.APPLICATION_JSON)
+	@ToValidate(typeName=FieldsValidatorFactory.SIGNUP)
+	public String update(@Context HttpServletRequest req) {
+		
+		String nome     =  GeneralUtilities.trim(req.getParameter("nome"));
+		String cognome  =  GeneralUtilities.trim(req.getParameter("cognome"));
+		String password =  GeneralUtilities.trim(req.getParameter("password"));
+		String email    =  GeneralUtilities.trim(req.getParameter("email"));
+		String dataNascita    
+		                =  GeneralUtilities.trim(req.getParameter("dataNascita"));
+		String indirizzo=  GeneralUtilities.trim(req.getParameter("indirizzo"));
+		String azienda  =  GeneralUtilities.trim(req.getParameter("azienda"));
+		String biografia=  GeneralUtilities.trim(req.getParameter("biografia"));
+		String lingua   =  GeneralUtilities.trim(req.getParameter("lingua"));
+		
+		
+		try {
+		  
+		  UserProfile profile = (UserProfile)req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+		  ISbiUserDAO userDao      = DAOFactory.getSbiUserDAO();
+		  ISbiAttributeDAO attrDao = DAOFactory.getSbiAttributeDAO();
+		  
+		  SbiUser user = userDao.loadSbiUserByUserId((String)profile.getUserId());
+		  int userId = user.getId();
+		  
+		  user.setFullName(nome + " " + cognome);
+		  if( password != null ) user.setPassword( Password.encriptPassword( password ));
+		  userDao.updateSbiUser( user, userId );
+		  
+		  updAttribute( userDao, attrDao, email, user.getUserId(), userId, attrDao.loadSbiAttributeByName("email").getAttributeId() );
+		  updAttribute( userDao, attrDao, dataNascita, user.getUserId(), userId, attrDao.loadSbiAttributeByName("birth_date").getAttributeId() );
+		  updAttribute( userDao, attrDao, indirizzo, user.getUserId(), userId, attrDao.loadSbiAttributeByName("location").getAttributeId() );
+		  updAttribute( userDao, attrDao, azienda, user.getUserId(), userId, attrDao.loadSbiAttributeByName("company").getAttributeId() );
+		  updAttribute( userDao, attrDao, biografia, user.getUserId(), userId, attrDao.loadSbiAttributeByName("short_bio").getAttributeId() );
+		  updAttribute( userDao, attrDao, lingua, user.getUserId(), userId, attrDao.loadSbiAttributeByName("language").getAttributeId() );
+		  
+		  profile.setAttributeValue("name",      nome);
+		  profile.setAttributeValue("surname",   cognome);
+		  profile.setAttributeValue("language",  lingua); 
+		  profile.setAttributeValue("short_bio", biografia);
+		  profile.setAttributeValue("company",   azienda);
+		  profile.setAttributeValue("location",  indirizzo);
+		  profile.setAttributeValue("birth_date",dataNascita);
+		  profile.setAttributeValue("email",     email);
+		  
+		} catch (Throwable t) {
+			throw new SpagoBIServiceException(
+					"An unexpected error occured while executing the subscribe action", t);
+		}
+        return new JSONObject().toString();
+	}
+	
+	@GET
 	@Path("/prepareActive")
 	public void prepareActive(@Context HttpServletRequest req) {
 		
@@ -85,19 +233,19 @@ public class Signup {
 		    user = userDao.loadSbiUserById( Integer.parseInt( id ));
 		  }catch(EMFUserError emferr){}
 		  if( user == null ) 
-		    return new JSONObject("{message: 'utente sconosciuto'}").toString();
+		    return new JSONObject("{message: 'Unknow user'}").toString();
 		  
 		  if( !user.getFlgPwdBlocked() )
-		    return new JSONObject("{message: 'utente attivo'}").toString();
+		    return new JSONObject("{message: 'User activated'}").toString();
 			  
 		  long now = System.currentTimeMillis();
 		  if( now > user.getCommonInfo().getTimeIn().getTime() + Long.parseLong(expired_time) * 24 * 60 * 60 * 1000 )
-		    return new JSONObject("{message: 'scaduto termine per l'attivazione'}").toString();
+		    return new JSONObject("{message: 'User activation expired time'}").toString();
 		  
 		  user.setFlgPwdBlocked(false);
 		  userDao.updateSbiUser(user, null );
 		  
-		  return new JSONObject("{message: 'utente attivo'}").toString();
+		  return new JSONObject("{message: 'User activated'}").toString();
 	  } catch (Throwable t) {
 			throw new SpagoBIServiceException(
 					"An unexpected error occured while executing the subscribe action", t);
@@ -162,13 +310,15 @@ public class Signup {
 		  
 		  Set<SbiUserAttributes> attributes = new HashSet<SbiUserAttributes>();
 		  
-		  addAttribute(attributes, 5,  email);
-		  addAttribute(attributes, 6,  sesso);
-		  addAttribute(attributes, 7,  dataNascita);
-		  addAttribute(attributes, 8,  indirizzo);
-		  addAttribute(attributes, 9,  azienda);
-		  addAttribute(attributes, 10, biografia);
-		  addAttribute(attributes, 11, lingua);
+		  ISbiAttributeDAO attrDao = DAOFactory.getSbiAttributeDAO();
+		  
+		  addAttribute(attributes, attrDao.loadSbiAttributeByName("email").getAttributeId(),  email);
+		  addAttribute(attributes, attrDao.loadSbiAttributeByName("gender").getAttributeId(),  sesso);
+		  addAttribute(attributes, attrDao.loadSbiAttributeByName("birth_date").getAttributeId(),  dataNascita);
+		  addAttribute(attributes, attrDao.loadSbiAttributeByName("location").getAttributeId(),  indirizzo);
+		  addAttribute(attributes, attrDao.loadSbiAttributeByName("company").getAttributeId(),  azienda);
+		  addAttribute(attributes, attrDao.loadSbiAttributeByName("short_bio").getAttributeId(), biografia);
+		  addAttribute(attributes, attrDao.loadSbiAttributeByName("language").getAttributeId(), lingua);
 		 
 		  user.setSbiUserAttributeses(attributes);
 		  int id = userDao.fullSaveOrUpdateSbiUser(user);

@@ -153,8 +153,7 @@ a:hover{
   <script type="text/javascript">
     function signup(){
     	var form = document.getElementById('formId');
-    	var act = '/SpagoBI/restful-services/signup/prepare';
-    	alert(act);
+    	var act = '${pageContext.request.contextPath}/restful-services/signup/prepare';
     	form.action = act;
     	form.submit();
     	
@@ -307,23 +306,17 @@ a:hover{
 												src='<%=urlBuilder.getResourceLinkByTheme(request, "/img/wapp/signup.png", currTheme)%>'
 												width='100px' height='37px' />
 												</a>
+											</td>
 											<td>
 												<input type="image" align="right"
 												src='<%=urlBuilder.getResourceLinkByTheme(request, "/img/wapp/login40.png", currTheme)%>'
 												title='<%=msgBuilder.getMessage("login")%>'
 												alt='<%=msgBuilder.getMessage("login")%>'>
 											</td>
-											</td>
+											
 										</tr>
-									
 									</table>
-									
-									
-
 									</td>
-
-									
-
 								</tr>
 								<tr>
 									<td colspan=3 height="30px">&nbsp;</td>
