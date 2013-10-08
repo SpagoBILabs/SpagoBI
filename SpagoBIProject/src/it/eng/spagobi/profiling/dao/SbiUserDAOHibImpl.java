@@ -19,6 +19,7 @@ import it.eng.spagobi.profiling.bean.SbiExtUserRoles;
 import it.eng.spagobi.profiling.bean.SbiExtUserRolesId;
 import it.eng.spagobi.profiling.bean.SbiUser;
 import it.eng.spagobi.profiling.bean.SbiUserAttributes;
+import it.eng.spagobi.profiling.bean.SbiUserAttributesId;
 import it.eng.spagobi.profiling.bo.UserBO;
 import it.eng.spagobi.profiling.dao.filters.FinalUsersFilter;
 import it.eng.spagobi.utilities.assertion.Assert;
@@ -837,6 +838,37 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 		} else {
 			throw new SpagoBIRuntimeException("Cannot handle filter of type [" + filter.getClass().getName() + "]");
 		}
+	}
+
+	
+	public void deleteSbiUserAttributeById(Integer id, Integer attributeId)
+			throws EMFUserError {
+		logger.debug("IN");
+
+		Session aSession = null;
+		Transaction tx = null;
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+
+			SbiUserAttributesId pk = new SbiUserAttributesId(id, attributeId);
+			SbiUserAttributes attribute = (SbiUserAttributes)aSession.load(SbiUserAttributes.class, pk);
+			aSession.delete(attribute);
+			aSession.flush();
+			tx.commit();
+		} catch (HibernateException he) {
+			logger.error(he.getMessage(), he);
+			if (tx != null)
+				tx.rollback();
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+		} finally {
+			logger.debug("OUT");
+			if (aSession!=null){
+				if (aSession.isOpen()) aSession.close();
+			}
+		}
+
+		
 	}
 	
 	

@@ -29,6 +29,8 @@ public interface ISbiUserDAO extends ISpagoBIDao{
 	
 	public void deleteSbiUserById(Integer id) throws EMFUserError;
 	
+	public void deleteSbiUserAttributeById(Integer id, Integer attrId) throws EMFUserError;
+	
 	public Integer saveSbiUser(SbiUser user) throws EMFUserError;
 	
 	public void updateSbiUserRoles(SbiExtUserRoles role) throws EMFUserError;

@@ -126,7 +126,7 @@ Ext.onReady(function () {
 		'	                <li class="user last"><a href="#"><span class="name">'+Sbi.user.userName+'</a>'+
 		//'	                <li class="user last"><a href="#"><span class="name">'+Sbi.user.userName+'</span> - <span class="company">ASTAT</span></a>'+
 		'						<ul> '+		
-        '                           <li><a href="#">'+LN('home.header.myAccount')+'</a></li> '+
+        '                           <li><a href=\"' + contextName + '/restful-services/signup/prepareUpdate\">'+LN('home.header.myAccount')+'</a></li> '+
         '                           <li class="last"><a href="<%=logoutUrl%>">Logout</a></li> '+
         '                       </ul> '+
         '					</li> '+

@@ -185,24 +185,25 @@ EXO -->
         <servlet-class>org.jboss.resteasy.plugins.server.servlet.HttpServletDispatcher</servlet-class>
     </servlet>
 	
+	<servlet>
+        <servlet-name>StickyCaptcha</servlet-name>
+        <servlet-class>nl.captcha.servlet.SimpleCaptchaServlet</servlet-class>
+        <init-param>
+            <param-name>captcha-width</param-name>
+            <param-value>250</param-value>
+        </init-param>
+        <init-param>
+            <param-name>captcha-height</param-name>
+            <param-value>75</param-value>
+        </init-param>
+        
+    </servlet>
+
+    
 	<servlet-mapping>
     	<servlet-name>DocsServlet</servlet-name>
     	<url-pattern>/docs</url-pattern>
 	</servlet-mapping>
-
-
-<servlet>
-	<servlet-name>StickyCaptcha</servlet-name>
-	<servlet-class>nl.captcha.servlet.StickyCaptchaServlet</servlet-class>
-	<init-param>
-		<param-name>width</param-name>
-		<param-value>250</param-value>
-	</init-param>
-	<init-param>
-		<param-name>height</param-name>
-		<param-value>75</param-value>
-	</init-param>
-</servlet> 
 
 
     <!-- START SERVLET MAPPINGS -->
@@ -253,13 +254,12 @@ END-LIFERAY -->
         <servlet-name>Resteasy</servlet-name>
         <url-pattern>/restful-services/*</url-pattern>
     </servlet-mapping>
-    
+
     <servlet-mapping>
         <servlet-name>StickyCaptcha</servlet-name>
         <url-pattern>/stickyImg</url-pattern>
-</servlet-mapping> 
-
-
+    </servlet-mapping>
+    
 
     <context-param>
          <param-name>resteasy.scan</param-name>
