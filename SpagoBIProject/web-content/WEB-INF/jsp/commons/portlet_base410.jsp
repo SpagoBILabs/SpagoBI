@@ -291,7 +291,7 @@ commented by Davide Zerbetto on 12/10/2009: there are problems with MIF (Ext Man
     Sbi.user.userName = '<%= StringEscapeUtils.escapeJavaScript(userName) %>';    
     Sbi.user.ismodeweb = <%= sbiMode.equals("WEB")? "true" : "false"%>;
 	Sbi.user.roles = new Array();
-	Sbi.user.defaultRole = '<%= defaultRole != null ? StringEscapeUtils.escapeJavaScript(defaultRole)  : ""%>'
+	Sbi.user.defaultRole = '<%= defaultRole != null ? StringEscapeUtils.escapeJavaScript(defaultRole)  : ""%>';
 	<%
 	StringBuffer buffer = new StringBuffer("[");
 	if (userProfile != null && userProfile.getFunctionalities() != null && !userProfile.getFunctionalities().isEmpty()) {
