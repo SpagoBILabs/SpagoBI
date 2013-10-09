@@ -111,22 +111,17 @@ OpenLayers.Control.SbiLegendMap = OpenLayers.Class(OpenLayers.Control, {
      * control, set <mapOptions> as one of the options properties.
      */
     initialize: function(options) {  
-        //add theme file     	
+        
+    	//add theme file     	
         var cssNode = document.createElement('link');
         cssNode.setAttribute('rel', 'stylesheet');
         cssNode.setAttribute('type', 'text/css');
         cssNode.setAttribute('href', './css/standard.css');
         document.getElementsByTagName('head')[0].appendChild(cssNode);
-        
-//        this.position = new OpenLayers.Pixel(OpenLayers.Control.SbiLegendMap.X,
-//        									 OpenLayers.Control.SbiLegendMap.Y);
-//        this.initLegendControlPanel();
-        
+               
         this.layers = [];
         this.handlers = {};
         OpenLayers.Control.prototype.initialize.apply(this, [options]);
-        
-//        this.createMap();
     },
     
     /**

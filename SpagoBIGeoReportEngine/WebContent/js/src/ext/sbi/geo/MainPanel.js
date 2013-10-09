@@ -36,8 +36,12 @@ Sbi.geo.MainPanel = function(config) {
 	if(Sbi.settings && Sbi.settings.georeport && Sbi.settings.georeport.georeportPanel) {
 		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.georeport.georeportPanel);
 	}
+	
+	
 		
 	var c = Ext.apply(defaultSettings, config || {});
+	
+	c.toolbarConf.enabled = false;
 	
 	Ext.apply(this, c);
 	
@@ -52,6 +56,7 @@ Sbi.geo.MainPanel = function(config) {
 	this.controlPanelConf.debugPanelConf = {
 			store: this.store
 		};
+	
 	
 
 	
@@ -72,7 +77,6 @@ Sbi.geo.MainPanel = function(config) {
 		}
 		if(this.toolbarConf.enabled) {
 			this.toolbar.initButtons.defer(500, this.toolbar);
-			//this.initToolbarContent.defer(500, this);	
 		}
 	}, this);	
 };
@@ -397,8 +401,12 @@ Ext.extend(Sbi.geo.MainPanel, Ext.Panel, {
 				if(this.baseControlsConf[i].enabled === true) {
 					this.baseControlsConf[i].mapOptions = this.baseMapOptions;
 					var c = Sbi.geo.utils.ControlFactory.createControl( this.baseControlsConf[i] );
-					this.map.addControl( c );
-					Sbi.trace("[MainPanel.initControls] : control [" + this.baseControlsConf[i]+ "] succesfully added to the map")
+					if(c != null) {
+						Sbi.trace("[MainPanel.initControls] : adding control [" + this.baseControlsConf[i]+ "] ...");
+						this.map.addControl( c );
+						Sbi.trace("[MainPanel.initControls] : control [" + this.baseControlsConf[i]+ "] succesfully added to the map");
+					}
+					
 				}
 			}			
 		}
@@ -680,7 +688,8 @@ Ext.extend(Sbi.geo.MainPanel, Ext.Panel, {
 			this.toolbarConf.map = this.map;
 			this.toolbarConf.analysisLayerSelectControl = this.analysisLayerSelectControl;
 			this.toolbarConf.featureHandler = this.featureHandler;
-			this.toolbar = new Sbi.geo.Toolbar(this.toolbarConf);
+			alert("why?!");
+			//this.toolbar = new Sbi.geo.Toolbar(this.toolbarConf);
 			mapPanelConf.tbar = this.toolbar;
 		}
 	 
@@ -705,13 +714,15 @@ Ext.extend(Sbi.geo.MainPanel, Ext.Panel, {
 			});
 		} else {
 			delete mapPanelConf.title;
+			var m = new Ext.Panel(mapPanelConf);
+			
 			this.mapPanel = new Ext.Panel({
 			    region    : 'center',
 			    margins   : '3 3 3 0', 
 			    defaults  : {
 					autoScroll : true
 				},
-		       	items: [new Ext.Panel(mapPanelConf)]
+		       	items: [m]
 			});
 		}
 		

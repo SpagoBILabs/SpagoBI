@@ -119,7 +119,7 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 	}
 
 	, initLayersControlPanel: function() {
-		
+		this.layerPanelEnabled = false;
 		if(this.layerPanelEnabled === true) {			
 			
 			this.layersControlPanel = new mapfish.widgets.LayerTree(Ext.apply({
@@ -145,8 +145,8 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 	             title: 'New Layers Panel',
 	             collapsible: true,
 	             collapsed: false,
-		         autoHeight: true,
-	             //height: 150,
+		         //autoHeight: true,
+	             height: 150,
 	             items: []
 			 }));
 			

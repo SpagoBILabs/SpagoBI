@@ -233,9 +233,9 @@ Sbi.geo.stat.ChoroplethControlPanel = Ext.extend(Ext.FormPanel, {
 		options.method = Sbi.geo.stat.Classifier[formState.method];
 		options.numClasses = formState.classes;
 		options.colors = new Array(2);
-		options.colors[0] = new mapfish.ColorRgb();
+		options.colors[0] = new Sbi.geo.utils.ColorRgb();
 		options.colors[0].setFromHex(formState.fromColor);
-		options.colors[1] = new mapfish.ColorRgb();
+		options.colors[1] = new Sbi.geo.utils.ColorRgb();
 		options.colors[1].setFromHex(formState.toColor);
 		options.indicator = formState.indicator;
 		
