@@ -46,17 +46,14 @@ Ext.extend(Sbi.geo.stat.ChoroplethThematizer, Sbi.geo.stat.Thematizer, {
 	 * Defines the different classification to use
 	 */
     classification: null
-	
-    
-    
+
     /**
-     * APIProperty: colors
-     * {Array(<mapfish.Color>}} Array of 2 colors to be applied to features
-     *     We should use styles instead
-     */
+	 * @property {Array(<Sbi.geo.utils.ColorRgb>}} colors
+	 * Array of 2 colors to be applied to features
+	 */
     , colors: [
-        new mapfish.ColorRgb(120, 120, 0),
-        new mapfish.ColorRgb(255, 0, 0)
+        new Sbi.geo.utils.ColorRgb([120, 120, 0]),
+        new Sbi.geo.utils.ColorRgb([255, 0, 0])
     ]
 
     /**
@@ -258,31 +255,23 @@ Ext.extend(Sbi.geo.stat.ChoroplethThematizer, Sbi.geo.stat.Thematizer, {
     }  
 
     /**
-     * Method: createColorInterpolation
-     *      Generates color interpolation in regard to classification.
+     * @method
+     * 
+     * Generates color interpolation in regard to classification
      */
     , createColorInterpolation: function() {
         var initialColors = this.colors;
         var numColors = this.classification.bins.length;
         this.colorInterpolation =
-            mapfish.ColorRgb.getColorsArrayByRgbInterpolation(
+        	Sbi.geo.utils.ColorRgb.getColorsArrayByRgbInterpolation(
                 initialColors[0], initialColors[1], numColors
             );
     }
-    
-    
-
-
-
-    
-    
-    
-
-  
 
     /**
-     * Method: updateLegend
-     *    Update the legendDiv content with new bins label
+     * @method
+     * 
+     * Update the legendDiv content with new bins label
      */
     , updateLegend: function() {
         if (!this.legendDiv) {

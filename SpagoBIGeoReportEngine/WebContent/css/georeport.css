@@ -126,6 +126,15 @@
 		background-image: url('../img/form/text-bg-search.gif') !important;
 		background-repeat: no-repeat;
 	}
+	
+	div.olControlLegend {
+	    bottom: 15;
+	    right: 3px;
+	    display: block;
+	    position: absolute;
+	    font-family: Arial;
+	    font-size: smaller;
+	}
 		
 	
  </style>
