@@ -40,6 +40,7 @@ import it.eng.spagobi.profiling.bean.SbiUser;
 import it.eng.spagobi.profiling.dao.ISbiUserDAO;
 import it.eng.spagobi.services.common.SsoServiceFactory;
 import it.eng.spagobi.services.common.SsoServiceInterface;
+import it.eng.spagobi.services.security.bo.SpagoBIUserProfile;
 import it.eng.spagobi.services.security.exceptions.SecurityException;
 import it.eng.spagobi.services.security.service.ISecurityServiceSupplier;
 import it.eng.spagobi.services.security.service.SecurityServiceSupplierFactory;
@@ -262,13 +263,26 @@ public class LoginModule extends AbstractHttpModule {
 		if (!activeSoo && !isPublicUser) {
 			String pwd=(String)request.getAttribute("password");       
 			try {
-				Object ris=supplier.checkAuthentication(userId, pwd);
-				if (ris==null){
-					logger.error("pwd uncorrect");
+				
+				SpagoBIUserProfile userProfile = null;
+				userProfile = supplier.checkAuthentication(userId, pwd);
+				if (userProfile == null){
+					logger.error("userName/pwd uncorrect");
 					EMFUserError emfu = new EMFUserError(EMFErrorSeverity.ERROR, 501);
 					errorHandler.addError(emfu); 
 					AuditLogUtilities.updateAudit(getHttpRequest(), profile, "SPAGOBI.Login", null, "KO");
 					return;
+				}
+				else{
+				  SbiUser user = DAOFactory.getSbiUserDAO().loadSbiUserByUserId(userId);
+				  if( user.getFlgPwdBlocked() != null && user.getFlgPwdBlocked() ){
+				    logger.error("userName/pwd uncorrect");
+				    EMFUserError emfu = new EMFUserError(EMFErrorSeverity.ERROR, 502);
+					errorHandler.addError(emfu); 
+					AuditLogUtilities.updateAudit(getHttpRequest(), profile, "SPAGOBI.Login", null, "KO");
+					return;  
+					  
+				  }	
 				}
 			} catch (Exception e) {
 				logger.error("Reading user information... ERROR", e);

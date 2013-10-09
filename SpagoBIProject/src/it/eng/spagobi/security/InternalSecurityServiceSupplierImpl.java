@@ -6,7 +6,6 @@
 package it.eng.spagobi.security;
 
 
-import it.eng.spago.base.RequestContainer;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IRoleDAO;
@@ -28,8 +27,8 @@ public class InternalSecurityServiceSupplierImpl implements
 	
 	static private Logger logger = Logger.getLogger(InternalSecurityServiceSupplierImpl.class);
 
-	public SpagoBIUserProfile checkAuthentication(String userId, String psw) {
-		logger.debug("IN - userId: " + userId);
+	private SpagoBIUserProfile checkAuthentication(SbiUser user, String userId, String psw) {
+        logger.debug("IN - userId: " + userId);
 		
 		if (userId == null) {
 			return null;
@@ -38,22 +37,18 @@ public class InternalSecurityServiceSupplierImpl implements
 		// get user from database
 		
 		try {
-			SbiUser user = DAOFactory.getSbiUserDAO().loadSbiUserByUserId(userId);
-			if(user == null){
-				logger.error("UserName not found into database");
-				return null;
-			}
+			
 			String password = user.getPassword();
 			String encrPass = Password.encriptPassword(psw);
 			if (password == null || password.length() == 0) {
 			    logger.error("UserName/pws not defined into database");
 			    return null;
-			}else if(password.equals(encrPass)){
-				logger.debug("Logged in with SHA pass");
 			}else if(!password.equals(encrPass)){
 				logger.error("UserName/pws not found into database");
 				return null;
 			}
+			
+		    logger.debug("Logged in with SHA pass");
 			SpagoBIUserProfile obj = new SpagoBIUserProfile();
 			obj.setUniqueIdentifier(user.getUserId());
 			obj.setUserId(user.getUserId());
@@ -69,7 +64,27 @@ public class InternalSecurityServiceSupplierImpl implements
 		}
 		return null;
 
-
+	
+		
+	}
+	public SpagoBIUserProfile checkAuthentication(String userId, String psw) {
+        logger.debug("IN - userId: " + userId);
+		
+		if(userId != null){
+		  SbiUser user;
+		  try{
+		    user = DAOFactory.getSbiUserDAO().loadSbiUserByUserId(userId);
+		    if(user == null){
+		      logger.error("UserName not found into database");
+		      return null;
+		    }
+		  }catch (EMFUserError e) {
+		     logger.error(e.getMessage(), e);
+		     return null;
+		  }
+		  return checkAuthentication( user, userId, psw );
+		}
+		return null;
 	}
 
 	public SpagoBIUserProfile checkAuthenticationWithToken(String userId,
