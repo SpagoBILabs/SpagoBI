@@ -45,7 +45,7 @@ OpenLayers.Control.SbiActionsMap = OpenLayers.Class(OpenLayers.Control, {
      * (values should be OpenLayers.Control.TYPE_BUTTON, 
      *  OpenLayers.Control.TYPE_TOGGLE or OpenLayers.Control.TYPE_TOOL)
      */
-	TYPE: OpenLayers.Control.TYPE_TOGGLE,
+//	TYPE: OpenLayers.Control.TYPE_TOGGLE,
 
     /**
      * Property: element
@@ -66,7 +66,7 @@ OpenLayers.Control.SbiActionsMap = OpenLayers.Class(OpenLayers.Control, {
      * class name olControlSbiActionsMapElement) may have padding or other style
      * attributes added via CSS.
      */
-    size: new OpenLayers.Size(180, 90),
+    size: new OpenLayers.Size(35,200),
 
     /**
      * APIProperty: layers
@@ -169,7 +169,9 @@ OpenLayers.Control.SbiActionsMap = OpenLayers.Class(OpenLayers.Control, {
      * Render the control in the browser.
      */    
     draw: function() {
-//    	alert('draw!!');
+    	var x =  this.map.size.w+280;
+    	var y = -30;
+    	this.position = new OpenLayers.Pixel(x, y);
         OpenLayers.Control.prototype.draw.apply(this, arguments);
        
         if(!(this.layers.length > 0)) {
@@ -185,7 +187,7 @@ OpenLayers.Control.SbiActionsMap = OpenLayers.Class(OpenLayers.Control, {
         // create overview map DOM elements
         this.createElementsAction();
         
-        this.update();
+//        this.update();
 
         return this.div;
     },
@@ -204,11 +206,11 @@ OpenLayers.Control.SbiActionsMap = OpenLayers.Class(OpenLayers.Control, {
      * Method: update
      * Update the overview map after layers move.
      */
-    update: function() {
-        if(this.ovmap == null) {
-            this.createMap();
-        }
-    },
+//    update: function() {
+//        if(this.ovmap == null) {
+//            this.createMap();
+//        }
+//    },
     
     /**
      * Method: createElementsAction
@@ -218,6 +220,10 @@ OpenLayers.Control.SbiActionsMap = OpenLayers.Class(OpenLayers.Control, {
         this.element = document.createElement('div');
 
         this.mapDiv = document.createElement('ul');
+        this.mapDiv.style.width = this.size.w + 'px';
+        this.mapDiv.style.height = this.size.h + 'px';
+        this.mapDiv.style.position = 'relative';
+        
         this.mapDiv.id = OpenLayers.Util.createUniqueID('SbiActionsMap'); 
         this.mapDiv.className = 'panel-actions';
        
@@ -283,20 +289,20 @@ OpenLayers.Control.SbiActionsMap = OpenLayers.Class(OpenLayers.Control, {
      * Method: createMap
      * Construct the map that this control contains
      */
-    createMap: function() {
-        // create the overview map
-//        var options = OpenLayers.Util.extend(
-//                        {controls: [], maxResolution: 'auto', 
-//                         fallThrough: false}, this.mapOptions);
-    	var options = {};
-        this.ovmap = new OpenLayers.Map(this.mapDiv, options);
-        
-        // prevent ovmap from being destroyed when the page unloads, because
-        // the SbiActionsMap control has to do this (and does it).
-//        OpenLayers.Event.stopObserving(window, 'unload', this.ovmap.unloadDestroy);
-        
-        this.ovmap.addLayers(this.layers);
-    },
+//    createMap: function() {
+//        // create the overview map
+////        var options = OpenLayers.Util.extend(
+////                        {controls: [], maxResolution: 'auto', 
+////                         fallThrough: false}, this.mapOptions);
+//    	var options = {};
+//        this.ovmap = new OpenLayers.Map(this.mapDiv, options);
+//        
+//        // prevent ovmap from being destroyed when the page unloads, because
+//        // the SbiActionsMap control has to do this (and does it).
+////        OpenLayers.Event.stopObserving(window, 'unload', this.ovmap.unloadDestroy);
+//        
+//        this.ovmap.addLayers(this.layers);
+//    },
     
     showShareMapWindow: function(type){
 		if(this.shareMapWindow != null){			
@@ -364,14 +370,14 @@ OpenLayers.Control.SbiActionsMap = OpenLayers.Class(OpenLayers.Control, {
     CLASS_NAME: 'OpenLayers.Control.SbiActionsMap'
 });
 
-/**
- * Constant: X
- * {Integer}
- */
-OpenLayers.Control.SbiActionsMap.X = 930;
-
-/**
- * Constant: Y
- * {Integer}
- */
-OpenLayers.Control.SbiActionsMap.Y = -30; //4
+///**
+// * Constant: X
+// * {Integer}
+// */
+//OpenLayers.Control.SbiActionsMap.X = 930;
+//
+///**
+// * Constant: Y
+// * {Integer}
+// */
+//OpenLayers.Control.SbiActionsMap.Y = -30; //4

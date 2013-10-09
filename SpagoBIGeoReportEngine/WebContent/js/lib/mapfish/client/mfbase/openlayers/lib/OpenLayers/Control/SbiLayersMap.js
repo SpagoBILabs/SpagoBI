@@ -45,7 +45,7 @@ OpenLayers.Control.SbiLayersMap = OpenLayers.Class(OpenLayers.Control, {
      * (values should be OpenLayers.Control.TYPE_BUTTON, 
      *  OpenLayers.Control.TYPE_TOGGLE or OpenLayers.Control.TYPE_TOOL)
      */
-	TYPE: OpenLayers.Control.TYPE_BUTTON,
+//	TYPE: OpenLayers.Control.TYPE_BUTTON,
 
     /**
      * Property: element
@@ -66,7 +66,7 @@ OpenLayers.Control.SbiLayersMap = OpenLayers.Class(OpenLayers.Control, {
      * class name olControlSbiLayersMapElement) may have padding or other style
      * attributes added via CSS.
      */
-    size: new OpenLayers.Size(180, 90),
+    size: new OpenLayers.Size(35, 35),
 
         
     /**
@@ -89,12 +89,6 @@ OpenLayers.Control.SbiLayersMap = OpenLayers.Class(OpenLayers.Control, {
      * {Array(DOMElement)} Array of Button Divs 
      */
     buttons: null,
-
-    /** 
-     * Property: position
-     * {<OpenLayers.Pixel>} 
-     */
-    position: null,
     
     /**
      * popup windows for share the map url
@@ -122,9 +116,7 @@ OpenLayers.Control.SbiLayersMap = OpenLayers.Class(OpenLayers.Control, {
         cssNode.setAttribute('type', 'text/css');
         cssNode.setAttribute('href', './css/standard.css');
         document.getElementsByTagName('head')[0].appendChild(cssNode);
-        
-        this.position = new OpenLayers.Pixel(OpenLayers.Control.SbiLayersMap.X,
-        									 OpenLayers.Control.SbiLayersMap.Y);
+
         OpenLayers.Control.prototype.initialize.apply(this, [options]);
     },
     
@@ -153,17 +145,14 @@ OpenLayers.Control.SbiLayersMap = OpenLayers.Class(OpenLayers.Control, {
      * Render the control in the browser.
      */    
 //    draw: function(px) {
-    draw: function() {
-        OpenLayers.Control.prototype.draw.apply(this, arguments);
-//        px = this.position;
-//        
-//        var sz = new OpenLayers.Size(18,18);
-//        var centered = new OpenLayers.Pixel(px.x+sz.w/2, px.y);
+    draw: function() {    	
+        var x =  this.map.size.w*2+50;
+    	var y =  this.map.size.h+100;
+    	this.position = new OpenLayers.Pixel(x, y);
+    	OpenLayers.Control.prototype.draw.apply(this, arguments);
 
         // create overview map DOM elements
         this.createButton();
-        
-        this.update();
 
         return this.div;
     },
@@ -179,34 +168,31 @@ OpenLayers.Control.SbiLayersMap = OpenLayers.Class(OpenLayers.Control, {
 
 
     /**
-     * Method: update
-     * Update the overview map after layers move.
-     */
-    update: function() {
-        if(this.ovmap == null) {
-            this.createMap();
-        }
-    },
-    
-    /**
      * Method: createElementsAction
      * Defines the action elements on the map
      */
-    createButton: function(){
+    createButton: function(){    	
         this.element = document.createElement('div');
         this.element.className = 'map-tools';
 
         this.mapDiv = document.createElement('div');
+        this.mapDiv.style.width = this.size.w + 'px';
+        this.mapDiv.style.height = this.size.h + 'px';
+        this.mapDiv.style.position = 'relative';
+        
         this.mapDiv.id = OpenLayers.Util.createUniqueID('SbiLayersMap'); 
         this.mapDiv.className = 'map-tools-element layers';
+        var mapDivContent = document.createElement('div');
+        mapDivContent.className = "tools-content overlay";        
         
         var divDet = document.createElement('div'),
         	divDetSpan = document.createElement('span');
 
-
         divDetSpan.className = 'icon';
+        divDetSpan.style = 'display:block;';
     	divDet.appendChild(divDetSpan);
-    	this.mapDiv.appendChild(divDet);
+    	this.mapDiv.appendChild(mapDivContent); 
+    	this.mapDiv.appendChild(divDet);    	
     	this.mapDiv.id = OpenLayers.Util.createUniqueID('layers');   
 	    OpenLayers.Event.observe(this.mapDiv, "click", 
 	    		OpenLayers.Function.bindAsEventListener(this.execClick, this));
@@ -231,27 +217,15 @@ OpenLayers.Control.SbiLayersMap = OpenLayers.Class(OpenLayers.Control, {
      * Method: createMap
      * Construct the map that this control contains
      */
-    createMap: function() {
-        // create the overview map
-        var options = OpenLayers.Util.extend(
-                        {controls: [], maxResolution: 'auto', 
-                         fallThrough: false}, this.mapOptions);
-        this.ovmap = new OpenLayers.Map(this.mapDiv, options);
-    },
-    
+//    createMap: function() {
+//        // create the overview map
+//        var options = OpenLayers.Util.extend(
+//                        {controls: [], maxResolution: 'auto', 
+//                         fallThrough: false}, this.mapOptions);
+//        this.ovmap = new OpenLayers.Map(this.mapDiv, options);
+//    },
+//    
     
 
     CLASS_NAME: 'OpenLayers.Control.SbiLayersMap'
 });
-
-/**
- * Constant: X
- * {Integer}
- */
-OpenLayers.Control.SbiLayersMap.X = 1300;
-
-/**
- * Constant: Y
- * {Integer}
- */
-OpenLayers.Control.SbiLayersMap.Y = 300;
