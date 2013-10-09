@@ -392,13 +392,13 @@ Ext.extend(Sbi.geo.MainPanel, Ext.Panel, {
 	}
 	
 	, initControls: function() {
-		
 		if(this.baseControlsConf && this.baseControlsConf.length > 0) {
 			for(var i = 0; i < this.baseControlsConf.length; i++) {
 				if(this.baseControlsConf[i].enabled === true) {
 					this.baseControlsConf[i].mapOptions = this.baseMapOptions;
 					var c = Sbi.geo.utils.ControlFactory.createControl( this.baseControlsConf[i] );
 					this.map.addControl( c );
+					Sbi.trace("[MainPanel.initControls] : control [" + this.baseControlsConf[i]+ "] succesfully added to the map")
 				}
 			}			
 		}
