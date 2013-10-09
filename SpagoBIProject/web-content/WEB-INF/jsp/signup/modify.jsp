@@ -27,7 +27,25 @@
 
 Ext.ns("Sbi.config");
 Sbi.config.loginUrl = "";
-
+function cancel(){
+	
+	Ext.MessageBox.confirm(
+	  //LN('sbi.generic.pleaseConfirm'),
+	  //LN('sbi.generic.confirmDelete'),
+	  'Conferma cancellazione',
+	  'Vuoi cancellare',
+	  function(btn, text){
+		  if (btn=='yes') {
+			var form = document.myForm;
+			form.method = 'get';
+			form.action = '${pageContext.request.contextPath}/restful-services/signup/delete';
+			form.submit();
+			
+		  }
+		}
+	);
+}
+	
 function modify() {
 
 	
@@ -380,7 +398,7 @@ a:hover{
 					    <a href="#" onclick="javascript:modify();">
 						  <img src='${pageContext.request.contextPath}/themes/geobi/img/wapp/confirm_button.png' title="aggiorna" alt="aggiorna"/>
 						</a>
-						<a href="${pageContext.request.contextPath}/restful-services/signup/delete" >
+						<a href="#" onclick="javascript:cancel();" >
 						  <img src='${pageContext.request.contextPath}/themes/geobi/img/wapp/cancel_button.png' title="elimina" alt="elimina"/>
 						</a>			  	
 					  </td>

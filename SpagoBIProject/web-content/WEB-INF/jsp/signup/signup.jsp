@@ -27,6 +27,20 @@
 Ext.ns("Sbi.config");
 Sbi.config.loginUrl = "";
 
+
+function nascondi(){
+  var optDiv = document.getElementById("optional");
+  var a = document.getElementById("nascondi");
+  if (optDiv.style.display == 'none') {
+    optDiv.style.display = '';
+    a.innerHTML = 'hide optional field';
+  }
+  else {
+    optDiv.style.display = 'none';
+    a.innerHTML = 'display optional field';
+  }
+}
+
 function register() {
 
 	
@@ -210,12 +224,12 @@ a:hover{
 					</tr>
 					<tr>
 						<td width="120px">&nbsp;</td>
-						<td width="350px">
-
+						<td width="550px">
+                            
 							<table border="0">
 								<tr class='header-row-portlet-section'>
 									<td class='login-label' width="90px" align="left">*&nbsp;Name:</td>
-									<td width="25px">&nbsp;</td>
+									<td width="75px">&nbsp;</td>
 
 									<td class='login-label'>*&nbsp;Surname:</td>
 
@@ -268,8 +282,43 @@ a:hover{
 
 								</tr>
 								<tr class='header-row-portlet-section'>
-									<td class='login-label' width="90px" align="left">Location:</td>
+									<td class='login-label' width="90px" align="left">*&nbsp;Captcha:</td>
 									<td width="25px">&nbsp;</td>
+                                    <td></td>
+							    </tr>
+								<tr>
+									<td colspan="3"><input id="captcha" name="captcha"
+										type="text" size="25" class="login" />
+									</td>
+								</tr>
+								<tr height="7px">
+									<td></td>
+									<td></td>
+									<td></td>
+								</tr>
+								<tr>
+									<td colspan="3"><div id="sticky"><img
+										src='${pageContext.request.contextPath}/stickyImg'
+										width='250px' height='75px' /></div>
+									</td>
+									
+								</tr>
+								
+								<tr>
+								  <td colspan="3" class='login-label'>*&nbsp;I Agree with the terms of service:</td>
+							    </tr>
+								<tr>
+									<td colspan="3" height="30px"><input type="checkbox"
+										name="termini" id="termini" class="login" />
+									</td>
+								</tr>
+								<tr><td colspan="3"><a href="#" onclick="javascript:nascondi();"><div id="nascondi" style="font-weight:bold">display optional field</div></a></td></tr>
+							</table>
+							<div id="optional" style="display:none">
+							<table border="0">
+								<tr class='header-row-portlet-section'>
+									<td class='login-label' width="90px" align="left">Location:</td>
+									<td width="75px">&nbsp;</td>
 
 									<td class='login-label'>Language:</td>
 
@@ -282,7 +331,7 @@ a:hover{
 									<td></td>
 
 									<td><select class="login" name="lingua" id="lingua"
-										style="width: 205px">
+										style="width: 214px">
 											<option value=""></option>
 											<option value="it_IT">Italian</option>
 											<option value="en_US">English</option>
@@ -302,7 +351,7 @@ a:hover{
 
 								<tr>
 									<td><select class="login" name="sesso" id="sesso"
-										style="width: 205px">
+										style="width: 214px">
 											<option value=""></option>
 											<option value="Uomo">Man</option>
 											<option value="Donna">Woman</option>
@@ -328,78 +377,44 @@ a:hover{
 								</tr>
 								<tr class='header-row-portlet-section'>
 									<td class='login-label' width="90px" align="left">Short Biografy:</td>
-									<td width="25px">&nbsp;</td>
-
+									<td width="75px">&nbsp;</td>
 									<td></td>
 
 								</tr>
 								<tr>
-									<td colspan="3"><textarea style="width: 415px"
+									<td colspan="3"><textarea style="width: 500px"
 											class="login" rows="5" cols="35" name="biografia"
 											id="biografia"></textarea>
 									</td>
 
 								</tr>
-								<tr class='header-row-portlet-section'>
-									<td class='login-label' width="90px" align="left">Captcha:</td>
-									<td width="25px">&nbsp;</td>
-
-									<td></td>
-
-								</tr>
-								<tr>
-									<td colspan="3"><input id="captcha" name="captcha"
-										type="text" size="25" class="login" />
-									</td>
-
-
-								</tr>
-								<tr height="5">
-									<td></td>
-									<td></td>
-									<td></td>
-								</tr>
-								<tr>
-									<td colspan="3"><img
-										src='${pageContext.request.contextPath}/stickyImg'
-										width='250px' height='75px' />
-									</td>
-
+								</table>
+								</div>
+								<table border="0">
+								  <tr>
+								    <td colspan="0">
+								     <table border="0">
+								      <tr height="20px"><td colspan="3">&nbsp;</td></tr>
+								      <tr>
+									  <td align="right">
+									    <a href="${pageContext.request.contextPath}/" >
+									      <img src='${pageContext.request.contextPath}/themes/sbi_default/img/wapp/back.png' width='100px' height='37px' />
+									    </a>
+									  </td>
+									  <td width="50px">&nbsp;</td>
+									  <td>
+									    <a href="#" onclick="javascript:register();">
+									      <img src='${pageContext.request.contextPath}/themes/sbi_default/img/wapp/register.png' title="Register" alt="Register" />
+									    </a>
+									  </td>
+									  </tr>
+									</table>
+								   </td>
 
 								</tr>
-								<tr>
-									<td class='login-label'>I Agree with the terms of service:</td>
-									<td></td>
-									<td></td>
-								</tr>
-								<tr>
-									<td colspan="2" height="30px"><input type="checkbox"
-										name="termini" id="termini" class="login" />
-									</td>
-									<td></td>
-
-								</tr>
-								<tr>
-									<td>
-									  <a href="${pageContext.request.contextPath}/" >
-									    <img src='${pageContext.request.contextPath}/themes/sbi_default/img/wapp/back.png' width='100px' height='37px' />
-									  </a>
-									</td>
-									<td>
-									  <a href="#" onclick="javascript:register();">
-									    <img src='${pageContext.request.contextPath}/themes/sbi_default/img/wapp/register.png' title="Register" alt="Register" />
-									  </a>
-									</td>
-
-								</tr>
-								<tr>
-									<td colspan="2" height="30px">&nbsp;</td>
-									<td></td>
-
-								</tr>
-
-							</table></td>
-						<td width='100px'></td>
+							   </table>
+							</td>
+						
 						<td style="padding-top: 20px">
 						</td>
 					</tr>

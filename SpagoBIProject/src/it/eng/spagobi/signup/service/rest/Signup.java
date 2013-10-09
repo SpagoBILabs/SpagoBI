@@ -1,5 +1,7 @@
 package it.eng.spagobi.signup.service.rest;
 
+import it.eng.spago.base.RequestContainer;
+import it.eng.spago.base.SessionContainer;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.SingletonConfig;
@@ -98,24 +100,17 @@ public class Signup {
 		
 	  try{	
 		UserProfile profile = (UserProfile)req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
-	    ISbiUserDAO userDao = DAOFactory.getSbiUserDAO();
+		ISbiUserDAO userDao = DAOFactory.getSbiUserDAO();
 	    SbiUser user = userDao.loadSbiUserByUserId((String)profile.getUserId());
 	    
 	    userDao.deleteSbiUserById( user.getId() );
-	    req.getSession().setAttribute(IEngUserProfile.ENG_USER_PROFILE, null);
 	    
-	    SingletonConfig serverConfig = SingletonConfig.getInstance();
-		String strUsePublicUser = serverConfig.getConfigValue(SpagoBIConstants.USE_PUBLIC_USER);
-		Boolean usePublicUser = (strUsePublicUser == null)?false:Boolean.valueOf(strUsePublicUser);
-		String callLogin = (req.getParameter("login")==null)?"false":(String)req.getParameter("login");
-		//default url
-		String contextName = ChannelUtilities.getSpagoBIContextName(req);
-		String redirectURL = contextName + "/servlet/AdapterHTTP?PAGE=LoginPage&NEW_SESSION=TRUE";
-		if (usePublicUser && callLogin.equals("false")){
-			redirectURL = contextName + "/servlet/AdapterHTTP?ACTION_NAME=START_ACTION_PUBLIC_USER&NEW_SESSION=TRUE";
-		}
+	    String host = req.getHeader("Host");
+		int index = host.indexOf(":");
+		URL url = new URL(req.getScheme(), host.substring(0, index), Integer.parseInt(host.substring(index+1)), 
+				req.getContextPath() + "/servlet/AdapterHTTP?ACTION_NAME=LOGOUT_ACTION&LIGHT_NAVIGATOR_DISABLED=TRUE" );
 		
-		servletResponse.sendRedirect(redirectURL);
+		servletResponse.sendRedirect(url.toString());
 	  
 	  }
 	  catch (Throwable t) {
