@@ -42,6 +42,9 @@ Ext.ns("Sbi.geo.control");
 
 Sbi.geo.control.InlineToolbar = OpenLayers.Class(OpenLayers.Control, {
 	
+	
+	mainPanel: null,
+	
 	 /**
      * Property: TYPE
      * {String} The TYPE of the control 
@@ -130,19 +133,15 @@ Sbi.geo.control.InlineToolbar = OpenLayers.Class(OpenLayers.Control, {
      * control, set <mapOptions> as one of the options properties.
      */
     initialize: function(options) {
-//    	alert('*** SbiActionsMap !! ***');    	
-        this.layers = [];
-        this.handlers = {};
-        //add theme file 
-        var cssNode = document.createElement('link');
-        cssNode.setAttribute('rel', 'stylesheet');
-        cssNode.setAttribute('type', 'text/css');
-        cssNode.setAttribute('href', './css/standard.css');
-        document.getElementsByTagName('head')[0].appendChild(cssNode);
-        
-        this.position = new OpenLayers.Pixel(Sbi.geo.control.InlineToolbar.X,
-        		Sbi.geo.control.InlineToolbar.Y);
+    	
+    	Sbi.trace("[InlineToolbar.initialize] : IN");
+
+    	Sbi.trace("[InlineToolbar.initialize] : options are equal to [" + Sbi.toSource(options) + "]");    	
+     
         OpenLayers.Control.prototype.initialize.apply(this, [options]);
+        this.displayClass = "panel-actions"; 
+         
+        Sbi.trace("[InlineToolbar.initialize] : OUT");
     },
     
     /**
@@ -172,73 +171,37 @@ Sbi.geo.control.InlineToolbar = OpenLayers.Class(OpenLayers.Control, {
      * Render the control in the browser.
      */    
     draw: function() {
-    	var x =  this.map.size.w+280;
-    	var y = -30;
-    	this.position = new OpenLayers.Pixel(x, y);
+    	
+    	Sbi.trace("[InlineToolbar.draw] : IN");
+
         OpenLayers.Control.prototype.draw.apply(this, arguments);
        
-        if(!(this.layers.length > 0)) {
-            if (this.map.baseLayer) {
-                var layer = this.map.baseLayer.clone();
-                this.layers = [layer];
-            } else {
-                this.map.events.register("changebaselayer", this, this.baseLayerDraw);
-                return this.div;
-            }
-        }
-
+    
         // create overview map DOM elements
-        this.createElementsAction();
-        
-//        this.update();
+        this.createContents();
+       
 
+        Sbi.trace("[InlineToolbar.draw] : OUT");
+        
         return this.div;
     },
     
-    /**
-     * Method: baseLayerDraw
-     * Draw the base layer - called if unable to complete in the initial draw
-     */
-    baseLayerDraw: function() {
-        this.draw();
-        this.map.events.unregister("changebaselayer", this, this.baseLayerDraw);
-    },
 
-
-    /**
-     * Method: update
-     * Update the overview map after layers move.
-     */
-//    update: function() {
-//        if(this.ovmap == null) {
-//            this.createMap();
-//        }
-//    },
-    
     /**
      * Method: createElementsAction
      * Defines the action elements on the map
      */
-    createElementsAction: function(){
-        this.element = document.createElement('div');
-
-        this.mapDiv = document.createElement('ul');
-        this.mapDiv.style.width = this.size.w + 'px';
-        this.mapDiv.style.height = this.size.h + 'px';
-        this.mapDiv.style.position = 'relative';
+    createContents: function(){
+    	Sbi.trace("[InlineToolbar.createContents] : IN");
+         
+        this.div.appendChild(this.createLIEl('span', 'Collapse control panel', 'btn-toggle first', 'elBtnArrow' ));        
+        this.div.appendChild(this.createLIEl('span', 'Print this map', 'btn-print', 'elBtnPrint' ));
+        this.div.appendChild(this.createLIEl('span', 'Share this map', 'btn-share', 'elBtnShare' ));
+        this.div.appendChild(this.createLIEl('a', 'Download this map', 'btn-download', 'elBtnDownload' ));
+        this.div.appendChild(this.createLIEl('a', 'Make this map favourite', 'btn-favourite last', 'elBtnFavourite' ));
         
-        this.mapDiv.id = OpenLayers.Util.createUniqueID('SbiActionsMap'); 
-        this.mapDiv.className = 'panel-actions';
-       
-        this.mapDiv.appendChild(this.createLIEl('span', null, 'btn-toggle first', 'elBtnArrow' ));        
-        this.mapDiv.appendChild(this.createLIEl('span', 'Print this map', 'btn-print', 'elBtnPrint' ));
-        this.mapDiv.appendChild(this.createLIEl('span', 'Share this map', 'btn-share', 'elBtnShare' ));
-        this.mapDiv.appendChild(this.createLIEl('a', 'Download this map', 'btn-download', 'elBtnDownload' ));
-        this.mapDiv.appendChild(this.createLIEl('a', 'Make this map favourite', 'btn-favourite last', 'elBtnFavourite' ));
-        
-        this.element.appendChild(this.mapDiv);  
-        
-        this.div.appendChild(this.element);
+               
+        Sbi.trace("[InlineToolbar.createContents] : OUT");
     },
     
     /**
@@ -261,8 +224,7 @@ Sbi.geo.control.InlineToolbar = OpenLayers.Class(OpenLayers.Control, {
 	    	toReturn.className = c;
 	    	toReturnDet.innerHTML = t; 
 	    	toReturn.id = OpenLayers.Util.createUniqueID(id);   
-		    OpenLayers.Event.observe(toReturn, "click", 
-		    		OpenLayers.Function.bindAsEventListener(this.execClick, this));
+		    OpenLayers.Event.observe(toReturn, "click", OpenLayers.Function.bindAsEventListener(this.execClick, this));
 		    
 		return toReturn;
     },
@@ -272,40 +234,38 @@ Sbi.geo.control.InlineToolbar = OpenLayers.Class(OpenLayers.Control, {
      * Executes the specific action
      */
     execClick: function(el){
-//    	alert(el.currentTarget.id);
-    	if (el.currentTarget.id.indexOf('elBtnArrow')>=0){
-    		//change theme of actions panel
-    		if (el.currentTarget.className.indexOf('open') >= 0){
-    			el.removeClass('open');
-    		}else{
-    			el.addClass('open');
-    		}
-    	}
+   	
     	
-    	if (el.currentTarget.id.indexOf('elBtnShare')>=0){
-    		//open the panel with link url to the document
-    		this.showShareMapWindow('link');
+    	//change theme of actions panel
+//		if (el.currentTarget.className.indexOf('open') >= 0){
+//			el.removeClass('open');
+//		}else{
+//			el.addClass('open');
+//		}
+		
+		
+    	if (el.currentTarget.id.indexOf('elBtnArrow')>=0){
+    		//alert('elBtnArrow');
+    		if(this.mainPanel.controlPanel2.collapsed) {
+    			el.currentTarget.className += ' open';
+    			this.mainPanel.controlPanel2.setVisible(true);
+    			this.mainPanel.controlPanel2.expand();
+    		} else {
+    			el.currentTarget.className = el.currentTarget.className.replace(/\bopen\b/,'');
+    			this.mainPanel.controlPanel2.collapse();
+    			this.mainPanel.controlPanel2.setVisible(false);
+    		}
+    	} else if (el.currentTarget.id.indexOf('elBtnPrint')>=0){
+    		alert('elBtnPrint');
+    	} else if (el.currentTarget.id.indexOf('elBtnShare')>=0){
+    		this.showShareMapWindow('elBtnShare');
+    	} else if (el.currentTarget.id.indexOf('elBtnDownload')>=0){
+    		alert('elBtnArrow');
+    	} else if (el.currentTarget.id.indexOf('elBtnFavourite')>=0){
+    		alert('elBtnFavourite');
     	}
     },
-    
-    /**
-     * Method: createMap
-     * Construct the map that this control contains
-     */
-//    createMap: function() {
-//        // create the overview map
-////        var options = OpenLayers.Util.extend(
-////                        {controls: [], maxResolution: 'auto', 
-////                         fallThrough: false}, this.mapOptions);
-//    	var options = {};
-//        this.ovmap = new OpenLayers.Map(this.mapDiv, options);
-//        
-//        // prevent ovmap from being destroyed when the page unloads, because
-//        // the SbiActionsMap control has to do this (and does it).
-////        OpenLayers.Event.stopObserving(window, 'unload', this.ovmap.unloadDestroy);
-//        
-//        this.ovmap.addLayers(this.layers);
-//    },
+
     
     showShareMapWindow: function(type){
 		if(this.shareMapWindow != null){			
@@ -372,15 +332,3 @@ Sbi.geo.control.InlineToolbar = OpenLayers.Class(OpenLayers.Control, {
 
     CLASS_NAME: 'Sbi.geo.control.InlineToolbar'
 });
-
-///**
-// * Constant: X
-// * {Integer}
-// */
-//OpenLayers.Control.SbiActionsMap.X = 930;
-//
-///**
-// * Constant: Y
-// * {Integer}
-// */
-//OpenLayers.Control.SbiActionsMap.Y = -30; //4

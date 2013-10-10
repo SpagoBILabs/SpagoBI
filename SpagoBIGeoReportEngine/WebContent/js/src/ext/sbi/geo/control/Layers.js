@@ -29,10 +29,10 @@
  */
 
 /**
- * Class: OpenLayers.Control.SbiLayersMap
+ * Class: Sbi.geo.control.Layers
  * Create an overview map to display the extent of your main map and provide
  * additional navigation control.  Create a new overview map with the
- * <OpenLayers.Control.SbiLayersMap> constructor.
+ * <Sbi.geo.control.Layers> constructor.
  *
  * Inerits from:
  *  - <OpenLayers.Control>
@@ -66,11 +66,10 @@ Sbi.geo.control.Layers = OpenLayers.Class(OpenLayers.Control, {
      * APIProperty: size
      * {<OpenLayers.Size>} The overvew map size in pixels.  Note that this is
      * the size of the map itself - the element that contains the map (default
-     * class name olControlSbiLayersMapElement) may have padding or other style
+     * class name olControlSbiLegendMapElement) may have padding or other style
      * attributes added via CSS.
      */
     size: new OpenLayers.Size(35, 35),
-
         
     /**
      * APIProperty: mapOptions
@@ -79,19 +78,12 @@ Sbi.geo.control.Layers = OpenLayers.Class(OpenLayers.Control, {
      * options that the main map was constructed with.
      */
     mapOptions: null,
-    
-    /**
-     * Property: handlers
-     * {Object}
-     */
-//    handlers: null,
 
-    
     /** 
-     * Property: buttons
-     * {Array(DOMElement)} Array of Button Divs 
+     * Property: position
+     * {<OpenLayers.Pixel>} 
      */
-    buttons: null,
+    position: null,
     
     /**
      * popup windows for share the map url
@@ -102,9 +94,18 @@ Sbi.geo.control.Layers = OpenLayers.Class(OpenLayers.Control, {
      * Property: action clicked from the user
      * */
     action: null,
-
+    
     /**
-     * Constructor: OpenLayers.Control.SbiLayersMap
+     * Property: legend configuration
+     * */
+    legendPanelConf: {},
+    /**
+     * Property: panel with the legend
+     * */
+    legendControlPanel: null,
+   
+    /**
+     * Constructor: Sbi.geo.control.Layers
      * Create a new options map
      *
      * Parameters:
@@ -112,15 +113,26 @@ Sbi.geo.control.Layers = OpenLayers.Class(OpenLayers.Control, {
      * map object.  Note, to set options on the map object contained in this
      * control, set <mapOptions> as one of the options properties.
      */
-    initialize: function(options) {
-        //add theme file 
-        var cssNode = document.createElement('link');
-        cssNode.setAttribute('rel', 'stylesheet');
-        cssNode.setAttribute('type', 'text/css');
-        cssNode.setAttribute('href', './css/standard.css');
-        document.getElementsByTagName('head')[0].appendChild(cssNode);
-
-        OpenLayers.Control.prototype.initialize.apply(this, [options]);
+    initialize: function(options) {  
+        
+    	Sbi.trace("[Layers.initialize] : IN");
+    	
+    	Sbi.trace("[Layers.initialize] : options are equal to [" + Sbi.toSource(options) + "]");    	
+       
+    	OpenLayers.Control.prototype.initialize.apply(this, [options]);
+    	// ovveride the main div class automatically generated 
+    	// by parent's initialize method
+    	this.displayClass = "map-tools"; 
+    	this.id = "MapTools"; 
+    	
+    	if (this.div == null) {
+    		Sbi.trace("[Layers.initialize] : div is null");
+    	} else {
+    		Sbi.trace("[Layers.initialize] : div is not null");
+    	}
+    	
+        
+        Sbi.trace("[Layers.initialize] : OUT");
     },
     
     /**
@@ -143,67 +155,74 @@ Sbi.geo.control.Layers = OpenLayers.Class(OpenLayers.Control, {
         OpenLayers.Control.prototype.destroy.apply(this, arguments);    
     },
 
+        
     /**
      * Method: draw
      * Render the control in the browser.
      */    
-//    draw: function(px) {
-    draw: function() {    	
-        var x =  this.map.size.w*2+50;
-    	var y =  this.map.size.h+100;
-    	this.position = new OpenLayers.Pixel(x, y);
+
+    draw: function(px) {    	
+    	Sbi.trace("[Layers.draw] : IN");
+
+    	this.div = document.getElementById("MapTools");
+    	if(this.div != null) {
+    		Sbi.trace("[Layers.draw] : a div with id equal to [MapTools] already exist");
+    	} else {
+    		Sbi.trace("[Layers.draw] : a div with id equal to [MapTools] does not exist");
+    	}
     	OpenLayers.Control.prototype.draw.apply(this, arguments);
-
+   
+    	
         // create overview map DOM elements
-        this.createButton();
-
+        this.createContents();
+    
+        Sbi.trace("[Layers.draw] : OUT");
+        
         return this.div;
     },
-    
-    /**
-     * Method: baseLayerDraw
-     * Draw the base layer - called if unable to complete in the initial draw
-     */
-    baseLayerDraw: function() {
-        this.draw();
-        this.map.events.unregister("changebaselayer", this, this.baseLayerDraw);
-    },
-
-
+  
     /**
      * Method: createElementsAction
      * Defines the action elements on the map
      */
-    createButton: function(){    	
-        this.element = document.createElement('div');
-        this.element.className = 'map-tools';
+    createContents: function(){
 
-        this.mapDiv = document.createElement('div');
-        this.mapDiv.style.width = this.size.w + 'px';
-        this.mapDiv.style.height = this.size.h + 'px';
-        this.mapDiv.style.position = 'relative';
+    	// create main Layers element
+        this.legendElement = document.createElement('div');
+        this.legendElement.id = 'Layers'; //OpenLayers.Util.createUniqueID('Layers');   
+        this.legendElement.className = 'map-tools-element layers';
         
-        this.mapDiv.id = OpenLayers.Util.createUniqueID('SbiLayersMap'); 
-        this.mapDiv.className = 'map-tools-element layers';
-        var mapDivContent = document.createElement('div');
-        mapDivContent.className = "tools-content overlay";        
+        // create legend popup window
+        this.legendContentElement = document.createElement('div');
+        this.legendContentElement.id = 'LayersContent'; // OpenLayers.Util.createUniqueID('LegendContent');   
+        this.legendContentElement.className = "tools-content overlay"; 
         
-        var divDet = document.createElement('div'),
-        	divDetSpan = document.createElement('span');
-
-        divDetSpan.className = 'icon';
-        divDetSpan.style = 'display:block;';
-    	divDet.appendChild(divDetSpan);
-    	this.mapDiv.appendChild(mapDivContent); 
-    	this.mapDiv.appendChild(divDet);    	
-    	this.mapDiv.id = OpenLayers.Util.createUniqueID('layers');   
-	    OpenLayers.Event.observe(this.mapDiv, "click", 
-	    		OpenLayers.Function.bindAsEventListener(this.execClick, this));
-      
-	    
-        this.element.appendChild(this.mapDiv);  
+        var legendContentCloseBtnElement = document.createElement('span');
+        legendContentCloseBtnElement.className = "btn-close";
+        this.legendContentElement.appendChild(legendContentCloseBtnElement);
+        OpenLayers.Event.observe(legendContentCloseBtnElement, "click", 
+	    		OpenLayers.Function.bindAsEventListener(this.closeLegend, this, 'close'));
+       
+        var legendContentBodyElement = document.createElement('div');
+        legendContentBodyElement.id = 'LayersBody'; // OpenLayers.Util.createUniqueID('LegendContent');   
+        this.legendContentElement.appendChild(legendContentBodyElement);
         
-        this.div.appendChild(this.element);
+        var titleElement = document.createElement("div");
+        titleElement.innerHTML = " <\p> <h3>Livelli</h3><\p> <\p>";
+        legendContentBodyElement.appendChild(titleElement);
+        
+        // create legend button
+        var	legendButtonElement = document.createElement('span');
+        legendButtonElement.className = 'icon';
+        OpenLayers.Event.observe(legendButtonElement, "click", 
+	    		OpenLayers.Function.bindAsEventListener(this.openLegend, this));
+    	
+	          
+        // put everythings together
+        this.legendElement.appendChild(legendButtonElement);
+	    this.legendElement.appendChild(this.legendContentElement); 
+	   
+        this.div.appendChild(this.legendElement);
     },
     
     
@@ -211,12 +230,38 @@ Sbi.geo.control.Layers = OpenLayers.Class(OpenLayers.Control, {
      * Method: execClick
      * Executes the specific action
      */
-    execClick: function(el){
-    	alert(el.currentTarget.id);
-    	    	
+    openLegend: function(el){
+    	this.legendContentElement.style.height = '200px';
+    	this.legendContentElement.style.width = '180px';
+    	this.legendContentElement.style.display = 'block';
+    	this.legendContentElement.opened = true;
     },
     
- 
+    closeLegend: function(el){
+    	this.legendContentElement.style.height = '0px';
+    	this.legendContentElement.style.width = '0px';
+    	this.legendContentElement.style.display = 'none';
+    	this.legendContentElement.closed = true;
+    },
+    
+    /**
+     * Method: createMap
+     * Construct the map that this control contains
+     */
+    createMap: function() {
+        // create the overview map
+        var options = OpenLayers.Util.extend(
+                        {controls: [], maxResolution: 'auto', 
+                         fallThrough: false}, this.mapOptions);
+
+        this.ovmap = new OpenLayers.Map(this.mapDiv, options);
+        
+        // prevent ovmap from being destroyed when the page unloads, because
+        // the SbiLegendMap control has to do this (and does it).
+//        OpenLayers.Event.stopObserving(window, 'click', this.ovmap.unloadDestroy);
+        
+    },
+    
 
     CLASS_NAME: 'Sbi.geo.control.Layers'
 });

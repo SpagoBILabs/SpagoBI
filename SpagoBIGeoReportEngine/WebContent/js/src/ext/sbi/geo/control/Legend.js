@@ -103,31 +103,7 @@ Sbi.geo.control.Legend = OpenLayers.Class(OpenLayers.Control, {
      * Property: panel with the legend
      * */
     legendControlPanel: null,
-    
-    name: "legend",
-
-    parentInitialize: function (options) {
-    	Sbi.trace("[Legend.parentInitialize] : IN");
-    	
-        // We do this before the extend so that instances can override
-        // className in options.
-        this.displayClass = "map-tools"; 
-        //"olControlLegend";
-        //"olControlMousePosition"; 
-        //this.CLASS_NAME.replace("OpenLayers.", "ol").replace(/\./g, "");
-        
-        OpenLayers.Util.extend(this, options);
-        
-        this.events = new OpenLayers.Events(this, null, this.EVENT_TYPES);
-        if(this.eventListeners instanceof Object) {
-            this.events.on(this.eventListeners);
-        }
-        if (this.id == null) {
-            this.id = OpenLayers.Util.createUniqueID(this.CLASS_NAME + "_");
-        }
-        Sbi.trace("[Legend.parentInitialize] : OUT");
-    },
-    
+   
     /**
      * Constructor: Sbi.geo.control.Legend
      * Create a new options map
@@ -142,19 +118,12 @@ Sbi.geo.control.Legend = OpenLayers.Class(OpenLayers.Control, {
     	Sbi.trace("[Legend.initialize] : IN");
     	
     	Sbi.trace("[Legend.initialize] : options are equal to [" + Sbi.toSource(options) + "]");    	
-    	
-    	//add theme file     	
-//        var cssNode = document.createElement('link');
-//        cssNode.setAttribute('rel', 'stylesheet');
-//        cssNode.setAttribute('type', 'text/css');
-//        cssNode.setAttribute('href', './css/standard.css');
-//        document.getElementsByTagName('head')[0].appendChild(cssNode);
-//               
-//        this.layers = [];
-//        this.handlers = {};
-        
-    	this.parentInitialize(options);
-    	//OpenLayers.Control.prototype.initialize.apply(this, [options]);
+       
+    	OpenLayers.Control.prototype.initialize.apply(this, [options]);
+    	// ovveride the main div class automatically generated 
+    	// by parent's initialize method
+    	this.displayClass = "map-tools"; 
+    	this.id = "MapTools"; 
     	
     	if (this.div == null) {
     		Sbi.trace("[Legend.initialize] : div is null");
@@ -186,40 +155,7 @@ Sbi.geo.control.Legend = OpenLayers.Class(OpenLayers.Control, {
         OpenLayers.Control.prototype.destroy.apply(this, arguments);    
     },
 
-    parentDraw: function (px) {
-    	Sbi.trace("[Legend.parentDraw] : IN");
         
-    	if (this.div == null) {
-    		
-    		Sbi.trace("[Legend.parentDraw] : div is null");
-    		 
-            this.div = OpenLayers.Util.createDiv(this.id);
-            this.div.className = this.displayClass;
-            
-            if (!this.allowSelection) {
-                this.div.className += " olControlNoSelect";
-                this.div.setAttribute("unselectable", "on", 0);
-                this.div.onselectstart = function() { return(false); }; 
-            }    
-            if (this.title != "") {
-                this.div.title = this.title;
-            }
-        } else {
-        	Sbi.trace("[Legend.parentDraw] : div is not null");
-        }
-    	
-    	Sbi.trace("[Legend.parentDraw] : div calss is equal to [" + this.displayClass + "]");
-    	
-        if (px != null) {
-            this.position = px.clone();
-        }
-        this.moveTo(this.position);
-        
-        Sbi.trace("[Legend.parentDraw] : OUT");
-        
-        return this.div;
-    },
-    
     /**
      * Method: draw
      * Render the control in the browser.
@@ -228,26 +164,24 @@ Sbi.geo.control.Legend = OpenLayers.Class(OpenLayers.Control, {
     draw: function(px) {    	
     	Sbi.trace("[Legend.draw] : IN");
     	
-//    	var x = this.map.size.w*2;
-//    	var y =  this.map.size.h+100;
-//    	this.position = new OpenLayers.Pixel(x, y);
+    	this.div = document.getElementById("MapTools");
+    	if(this.div != null) {
+    		Sbi.trace("[Legend.draw] : a div with id equal to [MapTools] already exist");
+    	} else {
+    		Sbi.trace("[Legend.draw] : a div with id equal to [MapTools] does not exist");
+    	}
     	
-    	//OpenLayers.Control.prototype.draw.apply(this, arguments);
-    	this.parentDraw(px);
-    	
-    	
+    	OpenLayers.Control.prototype.draw.apply(this, arguments);
+    	//this.parentDraw(px);
     	
         // create overview map DOM elements
         this.createContents();
-    	
-        
+    
         Sbi.trace("[Legend.draw] : OUT");
         
         return this.div;
     },
-   
-   
-    
+  
     /**
      * Method: createElementsAction
      * Defines the action elements on the map
@@ -298,21 +232,6 @@ Sbi.geo.control.Legend = OpenLayers.Class(OpenLayers.Control, {
     	this.legendContentElement.style.width = '180px';
     	this.legendContentElement.style.display = 'block';
     	this.legendContentElement.opened = true;
-    
-    	
-    	this.initLegendControlPanel();
-    	var pippo = new Ext.Window({
-            layout      : 'fit',
-	        width		: 700,
-	        height		: 350,
-            closeAction :'destroy',
-            plain       : true,
-//	            title		: OpenLayers.Lang.translate('sbi.tools.catalogue.measures.window.title'),
-            title		: 'test for the legend...',
-            items       : [this.legendControlPanel]
-		});
-		
-    	//pippo.show();
     },
     
     closeLegend: function(el){
@@ -339,21 +258,6 @@ Sbi.geo.control.Legend = OpenLayers.Class(OpenLayers.Control, {
 //        OpenLayers.Event.stopObserving(window, 'click', this.ovmap.unloadDestroy);
         
     },
-    
-	initLegendControlPanel: function() {
-
-		this.legendPanelConf = null;
-		this.legendControlPanel = new Ext.Panel(Ext.apply({
-	           title: LN('sbi.geo.legendpanel.title'),
-	           collapsible: true,
-	           bodyStyle:'padding:6px 6px 6px 6px; background-color:#FFFFFF',
-	           height: 180,
-	           autoScroll: true,
-	           html: '<center id="myChoroplethLegendDiv"></center>'
-	     },this.legendPanelConf));
-					
-
-	},
     
 
     CLASS_NAME: 'Sbi.geo.control.Legend'

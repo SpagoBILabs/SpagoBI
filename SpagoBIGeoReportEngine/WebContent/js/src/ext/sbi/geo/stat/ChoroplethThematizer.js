@@ -285,6 +285,12 @@ Ext.extend(Sbi.geo.stat.ChoroplethThematizer, Sbi.geo.stat.Thematizer, {
 
         // TODO use css classes instead
         this.legendDiv.update("");
+        
+        var element = document.createElement("div");
+        element.innerHTML = " <\p> <h3>Legenda</h3><\p> <\p>";
+        this.legendDiv.appendChild(element);
+        
+        
         for (var i = 0; i < this.classification.bins.length; i++) {
             var element = document.createElement("div");
             element.style.backgroundColor = this.colorInterpolation[i].toHexString();

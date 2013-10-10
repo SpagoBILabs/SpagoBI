@@ -20,18 +20,21 @@ Sbi.geo.ControlPanel2 = function(config) {
 	// init properties...
 	var defaultSettings = {
 		// set default values here
-		title       : LN('sbi.geo.controlpanel.title'),
+		//title       : LN('sbi.geo.controlpanel.title'),
 		region      : 'east',
-		split       : true,
+		split       : false,
 		width       : 365,
 		collapsible : true,
 		collapsed   : false,
-		margins     : '3 0 3 3',
-		cmargins    : '3 3 3 3',
-		autoScroll	 : true
-		, border: false
-		, id:'this'
-		,layout: 'fit'
+		autoScroll	: true,
+		layout		: 'fit',
+		margins     : '0 0 0 0',
+		cmargins    : '0 0 0 0',
+		collapseMode: 'none',
+        hideCollapseTool: true,
+		hideBorders: true,
+		border		: false,
+		frame: false
 	};
 	
 	if (Sbi.settings && Sbi.settings.geo && Sbi.settings.geo.ControlPanel2) {
