@@ -43,8 +43,8 @@ Ext.define('Sbi.tools.dataset.ValidateDatasetGrid', {
 
 		var defaultConf = {
 				/*pagingConfig:{}, */
-				storeConfig:{ pageSize: 10, dataRoot : "rows"}	};
-		this.title =  "Dataset Validation";
+				storeConfig:{ pageSize: 10, dataRoot : 'rows'}	};
+		this.title =  'Dataset Validation';
 		/*this.filterConfig={};*/
 		this.border = true;
 		/*this.region = 'south';*/
@@ -79,10 +79,10 @@ Ext.define('Sbi.tools.dataset.ValidateDatasetGrid', {
 
 							var sub_key = j;
 							var sub_val = val[j];
-							var cIndex = sub_key.replace("column_","");
+							var cIndex = sub_key.replace('column_','');
 							if (cIndex == colIndex){
 								metaData.tdCls = 'custom-error';
-								metaData.tdAttr = 'data-qtip="'+sub_val+'"';
+								metaData.tdAttr = 'data-qtip=\''+sub_val+'\'';
 
 								if (!thisPanel.firedValidationErrorFound){
 									this.fireEvent('validationErrorFound');
