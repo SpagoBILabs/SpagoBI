@@ -8,8 +8,7 @@
 Ext.define('Sbi.tools.dataset.ValidateDatasetGrid', {
     extend: 'Sbi.widgets.grid.DynamicGridPanel'
 
-	, constructor: function(config) {
-		
+  , constructor: function(config) {
 		thisPanel = this;
 		Ext.QuickTips.init();
 
