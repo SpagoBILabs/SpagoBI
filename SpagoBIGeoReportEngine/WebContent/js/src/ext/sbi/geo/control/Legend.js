@@ -103,7 +103,31 @@ Sbi.geo.control.Legend = OpenLayers.Class(OpenLayers.Control, {
      * Property: panel with the legend
      * */
     legendControlPanel: null,
+    
+    name: "legend",
 
+    parentInitialize: function (options) {
+    	Sbi.trace("[Legend.parentInitialize] : IN");
+    	
+        // We do this before the extend so that instances can override
+        // className in options.
+        this.displayClass = "map-tools"; 
+        //"olControlLegend";
+        //"olControlMousePosition"; 
+        //this.CLASS_NAME.replace("OpenLayers.", "ol").replace(/\./g, "");
+        
+        OpenLayers.Util.extend(this, options);
+        
+        this.events = new OpenLayers.Events(this, null, this.EVENT_TYPES);
+        if(this.eventListeners instanceof Object) {
+            this.events.on(this.eventListeners);
+        }
+        if (this.id == null) {
+            this.id = OpenLayers.Util.createUniqueID(this.CLASS_NAME + "_");
+        }
+        Sbi.trace("[Legend.parentInitialize] : OUT");
+    },
+    
     /**
      * Constructor: Sbi.geo.control.Legend
      * Create a new options map
@@ -115,16 +139,31 @@ Sbi.geo.control.Legend = OpenLayers.Class(OpenLayers.Control, {
      */
     initialize: function(options) {  
         
+    	Sbi.trace("[Legend.initialize] : IN");
+    	
+    	Sbi.trace("[Legend.initialize] : options are equal to [" + Sbi.toSource(options) + "]");    	
+    	
     	//add theme file     	
-        var cssNode = document.createElement('link');
-        cssNode.setAttribute('rel', 'stylesheet');
-        cssNode.setAttribute('type', 'text/css');
-        cssNode.setAttribute('href', './css/standard.css');
-        document.getElementsByTagName('head')[0].appendChild(cssNode);
-               
-        this.layers = [];
-        this.handlers = {};
-        OpenLayers.Control.prototype.initialize.apply(this, [options]);
+//        var cssNode = document.createElement('link');
+//        cssNode.setAttribute('rel', 'stylesheet');
+//        cssNode.setAttribute('type', 'text/css');
+//        cssNode.setAttribute('href', './css/standard.css');
+//        document.getElementsByTagName('head')[0].appendChild(cssNode);
+//               
+//        this.layers = [];
+//        this.handlers = {};
+        
+    	this.parentInitialize(options);
+    	//OpenLayers.Control.prototype.initialize.apply(this, [options]);
+    	
+    	if (this.div == null) {
+    		Sbi.trace("[Legend.initialize] : div is null");
+    	} else {
+    		Sbi.trace("[Legend.initialize] : div is not null");
+    	}
+    	
+        
+        Sbi.trace("[Legend.initialize] : OUT");
     },
     
     /**
@@ -147,73 +186,106 @@ Sbi.geo.control.Legend = OpenLayers.Class(OpenLayers.Control, {
         OpenLayers.Control.prototype.destroy.apply(this, arguments);    
     },
 
+    parentDraw: function (px) {
+    	Sbi.trace("[Legend.parentDraw] : IN");
+        
+    	if (this.div == null) {
+    		
+    		Sbi.trace("[Legend.parentDraw] : div is null");
+    		 
+            this.div = OpenLayers.Util.createDiv(this.id);
+            this.div.className = this.displayClass;
+            
+            if (!this.allowSelection) {
+                this.div.className += " olControlNoSelect";
+                this.div.setAttribute("unselectable", "on", 0);
+                this.div.onselectstart = function() { return(false); }; 
+            }    
+            if (this.title != "") {
+                this.div.title = this.title;
+            }
+        } else {
+        	Sbi.trace("[Legend.parentDraw] : div is not null");
+        }
+    	
+    	Sbi.trace("[Legend.parentDraw] : div calss is equal to [" + this.displayClass + "]");
+    	
+        if (px != null) {
+            this.position = px.clone();
+        }
+        this.moveTo(this.position);
+        
+        Sbi.trace("[Legend.parentDraw] : OUT");
+        
+        return this.div;
+    },
+    
     /**
      * Method: draw
      * Render the control in the browser.
      */    
-//    draw: function(px) {
-    draw: function() {    	
-//    	alert('this.map.size: ' + this.map.size);
 
-    	var x = this.map.size.w*2;
-    	var y =  this.map.size.h+100;
-    	this.position = new OpenLayers.Pixel(x, y);
+    draw: function(px) {    	
+    	Sbi.trace("[Legend.draw] : IN");
     	
-    	OpenLayers.Control.prototype.draw.apply(this, arguments);
-//        px = this.position;
-//        
-//        var sz = new OpenLayers.Size(18,18);
-//        var centered = new OpenLayers.Pixel(px.x+sz.w/2, px.y);
-
+//    	var x = this.map.size.w*2;
+//    	var y =  this.map.size.h+100;
+//    	this.position = new OpenLayers.Pixel(x, y);
+    	
+    	//OpenLayers.Control.prototype.draw.apply(this, arguments);
+    	this.parentDraw(px);
+    	
+    	
+    	
         // create overview map DOM elements
-        this.createButton();
+        this.createContents();
+    	
         
-//        this.update();
-
+        Sbi.trace("[Legend.draw] : OUT");
+        
         return this.div;
     },
+   
    
     
     /**
      * Method: createElementsAction
      * Defines the action elements on the map
      */
-    createButton: function(){
-        this.element = document.createElement('div');
-        this.element.className = 'map-tools';
+    createContents: function(){
 
-        this.mapDiv = document.createElement('div');
-      
-        this.mapDiv.id = OpenLayers.Util.createUniqueID('SbiLegendMap'); 
-        this.mapDiv.className = 'map-tools-element legend';
+    	// create main legend element
+        this.legendElement = document.createElement('div');
+        this.legendElement.id = 'Legend'; //OpenLayers.Util.createUniqueID('Legend');   
+        this.legendElement.className = 'map-tools-element legend';
         
-        this.mapDivContent = document.createElement('div');
-        this.mapDivContent.className = "tools-content overlay"; 
-        var mapDivContentSpan = document.createElement('span');
-        mapDivContentSpan.className = "btn-close";
-        this.mapDivContent.appendChild(mapDivContentSpan);
-        this.mapDivContent.id = OpenLayers.Util.createUniqueID('legendContent');   
-        OpenLayers.Event.observe(mapDivContentSpan, "click", 
+        // create legend popup window
+        this.legendContentElement = document.createElement('div');
+        this.legendContentElement.id = 'LegendContent'; // OpenLayers.Util.createUniqueID('LegendContent');   
+        this.legendContentElement.className = "tools-content overlay"; 
+        
+        var legendContentCloseBtnElement = document.createElement('span');
+        legendContentCloseBtnElement.className = "btn-close";
+        this.legendContentElement.appendChild(legendContentCloseBtnElement);
+        OpenLayers.Event.observe(legendContentCloseBtnElement, "click", 
 	    		OpenLayers.Function.bindAsEventListener(this.closeLegend, this, 'close'));
        
-        var divDet = document.createElement('div'),
-        	divDetSpan = document.createElement('span');
-
-        divDetSpan.className = 'icon';
-        divDet.appendChild(divDetSpan);
-
-    	this.mapDiv.id = OpenLayers.Util.createUniqueID('legend');   
-	          
-	    this.mapDiv.appendChild(divDet);
-
-	    this.mapDiv.appendChild(this.mapDivContent); 
-	    OpenLayers.Event.observe(divDetSpan, "click", 
-	    		OpenLayers.Function.bindAsEventListener(this.openLegend, this));
-	    
-	    
-        this.element.appendChild(this.mapDiv);  
+        var legendContentBodyElement = document.createElement('div');
+        legendContentBodyElement.id = 'LegendBody'; // OpenLayers.Util.createUniqueID('LegendContent');   
+        this.legendContentElement.appendChild(legendContentBodyElement);
         
-        this.div.appendChild(this.element);
+        // create legend button
+        var	legendButtonElement = document.createElement('span');
+        legendButtonElement.className = 'icon';
+        OpenLayers.Event.observe(legendButtonElement, "click", 
+	    		OpenLayers.Function.bindAsEventListener(this.openLegend, this));
+    	
+	          
+        // put everythings together
+        this.legendElement.appendChild(legendButtonElement);
+	    this.legendElement.appendChild(this.legendContentElement); 
+	   
+        this.div.appendChild(this.legendElement);
     },
     
     
@@ -222,10 +294,10 @@ Sbi.geo.control.Legend = OpenLayers.Class(OpenLayers.Control, {
      * Executes the specific action
      */
     openLegend: function(el){
-    	this.mapDivContent.style.height = '200px';
-    	this.mapDivContent.style.width = '180px';
-    	this.mapDivContent.style.display = 'block';
-    	this.mapDivContent.opened = true;
+    	this.legendContentElement.style.height = '200px';
+    	this.legendContentElement.style.width = '180px';
+    	this.legendContentElement.style.display = 'block';
+    	this.legendContentElement.opened = true;
     
     	
     	this.initLegendControlPanel();
@@ -240,14 +312,14 @@ Sbi.geo.control.Legend = OpenLayers.Class(OpenLayers.Control, {
             items       : [this.legendControlPanel]
 		});
 		
-    	pippo.show();
+    	//pippo.show();
     },
     
     closeLegend: function(el){
-    	this.mapDivContent.style.height = '0px';
-    	this.mapDivContent.style.width = '0px';
-    	this.mapDivContent.style.display = 'none';
-    	this.mapDivContent.closed = true;
+    	this.legendContentElement.style.height = '0px';
+    	this.legendContentElement.style.width = '0px';
+    	this.legendContentElement.style.display = 'none';
+    	this.legendContentElement.closed = true;
     },
     
     /**

@@ -127,14 +127,27 @@
 		background-repeat: no-repeat;
 	}
 	
-	div.olControlLegend {
-	    bottom: 15;
-	    right: 3px;
+	.olControlLegend {
+		line-height:100%;
+		z-index:1000;
+		position:absolute;
+		bottom:11px;
+		right:379px;
+		float:left;
+		white-space:nowrap; 
+		background-color: blue;
+	
+		/*
+	    bottom: 30px;
+	    right: 30px;
 	    display: block;
-	    position: absolute;
 	    font-family: Arial;
 	    font-size: smaller;
+	    */
 	}
+	
+	.map-tools{}
+	
 		
 	
  </style>

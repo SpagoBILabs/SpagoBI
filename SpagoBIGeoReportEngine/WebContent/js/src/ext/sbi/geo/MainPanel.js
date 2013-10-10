@@ -370,9 +370,44 @@ Ext.extend(Sbi.geo.MainPanel, Ext.Panel, {
 		
 		
 		this.map = new OpenLayers.Map('map', this.baseMapOptions);
+		this.map.addControlToMap = function (control, px) {
+			Sbi.debug("[Map.addControlToMap]: IN");
+			
+			
+			if(control.div == null) {
+				Sbi.debug("[Map.addControlToMap]: div is null");
+			} else {
+				Sbi.debug("[Map.addControlToMap]: div is not null");
+			}
+			
+	        // If a control doesn't have a div at this point, it belongs in the viewport.
+	        control.outsideViewport = (control.div != null);
+	        
+	        // If the map has a displayProjection, and the control doesn't, set 
+	        // the display projection.
+	        if (this.displayProjection && !control.displayProjection) {
+	            control.displayProjection = this.displayProjection;
+	        }    
+	        
+	        control.setMap(this);
+	        var div = control.draw(px);
+	        if (div) {
+	            if(!control.outsideViewport) {
+	                div.style.zIndex = this.Z_INDEX_BASE['Control'] +
+	                                    this.controls.length;
+	                this.viewPortDiv.appendChild( div );
+	                Sbi.debug("[Map.addControlToMap]: control [" + control.name + "] added to viewport");
+	            }
+	        }
+	        Sbi.debug("[Map.addControlToMap]: OUT");
+	    };
+		
+		
 		this.initLayers();
 		this.initControls();  
 		this.initAnalysis();
+		
+		
     }
 
 	, initLayers: function(c) {
@@ -402,9 +437,14 @@ Ext.extend(Sbi.geo.MainPanel, Ext.Panel, {
 					this.baseControlsConf[i].mapOptions = this.baseMapOptions;
 					var c = Sbi.geo.utils.ControlFactory.createControl( this.baseControlsConf[i] );
 					if(c != null) {
-						Sbi.trace("[MainPanel.initControls] : adding control [" + this.baseControlsConf[i]+ "] ...");
+						Sbi.trace("[MainPanel.initControls] : adding control [" + Sbi.toSource(this.baseControlsConf[i]) + "] ...");
+						if(c.div == null) {
+							Sbi.trace("[MainPanel.initControls] : div is null");
+						} else {
+							Sbi.trace("[MainPanel.initControls] : div is not null");
+						}
 						this.map.addControl( c );
-						Sbi.trace("[MainPanel.initControls] : control [" + this.baseControlsConf[i]+ "] succesfully added to the map");
+						Sbi.trace("[MainPanel.initControls] : control [" + Sbi.toSource(this.baseControlsConf[i]) + "] succesfully added to the map");
 					}
 					
 				}
@@ -474,7 +514,8 @@ Ext.extend(Sbi.geo.MainPanel, Ext.Panel, {
 			indicators: this.indicators,			
 			url: loadLayerUrl,
 			loadMask : {msg: 'Analysis...', msgCls: 'x-mask-loading'},
-			legendDiv : 'myChoroplethLegendDiv',
+			//legendDiv : 'myChoroplethLegendDiv',
+			legendDiv : 'LegendBody',
 			featureSelection: false,
 			listeners: {}
 		};
