@@ -274,7 +274,12 @@ Ext.extend(Sbi.geo.stat.ChoroplethThematizer, Sbi.geo.stat.Thematizer, {
      * Update the legendDiv content with new bins label
      */
     , updateLegend: function() {
-        if (!this.legendDiv) {
+    	
+    	Sbi.trace("[ChoroplethThematizer.updateLegend] : IN");
+        
+    	if (!this.legendDiv) {
+    		Sbi.trace("[ChoroplethThematizer.updateLegend] : legend div not defined");
+    		Sbi.trace("[ChoroplethThematizer.updateLegend] : OUT");
             return;
         }
 
