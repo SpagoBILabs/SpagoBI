@@ -14,12 +14,9 @@ Ext.define('Sbi.tools.dataset.ValidateDatasetGrid', {
 		Ext.QuickTips.init();
 
 		var defaultConf = {
-				/*pagingConfig:{}, */
 				storeConfig:{ pageSize: 10, dataRoot : 'rows'}	};
 		this.title =  'Dataset Validation';
-		/*this.filterConfig={};*/
 		this.border = true;
-		/*this.region = 'south';*/
         this.height = 300;
         this.width = '100%';
         this.autoscroll =  true;
@@ -27,7 +24,6 @@ Ext.define('Sbi.tools.dataset.ValidateDatasetGrid', {
         
         this.firedValidationErrorFound = false;
 
-		/*defaultConf = Ext.apply( defaultConf,config ||{} );*/
         defaultConf.params = config;
         defaultConf.usePost = true;
 		Ext.apply(this,defaultConf);
@@ -36,7 +32,6 @@ Ext.define('Sbi.tools.dataset.ValidateDatasetGrid', {
 		
 		defaultConf.serviceUrl =  Sbi.config.serviceRegistry.getRestServiceUrl({
 			serviceName: 'selfservicedataset/getDataStore'
-			/*,baseParams: config*/
 			,baseParams: {}
     	});
 
