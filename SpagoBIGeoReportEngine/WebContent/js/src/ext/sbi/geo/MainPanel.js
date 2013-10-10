@@ -30,7 +30,8 @@ Sbi.geo.MainPanel = function(config) {
 			wmsGroupEnabled: true,
 			drawButtonGroupEnabled: true,
 			historyButtonGroupEnabled: true
-		}
+		},
+		hideBorders: true
 	};
 		
 	if(Sbi.settings && Sbi.settings.georeport && Sbi.settings.georeport.georeportPanel) {
@@ -62,8 +63,15 @@ Sbi.geo.MainPanel = function(config) {
 	
 	this.init();
 	
+	Ext.layout.BorderLayout.Region.prototype.getCollapsedEl = Ext.layout.BorderLayout.Region.prototype.getCollapsedEl.createSequence(function(){
+		if(this.collapseMode == 'none'){
+            this.collapsedEl.enableDisplayMode('none');
+        }
+    });
+	
 	c = Ext.apply(c, {
          layout   : 'border',
+         hideBorders: true,
          items    : [this.controlPanel, this.mapPanel, this.controlPanel2]
 	});
 
@@ -396,7 +404,7 @@ Ext.extend(Sbi.geo.MainPanel, Ext.Panel, {
 	                div.style.zIndex = this.Z_INDEX_BASE['Control'] +
 	                                    this.controls.length;
 	                this.viewPortDiv.appendChild( div );
-	                Sbi.debug("[Map.addControlToMap]: control [" + control.name + "] added to viewport");
+	                Sbi.debug("[Map.addControlToMap]: control [" + control.CLASS_NAME + "] added to viewport");
 	            }
 	        }
 	        Sbi.debug("[Map.addControlToMap]: OUT");
@@ -442,6 +450,9 @@ Ext.extend(Sbi.geo.MainPanel, Ext.Panel, {
 							Sbi.trace("[MainPanel.initControls] : div is null");
 						} else {
 							Sbi.trace("[MainPanel.initControls] : div is not null");
+						}
+						if(c.CLASS_NAME == 'Sbi.geo.control.InlineToolbar') {
+							c.mainPanel = this;
 						}
 						this.map.addControl( c );
 						Sbi.trace("[MainPanel.initControls] : control [" + Sbi.toSource(this.baseControlsConf[i]) + "] succesfully added to the map");
@@ -719,6 +730,12 @@ Ext.extend(Sbi.geo.MainPanel, Ext.Panel, {
 		var mapPanelConf = {
 			title: LN(this.mapName),
 			layout: 'fit',
+			margins     : '0 0 0 0',
+			cmargins    : '0 0 0 0',
+			hideCollapseTool : true,
+			hideBorders: true,
+			border		: false,
+			frame: false,
 	       	items: {
 		        xtype: 'mapcomponent',
 		        map: this.map
@@ -738,7 +755,7 @@ Ext.extend(Sbi.geo.MainPanel, Ext.Panel, {
 			
 			this.mapPanel = new Ext.TabPanel({
 			    region    : 'center',
-			    margins   : '3 3 3 0', 
+			    margins   : '0 0 0 0', 
 			    activeTab : 0,
 			    defaults  : {
 					autoScroll : true
@@ -759,7 +776,12 @@ Ext.extend(Sbi.geo.MainPanel, Ext.Panel, {
 			
 			this.mapPanel = new Ext.Panel({
 			    region    : 'center',
-			    margins   : '3 3 3 0', 
+			    margins     : '0 0 0 0',
+				cmargins    : '0 0 0 0',
+				hideCollapseTool : true,
+				hideBorders: true,
+				border		: false,
+				frame: false,
 			    defaults  : {
 					autoScroll : true
 				},
