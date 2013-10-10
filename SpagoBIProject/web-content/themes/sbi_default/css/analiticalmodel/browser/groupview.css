@@ -4,9 +4,9 @@
 
 .group-view dd {
 	float: left;
-	width: 280px;
+	/*width: 280px;
 	height: 123px;
-	margin: 5px 5px 5px 10px;
+	margin: 5px 5px 5px 10px;*/
 	cursor: pointer;
 	zoom: 1;
 }
