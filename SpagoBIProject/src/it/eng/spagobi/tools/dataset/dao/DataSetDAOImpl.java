@@ -118,8 +118,9 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			hibDataSet.setUserIn(userIn);
 			hibDataSet.setSbiVersionIn(sbiVersionIn);		
 			hibDataSet.getId().setVersionNum(1);
+			hibDataSet.getId().setOrganization(hibDataSet.getCommonInfo().getOrganization());
 			hibDataSet.setTimeIn(currentTStamp);
-			hibDataSet.setOrganization(hibDataSet.getCommonInfo().getOrganization());
+			//hibDataSet.setOrganization(hibDataSet.getCommonInfo().getOrganization());
 			hibDataSet.setConfiguration(dataSet.getConfiguration());
 			hibDataSet.setActive(true);			
 
@@ -1353,7 +1354,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				hibDataSet.setUserIn(userIn);
 				hibDataSet.setSbiVersionIn(sbiVersionIn);	
 				hibDataSet.setTimeIn(currentTStamp);
-				hibDataSet.setOrganization(hibDataSet.getCommonInfo().getOrganization());
+				//hibDataSet.setOrganization(hibDataSet.getCommonInfo().getOrganization());
 				hibDataSet.setPublicDS(dataSet.isPublic());
 				hibDataSet.setOwner(userIn);
 
@@ -1846,6 +1847,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 		// get the next id or version num of the dataset managed
 		Integer maxId = null;
 		Integer nextId = null;
+		String organization =  null;
 		String hql = null;
 		Query query = null;
 		if (isInsert){
@@ -1853,7 +1855,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			toReturn.setVersionNum(new Integer("1"));
 			query = aSession.createQuery(hql);
 		}else{
-			hql = " select max(sb.id.versionNum) as maxId from SbiDataSet sb where sb.id.dsId = ? ";
+			hql = " select max(sb.id.versionNum) as maxId, sb.id.organization as organization from SbiDataSet sb where sb.id.dsId = ? group by organization";
 			query = aSession.createQuery(hql);
 			query.setInteger(0, dataSet.getId());
 			toReturn.setDsId(dataSet.getId());
@@ -1862,7 +1864,18 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 		List result = query.list();
 		Iterator it = result.iterator();
 		while (it.hasNext()){
-			maxId = (Integer) it.next();				
+			Object resultObject = it.next();
+			if (resultObject instanceof Integer){
+				maxId = (Integer) resultObject;				
+			} else {
+				//composed result
+				if (resultObject instanceof Object[]){
+					Object[] resultArrayObject = (Object[]) resultObject;
+					maxId = (Integer)resultArrayObject[0];
+					organization = (String)resultArrayObject[1];
+				}
+
+			}
 		}
 		logger.debug("Current max prog : " + maxId);
 		if (maxId == null) {
@@ -1876,6 +1889,9 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			toReturn.setDsId(nextId);
 		}else{
 			logger.debug("NextVersion: " + nextId);
+			if (organization != null){
+				toReturn.setOrganization(organization);
+			}
 			toReturn.setVersionNum(nextId);
 		}
 
