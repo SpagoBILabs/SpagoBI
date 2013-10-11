@@ -174,11 +174,11 @@ Ext.extend(Sbi.worksheet.WorksheetFromDatasetPanel, Ext.Panel, {
 		var datasetType = selectedRecord.get('dsTypeCd');
 		switch (datasetType) {
 		  case "Qbe":
-		    return selectedRecord.get('qbeDataSource');
-		    break;
+			  return selectedRecord.get('qbeDataSource');
+			  break;
 		  case "Query":
-		    return selectedRecord.get('dataSource');
-		    break;
+			  return selectedRecord.get('dataSource');
+			  break;
 		  default:
 				Sbi.exception.ExceptionHandler.showWarningMessage(
 						'Sorry but selected dataset isn\' supported for ad-hoc reporting'
