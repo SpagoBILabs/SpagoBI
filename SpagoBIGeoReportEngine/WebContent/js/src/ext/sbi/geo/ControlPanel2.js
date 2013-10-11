@@ -165,30 +165,9 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 		
 		this.innerPanel.on('render', function() {			
 			this.initInnerPannelCallbacks.defer(2000, this);
-			this.panelScroll.defer(2000, this);
 		}, this);
 	}
 	
-	, panelScroll: function(){
-//		var scrollVerticalBarPanel = Ext.query('.panel .scroll')[0];
-//		var panelS = Ext.query('.panel')[0];
-//		var panelHeight 	= panelS.getHeight();		
-//		var buttonsHeight	= Ext.query('.panel-buttons-container')[0].getOuterHeight();
-//		var maxHeight		= panelHeight - buttonsHeight - 1;
-//		Ext.fly(el1).dom.style.height = openMapH; 
-//		scrollVerticalBarPanel.dom.style.maxHeight = maxHeight;
-//		scrollVerticalBarPanel.style.maxHeight = '262px';
-		
-//		var elScroll = Ext.get("scroll");
-//		this.panelScrollElement = new IScroll(elScroll.dom, { scrollbars: 'custom', mouseWheel: true, interactiveScrollbars: true});
-		
-//		var scrollVerticalBar = Ext.query('.iScrollVerticalScrollbar')[0];		
-//		if(scrollVerticalBarPanel.getHeight() < maxHeight){			
-//			scrollVerticalBar.addClass('hidden');
-//		}else{
-//			scrollVerticalBar.removeClass('hidden');
-//		}
-	}
 	
 	, initInnerPannelCallbacks: function() {
 		var thisPanel = this;
@@ -290,6 +269,23 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 			//alert('Impossible to find element [maptype]');
 		}
 		
+		var elBtnNewMap = Ext.get("btn-new-map");
+		if(elBtnNewMap && elBtnNewMap !== null) {
+			elBtnNewMap.on('click', function() {
+					alert('mo salvo nuova mappa!');
+					this.showSaveWindow(true);
+			}, this);
+		}
+		
+		var elBtnModifyMap = Ext.get("btn-modify-map");
+		if(elBtnModifyMap && elBtnModifyMap !== null) {
+			elBtnModifyMap.on('click', function() {
+					alert('mo aggiorno la mappa!');	
+					this.showSaveWindow(false);
+			}, this);
+		}
+		
+		
 //		var elIndicators = Ext.get("ul-indicators");		
 //		if(elIndicators && elIndicators !== null) {
 //			elIndicators.on('click', function() {		
@@ -297,6 +293,7 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 //					this.openIndicatorDetail(elIndicators);					
 //			}, thisPanel);
 //		}
+		
 		
 		
 	}
@@ -361,7 +358,8 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 	, getPermissionDiv: function(){
 		var toReturn = '';
 		
-		if (!this.isFinalUser){
+//		if (!this.isFinalUser){
+		if (Sbi.config.userId === Sbi.config.docAuthor || !this.isFinalUser){
 			toReturn = '<div class="map-permissions">' +
 		    	'<div class="radio">' +
 		        	'<span class="label">Questa mappa è:</span>' ;
@@ -396,34 +394,37 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 	
 	, getPanelButtonsDiv: function(){
 		var toReturn = '' ;
-		if (!this.isFinalUser){
-			toReturn += ''+
-				'<!-- // Mapper new map -->' +
-		         '<div id="panel-buttons-container" class="panel-buttons-container">' +
-		             '<div class="panel-buttons">	' +
-		                 '<input type="submit" class="btn-1" value="salva" />' +
-		             '</div>' +
-		         '</div>';
-		}
+		var isInsertion = (Sbi.config.docAuthor)?false:true;
+		
 		if (Sbi.config.userId === Sbi.config.docAuthor){
 			toReturn += ''+
 				'<!-- // Mapper modify own map -->' +
 		        '<div class="panel-buttons-container map-owner">' +
 		             '<div class="panel-buttons">' +
-		                 '<a href="#" class="btn-2">Annulla</a>' +
-		                 '<input type="submit" class="btn-1" value="Aggiorna" />' +
+		                 //'<a href="#" class="btn-2">Annulla</a>' +
+		                 '<input type="submit" id="btn-cancel" class="btn-2" value="Annulla" />' +
+		                 '<input type="submit" id="btn-modify-map" class="btn-1" value="Aggiorna" />' +
 		             '</div>' +
 		             '<p>salva <a href="#">nuova mappa</a></p>' +
 		         '</div>';
-		}else if (!this.isFinalUser){
+		}else if (isInsertion){
 			toReturn += ''+
 			     '<!-- // Mapper modify sombody else map -->' +
 			     '<div class="panel-buttons-container">' +
 			         '<div class="panel-buttons">' +
-			             '<a href="#" class="btn-2">Annulla</a>' +
-			             '<input type="submit" class="btn-1" value="Salva nuova mappa" />' +
+//			             '<a href="#" class="btn-2">Annulla</a>' +
+			             '<input type="submit" id="btn-cancel" class="btn-2" value="Annulla" />' +
+			             '<input type="submit" id="btn-new-map" class="btn-1" value="Salva nuova mappa" />' +
 			         '</div>' +
 			     '</div>';
+		}else if (!isInsertion){
+			toReturn += ''+
+				'<!-- // Mapper new map -->' +
+		         '<div id="panel-buttons-container" class="panel-buttons-container">' +
+		             '<div class="panel-buttons">	' +
+		                 '<input type="submit" id="btn-modify-map" class="btn-1" value="salva" />' +
+		             '</div>' +
+		         '</div>';
 		}
 		
 		return toReturn;
@@ -532,6 +533,31 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 	, openIndicatorDetail: function(el){
 		alert("openIndicatorDetail: " + el);
 	}
+	
+	, showSaveWindow: function(type){
+			alert('insertion? ' + type);
+			if(this.saveWindow != null){			
+				this.saveWindow.destroy();
+				this.saveWindow.close();
+			}
+			var saveMap = this.getShareMapContent(type);			
+			var saveMapPanel = new Ext.Panel({items:[shareMap]});
+			
+			this.saveWindow = new Ext.Window({
+	            layout      : 'fit',
+		        width		: 700,
+		        height		: 350,
+	            closeAction :'destroy',
+	            plain       : true,
+//		            title		: OpenLayers.Lang.translate('sbi.tools.catalogue.measures.window.title'),
+	            title		: 'Share map',
+	            items       : [shareMapPanel]
+			});
+			
+			this.saveWindow.show();
+		}
+		
+		
 	// =================================================================================================================
 	// EVENTS
 	// =================================================================================================================
