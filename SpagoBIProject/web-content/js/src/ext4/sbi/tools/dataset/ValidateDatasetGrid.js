@@ -29,12 +29,12 @@ Ext.define('Sbi.tools.dataset.ValidateDatasetGrid', {
 		Ext.apply(this,defaultConf);
 		
 		Sbi.debug('ValidateDatasetGrid costructor IN');
-		/*
+		
 		defaultConf.serviceUrl =  Sbi.config.serviceRegistry.getRestServiceUrl({
 			serviceName: 'selfservicedataset/getDataStore'
 			,baseParams: {}
     	});
-
+		
 		Ext.util.Format.myRenderer = function(value,metaData,record,rowIndex,colIndex) {
 
 			var validationErrors = thisPanel.store.getValidationErrors(); 
@@ -71,6 +71,6 @@ Ext.define('Sbi.tools.dataset.ValidateDatasetGrid', {
 		this.addEvents('validationErrorFound');	
 
     	this.store.on('load',function(){this.fireEvent('storeLoad')},this);
-    	Sbi.debug('ValidateDatasetGrid costructor OUT');*/
+    	Sbi.debug('ValidateDatasetGrid costructor OUT');
     }
 });
