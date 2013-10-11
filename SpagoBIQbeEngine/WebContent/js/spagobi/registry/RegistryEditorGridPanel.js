@@ -1282,8 +1282,8 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 			success : 
 				function(response, opts) {
 				try {
-					for ( var int = 0; int < this.deletedRows.length; int++) {
-						var index = this.deletedRows[int];
+					for ( var indic = 0; indic < this.deletedRows.length; indic++) {
+						var index = this.deletedRows[indic];
 						this.store.removeAt(index);	
 					}
 					var params = {}
