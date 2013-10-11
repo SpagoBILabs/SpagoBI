@@ -8,12 +8,13 @@
 Ext.define('Sbi.tools.dataset.ValidateDatasetGrid', {
     extend: 'Sbi.widgets.grid.DynamicGridPanel'
 
-  , constructor: function(config) {
+  , constructor: function (config) {
 		thisPanel = this;
 		Ext.QuickTips.init();
 
 		var defaultConf = {
-				storeConfig:{ pageSize: 10, dataRoot : 'rows'}	};
+				storeConfig:{ pageSize: 10, dataRoot : 'rows'}	
+		};
 		this.title =  'Dataset Validation';
 		this.border = true;
         this.height = 300;
@@ -62,9 +63,7 @@ Ext.define('Sbi.tools.dataset.ValidateDatasetGrid', {
 
 					}
 				}
-			}
-
-			  
+			}		  
 			return value;
 		}
     	
@@ -74,9 +73,4 @@ Ext.define('Sbi.tools.dataset.ValidateDatasetGrid', {
     	this.store.on('load',function(){this.fireEvent('storeLoad')},this);
     	Sbi.debug('ValidateDatasetGrid costructor OUT');
     }
-	
-
-
-    
-	
 });
