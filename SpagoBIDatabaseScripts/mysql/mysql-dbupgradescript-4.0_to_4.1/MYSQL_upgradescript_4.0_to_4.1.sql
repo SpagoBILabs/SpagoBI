@@ -151,3 +151,7 @@ commit;
 INSERT INTO sbi_attribute (attribute_name,description,attribute_id,user_in,time_in,sbi_version_in,organization) values ('lingua','lingua',(SELECT next_val FROM hibernate_sequences WHERE sequence_name = 'sbi_attribute'),'server_init',sysdate(),'4.0','SPAGOBI');
 update hibernate_sequences set next_val = next_val+1 where sequence_name = 'SBI_ATTRIBUTE';
 commit;
+
+ALTER TABLE SBI_DATA_SET MODIFY COLUMN ORGANIZATION VARCHAR(20) NOT NULL,
+ DROP PRIMARY KEY,
+ ADD PRIMARY KEY  (DS_ID, VERSION_NUM, ORGANIZATION);
