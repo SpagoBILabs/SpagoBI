@@ -21,6 +21,9 @@
             <key-property name="versionNum" type="integer">
                 <column name="VERSION_NUM" />
             </key-property>
+            <key-property name="organization" type="string">
+                <column name="ORGANIZATION" />
+            </key-property>
         </composite-id>
 
         <many-to-one name="category" class="it.eng.spagobi.commons.metadata.SbiDomains">
@@ -107,10 +110,7 @@
 	        </property> 
 	        <property name="sbiVersionDe" type="string">
 	            <column name="SBI_VERSION_DE" length="10" not-null="false" />
-	        </property>                 
-	        <property name="organization" type="string">
-	            <column name="ORGANIZATION" length="20" not-null="false" />
-	        </property>  			 
+	        </property>                 		 
 	  </component> 
         <filter name="tenantFilter" condition="organization=:tenant"/>  
     </class>

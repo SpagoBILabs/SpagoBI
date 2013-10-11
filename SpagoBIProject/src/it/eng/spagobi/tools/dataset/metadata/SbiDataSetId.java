@@ -25,6 +25,7 @@ public class SbiDataSetId  implements java.io.Serializable {
 
      private Integer dsId;
      private Integer versionNum;
+     private String organization;
 
 
     // Constructors
@@ -35,9 +36,10 @@ public class SbiDataSetId  implements java.io.Serializable {
 
     
     /** full constructor */
-    public SbiDataSetId(Integer dsId, Integer versionNum) {
+    public SbiDataSetId(Integer dsId, Integer versionNum, String organization) {
         this.dsId = dsId;
         this.versionNum = versionNum;
+        this.organization = organization;
     }
     
 
@@ -85,6 +87,22 @@ public class SbiDataSetId  implements java.io.Serializable {
 	 */
 	public void setVersionNum(Integer versionNum) {
 		this.versionNum = versionNum;
+	}
+
+
+/**
+	 * @return the organization
+	 */
+	public String getOrganization() {
+		return organization;
+	}
+
+
+	/**
+	 * @param organization the organization to set
+	 */
+	public void setOrganization(String organization) {
+		this.organization = organization;
 	}
 
 
