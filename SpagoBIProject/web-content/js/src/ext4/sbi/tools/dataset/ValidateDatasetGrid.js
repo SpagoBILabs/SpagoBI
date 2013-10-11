@@ -9,7 +9,7 @@ Ext.define('Sbi.tools.dataset.ValidateDatasetGrid', {
     extend: 'Sbi.widgets.grid.DynamicGridPanel'
 
   , constructor: function (config) {
-		thisPanel = this;
+		/*thisPanel = this;
 		Ext.QuickTips.init();
 
 		var defaultConf = {
@@ -71,6 +71,6 @@ Ext.define('Sbi.tools.dataset.ValidateDatasetGrid', {
 		this.addEvents('validationErrorFound');	
 
     	this.store.on('load',function(){this.fireEvent('storeLoad')},this);
-    	Sbi.debug('ValidateDatasetGrid costructor OUT');
+    	Sbi.debug('ValidateDatasetGrid costructor OUT');*/
     }
 });
