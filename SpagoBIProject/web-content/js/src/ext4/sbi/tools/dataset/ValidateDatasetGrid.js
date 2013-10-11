@@ -21,7 +21,7 @@ Ext.define('Sbi.tools.dataset.ValidateDatasetGrid', {
         this.width = '100%';
         this.autoscroll =  true;
         this.loadMask = true;
-        /*
+        
         this.firedValidationErrorFound = false;
 
         defaultConf.params = config;
@@ -29,7 +29,7 @@ Ext.define('Sbi.tools.dataset.ValidateDatasetGrid', {
 		Ext.apply(this,defaultConf);
 		
 		Sbi.debug('ValidateDatasetGrid costructor IN');
-		
+		/*
 		defaultConf.serviceUrl =  Sbi.config.serviceRegistry.getRestServiceUrl({
 			serviceName: 'selfservicedataset/getDataStore'
 			,baseParams: {}
