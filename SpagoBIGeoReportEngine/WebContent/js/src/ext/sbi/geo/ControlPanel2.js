@@ -34,7 +34,9 @@ Sbi.geo.ControlPanel2 = function(config) {
         hideCollapseTool: true,
 		hideBorders: true,
 		border		: false,
-		frame: false
+		frame: false,
+		id:'controlPanel',
+		singleSelectionIndicator: true
 	};
 	
 	if (Sbi.settings && Sbi.settings.geo && Sbi.settings.geo.ControlPanel2) {
@@ -53,6 +55,7 @@ Sbi.geo.ControlPanel2 = function(config) {
 	c = Ext.apply(c, {
 	     items: this.innerPanel 
 	});
+	
 	
 	// constructor
     Sbi.geo.ControlPanel2.superclass.constructor.call(this, c);
@@ -285,6 +288,12 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 			}, this);
 		}
 		
+		//Initialize geostatistic form state
+		this.geostatistic.on('ready', function(){
+			Sbi.debug("[AnalysisControlPanel]: [ready] event fired");
+			this.setAnalysisConf( this.geostatistic.analysisConf );
+		}, this);
+		
 		
 //		var elIndicators = Ext.get("ul-indicators");		
 //		if(elIndicators && elIndicators !== null) {
@@ -451,6 +460,9 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 	}
 	
 	, getIndicatorsDiv: function(){
+
+		
+		
 		if ( this.geostatistic.indicators != null &&  this.geostatistic.indicators !== undefined){
 			
 			var toReturn = '' +
@@ -461,10 +473,10 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 					var indEl = this.geostatistic.indicators[i];
 					var clsName = (i==0)?'first':'disabled';
 					toReturn += ''+
-					'<li class="'+clsName+'"><span class="button">'+
-						'<a href="#" class="tick" onclick="javascript:Ext.getCmp(\'this\').openIndicatorDetail(\''+indEl[0]+'\');"></a>'+ indEl[1]+
-						'<span class="arrow"> <a href="#" onclick="javascript:Ext.getCmp(\'this\').openIndicatorDetail(\''+indEl[0]+'\');"></a></span></span>';
-		                '<div class="slider">' +
+					'<li class="'+clsName+'" id="indicator'+i+'"><span class="button">'+
+						'<a href="#" class="tick" onclick="javascript:Ext.getCmp(\'controlPanel\').indicatorSelected(\'indicator'+i+'\',\''+indEl[0]+'\');"></a>'+ indEl[1]+
+					/*	'<span class="arrow"> <a href="#" onclick="javascript:Ext.getCmp(\'controlPanel\').indicatorSelected(\''+indEl[0]+'\');"></a></span></span>';
+					'<div class="slider">' +
 		                	'<p>'+indEl[1]+'</p>' +
 		                	'<p class="published">Pubblicata da <a href="#">ASTAT</a> <span class="separator">/ aggiornati il 05/12/12</span></p>' +
 		                	'<div class="select">' +
@@ -474,8 +486,8 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 		                            '<option value="2">Hotel</option>' +
 		                            '<option value="3">Agritur</option>' +
 		                        '</select>' +
-		                    '</div>' +
-		                '</div>	' +
+		                    '</div>' + 
+		                '</div>	' + */
 		            '</li>' ;	
 				}
 		       toReturn +=''+
@@ -532,6 +544,74 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 	
 	, openIndicatorDetail: function(el){
 		alert("openIndicatorDetail: " + el);
+	}
+	
+	, setAnalysisConf: function(analysisConf) {
+		//This inizialize the required options for geostatistic
+		Sbi.debug("[ControlPanel2.setAnalysisConf]: IN");
+		
+		Sbi.debug("[ControlPanel2.setAnalysisConf]: analysisConf = " + Sbi.toSource(analysisConf));
+		
+		var formState = Ext.apply({}, analysisConf || {});
+		
+		formState.method = formState.method || 'CLASSIFY_BY_QUANTILS';
+		formState.classes =  formState.classes || 5;
+		
+		formState.fromColor =  formState.fromColor || '#FFFF99';
+		formState.toColor =  formState.toColor || '#FF6600';
+	
+		if(formState.indicator && this.indicatorContainer === 'layer') {
+			formState.indicator = formState.indicator.toUpperCase();
+		}
+		if(!formState.indicator && this.geostatistic.indicators && this.geostatistic.indicators.length > 0) {
+			formState.indicator = this.geostatistic.indicators[0][0];
+		}
+		
+		this.geostatistic.setFormState(formState, true);
+		
+		Sbi.debug("[ControlPanel2.setAnalysisConf]: OUT");
+	}
+	
+	, indicatorSelected: function(elementId, indicator){
+		
+		//Set selected indicator in the geostatistic form state
+		var geostasticFormState = this.geostatistic.getFormState();
+		var currentIndicator = geostasticFormState.indicator;
+		geostasticFormState.indicator = indicator;
+		this.geostatistic.setFormState(geostasticFormState, true); //<- this will update the thematizer of the map
+		//*****************************************
+		
+		
+		var el = Ext.get(elementId);
+		if ((el != null) && (el !== undefined )){
+			var currentClass = el.dom.className;
+			//single selection / multiple selection management 
+			if (this.singleSelectionIndicator == true){
+				if (currentClass == 'disabled'){
+
+					var indicatorsUl = Ext.get('ul-indicators').dom.childNodes;
+					//enable this element and disable all others
+					for(var i=0; i< indicatorsUl.length; i++){
+						if (indicatorsUl[i].id == elementId){
+							indicatorsUl[i].className = 'first';
+						} else {
+							indicatorsUl[i].className = 'disabled';
+						}
+					}
+					
+				} else {
+					//disable the only active indicator
+					el.dom.className = 'disabled';
+				}
+			} else {
+				if (currentClass == 'first'){
+					el.dom.className = 'disabled';
+				} else {
+					el.dom.className = 'first';
+				}
+			}
+
+		}
 	}
 	
 	, showSaveWindow: function(type){
