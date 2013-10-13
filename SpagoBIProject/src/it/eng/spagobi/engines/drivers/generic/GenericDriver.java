@@ -5,13 +5,6 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.engines.drivers.generic;
 
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.Locale;
-import java.util.Map;
-
-import org.apache.log4j.Logger;
-
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spago.security.IEngUserProfile;
@@ -29,6 +22,14 @@ import it.eng.spagobi.engines.drivers.EngineURL;
 import it.eng.spagobi.engines.drivers.IEngineDriver;
 import it.eng.spagobi.engines.drivers.exceptions.InvalidOperationRequest;
 
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+
 
 
 /**
@@ -44,7 +45,11 @@ public class GenericDriver extends AbstractDriver implements IEngineDriver {
     public static final String DOCUMENT_NAME = "DOCUMENT_NAME";
     public static final String DOCUMENT_DESCRIPTION = "DOCUMENT_DESCRIPTION";
     public static final String DOCUMENT_IS_PUBLIC = "DOCUMENT_IS_PUBLIC";
-
+    public static final String DOCUMENT_IS_VISIBLE = "DOCUMENT_IS_VISIBLE";
+    public static final String DOCUMENT_PREVIEW_FILE = "DOCUMENT_PREVIEW_FILE";
+    public static final String DOCUMENT_COMMUNITY = "DOCUMENT_COMMUNITY";
+    public static final String DOCUMENT_FUNCTIONALITIES = "DOCUMENT_FUNCTIONALITIES";
+    
 
     public static final String COUNTRY = "country";
     public static final String LANGUAGE = "language";
@@ -186,6 +191,19 @@ public class GenericDriver extends AbstractDriver implements IEngineDriver {
 		    logger.debug("Add " + DOCUMENT_DESCRIPTION + " parameter: " + biobj.getDescription());
 		    pars.put(DOCUMENT_IS_PUBLIC, biobj.isPublicDoc());
 		    logger.debug("Add " + DOCUMENT_IS_PUBLIC + " parameter: " + biobj.isPublicDoc());
+		    pars.put(DOCUMENT_IS_VISIBLE, biobj.isVisible());
+		    logger.debug("Add " + DOCUMENT_IS_PUBLIC + " parameter: " + biobj.isVisible());
+		    if (biobj.getPreviewFile() != null) 	
+		    	pars.put(DOCUMENT_PREVIEW_FILE, biobj.getPreviewFile());
+		    logger.debug("Add " + DOCUMENT_PREVIEW_FILE + " parameter: " + biobj.getPreviewFile());
+//		    pars.put(DOCUMENT_COMMUNITY, biobj.GETXXX());
+		    pars.put(DOCUMENT_COMMUNITY, "");
+//		    logger.debug("Add " + DOCUMENT_COMMUNITY + " parameter: " + biobj.isPublicDoc());
+		    List funcs =  biobj.getFunctionalities();
+		    if (funcs != null) 	{		    	
+		    	pars.put(DOCUMENT_FUNCTIONALITIES,funcs);
+		    	logger.debug("Add " + DOCUMENT_FUNCTIONALITIES + " parameter: " +funcs);
+		    }		    
 	        
 			pars = addBIParameters(biobj, pars);
 			pars = addBIParameterDescriptions(biobj, pars);
