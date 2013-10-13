@@ -397,7 +397,7 @@ li:hover .login-panel .not-registered a:hover,.login-panel .not-registered a:hov
 .panel-actions li.last span{height:32px}
 
 
-.map-tools{line-height:100%;z-index:1000;position:absolute;bottom:30px;right:30px;float:left;white-space:nowrap;}
+.map-tools{line-height:100%;z-index:1000;position:absolute;bottom:30px;right:60px;float:left;white-space:nowrap;}
 .map-tools h3{font-size:1.5em;font-family:cabinbold,aria,helvetica, sans-serif;font-weight:normal;margin:0 0 14px 0}
 .map-tools-element{position:relative;display:inline-block;height:34px;}
 .map-tools-element.layers{margin-left:8px}
