@@ -15,11 +15,8 @@ Sbi.geo.MainPanel = function(config) {
 	var defaultSettings = {
 		mapName: 'Sbi.geo.mappanel.title'
 		, controlPanelConf: {
-			layerPanelEnabled: true
-			, analysisPanelEnabled: true
-			, measurePanelEnabled: true
-			, legendPanelEnabled: true
-			, logoPanelEnabled: true
+			analysisPanelEnabled: true
+			, measurePanelEnabled: false
 			, earthPanelEnabled: true
 		} 
 		, toolbarConf: {
@@ -127,7 +124,7 @@ Ext.extend(Sbi.geo.MainPanel, Ext.Panel, {
     , GRAPHIC:'graphic'
     
     , targetLayer: null
-    , geostatistic: null
+    , thematizerControlPanel: null
     
     , controlPanel2: null
     
@@ -186,7 +183,7 @@ Ext.extend(Sbi.geo.MainPanel, Ext.Panel, {
 	, validate: function (successHandler, failureHandler, scope) {
 		Sbi.trace("[MainPanel.validate]: IN");
 		
-		var thematizationControlPanel = this.controlPanel.geostatistic;
+		var thematizationControlPanel = this.controlPanel.thematizerControlPanel;
 		
 		var template = {};
 		
@@ -542,8 +539,8 @@ Ext.extend(Sbi.geo.MainPanel, Ext.Panel, {
 		if (this.analysisType === this.PROPORTIONAL_SYMBOLS) {
 			this.initProportionalSymbolsAnalysis();
 			geostatConf.layer = this.targetLayer;
-			this.geostatistic = new Sbi.geo.stat.ProportionalSymbolControlPanel(geostatConf);
-			this.geostatistic.analysisConf = this.analysisConf;
+			this.thematizerControlPanel = new Sbi.geo.stat.ProportionalSymbolControlPanel(geostatConf);
+			this.thematizerControlPanel.analysisConf = this.analysisConf;
 		} else if(this.analysisType === this.GRAPHIC) {
 			this.initGraphicAnalysis();
 			geostatConf.layer = this.targetLayer;
@@ -553,16 +550,17 @@ Ext.extend(Sbi.geo.MainPanel, Ext.Panel, {
 			this.map.chartType = this.chartType;
 			this.map.totalField= this.totalField;
 			this.map.fieldsToShow= this.fieldsToShow;
-			this.geostatistic = new Sbi.geo.stat.ChoroplethControlPanel(geostatConf);//da ridefinire
-			this.geostatistic.analysisConf = this.analysisConf;
+			this.thematizerControlPanel = new Sbi.geo.stat.ChoroplethControlPanel(geostatConf);
+			this.thematizerControlPanel.analysisConf = this.analysisConf;
+			this.thematizerControlPanel.analysisConf = this.analysisConf;
 		} else if (this.analysisType === this.CHOROPLETH) {
 			this.initChoroplethAnalysis();
 			geostatConf.layer = this.targetLayer;
 			geostatConf.businessId = this.businessId;
 			geostatConf.geoId = this.geoId;
 			geostatConf.store = this.store;
-			this.geostatistic = new Sbi.geo.stat.ChoroplethControlPanel(geostatConf);
-			this.geostatistic.analysisConf = this.analysisConf;
+			this.thematizerControlPanel = new Sbi.geo.stat.ChoroplethControlPanel(geostatConf);
+			this.thematizerControlPanel.analysisConf = this.analysisConf;
 		} else {
 			alert('error: unsupported analysis type [' + this.analysisType + ']');
 		}
@@ -727,6 +725,7 @@ Ext.extend(Sbi.geo.MainPanel, Ext.Panel, {
 
 	, initMapPanel: function() {
 		
+		this.mapComponent = new Sbi.geo.MapComponent({map: this.map});
 		var mapPanelConf = {
 			title: LN(this.mapName),
 			layout: 'fit',
@@ -736,10 +735,7 @@ Ext.extend(Sbi.geo.MainPanel, Ext.Panel, {
 			hideBorders: true,
 			border		: false,
 			frame: false,
-	       	items: {
-		        xtype: 'mapcomponent',
-		        map: this.map
-		    }
+	       	items: [this.mapComponent]
 	    };
 		
 		if(this.toolbarConf.enabled) {
@@ -787,6 +783,9 @@ Ext.extend(Sbi.geo.MainPanel, Ext.Panel, {
 				},
 		       	items: [m]
 			});
+			
+			this.map.mapComponent = this.mapComponent;
+
 		}
 		
 		
@@ -794,7 +793,7 @@ Ext.extend(Sbi.geo.MainPanel, Ext.Panel, {
 	
 	, initControlPanel: function() {		
 		this.controlPanelConf.map = this.map;
-		this.controlPanelConf.geostatistic = this.geostatistic;
+		this.controlPanelConf.thematizerControlPanel = this.thematizerControlPanel;
 		this.controlPanelConf.controlledPanel = this;
 		this.controlPanel = new Sbi.geo.ControlPanel(this.controlPanelConf);
 		this.controlPanel2 = new Sbi.geo.ControlPanel2(this.controlPanelConf);

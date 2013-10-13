@@ -282,6 +282,17 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 			}, this);
 		}
 		
+		var elAddIndicator = Ext.get("addIndicatorButton");
+		if(elAddIndicator && elAddIndicator !== null) {
+			elAddIndicator.on('click', function() {
+				this.showMeasureCatalogueWindow();
+			},this);
+			//alert('Registered handler on element [feedback_mail]');
+		} else {
+			alert('Impossible to find element [addIndicatorButton]');
+		}
+		
+		
 		var elBtnModifyMap = Ext.get("btn-modify-map");
 		if(elBtnModifyMap && elBtnModifyMap !== null) {
 			elBtnModifyMap.on('click', function() {					
@@ -289,23 +300,11 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 			}, this);
 		}
 		
-		//Initialize geostatistic form state
-		this.geostatistic.on('ready', function(){
+		//Initialize thematizerControlPanel form state
+		this.thematizerControlPanel.on('ready', function(){
 			Sbi.debug("[AnalysisControlPanel]: [ready] event fired");
-			this.setAnalysisConf( this.geostatistic.analysisConf );
-		}, this);
-		
-		
-//		var elIndicators = Ext.get("ul-indicators");		
-//		if(elIndicators && elIndicators !== null) {
-//			elIndicators.on('click', function() {		
-//				alert(elIndicators.getId());
-//					this.openIndicatorDetail(elIndicators);					
-//			}, thisPanel);
-//		}
-		
-		
-		
+			this.setAnalysisConf( this.thematizerControlPanel.analysisConf );
+		}, this);		
 	}
 	
 	// -----------------------------------------------------------------------------------------------------------------
@@ -472,36 +471,23 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 	}
 	
 	, getIndicatorsDiv: function(){
-		if ( this.geostatistic.indicators != null &&  this.geostatistic.indicators !== undefined){
+		if ( this.thematizerControlPanel.indicators != null &&  this.thematizerControlPanel.indicators !== undefined){
 			
 			var toReturn = '' +
 			'<div class="indicators">' +
 		    	'<h2>Indicatori</h2>' +
 		        '<ul id="ul-indicators" class="group">';		
-				for(var i=0; i< this.geostatistic.indicators.length; i++){
-					var indEl = this.geostatistic.indicators[i];
+				for(var i=0; i< this.thematizerControlPanel.indicators.length; i++){
+					var indEl = this.thematizerControlPanel.indicators[i];
 					var clsName = (i==0)?'first':'disabled';
 					toReturn += ''+
 					'<li class="'+clsName+'" id="indicator'+i+'"><span class="button">'+
 						'<a href="#" class="tick" onclick="javascript:Ext.getCmp(\'controlPanel\').indicatorSelected(\'indicator'+i+'\',\''+indEl[0]+'\');"></a>'+ indEl[1]+
-					/*	'<span class="arrow"> <a href="#" onclick="javascript:Ext.getCmp(\'controlPanel\').indicatorSelected(\''+indEl[0]+'\');"></a></span></span>';
-					'<div class="slider">' +
-		                	'<p>'+indEl[1]+'</p>' +
-		                	'<p class="published">Pubblicata da <a href="#">ASTAT</a> <span class="separator">/ aggiornati il 05/12/12</span></p>' +
-		                	'<div class="select">' +
-		                    	'<label for="select-1">Anno</label>' +
-		                        '<select id="select-1" name="select-1">' +
-		                        	'<option value="1">Tutti</option>' +
-		                            '<option value="2">Hotel</option>' +
-		                            '<option value="3">Agritur</option>' +
-		                        '</select>' +
-		                    '</div>' + 
-		                '</div>	' + */
 		            '</li>' ;	
 				}
 		       toReturn +=''+
 		       	'</ul>' +
-		        '<span class="btn-2">Aggiungi</span>' +
+		        '<span id="addIndicatorButton" class="btn-2">Aggiungi</span>' +
 		    '</div>';
 			
 			return toReturn;
@@ -556,7 +542,7 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 	}
 	
 	, setAnalysisConf: function(analysisConf) {
-		//This inizialize the required options for geostatistic
+		//This inizialize the required options for thematizerControlPanel
 		Sbi.debug("[ControlPanel2.setAnalysisConf]: IN");
 		
 		Sbi.debug("[ControlPanel2.setAnalysisConf]: analysisConf = " + Sbi.toSource(analysisConf));
@@ -572,22 +558,22 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 		if(formState.indicator && this.indicatorContainer === 'layer') {
 			formState.indicator = formState.indicator.toUpperCase();
 		}
-		if(!formState.indicator && this.geostatistic.indicators && this.geostatistic.indicators.length > 0) {
-			formState.indicator = this.geostatistic.indicators[0][0];
+		if(!formState.indicator && this.thematizerControlPanel.indicators && this.thematizerControlPanel.indicators.length > 0) {
+			formState.indicator = this.thematizerControlPanel.indicators[0][0];
 		}
 		
-		this.geostatistic.setFormState(formState, true);
+		this.thematizerControlPanel.setFormState(formState, true);
 		
 		Sbi.debug("[ControlPanel2.setAnalysisConf]: OUT");
 	}
 	
 	, indicatorSelected: function(elementId, indicator){
 		
-		//Set selected indicator in the geostatistic form state
-		var geostasticFormState = this.geostatistic.getFormState();
+		//Set selected indicator in the thematizerControlPanel form state
+		var geostasticFormState = this.thematizerControlPanel.getFormState();
 		var currentIndicator = geostasticFormState.indicator;
 		geostasticFormState.indicator = indicator;
-		this.geostatistic.setFormState(geostasticFormState, true); //<- this will update the thematizer of the map
+		this.thematizerControlPanel.setFormState(geostasticFormState, true); //<- this will update the thematizer of the map
 		//*****************************************
 		
 		
@@ -621,6 +607,25 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 			}
 
 		}
+	}
+	, showMeasureCatalogueWindow: function(){
+		if(this.measureCatalogueWindow==null){
+			var measureCatalogue = new Sbi.geo.tools.MeasureCatalogue();
+			measureCatalogue.on('storeLoad', this.onStoreLoad, this);
+			
+			this.measureCatalogueWindow = new Ext.Window({
+	            layout      : 'fit',
+		        width		: 700,
+		        height		: 350,
+	            closeAction :'hide',
+	            plain       : true,
+	            title		: OpenLayers.Lang.translate('sbi.tools.catalogue.measures.window.title'),
+	            items       : [measureCatalogue]
+			});
+		}
+		
+		
+		this.measureCatalogueWindow.show();
 	}
 	
 	, showSaveWindow: function(isInsert){

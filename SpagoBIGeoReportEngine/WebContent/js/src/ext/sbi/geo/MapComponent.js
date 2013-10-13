@@ -37,6 +37,7 @@ Sbi.geo.MapComponent = function(config) {
     content.setStyle('width', '100%');
     content.setStyle('height', '100%');
     
+    
     Sbi.geo.MapComponent.superclass.constructor.call(this);
 };
 
@@ -46,10 +47,24 @@ Ext.extend(Sbi.geo.MapComponent, Ext.Panel, {
      * {OpenLayers.Map}  
      */
     map: null,
+    
+    mask: null,
 
     initComponent: function() {
     	Sbi.geo.MapComponent.superclass.initComponent.apply(this, arguments);
         this.on("bodyresize", this.map.updateSize, this.map);
+    },
+
+	mask: function() {
+		this.mask = new Ext.LoadMask(Ext.get(this.contentEl), {msg:"Please wait..."});
+        this.mask.show();
+	},
+    
+    unmask: function() {
+    	this.mask.hide();
     }
 });
+
+
+
 Ext.reg('mapcomponent', Sbi.geo.MapComponent);

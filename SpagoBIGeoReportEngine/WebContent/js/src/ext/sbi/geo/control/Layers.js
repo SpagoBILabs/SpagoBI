@@ -155,6 +155,33 @@ Sbi.geo.control.Layers = OpenLayers.Class(OpenLayers.Control, {
         OpenLayers.Control.prototype.destroy.apply(this, arguments);    
     },
 
+    /**
+     * Method: setMap
+     *
+     * Properties:
+     * map - {<OpenLayers.Map>}
+     */
+    setMap: function(map) {
+    	Sbi.trace("[Layers.setMap] : IN");
+    	
+        OpenLayers.Control.prototype.setMap.apply(this, arguments);
+
+        this.map.events.on({
+            addlayer: this.redraw,
+            changelayer: this.redraw,
+            removelayer: this.redraw,
+            changebaselayer: this.redraw,
+            scope: this
+        });
+        if (this.outsideViewport) {
+            this.events.attachToElement(this.div);
+            this.events.register("buttonclick", this, this.onButtonClick);
+        } else {
+            this.map.events.register("buttonclick", this, this.onButtonClick);
+        }
+        
+        Sbi.trace("[Layers.setMap] : OUT");
+    },
         
     /**
      * Method: draw
@@ -175,6 +202,7 @@ Sbi.geo.control.Layers = OpenLayers.Class(OpenLayers.Control, {
     	
         // create overview map DOM elements
         this.createContents();
+        this.redraw();
     
         Sbi.trace("[Layers.draw] : OUT");
         
@@ -188,28 +216,56 @@ Sbi.geo.control.Layers = OpenLayers.Class(OpenLayers.Control, {
     createContents: function(){
 
     	// create main Layers element
-        this.legendElement = document.createElement('div');
-        this.legendElement.id = 'Layers'; //OpenLayers.Util.createUniqueID('Layers');   
-        this.legendElement.className = 'map-tools-element layers';
-        
+        this.layersElement = this.createDiv('Layers', 'map-tools-element layers');
+        	
         // create legend popup window
-        this.legendContentElement = document.createElement('div');
-        this.legendContentElement.id = 'LayersContent'; // OpenLayers.Util.createUniqueID('LegendContent');   
-        this.legendContentElement.className = "tools-content overlay"; 
+        this.layersContentElement = this.createDiv('LayersContent', 'tools-content overlay');
         
+      
+        // add close button
         var legendContentCloseBtnElement = document.createElement('span');
         legendContentCloseBtnElement.className = "btn-close";
-        this.legendContentElement.appendChild(legendContentCloseBtnElement);
+        this.layersContentElement.appendChild(legendContentCloseBtnElement);
         OpenLayers.Event.observe(legendContentCloseBtnElement, "click", 
 	    		OpenLayers.Function.bindAsEventListener(this.closeLegend, this, 'close'));
        
-        var legendContentBodyElement = document.createElement('div');
-        legendContentBodyElement.id = 'LayersBody'; // OpenLayers.Util.createUniqueID('LegendContent');   
-        this.legendContentElement.appendChild(legendContentBodyElement);
+        this.layersContentBodyElement = document.createElement('div');
+        this.layersContentBodyElement.id = 'LayersBody'; // OpenLayers.Util.createUniqueID('LegendContent');   
+        this.layersContentElement.appendChild(this.layersContentBodyElement);
         
         var titleElement = document.createElement("div");
-        titleElement.innerHTML = " <\p> <h3>Livelli</h3><\p> <\p>";
-        legendContentBodyElement.appendChild(titleElement);
+        titleElement.innerHTML = " <\p> <h3>Livelli</h3>";
+        this.layersContentBodyElement.appendChild(titleElement);
+        
+        var editButton = document.createElement("label");
+        OpenLayers.Element.addClass(editButton, "labelSpan olButton");
+        editButton.id = "EditButton";
+        editButton._editButton = this.id;
+        editButton.innerHTML = "Aggiungi/Rimuovi livello<\p> <\p> ";
+        this.layersContentBodyElement.appendChild(editButton);
+        
+        // from layer switcher
+        this.baseLbl = document.createElement("div");
+        this.baseLbl.innerHTML = OpenLayers.i18n("Base Layer");
+        OpenLayers.Element.addClass(this.baseLbl, "baseLbl");
+        
+        this.baseLayersDiv = document.createElement("div");
+        OpenLayers.Element.addClass(this.baseLayersDiv, "baseLayersDiv");
+
+        this.dataLbl = document.createElement("div");
+        this.dataLbl.innerHTML = OpenLayers.i18n("Overlays");
+        OpenLayers.Element.addClass(this.dataLbl, "dataLbl");
+
+        this.dataLayersDiv = document.createElement("div");
+        OpenLayers.Element.addClass(this.dataLayersDiv, "dataLayersDiv");
+        
+        
+        this.layersContentBodyElement.appendChild(this.baseLbl);
+        this.layersContentBodyElement.appendChild(this.baseLbl);
+        this.layersContentBodyElement.appendChild(this.baseLayersDiv);
+        this.layersContentBodyElement.appendChild(this.dataLbl);
+        this.layersContentBodyElement.appendChild(this.dataLayersDiv);
+        
         
         // create legend button
         var	legendButtonElement = document.createElement('span');
@@ -219,11 +275,185 @@ Sbi.geo.control.Layers = OpenLayers.Class(OpenLayers.Control, {
     	
 	          
         // put everythings together
-        this.legendElement.appendChild(legendButtonElement);
-	    this.legendElement.appendChild(this.legendContentElement); 
+        this.layersElement.appendChild(legendButtonElement);
+	    this.layersElement.appendChild(this.layersContentElement); 
 	   
-        this.div.appendChild(this.legendElement);
+        this.div.appendChild(this.layersElement);
     },
+    
+    /**
+     * Method: redraw
+     * Goes through and takes the current state of the Map and rebuilds the
+     *     control to display that state. Groups base layers into a
+     *     radio-button group and lists each data layer with a checkbox.
+     *
+     * Returns:
+     * {DOMElement} A reference to the DIV DOMElement containing the control
+     */
+    redraw: function() {
+    	
+    	Sbi.trace("[Layers.redraw] : IN");
+    	
+        //if the state hasn't changed since last redraw, no need
+        // to do anything. Just return the existing div.
+        if (!this.checkRedraw()) {
+        	Sbi.trace("[Layers.redraw] : state has not changed. No redraw needed");
+        	Sbi.trace("[Layers.redraw] : OUT");
+            return this.div;
+        }
+
+        //clear out previous layers
+        this.clearLayersArray("base");
+        this.clearLayersArray("data");
+
+        var containsOverlays = false;
+        var containsBaseLayers = false;
+
+        // Save state -- for checking layer if the map state changed.
+        // We save this before redrawing, because in the process of redrawing
+        // we will trigger more visibility changes, and we want to not redraw
+        // and enter an infinite loop.
+        var len = this.map.layers.length;
+        this.layerStates = new Array(len);
+        for (var i=0; i <len; i++) {
+            var layer = this.map.layers[i];
+            this.layerStates[i] = {
+                'name': layer.name,
+                'visibility': layer.visibility,
+                'inRange': layer.inRange,
+                'id': layer.id
+            };
+            Sbi.trace("[Layers.redraw] : Found layer [" + Sbi.toSource(this.layerStates[i]) + "]");
+        }
+
+        var layers = this.map.layers.slice();
+        if (!this.ascending) { layers.reverse(); }
+        for(var i=0, len=layers.length; i<len; i++) {
+            var layer = layers[i];
+            var baseLayer = layer.isBaseLayer;
+
+            if (layer.displayInLayerSwitcher) {
+
+            	Sbi.trace("[Layers.redraw] : Property [displayInLayerSwitcher] of layer [" + layer.name + "] is set to [true]");
+            	
+                if (baseLayer) {
+                    containsBaseLayers = true;
+                } else {
+                    containsOverlays = true;
+                }
+
+                // only check a baselayer if it is *the* baselayer, check data
+                //  layers if they are visible
+                var checked = (baseLayer) ? (layer == this.map.baseLayer)
+                                          : layer.getVisibility();
+
+                // create input element
+                var inputElem = document.createElement("input"),
+                    // The input shall have an id attribute so we can use
+                    // labels to interact with them.
+                    inputId = OpenLayers.Util.createUniqueID(
+                        this.id + "_input_"
+                    );
+
+                inputElem.id = inputId;
+                inputElem.name = (baseLayer) ? this.id + "_baseLayers" : layer.name;
+                inputElem.type = (baseLayer) ? "radio" : "checkbox";
+                inputElem.value = layer.name;
+                inputElem.checked = checked;
+                inputElem.defaultChecked = checked;
+                inputElem.className = "olButton";
+                inputElem._layer = layer.id;
+                inputElem._layerSwitcher = this.id;
+
+                if (!baseLayer && !layer.inRange) {
+                	Sbi.trace("[Layers.redraw] : The input associated to layer [" + layer.name + "] will be disabled");
+                    inputElem.disabled = true;
+                }
+
+                // create span
+                var labelSpan = document.createElement("label");
+                // this isn't the DOM attribute 'for', but an arbitrary name we
+                // use to find the appropriate input element in <onButtonClick>
+                labelSpan["for"] = inputElem.id;
+                OpenLayers.Element.addClass(labelSpan, "labelSpan olButton");
+                labelSpan._layer = layer.id;
+                labelSpan._layerSwitcher = this.id;
+                if (!baseLayer && !layer.inRange) {
+                    labelSpan.style.color = "gray";
+                }
+                labelSpan.innerHTML = layer.name;
+                labelSpan.style.verticalAlign = (baseLayer) ? "bottom"
+                                                            : "baseline";
+                // create line break
+                var br = document.createElement("br");
+
+
+                var groupArray = (baseLayer) ? this.baseLayers
+                                             : this.dataLayers;
+                groupArray.push({
+                    'layer': layer,
+                    'inputElem': inputElem,
+                    'labelSpan': labelSpan
+                });
+
+
+                var groupDiv = (baseLayer) ? this.baseLayersDiv
+                                           : this.dataLayersDiv;
+                groupDiv.appendChild(inputElem);
+                groupDiv.appendChild(labelSpan);
+                groupDiv.appendChild(br);
+            } else {
+            	Sbi.trace("[Layers.redraw] : Property [displayInLayerSwitcher] of layer [" + layer.name + "] is set to [false]"); 	
+            }
+        }
+
+        // if no overlays, dont display the overlay label
+        this.dataLbl.style.display = (containsOverlays) ? "" : "none";
+
+        // if no baselayers, dont display the baselayer label
+        this.baseLbl.style.display = (containsBaseLayers) ? "" : "none";
+
+        return this.div;
+        
+        Sbi.trace("[Layers.redraw] : OUT");
+    },
+    
+    
+    /**
+     * Method: checkRedraw
+     * Checks if the layer state has changed since the last redraw() call.
+     *
+     * Returns:
+     * {Boolean} The layer state changed since the last redraw() call.
+     */
+    checkRedraw: function() {
+    	return true;
+    },
+    
+    /**
+     * Method: clearLayersArray
+     * User specifies either "base" or "data". we then clear all the
+     *     corresponding listeners, the div, and reinitialize a new array.
+     *
+     * Parameters:
+     * layersType - {String}
+     */
+    clearLayersArray: function(layersType) {
+        this[layersType + "LayersDiv"].innerHTML = "";
+        this[layersType + "Layers"] = [];
+    },
+    
+    
+    // TODO: move the following utilities methods to a dedicated class
+    createDiv: function(id, className) {
+    	 var divElement = document.createElement('div');
+    	 divElement.id = id || OpenLayers.Util.createUniqueID('Layers');   
+    	 divElement.className = className || '';
+    	 
+    	 return divElement;
+    },
+    
+    
     
     
     /**
@@ -231,37 +461,138 @@ Sbi.geo.control.Layers = OpenLayers.Class(OpenLayers.Control, {
      * Executes the specific action
      */
     openLegend: function(el){
-    	this.legendContentElement.style.height = '200px';
-    	this.legendContentElement.style.width = '180px';
-    	this.legendContentElement.style.display = 'block';
-    	this.legendContentElement.opened = true;
+    	this.layersContentElement.style.height = '200px';
+    	this.layersContentElement.style.width = '180px';
+    	this.layersContentElement.style.display = 'block';
+    	this.layersContentElement.opened = true;
     },
     
     closeLegend: function(el){
-    	this.legendContentElement.style.height = '0px';
-    	this.legendContentElement.style.width = '0px';
-    	this.legendContentElement.style.display = 'none';
-    	this.legendContentElement.closed = true;
+    	this.layersContentElement.style.height = '0px';
+    	this.layersContentElement.style.width = '0px';
+    	this.layersContentElement.style.display = 'none';
+    	this.layersContentElement.closed = true;
     },
     
     /**
-     * Method: createMap
-     * Construct the map that this control contains
+     * Method: onButtonClick
+     *
+     * Parameters:
+     * evt - {Event}
      */
-    createMap: function() {
-        // create the overview map
-        var options = OpenLayers.Util.extend(
-                        {controls: [], maxResolution: 'auto', 
-                         fallThrough: false}, this.mapOptions);
-
-        this.ovmap = new OpenLayers.Map(this.mapDiv, options);
-        
-        // prevent ovmap from being destroyed when the page unloads, because
-        // the SbiLegendMap control has to do this (and does it).
-//        OpenLayers.Event.stopObserving(window, 'click', this.ovmap.unloadDestroy);
-        
+    onButtonClick: function(evt) {
+       var button = evt.buttonElement;
+       
+       if (button._layerSwitcher === this.id) {
+            if (button["for"]) {
+                button = document.getElementById(button["for"]);
+            }
+            if (!button.disabled) {
+                if (button.type == "radio") {
+                    button.checked = true;
+                    this.map.setBaseLayer(this.map.getLayer(button._layer));
+                } else {
+                    button.checked = !button.checked;
+                    this.updateMap();
+                }
+            }
+        } else if(button._editButton === this.id) {
+        	this.showLayersCatalogueWindow();
+        }
     },
     
+    showLayersCatalogueWindow: function(){
+    	var thisPanel = this;
+		if(this.layersCatalogueWindow==null){
+			var layersCatalogue = new Sbi.geo.tools.LayersCatalogue(); 
+			
+			this.layersCatalogueWindow = new Ext.Window({
+	            layout      : 'fit',
+		        width		: 700,
+		        height		: 350,
+	            closeAction :'hide',
+	            plain       : true,
+	            title		: 'Layers Catalogue',
+	            items       : [layersCatalogue],
+	            buttons		: [{
+                    text:'Add layers',
+                    handler: function(){
+                    	
+                    	var selectedLayers = layersCatalogue.getSelectedLayers();
+                    	thisPanel.addSelectedLayers(selectedLayers);
+                    	thisPanel.layersCatalogueWindow.hide();
+                    }
+                }]
+	                      
+			});
+		}
+		
+		
+		this.layersCatalogueWindow.show();
+	},
+	
+	addSelectedLayers: function(layers) {
+		var thisPanel = this;
+		
+		var layersLabels = new Array();
+
+		for (var i = 0; i < layers.length; i++) {
+		    var selectedLayerLabel = layers[i];
+		    layersLabels.push(selectedLayerLabel);
+		}
+		
+	    //invoke service for layers properties
+		Ext.Ajax.request({
+			url: Sbi.config.serviceRegistry.getRestServiceUrl({serviceName: 'layers/getLayerProperties',baseUrl:{contextPath: 'SpagoBI'}}),
+			params: {labels: layersLabels},
+			success : function(response, options) {
+				if(response !== undefined && response.responseText !== undefined && response.statusText=="OK") {
+					if(response.responseText!=null && response.responseText!=undefined){
+						if(response.responseText.indexOf("error.mesage.description")>=0){
+							Sbi.exception.ExceptionHandler.handleFailure(response);
+						}else{
+							var obj = JSON.parse(response.responseText);
+							//alert("add " + response.responseText);
+							var layer = Sbi.geo.utils.LayerFactory.createLayer(obj.root[0]);
+							this.map.addLayer(layer);
+							thisPanel.redraw();
+						}
+					}
+				} else {
+					Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
+				}
+			},
+			scope: this,
+			failure: Sbi.exception.ExceptionHandler.handleFailure,  
+			scope: this
+		});
+	},
+    
+    /**
+     * Method: updateMap
+     * Cycles through the loaded data and base layer input arrays and makes
+     *     the necessary calls to the Map object such that that the map's
+     *     visual state corresponds to what the user has selected in
+     *     the control.
+     */
+    updateMap: function() {
+
+        // set the newly selected base layer
+        for(var i=0, len=this.baseLayers.length; i<len; i++) {
+            var layerEntry = this.baseLayers[i];
+            if (layerEntry.inputElem.checked) {
+                this.map.setBaseLayer(layerEntry.layer, false);
+            }
+        }
+
+        // set the correct visibilities for the overlays
+        for(var i=0, len=this.dataLayers.length; i<len; i++) {
+            var layerEntry = this.dataLayers[i];
+            layerEntry.layer.setVisibility(layerEntry.inputElem.checked);
+        }
+
+    },
+
 
     CLASS_NAME: 'Sbi.geo.control.Layers'
 });

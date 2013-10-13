@@ -11,11 +11,8 @@ Sbi.settings.georeport = {
 	georeportPanel: {
 	
 	  	controlPanelConf: {
-	   		layerPanelEnabled: true
-	   		, analysisPanelEnabled: true
-	   		, measurePanelEnabled: true
-	   		, legendPanelEnabled: true
-	   		, logoPanelEnabled: false
+	   		analysisPanelEnabled: true
+	   		, measurePanelEnabled: false
 	   		, earthPanelEnabled: false
 	  	} 
 	 
@@ -125,7 +122,7 @@ Sbi.settings.georeport = {
     		        displayOutsideMaxExtent: true
     		    }, 
 				enabled: true
-    		},
+    		}/*,
 //    		{
 //    			type: 'Google',
 //    			name: 'GoogleMap',
@@ -147,7 +144,7 @@ Sbi.settings.georeport = {
     		{
     			type: 'OSM', 
 				enabled: false
-    		}
+    		}*/
     		
      	]
      	
