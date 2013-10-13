@@ -45,7 +45,12 @@ public class EngineConstants {
 	public static final Object ENV_DOCUMENT_AUTHOR = "DOCUMENT_AUTHOR";
 	public static final Object ENV_DOCUMENT_NAME = "DOCUMENT_NAME";	
 	public static final Object ENV_DOCUMENT_DESCRIPTION = "DOCUMENT_DESCRIPTION";	
-	public static final Object ENV_DOCUMENT_IS_PUBLIC = "ENV_DOCUMENT_IS_PUBLIC";	
+	public static final Object ENV_DOCUMENT_IS_PUBLIC = "DOCUMENT_IS_PUBLIC";
+	public static final Object ENV_DOCUMENT_IS_VISIBLE = "DOCUMENT_IS_VISIBLE";	
+	public static final Object ENV_DOCUMENT_PREVIEW_FILE = "DOCUMENT_PREVIEW_FILE";	
+	public static final Object ENV_DOCUMENT_COMMUNITY = "DOCUMENT_COMMUNITY";	
+	public static final Object ENV_DOCUMENT_FUNCTIONALITIES = "DOCUMENT_FUNCTIONALITIES";	
+	
 
 		
 	public static final String ENGINE_DATASOURCE = "ENGINE_DATASOURCE";
