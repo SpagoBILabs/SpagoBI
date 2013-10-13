@@ -56,7 +56,6 @@ Sbi.geo.ControlPanel2 = function(config) {
 	     items: this.innerPanel 
 	});
 	
-	
 	// constructor
     Sbi.geo.ControlPanel2.superclass.constructor.call(this, c);
 };
@@ -102,6 +101,7 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 	, validateConfigObject: function(config) {
 		
 	}
+	
 
 	/**
 	 * @method 
@@ -148,6 +148,9 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 	 */
 	, init: function() {
 		this.isFinalUser = (Sbi.template.role.indexOf('user') >= 0);
+		this.isOwner = (Sbi.config.userId === Sbi.config.docAuthor)?true:false;
+		this.isInsertion = (Sbi.config.docLabel === '')?true:false;
+
 		this.innerPanel = new Ext.Panel({
 			layout: 'fit', 
 			autoScroll: true,
@@ -275,15 +278,13 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 		var elBtnNewMap = Ext.get("btn-new-map");
 		if(elBtnNewMap && elBtnNewMap !== null) {
 			elBtnNewMap.on('click', function() {
-					alert('mo salvo nuova mappa!');
 					this.showSaveWindow(true);
 			}, this);
 		}
 		
 		var elBtnModifyMap = Ext.get("btn-modify-map");
 		if(elBtnModifyMap && elBtnModifyMap !== null) {
-			elBtnModifyMap.on('click', function() {
-					alert('mo aggiorno la mappa!');	
+			elBtnModifyMap.on('click', function() {					
 					this.showSaveWindow(false);
 			}, this);
 		}
@@ -373,27 +374,36 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 		    	'<div class="radio">' +
 		        	'<span class="label">Questa mappa è:</span>' ;
 		
-			if (Sbi.config.docIsPublic == 'true'){
+			if (Sbi.config.docIsPublic == 'false'){
 				toReturn += '' +
 					'<div  id="div-perm1" class="radio-option checked">' +
-			        	'<input id="permissions-1" type="radio" name="permissions" value="1" checked />' +
+			        	'<input id="scopePrivate" type="radio" name="permissions" value="0" checked />' +
 			            '<label for="permissions-1">Privata</label>' +
 		            '</div>' +
-		            '<div  id="div-perm2" class="radio-option">' +
-			        	'<input id="permissions-2" type="radio" name="permissions" value="1" />' +
-			            '<label for="permissions-2">Pubblica</label>' +
+		            '<div  id="div-perm2" class="radio-option ">' +
+			        	'<input id="scopePublic" type="radio" name="permissions" value="1" />' +
+			            '<label for="permissions-2">&nbsp;Pubblica</label>' +
 			        '</div>';
 			}else{
 				toReturn += '' +
 					'<div id="div-perm1" class="radio-option ">' +
-			        	'<input id="permissions-1" type="radio" name="permissions" value="1"  />' +
+			        	'<input id="scopePrivate" type="radio" name="permissions" value="0"  />' +
 			            '<label for="permissions-1">Privata</label>' +
 		            '</div>' +
 		            '<div id="div-perm2" class="radio-option checked">' +
-			        	'<input id="permissions-2" type="radio" name="permissions" value="1" checked />' +
-			            '<label for="permissions-2">Pubblica</label>' +
+			        	'<input id="scopePublic" type="radio" name="permissions" value="1" checked />' +
+			            '<label for="permissions-2">&nbsp;Pubblica</label>' +
 			        '</div>';
 			}
+			strChecked = ''; 
+			if (Sbi.config.docIsVisible == 'true' || this.isInsertion ){
+				strChecked = 'checked';
+			}
+			toReturn += '' +
+				'<div  id="div-perm3" class="radio-option checked">' +
+		        	'<input id="visibility" type="checkbox" value="1" ' +strChecked +' />' +
+		            '<label for="permissions-1">Visibile</label>' +
+	            '</div>' ;		           
 			toReturn += '' +
 		        '</div>' +
 	        '</div>' ;
@@ -403,35 +413,37 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 	
 	, getPanelButtonsDiv: function(){
 		var toReturn = '' ;
-		var isInsertion = (Sbi.config.docAuthor)?false:true;
-		
-		if (Sbi.config.userId === Sbi.config.docAuthor){
+				
+		if (this.isOwner){
 			toReturn += ''+
 				'<!-- // Mapper modify own map -->' +
 		        '<div class="panel-buttons-container map-owner">' +
 		             '<div class="panel-buttons">' +
 		                 //'<a href="#" class="btn-2">Annulla</a>' +
 		                 '<input type="submit" id="btn-cancel" class="btn-2" value="Annulla" />' +
-		                 '<input type="submit" id="btn-modify-map" class="btn-1" value="Aggiorna" />' +
+//		                 '<input type="submit" id="btn-modify-map" class="btn-1" value="Aggiorna" />' +
+		                 '<a href="#" id="btn-modify-map" class="btn-1">Aggiorna</a>'  +
 		             '</div>' +
-		             '<p>salva <a href="#">nuova mappa</a></p>' +
+		             '<p>salva <a  id="btn-new-map" href="#">nuova mappa</a></p>' +
 		         '</div>';
-		}else if (isInsertion){
+		}else if (!this.isInsertion){
 			toReturn += ''+
 			     '<!-- // Mapper modify sombody else map -->' +
 			     '<div class="panel-buttons-container">' +
 			         '<div class="panel-buttons">' +
 //			             '<a href="#" class="btn-2">Annulla</a>' +
 			             '<input type="submit" id="btn-cancel" class="btn-2" value="Annulla" />' +
-			             '<input type="submit" id="btn-new-map" class="btn-1" value="Salva nuova mappa" />' +
+			             '<a href="#" id="btn-new-map" class="btn-1">Salva nuova mappa</a>'  +
+//			             '<input type="submit" id="btn-new-map" class="btn-1" value="Salva nuova mappa" />' +
 			         '</div>' +
 			     '</div>';
-		}else if (!isInsertion){
+		}else if (this.isInsertion){
 			toReturn += ''+
 				'<!-- // Mapper new map -->' +
 		         '<div id="panel-buttons-container" class="panel-buttons-container">' +
 		             '<div class="panel-buttons">	' +
-		                 '<input type="submit" id="btn-modify-map" class="btn-1" value="salva" />' +
+//		                 '<input type="submit" id="btn-modify-map" class="btn-1" value="salva" />' +
+		                 '<a href="#" id="btn-new-map" class="btn-1">Salva</a>'  +
 		             '</div>' +
 		         '</div>';
 		}
@@ -444,9 +456,9 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 		var toReturn = '' +
 		 '<div class="map-description">' +
 //	         '<h1 class="titleButton">'+Sbi.config.docName+'</h1>' +
-	         '<input  type="text" name="docName" class="mapTitle" value="'+Sbi.config.docName+'" /> '+
+	         '<input  type="text" id="docName" class="mapTitle" value="'+Sbi.config.docName+'" /> '+
 //	         '<p>'+Sbi.config.docDescription+'</p>' +
-	         '<textarea rows="2" cols="40" name="docDesc" class="mapDescription" />'+Sbi.config.docDescription+' </textarea>'+	         
+	         '<textarea rows="2" cols="40" id="docDesc" class="mapDescription" />'+Sbi.config.docDescription+' </textarea>'+	         
 	 		'<p id="author" class="published">Pubblicata da <a id="authorButton" class="authorButton" href="#">'+Sbi.config.docAuthor+'</a> <span class="separator">/</span> <a id="feedback_mail" href="#" class="feedback">invia feedback</a></p>' +
 	     '</div>' +
 	     '<ul id="mapType" class="map-type">' +
@@ -460,9 +472,6 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 	}
 	
 	, getIndicatorsDiv: function(){
-
-		
-		
 		if ( this.geostatistic.indicators != null &&  this.geostatistic.indicators !== undefined){
 			
 			var toReturn = '' +
@@ -614,27 +623,70 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 		}
 	}
 	
-	, showSaveWindow: function(type){
-			alert('insertion? ' + type);
-			if(this.saveWindow != null){			
-				this.saveWindow.destroy();
-				this.saveWindow.close();
+	, showSaveWindow: function(isInsert){
+
+		if(this.saveWindow != null){			
+			this.saveWindow.destroy();
+			this.saveWindow.close();
+		}
+
+		var template = this.controlledPanel.validate();	
+		if (template == null) {
+    		alert("Impossible to get template");
+    		return;
+    	}
+    	
+    	Sbi.debug('[ControlPanel.showSaveWindow]: ' + template);
+    	
+		var documentWindowsParams = {				
+				'OBJECT_TYPE': 'MAP',
+				'OBJECT_TEMPLATE': template,
+				'typeid': 'GEOREPORT' 
+		};
+		
+		var formState = {};
+		//gets the input values (name, desccription,..)
+		var el = Ext.get('docName');
+		if ((el != null) && (el !== undefined ) && (el.getValue() !== '' )){
+			formState.docName = el.getValue();
+		}/*else{
+			alert('Nome documento obbligatorio');
+		}*/
+		var el = Ext.get('docDesc');
+		if ((el != null) && (el !== undefined )){
+			formState.docDescr = el.getValue();
+		}
+		var el = Ext.get('scopePublic')
+		if ((el != null) && (el !== undefined )){
+			formState.scope = (el.dom.checked)?"true":"false";			
+		}else{
+			formState.scope = "false"; //default
+		}
+		var el = Ext.get('visibility');
+		if ((el != null) && (el !== undefined )){
+			if (isInsert){
+				formState.visibility = true;
+			}else{
+				formState.visibility = el.dom.checked; //default
 			}
-			var saveMap = this.getShareMapContent(type);			
-			var saveMapPanel = new Ext.Panel({items:[shareMap]});
-			
-			this.saveWindow = new Ext.Window({
-	            layout      : 'fit',
-		        width		: 700,
-		        height		: 350,
-	            closeAction :'destroy',
-	            plain       : true,
-//		            title		: OpenLayers.Lang.translate('sbi.tools.catalogue.measures.window.title'),
-	            title		: 'Share map',
-	            items       : [shareMapPanel]
-			});
-			
-			this.saveWindow.show();
+		}
+		
+		formState.docFunctionalities  = Sbi.config.docFunctionalities;
+		
+		if (isInsert){
+			formState.docLabel = 'map__' + Math.floor((Math.random()*1000000000)+1); 
+			if (Sbi.config.docDatasetLabel) 
+				documentWindowsParams.dataset_label= Sbi.config.docDatasetLabel;
+			documentWindowsParams.MESSAGE_DET= 'DOC_SAVE_FROM_DATASET';
+		}else{
+			formState.docLabel = Sbi.config.docLabel;
+			documentWindowsParams.MESSAGE_DET= 'MODIFY_GEOREPORT';	
+		}
+		documentWindowsParams.formState = formState;		
+		
+		this.saveWindow = new Sbi.service.SaveDocumentWindowExt(documentWindowsParams);
+		this.saveWindow.show();
+
 		}
 		
 		

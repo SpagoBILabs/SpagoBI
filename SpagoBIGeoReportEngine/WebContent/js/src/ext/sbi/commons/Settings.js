@@ -126,24 +126,24 @@ Sbi.settings.georeport = {
     		    }, 
 				enabled: true
     		},
-    		{
-    			type: 'Google',
-    			name: 'GoogleMap',
-    			options: {'sphericalMercator': true}, 
-				enabled: true
-    		}, 
-    		{
-    			type: 'Google',
-    			name: 'Google Satellite',
-    			options: {type: G_SATELLITE_MAP, 'sphericalMercator': true, numZoomLevels: 22},
-    			enabled: true
-    		}, 
-    		{
-    			type: 'Google',
-    			name: 'Google Hybrid',
-    			options: {type: G_HYBRID_MAP, 'sphericalMercator': true}, 
-				enabled: true
-    		},
+//    		{
+//    			type: 'Google',
+//    			name: 'GoogleMap',
+//    			options: {'sphericalMercator': true}, 
+//				enabled: true
+//    		}, 
+//    		{
+//    			type: 'Google',
+//    			name: 'Google Satellite',
+//    			options: {type: G_SATELLITE_MAP, 'sphericalMercator': true, numZoomLevels: 22},
+//    			enabled: true
+//    		}, 
+//    		{
+//    			type: 'Google',
+//    			name: 'Google Hybrid',
+//    			options: {type: G_HYBRID_MAP, 'sphericalMercator': true}, 
+//				enabled: true
+//    		},
     		{
     			type: 'OSM', 
 				enabled: false
@@ -235,3 +235,20 @@ Sbi.settings.georeport = {
 		}
 	} 
 };
+
+Sbi.settings.widgets = {
+			TreeLookUpField : {
+				//true to allow the selection of the internal node of the tree driver
+				//false to allow the selection only foe the leafs
+				allowInternalNodeSelection: true
+			}
+			//Details for specific file upload management (ex: img for document preview,...)
+		  , FileUploadPanel: {
+				imgUpload: {
+					maxSizeFile: 10485760
+				  , directory: '/preview/images' //starting from /resources directory
+				  , extFiles: ['BMP', 'IMG', 'JPG', 'PNG', 'GIF']
+				}
+			}
+};
+

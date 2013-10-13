@@ -33,6 +33,10 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='./js/src/ext/sbi/commons/Format.js'/></script>
 <script type="text/javascript" src='./js/src/ext/sbi/locale/LocaleUtils.js'/></script>
 <script type="text/javascript" src='./js/src/ext/sbi/service/ServiceRegistry.js'/></script>
+<script type="text/javascript" src='./js/src/ext/sbi/service/SaveDocumentWindowsExt.js'/></script>
+
+<script type="text/javascript" src='./js/src/ext/sbi/geo/widgets/DocumentsTree.js'/></script>
+<script type="text/javascript" src='./js/src/ext/sbi/geo/widgets/FileUploadPanel.js'/></script>
 
 <script type="text/javascript" src='./js/src/ext/sbi/geo/utils/ColorRgb.js'/></script>
 <script type="text/javascript" src='./js/src/ext/sbi/geo/utils/GeoReportUtils.js'/></script>
@@ -53,7 +57,7 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='./js/src/ext/sbi/geo/stat/ChoroplethControlPanel.js'/></script>
 <script type="text/javascript" src='./js/src/ext/sbi/geo/stat/ProportionalSymbolControlPanel.js'/></script>
 
-<script type="text/javascript" src='./js/src/ext/sbi/geo/iscroll.js'/></script>
+
 <script type="text/javascript" src='./js/src/ext/sbi/geo/ImportWMSLayerForm.js'/></script>
 <script type="text/javascript" src='./js/src/ext/sbi/geo/ControlPanel.js'/></script>
 <script type="text/javascript" src='./js/src/ext/sbi/geo/ControlPanel2.js'/></script>
