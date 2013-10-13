@@ -56,7 +56,7 @@ html, body{height:100%}
 /* ----------- FORM CLASSES ----------------------------------------------------------------------------------------------------------------------------------------------------------- */
 	input.mapTitle    {
 	display:block;
-	border: 0; 
+/*	border: 0;*/ 
 	color:#434343;
 	background:#F9F9F9;
 	font-family:cabinmedium, sans-serif, arial, helvetica;
@@ -368,9 +368,9 @@ li:hover .login-panel .not-registered a:hover,.login-panel .not-registered a:hov
 .panel-buttons-container.map-owner{padding-bottom:15px}
 .panel-buttons{float:right}
 .panel-buttons a{display:block}
-.panel-buttons .btn-1{position:relative;height:35px;padding:0 19px;cursor:pointer;border:0;font-family:cabinbold, sans-serif, arial, helvetica;text-transform:uppercase;color:#fff;background:#535353;font-size:1.16em;-webkit-border-radius:4px;-moz-border-radius:4px;border-radius:4px;float:left}
+.panel-buttons .btn-1{position:relative;height:35px;	/*margin:0 0 0 10;*/padding:10px 10px 0 10px;cursor:pointer;border:0;font-family:cabinbold, sans-serif, arial, helvetica;text-transform:uppercase;color:#fff;background:#535353;font-size:1.16em;-webkit-border-radius:4px;-moz-border-radius:4px;border-radius:4px;float:left}
 .panel-buttons .btn-1:hover{background:#3c3c3c}
-.panel-buttons .btn-2{float:left;margin:0 13px 0 0;position:relative;top:3px}
+.panel-buttons .btn-2{float:left;margin:0 10px 0 0;height:35px;position:relative;top:0;padding:10px 5px 15px 5px;}
 .panel-buttons-container p{margin:0;width:100%;color:#949393;padding:4px 0 0 0;float:left;text-align:right}
 .panel-buttons-container p a{margin:0 6px 0 0}
 .panel-buttons-container p a:hover{color:#276293}
@@ -426,7 +426,7 @@ li:hover .login-panel .not-registered a:hover,.login-panel .not-registered a:hov
 .overlay .btn-close{cursor:pointer;display:block;position:absolute;top:-9px;right:-9px;background:#535353 url(../img/controlpanel/ico-close.png) center center no-repeat;width:32px;height:32px;-webkit-border-radius:16px;-moz-border-radius:16px;border-radius:16px}
 .overlay .btn-close:hover{background-color:#3C3C3C}
 
-
+.uploadImgIcon {background-image:url('../img/form/browser_globe_upload.png') !important;}
 
 /* ----------- FOOTER --------------------------------------------------------------------------------------------------------------------------------------------------------------------- */
 
