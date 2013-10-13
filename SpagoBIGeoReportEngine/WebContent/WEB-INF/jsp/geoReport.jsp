@@ -18,6 +18,7 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 <%-- ---------------------------------------------------------------------- --%>
 <%@page import="java.util.Locale"%>
 <%@page import="java.util.List"%>
+<%@page import="java.util.ArrayList"%>
 <%@page import="java.util.Map"%>
 <%@page import="it.eng.spagobi.engines.georeport.GeoReportEngineInstance"%>
 <%@page import="it.eng.spagobi.utilities.engines.EngineConstants"%>
@@ -38,6 +39,11 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 	String docName;
 	String docDescription;
 	String docIsPublic;
+	String docIsVisible;
+	String docPreviewFile;
+	String docCommunity;
+	List docFunctionalities;
+	String docDatasetLabel;
 	String userId;
 	List<String> includes;
 	
@@ -54,9 +60,16 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 	docName = (engineInstance.getDocumentName()==null)?"":engineInstance.getDocumentName().toString();
 	docDescription = (engineInstance.getDocumentDescription()==null)?"":engineInstance.getDocumentDescription().toString();
 	docIsPublic= (engineInstance.getDocumentIsPublic()==null)?"":engineInstance.getDocumentIsPublic().toString();
-
-
-
+	docIsVisible= (engineInstance.getDocumentIsVisible()==null)?"":engineInstance.getDocumentIsVisible().toString();
+	docPreviewFile= (engineInstance.getDocumentPreviewFile()==null)?"":engineInstance.getDocumentPreviewFile().toString();
+	docCommunity= (engineInstance.getDocumentCommunity()==null)?"":engineInstance.getDocumentCommunity().toString();
+	docDatasetLabel = (engineInstance.getDataSet()==null)?"":engineInstance.getDataSet().getLabel();
+	//docFunctionalities= engineInstance.getDocumentFunctionalities();
+	//forzatura DA ELIMINARE!!
+	docFunctionalities = new ArrayList();
+	docFunctionalities.add(0,4); //forzatura per cast exception!!!
+	// Fine FORZATURA
+	
 	includes = engineInstance.getIncludes();
 	
 	
@@ -164,7 +177,11 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 		    Sbi.config.docName = '<%=docName%>';
 		    Sbi.config.docDescription = '<%=docDescription%>';
 		    Sbi.config.docIsPublic= '<%=docIsPublic%>';
-
+		    Sbi.config.docIsVisible= '<%=docIsVisible%>';
+		    Sbi.config.docPreviewFile= '<%=docPreviewFile%>';
+		    Sbi.config.docCommunity= '<%=docCommunity%>';
+		    Sbi.config.docFunctionalities= <%=docFunctionalities%>;
+		    Sbi.config.docDatasetLabel= '<%=docDatasetLabel%>';
 		    
 		    var geoReportPanel = null;
 		    

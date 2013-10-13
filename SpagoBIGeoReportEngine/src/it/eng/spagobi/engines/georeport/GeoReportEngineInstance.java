@@ -5,12 +5,6 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.engines.georeport;
 
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import org.json.JSONObject;
-
 import it.eng.spagobi.services.proxy.EventServiceProxy;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
@@ -20,6 +14,13 @@ import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.IEngineAnalysisState;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import org.json.JSONObject;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -91,9 +92,26 @@ public class GeoReportEngineInstance extends AbstractEngineInstance {
 		return (String)this.getEnv().get(EngineConstants.ENV_DOCUMENT_DESCRIPTION);
 	}
 	
-	public String getDocumentIsPublic() {
-		return (String)this.getEnv().get(EngineConstants.ENV_DOCUMENT_IS_PUBLIC
+	public String getDocumentIsVisible() {
+		return (String)this.getEnv().get(EngineConstants.ENV_DOCUMENT_IS_VISIBLE
 				);
+	}
+	
+	public String getDocumentPreviewFile() {
+		return (String)this.getEnv().get(EngineConstants.ENV_DOCUMENT_PREVIEW_FILE
+				);
+	}
+	
+	public String getDocumentCommunity() {
+		return (String)this.getEnv().get(EngineConstants.ENV_DOCUMENT_COMMUNITY);
+	}
+
+	public List<Integer> getDocumentFunctionalities() {
+		return (List)this.getEnv().get(EngineConstants.ENV_DOCUMENT_FUNCTIONALITIES);
+	}
+	
+	public String getDocumentIsPublic() {
+		return (String)this.getEnv().get(EngineConstants.ENV_DOCUMENT_IS_PUBLIC);
 	}
 	
 	public AuditServiceProxy getAuditServiceProxy() {
