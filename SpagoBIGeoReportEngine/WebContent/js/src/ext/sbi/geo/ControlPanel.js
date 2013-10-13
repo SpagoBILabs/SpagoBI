@@ -20,11 +20,8 @@ Sbi.geo.ControlPanel = function(config) {
 		cmargins    : '3 3 3 3',
 		autoScroll	 : true,
 		earthPanelConf: {},
-		layerPanelConf: {},
 		analysisPanelConf: {},
 		measurePanelConf: {},
-		logoPanelConf: {},
-		legendPanelConf: {},
 		debugPanelConf: {}
 		
 	};
@@ -61,24 +58,16 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 	, layerPanelEnabled: false
 	, analysisPanelEnabled: false
 	, measurePanelEnabled: false
-	, logoPanelEnabled: false
-	, legendPanelEnabled: false
 	, debugPanelEnabled: false
 	, saveButtonEnabled: false
 	
 	, earthPanelConf: null
-	, layerPanelConf: null
 	, analysisPanelConf: null
 	, measurePanelConf: null
-	, logoPanelConf: null
-	, legendPanelConf: null
 	, debugPanelConf: null
    
-	, layersControlPanel: null
 	, analysisControlPanel: null
 	, measureControlPanel: null
-	, legendControlPanel: null
-	, logoControlPanel: null
 	, debugControlPanel: null
 	
 	, resultsetWindow: null
@@ -95,11 +84,8 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 		this.controlPanelItemsConfig = [];
 	
 		this.initEarthControlPanel();
-		this.initLayersControlPanel();
 		this.initMeasureControlPanel();
 		this.initAnalysisControlPanel();
-		this.initLegendControlPanel();
-		this.initLogoControlPanel();
 		this.initDebugControlPanel();
 
 	}
@@ -118,43 +104,7 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 		}
 	}
 
-	, initLayersControlPanel: function() {
-		this.layerPanelEnabled = false;
-		if(this.layerPanelEnabled === true) {			
-			
-			this.layersControlPanel = new mapfish.widgets.LayerTree(Ext.apply({
-	        	title: LN('sbi.geo.layerpanel.title'),
-	            collapsible: true,
-	            collapsed: false,
-	            autoHeight: true,
-	            rootVisible: false,
-	            separator: '!',
-	            model: this.extractModel(),
-	            map: this.map,
-	            bodyStyle:'padding:6px 6px 6px 6px; background-color:#FFFFFF'
-	        }, this.layerPanelConf));
-			
-			this.map.layerTree = this.layersControlPanel;
-			
-			
-			
-			
-			
-			this.newLayersControlPanel = new Ext.Panel(Ext.apply({
-				 id: 'layersPanel',
-	             title: 'New Layers Panel',
-	             collapsible: true,
-	             collapsed: false,
-		         //autoHeight: true,
-	             height: 150,
-	             items: []
-			 }));
-			
-			this.controlPanelItemsConfig.push(this.layersControlPanel);
-			this.controlPanelItemsConfig.push(this.newLayersControlPanel);
-
-		}
-	}
+	
 	
 	, initAnalysisControlPanel: function() {
 		
@@ -164,12 +114,12 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 	        	title: LN('sbi.geo.analysispanel.title'),
 	            collapsible: true,
 	            bodyStyle:'padding:6px 6px 6px 6px; background-color:#FFFFFF',
-	            items: [this.geostatistic]
+	            items: [this.thematizerControlPanel]
 	        }, this.analysisPanelConf));
 			
-			this.geostatistic.on('ready', function(){
+			this.thematizerControlPanel.on('ready', function(){
 				Sbi.debug("[AnalysisControlPanel]: [ready] event fired");
-				this.setAnalysisConf( this.geostatistic.analysisConf );
+				this.setAnalysisConf( this.thematizerControlPanel.analysisConf );
 			}, this);
 			
 			this.controlPanelItemsConfig.push(this.analysisControlPanel);
@@ -192,21 +142,24 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 		if(formState.indicator && this.indicatorContainer === 'layer') {
 			formState.indicator = formState.indicator.toUpperCase();
 		}
-		if(!formState.indicator && this.geostatistic.indicators && this.geostatistic.indicators.length > 0) {
-			formState.indicator = this.geostatistic.indicators[0][0];
+		if(!formState.indicator && this.thematizerControlPanel.indicators && this.thematizerControlPanel.indicators.length > 0) {
+			formState.indicator = this.thematizerControlPanel.indicators[0][0];
 		}
 		
-		this.geostatistic.setFormState(formState, true);
+		this.thematizerControlPanel.setFormState(formState, true);
 		
 		Sbi.debug("[ControlPanel.setAnalysisConf]: OUT");
 	}
 	
 	, getAnalysisConf: function() {
-		return this.geostatistic.getFormState();
+		return this.thematizerControlPanel.getFormState();
 	}
 	
 	, initMeasureControlPanel: function() {
 		
+		Sbi.debug("[ControlPanel.initMeasureControlPanel]: IN");
+		
+		Sbi.debug("[ControlPanel.initMeasureControlPanel]: measurePanelEnabled is equal to [" + this.measurePanelEnabled + "]");
 		
 		if(this.measurePanelEnabled === true) {
 			
@@ -220,38 +173,16 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 			 }, this.measurePanelConf));
 				
 			this.controlPanelItemsConfig.push(this.measureControlPanel);
+			
+			Sbi.debug("[ControlPanel.initMeasureControlPanel]: measure control panel succesfulli initialized");
+		} else {
+			Sbi.debug("[ControlPanel.initMeasureControlPanel]: measure control panel is disabled");
 		}
+		
+		Sbi.debug("[ControlPanel.initMeasureControlPanel]: OUT");
 	}
 	
-	, initLegendControlPanel: function() {
-		if(this.legendPanelEnabled === true) {
-			
-			this.legendControlPanel = new Ext.Panel(Ext.apply({
-		           title: LN('sbi.geo.legendpanel.title'),
-		           collapsible: true,
-		           bodyStyle:'padding:6px 6px 6px 6px; background-color:#FFFFFF',
-		           height: 180,
-		           autoScroll: true,
-		           html: '<center id="myChoroplethLegendDiv"></center>'
-		     },this.legendPanelConf));
-					
-			this.controlPanelItemsConfig.push(this.legendControlPanel);
-		}
-	}
 	
-	, initLogoControlPanel: function() {
-		if(this.logoPanelEnabled === true) {
-			
-			this.logoControlPanel = new Ext.Panel(Ext.apply({
-		           title: 'Logo',
-		           collapsible: true,
-		           height: 85,
-		           html: '<center><img src="/SpagoBIGeoReportEngine/img/georeport.jpg" alt="GeoReport"/></center>'
-			 },this.logoPanelConf));
-				
-			this.controlPanelItemsConfig.push(this.logoControlPanel);
-		}
-	}
 	
 	, initDebugControlPanel: function() {
 		if(this.debugPanelEnabled === true) {
@@ -333,20 +264,6 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 		           		},
 		           		scope: this
 				    }), new Ext.Button({
-				    	text: 'Get element',
-				        width: 30,
-				        disabled :(Sbi.config.docLabel=="")?true:false,
-				        handler: function() {
-							var el = Ext.get("authorButton");
-							if(el && el !== null) {
-								el.on('click', function() {
-									alert('Clicked on author button');
-								});
-								alert('Registered handler on element [authorButton]');
-							}
-		           		},
-		           		scope: this
-				    }), new Ext.Button({
 				    	text: 'Export',
 				        width: 30,
 				        disabled :(Sbi.config.docLabel=="")?true:false,
@@ -375,15 +292,6 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 				        handler: function() {
 							sendMessage({'label': Sbi.config.docLabel},'modifyGeoReportDocument');
 
-		           		},
-		           		scope: this
-				    })
-		           	, new Ext.Button({
-				    	text: 'Add layer',
-				        width: 30,
-				        disabled : !this.addLayerButtonEnabled, //same visibility of the Save Button
-				        handler: function() {
-							this.showLayersCatalogueWindow();
 		           		},
 		           		scope: this
 				    })
@@ -444,6 +352,7 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 		
 		this.measureCatalogueWindow.show();
 	}
+	
 	, showLayersCatalogueWindow: function(){
 		var thisPanel = this;
 		if(this.layersCatalogueWindow==null){
@@ -478,14 +387,7 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 			this.feedbackWindow.destroy();
 			this.feedbackWindow.close();
 		}
-		
-		/*
-		this.subjectField = new Ext.form.TextField({
-			fieldLabel: 'Subject',
-            name: 'subject'
-		});
-		*/
-		
+	
 		this.messageField = new Ext.form.TextArea({
 			fieldLabel: 'Message text',
             width: '100%',
@@ -553,253 +455,16 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 	}
 	
 	, onStoreLoad: function(measureCatalogue, options, store, meta) {
-		this.geostatistic.thematizer.setData(store, meta);
-		this.geostatistic.storeType = 'virtualStore';
+		this.thematizerControlPanel.thematizer.setData(store, meta);
+		this.thematizerControlPanel.storeType = 'virtualStore';
 		var s = "";
 		for(o in options) s += o + ";"
 		Sbi.debug("[ControlPanel.onStoreLoad]: options.url = " + options.url);
 		Sbi.debug("[ControlPanel.onStoreLoad]: options.params = " + Sbi.toSource(options.params));
-		this.geostatistic.storeConfig = {
+		this.thematizerControlPanel.storeConfig = {
 			url: options.url
 			, params: options.params
 		};
-	}
-	
-    // private methods
-	
-	, addSelectedLayers: function(layers) {
-		var thisPanel = this;
-		
-		var layersLabels = new Array();
-
-		for (var i = 0; i < layers.length; i++) {
-		    var selectedLayerLabel = layers[i];
-		    layersLabels.push(selectedLayerLabel);
-		}
-		
-	    //invoke service for layers properties
-		Ext.Ajax.request({
-			url: Sbi.config.serviceRegistry.getRestServiceUrl({serviceName: 'layers/getLayerProperties',baseUrl:{contextPath: 'SpagoBI'}}),
-			params: {labels: layersLabels},
-			success : function(response, options) {
-				if(response !== undefined && response.responseText !== undefined && response.statusText=="OK") {
-					if(response.responseText!=null && response.responseText!=undefined){
-						if(response.responseText.indexOf("error.mesage.description")>=0){
-							Sbi.exception.ExceptionHandler.handleFailure(response);
-						}else{
-							var obj = JSON.parse(response.responseText);
-							thisPanel.createLayerPanel(obj);
-						}
-					}
-				} else {
-					Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
-				}
-			},
-			scope: this,
-			failure: Sbi.exception.ExceptionHandler.handleFailure,  
-			scope: this
-		});
-		
-		//TO REMOVE: only for test
-		/*
-		this.layers = new Array();
-		var exampleLayerConf = {};
-		exampleLayerConf.enabled = true;
-		exampleLayerConf.name = "NASA Global Mosaic";
-		exampleLayerConf.options = {};
-		exampleLayerConf.options.isBaseLayer=true;
-		exampleLayerConf.params = {};
-		//exampleLayerConf.params.layers = "landsat7";
-		exampleLayerConf.params.layers = "modis,global_mosaic";
-		exampleLayerConf.type= "WMS";
-		//exampleLayerConf.url="http://hypercube.telascience.org/cgi-bin/landsat7?";
-		exampleLayerConf.url="http://wms.jpl.nasa.gov/wms.cgi";
-		
-		var l = Sbi.geo.utils.LayerFactory.createLayer( exampleLayerConf );
-		this.layers.push( l	);
-		*/
-		
-		//Another GoogleMap
-		/*
-		var anotherExampleLayerConf = {};
-		anotherExampleLayerConf.type="Google";
-		anotherExampleLayerConf.name="GoogleMap";
-		anotherExampleLayerConf.options = {};
-		anotherExampleLayerConf.options.sphericalMercator=true;
-		anotherExampleLayerConf.enabled=true;
-		var lGoogle = Sbi.geo.utils.LayerFactory.createLayer( anotherExampleLayerConf );
-		this.layers.push(lGoogle);
-		*/
-		
-		/*
-		var myTree = this.layersControlPanel;
-		this.map.addLayers(this.layers);
-		this.layersControlPanel.model = this.extractModel();
-		
-		var mapLayers = this.map.layers;
-		
-		//this.layersControlPanel.map.setBaseLayer(l);
-		
-		
-		var node = new Ext.tree.TreeNode({text: l.name,
-              checked: false,
-              cls: '',
-              layerName: l.name,
-              leaf: true});
-		//myTree.getRootNode().appendChild(node,myTree.getRootNode().firstChild); 
-		node.attributes.uiProvider = mapfish.widgets.RadioTreeNodeUI;
-
-        if (node.ui)
-            node.ui = new mapfish.widgets.RadioTreeNodeUI(node);
-		myTree.root.childNodes[0].appendChild(node);
-		this.map.layerTree = this.layersControlPanel;
-
-		myTree.render();
-		*/
-		
-		/*
-		this.layersControlPanel.initComponent();
-		this.map.layerTree = this.layersControlPanel;		
-		this.add(this.layersControlPanel);
-		this.layersControlPanel.doLayout();
-		this.doLayout();
-		*/
-
-		
-		/*
-		var currentModel = this.layersControlPanel.model;
-		this.layersControlPanel.model = this.extractModel();
-		this.map.layerTree = this.layersControlPanel;
-		this.layersControlPanel.getLoader().load(this.layersControlPanel.getRootNode());
-		this.doLayout();
-		*/
-		
-		
-		/*
-		if(this.layerPanelEnabled === true) {	
-			this.remove(this.layersControlPanel);
-
-			
-			this.layersControlPanel = new mapfish.widgets.LayerTree(Ext.apply({
-	        	title: LN('sbi.geo.layerpanel.title'),
-	            collapsible: true,
-	            collapsed: false,
-	            autoHeight: true,
-	            rootVisible: false,
-	            separator: '!',
-	            model: this.extractModel(),
-	            map: this.map,
-	            bodyStyle:'padding:6px 6px 6px 6px; background-color:#FFFFFF'
-	        }, this.layerPanelConf));
-			
-			this.map.layerTree = this.layersControlPanel;
-			
-			this.add(this.layersControlPanel);
-			this.doLayout();
-		}
-		*/
-		
-
-
-	}
-	
-	, createLayerPanel: function(layers){
-		var thisPanel = this;
-		if ((layers != undefined) && (layers != null) ){
-			if((layers.root != undefined) && (layers.root != null)){
-				this.layersToAdd = new Array();
-				
-				//Radio button items
-				var itemsInGroup = [];
-
-
-				var layersDefinitions = layers.root;
-				
-				for (var i = 0; i < layersDefinitions.length; i++) {
-				    var layerDef = layersDefinitions[i];
-				    
-				    var newLayerConf = {};
-				    newLayerConf.enabled = true;
-				    newLayerConf.type = layerDef.type;
-				    if ((layerDef.propsName != undefined) && (layerDef.propsName != null)){
-					    newLayerConf.name = layerDef.propsName;
-				    }
-				    if ((layerDef.propsUrl != undefined) && (layerDef.propsUrl != null)){
-				    	if(layerDef.propsUrl){
-					    	newLayerConf.url = layerDef.propsUrl;
-				    	}
-				    }
-				    if((layerDef.propsParams != undefined) && (layerDef.propsParams != null)){
-				    	if(layerDef.propsParams){
-					    	var parsedParams = JSON.parse(layerDef.propsParams);
-					    	newLayerConf.params = parsedParams;
-				    	}
-				    }
-				    if((layerDef.propsOptions != undefined) && (layerDef.propsOptions != null)){
-				    	if (layerDef.propsOptions){
-					    	var parsedOptions = JSON.parse(layerDef.propsOptions);
-					    	newLayerConf.options = parsedOptions;
-				    	}
-
-				    }
-
-				    //create new layer with Open Layer
-					var layerObject = Sbi.geo.utils.LayerFactory.createLayer( newLayerConf );
-					if ((layerObject != undefined) && (layerObject != null)){
-						this.layersToAdd.push(layerObject);
-						
-						//Create UI element
-						itemsInGroup.push( {
-						      boxLabel: layerDef.propsLabel, 
-							  boxMinHeight: 100, 
-						      name: 'baseLayer-radio', 
-						      inputValue: layerDef.propsName,
-						      handler: function(ctl, val) {
-						    	  if (val == true){
-									    //alert("radio button select "+ctl.boxLabel+ " Value: "+ctl.inputValue);
-									    var layers = thisPanel.map.layers;
-									    for (var i = 0; i < layers.length; i++) {
-									    	if(layers[i].name == ctl.inputValue){
-									    		thisPanel.map.setBaseLayer(layers[i]);
-									    	}
-									    }
-						    	  }
-								}
-						    });
-					}
-					
-					//check for existing layers
-					for (var i = 0; i < this.layersToAdd.length; i++) {
-						var layersFound = this.map.getLayersBy("name",this.layersToAdd[i].name);
-						if (layersFound.length > 0){
-							//layers already added
-							this.layersToAdd.splice(i, 1);
-						}
-						
-					}
-					
-					//Add layers to map object		
-					this.map.addLayers(this.layersToAdd);
-					
-					
-				}
-				
-				var myGroup = { 
-						  xtype: 'radiogroup', 
-						  fieldLabel: 'Base Layers', 
-						  autoHeight: true,
-						  columns: 1,
-						  //height:150,
-						  boxMinHeight: 100, 
-						  items: itemsInGroup
-						};
-				
-				this.newLayersControlPanel.removeAll(true);
-				this.newLayersControlPanel.add(myGroup);
-				this.newLayersControlPanel.doLayout();
-				
-			}
-		}
 	}
 	
 	/**

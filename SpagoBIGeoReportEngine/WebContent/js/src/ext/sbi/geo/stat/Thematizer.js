@@ -721,6 +721,7 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
         // get features from web service if a url is specified
         if (this.url) {
         	Sbi.debug("[Thematizer.initialize]: Url attribute has been valorized to [" + Sbi.toSource(url) + "]. Features will be loaded from it");
+        	this.map.mapComponent.mask();
         	OpenLayers.Request.GET({
         		url: this.url
         		, success: this.onSuccess

@@ -3,6 +3,7 @@
 <script type="text/javascript" src="./js/lib/ext/3.4.1/adapter/ext/ext-base.js"></script>
 <script type="text/javascript" src="./js/lib/ext/3.4.1/ext-all.js" ></script>
 <script type="text/javascript" src='./js/lib/ext/3.4.1/ux/colorfield/color-field.js'/></script>
+<script type="text/javascript" src='./js/lib/ext/3.4.1/examples/grid/RowExpander.js'/></script>
 
 <link   type="text/css" rel="stylesheet" href="./js/lib/ext/3.4.1/resources/css/ext-all.css" ></link>
 <link   type="text/css" rel="styleSheet" href="./js/lib/ext/3.4.1/ux/colorfield/color-field.css"  />

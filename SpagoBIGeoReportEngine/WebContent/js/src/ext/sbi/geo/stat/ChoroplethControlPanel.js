@@ -571,7 +571,9 @@ Sbi.geo.stat.ChoroplethControlPanel = Ext.extend(Ext.FormPanel, {
     	Sbi.geo.stat.ChoroplethControlPanel.superclass.onRender.apply(this, arguments);
         if(this.loadMask){
             this.loadMask = new Ext.LoadMask(this.bwrap, this.loadMask);
+            //this.mapLoadMask = new Ext.LoadMask(this.map, {msg:"Please wait..."});
             this.loadMask.show();
+            //this.mapLoadMask.show();
         }
 
         var coreOptions = {
@@ -609,8 +611,8 @@ Sbi.geo.stat.ChoroplethControlPanel = Ext.extend(Ext.FormPanel, {
      */
     , initComponent : function() {
         this.items = [
-            this.initAddIndicatorsButton()          
-            , this.initIndicatorSelectionField()
+            /*this.initAddIndicatorsButton()          
+            ,*/ this.initIndicatorSelectionField()
             , this.initMethodSelectionField()
             , this.initClassesNumberSelectionField()
             , this.initFromColorSelectionField()
@@ -850,6 +852,7 @@ Sbi.geo.stat.ChoroplethControlPanel = Ext.extend(Ext.FormPanel, {
         // if widget is rendered, hide the optional mask
         if (this.loadMask && this.rendered) {
             this.loadMask.hide();
+            this.map.mapComponent.unmask();
         }
         
         this.fireEvent('ready', this);
