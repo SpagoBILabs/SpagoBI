@@ -81,7 +81,12 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
      * @property {Array} services
      * This array contains all the services invoked by this class
      */
-	services: null
+	  services: null
+	
+	//CONSTANTS
+	, DEFAULT_NAME: 'New Map name...'
+	, DEFAULT_DESCRIPTION: 'New Map description...' 
+	
    
 	// =================================================================================================================
 	// METHODS
@@ -394,18 +399,6 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 			            '<label for="permissions-2">&nbsp;Pubblica</label>' +
 			        '</div>';
 			}
-			strChecked = ''; 
-			if (Sbi.config.docIsVisible == 'true' || this.isInsertion ){
-				strChecked = 'checked';
-			}
-			toReturn += '' +
-				'<div  id="div-perm3" class="radio-option checked">' +
-		        	'<input id="visibility" type="checkbox" value="1" ' +strChecked +' />' +
-		            '<label for="permissions-1">Visibile</label>' +
-	            '</div>' ;		           
-			toReturn += '' +
-		        '</div>' +
-	        '</div>' ;
 		}
 		return toReturn;
 	}
@@ -452,12 +445,15 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 	
 	
 	, getMapTypeDiv: function(){
+		var name = (Sbi.config.docName !== "")?Sbi.config.docName:this.DEFAULT_NAME;
+		var desc = (Sbi.config.docDescription !== "")?Sbi.config.docDescription:this.DEFAULT_DESCRIPTION;
+		
 		var toReturn = '' +
 		 '<div class="map-description">' +
 //	         '<h1 class="titleButton">'+Sbi.config.docName+'</h1>' +
-	         '<input  type="text" id="docName" class="mapTitle" value="'+Sbi.config.docName+'" /> '+
+	         '<input  type="text" id="docName" class="mapTitle" value="'+name+'" /> '+
 //	         '<p>'+Sbi.config.docDescription+'</p>' +
-	         '<textarea rows="2" cols="40" id="docDesc" class="mapDescription" />'+Sbi.config.docDescription+' </textarea>'+	         
+	         '<textarea rows="2" cols="40" id="docDesc" class="mapDescription" />'+desc+' </textarea>'+	         
 	 		'<p id="author" class="published">Pubblicata da <a id="authorButton" class="authorButton" href="#">'+Sbi.config.docAuthor+'</a> <span class="separator">/</span> <a id="feedback_mail" href="#" class="feedback">invia feedback</a></p>' +
 	     '</div>' +
 	     '<ul id="mapType" class="map-type">' +
@@ -667,15 +663,7 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 		}else{
 			formState.scope = "false"; //default
 		}
-		var el = Ext.get('visibility');
-		if ((el != null) && (el !== undefined )){
-			if (isInsert){
-				formState.visibility = true;
-			}else{
-				formState.visibility = el.dom.checked; //default
-			}
-		}
-		
+		formState.scope.visibility = Sbi.config.visibility;
 		formState.docFunctionalities  = Sbi.config.docFunctionalities;
 		
 		if (isInsert){

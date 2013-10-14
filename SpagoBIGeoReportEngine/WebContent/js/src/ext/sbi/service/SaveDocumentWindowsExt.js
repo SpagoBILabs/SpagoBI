@@ -132,7 +132,7 @@ Ext.extend(Sbi.service.SaveDocumentWindowExt, Ext.Window, {
 	        boxLabel  : 'Visible',
             name      : 'docVisibility',
             inputValue: 1,
-            checked   : c.visibility
+            checked   : c.visibility || true
            });
 	
 		// The data store holding the communities
@@ -218,7 +218,8 @@ Ext.extend(Sbi.service.SaveDocumentWindowExt, Ext.Window, {
 	          docFunctionalities: c.docFunctionalities
 	    });
 	    
-	    this.saveDocumentForm =  new Ext.form.FormPanel({
+//	    this.saveDocumentForm =  new Ext.form.FormPanel({
+	    this.saveDocumentForm =  new Ext.Panel({
 		          autoScroll: true,
 		          labelAlign: 'left',
 		          autoWidth: true,
@@ -337,13 +338,13 @@ Ext.extend(Sbi.service.SaveDocumentWindowExt, Ext.Window, {
 
 		var uploadButton = this.fileUpload.fileUploadFormPanel.getComponent('fileUploadButton');	
 		uploadButton.setHandler(this.uploadFileButtonHandler,this);
-//		var toReturn = new  Ext.FormPanel({
-		var toReturn = new  Ext.Panel({
+		var toReturn = new  Ext.FormPanel({
+//		var toReturn = new  Ext.Panel({
 			  id: 'mapPreviewFileForm',
 			  fileUpload: true, // this is a multipart form!!
 			  isUpload: true,
 			  border:false,
-			  layout:'form',
+//			  layout:'form',
 			  enctype:'multipart/form-data',
 			  method: 'POST',
 	          labelAlign: 'left',
@@ -360,18 +361,17 @@ Ext.extend(Sbi.service.SaveDocumentWindowExt, Ext.Window, {
 	,uploadFileButtonHandler: function(btn, e) {
 		
 		Sbi.debug("[PreviewFileWizard.uploadFileButtonHandler]: IN");
-		var pippo =Ext.getCmp('mapPreviewFileForm'); 
         var form = Ext.getCmp('mapPreviewFileForm').getForm();
         
         Sbi.debug("[PreviewFileWizard.uploadFileButtonHandler]: form is equal to [" + form + "]");
 		
         var completeUrl =  Sbi.config.serviceRegistry.getServiceUrl({
 					    		serviceName : 'MANAGE_FILE_ACTION',
-					    		baseParams : {LIGHT_NAVIGATOR_DISABLED: 'TRUE'}
+					    		baseParams : {LIGHT_NAVIGATOR_DISABLED: 'TRUE', standardUrl:true},
+					    		baseUrl:{contextPath: 'SpagoBI', controllerPath: 'servlet/AdapterHTTP'}
 					    	});
-
-		var baseUrl = completeUrl.substr(0, completeUrl
-				.indexOf("?"));
+        
+		var baseUrl = completeUrl.substr(0, completeUrl.indexOf("?"));
 		
 		Sbi.debug("[PreviewFileWizard.uploadFileButtonHandler]: base url is equal to [" + baseUrl + "]");
 	 	
@@ -380,8 +380,9 @@ Ext.extend(Sbi.service.SaveDocumentWindowExt, Ext.Window, {
 		params.operation = 'UPLOAD';
 		params.directory = this.directory || '';
 		params.maxSize = this.maxSizeFile || '';
-		params.extFiles = this.extFiles || '';
- 
+		params.extFiles = Ext.util.JSON.encode(this.extFiles) || '';
+		
+		
 		Sbi.debug("[PreviewFileWizard.uploadFileButtonHandler]: form is valid [" + form.isValid() + "]");		
 		this.fileNameUploaded = Ext.getCmp('fileUploadField').getValue();
 		this.fileNameUploaded = this.fileNameUploaded.replace("C:\\fakepath\\", "");

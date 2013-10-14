@@ -64,10 +64,10 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 	docPreviewFile= (engineInstance.getDocumentPreviewFile()==null)?"":engineInstance.getDocumentPreviewFile().toString();
 	docCommunity= (engineInstance.getDocumentCommunity()==null)?"":engineInstance.getDocumentCommunity().toString();
 	docDatasetLabel = (engineInstance.getDataSet()==null)?"":engineInstance.getDataSet().getLabel();
-	//docFunctionalities= engineInstance.getDocumentFunctionalities();
+	docFunctionalities= (engineInstance.getDocumentFunctionalities()==null)?new ArrayList():engineInstance.getDocumentFunctionalities();
 	//forzatura DA ELIMINARE!!
-	docFunctionalities = new ArrayList();
-	docFunctionalities.add(0,4); //forzatura per cast exception!!!
+	//docFunctionalities = new ArrayList();
+	//docFunctionalities.add(0,4); //forzatura per cast exception!!!
 	// Fine FORZATURA
 	
 	includes = engineInstance.getIncludes();

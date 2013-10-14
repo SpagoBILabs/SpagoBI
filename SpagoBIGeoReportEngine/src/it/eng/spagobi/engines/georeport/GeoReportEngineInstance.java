@@ -14,6 +14,7 @@ import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.IEngineAnalysisState;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.json.JSONUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -107,7 +108,14 @@ public class GeoReportEngineInstance extends AbstractEngineInstance {
 	}
 
 	public List<Integer> getDocumentFunctionalities() {
-		return (List)this.getEnv().get(EngineConstants.ENV_DOCUMENT_FUNCTIONALITIES);
+		try{
+			String strFunctionalities = (String)this.getEnv().get(EngineConstants.ENV_DOCUMENT_FUNCTIONALITIES);
+			if (strFunctionalities == null) 
+				return null;
+			else
+				return JSONUtils.asList(JSONUtils.toJSONArray(strFunctionalities));
+		} catch (Throwable t) {
+			throw new SpagoBIRuntimeException("Impossible to get functionalities list", t);		}
 	}
 	
 	public String getDocumentIsPublic() {
