@@ -84,16 +84,17 @@ Ext.extend(Sbi.geo.widgets.FileUploadPanel, Ext.Panel, {
 	    });
 		
 		//Panel with the load file field
-		this.fileUploadFormPanel = new Ext.form.FieldSet({
+		this.fileUploadFormPanel = new Ext.Panel({
 			height: 45,
-//			layout:'column',
+			layout:'column',
+			columnWidth: 0.9,
 //			frame: true,
 			header: false,
 			border: false,
 			items: [this.uploadField, this.uploadButton]
 		});
 		
-		this.fileUploadFormPanel.layout = 'form';
+//		this.fileUploadFormPanel.layout = 'form';
 		
 		return this.fileUploadFormPanel;
 
