@@ -185,6 +185,8 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 			IBIObjectDAO biObjectDao = DAOFactory.getBIObjectDAO();
 			String documentLabel = documentJSON.getString("label");
 			BIObject document = biObjectDao.loadBIObjectByLabel(documentLabel);
+			//update document informations
+			
 			String templateContent = customDataJSON.optString("templateContent");
 
 			ObjTemplate template = buildDocumentTemplate("template.sbigeoreport", templateContent,document, 
