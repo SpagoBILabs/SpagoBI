@@ -65,7 +65,10 @@ public class ManageFileAction extends AbstractSpagoBIAction{ //AbstractHttpActio
 			directory = (("").equals(getAttribute(DIRECTORY)))?null:(String)getAttribute(DIRECTORY);
 			maxSize = (("").equals(getAttribute(MAX_SIZE)))?null:(String)getAttribute(MAX_SIZE);
 			String strExtFiles = (String)getAttribute(EXT_FILES);
-			extFiles = JSONUtils.asList(((strExtFiles==null)?null:JSONUtils.toJSONArray(strExtFiles)));
+			if (strExtFiles==null)
+				extFiles = null;
+			else
+				extFiles = JSONUtils.asList((JSONUtils.toJSONArray(strExtFiles)));
 			
 			JSONObject jsonToReturn = new JSONObject();
 			if (OPER_UPLOAD.equalsIgnoreCase(operation)){
