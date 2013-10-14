@@ -12,6 +12,7 @@ import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.SpagoBIServiceExceptionHandler;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
+import it.eng.spagobi.utilities.json.JSONUtils;
 import it.eng.spagobi.utilities.service.IServiceResponse;
 import it.eng.spagobi.utilities.service.JSONResponse;
 
@@ -63,7 +64,8 @@ public class ManageFileAction extends AbstractSpagoBIAction{ //AbstractHttpActio
 			//get request informations
 			directory = (("").equals(getAttribute(DIRECTORY)))?null:(String)getAttribute(DIRECTORY);
 			maxSize = (("").equals(getAttribute(MAX_SIZE)))?null:(String)getAttribute(MAX_SIZE);
-			extFiles = (("").equals(getAttribute(EXT_FILES)))?null:(List)getAttribute(EXT_FILES);
+			String strExtFiles = (String)getAttribute(EXT_FILES);
+			extFiles = JSONUtils.asList(((strExtFiles==null)?null:JSONUtils.toJSONArray(strExtFiles)));
 			
 			JSONObject jsonToReturn = new JSONObject();
 			if (OPER_UPLOAD.equalsIgnoreCase(operation)){
