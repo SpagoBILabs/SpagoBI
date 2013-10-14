@@ -185,7 +185,9 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 			IBIObjectDAO biObjectDao = DAOFactory.getBIObjectDAO();
 			String documentLabel = documentJSON.getString("label");
 			BIObject document = biObjectDao.loadBIObjectByLabel(documentLabel);
+			JSONArray foldersJSON = request.optJSONArray("folders");
 			//update document informations
+			document = syncronizeDocument(document, documentJSON, foldersJSON);
 			
 			String templateContent = customDataJSON.optString("templateContent");
 
@@ -194,6 +196,29 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 			documentManagementAPI.saveDocument(document, template);		
 
 
+		} catch (SpagoBIServiceException e) {
+			throw e;
+		} catch (Exception e) {
+			throw new SpagoBIServiceException(SERVICE_NAME, "An unexpected error occured while creating geo document", e);
+		} finally {
+			logger.debug("OUT");
+		}
+	}
+	
+	private BIObject syncronizeDocument(BIObject obj, JSONObject props, JSONArray folders){
+		logger.debug("IN");
+		try {
+			BIObject toReturn = obj;
+			toReturn.setName(props.getString("name"));
+			toReturn.setDescription(props.getString("description"));
+			toReturn.setVisible(props.getBoolean("visibility"));
+			toReturn.setPublicDoc(props.getBoolean("isPublic"));
+			if (!"".equals(props.getString("previewFile"))) 
+				toReturn.setPreviewFile(props.getString("previewFile"));
+			//syncronize the folders
+			toReturn = setFolders(obj, folders);
+			
+			return toReturn;
 		} catch (SpagoBIServiceException e) {
 			throw e;
 		} catch (Exception e) {
