@@ -47,7 +47,7 @@ Sbi.geo.ControlPanel2 = function(config) {
 	Ext.apply(this, c);
 	
 	// init events...
-	//this.addEvents();
+//	this.addEvents();
 	
 	this.initServices();
 	this.init();
@@ -664,7 +664,7 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 			formState.scope = "false"; //default
 		}
 		formState.scope.visibility = Sbi.config.visibility;
-		formState.docFunctionalities  = Sbi.config.docFunctionalities;
+		formState.OBJECT_FUNCTIONALITIES  = Sbi.config.docFunctionalities;
 		
 		if (isInsert){
 			formState.docLabel = 'map__' + Math.floor((Math.random()*1000000000)+1); 
@@ -678,9 +678,18 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 		documentWindowsParams.formState = formState;		
 		
 		this.saveWindow = new Sbi.service.SaveDocumentWindowExt(documentWindowsParams);
-		this.saveWindow.show();
+		this.saveWindow.addListener('syncronizePanel', this.onSyncronizePanel, this);
+		this.saveWindow.show();		
 
 		}
+	
+	, onSyncronizePanel: function(p) {
+		Ext.get('docName').value = p.docName.getEl().value;
+		Ext.get('docDesc').value = p.docDescr.getEl().value;
+		Ext.get('scopePublic').value = p.isPublic.getEl().value;	
+		this.doLayout();
+	}
+	
 		
 		
 	// =================================================================================================================

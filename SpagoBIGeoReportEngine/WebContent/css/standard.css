@@ -56,7 +56,7 @@ html, body{height:100%}
 /* ----------- FORM CLASSES ----------------------------------------------------------------------------------------------------------------------------------------------------------- */
 	input.mapTitle    {
 	display:block;
-/*	border: 0;*/ 
+	border: 0;
 	color:#434343;
 	background:#F9F9F9;
 	font-family:cabinmedium, sans-serif, arial, helvetica;
@@ -81,6 +81,12 @@ html, body{height:100%}
   	line-height:175%
 	}
 
+/*------------------ICONS CLASSES ------------------------------------------------------------------------------------------------*/
+.icon-ftree-root {background-image: url('../img/form/server16x16.png') !important;}
+
+.icon-ftree-folder {background-image: url('../img/form/folder16x16.png') !important;}
+
+.uploadImgIcon {background-image:url('../img/form/browser_globe_upload.png') !important;}
 
 /* ----------- COMMON CLASSES ----------------------------------------------------------------------------------------------------------------------------------------------------------- */
 
@@ -425,8 +431,6 @@ li:hover .login-panel .not-registered a:hover,.login-panel .not-registered a:hov
 .overlay{position:relative;box-shadow:0 0 10px -6px #000000;padding:21px 21px 5px 21px;background:#f9f9f9;-webkit-border-radius:6px;-moz-border-radius:6px;border-radius:6px}
 .overlay .btn-close{cursor:pointer;display:block;position:absolute;top:-9px;right:-9px;background:#535353 url(../img/controlpanel/ico-close.png) center center no-repeat;width:32px;height:32px;-webkit-border-radius:16px;-moz-border-radius:16px;border-radius:16px}
 .overlay .btn-close:hover{background-color:#3C3C3C}
-
-.uploadImgIcon {background-image:url('../img/form/browser_globe_upload.png') !important;}
 
 /* ----------- FOOTER --------------------------------------------------------------------------------------------------------------------------------------------------------------------- */
 

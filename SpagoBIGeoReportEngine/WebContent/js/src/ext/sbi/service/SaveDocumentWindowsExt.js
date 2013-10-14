@@ -36,15 +36,15 @@ Sbi.service.SaveDocumentWindowExt = function(config) {
 				, baseUrl:{contextPath: 'SpagoBI'}
 		});
 		
+		
+		
 		this.SBI_EXECUTION_ID = config.SBI_EXECUTION_ID;
 		this.OBJECT_ID = config.OBJECT_ID;
 		this.OBJECT_TYPE = config.OBJECT_TYPE;
 		this.OBJECT_ENGINE = config.OBJECT_ENGINE;
 		this.OBJECT_TEMPLATE = config.OBJECT_TEMPLATE;
 		this.OBJECT_DATA_SOURCE = config.OBJECT_DATA_SOURCE;
-		this.OBJECT_WK_DEFINITION = config.OBJECT_WK_DEFINITION;
-		this.OBJECT_QUERY = config.OBJECT_QUERY;
-		this.OBJECT_FORM_VALUES = config.OBJECT_FORM_VALUES;
+		this.OBJECT_FUNCTIONALITIES = config.formState.OBJECT_FUNCTIONALITIES;
 		this.OBJECT_PREVIEW_FILE = config.OBJECT_PREVIEW_FILE;		
 		this.OBJECT_COMMUNITY = config.OBJECT_COMMUNITY;
 		this.OBJECT_SCOPE = config.OBJECT_SCOPE;
@@ -68,6 +68,9 @@ Sbi.service.SaveDocumentWindowExt = function(config) {
 		});   
 		
 		Ext.apply(this,c);
+		
+		// init events...
+		this.addEvents("syncronizePanel");
 		
 		// constructor
 		Sbi.service.SaveDocumentWindowExt.superclass.constructor.call(this, c);
@@ -112,7 +115,7 @@ Ext.extend(Sbi.service.SaveDocumentWindowExt, Ext.Window, {
 	    });
 		this.docName.setValue(c.docName);
 		
-		this.docDescr = new Ext.form.TextField({
+		/*this.docDescr = new Ext.form.TextField({
 			id:'docDescr',
 	        name: 'docDescr',
 	        inputType: 'text',
@@ -120,9 +123,23 @@ Ext.extend(Sbi.service.SaveDocumentWindowExt, Ext.Window, {
 	        maxLength: 400,
 	        anchor:	 '95%',
 	        height: 80,
+	        autoscroll:true,
 			fieldLabel:'Descrizione',// LN('sbi.generic.descr'),
 			value:c.docDescr			
-	    });
+	    });*/
+		this.docDescr = new Ext.form.TextArea({
+			id:'docDescr',
+	        name: 'docDescr',
+			maxLength : 400,
+			xtype : 'textarea',
+			width : '100%', //350,
+			height : 80,		
+			autoScroll: true,
+			//regexText : LN('sbi.roles.alfanumericString'),
+			fieldLabel : 'Descrizione',// LN('sbi.generic.descr'),
+			allowBlank : true,
+			value:c.docDescr	
+		});
 		this.docDescr.setValue(c.docDescr); 
 
 
@@ -180,11 +197,9 @@ Ext.extend(Sbi.service.SaveDocumentWindowExt, Ext.Window, {
 		    displayField: 'value',
 		    valueField: 'field',
 		    allowBlank: false,
-		    defaultValue: c.scope
+		    triggerAction : 'all',  //it's necessary to view always ALL values, not only the selected one!
+		    value: c.scope
 		});
-
-		var index = 0; // or whatever
-//		this.isPublic.setValue(c.scope);
 
 		
 		this.fileUpload = this.initFileUpload();
@@ -215,8 +230,9 @@ Ext.extend(Sbi.service.SaveDocumentWindowExt, Ext.Window, {
 	    	  columnWidth: 0.4,
 	          border: false,
 	          drawUncheckedChecks: true,
-	          docFunctionalities: c.docFunctionalities
+	          docFunctionalities: this.OBJECT_FUNCTIONALITIES
 	    });
+	    this.treePanel.setCheckedIdNodesArray(this.OBJECT_FUNCTIONALITIES);
 	    
 //	    this.saveDocumentForm =  new Ext.form.FormPanel({
 	    this.saveDocumentForm =  new Ext.Panel({
@@ -248,11 +264,11 @@ Ext.extend(Sbi.service.SaveDocumentWindowExt, Ext.Window, {
 		var docName = this.docName.getValue();
 		var docDescr = this.docDescr.getValue();
 		var docVisibility = this.docVisibility.getValue();
-		var isPublic = this.isPublic.getValue();
-		var functs = this.treePanel.returnCheckedIdNodesArray();
+		var isPublic = this.isPublic.getValue();		
 		var query = this.OBJECT_QUERY;
 		var previewFile =  this.fileNameUploaded;
 		var docCommunity = '';// this.docCommunity.getValue();
+		var functs = this.treePanel.returnCheckedIdNodesArray();
 		
 		if(query!=undefined && query!=null){
 			query = Ext.util.JSON.encode(query);
@@ -310,7 +326,8 @@ Ext.extend(Sbi.service.SaveDocumentWindowExt, Ext.Window, {
 				                        width: 200,
 				                        buttons: Ext.MessageBox.OK
 				                });
-				      			 this.destroy();
+				      			this.fireEvent('syncronizePanel', this);
+				      			this.destroy();
 				      		}  
 			      		} else {
 			      			Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
@@ -339,7 +356,6 @@ Ext.extend(Sbi.service.SaveDocumentWindowExt, Ext.Window, {
 		var uploadButton = this.fileUpload.fileUploadFormPanel.getComponent('fileUploadButton');	
 		uploadButton.setHandler(this.uploadFileButtonHandler,this);
 		var toReturn = new  Ext.FormPanel({
-//		var toReturn = new  Ext.Panel({
 			  id: 'mapPreviewFileForm',
 			  fileUpload: true, // this is a multipart form!!
 			  isUpload: true,

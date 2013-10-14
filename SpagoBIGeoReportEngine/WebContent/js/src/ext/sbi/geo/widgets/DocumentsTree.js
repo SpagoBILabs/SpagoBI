@@ -50,9 +50,9 @@ Sbi.geo.widgets.DocumentsTree = function(config) {
 	});
 		
     var c = Ext.apply({}, config, {
-    	title            : 'Cartelle',//LN('sbi.browser.documentstree.title'),
+//    	title            : 'Cartelle',//LN('sbi.browser.documentstree.title'),
     	bodyStyle		 :'padding:6px 6px 6px 6px; background-color:#FFFFFF',
-        collapsible      : true,
+        collapsible      : false,
         enableDD		 : true,
         animCollapse     : true,
         collapseFirst	 : false,
@@ -97,9 +97,9 @@ Ext.extend(Sbi.geo.widgets.DocumentsTree, Ext.tree.TreePanel, {
 
 	, createnode: function(attr) {
 		var checked = false;
-		if (this.scope.docFunctionalities){
+		if (this.scope.docFunctionalities){	
 			for (var i=0; i<this.scope.docFunctionalities.length; i++){
-				if (this.scope.docFunctionalities[i] === attr.id){
+				if (this.scope.docFunctionalities[i] === attr.id){			
 					checked = true;
 					break;
 				}
