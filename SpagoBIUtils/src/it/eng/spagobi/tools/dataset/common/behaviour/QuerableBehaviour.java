@@ -11,6 +11,8 @@ import it.eng.spagobi.tools.dataset.bo.DataSetParameterItem;
 import it.eng.spagobi.tools.dataset.bo.DataSetParametersList;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
+import it.eng.spagobi.tools.dataset.bo.JDBCHBaseDataSet;
+import it.eng.spagobi.tools.dataset.bo.JDBCHiveDataSet;
 import it.eng.spagobi.tools.dataset.bo.ScriptDataSet;
 import it.eng.spagobi.tools.dataset.common.query.IQueryTransformer;
 import it.eng.spagobi.tools.dataset.exceptions.ParameterDsException;
@@ -20,8 +22,6 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.scripting.SpagoBIScriptManager;
 
 import java.io.File;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -85,7 +85,23 @@ public class QuerableBehaviour extends AbstractDataSetBehaviour {
 			} else {
 				statement = (String)jdbcDataSet.getQuery();
 			}
-		} else {
+		} else if (getTargetDataSet() instanceof JDBCHiveDataSet) {
+			JDBCHiveDataSet jdbcDataSet = (JDBCHiveDataSet)getTargetDataSet();
+			if( StringUtilities.isNotEmpty( jdbcDataSet.getQueryScript() ) ) {
+				statement = (String)jdbcDataSet.getQuery();
+				statement =  applyScript(statement, jdbcDataSet.getQueryScript(), jdbcDataSet.getQueryScriptLanguage());
+			} else {
+				statement = (String)jdbcDataSet.getQuery();
+			}
+		} else if (getTargetDataSet() instanceof JDBCHBaseDataSet) {
+			JDBCHBaseDataSet jdbcDataSet = (JDBCHBaseDataSet)getTargetDataSet();
+			if( StringUtilities.isNotEmpty( jdbcDataSet.getQueryScript() ) ) {
+				statement = (String)jdbcDataSet.getQuery();
+				statement =  applyScript(statement, jdbcDataSet.getQueryScript(), jdbcDataSet.getQueryScriptLanguage());
+			} else {
+				statement = (String)jdbcDataSet.getQuery();
+			}
+		}  else {
 			// maybe better to delete getQuery from IDataSet
 			//anto statement = (String)getTargetDataSet().getQuery();
 		}
