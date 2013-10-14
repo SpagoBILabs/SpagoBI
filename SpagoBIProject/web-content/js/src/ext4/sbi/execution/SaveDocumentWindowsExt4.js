@@ -397,7 +397,7 @@ Ext.define('Sbi.execution.SaveDocumentWindowExt4', {
 		params.operation = 'UPLOAD';
 		params.directory = this.directory || '';
 		params.maxSize = this.maxSizeFile || '';
-		params.extFiles = this.extFiles || '';
+		params.extFiles = Ext.JSON.encode(this.extFiles) || '';
  
 		Sbi.debug("[PreviewFileWizard.uploadFileButtonHandler]: form is valid [" + form.isValid() + "]");		
 		this.fileNameUploaded = Ext.getCmp('fileUploadField').getValue();
@@ -410,7 +410,7 @@ Ext.define('Sbi.execution.SaveDocumentWindowExt4', {
 							// main URL; they must POST
 							// parameters
 			,
-			params : params,
+			params :  params,
 			waitMsg : LN('sbi.generic.wait'),
 			success : function(form, action) {
 				Ext.MessageBox.alert('Success!','File Uploaded to the Server');
