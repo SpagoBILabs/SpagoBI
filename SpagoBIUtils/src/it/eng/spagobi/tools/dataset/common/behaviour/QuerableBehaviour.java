@@ -102,8 +102,9 @@ public class QuerableBehaviour extends AbstractDataSetBehaviour {
 				statement = (String)jdbcDataSet.getQuery();
 			}
 		}  else {
-			// maybe better to delete getQuery from IDataSet
-			//anto statement = (String)getTargetDataSet().getQuery();
+			logger.error("Type [" + getTargetDataSet().getClass().getName() + "] of the dataset [" + getTargetDataSet().getName() + "] is not managed! \n"+
+						 "Is impossible to define the dataset's statemant! ");
+			Assert.assertNotNull(statement, "Querable dataset statment cannot be null");
 		}
 		return statement;
 	}
