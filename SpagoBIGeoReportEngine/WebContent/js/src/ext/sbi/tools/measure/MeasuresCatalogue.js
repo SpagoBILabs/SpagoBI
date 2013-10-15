@@ -28,21 +28,21 @@ Sbi.geo.tools.MeasureCatalogue = function(config) {
 	
 	var tb =  this.buildToolbar(this);
 	var expander = this.buildexpander();
-	var sm = new Ext.grid.CheckboxSelectionModel({SingleSelect:false, hideable:true});
-	var cm = this.buildColumns(sm, expander);
-	
-	var c = ({
-		store: this.buildStore(),
-		view: new Ext.grid.GroupingView({
-			forceFit:true,
-			groupTextTpl: '{text} ({[values.rs.length]} {[values.rs.length > 1 ? "Items" : "Item"]})'
-		}),
-		
-		tbar: tb,
-		cm: cm,
-		sm: new Ext.grid.CheckboxSelectionModel({SingleSelect:false}),
-		plugins: expander
-	});
+	 var sm = new Ext.grid.CheckboxSelectionModel({SingleSelect:false, grid:this});
+	 var cm = this.buildColumns(sm, expander);
+	 
+	 var c = ({
+	  store: this.buildStore(),
+	  view: new Ext.grid.GroupingView({
+	   forceFit:true,
+	   groupTextTpl: '{text} ({[values.rs.length]} {[values.rs.length > 1 ? "Items" : "Item"]})'
+	  }),
+	  
+	  tbar: tb,
+	  cm: cm,
+	  sm: sm,
+	  plugins: expander
+	 });
 
 	this.addEvents('storeLoad');
 
