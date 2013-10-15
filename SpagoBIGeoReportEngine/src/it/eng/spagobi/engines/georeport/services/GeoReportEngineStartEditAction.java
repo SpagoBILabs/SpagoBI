@@ -118,7 +118,7 @@ public class GeoReportEngineStartEditAction extends AbstractEngineStartServlet {
 			//template.put("feautreInfo", buildFeatureInfo(dataSet));
 			//template.put("indicators", buildIndicators(dataSet));
 				
-			Properties level = GeoReportEngineConfig.getInstance().getLevels().get(0);
+			Properties level = GeoReportEngineConfig.getInstance().getLevels().get(1);
 			String levelName = level.getProperty("name");
 			
 			//template.put("businessId", businessId);
