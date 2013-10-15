@@ -202,7 +202,7 @@ Ext.extend(Sbi.geo.tools.MeasureCatalogue, Ext.grid.GridPanel, {
 							if(response.responseText.indexOf("error.mesage.description")>=0){
 								Sbi.exception.ExceptionHandler.handleFailure(response);
 							}else{
-								alert("Join ok.. look at the responce");
+								//alert("Join ok.. look at the responce");
 								//Sbi.debug(response.responseText);
 								var r = Ext.util.JSON.decode(response.responseText);
 						
