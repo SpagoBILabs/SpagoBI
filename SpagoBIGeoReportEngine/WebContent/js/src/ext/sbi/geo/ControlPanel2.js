@@ -207,8 +207,8 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 		if(elPermissions1 && elPermissions1 !== null) {
 			elPermissions1.on('click', function() {
 				//alert("permissions-1 "+ el.getValue());
-				var el1 =  Ext.get("div-perm1");
-				var el2 =  Ext.get("div-perm2");
+				var el1 =  Ext.get("div-private");
+				var el2 =  Ext.get("div-public");
 				Ext.fly(el2).removeClass('checked');
 				Ext.fly(el1).addClass('checked');
 			},this);
@@ -220,8 +220,8 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 		var elPermissions2 = Ext.get("permissions-2");
 		if(elPermissions2 && elPermissions2 !== null) {
 			elPermissions2.on('click', function() {				
-				var el1 =  Ext.get("div-perm1");
-				var el2 =  Ext.get("div-perm2");
+				var el1 =  Ext.get("div-private");
+				var el2 =  Ext.get("div-public");
 				Ext.fly(el1).removeClass('checked');
 				Ext.fly(el2).addClass('checked');
 			},this);
@@ -380,21 +380,21 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 		
 			if (Sbi.config.docIsPublic == 'false'){
 				toReturn += '' +
-					'<div  id="div-perm1" class="radio-option checked">' +
+					'<div  id="div-private" class="radio-option checked">' +
 			        	'<input id="scopePrivate" type="radio" name="permissions" value="0" checked />' +
 			            '<label for="permissions-1">Privata</label>' +
 		            '</div>' +
-		            '<div  id="div-perm2" class="radio-option ">' +
+		            '<div  id="div-public" class="radio-option ">' +
 			        	'<input id="scopePublic" type="radio" name="permissions" value="1" />' +
 			            '<label for="permissions-2">&nbsp;Pubblica</label>' +
 			        '</div>';
 			}else{
 				toReturn += '' +
-					'<div id="div-perm1" class="radio-option ">' +
+					'<div id="div-private" class="radio-option ">' +
 			        	'<input id="scopePrivate" type="radio" name="permissions" value="0"  />' +
 			            '<label for="permissions-1">Privata</label>' +
 		            '</div>' +
-		            '<div id="div-perm2" class="radio-option checked">' +
+		            '<div id="div-public" class="radio-option checked">' +
 			        	'<input id="scopePublic" type="radio" name="permissions" value="1" checked />' +
 			            '<label for="permissions-2">&nbsp;Pubblica</label>' +
 			        '</div>';
@@ -684,10 +684,26 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 		}
 	
 	, onSyncronizePanel: function(p) {
-		Ext.get('docName').value = p.docName.getEl().value;
-		Ext.get('docDesc').value = p.docDescr.getEl().value;
-		Ext.get('scopePublic').value = p.isPublic.getEl().value;	
-		this.doLayout();
+		Ext.get('docName').value = p.docName.getEl().getValue();
+		Ext.get('docDesc').text = p.docDescr.getEl().getValue();
+//		Ext.get('scopePublic').value = p.isPublic.getEl().value;	
+
+		this.setIsPublicValue(p.isPublic.getEl().getValue());
+
+	}
+	
+	, setIsPublicValue: function(v){
+		
+		var el1 =  Ext.get("div-private");
+		var el2 =  Ext.get("div-public");
+		
+		if (Ext.fly(el1).hasClass('checked')){
+			Ext.fly(el1).removeClass('checked');
+			Ext.fly(el2).addClass('checked');
+		}else{
+			Ext.fly(el2).removeClass('checked');
+			Ext.fly(el1).addClass('checked');	
+		}
 	}
 	
 		
