@@ -163,7 +163,7 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 					    '<div id="panel" class="panel">' +
 					    	'<form class="panel-form" action="#" method="post">' +
 					            '<div class="scroll" id="scroll">' +
-					               '<div class="scroll-content">' +  
+					               '<div class="scroll-content" id="containerPanel">' +  
 					               		this.getMapTypeDiv() + 			
 					               		this.getIndicatorsDiv() +
 					                    this.getPermissionDiv() + 
@@ -470,7 +470,7 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 		if ( this.thematizerControlPanel.indicators != null &&  this.thematizerControlPanel.indicators !== undefined){
 			
 			var toReturn = '' +
-			'<div class="indicators">' +
+			'<div class="indicators" id="indicatorsDiv">' +
 		    	'<h2>Indicatori</h2>' +
 		        '<ul id="ul-indicators" class="group">';		
 				for(var i=0; i< this.thematizerControlPanel.indicators.length; i++){
@@ -604,6 +604,55 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 
 		}
 	}
+	, onStoreLoad: function(measureCatalogue, options, store, meta) {
+		this.thematizerControlPanel.thematizer.setData(store, meta);
+		this.thematizerControlPanel.storeType = 'virtualStore';
+		var s = "";
+		for(o in options) s += o + ";"
+		Sbi.debug("[ControlPanel2.onStoreLoad]: options.url = " + options.url);
+		Sbi.debug("[ControlPanel2.onStoreLoad]: options.params = " + Sbi.toSource(options.params));
+		this.thematizerControlPanel.storeConfig = {
+			url: options.url
+			, params: options.params
+		};
+		
+		this.refreshIndicators();
+	}
+	
+	//refresh indicatorsDiv
+	, refreshIndicators: function(){
+		var containerPanel = Ext.get("containerPanel").dom;
+		var indicatorsDiv = Ext.get("indicatorsDiv").dom;
+		//remove old indicators div
+		indicatorsDiv.parentNode.removeChild(indicatorsDiv); 
+		//create new indicators div
+		indicatorsDiv = this.getIndicatorsDiv();
+		var dh = Ext.DomHelper;	
+		dh.insertBefore(containerPanel.children[2],indicatorsDiv);
+		
+		//Re-add handler on addIndicatorButton
+		var elAddIndicator = Ext.get("addIndicatorButton");
+		if(elAddIndicator && elAddIndicator !== null) {
+			elAddIndicator.on('click', function() {
+				this.showMeasureCatalogueWindow();
+			},this);
+			Sbi.debug("[ControlPanel2.refreshIndicators]: Registered handler on [addIndicatorButton] ");
+		} else {
+			Sbi.debug("[ControlPanel2.refreshIndicators]: Impossible to find element [addIndicatorButton] ");
+			alert('Impossible to find element [addIndicatorButton]');
+		}		
+		
+		//Activate first indicator as default
+		var indicatorsUl = Ext.get('ul-indicators').dom.childNodes;
+		if ((indicatorsUl[0] != null) && (indicatorsUl[0] !== undefined)){
+			var elementId = indicatorsUl[0].id;
+			indicatorsUl[0].className = 'disabled';
+			var indEl = this.thematizerControlPanel.indicators[0];
+			this.indicatorSelected(elementId, indEl[0]);
+		}
+		
+	}
+	
 	, showMeasureCatalogueWindow: function(){
 		if(this.measureCatalogueWindow==null){
 			var measureCatalogue = new Sbi.geo.tools.MeasureCatalogue();
