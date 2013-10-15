@@ -214,7 +214,7 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 			toReturn.setVisible(props.getBoolean("visibility"));
 			toReturn.setPublicDoc(props.getBoolean("isPublic"));
 			if (!"".equals(props.getString("previewFile"))) 
-				toReturn.setPreviewFile(props.getString("previewFile"));
+				toReturn.setPreviewFile(props.getString("previewFile").replace("\"", ""));
 			//syncronize the folders
 			toReturn = setFolders(obj, folders);
 			
