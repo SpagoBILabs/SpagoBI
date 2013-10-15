@@ -47,7 +47,7 @@ Sbi.geo.ControlPanel2 = function(config) {
 	Ext.apply(this, c);
 	
 	// init events...
-//	this.addEvents();
+	//	this.addEvents();
 	
 	this.initServices();
 	this.init();
@@ -81,7 +81,28 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
      * @property {Array} services
      * This array contains all the services invoked by this class
      */
-	  services: null
+	services: null
+	  
+	, thematizationOptions: [{
+			id: 'map-zone'
+			, label: 'Mappa a <span>zone</span>'
+			, className: 'map-zone'
+		}, {
+			id: 'map-point'
+				, label: 'Mappa <span>puntiforme</span>'
+				, className: 'map-point'
+		}/*, {
+			id: 'map-comparation'
+			, label: 'Mappa di <span>comparazione</span>'
+			, className: 'map-comparation'
+		}, {
+			id: 'map-heat'
+			, label: 'Mappa di <span>calore</span>'
+			, className: 'map-heat'
+		}*/
+	]
+
+	, selectedThematizationOptionId: 'map-zone'
 	
 	//CONSTANTS
 	, DEFAULT_NAME: 'New Map name...'
@@ -135,14 +156,9 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 	 *    - none
 	 */
 	, initServices: function() {
-//		var params = {LIGHT_NAVIGATOR_DISABLED: 'TRUE'};
-//		
-//		this.services = this.services || new Array();
-//		
-//		this.services['exampleService'] = this.services['exampleService'] || Sbi.config.serviceRegistry.getServiceUrl({
-//			serviceName: 'EXAMPLE_ACTION'
-//			, baseParams: params
-//		});	
+		Sbi.debug("[ControlPanel2.initServices]: IN");
+		Sbi.debug("[ControlPanel2.initServices]: there are no service to initialize");
+		Sbi.debug("[ControlPanel2.initServices]: OUT");	
 	}
 
 
@@ -152,9 +168,16 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 	 * Initialize the GUI
 	 */
 	, init: function() {
+		Sbi.debug("[ControlPanel2.init]: IN");
+		
 		this.isFinalUser = (Sbi.template.role.indexOf('user') >= 0);
+		Sbi.debug("[ControlPanel2.init]: variable isFinalUser is equal to [" + this.isFinalUser + "]");
+		
 		this.isOwner = (Sbi.config.userId === Sbi.config.docAuthor)?true:false;
+		Sbi.debug("[ControlPanel2.init]: variable isOwner is equal to [" + this.isOwner + "]");
+		
 		this.isInsertion = (Sbi.config.docLabel === '')?true:false;
+		Sbi.debug("[ControlPanel2.init]: variable isInsertion is equal to [" + this.isInsertion + "]");
 
 		this.innerPanel = new Ext.Panel({
 			layout: 'fit', 
@@ -177,196 +200,79 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 		this.innerPanel.on('render', function() {			
 			this.initInnerPannelCallbacks.defer(2000, this);
 		}, this);
+		
+		Sbi.debug("[ControlPanel2.init]: OUT");
 	}
 	
-	
-	, initInnerPannelCallbacks: function() {
-		var thisPanel = this;
-		//alert('initInnerPannelCallbacks');
-		var elAuthorBtn = Ext.get("authorButton");
-		if(elAuthorBtn && elAuthorBtn !== null) {
-			elAuthorBtn.on('click', function() {
-				//alert('xxx');
-			});
-			//alert('Registered handler on element [authorButton]');
-		} else {
-			//alert('Impossible to find element [authorButton]');
-		}
+	, getMapTypeDiv: function(){
+		var mapName = (Sbi.config.docName !== "")?Sbi.config.docName: this.DEFAULT_NAME;
+		var mapDescription = (Sbi.config.docDescription !== "")?Sbi.config.docDescription: this.DEFAULT_DESCRIPTION;
 		
-		var elFeedbackMail = Ext.get("feedback_mail");
-		if(elFeedbackMail && elFeedbackMail !== null) {
-			elFeedbackMail.on('click', function() {
-				this.showFeedbackWindow();
-			},this);
-			//alert('Registered handler on element [feedback_mail]');
-		} else {
-			//alert('Impossible to find element [feedback_mail]');
-		}
+		var toReturn = '' +
+		 '<div class="map-description">' +
+	         '<input  type="text" id="docName" class="mapTitle" value="' + mapName + '" /> '+
+	         '<textarea rows="2" cols="40" id="docDesc" class="mapDescription" />' + mapDescription + ' </textarea>'+	         
+	 		'<p id="author" class="published">Pubblicata da <a id="authorButton" class="authorButton" href="#">' + Sbi.config.docAuthor + '</a> <span class="separator">/</span> <a id="feedback_mail" href="#" class="feedback">invia feedback</a></p>' +
+	     '</div>' +
+	     '<ul id="mapType" class="map-type">' + 
+	     	this.getThematizationOptionsList() +
+//	     	'<li id="li-map-zone" class="map-zone active"><a href="#">Mappa a <span>zone</span><span class="arrow"></span></a></li>' +
+//	        '<li id="li-map-comparation" class="map-comparation"><a  href="#">Mappa di <span>comparazione</span></a></li>' +
+//	        '<li id="li-map-point" class="map-point"><a href="#">Mappa <span>puntiforme</span></a></li>' +
+//	        '<li id="li-map-heat" class="map-heat last"><a href="#">Mappa di <span>calore</span></a></li>' +
+	     '</ul>' ;
 		
-		var elPermissions1 = Ext.get("permissions-1");
-		if(elPermissions1 && elPermissions1 !== null) {
-			elPermissions1.on('click', function() {
-				//alert("permissions-1 "+ el.getValue());
-				var el1 =  Ext.get("div-private");
-				var el2 =  Ext.get("div-public");
-				Ext.fly(el2).removeClass('checked');
-				Ext.fly(el1).addClass('checked');
-			},this);
-			//alert('Registered handler on element [permission-1]');
-		} else {
-			//alert('Impossible to find element [permission-1]');
-		}
-		
-		var elPermissions2 = Ext.get("permissions-2");
-		if(elPermissions2 && elPermissions2 !== null) {
-			elPermissions2.on('click', function() {				
-				var el1 =  Ext.get("div-private");
-				var el2 =  Ext.get("div-public");
-				Ext.fly(el1).removeClass('checked');
-				Ext.fly(el2).addClass('checked');
-			},this);
-			//alert('Registered handler on element [permission-2]');
-		} else {
-			//alert('Impossible to find element [permission-2]');
-		}		
-		var flyUlEl = Ext.select('.map-type');
-		var elMapZone = Ext.get("li-map-zone");
-		if(elMapZone && elMapZone !== null) {
-			elMapZone.on('click', function() {
-					this.refreshList(elMapZone, flyUlEl);					
-			}, thisPanel);
-		}				
-		var elMapComparation = Ext.get("li-map-comparation");
-		
-		if(elMapComparation && elMapComparation !== null) {
-			elMapComparation.on('click', function() {						
-					this.refreshList(elMapComparation, flyUlEl);					
-			}, thisPanel);
-		}
-		var elMapPoint = Ext.get("li-map-point");
-		if(elMapPoint && elMapPoint !== null) {
-			elMapPoint.on('click', function() {
-					this.refreshList(elMapPoint, flyUlEl);					
-			}, thisPanel);
-		}
-		var elMapHeat = Ext.get("li-map-heat");
-		if(elMapHeat && elMapHeat !== null) {
-			elMapHeat.on('click', function() {
-					this.refreshList(elMapHeat, flyUlEl);					
-			}, thisPanel);
-		}
-		
-		var closeMapH = null;
-		var openMapH = null;
-		var elMapType = Ext.get("mapType");	
-		if(elMapType && elMapType !== null) {
-			elMapType.on('click', function() {				
-				
-				var el1 =  Ext.get("mapType");
-				
-				if (closeMapH == null){
-					closeMapH =  Ext.fly(el1).getHeight();
-					openMapH = closeMapH*4;
-				}
-				if (Ext.fly(el1).hasClass('open')){
-					Ext.fly(el1).dom.style.height = closeMapH-1; 
-					Ext.fly(el1).removeClass('open');
-				}else{
-					Ext.fly(el1).dom.style.height = openMapH; 
-					Ext.fly(el1).addClass('open');
-				}
-			});
-		} else {
-			//alert('Impossible to find element [maptype]');
-		}
-		
-		var elBtnNewMap = Ext.get("btn-new-map");
-		if(elBtnNewMap && elBtnNewMap !== null) {
-			elBtnNewMap.on('click', function() {
-					this.showSaveWindow(true);
-			}, this);
-		}
-		
-		var elAddIndicator = Ext.get("addIndicatorButton");
-		if(elAddIndicator && elAddIndicator !== null) {
-			elAddIndicator.on('click', function() {
-				this.showMeasureCatalogueWindow();
-			},this);
-			//alert('Registered handler on element [feedback_mail]');
-		} else {
-			alert('Impossible to find element [addIndicatorButton]');
-		}
-		
-		
-		var elBtnModifyMap = Ext.get("btn-modify-map");
-		if(elBtnModifyMap && elBtnModifyMap !== null) {
-			elBtnModifyMap.on('click', function() {					
-					this.showSaveWindow(false);
-			}, this);
-		}
-		
-		//Initialize thematizerControlPanel form state
-		this.thematizerControlPanel.on('ready', function(){
-			Sbi.debug("[AnalysisControlPanel]: [ready] event fired");
-			this.setAnalysisConf( this.thematizerControlPanel.analysisConf );
-		}, this);		
+		return toReturn;
 	}
 	
-	// -----------------------------------------------------------------------------------------------------------------
-    // public methods
-	// -----------------------------------------------------------------------------------------------------------------
-	
-	// -----------------------------------------------------------------------------------------------------------------
-    // private methods
-	// -----------------------------------------------------------------------------------------------------------------
-	, showFeedbackWindow: function(){
-		if(this.feedbackWindow != null){			
-			this.feedbackWindow.destroy();
-			this.feedbackWindow.close();
+	, getIndicatorsDiv: function(){
+		if ( this.thematizerControlPanel.indicators != null &&  this.thematizerControlPanel.indicators !== undefined){
+			
+			var toReturn = '' +
+			'<div class="indicators" id="indicatorsDiv">' +
+		    	'<h2>Indicatori</h2>' +
+		        '<ul id="ul-indicators" class="group">';		
+				for(var i=0; i< this.thematizerControlPanel.indicators.length; i++){
+					var indEl = this.thematizerControlPanel.indicators[i];
+					var clsName = (i==0)?'first':'disabled';
+					toReturn += ''+
+					'<li class="'+clsName+'" id="indicator'+i+'"><span class="button">'+
+						'<a href="#" class="tick" onclick="javascript:Ext.getCmp(\'controlPanel\').indicatorSelected(\'indicator'+i+'\',\''+indEl[0]+'\');"></a>'+ indEl[1]+
+		            '</li>' ;	
+				}
+		       toReturn +=''+
+		       	'</ul>' +
+		        '<span id="addIndicatorButton" class="btn-2">Aggiungi</span>' +
+		    '</div>';
+		} else {
+			var toReturn = '' +
+			'<div class="indicators" id="indicatorsDiv">' +
+		    	'<h2>Indicatori</h2>' +
+		        '<ul id="ul-indicators" class="group">' +		
+		       	'</ul>' +
+		        '<span id="addIndicatorButton" class="btn-2">Aggiungi</span>' +
+		    '</div>';
 		}
 		
-		this.messageField = new Ext.form.TextArea({
-			fieldLabel: 'Message text',
-            width: '100%',
-            name: 'message',
-            maxLength: 2000,
-            height: 100,
-            autoCreate: {tag: 'textArea', type: 'text',  autocomplete: 'off', maxlength: '2000'}
-		});
-		
-		this.sendButton = new Ext.Button({
-			xtype: 'button',
-			handler: function() {
-				var msgToSend = this.messageField.getValue();
-				sendMessage({'label': Sbi.config.docLabel, 'msg': msgToSend},'sendFeedback');
-       		},
-       		scope: this ,
-       		text:'Send',
-	        width: '100%'
-		});
-
-		
-		var feedbackWindowPanel = new Ext.form.FormPanel({
-			layout: 'form',
-			defaults: {
-	            xtype: 'textfield'
-	        },
-
-	        items: [this.messageField,this.sendButton]
-		});
-		
-		
-		this.feedbackWindow = new Ext.Window({
-            layout      : 'fit',
-	        width		: 700,
-	        height		: 170,
-            closeAction :'destroy',
-            plain       : true,
-            title		: 'Send Feedback',
-            items       : [feedbackWindowPanel]
-		});
-		
-		this.feedbackWindow.show();
+		return toReturn;
+	}
+	
+	, getThematizationOptionsList: function() {
+		var toReturn = '';
+		for(var i = 0; i < this.thematizationOptions.length; i++) {
+			var cName = this.thematizationOptions[i].className;
+			var expandButton = '';
+			if(i === 0) {
+				cName += ' active';
+				expandButton ='<span class="arrow"></span>';
+			} else if(i === this.thematizationOptions.length-1) {
+				cName += ' last';
+			}
+			toReturn += '<li id="li-' + this.thematizationOptions[i].id + '" class="' + cName + '">' + 
+							'<a href="#">' + this.thematizationOptions[i].label + '' + expandButton + '</a>' + 
+						'</li>';
+		}
+		return toReturn;
 	}
 	
 	, getPermissionDiv: function(){
@@ -444,51 +350,215 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 	}
 	
 	
-	, getMapTypeDiv: function(){
-		var name = (Sbi.config.docName !== "")?Sbi.config.docName:this.DEFAULT_NAME;
-		var desc = (Sbi.config.docDescription !== "")?Sbi.config.docDescription:this.DEFAULT_DESCRIPTION;
+
+	
+
+	
+	
+	, initInnerPannelCallbacks: function() {
+		var thisPanel = this;
+		//alert('initInnerPannelCallbacks');
+		var elAuthorBtn = Ext.get("authorButton");
+		if(elAuthorBtn && elAuthorBtn !== null) {
+			elAuthorBtn.on('click', function() {
+				//alert('xxx');
+			});
+			//alert('Registered handler on element [authorButton]');
+		} else {
+			//alert('Impossible to find element [authorButton]');
+		}
 		
-		var toReturn = '' +
-		 '<div class="map-description">' +
-//	         '<h1 class="titleButton">'+Sbi.config.docName+'</h1>' +
-	         '<input  type="text" id="docName" class="mapTitle" value="'+name+'" /> '+
-//	         '<p>'+Sbi.config.docDescription+'</p>' +
-	         '<textarea rows="2" cols="40" id="docDesc" class="mapDescription" />'+desc+' </textarea>'+	         
-	 		'<p id="author" class="published">Pubblicata da <a id="authorButton" class="authorButton" href="#">'+Sbi.config.docAuthor+'</a> <span class="separator">/</span> <a id="feedback_mail" href="#" class="feedback">invia feedback</a></p>' +
-	     '</div>' +
-	     '<ul id="mapType" class="map-type">' +
-	     	'<li id="li-map-zone" class="map-zone active"><a href="#">Mappa a <span>zone</span><span class="arrow"></span></a></li>' +
-	        '<li id="li-map-comparation" class="map-comparation"><a  href="#">Mappa di <span>comparazione</span></a></li>' +
-	        '<li id="li-map-point" class="map-point"><a href="#">Mappa <span>puntiforme</span></a></li>' +
-	        '<li id="li-map-heat" class="map-heat last"><a href="#">Mappa di <span>calore</span></a></li>' +
-	     '</ul>' ;
+		var elFeedbackMail = Ext.get("feedback_mail");
+		if(elFeedbackMail && elFeedbackMail !== null) {
+			elFeedbackMail.on('click', function() {
+				this.showFeedbackWindow();
+			},this);
+			//alert('Registered handler on element [feedback_mail]');
+		} else {
+			//alert('Impossible to find element [feedback_mail]');
+		}
 		
-		return toReturn;
+		var elPermissions1 = Ext.get("permissions-1");
+		if(elPermissions1 && elPermissions1 !== null) {
+			elPermissions1.on('click', function() {
+				//alert("permissions-1 "+ el.getValue());
+				var el1 =  Ext.get("div-private");
+				var el2 =  Ext.get("div-public");
+				Ext.fly(el2).removeClass('checked');
+				Ext.fly(el1).addClass('checked');
+			},this);
+			//alert('Registered handler on element [permission-1]');
+		} else {
+			//alert('Impossible to find element [permission-1]');
+		}
+		
+		var elPermissions2 = Ext.get("permissions-2");
+		if(elPermissions2 && elPermissions2 !== null) {
+			elPermissions2.on('click', function() {				
+				var el1 =  Ext.get("div-private");
+				var el2 =  Ext.get("div-public");
+				Ext.fly(el1).removeClass('checked');
+				Ext.fly(el2).addClass('checked');
+			},this);
+			//alert('Registered handler on element [permission-2]');
+		} else {
+			//alert('Impossible to find element [permission-2]');
+		}		
+
+		
+		
+		this.initMapThematizationTypeCallbacks();
+		
+		
+		var elBtnNewMap = Ext.get("btn-new-map");
+		if(elBtnNewMap && elBtnNewMap !== null) {
+			elBtnNewMap.on('click', function() {
+					this.showSaveWindow(true);
+			}, this);
+		}
+		
+		var elAddIndicator = Ext.get("addIndicatorButton");
+		if(elAddIndicator && elAddIndicator !== null) {
+			elAddIndicator.on('click', function() {
+				this.showMeasureCatalogueWindow();
+			},this);
+			//alert('Registered handler on element [feedback_mail]');
+		} else {
+			alert('Impossible to find element [addIndicatorButton]');
+		}
+		
+		
+		var elBtnModifyMap = Ext.get("btn-modify-map");
+		if(elBtnModifyMap && elBtnModifyMap !== null) {
+			elBtnModifyMap.on('click', function() {					
+					this.showSaveWindow(false);
+			}, this);
+		}
+		
+		//Initialize thematizerControlPanel form state
+		this.thematizerControlPanel.on('ready', function(){
+			Sbi.debug("[AnalysisControlPanel]: [ready] event fired");
+			this.setAnalysisConf( this.thematizerControlPanel.analysisConf );
+		}, this);		
 	}
 	
-	, getIndicatorsDiv: function(){
-		if ( this.thematizerControlPanel.indicators != null &&  this.thematizerControlPanel.indicators !== undefined){
-			
-			var toReturn = '' +
-			'<div class="indicators" id="indicatorsDiv">' +
-		    	'<h2>Indicatori</h2>' +
-		        '<ul id="ul-indicators" class="group">';		
-				for(var i=0; i< this.thematizerControlPanel.indicators.length; i++){
-					var indEl = this.thematizerControlPanel.indicators[i];
-					var clsName = (i==0)?'first':'disabled';
-					toReturn += ''+
-					'<li class="'+clsName+'" id="indicator'+i+'"><span class="button">'+
-						'<a href="#" class="tick" onclick="javascript:Ext.getCmp(\'controlPanel\').indicatorSelected(\'indicator'+i+'\',\''+indEl[0]+'\');"></a>'+ indEl[1]+
-		            '</li>' ;	
+	, initMapThematizationTypeCallbacks: function() {
+		var thisPanel = this;
+		
+		var flyUlEl = Ext.select('.map-type');
+		
+		var elMapZone = Ext.get("li-map-zone");
+		if(elMapZone && elMapZone !== null) {
+			elMapZone.on('click', function() {
+					this.refreshList(elMapZone, flyUlEl);					
+			}, thisPanel);
+		}				
+		
+		var elMapComparation = Ext.get("li-map-comparation");
+		if(elMapComparation && elMapComparation !== null) {
+			elMapComparation.on('click', function() {						
+					this.refreshList(elMapComparation, flyUlEl);					
+			}, thisPanel);
+		}
+		
+		var elMapPoint = Ext.get("li-map-point");
+		if(elMapPoint && elMapPoint !== null) {
+			elMapPoint.on('click', function() {
+					this.refreshList(elMapPoint, flyUlEl);					
+			}, thisPanel);
+		}
+		
+		var elMapHeat = Ext.get("li-map-heat");
+		if(elMapHeat && elMapHeat !== null) {
+			elMapHeat.on('click', function() {
+					this.refreshList(elMapHeat, flyUlEl);					
+			}, thisPanel);
+		}
+		
+		var closeMapH = null;
+		var openMapH = null;
+		var elMapType = Ext.get("mapType");	
+		if(elMapType && elMapType !== null) {
+			elMapType.on('click', function() {				
+				
+				var el1 =  Ext.get("mapType");
+				
+				if (closeMapH == null){
+					closeMapH =  Ext.fly(el1).getHeight();
+					openMapH = closeMapH * this.thematizationOptions.length;
 				}
-		       toReturn +=''+
-		       	'</ul>' +
-		        '<span id="addIndicatorButton" class="btn-2">Aggiungi</span>' +
-		    '</div>';
-			
-			return toReturn;
+				if (Ext.fly(el1).hasClass('open')){
+					Ext.fly(el1).dom.style.height = closeMapH-1; 
+					Ext.fly(el1).removeClass('open');
+				}else{
+					Ext.fly(el1).dom.style.height = openMapH; 
+					Ext.fly(el1).addClass('open');
+				}
+			}, thisPanel);
+		} else {
+			//alert('Impossible to find element [maptype]');
 		}
 	}
+	
+	
+	// -----------------------------------------------------------------------------------------------------------------
+    // public methods
+	// -----------------------------------------------------------------------------------------------------------------
+	
+	// -----------------------------------------------------------------------------------------------------------------
+    // private methods
+	// -----------------------------------------------------------------------------------------------------------------
+	, showFeedbackWindow: function(){
+		if(this.feedbackWindow != null){			
+			this.feedbackWindow.destroy();
+			this.feedbackWindow.close();
+		}
+		
+		this.messageField = new Ext.form.TextArea({
+			fieldLabel: 'Message text',
+            width: '100%',
+            name: 'message',
+            maxLength: 2000,
+            height: 100,
+            autoCreate: {tag: 'textArea', type: 'text',  autocomplete: 'off', maxlength: '2000'}
+		});
+		
+		this.sendButton = new Ext.Button({
+			xtype: 'button',
+			handler: function() {
+				var msgToSend = this.messageField.getValue();
+				sendMessage({'label': Sbi.config.docLabel, 'msg': msgToSend},'sendFeedback');
+       		},
+       		scope: this ,
+       		text:'Send',
+	        width: '100%'
+		});
+
+		
+		var feedbackWindowPanel = new Ext.form.FormPanel({
+			layout: 'form',
+			defaults: {
+	            xtype: 'textfield'
+	        },
+
+	        items: [this.messageField,this.sendButton]
+		});
+		
+		
+		this.feedbackWindow = new Ext.Window({
+            layout      : 'fit',
+	        width		: 700,
+	        height		: 170,
+            closeAction :'destroy',
+            plain       : true,
+            title		: 'Send Feedback',
+            items       : [feedbackWindowPanel]
+		});
+		
+		this.feedbackWindow.show();
+	}
+	
+	
 	
 	, refreshList: function(el, list){
 		if (el.id != list.item(0).first().id){
