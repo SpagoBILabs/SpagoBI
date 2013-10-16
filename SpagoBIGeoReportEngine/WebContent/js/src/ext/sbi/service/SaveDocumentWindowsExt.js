@@ -142,24 +142,6 @@ Ext.extend(Sbi.service.SaveDocumentWindowExt, Ext.Window, {
             checked   : c.visibility || true
            });
 	
-		// The data store holding the communities
-//		var storeComm = new Ext.data.Store({
-//			proxy:{
-//				type: 'rest',
-//				url : this.services['getCommunities'],
-//				reader: {
-//					type: 'json',
-//					root: 'root'
-//				}
-//			},
-//			fields: [
-//			         "communityId",
-//			         "name",
-//			         "description",
-//			         "owner",
-//			         "functCode"],
-//			         autoLoad: true
-//		});
 		var storeComm = new Ext.data.Store({
 			proxy:new Ext.data.HttpProxy({
 				type: 'json',
@@ -181,7 +163,7 @@ Ext.extend(Sbi.service.SaveDocumentWindowExt, Ext.Window, {
 		
 		this.docCommunity = new Ext.form.ComboBox({
 		    fieldLabel: LN('sbi.geo.controlpanel.savewin.community') ,
-		    queryMode: 'local',
+		    mode: 'local',
 		    store: storeComm,
 		    displayField: 'name',
 		    valueField: 'functCode',
