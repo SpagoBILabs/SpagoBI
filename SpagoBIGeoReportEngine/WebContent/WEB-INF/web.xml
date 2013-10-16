@@ -154,9 +154,16 @@
 	</servlet>
 	
 	<servlet>
-      <servlet-name>MapOl</servlet-name>
+    	<servlet-name>MapOl</servlet-name>
       <servlet-class>
 			it.eng.spagobi.engines.georeport.services.MapOlAction
+		</servlet-class>
+	</servlet>
+	
+	<servlet>
+		<servlet-name>GetHierarchyLevelMeta</servlet-name>
+        <servlet-class>
+			it.eng.spagobi.engines.georeport.services.GetHierachyLevelMetaAction
 		</servlet-class>
 	</servlet>
 	  
@@ -225,6 +232,11 @@
   	<servlet-mapping>
     	<servlet-name>MapOl</servlet-name>
     	<url-pattern>/MapOl</url-pattern>
+  	</servlet-mapping>
+  	
+  	<servlet-mapping>
+    	<servlet-name>GetHierarchyLevelMeta</servlet-name>
+    	<url-pattern>/GetHierarchyLevelMeta</url-pattern>
   	</servlet-mapping>
   	
     <servlet-mapping>

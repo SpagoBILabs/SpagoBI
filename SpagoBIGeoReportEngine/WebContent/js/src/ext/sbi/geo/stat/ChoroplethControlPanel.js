@@ -77,10 +77,10 @@ Sbi.geo.stat.ChoroplethControlPanel = Ext.extend(Ext.FormPanel, {
     , format: null
 
     /**
-	 * The URL to the web service. If none is provided, the features
+	 * The service name to call in order to load target layer. If none is provided, the features
      * found in the provided vector layer will be used.
 	 */
-    , url: null
+    , loadLayerServiceName: null
 
     /**
 	 * @property {Boolean} featureSelection
@@ -576,12 +576,16 @@ Sbi.geo.stat.ChoroplethControlPanel = Ext.extend(Ext.FormPanel, {
             //this.mapLoadMask.show();
         }
 
-        var coreOptions = {
-            'layer': this.layer,
-            'format': this.format,
-            'url': this.url,
-            'requestSuccess': this.requestSuccess.createDelegate(this),
+        var thematizerOptions = {
+        	'layer': this.layer,
+        	'loadLayerServiceName': this.loadLayerServiceName,
+        	'layerName': this.layerName,
+            'featureSourceType': this.featureSourceType,
+			'featureSource': this.featureSource,
+			'requestSuccess': this.requestSuccess.createDelegate(this),
             'requestFailure': this.requestFailure.createDelegate(this),
+            
+			'format': this.format,
             'featureSelection': this.featureSelection,
             'nameAttribute': this.nameAttribute,
             'legendDiv': this.legendDiv,
@@ -594,7 +598,7 @@ Sbi.geo.stat.ChoroplethControlPanel = Ext.extend(Ext.FormPanel, {
             'storeId' : this.businessId
         };
 
-        this.thematizer = new Sbi.geo.stat.ChoroplethThematizer(this.map, coreOptions);
+        this.thematizer = new Sbi.geo.stat.ChoroplethThematizer(this.map, thematizerOptions);
         
         this.thematizer.on('indicatorsChanged', function(thematizer, indicators, selectedIndicator){
 			this.setIndicators(indicators, selectedIndicator, false);

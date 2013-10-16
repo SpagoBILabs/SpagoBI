@@ -178,7 +178,7 @@ Ext.extend(Sbi.geo.stat.ChoroplethThematizer, Sbi.geo.stat.Thematizer, {
     	    		for(a in attributes) s += a + ";";
         			Sbi.trace("[Filter(" + this.binIndex + ").evaluate] :  feature does not contains attribute [" + this.layerId+ "]. Available attributes are [" + s + "]");
         		} else {
-        			Sbi.trace("[Filter(" + this.binIndex + ").evaluate] :  feature whose attribute [" + this.layerId + "] is equal to [" + attributes[this.layerId] + "] do not belong to this class");
+        			//Sbi.trace("[Filter(" + this.binIndex + ").evaluate] :  feature whose attribute [" + this.layerId + "] is equal to [" + attributes[this.layerId] + "] do not belong to this class");
         		}
     	        
     	        return false;
