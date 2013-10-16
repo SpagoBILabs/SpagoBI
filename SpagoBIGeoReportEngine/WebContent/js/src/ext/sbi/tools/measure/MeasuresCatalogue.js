@@ -69,7 +69,7 @@ Ext.extend(Sbi.geo.tools.MeasureCatalogue, Ext.grid.GridPanel, {
 		for(var i=0; i<this.columnsRef.length; i++){
 			var column = this.columnsRef[i];
 			var object = {
-					header: OpenLayers.Lang.translate('sbi.tools.catalogue.measures.column.header.'+column),
+					header: LN('sbi.tools.catalogue.measures.column.header.'+column),
 					sortable: true,
 					dataIndex: column
 				};
@@ -120,8 +120,8 @@ Ext.extend(Sbi.geo.tools.MeasureCatalogue, Ext.grid.GridPanel, {
 		var thisPanel = this;
 		
 		var joinMeasuresButton = new Ext.Toolbar.Button({
-			text    : OpenLayers.Lang.translate('sbi.tools.catalogue.measures.join.btn'),
-			tooltip : OpenLayers.Lang.translate('sbi.tools.catalogue.measures.join.tooltip'),
+			text    : LN('sbi.tools.catalogue.measures.join.btn'),
+			tooltip : LN('sbi.tools.catalogue.measures.join.tooltip'),
 			handler : function() {
 				thisPanel.executeJoin();
 			}
@@ -242,7 +242,7 @@ Ext.extend(Sbi.geo.tools.MeasureCatalogue, Ext.grid.GridPanel, {
 
 	        tpl : new Ext.Template(
 	        		'<div class="htmltable">',
-	        		'<div class="measure-detail-container"><div class="measure-detail-title"><h2><div class="group-header" style="background-image: none!important">'+OpenLayers.Lang.translate('sbi.tools.catalogue.measures.measure.properties')+'</div></h2></div>',
+	        		'<div class="measure-detail-container"><div class="measure-detail-title"><h2><div class="group-header" style="background-image: none!important">'+LN('sbi.tools.catalogue.measures.measure.properties')+'</div></h2></div>',
 	        		'<table>',
 	        		'		<tr style="height: 90px">',
 	        		'			<td class="measure-detail-measure">',
@@ -252,7 +252,7 @@ Ext.extend(Sbi.geo.tools.MeasureCatalogue, Ext.grid.GridPanel, {
 	        		'			</table></td>',			
 	        		'		</tr>',
 	        		'</table></div>',
-	        		'<div class="dataset-detail-container"><div class="measure-detail-title"><h2><div class="group-header" style="background-image: none!important">'+OpenLayers.Lang.translate('sbi.tools.catalogue.measures.dataset.properties')+'</div></h2></div>',
+	        		'<div class="dataset-detail-container"><div class="measure-detail-title"><h2><div class="group-header" style="background-image: none!important">'+LN('sbi.tools.catalogue.measures.dataset.properties')+'</div></h2></div>',
 	        		'<table>',
 	        		'		<tr style="height: 100px">',
 	        		'			<td class="measure-detail-dataset">',
