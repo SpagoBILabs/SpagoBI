@@ -56,6 +56,7 @@ Sbi.service.SaveDocumentWindowExt = function(config) {
 			layout:'fit',
 			width:700, //640,
 			height:350, //450,
+			resizable:false,
 			closeAction: 'destroy',
 			buttons:[{ 
 				  iconCls: 'icon-save' 	
@@ -111,22 +112,11 @@ Ext.extend(Sbi.service.SaveDocumentWindowExt, Ext.Window, {
 			enforceMaxLength: true,
 			anchor: '95%',
 			fieldLabel:'Nome',// LN('sbi.generic.name') ,
+//			style:'font-size:16;font-family:arial',
 			value:c.docName
 	    });
 		this.docName.setValue(c.docName);
 		
-		/*this.docDescr = new Ext.form.TextField({
-			id:'docDescr',
-	        name: 'docDescr',
-	        inputType: 'text',
-	        allowBlank: true, 
-	        maxLength: 400,
-	        anchor:	 '95%',
-	        height: 80,
-	        autoscroll:true,
-			fieldLabel:'Descrizione',// LN('sbi.generic.descr'),
-			value:c.docDescr			
-	    });*/
 		this.docDescr = new Ext.form.TextArea({
 			id:'docDescr',
 	        name: 'docDescr',
@@ -162,21 +152,49 @@ Ext.extend(Sbi.service.SaveDocumentWindowExt, Ext.Window, {
 //					root: 'root'
 //				}
 //			},
-//
 //			fields: [
 //			         "communityId",
 //			         "name",
 //			         "description",
 //			         "owner",
 //			         "functCode"],
-//		    //autoLoad: true
-//			         autoload:false
+//			         autoLoad: true
 //		});
+		
+		var arComm = new Array();
+	    
+	    Ext.Ajax.request({
+	        url: this.services['getCommunities'],
+	        callback : function(options , success, response){
+	  	  	if(success && response !== undefined) {   
+		      		if(response.responseText == undefined) {
+		      			Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
+		      		}else{
+		      			var content = Ext.util.JSON.decode( response.responseText );
+		      			if(content !== undefined) {
+		      				arComm = content.root;
+			      		} 
+		      		}
+	  	  	}
+	        }
+	       , scope: this
+	       , failure: Sbi.exception.ExceptionHandler.handleFailure  
+	     });
 
+	    var storeComm = new Ext.data.SimpleStore({
+		    fields: [
+				"communityId",
+				"name",
+				"description",
+				"owner",
+				"functCode"],
+		    data : arComm
+		});
+	    
 		this.docCommunity = new Ext.form.ComboBox({
 		    fieldLabel: 'Community',
 		    queryMode: 'local',
-//		    store: storeComm,
+		    store: storeComm,
 		    displayField: 'name',
 		    valueField: 'functCode',
 		    allowBlank: true
@@ -207,18 +225,19 @@ Ext.extend(Sbi.service.SaveDocumentWindowExt, Ext.Window, {
 	    this.inputForm = new Ext.Panel({
 	         itemId: 'detail'
 	        , columnWidth: 0.6
-	        , border: false
+	        , border: true
 	        , items: {
 	 		   	 columnWidth: 0.4,
 	             xtype: 'fieldset',
+//	             layout: 'column',
 	             labelWidth: 80,
 	             defaults: {border:false},    
 	             defaultType: 'textfield',
 	             autoScroll  : true,
 	             border: false,
 	             style: {
-	                 "margin-left": "4px",
-	                 "margin-top": "25px"
+//	                 "margin-left": "4px",
+//	                 "margin-top": "15px"  //"25px"
 	             },
 	             items: [this.docName,this.docDescr,this.docVisibility,this.fileUpload, this.docCommunity, this.isPublic]
 //	             items: [this.docLabel,this.docName,this.docDescr,this.docVisibility,this.fileUpload,this.isPublic]
