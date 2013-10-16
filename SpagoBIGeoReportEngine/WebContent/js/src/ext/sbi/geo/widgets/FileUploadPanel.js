@@ -37,8 +37,7 @@ Sbi.geo.widgets.FileUploadPanel = function(config) {
 	        frame:false,
 	        defaultType: 'textfield',
 	        isEnabled: true,
-	        border: false,
-	        layout: 'fit'
+	        border: false
 		};
 
 
@@ -61,12 +60,28 @@ Sbi.geo.widgets.FileUploadPanel = function(config) {
 Ext.extend(Sbi.geo.widgets.FileUploadPanel, Ext.Panel, {
 	
 	initUploadForm : function(items,config){
-
+//		this.label = new Ext.form.TextField({
+//			readOnly:true,
+//			value:config.labelFileName || LN('sbi.ds.fileName'),
+//			columnWidth: 0.4,
+//		}),
+		
+		this.previewFileLabel = new Ext.form.DisplayField({
+			value : (config.labelFileName || LN('sbi.ds.fileName')) +':',
+//			columnWidth: 0.2,
+			width:  80,
+			allowBlank : false,
+			readOnly:true,
+			style:'font-size:12;font-family:arial'
+//			,hidden: !this.isOwner || false
+		});
+		
 		this.uploadField = new Ext.form.TextField({
 			inputType:	'file',
 			fieldLabel : config.labelFileName || LN('sbi.ds.fileName'),
 			id: 'fileUploadField',
-			style: 'padding-left: 5px',
+			hideLabel : false,
+//			style: 'padding-left: 5px',
 			columnWidth: 0.8,
 			allowBlank: true
 		});
@@ -78,23 +93,23 @@ Ext.extend(Sbi.geo.widgets.FileUploadPanel, Ext.Panel, {
         	columnWidth:	0.1,
         	scope: 			this,
 //        	tooltip: 		LN('sbi.worksheet.designer.sheettitlepanel.uploadimage'),
-        	style:			'padding-left: 10px',
+//        	style:			'padding-left: 10px',
         	iconCls:		'uploadImgIcon',
         	hidden: 		!this.isEnabled || false
 	    });
 		
 		//Panel with the load file field
 		this.fileUploadFormPanel = new Ext.Panel({
-			height: 45,
-			layout:'column',
-			columnWidth: 0.9,
-//			frame: true,
+			height: 35, //45,			
+			width: '100%',
+			layout: 'column', //'column',
+			hideLabels: false,
+			frame: false,
 			header: false,
 			border: false,
-			items: [this.uploadField, this.uploadButton]
-		});
-		
-//		this.fileUploadFormPanel.layout = 'form';
+			labelAlign: 'left',
+			items: [this.previewFileLabel, this.uploadField, this.uploadButton]
+		});		
 		
 		return this.fileUploadFormPanel;
 
