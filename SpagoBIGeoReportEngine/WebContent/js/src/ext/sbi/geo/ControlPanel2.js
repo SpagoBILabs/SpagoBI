@@ -187,7 +187,7 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 					    	'<form class="panel-form" action="#" method="post">' +
 					            '<div class="scroll" id="scroll">' +
 					               '<div class="scroll-content" id="containerPanel">' +  
-					               		this.getMapTypeDiv() + 			
+					               		this.getThematizersDiv() + 			
 					               		this.getIndicatorsDiv() +
 					                    this.getPermissionDiv() + 
 					                '</div>' +
@@ -204,7 +204,7 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 		Sbi.debug("[ControlPanel2.init]: OUT");
 	}
 	
-	, getMapTypeDiv: function(){
+	, getThematizersDiv: function(){
 		var mapName = (Sbi.config.docName !== "")?Sbi.config.docName: this.DEFAULT_NAME;
 		var mapDescription = (Sbi.config.docDescription !== "")?Sbi.config.docDescription: this.DEFAULT_DESCRIPTION;
 		
@@ -219,6 +219,24 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 	     	this.getThematizationOptionsList() +
 	     '</ul>' ;
 		
+		return toReturn;
+	}
+	
+	, getThematizationOptionsList: function() {
+		var toReturn = '';
+		for(var i = 0; i < this.thematizationOptions.length; i++) {
+			var cName = this.thematizationOptions[i].className;
+			var expandButton = '';
+			if(i === 0) {
+				cName += ' active';
+				expandButton ='<span class="arrow"></span>';
+			} else if(i === this.thematizationOptions.length-1) {
+				cName += ' last';
+			}
+			toReturn += '<li id="li-' + this.thematizationOptions[i].id + '" class="' + cName + '">' + 
+							'<a href="#">' + this.thematizationOptions[i].label + '' + expandButton + '</a>' + 
+						'</li>';
+		}
 		return toReturn;
 	}
 	
@@ -254,28 +272,9 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 		return toReturn;
 	}
 	
-	, getThematizationOptionsList: function() {
-		var toReturn = '';
-		for(var i = 0; i < this.thematizationOptions.length; i++) {
-			var cName = this.thematizationOptions[i].className;
-			var expandButton = '';
-			if(i === 0) {
-				cName += ' active';
-				expandButton ='<span class="arrow"></span>';
-			} else if(i === this.thematizationOptions.length-1) {
-				cName += ' last';
-			}
-			toReturn += '<li id="li-' + this.thematizationOptions[i].id + '" class="' + cName + '">' + 
-							'<a href="#">' + this.thematizationOptions[i].label + '' + expandButton + '</a>' + 
-						'</li>';
-		}
-		return toReturn;
-	}
-	
 	, getPermissionDiv: function(){
 		var toReturn = '';
 		
-//		if (!this.isFinalUser){
 		if (Sbi.config.userId === Sbi.config.docAuthor || !this.isFinalUser){
 			toReturn = '<div class="map-permissions">' +
 		    	'<div class="radio">' +
@@ -291,7 +290,7 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 			        	'<input id="scopePublic" type="radio" name="permissions" value="1" />' +
 			            '<label for="permissions-2">&nbsp;'+LN('sbi.geo.controlpanel.permissionpublic')+'</label>' +
 			        '</div>';
-			}else{
+			} else {
 				toReturn += '' +
 					'<div id="div-private" class="radio-option ">' +
 			        	'<input id="scopePrivate" type="radio" name="permissions" value="0"  />' +

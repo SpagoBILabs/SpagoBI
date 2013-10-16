@@ -287,20 +287,20 @@ Ext.extend(Sbi.geo.MainPanel, Ext.Panel, {
 			params.featureSource = this.targetLayerConf.data;
 		}
 		
-		this.services['MapOl'] = this.services['MapOl'] || Sbi.config.serviceRegistry.getServiceUrl({
-			serviceName: 'MapOl'
-			, baseParams: params
-		});
-		
 		this.services['GetTargetDataset'] = this.services['GetTargetDataset'] || Sbi.config.serviceRegistry.getServiceUrl({
 			serviceName: 'GetTargetDataset'
 			, baseParams: params
 		});
 		
-		this.services['GetTargetLayer'] = this.services['GetTargetLayer'] || Sbi.config.serviceRegistry.getServiceUrl({
-			serviceName: 'GetTargetLayer'
-			, baseParams: params
-		});
+//		this.services['MapOl'] = this.services['MapOl'] || Sbi.config.serviceRegistry.getServiceUrl({
+//			serviceName: 'MapOl'
+//			, baseParams: params
+//		});
+//		
+//		this.services['GetTargetLayer'] = this.services['GetTargetLayer'] || Sbi.config.serviceRegistry.getServiceUrl({
+//			serviceName: 'GetTargetLayer'
+//			, baseParams: params
+//		});
 	}
 	
 	/**
@@ -323,7 +323,7 @@ Ext.extend(Sbi.geo.MainPanel, Ext.Panel, {
 			} else if(this.storeType === "virtualStore") {
 				Sbi.debug("[MainPanel.initStore]: Store will be loaded using service [MeasureJoin] because " +
 						"property [indicatorContainer] is equal to [" + this.indicatorContainer+ "] " +
-						"and property [storeType] is equal to [physicalStore");
+						"and property [storeType] is equal to [virtualStore]");
 				
 				this.store = null;
 			} else {
@@ -331,11 +331,15 @@ Ext.extend(Sbi.geo.MainPanel, Ext.Panel, {
 				this.store = null;
 			}
 		} else {
-			Sbi.debug("[MainPanel.initStore]: Store will be loaded using service [MapOl] because property [indicatorContainer] is equal to [" + this.indicatorContainer+ "]");
-			this.store = new Ext.data.JsonStore({
-				url: this.services['MapOl']
-				, autoLoad: false
-			})
+			Sbi.debug("[MainPanel.initStore]: Store wont be loaded because property [indicatorContainer] is equal to [" + this.indicatorContainer+ "]");
+			// DEPRECATED
+//			Sbi.debug("[MainPanel.initStore]: Store will be loaded using service [MapOl] because property [indicatorContainer] is equal to [" + this.indicatorContainer+ "]");
+//			this.store = new Ext.data.JsonStore({
+//				url: this.services['MapOl']
+//				, autoLoad: false
+//			})
+			// DEPRECATED
+			
 		}
 		Sbi.trace("[MainPanel.initStore]: OUT");
 	}
@@ -506,21 +510,37 @@ Ext.extend(Sbi.geo.MainPanel, Ext.Panel, {
 		
 		this.indicatorContainer = this.indicatorContainer  || 'layer';
 		
-		var loadLayerUrl = null
+		var loadLayerServiceName = null
 		if(this.indicatorContainer == 'layer') {
-			loadLayerUrl = this.services['MapOl'];
+			loadLayerServiceName = 'MapOl';
 		} else if(this.indicatorContainer == 'store') {
-			loadLayerUrl = this.services['GetTargetLayer'];
+			loadLayerServiceName = 'GetTargetLayer';
+		}
+		
+		var featureSourceType = null;
+		var featureSource = null;
+		
+		if(this.targetLayerConf.url) {
+			featureSourceType = 'wfs';
+			featureSource = this.targetLayerConf.url;
+		} else {
+			featureSourceType = 'file';
+			featureSource = this.targetLayerConf.data;
 		}
 			
-		var geostatConf = {
+		var thematizerControlPanelOptions = {
 			map: this.map,
+			
 			layer: null, // this.targetLayer not yet defined here
+			loadLayerServiceName: loadLayerServiceName,
+			layerName: this.targetLayerConf.name,
+			featureSourceType: featureSourceType,
+			featureSource: featureSource,		
+			
 			indicatorContainer: this.indicatorContainer || 'layer',
 			storeType: this.storeType || 'physicalStore',
 			storeConfig: this.storeConfig,
 			indicators: this.indicators,			
-			url: loadLayerUrl,
 			loadMask : {msg: 'Analysis...', msgCls: 'x-mask-loading'},
 			//legendDiv : 'myChoroplethLegendDiv',
 			legendDiv : 'LegendBody',
@@ -529,7 +549,7 @@ Ext.extend(Sbi.geo.MainPanel, Ext.Panel, {
 		};
 		
 		if(this.map.projection == "EPSG:900913") {
-			 geostatConf.format = new OpenLayers.Format.GeoJSON({
+			 thematizerControlPanelOptions.format = new OpenLayers.Format.GeoJSON({
 				 externalProjection: new OpenLayers.Projection("EPSG:4326"),
 			     internalProjection: new OpenLayers.Projection("EPSG:900913")
 			 });
@@ -538,28 +558,28 @@ Ext.extend(Sbi.geo.MainPanel, Ext.Panel, {
 		
 		if (this.analysisType === this.PROPORTIONAL_SYMBOLS) {
 			this.initProportionalSymbolsAnalysis();
-			geostatConf.layer = this.targetLayer;
+			thematizerControlPanelOptions.layer = this.targetLayer;
 			this.thematizerControlPanel = new Sbi.geo.stat.ProportionalSymbolControlPanel(geostatConf);
 			this.thematizerControlPanel.analysisConf = this.analysisConf;
 		} else if(this.analysisType === this.GRAPHIC) {
 			this.initGraphicAnalysis();
-			geostatConf.layer = this.targetLayer;
+			thematizerControlPanelOptions.layer = this.targetLayer;
 			this.map.PieDefinition = this.PieDefinition;			
 			this.map.analysisType = this.analysisType;
 			this.map.colors = this.color;
 			this.map.chartType = this.chartType;
 			this.map.totalField= this.totalField;
 			this.map.fieldsToShow= this.fieldsToShow;
-			this.thematizerControlPanel = new Sbi.geo.stat.ChoroplethControlPanel(geostatConf);
+			this.thematizerControlPanel = new Sbi.geo.stat.ChoroplethControlPanel(thematizerControlPanelOptions);
 			this.thematizerControlPanel.analysisConf = this.analysisConf;
 			this.thematizerControlPanel.analysisConf = this.analysisConf;
 		} else if (this.analysisType === this.CHOROPLETH) {
 			this.initChoroplethAnalysis();
-			geostatConf.layer = this.targetLayer;
-			geostatConf.businessId = this.businessId;
-			geostatConf.geoId = this.geoId;
-			geostatConf.store = this.store;
-			this.thematizerControlPanel = new Sbi.geo.stat.ChoroplethControlPanel(geostatConf);
+			thematizerControlPanelOptions.layer = this.targetLayer;
+			thematizerControlPanelOptions.businessId = this.businessId;
+			thematizerControlPanelOptions.geoId = this.geoId;
+			thematizerControlPanelOptions.store = this.store;
+			this.thematizerControlPanel = new Sbi.geo.stat.ChoroplethControlPanel(thematizerControlPanelOptions);
 			this.thematizerControlPanel.analysisConf = this.analysisConf;
 		} else {
 			alert('error: unsupported analysis type [' + this.analysisType + ']');

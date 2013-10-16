@@ -63,7 +63,7 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
     
     /**
      * @property {String} indicatorContainer
-     * Defines the object that contain the values of the specified indicator. It can be equal to:
+     * Defines the object that contains the values of the specified indicator. It can be equal to:
      *  - 'store' if the values are taken from a store. In this case the value are taken directly from the
      * dataset's column whose name is equal to the #indicator;
      *  - 'layer' if the values are taken from the features contained in the target layer. In this case the 
@@ -79,6 +79,12 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
      * If none is provided, one will be created.
      */
     , layer: null
+    
+    /**
+	 * @property {String} layerName
+	 * Defines the name of the layer loaded
+	 */
+    , layerName: null 
     
 	/**
 	 * @property {String} layerId
@@ -115,11 +121,10 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
     , format: null
 
     /**
-     * @property {String} url
-     * The URL to the web service. If none is provided, the features
+	 * The service name to call in order to load target layer. If none is provided, the features
      * found in the provided vector layer will be used.
-     */
-    , url: null
+	 */
+    , loadLayerServiceName: null
 
     /**
      * @property {Function} requestSuccess
@@ -402,12 +407,6 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
     		Sbi.debug("[Thematizer.setData] : Property [storeId] is not specified in store's metadata so it will be used as [storeId] the old one that is equal to [" + this.storeId + "]");
     	}
     	
-    	if(meta.geoIdHierarchyLevel) {
-    		Sbi.warn("[Thematizer.setData] : For the moment we are not able to dinamicaly load the [layerId] associated to hierarchy level [" + meta.geoIdHierarchyLevel + "] so it will remain equal to [" + this.layerId + "]");
-    	} else {
-    		Sbi.debug("[Thematizer.setData] : Property [geoIdHierarchyLevel] is not specified in store's metadata it will be used as [layerId] the old one that is equal to [" + this.layerId + "]");
-    	}
-    	
     	var indicators = [];
     	var selectedIndictaor = null;
     	for(var i = 0; i < meta.fields.length; i++) {
@@ -429,11 +428,51 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
     	
     	var filters = this.getAttributeFilters(store, meta);
     	
-    	this.thematize({resetClassification: true});
-    	Sbi.trace("[Thematizer.setData] : OUT");
+    	if(meta.geoIdHierarchyLevel) {
+    		if(this.geoIdHierarchyLevel != meta.geoIdHierarchyLevel) {
+    			//alert("calling service...");
+    			var loadLayerServiceUrl = Sbi.config.serviceRegistry.getServiceUrl({
+        			serviceName: 'GetHierarchyLevelMeta'
+        			, baseParams: {levelName: meta.geoIdHierarchyLevel}
+        		});
+    			
+    			Ext.Ajax.request({
+    				url: loadLayerServiceUrl,
+    				success : function(response, options) {
+    					if(response !== undefined && response.responseText !== undefined && response.statusText=="OK") {
+    						if(response.responseText!=null && response.responseText!=undefined){
+    							if(response.responseText.indexOf("error.mesage.description")>=0){
+    								Sbi.exception.ExceptionHandler.handleFailure(response);
+    							}else{
+    								var obj = JSON.parse(response.responseText);
+    								this.layerName = obj.layerName;
+    								this.layerId = obj.layerId;
+    					     		this.featureSourceType = obj.featureSource;
+    					     		this.featureSource = obj.featureSource;
+    					     		
+    								this.loadLayer();
+    								//alert("Response: " + response.responseText);
+    							}
+    						}
+    					} else {
+    						Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
+    					}
+    				},
+    				failure: Sbi.exception.ExceptionHandler.handleFailure,  
+    				scope: this
+    			});
+    			
+    			this.geoIdHierarchyLevel = meta.geoIdHierarchyLevel;
+    		} else {
+    			this.thematize({resetClassification: true});
+    	    	this.fireEvent('indicatorsChanged', this, indicators, this.indicator);
+    	    	this.fireEvent('filtersChanged', this, filters);
+    		}
+    	} else {
+    		Sbi.debug("[Thematizer.setData] : Property [geoIdHierarchyLevel] is not specified in store's metadata it will be used as [geoIdHierarchyLevel] the old one that is equal to [" + this.layerId + "]");
+    	}
     	
-    	this.fireEvent('indicatorsChanged', this, indicators, this.indicator);
-    	this.fireEvent('filtersChanged', this, filters);
+    	Sbi.trace("[Thematizer.setData] : OUT");
     }
     
     /**
@@ -719,15 +758,11 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
         }
         
         // get features from web service if a url is specified
-        if (this.url) {
+        if (this.loadLayerServiceName) {
         	Sbi.debug("[Thematizer.initialize]: Url attribute has been valorized to [" + Sbi.toSource(url) + "]. Features will be loaded from it");
         	this.map.mapComponent.mask();
-        	OpenLayers.Request.GET({
-        		url: this.url
-        		, success: this.onSuccess
-        		, failure: this.onFailure
-        		, scope: this
-        	});
+        	
+        	this.loadLayer();
         } else {
         	Sbi.debug("[Thematizer.initialize]: Url attribute has not been valorized");
         }
@@ -757,6 +792,34 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
         }
         
         Sbi.trace("[Thematizer.initialize]: OUT");
+     }
+     
+     , loadLayer: function() {
+    	 Sbi.debug("[Thematizer.initialize]: Service name is equal to to [" + this.loadLayerServiceName + "]");
+     	
+     	var params = {
+     		layer: this.layerName
+     		, businessId: this.storeId
+     		, geoId: this.layerId
+     		, featureSourceType: this.featureSourceType
+     		, featureSource: this.featureSource
+     	};
+     	
+     	Sbi.debug("[Thematizer.initialize]: Service parameters are equal to [" + Sbi.toSource(params) + "]");
+     	
+     	var loadLayerServiceUrl = Sbi.config.serviceRegistry.getServiceUrl({
+ 			serviceName: this.loadLayerServiceName
+ 			, baseParams: params
+ 		});
+     	
+     	Sbi.debug("[Thematizer.initialize]: Service url is equal to [" + loadLayerServiceUrl + "]");
+     	
+     	OpenLayers.Request.GET({
+     		url: loadLayerServiceUrl
+     		, success: this.onSuccess
+     		, failure: this.onFailure
+     		, scope: this
+     	});
      }
      
      , loadPhysicalStore: function() {
@@ -800,6 +863,7 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
      
      , onVirtualStoreLoaded: function(response, options) {
     	 Sbi.trace("[Thematizer.onVirtualStoreLoaded]: IN");
+    	 
     	 if(response !== undefined && response.responseText !== undefined && response.statusText=="OK") {
     		 if(response.responseText!=null && response.responseText!=undefined) {
 				if(response.responseText.indexOf("error.mesage.description")>=0){
@@ -824,7 +888,7 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
 
      /**
       * @method 
-      * create layer that will contains thematized features
+      * create an emppty layer that will contains thematized features
       */
      , initLayer: function() {
     	 var styleMap = new OpenLayers.StyleMap({
@@ -836,11 +900,13 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
              ),
              'select': new OpenLayers.Style(this.selectSymbolizer)
          });
+    	 
          var layer = new OpenLayers.Layer.Vector('geostat', {
              'displayInLayerSwitcher': false,
              'visibility': false,
              'styleMap': styleMap
          });
+         
          map.addLayer(layer);
          this.layer = layer;
      }
