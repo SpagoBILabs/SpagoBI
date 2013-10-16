@@ -15,6 +15,7 @@ import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IField;
 import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
+import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.BaseServletIOManager;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
@@ -83,18 +84,23 @@ public class MapOlAction extends AbstractBaseServlet {
 			
 			featureSourceType = servletIOManager.getParameterAsString(FEATURE_SOURCE_TYPE); 
 			logger.debug("Parameter [" + FEATURE_SOURCE_TYPE + "] is equal to [" + featureSourceType + "]");
-			
+			Assert.assertNotNull(featureSourceType, "Input parameter [" + FEATURE_SOURCE_TYPE + "] cannot be null");
+						
 			featureSource = servletIOManager.getParameterAsString(FEATURE_SOURCE); 
 			logger.debug("Parameter [" + FEATURE_SOURCE + "] is equal to [" + featureSourceType + "]");
+			Assert.assertNotNull(featureSourceType, "Input parameter [" + FEATURE_SOURCE + "] cannot be null");
 			
 			layerName = servletIOManager.getParameterAsString(LAYER_NAME); 
 			logger.debug("Parameter [" + LAYER_NAME + "] is equal to [" + layerName + "]");
+			Assert.assertNotNull(layerName, "Input parameter [" + LAYER_NAME + "] cannot be null");
 			
 			businessIdPName = servletIOManager.getParameterAsString(BUSINESSID_PNAME); 
 			logger.debug("Parameter [" + BUSINESSID_PNAME + "] is equal to [" + businessIdPName + "]");
+			Assert.assertNotNull(businessIdPName, "Input parameter [" + BUSINESSID_PNAME + "] cannot be null");
 			
 			geoIdPName = servletIOManager.getParameterAsString(GEOID_PNAME); 
 			logger.debug("Parameter [" + GEOID_PNAME + "] is equal to [" + geoIdPName + "]");
+			Assert.assertNotNull(geoIdPName, "Input parameter [" + GEOID_PNAME + "] cannot be null");
 			
 			engineInstance =  (GeoReportEngineInstance)servletIOManager.getHttpSession().getAttribute(EngineConstants.ENGINE_INSTANCE);
 			
