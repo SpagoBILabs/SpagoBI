@@ -85,11 +85,11 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 	  
 	, thematizationOptions: [{
 			id: 'map-zone'
-			, label: 'Mappa a <span>zone</span>'
+			, label: LN('sbi.geo.controlpanel.map')+'<span>'+LN('sbi.geo.controlpanel.zone')+'</span>'
 			, className: 'map-zone'
 		}, {
 			id: 'map-point'
-				, label: 'Mappa <span>puntiforme</span>'
+				, label:  LN('sbi.geo.controlpanel.map') + '<span>'+ LN('sbi.geo.controlpanel.point')+'</span>'
 				, className: 'map-point'
 		}/*, {
 			id: 'map-comparation'
@@ -105,8 +105,8 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 	, selectedThematizationOptionId: 'map-zone'
 	
 	//CONSTANTS
-	, DEFAULT_NAME: 'New Map name...'
-	, DEFAULT_DESCRIPTION: 'New Map description...' 
+	, DEFAULT_NAME: LN('sbi.geo.controlpanel.defaultname')
+	, DEFAULT_DESCRIPTION: LN('sbi.geo.controlpanel.defaultdescr')
 	
    
 	// =================================================================================================================
@@ -212,14 +212,11 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 		 '<div class="map-description">' +
 	         '<input  type="text" id="docName" class="mapTitle" value="' + mapName + '" /> '+
 	         '<textarea rows="2" cols="40" id="docDesc" class="mapDescription" />' + mapDescription + ' </textarea>'+	         
-	 		'<p id="author" class="published">Pubblicata da <a id="authorButton" class="authorButton" href="#">' + Sbi.config.docAuthor + '</a> <span class="separator">/</span> <a id="feedback_mail" href="#" class="feedback">invia feedback</a></p>' +
+	 		'<p id="author" class="published">'+LN('sbi.geo.controlpanel.publishedby')+'<a id="authorButton" class="authorButton" href="#">' + Sbi.config.docAuthor + '</a>'+
+	 			'<span class="separator">/</span> <a id="feedback_mail" href="#" class="feedback">'+LN('sbi.geo.controlpanel.sendfeedback')+'</a></p>' +
 	     '</div>' +
 	     '<ul id="mapType" class="map-type">' + 
 	     	this.getThematizationOptionsList() +
-//	     	'<li id="li-map-zone" class="map-zone active"><a href="#">Mappa a <span>zone</span><span class="arrow"></span></a></li>' +
-//	        '<li id="li-map-comparation" class="map-comparation"><a  href="#">Mappa di <span>comparazione</span></a></li>' +
-//	        '<li id="li-map-point" class="map-point"><a href="#">Mappa <span>puntiforme</span></a></li>' +
-//	        '<li id="li-map-heat" class="map-heat last"><a href="#">Mappa di <span>calore</span></a></li>' +
 	     '</ul>' ;
 		
 		return toReturn;
@@ -230,7 +227,7 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 			
 			var toReturn = '' +
 			'<div class="indicators" id="indicatorsDiv">' +
-		    	'<h2>Indicatori</h2>' +
+		    	'<h2>'+LN('sbi.geo.controlpanel.indicators')+'</h2>' +
 		        '<ul id="ul-indicators" class="group">';		
 				for(var i=0; i< this.thematizerControlPanel.indicators.length; i++){
 					var indEl = this.thematizerControlPanel.indicators[i];
@@ -242,7 +239,7 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 				}
 		       toReturn +=''+
 		       	'</ul>' +
-		        '<span id="addIndicatorButton" class="btn-2">Aggiungi</span>' +
+		        '<span id="addIndicatorButton" class="btn-2">'+LN('sbi.generic.add')+'</span>' +
 		    '</div>';
 		} else {
 			var toReturn = '' +
@@ -250,7 +247,7 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 		    	'<h2>Indicatori</h2>' +
 		        '<ul id="ul-indicators" class="group">' +		
 		       	'</ul>' +
-		        '<span id="addIndicatorButton" class="btn-2">Aggiungi</span>' +
+		        '<span id="addIndicatorButton" class="btn-2">'+LN('sbi.generic.add')+'</span>' +
 		    '</div>';
 		}
 		
@@ -282,27 +279,27 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 		if (Sbi.config.userId === Sbi.config.docAuthor || !this.isFinalUser){
 			toReturn = '<div class="map-permissions">' +
 		    	'<div class="radio">' +
-		        	'<span class="label">Questa mappa è:</span>' ;
+		        	'<span class="label">'+LN('sbi.geo.controlpanel.permissionlabel')+'</span>' ;
 		
 			if (Sbi.config.docIsPublic == 'false'){
 				toReturn += '' +
 					'<div  id="div-private" class="radio-option checked">' +
 			        	'<input id="scopePrivate" type="radio" name="permissions" value="0" checked />' +
-			            '<label for="permissions-1">Privata</label>' +
+			            '<label for="permissions-1">'+LN('sbi.geo.controlpanel.permissionprivate')+'</label>' +
 		            '</div>' +
 		            '<div  id="div-public" class="radio-option ">' +
 			        	'<input id="scopePublic" type="radio" name="permissions" value="1" />' +
-			            '<label for="permissions-2">&nbsp;Pubblica</label>' +
+			            '<label for="permissions-2">&nbsp;'+LN('sbi.geo.controlpanel.permissionpublic')+'</label>' +
 			        '</div>';
 			}else{
 				toReturn += '' +
 					'<div id="div-private" class="radio-option ">' +
 			        	'<input id="scopePrivate" type="radio" name="permissions" value="0"  />' +
-			            '<label for="permissions-1">Privata</label>' +
+			            '<label for="permissions-1">'+LN('sbi.geo.controlpanel.permissionprivate')+'</label>' +
 		            '</div>' +
 		            '<div id="div-public" class="radio-option checked">' +
 			        	'<input id="scopePublic" type="radio" name="permissions" value="1" checked />' +
-			            '<label for="permissions-2">&nbsp;Pubblica</label>' +
+			            '<label for="permissions-2">&nbsp;'+LN('sbi.geo.controlpanel.permissionpublic')+'</label>' +
 			        '</div>';
 			}
 		}
@@ -318,11 +315,11 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 		        '<div class="panel-buttons-container map-owner">' +
 		             '<div class="panel-buttons">' +
 		                 //'<a href="#" class="btn-2">Annulla</a>' +
-		                 '<input type="submit" id="btn-cancel" class="btn-2" value="Annulla" />' +
+		                 '<input type="submit" id="btn-cancel" class="btn-2" value="'+LN('sbi.generic.cancel')+'" />' +
 //		                 '<input type="submit" id="btn-modify-map" class="btn-1" value="Aggiorna" />' +
-		                 '<a href="#" id="btn-modify-map" class="btn-1">Aggiorna</a>'  +
+		                 '<a href="#" id="btn-modify-map" class="btn-1">'+LN('sbi.generic.modify')+'</a>'  +
 		             '</div>' +
-		             '<p>salva <a  id="btn-new-map" href="#">nuova mappa</a></p>' +
+		             '<p>'+LN('sbi.generic.save')+' <a  id="btn-new-map" href="#">'+LN('sbi.generic.newmap')+'</a></p>' +
 		         '</div>';
 		}else if (!this.isInsertion){
 			toReturn += ''+
@@ -330,8 +327,8 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 			     '<div class="panel-buttons-container">' +
 			         '<div class="panel-buttons">' +
 //			             '<a href="#" class="btn-2">Annulla</a>' +
-			             '<input type="submit" id="btn-cancel" class="btn-2" value="Annulla" />' +
-			             '<a href="#" id="btn-new-map" class="btn-1">Salva nuova mappa</a>'  +
+			             '<input type="submit" id="btn-cancel" class="btn-2" value="'+LN('sbi.generic.cancel')+'" />' +
+			             '<a href="#" id="btn-new-map" class="btn-1">'+LN('sbi.generic.savenewmap')+'</a>'  +
 //			             '<input type="submit" id="btn-new-map" class="btn-1" value="Salva nuova mappa" />' +
 			         '</div>' +
 			     '</div>';
@@ -341,20 +338,14 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 		         '<div id="panel-buttons-container" class="panel-buttons-container">' +
 		             '<div class="panel-buttons">	' +
 //		                 '<input type="submit" id="btn-modify-map" class="btn-1" value="salva" />' +
-		                 '<a href="#" id="btn-new-map" class="btn-1">Salva</a>'  +
+		                 '<a href="#" id="btn-new-map" class="btn-1">'+LN('sbi.generic.save')+'</a>'  +
 		             '</div>' +
 		         '</div>';
 		}
 		
 		return toReturn;
 	}
-	
-	
 
-	
-
-	
-	
 	, initInnerPannelCallbacks: function() {
 		var thisPanel = this;
 		//alert('initInnerPannelCallbacks');
@@ -734,7 +725,7 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 		        height		: 350,
 	            closeAction :'hide',
 	            plain       : true,
-	            title		: OpenLayers.Lang.translate('sbi.tools.catalogue.measures.window.title'),
+	            title		: LN('sbi.tools.catalogue.measures.window.title'), //OpenLayers.Lang.translate('sbi.tools.catalogue.measures.window.title'),
 	            items       : [measureCatalogue]
 			});
 		}

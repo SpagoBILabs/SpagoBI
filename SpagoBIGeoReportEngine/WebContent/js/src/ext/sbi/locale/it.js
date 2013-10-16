@@ -58,10 +58,52 @@ Sbi.locale.formats = {
 		}
 };
 
+
+//===================================================================
+//LABELS
+//===================================================================
+
+//===================================================================
+//GENERIC
+//===================================================================
+Sbi.locale.ln['sbi.generic.add'] = 'Aggiungi';
+Sbi.locale.ln['sbi.generic.cancel'] = 'Annulla';
+Sbi.locale.ln['sbi.generic.modify'] = 'Aggiorna';
+Sbi.locale.ln['sbi.generic.save'] = 'Salva ';
+Sbi.locale.ln['sbi.generic.newmap'] = 'Nuova mappa';
+Sbi.locale.ln['sbi.generic.savenewmap'] = 'Salva nuova mappa';
+Sbi.locale.ln['sbi.generic.wait'] = 'Attendere prego...';
+Sbi.locale.ln['sbi.generic.info'] = 'Informazione';
+Sbi.locale.ln['sbi.generic.error'] = 'Errore';
+Sbi.locale.ln['sbi.generic.error.msg'] = 'Operazione fallita';
+Sbi.locale.ln['sbi.generic.ok'] = 'Informazione';
+Sbi.locale.ln['sbi.generic.ok.msg'] = 'Operazione avvenuta con successo';
+Sbi.locale.ln['sbi.generic.resultMsg'] = 'Operazione riuscita';
+Sbi.locale.ln['sbi.generic.result'] = 'Modifiche salvate con successo';
+Sbi.locale.ln['sbi.generic.serviceError'] = 'Service Error';
+Sbi.locale.ln['sbi.generic.serviceResponseEmpty'] = 'Server response vuota';
+Sbi.locale.ln['sbi.generic.savingItemError'] = 'Errore nel salvataggio dell\'oggetto';
+Sbi.locale.ln['sbi.generic.deletingItemError'] = 'Errore nell\'eliminazione dell\'oggetto. Controllare gli eventuali oggetti a cui \u00e8 associato e poi riprovare!';
+Sbi.locale.ln['sbi.generic.warning'] = 'Attenzione';
+Sbi.locale.ln['sbi.generic.pleaseConfirm'] = 'Per favore confermare';
+
+
 //===================================================================
 //CONTROL PANEL
 //===================================================================
 Sbi.locale.ln['sbi.geo.controlpanel.title'] = 'Pannello di controllo';
+Sbi.locale.ln['sbi.geo.controlpanel.defaultname'] = 'Nome nuova mappa...';
+Sbi.locale.ln['sbi.geo.controlpanel.defaultdescr'] = 'Descrizione nuova mappa...';
+Sbi.locale.ln['sbi.geo.controlpanel.publishedby'] = 'Pubblicato da ';
+Sbi.locale.ln['sbi.geo.controlpanel.sendfeedback'] = ' Invia feedback ';
+Sbi.locale.ln['sbi.geo.controlpanel.indicators'] = ' Indicatori ';
+Sbi.locale.ln['sbi.geo.controlpanel.permissionlabel'] = 'Questa mappa e\': ';
+Sbi.locale.ln['sbi.geo.controlpanel.permissionprivate'] = 'Privata ';
+Sbi.locale.ln['sbi.geo.controlpanel.permissionpublic'] = 'Pubblica ';
+Sbi.locale.ln['sbi.geo.controlpanel.map'] = 'Mappa ';
+Sbi.locale.ln['sbi.geo.controlpanel.zone'] = 'zone ';
+Sbi.locale.ln['sbi.geo.controlpanel.point'] = 'puntiforme ';
+
 Sbi.locale.ln['sbi.geo.earthpanel.title'] = 'Navigazione 3D';
 Sbi.locale.ln['sbi.geo.layerpanel.title'] = 'Livelli';
 
@@ -78,10 +120,62 @@ Sbi.locale.ln['sbi.geo.analysispanel.filter.default.ok'] = 'Valori di default va
 
 Sbi.locale.ln['sbi.geo.legendpanel.title'] = 'Legenda';
 
-
+//===================================================================
+//CONTROL PANEL - SAVE WINDOW
+//===================================================================
+Sbi.locale.ln['sbi.geo.controlpanel.savewin.title'] = 'Inserisci ulteriori dettagli e salva il tuo documento... ';
+Sbi.locale.ln['sbi.geo.controlpanel.savewin.name'] = 'Nome';
+Sbi.locale.ln['sbi.geo.controlpanel.savewin.description'] = 'Descrizione';
+Sbi.locale.ln['sbi.geo.controlpanel.savewin.visibility'] = 'Visibilita documento';
+Sbi.locale.ln['sbi.geo.controlpanel.savewin.previewfile'] = 'Preview file';
+Sbi.locale.ln['sbi.geo.controlpanel.savewin.community'] = 'Community';
+Sbi.locale.ln['sbi.geo.controlpanel.savewin.scope'] = 'Scope';
 
 
 //===================================================================
 //MAP PANEL
 //===================================================================
 Sbi.locale.ln['sbi.geo.mappanel.title'] = 'Mappa';
+
+//===================================================================
+//OPENLAYERS
+//===================================================================
+Sbi.locale.ln['mf.print.mapTitle'] =  'Titolo';
+Sbi.locale.ln['mf.print.comment'] =  'Commenti';
+Sbi.locale.ln['mf.print.loadingConfig'] =  'Caricamento configurazione...';
+Sbi.locale.ln['mf.print.serverDown'] =  'Il servizio di stampa non è disponibile';
+Sbi.locale.ln['mf.print.unableToPrint'] =  "UnImpossibile stampare";
+Sbi.locale.ln['mf.print.generatingPDF'] =  "Generazione PDF...";
+Sbi.locale.ln['mf.print.dpi'] =  'DPI';
+Sbi.locale.ln['mf.print.scale'] =  'Scala';
+Sbi.locale.ln['mf.print.rotation'] =  'Rotazione';
+Sbi.locale.ln['mf.print.print'] =  'Stampa';
+Sbi.locale.ln['mf.print.resetPos'] =  'Reset Pos.';
+Sbi.locale.ln['mf.print.layout'] =  'Layout';
+Sbi.locale.ln['mf.print.addPage'] =  'Aggiungi pagina';
+Sbi.locale.ln['mf.print.remove'] =  'Rimuovi pagina';
+Sbi.locale.ln['mf.print.clearAll'] =  'Pulisci tutto';
+Sbi.locale.ln['mf.print.popupBlocked'] =  'Finestra di popup bloccata dal browser.<br />' +
+                       '<br />Usa questa url per scaricare il tuo documento] = ';
+Sbi.locale.ln['mf.print.noPage'] =  'Non ci sono pagine selezionate; click sul bottone "Aggiungi pagina" per aggiungerne una.';
+Sbi.locale.ln['mf.error'] =  'Errore';
+Sbi.locale.ln['mf.warning'] =  'Warning';
+Sbi.locale.ln['mf.information'] =  'Informazione';
+Sbi.locale.ln['sbi.tools.catalogue.measures.measure.properties'] = 'Proprietà Misura';
+Sbi.locale.ln['sbi.tools.catalogue.measures.dataset.properties'] = 'Proprietà Data Set';
+Sbi.locale.ln['sbi.tools.catalogue.measures.join.btn'] = 'Join';
+Sbi.locale.ln['sbi.tools.catalogue.measures.join.tooltip'] = 'Esegui la join tra le misure selezionate';
+Sbi.locale.ln['sbi.tools.catalogue.measures.select.tooltip'] = 'Apri il frame di selezione';
+Sbi.locale.ln['sbi.tools.catalogue.measures.select.btn'] = 'Selezione';
+Sbi.locale.ln['sbi.tools.catalogue.measures.window.title'] =  'Catalogo delle Misure';
+Sbi.locale.ln['error.mesage.description.measure.join.no.common.dimension'] = 'Impossibile eseguire la join tra le misure. I datasets associati non hanno misure in comune.';
+Sbi.locale.ln['error.mesage.description.measure.join.no.complete.common.dimension'] = 'Impossibile eseguire la join tra le misure. I datasets associati non hanno dimensioni in comune.';
+Sbi.locale.ln['sbi.tools.catalogue.measures.column.header.alias'] = 'Alias';
+Sbi.locale.ln['sbi.tools.catalogue.measures.column.header.dsName'] = 'Nome';
+Sbi.locale.ln['sbi.tools.catalogue.measures.column.header.dsLabel'] = 'Etichetta';
+Sbi.locale.ln['sbi.tools.catalogue.measures.column.header.dsCategory'] = 'Categoria';
+Sbi.locale.ln['sbi.tools.catalogue.measures.column.header.dsType'] = 'Tipo';
+Sbi.locale.ln['sbi.tools.catalogue.layers.column.header.label'] = 'Etichetta';
+Sbi.locale.ln['sbi.tools.catalogue.layers.column.header.descr'] = 'Descrizione';
+Sbi.locale.ln['sbi.tools.catalogue.layers.column.header.type'] = 'Tipo';
+Sbi.locale.ln['sbi.tools.catalogue.layers.column.header.baseLayer'] = 'Livello base';

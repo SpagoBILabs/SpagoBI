@@ -62,9 +62,9 @@ Sbi.service.SaveDocumentWindowExt = function(config) {
 				  iconCls: 'icon-save' 	
 				, handler: this.saveDocument
 				, scope: this
-				, text: 'Salva' //LN('sbi.generic.update')
+				, text: LN('sbi.generic.save')
 	           }],
-			title: 'Inserisci ulteriori dettagli e prosegui con il salvataggio del tuo documento... ', // LN('sbi.execution.saveDocument'),
+			title: LN('sbi.geo.controlpanel.savewin.title'), 
 			items: this.saveDocumentForm
 		});   
 		
@@ -111,7 +111,7 @@ Ext.extend(Sbi.service.SaveDocumentWindowExt, Ext.Window, {
 			maxLength: 200,
 			enforceMaxLength: true,
 			anchor: '95%',
-			fieldLabel:'Nome',// LN('sbi.generic.name') ,
+			fieldLabel:LN('sbi.geo.controlpanel.savewin.name') ,
 //			style:'font-size:16;font-family:arial',
 			value:c.docName
 	    });
@@ -126,7 +126,7 @@ Ext.extend(Sbi.service.SaveDocumentWindowExt, Ext.Window, {
 			height : 80,		
 			autoScroll: true,
 			//regexText : LN('sbi.roles.alfanumericString'),
-			fieldLabel : 'Descrizione',// LN('sbi.generic.descr'),
+			fieldLabel : LN('sbi.geo.controlpanel.savewin.description') ,
 			allowBlank : true,
 			value:c.docDescr	
 		});
@@ -134,7 +134,7 @@ Ext.extend(Sbi.service.SaveDocumentWindowExt, Ext.Window, {
 
 
 		this.docVisibility = new Ext.form.Checkbox({
-			fieldLabel:'Document Visibility',
+			fieldLabel:LN('sbi.geo.controlpanel.savewin.visibility') ,
 			id:'docVisibility',
 	        boxLabel  : 'Visible',
             name      : 'docVisibility',
@@ -179,39 +179,8 @@ Ext.extend(Sbi.service.SaveDocumentWindowExt, Ext.Window, {
 			autoLoad:true,
 		});
 		
-		
-//		var arComm = new Array();
-//	    
-//	    Ext.Ajax.request({
-//	        url: this.services['getCommunities'],
-//	        callback : function(options , success, response){
-//	  	  	if(success && response !== undefined) {   
-//		      		if(response.responseText == undefined) {
-//		      			Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
-//		      		}else{
-//		      			var content = Ext.util.JSON.decode( response.responseText );
-//		      			if(content !== undefined) {
-//		      				arComm = content.root;
-//			      		} 
-//		      		}
-//	  	  	}
-//	        }
-//	       , scope: this
-//	       , failure: Sbi.exception.ExceptionHandler.handleFailure  
-//	     });
-
-//	    var storeComm = new Ext.data.SimpleStore({
-//		    fields: [
-//				"communityId",
-//				"name",
-//				"description",
-//				"owner",
-//				"functCode"],
-//		    data : arComm
-//		});
-	    
 		this.docCommunity = new Ext.form.ComboBox({
-		    fieldLabel: 'Community',
+		    fieldLabel: LN('sbi.geo.controlpanel.savewin.community') ,
 		    queryMode: 'local',
 		    store: storeComm,
 		    displayField: 'name',
@@ -229,7 +198,7 @@ Ext.extend(Sbi.service.SaveDocumentWindowExt, Ext.Window, {
 		});
 		
 		this.isPublic =new Ext.form.ComboBox({
-		    fieldLabel: 'Scope',
+		    fieldLabel: LN('sbi.geo.controlpanel.savewin.scope') ,
 		    mode : 'local',
 		    store: storeScope,
 		    displayField: 'value',
