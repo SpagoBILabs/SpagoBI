@@ -100,6 +100,12 @@ public class SbiCommunityDAOImpl extends AbstractHibernateDAO implements ISbiCom
 			if (tx != null)
 				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+		} 
+		catch (RuntimeException re) {
+			logger.error(re.getMessage(),re);
+			if (tx != null)
+				tx.rollback();
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
 			if (aSession != null) {
 				if (aSession.isOpen())
@@ -231,6 +237,11 @@ public class SbiCommunityDAOImpl extends AbstractHibernateDAO implements ISbiCom
 
 		} catch (HibernateException he) {
 			logger.error(he.getMessage(),he);
+			if (tx != null)
+				tx.rollback();
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+		}catch (RuntimeException re) {
+			logger.error(re.getMessage(),re);
 			if (tx != null)
 				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
