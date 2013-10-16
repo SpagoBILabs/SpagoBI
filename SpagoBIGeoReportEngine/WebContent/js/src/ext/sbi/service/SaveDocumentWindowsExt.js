@@ -160,36 +160,55 @@ Ext.extend(Sbi.service.SaveDocumentWindowExt, Ext.Window, {
 //			         "functCode"],
 //			         autoLoad: true
 //		});
-		
-		var arComm = new Array();
-	    
-	    Ext.Ajax.request({
-	        url: this.services['getCommunities'],
-	        callback : function(options , success, response){
-	  	  	if(success && response !== undefined) {   
-		      		if(response.responseText == undefined) {
-		      			Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
-		      		}else{
-		      			var content = Ext.util.JSON.decode( response.responseText );
-		      			if(content !== undefined) {
-		      				arComm = content.root;
-			      		} 
-		      		}
-	  	  	}
-	        }
-	       , scope: this
-	       , failure: Sbi.exception.ExceptionHandler.handleFailure  
-	     });
+		var storeComm = new Ext.data.Store({
+			proxy:new Ext.data.HttpProxy({
+				type: 'json',
+				url :  this.services['getCommunities']
+			}),
+			reader: new  Ext.data.JsonReader({
+				fields: [
+				         "communityId",
+				         "name",
+				         "description",
+				         "owner",
+				         "functCode"
+				         ],
+				         root: 'root'
+			}),
 
-	    var storeComm = new Ext.data.SimpleStore({
-		    fields: [
-				"communityId",
-				"name",
-				"description",
-				"owner",
-				"functCode"],
-		    data : arComm
+			autoLoad:true,
 		});
+		
+		
+//		var arComm = new Array();
+//	    
+//	    Ext.Ajax.request({
+//	        url: this.services['getCommunities'],
+//	        callback : function(options , success, response){
+//	  	  	if(success && response !== undefined) {   
+//		      		if(response.responseText == undefined) {
+//		      			Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
+//		      		}else{
+//		      			var content = Ext.util.JSON.decode( response.responseText );
+//		      			if(content !== undefined) {
+//		      				arComm = content.root;
+//			      		} 
+//		      		}
+//	  	  	}
+//	        }
+//	       , scope: this
+//	       , failure: Sbi.exception.ExceptionHandler.handleFailure  
+//	     });
+
+//	    var storeComm = new Ext.data.SimpleStore({
+//		    fields: [
+//				"communityId",
+//				"name",
+//				"description",
+//				"owner",
+//				"functCode"],
+//		    data : arComm
+//		});
 	    
 		this.docCommunity = new Ext.form.ComboBox({
 		    fieldLabel: 'Community',
@@ -197,7 +216,8 @@ Ext.extend(Sbi.service.SaveDocumentWindowExt, Ext.Window, {
 		    store: storeComm,
 		    displayField: 'name',
 		    valueField: 'functCode',
-		    allowBlank: true
+		    allowBlank: true,
+		    triggerAction: 'all'
 		});
 		
 		var storeScope = new Ext.data.SimpleStore({

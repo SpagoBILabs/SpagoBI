@@ -776,7 +776,7 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 		if ((el != null) && (el !== undefined )){
 			formState.docDescr = el.getValue();
 		}
-		var el = Ext.get('scopePublic')
+		var el = Ext.get('scopePublic');
 		if ((el != null) && (el !== undefined )){
 			formState.scope = (el.dom.checked)?"true":"false";			
 		}else{
@@ -803,25 +803,37 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 		}
 	
 	, onSyncronizePanel: function(p) {
-		Ext.get('docName').value = p.docName.getEl().getValue();
-		Ext.get('docDesc').text = p.docDescr.getEl().getValue();
-//		Ext.get('scopePublic').value = p.isPublic.getEl().value;	
+		var newName =  p.docName.getEl().getValue();
+		var newDescr =  p.docDescr.getEl().getValue();
+//		alert(' p.docName.getEl().value: ' +  p.docName.getEl().getValue());
+//		alert('p.docDescr.getEl().value: '  + p.docDescr.getEl().getValue()) ;
+//		alert('Ext.get(docName).dom.value : ' + Ext.get('docName').dom.value );
+//		var elName = Ext.get('docName').dom;
+//		var elDescr = Ext.get('docDescr').dom;
+//		elName.value=newName;
+//		elDescr.value=newDescr;
+//		Ext.get('docName').dom.value = newName;
+//		Ext.get('docDesc').dom.text = newDescr;
 
 		this.setIsPublicValue(p.isPublic.getEl().getValue());
 
 	}
 	
 	, setIsPublicValue: function(v){
-		
-		var el1 =  Ext.get("div-private");
-		var el2 =  Ext.get("div-public");
-		
-		if (Ext.fly(el1).hasClass('checked')){
-			Ext.fly(el1).removeClass('checked');
-			Ext.fly(el2).addClass('checked');
+		var el1div =  Ext.get("div-private");
+		var el2div =  Ext.get("div-public");
+		var el1 = Ext.get("scopePrivate");
+		var el2 = Ext.get("scopePublic");
+		if (Ext.fly(el1div).hasClass('checked')){
+			el1.dom.checked = false;
+			el2.dom.checked = true;
+			Ext.fly(el1div).removeClass('checked');
+			Ext.fly(el2div).addClass('checked');
 		}else{
-			Ext.fly(el2).removeClass('checked');
-			Ext.fly(el1).addClass('checked');	
+			el1.dom.checked=true;
+			el2.dom.checked=false;
+			Ext.fly(el2div).removeClass('checked');
+			Ext.fly(el1div).addClass('checked');	
 		}
 	}
 	
