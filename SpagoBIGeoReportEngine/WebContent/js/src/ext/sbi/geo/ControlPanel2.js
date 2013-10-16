@@ -210,8 +210,8 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 		
 		var toReturn = '' +
 		 '<div class="map-description">' +
-	         '<input  type="text" id="docName" class="mapTitle" value="' + mapName + '" /> '+
-	         '<textarea rows="2" cols="40" id="docDesc" class="mapDescription" />' + mapDescription + ' </textarea>'+	         
+	         '<input  type="text" id="docMapName" class="mapTitle" value="' + mapName + '" /> '+
+	         '<textarea rows="2" cols="40" id="docMapDesc" class="mapDescription" />' + mapDescription + ' </textarea>'+	         
 	 		'<p id="author" class="published">'+LN('sbi.geo.controlpanel.publishedby')+'<a id="authorButton" class="authorButton" href="#">' + Sbi.config.docAuthor + '</a>'+
 	 			'<span class="separator">/</span> <a id="feedback_mail" href="#" class="feedback">'+LN('sbi.geo.controlpanel.sendfeedback')+'</a></p>' +
 	     '</div>' +
@@ -757,13 +757,13 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 		
 		var formState = {};
 		//gets the input values (name, desccription,..)
-		var el = Ext.get('docName');
+		var el = Ext.get('docMapName');
 		if ((el != null) && (el !== undefined ) && (el.getValue() !== '' )){
 			formState.docName = el.getValue();
 		}/*else{
 			alert('Nome documento obbligatorio');
 		}*/
-		var el = Ext.get('docDesc');
+		var el = Ext.get('docMapDesc');
 		if ((el != null) && (el !== undefined )){
 			formState.docDescr = el.getValue();
 		}
@@ -796,15 +796,8 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 	, onSyncronizePanel: function(p) {
 		var newName =  p.docName.getEl().getValue();
 		var newDescr =  p.docDescr.getEl().getValue();
-//		alert(' p.docName.getEl().value: ' +  p.docName.getEl().getValue());
-//		alert('p.docDescr.getEl().value: '  + p.docDescr.getEl().getValue()) ;
-//		alert('Ext.get(docName).dom.value : ' + Ext.get('docName').dom.value );
-//		var elName = Ext.get('docName').dom;
-//		var elDescr = Ext.get('docDescr').dom;
-//		elName.value=newName;
-//		elDescr.value=newDescr;
-//		Ext.get('docName').dom.value = newName;
-//		Ext.get('docDesc').dom.text = newDescr;
+		Ext.get('docMapName').dom.value = newName;
+		Ext.get('docMapDesc').dom.value = newDescr;
 
 		this.setIsPublicValue(p.isPublic.getEl().getValue());
 
