@@ -321,6 +321,22 @@ li:hover .login-panel .not-registered a:hover,.login-panel .not-registered a:hov
 .map-type li.active:hover .arrow{background-position:0 -6px}
 .map-type.open li.active .arrow{background-position:0 -6px}
 
+.filters{
+	float:left;width:100%;padding:0 0 27px 0;
+	color: #434343;
+	font-size: 1.25em !important;
+	font-family: cabinmedium, sans-serif, arial, helvetica;
+	}	
+.filters input{
+	background-color: #fefefe !important;
+	background: #fefefe !important;
+	/*font-size: 1.25em;*/
+	color: #434343;
+	font-family: cabinmedium, sans-serif, arial, helvetica;
+}
+.filters button{position:relative;cursor:pointer;height:20px !important;font-family:cabinbold, arial, helvetica, sans-serif;float:right;background:#f1f1f1;border:1px solid #eae8e8;color:#adadad;text-transform:uppercase;-webkit-border-radius:4px;-moz-border-radius:4px;border-radius:4px}
+.filters button:hover{color:#9c9c9c;background:#ebebeb;border:1px solid #e0e0e0}
+	
 .panel .indicators{float:left;width:100%;padding:0 0 27px 0}
 
 .panel .group{width:100%;float:left;margin:0 0 18px 0;border:1px solid #eae8e8;background:#fbfbfb;with:296px;-webkit-border-radius:4px;-moz-border-radius:4px;border-radius:4px} /*float*/
