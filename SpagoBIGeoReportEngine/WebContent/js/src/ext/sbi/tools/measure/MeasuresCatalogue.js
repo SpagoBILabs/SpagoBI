@@ -192,11 +192,13 @@ Ext.extend(Sbi.geo.tools.MeasureCatalogue, Ext.grid.GridPanel, {
 				alert("Only one measure selected. Nothing to join"); 
 				return;
 			}
-
+			Ext.MessageBox.wait('Please wait...');
 			Ext.Ajax.request({
 				url: Sbi.config.serviceRegistry.getRestServiceUrl({serviceName: 'measures/join', baseUrl:{contextPath: this.contextPath}}),
 				params: {labels: measuresLabels},
 				success : function(response, options) {
+					Ext.MessageBox.updateProgress(1);
+					Ext.MessageBox.hide();
 					if(response !== undefined && response.responseText !== undefined && response.statusText=="OK") {
 						if(response.responseText!=null && response.responseText!=undefined){
 							if(response.responseText.indexOf("error.mesage.description")>=0){
