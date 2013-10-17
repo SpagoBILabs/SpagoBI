@@ -447,10 +447,15 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
     								var obj = JSON.parse(response.responseText);
     								this.layerName = obj.layerName;
     								this.layerId = obj.layerId;
-    					     		this.featureSourceType = obj.featureSource;
+    					     		this.featureSourceType = obj.featureSourceType;
     					     		this.featureSource = obj.featureSource;
-    					     		//TODO
-    								this.loadLayer();
+    								this.loadLayer(function(response) {
+    									alert("Layer Loaded!");
+    									this.onSuccess(response);
+    									this.thematize({resetClassification: true});
+    					    	    	this.fireEvent('indicatorsChanged', this, indicators, this.indicator);
+    					    	    	this.fireEvent('filtersChanged', this, filters);
+    								});
     								//alert("Response: " + response.responseText);
     							}
     						}
@@ -794,7 +799,7 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
         Sbi.trace("[Thematizer.initialize]: OUT");
      }
      
-     , loadLayer: function() {
+     , loadLayer: function(onSuccess, onFailure) {
     	 Sbi.debug("[Thematizer.initialize]: Service name is equal to to [" + this.loadLayerServiceName + "]");
      	
      	var params = {
@@ -816,8 +821,8 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
      	
      	OpenLayers.Request.GET({
      		url: loadLayerServiceUrl
-     		, success: this.onSuccess
-     		, failure: this.onFailure
+     		, success: onSuccess || this.onSuccess
+     		, failure: onFailure || this.onFailure
      		, scope: this
      	});
      }
