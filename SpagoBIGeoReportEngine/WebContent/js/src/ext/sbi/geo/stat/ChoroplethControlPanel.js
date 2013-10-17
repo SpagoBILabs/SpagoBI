@@ -867,8 +867,17 @@ Sbi.geo.stat.ChoroplethControlPanel = Ext.extend(Ext.FormPanel, {
      *      Displays an error message on the console.
      *      Called on Ajax request failure.
      */
-    , requestFailure: function(request) {
-        OpenLayers.Console.error('Ajax request failed');
+    , requestFailure: function(response) {
+    	var message = response.responseXML;
+        if (!message || !message.documentElement) {
+            message = response.responseText;
+        }
+        Sbi.exception.ExceptionHandler.showErrorMessage(message, 'Service Error');
+    	// if widget is rendered, hide the optional mask
+        if (this.loadMask && this.rendered) {
+            this.loadMask.hide();
+            this.map.mapComponent.unmask();
+        }
     }   
 });
 
