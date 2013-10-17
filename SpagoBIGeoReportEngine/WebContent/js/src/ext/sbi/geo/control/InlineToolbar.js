@@ -198,7 +198,7 @@ Sbi.geo.control.InlineToolbar = OpenLayers.Class(OpenLayers.Control, {
         this.div.appendChild(this.createLIEl('span', 'Print this map', 'btn-print', 'elBtnPrint' ));
         this.div.appendChild(this.createLIEl('span', 'Share this map', 'btn-share', 'elBtnShare' ));
         this.div.appendChild(this.createLIEl('a', 'Download this map', 'btn-download', 'elBtnDownload' ));
-        this.div.appendChild(this.createLIEl('a', 'Make this map favourite', 'btn-favourite last', 'elBtnFavourite' ));
+//        this.div.appendChild(this.createLIEl('a', 'Make this map favourite', 'btn-favourite last', 'elBtnFavourite' ));
         
                
         Sbi.trace("[InlineToolbar.createContents] : OUT");
@@ -272,13 +272,16 @@ Sbi.geo.control.InlineToolbar = OpenLayers.Class(OpenLayers.Control, {
 			this.shareMapWindow.destroy();
 			this.shareMapWindow.close();
 		}
-		var shareMap = this.getShareMapContent(type);			
-		var shareMapPanel = new Ext.Panel({items:[shareMap]});
+		var shareMapLink = this.getShareMapContent('link');	 //type : 'link' or 'html'	
+		shareMapLink.title = 'Link';
+		var shareMapHtml = this.getShareMapContent('html');	 
+		shareMapHtml.title = 'Html';
+		var shareMapPanel = new Ext.TabPanel({activeTab: 0,items:[shareMapLink,shareMapHtml ]});
 		
 		this.shareMapWindow = new Ext.Window({
             layout      : 'fit',
 	        width		: 700,
-	        height		: 350,
+	        height		: 150,
             closeAction :'destroy',
             plain       : true,
 //	            title		: OpenLayers.Lang.translate('sbi.tools.catalogue.measures.window.title'),
