@@ -449,7 +449,7 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
     								this.layerId = obj.layerId;
     					     		this.featureSourceType = obj.featureSource;
     					     		this.featureSource = obj.featureSource;
-    					     		
+    					     		//TODO
     								this.loadLayer();
     								//alert("Response: " + response.responseText);
     							}
@@ -937,25 +937,25 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
     /**
      * @method 
      *
-     * @param {Object} request
+     * @param {Object} response
      */
-    , onSuccess: function(request) {
-        var doc = request.responseXML;
+    , onSuccess: function(response) {
+        var doc = response.responseXML;
         if (!doc || !doc.documentElement) {
-            doc = request.responseText;
+            doc = response.responseText;
         }
         var format = this.format || new OpenLayers.Format.GeoJSON()
         this.layer.addFeatures(format.read(doc));
-        this.requestSuccess(request);
+        this.requestSuccess(response);
     }
 
     /**
      * @method 
      *
-     * @param {Object} request
+     * @param {Object} response
      */
-    , onFailure: function(request) {
-        this.requestFailure(request);
+    , onFailure: function(response) {
+        this.requestFailure(response);
     }
 });
 
