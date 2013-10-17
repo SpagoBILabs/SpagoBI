@@ -257,7 +257,7 @@ Ext.extend(Sbi.service.SaveDocumentWindowExt, Ext.Window, {
 		var isPublic = this.isPublic.getValue();		
 		var query = this.OBJECT_QUERY;
 		var previewFile =  this.fileNameUploaded;
-		var docCommunity = '';// this.docCommunity.getValue();
+		var docCommunity = this.docCommunity.getValue();
 		var functs = this.treePanel.returnCheckedIdNodesArray();
 		
 		if(query!=undefined && query!=null){
@@ -269,7 +269,7 @@ Ext.extend(Sbi.service.SaveDocumentWindowExt, Ext.Window, {
 		
 		if(docLabel == null || docLabel == undefined || docLabel == '' ||
 		   ((functs == null || functs == undefined || functs.length == 0)
-//			&&   (docCommunity == null || docCommunity == undefined || docCommunity == '')
+			&&   (docCommunity == null || docCommunity == undefined || docCommunity == '')
 			)){
 				Ext.MessageBox.show({
 	                title: LN('sbi.generic.warning'),
