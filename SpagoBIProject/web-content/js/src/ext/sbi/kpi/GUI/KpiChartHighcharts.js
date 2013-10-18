@@ -136,7 +136,8 @@ maxValueElement = setMax(max);
 // ranges
 setRanges(ranges);
 
-function setTicks(maxim){
+function setTicks(maxim, tickInt){
+	tickInterval = tickInt;
 	max = maxim
 	for (var i = min; i <= max; i += tickInterval) {
 	    
@@ -168,7 +169,7 @@ function setTicks(maxim){
 	    
 	}
 }
-setTicks(max);
+setTicks(max, tickInterval);
 // the initial value
 setValue(value);
 
