@@ -152,7 +152,7 @@ Ext.extend(Sbi.kpi.KpiGUIDetail , Ext.form.FormPanel, {
 
 		}
 		if(this.tickInterval && this.tickInterval != null){
-			this.ticksNumber = ((this.maxChartValue - this.minChartValue)/this.tickInterval)+1;
+			this.ticksNumber = this.tickInterval + 1;
 		}
 		var config = 
 		{
@@ -175,9 +175,11 @@ Ext.extend(Sbi.kpi.KpiGUIDetail , Ext.form.FormPanel, {
 			if(Ext.isIE && (this.customChartName === undefined || this.customChartName == null || this.customChartName === 'null')){
 				y = 155;
 			}
-			if(!this.tickInterval || this.tickInterval == null || this.tickInterval == 0){
-				this.tickInterval = 20;
+			this.ticksNumber = 20;
+			if(this.tickInterval && this.tickInterval != null){
+				this.ticksNumber = ((this.maxChartValue - this.minChartValue)/this.tickInterval);
 			}
+			console.log(this.ticksNumber);
 			if(this.dial == null){
 				// Build the dial
 				this.dial = drawDial({
@@ -190,7 +192,7 @@ Ext.extend(Sbi.kpi.KpiGUIDetail , Ext.form.FormPanel, {
 				    
 				    minAngle: -Math.PI,
 				    maxAngle: 0,
-				    tickInterval: this.tickInterval,
+				    tickInterval: this.ticksNumber,
 				    ranges: this.ranges
 				    , pivotLength: 70 //arrow length
 				    , backgroundRadius: 120
@@ -203,7 +205,7 @@ Ext.extend(Sbi.kpi.KpiGUIDetail , Ext.form.FormPanel, {
 			}else{
 				this.dial.setMax(this.maxChartValue);			
 				this.dial.setRanges(this.ranges);
-				this.dial.setTicks(this.maxChartValue);
+				this.dial.setTicks(this.maxChartValue, this.ticksNumber);
 				this.dial.setValue(value);
 				this.dial.setCircle();
 			}
