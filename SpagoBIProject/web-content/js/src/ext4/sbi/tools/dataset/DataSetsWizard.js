@@ -5,6 +5,7 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
 		fieldsStep1: null,
 		fieldsStep2: null,
 		fieldsStep3: null,
+		fieldsStep4: null,
 		categoriesStore: null,
 		height: 440,
 		datasetGenericPropertiesStore: null,
@@ -16,7 +17,8 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
 		user:'',
 		fileUpload:null,
 		metaInfo:null,
-		isOwner: false
+		isOwner: false,
+		isTabbedPanel:false //if false rendering as 'card layout (without tabs)
 	}
 
 	, constructor: function(config) {
@@ -33,7 +35,6 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
 		
 		config.title =  LN('sbi.ds.wizard'); 	
 		config.bodyPadding = 10;   
-		config.layout='card';
 		config.tabs = this.initSteps();
 		config.buttons = this.initWizardBar();
 
@@ -49,29 +50,31 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
 	
 	, configureSteps : function(){
    
-		this.fieldsStep1 = this.getFieldsTab1();
+		this.fieldsStep1 =  this.getFieldsTab1(); 
 			
 		this.fieldsStep2 =  this.getFieldsTab2(); 
-			
-		this.fieldsStep3 =  this.getFieldsTab3(); 
 		
-		this.fieldsStep4 =  this.getFieldsTab4(); 
-
+		this.fieldsStep3 =  this.getFieldsTab3();
+		
+		this.fieldsStep4 = this.getFieldsTab4();
 
 	}
 	, initSteps: function(){
 		
 		var steps = [];
-
-		steps.push({itemId:'0', title:LN('sbi.ds.wizard.general'), items: Sbi.tools.dataset.DataSetsWizard.superclass.createStepFieldsGUI(this.fieldsStep1)});
-		steps.push({itemId:'1', title:LN('sbi.ds.wizard.detail'), items: this.fieldsStep2});
-		steps.push({itemId:'2', title:LN('sbi.ds.wizard.metadata'), items: this.fieldsStep3});
-		steps.push({itemId:'3', title:LN('sbi.ds.wizard.validation'), items: this.fieldsStep4});
+		var item1Label = LN('sbi.ds.wizard.detail');
+		var item2Label = item1Label + ' -> ' + LN('sbi.ds.wizard.metadata');
+		var item3Label = item2Label + ' -> ' + LN('sbi.ds.wizard.validation');
+		var item4Label = item3Label + ' -> ' + LN('sbi.ds.wizard.general');
+		steps.push({itemId:'0', title:item1Label, items: this.fieldsStep1});
+		steps.push({itemId:'1', title:item2Label, items: this.fieldsStep2});
+		steps.push({itemId:'2', title:item3Label, items: this.fieldsStep3});
+		steps.push({itemId:'3', title:item4Label, items: Sbi.tools.dataset.DataSetsWizard.superclass.createStepFieldsGUI(this.fieldsStep4)});
 		
 		return steps;
 	}
 	
-	, getFieldsTab1: function(){
+	, getFieldsTab4: function(){
 		//General tab
 		var toReturn = [];
 		
@@ -88,7 +91,7 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
 		return toReturn;
 	}
 	
-	, getFieldsTab2: function(){
+	, getFieldsTab1: function(){
 		//upload details tab
 		this.fileUpload = new Sbi.tools.dataset.FileDatasetPanel({fromWizard:true, isOwner: this.isOwner});
 		if (this.record !== undefined){
@@ -116,7 +119,7 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
 		return toReturn;
 	}
 	
-	, getFieldsTab3: function(){
+	, getFieldsTab2: function(){
 		//metadata tab
 		var config = {};
 		config.meta = this.record.meta;
@@ -128,23 +131,21 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
 		return this.metaInfo;
 	}
 	
-	, getFieldsTab4: function() {
+	, getFieldsTab3: function() {
 		//dataset validation tab
 		var config = {};
 		//create empty panel
 		this.validateDatasetInfo = new Sbi.tools.dataset.ValidateDataset(config);
 		return this.validateDatasetInfo;
 	}
-	
-	
-	
+
 	
 	, initWizardBar: function() {
 		var bar = this.callParent();
 		for (var i=0; i<bar.length; i++){
 			var btn = bar[i];
 			if (btn.id === 'confirm'){
-				if (!this.isOwner) {
+				if (!this.isOwner) {					
 					btn.disabled = true;
 				}
 			}				
@@ -159,23 +160,28 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
          // or finalization, etc.  A complete wizard implementation could get pretty
          // sophisticated depending on the complexity required, and should probably be
          // done as a subclass of CardLayout in a real-world implementation.
-		 var layout = panel.getLayout();		 
-		 var newTabId  = parseInt(this.wizardPanel.getActiveTab().itemId);
+		 var layout = panel.getLayout();
+		 var newTabId;
+		 if (this.isTabbedPanel){
+			 newTabId  = parseInt(this.wizardPanel.getActiveTab().itemId);
+		 }else{
+			newTabId  = parseInt(this.wizardPanel.layout.getActiveItem().itemId);
+		 }
+		 
 		 var oldTabId = newTabId;
 		 var numTabs  = (this.wizardPanel.items.length-1);
 		 var isTabValid = true;
 		 if (direction == 'next'){
 			 newTabId += (newTabId < numTabs)?1:0;	
-			 if (newTabId == 1){
-				 isTabValid = this.validateTab1();					
+			 if (newTabId == 0){
+				 isTabValid = this.validateTab0();					
 			 }
-			 if (newTabId == 2){
-				 isTabValid = this.validateTab2();
+			 if (newTabId == 1){
+				 isTabValid = this.validateTab1();
 				if (isTabValid){						
 					var values = Sbi.tools.dataset.DataSetsWizard.superclass.getFormState();
 					var fileValues = this.fileUpload.getFormState();
 					Ext.apply(values, fileValues);
-					//if (this.record.meta !== undefined && this.record.meta.length > 0 ){
 					if (this.record.meta !== undefined){
 						var metaValues = this.metaInfo.getFormState();
 						values.meta = metaValues;
@@ -185,23 +191,30 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
 					this.fireEvent('getMetaValues', values);
 				}
 			 }
-			 if (newTabId == 3){
+			 if (newTabId == 2){				 
 				 var values = Sbi.tools.dataset.DataSetsWizard.superclass.getFormState();
 				 var fileValues = this.fileUpload.getFormState();
 				 Ext.apply(values, fileValues);
 				 //If true a new file is uploaded
 				 values.fileUploaded = thisPanel.fileUploaded;
-				 var datasetMetadata = this.fieldsStep3.getFormState();
+				 var datasetMetadata = this.fieldsStep2.getFormState();
 				 values.datasetMetadata = Ext.JSON.encode(datasetMetadata) ;
-				 this.fieldsStep4.createDynamicGrid(values);
+
+				 this.fieldsStep3.createDynamicGrid(values);
 			 }
 		 }else{			
 			newTabId -= (newTabId <= numTabs)?1:0;					
 		 }
 		 if (isTabValid){
-			 this.wizardPanel.setActiveTab(newTabId);
+			 if (this.isTabbedPanel){
+				 this.wizardPanel.setActiveTab(newTabId);
+			 }else{
+				 this.wizardPanel.layout.setActiveItem(newTabId);
+			 }
 			 Ext.getCmp('move-prev').setDisabled(newTabId==0);
 			 Ext.getCmp('move-next').setDisabled(newTabId==numTabs);
+		 	 Ext.getCmp('confirm').setVisible(!(parseInt(newTabId)<parseInt(numTabs)));
+//			 	Ext.getCmp('confirm').setDisabled(parseInt(newTabId)<parseInt(numTabs));
 		 }			 
 	}
 	
@@ -210,7 +223,7 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
 	}
 
 	, save : function(){
-		if (this.validateTab1() && this.validateTab2()){
+		if (this.validateTab0() && this.validateTab1()){
 			var values = Sbi.tools.dataset.DataSetsWizard.superclass.getFormState();
 			var fileValues = this.fileUpload.getFormState();
 			Ext.apply(values, fileValues);
@@ -224,7 +237,7 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
 		}
 	}
 	
-	, validateTab1: function(){		
+	, validateTab0: function(){		
 		if (!Sbi.tools.dataset.DataSetsWizard.superclass.validateForm()){
 			Sbi.exception.ExceptionHandler.showErrorMessage(LN('sbi.ds.mandatoryFields'), '');
 			return false;
@@ -232,13 +245,13 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
 		return true;
 	}
 	
-	, validateTab2: function(){
+	, validateTab1: function(){
 		var fileName = this.fileUpload.fileNameField;
 		if (fileName == undefined || fileName.value == ""){
 			Sbi.exception.ExceptionHandler.showErrorMessage(LN('sbi.ds.mandatoryUploadFile'), '');
 			return false;
 		}
-		var fileType =  this.fileUpload.fileTypeCombo;
+		var fileType =  this.fileUpload.fileType;
 		if (fileType == undefined || fileType.value == null || fileType.value == ""){
 			Sbi.exception.ExceptionHandler.showErrorMessage(LN('sbi.ds.mandatoryFields'), '');
 			return false;
@@ -293,6 +306,7 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
 			success : function(form, action) {
 				Ext.MessageBox.alert('Success!','File Uploaded to the Server');
 				Ext.getCmp('fileNameField').setValue(fileNameUploaded);
+				this.fileUpload.activateFileTypePanel(action.result.fileExtension);
 				thisPanel.fileUploaded = true;
 			},
 			failure : function(form, action) {
@@ -324,21 +338,33 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
 		Sbi.debug("[DatasetWizard.uploadFileButtonHandler]: OUT");
 	}
 
-	, goBack: function(n){
-		 var newTabId  = parseInt(this.wizardPanel.getActiveTab().itemId)-n;
-		 var numTabs  = (this.wizardPanel.items.length-1);		 
-		 this.wizardPanel.setActiveTab(newTabId);
-		 Ext.getCmp('move-prev').setDisabled(newTabId==0);
-		 Ext.getCmp('move-next').setDisabled(newTabId==numTabs);
-	}
-	
-	, goNext: function(n){
-		 var newTabId  = parseInt(this.wizardPanel.getActiveTab().itemId)+n;
-		 var numTabs  = (this.wizardPanel.items.length-1);		 
-		 this.wizardPanel.setActiveTab(newTabId);
-		 Ext.getCmp('move-prev').setDisabled(newTabId==0);
-		 Ext.getCmp('move-next').setDisabled(newTabId==numTabs);
-	}
+//	, goBack: function(n){
+//		 var newTabId;
+//		 if (this.isTabbedPanel){
+//			 newTabId  = parseInt(this.wizardPanel.getActiveTab().itemId)-n;
+//		 }else{
+//			 newTabId  = parseInt(this.wizardPanel.layout.getActiveItem().itemId)-n;
+//		 }
+//		 var numTabs  = (this.wizardPanel.items.length-1);		 
+//		 this.wizardPanel.setActiveTab(newTabId);
+//		 Ext.getCmp('move-prev').setDisabled(newTabId==0);
+//		 Ext.getCmp('move-next').setDisabled(newTabId==numTabs);
+////		 Ext.getCmp('confirm').setDisabled(newTabId<numTabs);
+//	}
+//	
+//	, goNext: function(n){
+//		var newTabId;
+//		 if (this.isTabbedPanel){
+//			 newTabId  = parseInt(this.wizardPanel.getActiveTab().itemId)+n;
+//		 }else{
+//			 newTabId  = parseInt(this.wizardPanel.layout.getActiveItem().itemId)+n;
+//		 }
+//		 var numTabs  = (this.wizardPanel.items.length-1);		 
+//		 this.wizardPanel.setActiveTab(newTabId);
+//		 Ext.getCmp('move-prev').setDisabled(newTabId==0);
+//		 Ext.getCmp('move-next').setDisabled(newTabId==numTabs);
+//		 Ext.getCmp('confirm').setDisabled(newTabId<numTabs);
+//	}
 	
 	, disableButton: function(btn){
 		 Ext.getCmp(btn).setDisabled(true);		

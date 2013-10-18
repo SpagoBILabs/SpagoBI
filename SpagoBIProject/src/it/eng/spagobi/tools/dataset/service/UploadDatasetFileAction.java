@@ -44,6 +44,8 @@ public class UploadDatasetFileAction extends AbstractSpagoBIAction {
     
     private static final String UPLOADED_FILE= "UPLOADED_FILE";
     private static final String SKIP_CHECKS= "SKIP_CHECKS";
+    
+    String fileExtension = "";
 		
     public void doService() {
     	
@@ -122,17 +124,27 @@ public class UploadDatasetFileAction extends AbstractSpagoBIAction {
 				}
 				
 				public String getContent() throws IOException {
+					JSONObject toReturn = new JSONObject();
 					if ( e != null) {
-						try {
-							JSONObject toReturn = new JSONObject();
-							toReturn.put("success", false);
+						try {							
+							toReturn.put("success", false);							
 							toReturn.put("msg", e.getMessage());
 							return toReturn.toString();
 						} catch (JSONException jSONException) {
 							logger.error(jSONException);
 						}
 					}
-					return "{success:true, file:null}";
+					toReturn = new JSONObject();
+					try {				
+						toReturn.put("success", true);
+						toReturn.put("fileExtension",fileExtension);
+						toReturn.put("file","null");
+					} catch (JSONException jSONException) {
+						logger.error(jSONException);
+					}					
+//					return "{success:true, file:null}";
+					return toReturn.toString();
+					
 				}
 				
 			});
@@ -157,7 +169,7 @@ public class UploadDatasetFileAction extends AbstractSpagoBIAction {
 				throw new SpagoBIServiceException(getActionName(), "The uploaded file exceeds the maximum size, that is " + maxSize + " bytes");
 			}
 			// check if the extension is valid (XLS, CSV)
-			String fileExtension =  uploaded.getName().lastIndexOf('.') > 0 ?  
+			fileExtension =  uploaded.getName().lastIndexOf('.') > 0 ?  
 					uploaded.getName().substring( uploaded.getName().lastIndexOf('.') + 1) : null;
 			logger.debug("File extension: [" + fileExtension +"]");			
 			if(!"CSV".equalsIgnoreCase( fileExtension )&& !"XLS".equalsIgnoreCase( fileExtension )) {

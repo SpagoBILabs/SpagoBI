@@ -5,7 +5,7 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. **/
 
 
-/**TODO anto: aggiornare documentazione!!!
+/**TODO aggiornare documentazione!!!
  * 
  * Wizard window base. It define a layout and provides the stubs methods for the wizard.
  * This methods should be overridden to define the logic. 
@@ -20,7 +20,6 @@
 
 Ext.define('Sbi.widgets.wizard.WizardWindow', {
     extend: 'Ext.Window'
-//    , requires: ['Ext.Toolbar', 'Ext.tab.Panel']
     ,config: {    	  	     	
     	width: 700,
 		height: 500,
@@ -29,12 +28,12 @@ Ext.define('Sbi.widgets.wizard.WizardWindow', {
 		closeAction:'destroy',
 		constrain: true,
 		plain: true,
-		modal:true,
 		title: '',
 		buttonAlign : 'center',
 		wizardPanel: null,		
 		fieldMap: {},
-		resizable: false
+		resizable: false,
+		isTabbedPanel: null
     } 
    
 	/**
@@ -56,8 +55,15 @@ Ext.define('Sbi.widgets.wizard.WizardWindow', {
 		localConf.fieldDefaults= {
 	            labelAlign: 'right',
 	            msgTarget: 'side'
-	        },
-		this.wizardPanel = Ext.create('Ext.TabPanel', localConf);	
+	        };
+		
+	    if (this.isTabbedPanel !== undefined && this.isTabbedPanel === true){	  
+	    	this.wizardPanel = Ext.create('Ext.TabPanel', localConf);
+	    }else{
+	    	localConf.layout = 'card';
+	    	this.wizardPanel = Ext.create('Ext.Panel', localConf);
+	    }
+		
 		this.items = [this.wizardPanel];
 	}
 	
@@ -124,10 +130,11 @@ Ext.define('Sbi.widgets.wizard.WizardWindow', {
         	});
 		
 		buttonsBar.push({id: 'confirm',
+			hidden: true,
             text:  LN('sbi.ds.wizard.confirm'),
             handler: function(){
             	thisPanel.fireEvent('confirm', this);   
-            }, scope: this
+            }, scope: this            
         	});
 		
 		buttonsBar.push({id: 'cancel',
