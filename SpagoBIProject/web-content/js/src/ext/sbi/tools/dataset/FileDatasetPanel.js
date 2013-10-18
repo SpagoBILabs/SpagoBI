@@ -54,7 +54,8 @@ Sbi.tools.dataset.FileDatasetPanel = function(config) {
 	var defaultSettings =  {
 	        labelWidth: 75, 
 	        frame:false,
-	        defaultType: 'textfield'        	
+	        defaultType: 'textfield'      
+//	        ,layout: 'fit'
 		};
 
 
@@ -72,10 +73,9 @@ Sbi.tools.dataset.FileDatasetPanel = function(config) {
 		};
 
 
-
-
-
-	Sbi.tools.dataset.FileDatasetPanel.superclass.constructor.call(this, c);	 		
+	Sbi.tools.dataset.FileDatasetPanel.superclass.constructor.call(this, c);	 	
+	
+	
 	
 };
 
@@ -119,6 +119,7 @@ Ext.extend(Sbi.tools.dataset.FileDatasetPanel, Ext.Panel, {
 	          width: 500,
 			  labelWidth: 150,
 	          items: [ this.skipRowsField, this.limitRowsField, this.sheetNumberField  ]
+//		,columnWidth: 0.5
 		});
 		this.xlsOptionsPanel.setVisible(false);
 
@@ -208,44 +209,47 @@ Ext.extend(Sbi.tools.dataset.FileDatasetPanel, Ext.Panel, {
 	          width: 500,
 			  labelWidth: 150,
 	          items: [ this.csvDelimiterCombo, this.csvQuoteCombo]
+//			,columnWidth: 0.5
 		});
 		this.csvOptionsPanel.setVisible(false);
 
 		
 		
 		//Upload file fields
-		this.fileTypeCombo = new Ext.form.ComboBox({
-			name : 'fileType',
-			store: new Ext.data.ArrayStore({
-		        fields: [
-		            'fileTypeName',
-		            'fileTypeValue'
-		        ],
-		        data: [['CSV', 'CSV'], ['Excel 2003', 'XLS']]
-		    }),
-			width : (this.fromWizard)? 'auto' : 150,
-			fieldLabel : LN('sbi.ds.file.type'),
-			displayField : 'fileTypeName', 
-			valueField : 'fileTypeValue', 
-			typeAhead : true, forceSelection : true,
-			mode : 'local',
-			triggerAction : 'all',
-			selectOnFocus : true, 
-			editable : false,
-			allowBlank : false, 
-			validationEvent : false,
-			readOnly: !this.isOwner || false
-		});		
-		this.fileTypeCombo.addListener('select',this.activateFileTypePanel, this);
-
+//		this.fileTypeCombo = new Ext.form.ComboBox({
+//			name : 'fileType',
+//			store: new Ext.data.ArrayStore({
+//		        fields: [
+//		            'fileTypeName',
+//		            'fileTypeValue'
+//		        ],
+//		        data: [['CSV', 'CSV'], ['Excel 2003', 'XLS']]
+//		    }),
+//			width : (this.fromWizard)? 'auto' : 150,
+//			fieldLabel : LN('sbi.ds.file.type'),
+//			displayField : 'fileTypeName', 
+//			valueField : 'fileTypeValue', 
+//			typeAhead : true, forceSelection : true,
+//			mode : 'local',
+//			triggerAction : 'all',
+//			selectOnFocus : true, 
+//			editable : false,
+//			allowBlank : false, 
+//			validationEvent : false,
+//			readOnly: !this.isOwner || false
+//		});		
+//		this.fileTypeCombo.addListener('select',this.activateFileTypePanel, this);
+		this.fileType = new Ext.form.Field({name : 'fileType',hidden:true});
+		
 		this.fileNameField = new Ext.form.DisplayField({
 			fieldLabel : LN('sbi.ds.fileName'),
 			width:  300,
 			allowBlank : false,
 			id: 'fileNameField',
 			name: 'fileName',
-			readOnly:true,
-			hidden: !this.isOwner || false
+			readOnly:true
+//			hidden: !this.isOwner || false
+//			columnWidth: 0.3
 		});
 		
 		this.uploadField = new Ext.form.TextField({
@@ -256,6 +260,7 @@ Ext.extend(Sbi.tools.dataset.FileDatasetPanel, Ext.Panel, {
 			id: 'fileUploadField',
 			name: 'fileUpload',
 			hidden: !this.isOwner || false
+//			,columnWidth: 0.2
 		});
 		/*
 		this.noChecks = new  Ext.form.Checkbox({
@@ -270,6 +275,7 @@ Ext.extend(Sbi.tools.dataset.FileDatasetPanel, Ext.Panel, {
 	        text: LN('sbi.ds.file.upload.button'),
 	        id: 'fileUploadButton',
 	        hidden: !this.isOwner || false
+//	        ,columnWidth: 0.2
 	    });
 		
 		//Main Panel
@@ -281,7 +287,9 @@ Ext.extend(Sbi.tools.dataset.FileDatasetPanel, Ext.Panel, {
 		  defaultType: 'textfield',
 		  fileUpload: true,
 		  id: 'fileUploadPanel',
-		  items: [this.fileNameField, this.uploadField, this.uploadButton, this.fileTypeCombo, this.csvOptionsPanel, this.xlsOptionsPanel]
+//		  layout:'column',
+//		  items: [this.fileNameField, this.uploadField, this.uploadButton, this.fileTypeCombo, this.csvOptionsPanel, this.xlsOptionsPanel]
+		  items: [this.fileNameField, this.uploadField, this.uploadButton,  this.fileType, this.csvOptionsPanel, this.xlsOptionsPanel]
 
 		});
 		if (!this.fromWizard) {
@@ -292,9 +300,22 @@ Ext.extend(Sbi.tools.dataset.FileDatasetPanel, Ext.Panel, {
 	}	
 
 	//Listeners
-	,activateFileTypePanel : function(combo, record, index) {
-		if (Array.isArray(record)) record = record[0];
-		var fileTypeSelected = record.get('fileTypeValue');
+//	,activateFileTypePanel : function(combo, record, index) {
+//		alert('activateFileTypePanel!');
+//		if (Array.isArray(record)) record = record[0];
+//		var fileTypeSelected = record.get('fileTypeValue');
+//		if (fileTypeSelected != null && fileTypeSelected == 'CSV') {
+//			this.csvOptionsPanel.setVisible(true);
+//			this.xlsOptionsPanel.setVisible(false);
+//		} else if (fileTypeSelected != null && fileTypeSelected == 'XLS') {
+//			this.csvOptionsPanel.setVisible(false);
+//			this.xlsOptionsPanel.setVisible(true);
+//		}
+//	}
+//	
+	,activateFileTypePanel : function(fileTypeSelected) {
+		fileTypeSelected = fileTypeSelected.toUpperCase();
+		this.fileType.setValue(fileTypeSelected);
 		if (fileTypeSelected != null && fileTypeSelected == 'CSV') {
 			this.csvOptionsPanel.setVisible(true);
 			this.xlsOptionsPanel.setVisible(false);
@@ -328,7 +349,8 @@ Ext.extend(Sbi.tools.dataset.FileDatasetPanel, Ext.Panel, {
 			this.csvQuoteCombo.setValue(formState.csvQuote);
 		}
 		if (formState.fileType != null){
-			this.fileTypeCombo.setValue(formState.fileType);
+//			this.fileTypeCombo.setValue(formState.fileType);
+			this.fileType.setValue(formState.fileType);
 			this.initialActivateFileTypePanel(formState.fileType);
 		}
 		if (formState.skipRows != null){
@@ -348,7 +370,8 @@ Ext.extend(Sbi.tools.dataset.FileDatasetPanel, Ext.Panel, {
 		formState.fileName = this.fileNameField.getValue();
 		formState.csvDelimiter = this.csvDelimiterCombo.getValue();
 		formState.csvQuote = this.csvQuoteCombo.getValue();
-		formState.fileType = this.fileTypeCombo.getValue();
+//		formState.fileType = this.fileTypeCombo.getValue();
+		formState.fileType = this.fileType.getValue();
 		formState.skipRows = this.skipRowsField.getValue();
 		formState.limitRows = this.limitRowsField.getValue();
 		formState.xslSheetNumber = this.sheetNumberField.getValue();
