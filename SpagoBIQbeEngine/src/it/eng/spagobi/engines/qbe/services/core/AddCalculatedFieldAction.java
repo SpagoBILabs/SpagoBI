@@ -8,7 +8,6 @@ package it.eng.spagobi.engines.qbe.services.core;
 import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.model.structure.ModelCalculatedField;
 import it.eng.qbe.model.structure.ModelCalculatedField.Slot;
-import it.eng.qbe.model.structure.ModelCalculatedField.Slot.IMappedValuesDescriptor;
 import it.eng.qbe.query.serializer.json.QuerySerializationConstants;
 import it.eng.qbe.serializer.SerializationManager;
 import it.eng.spago.base.SourceBean;
@@ -19,6 +18,7 @@ import it.eng.spagobi.utilities.service.JSONAcknowledge;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -135,6 +135,10 @@ public class AddCalculatedFieldAction extends AbstractQbeEngineAction {
 			}
 			field.setNature(nature);
 			
+			///begin patch : default properties --bug SPAGOBI-1292
+			setDefaultProperties(field, nature);
+			////---end patch
+			
 			if(slots != null && slots.trim().length() > 0) {
 				JSONArray slotsJSON = new JSONArray(slots);
 				List<Slot> slotList = new ArrayList<Slot>();
@@ -160,4 +164,17 @@ public class AddCalculatedFieldAction extends AbstractQbeEngineAction {
 		return field;
 	}
 	
+	private void setDefaultProperties(ModelCalculatedField field, String nature){
+		
+		HashMap<String, Object> properties = new HashMap<String, Object>();
+		properties.put(QuerySerializationConstants.FIELD_VISIBLE, "true");	
+		properties.put("position", "0");
+		if(nature == null){
+			nature = "attribute";
+		}
+		properties.put("type", nature.toLowerCase());
+		properties.put("format", "null");
+		field.setProperties(properties);	
+		
+	}
 }
