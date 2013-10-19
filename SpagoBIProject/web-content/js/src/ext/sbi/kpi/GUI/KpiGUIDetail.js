@@ -349,6 +349,9 @@ Ext.extend(Sbi.kpi.KpiGUIDetail , Ext.form.FormPanel, {
 
 		//target
 		var target = field.attributes.target;
+		if(target === undefined){
+			target='';
+		}
 		this.targetItem = new Ext.form.DisplayField({fieldLabel: LN('sbi.modelinstances.target'), 
 													style: 'padding-left:15px;',
 													//width: 150,
@@ -358,7 +361,9 @@ Ext.extend(Sbi.kpi.KpiGUIDetail , Ext.form.FormPanel, {
 		
 		//weight
 		var weight = field.attributes.weight;
-		
+		if(weight === undefined){
+			weight='';
+		}
 		this.weightItem = new Ext.form.DisplayField({fieldLabel: LN('sbi.kpis.weight'),
 													style: 'margin-left:15px;',
 													width: 150,
