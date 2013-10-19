@@ -122,14 +122,8 @@ function Gauge(placeholderName, configuration)
 		}		
 
 		var pointerContainer = this.body.append("svg:g").attr("class", "pointerContainer");		
-		this.drawPointer(0);
-		pointerContainer.append("svg:circle")								
-							.attr("cx", this.config.cx)						
-							.attr("cy", this.config.cy)								
-							.attr("r", 0.12 * this.config.raduis)
-							.style("fill", "#4684EE")
-							.style("stroke", "#666")
-							.style("opacity", 1);
+
+
 	}
 
 	this.redraw = function(value)
@@ -140,20 +134,28 @@ function Gauge(placeholderName, configuration)
 	this.drawBand = function(start, end, color)
 	{
 		if (0 >= end - start) return;
-
-		this.body.append("svg:path")
-					.style("fill", color)
-					.attr("d", d3.svg.arc()
-						.startAngle(this.valueToRadians(start))
-						.endAngle(this.valueToRadians(end))
-						.innerRadius(0.65 * this.config.raduis)
-						.outerRadius(0.85 * this.config.raduis))
-					.attr("transform", function() { return "translate(" + self.config.cx + ", " + self.config.cy + ") rotate(270)" });
+		try{
+			this.body.append("svg:path")
+						.style("fill", color)
+						.attr("d", d3.svg.arc()
+							.startAngle(this.valueToRadians(start))
+							.endAngle(this.valueToRadians(end))
+							.innerRadius(0.65 * this.config.raduis)
+							.outerRadius(0.85 * this.config.raduis))
+						.attr("transform", function() { return "translate(" + self.config.cx + ", " + self.config.cy + ") rotate(270)" });
+		}catch(err){
+			console.log(err);
+		}
 	}
 
 	this.drawPointer = function(value)
 	{
-		var valueToSet = value;
+		var valueToSet =''+value+'';
+		if(valueToSet.indexOf('.') != -1){
+			valueToSet = parseFloat(valueToSet).toFixed(2);
+		}else{
+			valueToSet = Math.round(valueToSet);
+		}
 		
 		var tickColor ='#57a8d7';//light blue
 		var tickBorder ='#155ba4';//dark blue
@@ -167,7 +169,7 @@ function Gauge(placeholderName, configuration)
 			tickColor ='#e5340b';//light red
 			tickBorder ="#c63310";//dark red	
 		}
-		var delta = this.config.range / 13;
+/*		var delta = this.config.range / 13;
 
 		var head = this.valueToPoint(value, 0.85);
 		var head1 = this.valueToPoint(value - delta, 0.12);
@@ -183,39 +185,47 @@ function Gauge(placeholderName, configuration)
 		var line = d3.svg.line()
 							.x(function(d) { return d.x })
 							.y(function(d) { return d.y })
-							.interpolate("linear");
+							.interpolate("linear");*/
 		
 		
 		var pointerContainer = this.body.select(".pointerContainer");	
 
-		var pointer = pointerContainer.selectAll("path").data([data]);
-			
-		pointer.enter()
+		//var pointer = pointerContainer.selectAll("path").data([data]);
+				
+		pointerContainer.append('svg:path').attr('class', 'needle').attr('d', this.mkNeedle(value, 70)).style("fill", tickColor).style("stroke", tickBorder).style("fill-opacity", 0.7);	
+		
+		pointerContainer.append("svg:circle")								
+		.attr("cx", this.config.cx)						
+		.attr("cy", this.config.cy)								
+		.attr("r", 0.12 * this.config.raduis)
+		.style("fill", tickColor).style("stroke", tickBorder)
+		.style("opacity", 1);
+/*		pointer.enter()
 				.append("svg:path")
 					.attr("d", line)
+					//.attr("d", function(d) { return line.tension(d)(data); })
 					.style("fill", tickColor)
 					.style("stroke", tickBorder)
 					.style("fill-opacity", 0.7);
 		
-		pointer.style("fill", tickColor)
-		.style("stroke", tickBorder);
+		pointer.style("fill", tickColor).style("stroke", tickBorder);
 		
 		pointer.transition()
-					.attr("d", line);
+					.attr("d", line);*/
 
 
 		var fontSize = Math.round(this.config.size / 10);
 		
 		pointerContainer.selectAll("text")
 							.data([valueToSet])
-								.text(Math.round(valueToSet))
+								.text(valueToSet)
 							.enter()
 								.append("svg:text")
 									.attr("x", this.config.cx)
 									.attr("y", this.config.size - this.config.cy / 4 - fontSize)			 			
 									.attr("dy", fontSize / 2)
 									.attr("text-anchor", "middle")
-									.text(Math.round(valueToSet))
+									.text(valueToSet)
 									.style("font-size", fontSize + "px")
 									.style("fill", "#000")
 									.style("stroke-width", "0px");
@@ -241,7 +251,22 @@ function Gauge(placeholderName, configuration)
 
 		return point;
 	}
-
+		  
+    this.mkNeedle = function(value, len) {
+        var centerX, centerY, leftX, leftY, rightX, rightY, thetaRad, topX, topY;
+  	    thetaRad = this.valueToRadians(value);
+        centerX = 0;
+        centerY = 0;
+  	  this.len= 
+        topX = this.config.cx - len * Math.cos(thetaRad);
+        topY = this.config.cy - len * Math.sin(thetaRad);
+        leftX = this.config.cx - (0.12 * this.config.raduis) * Math.cos(thetaRad - Math.PI / 2);
+        leftY = this.config.cy - (0.12 * this.config.raduis) * Math.sin(thetaRad - Math.PI / 2);
+        rightX = this.config.cx - (0.12 * this.config.raduis) * Math.cos(thetaRad + Math.PI / 2);
+        rightY = this.config.cy - (0.12 * this.config.raduis) * Math.sin(thetaRad + Math.PI / 2);
+        return "M " + leftX + " " + leftY + " L " + topX + " " + topY + " L " + rightX + " " + rightY;
+  			
+      };
 	// initialization
 	this.configure(configuration);	
 }
