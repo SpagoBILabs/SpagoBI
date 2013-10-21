@@ -94,10 +94,10 @@ public static String DS_TYPE = "SbiQbeDataSet";
 		IDataSource dataSource = DataSourceFactory.getDataSource( dataSetConfig.getDataSource() ) ;
 		this.setDataSource(dataSource);
 		
-		if (dataSetConfig.getDataSourcePersist() != null) {
-			IDataSource dataSourcePersist = DataSourceFactory.getDataSource( dataSetConfig.getDataSourcePersist() ) ;
-			this.setDataSourcePersist(dataSourcePersist);
-		}
+//		if (dataSetConfig.getDataSourcePersist() != null) {
+//			IDataSource dataSourcePersist = DataSourceFactory.getDataSource( dataSetConfig.getDataSourcePersist() ) ;
+//			this.setDataSourcePersist(dataSourcePersist);
+//		}
 
 	}
     
@@ -123,7 +123,7 @@ public static String DS_TYPE = "SbiQbeDataSet";
     		ds.setDataStoreTransformer(dataSetTransformer);
     		((AbstractDataSet)ds).setPersisted(persisted);
     		((AbstractDataSet)ds).setPersistTableName(persistTableName);
-    		ds.setDataSourcePersist(getDataSourcePersist());
+//    		ds.setDataSourcePersist(getDataSourcePersist());
     	}
     }
     
@@ -209,9 +209,9 @@ public static String DS_TYPE = "SbiQbeDataSet";
 			sbd.setDataSource(getDataSource().toSpagoBiDataSource());
 		}
 		
-		if (getDataSourcePersist() != null) {
-			sbd.setDataSourcePersist(getDataSourcePersist().toSpagoBiDataSource());
-		}
+//		if (getDataSourcePersist() != null) {
+//			sbd.setDataSourcePersist(getDataSourcePersist().toSpagoBiDataSource());
+//		}
 		
 		/* next informations are already loaded in method super.toSpagoBiDataSet() through the table field configuration 
 		try{
