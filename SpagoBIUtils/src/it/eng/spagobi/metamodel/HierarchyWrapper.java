@@ -46,6 +46,14 @@ public class HierarchyWrapper{
 		return this.wrappedHierarchy.getLevels();
 	}
 	
+	public IDataStore getSiblingValues(String siblingColumnName){
+		return this.wrappedHierarchy.getSiblingValues(siblingColumnName);
+	}
+	
+	public Map<Object, Object> getMembersAndSibling(String levelName, String columnName){
+		return this.wrappedHierarchy.getMembersAndSibling(levelName,columnName);
+	}
+	
 	/**
 	 * Gets the position of the level in the hierarchy.
 	 * The root of the hierarchy has level position =0 
