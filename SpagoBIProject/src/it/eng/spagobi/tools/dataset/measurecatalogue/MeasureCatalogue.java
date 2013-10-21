@@ -14,6 +14,8 @@ import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.meta.model.Model;
 import it.eng.spagobi.metamodel.MetaModelLoader;
 import it.eng.spagobi.metamodel.MetaModelWrapper;
+import it.eng.spagobi.metamodel.SiblingsFileLoader;
+import it.eng.spagobi.metamodel.SiblingsFileWrapper;
 import it.eng.spagobi.services.common.EnginConf;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
@@ -34,6 +36,7 @@ import java.util.Set;
 import junit.framework.Assert;
 
 import org.apache.log4j.Logger;
+import org.w3c.dom.Document;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -47,6 +50,7 @@ public class MeasureCatalogue implements Observer {
 	
 	public MeasureCatalogue(){
 		initModel();
+		initSiblings();
 		initMeasures();
 	}
 	
@@ -93,6 +97,47 @@ public class MeasureCatalogue implements Observer {
 		
 		logger.debug("Model [" + modelname + "] succesfully initialized");
 	}
+	
+	/**
+	 * Get the name of the model from SbiConfig and load the information about siblings columns for levels from the *.siblings (if present, not mandatory)
+	 */
+	private void initSiblings(){
+		Config modelConfig=null;
+		
+		try {
+			IConfigDAO configDao = DAOFactory.getSbiConfigDAO();
+			modelConfig = configDao.loadConfigParametersByLabel(MeasureCatalogueCostants.modelConfigLabel);
+		} catch (Exception e) {
+			logger.error("Error loading the name of the model that contains the hierarchies",e);
+			throw new SpagoBIRuntimeException("Error loading the name of the model that contains the hierarchies",e);
+		}
+		
+		Assert.assertNotNull("The model with the definition of the cube must be difined in the configs (property "+MeasureCatalogueCostants.modelConfigLabel+")", modelConfig);
+		
+		String modelname = modelConfig.getValueCheck();
+		logger.debug("Loading Siblings File [" + modelname +".siblings ]");
+		
+		File siblingsFile = new File(getResourcePath()+File.separator+"qbe" + File.separator + "datamarts" + File.separator + modelname+File.separator+modelname+".siblings");
+		
+		if (siblingsFile.exists()){
+			logger.debug("Siblings file name is equal to [" + modelname + "]");
+			Document xmlDocument = SiblingsFileLoader.load(siblingsFile);
+			SiblingsFileWrapper siblingsFileWrapper = new SiblingsFileWrapper(xmlDocument);
+			if (metamodelWrapper != null){
+				metamodelWrapper.setSiblingsFileWrapper(siblingsFileWrapper);
+			}
+						
+			logger.debug("Siblings [" + modelname + "] succesfully initialized");
+
+		} else {
+			//do nothing
+			logger.debug("Siblings File [" + modelname +".siblings ] not present");
+
+		}
+		
+
+	}
+
 	
 	/**
 	 * Init the set of measures 

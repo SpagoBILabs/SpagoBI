@@ -31,12 +31,14 @@ import org.apache.log4j.Logger;
 import it.eng.spagobi.meta.model.olap.Level;
 import it.eng.spagobi.metamodel.HierarchyWrapper;
 import it.eng.spagobi.metamodel.MetaModelWrapper;
+import it.eng.spagobi.metamodel.SiblingsFileWrapper;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IField;
 import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.measurecatalogue.MeasureCatalogue;
+import it.eng.spagobi.tools.dataset.measurecatalogue.MeasureCatalogueSingleton;
 
 /**
  * @author Marco Cortella (marco.cortella@eng.it)
@@ -46,7 +48,7 @@ public class GeoSpatialDimensionDatasetValidator  extends AbstractDatasetValidat
 
 	public static transient Logger logger = Logger.getLogger(GeoSpatialDimensionDatasetValidator.class);
 	public final String GEO_HIERARCHY_NAME = "geo"; //this validator check only hierarchies with this name
-
+	public final String GEO_DIMENSION_NAME = "geo";
 
 	public GeoSpatialDimensionDatasetValidator(IDatasetValidator child){
 		childValidator = child;
@@ -58,13 +60,10 @@ public class GeoSpatialDimensionDatasetValidator  extends AbstractDatasetValidat
 	@Override
 	public ValidationErrors doValidateDataset(IDataStore dataStore,Map<String, HierarchyLevel> hierarchiesColumnsToCheck ) {
 		ValidationErrors validationErrors = new ValidationErrors();
-		MeasureCatalogue measureCatalogue = new MeasureCatalogue();
+		MeasureCatalogue measureCatalogue = MeasureCatalogueSingleton.getMeasureCatologue();
 		
 		MetaModelWrapper metamodelWrapper = measureCatalogue.getMetamodelWrapper();
-		List<HierarchyWrapper> hierachies = metamodelWrapper.getHierarchies();
-		for(HierarchyWrapper h : hierachies) {
-			 logger.debug("Supported hierarchy [" + h.getName() + "]");
-		}
+
 		
 		for (Map.Entry<String, HierarchyLevel> entry : hierarchiesColumnsToCheck.entrySet())
 		{
@@ -78,13 +77,18 @@ public class GeoSpatialDimensionDatasetValidator  extends AbstractDatasetValidat
 		    		HierarchyWrapper hierarchy = metamodelWrapper.getHierarchy(GEO_HIERARCHY_NAME);
 		    		if (hierarchy != null){
 		    			if (hierarchy.getName().equalsIgnoreCase(hierarchyName)){
-			    			List<Level> levels = hierarchy.getLevels();
+			    			//List<Level> levels = hierarchy.getLevels();
 			    			Level level = hierarchy.getLevel(hierarchyLevelName);
 			    			if (level != null){
 			    				String levelName = level.getName();
-				    			IDataStore dataStoreLevel = hierarchy.getMembers(levelName); //return a dataStore with one column only
+				    			//IDataStore dataStoreLevel = hierarchy.getMembers(levelName); //return a dataStore with one column only
 
-				    			Set<String> admissibleValues = dataStoreLevel.getFieldDistinctValuesAsString(0);
+				    			/* Test for what values use in the validation */
+				    			Set<String> admissibleValues = testValidationCriteria(metamodelWrapper, hierarchy, dataStore, levelName,
+				    					columnName);
+				    			
+				    			//Default Criteria commented
+				    			//Set<String> admissibleValues = dataStoreLevel.getFieldDistinctValuesAsString(0);
 				    			String hint = generateHintValues(admissibleValues);
 
 				    			//Iterate the datastore (of the dataset) and check if values are ammissible
@@ -129,6 +133,57 @@ public class GeoSpatialDimensionDatasetValidator  extends AbstractDatasetValidat
 
 		
 		return validationErrors;
+	}
+	
+	/**
+	 *
+	 * @return the admissible values to use for the validation
+	 */
+	public Set<String> testValidationCriteria(MetaModelWrapper metaModelWrapper, HierarchyWrapper hierarchy, IDataStore datastoreToValidate, String levelName, String columnNameOnDataset ){
+		Object fieldValue = null;
+		
+		//Get the first value of the datastore to validate
+		Iterator it = datastoreToValidate.iterator();
+		int columnIndex = datastoreToValidate.getMetaData().getFieldIndex(columnNameOnDataset); 
+   		IRecord record = (IRecord)it.next();
+    	IField field = record.getFieldAt(columnIndex);
+    	fieldValue = field.getValue();   		
+
+		
+		//then check if the value is ammissible for the Level members (default values used as identifiers values)
+		IDataStore dataStoreLevel = hierarchy.getMembers(levelName); //return a dataStore with one column only
+		Set<String> admissibleValues = dataStoreLevel.getFieldDistinctValuesAsString(0);
+		if(fieldValue != null)  {
+			if (admissibleValues.contains(fieldValue)){
+				return admissibleValues; // use default criteria
+			} else {
+				//otherwise check the values on the siblings columns (if any)
+				SiblingsFileWrapper siblingsFile = metaModelWrapper.getSiblingsFileWrapper();
+				if (siblingsFile != null){
+					List<String> siblingsColumnsNames = siblingsFile.getLevelSiblings(GEO_DIMENSION_NAME, GEO_HIERARCHY_NAME, levelName);
+					
+					if (!siblingsColumnsNames.isEmpty()){
+						for (String siblingColumnName : siblingsColumnsNames){
+							IDataStore dataStoreSibling = hierarchy.getSiblingValues(siblingColumnName);
+							Set<String> admissibleValuesSibling  = dataStoreSibling.getFieldDistinctValuesAsString(0);
+							if (admissibleValuesSibling.contains(fieldValue)){
+								//found a valid criteria, validate dataset with this values
+								return admissibleValuesSibling;
+							}
+						}
+					}
+				}
+				
+				
+				
+			}
+		} 
+		//in all other cases use default validation
+		return admissibleValues;
+		
+		
+		
+		
 	}
 	
 	//Generate a String with some possible admissible values as an hint

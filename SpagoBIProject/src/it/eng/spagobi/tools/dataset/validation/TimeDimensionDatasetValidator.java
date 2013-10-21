@@ -35,6 +35,7 @@ import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IField;
 import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
 import it.eng.spagobi.tools.dataset.measurecatalogue.MeasureCatalogue;
+import it.eng.spagobi.tools.dataset.measurecatalogue.MeasureCatalogueSingleton;
 
 /**
  * @author Marco Cortella (marco.cortella@eng.it)
@@ -56,7 +57,9 @@ public class TimeDimensionDatasetValidator  extends AbstractDatasetValidator {
 	@Override
 	public ValidationErrors doValidateDataset(IDataStore dataStore,Map<String, HierarchyLevel> hierarchiesColumnsToCheck ) {
 		ValidationErrors validationErrors = new ValidationErrors();
-		MeasureCatalogue measureCatalogue = new MeasureCatalogue();
+		//MeasureCatalogue measureCatalogue = new MeasureCatalogue();
+		MeasureCatalogue measureCatalogue = MeasureCatalogueSingleton.getMeasureCatologue();
+
 		
 		MetaModelWrapper metamodelWrapper = measureCatalogue.getMetamodelWrapper();
 		
