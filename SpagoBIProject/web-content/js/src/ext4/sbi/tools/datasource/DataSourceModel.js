@@ -25,6 +25,8 @@ Ext.define('Sbi.tools.datasource.DataSourceModel', {
 	         "DIALECT_ID", 
 	         "MULTISCHEMA",
 	         "SCHEMA", 
+	         "READ_ONLY",
+	         "WRITE_DEFAULT",	
 	         "TYPE",
 	         "JNDI_URL",
 	         "USER", 

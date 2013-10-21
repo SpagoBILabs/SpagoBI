@@ -193,63 +193,11 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 	</div>	
 		<div class='div_detail_form'>
 		<input class='portlet-form-input-field' type="checkbox" name="useDataSource" id="useDataSource"
-			   value="true" <%=(useDataSource==true ? "checked='checked'" : "")%> onclick = "sourceControl();manualInputSelection=this.value;"/>
+			   value="true" <%=(useDataSource==true ? "checked='checked'" : "")%> onclick = "manualInputSelection=this.value;"/>
 			   
 	</div>
 	
-	<script type="text/javascript">
-	function sourceControl(){
-		var var1 = document.getElementById('dataSourceLabel');
-		var var2 = document.getElementById('dataSource');
 
-		if(var2.style.display != 'inline'){
-   			var2.style.display = 'inline';
-			var1.style.display = 'inline';
- 			}
- 		else {
-   			var2.style.display = 'none';
-			var1.style.display = 'none';
- 			}
-		}
-
-	</script>
-	
-
-	<%
-	String dataSourceStyle="style=\"display: none\"";
-	if(useDataSource==true){
-		dataSourceStyle="style=\"display: inline\"";
-	}
-	%>
-
-	<div class='div_detail_label' id="dataSourceLabel" <%=dataSourceStyle%>>
-		<span class='portlet-form-field-label'>
-			<spagobi:message key = "SBISet.eng.dataSource" />
-		</span>
-	</div>	
-	<div class='div_detail_form' <%=dataSourceStyle%> id="dataSource">
-		<select class='portlet-form-field' name="engineDefaultDS" onchange= "changeEngineType(this.options[this.selectedIndex].label)" >			
-			<option></option>
-			<%
-			java.util.List engineDS = DAOFactory.getDataSourceDAO().loadAllDataSources();
-			java.util.Iterator engineDSIt = engineDS.iterator();
-			while (engineDSIt.hasNext()) {
-				DataSource ds = (DataSource) engineDSIt.next();
-				String dsId = String.valueOf(ds.getDsId());
-				String actualDsId = (engine.getDataSourceId()==null)?"":engine.getDataSourceId().toString();
-				String selected = "";
-				if (dsId.equalsIgnoreCase(actualDsId)) {
-					selected = "selected='selected'";										
-				}				
-			 	%>    			 		
-    				<option value="<%= dsId  %>" label="<%= StringEscapeUtils.escapeHtml(ds.getLabel()) %>" <%= selected %>>
-    					<%= StringEscapeUtils.escapeHtml(ds.getLabel()) %>	
-    				</option>
-    				<%				
-			}
-			%>
-		</select>
-	</div>
 	
 	<div id="className" style='display:<%= ("INT".equalsIgnoreCase(engineType)) ? "inline;" : "none;" %>'>
 		<div class='div_detail_label'>

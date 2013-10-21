@@ -126,6 +126,58 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 		return biDS;		
 	}
 
+	
+	
+	/**
+	 * Is there data source write default, if yes return it.
+	 * 
+	 * @return the data source
+	 * 
+	 * @throws EMFUserError the EMF user error
+	 * 
+	 * @see it.eng.spagobi.tools.datasource.dao.IDataSourceDAO#loadDataSourceByLabel(string)
+	 */	
+	public SbiDataSource loadSbiDataSourceWriteDefault() throws EMFUserError {
+		logger.debug("IN");
+		SbiDataSource biDS = null;
+		Session tmpSession = null;
+		Transaction tx = null;
+		try {
+			tmpSession = getSession();
+			tx = tmpSession.beginTransaction();
+			Criterion labelCriterrion = Expression.eq("writeDefault", true);
+			Criteria criteria = tmpSession.createCriteria(SbiDataSource.class);
+			criteria.add(labelCriterrion);	
+			biDS = (SbiDataSource) criteria.uniqueResult();
+			if (biDS == null) return null;
+			
+			tx.commit();
+		} catch (HibernateException he) {
+			logger.error("Error while loading the data source with write default = true: check there are no more than one (incorrect situation)", he);
+			if (tx != null)
+				tx.rollback();
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+		} finally {
+			if (tmpSession!=null){
+				if (tmpSession.isOpen()) tmpSession.close();
+			}
+		}
+		logger.debug("OUT");
+		return biDS;		
+	}
+	
+	public IDataSource loadDataSourceWriteDefault() throws EMFUserError {
+		logger.debug("IN");
+		IDataSource ds = null;
+		SbiDataSource sbiDs = loadSbiDataSourceWriteDefault();
+		if( sbiDs != null){
+			ds= toDataSource(sbiDs);	
+		}		
+		logger.debug("OUT");
+		return ds;
+	}
+	
+	
 	/**
 	 * Load all data sources.
 	 * 
@@ -237,8 +289,29 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 			hibDataSource.setPwd(aDataSource.getPwd());
 			hibDataSource.setDriver(aDataSource.getDriver());
 			hibDataSource.setMultiSchema(aDataSource.getMultiSchema());
+			hibDataSource.setReadOnly(aDataSource.checkIsReadOnly());
+			
+			// if writeDefault is going to be set to truew than must be disabled in others
+			if(aDataSource.checkIsWriteDefault()==true){
+				logger.debug("searching for write default datasource to delete flag");
+				SbiDataSource hibModify = loadSbiDataSourceWriteDefault();
+				if(hibModify != null && !hibModify.getLabel().equals(hibDataSource.getLabel())){
+					logger.debug("previous write default data source was "+hibModify.getLabel());				
+					hibModify.setWriteDefault(false);
+					aSession.update(hibModify);
+			
+					logger.debug("previous write default modified");
+				}
+				else{
+					logger.debug("No previous write default datasource found");
+				}
+			}
+			
+			hibDataSource.setWriteDefault(aDataSource.checkIsWriteDefault());
+			
 			hibDataSource.setSchemaAttribute(aDataSource.getSchemaAttribute());
 			updateSbiCommonInfo4Update(hibDataSource);
+			aSession.update(hibDataSource);
 			tx.commit();
 		} catch (HibernateException he) {
 			logger.error("Error while modifing the data source with id " + ((aDataSource == null)?"":String.valueOf(aDataSource.getDsId())), he);
@@ -299,6 +372,9 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 			hibDataSource.setDriver(aDataSource.getDriver());
 			hibDataSource.setMultiSchema(aDataSource.getMultiSchema());
 			hibDataSource.setSchemaAttribute(aDataSource.getSchemaAttribute());
+			hibDataSource.setReadOnly(aDataSource.checkIsReadOnly());
+			hibDataSource.setWriteDefault(aDataSource.checkIsWriteDefault());
+			
 			updateSbiCommonInfo4Insert(hibDataSource);
 			aSession.save(hibDataSource);
 			tx.commit();
@@ -382,7 +458,8 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 		ds.setMultiSchema(hibDataSource.getMultiSchema());
 		ds.setHibDialectClass(hibDataSource.getDialect().getValueCd());
 		ds.setHibDialectName(hibDataSource.getDialect().getValueNm());
-		
+		ds.setReadOnly(hibDataSource.getReadOnly());
+		ds.setWriteDefault(hibDataSource.getWriteDefault());
 		return ds;
 	}
 	
@@ -437,56 +514,56 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 		
 	}
 	
-	/**
-	 * Checks for bi engine associated.
-	 * 
-	 * @param dsId the ds id
-	 * 
-	 * @return true, if checks for bi engine associated
-	 * 
-	 * @throws EMFUserError the EMF user error
-	 * 
-	 * @see it.eng.spagobi.tools.datasource.dao.IDataSourceDAO#hasEngineAssociated(java.lang.String)
-	 */
-	public boolean hasBIEngineAssociated (String dsId) throws EMFUserError{
-		logger.debug("IN");
-		boolean bool = false; 
-		
-		
-		Session aSession = null;
-		Transaction tx = null;
-		try {
-			aSession = getSession();
-			tx = aSession.beginTransaction();
-			Integer dsIdInt = Integer.valueOf(dsId);
-			
-			//String hql = " from SbiEngines s where s.dataSource.dsId = "+ dsIdInt;
-			String hql = " from SbiEngines s where s.dataSource.dsId = ?";
-			Query aQuery = aSession.createQuery(hql);
-			aQuery.setInteger(0, dsIdInt.intValue());
-			List biObjectsAssocitedWithEngine = aQuery.list();
-			if (biObjectsAssocitedWithEngine.size() > 0)
-				bool = true;
-			else
-				bool = false;
-			tx.commit();
-		} catch (HibernateException he) {
-			logger.error("Error while getting the engines associated with the data source with id " + dsId, he);
-
-			if (tx != null)
-				tx.rollback();
-
-			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
-		} finally {
-			if (aSession!=null){
-				if (aSession.isOpen()) aSession.close();
-			}
-		}
-		logger.debug("OUT");
-		return bool;
-		
-	}
+//	/**
+//	 * Checks for bi engine associated.
+//	 * 
+//	 * @param dsId the ds id
+//	 * 
+//	 * @return true, if checks for bi engine associated
+//	 * 
+//	 * @throws EMFUserError the EMF user error
+//	 * 
+//	 * @see it.eng.spagobi.tools.datasource.dao.IDataSourceDAO#hasEngineAssociated(java.lang.String)
+//	 */
+//	public boolean hasBIEngineAssociated (String dsId) throws EMFUserError{
+//		logger.debug("IN");
+//		boolean bool = false; 
+//		
+//		
+//		Session aSession = null;
+//		Transaction tx = null;
+//		try {
+//			aSession = getSession();
+//			tx = aSession.beginTransaction();
+//			Integer dsIdInt = Integer.valueOf(dsId);
+//			
+//			//String hql = " from SbiEngines s where s.dataSource.dsId = "+ dsIdInt;
+//			String hql = " from SbiEngines s where s.dataSource.dsId = ?";
+//			Query aQuery = aSession.createQuery(hql);
+//			aQuery.setInteger(0, dsIdInt.intValue());
+//			List biObjectsAssocitedWithEngine = aQuery.list();
+//			if (biObjectsAssocitedWithEngine.size() > 0)
+//				bool = true;
+//			else
+//				bool = false;
+//			tx.commit();
+//		} catch (HibernateException he) {
+//			logger.error("Error while getting the engines associated with the data source with id " + dsId, he);
+//
+//			if (tx != null)
+//				tx.rollback();
+//
+//			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+//
+//		} finally {
+//			if (aSession!=null){
+//				if (aSession.isOpen()) aSession.close();
+//			}
+//		}
+//		logger.debug("OUT");
+//		return bool;
+//		
+//	}
 	
 }
 

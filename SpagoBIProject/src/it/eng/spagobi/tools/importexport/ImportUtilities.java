@@ -304,6 +304,9 @@ public class ImportUtilities {
 		newDS.setUrl_connection(ds.getUrl_connection());
 		newDS.setUser(ds.getUser());
 		newDS.setMultiSchema((ds.getMultiSchema()!=null) ? ds.getMultiSchema() : Boolean.valueOf(false) );
+		newDS.setReadOnly((ds.getReadOnly()!=null) ? ds.getReadOnly() : Boolean.valueOf(false) );
+		newDS.setWriteDefault((ds.getWriteDefault()!=null) ? ds.getWriteDefault() : Boolean.valueOf(false) );
+		
 		newDS.setSchemaAttribute(ds.getSchemaAttribute());
 		logger.debug("OUT");
 		return newDS;
@@ -326,7 +329,10 @@ public class ImportUtilities {
 			existingDatasource.setUrl_connection(dataSource.getUrl_connection());
 			existingDatasource.setUser(dataSource.getUser());
 			existingDatasource.setMultiSchema((dataSource.getMultiSchema()!=null) ? dataSource.getMultiSchema() : Boolean.valueOf(false));
+			existingDatasource.setReadOnly((dataSource.getReadOnly()!=null) ? dataSource.getReadOnly() : Boolean.valueOf(false));
+			existingDatasource.setWriteDefault((dataSource.getWriteDefault()!=null) ? dataSource.getWriteDefault() : Boolean.valueOf(false));
 			existingDatasource.setSchemaAttribute(dataSource.getSchemaAttribute());
+		
 		} finally {
 			logger.debug("OUT");
 		}

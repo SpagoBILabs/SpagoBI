@@ -105,13 +105,15 @@ public class SelectDatasetAction extends CreateDatasetForWorksheetAction {
 			if ( target.equals(WORKSHEET) ) {
 				editActionParameters.put("datasource_label" , datasource.getLabel());
 				Engine worksheetEngine = getWorksheetEngine();
-				int defEngineDataSource = worksheetEngine.getDataSourceId();
+				int defEngineDataSource = 0;
+						//worksheetEngine.getDataSourceId();
 				editActionParameters.put("ENGINE_DATASOURCE_ID", defEngineDataSource);
 			} else {
 				editActionParameters.put("selected_datasource_label" , datasource.getLabel());
 				//add the data default datasource of teh engine
 				Engine qbeEngine = getQbeEngine();
-				int defEngineDataSource = qbeEngine.getDataSourceId();
+				int defEngineDataSource = 0;
+				//qbeEngine.getDataSourceId();
 				editActionParameters.put("ENGINE_DATASOURCE_ID", defEngineDataSource);
 			}
 			

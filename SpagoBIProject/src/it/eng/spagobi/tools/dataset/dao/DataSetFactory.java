@@ -128,7 +128,6 @@ public class DataSetFactory {
 		
 		//set persist values
 		toReturn.setPersisted(dataSet.isPersisted());
-		toReturn.setDataSourcePersist(dataSet.getDataSourcePersist());
 		toReturn.setPersistTableName(dataSet.getPersistTableName());
 
 		return toReturn;
@@ -251,7 +250,7 @@ public class DataSetFactory {
 						new PivotDataSetTransformer(ds.getPivotColumnName(), ds.getPivotColumnValue(), ds.getPivotRowName(), ds.isNumRows()));
 			}
 			ds.setPersisted(sbiDataSet.isPersisted());
-			ds.setDataSourcePersist((sbiDataSet.getDataSourcePersist()==null)?null:DataSourceDAOHibImpl.toDataSource(sbiDataSet.getDataSourcePersist()));
+
 			ds.setPersistTableName(sbiDataSet.getPersistTableName());
 			ds.setOwner(sbiDataSet.getOwner());
 			ds.setPublic(sbiDataSet.isPublicDS());

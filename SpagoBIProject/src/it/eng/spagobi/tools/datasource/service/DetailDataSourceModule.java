@@ -286,8 +286,8 @@ public class DetailDataSourceModule extends AbstractHttpModule{
 			String id = (String) request.getAttribute("ID");
 //			if the ds is associated with any BIEngine or BIObjects, creates an error
 			boolean bObjects =  DAOFactory.getDataSourceDAO().hasBIObjAssociated(id);
-			boolean bEngines =  DAOFactory.getDataSourceDAO().hasBIEngineAssociated(id);
-			if (bObjects || bEngines){
+			//boolean bEngines =  DAOFactory.getDataSourceDAO().hasBIEngineAssociated(id);
+			if (bObjects){
 				HashMap params = new HashMap();
 				params.put(AdmintoolsConstants.PAGE, ListDataSourceModule.MODULE_PAGE);
 				EMFUserError error = new EMFUserError(EMFErrorSeverity.ERROR, 8007, new Vector(), params );

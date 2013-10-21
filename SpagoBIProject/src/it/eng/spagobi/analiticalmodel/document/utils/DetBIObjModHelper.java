@@ -152,6 +152,16 @@ public class DetBIObjModHelper {
 			ds = DAOFactory.getDataSourceDAO().loadDataSourceByID(dsIdInt);
 		}
 		
+		logger.debug("If engine requires datasource and datasource is not defined throw error");
+		if(engine != null && engine.getUseDataSource()){
+			if(ds == null){
+				logger.error("Engine "+engine.getLabel()+" do requires datasource but it is nodt defined");
+				EMFValidationError error = new EMFValidationError(EMFErrorSeverity.ERROR, ObjectsTreeConstants.FUNCT_ID, "1087");
+				this.respCont.getErrorHandler().addError(error);		
+			}
+		}
+		
+		
 		String datasetIdStr = (String) request.getAttribute("dataset");
 		IDataSet dataset  = null;
 		if (datasetIdStr != null && !datasetIdStr.equals("")) {

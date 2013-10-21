@@ -30,7 +30,7 @@ Ext.define('Sbi.tools.datasource.DataSourceDetailPanel', {
 	, constructor: function(config) {
 		this.initConfig(config);
 		this.initFields();
-		this.items=[this.dataSourceId, this.dataSourceDialectId, this.dataSourceLabel , this.dataSourceDescription, this.dataSourceDialect, this.dataSourceMultischema , this.dataSourceMultischemaAttribute, this.dataSourceTypeJdbc, this.dataSourceTypeJndi,this.dataSourceJndiName, this.dataSourceJdbcUrl, this.dataSourceJdbcUser, this.dataSourceJdbcPassword ,this.dataSourceDriver]
+		this.items=[this.dataSourceId, this.dataSourceDialectId, this.dataSourceLabel , this.dataSourceDescription, this.dataSourceDialect, this.dataSourceMultischema , this.dataSourceMultischemaAttribute, this.dataSourceReadOnly, this.dataSourceReadWrite, this.dataSourceWriteDefault, this.dataSourceTypeJdbc, this.dataSourceTypeJndi,this.dataSourceJndiName, this.dataSourceJdbcUrl, this.dataSourceJdbcUser, this.dataSourceJdbcPassword ,this.dataSourceDriver]
 		
 		this.addEvents('save');
 		this.tbar = Sbi.widget.toolbar.StaticToolbarBuilder.buildToolbar({items:[{name:'->'},{name:'test'},{name:'save'}]},this);
@@ -115,6 +115,33 @@ Ext.define('Sbi.tools.datasource.DataSourceDetailPanel', {
 				this.dataSourceMultischemaAttribute.hide();
 			}
 		},this);
+		
+		
+		this.dataSourceReadWrite = Ext.create("Ext.form.field.Radio",{
+            hideEmptyLabel: false,
+            //fieldLabel: LN('sbi.datasource.readonly'),
+			boxLabel: LN('sbi.datasource.readwrite'), 
+			checked : true,
+			name: 'READ_WRITE' , 
+			inputValue:'readwrite'
+		});
+				
+		this.dataSourceReadOnly = Ext.create("Ext.form.field.Radio",{
+			fieldLabel: LN('sbi.datasource.readonly'),
+			boxLabel: LN('sbi.datasource.readonly'), 
+			name: 'READ_WRITE' , 
+			inputValue:'readonly'
+		})
+		this.dataSourceReadOnly.addListener('change', this.readOnlyCheck, this);
+
+		
+		this.dataSourceWriteDefault = Ext.create("Ext.form.Checkbox",{
+	        fieldLabel: LN('sbi.datasource.writedefault'),
+	        name: "WRITE_DEFAULT",
+	        value: false
+		});
+		this.dataSourceWriteDefault.addListener('change', this.writeDefaultCheck, this);
+		
 		
 		this.dataSourceTypeJdbc = Ext.create("Ext.form.field.Radio",{
 			fieldLabel: LN('sbi.datasource.type'),
@@ -237,6 +264,15 @@ Ext.define('Sbi.tools.datasource.DataSourceDetailPanel', {
 			v.MULTISCHEMA='on';
 		}
 		
+		// convert for radio button
+		if(v.READ_ONLY != true)
+		{
+			v.READ_WRITE = 'readwrite';	
+		}
+		else{
+			v.READ_WRITE = 'readonly';	
+		}
+		
 		this.getForm().setValues(v);
 	}
 	
@@ -245,6 +281,19 @@ Ext.define('Sbi.tools.datasource.DataSourceDetailPanel', {
 		if(values.TYPE=='jdbc'){
 			values.JNDI_URL="";
 		}
+        
+        var readOnly =  this.dataSourceReadOnly.getValue();
+        var readWrite =  this.dataSourceReadWrite.getValue();
+		if(readOnly == true){
+			values.READ_ONLY=true;
+		}
+		else{
+			values.READ_ONLY = false;
+		}
+		
+        var writeDefault = this.dataSourceWriteDefault.getValue();
+        values.WRITE_DEFAULT = writeDefault;
+		
 		return values;
 	}
 	
@@ -264,6 +313,34 @@ Ext.define('Sbi.tools.datasource.DataSourceDetailPanel', {
 		}
 		return valid;
 	}
+	,
+	writeDefaultCheck : function(check, checked) {
+		// var persistSelected = newValue;
+		var writeSelected = checked;
+		if (writeSelected != null && writeSelected == true) {
+			
+	        this.dataSourceReadOnly.setValue(false);
+	        this.dataSourceReadWrite.setValue(true);
+	        this.dataSourceReadOnly.disable();
+		} else {
+			this.dataSourceReadOnly.enable();
+		
+		}
+	}
+	,
+	readOnlyCheck : function(check, checked) {
+		// var persistSelected = newValue;
+		var readOnlySel = checked;
+		if (readOnlySel != null && readOnlySel == true) {
+			
+	        this.dataSourceWriteDefault.setValue(false);
+	        this.dataSourceWriteDefault.disable();
+		} else {
+			this.dataSourceWriteDefault.enable();
+		
+		}
+	}
+	
 	
 });
     

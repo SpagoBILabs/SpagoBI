@@ -5,12 +5,11 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.engines.config.metadata;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import it.eng.spagobi.commons.metadata.SbiDomains;
 import it.eng.spagobi.commons.metadata.SbiHibernateModel;
-import it.eng.spagobi.tools.datasource.metadata.SbiDataSource;
+
+import java.util.HashSet;
+import java.util.Set;
 
 
 
@@ -36,7 +35,6 @@ public class SbiEngines  extends SbiHibernateModel {
      private SbiDomains engineType;
      private String classNm;
      private SbiDomains biobjType; 
-     private SbiDataSource dataSource;
      private Boolean useDataSource;
      private Boolean useDataSet;
      private Set sbiExporterses = new HashSet(0);
@@ -298,23 +296,6 @@ public class SbiEngines  extends SbiHibernateModel {
 		this.engineType = engineType;
 	}
 
-	/**
-	 * Gets the data source.
-	 * 
-	 * @return the data source
-	 */
-	public SbiDataSource getDataSource() {
-		return dataSource;
-	}
-
-	/**
-	 * Sets the data source.
-	 * 
-	 * @param dataSource the new data source
-	 */
-	public void setDataSource(SbiDataSource dataSource) {
-		this.dataSource = dataSource;
-	}
 
 	/**
 	 * Gets the use data source.

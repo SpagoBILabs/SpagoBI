@@ -182,12 +182,13 @@ public class CreateDatasetForWorksheetAction extends ExecuteDocumentAction {
 		
 		datasourceLabel = null;
 		try {
-			Integer datasourceId = engine.getDataSourceId();
-			if (datasourceId == null) {
-				throw new SpagoBIServiceException(SERVICE_NAME, "Worksheet engine [" + engine.getLabel() + "] has no datasource.");
-			}
-			DataSource dataSource = DAOFactory.getDataSourceDAO().loadDataSourceByID(datasourceId);
-			datasourceLabel = dataSource.getLabel();;
+			//Integer datasourceId = engine.getDataSourceId();
+			// TODO: no more present engine data source
+//			if (datasourceId == null) {
+//				throw new SpagoBIServiceException(SERVICE_NAME, "Worksheet engine [" + engine.getLabel() + "] has no datasource.");
+//			}
+//			DataSource dataSource = DAOFactory.getDataSourceDAO().loadDataSourceByID(datasourceId);
+//			datasourceLabel = dataSource.getLabel();
 		} catch(Throwable t) {
 			throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to load the datasource of dataset [" + engine.getLabel() + "]", t);				
 		} finally {

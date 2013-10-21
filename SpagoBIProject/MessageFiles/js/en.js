@@ -578,6 +578,9 @@ Sbi.locale.ln['sbi.datasource.driver']= 'Driver';
 Sbi.locale.ln['sbi.datasource.dialect']= 'Dialect';
 Sbi.locale.ln['sbi.datasource.multischema']= 'Multischema';
 Sbi.locale.ln['sbi.datasource.multischema.attribute']= 'Multischema Attribute';
+Sbi.locale.ln['sbi.datasource.readonly']= 'Read Only';
+Sbi.locale.ln['sbi.datasource.readwrite']= 'Read and write';
+Sbi.locale.ln['sbi.datasource.writedefault']= 'Write Default';
 Sbi.locale.ln['sbi.datasource.type']= 'Type';
 Sbi.locale.ln['sbi.datasource.type.jndi']= 'Jndi';
 Sbi.locale.ln['sbi.datasource.type.jdbc']= 'Jdbc';
@@ -591,6 +594,7 @@ Sbi.locale.ln['sbi.datasource.deleted']= 'Data source correctly deleted';
 Sbi.locale.ln['sbi.datasource.tested']= 'Data source correctly tested';
 Sbi.locale.ln['sbi.datasource.validation.error']= 'There is some error in the data source configuration. Check the marked fields.';
 Sbi.locale.ln['sbi.datasource.test.failed']= 'Error testing the datasource';
+Sbi.locale.ln['sbi.datasource.validation.writeDefault']= ' : datasource already marked as write default: do you want to substitute with current?';
 
 //Datasets
 Sbi.locale.ln['sbi.ds.clearOldVersion'] = 'Clear All';

@@ -99,10 +99,7 @@ public class MeasureCatalogueSearchManager {
         		if(dataSetLabel.getConfiguration()!=null && (measureDataSet.getConfiguration()==null || measureDataSet.getConfiguration().equals( dataSetLabel.getConfiguration()))){
         			continue;
         		}
-        		
-        		if(dataSetLabel.getDataSourcePersist()!=null && (measureDataSet.getDataSourcePersist()==null || measureDataSet.getDataSourcePersist().equals( dataSetLabel.getDataSourcePersist()))){
-        			continue;
-        		}
+
         		
         		if(dataSetLabel.getDateIn()!=null && (measureDataSet.getDateIn()==null || measureDataSet.getDateIn().equals( dataSetLabel.getDateIn()))){
         			continue;

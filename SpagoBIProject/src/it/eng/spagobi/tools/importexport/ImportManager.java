@@ -676,13 +676,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 				if (existBiobjectTypeDomain != null) {
 					newEng.setBiobjType(existBiobjectTypeDomain);
 				}
-				// check datasource link
-				SbiDataSource expDs = engine.getDataSource();
-				if (expDs != null) {
-					Integer dsId = (Integer) metaAss.getDataSourceIDAssociation().get(new Integer(expDs.getDsId()));
-					SbiDataSource localDS = (SbiDataSource) sessionCurrDB.load(SbiDataSource.class, dsId);
-					newEng.setDataSource(localDS);
-				}
+
 				this.updateSbiCommonInfo4Insert(newEng);
 				sessionCurrDB.save(newEng);
 				sessionCurrDB.flush();

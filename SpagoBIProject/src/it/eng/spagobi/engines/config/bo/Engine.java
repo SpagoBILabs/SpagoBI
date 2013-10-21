@@ -31,7 +31,6 @@ public class Engine implements Serializable {
 	private String className = "";
 	private Integer biobjTypeId;
 	private Integer engineTypeId;
-	private Integer dataSourceId = null;
 	private boolean useDataSource = false;
 	private boolean useDataSet = false;
 
@@ -267,24 +266,6 @@ public class Engine implements Serializable {
 	 */
 	public void setBiobjTypeId(Integer biobjTypeId) {
 		this.biobjTypeId = biobjTypeId;
-	}
-	
-	/**
-	 * Gets the data source id.
-	 * 
-	 * @return Returns the data source.
-	 */
-	public Integer getDataSourceId() {
-		return dataSourceId;
-	}
-
-	/**
-	 * Sets the data source id.
-	 * 
-	 * @param dataSourceId the data source id
-	 */
-	public void setDataSourceId(Integer dataSourceId) {
-		this.dataSourceId = dataSourceId;
 	}
 	
 	/**

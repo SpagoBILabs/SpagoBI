@@ -786,3 +786,9 @@ Sbi.locale.ln['sbi.tools.layer.props.file']= "File";
 Sbi.locale.ln['sbi.tools.layer.baseLayer']= "Base Layer";
 Sbi.locale.ln['sbi.tools.layer.props.params']= "Params";
 Sbi.locale.ln['sbi.tools.layer.props.options']= "Options";
+
+//===================================================================
+//DATASOURCE
+//===================================================================
+Sbi.locale.ln['sbi.datasource.validation.writeDefault']= ': datasource already as write default: do you want to substitute with current?';
+Sbi.locale.ln['sbi.datasource.readwrite']= 'Read and write';

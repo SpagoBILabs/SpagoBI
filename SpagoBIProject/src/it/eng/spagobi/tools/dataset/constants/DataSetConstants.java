@@ -91,7 +91,6 @@ public class DataSetConstants {
 	public static final String SOURCE_DS_LABEL = "sourceDatasetLabel";
 	
 	public static final String IS_PERSISTED = "isPersisted";
-	public static final String DATA_SOURCE_PERSIST = "dataSourcePersist";
 	public static final String FLAT_TABLE_NAME = "flatTableName";
 	public static final String DATA_SOURCE_FLAT = "dataSourceFlat";
 	public static final String IS_PUBLIC = "isPublic";

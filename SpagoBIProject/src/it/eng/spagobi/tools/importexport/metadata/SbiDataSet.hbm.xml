@@ -15,9 +15,6 @@
         <many-to-one name="category" class="it.eng.spagobi.commons.metadata.SbiDomains">
             <column name="CATEGORY_ID" not-null="false"/>
         </many-to-one>
-        <many-to-one name="dataSourcePersist" class="it.eng.spagobi.tools.datasource.metadata.SbiDataSource">
-            <column name="DATA_SOURCE_PERSIST_ID" not-null="false"/>
-        </many-to-one>
         <many-to-one name="dataSourceFlat" class="it.eng.spagobi.tools.datasource.metadata.SbiDataSource">
             <column name="DATA_SOURCE_FLAT_ID" not-null="false"/>
         </many-to-one>

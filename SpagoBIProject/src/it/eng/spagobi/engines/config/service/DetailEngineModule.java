@@ -419,7 +419,6 @@ public class DetailEngineModule extends AbstractHttpModule {
 		engine.setEngineTypeId(engineTypeId);
 		engine.setClassName(className);
 		engine.setBiobjTypeId(biobjTypeId);
-		engine.setDataSourceId(engineDSId);
 		engine.setUseDataSource(useDataSource);
 		engine.setUseDataSet(useDataSet);
 		

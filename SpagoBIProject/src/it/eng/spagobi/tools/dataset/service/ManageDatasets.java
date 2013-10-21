@@ -208,9 +208,8 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 						logger.error("The dataset cannot be persisted because uses parameters!");
 						throw new SpagoBIServiceException(SERVICE_NAME,"sbi.ds.dsCannotPersist");
 					}
-					IDataSource datasource = ds.getDataSourcePersist();
 					PersistedTableManager ptm = new PersistedTableManager(profile);
-					ptm.persistDataSet(dataset, datasource);										
+					ptm.persistDataSet(dataset);										
 					logger.debug("Persistence ended succesfully!");
 				}
 				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, operation, logParam , "OK");
@@ -525,20 +524,19 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 			ds.setPersisted(isPersisted.booleanValue());
 		}
 		if (isPersisted) {
-			String dataSourcePersistLabel = getAttributeAsString(DataSetConstants.DATA_SOURCE_PERSIST);
-			if (dataSourcePersistLabel != null) {
-				IDataSource dataSource = DAOFactory.getDataSourceDAO()
-						.loadDataSourceByLabel(dataSourcePersistLabel);
-				if (dataSource != null) {
-					ds.setDataSourcePersist(dataSource);
-				}
-			}
+//			String dataSourcePersistLabel = getAttributeAsString(DataSetConstants.DATA_SOURCE_PERSIST);
+//			if (dataSourcePersistLabel != null) {
+//				IDataSource dataSource = DAOFactory.getDataSourceDAO()
+//						.loadDataSourceByLabel(dataSourcePersistLabel);
+//				if (dataSource != null) {
+//					ds.setDataSourcePersist(dataSource);
+//				}
+//			}
 			String persistTableName = getAttributeAsString(DataSetConstants.PERSIST_TABLE_NAME);
 			if (persistTableName != null) {
 				ds.setPersistTableName(persistTableName);
 			}
 		} else {
-			ds.setDataSourcePersist(null);
 			ds.setPersistTableName("");
 		}
 	}

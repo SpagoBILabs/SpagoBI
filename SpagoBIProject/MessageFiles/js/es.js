@@ -570,6 +570,10 @@ Sbi.locale.ln['sbi.ds.failedToUpload']= 'Carga fallida';
 Sbi.locale.ln['sbi.ds.skip.checks']='Sobreescribir el archivo existente';
 Sbi.locale.ln['sbi.ds.changedon']='Modificado';
 
+// DATASOURCE
+Sbi.locale.ln['sbi.datasource.validation.writeDefault']= ': datasource already as write default: do you want to substitute with current?';
+Sbi.locale.ln['sbi.datasource.readwrite']= 'Read and write';
+
 //===================================================================
 //MESSAGE BOX BUTTONS
 //===================================================================

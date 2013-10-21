@@ -47,10 +47,6 @@ public class DataSourceSupplier {
 	    if (obj.getDataSourceId() != null) {
 	    	dsId = obj.getDataSourceId();
 	    	logger.debug("Using document datasource id = " + dsId);
-	    } else {
-	    	Engine engine = obj.getEngine();
-	    	dsId = engine.getDataSourceId();
-	    	logger.debug("Using document's engine datasource id = " + dsId);
 	    }
     	if (dsId == null) {
     		logger.error("Data source is not configured neither for document nor for its engine.");

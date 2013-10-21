@@ -706,3 +706,9 @@ Sbi.locale.ln['sbi.config.manageconfig.fields.category']='Categorie';
 //===================================================================
 Sbi.locale.ln['sbi.worksheet.validation.error.title']='Erreur Validation';
 Sbi.locale.ln['sbi.worksheet.validation.error.text']='Certaines feuilles ne sont pas valides... V\u00E9rifier que toutes les feuilles ont un contenu valide.';
+
+//===================================================================
+// DATASOURCE
+//===================================================================
+Sbi.locale.ln['sbi.datasource.validation.writeDefault']= ': datasource already as write default: do you want to substitute with current?';
+Sbi.locale.ln['sbi.datasource.readwrite']= 'Read and write';
