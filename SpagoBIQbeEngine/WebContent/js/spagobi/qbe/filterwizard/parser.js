@@ -21,14 +21,16 @@
 
 	
 
-		/~ Characters to be ignored ~/
+			/~ Characters to be ignored ~/
 			!	' |\r|\n|\t'
 			
 			/~ Non-associative tokens ~/
 			    "AND"
 			    "GROUP"
 			    "OR"		
-			    '$F{[A-Za-z0-9_ ]+}'					Identifier
+			    "\("
+			    "\)"
+			    '$F{[¿¡¬√ƒ≈∆«»… ÀÃÕŒœ–—“”‘’÷ÿ˛Ÿ⁄€‹›‡·‚„‰ÂÊÁËÈÍÎÏÌÓÔÒÚÛÙıˆ¯ﬁ˘˙˚¸˝A-Za-z0-9_ ]+}'					Identifier
 			    ;
 			
                   			/~ Left-associative tokens, lowest precedence ~/
@@ -43,14 +45,12 @@
 			
 			p: ex;
 			
-		          	ex:	ex 'OR' ex
+		          	ex:	'\('ex'\)'
+		          		| ex 'OR' ex
 			       		| ex 'AND' ex
 						| ex 'GROUP' ex  
 						| Identifier
 							;
-				
-
-
 
 */
 
@@ -65,9 +65,6 @@ boolstaf.module = function(){
 var expressionNode; 
 
 // ============================================================================================= 
-
-
-
 
 
 var _dbg_withtrace        = false;
@@ -94,7 +91,7 @@ function __lex( info )
         start = pos;
 
         if( info.src.length <= start )
-            return 8;
+            return 10;
 
         do
         {
@@ -103,10 +100,12 @@ switch( state )
 {
     case 0:
         if( ( info.src.charCodeAt( pos ) >= 9 && info.src.charCodeAt( pos ) <= 10 ) || info.src.charCodeAt( pos ) == 13 || info.src.charCodeAt( pos ) == 32 ) state = 1;
-        else if( info.src.charCodeAt( pos ) == 36 ) state = 6;
-        else if( info.src.charCodeAt( pos ) == 65 || info.src.charCodeAt( pos ) == 97 ) state = 7;
-        else if( info.src.charCodeAt( pos ) == 71 || info.src.charCodeAt( pos ) == 103 ) state = 8;
-        else if( info.src.charCodeAt( pos ) == 79 || info.src.charCodeAt( pos ) == 111 ) state = 9;
+        else if( info.src.charCodeAt( pos ) == 40 ) state = 2;
+        else if( info.src.charCodeAt( pos ) == 41 ) state = 3;
+        else if( info.src.charCodeAt( pos ) == 36 ) state = 8;
+        else if( info.src.charCodeAt( pos ) == 65 || info.src.charCodeAt( pos ) == 97 ) state = 9;
+        else if( info.src.charCodeAt( pos ) == 71 || info.src.charCodeAt( pos ) == 103 ) state = 10;
+        else if( info.src.charCodeAt( pos ) == 79 || info.src.charCodeAt( pos ) == 111 ) state = 11;
         else state = -1;
         break;
 
@@ -118,81 +117,93 @@ switch( state )
 
     case 2:
         state = -1;
-        match = 4;
+        match = 5;
         match_pos = pos;
         break;
 
     case 3:
         state = -1;
-        match = 2;
+        match = 6;
         match_pos = pos;
         break;
 
     case 4:
         state = -1;
-        match = 5;
+        match = 4;
         match_pos = pos;
         break;
 
     case 5:
         state = -1;
-        match = 3;
+        match = 2;
         match_pos = pos;
         break;
 
     case 6:
-        if( info.src.charCodeAt( pos ) == 70 ) state = 10;
-        else state = -1;
+        state = -1;
+        match = 7;
+        match_pos = pos;
         break;
 
     case 7:
-        if( info.src.charCodeAt( pos ) == 78 || info.src.charCodeAt( pos ) == 110 ) state = 11;
-        else state = -1;
+        state = -1;
+        match = 3;
+        match_pos = pos;
         break;
 
     case 8:
-        if( info.src.charCodeAt( pos ) == 82 || info.src.charCodeAt( pos ) == 114 ) state = 12;
+        if( info.src.charCodeAt( pos ) == 70 ) state = 12;
         else state = -1;
         break;
 
     case 9:
-        if( info.src.charCodeAt( pos ) == 82 || info.src.charCodeAt( pos ) == 114 ) state = 2;
+        if( info.src.charCodeAt( pos ) == 78 || info.src.charCodeAt( pos ) == 110 ) state = 13;
         else state = -1;
         break;
 
     case 10:
-        if( info.src.charCodeAt( pos ) == 123 ) state = 13;
+        if( info.src.charCodeAt( pos ) == 82 || info.src.charCodeAt( pos ) == 114 ) state = 14;
         else state = -1;
         break;
 
     case 11:
-        if( info.src.charCodeAt( pos ) == 68 || info.src.charCodeAt( pos ) == 100 ) state = 3;
+        if( info.src.charCodeAt( pos ) == 82 || info.src.charCodeAt( pos ) == 114 ) state = 4;
         else state = -1;
         break;
 
     case 12:
-        if( info.src.charCodeAt( pos ) == 79 || info.src.charCodeAt( pos ) == 111 ) state = 14;
+        if( info.src.charCodeAt( pos ) == 123 ) state = 15;
         else state = -1;
         break;
 
     case 13:
-        if( info.src.charCodeAt( pos ) == 32 || ( info.src.charCodeAt( pos ) >= 48 && info.src.charCodeAt( pos ) <= 57 ) || ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 90 ) || info.src.charCodeAt( pos ) == 95 || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 122 ) || ( info.src.charCodeAt( pos ) >= 192 && info.src.charCodeAt( pos ) <= 214 ) || ( info.src.charCodeAt( pos ) >= 216 && info.src.charCodeAt( pos ) <= 222 ) || ( info.src.charCodeAt( pos ) >= 224 && info.src.charCodeAt( pos ) <= 246 ) || ( info.src.charCodeAt( pos ) >= 248 && info.src.charCodeAt( pos ) <= 254 ) ) state = 15;
+        if( info.src.charCodeAt( pos ) == 68 || info.src.charCodeAt( pos ) == 100 ) state = 5;
         else state = -1;
         break;
 
     case 14:
-        if( info.src.charCodeAt( pos ) == 85 || info.src.charCodeAt( pos ) == 117 ) state = 16;
+        if( info.src.charCodeAt( pos ) == 79 || info.src.charCodeAt( pos ) == 111 ) state = 16;
         else state = -1;
         break;
 
     case 15:
-        if( info.src.charCodeAt( pos ) == 125 ) state = 4;
-        else if( info.src.charCodeAt( pos ) == 32 || ( info.src.charCodeAt( pos ) >= 48 && info.src.charCodeAt( pos ) <= 57 ) || ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 90 ) || info.src.charCodeAt( pos ) == 95 || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 122 ) || ( info.src.charCodeAt( pos ) >= 192 && info.src.charCodeAt( pos ) <= 214 ) || ( info.src.charCodeAt( pos ) >= 216 && info.src.charCodeAt( pos ) <= 222 ) || ( info.src.charCodeAt( pos ) >= 224 && info.src.charCodeAt( pos ) <= 246 ) || ( info.src.charCodeAt( pos ) >= 248 && info.src.charCodeAt( pos ) <= 254 ) ) state = 15;
+        if( info.src.charCodeAt( pos ) == 32 || ( info.src.charCodeAt( pos ) >= 48 && info.src.charCodeAt( pos ) <= 57 ) || ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 90 ) || info.src.charCodeAt( pos ) == 95 || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 122 ) || ( info.src.charCodeAt( pos ) >= 192 && info.src.charCodeAt( pos ) <= 214 ) || ( info.src.charCodeAt( pos ) >= 216 && info.src.charCodeAt( pos ) <= 222 ) || ( info.src.charCodeAt( pos ) >= 224 && info.src.charCodeAt( pos ) <= 246 ) || ( info.src.charCodeAt( pos ) >= 248 && info.src.charCodeAt( pos ) <= 254 ) ) state = 17;
         else state = -1;
         break;
 
     case 16:
-        if( info.src.charCodeAt( pos ) == 80 || info.src.charCodeAt( pos ) == 112 ) state = 5;
+        if( info.src.charCodeAt( pos ) == 85 || info.src.charCodeAt( pos ) == 117 ) state = 18;
+        else state = -1;
+        break;
+
+    case 17:
+        if( info.src.charCodeAt( pos ) == 125 ) state = 6;
+        else if( info.src.charCodeAt( pos ) == 32 || ( info.src.charCodeAt( pos ) >= 48 && info.src.charCodeAt( pos ) <= 57 ) || ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 90 ) || info.src.charCodeAt( pos ) == 95 || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 122 ) || ( info.src.charCodeAt( pos ) >= 192 && info.src.charCodeAt( pos ) <= 214 ) || ( info.src.charCodeAt( pos ) >= 216 && info.src.charCodeAt( pos ) <= 222 ) || ( info.src.charCodeAt( pos ) >= 224 && info.src.charCodeAt( pos ) <= 246 ) || ( info.src.charCodeAt( pos ) >= 248 && info.src.charCodeAt( pos ) <= 254 ) ) state = 17;
+        else state = -1;
+        break;
+
+    case 18:
+        if( info.src.charCodeAt( pos ) == 80 || info.src.charCodeAt( pos ) == 112 ) state = 7;
         else state = -1;
         break;
 
@@ -236,59 +247,65 @@ function __parse( src, err_off, err_la )
     var     parseinfo        = new Function( "", "var offset; var src; var att;" );
     var        info            = new parseinfo();
     
-/* Pop-Table */
-var pop_tab = new Array(
-    new Array( 0/* p' */, 1 ),
-    new Array( 7/* p */, 1 ),
-    new Array( 6/* ex */, 3 ),
-    new Array( 6/* ex */, 3 ),
-    new Array( 6/* ex */, 3 ),
-    new Array( 6/* ex */, 1 )
-);
+    /* Pop-Table */
+    var pop_tab = new Array(
+        new Array( 0/* p' */, 1 ),
+        new Array( 9/* p */, 1 ),
+        new Array( 8/* ex */, 3 ),
+        new Array( 8/* ex */, 3 ),
+        new Array( 8/* ex */, 3 ),
+        new Array( 8/* ex */, 3 ),
+        new Array( 8/* ex */, 1 )
+    );
 
-/* Action-Table */
-var act_tab = new Array(
-    /* State 0 */ new Array( 5/* "Identifier" */,3 ),
-    /* State 1 */ new Array( 8/* "$" */,0 ),
-    /* State 2 */ new Array( 3/* "GROUP" */,4 , 2/* "AND" */,5 , 4/* "OR" */,6 , 8/* "$" */,-1 ),
-    /* State 3 */ new Array( 8/* "$" */,-5 , 4/* "OR" */,-5 , 2/* "AND" */,-5 , 3/* "GROUP" */,-5 ),
-    /* State 4 */ new Array( 5/* "Identifier" */,3 ),
-    /* State 5 */ new Array( 5/* "Identifier" */,3 ),
-    /* State 6 */ new Array( 5/* "Identifier" */,3 ),
-    /* State 7 */ new Array( 3/* "GROUP" */,4 , 2/* "AND" */,5 , 4/* "OR" */,6 , 8/* "$" */,-4 ),
-    /* State 8 */ new Array( 3/* "GROUP" */,4 , 2/* "AND" */,5 , 4/* "OR" */,6 , 8/* "$" */,-3 ),
-    /* State 9 */ new Array( 3/* "GROUP" */,4 , 2/* "AND" */,5 , 4/* "OR" */,6 , 8/* "$" */,-2 )
-);
+    /* Action-Table */
+    var act_tab = new Array(
+        /* State 0 */ new Array( 5/* "(" */,3 , 7/* "Identifier" */,4 ),
+        /* State 1 */ new Array( 10/* "$" */,0 ),
+        /* State 2 */ new Array( 3/* "GROUP" */,5 , 2/* "AND" */,6 , 4/* "OR" */,7 , 10/* "$" */,-1 ),
+        /* State 3 */ new Array( 5/* "(" */,3 , 7/* "Identifier" */,4 ),
+        /* State 4 */ new Array( 10/* "$" */,-6 , 4/* "OR" */,-6 , 2/* "AND" */,-6 , 3/* "GROUP" */,-6 , 6/* ")" */,-6 ),
+        /* State 5 */ new Array( 5/* "(" */,3 , 7/* "Identifier" */,4 ),
+        /* State 6 */ new Array( 5/* "(" */,3 , 7/* "Identifier" */,4 ),
+        /* State 7 */ new Array( 5/* "(" */,3 , 7/* "Identifier" */,4 ),
+        /* State 8 */ new Array( 3/* "GROUP" */,5 , 2/* "AND" */,6 , 4/* "OR" */,7 , 6/* ")" */,12 ),
+        /* State 9 */ new Array( 3/* "GROUP" */,5 , 2/* "AND" */,6 , 4/* "OR" */,7 , 10/* "$" */,-5 , 6/* ")" */,-5 ),
+        /* State 10 */ new Array( 3/* "GROUP" */,5 , 2/* "AND" */,6 , 4/* "OR" */,7 , 10/* "$" */,-4 , 6/* ")" */,-4 ),
+        /* State 11 */ new Array( 3/* "GROUP" */,5 , 2/* "AND" */,6 , 4/* "OR" */,7 , 10/* "$" */,-3 , 6/* ")" */,-3 ),
+        /* State 12 */ new Array( 10/* "$" */,-2 , 4/* "OR" */,-2 , 2/* "AND" */,-2 , 3/* "GROUP" */,-2 , 6/* ")" */,-2 )
+    );
 
-/* Goto-Table */
-var goto_tab = new Array(
-    /* State 0 */ new Array( 7/* p */,1 , 6/* ex */,2 ),
-    /* State 1 */ new Array( ),
-    /* State 2 */ new Array( ),
-    /* State 3 */ new Array( ),
-    /* State 4 */ new Array( 6/* ex */,7 ),
-    /* State 5 */ new Array( 6/* ex */,8 ),
-    /* State 6 */ new Array( 6/* ex */,9 ),
-    /* State 7 */ new Array( ),
-    /* State 8 */ new Array( ),
-    /* State 9 */ new Array( )
-);
+    /* Goto-Table */
+    var goto_tab = new Array(
+        /* State 0 */ new Array( 9/* p */,1 , 8/* ex */,2 ),
+        /* State 1 */ new Array( ),
+        /* State 2 */ new Array( ),
+        /* State 3 */ new Array( 8/* ex */,8 ),
+        /* State 4 */ new Array( ),
+        /* State 5 */ new Array( 8/* ex */,9 ),
+        /* State 6 */ new Array( 8/* ex */,10 ),
+        /* State 7 */ new Array( 8/* ex */,11 ),
+        /* State 8 */ new Array( ),
+        /* State 9 */ new Array( ),
+        /* State 10 */ new Array( ),
+        /* State 11 */ new Array( ),
+        /* State 12 */ new Array( )
+    );
 
-
-
-/* Symbol labels */
-var labels = new Array(
-    "p'" /* Non-terminal symbol */,
-    "WHITESPACE" /* Terminal symbol */,
-    "AND" /* Terminal symbol */,
-    "GROUP" /* Terminal symbol */,
-    "OR" /* Terminal symbol */,
-    "Identifier" /* Terminal symbol */,
-    "ex" /* Non-terminal symbol */,
-    "p" /* Non-terminal symbol */,
-    "$" /* Terminal symbol */
-);
-
+    /* Symbol labels */
+    var labels = new Array(
+        "p'" /* Non-terminal symbol */,
+        "WHITESPACE" /* Terminal symbol */,
+        "AND" /* Terminal symbol */,
+        "GROUP" /* Terminal symbol */,
+        "OR" /* Terminal symbol */,
+        "(" /* Terminal symbol */,
+        ")" /* Terminal symbol */,
+        "Identifier" /* Terminal symbol */,
+        "ex" /* Non-terminal symbol */,
+        "p" /* Non-terminal symbol */,
+        "$" /* Terminal symbol */
+    );
 
     
     info.offset = 0;
@@ -307,7 +324,8 @@ var labels = new Array(
 
     while( true )
     {
-        act = 11;
+
+        act = 14;
         for( var i = 0; i < act_tab[sstack[sstack.length-1]].length; i+=2 )
         {
             if( act_tab[sstack[sstack.length-1]][i] == la )
@@ -316,12 +334,12 @@ var labels = new Array(
                 break;
             }
         }
-
+        
         if( _dbg_withtrace && sstack.length > 0 )
         {
             __dbg_print( "\nState " + sstack[sstack.length-1] + "\n" +
                             "\tLookahead: " + labels[la] + " (\"" + info.att + "\")\n" +
-                            "\tAction: " + act + "\n" +
+                            "\tAction: " + act + "\n" + 
                             "\tSource: \"" + info.src.substr( info.offset, 30 ) + ( ( info.offset + 30 < info.src.length ) ?
                                     "..." : "" ) + "\"\n" +
                             "\tStack: " + sstack.join() + "\n" +
@@ -330,11 +348,11 @@ var labels = new Array(
         
             
         //Panic-mode: Try recovery when parse-error occurs!
-        if( act == 11 )
+        if( act == 14 )
         {
             if( _dbg_withtrace )
                 __dbg_print( "Error detected: There is no reduce or shift on the symbol " + labels[la] );
-            
+
             err_cnt++;
             err_off.push( info.offset - info.att.length );            
             err_la.push( new Array() );
@@ -350,7 +368,7 @@ var labels = new Array(
                 rvstack[i] = vstack[i];
             }
             
-            while( act == 11 && la != 8 )
+            while( act == 14 && la != 10 )
             {
                 if( _dbg_withtrace )
                     __dbg_print( "\tError recovery\n" +
@@ -359,7 +377,7 @@ var labels = new Array(
                 if( la == -1 )
                     info.offset++;
                     
-                while( act == 11 && sstack.length > 0 )
+                while( act == 14 && sstack.length > 0 )
                 {
                     sstack.pop();
                     vstack.pop();
@@ -367,7 +385,7 @@ var labels = new Array(
                     if( sstack.length == 0 )
                         break;
                         
-                    act = 11;
+                    act = 14;
                     for( var i = 0; i < act_tab[sstack[sstack.length-1]].length; i+=2 )
                     {
                         if( act_tab[sstack[sstack.length-1]][i] == la )
@@ -378,7 +396,7 @@ var labels = new Array(
                     }
                 }
                 
-                if( act != 11 )
+                if( act != 14 )
                     break;
                 
                 for( var i = 0; i < rsstack.length; i++ )
@@ -390,7 +408,7 @@ var labels = new Array(
                 la = __lex( info );
             }
             
-            if( act == 11 )
+            if( act == 14 )
             {
                 if( _dbg_withtrace )
                     __dbg_print( "\tError recovery failed, terminating parse process..." );
@@ -403,11 +421,10 @@ var labels = new Array(
         }
         
         /*
-        if( act == 11 )
+        if( act == 14 )
             break;
         */
-        
-        
+
         //Shift
         if( act > 0 )
         {            
@@ -422,6 +439,7 @@ var labels = new Array(
             if( _dbg_withtrace )
                 __dbg_print( "\tNew lookahead symbol: " + labels[la] + " (" + info.att + ")" );
         }
+
         //Reduce
         else
         {        
@@ -433,11 +451,19 @@ var labels = new Array(
             rval = void(0);
             
             if( _dbg_withtrace )
-                __dbg_print( "\tPerforming semantic action..." );
-            
+                __dbg_print( "\tPerforming semantic action..." );  
 switch( act )
 {
-   case 0:
+
+    /*
+    '\('ex'\)'
+		| ex 'OR' ex
+		| ex 'AND' ex
+	| ex 'GROUP' ex  
+	| Identifier
+		;
+		*/
+    case 0:
     {
         rval = vstack[ vstack.length - 1 ];
     }
@@ -446,58 +472,64 @@ switch( act )
     {
          boolstaf.module.setExpressionNode( vstack[ vstack.length - 1 ] ); 
     }
+
     break;
     case 2:
     {
-         rval = boolstaf.module.createNode( boolstaf.module.NODE_OP, boolstaf.module.OR, 'OR', vstack[ vstack.length - 3 ], vstack[ vstack.length - 1 ]) 
+    	//function(type, value, name, childs) 
+    	rval = boolstaf.module.createNode( boolstaf.module.NODE_OP, 4,'()', vstack[ vstack.length - 2 ]) 
+        //rval = boolstaf.module.createNode( boolstaf.module.NODE_OP, boolstaf.module.PAR, '(ex)', vstack[ vstack.length - 3 ], vstack[ vstack.length - 1 ]) 
     }
     break;
     case 3:
     {
-         rval = boolstaf.module.createNode( boolstaf.module.NODE_OP, boolstaf.module.AND, 'AND', vstack[ vstack.length - 3 ], vstack[ vstack.length - 1 ]) 
+    	rval = boolstaf.module.createNode( boolstaf.module.NODE_OP, boolstaf.module.OR, 'OR', vstack[ vstack.length - 3 ], vstack[ vstack.length - 1 ]) 
     }
     break;
     case 4:
     {
-         rval = boolstaf.module.createNode( boolstaf.module.NODE_OP, boolstaf.module.GROUP, 'GROUP', vstack[ vstack.length - 2 ]) 
+    	rval = boolstaf.module.createNode( boolstaf.module.NODE_OP, boolstaf.module.AND, 'AND', vstack[ vstack.length - 3 ], vstack[ vstack.length - 1 ]) 
     }
     break;
     case 5:
     {
-         rval = boolstaf.module.createNode( boolstaf.module.NODE_CONST, vstack[ vstack.length - 1 ], vstack[ vstack.length - 1 ]) 
+    	rval = boolstaf.module.createNode( boolstaf.module.NODE_OP, boolstaf.module.GROUP, 'GROUP', vstack[ vstack.length - 2 ]) 
+    }
+    break;
+    case 6:
+    {
+    	rval = boolstaf.module.createNode( boolstaf.module.NODE_CONST, vstack[ vstack.length - 1 ], vstack[ vstack.length - 1 ]) 
     }
     break;
 }
 
-
-
-            if( _dbg_withtrace )
-                __dbg_print( "\tPopping " + pop_tab[act][1] + " off the stack..." );
-                
-            for( var i = 0; i < pop_tab[act][1]; i++ )
-            {
-                sstack.pop();
-                vstack.pop();
-            }
-                                    
-            go = -1;
-            for( var i = 0; i < goto_tab[sstack[sstack.length-1]].length; i+=2 )
-            {
-                if( goto_tab[sstack[sstack.length-1]][i] == pop_tab[act][0] )
-                {
-                    go = goto_tab[sstack[sstack.length-1]][i+1];
-                    break;
-                }
-            }
-            
-            if( act == 0 )
-                break;
-                
-            if( _dbg_withtrace )
-                __dbg_print( "\tPushing non-terminal " + labels[ pop_tab[act][0] ] );
-                
-            sstack.push( go );
-            vstack.push( rval );            
+			if( _dbg_withtrace )
+			    __dbg_print( "\tPopping " + pop_tab[act][1] + " off the stack..." );
+			    
+			for( var i = 0; i < pop_tab[act][1]; i++ )
+			{
+			    sstack.pop();
+			    vstack.pop();
+			}
+			                        
+			go = -1;
+			for( var i = 0; i < goto_tab[sstack[sstack.length-1]].length; i+=2 )
+			{
+			    if( goto_tab[sstack[sstack.length-1]][i] == pop_tab[act][0] )
+			    {
+			        go = goto_tab[sstack[sstack.length-1]][i+1];
+			        break;
+			    }
+			}
+			
+			if( act == 0 )
+			    break;
+			    
+			if( _dbg_withtrace )
+			    __dbg_print( "\tPushing non-terminal " + labels[ pop_tab[act][0] ] );
+			    
+			sstack.push( go );
+			vstack.push( rval );                   
         }
         
         if( _dbg_withtrace )
@@ -614,7 +646,7 @@ createNode : function(type, value, name, childs) {
     //node.appendChild(arguments[i]);
     //alert(child.attributes['type'] + " - " + child.attributes['value']); 
      
-    if(type == this.NODE_OP && value == this.GROUP) { 
+    if(type == this.NODE_OP && value == this.GROUP ) { 
       node = child; 
     } else if (type == child.attributes['type'] && value == child.attributes['value'] ) { 
       //alert(child.attributes['type'] + " >-< " + child.attributes['value']); 
