@@ -129,3 +129,6 @@ update HIBERNATE_SEQUENCES set next_val = next_val+1 where  sequence_name = 'SBI
 commit;
 
 ALTER TABLE SBI_GEO_LAYERS ADD COLUMN IS_BASE_LAYER SMALLINT DEFAULT 0;
+
+UPDATE SBI_CONFIG SET VALUE_CHECK = '' WHERE VALUE_CHECK = 'spagobi@eng.it';
+commit;
