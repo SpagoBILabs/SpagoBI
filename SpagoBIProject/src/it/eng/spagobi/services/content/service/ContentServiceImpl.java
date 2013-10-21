@@ -61,12 +61,14 @@ public class ContentServiceImpl extends AbstractServiceImpl {
 		logger.debug("IN");
 		try {
 			validateTicket(token, user);
+			this.setTenantByUserId(user);
 			ContentServiceImplSupplier c = new ContentServiceImplSupplier();
 			return c.readTemplate(user, document, attributes);
 		} catch (Exception e) {
 			logger.error("Exception", e);
 			return null;
 		} finally {
+			this.unsetTenant();
 			monitor.stop();
 			logger.debug("OUT");
 		}
@@ -92,12 +94,14 @@ public class ContentServiceImpl extends AbstractServiceImpl {
 		logger.debug("IN");
 		try {
 			validateTicket(token, user);
+			this.setTenantByUserId(user);
 			ContentServiceImplSupplier c = new ContentServiceImplSupplier();
 			return c.readTemplateByLabel(user, label, attributes);
 		} catch (Exception e) {
 			logger.error("Exception", e);
 			return null;
 		} finally {
+			this.unsetTenant();
 			monitor.stop();
 			logger.debug("OUT");
 		}
@@ -122,11 +126,13 @@ public class ContentServiceImpl extends AbstractServiceImpl {
 				.start("spagobi.service.content.readSubObjectContent");
 		try {
 			validateTicket(token, user);
+			this.setTenantByUserId(user);
 			return readSubObjectContent(user, subObjectId);
 		} catch (SecurityException e) {
 			logger.error("SecurityException", e);
 			return null;
 		} finally {
+			this.unsetTenant();
 			monitor.stop();
 			logger.debug("OUT");
 		}
@@ -154,11 +160,13 @@ public class ContentServiceImpl extends AbstractServiceImpl {
 				.start("spagobi.service.content.readSubObjectContent");
 		try {
 			validateTicket(token, user);
+			this.setTenantByUserId(user);
 			return readSubObjectContent(user, subObjectName, objId);
 		} catch (SecurityException e) {
 			logger.error("SecurityException", e);
 			return null;
 		} finally {
+			this.unsetTenant();
 			monitor.stop();
 			logger.debug("OUT");
 		}
