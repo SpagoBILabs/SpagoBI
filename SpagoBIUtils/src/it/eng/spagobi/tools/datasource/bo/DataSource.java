@@ -42,6 +42,9 @@ public class DataSource implements Serializable, IDataSource {
 	private Set objects = null;
     private String schemaAttribute=null;
 	private Boolean multiSchema=null;
+	private Boolean readOnly=null;
+	private Boolean writeDefault=null;
+	
 	
     public String getSchemaAttribute() {
 		return schemaAttribute;
@@ -327,5 +330,29 @@ public class DataSource implements Serializable, IDataSource {
 	public void setHibDialectName(String hibDialectName) {
 		this.hibDialectName = hibDialectName;
 	}
+
+
+	public void setReadOnly(Boolean readOnly) {
+		this.readOnly = readOnly;
+	}
+
+
+
+	public void setWriteDefault(Boolean writeDefault) {
+		this.writeDefault = writeDefault;
+	}
+
+	public boolean checkIsReadOnly() {
+		// TODO Auto-generated method stub
+		return readOnly;
+	}
+
+	public boolean checkIsWriteDefault() {
+		// TODO Auto-generated method stub
+		return writeDefault;
+	}
+	
+	
+	
 
 }

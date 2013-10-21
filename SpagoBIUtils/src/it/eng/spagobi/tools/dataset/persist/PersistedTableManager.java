@@ -64,8 +64,10 @@ public class PersistedTableManager {
 	public PersistedTableManager(IEngUserProfile profile){
 		this.profile = profile;
 	}
-	public void persistDataSet(IDataSet dataset, IDataSource dsPersist) throws Exception {
+	public void persistDataSet(IDataSet dataset) throws Exception {
 		String tableName = dataset.getTableNameForReading();
+		//changed
+		IDataSource dsPersist = dataset.getDataSource();
 		persistDataSet(dataset, dsPersist, tableName);
 	}
 	

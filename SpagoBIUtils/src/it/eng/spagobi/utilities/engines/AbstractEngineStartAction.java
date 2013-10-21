@@ -598,7 +598,6 @@ public class AbstractEngineStartAction extends AbstractBaseHttpAction {
 			logger.debug("Dataset persisted.");
 			dataset.setPersisted(true);
 			dataset.setPersistTableName(tableName);
-			dataset.setDataSourcePersist(dataSource);
 		}
 	}
 

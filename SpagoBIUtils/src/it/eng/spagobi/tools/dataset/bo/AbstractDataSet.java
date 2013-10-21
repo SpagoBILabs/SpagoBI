@@ -86,7 +86,6 @@ public abstract class AbstractDataSet implements IDataSet {
     protected String queryScriptLanguage;	
 
     protected boolean persisted;
-    protected IDataSource dataSourcePersist;
     protected String persistTableName;	
     protected String configuration;
     protected List noActiveVersions;
@@ -120,9 +119,6 @@ public abstract class AbstractDataSet implements IDataSet {
 		setDsMetadata(dataSet.getDsMetadata());
 		setPersisted(dataSet.isPersisted());
 		setPersistTableName(dataSet.getPersistTableName());
-		if (dataSet.getDataSourcePersist() != null) {
-			setDataSourcePersist(DataSourceFactory.getDataSource(dataSet.getDataSourcePersist()));
-		}
 		
 		setPublic(dataSet.is_public());
 		
@@ -155,9 +151,6 @@ public abstract class AbstractDataSet implements IDataSet {
 		sbd.setNumRows(isNumRows());
 		sbd.setPersisted(isPersisted());
 		sbd.setPersistTableName(getPersistTableName());
-		if (this.getDataSourcePersist() != null) {
-			sbd.setDataSourcePersist(this.getDataSourcePersist().toSpagoBiDataSource());
-		}
 		sbd.set_public(isPublic());
 		
 		return sbd;
@@ -446,13 +439,6 @@ public abstract class AbstractDataSet implements IDataSet {
 		this.persisted = persisted;
 	}
 
-	public IDataSource getDataSourcePersist() {
-		return dataSourcePersist;
-	}
-
-	public void setDataSourcePersist(IDataSource dataSourcePersist) {
-		this.dataSourcePersist = dataSourcePersist;
-	}
 	
 	/**
 	 * @return the flatDataset
@@ -700,13 +686,15 @@ public abstract class AbstractDataSet implements IDataSet {
 	}
 	
 	public IDataSource getDataSourceForReading() {
-		if (isPersisted()) {
-			return getDataSourcePersist();
-		} else if (isFlatDataset()) {
-			return getDataSource();
-		} else {
-			return null;
-		}
+		return getDataSource();
+		
+//		if (isPersisted()) {
+//			return getDataSourcePersist();
+//		} else if (isFlatDataset()) {
+//			return getDataSource();
+//		} else {
+//			return null;
+//		}
 	}
 	
 }

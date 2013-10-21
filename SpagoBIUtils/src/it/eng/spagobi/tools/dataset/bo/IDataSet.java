@@ -125,10 +125,7 @@ public interface IDataSet {
 	
 	boolean isPersisted();
 	void setPersisted(boolean persisted);
-	
-	public IDataSource getDataSourcePersist();
-	void setDataSourcePersist(IDataSource dataSourcePersist);
-	
+		
 	boolean isFlatDataset();
 	
 	String getFlatTableName();
