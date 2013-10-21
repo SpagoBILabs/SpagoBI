@@ -295,14 +295,7 @@ public class VersionedDataSet implements IDataSet {
 	public void setPersisted(boolean persisted){
 		wrappedDataset.setPersisted(persisted);
 	}
-	
-	public IDataSource getDataSourcePersist(){
-		return wrappedDataset.getDataSourcePersist();
-	}
-	
-	public void setDataSourcePersist(IDataSource dataSourcePersist){
-		wrappedDataset.setDataSourcePersist(dataSourcePersist);
-	}
+
 	
 	public boolean isFlatDataset(){
 		return wrappedDataset.isFlatDataset();

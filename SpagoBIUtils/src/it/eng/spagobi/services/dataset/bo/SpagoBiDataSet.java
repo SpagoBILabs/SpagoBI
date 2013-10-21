@@ -16,8 +16,6 @@ public class SpagoBiDataSet  implements java.io.Serializable {
 
     private it.eng.spagobi.services.datasource.bo.SpagoBiDataSource dataSource;
 
-    private it.eng.spagobi.services.datasource.bo.SpagoBiDataSource dataSourcePersist;
-
     private java.lang.String description;
 
     private int dsId;
@@ -60,7 +58,6 @@ public class SpagoBiDataSet  implements java.io.Serializable {
            java.lang.Integer categoryId,
            java.lang.String configuration,
            it.eng.spagobi.services.datasource.bo.SpagoBiDataSource dataSource,
-           it.eng.spagobi.services.datasource.bo.SpagoBiDataSource dataSourcePersist,
            java.lang.String description,
            int dsId,
            java.lang.String dsMetadata,
@@ -82,7 +79,6 @@ public class SpagoBiDataSet  implements java.io.Serializable {
            this.categoryId = categoryId;
            this.configuration = configuration;
            this.dataSource = dataSource;
-           this.dataSourcePersist = dataSourcePersist;
            this.description = description;
            this.dsId = dsId;
            this.dsMetadata = dsMetadata;
@@ -180,26 +176,6 @@ public class SpagoBiDataSet  implements java.io.Serializable {
      */
     public void setDataSource(it.eng.spagobi.services.datasource.bo.SpagoBiDataSource dataSource) {
         this.dataSource = dataSource;
-    }
-
-
-    /**
-     * Gets the dataSourcePersist value for this SpagoBiDataSet.
-     * 
-     * @return dataSourcePersist
-     */
-    public it.eng.spagobi.services.datasource.bo.SpagoBiDataSource getDataSourcePersist() {
-        return dataSourcePersist;
-    }
-
-
-    /**
-     * Sets the dataSourcePersist value for this SpagoBiDataSet.
-     * 
-     * @param dataSourcePersist
-     */
-    public void setDataSourcePersist(it.eng.spagobi.services.datasource.bo.SpagoBiDataSource dataSourcePersist) {
-        this.dataSourcePersist = dataSourcePersist;
     }
 
 
@@ -564,9 +540,6 @@ public class SpagoBiDataSet  implements java.io.Serializable {
             ((this.dataSource==null && other.getDataSource()==null) || 
              (this.dataSource!=null &&
               this.dataSource.equals(other.getDataSource()))) &&
-            ((this.dataSourcePersist==null && other.getDataSourcePersist()==null) || 
-             (this.dataSourcePersist!=null &&
-              this.dataSourcePersist.equals(other.getDataSourcePersist()))) &&
             ((this.description==null && other.getDescription()==null) || 
              (this.description!=null &&
               this.description.equals(other.getDescription()))) &&
@@ -628,9 +601,6 @@ public class SpagoBiDataSet  implements java.io.Serializable {
         }
         if (getDataSource() != null) {
             _hashCode += getDataSource().hashCode();
-        }
-        if (getDataSourcePersist() != null) {
-            _hashCode += getDataSourcePersist().hashCode();
         }
         if (getDescription() != null) {
             _hashCode += getDescription().hashCode();
@@ -704,12 +674,6 @@ public class SpagoBiDataSet  implements java.io.Serializable {
         elemField = new org.apache.axis.description.ElementDesc();
         elemField.setFieldName("dataSource");
         elemField.setXmlName(new javax.xml.namespace.QName("", "dataSource"));
-        elemField.setXmlType(new javax.xml.namespace.QName("http://bo.datasource.services.spagobi.eng.it", "SpagoBiDataSource"));
-        elemField.setNillable(true);
-        typeDesc.addFieldDesc(elemField);
-        elemField = new org.apache.axis.description.ElementDesc();
-        elemField.setFieldName("dataSourcePersist");
-        elemField.setXmlName(new javax.xml.namespace.QName("", "dataSourcePersist"));
         elemField.setXmlType(new javax.xml.namespace.QName("http://bo.datasource.services.spagobi.eng.it", "SpagoBiDataSource"));
         elemField.setNillable(true);
         typeDesc.addFieldDesc(elemField);
