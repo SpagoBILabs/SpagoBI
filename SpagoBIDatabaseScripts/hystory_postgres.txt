@@ -1842,3 +1842,7 @@ commit;
 
 ALTER TABLE SBI_DATA_SET DROP COLUMN DATA_SOURCE_PERSIST_ID;
 commit;
+
+-- Davide 21/10/2013: removed spagobi@eng.it from SpagoBI config
+UPDATE SBI_CONFIG SET VALUE_CHECK = '' WHERE VALUE_CHECK = 'spagobi@eng.it';
+commit;

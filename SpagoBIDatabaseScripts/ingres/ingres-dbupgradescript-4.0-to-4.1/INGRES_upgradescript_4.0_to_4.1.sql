@@ -125,3 +125,6 @@ commit;\p\g
 
 ALTER TABLE SBI_DATA_SET DROP COLUMN DATA_SOURCE_PERSIST_ID;\p\g
 commit;\p\g
+
+UPDATE SBI_CONFIG SET VALUE_CHECK = '' WHERE VALUE_CHECK = 'spagobi@eng.it';\p\g
+commit;\p\g
