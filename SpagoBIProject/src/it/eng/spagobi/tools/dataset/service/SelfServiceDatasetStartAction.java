@@ -118,7 +118,7 @@ public class SelfServiceDatasetStartAction extends ManageDatasets  {
 		Engine worksheetEngine = ExecuteAdHocUtility.getWorksheetEngine();
 		LogMF.debug(logger, "Engine label is equal to [{0}]", worksheetEngine.getLabel());
 // TODO no more datasource associated with engine
-		Integer defEngineDataSourceWork =0;
+		Integer defEngineDataSourceWork = worksheetEngine.getDataSourceId();
 		if(defEngineDataSourceWork!=null){
 			try {
 				IDataSource ds = DAOFactory.getDataSourceDAO().loadDataSourceByID(defEngineDataSourceWork);
@@ -154,8 +154,7 @@ public class SelfServiceDatasetStartAction extends ManageDatasets  {
 		Engine qbeEngine = ExecuteAdHocUtility.getQbeEngine();
 
 		Engine worksheetEngine = ExecuteAdHocUtility.getWorksheetEngine();
-		Integer defEngineDataSourceQbe = 0;
-				//worksheetEngine.getDataSourceId();
+		Integer defEngineDataSourceQbe = worksheetEngine.getDataSourceId();
 		
 		if(defEngineDataSourceQbe!=null){
 			try {
@@ -188,7 +187,7 @@ public class SelfServiceDatasetStartAction extends ManageDatasets  {
 		Engine qbeEngine = ExecuteAdHocUtility.getQbeEngine();
 
 		Engine worksheetEngine = ExecuteAdHocUtility.getWorksheetEngine();
-		Integer defEngineDataSourceQbe = 0;//worksheetEngine.getDataSourceId();
+		Integer defEngineDataSourceQbe = worksheetEngine.getDataSourceId();
 		if(defEngineDataSourceQbe!=null){
 			try {
 				IDataSource ds = DAOFactory.getDataSourceDAO().loadDataSourceByID(defEngineDataSourceQbe);
