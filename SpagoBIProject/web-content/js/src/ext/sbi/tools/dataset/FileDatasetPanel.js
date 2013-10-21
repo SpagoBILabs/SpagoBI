@@ -52,7 +52,6 @@ Sbi.tools.dataset.FileDatasetPanel = function(config) {
 	
 	
 	var defaultSettings =  {
-//	        labelWidth: 75, 
 	        frame:false,
 	        defaultType: 'textfield'      
 //	        ,layout: 'fit'
@@ -294,7 +293,7 @@ Ext.extend(Sbi.tools.dataset.FileDatasetPanel, Ext.Panel, {
 		  margins: '50 50 50 50',
           labelAlign: 'left',
           bodyStyle:'padding:5px',
-//          layout: 'form',
+          layout: 'column',
 		  defaultType: 'textfield',
 		  fileUpload: true,
 		  id: 'fileUploadPanel',
