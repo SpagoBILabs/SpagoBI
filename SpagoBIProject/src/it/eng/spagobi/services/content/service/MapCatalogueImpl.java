@@ -68,6 +68,7 @@ public class MapCatalogueImpl extends AbstractServiceImpl {
         Content content = new Content();
         try {
             validateTicket(token,user);
+            this.setTenantByUserId(user);
             GeoMap tmpMap =  DAOFactory.getSbiGeoMapsDAO().loadMapByName(mapName);
             if (tmpMap == null) {
             	logger.info("Map with name " + mapName + " not found on db."); 
@@ -91,6 +92,7 @@ public class MapCatalogueImpl extends AbstractServiceImpl {
 		    logger.error("Exception",e); 
 		    throw new RuntimeException("Exception occured while retrieving map from db", e);
 		}finally{
+			this.unsetTenant();
 		    monitor.stop();
 		    logger.debug("OUT");
 		}        
@@ -114,11 +116,13 @@ public class MapCatalogueImpl extends AbstractServiceImpl {
 	Monitor monitor =MonitorFactory.start("spagobi.service.content.mapCatalogue");
 	try {
 	    validateTicket(token, user);
+	    this.setTenantByUserId(user);
 	    return mapCatalogue(user, operation, path, featureName, mapName);
 	} catch (SecurityException e) {
 	    logger.error("SecurityException", e);
 	    return null;
 	} finally {
+		this.unsetTenant();
 	    monitor.stop();
 	    logger.debug("OUT");
 	}	

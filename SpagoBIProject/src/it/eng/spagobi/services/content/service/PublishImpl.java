@@ -49,11 +49,13 @@ public class PublishImpl extends AbstractServiceImpl {
 	Monitor monitor =MonitorFactory.start("spagobi.service.content.publishTemplate");
 	try {
 	    validateTicket(token, user);
+	    this.setTenantByUserId(user);
 	    return helper.publishTemplate(user, attributes);
 	} catch (SecurityException e) {
 	    logger.error("SecurityException", e);
 	    return null;
 	} finally {
+		this.unsetTenant();
 	    monitor.stop();
 	    logger.debug("OUT");
 	}
