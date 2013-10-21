@@ -26,6 +26,7 @@ public class MetaModelWrapper {
 
 	private Model model;
 	private List<HierarchyWrapper> hierarchies;
+	private SiblingsFileWrapper siblingsFileWrapper;
 	
 	public MetaModelWrapper(Model model){
 		this.model = model;
@@ -71,6 +72,20 @@ public class MetaModelWrapper {
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * @return the siblingsFileWrapper
+	 */
+	public SiblingsFileWrapper getSiblingsFileWrapper() {
+		return siblingsFileWrapper;
+	}
+
+	/**
+	 * @param siblingsFileWrapper the siblingsFileWrapper to set
+	 */
+	public void setSiblingsFileWrapper(SiblingsFileWrapper siblingsFileWrapper) {
+		this.siblingsFileWrapper = siblingsFileWrapper;
 	}
 	
 
