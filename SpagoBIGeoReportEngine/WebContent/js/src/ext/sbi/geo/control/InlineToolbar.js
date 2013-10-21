@@ -256,11 +256,23 @@ Sbi.geo.control.InlineToolbar = OpenLayers.Class(OpenLayers.Control, {
     			this.mainPanel.controlPanel2.setVisible(false);
     		}
     	} else if (el.currentTarget.id.indexOf('elBtnPrint')>=0){
-    		alert('elBtnPrint');
+    	     window.print();
     	} else if (el.currentTarget.id.indexOf('elBtnShare')>=0){
     		this.showShareMapWindow('elBtnShare');
     	} else if (el.currentTarget.id.indexOf('elBtnDownload')>=0){
-    		alert('elBtnArrow');
+    		var printProvider = new GeoExt.data.PrintProvider({
+                capabilities: {"scales":[{"name":"1:25.000","value":"25000"},{"name":"1:50.000","value":"50000"},{"name":"1:100.000","value":"100000"},{"name":"1:200.000","value":"200000"},{"name":"1:500.000","value":"500000"},{"name":"1:1.000.000","value":"1000000"},{"name":"1:2.000.000","value":"2000000"},{"name":"1:4.000.000","value":"4000000"}],"dpis":[{"name":"56","value":"56"},{"name":"127","value":"127"},{"name":"190","value":"190"},{"name":"256","value":"256"}],"outputFormats":[{"name":"pdf"}],"layouts":[{"name":"A4 portrait","map":{"width":440,"height":483},"rotation":true}],"printURL":"http://localhost:8080/SpagoBIGeoReportEngine/pdf/print.pdf","createURL":"http://localhost:8080/SpagoBIGeoReportEngine/pdf/create.json"},
+                customParams: {
+                    mapTitle: "Printing Demo",
+                    title: "Printing Demo",
+                    comment: "This is a simple map printed from GeoExt."
+                }
+        	});
+            var printPage = new GeoExt.data.PrintPage({
+                printProvider: printProvider
+            });
+            printPage.fit(this.map, true);
+            printProvider.print(this.map, printPage);
     	} else if (el.currentTarget.id.indexOf('elBtnFavourite')>=0){
     		alert('elBtnFavourite');
     	}
