@@ -52,7 +52,7 @@ Sbi.tools.dataset.FileDatasetPanel = function(config) {
 	
 	
 	var defaultSettings =  {
-	        labelWidth: 75, 
+//	        labelWidth: 75, 
 	        frame:false,
 	        defaultType: 'textfield'      
 //	        ,layout: 'fit'
@@ -90,36 +90,43 @@ Ext.extend(Sbi.tools.dataset.FileDatasetPanel, Ext.Panel, {
 			fieldLabel : LN('sbi.ds.file.xsl.skiprows'),
 			allowBlank : true,
 			name: 'skipRows',
-			width: 100,
-			readOnly: !this.isOwner || false
+			width: (this.fromWizard)? 180 : 100,
+			readOnly: !this.isOwner || false,
+			style: {
+	            marginRight: '15px'
+	        }
 		});
 		
 		this.limitRowsField = new Ext.form.NumberField({
 			fieldLabel : LN('sbi.ds.file.xsl.limitrows'),
 			allowBlank : true,
 			name: 'limitRows',
-			width: 100,
-			readOnly: !this.isOwner || false
+			width: (this.fromWizard)? 180 : 100,
+			readOnly: !this.isOwner || false,
+			style: {
+	            marginRight: '15px'
+	        }
 		});
 		
 		this.sheetNumberField = new Ext.form.NumberField({
 			fieldLabel : LN('sbi.ds.file.xsl.sheetnumber'),
 			allowBlank : true,
 			name: 'xslSheetNumber',
-			width: 100,
+			width: (this.fromWizard)? 180 : 100,
 			readOnly: !this.isOwner || false
 		});		
 		
 		
 		this.xlsOptionsPanel = new Ext.Panel({
-			  margins: '50 50 50 50',
-	          labelAlign: 'left',
+			 fieldDefaults: {
+			        labelAlign: 'top',
+			        labelWidth: 150
+			   },
+			  margins: '50 50 50 50', 
 	          bodyStyle:'padding:5px',
-	          layout: 'form',
-	          width: 500,
-			  labelWidth: 150,
+	          layout: (this.fromWizard)? 'column' : 'form',
+	          width: (this.fromWizard)? '100%' : 500,			 
 	          items: [ this.skipRowsField, this.limitRowsField, this.sheetNumberField  ]
-//		,columnWidth: 0.5
 		});
 		this.xlsOptionsPanel.setVisible(false);
 
@@ -148,32 +155,10 @@ Ext.extend(Sbi.tools.dataset.FileDatasetPanel, Ext.Panel, {
 			editable : false,
 			allowBlank : false, 
 			validationEvent : false,
-			readOnly: !this.isOwner || false
-		});	
-		
-		
-		this.csvQuoteCombo = new Ext.form.ComboBox({
-			name : 'csvQuote',
-			store: new Ext.data.ArrayStore({
-		        fields: [
-		            'csvQuoteName',
-		            'csvQuoteValue'
-		        ],
-		        data: [['"', '"'], ['\'', '\'']]
-		    }),
-			width : 150,
-			fieldLabel : LN('sbi.ds.file.csv.quote'),
-			displayField : 'csvQuoteName', 
-			valueField : 'csvQuoteValue', 
-			typeAhead : true,
-			forceSelection : true,
-			mode : 'local',
-			triggerAction : 'all',
-			selectOnFocus : true, 
-			editable : false,
-			allowBlank : false, 
-			validationEvent : false,
-			readOnly: !this.isOwner || false
+			readOnly: !this.isOwner || false,
+			style: {
+	            marginRight: '15px'
+	        }
 		});	
 		
 		this.csvDelimiterCombo = new Ext.form.ComboBox({
@@ -185,7 +170,7 @@ Ext.extend(Sbi.tools.dataset.FileDatasetPanel, Ext.Panel, {
 		        ],
 		        data: [[';', ';'], [',', ','], ['\\t', '\\t'], ['\|', '\|']]
 		    }),
-			width : 150,
+		    width: (this.fromWizard)? 180 : 150,
 			fieldLabel : LN('sbi.ds.file.csv.delimiter'),
 			displayField : 'csvDelimiterName', 
 			valueField : 'csvDelimiterValue', 
@@ -197,19 +182,49 @@ Ext.extend(Sbi.tools.dataset.FileDatasetPanel, Ext.Panel, {
 			editable : false,
 			allowBlank : false, 
 			validationEvent : false,
-			readOnly: !this.isOwner || false
+			readOnly: !this.isOwner || false,
+			style: {
+	            marginLeft: '10px'
+	        }
 		});	
 		
-		
-		this.csvOptionsPanel = new Ext.Panel({
+		this.csvQuoteCombo = new Ext.form.ComboBox({
+			name : 'csvQuote',
+			store: new Ext.data.ArrayStore({
+		        fields: [
+		            'csvQuoteName',
+		            'csvQuoteValue'
+		        ],
+		        data: [['"', '"'], ['\'', '\'']]
+		    }),
+		    width: (this.fromWizard)? 180 : 150,
+			fieldLabel : LN('sbi.ds.file.csv.quote'),
+			displayField : 'csvQuoteName', 
+			valueField : 'csvQuoteValue', 
+			typeAhead : true,
+			forceSelection : true,
+			mode : 'local',
+			triggerAction : 'all',
+			selectOnFocus : true, 
+			editable : false,
+			allowBlank : false, 
+			validationEvent : false,
+			readOnly: !this.isOwner || false,
+			style: {
+	            marginLeft: '10px'
+	        }
+		});	
+		 
+		this.csvOptionsPanel = new Ext.Panel({	
+			  fieldDefaults: {
+			        labelAlign: 'top',
+			        labelWidth: 200
+			  },
 			  margins: '50 50 50 50',
-	          labelAlign: 'left',
 	          bodyStyle:'padding:5px',
-	          layout: 'form',
-	          width: 500,
-			  labelWidth: 150,
+	          layout: (this.fromWizard)? 'column' : 'form',
+	    	  width: (this.fromWizard)? '100%' : 500,
 	          items: [ this.csvDelimiterCombo, this.csvQuoteCombo]
-//			,columnWidth: 0.5
 		});
 		this.csvOptionsPanel.setVisible(false);
 
@@ -248,8 +263,6 @@ Ext.extend(Sbi.tools.dataset.FileDatasetPanel, Ext.Panel, {
 			id: 'fileNameField',
 			name: 'fileName',
 			readOnly:true
-//			hidden: !this.isOwner || false
-//			columnWidth: 0.3
 		});
 		
 		this.uploadField = new Ext.form.TextField({
@@ -260,7 +273,6 @@ Ext.extend(Sbi.tools.dataset.FileDatasetPanel, Ext.Panel, {
 			id: 'fileUploadField',
 			name: 'fileUpload',
 			hidden: !this.isOwner || false
-//			,columnWidth: 0.2
 		});
 		/*
 		this.noChecks = new  Ext.form.Checkbox({
@@ -275,7 +287,6 @@ Ext.extend(Sbi.tools.dataset.FileDatasetPanel, Ext.Panel, {
 	        text: LN('sbi.ds.file.upload.button'),
 	        id: 'fileUploadButton',
 	        hidden: !this.isOwner || false
-//	        ,columnWidth: 0.2
 	    });
 		
 		//Main Panel
@@ -287,8 +298,6 @@ Ext.extend(Sbi.tools.dataset.FileDatasetPanel, Ext.Panel, {
 		  defaultType: 'textfield',
 		  fileUpload: true,
 		  id: 'fileUploadPanel',
-//		  layout:'column',
-//		  items: [this.fileNameField, this.uploadField, this.uploadButton, this.fileTypeCombo, this.csvOptionsPanel, this.xlsOptionsPanel]
 		  items: [this.fileNameField, this.uploadField, this.uploadButton,  this.fileType, this.csvOptionsPanel, this.xlsOptionsPanel]
 
 		});
