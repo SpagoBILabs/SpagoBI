@@ -493,11 +493,11 @@ public class ExportManager implements IExportManager {
 
 			// Engine if present, and data source if engine uses data source
 			Engine engine = biobj.getEngine();
-			if (engine.getUseDataSource() && engine.getDataSourceId() != null) {
-				Integer engineDataSourceId = engine.getDataSourceId();
-				IDataSource ds = dataSourceDao.loadDataSourceByID(engineDataSourceId);
-				exporter.insertDataSource(ds, session);
-			}
+//			if (engine.getUseDataSource() && engine.getDataSourceId() != null) {
+//				Integer engineDataSourceId = engine.getDataSourceId();
+//				IDataSource ds = dataSourceDao.loadDataSourceByID(engineDataSourceId);
+//				exporter.insertDataSource(ds, session);
+//			}
 
 			exporter.insertEngine(engine, session);   
 			exporter.insertBIObject(biobj, session, false); // do not insert dataset

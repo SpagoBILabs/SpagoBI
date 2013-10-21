@@ -91,19 +91,6 @@ public interface IDataSourceDAO extends ISpagoBIDao{
 	 */	
 	public void eraseDataSource(IDataSource aDataSource) throws EMFUserError;
 
-	/**
-	 * Tells if a data source is associated to any
-	 * BI Engines. It is useful because a data source cannot be deleted
-	 * if it is used by one or more BI Engines.
-	 * 
-	 * @param dsId The datasource identifier
-	 * 
-	 * @return True if the datasource is used by one or more
-	 * objects, else false
-	 * 
-	 * @throws EMFUserError If any exception occurred
-	 */
-	public boolean hasBIEngineAssociated (String dsId) throws EMFUserError;
 
 	
 	/**
@@ -119,5 +106,14 @@ public interface IDataSourceDAO extends ISpagoBIDao{
 	 * @throws EMFUserError If any exception occurred
 	 */
 	public boolean hasBIObjAssociated (String dsId) throws EMFUserError;
+	
+	
+	/** Return the data source thatr is marked wityh write default
+	 * 
+	 * @return
+	 * @throws EMFUserError
+	 */
+	
+	public IDataSource loadDataSourceWriteDefault()  throws EMFUserError;
 
 }

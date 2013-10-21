@@ -29,6 +29,9 @@ public class DataSourceJSONSerializer implements Serializer {
 	public static final String PASSWORD = "PASSWORD";	
 	public static final String SCHEMA = "SCHEMA";
 	public static final String CONNECTION_URL = "CONNECTION_URL";		
+	public static final String READ_ONLY = "READ_ONLY";		
+	public static final String WRITE_DEFAULT = "WRITE_DEFAULT";		
+
 	
 	public Object serialize(Object o, Locale locale) throws SerializationException {
 		JSONObject  result = null;
@@ -53,6 +56,8 @@ public class DataSourceJSONSerializer implements Serializer {
 			result.put(PASSWORD,dataSource.getPwd() );
 			result.put(SCHEMA,dataSource.getSchemaAttribute() );
 			result.put(CONNECTION_URL,dataSource.getUrlConnection() );
+			result.put(READ_ONLY,dataSource.checkIsReadOnly());
+			result.put(WRITE_DEFAULT,dataSource.checkIsWriteDefault());
 			
 		
 		} catch (Throwable t) {

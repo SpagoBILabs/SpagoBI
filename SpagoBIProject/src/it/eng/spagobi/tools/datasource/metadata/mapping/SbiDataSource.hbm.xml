@@ -77,6 +77,12 @@
         <property name="multiSchema" type="boolean">
             <column name="MULTI_SCHEMA" />
         </property>
+        <property name="readOnly" type="boolean">
+            <column name="READ_ONLY" />
+        </property>
+        <property name="writeDefault" type="boolean">
+            <column name="WRITE_DEFAULT" />
+        </property>        
         <filter name="tenantFilter" condition="organization=:tenant"/>  
     </class>
 	<filter-def name="tenantFilter">

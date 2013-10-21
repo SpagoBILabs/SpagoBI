@@ -397,7 +397,6 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 						pivotRowName : values['pivotRowName'],
 						pivotIsNumRows : values['pivotIsNumRows'],
 						isPersisted : values['isPersisted'],
-						dataSourcePersist : values['dataSourcePersist'],
 						persistTableName : values['persistTableName'],
 						flatTableName : values['flatTableName'],
 						dataSourceFlat : values['dataSourceFlat'],
@@ -444,7 +443,7 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 							'jclassName', 'jclassNameForCustom', 'customData', 'pars', 'trasfTypeCd',
 							'pivotColName', 'pivotColValue',
 							'pivotRowName', 'pivotIsNumRows', 'dsVersions',
-							'isPersisted','dataSourcePersist', 'persistTableName',
+							'isPersisted', 'persistTableName',
 							'flatTableName', 'dataSourceFlat',
 							'qbeSQLQuery', 'qbeJSONQuery', 'qbeDataSource',
 							'qbeDatamarts',	'userIn','dateIn','versNum','versId','meta'];
@@ -459,7 +458,7 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 								scriptLanguage : '', jclassName : '',jclassNameForCustom:'', customData: '', pars : [],
 								trasfTypeCd : '', pivotColName : '', pivotColValue : '',								
 								pivotRowName : '', pivotIsNumRows : '', 
-								isPersisted:'', dataSourcePersist:'', persistTableName:'',
+								isPersisted:'', persistTableName:'',
 								flatTableName:'', dataSourceFlat : '',
 								qbeSQLQuery: '',qbeJSONQuery: '', qbeDataSource: '', qbeDatamarts: '',
 								dsVersions : [], userIn:'',dateIn:'',versNum:'',versId:'',meta:[]
@@ -1448,21 +1447,6 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 					//extjs4: this.isPersisted.addListener('change',	this.activatePersistForm, this);
 					this.isPersisted.addListener('check',	this.activatePersistForm, this);
 					
-					var dataSourcePersist = new Ext.form.ComboBox({
-						name : 'dataSourcePersist',
-						id  : 'dataSourcePersist',
-						store : this.dataSourceStore,
-						width : 350, //180,
-						fieldLabel : LN('sbi.ds.dataSource'),
-						displayField : 'dataSource', // what the user sees in the popup
-						valueField : 'dataSource', // what is passed to the 'change' event
-						typeAhead : true, forceSelection : true,
-						mode : 'local',
-						triggerAction : 'all',
-						selectOnFocus : true, editable : false,
-						allowBlank : false, validationEvent : true
-					});
-					
 					var persistTableName = new Ext.form.TextField({
 						maxLength : 50, minLength : 1,
 						width : 200,
@@ -1492,7 +1476,7 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 											: "-13px")
 											: "10px"
 								},
-								items : [ dataSourcePersist , persistTableName ]
+								items : [ persistTableName ]
 							});
 					return fsPersist;
 				}
@@ -1612,7 +1596,7 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 								scriptLanguage : '', jclassName : '', jclassNameForCustom:'', customData : '', pars : [],
 								trasfTypeCd : '', pivotColName : '', pivotColValue : '',
 								pivotRowName : '', pivotIsNumRows : '',
-								isPersisted:'', dataSourcePersist:'', persistTableName:'',
+								isPersisted:'', persistTableName:'',
 								flatTableName:'', dataSourceFlat:'',
 								qbeSQLQuery: '',
 								qbeJSONQuery: '', qbeDataSource: '', qbeDatamarts: '',
@@ -1705,7 +1689,6 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 						pivotRowName : values['pivotRowName'],
 						pivotIsNumRows : values['pivotIsNumRows'],
 						isPersisted: values['isPersisted'],
-						dataSourcePersist: values['dataSourcePersist'],
 						persistTableName: values['persistTableName'],
 						dataSourceFlat: values['dataSourceFlat'],
 						flatTableName: values['flatTableName'],
@@ -1758,7 +1741,6 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 						pivotRowName : values['pivotRowName'],
 						pivotIsNumRows : values['pivotIsNumRows'],
 						isPersisted: values['isPersisted'],
-						dataSourcePersist: values['dataSourcePersist'],
 						persistTableName: values['persistTableName'],
 						dataSourceFlat: values['dataSourceFlat'],
 						flatTableName: values['flatTableName'],
@@ -1807,7 +1789,6 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 							pivotRowName : values['pivotRowName'],
 							pivotIsNumRows : values['pivotIsNumRows'],
 							isPersisted: values['isPersisted'],
-							dataSourcePersist: values['dataSourcePersist'],
 							persistTableName: values['persistTableName'],
 							dataSourceFlat: values['dataSourceFlat'],
 							flatTableName: values['flatTableName'],
@@ -1857,7 +1838,6 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 					record.set('pivotRowName',values['pivotRowName']);
 					record.set('pivotIsNumRows',values['pivotIsNumRows']);
 					record.set('isPersisted', values['isPersisted']),
-					record.set('dataSourcePersist', values['dataSourcePersist']),
 					record.set('persistTableName', values['persistTableName']),
 					record.set('dataSourceFlat', values['dataSourceFlat']),
 					record.set('flatTableName', values['flatTableName']),					

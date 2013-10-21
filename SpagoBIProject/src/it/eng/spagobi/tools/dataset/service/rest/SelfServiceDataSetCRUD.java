@@ -1001,7 +1001,6 @@ public class SelfServiceDataSetCRUD {
 			
 			//set persist values
 			toReturn.setPersisted(dataSet.isPersisted());
-			toReturn.setDataSourcePersist(dataSet.getDataSourcePersist());
 		}
 		
 		if (id == -1){

@@ -54,7 +54,6 @@ public class SbiDataSet extends SbiHibernateModel {
 
 	private boolean persisted = false;
 	private String persistTableName = null;
-	private SbiDataSource dataSourcePersist;
 	
 	private String owner=null;
 	private boolean publicDS = false;
@@ -337,21 +336,6 @@ public class SbiDataSet extends SbiHibernateModel {
 	 */
 	public String getPersistTableName() {
 		return persistTableName;
-	}
-
-
-	/**
-	 * @return the dataSourcePersist
-	 */
-	public SbiDataSource getDataSourcePersist() {
-		return dataSourcePersist;
-	}
-
-	/**
-	 * @param dataSourcePersist the dataSourcePersist to set
-	 */
-	public void setDataSourcePersist(SbiDataSource dataSourcePersist) {
-		this.dataSourcePersist = dataSourcePersist;
 	}
 
 	/**

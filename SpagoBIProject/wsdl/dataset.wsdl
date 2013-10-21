@@ -33,7 +33,6 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
      <element name="categoryId" nillable="true" type="soapenc:int"/>
      <element name="configuration" nillable="true" type="soapenc:string"/>
      <element name="dataSource" nillable="true" type="tns3:SpagoBiDataSource"/>
-     <element name="dataSourcePersist" nillable="true" type="tns3:SpagoBiDataSource"/>
      <element name="description" nillable="true" type="soapenc:string"/>
      <element name="dsId" type="xsd:int"/>
      <element name="dsMetadata" nillable="true" type="soapenc:string"/>

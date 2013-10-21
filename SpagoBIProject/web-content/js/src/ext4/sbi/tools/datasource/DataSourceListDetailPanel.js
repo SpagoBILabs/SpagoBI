@@ -23,8 +23,8 @@ Ext.define('Sbi.tools.datasource.DataSourceListDetailPanel', {
 		this.initServices();
 		this.detailPanel =  Ext.create('Sbi.tools.datasource.DataSourceDetailPanel',{services: this.services});
 		this.columns = [{dataIndex:"DATASOURCE_LABEL", header:'sbi.generic.label'}, {dataIndex:"DESCRIPTION", header:'sbi.generic.descr'}];
-		this.fields = ["DATASOURCE_ID","DATASOURCE_LABEL","DESCRIPTION","DRIVER","DIALECT_ID","DIALECT_CLASS","DIALECT_NAME","JNDI_URL","USER","PASSWORD","SCHEMA","MULTISCHEMA","CONNECTION_URL"];
-		this.detailPanel.on("save",this.onFormSave,this);
+		this.fields = ["DATASOURCE_ID","DATASOURCE_LABEL","DESCRIPTION","DRIVER","DIALECT_ID","DIALECT_CLASS","DIALECT_NAME","JNDI_URL","USER","PASSWORD","SCHEMA","MULTISCHEMA","READ_ONLY","WRITE_DEFAULT","CONNECTION_URL"];
+		this.detailPanel.on("save",this.checkCanSave,this);
 		this.detailPanel.on("test",this.onFormTest,this);
 		this.filteredProperties = ["DATASOURCE_LABEL","DESCRIPTION"];
 		this.buttonToolbarConfig = {
@@ -73,10 +73,37 @@ Ext.define('Sbi.tools.datasource.DataSourceListDetailPanel', {
 		});
 	}
 	
-	, onFormSave: function(record){
 	
-		var recordToSave = Ext.create("Sbi.tools.datasource.DataSourceModel",record);
-		recordToSave.save({
+	, checkCanSave: function(record){
+					// if write default is true and there is already a write default ask for modification
+		var currentPanel = this;
+		var already = this.isThereWriteDefault();
+		if(
+				(record.WRITE_DEFAULT == true || record.WRITE_DEFAULT == 'true' || record.WRITE_DEFAULT == 'on')
+				&&
+				already != undefined
+		)
+		{		
+					 Ext.Msg.confirm(LN("sbi.datasource.validation.error"),already+LN("sbi.datasource.validation.writeDefault"),
+							 			function(btn, text){
+						 					if (btn == 'yes'){ 
+						 						currentPanel.onFormSave(record);
+						 							}
+						 					else{
+						 						record.WRITE_DEFAULT=false;
+						 						currentPanel.onFormSave(record);						 						
+						 					}
+						 				});
+				
+		}
+		else{ 
+			// case current not to set write default or there is no already one
+			this.onFormSave(record);
+		}		
+	}	
+	, onFormSave: function(record){
+		 var recordToSave = Ext.create("Sbi.tools.datasource.DataSourceModel",record);
+		 recordToSave.save({
 			success : function(object, response, options) {
 	
 				if(response !== undefined && response.response !== undefined && response.response.responseText !== undefined && response.response.statusText=="OK") {
@@ -96,6 +123,18 @@ Ext.define('Sbi.tools.datasource.DataSourceListDetailPanel', {
 							//unused.. Its a workaround because it doesn't update the values in the grids...
 							selectedRow[0].set("DESCRIPTION",selectedRow.DESCRIPTION);
 							
+							// if it has been set write deafult must change the previous write default
+							if(object.data.WRITE_DEFAULT == true){
+								var currentLabel = object.data.DATASOURCE_LABEL;
+						        var store = this.grid.store;
+						        for (var i = 0; i < this.grid.store.count(); i++) {
+						        	var element = this.grid.store.getAt(i);
+						        	// set all to write default = false except the current one
+						        	if(element.data.DATASOURCE_LABEL != object.data.DATASOURCE_LABEL){
+						        		element.data.WRITE_DEFAULT = false;
+						        	}
+						        }
+							}
 							
 							selectedRow[0].data = Ext.apply(selectedRow[0].data,record);
 							this.grid.store.commitChanges();	
@@ -109,7 +148,10 @@ Ext.define('Sbi.tools.datasource.DataSourceListDetailPanel', {
 			scope: this,
 			failure: Sbi.exception.ExceptionHandler.handleFailure  
 		});
+		
+		
 	}
+
 	
 	, onFormTest: function(record){
 		Ext.Ajax.request({
@@ -137,5 +179,14 @@ Ext.define('Sbi.tools.datasource.DataSourceListDetailPanel', {
 	, onGridSelect: function(selectionrowmodel, record, index, eOpts){
 		this.detailPanel.show();
 		this.detailPanel.setFormState(record.data);
+	}
+	, isThereWriteDefault: function(){
+        var store = this.grid.store;
+        for (var i = 0; i < this.grid.store.count(); i++) {
+        			var element = this.grid.store.getAt(i);
+                    var isWriteDefault = element.data.WRITE_DEFAULT;
+                    if(isWriteDefault == true || isWriteDefault == 'true' || isWriteDefault == 'on') return element.data.DATASOURCE_LABEL;
+        }
+        return;
 	}
 });

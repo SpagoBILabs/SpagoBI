@@ -137,7 +137,6 @@ import it.eng.spagobi.tools.catalogue.metadata.SbiMetaModelContent;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
-import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
 import it.eng.spagobi.tools.dataset.dao.DataSetFactory;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
@@ -169,7 +168,6 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Expression;
-import org.hibernate.engine.jdbc.WrappedBlob;
 
 /**
  * Implements methods to insert exported metadata into the exported database 
@@ -351,6 +349,8 @@ public class ExporterMetadata {
 			hibDS.setDialect(dialect);
 			hibDS.setSchemaAttribute(ds.getSchemaAttribute());
 			hibDS.setMultiSchema(ds.getMultiSchema());		
+			hibDS.setReadOnly(ds.checkIsReadOnly());		
+			hibDS.setWriteDefault(ds.checkIsWriteDefault());		
 
 			// va aggiunto il legame con gli engine e il doc ????
 
@@ -804,10 +804,6 @@ public class ExporterMetadata {
 			SbiDomains engineTypeDom = (SbiDomains)session.load(SbiDomains.class, engine.getEngineTypeId());
 			hibEngine.setEngineType(engineTypeDom);
 			hibEngine.setUseDataSource(new Boolean(engine.getUseDataSource()));
-			if (engine.getUseDataSource() && engine.getDataSourceId() != null) {
-				SbiDataSource ds = (SbiDataSource) session.load(SbiDataSource.class, engine.getDataSourceId());
-				hibEngine.setDataSource(ds);
-			}
 			hibEngine.setUseDataSet(new Boolean(engine.getUseDataSet()));
 			session.save(hibEngine);
 			tx.commit();

@@ -37,7 +37,6 @@ public class EngineJSONDeserializer implements Deserializer {
 	
 	public static final String USE_DATASET = "useDataSet";
 	public static final String USE_DATASOURCE = "useDataSource";
-	public static final String DATASOURCE = "dataSource";
 	
 	public static final String CLASS = "engine_class";
 	public static final String URL = "url";
@@ -66,7 +65,6 @@ public class EngineJSONDeserializer implements Deserializer {
 		String className = "";
 		Integer biobjTypeId = null;
 		Integer engineTypeId = null;
-		Integer dataSourceId = null;
 		boolean useDataSource = false;
 		boolean useDataSet = false;
 		
@@ -108,9 +106,6 @@ public class EngineJSONDeserializer implements Deserializer {
 			url = json.getString(URL);
 			secondaryUrl = json.getString(SECONDARY_URL);
 			driverName =  json.getString(DRIVER);
-			if (json.getString(DATASOURCE).length() > 0){
-				dataSourceId = Integer.parseInt(json.getString(DATASOURCE));
-			}
 			
 			engine.setId(id);
 			engine.setLabel(label);
@@ -124,7 +119,6 @@ public class EngineJSONDeserializer implements Deserializer {
 			engine.setUrl(url);
 			engine.setSecondaryUrl(secondaryUrl);
 			engine.setDriverName(driverName);
-			engine.setDataSourceId(dataSourceId);
 			
 			//TODO: verify other options not set
             engine.setCriptable(new Integer(0));

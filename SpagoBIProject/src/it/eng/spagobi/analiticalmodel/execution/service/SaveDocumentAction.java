@@ -590,17 +590,9 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 	
 	private BIObject setDatasource(BIObject document, BIObject sourceDocument) {
 		
-		Integer dataSourceId = null;
-		
-		dataSourceId = sourceDocument.getDataSourceId();
-		if ( dataSourceId == null ) {
-			dataSourceId = sourceDocument.getEngine().getDataSourceId();
-			if ( dataSourceId == null ) {
-				throw new SpagoBIServiceException(SERVICE_NAME,	"No datasource found");
-			}
-		}
-		
-		document.setDataSourceId(dataSourceId);
+		document.setDataSourceId(
+				sourceDocument.getDataSourceId()
+		);
 		
 		return document;
 	}

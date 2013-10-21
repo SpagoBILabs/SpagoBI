@@ -672,6 +672,9 @@ Sbi.locale.ln['sbi.datasource.driver']= 'Driver';
 Sbi.locale.ln['sbi.datasource.dialect']= 'Dialetto';
 Sbi.locale.ln['sbi.datasource.multischema']= 'Multischema';
 Sbi.locale.ln['sbi.datasource.multischema.attribute']= 'Attributo Multischema';
+Sbi.locale.ln['sbi.datasource.readonly']= 'Sola lettura';
+Sbi.locale.ln['sbi.datasource.writedefault']= 'Scrittura di default';
+Sbi.locale.ln['sbi.datasource.readwrite']= 'Lettura e scrittura';
 Sbi.locale.ln['sbi.datasource.type']= 'Tipo';
 Sbi.locale.ln['sbi.datasource.type.jndi']= 'Jndi';
 Sbi.locale.ln['sbi.datasource.type.jdbc']= 'Jdbc';
@@ -686,6 +689,10 @@ Sbi.locale.ln['sbi.datasource.deleted']= 'Data source cancellato correttamente';
 Sbi.locale.ln['sbi.datasource.validation.error']= 'Ci sono degli errori di validazione. Controlla i campi marcati.';
 Sbi.locale.ln['sbi.datasource.tested']= 'Test OK';
 Sbi.locale.ln['sbi.datasource.test.failed']= 'Errore nel test del datasource';
+Sbi.locale.ln['sbi.datasource.validation.writeDefault']= ' : data source già presente con funzione di scrittura di default. Sostituire con il presente?';
+
+
+
 
 //===================================================================
 //MESSAGE BOX BUTTONS

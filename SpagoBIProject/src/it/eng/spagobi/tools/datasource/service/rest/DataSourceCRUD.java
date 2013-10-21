@@ -99,8 +99,8 @@ public class DataSourceCRUD {
 			// if the ds is associated with any BIEngine or BIObjects, creates
 			// an error
 			boolean bObjects = DAOFactory.getDataSourceDAO().hasBIObjAssociated(id);
-			boolean bEngines = DAOFactory.getDataSourceDAO().hasBIEngineAssociated(id);
-			if (bObjects || bEngines) {
+			//boolean bEngines = DAOFactory.getDataSourceDAO().hasBIEngineAssociated(id);
+			if (bObjects){ //|| bEngines) {
 				HashMap params = new HashMap();
 				logger.debug(deleteInUseDSError);
 				updateAudit(req, profile, "DATA_SOURCE.DELETE", null, "ERR");
@@ -241,9 +241,22 @@ public class DataSourceCRUD {
 		String driver = (String)requestBodyJSON.opt("DRIVER");
 		String schemaAttr = (String)requestBodyJSON.opt("SCHEMA");
 		String multiSchema = (String)requestBodyJSON.opt("MULTISCHEMA");
+		String readOnlyS = (String)requestBodyJSON.opt("READ_ONLY");
+		String writeDefaultS = (String)requestBodyJSON.opt("WRITE_DEFAULT");
+
 		Boolean isMultiSchema = false;
 		if(multiSchema!=null && (multiSchema.equals("on") || multiSchema.equals("true"))){
 			isMultiSchema = true;
+		}
+
+		Boolean readOnly = false;
+		if(readOnlyS!=null && (readOnlyS.equals("on") || readOnlyS.equals("true"))){
+			readOnly = true;
+		}
+
+		Boolean writeDefault = false;
+		if(writeDefaultS!=null && (writeDefaultS.equals("on") || writeDefaultS.equals("true"))){
+			writeDefault = true;
 		}
 		
 		ds.setDsId(id.intValue());
@@ -257,6 +270,8 @@ public class DataSourceCRUD {
 		ds.setDriver(driver);
 		ds.setSchemaAttribute(schemaAttr);
 		ds.setMultiSchema(isMultiSchema);
+		ds.setReadOnly(readOnly);
+		ds.setWriteDefault(writeDefault);
 				
 		return ds;
 	}

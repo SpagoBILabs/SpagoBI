@@ -5,9 +5,11 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.tools.dataset.dao;
 
+import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.dao.ISpagoBIDao;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
 
 import java.util.List;
 
@@ -40,6 +42,8 @@ public interface IDataSetDAO extends ISpagoBIDao {
 	public IDataSet loadDataSetById(Integer dsId) ;
 	public IDataSet loadDataSetByLabel(String dsLabel);
 	public IDataSet loadDataSetByOwner(String owner);
+	
+	public IDataSource getDataSourceForWriting(IDataSet dataset) throws EMFUserError;
 	
 	/**
 	 * @deprecated

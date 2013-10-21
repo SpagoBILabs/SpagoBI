@@ -251,13 +251,6 @@ Ext
 						else {
 							useDatasource = this.detailFieldUseDataSource.getValue();
 						}
-						if (useDatasource){
-							this.detailFieldDataSource.setVisible(true);
-							this.detailFieldDataSource.getEl().up('.x-form-item').setDisplayed(true);
-						} else {
-							this.detailFieldDataSource.setVisible(false);
-							this.detailFieldDataSource.getEl().up('.x-form-item').setDisplayed(false);
-						}
 					}
 					
 
@@ -410,22 +403,6 @@ Ext
 						//this.detailFieldUseDataSource.addListener('check',this.activateDataSourceCombo, this);
 						
 
-						this.detailFieldDataSource = new Ext.form.ComboBox ({
-							name : 'dataSourceId',
-							store : this.dataSourcesStore,
-							width : 150,
-							fieldLabel : 'Data Source',
-							displayField : 'DATASOURCE_LABEL',
-							valueField : 'DATASOURCE_ID',
-							typeAhead : true,
-							forceSelection : true,
-							mode : 'local',
-							triggerAction : 'all',
-							selectOnFocus : true,
-							editable : false,
-							allowBlank : true,
-							validationEvent : true
-						});
 						
 						this.detailFieldClass = new Ext.form.TextField ({
 							//maxLength : 50,
@@ -519,7 +496,6 @@ Ext
 												this.detailFieldEngineType,
 												this.detailFieldUseDataSet,
 												this.detailFieldUseDataSource,
-												this.detailFieldDataSource,
 												this.detailFieldClass,
 												this.detailFieldUrl,
 												this.detailFieldSecondaryUrl,
@@ -679,7 +655,6 @@ Ext
 						values.engineType = this.detailFieldEngineType.getValue();
 						values.useDataSet = this.detailFieldUseDataSet.getValue();
 						values.useDataSource = this.detailFieldUseDataSource.getValue();
-						values.dataSource = this.detailFieldDataSource.getValue();
 						values.engine_class = this.detailFieldClass.getValue();						
 						values.url = this.detailFieldUrl.getValue();
 						values.secondaryUrl = this.detailFieldSecondaryUrl.getValue();
@@ -706,7 +681,6 @@ Ext
 						this.detailFieldEngineType.setValue(rec.get('engineType'));
 						this.detailFieldUseDataSet.setValue(rec.get('useDataSet'));
 						this.detailFieldUseDataSource.setValue(rec.get('useDataSource'));
-						this.detailFieldDataSource.setValue(rec.get('dataSourceId'));
 						this.detailFieldUrl.setValue(rec.get('url'));
 						this.detailFieldClass.setValue(rec.get('engine_class'));						
 						this.detailFieldSecondaryUrl.setValue(rec.get('secondaryUrl'));

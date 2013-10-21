@@ -48,16 +48,19 @@ public class StartCreatingWorksheetFromDatasetAction extends CreateDatasetForWor
 						
 			Engine worksheetEngine = getWorksheetEngine();
 			LogMF.debug(logger, "Engine label is equal to [{0}]", worksheetEngine.getLabel());
-			
-			if (worksheetEngine.getDataSourceId() == null) {
-				throw new SpagoBIServiceException(
-						SERVICE_NAME,
-						"The Wrosksheet engine has no default datasource, that is required for using this functionality. Please contact the administrator");
-			}
-			int defEngineDataSourceWork = worksheetEngine.getDataSourceId();
+
+			// TODO: no more present engine data source			
+//			if (worksheetEngine.getDataSourceId() == null) {
+//				throw new SpagoBIServiceException(
+//						SERVICE_NAME,
+//						"The Wrosksheet engine has no default datasource, that is required for using this functionality. Please contact the administrator");
+//			}
+			int defEngineDataSourceWork = 0;
+					//worksheetEngine.getDataSourceId();
 			worksheetEditActionParameters.put(EngineConstants.ENGINE_DATASOURCE_ID, defEngineDataSourceWork);
 			
-			int engineDatasource = worksheetEngine.getDataSourceId();
+			int engineDatasource = 0;
+					//worksheetEngine.getDataSourceId();
 			DataSource datasource;
 			try {
 				datasource = DAOFactory.getDataSourceDAO().loadDataSourceByID(engineDatasource);
@@ -79,7 +82,8 @@ public class StartCreatingWorksheetFromDatasetAction extends CreateDatasetForWor
 			
 			Engine qbeEngine = getQbeEngine();
 			
-			int defEngineDataSource = qbeEngine.getDataSourceId();
+			int defEngineDataSource = 0;
+					//qbeEngine.getDataSourceId();
 			qbeEditActionParameters.put(EngineConstants.ENGINE_DATASOURCE_ID, defEngineDataSource);
 			
 			

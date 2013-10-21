@@ -26,7 +26,6 @@ public class EngineJSONSerializer implements Serializer {
 	
 	public static final String USE_DATASET = "useDataSet";
 	public static final String USE_DATASOURCE = "useDataSource";
-	public static final String DATASOURCE = "dataSourceId";
 	
 	public static final String CLASS = "engine_class";
 	public static final String URL = "url";
@@ -53,7 +52,6 @@ public class EngineJSONSerializer implements Serializer {
 			
 			result.put(USE_DATASET, engine.getUseDataSet() );
 			result.put(USE_DATASOURCE, engine.getUseDataSource() );
-			result.put(DATASOURCE, engine.getDataSourceId() );
 			
 			result.put(CLASS, engine.getClassName() );
 			result.put(URL, engine.getUrl() );
