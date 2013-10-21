@@ -491,7 +491,7 @@ it.eng.spagobi.engines.qbe.filterwizard = function() {
             if(!tree) tree = getExpStructureTree();          
            
             var types = ['UNDEF', 'NODE_OP', 'NODE_CONST']; 
-  		  	var values = ['UNDEF', 'AND', 'OR', 'GROUP'];
+  		  	var values = ['UNDEF', 'AND', 'OR', 'GROUP','PAR'];
   		  	
   		  	o.type = types[tree.attributes.type];
   		    o.value = (tree.attributes.type==1? values[tree.attributes.value]: tree.attributes.value);
@@ -513,7 +513,7 @@ it.eng.spagobi.engines.qbe.filterwizard = function() {
           if(!tree) return '{}';
           
           var types = ['UNDEF', 'NODE_OP', 'NODE_CONST']; 
-		  var values = ['UNDEF', 'AND', 'OR', 'GROUP'];
+		  var values = ['UNDEF', 'AND', 'OR', 'GROUP','PAR'];
  
           s += "{";
           s += "type: '" + types[tree.attributes.type] + "', ";
