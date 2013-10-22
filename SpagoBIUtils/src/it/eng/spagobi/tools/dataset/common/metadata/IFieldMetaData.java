@@ -35,6 +35,7 @@ public interface IFieldMetaData {
 	void setType(Class type);
 	void setProperty(String propertyName, Object propertyValue);
 	void setFieldType(FieldType fieldType);
+	void deleteProperty(String propertyName);
 	Map getProperties();
-
+	void setProperties(Map properties);
 }
