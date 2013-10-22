@@ -245,7 +245,6 @@ Sbi.geo.control.InlineToolbar = OpenLayers.Class(OpenLayers.Control, {
 		
 		
     	if (el.currentTarget.id.indexOf('elBtnArrow')>=0){
-    		//alert('elBtnArrow');
     		if(this.mainPanel.controlPanel2.collapsed) {
     			el.currentTarget.className += ' open';
     			this.mainPanel.controlPanel2.setVisible(true);
@@ -288,15 +287,19 @@ Sbi.geo.control.InlineToolbar = OpenLayers.Class(OpenLayers.Control, {
 		shareMapLink.title = 'Link';
 		var shareMapHtml = this.getShareMapContent('html');	 
 		shareMapHtml.title = 'Html';
-		var shareMapPanel = new Ext.TabPanel({activeTab: 0,items:[shareMapLink,shareMapHtml ]});
+		var shareMapPanel = new Ext.TabPanel({
+			 					bodyStyle:'padding:5px',
+								activeTab: 0,
+								items:[shareMapLink,shareMapHtml ]});
+		shareMapPanel.addListener('tabchange', this.onActivate, this);		
 		
 		this.shareMapWindow = new Ext.Window({
             layout      : 'fit',
 	        width		: 700,
-	        height		: 150,
+	        height		: 130,
             closeAction :'destroy',
             plain       : true,
-//	            title		: OpenLayers.Lang.translate('sbi.tools.catalogue.measures.window.title'),
+            resizable	: false,
             title		: 'Share map',
             items       : [shareMapPanel]
 		});
@@ -306,7 +309,7 @@ Sbi.geo.control.InlineToolbar = OpenLayers.Class(OpenLayers.Control, {
 	
 	getShareMapContent: function(type){
 		var toReturn = '';
-		var url = Sbi.config.serviceRegistry.baseUrl.protocol +'://' + Sbi.config.serviceRegistry.baseUrl.host+':'+
+		var url = ''+Sbi.config.serviceRegistry.baseUrl.protocol +'://' + Sbi.config.serviceRegistry.baseUrl.host+':'+
 		 		  Sbi.config.serviceRegistry.baseUrl.port+'/SpagoBI/servlet/AdapterHTTP?PAGE=LoginPage&NEW_SESSION=TRUE&DIRECT_EXEC=TRUE&'+
 		 		  'OBJECT_LABEL='+ Sbi.config.docLabel+'&OBJECT_VERSION=' + Sbi.config.docVersion;
 		
@@ -314,35 +317,51 @@ Sbi.geo.control.InlineToolbar = OpenLayers.Class(OpenLayers.Control, {
 		if (type=='link'){
 			toReturn = new Ext.form.TextArea({
 		  		  fieldLabel: 'Map link:' 
-		  			  , name: 'shareText'
+		  			  , name: 'shareTextLink'
 			          , width: 690 
 					  , xtype : 'textarea'
 					  , hideLabel: false
 					  , multiline: true
 			          , margin: '0 0 0 0'
 			          , readOnly: true
+			          , selectOnFocus: true
 			          , labelStyle:'font-weight:bold;'
 			          , value: url
+			          , listeners: {
+			              afterrender: function(field) {
+			                field.focus();
+			              }
+			          }
 			        });
 			 
 		}else if (type == 'html'){
 			var htmlCode = '<iframe name="htmlMap"  width="100%" height="100%"  src="'+url+'"></iframe>';
 			toReturn = new Ext.form.TextArea({
 		  		  fieldLabel: 'Map html:' 
-		  			  , name: 'shareText'
+		  			  , name: 'shareTextHtml'
 			          , width: 690 
 					  , xtype : 'textarea'
 					  , hideLabel: false
 					  , multiline: true
+					  , selectOnFocus: true
 			          , margin: '0 0 0 0'
 			          , readOnly: true
 			          , labelStyle:'font-weight:bold;'
 			          , value: htmlCode
+			          , listeners: {
+			              afterrender: function(field) {
+			                field.focus();
+			              }
+			          }
 			        });
 		}else{
 			alert('WARNING: Is possible to share only the link url or the html of the map!');
 		}
 		return toReturn;
+	},
+	
+	onActivate: function(el, t){
+		t.focus(false,100);
 	},
 
     CLASS_NAME: 'Sbi.geo.control.InlineToolbar'
