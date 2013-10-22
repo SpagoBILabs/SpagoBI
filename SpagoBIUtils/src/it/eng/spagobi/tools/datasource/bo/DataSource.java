@@ -82,6 +82,8 @@ public class DataSource implements Serializable, IDataSource {
 		sbd.setHibDialectName(hibDialectName);
 		sbd.setMultiSchema(multiSchema);
 		sbd.setSchemaAttribute(schemaAttribute);
+		sbd.setReadOnly(readOnly);
+		sbd.setWriteDefault(writeDefault);
 		return sbd;
 	}
 
