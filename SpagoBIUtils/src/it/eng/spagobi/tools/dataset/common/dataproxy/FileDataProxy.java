@@ -65,7 +65,7 @@ public class FileDataProxy extends AbstractDataProxy {
 		return dataStore;
 	}
 
-	private String getCompleteFilePath() {
+	public String getCompleteFilePath() {
 				
 		String filePath = resourcePath;
 		if (useTempFile){

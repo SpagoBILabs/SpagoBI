@@ -124,7 +124,14 @@ public class FieldMetadata implements IFieldMetaData {
 		
 		return true;
 	}
-	
+
+
+	public void deleteProperty(String propertyName) {
+		Map properties = getProperties();
+		properties.remove(propertyName);
+	}
+
+
 	
 	
 }
