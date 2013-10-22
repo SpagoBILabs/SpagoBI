@@ -9,16 +9,18 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
    <complexType name="SpagoBiDataSource">
     <sequence>
      <element name="driver" nillable="true" type="soapenc:string"/>
-     <element name="jndiName" nillable="true" type="soapenc:string"/>
-     <element name="password" nillable="true" type="soapenc:string"/>
-     <element name="url" nillable="true" type="soapenc:string"/>
-     <element name="user" nillable="true" type="soapenc:string"/>
-     <element name="label" nillable="true" type="soapenc:string"/>
      <element name="hibDialectClass" nillable="true" type="soapenc:string"/>
      <element name="hibDialectName" nillable="true" type="soapenc:string"/>
      <element name="id" type="xsd:int"/>
+     <element name="jndiName" nillable="true" type="soapenc:string"/>
+     <element name="label" nillable="true" type="soapenc:string"/>
      <element name="multiSchema" nillable="true" type="soapenc:boolean"/>
+     <element name="password" nillable="true" type="soapenc:string"/>
+     <element name="readOnly" nillable="true" type="soapenc:boolean"/>
      <element name="schemaAttribute" nillable="true" type="soapenc:string"/>
+     <element name="url" nillable="true" type="soapenc:string"/>
+     <element name="user" nillable="true" type="soapenc:string"/>
+     <element name="writeDefault" nillable="true" type="soapenc:boolean"/>
     </sequence>
    </complexType>
   </schema>
@@ -35,23 +37,13 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
   </schema>
  </wsdl:types>
 
-   <wsdl:message name="getAllDataSourceRequest">
+   <wsdl:message name="getDataSourceByIdRequest">
 
       <wsdl:part name="in0" type="soapenc:string"/>
 
       <wsdl:part name="in1" type="soapenc:string"/>
 
-   </wsdl:message>
-
-   <wsdl:message name="getDataSourceByLabelResponse">
-
-      <wsdl:part name="getDataSourceByLabelReturn" type="tns2:SpagoBiDataSource"/>
-
-   </wsdl:message>
-
-   <wsdl:message name="getDataSourceResponse">
-
-      <wsdl:part name="getDataSourceReturn" type="tns2:SpagoBiDataSource"/>
+      <wsdl:part name="in2" type="soapenc:int"/>
 
    </wsdl:message>
 
@@ -65,6 +57,24 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
 
    </wsdl:message>
 
+   <wsdl:message name="getDataSourceByLabelResponse">
+
+      <wsdl:part name="getDataSourceByLabelReturn" type="tns2:SpagoBiDataSource"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getAllDataSourceResponse">
+
+      <wsdl:part name="getAllDataSourceReturn" type="impl:ArrayOf_tns2_SpagoBiDataSource"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getDataSourceResponse">
+
+      <wsdl:part name="getDataSourceReturn" type="tns2:SpagoBiDataSource"/>
+
+   </wsdl:message>
+
    <wsdl:message name="getDataSourceRequest">
 
       <wsdl:part name="in0" type="soapenc:string"/>
@@ -75,9 +85,17 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
 
    </wsdl:message>
 
-   <wsdl:message name="getAllDataSourceResponse">
+   <wsdl:message name="getAllDataSourceRequest">
 
-      <wsdl:part name="getAllDataSourceReturn" type="impl:ArrayOf_tns2_SpagoBiDataSource"/>
+      <wsdl:part name="in0" type="soapenc:string"/>
+
+      <wsdl:part name="in1" type="soapenc:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getDataSourceByIdResponse">
+
+      <wsdl:part name="getDataSourceByIdReturn" type="tns2:SpagoBiDataSource"/>
 
    </wsdl:message>
 
@@ -96,6 +114,14 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
          <wsdl:input message="impl:getDataSourceByLabelRequest" name="getDataSourceByLabelRequest"/>
 
          <wsdl:output message="impl:getDataSourceByLabelResponse" name="getDataSourceByLabelResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getDataSourceById" parameterOrder="in0 in1 in2">
+
+         <wsdl:input message="impl:getDataSourceByIdRequest" name="getDataSourceByIdRequest"/>
+
+         <wsdl:output message="impl:getDataSourceByIdResponse" name="getDataSourceByIdResponse"/>
 
       </wsdl:operation>
 
@@ -149,6 +175,24 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
 
       </wsdl:operation>
 
+      <wsdl:operation name="getDataSourceById">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="getDataSourceByIdRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobidatasource" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="getDataSourceByIdResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobidatasource" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
       <wsdl:operation name="getAllDataSource">
 
          <wsdlsoap:operation soapAction=""/>
@@ -173,7 +217,7 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
 
       <wsdl:port binding="impl:DataSourceServiceSoapBinding" name="DataSourceService">
 
-         <wsdlsoap:address location="http://localhost:8080/SpagoBI/services/DataSourceService"/>
+         <wsdlsoap:address location="http://localhost:8181/SpagoBI/services/DataSourceService"/>
 
       </wsdl:port>
 

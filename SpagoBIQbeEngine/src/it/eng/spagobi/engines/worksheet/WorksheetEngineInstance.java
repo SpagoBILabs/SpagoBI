@@ -17,6 +17,7 @@ import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.engines.AbstractEngineInstance;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.IEngineAnalysisState;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.temporarytable.TemporaryTableManager;
 
 import java.util.Map;
@@ -42,12 +43,10 @@ public class WorksheetEngineInstance extends AbstractEngineInstance {
 
 	protected WorksheetEngineInstance(Object template, Map env) throws WorksheetEngineException {
 		this( WorksheetTemplateParser.getInstance().parse(template, env), env );
-		setDataSourceForWriting((IDataSource)env.get(EngineConstants.ENGINE_DATASOURCE));
 	}
 
 	protected WorksheetEngineInstance(WorksheetTemplate template, Map env) throws WorksheetEngineException {
 		super( env );
-		setDataSourceForWriting((IDataSource)env.get(EngineConstants.ENGINE_DATASOURCE));
 		logger.debug("IN");
 		this.template = template;
 		this.setTemporaryTableName();
@@ -132,7 +131,11 @@ public class WorksheetEngineInstance extends AbstractEngineInstance {
 	}
 
 	public IDataSource getDataSourceForWriting() {
-		return dataSourceForWriting;
+		IDataSource datasource = (IDataSource) this.getEnv().get(EngineConstants.DATASOURCE_FOR_WRITING);
+		if (datasource == null) {
+			throw new SpagoBIEngineRuntimeException("Datasource for writing not defined!");
+		}
+		return datasource;
 //		if(dataSource.getHibDialectClass().toLowerCase().contains("hive")){
 //			if(dataSourceForWriting==null || dataSet.isPersisted()){
 //				return dataSet.getDataSourceForReading();
@@ -141,12 +144,6 @@ public class WorksheetEngineInstance extends AbstractEngineInstance {
 //		}
 //		return dataSource;
 	}
-
-	public void setDataSourceForWriting(IDataSource dataSourceForWriting) {
-		
-		this.dataSourceForWriting = dataSourceForWriting;
-	}
-
 	
 	
 }

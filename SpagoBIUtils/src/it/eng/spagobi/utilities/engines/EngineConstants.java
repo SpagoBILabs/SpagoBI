@@ -54,8 +54,11 @@ public class EngineConstants {
 
 		
 	public static final String ENGINE_DATASOURCE = "ENGINE_DATASOURCE";
-	public static final String ENGINE_DATASOURCE_LABEL = "ENGINE_DATASOURCE_LABEL";
-	public static final String ENGINE_DATASOURCE_ID = "ENGINE_DATASOURCE_ID";
+	//public static final String ENGINE_DATASOURCE_LABEL = "ENGINE_DATASOURCE_LABEL";
+	//public static final String ENGINE_DATASOURCE_ID = "ENGINE_DATASOURCE_ID";
+	
+	public static final String DEFAULT_DATASOURCE_FOR_WRITING_LABEL = "DEFAULT_DATASOURCE_FOR_WRITING_LABEL";
+	public static final String DATASOURCE_FOR_WRITING = "DATASOURCE_FOR_WRITING";
 	
 	public static final String MODEL_NAME = "MODEL_NAME";
 	

@@ -43,8 +43,6 @@ public interface IDataSetDAO extends ISpagoBIDao {
 	public IDataSet loadDataSetByLabel(String dsLabel);
 	public IDataSet loadDataSetByOwner(String owner);
 	
-	public IDataSource getDataSourceForWriting(IDataSet dataset) throws EMFUserError;
-	
 	/**
 	 * @deprecated
 	 */

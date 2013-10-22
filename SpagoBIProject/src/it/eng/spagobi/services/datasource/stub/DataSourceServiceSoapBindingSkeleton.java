@@ -47,6 +47,20 @@ public class DataSourceServiceSoapBindingSkeleton implements it.eng.spagobi.serv
         _params = new org.apache.axis.description.ParameterDesc [] {
             new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "in0"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"), java.lang.String.class, false, false), 
             new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "in1"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"), java.lang.String.class, false, false), 
+            new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "in2"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"), java.lang.String.class, false, false), 
+        };
+        _oper = new org.apache.axis.description.OperationDesc("getDataSourceByLabel", _params, new javax.xml.namespace.QName("", "getDataSourceByLabelReturn"));
+        _oper.setReturnType(new javax.xml.namespace.QName("http://bo.datasource.services.spagobi.eng.it", "SpagoBiDataSource"));
+        _oper.setElementQName(new javax.xml.namespace.QName("urn:spagobidatasource", "getDataSourceByLabel"));
+        _oper.setSoapAction("");
+        _myOperationsList.add(_oper);
+        if (_myOperations.get("getDataSourceByLabel") == null) {
+            _myOperations.put("getDataSourceByLabel", new java.util.ArrayList());
+        }
+        ((java.util.List)_myOperations.get("getDataSourceByLabel")).add(_oper);
+        _params = new org.apache.axis.description.ParameterDesc [] {
+            new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "in0"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"), java.lang.String.class, false, false), 
+            new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "in1"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"), java.lang.String.class, false, false), 
             new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "in2"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "int"), java.lang.Integer.class, false, false), 
         };
         _oper = new org.apache.axis.description.OperationDesc("getDataSourceById", _params, new javax.xml.namespace.QName("", "getDataSourceByIdReturn"));
@@ -71,20 +85,6 @@ public class DataSourceServiceSoapBindingSkeleton implements it.eng.spagobi.serv
             _myOperations.put("getAllDataSource", new java.util.ArrayList());
         }
         ((java.util.List)_myOperations.get("getAllDataSource")).add(_oper);
-        _params = new org.apache.axis.description.ParameterDesc [] {
-            new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "in0"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"), java.lang.String.class, false, false), 
-            new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "in1"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"), java.lang.String.class, false, false), 
-            new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "in2"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"), java.lang.String.class, false, false), 
-        };
-        _oper = new org.apache.axis.description.OperationDesc("getDataSourceByLabel", _params, new javax.xml.namespace.QName("", "getDataSourceByLabelReturn"));
-        _oper.setReturnType(new javax.xml.namespace.QName("http://bo.datasource.services.spagobi.eng.it", "SpagoBiDataSource"));
-        _oper.setElementQName(new javax.xml.namespace.QName("urn:spagobidatasource", "getDataSourceByLabel"));
-        _oper.setSoapAction("");
-        _myOperationsList.add(_oper);
-        if (_myOperations.get("getDataSourceByLabel") == null) {
-            _myOperations.put("getDataSourceByLabel", new java.util.ArrayList());
-        }
-        ((java.util.List)_myOperations.get("getDataSourceByLabel")).add(_oper);
     }
 
     public DataSourceServiceSoapBindingSkeleton() {
@@ -100,6 +100,12 @@ public class DataSourceServiceSoapBindingSkeleton implements it.eng.spagobi.serv
         return ret;
     }
 
+    public it.eng.spagobi.services.datasource.bo.SpagoBiDataSource getDataSourceByLabel(java.lang.String in0, java.lang.String in1, java.lang.String in2) throws java.rmi.RemoteException
+    {
+        it.eng.spagobi.services.datasource.bo.SpagoBiDataSource ret = impl.getDataSourceByLabel(in0, in1, in2);
+        return ret;
+    }
+
     public it.eng.spagobi.services.datasource.bo.SpagoBiDataSource getDataSourceById(java.lang.String in0, java.lang.String in1, java.lang.Integer in2) throws java.rmi.RemoteException
     {
         it.eng.spagobi.services.datasource.bo.SpagoBiDataSource ret = impl.getDataSourceById(in0, in1, in2);
@@ -109,12 +115,6 @@ public class DataSourceServiceSoapBindingSkeleton implements it.eng.spagobi.serv
     public it.eng.spagobi.services.datasource.bo.SpagoBiDataSource[] getAllDataSource(java.lang.String in0, java.lang.String in1) throws java.rmi.RemoteException
     {
         it.eng.spagobi.services.datasource.bo.SpagoBiDataSource[] ret = impl.getAllDataSource(in0, in1);
-        return ret;
-    }
-
-    public it.eng.spagobi.services.datasource.bo.SpagoBiDataSource getDataSourceByLabel(java.lang.String in0, java.lang.String in1, java.lang.String in2) throws java.rmi.RemoteException
-    {
-        it.eng.spagobi.services.datasource.bo.SpagoBiDataSource ret = impl.getDataSourceByLabel(in0, in1, in2);
         return ret;
     }
 

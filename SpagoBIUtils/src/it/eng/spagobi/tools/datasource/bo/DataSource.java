@@ -343,12 +343,10 @@ public class DataSource implements Serializable, IDataSource {
 	}
 
 	public boolean checkIsReadOnly() {
-		// TODO Auto-generated method stub
 		return readOnly;
 	}
 
 	public boolean checkIsWriteDefault() {
-		// TODO Auto-generated method stub
 		return writeDefault;
 	}
 	

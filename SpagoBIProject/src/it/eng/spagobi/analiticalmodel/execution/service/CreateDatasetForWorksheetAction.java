@@ -7,6 +7,7 @@ package it.eng.spagobi.analiticalmodel.execution.service;
 
 
 import it.eng.spago.base.SourceBean;
+import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
@@ -18,8 +19,10 @@ import it.eng.spagobi.tools.dataset.DatasetManagementAPI;
 import it.eng.spagobi.tools.dataset.bo.CustomDataSet;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
-import it.eng.spagobi.tools.datasource.bo.DataSource;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.engines.EngineConstants;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 import java.util.HashMap;
@@ -90,9 +93,19 @@ public class CreateDatasetForWorksheetAction extends ExecuteDocumentAction {
 			Engine worksheetEngine = getWorksheetEngine();
 			LogMF.debug(logger, "Engine label is equal to [{0}]", worksheetEngine.getLabel());
 			
-			String datasourceLabel = getDatasourceLabel(worksheetEngine);
-			LogMF.debug(logger, "Datasource label is equal to [{0}]", datasourceLabel);
-			worksheetEditActionParameters.put("datasource_label" , datasourceLabel);
+			IDataSource datasource;
+			try {
+				datasource = DAOFactory.getDataSourceDAO().loadDataSourceWriteDefault();
+			} catch (EMFUserError e) {
+				throw new SpagoBIRuntimeException(
+						"Error while loading default datasource for writing", e);
+			}
+			if (datasource != null) {
+				LogMF.debug(logger, "Datasource label is equal to [{0}]", datasource.getLabel());
+				worksheetEditActionParameters.put(EngineConstants.DEFAULT_DATASOURCE_FOR_WRITING_LABEL, datasource.getLabel());
+			} else {
+				logger.debug("There is no default datasource for writing");
+			}
 			
 			datasetBean = getDatasetAttributesFromRequest();
 			worksheetEditActionParameters.put("dataset_label" , datasetBean.getLabel());
@@ -172,30 +185,6 @@ public class CreateDatasetForWorksheetAction extends ExecuteDocumentAction {
 	
 	protected Engine getQbeEngine() {
 		return getEngineByDocumentType(SpagoBIConstants.DATAMART_TYPE_CODE);
-	}
-
-	private String getDatasourceLabel(Engine engine) {
-		
-		String datasourceLabel;
-		
-		logger.debug("IN");
-		
-		datasourceLabel = null;
-		try {
-			//Integer datasourceId = engine.getDataSourceId();
-			Integer datasourceId = 0;
-			// TODO: no more present engine data source
-			if (datasourceId == null) {
-				throw new SpagoBIServiceException(SERVICE_NAME, "Worksheet engine [" + engine.getLabel() + "] has no datasource.");
-			}
-			DataSource dataSource = DAOFactory.getDataSourceDAO().loadDataSourceByID(datasourceId);
-			datasourceLabel = dataSource.getLabel();
-		} catch(Throwable t) {
-			throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to load the datasource of dataset [" + engine.getLabel() + "]", t);				
-		} finally {
-			logger.debug("OUT");
-		}
-		return datasourceLabel;
 	}
 	
 	protected Map<String, String> buildWorksheetEditServiceBaseParametersMap() {

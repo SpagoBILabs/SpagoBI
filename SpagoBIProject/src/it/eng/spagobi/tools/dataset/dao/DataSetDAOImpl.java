@@ -7,7 +7,6 @@ package it.eng.spagobi.tools.dataset.dao;
 
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
-import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.SpagoBIDOAException;
 import it.eng.spagobi.commons.metadata.SbiDomains;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
@@ -16,9 +15,6 @@ import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
 import it.eng.spagobi.tools.dataset.event.DataSetEventManager;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSetId;
-import it.eng.spagobi.tools.datasource.bo.DataSource;
-import it.eng.spagobi.tools.datasource.bo.IDataSource;
-import it.eng.spagobi.tools.datasource.metadata.SbiDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
 
 import java.util.ArrayList;
@@ -1884,43 +1880,4 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 		return toReturn;
 	}
 
-
-
-	public IDataSource getDataSourceForWriting(IDataSet dataset) throws EMFUserError {
-		logger.debug("IN");
-		IDataSource toReturn = null;
-
-		IDataSource dataSource = dataset.getDataSource();
-		
-		// if datasource associated is a readwrite or is write default then return it
-		if(dataSource != null && (!dataSource.checkIsReadOnly() || dataSource.checkIsWriteDefault())){
-			toReturn = dataSource;
-			logger.debug("Return data source "+dataSource.getLabel());
-		}
-		else{
-			logger.debug("Retrieve write default dataset");
-			
-			dataSource = DAOFactory.getDataSourceDAO().loadDataSourceWriteDefault();
-			
-			if(dataSource == null) {
-				logger.warn("No datasource write default is defined: no writing datasource found for dataset with label "+dataset.getLabel());
-			}
-			else{
-				toReturn = dataSource;
-				logger.debug("Return data source with label "+dataSource.getLabel());				
-			}
-		}
-		logger.debug("OUT");
-		return toReturn;
-	}
-
-
-
-
-
-
-
 }
-
-
-

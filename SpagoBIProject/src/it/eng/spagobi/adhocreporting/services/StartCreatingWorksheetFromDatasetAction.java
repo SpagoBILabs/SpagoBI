@@ -14,8 +14,9 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.services.common.SsoServiceInterface;
-import it.eng.spagobi.tools.datasource.bo.DataSource;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.engines.EngineConstants;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 import java.util.HashMap;
@@ -45,34 +46,25 @@ public class StartCreatingWorksheetFromDatasetAction extends CreateDatasetForWor
 			String executionId = ExecuteAdHocUtility.createNewExecutionId();
 			worksheetEditActionParameters.put("SBI_EXECUTION_ID" , executionId);
 			
+			IDataSource datasource;
+			try {
+				datasource = DAOFactory.getDataSourceDAO().loadDataSourceWriteDefault();
+			} catch (EMFUserError e) {
+				throw new SpagoBIRuntimeException(
+						"Error while loading default datasource for writing", e);
+			}
+			if (datasource != null) {
+				worksheetEditActionParameters.put(EngineConstants.DEFAULT_DATASOURCE_FOR_WRITING_LABEL, datasource.getLabel());
+			} else {
+				logger.debug("There is no default datasource for writing");
+			}
 						
 			Engine worksheetEngine = getWorksheetEngine();
 			LogMF.debug(logger, "Engine label is equal to [{0}]", worksheetEngine.getLabel());
-
-			// TODO: no more present engine data source			
-//			if (worksheetEngine.getDataSourceId() == null) {
-//				throw new SpagoBIServiceException(
-//						SERVICE_NAME,
-//						"The Wrosksheet engine has no default datasource, that is required for using this functionality. Please contact the administrator");
-//			}
-			int defEngineDataSourceWork = 0;
-					//worksheetEngine.getDataSourceId();
-			worksheetEditActionParameters.put(EngineConstants.ENGINE_DATASOURCE_ID, defEngineDataSourceWork);
-			
-			int engineDatasource = 0;
-					//worksheetEngine.getDataSourceId();
-			DataSource datasource;
-			try {
-				datasource = DAOFactory.getDataSourceDAO().loadDataSourceByID(engineDatasource);
-			} catch (EMFUserError e) {
-				throw new SpagoBIServiceException(SERVICE_NAME, "Error getting datasource with id " + engineDatasource, e);	
-			}
-			worksheetEditActionParameters.put("ENGINE_DATASOURCE_LABEL", datasource.getLabel());
 			
 			// create the WorkSheet Edit Service's URL
 			String worksheetEditActionUrl = GeneralUtilities.getUrl(worksheetEngine.getUrl(), worksheetEditActionParameters);
 			LogMF.debug(logger, "Worksheet edit service invocation url is equal to [{}]", worksheetEditActionUrl);
-			
 			
 			// create the input parameters to pass to the WorkSheet Edit Service
 			Map qbeEditActionParameters = buildQbeEditServiceBaseParametersMap();
@@ -81,13 +73,12 @@ public class StartCreatingWorksheetFromDatasetAction extends CreateDatasetForWor
 			qbeEditActionParameters.put("SBI_EXECUTION_ID" , executionId);
 			
 			Engine qbeEngine = getQbeEngine();
-			
-			int defEngineDataSource = 0;
-					//qbeEngine.getDataSourceId();
-			qbeEditActionParameters.put(EngineConstants.ENGINE_DATASOURCE_ID, defEngineDataSource);
-			
-			
 			LogMF.debug(logger, "Engine label is equal to [{0}]", qbeEngine.getLabel());
+			if (datasource != null) {
+				qbeEditActionParameters.put(EngineConstants.DEFAULT_DATASOURCE_FOR_WRITING_LABEL, datasource.getLabel());
+			} else {
+				logger.debug("There is no default datasource for writing");
+			}
 			
 			// create the qbe Edit Service's URL
 			String qbeEditActionUrl = GeneralUtilities.getUrl(qbeEngine.getUrl(), qbeEditActionParameters);

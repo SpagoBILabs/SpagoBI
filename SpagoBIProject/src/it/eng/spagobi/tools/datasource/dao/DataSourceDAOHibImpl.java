@@ -126,31 +126,17 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 		return biDS;		
 	}
 
-	
-	
-	/**
-	 * Is there data source write default, if yes return it.
-	 * 
-	 * @return the data source
-	 * 
-	 * @throws EMFUserError the EMF user error
-	 * 
-	 * @see it.eng.spagobi.tools.datasource.dao.IDataSourceDAO#loadDataSourceByLabel(string)
-	 */	
-	public SbiDataSource loadSbiDataSourceWriteDefault() throws EMFUserError {
+	public IDataSource loadDataSourceWriteDefault() throws EMFUserError {
 		logger.debug("IN");
-		SbiDataSource biDS = null;
+		IDataSource toReturn = null;
 		Session tmpSession = null;
 		Transaction tx = null;
 		try {
 			tmpSession = getSession();
 			tx = tmpSession.beginTransaction();
-			Criterion labelCriterrion = Expression.eq("writeDefault", true);
-			Criteria criteria = tmpSession.createCriteria(SbiDataSource.class);
-			criteria.add(labelCriterrion);	
-			biDS = (SbiDataSource) criteria.uniqueResult();
-			if (biDS == null) return null;
-			
+			SbiDataSource hibDataSource = loadSbiDataSourceWriteDefault(tmpSession);
+			if (hibDataSource == null) return null;
+			toReturn = toDataSource(hibDataSource);
 			tx.commit();
 		} catch (HibernateException he) {
 			logger.error("Error while loading the data source with write default = true: check there are no more than one (incorrect situation)", he);
@@ -163,18 +149,7 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 			}
 		}
 		logger.debug("OUT");
-		return biDS;		
-	}
-	
-	public IDataSource loadDataSourceWriteDefault() throws EMFUserError {
-		logger.debug("IN");
-		IDataSource ds = null;
-		SbiDataSource sbiDs = loadSbiDataSourceWriteDefault();
-		if( sbiDs != null){
-			ds= toDataSource(sbiDs);	
-		}		
-		logger.debug("OUT");
-		return ds;
+		return toReturn;		
 	}
 	
 	
@@ -294,7 +269,7 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 			// if writeDefault is going to be set to truew than must be disabled in others
 			if(aDataSource.checkIsWriteDefault()==true){
 				logger.debug("searching for write default datasource to delete flag");
-				SbiDataSource hibModify = loadSbiDataSourceWriteDefault();
+				SbiDataSource hibModify = loadSbiDataSourceWriteDefault(aSession);
 				if(hibModify != null && !hibModify.getLabel().equals(hibDataSource.getLabel())){
 					logger.debug("previous write default data source was "+hibModify.getLabel());				
 					hibModify.setWriteDefault(false);
@@ -331,6 +306,14 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 			}
 		}
 
+	}
+
+	private SbiDataSource loadSbiDataSourceWriteDefault(Session aSession) {
+		Criterion labelCriterrion = Expression.eq("writeDefault", true);
+		Criteria criteria = aSession.createCriteria(SbiDataSource.class);
+		criteria.add(labelCriterrion);	
+		SbiDataSource hibDataSource = (SbiDataSource) criteria.uniqueResult();
+		return hibDataSource;
 	}
 
 	/**

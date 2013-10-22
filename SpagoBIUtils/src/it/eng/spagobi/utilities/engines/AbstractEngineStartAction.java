@@ -687,4 +687,48 @@ public class AbstractEngineStartAction extends AbstractBaseHttpAction {
 		this.getHttpSession().setAttribute(attributeName, recorder);
 	}
 
+	public IDataSource getDataSourceForWriting() {
+		String schema = null;
+		String attrname = null;
+		
+		String datasourceLabel = this
+				.getAttributeAsString(EngineConstants.DEFAULT_DATASOURCE_FOR_WRITING_LABEL);
+
+		if (datasourceLabel != null) {
+			IDataSource dataSource = getDataSourceServiceProxy()
+					.getDataSourceByLabel(datasourceLabel);
+			if (dataSource.checkIsMultiSchema()) {
+				logger.debug("Datasource [" + dataSource.getLabel()
+						+ "] is defined on multi schema");
+				try {
+					logger.debug("Retriving target schema for datasource ["
+							+ dataSource.getLabel() + "]");
+					attrname = dataSource.getSchemaAttribute();
+					logger.debug("Datasource's schema attribute name is equals to ["
+							+ attrname + "]");
+					Assert.assertNotNull(
+							attrname,
+							"Datasource's schema attribute name cannot be null in order to retrive the target schema");
+					schema = (String) getUserProfile().getUserAttribute(
+							attrname);
+					Assert.assertNotNull(schema,
+							"Impossible to retrive the value of attribute ["
+									+ attrname + "] form user profile");
+					dataSource.setJndi(dataSource.getJndi() + schema);
+					logger.debug("Target schema for datasource  ["
+							+ dataSource.getLabel() + "] is ["
+							+ dataSource.getJndi() + "]");
+				} catch (Throwable t) {
+					throw new SpagoBIEngineRuntimeException(
+							"Impossible to retrive target schema for datasource ["
+									+ dataSource.getLabel() + "]", t);
+				}
+				logger.debug("Target schema for datasource  ["
+						+ dataSource.getLabel() + "] retrieved succesfully");
+			}
+			return dataSource;
+		}
+		
+		return null;
+	}
 }
