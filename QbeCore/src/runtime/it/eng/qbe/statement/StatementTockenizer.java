@@ -5,6 +5,8 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.qbe.statement;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.StringTokenizer;
 
 /**
@@ -15,9 +17,13 @@ public class StatementTockenizer extends StringTokenizer{
 
 	private String satement;
 	private String currentToken;
+	private List<String> tockens;
+	private int tockenCount;
 	
+
 	private static final String DELIMITERS = "+-|*/()<>=!,";
-	private static final String[] ADDITIONALS_DELIMITERS_SUBSTRING_FUNCTIONS = {" like ", "case when", " then ", " end ", "not in ", " in ", " between", "is not null ", "is null ", "is not empty " , "is empty ", "not member of", "member of"};
+	private static final String[] ADDITIONALS_DELIMITERS_SUBSTRING_FUNCTIONS = {" like ", "case when", " when ", " then ", "else", " end ", "not in ", " in ", " between", "is not null ", "is null ", "is not empty " , "is empty ", "not member of", "member of", " and ", " or "};
+
 	
 
 	/**
@@ -27,6 +33,38 @@ public class StatementTockenizer extends StringTokenizer{
 		super(str, DELIMITERS);
 		satement = str;
 		currentToken = null;
+		getAllTockens();
+		tockenCount=0;
+	}
+	
+	private void getAllTockens(){
+		tockens = new ArrayList<String>();
+		while(super.hasMoreTokens()){
+			parseTocken( super.nextToken());
+		}
+	}
+	
+	private void parseTocken(String tocken){
+		int position =0;
+		while(tocken.length()>0){
+			boolean foundAdditional = false;
+			for(int i=0; i<ADDITIONALS_DELIMITERS_SUBSTRING_FUNCTIONS.length; i++){
+				position = tocken.indexOf(ADDITIONALS_DELIMITERS_SUBSTRING_FUNCTIONS[i]);
+				if(position>=0){
+					if(position>0){
+						tockens.add(tocken.substring(0,position));
+					}
+					tocken = tocken.substring(position+ADDITIONALS_DELIMITERS_SUBSTRING_FUNCTIONS[i].length() );
+					foundAdditional = true;
+					break;
+				}
+			}
+			if(!foundAdditional){
+				tockens.add(tocken);
+				break;
+			}
+
+		}
 	}
 	
 	public String nextTokenInStatement(){
@@ -34,25 +72,24 @@ public class StatementTockenizer extends StringTokenizer{
 		
 		nextToken = null;
 		try {
-			nextToken =  super.nextToken();
-			if(nextToken != null){
-				nextToken = cleanTockenFromKeyWords(nextToken);
-				nextToken = nextToken.trim();
-			} 	
-			currentToken = nextToken;
+
+			nextToken=tockens.get(tockenCount);
+			nextToken = nextToken.trim();
+			tockenCount++;
+
+
 		} catch(Throwable t) {
 			throw new RuntimeException("An unexpected error occured during tokenization of statement [" + satement + "] (current token: [" + currentToken + "]; next: token: [" + nextToken + "])", t);
 		}
 		
 		return nextToken;
 	}
+
 	
-	public String cleanTockenFromKeyWords(String tocken){
-		for(int i=0; i<ADDITIONALS_DELIMITERS_SUBSTRING_FUNCTIONS.length; i++){
-			tocken = tocken.replace( ADDITIONALS_DELIMITERS_SUBSTRING_FUNCTIONS[i], "");
-		}
-		return tocken;
-		
+
+
+	public boolean hasMoreTokens(){
+		return tockenCount<tockens.size();
 	}
 	
 
