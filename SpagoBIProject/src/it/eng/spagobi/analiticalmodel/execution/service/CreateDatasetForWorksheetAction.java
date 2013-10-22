@@ -182,7 +182,8 @@ public class CreateDatasetForWorksheetAction extends ExecuteDocumentAction {
 		
 		datasourceLabel = null;
 		try {
-			Integer datasourceId = engine.getDataSourceId();
+			//Integer datasourceId = engine.getDataSourceId();
+			Integer datasourceId = 0;
 			// TODO: no more present engine data source
 			if (datasourceId == null) {
 				throw new SpagoBIServiceException(SERVICE_NAME, "Worksheet engine [" + engine.getLabel() + "] has no datasource.");
