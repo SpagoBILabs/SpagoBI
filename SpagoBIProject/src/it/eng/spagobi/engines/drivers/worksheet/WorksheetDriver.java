@@ -113,7 +113,9 @@ public class WorksheetDriver extends AbstractDriver implements IEngineDriver {
 	private Map applyEngineDatasource(Map parameters, BIObject biObject) {
 		Engine engine = biObject.getEngine();
 		//TODO No more datasource associated to engine
-		Integer id = engine.getDataSourceId();
+		//Integer id = engine.getDataSourceId();
+		Integer id = biObject.getDataSourceId();
+
 		if (id == null) {
 			throw new SpagoBIRuntimeException("Engine has no datasources associated");
 		}
@@ -216,10 +218,13 @@ public class WorksheetDriver extends AbstractDriver implements IEngineDriver {
 			addBIParameterDescriptions(biObject, parameters);
 
 			addMetadataAndContent(biObject, parameters);
-			Integer engineDataSource =  biObject.getEngine().getDataSourceId();
-			if(engineDataSource!=null){
-				parameters.put(EngineConstants.ENGINE_DATASOURCE_ID,engineDataSource);
-			}
+			
+			// TODO No more
+//			Integer engineDataSource =  biObject.getEngine().getDataSourceId();
+//			
+//			if(engineDataSource!=null){
+//				parameters.put(EngineConstants.ENGINE_DATASOURCE_ID,engineDataSource);
+//			}
 			
 
 		} finally {
