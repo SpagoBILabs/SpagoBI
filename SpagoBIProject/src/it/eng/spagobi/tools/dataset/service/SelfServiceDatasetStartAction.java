@@ -115,24 +115,21 @@ public class SelfServiceDatasetStartAction extends ManageDatasets  {
 		Map<String, String> parametersMap = buildWorksheetEditServiceBaseParametersMap();
 		parametersMap.put("SBI_EXECUTION_ID" , executionId);
 		
+		IDataSource datasource;
+		try {
+			datasource = DAOFactory.getDataSourceDAO().loadDataSourceWriteDefault();
+		} catch (EMFUserError e) {
+			throw new SpagoBIRuntimeException(
+					"Error while loading default datasource for writing", e);
+		}
+		if (datasource != null) {
+			parametersMap.put(EngineConstants.DEFAULT_DATASOURCE_FOR_WRITING_LABEL, datasource.getLabel());
+		} else {
+			logger.debug("There is no default datasource for writing");
+		}
+		
 		Engine worksheetEngine = ExecuteAdHocUtility.getWorksheetEngine();
 		LogMF.debug(logger, "Engine label is equal to [{0}]", worksheetEngine.getLabel());
-// TODO no more datasource associated with engine
-		//Integer defEngineDataSourceWork = worksheetEngine.getDataSourceId();
-		Integer defEngineDataSourceWork = 0;
-		
-		if(defEngineDataSourceWork!=null){
-			try {
-				IDataSource ds = DAOFactory.getDataSourceDAO().loadDataSourceByID(defEngineDataSourceWork);
-				parametersMap.put(EngineConstants.ENGINE_DATASOURCE_LABEL, ds.getLabel());
-			} catch (EMFUserError e) {
-				logger.error("Error loading the datasource of the worksheet engine", e);
-				throw new SpagoBIRuntimeException("Error loading the datasource of the worksheet engine", e);
-			}
-		} else{
-			logger.error("No default data source defined for the worksheet engine");
-			throw new SpagoBIRuntimeException("No default data source defined for the worksheet engine");
-		}
 
 		// create the WorkSheet Edit Service's URL
 		String worksheetEditActionUrl = GeneralUtilities.getUrl(worksheetEngine.getUrl(), parametersMap);
@@ -153,26 +150,20 @@ public class SelfServiceDatasetStartAction extends ManageDatasets  {
 		Map<String, String> parametersMap = buildQbeEditFromBMServiceBaseParametersMap();
 		parametersMap.put("SBI_EXECUTION_ID" , executionId);
 		
-		Engine qbeEngine = ExecuteAdHocUtility.getQbeEngine();
-
-		Engine worksheetEngine = ExecuteAdHocUtility.getWorksheetEngine();
-		//Integer defEngineDataSourceQbe = worksheetEngine.getDataSourceId();
-		Integer defEngineDataSourceQbe = 0;
-		
-		if(defEngineDataSourceQbe!=null){
-			try {
-				IDataSource ds = DAOFactory.getDataSourceDAO().loadDataSourceByID(defEngineDataSourceQbe);
-				parametersMap.put(EngineConstants.ENGINE_DATASOURCE_LABEL,ds.getLabel());
-			} catch (EMFUserError e) {
-				logger.error("Error loading the datasource of the engine qbe", e);
-				throw new SpagoBIRuntimeException("Error loading the datasource of the engine qbe", e);
-			}
-		}else{
-			logger.error("No default data source defined for the qbe engine");
-			throw new SpagoBIRuntimeException("No default data source defined for the qbe engine");
+		IDataSource datasource;
+		try {
+			datasource = DAOFactory.getDataSourceDAO().loadDataSourceWriteDefault();
+		} catch (EMFUserError e) {
+			throw new SpagoBIRuntimeException(
+					"Error while loading default datasource for writing", e);
 		}
-
-
+		if (datasource != null) {
+			parametersMap.put(EngineConstants.DEFAULT_DATASOURCE_FOR_WRITING_LABEL, datasource.getLabel());
+		} else {
+			logger.debug("There is no default datasource for writing");
+		}
+		
+		Engine qbeEngine = ExecuteAdHocUtility.getQbeEngine();
 		LogMF.debug(logger, "Engine label is equal to [{0}]", qbeEngine.getLabel());
 
 		// create the qbe Edit Service's URL
@@ -187,27 +178,20 @@ public class SelfServiceDatasetStartAction extends ManageDatasets  {
 		Map<String, String> parametersMap = buildQbeEditFromDataSetServiceBaseParametersMap();
 		parametersMap.put("SBI_EXECUTION_ID" , executionId);
 		
-		Engine qbeEngine = ExecuteAdHocUtility.getQbeEngine();
-
-		Engine worksheetEngine = ExecuteAdHocUtility.getWorksheetEngine();
-//		Integer defEngineDataSourceQbe = worksheetEngine.getDataSourceId();
-		// TODO No more 
-		Integer defEngineDataSourceQbe = 0;
-
-		if(defEngineDataSourceQbe!=null){
-			try {
-				IDataSource ds = DAOFactory.getDataSourceDAO().loadDataSourceByID(defEngineDataSourceQbe);
-				parametersMap.put(EngineConstants.ENGINE_DATASOURCE_LABEL,ds.getLabel());
-			} catch (EMFUserError e) {
-				logger.error("Error loading the datasource of the engine qbe", e);
-				throw new SpagoBIRuntimeException("Error loading the datasource of the engine qbe", e);
-			}
-		}else{
-			logger.error("No default data source defined for the qbe engine");
-			throw new SpagoBIRuntimeException("No default data source defined for the qbe engine");
+		IDataSource datasource;
+		try {
+			datasource = DAOFactory.getDataSourceDAO().loadDataSourceWriteDefault();
+		} catch (EMFUserError e) {
+			throw new SpagoBIRuntimeException(
+					"Error while loading default datasource for writing", e);
 		}
-
-
+		if (datasource != null) {
+			parametersMap.put(EngineConstants.DEFAULT_DATASOURCE_FOR_WRITING_LABEL, datasource.getLabel());
+		} else {
+			logger.debug("There is no default datasource for writing");
+		}
+		
+		Engine qbeEngine = ExecuteAdHocUtility.getQbeEngine();
 		LogMF.debug(logger, "Engine label is equal to [{0}]", qbeEngine.getLabel());
 
 		// create the qbe Edit Service's URL

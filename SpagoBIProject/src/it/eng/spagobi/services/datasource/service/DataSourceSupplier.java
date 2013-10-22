@@ -9,7 +9,6 @@ import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IDomainDAO;
-import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.services.datasource.bo.SpagoBiDataSource;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 
@@ -57,33 +56,9 @@ public class DataSourceSupplier {
 		logger.error("The data source with id " + obj.getDataSourceId() + " is not found on the database.");
 		return null;
 	    }
+	       
+	    sbds = toSpagoBiDataSource(ds);
 	    
-	    Domain dialectHB = DAOFactory.getDomainDAO().loadDomainById(ds.getDialectId());
-	    if (ds == null) {
-		logger.error("The data source with id " + obj.getDataSourceId() + " is not found on the database.");
-		return null;
-	    }	    
-	    sbds = new SpagoBiDataSource();
-	    sbds.setLabel(ds.getLabel());
-	    sbds.setJndiName(ds.getJndi());
-	    sbds.setUrl(ds.getUrlConnection());
-	    sbds.setUser(ds.getUser());
-	    sbds.setPassword(ds.getPwd());
-	    sbds.setDriver(ds.getDriver());
-	    sbds.setHibDialectName(dialectHB.getValueName());
-//change
-//	    sbds.setHibDialectClass(dialectHB.getValueDescription());
-	    sbds.setHibDialectClass(dialectHB.getValueCd());
-	    logger.info("read DS: Label="+sbds.getLabel()+" Jndi="+sbds.getJndiName()+" HIB="+sbds.getHibDialectClass());
-	    
-	    //gets dialect informations
-	    IDomainDAO domaindao = DAOFactory.getDomainDAO();
-	    Domain doDialect = domaindao.loadDomainById(ds.getDialectId());
-	    sbds.setHibDialectClass(doDialect.getValueCd());
-	    sbds.setHibDialectName(doDialect.getValueName());
-	    sbds.setMultiSchema(ds.getMultiSchema());
-	    sbds.setSchemaAttribute(ds.getSchemaAttribute());
-
 	} catch (Exception e) {
 	    logger.error("The data source is not correctly returned", e);
 	    sbds=null;
@@ -166,6 +141,8 @@ public class DataSourceSupplier {
 	    Domain doDialect = domaindao.loadDomainById(ds.getDialectId());
 	    sbds.setHibDialectClass(doDialect.getValueCd());
 	    sbds.setHibDialectName(doDialect.getValueName());
+	    sbds.setReadOnly(ds.checkIsReadOnly());
+	    sbds.setWriteDefault(ds.checkIsWriteDefault());
 	    return sbds;
     }
 
@@ -188,22 +165,9 @@ public class DataSourceSupplier {
 
 	    Iterator dsIt = lstDs.iterator();
 	    while (dsIt.hasNext()) {
-		IDataSource ds = (IDataSource) dsIt.next();
-		SpagoBiDataSource sbds = new SpagoBiDataSource();
-		sbds.setJndiName(ds.getJndi());
-		sbds.setUrl(ds.getUrlConnection());
-		sbds.setUser(ds.getUser());
-		sbds.setPassword(ds.getPwd());
-		sbds.setDriver(ds.getDriver());
-		//gets dialect informations
-	    IDomainDAO domaindao = DAOFactory.getDomainDAO();
-	    Domain doDialect = domaindao.loadDomainById(ds.getDialectId());
-	    sbds.setHibDialectClass(doDialect.getValueCd());
-	    sbds.setHibDialectName(doDialect.getValueName());
-	    sbds.setMultiSchema(ds.getMultiSchema());
-	    sbds.setSchemaAttribute(ds.getSchemaAttribute());
-	    
-		tmpList.add(sbds);
+			IDataSource ds = (IDataSource) dsIt.next();
+			SpagoBiDataSource sbds = toSpagoBiDataSource(ds);
+			tmpList.add(sbds);
 	    }
 	} catch (Exception e) {
 	    logger.error("The data sources are not correctly returned", e);

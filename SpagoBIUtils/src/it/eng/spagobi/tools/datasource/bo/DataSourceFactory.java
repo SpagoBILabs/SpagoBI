@@ -37,6 +37,8 @@ public class DataSourceFactory {
 		dataSource.setHibDialectName( dataSourceConfig.getHibDialectName());
 		dataSource.setMultiSchema(dataSourceConfig.getMultiSchema());
 		dataSource.setSchemaAttribute(dataSourceConfig.getSchemaAttribute());
+		dataSource.setReadOnly(dataSourceConfig.getReadOnly());
+		dataSource.setWriteDefault(dataSourceConfig.getWriteDefault());
 		return dataSource;
 	}
 }

@@ -12,6 +12,8 @@ import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
+
 
 /**
  * @authors Alberto Ghedin (alberto.ghedin@eng.it)
@@ -19,6 +21,8 @@ import java.util.Map;
  */
 public class WorksheetTemplateParser {
 
+	static private Logger logger = Logger.getLogger(WorksheetTemplateParser.class);
+	
 	Map<String, IWorksheetTemplateParser> parsers;
 	
 	static WorksheetTemplateParser instance;
@@ -57,6 +61,10 @@ public class WorksheetTemplateParser {
 	}
 	
 	public boolean hasInnerQbeQuery(Object template) {
+		if (template == null) {
+			logger.debug("template in input is null, returning false");
+			return false;
+		}
 		if(!parsers.containsKey(template.getClass().getName())) {
 			throw new SpagoBIEngineRuntimeException("Impossible to parse template of type [" + template.getClass().getName() + "]");
 		} else {

@@ -5,6 +5,7 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.engines.drivers.qbe;
 
+import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
@@ -18,7 +19,10 @@ import it.eng.spagobi.engines.drivers.AbstractDriver;
 import it.eng.spagobi.engines.drivers.EngineURL;
 import it.eng.spagobi.engines.drivers.IEngineDriver;
 import it.eng.spagobi.engines.drivers.exceptions.InvalidOperationRequest;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.engines.EngineConstants;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -63,6 +67,7 @@ public class QbeDriver extends AbstractDriver implements IEngineDriver {
 			parameters = applySecurity(parameters, profile);
 			//parameters = addDocumentParametersInfo(parameters, biObject);
 			parameters = applyService(parameters, biObject);
+			parameters = applyDatasourceForWriting(parameters, biObject);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -111,6 +116,7 @@ public class QbeDriver extends AbstractDriver implements IEngineDriver {
 			parameters = applySecurity(parameters, profile);
 			//parameters = addDocumentParametersInfo(parameters, biObject);
 			parameters = applyService(parameters, biObject);
+			parameters = applyDatasourceForWriting(parameters, biObject);
 			parameters.put("isFromCross", "false");
 
 		} finally {
@@ -317,6 +323,22 @@ public class QbeDriver extends AbstractDriver implements IEngineDriver {
 	private void appendRequestParameter(Map parameters, String pname, String pvalue) {
 		parameters.put(pname, pvalue);
 		logger.debug("Added parameter [" + pname + "] with value [" + pvalue + "] to request parameters list");
+	}
+	
+	private Map applyDatasourceForWriting(Map parameters, BIObject biObject) {
+		IDataSource datasource;
+		try {
+			datasource = DAOFactory.getDataSourceDAO().loadDataSourceWriteDefault();
+		} catch (EMFUserError e) {
+			throw new SpagoBIRuntimeException(
+					"Error while loading default datasource for writing", e);
+		}
+		if (datasource != null) {
+			parameters.put(EngineConstants.DEFAULT_DATASOURCE_FOR_WRITING_LABEL, datasource.getLabel());
+		} else {
+			logger.debug("There is no default datasource for writing");
+		}
+		return parameters;
 	}
 }
 

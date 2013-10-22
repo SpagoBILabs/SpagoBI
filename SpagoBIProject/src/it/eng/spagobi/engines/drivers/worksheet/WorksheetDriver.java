@@ -26,7 +26,6 @@ import it.eng.spagobi.commons.serializer.MetadataJSONSerializer;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.ParameterValuesEncoder;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
-import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.engines.drivers.AbstractDriver;
 import it.eng.spagobi.engines.drivers.EngineURL;
 import it.eng.spagobi.engines.drivers.IEngineDriver;
@@ -100,9 +99,8 @@ public class WorksheetDriver extends AbstractDriver implements IEngineDriver {
 			parameters = new Hashtable();
 			parameters = getRequestParameters(biObject);
 			parameters = applySecurity(parameters, profile);
-			//parameters = addDocumentParametersInfo(parameters, biObject);
 			parameters = applyService(parameters, biObject);
-			parameters = applyEngineDatasource(parameters, biObject);
+			parameters = applyDatasourceForWriting(parameters, biObject);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -110,23 +108,19 @@ public class WorksheetDriver extends AbstractDriver implements IEngineDriver {
 		return parameters;
 	}
 
-	private Map applyEngineDatasource(Map parameters, BIObject biObject) {
-		Engine engine = biObject.getEngine();
-		//TODO No more datasource associated to engine
-		//Integer id = engine.getDataSourceId();
-		Integer id = biObject.getDataSourceId();
-
-		if (id == null) {
-			throw new SpagoBIRuntimeException("Engine has no datasources associated");
-		}
-		IDataSource dataSource;
+	private Map applyDatasourceForWriting(Map parameters, BIObject biObject) {
+		IDataSource datasource;
 		try {
-			dataSource = DAOFactory.getDataSourceDAO().loadDataSourceByID(id);
+			datasource = DAOFactory.getDataSourceDAO().loadDataSourceWriteDefault();
 		} catch (EMFUserError e) {
-			throw new SpagoBIRuntimeException("Error while loading datasource with id " + id, e);
+			throw new SpagoBIRuntimeException(
+					"Error while loading default datasource for writing", e);
 		}
-		String datasourceLabel = dataSource.getLabel();
-		parameters.put(EngineConstants.ENGINE_DATASOURCE_LABEL, datasourceLabel);
+		if (datasource != null) {
+			parameters.put(EngineConstants.DEFAULT_DATASOURCE_FOR_WRITING_LABEL, datasource.getLabel());
+		} else {
+			logger.debug("There is no default datasource for writing");
+		}
 		return parameters;
 	}
 
@@ -169,9 +163,8 @@ public class WorksheetDriver extends AbstractDriver implements IEngineDriver {
 			parameters.put("subobjectId", subObject.getId());
 
 			parameters = applySecurity(parameters, profile);
-			//parameters = addDocumentParametersInfo(parameters, biObject);
 			parameters = applyService(parameters, biObject);
-			parameters = applyEngineDatasource(parameters, biObject);
+			parameters = applyDatasourceForWriting(parameters, biObject);
 			parameters.put("isFromCross", "false");
 
 		} finally {
@@ -218,14 +211,6 @@ public class WorksheetDriver extends AbstractDriver implements IEngineDriver {
 			addBIParameterDescriptions(biObject, parameters);
 
 			addMetadataAndContent(biObject, parameters);
-			
-			// TODO No more
-//			Integer engineDataSource =  biObject.getEngine().getDataSourceId();
-//			
-//			if(engineDataSource!=null){
-//				parameters.put(EngineConstants.ENGINE_DATASOURCE_ID,engineDataSource);
-//			}
-			
 
 		} finally {
 			logger.debug("OUT");

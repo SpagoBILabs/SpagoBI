@@ -159,14 +159,9 @@ public abstract class AbstractWorksheetEngineAction extends AbstractEngineAction
 		IDataStore dataStore = null;
 
 		UserProfile userProfile = (UserProfile)getEnv().get(EngineConstants.ENV_USER_PROFILE);
-		//		ConnectionDescriptor connection = (ConnectionDescriptor)getDataSource().getConfiguration().loadDataSourceProperties().get("connection");
-		//		DataSource dataSource = getDataSource(connection);
-		IDataSource dataSource = getDataSource();
+		IDataSource dataSource = this.getEngineInstance().getDataSourceForWriting();
 
-		//		logger.debug("Temporary table definition for user [" + userProfile.getUserId() + "] (SQL): [" + baseQuery + "]");
 		logger.debug("Querying temporary table: user [" + userProfile.getUserId() + "] (SQL): [" + worksheetQuery + "]");
-
-		//		auditlogger.info("Temporary table definition for user [" + userProfile.getUserId() + "]:: SQL: " + baseQuery);
 		auditlogger.info("Querying temporary table: user [" + userProfile.getUserId() + "] (SQL): [" + worksheetQuery + "]");
 
 		try {
