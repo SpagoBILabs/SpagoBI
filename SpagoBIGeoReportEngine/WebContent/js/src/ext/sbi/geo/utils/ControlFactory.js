@@ -31,26 +31,39 @@ Sbi.geo.utils.ControlFactory = function(){
 		createControl : function( controlConf ){
 			var control;
 			
-			if(controlConf.type === 'MousePosition') {
+			if(controlConf.type === 'Navigation') {
+				
+				/**
+				 * The navigation control handles map browsing with mouse 
+				 * events (dragging, double-clicking, and scrolling the wheel).  
+				 * URL: http://dev.openlayers.org/docs/files/OpenLayers/Control/Navigation-js.html
+				 */
+				control =  new OpenLayers.Control.Navigation();
+				
+			} else if(controlConf.type === 'KeyboardDefaults') {
+				
+				/**
+			     * The KeyboardDefaults control adds panning and zooming functions, 
+			     * controlled with the keyboard.  By default arrow keys pan, +/- keys 
+			     * zoom & Page Up/Page Down/Home/End scroll by three quarters of a page.
+			     */
+				control =  new OpenLayers.Control.KeyboardDefaults();
+				
+			} else if(controlConf.type === 'MousePosition') {
 				control =  new OpenLayers.Control.MousePosition();
 			} else if(controlConf.type === 'OverviewMap') {
 				control =  new OpenLayers.Control.OverviewMap({
 					mapOptions: controlConf.mapOptions
 				});
-			} else if(controlConf.type === 'Navigation') {
-				control =  new OpenLayers.Control.Navigation();
 			} else if(controlConf.type === 'PanZoomBar') {
 				control =  new OpenLayers.Control.PanZoomBar();
-			}else if(controlConf.type === 'SbiActionsMap') {
+			} else if(controlConf.type === 'SbiActionsMap') {
 				control =  new Sbi.geo.control.InlineToolbar();
-			}else if(controlConf.type === 'SbiLegendMap') {
+			} else if(controlConf.type === 'SbiLegendMap') {
 				control =  new Sbi.geo.control.Legend();
-			}else if(controlConf.type === 'SbiLayersMap') {
+			} else if(controlConf.type === 'SbiLayersMap') {
 				control =  new Sbi.geo.control.Layers();
 			} else {
-//				Sbi.exception.ExceptionHandler.showErrorMessage(
-//					'Control type [' + controlConf.type + '] not supported'
-//				);
 				control=null;
 			}
 			
