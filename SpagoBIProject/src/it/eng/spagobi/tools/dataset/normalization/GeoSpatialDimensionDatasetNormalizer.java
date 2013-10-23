@@ -64,6 +64,8 @@ public class GeoSpatialDimensionDatasetNormalizer implements IDatasetNormalizer 
 	public static final String XSL_FILE_SKIP_ROWS = "skipRows";
 	public static final String XSL_FILE_LIMIT_ROWS = "limitRows";
 	public static final String XSL_FILE_SHEET_NUMBER = "xslSheetNumber";
+	public static final String CSV_FILE_DELIMITER_CHARACTER = "csvDelimiter";
+	public static final String CSV_FILE_QUOTE_CHARACTER = "csvQuote";
 	
 	public static transient Logger logger = Logger.getLogger(GeoSpatialDimensionDatasetNormalizer.class);
 
@@ -163,14 +165,11 @@ public class GeoSpatialDimensionDatasetNormalizer implements IDatasetNormalizer 
 					//Modifying an Excel file
 					logger.debug("Normalizing dataset file [XLS]: "+filePath);
 					modifyXLSFile( dataset, datasetFile, hierarchy, levelName, siblingColumnName,columnNameOnDataset );
+					
 				} else if (fileExtension.equalsIgnoreCase("CSV")){
 					//Modifying a CSV file
 					logger.debug("Normalizing dataset file [CSV]: "+filePath);
-					//TODO: modifyCSVFile()
-					
-					//.... da implementare ....
-					
-					
+					modifyCSVFile( dataset, datasetFile, hierarchy, levelName, siblingColumnName,columnNameOnDataset );
 				}
 			}
 
@@ -216,6 +215,7 @@ public class GeoSpatialDimensionDatasetNormalizer implements IDatasetNormalizer 
 		
 		//Modify Dataset Metadata **************************************
 		
+		/*
 		//Search and remove hierarchy properties already set on a column for Geo Hierarchy
 		IMetaData dataStoreMetaData = dataset.getMetadata();
 		for (int i = 0; i < dataStoreMetaData.getFieldCount(); i++) {
@@ -245,7 +245,82 @@ public class GeoSpatialDimensionDatasetNormalizer implements IDatasetNormalizer 
 		DatasetMetadataParser dsp = new DatasetMetadataParser();
 		String dsMetadata = dsp.metadataToXML(dataStoreMetaData);
 		dataset.setDsMetadata(dsMetadata);
+		*/
+		modifyDatasetMetadata(dataset, columnNameOnDataset, levelName, newColumnName, newColumnType);
 		
 	}
+	
+	public void modifyCSVFile(IDataSet dataset, File datasetFile,HierarchyWrapper hierarchy, String levelName, String siblingColumnName, String columnNameOnDataset ){
+		Map<Object, Object> levelSiblingsValue = hierarchy.getMembersAndSibling(levelName, siblingColumnName);
+		
+		CSVFileNormalizer csvFileNormalizer = new CSVFileNormalizer(datasetFile, levelSiblingsValue, columnNameOnDataset, levelName);
+
+		try{
+			//Get configuration options (for the parsers)
+			String configuration = dataset.getConfiguration();
+			if (configuration != null){
+				configuration = JSONUtils.escapeJsonString(configuration);
+				JSONObject jsonConf  = ObjectUtils.toJSONObject(configuration);	
+				
+				if (jsonConf.has(CSV_FILE_DELIMITER_CHARACTER)){
+					String csvDelimiter = jsonConf.getString(CSV_FILE_DELIMITER_CHARACTER);
+					csvFileNormalizer.setCsvDelimiter(csvDelimiter);
+				}
+				if (jsonConf.has(CSV_FILE_QUOTE_CHARACTER)){
+					String csvQuote = jsonConf.getString(CSV_FILE_QUOTE_CHARACTER);
+					csvFileNormalizer.setCsvQuote(csvQuote);
+				}
+				
+			}
+		} catch (JSONException e){
+			logger.debug("Error reading JSON of dataset configuration");
+			throw new SpagoBIRuntimeException("Error reading JSON of dataset configuration", e);
+		}
+		
+		//call normalization on file ***********************************
+		csvFileNormalizer.normalizeFile();		
+		
+		//Get new column name and type for adding new metadata to the file
+		String newColumnName = csvFileNormalizer.getNewColumnName();
+		String newColumnType = csvFileNormalizer.getNewColumnType();
+		
+		//Modify Dataset Metadata **************************************
+		modifyDatasetMetadata(dataset, columnNameOnDataset, levelName, newColumnName, newColumnType);
+	}
+	
+	public void modifyDatasetMetadata(IDataSet dataset, String columnNameOnDataset, String levelName, String newColumnName, String newColumnType){
+		//Search and remove hierarchy properties already set on a column for Geo Hierarchy
+		IMetaData dataStoreMetaData = dataset.getMetadata();
+		for (int i = 0; i < dataStoreMetaData.getFieldCount(); i++) {
+			IFieldMetaData fieldMetaData=dataStoreMetaData.getFieldMeta(i);
+			String name = fieldMetaData.getName();
+			if (name.equals(columnNameOnDataset)){		
+				fieldMetaData.deleteProperty("hierarchy");
+				fieldMetaData.deleteProperty("hierarchy_level");		
+				break;
+			}
+		}
+		//add metadata for new column
+		IFieldMetaData newFieldMetaData = new FieldMetadata();
+		newFieldMetaData.setName(newColumnName);
+		Class type = null;
+		try {
+			type = Class.forName(newColumnType);
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+		newFieldMetaData.setType(type);
+		newFieldMetaData.setProperty("hierarchy", GEO_HIERARCHY_NAME);
+		newFieldMetaData.setProperty("hierarchy_level", levelName);
+		dataStoreMetaData.addFiedMeta(newFieldMetaData);
+		
+		//Set the new metadata to the dataset
+		DatasetMetadataParser dsp = new DatasetMetadataParser();
+		String dsMetadata = dsp.metadataToXML(dataStoreMetaData);
+		dataset.setDsMetadata(dsMetadata);
+	}
+	
+	
+	
 
 }

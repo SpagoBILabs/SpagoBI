@@ -205,14 +205,12 @@ public class XLSFileNormalizer {
 			HSSFCell newCell = row.createCell(lastColumn);
 			newCell.setCellValue("");
 		}
-
-		
-		
+	
 	}
 	
 	
 	/*
-	 * To Use on the first row (header)
+	 * To Use on the header row
 	 */
 	private void addColumnHeader(HSSFRow row){
 		//Get all existing columns names
@@ -235,11 +233,11 @@ public class XLSFileNormalizer {
 			}
 		}
 		
-		String newColumnName = "normalized_"+levelName;
+		String newColumnName = "ref_"+levelName;
 		
 		//Check if exist already a column with the same name, otherwise generate a new name
 		while( columnsNames.contains(newColumnName)){
-			int count = 1;
+			int count = 2;
 			newColumnName = newColumnName+"_"+count;
 			count++;
 		}
@@ -252,7 +250,7 @@ public class XLSFileNormalizer {
 	}
 	
 	/*
-	 * To Use on the first row (header)
+	 * To Use on the header row
 	 */
 	private int getColumnPosition(String columnName, HSSFRow row){
 		int cells = row.getPhysicalNumberOfCells();
@@ -273,8 +271,7 @@ public class XLSFileNormalizer {
 			} catch(Throwable t) {
 				throw new RuntimeException("Impossible to parse cell [" + c + "]", t);
 			}
-			
-			
+
 		}
 		return -1;
 		
