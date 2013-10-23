@@ -832,6 +832,7 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 		var snapshotsPanel =  new Sbi.execution.SnapshotsPanel({showTitle:false}, this.executionInstance.document);
 		snapshotsPanel.on('executionrequest', function(snapshotId) {
 	    	this.onExecuteSnapshot(snapshotId);
+	    	this.snapshotWin.hide();
 	    }, this);
 		
 		this.snapshotWin = new Ext.Window({
