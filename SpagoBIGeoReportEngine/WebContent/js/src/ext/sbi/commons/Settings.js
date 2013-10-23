@@ -154,6 +154,23 @@ Sbi.settings.georeport = {
 		 */
 		, baseControlsConf: [
 			
+		   /**
+		    * The navigation control handles map browsing with mouse events (dragging, double-clicking, and scrolling the wheel)
+		    */
+		    {
+		    	type: 'Navigation', 
+		    	enabled: true
+		    },		
+		    
+		    /**
+		     * The KeyboardDefaults control adds panning and zooming functions, controlled with the keyboard.  
+		     * By default arrow keys pan, +/- keys zoom & Page Up/Page Down/Home/End scroll by three quarters of a page.
+		     */
+		    {
+		    	type: 'KeyboardDefaults', 
+		    	enabled: true
+		    },
+		    
 			/**
 			 * The MousePosition control displays geographic coordinates of the mouse pointer, as it is moved about the map.
 			 */
@@ -171,14 +188,6 @@ Sbi.settings.georeport = {
 				type: 'OverviewMap', 
 				enabled: false
 			}, 
-			
-			/**
-			 * The navigation control handles map browsing with mouse events (dragging, double-clicking, and scrolling the wheel)
-			 */
-			{
-				type: 'Navigation', 
-				enabled: true
-			},
 			
 			/**
 			 * The PanZoomBar is a visible control. By default it is displayed in the upper left corner of the map as 4 

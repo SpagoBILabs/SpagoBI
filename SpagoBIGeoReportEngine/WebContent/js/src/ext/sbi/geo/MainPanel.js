@@ -587,7 +587,7 @@ Ext.extend(Sbi.geo.MainPanel, Ext.Panel, {
 		
 		this.initAnalysislayerSelectControl();
 		this.map.addControl(this.analysisLayerSelectControl); 
-		this.analysisLayerSelectControl.activate();
+		//this.analysisLayerSelectControl.activate();
 		
 		
 	}
@@ -716,6 +716,7 @@ Ext.extend(Sbi.geo.MainPanel, Ext.Panel, {
 	}
 	
 	, onTargetFeatureClick: function(feature) {
+		Sbi.trace("[MainPanel.onTargetFeatureClick]: IN");
 		if(Ext.isEmpty(this.detailDocumentConf)) {
 			this.detailDocumentConf = [];
 		} 
@@ -726,19 +727,18 @@ Ext.extend(Sbi.geo.MainPanel, Ext.Panel, {
 		if(!this.toolbar.selectMode){
 			this.openPopup(feature);
 		}
+		Sbi.trace("[MainPanel.onTargetFeatureClick]: OUT");
 	}
 	
 	
 	, onTargetFeatureSelect: function(feature) {
-		if(this.toolbar.selectMode){
-			
-		}	
+		Sbi.trace("[MainPanel.onTargetFeatureSelect]: IN");
+		Sbi.trace("[MainPanel.onTargetFeatureSelect]: OUT");
 	}
 	
 	, onTargetFeatureUnselect: function(feature) {
-		if(this.toolbar.selectMode){
-			
-		}
+		Sbi.trace("[MainPanel.onTargetFeatureUnselect]: IN");
+		Sbi.trace("[MainPanel.onTargetFeatureUnselect]: OUT");
 	}
 	
 	// --------------------------------------------------------------------------------------------------
@@ -762,7 +762,6 @@ Ext.extend(Sbi.geo.MainPanel, Ext.Panel, {
 			this.toolbarConf.map = this.map;
 			this.toolbarConf.analysisLayerSelectControl = this.analysisLayerSelectControl;
 			this.toolbarConf.featureHandler = this.featureHandler;
-			alert("why?!");
 			//this.toolbar = new Sbi.geo.Toolbar(this.toolbarConf);
 			mapPanelConf.tbar = this.toolbar;
 		}
