@@ -54,20 +54,20 @@ public class DatasetFieldsValidator implements IFieldsValidator {
 						if(columnJsonObject.getString("pname").equalsIgnoreCase("type")){
 							if(columnName == null){
 								validationErrors.put(new JSONObject("{message: 'Validation error: Column name cannot be null'}"));
-							}else if(Pattern.compile("\\s").matcher(columnName).find()){							
+							} /* else if(Pattern.compile("\\s").matcher(columnName).find()){							
 								validationErrors.put(new JSONObject("{message: 'Validation error: Space character not allowed for column name "+ columnName + "'}"));
 							}else if(Pattern.compile("[ÀÈÌÒÙàèìòùÁÉÍÓÚİáéíóúıÂÊÎÔÛâêîôûÃÑÕãñõÄËÏÖÜŸäëïöüŸ¡¿çÇŒœßØøÅåÆæŞşĞğĞğ'.,&#@:?!()$\\/]").matcher(columnName).find()){
 								validationErrors.put(new JSONObject("{message: 'Validation error: Special characters not allowed for column name "+ columnName + "'}"));
-							}
-						}
+							} */
+						} 
 						String propertyName = columnJsonObject.getString("pname");
 						if(propertyName == null){
 							validationErrors.put(new JSONObject("{message: 'Validation error: Property name cannot be null'}"));
-						}else if( Pattern.compile("\\s").matcher(propertyName).find()){							
+						} /* else if( Pattern.compile("\\s").matcher(propertyName).find()){							
 							validationErrors.put(new JSONObject("{message: 'Validation error: Space character not allowed for Property name "+ propertyName + "'}"));
 						}else if( Pattern.compile("[ÀÈÌÒÙàèìòùÁÉÍÓÚİáéíóúıÂÊÎÔÛâêîôûÃÑÕãñõÄËÏÖÜŸäëïöüŸ¡¿çÇŒœßØøÅåÆæŞşĞğĞğ'.,&#@:?!()$\\/]").matcher(propertyName).find()){
 							validationErrors.put(new JSONObject("{message: 'Validation error: Special characters not allowed for Property name "+ propertyName + "'}"));
-						}
+						} */
 						String propertyValue = columnJsonObject.getString("pvalue");
 
 					}
