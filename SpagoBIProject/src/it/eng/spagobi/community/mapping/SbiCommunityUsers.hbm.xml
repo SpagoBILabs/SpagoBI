@@ -12,9 +12,19 @@
                 <column name="USER_ID" length="100" />
             </key-property>
         </composite-id>
+  
         <many-to-one name="sbiCommunity" class="it.eng.spagobi.community.mapping.SbiCommunity" update="false" insert="false" fetch="select">
             <column name="COMMUNITY_ID" not-null="true" />
         </many-to-one>
+        
+        <property name="creationDate" type="timestamp">
+			<column name="CREATION_DATE" not-null="true" />
+		</property>
+		<property name="lastChangeDate" type="timestamp">
+			<column name="LAST_CHANGE_DATE" not-null="true" />
+		</property>
+		
+		
 	<component name="commonInfo" insert="true" update="true" 
   			 class="it.eng.spagobi.commons.metadata.SbiCommonInfo">
         <property name="userIn" type="string">
