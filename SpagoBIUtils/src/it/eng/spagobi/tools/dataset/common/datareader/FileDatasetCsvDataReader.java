@@ -149,7 +149,12 @@ public class FileDatasetCsvDataReader extends AbstractDataReader {
 
 	                        for (int i= 0; i<header.length;i++){
 	                        	 logger.debug(header[i]+" = "+contentsMap.get(header[i])); 
-	                        	 IField field = new Field(contentsMap.get(header[i]));
+	                        	 IField field = null;
+	                        	 if (contentsMap.get(header[i]) == null){
+	                        		 field = new Field("");
+	                        	 } else {
+	                        		 field = new Field(contentsMap.get(header[i]));
+	                        	 }
 	 							 record.appendField(field);
 	    	                }
 	                        dataStore.appendRecord(record);	
