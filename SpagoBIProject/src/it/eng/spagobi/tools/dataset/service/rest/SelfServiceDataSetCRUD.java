@@ -951,8 +951,7 @@ public class SelfServiceDataSetCRUD {
 		String limitRows = (String)req.getParameter("limitRows");
 		String xslSheetNumber = (String)req.getParameter("xslSheetNumber");
 		String meta = (String)req.getParameter(DataSetConstants.METADATA);		
-		
-		Boolean isPublic = Boolean.valueOf((req.getParameter("isPublic")==null)?"false":(String)req.getParameter("isPublic"));
+		Boolean isPublic = Boolean.valueOf((req.getParameter("isPublicDS")==null)?"false":(String)req.getParameter("isPublicDS"));
 		Boolean newFileUploaded = false;
 		if (req.getParameter("fileUploaded") != null){
 			newFileUploaded = Boolean.valueOf(((String)req.getParameter("fileUploaded")));

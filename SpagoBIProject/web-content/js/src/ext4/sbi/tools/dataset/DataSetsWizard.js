@@ -86,7 +86,7 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
 		//the category is moved at the first tab because it's necessary for the validation action 
 //		toReturn.push({label:LN('sbi.ds.catType'), name:"catTypeVn", type:"combo", valueCol:"VALUE_ID", descCol:"VALUE_DS", readOnly:!this.isOwner, value:this.record.catTypeId, data:this.categoriesStore});
 		var valueScope = (this.record.isPublic==true)?'true':'false' ;
-		toReturn.push({label:LN('sbi.ds.scope'), name:"isPublic", type:"combo", valueCol:"field", descCol:"value", readOnly:!this.isOwner, value:valueScope, data:this.scopeStore});
+		toReturn.push({label:LN('sbi.ds.scope'), name:"isPublicDS", type:"combo", valueCol:"field", descCol:"value", readOnly:!this.isOwner, value:valueScope, data:this.scopeStore});
 		
 		return toReturn;
 	}
