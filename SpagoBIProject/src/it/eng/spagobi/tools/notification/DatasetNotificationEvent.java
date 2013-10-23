@@ -35,7 +35,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
@@ -163,41 +165,58 @@ public class DatasetNotificationEvent extends AbstractEvent {
 			String templateContent = new String(templateContentBytes);
 			//to check if is a XML or JSON (other map templates are XML)
 			if (!templateContent.trim().startsWith("<")){
-				JSONObject mapTemplateJSONObject = JSONUtils.toJSONObject(templateContent);
-				if (mapTemplateJSONObject.has("storeType")){
-					String storeType = mapTemplateJSONObject.getString("storeType");
-					if (storeType.equalsIgnoreCase("virtualStore")){
-						JSONObject storeConfigJSON = mapTemplateJSONObject.getJSONObject("storeConfig");
-						JSONObject paramsJSON = storeConfigJSON.getJSONObject("params");
-						JSONArray measureLabelsArray = paramsJSON.getJSONArray("labels");
-						for (int i = 0; i < measureLabelsArray.length(); i++) {
-							String measureLabel = measureLabelsArray.getString(i);
-							
-							for (MeasureCatalogueMeasure measureDataset : measuresOfDataset){
-								if (measureDataset.getLabel().equals(measureLabel)){
-									String documentCreationUser = sbiDocument.getCreationUser();
-									ISecurityServiceSupplier supplier = SecurityServiceSupplierFactory.createISecurityServiceSupplier();
-									SpagoBIUserProfile userProfile = supplier.createUserProfile(documentCreationUser);
-									HashMap userAttributes = userProfile.getAttributes();
+				if (isValidJSON(templateContent)){
+					JSONObject mapTemplateJSONObject = JSONUtils.toJSONObject(templateContent);
+					if (mapTemplateJSONObject.has("storeType")){
+						String storeType = mapTemplateJSONObject.getString("storeType");
+						if (storeType.equalsIgnoreCase("virtualStore")){
+							JSONObject storeConfigJSON = mapTemplateJSONObject.getJSONObject("storeConfig");
+							JSONObject paramsJSON = storeConfigJSON.getJSONObject("params");
+							JSONArray measureLabelsArray = paramsJSON.getJSONArray("labels");
+							for (int i = 0; i < measureLabelsArray.length(); i++) {
+								String measureLabel = measureLabelsArray.getString(i);
+								
+								for (MeasureCatalogueMeasure measureDataset : measuresOfDataset){
+									if (measureDataset.getLabel().equals(measureLabel)){
+										String documentCreationUser = sbiDocument.getCreationUser();
+										ISecurityServiceSupplier supplier = SecurityServiceSupplierFactory.createISecurityServiceSupplier();
+										SpagoBIUserProfile userProfile = supplier.createUserProfile(documentCreationUser);
+										HashMap userAttributes = userProfile.getAttributes();
 
-									if (userAttributes.get("email") != null){
-										String emailAddressDocumentCreationUser =(String) userAttributes.get("email");
-										if (!emailAddressDocumentCreationUser.isEmpty()){
-											//ADD EMAIL ADDRESS TO SET OF ADDRESS
-											emailsAddressOfAuthors.add(emailAddressDocumentCreationUser);
+										if (userAttributes.get("email") != null){
+											String emailAddressDocumentCreationUser =(String) userAttributes.get("email");
+											if (!emailAddressDocumentCreationUser.isEmpty()){
+												//ADD EMAIL ADDRESS TO SET OF ADDRESS
+												emailsAddressOfAuthors.add(emailAddressDocumentCreationUser);
+											}
 										}
 									}
 								}
+
 							}
-
 						}
-					}
+					}					
 				}
-
 			}							
 
 		}		
 		return emailsAddressOfAuthors;
+	}
+	
+	public boolean isValidJSON(final String json) {
+		boolean valid = false;
+		try {
+			final JsonParser parser = new ObjectMapper().getJsonFactory().createJsonParser(json);
+			while (parser.nextToken() != null) {
+			}
+			valid = true;
+		} catch (JsonParseException jpe) {
+			logger.debug("Parsed String is not a valid JSON: "+json);
+		} catch (IOException ioe) {
+			ioe.printStackTrace();
+		}
+
+		return valid;
 	}
 
 	/**
