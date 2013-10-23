@@ -298,45 +298,74 @@ public class AbstractEngineStartAction extends AbstractBaseHttpAction {
 	  * @return the data source
 	  */
 
-	 public IDataSource getDataSource() {
-		 String schema=null;
-		 String attrname=null;
+	public IDataSource getDataSource() {
+		String schema = null;
+		String attrname = null;
 
-		 if(dataSource == null) {
-			 dataSource = getDataSourceServiceProxy().getDataSource( getDocumentId() );   
-			 if(dataSource == null) {
-				 logger.warn("Datasource is not defined.");
-				 throw new SpagoBIEngineRuntimeException("Datasource is not defined.");
-			 }
-			 if (dataSource.checkIsMultiSchema()){
-				 logger.debug("Datasource [" + dataSource.getLabel() + "] is defined on multi schema");
-				 try {            
-					 logger.debug("Retriving target schema for datasource [" + dataSource.getLabel() + "]");
-					 attrname = dataSource.getSchemaAttribute();
-					 logger.debug("Datasource's schema attribute name is equals to [" + attrname + "]");                                 
-					 Assert.assertNotNull(attrname, "Datasource's schema attribute name cannot be null in order to retrive the target schema");
-					 schema = (String)getUserProfile().getUserAttribute(attrname);
-					 Assert.assertNotNull(schema, "Impossible to retrive the value of attribute [" + attrname + "] form user profile");
-					 dataSource.setJndi( dataSource.getJndi() + schema);
-					 logger.debug("Target schema for datasource  [" + dataSource.getLabel() + "] is [" + dataSource.getJndi()+ "]");
-				 } catch (Throwable t) {
-					 throw new SpagoBIEngineRuntimeException("Impossible to retrive target schema for datasource [" + dataSource.getLabel() + "]", t);
-				 }
-				 logger.debug("Target schema for datasource  [" + dataSource.getLabel() + "] retrieved succesfully"); 
-			 }            
-		 }
+		if (dataSource == null) {
+			dataSource = getDataSourceServiceProxy().getDataSource(
+					getDocumentId());
+			if (dataSource == null) {
+				logger.warn("Datasource is not defined.");
+				if (!this.tolerateMissingDatasource()) {
+					logger.error("The datasource is mandatory but it is not defined");
+					throw new SpagoBIEngineRuntimeException(
+							"Datasource is not defined.");
+				}
 
-		 return dataSource;
-	 }
+			} else {
+				if (dataSource.checkIsMultiSchema()) {
+					logger.debug("Datasource [" + dataSource.getLabel()
+							+ "] is defined on multi schema");
+					try {
+						logger.debug("Retriving target schema for datasource ["
+								+ dataSource.getLabel() + "]");
+						attrname = dataSource.getSchemaAttribute();
+						logger.debug("Datasource's schema attribute name is equals to ["
+								+ attrname + "]");
+						Assert.assertNotNull(
+								attrname,
+								"Datasource's schema attribute name cannot be null in order to retrive the target schema");
+						schema = (String) getUserProfile().getUserAttribute(
+								attrname);
+						Assert.assertNotNull(schema,
+								"Impossible to retrive the value of attribute ["
+										+ attrname + "] form user profile");
+						dataSource.setJndi(dataSource.getJndi() + schema);
+						logger.debug("Target schema for datasource  ["
+								+ dataSource.getLabel() + "] is ["
+								+ dataSource.getJndi() + "]");
+					} catch (Throwable t) {
+						throw new SpagoBIEngineRuntimeException(
+								"Impossible to retrive target schema for datasource ["
+										+ dataSource.getLabel() + "]", t);
+					}
+					logger.debug("Target schema for datasource  ["
+							+ dataSource.getLabel() + "] retrieved succesfully");
+				}
+			}
+		}
+
+		return dataSource;
+	}
 
 	
-	 public IDataSet getDataSet() {
-		 if(dataSet == null) {
-			 dataSet = getDataSetServiceProxy().getDataSet( getDocumentId() );
-		 }
+	/**
+	 * A datasource is generally required, therefore default is false, but engines can override this method and accept missing datasource 
+	 * (example: Worksheet created on a file dataset)
+	 * @return true if this engine tolerates the case when the datasource is missing
+	 */
+	protected boolean tolerateMissingDatasource() {
+		return false;
+	}
 
-		 return dataSet;    	
-	 }
+
+	public IDataSet getDataSet() {
+		if (dataSet == null) {
+			dataSet = getDataSetServiceProxy().getDataSet(getDocumentId());
+		}
+		return dataSet;
+	}
 
 
 	 /**

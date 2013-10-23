@@ -292,5 +292,13 @@ public class WorksheetEngineStartAction extends AbstractEngineStartAction {
 		}
 		return env;
 	}
+
+
+	@Override
+	protected boolean tolerateMissingDatasource() {
+		return true;
+	}
+	
+	
 	
 }
