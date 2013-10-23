@@ -528,7 +528,7 @@ Ext.extend(Sbi.worksheet.designer.DesignSheetFiltersPanel, Ext.Panel, {
 		var num = this.store.getCount();
 		for(var i = 0; i < num; i++) {
 			var record = this.store.getAt(i);
-			if(row.data.id = record.data.id){
+			if(row.data.id == record.data.id){
 				valid = record.data.valid;
 				break;
 			}
