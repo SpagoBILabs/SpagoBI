@@ -807,8 +807,13 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 				}
 				
 				// if association made by user has prvilege
-				existingDatasourceId = getUserAssociation().getDsExportedToUser().get(oldId);
-
+				Integer userDatasourceId = getUserAssociation().getDsExportedToUser().get(oldId);
+				// if user has no specified association but same label has been detected 
+				// update otherwise goes in duplication error
+				if(userDatasourceId != null){
+					logger.debug("User choose to update exported data source "+dataSource.getLabel()+" with current datasource with id "+userDatasourceId);
+					existingDatasourceId = userDatasourceId;
+				}
 				
 				
 				// if association made by user do not update!
