@@ -195,7 +195,7 @@ public class ExecuteWorksheetQueryAction extends AbstractWorksheetEngineAction {
 
 	private String buildSqlStatement(List<String> fieldNames,
 			IDataSetTableDescriptor descriptor, List<WhereField> filters) {
-		IDataSource dataSource = getDataSource();
+		IDataSource dataSource = descriptor.getDataSource();
 		return CrosstabQueryCreator.getTableQuery(fieldNames, false, descriptor, filters, dataSource);	
 	}
 	
