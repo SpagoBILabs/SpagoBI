@@ -1846,3 +1846,6 @@ commit;
 -- Davide 21/10/2013: removed spagobi@eng.it from SpagoBI config
 UPDATE SBI_CONFIG SET VALUE_CHECK = '' WHERE VALUE_CHECK = 'spagobi@eng.it';
 commit;
+
+ --Monica 23/11/2013: added content_type mng for snapshots
+ALTER TABLE SBI_SNAPSHOTS ADD COLUMN CONTENT_TYPE VARCHAR(300) DEFAULT NULL;

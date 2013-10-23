@@ -42,17 +42,21 @@ public class GetSnapshotContentAction extends AbstractHttpAction {
 		// check if the user is able to see the document
 		// TODO check if the user is able to execute the document (even if it does no make sense to be able to see the document but not to execute it...)
 		byte[] content = null;
+		String contentType ="text/html";
 		if (ObjectsAccessVerifier.canSee(obj, profile)) {
 			logger.debug("Current user [" + ((UserProfile) profile).getUserId().toString() + "] can see snapshot with id = " + idSnap + " of document with id = " + objectId);
 			ISnapshotDAO snapdao = DAOFactory.getSnapshotDAO();
 			Snapshot snap = snapdao.loadSnapshot(idSnap);
 			content = snap.getContent();
+			if(snap.getContentType() != null){
+				contentType =snap.getContentType();
+			}
 		} else {
 			logger.error("Current user [" + ((UserProfile) profile).getUserId().toString() + "] CANNOT see snapshot with id = " + idSnap + " of document with id = " + objectId);
 			//content = "You cannot see required snapshot.".getBytes();
 			content = "You cannot see required snapshot.".getBytes("UTF-8");
 		}
-		//httpResp.setContentType("text/html");
+		httpResp.setContentType(contentType);
 		httpResp.setContentLength(content.length);
 		httpResp.getOutputStream().write(content);
 		httpResp.setStatus(SUCCESS);

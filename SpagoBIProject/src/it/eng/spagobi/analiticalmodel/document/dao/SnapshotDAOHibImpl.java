@@ -96,7 +96,11 @@ public class SnapshotDAOHibImpl extends AbstractHibernateDAO implements ISnapsho
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.ISnapshotDAO#saveSnapshot(byte[], java.lang.Integer, java.lang.String, java.lang.String)
 	 */
-	public void saveSnapshot(byte[] content, Integer idBIObj, String name, String description) throws EMFUserError {
+	public void saveSnapshot(byte[] content, 
+			Integer idBIObj, 
+			String name, 
+			String description,
+			String contentType) throws EMFUserError {
 		Session aSession = null;
 		Transaction tx = null;
 		try {
@@ -113,9 +117,10 @@ public class SnapshotDAOHibImpl extends AbstractHibernateDAO implements ISnapsho
 			SbiSnapshots hibSnap = new SbiSnapshots();
 			hibSnap.setCreationDate(new Date());
 			hibSnap.setDescription(description);
-			hibSnap.setName(name);
+			hibSnap.setName(name);			
 			hibSnap.setSbiBinContents(hibBinContent);
 			hibSnap.setSbiObject(hibBIObject);
+			hibSnap.setContentType(contentType);
 			updateSbiCommonInfo4Insert(hibSnap);
 			aSession.save(hibSnap);
 			tx.commit();
@@ -141,6 +146,7 @@ public class SnapshotDAOHibImpl extends AbstractHibernateDAO implements ISnapsho
 		snap.setDescription(hibSnap.getDescription());
 		snap.setId(hibSnap.getSnapId());
 		snap.setName(hibSnap.getName());
+		snap.setContentType(hibSnap.getContentType());
 		return snap;
 	}
 
