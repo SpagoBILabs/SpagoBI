@@ -42,6 +42,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
    String mapsUrl="#";
    String datasetUrl = "#";
    String logoutUrl="#";
+   String loginUrl="#";
    
    Map langUrls = new HashMap();
 
@@ -56,6 +57,8 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 				datasetUrl = menuItem.getString("href").replace("'","\\'");
 			}else if(menuItem.has("iconCls") && menuItem.getString("iconCls").equalsIgnoreCase("power")){
 				logoutUrl = menuItem.getString("href").replace("'","\\'");
+			}else if(menuItem.has("iconCls") && menuItem.getString("iconCls").equalsIgnoreCase("login")){
+				loginUrl = menuItem.getString("href").replace("'","\\'");
 			}else if(menuItem.has("itemLabel") && menuItem.getString("itemLabel") == "LANG"){	
 				List localesList = GeneralUtilities.getSupportedLocales();				
 				for (int j = 0; j < localesList.size() ; j++) {
@@ -123,12 +126,20 @@ Ext.onReady(function () {
 		'	                <li class="first"><a href="#">'+LN('home.header.geoBIProject')+'</a></li> '+
 		'	                <li><a href="#">'+LN('home.header.tutorial')+'</a></li> '+
 		'	                <li><a href="#">'+LN('home.herader.conditions')+'</a></li> '+
-		'	                <li class="user last"><a href="#"><span class="name">'+Sbi.user.userName+'</a>'+
-		//'	                <li class="user last"><a href="#"><span class="name">'+Sbi.user.userName+'</span> - <span class="company">ASTAT</span></a>'+
-		'						<ul> '+		
-        '                           <li><a href="javascript:execDirectUrl(\'${pageContext.request.contextPath}/restful-services/signup/prepareUpdate\',\'Modify user\')">'+LN('home.header.myAccount')+'</a></li> '+
-        '                           <li class="last"><a href="<%=logoutUrl%>">Logout</a></li> '+
-        '                       </ul> '+
+		'	                <li class="user last"><a href="#"><span class="name">'+Sbi.user.userName+'</a>';
+		if (Sbi.user.userId !== 'public_user'){
+			bannerHTML += 
+			'						<ul> '+		
+	        '                           <li><a href="javascript:execDirectUrl(\'${pageContext.request.contextPath}/restful-services/signup/prepareUpdate\',\'Modify user\')">'+LN('home.header.myAccount')+'</a></li> '+
+	        '                           <li class="last"><a href="<%=logoutUrl%>">Logout</a></li> '+
+	        '                       </ul> ';      
+		}else{ 
+			bannerHTML += 
+				'					<ul> '+				     
+		        '                        <li class="last"><a href="<%=loginUrl%>">Logout</a></li> '+
+		        '                   </ul> ';      
+		}
+		bannerHTML +=
         '					</li> '+
 		'	            </ul> '+
 		'	            <ul class="language-switcher"> '+
