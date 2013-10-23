@@ -16,6 +16,7 @@ import it.eng.spagobi.tools.dataset.common.datareader.XmlDataReader;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.json.JSONUtils;
 
 import org.apache.log4j.Logger;
@@ -250,4 +251,12 @@ public class FileDataSet extends ConfigurableDataSet{
 	public void setUseTempFile(boolean useTempFile) {
 		this.useTempFile = useTempFile;
 	}
+
+	@Override
+	public IDataSource getDataSource() {
+		return null;
+	}
+	
+	
+	
 }
