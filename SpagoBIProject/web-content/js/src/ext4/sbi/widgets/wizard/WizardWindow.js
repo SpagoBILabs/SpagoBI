@@ -21,8 +21,8 @@
 Ext.define('Sbi.widgets.wizard.WizardWindow', {
     extend: 'Ext.Window'
     ,config: {    	  	     	
-    	width: 700,
-		height: 500,
+    	width: 	700,
+		height: 700,//500,
 		hasBuddy: false,	
 		modal: true,
 		closeAction:'destroy',
@@ -52,6 +52,8 @@ Ext.define('Sbi.widgets.wizard.WizardWindow', {
 		var localConf = {};		
 		localConf.items = c.tabs;		
 		localConf.activeTab = 0;
+		localConf.bodyStyle = 'z-index:80000';
+		localConf.height = 360;
 		localConf.fieldDefaults= {
 	            labelAlign: 'right',
 	            msgTarget: 'side'

@@ -15,9 +15,9 @@ Ext.define('Sbi.tools.dataset.ValidateDatasetGrid', {
 		var defaultConf = {
 				storeConfig:{ pageSize: 10, dataRoot : 'rows'}	
 		};
-		this.title =  'Dataset Validation';
+//		this.title =  'Dataset Validation';
 		this.border = true;
-        this.height = 300;
+        this.height = 300; //290;
         this.width = '100%';
         this.autoscroll =  true;
         this.loadMask = true;

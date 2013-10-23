@@ -7,7 +7,7 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
 		fieldsStep3: null,
 		fieldsStep4: null,
 		categoriesStore: null,
-		height: 430,
+		height: 440, //440,
 		datasetGenericPropertiesStore: null,
 		datasetPropertiesStore: null,
 		datasetValuesStore: null,
@@ -80,11 +80,11 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
 		
 		toReturn = [{label:"Id", name:"id",type:"text",hidden:"true", value:this.record.id},
          {label: LN('sbi.ds.dsTypeCd'), name:"type",type:"text",hidden:"true", value:this.record.dsTypeCd || 'File'},
-         {label: LN('sbi.ds.label'), name:"label", type:"text", mandatory:true, readOnly:(this.isNew || this.isOwner)?false:true, value:this.record.label}, 
+         {label: LN('sbi.ds.label'), name:"label", type:"text",hidden:"true", /*mandatory:true, readOnly:(this.isNew || this.isOwner)?false:true,*/ value:this.record.label}, 
          {label: LN('sbi.ds.name'), name:"name", type:"text", mandatory:true, readOnly:(!this.isOwner), value:this.record.name},
          {label: LN('sbi.ds.description'), name:"description", type:"textarea", readOnly:(!this.isOwner), value:this.record.description}];
-		
-		toReturn.push({label:LN('sbi.ds.catType'), name:"catTypeVn", type:"combo", valueCol:"VALUE_ID", descCol:"VALUE_DS", readOnly:!this.isOwner, value:this.record.catTypeId, data:this.categoriesStore});
+		//the category is moved at the first tab because it's necessary for the validation action 
+//		toReturn.push({label:LN('sbi.ds.catType'), name:"catTypeVn", type:"combo", valueCol:"VALUE_ID", descCol:"VALUE_DS", readOnly:!this.isOwner, value:this.record.catTypeId, data:this.categoriesStore});
 		var valueScope = (this.record.isPublic==true)?'true':'false' ;
 		toReturn.push({label:LN('sbi.ds.scope'), name:"isPublic", type:"combo", valueCol:"field", descCol:"value", readOnly:!this.isOwner, value:valueScope, data:this.scopeStore});
 		
@@ -92,27 +92,53 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
 	}
 	
 	, getFieldsTab1: function(){
+		
+		this.cmbCategory = new Ext.form.ComboBox({
+			fieldLabel: LN('sbi.ds.catType'),
+			store :this.categoriesStore,
+			name : 'catTypeVn',			
+			displayField : 'VALUE_DS',
+			valueField :  'VALUE_ID',
+			width : 180,
+//			emptyText:'Select ...',
+			typeAhead : true, forceSelection : true,
+			mode : 'local',
+			triggerAction : 'all',
+			selectOnFocus : true, 
+			editable : false,
+			value: this.record.catTypeId,
+			style:'padding:5px',
+			listeners: {
+			    afterrender: function(combo) {
+			        var recordSelected = combo.getStore().getAt(0);                     
+			        combo.setValue(recordSelected.get('VALUE_ID'));
+			    }
+			}
+		});
+		
 		//upload details tab
-		this.fileUpload = new Sbi.tools.dataset.FileDatasetPanel({fromWizard:true, isOwner: this.isOwner});
+		this.fileUpload = new Sbi.tools.dataset.FileDatasetPanel({fromExt4:true, isOwner: this.isOwner});
 		if (this.record !== undefined){
 			this.fileUpload.setFormState(this.record);
 		}
-		var uploadButton = this.fileUpload.getComponent('fileUploadPanel').getComponent('fileUploadButton');		
+		var uploadButton = this.fileUpload.getComponent('fileUploadPanel').getComponent('fileUploadButton');			
 		uploadButton.setHandler(this.uploadFileButtonHandler,this);
+		
 		var toReturn = new  Ext.FormPanel({
 			  id: 'datasetForm',
 			  fileUpload: true, // this is a multipart form!!
 			  isUpload: true,
 			  method: 'POST',
 			  enctype: 'multipart/form-data',
-  		      margins: '50 50 50 50',
+//  		      margins: '50 50 50 50',
 	          labelAlign: 'left',
-	          bodyStyle:'padding:15px',
-	          autoScroll:true,
-	          width: 650,
-	          height: 600,
+	          bodyStyle:'padding:20px',
+//	          autoScroll:true,
+	          width: '100%', //650,
+	          height: 330,
+	          border: false,
 	          trackResetOnLoad: true,
-	          items: this.fileUpload
+	          items: [this.cmbCategory, this.fileUpload]
 	      }); 
 		
 		
@@ -225,6 +251,12 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
 	, save : function(){
 		if (this.validateTab0() && this.validateTab1()){
 			var values = Sbi.tools.dataset.DataSetsWizard.superclass.getFormState();
+			if (values['label'] == undefined || values['label'] == ''){
+				//defining a new label for the dataset
+				values['label'] = 'ds__' + Math.floor((Math.random()*1000000000)+1); 
+			}
+			//added manually category because it's moved on the first tab (it's necessary for correct validation action)
+			values[this.cmbCategory.name] = this.cmbCategory.getValue();	
 			var fileValues = this.fileUpload.getFormState();
 			Ext.apply(values, fileValues);
 			if (this.metaInfo !== undefined){
@@ -294,6 +326,7 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
 		var fileNameUploaded = Ext.getCmp('fileUploadField').getValue();
 		fileNameUploaded = fileNameUploaded.replace("C:\\fakepath\\", "");
 		
+		Ext.MessageBox.wait(LN('sbi.generic.wait'));
 		form.submit({
 			clientValidation: false,
 			url : baseUrl // a multipart form cannot
@@ -301,11 +334,15 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
 							// main URL; they must POST
 							// parameters
 			,
-			params : params,
-			waitMsg : LN('sbi.generic.wait'),
+			params : params,			
 			success : function(form, action) {
-				Ext.MessageBox.alert('Success!','File Uploaded to the Server');
-				Ext.getCmp('fileNameField').setValue(fileNameUploaded);
+				Ext.MessageBox.updateProgress(1);
+				Ext.MessageBox.hide();
+				Ext.getCmp('fileNameField').setValue(fileNameUploaded); //hidden field
+				Ext.getCmp('fileDetailText').setText(LN('sbi.ds.wizard.file') +fileNameUploaded + LN('sbi.ds.wizard.successLoad') );
+//				Ext.getCmp('fileUploadField').hide();
+//				Ext.getCmp('fileUploadButton').hide();
+				
 				this.fileUpload.activateFileTypePanel(action.result.fileExtension);
 				thisPanel.fileUploaded = true;
 			},
