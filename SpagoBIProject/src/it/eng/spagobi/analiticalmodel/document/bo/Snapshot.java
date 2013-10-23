@@ -25,7 +25,16 @@ public class Snapshot implements Serializable {
 	private Date dateCreation = null;
 	private Integer binId = null;
 	private byte[] content = null;
+	private String contentType = null;
 	
+	public String getContentType() {
+		return contentType;
+	}
+
+	public void setContentType(String contentType) {
+		this.contentType = contentType;
+	}
+
 	/**
 	 * Gets the id.
 	 * 

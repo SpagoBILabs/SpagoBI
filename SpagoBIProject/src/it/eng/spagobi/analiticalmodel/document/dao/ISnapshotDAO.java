@@ -24,7 +24,7 @@ public interface ISnapshotDAO extends ISpagoBIDao{
 	 * 
 	 * @throws EMFUserError the EMF user error
 	 */
-	public void saveSnapshot(byte[] content, Integer idBIObj, String name, String description) throws EMFUserError;
+	public void saveSnapshot(byte[] content, Integer idBIObj, String name, String description, String contentType) throws EMFUserError;
 	
 	/**
 	 * Gets the list of the snapshot details that are children of a biobject.

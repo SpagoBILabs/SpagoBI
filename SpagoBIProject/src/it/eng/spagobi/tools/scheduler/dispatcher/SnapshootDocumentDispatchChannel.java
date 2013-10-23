@@ -99,7 +99,7 @@ public class SnapshootDocumentDispatchChannel implements IDocumentDispatchChanne
 					logger.error("Error while deleting object snapshots", e);
 				}
 			}
-			snapDao.saveSnapshot(executionOutput, document.getId(), snapName, snapDesc);	
+			snapDao.saveSnapshot(executionOutput, document.getId(), snapName, snapDesc, dispatchContext.getContentType());	
 			
 		} catch (Exception e) {
 			logger.error("Error while saving schedule result as new snapshot", e);

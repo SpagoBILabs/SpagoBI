@@ -20,7 +20,17 @@ public class SbiSnapshots  extends SbiHibernateModel {
     private String name;
     private String description;
     private Date creationDate;
+    private String contentType;
     
+    
+	public String getContentType() {
+		return contentType;
+	}
+
+	public void setContentType(String contentType) {
+		this.contentType = contentType;
+	}
+
 	/**
 	 * Gets the snap id.
 	 * 

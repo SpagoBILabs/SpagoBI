@@ -65,6 +65,10 @@
         <property name="creationDate" type="timestamp">
             <column name="creation_date"/>
         </property>
+        
+        <property name="contentType" type="string">
+            <column name="content_type" />
+        </property>
                 
     </class>
 </hibernate-mapping>
