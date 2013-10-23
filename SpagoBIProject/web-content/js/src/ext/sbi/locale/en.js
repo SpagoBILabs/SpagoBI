@@ -665,7 +665,6 @@ Sbi.locale.ln['sbi.datasource.validation.error']= 'There is some error in the da
 Sbi.locale.ln['sbi.datasource.test.failed']= 'Error testing the datasource';
 Sbi.locale.ln['sbi.datasource.validation.writeDefault']= ' : datasource already marked as write default: do you want to substitute with current?';
 
-
 //Datasets
 Sbi.locale.ln['sbi.ds.clearOldVersion'] = 'Clear All';
 Sbi.locale.ln['sbi.ds.deleteVersion'] = 'Delete Version';
@@ -728,6 +727,12 @@ Sbi.locale.ln['sbi.ds.wizard.back']= '< Back';
 Sbi.locale.ln['sbi.ds.wizard.next']= 'Next >';
 Sbi.locale.ln['sbi.ds.wizard.confirm']= 'Confirm';
 Sbi.locale.ln['sbi.ds.wizard.cancel']= 'Cancel';
+Sbi.locale.ln['sbi.ds.wizard.startMsg']= 'Select and load your file XLS or CSV ...';
+Sbi.locale.ln['sbi.ds.wizard.file']= 'File';
+Sbi.locale.ln['sbi.ds.wizard.successLoad']= ' loaded succesfully!'
+Sbi.locale.ln['sbi.ds.wizard.selectedFile']='Selected file ';
+Sbi.locale.ln['sbi.ds.wizard.loadedFile']='Loaded file ';
+Sbi.locale.ln['sbi.ds.wizard.selectFile']='Select file';
 Sbi.locale.ln['sbi.ds.scope'] = 'Scope';
 Sbi.locale.ln['sbi.ds.noDataset']= 'No datasets available';
 Sbi.locale.ln['sbi.ds.mandatoryFields']= 'Please insert mandatory fields!';
@@ -1037,4 +1042,5 @@ Sbi.locale.ln['sbi.tools.layer.props.file']= "File";
 Sbi.locale.ln['sbi.tools.layer.baseLayer']= "Base Layer";
 Sbi.locale.ln['sbi.tools.layer.props.params']= "Params";
 Sbi.locale.ln['sbi.tools.layer.props.options']= "Options";
+
 

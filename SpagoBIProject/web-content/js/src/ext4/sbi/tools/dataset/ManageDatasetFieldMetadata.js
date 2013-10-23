@@ -363,7 +363,7 @@ Ext.define('Sbi.tools.dataset.ManageDatasetFieldMetadata', {
 	          labelAlign: 'left',
 	          bodyStyle:'padding:5px',
 			  defaultType: 'textfield',
-			  height:320,
+			  height: 330, //320,
 			  autoScroll: true,
 			  layout: 'border',
 			  items: [this.metadataType, this.gridColumnsMetadata, this.gridDatasetMetadata]
