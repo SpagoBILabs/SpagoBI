@@ -64,6 +64,8 @@ public abstract class AbstractDataSet implements IDataSet {
     protected String pivotRowName;
     protected String pivotColumnValue;
     protected boolean numRows;
+    protected String organization;
+   
     
     protected IDataStoreTransformer dataSetTransformer;
     
@@ -152,6 +154,8 @@ public abstract class AbstractDataSet implements IDataSet {
 		sbd.setPersisted(isPersisted());
 		sbd.setPersistTableName(getPersistTableName());
 		sbd.set_public(isPublic());
+		
+		sbd.setOrganization(getOrganization());
 		
 		return sbd;
 	}
@@ -696,5 +700,15 @@ public abstract class AbstractDataSet implements IDataSet {
 //			return null;
 //		}
 	}
+
+	public String getOrganization() {
+		return organization;
+	}
+
+	public void setOrganization(String organization) {
+		this.organization = organization;
+	}
+	
+	
 	
 }
