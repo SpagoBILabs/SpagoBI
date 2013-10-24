@@ -413,8 +413,8 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 				if(response !== undefined  && response.responseText !== undefined && response.statusText=="OK") {
 					if(response.responseText!=null && response.responseText!=undefined){
 						if(response.responseText.indexOf("error.mesage.description")>=0){
-							this.wizardWin.disableButton('confirm');
-							this.wizardWin.goBack(1);
+							//this.wizardWin.disableButton('confirm');
+							//this.wizardWin.goBack(1);
 							Sbi.exception.ExceptionHandler.handleFailure(response);
 						}else{			
 							var newMeta = response.responseText;
