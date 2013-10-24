@@ -110,8 +110,10 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
 			style:'padding:5px',
 			listeners: {
 			    afterrender: function(combo) {
-			        var recordSelected = combo.getStore().getAt(0);                     
-			        combo.setValue(recordSelected.get('VALUE_ID'));
+			    	if (!this.rawValue || this.rawValue == ''){
+				        var recordSelected = combo.getStore().getAt(0);                     
+				        combo.setValue(recordSelected.get('VALUE_ID'));
+			    	}
 			    }
 			}
 		});
@@ -206,6 +208,8 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
 				 isTabValid = this.validateTab1();
 				if (isTabValid){						
 					var values = Sbi.tools.dataset.DataSetsWizard.superclass.getFormState();
+					//added manually category because it's moved on the first tab (it's necessary for correct validation action)
+					values[this.cmbCategory.name] = this.cmbCategory.getValue();	
 					var fileValues = this.fileUpload.getFormState();
 					Ext.apply(values, fileValues);
 					if (this.record.meta !== undefined){
@@ -219,6 +223,8 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
 			 }
 			 if (newTabId == 2){				 
 				 var values = Sbi.tools.dataset.DataSetsWizard.superclass.getFormState();
+				 //added manually category because it's moved on the first tab (it's necessary for correct validation action)
+				 values[this.cmbCategory.name] = this.cmbCategory.getValue();	
 				 var fileValues = this.fileUpload.getFormState();
 				 Ext.apply(values, fileValues);
 				 //If true a new file is uploaded
@@ -253,7 +259,8 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
 			var values = Sbi.tools.dataset.DataSetsWizard.superclass.getFormState();
 			if (values['label'] == undefined || values['label'] == ''){
 				//defining a new label for the dataset
-				values['label'] = 'ds__' + Math.floor((Math.random()*1000000000)+1); 
+				var d = new Date();
+				values['label'] = 'ds__' + d.getTime()%10000000; 
 			}
 			//added manually category because it's moved on the first tab (it's necessary for correct validation action)
 			values[this.cmbCategory.name] = this.cmbCategory.getValue();	
@@ -278,6 +285,11 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
 	}
 	
 	, validateTab1: function(){
+		var categ = this.cmbCategory;	
+		if (categ == undefined || categ.getValue() == ""){
+			Sbi.exception.ExceptionHandler.showErrorMessage(LN('sbi.ds.mandatoryFields'), '');
+			return false;
+		}
 		var fileName = this.fileUpload.fileNameField;
 		if (fileName == undefined || fileName.value == ""){
 			Sbi.exception.ExceptionHandler.showErrorMessage(LN('sbi.ds.mandatoryUploadFile'), '');
