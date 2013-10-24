@@ -218,7 +218,7 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
 						values.meta = metaValues;
 					}
 					//If true a new file is uploaded
-					values.fileUploaded = thisPanel.fileUploaded;
+					values.fileUploaded = this.fileUploaded;
 					this.fireEvent('getMetaValues', values);
 				}
 			 }
@@ -229,7 +229,7 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
 				 var fileValues = this.fileUpload.getFormState();
 				 Ext.apply(values, fileValues);
 				 //If true a new file is uploaded
-				 values.fileUploaded = thisPanel.fileUploaded;
+				 values.fileUploaded = this.fileUploaded;
 				 var datasetMetadata = this.fieldsStep2.getFormState();
 				 values.datasetMetadata = Ext.JSON.encode(datasetMetadata) ;
 
@@ -357,7 +357,7 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
 //				Ext.getCmp('fileUploadButton').hide();
 				
 				this.fileUpload.activateFileTypePanel(action.result.fileExtension);
-				thisPanel.fileUploaded = true;
+				this.fileUploaded = true;
 			},
 			failure : function(form, action) {
 				switch (action.failureType) {
