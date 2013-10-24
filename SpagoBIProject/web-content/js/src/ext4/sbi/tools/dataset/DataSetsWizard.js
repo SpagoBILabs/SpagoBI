@@ -106,6 +106,7 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
 			triggerAction : 'all',
 			selectOnFocus : true, 
 			editable : false,
+			readOnly:!this.isOwner,
 			value: this.record.catTypeId,
 			style:'padding:5px',
 			listeners: {
