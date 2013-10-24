@@ -45,6 +45,8 @@ public class SpagoBiDataSet  implements java.io.Serializable {
     private java.lang.Integer transformerId;
 
     private java.lang.String type;
+    
+    private java.lang.String organization;
 
     private int versionNum;
 
@@ -74,7 +76,8 @@ public class SpagoBiDataSet  implements java.io.Serializable {
            java.lang.Integer transformerId,
            java.lang.String type,
            int versionNum,
-           boolean _public) {
+           boolean _public,
+           String organization) {
            this.active = active;
            this.categoryId = categoryId;
            this.configuration = configuration;
@@ -96,6 +99,7 @@ public class SpagoBiDataSet  implements java.io.Serializable {
            this.type = type;
            this.versionNum = versionNum;
            this._public = _public;
+           this.organization = organization;
     }
 
 
@@ -508,8 +512,18 @@ public class SpagoBiDataSet  implements java.io.Serializable {
         return _public;
     }
 
+    
+    
 
-    /**
+    public java.lang.String getOrganization() {
+		return organization;
+	}
+
+	public void setOrganization(java.lang.String organization) {
+		this.organization = organization;
+	}
+
+	/**
      * Sets the _public value for this SpagoBiDataSet.
      * 
      * @param _public

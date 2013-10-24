@@ -171,4 +171,8 @@ public interface IDataSet {
 	
 	public IDataSource getDataSourceForReading();
 	
+	public String getOrganization();
+	public void setOrganization(String organization);
+	
+	
 }

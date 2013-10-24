@@ -53,6 +53,22 @@ public class VersionedDataSet implements IDataSet {
 	public void setWrappedDataset(IDataSet wrappedDataset) {
 		this.wrappedDataset = wrappedDataset;
 	}
+	
+	
+	/**
+	 * @return the organization
+	 */
+	public String getOrganization() {
+		return wrappedDataset.getOrganization();
+	}
+
+	/**
+	 * @param wrappedDataset the organization to set
+	 */
+	public void setOrganization(String organization) {
+		this.wrappedDataset.setOrganization(organization);
+	}
+	
 
 	/**
 	 * @return the version
