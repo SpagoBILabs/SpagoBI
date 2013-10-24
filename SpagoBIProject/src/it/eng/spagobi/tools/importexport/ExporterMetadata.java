@@ -398,7 +398,8 @@ public class ExporterMetadata {
 					// in case of export do not recaculate id to avoid losing constraints
 					compositeKey = new SbiDataSetId();
 					compositeKey.setDsId(dataSet.getId());
-					compositeKey.setVersionNum(1);					
+					compositeKey.setVersionNum(1);		
+					compositeKey.setOrganization(dataSet.getOrganization());
 				}
 				
 				SbiDataSet sbiDataSet = new SbiDataSet(compositeKey);
@@ -444,6 +445,8 @@ public class ExporterMetadata {
 				sbiDataSet.setPivotRowName(dataSet.getPivotRowName());
 				sbiDataSet.setPivotColumnValue(dataSet.getPivotColumnValue());
 				sbiDataSet.setNumRows(dataSet.isNumRows());
+				//sbiDataSet.setOrganization(dataSet.getOrganization());
+				
 
 				sbiDataSet.setCategory(category);
 				sbiDataSet.setParameters(dataSet.getParameters());
@@ -866,6 +869,7 @@ public class ExporterMetadata {
 			sub.setSbiBinContents(hibBinContent);
 			sub.setSbiObject(hibBIObj);
 			sub.setSnapId(snapshot.getId());
+			sub.setContentType(snapshot.getContentType());
 
 
 			session.save(sub);
@@ -3492,6 +3496,7 @@ public class ExporterMetadata {
 			toReturn.setVersionNum(nextId);
 		}
 
+		toReturn.setOrganization(dataSet.getOrganization());
 		return toReturn;
 	}
 }

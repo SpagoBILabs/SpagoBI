@@ -532,11 +532,42 @@ public class ImporterMetadata {
 		else if (hibObj instanceof SbiDataSet) {
 			param = "SbiDataSet";
 			String label = (String) unique;
+
 			hqlQuery = sessionCurrDB.createQuery("from SbiDataSet h where h.active = ? and h.label = ?" );
 			hqlQuery.setBoolean(0, true);
 			hqlQuery.setString(1, label);					
-			SbiDataSet hibDs =(SbiDataSet)hqlQuery.uniqueResult();			
+			SbiDataSet hibDs =(SbiDataSet)hqlQuery.uniqueResult();	
+
 			return hibDs;
+			
+			//			hqlQuery = sessionCurrDB.createQuery("from SbiDataSet h where h.active = ? and h.label = ?" );
+			//			hqlQuery.setBoolean(0, true);
+			//			hqlQuery.setString(1, label);					
+			//			SbiDataSet hibDs =(SbiDataSet)hqlQuery.uniqueResult();	
+			//			List hibDsList =(List)hqlQuery.list();	
+
+//			SbiDataSet toReturn=null;
+//			
+//			hqlQuery = sessionCurrDB.createQuery("from SbiDataSet h where h.label = ?" );
+//			hqlQuery.setString(0, label);					
+//			List hibDsList =(List)hqlQuery.list();	
+//
+//			// get the active one
+//			for (Iterator iterator = hibDsList.iterator(); iterator.hasNext();) {
+//				SbiDataSet sbiDs = (SbiDataSet) iterator.next();
+//				if(sbiDs.isActive()==true){
+//					if(toReturn != null){
+//						logger.error("There are more dataset with label "+label+" that are set to active status. This is not a corect situation. Import goes on anyway an take the highest version");
+//						if(sbiDs.getId().getVersionNum().intValue()>toReturn.getId().getVersionNum().intValue())
+//							toReturn=sbiDs;
+//					}
+//					else{
+//						toReturn=sbiDs;
+//					}
+//				}
+//			}
+//
+//			return toReturn;
 		} else if (hibObj instanceof SbiDataSource) {
 			param = "SbiDataSource";
 			String label = (String) unique;

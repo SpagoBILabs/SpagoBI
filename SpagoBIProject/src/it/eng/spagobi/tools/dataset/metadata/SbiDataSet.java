@@ -65,7 +65,7 @@ public class SbiDataSet extends SbiHibernateModel {
 	private String sbiVersionUp=null;
 	private String sbiVersionDe=null;
 	private String metaVersion=null;
-	private String organization=null;
+
 	private Date timeIn = null;
 	private Date timeUp = null;
 	private Date timeDe = null;
@@ -299,14 +299,6 @@ public class SbiDataSet extends SbiHibernateModel {
 		this.dsMetadata = dsMetadata;
 	}
     	
-	
-	public String getOrganization() {
-		return organization;
-	}
-
-	public void setOrganization(String organization) {
-		this.organization = organization;
-	}
 
 	
 

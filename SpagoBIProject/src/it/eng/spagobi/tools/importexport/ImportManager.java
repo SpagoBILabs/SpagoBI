@@ -9,6 +9,7 @@ import it.eng.spago.base.SourceBean;
 import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
+import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.dao.BIObjectDAOHibImpl;
 import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjFunc;
@@ -33,6 +34,7 @@ import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParuseDet;
 import it.eng.spagobi.behaviouralmodel.check.metadata.SbiChecks;
 import it.eng.spagobi.behaviouralmodel.lov.metadata.SbiLov;
 import it.eng.spagobi.commons.bo.Role;
+import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.dao.DAOFactory;
@@ -135,6 +137,8 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 	private AssociationFile associationFile = null;
 	private String impAssMode = IMPORT_ASS_DEFAULT_MODE;
 
+	ImportUtilities importUtilities = null;
+	
 	// cntains columns returned by lovs
 	private Map<String, List<String>> lovsMetadata;
 	
@@ -151,6 +155,10 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 	 */
 	public void init(String pathImpTmpFold, String archiveName, byte[] archiveContent) throws EMFUserError {
 		logger.debug("IN");
+		
+		importUtilities = new ImportUtilities();
+		importUtilities.setProfile(this.getUserProfile());
+		
 		// create directories of the tmp import folder
 		File impTmpFold = new File(pathImpTmpFold);
 		impTmpFold.mkdirs();
@@ -595,7 +603,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 
 					continue;
 				}
-				SbiExtRoles newRole = ImportUtilities.makeNew(role);
+				SbiExtRoles newRole = importUtilities.makeNew(role);
 				String roleCd = role.getRoleTypeCode();
 				Map unique = new HashMap();
 				unique.put("valuecd", roleCd);
@@ -657,7 +665,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 							+ " of an existing engine");
 					continue;
 				}
-				SbiEngines newEng = ImportUtilities.makeNew(engine);
+				SbiEngines newEng = importUtilities.makeNew(engine);
 				SbiDomains engineTypeDomain = engine.getEngineType();
 				Map uniqueEngineType = new HashMap();
 				uniqueEngineType.put("valuecd", engineTypeDomain.getValueCd());
@@ -741,13 +749,13 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 				if (existingMetadataId != null) {
 					logger.debug("The objMetadata with label:[" + exportedObjMetadata.getLabel() + "] is just present. It will be updated.");
 					metaLog.log("The objMetadata with label = [" + exportedObjMetadata.getLabel() + "] will be updated.");
-					SbiObjMetadata existingObjMetadata = ImportUtilities.modifyExisting(exportedObjMetadata, sessionCurrDB, existingMetadataId, metaAss,importer);
+					SbiObjMetadata existingObjMetadata = importUtilities.modifyExisting(exportedObjMetadata, sessionCurrDB, existingMetadataId, metaAss,importer);
 					this.updateSbiCommonInfo4Update(existingObjMetadata);
 					sessionCurrDB.update(existingObjMetadata);
 					sessionCurrDB.flush();
 
 				} else {
-					SbiObjMetadata newObjM = ImportUtilities.makeNew(exportedObjMetadata, sessionCurrDB, metaAss, importer);
+					SbiObjMetadata newObjM = importUtilities.makeNew(exportedObjMetadata, sessionCurrDB, metaAss, importer);
 					this.updateSbiCommonInfo4Insert(newObjM);
 					sessionCurrDB.save(newObjM);
 					sessionCurrDB.flush();
@@ -821,14 +829,14 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 				if (existingDatasourceId != null) {
 						logger.debug("The data source with label:[" + dataSource.getLabel() + "] is just present. It will be updated.");
 						metaLog.log("The data source with label = [" + dataSource.getLabel() + "] will be updated.");
-						SbiDataSource existingDs = ImportUtilities.modifyExisting(dataSource, sessionCurrDB, existingDatasourceId);
-						ImportUtilities.associateWithExistingEntities(existingDs, dataSource, sessionCurrDB, importer, metaAss);
+						SbiDataSource existingDs = importUtilities.modifyExisting(dataSource, sessionCurrDB, existingDatasourceId);
+						importUtilities.associateWithExistingEntities(existingDs, dataSource, sessionCurrDB, importer, metaAss);
 						this.updateSbiCommonInfo4Update(existingDs);
 						sessionCurrDB.update(existingDs);
 						sessionCurrDB.flush();
 					} else {
-						SbiDataSource newDS = ImportUtilities.makeNew(dataSource);
-						ImportUtilities.associateWithExistingEntities(newDS, dataSource, sessionCurrDB, importer, metaAss);
+						SbiDataSource newDS = importUtilities.makeNew(dataSource);
+						importUtilities.associateWithExistingEntities(newDS, dataSource, sessionCurrDB, importer, metaAss);
 						this.updateSbiCommonInfo4Insert(newDS);
 						Integer newId = (Integer) sessionCurrDB.save(newDS);
 						sessionCurrDB.flush();
@@ -889,15 +897,15 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 					logger.debug("The dataset with label:[" + exportedDataSet.getLabel() + "] is just present. It will be updated. Existing one has id "+existingDatasetId);
 					metaLog.log("The dataset with label = [" + exportedDataSet.getLabel() + "] will be updated.");
 					// close previous and insert new
-					SbiDataSet newDataset = ImportUtilities.modifyExisting(exportedDataSet, sessionCurrDB, existingDatasetId, sessionExpDB, this.getUserProfile());
-					newDataset = ImportUtilities.associateWithExistingEntities(newDataset, exportedDataSet, sessionCurrDB, importer, metaAss);
+					SbiDataSet newDataset = importUtilities.modifyExisting(exportedDataSet, sessionCurrDB, existingDatasetId, sessionExpDB, this.getUserProfile());
+					newDataset = importUtilities.associateWithExistingEntities(newDataset, exportedDataSet, sessionCurrDB, importer, metaAss);
 					this.updateSbiCommonInfo4Update(newDataset);
 					sessionCurrDB.save(newDataset);
 					sessionCurrDB.flush();
 				} else {
-					SbiDataSet newDataset = ImportUtilities.makeNew(exportedDataSet, sessionCurrDB, this.getUserProfile());
+					SbiDataSet newDataset = importUtilities.makeNew(exportedDataSet, sessionCurrDB, this.getUserProfile());
 					this.updateSbiCommonInfo4Insert(newDataset);
-					newDataset = ImportUtilities.associateWithExistingEntities(newDataset, exportedDataSet, sessionCurrDB, importer, metaAss);
+					newDataset = importUtilities.associateWithExistingEntities(newDataset, exportedDataSet, sessionCurrDB, importer, metaAss);
 					sessionCurrDB.save(newDataset);
 					sessionCurrDB.flush();
 
@@ -971,20 +979,20 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 					logger.debug("The MetaModel with label:[" + exportedMetaModel.getName() + "] is just present. It will be updated. Existing one has id "+existingMetaModelId);
 					metaLog.log("The MetaModel with label = [" + exportedMetaModel.getName() + "] will be updated.");
 					// close previous and insert new
-					SbiMetaModel newMetaModel = ImportUtilities.modifyExisting(exportedMetaModel, sessionCurrDB, existingMetaModelId, sessionExpDB, this.getUserProfile());
-					newMetaModel = ImportUtilities.associateWithExistingEntities(newMetaModel, exportedMetaModel, exportedMetaContent, sessionCurrDB, importer, metaAss);
+					SbiMetaModel newMetaModel = importUtilities.modifyExisting(exportedMetaModel, sessionCurrDB, existingMetaModelId, sessionExpDB, this.getUserProfile());
+					newMetaModel = importUtilities.associateWithExistingEntities(newMetaModel, exportedMetaModel, exportedMetaContent, sessionCurrDB, importer, metaAss);
 					this.updateSbiCommonInfo4Update(newMetaModel);
 					sessionCurrDB.save(newMetaModel);
 					sessionCurrDB.flush();
-					ImportUtilities.insertMetaModelContent(newMetaModel, exportedMetaModel, exportedMetaContent, sessionCurrDB, importer, metaAss);
+					importUtilities.insertMetaModelContent(newMetaModel, exportedMetaModel, exportedMetaContent, sessionCurrDB, importer, metaAss);
 
 				} else {
-					SbiMetaModel newMetaModel = ImportUtilities.makeNew(exportedMetaModel, sessionCurrDB, this.getUserProfile());
+					SbiMetaModel newMetaModel = importUtilities.makeNew(exportedMetaModel, sessionCurrDB, this.getUserProfile());
 					this.updateSbiCommonInfo4Insert(newMetaModel);
-					newMetaModel = ImportUtilities.associateWithExistingEntities(newMetaModel, exportedMetaModel, exportedMetaContent, sessionCurrDB, importer, metaAss);
+					newMetaModel = importUtilities.associateWithExistingEntities(newMetaModel, exportedMetaModel, exportedMetaContent, sessionCurrDB, importer, metaAss);
 					sessionCurrDB.save(newMetaModel);
 					sessionCurrDB.flush();
-					ImportUtilities.insertMetaModelContent(newMetaModel, exportedMetaModel, exportedMetaContent, sessionCurrDB, importer, metaAss);
+					importUtilities.insertMetaModelContent(newMetaModel, exportedMetaModel, exportedMetaContent, sessionCurrDB, importer, metaAss);
 					
 					logger.debug("Inserted new MetaModel " + newMetaModel.getName());
 					metaLog.log("Inserted new metaModel	 " + newMetaModel.getName());
@@ -1058,20 +1066,20 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 					logger.debug("The Artifact with label:[" + exportedArtifact.getName() + "] is just present. It will be updated. Existing one has id "+existingArtifactId);
 					metaLog.log("The Artifact with label = [" + exportedArtifact.getName() + "] will be updated.");
 					// close previous and insert new
-					SbiArtifact newArtifact = ImportUtilities.modifyExisting(exportedArtifact, sessionCurrDB, existingArtifactId, sessionExpDB, this.getUserProfile());
-					newArtifact = ImportUtilities.associateWithExistingEntities(newArtifact, exportedArtifact, exportedMetaContent, sessionCurrDB, importer, metaAss);
+					SbiArtifact newArtifact = importUtilities.modifyExisting(exportedArtifact, sessionCurrDB, existingArtifactId, sessionExpDB, this.getUserProfile());
+					newArtifact = importUtilities.associateWithExistingEntities(newArtifact, exportedArtifact, exportedMetaContent, sessionCurrDB, importer, metaAss);
 					this.updateSbiCommonInfo4Update(newArtifact);
 					sessionCurrDB.save(newArtifact);
 					sessionCurrDB.flush();
-					ImportUtilities.insertArtifactContent(newArtifact, exportedArtifact, exportedMetaContent, sessionCurrDB, importer, metaAss);
+					importUtilities.insertArtifactContent(newArtifact, exportedArtifact, exportedMetaContent, sessionCurrDB, importer, metaAss);
 
 				} else {
-					SbiArtifact newArtifact = ImportUtilities.makeNew(exportedArtifact, sessionCurrDB, this.getUserProfile());
+					SbiArtifact newArtifact = importUtilities.makeNew(exportedArtifact, sessionCurrDB, this.getUserProfile());
 					this.updateSbiCommonInfo4Insert(newArtifact);
-					newArtifact = ImportUtilities.associateWithExistingEntities(newArtifact, exportedArtifact, exportedMetaContent, sessionCurrDB, importer, metaAss);
+					newArtifact = importUtilities.associateWithExistingEntities(newArtifact, exportedArtifact, exportedMetaContent, sessionCurrDB, importer, metaAss);
 					sessionCurrDB.save(newArtifact);
 					sessionCurrDB.flush();
-					ImportUtilities.insertArtifactContent(newArtifact, exportedArtifact, exportedMetaContent, sessionCurrDB, importer, metaAss);
+					importUtilities.insertArtifactContent(newArtifact, exportedArtifact, exportedMetaContent, sessionCurrDB, importer, metaAss);
 					
 					logger.debug("Inserted new Artifact " + newArtifact.getName());
 					metaLog.log("Inserted new artifact	 " + newArtifact.getName());
@@ -1144,7 +1152,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 							+ " because it has the same label (and the same path) of an existing functionality");
 					continue;
 				}
-				SbiFunctions newFunct = ImportUtilities.makeNew(functToInsert);
+				SbiFunctions newFunct = importUtilities.makeNew(functToInsert);
 				String functCd = functToInsert.getFunctTypeCd();
 				Map unique = new HashMap();
 				unique.put("valuecd", functCd);
@@ -1248,15 +1256,15 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 				if (existingLovId != null) {
 					logger.debug("The lov with label:[" + exportedLov.getLabel() + "] is just present. It will be updated.");
 					metaLog.log("The lov with label = [" + exportedLov.getLabel() + "] will be updated.");
-					SbiLov existinglov = ImportUtilities.modifyExisting(exportedLov, sessionCurrDB, existingLovId, getUserAssociation().getDsExportedToUserLabel());
-					ImportUtilities.associateWithExistingEntities(existinglov, exportedLov, sessionCurrDB, importer, metaAss);
+					SbiLov existinglov = importUtilities.modifyExisting(exportedLov, sessionCurrDB, existingLovId, getUserAssociation().getDsExportedToUserLabel());
+					importUtilities.associateWithExistingEntities(existinglov, exportedLov, sessionCurrDB, importer, metaAss);
 					this.updateSbiCommonInfo4Update(existinglov);
 					sessionCurrDB.update(existinglov);
 					sessionCurrDB.flush();
 
 				} else {
-					SbiLov newlov = ImportUtilities.makeNew(exportedLov, sessionCurrDB, getUserAssociation().getDsExportedToUserLabel());
-					ImportUtilities.associateWithExistingEntities(newlov, exportedLov, sessionCurrDB, importer, metaAss);
+					SbiLov newlov = importUtilities.makeNew(exportedLov, sessionCurrDB, getUserAssociation().getDsExportedToUserLabel());
+					importUtilities.associateWithExistingEntities(newlov, exportedLov, sessionCurrDB, importer, metaAss);
 					this.updateSbiCommonInfo4Insert(newlov);
 					sessionCurrDB.save(newlov); 
 					sessionCurrDB.flush();
@@ -1308,7 +1316,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 							+ " because it has the same label of an existing check");
 					continue;
 				}
-				SbiChecks newck = ImportUtilities.makeNew(check);
+				SbiChecks newck = importUtilities.makeNew(check);
 				String valueCd = check.getValueTypeCd();
 				Map unique = new HashMap();
 				unique.put("valuecd", valueCd);
@@ -1376,8 +1384,8 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 				if (existingParId != null) {
 					logger.debug("The parameter with label:[" + exportedParameter.getLabel() + "] is just present. It will be updated.");
 					metaLog.log("The parameter with label = [" + exportedParameter.getLabel() + "] will be updated.");
-					SbiParameters existingParameter = ImportUtilities.modifyExisting(exportedParameter, sessionCurrDB, existingParId);
-					ImportUtilities.associateWithExistingEntities(existingParameter, exportedParameter, sessionCurrDB, importer, metaAss);
+					SbiParameters existingParameter = importUtilities.modifyExisting(exportedParameter, sessionCurrDB, existingParId);
+					importUtilities.associateWithExistingEntities(existingParameter, exportedParameter, sessionCurrDB, importer, metaAss);
 					this.updateSbiCommonInfo4Update(existingParameter);
 					sessionCurrDB.update(existingParameter);
 					sessionCurrDB.flush();
@@ -1402,8 +1410,8 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 
 				} else {
 					// parameter is new (new Id)
-					SbiParameters newPar = ImportUtilities.makeNew(exportedParameter);
-					ImportUtilities.associateWithExistingEntities(newPar, exportedParameter, sessionCurrDB, importer, metaAss);
+					SbiParameters newPar = importUtilities.makeNew(exportedParameter);
+					importUtilities.associateWithExistingEntities(newPar, exportedParameter, sessionCurrDB, importer, metaAss);
 					this.updateSbiCommonInfo4Insert(newPar);
 					sessionCurrDB.save(newPar);
 					sessionCurrDB.flush();
@@ -1505,15 +1513,15 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 				if (existingObjId != null) {
 					logger.debug("The document with label:[" + exportedObj.getLabel() + "] is just present. It will be updated.");
 					metaLog.log("The document with label = [" + exportedObj.getLabel() + "] will be updated.");
-					obj = ImportUtilities.modifyExisting(exportedObj, sessionCurrDB, existingObjId);
-					ImportUtilities.associateWithExistingEntities(obj, exportedObj, sessionCurrDB, importer, metaAss);
+					obj = importUtilities.modifyExisting(exportedObj, sessionCurrDB, existingObjId);
+					importUtilities.associateWithExistingEntities(obj, exportedObj, sessionCurrDB, importer, metaAss);
 					this.updateSbiCommonInfo4Update(obj);
 					sessionCurrDB.update(obj);
 					sessionCurrDB.flush();
 
 				} else {
-					obj = ImportUtilities.makeNew(exportedObj);
-					ImportUtilities.associateWithExistingEntities(obj, exportedObj, sessionCurrDB, importer, metaAss);
+					obj = importUtilities.makeNew(exportedObj);
+					importUtilities.associateWithExistingEntities(obj, exportedObj, sessionCurrDB, importer, metaAss);
 					this.updateSbiCommonInfo4Insert(obj);
 					// insert document
 					Integer newId = (Integer) sessionCurrDB.save(obj);
@@ -1548,7 +1556,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 				// puts visual into object
 				importObjParView(exportedObj.getBiobjId());
 
-				commit();
+				//commit();
 
 				//updates lucene index
 				BIObjectDAOHibImpl daoObj = (BIObjectDAOHibImpl)DAOFactory.getBIObjectDAO();
@@ -1609,7 +1617,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 					metaLog.log("Exported snaphost with name = [" + expSbiSnapshots.getName() + "] and creation date = [" + expSbiSnapshots.getCreationDate() + "] (of document with name = [" + exportedObj.getName() + "] and label = [" + exportedObj.getLabel() + "]) is already existing, most likely it is the same snapshot, so it will not be inserted.");
 					continue;
 				} else {
-					SbiSnapshots newSnapshots = ImportUtilities.makeNew(expSbiSnapshots);
+					SbiSnapshots newSnapshots = importUtilities.makeNew(expSbiSnapshots);
 					newSnapshots.setSbiObject(obj);
 					SbiBinContents binary = insertBinaryContent(expSbiSnapshots.getSbiBinContents());
 					newSnapshots.setSbiBinContents(binary);
@@ -1773,7 +1781,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 						updateSubObject(current, expSubObject);
 						continue;
 					} else {
-						SbiSubObjects newSubObj = ImportUtilities.makeNew(expSubObject);
+						SbiSubObjects newSubObj = importUtilities.makeNew(expSubObject);
 						newSubObj.setSbiObject(obj);
 						SbiBinContents binary = insertBinaryContent(expSubObject.getSbiBinContents());
 						newSubObj.setSbiBinContents(binary);
@@ -1793,7 +1801,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 						//idAssociation.put(expSubObject.getSubObjId(), current.getSubObjId());
 						continue;
 					} else {
-						SbiSubObjects newSubObj = ImportUtilities.makeNew(expSubObject);
+						SbiSubObjects newSubObj = importUtilities.makeNew(expSubObject);
 						newSubObj.setSbiObject(obj);
 						SbiBinContents binary = insertBinaryContent(expSubObject.getSbiBinContents());
 						newSubObj.setSbiBinContents(binary);
@@ -1890,7 +1898,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 			Integer nextProg = getNextProg(obj.getBiobjId());
 
 			SbiObjTemplates expTemplate = (SbiObjTemplates) templateList.get(0);
-			SbiObjTemplates newObj = ImportUtilities.makeNew(expTemplate);
+			SbiObjTemplates newObj = importUtilities.makeNew(expTemplate);
 			newObj.setProg(nextProg);
 			if (nextProg.intValue() > 1) {
 				// old current template is no more active
@@ -1914,9 +1922,9 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 		catch (Exception he) {
 			logger.error("Error while getting exported template objects ", he);
 			List params = new ArrayList();
-			params.add("Sbi_obj_template");
-			params.add("");
-			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params, ImportManager.messageBundle);
+			params.add(obj.getLabel());
+			
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8021", params, ImportManager.messageBundle);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -1957,7 +1965,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 				return null;
 			}
 			SbiBinContents expBinaryContent = (SbiBinContents) templateList.get(0);
-			newObj = ImportUtilities.makeNew(expBinaryContent);
+			newObj = importUtilities.makeNew(expBinaryContent);
 			this.updateSbiCommonInfo4Insert(newObj);
 			// save new binary content
 			sessionCurrDB.save(newObj);
@@ -2033,7 +2041,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 //				Map assParams = metaAss.getParameterIDAssociation();
 //				Integer newParamId = (Integer) assParams.get(oldParamId);
 //				if (newParamId != null) {
-//					SbiParameters newParam = ImportUtilities.makeNewSbiParameter(param, newParamId);
+//					SbiParameters newParam = importUtilities.makeNewSbiParameter(param, newParamId);
 //					expParuse.setSbiParameters(newParam);
 //				}
 //
@@ -2043,12 +2051,12 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 //					Map assLovs = metaAss.getLovIDAssociation();
 //					Integer newLovId = (Integer) assLovs.get(oldLovId);
 //					if (newLovId != null) {
-//						SbiLov newlov = ImportUtilities.makeNewSbiLov(lov, sessionCurrDB, newLovId, null);
+//						SbiLov newlov = importUtilities.makeNewSbiLov(lov, sessionCurrDB, newLovId, null);
 //						expParuse.setSbiLov(newlov);
 //					}
 //				}
 //
-//				SbiParuse newParuse = ImportUtilities.makeNewSbiParuse(expParuse);
+//				SbiParuse newParuse = importUtilities.makeNewSbiParuse(expParuse);
 //				this.updateSbiCommonInfo4Insert(newParuse);
 //				sessionCurrDB.save(newParuse);
 //				logger.debug("Inserted new parameter use " + newParuse.getName() + " for param " + param.getName());
@@ -2132,7 +2140,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 				Object existObj = importer.checkExistence(unique, sessionCurrDB, new SbiParuse());
 				if (existObj == null) {
 					logger.debug("Paruse di not exist: create");
-					SbiParuse newParuse = ImportUtilities.makeNew(exportedParuse, sessionCurrDB, metaAss);
+					SbiParuse newParuse = importUtilities.makeNew(exportedParuse, sessionCurrDB, metaAss);
 					this.updateSbiCommonInfo4Insert(newParuse);
 					sessionCurrDB.save(newParuse);
 					sessionCurrDB.flush();
@@ -2146,7 +2154,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 					logger.debug("Paruse already existed: update");
 					SbiParuse existingParuse = (SbiParuse)existObj;
 
-					ImportUtilities.modifyExisting(exportedParuse, existingParuse,  sessionCurrDB, metaAss);
+					importUtilities.modifyExisting(exportedParuse, existingParuse,  sessionCurrDB, metaAss);
 					this.updateSbiCommonInfo4Update(existingParuse);
 
 					IParameterUseDAO iParameterUseDAO=DAOFactory.getParameterUseDAO();
@@ -2223,7 +2231,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 //				Integer newParamId = (Integer) assParams.get(oldParamId);
 //				
 //				if (newParamId != null) {
-//					SbiParameters newParam = ImportUtilities.makeNewSbiParameter(param, newParamId);
+//					SbiParameters newParam = importUtilities.makeNewSbiParameter(param, newParamId);
 //					paruse.setSbiParameters(newParam);
 //				}
 //
@@ -2233,7 +2241,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 //					Map assLovs = metaAss.getLovIDAssociation();
 //					Integer newLovId = (Integer) assLovs.get(oldLovId);
 //					if (newLovId != null) {
-//						SbiLov newlov = ImportUtilities.makeNewSbiLov(lov, sessionCurrDB, newLovId, null);
+//						SbiLov newlov = importUtilities.makeNewSbiLov(lov, sessionCurrDB, newLovId, null);
 //						paruse.setSbiLov(newlov);
 //					}
 //				}
@@ -2252,7 +2260,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 //				//				existingParUseId = (Integer) paruseIdAss.get(oldId);
 //				//				}
 //
-//				SbiParuse newParuse = ImportUtilities.makeNewSbiParuse(paruse);
+//				SbiParuse newParuse = importUtilities.makeNewSbiParuse(paruse);
 //				this.updateSbiCommonInfo4Insert(newParuse);
 //				sessionCurrDB.save(newParuse);
 //				logger.debug("Inserted new parameter use " + newParuse.getName() + " for param " + param.getName());
@@ -2318,7 +2326,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 	//	Integer newParuseid = (Integer) paruseIdAss.get(paruseid);
 	//	Integer newRoleid = (Integer) roleIdAss.get(roleid);
 	//	// build a new SbiParuseDet
-	//	SbiParuseDet newParuseDet = ImportUtilities.makeNewSbiParuseDet(parusedet, newParuseid, newRoleid);
+	//	SbiParuseDet newParuseDet = importUtilities.makeNewSbiParuseDet(parusedet, newParuseid, newRoleid);
 	//	// check if the association between metadata already exist
 	//	Map unique = new HashMap();
 	//	unique.put("paruseid", newParuseid);
@@ -2376,7 +2384,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 				
 				if (existObj == null) {
 					logger.debug("ParuseDet di not exist: create");
-					SbiParuseDet newParuseDet = ImportUtilities.makeNew(exportParuseDet, sessionCurrDB, metaAss);
+					SbiParuseDet newParuseDet = importUtilities.makeNew(exportParuseDet, sessionCurrDB, metaAss);
 					this.updateSbiCommonInfo4Insert(newParuseDet);
 					sessionCurrDB.save(newParuseDet);
 					sessionCurrDB.flush();
@@ -2390,7 +2398,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 				else{
 					logger.debug("ParuseDet already existed: update");
 					SbiParuseDet existingParuseDet = (SbiParuseDet)existObj;
-					ImportUtilities.modifyExisting(exportParuseDet, existingParuseDet,  sessionCurrDB, metaAss);
+					importUtilities.modifyExisting(exportParuseDet, existingParuseDet,  sessionCurrDB, metaAss);
 					this.updateSbiCommonInfo4Update(existingParuseDet);
 					sessionCurrDB.save(existingParuseDet);
 					sessionCurrDB.flush();
@@ -2453,7 +2461,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 				logger.debug("Import SbiParuseCk with new keys as paruse "+newParuseid+" and check "+newCheckid);
 				
 				// build a new paruse check
-				//SbiParuseCk newParuseCk = ImportUtilities.makeNewSbiParuseCk(paruseck, newParuseid, newCheckid);
+				//SbiParuseCk newParuseCk = importUtilities.makeNewSbiParuseCk(paruseck, newParuseid, newCheckid);
 				// check if the association between metadata already exist
 				Map unique = new HashMap();
 				unique.put("paruseid", newParuseid);
@@ -2462,7 +2470,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 				Object existObj = importer.checkExistence(unique, sessionCurrDB, new SbiParuseCk());
 				if (existObj == null) {
 					logger.debug("paruseCk not existing: create");
-					SbiParuseCk newParuseCk = ImportUtilities.makeNew(exportedParuseCk, sessionCurrDB, metaAss);
+					SbiParuseCk newParuseCk = importUtilities.makeNew(exportedParuseCk, sessionCurrDB, metaAss);
 					this.updateSbiCommonInfo4Insert(newParuseCk);
 					sessionCurrDB.save(newParuseCk);
 					sessionCurrDB.flush();
@@ -2475,7 +2483,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 				else {
 					logger.debug("paruseCk existing: update");
 					SbiParuseCk existingParuseCk =(SbiParuseCk) existObj;
-					ImportUtilities.modifyExisting(exportedParuseCk, existingParuseCk, sessionCurrDB, metaAss);
+					importUtilities.modifyExisting(exportedParuseCk, existingParuseCk, sessionCurrDB, metaAss);
 					this.updateSbiCommonInfo4Insert(existingParuseCk);
 					sessionCurrDB.save(existingParuseCk);
 					sessionCurrDB.flush();
@@ -2539,8 +2547,8 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 				if (sbiSubReportsId != null) {
 					SbiObjects master = sbiSubReportsId.getMasterReport();
 					SbiObjects sub = sbiSubReportsId.getMasterReport();
-					SbiObjects newMaster = ImportUtilities.makeNew(master, newMasterId);
-					SbiObjects newSub = ImportUtilities.makeNew(sub, newSubId);
+					SbiObjects newMaster = importUtilities.makeNew(master, newMasterId);
+					SbiObjects newSub = importUtilities.makeNew(sub, newSubId);
 					newSubReportsId.setMasterReport(newMaster);
 					newSubReportsId.setSubReport(newSub);
 				}
@@ -2611,13 +2619,13 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 				SbiObjFuncId objfunctid = objfunct.getId();
 				if (objfunctid != null) {
 					SbiFunctions sbifunct = objfunctid.getSbiFunctions();
-					SbiFunctions newFunct = ImportUtilities.makeNew(sbifunct, newFunctid);
+					SbiFunctions newFunct = importUtilities.makeNew(sbifunct, newFunctid);
 					objfunctid.setSbiFunctions(newFunct);
 					functid = newFunctid;
 				}
 				if (newObjectid != null) {
 					SbiObjects sbiobj = objfunctid.getSbiObjects();
-					SbiObjects newObj = ImportUtilities.makeNew(sbiobj, newObjectid);
+					SbiObjects newObj = importUtilities.makeNew(sbiobj, newObjectid);
 					objfunctid.setSbiObjects(newObj);
 					objid = newObjectid;
 				}
@@ -2686,7 +2694,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 				Integer newFunctid = (Integer) functIdAss.get(functid);
 				Integer newRoleid = (Integer) roleIdAss.get(roleid);
 				// build a new SbiFuncRole
-				SbiFuncRole newFunctRole = ImportUtilities.makeNew(functrole, newFunctid, newRoleid);
+				SbiFuncRole newFunctRole = importUtilities.makeNew(functrole, newFunctid, newRoleid);
 				// get sbidomain of the current system
 				String stateCd = functrole.getStateCd();
 				Map uniqueDom = new HashMap();
@@ -2764,11 +2772,11 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 				logger.debug("importing SbiObjParameter with new keys: biObjId "+oldBIObjId+" parId "+oldParamId+ " adn url name "+exportedObjpar.getParurlNm());
 
 				//				if (newParamId != null) {
-				//					SbiParameters newParam = ImportUtilities.makeNew(param, newParamId);
+				//					SbiParameters newParam = importUtilities.makeNew(param, newParamId);
 				//					objpar.setSbiParameter(newParam);
 				//				}
 				//				if (newBIObjId != null) {
-				//					SbiObjects newObj = ImportUtilities.makeNewSbiObject(biobj, newBIObjId);
+				//					SbiObjects newObj = importUtilities.makeNewSbiObject(biobj, newBIObjId);
 				//					objpar.setSbiObject(newObj);
 				//				}
 				Integer oldId = exportedObjpar.getObjParId();
@@ -2784,7 +2792,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 				//				Object existObj = importer.checkExistence(uniqueMap, sessionCurrDB, new SbiObjPar());
 				//				if (existObj != null) {
 				//					SbiObjPar existingSbiObjPar = (SbiObjPar)existObj;
-				//					ImportUtilities.modifyExisting(exportedObjpar, existingSbiObjPar,  sessionCurrDB, metaAss);
+				//					importUtilities.modifyExisting(exportedObjpar, existingSbiObjPar,  sessionCurrDB, metaAss);
 				//					sessionCurrDB.save(existingSbiObjPar);
 				//					logger.debug("Exported association between object " + existingSbiObjPar.getSbiObject().getName() + " "
 				//							+ " and parameter " + existingSbiObjPar.getSbiParameter().getName() + " with url name "
@@ -2796,7 +2804,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 				//							+ " because already existing into the current database");
 				//				}
 				//				else {
-				SbiObjPar newObjpar = ImportUtilities.makeNew(exportedObjpar, sessionCurrDB, metaAss);
+				SbiObjPar newObjpar = importUtilities.makeNew(exportedObjpar, sessionCurrDB, metaAss);
 				this.updateSbiCommonInfo4Insert(newObjpar);
 				sessionCurrDB.save(newObjpar);
 				sessionCurrDB.flush();
@@ -2852,7 +2860,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 			SbiParuse paruse = pardep.getId().getSbiParuse();
 			SbiLov sbiLov = paruse.getSbiLov();
 			logger.debug("retrieve metadata for lov "+sbiLov.getLabel());
-			List<String> metadata = ImportUtilities.retrieveLovMetadataById(sbiLov);
+			List<String> metadata = importUtilities.retrieveLovMetadataById(sbiLov);
 			// check if filter column is in metadata
 			if(metadata.contains(pardep.getFilterColumn())){
 				logger.debug(pardep.getFilterColumn()+" is included in Lov "+sbiLov.getLabel()+ " metadata");
@@ -2915,19 +2923,19 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 				
 //				if (newParuseId != null) {
 //					SbiParuse sbiparuse = objparuseid.getSbiParuse();
-//					SbiParuse newParuse = ImportUtilities.makeNewSbiParuse(sbiparuse, newParuseId);
+//					SbiParuse newParuse = importUtilities.makeNewSbiParuse(sbiparuse, newParuseId);
 //					objparuseid.setSbiParuse(newParuse);
 //					paruseId = newParuseId;
 //				}
 //				if (newObjparId != null) {
 //					SbiObjPar sbiobjpar = objparuseid.getSbiObjPar();
-//					SbiObjPar newObjPar = ImportUtilities.makeNewSbiObjpar(sbiobjpar, newObjparId);
+//					SbiObjPar newObjPar = importUtilities.makeNewSbiObjpar(sbiobjpar, newObjparId);
 //					objparuseid.setSbiObjPar(newObjPar);
 //					objparId = newObjparId;
 //				}
 //				if (newObjParFathId != null) {
 //					SbiObjPar sbiobjparfath = objparuseid.getSbiObjParFather();
-//					SbiObjPar newObjParFath = ImportUtilities.makeNewSbiObjpar(sbiobjparfath, newObjParFathId);
+//					SbiObjPar newObjParFath = importUtilities.makeNewSbiObjpar(sbiobjparfath, newObjParFathId);
 //					objparuseid.setSbiObjParFather(newObjParFath);
 //					objparfathId = newObjParFathId;
 //				}
@@ -2943,7 +2951,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 				Object existObj = importer.checkExistence(unique, sessionCurrDB, new SbiObjParuse());
 				if (existObj == null) {
 					logger.debug("correlation with objparId="+newObjparId+" paruseId="+newParuseId+" objparfathid"+newObjParFathId+" filterop"+filterOp+ " not exist: create");
-					SbiObjParuse toInsert = ImportUtilities.makeNew(exportedObjParuse, sessionCurrDB, metaAss);
+					SbiObjParuse toInsert = importUtilities.makeNew(exportedObjParuse, sessionCurrDB, metaAss);
 					this.updateSbiCommonInfo4Insert(toInsert);
 					sessionCurrDB.save(toInsert);
 					sessionCurrDB.flush();
@@ -2960,7 +2968,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 				else{
 					logger.debug("check if correlation with objparId="+newObjparId+" paruseId="+newParuseId+" objparfathid"+newObjParFathId+" filterop"+filterOp+ " already exists: update");
 					SbiObjParuse sbiObjParuse = (SbiObjParuse)existObj;
-					SbiObjParuse toUpdate = ImportUtilities.modifyExisting(exportedObjParuse, sbiObjParuse, sessionCurrDB, metaAss);
+					SbiObjParuse toUpdate = importUtilities.modifyExisting(exportedObjParuse, sbiObjParuse, sessionCurrDB, metaAss);
 					this.updateSbiCommonInfo4Update(toUpdate);
 					sessionCurrDB.save(toUpdate);
 					sessionCurrDB.flush();
@@ -3054,13 +3062,13 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 				//
 //				if (newObjparId != null) {
 //					SbiObjPar sbiobjpar = objparviewid.getSbiObjPar();
-//					SbiObjPar newObjPar = ImportUtilities.makeNewSbiObjpar(sbiobjpar, newObjparId);
+//					SbiObjPar newObjPar = importUtilities.makeNewSbiObjpar(sbiobjpar, newObjparId);
 //					objparviewid.setSbiObjPar(newObjPar);
 //					objparId = newObjparId;
 //				}
 //				if (newObjParFathId != null) {
 //					SbiObjPar sbiobjparfath = objparviewid.getSbiObjParFather();
-//					SbiObjPar newObjParFath = ImportUtilities.makeNewSbiObjpar(sbiobjparfath, newObjParFathId);
+//					SbiObjPar newObjParFath = importUtilities.makeNewSbiObjpar(sbiobjparfath, newObjParFathId);
 //					objparviewid.setSbiObjParFather(newObjParFath);
 //					objparfathId = newObjParFathId;
 //				}
@@ -3074,7 +3082,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 				Object existObj = importer.checkExistence(unique, sessionCurrDB, new SbiObjParview());
 				if (existObj == null) {
 					logger.debug("par View does not alredy exist: create it");					
-					SbiObjParview toInsert = ImportUtilities.makeNew(exportedObjParView, sessionCurrDB, metaAss);
+					SbiObjParview toInsert = importUtilities.makeNew(exportedObjParView, sessionCurrDB, metaAss);
 					this.updateSbiCommonInfo4Insert(toInsert);
 					sessionCurrDB.save(toInsert);
 					sessionCurrDB.flush();
@@ -3092,7 +3100,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 					logger.debug("par View already exist: update it");					
 					
 					SbiObjParview sbiObjParview = (SbiObjParview)existObj;
-					SbiObjParview toUpdate = ImportUtilities.modifyExisting(exportedObjParView, sbiObjParview, sessionCurrDB, metaAss);
+					SbiObjParview toUpdate = importUtilities.modifyExisting(exportedObjParView, sbiObjParview, sessionCurrDB, metaAss);
 					this.updateSbiCommonInfo4Update(toUpdate);
 					sessionCurrDB.save(toUpdate);
 					sessionCurrDB.flush();
@@ -4428,15 +4436,15 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 				if (existingModelId != null) {
 					logger.debug("The model with id:[" + exportedModel.getKpiModelId() + "] is just present. It will be updated.");
 					metaLog.log("The model with code = [" + exportedModel.getKpiModelCd() + "] will be updated.");
-					SbiKpiModel existingModel = ImportUtilities.modifyExisting(exportedModel, sessionCurrDB, existingModelId, metaAss);
+					SbiKpiModel existingModel = importUtilities.modifyExisting(exportedModel, sessionCurrDB, existingModelId, metaAss);
 					this.updateSbiCommonInfo4Update(existingModel);
 					sessionCurrDB.update(existingModel);
 					sessionCurrDB.flush();
 
 				} else {
-					SbiKpiModel newModel = ImportUtilities.makeNew(exportedModel, sessionCurrDB, metaAss);
+					SbiKpiModel newModel = importUtilities.makeNew(exportedModel, sessionCurrDB, metaAss);
 					// TODO manca da associare il kpi con le entita
-					//ImportUtilities.associateWithExistingEntities(newPar, exportedParameter, sessionCurrDB, importer, metaAss);
+					//importUtilities.associateWithExistingEntities(newPar, exportedParameter, sessionCurrDB, importer, metaAss);
 					this.updateSbiCommonInfo4Insert(newModel);
 					sessionCurrDB.save(newModel);
 					sessionCurrDB.flush();
@@ -4505,13 +4513,13 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 				if (existingModelInstId != null) {
 					logger.debug("The model instance with id:[" + exportedModelInst.getKpiModelInst() + "] is just present. It will be updated.");
 					metaLog.log("The model instance with code = [" + exportedModelInst.getLabel() + "] will be updated.");
-					SbiKpiModelInst existingModelInst = ImportUtilities.modifyExisting(exportedModelInst, sessionCurrDB, existingModelInstId, metaAss);
+					SbiKpiModelInst existingModelInst = importUtilities.modifyExisting(exportedModelInst, sessionCurrDB, existingModelInstId, metaAss);
 					this.updateSbiCommonInfo4Update(existingModelInst);
 					sessionCurrDB.update(existingModelInst);
 					sessionCurrDB.flush();
 
 				} else {
-					SbiKpiModelInst newModelInst = ImportUtilities.makeNew(exportedModelInst, sessionCurrDB, metaAss);
+					SbiKpiModelInst newModelInst = importUtilities.makeNew(exportedModelInst, sessionCurrDB, metaAss);
 					this.updateSbiCommonInfo4Insert(newModelInst);
 					sessionCurrDB.save(newModelInst);
 					sessionCurrDB.flush();
@@ -4574,20 +4582,33 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 				if (existingKpiId != null) {
 					logger.debug("The kpi with id:[" + exportedKpi.getKpiId() + "] is just present. It will be updated.");
 					metaLog.log("The kpi with code = [" + exportedKpi.getCode() + "] will be updated.");
-					SbiKpi existingKpi = ImportUtilities.modifyExisting(exportedKpi, sessionCurrDB, existingKpiId, metaAss);
+					
+					// want to get dataset organization
+//					String organization = null;
+//					if(exportedKpi.getSbiDataSet() != null){
+//						logger.debug("exported Kpi "+exportedKpi.getCode()+" is associated to dataset with id "+exportedKpi.getSbiDataSet()+": get it to retrieve organization");
+//						Query hibQuery = sessionCurrDB.createQuery("from SbiDataSet h where h.active = ? and h.id.dsId = ?" );
+//						hibQuery.setBoolean(0, true);
+//						hibQuery.setInteger(1, exportedKpi.getSbiDataSet());					
+//						SbiDataSet newSbiDataset =(SbiDataSet)hibQuery.uniqueResult();
+//						organization = newSbiDataset.getId().getOrganization();	
+//					}
+					
+					IEngUserProfile userProfile = this.getUserProfile();
+					SbiKpi existingKpi = importUtilities.modifyExisting(exportedKpi, sessionCurrDB, existingKpiId, metaAss);
 					existingKpi.setSbiKpiDocumentses(new HashSet(0));
 					// TODO manca da associare il kpi alle nuove realtà
-					//ImportUtilities.associateWithExistingEntities(existingParameter, exportedParameter, sessionCurrDB, importer, metaAss);
+					//importUtilities.associateWithExistingEntities(existingParameter, exportedParameter, sessionCurrDB, importer, metaAss);
 					this.updateSbiCommonInfo4Update(existingKpi);
 					sessionCurrDB.update(existingKpi);
 					sessionCurrDB.flush();
 
 					referenceKpi = existingKpi;
 				} else {
-					SbiKpi newKpi = ImportUtilities.makeNew(exportedKpi, sessionCurrDB, metaAss);
+					SbiKpi newKpi = importUtilities.makeNew(exportedKpi, sessionCurrDB, metaAss);
 					newKpi.setSbiKpiDocumentses(new HashSet(0));
 					// TODO manca da associare il kpi con le entita
-					//ImportUtilities.associateWithExistingEntities(newPar, exportedParameter, sessionCurrDB, importer, metaAss);
+					//importUtilities.associateWithExistingEntities(newPar, exportedParameter, sessionCurrDB, importer, metaAss);
 					this.updateSbiCommonInfo4Insert(newKpi);
 					sessionCurrDB.save(newKpi);
 					sessionCurrDB.flush();
@@ -4689,13 +4710,13 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 				if (existingKpiInstId != null) {
 					logger.debug("The kpi instance with id:[" + exportedKpiInst.getIdKpiInstance() + "] is just present. It will be updated.");
 					metaLog.log("The kpi instance with id = [" + exportedKpiInst.getIdKpiInstance() + "] will be updated.");
-					SbiKpiInstance existingKpiInst = ImportUtilities.modifyExisting(exportedKpiInst, sessionCurrDB, existingKpiInstId, metaAss);
+					SbiKpiInstance existingKpiInst = importUtilities.modifyExisting(exportedKpiInst, sessionCurrDB, existingKpiInstId, metaAss);
 					this.updateSbiCommonInfo4Update(existingKpiInst);
 					sessionCurrDB.update(existingKpiInst);
 					sessionCurrDB.flush();
 
 				} else {
-					SbiKpiInstance newKpiInst = ImportUtilities.makeNew(exportedKpiInst, sessionCurrDB, metaAss);
+					SbiKpiInstance newKpiInst = importUtilities.makeNew(exportedKpiInst, sessionCurrDB, metaAss);
 					this.updateSbiCommonInfo4Insert(newKpiInst);
 					sessionCurrDB.save(newKpiInst);
 					sessionCurrDB.flush();
@@ -4761,13 +4782,13 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 				if (existingThValueId != null) {
 					logger.debug("The threshold value with id:[" + exportedThValue.getIdThresholdValue() + "] is just present. It will be updated.");
 					metaLog.log("The threshold value with code = [" + exportedThValue.getLabel() + "] will be updated.");
-					SbiThresholdValue existingThValue = ImportUtilities.modifyExisting(exportedThValue, sessionCurrDB, existingThValueId, metaAss,importer);
+					SbiThresholdValue existingThValue = importUtilities.modifyExisting(exportedThValue, sessionCurrDB, existingThValueId, metaAss,importer);
 					this.updateSbiCommonInfo4Update(existingThValue);
 					sessionCurrDB.update(existingThValue);
 					sessionCurrDB.flush();
 
 				} else {
-					SbiThresholdValue newThresholdValue = ImportUtilities.makeNew(exportedThValue, sessionCurrDB, metaAss,importer);
+					SbiThresholdValue newThresholdValue = importUtilities.makeNew(exportedThValue, sessionCurrDB, metaAss,importer);
 					this.updateSbiCommonInfo4Insert(newThresholdValue);
 					sessionCurrDB.save(newThresholdValue);
 					sessionCurrDB.flush();
@@ -4831,13 +4852,13 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 				if (existingThId != null) {
 					logger.debug("The threshold with id:[" + exportedTh.getThresholdId() + "] is just present. It will be updated.");
 					metaLog.log("The threshold with code = [" + exportedTh.getCode() + "] will be updated.");
-					SbiThreshold existingTh = ImportUtilities.modifyExisting(exportedTh, sessionCurrDB, existingThId, metaAss);
+					SbiThreshold existingTh = importUtilities.modifyExisting(exportedTh, sessionCurrDB, existingThId, metaAss);
 					this.updateSbiCommonInfo4Update(existingTh);
 					sessionCurrDB.update(existingTh);
 					sessionCurrDB.flush();
 
 				} else {
-					SbiThreshold newThreshold = ImportUtilities.makeNew(exportedTh, sessionCurrDB, metaAss);
+					SbiThreshold newThreshold = importUtilities.makeNew(exportedTh, sessionCurrDB, metaAss);
 					this.updateSbiCommonInfo4Insert(newThreshold);
 					sessionCurrDB.save(newThreshold);
 					sessionCurrDB.flush();
@@ -4910,13 +4931,13 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 				if (existingResourceId != null) {
 					logger.debug("The resource with id:[" + exportedResource.getResourceId() + "] is just present. It will be updated.");
 					metaLog.log("The resource with name = [" + exportedResource.getResourceName() + "] will be updated.");
-					SbiResources existingResources = ImportUtilities.modifyExisting(exportedResource, sessionCurrDB, existingResourceId, metaAss,importer);
+					SbiResources existingResources = importUtilities.modifyExisting(exportedResource, sessionCurrDB, existingResourceId, metaAss,importer);
 					this.updateSbiCommonInfo4Update(existingResources);
 					sessionCurrDB.update(existingResources);
 					sessionCurrDB.flush();
 
 				} else {
-					SbiResources newResource = ImportUtilities.makeNew(exportedResource, sessionCurrDB, metaAss, importer);
+					SbiResources newResource = importUtilities.makeNew(exportedResource, sessionCurrDB, metaAss, importer);
 					this.updateSbiCommonInfo4Insert(newResource);
 					sessionCurrDB.save(newResource);
 					sessionCurrDB.flush();
@@ -4983,13 +5004,13 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 				if (existingModResourceId != null) {
 					logger.debug("The model resource with id:[" + exportedModResource.getKpiModelResourcesId() + "] is just present. It will be updated.");
 					metaLog.log("The model resource referencing resource with name = [" + exportedModResource.getSbiResources().getResourceName() + "] nad model instance with label [ "+exportedModResource.getSbiKpiModelInst().getLabel() +" ]will be updated.");
-					SbiKpiModelResources existingResources = ImportUtilities.modifyExisting(exportedModResource, sessionCurrDB, existingModResourceId, metaAss,importer);
+					SbiKpiModelResources existingResources = importUtilities.modifyExisting(exportedModResource, sessionCurrDB, existingModResourceId, metaAss,importer);
 					this.updateSbiCommonInfo4Update(existingResources);
 					sessionCurrDB.update(existingResources);
 					sessionCurrDB.flush();
 
 				} else {
-					SbiKpiModelResources newModResource = ImportUtilities.makeNew(exportedModResource, sessionCurrDB, metaAss, importer);
+					SbiKpiModelResources newModResource = importUtilities.makeNew(exportedModResource, sessionCurrDB, metaAss, importer);
 					this.updateSbiCommonInfo4Insert(newModResource);
 					sessionCurrDB.save(newModResource);
 					sessionCurrDB.flush();
@@ -5051,13 +5072,13 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 				if (existingPeriodicityId != null) {
 					logger.debug("The periodicity with id:[" + exportedPeriodicity.getIdKpiPeriodicity() + "] is just present. It will be updated.");
 					metaLog.log("The periodicity with name = [" + exportedPeriodicity.getName() + "] will be updated.");
-					SbiKpiPeriodicity existingPeriodicity = ImportUtilities.modifyExisting(exportedPeriodicity, sessionCurrDB, existingPeriodicityId, metaAss,importer);
+					SbiKpiPeriodicity existingPeriodicity = importUtilities.modifyExisting(exportedPeriodicity, sessionCurrDB, existingPeriodicityId, metaAss,importer);
 					this.updateSbiCommonInfo4Update(existingPeriodicity);
 					sessionCurrDB.update(existingPeriodicity);
 					sessionCurrDB.flush();
 
 				} else {
-					SbiKpiPeriodicity newPeriodicity = ImportUtilities.makeNew(exportedPeriodicity, sessionCurrDB, metaAss, importer);
+					SbiKpiPeriodicity newPeriodicity = importUtilities.makeNew(exportedPeriodicity, sessionCurrDB, metaAss, importer);
 					this.updateSbiCommonInfo4Insert(newPeriodicity);
 					sessionCurrDB.save(newPeriodicity);
 					sessionCurrDB.flush();
@@ -5124,13 +5145,13 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 				if (existingKpiInstPeriodId != null) {
 					logger.debug("The kpiInstPeriod with id:[" + exportedKpiInstPeriod.getKpiInstPeriodId() + "] is just present. It will be updated.");
 					metaLog.log("The kpiInstPeriod referencing periodicity with name = [" + exportedKpiInstPeriod.getSbiKpiPeriodicity().getName() + "] and kpi instance with prev Id [ "+exportedKpiInstPeriod.getSbiKpiInstance().getIdKpiInstance() +" ]will be updated.");
-					SbiKpiInstPeriod existingKpiInstPeriod = ImportUtilities.modifyExisting(exportedKpiInstPeriod, sessionCurrDB, existingKpiInstPeriodId, metaAss,importer);
+					SbiKpiInstPeriod existingKpiInstPeriod = importUtilities.modifyExisting(exportedKpiInstPeriod, sessionCurrDB, existingKpiInstPeriodId, metaAss,importer);
 					this.updateSbiCommonInfo4Update(existingKpiInstPeriod);
 					sessionCurrDB.update(existingKpiInstPeriod);
 					sessionCurrDB.flush();
 
 				} else {
-					SbiKpiInstPeriod newKpiInstPeriod = ImportUtilities.makeNew(exportedKpiInstPeriod, sessionCurrDB, metaAss, importer);
+					SbiKpiInstPeriod newKpiInstPeriod = importUtilities.makeNew(exportedKpiInstPeriod, sessionCurrDB, metaAss, importer);
 					this.updateSbiCommonInfo4Insert(newKpiInstPeriod);
 					sessionCurrDB.save(newKpiInstPeriod);
 					sessionCurrDB.flush();
@@ -5195,13 +5216,13 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 				if (existingAlarmId != null) {
 					logger.debug("The Alarm with id:[" + exportedAlarm.getId() + "] is just present. It will be updated.");
 					metaLog.log("The Alarm with label = [" + exportedAlarm.getLabel() + "] will be updated.");
-					SbiAlarm existingAlarm = ImportUtilities.modifyExisting(exportedAlarm, sessionCurrDB, existingAlarmId, metaAss,importer);
+					SbiAlarm existingAlarm = importUtilities.modifyExisting(exportedAlarm, sessionCurrDB, existingAlarmId, metaAss,importer);
 					this.updateSbiCommonInfo4Update(existingAlarm);
 					sessionCurrDB.update(existingAlarm);
 					sessionCurrDB.flush();
 
 				} else {
-					SbiAlarm newAlarm = ImportUtilities.makeNew(exportedAlarm, sessionCurrDB, metaAss, importer);
+					SbiAlarm newAlarm = importUtilities.makeNew(exportedAlarm, sessionCurrDB, metaAss, importer);
 					this.updateSbiCommonInfo4Insert(newAlarm);
 					sessionCurrDB.save(newAlarm);
 					sessionCurrDB.flush();
@@ -5264,10 +5285,10 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 	//				if (existingKpiModelAttrId != null) {
 	//					logger.info("The KpiModelAttr with id:[" + exportedKpiModelAttr.getKpiModelAttrId() + "] is just present. It will be updated.");
 	//					metaLog.log("The KpiModelAttr with label = [" + exportedKpiModelAttr.getKpiModelAttrCd() + " and referring to domain "+ exportedKpiModelAttr.getSbiDomains().getDomainCd() +" / "+exportedKpiModelAttr.getSbiDomains().getValueCd()+"] will be updated.");
-	//					SbiKpiModelAttr existingSbiKpiModelAttr = ImportUtilities.modifyExistingSbiKpiModelAttr(exportedKpiModelAttr, sessionCurrDB, existingKpiModelAttrId, metaAss,importer);
+	//					SbiKpiModelAttr existingSbiKpiModelAttr = importUtilities.modifyExistingSbiKpiModelAttr(exportedKpiModelAttr, sessionCurrDB, existingKpiModelAttrId, metaAss,importer);
 	//					sessionCurrDB.update(existingSbiKpiModelAttr);
 	//				} else {
-	//					SbiKpiModelAttr newKpiModelAttr = ImportUtilities.makeNewSbiKpiModelAttr(exportedKpiModelAttr, sessionCurrDB, metaAss, importer);
+	//					SbiKpiModelAttr newKpiModelAttr = importUtilities.makeNewSbiKpiModelAttr(exportedKpiModelAttr, sessionCurrDB, metaAss, importer);
 	//					sessionCurrDB.save(newKpiModelAttr);
 	//					metaLog.log("Inserted new kpiModelAttr with label " + newKpiModelAttr.getKpiModelAttrCd()+ " and referring to domain " + newKpiModelAttr.getSbiDomains().getDomainCd() + " / " + newKpiModelAttr.getSbiDomains().getDomainCd());
 	//					Integer newId = newKpiModelAttr.getKpiModelAttrId();
@@ -5319,10 +5340,10 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 	//							" referring to attribute  "+ exportedKpiModelAttrVal.getSbiKpiModelAttr().getKpiModelAttrNm() +"is just present. It will be updated.");
 	//					metaLog.log("The KpiModelAttrVal referring to model " + exportedKpiModelAttrVal.getSbiKpiModel().getKpiModelNm() + " and " +
 	//							" referring to attribute  "+ exportedKpiModelAttrVal.getSbiKpiModelAttr().getKpiModelAttrNm() +" will be updated");
-	//					SbiKpiModelAttrVal existingSbiKpiModelAttrVal = ImportUtilities.modifyExistingSbiKpiModelAttrVal(exportedKpiModelAttrVal, sessionCurrDB, existingKpiModelAttrValId, metaAss,importer);
+	//					SbiKpiModelAttrVal existingSbiKpiModelAttrVal = importUtilities.modifyExistingSbiKpiModelAttrVal(exportedKpiModelAttrVal, sessionCurrDB, existingKpiModelAttrValId, metaAss,importer);
 	//					sessionCurrDB.update(existingSbiKpiModelAttrVal);
 	//				} else {
-	//					SbiKpiModelAttrVal newKpiModelAttrVal = ImportUtilities.makeNewSbiKpiModelAttrVal(exportedKpiModelAttrVal, sessionCurrDB, metaAss, importer);
+	//					SbiKpiModelAttrVal newKpiModelAttrVal = importUtilities.makeNewSbiKpiModelAttrVal(exportedKpiModelAttrVal, sessionCurrDB, metaAss, importer);
 	//					sessionCurrDB.save(newKpiModelAttrVal);
 	//					metaLog.log("Inserted new kpiModelAttrVal referring to model " + newKpiModelAttrVal.getSbiKpiModel().getKpiModelNm() + " and " +
 	//							" referring to attribute  "+ newKpiModelAttrVal.getSbiKpiModelAttr().getKpiModelAttrNm());
@@ -5376,13 +5397,13 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 				if (existingAlarmContactId != null) {
 					logger.debug("The Alarm Contact with id:[" + exportedAlarmContact.getId() + "] is just present. It will be updated.");
 					metaLog.log("The Alarm Contact with name = [" + exportedAlarmContact.getName() + "] will be updated.");
-					SbiAlarmContact existingAlarmContact = ImportUtilities.modifyExisting(exportedAlarmContact, sessionCurrDB, existingAlarmContactId, metaAss,importer);
+					SbiAlarmContact existingAlarmContact = importUtilities.modifyExisting(exportedAlarmContact, sessionCurrDB, existingAlarmContactId, metaAss,importer);
 					this.updateSbiCommonInfo4Update(existingAlarmContact);
 					sessionCurrDB.update(existingAlarmContact);
 					sessionCurrDB.flush();
 
 				} else {
-					SbiAlarmContact newAlarmContact = ImportUtilities.makeNew(exportedAlarmContact, sessionCurrDB, metaAss, importer);
+					SbiAlarmContact newAlarmContact = importUtilities.makeNew(exportedAlarmContact, sessionCurrDB, metaAss, importer);
 					this.updateSbiCommonInfo4Insert(newAlarmContact);
 					sessionCurrDB.save(newAlarmContact);
 					sessionCurrDB.flush();
@@ -5456,13 +5477,13 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 				if (existingMetacontentsId != null) {
 					logger.debug("The Metacontent with id:[" + exportedMetacontent.getObjMetacontentId() + "] is already present. It will be updated.");
 					metaLog.log("The Metacontent with original id = " + exportedMetacontent.getObjMetacontentId() + "and associated to the object with label" + exportedMetacontent.getSbiObjects().getLabel() +"  will be updated.");
-					SbiObjMetacontents existingObjMetacontents = ImportUtilities.modifyExisting(exportedMetacontent, sessionCurrDB, existingMetacontentsId, metaAss,importer, this.getUserProfile());
+					SbiObjMetacontents existingObjMetacontents = importUtilities.modifyExisting(exportedMetacontent, sessionCurrDB, existingMetacontentsId, metaAss,importer, this.getUserProfile());
 					this.updateSbiCommonInfo4Update(existingObjMetacontents);
 					sessionCurrDB.update(existingObjMetacontents);
 					sessionCurrDB.flush();
 
 				} else {
-					SbiObjMetacontents newMetacontents = ImportUtilities.makeNew(exportedMetacontent, sessionCurrDB, metaAss, importer, this.getUserProfile());
+					SbiObjMetacontents newMetacontents = importUtilities.makeNew(exportedMetacontent, sessionCurrDB, metaAss, importer, this.getUserProfile());
 					this.updateSbiCommonInfo4Insert(newMetacontents);
 					sessionCurrDB.save(newMetacontents);
 					sessionCurrDB.flush();
@@ -5543,14 +5564,14 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 				if (existingUdpId != null) {
 					logger.info("The udp with label:[" + udp.getLabel() + "] is just present. It will be updated.");
 					metaLog.log("The udp with label = [" + udp.getLabel() + "] will be updated.");
-					SbiUdp existingUdp = ImportUtilities.modifyExisting(udp, sessionCurrDB, existingUdpId);
-					ImportUtilities.entitiesAssociations(existingUdp, udp, sessionCurrDB,  metaAss, importer);
+					SbiUdp existingUdp = importUtilities.modifyExisting(udp, sessionCurrDB, existingUdpId);
+					importUtilities.entitiesAssociations(existingUdp, udp, sessionCurrDB,  metaAss, importer);
 					this.updateSbiCommonInfo4Update(existingUdp);
 					sessionCurrDB.update(existingUdp);
 					sessionCurrDB.flush();
 
 				} else {
-					SbiUdp newUdp = ImportUtilities.makeNew(udp, sessionCurrDB, metaAss, importer);
+					SbiUdp newUdp = importUtilities.makeNew(udp, sessionCurrDB, metaAss, importer);
 					this.updateSbiCommonInfo4Insert(newUdp);
 					sessionCurrDB.save(newUdp);
 					sessionCurrDB.flush();
@@ -5632,14 +5653,14 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 					metaLog.log("The udp value with udp with label " + udpvalue.getSbiUdp().getLabel() + " "
 							+ " and family " + udpvalue.getFamily() + " with reference id "
 							+  udpvalue.getReferenceId()+ "] will be updated.");
-					SbiUdpValue existingUdpValue = ImportUtilities.modifyExisting(udpvalue, sessionCurrDB, existingUdpValueId);
-					ImportUtilities.entitiesAssociations(udpvalue, existingUdpValue, sessionCurrDB, metaAss, importer);
+					SbiUdpValue existingUdpValue = importUtilities.modifyExisting(udpvalue, sessionCurrDB, existingUdpValueId);
+					importUtilities.entitiesAssociations(udpvalue, existingUdpValue, sessionCurrDB, metaAss, importer);
 					this.updateSbiCommonInfo4Update(existingUdpValue);
 					sessionCurrDB.update(existingUdpValue);
 					sessionCurrDB.flush();
 
 				} else {
-					SbiUdpValue newUdpValue = ImportUtilities.makeNew(udpvalue, sessionCurrDB, metaAss, importer);
+					SbiUdpValue newUdpValue = importUtilities.makeNew(udpvalue, sessionCurrDB, metaAss, importer);
 					this.updateSbiCommonInfo4Insert(newUdpValue);
 					sessionCurrDB.save(newUdpValue);
 					sessionCurrDB.flush();
@@ -5718,14 +5739,14 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 						metaLog.log("The relation between object " + kpirel.getSbiKpiByKpiFatherId().getName() + " "
 								+ " and kpi " + kpirel.getSbiKpiByKpiChildId().getName() + " with parameter "
 								+ kpirel.getParameter()+ "] will be updated.");
-						SbiKpiRel existingKpiRel = ImportUtilities.modifyExisting(kpirel, sessionCurrDB, existingKpiRelId);
-						ImportUtilities.entitiesAssociations(kpirel, existingKpiRel, sessionCurrDB, metaAss, importer);
+						SbiKpiRel existingKpiRel = importUtilities.modifyExisting(kpirel, sessionCurrDB, existingKpiRelId);
+						importUtilities.entitiesAssociations(kpirel, existingKpiRel, sessionCurrDB, metaAss, importer);
 						this.updateSbiCommonInfo4Update(existingKpiRel);
 						sessionCurrDB.update(existingKpiRel);
 						sessionCurrDB.flush();
 
 					} else {
-						SbiKpiRel newRel = ImportUtilities.makeNew(kpirel, sessionCurrDB, metaAss, importer);
+						SbiKpiRel newRel = importUtilities.makeNew(kpirel, sessionCurrDB, metaAss, importer);
 						this.updateSbiCommonInfo4Insert(newRel);
 						sessionCurrDB.save(newRel);
 						sessionCurrDB.flush();
@@ -5787,11 +5808,11 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 	//				if (existingGrantId != null) {
 	//					logger.debug("Exported association of grant with name " + grant.getName() + "] will be updated.");
 	//					metaLog.log("Exported association of grant with name " + grant.getName() + "] will be updated.");
-	//					SbiOrgUnitGrant existingGrant = ImportUtilities.modifyExistingOuGrant(grant, sessionCurrDB, existingGrantId);
-	//					ImportUtilities.entitiesAssociationsOuGrant(grant, existingGrant, sessionCurrDB, metaAss, importer);
+	//					SbiOrgUnitGrant existingGrant = importUtilities.modifyExistingOuGrant(grant, sessionCurrDB, existingGrantId);
+	//					importUtilities.entitiesAssociationsOuGrant(grant, existingGrant, sessionCurrDB, metaAss, importer);
 	//					sessionCurrDB.update(existingGrant);
 	//				} else {
-	//					SbiOrgUnitGrant newGrant = ImportUtilities.makeNewOuGrant(grant, sessionCurrDB, metaAss, importer);
+	//					SbiOrgUnitGrant newGrant = importUtilities.makeNewOuGrant(grant, sessionCurrDB, metaAss, importer);
 	//					sessionCurrDB.save(newGrant);
 	//					logger.debug("Inserted new grant with name " + grant.getName() );
 	//					metaLog.log("Inserted new grant with name " + grant.getName() );
@@ -5846,11 +5867,11 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 	//				if (existingGrantNodeId != null) {
 	//					logger.debug("Exported association of grant node with grant id " + grantNode.getId().getGrantId() + "] will be updated.");
 	//					metaLog.log("Exported association of grant node with grant id " + grantNode.getId().getGrantId() + "] will be updated.");
-	//					SbiOrgUnitGrantNodes existingGrantNode = ImportUtilities.modifyExistingOuGrantNode(grantNode, sessionCurrDB, existingGrantNodeId);
-	//					ImportUtilities.entitiesAssociationsOuGrantNode(existingGrantNode.getId(), grantNode, existingGrantNode, sessionCurrDB, metaAss, importer);
+	//					SbiOrgUnitGrantNodes existingGrantNode = importUtilities.modifyExistingOuGrantNode(grantNode, sessionCurrDB, existingGrantNodeId);
+	//					importUtilities.entitiesAssociationsOuGrantNode(existingGrantNode.getId(), grantNode, existingGrantNode, sessionCurrDB, metaAss, importer);
 	//					sessionCurrDB.update(existingGrantNode);
 	//				} else {
-	//					SbiOrgUnitGrantNodes newGrantNode = ImportUtilities.makeNewOuGrantNode(grantNode, sessionCurrDB, metaAss, importer);
+	//					SbiOrgUnitGrantNodes newGrantNode = importUtilities.makeNewOuGrantNode(grantNode, sessionCurrDB, metaAss, importer);
 	//					sessionCurrDB.save(newGrantNode);
 	//					logger.debug("Inserted new grant node with grant id " + grantNode.getId().getGrantId() );
 	//					metaLog.log("Inserted new grant node with grant id " + grantNode.getId().getGrantId() );
