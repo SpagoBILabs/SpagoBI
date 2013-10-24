@@ -701,6 +701,7 @@ Ext.extend(Sbi.geo.MainPanel, Ext.Panel, {
 		this.featureHandler = new OpenLayers.Handler.Feature(
 				this, this.targetLayer, {click: this.onTargetFeatureClick}
 	    );
+		this.featureHandler.activate();
 		
 		this.targetLayer.events.register("beforefeaturesadded", this, function(o) { 
 			this.map.xfeatures = o.features;
@@ -724,9 +725,9 @@ Ext.extend(Sbi.geo.MainPanel, Ext.Panel, {
 			this.detailDocumentConf = [this.detailDocumentConf];
 		}
 		
-		if(!this.toolbar.selectMode){
+		//if(!this.toolbar.selectMode){
 			this.openPopup(feature);
-		}
+		//}
 		Sbi.trace("[MainPanel.onTargetFeatureClick]: OUT");
 	}
 	
@@ -1087,6 +1088,7 @@ Ext.extend(Sbi.geo.MainPanel, Ext.Panel, {
 	// ==========================================================================================
 	
 	, openPopup: function(feature) {
+		Sbi.trace("[MainPanel.openPopup]: IN");
 		var content = '';
 		content += this.getFeatureInfoHtmlFragment(feature);
 		content += this.getDetailDocHtmlFragment(feature);
@@ -1100,7 +1102,10 @@ Ext.extend(Sbi.geo.MainPanel, Ext.Panel, {
         	this.closePopup(feature);
         }
         
-        feature.popup = new OpenLayers.Popup.AnchoredBubble( //new OpenLayers.Popup.FramedCloud(
+        Sbi.trace("[MainPanel.openPopup]: feature is equal to [" + feature + "]");
+        feature.popup = 
+        	new OpenLayers.Popup.FramedCloud(
+        	//new OpenLayers.Popup.Anchored( 
         		Ext.id(), 
                 feature.geometry.getBounds().getCenterLonLat(),
                 new OpenLayers.Size(200, 150),
@@ -1111,6 +1116,8 @@ Ext.extend(Sbi.geo.MainPanel, Ext.Panel, {
         );
         
         this.map.addPopup(feature.popup);
+        
+        Sbi.trace("[MainPanel.openPopup]: OUT");
 	}
 	
 	, closePopup: function(feature) {
@@ -1132,9 +1139,11 @@ Ext.extend(Sbi.geo.MainPanel, Ext.Panel, {
 	
 	, getFeatureInfoHtmlFragment: function(feature) {
 		var info = "<div style='font-size:.8em'>";
-	    for(var i=0; i<this.featureInfo.length; i++){
-	    	info = info+"<b>"+ this.featureInfo[i][0] +"</b>: " + feature.attributes[this.featureInfo[i][1]] + "<br />";    
-	    } 
+		if(this.featureInfo) {
+		    for(var i=0; i<this.featureInfo.length; i++){
+		    	info = info+"<b>"+ this.featureInfo[i][0] +"</b>: " + feature.attributes[this.featureInfo[i][1]] + "<br />";    
+		    } 
+		}
 	    info += "</div>";
 	    return info;
 	}
