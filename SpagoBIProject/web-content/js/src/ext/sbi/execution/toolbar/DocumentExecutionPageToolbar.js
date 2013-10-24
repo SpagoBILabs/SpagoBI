@@ -7,7 +7,6 @@
 Ext.ns("Sbi.execution.toolbar");
 
 Sbi.execution.toolbar.DocumentExecutionPageToolbar = function(config) {	
-	
 	// init properties...
 	var defaultSettings = {
 		// public

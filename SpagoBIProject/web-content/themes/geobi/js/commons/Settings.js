@@ -9,6 +9,19 @@
  */
 Ext.ns("Sbi.settings.geobi");
 
+/**
+ * Execution  panel settings
+ */
+Sbi.settings.geobi.execution = {
+	    toolbar:{
+			hideForEngineLabels: ['Gis Engine'] //list of engines without toolbar
+		}
+};
+
+
+/**
+ * Document browser settings
+ */
 Sbi.settings.geobi.browser = {
 		mexport: {
 			massiveExportWizard: {
@@ -28,7 +41,7 @@ Sbi.settings.geobi.browser = {
 //	  , maxNumberOfExecutionTabs: 5 //the maximum number of tabs to open on execution of documents if valorized
 	  , typeLayout: 'card' //possible values: 'tab' or 'card'
 	  , showTitle: false 
-} 
+}; 
 
 //Sbi.settings.browser = Ext.apply(Sbi.settings.browser,Sbi.settings.geobi.browser);
 

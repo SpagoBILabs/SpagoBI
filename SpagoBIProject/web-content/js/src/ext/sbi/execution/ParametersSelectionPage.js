@@ -320,7 +320,7 @@ Ext.extend(Sbi.execution.ParametersSelectionPage, Ext.Panel, {
 	, initToolbar: function(config, doc) {
 		
 		this.toolbarHiddenPreference = config.toolbarHidden!== undefined ? config.toolbarHidden : false;
-		if (this.toolbarHiddenPreference) return;
+		if (this.toolbarHiddenPreference || this.hideToolbar(doc.engine)) return;
 		
 		config.executionToolbarConfig = config.executionToolbarConfig || {};
 		config.executionToolbarConfig.callFromTreeListDoc = config.callFromTreeListDoc;
@@ -1003,6 +1003,22 @@ Ext.extend(Sbi.execution.ParametersSelectionPage, Ext.Panel, {
 	, onExecuteSnapshot: function (snapshotId) {
 		this.executionInstance.SBI_SNAPSHOT_ID = snapshotId;
 		this.refreshDocument(this.executionInstance);
+	}
+	
+	, hideToolbar: function(engine){
+		var toReturn = false;
+		if (Sbi.settings && Sbi.settings.execution && Sbi.settings.execution.toolbar &&
+			Sbi.settings.execution.toolbar.hideForEngineLabels) {
+			var listEnginesToHide = Sbi.settings.execution.toolbar.hideForEngineLabels;
+			for (var i=0; i < listEnginesToHide.length; i++ ){
+				if(listEnginesToHide[i] === engine){
+					toReturn = true;
+					break;
+				}
+			}
+		}
+		
+		return toReturn;
 	}
 	
 	// =================================================================================================================

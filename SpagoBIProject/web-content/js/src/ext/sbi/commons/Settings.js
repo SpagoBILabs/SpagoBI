@@ -33,6 +33,10 @@ Sbi.settings.execution = {
 			}
 			, height: 205
 		}
+		
+		, toolbar:{
+			hideForEngineLabels:[]	//list of engines without toolbar 
+		}
 };
 
 /**
@@ -54,9 +58,8 @@ Sbi.settings.browser = {
 		}
 	  , showLeftPanels: true
 	  , showBreadCrumbs: false
-	  , maxNumberOfExecutionTabs: 1 //the maximum number of tabs to open on execution of documents if valorized
-	  , typeLayout: 'card' //possible values: 'tab' or 'card'
-	  , showTitle: false 
+	  , maxNumberOfExecutionTabs: 1 	 //the maximum number of tabs to open on execution of documents if valorized
+	  , typeLayout: 'card'				 //possible values: 'tab' or 'card'
 	  , showTitle: true 
 } 
 
