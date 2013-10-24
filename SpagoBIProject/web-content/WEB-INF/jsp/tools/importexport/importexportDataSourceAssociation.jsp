@@ -197,6 +197,11 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 								selected = "";
 								DataSource curDs = (DataSource)currentDsIterator.next();
 								String currentDsdescription = curDs.getDescr();
+								if(currentDsdescription == null || currentDsdescription.equals("")){
+									currentDsdescription = "No descr, Label: "+curDs.getLabel();									
+								}
+
+								
 								String dsAssociated = usrAssKeep.getAssociatedDataSource(curDs.getLabel());
 								if( (dsAssociated!=null) &&  curDs.getLabel().equals(dsAssociated)) {
 									selected=" selected ";

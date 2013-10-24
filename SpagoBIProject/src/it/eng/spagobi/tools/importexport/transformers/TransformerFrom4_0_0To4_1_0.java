@@ -11,6 +11,7 @@ import it.eng.spagobi.tools.importexport.ITransformer;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 import org.apache.log4j.Logger;
 
@@ -44,6 +45,15 @@ public class TransformerFrom4_0_0To4_1_0 implements ITransformer {
 		logger.debug("IN");
 		Connection conn = null;
 		try {
+			conn = TransformersUtilities.getConnectionToDatabase(pathImpTmpFolder, archiveName);
+			fixSbiObjects(conn);
+			fixSbiDataSet(conn);
+			fixSbiDataSource(conn);
+			fixSbiEngines(conn);
+			fixSbiSnapshot(conn);
+			
+			//fixSbiGeoLayers(conn);
+			
 		} catch (Exception e) {
 			logger.error("Error while changing database", e);	
 		} finally {
@@ -58,6 +68,115 @@ public class TransformerFrom4_0_0To4_1_0 implements ITransformer {
 		}
 	}
 	
+	
+	private void fixSbiObjects(Connection conn) throws Exception {
+		logger.debug("IN");
+		Statement stmt = conn.createStatement();
+		String sql = "";
+		try {
+			sql = "ALTER TABLE SBI_OBJECTS ADD COLUMN PREVIEW_FILE VARCHAR(100);"
+					+ " ALTER TABLE SBI_OBJECTS ADD COLUMN IS_PUBLIC BOOLEAN DEFAULT FALSE;"
+					+ " UPDATE SBI_OBJECTS SET IS_PUBLIC = TRUE;";
+			stmt.executeUpdate(sql);
+		
+		} catch (Exception e) {
+			logger.error(
+					"Error in altering sbi_Objects",
+					e);
+		}
+		logger.debug("OUT");
+	}
+	
+	
+	private void fixSbiDataSet(Connection conn) throws Exception {
+		logger.debug("IN");
+		Statement stmt = conn.createStatement();
+		String sql = "";
+		try {
+			
+			sql = "ALTER TABLE SBI_DATA_SET ADD COLUMN PERSIST_TABLE_NAME VARCHAR(50);"
+					+ " ALTER TABLE SBI_DATA_SET DROP COLUMN IS_FLAT_DATASET;"
+					+ " ALTER TABLE SBI_DATA_SET DROP COLUMN FLAT_TABLE_NAME;"
+					+ " ALTER TABLE SBI_DATA_SET DROP COLUMN DATA_SOURCE_FLAT_ID;"
+					+ " ALTER TABLE SBI_DATA_SET DROP COLUMN DATA_SOURCE_PERSIST_ID;";
+			stmt.executeUpdate(sql);
+		
+		} catch (Exception e) {
+			logger.error(
+					"Error in altering sbi_DataSet",
+					e);
+		}
+		logger.debug("OUT");
+	}
+	
+	private void fixSbiDataSource(Connection conn) throws Exception {
+		logger.debug("IN");
+		Statement stmt = conn.createStatement();
+		String sql = "";
+		try {
+			
+			sql = "ALTER TABLE SBI_DATA_SOURCE ADD COLUMN READ_ONLY BOOLEAN DEFAULT FALSE;"
+					+ " ALTER TABLE SBI_DATA_SOURCE ADD COLUMN WRITE_DEFAULT BOOLEAN DEFAULT FALSE;";
+			stmt.executeUpdate(sql);
+		
+		} catch (Exception e) {
+			logger.error(
+					"Error in altering sbi_Data_Source",
+					e);
+		}
+		logger.debug("OUT");
+	}
+
+	private void fixSbiEngines(Connection conn) throws Exception {
+		logger.debug("IN");
+		Statement stmt = conn.createStatement();
+		String sql = "";
+		try {
+			sql = "ALTER TABLE  SBI_ENGINES DROP COLUMN DEFAULT_DS_ID;";
+			stmt.executeUpdate(sql);
+
+		} catch (Exception e) {
+			logger.error(
+					"Error in altering sbi_Engines",
+					e);
+		}
+		logger.debug("OUT");
+	}
+	
+	private void fixSbiSnapshot(Connection conn) throws Exception {
+		logger.debug("IN");
+		Statement stmt = conn.createStatement();
+		String sql = "";
+		try {
+			sql = "ALTER TABLE SBI_SNAPSHOTS ADD COLUMN CONTENT_TYPE VARCHAR(300) DEFAULT NULL;";
+			stmt.executeUpdate(sql);
+
+		} catch (Exception e) {
+			logger.error(
+					"Error in altering sbi_Snapshot",
+					e);
+		}
+		logger.debug("OUT");
+	}
+	
+	
+//	private void fixSbiGeoLayers(Connection conn) throws Exception {
+//		logger.debug("IN");
+//		Statement stmt = conn.createStatement();
+//		String sql = "";
+//		try {
+//			
+//			sql = "ALTER TABLE SBI_GEO_LAYERS ADD COLUMN IS_BASE_LAYER BOOLEAN DEFAULT FALSE;";
+//			stmt.executeUpdate(sql);
+//
+//		
+//		} catch (Exception e) {
+//			logger.error(
+//					"Error in altering sbi_Geo_Layers",
+//					e);
+//		}
+//		logger.debug("OUT");
+//	}
 
 }
 
