@@ -70,7 +70,7 @@ public class GeoSpatialDimensionDatasetNormalizer implements IDatasetNormalizer 
 	public static transient Logger logger = Logger.getLogger(GeoSpatialDimensionDatasetNormalizer.class);
 
 
-	//Modifiy the original file associated to the dataset adding a column with correct values to use for geo hierarchy
+	//Modify the original file associated to the dataset adding a column with correct values to use for geo hierarchy
 	//then set this column as the hierarchy level column inside the dataset metadata
 	public IDataSet normalizeDataset(IDataSet dataset,
 			Map<String, HierarchyLevel> hierarchiesColumnsToCheck) {
@@ -215,37 +215,6 @@ public class GeoSpatialDimensionDatasetNormalizer implements IDatasetNormalizer 
 		
 		//Modify Dataset Metadata **************************************
 		
-		/*
-		//Search and remove hierarchy properties already set on a column for Geo Hierarchy
-		IMetaData dataStoreMetaData = dataset.getMetadata();
-		for (int i = 0; i < dataStoreMetaData.getFieldCount(); i++) {
-			IFieldMetaData fieldMetaData=dataStoreMetaData.getFieldMeta(i);
-			String name = fieldMetaData.getName();
-			if (name.equals(columnNameOnDataset)){		
-				fieldMetaData.deleteProperty("hierarchy");
-				fieldMetaData.deleteProperty("hierarchy_level");		
-				break;
-			}
-		}
-		//add metadata for new column
-		IFieldMetaData newFieldMetaData = new FieldMetadata();
-		newFieldMetaData.setName(newColumnName);
-		Class type = null;
-		try {
-			type = Class.forName(newColumnType);
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		}
-		newFieldMetaData.setType(type);
-		newFieldMetaData.setProperty("hierarchy", GEO_HIERARCHY_NAME);
-		newFieldMetaData.setProperty("hierarchy_level", levelName);
-		dataStoreMetaData.addFiedMeta(newFieldMetaData);
-		
-		//Set the new metadata to the dataset
-		DatasetMetadataParser dsp = new DatasetMetadataParser();
-		String dsMetadata = dsp.metadataToXML(dataStoreMetaData);
-		dataset.setDsMetadata(dsMetadata);
-		*/
 		modifyDatasetMetadata(dataset, columnNameOnDataset, levelName, newColumnName, newColumnType);
 		
 	}
