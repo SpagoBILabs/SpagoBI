@@ -1369,7 +1369,7 @@ public class SelfServiceDataSetCRUD {
 		}
 		catch (Exception e) {
 			logger.error("Error while executing dataset for test purpose",e);
-			return null;		
+			throw new RuntimeException("Error while executing dataset for test purpose", e);
 		}
 
 		logger.debug("OUT");
