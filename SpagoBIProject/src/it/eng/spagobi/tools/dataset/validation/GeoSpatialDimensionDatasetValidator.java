@@ -100,11 +100,27 @@ public class GeoSpatialDimensionDatasetValidator  extends AbstractDatasetValidat
 				    	    		IField field = record.getFieldAt(columnIndex);
 				    	    		Object fieldValue = field.getValue(); 
 				    	    		if(fieldValue != null)  {
-				    	    			if (!admissibleValues.contains(fieldValue))
-				    	    			{
-				    	    				String errorDescription = "Error in validation: "+fieldValue+" is not valid for hierarchy "+GEO_HIERARCHY_NAME+" on level "+levelName+". "+hint+"...";
-				    	    				validationErrors.addError(rowNumber, columnIndex, field, errorDescription);
+				    	    			if (fieldValue instanceof String){
+				    	    				String valueString = (String)fieldValue;
+				    	    				//Case Empty String
+				    	    				if (valueString.isEmpty()){
+				    	    					String errorDescription = "Error in validation: empty value is not valid for hierarchy "+GEO_HIERARCHY_NAME+" on level "+levelName+". "+hint+"...";
+					    	    				validationErrors.addError(rowNumber, columnIndex, field, errorDescription);
+				    	    				} else {
+						    	    			if (!admissibleValues.contains(fieldValue))
+						    	    			{
+						    	    				String errorDescription = "Error in validation: "+fieldValue+" is not valid for hierarchy "+GEO_HIERARCHY_NAME+" on level "+levelName+". "+hint+"...";
+						    	    				validationErrors.addError(rowNumber, columnIndex, field, errorDescription);
+						    	    			}
+				    	    				}
+				    	    			} else {
+					    	    			if (!admissibleValues.contains(fieldValue))
+					    	    			{
+					    	    				String errorDescription = "Error in validation: "+fieldValue+" is not valid for hierarchy "+GEO_HIERARCHY_NAME+" on level "+levelName+". "+hint+"...";
+					    	    				validationErrors.addError(rowNumber, columnIndex, field, errorDescription);
+					    	    			}
 				    	    			}
+
 				    	    		} else {
 			    	    				String errorDescription = "Error in validation: null is not valid for hierarchy "+GEO_HIERARCHY_NAME+" on level "+levelName+". "+hint+"...";
 			    	    				validationErrors.addError(rowNumber, columnIndex, field, errorDescription);
@@ -142,12 +158,25 @@ public class GeoSpatialDimensionDatasetValidator  extends AbstractDatasetValidat
 	public Set<String> testValidationCriteria(MetaModelWrapper metaModelWrapper, HierarchyWrapper hierarchy, IDataStore datastoreToValidate, String levelName, String columnNameOnDataset ){
 		Object fieldValue = null;
 		
-		//Get the first value of the datastore to validate
+		//Get the first not null or not empty value of the datastore to validate
 		Iterator it = datastoreToValidate.iterator();
 		int columnIndex = datastoreToValidate.getMetaData().getFieldIndex(columnNameOnDataset); 
-   		IRecord record = (IRecord)it.next();
-    	IField field = record.getFieldAt(columnIndex);
-    	fieldValue = field.getValue();   		
+		while( it.hasNext() ) {
+	   		IRecord record = (IRecord)it.next();
+	    	IField field = record.getFieldAt(columnIndex);
+	    	fieldValue = field.getValue();   	
+	    	if (fieldValue != null){
+	    		if (fieldValue instanceof String){
+	    			String stringValue = (String) fieldValue;
+	    			if (!stringValue.isEmpty()){
+	    				break;
+	    			}
+	    		} else {
+	    			break;
+	    		}
+	    	}
+		}
+	
 
 		
 		//then check if the value is ammissible for the Level members (default values used as identifiers values)
