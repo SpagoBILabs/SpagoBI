@@ -604,7 +604,7 @@ public class CopyOfExecuteBIDocumentJob implements Job {
 					logger.error("Error while deleting object snapshots", e);
 				}
 			}
-			snapDao.saveSnapshot(response, biobj.getId(), snapName, snapDesc);	
+			snapDao.saveSnapshot(response, biobj.getId(), snapName, snapDesc, null);	
 		} catch (Exception e) {
 			logger.error("Error while saving schedule result as new snapshot", e);
 		}finally{
