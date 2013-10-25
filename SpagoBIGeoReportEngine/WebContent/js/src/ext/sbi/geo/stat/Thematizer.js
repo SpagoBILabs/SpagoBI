@@ -450,9 +450,25 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
     					     		this.featureSourceType = obj.featureSourceType;
     					     		this.featureSource = obj.featureSource;
     								this.loadLayer(function(response) {
-    									alert("Layer Loaded!");
-    									this.onSuccess(response);
+    									
+    									alert("Layer loaded! " + this.layer.features.length);
+    									Sbi.debug("[Thematizer.loadLayer.onSuccess] : layer loaded");
+    									//this.onSuccess(response);
+    									var doc = response.responseXML;
+    							        if (!doc || !doc.documentElement) {
+    							            doc = response.responseText;
+    							        }
+    							        var format = this.format || new OpenLayers.Format.GeoJSON()
+    							        this.layer.removeAllFeatures();
+    							        this.layer.addFeatures(format.read(doc));
+    									this.layer.renderer.clear();
+    							        this.layer.redraw();
+    									alert("Layer added! " + this.layer.features.length);
+    									Sbi.debug("[Thematizer.loadLayer.onSuccess] : layer added");
     									this.thematize({resetClassification: true});
+    									alert("Layer thematized!");
+    									Sbi.debug("[Thematizer.loadLayer.onSuccess] : layer thematized");
+    									
     					    	    	this.fireEvent('indicatorsChanged', this, indicators, this.indicator);
     					    	    	this.fireEvent('filtersChanged', this, filters);
     								});
@@ -950,6 +966,7 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
             doc = response.responseText;
         }
         var format = this.format || new OpenLayers.Format.GeoJSON()
+        this.layer.removeAllFeatures();
         this.layer.addFeatures(format.read(doc));
         this.requestSuccess(response);
     }
