@@ -686,7 +686,7 @@ public class SelfServiceDataSetCRUD {
 
 	@POST
 	@Path("/testDataSet")
-	@Produces(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON+"; charset=UTF-8")
 	public String testDataSet(@Context HttpServletRequest req) {
 		IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 		try {
@@ -750,7 +750,7 @@ public class SelfServiceDataSetCRUD {
 	
 	@POST
 	@Path("/getDataStore")
-	@Produces(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON+"; charset=UTF-8")
 	public String getDataStore(@Context HttpServletRequest req) {
 		IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 		Integer start = new Integer(0);
