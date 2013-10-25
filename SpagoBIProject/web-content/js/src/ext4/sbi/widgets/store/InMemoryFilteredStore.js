@@ -161,6 +161,12 @@ Ext.define('Sbi.widgets.store.InMemoryFilteredStore', {
 		return items;
 	}
 	
+	, getTotalCount: function(){
+		if(this.inMemoryData){
+			return this.inMemoryData.length;
+		}
+		return 0;
+	}
 
 
 	

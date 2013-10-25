@@ -94,7 +94,7 @@ Ext.define('Sbi.widgets.grid.DynamicGridPanel', {
       	}
       	
     	this.callParent(arguments);
-
+    	this.bbar = this.pagingToolbar;
     	this.on('afterrender', this.loadStore, this);
       	
     	Sbi.debug('DynamicGridPanel costructor OUT');
@@ -122,9 +122,9 @@ Ext.define('Sbi.widgets.grid.DynamicGridPanel', {
     	Sbi.debug('DynamicGridPanel updategrid IN');
     	var columns = this.store.getColumns();
     	Sbi.widget.grid.StaticGridDecorator.addButtonColumns(this.decorators, this.columns, this);
-    	if((this.bbar == undefined || this.bbar==null) && this.pagingToolbar){
-    		this.bbar = this.pagingToolbar;
-    	}
+//    	if((this.bbar == undefined || this.bbar==null) && this.pagingToolbar){
+//    		this.bbar = this.pagingToolbar;
+//    	}
     	if(this.bbar!=undefined && this.bbar!=null){     
     		this.bbar.bindStore(this.store);    		
     		this.bbar.doLayout();
