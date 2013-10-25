@@ -37,10 +37,9 @@ Sbi.execution.ExecutionPanel = function(config, doc) {
 	
 	this.activeDocument.documentExecutionPage.on('openfavourite', function(doc){
 		this.fireEvent('openfavourite', doc);
-	} , this);
-	
+	} , this);	
 	var c = Ext.apply({}, config || {}, {
-		title: title
+		title: (this.hideToolbar(doc.engine))?'':title
 		, closable: closable
 		, border: false
 		, activeItem: 0
@@ -500,6 +499,21 @@ Ext.extend(Sbi.execution.ExecutionPanel, Ext.Panel, {
 		}
 	}
 	
+	, hideToolbar: function(engine){
+		var toReturn = false;
+		if (Sbi.settings && Sbi.settings.execution && Sbi.settings.execution.toolbar &&
+			Sbi.settings.execution.toolbar.hideForEngineLabels) {
+			var listEnginesToHide = Sbi.settings.execution.toolbar.hideForEngineLabels;
+			for (var i=0; i < listEnginesToHide.length; i++ ){
+				if(listEnginesToHide[i] === engine){
+					toReturn = true;
+					break;
+				}
+			}
+		}
+		
+		return toReturn;
+	}
 	
 	
 	// =================================================================================================================
