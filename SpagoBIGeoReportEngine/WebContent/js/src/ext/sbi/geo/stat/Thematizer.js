@@ -154,6 +154,10 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
 	 */
     , nameAttribute: null
 
+    , indicators: null
+    
+    , filters: null
+    
     /**
 	 * @property {Object} defaultSymbolizer
 	 * This symbolizer is used in the constructor to define
@@ -209,9 +213,7 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
 			throw "Impossible to build thematizer. Config object is undefined";
 		}
 		
-		if(!config.layerId) {
-			throw "Impossible to build thematizer. Config property [layerId] is undefined";
-		}
+		
 		
 		if(config.indicatorContainer == 'store') {
 			
@@ -238,8 +240,11 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
 				}
 			} else {
 				throw "Value [" + config.storeType + "] is not valid for property [storeType]";
-			}
-			
+			}		
+		}
+		
+		if(config.storeType != "virtualStore" && !config.layerId) {
+			throw "Impossible to build thematizer. Config property [layerId] must be defined if store type is not equal to [virtualStore]";
 		}
 		
 		Sbi.trace("[Thematizer.validateConfigObject] : Config object passed to constructor has been succesfully validated");
@@ -303,6 +308,72 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
     , convertToNumber: function(value) {
     	if(typeof value == "Number") return value;
     	return parseFloat(value);
+    }
+    
+    /**
+     * Apply the filters to the store
+     */
+    , filterStore: function(filters){
+    	Sbi.debug("[Thematizer.filterStore] : IN");
+    	if(filters){
+    		Sbi.debug("[Thematizer.filterStore] :  filtering the store for"+filters);
+    		
+    		var filterFunction = function(record, id){
+    			for(var i=0; i<filters.length; i++){
+	        		var field = filters[i].field;
+	        		var value = filters[i].value;
+	        		if(field && value!=null && value!=undefined && value!=""){
+	        			if(record.data[field]!=value){
+	        				return false;
+	        			}
+	        		}else{
+	        			Sbi.debug("[Thematizer.filterStore] : there are filters with no field defined");
+	        		}
+	    		}
+    			
+    			return true;
+    		};
+    		
+    		this.store.filterBy(filterFunction, this);
+    	}
+    	Sbi.debug("[Thematizer.filterStore] : OUT");
+    }
+    
+    /**
+     * @method
+     *
+     * @param {Object} obj
+     */
+    , showDetails: function(obj) {
+        var feature = obj.feature;
+        // popup html
+        var html = typeof this.nameAttribute == 'string' ?
+            '<h4 style="margin-top:5px">'
+                + feature.attributes[this.nameAttribute] +'</h4>' : '';
+        html += this.indicator + ": " + feature.attributes[this.indicator];
+        // create popup located in the bottom right of the map
+        var bounds = this.layer.map.getExtent();
+        var lonlat = new OpenLayers.LonLat(bounds.right, bounds.bottom);
+        var size = new OpenLayers.Size(200, 100);
+        var popup = new OpenLayers.Popup.AnchoredBubble(
+            feature.attributes[this.nameAttribute],
+            lonlat, size, html, 0.5, false);
+        var symbolizer = feature.layer.styleMap.createSymbolizer(feature, 'default');
+        popup.setBackgroundColor(symbolizer.fillColor);
+        this.layer.map.addPopup(popup);
+    }
+
+    /**
+     * @method
+     *
+     * @param {Object} obj
+     */
+    , hideDetails: function(obj) {
+        //remove all other popups from screen
+        var map= this.layer.map;
+        for (var i = map.popups.length - 1; i >= 0; --i) {
+            map.removePopup(map.popups[i]);
+        }
     }
     
 	// -----------------------------------------------------------------------------------------------------------------
@@ -407,7 +478,7 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
     		Sbi.debug("[Thematizer.setData] : Property [storeId] is not specified in store's metadata so it will be used as [storeId] the old one that is equal to [" + this.storeId + "]");
     	}
     	
-    	var indicators = [];
+    	this.indicators = [];
     	var selectedIndictaor = null;
     	for(var i = 0; i < meta.fields.length; i++) {
     		var field = meta.fields[i];
@@ -416,7 +487,7 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
     		if(field.role == 'MEASURE')  {
     			Sbi.debug("[Thematizer.setData] : new indicator found. It is equal to [" + field.header + "]");
     			selectedIndictaor = field.header;
-    			indicators.push([field.header, field.header]);
+    			this.indicators.push([field.header, field.header]);
     		}
     	}
     	if(selectedIndictaor != null) {
@@ -426,68 +497,16 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
     		Sbi.debug("[Thematizer.setData] : Indicator not specified in store's metadata so the ld one will be used [" + this.indicator + "]");
     	}
     	
-    	var filters = this.getAttributeFilters(store, meta);
+    	this.filters = this.getAttributeFilters(store, meta);
     	
     	if(meta.geoIdHierarchyLevel) {
     		if(this.geoIdHierarchyLevel != meta.geoIdHierarchyLevel) {
-    			//alert("calling service...");
-    			var loadLayerServiceUrl = Sbi.config.serviceRegistry.getServiceUrl({
-        			serviceName: 'GetHierarchyLevelMeta'
-        			, baseParams: {levelName: meta.geoIdHierarchyLevel}
-        		});
-    			
-    			Ext.Ajax.request({
-    				url: loadLayerServiceUrl,
-    				success : function(response, options) {
-    					if(response !== undefined && response.responseText !== undefined && response.statusText=="OK") {
-    						if(response.responseText!=null && response.responseText!=undefined){
-    							if(response.responseText.indexOf("error.mesage.description")>=0){
-    								Sbi.exception.ExceptionHandler.handleFailure(response);
-    							}else{
-    								var obj = JSON.parse(response.responseText);
-    								this.layerName = obj.layerName;
-    								this.layerId = obj.layerId;
-    					     		this.featureSourceType = obj.featureSourceType;
-    					     		this.featureSource = obj.featureSource;
-    								this.loadLayer(function(response) {
-    									
-    									alert("Layer loaded! " + this.layer.features.length);
-    									Sbi.debug("[Thematizer.loadLayer.onSuccess] : layer loaded");
-    									//this.onSuccess(response);
-    									var doc = response.responseXML;
-    							        if (!doc || !doc.documentElement) {
-    							            doc = response.responseText;
-    							        }
-    							        var format = this.format || new OpenLayers.Format.GeoJSON()
-    							        this.layer.removeAllFeatures();
-    							        this.layer.addFeatures(format.read(doc));
-    									this.layer.renderer.clear();
-    							        this.layer.redraw();
-    									alert("Layer added! " + this.layer.features.length);
-    									Sbi.debug("[Thematizer.loadLayer.onSuccess] : layer added");
-    									this.thematize({resetClassification: true});
-    									alert("Layer thematized!");
-    									Sbi.debug("[Thematizer.loadLayer.onSuccess] : layer thematized");
-    									
-    					    	    	this.fireEvent('indicatorsChanged', this, indicators, this.indicator);
-    					    	    	this.fireEvent('filtersChanged', this, filters);
-    								});
-    								//alert("Response: " + response.responseText);
-    							}
-    						}
-    					} else {
-    						Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
-    					}
-    				},
-    				failure: Sbi.exception.ExceptionHandler.handleFailure,  
-    				scope: this
-    			});
-    			
+    			this.loadHierarchyLevelMeta(meta.geoIdHierarchyLevel);
     			this.geoIdHierarchyLevel = meta.geoIdHierarchyLevel;
     		} else {
     			this.thematize({resetClassification: true});
-    	    	this.fireEvent('indicatorsChanged', this, indicators, this.indicator);
-    	    	this.fireEvent('filtersChanged', this, filters);
+    	    	this.fireEvent('indicatorsChanged', this, this.indicators, this.indicator);
+    	    	this.fireEvent('filtersChanged', this, this.filters);
     		}
     	} else {
     		Sbi.debug("[Thematizer.setData] : Property [geoIdHierarchyLevel] is not specified in store's metadata it will be used as [geoIdHierarchyLevel] the old one that is equal to [" + this.layerId + "]");
@@ -496,34 +515,37 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
     	Sbi.trace("[Thematizer.setData] : OUT");
     }
     
+    
     /**
-     * Apply the filters to the store
+     * @method 
+     *
+     * @param {String} layer the layer to set as returned by service loadLayerServiceName
+     * @param {Object} format the format used to encode layer content. If override the one
+     * saved as property of this object
      */
-    , filterStore: function(filters){
-    	Sbi.debug("[Thematizer.filterStore] : IN");
-    	if(filters){
-    		Sbi.debug("[Thematizer.filterStore] :  filtering the store for"+filters);
-    		
-    		var filterFunction = function(record, id){
-    			for(var i=0; i<filters.length; i++){
-	        		var field = filters[i].field;
-	        		var value = filters[i].value;
-	        		if(field && value!=null && value!=undefined && value!=""){
-	        			if(record.data[field]!=value){
-	        				return false;
-	        			}
-	        		}else{
-	        			Sbi.debug("[Thematizer.filterStore] : there are filters with no field defined");
-	        		}
-	    		}
-    			
-    			return true;
-    		};
-    		
-    		this.store.filterBy(filterFunction, this);
-    	}
-    	Sbi.debug("[Thematizer.filterStore] : OUT");
+    , setLayer: function(layer, format) {
+    	 Sbi.trace("[Thematizer.setLayer] : IN");
+    	
+    	 Sbi.debug("[Thematizer.setLayer] : Input parameter layer is of type [" + (typeof layer) + "]");
+    	  
+	     var format = format || this.format || new OpenLayers.Format.GeoJSON();
+	     Sbi.debug("[Thematizer.setLayer] : Layer formt is equal to  [" + format + "]");
+	     
+	     this.layer.removeAllFeatures();
+	     this.layer.addFeatures(format.read(layer));
+		 this.layer.renderer.clear();
+	     this.layer.redraw();
+		 Sbi.trace("[Thematizer.setLayer] : OUT");
     }
+    
+    
+
+    
+    
+    
+    
+    
+    
     
     , getAttributeFilters: function(store, meta){
     	Sbi.debug("[Thematizer.getAttributeFilters] :IN");
@@ -710,42 +732,7 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
         }
     }
 
-    /**
-     * @method
-     *
-     * @param {Object} obj
-     */
-    , showDetails: function(obj) {
-        var feature = obj.feature;
-        // popup html
-        var html = typeof this.nameAttribute == 'string' ?
-            '<h4 style="margin-top:5px">'
-                + feature.attributes[this.nameAttribute] +'</h4>' : '';
-        html += this.indicator + ": " + feature.attributes[this.indicator];
-        // create popup located in the bottom right of the map
-        var bounds = this.layer.map.getExtent();
-        var lonlat = new OpenLayers.LonLat(bounds.right, bounds.bottom);
-        var size = new OpenLayers.Size(200, 100);
-        var popup = new OpenLayers.Popup.AnchoredBubble(
-            feature.attributes[this.nameAttribute],
-            lonlat, size, html, 0.5, false);
-        var symbolizer = feature.layer.styleMap.createSymbolizer(feature, 'default');
-        popup.setBackgroundColor(symbolizer.fillColor);
-        this.layer.map.addPopup(popup);
-    }
-
-    /**
-     * @method
-     *
-     * @param {Object} obj
-     */
-    , hideDetails: function(obj) {
-        //remove all other popups from screen
-        var map= this.layer.map;
-        for (var i = map.popups.length - 1; i >= 0; --i) {
-            map.removePopup(map.popups[i]);
-        }
-    }
+    
 	
 	// -----------------------------------------------------------------------------------------------------------------
     // init methods
@@ -779,13 +766,12 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
         }
         
         // get features from web service if a url is specified
-        if (this.loadLayerServiceName) {
+        if (this.loadLayerServiceName && this.layerId) {
         	Sbi.debug("[Thematizer.initialize]: Url attribute has been valorized to [" + Sbi.toSource(url) + "]. Features will be loaded from it");
         	this.map.mapComponent.mask();
-        	
         	this.loadLayer();
         } else {
-        	Sbi.debug("[Thematizer.initialize]: Url attribute has not been valorized");
+        	Sbi.debug("[Thematizer.initialize]: Url attribute or layerId has not been valorized");
         }
         
         this.legendDiv = Ext.get(options.legendDiv);
@@ -795,7 +781,7 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
         	Sbi.debug("[Thematizer.initialize]: Property [indicatorContainer] is equal to [store]");
         	
         	if(this.storeType === 'physicalStore') {
-        		this.store.on('load', this.onPhysicalStoreLoaded, this);
+        		this.store.on('metachange', this.onPhysicalStoreLoaded, this);
             	if(this.storeReload == true) {
             		this.loadPhysicalStore();
             	}
@@ -815,98 +801,6 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
         Sbi.trace("[Thematizer.initialize]: OUT");
      }
      
-     , loadLayer: function(onSuccess, onFailure) {
-    	 Sbi.debug("[Thematizer.initialize]: Service name is equal to to [" + this.loadLayerServiceName + "]");
-     	
-     	var params = {
-     		layer: this.layerName
-     		, businessId: this.storeId
-     		, geoId: this.layerId
-     		, featureSourceType: this.featureSourceType
-     		, featureSource: this.featureSource
-     	};
-     	
-     	Sbi.debug("[Thematizer.initialize]: Service parameters are equal to [" + Sbi.toSource(params) + "]");
-     	
-     	var loadLayerServiceUrl = Sbi.config.serviceRegistry.getServiceUrl({
- 			serviceName: this.loadLayerServiceName
- 			, baseParams: params
- 		});
-     	
-     	Sbi.debug("[Thematizer.initialize]: Service url is equal to [" + loadLayerServiceUrl + "]");
-     	
-     	OpenLayers.Request.GET({
-     		url: loadLayerServiceUrl
-     		, success: onSuccess || this.onSuccess
-     		, failure: onFailure || this.onFailure
-     		, scope: this
-     	});
-     }
-     
-     , loadPhysicalStore: function() {
-    	 Sbi.debug("[Thematizer.loadPhysicalStore]: IN");
-    	 this.store.load({});
-    	 Sbi.debug("[Thematizer.loadPhysicalStore]: OUT");
-     }
-     
-     , loadVirtualStore: function() {
-    	 
-    	 Sbi.debug("[Thematizer.loadPhysicalStore]: OUT");
-    	 
-    	 if(!this.storeConfig.params) {
-    		 Sbi.warn("Impossible to load virtual store because property [storeConfig.params] is undefined");
-    	 }
-    	 
-    	 if(!this.storeConfig.url) {
-    		 Sbi.warn("Impossible to load virtual store because property [storeConfig.url] is undefined");
-    	 }
-    	 
-    	 Ext.Ajax.request({
-			url: this.storeConfig.url
-			, params: this.storeConfig.params
-			, success : this.onVirtualStoreLoaded
-			, failure: Sbi.exception.ExceptionHandler.handleFailure
-			, scope: this
-    	 });
-    	 
-    	 Sbi.debug("[Thematizer.loadPhysicalStore]: OUT");
-     }
-     
-     /**
-      * @method 
-      *
-      * @param {Object} request
-      */
-     , onPhysicalStoreLoaded: function(store, records, options) {
-    	Sbi.trace("[Thematizer.onPhysicalStoreLoaded]: IN");
-    	Sbi.trace("[Thematizer.onPhysicalStoreLoaded]: OUT");
-     }
-     
-     , onVirtualStoreLoaded: function(response, options) {
-    	 Sbi.trace("[Thematizer.onVirtualStoreLoaded]: IN");
-    	 
-    	 if(response !== undefined && response.responseText !== undefined && response.statusText=="OK") {
-    		 if(response.responseText!=null && response.responseText!=undefined) {
-				if(response.responseText.indexOf("error.mesage.description")>=0){
-					Sbi.exception.ExceptionHandler.handleFailure(response);
-				} else {
-					//Sbi.debug(response.responseText);
-					var r = Ext.util.JSON.decode(response.responseText);
-			
-					var store = new Ext.data.JsonStore({
-					    fields: r.metaData.fields
-					});
-					store.loadData(r.rows);
-					this.setData(store, r.metaData);
-				}
-			}
-		} else {
-			Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
-		}
-    	 
-    	Sbi.trace("[Thematizer.onVirtualStoreLoaded]: OUT");
-	}
-
      /**
       * @method 
       * create an emppty layer that will contains thematized features
@@ -952,6 +846,195 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
      }
      
      // -----------------------------------------------------------------------------------------------------------------
+     // synchronization methods
+ 	 // -----------------------------------------------------------------------------------------------------------------
+ 	
+     
+     , loadHierarchyLevelMeta: function(levelName) {
+     	Sbi.debug("[Thematizer.loadHierarchyLevelMeta] : IN");
+     	var loadHierarchyLevelInfoServiceUrl = Sbi.config.serviceRegistry.getServiceUrl({
+ 			serviceName: 'GetHierarchyLevelMeta'
+ 			, baseParams: {levelName: levelName}
+ 		});
+     	
+     	Sbi.debug("[Thematizer.loadHierarchyLevelMeta] : loading metadata of level [" + levelName + "]...");		
+ 		Ext.Ajax.request({
+ 			url: loadHierarchyLevelInfoServiceUrl,
+ 			success : this.onHierarchyLevelMetaLoad,
+ 			failure: Sbi.exception.ExceptionHandler.handleFailure,  
+ 			scope: this
+ 		});
+ 		
+ 		Sbi.debug("[Thematizer.loadHierarchyLevelMeta] : OUT");
+     }
+     
+     , onHierarchyLevelMetaLoad: function(response, options) {
+     	Sbi.trace("[Thematizer.onLoadHierarchyLevelMeta] : IN");
+     	
+     	Sbi.debug("[Thematizer.onLoadHierarchyLevelMeta] : metadata of level [" + options + "] succesfully loaded");	
+     	
+ 		if(response !== undefined && response.responseText !== undefined && response.statusText=="OK") {
+ 			if(response.responseText!=null && response.responseText!=undefined){
+ 				if(response.responseText.indexOf("error.mesage.description")>=0){
+ 					Sbi.exception.ExceptionHandler.handleFailure(response);
+ 				} else {
+ 					var levelMeta = JSON.parse(response.responseText);
+ 					this.layerName = levelMeta.layerName;
+ 					this.layerId = levelMeta.layerId;
+ 		     		this.featureSourceType = levelMeta.featureSourceType;
+ 		     		this.featureSource = levelMeta.featureSource;
+ 					this.loadLayer(this.onLayerLoaded);
+ 				}
+ 			}
+ 		} else {
+ 			Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
+ 		}
+ 		
+ 		Sbi.trace("[Thematizer.onLoadHierarchyLevelMeta] : OUT");
+ 	}
+     
+    , loadLayer: function(onSuccess, onFailure) {
+    	
+    	Sbi.trace("[Thematizer.loadLayer]: IN");
+    	
+    	Sbi.debug("[Thematizer.loadLayer]: onSuccess callback defined [" + (onSuccess != undefined) + "]");
+    	Sbi.debug("[Thematizer.loadLayer]: onFailure callback defined [" + (onFailure != undefined) + "]");
+    	
+     	var params = {
+     		layer: this.layerName
+     		, businessId: this.storeId
+     		, geoId: this.layerId
+     		, featureSourceType: this.featureSourceType
+     		, featureSource: this.featureSource
+     	};
+     	
+     	Sbi.debug("[Thematizer.loadLayer]: Service parameters are equal to [" + Sbi.toSource(params) + "]");
+     	
+     	var loadLayerServiceUrl = Sbi.config.serviceRegistry.getServiceUrl({
+ 			serviceName: this.loadLayerServiceName
+ 			, baseParams: {} //params
+ 		});
+     	
+     	Sbi.debug("[Thematizer.loadLayer]: Service url is equal to [" + loadLayerServiceUrl + "]");
+     	
+     	
+     	Sbi.debug("[Thematizer.loadLayer]: Loading layer [" + this.layerName + "] ...");
+     	Ext.Ajax.request({
+     		url: loadLayerServiceUrl
+     		, params: params
+     		, success : onSuccess || this.onSuccess
+     		, failure: onFailure || this.onFailure
+     		, scope: this
+     	});
+     	/*
+     	OpenLayers.Request.GET({
+     		url: loadLayerServiceUrl
+     		, success: onSuccess || this.onSuccess
+     		, failure: onFailure || this.onFailure
+     		, scope: this
+     	});
+     	*/
+     	
+     	Sbi.trace("[Thematizer.loadLayer]: OUT");
+     }
+    
+     , onLayerLoaded: function(response, options) {
+    	 alert("Layer loaded! " + this.layer.features.length);
+    	 Sbi.trace("[Thematizer.onLayerLoaded] : IN");
+    	 
+    	 Sbi.debug("[Thematizer.onLayerLoaded] : Layer [" + options.params.layer + "] succesfully loaded");
+    	 
+		 //this.onSuccess(response);
+		 var layer = response.responseXML;
+	     if (!layer || !doc.documentElement) {
+	    	 layer = response.responseText;
+	     }
+	     this.setLayer(layer);
+	     
+		 Sbi.debug("[Thematizer.loadLayer.onSuccess] : Thematizing ayer ...");
+		 this.thematize({resetClassification: true});
+		 alert("Layer thematized!");
+		 Sbi.debug("[Thematizer.loadLayer.onSuccess] : Layer succesfully thematized");
+			
+	     this.fireEvent('indicatorsChanged', this, this.indicators, this.indicator);
+	     this.fireEvent('filtersChanged', this, this.filters);
+	     
+	     Sbi.trace("[Thematizer.onLayerLoaded] : OUT");
+     }
+    
+    
+    
+    
+    
+     
+     , loadPhysicalStore: function() {
+    	 Sbi.debug("[Thematizer.loadPhysicalStore]: IN");
+    	 this.store.load({});
+    	 Sbi.debug("[Thematizer.loadPhysicalStore]: OUT");
+     }
+     
+     , loadVirtualStore: function() {
+    	 
+    	 Sbi.debug("[Thematizer.loadPhysicalStore]: OUT");
+    	 
+    	 if(!this.storeConfig.params) {
+    		 Sbi.warn("Impossible to load virtual store because property [storeConfig.params] is undefined");
+    	 }
+    	 
+    	 if(!this.storeConfig.url) {
+    		 Sbi.warn("Impossible to load virtual store because property [storeConfig.url] is undefined");
+    	 }
+    	 
+    	 Ext.Ajax.request({
+			url: this.storeConfig.url
+			, params: this.storeConfig.params
+			, success : this.onVirtualStoreLoaded
+			, failure: Sbi.exception.ExceptionHandler.handleFailure
+			, scope: this
+    	 });
+    	 
+    	 Sbi.debug("[Thematizer.loadPhysicalStore]: OUT");
+     }
+     
+     /**
+      * @method 
+      *
+      * @param {Object} request
+      */
+     , onPhysicalStoreLoaded: function(store, meta) {
+    	Sbi.trace("[Thematizer.onPhysicalStoreLoaded]: IN");
+    	Sbi.trace("[Thematizer.onPhysicalStoreLoaded]: Meta property list [" + Sbi.toSourcePropertiesList(meta)+ "]");
+    	Sbi.trace("[Thematizer.onPhysicalStoreLoaded]: OUT");
+     }
+     
+     , onVirtualStoreLoaded: function(response, options) {
+    	 Sbi.trace("[Thematizer.onVirtualStoreLoaded]: IN");
+    	 
+    	 if(response !== undefined && response.responseText !== undefined && response.statusText=="OK") {
+    		 if(response.responseText!=null && response.responseText!=undefined) {
+				if(response.responseText.indexOf("error.mesage.description")>=0){
+					Sbi.exception.ExceptionHandler.handleFailure(response);
+				} else {
+					//Sbi.debug(response.responseText);
+					var r = Ext.util.JSON.decode(response.responseText);
+			
+					var store = new Ext.data.JsonStore({
+					    fields: r.metaData.fields
+					});
+					store.loadData(r.rows);
+					this.setData(store, r.metaData);
+				}
+			}
+		} else {
+			Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
+		}
+    	 
+    	Sbi.trace("[Thematizer.onVirtualStoreLoaded]: OUT");
+	}
+
+
+     
+     // -----------------------------------------------------------------------------------------------------------------
      // private methods
  	 // -----------------------------------------------------------------------------------------------------------------
  	
@@ -961,6 +1044,7 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
      * @param {Object} response
      */
     , onSuccess: function(response) {
+    	Sbi.trace("[Thematizer.onSuccess]: IN");
         var doc = response.responseXML;
         if (!doc || !doc.documentElement) {
             doc = response.responseText;
@@ -969,6 +1053,7 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
         this.layer.removeAllFeatures();
         this.layer.addFeatures(format.read(doc));
         this.requestSuccess(response);
+        Sbi.trace("[Thematizer.onSuccess]: OUT");
     }
 
     /**
@@ -980,6 +1065,12 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
         this.requestFailure(response);
     }
 });
+
+
+
+
+
+
 
 
 
