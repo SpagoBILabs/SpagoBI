@@ -17,7 +17,7 @@ Sbi.settings.georeport = {
 	  	} 
 	 
 	  	, toolbarConf: {
-	  		enabled: true
+	  		enabled: false
 	  		, zoomToMaxButtonEnabled: true
 	  		, mouseButtonGroupEnabled: true
 	  		, measureButtonGroupEnabled: true

@@ -9,16 +9,6 @@
 Ext.ns("Sbi.geo.stat");
 
 
-
-/**
- * @requires OpenLayers/Layer/Vector.js
- * @requires OpenLayers/Popup/AnchoredBubble.js
- * @requires OpenLayers/Feature/Vector.js
- * @requires OpenLayers/Format/GeoJSON.js
- * @requires OpenLayers/Control/SelectFeature.js
- * @requires OpenLayers/Ajax.js
- */
-
 /**
  * Class: Sbi.geo.stat.Thematizer
  * Base class for geo-statistics. This class is not meant to be used directly, it serves
@@ -926,6 +916,7 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
      		, failure: onFailure || this.onFailure
      		, scope: this
      	});
+     	
      	/*
      	OpenLayers.Request.GET({
      		url: loadLayerServiceUrl
@@ -1062,6 +1053,7 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
      * @param {Object} response
      */
     , onFailure: function(response) {
+    	alert("Impossible to load layer");
         this.requestFailure(response);
     }
 });

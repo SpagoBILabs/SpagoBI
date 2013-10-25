@@ -6,11 +6,14 @@
  
 Ext.ns("Sbi.geo");
 
+/**
+ * Class: Sbi.geo.MainPanel
+ * Main GUI of SpagoBIGeoReportEngine
+ */
 Sbi.geo.MainPanel = function(config) {
 	
 	this.validateConfigObject(config);
 	this.adjustConfigObject(config);
-	
 	
 	var defaultSettings = {
 		mapName: 'Sbi.geo.mappanel.title'
@@ -20,7 +23,7 @@ Sbi.geo.MainPanel = function(config) {
 			, earthPanelEnabled: true
 		} 
 		, toolbarConf: {
-			enabled: true,
+			enabled: false,
 			zoomToMaxButtonEnabled: true,
 			mouseButtonGroupEnabled: true,
 			measureButtonGroupEnabled: true,
@@ -38,7 +41,6 @@ Sbi.geo.MainPanel = function(config) {
 	
 		
 	var c = Ext.apply(defaultSettings, config || {});
-	
 	c.toolbarConf.enabled = false;
 	
 	Ext.apply(this, c);
@@ -52,14 +54,13 @@ Sbi.geo.MainPanel = function(config) {
 	// enable disable debug panel
 	this.controlPanelConf.debugPanelEnabled = true;
 	this.controlPanelConf.debugPanelConf = {
-			store: this.store
-		};
-	
-	
-
+		store: this.store
+	};
 	
 	this.init();
 	
+	// inline ovveride to add none as possible collapse mode for border layout 
+	// TODO move it to ovverides file
 	Ext.layout.BorderLayout.Region.prototype.getCollapsedEl = Ext.layout.BorderLayout.Region.prototype.getCollapsedEl.createSequence(function(){
 		if(this.collapseMode == 'none'){
             this.collapsedEl.enableDisplayMode('none');
@@ -75,6 +76,7 @@ Sbi.geo.MainPanel = function(config) {
 	// constructor
 	Sbi.geo.MainPanel.superclass.constructor.call(this, c);
 	
+	// apply after render settings
 	this.on('render', function() {
 		this.setCenter();
 		if(this.controlPanelConf.earthPanelEnabled === true) {
