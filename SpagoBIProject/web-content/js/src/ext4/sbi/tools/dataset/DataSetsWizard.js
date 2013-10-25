@@ -352,7 +352,7 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
 				Ext.MessageBox.updateProgress(1);
 				Ext.MessageBox.hide();
 				Ext.getCmp('fileNameField').setValue(fileNameUploaded); //hidden field
-				Ext.getCmp('fileDetailText').setText(LN('sbi.ds.wizard.file') +fileNameUploaded + LN('sbi.ds.wizard.successLoad') );
+				Ext.getCmp('fileDetailText').setText(LN('sbi.ds.wizard.file') +" "+fileNameUploaded + LN('sbi.ds.wizard.successLoad') );
 //				Ext.getCmp('fileUploadField').hide();
 //				Ext.getCmp('fileUploadButton').hide();
 				
