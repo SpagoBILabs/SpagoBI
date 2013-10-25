@@ -8,16 +8,24 @@
 Ext.define('Sbi.tools.dataset.ValidateDatasetGrid', {
     extend: 'Sbi.widgets.grid.DynamicGridPanel'
 
+
   , constructor: function (config) {
 		thisPanel = this;
 		Ext.QuickTips.init();
 
-		var defaultConf = {
-				storeConfig:{ pageSize: 10, dataRoot : 'rows'}	
+		var defaultConf = { pagingConfig:{}, 
+							storeConfig:{ pageSize: 10, 
+										  dataRoot : 'rows' ,
+										  storeType: "InMemoryFilteredStore",
+										  parentGrid: this,
+								    	  filteredProperties: {}
+							}
 		};
-//		this.title =  'Dataset Validation';
-		this.border = true;
-        this.height = 300; //290;
+
+		
+		this.border = false;// true;
+		this.bodyStyle = 'padding:10px;';
+        this.height = 300; 
         this.width = '100%';
         this.autoscroll =  true;
         this.loadMask = true;
@@ -34,7 +42,7 @@ Ext.define('Sbi.tools.dataset.ValidateDatasetGrid', {
 			serviceName: 'selfservicedataset/getDataStore'
 			,baseParams: {}
     	});
-		
+
 		
 		Ext.util.Format.myRenderer = function(value, metaData, record, rowIndex, colIndex){	
 			var validationErrors = thisPanel.store.getValidationErrors(); 
