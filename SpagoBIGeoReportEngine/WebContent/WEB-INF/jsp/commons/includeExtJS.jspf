@@ -10,6 +10,6 @@
 <link id="theme" rel="styleSheet" href ="./js/lib/mapfish/client/mfbase/ext/resources/css/xtheme-gray.css" type="text/css" />
 
 <script type="text/javascript">
-	Ext.Ajax.timeout = 300000;
+	Ext.Ajax.timeout = 3000000;
 	Ext.BLANK_IMAGE_URL = './js/lib/mapfish/client/mfbase/ext/resources/images/default/s.gif';
 </script>
