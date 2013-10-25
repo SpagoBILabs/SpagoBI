@@ -136,6 +136,7 @@ public class DataSetFactory {
 	public static IDataSet toDataSet(SbiDataSet sbiDataSet) {
 		IDataSet ds = null;		
 		VersionedDataSet versionDS = null;
+		logger.debug("IN");
 		String config = JSONUtils.escapeJsonString(sbiDataSet.getConfiguration());
 		JSONObject jsonConf  = ObjectUtils.toJSONObject(config);
 		try{
@@ -158,6 +159,10 @@ public class DataSetFactory {
 				DataSourceDAOHibImpl dataSourceDao=new DataSourceDAOHibImpl();
 				IDataSource dataSource= dataSourceDao.loadDataSourceByLabel(jsonConf.getString(DataSetConstants.DATA_SOURCE));				
 				((JDBCDataSet)ds).setDataSource(dataSource);				
+				// if data source associated is not read only set is as write one.
+				if(!dataSource.checkIsReadOnly()){
+					ds.setDataSourceForWriting(dataSource);
+				}
 				ds.setDsType(JDBC_DS_TYPE);
 			}
 	
@@ -222,7 +227,10 @@ public class DataSetFactory {
 			logger.error("Error while defining dataset configuration.  Error: " + e.getMessage());
 		}
 		
+		
 		if(ds!=null){		
+		try{
+			
 			if (sbiDataSet.getCategory()!= null){
 				ds.setCategoryCd(sbiDataSet.getCategory().getValueCd());
 				ds.setCategoryId(sbiDataSet.getCategory().getValueId());
@@ -258,7 +266,27 @@ public class DataSetFactory {
 			ds.setUserIn(sbiDataSet.getCommonInfo().getUserIn());
 			ds.setDateIn(sbiDataSet.getCommonInfo().getTimeIn());
 			versionDS = new VersionedDataSet(ds, Integer.valueOf(sbiDataSet.getId().getVersionNum()), sbiDataSet.isActive());	
+		
+				// if not yet assigned set data source for writing as default one
+			if(ds.getDataSourceForWriting()== null){
+				logger.debug("take write default data source as data source for writing");
+				DataSourceDAOHibImpl dataSourceDao=new DataSourceDAOHibImpl();
+				IDataSource dataSourceWriteDef= dataSourceDao.loadDataSourceWriteDefault();
+				if (dataSourceWriteDef!=null){				
+					logger.debug("data source write default is "+dataSourceWriteDef.getLabel());
+					ds.setDataSourceForWriting(dataSourceWriteDef);
+				}	
+				else{
+					logger.warn("No data source for write default was found");
+				}
+			}
 		}
+		catch(Exception e){
+			logger.error("Error in copying dataset definition ",e);
+		}
+		
+		}
+		logger.debug("OUT");
 		return versionDS;
 	}
 }
