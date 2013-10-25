@@ -16,9 +16,9 @@ Ext.define('Sbi.tools.dataset.ValidateDatasetGrid', {
 		var defaultConf = { pagingConfig:{}, 
 							storeConfig:{ pageSize: 10, 
 										  dataRoot : 'rows' ,
-										  storeType: "InMemoryFilteredStore",
-										  parentGrid: this,
-								    	  filteredProperties: {}
+										  storeType: "InMemoryFilteredStore"
+//										  parentGrid: this,
+//								    	  filteredProperties: {}
 							}
 		};
 
@@ -29,7 +29,7 @@ Ext.define('Sbi.tools.dataset.ValidateDatasetGrid', {
         this.width = '100%';
         this.autoscroll =  true;
         this.loadMask = true;
-        
+         
         this.firedValidationErrorFound = false;
 
         defaultConf.params = config;
@@ -47,7 +47,11 @@ Ext.define('Sbi.tools.dataset.ValidateDatasetGrid', {
 		Ext.util.Format.myRenderer = function(value, metaData, record, rowIndex, colIndex){	
 			var validationErrors = thisPanel.store.getValidationErrors(); 
 			if ((validationErrors != null) && (validationErrors != undefined)){
-				for (var i=0; i<validationErrors.length; i++) {
+				//redefining rowIndex for correct pagination management
+				if (this.store.page > 1){
+					rowIndex += this.store.page*this.store.pageSize;
+				}
+				for (var i=0; i<validationErrors.length; i++) {					
 					if (validationErrors[i].id == rowIndex){
 						var val = validationErrors[i];
 						for(j in val){
