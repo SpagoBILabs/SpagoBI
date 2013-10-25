@@ -388,19 +388,23 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
 		Sbi.debug("[DatasetWizard.uploadFileButtonHandler]: OUT");
 	}
 
-//	, goBack: function(n){
-//		 var newTabId;
-//		 if (this.isTabbedPanel){
-//			 newTabId  = parseInt(this.wizardPanel.getActiveTab().itemId)-n;
-//		 }else{
-//			 newTabId  = parseInt(this.wizardPanel.layout.getActiveItem().itemId)-n;
-//		 }
-//		 var numTabs  = (this.wizardPanel.items.length-1);		 
-//		 this.wizardPanel.setActiveTab(newTabId);
-//		 Ext.getCmp('move-prev').setDisabled(newTabId==0);
-//		 Ext.getCmp('move-next').setDisabled(newTabId==numTabs);
-////		 Ext.getCmp('confirm').setDisabled(newTabId<numTabs);
-//	}
+	, goBack: function(n){
+		 var newTabId;
+		 if (this.isTabbedPanel){
+			 newTabId  = parseInt(this.wizardPanel.getActiveTab().itemId)-n;
+		 }else{
+			 newTabId  = parseInt(this.wizardPanel.layout.getActiveItem().itemId)-n;
+		 }
+		 var numTabs  = (this.wizardPanel.items.length-1);	
+		 if (this.isTabbedPanel){
+			 this.wizardPanel.setActiveTab(newTabId);
+		 }else{
+			 this.wizardPanel.layout.setActiveItem(newTabId);
+		 }
+		 Ext.getCmp('move-prev').setDisabled(newTabId==0);
+		 Ext.getCmp('move-next').setDisabled(newTabId==numTabs);
+//		 Ext.getCmp('confirm').setDisabled(newTabId<numTabs);
+	}
 //	
 //	, goNext: function(n){
 //		var newTabId;
