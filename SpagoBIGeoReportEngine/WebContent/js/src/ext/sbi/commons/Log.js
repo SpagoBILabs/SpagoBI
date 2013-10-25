@@ -56,3 +56,11 @@ Sbi.error = function(msg) {
 Sbi.toSource = function(o) {
 	return Ext.util.JSON.encode(o);
 };
+
+Sbi.toSourcePropertiesList = function(o) {
+	var s = '';
+	for(p in o) {
+		s += p + '; '
+	}
+	return s;
+};

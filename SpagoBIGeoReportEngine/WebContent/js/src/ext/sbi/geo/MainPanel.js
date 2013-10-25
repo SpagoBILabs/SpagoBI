@@ -240,9 +240,9 @@ Ext.extend(Sbi.geo.MainPanel, Ext.Panel, {
     , setCenter: function(center) {
       	
 		center = center || {};
-      	this.lon = center.lon || this.lon;
-      	this.lat = center.lat || this.lat;
-      	this.zoomLevel = center.zoomLevel || this.zoomLevel;
+      	this.lon = center.lon || this.lon || 18.530;
+      	this.lat = center.lat || this.lat || 42.500;
+      	this.zoomLevel = center.zoomLevel || this.zoomLevel || 5;
         
         if(this.map.projection == 'EPSG:900913'){            
             this.centerPoint = Sbi.geo.utils.GeoReportUtils.lonLatToMercator(new OpenLayers.LonLat(this.lon, this.lat));
@@ -274,18 +274,21 @@ Ext.extend(Sbi.geo.MainPanel, Ext.Panel, {
 		this.services = this.services || new Array();	
 		
 		var params = {
-			layer: this.targetLayerConf.name
+			layer: this.targetLayerConf? this.targetLayerConf.name: null
 			, businessId: this.businessId
 			, geoId: this.geoId
 		};
 		
-		if(this.targetLayerConf.url) {
-			params.featureSourceType = 'wfs';
-			params.featureSource = this.targetLayerConf.url;
-		} else {
-			params.featureSourceType = 'file';
-			params.featureSource = this.targetLayerConf.data;
+		if(this.targetLayerConf) {
+			if(this.targetLayerConf.url) {
+				params.featureSourceType = 'wfs';
+				params.featureSource = this.targetLayerConf.url;
+			} else {
+				params.featureSourceType = 'file';
+				params.featureSource = this.targetLayerConf.data;
+			}
 		}
+		
 		
 		this.services['GetTargetDataset'] = this.services['GetTargetDataset'] || Sbi.config.serviceRegistry.getServiceUrl({
 			serviceName: 'GetTargetDataset'
@@ -520,12 +523,14 @@ Ext.extend(Sbi.geo.MainPanel, Ext.Panel, {
 		var featureSourceType = null;
 		var featureSource = null;
 		
-		if(this.targetLayerConf.url) {
-			featureSourceType = 'wfs';
-			featureSource = this.targetLayerConf.url;
-		} else {
-			featureSourceType = 'file';
-			featureSource = this.targetLayerConf.data;
+		if(this.targetLayerConf) {
+			if(this.targetLayerConf.url) {
+				featureSourceType = 'wfs';
+				featureSource = this.targetLayerConf.url;
+			} else {
+				featureSourceType = 'file';
+				featureSource = this.targetLayerConf.data;
+			}
 		}
 			
 		var thematizerControlPanelOptions = {
@@ -533,7 +538,7 @@ Ext.extend(Sbi.geo.MainPanel, Ext.Panel, {
 			
 			layer: null, // this.targetLayer not yet defined here
 			loadLayerServiceName: loadLayerServiceName,
-			layerName: this.targetLayerConf.name,
+			layerName: this.targetLayerConf? this.targetLayerConf.name: null,
 			featureSourceType: featureSourceType,
 			featureSource: featureSource,		
 			
@@ -594,7 +599,8 @@ Ext.extend(Sbi.geo.MainPanel, Ext.Panel, {
 	
 	, initProportionalSymbolsAnalysis: function() {
 	
-		this.targetLayer = new OpenLayers.Layer.Vector(this.targetLayerConf.text, {
+		var layerName = this.targetLayerConf? this.targetLayerConf.text: 'Thematized layer';
+		this.targetLayer = new OpenLayers.Layer.Vector(layerName, {
 				'visibility': false  ,
 				'styleMap': new OpenLayers.StyleMap({
 	   				'select': new OpenLayers.Style(
@@ -607,7 +613,8 @@ Ext.extend(Sbi.geo.MainPanel, Ext.Panel, {
 	}
 	
 	, initChoroplethAnalysis: function() {
-		this.targetLayer = new OpenLayers.Layer.Vector(this.targetLayerConf.text, {
+		var layerName = this.targetLayerConf? this.targetLayerConf.text: 'Thematized layer';
+		this.targetLayer = new OpenLayers.Layer.Vector(layerName, {
         	'visibility': true,
           	'styleMap': new OpenLayers.StyleMap({
             	'default': new OpenLayers.Style(
@@ -646,7 +653,8 @@ Ext.extend(Sbi.geo.MainPanel, Ext.Panel, {
 		    	
 		    
 		    /************************************ **********/
-		this.targetLayer = new OpenLayers.Layer.Vector( this.targetLayerConf.text,
+		var layerName = this.targetLayerConf? this.targetLayerConf.text: 'Thematized layer';
+		this.targetLayer = new OpenLayers.Layer.Vector( layerName,
                                                 { format: OpenLayers.Format.GeoJSON,
                                                   styleMap: styleMap,
                                                   isBaseLayer: false,
