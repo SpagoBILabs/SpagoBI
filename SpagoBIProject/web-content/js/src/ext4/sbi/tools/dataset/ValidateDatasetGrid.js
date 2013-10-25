@@ -51,9 +51,10 @@ Ext.define('Sbi.tools.dataset.ValidateDatasetGrid', {
 					this.fireEvent('validationErrorFound');
 					thisPanel.firedValidationErrorFound = true;
 				}
+				
 				//redefining rowIndex for correct pagination management
 				if (thisPanel.store.page > 1){
-					rowIndex += thisPanel.store.page*thisPanel.store.pageSize;
+					rowIndex += (thisPanel.store.page-1)*thisPanel.store.pageSize;
 				}
 				for (var i=0; i<validationErrors.length; i++) {					
 					if (validationErrors[i].id == rowIndex){
