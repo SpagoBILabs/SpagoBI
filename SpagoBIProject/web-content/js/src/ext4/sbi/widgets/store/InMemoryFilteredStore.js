@@ -31,7 +31,8 @@
  * 
  */
 Ext.define('Sbi.widgets.store.InMemoryFilteredStore', {
-    extend: 'Ext.data.Store'
+    extend: 'Sbi.widgets.store.DynamicStore'
+//    extend: 'Ext.data.Store'
 
     ,config: {
     	/**
@@ -59,10 +60,10 @@ Ext.define('Sbi.widgets.store.InMemoryFilteredStore', {
     , constructor: function(config) {
     	this.initConfig(config)
     	this.callParent(arguments);
-    	this.on("load",function(a){
+    	this.on("load",function(a){    		
     		if(!this.inMemoryData){
     			this.inMemoryData = this.data.items.slice(0);//clone the items
-    		}
+    		}    		
    			var items = this.getFilteredItems(this.inMemoryData, this.filteredProperties, this.filterString);
    			items = this.getPageItems(this.start, this.limit, items);
    			this.removeAll();
