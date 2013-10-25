@@ -12,6 +12,7 @@ import it.eng.spagobi.tools.dataset.common.datastore.IDataStoreFilter;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.common.transformer.IDataStoreTransformer;
 import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
+import it.eng.spagobi.tools.datasource.bo.DataSource;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 
 import java.util.Date;
@@ -174,5 +175,7 @@ public interface IDataSet {
 	public String getOrganization();
 	public void setOrganization(String organization);
 	
+	public IDataSource getDataSourceForWriting();
+	public void setDataSourceForWriting(IDataSource dataSource);
 	
 }
