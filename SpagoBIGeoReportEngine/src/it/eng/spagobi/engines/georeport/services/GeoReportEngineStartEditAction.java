@@ -115,29 +115,23 @@ public class GeoReportEngineStartEditAction extends AbstractEngineStartServlet {
 			template.put("mapName", DEFAULT_MAP_NAME);
 			template.put("analysisType", DEFAULT_ANALYSIS_TYPE);
 			template.put("analysisConf", buildAnalysisConf(null));
-			//template.put("feautreInfo", buildFeatureInfo(dataSet));
-			//template.put("indicators", buildIndicators(dataSet));
-				
-			Properties level = GeoReportEngineConfig.getInstance().getLevels().get(1);
-			String levelName = level.getProperty("name");
 			
-			//template.put("businessId", businessId);
-			template.put("geoId", getGeoId(levelName));
+			//Properties level = GeoReportEngineConfig.getInstance().getLevels().get(1);
+			//String levelName = level.getProperty("name");
+			//template.put("geoId", getGeoId(levelName));
 			
-			//template.put("selectedBaseLayer", "GoogleMap");
 			template.put("selectedBaseLayer", "OpenStreetMap");
 			
-			template.put("targetLayerConf", buildTargetLayerConf(levelName));
+			//template.put("targetLayerConf", buildTargetLayerConf(levelName));
 			
 			template.put("controlPanelConf", buildControlPanelConf(null));
 			template.put("toolbarConf", buildToolbarConf(null));
 			
-			//template.put("role", "spagobi/admin");
-			Properties levelProps = GeoReportEngineConfig.getInstance().getLevelByName(levelName);
-			String centralPoint = levelProps.getProperty("layer_cetral_point");
-			template.put("lon", centralPoint.split(" ")[0]);
-			template.put("lat", centralPoint.split(" ")[1]);
-			template.put("zoomLevel", levelProps.getProperty("layer_zoom") );
+			//Properties levelProps = GeoReportEngineConfig.getInstance().getLevelByName(levelName);
+			//String centralPoint = levelProps.getProperty("layer_cetral_point");
+			//template.put("lon", centralPoint.split(" ")[0]);
+			//template.put("lat", centralPoint.split(" ")[1]);
+			//template.put("zoomLevel", levelProps.getProperty("layer_zoom") );
 		} catch (Throwable t) {
 			throw new RuntimeException(
 					"An unexpected error occured while executing building template",
