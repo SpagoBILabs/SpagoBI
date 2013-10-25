@@ -354,11 +354,9 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 	 * @param {Object} doc the document configuration
 	 */
 	
-	, initToolbar: function(config, doc) {
-		
+	, initToolbar: function(config, doc) {		
 		this.toolbarHiddenPreference = config.toolbarHidden!== undefined ? config.toolbarHidden : false;
-		if (this.toolbarHiddenPreference || this.hideToolbar(doc.engine)) return;
-		
+		if (this.toolbarHiddenPreference || this.hideToolbar(doc.engine)) return;		
 		config.executionToolbarConfig = config.executionToolbarConfig || {};
 		config.executionToolbarConfig.callFromTreeListDoc = config.callFromTreeListDoc;
 		config.executionToolbarConfig.preferenceSubobjectId = this.getSubObjectId();
