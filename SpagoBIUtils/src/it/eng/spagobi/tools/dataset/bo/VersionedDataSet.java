@@ -427,6 +427,15 @@ public class VersionedDataSet implements IDataSet {
 	public void setPersistTableName(String persistTableName) {
 		wrappedDataset.setPersistTableName(persistTableName);
 	}
+
+	public IDataSource getDataSourceForWriting() {
+		return wrappedDataset.getDataSourceForWriting();
+		}
+
+	public void setDataSourceForWriting(IDataSource dataSource) {
+		wrappedDataset.setDataSourceForWriting(dataSource);
+		
+	}
 	
 	
 }

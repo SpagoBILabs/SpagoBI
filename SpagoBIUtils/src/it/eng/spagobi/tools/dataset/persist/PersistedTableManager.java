@@ -67,7 +67,13 @@ public class PersistedTableManager {
 	public void persistDataSet(IDataSet dataset) throws Exception {
 		String tableName = dataset.getTableNameForReading();
 		//changed
-		IDataSource dsPersist = dataset.getDataSource();
+		
+		// get data source for writing not only getDataSource
+		IDataSource dsPersist = dataset.getDataSourceForWriting();
+		if(dsPersist== null){
+			logger.error("No data source for writing found: check the datasource associated to dataset "+dataset.getLabel()+" is read and write or there is one and only one datasource marked as write default" );
+			throw new SpagoBIServiceException("","sbi.ds.noDataSourceForWriting");
+		}
 		persistDataSet(dataset, dsPersist, tableName);
 	}
 	

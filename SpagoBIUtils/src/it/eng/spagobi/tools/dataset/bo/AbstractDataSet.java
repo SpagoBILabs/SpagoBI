@@ -19,6 +19,7 @@ import it.eng.spagobi.tools.dataset.common.transformer.PivotDataSetTransformer;
 import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
 import it.eng.spagobi.tools.dataset.persist.PersistedTableManager;
 import it.eng.spagobi.tools.dataset.utils.DatasetMetadataParser;
+import it.eng.spagobi.tools.datasource.bo.DataSource;
 import it.eng.spagobi.tools.datasource.bo.DataSourceFactory;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.StringUtils;
@@ -65,7 +66,8 @@ public abstract class AbstractDataSet implements IDataSet {
     protected String pivotColumnValue;
     protected boolean numRows;
     protected String organization;
-   
+
+    protected IDataSource datasourceForWriting;
     
     protected IDataStoreTransformer dataSetTransformer;
     
@@ -709,6 +711,36 @@ public abstract class AbstractDataSet implements IDataSet {
 		this.organization = organization;
 	}
 	
+	
+	public IDataSource getDataSourceForWriting(){
+		return this.datasourceForWriting;
+	}
+
+	public void setDataSourceForWriting(IDataSource dataSource){
+		this.datasourceForWriting = dataSource;
+	}
+
+	
+	
+//	/**
+//	 *  Returns the datasource on whgich dataset can write
+//	 *  If the associated datasource is read and write takes that, otherwise takes the write default one
+//	 */
+//	public IDataSource getDataSourceForWriting() {
+//		logger.debug("IN");
+//		IDataSource toReturn = null;
+//		
+//		if(getDataSource() != null && getDataSource().checkIsReadOnly() == false ){
+//			toReturn = getDataSource();
+//		}
+//		else{
+//			DAOFactory
+//			
+//		}
+		
+//		logger.debug("OUT");
+//		return toReturn;
+//	}
 	
 	
 }
