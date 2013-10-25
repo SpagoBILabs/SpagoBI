@@ -47,9 +47,13 @@ Ext.define('Sbi.tools.dataset.ValidateDatasetGrid', {
 		Ext.util.Format.myRenderer = function(value, metaData, record, rowIndex, colIndex){	
 			var validationErrors = thisPanel.store.getValidationErrors(); 
 			if ((validationErrors != null) && (validationErrors != undefined)){
+				if (!thisPanel.firedValidationErrorFound){
+					this.fireEvent('validationErrorFound');
+					thisPanel.firedValidationErrorFound = true;
+				}
 				//redefining rowIndex for correct pagination management
-				if (this.store.page > 1){
-					rowIndex += this.store.page*this.store.pageSize;
+				if (thisPanel.store.page > 1){
+					rowIndex += thisPanel.store.page*thisPanel.store.pageSize;
 				}
 				for (var i=0; i<validationErrors.length; i++) {					
 					if (validationErrors[i].id == rowIndex){
@@ -62,10 +66,10 @@ Ext.define('Sbi.tools.dataset.ValidateDatasetGrid', {
 								metaData.tdCls = 'custom-error';
 								metaData.tdAttr = 'data-qtip=\''+sub_val+'\'';
 
-								if (!thisPanel.firedValidationErrorFound){
-									this.fireEvent('validationErrorFound');
-									thisPanel.firedValidationErrorFound = true;
-								}
+//								if (!thisPanel.firedValidationErrorFound){
+//									this.fireEvent('validationErrorFound');
+//									thisPanel.firedValidationErrorFound = true;
+//								}
 							}
 						} 
 					}
