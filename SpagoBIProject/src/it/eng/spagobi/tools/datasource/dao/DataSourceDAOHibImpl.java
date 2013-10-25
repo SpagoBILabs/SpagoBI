@@ -266,21 +266,7 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 			hibDataSource.setMultiSchema(aDataSource.getMultiSchema());
 			hibDataSource.setReadOnly(aDataSource.checkIsReadOnly());
 			
-			// if writeDefault is going to be set to truew than must be disabled in others
-			if(aDataSource.checkIsWriteDefault()==true){
-				logger.debug("searching for write default datasource to delete flag");
-				SbiDataSource hibModify = loadSbiDataSourceWriteDefault(aSession);
-				if(hibModify != null && !hibModify.getLabel().equals(hibDataSource.getLabel())){
-					logger.debug("previous write default data source was "+hibModify.getLabel());				
-					hibModify.setWriteDefault(false);
-					aSession.update(hibModify);
-			
-					logger.debug("previous write default modified");
-				}
-				else{
-					logger.debug("No previous write default datasource found");
-				}
-			}
+			disableOtherWriteDefault(aDataSource, hibDataSource, aSession);
 			
 			hibDataSource.setWriteDefault(aDataSource.checkIsWriteDefault());
 			
@@ -308,6 +294,29 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 
 	}
 
+	private void disableOtherWriteDefault(IDataSource aDataSource, SbiDataSource hibDataSource, Session aSession){
+		// if writeDefault is going to be set to true than must be disabled in others
+		logger.debug("IN");
+		if(aDataSource.checkIsWriteDefault()==true){
+			logger.debug("searching for write default datasource to delete flag");
+			SbiDataSource hibModify = loadSbiDataSourceWriteDefault(aSession);
+			if(hibModify != null && !hibModify.getLabel().equals(hibDataSource.getLabel())){
+				logger.debug("previous write default data source was "+hibModify.getLabel());				
+				hibModify.setWriteDefault(false);
+				aSession.update(hibModify);
+		
+				logger.debug("previous write default modified");
+			}
+			else{
+				logger.debug("No previous write default datasource found");
+			}
+		}
+		logger.debug("OUT");
+	}
+	
+	
+	
+	
 	private SbiDataSource loadSbiDataSourceWriteDefault(Session aSession) {
 		Criterion labelCriterrion = Expression.eq("writeDefault", true);
 		Criteria criteria = aSession.createCriteria(SbiDataSource.class);
@@ -356,6 +365,9 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 			hibDataSource.setMultiSchema(aDataSource.getMultiSchema());
 			hibDataSource.setSchemaAttribute(aDataSource.getSchemaAttribute());
 			hibDataSource.setReadOnly(aDataSource.checkIsReadOnly());
+
+			disableOtherWriteDefault(aDataSource, hibDataSource, aSession);
+
 			hibDataSource.setWriteDefault(aDataSource.checkIsWriteDefault());
 			
 			updateSbiCommonInfo4Insert(hibDataSource);
