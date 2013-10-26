@@ -13,12 +13,14 @@ import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
+import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData.FieldType;
 import it.eng.spagobi.utilities.engines.BaseServletIOManager;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
 import it.eng.spagobi.utilities.service.AbstractBaseServlet;
 
 import org.apache.log4j.Logger;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 
@@ -30,7 +32,7 @@ public class GetTargetDatasetAction extends AbstractBaseServlet {
 	private static final long serialVersionUID = 1L;
 	
 	/** Logger component. */
-    private static transient Logger logger = Logger.getLogger(GeoReportEngineStartAction.class);
+    private static transient Logger logger = Logger.getLogger(GetTargetDatasetAction.class);
     
     
 	public void doService( BaseServletIOManager servletIOManager ) throws SpagoBIEngineException {
@@ -65,6 +67,22 @@ public class GetTargetDatasetAction extends AbstractBaseServlet {
 			
 			JSONDataWriter dataWriter = new JSONDataWriter();
 			JSONObject result = (JSONObject)dataWriter.write(dataStore);
+			
+			JSONObject metaData = result.getJSONObject("metaData");
+			JSONArray fields = metaData.getJSONArray("fields");
+			for(int i = 1; i < fields.length(); i++) {
+				JSONObject field = fields.getJSONObject(i);
+				IFieldMetaData fieldMeta = dataStore.getMetaData().getFieldMeta(i-1);
+				if(fieldMeta.getFieldType().equals(FieldType.MEASURE) ){
+					field.put("role", "MEASURE");
+				} else {
+					field.put("role", "ATTRIBUTE");
+				}
+				
+				
+			}
+			
+			logger.debug(result.toString(3));
 			servletIOManager.tryToWriteBackToClient( result.toString() );
 			
 		} catch(Throwable t) {

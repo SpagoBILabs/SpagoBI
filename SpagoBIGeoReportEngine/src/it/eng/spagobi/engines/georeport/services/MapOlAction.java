@@ -58,7 +58,7 @@ public class MapOlAction extends AbstractBaseServlet {
 	public static final String GEOID_PNAME = "geoId";
 	
 	/** Logger component. */
-    private static transient Logger logger = Logger.getLogger(GeoReportEngineStartAction.class);
+    private static transient Logger logger = Logger.getLogger(MapOlAction.class);
     
     
 	public void doService( BaseServletIOManager servletIOManager ) throws SpagoBIEngineException {
