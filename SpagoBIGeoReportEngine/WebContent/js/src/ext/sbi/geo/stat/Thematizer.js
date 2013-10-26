@@ -168,11 +168,13 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
 	 */
     , selectSymbolizer: {'strokeColor': '#000000'} // neutral stroke color
 
+    
     /**
-     * Property: legendDiv
-     * {Object} Reference to the DOM container for the legend to be
-     *     generated.
-     */
+	 * @property {String} elementToMask
+	 * The element o mask when masking is required
+	 */
+    , elementToMask: null
+    , mask: null
     
     /**
 	 * @property {String} legendDiv
@@ -254,9 +256,7 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
 	 * 
 	 */
 	, adjustConfigObject: function(config) {
-//		if(indicatorContainer === "layer" && config.storeId) {
-//			config.storeId = config.storeId.toUpperCase();
-//		}
+		if(config.elementToMask == undefined) config.elementToMask = Ext.getBody();
 	}
 	
 	
@@ -364,6 +364,18 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
         for (var i = map.popups.length - 1; i >= 0; --i) {
             map.removePopup(map.popups[i]);
         }
+    }
+    
+    , showMask: function(msg) {
+		this.mask = new Ext.LoadMask(this.elementToMask, {msg: msg || "Loading"});
+        this.mask.show();
+	}
+    
+    , hideMask: function() {
+    	if(this.mask) {
+    		this.mask.hide();
+        	this.mask = null;
+    	}
     }
     
 	// -----------------------------------------------------------------------------------------------------------------
@@ -866,6 +878,9 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
      
      , loadHierarchyLevelMeta: function(levelName) {
      	Sbi.debug("[Thematizer.loadHierarchyLevelMeta] : IN");
+     	
+     	this.showMask("Loading metadata of geographical level [" + levelName + "]");
+     		
      	var loadHierarchyLevelInfoServiceUrl = Sbi.config.serviceRegistry.getServiceUrl({
  			serviceName: 'GetHierarchyLevelMeta'
  			, baseParams: {levelName: levelName}
@@ -876,8 +891,8 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
  			url: loadHierarchyLevelInfoServiceUrl,
  			success : this.onHierarchyLevelMetaLoad,
  			failure: function(response) {
- 				alert("Impossible to load hierarchy level info");
  				Sbi.exception.ExceptionHandler.handleFailure(response);
+ 				this.hideMask();
  			},  
  			scope: this
  		});
@@ -887,13 +902,14 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
      
      , onHierarchyLevelMetaLoad: function(response, options) {
      	Sbi.trace("[Thematizer.onLoadHierarchyLevelMeta] : IN");
-     	
+     	     	
      	Sbi.debug("[Thematizer.onLoadHierarchyLevelMeta] : metadata of level [" + options + "] succesfully loaded");	
      	
+     	this.hideMask();
+    
  		if(response !== undefined && response.responseText !== undefined && response.statusText=="OK") {
  			if(response.responseText!=null && response.responseText!=undefined){
  				if(response.responseText.indexOf("error.mesage.description")>=0){
- 					alert("Impossible to load hierarchy level info because of errors");
  					Sbi.exception.ExceptionHandler.handleFailure(response);
  				} else {
  					var levelMeta = JSON.parse(response.responseText);
@@ -915,54 +931,62 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
     	
     	Sbi.trace("[Thematizer.loadLayer]: IN");
     	
-    	Sbi.debug("[Thematizer.loadLayer]: onSuccess callback defined [" + (onSuccess != undefined) + "]");
-    	Sbi.debug("[Thematizer.loadLayer]: onFailure callback defined [" + (onFailure != undefined) + "]");
+    	this.showMask("Loading layer [" + this.layerName + "] ...");
     	
-     	var params = {
-     		layer: this.layerName
-     		, businessId: this.storeId
-     		, geoId: this.layerId
-     		, featureSourceType: this.featureSourceType
-     		, featureSource: this.featureSource
-     	};
-     	
-     	Sbi.debug("[Thematizer.loadLayer]: Service parameters are equal to [" + Sbi.toSource(params) + "]");
-     	
-     	var loadLayerServiceUrl = Sbi.config.serviceRegistry.getServiceUrl({
- 			serviceName: this.loadLayerServiceName
- 			, baseParams: params
- 		});
-     	
-     	Sbi.debug("[Thematizer.loadLayer]: Service url is equal to [" + loadLayerServiceUrl + "]");
-     	
-     	
-     	Sbi.debug("[Thematizer.loadLayer]: Loading layer [" + this.layerName + "] ...");
-     	/*
-     	Ext.Ajax.request({
-     		url: loadLayerServiceUrl
-     		, params: params
-     		, success : onSuccess || this.onSuccess
-     		, failure: onFailure || this.onFailure
-     		, scope: this
-     	});
-     	*/
-     	
-     	OpenLayers.Request.GET({
-     		url: loadLayerServiceUrl
-     		, success: onSuccess || this.onSuccess
-     		, failure: onFailure || this.onFailure
-     		, scope: this
-     	});
+    	try {
+	    	Sbi.debug("[Thematizer.loadLayer]: onSuccess callback defined [" + (onSuccess != undefined) + "]");
+	    	Sbi.debug("[Thematizer.loadLayer]: onFailure callback defined [" + (onFailure != undefined) + "]");
+	    	
+	     	var params = {
+	     		layer: this.layerName
+	     		, businessId: this.storeId
+	     		, geoId: this.layerId
+	     		, featureSourceType: this.featureSourceType
+	     		, featureSource: this.featureSource
+	     	};
+	     	
+	     	Sbi.debug("[Thematizer.loadLayer]: Service parameters are equal to [" + Sbi.toSource(params) + "]");
+	     	
+	     	var loadLayerServiceUrl = Sbi.config.serviceRegistry.getServiceUrl({
+	 			serviceName: this.loadLayerServiceName
+	 			, baseParams: {} //params
+	 		});
+	     	
+	     	Sbi.debug("[Thematizer.loadLayer]: Service url is equal to [" + loadLayerServiceUrl + "]");
+	     	
+	     	
+	     	Sbi.debug("[Thematizer.loadLayer]: Loading layer [" + this.layerName + "] ...");
+	     	
+	     	Ext.Ajax.request({
+	     		url: loadLayerServiceUrl
+	     		, params: params
+	     		, success : onSuccess || this.onSuccess
+	     		, failure: onFailure || this.onFailure
+	     		, scope: this
+	     	});
+	     	
+	     	/*
+	     	OpenLayers.Request.GET({
+	     		url: loadLayerServiceUrl
+	     		, success: onSuccess || this.onSuccess
+	     		, failure: onFailure || this.onFailure
+	     		, scope: this
+	     	});
+	     	*/
+    	} catch (e) {
+    		Sbi.exception.ExceptionHandler.showErrorMessage('An unexpected error occured whiel loading layer [' + this.layerName + ']: ' + e, 'Internal error');
+    	}
      	
      	
      	Sbi.trace("[Thematizer.loadLayer]: OUT");
      }
     
      , onLayerLoaded: function(response, options) {
-    	 alert("Layer loaded! ");
-    	 Sbi.trace("[Thematizer.onLayerLoaded] : IN");
-    	 
+    
+    	 Sbi.trace("[Thematizer.onLayerLoaded] : IN");	 
     	 Sbi.debug("[Thematizer.onLayerLoaded] : Layer [" + options.params.layer + "] succesfully loaded");
+    	 
+    	 this.hideMask();
     	 
 		 //this.onSuccess(response);
 		 var layer = response.responseXML;
@@ -973,7 +997,6 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
 	     
 		 Sbi.debug("[Thematizer.loadLayer.onSuccess] : Thematizing ayer ...");
 		 this.thematize({resetClassification: true});
-		 alert("Layer thematized!");
 		 Sbi.debug("[Thematizer.loadLayer.onSuccess] : Layer succesfully thematized");
 			
 	     this.fireEvent('indicatorsChanged', this, this.indicators, this.indicator);
@@ -1079,6 +1102,10 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
      */
     , onSuccess: function(response) {
     	Sbi.trace("[Thematizer.onSuccess]: IN");
+    	
+    	this.hideMask();
+    	
+    	this.showMask("Adding layer to map...");
         var doc = response.responseXML;
         if (!doc || !doc.documentElement) {
             doc = response.responseText;
@@ -1087,6 +1114,8 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
         this.layer.removeAllFeatures();
         this.layer.addFeatures(format.read(doc));
         this.requestSuccess(response);
+        
+        this.unmsak();
         Sbi.trace("[Thematizer.onSuccess]: OUT");
     }
 
@@ -1096,7 +1125,7 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
      * @param {Object} response
      */
     , onFailure: function(response) {
-    	alert("Loading layer failure");
+    	this.unmsak();
         this.requestFailure(response);
     }
 });

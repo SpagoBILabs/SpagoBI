@@ -12,10 +12,15 @@ Sbi.geo.tools.MeasureCatalogue = function(config) {
 	var defaultSettings = {
 			layout: 'fit',
 			contextPath: "SpagoBI",
-			columnsRef: ['dsName', 'dsLabel', 'dsCategory', 'dsType'],
-			measuresProperties: [{header:'Alias', dataIndex:'alias'},{header:'Type', dataIndex:'classType'},{header:'Column', dataIndex:'columnName'}],
-			datasetsProperties: [{header:'Name', dataIndex:'dsName'},{header:'Label', dataIndex:'dsLabel'},{header:'Category', dataIndex:'dsCategory'},{header:'Type', dataIndex:'dsType'}],
-			filteringProperties:['alias','dsName', 'dsLabel', 'dsCategory', 'dsType']
+			columnsRef: ['dsName', 'dsCategory', 'dsType'],
+			measuresProperties: [{header:'Alias', dataIndex:'alias'},
+			                     {header:'Type', dataIndex:'classType'},
+			                     {header:'Column', dataIndex:'columnName'}],
+			datasetsProperties: [{header:'Name', dataIndex:'dsName'},
+			                     {header:'Label', dataIndex:'dsLabel'},
+			                     {header:'Category', dataIndex:'dsCategory'},
+			                     {header:'Type', dataIndex:'dsType'}],
+			filteringProperties:['alias','dsName', 'dsCategory', 'dsType']
 	};
 
 	
@@ -28,14 +33,14 @@ Sbi.geo.tools.MeasureCatalogue = function(config) {
 	
 	var tb =  this.buildToolbar(this);
 	var expander = this.buildexpander();
-	 var sm = new Ext.grid.CheckboxSelectionModel({SingleSelect:false, grid:this});
-	 var cm = this.buildColumns(sm, expander);
+	var sm = new Ext.grid.CheckboxSelectionModel({SingleSelect:false, grid:this});
+	var cm = this.buildColumns(sm, expander);
 	 
 	 var c = ({
 	  store: this.buildStore(),
 	  view: new Ext.grid.GroupingView({
 	   forceFit:true,
-	   groupTextTpl: '{text} ({[values.rs.length]} {[values.rs.length > 1 ? "Items" : "Item"]})'
+	   groupTextTpl: '{text} ({[values.rs.length]} {[values.rs.length > 1 ? "Misure" : "Misura"]})'
 	  }),
 	  
 	  tbar: tb,
@@ -71,7 +76,8 @@ Ext.extend(Sbi.geo.tools.MeasureCatalogue, Ext.grid.GridPanel, {
 			var object = {
 					header: LN('sbi.tools.catalogue.measures.column.header.'+column),
 					sortable: true,
-					dataIndex: column
+					dataIndex: column,
+					groupName: 'Dataset'
 				};
 			//if the column is involved in the filter we should add the renderer 
 			if(this.filteringProperties.indexOf(column)>=0){
@@ -104,13 +110,14 @@ Ext.extend(Sbi.geo.tools.MeasureCatalogue, Ext.grid.GridPanel, {
 				         "dsName",
 				         "dsLabel"
 				         ],
-				         groupField:'alias',
+				         groupField:'dsName',
 				         root: 'measures'
 			}),
 
 			autoLoad:true,
 			
-			sortInfo:{field: 'alias', direction: "ASC"}
+			sortInfo:{field: 'dsName', direction: "ASC"}
+			,  groupField:'dsName'
 
 		});
 	},
@@ -203,9 +210,7 @@ Ext.extend(Sbi.geo.tools.MeasureCatalogue, Ext.grid.GridPanel, {
 						if(response.responseText!=null && response.responseText!=undefined){
 							if(response.responseText.indexOf("error.mesage.description")>=0){
 								Sbi.exception.ExceptionHandler.handleFailure(response);
-							}else{
-								//alert("Join ok.. look at the responce");
-								//Sbi.debug(response.responseText);
+							} else {
 								var r = Ext.util.JSON.decode(response.responseText);
 						
 								var store = new Ext.data.JsonStore({
