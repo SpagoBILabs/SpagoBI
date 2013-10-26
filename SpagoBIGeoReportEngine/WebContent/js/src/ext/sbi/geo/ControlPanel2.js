@@ -565,6 +565,9 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 		
 		//build the new filters
 		for(var i=0; i<filters.length; i++){
+			
+			Sbi.debug("[ControlPanel2.setFilters]: Filter [" + filters[i].name + "] have [" + filters[i].values.length + "] possible values");
+			
 			var filterDef = filters[i];
 			var filter =new Ext.form.ComboBox  ({
 	            fieldLabel: filterDef.header,

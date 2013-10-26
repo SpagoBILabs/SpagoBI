@@ -545,28 +545,30 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
     	var filters = new Array();//array with filters: contains definitions and values
     	//the order of the 3 arrays is the same. The values of the filter with name filtersNames[j] stay in filtersValueMap[j]
     	
-    	Sbi.debug("[Thematizer.getAttributeFilters] : Building the array of filters positions");
+    	Sbi.debug("[Thematizer.getAttributeFilters] : Building the array of filters positions ");
+
     	for(var i = 0; i < meta.fields.length; i++) {
+    		
     		var field = meta.fields[i];
-    		Sbi.debug("[Thematizer.getAttributeFilters] : Scanning field [" + Sbi.toSource(field) + "]");
+    		//Sbi.debug("[Thematizer.getAttributeFilters] : Scanning field [" + Sbi.toSource(field) + "]");
     		Sbi.debug("[Thematizer.getAttributeFilters] : Property role is equal to [" + field.role + "]");
     		if(field.role == 'ATTRIBUTE' && !((meta.geoId) && (meta.geoId==field.header)) )  {
     			Sbi.debug("[Thematizer.getAttributeFilters] : new filter found. It is equal to [" + field.header + "]");
     			filtersNames.push(field.name);
-    			filtersValueMap.push(new Array());
+    			filtersValueMap.push({});
     			filters.push(field);
     		}
     	}
     	
-    	Sbi.debug("[Thematizer.getAttributeFilters] : Building the map of the filters values");
+    	Sbi.debug("[Thematizer.getAttributeFilters] : Building the map of the filters values " + store.data.length);
     	for(var i = 0; i < store.data.length; i++) {
+    		Sbi.debug("[Thematizer.getAttributeFilters] : Processing line " + i);
     		var row = store.data.items[i].data;
         	for(var j = 0; j < filtersNames.length; j++) {
         		var value = row[filtersNames[j]];
         		var filterValues = filtersValueMap[j];
-        		if(filterValues.indexOf(value)<0){
-        			filterValues.push(value);
-        		}
+        		filterValues[value] = value;
+        		Sbi.debug("[Thematizer.getAttributeFilters] : Added value [" + value + "] to [" + filtersNames[j] + "]");
         	}
     	}
     	Sbi.debug("[Thematizer.getAttributeFilters] : Built the map of the filters values");
@@ -576,8 +578,7 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
 
     		filters[j].values = new Array();
     		
-        	for(var i = 0; i < filtersValueMap[j].length; i++) {
-        		var value = filtersValueMap[j][i];
+        	for(value in filtersValueMap[j]) {
         		filters[j].values.push([value]);
         	}
     		
@@ -771,7 +772,30 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
         	Sbi.debug("[Thematizer.initialize]: Property [indicatorContainer] is equal to [store]");
         	
         	if(this.storeType === 'physicalStore') {
-        		this.store.on('metachange', this.onPhysicalStoreLoaded, this);
+        		
+        		/*
+        		var printFields = function(meta) {
+        			meta.xfields = [];
+        			for(var i = 0; i <  meta.fields.length; i++) {
+        				meta.xfields.push(meta.fields[i]);
+        	    		if(meta.fields[i] == "recNo") continue;
+        	        	Sbi.trace("[Thematizer.printFields]: Field meta [" + Sbi.toSource(meta.fields[i]) + "]");	
+        	        }
+        		};
+        		this.store.reader.onMetaChange = printFields.createSequence(this.store.reader.onMetaChange, this.store.reader);
+        		*/
+        		
+        		this.store.on('metachange', function(store, meta) {
+        			this.meta = meta;
+        		}, this);
+        		this.store.on('load', this.onPhysicalStoreLoaded, this);
+        		
+        		this.store.on('loadexception', function(store, options, response, e) {
+        			Sbi.exception.ExceptionHandler.showErrorMessage("Error: " + e , "Impossible to load store");
+        			//Sbi.exception.ExceptionHandler.handleFailure(response, options);
+        		});
+        		
+        		
             	if(this.storeReload == true) {
             		this.loadPhysicalStore();
             	}
@@ -851,7 +875,10 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
  		Ext.Ajax.request({
  			url: loadHierarchyLevelInfoServiceUrl,
  			success : this.onHierarchyLevelMetaLoad,
- 			failure: Sbi.exception.ExceptionHandler.handleFailure,  
+ 			failure: function(response) {
+ 				alert("Impossible to load hierarchy level info");
+ 				Sbi.exception.ExceptionHandler.handleFailure(response);
+ 			},  
  			scope: this
  		});
  		
@@ -866,6 +893,7 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
  		if(response !== undefined && response.responseText !== undefined && response.statusText=="OK") {
  			if(response.responseText!=null && response.responseText!=undefined){
  				if(response.responseText.indexOf("error.mesage.description")>=0){
+ 					alert("Impossible to load hierarchy level info because of errors");
  					Sbi.exception.ExceptionHandler.handleFailure(response);
  				} else {
  					var levelMeta = JSON.parse(response.responseText);
@@ -902,13 +930,14 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
      	
      	var loadLayerServiceUrl = Sbi.config.serviceRegistry.getServiceUrl({
  			serviceName: this.loadLayerServiceName
- 			, baseParams: {} //params
+ 			, baseParams: params
  		});
      	
      	Sbi.debug("[Thematizer.loadLayer]: Service url is equal to [" + loadLayerServiceUrl + "]");
      	
      	
      	Sbi.debug("[Thematizer.loadLayer]: Loading layer [" + this.layerName + "] ...");
+     	/*
      	Ext.Ajax.request({
      		url: loadLayerServiceUrl
      		, params: params
@@ -916,21 +945,21 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
      		, failure: onFailure || this.onFailure
      		, scope: this
      	});
+     	*/
      	
-     	/*
      	OpenLayers.Request.GET({
      		url: loadLayerServiceUrl
      		, success: onSuccess || this.onSuccess
      		, failure: onFailure || this.onFailure
      		, scope: this
      	});
-     	*/
+     	
      	
      	Sbi.trace("[Thematizer.loadLayer]: OUT");
      }
     
      , onLayerLoaded: function(response, options) {
-    	 alert("Layer loaded! " + this.layer.features.length);
+    	 alert("Layer loaded! ");
     	 Sbi.trace("[Thematizer.onLayerLoaded] : IN");
     	 
     	 Sbi.debug("[Thematizer.onLayerLoaded] : Layer [" + options.params.layer + "] succesfully loaded");
@@ -960,6 +989,7 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
      
      , loadPhysicalStore: function() {
     	 Sbi.debug("[Thematizer.loadPhysicalStore]: IN");
+    	 alert("Loading physical store");
     	 this.store.load({});
     	 Sbi.debug("[Thematizer.loadPhysicalStore]: OUT");
      }
@@ -980,7 +1010,10 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
 			url: this.storeConfig.url
 			, params: this.storeConfig.params
 			, success : this.onVirtualStoreLoaded
-			, failure: Sbi.exception.ExceptionHandler.handleFailure
+			, failure: function(response) {
+				alert("Impossible to load virtual store");
+				Sbi.exception.ExceptionHandler.handleFailure(response);
+			}
 			, scope: this
     	 });
     	 
@@ -992,9 +1025,18 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
       *
       * @param {Object} request
       */
-     , onPhysicalStoreLoaded: function(store, meta) {
+     , onPhysicalStoreLoaded: function(store) {
     	Sbi.trace("[Thematizer.onPhysicalStoreLoaded]: IN");
-    	Sbi.trace("[Thematizer.onPhysicalStoreLoaded]: Meta property list [" + Sbi.toSourcePropertiesList(meta)+ "]");
+    	Sbi.trace("[Thematizer.onPhysicalStoreLoaded]: Meta property list [" + Sbi.toSourcePropertiesList(this.meta)+ "]");
+    	
+    	for(var i = 0; i <  this.meta.fields.length; i++) {
+        	Sbi.trace("[Thematizer.onPhysicalStoreLoaded]: Field role [" + this.meta.fields[i].role + "]");
+        }
+    	
+    	this.meta.geoId = this.geoId;
+    	this.filters = this.getAttributeFilters(store, this.meta);
+    	this.fireEvent('filtersChanged', this, this.filters);
+    	
     	Sbi.trace("[Thematizer.onPhysicalStoreLoaded]: OUT");
      }
      
@@ -1004,6 +1046,7 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
     	 if(response !== undefined && response.responseText !== undefined && response.statusText=="OK") {
     		 if(response.responseText!=null && response.responseText!=undefined) {
 				if(response.responseText.indexOf("error.mesage.description")>=0){
+					alert("Impossible to load virtual store because of errors");
 					Sbi.exception.ExceptionHandler.handleFailure(response);
 				} else {
 					//Sbi.debug(response.responseText);
@@ -1053,7 +1096,7 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
      * @param {Object} response
      */
     , onFailure: function(response) {
-    	alert("Impossible to load layer");
+    	alert("Loading layer failure");
         this.requestFailure(response);
     }
 });

@@ -60,7 +60,8 @@ Sbi.exception.ExceptionHandler = function(){
         				}
         			} 
         		} 
-        		if(errMessage === null)	errMessage = 'An unspecified error occurred on the server side';
+        		if(errMessage === null)	errMessage = "An unspecified error occurred on the server side [" + response.status + ", " + response.statusText + ", " + Ext.Ajax.timeout + "]";
+        		//tId; status; statusText; getResponseHeader; getAllResponseHeaders; responseText; responseXML; argument;
         	} else {
         		errMessage = 'Request has been aborted due to a timeout trigger';
         	}
