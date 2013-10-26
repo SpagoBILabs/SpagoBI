@@ -64,7 +64,7 @@ public class GetTargetLayerAction extends AbstractBaseServlet {
 	
 	
 	/** Logger component. */
-    private static transient Logger logger = Logger.getLogger(GeoReportEngineStartAction.class);
+    private static transient Logger logger = Logger.getLogger(GetTargetLayerAction.class);
     
     
 	public void doService( BaseServletIOManager servletIOManager ) throws SpagoBIEngineException {
@@ -86,7 +86,7 @@ public class GetTargetLayerAction extends AbstractBaseServlet {
 				Assert.assertTrue(StringUtilities.isNotEmpty(featureSourceType), "Input parameter [" + FEATURE_SOURCE_TYPE + "] cannot be empty");
 				
 				featureSource = servletIOManager.getParameterAsString(FEATURE_SOURCE); 
-				logger.debug("Parameter [" + FEATURE_SOURCE + "] is equal to [" + featureSourceType + "]");
+				logger.debug("Parameter [" + FEATURE_SOURCE + "] is equal to [" + featureSource + "]");
 				Assert.assertTrue(StringUtilities.isNotEmpty(featureSource), "Input parameter [" + FEATURE_SOURCE + "] cannot be empty");
 				
 				layerName = servletIOManager.getParameterAsString(LAYER_NAME); 

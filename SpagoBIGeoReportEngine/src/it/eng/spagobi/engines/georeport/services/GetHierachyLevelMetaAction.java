@@ -64,7 +64,7 @@ public class GetHierachyLevelMetaAction extends AbstractBaseServlet {
 	
 	
 	/** Logger component. */
-    private static transient Logger logger = Logger.getLogger(GeoReportEngineStartAction.class);
+    private static transient Logger logger = Logger.getLogger(GetHierachyLevelMetaAction.class);
     
     
 	public void doService( BaseServletIOManager servletIOManager ) throws SpagoBIEngineException {
