@@ -845,6 +845,7 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 		}
 	}
 	, onStoreLoad: function(measureCatalogue, options, store, meta) {
+		this.measureCatalogueWindow.close();
 		this.thematizerControlPanel.thematizer.setData(store, meta);
 		this.thematizerControlPanel.storeType = 'virtualStore';
 		var s = "";

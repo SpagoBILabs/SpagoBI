@@ -117,6 +117,8 @@ Ext.extend(Sbi.geo.stat.ChoroplethThematizer, Sbi.geo.stat.Thematizer, {
     , thematize: function(options) {
            
     	Sbi.trace("[ChoroplethThematizer.thematize] : IN");
+    	
+    	this.showMask("Buiding thematization ...");
     	   
     	if (options) {
     		if(options.resetClassification) {
@@ -147,6 +149,8 @@ Ext.extend(Sbi.geo.stat.ChoroplethThematizer, Sbi.geo.stat.Thematizer, {
         for (var i = 0; i < rules.length; i++) {
         	Sbi.trace("[ChoroplethThematizer.thematize] : Features thematized succesfully for class [" + i + "] are [" + filters[i].filteredFeatures + "] on [" + filters[i].dataPoints.length +"] expected");
         }
+        
+        this.hideMask();
         
         Sbi.trace("[ChoroplethThematizer.thematize] : OUT");
     }

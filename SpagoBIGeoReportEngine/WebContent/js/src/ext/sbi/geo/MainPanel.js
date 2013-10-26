@@ -78,10 +78,7 @@ Sbi.geo.MainPanel = function(config) {
 	
 	// apply after render settings
 	this.on('render', function() {
-		this.setCenter();
-		if(this.controlPanelConf.earthPanelEnabled === true) {
-			this.init3D.defer(500, this);
-		}
+		this.mapComponent.setCenter();
 		if(this.toolbarConf.enabled) {
 			this.toolbar.initButtons.defer(500, this.toolbar);
 		}
@@ -106,16 +103,11 @@ Ext.extend(Sbi.geo.MainPanel, Ext.Panel, {
      */
     services: null
     
-    , baseLayersConf: null
-    , layers: null
-    
     , map: null
     , lon: null
     , lat: null
     , zoomLevel: null
     
-    , showPositon: null
-    , showOverview: null
     , mapName: null
     , mapPanel: null
     , controlPanel: null
@@ -127,22 +119,9 @@ Ext.extend(Sbi.geo.MainPanel, Ext.Panel, {
     
     , targetLayer: null
     , thematizerControlPanel: null
-    
     , controlPanel2: null
     
-    , nWLayer: null
-    
-    , wmsLayerUrl: null
- 
-    , btnAddWms: null
- 
-    , winWmsForm: null
-    
-    , Form: null
-    
-    , wmsLayerGrid: null
-    
-    , model: null
+
     
     // =================================================================================================================
 	// METHODS
@@ -239,24 +218,15 @@ Ext.extend(Sbi.geo.MainPanel, Ext.Panel, {
 	// -----------------------------------------------------------------------------------------------------------------
     // accessor methods
 	// -----------------------------------------------------------------------------------------------------------------
-    , setCenter: function(center) {
-      	
-		center = center || {};
-      	this.lon = center.lon || this.lon || 18.530;
-      	this.lat = center.lat || this.lat || 42.500;
-      	this.zoomLevel = center.zoomLevel || this.zoomLevel || 5;
-        
-        if(this.map.projection == 'EPSG:900913'){            
-            this.centerPoint = Sbi.geo.utils.GeoReportUtils.lonLatToMercator(new OpenLayers.LonLat(this.lon, this.lat));
-            this.map.setCenter(this.centerPoint, this.zoomLevel);
-        } else if(this.map.projection == 'EPSG:4326') {
-        	this.centerPoint = new OpenLayers.LonLat(this.lon, this.lat);
-        	this.map.setCenter(this.centerPoint, this.zoomLevel);
-        } else{
-        	alert('Map Projection [' + this.map.projection + '] not supported yet');
-        }
-         
-     }
+
+	, isStoreVirtual: function() {
+		return this.indicatorContainer === "store" && this.storeType === "virtualStore";
+	}
+	
+	// -----------------------------------------------------------------------------------------------------------------
+    // public methods
+	// -----------------------------------------------------------------------------------------------------------------
+	// ...
 
 	//-----------------------------------------------------------------------------------------------------------------
 	// init methods
@@ -296,16 +266,7 @@ Ext.extend(Sbi.geo.MainPanel, Ext.Panel, {
 			serviceName: 'GetTargetDataset'
 			, baseParams: params
 		});
-		
-//		this.services['MapOl'] = this.services['MapOl'] || Sbi.config.serviceRegistry.getServiceUrl({
-//			serviceName: 'MapOl'
-//			, baseParams: params
-//		});
-//		
-//		this.services['GetTargetLayer'] = this.services['GetTargetLayer'] || Sbi.config.serviceRegistry.getServiceUrl({
-//			serviceName: 'GetTargetLayer'
-//			, baseParams: params
-//		});
+
 	}
 	
 	/**
@@ -336,15 +297,7 @@ Ext.extend(Sbi.geo.MainPanel, Ext.Panel, {
 				this.store = null;
 			}
 		} else {
-			Sbi.debug("[MainPanel.initStore]: Store wont be loaded because property [indicatorContainer] is equal to [" + this.indicatorContainer+ "]");
-			// DEPRECATED
-//			Sbi.debug("[MainPanel.initStore]: Store will be loaded using service [MapOl] because property [indicatorContainer] is equal to [" + this.indicatorContainer+ "]");
-//			this.store = new Ext.data.JsonStore({
-//				url: this.services['MapOl']
-//				, autoLoad: false
-//			})
-			// DEPRECATED
-			
+			Sbi.debug("[MainPanel.initStore]: Store wont be loaded because property [indicatorContainer] is equal to [" + this.indicatorContainer+ "]");			
 		}
 		Sbi.trace("[MainPanel.initStore]: OUT");
 	}
@@ -360,149 +313,20 @@ Ext.extend(Sbi.geo.MainPanel, Ext.Panel, {
 		this.initControlPanel();
 	}
 	
-	
-	
 	, initMap: function() {  
-		var o = this.baseMapOptions;
-	
-		if(o.projection !== undefined && typeof o.projection === 'string') {
-			o.projection = new OpenLayers.Projection( o.projection );
-		}
-		
-		if(o.displayProjection !== undefined && typeof o.displayProjection === 'string') {
-			o.displayProjection = new OpenLayers.Projection( o.displayProjection );
-		}
-		
-		if(o.maxExtent !== undefined && typeof o.maxExtent === 'object') {
-			o.maxExtent = new OpenLayers.Bounds(
-					o.maxExtent.left, 
-					o.maxExtent.bottom,
-					o.maxExtent.right,
-					o.maxExtent.top
-            );
-		}
-		
-		
-		this.map = new OpenLayers.Map('map', this.baseMapOptions);
-		this.map.addControlToMap = function (control, px) {
-			Sbi.debug("[Map.addControlToMap]: IN");
-			
-			
-			if(control.div == null) {
-				Sbi.debug("[Map.addControlToMap]: div is null");
-			} else {
-				Sbi.debug("[Map.addControlToMap]: div is not null");
+		this.mapComponent = new Sbi.geo.MapComponent({
+			baseMapOptions : this.baseMapOptions
+			, baseLayersConf : this.baseLayersConf
+			, baseControlsConf: this.baseControlsConf
+			, baseCentralPointConf: {
+				lon: this.lon
+				, lat: this.lat
+				, zoomLevel: this.zoomLevel
 			}
-			
-	        // If a control doesn't have a div at this point, it belongs in the viewport.
-	        control.outsideViewport = (control.div != null);
-	        
-	        // If the map has a displayProjection, and the control doesn't, set 
-	        // the display projection.
-	        if (this.displayProjection && !control.displayProjection) {
-	            control.displayProjection = this.displayProjection;
-	        }    
-	        
-	        control.setMap(this);
-	        var div = control.draw(px);
-	        if (div) {
-	            if(!control.outsideViewport) {
-	                div.style.zIndex = this.Z_INDEX_BASE['Control'] +
-	                                    this.controls.length;
-	                this.viewPortDiv.appendChild( div );
-	                Sbi.debug("[Map.addControlToMap]: control [" + control.CLASS_NAME + "] added to viewport");
-	            }
-	        }
-	        Sbi.debug("[Map.addControlToMap]: OUT");
-	    };
+		});
 		
-		
-		this.initLayers();
-		this.initControls();  
+		this.map = this.mapComponent.map;
 		this.initAnalysis();
-		
-		
-    }
-
-	, initLayers: function(c) {
-		this.layers = new Array();
-				
-		if(this.baseLayersConf && this.baseLayersConf.length > 0) {
-			for(var i = 0; i < this.baseLayersConf.length; i++) {
-				if(this.baseLayersConf[i].enabled === true) {
-					var l = Sbi.geo.utils.LayerFactory.createLayer( this.baseLayersConf[i] );
-					if(l.name === this.selectedBaseLayer) {
-						l.selected = true;
-					} else {
-						l.selected = false;
-					}
-					this.layers.push( l	);
-				}
-			}			
-		}
-		
-		this.map.addLayers(this.layers);
-	}
-	
-	, initControls: function() {
-		if(this.baseControlsConf && this.baseControlsConf.length > 0) {
-			for(var i = 0; i < this.baseControlsConf.length; i++) {
-				if(this.baseControlsConf[i].enabled === true) {
-					this.baseControlsConf[i].mapOptions = this.baseMapOptions;
-					var c = Sbi.geo.utils.ControlFactory.createControl( this.baseControlsConf[i] );
-					if(c != null) {
-						Sbi.trace("[MainPanel.initControls] : adding control [" + Sbi.toSource(this.baseControlsConf[i]) + "] ...");
-						if(c.div == null) {
-							Sbi.trace("[MainPanel.initControls] : div is null");
-						} else {
-							Sbi.trace("[MainPanel.initControls] : div is not null");
-						}
-						if(c.CLASS_NAME == 'Sbi.geo.control.InlineToolbar') {
-							c.mainPanel = this;
-						}
-						this.map.addControl( c );
-						Sbi.trace("[MainPanel.initControls] : control [" + Sbi.toSource(this.baseControlsConf[i]) + "] succesfully added to the map");
-					}
-					
-				}
-			}			
-		}
-	}
-	
-	
-	, init3D: function(center){
-		center = center || {};
-		this.lon = center.lon || this.lon;
-		this.lat = center.lat || this.lat;
-	    
-	    if(this.map.projection == "EPSG:900913"){
-	        
-	    	var earth = new mapfish.Earth(this.map, 'map3dContainer', {
-	    		lonLat: Sbi.geo.utils.GeoReportUtils.lonLatToMercator(new OpenLayers.LonLat(this.lon, this.lat)),
-	            altitude: 50, //da configurare
-	            heading: -60, //da configurare
-	            tilt: 70,     //da configurare
-	            range: 700}
-	    	); //da configurare
-	    	
-	    } else if(this.map.projection == "EPSG:4326"){
-	    	
-	    	var earth = new mapfish.Earth(this.map, 'map3dContainer', {
-	    		lonLat: new OpenLayers.LonLat(this.lon, this.lat),
-	            altitude: 50,//da configurare
-	            heading: -60,//da configurare
-	            tilt: 70,//da configurare
-	            range: 700
-	       
-	    	}); //da configurare	    
-	    } else{
-	    	alert('Map projection [' + this.map.projection + '] not supported yet!');
-	    }
-	  
-	  }
-	
-	, isStoreVirtual: function() {
-		return this.indicatorContainer === "store" && this.storeType === "virtualStore";
 	}
 	
 	, initAnalysis: function() {
@@ -567,18 +391,6 @@ Ext.extend(Sbi.geo.MainPanel, Ext.Panel, {
 			thematizerControlPanelOptions.layer = this.targetLayer;
 			this.thematizerControlPanel = new Sbi.geo.stat.ProportionalSymbolControlPanel(geostatConf);
 			this.thematizerControlPanel.analysisConf = this.analysisConf;
-		} else if(this.analysisType === this.GRAPHIC) {
-			this.initGraphicAnalysis();
-			thematizerControlPanelOptions.layer = this.targetLayer;
-			this.map.PieDefinition = this.PieDefinition;			
-			this.map.analysisType = this.analysisType;
-			this.map.colors = this.color;
-			this.map.chartType = this.chartType;
-			this.map.totalField= this.totalField;
-			this.map.fieldsToShow= this.fieldsToShow;
-			this.thematizerControlPanel = new Sbi.geo.stat.ChoroplethControlPanel(thematizerControlPanelOptions);
-			this.thematizerControlPanel.analysisConf = this.analysisConf;
-			this.thematizerControlPanel.analysisConf = this.analysisConf;
 		} else if (this.analysisType === this.CHOROPLETH) {
 			this.initChoroplethAnalysis();
 			thematizerControlPanelOptions.layer = this.targetLayer;
@@ -594,8 +406,6 @@ Ext.extend(Sbi.geo.MainPanel, Ext.Panel, {
 		this.initAnalysislayerSelectControl();
 		this.map.addControl(this.analysisLayerSelectControl); 
 		//this.analysisLayerSelectControl.activate();
-		
-		
 	}
 	
 	, initProportionalSymbolsAnalysis: function() {
@@ -634,128 +444,9 @@ Ext.extend(Sbi.geo.MainPanel, Ext.Panel, {
     	this.map.addLayer(this.targetLayer);                                    
 	}
 	
-	, initGraphicAnalysis: function() {
-
-		var context = Sbi.geo.utils.ContextFactory.createContext();
-
-        var template = {
-			fillColor: "${getColor}",
-            fillOpacity: 0.2,
-            graphicOpacity: 1,
-            externalGraphic: "${getChartURLOriginal}",
-            pointRadius: 20,
-            graphicWidth:  "${getWidth}",
-            graphicHeight: "${getHeight}"
-        };
-            
-        var style = new OpenLayers.Style(template, {context: context});
-        
-		var styleMap = new OpenLayers.StyleMap({'default': style, 'select': {fillOpacity: 0.3}});
-		    	
-		    
-		    /************************************ **********/
-		var layerName = this.targetLayerConf? this.targetLayerConf.text: 'Thematized layer';
-		this.targetLayer = new OpenLayers.Layer.Vector( layerName,
-                                                { format: OpenLayers.Format.GeoJSON,
-                                                  styleMap: styleMap,
-                                                  isBaseLayer: false,
-                                                  projection: new OpenLayers.Projection("EPSG:4326")} );
-
-           // this.map.addLayers(vectors);
-            this.setCenter(new OpenLayers.LonLat(20, 38), 4);
-
-
-            //map.addControl(new OpenLayers.Control.LayerSwitcher());
-            //map.addControl(new OpenLayers.Control.MouseDefaults());
-            // map.addControl(new OpenLayers.Control.PanZoomBar());
-
-        function serialize() {
-            var Msg = "<strong>" + vectors.selectedFeatures[0].attributes["name"] + "</strong><br/>";
-            Msg    += "Population: " + vectors.selectedFeatures[0].attributes["population"] + "<br/>";
-            Msg    += "0-14 years: " + vectors.selectedFeatures[0].attributes["pop_0_14"] + "%<br/>";
-            Msg    += "15-59 years: " + vectors.selectedFeatures[0].attributes["pop_15_59"] + "%<br/>";
-            Msg    += "60 and over: " + vectors.selectedFeatures[0].attributes["pop_60_above"] + "%<br/>";
-            document.getElementById("info").innerHTML = Msg;
-        }
-
-            var options = {
-               hover: true
-               //,onSelect: serialize
-            };
-            
-            var select = new OpenLayers.Control.SelectFeature(this.targetLayer, options);
-            this.map.addControl(select);
-            select.activate();
-			
-     
-    
-    	this.map.addLayer(this.targetLayer);                                    
-	}
-	
-	
-	// --------------------------------------------------------------------------------------------------
-	// SELECTION Control
-	// --------------------------------------------------------------------------------------------------
-	
-	, initAnalysislayerSelectControl: function() {
-		this.analysisLayerSelectControl = new OpenLayers.Control.SelectFeature(
-        		this.targetLayer
-        		, {
-        			multiple: true
-        			, toggle: true
-        			, box: true
-        		}
-        );
-
-		this.featureHandler = new OpenLayers.Handler.Feature(
-				this, this.targetLayer, {click: this.onTargetFeatureClick}
-	    );
-		this.featureHandler.activate();
-		
-		this.targetLayer.events.register("beforefeaturesadded", this, function(o) { 
-			this.map.xfeatures = o.features;
-		}); 
-		
-		this.targetLayer.events.register("featureselected", this, function(o) { 
-			this.onTargetFeatureSelect(o.feature);
-		}); 
-        
-        this.targetLayer.events.register("featureunselected", this, function(o) { 
-			this.onTargetFeatureUnselect(o.feature);
-		}); 
-	}
-	
-	, onTargetFeatureClick: function(feature) {
-		Sbi.trace("[MainPanel.onTargetFeatureClick]: IN");
-		if(Ext.isEmpty(this.detailDocumentConf)) {
-			this.detailDocumentConf = [];
-		} 
-		if(!Ext.isArray( this.detailDocumentConf )) {
-			this.detailDocumentConf = [this.detailDocumentConf];
-		}
-		
-		//if(!this.toolbar.selectMode){
-			this.openPopup(feature);
-		//}
-		Sbi.trace("[MainPanel.onTargetFeatureClick]: OUT");
-	}
-	
-	
-	, onTargetFeatureSelect: function(feature) {
-		Sbi.trace("[MainPanel.onTargetFeatureSelect]: IN");
-		Sbi.trace("[MainPanel.onTargetFeatureSelect]: OUT");
-	}
-	
-	, onTargetFeatureUnselect: function(feature) {
-		Sbi.trace("[MainPanel.onTargetFeatureUnselect]: IN");
-		Sbi.trace("[MainPanel.onTargetFeatureUnselect]: OUT");
-	}
-	
-	// --------------------------------------------------------------------------------------------------
-
 	, initMapPanel: function() {
 		
-		this.mapComponent = new Sbi.geo.MapComponent({map: this.map});
+		//this.mapComponent = new Sbi.geo.MapComponent({map: this.map});
 		var mapPanelConf = {
 			title: LN(this.mapName),
 			layout: 'fit',
@@ -815,9 +506,7 @@ Ext.extend(Sbi.geo.MainPanel, Ext.Panel, {
 			
 			this.map.mapComponent = this.mapComponent;
 
-		}
-		
-		
+		}	
 	}
 	
 	, initControlPanel: function() {		
@@ -828,13 +517,63 @@ Ext.extend(Sbi.geo.MainPanel, Ext.Panel, {
 		this.controlPanel2 = new Sbi.geo.ControlPanel2(this.controlPanelConf);
 	}
 	
-
+	// --------------------------------------------------------------------------------------------------
+	// SELECTION Control
+	// --------------------------------------------------------------------------------------------------
 	
-	, addSeparator: function(){
-          this.toolbar.add(new Ext.Toolbar.Spacer());
-          this.toolbar.add(new Ext.Toolbar.Separator());
-          this.toolbar.add(new Ext.Toolbar.Spacer());
-    } 
+	, initAnalysislayerSelectControl: function() {
+		this.analysisLayerSelectControl = new OpenLayers.Control.SelectFeature(
+        		this.targetLayer
+        		, {
+        			multiple: true
+        			, toggle: true
+        			, box: true
+        		}
+        );
+
+		this.featureHandler = new OpenLayers.Handler.Feature(
+				this, this.targetLayer, {click: this.onTargetFeatureClick}
+	    );
+		this.featureHandler.activate();
+		
+		this.targetLayer.events.register("beforefeaturesadded", this, function(o) { 
+			this.map.xfeatures = o.features;
+		}); 
+		
+		this.targetLayer.events.register("featureselected", this, function(o) { 
+			this.onTargetFeatureSelect(o.feature);
+		}); 
+        
+        this.targetLayer.events.register("featureunselected", this, function(o) { 
+			this.onTargetFeatureUnselect(o.feature);
+		}); 
+	}
+	
+	, onTargetFeatureClick: function(feature) {
+		Sbi.trace("[MainPanel.onTargetFeatureClick]: IN");
+		if(Ext.isEmpty(this.detailDocumentConf)) {
+			this.detailDocumentConf = [];
+		} 
+		if(!Ext.isArray( this.detailDocumentConf )) {
+			this.detailDocumentConf = [this.detailDocumentConf];
+		}
+		
+		//if(!this.toolbar.selectMode){
+			this.openPopup(feature);
+		//}
+		Sbi.trace("[MainPanel.onTargetFeatureClick]: OUT");
+	}
+	
+	
+	, onTargetFeatureSelect: function(feature) {
+		Sbi.trace("[MainPanel.onTargetFeatureSelect]: IN");
+		Sbi.trace("[MainPanel.onTargetFeatureSelect]: OUT");
+	}
+	
+	, onTargetFeatureUnselect: function(feature) {
+		Sbi.trace("[MainPanel.onTargetFeatureUnselect]: IN");
+		Sbi.trace("[MainPanel.onTargetFeatureUnselect]: OUT");
+	}
 	
 	
 	// ==========================================================================================
