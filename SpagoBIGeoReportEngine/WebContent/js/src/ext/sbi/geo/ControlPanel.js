@@ -479,9 +479,7 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
     	}
     	
     	if(this.resultsetWindow == null) {
-    		this.store.on('loadexception', function(store, options, response, e) {
-    			Sbi.exception.ExceptionHandler.handleFailure(response, options);
-    		});
+    		
         	
         	this.store.on('metachange', function( store, meta ) {
         		this.updateMeta( meta );

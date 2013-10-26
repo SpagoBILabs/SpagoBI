@@ -15,3 +15,9 @@
 <script type="text/javascript" src="./js/lib/geoext/1.1/lib/GeoExt.js" ></script>
 <link rel="stylesheet" type="text/css" href="./js/lib/geoext/1.1/resources/css/geoext-all-debug.css" ></link>
 
+
+<script type="text/javascript">
+	Ext.Ajax.timeout = 5000000;
+	Ext.BLANK_IMAGE_URL = './js/lib/mapfish/client/mfbase/ext/resources/images/default/s.gif';
+</script>
+
