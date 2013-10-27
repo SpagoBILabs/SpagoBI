@@ -7,11 +7,11 @@
  
 Ext.ns("Sbi.geo");
 
-
 /**
- * Every time you create a new class add it to the following files:
- *  - importSbiJS.jspf
- *  - ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml
+ * @class Sbi.geo.ControlPanel
+ * @extends Ext.Panel
+ * 
+ * The control panel
  */
 Sbi.geo.ControlPanel2 = function(config) {
 	this.validateConfigObject(config);
@@ -19,8 +19,7 @@ Sbi.geo.ControlPanel2 = function(config) {
 	
 	// init properties...
 	var defaultSettings = {
-		// set default values here
-		//title       : LN('sbi.geo.controlpanel.title'),
+		id:'controlPanel',
 		region      : 'east',
 		split       : false,
 		width       : 365,
@@ -35,7 +34,6 @@ Sbi.geo.ControlPanel2 = function(config) {
 		hideBorders: true,
 		border		: false,
 		frame: false,
-		id:'controlPanel',
 		singleSelectionIndicator: true
 	};
 	
@@ -60,12 +58,6 @@ Sbi.geo.ControlPanel2 = function(config) {
     Sbi.geo.ControlPanel2.superclass.constructor.call(this, c);
 };
 
-/**
- * @class Sbi.geo.ControlPanel2
- * @extends Ext.Panel
- * 
- * bla bla bla bla bla ...
- */
 
 /**
  * @cfg {Object} config
@@ -143,6 +135,335 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 	, adjustConfigObject: function(config) {
 		
 	}
+	
+	// -----------------------------------------------------------------------------------------------------------------
+    // accessor methods
+	// -----------------------------------------------------------------------------------------------------------------
+	
+	, setMapPrivate: function() {
+		var privateEl =  Ext.get("div-private");
+		var publicEl =  Ext.get("div-public");
+		Ext.fly(publicEl).removeClass('checked');
+		Ext.fly(privateEl).addClass('checked');
+	}
+	
+	, setMapPublic: function() {
+		var privateEl =  Ext.get("div-private");
+		var publicEl =  Ext.get("div-public");
+		Ext.fly(privateEl).removeClass('checked');
+		Ext.fly(publicEl).addClass('checked');
+	}
+	
+	/**
+	 * @method 
+	 * Set a new list of indicators usable to generate the thematization
+	 * 
+	 * @param {Array} indicators new indicators list. each element is an array of two element:
+	 * the first is the indicator name while the second one is the indicator text
+	 * @param {String} indicator the name of the selected indicator. Must be equal to one of the 
+	 * names of the indicators passed in as first parameter. It is optional. If not specified
+	 * the first indicators of the list will be selected.
+	 * @param {boolean} riseEvents true to rise an event in order to regenerate the thematization, false 
+	 * otherwise. Optional. By default false.
+	 */
+	, setIndicators: function(indicators, indicator, riseEvents) {
+		Sbi.trace("[ControlPanel2.setIndicators] : IN");
+		
+		Sbi.trace("[ControlPanel2.setIndicators] : New indicators number is equal to [" + indicators.length + "]");
+		
+    	this.thematizerControlPanel.indicators = indicators;
+    	var newStore = new Ext.data.SimpleStore({
+            fields: ['value', 'text'],
+            data : this.indicators
+        });
+    	
+    	//updating indicatorsDiv
+    	this.refreshIndicatorsDiv();
+        
+        Sbi.trace("[ControlPanel2.setIndicators] : OUT");      
+    }
+	
+	/**
+     * Gets filters values
+     */
+    , getFilters:function(){
+    	Sbi.trace("[ControlPanel2.getFilters] : IN.. Get the values of the filters"); 
+    	var filters =new Array();
+		if(this.filters){
+			for(var i=0; i<this.filters.length; i++){
+				var filter = this.filters[i];
+				filters.push({
+					field: filter.name,
+					value: filter.getValue()
+				});
+			}
+		}
+		Sbi.trace("[ControlPanel2.getFilters] : OUT");
+		return filters;
+    }	
+    
+    /**
+     * Create the filter comboboxes
+     * @param filters the fiters definition
+     */
+	, setFilters: function(filters){
+		//Adding comboboxes for filters
+		Sbi.debug("[ControlPanel2.setFilters]: IN");
+		
+		if(!this.filters){
+			this.filters = new Array();
+		}
+
+		/*
+		if(this.setDefaultsValuesToFiltersButton){
+			this.remove(setDefaultsValuesToFiltersButton, true);
+		}
+		*/
+	
+		//remove the old filters
+		for(var i=0; i<this.filters.length; i++){
+			this.remove(this.filters[i],true);
+		}
+		this.filters = new Array();
+		
+		//build the new filters
+		for(var i=0; i<filters.length; i++){
+			
+			Sbi.debug("[ControlPanel2.setFilters]: Filter [" + filters[i].name + "] have [" + filters[i].values.length + "] possible values");
+			
+			var filterDef = filters[i];
+			var filter =new Ext.form.ComboBox  ({
+	            fieldLabel: filterDef.header,
+	            name: filterDef.name,
+	            editable: false,
+	            mode: 'local',
+	            allowBlank: true,
+	            valueField: 'val',
+	            displayField: 'val',
+	            emptyText: 'Select a value',
+	            triggerAction: 'all',
+	            store: new Ext.data.SimpleStore({
+	            	fields: ['val'],
+	                data : 	filterDef.values
+	            }),
+	            listeners: {
+	                'select': {
+	                    fn: function() {
+	                    	this.filterDataSet();
+	                    },
+	                    scope: this
+	                }
+	            }
+	        });
+
+			this.filters.push(filter);
+			
+			var filterLabel = new Ext.form.DisplayField({
+				fieldLabel : filterDef.header,
+				width:  300,
+				allowBlank : false,
+				name: filterDef.header,
+				readOnly:true,
+				hidden: false
+			});
+			filterLabel.setValue(filterDef.header);
+			
+			filterLabel.render("filtersDiv");
+			filter.render("filtersDiv");
+		}
+		
+		
+		if((Sbi.config.docLabel=="" && this.filters && this.filters.length>0)){
+			this.setDefaultsValuesToFiltersButton =  new Ext.Button({
+		    	text: LN('sbi.geo.analysispanel.filter.default'),
+		        width: 30,
+		        handler: function() {
+		        	this.saveDefaultFiltersValue();
+		        	Sbi.exception.ExceptionHandler.showInfoMessage(LN('sbi.geo.analysispanel.filter.default.ok'));
+           		},
+           		scope: this
+			});
+			this.setDefaultsValuesToFiltersButton.render("filtersDiv");
+		}
+		
+		
+		this.doLayout();
+		
+		
+		Sbi.debug("[ControlPanel2.setFilters]: OUT");
+	}
+	
+	// -----------------------------------------------------------------------------------------------------------------
+    // public methods
+	// -----------------------------------------------------------------------------------------------------------------
+	
+	
+    /**
+     * Save the default value of the filter in the filter as filterDefaultValue 
+     */
+    , saveDefaultFiltersValue:function(){
+    	Sbi.trace("[ControlPanel2.saveDefaultFiltersValue] : IN"); 
+		if(this.filters){
+			for(var i=0; i<this.filters.length; i++){
+				var filter = this.filters[i];
+				filter.filterDefaultValue =  filter.getValue();
+			}
+		}
+		Sbi.trace("[ControlPanel2.saveDefaultFiltersValue] : OUT");
+    }
+
+    /**
+     * Execute the filters
+     */
+    , filterDataSet: function(){
+    	Sbi.trace("[ControlPanel2.filterDataSet] : IN");      
+    	//get filter values
+    	var filters = this.getFilters();
+    	//filter the store
+    	this.thematizerControlPanel.thematizer.filterStore(filters);
+    	//update the thematization
+    	this.thematizerControlPanel.thematize(false, {resetClassification: true});
+    	Sbi.trace("[ControlPanel2.filterDataSet] : OUT");      
+    }
+	
+    
+	, showFeedbackWindow: function(){
+		if(this.feedbackWindow != null){			
+			this.feedbackWindow.destroy();
+			this.feedbackWindow.close();
+		}
+		
+		this.messageField = new Ext.form.TextArea({
+			fieldLabel: 'Message text',
+            width: '100%',
+            name: 'message',
+            maxLength: 2000,
+            height: 100,
+            autoCreate: {tag: 'textArea', type: 'text',  autocomplete: 'off', maxlength: '2000'}
+		});
+		
+		this.sendButton = new Ext.Button({
+			xtype: 'button',
+			handler: function() {
+				var msgToSend = this.messageField.getValue();
+				sendMessage({'label': Sbi.config.docLabel, 'msg': msgToSend},'sendFeedback');
+       		},
+       		scope: this ,
+       		text:'Send',
+	        width: '100%'
+		});
+
+		
+		var feedbackWindowPanel = new Ext.form.FormPanel({
+			layout: 'form',
+			defaults: {
+	            xtype: 'textfield'
+	        },
+
+	        items: [this.messageField,this.sendButton]
+		});
+		
+		
+		this.feedbackWindow = new Ext.Window({
+            layout      : 'fit',
+	        width		: 700,
+	        height		: 170,
+            closeAction :'destroy',
+            plain       : true,
+            title		: 'Send Feedback',
+            items       : [feedbackWindowPanel]
+		});
+		
+		this.feedbackWindow.show();
+	}
+	
+	, showMeasureCatalogueWindow: function(){
+		if(this.measureCatalogueWindow==null){
+			var measureCatalogue = new Sbi.geo.tools.MeasureCatalogue();
+			measureCatalogue.on('storeLoad', this.onStoreLoad, this);
+			
+			this.measureCatalogueWindow = new Ext.Window({
+	            layout      : 'fit',
+		        width		: 700,
+		        height		: 350,
+	            closeAction :'hide',
+	            plain       : true,
+	            title		: LN('sbi.tools.catalogue.measures.window.title'), //OpenLayers.Lang.translate('sbi.tools.catalogue.measures.window.title'),
+	            items       : [measureCatalogue]
+			});
+		}
+		
+		
+		this.measureCatalogueWindow.show();
+	}
+	
+	, showSaveMapWindow: function(){
+		this.showSaveWindow(false);
+	}
+	
+	, showSaveMapAsWindow: function(){
+		this.showSaveWindow(true);
+	}
+	
+	, showSaveWindow: function(isInsert){
+
+		if(this.saveWindow != null){			
+			this.saveWindow.destroy();
+			this.saveWindow.close();
+		}
+
+		var template = this.controlledPanel.validate();	
+		if (template == null) {
+    		alert("Impossible to get template");
+    		return;
+    	}
+    	
+    	Sbi.debug('[ControlPanel.showSaveWindow]: ' + template);
+    	
+		var documentWindowsParams = {				
+				'OBJECT_TYPE': 'MAP',
+				'OBJECT_TEMPLATE': template,
+				'typeid': 'GEOREPORT' 
+		};
+		
+		var formState = {};
+		//gets the input values (name, desccription,..)
+		var el = Ext.get('docMapName');
+		if ((el != null) && (el !== undefined ) && (el.getValue() !== '' )){
+			formState.docName = el.getValue();
+		}/*else{
+			alert('Nome documento obbligatorio');
+		}*/
+		var el = Ext.get('docMapDesc');
+		if ((el != null) && (el !== undefined )){
+			formState.docDescr = el.getValue();
+		}
+		var el = Ext.get('scopePublic');
+		if ((el != null) && (el !== undefined )){
+			formState.scope = (el.dom.checked)?"true":"false";			
+		}else{
+			formState.scope = "false"; //default
+		}
+		formState.scope.visibility = Sbi.config.visibility;
+		formState.OBJECT_FUNCTIONALITIES  = Sbi.config.docFunctionalities;
+		
+		if (isInsert){
+			formState.docLabel = 'map__' + Math.floor((Math.random()*1000000000)+1); 
+			if (Sbi.config.docDatasetLabel) 
+				documentWindowsParams.dataset_label= Sbi.config.docDatasetLabel;
+			documentWindowsParams.MESSAGE_DET= 'DOC_SAVE_FROM_DATASET';
+		}else{
+			formState.docLabel = Sbi.config.docLabel;
+			documentWindowsParams.MESSAGE_DET= 'MODIFY_GEOREPORT';	
+		}
+		documentWindowsParams.formState = formState;		
+		
+		this.saveWindow = new Sbi.service.SaveDocumentWindowExt(documentWindowsParams);
+		this.saveWindow.addListener('syncronizePanel', this.onSyncronizePanel, this);
+		this.saveWindow.show();		
+
+	}
+	
 	
 	// -----------------------------------------------------------------------------------------------------------------
     // init methods
@@ -264,7 +585,7 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 					var clsName = (i==0)?'first':'disabled';
 					toReturn += ''+
 					'<li class="'+clsName+'" id="indicator'+i+'"><span class="button">'+
-						'<a href="#" class="tick" onclick="javascript:Ext.getCmp(\'controlPanel\').indicatorSelected(\'indicator'+i+'\',\''+indEl[0]+'\');"></a>'+ indEl[1]+
+						'<a href="#" class="tick" onclick="javascript:Ext.getCmp(\'controlPanel\').onIndicatorSelected(\'indicator'+i+'\',\''+indEl[0]+'\');"></a>'+ indEl[1]+
 		            '</li>' ;	
 				}
 		       toReturn +=''+
@@ -282,6 +603,39 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 		}
 		
 		return toReturn;
+	}
+	
+	, refreshIndicatorsDiv: function(){
+		var containerPanel = Ext.get("containerPanel").dom;
+		var indicatorsDiv = Ext.get("indicatorsDiv").dom;
+		//remove old indicators div
+		indicatorsDiv.parentNode.removeChild(indicatorsDiv); 
+		//create new indicators div
+		indicatorsDiv = this.getIndicatorsDiv();
+		var mapTypeElement = Ext.get("mapType");
+		var dh = Ext.DomHelper;	
+		dh.insertAfter(mapTypeElement,indicatorsDiv);
+		
+		//Re-add handler on addIndicatorButton
+		var elAddIndicator = Ext.get("addIndicatorButton");
+		if(elAddIndicator && elAddIndicator !== null) {
+			elAddIndicator.on('click', function() {
+				this.showMeasureCatalogueWindow();
+			},this);
+			Sbi.debug("[ControlPanel2.refreshIndicatorsDiv]: Registered handler on [addIndicatorButton] ");
+		} else {
+			Sbi.debug("[ControlPanel2.refreshIndicatorsDiv]: Impossible to find element [addIndicatorButton] ");
+			alert('Impossible to find element [addIndicatorButton]');
+		}		
+		
+		//Activate first indicator as default
+		var indicatorsUl = Ext.get('ul-indicators').dom.childNodes;
+		if ((indicatorsUl[0] != null) && (indicatorsUl[0] !== undefined)){
+			var elementId = indicatorsUl[0].id;
+			indicatorsUl[0].className = 'disabled';
+			var indEl = this.thematizerControlPanel.indicators[0];
+			this.onIndicatorSelected(elementId, indEl[0]);
+		}
 	}
 	
 	, getPermissionDiv: function(){
@@ -357,91 +711,25 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 		return toReturn;
 	}
 
-	, initInnerPannelCallbacks: function() {
-		var thisPanel = this;
-		//alert('initInnerPannelCallbacks');
-		var elAuthorBtn = Ext.get("authorButton");
-		if(elAuthorBtn && elAuthorBtn !== null) {
-			elAuthorBtn.on('click', function() {
-				//alert('xxx');
-			});
-			//alert('Registered handler on element [authorButton]');
+	// -----------------------------------------------------------------------------------------------------------------
+    // init callbacks
+	// -----------------------------------------------------------------------------------------------------------------
+	
+	, initCallbackOnGuiItemClick: function(itemId, callbackFn, itemName) {
+		Sbi.trace("[ControlPanel2.initCallbackOnGuiItemClick]: IN");
+		
+		var itemEl = Ext.get(itemId);
+		if(itemEl && itemEl !== null) {
+			itemEl.on('click', callbackFn, this);
+			Sbi.debug("[ControlPanel2.initCallbackOnAuthorButton]: Callback on " + (itemName!=undefined?itemName: itemId) + " succesfully registered");
 		} else {
-			//alert('Impossible to find element [authorButton]');
+			Sbi.warn("[ControlPanel2.initCallbackOnAuthorButton]: Impossible to ragister callback on " + (itemName!=undefined?itemName: itemId));
 		}
 		
-		var elFeedbackMail = Ext.get("feedback_mail");
-		if(elFeedbackMail && elFeedbackMail !== null) {
-			elFeedbackMail.on('click', function() {
-				this.showFeedbackWindow();
-			},this);
-			//alert('Registered handler on element [feedback_mail]');
-		} else {
-			//alert('Impossible to find element [feedback_mail]');
-		}
-		
-		var elPermissions1 = Ext.get("permissions-1");
-		if(elPermissions1 && elPermissions1 !== null) {
-			elPermissions1.on('click', function() {
-				//alert("permissions-1 "+ el.getValue());
-				var el1 =  Ext.get("div-private");
-				var el2 =  Ext.get("div-public");
-				Ext.fly(el2).removeClass('checked');
-				Ext.fly(el1).addClass('checked');
-			},this);
-			//alert('Registered handler on element [permission-1]');
-		} else {
-			//alert('Impossible to find element [permission-1]');
-		}
-		
-		var elPermissions2 = Ext.get("permissions-2");
-		if(elPermissions2 && elPermissions2 !== null) {
-			elPermissions2.on('click', function() {				
-				var el1 =  Ext.get("div-private");
-				var el2 =  Ext.get("div-public");
-				Ext.fly(el1).removeClass('checked');
-				Ext.fly(el2).addClass('checked');
-			},this);
-			//alert('Registered handler on element [permission-2]');
-		} else {
-			//alert('Impossible to find element [permission-2]');
-		}		
-		
-		
-		this.initMapThematizationTypeCallbacks();
-		
-		
-		var elBtnNewMap = Ext.get("btn-new-map");
-		if(elBtnNewMap && elBtnNewMap !== null) {
-			elBtnNewMap.on('click', function() {
-					this.showSaveWindow(true);
-			}, this);
-		}
-		
-		var elAddIndicator = Ext.get("addIndicatorButton");
-		if(elAddIndicator && elAddIndicator !== null) {
-			elAddIndicator.on('click', function() {
-				this.showMeasureCatalogueWindow();
-			},this);
-			//alert('Registered handler on element [feedback_mail]');
-		} else {
-			alert('Impossible to find element [addIndicatorButton]');
-		}
-		
-		
-		var elBtnModifyMap = Ext.get("btn-modify-map");
-		if(elBtnModifyMap && elBtnModifyMap !== null) {
-			elBtnModifyMap.on('click', function() {					
-					this.showSaveWindow(false);
-			}, this);
-		}
-		
-		//Initialize thematizerControlPanel form state
-		this.thematizerControlPanel.on('ready', function(){
-			Sbi.debug("[AnalysisControlPanel]: [ready] event fired");
-			this.setAnalysisConf( this.thematizerControlPanel.analysisConf );
-		}, this);		
+		Sbi.trace("[ControlPanel2.initCallbackOnAuthorButton]: OUT");
 	}
+	
+	
 	
 	, initMapThematizationTypeCallbacks: function() {
 		var thisPanel = this;
@@ -451,28 +739,28 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 		var elMapZone = Ext.get("li-map-zone");
 		if(elMapZone && elMapZone !== null) {
 			elMapZone.on('click', function() {
-					this.refreshList(elMapZone, flyUlEl);					
+					this.onThematizerSelected(elMapZone, flyUlEl);					
 			}, thisPanel);
 		}				
 		
 		var elMapComparation = Ext.get("li-map-comparation");
 		if(elMapComparation && elMapComparation !== null) {
 			elMapComparation.on('click', function() {						
-					this.refreshList(elMapComparation, flyUlEl);					
+					this.onThematizerSelected(elMapComparation, flyUlEl);					
 			}, thisPanel);
 		}
 		
 		var elMapPoint = Ext.get("li-map-point");
 		if(elMapPoint && elMapPoint !== null) {
 			elMapPoint.on('click', function() {
-					this.refreshList(elMapPoint, flyUlEl);					
+					this.onThematizerSelected(elMapPoint, flyUlEl);					
 			}, thisPanel);
 		}
 		
 		var elMapHeat = Ext.get("li-map-heat");
 		if(elMapHeat && elMapHeat !== null) {
 			elMapHeat.on('click', function() {
-					this.refreshList(elMapHeat, flyUlEl);					
+					this.onThematizerSelected(elMapHeat, flyUlEl);					
 			}, thisPanel);
 		}
 		
@@ -500,238 +788,47 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 			//alert('Impossible to find element [maptype]');
 		}
 	}
-
-
-	// -----------------------------------------------------------------------------------------------------------------
-    // public methods
-	// -----------------------------------------------------------------------------------------------------------------
 	
+
+	
+	, initInnerPannelCallbacks: function() {
+		
+		var thisPanel = this;
+		
+		this.initCallbackOnGuiItemClick("authorButton", function(){}, "author button");
+		this.initCallbackOnGuiItemClick("feedback_mail", this.showFeedbackWindow, "feedback button");
+		this.initCallbackOnGuiItemClick("permissions-1", this.setMapPrivate, "private radio button");
+		this.initCallbackOnGuiItemClick("permissions-2", this.setMapPublic, "public radio button");
+		
+	
+		this.initMapThematizationTypeCallbacks();
+		
+		this.initCallbackOnGuiItemClick("btn-new-map", this.showSaveMapAsWindow, "save map button");
+		
+		this.initCallbackOnGuiItemClick("btn-modify-map", this.showSaveMapWindow, "modify map button");
+		
+		this.initCallbackOnGuiItemClick("addIndicatorButton", this.showMeasureCatalogueWindow, "add indicator button");
+		
+		//Initialize thematizerControlPanel form state
+		this.thematizerControlPanel.on('ready', function(){
+			Sbi.debug("[AnalysisControlPanel]: [ready] event fired");
+			this.setAnalysisConf( this.thematizerControlPanel.analysisConf );
+		}, this);		
+	}
+	
+
 	// -----------------------------------------------------------------------------------------------------------------
     // private methods
 	// -----------------------------------------------------------------------------------------------------------------
-	/**
-	 * @method 
-	 * Set a new list of indicators usable to generate the thematization
-	 * 
-	 * @param {Array} indicators new indicators list. each element is an array of two element:
-	 * the first is the indicator name while the second one is the indicator text
-	 * @param {String} indicator the name of the selected indicator. Must be equal to one of the 
-	 * names of the indicators passed in as first parameter. It is optional. If not specified
-	 * the first indicators of the list will be selected.
-	 * @param {boolean} riseEvents true to rise an event in order to regenerate the thematization, false 
-	 * otherwise. Optional. By default false.
-	 */
-	, setIndicators: function(indicators, indicator, riseEvents) {
-		Sbi.trace("[ControlPanel2.setIndicators] : IN");
-		
-		Sbi.trace("[ControlPanel2.setIndicators] : New indicators number is equal to [" + indicators.length + "]");
-		
-    	this.thematizerControlPanel.indicators = indicators;
-    	var newStore = new Ext.data.SimpleStore({
-            fields: ['value', 'text'],
-            data : this.indicators
-        });
-    	
-    	//updating indicatorsDiv
-    	this.refreshIndicators();
-        
-        Sbi.trace("[ControlPanel2.setIndicators] : OUT");      
-    }
 
-	
-	/**
-     * Create the filter comboboxes
-     * @param filters the fiters definition
-     */
-	, setFilters: function(filters){
-		//Adding comboboxes for filters
-		Sbi.debug("[ControlPanel2.setFilters]: IN");
+	, onThematizerSelected: function(el, list){
+		Sbi.trace("[ControlPanel2.onThematizerSelected]: IN");
 		
-		if(!this.filters){
-			this.filters = new Array();
-		}
-
-		/*
-		if(this.setDefaultsValuesToFiltersButton){
-			this.remove(setDefaultsValuesToFiltersButton, true);
-		}
-		*/
-	
-		//remove the old filters
-		for(var i=0; i<this.filters.length; i++){
-			this.remove(this.filters[i],true);
-		}
-		this.filters = new Array();
-		
-		//build the new filters
-		for(var i=0; i<filters.length; i++){
-			
-			Sbi.debug("[ControlPanel2.setFilters]: Filter [" + filters[i].name + "] have [" + filters[i].values.length + "] possible values");
-			
-			var filterDef = filters[i];
-			var filter =new Ext.form.ComboBox  ({
-	            fieldLabel: filterDef.header,
-	            name: filterDef.name,
-	            editable: false,
-	            mode: 'local',
-	            allowBlank: true,
-	            valueField: 'val',
-	            displayField: 'val',
-	            emptyText: 'Select a value',
-	            triggerAction: 'all',
-	            store: new Ext.data.SimpleStore({
-	            	fields: ['val'],
-	                data : 	filterDef.values
-	            }),
-	            listeners: {
-	                'select': {
-	                    fn: function() {
-	                    	this.filterDataSet();
-	                    },
-	                    scope: this
-	                }
-	            }
-	        });
-
-			this.filters.push(filter);
-			
-			var filterLabel = new Ext.form.DisplayField({
-				fieldLabel : filterDef.header,
-				width:  300,
-				allowBlank : false,
-				name: filterDef.header,
-				readOnly:true,
-				hidden: false
-			});
-			filterLabel.setValue(filterDef.header);
-			
-			filterLabel.render("filtersDiv");
-			filter.render("filtersDiv");
-		}
-		
-		
-		if((Sbi.config.docLabel=="" && this.filters && this.filters.length>0)){
-			this.setDefaultsValuesToFiltersButton =  new Ext.Button({
-		    	text: LN('sbi.geo.analysispanel.filter.default'),
-		        width: 30,
-		        handler: function() {
-		        	this.saveDefaultFiltersValue();
-		        	Sbi.exception.ExceptionHandler.showInfoMessage(LN('sbi.geo.analysispanel.filter.default.ok'));
-           		},
-           		scope: this
-			});
-			this.setDefaultsValuesToFiltersButton.render("filtersDiv");
-		}
-		
-		
-		this.doLayout();
-		
-		
-		Sbi.debug("[ControlPanel2.setFilters]: OUT");
-
-
-	}
-	
-    /**
-     * Save the default value of the filter in the filter as filterDefaultValue 
-     */
-    , saveDefaultFiltersValue:function(){
-    	Sbi.trace("[ControlPanel2.saveDefaultFiltersValue] : IN"); 
-		if(this.filters){
-			for(var i=0; i<this.filters.length; i++){
-				var filter = this.filters[i];
-				filter.filterDefaultValue =  filter.getValue();
-			}
-		}
-		Sbi.trace("[ControlPanel2.saveDefaultFiltersValue] : OUT");
-    }
-
-    /**
-     * Execute the filters
-     */
-    , filterDataSet: function(){
-    	Sbi.trace("[ControlPanel2.filterDataSet] : IN");      
-    	//get filter values
-    	var filters = this.getFilters();
-    	//filter the store
-    	this.thematizerControlPanel.thematizer.filterStore(filters);
-    	//update the thematization
-    	this.thematizerControlPanel.thematize(false, {resetClassification: true});
-    	Sbi.trace("[ControlPanel2.filterDataSet] : OUT");      
-    }
-	
-    /**
-     * Gets filters values
-     */
-    , getFilters:function(){
-    	Sbi.trace("[ControlPanel2.getFilters] : IN.. Get the values of the filters"); 
-    	var filters =new Array();
-		if(this.filters){
-			for(var i=0; i<this.filters.length; i++){
-				var filter = this.filters[i];
-				filters.push({
-					field: filter.name,
-					value: filter.getValue()
-				});
-			}
-		}
-		Sbi.trace("[ControlPanel2.getFilters] : OUT");
-		return filters;
-    }	
-	
-	
-	, showFeedbackWindow: function(){
-		if(this.feedbackWindow != null){			
-			this.feedbackWindow.destroy();
-			this.feedbackWindow.close();
-		}
-		
-		this.messageField = new Ext.form.TextArea({
-			fieldLabel: 'Message text',
-            width: '100%',
-            name: 'message',
-            maxLength: 2000,
-            height: 100,
-            autoCreate: {tag: 'textArea', type: 'text',  autocomplete: 'off', maxlength: '2000'}
-		});
-		
-		this.sendButton = new Ext.Button({
-			xtype: 'button',
-			handler: function() {
-				var msgToSend = this.messageField.getValue();
-				sendMessage({'label': Sbi.config.docLabel, 'msg': msgToSend},'sendFeedback');
-       		},
-       		scope: this ,
-       		text:'Send',
-	        width: '100%'
-		});
-
-		
-		var feedbackWindowPanel = new Ext.form.FormPanel({
-			layout: 'form',
-			defaults: {
-	            xtype: 'textfield'
-	        },
-
-	        items: [this.messageField,this.sendButton]
-		});
-		
-		
-		this.feedbackWindow = new Ext.Window({
-            layout      : 'fit',
-	        width		: 700,
-	        height		: 170,
-            closeAction :'destroy',
-            plain       : true,
-            title		: 'Send Feedback',
-            items       : [feedbackWindowPanel]
-		});
-		
-		this.feedbackWindow.show();
-	}
-
-	, refreshList: function(el, list){
 		if (el.id != list.item(0).first().id){
+			
+			alert("Selected thematizer [" + el.id + "]");
+			this.selectedThematizationOptionId =  el.id;
+			
 			var items = Ext.query('.active');
 			Ext.each(items, function (item) {
 		        item = Ext.get(item);
@@ -757,8 +854,9 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 			this.clearList(list);
 			//add
 			this.addElemsToList(list, newList);
-
 		}
+		
+		Sbi.trace("[ControlPanel2.onThematizerSelected]: OUT");
 	}
 	
 	, clearList: function(list){
@@ -803,7 +901,7 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 		Sbi.debug("[ControlPanel2.setAnalysisConf]: OUT");
 	}
 	
-	, indicatorSelected: function(elementId, indicator){
+	, onIndicatorSelected: function(elementId, indicator){
 		
 		//Set selected indicator in the thematizerControlPanel form state
 		var geostasticFormState = this.thematizerControlPanel.getFormState();
@@ -857,123 +955,9 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 			, params: options.params
 		};
 		
-		this.refreshIndicators();
+		this.refreshIndicatorsDiv();
 	}
-	
-	//refresh indicatorsDiv
-	, refreshIndicators: function(){
-		var containerPanel = Ext.get("containerPanel").dom;
-		var indicatorsDiv = Ext.get("indicatorsDiv").dom;
-		//remove old indicators div
-		indicatorsDiv.parentNode.removeChild(indicatorsDiv); 
-		//create new indicators div
-		indicatorsDiv = this.getIndicatorsDiv();
-		var mapTypeElement = Ext.get("mapType");
-		var dh = Ext.DomHelper;	
-		dh.insertAfter(mapTypeElement,indicatorsDiv);
-		
-		//Re-add handler on addIndicatorButton
-		var elAddIndicator = Ext.get("addIndicatorButton");
-		if(elAddIndicator && elAddIndicator !== null) {
-			elAddIndicator.on('click', function() {
-				this.showMeasureCatalogueWindow();
-			},this);
-			Sbi.debug("[ControlPanel2.refreshIndicators]: Registered handler on [addIndicatorButton] ");
-		} else {
-			Sbi.debug("[ControlPanel2.refreshIndicators]: Impossible to find element [addIndicatorButton] ");
-			alert('Impossible to find element [addIndicatorButton]');
-		}		
-		
-		//Activate first indicator as default
-		var indicatorsUl = Ext.get('ul-indicators').dom.childNodes;
-		if ((indicatorsUl[0] != null) && (indicatorsUl[0] !== undefined)){
-			var elementId = indicatorsUl[0].id;
-			indicatorsUl[0].className = 'disabled';
-			var indEl = this.thematizerControlPanel.indicators[0];
-			this.indicatorSelected(elementId, indEl[0]);
-		}
-		
-	}
-	
-	, showMeasureCatalogueWindow: function(){
-		if(this.measureCatalogueWindow==null){
-			var measureCatalogue = new Sbi.geo.tools.MeasureCatalogue();
-			measureCatalogue.on('storeLoad', this.onStoreLoad, this);
-			
-			this.measureCatalogueWindow = new Ext.Window({
-	            layout      : 'fit',
-		        width		: 700,
-		        height		: 350,
-	            closeAction :'hide',
-	            plain       : true,
-	            title		: LN('sbi.tools.catalogue.measures.window.title'), //OpenLayers.Lang.translate('sbi.tools.catalogue.measures.window.title'),
-	            items       : [measureCatalogue]
-			});
-		}
-		
-		
-		this.measureCatalogueWindow.show();
-	}
-	
-	, showSaveWindow: function(isInsert){
 
-		if(this.saveWindow != null){			
-			this.saveWindow.destroy();
-			this.saveWindow.close();
-		}
-
-		var template = this.controlledPanel.validate();	
-		if (template == null) {
-    		alert("Impossible to get template");
-    		return;
-    	}
-    	
-    	Sbi.debug('[ControlPanel.showSaveWindow]: ' + template);
-    	
-		var documentWindowsParams = {				
-				'OBJECT_TYPE': 'MAP',
-				'OBJECT_TEMPLATE': template,
-				'typeid': 'GEOREPORT' 
-		};
-		
-		var formState = {};
-		//gets the input values (name, desccription,..)
-		var el = Ext.get('docMapName');
-		if ((el != null) && (el !== undefined ) && (el.getValue() !== '' )){
-			formState.docName = el.getValue();
-		}/*else{
-			alert('Nome documento obbligatorio');
-		}*/
-		var el = Ext.get('docMapDesc');
-		if ((el != null) && (el !== undefined )){
-			formState.docDescr = el.getValue();
-		}
-		var el = Ext.get('scopePublic');
-		if ((el != null) && (el !== undefined )){
-			formState.scope = (el.dom.checked)?"true":"false";			
-		}else{
-			formState.scope = "false"; //default
-		}
-		formState.scope.visibility = Sbi.config.visibility;
-		formState.OBJECT_FUNCTIONALITIES  = Sbi.config.docFunctionalities;
-		
-		if (isInsert){
-			formState.docLabel = 'map__' + Math.floor((Math.random()*1000000000)+1); 
-			if (Sbi.config.docDatasetLabel) 
-				documentWindowsParams.dataset_label= Sbi.config.docDatasetLabel;
-			documentWindowsParams.MESSAGE_DET= 'DOC_SAVE_FROM_DATASET';
-		}else{
-			formState.docLabel = Sbi.config.docLabel;
-			documentWindowsParams.MESSAGE_DET= 'MODIFY_GEOREPORT';	
-		}
-		documentWindowsParams.formState = formState;		
-		
-		this.saveWindow = new Sbi.service.SaveDocumentWindowExt(documentWindowsParams);
-		this.saveWindow.addListener('syncronizePanel', this.onSyncronizePanel, this);
-		this.saveWindow.show();		
-
-		}
-	
 	, onSyncronizePanel: function(p) {
 		var newName =  p.docName.getEl().getValue();
 		var newDescr =  p.docDescr.getEl().getValue();

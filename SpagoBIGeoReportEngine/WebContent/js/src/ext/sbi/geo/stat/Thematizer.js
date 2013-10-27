@@ -533,8 +533,20 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
 	     var format = format || this.format || new OpenLayers.Format.GeoJSON();
 	     Sbi.debug("[Thematizer.setLayer] : Layer formt is equal to  [" + format + "]");
 	     
+	     var features = format.read(layer);
+	     var newFeatures = new Array();
+	     alert(features.length);
+	     for(var i = 0; i < features.length; i++) {
+	    	var f =  features[i];
+	    	var centroid = f.geometry.getCentroid();
+	    	
+	    	var newFeature = new OpenLayers.Feature.Vector( centroid, f.attributes, f.style);
+	    	newFeatures.push(newFeature);
+	    	Sbi.debug("[Thematizer.setLayer] : centroid [" + i + "] equals to [" + centroid.x + "," + centroid.y + "]");
+	     }
+	     
 	     this.layer.removeAllFeatures();
-	     this.layer.addFeatures(format.read(layer));
+	     this.layer.addFeatures(newFeatures);
 		 this.layer.renderer.clear();
 	     this.layer.redraw();
 		 Sbi.trace("[Thematizer.setLayer] : OUT");
@@ -574,13 +586,13 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
     	
     	Sbi.debug("[Thematizer.getAttributeFilters] : Building the map of the filters values " + store.data.length);
     	for(var i = 0; i < store.data.length; i++) {
-    		Sbi.debug("[Thematizer.getAttributeFilters] : Processing line " + i);
+    		//Sbi.trace("[Thematizer.getAttributeFilters] : Processing line " + i);
     		var row = store.data.items[i].data;
         	for(var j = 0; j < filtersNames.length; j++) {
         		var value = row[filtersNames[j]];
         		var filterValues = filtersValueMap[j];
         		filterValues[value] = value;
-        		Sbi.debug("[Thematizer.getAttributeFilters] : Added value [" + value + "] to [" + filtersNames[j] + "]");
+        		//Sbi.trace("[Thematizer.getAttributeFilters] : Added value [" + value + "] to [" + filtersNames[j] + "]");
         	}
     	}
     	Sbi.debug("[Thematizer.getAttributeFilters] : Built the map of the filters values");
@@ -771,7 +783,6 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
         // get features from web service if a url is specified
         if (this.loadLayerServiceName && this.layerId) {
         	Sbi.debug("[Thematizer.initialize]: Url attribute has been valorized to [" + Sbi.toSource(url) + "]. Features will be loaded from it");
-        	this.map.mapComponent.mask();
         	this.loadLayer();
         } else {
         	Sbi.debug("[Thematizer.initialize]: Url attribute or layerId has not been valorized");
@@ -1103,6 +1114,8 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
     , onSuccess: function(response) {
     	Sbi.trace("[Thematizer.onSuccess]: IN");
     	
+    	alert("Nessun dorma");
+    	
     	this.hideMask();
     	
     	this.showMask("Adding layer to map...");
@@ -1110,12 +1123,26 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
         if (!doc || !doc.documentElement) {
             doc = response.responseText;
         }
-        var format = this.format || new OpenLayers.Format.GeoJSON()
+        
+        var format = this.format || new OpenLayers.Format.GeoJSON();
+        
+        var features = format.read(doc);
+	    var newFeatures = new Array();
+	    
+	    alert(features.length);
+	    for(var i = 0; i < features.length; i++) {
+	    	var f =  features[i];
+	    	var centroid = f.geometry.getCentroid();
+	    	var newFeature = new OpenLayers.Feature.Vector( centroid, f.attributes, f.style);
+	    	newFeatures.push(newFeature);
+	    	Sbi.debug("[Thematizer.setLayer] : centroid [" + i + "] equals to [" + centroid.x + "," + centroid.y + "]");
+	    }
+	     
         this.layer.removeAllFeatures();
-        this.layer.addFeatures(format.read(doc));
+        this.layer.addFeatures( newFeatures );
         this.requestSuccess(response);
         
-        this.unmsak();
+        this.hideMask();
         Sbi.trace("[Thematizer.onSuccess]: OUT");
     }
 
