@@ -9,10 +9,6 @@
 
 Ext.ns("Sbi.geo.stat");
 
-/**
- * @requires core/GeoStat.js
- */
-
 Sbi.geo.stat.ChoroplethThematizer = function(map, config) {
 	
 	this.validateConfigObject(config);
@@ -92,13 +88,6 @@ Ext.extend(Sbi.geo.stat.ChoroplethThematizer, Sbi.geo.stat.Thematizer, {
     // init methods
 	// -----------------------------------------------------------------------------------------------------------------
     
-    /**
-     * Constructor: Sbi.geo.stat.ChoroplethThematizer
-     *
-     * Parameters:
-     * map - {<OpenLayers.Map>} OpenLayers map object
-     * options - {Object} Hashtable of extra options
-     */
     , initialize: function(map, options) {
     	Sbi.geo.stat.ChoroplethThematizer.superclass.initialize.call(this, map, options);
     }

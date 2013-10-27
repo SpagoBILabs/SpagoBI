@@ -8,12 +8,6 @@
 Ext.ns("Sbi.geo.stat");
 
 /**
- * @requires core/GeoStat/Choropleth.js
- * @requires core/Color.js
- */
-
-
-/**
  * The Choropleth class create a widget allowing to set up and display choropleth
  * thematization on a map
  *
@@ -149,11 +143,6 @@ Sbi.geo.stat.ChoroplethControlPanel = Ext.extend(Ext.FormPanel, {
      */
     , border: false
 
-    /**
-     * @property {Boolean} loadMask
-     * `true` to mask the widget while loading (defaults to false).
-     */
-    , loadMask : false
 
     /**
      * APIProperty: labelGenerator
@@ -569,33 +558,31 @@ Sbi.geo.stat.ChoroplethControlPanel = Ext.extend(Ext.FormPanel, {
      */
     , onRender: function(ct, position) {
     	Sbi.geo.stat.ChoroplethControlPanel.superclass.onRender.apply(this, arguments);
-        if(this.loadMask){
-            this.loadMask = new Ext.LoadMask(this.bwrap, this.loadMask);
-            //this.mapLoadMask = new Ext.LoadMask(this.map, {msg:"Please wait..."});
-            this.loadMask.show();
-            //this.mapLoadMask.show();
-        }
+       
 
         var thematizerOptions = {
-        	'layer': this.layer,
-        	'loadLayerServiceName': this.loadLayerServiceName,
-        	'layerName': this.layerName,
-            'featureSourceType': this.featureSourceType,
-			'featureSource': this.featureSource,
-			'requestSuccess': this.requestSuccess.createDelegate(this),
+           	'layer': this.layer,
+            'layerName': this.layerName,
+            'layerId' : this.geoId,
+            'loadLayerServiceName': this.loadLayerServiceName,
+            'requestSuccess': this.requestSuccess.createDelegate(this),
             'requestFailure': this.requestFailure.createDelegate(this),
-            
-			'format': this.format,
+                	
+            'format': this.format,
+            'featureSourceType': this.featureSourceType,
+            'featureSource': this.featureSource,
+            		
             'featureSelection': this.featureSelection,
             'nameAttribute': this.nameAttribute,
-            'legendDiv': this.legendDiv,
-            'labelGenerator': this.labelGenerator,
+            	        
             'indicatorContainer': this.indicatorContainer,
             'storeType': this.storeType,
             'storeConfig': this.storeConfig,
             'store': this.store,
-            'layerId' : this.geoId,
-            'storeId' : this.businessId
+            'storeId' : this.businessId,
+            		       
+            'legendDiv': this.legendDiv,
+            'labelGenerator': this.labelGenerator      	
         };
 
         this.thematizer = new Sbi.geo.stat.ChoroplethThematizer(this.map, thematizerOptions);
@@ -615,8 +602,7 @@ Sbi.geo.stat.ChoroplethControlPanel = Ext.extend(Ext.FormPanel, {
      */
     , initComponent : function() {
         this.items = [
-            /*this.initAddIndicatorsButton()          
-            ,*/ this.initIndicatorSelectionField()
+            this.initIndicatorSelectionField()
             , this.initMethodSelectionField()
             , this.initClassesNumberSelectionField()
             , this.initFromColorSelectionField()
@@ -852,13 +838,6 @@ Sbi.geo.stat.ChoroplethControlPanel = Ext.extend(Ext.FormPanel, {
      */
     , requestSuccess: function(request) {
         this.ready = true;
-
-        // if widget is rendered, hide the optional mask
-        if (this.loadMask && this.rendered) {
-            this.loadMask.hide();
-            this.map.mapComponent.unmask();
-        }
-        
         this.fireEvent('ready', this);
     }
 
@@ -873,11 +852,6 @@ Sbi.geo.stat.ChoroplethControlPanel = Ext.extend(Ext.FormPanel, {
             message = response.responseText;
         }
         Sbi.exception.ExceptionHandler.showErrorMessage(message, 'Service Error');
-    	// if widget is rendered, hide the optional mask
-        if (this.loadMask && this.rendered) {
-            this.loadMask.hide();
-            this.map.mapComponent.unmask();
-        }
     }   
 });
 

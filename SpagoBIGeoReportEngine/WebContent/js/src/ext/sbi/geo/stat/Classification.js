@@ -85,7 +85,10 @@ Ext.extend(Sbi.geo.stat.Distribution, Ext.util.Observable, {
 	}
 	
 	, getDataPoint: function(coordinates){
-		
+		for(var i = 0; i < this.dataPoints.length; i++) {
+			if(this.dataPoints[i].coordinatesAreEqualTo(coordinates, false)) return this.dataPoints[i];
+		}
+		return null;		
 	}
 	
 	/**

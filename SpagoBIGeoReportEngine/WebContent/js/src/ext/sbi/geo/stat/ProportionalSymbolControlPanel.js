@@ -9,179 +9,106 @@
 Ext.ns("Sbi.geo.stat");
 
 /**
- * @requires core/GeoStat/ProportionalSymbol.js
- */
-
-Ext.ns('Sbi.geo.stat');
-
-/**
- * Class: Sbi.geo.stat.ProportionalSymbolControlPanel
- * Use this class to create a widget allowing to display proportional
- * symbols on the map.
+ * The ProportionalSymbol class create a widget allowing to set up and display proportional symbol
+ * thematization on a map.
+ * 
+ * ## Further Reading
+ * 
+ * The proportional symbol thematization technique uses symbols of different sizes to represent data associated 
+ * with different areas or locations within the map. For example, a disc may be shown at the location 
+ * of each city in a map, with the area of the disc being proportional to the population of the city.
  *
- * Inherits from:
- * - {Ext.FormPanel}
+ * @author Andrea Gioia
  */
 Sbi.geo.stat.ProportionalSymbolControlPanel = Ext.extend(Ext.FormPanel, {
 
-    /**
-     * APIProperty: layer
-     * {<OpenLayers.Layer.Vector>} The vector layer containing the features that
-     *      are styled based on statistical values. If none is provided, one will
-     *      be created.
-     */
-    layer: null,
+	/**
+	 * @property {OpenLayers.Layer.Vector} layer
+	 * The vector layer containing the features that
+	 * are styled based on statistical values. If none is provided, one will
+	 * be created.
+	 */
+    layer: null
 
     /**
-     * APIProperty: format
-     * {<OpenLayers.Format>} The OpenLayers format used to get features from
-     *      the HTTP request response. GeoJSON is used if none is provided.
-     */
-    format: null,
+	 * @property {OpenLayers.Format} format
+	 * The OpenLayers format used to get features from the HTTP request response. 
+	 * GeoJSON is used if none is provided.
+	 */
+    , format: null
 
     /**
-     * APIProperty: url
-     * {String} The URL to the web service. If none is provided, the features
-     *      found in the provided vector layer will be used.
-     */
-    url: null,
+	 * The service name to call in order to load target layer. If none is provided, the features
+     * found in the provided vector layer will be used.
+	 */
+    , loadLayerServiceName: null
 
     /**
-     * APIProperty: featureSelection
-     * {Boolean} A boolean value specifying whether feature selection must
-     *      be put in place. If true a popup will be displayed when the
-     *      mouse goes over a feature.
-     */
-    featureSelection: true,
+	 * @property {Boolean} featureSelection
+	 * A boolean value specifying whether feature selection must
+     * be put in place. If true a popup will be displayed when the
+     * mouse goes over a feature.
+	 */    
+    , featureSelection: true
 
     /**
-     * APIProperty: nameAttribute
-     * {String} The feature attribute that will be used as the popup title.
-     *      Only applies if featureSelection is true.
-     */
-    nameAttribute: null,
+	 * @property {String} nameAttribute
+	 * The feature attribute that will be used as the popup title.
+	 * Only applies if featureSelection is true.
+	 */
+    , nameAttribute: null
+
+    /**
+	 * @property {Array} indicators
+	 * An array of selectable indicators. Each item of the array is an array composed by two element. The first is the name
+	 * of the indictor the secon one is the indicator text (ie. human readable).
+	 */
+    , indicators: null
     
     /**
-     * APIProperty: indicator
-     * {String} (read-only) The feature attribute currently chosen
-     *     Useful if callbacks are registered on 'featureselected'
-     *     and 'featureunselected' events
-     */
-    indicator: null,
+	 * @property {String} indicator
+	 * The indicator currently chosen
+	 */
+    , indicator: null
     
     /**
-     * APIProperty: indicatorText
-     * {String} (read-only) The raw value of the currently chosen indicator
-     *     (ie. human readable)
-     *     Useful if callbacks are registered on 'featureselected'
-     *     and 'featureunselected' events
+     * @property {String} indicator
+     * The raw value of the currently chosen indicator (ie. human readable)
      */
-    indicatorText: null,
+    , indicatorText: null
 
     /**
-     * Property: thematizer
-     * {<mapfish.GeoStat.ProportionalSymbol>} The core component object.
+     * @property {Sbi.geo.stat.ProportionalSymbolThematizer} thematizer
+     * The core thematizer object.
      */
-    thematizer: null,
-
-    /**
-     * Property: classificationApplied
-     * {Boolean} true if the classify was applied
-     */
-    classificationApplied: false,
-
-    /**
-     * Property: ready
-     * {Boolean} true if the widget is ready to accept user commands.
-     */
-    ready: false,
-
-    /**
-     * Property: border
-     *     Styling border
-     */
-    border: false,
+    , thematizer: null
     
     /**
-     * APIProperty: loadMask
-     *     An Ext.LoadMask config or true to mask the widget while loading (defaults to false).
+     * @property {boolean} thematizationApplied
+     * true if the thematization was applied
      */
-    loadMask : false,
+    , thematizationApplied: false
+   
+    /**
+     * @property {Boolean} ready
+     * true if the widget is ready to accept user commands.
+     */
+    , ready: false
 
     /**
-     * Constructor: Sbi.geo.stat.ProportionalSymbolControlPanel
-     *
-     * Parameters:
-     * config - {Object} Config object.
+     * @property {Boolean} border
+     * Styling border
      */
+    , border: false
+    
 
-    /**
-     * Method: initComponent
-     *    Inits the component
-     */
-    initComponent : function() {
-        this.items = [{
-            xtype: 'combo',
-            fieldLabel: 'Indicator',
-            name: 'indicator',
-            editable: false,
-            valueField: 'value',
-            displayField: 'text',
-            mode: 'local',
-            emptyText: 'select an indicator',
-            triggerAction: 'all',
-            store: new Ext.data.SimpleStore({
-                fields: ['value', 'text'],
-                data : this.indicators
-            })
-        },{
-            xtype: 'numberfield',
-            fieldLabel:'Min Size',
-            name: 'minSize',
-            width: 30,
-            value: 2,
-            maxValue: 20
-        },{
-            xtype: 'numberfield',
-            fieldLabel:'Max Size',
-            name: 'maxSize',
-            width: 30,
-            value: 20,
-            maxValue: 50
-        }];
-        
-        
-        this.buttons = [{
-            text: 'OK',
-            handler: this.classify,
-            scope: this
-        }];
-        Sbi.geo.stat.ProportionalSymbolControlPanel.superclass.initComponent.apply(this);
-    },
-
-    /**
-     * Method: requestSuccess
-     *      Calls onReady callback function and mark the widget as ready.
-     *      Called on Ajax request success.
-     */
-    requestSuccess: function(request) {
-        this.ready = true;
-        
-        // if widget is rendered, hide the optional mask
-        if (this.loadMask && this.rendered) {
-            this.loadMask.hide();
-        }
-    },
-
-    /**
-     * Method: requestFailure
-     *      Displays an error message on the console.
-     *      Called on Ajax request failure.
-     */
-    requestFailure: function(request) {
-        OpenLayers.Console.error('Ajax request failed');
-    },
-        
+    // =================================================================================================================
+	// METHODS
+	// =================================================================================================================
+    
+    // -----------------------------------------------------------------------------------------------------------------
+    // public methods
+	// -----------------------------------------------------------------------------------------------------------------
     /**
      * Method: classify
      *    Reads the features to get the different value for
@@ -189,53 +116,257 @@ Sbi.geo.stat.ProportionalSymbolControlPanel = Ext.extend(Ext.FormPanel, {
      *    Creates a new Distribution and related Classification
      *    Then creates an new ProportionalSymbols and applies classification
      */
-    classify: function() {
+    , thematize: function(exception, additionaOptions) {
+    	
+    	Sbi.trace("[ProportionalSymbolControlPanel.thematize] : IN");
+    	
+    	var doThematization = true;
+    	
         if (!this.ready) {
             if (exception) {
                 Ext.MessageBox.alert('Error', 'Component init not complete');
             }
             return;
         }
-        this.indicator = this.form.findField('indicator').getValue();
-        this.indicatorText = this.form.findField('indicator').getRawValue();
-        if (!this.indicator) {
-            Ext.MessageBox.alert('Error', 'You must choose an indicator');
-            return;
+        
+        var options = this.getThemathizerOptions();
+        
+        if (!options.indicator) {
+            if (exception === true) {
+                Ext.MessageBox.alert('Error', 'You must choose an indicator');
+            }
+            doThematization = false;
         }
-        var minSize = this.form.findField('minSize').getValue();
-        var maxSize = this.form.findField('maxSize').getValue();
-        this.thematizer.updateOptions({
-            'indicator': this.indicator,
-            'minSize': minSize,
-            'maxSize': maxSize
-        });
-        this.thematizer.thematize();
-        this.classificationApplied = true;
-    },
+        
+        options = Ext.apply(options, additionaOptions||{});
+        
+        if(doThematization) {
+        	this.thematizer.thematize(options);
+            this.thematizationApplied = true;
+        } else {
+        	this.thematizer.setOptions(options);
+        } 
+        
+        Sbi.trace("[ProportionalSymbolControlPanel.thematize] : IN");
+    }
+    
+    // -----------------------------------------------------------------------------------------------------------------
+    // accessor methods
+	// -----------------------------------------------------------------------------------------------------------------
+    
+	, getThemathizerOptions: function() {
+		Sbi.trace("[ProportionalSymbolControlPanel.getThemathizerOptions] : IN");
+		var formState = this.getFormState();
+		var options = {};
+		options.indicator = formState.indicator;
+		options.minRadiusSize = formState.minRadiusSize;
+		options.maxRadiusSize = formState.maxRadiusSize;
+		
+		Sbi.trace("[ProportionalSymbolControlPanel.getThemathizerOptions] : OUT");
+		
+		return options;
+	}
+	
+	, getFormState: function() {
+		var formState = {};
+		
 
-    /**
+		formState.indicator = this.getIndicator();
+		formState.minRadiusSize = this.getMinRadiusSize();
+		formState.maxRadiusSize = this.getMaxRadiusSize();
+		
+		return formState;
+	}
+	
+	, setFormState: function(formState, riseEvent) {
+		Sbi.trace("[ProportionalSymbolControlPanel.setFormState] : IN");
+	
+//		this.setMethod(formState.method);
+//		this.setNumberOfClasses(formState.classes);
+//		this.setFromColor(formState.fromColor);
+//		this.setToColor(formState.toColor);
+//		this.setIndicator(formState.indicator);
+//		this.setFiltersDefaultValues(formState.filtersDefaultValues);
+//		if(riseEvent === true) { this.onConfigurationChange(); }
+		
+		Sbi.trace("[ProportionalSymbolControlPanel.setFormState] : OUT");
+	}
+	
+	/**
+	 * @method
+	 * 
+	 * @return {String} the selected classification indicator
+	 */
+	, getIndicator: function() {
+		return this.form.findField('indicator').getValue();
+	}
+	
+	/**
+	 * @method
+	 * 
+	 * @return {String} the selected classification min radius size
+	 */
+	, getMinRadiusSize: function() {
+		return this.form.findField('minSize').getValue();
+	}
+	
+	/**
+	 * @method
+	 * 
+	 * @return {String} the selected classification max radius size
+	 */
+	, getMaxRadiusSize: function() {
+		return this.form.findField('maxSize').getValue();
+	}
+    
+    // -----------------------------------------------------------------------------------------------------------------
+    // init method
+	// -----------------------------------------------------------------------------------------------------------------
+    
+	  /**
      * Method: onRender
      * Called by EXT when the component is rendered.
      */
-    onRender: function(ct, position) {
-        Sbi.geo.stat.Choropleth.superclass.onRender.apply(
-                this, arguments);
+    , onRender: function(ct, position) {
+    	Sbi.geo.stat.ProportionalSymbolControlPanel.superclass.onRender.apply(this, arguments);
         
-        if(this.loadMask){
-            this.loadMask = new Ext.LoadMask(this.bwrap,
-                    this.loadMask);
-            this.loadMask.show();
-        }
-        
-        this.thematizer = new Sbi.geo.stat.ProportionalSymbolThematizer(this.map, {
-            'layer': this.layer,
-            'format': this.format,
-            'url': this.url,
-            'requestSuccess': this.requestSuccess.createDelegate(this),
+        var thematizerOptions = {
+        	'layer': this.layer,
+            'layerName': this.layerName,
+            'layerId' : this.geoId,
+          	'loadLayerServiceName': this.loadLayerServiceName,
+          	'requestSuccess': this.requestSuccess.createDelegate(this),
             'requestFailure': this.requestFailure.createDelegate(this),
-            'featureSelection': this.featureSelection,
-            'nameAttribute': this.nameAttribute
-        });
+            	
+            'format': this.format,
+            'featureSourceType': this.featureSourceType,
+            'featureSource': this.featureSource,
+        		
+        	'featureSelection': this.featureSelection,
+        	'nameAttribute': this.nameAttribute,
+        	        
+        	'indicatorContainer': this.indicatorContainer,
+        	'storeType': this.storeType,
+        	'storeConfig': this.storeConfig,
+        	'store': this.store,
+        	'storeId' : this.businessId,
+        		       
+            'legendDiv': this.legendDiv,
+            'labelGenerator': this.labelGenerator      	
+        };
+        
+        
+       
+       
+        
+        
+        this.thematizer = new Sbi.geo.stat.ProportionalSymbolThematizer(this.map, thematizerOptions);
     }
+	
+    /**
+     * @private
+     * Called by EXT when the component is initialized.
+     */
+    , initComponent : function() {
+        this.items = [
+            this.initIndicatorSelectionField()
+            , this.initMinRadiusSizeField()
+            , this.initMaxRadiusSizeField()
+        ];
+         
+        this.buttons = [{
+            text: 'OK',
+            handler: this.thematize,
+            scope: this
+        }];
+        Sbi.geo.stat.ProportionalSymbolControlPanel.superclass.initComponent.apply(this);
+    }
+
+    /**
+     * @private
+     * Initialize the indicators' selection field
+     */
+    , initIndicatorSelectionField: function() {
+    	this.indicatorSelectionField = new Ext.form.ComboBox({
+    		fieldLabel: LN('sbi.geo.analysispanel.indicator'),
+            name: 'indicator',
+            editable: false,
+            valueField: 'value',
+            displayField: 'text',
+            mode: 'local',
+            emptyText: LN('sbi.geo.analysispanel.emptytext'),
+            valueNotFoundText: LN('sbi.geo.analysispanel.emptytext'),
+            triggerAction: 'all',
+            store: new Ext.data.SimpleStore({
+            	fields: ['value', 'text'],
+            	data : this.indicators
+            }),
+            listeners: {
+                'select': {
+                    fn: function() {
+                    	this.thematize(false);
+                    },
+                    scope: this
+                }
+            }
+    	});
+    	
+    	return this.indicatorSelectionField;
+    }
+        
+    /**
+     * @private
+     * Initialize the minRadiusSize' selection field
+     */
+    , initMinRadiusSizeField: function() {
+    	this.minRadiuSize = new Ext.form.NumberField({
+    		fieldLabel:'Min Size',
+            name: 'minSize',
+            width: 30,
+            value: 2,
+            maxValue: 20
+    	});
+    	
+    	return this.minRadiuSize;
+    }
+    
+    /**
+     * @private
+     * Initialize the minRadiusSize' selection field
+     */
+    , initMaxRadiusSizeField: function() {
+    	this.maxRadiuSize = new Ext.form.NumberField({
+             fieldLabel:'Max Size',
+             name: 'maxSize',
+             width: 30,
+             value: 20,
+             maxValue: 50
+    	});
+    	
+    	return this.maxRadiuSize;
+    }
+    
+    /**
+     * Method: requestSuccess
+     *      Calls onReady callback function and mark the widget as ready.
+     *      Called on Ajax request success.
+     */
+    , requestSuccess: function(request) {
+        this.ready = true;
+        this.fireEvent('ready', this);
+    }
+
+    /**
+     * Method: requestFailure
+     *      Displays an error message on the console.
+     *      Called on Ajax request failure.
+     */
+    , requestFailure: function(response) {
+    	var message = response.responseXML;
+        if (!message || !message.documentElement) {
+            message = response.responseText;
+        }
+        Sbi.exception.ExceptionHandler.showErrorMessage(message, 'Service Error');
+    }   
 });
 Ext.reg('proportionalsymbol', Sbi.geo.stat.ProportionalSymbolControlPanel);

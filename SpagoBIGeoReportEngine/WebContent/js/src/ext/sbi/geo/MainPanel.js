@@ -331,6 +331,8 @@ Ext.extend(Sbi.geo.MainPanel, Ext.Panel, {
 	
 	, initAnalysis: function() {
 		
+		Sbi.trace("[MainPanel.initAnalysis]: IN");
+		
 		if(this.indicatorContainer === "layer")  {
 			for (var i = 0; i < this.indicators.length; i++){
 				this.indicators[i][0] = this.indicators[i][0].toUpperCase();
@@ -389,7 +391,10 @@ Ext.extend(Sbi.geo.MainPanel, Ext.Panel, {
 		if (this.analysisType === this.PROPORTIONAL_SYMBOLS) {
 			this.initProportionalSymbolsAnalysis();
 			thematizerControlPanelOptions.layer = this.targetLayer;
-			this.thematizerControlPanel = new Sbi.geo.stat.ProportionalSymbolControlPanel(geostatConf);
+			thematizerControlPanelOptions.businessId = this.businessId;
+			thematizerControlPanelOptions.geoId = this.geoId;
+			thematizerControlPanelOptions.store = this.store;
+			this.thematizerControlPanel = new Sbi.geo.stat.ProportionalSymbolControlPanel(thematizerControlPanelOptions);
 			this.thematizerControlPanel.analysisConf = this.analysisConf;
 		} else if (this.analysisType === this.CHOROPLETH) {
 			this.initChoroplethAnalysis();
@@ -406,6 +411,8 @@ Ext.extend(Sbi.geo.MainPanel, Ext.Panel, {
 		this.initAnalysislayerSelectControl();
 		this.map.addControl(this.analysisLayerSelectControl); 
 		//this.analysisLayerSelectControl.activate();
+		
+		Sbi.trace("[MainPanel.initAnalysis]: OUT");
 	}
 	
 	, initProportionalSymbolsAnalysis: function() {

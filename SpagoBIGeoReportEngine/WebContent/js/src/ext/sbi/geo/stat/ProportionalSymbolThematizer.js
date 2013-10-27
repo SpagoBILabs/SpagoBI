@@ -8,9 +8,6 @@
 
 Ext.ns("Sbi.geo.stat");
 
-/**
- * @requires core/GeoStat.js
- */
 
 Sbi.geo.stat.ProportionalSymbolThematizer = function(map, config) {
 	
@@ -22,20 +19,10 @@ Sbi.geo.stat.ProportionalSymbolThematizer = function(map, config) {
 };
 
 /**
- * @class Sbi.geo.stat.Choropleth
+ * @class Sbi.geo.stat.ProportionalSymbolThematizer
  * @extends Sbi.geo.stat.Thematizer
  * 
  * Use this class to create proportional symbols on a map.
- *
- * Mandatory options are :
- * - features
- * 
- * Example usage :
- * > new mapfish.Sbi.geo.stat.ProportionalSymbolThematizer(this.map, {
- * >     minRadiusSize: 5,
- * >     maxRadiusSize: 15,
- * >     idAttribute:
- * > });
  */
 Ext.extend(Sbi.geo.stat.ProportionalSymbolThematizer, Sbi.geo.stat.Thematizer, {
     
@@ -70,15 +57,9 @@ Ext.extend(Sbi.geo.stat.ProportionalSymbolThematizer, Sbi.geo.stat.Thematizer, {
     // init methods
 	// -----------------------------------------------------------------------------------------------------------------
    
-    /**
-     * Constructor: OpenLayers.Layer
-     *
-     * Parameters:
-     * map - {<OpenLayers.Map>} OpenLayers map object
-     * options - {Object} Hashtable of extra options
-     */
+
     , initialize: function(map, options) {
-    	Sbi.geo.stat.Thematizer.prototype.initialize.apply(this, arguments);
+    	Sbi.geo.stat.ProportionalSymbolThematizer.superclass.initialize.call(this, map, options);
     }
     
     // -----------------------------------------------------------------------------------------------------------------
@@ -93,6 +74,8 @@ Ext.extend(Sbi.geo.stat.ProportionalSymbolThematizer, Sbi.geo.stat.Thematizer, {
      */
     , thematize: function(options) {
         
+    	Sbi.trace("[ProportionalSymbolThematizer.thematize] : IN");
+    	
     	if (options) {
     		if(options.resetClassification) {
     			this.setClassification();
@@ -103,9 +86,21 @@ Ext.extend(Sbi.geo.stat.ProportionalSymbolThematizer, Sbi.geo.stat.Thematizer, {
         
         var calculateRadius = OpenLayers.Function.bind(
             function(feature) {
-                var value = feature.attributes[this.indicator];
-                var size = (value - this.classification.minVal) / ( this.classification.maxVal - this.classification.minVal) *
-                           (this.maxRadiusSize - this.minRadiusSize) + this.minRadiusSize;
+            	var size;
+            	
+            	var dataPoint = this.distribution.getDataPoint([ feature.attributes[this.layerId] ]);
+            	if(dataPoint) {
+            		 var value = dataPoint.getValue();
+                     var minValue = this.distribution.getMinDataPoint().getValue();
+                     var maxValue = this.distribution.getMaxDataPoint().getValue();
+                     
+                     
+                     size = (value - minValue) / ( maxValue - minValue) *
+                                (this.maxRadiusSize - this.minRadiusSize) + this.minRadiusSize;
+            	} else {
+            		size = 0;
+            	}
+               
                 return size;
             }, this
         );
@@ -116,6 +111,8 @@ Ext.extend(Sbi.geo.stat.ProportionalSymbolThematizer, Sbi.geo.stat.Thematizer, {
         );
         
         Sbi.geo.stat.Thematizer.prototype.thematize.apply(this, arguments);
+        
+        Sbi.trace("[ProportionalSymbolThematizer.thematize] : OUT");
     }
     
     
@@ -123,12 +120,21 @@ Ext.extend(Sbi.geo.stat.ProportionalSymbolThematizer, Sbi.geo.stat.Thematizer, {
      * @method
      * Creates the classification that will be used for map thematization
      */  
+    , classify: function() {
+    	Sbi.trace("[ProportionalSymbolThematizer.classify] : IN");
+        
+    	this.distribution = this.getDistribution(this.indicator);
+    	Sbi.debug("[ChoroplethThematizer.setClassification] : Extracted [" + this.distribution.getSize() + "] values for indicator [" + this.indicator + "]");
+            
+        Sbi.trace("[ProportionalSymbolThematizer.classify] : OUT");
+    }
+    
+    /**
+     * @method
+     * @deperecated use #classify instead
+     */
     , setClassification: function() {
-    	var values = this.getValues(this.indicator);
-        var dist = new Sbi.geo.stat.Classifier(values);
-        this.classification = {};
-        this.classification.minVal = dist.minVal;
-        this.classification.maxVal = dist.maxVal;
+    	this.classify();
     }
 
    
