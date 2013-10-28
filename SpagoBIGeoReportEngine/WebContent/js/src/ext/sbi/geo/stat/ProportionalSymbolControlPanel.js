@@ -181,13 +181,11 @@ Sbi.geo.stat.ProportionalSymbolControlPanel = Ext.extend(Ext.FormPanel, {
 	, setFormState: function(formState, riseEvent) {
 		Sbi.trace("[ProportionalSymbolControlPanel.setFormState] : IN");
 	
-//		this.setMethod(formState.method);
-//		this.setNumberOfClasses(formState.classes);
-//		this.setFromColor(formState.fromColor);
-//		this.setToColor(formState.toColor);
-//		this.setIndicator(formState.indicator);
-//		this.setFiltersDefaultValues(formState.filtersDefaultValues);
-//		if(riseEvent === true) { this.onConfigurationChange(); }
+		this.setIndicator(formState.indicator);
+		this.setMinRadiusSize(formState.minRadiusSize);
+		this.setMaxRadiusSize(formState.maxRadiusSize);
+		this.setFiltersDefaultValues(formState.filtersDefaultValues);
+		if(riseEvent === true) { this.onConfigurationChange(); }
 		
 		Sbi.trace("[ProportionalSymbolControlPanel.setFormState] : OUT");
 	}
@@ -204,6 +202,15 @@ Sbi.geo.stat.ProportionalSymbolControlPanel = Ext.extend(Ext.FormPanel, {
 	/**
 	 * @method
 	 * 
+	 * @param {String} the indicator to set
+	 */
+	, setIndicator: function(indicator) {
+		this.form.findField('indicator').setValue(indicator);
+	}
+	
+	/**
+	 * @method
+	 * 
 	 * @return {String} the selected classification min radius size
 	 */
 	, getMinRadiusSize: function() {
@@ -213,10 +220,79 @@ Sbi.geo.stat.ProportionalSymbolControlPanel = Ext.extend(Ext.FormPanel, {
 	/**
 	 * @method
 	 * 
+	 * @param {Number} the min radius size to set
+	 */
+	, setMinRadiusSize: function(minRadiusSize) {
+		this.form.findField('minSize').setValue(minRadiusSize);
+	}
+	
+	/**
+	 * @method
+	 * 
 	 * @return {String} the selected classification max radius size
 	 */
 	, getMaxRadiusSize: function() {
 		return this.form.findField('maxSize').getValue();
+	}
+	
+	/**
+	 * @method
+	 * 
+	 * @param {Number} the max radius size to set
+	 */
+	, setMaxRadiusSize: function(maxRadiusSize) {
+		this.form.findField('maxSize').setValue(maxRadiusSize);
+	}
+	
+	/**
+	 * @method 
+	 * Set a new list of indicators usable to generate the thematization
+	 * 
+	 * @param {Array} indicators new indicators list. each element is an array of two element:
+	 * the first is the indicator name while the second one is the indicator text
+	 * @param {String} indicator the name of the selected indicator. Must be equal to one of the 
+	 * names of the indicators passed in as first parameter. It is optional. If not specified
+	 * the first indicators of the list will be selected.
+	 * @param {boolean} riseEvents true to rise an event in order to regenerate the thematization, false 
+	 * otherwise. Optional. By default false.
+	 */
+	, setIndicators: function(indicators, indicator, riseEvents) {
+		Sbi.trace("[ChoropletControlPanel.setIndicators] : IN");
+		
+		Sbi.trace("[ChoropletControlPanel.setIndicators] : New indicators number is equal to [" + indicators.length + "]");
+
+        
+        Sbi.trace("[ChoropletControlPanel.setIndicators] : OUT");      
+    }
+	
+    /**
+	 * @method
+	 * 
+	 * @param {Array} the default values of the filters
+	 */
+	, setFiltersDefaultValues: function(filters) {
+		if(filters){
+			for(var i=0; i<filters.length; i++){
+				var combo = this.form.findField(filters[i].name);
+				if(combo && filters[i].value && filters[i].value!=""){
+					combo.setValue(filters[i].value);
+					combo.fireEvent("select");
+				}
+			}
+		}
+	}
+    
+    /**
+     * Create the filter comboboxes
+     * @param filters the fiters definition
+     */
+	, setFilters: function(filters){
+		Sbi.trace("[ChoropletControlPanel.setFilters] : IN");
+		
+		Sbi.trace("[ChoropletControlPanel.setFilters] : New filters number is equal to [" + filters.length + "]");
+
+        
+        Sbi.trace("[ChoropletControlPanel.setFilters] : OUT");      
 	}
     
     // -----------------------------------------------------------------------------------------------------------------
@@ -230,37 +306,55 @@ Sbi.geo.stat.ProportionalSymbolControlPanel = Ext.extend(Ext.FormPanel, {
     , onRender: function(ct, position) {
     	Sbi.geo.stat.ProportionalSymbolControlPanel.superclass.onRender.apply(this, arguments);
         
-        var thematizerOptions = {
-        	'layer': this.layer,
-            'layerName': this.layerName,
-            'layerId' : this.geoId,
-          	'loadLayerServiceName': this.loadLayerServiceName,
-          	'requestSuccess': this.requestSuccess.createDelegate(this),
-            'requestFailure': this.requestFailure.createDelegate(this),
-            	
-            'format': this.format,
-            'featureSourceType': this.featureSourceType,
-            'featureSource': this.featureSource,
-        		
-        	'featureSelection': this.featureSelection,
-        	'nameAttribute': this.nameAttribute,
-        	        
-        	'indicatorContainer': this.indicatorContainer,
-        	'storeType': this.storeType,
-        	'storeConfig': this.storeConfig,
-        	'store': this.store,
-        	'storeId' : this.businessId,
-        		       
-            'legendDiv': this.legendDiv,
-            'labelGenerator': this.labelGenerator      	
-        };
-        
-        
-       
-       
-        
-        
-        this.thematizer = new Sbi.geo.stat.ProportionalSymbolThematizer(this.map, thematizerOptions);
+    	if(this.thematizer == null) {
+    	   var thematizerOptions = {
+    			   'layer': this.layer,
+    		       'layerName': this.layerName,
+    		       'layerId' : this.geoId,
+    		       'loadLayerServiceName': this.loadLayerServiceName,
+    		       'requestSuccess': this.requestSuccess.createDelegate(this),
+    		       'requestFailure': this.requestFailure.createDelegate(this),
+    		            	
+    		       'format': this.format,
+    		       'featureSourceType': this.featureSourceType,
+    		       'featureSource': this.featureSource,
+    		        		
+    		       'featureSelection': this.featureSelection,
+    		       'nameAttribute': this.nameAttribute,
+    		       	        
+    		       'indicatorContainer': this.indicatorContainer,
+    		       'storeType': this.storeType,
+    		       'storeConfig': this.storeConfig,
+    		       'store': this.store,
+    		       'storeId' : this.businessId,
+    		       		       
+    		       'legendDiv': this.legendDiv,
+    		       'labelGenerator': this.labelGenerator      	
+    	   };
+
+    	   this.thematizer = new Sbi.geo.stat.ProportionalSymbolThematizer(this.map, thematizerOptions);
+    	}
+    	
+    	if(this.thematizer.getLayer != null) {
+    		this.ready = true;
+			this.fireEvent('ready', this);
+    	} else {
+    		this.thematizer.on('layerloaded', function(thematizer, layer){
+    			if(this.ready !== true) { // do that only the first time
+    	    		this.ready = true;
+    				this.fireEvent('ready', this);
+    			}
+    		}, this);
+    	}
+    	
+    	 this.thematizer.on('indicatorsChanged', function(thematizer, indicators, selectedIndicator){
+ 			this.setIndicators(indicators, selectedIndicator, false);
+ 		}, this);
+         
+         this.thematizer.on('filtersChanged', function(thematizer, filters){
+ 			this.setFilters(filters);
+ 		}, this);
+     
     }
 	
     /**
@@ -345,28 +439,14 @@ Sbi.geo.stat.ProportionalSymbolControlPanel = Ext.extend(Ext.FormPanel, {
     	
     	return this.maxRadiuSize;
     }
+ 
+    //-----------------------------------------------------------------------------------------------------------------
+    // private methods
+	// -----------------------------------------------------------------------------------------------------------------
     
-    /**
-     * Method: requestSuccess
-     *      Calls onReady callback function and mark the widget as ready.
-     *      Called on Ajax request success.
-     */
-    , requestSuccess: function(request) {
-        this.ready = true;
-        this.fireEvent('ready', this);
+    , onConfigurationChange: function() {
+    	//alert("Classification change");
+    	this.thematize(false);
     }
-
-    /**
-     * Method: requestFailure
-     *      Displays an error message on the console.
-     *      Called on Ajax request failure.
-     */
-    , requestFailure: function(response) {
-    	var message = response.responseXML;
-        if (!message || !message.documentElement) {
-            message = response.responseText;
-        }
-        Sbi.exception.ExceptionHandler.showErrorMessage(message, 'Service Error');
-    }   
 });
 Ext.reg('proportionalsymbol', Sbi.geo.stat.ProportionalSymbolControlPanel);

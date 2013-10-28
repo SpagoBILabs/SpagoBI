@@ -70,7 +70,7 @@ Sbi.geo.MainPanel = function(config) {
 	c = Ext.apply(c, {
          layout   : 'border',
          hideBorders: true,
-         items    : [this.controlPanel, this.mapPanel, this.controlPanel2]
+         items    : [/*this.controlPanel,*/ this.mapPanel, this.controlPanel2]
 	});
 
 	// constructor
@@ -118,7 +118,7 @@ Ext.extend(Sbi.geo.MainPanel, Ext.Panel, {
     , GRAPHIC:'graphic'
     
     , targetLayer: null
-    , thematizerControlPanel: null
+    //, thematizerControlPanel: null
     , controlPanel2: null
     
 
@@ -164,6 +164,7 @@ Ext.extend(Sbi.geo.MainPanel, Ext.Panel, {
 	, validate: function (successHandler, failureHandler, scope) {
 		Sbi.trace("[MainPanel.validate]: IN");
 		
+		// TODO fix this beacuse control panel does not exist anymore
 		var thematizationControlPanel = this.controlPanel.thematizerControlPanel;
 		
 		var template = {};
@@ -361,52 +362,57 @@ Ext.extend(Sbi.geo.MainPanel, Ext.Panel, {
 			}
 		}
 			
-		var thematizerControlPanelOptions = {
-			map: this.map,
-			
-			layer: null, // this.targetLayer not yet defined here
-			loadLayerServiceName: loadLayerServiceName,
-			layerName: this.targetLayerConf? this.targetLayerConf.name: null,
-			featureSourceType: featureSourceType,
-			featureSource: featureSource,		
-			
-			indicatorContainer: this.indicatorContainer || 'layer',
-			storeType: this.storeType || 'physicalStore',
-			storeConfig: this.storeConfig,
-			indicators: this.indicators,			
-			loadMask : {msg: 'Analysis...', msgCls: 'x-mask-loading'},
-			legendDiv : 'LegendBody',
-			featureSelection: false,
-			listeners: {}
-		};
+		var thematizerOptions = {
+	       	'layer': null,
+	        'layerName': this.targetLayerConf? this.targetLayerConf.name: null,
+	        'layerId' : this.geoId,
+	      	'loadLayerServiceName': loadLayerServiceName,
+	       	//'requestSuccess': this.requestSuccess.createDelegate(this),
+	        //'requestFailure': this.requestFailure.createDelegate(this),
+	            	
+	        'format': null,
+	        'featureSourceType': featureSourceType,
+	        'featureSource': featureSource,
+	        		
+	      	'featureSelection': false,
+	       	'nameAttribute': null,
+	        	        
+	       	'indicatorContainer': this.indicatorContainer || 'layer',
+	       	'storeType': this.storeType || 'physicalStore',
+	       	'storeConfig': this.storeConfig,
+	       	'store': this.store,
+	       	'storeId' : this.businessId,
+	        		       
+	        'legendDiv': 'LegendBody',
+	        'labelGenerator': this.labelGenerator      	
+	    };
+		
+	
 		
 		if(this.map.projection == "EPSG:900913") {
-			 thematizerControlPanelOptions.format = new OpenLayers.Format.GeoJSON({
+			 var format =  new OpenLayers.Format.GeoJSON({
 				 externalProjection: new OpenLayers.Projection("EPSG:4326"),
 			     internalProjection: new OpenLayers.Projection("EPSG:900913")
 			 });
+			 thematizerOptions.format = format;
 		}
-		
 		
 		if (this.analysisType === this.PROPORTIONAL_SYMBOLS) {
-			this.initProportionalSymbolsAnalysis();
-			thematizerControlPanelOptions.layer = this.targetLayer;
-			thematizerControlPanelOptions.businessId = this.businessId;
-			thematizerControlPanelOptions.geoId = this.geoId;
-			thematizerControlPanelOptions.store = this.store;
-			this.thematizerControlPanel = new Sbi.geo.stat.ProportionalSymbolControlPanel(thematizerControlPanelOptions);
-			this.thematizerControlPanel.analysisConf = this.analysisConf;
+			Sbi.debug("[MainPanel.initAnalysis]: analysis type is equal to [" + this.PROPORTIONAL_SYMBOLS + "]");
+			this.initProportionalSymbolsAnalysisLayer();
+			thematizerOptions.layer = this.targetLayer;
+			this.thematizer = new Sbi.geo.stat.ProportionalSymbolThematizer(this.map, thematizerOptions);
 		} else if (this.analysisType === this.CHOROPLETH) {
-			this.initChoroplethAnalysis();
-			thematizerControlPanelOptions.layer = this.targetLayer;
-			thematizerControlPanelOptions.businessId = this.businessId;
-			thematizerControlPanelOptions.geoId = this.geoId;
-			thematizerControlPanelOptions.store = this.store;
-			this.thematizerControlPanel = new Sbi.geo.stat.ChoroplethControlPanel(thematizerControlPanelOptions);
-			this.thematizerControlPanel.analysisConf = this.analysisConf;
+			Sbi.debug("[MainPanel.initAnalysis]: analysis type is equal to [" + this.CHOROPLETH + "]");
+			this.initChoroplethAnalysisLayer();
+			thematizerOptions.layer = this.targetLayer;
+			this.thematizer = new Sbi.geo.stat.ChoroplethThematizer(this.map, thematizerOptions);
 		} else {
-			alert('error: unsupported analysis type [' + this.analysisType + ']');
+			Sbi.exception.ExceptionHandler.showErrorMessage('error: unsupported analysis type [' + this.analysisType + ']', 'Configuration error');
 		}
+		
+		// we inject thematzer in map to make it accessible to the legend control that need it in order to change configurations
+		this.map.thematizer = this.thematizer;
 		
 		this.initAnalysislayerSelectControl();
 		this.map.addControl(this.analysisLayerSelectControl); 
@@ -415,8 +421,9 @@ Ext.extend(Sbi.geo.MainPanel, Ext.Panel, {
 		Sbi.trace("[MainPanel.initAnalysis]: OUT");
 	}
 	
-	, initProportionalSymbolsAnalysis: function() {
-	
+	, initProportionalSymbolsAnalysisLayer: function() {
+		Sbi.trace("[MainPanel.initProportionalSymbolsAnalysisLayer]: IN");
+		
 		var layerName = this.targetLayerConf? this.targetLayerConf.text: 'Thematized layer';
 		this.targetLayer = new OpenLayers.Layer.Vector(layerName, {
 				'visibility': false  ,
@@ -428,9 +435,13 @@ Ext.extend(Sbi.geo.MainPanel, Ext.Panel, {
 		});
 
 		this.map.addLayer(this.targetLayer);		
+		
+		Sbi.trace("[MainPanel.initProportionalSymbolsAnalysisLayer]: OUT");
 	}
 	
-	, initChoroplethAnalysis: function() {
+	, initChoroplethAnalysisLayer: function() {
+		Sbi.trace("[MainPanel.initChoroplethAnalysisLayer]: IN");
+		
 		var layerName = this.targetLayerConf? this.targetLayerConf.text: 'Thematized layer';
 		this.targetLayer = new OpenLayers.Layer.Vector(layerName, {
         	'visibility': true,
@@ -448,7 +459,9 @@ Ext.extend(Sbi.geo.MainPanel, Ext.Panel, {
       	});
      
     
-    	this.map.addLayer(this.targetLayer);                                    
+    	this.map.addLayer(this.targetLayer);       
+    	
+    	Sbi.trace("[MainPanel.initChoroplethAnalysisLayer]: IN");
 	}
 	
 	, initMapPanel: function() {
@@ -518,8 +531,12 @@ Ext.extend(Sbi.geo.MainPanel, Ext.Panel, {
 	
 	, initControlPanel: function() {		
 		this.controlPanelConf.map = this.map;
-		this.controlPanelConf.thematizerControlPanel = this.thematizerControlPanel;
+		this.controlPanelConf.thematizer = this.thematizer;
+		this.controlPanelConf.indicators = this.indicators;
+		//this.controlPanelConf.thematizerControlPanel = this.thematizerControlPanel;
 		this.controlPanelConf.controlledPanel = this;
+		this.controlPanelConf.analysisType = this.analysisType;
+		this.controlPanelConf.analysisConf = this.analysisConf;
 		this.controlPanel = new Sbi.geo.ControlPanel(this.controlPanelConf);
 		this.controlPanel2 = new Sbi.geo.ControlPanel2(this.controlPanelConf);
 	}

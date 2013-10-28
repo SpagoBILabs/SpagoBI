@@ -21,8 +21,28 @@ Sbi.geo.stat.Thematizer = function(map, config) {
 
 	this.initialize(map, config);
 	
-	this.addEvents('indicatorsChanged');
-	this.addEvents('filtersChanged');
+	this.addEvents(
+		/**
+		* @event indicatorsChanged
+		* Fires when ...
+		* @param {Thematizer} this
+		*/
+		'indicatorsChanged'
+		/**
+		* @event filtersChanged
+		* Fires when ...
+		* @param {Thematizer} this
+		*/
+		, 'filtersChanged'
+		/**
+		* @event layerloaded
+		* Fires when a new target layer has been successfully loaded
+		* @param {Thematizer} this
+		* @param {OpenLayers.Layer.Vector} the layer loaded
+		*/
+		, 'layerloaded'
+	);
+
 
 	Sbi.geo.stat.Thematizer.superclass.constructor.call(this, config);
 };
@@ -385,7 +405,7 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
     
     /**
      * @method
-     * Method used to update the properties. It call #setOptions the check if some properties value is changed. If so
+     * Method used to update the properties. It call #setOptions then check if some properties value is changed. If so
      * regenerate the classification on which the thematization is built on calling #setClassification method. It should
      * be overwritten by subclasses if not all the properties contained in options object can trigger a classification recalculation
      * but only a subset of them.
@@ -517,6 +537,14 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
     	Sbi.trace("[Thematizer.setData] : OUT");
     }
     
+    /**
+     * @method 
+     *
+     * @return {OpenLayers.Layer.Vector} the target layer
+     */
+    , getLayer: function() {
+    	return this.layer;
+    }
     
     /**
      * @method 
@@ -533,9 +561,10 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
 	     var format = format || this.format || new OpenLayers.Format.GeoJSON();
 	     Sbi.debug("[Thematizer.setLayer] : Layer formt is equal to  [" + format + "]");
 	     
+	     // TODO non fare questo per tutte le tematizzazioni
 	     var features = format.read(layer);
 	     var newFeatures = new Array();
-	     alert(features.length);
+	     
 	     for(var i = 0; i < features.length; i++) {
 	    	var f =  features[i];
 	    	var centroid = f.geometry.getCentroid();
@@ -551,16 +580,7 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
 	     this.layer.redraw();
 		 Sbi.trace("[Thematizer.setLayer] : OUT");
     }
-    
-    
 
-    
-    
-    
-    
-    
-    
-    
     , getAttributeFilters: function(store, meta){
     	Sbi.debug("[Thematizer.getAttributeFilters] :IN");
     	
@@ -840,7 +860,7 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
      
      /**
       * @method 
-      * create an emppty layer that will contains thematized features
+      * create an empty layer that will contains thematized features
       */
      , initLayer: function() {
     	 var styleMap = new OpenLayers.StyleMap({
@@ -1010,17 +1030,16 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
 		 this.thematize({resetClassification: true});
 		 Sbi.debug("[Thematizer.loadLayer.onSuccess] : Layer succesfully thematized");
 			
+		 
+		 this.fireEvent('layerloaded', this, layer);
+		 Sbi.trace("[Thematizer.onSuccess]: event [layerloaded] fired");
+		 
 	     this.fireEvent('indicatorsChanged', this, this.indicators, this.indicator);
 	     this.fireEvent('filtersChanged', this, this.filters);
 	     
 	     Sbi.trace("[Thematizer.onLayerLoaded] : OUT");
      }
-    
-    
-    
-    
-    
-     
+
      , loadPhysicalStore: function() {
     	 Sbi.debug("[Thematizer.loadPhysicalStore]: IN");
     	 alert("Loading physical store");
@@ -1114,8 +1133,6 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
     , onSuccess: function(response) {
     	Sbi.trace("[Thematizer.onSuccess]: IN");
     	
-    	alert("Nessun dorma");
-    	
     	this.hideMask();
     	
     	this.showMask("Adding layer to map...");
@@ -1129,7 +1146,6 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
         var features = format.read(doc);
 	    var newFeatures = new Array();
 	    
-	    alert(features.length);
 	    for(var i = 0; i < features.length; i++) {
 	    	var f =  features[i];
 	    	var centroid = f.geometry.getCentroid();
@@ -1143,6 +1159,10 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
         this.requestSuccess(response);
         
         this.hideMask();
+        
+        this.fireEvent('layerloaded', this, this.layer);
+        Sbi.trace("[Thematizer.onSuccess]: event [layerloaded] fired [" + this.layer.features.length+ "]");
+        
         Sbi.trace("[Thematizer.onSuccess]: OUT");
     }
 
@@ -1155,6 +1175,29 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
     	this.unmsak();
         this.requestFailure(response);
     }
+    
+    /**
+     * Method: requestSuccess
+     *      Calls onReady callback function and mark the widget as ready.
+     *      Called on Ajax request success.
+     */
+//    , requestSuccess: function(request) {
+//        this.ready = true;
+//        this.fireEvent('ready', this);
+//    }
+
+    /**
+     * Method: requestFailure
+     *      Displays an error message on the console.
+     *      Called on Ajax request failure.
+     */
+//    , requestFailure: function(response) {
+//    	var message = response.responseXML;
+//        if (!message || !message.documentElement) {
+//            message = response.responseText;
+//        }
+//        Sbi.exception.ExceptionHandler.showErrorMessage(message, 'Service Error');
+//    }   
 });
 
 
@@ -1219,5 +1262,13 @@ OpenLayers.Filter.Function = OpenLayers.Class(OpenLayers.Filter, {
     CLASS_NAME: "OpenLayers.Filter.Function"
 });
 
+Sbi.geo.stat.Thematizer.supportedType =  {};
 
+Sbi.geo.stat.Thematizer.addSupportedType = function(typeName, thematizerClass, controlPanelClass) {
+	Sbi.geo.stat.Thematizer.supportedType[typeName] = {
+		typeName: typeName
+		, thematizerClass: thematizerClass
+		, controlPanelClass: controlPanelClass
+	};
+}
 

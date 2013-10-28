@@ -107,8 +107,31 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 	
 	
 	, initAnalysisControlPanel: function() {
+		Sbi.debug("[ControlPanel.initAnalysisControlPanel]: IN");
 		
 		if(this.analysisPanelEnabled === true) {
+			
+			var thematizerControlPanelOptions = {
+				map: this.map,
+				//ready: true, // force the ready state
+				indicators: this.indicators,	
+//				loadMask : {msg: 'Analysis...', msgCls: 'x-mask-loading'},
+//				legendDiv : 'LegendBody',
+//				listeners: {},
+				thematizer: this.thematizer
+			};
+			
+			
+			var thematizerType = Sbi.geo.stat.Thematizer.supportedType[this.analysisType];
+			if(thematizerType) {
+				Sbi.debug("[ControlPanel.initAnalysisControlPanel]: analysis type is equal to [" + thematizerType.typeName + "]");
+				this.thematizerControlPanel = new thematizerType.controlPanelClass(thematizerControlPanelOptions);
+				this.thematizerControlPanel.analysisConf = this.analysisConf;
+			} else {
+				Sbi.exception.ExceptionHandler.showErrorMessage('error: unsupported analysis type [' + this.analysisType + ']', 'Configuration error');
+			}
+			
+
 			
 			this.analysisControlPanel = new Ext.Panel(Ext.apply({
 	        	title: LN('sbi.geo.analysispanel.title'),
@@ -123,7 +146,11 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 			}, this);
 			
 			this.controlPanelItemsConfig.push(this.analysisControlPanel);
+		} else {
+			Sbi.debug("[ControlPanel.initAnalysisControlPanel]: analysis control panel is disabled");
 		}
+		
+		Sbi.trace("[ControlPanel.initAnalysisControlPanel]: IN");
 	}
 	
 	, setAnalysisConf: function(analysisConf) {
