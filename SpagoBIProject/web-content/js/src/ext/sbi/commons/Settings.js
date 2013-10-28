@@ -61,6 +61,7 @@ Sbi.settings.browser = {
 	  , maxNumberOfExecutionTabs: 1 	 //the maximum number of tabs to open on execution of documents if valorized
 	  , typeLayout: 'card'				 //possible values: 'tab' or 'card'
 	  , showTitle: true 
+	  , showCreateButton: true
 } 
 
 Sbi.settings.invisibleParameters = {

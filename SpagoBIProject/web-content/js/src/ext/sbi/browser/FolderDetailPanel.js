@@ -628,11 +628,18 @@ Ext.extend(Sbi.browser.FolderDetailPanel, Ext.Panel, {
         }
         
         var createButton = '';
-        if (this.isAbleToManageDocument()){
-        	createButton += ' <a id="newDocument" href="#" onclick="javascript:Ext.getCmp(\'this\').addNewDocument(\'\')" class="btn-add"><span class="highlighted">'+LN('sbi.generic.create')+'</span> '+LN('sbi.generic.document')+'<span class="plus">+</span></a> ';
-        }else  if (this.isAbleToCreateDocument()){
-        	createButton += ' <a id="newDocument" href="#" onclick="javascript:Ext.getCmp(\'this\').addNewDocument(\'georeport\')"" class="btn-add"><span class="highlighted">'+LN('sbi.generic.load')+'</span> '+LN('sbi.generic.map')+'<span class="plus">+</span></a> ';
-        } 
+        if (Sbi.settings.browser.showCreateButton == true){
+        	 if (this.isAbleToManageDocument()){
+             	createButton += ' <a id="newDocument" href="#" onclick="javascript:Ext.getCmp(\'this\').addNewDocument(\'\')" class="btn-add"><span class="highlighted">'+LN('sbi.generic.create')+'</span> '+LN('sbi.generic.document')+'<span class="plus">+</span></a> ';
+             }
+        } else {
+            if (this.isAbleToManageDocument()){
+            	createButton += ' <a id="newDocument" href="#" onclick="javascript:Ext.getCmp(\'this\').addNewDocument(\'\')" class="btn-add"><span class="highlighted">'+LN('sbi.generic.create')+'</span> '+LN('sbi.generic.document')+'<span class="plus">+</span></a> ';
+            }else  if (this.isAbleToCreateDocument()){
+            	createButton += ' <a id="newDocument" href="#" onclick="javascript:Ext.getCmp(\'this\').addNewDocument(\'georeport\')"" class="btn-add"><span class="highlighted">'+LN('sbi.generic.load')+'</span> '+LN('sbi.generic.map')+'<span class="plus">+</span></a> ';
+            } 
+        }
+
         var bannerHTML = ''+
 //     		'<div class="aux"> '+
      		'<div class="main-maps-list"> '+
