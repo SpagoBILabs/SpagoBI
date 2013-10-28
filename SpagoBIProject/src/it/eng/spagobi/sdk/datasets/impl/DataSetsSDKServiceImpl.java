@@ -245,6 +245,13 @@ public class DataSetsSDKServiceImpl extends AbstractSDKService implements DataSe
 				logger.warn("DataSet with identifier [" + dataSetId + "] found. Modified it!");			
 				IDataSetDAO datasetDAO = DAOFactory.getDataSetDAO();
 				datasetDAO.setUserProfile(profile);
+
+				// if going in update must not change visibility settings
+				IDataSet datasetPrevious = datasetDAO.loadActiveIDataSetByID(dataSetId);
+
+				logger.debug("keep previous settings as organization "+datasetPrevious.getOrganization()+" anbd visibility public: "+datasetPrevious.isPublic());
+				sbiDataset.setOrganization(datasetPrevious.getOrganization());
+				sbiDataset.setPublic(datasetPrevious.isPublic());
 				datasetDAO.modifyDataSet(sbiDataset);
 			}		
 			
