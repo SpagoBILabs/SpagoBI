@@ -155,7 +155,27 @@ Sbi.geo.control.Legend = OpenLayers.Class(OpenLayers.Control, {
         OpenLayers.Control.prototype.destroy.apply(this, arguments);    
     },
 
+    /**
+     * Method: setMap
+     *
+     * Properties:
+     * map - {<OpenLayers.Map>}
+     */
+    setMap: function(map) {
+    	Sbi.trace("[Layers.setMap] : IN");
+    	
+        OpenLayers.Control.prototype.setMap.apply(this, arguments);
+
+        if (this.outsideViewport) {
+            this.events.attachToElement(this.div);
+            this.events.register("buttonclick", this, this.onButtonClick);
+        } else {
+            this.map.events.register("buttonclick", this, this.onButtonClick);
+        }
         
+        Sbi.trace("[Layers.setMap] : OUT");
+    },
+    
     /**
      * Method: draw
      * Render the control in the browser.
@@ -204,6 +224,18 @@ Sbi.geo.control.Legend = OpenLayers.Class(OpenLayers.Control, {
         OpenLayers.Event.observe(legendContentCloseBtnElement, "click", 
 	    		OpenLayers.Function.bindAsEventListener(this.closeLegend, this, 'close'));
        
+        
+        var titleElement = document.createElement("div");
+        titleElement.innerHTML = " <\p> <h3>Legenda</h3><\p> <\p>";
+        this.legendContentElement.appendChild(titleElement);
+        
+        var legendEditButton = document.createElement("label");
+        OpenLayers.Element.addClass(legendEditButton, "labelSpan olButton");
+        legendEditButton.id = "LegendEditButton";
+        legendEditButton._legendEditButton = this.id;
+        legendEditButton.innerHTML = "Modifica stile<\p> <\p> ";
+        this.legendContentElement.appendChild(legendEditButton);
+        
         var legendContentBodyElement = document.createElement('div');
         legendContentBodyElement.id = 'LegendBody'; // OpenLayers.Util.createUniqueID('LegendContent');   
         this.legendContentElement.appendChild(legendContentBodyElement);
@@ -241,24 +273,84 @@ Sbi.geo.control.Legend = OpenLayers.Class(OpenLayers.Control, {
     	this.legendContentElement.closed = true;
     },
     
+   
     /**
-     * Method: createMap
-     * Construct the map that this control contains
+     * Method: onButtonClick
+     *
+     * Parameters:
+     * evt - {Event}
      */
-    createMap: function() {
-        // create the overview map
-        var options = OpenLayers.Util.extend(
-                        {controls: [], maxResolution: 'auto', 
-                         fallThrough: false}, this.mapOptions);
-
-        this.ovmap = new OpenLayers.Map(this.mapDiv, options);
-        
-        // prevent ovmap from being destroyed when the page unloads, because
-        // the SbiLegendMap control has to do this (and does it).
-//        OpenLayers.Event.stopObserving(window, 'click', this.ovmap.unloadDestroy);
-        
+    onButtonClick: function(evt) {
+    	var button = evt.buttonElement;
+       
+    	if(button._legendEditButton === this.id) {
+    		this.showThematizerConfigurationWindow();
+    	}
     },
     
+    showThematizerConfigurationWindow: function(){
+    	var thisPanel = this;
+		if(this.thematizerConfigurationWindow==null){
+			
+			var thematizerType = Sbi.geo.stat.Thematizer.supportedType[this.map.thematizer.thematyzerType];
+			if(thematizerType) {
+				Sbi.debug("[ControlPanel.initAnalysisControlPanel]: analysis type is equal to [" + thematizerType.typeName + "]");
+				var thematizerControlPanelOptions = {
+						map: this.map,
+						indicators: this.null,	
+						thematizer: this.map.thematizer,
+						bodyStyle:'padding:6px 6px 6px 6px; background-color:#FFFFFF',
+					};
+				
+				this.thematizerControlPanel = new thematizerType.controlPanelClass(thematizerControlPanelOptions);
+				//this.thematizerControlPanel.analysisConf = this.analysisConf;
+			} else {
+				Sbi.exception.ExceptionHandler.showErrorMessage('error: unsupported analysis type [' + this.analysisType + ']', 'Configuration error');
+			}
+			
+			//var thematizerControlPanel = {html: thematizerType.typeName + ": work in progress ... "}; 
+			
+			this.thematizerConfigurationWindow = new Ext.Window({
+	            layout      : 'fit',
+		        width		: 350,
+		        height		: 310,
+		        x			: 80,
+		        y			: 30,
+		        resizable	: false,
+	            closeAction : 'hide',
+	            plain       : true,
+	            title		: 'Style settings',
+	            items       : [this.thematizerControlPanel],
+	            buttons		: [
+	             {
+                    text:'Ok',
+                    handler: function(){
+                    	var themathizerOptions = thisPanel.thematizerControlPanel.getThemathizerOptions();
+                        thisPanel.map.thematizer.thematize(themathizerOptions);
+                        //this.close();
+                    }
+                } , {
+                    text:'Cancel',
+                    handler: function(){
+                    	// TODO: revert if necessary
+                       	//this.close();
+                    }
+                    
+                }, {
+                    text:'Apply',
+                    handler: function(){
+                    	var themathizerOptions = thisPanel.thematizerControlPanel.getThemathizerOptions();
+                    	thisPanel.map.thematizer.thematize(themathizerOptions);
+                    }
+	            }]
+	                      
+			});
+		}
+		
+		
+		this.thematizerConfigurationWindow.show();
+	},
+	
 
     CLASS_NAME: 'Sbi.geo.control.Legend'
 });

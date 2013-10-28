@@ -47,6 +47,8 @@ Ext.extend(Sbi.geo.stat.ProportionalSymbolThematizer, Sbi.geo.stat.Thematizer, {
      * {Integer} The maximum radius size
      */
     , maxRadiusSize: 20
+    
+    , thematyzerType: "proportionalSymbols"
 
 
     // =================================================================================================================
@@ -154,14 +156,6 @@ Ext.extend(Sbi.geo.stat.ProportionalSymbolThematizer, Sbi.geo.stat.Thematizer, {
             this.setClassification();
         }
     }    
-
-    
-    
-    
-    
-    
-    
-    
     
     /**
      * Method: updateLegend
@@ -175,3 +169,5 @@ Ext.extend(Sbi.geo.stat.ProportionalSymbolThematizer, Sbi.geo.stat.Thematizer, {
         // TODO use css classes instead
     }
 });
+
+Sbi.geo.stat.Thematizer.addSupportedType("proportionalSymbols", Sbi.geo.stat.ProportionalSymbolThematizer, Sbi.geo.stat.ProportionalSymbolControlPanel);

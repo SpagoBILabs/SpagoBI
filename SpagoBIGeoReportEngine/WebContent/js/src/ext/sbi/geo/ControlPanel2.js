@@ -171,7 +171,7 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 		
 		Sbi.trace("[ControlPanel2.setIndicators] : New indicators number is equal to [" + indicators.length + "]");
 		
-    	this.thematizerControlPanel.indicators = indicators;
+    	this.indicators = indicators;
     	var newStore = new Ext.data.SimpleStore({
             fields: ['value', 'text'],
             data : this.indicators
@@ -320,9 +320,10 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
     	//get filter values
     	var filters = this.getFilters();
     	//filter the store
-    	this.thematizerControlPanel.thematizer.filterStore(filters);
+    	this.thematizer.filterStore(filters);
     	//update the thematization
-    	this.thematizerControlPanel.thematize(false, {resetClassification: true});
+    	//this.thematizerControlPanel.thematize(false, {resetClassification: true});
+    	this.thematizer.thematize({resetClassification: true});
     	Sbi.trace("[ControlPanel2.filterDataSet] : OUT");      
     }
 	
@@ -522,12 +523,12 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 		this.innerPanel.on('render', function() {		
 			
 			//Handle indicatorsChanged event for updating indicators
-			this.thematizerControlPanel.thematizer.on('indicatorsChanged', function(thematizer, indicators, selectedIndicator){
+			this.thematizer.on('indicatorsChanged', function(thematizer, indicators, selectedIndicator){
 				this.setIndicators(indicators, selectedIndicator, false);
 			}, this);
 			
 			//Handle filtersChanged event for adding filters combo
-			this.thematizerControlPanel.thematizer.on('filtersChanged', function(thematizer, filters){
+			this.thematizer.on('filtersChanged', function(thematizer, filters){
 				this.setFilters(filters);
 			}, this);
 			
@@ -574,14 +575,14 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 	}
 
 	, getIndicatorsDiv: function(){
-		if ( this.thematizerControlPanel.indicators != null &&  this.thematizerControlPanel.indicators !== undefined){
+		if ( this.indicators != null &&  this.indicators !== undefined){
 			
 			var toReturn = '' +
 			'<div class="indicators" id="indicatorsDiv">' +
 		    	'<h2>'+LN('sbi.geo.controlpanel.indicators')+'</h2>' +
 		        '<ul id="ul-indicators" class="group">';		
-				for(var i=0; i< this.thematizerControlPanel.indicators.length; i++){
-					var indEl = this.thematizerControlPanel.indicators[i];
+				for(var i=0; i< this.indicators.length; i++){
+					var indEl = this.indicators[i];
 					var clsName = (i==0)?'first':'disabled';
 					toReturn += ''+
 					'<li class="'+clsName+'" id="indicator'+i+'"><span class="button">'+
@@ -633,7 +634,7 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 		if ((indicatorsUl[0] != null) && (indicatorsUl[0] !== undefined)){
 			var elementId = indicatorsUl[0].id;
 			indicatorsUl[0].className = 'disabled';
-			var indEl = this.thematizerControlPanel.indicators[0];
+			var indEl = this.indicators[0];
 			this.onIndicatorSelected(elementId, indEl[0]);
 		}
 	}
@@ -793,6 +794,8 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 	
 	, initInnerPannelCallbacks: function() {
 		
+		Sbi.trace("[ControlPanel2.initInnerPannelCallbacks]: IN");
+		
 		var thisPanel = this;
 		
 		this.initCallbackOnGuiItemClick("authorButton", function(){}, "author button");
@@ -804,16 +807,32 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 		this.initMapThematizationTypeCallbacks();
 		
 		this.initCallbackOnGuiItemClick("btn-new-map", this.showSaveMapAsWindow, "save map button");
-		
 		this.initCallbackOnGuiItemClick("btn-modify-map", this.showSaveMapWindow, "modify map button");
 		
 		this.initCallbackOnGuiItemClick("addIndicatorButton", this.showMeasureCatalogueWindow, "add indicator button");
 		
 		//Initialize thematizerControlPanel form state
-		this.thematizerControlPanel.on('ready', function(){
-			Sbi.debug("[AnalysisControlPanel]: [ready] event fired");
-			this.setAnalysisConf( this.thematizerControlPanel.analysisConf );
-		}, this);		
+		var targetLayer = this.thematizer.getLayer();
+		Sbi.trace("[ControlPanel2.initInnerPannelCallbacks] : target layer contains [" + targetLayer.features + "] features");
+    	if(targetLayer != null && targetLayer.features.length > 0) {
+    		Sbi.trace("[ControlPanel2.initInnerPannelCallbacks] : target layer already loaded");
+    		this.setAnalysisConf( this.analysisConf );
+    	} else {
+    		Sbi.trace("[ControlPanel2.initInnerPannelCallbacks] : target layer not already loaded");
+    		this.thematizer.on('layerloaded', function(){
+    			Sbi.trace("[ControlPanel2.onlayerLoaded]: IN");
+    			if(this.notAlreadyLoaded !== true) {
+    				Sbi.debug("[AnalysisControlPanel]: [layerloaded] event fired");
+    				this.setAnalysisConf( this.analysisConf );
+    				this.notAlreadyLoaded = true;
+    			}
+    			Sbi.trace("[ControlPanel2.onlayerLoaded]: OUT");
+    			
+    		}, this);	
+    	}
+		
+		
+		Sbi.trace("[ControlPanel2.initInnerPannelCallbacks]: OUT");
 	}
 	
 
@@ -884,6 +903,9 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 		var formState = Ext.apply({}, analysisConf || {});
 		
 		formState.method = formState.method || 'CLASSIFY_BY_QUANTILS';
+		formState.method = Sbi.geo.stat.Classifier[formState.method];
+		
+		
 		formState.classes =  formState.classes || 5;
 		
 		formState.fromColor =  formState.fromColor || '#FFFF99';
@@ -892,25 +914,21 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 		if(formState.indicator && this.indicatorContainer === 'layer') {
 			formState.indicator = formState.indicator.toUpperCase();
 		}
-		if(!formState.indicator && this.thematizerControlPanel.indicators && this.thematizerControlPanel.indicators.length > 0) {
-			formState.indicator = this.thematizerControlPanel.indicators[0][0];
+		if(!formState.indicator && this.indicators && this.indicators.length > 0) {
+			formState.indicator = this.indicators[0][0];
 		}
 		
-		this.thematizerControlPanel.setFormState(formState, true);
+		this.thematizer.thematize(formState);
 		
 		Sbi.debug("[ControlPanel2.setAnalysisConf]: OUT");
 	}
 	
-	, onIndicatorSelected: function(elementId, indicator){
+	, onIndicatorSelected: function(elementId, indicator) {
 		
-		//Set selected indicator in the thematizerControlPanel form state
-		var geostasticFormState = this.thematizerControlPanel.getFormState();
-		var currentIndicator = geostasticFormState.indicator;
-		geostasticFormState.indicator = indicator;
-		this.thematizerControlPanel.setFormState(geostasticFormState, true); //<- this will update the thematizer of the map
-		//*****************************************
-		
-		
+		Sbi.trace("[ControlPanel2.onIndicatorSelected]: IN");
+	
+		this.thematizer.thematize({indicator: indicator});
+
 		var el = Ext.get(elementId);
 		if ((el != null) && (el !== undefined )){
 			var currentClass = el.dom.className;
@@ -941,19 +959,23 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 			}
 
 		}
+		
+		Sbi.trace("[ControlPanel2.onIndicatorSelected]: OUT");
 	}
 	, onStoreLoad: function(measureCatalogue, options, store, meta) {
 		this.measureCatalogueWindow.close();
-		this.thematizerControlPanel.thematizer.setData(store, meta);
-		this.thematizerControlPanel.storeType = 'virtualStore';
+		this.thematizer.setData(store, meta);
+		// TODO verify
+		//this.thematizerControlPanel.storeType = 'virtualStore';
 		var s = "";
 		for(o in options) s += o + ";"
 		Sbi.debug("[ControlPanel2.onStoreLoad]: options.url = " + options.url);
 		Sbi.debug("[ControlPanel2.onStoreLoad]: options.params = " + Sbi.toSource(options.params));
-		this.thematizerControlPanel.storeConfig = {
-			url: options.url
-			, params: options.params
-		};
+		// TODO verify
+//		this.thematizerControlPanel.storeConfig = {
+//			url: options.url
+//			, params: options.params
+//		};
 		
 		this.refreshIndicatorsDiv();
 	}

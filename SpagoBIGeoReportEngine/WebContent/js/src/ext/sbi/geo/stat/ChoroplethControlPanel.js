@@ -181,6 +181,7 @@ Sbi.geo.stat.ChoroplethControlPanel = Ext.extend(Ext.FormPanel, {
             if (exception === true) {
                 Ext.MessageBox.alert('Error', 'Component init not complete');
             }
+            Sbi.warn("[ChoropletControlPanel.thematize] : Component init not complete");
             doThematization = false;
         }
         var options = this.getThemathizerOptions();
@@ -189,12 +190,14 @@ Sbi.geo.stat.ChoroplethControlPanel = Ext.extend(Ext.FormPanel, {
             if (exception === true) {
                 Ext.MessageBox.alert('Error', 'You must choose an indicator');
             }
+            Sbi.warn("[ChoropletControlPanel.thematize] : You must choose an indicator");
             doThematization = false;
         }
         if (!options.method) {
             if (exception === true) {
                 Ext.MessageBox.alert('Error', 'You must choose a method');
             }
+            Sbi.warn("[ChoropletControlPanel.thematize] : You must choose a method");
             doThematization = false;
         }
 
@@ -203,8 +206,10 @@ Sbi.geo.stat.ChoroplethControlPanel = Ext.extend(Ext.FormPanel, {
         if(doThematization) {
         	this.thematizer.thematize(options);
             this.thematizationApplied = true;
+            Sbi.debug("[ChoropletControlPanel.thematize] : thematization succesfully applied");
         } else {
         	this.thematizer.setOptions(options);
+        	Sbi.debug("[ChoropletControlPanel.thematize] : thematization not applied");
         }        
         
         Sbi.trace("[ChoropletControlPanel.thematize] : OUT");
@@ -557,36 +562,63 @@ Sbi.geo.stat.ChoroplethControlPanel = Ext.extend(Ext.FormPanel, {
      * Called by EXT when the component is rendered.
      */
     , onRender: function(ct, position) {
+    	Sbi.trace("[ChoropletControlPanel.onRender] : IN");
+    	
     	Sbi.geo.stat.ChoroplethControlPanel.superclass.onRender.apply(this, arguments);
        
-
-        var thematizerOptions = {
-           	'layer': this.layer,
-            'layerName': this.layerName,
-            'layerId' : this.geoId,
-            'loadLayerServiceName': this.loadLayerServiceName,
-            'requestSuccess': this.requestSuccess.createDelegate(this),
-            'requestFailure': this.requestFailure.createDelegate(this),
-                	
-            'format': this.format,
-            'featureSourceType': this.featureSourceType,
-            'featureSource': this.featureSource,
-            		
-            'featureSelection': this.featureSelection,
-            'nameAttribute': this.nameAttribute,
-            	        
-            'indicatorContainer': this.indicatorContainer,
-            'storeType': this.storeType,
-            'storeConfig': this.storeConfig,
-            'store': this.store,
-            'storeId' : this.businessId,
-            		       
-            'legendDiv': this.legendDiv,
-            'labelGenerator': this.labelGenerator      	
-        };
-
-        this.thematizer = new Sbi.geo.stat.ChoroplethThematizer(this.map, thematizerOptions);
-        
+    	if(this.thematizer == null) {
+    		Sbi.trace("[ChoropletControlPanel.onRender] : thematizer ");
+    		
+	        var thematizerOptions = {
+	           	'layer': this.layer,
+	            'layerName': this.layerName,
+	            'layerId' : this.geoId,
+	            'loadLayerServiceName': this.loadLayerServiceName,
+	            'requestSuccess': this.requestSuccess.createDelegate(this),
+	            'requestFailure': this.requestFailure.createDelegate(this),
+	                	
+	            'format': this.format,
+	            'featureSourceType': this.featureSourceType,
+	            'featureSource': this.featureSource,
+	            		
+	            'featureSelection': this.featureSelection,
+	            'nameAttribute': this.nameAttribute,
+	            	        
+	            'indicatorContainer': this.indicatorContainer,
+	            'storeType': this.storeType,
+	            'storeConfig': this.storeConfig,
+	            'store': this.store,
+	            'storeId' : this.businessId,
+	            		       
+	            'legendDiv': this.legendDiv,
+	            'labelGenerator': this.labelGenerator      	
+	        };
+	
+	        this.thematizer = new Sbi.geo.stat.ChoroplethThematizer(this.map, thematizerOptions);
+    	} else {
+    		Sbi.trace("[ChoropletControlPanel.onRender] : thematizer already defined");
+    	}
+    	
+    	var targetLayer = this.thematizer.getLayer();
+    	if(targetLayer != null && targetLayer.features > 0) {
+    		Sbi.trace("[ChoropletControlPanel.onRender] : target layer already loaded");
+    		this.ready = true;
+			this.fireEvent('ready', this);
+    	} else {
+    		Sbi.trace("[ChoropletControlPanel.onRender] : target layer not already loaded");
+    		this.thematizer.on('layerloaded', function(thematizer, layer){
+    			Sbi.trace("[ChoropletControlPanel.onRender] : target layer has been just loaded");
+    			if(this.ready !== true) { // do that only the first time
+    				Sbi.trace("[ChoropletControlPanel.onRender] : set control panel state to ready");
+    	    		this.ready = true;
+    				this.fireEvent('ready', this);
+    			} else {
+    				Sbi.trace("[ChoropletControlPanel.onRender] : control panel state is aready set to ready");
+    			}
+    		}, this);
+    	}
+    	
+    	
         this.thematizer.on('indicatorsChanged', function(thematizer, indicators, selectedIndicator){
 			this.setIndicators(indicators, selectedIndicator, false);
 		}, this);
@@ -594,6 +626,8 @@ Sbi.geo.stat.ChoroplethControlPanel = Ext.extend(Ext.FormPanel, {
         this.thematizer.on('filtersChanged', function(thematizer, filters){
 			this.setFilters(filters);
 		}, this);
+        
+        Sbi.trace("[ChoropletControlPanel.onRender] : OUT");
     }
     
     /**
@@ -831,28 +865,6 @@ Sbi.geo.stat.ChoroplethControlPanel = Ext.extend(Ext.FormPanel, {
     	this.thematize(false);
     }
     
-    /**
-     * Method: requestSuccess
-     *      Calls onReady callback function and mark the widget as ready.
-     *      Called on Ajax request success.
-     */
-    , requestSuccess: function(request) {
-        this.ready = true;
-        this.fireEvent('ready', this);
-    }
-
-    /**
-     * Method: requestFailure
-     *      Displays an error message on the console.
-     *      Called on Ajax request failure.
-     */
-    , requestFailure: function(response) {
-    	var message = response.responseXML;
-        if (!message || !message.documentElement) {
-            message = response.responseText;
-        }
-        Sbi.exception.ExceptionHandler.showErrorMessage(message, 'Service Error');
-    }   
 });
 
 
