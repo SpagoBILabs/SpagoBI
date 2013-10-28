@@ -17,6 +17,8 @@ public class SDKDataSet  implements java.io.Serializable {
     
     private java.lang.Boolean active;
 
+    private java.lang.Boolean _public;
+    
  //   private java.lang.String javaClassName;
 
  //   private java.lang.Integer jdbcDataSourceId;
@@ -53,6 +55,9 @@ public class SDKDataSet  implements java.io.Serializable {
 
     private java.lang.String category;
 
+    private java.lang.String organization;
+
+    
   //  private java.lang.String jsonQuery;
 
   //  private java.lang.String datamarts;
@@ -73,6 +78,7 @@ public class SDKDataSet  implements java.io.Serializable {
            java.lang.Integer id,
            java.lang.Integer versionNum,
            java.lang.Boolean active,
+           java.lang.Boolean _public,           
            java.lang.String javaClassName,
            java.lang.Integer jdbcDataSourceId,
            java.lang.String jdbcQuery,
@@ -109,6 +115,7 @@ public class SDKDataSet  implements java.io.Serializable {
            this.id = id;
            this.versionNum = versionNum;
            this.active = active;
+           this._public = _public;           
           // this.javaClassName = javaClassName;
           // this.jdbcDataSourceId = jdbcDataSourceId;
            // this.jdbcQuery = jdbcQuery;
@@ -127,6 +134,8 @@ public class SDKDataSet  implements java.io.Serializable {
            this.configuration = configuration;
            this.transformer = transformer;
            this.category = category;
+           this.organization = organization;
+           
            //this.jsonQuery = jsonQuery;
            //this.datamarts = datamarts;
            //this.webServiceAddress = webServiceAddress;
@@ -211,6 +220,16 @@ public class SDKDataSet  implements java.io.Serializable {
 	 */
 	public void setActive(java.lang.Boolean active) {
 		this.active = active;
+	}
+
+	
+	
+	public java.lang.Boolean get_public() {
+		return _public;
+	}
+
+	public void set_public(java.lang.Boolean _public) {
+		this._public = _public;
 	}
 
 	/**
@@ -669,7 +688,10 @@ public class SDKDataSet  implements java.io.Serializable {
             ((this.active==null && other.getActive()==null) || 
              (this.active!=null &&
               this.active.equals(other.getActive()))) &&
-          /*  ((this.javaClassName==null && other.getJavaClassName()==null) || 
+            ((this._public==null && other.get_public()==null) || 
+             (this._public!=null &&
+              this._public.equals(other.get_public()))) &&
+              /*  ((this.javaClassName==null && other.getJavaClassName()==null) || 
              (this.javaClassName!=null &&
               this.javaClassName.equals(other.getJavaClassName()))) &&
             ((this.jdbcDataSourceId==null && other.getJdbcDataSourceId()==null) || 
@@ -720,7 +742,10 @@ public class SDKDataSet  implements java.io.Serializable {
             ((this.transformer==null && other.getTransformer()==null) || 
              (this.transformer!=null &&
               this.transformer.equals(other.getTransformer()))) &&
-            ((this.category==null && other.getCategory()==null) || 
+              ((this.organization==null && other.getOrganization()==null) || 
+                      (this.organization!=null &&
+                       this.organization.equals(other.getOrganization()))) &&
+              ((this.category==null && other.getCategory()==null) || 
              (this.category!=null &&
               this.category.equals(other.getCategory()))) /* &&
            ((this.jsonQuery==null && other.getJsonQuery()==null) || 
@@ -783,6 +808,9 @@ public class SDKDataSet  implements java.io.Serializable {
         if (getNumberingRows() != null) {
             _hashCode += getNumberingRows().hashCode();
         }
+        if (get_public() != null) {
+            _hashCode += get_public().hashCode();
+        }
         if (getParameters() != null) {
             for (int i=0;
                  i<java.lang.reflect.Array.getLength(getParameters());
@@ -820,6 +848,9 @@ public class SDKDataSet  implements java.io.Serializable {
         }
         if (getCategory() != null) {
             _hashCode += getCategory().hashCode();
+        }
+        if (getOrganization() != null) {
+            _hashCode += getOrganization().hashCode();
         }
      /*   if (getJsonQuery() != null) {
             _hashCode += getJsonQuery().hashCode();
@@ -871,6 +902,12 @@ public class SDKDataSet  implements java.io.Serializable {
         elemField = new org.apache.axis.description.ElementDesc();
         elemField.setFieldName("active");
         elemField.setXmlName(new javax.xml.namespace.QName("", "active"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "boolean"));
+        elemField.setNillable(true);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("_public");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "_public"));
         elemField.setXmlType(new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "boolean"));
         elemField.setNillable(true);
         typeDesc.addFieldDesc(elemField);
@@ -1055,8 +1092,18 @@ public class SDKDataSet  implements java.io.Serializable {
     public static org.apache.axis.description.TypeDesc getTypeDesc() {
         return typeDesc;
     }
+    
+    
 
-    /**
+    public java.lang.String getOrganization() {
+		return organization;
+	}
+
+	public void setOrganization(java.lang.String organization) {
+		this.organization = organization;
+	}
+
+	/**
      * Get Custom Serializer
      */
     public static org.apache.axis.encoding.Serializer getSerializer(
