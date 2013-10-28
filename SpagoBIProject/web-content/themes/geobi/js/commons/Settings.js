@@ -41,6 +41,7 @@ Sbi.settings.geobi.browser = {
 //	  , maxNumberOfExecutionTabs: 5 //the maximum number of tabs to open on execution of documents if valorized
 	  , typeLayout: 'card' //possible values: 'tab' or 'card'
 	  , showTitle: false 
+	  , showCreateButton: false
 }; 
 
 //Sbi.settings.browser = Ext.apply(Sbi.settings.browser,Sbi.settings.geobi.browser);
