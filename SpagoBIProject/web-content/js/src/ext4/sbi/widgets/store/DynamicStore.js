@@ -33,7 +33,7 @@ Ext.define('Sbi.widgets.store.DynamicStore', {
     extend: 'Ext.data.Store'
 
     ,config: {
-
+    	isDynamicStore:false
     }
       
     /**
@@ -44,55 +44,60 @@ Ext.define('Sbi.widgets.store.DynamicStore', {
     	Sbi.debug('constructor IN'+config);
     	Ext.apply(this, config);
     	
+    	if (this.isDynamicStore){
+	    	
+	    	
+	    	var serviceUrl = config.serviceUrl;
+	    	
+	    	if(!this.model){
+	    		Sbi.debug('create new model');	
+	    		var d = new Date();
+	    		var modelname =  'DynamicStoreModel'+(d.getTime()%10000000);
+	            Ext.define(modelname, {
+	                extend: 'Ext.data.Model'
+	            });
+	            
+	    		this.model= modelname;
+	    		
+	    	}
+	    	
+	
+			var dataRoot = "root";
+			if(config.dataRoot){
+				dataRoot=config.dataRoot;
+			}
+			
+			
+	    	if ((config.usePost != null) && (config.usePost != undefined ) ){
+	    		this.proxy= {
+	    				type: 'ajax',
+	    				url:  this.serviceUrl,
+	    				extraParams: this.params,
+	    				actionMethods:{ create:'POST', read:'POST', update:'POST', destroy:'POST' },
+	    				reader: {
+	    					type:"json",
+	    					root: dataRoot
+	    				}
+	    		};
+	      	} else {
+	      		this.proxy= {
+	      				type: 'ajax',
+	      				url:  this.serviceUrl,
+	      				reader: {
+	      					type:"json",
+	      					root: dataRoot
+	      				}
+	      		};
+	      	}
+	
     	
-    	
-    	var serviceUrl = config.serviceUrl;
-    	
-    	if(!this.model){
-    		Sbi.debug('create new model');	
-    		var d = new Date();
-    		var modelname =  'DynamicStoreModel'+(d.getTime()%10000000);
-            Ext.define(modelname, {
-                extend: 'Ext.data.Model'
-            });
-            
-    		this.model= modelname;
-    		
+	    	this.callParent([config]);
+	        
+	    	this.fields = this.model.prototype.fields;
+    	}else{
+    		this.callParent(arguments);
     	}
     	
-
-		var dataRoot = "root";
-		if(config.dataRoot){
-			dataRoot=config.dataRoot;
-		}
-		
-		
-    	if ((config.usePost != null) && (config.usePost != undefined ) ){
-    		this.proxy= {
-    				type: 'ajax',
-    				url:  this.serviceUrl,
-    				extraParams: this.params,
-    				actionMethods:{ create:'POST', read:'POST', update:'POST', destroy:'POST' },
-    				reader: {
-    					type:"json",
-    					root: dataRoot
-    				}
-    		};
-      	} else {
-      		this.proxy= {
-      				type: 'ajax',
-      				url:  this.serviceUrl,
-      				reader: {
-      					type:"json",
-      					root: dataRoot
-      				}
-      		};
-      	}
-
-    	
-    	this.callParent([config]);
-        
-    	this.fields = this.model.prototype.fields;
     	Sbi.debug('constructor OUT');
 //		this.on('load', this.onStoreLoad, this);
     }
