@@ -68,7 +68,9 @@ public class MeasureCatalogue implements Observer {
 	public void update(Observable o, Object arg) {
 		DataSetEvent event = (DataSetEvent) arg;
 		logger.debug("Updating the measures catalogue after a change in the dataset list");
-		initMeasures();
+		if(isValid()){
+			initMeasures();
+		}
 	 }
 	
 	

@@ -59,74 +59,68 @@ public class TimeDimensionDatasetValidator  extends AbstractDatasetValidator {
 		ValidationErrors validationErrors = new ValidationErrors();
 		//MeasureCatalogue measureCatalogue = new MeasureCatalogue();
 		MeasureCatalogue measureCatalogue = MeasureCatalogueSingleton.getMeasureCatologue();
+		if (measureCatalogue.isValid()){
+			MetaModelWrapper metamodelWrapper = measureCatalogue.getMetamodelWrapper();
+			
+			for (Map.Entry<String, HierarchyLevel> entry : hierarchiesColumnsToCheck.entrySet())
+			{
+			    logger.debug("Column Name= "+entry.getKey() + " / HierarchyLevel" + entry.getValue());
+			    String columnName = entry.getKey();
+			    HierarchyLevel hierarchyLevel = entry.getValue();
+			    if (hierarchyLevel.isValidEntry()){
+			    	String hierarchyName = hierarchyLevel.getHierarchy_name();
+			    	String hierarchyLevelName = hierarchyLevel.getLevel_name();
+			    	if (hierarchyName.equalsIgnoreCase(TIME_HIERARCHY_NAME)){
+			    		HierarchyWrapper hierarchy = metamodelWrapper.getHierarchy(TIME_HIERARCHY_NAME);
+			    		if (hierarchy != null){
+			    			if (hierarchy.getName().equalsIgnoreCase(hierarchyName)){
+				    			List<Level> levels = hierarchy.getLevels();
+				    			Level level = hierarchy.getLevel(hierarchyLevelName);
+				    			if (level != null){
+				    				String levelName = level.getName();
+					    			IDataStore dataStoreLevel = hierarchy.getMembers(levelName); //return a dataStore with one column only
 
-		
-		MetaModelWrapper metamodelWrapper = measureCatalogue.getMetamodelWrapper();
-		
-		for (Map.Entry<String, HierarchyLevel> entry : hierarchiesColumnsToCheck.entrySet())
-		{
-		    logger.debug("Column Name= "+entry.getKey() + " / HierarchyLevel" + entry.getValue());
-		    String columnName = entry.getKey();
-		    HierarchyLevel hierarchyLevel = entry.getValue();
-		    if (hierarchyLevel.isValidEntry()){
-		    	String hierarchyName = hierarchyLevel.getHierarchy_name();
-		    	String hierarchyLevelName = hierarchyLevel.getLevel_name();
-		    	if (hierarchyName.equalsIgnoreCase(TIME_HIERARCHY_NAME)){
-		    		HierarchyWrapper hierarchy = metamodelWrapper.getHierarchy(TIME_HIERARCHY_NAME);
-		    		if (hierarchy != null){
-		    			if (hierarchy.getName().equalsIgnoreCase(hierarchyName)){
-			    			List<Level> levels = hierarchy.getLevels();
-			    			Level level = hierarchy.getLevel(hierarchyLevelName);
-			    			if (level != null){
-			    				String levelName = level.getName();
-				    			IDataStore dataStoreLevel = hierarchy.getMembers(levelName); //return a dataStore with one column only
+					    			Set<String> admissibleValues = dataStoreLevel.getFieldDistinctValuesAsString(0);
+					    			String hint = generateHintValues(admissibleValues);
 
-				    			Set<String> admissibleValues = dataStoreLevel.getFieldDistinctValuesAsString(0);
-				    			String hint = generateHintValues(admissibleValues);
-
-				    			//Iterate the datastore (of the dataset) and check if values are ammissible
-				    			Iterator it = dataStore.iterator();
-				    			int columnIndex = dataStore.getMetaData().getFieldIndex(columnName); 
-				    			int rowNumber = 0;
-				    			while( it.hasNext() ) {
-				    	    		IRecord record = (IRecord)it.next();
-				    	    		IField field = record.getFieldAt(columnIndex);
-				    	    		Object fieldValue = field.getValue(); 
-				    	    		if(fieldValue != null)  {
-				    	    			if (!admissibleValues.contains(fieldValue))
-				    	    			{
-				    	    				String errorDescription = "Error in validation: "+fieldValue+" is not valid for hierarchy "+TIME_HIERARCHY_NAME+" on level "+levelName+". "+hint+"...";
+					    			//Iterate the datastore (of the dataset) and check if values are ammissible
+					    			Iterator it = dataStore.iterator();
+					    			int columnIndex = dataStore.getMetaData().getFieldIndex(columnName); 
+					    			int rowNumber = 0;
+					    			while( it.hasNext() ) {
+					    	    		IRecord record = (IRecord)it.next();
+					    	    		IField field = record.getFieldAt(columnIndex);
+					    	    		Object fieldValue = field.getValue(); 
+					    	    		if(fieldValue != null)  {
+					    	    			if (!admissibleValues.contains(fieldValue))
+					    	    			{
+					    	    				String errorDescription = "Error in validation: "+fieldValue+" is not valid for hierarchy "+TIME_HIERARCHY_NAME+" on level "+levelName+". "+hint+"...";
+					    	    				validationErrors.addError(rowNumber, columnIndex, field, errorDescription);
+					    	    			}
+					    	    		} else {
+				    	    				String errorDescription = "Error in validation: null is not valid for hierarchy "+TIME_HIERARCHY_NAME+" on level "+levelName+". "+hint+"...";
 				    	    				validationErrors.addError(rowNumber, columnIndex, field, errorDescription);
-				    	    			}
-				    	    		} else {
-			    	    				String errorDescription = "Error in validation: null is not valid for hierarchy "+TIME_HIERARCHY_NAME+" on level "+levelName+". "+hint+"...";
-			    	    				validationErrors.addError(rowNumber, columnIndex, field, errorDescription);
-				    	    		}
-				    	    		rowNumber++;
-				    	    	}
-			    			} else {
-				    			logger.warn("Attention: the hierarchy "+TIME_HIERARCHY_NAME+" doesn't contain a level "+hierarchyLevelName);
-			    			}
-			    			
+					    	    		}
+					    	    		rowNumber++;
+					    	    	}
+				    			} else {
+					    			logger.warn("Attention: the hierarchy "+TIME_HIERARCHY_NAME+" doesn't contain a level "+hierarchyLevelName);
+				    			}
+				    			
 
-		    			}		    			
-		    		} else {
-		    			logger.warn("Attention: the validation model doesn't contain a hierarchy with name "+TIME_HIERARCHY_NAME+". Validation will not be performed.");
-		    		}
+			    			}		    			
+			    		} else {
+			    			logger.warn("Attention: the validation model doesn't contain a hierarchy with name "+TIME_HIERARCHY_NAME+". Validation will not be performed.");
+			    		}
 
-		    	}
-		    }
-		    
-		    
-		    
-		    
-		    
-		  
+			    	}
+			    }
+
+			}			
 		}
 		
-		
 
-		
+
 		return validationErrors;
 	}
 	
