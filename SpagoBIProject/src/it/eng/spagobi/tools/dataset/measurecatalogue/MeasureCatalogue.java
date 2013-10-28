@@ -46,12 +46,15 @@ public class MeasureCatalogue implements Observer {
 	
 	public static transient Logger logger = Logger.getLogger(MeasureCatalogue.class);
 	private MetaModelWrapper metamodelWrapper;
-	private Set<MeasureCatalogueMeasure> measures;
+	private Set<MeasureCatalogueMeasure> measures = new HashSet<MeasureCatalogueMeasure>();
+	private boolean valid;
 	
 	public MeasureCatalogue(){
 		initModel();
-		initSiblings();
-		initMeasures();
+		if(isValid()){
+			initSiblings();
+			initMeasures();
+		}
 	}
 	
 	public MeasureCatalogue(Model model){
@@ -91,11 +94,24 @@ public class MeasureCatalogue implements Observer {
 		File modelFile = new File(getResourcePath()+File.separator+"qbe" + File.separator + "datamarts" + File.separator + modelname+File.separator+modelname+".sbimodel");
 		Assert.assertNotNull("The model with the definition of the cube must be uploaded in the server. The name of the model in the configs is "+modelname, modelFile);
 		
-		logger.debug("Model file name is equal to [" + modelname + "]");
-		
-		metamodelWrapper = new MetaModelWrapper(MetaModelLoader.load(modelFile));
-		
-		logger.debug("Model [" + modelname + "] succesfully initialized");
+		if(modelFile==null){
+			valid = false;
+			logger.debug("No hierarchy model loaded");
+		}else{
+			valid = true;
+			logger.debug("Model file name is equal to [" + modelname + "]");
+			try {
+				metamodelWrapper = new MetaModelWrapper(MetaModelLoader.load(modelFile));
+				logger.debug("Model [" + modelname + "] succesfully initialized");
+			} catch (Exception e) {
+				logger.debug("Error loading the hierarchy. No model loaded");
+				valid = false;
+			}
+			
+			
+			
+		}
+
 	}
 	
 	/**
@@ -297,12 +313,18 @@ public class MeasureCatalogue implements Observer {
 		}
 		return resPath;
 	}
+	
+	@JsonIgnore
+	public boolean isValid() {
+		return valid;
+	}
 
 	
 	//*************************************************
 	//RESOURCES TO INCLUDE IN THE SERIALIZATION
 	//*************************************************
-	
+
+
 	public Set<MeasureCatalogueMeasure> getMeasures() {
 		return measures;
 	}
