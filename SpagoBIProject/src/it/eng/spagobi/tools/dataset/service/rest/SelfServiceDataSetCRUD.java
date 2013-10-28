@@ -54,7 +54,6 @@ import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.tools.dataset.measurecatalogue.MeasureCatalogue;
-import it.eng.spagobi.tools.dataset.measurecatalogue.MeasureCatalogueMeasure;
 import it.eng.spagobi.tools.dataset.measurecatalogue.MeasureCatalogueSingleton;
 import it.eng.spagobi.tools.dataset.normalization.GeoSpatialDimensionDatasetNormalizer;
 import it.eng.spagobi.tools.dataset.utils.DatasetMetadataParser;
@@ -371,56 +370,59 @@ public class SelfServiceDataSetCRUD {
 		try {
 			
 			//1 - Check if the .sibling file is present (required for normalization)
-			MeasureCatalogue measureCatalogue = MeasureCatalogueSingleton.getMeasureCatologue();				
-			MetaModelWrapper metamodelWrapper = measureCatalogue.getMetamodelWrapper();
-			SiblingsFileWrapper siblingsFile = metamodelWrapper.getSiblingsFileWrapper();
-			if (siblingsFile != null){
-				//Siblings file found, proceed with the validation of the dataset
-				dataSet.loadData(0, 10, GeneralUtilities.getDatasetMaxResults());
-				IDataStore dataStore = dataSet.getDataStore(); 
+			MeasureCatalogue measureCatalogue = MeasureCatalogueSingleton.getMeasureCatologue();
+			if (measureCatalogue.isValid()){
+				MetaModelWrapper metamodelWrapper = measureCatalogue.getMetamodelWrapper();
+				SiblingsFileWrapper siblingsFile = metamodelWrapper.getSiblingsFileWrapper();
+				if (siblingsFile != null){
+					//Siblings file found, proceed with the validation of the dataset
+					dataSet.loadData(0, 10, GeneralUtilities.getDatasetMaxResults());
+					IDataStore dataStore = dataSet.getDataStore(); 
 
-				//2 - Validate dataset, if there are errors we cannot perform normalization
-				if (datasetMetadata != null)	{
-					ValidationErrors validationErrors = new ValidationErrors();				
-					
-					//validation of columns with specified Hierarchies and with numeric Type
-					Map<String, HierarchyLevel> hierarchiesColumnsToCheck = getHierarchiesColumnsToCheck(datasetMetadata);
-				
-					if (!hierarchiesColumnsToCheck.isEmpty()){
-						//We get the category of the dataset and with this we search the appropriate validator
-						Integer categoryId = dataSet.getCategoryId();
+					//2 - Validate dataset, if there are errors we cannot perform normalization
+					if (datasetMetadata != null)	{
+						ValidationErrors validationErrors = new ValidationErrors();				
 						
-						if (categoryId != null){
-							IDomainDAO domainDao = DAOFactory.getDomainDAO();
-							Domain domain = domainDao.loadDomainById(categoryId);
-							String categoryValueName = domain.getValueName();
+						//validation of columns with specified Hierarchies and with numeric Type
+						Map<String, HierarchyLevel> hierarchiesColumnsToCheck = getHierarchiesColumnsToCheck(datasetMetadata);
+					
+						if (!hierarchiesColumnsToCheck.isEmpty()){
+							//We get the category of the dataset and with this we search the appropriate validator
+							Integer categoryId = dataSet.getCategoryId();
 							
-							//Validate only if there are the proper metadata set
-							IDatasetValidatorFactory geoValidatorFactory = new GeoDatasetValidatorFactory();
-							
-							IDatasetValidator geoValidator = geoValidatorFactory.getValidator(categoryValueName);
-							
-							if (geoValidator != null){
+							if (categoryId != null){
+								IDomainDAO domainDao = DAOFactory.getDomainDAO();
+								Domain domain = domainDao.loadDomainById(categoryId);
+								String categoryValueName = domain.getValueName();
+								
+								//Validate only if there are the proper metadata set
+								IDatasetValidatorFactory geoValidatorFactory = new GeoDatasetValidatorFactory();
+								
+								IDatasetValidator geoValidator = geoValidatorFactory.getValidator(categoryValueName);
+								
+								if (geoValidator != null){
 
-								//Validate the dataset and return the fields not valid
-								ValidationErrors hierarchiesColumnsValidationErrors = geoValidator.validateDataset(dataStore,hierarchiesColumnsToCheck);
-								if (!hierarchiesColumnsValidationErrors.isEmpty()){
-									validationErrors.addAll(hierarchiesColumnsValidationErrors);
-								}								
-							}
-						}					
-					}
-					if (validationErrors.isEmpty()){
-						//3 - No errors in the validation, we can normalize the dataset
-						GeoSpatialDimensionDatasetNormalizer geoDatasetNormalizer = new GeoSpatialDimensionDatasetNormalizer();
-						IDataSet normalizedDataset = geoDatasetNormalizer.normalizeDataset(dataSet, hierarchiesColumnsToCheck);
-						if (normalizedDataset != null){
-							dataSet = normalizedDataset;
+									//Validate the dataset and return the fields not valid
+									ValidationErrors hierarchiesColumnsValidationErrors = geoValidator.validateDataset(dataStore,hierarchiesColumnsToCheck);
+									if (!hierarchiesColumnsValidationErrors.isEmpty()){
+										validationErrors.addAll(hierarchiesColumnsValidationErrors);
+									}								
+								}
+							}					
 						}
-					}	
+						if (validationErrors.isEmpty()){
+							//3 - No errors in the validation, we can normalize the dataset
+							GeoSpatialDimensionDatasetNormalizer geoDatasetNormalizer = new GeoSpatialDimensionDatasetNormalizer();
+							IDataSet normalizedDataset = geoDatasetNormalizer.normalizeDataset(dataSet, hierarchiesColumnsToCheck);
+							if (normalizedDataset != null){
+								dataSet = normalizedDataset;
+							}
+						}	
 
-				}			
+					}			
+				}
 			}
+
 
 		} catch (IOException ex){
 			logger.error("IOException in normalizeDataset: "+ex);
