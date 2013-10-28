@@ -392,8 +392,10 @@ public class SDKObjectsConverter {
 			toReturn.setPivotColumnValue(spagoBiDataSet.getPivotColumnValue());
 			toReturn.setPivotRowName(spagoBiDataSet.getPivotRowName());
 			toReturn.setNumberingRows(spagoBiDataSet.isNumRows());
+			toReturn.set_public(spagoBiDataSet.is_public());
 		
 			toReturn.setConfiguration(spagoBiDataSet.getConfiguration());
+			toReturn.setOrganization(spagoBiDataSet.getOrganization());
 			
 			/*
 			// file dataset			
@@ -596,11 +598,17 @@ public class SDKObjectsConverter {
 				((QbeDataSet) ds).setJsonQuery(jsonQuery);
 				((QbeDataSet) ds).setDatamarts(datamarts);
 				DataSourceDAOHibImpl dataSourceDao=new DataSourceDAOHibImpl();
-				IDataSource dataSource= dataSourceDao.loadDataSourceByLabel(jsonConf.getString(DataSetConstants.QBE_DATA_SOURCE));				
-				((QbeDataSet)ds).setDataSource(dataSource);						
-				if (dataSource!=null){				
-					((QbeDataSet)ds).setDataSource(dataSource);				
-				}			
+
+				if(!jsonConf.isNull(DataSetConstants.QBE_DATA_SOURCE)){
+					IDataSource dataSource= dataSourceDao.loadDataSourceByLabel(jsonConf.getString(DataSetConstants.QBE_DATA_SOURCE));				
+					((QbeDataSet)ds).setDataSource(dataSource);						
+					if (dataSource!=null){				
+						((QbeDataSet)ds).setDataSource(dataSource);				
+					}
+				}
+				else{
+		        	logger.warn("Dataset "+ds.getLabel()+"has no associated datasource");
+				}
 			}else if(dataset.getType().equalsIgnoreCase(DataSetConstants.DS_SCRIPT)){
 				ds = new ScriptDataSet();
 				String script = jsonConf.getString(DataSetConstants.SCRIPT);
@@ -640,6 +648,8 @@ public class SDKObjectsConverter {
 			ds.setDescription(dataset.getDescription());	
 			ds.setDsType(dataset.getType());
 			ds.setConfiguration(dataset.getConfiguration());
+			ds.setOrganization(dataset.getOrganization());
+			
 			//sets other general object's fields
 			if(dataset.getPivotColumnName()!=null && !dataset.getPivotColumnName().equals("")){
 				ds.setPivotColumnName(dataset.getPivotColumnName());
@@ -652,6 +662,9 @@ public class SDKObjectsConverter {
 			}
 			if(dataset.getNumberingRows()!=null){
 				ds.setNumRows(dataset.getNumberingRows());
+			}
+			if(dataset.get_public()!=null){
+				ds.setPublic(dataset.get_public());
 			}
 
 			//dsDetail.setDsMetadata(dataset.getXXX);
