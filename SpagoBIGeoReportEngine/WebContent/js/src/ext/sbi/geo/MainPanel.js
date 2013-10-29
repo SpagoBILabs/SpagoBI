@@ -324,6 +324,7 @@ Ext.extend(Sbi.geo.MainPanel, Ext.Panel, {
 				, lat: this.lat
 				, zoomLevel: this.zoomLevel
 			}
+			, mainPanel: this
 		});
 		
 		this.map = this.mapComponent.map;
@@ -448,7 +449,7 @@ Ext.extend(Sbi.geo.MainPanel, Ext.Panel, {
           	'styleMap': new OpenLayers.StyleMap({
             	'default': new OpenLayers.Style(
                 	OpenLayers.Util.applyDefaults(
-                      {'fillOpacity': 0.5},
+                      {'fillOpacity': 0.8},
                       OpenLayers.Feature.Vector.style['default']
                   	)
               	),

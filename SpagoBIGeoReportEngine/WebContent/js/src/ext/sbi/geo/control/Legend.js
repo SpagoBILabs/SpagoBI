@@ -289,7 +289,7 @@ Sbi.geo.control.Legend = OpenLayers.Class(OpenLayers.Control, {
     },
     
     showThematizerConfigurationWindow: function(){
-    	var thisPanel = this;
+    
 		if(this.thematizerConfigurationWindow==null){
 			
 			var thematizerType = Sbi.geo.stat.Thematizer.supportedType[this.map.thematizer.thematyzerType];
@@ -304,12 +304,11 @@ Sbi.geo.control.Legend = OpenLayers.Class(OpenLayers.Control, {
 					};
 				
 				this.thematizerControlPanel = new thematizerType.controlPanelClass(thematizerControlPanelOptions);
+				
 				//this.thematizerControlPanel.analysisConf = this.analysisConf;
 			} else {
 				Sbi.exception.ExceptionHandler.showErrorMessage('error: unsupported analysis type [' + this.analysisType + ']', 'Configuration error');
 			}
-			
-			//var thematizerControlPanel = {html: thematizerType.typeName + ": work in progress ... "}; 
 			
 			this.thematizerConfigurationWindow = new Ext.Window({
 	            layout      : 'fit',
@@ -326,28 +325,39 @@ Sbi.geo.control.Legend = OpenLayers.Class(OpenLayers.Control, {
 	             {
                     text:'Ok',
                     handler: function(){
-                    	var themathizerOptions = thisPanel.thematizerControlPanel.getThemathizerOptions();
-                        thisPanel.map.thematizer.thematize(themathizerOptions);
-                        //this.close();
-                    }
+                    	var themathizerOptions = this.thematizerControlPanel.getThemathizerOptions();
+                        this.map.thematizer.thematize(themathizerOptions);
+                        this.thematizerConfigurationWindow.hide();
+                    },
+                    scope: this
                 } , {
                     text:'Cancel',
                     handler: function(){
-                    	// TODO: revert if necessary
-                       	//this.close();
-                    }
+                    	if(this.thematizerConfigurationWindow.optionChanged === true) {
+                    		 this.map.thematizer.thematize( this.thematizerConfigurationWindow.oldOptions );
+                    		 this.thematizerControlPanel.synchronizeFormState();
+                    	}
+                    	this.thematizerConfigurationWindow.hide();
+                    }, 
+                    scope: this
                     
                 }, {
                     text:'Apply',
                     handler: function(){
-                    	var themathizerOptions = thisPanel.thematizerControlPanel.getThemathizerOptions();
-                    	thisPanel.map.thematizer.thematize(themathizerOptions);
-                    }
+                    	var themathizerOptions = this.thematizerControlPanel.getThemathizerOptions();
+                    	this.map.thematizer.thematize(themathizerOptions);
+                    	this.thematizerConfigurationWindow.optionChanged = true;
+                    },
+                    scope: this
 	            }]
 	                      
 			});
 		}
 		
+		this.thematizerConfigurationWindow.on("show", function(win) {
+			win.oldOptions = this.thematizerControlPanel.getThemathizerOptions();
+			win.optionChanged = false;
+		}, this);
 		
 		this.thematizerConfigurationWindow.show();
 	},

@@ -221,6 +221,12 @@ Sbi.geo.stat.ChoroplethControlPanel = Ext.extend(Ext.FormPanel, {
     // accessor methods
 	// -----------------------------------------------------------------------------------------------------------------
     
+	/**
+	 * @method
+	 * 
+	 * convert form state object in a valid thematizerOption object. It is used when the state of this controller
+	 * must be applied to the thematzier. 
+	 */
 	, getThemathizerOptions: function() {
 		Sbi.trace("[ChoropletControlPanel.getThemathizerOptions] : IN");
 		var formState = this.getFormState();
@@ -233,12 +239,57 @@ Sbi.geo.stat.ChoroplethControlPanel = Ext.extend(Ext.FormPanel, {
 		options.colors[0].setFromHex(formState.fromColor);
 		options.colors[1] = new Sbi.geo.utils.ColorRgb();
 		options.colors[1].setFromHex(formState.toColor);
-		options.indicator = formState.indicator;
-		
+		if(this.manageIndicator === true) {
+			options.indicator = formState.indicator;
+		}
 		Sbi.trace("[ChoropletControlPanel.getThemathizerOptions] : OUT");
 		
 		return options;
 	}
+	
+	/**
+	 * @method
+	 * 
+	 * convert the thematizerOption object used by the thematizer in a valid form state. The generated formState object is applied
+	 * to this controller. 
+	 */
+
+	, synchronizeFormState: function() {
+		Sbi.trace("[ChoropletControlPanel.syncronizeFormState] : IN");
+	
+		var thematizerOption = this.thematizer.getOptions();
+		
+		var formState = {};
+		
+		for(var method in Sbi.geo.stat.Classifier) {
+			if(Sbi.geo.stat.Classifier[method] == thematizerOption.method) {
+				formState.method = method;
+			}
+		}
+		
+		formState.classes = thematizerOption.numClasses;
+		if(thematizerOption.colors[0]) {
+			formState.fromColor = thematizerOption.colors[0].toHexString();
+		}
+		if(thematizerOption.colors[1]) {
+			formState.toColor = thematizerOption.colors[1].toHexString();
+		}
+		
+		formState.indicator = thematizerOption.indicator;
+		
+		Sbi.trace("[ChoropletControlPanel.syncronizeFormState] : new form state is equal to [" + Sbi.toSource(formState) + "]");
+		
+		this.setMethod(formState.method);
+		this.setNumberOfClasses(formState.classes);
+		this.setFromColor(formState.fromColor);
+		this.setToColor(formState.toColor);
+		if(this.manageIndicator === true) {
+			this.setIndicator(formState.indicator);
+		}
+		
+		Sbi.trace("[ChoropletControlPanel.syncronizeFormState] : OUT");
+	}
+	
 
 	, getFormState: function() {
 		var formState = {};
@@ -247,7 +298,9 @@ Sbi.geo.stat.ChoroplethControlPanel = Ext.extend(Ext.FormPanel, {
 		formState.classes = this.getNumberOfClasses();
 		formState.fromColor = this.getToColor();
 		formState.toColor = this.getFromColor();
-		formState.indicator = this.getIndicator();
+		if(this.manageIndicator === true) {
+			formState.indicator = this.getIndicator();
+		}
 		formState.filtersDefaultValues = this.getFiltersDefaultValues();
 		return formState;
 	}
@@ -323,7 +376,9 @@ Sbi.geo.stat.ChoroplethControlPanel = Ext.extend(Ext.FormPanel, {
 		this.setNumberOfClasses(formState.classes);
 		this.setFromColor(formState.fromColor);
 		this.setToColor(formState.toColor);
-		this.setIndicator(formState.indicator);
+		if(this.manageIndicator === true) {
+			this.setIndicator(formState.indicator);
+		}
 		this.setFiltersDefaultValues(formState.filtersDefaultValues);
 		if(riseEvent === true) { this.onConfigurationChange(); }
 		
@@ -608,6 +663,9 @@ Sbi.geo.stat.ChoroplethControlPanel = Ext.extend(Ext.FormPanel, {
     		Sbi.trace("[ChoropletControlPanel.onRender] : thematizer already defined");
     	}
     	
+    	this.synchronizeFormState();
+    	
+    	
     	var targetLayer = this.thematizer.getLayer();
     	if(targetLayer != null && targetLayer.features > 0) {
     		Sbi.trace("[ChoropletControlPanel.onRender] : target layer already loaded");
@@ -628,9 +686,11 @@ Sbi.geo.stat.ChoroplethControlPanel = Ext.extend(Ext.FormPanel, {
     	}
     	
     	
-        this.thematizer.on('indicatorsChanged', function(thematizer, indicators, selectedIndicator){
-			this.setIndicators(indicators, selectedIndicator, false);
-		}, this);
+    	if(this.manageIndicator === true) {
+	        this.thematizer.on('indicatorsChanged', function(thematizer, indicators, selectedIndicator){
+				this.setIndicators(indicators, selectedIndicator, false);
+			}, this);
+    	}
         
         this.thematizer.on('filtersChanged', function(thematizer, filters){
 			this.setFilters(filters);
@@ -644,7 +704,8 @@ Sbi.geo.stat.ChoroplethControlPanel = Ext.extend(Ext.FormPanel, {
      * Called by EXT when the component is initialized.
      */
     , initComponent : function() {
-        
+    	Sbi.trace("[ChoropletControlPanel.initComponent] : IN");
+    	
     	this.items = [];
     	if(this.manageIndicator === true) {
     		this.items.push(this.initIndicatorSelectionField());
@@ -656,6 +717,8 @@ Sbi.geo.stat.ChoroplethControlPanel = Ext.extend(Ext.FormPanel, {
     	this.items.push(this.initToColorSelectionField());
 
         Sbi.geo.stat.ChoroplethControlPanel.superclass.initComponent.apply(this);
+       
+        Sbi.trace("[ChoropletControlPanel.initComponent] : OUT");
     }
     
     
