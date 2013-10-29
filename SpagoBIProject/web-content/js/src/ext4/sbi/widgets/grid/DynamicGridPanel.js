@@ -54,8 +54,8 @@ Ext.define('Sbi.widgets.grid.DynamicGridPanel', {
 		
 		Ext.apply(this,config);
 	
-		if (config.parentGrid)
-			this = parentGrid;
+//		if (config.parentGrid)
+//			this = parentGrid;
 		
     	Sbi.debug('DynamicGridPanel build store');
     	config.storeConfig = Ext.apply(config.storeConfig||{},{serviceUrl: config.serviceUrl});
