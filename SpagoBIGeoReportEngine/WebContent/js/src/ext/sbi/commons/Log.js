@@ -53,8 +53,12 @@ Sbi.error = function(msg) {
 	Sbi.log("ERROR", msg);
 };
 
-Sbi.toSource = function(o) {
-	return Ext.util.JSON.encode(o);
+Sbi.toSource = function(o, onlyName) {
+	if(onlyName === true) {
+		return Sbi.toSourcePropertiesList(o);
+	} else {
+		return Ext.util.JSON.encode(o);
+	}
 };
 
 Sbi.toSourcePropertiesList = function(o) {

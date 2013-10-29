@@ -85,6 +85,8 @@ Ext.extend(Sbi.geo.MapComponent, Ext.Panel, {
      * base centralPoint's configurations.
      */
 	, baseCentralPointConf: null
+	
+	, mainPanel: null
     
     , mask: null
 
@@ -304,7 +306,7 @@ Ext.extend(Sbi.geo.MapComponent, Ext.Panel, {
 							Sbi.trace("[MainPanel.initControls] : div is not null");
 						}
 						if(c.CLASS_NAME == 'Sbi.geo.control.InlineToolbar') {
-							c.mainPanel = this;
+							c.mainPanel = this.mainPanel;
 						}
 						this.map.addControl( c );
 						Sbi.trace("[MainPanel.initControls] : control [" + Sbi.toSource(this.baseControlsConf[i]) + "] succesfully added to the map");

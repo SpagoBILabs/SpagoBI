@@ -445,31 +445,22 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
     , setOptions: function(newOptions) {
     	Sbi.debug("[Thematizer.setOptions] : IN " + this.indicator);
     	
-    	var oldIndicator = this.indicator;
-    	
     	if (newOptions) {
             if (!this.options) {
                 this.options = {};
             }
           
             // update our copy for clone
-            Ext.apply(this.options,  this.normalizeOption(newOptions));
+            Ext.apply(this.options,  newOptions);
+      
             // add new options to this
             Ext.apply(this, newOptions);
         }  
     	
-    	if(!this.indicator) {
-    		this.indicator = oldIndicator;
-    	}
         Sbi.debug("[Thematizer.setOptions] : OUT" + this.indicator);
     }
     
-    , normalizeOption: function(options) {
-    	Sbi.debug("[Thematizer.normalizeOption] : IN");
-    	var normalizedOptions = Ext.apply({}, options);
-    	Sbi.debug("[Thematizer.normalizeOption] : OUT");
-    	return normalizedOptions;
-    }
+  
     
     /**
      * @method 

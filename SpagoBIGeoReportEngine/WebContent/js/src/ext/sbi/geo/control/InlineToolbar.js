@@ -44,14 +44,7 @@ Sbi.geo.control.InlineToolbar = OpenLayers.Class(OpenLayers.Control, {
 	
 	
 	mainPanel: null,
-	
-	 /**
-     * Property: TYPE
-     * {String} The TYPE of the control 
-     * (values should be OpenLayers.Control.TYPE_BUTTON, 
-     *  OpenLayers.Control.TYPE_TOGGLE or OpenLayers.Control.TYPE_TOOL)
-     */
-//	TYPE: OpenLayers.Control.TYPE_TOGGLE,
+
 
     /**
      * Property: element
@@ -234,16 +227,7 @@ Sbi.geo.control.InlineToolbar = OpenLayers.Class(OpenLayers.Control, {
      * Executes the specific action
      */
     execClick: function(el){
-   	
-    	
-    	//change theme of actions panel
-//		if (el.currentTarget.className.indexOf('open') >= 0){
-//			el.removeClass('open');
-//		}else{
-//			el.addClass('open');
-//		}
-		
-		
+	
     	if (el.currentTarget.id.indexOf('elBtnArrow')>=0){
     		if(this.mainPanel.controlPanel2.collapsed) {
     			el.currentTarget.className += ' open';
