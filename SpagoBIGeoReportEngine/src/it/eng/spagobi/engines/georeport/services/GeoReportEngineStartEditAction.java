@@ -38,7 +38,7 @@ public class GeoReportEngineStartEditAction extends AbstractEngineStartServlet {
 
 	
 	private static final String DEFAULT_MAP_NAME = "Sud Tirol";
-	private static final String DEFAULT_ANALYSIS_TYPE = "proportionalSymbols"; //"choropleth";
+	private static final String DEFAULT_ANALYSIS_TYPE = "choropleth"; //"proportionalSymbols"; //"choropleth";
 	
 	private static final long serialVersionUID = 1L;
 	private static final String ENGINE_NAME = "GeoReportEngine";
