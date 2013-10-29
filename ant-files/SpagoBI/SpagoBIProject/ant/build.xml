@@ -593,8 +593,8 @@
 
 				<file name="./src/ext/sbi/widgets/FileUploadPanel.js" />
 
-				<file name="./src/ext4/sbi/widgets/store/InMemoryFilteredStore.js" />
 				<file name="./src/ext4/sbi/widgets/store/DynamicStore.js" />
+				<file name="./src/ext4/sbi/widgets/store/InMemoryFilteredStore.js" />
 				<file name="./src/ext4/sbi/widgets/grid/RadioColumn.js" />
 				<file name="./src/ext4/sbi/widgets/grid/StaticGridDecorator.js" />
 				<file name="./src/ext4/sbi/widgets/grid/CheckColumn.js" />
