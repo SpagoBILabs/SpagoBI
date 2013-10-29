@@ -40,7 +40,7 @@ Sbi.browser.FolderViewTemplate = function(config) {
 	var changed = LN('sbi.ds.changedon');
 	var author = LN('sbi.generic.author');
 	var documentTpl = ''+
-	'<div class="box-container">'+
+	'<div class="box-container-browser">'+
 		'<div id="document-item-icon"  class="box-figure">'+
 			'<tpl if="this.isSearchResult(summary) == true">'+
 				'<tpl if="this.exists(previewFile) == true">'+
