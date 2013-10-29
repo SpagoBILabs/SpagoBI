@@ -161,11 +161,11 @@ Ext.define('Sbi.tools.dataset.DataSetsView', {
 										'<p class="modified">'+changed+' {dateIn}</p>',
 									'</div>',
 								'</div>',
-								'<div class="fav-container" >',
-									'<div class="fav"  title="Favourites">',
-									'    <span class="icon"><a href="#" onclick="alert(\'Functionality not supported yet!\');"/></span> '+
-									'</div>',
-								'</div>',
+//								'<div class="fav-container" >',
+//									'<div class="fav"  title="Favourites">',
+//									'    <span class="icon"><a href="#" onclick="alert(\'Functionality not supported yet!\');"/></span> '+
+//									'</div>',
+//								'</div>',
 							'</dd>',
 						 '</tpl>',	 
 						 '<div style="clear:left"></div>',
