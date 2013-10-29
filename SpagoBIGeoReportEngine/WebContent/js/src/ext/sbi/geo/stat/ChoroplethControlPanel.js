@@ -91,6 +91,8 @@ Sbi.geo.stat.ChoroplethControlPanel = Ext.extend(Ext.FormPanel, {
 	 */
     , nameAttribute: null
 
+    , manageIndicator: true
+    
     /**
 	 * @property {Array} indicators
 	 * An array of selectable indicators. Each item of the array is an array composed by two element. The first is the name
@@ -292,7 +294,7 @@ Sbi.geo.stat.ChoroplethControlPanel = Ext.extend(Ext.FormPanel, {
 	 * @return {String} the selected indicator
 	 */
 	, getIndicator: function() {
-		return this.form.findField('indicator').getValue();
+		return this.manageIndicator === true? this.form.findField('indicator').getValue() : undefined;
 	}
 	
 	/**
@@ -363,6 +365,13 @@ Sbi.geo.stat.ChoroplethControlPanel = Ext.extend(Ext.FormPanel, {
 	
 	, setIndicator: function(indicatorName, riseEvents) {
 		Sbi.trace("[ChoropletControlPanel.setIndicator] : IN");
+		
+		if(this.manageIndicator !== true) {
+			Sbi.trace("[ChoropletControlPanel.setIndicator] : the control panel does not manage indicators");
+			return;
+		}
+		
+		
 		Sbi.trace("[ChoropletControlPanel.setIndicator] : Looking for indicator [" + indicatorName + "] ...");
 		
 		if(indicatorName && this.indicators) {
@@ -635,13 +644,16 @@ Sbi.geo.stat.ChoroplethControlPanel = Ext.extend(Ext.FormPanel, {
      * Called by EXT when the component is initialized.
      */
     , initComponent : function() {
-        this.items = [
-            this.initIndicatorSelectionField()
-            , this.initMethodSelectionField()
-            , this.initClassesNumberSelectionField()
-            , this.initFromColorSelectionField()
-            , this.initToColorSelectionField()
-        ];
+        
+    	this.items = [];
+    	if(this.manageIndicator === true) {
+    		this.items.push(this.initIndicatorSelectionField());
+    	}
+    	
+    	this.items.push(this.initMethodSelectionField());
+    	this.items.push(this.initClassesNumberSelectionField());
+    	this.items.push(this.initFromColorSelectionField());
+    	this.items.push(this.initToColorSelectionField());
 
         Sbi.geo.stat.ChoroplethControlPanel.superclass.initComponent.apply(this);
     }
@@ -727,8 +739,7 @@ Sbi.geo.stat.ChoroplethControlPanel = Ext.extend(Ext.FormPanel, {
             listeners: {
                 'select': {
                     fn: function() {
-                    	//alert("indicator change");
-                    	this.thematize(false);
+                    	// this.thematize(false);
                     },
                     scope: this
                 }
@@ -762,8 +773,7 @@ Sbi.geo.stat.ChoroplethControlPanel = Ext.extend(Ext.FormPanel, {
             listeners: {
                 'select': {
                 	fn: function() {
-                    	//alert("method change");
-                    	this.thematize(false);
+                    	//this.thematize(false);
                     },
                     scope: this
                 }
@@ -790,13 +800,12 @@ Sbi.geo.stat.ChoroplethControlPanel = Ext.extend(Ext.FormPanel, {
             triggerAction: 'all',
             store: new Ext.data.SimpleStore({
                 fields: ['value'],
-                data: [[0], [1], [2], [3], [4], [5], [6], [7], [8], [9]]
+                data: [[0], [1], [2], [3], [4], [5], [6], [7]]
             }),
             listeners: {
                 'select': {
                 	fn: function() {
-                    	//alert("numClasses change");
-                    	this.thematize(false);
+                    	// this.thematize(false);
                     },
                     scope: this
                 }
@@ -820,8 +829,7 @@ Sbi.geo.stat.ChoroplethControlPanel = Ext.extend(Ext.FormPanel, {
             listeners: {
                 'select': {
                     fn: function() {
-                    	//alert("colorA change");
-                    	this.thematize(false);
+                    	//this.thematize(false);
                     },
                     scope: this
                 }
@@ -845,8 +853,7 @@ Sbi.geo.stat.ChoroplethControlPanel = Ext.extend(Ext.FormPanel, {
             listeners: {
                 'select': {
                     fn: function() {
-                    	//alert("colorB change");
-                    	this.thematize(false);
+                    	//this.thematize(false);
                     },
                     scope: this
                 }

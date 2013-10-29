@@ -413,6 +413,7 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
      * @param {Object} options object
      */
     , updateOptions: function(newOptions) {
+    	Sbi.debug("[Thematizer.updateOptions] : IN");
         var oldOptions = Ext.apply({}, this.options);
         this.setOptions(newOptions);
         if (newOptions) {
@@ -427,8 +428,9 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
             	this.setClassification();
             }            
         }
+        Sbi.debug("[Thematizer.updateOptions] : OUT");
     } 
-    
+     
     /**
      * @method 
      * 
@@ -441,15 +443,32 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
      * In order to update options and then also update the classification use #updateOptions method.
      */
     , setOptions: function(newOptions) {
-        if (newOptions) {
+    	Sbi.debug("[Thematizer.setOptions] : IN " + this.indicator);
+    	
+    	var oldIndicator = this.indicator;
+    	
+    	if (newOptions) {
             if (!this.options) {
                 this.options = {};
             }
+          
             // update our copy for clone
-            Ext.apply(this.options, newOptions);
+            Ext.apply(this.options,  this.normalizeOption(newOptions));
             // add new options to this
             Ext.apply(this, newOptions);
         }  
+    	
+    	if(!this.indicator) {
+    		this.indicator = oldIndicator;
+    	}
+        Sbi.debug("[Thematizer.setOptions] : OUT" + this.indicator);
+    }
+    
+    , normalizeOption: function(options) {
+    	Sbi.debug("[Thematizer.normalizeOption] : IN");
+    	var normalizedOptions = Ext.apply({}, options);
+    	Sbi.debug("[Thematizer.normalizeOption] : OUT");
+    	return normalizedOptions;
     }
     
     /**
@@ -563,16 +582,17 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
 	     
 	     // TODO non fare questo per tutte le tematizzazioni
 	     var features = format.read(layer);
-	     var newFeatures = new Array();
+	     newFeatures = features;
 	     
-	     for(var i = 0; i < features.length; i++) {
-	    	var f =  features[i];
-	    	var centroid = f.geometry.getCentroid();
-	    	
-	    	var newFeature = new OpenLayers.Feature.Vector( centroid, f.attributes, f.style);
-	    	newFeatures.push(newFeature);
-	    	Sbi.debug("[Thematizer.setLayer] : centroid [" + i + "] equals to [" + centroid.x + "," + centroid.y + "]");
-	     }
+//	     var newFeatures = new Array();	     
+//	     for(var i = 0; i < features.length; i++) {
+//	    	var f =  features[i];
+//	    	var centroid = f.geometry.getCentroid();
+//	    	
+//	    	var newFeature = new OpenLayers.Feature.Vector( centroid, f.attributes, f.style);
+//	    	newFeatures.push(newFeature);
+//	    	Sbi.debug("[Thematizer.setLayer] : centroid [" + i + "] equals to [" + centroid.x + "," + centroid.y + "]");
+//	     }
 	     
 	     this.layer.removeAllFeatures();
 	     this.layer.addFeatures(newFeatures);
@@ -1144,15 +1164,16 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
         var format = this.format || new OpenLayers.Format.GeoJSON();
         
         var features = format.read(doc);
-	    var newFeatures = new Array();
-	    
-	    for(var i = 0; i < features.length; i++) {
-	    	var f =  features[i];
-	    	var centroid = f.geometry.getCentroid();
-	    	var newFeature = new OpenLayers.Feature.Vector( centroid, f.attributes, f.style);
-	    	newFeatures.push(newFeature);
-	    	Sbi.debug("[Thematizer.setLayer] : centroid [" + i + "] equals to [" + centroid.x + "," + centroid.y + "]");
-	    }
+        var newFeatures = features;
+        
+//	    var newFeatures = new Array();
+//	    for(var i = 0; i < features.length; i++) {
+//	    	var f =  features[i];
+//	    	var centroid = f.geometry.getCentroid();
+//	    	var newFeature = new OpenLayers.Feature.Vector( centroid, f.attributes, f.style);
+//	    	newFeatures.push(newFeature);
+//	    	Sbi.debug("[Thematizer.setLayer] : centroid [" + i + "] equals to [" + centroid.x + "," + centroid.y + "]");
+//	    }
 	     
         this.layer.removeAllFeatures();
         this.layer.addFeatures( newFeatures );

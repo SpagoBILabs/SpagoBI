@@ -903,7 +903,6 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 		var formState = Ext.apply({}, analysisConf || {});
 		
 		formState.method = formState.method || 'CLASSIFY_BY_QUANTILS';
-		formState.method = Sbi.geo.stat.Classifier[formState.method];
 		
 		
 		formState.classes =  formState.classes || 5;
@@ -918,7 +917,17 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 			formState.indicator = this.indicators[0][0];
 		}
 		
-		this.thematizer.thematize(formState);
+		var thematizerOptions = {};
+		thematizerOptions.method = Sbi.geo.stat.Classifier[formState.method];
+		thematizerOptions.classes = formState.classes;
+		thematizerOptions.colors = new Array(2);
+		thematizerOptions.colors[0] = new Sbi.geo.utils.ColorRgb();
+		thematizerOptions.colors[0].setFromHex(formState.fromColor);
+		thematizerOptions.colors[1] = new Sbi.geo.utils.ColorRgb();
+		thematizerOptions.colors[1].setFromHex(formState.toColor);
+		thematizerOptions.indicator = formState.indicator;
+		
+		this.thematizer.thematize(thematizerOptions);
 		
 		Sbi.debug("[ControlPanel2.setAnalysisConf]: OUT");
 	}

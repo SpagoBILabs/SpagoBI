@@ -238,20 +238,39 @@ Ext.extend(Sbi.geo.stat.ChoroplethThematizer, Sbi.geo.stat.Thematizer, {
     , updateOptions: function(newOptions) {
     	Sbi.trace("[ChoroplethThematizer.updateOptions] : IN");
         var oldOptions = Ext.apply({}, this.options);
+        
+        Sbi.debug("[ChoroplethThematizer.updateOptions]: Old options are equal to [" + Sbi.toSource(oldOptions)+ "]");
+        Sbi.debug("[ChoroplethThematizer.updateOptions]: New options are equal to [" + Sbi.toSource(newOptions)+ "]");
+        
         this.setOptions(newOptions);
         if (newOptions) {
             if (newOptions.method != oldOptions.method ||
                 newOptions.indicator != oldOptions.indicator ||
                 newOptions.numClasses != oldOptions.numClasses) {
+            	 Sbi.debug("[ChoroplethThematizer.updateOptions] : An option related to classification has changed");
                 this.setClassification();
             } else if (newOptions.colors && (
                        !newOptions.colors[0].equals(oldOptions.colors[0]) ||
                        !newOptions.colors[1].equals(oldOptions.colors[1]))) {
+            	Sbi.debug("[ChoroplethThematizer.updateOptions] : No option related to classifcation has changed");
                 this.createColorInterpolation();
+            } else {
+            	Sbi.trace("[ChoroplethThematizer.updateOptions] : No option has changed");
             }
         }
         Sbi.trace("[ChoroplethThematizer.updateOptions] : OUT");
     }  
+    
+    , normalizeOption: function(options) {
+    	Sbi.debug("[ChoroplethThematizer.normalizeOption] : IN");
+    	var normalizedOptions = {};
+    	normalizedOptions.indicator = options.indicator;
+    	normalizedOptions.method = options.method;
+    	normalizedOptions.numClasses = options.numClasses;
+    	normalizedOptions.colors = options.colors;
+    	Sbi.debug("[ChoroplethThematizer.normalizeOption] : OUT");
+    	return normalizedOptions;
+    }
 
     /**
      * @method
