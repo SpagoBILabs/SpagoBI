@@ -110,15 +110,11 @@ Ext.extend(Sbi.geo.MainPanel, Ext.Panel, {
     
     , mapName: null
     , mapPanel: null
-    , controlPanel: null
     
     , analysisType: null
-    , PROPORTIONAL_SYMBOLS:'proportionalSymbols'
-    , CHOROPLETH:'choropleth'
-    , GRAPHIC:'graphic'
+
     
     , targetLayer: null
-    //, thematizerControlPanel: null
     , controlPanel2: null
     
 
@@ -164,19 +160,18 @@ Ext.extend(Sbi.geo.MainPanel, Ext.Panel, {
 	, validate: function (successHandler, failureHandler, scope) {
 		Sbi.trace("[MainPanel.validate]: IN");
 		
-		// TODO fix this beacuse control panel does not exist anymore
-		var thematizationControlPanel = this.controlPanel.thematizerControlPanel;
-		
 		var template = {};
+		
+		var thematizer = this.mapComponent.getActiveThematzer();
 		
 		template.mapName = this.mapName;
 		template.analysisType = this.analysisType;
 	
-		template.indicatorContainer = thematizationControlPanel.indicatorContainer;
-		template.storeType = thematizationControlPanel.storeType;
+		template.indicatorContainer = thematizer.indicatorContainer;
+		template.storeType = thematizer.storeType;
 		
 		if(template.storeType === 'virtualStore') {
-			template.storeConfig = thematizationControlPanel.storeConfig;
+			template.storeConfig = thematizer.storeConfig;
 		} else { // it's a physicalStore
 			template.feautreInfo = this.feautreInfo;
 			template.indicators = this.indicators;
@@ -398,22 +393,20 @@ Ext.extend(Sbi.geo.MainPanel, Ext.Panel, {
 			 thematizerOptions.format = format;
 		}
 		
-		if (this.analysisType === this.PROPORTIONAL_SYMBOLS) {
-			Sbi.debug("[MainPanel.initAnalysis]: analysis type is equal to [" + this.PROPORTIONAL_SYMBOLS + "]");
-			this.initProportionalSymbolsAnalysisLayer();
-			thematizerOptions.layer = this.targetLayer;
-			this.thematizer = new Sbi.geo.stat.ProportionalSymbolThematizer(this.map, thematizerOptions);
-		} else if (this.analysisType === this.CHOROPLETH) {
-			Sbi.debug("[MainPanel.initAnalysis]: analysis type is equal to [" + this.CHOROPLETH + "]");
+		var thematizerType = Sbi.geo.stat.Thematizer.supportedType[this.analysisType];
+		if (thematizerType !== undefined) {
+			Sbi.debug("[MainPanel.initAnalysis]: analysis type is equal to [" + thematizerType.typeName + "]");
 			this.initChoroplethAnalysisLayer();
 			thematizerOptions.layer = this.targetLayer;
-			this.thematizer = new Sbi.geo.stat.ChoroplethThematizer(this.map, thematizerOptions);
+			this.thematizer = new thematizerType.thematizerClass(this.map, thematizerOptions);
 		} else {
 			Sbi.exception.ExceptionHandler.showErrorMessage('error: unsupported analysis type [' + this.analysisType + ']', 'Configuration error');
 		}
 		
-		// we inject thematzer in map to make it accessible to the legend control that need it in order to change configurations
-		this.map.thematizer = this.thematizer;
+		// the owner of the thematizer is the map Component. Other GUI component must call it to have back the thematizer
+		this.mapComponent.addThematizer(this.analysisType, this.thematizer);
+		this.mapComponent.activateThematizer(this.analysisType);
+		
 		
 		this.initAnalysislayerSelectControl();
 		this.map.addControl(this.analysisLayerSelectControl); 
@@ -532,13 +525,12 @@ Ext.extend(Sbi.geo.MainPanel, Ext.Panel, {
 	
 	, initControlPanel: function() {		
 		this.controlPanelConf.map = this.map;
-		this.controlPanelConf.thematizer = this.thematizer;
+		this.controlPanelConf.mapComponnet = this.mapComponent;
 		this.controlPanelConf.indicators = this.indicators;
-		//this.controlPanelConf.thematizerControlPanel = this.thematizerControlPanel;
 		this.controlPanelConf.controlledPanel = this;
 		this.controlPanelConf.analysisType = this.analysisType;
 		this.controlPanelConf.analysisConf = this.analysisConf;
-		this.controlPanel = new Sbi.geo.ControlPanel(this.controlPanelConf);
+		//this.controlPanel = new Sbi.geo.ControlPanel(this.controlPanelConf);
 		this.controlPanel2 = new Sbi.geo.ControlPanel2(this.controlPanelConf);
 	}
 	
@@ -645,7 +637,7 @@ Ext.extend(Sbi.geo.MainPanel, Ext.Panel, {
 			feature.popup = null;
 		}
         var infoPanel = Ext.getCmp('infotable');
-        if(infoPanel.body){
+        if(infoPanel && infoPanel.body){
         	infoPanel.body.dom.innerHTML = '';
         }
 	}
@@ -657,12 +649,31 @@ Ext.extend(Sbi.geo.MainPanel, Ext.Panel, {
 	
 	, getFeatureInfoHtmlFragment: function(feature) {
 		var info = "<div style='font-size:.8em'>";
-		if(this.featureInfo) {
-		    for(var i=0; i<this.featureInfo.length; i++){
-		    	info = info+"<b>"+ this.featureInfo[i][0] +"</b>: " + feature.attributes[this.featureInfo[i][1]] + "<br />";    
-		    } 
+		
+		// TODO: we ignore feature info as passed in by template for the moment. 
+		//Improve this in the feature. Maybe the feture's attribute to show can be read by
+		// hierarchy level metadata
+		
+//		if(this.featureInfo) {
+//		    for(var i=0; i<this.featureInfo.length; i++){
+//		    	info = info+"<b>"+ this.featureInfo[i][0] +"</b>: " + feature.attributes[this.featureInfo[i][1]] + "<br />";    
+//		    } 
+//		} 
+		
+		// TODO put as title the geoID
+		// todo read also measure... how?
+		info += "<h1>" + feature.attributes[this.geoId] + "</h1><p>---------------<p> ";  
+		
+		for(var attribute in feature.attributes) {
+			info += "<b>"+ attribute +"</b>: " + feature.attributes[attribute] + "<br />";    
 		}
+		
+		// TODO read also measure... how?
+		
 	    info += "</div>";
+	    
+	    // TODO iprove style (css)
+	    
 	    return info;
 	}
 	

@@ -320,10 +320,10 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
     	//get filter values
     	var filters = this.getFilters();
     	//filter the store
-    	this.thematizer.filterStore(filters);
+    	this.mapComponnet.getActiveThematizer().filterStore(filters);
     	//update the thematization
     	//this.thematizerControlPanel.thematize(false, {resetClassification: true});
-    	this.thematizer.thematize({resetClassification: true});
+    	this.mapComponnet.getActiveThematizer().thematize({resetClassification: true});
     	Sbi.trace("[ControlPanel2.filterDataSet] : OUT");      
     }
 	
@@ -523,12 +523,12 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 		this.innerPanel.on('render', function() {		
 			
 			//Handle indicatorsChanged event for updating indicators
-			this.thematizer.on('indicatorsChanged', function(thematizer, indicators, selectedIndicator){
+			this.mapComponnet.getActiveThematizer().on('indicatorsChanged', function(thematizer, indicators, selectedIndicator){
 				this.setIndicators(indicators, selectedIndicator, false);
 			}, this);
 			
 			//Handle filtersChanged event for adding filters combo
-			this.thematizer.on('filtersChanged', function(thematizer, filters){
+			this.mapComponnet.getActiveThematizer().on('filtersChanged', function(thematizer, filters){
 				this.setFilters(filters);
 			}, this);
 			
@@ -812,14 +812,14 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 		this.initCallbackOnGuiItemClick("addIndicatorButton", this.showMeasureCatalogueWindow, "add indicator button");
 		
 		//Initialize thematizerControlPanel form state
-		var targetLayer = this.thematizer.getLayer();
+		var targetLayer = this.mapComponnet.getActiveThematizer().getLayer();
 		Sbi.trace("[ControlPanel2.initInnerPannelCallbacks] : target layer contains [" + targetLayer.features + "] features");
     	if(targetLayer != null && targetLayer.features.length > 0) {
     		Sbi.trace("[ControlPanel2.initInnerPannelCallbacks] : target layer already loaded");
     		this.setAnalysisConf( this.analysisConf );
     	} else {
     		Sbi.trace("[ControlPanel2.initInnerPannelCallbacks] : target layer not already loaded");
-    		this.thematizer.on('layerloaded', function(){
+    		this.mapComponnet.getActiveThematizer().on('layerloaded', function(){
     			Sbi.trace("[ControlPanel2.onlayerLoaded]: IN");
     			if(this.notAlreadyLoaded !== true) {
     				Sbi.debug("[AnalysisControlPanel]: [layerloaded] event fired");
@@ -927,7 +927,7 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 		thematizerOptions.colors[1].setFromHex(formState.toColor);
 		thematizerOptions.indicator = formState.indicator;
 		
-		this.thematizer.thematize(thematizerOptions);
+		this.mapComponnet.getActiveThematizer().thematize(thematizerOptions);
 		
 		Sbi.debug("[ControlPanel2.setAnalysisConf]: OUT");
 	}
@@ -936,7 +936,7 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 		
 		Sbi.trace("[ControlPanel2.onIndicatorSelected]: IN");
 	
-		this.thematizer.thematize({indicator: indicator});
+		this.mapComponnet.getActiveThematizer().thematize({indicator: indicator});
 
 		var el = Ext.get(elementId);
 		if ((el != null) && (el !== undefined )){
@@ -973,7 +973,7 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 	}
 	, onStoreLoad: function(measureCatalogue, options, store, meta) {
 		this.measureCatalogueWindow.close();
-		this.thematizer.setData(store, meta);
+		this.mapComponnet.getActiveThematizer().setData(store, meta);
 		// TODO verify
 		//this.thematizerControlPanel.storeType = 'virtualStore';
 		var s = "";

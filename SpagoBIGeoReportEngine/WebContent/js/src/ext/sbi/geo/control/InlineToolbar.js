@@ -187,7 +187,7 @@ Sbi.geo.control.InlineToolbar = OpenLayers.Class(OpenLayers.Control, {
     createContents: function(){
     	Sbi.trace("[InlineToolbar.createContents] : IN");
          
-        this.div.appendChild(this.createLIEl('span', 'Collapse control panel', 'btn-toggle first', 'elBtnArrow' ));        
+        this.div.appendChild(this.createLIEl('span', 'Collapse control panel', 'btn-toggle first open', 'elBtnArrow' ));        
         this.div.appendChild(this.createLIEl('span', 'Print this map', 'btn-print', 'elBtnPrint' ));
         this.div.appendChild(this.createLIEl('span', 'Share this map', 'btn-share', 'elBtnShare' ));
         this.div.appendChild(this.createLIEl('a', 'Download this map', 'btn-download', 'elBtnDownload' ));
