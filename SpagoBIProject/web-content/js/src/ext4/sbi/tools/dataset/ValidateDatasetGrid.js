@@ -44,8 +44,8 @@ Ext.define('Sbi.tools.dataset.ValidateDatasetGrid', {
     	});
 
 		
-		Ext.util.Format.myRenderer = function(value, metaData, record, rowIndex, colIndex){	
-			var validationErrors = thisPanel.store.getValidationErrors();			
+		Ext.util.Format.myRenderer = function(value, metaData, record, rowIndex, colIndex){
+			var validationErrors = thisPanel.store.getValidationErrors();
 			if ((validationErrors != null) && (validationErrors != undefined)){
 				if (!thisPanel.firedValidationErrorFound){
 					this.fireEvent('validationErrorFound');
