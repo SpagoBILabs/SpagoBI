@@ -461,7 +461,7 @@ Ext.extend(Sbi.geo.MainPanel, Ext.Panel, {
     
     	this.map.addLayer(this.targetLayer);       
     	
-    	Sbi.trace("[MainPanel.initChoroplethAnalysisLayer]: IN");
+    	Sbi.trace("[MainPanel.initChoroplethAnalysisLayer]: OUT");
 	}
 	
 	, initMapPanel: function() {

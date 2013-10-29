@@ -297,6 +297,7 @@ Sbi.geo.control.Legend = OpenLayers.Class(OpenLayers.Control, {
 				Sbi.debug("[ControlPanel.initAnalysisControlPanel]: analysis type is equal to [" + thematizerType.typeName + "]");
 				var thematizerControlPanelOptions = {
 						map: this.map,
+						manageIndicator: false,
 						indicators: this.null,	
 						thematizer: this.map.thematizer,
 						bodyStyle:'padding:6px 6px 6px 6px; background-color:#FFFFFF',
