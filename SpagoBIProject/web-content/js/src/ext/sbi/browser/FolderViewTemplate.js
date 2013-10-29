@@ -79,7 +79,7 @@ Sbi.browser.FolderViewTemplate = function(config) {
 	            '</tpl>' +
 	        '</div>'+ //hover
 		'</div>'+ //box-figure
-		'<div class="box-text">'+
+		'<div title="{name}" class="box-text">'+
 			'<h2>{name}</h2>'+
 //			'<p>{[Ext.String.ellipsis(values.description, 100, false)]}</p>'+
 			'<p>{description}</p>'+
@@ -110,7 +110,7 @@ Sbi.browser.FolderViewTemplate = function(config) {
 		'</div>'+ 	
 //    '<div class="item-desc">' +
 //        folderAttributes +
-		'<div class="box-text">'+
+		'<div title="{name}" class="box-text">'+
 			'<h2>{name}</h2>'+
 			'<p>{description}</p>'+
 	    '</div>'+
