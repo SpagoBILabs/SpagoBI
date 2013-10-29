@@ -1062,7 +1062,7 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
 
      , loadPhysicalStore: function() {
     	 Sbi.debug("[Thematizer.loadPhysicalStore]: IN");
-    	 alert("Loading physical store");
+    	 //alert("Loading physical store");
     	 this.store.load({});
     	 Sbi.debug("[Thematizer.loadPhysicalStore]: OUT");
      }
@@ -1193,7 +1193,7 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
      * @param {Object} response
      */
     , onFailure: function(response) {
-    	this.unmsak();
+    	this.hideMask();
         this.requestFailure(response);
     }
     

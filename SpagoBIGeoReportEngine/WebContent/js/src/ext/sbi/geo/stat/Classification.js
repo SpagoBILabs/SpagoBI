@@ -124,7 +124,7 @@ Ext.extend(Sbi.geo.stat.Distribution, Ext.util.Observable, {
     			minVal = this.dataPoints[i].getValue();
     			minDataPoint = this.dataPoints[i];
     		}
-    		Sbi.trace("[Distribution.getMinDataPoint] : last value read is equal to [" + this.dataPoints[i].getValue() + "]. Min val found so far is equal to [" + minVal + "]");
+    		//Sbi.trace("[Distribution.getMinDataPoint] : last value read is equal to [" + this.dataPoints[i].getValue() + "]. Min val found so far is equal to [" + minVal + "]");
     	}
     	
     	Sbi.trace("[Distribution.getMinDataPoint] : OUT");
