@@ -154,7 +154,7 @@ Ext.define('Sbi.tools.dataset.DataSetsView', {
 								            '</tpl>' +
 		                                '</div>',
 									'</div>',
-									'<div class="box-text">',
+									'<div title="{name}" class="box-text">',
 										'<h2>{name}</h2>',
 										'<p>{[Ext.String.ellipsis(values.description, 100, false)]}</p>',
 										'<p><b>'+author+':</b> {owner}</p>',
