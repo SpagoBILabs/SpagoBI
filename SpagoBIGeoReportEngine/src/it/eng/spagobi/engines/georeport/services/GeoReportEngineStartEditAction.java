@@ -38,7 +38,7 @@ public class GeoReportEngineStartEditAction extends AbstractEngineStartServlet {
 
 	
 	private static final String DEFAULT_MAP_NAME = "Sud Tirol";
-	private static final String DEFAULT_ANALYSIS_TYPE = "choropleth"; //"proportionalSymbols"; //"choropleth";
+	private static final String DEFAULT_ANALYSIS_TYPE = "choropleth"; //"proportionalSymbols";
 	
 	private static final long serialVersionUID = 1L;
 	private static final String ENGINE_NAME = "GeoReportEngine";
@@ -436,7 +436,7 @@ public class GeoReportEngineStartEditAction extends AbstractEngineStartServlet {
 			}
 						
 			
-			analysisConf.put("method", "CLASSIFY_BY_EQUAL_INTERVALS"); // "CLASSIFY_BY_QUANTILS"
+			analysisConf.put("method", "CLASSIFY_BY_QUANTILS"); // "CLASSIFY_BY_EQUAL_INTERVALS" 
 			analysisConf.put("classes", "7");
 			analysisConf.put("fromColor", "#FFFF00");
 			analysisConf.put("toColor", "#008000");
