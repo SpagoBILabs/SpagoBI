@@ -164,6 +164,26 @@ Ext.extend(Sbi.geo.MapComponent, Ext.Panel, {
     // accessor methods
 	// -----------------------------------------------------------------------------------------------------------------
     
+	
+	, thematizers: {}
+	, activeThematizerName: null 
+	
+	, addThematizer: function(name, thematizer) {
+		this.thematizers[name] = thematizer;
+		// we inject thematzer in map to make it accessible to the 
+		// legend control that need it in order to change configurations
+		this.map.thematizer = this.thematizer;
+	}
+	
+	, activateThematizer: function(name) {
+		this.activeThematizerName = name;
+		this.map.thematizer = this.getActiveThematizer();
+	}
+	
+	, getActiveThematizer: function() {
+		return this.thematizers[this.activeThematizerName];
+	}
+	
 	 /**
      * @method
      * Set the central point of the map
@@ -217,7 +237,49 @@ Ext.extend(Sbi.geo.MapComponent, Ext.Panel, {
     , initMap: function() {  
     	Sbi.trace("MapComponent.initMap: IN");
     	
+    	this.baseMapOptions.eventListeners = {
+//    		featureover: function(e) {
+//    			e.feature.renderIntent = "select";
+//    	        e.feature.layer.drawFeature(e.feature);
+//    	            
+//    	            
+//    	        var lonlat = e.feature.geometry.getBounds().getCenterLonLat();
+//
+//    	        var html = 'Comune: ' +
+//    	        	e.feature.attributes.COMUNE + '<br />' +
+//    	        	'Popolazione: ' + 
+//    	            e.feature.attributes.POPOLAZIONE;
+//
+//    	            var popup = new OpenLayers.Popup.Anchored(
+//    	                    'myPopup',
+//    	                    lonlat,
+//    	                    new OpenLayers.Size(150, 60),
+//    	                    html, 
+//    	                    {size: {w: 14, h: 5}, offset: {x: -7, y: -7}},
+//    	                    false
+//    	            );
+//
+//    	            e.feature.tooltip = popup;
+//    	            this.addPopup(popup);
+//    	        },
+//    	        
+//    	        featureout: function(e) {
+//    	            e.feature.renderIntent = "default";
+//    	            e.feature.layer.drawFeature(e.feature);
+//    	            this.removePopup(e.feature.tooltip);
+//    	            e.feature.tooltip = null;
+//    	        }
+//    	        ,
+//    	        featureclick: function(e) {
+//    	            log("Map says: " + e.feature.id + " clicked on " + e.feature.layer.name);
+//    	        }
+    	};
+    	
 		this.map = new OpenLayers.Map('map', this.baseMapOptions);
+		
+	
+		
+		
 		
 		this.map.addControlToMap = function (control, px) {
 			Sbi.debug("[Map.addControlToMap]: IN");
