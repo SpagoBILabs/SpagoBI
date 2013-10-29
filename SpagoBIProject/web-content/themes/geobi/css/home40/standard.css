@@ -74,7 +74,8 @@ a {text-decoration:none}
 .header{border-bottom:1px solid #ededed;background:#fff;position:relative;z-index:10000;width:100%;float:left;padding:33px 0 0 0;height:142px}
 .map-body .header{position:fixed;top:0;left:0} /* ATTENTION! ADDED */
 
-#logo{position:absolute;top:23px;left:33px;width:228px;height:61px;display:block;background:url(../../images/logo.gif) 0 0 no-repeat;text-indent:-9999px;font-size:0;line-height:0} /* ATTENTION! MODIFIED left:33px*/
+/*#logo{position:absolute;top:23px;left:33px;width:228px;height:61px;display:block;background:url(../../images/logo.gif) 0 0 no-repeat;text-indent:-9999px;font-size:0;line-height:0} */
+#logo{position:absolute;top:23px;left:33px;width:235px;height:65px;display:block;background:url(../../images/Logo_GeoBI_BETA.png) 0 0 no-repeat;text-indent:-9999px;font-size:0;line-height:0} /* ATTENTION! MODIFIED left:33px*/
 #logo:hover{opacity:0.9;filter:alpha(opacity = 90)}
 
 .main-buttons{float:right;padding:33px 0 0 0}
