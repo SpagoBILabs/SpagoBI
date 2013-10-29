@@ -99,7 +99,7 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
 			name : 'catTypeVn',			
 			displayField : 'VALUE_DS',
 			valueField :  'VALUE_ID',
-			width : 180,
+			width : 300,
 //			emptyText:'Select ...',
 			typeAhead : true, forceSelection : true,
 			mode : 'local',
