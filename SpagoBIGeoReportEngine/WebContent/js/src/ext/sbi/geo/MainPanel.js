@@ -70,7 +70,7 @@ Sbi.geo.MainPanel = function(config) {
 	c = Ext.apply(c, {
          layout   : 'border',
          hideBorders: true,
-         items    : [/*this.controlPanel,*/ this.mapPanel, this.controlPanel2]
+         items    : [this.mapPanel, this.controlPanel]
 	});
 
 	// constructor
@@ -115,7 +115,7 @@ Ext.extend(Sbi.geo.MainPanel, Ext.Panel, {
 
     
     , targetLayer: null
-    , controlPanel2: null
+    , controlPanel: null
     
 
     
@@ -162,7 +162,7 @@ Ext.extend(Sbi.geo.MainPanel, Ext.Panel, {
 		
 		var template = {};
 		
-		var thematizer = this.mapComponent.getActiveThematzer();
+		var thematizer = this.mapComponent.getActiveThematizer();
 		
 		template.mapName = this.mapName;
 		template.analysisType = this.analysisType;
@@ -181,7 +181,7 @@ Ext.extend(Sbi.geo.MainPanel, Ext.Panel, {
 		
 		template.geoId = this.geoId;
 				
-		template.analysisConf = this.controlPanel.getAnalysisConf();
+		template.analysisConf = thematizer.getAnalysisConf();
 				
 		template.selectedBaseLayer = this.selectedBaseLayer;
 		for(var i=0; i < this.map.getNumLayers(); i++) {
@@ -393,19 +393,25 @@ Ext.extend(Sbi.geo.MainPanel, Ext.Panel, {
 			 thematizerOptions.format = format;
 		}
 		
-		var thematizerType = Sbi.geo.stat.Thematizer.supportedType[this.analysisType];
-		if (thematizerType !== undefined) {
-			Sbi.debug("[MainPanel.initAnalysis]: analysis type is equal to [" + thematizerType.typeName + "]");
-			this.initChoroplethAnalysisLayer();
-			thematizerOptions.layer = this.targetLayer;
-			this.thematizer = new thematizerType.thematizerClass(this.map, thematizerOptions);
-		} else {
-			Sbi.exception.ExceptionHandler.showErrorMessage('error: unsupported analysis type [' + this.analysisType + ']', 'Configuration error');
+		this.initChoroplethAnalysisLayer();
+		thematizerOptions.layer = this.targetLayer;
+		
+		for(var typeName in Sbi.geo.stat.Thematizer.supportedType) {
+			var thematizerType = Sbi.geo.stat.Thematizer.supportedType[typeName];
+			var thematizer = new thematizerType.thematizerClass(this.map, thematizerOptions);
+			this.mapComponent.addThematizer(thematizerType.typeName, thematizer);
+			Sbi.debug("[MainPanel.initAnalysis]: thematizer [" + thematizerType.typeName + "] succesfully initialized");
 		}
 		
-		// the owner of the thematizer is the map Component. Other GUI component must call it to have back the thematizer
-		this.mapComponent.addThematizer(this.analysisType, this.thematizer);
-		this.mapComponent.activateThematizer(this.analysisType);
+		var thematizerType = Sbi.geo.stat.Thematizer.supportedType[this.analysisType];
+		if (thematizerType !== undefined) {
+			Sbi.debug("[MainPanel.initAnalysis]: active thematizer is equal to [" + thematizerType.typeName + "]");
+			this.mapComponent.activateThematizer(this.analysisType);
+		} else {
+			Sbi.exception.ExceptionHandler.showErrorMessage('Unsupported thematizer type [' + this.analysisType + ']', 'Configuration error');
+		}
+		
+		
 		
 		
 		this.initAnalysislayerSelectControl();
@@ -494,7 +500,7 @@ Ext.extend(Sbi.geo.MainPanel, Ext.Panel, {
 		       	   new Ext.Panel(mapPanelConf), 
 		       	   {
 			            title    : 'Info',
-			            html: '<div id="info"</div>',
+			            html: '<div id="info"></div>',
 			            id: 'infotable',
 			            autoScroll: true
 			        }
@@ -530,8 +536,7 @@ Ext.extend(Sbi.geo.MainPanel, Ext.Panel, {
 		this.controlPanelConf.controlledPanel = this;
 		this.controlPanelConf.analysisType = this.analysisType;
 		this.controlPanelConf.analysisConf = this.analysisConf;
-		//this.controlPanel = new Sbi.geo.ControlPanel(this.controlPanelConf);
-		this.controlPanel2 = new Sbi.geo.ControlPanel2(this.controlPanelConf);
+		this.controlPanel = new Sbi.geo.ControlPanel(this.controlPanelConf);
 	}
 	
 	// --------------------------------------------------------------------------------------------------

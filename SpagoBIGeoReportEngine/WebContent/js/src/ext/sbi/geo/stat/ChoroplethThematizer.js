@@ -95,6 +95,38 @@ Ext.extend(Sbi.geo.stat.ChoroplethThematizer, Sbi.geo.stat.Thematizer, {
     }
     
     // -----------------------------------------------------------------------------------------------------------------
+    // accessor methods
+	// -----------------------------------------------------------------------------------------------------------------
+    /**
+     * @method
+     * 
+     * the analysis conf. this object can be passed as is at the method setFormState of the related
+     * control panel
+     */
+    , getAnalysisConf: function() {
+    	var thematizerOption = this.getOptions();
+		
+		var formState = {};
+		
+		for(var method in Sbi.geo.stat.Classifier) {
+			if(Sbi.geo.stat.Classifier[method] == thematizerOption.method) {
+				formState.method = method;
+			}
+		}
+		
+		formState.classes = thematizerOption.numClasses;
+		if(thematizerOption.colors[0]) {
+			formState.fromColor = thematizerOption.colors[0].toHexString();
+		}
+		if(thematizerOption.colors[1]) {
+			formState.toColor = thematizerOption.colors[1].toHexString();
+		}
+		
+		formState.indicator = thematizerOption.indicator;
+		
+		return formState;
+    }
+    // -----------------------------------------------------------------------------------------------------------------
     // public methods
 	// -----------------------------------------------------------------------------------------------------------------
     
@@ -162,7 +194,7 @@ Ext.extend(Sbi.geo.stat.ChoroplethThematizer, Sbi.geo.stat.Thematizer, {
         		this.invoked = true;
     	        for(var j = 0; j < this.dataPoints.length; j++) {
     	        	if(this.dataPoints[j].coordinatesAreEqualTo([attributes[this.layerId]])) {
-    	        		Sbi.trace("Feature [" + attributes[this.layerId]+ "] belong to class [" + binIndex + "]");
+    	        		Sbi.debug("[ChoroplethThematizer.createClassFilter]: Feature [" + attributes[this.layerId]+ "] belong to class [" + binIndex + "]");
     	        		this.filteredFeatures++;
     	        		return true;
     	        	} 
@@ -195,7 +227,7 @@ Ext.extend(Sbi.geo.stat.ChoroplethThematizer, Sbi.geo.stat.Thematizer, {
      * Creates the classification that will be used for map thematization
      */
     , classify: function() {
-    	Sbi.trace("[ChoroplethThematizer.setClassification] : IN");
+    	Sbi.trace("[ChoroplethThematizer.classify] : IN");
         
     	var distribution = this.getDistribution(this.indicator);
     	Sbi.debug("[ChoroplethThematizer.setClassification] : Extracted [" + distribution.getSize() + "] values for indicator [" + this.indicator + "]");
@@ -212,7 +244,7 @@ Ext.extend(Sbi.geo.stat.ChoroplethThematizer, Sbi.geo.stat.Thematizer, {
         );
         this.createColorInterpolation();
         
-        Sbi.trace("[ChoroplethThematizer.setClassification] : OUT");
+        Sbi.trace("[ChoroplethThematizer.classify] : OUT");
     }
     
     /**
