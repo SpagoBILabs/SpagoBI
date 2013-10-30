@@ -12,6 +12,7 @@ import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.SpagoBIServiceExceptionHandler;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
+import it.eng.spagobi.utilities.file.FileUtils;
 import it.eng.spagobi.utilities.json.JSONUtils;
 import it.eng.spagobi.utilities.service.IServiceResponse;
 import it.eng.spagobi.utilities.service.JSONResponse;
@@ -103,7 +104,7 @@ public class ManageFileAction extends AbstractSpagoBIAction{ //AbstractHttpActio
 	}
 	
 	
-	private JSONObject uploadFile(){		
+	private JSONObject uploadFile() throws Exception{		
 		FileItem uploaded = (FileItem) getAttribute(UPLOADED_FILE);
 		
 		if (uploaded == null) {
@@ -114,13 +115,13 @@ public class ManageFileAction extends AbstractSpagoBIAction{ //AbstractHttpActio
 		logger.info("User [id : " + userProfile.getUserId() + ", name : " + userProfile.getUserName() + "] " +
 				"is uploading file [" + uploaded.getName() + "] with size [" + uploaded.getSize() + "]");
 		
-		checkUploadedFile(uploaded);
+		FileUtils.checkUploadedFile(uploaded, Integer.valueOf(maxSize), extFiles);
 		
 		
-		File file = checkAndCreateDir(uploaded);
+		File file = FileUtils.checkAndCreateDir(uploaded, directory);
 
 		logger.debug("Saving file...");
-		saveFile(uploaded, file);
+		FileUtils.saveFile(uploaded, file);
 		logger.debug("File saved");
 		
 		JSONObject toReturn = new JSONObject();
@@ -215,7 +216,7 @@ public class ManageFileAction extends AbstractSpagoBIAction{ //AbstractHttpActio
 		}
 	}
 
-	private void checkUploadedFile(FileItem uploaded) {
+/*	private void checkUploadedFile(FileItem uploaded) {
 	
 		logger.debug("IN");
 		try {
@@ -301,7 +302,7 @@ public class ManageFileAction extends AbstractSpagoBIAction{ //AbstractHttpActio
 			logger.debug("OUT");
 		}
 	}
-	
+	*/
 	private boolean checkFileIfExist(File file){
 		return (file.exists());
 	}

@@ -36,8 +36,11 @@ import it.eng.spagobi.community.mapping.SbiCommunity;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.utilities.file.FileUtils;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -108,11 +111,28 @@ public class DetBIObjModHelper {
 		if(refreshSecondsString==null || refreshSecondsString.equalsIgnoreCase(""))refreshSecondsString="0";
 		Integer refreshSeconds=Integer.valueOf(refreshSecondsString);
 		boolean isPublic = Boolean.valueOf( (String)request.getAttribute("isPublic"));
-		/*String longDescription = (String) request.getAttribute("longDescription");
-		String objective = (String) request.getAttribute("objective");
-		String language = (String) request.getAttribute("language");
-		String Keywords = (String) request.getAttribute("Keywords");
-		String Rating = (String) request.getAttribute("Rating");*/
+		
+		
+		//previewFile management
+		String previewFileName = null;
+		ArrayList arUploaded = (ArrayList) request.getAttribute("UPLOADED_FILE");		
+		FileItem uploaded = getFileItemByFieldName(arUploaded, "previewFile");
+		if (uploaded != null) {
+			String fileName = GeneralUtilities.getRelativeFileNames(uploaded.getName());
+			if (fileName != null && !fileName.trim().equals("")) {
+				try{
+					previewFileName = uploadFile(uploaded);
+				}catch(EMFUserError e){
+					EMFValidationError error = new EMFValidationError(EMFErrorSeverity.ERROR, "preview file",e.getErrorCode());
+					this.respCont.getErrorHandler().addError(error);	
+				}
+				catch(Exception e){
+					EMFValidationError error = new EMFValidationError(EMFErrorSeverity.ERROR, "preview file",e.getMessage());
+					this.respCont.getErrorHandler().addError(error);	
+				}
+			}
+		}
+		
 		// ELABORATE DATA RECOVERED FROM REQUEST
 		Integer id = null;
 		if(idStr!=null) id = new Integer(idStr);
@@ -252,6 +272,7 @@ public class DetBIObjModHelper {
 		//obj.setRating(Rating == null ? null : new Short(Rating));
 		obj.setRefreshSeconds(refreshSeconds);
 		obj.setPublicDoc(isPublic);
+		obj.setPreviewFile((previewFileName == null && aBIObject.getPreviewFile() != null)? aBIObject.getPreviewFile():previewFileName);
 		// RETURN OBJECT
 		return obj;
 	}
@@ -275,8 +296,10 @@ public class DetBIObjModHelper {
 		String userId=(String)((UserProfile)profile).getUserId();
 	    ObjTemplate templ = null;
 	    
-		FileItem uploaded = (FileItem) request.getAttribute("UPLOADED_FILE");
-		if (uploaded != null) {
+		//FileItem uploaded = (FileItem) request.getAttribute("UPLOADED_FILE");
+		ArrayList arUploaded = (ArrayList) request.getAttribute("UPLOADED_FILE");		
+		FileItem uploaded = getFileItemByFieldName(arUploaded, "uploadFile");
+		if (uploaded != null) {			
 			String fileName = GeneralUtilities.getRelativeFileNames(uploaded.getName());
 			if (fileName != null && !fileName.trim().equals("")) {
 				if (uploaded.getSize() == 0) {
@@ -299,25 +322,10 @@ public class DetBIObjModHelper {
 		        templ.setContent(uplCont);
 			}
 		}
-	    
-//		UploadedFile uploaded = (UploadedFile) request.getAttribute("UPLOADED_FILE");
-//		if (uploaded != null) {
-//			String fileName = uploaded.getFileName();
-//			if (fileName != null && !fileName.trim().equals("")) {
-//				templ = new ObjTemplate();
-//				templ.setActive(new Boolean(true));
-//				templ.setCreationUser(userId);
-//				templ.setDimension(Long.toString(uploaded.getSizeInBytes()/1000)+" KByte");
-//		        templ.setName(fileName);
-//		        byte[] uplCont = uploaded.getFileContent();
-//		        templ.setContent(uplCont);
-//			}
-//		}
+	   
 		return templ;
 	}
-	
-	
-	
+
 	
 	/**
 	 * Recover bi object parameter details.
@@ -531,86 +539,45 @@ public class DetBIObjModHelper {
 		int objParId = Integer.parseInt(objParIdStr);
 		return objParId;
 	}
+
+	private FileItem getFileItemByFieldName (ArrayList lst, String fn){
+		FileItem toReturn = null;
+		for (int i=0; i<lst.size();i++){
+			FileItem item = (FileItem)lst.get(i);
+			if (item.getFieldName().equals(fn)){
+				toReturn = item;
+				break;
+			}
+		}
+		return toReturn;
+	}
 	
-	
-	
-	/**
-	 * Fills the request container object with some BIObject and BIObjectParameter information contained into
-	 * the request Source Bean (they are all attributes). It is useful for validation process.
-	 * 
-	 * @param request The request Source Bean 
-	 * @throws SourceBeanException If any exception occurred
-	 */
-//	public static void fillRequestContainer (RequestContainer req, SourceBean request, EMFErrorHandler errorHandler) throws Exception{
-//		String label = (String)request.getAttribute("label");
-//		String name = (String)request.getAttribute("name");
-//		String description = (String)request.getAttribute("description");
-//		String relName = (String)request.getAttribute("relName");
-//		String engine = (String)request.getAttribute("engine");
-//		String datasource = (String)request.getAttribute("datasource");
-//		String state = (String)request.getAttribute("state");
-//		String path = "";
-//		String objParLabel = (String)request.getAttribute("objParLabel");
-//		String parurl_nm = (String)request.getAttribute("parurl_nm");
-//		String par_Id = (String)request.getAttribute("par_Id");
-//		String req_fl = (String)request.getAttribute("req_fl");
-//		String mod_fl = (String) request.getAttribute("mod_fl");
-//		String view_fl = (String) request.getAttribute("view_fl");
-//		String mult_fl = (String) request.getAttribute("mult_fl");
-//		Object pathParentObj = request.getAttribute("PATH_PARENT");
-//		if( (pathParentObj != null) && (!(pathParentObj instanceof String))) {
-//			errorHandler.addError(new EMFValidationError(EMFErrorSeverity.ERROR, 1032));
-//		}else {
-//			String pathParent = (String)pathParentObj;
-//			if(pathParent != null){
-//				path = pathParent;
-//			}
-//		}
-//		SourceBean _serviceRequest = req.getServiceRequest();
-//		if(_serviceRequest.getAttribute("label")==null)
-//			_serviceRequest.setAttribute("label",label);
-//		if(_serviceRequest.getAttribute("description")==null)
-//			_serviceRequest.setAttribute("description",description);
-//		if(_serviceRequest.getAttribute("name")==null)
-//			_serviceRequest.setAttribute("name",name);
-//		if(_serviceRequest.getAttribute("relName")==null)
-//			_serviceRequest.setAttribute("relName",relName);
-//		if (engine == null) {
-//			List engines = DAOFactory.getEngineDAO().loadAllEngines();
-//			if (engines.size() > 0) {
-//				engine = ((Engine) engines.get(0)).getId().toString();
-//			}
-//		}
-//		if (datasource == null) {
-//			List lstDataSource = DAOFactory.getDataSourceDAO().loadAllDataSources();
-//			if (lstDataSource.size() > 0) {
-//				datasource = new Integer(((DataSource) lstDataSource.get(0)).getDsId()).toString();
-//			}
-//		}		
-//		if(_serviceRequest.getAttribute("engine")==null)
-//			_serviceRequest.setAttribute("engine", engine);
-//		if(_serviceRequest.getAttribute("datasource")==null)
-//			_serviceRequest.setAttribute("datasource", datasource);		
-//		if(_serviceRequest.getAttribute("state")==null)
-//			_serviceRequest.setAttribute("state", state);
-//		if(_serviceRequest.getAttribute("path")==null)
-//			_serviceRequest.setAttribute("path", path);
-//		if(_serviceRequest.getAttribute("objParLabel")==null)
-//			_serviceRequest.setAttribute("objParLabel", objParLabel == null ? "" : objParLabel);
-//		if(_serviceRequest.getAttribute("parurl_nm")==null)
-//			_serviceRequest.setAttribute("parurl_nm", parurl_nm == null ? "" : parurl_nm);
-//		if(_serviceRequest.getAttribute("par_Id")==null)
-//			_serviceRequest.setAttribute("par_Id", par_Id == null ? "" : par_Id);
-//		if(_serviceRequest.getAttribute("req_fl")==null)
-//			_serviceRequest.setAttribute("req_fl", req_fl == null ? "" : req_fl);
-//		if(_serviceRequest.getAttribute("mod_fl")==null)
-//			_serviceRequest.setAttribute("mod_fl", mod_fl == null ? "" : mod_fl);
-//		if(_serviceRequest.getAttribute("view_fl")==null)
-//			_serviceRequest.setAttribute("view_fl", view_fl == null ? "" : view_fl);
-//		if(_serviceRequest.getAttribute("mult_fl")==null)
-//			_serviceRequest.setAttribute("mult_fl", mult_fl == null ? "" : mult_fl);
-//	}
-	
-	
+	private String uploadFile(FileItem uploaded) throws Exception{		
+		List<String> extFiles = new ArrayList<String>();
+		Collections.addAll(extFiles,"BMP", "IMG", "JPG", "JPEG", "PNG", "GIF");
+		
+		if (uploaded == null) {
+			logger.error("No file was uploaded");
+		}
+					
+		Integer maxSize = Integer.valueOf(GeneralUtilities.getTemplateMaxSize());
+		try{			
+				FileUtils.checkUploadedFile(uploaded,maxSize,extFiles);		
+		} catch (EMFUserError e) {
+			throw e;
+		} catch (Exception ex) {
+			throw ex;
+		}
+		
+		
+		File file = FileUtils.checkAndCreateDir(uploaded,"/preview/images");
+
+		logger.debug("Saving file...");
+		FileUtils.saveFile(uploaded, file);
+		logger.debug("File saved");
+
+		return file.getName();
+		
+	}
 	
 }
