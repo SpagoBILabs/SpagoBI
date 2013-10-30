@@ -681,6 +681,8 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
     }
     
     , getDistributionFromLayer: function(indicator, id) {
+    	Sbi.trace("[Thematizer.getDistributionFromLayer] : IN");
+    	
     	var distribution = new Sbi.geo.stat.Distribution();;
     	
     	var features = this.layer.features;
@@ -700,10 +702,15 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
 			}
         }
         
+        Sbi.trace("[Thematizer.getDistributionFromLayer] : OUT");
+        
         return distribution;
     }
     
     , getDistributionFromStore: function(indicator, id) {
+    	
+    	Sbi.trace("[Thematizer.getDistributionFromStore] : IN");
+    	
     	var distribution = new Sbi.geo.stat.Distribution();
     	var records = this.store.getRange();
 	 	Sbi.trace("[Thematizer.getDistributionFromStore] : Records number is equal to [" + records.length + "]");
@@ -740,6 +747,9 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
 				distribution.addDataPoint( dataPoint );
 			}
         }
+	 	
+	 	Sbi.trace("[Thematizer.getDistributionFromStore] : OUT");
+	 	
     	return distribution;
     }
     
@@ -756,6 +766,9 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
      * @param {Object} context Object representing the new context
      */
     , extendStyle: function(rules, symbolizer, context) {
+    	
+    	Sbi.trace("[Thematizer.extendStyle] : IN");
+    	
         var style = this.layer.styleMap.styles['default'];
         // replace rules entirely - the geostat object takes control
         // on the style rules of the "default" render intent
@@ -776,6 +789,8 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
             }
             OpenLayers.Util.extend(style.context, context);
         }
+        
+    	Sbi.trace("[Thematizer.extendStyle] : OUT");
     }
 
     
@@ -1061,7 +1076,7 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
      , loadVirtualStore: function() {
     	 
     	 Sbi.debug("[Thematizer.loadPhysicalStore]: OUT");
-    	 
+ 
     	 if(!this.storeConfig.params) {
     		 Sbi.warn("Impossible to load virtual store because property [storeConfig.params] is undefined");
     	 }

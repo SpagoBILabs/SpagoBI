@@ -288,11 +288,15 @@ Sbi.geo.control.Legend = OpenLayers.Class(OpenLayers.Control, {
     	}
     },
     
-    showThematizerConfigurationWindow: function(){
+    thematizerConfigurationWindow: null,
     
-		if(this.thematizerConfigurationWindow==null){
+    showThematizerConfigurationWindow: function(){
+    	Sbi.trace("[Legend.showThematizerConfigurationWindow]: IN");
+		
+    	if(this.thematizerConfigurationWindow === null){
+    		Sbi.debug("[Legend.showThematizerConfigurationWindow]: creating window...");
 			
-			var thematizerType = Sbi.geo.stat.Thematizer.supportedType[this.map.thematizer.thematyzerType];
+    		var thematizerType = Sbi.geo.stat.Thematizer.supportedType[this.map.thematizer.thematyzerType];
 			if(thematizerType) {
 				Sbi.debug("[ControlPanel.initAnalysisControlPanel]: analysis type is equal to [" + thematizerType.typeName + "]");
 				var thematizerControlPanelOptions = {
@@ -304,8 +308,7 @@ Sbi.geo.control.Legend = OpenLayers.Class(OpenLayers.Control, {
 					};
 				
 				this.thematizerControlPanel = new thematizerType.controlPanelClass(thematizerControlPanelOptions);
-				
-				//this.thematizerControlPanel.analysisConf = this.analysisConf;
+				Sbi.debug("[Legend.showThematizerConfigurationWindow]: control panel for [" + this.map.thematizer.thematyzerType + "] thematizer succesfully created");
 			} else {
 				Sbi.exception.ExceptionHandler.showErrorMessage('error: unsupported analysis type [' + this.analysisType + ']', 'Configuration error');
 			}
@@ -317,7 +320,7 @@ Sbi.geo.control.Legend = OpenLayers.Class(OpenLayers.Control, {
 		        x			: 80,
 		        y			: 30,
 		        resizable	: false,
-	            closeAction : 'hide',
+	            //closeAction : 'hide',
 	            plain       : true,
 	            title		: 'Style settings',
 	            items       : [this.thematizerControlPanel],
@@ -327,7 +330,8 @@ Sbi.geo.control.Legend = OpenLayers.Class(OpenLayers.Control, {
                     handler: function(){
                     	var themathizerOptions = this.thematizerControlPanel.getThemathizerOptions();
                         this.map.thematizer.thematize(themathizerOptions);
-                        this.thematizerConfigurationWindow.hide();
+                        this.thematizerConfigurationWindow.close();
+                        this.thematizerConfigurationWindow = null;
                     },
                     scope: this
                 } , {
@@ -335,9 +339,10 @@ Sbi.geo.control.Legend = OpenLayers.Class(OpenLayers.Control, {
                     handler: function(){
                     	if(this.thematizerConfigurationWindow.optionChanged === true) {
                     		 this.map.thematizer.thematize( this.thematizerConfigurationWindow.oldOptions );
-                    		 this.thematizerControlPanel.synchronizeFormState();
+                    		 //this.thematizerControlPanel.synchronizeFormState();
                     	}
-                    	this.thematizerConfigurationWindow.hide();
+                    	this.thematizerConfigurationWindow.close();
+                    	this.thematizerConfigurationWindow = null;
                     }, 
                     scope: this
                     
@@ -352,6 +357,8 @@ Sbi.geo.control.Legend = OpenLayers.Class(OpenLayers.Control, {
 	            }]
 	                      
 			});
+			
+			Sbi.debug("[Legend.showThematizerConfigurationWindow]: window successfully created");
 		}
 		
 		this.thematizerConfigurationWindow.on("show", function(win) {
@@ -360,6 +367,8 @@ Sbi.geo.control.Legend = OpenLayers.Class(OpenLayers.Control, {
 		}, this);
 		
 		this.thematizerConfigurationWindow.show();
+		
+		Sbi.trace("[Legend.showThematizerConfigurationWindow]: OUT");
 	},
 	
 

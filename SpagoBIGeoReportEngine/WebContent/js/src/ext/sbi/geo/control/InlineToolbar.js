@@ -229,14 +229,14 @@ Sbi.geo.control.InlineToolbar = OpenLayers.Class(OpenLayers.Control, {
     execClick: function(el){
 	
     	if (el.currentTarget.id.indexOf('elBtnArrow')>=0){
-    		if(this.mainPanel.controlPanel2.collapsed) {
+    		if(this.mainPanel.controlPanel.collapsed) {
     			el.currentTarget.className += ' open';
-    			this.mainPanel.controlPanel2.setVisible(true);
-    			this.mainPanel.controlPanel2.expand();
+    			this.mainPanel.controlPanel.setVisible(true);
+    			this.mainPanel.controlPanel.expand();
     		} else {
     			el.currentTarget.className = el.currentTarget.className.replace(/\bopen\b/,'');
-    			this.mainPanel.controlPanel2.collapse();
-    			this.mainPanel.controlPanel2.setVisible(false);
+    			this.mainPanel.controlPanel.collapse();
+    			this.mainPanel.controlPanel.setVisible(false);
     		}
     	} else if (el.currentTarget.id.indexOf('elBtnPrint')>=0){
     	     window.print();

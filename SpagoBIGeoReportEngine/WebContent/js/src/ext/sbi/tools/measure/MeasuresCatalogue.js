@@ -217,6 +217,7 @@ Ext.extend(Sbi.geo.tools.MeasureCatalogue, Ext.grid.GridPanel, {
 								    fields: r.metaData.fields
 								});
 								store.loadData(r.rows);
+								alert("measureCatalogue: storeLoad");
 								this.fireEvent("storeLoad", this, options, store, r.metaData);
 							}
 						}

@@ -13,7 +13,7 @@ Ext.ns("Sbi.geo");
  * 
  * The control panel
  */
-Sbi.geo.ControlPanel2 = function(config) {
+Sbi.geo.controlPanel = function(config) {
 	this.validateConfigObject(config);
 	this.adjustConfigObject(config);
 	
@@ -37,8 +37,8 @@ Sbi.geo.ControlPanel2 = function(config) {
 		singleSelectionIndicator: true
 	};
 	
-	if (Sbi.settings && Sbi.settings.geo && Sbi.settings.geo.ControlPanel2) {
-		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.geo.ControlPanel2);
+	if (Sbi.settings && Sbi.settings.geo && Sbi.settings.geo.controlPanel) {
+		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.geo.controlPanel);
 	}
 	
 	var c = Ext.apply(defaultSettings, config || {});	
@@ -55,7 +55,7 @@ Sbi.geo.ControlPanel2 = function(config) {
 	});
 	
 	// constructor
-    Sbi.geo.ControlPanel2.superclass.constructor.call(this, c);
+    Sbi.geo.controlPanel.superclass.constructor.call(this, c);
 };
 
 
@@ -63,7 +63,7 @@ Sbi.geo.ControlPanel2 = function(config) {
  * @cfg {Object} config
  * ...
  */
-Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
+Ext.extend(Sbi.geo.controlPanel, Ext.Panel, {
     
 	// =================================================================================================================
 	// PROPERTIES
@@ -167,9 +167,9 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 	 * otherwise. Optional. By default false.
 	 */
 	, setIndicators: function(indicators, indicator, riseEvents) {
-		Sbi.trace("[ControlPanel2.setIndicators] : IN");
+		Sbi.trace("[ControlPanel.setIndicators] : IN");
 		
-		Sbi.trace("[ControlPanel2.setIndicators] : New indicators number is equal to [" + indicators.length + "]");
+		Sbi.trace("[ControlPanel.setIndicators] : New indicators number is equal to [" + indicators.length + "]");
 		
     	this.indicators = indicators;
     	var newStore = new Ext.data.SimpleStore({
@@ -180,14 +180,14 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
     	//updating indicatorsDiv
     	this.refreshIndicatorsDiv();
         
-        Sbi.trace("[ControlPanel2.setIndicators] : OUT");      
+        Sbi.trace("[ControlPanel.setIndicators] : OUT");      
     }
 	
 	/**
      * Gets filters values
      */
     , getFilters:function(){
-    	Sbi.trace("[ControlPanel2.getFilters] : IN.. Get the values of the filters"); 
+    	Sbi.trace("[ControlPanel.getFilters] : IN.. Get the values of the filters"); 
     	var filters =new Array();
 		if(this.filters){
 			for(var i=0; i<this.filters.length; i++){
@@ -198,7 +198,7 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 				});
 			}
 		}
-		Sbi.trace("[ControlPanel2.getFilters] : OUT");
+		Sbi.trace("[ControlPanel.getFilters] : OUT");
 		return filters;
     }	
     
@@ -208,7 +208,7 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
      */
 	, setFilters: function(filters){
 		//Adding comboboxes for filters
-		Sbi.debug("[ControlPanel2.setFilters]: IN");
+		Sbi.debug("[ControlPanel.setFilters]: IN");
 		
 		if(!this.filters){
 			this.filters = new Array();
@@ -229,7 +229,7 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 		//build the new filters
 		for(var i=0; i<filters.length; i++){
 			
-			Sbi.debug("[ControlPanel2.setFilters]: Filter [" + filters[i].name + "] have [" + filters[i].values.length + "] possible values");
+			Sbi.debug("[ControlPanel.setFilters]: Filter [" + filters[i].name + "] have [" + filters[i].values.length + "] possible values");
 			
 			var filterDef = filters[i];
 			var filter =new Ext.form.ComboBox  ({
@@ -290,7 +290,7 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 		this.doLayout();
 		
 		
-		Sbi.debug("[ControlPanel2.setFilters]: OUT");
+		Sbi.debug("[ControlPanel.setFilters]: OUT");
 	}
 	
 	// -----------------------------------------------------------------------------------------------------------------
@@ -302,21 +302,21 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
      * Save the default value of the filter in the filter as filterDefaultValue 
      */
     , saveDefaultFiltersValue:function(){
-    	Sbi.trace("[ControlPanel2.saveDefaultFiltersValue] : IN"); 
+    	Sbi.trace("[ControlPanel.saveDefaultFiltersValue] : IN"); 
 		if(this.filters){
 			for(var i=0; i<this.filters.length; i++){
 				var filter = this.filters[i];
 				filter.filterDefaultValue =  filter.getValue();
 			}
 		}
-		Sbi.trace("[ControlPanel2.saveDefaultFiltersValue] : OUT");
+		Sbi.trace("[ControlPanel.saveDefaultFiltersValue] : OUT");
     }
 
     /**
      * Execute the filters
      */
     , filterDataSet: function(){
-    	Sbi.trace("[ControlPanel2.filterDataSet] : IN");      
+    	Sbi.trace("[ControlPanel.filterDataSet] : IN");      
     	//get filter values
     	var filters = this.getFilters();
     	//filter the store
@@ -324,7 +324,7 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
     	//update the thematization
     	//this.thematizerControlPanel.thematize(false, {resetClassification: true});
     	this.mapComponnet.getActiveThematizer().thematize({resetClassification: true});
-    	Sbi.trace("[ControlPanel2.filterDataSet] : OUT");      
+    	Sbi.trace("[ControlPanel.filterDataSet] : OUT");      
     }
 	
     
@@ -478,9 +478,9 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 	 *    - none
 	 */
 	, initServices: function() {
-		Sbi.debug("[ControlPanel2.initServices]: IN");
-		Sbi.debug("[ControlPanel2.initServices]: there are no service to initialize");
-		Sbi.debug("[ControlPanel2.initServices]: OUT");	
+		Sbi.debug("[ControlPanel.initServices]: IN");
+		Sbi.debug("[ControlPanel.initServices]: there are no service to initialize");
+		Sbi.debug("[ControlPanel.initServices]: OUT");	
 	}
 
 
@@ -490,16 +490,16 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 	 * Initialize the GUI
 	 */
 	, init: function() {
-		Sbi.debug("[ControlPanel2.init]: IN");
+		Sbi.debug("[ControlPanel.init]: IN");
 		
 		this.isFinalUser = (Sbi.template.role.indexOf('user') >= 0);
-		Sbi.debug("[ControlPanel2.init]: variable isFinalUser is equal to [" + this.isFinalUser + "]");
+		Sbi.debug("[ControlPanel.init]: variable isFinalUser is equal to [" + this.isFinalUser + "]");
 		
 		this.isOwner = (Sbi.config.userId === Sbi.config.docAuthor)?true:false;
-		Sbi.debug("[ControlPanel2.init]: variable isOwner is equal to [" + this.isOwner + "]");
+		Sbi.debug("[ControlPanel.init]: variable isOwner is equal to [" + this.isOwner + "]");
 		
 		this.isInsertion = (Sbi.config.docLabel === '')?true:false;
-		Sbi.debug("[ControlPanel2.init]: variable isInsertion is equal to [" + this.isInsertion + "]");
+		Sbi.debug("[ControlPanel.init]: variable isInsertion is equal to [" + this.isInsertion + "]");
 
 		this.innerPanel = new Ext.Panel({
 			layout: 'fit', 
@@ -535,7 +535,7 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 			this.initInnerPannelCallbacks.defer(2000, this);
 		}, this);
 
-		Sbi.debug("[ControlPanel2.init]: OUT");
+		Sbi.debug("[ControlPanel.init]: OUT");
 	}	
 	
 	, getThematizersDiv: function(){
@@ -623,9 +623,9 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 			elAddIndicator.on('click', function() {
 				this.showMeasureCatalogueWindow();
 			},this);
-			Sbi.debug("[ControlPanel2.refreshIndicatorsDiv]: Registered handler on [addIndicatorButton] ");
+			Sbi.debug("[ControlPanel.refreshIndicatorsDiv]: Registered handler on [addIndicatorButton] ");
 		} else {
-			Sbi.debug("[ControlPanel2.refreshIndicatorsDiv]: Impossible to find element [addIndicatorButton] ");
+			Sbi.debug("[ControlPanel.refreshIndicatorsDiv]: Impossible to find element [addIndicatorButton] ");
 			alert('Impossible to find element [addIndicatorButton]');
 		}		
 		
@@ -717,17 +717,17 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 	// -----------------------------------------------------------------------------------------------------------------
 	
 	, initCallbackOnGuiItemClick: function(itemId, callbackFn, itemName) {
-		Sbi.trace("[ControlPanel2.initCallbackOnGuiItemClick]: IN");
+		Sbi.trace("[ControlPanel.initCallbackOnGuiItemClick]: IN");
 		
 		var itemEl = Ext.get(itemId);
 		if(itemEl && itemEl !== null) {
 			itemEl.on('click', callbackFn, this);
-			Sbi.debug("[ControlPanel2.initCallbackOnAuthorButton]: Callback on " + (itemName!=undefined?itemName: itemId) + " succesfully registered");
+			Sbi.debug("[ControlPanel.initCallbackOnAuthorButton]: Callback on " + (itemName!=undefined?itemName: itemId) + " succesfully registered");
 		} else {
-			Sbi.warn("[ControlPanel2.initCallbackOnAuthorButton]: Impossible to ragister callback on " + (itemName!=undefined?itemName: itemId));
+			Sbi.warn("[ControlPanel.initCallbackOnAuthorButton]: Impossible to ragister callback on " + (itemName!=undefined?itemName: itemId));
 		}
 		
-		Sbi.trace("[ControlPanel2.initCallbackOnAuthorButton]: OUT");
+		Sbi.trace("[ControlPanel.initCallbackOnAuthorButton]: OUT");
 	}
 	
 	
@@ -794,7 +794,7 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 	
 	, initInnerPannelCallbacks: function() {
 		
-		Sbi.trace("[ControlPanel2.initInnerPannelCallbacks]: IN");
+		Sbi.trace("[ControlPanel.initInnerPannelCallbacks]: IN");
 		
 		var thisPanel = this;
 		
@@ -813,26 +813,26 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 		
 		//Initialize thematizerControlPanel form state
 		var targetLayer = this.mapComponnet.getActiveThematizer().getLayer();
-		Sbi.trace("[ControlPanel2.initInnerPannelCallbacks] : target layer contains [" + targetLayer.features + "] features");
+		Sbi.trace("[ControlPanel.initInnerPannelCallbacks] : target layer contains [" + targetLayer.features + "] features");
     	if(targetLayer != null && targetLayer.features.length > 0) {
-    		Sbi.trace("[ControlPanel2.initInnerPannelCallbacks] : target layer already loaded");
+    		Sbi.trace("[ControlPanel.initInnerPannelCallbacks] : target layer already loaded");
     		this.setAnalysisConf( this.analysisConf );
     	} else {
-    		Sbi.trace("[ControlPanel2.initInnerPannelCallbacks] : target layer not already loaded");
+    		Sbi.trace("[ControlPanel.initInnerPannelCallbacks] : target layer not already loaded");
     		this.mapComponnet.getActiveThematizer().on('layerloaded', function(){
-    			Sbi.trace("[ControlPanel2.onlayerLoaded]: IN");
+    			Sbi.trace("[ControlPanel.onlayerLoaded]: IN");
     			if(this.notAlreadyLoaded !== true) {
     				Sbi.debug("[AnalysisControlPanel]: [layerloaded] event fired");
     				this.setAnalysisConf( this.analysisConf );
     				this.notAlreadyLoaded = true;
     			}
-    			Sbi.trace("[ControlPanel2.onlayerLoaded]: OUT");
+    			Sbi.trace("[ControlPanel.onlayerLoaded]: OUT");
     			
     		}, this);	
     	}
 		
 		
-		Sbi.trace("[ControlPanel2.initInnerPannelCallbacks]: OUT");
+		Sbi.trace("[ControlPanel.initInnerPannelCallbacks]: OUT");
 	}
 	
 
@@ -841,7 +841,7 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 	// -----------------------------------------------------------------------------------------------------------------
 
 	, onThematizerSelected: function(el, list){
-		Sbi.trace("[ControlPanel2.onThematizerSelected]: IN");
+		Sbi.trace("[ControlPanel.onThematizerSelected]: IN");
 		
 		if (el.id != list.item(0).first().id){
 			
@@ -875,7 +875,7 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 			this.addElemsToList(list, newList);
 		}
 		
-		Sbi.trace("[ControlPanel2.onThematizerSelected]: OUT");
+		Sbi.trace("[ControlPanel.onThematizerSelected]: OUT");
 	}
 	
 	, clearList: function(list){
@@ -896,9 +896,9 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 	
 	, setAnalysisConf: function(analysisConf) {
 		//This inizialize the required options for thematizerControlPanel
-		Sbi.debug("[ControlPanel2.setAnalysisConf]: IN");
+		Sbi.debug("[ControlPanel.setAnalysisConf]: IN");
 		
-		Sbi.debug("[ControlPanel2.setAnalysisConf]: analysisConf = " + Sbi.toSource(analysisConf));
+		Sbi.debug("[ControlPanel.setAnalysisConf]: analysisConf = " + Sbi.toSource(analysisConf));
 		
 		var formState = Ext.apply({}, analysisConf || {});
 		
@@ -929,12 +929,12 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 		
 		this.mapComponnet.getActiveThematizer().thematize(thematizerOptions);
 		
-		Sbi.debug("[ControlPanel2.setAnalysisConf]: OUT");
+		Sbi.debug("[ControlPanel.setAnalysisConf]: OUT");
 	}
 	
 	, onIndicatorSelected: function(elementId, indicator) {
 		
-		Sbi.trace("[ControlPanel2.onIndicatorSelected]: IN");
+		Sbi.trace("[ControlPanel.onIndicatorSelected]: IN");
 	
 		this.mapComponnet.getActiveThematizer().thematize({indicator: indicator});
 
@@ -969,7 +969,7 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 
 		}
 		
-		Sbi.trace("[ControlPanel2.onIndicatorSelected]: OUT");
+		Sbi.trace("[ControlPanel.onIndicatorSelected]: OUT");
 	}
 	, onStoreLoad: function(measureCatalogue, options, store, meta) {
 		this.measureCatalogueWindow.close();
@@ -978,8 +978,8 @@ Ext.extend(Sbi.geo.ControlPanel2, Ext.Panel, {
 		//this.thematizerControlPanel.storeType = 'virtualStore';
 		var s = "";
 		for(o in options) s += o + ";"
-		Sbi.debug("[ControlPanel2.onStoreLoad]: options.url = " + options.url);
-		Sbi.debug("[ControlPanel2.onStoreLoad]: options.params = " + Sbi.toSource(options.params));
+		Sbi.debug("[ControlPanel.onStoreLoad]: options.url = " + options.url);
+		Sbi.debug("[ControlPanel.onStoreLoad]: options.params = " + Sbi.toSource(options.params));
 		// TODO verify
 //		this.thematizerControlPanel.storeConfig = {
 //			url: options.url

@@ -58,12 +58,15 @@ Sbi.geo.stat.ProportionalSymbolControlPanel = Ext.extend(Ext.FormPanel, {
 	 */
     , nameAttribute: null
 
+    , manageIndicator: true
+    
     /**
 	 * @property {Array} indicators
 	 * An array of selectable indicators. Each item of the array is an array composed by two element. The first is the name
 	 * of the indictor the secon one is the indicator text (ie. human readable).
 	 */
     , indicators: null
+    
     
     /**
 	 * @property {String} indicator
@@ -158,7 +161,9 @@ Sbi.geo.stat.ProportionalSymbolControlPanel = Ext.extend(Ext.FormPanel, {
 		Sbi.trace("[ProportionalSymbolControlPanel.getThemathizerOptions] : IN");
 		var formState = this.getFormState();
 		var options = {};
-		options.indicator = formState.indicator;
+		if(this.manageIndicator === true) {
+			options.indicator = formState.indicator;
+		}
 		options.minRadiusSize = formState.minRadiusSize;
 		options.maxRadiusSize = formState.maxRadiusSize;
 		
@@ -170,8 +175,9 @@ Sbi.geo.stat.ProportionalSymbolControlPanel = Ext.extend(Ext.FormPanel, {
 	, getFormState: function() {
 		var formState = {};
 		
-
-		formState.indicator = this.getIndicator();
+		if(this.manageIndicator === true) {
+			formState.indicator = this.getIndicator();
+		}
 		formState.minRadiusSize = this.getMinRadiusSize();
 		formState.maxRadiusSize = this.getMaxRadiusSize();
 		
@@ -181,7 +187,9 @@ Sbi.geo.stat.ProportionalSymbolControlPanel = Ext.extend(Ext.FormPanel, {
 	, setFormState: function(formState, riseEvent) {
 		Sbi.trace("[ProportionalSymbolControlPanel.setFormState] : IN");
 	
-		this.setIndicator(formState.indicator);
+		if(this.manageIndicator === true) {
+			this.setIndicator(formState.indicator);
+		}
 		this.setMinRadiusSize(formState.minRadiusSize);
 		this.setMaxRadiusSize(formState.maxRadiusSize);
 		this.setFiltersDefaultValues(formState.filtersDefaultValues);
@@ -196,7 +204,7 @@ Sbi.geo.stat.ProportionalSymbolControlPanel = Ext.extend(Ext.FormPanel, {
 	 * @return {String} the selected classification indicator
 	 */
 	, getIndicator: function() {
-		return this.form.findField('indicator').getValue();
+		return (this.manageIndicator ===  true)?this.form.findField('indicator').getValue(): undefined;
 	}
 	
 	/**
@@ -205,7 +213,9 @@ Sbi.geo.stat.ProportionalSymbolControlPanel = Ext.extend(Ext.FormPanel, {
 	 * @param {String} the indicator to set
 	 */
 	, setIndicator: function(indicator) {
-		this.form.findField('indicator').setValue(indicator);
+		if(this.manageIndicator === true) {
+			this.form.findField('indicator').setValue(indicator);
+		}
 	}
 	
 	/**
@@ -261,7 +271,6 @@ Sbi.geo.stat.ProportionalSymbolControlPanel = Ext.extend(Ext.FormPanel, {
 		
 		Sbi.trace("[ChoropletControlPanel.setIndicators] : New indicators number is equal to [" + indicators.length + "]");
 
-        
         Sbi.trace("[ChoropletControlPanel.setIndicators] : OUT");      
     }
 	
@@ -347,9 +356,11 @@ Sbi.geo.stat.ProportionalSymbolControlPanel = Ext.extend(Ext.FormPanel, {
     		}, this);
     	}
     	
-    	 this.thematizer.on('indicatorsChanged', function(thematizer, indicators, selectedIndicator){
- 			this.setIndicators(indicators, selectedIndicator, false);
- 		}, this);
+    	if(this.manageIndicator === true) {
+	    	this.thematizer.on('indicatorsChanged', function(thematizer, indicators, selectedIndicator){
+	 			this.setIndicators(indicators, selectedIndicator, false);
+	 		}, this);
+    	}
          
          this.thematizer.on('filtersChanged', function(thematizer, filters){
  			this.setFilters(filters);
@@ -362,17 +373,20 @@ Sbi.geo.stat.ProportionalSymbolControlPanel = Ext.extend(Ext.FormPanel, {
      * Called by EXT when the component is initialized.
      */
     , initComponent : function() {
-        this.items = [
-            this.initIndicatorSelectionField()
-            , this.initMinRadiusSizeField()
-            , this.initMaxRadiusSizeField()
-        ];
+        this.items = [];
+        
+        if(this.manageIndicator === true) {
+        	this.items.push(this.initIndicatorSelectionField());
+        }
+        this.items.push(this.initMinRadiusSizeField());
+        this.items.push(this.initMaxRadiusSizeField());
+        
          
-        this.buttons = [{
-            text: 'OK',
-            handler: this.thematize,
-            scope: this
-        }];
+//        this.buttons = [{
+//            text: 'OK',
+//            handler: this.thematize,
+//            scope: this
+//        }];
         Sbi.geo.stat.ProportionalSymbolControlPanel.superclass.initComponent.apply(this);
     }
 

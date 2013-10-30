@@ -78,6 +78,11 @@ Ext.extend(Sbi.geo.stat.ProportionalSymbolThematizer, Sbi.geo.stat.Thematizer, {
         
     	Sbi.trace("[ProportionalSymbolThematizer.thematize] : IN");
     	
+    	Sbi.trace("[ProportionalSymbolThematizer.thematize] : layer [" + this.layer + "]");
+    	if(this.layer){
+    		Sbi.trace("[ProportionalSymbolThematizer.thematize] : layer [" + this.layer.features.length + "]");
+    	}
+    	
     	if (options) {
     		if(options.resetClassification) {
     			this.setClassification();
@@ -99,6 +104,8 @@ Ext.extend(Sbi.geo.stat.ProportionalSymbolThematizer, Sbi.geo.stat.Thematizer, {
                      
                      size = (value - minValue) / ( maxValue - minValue) *
                                 (this.maxRadiusSize - this.minRadiusSize) + this.minRadiusSize;
+                     
+                     Sbi.trace("[ProportionalSymbolThematizer.calculateRadius] : radius for feature [" + feature.attributes[this.layerId] + "]is equal to [" + size + "]");
             	} else {
             		size = 0;
             	}
@@ -136,7 +143,10 @@ Ext.extend(Sbi.geo.stat.ProportionalSymbolThematizer, Sbi.geo.stat.Thematizer, {
      * @deperecated use #classify instead
      */
     , setClassification: function() {
+    	Sbi.trace("[ProportionalSymbolThematizer.setClassification] : IN");
+    	Sbi.warn("[ProportionalSymbolThematizer.setClassification] : Method [setClassification] is deprecated. Use method [classify] instead");
     	this.classify();
+    	Sbi.trace("[ProportionalSymbolThematizer.setClassification] : IN");
     }
 
    
@@ -150,11 +160,18 @@ Ext.extend(Sbi.geo.stat.ProportionalSymbolThematizer, Sbi.geo.stat.Thematizer, {
      * @param {Object} options object
      */
     , updateOptions: function(newOptions) {
-        var oldOptions = OpenLayers.Util.extend({}, this.options);
+    	Sbi.trace("[ProportionalSymbolThematizer.updateOptions] : IN");
+    	var oldOptions = Ext.apply({}, this.options);
         this.setOptions(newOptions);
-        if (newOptions && newOptions.indicator != oldOptions.indicator) {
-            this.setClassification();
+        if(newOptions) {
+        	 if (newOptions.indicator != oldOptions.indicator
+        			 || newOptions.minRadiusSize != newOptions.minRadiusSize
+        			 || newOptions.maxRadiusSize != newOptions.maxRadiusSize) {
+        		 this.classify();
+             }
         }
+       
+        Sbi.trace("[ProportionalSymbolThematizer.updateOptions] : IN");
     }    
     
     /**

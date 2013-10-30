@@ -257,25 +257,8 @@ Sbi.geo.stat.ChoroplethControlPanel = Ext.extend(Ext.FormPanel, {
 	, synchronizeFormState: function() {
 		Sbi.trace("[ChoropletControlPanel.syncronizeFormState] : IN");
 	
-		var thematizerOption = this.thematizer.getOptions();
 		
-		var formState = {};
-		
-		for(var method in Sbi.geo.stat.Classifier) {
-			if(Sbi.geo.stat.Classifier[method] == thematizerOption.method) {
-				formState.method = method;
-			}
-		}
-		
-		formState.classes = thematizerOption.numClasses;
-		if(thematizerOption.colors[0]) {
-			formState.fromColor = thematizerOption.colors[0].toHexString();
-		}
-		if(thematizerOption.colors[1]) {
-			formState.toColor = thematizerOption.colors[1].toHexString();
-		}
-		
-		formState.indicator = thematizerOption.indicator;
+		var formState = this.thematizer.getAnalysisConf();
 		
 		Sbi.trace("[ChoropletControlPanel.syncronizeFormState] : new form state is equal to [" + Sbi.toSource(formState) + "]");
 		
@@ -778,7 +761,14 @@ Sbi.geo.stat.ChoroplethControlPanel = Ext.extend(Ext.FormPanel, {
 			url: options.url
 			, params: options.params
 		};
+		
+		alert("[ChoropletControlPanel.onStoreLoad]: options.params = " + Sbi.toSource(this.storeConfig));
+		
 	}
+    
+    
+    
+    
     
     /**
      * @private
