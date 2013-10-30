@@ -115,12 +115,15 @@ Ext.extend(Sbi.geo.stat.ChoroplethThematizer, Sbi.geo.stat.Thematizer, {
 		}
 		
 		formState.classes = thematizerOption.numClasses;
-		if(thematizerOption.colors[0]) {
-			formState.fromColor = thematizerOption.colors[0].toHexString();
+		if(thematizerOption.colors && thematizerOption.colors.length > 1) {
+			if(thematizerOption.colors[0]) {
+				formState.fromColor = thematizerOption.colors[0].toHexString();
+			}
+			if(thematizerOption.colors[1]) {
+				formState.toColor = thematizerOption.colors[1].toHexString();
+			}
 		}
-		if(thematizerOption.colors[1]) {
-			formState.toColor = thematizerOption.colors[1].toHexString();
-		}
+		
 		
 		formState.indicator = thematizerOption.indicator;
 		
