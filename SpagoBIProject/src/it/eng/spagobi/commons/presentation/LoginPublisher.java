@@ -28,6 +28,7 @@ public class LoginPublisher extends GenericPublisher {
 	// get the response of the module
 	SourceBean moduleResponse = (SourceBean) serviceResp.getAttribute("LoginModule");
 	String publisherName = getPublisherName(requestContainer, responseContainer, moduleResponse);
+	if (publisherName.equalsIgnoreCase("error")) publisherName = "errorLogin";
 
 	/*
 	 * if(!errorHandler.isOKBySeverity(EMFErrorSeverity.ERROR)) { return new
