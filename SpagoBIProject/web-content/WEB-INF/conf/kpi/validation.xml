@@ -11,7 +11,7 @@
 				<FIELD name="name" label="#sbi.kpi.label.name" bundle="component_kpi_messages">
 					<VALIDATOR validatorName="MANDATORY" />
 					<VALIDATOR validatorName="EXTENDED_ALFANUMERIC"/>
-					<VALIDATOR validatorName="MAXLENGTH" arg0="40"/>
+					<VALIDATOR validatorName="MAXLENGTH" arg0="200"/>
 				</FIELD>
 				
 				<FIELD name="description" label="#sbi.kpi.label.description" bundle="component_kpi_messages">
