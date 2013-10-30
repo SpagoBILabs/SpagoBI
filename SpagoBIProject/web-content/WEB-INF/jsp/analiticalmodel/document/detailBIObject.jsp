@@ -835,6 +835,19 @@ function saveDocument(goBack) {
 					document.getElementById('profileVisibility').innerHTML='';
 				}
 				</script>
+				
+				 <!-- DISPLAY FORM FOR PREVIEW FILE  UPLOAD -->
+				<div id="preview_upload">
+					<div class='div_detail_label'>
+						<span class='portlet-form-field-label'>
+							<spagobi:message key = "SBIDev.docConf.docDet.previewField" />
+						</span>
+					</div>
+					<div class='div_detail_form'>
+						<input class='portlet-form-input-field' type="file" 
+			      		       name="previewFile" id="previewFile" onchange='fileToUploadInserted()' />
+					</div>
+				</div>	
 
 				<!-- DISPLAY FORM FOR TEMPLATE  UPLOAD -->
 				<div id="form_upload">
@@ -924,6 +937,7 @@ function saveDocument(goBack) {
  						%>
 					</div>
 	        </div>
+
 	        
 	        <!-- engine list and template buttons adjustment based on the document type -->
 	        <script>
