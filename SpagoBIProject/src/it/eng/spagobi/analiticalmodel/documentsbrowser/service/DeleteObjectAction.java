@@ -49,8 +49,18 @@ public class DeleteObjectAction extends AbstractSpagoBIAction {
 				throw new SpagoBIServiceException(SERVICE_NAME, "Cannot access database", e);
 			}
 			String ids = this.getAttributeAsString(OBJECT_ID);
-			Integer folderId = this.getAttributeAsInteger(FUNCT_ID);
-			logger.debug("Input Folder:" + folderId);
+			
+			Object folder = this.getAttribute(FUNCT_ID);
+			Integer folderId = null;
+			if (folder != null){
+				if (folder instanceof Integer){
+					folderId = this.getAttributeAsInteger(FUNCT_ID);
+					logger.debug("Input Folder:" + folderId);
+				} else if (folder instanceof String){
+					//TODO: to fix
+				}
+			}
+
 			logger.debug("Input Object:" + ids);
 			String userId = ((UserProfile)userProfile).getUserId().toString();
 			logger.debug("User id:" + userId);
@@ -61,8 +71,13 @@ public class DeleteObjectAction extends AbstractSpagoBIAction {
 				Integer id = new Integer(idArray[i]);
 				BIObject biObject = dao.loadBIObjectById(id);;
 				Assert.assertNotNull(biObject, "Document with id [" + id + "] not found");
+				LowFunctionality lowFunctionality = null;
+				if (folderId == null){
+					lowFunctionality = functDAO.loadRootLowFunctionality(false); //TODO: to fix
+				} else {
+					lowFunctionality = functDAO.loadLowFunctionalityByID(folderId, false);
+				}
 				
-				LowFunctionality lowFunctionality = functDAO.loadLowFunctionalityByID(folderId, false);
 				Assert.assertNotNull(lowFunctionality, "Folder with id [" + folderId + "] not found");
 				
 				if (ObjectsAccessVerifier.canDeleteBIObject(id, userProfile, lowFunctionality)) {
