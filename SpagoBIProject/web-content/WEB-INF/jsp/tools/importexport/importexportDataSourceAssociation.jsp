@@ -202,7 +202,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 								}
 
 								
-								String dsAssociated = usrAssKeep.getAssociatedDataSource(curDs.getLabel());
+								String dsAssociated = usrAssKeep.getAssociatedDataSource(dataSource.getLabel());
 								if( (dsAssociated!=null) &&  curDs.getLabel().equals(dsAssociated)) {
 									selected=" selected ";
 									isAssociated = true;

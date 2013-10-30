@@ -86,6 +86,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -107,6 +108,8 @@ import org.json.JSONObject;
 import org.safehaus.uuid.UUID;
 import org.safehaus.uuid.UUIDGenerator;
 
+import com.lowagie.text.Meta;
+
 public class ImportUtilities {
 
 	static private Logger logger = Logger.getLogger(ImportUtilities.class);
@@ -116,7 +119,7 @@ public class ImportUtilities {
 	// if cannot retrieve once more the object cause has been alreeady retrieved cache it in Map
 	Map<Integer, SbiDataSet> datasetMap = new HashMap<Integer, SbiDataSet>();
 	IEngUserProfile profile= null;
-	
+MetadataLogger metaLog;	
 	/**
 	 * Decompress the export compress file.
 	 * 
@@ -1483,33 +1486,80 @@ public class ImportUtilities {
 		return existingEngine;
 	}
 
-	private  SbiDataSource getAssociatedSbiDataSource(SbiDataSet exportedDataset,
-			Session sessionCurrDB, MetadataAssociations metaAss) {
+	
+	private  SbiDataSource getAssociatedSbiDataSource(
+			SbiDataSet exportedDataset,
+			Session sessionExpDB, 
+			Session sessionCurrDB, 
+			MetadataAssociations metaAss, 
+			ImporterMetadata importer) {
 		logger.debug("IN");
-		SbiDataSource existingDs = null;
+		SbiDataSource toReturn = null;
 		//JSONObject jsonConf  = ObjectUtils.toJSONObject(exportedDataset.getConfiguration());
 		String config = JSONUtils.escapeJsonString(exportedDataset.getConfiguration());		
 		JSONObject jsonConf  = ObjectUtils.toJSONObject(config);
-		DataSourceDAOHibImpl dataSourceDao=new DataSourceDAOHibImpl();
 		try{
-			IDataSource dataSource= dataSourceDao.loadDataSourceByLabel(jsonConf.getString(DataSetConstants.DATA_SOURCE));
-//			SbiDataSource exportedDs = exportedDataset.getDataSource();
-			if (dataSource != null) {
-				Integer exportedDsId = new Integer(dataSource.getDsId());
-				Map assDatasources = metaAss.getDataSourceIDAssociation();
-				Integer existingDsID = (Integer) assDatasources.get(exportedDsId);
-				existingDs = (SbiDataSource) sessionCurrDB.load(SbiDataSource.class, existingDsID);
+			
+			String dataSourceLabel = jsonConf.getString(DataSetConstants.DATA_SOURCE);
+
+			if(dataSourceLabel != null){
+
+				// CHeck if this datasource has been mapped to another one, maybe with different label because of user selection
+				Query hqlQueryExp = sessionExpDB.createQuery("from SbiDataSource h where h.label = '"+dataSourceLabel+"'");
+				SbiDataSource dataSourceExp = 	(SbiDataSource)hqlQueryExp.uniqueResult();	
+
+				if(dataSourceExp!= null){
+					Integer expId = dataSourceExp.getDsId();
+					Integer newId = metaAss.getDataSourceIDAssociation().get(expId) != null ? (Integer) metaAss.getDataSourceIDAssociation().get(expId) : 0;
+
+					Query hqlQuery = null;
+					if(newId != null){
+						logger.debug("Dataset with label "+exportedDataset.getLabel()+" is associated with datasource with label "+dataSourceLabel+" that in import db has been mapped with id "+newId);
+						hqlQuery = sessionCurrDB.createQuery("from SbiDataSource h where h.dsId = "+newId);
+					}
+					else{	
+						logger.debug("Datasource with label "+dataSourceLabel+" was not mapped into another one with differnet label; can check same label one");
+						hqlQuery = sessionCurrDB.createQuery("from SbiDataSource h where h.label = '"+dataSourceLabel+"'");
+					}
+					
+					logger.debug("To dataset "+exportedDataset.getLabel()+" is associated datasource with label "+dataSourceLabel+": recover it");
+
+					SbiDataSource foundDataSource = 	(SbiDataSource)hqlQuery.uniqueResult();	
+					if(foundDataSource != null){
+						logger.debug("Datasource with label "+dataSourceLabel+" found");
+						toReturn = foundDataSource;
+					}
+					else{
+						logger.error("DataSource with label "+dataSourceLabel+" was not found in current DB; this should not happen: ignore association");
+
+
+					}
+				}
 			}
+					
+//					// THis case should never happened, this insert is not needed
+//					logger.debug("Datasource with label "+dataSourceLabel+" was not found; create it");
+//					//get the exported one
+//					Query hqlQueryExp = sessionExpDB.createQuery("from SbiDataSource h where h.label = '"+dataSourceLabel+"'");
+//					SbiDataSource dataSourceExp = 	(SbiDataSource)hqlQueryExp.uniqueResult();	
+//					if(dataSourceExp!= null){
+//						SbiDataSource newDS = makeNew(dataSourceExp);
+//						associateWithExistingEntities(newDS, dataSourceExp, sessionCurrDB, importer, metaAss);
+//						Integer newId = (Integer) sessionCurrDB.save(newDS);
+//						sessionCurrDB.flush();
+//						metaLog.log("Inserted new datasource " + newDS.getLabel());
+//						logger.debug("Inserted new datasource " + newDS.getLabel());
+//						metaAss.insertCoupleDataSources(dataSourceExp.getDsId(), newId);
+//					}
+//					else{
+//						logger.error("DataSource with label "+dataSourceLabel+" was not found in export DB; ignore association");
+//					}
 		}catch (Exception e){
 			logger.error("Error while defining dataset configuration.  Error: " + e.getMessage());
 		}
-
 		logger.debug("OUT");
-		return existingDs;
+		return toReturn;
 	}
-
-	
-
 
 
 
@@ -1719,7 +1769,8 @@ public class ImportUtilities {
 
 		newMetaModel.setName(exportedMetaModel.getName());			
 		newMetaModel.setDescription(exportedMetaModel.getDescription());
-		newMetaModel.setCategory(exportedMetaModel.getCategory());
+	
+		//newMetaModel.setCategory(exportedMetaModel.getCategory());
 
 		
 		SbiCommonInfo i = new SbiCommonInfo();
@@ -1762,7 +1813,8 @@ public class ImportUtilities {
 			
 			existMeta.setName(exportedMeta.getName());			
 			existMeta.setDescription(exportedMeta.getDescription());
-			existMeta.setCategory(exportedMeta.getCategory());
+			
+			//existMeta.setCategory(exportedMeta.getCategory());
 			
 			SbiCommonInfo i = new SbiCommonInfo();
 			String userid = "biadmin";
@@ -1789,7 +1841,7 @@ public class ImportUtilities {
 	
 	
 	public  SbiMetaModel associateWithExistingEntities(SbiMetaModel newMetaModel,
-			SbiMetaModel exportedMetaModel, SbiMetaModelContent exportedMetaModelContent, Session sessionCurrDB,
+			SbiMetaModel exportedMetaModel, SbiMetaModelContent exportedMetaModelContent, Session sessionExpDB, Session sessionCurrDB,
 			ImporterMetadata importer, MetadataAssociations metaAss) throws EMFUserError {
 		
 		logger.debug("IN");
@@ -1809,6 +1861,33 @@ public class ImportUtilities {
 			}
 			
 		}
+		
+		Map domainIdAss=metaAss.getDomainIDAssociation();
+		if(exportedMetaModel.getCategory()!=null){
+					Integer oldId=exportedMetaModel.getCategory();
+					Integer newId=(Integer)domainIdAss.get(oldId);
+					if(newId==null) {
+						logger.warn("could not find CATEGORY TYPE domain included by meta model"+exportedMetaModel.getDescription()+": insert it as new");
+						SbiDomains catNew= insertCategoryTypeDomain(oldId, sessionExpDB, sessionCurrDB, metaAss);
+						if(catNew != null){
+							logger.debug("inserted new BM category "+catNew.getDomainCd());
+							newMetaModel.setCategory(catNew.getValueId());
+						}
+						else{
+							newMetaModel.setCategory(null);
+						}
+						
+					}
+					else{
+						// I must get the new SbiDomains object
+						logger.debug("category previously identificed by "+oldId+" is now identified by "+newId);
+						SbiDomains newCategory = (SbiDomains) sessionCurrDB.load(SbiDomains.class, newId);
+						newMetaModel.setCategory(newCategory.getValueId());
+					}
+				}
+				else{
+					newMetaModel.setCategory(null);
+				}		
 		
 		logger.debug("OUT");
 		return newMetaModel;
@@ -1865,7 +1944,7 @@ public class ImportUtilities {
 		newDataset.setName(exportedDataset.getName());			
 		newDataset.setDescription(exportedDataset.getDescription());
 		newDataset.setConfiguration(exportedDataset.getConfiguration());
-		newDataset.setCategory(exportedDataset.getCategory());
+//		newDataset.setCategory(exportedDataset.getCategory());
 //		newDataset.getsetOrganization(((UserProfile) profile).getOrganization());	
 		newDataset.setDsMetadata(exportedDataset.getDsMetadata());
 		newDataset.setMetaVersion(exportedDataset.getMetaVersion());
@@ -1901,7 +1980,9 @@ public class ImportUtilities {
 	
 	
 	public  SbiDataSet associateWithExistingEntities(SbiDataSet newDataset,
-			SbiDataSet exportedDataset, Session sessionCurrDB,
+			SbiDataSet exportedDataset, 
+			Session sessionExpDB,
+			Session sessionCurrDB,
 			ImporterMetadata importer, MetadataAssociations metaAss) throws EMFUserError {
 		
 		logger.debug("IN");
@@ -1911,13 +1992,14 @@ public class ImportUtilities {
 		logger.debug("get Ds Domain Type from label type "+exportedDataset.getType());
 		SbiDomains existDom = (SbiDomains) importer.checkExistence(unique, sessionCurrDB, new SbiDomains());
 		newDataset.setType(existDom.getValueDs());
-	
+		
+		
 		if(exportedDataset.getType().equalsIgnoreCase(DataSetConstants.QUERY) || exportedDataset.getType().equalsIgnoreCase(DataSetConstants.DS_QUERY)) { 
 			String config = JSONUtils.escapeJsonString(newDataset.getConfiguration());		
 			JSONObject jsonConf  = ObjectUtils.toJSONObject(config);	
 			//SbiDataSet queryDataSet = (SbiDataSet) dsHistory;
 			//SbiDataSource ds = getAssociatedSbiDataSource(queryDataSet, sessionCurrDB, metaAss);
-			SbiDataSource ds = getAssociatedSbiDataSource(newDataset, sessionCurrDB, metaAss);
+			SbiDataSource ds = getAssociatedSbiDataSource(newDataset, sessionExpDB, sessionCurrDB, metaAss, importer);
 			
 			if (ds != null) {
 				try{
@@ -1935,13 +2017,89 @@ public class ImportUtilities {
 			newDataset.setTransformer(transformer);
 		}
 		
+		// associate category; if category is not present means it is new and must be inserted
+		
+		Map domainIdAss=metaAss.getDomainIDAssociation();
+		if(exportedDataset.getCategory()!=null){
+					Integer oldId=exportedDataset.getCategory().getValueId();
+					Integer newId=(Integer)domainIdAss.get(oldId);
+					if(newId==null) {
+						logger.warn("could not find CATEGORY TYPEdomain "+exportedDataset.getCategory().getDomainNm()+": insert it as new");
+						SbiDomains catNew= insertCategoryTypeDomain(oldId, sessionExpDB, sessionCurrDB, metaAss);
+						if(catNew != null){
+							logger.debug("inserted new category type"+catNew.getDomainCd());
+							newDataset.setCategory(catNew);
+						}
+						else{
+							newDataset.setCategory(null);
+						}
+						
+					}
+					else{
+						// I must get the new SbiDomains object
+						logger.debug("category previously identificed by "+oldId+" is now identified by "+newId);
+						SbiDomains newCategory = (SbiDomains) sessionCurrDB.load(SbiDomains.class, newId);
+						newDataset.setCategory(newCategory);
+					}
+				}
+				else{
+					newDataset.setCategory(null);
+				}
+
 		logger.debug("OUT");
 		return newDataset;
 	}	
 	
 	
 	
-	
+	SbiDomains insertCategoryTypeDomain(Integer expDomainId, Session sessionExpDB, Session sessionCurrDB, MetadataAssociations metaAss){
+		logger.debug("IN");
+		// insert new category
+		SbiDomains toReturn=null;
+		try{
+
+			String hql = "from SbiDomains d where d.valueId = "+expDomainId;
+			Query  hqlQuery = sessionExpDB.createQuery(hql);
+			SbiDomains hibDomains = (SbiDomains) hqlQuery.uniqueResult();
+			if(hibDomains != null){
+				SbiDomains newSbiDomains = new SbiDomains();
+				newSbiDomains.setDomainCd(hibDomains.getDomainCd());
+				newSbiDomains.setDomainNm(hibDomains.getDomainNm());
+				newSbiDomains.setValueCd(hibDomains.getValueCd());
+				newSbiDomains.setValueNm(hibDomains.getValueNm());
+				newSbiDomains.setValueDs(hibDomains.getValueDs());
+				newSbiDomains.setCommonInfo(hibDomains.getCommonInfo());
+
+				Serializable s = sessionCurrDB.save(newSbiDomains);
+				sessionCurrDB.flush();
+				
+				
+				if(s != null){
+					Integer id = (Integer)s;
+					Object obj = sessionCurrDB.load(SbiDomains.class, id);
+					if(obj!= null){
+						toReturn = (SbiDomains)obj;
+						metaAss.getDomainIDAssociation().put(expDomainId, id);
+
+					}
+				
+				}
+				
+//				String back = "from SbiDomains d where d.domainCd = 'CATEGORY_TYPE' AND d.valueCd='"+expDomainId+"'";
+//				Query  backQuery = sessionCurrDB.createQuery(back);
+//				toReturn = (SbiDomains) backQuery.uniqueResult();
+			}
+			else{
+				logger.error("Could not find category which in exported DB should have had id "+expDomainId+" go on without carrying category");			
+			}
+		}
+		catch(Exception e){
+			logger.error("Error inserting category which in exported Db has id "+expDomainId+" go on without carrying category");
+
+		}
+		logger.debug("OUT");
+		return toReturn;
+	}
 	
 
 
@@ -1984,7 +2142,7 @@ public class ImportUtilities {
 			newDataset.setName(exportedDataset.getName());			
 			newDataset.setDescription(exportedDataset.getDescription());
 			newDataset.setConfiguration(exportedDataset.getConfiguration());
-			newDataset.setCategory(exportedDataset.getCategory());
+//			newDataset.setCategory(exportedDataset.getCategory());
 			//newDataset.setOrganization(((UserProfile) profile).getOrganization());	
 			newDataset.setDsMetadata(exportedDataset.getDsMetadata());
 			newDataset.setMetaVersion(exportedDataset.getMetaVersion());
@@ -5286,6 +5444,30 @@ public class ImportUtilities {
 
 	public void setProfile(IEngUserProfile profile) {
 		this.profile = profile;
+	}
+
+
+
+	public Map<Integer, SbiDataSet> getDatasetMap() {
+		return datasetMap;
+	}
+
+
+
+	public void setDatasetMap(Map<Integer, SbiDataSet> datasetMap) {
+		this.datasetMap = datasetMap;
+	}
+
+
+
+	public MetadataLogger getMetaLog() {
+		return metaLog;
+	}
+
+
+
+	public void setMetaLog(MetadataLogger metaLog) {
+		this.metaLog = metaLog;
 	}
 
 	
