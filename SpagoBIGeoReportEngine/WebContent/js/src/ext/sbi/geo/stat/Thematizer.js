@@ -16,6 +16,8 @@ Ext.ns("Sbi.geo.stat");
  */
 Sbi.geo.stat.Thematizer = function(map, config) {
 	
+	Sbi.trace("[Thematizer.constructor] : IN");
+	
 	this.validateConfigObject(config);
 	this.adjustConfigObject(config);
 
@@ -45,6 +47,7 @@ Sbi.geo.stat.Thematizer = function(map, config) {
 
 
 	Sbi.geo.stat.Thematizer.superclass.constructor.call(this, config);
+	Sbi.trace("[Thematizer.constructor] : OUT");
 };
 
 /**
@@ -135,6 +138,12 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
      * found in the provided vector layer will be used.
 	 */
     , loadLayerServiceName: null
+    
+    /**
+     * true to filter layer on load taking only feature whose id match with one of the disticnt values
+     * contained in the storeId column of the dataset.
+     */
+    , filterLayerOnLoad: true
 
     /**
      * @property {Function} requestSuccess
@@ -477,6 +486,10 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
     
     /**
      * @method 
+     *
+     * method called only by onVirtualStoreLoaded. It is an extension of that callback.
+     * 
+     * TODO verify if it s possible to generalize it and use it as subpart of also onPhysicalStoreLoaded
      *
      * @param {Ext.data.Store} store the store that contains data used to generate the new thematization
      * @param {Object} meta the store's metadata as returned from measure catalogue service
@@ -827,7 +840,8 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
         }
         
         // get features from web service if a url is specified
-        if (this.loadLayerServiceName && this.layerId) {
+        if (this.loadLayerServiceName && this.layerId && this.indicatorContainer != 'store') {
+        	// if indicator container is store we will load te layer only after the store has been succesfully loaded
         	Sbi.debug("[Thematizer.initialize]: Url attribute has been valorized to [" + Sbi.toSource(url) + "]. Features will be loaded from it");
         	this.loadLayer();
         } else {
@@ -841,19 +855,7 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
         	Sbi.debug("[Thematizer.initialize]: Property [indicatorContainer] is equal to [store]");
         	
         	if(this.storeType === 'physicalStore') {
-        		
-        		/*
-        		var printFields = function(meta) {
-        			meta.xfields = [];
-        			for(var i = 0; i <  meta.fields.length; i++) {
-        				meta.xfields.push(meta.fields[i]);
-        	    		if(meta.fields[i] == "recNo") continue;
-        	        	Sbi.trace("[Thematizer.printFields]: Field meta [" + Sbi.toSource(meta.fields[i]) + "]");	
-        	        }
-        		};
-        		this.store.reader.onMetaChange = printFields.createSequence(this.store.reader.onMetaChange, this.store.reader);
-        		*/
-        		
+        		Sbi.debug("[Thematizer.initialize]: Loading physical store...");
         		this.store.on('metachange', function(store, meta) {
         			this.meta = meta;
         		}, this);
@@ -861,16 +863,19 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
         		
         		this.store.on('loadexception', function(store, options, response, e) {
         			Sbi.exception.ExceptionHandler.showErrorMessage("Error: " + e , "Impossible to load store");
-        			//Sbi.exception.ExceptionHandler.handleFailure(response, options);
         		});
-        		
         		
             	if(this.storeReload == true) {
             		this.loadPhysicalStore();
+            	} else {
+            		Sbi.debug("[Thematizer.initialize]: Physical store already loaded. It doesn't need to be reloaded");
             	}
         	} else if(this.storeType === 'virtualStore') {
+        		Sbi.debug("[Thematizer.initialize]: Loading virtual store...");
         		if(this.storeConfig.params) {
 	        		this.loadVirtualStore();
+	        	} else {
+	        		Sbi.warn("[Thematizer.initialize]: Virtual store wont be loaded because [storeConfig.params] is not defined");
 	        	}
         	} else {
         		Sbi.debug("[Thematizer.initialize]: Property [storeType] value [" + this.storeType + "] is not valid");
@@ -983,6 +988,31 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
  		
  		Sbi.trace("[Thematizer.onLoadHierarchyLevelMeta] : OUT");
  	}
+    
+    /**
+     * @method
+     * 
+     * extract the distinct values of the storeId column
+     * 
+     * TODO: the extraction part is similar to the one used for extracting
+     * indicator's values from store. Can we marge the code?
+     */
+    , getFeatureIdsFromStore: function() {
+    	Sbi.trace("[Thematizer.getFeatureIdsFromStore]: IN");
+    	var storeIdFiledName;
+    	var records = this.store.getRange(0,1);
+	 	for(var n = 0; n < records[0].fields.getCount(); n++) {
+	 		var field = records[0].fields.itemAt(n);
+	 		if(field.header == this.storeId) {
+	 			storeIdFiledName = field.name;
+	 			break;
+	 		}
+	 	}
+    	var featureIds = this.store.collect(storeIdFiledName);
+    	Sbi.debug("[Thematizer.getFeatureIdsFromStore]: found [" + featureIds.length + "] distinct feature id in store");
+    	Sbi.trace("[Thematizer.getFeatureIdsFromStore]: OUT");
+    	return featureIds;
+    }
      
     , loadLayer: function(onSuccess, onFailure) {
     	
@@ -994,6 +1024,8 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
 	    	Sbi.debug("[Thematizer.loadLayer]: onSuccess callback defined [" + (onSuccess != undefined) + "]");
 	    	Sbi.debug("[Thematizer.loadLayer]: onFailure callback defined [" + (onFailure != undefined) + "]");
 	    	
+	    	alert("loadlayer");
+	    	
 	     	var params = {
 	     		layer: this.layerName
 	     		, businessId: this.storeId
@@ -1001,6 +1033,12 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
 	     		, featureSourceType: this.featureSourceType
 	     		, featureSource: this.featureSource
 	     	};
+	     	
+	     	if(this.indicatorContainer == 'store' && this.filterLayerOnLoad === true) {
+	     		var featureIds = this.getFeatureIdsFromStore();
+		    	var encodedFeatures = Ext.util.JSON.encode(featureIds);
+		    	params.featureIds = encodedFeatures;
+	     	}
 	     	
 	     	Sbi.debug("[Thematizer.loadLayer]: Service parameters are equal to [" + Sbi.toSource(params) + "]");
 	     	
@@ -1066,23 +1104,55 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
 	     Sbi.trace("[Thematizer.onLayerLoaded] : OUT");
      }
 
+     /**
+      * @method 
+      * Load the physical store
+      */
      , loadPhysicalStore: function() {
     	 Sbi.debug("[Thematizer.loadPhysicalStore]: IN");
-    	 //alert("Loading physical store");
     	 this.store.load({});
     	 Sbi.debug("[Thematizer.loadPhysicalStore]: OUT");
      }
      
+     /**
+      * @method 
+      * callback called when the physical store has been succesfully loaded
+      * 
+      * @param {Ext.data.Store} store
+      */
+     , onPhysicalStoreLoaded: function(store) {
+    	Sbi.trace("[Thematizer.onPhysicalStoreLoaded]: IN");
+    	Sbi.trace("[Thematizer.onPhysicalStoreLoaded]: Meta property list [" + Sbi.toSourcePropertiesList(this.meta)+ "]");
+    	
+    	for(var i = 0; i <  this.meta.fields.length; i++) {
+        	Sbi.trace("[Thematizer.onPhysicalStoreLoaded]: Field role [" + this.meta.fields[i].role + "]");
+        }
+    	
+    	this.meta.geoId = this.geoId;
+    	this.filters = this.getAttributeFilters(store, this.meta);
+    	this.fireEvent('filtersChanged', this, this.filters);
+    	
+    	this.loadLayer();
+    	
+    	Sbi.trace("[Thematizer.onPhysicalStoreLoaded]: OUT");
+     }
+     
+     /**
+      * @method 
+      * Load the virtual store
+      */
      , loadVirtualStore: function() {
     	 
-    	 Sbi.debug("[Thematizer.loadPhysicalStore]: OUT");
+    	 Sbi.debug("[Thematizer.loadVirtualStore]: IN");
  
     	 if(!this.storeConfig.params) {
     		 Sbi.warn("Impossible to load virtual store because property [storeConfig.params] is undefined");
+    		 return;
     	 }
     	 
     	 if(!this.storeConfig.url) {
     		 Sbi.warn("Impossible to load virtual store because property [storeConfig.url] is undefined");
+    		 return;
     	 }
     	 
     	 Ext.Ajax.request({
@@ -1099,36 +1169,19 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
     	 Sbi.debug("[Thematizer.loadPhysicalStore]: OUT");
      }
      
+    
      /**
       * @method 
-      *
-      * @param {Object} request
+      * callback called when the virtual store has been succesfully loaded
       */
-     , onPhysicalStoreLoaded: function(store) {
-    	Sbi.trace("[Thematizer.onPhysicalStoreLoaded]: IN");
-    	Sbi.trace("[Thematizer.onPhysicalStoreLoaded]: Meta property list [" + Sbi.toSourcePropertiesList(this.meta)+ "]");
-    	
-    	for(var i = 0; i <  this.meta.fields.length; i++) {
-        	Sbi.trace("[Thematizer.onPhysicalStoreLoaded]: Field role [" + this.meta.fields[i].role + "]");
-        }
-    	
-    	this.meta.geoId = this.geoId;
-    	this.filters = this.getAttributeFilters(store, this.meta);
-    	this.fireEvent('filtersChanged', this, this.filters);
-    	
-    	Sbi.trace("[Thematizer.onPhysicalStoreLoaded]: OUT");
-     }
-     
      , onVirtualStoreLoaded: function(response, options) {
     	 Sbi.trace("[Thematizer.onVirtualStoreLoaded]: IN");
     	 
     	 if(response !== undefined && response.responseText !== undefined && response.statusText=="OK") {
     		 if(response.responseText!=null && response.responseText!=undefined) {
 				if(response.responseText.indexOf("error.mesage.description")>=0){
-					alert("Impossible to load virtual store because of errors");
 					Sbi.exception.ExceptionHandler.handleFailure(response);
 				} else {
-					//Sbi.debug(response.responseText);
 					var r = Ext.util.JSON.decode(response.responseText);
 			
 					var store = new Ext.data.JsonStore({
@@ -1203,28 +1256,7 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
         this.requestFailure(response);
     }
     
-    /**
-     * Method: requestSuccess
-     *      Calls onReady callback function and mark the widget as ready.
-     *      Called on Ajax request success.
-     */
-//    , requestSuccess: function(request) {
-//        this.ready = true;
-//        this.fireEvent('ready', this);
-//    }
 
-    /**
-     * Method: requestFailure
-     *      Displays an error message on the console.
-     *      Called on Ajax request failure.
-     */
-//    , requestFailure: function(response) {
-//    	var message = response.responseXML;
-//        if (!message || !message.documentElement) {
-//            message = response.responseText;
-//        }
-//        Sbi.exception.ExceptionHandler.showErrorMessage(message, 'Service Error');
-//    }   
 });
 
 

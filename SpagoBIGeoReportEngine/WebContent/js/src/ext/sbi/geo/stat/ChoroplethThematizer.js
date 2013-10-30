@@ -10,12 +10,13 @@
 Ext.ns("Sbi.geo.stat");
 
 Sbi.geo.stat.ChoroplethThematizer = function(map, config) {
-	
+	Sbi.trace("[ChoroplethThematizer.constructor] : IN");
 	this.validateConfigObject(config);
 	this.adjustConfigObject(config);
 	
 	// constructor
 	Sbi.geo.stat.ChoroplethThematizer.superclass.constructor.call(this, map, config);
+	Sbi.trace("[ChoroplethThematizer.constructor] : OUT");
 };
 
 /**

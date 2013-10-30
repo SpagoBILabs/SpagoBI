@@ -10,12 +10,13 @@ Ext.ns("Sbi.geo.stat");
 
 
 Sbi.geo.stat.ProportionalSymbolThematizer = function(map, config) {
-	
+	Sbi.trace("[ProportionalSymbolThematizer.constructor] : IN");
 	this.validateConfigObject(config);
 	this.adjustConfigObject(config);
 	
 	// constructor
 	Sbi.geo.stat.ProportionalSymbolThematizer.superclass.constructor.call(this, map, config);
+	Sbi.trace("[ProportionalSymbolThematizer.constructor] : OUT");
 };
 
 /**
