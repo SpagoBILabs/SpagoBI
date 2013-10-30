@@ -239,8 +239,8 @@ public class ImportExportModule extends AbstractHttpModule {
 	
 	IImportManager impManager = null;
 	// get exported file and eventually the associations file
-//	UploadedFile archive = null;
-//	UploadedFile associationsFile = null;
+
+	
 	FileItem archive = null;
 	FileItem associationsFileItem = null;
 	UploadedFile associationsFile = null;

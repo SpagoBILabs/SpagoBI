@@ -75,6 +75,7 @@ import it.eng.spagobi.tools.catalogue.metadata.SbiArtifactContent;
 import it.eng.spagobi.tools.catalogue.metadata.SbiMetaModel;
 import it.eng.spagobi.tools.catalogue.metadata.SbiMetaModelContent;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
+import it.eng.spagobi.tools.dataset.metadata.SbiDataSetId;
 import it.eng.spagobi.tools.datasource.bo.DataSource;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
@@ -214,6 +215,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 		sessionFactoryExpDB = ImportUtilities.getHibSessionExportDB(pathDBFolder);
 		metaAss = new MetadataAssociations();
 		metaLog = new MetadataLogger();
+		importUtilities.setMetaLog(metaLog);
 		usrAss = new UserAssociationsKeeper();
 		logger.debug("OUT");
 	}
@@ -827,13 +829,13 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 				// if association made by user do not update!
 //				if(!getUserAssociation().isDataSourceAssociated(oldId)){
 				if (existingDatasourceId != null) {
-						logger.debug("The data source with label:[" + dataSource.getLabel() + "] is just present. It will be updated.");
-						metaLog.log("The data source with label = [" + dataSource.getLabel() + "] will be updated.");
-						SbiDataSource existingDs = importUtilities.modifyExisting(dataSource, sessionCurrDB, existingDatasourceId);
-						importUtilities.associateWithExistingEntities(existingDs, dataSource, sessionCurrDB, importer, metaAss);
-						this.updateSbiCommonInfo4Update(existingDs);
-						sessionCurrDB.update(existingDs);
-						sessionCurrDB.flush();
+						logger.debug("The data source with label:[" + dataSource.getLabel() + "] is just present. not be updated.");
+						metaLog.log("The data source with label = [" + dataSource.getLabel() + "] will not be updated.");
+						//SbiDataSource existingDs = importUtilities.modifyExisting(dataSource, sessionCurrDB, existingDatasourceId);
+						//importUtilities.associateWithExistingEntities(existingDs, dataSource, sessionCurrDB, importer, metaAss);
+						//this.updateSbiCommonInfo4Update(existingDs);
+						//sessionCurrDB.update(existingDs);
+						//sessionCurrDB.flush();
 					} else {
 						SbiDataSource newDS = importUtilities.makeNew(dataSource);
 						importUtilities.associateWithExistingEntities(newDS, dataSource, sessionCurrDB, importer, metaAss);
@@ -898,16 +900,34 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 					metaLog.log("The dataset with label = [" + exportedDataSet.getLabel() + "] will be updated.");
 					// close previous and insert new
 					SbiDataSet newDataset = importUtilities.modifyExisting(exportedDataSet, sessionCurrDB, existingDatasetId, sessionExpDB, this.getUserProfile());
-					newDataset = importUtilities.associateWithExistingEntities(newDataset, exportedDataSet, sessionCurrDB, importer, metaAss);
+					newDataset = importUtilities.associateWithExistingEntities(newDataset, exportedDataSet, sessionExpDB, sessionCurrDB, importer, metaAss);
 					this.updateSbiCommonInfo4Update(newDataset);
 					sessionCurrDB.save(newDataset);
 					sessionCurrDB.flush();
 				} else {
 					SbiDataSet newDataset = importUtilities.makeNew(exportedDataSet, sessionCurrDB, this.getUserProfile());
 					this.updateSbiCommonInfo4Insert(newDataset);
-					newDataset = importUtilities.associateWithExistingEntities(newDataset, exportedDataSet, sessionCurrDB, importer, metaAss);
-					sessionCurrDB.save(newDataset);
+					newDataset = importUtilities.associateWithExistingEntities(newDataset, exportedDataSet, sessionExpDB, sessionCurrDB, importer, metaAss);
+					Object newIdO = sessionCurrDB.save(newDataset);
 					sessionCurrDB.flush();
+					
+					if(newIdO != null){
+						Integer newId = null;
+						if(newIdO instanceof SbiDataSetId){
+							newId = ((SbiDataSetId) newIdO).getDsId();							
+						}
+						else if (newIdO instanceof Integer){
+							newId = (Integer) newIdO;
+
+						}
+						if(newId!= null){
+							//add new dataset to dataset map needed for hibernate persistence reason
+							Map<Integer, SbiDataSet> mapDs= importUtilities.getDatasetMap();
+							if(mapDs.get(newId) == null){
+								mapDs.put(newId, newDataset);
+							}
+						}
+					}
 
 					logger.debug("Inserted new dataset " + newDataset.getName());
 					metaLog.log("Inserted new dataset " + newDataset.getName());
@@ -980,7 +1000,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 					metaLog.log("The MetaModel with label = [" + exportedMetaModel.getName() + "] will be updated.");
 					// close previous and insert new
 					SbiMetaModel newMetaModel = importUtilities.modifyExisting(exportedMetaModel, sessionCurrDB, existingMetaModelId, sessionExpDB, this.getUserProfile());
-					newMetaModel = importUtilities.associateWithExistingEntities(newMetaModel, exportedMetaModel, exportedMetaContent, sessionCurrDB, importer, metaAss);
+					newMetaModel = importUtilities.associateWithExistingEntities(newMetaModel, exportedMetaModel, exportedMetaContent, sessionExpDB, sessionCurrDB, importer, metaAss);
 					this.updateSbiCommonInfo4Update(newMetaModel);
 					sessionCurrDB.save(newMetaModel);
 					sessionCurrDB.flush();
@@ -989,7 +1009,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 				} else {
 					SbiMetaModel newMetaModel = importUtilities.makeNew(exportedMetaModel, sessionCurrDB, this.getUserProfile());
 					this.updateSbiCommonInfo4Insert(newMetaModel);
-					newMetaModel = importUtilities.associateWithExistingEntities(newMetaModel, exportedMetaModel, exportedMetaContent, sessionCurrDB, importer, metaAss);
+					newMetaModel = importUtilities.associateWithExistingEntities(newMetaModel, exportedMetaModel, exportedMetaContent, sessionExpDB, sessionCurrDB, importer, metaAss);
 					sessionCurrDB.save(newMetaModel);
 					sessionCurrDB.flush();
 					importUtilities.insertMetaModelContent(newMetaModel, exportedMetaModel, exportedMetaContent, sessionCurrDB, importer, metaAss);
