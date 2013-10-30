@@ -41,7 +41,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 		      		<h1><%=msgBuilder.getMessage("authError")%></h1>
 					<span class="ops">Ooooooops!</span>
 					<p class="retry"><%=msgBuilder.getMessage("userPwdInvalid")%>, <a href="<%=loginUrl%>"><%=msgBuilder.getMessage("retry")%>!</a></p>
-					<p><!-- Hai <a href="#">dimenticato la password</a>? --> <%=msgBuilder.getMessage("noAccount")%>? <a href="#" onclick="signup();"><%=msgBuilder.getMessage("signup")%></a></p>
+					<p><!-- Hai <a href="#">dimenticato la password</a>? --> <%=msgBuilder.getMessage("noAccount")%> <a href="#" onclick="signup();"><%=msgBuilder.getMessage("signup")%></a></p>
 				</div>
 	       </div>
 	       </main> 
