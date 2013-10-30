@@ -438,7 +438,7 @@ li:hover .login-panel .not-registered a:hover,.login-panel .not-registered a:hov
 	display:block;
 	width:100%;
 	height:200px;	
-	background-size: contain;
+	/*background-size: contain;*/
 	background-position: top center;
 	background-repeat: no-repeat;
 	border: 0px;
