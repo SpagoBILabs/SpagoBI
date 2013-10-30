@@ -51,5 +51,6 @@
 	<classpathentry kind="lib" path="lib/org.eclipse.emf.ecore_2.8.3.v20130125-0546.jar"/>
 	<classpathentry kind="lib" path="lib/org.eclipse.emf.ecore.xmi_2.8.1.v20130125-0546.jar"/>
 	<classpathentry kind="lib" path="lib/org.eclipse.wtp.xml.capabilities_1.0.100.v201005102000.jar"/>
+	<classpathentry kind="lib" path="lib/jug-2.0.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
