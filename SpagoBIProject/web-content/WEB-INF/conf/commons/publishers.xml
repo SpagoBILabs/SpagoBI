@@ -45,6 +45,20 @@
       		</RESOURCES>
    	 	</RENDERING>
   	</PUBLISHER>
+  	
+  	<PUBLISHER name="errorLogin">
+    	<RENDERING channel="PORTLET" mode="" type="JSP">
+      		<RESOURCES>
+        		<ITEM mode="VIEW" resource="/WEB-INF/jsp/wapp/errorLogin.jsp"/>
+        		<!-- <ITEM mode="EDIT" resource="/WEB-INF/jsp/commons/edit.jsp"/> -->
+      		</RESOURCES>
+   	 	</RENDERING>
+   	 	<RENDERING channel="HTTP" mode="" type="JSP">
+      		<RESOURCES>
+        		<ITEM prog="0" resource="/WEB-INF/jsp/wapp/errorLogin.jsp"/>
+      		</RESOURCES>
+   	 	</RENDERING>
+  	</PUBLISHER>
     
       	
 	<PUBLISHER name="DYN_FORWARD_PUBLISHER">
