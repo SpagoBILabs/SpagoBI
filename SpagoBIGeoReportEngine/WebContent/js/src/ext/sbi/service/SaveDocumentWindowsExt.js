@@ -271,9 +271,10 @@ Ext.extend(Sbi.service.SaveDocumentWindowExt, Ext.Window, {
 		   ((functs == null || functs == undefined || functs.length == 0)
 			&&   (docCommunity == null || docCommunity == undefined || docCommunity == '')
 			)){
+				var msgWarning = LN('sbi.geo.controlpanel.savewin.saveWarning');
 				Ext.MessageBox.show({
 	                title: LN('sbi.generic.warning'),
-	                msg:  LN('sbi.document.saveWarning'),
+	                msg: msgWarning,
 	                width: 180,
 	                buttons: Ext.MessageBox.OK
 	           });

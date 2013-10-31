@@ -711,7 +711,7 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 		if (this.isOwner){
 			toReturn += ''+
 				'<!-- // Mapper modify own map -->' +
-		        '<div class="panel-buttons-container map-owner">' +
+		        '<div id="panel-buttons-container" class="panel-buttons-container map-owner">' +
 		             '<div class="panel-buttons">' +
 		                 //'<a href="#" class="btn-2">Annulla</a>' +
 		                 '<input type="submit" id="btn-cancel" class="btn-2" value="'+LN('sbi.generic.cancel')+'" />' +
@@ -723,7 +723,7 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 		}else if (!this.isInsertion){
 			toReturn += ''+
 			     '<!-- // Mapper modify sombody else map -->' +
-			     '<div class="panel-buttons-container">' +
+			     '<div id="panel-buttons-container" class="panel-buttons-container">' +
 			         '<div class="panel-buttons">' +
 //			             '<a href="#" class="btn-2">Annulla</a>' +
 			             '<input type="submit" id="btn-cancel" class="btn-2" value="'+LN('sbi.generic.cancel')+'" />' +
@@ -1089,6 +1089,25 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 		Ext.get('docMapDesc').dom.value = newDescr;
 
 		this.setIsPublicValue(p.isPublic.getEl().getValue());
+		//after insert redefines the buttons div (for modify)
+		if (this.isInsertion = true && p.docLabel.value !== undefined && p.docLabel.value !== null && 
+				p.docLabel.value !==""){
+			this.isInsertion = false;
+			this.isOwner = true;			
+			var buttonsDiv = Ext.get("panel-buttons-container").dom;
+			//remove old buttons div
+			buttonsDiv.parentNode.removeChild(buttonsDiv); 
+			//create new buttons div
+			buttonsDiv = this.getPanelButtonsDiv();
+			var precElement = Ext.get("scroll");
+			var dh = Ext.DomHelper;	
+			dh.insertAfter(precElement,buttonsDiv);
+			//redefines callback on buttons
+			this.initCallbackOnGuiItemClick("btn-new-map", this.showSaveMapAsWindow, "save map button");
+			this.initCallbackOnGuiItemClick("btn-modify-map", this.showSaveMapWindow, "modify map button");						
+			Sbi.config.docLabel = p.docLabel.value;
+		}
+
 
 	}
 	

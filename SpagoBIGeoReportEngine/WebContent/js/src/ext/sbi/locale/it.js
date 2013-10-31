@@ -130,6 +130,7 @@ Sbi.locale.ln['sbi.geo.controlpanel.savewin.visibility'] = 'Visibilita documento
 Sbi.locale.ln['sbi.geo.controlpanel.savewin.previewfile'] = 'Preview file';
 Sbi.locale.ln['sbi.geo.controlpanel.savewin.community'] = 'Community';
 Sbi.locale.ln['sbi.geo.controlpanel.savewin.scope'] = 'Scope';
+Sbi.locale.ln['sbi.geo.controlpanel.savewin.saveWarning']  = 'Prima di salvare il documento, inserire il Nome e selezionare almeno una cartella dove posizionare il documento';
 
 
 //===================================================================
