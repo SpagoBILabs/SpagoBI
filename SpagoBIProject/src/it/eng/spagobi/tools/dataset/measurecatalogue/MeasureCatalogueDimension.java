@@ -34,7 +34,7 @@ public class MeasureCatalogueDimension implements IMeasureCatalogueField{
 			String hierarchyName = (String) dimensionMetadata.getProperty(MeasureCatalogueCostants.dimensionHierarchyMetadata);
 			if(hierarchyName!=null){
 				setHierarchy(hierarchyName, metaModel);
-				Assert.assertNotNull(hierarchy, "Can not find the hieracky with name "+hierarchyName+" in the dataset with label "+ds.getLabel());
+				Assert.assertNotNull(hierarchy, "Can not find the hierachy with name "+hierarchyName+" in the dataset with label "+ds.getLabel());
 				hierarchyLevel =  (String) dimensionMetadata.getProperty(MeasureCatalogueCostants.dimensionHierarchyMetadataLevel);
 				hierarchyLevelPosition = hierarchy.getLevelPosition(hierarchyLevel);
 			}
