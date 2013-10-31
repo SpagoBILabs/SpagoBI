@@ -11,8 +11,11 @@ import it.eng.spagobi.metamodel.HierarchyWrapper;
 import it.eng.spagobi.metamodel.MetaModelWrapper;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
+import it.eng.spagobi.utilities.assertion.Assert;
 
 import java.util.List;
+
+import org.apache.log4j.Logger;
 
 
 
@@ -21,6 +24,7 @@ public class MeasureCatalogueDimension implements IMeasureCatalogueField{
 	HierarchyWrapper hierarchy;
 	String hierarchyLevel;
 	int hierarchyLevelPosition;
+	public static transient Logger logger = Logger.getLogger(MeasureCatalogueDimension.class);
 
 	public MeasureCatalogueDimension(IFieldMetaData dimensionMetadata, MetaModelWrapper metaModel, IDataSet ds){
 		this.dimensionMetadata = dimensionMetadata;
@@ -30,6 +34,7 @@ public class MeasureCatalogueDimension implements IMeasureCatalogueField{
 			String hierarchyName = (String) dimensionMetadata.getProperty(MeasureCatalogueCostants.dimensionHierarchyMetadata);
 			if(hierarchyName!=null){
 				setHierarchy(hierarchyName, metaModel);
+				Assert.assertNotNull(hierarchy, "Can not find the hieracky with name "+hierarchyName+" in the dataset with label "+ds.getLabel());
 				hierarchyLevel =  (String) dimensionMetadata.getProperty(MeasureCatalogueCostants.dimensionHierarchyMetadataLevel);
 				hierarchyLevelPosition = hierarchy.getLevelPosition(hierarchyLevel);
 			}
@@ -48,9 +53,12 @@ public class MeasureCatalogueDimension implements IMeasureCatalogueField{
 		List<HierarchyWrapper> hierarchies = metaModel.getHierarchies();
 		for(int i=0; i<hierarchies.size(); i++){
 			if(hierarchies.get(i).getName().equals(hierarchyName)){
+				logger.debug("Hierarchy with name "+hierarchyName+" found in the hierarcies model");
 				hierarchy = hierarchies.get(i);
+				break;
 			}
 		}
+		logger.debug("Hierarchy with name "+hierarchyName+" not found in the hierarcies model");
 	}
 	
 	public boolean hasHierarchy() {
