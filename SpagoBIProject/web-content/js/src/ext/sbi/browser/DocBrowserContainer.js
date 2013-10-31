@@ -74,27 +74,33 @@ Sbi.browser.DocBrowserContainer = function(config) {
     			 Ext.getCmp('close-all').setDisabled(false);
     		 }
          };
-
-    	  this.brSheet = new Ext.Panel({
+         
+         var hideGoBackLink = (Sbi.settings.geobi.browser.hideGoBackToolbar)? Sbi.settings.geobi.browser.hideGoBackToolbar:false;
+         var btmbar = [];
+         if (!hideGoBackLink){
+        	 btmbar =  ['->', 
+	     	    	      {
+				            id: 'close-all',
+				            xtype:'button',
+				            text: LN('sbi.browser.goTo'),
+				            handler: navHandler.createDelegate(this),
+				            disabled: true,
+				            hidden: hideGoBackLink
+					      },
+					      {
+					         id: 'close',
+					         xtype:'button',
+					         text: LN('sbi.general.close'),
+					         handler: navHandler.createDelegate(this),
+					         hidden: true
+					      }	    	        
+		    ];
+         }
+    	 this.brSheet = new Ext.Panel({
 	  		layout:'card',
  	    	activeItem: 0,
  	    	layoutConfig: { animate: true }, 
- 	    	bbar: ['->', 
- 	    	      {
-			            id: 'close-all',
-			            xtype:'button',
-			            text: LN('sbi.browser.goTo'),
-			            handler: navHandler.createDelegate(this),
-			            disabled: true
-		         },
-    	         {
-    	            id: 'close',
-    	            xtype:'button',
-    	            text: LN('sbi.general.close'),
-    	            handler: navHandler.createDelegate(this),
-    	            hidden: true
-    	         }	    	        
-	    	    ],
+ 	    	bbar: btmbar,
  		    items: [browser]
  	    });	   
     }else{ 

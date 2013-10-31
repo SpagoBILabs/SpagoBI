@@ -319,21 +319,22 @@ Ext.extend(Sbi.browser.DocumentsBrowser, Ext.Panel, {
 	}
 	
 	,enableBBarButtons: function(nCard){
-		
-		switch (nCard)
-		{
-		case 0:
-			Ext.getCmp('close').setVisible(false);
-			Ext.getCmp('close-all').setDisabled(true);
-		  break;
-		case 1:
-			Ext.getCmp('close').setVisible(false);
-			Ext.getCmp('close-all').setDisabled(false);
-		  break;		
-		default:
-			Ext.getCmp('close').setVisible(true);
-			Ext.getCmp('close-all').setDisabled(false);
-		}		
+		if (Sbi.settings.geobi.browser.hideGoBackToolbar && !Sbi.settings.geobi.browser.hideGoBackToolbar){
+			switch (nCard)
+			{
+			case 0:
+				Ext.getCmp('close').setVisible(false);
+				Ext.getCmp('close-all').setDisabled(true);
+			  break;
+			case 1:
+				Ext.getCmp('close').setVisible(false);
+				Ext.getCmp('close-all').setDisabled(false);
+			  break;		
+			default:
+				Ext.getCmp('close').setVisible(true);
+				Ext.getCmp('close-all').setDisabled(false);
+			}
+		}
 	}
 	
 	, addPanelToSheet: function(panel){
