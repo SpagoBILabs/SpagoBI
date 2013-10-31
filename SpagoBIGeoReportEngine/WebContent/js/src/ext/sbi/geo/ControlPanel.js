@@ -1116,16 +1116,18 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 		var el2div =  Ext.get("div-public");
 		var el1 = Ext.get("scopePrivate");
 		var el2 = Ext.get("scopePublic");
-		if (Ext.fly(el1div).hasClass('checked')){
-			el1.dom.checked = false;
-			el2.dom.checked = true;
-			Ext.fly(el1div).removeClass('checked');
-			Ext.fly(el2div).addClass('checked');
-		}else{
-			el1.dom.checked=true;
-			el2.dom.checked=false;
-			Ext.fly(el2div).removeClass('checked');
-			Ext.fly(el1div).addClass('checked');	
+		if (Ext.fly(el1div) && Ext.fly(el2div)){
+			if (Ext.fly(el1div).hasClass('checked')){
+				el1.dom.checked = false;
+				el2.dom.checked = true;
+				Ext.fly(el1div).removeClass('checked');
+				Ext.fly(el2div).addClass('checked');
+			}else{
+				el1.dom.checked=true;
+				el2.dom.checked=false;
+				Ext.fly(el2div).removeClass('checked');
+				Ext.fly(el1div).addClass('checked');	
+			}
 		}
 	}
 	
