@@ -231,13 +231,18 @@ public class ManageImpExpAssAction extends AbstractHttpAction {
 			String modality = (String) sbrequest.getAttribute("MODALITY");
 			IAssociationFileDAO assfiledao = new AssociationFileDAO();
 			List assFiles = assfiledao.getAssociationFiles();
-			String html = generateHtmlJsCss();
+			String html="<HTML>";
+
+			html += generateHtmlJsCss();
 			if (modality.equals("MANAGE")) {
 				html += "<br/>";
 				html += generateHtmlForInsertNewForm();
 			}
 			html += "<br/>";
 			html += generateHtmlForList(assFiles, modality);
+			
+
+			html+="</HTML>";
 			httpResponse.getOutputStream().write(html.getBytes());
 			httpResponse.getOutputStream().flush();
 		} catch (Exception e) {
