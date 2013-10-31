@@ -36,7 +36,10 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
    }else if(userAgent.contains("Chrome")){
        subsString = userAgent.substring( userAgent.indexOf("Chrome"));
        info = (subsString.split(" ")[0]).split("/");
+   } else {
+	   info = new String[]{"unknown", "unknown"};
    }
+   
    browsername = info[0];
    browserversion = info[1];
    String mapsUrl="#";
