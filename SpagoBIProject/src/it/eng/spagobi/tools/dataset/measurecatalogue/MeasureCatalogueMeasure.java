@@ -18,6 +18,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import junit.framework.Assert;
+
 import org.apache.log4j.Logger;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -55,20 +57,25 @@ public class MeasureCatalogueMeasure implements IMeasureCatalogueField {
 	
 	public MeasureCatalogueMeasure( IFieldMetaData fieldMetadata, MetaModelWrapper metaModel, IDataSet ds, Set<MeasureCatalogueDimension> datasetDimension){
 		this(metaModel);
+		Assert.assertNotNull("The field metadata of the measure is null",fieldMetadata);
 		this.fieldMetadata = fieldMetadata;
 		this.alias=fieldMetadata.getAlias();
 		if(this.alias==null){
 			this.alias=fieldMetadata.getName();
 		}
+		Assert.assertNotNull("Teh alias of the field is null",this.alias);
 		this.label = this.alias+ds.getLabel();
 		this.dataType = fieldMetadata.getType();
 		columnName = this.alias;
 		if(datasetDimension!=null){
+			logger.debug("The list of dimensions of the dataset is not null..");
 			this.dataset = ds;
 			this.datasetDimensions = datasetDimension;
 		}else{
+			logger.debug("The list of dimensions of the dataset is null.. Create a new dimensions set");
 			refreshDataSet(ds);
 		}
+		logger.debug("Measure ["+fieldMetadata.getName()+"] generated for the dataset["+ds.getName()+"]");
 	}
 	
 	
@@ -77,15 +84,18 @@ public class MeasureCatalogueMeasure implements IMeasureCatalogueField {
 	 * @param ds
 	 */
 	public void refreshDataSet(IDataSet ds){
+		logger.debug("Updating the dimension of dataset "+ds.getName());
 		this.dataset = ds;
 		Set<MeasureCatalogueDimension> dimensions = new HashSet<MeasureCatalogueDimension>();
 		int fields = ds.getMetadata().getFieldCount();
 		for(int i=0; i<fields; i++){
 			IFieldMetaData aFieldMetadata = ds.getMetadata().getFieldMeta(i);
 			if(!isMeasure(aFieldMetadata)){
+				logger.debug("Adding the dimension ["+aFieldMetadata.getName()+"] to the dataset +["+ds.getName()+"]");
 				dimensions.add(new MeasureCatalogueDimension(aFieldMetadata,metaModel, ds));
 			}
 		}
+		logger.debug("OUT");
 		datasetDimensions = dimensions;
 	}
 	
@@ -109,7 +119,9 @@ public class MeasureCatalogueMeasure implements IMeasureCatalogueField {
 	 * @return
 	 */
 	public static boolean isMeasure(IFieldMetaData fieldMetadata){
-		return (fieldMetadata.getFieldType()!=null && fieldMetadata.getFieldType().name().equals(MeasureCatalogueCostants.MEASURE));
+		boolean isMeasure = (fieldMetadata.getFieldType()!=null && fieldMetadata.getFieldType().name().equals(MeasureCatalogueCostants.MEASURE));
+		logger.debug("The model field ["+fieldMetadata.getAlias()+"] is a measure? "+isMeasure);
+		return isMeasure;
 	}
 	
 
