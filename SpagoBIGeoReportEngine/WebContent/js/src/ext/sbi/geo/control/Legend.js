@@ -302,7 +302,7 @@ Sbi.geo.control.Legend = OpenLayers.Class(OpenLayers.Control, {
 				var thematizerControlPanelOptions = {
 						map: this.map,
 						manageIndicator: false,
-						indicators: this.null,	
+						indicators: null,	
 						thematizer: this.map.thematizer,
 						bodyStyle:'padding:6px 6px 6px 6px; background-color:#FFFFFF',
 					};

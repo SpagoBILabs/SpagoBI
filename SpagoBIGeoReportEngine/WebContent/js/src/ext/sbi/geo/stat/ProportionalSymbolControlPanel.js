@@ -172,6 +172,30 @@ Sbi.geo.stat.ProportionalSymbolControlPanel = Ext.extend(Ext.FormPanel, {
 		return options;
 	}
 	
+	/**
+	 * @method
+	 * 
+	 * convert the thematizerOption object used by the thematizer in a valid form state. The generated formState object is applied
+	 * to this controller. 
+	 */
+
+	, synchronizeFormState: function() {
+		Sbi.trace("[ChoropletControlPanel.syncronizeFormState] : IN");
+	
+		
+		var formState = this.thematizer.getAnalysisConf();
+		
+		Sbi.trace("[ProportionalSymbolControlPanel.syncronizeFormState] : new form state is equal to [" + Sbi.toSource(formState) + "]");
+		
+		this.setMaxRadiusSize(formState.maxRadiusSize);
+		this.setMinRadiusSize(formState.minRadiusSize);
+		if(this.manageIndicator === true) {
+			this.setIndicator(formState.indicator);
+		}
+		
+		Sbi.trace("[ProportionalSymbolControlPanel.syncronizeFormState] : OUT");
+	}
+	
 	, getFormState: function() {
 		var formState = {};
 		
@@ -343,6 +367,8 @@ Sbi.geo.stat.ProportionalSymbolControlPanel = Ext.extend(Ext.FormPanel, {
 
     	   this.thematizer = new Sbi.geo.stat.ProportionalSymbolThematizer(this.map, thematizerOptions);
     	}
+    	
+    	this.synchronizeFormState();
     	
     	if(this.thematizer.getLayer != null) {
     		this.ready = true;

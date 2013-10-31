@@ -563,17 +563,45 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 
 	, getThematizationOptionsList: function() {
 		var toReturn = '';
+		
+		var activeClass;
+		var activeThematizer = this.mapComponnet.activeThematizerName;
+		if(activeThematizer === "choropleth") {
+			activeClass = "map-zone";
+		} else if(activeThematizer === "proportionalSymbols") {
+			activeClass = "map-point";
+		} else {
+			alert("[ControlPanel.getThematizationOptionsList]: active thematizer [" + activeThematizer + "] not valid");
+		}
+		
+		var list = [];
+		list.push('selected');
+		
+		var activeThematizationOption = null;
 		for(var i = 0; i < this.thematizationOptions.length; i++) {
 			var cName = this.thematizationOptions[i].className;
+	
+			if(cName === activeClass) {
+				activeThematizationOption = this.thematizationOptions[i];
+				continue;
+			} else {
+				list.push(this.thematizationOptions[i]);
+			}
+		}
+		list[0] = activeThematizationOption;
+		
+		
+		for(var i = 0; i < list.length; i++) {
+			var cName = list[i].className;
 			var expandButton = '';
 			if(i === 0) {
 				cName += ' active';
 				expandButton ='<span class="arrow"></span>';
-			} else if(i === this.thematizationOptions.length-1) {
+			} else if(i === list.length-1) {
 				cName += ' last';
 			}
-			toReturn += '<li id="li-' + this.thematizationOptions[i].id + '" class="' + cName + '">' + 
-							'<a href="#">' + this.thematizationOptions[i].label + '' + expandButton + '</a>' + 
+			toReturn += '<li id="li-' + list[i].id + '" class="' + cName + '">' + 
+							'<a href="#">' + list[i].label + '' + expandButton + '</a>' + 
 						'</li>';
 		}
 		return toReturn;
@@ -861,33 +889,33 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 				Sbi.trace("[ControlPanel.onThematizerSelected]: activating choropleth thematizer...");
 				this.mapComponnet.activateThematizer('choropleth');
 				newThematizer = this.mapComponnet.getActiveThematizer();
-				if(newThematizer.features && newThematizer.features.length > 0) {
-					newThematizer.layer.removeAllFeatures();
-					newThematizer.layer.addFeatures( newThematizer.features );
-				} else {
-					alert("Error");
-				}
+//				if(newThematizer.features && newThematizer.features.length > 0) {
+//					newThematizer.layer.removeAllFeatures();
+//					newThematizer.layer.addFeatures( newThematizer.features );
+//				} else {
+//					alert("Error");
+//				}
 			} else if (el.id === 'li-map-point'){
 				Sbi.trace("[ControlPanel.onThematizerSelected]: activating proportionalSymbols thematizer...");
 				this.mapComponnet.activateThematizer('proportionalSymbols');
 				newThematizer = this.mapComponnet.getActiveThematizer();
-				if(newThematizer.features && newThematizer.features.length > 0) {
-					Sbi.trace("[ControlPanel.onThematizerSelected]: restore centroid features");
-					newThematizer.layer.removeAllFeatures();
-					newThematizer.layer.addFeatures( newThematizer.features );
-				} else {
-					Sbi.trace("[ControlPanel.onThematizerSelected]: restore centroid features");
-					 var newFeatures = new Array();
-					 for(var i = 0; i < oldThematizer.features.length; i++) {
-					   	var f =  oldThematizer.features[i];
-					   	var centroid = f.geometry.getCentroid();
-					   	var newFeature = new OpenLayers.Feature.Vector( centroid, f.attributes, f.style);
-					   	newFeatures.push(newFeature);
-					   	//Sbi.debug("[Thematizer.setLayer] : centroid [" + i + "] equals to [" + centroid.x + "," + centroid.y + "]");
-					   	newThematizer.layer.removeAllFeatures();
-						newThematizer.layer.addFeatures( newFeatures );
-					 }
-				}
+//				if(newThematizer.features && newThematizer.features.length > 0) {
+//					Sbi.trace("[ControlPanel.onThematizerSelected]: restore centroid features");
+//					newThematizer.layer.removeAllFeatures();
+//					newThematizer.layer.addFeatures( newThematizer.features );
+//				} else {
+//					Sbi.trace("[ControlPanel.onThematizerSelected]: restore centroid features");
+//					 var newFeatures = new Array();
+//					 for(var i = 0; i < oldThematizer.features.length; i++) {
+//					   	var f =  oldThematizer.features[i];
+//					   	var centroid = f.geometry.getCentroid();
+//					   	var newFeature = new OpenLayers.Feature.Vector( centroid, f.attributes, f.style);
+//					   	newFeatures.push(newFeature);
+//					   	//Sbi.debug("[Thematizer.setLayer] : centroid [" + i + "] equals to [" + centroid.x + "," + centroid.y + "]");
+//					   	newThematizer.layer.removeAllFeatures();
+//						newThematizer.layer.addFeatures( newFeatures );
+//					 }
+//				}
 			}
 			
 			
@@ -952,30 +980,39 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 		
 		var formState = Ext.apply({}, analysisConf || {});
 		
-		formState.method = formState.method || 'CLASSIFY_BY_QUANTILS';
-		
-		
-		formState.classes =  formState.classes || 5;
-		
-		formState.fromColor =  formState.fromColor || '#FFFF99';
-		formState.toColor =  formState.toColor || '#FF6600';
-	
-		if(formState.indicator && this.indicatorContainer === 'layer') {
-			formState.indicator = formState.indicator.toUpperCase();
-		}
-		if(!formState.indicator && this.indicators && this.indicators.length > 0) {
-			formState.indicator = this.indicators[0][0];
-		}
 		
 		var thematizerOptions = {};
-		thematizerOptions.method = Sbi.geo.stat.Classifier[formState.method];
-		thematizerOptions.classes = formState.classes;
-		thematizerOptions.colors = new Array(2);
-		thematizerOptions.colors[0] = new Sbi.geo.utils.ColorRgb();
-		thematizerOptions.colors[0].setFromHex(formState.fromColor);
-		thematizerOptions.colors[1] = new Sbi.geo.utils.ColorRgb();
-		thematizerOptions.colors[1].setFromHex(formState.toColor);
-		thematizerOptions.indicator = formState.indicator;
+		
+		if(this.mapComponnet.activeThematizerName === "choropleth") {
+			formState.method = formState.method || 'CLASSIFY_BY_QUANTILS';
+			
+			
+			formState.classes =  formState.classes || 5;
+			
+			formState.fromColor =  formState.fromColor || '#FFFF99';
+			formState.toColor =  formState.toColor || '#FF6600';
+		
+			if(formState.indicator && this.indicatorContainer === 'layer') {
+				formState.indicator = formState.indicator.toUpperCase();
+			}
+			if(!formState.indicator && this.indicators && this.indicators.length > 0) {
+				formState.indicator = this.indicators[0][0];
+			}
+			
+			thematizerOptions.method = Sbi.geo.stat.Classifier[formState.method];
+			thematizerOptions.classes = formState.classes;
+			thematizerOptions.colors = new Array(2);
+			thematizerOptions.colors[0] = new Sbi.geo.utils.ColorRgb();
+			thematizerOptions.colors[0].setFromHex(formState.fromColor);
+			thematizerOptions.colors[1] = new Sbi.geo.utils.ColorRgb();
+			thematizerOptions.colors[1].setFromHex(formState.toColor);
+			thematizerOptions.indicator = formState.indicator;
+		} else if(this.mapComponnet.activeThematizerName === "proportionalSymbols") {
+			thematizerOptions.minRadiusSize = formState.minRadiusSize;
+			thematizerOptions.maxRadiusSize = formState.maxRadiusSize;
+			thematizerOptions.indicator = formState.indicator;
+		}
+		
 		
 		this.mapComponnet.getActiveThematizer().thematize(thematizerOptions);
 		
@@ -1025,19 +1062,21 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 		Sbi.trace("[ControlPanel.onStoreLoad]: IN");
 		
 		this.measureCatalogueWindow.close();
-		var thematizer = this.mapComponnet.getActiveThematizer();
-		thematizer.setData(store, meta);
 		
-		thematizer.storeType = 'virtualStore';
-		
-		Sbi.debug("[ControlPanel.onStoreLoad]: options.url = " + options.url);
-		Sbi.debug("[ControlPanel.onStoreLoad]: options.params = " + Sbi.toSource(options.params, true));
-		
-		thematizer.storeConfig = {
-			url: options.url
-			, params: options.params
-		};
-	
+		for(thematizerName in this.mapComponnet.thematizers) {
+			var thematizer = this.mapComponnet.thematizers[thematizerName];
+			thematizer.setData(store, meta);
+			
+			thematizer.storeType = 'virtualStore';
+			
+			Sbi.debug("[ControlPanel.onStoreLoad]: options.url = " + options.url);
+			Sbi.debug("[ControlPanel.onStoreLoad]: options.params = " + Sbi.toSource(options.params, true));
+			
+			thematizer.storeConfig = {
+				url: options.url
+				, params: options.params
+			};
+		}
 		
 		this.refreshIndicatorsDiv();
 		Sbi.trace("[ControlPanel.onStoreLoad]: OUT");

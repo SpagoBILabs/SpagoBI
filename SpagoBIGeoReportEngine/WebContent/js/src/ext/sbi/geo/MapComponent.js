@@ -176,8 +176,24 @@ Ext.extend(Sbi.geo.MapComponent, Ext.Panel, {
 	}
 	
 	, activateThematizer: function(name) {
+		Sbi.trace("[MapComponent.activateThematizer] : IN");
+		var newThematizer = this.thematizers[name];
+		if(newThematizer === undefined) {
+			Sbi.warn("[MapComponent.activateThematizer] : A thematizer with name [" + name + "] does not exist");
+			Sbi.trace("[MapComponent.activateThematizer] : OUT");
+			return;
+		}
+		
+		if(this.activeThematizerName != null) {
+			var oldThematizer = this.getActiveThematizer();
+			oldThematizer.deactivate();
+		}
+		
 		this.activeThematizerName = name;
-		this.map.thematizer = this.getActiveThematizer();
+		this.map.thematizer = newThematizer;
+		newThematizer.activate();
+		
+		Sbi.trace("[MapComponent.activateThematizer] : OUT");
 	}
 	
 	, getActiveThematizer: function() {
