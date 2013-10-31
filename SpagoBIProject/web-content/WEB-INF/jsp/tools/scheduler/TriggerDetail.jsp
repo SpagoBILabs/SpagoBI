@@ -1226,7 +1226,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 			<div id="folderDataset_<%=biobj.getId()%>__<%=index%>" style="margin-left:50px;margin-top:10px;">
 		  		<div  class='div_detail_label_scheduler'>
 						<span class='portlet-form-field-label'>
-							<spagobi:message key="scheduler.folderToDataset" bundle="component_scheduler_messages" />
+							<spagobi:message key="scheduler.folderToDatasetParameter" bundle="component_scheduler_messages" />
 						</span>
 	 	    	</div>
 	  	  		<div class='div_detail_form'>
@@ -1251,7 +1251,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 		  	    </div>
 		  		<div  class='div_detail_label_scheduler'>
 						<span class='portlet-form-field-label'>
-							<spagobi:message key="scheduler.folderToDatasetParameter" bundle="component_scheduler_messages" />
+							<spagobi:message key="scheduler.folderToDriver" bundle="component_scheduler_messages" />
 						</span>
 	 	    	</div>
 	  	  		<div class='div_detail_form'>
