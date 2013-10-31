@@ -195,9 +195,9 @@ public interface IDataSource {
 
 	public void setHibDialectName(String hibDialectName);
 
-	public boolean checkIsReadOnly();
+	public Boolean checkIsReadOnly();
 	
-	public boolean checkIsWriteDefault();
+	public Boolean checkIsWriteDefault();
 	
 	public void setWriteDefault(Boolean writeDefault);
 	public void setReadOnly(Boolean readOnly);
