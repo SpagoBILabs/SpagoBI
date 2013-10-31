@@ -165,7 +165,7 @@ Ext.extend(Sbi.geo.MainPanel, Ext.Panel, {
 		var thematizer = this.mapComponent.getActiveThematizer();
 		
 		template.mapName = this.mapName;
-		template.analysisType = this.analysisType;
+		template.analysisType = this.mapComponent.activeThematizerName;
 	
 		template.indicatorContainer = thematizer.indicatorContainer;
 		template.storeType = thematizer.storeType;

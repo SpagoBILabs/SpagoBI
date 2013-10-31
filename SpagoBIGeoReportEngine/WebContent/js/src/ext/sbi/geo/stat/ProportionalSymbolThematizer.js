@@ -186,6 +186,90 @@ Ext.extend(Sbi.geo.stat.ProportionalSymbolThematizer, Sbi.geo.stat.Thematizer, {
         this.legendDiv.innerHTML = "Needs to be done !";
         // TODO use css classes instead
     }
+    /**
+     * @method
+     * 
+     * the analysis conf. this object can be passed as is at the method setFormState of the related
+     * control panel
+     */
+    , getAnalysisConf: function() {
+    	var thematizerOption = this.getOptions();
+		
+		var formState = {};
+		
+		formState.minRadiusSize = thematizerOption.minRadiusSize || 2;
+		formState.maxRadiusSize = thematizerOption.maxRadiusSize || 20;
+		formState.indicator = thematizerOption.indicator;
+		
+		return formState;
+    }
+    , setLayer: function(layer, format) {
+   	 	Sbi.trace("[ProportionalSymbolThematizer.setLayer] : IN");
+   	
+   	 	Sbi.debug("[ProportionalSymbolThematizer.setLayer] : Input parameter layer is of type [" + (typeof layer) + "]");
+   	  
+	    var format = format || this.format || new OpenLayers.Format.GeoJSON();
+	    Sbi.debug("[Thematizer.setLayer] : Layer formt is equal to  [" + format + "]");
+	     
+	    var features = format.read(layer);
+	    newFeatures = features;
+	     
+	    var newFeatures = new Array();	     
+	    for(var i = 0; i < features.length; i++) {
+	    	var f =  features[i];
+	    	var centroid = f.geometry.getCentroid();
+	    	
+	    	var newFeature = new OpenLayers.Feature.Vector( centroid, f.attributes, f.style);
+	    	newFeatures.push(newFeature);
+	    	Sbi.debug("[ProportionalSymbolThematizer.setLayer] : centroid [" + i + "] equals to [" + centroid.x + "," + centroid.y + "]");
+	    }
+	     
+	    this.setFeatures(newFeatures);
+
+		Sbi.trace("[ProportionalSymbolThematizer.setLayer] : OUT");
+    }
+    
+    /**
+     * @method 
+     *
+     * @param {Object} response
+     */
+    , onSuccess: function(response) {
+    	Sbi.trace("[Thematizer.onSuccess]: IN");
+    	
+    	this.hideMask();
+    	
+    	this.showMask("Adding layer to map...");
+        var doc = response.responseXML;
+        if (!doc || !doc.documentElement) {
+            doc = response.responseText;
+        }
+        
+        var format = this.format || new OpenLayers.Format.GeoJSON();
+        
+        var features = format.read(doc);
+        var newFeatures = features;
+        
+	    var newFeatures = new Array();
+	    for(var i = 0; i < features.length; i++) {
+	    	var f =  features[i];
+	    	var centroid = f.geometry.getCentroid();
+	    	var newFeature = new OpenLayers.Feature.Vector( centroid, f.attributes, f.style);
+	    	newFeatures.push(newFeature);
+	    	Sbi.debug("[Thematizer.setLayer] : centroid [" + i + "] equals to [" + centroid.x + "," + centroid.y + "]");
+	    }
+	     
+        this.layer.removeAllFeatures();
+        this.layer.addFeatures( newFeatures );
+        this.requestSuccess(response);
+        
+        this.hideMask();
+        
+        this.fireEvent('layerloaded', this, this.layer);
+        Sbi.trace("[Thematizer.onSuccess]: event [layerloaded] fired [" + this.layer.features.length+ "]");
+        
+        Sbi.trace("[Thematizer.onSuccess]: OUT");
+    }    
 });
 
 Sbi.geo.stat.Thematizer.addSupportedType("proportionalSymbols", Sbi.geo.stat.ProportionalSymbolThematizer, Sbi.geo.stat.ProportionalSymbolControlPanel);
