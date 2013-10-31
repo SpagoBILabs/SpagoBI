@@ -178,7 +178,9 @@ public class MeasureCatalogue implements Observer {
 		 */
 		if(datasets!=null){
 			for(int i=0; i<datasets.size();i++){
+				
 				IDataSet aDs = datasets.get(i);
+				logger.debug("Creating the measures for the dataset "+aDs.getName());
 				try {
 					List<IFieldMetaData> aDsMeasures = getMeasures(aDs);
 					Set<MeasureCatalogueDimension> datasetDimension = null;
@@ -186,11 +188,13 @@ public class MeasureCatalogue implements Observer {
 						/**
 						 * Search the measure in the list of measures
 						 */
+						logger.debug("Creating the measure for the field "+aDsMeasures.get(j).getAlias());
 						MeasureCatalogueMeasure aDsMeasure = getMeasure(aDsMeasures.get(j),aDs);
 						if(aDsMeasure==null){
 							/**
 							 * The measures has not been already saved, so we create it
 							 */
+							logger.debug("The measure is new.. Create a new MeasureCatalogueMeasureObject");
 							aDsMeasure = new MeasureCatalogueMeasure(aDsMeasures.get(j), metamodelWrapper, aDs, datasetDimension);
 							measures.add(aDsMeasure);
 							datasetDimension = aDsMeasure.getDatasetDimension();
@@ -198,6 +202,7 @@ public class MeasureCatalogue implements Observer {
 	
 					}
 				} catch(Throwable t) {
+					logger.error("An unexpected error occured while extracting measures from dataset [" + aDs.getLabel() + "]", t);
 					throw new SpagoBIRuntimeException("An unexpected error occured while extracting measures from dataset [" + aDs.getLabel() + "]", t);
 				}
 			}
@@ -212,6 +217,7 @@ public class MeasureCatalogue implements Observer {
      * @return
      */
     public static List<IFieldMetaData> getMeasures(IDataSet ds){
+    	logger.debug("IN");
     	IMetaData md = ds.getMetadata();
     	List<IFieldMetaData> measures = new ArrayList<IFieldMetaData>();
     	if(md!=null){
@@ -221,6 +227,7 @@ public class MeasureCatalogue implements Observer {
     			}
     		}
     	}
+    	logger.debug("OUT");
     	return measures;
     }
     
