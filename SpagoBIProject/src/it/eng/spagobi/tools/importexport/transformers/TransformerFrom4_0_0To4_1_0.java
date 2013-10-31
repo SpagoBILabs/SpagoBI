@@ -115,8 +115,10 @@ public class TransformerFrom4_0_0To4_1_0 implements ITransformer {
 		String sql = "";
 		try {
 			
-			sql = "ALTER TABLE SBI_DATA_SOURCE ADD COLUMN READ_ONLY BOOLEAN DEFAULT FALSE;"
-					+ " ALTER TABLE SBI_DATA_SOURCE ADD COLUMN WRITE_DEFAULT BOOLEAN DEFAULT FALSE;";
+			sql = "ALTER TABLE SBI_DATA_SOURCE ADD COLUMN READ_ONLY BOOLEAN DEFAULT FALSE;";
+			stmt.executeUpdate(sql);
+			
+			sql = "ALTER TABLE SBI_DATA_SOURCE ADD COLUMN WRITE_DEFAULT BOOLEAN DEFAULT FALSE;";
 			stmt.executeUpdate(sql);
 		
 		} catch (Exception e) {
