@@ -61,6 +61,7 @@ Sbi.settings.browser = {
 //	  , maxNumberOfExecutionTabs: 1 	 //the maximum number of tabs to open on execution of documents if valorized
 	  , typeLayout: 'tab'				 //possible values: 'tab' or 'card'
 	  , showTitle: true 
+	  , hideGoBackToolbar: false			//hide (if true) the bottom bar with goBack links
 	  , showCreateButton: true
 } 
 
