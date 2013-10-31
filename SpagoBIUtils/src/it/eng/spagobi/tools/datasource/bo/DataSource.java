@@ -42,8 +42,8 @@ public class DataSource implements Serializable, IDataSource {
 	private Set objects = null;
     private String schemaAttribute=null;
 	private Boolean multiSchema=null;
-	private Boolean readOnly=null;
-	private Boolean writeDefault=null;
+	private Boolean readOnly;
+	private Boolean writeDefault;
 	
 	
     public String getSchemaAttribute() {
@@ -344,11 +344,15 @@ public class DataSource implements Serializable, IDataSource {
 		this.writeDefault = writeDefault;
 	}
 
-	public boolean checkIsReadOnly() {
+	public Boolean checkIsReadOnly() {
+		if(readOnly == null)
+			readOnly = false;
 		return readOnly;
 	}
 
-	public boolean checkIsWriteDefault() {
+	public Boolean checkIsWriteDefault() {
+		if(writeDefault == null)
+			writeDefault = false;
 		return writeDefault;
 	}
 	
