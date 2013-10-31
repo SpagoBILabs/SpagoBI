@@ -702,6 +702,7 @@ li:hover .login-panel .not-registered a:hover,.login-panel .not-registered a:hov
 
 .main p{font-family:cabinregular,arial,helvetica,sans-serif;font-size:1.33em;font-weight:normal;color:#363636;margin-bottom:15px}
 .main a{color:#2a80c8}
+.loginPage a{color:#2a80c8;font-size:12px;}
 .main a:hover{text-decoration:underline}
 
 .main-error{padding-top:165px}
@@ -728,7 +729,7 @@ li:hover .login-panel .not-registered a:hover,.login-panel .not-registered a:hov
 .reserved-area-form .field label{display:none}
 .reserved-area-form .field input,
 .reserved-area-form .field textarea{position:relative;border:1px solid #e6e6e6;width:158px;padding:2px 20px 0 50px;height:43px;background:url(../images/ico-register-form.png) 14px 14px #fff no-repeat;color:#c6c5c5;font-family:cabinbold,arial,helvetica,sans-serif;font-size:1.33em;-webkit-border-radius:4px;-moz-border-radius:4px;border-radius:4px;overflow:hidden}
-.reserved-area-form.login input{width:198px}
+.reserved-area-form.login input{width:250px}
 .reserved-area-form.login .submit input{width:auto}
 
 .reserved-area-form .organization input{width:404px}
