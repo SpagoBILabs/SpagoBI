@@ -45,6 +45,14 @@ Sbi.settings.geobi.browser = {
 	  , showCreateButton: false
 }; 
 
+
+/**
+ * Datasets
+ */
+Sbi.settings.dataset = {
+		hiddenActions: ['worksheet', 'qbe']
+};
+
 //Sbi.settings.browser = Ext.apply(Sbi.settings.browser,Sbi.settings.geobi.browser);
 
 Sbi.settings = Ext.apply(Sbi.settings,Sbi.settings.geobi);

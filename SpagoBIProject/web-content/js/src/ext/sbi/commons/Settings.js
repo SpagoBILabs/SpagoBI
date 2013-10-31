@@ -78,6 +78,12 @@ Sbi.settings.kpi = {
 		}
 };
 
+/**
+ * Datasets
+ */
+Sbi.settings.dataset = {
+		hiddenActions: []
+};
 
 /**
  * WIDGETS

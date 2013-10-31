@@ -141,7 +141,7 @@ Ext.define('Sbi.tools.dataset.DataSetsView', {
 			                                '<div class="box-actions-container">'+
 								            '    <ul class="box-actions">'+	    
 								            '		<tpl for="actions">'+  
-								        	' 			<tpl if="name != \'delete\' ">'+
+								        	' 			<tpl if="name != \'delete\' && this.includeActionsForGeoBI(name) == true ">'+
 									        ' 	       		<li class="{name}"><a href="#" title="{description}"></a></li>'+
 									        '			</tpl>'+
 									        '		</tpl>'+
@@ -171,7 +171,24 @@ Ext.define('Sbi.tools.dataset.DataSetsView', {
 						 '<div style="clear:left"></div>',
 //					'</ul>',
 //				'</div>',
-			'</div>'
+			'</div>',{
+			        	includeActionsForGeoBI: function(n){
+			        		var toReturn = true;
+			        		if (Sbi.settings.dataset.hiddenActions && Sbi.settings.dataset.hiddenActions.length > 0){
+			        			for (var i=0; i<Sbi.settings.dataset.hiddenActions.length; i++){
+			        				var iconToHide = Sbi.settings.dataset.hiddenActions[i];
+			        				if (iconToHide == n){
+			        					toReturn = false;
+			        					break;
+			        				}
+			        			}
+			        		}
+			        		//if (n == 'qbe' || n == 'worksheet') toReturn = false;
+			        		
+			        		return toReturn;
+			        	}
+			        		
+			        }
 		);
      
 		Sbi.debug('DataViewPanel tpl built.');
