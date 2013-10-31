@@ -218,9 +218,13 @@ public class LoginModule extends AbstractHttpModule {
 				} else {
 					// user must authenticate
 					logger.debug("User must authenticate");
-					String url = GeneralUtilities.getSpagoBiHost() + servletRequest.getContextPath();
-					response.setAttribute("start_url", url);
-					response.setAttribute(SpagoBIConstants.PUBLISHER_NAME, "login");
+					// set publisher name
+					String url = "/themes/" + currTheme	+ "/jsp/login.jsp";
+					getHttpRequest().getRequestDispatcher(url).forward(getHttpRequest(), getHttpResponse());
+					//orig:
+//					String url = GeneralUtilities.getSpagoBiHost() + servletRequest.getContextPath();
+//					response.setAttribute("start_url", url);
+//					response.setAttribute(SpagoBIConstants.PUBLISHER_NAME, "login");
 					logger.debug("OUT");
 					return;
 				}
