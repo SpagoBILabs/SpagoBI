@@ -233,7 +233,7 @@ Sbi.geo.control.Legend = OpenLayers.Class(OpenLayers.Control, {
         OpenLayers.Element.addClass(legendEditButton, "labelSpan olButton");
         legendEditButton.id = "LegendEditButton";
         legendEditButton._legendEditButton = this.id;
-        legendEditButton.innerHTML = "Modifica stile<\p> <\p> ";
+        legendEditButton.innerHTML = "<a style='color:#3d90d4;' href='#'>Modifica stile</a><\p>.<\p> ";
         this.legendContentElement.appendChild(legendEditButton);
         
         var legendContentBodyElement = document.createElement('div');
@@ -320,7 +320,7 @@ Sbi.geo.control.Legend = OpenLayers.Class(OpenLayers.Control, {
 		        x			: 80,
 		        y			: 30,
 		        resizable	: false,
-	            //closeAction : 'hide',
+	            closeAction : 'close',
 	            plain       : true,
 	            title		: 'Style settings',
 	            items       : [this.thematizerControlPanel],
@@ -331,7 +331,6 @@ Sbi.geo.control.Legend = OpenLayers.Class(OpenLayers.Control, {
                     	var themathizerOptions = this.thematizerControlPanel.getThemathizerOptions();
                         this.map.thematizer.thematize(themathizerOptions);
                         this.thematizerConfigurationWindow.close();
-                        this.thematizerConfigurationWindow = null;
                     },
                     scope: this
                 } , {
@@ -342,7 +341,6 @@ Sbi.geo.control.Legend = OpenLayers.Class(OpenLayers.Control, {
                     		 //this.thematizerControlPanel.synchronizeFormState();
                     	}
                     	this.thematizerConfigurationWindow.close();
-                    	this.thematizerConfigurationWindow = null;
                     }, 
                     scope: this
                     
@@ -364,6 +362,9 @@ Sbi.geo.control.Legend = OpenLayers.Class(OpenLayers.Control, {
 		this.thematizerConfigurationWindow.on("show", function(win) {
 			win.oldOptions = this.thematizerControlPanel.getThemathizerOptions();
 			win.optionChanged = false;
+		}, this);
+		this.thematizerConfigurationWindow.on("close", function(win) {
+			this.thematizerConfigurationWindow = null;
 		}, this);
 		
 		this.thematizerConfigurationWindow.show();

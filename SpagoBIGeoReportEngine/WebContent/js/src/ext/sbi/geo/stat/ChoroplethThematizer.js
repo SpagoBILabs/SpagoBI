@@ -347,7 +347,7 @@ Ext.extend(Sbi.geo.stat.ChoroplethThematizer, Sbi.geo.stat.Thematizer, {
     , updateLegend: function() {
     	
     	Sbi.trace("[ChoroplethThematizer.updateLegend] : IN");
-        
+    	 
     	if (!this.legendDiv) {
     		Sbi.trace("[ChoroplethThematizer.updateLegend] : legend div not defined");
     		Sbi.trace("[ChoroplethThematizer.updateLegend] : OUT");
@@ -374,6 +374,8 @@ Ext.extend(Sbi.geo.stat.ChoroplethThematizer, Sbi.geo.stat.Thematizer, {
             element.style.clear = "left";
             this.legendDiv.appendChild(element);
         }
+        
+        Sbi.trace("[ChoroplethThematizer.updateLegend] : OUT");
     }
 });
 

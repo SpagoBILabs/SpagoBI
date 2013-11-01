@@ -503,14 +503,14 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
      * @param {Object} meta the store's metadata as returned from measure catalogue service
      */
     , setData: function(store, meta) {
-    	Sbi.trace("[Thematizer.setData] : IN");
+    	Sbi.trace("[Thematizer.setData] : IN " + store.getTotalCount());
     	
     	if(this.active === false) {
     		Sbi.trace("[Thematizer.setData] : thematizer is not active");
     		this.pendingSetData = true;
     		this.store = store;
     		this.meta = meta;
-    		Sbi.trace("[Thematizer.setData] : IN");
+    		Sbi.trace("[Thematizer.setData] : OUT");
     		return;
     	}
     	
@@ -603,17 +603,7 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
 	     
 	     var features = format.read(layer);
 	     newFeatures = features;
-	     
-//	     var newFeatures = new Array();	     
-//	     for(var i = 0; i < features.length; i++) {
-//	    	var f =  features[i];
-//	    	var centroid = f.geometry.getCentroid();
-//	    	
-//	    	var newFeature = new OpenLayers.Feature.Vector( centroid, f.attributes, f.style);
-//	    	newFeatures.push(newFeature);
-//	    	Sbi.debug("[Thematizer.setLayer] : centroid [" + i + "] equals to [" + centroid.x + "," + centroid.y + "]");
-//	     }
-	     
+	   
 	     this.setFeatures(newFeatures);
 
 		 Sbi.trace("[Thematizer.setLayer] : OUT");
@@ -624,6 +614,7 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
 	     this.layer.addFeatures(features);
 		 this.layer.renderer.clear();
 	     this.layer.redraw();
+	     this.map.zoomToExtent(this.layer.getDataExtent());
     }
 
     , getAttributeFilters: function(store, meta){
@@ -1120,7 +1111,7 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
      * indicator's values from store. Can we marge the code?
      */
     , getFeatureIdsFromStore: function() {
-    	Sbi.trace("[Thematizer.getFeatureIdsFromStore]: IN");
+    	Sbi.trace("[Thematizer.getFeatureIdsFromStore]: IN " + this.store.getTotalCount());
     	var storeIdFiledName;
     	var records = this.store.getRange(0,1);
 	 	for(var n = 0; n < records[0].fields.getCount(); n++) {
@@ -1142,7 +1133,7 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
     	
     	this.showMask("Loading layer [" + this.layerName + "] ...");
     	
-    	try {
+    	//try {
 	    	Sbi.debug("[Thematizer.loadLayer]: onSuccess callback defined [" + (onSuccess != undefined) + "]");
 	    	Sbi.debug("[Thematizer.loadLayer]: onFailure callback defined [" + (onFailure != undefined) + "]");
 	    	
@@ -1190,9 +1181,9 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
 	     		, scope: this
 	     	});
 	     	*/
-    	} catch (e) {
-    		Sbi.exception.ExceptionHandler.showErrorMessage('An unexpected error occured whiel loading layer [' + this.layerName + ']: ' + e, 'Internal error');
-    	}
+//    	} catch (e) {
+//    		Sbi.exception.ExceptionHandler.showErrorMessage('An unexpected error occured whiel loading layer [' + this.layerName + ']: ' + e, 'Internal error');
+//    	}
      	
      	
      	Sbi.trace("[Thematizer.loadLayer]: OUT");
@@ -1344,20 +1335,11 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
         
         var format = this.format || new OpenLayers.Format.GeoJSON();
         
-        var features = format.read(doc);
-        var newFeatures = features;
-        
-//	    var newFeatures = new Array();
-//	    for(var i = 0; i < features.length; i++) {
-//	    	var f =  features[i];
-//	    	var centroid = f.geometry.getCentroid();
-//	    	var newFeature = new OpenLayers.Feature.Vector( centroid, f.attributes, f.style);
-//	    	newFeatures.push(newFeature);
-//	    	Sbi.debug("[Thematizer.setLayer] : centroid [" + i + "] equals to [" + centroid.x + "," + centroid.y + "]");
-//	    }
-	     
+        var features = format.read(doc); 
         this.layer.removeAllFeatures();
-        this.layer.addFeatures( newFeatures );
+        this.layer.addFeatures( features );
+        this.map.zoomToExtent(this.layer.getDataExtent());
+            
         this.requestSuccess(response);
         
         this.hideMask();

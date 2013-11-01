@@ -180,11 +180,27 @@ Ext.extend(Sbi.geo.stat.ProportionalSymbolThematizer, Sbi.geo.stat.Thematizer, {
      *    Update the legendDiv content with new bins label
      */
     , updateLegend: function() {
+    	Sbi.trace("[ProportionalSymbolThematizer.updateLegend] : IN");
+    	
         if (!this.legendDiv) {
+        	Sbi.trace("[ProportionalSymbolThematizer.updateLegend] : legend div not defined");
+    		Sbi.trace("[ProportionalSymbolThematizer.updateLegend] : OUT");
             return;
         }
-        this.legendDiv.innerHTML = "Needs to be done !";
-        // TODO use css classes instead
+        
+        this.legendDiv.update(""); 
+        var element = document.createElement("div");
+        element.innerHTML = "The dimension of each circle's</br>" +
+        					"radius is directly proportional</br>" +
+        					"to the measure od the indicator</br>";
+        this.legendDiv.appendChild(element);
+        
+        var element = document.createElement("div");
+        element.style.clear = "left";
+        this.legendDiv.appendChild(element);
+
+
+        Sbi.trace("[ProportionalSymbolThematizer.updateLegend] : OUT");
     }
     /**
      * @method
