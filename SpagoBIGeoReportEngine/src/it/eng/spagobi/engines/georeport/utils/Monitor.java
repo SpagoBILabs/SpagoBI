@@ -33,7 +33,7 @@ public class Monitor {
 	public static long elapsed(String activityName) {
 		long now = System.currentTimeMillis();
 		Long startTime = activities.get(activityName);
-		return startTime.longValue() - now;
+		return now - startTime.longValue();
 	}
 	
 	public static long stop(String activityName) {
