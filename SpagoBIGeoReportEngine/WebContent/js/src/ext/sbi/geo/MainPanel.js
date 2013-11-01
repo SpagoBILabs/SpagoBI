@@ -181,7 +181,15 @@ Ext.extend(Sbi.geo.MainPanel, Ext.Panel, {
 		
 		template.geoId = this.geoId;
 				
-		template.analysisConf = thematizer.getAnalysisConf();
+		// TODO we assume that different thematizer have no property with the same name
+		// this must be improved in order to manage overlapps in the respect of
+		// old versions
+		template.analysisConf = {};
+		for(var t in this.mapComponent.thematizers) {
+			template.analysisConf = Ext.apply(template.analysisConf
+					, this.mapComponent.thematizers[t].getAnalysisConf());
+		}
+		//template.analysisConf = thematizer.getAnalysisConf();
 				
 		template.selectedBaseLayer = this.selectedBaseLayer;
 		for(var i=0; i < this.map.getNumLayers(); i++) {

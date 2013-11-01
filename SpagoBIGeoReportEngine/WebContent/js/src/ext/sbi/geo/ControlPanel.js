@@ -877,7 +877,6 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 		Sbi.trace("[ControlPanel.onThematizerSelected]: IN");
 		
 		if (el.id != list.item(0).first().id){
-			
 			var oldThematizer = this.mapComponnet.getActiveThematizer();
 			var newThematizer = null;
 			
@@ -885,43 +884,35 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 				oldThematizer.features = oldThematizer.layer.features;
 			}
 			
+			var thematizationOptions = {};
 			if(el.id === 'li-map-zone') {
 				Sbi.trace("[ControlPanel.onThematizerSelected]: activating choropleth thematizer...");
+				var t = this.mapComponnet.thematizers['choropleth'];
+				var isFirstActivation = t.isFirstActivation;
+				
 				this.mapComponnet.activateThematizer('choropleth');
 				newThematizer = this.mapComponnet.getActiveThematizer();
-//				if(newThematizer.features && newThematizer.features.length > 0) {
-//					newThematizer.layer.removeAllFeatures();
-//					newThematizer.layer.addFeatures( newThematizer.features );
-//				} else {
-//					alert("Error");
-//				}
+				
+				if(isFirstActivation) {
+					Sbi.trace("[ControlPanel.onThematizerSelected]: is the first activation");
+					thematizationOptions = this.getThematizerOptions(this.analysisConf);
+				}
 			} else if (el.id === 'li-map-point'){
 				Sbi.trace("[ControlPanel.onThematizerSelected]: activating proportionalSymbols thematizer...");
+				var t = this.mapComponnet.thematizers['proportionalSymbols'];
+				var isFirstActivation = t.isFirstActivation;
+				
 				this.mapComponnet.activateThematizer('proportionalSymbols');
 				newThematizer = this.mapComponnet.getActiveThematizer();
-//				if(newThematizer.features && newThematizer.features.length > 0) {
-//					Sbi.trace("[ControlPanel.onThematizerSelected]: restore centroid features");
-//					newThematizer.layer.removeAllFeatures();
-//					newThematizer.layer.addFeatures( newThematizer.features );
-//				} else {
-//					Sbi.trace("[ControlPanel.onThematizerSelected]: restore centroid features");
-//					 var newFeatures = new Array();
-//					 for(var i = 0; i < oldThematizer.features.length; i++) {
-//					   	var f =  oldThematizer.features[i];
-//					   	var centroid = f.geometry.getCentroid();
-//					   	var newFeature = new OpenLayers.Feature.Vector( centroid, f.attributes, f.style);
-//					   	newFeatures.push(newFeature);
-//					   	//Sbi.debug("[Thematizer.setLayer] : centroid [" + i + "] equals to [" + centroid.x + "," + centroid.y + "]");
-//					   	newThematizer.layer.removeAllFeatures();
-//						newThematizer.layer.addFeatures( newFeatures );
-//					 }
-//				}
+				
+				if(isFirstActivation) {
+					Sbi.trace("[ControlPanel.onThematizerSelected]: is the first activation");
+					thematizationOptions = this.getThematizerOptions(this.analysisConf);
+				}
 			}
 			
-			
-			newThematizer.thematize({
-				indicator: oldThematizer.indicator
-			});
+			thematizationOptions.indicator = oldThematizer.indicator;
+			newThematizer.thematize(thematizationOptions);
 			
 			
 			this.selectedThematizationOptionId =  el.id;
@@ -972,15 +963,15 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 		alert("openIndicatorDetail: " + el);
 	}
 	
-	, setAnalysisConf: function(analysisConf) {
+	
+	, getThematizerOptions: function(analysisConf) {
 		//This inizialize the required options for thematizerControlPanel
-		Sbi.debug("[ControlPanel.setAnalysisConf]: IN");
+		Sbi.debug("[getThematizerOptions.setAnalysisConf]: IN");
 		
-		Sbi.debug("[ControlPanel.setAnalysisConf]: analysisConf = " + Sbi.toSource(analysisConf));
+		Sbi.debug("[getThematizerOptions.setAnalysisConf]: analysisConf = " + Sbi.toSource(analysisConf));
 		
 		var formState = Ext.apply({}, analysisConf || {});
-		
-		
+	
 		var thematizerOptions = {};
 		
 		if(this.mapComponnet.activeThematizerName === "choropleth") {
@@ -1008,12 +999,19 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 			thematizerOptions.colors[1].setFromHex(formState.toColor);
 			thematizerOptions.indicator = formState.indicator;
 		} else if(this.mapComponnet.activeThematizerName === "proportionalSymbols") {
-			thematizerOptions.minRadiusSize = formState.minRadiusSize;
-			thematizerOptions.maxRadiusSize = formState.maxRadiusSize;
+			thematizerOptions.minRadiusSize = formState.minRadiusSize || 2;
+			thematizerOptions.maxRadiusSize = formState.maxRadiusSize || 20;
 			thematizerOptions.indicator = formState.indicator;
 		}
 		
+		Sbi.debug("[getThematizerOptions.setAnalysisConf]: OUT");
+		return thematizerOptions; 
+	}
+	
+	, setAnalysisConf: function(analysisConf) {
+		Sbi.debug("[ControlPanel.setAnalysisConf]: IN");
 		
+		var thematizerOptions = this.getThematizerOptions(analysisConf);
 		this.mapComponnet.getActiveThematizer().thematize(thematizerOptions);
 		
 		Sbi.debug("[ControlPanel.setAnalysisConf]: OUT");
