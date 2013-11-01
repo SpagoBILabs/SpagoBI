@@ -91,11 +91,25 @@ Ext.extend(Sbi.geo.stat.ProportionalSymbolThematizer, Sbi.geo.stat.Thematizer, {
     			this.updateOptions(options);
     		}
         }
+    	
+    	Sbi.trace("[ProportionalSymbolThematizer.thematize] : Checking if the thematizer is ready ...");
+    	if(this.indicatorContainer == "store" && this.isThematizerReady() == false) {
+    		Sbi.debug("[ProportionalSymbolThematizer.thematize] : thematizatoin aborted because the store is not ready");
+    		Sbi.trace("[ProportionalSymbolThematizer.thematize] : OUT");
+    		return;
+    	}
+    	
+    	Sbi.trace("[ProportionalSymbolThematizer.thematize] : Thematizer is ready so we can go on with thematization");
         
         var calculateRadius = OpenLayers.Function.bind(
             function(feature) {
             	var size;
             	
+            	var featureId = feature.attributes[this.layerId];
+            	if(featureId == undefined || featureId == null) {
+            		Sbi.warn("[ProportionalSymbolThematizer.thematize] :Impossible to extract [" + this.layerId + "] form feature");
+            		return 0;
+            	}
             	var dataPoint = this.distribution.getDataPoint([ feature.attributes[this.layerId] ]);
             	if(dataPoint) {
             		 var value = dataPoint.getValue();
@@ -133,9 +147,14 @@ Ext.extend(Sbi.geo.stat.ProportionalSymbolThematizer, Sbi.geo.stat.Thematizer, {
     , classify: function() {
     	Sbi.trace("[ProportionalSymbolThematizer.classify] : IN");
         
-    	this.distribution = this.getDistribution(this.indicator);
-    	Sbi.debug("[ChoroplethThematizer.setClassification] : Extracted [" + this.distribution.getSize() + "] values for indicator [" + this.indicator + "]");
-            
+    	if(this.indicatorContainer != 'store' 
+    		|| (this.indicatorContainer == "store" && this.isStoreReady() == true)) {
+    		this.distribution = this.getDistribution(this.indicator);
+        	Sbi.debug("[ProportionalSymbolThematizer.setClassification] : Extracted [" + this.distribution.getSize() + "] values for indicator [" + this.indicator + "]");
+    	} else {
+    		Sbi.trace("[ProportionalSymbolThematizer.classify] : classification not performed because the store is not ready");
+    	}
+    	   
         Sbi.trace("[ProportionalSymbolThematizer.classify] : OUT");
     }
     
@@ -172,7 +191,7 @@ Ext.extend(Sbi.geo.stat.ProportionalSymbolThematizer, Sbi.geo.stat.Thematizer, {
              }
         }
        
-        Sbi.trace("[ProportionalSymbolThematizer.updateOptions] : IN");
+        Sbi.trace("[ProportionalSymbolThematizer.updateOptions] : OUT");
     }    
     
     /**

@@ -865,57 +865,6 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
         
         this.legendDiv = Ext.get(this.options.legendDiv);
         
-        //this.activate();
-        
-        /*
-        // get features from web service if a url is specified
-        if (this.loadLayerServiceName && this.layerId && this.indicatorContainer != 'store') {
-        	// if indicator container is store we will load te layer only after the store has been succesfully loaded
-        	Sbi.debug("[Thematizer.initialize]: Url attribute has been valorized to [" + Sbi.toSource(url) + "]. Features will be loaded from it");
-        	this.loadLayer();
-        } else {
-        	Sbi.debug("[Thematizer.initialize]: Url attribute or layerId has not been valorized");
-        }
-        
-        this.legendDiv = Ext.get(options.legendDiv);
-        
-        if(this.indicatorContainer == 'store') {
-        	
-        	Sbi.debug("[Thematizer.initialize]: Property [indicatorContainer] is equal to [store]");
-        	
-        	if(this.storeType === 'physicalStore') {
-        		Sbi.debug("[Thematizer.initialize]: Loading physical store...");
-        		this.store.on('metachange', function(store, meta) {
-        			this.meta = meta;
-        		}, this);
-        		this.store.on('load', this.onPhysicalStoreLoaded, this);
-        		
-        		this.store.on('loadexception', function(store, options, response, e) {
-        			Sbi.exception.ExceptionHandler.showErrorMessage("Error: " + e , "Impossible to load store");
-        		});
-        		
-            	if(this.storeReload == true) {
-            		this.loadPhysicalStore();
-            	} else {
-            		Sbi.debug("[Thematizer.initialize]: Physical store already loaded. It doesn't need to be reloaded");
-            	}
-        	} else if(this.storeType === 'virtualStore') {
-        		Sbi.debug("[Thematizer.initialize]: Loading virtual store...");
-        		if(this.storeConfig.params) {
-	        		this.loadVirtualStore();
-	        	} else {
-	        		Sbi.warn("[Thematizer.initialize]: Virtual store wont be loaded because [storeConfig.params] is not defined");
-	        	}
-        	} else {
-        		Sbi.debug("[Thematizer.initialize]: Property [storeType] value [" + this.storeType + "] is not valid");
-        	}
-        } else if(this.indicatorContainer == 'layer') {
-        	Sbi.debug("[Thematizer.initialize]: Property [indicatorContainer] is equal to [layer]");
-        } else {
-        	Sbi.warn("[Thematizer.initialize]: Property [indicatorContainer] is equal to [" + this.indicatorContainer + "]");
-        }
-        */
-        
         Sbi.trace("[Thematizer.initialize]: OUT");
      }
      , deactivate: function(){
@@ -927,10 +876,11 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
     		 this.cachedFeatures = this.layer.features;
     		 Sbi.trace("[Thematizer.deactivate]: layer's features succesfully cached");
     	 }
-    			 
+    			
+    	 
     	 Sbi.trace("[Thematizer.deactivate]: OUT");
      }
-     
+     , isFirstActivation: true
      , activate: function(){
     	 
     	 Sbi.trace("[Thematizer.activate]: IN");
@@ -950,11 +900,11 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
     		 if(this.cachedFeatures != null) {
     			 this.setFeatures(this.cachedFeatures);
     		 }
-    		 this.isFirstActivation = false;
     		     		 
     		 Sbi.trace("[Thematizer.activate]: OUT");
     		 return;
     	 }
+    	 this.isFirstActivation = false;
     	 
     	 // get features from web service if a url is specified
          if (this.loadLayerServiceName && this.layerId && this.indicatorContainer != 'store') {
@@ -1282,6 +1232,33 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
     	 Sbi.debug("[Thematizer.loadPhysicalStore]: OUT");
      }
      
+     /**
+      * used during thematization to decide if go or stop the proces. the store can be not ready
+      * because it is in loding phase.
+      */
+     , isStoreReady: function() {
+    	 Sbi.trace("[Thematizer.isStoreReady]: IN");
+    	 var isReady = this.storeId != null && this.store != null;
+    	 Sbi.trace("[Thematizer.isStoreReady]: Store is ready [" + isReady + "]");
+    	 Sbi.trace("[Thematizer.isStoreReady]: OUT");
+    	 return isReady;
+     }     
+     
+     , isLayerReady: function() {
+    	 Sbi.trace("[Thematizer.isLayerReady]: IN");
+    	 var isReady = this.layerId != null && this.layer != null && this.layer.features && this.layer.features.length > 0;
+    	 Sbi.trace("[Thematizer.isLayerReady]: Layer is ready [" + isReady + "]");
+    	 Sbi.trace("[Thematizer.isLayerReady]: OUT");
+    	 return isReady;
+     }
+     
+     , isThematizerReady: function() {
+    	 Sbi.trace("[Thematizer.isThematizerReady]: IN");
+    	 var isReady = this.isStoreReady() && this.isLayerReady();
+    	 Sbi.trace("[Thematizer.isThematizerReady]: Thematizer is ready [" + isReady + "]");
+    	 Sbi.trace("[Thematizer.isThematizerReady]: OUT");
+    	 return isReady;
+     }
     
      /**
       * @method 

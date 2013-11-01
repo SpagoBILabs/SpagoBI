@@ -39,6 +39,7 @@ Ext.extend(Sbi.geo.stat.DataPoint, Ext.util.Observable, {
 	 * exactly the same datapoint of coordinate ['MILANO', 'geNNaio']
 	 */
 	, coordinatesAreEqualTo: function(c, isCaseSensitive) {
+		if(c === undefined || c === null) return false;
 		isCaseSensitive = isCaseSensitive || false;
 		for(var i = 0; i < this.coordinates.length; i++) {
 			if(isCaseSensitive) {
