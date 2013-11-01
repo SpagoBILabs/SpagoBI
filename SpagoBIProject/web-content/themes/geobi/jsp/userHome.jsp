@@ -97,12 +97,14 @@ Ext.onReady(function () {
 	
 	var firstUrl =  '<%= StringEscapeUtils.escapeJavaScript(firstUrlToCall) %>';  
 	firstUrlTocallvar = firstUrl;
+	
     Ext.tip.QuickTipManager.init();
-    this.mainframe = Ext.create('Ext.ux.IFrame', 
-    			{ xtype: 'uxiframe'
-  	  			, src: firstUrl
-  	  		//	, height: '100%'
-  	  			});
+    this.mainframe = Ext.create(
+    	'Ext.ux.IFrame', 
+    	{ xtype: 'uxiframe'
+  	  	, src: firstUrl
+  	  	}
+    );
     
     this.titlePath = Ext.create("Ext.Panel",{title :'Home'});
     
@@ -115,7 +117,7 @@ Ext.onReady(function () {
  	var bannerHTML = 
  		'	<header class="header" id="header"> '+
 		'		<div class="aux"> '+
-		'			<a href="#" id="logo">GeoBI - Geographic Business Intelligence</a> '+
+		'			<a href="http://geobi.info" id="logo">GeoBI - Geographic Business Intelligence</a> '+
 		'	        <nav class="main-buttons"> '+
 		'	        	<ul> '+
 		'	            	<li class="btn-maps"><a href="<%=mapsUrl%>">'+LN('sbi.generic.maps')+'<span></span></a></li> '+
@@ -126,9 +128,9 @@ Ext.onReady(function () {
 		'	    <div class="top-bar user-logged" id="top-bar"> '+
 		'	        <nav class="aux"> '+
 		'	            <ul class="top-menu" id="top-menu"> '+
-		'	                <li class="first"><a href="#">'+LN('home.header.geoBIProject')+'</a></li> '+
-		'	                <li><a href="#">'+LN('home.header.tutorial')+'</a></li> '+
-		'	                <li><a href="#">'+LN('home.herader.conditions')+'</a></li> '+
+		'	                <li class="first"><a href="http://geobi.info">'+LN('home.header.geoBIProject')+'</a></li> '+
+		'	                <li><a href="http://geobi.info/help">'+LN('home.header.tutorial')+'</a></li> '+
+		'	                <li><a href="http://geobi.info/terms">'+LN('home.herader.conditions')+'</a></li> '+
 		'	                <li class="user last"><a href="#"><span class="name">'+Sbi.user.userName+'</a>';
 		if (Sbi.user.userId !== 'public_user'){
 			bannerHTML += 
@@ -172,9 +174,9 @@ Ext.onReady(function () {
 				    ' 	<p><a href="#">Impressum & Privacy</a> | <a href="#">Forum & FAQs</a></p>' +
 				    '</div>' +
 				    '<ul class="logos">' +
-				    '	<li class="tis"><a href="#">'+LN('home.footer.logo.tis')+'</a></li>' +
-				    '   <li class="pab"><a href="#">'+LN('home.footer.logo.pab')+'</a></li>' +
-				    '   <li class="ue"><a href="#">'+LN('home.footer.logo.ue')+'</a></li>' +
+				    '	<li class="tis"><a href="http://www.tis.bz.it/">'+LN('home.footer.logo.tis')+'</a></li>' +
+				    '   <li class="pab"><a href="http://www.provinz.bz.it/">'+LN('home.footer.logo.pab')+'</a></li>' +
+				    '   <li class="ue"><a href="http://www.provinz.bz.it/europa/">'+LN('home.footer.logo.ue')+'</a></li>' +
 				    '</ul>' +
 				'</div>' +
 			'</footer>';
