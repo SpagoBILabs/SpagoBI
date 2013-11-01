@@ -618,8 +618,8 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 					var indEl = this.indicators[i];
 					var clsName = (i==0)?'first':'disabled';
 					toReturn += ''+
-					'<li class="'+clsName+'" id="indicator'+i+'"><span class="button">'+
-						'<a href="#" class="tick" onclick="javascript:Ext.getCmp(\'controlPanel\').onIndicatorSelected(\'indicator'+i+'\',\''+indEl[0]+'\');"></a>'+ indEl[1]+
+					'<li class="'+clsName+'" id="indicator'+i+'"><span class="button" onclick="javascript:Ext.getCmp(\'controlPanel\').onIndicatorSelected(\'indicator'+i+'\',\''+indEl[0]+'\');">'+
+						'<a href="#" class="tick"></a>'+ indEl[1]+
 		            '</li>' ;	
 				}
 		       toReturn +=''+
