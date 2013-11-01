@@ -149,12 +149,22 @@ Ext.extend(Sbi.geo.stat.ChoroplethThematizer, Sbi.geo.stat.Thematizer, {
     	   
     	if (options) {
     		if(options.resetClassification) {
-    			this.setClassification();
+    			this.classify();
     		} else {
     			this.updateOptions(options);
     		}
         }
     	  
+    	Sbi.trace("[ChoroplethThematizer.thematize] : Checking if the thematizer is ready ...");
+    	if(this.indicatorContainer == "store" && this.isThematizerReady() == false) {
+    		Sbi.debug("[ChoroplethThematizer.thematize] : thematizatoin aborted because the store is not ready");
+    		Sbi.trace("[ChoroplethThematizer.thematize] : OUT");
+    		return;
+    	}
+    	
+    	Sbi.trace("[ChoroplethThematizer.thematize] : Thematizer is ready so we can go on with thematization");
+        
+    	
     	var bins = this.classification.getBins(); 
     	var filters = new Array(bins.length);
     	var rules = new Array(bins.length);
@@ -232,21 +242,27 @@ Ext.extend(Sbi.geo.stat.ChoroplethThematizer, Sbi.geo.stat.Thematizer, {
      */
     , classify: function() {
     	Sbi.trace("[ChoroplethThematizer.classify] : IN");
+    	
+    	if(this.indicatorContainer != 'store' 
+    		|| (this.indicatorContainer == "store" && this.isStoreReady() == true)) {
         
-    	var distribution = this.getDistribution(this.indicator);
-    	Sbi.debug("[ChoroplethThematizer.setClassification] : Extracted [" + distribution.getSize() + "] values for indicator [" + this.indicator + "]");
-        
-        var classificationOptions = {
-            'labelGenerator' : this.options.labelGenerator
-        };
-        
-        var classifier = new Sbi.geo.stat.Classifier({distribution: distribution, classificationOptions: classificationOptions});
-        this.classification = classifier.classify(
-            this.method,
-            this.numClasses,
-            null
-        );
-        this.createColorInterpolation();
+		    	var distribution = this.getDistribution(this.indicator);
+		    	Sbi.debug("[ChoroplethThematizer.setClassification] : Extracted [" + distribution.getSize() + "] values for indicator [" + this.indicator + "]");
+		        
+		        var classificationOptions = {
+		            'labelGenerator' : this.options.labelGenerator
+		        };
+		        
+		        var classifier = new Sbi.geo.stat.Classifier({distribution: distribution, classificationOptions: classificationOptions});
+		        this.classification = classifier.classify(
+		            this.method,
+		            this.numClasses,
+		            null
+		        );
+		        this.createColorInterpolation();
+    	} else {
+    		Sbi.trace("[ChoroplethThematizer.classify] : classification not performed because the store is not ready");
+    	}
         
         Sbi.trace("[ChoroplethThematizer.classify] : OUT");
     }
@@ -256,7 +272,10 @@ Ext.extend(Sbi.geo.stat.ChoroplethThematizer, Sbi.geo.stat.Thematizer, {
      * @deperecated use #classify instead
      */
     , setClassification: function() {
+    	Sbi.trace("[ChoroplethThematizer.setClassification] : IN");
+    	Sbi.warn("[ChoroplethThematizer.setClassification] : Method [setClassification] is deprecated. Use method [classify] instead");
     	this.classify();
+    	Sbi.trace("[ChoroplethThematizer.setClassification] : IN");
     }
     
     
