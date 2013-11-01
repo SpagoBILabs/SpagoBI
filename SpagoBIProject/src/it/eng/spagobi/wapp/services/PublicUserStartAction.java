@@ -5,6 +5,8 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.wapp.services;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -19,6 +21,7 @@ import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.service.AbstractBaseHttpAction;
 import it.eng.spagobi.utilities.themes.ThemesManager;
+import it.eng.spagobi.wapp.util.MenuUtilities;
 
 import org.apache.log4j.Logger;
 
@@ -44,13 +47,16 @@ public class PublicUserStartAction extends AbstractBaseHttpAction{
 			IEngUserProfile userProfile = GeneralUtilities.createNewUserProfile(SpagoBIConstants.PUBLIC_USER_ID);
 			permSess.setAttribute(IEngUserProfile.ENG_USER_PROFILE, userProfile);
 			
+			List lstMenu = MenuUtilities.getMenuItems(userProfile);		
+			httpRequest.getSession().setAttribute(MenuUtilities.LIST_MENU, lstMenu);
+			
 			//defining url for user home with theme
 			ConfigSingleton config = ConfigSingleton.getInstance();
 			String currTheme=ThemesManager.getCurrentTheme(reqCont);
 	    	if(currTheme==null)currTheme=ThemesManager.getDefaultTheme();
 			logger.debug("theme: "+currTheme);
-			
 			String url = "/themes/" + currTheme	+ "/jsp/publicUserHome.jsp";
+			
 			httpRequest.getRequestDispatcher(url).forward(httpRequest, httpResponse);
 			
 
