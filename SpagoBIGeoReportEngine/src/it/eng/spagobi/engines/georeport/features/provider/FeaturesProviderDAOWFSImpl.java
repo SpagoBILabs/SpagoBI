@@ -5,6 +5,7 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.engines.georeport.features.provider;
 
+import it.eng.spagobi.engines.georeport.utils.Monitor;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.io.BufferedReader;
@@ -115,9 +116,15 @@ public class FeaturesProviderDAOWFSImpl implements IFeaturesProviderDAO {
 			// wfs call
 			
 			url =  buildURL(wfsUrl);
+			Monitor.start("FeaturesProviderDAOWFSImpl.openConnection");
+			logger.debug("Opening connection with url [" + wfsUrl + "]...");
 	    	connection = url.openConnection();
+	    	logger.debug("Conncetion succesfully opened in [" + Monitor.elapsed("FeaturesProviderDAOWFSImpl.openConnection")+ "] ms");
+	    	
 	        
 	    	// Get the response
+	    	Monitor.start("FeaturesProviderDAOWFSImpl.loadingLayer");
+			logger.debug("Loading layer ...");
 	        BufferedReader rd = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 	        StringBuffer sb = new StringBuffer();
 	        String line;
@@ -126,11 +133,15 @@ public class FeaturesProviderDAOWFSImpl implements IFeaturesProviderDAO {
 	        }
 	        rd.close();
 	        result = sb.toString();
-	       
-	      
+	        logger.debug("Layer succesfully loaded in [" + Monitor.elapsed("FeaturesProviderDAOWFSImpl.loadingLayer")+ "] ms");
+	    	
+	        Monitor.start("FeaturesProviderDAOWFSImpl.parsingResponse");
+			logger.debug("Parseing response ...");
 	    	Reader reader = new StringReader( result );
 	    	FeatureJSON featureJSON = new FeatureJSON();
 		    featureCollection = featureJSON.readFeatureCollection(reader);
+		    logger.debug("Response succesfully parsed in [" + Monitor.elapsed("FeaturesProviderDAOWFSImpl.parsingResponse")+ "] ms");
+	    	
 	    } catch(Throwable t){
 	    	throw new SpagoBIRuntimeException("An unexpected error occured while executing service call [" + wfsUrl + "]", t);
 	    }finally {
@@ -153,6 +164,8 @@ public class FeaturesProviderDAOWFSImpl implements IFeaturesProviderDAO {
 		} catch(Throwable t) {
 			throw new SpagoBIRuntimeException("An unexpected error occured while buildin url for address [" + wfsUrl + "]", t);
 		}
+		
+		logger.debug("OUT");
     	
     	return url;
 	}

@@ -44,6 +44,7 @@ import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
 import org.geotools.geojson.feature.FeatureJSON;
 import org.json.JSONArray;
 import org.opengis.feature.Feature;
+import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
@@ -126,7 +127,7 @@ public class GetTargetLayerAction extends AbstractBaseServlet {
 				IFeaturesProviderDAO featuresProvider = FeaturesProviderDAOFactory.getFeaturesProviderDAO(featureSourceType);
 				outputFeatureCollection = featuresProvider.getAllFeatures(featureSource, layerName);	
 				Assert.assertNotNull(outputFeatureCollection, "The feature source returned a null object");
-				logger.debug("GetTargetLayerAction.getFeature" + Monitor.elapsed("GetTargetLayerAction.getFeature"));
+				logger.debug("GetTargetLayerAction.getFeature " + Monitor.elapsed("GetTargetLayerAction.getFeature"));
 				
 				LayerCache.cache.put(layerName, outputFeatureCollection);
 			} catch(Throwable t2) {
@@ -158,13 +159,19 @@ public class GetTargetLayerAction extends AbstractBaseServlet {
 				idIndex.put(s,s);
 			}
 			FeatureIterator it = outputFeatureCollection.features();
-			 List<SimpleFeature> list = new ArrayList<SimpleFeature>();
+			List<SimpleFeature> list = new ArrayList<SimpleFeature>();
 			while(it.hasNext()) {
 				SimpleFeature f  = (SimpleFeature)it.next();
-				String id = (String)f.getProperty(layerId).getValue();
-				if(idIndex.containsKey(id)) {
-					list.add(f);
+				Property property = f.getProperty(layerId);
+				if(property != null) {
+					String id = (String)f.getProperty(layerId).getValue();
+					if(idIndex.containsKey(id)) {
+						list.add(f);
+					}
+				} else {
+					logger.warn("Impossible to read attribute [" + layerId + "] from feature [" + f + "]");
 				}
+				
 			}
 			
 			FeatureCollection<SimpleFeatureType, SimpleFeature> filteredOutputFeatureCollection = DataUtilities.collection( list ); 
@@ -173,9 +180,9 @@ public class GetTargetLayerAction extends AbstractBaseServlet {
 			FeatureJSON featureJSON = new FeatureJSON();	
 			String responseFeature = featureJSON.toString(filteredOutputFeatureCollection);
 			servletIOManager.tryToWriteBackToClient(responseFeature);
-			logger.debug("GetTargetLayerAction.flushResponse" + Monitor.elapsed("GetTargetLayerAction.flushResponse"));
+			logger.debug("GetTargetLayerAction.flushResponse " + Monitor.elapsed("GetTargetLayerAction.flushResponse"));
 			
-			logger.debug("GetTargetLayerAction.doService" + Monitor.elapsed("GetTargetLayerAction.doService"));
+			logger.debug("GetTargetLayerAction.doService " + Monitor.elapsed("GetTargetLayerAction.doService"));
 		} catch(Throwable t) {
 			logger.error("An unexpected error occured while loading target layer", t);
 			try {
