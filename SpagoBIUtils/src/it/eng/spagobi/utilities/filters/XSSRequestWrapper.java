@@ -65,6 +65,9 @@ public class XSSRequestWrapper extends HttpServletRequestWrapper {
             // Avoid anything between script tags
             Pattern scriptPattern = Pattern.compile("<script>(.*?)</script>", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
             value = scriptPattern.matcher(value).replaceAll("");
+            
+            scriptPattern = Pattern.compile("&lt;script&gt;(.*?)&lt;/script&gt;", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
+            value = scriptPattern.matcher(value).replaceAll("");
 
             // Avoid anything in a src='...' type of expression
             scriptPattern = Pattern.compile("src[\r\n]*=[\r\n]*\\\'(.*?)\\\'", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
@@ -76,9 +79,15 @@ public class XSSRequestWrapper extends HttpServletRequestWrapper {
             // Remove any lonesome </script> tag
             scriptPattern = Pattern.compile("</script>", Pattern.CASE_INSENSITIVE);
             value = scriptPattern.matcher(value).replaceAll("");
+            
+            scriptPattern = Pattern.compile("&lt;/script&gt;", Pattern.CASE_INSENSITIVE);
+            value = scriptPattern.matcher(value).replaceAll("");
 
             // Remove any lonesome <script ...> tag
             scriptPattern = Pattern.compile("<script(.*?)>", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
+            value = scriptPattern.matcher(value).replaceAll("");
+            
+            scriptPattern = Pattern.compile("&lt;script(.*?)&gt;", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
             value = scriptPattern.matcher(value).replaceAll("");
 
             // Avoid eval(...) expressions
@@ -109,18 +118,32 @@ public class XSSRequestWrapper extends HttpServletRequestWrapper {
             Pattern aPattern = Pattern.compile("<a(.*?)</a>", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
             value = aPattern.matcher(value).replaceAll("");
             
+            aPattern = Pattern.compile("<a(.*?/)>", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
+            value = aPattern.matcher(value).replaceAll("");
+            
+            aPattern = Pattern.compile("&lt;a(.*?)&lt;/a&gt;", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
+            value = aPattern.matcher(value).replaceAll("");
+            
             // Example value ="<object data=\"javascript:alert('XSS')\"></object>"
             // Avoid anything between script tags
             Pattern objectPattern = Pattern.compile("<object(.*?)</object>", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
             value = objectPattern.matcher(value).replaceAll("");
             
+            objectPattern = Pattern.compile("&lt;object(.*?)&lt;/object&gt;", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
+            value = objectPattern.matcher(value).replaceAll("");
+            
             // Remove any lonesome </object> tag
             objectPattern = Pattern.compile("</object>", Pattern.CASE_INSENSITIVE);
             value = objectPattern.matcher(value).replaceAll("");
-
+            
+            objectPattern = Pattern.compile("&lt;/object&gt;", Pattern.CASE_INSENSITIVE);
+            value = objectPattern.matcher(value).replaceAll("");
             
             // Remove any lonesome <object ...> tag
             objectPattern = Pattern.compile("<object(.*?/)>", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
+            value = objectPattern.matcher(value).replaceAll("");
+            
+            objectPattern = Pattern.compile("&lt;object(.*?/)&gt;", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
             value = objectPattern.matcher(value).replaceAll("");
 
             
