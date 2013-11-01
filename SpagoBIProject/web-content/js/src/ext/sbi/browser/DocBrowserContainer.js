@@ -96,13 +96,15 @@ Sbi.browser.DocBrowserContainer = function(config) {
 					      }	    	        
 		    ];
          }
-    	 this.brSheet = new Ext.Panel({
-	  		layout:'card',
- 	    	activeItem: 0,
- 	    	layoutConfig: { animate: true }, 
- 	    	bbar: btmbar,
- 		    items: [browser]
- 	    });	   
+         
+         var brSheetConf = {
+     	 	layout:'card',
+     	   	activeItem: 0,
+     	   	layoutConfig: { animate: true }, 
+     	    items: [browser]
+     	 };
+         if(btmbar.length > 0 ) brSheetConf.bbar = btmbar;
+    	 this.brSheet = new Ext.Panel(brSheetConf);	   
     }else{ 
     	//default type layout is 'tab'
     	this.brSheet = new Ext.TabPanel({
