@@ -141,7 +141,7 @@ Ext.define('Sbi.tools.dataset.DataSetsView', {
 			                                '<div class="box-actions-container">'+
 								            '    <ul class="box-actions">'+	    
 								            '		<tpl for="actions">'+  
-								        	' 			<tpl if="name != \'delete\' && this.includeActionsForGeoBI(name) == true ">'+
+								        	' 			<tpl if="name != \'delete\' && this.includeAction(name) == true ">'+
 									        ' 	       		<li class="{name}"><a href="#" title="{description}"></a></li>'+
 									        '			</tpl>'+
 									        '		</tpl>'+
@@ -172,7 +172,7 @@ Ext.define('Sbi.tools.dataset.DataSetsView', {
 //					'</ul>',
 //				'</div>',
 			'</div>',{
-			        	includeActionsForGeoBI: function(n){
+			        	includeAction: function(n){
 			        		var toReturn = true;
 			        		if (Sbi.settings.dataset.hiddenActions && Sbi.settings.dataset.hiddenActions.length > 0){
 			        			for (var i=0; i<Sbi.settings.dataset.hiddenActions.length; i++){
