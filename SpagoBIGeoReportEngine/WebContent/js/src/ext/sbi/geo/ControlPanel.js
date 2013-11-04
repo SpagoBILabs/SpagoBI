@@ -607,8 +607,22 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 		return toReturn;
 	}
 
+	/**
+	 * @method 
+	 * 
+	 * @return returns the html fragment used to render the indicator's selction panel
+	 */
 	, getIndicatorsDiv: function(){
-		if ( this.indicators != null &&  this.indicators !== undefined){
+		Sbi.trace("[ControlPanel.getIndicatorsDiv]: IN");
+
+		if ( this.indicators != null &&  this.indicators !== undefined)	{	
+			var indicator = null;
+			if(this.analysisConf.indicator) {
+				indicator = this.analysisConf.indicator;
+			} else {
+				indicator = this.indicators[0][0];
+				Sbi.warn("[ControlPanel.getIndicatorsDiv]: Selected indicator not specified. The first indicator of the list will be selected");
+			}
 			
 			var toReturn = '' +
 			'<div class="indicators" id="indicatorsDiv">' +
@@ -616,7 +630,12 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 		        '<ul id="ul-indicators" class="group">';		
 				for(var i=0; i< this.indicators.length; i++){
 					var indEl = this.indicators[i];
-					var clsName = (i==0)?'first':'disabled';
+					clsName = null;
+					if(indicator === indEl[0]) {
+						clsName = 'first';
+					} else {
+						clsName = 'disabled';
+					}
 					toReturn += ''+
 					'<li class="'+clsName+'" id="indicator'+i+'"><span class="button" onclick="javascript:Ext.getCmp(\'controlPanel\').onIndicatorSelected(\'indicator'+i+'\',\''+indEl[0]+'\');">'+
 						'<a href="#" class="tick"></a>'+ indEl[1]+
@@ -636,41 +655,75 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 		    '</div>';
 		}
 		
+		Sbi.trace("[ControlPanel.getIndicatorsDiv]: OUT");
+		
 		return toReturn;
 	}
 	
-	, refreshIndicatorsDiv: function(){
-		var containerPanel = Ext.get("containerPanel").dom;
+	, resetIndicatorDiv: function() {
+		Sbi.trace("[ControlPanel.resetIndicatorDiv]: IN");
 		var indicatorsDiv = Ext.get("indicatorsDiv").dom;
-		//remove old indicators div
 		indicatorsDiv.parentNode.removeChild(indicatorsDiv); 
-		//create new indicators div
-		indicatorsDiv = this.getIndicatorsDiv();
-		var mapTypeElement = Ext.get("mapType");
-		var dh = Ext.DomHelper;	
-		dh.insertAfter(mapTypeElement,indicatorsDiv);
+		Sbi.trace("[ControlPanel.resetIndicatorDiv]: OUT");
+	}
+	
+	/**
+	 * @method
+	 * 
+	 * @return
+	 */
+	, refreshIndicatorsDiv: function(){
 		
-		//Re-add handler on addIndicatorButton
-		var elAddIndicator = Ext.get("addIndicatorButton");
-		if(elAddIndicator && elAddIndicator !== null) {
-			elAddIndicator.on('click', function() {
-				this.showMeasureCatalogueWindow();
-			},this);
-			Sbi.debug("[ControlPanel.refreshIndicatorsDiv]: Registered handler on [addIndicatorButton] ");
-		} else {
-			Sbi.debug("[ControlPanel.refreshIndicatorsDiv]: Impossible to find element [addIndicatorButton] ");
-			alert('Impossible to find element [addIndicatorButton]');
-		}		
+		Sbi.trace("[ControlPanel.refreshIndicatorsDiv]: IN");
 		
-		//Activate first indicator as default
+		var containerPanel = Ext.get("containerPanel").dom;
+		
+		this.resetIndicatorDiv();
+		var indicatorsDiv = this.getIndicatorsDiv();
+		this.renderIndicatorsDiv(indicatorsDiv);
+		this.initCallbackOnGuiItemClick("addIndicatorButton", this.showMeasureCatalogueWindow, "add indicator button");
+		
 		var indicatorsUl = Ext.get('ul-indicators').dom.childNodes;
 		if ((indicatorsUl[0] != null) && (indicatorsUl[0] !== undefined)){
-			var elementId = indicatorsUl[0].id;
-			indicatorsUl[0].className = 'disabled';
-			var indEl = this.indicators[0];
-			this.onIndicatorSelected(elementId, indEl[0]);
+			var indicatorSelected = false;
+			for(var i = 0; i < this.indicators.length; i++) {
+				if(this.analysisConf.indicator === this.indicators[i][0]) {
+					var elementId = indicatorsUl[i].id;
+					indicatorsUl[i].className = 'disabled';
+					var indEl = this.indicators[i];
+					this.onIndicatorSelected(elementId, indEl[0]);
+					indicatorSelected = true;
+					break;
+				}
+			}
+			if(indicatorSelected == false) {
+				var elementId = indicatorsUl[0].id;
+				indicatorsUl[0].className = 'disabled';
+				var indEl = this.indicators[0];
+				this.onIndicatorSelected(elementId, indEl[0]);
+			}
 		}
+		
+	
+		
+		Sbi.trace("[ControlPanel.refreshIndicatorsDiv]: OUT");
 	}
+	
+	/**
+	 * @method
+	 * 
+	 */
+	, renderIndicatorsDiv: function(divHtmlFragment) {
+		Sbi.trace("[ControlPanel.renderIndicatorsDiv]: IN");
+		var mapTypeElement = Ext.get("mapType");
+		Ext.DomHelper.insertAfter(mapTypeElement, divHtmlFragment);
+		Sbi.trace("[ControlPanel.renderIndicatorsDiv]: OUT");
+	}
+	
+	
+	
+	
+	
 	
 	, getPermissionDiv: function(){
 		var toReturn = '';
@@ -872,6 +925,46 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 	// -----------------------------------------------------------------------------------------------------------------
     // private methods
 	// -----------------------------------------------------------------------------------------------------------------
+	
+	, onIndicatorSelected: function(elementId, indicator) {
+		
+		Sbi.trace("[ControlPanel.onIndicatorSelected]: IN");
+		
+		this.mapComponnet.getActiveThematizer().thematize({indicator: indicator});
+
+		var el = Ext.get(elementId);
+		if ((el != null) && (el !== undefined )){
+			var currentClass = el.dom.className;
+			//single selection / multiple selection management 
+			if (this.singleSelectionIndicator == true){
+				if (currentClass == 'disabled'){
+
+					var indicatorsUl = Ext.get('ul-indicators').dom.childNodes;
+					//enable this element and disable all others
+					for(var i=0; i< indicatorsUl.length; i++){
+						if (indicatorsUl[i].id == elementId){
+							indicatorsUl[i].className = 'first';
+						} else {
+							indicatorsUl[i].className = 'disabled';
+						}
+					}
+					
+				} else {
+					//disable the only active indicator
+					el.dom.className = 'disabled';
+				}
+			} else {
+				if (currentClass == 'first'){
+					el.dom.className = 'disabled';
+				} else {
+					el.dom.className = 'first';
+				}
+			}
+
+		}
+		
+		Sbi.trace("[ControlPanel.onIndicatorSelected]: OUT");
+	}
 
 	, onThematizerSelected: function(el, list){
 		Sbi.trace("[ControlPanel.onThematizerSelected]: IN");
@@ -1017,45 +1110,8 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 		Sbi.debug("[ControlPanel.setAnalysisConf]: OUT");
 	}
 	
-	, onIndicatorSelected: function(elementId, indicator) {
-		
-		Sbi.trace("[ControlPanel.onIndicatorSelected]: IN");
 	
-		this.mapComponnet.getActiveThematizer().thematize({indicator: indicator});
-
-		var el = Ext.get(elementId);
-		if ((el != null) && (el !== undefined )){
-			var currentClass = el.dom.className;
-			//single selection / multiple selection management 
-			if (this.singleSelectionIndicator == true){
-				if (currentClass == 'disabled'){
-
-					var indicatorsUl = Ext.get('ul-indicators').dom.childNodes;
-					//enable this element and disable all others
-					for(var i=0; i< indicatorsUl.length; i++){
-						if (indicatorsUl[i].id == elementId){
-							indicatorsUl[i].className = 'first';
-						} else {
-							indicatorsUl[i].className = 'disabled';
-						}
-					}
-					
-				} else {
-					//disable the only active indicator
-					el.dom.className = 'disabled';
-				}
-			} else {
-				if (currentClass == 'first'){
-					el.dom.className = 'disabled';
-				} else {
-					el.dom.className = 'first';
-				}
-			}
-
-		}
-		
-		Sbi.trace("[ControlPanel.onIndicatorSelected]: OUT");
-	}
+	
 	, onStoreLoad: function(measureCatalogue, options, store, meta) {
 		Sbi.trace("[ControlPanel.onStoreLoad]: IN");
 		

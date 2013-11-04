@@ -168,7 +168,7 @@ Sbi.geo.control.InlineToolbar = OpenLayers.Class(OpenLayers.Control, {
     	Sbi.trace("[InlineToolbar.draw] : IN");
 
         OpenLayers.Control.prototype.draw.apply(this, arguments);
-       
+        this.div.className = this.div.className + " no-print";
     
         // create overview map DOM elements
         this.createContents();
@@ -189,8 +189,8 @@ Sbi.geo.control.InlineToolbar = OpenLayers.Class(OpenLayers.Control, {
          
         this.div.appendChild(this.createLIEl('span', 'Collapse control panel', 'btn-toggle first open', 'elBtnArrow' ));        
         this.div.appendChild(this.createLIEl('span', 'Print this map', 'btn-print', 'elBtnPrint' ));
-        this.div.appendChild(this.createLIEl('span', 'Share this map', 'btn-share', 'elBtnShare' ));
-        this.div.appendChild(this.createLIEl('a', 'Download this map', 'btn-download', 'elBtnDownload' ));
+        this.div.appendChild(this.createLIEl('span', 'Share this map', 'btn-share last', 'elBtnShare' ));
+//        this.div.appendChild(this.createLIEl('a', 'Download this map', 'btn-download last', 'elBtnDownload' ));
 //        this.div.appendChild(this.createLIEl('a', 'Make this map favourite', 'btn-favourite last', 'elBtnFavourite' ));
         
                

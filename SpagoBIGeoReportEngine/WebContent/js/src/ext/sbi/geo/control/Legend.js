@@ -4,29 +4,6 @@
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. **/
  
-  
- 
-/**
-  * Object name 
-  * 
-  * [description]
-  * 
-  * 
-  * Public Functions
-  * 
-  *  [list]
-  * 
-  * 
-  * Authors
-  * 
-  * - Antonella Giachino (antonella.giachino@eng.it)
-  */
-
-/** 
- * @requires OpenLayers/Control.js
- * @requires OpenLayers/BaseTypes.js
- * @requires OpenLayers/Events.js
- */
 
 /**
  * Class: Sbi.geo.control.Legend
@@ -185,14 +162,17 @@ Sbi.geo.control.Legend = OpenLayers.Class(OpenLayers.Control, {
     	Sbi.trace("[Legend.draw] : IN");
     	
     	this.div = document.getElementById("MapTools");
+    	    	
     	if(this.div != null) {
     		Sbi.trace("[Legend.draw] : a div with id equal to [MapTools] already exist");
     	} else {
     		Sbi.trace("[Legend.draw] : a div with id equal to [MapTools] does not exist");
+    		this.div = document.createElement('div');
+    		this.div.id = "MapTools";
     	}
     	
     	OpenLayers.Control.prototype.draw.apply(this, arguments);
-    	//this.parentDraw(px);
+    	this.div.className = this.displayClass || "";
     	
         // create overview map DOM elements
         this.createContents();
@@ -260,6 +240,14 @@ Sbi.geo.control.Legend = OpenLayers.Class(OpenLayers.Control, {
      * Executes the specific action
      */
     openLegend: function(el){
+    	var controls = this.map.getControlsByClass("Sbi.geo.control.Layers");
+    	for(var i = 0; i < controls.length; i++) {
+    		if(controls[i].layersContentElement.opened = true) {
+    			controls[i].closeLegend();
+    		}
+    	}
+    	
+    	
     	this.legendContentElement.style.height = '200px';
     	this.legendContentElement.style.width = '180px';
     	this.legendContentElement.style.display = 'block';
