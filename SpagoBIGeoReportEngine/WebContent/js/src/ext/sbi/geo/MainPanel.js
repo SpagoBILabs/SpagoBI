@@ -628,7 +628,6 @@ Ext.extend(Sbi.geo.MainPanel, Ext.Panel, {
         Sbi.trace("[MainPanel.openPopup]: feature is equal to [" + feature + "]");
         feature.popup = 
         	new OpenLayers.Popup.FramedCloud(
-        	//new OpenLayers.Popup.Anchored( 
         		Ext.id(), 
                 feature.geometry.getBounds().getCenterLonLat(),
                 new OpenLayers.Size(200, 150),
@@ -637,6 +636,7 @@ Ext.extend(Sbi.geo.MainPanel, Ext.Panel, {
                 true, 
                 onPopupCloseFn
         );
+        feature.popup.contentDisplayClass = feature.popup.displayClass + " no-print";
         
         this.map.addPopup(feature.popup);
         

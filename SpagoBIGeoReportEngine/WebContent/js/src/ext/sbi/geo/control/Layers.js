@@ -192,13 +192,18 @@ Sbi.geo.control.Layers = OpenLayers.Class(OpenLayers.Control, {
     	Sbi.trace("[Layers.draw] : IN");
 
     	this.div = document.getElementById("MapTools");
+    	
+    	
     	if(this.div != null) {
     		Sbi.trace("[Layers.draw] : a div with id equal to [MapTools] already exist");
     	} else {
     		Sbi.trace("[Layers.draw] : a div with id equal to [MapTools] does not exist");
+    		this.div = document.createElement('div');
+    		this.div.id = "MapTools";
     	}
     	OpenLayers.Control.prototype.draw.apply(this, arguments);
-   
+    	
+    	this.div.className = this.displayClass || "";
     	
         // create overview map DOM elements
         this.createContents();
@@ -241,7 +246,7 @@ Sbi.geo.control.Layers = OpenLayers.Class(OpenLayers.Control, {
         OpenLayers.Element.addClass(editButton, "labelSpan olButton");
         editButton.id = "EditButton";
         editButton._editButton = this.id;
-        editButton.innerHTML = "Aggiungi/Rimuovi livello<\p> <\p> ";
+        editButton.innerHTML = "<a style='color:#3d90d4;' href='#'>Aggiungi/Rimuovi livello</a><\p>.<\p> "; 
         this.layersContentBodyElement.appendChild(editButton);
         
         // from layer switcher
@@ -461,6 +466,13 @@ Sbi.geo.control.Layers = OpenLayers.Class(OpenLayers.Control, {
      * Executes the specific action
      */
     openLegend: function(el){
+    	var controls = this.map.getControlsByClass("Sbi.geo.control.Legend");
+    	for(var i = 0; i < controls.length; i++) {
+    		if(controls[i].legendContentElement.opened = true) {
+    			controls[i].closeLegend();
+    		}
+    	}
+    	
     	this.layersContentElement.style.height = '200px';
     	this.layersContentElement.style.width = '180px';
     	this.layersContentElement.style.display = 'block';
