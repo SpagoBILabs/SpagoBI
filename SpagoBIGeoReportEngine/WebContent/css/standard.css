@@ -531,5 +531,7 @@ li:hover .login-panel .not-registered a:hover,.login-panel .not-registered a:hov
 	
 	table{border-collapse:collapse}
 	table td,table th{text-align:center;border:1px solid #ccc;padding:10px;font-size:12pt}
+	
+	.no-print{display: none !important;}
 
 } /* END MEDIA PRINT*/	
