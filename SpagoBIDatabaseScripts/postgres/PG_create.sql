@@ -270,7 +270,7 @@ CREATE TABLE SBI_OBJECTS (
        BIOBJ_ID             INTEGER NOT NULL ,
        ENGINE_ID            INTEGER NOT NULL,
        DESCR                VARCHAR(400) NULL,
-       LABEL                VARCHAR(20) NOT NULL,
+       LABEL                VARCHAR(100) NOT NULL,
        ENCRYPT              SMALLINT NULL,
        PATH                 VARCHAR(400) NULL,
        REL_NAME             VARCHAR(400) NULL,
