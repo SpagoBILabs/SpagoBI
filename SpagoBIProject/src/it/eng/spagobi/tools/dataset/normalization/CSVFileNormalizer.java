@@ -168,7 +168,7 @@ public class CSVFileNormalizer {
     	Object cell = row.get(columnNameOnFile);
     	String valueField = parseValue(cell);
     	
-    	if (!valueField.isEmpty()){
+    	if ((valueField != null) && (!valueField.isEmpty())){
 			//Search this value on the Map levelSiblingsValue and get the corresponding level value
 			
 			//try first searching valueField as a String
@@ -176,13 +176,23 @@ public class CSVFileNormalizer {
 			
 			//else try searching valueField as an Integer
 			if (levelValue == null){
-				Integer valueFieldInteger = Integer.parseInt(valueField);
-				levelValue = levelSiblingsValue.get(valueFieldInteger);
+				try{
+					Integer valueFieldInteger = Integer.parseInt(valueField);
+					levelValue = levelSiblingsValue.get(valueFieldInteger);					
+				} catch (Exception ex){
+					logger.debug("Cannot cast "+valueField+" to Integer");
+				}
+
 				
 				//else try searching valueField as a Double
 				if (levelValue == null){
-					Double valueFieldDouble = Double.parseDouble(valueField);
-					levelValue = levelSiblingsValue.get(valueFieldDouble);
+					try{
+						Double valueFieldDouble = Double.parseDouble(valueField);
+						levelValue = levelSiblingsValue.get(valueFieldDouble);
+					} catch (Exception ex){
+						logger.debug("Cannot cast "+valueField+" to Double");
+					}
+					
 					if (levelValue == null){
 						logger.error("Value corresponding to "+valueField+" not found on level values");
 					}
@@ -202,11 +212,15 @@ public class CSVFileNormalizer {
 					this.setNewColumnType("java.lang.Double");				
 				} else if (levelValue instanceof Integer){
 					Integer levelValueInteger = (Integer)levelValue;
-					row.put(getNewColumnName(), levelValueInteger);
+					Double levelValueDouble = levelValueInteger.doubleValue();
+					row.put(getNewColumnName(), levelValueDouble);
 					this.setNewColumnType("java.lang.Double");				
 				}
 				
-			}			
+			} else {
+				//create an empty cell
+				row.put(getNewColumnName(), "");
+			}
 		} else {
 			//create an empty cell
 			row.put(getNewColumnName(), "");
