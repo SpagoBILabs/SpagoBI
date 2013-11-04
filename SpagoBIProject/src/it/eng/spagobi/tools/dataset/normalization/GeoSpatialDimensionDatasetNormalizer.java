@@ -142,6 +142,7 @@ public class GeoSpatialDimensionDatasetNormalizer implements IDatasetNormalizer 
 
 								//modify file and set dataset metadata
 								modifyFileDataset(dataset, datastoreToValidate,hierarchy, levelName, siblingColumnName, columnNameOnDataset );
+								break;
 							}
 						}
 					}
