@@ -410,14 +410,13 @@ public class SelfServiceDataSetCRUD {
 								}
 							}					
 						}
-						if (validationErrors.isEmpty()){
-							//3 - No errors in the validation, we can normalize the dataset
-							GeoSpatialDimensionDatasetNormalizer geoDatasetNormalizer = new GeoSpatialDimensionDatasetNormalizer();
-							IDataSet normalizedDataset = geoDatasetNormalizer.normalizeDataset(dataSet, hierarchiesColumnsToCheck);
-							if (normalizedDataset != null){
-								dataSet = normalizedDataset;
-							}
-						}	
+
+						GeoSpatialDimensionDatasetNormalizer geoDatasetNormalizer = new GeoSpatialDimensionDatasetNormalizer();
+						IDataSet normalizedDataset = geoDatasetNormalizer.normalizeDataset(dataSet, hierarchiesColumnsToCheck);
+						if (normalizedDataset != null){
+							dataSet = normalizedDataset;
+						}
+
 
 					}			
 				}

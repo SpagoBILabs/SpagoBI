@@ -160,7 +160,7 @@ public class XLSFileNormalizer {
 		} catch(Throwable t) {
 			throw new RuntimeException("Impossible to parse cell [" + columnPositionOnFile + "]", t);
 		}
-		if (!valueField.isEmpty()){
+		if ((valueField != null) && (!valueField.isEmpty())){
 			//Search this value on the Map levelSiblingsValue and get the corresponding level value
 			
 			//try first searching valueField as a String
@@ -168,13 +168,23 @@ public class XLSFileNormalizer {
 			
 			//else try searching valueField as an Integer
 			if (levelValue == null){
-				Integer valueFieldInteger = Integer.parseInt(valueField);
-				levelValue = levelSiblingsValue.get(valueFieldInteger);
+				try{
+					Integer valueFieldInteger = Integer.parseInt(valueField);
+					levelValue = levelSiblingsValue.get(valueFieldInteger);					
+				} catch (Exception ex){
+					logger.debug("Cannot cast "+valueField+" to Integer");
+				}
+
 				
 				//else try searching valueField as a Double
 				if (levelValue == null){
-					Double valueFieldDouble = Double.parseDouble(valueField);
-					levelValue = levelSiblingsValue.get(valueFieldDouble);
+					try{
+						Double valueFieldDouble = Double.parseDouble(valueField);
+						levelValue = levelSiblingsValue.get(valueFieldDouble);
+					} catch (Exception ex){
+						logger.debug("Cannot cast "+valueField+" to Double");
+					}
+					
 					if (levelValue == null){
 						logger.error("Value corresponding to "+valueField+" not found on level values");
 					}
@@ -199,11 +209,17 @@ public class XLSFileNormalizer {
 					this.setNewColumnType("java.lang.Double");				
 				}
 				
-			}			
+			} else {
+				//For values not found in the levelSiblingsValue Map, create an empty cell
+				HSSFCell newCell = row.createCell(lastColumn);
+				newCell.setCellValue("");
+				this.setNewColumnType("java.lang.String");				
+			}
 		} else {
 			//create an empty cell
 			HSSFCell newCell = row.createCell(lastColumn);
 			newCell.setCellValue("");
+			this.setNewColumnType("java.lang.String");				
 		}
 	
 	}
