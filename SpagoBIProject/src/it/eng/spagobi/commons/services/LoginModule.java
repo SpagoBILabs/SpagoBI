@@ -244,17 +244,22 @@ public class LoginModule extends AbstractHttpModule {
 					// user is authenticated, nothing to do
 					logger.debug("User is authenticated");
 					// fill response
-					List lstMenu = MenuUtilities.getMenuItems(profile);			
-					// set publisher name
-					String url = "/themes/" + currTheme	+ "/jsp/";
-					if (UserUtilities.isTechnicalUser(profile)){
-						url += "adminHome.jsp";
-					}else{
-						url += "userHome.jsp";
-					}						
-					servletRequest.getSession().setAttribute(LIST_MENU, lstMenu);
-					getHttpRequest().getRequestDispatcher(url).forward(getHttpRequest(), getHttpResponse());
-					//response.setAttribute(SpagoBIConstants.PUBLISHER_NAME, "userhome");
+					List lstMenu = MenuUtilities.getMenuItems(profile);		
+					if(backUrl == null){
+						// set publisher name
+						String url = "/themes/" + currTheme	+ "/jsp/";
+						if (UserUtilities.isTechnicalUser(profile)){
+							url += "adminHome.jsp";
+						}else{
+							url += "userHome.jsp";
+						}						
+						servletRequest.getSession().setAttribute(LIST_MENU, lstMenu);
+						getHttpRequest().getRequestDispatcher(url).forward(getHttpRequest(), getHttpResponse());
+					} else {
+						servletRequest.getSession().setAttribute(IEngUserProfile.ENG_USER_PROFILE, profile);
+						getHttpResponse().sendRedirect(backUrl);
+					}
+					
 					return;
 				} 
 			}	
