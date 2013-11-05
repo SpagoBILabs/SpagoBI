@@ -726,9 +726,11 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 	
 	
 	, getPermissionDiv: function(){
+		Sbi.trace("[ControlPanel.getPermissionDiv]: IN");
+		
 		var toReturn = '';
 		
-		if (Sbi.config.userId === Sbi.config.docAuthor || !this.isFinalUser){
+		if ( (Sbi.config.userId === Sbi.config.docAuthor) || !this.isFinalUser){
 			toReturn = '<div class="map-permissions">' +
 		    	'<div class="radio">' +
 		        	'<span class="label">'+LN('sbi.geo.controlpanel.permissionlabel')+'</span>' ;
@@ -755,6 +757,9 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 			        '</div>';
 			}
 		}
+		
+		Sbi.trace("[ControlPanel.getPermissionDiv]: OUT");
+		
 		return toReturn;
 	}
 	
