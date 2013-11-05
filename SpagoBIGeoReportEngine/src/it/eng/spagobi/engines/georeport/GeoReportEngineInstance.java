@@ -85,6 +85,10 @@ public class GeoReportEngineInstance extends AbstractEngineInstance {
 		return (String)this.getEnv().get(EngineConstants.ENV_DOCUMENT_AUTHOR);
 	}
 	
+	public String getDocumentUser() {
+		return (String)this.getEnv().get(EngineConstants.ENV_DOCUMENT_USER);
+	}
+	
 	public String getDocumentName() {
 		return (String)this.getEnv().get(EngineConstants.ENV_DOCUMENT_NAME);
 	}

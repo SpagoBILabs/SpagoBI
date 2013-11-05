@@ -157,6 +157,9 @@ public class GetTargetLayerAction extends AbstractBaseServlet {
 			for(int i = 0; i < featuresIdJSON.length(); i++) {
 				String s = featuresIdJSON.getString(i);
 				idIndex.put(s,s);
+				// TODO: remove this. Now it is useful because the layer contains the name in upper case while the geo dimension id contains the names
+				// in camel case. Once ethe two will be synchronizer remve this dirty fix 
+				idIndex.put(s.toUpperCase(),s);
 			}
 			FeatureIterator it = outputFeatureCollection.features();
 			List<SimpleFeature> list = new ArrayList<SimpleFeature>();
@@ -167,6 +170,8 @@ public class GetTargetLayerAction extends AbstractBaseServlet {
 					String id = (String)f.getProperty(layerId).getValue();
 					if(idIndex.containsKey(id)) {
 						list.add(f);
+					} else {
+						logger.debug("Feature [" + id + "] filtered out");
 					}
 				} else {
 					logger.warn("Impossible to read attribute [" + layerId + "] from feature [" + f + "]");
