@@ -43,6 +43,7 @@ public class EngineConstants {
 	public static final String ENV_DB_DATE_FORMAT = "ENV_DB_DATE_FORMAT";
 	public static final Object ENV_METAMODEL_PROXY = "ENV_METAMODEL_PROXY";	
 	public static final Object ENV_DOCUMENT_AUTHOR = "DOCUMENT_AUTHOR";
+	public static final Object ENV_DOCUMENT_USER = "DOCUMENT_USER";
 	public static final Object ENV_DOCUMENT_NAME = "DOCUMENT_NAME";	
 	public static final Object ENV_DOCUMENT_DESCRIPTION = "DOCUMENT_DESCRIPTION";	
 	public static final Object ENV_DOCUMENT_IS_PUBLIC = "DOCUMENT_IS_PUBLIC";
@@ -61,6 +62,7 @@ public class EngineConstants {
 	public static final String DATASOURCE_FOR_WRITING = "DATASOURCE_FOR_WRITING";
 	
 	public static final String MODEL_NAME = "MODEL_NAME";
+	
 	
 
 
