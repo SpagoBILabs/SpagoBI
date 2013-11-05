@@ -3,36 +3,24 @@
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
-/*
- * Created on 21-apr-2005
- *
- * TODO To change the template for this generated file go to
- * Window - Preferences - Java - Code Style - Code Templates
- */
+
 package it.eng.spagobi.commons.services;
-
-import java.sql.Connection;
-import java.util.HashMap;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
-import org.hibernate.HibernateException;
-import org.hibernate.Session;
 
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.SessionContainer;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.dispatching.action.AbstractHttpAction;
-import it.eng.spago.error.EMFErrorSeverity;
-import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.utilities.AuditLogUtilities;
-import it.eng.spagobi.commons.utilities.HibernateUtil;
-import it.eng.spagobi.commons.utilities.UserUtilities;
+
+import java.util.HashMap;
+
+import org.apache.log4j.Logger;
 
 public class LogoutAction extends AbstractHttpAction {
 
+	static private Logger logger = Logger.getLogger(LogoutAction.class);
+	
 	/* (non-Javadoc)
 	 * @see it.eng.spago.dispatching.service.ServiceIFace#service(it.eng.spago.base.SourceBean, it.eng.spago.base.SourceBean)
 	 */
@@ -42,27 +30,17 @@ public class LogoutAction extends AbstractHttpAction {
 		SessionContainer sessCont = reqCont.getSessionContainer();
 		SessionContainer permSess = sessCont.getPermanentContainer();
 		
-		//Start writing log in the DB
-		Session aSession =null;
-		try {
-			aSession = HibernateUtil.currentSession();
-			//Connection jdbcConnection = aSession.connection();
-			Connection jdbcConnection = HibernateUtil.getConnection(aSession);
-			IEngUserProfile profile = (IEngUserProfile)permSess.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
-			HashMap<String, String> logParam = new HashMap();
-			logParam.put("USER",UserUtilities.getUserProfile().toString());
-			AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "SPAGOBI.Logout", logParam, "OK");
-		} catch (HibernateException he) {
-			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-		} finally {
-			if (aSession!=null){
-				if (aSession.isOpen()) aSession.close();
-			}
+		IEngUserProfile profile = (IEngUserProfile)permSess.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+		if (profile != null) {
+			logger.debug("User profile object found, removing it from session ...");
+			permSess.setAttribute(IEngUserProfile.ENG_USER_PROFILE, null);
+			HashMap<String, String> logParam = new HashMap<String, String>();
+			logParam.put("USER", profile.toString());
+			AuditLogUtilities.updateAudit(getHttpRequest(), profile, "SPAGOBI.Logout", logParam, "OK");
+		} else {
+			logger.debug("User profile object not found, most likely a previous session has expired");
 		}
-		//End writing log in the DB
-		
-		permSess.setAttribute(IEngUserProfile.ENG_USER_PROFILE, null);
-		
+
 	}
 	
 }
