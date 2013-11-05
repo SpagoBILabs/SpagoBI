@@ -411,7 +411,7 @@ public class EngineStartServletIOManager extends BaseServletIOManager {
 			env.put(EngineConstants.ENV_USER_PROFILE, getUserProfile());
 			env.put(EngineConstants.ENV_EXECUTION_ROLE, getUserExecutionRole());
 			env.put(EngineConstants.ENV_DOCUMENT_AUTHOR, getDocumentAuthor());
-
+			env.put(EngineConstants.ENV_DOCUMENT_USER, getUserId());
 		}
 
 		return env;
