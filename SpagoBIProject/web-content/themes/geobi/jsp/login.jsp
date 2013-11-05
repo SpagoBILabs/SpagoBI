@@ -88,65 +88,9 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 %>
 
 
-
-
-
-
 <%@page import="it.eng.spagobi.commons.SingletonConfig"%>
+
 <html>
-  <head>
-  <style media="screen" type="text/css">
-
-	input.login    {
-	display:block;
-	border: 1px solid #a9a9a9; 
-	color: #7b7575;
-	background: #d4d4d4; 
-	height: 25px;
-	width: 300px;
-	-webkit-box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.3);
-	-moz-box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.3);
-	box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.3);
-	}
-	body {
-background: #dedede; /* Old browsers */
-background: -moz-linear-gradient(top,  #dedede 0%, #efefef 100%); /* FF3.6+ */
-background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#dedede), color-stop(100%,#efefef)); /* Chrome,Safari4+ */
-background: -webkit-linear-gradient(top,  #dedede 0%,#efefef 100%); /* Chrome10+,Safari5.1+ */
-background: -o-linear-gradient(top,  #dedede 0%,#efefef 100%); /* Opera 11.10+ */
-background: -ms-linear-gradient(top,  #dedede 0%,#efefef 100%); /* IE10+ */
-background: linear-gradient(to bottom,  #dedede 0%,#efefef 100%); /* W3C */
-filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dedede', endColorstr='#efefef',GradientType=0 ); /* IE6-9 */
-height: 100%;
-margin: 0;
-background-repeat: no-repeat;
-background-attachment: fixed;
-	}
-	td.login-label{
- 	font-family: Tahoma,Verdana,Geneva,Helvetica,sans-serif;
-	font-size: 10 px;
-	color: #7d7d7d;
-}
-
-a:link{
- 	font-family: Tahoma,Verdana,Geneva,Helvetica,sans-serif;
-	font-size: 9px;
-	color: #7d7d7d;
-}
-a:visited{
- 	font-family: Tahoma,Verdana,Geneva,Helvetica,sans-serif;
-	font-size: 9px;
-	color: #7d7d7d;
-}
-a:hover{
- 	font-family: Tahoma,Verdana,Geneva,Helvetica,sans-serif;
-	font-size: 9px;
-	color: #7d7d7d;
-}
-
- </style>
-  
-  
   <script type="text/javascript">
     function signup(){
     	var form = document.getElementById('formId');
@@ -166,9 +110,6 @@ a:hover{
 			}
 		else
 			{
-				/*var form = document.getElementById('formId');
-				alert(form.action);
-				form.submit();*/
 				return true;
 			}
 		
@@ -179,7 +120,6 @@ a:hover{
 		var user = document.getElementById('userID');
 		password.value = pswV;
 		user.value = userV;
-	 //	document.forms[0].submit();
 	 }
 	 
 	  function changefield(){
@@ -190,12 +130,12 @@ a:hover{
 	</script>
 	<link rel="shortcut icon" href="<%=urlBuilder.getResourceLink(request, "img/favicon.ico")%>" />
     <title>SpagoBI</title>
-  </head>
+
 
   <body>
 
 	<LINK rel='StyleSheet' href='<%=urlBuilder.getResourceLinkByTheme(request, "css/spagobi_shared.css",currTheme)%>' type='text/css' />
-	<link rel='stylesheet' type='text/css' href='<%=urlBuilder.getResourceLinkByTheme(request, "css/analiticalmodel/browser/standard.css",currTheme)%>'/>
+	<link rel='stylesheet' type='text/css' href='<%=urlBuilder.getResourceLinkByTheme(request, "css/home40/standard.css",currTheme)%>'/>
 
 	        
    <% 
@@ -209,6 +149,7 @@ a:hover{
                   <form  id="formId" name="login" action="<%=contextName%>/servlet/AdapterHTTP?PAGE=LoginPage&NEW_SESSION=TRUE" method="POST" onsubmit="return escapeUserName()" class="reserved-area-form login">
                    <input type="hidden" id="isInternalSecurity" name="isInternalSecurity" value="<%=isInternalSecurity %>" />        	
 	        		<input type="hidden" id="<%=roleToCheckLbl%>" name="<%=roleToCheckLbl%>" value="<%=roleToCheckVal%>" />
+	        		<input type="hidden" id="currTheme" name="currTheme" value="<%=currTheme%>" />
 		        	<%	
 			        	//manages backUrl after login
 			        	String backUrl = (String)request.getAttribute(SpagoBIConstants.BACK_URL);
@@ -262,7 +203,8 @@ a:hover{
                           </div>
                           <div class="submit">
                               <input type="submit" value="Login" />                              
-                              <p><%=msgBuilder.getMessage("noAccount")%> <a href="#" onclick="signup();"><%=msgBuilder.getMessage("signup")%></a></p>
+                              <!-- <p><%=msgBuilder.getMessage("noAccount")%> <a href="#" onclick="signup();"><%=msgBuilder.getMessage("signup")%></a></p> -->
+                              <p>You don't have an account? <a href="#" onclick="signup();">Register</a></p>
                           </div>
                       </fieldset>
                   </form>

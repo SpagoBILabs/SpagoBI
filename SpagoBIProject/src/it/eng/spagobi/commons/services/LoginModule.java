@@ -220,6 +220,7 @@ public class LoginModule extends AbstractHttpModule {
 					logger.debug("User must authenticate");
 					// set publisher name
 					String url = "/themes/" + currTheme	+ "/jsp/login.jsp";
+					getHttpRequest().setAttribute("start_url", url);
 					getHttpRequest().getRequestDispatcher(url).forward(getHttpRequest(), getHttpResponse());
 					//orig:
 //					String url = GeneralUtilities.getSpagoBiHost() + servletRequest.getContextPath();

@@ -23,6 +23,8 @@ import it.eng.spagobi.rest.publishers.PublisherService;
 import it.eng.spagobi.security.Password;
 import it.eng.spagobi.tools.dataset.validation.FieldsValidatorFactory;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
+import it.eng.spagobi.utilities.themes.ThemesManager;
+import it.eng.spagobi.wapp.services.ChangeTheme;
 
 import java.io.IOException;
 import java.net.URL;
@@ -65,6 +67,9 @@ public class Signup {
 	
 	@Context
 	private HttpServletResponse servletResponse;
+	
+	private static final String defaultPassword = "Password";
+	private static final String defaultPasswordConfirm = "Confirm Password";
 
 	private static Logger logger = Logger.getLogger(PublisherService.class);
 
@@ -80,6 +85,7 @@ public class Signup {
 		  Map<String,String> data = profile.getUserAttributes(); 
 		  data.put("name", user.getFullName().substring(0, i));
 		  data.put("surname", user.getFullName().substring(i+1));
+		  data.put("username", user.getUserId());
 		  req.setAttribute("data", data );
 		  
 	  }catch (Throwable t) {
@@ -87,7 +93,17 @@ public class Signup {
 					"An unexpected error occured while executing the subscribe action", t);
 	  }
 	  try {
-		    req.getRequestDispatcher("/WEB-INF/jsp/signup/modify.jsp").forward(req, servletResponse);
+		  	String theme_name=(String)req.getAttribute(ChangeTheme.THEME_NAME);
+			logger.debug("theme selected: "+theme_name);
+			
+			String currTheme = (String)req.getAttribute("currTheme");
+	    	if(currTheme==null)currTheme=ThemesManager.getDefaultTheme();			
+			logger.debug("currTheme: "+currTheme);
+			
+			String url = "/themes/" + currTheme	+ "/jsp/signup/modify.jsp";
+			logger.debug("url for modify: "+url);
+		   // req.getRequestDispatcher("/WEB-INF/jsp/signup/modify.jsp").forward(req, servletResponse);
+			 req.getRequestDispatcher(url).forward(req, servletResponse);
 		  } catch (ServletException e) {
 				logger.error("Error dispatching request");
 		  } catch (IOException e) {
@@ -164,9 +180,8 @@ public class Signup {
 		String biografia=  GeneralUtilities.trim(req.getParameter("biografia"));
 		String lingua   =  GeneralUtilities.trim(req.getParameter("lingua"));
 		
-		
 		try {
-		  
+			
 		  UserProfile profile = (UserProfile)req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 		  ISbiUserDAO userDao      = DAOFactory.getSbiUserDAO();
 		  ISbiAttributeDAO attrDao = DAOFactory.getSbiAttributeDAO();
@@ -175,7 +190,7 @@ public class Signup {
 		  int userId = user.getId();
 		  
 		  user.setFullName(nome + " " + cognome);
-		  if( password != null ) user.setPassword( Password.encriptPassword( password ));
+		  if( password != null && !password.equals(defaultPassword)) user.setPassword( Password.encriptPassword( password ));
 		  userDao.updateSbiUser( user, userId );
 		  
 		  updAttribute( userDao, attrDao, email, user.getUserId(), userId, attrDao.loadSbiAttributeByName("email").getAttributeId() );
@@ -206,7 +221,18 @@ public class Signup {
 	public void prepareActive(@Context HttpServletRequest req) {
 		
 	  try {
-		    req.getRequestDispatcher("/WEB-INF/jsp/signup/active.jsp").forward(req, servletResponse);
+		  	String theme_name=(String)req.getAttribute(ChangeTheme.THEME_NAME);
+			logger.debug("theme selected: "+theme_name);
+			
+			String currTheme = (String)req.getAttribute("currTheme");
+	    	if(currTheme==null)currTheme=ThemesManager.getDefaultTheme();			
+			logger.debug("currTheme: "+currTheme);
+			
+			String url = "/themes/" + currTheme	+ "/jsp/signup/active.jsp";
+			logger.debug("url for active: "+url);
+//		    req.getRequestDispatcher("/WEB-INF/jsp/signup/active.jsp").forward(req, servletResponse);
+			req.setAttribute("currTheme", currTheme);
+		    req.getRequestDispatcher(url).forward(req, servletResponse);
 		  } catch (ServletException e) {
 				logger.error("Error dispatching request");
 		  } catch (IOException e) {
@@ -266,10 +292,12 @@ public class Signup {
 		String biografia=  GeneralUtilities.trim(req.getParameter("biografia"));
 		String lingua   =  GeneralUtilities.trim(req.getParameter("lingua"));
 		String captcha  =  GeneralUtilities.trim(req.getParameter("captcha"));
+		String strUseCaptcha = (req.getParameter("useCaptcha")==null)?"true":req.getParameter("useCaptcha");
+	    boolean useCaptcha = Boolean.valueOf(strUseCaptcha);
 		
 		try {
 		  Captcha c = (Captcha) req.getSession().getAttribute(Captcha.NAME);
-		  if( !c.isCorrect(captcha) ){
+		  if( useCaptcha && !c.isCorrect(captcha) ){
 		    JSONObject errorMsg = new JSONObject();
 			JSONArray errors = new JSONArray();
 			errors.put(new JSONObject("{message: 'Campo Captcha non verificato'}"));
@@ -350,10 +378,19 @@ public class Signup {
     @POST
 	@Path("/prepare")
 	public void prepare(@Context HttpServletRequest req) {
+		String theme_name=(String)req.getAttribute(ChangeTheme.THEME_NAME);
+		logger.debug("theme selected: "+theme_name);
 		
+		String currTheme = (String)req.getAttribute("currTheme");
+    	if(currTheme==null)currTheme=ThemesManager.getDefaultTheme();			
+		logger.debug("currTheme: "+currTheme);
 		
+		String url = "/themes/" + currTheme	+ "/jsp/signup/signup.jsp";
+		logger.debug("url for signup: "+url);
 	  try {
-	    req.getRequestDispatcher("/WEB-INF/jsp/signup/signup.jsp").forward(req, servletResponse);
+//	    req.getRequestDispatcher("/WEB-INF/jsp/signup/signup.jsp").forward(req, servletResponse);
+		req.setAttribute("currTheme", currTheme);
+	    req.getRequestDispatcher(url).forward(req, servletResponse);
 	  } catch (ServletException e) {
 			logger.error("Error dispatching request");
 	  } catch (IOException e) {
