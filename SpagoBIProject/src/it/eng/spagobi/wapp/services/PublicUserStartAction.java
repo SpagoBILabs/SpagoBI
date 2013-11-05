@@ -47,8 +47,8 @@ public class PublicUserStartAction extends AbstractBaseHttpAction{
 			IEngUserProfile userProfile = GeneralUtilities.createNewUserProfile(SpagoBIConstants.PUBLIC_USER_ID);
 			permSess.setAttribute(IEngUserProfile.ENG_USER_PROFILE, userProfile);
 			
-//			List lstMenu = MenuUtilities.getMenuItems(userProfile);		
-//			httpRequest.getSession().setAttribute(MenuUtilities.LIST_MENU, lstMenu);
+			List lstMenu = MenuUtilities.getMenuItems(userProfile);		
+			httpRequest.getSession().setAttribute(MenuUtilities.LIST_MENU, lstMenu);
 			
 			//defining url for user home with theme
 			ConfigSingleton config = ConfigSingleton.getInstance();
