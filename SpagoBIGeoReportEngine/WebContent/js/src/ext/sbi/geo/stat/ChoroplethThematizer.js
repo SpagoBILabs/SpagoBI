@@ -157,7 +157,7 @@ Ext.extend(Sbi.geo.stat.ChoroplethThematizer, Sbi.geo.stat.Thematizer, {
     	  
     	Sbi.trace("[ChoroplethThematizer.thematize] : Checking if the thematizer is ready ...");
     	if(this.indicatorContainer == "store" && this.isThematizerReady() == false) {
-    		Sbi.debug("[ChoroplethThematizer.thematize] : thematizatoin aborted because the store is not ready");
+    		Sbi.debug("[ChoroplethThematizer.thematize] : thematizatoin aborted because the thematizer is not ready");
     		Sbi.trace("[ChoroplethThematizer.thematize] : OUT");
     		return;
     	}
