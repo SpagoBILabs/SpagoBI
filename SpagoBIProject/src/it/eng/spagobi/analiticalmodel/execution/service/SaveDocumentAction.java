@@ -503,7 +503,7 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 				visibility = documentJSON.getString("visibility");//overriding default value
 			}
 			if (documentJSON.optString("isPublic") != null && !documentJSON.optString("isPublic").equals("")){
-				visibility = documentJSON.getString("isPublic");//overriding default value
+				isPublic = documentJSON.getBoolean("isPublic");//overriding default value
 			}
 			if (documentJSON.optString("previewFile") != null && !documentJSON.optString("previewFile").equals("")){
 				previewFile = documentJSON.getString("previewFile");//overriding default value
