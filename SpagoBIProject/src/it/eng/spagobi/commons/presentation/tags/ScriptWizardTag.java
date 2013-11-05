@@ -125,7 +125,6 @@ public class ScriptWizardTag extends CommonWizardLovTag {
 		output.append("		<div class='div_detail_form'>\n");
 		output.append("			<select  style='width:180px;' class='portlet-form-input-field' name='LANGUAGESCRIPT' id='LANGUAGESCRIPT' >\n");
 
-		String selected="";
 		try {
 			
 			List scriptLanguageList = DAOFactory.getDomainDAO().loadListDomainsByType(DataSetConstants.SCRIPT_TYPE);
@@ -136,6 +135,7 @@ public class ScriptWizardTag extends CommonWizardLovTag {
 					name = StringEscapeUtils.escapeHtml(name);
 					String value = domain.getValueCd();
 					value = StringEscapeUtils.escapeHtml(value);
+					String selected="";
 					if(languageScript.equalsIgnoreCase(value)){
 						selected="selected='selected'";
 					}		
