@@ -23,8 +23,6 @@ import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.engines.drivers.IEngineDriver;
 import it.eng.spagobi.services.content.bo.Content;
 import it.eng.spagobi.services.security.exceptions.SecurityException;
-import it.eng.spagobi.tenant.Tenant;
-import it.eng.spagobi.tenant.TenantManager;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -32,7 +30,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 
 import sun.misc.BASE64Encoder;
@@ -380,10 +377,6 @@ public class ContentServiceImplSupplier {
 								+ user + "]", e);
 			}
 
-			String tenant = ((UserProfile) profile).getOrganization();
-			LogMF.debug(logger, "Tenant = [{0}]", tenant);
-			TenantManager.setTenant(new Tenant(tenant));
-
 			// Check if the user can execute the document
 			boolean canSee = ObjectsAccessVerifier.canSee(biobj, profile);
 			if (!canSee) {
@@ -467,7 +460,6 @@ public class ContentServiceImplSupplier {
 						+ " is compatible with input parameters");
 			}
 		} finally {
-			TenantManager.unset();
 			monitor.stop();
 			logger.debug("OUT");
 		}
