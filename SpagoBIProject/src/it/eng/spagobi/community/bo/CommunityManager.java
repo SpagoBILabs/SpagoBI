@@ -22,7 +22,9 @@ import it.eng.spagobi.profiling.dao.ISbiAttributeDAO;
 import it.eng.spagobi.profiling.dao.ISbiUserDAO;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Random;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -124,17 +126,19 @@ public class CommunityManager {
 		ArrayList<SbiExtRoles> userRoles = userDao.loadSbiUserRolesById(user.getId());
 		LowFunctionality funct = lowFunctDao.loadLowFunctionalityByCode(functCode, false);
 		Role [] execRole4Funct = funct.getExecRoles();
+		
 		ArrayList<Role> roles = new ArrayList<Role>();
+		Set<Integer> roleIds = new HashSet<Integer>();
 		for(int j=0; j<execRole4Funct.length; j++){
 			Role alreadySetRole = execRole4Funct[j];
 			roles.add(alreadySetRole);
-
+			roleIds.add(alreadySetRole.getId());
 		}
 		for(int i =0; i<userRoles.size();i++){
 			SbiExtRoles extr = userRoles.get(i);
 			Integer extRID= extr.getExtRoleId();
-			Role r = roledao.loadByID(extRID);
-			if(!roles.contains(r)){
+			if(!roleIds.contains(extRID)){
+				Role r = roledao.loadByID(extRID);
 				roles.add(r);
 			}					
 		}
