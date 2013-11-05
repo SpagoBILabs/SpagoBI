@@ -205,7 +205,7 @@ this.services["update"]= Sbi.config.serviceRegistry.getRestServiceUrl({
                                 <input type="text" name="confermaPassword" id="confermaPassword" value="Confirm Password" onfocus="changefield('confermaPassword');" onblur="if (this.value=='') this.value = '<%=defaultConfirmPwd%>'" />
                             </div>
                             <div class="submit">
-                                <input type="text" value="Modifica" onclick="javascript:modify();"/>
+                                <input type="text" value="Modify" onclick="javascript:modify();"/>
                                 <p class="delete">Do you want delete this account? <a href="#" onclick="javascript:cancel();">Delete</a></p>
                             </div>
                         </fieldset>
