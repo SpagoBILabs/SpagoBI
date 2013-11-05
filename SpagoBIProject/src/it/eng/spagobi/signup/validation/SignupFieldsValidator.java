@@ -18,6 +18,8 @@ public class SignupFieldsValidator implements IFieldsValidator {
 	private static final String regex_password = "[^\\d][a-zA-Z0-9]{7,9}";
 	private static final String regex_email = "[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,4}";
 	private static final String regex_date = "(0[1-9]|[12][0-9]|3[01])/(0[1-9]|1[012])/(19|20)\\d\\d";
+	private static final String defaultPassword = "Password";
+	private static final String defaultPasswordConfirm = "Confirm Password";
 	
 	private boolean validatePassword( String password, String username ){
 		
@@ -45,6 +47,8 @@ public class SignupFieldsValidator implements IFieldsValidator {
         String email    = GeneralUtilities.trim(parameters.getFirst("email"));
         String dataNascita  
                         = GeneralUtilities.trim(parameters.getFirst("dataNascita"));
+        String strUseCaptcha = (parameters.getFirst("useCaptcha")==null)?"true":parameters.getFirst("useCaptcha");
+        boolean useCaptcha = Boolean.valueOf(strUseCaptcha);
         String captcha  = GeneralUtilities.trim(parameters.getFirst("captcha"));
         String termini  = parameters.getFirst("termini");
         String modify  = GeneralUtilities.trim(parameters.getFirst("modify"));
@@ -92,14 +96,15 @@ public class SignupFieldsValidator implements IFieldsValidator {
             if( confermaPassword == null ) 
         	  validationErrors.put( new JSONObject("{message: 'Field Confirm Password mandatory'}") );
           
-            if( !Boolean.valueOf(termini) ) 
+            if( useCaptcha && !Boolean.valueOf(termini) ) 
         	  validationErrors.put( new JSONObject("{message: 'Agree with the terms of service mandatory'}") );
           
         	  
-            if( password != null && confermaPassword != null )
-        	 if( ! password.equals(confermaPassword)) 
+            if( password != null && !password.equals(defaultPassword) && 
+            		confermaPassword != null && !confermaPassword.equals(defaultPasswordConfirm))
+        	 if( !password.equals(confermaPassword)) 
         	   validationErrors.put( new JSONObject("{message: 'Field Password and Confirm Password not equal'}") );
-            if( captcha == null ) 
+            if( useCaptcha && captcha == null ) 
         	  validationErrors.put( new JSONObject("{message: 'Field Captcha mandatory'}") );
           }
 		} catch (JSONException e1) {

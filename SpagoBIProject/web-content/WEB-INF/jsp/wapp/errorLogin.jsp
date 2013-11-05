@@ -31,7 +31,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 	   	</script>
 	   	
    	  	<body>
-   	   		 <link rel='stylesheet' type='text/css' href='<%=urlBuilder.getResourceLinkByTheme(request, "css/analiticalmodel/browser/standard.css",currTheme)%>'/>
+   	   		 <link rel='stylesheet' type='text/css' href='<%=urlBuilder.getResourceLinkByTheme(request, "css/home40/standard.css",currTheme)%>'/>
    	   	  	 <form id="formId" name="login" action="<%=contextName%>/servlet/AdapterHTTP?PAGE=LoginPage&NEW_SESSION=TRUE" method="POST">
    	   	  	 </form>
    	   	  	 

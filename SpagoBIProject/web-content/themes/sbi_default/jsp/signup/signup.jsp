@@ -59,7 +59,7 @@ function register() {
 
 
 this.services = [];
-
+ 
 //Adding a new service to the registry
 this.services["create"]= Sbi.config.serviceRegistry.getRestServiceUrl({
 	serviceName: 'signup/create',
@@ -213,7 +213,7 @@ a:hover{
 		        	 -->
 
 				<table border="0" align="center" style="border-collapse:separate; background: none repeat scroll 0 0; border-radius: 5px 5px 5px 5px;  box-shadow: 0px 0px 10px #888;  -webkit-box-shadow:  0px 0px 10px #888;  -moz-box-shadow:  0px 0px 10px #888; color: #009DC3; display: block; font-size: 14px; line-height: 18px; padding: 20px;">
-					<tr>
+				   <tr>
 						<td></td>
 						<td><img
 							src='${pageContext.request.contextPath}/themes/sbi_default/img/wapp/spagobi40logo.png'
@@ -221,7 +221,7 @@ a:hover{
 						</td>
 						<td width='50px'></td>
 						<td></td>
-					</tr>
+					</tr> 
 					<tr>
 						<td width="120px">&nbsp;</td>
 						<td width="550px">
