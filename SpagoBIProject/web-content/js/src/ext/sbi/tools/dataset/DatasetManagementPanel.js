@@ -1260,7 +1260,8 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 						success : function(form, action) {
 							Ext.MessageBox.alert('Success!','File Uploaded to the Server');
 							var fileNameUploaded = Ext.getCmp('fileUploadField').getValue();
-							fileNameUploaded = fileNameUploaded.replace("C:\\fakepath\\", "");
+							//get only the file name from the path (for IE)
+							fileNameUploaded = fileNameUploaded.replace(/^.*[\\\/]/, '');
 							Ext.getCmp('fileNameField').setValue(fileNameUploaded);							
 							this.fileUploadFormPanel.activateFileTypePanel(action.result.fileExtension);
 							thisPanel.fileUploaded = true;

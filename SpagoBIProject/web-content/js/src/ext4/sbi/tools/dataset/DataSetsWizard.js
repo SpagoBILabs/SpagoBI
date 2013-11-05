@@ -337,7 +337,8 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
 
 		Sbi.debug("[DatasetWizard.uploadFileButtonHandler]: form is valid [" + form.isValid() + "]");		
 		var fileNameUploaded = Ext.getCmp('fileUploadField').getValue();
-		fileNameUploaded = fileNameUploaded.replace("C:\\fakepath\\", "");
+		//get only the file name from the path (for IE)
+		fileNameUploaded = fileNameUploaded.replace(/^.*[\\\/]/, '');
 		
 		Ext.MessageBox.wait(LN('sbi.generic.wait'));
 		form.submit({
