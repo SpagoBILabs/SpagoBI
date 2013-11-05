@@ -52,7 +52,7 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 	locale = engineInstance.getLocale();
 
 	executionRole = (String)env.get(EngineConstants.ENV_EXECUTION_ROLE);
-	userId = (String)env.get("user_id");
+	userId = (engineInstance.getDocumentUser()==null)?"":engineInstance.getDocumentUser().toString();
 	template = engineInstance.getGuiSettings().toString();
 	docLabel = (engineInstance.getDocumentLabel()==null)?"":engineInstance.getDocumentLabel().toString();
 	docVersion = (engineInstance.getDocumentVersion()==null)?"":engineInstance.getDocumentVersion().toString();
