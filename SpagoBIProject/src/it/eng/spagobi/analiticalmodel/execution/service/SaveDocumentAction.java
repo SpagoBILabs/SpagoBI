@@ -33,7 +33,9 @@ import it.eng.spagobi.utilities.json.JSONUtils;
 import it.eng.spagobi.utilities.service.JSONSuccess;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -186,8 +188,22 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 			String documentLabel = documentJSON.getString("label");
 			BIObject document = biObjectDao.loadBIObjectByLabel(documentLabel);
 			JSONArray foldersJSON = request.optJSONArray("folders");
+			
+			JSONArray filteredFoldersJSON = new JSONArray();
+			Set<Integer> folderIds = new HashSet<Integer>();
+			for(int i = 0; i < foldersJSON.length(); i++) {
+				int id =  foldersJSON.getInt(i);
+				Integer folderId = new Integer(id);
+				if(!folderIds.contains(folderId)) {
+					filteredFoldersJSON.put(id);
+					folderIds.add(new Integer(folderId));
+				} else {
+					logger.debug("Folder filtered out because duplicate: [" + id + "]");
+				}
+			}
+			
 			//update document informations
-			document = syncronizeDocument(document, documentJSON, foldersJSON);
+			document = syncronizeDocument(document, documentJSON, filteredFoldersJSON);
 			
 			String templateContent = customDataJSON.optString("templateContent");
 
