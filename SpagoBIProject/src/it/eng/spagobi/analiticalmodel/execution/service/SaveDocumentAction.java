@@ -187,20 +187,7 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 			IBIObjectDAO biObjectDao = DAOFactory.getBIObjectDAO();
 			String documentLabel = documentJSON.getString("label");
 			BIObject document = biObjectDao.loadBIObjectByLabel(documentLabel);
-			JSONArray foldersJSON = request.optJSONArray("folders");
-			
-			JSONArray filteredFoldersJSON = new JSONArray();
-			Set<Integer> folderIds = new HashSet<Integer>();
-			for(int i = 0; i < foldersJSON.length(); i++) {
-				int id =  foldersJSON.getInt(i);
-				Integer folderId = new Integer(id);
-				if(!folderIds.contains(folderId)) {
-					filteredFoldersJSON.put(id);
-					folderIds.add(new Integer(folderId));
-				} else {
-					logger.debug("Folder filtered out because duplicate: [" + id + "]");
-				}
-			}
+			JSONArray filteredFoldersJSON = filterFolders(request.optJSONArray("folders"));
 			
 			//update document informations
 			document = syncronizeDocument(document, documentJSON, filteredFoldersJSON);
@@ -251,18 +238,19 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 		try {
 			String sourceModelName = getAttributeAsString("model_name");
 			JSONObject documentJSON = request.optJSONObject("document");
-			JSONArray foldersJSON = request.optJSONArray("folders");
+			JSONArray filteredFoldersJSON = filterFolders(request.optJSONArray("folders"));
+
 			JSONObject customDataJSON = request.optJSONObject("customData");
 			Assert.assertNotNull( customDataJSON , "Custom data object cannot be null");
 		
 			if(request.has("sourceDataset")) {
 				JSONObject sourceDatasetJSON = request.getJSONObject("sourceDataset");
-				insertGeoReportDocumentCreatedOnDataset(sourceDatasetJSON, documentJSON, customDataJSON, foldersJSON);
+				insertGeoReportDocumentCreatedOnDataset(sourceDatasetJSON, documentJSON, customDataJSON, filteredFoldersJSON);
 			}  else if(sourceModelName != null) {
 				throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to create geo document defined on a metamodel");
 				//insertWorksheetDocumentCreatedOnModel(sourceModelName, documentJSON, customDataJSON, foldersJSON);
 			} else {
-				insertGeoReportDocumentCreatedOnDataset(null, documentJSON, customDataJSON, foldersJSON);
+				insertGeoReportDocumentCreatedOnDataset(null, documentJSON, customDataJSON, filteredFoldersJSON);
 				//throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to create geo document because both sourceModel and sourceDataset are null");
 			}
 		} catch (SpagoBIServiceException e) {
@@ -951,5 +939,25 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 		objTemp.setName("template.sbiworksheet");
 		logger.debug("OUT");
 		return objTemp;
+	}
+	
+	private JSONArray filterFolders (JSONArray foldersJSON){
+		JSONArray toReturn = new JSONArray();
+		try{
+			Set<Integer> folderIds = new HashSet<Integer>();
+			for(int i = 0; i < foldersJSON.length(); i++) {
+				int id =  foldersJSON.getInt(i);
+				Integer folderId = new Integer(id);
+				if(!folderIds.contains(folderId)) {
+					toReturn.put(id);
+					folderIds.add(new Integer(folderId));
+				} else {
+					logger.debug("Folder filtered out because duplicate: [" + id + "]");
+				}
+			} 
+		}catch (Exception e) {			
+			throw new SpagoBIServiceException(SERVICE_NAME, "An error occured while defines folders list", e);
+		}
+		return toReturn;		
 	}
 }

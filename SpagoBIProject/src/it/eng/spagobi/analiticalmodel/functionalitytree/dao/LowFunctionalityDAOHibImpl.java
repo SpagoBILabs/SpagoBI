@@ -153,7 +153,7 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 				else hibFunct.setProg(new Integer(1));
 			}
 			
-			updateSbiCommonInfo4Insert(hibFunct);
+			updateSbiCommonInfo4Insert(hibFunct,true);
 			
 			aSession.save(hibFunct);
 
@@ -611,7 +611,7 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 			sbifuncrole.setId(sbifuncroleid);
 			sbifuncrole.setStateCd(permissionDomain.getValueCd());
 			
-			updateSbiCommonInfo4Update(sbifuncrole);
+			updateSbiCommonInfo4Update(sbifuncrole, true);
 			
 			aSession.save(sbifuncrole);
 			functRoleToSave.add(sbifuncrole);
@@ -1770,7 +1770,7 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 				else hibFunct.setProg(new Integer(1));
 			}
 			
-			updateSbiCommonInfo4Insert(hibFunct);
+			updateSbiCommonInfo4Insert(hibFunct, true);
 			
 			result = (Integer)aSession.save(hibFunct);
 

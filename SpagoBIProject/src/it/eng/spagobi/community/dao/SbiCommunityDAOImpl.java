@@ -88,7 +88,7 @@ public class SbiCommunityDAOImpl extends AbstractHibernateDAO implements ISbiCom
 			tx = aSession.beginTransaction();
 			community.setCreationDate(new Date());
 			community.setLastChangeDate(new Date());
-			updateSbiCommonInfo4Insert(community);
+			updateSbiCommonInfo4Insert(community, true);
 			id = (Integer)aSession.save(community);
 
 			tx.commit();
@@ -228,7 +228,7 @@ public class SbiCommunityDAOImpl extends AbstractHibernateDAO implements ISbiCom
 				
 				commUsers.setId(id);
 				
-				updateSbiCommonInfo4Insert(commUsers);
+				updateSbiCommonInfo4Insert(commUsers, true);
 				aSession.save(commUsers);
 	
 				tx.commit();
@@ -273,7 +273,7 @@ public class SbiCommunityDAOImpl extends AbstractHibernateDAO implements ISbiCom
 			
 			commUsers.setId(id);
 			
-			updateSbiCommonInfo4Insert(commUsers);
+			updateSbiCommonInfo4Insert(commUsers,true);
 			aSession.save(commUsers);
 
 			tx.commit();
