@@ -91,7 +91,9 @@ public class DataSetJSONSerializer implements Serializer {
 	public static final String XSL_FILE_SKIP_ROWS = "skipRows";
 	public static final String XSL_FILE_LIMIT_ROWS = "limitRows";
 	public static final String XSL_FILE_SHEET_NUMBER = "xslSheetNumber";
-
+	
+	private static final String SCOPE_CD = "scopeCd";
+	private static final String SCOPE_ID = "scopeId";
 	
 	public Object serialize(Object o, Locale locale) throws SerializationException {
 		JSONObject  result = null;
@@ -277,6 +279,8 @@ public class DataSetJSONSerializer implements Serializer {
 			result.put(IS_PUBLIC, ds.isPublic());
 			result.put(OWNER, ds.getOwner());
 			result.put(DATE_IN, ds.getDateIn());
+			result.put(SCOPE_CD, ds.getScopeCd()); 
+			result.put(SCOPE_ID, ds.getScopeId()); 
 		} catch (Throwable t) {
 			throw new SerializationException("An error occurred while serializing object: " + o, t);
 		} finally {

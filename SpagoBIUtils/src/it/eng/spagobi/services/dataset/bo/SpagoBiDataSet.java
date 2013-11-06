@@ -52,7 +52,11 @@ public class SpagoBiDataSet  implements java.io.Serializable {
 
     private boolean _public;
 
-    public SpagoBiDataSet() {
+    private java.lang.Integer scopeId;
+
+
+
+	public SpagoBiDataSet() {
     }
 
     public SpagoBiDataSet(
@@ -77,7 +81,8 @@ public class SpagoBiDataSet  implements java.io.Serializable {
            java.lang.String type,
            int versionNum,
            boolean _public,
-           String organization) {
+           String organization,
+           java.lang.Integer scopeId) {
            this.active = active;
            this.categoryId = categoryId;
            this.configuration = configuration;
@@ -100,10 +105,18 @@ public class SpagoBiDataSet  implements java.io.Serializable {
            this.versionNum = versionNum;
            this._public = _public;
            this.organization = organization;
+           this.scopeId = scopeId;
     }
 
+    public java.lang.Integer getScopeId() {
+		return scopeId;
+	}
 
-    /**
+	public void setScopeId(java.lang.Integer scopeId) {
+		this.scopeId = scopeId;
+	}
+
+	/**
      * Gets the active value for this SpagoBiDataSet.
      * 
      * @return active
@@ -594,7 +607,10 @@ public class SpagoBiDataSet  implements java.io.Serializable {
              (this.type!=null &&
               this.type.equals(other.getType()))) &&
             this.versionNum == other.getVersionNum() &&
-            this._public == other.is_public();
+            this._public == other.is_public() &&
+            ((this.scopeId==null && other.getScopeId()==null) || 
+                    (this.scopeId!=null &&
+                     this.scopeId.equals(other.getScopeId())));
         __equalsCalc = null;
         return _equals;
     }
@@ -651,6 +667,9 @@ public class SpagoBiDataSet  implements java.io.Serializable {
         }
         if (getTransformerId() != null) {
             _hashCode += getTransformerId().hashCode();
+        }
+        if (getScopeId() != null) {
+            _hashCode += getScopeId().hashCode();
         }
         if (getType() != null) {
             _hashCode += getType().hashCode();
@@ -792,6 +811,13 @@ public class SpagoBiDataSet  implements java.io.Serializable {
         elemField.setXmlName(new javax.xml.namespace.QName("", "public"));
         elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "boolean"));
         elemField.setNillable(false);
+        typeDesc.addFieldDesc(elemField);
+        
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("scopeId");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "scopeId"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "int"));
+        elemField.setNillable(true);
         typeDesc.addFieldDesc(elemField);
     }
 

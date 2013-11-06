@@ -29,6 +29,8 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
     List scriptLanguageList = (List) aSessionContainer.getAttribute("scriptLanguageList");
     List trasfTypesList = (List) aSessionContainer.getAttribute("trasfTypesList");
     List sbiAttrsList = (List) aSessionContainer.getAttribute("sbiAttrsList");
+    
+    List scopeCdList = (List) aSessionContainer.getAttribute("scopeCdList");
     String[] fileNamesList = ( String[]) aSessionContainer.getAttribute("fileNames");
 %>
 
@@ -89,7 +91,20 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 	}	
 	String catTypes = catTypesArray.toString();
 	catTypes = catTypes.replaceAll("\"","'");
-	
+	///------scope USER, ENTERPRISE, TECHNICAL
+	JSONArray scopeCdArray = new JSONArray();
+	//scopeCdArray.put(empty);
+	if(scopeCdList != null){
+		for(int i=0; i< scopeCdList.size(); i++){
+			Domain domain = (Domain)scopeCdList.get(i);
+			JSONArray temp = new JSONArray();
+			temp.put(domain.getValueName());
+			scopeCdArray.put(temp);
+		}
+	}	
+	String scopeCd = scopeCdArray.toString();
+	scopeCd = scopeCd.replaceAll("\"","'");
+	///-----------END
 	JSONArray dataSourcesArray = new JSONArray();
 	if(dataSourceList != null){
 		for(int i=0; i< dataSourceList.size(); i++){
@@ -164,6 +179,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
     config.trasfTypes = <%= trasfTypes%>;    
     config.attrs = <%= attrs%>;  
     config.fileTypes = <%= fileNames%>;  
+    config.scopeCd = <%= scopeCd%>;  
 	
 	var url = {
     	host: '<%= request.getServerName()%>'

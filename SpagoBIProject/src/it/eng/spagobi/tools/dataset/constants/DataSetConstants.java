@@ -30,7 +30,9 @@ public class DataSetConstants {
 	public static final String CATEGORY_DOMAIN_TYPE = "CATEGORY_TYPE";
 	public static final String SCRIPT_TYPE = "SCRIPT_TYPE";
 	public static final String DATA_SET_TYPE = "DATA_SET_TYPE";	
-	public static final String TRANSFORMER_TYPE = "TRANSFORMER_TYPE";		
+	public static final String TRANSFORMER_TYPE = "TRANSFORMER_TYPE";
+	public static final String DS_SCOPE = "DS_SCOPE";	
+	public static final String DS_SCOPE_USER = "USER";	
 	
 	public static final String DS_ID = "dsId";
 	public static final String VERSION_ID = "versId";

@@ -307,6 +307,26 @@ public class CustomDataSet extends ConfigurableDataSet {
 				dataSource) ;
 	}
 
+	public Integer getScopeId() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public void setScopeId(Integer scopeId) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public String getScopeCd() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public void setScopeCd(String scopeCd) {
+		// TODO Auto-generated method stub
+		
+	}
+
 	
 	
 	

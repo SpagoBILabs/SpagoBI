@@ -97,6 +97,9 @@ public abstract class AbstractDataSet implements IDataSet {
     protected String owner;
     protected boolean isPublic;
     
+    protected Integer scopeId;
+    protected String scopeCd;
+    
     private static transient Logger logger = Logger.getLogger(AbstractDataSet.class);
 
     public AbstractDataSet() {
@@ -104,7 +107,23 @@ public abstract class AbstractDataSet implements IDataSet {
     	behaviours = new HashMap();
     }
     
-    public AbstractDataSet(SpagoBiDataSet dataSet) {
+    public Integer getScopeId() {
+		return scopeId;
+	}
+
+	public void setScopeId(Integer scopeId) {
+		this.scopeId = scopeId;
+	}
+
+	public String getScopeCd() {
+		return scopeCd;
+	}
+
+	public void setScopeCd(String scopeCd) {
+		this.scopeCd = scopeCd;
+	}
+
+	public AbstractDataSet(SpagoBiDataSet dataSet) {
     	super();
     	setId(dataSet.getDsId());
     	setName(dataSet.getName());
@@ -125,6 +144,7 @@ public abstract class AbstractDataSet implements IDataSet {
 		setPersistTableName(dataSet.getPersistTableName());
 		
 		setPublic(dataSet.is_public());
+		setScopeId(dataSet.getScopeId());
 		
 		if(this.getPivotColumnName() != null 
 				&& this.getPivotColumnValue() != null
@@ -158,6 +178,7 @@ public abstract class AbstractDataSet implements IDataSet {
 		sbd.set_public(isPublic());
 		
 		sbd.setOrganization(getOrganization());
+		sbd.setScopeId(getScopeId());
 		
 		return sbd;
 	}

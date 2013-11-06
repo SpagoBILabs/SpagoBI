@@ -185,6 +185,20 @@ public class UserUtilities {
 		}
 	}  
 	
+	public static boolean isTechDsManager (IEngUserProfile profile) {
+		Assert.assertNotNull(profile, "Object in input is null");
+		logger.debug("IN.user unique id = [" + profile.getUserUniqueIdentifier() + "]");
+		try {
+			if (profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN)  // for administrators
+					|| profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_DEV)  ){// for developers
+				return true;
+			} else {
+				return false;
+			}
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException("Error while getting user's information", e);
+		}
+	}  
 	
 	public static boolean isAdministrator (IEngUserProfile profile) {
 		Assert.assertNotNull(profile, "Object in input is null");

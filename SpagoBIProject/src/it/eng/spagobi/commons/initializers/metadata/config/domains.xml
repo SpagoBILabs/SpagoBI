@@ -182,8 +182,9 @@
 <DOMAIN valueCd="TMS" valueNm="TMS" domainCd="LAYER_TYPE" domainNm="Layer Type" valueDs="Layer Type"/>
 <DOMAIN valueCd="Google" valueNm="Google" domainCd="LAYER_TYPE" domainNm="Layer Type" valueDs="Layer Type"/>
 <DOMAIN valueCd="OSM" valueNm="OSM" domainCd="LAYER_TYPE" domainNm="Layer Type" valueDs="Layer Type"/>
-
-
+<DOMAIN valueCd="USER" valueNm="User" domainCd="DS_SCOPE" domainNm="Dataset scope" valueDs="Dataset scope"/>
+<DOMAIN valueCd="ENTERPRISE" valueNm="Enterprise" domainCd="DS_SCOPE" domainNm="Dataset scope" valueDs="Dataset scope"/>
+<DOMAIN valueCd="TECHNICAL" valueNm="Technical" domainCd="DS_SCOPE" domainNm="Dataset scope" valueDs="Dataset scope"/>
 
 <DOMAIN valueCd="licence" valueNm="licence" domainCd="DS_GEN_META_PROPERTY" domainNm="Data Set General Metadata Property" valueDs="Data Set General Metadata Property"/>
 

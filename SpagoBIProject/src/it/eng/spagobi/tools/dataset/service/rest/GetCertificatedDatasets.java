@@ -54,14 +54,15 @@ public class GetCertificatedDatasets {
 		try {
 			dataSetDao = DAOFactory.getDataSetDAO();
 			dataSetDao.setUserProfile(profile);
-			String isPublic = req.getParameter("isPublic");
-			Boolean isPubl = true;
-			if(isPublic != null && isPublic.equals("false")){
-				isPubl = false;
+			String isTech = req.getParameter("isTech");
+
+			if(isTech != null && isTech.equals("true")){
+				//if is technical dataset == ENTERPRISE --> get all ADMIN/DEV public datasets
+				dataSets = dataSetDao.loadEnterpriseDatasets(profile.getUserUniqueIdentifier().toString());
+			}else{
+				//else it is a custom dataset list --> get all datasets public with owner != user itself
+				dataSets = dataSetDao.loadSharedDatasets(profile.getUserUniqueIdentifier().toString());
 			}
-			dataSets = dataSetDao.loadPagedDatasetList(0,
-					Integer.MAX_VALUE, profile.getUserUniqueIdentifier()
-							.toString(), isPubl);
 
 			datasetsJSONArray = (JSONArray) SerializerFactory.getSerializer(
 					"application/json").serialize(dataSets, null);
