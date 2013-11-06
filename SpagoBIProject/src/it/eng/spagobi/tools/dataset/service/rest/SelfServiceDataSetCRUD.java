@@ -27,6 +27,7 @@ import it.eng.spagobi.commons.serializer.SerializerFactory;
 import it.eng.spagobi.commons.utilities.AuditLogUtilities;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.StringUtilities;
+import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.metamodel.MetaModelWrapper;
@@ -114,6 +115,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 
 /**
  * @authors Antonella Giachino (antonella.giachino@eng.it)
+ * Monica Franceschini (monica.franceschini@eng.it)
  * 
  */
 @Path("/selfservicedataset")
@@ -131,7 +133,7 @@ public class SelfServiceDataSetCRUD {
 	@Produces(MediaType.APPLICATION_JSON)
 	public String getAllDataSet(@Context HttpServletRequest req) {
 		IDataSetDAO dataSetDao = null;
-		List<IDataSet> dataSets;
+		List<IDataSet> dataSets = new ArrayList<IDataSet>();
 		IEngUserProfile profile = (IEngUserProfile) req.getSession()
 				.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 		JSONObject JSONReturn = new JSONObject();
@@ -139,7 +141,17 @@ public class SelfServiceDataSetCRUD {
 		try {
 			dataSetDao = DAOFactory.getDataSetDAO();
 			dataSetDao.setUserProfile(profile);
-			dataSets = dataSetDao.loadAllActiveDataSetsByOwnerAndType(profile.getUserUniqueIdentifier().toString(), DataSetConstants.DS_FILE);	
+			
+			boolean isTechDsMngr = UserUtilities.isTechDsManager(profile);
+			String showOnlyOwner =  req.getParameter("showOnlyOwner");
+			if(!isTechDsMngr){
+				if(showOnlyOwner != null && !showOnlyOwner.equalsIgnoreCase("true")){
+					dataSets = dataSetDao.loadMyDataOwnerAndSharedDatasets(profile.getUserUniqueIdentifier().toString());	
+				}else{
+					dataSets = dataSetDao.loadMyDataOwnerDatasets(profile.getUserUniqueIdentifier().toString());	
+				}
+			}
+			
 			datasetsJSONArray = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(dataSets, null);
 			
 			JSONArray datasetsJSONReturn = putActions(profile,
@@ -1003,7 +1015,8 @@ public class SelfServiceDataSetCRUD {
 		String skipRows = (String)req.getParameter("skipRows");
 		String limitRows = (String)req.getParameter("limitRows");
 		String xslSheetNumber = (String)req.getParameter("xslSheetNumber");
-		String meta = (String)req.getParameter(DataSetConstants.METADATA);		
+		String meta = (String)req.getParameter(DataSetConstants.METADATA);
+		String scopeCd = DataSetConstants.DS_SCOPE_USER;	
 		Boolean isPublic = Boolean.valueOf((req.getParameter("isPublicDS")==null)?"false":(String)req.getParameter("isPublicDS"));
 		Boolean newFileUploaded = false;
 		if (req.getParameter("fileUploaded") != null){
@@ -1029,6 +1042,7 @@ public class SelfServiceDataSetCRUD {
 			jsonDsConfig.put(DataSetConstants.XSL_FILE_SKIP_ROWS, skipRows);
 			jsonDsConfig.put(DataSetConstants.XSL_FILE_LIMIT_ROWS, limitRows);
 			jsonDsConfig.put(DataSetConstants.XSL_FILE_SHEET_NUMBER, xslSheetNumber);
+			jsonDsConfig.put(DataSetConstants.DS_SCOPE, scopeCd);
 		
 
 		}catch (Exception e){
@@ -1106,6 +1120,18 @@ public class SelfServiceDataSetCRUD {
 		toReturn.setLabel(label);
 		toReturn.setName(name);
 		toReturn.setDescription(description);		
+		
+		//always USER scope
+		toReturn.setScopeCd(scopeCd);
+		Integer scopeId = null;
+		try{
+			scopeId = Integer.parseInt(scopeCd);			
+		}catch (Exception e){
+			logger.debug("Scope must be decodified...");
+			scopeId = getScopeId(scopeCd);
+			logger.debug("Scope Id is : " + scopeId);
+		}
+		toReturn.setScopeId(scopeId);
 		
 		Integer categoryCode = null;
 		try{
@@ -1220,6 +1246,36 @@ public class SelfServiceDataSetCRUD {
 		}
 		
 		return categoryCode;
+	}
+	
+	private Integer getScopeId(String scopeCd) {
+		Integer scopeId = null;		
+		try {
+		
+			if(scopeCd == null) return null;
+			List<Domain> scopes = null;
+			
+			try {
+				scopes = DAOFactory.getDomainDAO().loadListDomainsByType(DataSetConstants.DS_SCOPE);
+			} catch (Throwable t) {
+				throw new SpagoBIRuntimeException("An unexpected error occured while loading scopes types from database", t);
+			}			
+			
+			if(scopes == null) {
+				return null;
+			}
+			
+			for(Domain dmScope : scopes){
+				if( scopeCd.equalsIgnoreCase( dmScope.getValueCd() ) ){
+					scopeId = dmScope.getValueId();
+					break;
+				}
+			}
+		} catch(Throwable t) {
+			if(t instanceof SpagoBIRuntimeException) throw (SpagoBIRuntimeException)t;
+			throw new SpagoBIRuntimeException("An unexpected error occured while resolving scope id name from dataset scope code [" + scopeCd + "]");
+		}		
+		return scopeId;
 	}
 
 	private String getDatasetTestMetadata(IDataSet dataSet,  IEngUserProfile profile, String metadata) throws Exception {

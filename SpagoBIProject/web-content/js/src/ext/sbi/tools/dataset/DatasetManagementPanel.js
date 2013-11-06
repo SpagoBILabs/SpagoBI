@@ -174,7 +174,8 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 	detailFieldVersNum: null,
 	detailFieldVersId: null,
 	qbeDataSetBuilder: null,
-	customDataGrid: null
+	customDataGrid: null,
+	detailFieldScopeId: null
 
 	
 	, manageFormsDisabling: function(){
@@ -409,7 +410,8 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 						versNum: values['versNum'],
 						versId: values['versId'],
 						meta: values['meta'],
-						fileUploaded: thisPanel.fileUploaded
+						fileUploaded: thisPanel.fileUploaded,
+						scopeCd: values['scopeCd']
 					};
 					arrayPars = this.parsGrid.getParametersValues();
 					if (arrayPars) {
@@ -446,7 +448,7 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 							'isPersisted', 'persistTableName',
 							'flatTableName', 'dataSourceFlat',
 							'qbeSQLQuery', 'qbeJSONQuery', 'qbeDataSource',
-							'qbeDatamarts',	'userIn','dateIn','versNum','versId','meta'];
+							'qbeDatamarts',	'userIn','dateIn','versNum','versId','meta', 'scopeCd'];
 
 					this.configurationObject.emptyRecToAdd = new Ext.data.Record(
 							{	id : null,
@@ -461,7 +463,7 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 								isPersisted:'', persistTableName:'',
 								flatTableName:'', dataSourceFlat : '',
 								qbeSQLQuery: '',qbeJSONQuery: '', qbeDataSource: '', qbeDatamarts: '',
-								dsVersions : [], userIn:'',dateIn:'',versNum:'',versId:'',meta:[]
+								dsVersions : [], userIn:'',dateIn:'',versNum:'',versId:'',meta:[], scopeCd:''
 							});
 
 					this.configurationObject.gridColItems = [ {
@@ -562,7 +564,13 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 						fields : [ 'catTypeVn' ],
 						data : config.catTypeVn,
 						autoLoad : false
-					});									
+					});		
+					
+					this.scopeStore = new Ext.data.SimpleStore({
+						fields : [ 'scopeCd' ],
+						data : config.scopeCd,
+						autoLoad : false
+					});
                   		
                   	this.isPublicStore = new Ext.data.SimpleStore({
                   		fields: ['value', 'field', 'description'],
@@ -652,6 +660,21 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 						allowBlank : true, validationEvent : true,
 						xtype : 'combo'							    	
 					});
+					
+					var scopeCdField = new Ext.form.ComboBox({
+						name : 'scopeCd',
+						store : this.scopeStore,
+						width : 350,
+						//fieldLabel : LN('sbi.ds.scope'),
+						displayField : 'scopeCd', 
+						valueField : 'scopeCd', 
+						typeAhead : true, forceSelection : true,
+						mode : 'local',
+						triggerAction : 'all',
+						selectOnFocus : true, editable : false,
+						allowBlank : true, validationEvent : true,
+						xtype : 'combo'							    	
+					});
 					// END list of detail fields
 
 					var c = {};
@@ -723,7 +746,7 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 									},
 									items : [ 
 									        detailFieldLabel, detailFieldName,
-											detailFieldDescr, detailFieldCatType, scopeField, this.manageDsVersionsPanel ,
+											detailFieldDescr, detailFieldCatType, scopeField, scopeCdField, this.manageDsVersionsPanel ,
 											this.detailFieldUserIn,this.detailFieldDateIn,this.detailFieldVersNum,this.detailFieldVersId,this.detailFieldId
 											]
 								}
@@ -1606,7 +1629,8 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 								dateIn: '',
 								versNum: 2,
 								versId: 0,
-								meta: []
+								meta: [],
+								scopeCd: ''
 							});
 					this.setValues(this.newRecord);
 					this.manageParsGrid.loadItems([]);
@@ -1701,7 +1725,8 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 						dateIn: values['dateIn'],
 						versNum: values['versNum'],
 						versId: values['versId'],
-						meta: values['meta']
+						meta: values['meta'],
+						scopeCd: values['scopeCd']
 					});
 					return newRec;
 				}
@@ -1753,7 +1778,8 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 						dateIn: values['dateIn'],
 						versNum: values['versNum'],
 						versId: values['versId'],
-						meta: values['meta']
+						meta: values['meta'],
+						scopeCd: values['scopeCd']
 					});
 					return newRec;
 				}	
@@ -1802,7 +1828,8 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 							versNum: values['versNum'],
 							versId: values['versId'],
 							meta: values['meta'],
-							fileUploaded : thisPanel.fileUploaded
+							fileUploaded : thisPanel.fileUploaded,
+							scopeCd: values['scopeCd'],
 						};
 					return params;
 				}
@@ -1850,6 +1877,7 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 					record.set('dateIn',values['dateIn']);
 					record.set('versNum',values['versNum']);
 					record.set('versId',values['versId']);
+					record.set('scopeCd',values['scopeCd']);
 					
 					if (arrayPars) {
 						record.set('pars',arrayPars);
