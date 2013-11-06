@@ -1982,7 +1982,7 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 				 */
 			    , showMask : function(){  
 			    	if (this.loadMask == null) {
-			    		this.loadMask = new Ext.LoadMask(this, {msg: "Saving..."});    		
+			    		this.loadMask = new Ext.LoadMask(this, {msg: "Loading..."});    		
 			    	}
 			    	this.loadMask.show();
 			    }
@@ -2388,7 +2388,7 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 			    , showMask : function(){
 			    	this.un('afterlayout',this.showMask,this);
 			    	if (this.loadMask == null) {    		
-			    		this.loadMask = new Ext.LoadMask(Ext.getBody(), {msg: "  Saving...  "});
+			    		this.loadMask = new Ext.LoadMask(Ext.getBody(), {msg: "Loading...  "});
 			    	}
 			    	if (this.loadMask){
 			    		this.loadMask.show();
