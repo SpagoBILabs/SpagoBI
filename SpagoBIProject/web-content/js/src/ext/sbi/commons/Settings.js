@@ -113,5 +113,12 @@ Ext.ns("Sbi.settings.IE");
 // warning message "A script on this page is causing Internet Explorer to run slowly")
 Sbi.settings.IE.destroyExecutionWizardWhenClosed = false;
 
-
+/**
+ * MY DATA :
+ * put false for previous behavior (all USER public ds + owned)
+ * put true for showing only owned datasets
+ */
+Sbi.settings.myData = {
+	showOnlyOwner: true
+};
 
