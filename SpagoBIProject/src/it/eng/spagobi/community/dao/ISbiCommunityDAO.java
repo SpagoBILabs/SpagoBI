@@ -8,12 +8,16 @@ package it.eng.spagobi.community.dao;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.dao.ISpagoBIDao;
 import it.eng.spagobi.community.mapping.SbiCommunity;
+import it.eng.spagobi.community.mapping.SbiCommunityUsers;
+import it.eng.spagobi.profiling.bean.SbiUser;
 
 import java.util.List;
 
 public interface ISbiCommunityDAO extends ISpagoBIDao {
 	
 	public void deleteCommunityById(Integer id) throws EMFUserError;
+	
+	public void deleteCommunityMembership(String userID) throws EMFUserError;
 	
 	public SbiCommunity loadSbiCommunityByName(String name) throws EMFUserError;
 
@@ -30,4 +34,6 @@ public interface ISbiCommunityDAO extends ISpagoBIDao {
 	public Integer saveSbiComunity(SbiCommunity community) throws EMFUserError;
 	
 	public Integer updateSbiComunity(SbiCommunity community) throws EMFUserError;
+	
+	public List<SbiCommunityUsers> loadCommunitieMembersByName(SbiCommunity community, SbiUser owner) throws EMFUserError;
 }

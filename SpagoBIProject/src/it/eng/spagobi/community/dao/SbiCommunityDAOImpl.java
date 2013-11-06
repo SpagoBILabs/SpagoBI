@@ -37,6 +37,7 @@ import it.eng.spagobi.community.mapping.SbiCommunityUsers;
 import it.eng.spagobi.community.mapping.SbiCommunityUsersId;
 import it.eng.spagobi.engines.dossier.dao.IDossierPartsTempDAO;
 import it.eng.spagobi.engines.dossier.dao.IDossierPresentationsDAO;
+import it.eng.spagobi.profiling.bean.SbiUser;
 import it.eng.spagobi.tools.objmetadata.bo.ObjMetacontent;
 import it.eng.spagobi.tools.objmetadata.bo.ObjMetadata;
 import it.eng.spagobi.tools.objmetadata.dao.IObjMetacontentDAO;
@@ -159,8 +160,7 @@ public class SbiCommunityDAOImpl extends AbstractHibernateDAO implements ISbiCom
 			Query query = aSession.createQuery(q);
 			query.setString("userId", owner);
 
-			List hibList = query.list();
-			Iterator it = hibList.iterator();
+			result = query.list();
 
 			return result;
 		} catch (HibernateException he) {
@@ -570,6 +570,68 @@ public class SbiCommunityDAOImpl extends AbstractHibernateDAO implements ISbiCom
 					aSession.close();
 			}
 		}
+	}
+
+	public List<SbiCommunityUsers> loadCommunitieMembersByName(SbiCommunity community, SbiUser owner)
+			throws EMFUserError {
+		logger.debug("IN");
+		List<SbiCommunityUsers> result = null;
+		Session aSession = null;
+		Transaction tx = null;
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+			Integer id = community.getCommunityId();
+			String q = "from SbiCommunityUsers cu where cu.id.communityId = ? and cu.id.userId != ? order by creationDate desc";
+			Query query = aSession.createQuery(q);
+			query.setInteger(0, id);
+			query.setString(1, owner.getUserId());
+			result = query.list();
+
+			return result;
+		} catch (HibernateException he) {
+			logger.error(he.getMessage(), he);
+			if (tx != null)
+				tx.rollback();
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+		} finally {
+			logger.debug("OUT");
+			if (aSession!=null){
+				if (aSession.isOpen()) aSession.close();
+			}
+		}
+	}
+
+	public void deleteCommunityMembership(String userID)
+			throws EMFUserError {
+		logger.debug("IN");
+		Session aSession = null;
+		Transaction tx = null;
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+			String q = "from SbiCommunityUsers cu where cu.id.userId = ?";
+			Query query = aSession.createQuery(q);
+			query.setString(0, userID);
+			List <SbiCommunityUsers> result = query.list();
+			if(result != null && !result.isEmpty()){
+				for(int i=0; i<result.size(); i++){
+					aSession.delete(result.get(i));
+				}
+			}
+			tx.commit();
+		} catch (HibernateException he) {
+			logger.error(he.getMessage(), he);
+			if (tx != null)
+				tx.rollback();
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+		} finally {
+			logger.debug("OUT");
+			if (aSession!=null){
+				if (aSession.isOpen()) aSession.close();
+			}
+		}
+		
 	}
 
 }
