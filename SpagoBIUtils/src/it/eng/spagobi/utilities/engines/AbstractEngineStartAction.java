@@ -620,13 +620,14 @@ public class AbstractEngineStartAction extends AbstractBaseHttpAction {
 		if (!dataset.isPersisted() && !dataset.isFlatDataset()) {
 			logger.debug("Dataset is neither persisted nor flat. Persisting dataset into a temporary table...");
 			IDataSource dataSource = (IDataSource) env
-					.get(EngineConstants.ENV_DATASOURCE);
+					.get(EngineConstants.DATASOURCE_FOR_WRITING);
 			String tableName = this.getPersistenceTableName();
 			this.persistDataSetWithTemporaryTable(dataset, tableName,
 					dataSource);
 			logger.debug("Dataset persisted.");
 			dataset.setPersisted(true);
 			dataset.setPersistTableName(tableName);
+			dataset.setDataSourceForReading(dataSource);
 		}
 	}
 

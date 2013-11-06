@@ -10,16 +10,18 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
    <complexType name="SpagoBiDataSource">
     <sequence>
      <element name="driver" nillable="true" type="soapenc:string"/>
-     <element name="jndiName" nillable="true" type="soapenc:string"/>
-     <element name="password" nillable="true" type="soapenc:string"/>
-     <element name="url" nillable="true" type="soapenc:string"/>
-     <element name="user" nillable="true" type="soapenc:string"/>
-     <element name="label" nillable="true" type="soapenc:string"/>
      <element name="hibDialectClass" nillable="true" type="soapenc:string"/>
      <element name="hibDialectName" nillable="true" type="soapenc:string"/>
      <element name="id" type="xsd:int"/>
+     <element name="jndiName" nillable="true" type="soapenc:string"/>
+     <element name="label" nillable="true" type="soapenc:string"/>
      <element name="multiSchema" nillable="true" type="soapenc:boolean"/>
+     <element name="password" nillable="true" type="soapenc:string"/>
+     <element name="readOnly" nillable="true" type="soapenc:boolean"/>
      <element name="schemaAttribute" nillable="true" type="soapenc:string"/>
+     <element name="url" nillable="true" type="soapenc:string"/>
+     <element name="user" nillable="true" type="soapenc:string"/>
+     <element name="writeDefault" nillable="true" type="soapenc:boolean"/>
     </sequence>
    </complexType>
   </schema>
@@ -29,10 +31,12 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
    <import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>
    <complexType name="SpagoBiDataSet">
     <sequence>
+     <element name="_public" type="xsd:boolean"/>
      <element name="active" type="xsd:boolean"/>
      <element name="categoryId" nillable="true" type="soapenc:int"/>
      <element name="configuration" nillable="true" type="soapenc:string"/>
      <element name="dataSource" nillable="true" type="tns3:SpagoBiDataSource"/>
+     <element name="dataSourceForReading" nillable="true" type="tns3:SpagoBiDataSource"/>
      <element name="description" nillable="true" type="soapenc:string"/>
      <element name="dsId" type="xsd:int"/>
      <element name="dsMetadata" nillable="true" type="soapenc:string"/>
@@ -40,16 +44,17 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
      <element name="label" nillable="true" type="soapenc:string"/>
      <element name="name" nillable="true" type="soapenc:string"/>
      <element name="numRows" type="xsd:boolean"/>
+     <element name="organization" nillable="true" type="soapenc:string"/>
      <element name="parameters" nillable="true" type="soapenc:string"/>
      <element name="persistTableName" nillable="true" type="soapenc:string"/>
      <element name="persisted" type="xsd:boolean"/>
      <element name="pivotColumnName" nillable="true" type="soapenc:string"/>
      <element name="pivotColumnValue" nillable="true" type="soapenc:string"/>
      <element name="pivotRowName" nillable="true" type="soapenc:string"/>
+     <element name="scopeId" nillable="true" type="soapenc:int"/>
      <element name="transformerId" nillable="true" type="soapenc:int"/>
      <element name="type" nillable="true" type="soapenc:string"/>
      <element name="versionNum" type="xsd:int"/>
-     <element name="public" type="xsd:boolean"/>
     </sequence>
    </complexType>
   </schema>

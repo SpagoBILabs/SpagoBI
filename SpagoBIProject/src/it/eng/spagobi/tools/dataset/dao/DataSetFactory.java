@@ -21,6 +21,7 @@ import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.tools.datasource.dao.DataSourceDAOHibImpl;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.json.JSONUtils;
 
 import java.util.Date;
@@ -206,8 +207,11 @@ public class DataSetFactory {
 				DataSourceDAOHibImpl dataSourceDao=new DataSourceDAOHibImpl();
 				IDataSource dataSource= dataSourceDao.loadDataSourceByLabel(jsonConf.getString(DataSetConstants.QBE_DATA_SOURCE));									
 				if (dataSource!=null){				
-					((QbeDataSet)ds).setDataSource(dataSource);				
-				}			
+					((QbeDataSet)ds).setDataSource(dataSource);
+					if(!dataSource.checkIsReadOnly()){
+						ds.setDataSourceForWriting(dataSource);
+					}
+				}
 				ds.setDsType(QBE_DS_TYPE);
 				
 			}
@@ -260,7 +264,6 @@ public class DataSetFactory {
 						new PivotDataSetTransformer(ds.getPivotColumnName(), ds.getPivotColumnValue(), ds.getPivotRowName(), ds.isNumRows()));
 			}
 			ds.setPersisted(sbiDataSet.isPersisted());
-
 			ds.setPersistTableName(sbiDataSet.getPersistTableName());
 			ds.setOwner(sbiDataSet.getOwner());
 			ds.setPublic(sbiDataSet.isPublicDS());
@@ -275,13 +278,22 @@ public class DataSetFactory {
 				logger.debug("take write default data source as data source for writing");
 				DataSourceDAOHibImpl dataSourceDao=new DataSourceDAOHibImpl();
 				IDataSource dataSourceWriteDef= dataSourceDao.loadDataSourceWriteDefault();
-				if (dataSourceWriteDef!=null){				
+				if (dataSourceWriteDef!=null) {				
 					logger.debug("data source write default is "+dataSourceWriteDef.getLabel());
 					ds.setDataSourceForWriting(dataSourceWriteDef);
-				}	
-				else{
+				} else {
 					logger.warn("No data source for write default was found");
 				}
+			}
+			
+			if (sbiDataSet.isPersisted()) {
+				// we read using the same datasource used for writing
+				// TODO manage case when datasource for writing has changed in the meanwhile
+				IDataSource dataSourceForReading = ds.getDataSourceForWriting();
+				if (dataSourceForReading == null) {
+					throw new SpagoBIRuntimeException("Dataset is persisted but there is no datasource for writing!!");
+				}
+				ds.setDataSourceForReading(dataSourceForReading);
 			}
 		}
 		catch(Exception e){

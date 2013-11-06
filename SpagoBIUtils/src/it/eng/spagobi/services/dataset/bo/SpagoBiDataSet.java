@@ -8,6 +8,8 @@
 package it.eng.spagobi.services.dataset.bo;
 
 public class SpagoBiDataSet  implements java.io.Serializable {
+    private boolean _public;
+
     private boolean active;
 
     private java.lang.Integer categoryId;
@@ -15,6 +17,8 @@ public class SpagoBiDataSet  implements java.io.Serializable {
     private java.lang.String configuration;
 
     private it.eng.spagobi.services.datasource.bo.SpagoBiDataSource dataSource;
+
+    private it.eng.spagobi.services.datasource.bo.SpagoBiDataSource dataSourceForReading;
 
     private java.lang.String description;
 
@@ -30,6 +34,8 @@ public class SpagoBiDataSet  implements java.io.Serializable {
 
     private boolean numRows;
 
+    private java.lang.String organization;
+
     private java.lang.String parameters;
 
     private java.lang.String persistTableName;
@@ -42,28 +48,24 @@ public class SpagoBiDataSet  implements java.io.Serializable {
 
     private java.lang.String pivotRowName;
 
+    private java.lang.Integer scopeId;
+
     private java.lang.Integer transformerId;
 
     private java.lang.String type;
-    
-    private java.lang.String organization;
 
     private int versionNum;
 
-    private boolean _public;
-
-    private java.lang.Integer scopeId;
-
-
-
-	public SpagoBiDataSet() {
+    public SpagoBiDataSet() {
     }
 
     public SpagoBiDataSet(
+           boolean _public,
            boolean active,
            java.lang.Integer categoryId,
            java.lang.String configuration,
            it.eng.spagobi.services.datasource.bo.SpagoBiDataSource dataSource,
+           it.eng.spagobi.services.datasource.bo.SpagoBiDataSource dataSourceForReading,
            java.lang.String description,
            int dsId,
            java.lang.String dsMetadata,
@@ -71,22 +73,23 @@ public class SpagoBiDataSet  implements java.io.Serializable {
            java.lang.String label,
            java.lang.String name,
            boolean numRows,
+           java.lang.String organization,
            java.lang.String parameters,
            java.lang.String persistTableName,
            boolean persisted,
            java.lang.String pivotColumnName,
            java.lang.String pivotColumnValue,
            java.lang.String pivotRowName,
+           java.lang.Integer scopeId,
            java.lang.Integer transformerId,
            java.lang.String type,
-           int versionNum,
-           boolean _public,
-           String organization,
-           java.lang.Integer scopeId) {
+           int versionNum) {
+           this._public = _public;
            this.active = active;
            this.categoryId = categoryId;
            this.configuration = configuration;
            this.dataSource = dataSource;
+           this.dataSourceForReading = dataSourceForReading;
            this.description = description;
            this.dsId = dsId;
            this.dsMetadata = dsMetadata;
@@ -94,29 +97,41 @@ public class SpagoBiDataSet  implements java.io.Serializable {
            this.label = label;
            this.name = name;
            this.numRows = numRows;
+           this.organization = organization;
            this.parameters = parameters;
            this.persistTableName = persistTableName;
            this.persisted = persisted;
            this.pivotColumnName = pivotColumnName;
            this.pivotColumnValue = pivotColumnValue;
            this.pivotRowName = pivotRowName;
+           this.scopeId = scopeId;
            this.transformerId = transformerId;
            this.type = type;
            this.versionNum = versionNum;
-           this._public = _public;
-           this.organization = organization;
-           this.scopeId = scopeId;
     }
 
-    public java.lang.Integer getScopeId() {
-		return scopeId;
-	}
 
-	public void setScopeId(java.lang.Integer scopeId) {
-		this.scopeId = scopeId;
-	}
+    /**
+     * Gets the _public value for this SpagoBiDataSet.
+     * 
+     * @return _public
+     */
+    public boolean is_public() {
+        return _public;
+    }
 
-	/**
+
+    /**
+     * Sets the _public value for this SpagoBiDataSet.
+     * 
+     * @param _public
+     */
+    public void set_public(boolean _public) {
+        this._public = _public;
+    }
+
+
+    /**
      * Gets the active value for this SpagoBiDataSet.
      * 
      * @return active
@@ -193,6 +208,26 @@ public class SpagoBiDataSet  implements java.io.Serializable {
      */
     public void setDataSource(it.eng.spagobi.services.datasource.bo.SpagoBiDataSource dataSource) {
         this.dataSource = dataSource;
+    }
+
+
+    /**
+     * Gets the dataSourceForReading value for this SpagoBiDataSet.
+     * 
+     * @return dataSourceForReading
+     */
+    public it.eng.spagobi.services.datasource.bo.SpagoBiDataSource getDataSourceForReading() {
+        return dataSourceForReading;
+    }
+
+
+    /**
+     * Sets the dataSourceForReading value for this SpagoBiDataSet.
+     * 
+     * @param dataSourceForReading
+     */
+    public void setDataSourceForReading(it.eng.spagobi.services.datasource.bo.SpagoBiDataSource dataSourceForReading) {
+        this.dataSourceForReading = dataSourceForReading;
     }
 
 
@@ -337,6 +372,26 @@ public class SpagoBiDataSet  implements java.io.Serializable {
 
 
     /**
+     * Gets the organization value for this SpagoBiDataSet.
+     * 
+     * @return organization
+     */
+    public java.lang.String getOrganization() {
+        return organization;
+    }
+
+
+    /**
+     * Sets the organization value for this SpagoBiDataSet.
+     * 
+     * @param organization
+     */
+    public void setOrganization(java.lang.String organization) {
+        this.organization = organization;
+    }
+
+
+    /**
      * Gets the parameters value for this SpagoBiDataSet.
      * 
      * @return parameters
@@ -457,6 +512,26 @@ public class SpagoBiDataSet  implements java.io.Serializable {
 
 
     /**
+     * Gets the scopeId value for this SpagoBiDataSet.
+     * 
+     * @return scopeId
+     */
+    public java.lang.Integer getScopeId() {
+        return scopeId;
+    }
+
+
+    /**
+     * Sets the scopeId value for this SpagoBiDataSet.
+     * 
+     * @param scopeId
+     */
+    public void setScopeId(java.lang.Integer scopeId) {
+        this.scopeId = scopeId;
+    }
+
+
+    /**
      * Gets the transformerId value for this SpagoBiDataSet.
      * 
      * @return transformerId
@@ -515,36 +590,6 @@ public class SpagoBiDataSet  implements java.io.Serializable {
         this.versionNum = versionNum;
     }
 
-
-    /**
-     * Gets the _public value for this SpagoBiDataSet.
-     * 
-     * @return _public
-     */
-    public boolean is_public() {
-        return _public;
-    }
-
-    
-    
-
-    public java.lang.String getOrganization() {
-		return organization;
-	}
-
-	public void setOrganization(java.lang.String organization) {
-		this.organization = organization;
-	}
-
-	/**
-     * Sets the _public value for this SpagoBiDataSet.
-     * 
-     * @param _public
-     */
-    public void set_public(boolean _public) {
-        this._public = _public;
-    }
-
     private java.lang.Object __equalsCalc = null;
     public synchronized boolean equals(java.lang.Object obj) {
         if (!(obj instanceof SpagoBiDataSet)) return false;
@@ -557,6 +602,7 @@ public class SpagoBiDataSet  implements java.io.Serializable {
         __equalsCalc = obj;
         boolean _equals;
         _equals = true && 
+            this._public == other.is_public() &&
             this.active == other.isActive() &&
             ((this.categoryId==null && other.getCategoryId()==null) || 
              (this.categoryId!=null &&
@@ -567,6 +613,9 @@ public class SpagoBiDataSet  implements java.io.Serializable {
             ((this.dataSource==null && other.getDataSource()==null) || 
              (this.dataSource!=null &&
               this.dataSource.equals(other.getDataSource()))) &&
+            ((this.dataSourceForReading==null && other.getDataSourceForReading()==null) || 
+             (this.dataSourceForReading!=null &&
+              this.dataSourceForReading.equals(other.getDataSourceForReading()))) &&
             ((this.description==null && other.getDescription()==null) || 
              (this.description!=null &&
               this.description.equals(other.getDescription()))) &&
@@ -584,6 +633,9 @@ public class SpagoBiDataSet  implements java.io.Serializable {
              (this.name!=null &&
               this.name.equals(other.getName()))) &&
             this.numRows == other.isNumRows() &&
+            ((this.organization==null && other.getOrganization()==null) || 
+             (this.organization!=null &&
+              this.organization.equals(other.getOrganization()))) &&
             ((this.parameters==null && other.getParameters()==null) || 
              (this.parameters!=null &&
               this.parameters.equals(other.getParameters()))) &&
@@ -600,17 +652,16 @@ public class SpagoBiDataSet  implements java.io.Serializable {
             ((this.pivotRowName==null && other.getPivotRowName()==null) || 
              (this.pivotRowName!=null &&
               this.pivotRowName.equals(other.getPivotRowName()))) &&
+            ((this.scopeId==null && other.getScopeId()==null) || 
+             (this.scopeId!=null &&
+              this.scopeId.equals(other.getScopeId()))) &&
             ((this.transformerId==null && other.getTransformerId()==null) || 
              (this.transformerId!=null &&
               this.transformerId.equals(other.getTransformerId()))) &&
             ((this.type==null && other.getType()==null) || 
              (this.type!=null &&
               this.type.equals(other.getType()))) &&
-            this.versionNum == other.getVersionNum() &&
-            this._public == other.is_public() &&
-            ((this.scopeId==null && other.getScopeId()==null) || 
-                    (this.scopeId!=null &&
-                     this.scopeId.equals(other.getScopeId())));
+            this.versionNum == other.getVersionNum();
         __equalsCalc = null;
         return _equals;
     }
@@ -622,6 +673,7 @@ public class SpagoBiDataSet  implements java.io.Serializable {
         }
         __hashCodeCalc = true;
         int _hashCode = 1;
+        _hashCode += (is_public() ? Boolean.TRUE : Boolean.FALSE).hashCode();
         _hashCode += (isActive() ? Boolean.TRUE : Boolean.FALSE).hashCode();
         if (getCategoryId() != null) {
             _hashCode += getCategoryId().hashCode();
@@ -631,6 +683,9 @@ public class SpagoBiDataSet  implements java.io.Serializable {
         }
         if (getDataSource() != null) {
             _hashCode += getDataSource().hashCode();
+        }
+        if (getDataSourceForReading() != null) {
+            _hashCode += getDataSourceForReading().hashCode();
         }
         if (getDescription() != null) {
             _hashCode += getDescription().hashCode();
@@ -649,6 +704,9 @@ public class SpagoBiDataSet  implements java.io.Serializable {
             _hashCode += getName().hashCode();
         }
         _hashCode += (isNumRows() ? Boolean.TRUE : Boolean.FALSE).hashCode();
+        if (getOrganization() != null) {
+            _hashCode += getOrganization().hashCode();
+        }
         if (getParameters() != null) {
             _hashCode += getParameters().hashCode();
         }
@@ -665,17 +723,16 @@ public class SpagoBiDataSet  implements java.io.Serializable {
         if (getPivotRowName() != null) {
             _hashCode += getPivotRowName().hashCode();
         }
-        if (getTransformerId() != null) {
-            _hashCode += getTransformerId().hashCode();
-        }
         if (getScopeId() != null) {
             _hashCode += getScopeId().hashCode();
+        }
+        if (getTransformerId() != null) {
+            _hashCode += getTransformerId().hashCode();
         }
         if (getType() != null) {
             _hashCode += getType().hashCode();
         }
         _hashCode += getVersionNum();
-        _hashCode += (is_public() ? Boolean.TRUE : Boolean.FALSE).hashCode();
         __hashCodeCalc = false;
         return _hashCode;
     }
@@ -687,6 +744,12 @@ public class SpagoBiDataSet  implements java.io.Serializable {
     static {
         typeDesc.setXmlType(new javax.xml.namespace.QName("http://bo.dataset.services.spagobi.eng.it", "SpagoBiDataSet"));
         org.apache.axis.description.ElementDesc elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("_public");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "_public"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "boolean"));
+        elemField.setNillable(false);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
         elemField.setFieldName("active");
         elemField.setXmlName(new javax.xml.namespace.QName("", "active"));
         elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "boolean"));
@@ -707,6 +770,12 @@ public class SpagoBiDataSet  implements java.io.Serializable {
         elemField = new org.apache.axis.description.ElementDesc();
         elemField.setFieldName("dataSource");
         elemField.setXmlName(new javax.xml.namespace.QName("", "dataSource"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://bo.datasource.services.spagobi.eng.it", "SpagoBiDataSource"));
+        elemField.setNillable(true);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("dataSourceForReading");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "dataSourceForReading"));
         elemField.setXmlType(new javax.xml.namespace.QName("http://bo.datasource.services.spagobi.eng.it", "SpagoBiDataSource"));
         elemField.setNillable(true);
         typeDesc.addFieldDesc(elemField);
@@ -753,6 +822,12 @@ public class SpagoBiDataSet  implements java.io.Serializable {
         elemField.setNillable(false);
         typeDesc.addFieldDesc(elemField);
         elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("organization");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "organization"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"));
+        elemField.setNillable(true);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
         elemField.setFieldName("parameters");
         elemField.setXmlName(new javax.xml.namespace.QName("", "parameters"));
         elemField.setXmlType(new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"));
@@ -789,6 +864,12 @@ public class SpagoBiDataSet  implements java.io.Serializable {
         elemField.setNillable(true);
         typeDesc.addFieldDesc(elemField);
         elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("scopeId");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "scopeId"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "int"));
+        elemField.setNillable(true);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
         elemField.setFieldName("transformerId");
         elemField.setXmlName(new javax.xml.namespace.QName("", "transformerId"));
         elemField.setXmlType(new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "int"));
@@ -805,19 +886,6 @@ public class SpagoBiDataSet  implements java.io.Serializable {
         elemField.setXmlName(new javax.xml.namespace.QName("", "versionNum"));
         elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "int"));
         elemField.setNillable(false);
-        typeDesc.addFieldDesc(elemField);
-        elemField = new org.apache.axis.description.ElementDesc();
-        elemField.setFieldName("_public");
-        elemField.setXmlName(new javax.xml.namespace.QName("", "public"));
-        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "boolean"));
-        elemField.setNillable(false);
-        typeDesc.addFieldDesc(elemField);
-        
-        elemField = new org.apache.axis.description.ElementDesc();
-        elemField.setFieldName("scopeId");
-        elemField.setXmlName(new javax.xml.namespace.QName("", "scopeId"));
-        elemField.setXmlType(new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "int"));
-        elemField.setNillable(true);
         typeDesc.addFieldDesc(elemField);
     }
 

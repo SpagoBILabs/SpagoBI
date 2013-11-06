@@ -202,7 +202,8 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 				//Manage persistence of dataset if required. On modify it will drop and create the destination table!
 					logger.debug("Start persistence...");
 					//gets the dataset object informations		
-					IDataSet dataset = DAOFactory.getDataSetDAO().loadActiveDataSetByLabel(ds.getLabel());								
+					IDataSet dataset = DAOFactory.getDataSetDAO().loadActiveDataSetByLabel(ds.getLabel());
+					checkQbeDataset(((VersionedDataSet) dataset).getWrappedDataset());
 					JSONArray parsListJSON = getAttributeAsJSONArray(DataSetConstants.PARS);
 					if(parsListJSON.length()>0)  { 
 						logger.error("The dataset cannot be persisted because uses parameters!");

@@ -177,6 +177,7 @@ public interface IDataSet {
 	public String getTableNameForReading();
 	
 	public IDataSource getDataSourceForReading();
+	public void setDataSourceForReading(IDataSource dataSource);
 	
 	public String getOrganization();
 	public void setOrganization(String organization);

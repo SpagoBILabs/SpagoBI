@@ -42,7 +42,7 @@ public class SQLDataSet extends AbstractQbeDataSet {
 			dataset.setQuery("select * from " + getTableNameForReading());
 			dataset.loadData(offset, fetchSize, maxResults);
 		} else {
-			DataSetDataSource ds = (DataSetDataSource)statement.getDataSource();
+			DataSetDataSource ds = (DataSetDataSource) statement.getDataSource();
 			String statementStr = statement.getQueryString();
 			//SpagoBiDataSet dataSetConfig = new SpagoBiDataSet();
 			//dataSetConfig.setDataSource( ds.getSpagoBiDataSource() );
