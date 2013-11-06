@@ -7,21 +7,26 @@ package it.eng.spagobi.engines.drivers.generic;
 
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.configuration.ConfigSingleton;
+import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
 import it.eng.spagobi.analiticalmodel.document.bo.SubObject;
+import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
+import it.eng.spagobi.analiticalmodel.functionalitytree.dao.ILowFunctionalityDAO;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.ParameterValuesEncoder;
 import it.eng.spagobi.commons.utilities.PortletUtilities;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
+import it.eng.spagobi.community.mapping.SbiCommunity;
 import it.eng.spagobi.engines.drivers.AbstractDriver;
 import it.eng.spagobi.engines.drivers.EngineURL;
 import it.eng.spagobi.engines.drivers.IEngineDriver;
 import it.eng.spagobi.engines.drivers.exceptions.InvalidOperationRequest;
 
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
@@ -47,7 +52,7 @@ public class GenericDriver extends AbstractDriver implements IEngineDriver {
     public static final String DOCUMENT_IS_PUBLIC = "DOCUMENT_IS_PUBLIC";
     public static final String DOCUMENT_IS_VISIBLE = "DOCUMENT_IS_VISIBLE";
     public static final String DOCUMENT_PREVIEW_FILE = "DOCUMENT_PREVIEW_FILE";
-    public static final String DOCUMENT_COMMUNITY = "DOCUMENT_COMMUNITY";
+    public static final String DOCUMENT_COMMUNITIES = "DOCUMENT_COMMUNITIES";
     public static final String DOCUMENT_FUNCTIONALITIES = "DOCUMENT_FUNCTIONALITIES";
     
 
@@ -73,7 +78,7 @@ public class GenericDriver extends AbstractDriver implements IEngineDriver {
 		Map map = new Hashtable();
 		try{
 			BIObject biobj = (BIObject)biobject;
-			map = getMap(biobj);
+			map = getMap(biobj, profile);
 			// This parameter is not required
 			//map.put("query", "#");
 		} catch (ClassCastException cce) {
@@ -108,7 +113,7 @@ public class GenericDriver extends AbstractDriver implements IEngineDriver {
 		Map map = new Hashtable();
 		try{
 			BIObject biobj = (BIObject)object;
-			map = getMap(biobj);
+			map = getMap(biobj, profile);
 			SubObject subObjectDetail = (SubObject) subObject;
 			
 			Integer id = subObjectDetail.getId();
@@ -145,7 +150,7 @@ public class GenericDriver extends AbstractDriver implements IEngineDriver {
      * @param biobj BIObject to execute
      * @return Map The map of the execution call parameters
      */    
-	private Map getMap(BIObject biobj) {
+	private Map getMap(BIObject biobj, IEngUserProfile profile) {
 		logger.debug("IN");
 		
 		Map pars;
@@ -192,13 +197,15 @@ public class GenericDriver extends AbstractDriver implements IEngineDriver {
 		    pars.put(DOCUMENT_IS_PUBLIC, biobj.isPublicDoc());
 		    logger.debug("Add " + DOCUMENT_IS_PUBLIC + " parameter: " + biobj.isPublicDoc());
 		    pars.put(DOCUMENT_IS_VISIBLE, biobj.isVisible());
-		    logger.debug("Add " + DOCUMENT_IS_PUBLIC + " parameter: " + biobj.isVisible());
+		    logger.debug("Add " + DOCUMENT_IS_VISIBLE + " parameter: " + biobj.isVisible());
 		    if (biobj.getPreviewFile() != null) 	
 		    	pars.put(DOCUMENT_PREVIEW_FILE, biobj.getPreviewFile());
 		    logger.debug("Add " + DOCUMENT_PREVIEW_FILE + " parameter: " + biobj.getPreviewFile());
-//		    pars.put(DOCUMENT_COMMUNITY, biobj.GETXXX());
-		    pars.put(DOCUMENT_COMMUNITY, "");
-//		    logger.debug("Add " + DOCUMENT_COMMUNITY + " parameter: " + biobj.isPublicDoc());
+		    List<String> communities = getCommunities(profile);
+		    if (communities != null) 	{		    	
+		    	 pars.put(DOCUMENT_COMMUNITIES, communities);
+		    	 logger.debug("Add " + DOCUMENT_COMMUNITIES + " parameter: " +communities);
+		    }		    
 		    List funcs =  biobj.getFunctionalities();
 		    if (funcs != null) 	{		    	
 		    	pars.put(DOCUMENT_FUNCTIONALITIES,funcs);
@@ -327,6 +334,22 @@ public class GenericDriver extends AbstractDriver implements IEngineDriver {
 		logger.debug("OUT");
 		return map;
 	}
+    
+    private List<String> getCommunities(IEngUserProfile profile)  throws EMFUserError {    	
+    	List<String> toReturn = new ArrayList();
+    	List<SbiCommunity> communities = DAOFactory.getCommunityDAO().loadSbiCommunityByUser(profile.getUserUniqueIdentifier().toString());
+	    if(communities != null){
+			for(int i=0; i<communities.size(); i++){
+				SbiCommunity community = communities.get(i);
+				String functCode = community.getFunctCode();
+				ILowFunctionalityDAO functDao = DAOFactory.getLowFunctionalityDAO();
+				LowFunctionality funct= functDao.loadLowFunctionalityByCode(functCode, false);
+				String name = community.getName();
+				toReturn.add("\"" + funct.getId().toString() + "__" + name + "\"");
+			}
+		}
+	    return toReturn;
+    }
 
 }
 
