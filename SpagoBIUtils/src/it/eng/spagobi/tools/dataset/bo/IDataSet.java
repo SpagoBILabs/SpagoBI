@@ -66,6 +66,12 @@ public interface IDataSet {
 	Date getDateIn();
 	void setDateIn(Date dateIn);
 	
+	Integer getScopeId();
+	void setScopeId(Integer scopeId);
+	
+	String getScopeCd();
+	void setScopeCd(String scopeCd);
+	
 	// parametrization ....
 	// --------------------------------------------------------------------------------------------------
 	// INVESTIGATE: why this 2 similar methods ??? FIND OUT & REFACTOR !

@@ -32,6 +32,9 @@
          <many-to-one name="transformer" class="it.eng.spagobi.commons.metadata.SbiDomains">
             <column name="TRANSFORMER_ID" not-null="false"/>
         </many-to-one>
+        <many-to-one name="scope" class="it.eng.spagobi.commons.metadata.SbiDomains">
+            <column name="SCOPE_ID" not-null="false"/>
+        </many-to-one>
         <property name="active" type="boolean">
             <column name="ACTIVE" />
         </property>          
@@ -80,6 +83,7 @@
         <property name="publicDS" type="boolean">
             <column name="IS_PUBLIC" />
         </property>
+
 	   <component name="commonInfo" insert="true" update="true"  class="it.eng.spagobi.commons.metadata.SbiCommonInfo">
 	        <property name="userIn" type="string">
 	            <column name="USER_IN" length="100" not-null="true" />

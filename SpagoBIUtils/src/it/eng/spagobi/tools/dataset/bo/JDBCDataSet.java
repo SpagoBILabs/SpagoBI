@@ -67,5 +67,6 @@ public static String DS_TYPE = "SbiQueryDataSet";
     public JDBCDataSet(SpagoBiDataSet dataSetConfig) {
 		super(dataSetConfig);
 	}
+
  
 }

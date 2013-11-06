@@ -169,7 +169,7 @@ public class VersionedDataSet implements IDataSet {
 	public void setDsType(String dsType){
 		wrappedDataset.setDsType(dsType);
 	}
-	
+
 
 	public String getConfiguration(){
 		return wrappedDataset.getConfiguration();
@@ -436,6 +436,26 @@ public class VersionedDataSet implements IDataSet {
 		wrappedDataset.setDataSourceForWriting(dataSource);
 		
 	}
+
+	public Integer getScopeId() {
+		return wrappedDataset.getScopeId();
+	}
+
+	public void setScopeId(Integer scopeId) {
+		wrappedDataset.setScopeId(scopeId);
+		
+	}
+
+	public String getScopeCd() {
+		return wrappedDataset.getScopeCd();
+	}
+
+	public void setScopeCd(String scopeCd) {
+		wrappedDataset.setScopeCd(scopeCd);
+		
+	}
+
+
 	
 	
 }

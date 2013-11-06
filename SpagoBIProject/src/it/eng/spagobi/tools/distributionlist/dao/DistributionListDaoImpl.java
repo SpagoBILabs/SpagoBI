@@ -11,7 +11,6 @@ import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.dao.BIObjectDAOHibImpl;
-import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
 import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.dao.DAOFactory;
@@ -34,6 +33,9 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
+import org.hibernate.transform.Transformers;
 /**
 * @author Chiarelli Chiara (chiara.chiarelli@eng.it)
 */
@@ -722,7 +724,7 @@ public class DistributionListDaoImpl extends AbstractHibernateDAO implements IDi
 			tx = tmpSession.beginTransaction();
 			
 			//String hql = "from SbiDistributionListsObjects sdlo where sdlo.sbiDistributionList.dlId=" + dl.getId()+" and sdlo.sbiObjects.biobjId="+objId+" group by sdlo.xml";
-			String hql = "from SbiDistributionListsObjects sdlo where sdlo.sbiDistributionList.dlId=? and sdlo.sbiObjects.biobjId=? group by sdlo.xml, sdlo.relId, sdlo.sbiObjects, sdlo.sbiDistributionList";
+			String hql = "from SbiDistributionListsObjects sdlo where sdlo.sbiDistributionList.dlId=? and sdlo.sbiObjects.biobjId=?";
 			Query query = tmpSession.createQuery(hql);
 			query.setInteger(0, dl.getId());
 			query.setInteger(1, objId);

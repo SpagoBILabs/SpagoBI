@@ -350,7 +350,11 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 			List trasfTypesList = DAOFactory.getDomainDAO().loadListDomainsByType(DataSetConstants.TRANSFORMER_TYPE);
 			getSessionContainer().setAttribute("trasfTypesList", trasfTypesList);	
 			List sbiAttrs = DAOFactory.getSbiAttributeDAO().loadSbiAttributes();
-			getSessionContainer().setAttribute("sbiAttrsList", sbiAttrs);	
+			getSessionContainer().setAttribute("sbiAttrsList", sbiAttrs);
+			
+			List scopeCdList = DAOFactory.getDomainDAO().loadListDomainsByType(DataSetConstants.DS_SCOPE);
+			getSessionContainer().setAttribute("scopeCdList", scopeCdList);	
+			
 			SingletonConfig configSingleton = SingletonConfig.getInstance();
 			String pathh = configSingleton.getConfigValue("SPAGOBI.RESOURCE_PATH_JNDI_NAME");
 			String filePath= SpagoBIUtilities.readJndiResource(pathh);
@@ -410,6 +414,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 		String name = getAttributeAsString(DataSetConstants.NAME);
 		String description = getAttributeAsString(DataSetConstants.DESCRIPTION);		
 		String datasetTypeCode = getAttributeAsString(DataSetConstants.DS_TYPE_CD);
+		
 
 		String datasetTypeName = getDatasetTypeName(datasetTypeCode);
 	
@@ -443,6 +448,22 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 						ds.setCategoryId(catTypeID);
 					}
 	
+					
+					List<Domain> domainsScope = (List<Domain>)getSessionContainer().getAttribute("scopeCdList");			
+					HashMap<String, Integer> domainScopeIds = new HashMap<String, Integer> ();
+					if(domainsScope != null){
+						for(int i=0; i< domainsScope.size(); i++){
+							domainScopeIds.put(domainsScope.get(i).getValueName(), domainsScope.get(i).getValueId());
+						}
+					}
+					String scopeCode = getAttributeAsString("scopeCd");
+					Integer scopeID = domainScopeIds.get(scopeCode);
+					if(scopeID!=null){
+						ds.setScopeCd(scopeCode);
+						ds.setScopeId(scopeID);
+					}
+					
+					
 					if(meta != null && !meta.equals("")){
 						ds.setDsMetadata(meta);				
 					}

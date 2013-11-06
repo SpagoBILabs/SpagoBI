@@ -61,7 +61,6 @@ public class DataSetFactory {
 			guiDataSet.setDateIn(new Date());
 			
 			guiDataSet.setId(sbiDataSet.getId().getDsId());
-
 		}
 
 		return guiDataSet;
@@ -129,6 +128,8 @@ public class DataSetFactory {
 		//set persist values
 		toReturn.setPersisted(dataSet.isPersisted());
 		toReturn.setPersistTableName(dataSet.getPersistTableName());
+		toReturn.setScopeCd(dataSet.getScopeCd());
+		toReturn.setScopeId(dataSet.getScopeId());
 
 		return toReturn;
 	}
@@ -267,6 +268,8 @@ public class DataSetFactory {
 			ds.setDateIn(sbiDataSet.getCommonInfo().getTimeIn());
 			versionDS = new VersionedDataSet(ds, Integer.valueOf(sbiDataSet.getId().getVersionNum()), sbiDataSet.isActive());	
 		
+			ds.setScopeId((sbiDataSet.getScope()==null)?null:sbiDataSet.getScope().getValueId());
+			ds.setScopeCd((sbiDataSet.getScope()==null)?null:sbiDataSet.getScope().getValueCd());
 				// if not yet assigned set data source for writing as default one
 			if(ds.getDataSourceForWriting()== null){
 				logger.debug("take write default data source as data source for writing");

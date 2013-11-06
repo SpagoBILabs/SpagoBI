@@ -69,6 +69,8 @@ public class SbiDataSet extends SbiHibernateModel {
 	private Date timeIn = null;
 	private Date timeUp = null;
 	private Date timeDe = null;
+	
+	private SbiDomains scope = null;
     	
 	/**
 	 * default constructor.
@@ -85,6 +87,16 @@ public class SbiDataSet extends SbiHibernateModel {
 		this.id = id;
 	}
     
+
+
+	public SbiDomains getScope() {
+		return scope;
+	}
+
+	public void setScope(SbiDomains scope) {
+		this.scope = scope;
+	}
+
 	/**
 	 * Gets the name.
 	 * 

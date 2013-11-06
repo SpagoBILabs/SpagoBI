@@ -431,6 +431,20 @@ public class ExporterMetadata {
 						throw new EMFUserError(EMFErrorSeverity.ERROR, 1035);
 					}
 				}
+				
+				SbiDomains scope = null;
+				if (dataSet.getScopeId()!= null){ 
+					Criterion aCriterion = Expression.eq("valueId",	dataSet.getScopeId());
+					Criteria criteria = session.createCriteria(SbiDomains.class);
+					criteria.add(aCriterion);
+
+					scope = (SbiDomains) criteria.uniqueResult();
+
+					if (scope == null){
+						logger.error("The Domain with value_id= "+dataSet.getScopeId()+" does not exist.");
+						throw new EMFUserError(EMFErrorSeverity.ERROR, 1035);
+					}
+				}
 				Date currentTStamp = new Date();
 
 				sbiDataSet.setLabel(dataSet.getLabel());
@@ -454,6 +468,8 @@ public class ExporterMetadata {
 
 				sbiDataSet.setPublicDS(dataSet.isPublic());
 				sbiDataSet.setOwner(dataSet.getOwner());
+				
+				sbiDataSet.setScope(scope);
 				
 				tx2 = session.beginTransaction();
 				session.save(sbiDataSet);

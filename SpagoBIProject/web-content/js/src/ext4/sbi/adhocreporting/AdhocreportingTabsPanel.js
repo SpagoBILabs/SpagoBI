@@ -40,25 +40,25 @@ Ext.define('Sbi.adhocreporting.AdhocreportingTabsPanel', {
 		
 		this.layout = 'fit';
 		
-		var browserConfPubl = {
+		var browserConfCert = {
 				title: LN("sbi.tools.dataset.public.datasetbrowser.title")
 				, user: Sbi.user.userId
 				, datasetsServicePath : config.datasetsServicePath
 				, displayToolbar : false
-				, isPublic: true
+				, isTech: true
 		};
-		var browserConfPriv = {
+		var browserConfCustom = {
 				title: LN("sbi.tools.dataset.private.datasetbrowser.title")
 				, user: Sbi.user.userId
 				, datasetsServicePath : config.datasetsServicePath
 				, displayToolbar : false
-				, isPublic: false
+				, isTech: false
 		};
-		this.datasetPanelTabPubl = Ext.create('Sbi.tools.dataset.DataSetsBrowser', browserConfPubl );
-		this.datasetPanelTabPriv = Ext.create('Sbi.tools.dataset.DataSetsBrowser', browserConfPriv );
+		this.datasetPanelTabCert = Ext.create('Sbi.tools.dataset.DataSetsBrowser', browserConfCert );
+		this.datasetPanelTabCustom = Ext.create('Sbi.tools.dataset.DataSetsBrowser', browserConfCustom );
 		this.modelstPanelTab = Ext.create('Sbi.tools.model.MetaModelsBrowser',{title: LN("sbi.tools.model.metamodelsbrowser.title")});
 		
-		this.items = [ this.datasetPanelTabPubl, this.datasetPanelTabPriv, this.modelstPanelTab  ];
+		this.items = [ this.datasetPanelTabCert, this.datasetPanelTabCustom, this.modelstPanelTab  ];
 
 		this.callParent(arguments);
 		this.addEvents(
@@ -74,10 +74,10 @@ Ext.define('Sbi.adhocreporting.AdhocreportingTabsPanel', {
 		this.modelstPanelTab.on('executeDocument',function(docType, inputType, record){
 			this.fireEvent('executeDocument',docType,inputType,record);
 		},this);
-		this.datasetPanelTabPubl.on('executeDocument',function(docType, inputType, record){
+		this.datasetPanelTabCert.on('executeDocument',function(docType, inputType, record){
 			this.fireEvent('executeDocument',docType,inputType,record);
 		},this);
-		this.datasetPanelTabPriv.on('executeDocument',function(docType, inputType, record){
+		this.datasetPanelTabCustom.on('executeDocument',function(docType, inputType, record){
 			this.fireEvent('executeDocument',docType,inputType,record);
 		},this);		
 	}
