@@ -144,3 +144,64 @@ DELETE FROM SBI_ROLE_TYPE_USER_FUNC WHERE ROLE_TYPE_ID= (SELECT value_id FROM SB
 AND USER_FUNCT_ID =(SELECT user_funct_id FROM SBI_USER_FUNC where NAME = 'FinalUsersManagement');
 
 ALTER TABLE SBI_OBJECTS ALTER COLUMN LABEL VARCHAR(200);
+
+INSERT INTO SBI_DOMAINS (VALUE_ID, VALUE_CD,VALUE_NM,DOMAIN_CD,DOMAIN_NM,VALUE_DS, USER_IN, TIME_IN)
+    VALUES ((SELECT next_val FROM hibernate_sequences WHERE sequence_name = 'SBI_DOMAINS'),
+    'USER','User','DS_SCOPE','Dataset scope','Dataset scope', 'biadmin', current_timestamp);
+update hibernate_sequences set next_val = next_val+1 where  sequence_name = 'SBI_DOMAINS';
+commit;
+
+INSERT INTO SBI_DOMAINS (VALUE_ID, VALUE_CD,VALUE_NM,DOMAIN_CD,DOMAIN_NM,VALUE_DS, USER_IN, TIME_IN)
+    VALUES ((SELECT next_val FROM hibernate_sequences WHERE sequence_name = 'SBI_DOMAINS'),
+    'TECHNICAL','Technical','DS_SCOPE','Dataset scope','Dataset scope', 'biadmin', current_timestamp);
+update hibernate_sequences set next_val = next_val+1 where  sequence_name = 'SBI_DOMAINS';
+commit;
+
+INSERT INTO SBI_DOMAINS (VALUE_ID, VALUE_CD,VALUE_NM,DOMAIN_CD,DOMAIN_NM,VALUE_DS, USER_IN, TIME_IN)
+    VALUES ((SELECT next_val FROM hibernate_sequences WHERE sequence_name = 'SBI_DOMAINS'),
+    'ENTERPRISE','Enterprise','DS_SCOPE','Dataset scope','Dataset scope', 'biadmin', current_timestamp);
+update hibernate_sequences set next_val = next_val+1 where  sequence_name = 'SBI_DOMAINS';
+commit;
+
+ALTER TABLE SBI_DATA_SET ADD COLUMN SCOPE_ID INTEGER DEFAULT NULL;
+ALTER TABLE SBI_DATA_SET ADD CONSTRAINT FK_SBI_DOMAINS_2 FOREIGN KEY ( SCOPE_ID ) REFERENCES SBI_DOMAINS( VALUE_ID ) ON DELETE CASCADE;
+
+UPDATE SBI_DATA_SET
+       SET SCOPE_ID =
+                 CASE
+                   WHEN OWNER IN (SELECT 
+						U.USER_ID
+						FROM 
+						SBI_USER U,
+						SBI_EXT_USER_ROLES R,
+						SBI_EXT_ROLES RO
+						WHERE OWNER = U.USER_ID
+						AND R.ID = U.ID
+						AND RO.EXT_ROLE_ID = R.EXT_ROLE_ID
+						AND RO.ROLE_TYPE_CD IN ('ADMIN', 'DEV_ROLE')
+						AND IS_PUBLIC = 0) THEN (SELECT VALUE_ID FROM SBI_DOMAINS WHERE VALUE_CD='TECHNICAL' AND DOMAIN_CD='DS_SCOPE')
+                   WHEN OWNER IN (SELECT 
+						U.USER_ID
+						FROM 
+						SBI_USER U,
+						SBI_EXT_USER_ROLES R,
+						SBI_EXT_ROLES RO
+						WHERE OWNER = U.USER_ID
+						AND R.ID = U.ID
+						AND RO.EXT_ROLE_ID = R.EXT_ROLE_ID
+						AND RO.ROLE_TYPE_CD IN ('ADMIN', 'DEV_ROLE')
+						AND IS_PUBLIC = 1) THEN (SELECT VALUE_ID FROM SBI_DOMAINS WHERE VALUE_CD='ENTERPRISE' AND DOMAIN_CD='DS_SCOPE')
+                   WHEN OWNER IN (SELECT 
+						U.USER_ID
+						FROM 
+						SBI_USER U,
+						SBI_EXT_USER_ROLES R,
+						SBI_EXT_ROLES RO
+						WHERE OWNER = U.USER_ID
+						AND R.ID = U.ID
+						AND RO.EXT_ROLE_ID = R.EXT_ROLE_ID
+						AND RO.ROLE_TYPE_CD ='USER') THEN (SELECT VALUE_ID FROM SBI_DOMAINS WHERE VALUE_CD='USER' AND DOMAIN_CD='DS_SCOPE')
+                   ELSE (SELECT VALUE_ID FROM SBI_DOMAINS WHERE VALUE_CD='TECHNICAL' AND DOMAIN_CD='DS_SCOPE')
+                 END;
+                 
+commit;
