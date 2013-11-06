@@ -9,9 +9,14 @@ import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.utilities.ChannelUtilities;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.profiling.bean.SbiUser;
+import it.eng.spagobi.profiling.bean.SbiUserAttributes;
 
 import java.security.Security;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 import javax.mail.Authenticator;
 import javax.mail.Message;
@@ -31,7 +36,9 @@ public class CommunityUtilities {
 	
 	public boolean dispatchMail(String communityName, SbiUser userToAccept, SbiUser owner, String ownerEmail, HttpServletRequest request) {
 		String contextName = ChannelUtilities.getSpagoBIContextName(request);
-
+		
+		
+		
 		String mailSubj = "Community "+communityName+" membership request";
 		StringBuffer sb = new StringBuffer();
 		sb.append("<HTML>");
@@ -40,26 +47,22 @@ public class CommunityUtilities {
 		sb.append("</HEAD>");
 		sb.append("<BODY>");
 		sb.append("<p style=\"width:100%; text-align:center;\">");
+		
 		sb.append("Dear "+ owner.getFullName()+", <br/> user "+userToAccept.getFullName()+ " wants to join "+communityName+" community");
 		sb.append("<br/> Select whether to accept "+userToAccept.getFullName()+" or not, clicking the following image:");		
-		String protocol = request.getProtocol();
-		if(protocol.equalsIgnoreCase("HTTP/1.1")){
-			protocol="http";
-		}else{
-			protocol="https";
-		}
+		String schema = request.getScheme();
 		String server= request.getServerName();
 		String port= request.getLocalPort()+"";
 		
 		sb.append("<br/><a href=\""
-				+protocol
+				+schema
 				+ "://"+server
 				+ ":"
 				+ port
 				+ contextName
 				+"/CommunityRequest.jsp?owner="+owner.getUserId()+"&userToAccept="+userToAccept.getUserId()+"&community="+communityName+"\">");
 		sb.append("<img alt=\"Accept/Reject\" src=\""
-				+protocol
+				+schema
 				+ "://"+server
 				+ ":"
 				+ port
@@ -71,9 +74,7 @@ public class CommunityUtilities {
 		String mailTxt = sb.toString();
 
 		logger.debug("IN");
-		try{
-
-
+		try {
 			String smtphost = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.user.smtphost");
 		    String smtpport = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.user.smtpport");
 		    String smtpssl = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.user.useSSL"); 
