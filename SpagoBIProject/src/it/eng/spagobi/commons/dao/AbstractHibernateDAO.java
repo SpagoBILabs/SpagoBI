@@ -37,6 +37,7 @@ public class AbstractHibernateDAO {
 	private String tenant = null;
 
 	public static final String TENANT_FILTER_NAME = "tenantFilter";
+	private static final String TENANT_DEFAULT = "SPAGOBI";
 	
 	public void setUserID(String user) {
 		userID = user;
@@ -140,6 +141,30 @@ public class AbstractHibernateDAO {
 		}
 		return obj;
 	}
+	
+	/**
+	 * usefull to update some property
+	 * 
+	 * @param obj
+	 * @return
+	 */
+	protected SbiHibernateModel updateSbiCommonInfo4Update(SbiHibernateModel obj, boolean useDefaultTenant) {
+		obj.getCommonInfo().setTimeUp(new Date());
+		obj.getCommonInfo().setSbiVersionUp(SbiCommonInfo.SBI_VERSION);
+		obj.getCommonInfo().setUserUp(userID);
+		String tenantId = this.getTenant();
+		// sets the tenant if it is set and input object hasn't
+		if (tenantId != null && obj.getCommonInfo().getOrganization() == null) {
+			obj.getCommonInfo().setOrganization(tenantId);
+		}
+		if (obj.getCommonInfo().getOrganization() == null) {
+			if (useDefaultTenant)
+				obj.getCommonInfo().setOrganization(TENANT_DEFAULT);
+			else
+				throw new SpagoBIRuntimeException("Organization not set!!!");
+		}
+		return obj;
+	}
 
 	protected SbiHibernateModel updateSbiCommonInfo4Insert(SbiHibernateModel obj) {
 		obj.getCommonInfo().setTimeIn(new Date());
@@ -152,6 +177,25 @@ public class AbstractHibernateDAO {
 		}
 		if (obj.getCommonInfo().getOrganization() == null) {
 			throw new SpagoBIRuntimeException("Organization not set!!!");
+		}
+		return obj;
+	}
+	
+	protected SbiHibernateModel updateSbiCommonInfo4Insert(SbiHibernateModel obj, boolean useDefaultTenant) {
+		obj.getCommonInfo().setTimeIn(new Date());
+		obj.getCommonInfo().setSbiVersionIn(SbiCommonInfo.SBI_VERSION);
+		obj.getCommonInfo().setUserIn(userID);
+		// sets the tenant if it is set and input object hasn't
+		String tenantId = this.getTenant();
+		if (tenantId != null && obj.getCommonInfo().getOrganization() == null) {
+			obj.getCommonInfo().setOrganization(tenantId);
+		}
+		if (obj.getCommonInfo().getOrganization() == null) {
+			if (useDefaultTenant)
+				obj.getCommonInfo().setOrganization(TENANT_DEFAULT);
+			else
+				throw new SpagoBIRuntimeException("Organization not set!!!");
+			
 		}
 		return obj;
 	}

@@ -13,6 +13,8 @@ import it.eng.spagobi.commons.metadata.SbiExtRoles;
 import it.eng.spagobi.commons.utilities.ChannelUtilities;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.StringUtilities;
+import it.eng.spagobi.community.bo.CommunityManager;
+import it.eng.spagobi.community.mapping.SbiCommunity;
 import it.eng.spagobi.profiling.bean.SbiUser;
 import it.eng.spagobi.profiling.bean.SbiUserAttributes;
 import it.eng.spagobi.profiling.bean.SbiUserAttributesId;
@@ -69,7 +71,7 @@ public class Signup {
 	private HttpServletResponse servletResponse;
 	
 	private static final String defaultPassword = "Password";
-	private static final String defaultPasswordConfirm = "Confirm Password";
+	private static final String defaultTenant = "SPAGOBI";
 
 	private static Logger logger = Logger.getLogger(PublisherService.class);
 
@@ -147,7 +149,7 @@ public class Signup {
 	    }
 	    else{
 		  userAttribute = new SbiUserAttributes();
-		  userAttribute.getCommonInfo().setOrganization("SPAGOBI");
+		  userAttribute.getCommonInfo().setOrganization(defaultTenant);
 		  userAttribute.getCommonInfo().setTimeIn(new Date(System.currentTimeMillis()));
 		  userAttribute.getCommonInfo().setUserIn(userId);
 		  userAttribute.getCommonInfo().setSbiVersionIn(SbiCommonInfo.SBI_VERSION);
@@ -196,7 +198,7 @@ public class Signup {
 		  updAttribute( userDao, attrDao, email, user.getUserId(), userId, attrDao.loadSbiAttributeByName("email").getAttributeId() );
 		  updAttribute( userDao, attrDao, dataNascita, user.getUserId(), userId, attrDao.loadSbiAttributeByName("birth_date").getAttributeId() );
 		  updAttribute( userDao, attrDao, indirizzo, user.getUserId(), userId, attrDao.loadSbiAttributeByName("location").getAttributeId() );
-		  updAttribute( userDao, attrDao, azienda, user.getUserId(), userId, attrDao.loadSbiAttributeByName("company").getAttributeId() );
+		  updAttribute( userDao, attrDao, azienda, user.getUserId(), userId, attrDao.loadSbiAttributeByName("community").getAttributeId() );
 		  updAttribute( userDao, attrDao, biografia, user.getUserId(), userId, attrDao.loadSbiAttributeByName("short_bio").getAttributeId() );
 		  updAttribute( userDao, attrDao, lingua, user.getUserId(), userId, attrDao.loadSbiAttributeByName("language").getAttributeId() );
 		  
@@ -208,6 +210,12 @@ public class Signup {
 		  profile.setAttributeValue("location",  indirizzo);
 		  profile.setAttributeValue("birth_date",dataNascita);
 		  profile.setAttributeValue("email",     email);
+		  
+		  CommunityManager cm = new CommunityManager();							
+		  if(azienda!= null && !azienda.equals("")){
+			SbiCommunity community = DAOFactory.getCommunityDAO().loadSbiCommunityByName(azienda);
+			cm.saveCommunity(community, azienda, user.getUserId(), req);
+		  }
 		  
 		} catch (Throwable t) {
 			throw new SpagoBIServiceException(
@@ -321,13 +329,13 @@ public class Signup {
 		  user.setUserId(username);
 		  user.setPassword( Password.encriptPassword( password ));
 		  user.setFullName( nome + " " + cognome );
-		  user.getCommonInfo().setOrganization("SPAGOBI");
+		  user.getCommonInfo().setOrganization(defaultTenant);
 		  user.setFlgPwdBlocked(true);
 		  
 		  Set<SbiExtRoles> roles = new HashSet<SbiExtRoles>();
 		  SbiExtRoles r = new SbiExtRoles();
 		  r.setExtRoleId(3);
-		  r.getCommonInfo().setOrganization("SPAGOBI");
+		  r.getCommonInfo().setOrganization(defaultTenant);
 		  roles.add(r);
 		  user.setSbiExtUserRoleses(roles);
 		  
@@ -339,12 +347,24 @@ public class Signup {
 		  addAttribute(attributes, attrDao.loadSbiAttributeByName("gender").getAttributeId(),  sesso);
 		  addAttribute(attributes, attrDao.loadSbiAttributeByName("birth_date").getAttributeId(),  dataNascita);
 		  addAttribute(attributes, attrDao.loadSbiAttributeByName("location").getAttributeId(),  indirizzo);
-		  addAttribute(attributes, attrDao.loadSbiAttributeByName("company").getAttributeId(),  azienda);
+//		  addAttribute(attributes, attrDao.loadSbiAttributeByName("company").getAttributeId(),  azienda);
+		  addAttribute(attributes, attrDao.loadSbiAttributeByName("community").getAttributeId(),  azienda);
 		  addAttribute(attributes, attrDao.loadSbiAttributeByName("short_bio").getAttributeId(), biografia);
-		  addAttribute(attributes, attrDao.loadSbiAttributeByName("language").getAttributeId(), lingua);
+		  addAttribute(attributes, attrDao.loadSbiAttributeByName("language").getAttributeId(), lingua);		  
 		 
 		  user.setSbiUserAttributeses(attributes);
 		  int id = userDao.fullSaveOrUpdateSbiUser(user);
+		  
+		  CommunityManager cm = new CommunityManager();							
+		  if(azienda!= null && !azienda.equals("")){
+			SbiCommunity community = DAOFactory.getCommunityDAO().loadSbiCommunityByName(azienda);
+			//temporary setting of default tenant (because we are in the insertion of the user without a specific tenant)
+//			if (community == null) community =  new SbiCommunity();
+//			community.getCommonInfo().setOrganization(defaultTenant);
+			//end of temporary setting
+			cm.saveCommunity(community, azienda, user.getUserId(), req);
+		  }
+
 		  
 		  String subject = SingletonConfig.getInstance().getConfigValue("MAIL.SIGNUP.subject");
 	      String body    = SingletonConfig.getInstance().getConfigValue("MAIL.SIGNUP.body");
@@ -367,7 +387,7 @@ public class Signup {
 		
 	  if( attrValue != null ){	
 	    SbiUserAttributes a = new SbiUserAttributes();
-	    a.getCommonInfo().setOrganization("SPAGOBI");
+	    a.getCommonInfo().setOrganization(defaultTenant);
 	    SbiUserAttributesId id = new SbiUserAttributesId();
 	    id.setAttributeId(attrId);
 	    a.setId(id);
