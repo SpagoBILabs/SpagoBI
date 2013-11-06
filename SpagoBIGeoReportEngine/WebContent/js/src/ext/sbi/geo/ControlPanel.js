@@ -451,6 +451,7 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 			formState.scope = "false"; //default
 		}
 		formState.scope.visibility = Sbi.config.visibility;
+		formState.OBJECT_COMMUNITIES  = Sbi.config.docCommunities;
 		formState.OBJECT_FUNCTIONALITIES  = Sbi.config.docFunctionalities;
 		
 		if (isInsert){

@@ -107,8 +107,15 @@ public class GeoReportEngineInstance extends AbstractEngineInstance {
 				);
 	}
 	
-	public String getDocumentCommunity() {
-		return (String)this.getEnv().get(EngineConstants.ENV_DOCUMENT_COMMUNITY);
+	public String[] getDocumentCommunities() {
+		try{
+			String strCommunities = (String)this.getEnv().get(EngineConstants.ENV_DOCUMENT_COMMUNITIES);
+			if (strCommunities == null) 
+				return null;
+			else
+				return JSONUtils.asStringArray(JSONUtils.toJSONArray(strCommunities));
+		} catch (Throwable t) {
+			throw new SpagoBIRuntimeException("Impossible to get communities list", t);		}
 	}
 
 	public List<Integer> getDocumentFunctionalities() {

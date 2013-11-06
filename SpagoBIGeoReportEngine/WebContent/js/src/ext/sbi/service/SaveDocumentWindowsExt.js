@@ -46,7 +46,7 @@ Sbi.service.SaveDocumentWindowExt = function(config) {
 		this.OBJECT_DATA_SOURCE = config.OBJECT_DATA_SOURCE;
 		this.OBJECT_FUNCTIONALITIES = config.formState.OBJECT_FUNCTIONALITIES;
 		this.OBJECT_PREVIEW_FILE = config.OBJECT_PREVIEW_FILE;		
-		this.OBJECT_COMMUNITY = config.OBJECT_COMMUNITY;
+		this.OBJECT_COMMUNITIES = config.formState.OBJECT_COMMUNITIES;
 		this.OBJECT_SCOPE = config.OBJECT_SCOPE;
 		
 		this.initFormPanel(config.formState);
@@ -90,7 +90,7 @@ Ext.extend(Sbi.service.SaveDocumentWindowExt, Ext.Window, {
 	OBJECT_DATA_SOURCE: null,
 	OBJECT_PARS: null,
 	OBJECT_PREVIEW_FILE: null,
-	OBJECT_COMMUNITY: null,
+	OBJECT_COMMUNITIES: null,
 	OBJECT_SCOPE: null,
 	
 	initFormPanel: function (c){
@@ -142,6 +142,8 @@ Ext.extend(Sbi.service.SaveDocumentWindowExt, Ext.Window, {
             checked   : c.visibility || true
            });
 	
+		
+		var selectedComm = this.getCommunitySelected();	    
 		var storeComm = new Ext.data.Store({
 			proxy:new Ext.data.HttpProxy({
 				type: 'json',
@@ -158,9 +160,23 @@ Ext.extend(Sbi.service.SaveDocumentWindowExt, Ext.Window, {
 				         root: 'root'
 			}),
 
-			autoLoad:true,
+			autoLoad:true
+//			,listeners: {
+//			     load: function(store, records) {
+//			          store.insert(0, [{
+//			        	  communityId: null,
+//			        	  name: '&nbsp;',
+//			        	  description:'&nbsp;',
+//			        	  owner:'&nbsp;',
+//			        	  functCode:'&nbsp;'
+//			          }]);
+//			     }
+//			  }
 		});
 		
+		
+
+	    
 		this.docCommunity = new Ext.form.ComboBox({
 		    fieldLabel: LN('sbi.geo.controlpanel.savewin.community') ,
 		    mode: 'local',
@@ -168,8 +184,11 @@ Ext.extend(Sbi.service.SaveDocumentWindowExt, Ext.Window, {
 		    displayField: 'name',
 		    valueField: 'functCode',
 		    allowBlank: true,
-		    triggerAction: 'all'
+		    triggerAction: 'all',
+		    value: selectedComm
 		});
+		
+		
 		
 		var storeScope = new Ext.data.SimpleStore({
 		    fields: ['field', 'value'],
@@ -211,7 +230,6 @@ Ext.extend(Sbi.service.SaveDocumentWindowExt, Ext.Window, {
 //	                 "margin-top": "15px"  //"25px"
 	             },
 	             items: [this.docName,this.docDescr,this.docVisibility,this.fileUpload, this.docCommunity, this.isPublic]
-//	             items: [this.docLabel,this.docName,this.docDescr,this.docVisibility,this.fileUpload,this.isPublic]
 	    	}
 	    });
 	    
@@ -224,7 +242,6 @@ Ext.extend(Sbi.service.SaveDocumentWindowExt, Ext.Window, {
 	    });
 	    this.treePanel.setCheckedIdNodesArray(this.OBJECT_FUNCTIONALITIES);
 	    
-//	    this.saveDocumentForm =  new Ext.form.FormPanel({
 	    this.saveDocumentForm =  new Ext.Panel({
 		          autoScroll: true,
 		          labelAlign: 'left',
@@ -429,6 +446,26 @@ Ext.extend(Sbi.service.SaveDocumentWindowExt, Ext.Window, {
 		});		
 		
 		Sbi.debug("[PreviewFileWizard.uploadFileButtonHandler]: OUT");
+	}
+	
+	, getCommunitySelected: function(){
+		var toReturn = null;
+		
+		if(this.OBJECT_COMMUNITIES == null) return toReturn;
+		
+		var functID = this.OBJECT_COMMUNITIES.substring(0,this.OBJECT_COMMUNITIES.indexOf("__") );
+		for (var i=0; i<this.OBJECT_FUNCTIONALITIES.length; i++){
+			var f = this.OBJECT_FUNCTIONALITIES[i];
+			if (f == functID){
+				var funcCode = this.OBJECT_COMMUNITIES.substring(this.OBJECT_COMMUNITIES.indexOf("__")+2 );
+				toReturn = funcCode; //gets the first community
+				break;
+			}			
+		}
+		
+//		toReturn = this.OBJECT_COMMUNITIES; //gets the first community
+		return toReturn;	
+		
 	}
 
 });

@@ -41,6 +41,7 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 	String docIsPublic;
 	String docIsVisible;
 	String docPreviewFile;
+	String[] docCommunities;
 	String docCommunity;
 	List docFunctionalities;
 	String docDatasetLabel;
@@ -61,17 +62,13 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 	docDescription = (engineInstance.getDocumentDescription()==null)?"":engineInstance.getDocumentDescription().toString();
 	docIsPublic= (engineInstance.getDocumentIsPublic()==null)?"":engineInstance.getDocumentIsPublic().toString();
 	docIsVisible= (engineInstance.getDocumentIsVisible()==null)?"":engineInstance.getDocumentIsVisible().toString();
-	docPreviewFile= (engineInstance.getDocumentPreviewFile()==null)?"":engineInstance.getDocumentPreviewFile().toString();
-	docCommunity= (engineInstance.getDocumentCommunity()==null)?"":engineInstance.getDocumentCommunity().toString();
+	docPreviewFile= (engineInstance.getDocumentPreviewFile()==null)?"":engineInstance.getDocumentPreviewFile().toString();	
 	docDatasetLabel = (engineInstance.getDataSet()==null)?"":engineInstance.getDataSet().getLabel();
+	docCommunities= (engineInstance.getDocumentCommunities()==null)?null:engineInstance.getDocumentCommunities();
+	docCommunity = (docCommunities == null) ? "": docCommunities[0];
 	docFunctionalities= (engineInstance.getDocumentFunctionalities()==null)?new ArrayList():engineInstance.getDocumentFunctionalities();
-	//forzatura DA ELIMINARE!!
-	//docFunctionalities = new ArrayList();
-	//docFunctionalities.add(0,4); //forzatura per cast exception!!!
-	// Fine FORZATURA
 	
 	includes = engineInstance.getIncludes();
-	
 	
 %>
 
@@ -170,18 +167,18 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 		        , baseParams: params
 		    });
 
-		    Sbi.config.docLabel = '<%=docLabel%>';
-		    Sbi.config.docVersion = '<%=docVersion%>';
-		    Sbi.config.userId = '<%=userId%>';
-		    Sbi.config.docAuthor = '<%=docAuthor%>';
-		    Sbi.config.docName = '<%=docName%>';
-		    Sbi.config.docDescription = '<%=docDescription%>';
-		    Sbi.config.docIsPublic= '<%=docIsPublic%>';
-		    Sbi.config.docIsVisible= '<%=docIsVisible%>';
-		    Sbi.config.docPreviewFile= '<%=docPreviewFile%>';
-		    Sbi.config.docCommunity= '<%=docCommunity%>';
+		    Sbi.config.docLabel ="<%=docLabel%>";
+		    Sbi.config.docVersion = "<%=docVersion%>";
+		    Sbi.config.userId = "<%=userId%>";
+		    Sbi.config.docAuthor = "<%=docAuthor%>";
+		    Sbi.config.docName = "<%=docName%>";
+		    Sbi.config.docDescription = "<%=docDescription%>";
+		    Sbi.config.docIsPublic= "<%=docIsPublic%>";
+		    Sbi.config.docIsVisible= "<%=docIsVisible%>";
+		    Sbi.config.docPreviewFile= "<%=docPreviewFile%>";
+		    Sbi.config.docCommunities= "<%=docCommunity%>";
 		    Sbi.config.docFunctionalities= <%=docFunctionalities%>;
-		    Sbi.config.docDatasetLabel= '<%=docDatasetLabel%>';
+		    Sbi.config.docDatasetLabel= "<%=docDatasetLabel%>";
 		    
 		    var geoReportPanel = null;
 		    
