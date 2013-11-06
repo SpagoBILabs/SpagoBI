@@ -119,5 +119,9 @@ public class QbeEngineFromDatasetStartAction extends QbeEngineStartAction {
 		env.put(EngineConstants.ENV_DATASETS, dataSets);
 		return env;
 	}
+	
+	protected boolean tolerateMissingDatasource() {
+		return true;
+	}
 
 }

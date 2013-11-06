@@ -419,6 +419,10 @@ public class VersionedDataSet implements IDataSet {
 	public IDataSource getDataSourceForReading() {
 		return wrappedDataset.getDataSourceForReading();
 	}
+	
+	public void setDataSourceForReading(IDataSource dataSource) {
+		wrappedDataset.setDataSourceForReading(dataSource);
+	}
 
 	public String getPersistTableName() {
 		return wrappedDataset.getPersistTableName();
@@ -430,11 +434,10 @@ public class VersionedDataSet implements IDataSet {
 
 	public IDataSource getDataSourceForWriting() {
 		return wrappedDataset.getDataSourceForWriting();
-		}
+	}
 
 	public void setDataSourceForWriting(IDataSource dataSource) {
 		wrappedDataset.setDataSourceForWriting(dataSource);
-		
 	}
 
 	public Integer getScopeId() {

@@ -137,10 +137,10 @@ public final class DataSetServiceProxy extends AbstractServiceProxy{
     private void addMetaModelProxy(IDataSet dataSet) {
 		// in case of qbe dataset, it need a MetamodelServiceProxy
 		MetamodelServiceProxy proxy;
-		if(this.session!=null && this.metamodelServiceProxy!=null){
-			proxy	= new MetamodelServiceProxy(userId, this.session);
-		}else{
-			proxy =  this.metamodelServiceProxy;
+		if (this.session != null && this.metamodelServiceProxy == null) {
+			proxy = new MetamodelServiceProxy(userId, this.session);
+		} else {
+			proxy = this.metamodelServiceProxy;
 		}
 		
 		IQbeDataSetDatamartRetriever retriever = new DefaultEngineDatamartRetriever(proxy);

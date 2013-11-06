@@ -10,6 +10,7 @@ import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.services.common.EnginConf;
 import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
+import it.eng.spagobi.services.datasource.bo.SpagoBiDataSource;
 import it.eng.spagobi.tools.dataset.common.behaviour.IDataSetBehaviour;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStoreFilter;
@@ -68,8 +69,9 @@ public abstract class AbstractDataSet implements IDataSet {
     protected String organization;
 
     protected IDataSource datasourceForWriting;
+    protected IDataSource datasourceForReading;
     
-    protected IDataStoreTransformer dataSetTransformer;
+	protected IDataStoreTransformer dataSetTransformer;
     
     // hook for extension points
     private Map behaviours;
@@ -142,7 +144,8 @@ public abstract class AbstractDataSet implements IDataSet {
 		setDsMetadata(dataSet.getDsMetadata());
 		setPersisted(dataSet.isPersisted());
 		setPersistTableName(dataSet.getPersistTableName());
-		
+		SpagoBiDataSource dsDataSourceForReading = dataSet.getDataSourceForReading();
+		setDataSourceForReading(dsDataSourceForReading != null ? DataSourceFactory.getDataSource(dsDataSourceForReading) : null);
 		setPublic(dataSet.is_public());
 		setScopeId(dataSet.getScopeId());
 		
@@ -175,6 +178,8 @@ public abstract class AbstractDataSet implements IDataSet {
 		sbd.setNumRows(isNumRows());
 		sbd.setPersisted(isPersisted());
 		sbd.setPersistTableName(getPersistTableName());
+		IDataSource dataSourceForReading = getDataSourceForReading();
+		sbd.setDataSourceForReading(dataSourceForReading != null ? dataSourceForReading.toSpagoBiDataSource() : null);
 		sbd.set_public(isPublic());
 		
 		sbd.setOrganization(getOrganization());
@@ -712,17 +717,17 @@ public abstract class AbstractDataSet implements IDataSet {
 		return toReturn;
 	}
 	
-	public IDataSource getDataSourceForReading() {
-		return getDataSource();
-		
-//		if (isPersisted()) {
-//			return getDataSourcePersist();
-//		} else if (isFlatDataset()) {
-//			return getDataSource();
-//		} else {
-//			return null;
-//		}
-	}
+//	public IDataSource getDataSourceForReading() {
+//		return getDataSource();
+//		
+////		if (isPersisted()) {
+////			return getDataSourcePersist();
+////		} else if (isFlatDataset()) {
+////			return getDataSource();
+////		} else {
+////			return null;
+////		}
+//	}
 
 	public String getOrganization() {
 		return organization;
@@ -741,7 +746,13 @@ public abstract class AbstractDataSet implements IDataSet {
 		this.datasourceForWriting = dataSource;
 	}
 
-	
+    public IDataSource getDataSourceForReading() {
+		return datasourceForReading;
+	}
+
+	public void setDataSourceForReading(IDataSource datasourceForReading) {
+		this.datasourceForReading = datasourceForReading;
+	}
 	
 //	/**
 //	 *  Returns the datasource on whgich dataset can write

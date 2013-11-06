@@ -264,6 +264,7 @@ public class TemporaryTableManager {
 				logger.debug("[connection] released succesfully");
 			}	
 		}
+		tableDescriptor.setDataSource(dataSource);
 		return tableDescriptor;
 	}
 

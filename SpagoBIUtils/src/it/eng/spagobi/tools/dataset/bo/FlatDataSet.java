@@ -113,4 +113,16 @@ public class FlatDataSet extends ConfigurableDataSet {
 		return DS_TYPE;
 	}
 
+	@Override
+	public IDataSource getDataSourceForReading() {
+		return this.getDataSource();
+	}
+
+	@Override
+	public void setDataSourceForReading(IDataSource datasourceForReading) {
+		this.setDataSource(datasourceForReading);
+	}
+	
+	
+
 }
