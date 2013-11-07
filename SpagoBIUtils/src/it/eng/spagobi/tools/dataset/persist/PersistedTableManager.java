@@ -7,6 +7,7 @@ package it.eng.spagobi.tools.dataset.persist;
 
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.utilities.StringUtilities;
+import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IField;
@@ -115,7 +116,7 @@ public class PersistedTableManager {
 			//Steps #1: define prepared statement (and max column size for strings type)			
 			PreparedStatement statement = defineStatements(datastore, datasource, connection);			
 			//Steps #2: define create table statement
-		    String createStmtQuery = getCreateTableQuery(datastore);
+		    String createStmtQuery = getCreateTableQuery(datastore, datasource);
 		    dropTableIfExists(datasource);
 		    //Step #3: execute create table statament
 			executeStatement(createStmtQuery, datasource);
@@ -151,11 +152,12 @@ public class PersistedTableManager {
 		for (int i=0, l=filedNo; i<l; i++){	
 			IFieldMetaData fmd = md.getFieldMeta(i);
 			String columnName = getSQLColumnName(fmd);
-			query += " " + columnName + ((i<filedNo-1)?" , " : "");	
+			String escapedColumnName = AbstractJDBCDataset.encapsulateColumnName(columnName, datasource);
+			query += " " + escapedColumnName + ((i<filedNo-1)?" , " : "");	
 			query += ((i==filedNo-1)?" ) " : "");
 			values += "?" + ((i<filedNo-1)?" , " : "");
 			values += ((i==filedNo-1)?" ) " : "");	
-			create +=  " " + columnName + getDBFieldType(fmd) + ((i<filedNo-1)?" , " : ")");	
+			create +=  " " + escapedColumnName + getDBFieldType(fmd) + ((i<filedNo-1)?" , " : ")");	
 		}
 		String totalQuery = query + values;
 		logger.debug("create table statement: " + create);
@@ -338,13 +340,13 @@ public class PersistedTableManager {
 		return toReturn;
 	}
 	
-	private String getCreateTableQuery(IDataStore datastore){
+	private String getCreateTableQuery(IDataStore datastore, IDataSource dataSource){
 		String toReturn = "create table " + tableName + " (" ;
 		IMetaData md = datastore.getMetaData();	
 		for (int i=0, l=md.getFieldCount(); i<l; i++){				
 			 IFieldMetaData fmd = md.getFieldMeta(i);
 			 String columnName = getSQLColumnName(fmd);
-			 toReturn += " " + columnName + getDBFieldType(fmd);	
+			 toReturn += " " + AbstractJDBCDataset.encapsulateColumnName(columnName, dataSource) + getDBFieldType(fmd);	
 			 toReturn += ((i<l-1)?" , " : "");	
 		}
 		toReturn += " )";
