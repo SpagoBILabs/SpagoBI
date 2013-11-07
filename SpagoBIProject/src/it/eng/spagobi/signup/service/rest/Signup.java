@@ -238,7 +238,6 @@ public class Signup {
 			
 			String url = "/themes/" + currTheme	+ "/jsp/signup/active.jsp";
 			logger.debug("url for active: "+url);
-//		    req.getRequestDispatcher("/WEB-INF/jsp/signup/active.jsp").forward(req, servletResponse);
 			req.setAttribute("currTheme", currTheme);
 		    req.getRequestDispatcher(url).forward(req, servletResponse);
 		  } catch (ServletException e) {
@@ -287,36 +286,36 @@ public class Signup {
 	@ToValidate(typeName=FieldsValidatorFactory.SIGNUP)
 	public String create(@Context HttpServletRequest req) {
 		
-		String nome     =  GeneralUtilities.trim(req.getParameter("nome"));
-		String cognome  =  GeneralUtilities.trim(req.getParameter("cognome"));
-		String username =  GeneralUtilities.trim(req.getParameter("username"));
-		String password =  GeneralUtilities.trim(req.getParameter("password"));
-		String email    =  GeneralUtilities.trim(req.getParameter("email"));
-		String sesso    =  GeneralUtilities.trim(req.getParameter("sesso"));
-		String dataNascita    
-		                =  GeneralUtilities.trim(req.getParameter("dataNascita"));
-		String indirizzo=  GeneralUtilities.trim(req.getParameter("indirizzo"));
-		String azienda  =  GeneralUtilities.trim(req.getParameter("azienda"));
-		String biografia=  GeneralUtilities.trim(req.getParameter("biografia"));
-		String lingua   =  GeneralUtilities.trim(req.getParameter("lingua"));
-		String captcha  =  GeneralUtilities.trim(req.getParameter("captcha"));
-		String strUseCaptcha = (req.getParameter("useCaptcha")==null)?"true":req.getParameter("useCaptcha");
-	    boolean useCaptcha = Boolean.valueOf(strUseCaptcha);
+		String nome     	=  GeneralUtilities.trim(req.getParameter("nome"));
+		String cognome  	=  GeneralUtilities.trim(req.getParameter("cognome"));
+		String username 	=  GeneralUtilities.trim(req.getParameter("username"));
+		String password 	=  GeneralUtilities.trim(req.getParameter("password"));
+		String email    	=  GeneralUtilities.trim(req.getParameter("email"));
+		String sesso    	=  GeneralUtilities.trim(req.getParameter("sesso"));
+		String dataNascita  =  GeneralUtilities.trim(req.getParameter("dataNascita"));
+		String indirizzo	=  GeneralUtilities.trim(req.getParameter("indirizzo"));
+		String azienda  	=  GeneralUtilities.trim(req.getParameter("azienda"));
+		String biografia	=  GeneralUtilities.trim(req.getParameter("biografia"));
+		String lingua   	=  GeneralUtilities.trim(req.getParameter("lingua"));
+		String captcha  	=  GeneralUtilities.trim(req.getParameter("captcha"));
 		
+		String strUseCaptcha = (req.getParameter("useCaptcha")==null)?"true":req.getParameter("useCaptcha");
+		boolean useCaptcha = Boolean.valueOf(strUseCaptcha);
 		try {
 		  Captcha c = (Captcha) req.getSession().getAttribute(Captcha.NAME);
 		  if( useCaptcha && !c.isCorrect(captcha) ){
+			logger.error("Invalid captcha");
 		    JSONObject errorMsg = new JSONObject();
 			JSONArray errors = new JSONArray();
 			errors.put(new JSONObject("{message: 'Campo Captcha non verificato'}"));
 			errorMsg.put("errors", errors);
 			errorMsg.put("message", "validation-error");
 			return errorMsg.toString(); 	  
-				  
 		  }	
 		  
 		  ISbiUserDAO userDao = DAOFactory.getSbiUserDAO();
 		  if( userDao.isUserIdAlreadyInUse( username ) != null ){
+			logger.error("Username already in use");
 		    JSONObject errorMsg = new JSONObject();
 		    JSONArray errors = new JSONArray();
 		    errors.put(new JSONObject("{message: 'Username in uso'}"));
@@ -347,7 +346,6 @@ public class Signup {
 		  addAttribute(attributes, attrDao.loadSbiAttributeByName("gender").getAttributeId(),  sesso);
 		  addAttribute(attributes, attrDao.loadSbiAttributeByName("birth_date").getAttributeId(),  dataNascita);
 		  addAttribute(attributes, attrDao.loadSbiAttributeByName("location").getAttributeId(),  indirizzo);
-//		  addAttribute(attributes, attrDao.loadSbiAttributeByName("company").getAttributeId(),  azienda);
 		  addAttribute(attributes, attrDao.loadSbiAttributeByName("community").getAttributeId(),  azienda);
 		  addAttribute(attributes, attrDao.loadSbiAttributeByName("short_bio").getAttributeId(), biografia);
 		  addAttribute(attributes, attrDao.loadSbiAttributeByName("language").getAttributeId(), lingua);		  
@@ -355,27 +353,30 @@ public class Signup {
 		  user.setSbiUserAttributeses(attributes);
 		  int id = userDao.fullSaveOrUpdateSbiUser(user);
 		  
-		  CommunityManager cm = new CommunityManager();							
-		  if(azienda!= null && !azienda.equals("")){
+		  logger.debug("User [" + username + "] succesfuly created with id [" + id + "]");
+		  						
+		  if(StringUtilities.isNotEmpty(azienda)) {
+			logger.debug("User [" + username + "] would be part of community [" + azienda + "]");
 			SbiCommunity community = DAOFactory.getCommunityDAO().loadSbiCommunityByName(azienda);
-			//temporary setting of default tenant (because we are in the insertion of the user without a specific tenant)
-//			if (community == null) community =  new SbiCommunity();
-//			community.getCommonInfo().setOrganization(defaultTenant);
-			//end of temporary setting
-			cm.saveCommunity(community, azienda, user.getUserId(), req);
+			CommunityManager communityManager = new CommunityManager();	
+			communityManager.saveCommunity(community, azienda, user.getUserId(), req);
 		  }
 
-		  
+		  logger.debug("Preparing activation mail for user [" + username + "]");
 		  String subject = SingletonConfig.getInstance().getConfigValue("MAIL.SIGNUP.subject");
+		  logger.debug("Activation mail's subject set to [" + subject + "]");
 	      String body    = SingletonConfig.getInstance().getConfigValue("MAIL.SIGNUP.body");
-		  String host = req.getHeader("Host");
-		  int index = host.indexOf(":");
-			  
-		  URL url = new URL(req.getScheme(), host.substring(0, index), Integer.parseInt(host.substring(index+1)), req.getContextPath() + "/restful-services/signup/prepareActive?accountId=" + id );
-			  
+	      logger.debug("Activation mail's body set to [" + body + "]");
+		  
+	      String host = req.getServerName();
+	      logger.debug("Activation url host is equal to [" + host + "]");
+	      int port = req.getServerPort();
+	      logger.debug("Activation url port is equal to [" + port + "]");
+	      URL url = new URL(req.getScheme(), host, port, req.getContextPath() + "/restful-services/signup/prepareActive?accountId=" + id );	  
+	      logger.debug("Activation url is equal to [" + url.toExternalForm() + "]");
+		  logger.debug("Activation mail for user [" + username + "] succesfully prepared");
+		  
 	      sendMail(email, subject, body + " \r\n \r\n " + url.toExternalForm() );
-		  
-		  
 		} catch (Throwable t) {
 			throw new SpagoBIServiceException(
 					"An unexpected error occured while executing the subscribe action", t);
