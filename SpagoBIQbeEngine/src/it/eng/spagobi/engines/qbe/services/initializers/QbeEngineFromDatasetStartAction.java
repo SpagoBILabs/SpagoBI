@@ -62,23 +62,18 @@ public class QbeEngineFromDatasetStartAction extends QbeEngineStartAction {
 			logger.debug("Parameter [" + DATASET_LABEL + "]  is equal to [" + datasetLabel + "]");
 			Assert.assertNotNull(datasetLabel, "Dataset not specified");
 			dataSet = getDataSetServiceProxy().getDataSetByLabel(datasetLabel);  	
-			logger.debug("OUT");
 		}
+		logger.debug("OUT");
 		return dataSet;
 	}
 
 	@Override
-	// this is engine default datasource (not of interest inthis case)
 	public IDataSource getDataSource() {
-//		logger.debug("IN");
-//		// datasource information is coming with the request
-//		String datasourceLabel = this.getAttributeAsString( DATASOURCE_LABEL );
-//		logger.debug("Parameter [" + DATASOURCE_LABEL + "]  is equal to [" + datasourceLabel + "]");
-//		Assert.assertNotNull(datasourceLabel, "Data source not specified");
-//		IDataSource dataSource = getDataSourceServiceProxy().getDataSourceByLabel(datasourceLabel);
-//		logger.debug("oUT");
-//		return dataSource;
-		return null;
+		logger.debug("IN");
+		IDataSet dataset = this.getDataSet();
+		IDataSource datasource = dataset.getDataSource();
+		logger.debug("OUT : returning [" + datasource + "]");
+		return datasource;
 	}
 
 
