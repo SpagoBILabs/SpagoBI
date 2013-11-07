@@ -2016,10 +2016,26 @@ MetadataLogger metaLog;
 		if (transformer != null) {
 			newDataset.setTransformer(transformer);
 		}
+
+		// associate scope
+		Map domainIdAss=metaAss.getDomainIDAssociation();
+		if(exportedDataset.getScope()!=null){
+			Integer oldId=exportedDataset.getScope().getValueId();
+			Integer newId=(Integer)domainIdAss.get(oldId);
+			if(newId != null){
+				logger.debug("scope previously identificed by "+oldId+" is now identified by "+newId);
+				SbiDomains newScope = (SbiDomains) sessionCurrDB.load(SbiDomains.class, newId);
+				newDataset.setScope(newScope);
+			}
+			else{
+				logger.error("Could not find scope category previously identified with id "+oldId+": leave it blanck");
+				newDataset.setScope(null);
+			}
+
+		}
+
 		
 		// associate category; if category is not present means it is new and must be inserted
-		
-		Map domainIdAss=metaAss.getDomainIDAssociation();
 		if(exportedDataset.getCategory()!=null){
 					Integer oldId=exportedDataset.getCategory().getValueId();
 					Integer newId=(Integer)domainIdAss.get(oldId);
