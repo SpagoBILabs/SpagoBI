@@ -524,10 +524,10 @@ Sbi.geo.control.Layers = OpenLayers.Class(OpenLayers.Control, {
 		        height		: 350,
 	            closeAction :'hide',
 	            plain       : true,
-	            title		: 'Layers Catalogue',
+	            title		: LN('sbi.geo.layerpanel.catalogue'),
 	            items       : [layersCatalogue],
 	            buttons		: [{
-                    text:'Add layers',
+                    text: LN('sbi.geo.layerpanel.add'),
                     handler: function(){
                     	
                     	var selectedLayers = layersCatalogue.getSelectedLayers();

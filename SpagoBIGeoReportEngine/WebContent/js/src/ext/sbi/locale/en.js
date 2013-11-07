@@ -109,6 +109,8 @@ Sbi.locale.ln['sbi.geo.controlpanel.point'] = 'point ';
 
 Sbi.locale.ln['sbi.geo.layerpanel.title'] = 'Layers';
 Sbi.locale.ln['sbi.geo.layerpanel.layer'] = ' layer';
+Sbi.locale.ln['sbi.geo.layerpanel.add'] = 'Add layers';
+Sbi.locale.ln['sbi.geo.layerpanel.catalogue'] = 'Layers Catalogue';
 
 Sbi.locale.ln['sbi.geo.analysispanel.title'] = 'Analysis';
 Sbi.locale.ln['sbi.geo.analysispanel.addindicators'] = 'Add indicators';
