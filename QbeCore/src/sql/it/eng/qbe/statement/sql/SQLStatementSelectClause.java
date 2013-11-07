@@ -18,24 +18,25 @@ import org.apache.log4j.Logger;
  * @author Alberto Ghedin (alberto.ghedin@eng.it)
  */
 
-public class SQLStatementSelectClause extends AbstractSelectStatementClause{
+public class SQLStatementSelectClause extends AbstractSelectStatementClause {
 	
 
 	 
 	public static transient Logger logger = Logger.getLogger(SQLStatementSelectClause.class);
 	
-	public static String build(IStatement parentStatement, Query query, Map<String, Map<String, String>> entityAliasesMaps){
-		SQLStatementSelectClause clause = new SQLStatementSelectClause(parentStatement);
-		return clause.buildClause(query, entityAliasesMaps);
-	}
+//	public static String build(IStatement parentStatement, Query query, Map<String, Map<String, String>> entityAliasesMaps){
+//		SQLStatementSelectClause clause = new SQLStatementSelectClause(parentStatement);
+//		return clause.buildClause(query, entityAliasesMaps);
+//	}
 	
 	protected SQLStatementSelectClause(IStatement statement) {
 		parentStatement = statement;
 	}
 	
 
-	
-
-
+	public static String build(IStatement parentStatement, Query query, Map<String, Map<String, String>> entityAliasesMaps, boolean useAliases){
+		SQLStatementSelectClause clause = new SQLStatementSelectClause(parentStatement);
+		return clause.buildClause(query, entityAliasesMaps, useAliases);
+	}
 	
 }

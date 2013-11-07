@@ -11,10 +11,17 @@ import it.eng.spago.error.EMFErrorHandler;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.validation.EMFValidationError;
 import it.eng.spagobi.commons.utilities.StringUtilities;
+import it.eng.spagobi.engines.qbe.QbeEngineConfig;
 import it.eng.spagobi.engines.qbe.services.core.AbstractQbeEngineAction;
 import it.eng.spagobi.services.proxy.DataSetServiceProxy;
 import it.eng.spagobi.tools.dataset.bo.FlatDataSet;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
+import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
+import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
+import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
+import it.eng.spagobi.tools.dataset.utils.DatasetMetadataParser;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.EngineConstants;
@@ -78,9 +85,9 @@ public class SaveDatasetUserAction extends AbstractQbeEngineAction {
 			validateLabel();
 			validateInput();
 			
-			String flatTableName = persistCurrentDataset();
+			IDataSetTableDescriptor descriptor = persistCurrentDataset();
 			IDataSet dataset = getEngineInstance().getActiveQueryAsDataSet();
-			IDataSet newDataset = createNewDataSet(dataset, flatTableName);
+			IDataSet newDataset = createNewDataSet(dataset, descriptor);
 			IDataSet datasetSaved = saveNewDataset(newDataset);
 			
 			int datasetId = datasetSaved.getId();
@@ -130,7 +137,7 @@ public class SaveDatasetUserAction extends AbstractQbeEngineAction {
 		}
 	}
 
-	private IDataSet createNewDataSet(IDataSet dataset, String flatTableName) {
+	private IDataSet createNewDataSet(IDataSet dataset, IDataSetTableDescriptor descriptor) {
 		logger.debug("IN");
 		FlatDataSet flatFataSet = new FlatDataSet();
 		flatFataSet.setLabel( getAttributeAsString(LABEL) );
@@ -144,18 +151,59 @@ public class SaveDatasetUserAction extends AbstractQbeEngineAction {
 		
 		JSONObject jsonConfig = new JSONObject();
 		try {
-			jsonConfig.put( FlatDataSet.FLAT_TABLE_NAME, flatTableName );
+			jsonConfig.put( FlatDataSet.FLAT_TABLE_NAME, descriptor );
 			jsonConfig.put( FlatDataSet.DATA_SOURCE, dataset.getDataSource().getLabel() );
 		} catch (JSONException e) {
 			throw new SpagoBIRuntimeException("Error while creating dataset's JSON config", e);
 		}
 		
-		flatFataSet.setTableName( flatTableName );
+		flatFataSet.setTableName( descriptor.getTableName() );
 		flatFataSet.setDataSource( dataset.getDataSource() );
 		flatFataSet.setConfiguration( jsonConfig.toString() );
 		
+		String metadata = getMetadataAsString(dataset, descriptor);
+		logger.debug("Dataset's metadata: [" + metadata + "]");
+		flatFataSet.setDsMetadata(metadata);
+		
 		logger.debug("OUT");
 		return flatFataSet;
+	}
+
+	private String getMetadataAsString(IDataSet dataset,
+			IDataSetTableDescriptor descriptor) {
+		IMetaData metadata = getDataSetMetadata(dataset);
+		MetaData newMetadata;
+		try {
+			newMetadata = (MetaData) ((MetaData) metadata).clone();
+		} catch (CloneNotSupportedException e) {
+			throw new SpagoBIRuntimeException("Error while cloning dataset's metadata", e);
+		}
+		
+		for (int i = 0; i < metadata.getFieldCount(); i++) {
+			IFieldMetaData fieldMetadata = metadata.getFieldMeta(i);
+			IFieldMetaData newFieldMetadata = newMetadata.getFieldMeta(i);
+			String columnName = descriptor.getColumnName(fieldMetadata.getName());
+			newFieldMetadata.setName(columnName);
+		}
+
+		DatasetMetadataParser parser = new DatasetMetadataParser();
+		String toReturn = parser.metadataToXML(newMetadata);
+		return toReturn;
+	}
+
+	private IMetaData getDataSetMetadata(IDataSet dataset) {
+		IMetaData metaData = null;
+		Integer start = new Integer(0);
+		Integer limit = new Integer(10);
+		Integer maxSize = QbeEngineConfig.getInstance().getResultLimit();			
+		try {
+			dataset.loadData(start, limit, maxSize);
+			IDataStore dataStore = dataset.getDataStore();
+			metaData = dataStore.getMetaData();
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException("Error while executing dataset", e);
+		}
+		return metaData;
 	}
 
 	private IDataSet saveNewDataset(IDataSet newDataset) {
@@ -166,7 +214,7 @@ public class SaveDatasetUserAction extends AbstractQbeEngineAction {
 		return saved;
 	}
 
-	private String persistCurrentDataset() {
+	private IDataSetTableDescriptor persistCurrentDataset() {
 		logger.debug("Retrieving working dataset ...");
 		IDataSet dataset = getEngineInstance().getActiveQueryAsDataSet();
 		// gets the name of the table that will contain data
@@ -174,9 +222,9 @@ public class SaveDatasetUserAction extends AbstractQbeEngineAction {
 		logger.debug("Flat table name : [" + flatTableName + "]");
 		IDataSource dataSource = dataset.getDataSource();
 		logger.debug("Persisting working dataset ...");
-		dataset.persist(flatTableName, dataSource);
+		IDataSetTableDescriptor descriptor = dataset.persist(flatTableName, dataSource);
 		logger.debug("Working dataset persisted");
-		return flatTableName;
+		return descriptor;
 	}
 
 	private String getFlatTableName() {
