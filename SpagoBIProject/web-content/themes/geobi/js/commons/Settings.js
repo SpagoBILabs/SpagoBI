@@ -36,8 +36,8 @@ Sbi.settings.geobi.browser = {
 				showJobDetails: false
 			}
 		}
-	  , showLeftPanels: true
-	  , showBreadCrumbs: true
+	  , showLeftPanels: false
+	  , showBreadCrumbs: false
 	  , maxNumberOfExecutionTabs: 1 //the maximum number of tabs to open on execution of documents if valorized
 	  , typeLayout: 'card' //possible values: 'tab' or 'card'
 	  , showTitle: false
@@ -50,7 +50,11 @@ Sbi.settings.geobi.browser = {
  * Datasets
  */
 Sbi.settings.dataset = {
-		hiddenActions: ['worksheet', 'qbe']
+	hiddenActions: ['worksheet', 'qbe']
+};
+
+Sbi.settings.myData = {
+	showOnlyOwner: false
 };
 
 //Sbi.settings.browser = Ext.apply(Sbi.settings.browser,Sbi.settings.geobi.browser);
