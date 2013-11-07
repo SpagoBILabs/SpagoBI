@@ -14,6 +14,7 @@ import it.eng.spagobi.commons.dao.IRoleDAO;
 import it.eng.spagobi.commons.metadata.SbiExtRoles;
 import it.eng.spagobi.community.dao.ISbiCommunityDAO;
 import it.eng.spagobi.community.mapping.SbiCommunity;
+import it.eng.spagobi.community.mapping.SbiCommunityUsers;
 import it.eng.spagobi.community.util.CommunityUtilities;
 import it.eng.spagobi.profiling.bean.SbiAttribute;
 import it.eng.spagobi.profiling.bean.SbiUser;
@@ -23,6 +24,7 @@ import it.eng.spagobi.profiling.dao.ISbiUserDAO;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
@@ -151,5 +153,39 @@ public class CommunityManager {
 		funct.setCreateRoles(rolesArr);
 		
 		lowFunctDao.modifyLowFunctionality(funct);
+	}
+	/**This method executes the following actions after user deletion:
+	 * - if user is owner of a community and there are no other members--> the community is deleted
+	 * - if user is owner of a community and there are other members --> the ownership shifts to the oldest member
+	 * - if he is just a member --> the relationship with the community is deleted
+	 * @param userId the user that has been deleted
+	 * @throws EMFUserError 
+	 */
+	public void mngUserCommunityAfterDelete(SbiUser user) throws EMFUserError{
+		logger.debug("IN");
+		ISbiCommunityDAO commDao = DAOFactory.getCommunityDAO();
+		List <SbiCommunity> communitiesOwned= commDao.loadSbiCommunityByOwner(user.getUserId());
+		if(communitiesOwned != null && !communitiesOwned.isEmpty()){
+			//find other members
+			for(int i=0; i<communitiesOwned.size(); i++){
+				SbiCommunity commOwned = communitiesOwned.get(i);
+				List<SbiCommunityUsers> members= commDao.loadCommunitieMembersByName(commOwned, user);
+				if(members != null && !members.isEmpty()){
+					//takes the first (ordered query resultset)
+					SbiCommunityUsers membership = members.get(0);
+					String newOwnerId = membership.getId().getUserId();
+					commOwned.setOwner(newOwnerId);
+					commDao.updateSbiComunity(commOwned);
+					logger.debug("New owner "+newOwnerId+" for community "+commOwned.getName());
+				}else{
+					commDao.deleteCommunityById(commOwned.getCommunityId());
+					logger.debug("Deleted owner community "+commOwned.getName());
+				}
+			}			
+		}
+		//in any case delete relationship
+		commDao.deleteCommunityMembership(user.getUserId());
+		logger.debug("Deleted community memberships for user "+user.getUserId());
+		logger.debug("OUT");
 	}
 }

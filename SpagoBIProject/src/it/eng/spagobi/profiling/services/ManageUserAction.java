@@ -368,8 +368,8 @@ public class ManageUserAction extends AbstractSpagoBIAction {
 								"Cannot delete user");
 					}
 				}
-				
-				mngUserCommunityAfterDelete(user);
+				CommunityManager cm = new CommunityManager();
+				cm.mngUserCommunityAfterDelete(user);
 				logger.debug("User-community membership deleted");
 				
 				
@@ -410,40 +410,7 @@ public class ManageUserAction extends AbstractSpagoBIAction {
 		}
 	}
 
-	/**This method executes the following actions after user deletion:
-	 * - if user is owner of a community and there are no other members--> the community is deleted
-	 * - if user is owner of a community and there are other members --> the ownership shifts to the oldest member
-	 * - if he is just a member --> the relationship with the community is deleted
-	 * @param userId the user that has been deleted
-	 * @throws EMFUserError 
-	 */
-	private void mngUserCommunityAfterDelete(SbiUser user) throws EMFUserError{
-		logger.debug("IN");
-		ISbiCommunityDAO commDao = DAOFactory.getCommunityDAO();
-		List <SbiCommunity> communitiesOwned= commDao.loadSbiCommunityByOwner(user.getUserId());
-		if(communitiesOwned != null && !communitiesOwned.isEmpty()){
-			//find other members
-			for(int i=0; i<communitiesOwned.size(); i++){
-				SbiCommunity commOwned = communitiesOwned.get(i);
-				List<SbiCommunityUsers> members= commDao.loadCommunitieMembersByName(commOwned, user);
-				if(members != null && !members.isEmpty()){
-					//takes the first (ordered query resultset)
-					SbiCommunityUsers membership = members.get(0);
-					String newOwnerId = membership.getId().getUserId();
-					commOwned.setOwner(newOwnerId);
-					commDao.updateSbiComunity(commOwned);
-					logger.debug("New owner "+newOwnerId+" for community "+commOwned.getName());
-				}else{
-					commDao.deleteCommunityById(commOwned.getCommunityId());
-					logger.debug("Deleted owner community "+commOwned.getName());
-				}
-			}			
-		}
-		//in any case delete relationship
-		commDao.deleteCommunityMembership(user.getUserId());
-		logger.debug("Deleted community memberships for user "+user.getUserId());
-		logger.debug("OUT");
-	}
+	
 	
 	private boolean isFinalUser(SbiUser user) throws EMFUserError {
 		boolean toReturn = true;
