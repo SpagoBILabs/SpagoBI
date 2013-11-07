@@ -21,6 +21,7 @@ import it.eng.qbe.statement.hibernate.HQLStatement;
 import it.eng.qbe.statement.hibernate.HQLStatement.IConditionalOperator;
 import it.eng.spagobi.services.common.SsoServiceInterface;
 import it.eng.spagobi.tools.dataset.bo.AbstractDataSet;
+import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
 import it.eng.spagobi.tools.dataset.bo.DataSetVariable;
 import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
@@ -373,7 +374,7 @@ public abstract class AbstractQbeDataSet extends AbstractDataSet {
 				logger.error("Temporary table name not set, cannot proceed!!");
 				throw new SpagoBIEngineRuntimeException("Temporary table name not set");
 			}
-			IDataSource dataSource = getDataSource();
+			IDataSource dataSource = getDataSourceForReading();
 			String sql = getSQLQuery();
 			IDataSetTableDescriptor tableDescriptor = null;
 					
@@ -387,7 +388,7 @@ public abstract class AbstractQbeDataSet extends AbstractDataSet {
 			}
 			String filterColumnName = tableDescriptor.getColumnName(fieldName);
 			//			StringBuffer buffer = new StringBuffer("Select DISTINCT " + filterColumnName + ", CONCAT(" + filterColumnName + ", ' Description' ) as description FROM " + tableName);
-			StringBuffer buffer = new StringBuffer("Select DISTINCT " + filterColumnName + " FROM " + tableName);
+			StringBuffer buffer = new StringBuffer("Select DISTINCT " + AbstractJDBCDataset.encapsulateColumnName(filterColumnName, dataSource) + " FROM " + tableName);
 			manageFilterOnDomainValues(buffer, fieldName, tableDescriptor, filter);
 			String sqlStatement = buffer.toString();
 			toReturn = TemporaryTableManager.queryTemporaryTable(sqlStatement, dataSource, start, limit);
@@ -411,7 +412,7 @@ public abstract class AbstractQbeDataSet extends AbstractDataSet {
 			Class clazz = tableDescriptor.getColumnType(fieldName);
 			String value = getFilterValue(filter.getValue(), clazz);
 			IConditionalOperator conditionalOperator = (IConditionalOperator) HQLStatement.conditionalOperators.get(filter.getOperator());
-			String temp = conditionalOperator.apply(columnName, new String[] { value });
+			String temp = conditionalOperator.apply(AbstractJDBCDataset.encapsulateColumnName(columnName, tableDescriptor.getDataSource()), new String[] { value });
 			buffer.append(" WHERE " + temp);
 		}
 	}

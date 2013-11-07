@@ -303,6 +303,7 @@ public abstract class AbstractWorksheetEngineAction extends AbstractEngineAction
 			logger.debug("Persisting dataset ...");
 			
 			td = dataset.persist(tableName, getEngineInstance().getDataSourceForWriting());
+			dataset.setDataSourceForReading(getEngineInstance().getDataSourceForWriting());
 			this.recordTemporaryTable(tableName, getEngineInstance().getDataSourceForWriting());
 			
 			logger.debug("Dataset persisted");
