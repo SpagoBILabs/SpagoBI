@@ -67,6 +67,7 @@ Sbi.locale.formats = {
 //GENERIC
 //===================================================================
 Sbi.locale.ln['sbi.generic.add'] = 'Aggiungi';
+Sbi.locale.ln['sbi.generic.delete'] = 'Rimuovi';
 Sbi.locale.ln['sbi.generic.cancel'] = 'Annulla';
 Sbi.locale.ln['sbi.generic.modify'] = 'Aggiorna';
 Sbi.locale.ln['sbi.generic.save'] = 'Salva ';
@@ -106,6 +107,7 @@ Sbi.locale.ln['sbi.geo.controlpanel.point'] = 'puntiforme ';
 
 Sbi.locale.ln['sbi.geo.earthpanel.title'] = 'Navigazione 3D';
 Sbi.locale.ln['sbi.geo.layerpanel.title'] = 'Livelli';
+Sbi.locale.ln['sbi.geo.layerpanel.layer'] = ' livello';
 
 Sbi.locale.ln['sbi.geo.analysispanel.title'] = 'Analisi';
 Sbi.locale.ln['sbi.geo.analysispanel.addindicators'] = 'Aggiungi indicatore';
@@ -119,6 +121,7 @@ Sbi.locale.ln['sbi.geo.analysispanel.filter.default'] = 'Set Default';
 Sbi.locale.ln['sbi.geo.analysispanel.filter.default.ok'] = 'Valori di default valorizzati correttamente';
 
 Sbi.locale.ln['sbi.geo.legendpanel.title'] = 'Legenda';
+Sbi.locale.ln['sbi.geo.legendpanel.changeStyle'] = 'Modifica stile'; 
 
 //===================================================================
 //CONTROL PANEL - SAVE WINDOW

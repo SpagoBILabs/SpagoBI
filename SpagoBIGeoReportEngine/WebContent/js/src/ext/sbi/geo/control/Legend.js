@@ -206,14 +206,14 @@ Sbi.geo.control.Legend = OpenLayers.Class(OpenLayers.Control, {
        
         
         var titleElement = document.createElement("div");
-        titleElement.innerHTML = " <\p> <h3>Legenda</h3><\p> <\p>";
+        titleElement.innerHTML = " <\p> <h3>"+LN('sbi.geo.legendpanel.title')+"</h3><\p> <\p>";
         this.legendContentElement.appendChild(titleElement);
         
         var legendEditButton = document.createElement("label");
         OpenLayers.Element.addClass(legendEditButton, "labelSpan olButton");
         legendEditButton.id = "LegendEditButton";
         legendEditButton._legendEditButton = this.id;
-        legendEditButton.innerHTML = "<a style='color:#3d90d4;' href='#'>Modifica stile</a><\p>.<\p> ";
+        legendEditButton.innerHTML = "<a style='color:#3d90d4;' href='#'>"+LN('sbi.geo.legendpanel.changeStyle')+"</a><\p>.<\p> ";
         this.legendContentElement.appendChild(legendEditButton);
         
         var legendContentBodyElement = document.createElement('div');
