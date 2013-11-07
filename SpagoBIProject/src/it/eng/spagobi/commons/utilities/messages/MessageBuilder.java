@@ -216,28 +216,29 @@ public class MessageBuilder
         Locale locale = null;
         if(sbiMode.equalsIgnoreCase("WEB"))
         {
+        	String language = null;
+            String country = null;
+            
             RequestContainer reqCont = RequestContainer.getRequestContainer();
-            SessionContainer sessCont = reqCont.getSessionContainer();
-            SessionContainer permSess = sessCont.getPermanentContainer();
-            String language = (String)permSess.getAttribute("AF_LANGUAGE");
-            String country = (String)permSess.getAttribute("AF_COUNTRY");
+            if(reqCont != null) {
+            	SessionContainer sessCont = reqCont.getSessionContainer();
+                SessionContainer permSess = sessCont.getPermanentContainer();
+                language = (String)permSess.getAttribute("AF_LANGUAGE");
+                country = (String)permSess.getAttribute("AF_COUNTRY");
+            }
+           
             if(country == null)
             {
                 country = "";
             }
-            if(language != null)
-            {
+            if(language != null) {
                 locale = new Locale(language, country, "");
-            } else
-            if(request == null)
-            {
-                locale = getBrowserLocaleFromSpago();
-            } else
-            {
-                locale = getBrowserLocale(request);
-            }
-        } else
-        if(sbiMode.equalsIgnoreCase("PORTLET"))
+            } else if(request == null) {
+	            locale = getBrowserLocaleFromSpago();
+	        } else {
+	            locale = getBrowserLocale(request);
+	        }
+        } else if(sbiMode.equalsIgnoreCase("PORTLET"))
         {
             locale = PortletUtilities.getPortalLocale();
         }
