@@ -15,6 +15,7 @@ import it.eng.qbe.query.SimpleSelectField;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.objects.Couple;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -27,7 +28,7 @@ import org.apache.log4j.Logger;
 
 public class AbstractSelectStatementClause extends AbstractStatementClause{
 	
-	protected String[] statementFields;
+	protected Couple<String, String>[] statementFields;
 	protected int index;
 	protected Map entityAliases;
 	public static final String SELECT = "SELECT";
@@ -35,6 +36,10 @@ public class AbstractSelectStatementClause extends AbstractStatementClause{
 	public static transient Logger logger = Logger.getLogger(AbstractStatementClause.class);
 	
 	public String buildClause(Query query, Map<String, Map<String, String>> entityAliasesMaps) {
+		return this.buildClause(query, entityAliasesMaps, false);
+	}
+	
+	public String buildClause(Query query, Map<String, Map<String, String>> entityAliasesMaps, boolean useAliases) {
 		StringBuffer buffer;
 		List<ISelectField> selectFields;
 		List<InLineCalculatedSelectField> selectInLineCalculatedFields = new ArrayList<InLineCalculatedSelectField>();
@@ -67,7 +72,8 @@ public class AbstractSelectStatementClause extends AbstractStatementClause{
 			if(statementFiledsNo == 0) {
 				throw new RuntimeException("Impossible to execute a query that contains in the select statemet only (expert) calculated fields");
 			}
-			statementFields = new String[selectFields.size() - calculatedFieldNumber]; 
+			statementFields = (Couple<String, String>[]) Array.newInstance(new Couple<String, String>("", "").getClass(), selectFields.size() - calculatedFieldNumber);
+			
 			index = 0;
 			
 			for(ISelectField selectAbstractField : selectFields){										
@@ -92,7 +98,7 @@ public class AbstractSelectStatementClause extends AbstractStatementClause{
 					
 					for(int y = 0; y < statementFields.length; y++){
 						if(statementFields[y] == null){
-							statementFields[y]= " " + expression;
+							statementFields[y]= new Couple(" " + expression, selectInLineField.getAlias());
 							index = y;
 							break;
 						}
@@ -103,7 +109,11 @@ public class AbstractSelectStatementClause extends AbstractStatementClause{
 				
 			String separator = "";
 			for(int y = 0; y < statementFields.length; y++){
-				buffer.append(separator + statementFields[y]);
+				buffer.append(separator + statementFields[y].getFirst());
+				String alias = statementFields[y].getSecond();
+				if (useAliases && alias != null) {
+					buffer.append(" as " + alias);
+				}
 				separator = ",";
 			}		
 		} finally {
@@ -113,6 +123,11 @@ public class AbstractSelectStatementClause extends AbstractStatementClause{
 		return buffer.toString().trim();
 	}
 	
+	private String generateAlias(int y) {
+		String alias = "c_" + y;
+		return alias;
+	}
+
 	private void addSimpleSelectField(SimpleSelectField selectField, Map entityAliasesMaps) {
 		
 		IModelField datamartField;
@@ -153,7 +168,7 @@ public class AbstractSelectStatementClause extends AbstractStatementClause{
 		logger.debug("select clause element after aggregation [" + selectClauseElement + "]");
 		
 		
-		statementFields[index] = " " + selectClauseElement;
+		statementFields[index] = new Couple(" " + selectClauseElement, selectField.getAlias());
 		index++;
 		
 		logger.debug("select clause element succesfully added to select clause");

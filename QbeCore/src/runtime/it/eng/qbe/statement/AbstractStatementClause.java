@@ -220,7 +220,7 @@ public abstract class AbstractStatementClause implements IStatementClause {
 			
 			inlineFunctionsMap = dataSourceConfiguration.loadInLineFunctions(dialect);
 		} catch (Throwable t) {
-			throw new RuntimeException("An unexpected error occured while getting dialect from datasource", t);
+			throw new RuntimeException("An unexpected error occured while getting inline functions", t);
 		}
 		
 		return inlineFunctionsMap;

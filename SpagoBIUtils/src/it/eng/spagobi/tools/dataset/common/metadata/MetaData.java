@@ -15,7 +15,7 @@ import java.util.Map;
  * @author Andrea Gioia (andrea.gioia@eng.it)
  *
  */
-public class MetaData implements IMetaData {
+public class MetaData implements IMetaData, Cloneable {
 	
 	int idFieldIndex;
 	
@@ -166,5 +166,21 @@ public class MetaData implements IMetaData {
 		IFieldMetaData m = this.getFieldMeta(fieldIndex);
 		m.setAlias(newAlias);
 	}
+
+	@Override
+	public Object clone() throws CloneNotSupportedException {
+//		MetaData toReturn = new MetaData();
+//		toReturn.setProperties(this.getProperties());
+//		
+//		int fields = this.getFieldCount();
+//		for (int i = 0; i < fields; i++) {
+//			IFieldMetaData fieldMetadata = this.getFieldMeta(i);
+//			IFieldMetaData clone = fieldMetadata.clone();
+//			toReturn.addFiedMeta(clone);
+//		}
+		
+		return super.clone();
+	}
+
 
 }

@@ -9,7 +9,7 @@ package it.eng.spagobi.tools.dataset.common.metadata;
 import java.util.HashMap;
 import java.util.Map;
 
-public class FieldMetadata implements IFieldMetaData {
+public class FieldMetadata implements IFieldMetaData, Cloneable  {
 	
 	String name;
 	String alias;
@@ -132,6 +132,9 @@ public class FieldMetadata implements IFieldMetaData {
 	}
 
 
-	
-	
+
+	@Override
+	protected Object clone() throws CloneNotSupportedException {
+		return super.clone();
+	}
 }

@@ -8,7 +8,6 @@
 package it.eng.qbe.statement.sql;
 
 import it.eng.qbe.datasource.IDataSource;
-import it.eng.qbe.datasource.sql.ISQLDataSource;
 import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.statement.AbstractStatement;
@@ -86,7 +85,7 @@ public class SQLStatement extends AbstractStatement {
 		entityAliasesMaps.put(query.getId(), new HashMap<String, String>());
 		
 
-		selectClause = SQLStatementSelectClause.build(this, query, entityAliasesMaps);
+		selectClause = SQLStatementSelectClause.build(this, query, entityAliasesMaps, true);
 		whereClause = SQLStatementWhereClause.build(this, query, entityAliasesMaps);
 		groupByClause = SQLStatementGroupByClause.build(this, query, entityAliasesMaps);
 		orderByClause = SQLStatementOrderByClause.build(this, query, entityAliasesMaps);

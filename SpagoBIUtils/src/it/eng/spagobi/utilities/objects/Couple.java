@@ -11,30 +11,30 @@ import java.io.Serializable;
  * @authors Alberto Ghedin (alberto.ghedin@eng.it)
  *
  */
-public class Couple implements Serializable {
+public class Couple<X, Y> implements Serializable {
 
 	private static final long serialVersionUID = -7561892082469672604L;
-	private Object first;
-	private Object second;
+	private X first;
+	private Y second;
 	
-	public Couple(Object first, Object second){
+	public Couple(X first, Y second){
 		this.first = first;
 		this.second = second;
 	}
 
-	public Object getFirst() {
+	public X getFirst() {
 		return first;
 	}
 
-	public void setFirst(Object first) {
+	public void setFirst(X first) {
 		this.first = first;
 	}
 
-	public Object getSecond() {
+	public Y getSecond() {
 		return second;
 	}
 
-	public void setSecond(Object second) {
+	public void setSecond(Y second) {
 		this.second = second;
 	}
 	
