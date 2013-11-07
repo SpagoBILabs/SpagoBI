@@ -193,8 +193,8 @@ Ext.extend(Sbi.service.SaveDocumentWindowExt, Ext.Window, {
 		var storeScope = new Ext.data.SimpleStore({
 		    fields: ['field', 'value'],
 		    data : [
-		        ["true", "Public"],
-		        ["false", "Private"]
+		        ["true", LN('sbi.geo.controlpanel.permissionpublic')],
+		        ["false", LN('sbi.geo.controlpanel.permissionprivate')]
 		    ]
 		});
 		

@@ -67,6 +67,7 @@ Sbi.locale.formats = {
 //GENERIC
 //===================================================================
 Sbi.locale.ln['sbi.generic.add'] = 'Add';
+Sbi.locale.ln['sbi.generic.delete'] = 'Delete';
 Sbi.locale.ln['sbi.generic.cancel'] = 'Cancel';
 Sbi.locale.ln['sbi.generic.modify'] = 'Modify';
 Sbi.locale.ln['sbi.generic.save'] = 'Save ';
@@ -107,6 +108,7 @@ Sbi.locale.ln['sbi.geo.controlpanel.point'] = 'point ';
 
 
 Sbi.locale.ln['sbi.geo.layerpanel.title'] = 'Layers';
+Sbi.locale.ln['sbi.geo.layerpanel.layer'] = ' layer';
 
 Sbi.locale.ln['sbi.geo.analysispanel.title'] = 'Analysis';
 Sbi.locale.ln['sbi.geo.analysispanel.addindicators'] = 'Add indicators';
@@ -122,6 +124,7 @@ Sbi.locale.ln['sbi.geo.analysispanel.filter.default.ok'] = 'Default values corre
 	
 
 Sbi.locale.ln['sbi.geo.legendpanel.title'] = 'Legend';
+Sbi.locale.ln['sbi.geo.legendpanel.changeStyle'] = 'Change style'; 
 Sbi.locale.ln['sbi.geo.earthpanel.title'] = '3D Navigation';
 
 //===================================================================

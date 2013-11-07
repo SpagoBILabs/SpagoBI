@@ -649,7 +649,7 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 		} else {
 			var toReturn = '' +
 			'<div class="indicators" id="indicatorsDiv">' +
-		    	'<h2>Indicatori</h2>' +
+		    	'<h2>'+LN('sbi.geo.controlpanel.indicators')+'</h2>' +
 		        '<ul id="ul-indicators" class="group">' +		
 		       	'</ul>' +
 		        '<span id="addIndicatorButton" class="btn-2">'+LN('sbi.generic.add')+'</span>' +
