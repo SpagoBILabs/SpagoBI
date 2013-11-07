@@ -8,6 +8,8 @@ package it.eng.spagobi.community.util;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.utilities.ChannelUtilities;
 import it.eng.spagobi.commons.utilities.StringUtilities;
+import it.eng.spagobi.commons.utilities.messages.IMessageBuilder;
+import it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory;
 import it.eng.spagobi.profiling.bean.SbiUser;
 import it.eng.spagobi.profiling.bean.SbiUserAttributes;
 
@@ -35,9 +37,19 @@ public class CommunityUtilities {
     final String CUSTOM_SSL_FACTORY = "it.eng.spagobi.commons.services.DummySSLSocketFactory";
 	
 	public boolean dispatchMail(String communityName, SbiUser userToAccept, SbiUser owner, String ownerEmail, HttpServletRequest request) {
+		
+		
+        IMessageBuilder msgBuilder = MessageBuilderFactory.getMessageBuilder();
+        // get message 
+        String msg1 = msgBuilder.getMessage("community.accept.mail.1", "messages", request);
+        String msg2 = msgBuilder.getMessage("community.accept.mail.2", "messages", request);
+        String msg3 = msgBuilder.getMessage("community.accept.mail.3", "messages", request);
+        String msg4 = msgBuilder.getMessage("community.accept.mail.4", "messages", request);
+        String msg5 = msgBuilder.getMessage("community.accept.mail.5", "messages", request);
+        String msgwarn = msgBuilder.getMessage("community.accept.mail.warn", "messages", request);
+        
+        
 		String contextName = ChannelUtilities.getSpagoBIContextName(request);
-		
-		
 		
 		String mailSubj = "Community "+communityName+" membership request";
 		StringBuffer sb = new StringBuffer();
@@ -48,8 +60,8 @@ public class CommunityUtilities {
 		sb.append("<BODY>");
 		sb.append("<p style=\"width:100%; text-align:center;\">");
 		
-		sb.append("Dear "+ owner.getFullName()+", <br/> user "+userToAccept.getFullName()+ " wants to join "+communityName+" community");
-		sb.append("<br/> Select whether to accept "+userToAccept.getFullName()+" or not, clicking the following image:");		
+		sb.append(msg1+" "+ owner.getFullName()+", <br/>  "+msg2+" "+userToAccept.getFullName()+ " "+msg3+" "+communityName+" community");
+		sb.append("<br/> "+msg4+" "+userToAccept.getFullName()+" "+msg5);		
 		String schema = request.getScheme();
 		String server= request.getServerName();
 		String port= request.getLocalPort()+"";
@@ -70,6 +82,7 @@ public class CommunityUtilities {
 				+ "/themes/sbi_default/img/go-community.png\"></a>");
 
 		sb.append("</p>");
+		sb.append("<p style=\"width:100%; text-align:center;\"><b>"+msgwarn+"</b></p>");
 		sb.append("</BODY>");
 		String mailTxt = sb.toString();
 
