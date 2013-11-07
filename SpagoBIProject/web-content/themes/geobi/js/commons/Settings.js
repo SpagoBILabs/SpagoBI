@@ -36,8 +36,8 @@ Sbi.settings.geobi.browser = {
 				showJobDetails: false
 			}
 		}
-	  , showLeftPanels: false
-	  , showBreadCrumbs: false
+	  , showLeftPanels: true
+	  , showBreadCrumbs: true
 	  , maxNumberOfExecutionTabs: 1 //the maximum number of tabs to open on execution of documents if valorized
 	  , typeLayout: 'card' //possible values: 'tab' or 'card'
 	  , showTitle: false
