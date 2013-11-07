@@ -100,12 +100,66 @@ public class TransformerFrom4_0_0To4_1_0 implements ITransformer {
 					+ " ALTER TABLE SBI_DATA_SET DROP COLUMN DATA_SOURCE_FLAT_ID;"
 					+ " ALTER TABLE SBI_DATA_SET DROP COLUMN DATA_SOURCE_PERSIST_ID;";
 			stmt.executeUpdate(sql);
+			
+			
+			sql ="ALTER TABLE SBI_DATA_SET ADD COLUMN SCOPE_ID INTEGER DEFAULT NULL;";
+			stmt.executeUpdate(sql);
+			
 		
 		} catch (Exception e) {
 			logger.error(
 					"Error in altering sbi_DataSet",
 					e);
 		}
+		
+//		try{
+//			sql = "UPDATE SBI_DATA_SET "+
+//					"SET SCOPE_ID = "+
+//		                 "CASE  "+
+//		                   "WHEN OWNER IN (SELECT  "+
+//								"U.USER_ID "+
+//								"FROM  "+
+//								"SBI_USER U, "+
+//								"SBI_EXT_USER_ROLES R, "+
+//								"SBI_EXT_ROLES RO "+
+//								"WHERE OWNER = U.USER_ID "+
+//								"AND R.ID = U.ID "+
+//								"AND RO.EXT_ROLE_ID = R.EXT_ROLE_ID "+
+//								"AND RO.ROLE_TYPE_CD IN ('ADMIN', 'DEV_ROLE') "+
+//								"AND IS_PUBLIC = false) THEN (SELECT VALUE_ID FROM SBI_DOMAINS WHERE VALUE_CD='TECHNICAL' AND DOMAIN_CD='DS_SCOPE') "+
+//		                   "WHEN OWNER IN (SELECT  "+
+//								"U.USER_ID "+
+//								"FROM  "+
+//								"SBI_USER U, "+
+//								"SBI_EXT_USER_ROLES R, "+
+//								"SBI_EXT_ROLES RO "+
+//								"WHERE OWNER = U.USER_ID "+
+//								"AND R.ID = U.ID "+
+//								"AND RO.EXT_ROLE_ID = R.EXT_ROLE_ID "+
+//								"AND RO.ROLE_TYPE_CD IN ('ADMIN', 'DEV_ROLE') "+
+//								"AND IS_PUBLIC = true) THEN (SELECT VALUE_ID FROM SBI_DOMAINS WHERE VALUE_CD='ENTERPRISE' AND DOMAIN_CD='DS_SCOPE') "+
+//		                   "WHEN OWNER IN (SELECT  "+
+//								"U.USER_ID "+
+//								"FROM  "+
+//								"SBI_USER U, "+
+//								"SBI_EXT_USER_ROLES R, "+
+//								"SBI_EXT_ROLES RO "+
+//								"WHERE OWNER = U.USER_ID "+
+//								"AND R.ID = U.ID "+
+//								"AND RO.EXT_ROLE_ID = R.EXT_ROLE_ID "+
+//								"AND RO.ROLE_TYPE_CD ='USER') THEN (SELECT VALUE_ID FROM SBI_DOMAINS WHERE VALUE_CD='USER' AND DOMAIN_CD='DS_SCOPE') "+
+//		                   "ELSE (SELECT VALUE_ID FROM SBI_DOMAINS WHERE VALUE_CD='TECHNICAL' AND DOMAIN_CD='DS_SCOPE') "+
+//		                 "END; "+      
+//		"commit;"; 
+//		stmt.executeUpdate(sql);
+//
+//		}
+//		catch (Exception e) {
+//			logger.error(
+//					"Error in assigning scope to sbi_DataSet: go on with black socpes",
+//					e);
+//		}
+		
 		logger.debug("OUT");
 	}
 	
