@@ -65,7 +65,7 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 	docPreviewFile= (engineInstance.getDocumentPreviewFile()==null)?"":engineInstance.getDocumentPreviewFile().toString();	
 	docDatasetLabel = (engineInstance.getDataSet()==null)?"":engineInstance.getDataSet().getLabel();
 	docCommunities= (engineInstance.getDocumentCommunities()==null)?null:engineInstance.getDocumentCommunities();
-	docCommunity = (docCommunities == null) ? "": docCommunities[0];
+	docCommunity = (docCommunities == null && docCommunities.length > 0) ? "": docCommunities[0];
 	docFunctionalities= (engineInstance.getDocumentFunctionalities()==null)?new ArrayList():engineInstance.getDocumentFunctionalities();
 	
 	includes = engineInstance.getIncludes();
