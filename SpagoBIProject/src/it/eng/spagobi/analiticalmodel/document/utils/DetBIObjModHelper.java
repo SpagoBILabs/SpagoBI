@@ -272,7 +272,7 @@ public class DetBIObjModHelper {
 		//obj.setRating(Rating == null ? null : new Short(Rating));
 		obj.setRefreshSeconds(refreshSeconds);
 		obj.setPublicDoc(isPublic);
-		obj.setPreviewFile((previewFileName == null && aBIObject.getPreviewFile() != null)? aBIObject.getPreviewFile():previewFileName);
+		obj.setPreviewFile((previewFileName == null && aBIObject != null && aBIObject.getPreviewFile() != null)? aBIObject.getPreviewFile():previewFileName);
 		// RETURN OBJECT
 		return obj;
 	}
