@@ -103,6 +103,16 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				if (scope == null){
 					throw new SpagoBIDOAException("The Domain with value_id= "+dataSet.getScopeId()+" does not exist");
 				}
+			}else if(dataSet.getScopeId()== null && dataSet.getScopeCd() != null){
+				Criterion aCriterion = Expression.eq("valueCd",	dataSet.getScopeCd());
+				Criterion aCriterion2 = Expression.eq("domainCd","DS_SCOPE");
+				Criteria criteria = session.createCriteria(SbiDomains.class);
+				criteria.add(aCriterion);
+				criteria.add(aCriterion2);
+				scope = (SbiDomains) criteria.uniqueResult();	
+				if (scope == null){
+					throw new SpagoBIDOAException("The Domain with value_cd= "+dataSet.getScopeCd()+" does not exist");
+				}
 			}
 			
 			SbiDataSetId compositeKey = getDataSetKey(session, dataSet, true);
@@ -146,7 +156,13 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			hibDataSet.setCategory(category);
 			hibDataSet.setParameters(dataSet.getParameters());
 			hibDataSet.setDsMetadata(dataSet.getDsMetadata());
-			hibDataSet.setOwner(userIn);
+			
+			if(dataSet.getOwner() == null){
+				hibDataSet.setOwner(userIn);
+			}else{
+				hibDataSet.setOwner(dataSet.getOwner());
+			}
+			
 			hibDataSet.setPublicDS(dataSet.isPublic());
 
 			session.save(hibDataSet);

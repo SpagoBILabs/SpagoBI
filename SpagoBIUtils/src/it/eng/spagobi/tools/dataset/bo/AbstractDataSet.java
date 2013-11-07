@@ -148,6 +148,8 @@ public abstract class AbstractDataSet implements IDataSet {
 		setDataSourceForReading(dsDataSourceForReading != null ? DataSourceFactory.getDataSource(dsDataSourceForReading) : null);
 		setPublic(dataSet.is_public());
 		setScopeId(dataSet.getScopeId());
+		setScopeCd(dataSet.getScopeCd());
+		setOwner(dataSet.getOwner());
 		
 		if(this.getPivotColumnName() != null 
 				&& this.getPivotColumnValue() != null
@@ -184,7 +186,9 @@ public abstract class AbstractDataSet implements IDataSet {
 		
 		sbd.setOrganization(getOrganization());
 		sbd.setScopeId(getScopeId());
-		
+		sbd.setScopeCd(getScopeCd());
+		sbd.setOwner(getOwner());
+
 		return sbd;
 	}
     
