@@ -55,14 +55,14 @@ import org.json.JSONObject;
  */
 public class QbeDataSet extends ConfigurableDataSet {
 	
-public static String DS_TYPE = "SbiQbeDataSet";
+	public static String DS_TYPE = "SbiQbeDataSet";
 	
 	private static transient Logger logger = Logger.getLogger(QbeDataSet.class);
 	
-	private static final String QBE_DATA_SOURCE = "qbeDataSource";
-	private static final String QBE_DATAMARTS = "qbeDatamarts";
-	private static final String QBE_JSON_QUERY = "qbeJSONQuery";
-	private static final String QBE_SQL_QUERY = "qbeSQLQuery";
+	public static final String QBE_DATA_SOURCE = "qbeDataSource";
+	public static final String QBE_DATAMARTS = "qbeDatamarts";
+	public static final String QBE_JSON_QUERY = "qbeJSONQuery";
+	public static final String QBE_SQL_QUERY = "qbeSQLQuery";
 	
 	protected IDataSet ds = null;
 	protected String jsonQuery = null;
@@ -479,6 +479,10 @@ public static String DS_TYPE = "SbiQbeDataSet";
     	}
 	}
 	
+	@Override
+	public String getDsType() {
+		return DS_TYPE;
+	}
 	
 	
 }

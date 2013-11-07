@@ -5,6 +5,10 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.engines.qbe.services.dataset;
 
+import it.eng.qbe.dataset.QbeDataSet;
+import it.eng.qbe.statement.AbstractQbeDataSet;
+import it.eng.qbe.statement.hibernate.HQLDataSet;
+import it.eng.qbe.statement.jpa.JPQLDataSet;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.error.EMFAbstractError;
 import it.eng.spago.error.EMFErrorHandler;
@@ -27,6 +31,8 @@ import it.eng.spagobi.tools.dataset.utils.DatasetMetadataParser;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.EngineConstants;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
@@ -87,13 +93,16 @@ public class SaveDatasetUserAction extends AbstractQbeEngineAction {
 			validateLabel();
 			validateInput();
 			
-			IDataSetTableDescriptor descriptor = persistCurrentDataset();
 			IDataSet dataset = getEngineInstance().getActiveQueryAsDataSet();
-			IDataSet newDataset = createNewDataSet(dataset, descriptor);
-			IDataSet datasetSaved = saveNewDataset(newDataset);
-			
-			int datasetId = datasetSaved.getId();
-			
+			int datasetId = -1;
+			if (dataset instanceof HQLDataSet || dataset instanceof JPQLDataSet) {
+				// dataset defined on a model --> save it as a Qbe dataset
+				datasetId = this.saveQbeDataset(dataset);
+			} else {
+				// dataset defined on another dataset --> save it as a flat dataset 
+				datasetId = this.saveFlatDataset(dataset);
+			}
+
 			try {
 				JSONObject obj = new JSONObject();
 				obj.put("success", "true");
@@ -114,6 +123,75 @@ public class SaveDatasetUserAction extends AbstractQbeEngineAction {
 				totalTimeMonitor.stop();
 			logger.debug("OUT");
 		}	
+	}
+
+	private int saveQbeDataset(IDataSet dataset) {
+		
+		QbeDataSet newDataset = createNewQbeDataset(dataset);
+		
+		IDataSet datasetSaved = this.saveNewDataset(newDataset);
+		
+		int datasetId = datasetSaved.getId();
+		return datasetId;
+	}
+
+	private QbeDataSet createNewQbeDataset(IDataSet dataset) {
+		AbstractQbeDataSet qbeDataset = (AbstractQbeDataSet) dataset;
+		
+		QbeDataSet newDataset = new QbeDataSet();
+		newDataset.setLabel( getAttributeAsString(LABEL) );
+		newDataset.setName( getAttributeAsString(NAME) );
+		newDataset.setDescription( getAttributeAsString(DESCRIPTION) );
+
+		newDataset.setPublic( getAttributeAsBoolean(IS_PUBLIC, Boolean.TRUE) );
+		
+		newDataset.setCategoryCd(dataset.getCategoryCd());
+		newDataset.setCategoryId(dataset.getCategoryId());
+		
+		UserProfile profile = (UserProfile) this.getEnv().get(
+				EngineConstants.ENV_USER_PROFILE);
+		String owner = profile.getUserId().toString();
+		//saves owner of the dataset
+		newDataset.setOwner(owner);
+		//saves scope which is always "USER"
+		newDataset.setScopeCd(SpagoBIConstants.DS_SCOPE_USER);
+		
+		String metadata = getMetadataAsString(dataset);
+		logger.debug("Dataset's metadata: [" + metadata + "]");
+		newDataset.setDsMetadata(metadata);
+		
+		newDataset.setDataSource(qbeDataset.getDataSource());
+		
+		String datamart = qbeDataset.getStatement().getDataSource().getConfiguration().getModelName();
+		String datasource = qbeDataset.getDataSource().getLabel();
+		String jsonQuery;
+		try {
+			jsonQuery = new String( getEngineInstance().getAnalysisState().store() );
+		} catch (SpagoBIEngineException e) {
+			throw new SpagoBIEngineRuntimeException("Error while serializing engine state", e);
+		}
+		
+		JSONObject jsonConfig = new JSONObject();
+		try {
+			jsonConfig.put( QbeDataSet.QBE_DATA_SOURCE, datasource );
+			jsonConfig.put( QbeDataSet.QBE_DATAMARTS, datamart );
+			jsonConfig.put( QbeDataSet.QBE_JSON_QUERY, jsonQuery );
+		} catch (JSONException e) {
+			throw new SpagoBIRuntimeException("Error while creating dataset's JSON config", e);
+		}
+		
+		newDataset.setConfiguration( jsonConfig.toString() );
+		return newDataset;
+	}
+
+	private int saveFlatDataset(IDataSet dataset) {
+		IDataSetTableDescriptor descriptor = persistCurrentDataset(dataset);
+		
+		IDataSet newDataset = createNewFlatDataSet(dataset, descriptor);
+		IDataSet datasetSaved = saveNewDataset(newDataset);
+		
+		int datasetId = datasetSaved.getId();
+		return datasetId;
 	}
 
 	private void validateLabel() {
@@ -139,11 +217,11 @@ public class SaveDatasetUserAction extends AbstractQbeEngineAction {
 		}
 	}
 
-	private IDataSet createNewDataSet(IDataSet dataset, IDataSetTableDescriptor descriptor) {
+	private IDataSet createNewFlatDataSet(IDataSet dataset, IDataSetTableDescriptor descriptor) {
 		logger.debug("IN");
 		
-		UserProfile profile = (UserProfile)this.getEnv().get(EngineConstants.ENV_USER_PROFILE);
-		String owner = (String)profile.getUserUniqueIdentifier();
+		UserProfile profile = (UserProfile) this.getEnv().get(EngineConstants.ENV_USER_PROFILE);
+		String owner = profile.getUserId().toString();
 		
 		FlatDataSet flatFataSet = new FlatDataSet();
 		
@@ -201,6 +279,13 @@ public class SaveDatasetUserAction extends AbstractQbeEngineAction {
 		String toReturn = parser.metadataToXML(newMetadata);
 		return toReturn;
 	}
+	
+	private String getMetadataAsString(IDataSet dataset) {
+		IMetaData metadata = getDataSetMetadata(dataset);
+		DatasetMetadataParser parser = new DatasetMetadataParser();
+		String toReturn = parser.metadataToXML(metadata);
+		return toReturn;
+	}
 
 	private IMetaData getDataSetMetadata(IDataSet dataset) {
 		IMetaData metaData = null;
@@ -225,9 +310,7 @@ public class SaveDatasetUserAction extends AbstractQbeEngineAction {
 		return saved;
 	}
 
-	private IDataSetTableDescriptor persistCurrentDataset() {
-		logger.debug("Retrieving working dataset ...");
-		IDataSet dataset = getEngineInstance().getActiveQueryAsDataSet();
+	private IDataSetTableDescriptor persistCurrentDataset(IDataSet dataset) {
 		// gets the name of the table that will contain data
 		String flatTableName = getFlatTableName();
 		logger.debug("Flat table name : [" + flatTableName + "]");
