@@ -108,6 +108,9 @@ Sbi.locale.ln['sbi.geo.controlpanel.point'] = 'puntiforme ';
 Sbi.locale.ln['sbi.geo.earthpanel.title'] = 'Navigazione 3D';
 Sbi.locale.ln['sbi.geo.layerpanel.title'] = 'Livelli';
 Sbi.locale.ln['sbi.geo.layerpanel.layer'] = ' livello';
+Sbi.locale.ln['sbi.geo.layerpanel.add'] = 'Aggiungi livello';
+Sbi.locale.ln['sbi.geo.layerpanel.catalogue'] = 'Catalogo Livelli';
+
 
 Sbi.locale.ln['sbi.geo.analysispanel.title'] = 'Analisi';
 Sbi.locale.ln['sbi.geo.analysispanel.addindicators'] = 'Aggiungi indicatore';
@@ -116,7 +119,7 @@ Sbi.locale.ln['sbi.geo.analysispanel.emptytext'] = 	'Seleziona un indicatore';
 Sbi.locale.ln['sbi.geo.analysispanel.method'] = 'Metodo';
 Sbi.locale.ln['sbi.geo.analysispanel.classes'] = 'Numero di classi';
 Sbi.locale.ln['sbi.geo.analysispanel.fromcolor'] = 'Dal colore';
-Sbi.locale.ln['sbi.geo.analysispanel.tocolor'] = 'Al colore';
+Sbi.locale.ln['sbi.geo.analysispanel.toco>lor'] = 'Al colore';
 Sbi.locale.ln['sbi.geo.analysispanel.filter.default'] = 'Set Default';
 Sbi.locale.ln['sbi.geo.analysispanel.filter.default.ok'] = 'Valori di default valorizzati correttamente';
 

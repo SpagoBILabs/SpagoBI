@@ -48,7 +48,8 @@ Ext.extend(Sbi.geo.tools.LayersCatalogue, Ext.grid.GridPanel, {
 		for(var i=0; i<this.columnsRef.length; i++){
 			var column = this.columnsRef[i];
 			var object = {
-					header: OpenLayers.Lang.translate('sbi.tools.catalogue.layers.column.header.'+column), 
+//					header: OpenLayers.Lang.translate('sbi.tools.catalogue.layers.column.header.'+column), 
+					header:LN('sbi.tools.catalogue.layers.column.header.'+column), 
 					sortable: true,
 					dataIndex: column
 				};
