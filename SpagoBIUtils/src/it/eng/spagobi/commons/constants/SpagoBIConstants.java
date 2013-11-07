@@ -422,4 +422,6 @@ public class SpagoBIConstants {
     public static final String SBI_ARTIFACT_VERSION_ID = "SBI_ARTIFACT_VERSION_ID";
     
     public static final String DATAMART_RETRIEVER = "DATAMART_RETRIEVER";
+    
+    public static final String DS_SCOPE_USER = "USER";
 }

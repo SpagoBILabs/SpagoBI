@@ -10,6 +10,8 @@ import it.eng.spago.error.EMFAbstractError;
 import it.eng.spago.error.EMFErrorHandler;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.validation.EMFValidationError;
+import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.engines.qbe.QbeEngineConfig;
 import it.eng.spagobi.engines.qbe.services.core.AbstractQbeEngineAction;
@@ -139,7 +141,12 @@ public class SaveDatasetUserAction extends AbstractQbeEngineAction {
 
 	private IDataSet createNewDataSet(IDataSet dataset, IDataSetTableDescriptor descriptor) {
 		logger.debug("IN");
+		
+		UserProfile profile = (UserProfile)this.getEnv().get(EngineConstants.ENV_USER_PROFILE);
+		String owner = (String)profile.getUserUniqueIdentifier();
+		
 		FlatDataSet flatFataSet = new FlatDataSet();
+		
 		flatFataSet.setLabel( getAttributeAsString(LABEL) );
 		flatFataSet.setName( getAttributeAsString(NAME) );
 		flatFataSet.setDescription( getAttributeAsString(DESCRIPTION) );
@@ -148,7 +155,11 @@ public class SaveDatasetUserAction extends AbstractQbeEngineAction {
 		
 		flatFataSet.setCategoryCd(dataset.getCategoryCd());
 		flatFataSet.setCategoryId(dataset.getCategoryId());
-		
+		//saves owner of the dataset
+		flatFataSet.setOwner(owner);
+		//saves scope which is always "USER"
+		flatFataSet.setScopeCd(SpagoBIConstants.DS_SCOPE_USER);
+
 		JSONObject jsonConfig = new JSONObject();
 		try {
 			jsonConfig.put( FlatDataSet.FLAT_TABLE_NAME, descriptor.getTableName() );

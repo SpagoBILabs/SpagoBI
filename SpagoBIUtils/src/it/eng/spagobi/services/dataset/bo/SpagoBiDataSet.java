@@ -49,6 +49,11 @@ public class SpagoBiDataSet  implements java.io.Serializable {
     private java.lang.String pivotRowName;
 
     private java.lang.Integer scopeId;
+    
+
+	private java.lang.String scopeCd;
+    
+    private java.lang.String owner;
 
     private java.lang.Integer transformerId;
 
@@ -81,6 +86,8 @@ public class SpagoBiDataSet  implements java.io.Serializable {
            java.lang.String pivotColumnValue,
            java.lang.String pivotRowName,
            java.lang.Integer scopeId,
+           java.lang.String scopeCd,
+           java.lang.String owner,
            java.lang.Integer transformerId,
            java.lang.String type,
            int versionNum) {
@@ -108,8 +115,25 @@ public class SpagoBiDataSet  implements java.io.Serializable {
            this.transformerId = transformerId;
            this.type = type;
            this.versionNum = versionNum;
+           this.scopeCd= scopeCd;
+           this.owner= owner;
     }
 
+    public java.lang.String getScopeCd() {
+		return scopeCd;
+	}
+
+	public void setScopeCd(java.lang.String scopeCd) {
+		this.scopeCd = scopeCd;
+	}
+
+	public java.lang.String getOwner() {
+		return owner;
+	}
+
+	public void setOwner(java.lang.String owner) {
+		this.owner = owner;
+	}
 
     /**
      * Gets the _public value for this SpagoBiDataSet.
