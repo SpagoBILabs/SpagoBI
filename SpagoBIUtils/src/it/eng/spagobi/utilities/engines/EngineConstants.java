@@ -49,7 +49,7 @@ public class EngineConstants {
 	public static final Object ENV_DOCUMENT_IS_PUBLIC = "DOCUMENT_IS_PUBLIC";
 	public static final Object ENV_DOCUMENT_IS_VISIBLE = "DOCUMENT_IS_VISIBLE";	
 	public static final Object ENV_DOCUMENT_PREVIEW_FILE = "DOCUMENT_PREVIEW_FILE";	
-	public static final Object ENV_DOCUMENT_COMMUNITY = "DOCUMENT_COMMUNITY";	
+	public static final Object ENV_DOCUMENT_COMMUNITIES = "DOCUMENT_COMMUNITIES";	
 	public static final Object ENV_DOCUMENT_FUNCTIONALITIES = "DOCUMENT_FUNCTIONALITIES";	
 	
 
