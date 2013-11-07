@@ -27,6 +27,7 @@ import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.utilities.engines.AbstractEngineInstance;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.IEngineAnalysisState;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.util.HashMap;
@@ -394,6 +395,16 @@ public class QbeEngineInstance extends AbstractEngineInstance {
 		}
 		logger.debug("Dataset correctly taken from the query ");
 		return dataSet;
+	}
+	
+	public it.eng.spagobi.tools.datasource.bo.IDataSource getDataSourceForWriting() {
+		it.eng.spagobi.tools.datasource.bo.IDataSource datasource = (it.eng.spagobi.tools.datasource.bo.IDataSource) this
+				.getEnv().get(EngineConstants.DATASOURCE_FOR_WRITING);
+		if (datasource == null) {
+			throw new SpagoBIEngineRuntimeException(
+					"Datasource for writing not defined!");
+		}
+		return datasource;
 	}
 
 }

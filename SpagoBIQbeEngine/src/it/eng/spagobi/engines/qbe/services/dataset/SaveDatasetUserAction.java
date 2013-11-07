@@ -151,14 +151,14 @@ public class SaveDatasetUserAction extends AbstractQbeEngineAction {
 		
 		JSONObject jsonConfig = new JSONObject();
 		try {
-			jsonConfig.put( FlatDataSet.FLAT_TABLE_NAME, descriptor );
-			jsonConfig.put( FlatDataSet.DATA_SOURCE, dataset.getDataSource().getLabel() );
+			jsonConfig.put( FlatDataSet.FLAT_TABLE_NAME, descriptor.getTableName() );
+			jsonConfig.put( FlatDataSet.DATA_SOURCE, descriptor.getDataSource().getLabel() );
 		} catch (JSONException e) {
 			throw new SpagoBIRuntimeException("Error while creating dataset's JSON config", e);
 		}
 		
 		flatFataSet.setTableName( descriptor.getTableName() );
-		flatFataSet.setDataSource( dataset.getDataSource() );
+		flatFataSet.setDataSource( descriptor.getDataSource() );
 		flatFataSet.setConfiguration( jsonConfig.toString() );
 		
 		String metadata = getMetadataAsString(dataset, descriptor);
@@ -220,7 +220,7 @@ public class SaveDatasetUserAction extends AbstractQbeEngineAction {
 		// gets the name of the table that will contain data
 		String flatTableName = getFlatTableName();
 		logger.debug("Flat table name : [" + flatTableName + "]");
-		IDataSource dataSource = dataset.getDataSource();
+		IDataSource dataSource = getEngineInstance().getDataSourceForWriting();
 		logger.debug("Persisting working dataset ...");
 		IDataSetTableDescriptor descriptor = dataset.persist(flatTableName, dataSource);
 		logger.debug("Working dataset persisted");
