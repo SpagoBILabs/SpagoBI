@@ -1376,12 +1376,20 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				hibDataSet.setTimeIn(currentTStamp);
 				//hibDataSet.setOrganization(hibDataSet.getCommonInfo().getOrganization());
 				hibDataSet.setPublicDS(dataSet.isPublic());
-				hibDataSet.setOwner(userIn);
+
 
 				Query hibQuery = session.createQuery("from SbiDataSet h where h.active = ? and h.id.dsId = ?" );
 				hibQuery.setBoolean(0, true);
 				hibQuery.setInteger(1, dsId);	
+
 				SbiDataSet dsActiveDetail =(SbiDataSet)hibQuery.uniqueResult();
+				
+				if(dsActiveDetail.getOwner() == null){
+					hibDataSet.setOwner(userIn);
+				}else{
+					hibDataSet.setOwner(dsActiveDetail.getOwner());
+				}
+				
 				dsActiveDetail.setActive(false);
 				session.update(dsActiveDetail);
 				session.save(hibDataSet);
