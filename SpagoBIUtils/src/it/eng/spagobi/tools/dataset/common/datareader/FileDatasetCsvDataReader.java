@@ -104,8 +104,8 @@ public class FileDatasetCsvDataReader extends AbstractDataReader {
     }
 	
  	private DataStore readWithCsvMapReader( InputStream inputDataStream ) throws Exception {
- 		
- 		InputStreamReader inputStreamReader = new InputStreamReader(inputDataStream);
+ 				
+ 		InputStreamReader inputStreamReader = new InputStreamReader(inputDataStream,"windows-1252");
     	DataStore dataStore = null;
 		MetaData dataStoreMeta;
     	dataStore = new DataStore();
