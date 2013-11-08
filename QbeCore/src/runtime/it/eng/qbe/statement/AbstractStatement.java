@@ -244,7 +244,7 @@ public abstract class  AbstractStatement implements IStatement {
 		}
 
 		
-		return  rootEntityAlias + "." + queryName.substring(0,1).toLowerCase()+queryName.substring(1);
+		return  rootEntityAlias + "." + queryName;//.substring(0,1).toLowerCase()+queryName.substring(1);
 	}
 	
 	/**
@@ -286,7 +286,7 @@ public abstract class  AbstractStatement implements IStatement {
 			while(iter.hasNext()){
 				String firstRole = iter.next();
 				String rootEntityAliasWithRole = buildEntityAliasWithRoles(rootEntity, firstRole, rootEntityAlias);
-				toReturn.add(rootEntityAliasWithRole + "." + queryName.substring(0,1).toLowerCase()+queryName.substring(1));
+				toReturn.add(rootEntityAliasWithRole + "." + queryName);//.substring(0,1).toLowerCase()+queryName.substring(1));
 			}
 		}else{
 			toReturn.add(rootEntityAlias + "." + queryName);//queryName.substring(0,1).toLowerCase()+queryName.substring(1));
