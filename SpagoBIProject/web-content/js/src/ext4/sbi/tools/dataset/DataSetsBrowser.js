@@ -131,58 +131,7 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 			   	autoScroll: false,
 			   //	style:"position:'absolute';z-index:800000;float:left;width:100%;",
 			   	html: bannerHTML
-			});
-			
-//			if (this.user !== '' && this.user !== this.PUBLIC_USER){
-//				//the button add isn't able for public user
-//				var newDatasetButton = new Ext.button.Button({
-//			    	text : LN('sbi.generic.add'),
-//					iconCls:'icon-add',
-//					width:70,
-//					listeners: {
-//						'click': {
-//			          		fn: this.addNewDataset,
-//			          		scope: this
-//			        	} 
-//					}
-//			    });
-//			     
-//				var additionalButtons = [];
-//				additionalButtons.push(newDatasetButton);
-//			}
-//			var ordersCombo = new Ext.form.ComboBox({
-//	//			fieldLabel: LN('sbi.ds.orderComboLabel') ,
-//				store : this.sortersCombo,
-//				name : 'ordersCombo',			
-//				width : 'auto',
-//				margin: '2 0 0 10',
-//				displayField : 'description', 
-//				valueField : 'property',
-//	//			labelStyle:'font-weight:bold;', 
-//				emptyText:LN('sbi.ds.orderComboLabel'),
-//				typeAhead : true, forceSelection : true,
-//				mode : 'local',
-//				triggerAction : 'all',
-//				selectOnFocus : true, editable : false,		   
-//				xtype : 'combo'	
-//			});
-//			
-//			var additionalSorters = [];
-//			additionalSorters.push(ordersCombo);
-//			
-//			var config = Ext.apply({store: this.store, additionalButtons:additionalButtons, additionalSorters:additionalSorters});
-//			config.alignToRight = true;
-//			config.emptyLabel = LN('sbi.ds.filterLabel');
-//			var toolbar =  Ext.create('Sbi.widgets.toolbar.InLineFilterAndOrder',config);
-//			toolbar.on("filter",function(filterConfig){
-//	      		this.filterString = filterConfig.filterString;
-//	      	},this);	
-//			toolbar.on("order",function(renderConfig){			
-//				this.store.sort(renderConfig.property, renderConfig.direction);
-//				this.viewPanel.refresh();
-//	      	},this);
-//	
-//			this.tbar = toolbar;
+			});			
 		}
 	}
 	
@@ -465,8 +414,23 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 		this.store.load({filterString: filterString});
 	}
 	
-	, sortStore: function(value) {
+	, sortStore: function(value) {			
+		var sortEls = Ext.get('sortList').dom.childNodes;
+		//move the selected value to the first element
+		for(var i=0; i< sortEls.length; i++){
+			if (sortEls[i].id == value){					
+				sortEls[i].className = 'active';
+				break;
+			} 
+		}
+		//append others elements
+		for(var i=0; i< sortEls.length; i++){
+			if (sortEls[i].id !== value){
+				sortEls[i].className = '';		
+			}
+		}
 		
+
 		for (sort in this.sorters){
 			var s = this.sorters[sort];
 			if (s.property == value){
@@ -474,36 +438,13 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 				break;
 			}
 		}
-		this.viewPanel.refresh();
 		
-		if (value != null){	      					
-			var sortEls = Ext.get('sortList').dom.childNodes;
-			var newSortEls = new Array();
-			newSortEls.push(value);
-			//move the selected value to the first element
-			for(var i=0; i< sortEls.length; i++){
-				if (sortEls[i].id == value){					
-					sortEls[i].className = 'active';
-					newSortEls.push(sortEls[i]);
-					break;
-				} 
-			}
-			//append others elements
-			for(var i=0; i< sortEls.length; i++){
-				if (sortEls[i].id !== value){
-					sortEls[i].className = '';
-					newSortEls.push(sortEls[i]);				
-				}
-			}
-			//clear			
-			this.clearList(sortEls);
-			//add
-			this.addElemsToList(sortEls, newSortEls);
-		}	
+		this.viewPanel.refresh();
 	}	
 
 	, createBannerHtml: function(communities){
     	var communityString = '';
+    	//hidden 'ALL' button for favourites (until they aren't managed)
 //        for(i=0; i< communities.root.length; i++){
 //        	var funct = communities.root[i].functId;
 //        	communityString += '<li><a href="#" onclick="javascript:Ext.getCmp(\'this\').loadFolder('+funct+', null)">';

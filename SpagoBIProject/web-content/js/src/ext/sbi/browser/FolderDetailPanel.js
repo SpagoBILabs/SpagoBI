@@ -252,33 +252,23 @@ Ext.extend(Sbi.browser.FolderDetailPanel, Ext.Panel, {
 		this.folderView.inMemoryFilter(value);
 	}
 	
-	, sortStore: function(value) {
-		this.folderView.inMemorySort(value);
+	, sortStore: function(value) {    					
+		var sortEls = Ext.get('sortList').dom.childNodes;
+		//move the selected value to the first element
+		for(var i=0; i< sortEls.length; i++){
+			if (sortEls[i].id == value){					
+				sortEls[i].className = 'active';
+				break;
+			} 
+		}
+		//append others elements
+		for(var i=0; i< sortEls.length; i++){
+			if (sortEls[i].id !== value){
+				sortEls[i].className = '';				
+			}
+		}
 		
-		if (value != null){	      					
-			var sortEls = Ext.get('sortList').dom.childNodes;
-			var newSortEls = new Array();
-			newSortEls.push(value);
-			//move the selected value to the first element
-			for(var i=0; i< sortEls.length; i++){
-				if (sortEls[i].id == value){					
-					sortEls[i].className = 'active';
-					newSortEls.push(sortEls[i]);
-					break;
-				} 
-			}
-			//append others elements
-			for(var i=0; i< sortEls.length; i++){
-				if (sortEls[i].id !== value){
-					sortEls[i].className = '';
-					newSortEls.push(sortEls[i]);				
-				}
-			}
-			//clear			
-			this.clearList(sortEls);
-			//add
-			this.addElemsToList(sortEls, newSortEls);
-		}	
+		this.folderView.inMemorySort(value);
 	}	
 
     , loadFolder: function(folderId, rootFolderId, what) {

@@ -206,7 +206,7 @@ commented by Davide Zerbetto on 12/10/2009: there are problems with MIF (Ext Man
 
 <script type="text/javascript" src='${pageContext.request.contextPath}/js/lib/ext-4.1.1a/ext-all-debug.js'/></script>
 <script type="text/javascript" src='${pageContext.request.contextPath}/js/lib/ext-4.1.1a/examples/ux/IFrame.js'/></script>
-<script type="text/javascript" src='${pageContext.request.contextPath}./js/lib/ext-4.1.1a/ux/RowExpander.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/lib/ext-4.1.1a/ux/RowExpander.js'/></script>
     
 <script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext/sbi/service/ServiceRegistry.js'/></script>
     
