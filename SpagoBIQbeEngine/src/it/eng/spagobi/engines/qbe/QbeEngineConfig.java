@@ -272,6 +272,62 @@ public class QbeEngineConfig {
 		return cellLimit;
 	}
 	
+	
+	public boolean isRemoveSubpaths() {
+		boolean remove = true;
+		try {																		 
+			remove = new Boolean((String) ConfigSingleton.getInstance().getAttribute("QBE.GRAPH-PATH.removeSubPaths")) ;
+		} catch (Exception e) {
+			logger.debug("No GRAPH PATH configuration has been specified in the qbe.xml");
+		}
+		return remove;
+	}
+	
+	
+	public String getPathsOrder() {
+		String pathsOrder = "ASC";
+		try {																		 
+			pathsOrder = ((String) ConfigSingleton.getInstance().getAttribute("QBE.GRAPH-PATH.pathsOrder")) ;
+		} catch (Exception e) {
+			logger.debug("No GRAPH PATH configuration has been specified in the qbe.xml");
+		}
+		return pathsOrder;
+	}
+	
+	public String getGraphValidatorImpl() {
+		String validatorClassName = null;
+		try {																		 
+			validatorClassName = (String) ConfigSingleton.getInstance().getAttribute("QBE.GRAPH-PATH.graphValidatorImpl");
+		} catch (Exception e) {
+			logger.debug("No Graph Validator class name specified in the qbe.xml");
+		}
+		return validatorClassName;
+	}
+	
+	
+	public String getDefaultCoverImpl() {
+		String defaultCoverClass = null;
+		try {																		 
+			defaultCoverClass = ((String) ConfigSingleton.getInstance().getAttribute("QBE.GRAPH-PATH.defaultCoverImpl")) ;
+		} catch (Exception e) {
+			logger.debug("No Default cover graph algorithm class specified in the qbe.xml");
+		}
+		return defaultCoverClass;
+	}
+
+	
+	public String getPathsFiltersImpl() {
+		String pathFilters = null;
+		try {																		 
+			pathFilters = ((String) ConfigSingleton.getInstance().getAttribute("QBE.GRAPH-PATH.pathsFiltersImpl")) ;
+		} catch (Exception e) {
+			logger.debug("No PATH filters defined in the qbe.xml");
+		}
+		return pathFilters;
+	}
+	
+	
+	
 	public int getCrosstabCFDecimalPrecision() {
 		int precision = 2;
 		try {

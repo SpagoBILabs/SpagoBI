@@ -16,17 +16,20 @@ public abstract class Operand {
 	public String type;
 	public String[] defaulttValues;
 	public String[] lastValues;
+	public String alias;
 	
 	public Operand(String[] values,
 			String description,
 			String type,
 			String[] defaulttValues,
-			String[] lastValues) {
+			String[] lastValues,
+			String alias) {
 		this.values = values;
 		this.description = description;
 		this.type = type;
 		this.defaulttValues = defaulttValues;
 		this.lastValues = lastValues;
+		this.alias = alias;
 	}
 	
 }

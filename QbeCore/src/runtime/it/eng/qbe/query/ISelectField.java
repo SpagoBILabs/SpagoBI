@@ -8,15 +8,15 @@ package it.eng.qbe.query;
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
  */
-public interface ISelectField {
+public interface ISelectField extends IQueryField{
 	public final static String SIMPLE_FIELD = "datamartField";
 	public final static String CALCULATED_FIELD = "calculated.field";
 	public final static String IN_LINE_CALCULATED_FIELD = "inline.calculated.field";
 	
-	String getAlias();	
+
 	void setAlias(String alias);
 	
-	String getName();	
+
 	void setName(String name);
 	
 	String getType();	

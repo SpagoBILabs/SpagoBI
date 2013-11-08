@@ -11,6 +11,9 @@
  Ext.ns("Sbi.settings");
 
 Sbi.settings.qbe = {
+		relationshipswizard:{
+			pathSeparator: ' -- '
+		},
 		
 		queryBuilderPanel: {
 			enableTreeToolbar: true,

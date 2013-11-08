@@ -107,17 +107,132 @@ Ext.extend(Sbi.qbe.QueryCataloguePanel, Ext.Panel, {
 
 	, commit: function(callback, scope) {
 		
+		var currentQuery = this.getSelectedQuery();
+		var ambiguousFields = [];
+		var ambiguousRoles = [];
+		if (currentQuery) {
+			ambiguousFields = this.getStoredAmbiguousFields();
+			ambiguousRoles = this.getStoredRoles();
+		}
+		
 		var params = {
 				catalogue: Ext.util.JSON.encode(this.getQueries())
+				, currentQueryId : (currentQuery) ? currentQuery.id : ''
+				, ambiguousFieldsPaths : Ext.util.JSON.encode(ambiguousFields)
+				, ambiguousRoles : Ext.util.JSON.encode(ambiguousRoles)
 		};
 
 		Ext.Ajax.request({
 		    url: this.services['setCatalogue'],
-		    success: callback,
+		    success: this.onCommitSuccessHandler.createDelegate(this, [callback, scope], true), // before invoking callback, we have to resolve ambiguous fields, if any
 		    failure: Sbi.exception.ExceptionHandler.handleFailure,	
-		    scope: scope,
+		    scope: this,
 		    params: params
-		});   
+		});
+		
+	}
+	
+	, manageAmbiguousFields: function(callback, scope) {
+		
+		var currentQuery = this.getSelectedQuery();
+		if (currentQuery) {
+			ambiguousRoles = this.getStoredRoles();
+		}
+		var params = {
+				catalogue: Ext.util.JSON.encode(this.getQueries())
+				, ambiguousRoles : Ext.util.JSON.encode(ambiguousRoles)
+				, currentQueryId : (currentQuery) ? currentQuery.id : ''
+		};
+
+		Ext.Ajax.request({
+		    url: this.services['setCatalogue'],
+		    success: this.onCommitSuccessHandler.createDelegate(this, [callback, scope, true], true), // before invoking callback, we have to resolve ambiguous fields, if any
+		    failure: Sbi.exception.ExceptionHandler.handleFailure,	
+		    scope: this,
+		    params: params
+		});
+		
+	}
+	
+	,
+	onCommitSuccessHandler : function (response, options, callback, scope, forceOpenAmbiguous) {
+		var decodedResponce = Ext.util.JSON.decode( response.responseText );
+		var ambiguousFields  = Ext.util.JSON.decode(decodedResponce.ambiguousFieldsPaths);
+		var userRolesSolved = Ext.util.JSON.decode(decodedResponce.ambiguousRoles);
+		var ambiguousWarinig =(decodedResponce.ambiguousWarinig);
+
+		//open the ambiguous fields wizard but there is no ambiguous fields
+		if (forceOpenAmbiguous && (ambiguousFields.length == 0 )) {
+			Sbi.exception.ExceptionHandler.showInfoMessage(LN('sbi.qbe.queryeditor.noambiguousfields.msg'),LN('sbi.qbe.queryeditor.noambiguousfields.title'));
+		}
+
+		if ((!forceOpenAmbiguous && decodedResponce.executeDirectly) || (forceOpenAmbiguous && (ambiguousFields.length == 0 ) )) {
+			if (callback) {
+				callback.call(scope);  // proced execution with the specified callback function
+			}
+		} else {
+			
+			ambiguousFields = this.mergeAmbiguousFields(ambiguousFields);
+			var relationshipsWindow = new Sbi.qbe.RelationshipsWizardWindow({
+				ambiguousFields : ambiguousFields
+				, ambiguousRoles : userRolesSolved 
+				, closeAction : 'close'
+				, modal : true
+			});
+			relationshipsWindow.show();
+			relationshipsWindow.on('apply', this.onAmbiguousFieldsSolved.createDelegate(this, [callback, scope], true), this);
+			if(ambiguousWarinig!=null && ambiguousWarinig!="null" && ambiguousWarinig!=""){
+				Sbi.exception.ExceptionHandler.showInfoMessage(LN(ambiguousWarinig));
+			}
+		}
+
+	}
+	
+	,
+	mergeAmbiguousFields : function (ambiguousFields) {
+		var previousAmbiguousFields = this.getStoredAmbiguousFields();
+		var ambiguousFieldsObj = new Sbi.qbe.AmbiguousFields({ ambiguousFields : ambiguousFields });
+		var cachedObj = new Sbi.qbe.AmbiguousFields({ ambiguousFields : previousAmbiguousFields });
+		ambiguousFieldsObj.merge(cachedObj);
+		return ambiguousFieldsObj.getAmbiguousFieldsAsJSONArray();
+	}
+	
+	,
+	onAmbiguousFieldsSolved : function (theWindow, ambiguousFieldsSolved, userRolesSolved, callback, scope) {
+		theWindow.close();
+		this.userRolesSolved = userRolesSolved;
+		this.storeAmbiguousFields(ambiguousFieldsSolved, userRolesSolved);
+		this.commit(callback, scope);
+	}
+
+	,
+	storeAmbiguousFields : function (ambiguousFields, userRolesSolved) {
+		var query = this.getSelectedQuery();
+		Sbi.cache.memory.put(query.id, ambiguousFields);
+		Sbi.cache.memory.put(query.id+"_roles",  userRolesSolved);
+		//query.ambiguousFields = ambiguousFields;
+	}
+	
+	,
+	getStoredAmbiguousFields : function () {
+		var query = this.getSelectedQuery();
+		var cached = Sbi.cache.memory.get(query.id);
+		return cached || [];
+		//return query.ambiguousFields || [];
+	}
+	
+	,
+	getStoredRoles : function () {
+		var query = this.getSelectedQuery();
+		var cached = Sbi.cache.memory.get(query.id+"_roles");
+		return cached || [];
+		//return query.ambiguousFields || [];
+	}
+	
+	,getQueryRoles : function (queryId) {
+		var cached = Sbi.cache.memory.get(queryId+"_roles");
+		return cached || [];
+		//return query.ambiguousFields || [];
 	}
 	
 	, validate: function(callback, scope) {
@@ -172,11 +287,29 @@ Ext.extend(Sbi.qbe.QueryCataloguePanel, Ext.Panel, {
 		if(queryNode) {
 			query = queryNode.props.query;
 			query.name = queryNode.text;
+			var cachedGraph = this.getqueryGraph(queryId);
+			var cachedRoles = this.getQueryRoles(queryId);
+			var cachedAmbiguousFields = this.getAmbiguousFields(queryId);
+			
+			if(cachedGraph){
+				query.graph =cachedGraph;
+			}
+
+			if(cachedRoles){
+				query.relationsRoles = cachedRoles;
+			}
+			
+			if(cachedAmbiguousFields){
+				query.ambiguousFields = cachedAmbiguousFields;
+			}
+			
 			query.subqueries = [];
 			if( queryNode.childNodes && queryNode.childNodes.length > 0 ) {
 				for(var i = 0; i < queryNode.childNodes.length; i++) {
 					var subquery = this.getQueryById( queryNode.childNodes[i].id );
 					query.subqueries.push( subquery );
+
+					
 				}
 			}
 		}
@@ -552,6 +685,10 @@ Ext.extend(Sbi.qbe.QueryCataloguePanel, Ext.Panel, {
 		 		, iconCls: 'icon-query'
 		    }
 		};
+		Sbi.cache.memory.put(query.id+"_roles",  query.relationsRoles);
+		Sbi.cache.memory.put(query.id,  query.ambiguousFields);
+		
+		
 		parentNode.appendChild( queryNode );
 		parentNode.expand();
 		
@@ -567,6 +704,41 @@ Ext.extend(Sbi.qbe.QueryCataloguePanel, Ext.Panel, {
 	clear : function () {
 		var root = this.tree.getRootNode();
 		root.removeAll(true);
+	}
+	
+	, getqueryGraph: function(queryId){
+		var relationships = this.parseGraph(Sbi.cache.memory.get(queryId));
+		return relationships;
+	}
+	
+	, getAmbiguousFields: function(queryId){
+		var relationships = Sbi.cache.memory.get(queryId);
+		return relationships;
+	}
+	
+	, parseGraph: function(graph){
+		var relationships = new Array();
+		if(graph){
+			for(var i=0; i<graph.length; i++){
+				var choices = graph[i].choices;
+				if(choices){
+					for(var j=0; j<choices.length; j++){
+						var choice = choices[j];
+						if(choice.active && choice.active && choice.nodes){
+							var nodes =choice.nodes;
+							for(var k=0; k<nodes.length; k++){
+								var node = nodes[k];
+								if(node){
+									relationships.push({relationshipId: node.relationshipId});
+								}
+							}
+						}
+					}
+				}
+
+			}
+		}
+		return relationships;
 	}
 	
 });

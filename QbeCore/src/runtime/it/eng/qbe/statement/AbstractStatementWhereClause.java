@@ -12,11 +12,13 @@ import it.eng.qbe.model.accessmodality.IModelAccessModality;
 import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.model.structure.IModelField;
 import it.eng.qbe.model.structure.IModelStructure;
-import it.eng.qbe.model.structure.ModelStructure.RootEntitiesGraph.Relationship;
 import it.eng.qbe.query.ExpressionNode;
 import it.eng.qbe.query.Filter;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.query.WhereField;
+import it.eng.qbe.statement.graph.GraphManager;
+import it.eng.qbe.statement.graph.bean.QueryGraph;
+import it.eng.qbe.statement.graph.bean.Relationship;
 import it.eng.qbe.statement.jpa.JPQLStatementConditionalOperators;
 import it.eng.spagobi.utilities.StringUtils;
 import it.eng.spagobi.utilities.assertion.Assert;
@@ -38,6 +40,7 @@ import javax.persistence.metamodel.SingularAttribute;
 import javax.persistence.metamodel.Type;
 
 import org.apache.log4j.Logger;
+import org.jgrapht.Graph;
 
 /**
 
@@ -93,10 +96,10 @@ public abstract class AbstractStatementWhereClause extends AbstractStatementFilt
 			}
 			buffer.append(condition + " ");
 		}
-		
+
 		return buffer;
 	}
-	
+
 	/**
 	 * Add where conditions explicitly defined by user
 	 * 
@@ -112,13 +115,13 @@ public abstract class AbstractStatementWhereClause extends AbstractStatementFilt
 			String userProvidedConditions = buildUserProvidedConditions(filterExp, query, entityAliasesMaps);
 			addCondition(buffer, userProvidedConditions);
 		}
-		
+
 		return buffer;
 	}
-	
+
 	private String buildUserProvidedConditions( ExpressionNode filterExp, Query query, Map entityAliasesMaps) {		
 		StringBuffer buffer = new StringBuffer();
-		
+
 		String type = filterExp.getType();
 		if("NODE_OP".equalsIgnoreCase( type )) {
 			for(int i = 0; i < filterExp.getChildNodes().size(); i++) {
@@ -134,90 +137,90 @@ public abstract class AbstractStatementWhereClause extends AbstractStatementFilt
 			WhereField whereField = query.getWhereFieldByName( filterExp.getValue() );
 			buffer.append(buildUserProvidedCondition(whereField, query, entityAliasesMaps));
 		}
-		
+
 		return buffer.toString().trim();
 	}
-	
+
 	private String buildUserProvidedCondition(WhereField whereField, Query query, Map entityAliasesMaps) {
-		
+
 		StringBuffer buffer;
 		String whereClauseElement = "";
 		String[] rightOperandElements;
 		String[] leftOperandElements;
-				
+
 		logger.debug("IN");
-		
+
 		buffer = new StringBuffer();
 		try {
 			IConditionalOperator conditionalOperator = null;
 			conditionalOperator = (IConditionalOperator)JPQLStatementConditionalOperators.getOperator( whereField.getOperator() );
 			Assert.assertNotNull(conditionalOperator, "Unsopported operator " + whereField.getOperator() + " used in query definition");
-			
-		
+
+
 			if(whereField.getLeftOperand().type.equalsIgnoreCase(AbstractStatement.OPERAND_TYPE_INLINE_CALCULATED_FIELD)) {
 				whereClauseElement = buildInLineCalculatedFieldClause(whereField.getOperator(), whereField.getLeftOperand(), whereField.isPromptable(), whereField.getRightOperand(), query, entityAliasesMaps, conditionalOperator);
 			} else {
-				
+
 				leftOperandElements = buildOperand(whereField.getLeftOperand(), query, entityAliasesMaps);
-				
+
 				if (parentStatement.OPERAND_TYPE_STATIC.equalsIgnoreCase(whereField.getRightOperand().type) && whereField.isPromptable()) {
 					// get last value first (the last value edited by the user)
 					rightOperandElements = whereField.getRightOperand().lastValues;
 				} else {
 					rightOperandElements = buildOperand(whereField.getRightOperand(), query, entityAliasesMaps);
 				}
-				
-				
+
+
 				if (parentStatement.OPERAND_TYPE_STATIC.equalsIgnoreCase(whereField.getLeftOperand().type) )  {
 					leftOperandElements = getTypeBoundedStaticOperand(whereField.getRightOperand(), whereField.getOperator(), leftOperandElements);
 				}				
 				if (parentStatement.OPERAND_TYPE_STATIC.equalsIgnoreCase(whereField.getRightOperand().type) )  {
 					rightOperandElements = getTypeBoundedStaticOperand(whereField.getLeftOperand(), whereField.getOperator(), rightOperandElements);
 				}
-				
+
 				whereClauseElement = conditionalOperator.apply(leftOperandElements[0], rightOperandElements);
 			}
-			
+
 			logger.debug("where element value [" + whereClauseElement + "]");
 		} finally {
 			logger.debug("OUT");
 		}
-		
+
 		buffer.append(whereClauseElement);
-		
+
 		//addCondition(buffer, whereClauseElement);
-		
+
 		return  buffer.toString().trim();
 	}
-	
+
 	private StringBuffer addProfilingConditions(StringBuffer buffer, Query query, Map entityAliasesMaps) {
 		Map<String, String> entityAliases;
-		
+
 		entityAliases = (Map<String, String>)entityAliasesMaps.get(query.getId());
-				
+
 		for(String entityUniqueName : entityAliases.keySet()){
 			addProfilingConditionsOnEntity(buffer, entityUniqueName, query, entityAliasesMaps);
 			addProfilingConditionsOnSubEntity(buffer, entityUniqueName, query, entityAliasesMaps);			
 		}
-		
+
 		return buffer;
 	}
-	
+
 	private StringBuffer addProfilingConditionsOnEntity(StringBuffer buffer, String entityUniqueName, Query query, Map entityAliasesMaps) {
-		
+
 		IModelStructure dataMartModelStructure;
 		IModelAccessModality dataMartModelAccessModality;
 		Map<String, String> entityAliases;
-		
+
 		entityAliases = (Map<String, String>)entityAliasesMaps.get(query.getId());
 		dataMartModelStructure = parentStatement.getDataSource().getModelStructure();
 		dataMartModelAccessModality = parentStatement.getDataSource().getModelAccessModality();
-		
+
 		IModelEntity entity = dataMartModelStructure.getEntity( entityUniqueName );
 		List<Filter> filters = dataMartModelAccessModality.getEntityFilterConditions(entity.getType());
-		
+
 		if(filters == null || filters.isEmpty())return buffer;
-		
+
 		for(Filter filter: filters) {
 			Set fields = filter.getFields();
 			Properties props = new Properties();
@@ -233,27 +236,27 @@ public abstract class AbstractStatementWhereClause extends AbstractStatementFilt
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			
+
 			addCondition(buffer, filterCondition);
 		}
-		
+
 		return buffer;
 	}
-	
+
 	private StringBuffer addProfilingConditionsOnSubEntity(StringBuffer buffer, String entityUniqueName, Query query, Map entityAliasesMaps) {
-		
+
 		IModelStructure dataMartModelStructure;
 		IModelAccessModality dataMartModelAccessModality;
 		Map<String, String> entityAliases;
-		
+
 		entityAliases = (Map<String, String>)entityAliasesMaps.get(query.getId());
-		
+
 		dataMartModelStructure = parentStatement.getDataSource().getModelStructure();
 		dataMartModelAccessModality = parentStatement.getDataSource().getModelAccessModality();
-		
+
 		IModelEntity entity = dataMartModelStructure.getEntity( entityUniqueName );
 		List filters = dataMartModelAccessModality.getEntityFilterConditions(entity.getType());
-		
+
 		if(dataMartModelAccessModality.getRecursiveFiltering() == null 
 				|| dataMartModelAccessModality.getRecursiveFiltering().booleanValue() == true) {
 			//	check for condition filter on sub entities
@@ -277,30 +280,30 @@ public abstract class AbstractStatementWhereClause extends AbstractStatementFilt
 						String entityAlias = (String)entityAliases.get(entityUniqueName);
 						props.put(fieldName, entityAlias + "." + filed.getQueryName().getFirst());
 					}
-					
+
 					String filterCondition = null;
 					try {
 						filterCondition = StringUtils.replaceParameters(filter.getFilterCondition(), "F", props);
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
-					
+
 					addCondition(buffer, filterCondition);
 				}
 			}
 		}
-	
-	
+
+
 		return buffer;
 	}
-	
+
 	/*
 	private StringBuffer addJoinConditions(StringBuffer buffer, Query query, Map entityAliasesMaps) {
-	
+
 		Map<String, String> entityAliases;
-		
+
 		entityAliases = (Map<String, String>)entityAliasesMaps.get(query.getId());
-		
+
 		try {
 			Map<String, Set<String>> viewToInnerEntitiesMap = new HashMap<String, Set<String>>();
 			List<ISelectField> selectFields =  query.getSelectFields(true);
@@ -320,7 +323,7 @@ public abstract class AbstractStatementWhereClause extends AbstractStatementFilt
 					}				
 				}
 			}
-			
+
 			// per il momento metto le join anche se non ce n'è bisogno
 			for(String viewName : viewToInnerEntitiesMap.keySet()) {
 				ModelViewEntity view = (ModelViewEntity)parentStatement.getDataSource().getModelStructure().getEntity( viewName );
@@ -328,7 +331,7 @@ public abstract class AbstractStatementWhereClause extends AbstractStatementFilt
 				for(Join join : joins) {
 					IConditionalOperator conditionalOperator = null;
 					conditionalOperator = (IConditionalOperator)JPQLStatementConditionalOperators.getOperator( CriteriaConstants.EQUALS_TO );
-					
+
 					String sourceEntityAlias = (String)entityAliases.get(join.getSourceEntity().getUniqueName());
 					if(sourceEntityAlias == null) {
 						sourceEntityAlias = parentStatement.getNextAlias(entityAliasesMaps);
@@ -339,18 +342,18 @@ public abstract class AbstractStatementWhereClause extends AbstractStatementFilt
 						destinationEntityAlias = parentStatement.getNextAlias(entityAliasesMaps);
 						entityAliases.put(join.getDestinationEntity().getUniqueName(), destinationEntityAlias);
 					}
-					
+
 					for(int i = 0; i < join.getSourceFileds().size(); i++) {
 						IModelField sourceField = join.getSourceFileds().get(i);
 						IModelField destinationField = join.getDestinationFileds().get(i);
 						String sourceFieldName = (String)sourceField.getQueryName().getFirst();
 						String destinationFieldName = (String)destinationField.getQueryName().getFirst();
-						
+
 						String leftHandValue = sourceEntityAlias + "." + sourceFieldName;
 						String rightHandValues = destinationEntityAlias + "." + destinationFieldName;
-						
+
 						String filterCondition = conditionalOperator.apply(leftHandValue, new String[]{rightHandValues});
-						
+
 						addCondition(buffer, filterCondition);  
 					}
 				}
@@ -358,52 +361,54 @@ public abstract class AbstractStatementWhereClause extends AbstractStatementFilt
 		} catch(Throwable t) {
 			t.printStackTrace();
 		}
-			
+
 		return buffer;
-		
+
 	}
-	*/
-	
-	
+	 */
+
+
 	protected String injectAutoJoins(String whereClause, Query query, Map entityAliasesMaps) {
 		logger.debug("IN");
-		
+
 		try {
 			Map rootEntityAlias = (Map)entityAliasesMaps.get(query.getId());
-			
+
 			if(rootEntityAlias == null || rootEntityAlias.keySet().size() == 0) {
 				return "";
 			}
-			
+
 			Set<IModelEntity> unjoinedEntities = getUnjoinedRootEntities(rootEntityAlias);
-			if(unjoinedEntities.size() > 0) {
-				boolean areConnected = parentStatement.getDataSource().getModelStructure().areRootEntitiesConnected(unjoinedEntities);
+			if(unjoinedEntities.size() > 1) {
+				QueryGraph queryGraph = query.getQueryGraph();
+				if(queryGraph==null){ 
+					logger.debug("NO GRAPH FOUND IN THE QUERY. creating a default one");
+					String modelName = parentStatement.getDataSource().getConfiguration().getModelName();
+					Graph<IModelEntity, Relationship> rootEntitiesGraph = parentStatement.getDataSource().getModelStructure().getRootEntitiesGraph(modelName, false).getRootEntitiesGraph();
+					queryGraph = GraphManager.getDefaultCoverGraphInstance(null).getCoverGraph(rootEntitiesGraph, unjoinedEntities);
+				}
+				boolean areConnected = GraphManager.getGraphValidatorInstance(null).isValid(queryGraph, unjoinedEntities);
 				if(areConnected) {
-					Set<Relationship> relationships = parentStatement.getDataSource().getModelStructure().getRootEntitiesConnections(unjoinedEntities);
+					List<Relationship> relationships = queryGraph.getConnections();
 					for(Relationship relationship : relationships) {
 						IModelEntity sourceEntity = relationship.getSourceEntity();
 						Assert.assertNotNull(sourceEntity, "In a relationship source entity cannot be null");
 						IModelEntity targetEntity = relationship.getTargetEntity();
 						Assert.assertNotNull(sourceEntity, "In a relationship target entity cannot be null");
+
+
+
+
+
 						logger.debug("Adding join condition between entity [" + sourceEntity.getName() + "] and entity [" + targetEntity.getName() + "]");
-						String sourceEntityAlias = null;
-						if( rootEntityAlias.containsKey(sourceEntity.getUniqueName()) ) {
-							sourceEntityAlias = (String)rootEntityAlias.get(sourceEntity.getUniqueName());
-						} else {
-							sourceEntityAlias = parentStatement.getNextAlias(entityAliasesMaps);
-							rootEntityAlias.put(sourceEntity.getUniqueName(), sourceEntityAlias);
-						}
-						logger.debug("Source entity alias is equal to [" + sourceEntityAlias + "]");
-						
-						String targetEntityAlias = null;
-						if( rootEntityAlias.containsKey(targetEntity.getUniqueName()) ) {
-							targetEntityAlias = (String)rootEntityAlias.get(targetEntity.getUniqueName());
-						} else {
-							targetEntityAlias = parentStatement.getNextAlias(entityAliasesMaps);
-							rootEntityAlias.put(targetEntity.getUniqueName(), targetEntityAlias);
-						}
-						logger.debug("Traget entity alias is equal to [" + targetEntityAlias + "]");
-						
+						//						String sourceEntityAlias =  parentStatement.getEntityAliasWithRoles(sourceEntity, rootEntityAlias, entityAliasesMaps);
+						//						
+						//
+						//						logger.debug("Source entity alias is equal to [" + sourceEntityAlias + "]");
+						//						
+						//						String targetEntityAlias =  parentStatement.getEntityAliasWithRoles(targetEntity, rootEntityAlias, entityAliasesMaps);
+						//						logger.debug("Traget entity alias is equal to [" + targetEntityAlias + "]");
+						//						
 						String joinCondition;
 						List<IModelField> sourceFields = relationship.getSourceFields();
 						Assert.assertTrue(sourceFields != null && sourceFields.size() > 0, "A relationship must refer at least one column of the source table");
@@ -412,43 +417,42 @@ public abstract class AbstractStatementWhereClause extends AbstractStatementFilt
 						Assert.assertTrue(sourceFields.size() == destinationFields.size(), "The number of columns of source table referred by a relationship must be equal to the number of columns it refer in the target table");
 						for(int i = 0; i < sourceFields.size(); i++) {
 							IModelField sourceField =  sourceFields.get(i);
-							String sourceFieldName = (String)sourceField.getQueryName().getFirst();
+							//							String sourceFieldName = (String)sourceField.getQueryName().getFirst();
 							IModelField destinationField =  destinationFields.get(i);
-							String destinationFieldName = (String)destinationField.getQueryName().getFirst();
+							//							String destinationFieldName = (String)destinationField.getQueryName().getFirst();
 							
-							joinCondition = null;
-							if( "one-to-many".equalsIgnoreCase(relationship.getType()) ) {
-								joinCondition = sourceEntityAlias + "." + sourceFieldName + " = " + targetEntityAlias + "." + destinationFieldName;
-							} else if( "many-to-one".equalsIgnoreCase(relationship.getType()) ) {
-								joinCondition = sourceEntityAlias + "." + sourceFieldName + " = " + targetEntityAlias + "." + destinationFieldName;
-							} else if( "many-to-many".equalsIgnoreCase(relationship.getType()) ) {
-								joinCondition = sourceEntityAlias + "." + sourceFieldName + " = " + targetEntityAlias + "." + destinationFieldName;
-							} else if( "one-to-one".equalsIgnoreCase(relationship.getType()) ) {
-								joinCondition = sourceEntityAlias + "." + sourceFieldName + " = " + targetEntityAlias + "." + destinationFieldName;
-							} else if( "optional-one-to-one".equalsIgnoreCase(relationship.getType()) ) {
-								joinCondition = sourceEntityAlias + "." + sourceFieldName + " = " + targetEntityAlias + "." + destinationFieldName;
-							} else if( "one-to-optional-one".equalsIgnoreCase(relationship.getType()) ) {
-								joinCondition = sourceEntityAlias + "." + sourceFieldName + " = " + targetEntityAlias + "." + destinationFieldName;
-							} else if( "optional-many-to-one".equalsIgnoreCase(relationship.getType()) ) {
-								joinCondition = sourceEntityAlias + "." + sourceFieldName + " = " + targetEntityAlias + "." + destinationFieldName;
-							} else if( "many-to-optional-one".equalsIgnoreCase(relationship.getType()) ) {
-								joinCondition = sourceEntityAlias + "." + sourceFieldName + " = " + targetEntityAlias + "." + destinationFieldName;
-							} else if( "optional-one-to-many".equalsIgnoreCase(relationship.getType()) ) {
-								joinCondition = sourceEntityAlias + "." + sourceFieldName + " = " + targetEntityAlias + "." + destinationFieldName;
-							} else if( "one-to-optional-many".equalsIgnoreCase(relationship.getType()) ) {
-								joinCondition = sourceEntityAlias + "." + sourceFieldName + " = " + targetEntityAlias + "." + destinationFieldName;
-							} else {
-								joinCondition = sourceEntityAlias + "." + sourceFieldName + " = " + targetEntityAlias + "." + destinationFieldName;
+							Set<String> entityRoleAlias = parentStatement.getQuery().getEntityRoleAlias(sourceField.getParent(),parentStatement.getDataSource());
+
+							if(entityRoleAlias==null || entityRoleAlias.size()==1){//no roles or source is the fist node of the fork
+								String sourceEntityAliases = parentStatement.getFieldAliasWithRoles(sourceField, rootEntityAlias, entityAliasesMaps, relationship.getName());
+								String targetEntityAliases = parentStatement.getFieldAliasWithRoles(destinationField, rootEntityAlias, entityAliasesMaps,relationship.getName());
+
+								
+								joinCondition = buildJoinClause(sourceEntityAliases, targetEntityAliases, relationship.getType());
+								logger.debug("succesful added auto-join condition [" + joinCondition + "]");
+								if(whereClause == null || whereClause.equals("")) {
+									whereClause = "WHERE ";
+								} else {
+									whereClause = whereClause + " AND ";
+								}						
+								whereClause += joinCondition;
+
+							}else{
+								List<String> sourceEntityAliases = parentStatement.getFieldAliasWithRolesList(sourceField, rootEntityAlias, entityAliasesMaps);
+								List<String> targetEntityAliases = parentStatement.getFieldAliasWithRolesList(destinationField, rootEntityAlias, entityAliasesMaps);
+
+								for(int j=0; j<targetEntityAliases.size();j++){
+									joinCondition = buildJoinClause(sourceEntityAliases.get(j), targetEntityAliases.get(j), relationship.getType());
+									logger.debug("succesful added auto-join condition [" + joinCondition + "]");
+									if(whereClause == null || whereClause.equals("")) {
+										whereClause = "WHERE ";
+									} else {
+										whereClause = whereClause + " AND ";
+									}						
+									whereClause += joinCondition;
+								}								
 							}
-							
-							
-							logger.debug("succesful added auto-join condition [" + joinCondition + "]");
-							if(whereClause == null || whereClause.equals("")) {
-								whereClause = "WHERE ";
-							} else {
-								whereClause = whereClause + " AND ";
-							}						
-							whereClause += joinCondition;
+
 						}
 					}
 					//throw new RuntimeException("Impossible to auto join entities");
@@ -462,51 +466,80 @@ public abstract class AbstractStatementWhereClause extends AbstractStatementFilt
 		}finally {
 			logger.debug("OUT");
 		}
-		
+
 		return whereClause;
 	}
-	
+
+	public String buildJoinClause(String left, String right, String relType){
+
+		String joinCondition = null;
+		if( "one-to-many".equalsIgnoreCase(relType) ) {
+			joinCondition =left + " = " + right;
+		} else if( "many-to-one".equalsIgnoreCase(relType) ) {
+			joinCondition =left + " = " + right;
+		} else if( "many-to-many".equalsIgnoreCase(relType) ) {
+			joinCondition =left + " = " + right;
+		} else if( "one-to-one".equalsIgnoreCase(relType) ) {
+			joinCondition =left + " = " + right;
+		} else if( "optional-one-to-one".equalsIgnoreCase(relType) ) {
+			joinCondition =left + " = " + right;
+		} else if( "one-to-optional-one".equalsIgnoreCase(relType) ) {
+			joinCondition =left + " = " + right;
+		} else if( "optional-many-to-one".equalsIgnoreCase(relType) ) {
+			joinCondition =left + " = " + right;
+		} else if( "many-to-optional-one".equalsIgnoreCase(relType) ) {
+			joinCondition =left + " = " + right;
+		} else if( "optional-one-to-many".equalsIgnoreCase(relType) ) {
+			joinCondition =left + " = " + right;
+		} else if( "one-to-optional-many".equalsIgnoreCase(relType) ) {
+			joinCondition =left + " = " + right;
+		} else {
+			joinCondition =left + " = " + right;
+		}
+		return joinCondition;
+	}
+
 	protected String fixWhereClause(String whereClause, Query query, Map entityAliasesMaps) {
 		logger.debug("IN");
-		
+
 		try {
 			Map rootEntityAlias = (Map)entityAliasesMaps.get(query.getId());
-			
-			
+
+
 			if(rootEntityAlias == null || rootEntityAlias.keySet().size() == 0) {
 				return "";
 			}
-		
+
 			Iterator it = rootEntityAlias.keySet().iterator();
 			while( it.hasNext() ) {
 				String entityUniqueName = (String)it.next();
 				logger.debug("entity [" + entityUniqueName +"]");
-				
+
 				String entityAlias = (String)rootEntityAlias.get(entityUniqueName);
 				logger.debug("entity alias [" + entityAlias +"]");
-				
+
 				IModelEntity modelEntity =  parentStatement.getDataSource().getModelStructure().getEntity(entityUniqueName);
-				
+
 				addTableFakeCondition(whereClause, modelEntity.getName(), entityAlias);
 			}
 		} finally {
 			logger.debug("OUT");
 		}
-		
+
 		return whereClause;
 	}
-	
+
 	private Set<IModelEntity> getUnjoinedRootEntities(Map entityAliases) {
-		
+
 		Set<IModelEntity> unjoinedEntities = new HashSet();
-		
+
 		Iterator it = entityAliases.keySet().iterator();
 		while( it.hasNext() ) {
 			String entityUniqueName = (String)it.next();
 			IModelEntity modelEntity =  parentStatement.getDataSource().getModelStructure().getEntity(entityUniqueName);
 			unjoinedEntities.add(modelEntity);
 		}
-		
+
 		return unjoinedEntities;
 	}
 
@@ -527,14 +560,14 @@ public abstract class AbstractStatementWhereClause extends AbstractStatementFilt
 			for(Iterator it2 = classMetadata.getEntities().iterator(); it2.hasNext(); ) {
 				EntityType et = (EntityType)it2.next();
 				String entityName = et.getName();
-				
+
 				if(datamartEntityName.equals(entityName)){
-				
+
 					Type keyT = et.getIdType();
-					
+
 					if (keyT instanceof BasicType) {
 						//the key has only one field
-						
+
 						String name = (et.getId(Object.class)).getName();
 						if(whereClause==null || whereClause.equals("")){
 							whereClause = "WHERE ";

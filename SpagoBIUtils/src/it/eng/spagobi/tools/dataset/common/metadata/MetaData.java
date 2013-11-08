@@ -25,10 +25,12 @@ public class MetaData implements IMetaData, Cloneable {
 	// @deprecated this map is used only by deprecated method getFieldIndex. Once this method will be removed
 	// remove also this map and all the references to it made within this class
 	Map<String, Integer> name2IndexMap;
+	Map<String, Integer> alias2IndexMap;
 
 	public MetaData() {
 		idFieldIndex = -1;
 		name2IndexMap = new HashMap<String, Integer>();
+		alias2IndexMap = new HashMap<String, Integer>();
 		fieldsMeta = new ArrayList<IFieldMetaData>();
 		properties = new HashMap<String, Object>();
 	}
@@ -47,9 +49,10 @@ public class MetaData implements IMetaData, Cloneable {
 	
 	public int getFieldIndex(String fieldName) {
 		Integer columnIndex = null;
-		
-		columnIndex = (Integer)name2IndexMap.get(fieldName.toUpperCase());
-		
+		columnIndex = (Integer)alias2IndexMap.get(fieldName.toUpperCase());
+		if(columnIndex == null || columnIndex<0){
+			columnIndex = (Integer)name2IndexMap.get(fieldName.toUpperCase());
+		}
 		return columnIndex == null? -1: columnIndex.intValue();
 	}
 	
@@ -138,6 +141,10 @@ public class MetaData implements IMetaData, Cloneable {
 		Integer fieldIndex = new Integer(fieldsMeta.size());
 		fieldsMeta.add(fieldMetaData);
 		String fieldName = fieldMetaData.getName();
+		if(fieldMetaData.getAlias()!=null){
+			String fieldAlias = fieldMetaData.getAlias();
+			alias2IndexMap.put(fieldAlias.toUpperCase(), fieldIndex);
+		}
 		name2IndexMap.put(fieldName.toUpperCase(), fieldIndex);
 	}
 

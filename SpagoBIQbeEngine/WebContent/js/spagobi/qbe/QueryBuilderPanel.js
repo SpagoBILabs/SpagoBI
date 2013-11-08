@@ -91,13 +91,19 @@ Sbi.qbe.QueryBuilderPanel = function(config) {
 		serviceName: 'GET_SQL_QUERY_ACTION'
 		, baseParams: params
 	});
+	/*
+	this.services['getAmbiguousFields'] = Sbi.config.serviceRegistry.getServiceUrl({
+		serviceName: 'GET_AMBIGUOUS_FIELDS_ACTION'
+		, baseParams: params
+	});
+	*/
 		
 	this.addEvents('save');
 		
 	this.initWestRegionPanel(c.westConfig || {});
 	this.initCenterRegionPanel(c.centerConfig || {});
 	this.initEastRegionPanel(c.eastConfig || {});
-		
+	
 	c = Ext.apply(c, {
       	layout: 'border',  
 		/*
@@ -528,6 +534,11 @@ Ext.extend(Sbi.qbe.QueryBuilderPanel, Ext.Panel, {
 		this.havingGridButton.on('toggle', this.onButtonToggleHandler.createDelegate(this, [2], true), this);
 		this.selectGridButton.toggle(true, true);
 	    
+		this.getAmbiguousFieldsButton = new Ext.Button({
+		    text: LN('sbi.qbe.queryeditor.centerregion.buttons.relationshipswizard')
+		});
+		this.getAmbiguousFieldsButton.on('click', this.getAmbiguousFields, this);
+		
 	    this.centerRegionPanel = new Ext.Panel({ 
 	    	title: LN('sbi.qbe.queryeditor.centerregion.title'),
 	        region:'center',
@@ -541,7 +552,7 @@ Ext.extend(Sbi.qbe.QueryBuilderPanel, Ext.Panel, {
 	        },
 	        margins: '5 5 5 5',
 	        items: [this.selectGridPanel, this.filterGridPanel, this.havingGridPanel],
-	        tbar: ['->', this.selectGridButton, this.filterGridButton, this.havingGridButton]
+	        tbar: [this.selectGridButton, this.filterGridButton, this.havingGridButton, '->', this.getAmbiguousFieldsButton]
 	    });
 	    
 	    /*this.centerRegionPanel = new Ext.Panel({ 
@@ -610,7 +621,8 @@ Ext.extend(Sbi.qbe.QueryBuilderPanel, Ext.Panel, {
 	    		leftOperandValue: record.data.id
 				, leftOperandDescription: record.data.entity + ' : ' + record.data.field 
 				, leftOperandType: operandType
-				, leftOperandLongDescription: record.data.longDescription
+				, leftOperandLongDescription: record.data.entity + ' : ' + record.data.alias
+				, leftOperandAlias: record.data.alias
 
 			};
 	    	this.toggleCenterPanelToItem(1);
@@ -653,6 +665,84 @@ Ext.extend(Sbi.qbe.QueryBuilderPanel, Ext.Panel, {
 			this.centerRegionPanel.getLayout().setActiveItem(activeItemIndex);
 		}
 	}
+	
+	,
+	getAmbiguousFields: function() {
+		this.applyChanges();
+		this.queryCataloguePanel.manageAmbiguousFields(function() {
+			// do nothings after commit for the moment
+		}, this);
+	}
+	
+	/*
+	,
+	getAmbiguousFields: function() {
+		this.applyChanges();
+		var query = this.getQuery(true);
+		var queries = this.getQueries();
+		// call the server to get ambiguous fields
+		Ext.Ajax.request({
+			url: this.services['getAmbiguousFields'],
+			params: {
+				id: query.id
+				, catalogue : Ext.util.JSON.encode(queries)
+			},
+			success : this.onAmbiguousFieldsLoaded,
+			scope: this,
+			failure: Sbi.exception.ExceptionHandler.handleFailure
+		});
+	}
+	
+	,
+	onAmbiguousFieldsLoaded : function (response, opts) {
+		var ambiguousFields = Ext.util.JSON.decode( response.responseText );
+		if (ambiguousFields.length == 0) {
+			Ext.Msg.show({
+				   title: LN('sbi.qbe.queryeditor.noambiguousfields.title'),
+				   msg: LN('sbi.qbe.queryeditor.noambiguousfields.msg'),
+				   buttons: Ext.Msg.OK,
+				   icon: Ext.MessageBox.INFO
+			});
+		} else {
+			ambiguousFields = this.mergeAmbiguousFieldsWithCache(ambiguousFields);
+			var relationshipsWindow = new Sbi.qbe.RelationshipsWizardWindow({
+				ambiguousFields : ambiguousFields
+				, closeAction : 'close'
+				, modal : true
+			});
+			relationshipsWindow.show();
+			relationshipsWindow.on('apply', this.onAmbiguousFieldsSolved, this);
+		}
+	}
+	
+	,
+	onAmbiguousFieldsSolved : function (theWindow, ambiguousFieldsSolved) {
+		theWindow.close();
+		this.putAmbiguousFieldsSolvedOnCache(ambiguousFieldsSolved);
+	}
+	
+	,
+	putAmbiguousFieldsSolvedOnCache : function (ambiguousFieldsSolved) {
+		var query = this.getQuery(true);
+		Sbi.cache.memory.put(query.id, ambiguousFieldsSolved);
+	}
+	
+	,
+	mergeAmbiguousFieldsWithCache : function (ambiguousFields) {
+		var cached = this.getAmbiguousFieldsFromCache();
+		var ambiguousFieldsObj = new Sbi.qbe.AmbiguousFields({ ambiguousFields : ambiguousFields });
+		var cachedObj = new Sbi.qbe.AmbiguousFields({ ambiguousFields : cached });
+		ambiguousFieldsObj.merge(cachedObj);
+		return ambiguousFieldsObj.getAmbiguousFieldsAsJSONArray();
+	}
+	
+	,
+	getAmbiguousFieldsFromCache : function () {
+		var query = this.getQuery(true);
+		var cached = Sbi.cache.memory.get(query.id);
+		return cached;
+	}
+	*/
 	
 	/**
 	 * activate panel specified by the index in input by toggling the relevant button
@@ -746,7 +836,7 @@ Ext.extend(Sbi.qbe.QueryBuilderPanel, Ext.Panel, {
 
 			this.setQuery( newquery );
 			// required in order to be sure to have all query stored at the server side while
-			// joining a subquery to a parent query selected entity
+			// joining a subquery to a parent query selected entity, but only if previousQuery is defined (i.e. not the first time)
 			this.queryCataloguePanel.commit(function() {
 				// do nothings after commit for the moment
 				// todo: implement hidingMask in order to block edinting while commiting

@@ -33,5 +33,4 @@ public class JPQLStatementSelectClause extends AbstractSelectStatementClause {
 
 	
 	
-	
 }

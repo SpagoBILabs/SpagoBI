@@ -6,7 +6,8 @@
 package it.eng.qbe.model.structure;
 
 import it.eng.qbe.datasource.IDataSource;
-import it.eng.qbe.model.structure.ModelStructure.RootEntitiesGraph.Relationship;
+import it.eng.qbe.statement.graph.bean.Relationship;
+import it.eng.qbe.statement.graph.bean.RootEntitiesGraph;
 import it.eng.qbe.model.structure.filter.QbeTreeFilter;
 
 import java.util.ArrayList;
@@ -165,13 +166,13 @@ public class FilteredModelStructure extends AbstractModelObject implements IMode
 	public void addRootEntityRelationship(String modelName, 
 			IModelEntity fromEntity, List<IModelField> fromFields,
 			IModelEntity toEntity, List<IModelField> toFields,
-			String type, String name) {
-		wrappedModelStructure.addRootEntityRelationship(modelName, fromEntity, fromFields, toEntity, toFields, type, name);
+			String type, String relationName) {
+		wrappedModelStructure.addRootEntityRelationship(modelName, fromEntity, fromFields, toEntity, toFields, type, relationName);
 	}
 
-	public Set<Relationship> getRootEntitiesConnections(Set<IModelEntity> entities) {
-		return wrappedModelStructure.getRootEntitiesConnections(entities);
-	}
+//	public Set<Relationship> getRootEntitiesConnections(Set<IModelEntity> entities) {
+//		return wrappedModelStructure.getRootEntitiesConnections(entities);
+//	}
 	
 	public IModelEntity getEntity(String entityUniqueName) {
 		List<IModelEntity> list = new ArrayList<IModelEntity>();
@@ -279,13 +280,18 @@ public class FilteredModelStructure extends AbstractModelObject implements IMode
 		return this.maxRecursionLevel;
 	}
 
-	public Set<Relationship> getRootEntityDirectConnections(IModelEntity entity) {
-		return wrappedModelStructure.getRootEntityDirectConnections(entity);
+	public RootEntitiesGraph getRootEntitiesGraph(String modelName,
+			boolean createIfNotExist) {
+		return wrappedModelStructure.getRootEntitiesGraph(modelName, createIfNotExist);
 	}
 
 	public Set<Relationship> getDirectConnections(IModelEntity source,
 			IModelEntity target) {
 		return wrappedModelStructure.getDirectConnections(source, target);
+	}
+
+	public Set<Relationship> getRootEntityDirectConnections(IModelEntity entity) {
+		return wrappedModelStructure.getRootEntityDirectConnections(entity);
 	}
 	
 

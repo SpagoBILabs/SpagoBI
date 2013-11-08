@@ -370,7 +370,6 @@ public class FakeDataset extends AbstractCustomDataSet {
 			connection = dataSource.getConnection();
 			IDataSetTableDescriptor toReturn = this.createTemporaryTable(tableName, connection);
 			this.populateTable(connection, tableName);
-			toReturn.setDataSource(dataSource);
 			return toReturn;
 		} catch (Exception e) {
 			throw new SpagoBIRuntimeException("Error persisting dataset", e);

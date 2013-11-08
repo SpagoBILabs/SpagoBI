@@ -14,6 +14,7 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <link rel="styleSheet" href ="../css/qbe.css" type="text/css" />
 <link rel="styleSheet" href ="../css/worksheet.css" type="text/css" />
 
+
 <!-- Include localized labels  -->
 <script type="text/javascript" src='../js/spagobi/locale/commons/<%=locale.getLanguage()%>.js'></script>
 <script type="text/javascript" src='../js/spagobi/locale/qbe/<%=locale.getLanguage()%>.js'></script>
@@ -72,6 +73,13 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='../js/spagobi/qbe/DocumentParametersStore.js'></script>
 <script type="text/javascript" src='../js/spagobi/qbe/HavingGridPanel.js'></script>
 
+<script type="text/javascript" src='../js/spagobi/qbe/RelationshipsWizard.js'></script>
+<script type="text/javascript" src='../js/spagobi/qbe/RelationshipsWizardRoleForEntity.js'></script>
+<script type="text/javascript" src='../js/spagobi/qbe/RelationshipsWizardRole.js'></script>
+<script type="text/javascript" src='../js/spagobi/qbe/RelationshipsWizardContainer.js'></script>
+<script type="text/javascript" src='../js/spagobi/qbe/RelationshipsWizardWindow.js'></script>
+<script type="text/javascript" src='../js/spagobi/qbe/AmbiguousFields.js'></script>
+
 <script type="text/javascript" src='../js/spagobi/widgets/LookupField.js'></script>
 <script type="text/javascript" src='../js/spagobi/widgets/FilterLookupField.js'></script>
 <script type="text/javascript" src='../js/spagobi/widgets/FilteringToolbar.js'></script>
@@ -82,6 +90,7 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='../js/spagobi/widgets/SimpleValuesChooserWindow.js'></script>
 <script type="text/javascript" src='../js/spagobi/widgets/FilterLookupPopupWindow.js'></script>
 <script type="text/javascript" src='../js/spagobi/widgets/ConfigurableForm.js'></script>
+<script type="text/javascript" src='../js/spagobi/widgets/Cache.js'></script>
 
 
 <script type="text/javascript" src='../js/spagobi/qbe/FilterComboBox.js'></script>

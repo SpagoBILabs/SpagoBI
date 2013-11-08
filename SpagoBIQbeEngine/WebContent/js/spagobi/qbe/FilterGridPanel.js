@@ -166,6 +166,7 @@ Ext.extend(Sbi.qbe.FilterGridPanel, Ext.Panel, {
 			, leftOperandType: Sbi.constants.qbe.OPERAND_TYPE_STATIC_VALUE
 			, leftOperandDefaultValue: null
 			, leftOperandLastValue: null
+			, leftOperandAlias: null
 			
 			, operator: ''
 				
@@ -175,6 +176,7 @@ Ext.extend(Sbi.qbe.FilterGridPanel, Ext.Panel, {
 			, rightOperandType: Sbi.constants.qbe.OPERAND_TYPE_STATIC_VALUE
 			, rightOperandDefaultValue: null
 			, rightOperandLastValue: null
+			, rightOperandAlias: null
 			
 			, booleanConnector: 'AND'
 				
@@ -519,6 +521,7 @@ Ext.extend(Sbi.qbe.FilterGridPanel, Ext.Panel, {
 		   {name: 'leftOperandType', type: 'string'}, // NEW
 		   {name: 'leftOperandDefaultValue', type: 'string'}, // RESERVED FOR FUTURE USE
 		   {name: 'leftOperandLastValue', type: 'string'}, // RESERVED FOR FUTURE USE
+		   {name: 'leftOperandAlias', type: 'string'}, // The alias of the field
 		   
 		   {name: 'operator', type: 'string'},
 		   
@@ -528,6 +531,7 @@ Ext.extend(Sbi.qbe.FilterGridPanel, Ext.Panel, {
 		   {name: 'rightOperandType', type: 'string'}, // otype
 		   {name: 'rightOperandDefaultValue', type: 'string'}, // defaultvalue
 		   {name: 'rightOperandLastValue', type: 'string'}, // lastvalue
+		   {name: 'rightOperandAlias', type: 'string'}, // The alias of the field
 		   
 		   {name: 'booleanConnector', type: 'string'},
 		   

@@ -40,6 +40,8 @@ public class QuerySerializationConstants {
 	
 	public static final String DISTINCT = "distinct";
 	public static final String IS_NESTED_EXPRESSION = "isNestedExpression";
+	public static final String RELATIONS_ROLES = "relationsRoles";
+	
 	
 	public static final String FILTERS = "filters";
 	public static final String HAVINGS = "havings";
@@ -53,6 +55,7 @@ public class QuerySerializationConstants {
 	public static final String FILTER_LO_TYPE = "leftOperandType";
 	public static final String FILTER_LO_FUNCTION = "leftOperandAggregator";
 	public static final String FILTER_LO_DEFAULT_VALUE = "leftOperandDefaultValue";
+	public static final String FILTER_LO_ALIAS = "leftOperandAlias";
 	public static final String FILTER_LO_LAST_VALUE = "leftOperandLastValue";
 	public static final String FILTER_OPERATOR = "operator";
 	public static final String FILTER_RO_VALUE = "rightOperandValue";
@@ -61,6 +64,7 @@ public class QuerySerializationConstants {
 	public static final String FILTER_RO_TYPE = "rightOperandType";
 	public static final String FILTER_RO_FUNCTION = "rightOperandAggregator";
 	public static final String FILTER_RO_DEFAULT_VALUE = "rightOperandDefaultValue";
+	public static final String FILTER_RO_ALIAS = "rightOperandAlias";
 	public static final String FILTER_RO_LAST_VALUE = "rightOperandLastValue";
 	public static final String FILTER_BOOLEAN_CONNETOR = "booleanConnector";
 

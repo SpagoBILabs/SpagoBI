@@ -34,10 +34,13 @@ public class FieldMetadata implements IFieldMetaData, Cloneable  {
 	private String getId() {
 		String id = null;
 		String aggregationFunction = (String)properties.get("aggregationFunction");
-		if(aggregationFunction == null || "NONE".equalsIgnoreCase(aggregationFunction)) {
-			id = getName();
-		} else {
-			id = aggregationFunction + "(" +  getName() + ")";
+		
+		id = getName();
+		if(getAlias()!=null){
+			id = getAlias();
+		}
+		if(aggregationFunction != null && !"NONE".equalsIgnoreCase(aggregationFunction)) {
+			id = aggregationFunction + "(" +  id + ")";
 		}
 		
 		return id;
@@ -52,6 +55,9 @@ public class FieldMetadata implements IFieldMetaData, Cloneable  {
 	}
 
 	public String getAlias() {
+		if(alias==null){
+			return name;
+		}
 		return alias;
 	}
 

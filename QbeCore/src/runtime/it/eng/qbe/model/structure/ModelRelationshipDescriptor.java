@@ -120,4 +120,11 @@ public class ModelRelationshipDescriptor implements IModelRelationshipDescriptor
 			throw new RuntimeException("Impossible to read property [name] from relationship json object", t);
 		}
 	}
+	
+	/* (non-Javadoc)
+	 * @see it.eng.qbe.model.structure.IModelRelationshipDescriptor#getName()
+	 */
+	public String getLabel() {
+		return relationshipJSON.optString("label");
+	}
 }

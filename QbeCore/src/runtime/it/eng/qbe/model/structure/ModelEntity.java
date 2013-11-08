@@ -410,7 +410,10 @@ public class ModelEntity extends AbstractModelNode implements IModelEntity {
 			String o = (String)properties.get(key);
 			properties2.put(key.substring(0), o.substring(0));
 		}
-		properties2.put("parentView", parentView);
+		if(parentView!=null){
+			properties2.put("parentView", parentView);
+		}
+		
 				
 		newModelEntity.setProperties(properties2);
 		

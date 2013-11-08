@@ -80,6 +80,14 @@
 			scope="REQUEST">
 		<CONFIG></CONFIG>
 	</ACTION>
-
+	
+	<!-- 
+	<ACTION name="GET_AMBIGUOUS_FIELDS_ACTION" 
+			class="it.eng.spagobi.engines.qbe.services.core.GetAmbiguousFieldsAction"  
+			scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>
+ 	-->
+ 	
 </ACTIONS>
 

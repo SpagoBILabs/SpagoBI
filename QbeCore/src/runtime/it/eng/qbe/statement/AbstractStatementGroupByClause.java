@@ -13,6 +13,7 @@ import it.eng.qbe.query.ISelectField;
 import it.eng.qbe.query.InLineCalculatedSelectField;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.query.SimpleSelectField;
+import it.eng.qbe.statement.jpa.JPQLStatementConstants;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.objects.Couple;
 
@@ -37,7 +38,7 @@ public abstract class AbstractStatementGroupByClause extends AbstractStatementCl
 		List<ISelectField> groupByFields = query.getGroupByFields();
 		if(groupByFields.size() == 0) return buffer.toString();
 		
-		buffer.append(GROUP_BY);
+		buffer.append(JPQLStatementConstants.STMT_KEYWORD_GROUP_BY);
 		
 		Map entityAliases = (Map)entityAliasesMaps.get(query.getId());
 		
@@ -55,25 +56,7 @@ public abstract class AbstractStatementGroupByClause extends AbstractStatementCl
 			} else if(groupByField.isSimpleField()){			
 				SimpleSelectField simpleField = (SimpleSelectField)groupByField;
 				IModelField datamartField = parentStatement.getDataSource().getModelStructure().getField(simpleField.getUniqueName());
-				
-						
-				Couple queryNameAndRoot = datamartField.getQueryName();
-				IModelEntity root;
-				String queryName = (String) queryNameAndRoot.getFirst();
-				logger.debug("select field query name [" + queryName + "]");
-				
-				if(queryNameAndRoot.getSecond()!=null){
-					root = (IModelEntity)queryNameAndRoot.getSecond(); 	
-				}else{
-					root = datamartField.getParent().getRoot(); 	
-				}
-				
-				
-				if(!entityAliases.containsKey(root.getUniqueName())) {
-					entityAliases.put(root.getUniqueName(), parentStatement.getNextAlias(entityAliasesMaps));
-				}
-				String entityAlias = (String)entityAliases.get( root.getUniqueName() );
-				fieldName =  parentStatement.getFieldAlias(entityAlias, queryName);
+				fieldName = parentStatement.getFieldAliasWithRoles(datamartField, entityAliases, entityAliasesMaps, simpleField);
 			} else {
 				// TODO throw an exception here
 			}

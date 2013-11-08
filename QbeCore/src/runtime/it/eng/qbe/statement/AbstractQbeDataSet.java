@@ -278,7 +278,7 @@ public abstract class AbstractQbeDataSet extends AbstractDataSet {
 			logger.debug("Field [" + fieldMeta.getName()+ "] is equals to [" + calculatedValue + "]");
 			variable.setValue(calculatedValue);
 
-			record.getFieldAt(dataStoreMeta.getFieldIndex(fieldMeta.getName())).setValue(variable.getValue());
+			record.getFieldAt(dataStoreMeta.getFieldIndex(fieldMeta.getAlias())).setValue(variable.getValue());
 		}
 	}
 
