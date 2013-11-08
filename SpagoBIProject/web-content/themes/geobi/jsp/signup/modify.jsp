@@ -4,7 +4,9 @@
          pageEncoding="ISO-8859-1"
          session="true" 
          import="it.eng.spago.base.*,
-                 it.eng.spagobi.commons.constants.SpagoBIConstants"
+                 it.eng.spagobi.commons.constants.SpagoBIConstants,
+                  it.eng.spagobi.commons.utilities.urls.IUrlBuilder,
+         		 it.eng.spagobi.commons.utilities.messages.IMessageBuilder"
 %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page import="it.eng.spagobi.commons.utilities.ChannelUtilities"%>
@@ -19,23 +21,20 @@
 <%@page import="org.apache.commons.lang.StringEscapeUtils"%>
 <%@page import="java.util.Enumeration"%>
 
- <%
-    // RequestContainer requestContainer = RequestContainer.getRequestContainer();
-    String currTheme = (String)request.getAttribute("currTheme");
-   	if (currTheme == null)
-  		currTheme = ThemesManager.getDefaultTheme();
+<%@ include file="/WEB-INF/jsp/commons/portlet_base410.jsp"%>  
 
- 	
- 	String sbiMode = "WEB";
- 	IUrlBuilder urlBuilder = null;
- 	urlBuilder = UrlBuilderFactory.getUrlBuilder(sbiMode);
-   	
-%>
 
-<script type="text/javascript" src='${pageContext.request.contextPath}/js/lib/ext-4.1.1a/ext-all-debug.js'/></script>
-<script type="text/javascript" src='${pageContext.request.contextPath}/js/lib/ext-4.1.1a/examples/ux/IFrame.js'/></script>
-<script type="text/javascript" src='${pageContext.request.contextPath}/js/lib/ext-4.1.1a/ux/RowExpander.js'/></script>
-<link rel='stylesheet' type='text/css' href='<%=urlBuilder.getResourceLinkByTheme(request, "css/analiticalmodel/browser/standard.css",currTheme)%>'/>
+<% 
+	String defaultOrganization = msgBuilder.getMessage("profileattr.company",locale); 
+	String defaultName = msgBuilder.getMessage("profileattr.firstname",locale);
+	String defaultSurname = msgBuilder.getMessage("profileattr.lastname",locale);
+	String defaultUsername = msgBuilder.getMessage("username",locale);
+	String defaultPassword = msgBuilder.getMessage("password",locale);
+	String defaultEmail = msgBuilder.getMessage("profileattr.email",locale);
+	String defaultConfirmPwd = msgBuilder.getMessage("confirmPwd",locale);         
+%> 
+
+<link rel='stylesheet' type='text/css' href='<%=urlBuilder.getResourceLinkByTheme(request, "css/home40/standard.css",currTheme)%>'/>
 
 <script type="text/javascript">
 
@@ -139,41 +138,15 @@ this.services["update"]= Sbi.config.serviceRegistry.getRestServiceUrl({
   });
 }
 </script>
-<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext/sbi/service/ServiceRegistry.js'/></script>
-<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext/sbi/exception/ExceptionHandler.js'/></script>
 
-<link id="extall"     rel="styleSheet" href ="${pageContext.request.contextPath}/js/lib/ext-4.1.1a/resources/css/ext-all.css" type="text/css" />
-<link id="theme-gray" rel="styleSheet" href ="${pageContext.request.contextPath}/js/lib/ext-4.1.1a/resources/css/ext-all-gray.css" type="text/css" />
-<link id="spagobi-ext-4" rel="styleSheet" href ="${pageContext.request.contextPath}/js/lib/ext-4.1.1a/overrides/resources/css/spagobi.css" type="text/css" />
 <link rel='stylesheet' type='text/css' href='<%=urlBuilder.getResourceLinkByTheme(request, "css/home40/standard.css",currTheme)%>'/>
 <html>
 
   <body>
-		<% 
-     		//IUrlBuilder urlBuilder = null;
-         /*
-     		IMessageBuilder msgBuilder = MessageBuilderFactory.getMessageBuilder();
-    		urlBuilder = UrlBuilderFactory.getUrlBuilder(sbiMode);
-         	String defaultOrganization = msgBuilder.getMessage("profileattr.company"); 
-         	String defaultName = msgBuilder.getMessage("profileattr.firstname");
-         	String defaultSurname = msgBuilder.getMessage("profileattr.lastname");
-         	String defaultUsername = msgBuilder.getMessage("username");
-         	String defaultPassword = msgBuilder.getMessage("password");
-         	String defaultEmail = msgBuilder.getMessage("profileattr.email");
-         	String defaultConfirmPwd = msgBuilder.getMessage("confirmPwd");         
-         	*/
-        	String defaultOrganization = "Company"; 
-         	String defaultName = "Name";
-         	String defaultSurname = "Surname";
-         	String defaultUsername = "Username";
-         	String defaultPassword = "Password";
-         	String defaultEmail = "Email";
-         	String defaultConfirmPwd = "Confirm Password";         	
-         %>
     <main class="main main-maps-list main-list" id="main">
         	<div class="aux">
             	<div class="reserved-area-container">
-            		<h1>Modify account</h1>
+            		<h1><%=msgBuilder.getMessage("modifyAccount",locale)%></h1>
                     <form name="myForm" method="post"  class="reserved-area-form">
                         <fieldset>
                             <div class="field organization">
@@ -202,11 +175,11 @@ this.services["update"]= Sbi.config.serviceRegistry.getRestServiceUrl({
                             </div>
                             <div class="field confirm" id="confermaPasswordbox">
                                 <label for="confirm">Confirm Password</label>
-                                <input type="text" name="confermaPassword" id="confermaPassword" value="Confirm Password" onfocus="changefield('confermaPassword');" onblur="if (this.value=='') this.value = '<%=defaultConfirmPwd%>'" />
+                                <input type="text" name="confermaPassword" id="confermaPassword" value="<%=defaultConfirmPwd%>" onfocus="changefield('confermaPassword');" onblur="if (this.value=='') this.value = '<%=defaultConfirmPwd%>'" />
                             </div>
                             <div class="submit">
-                                <input type="text" value="Modify" onclick="javascript:modify();"/>
-                                <p class="delete">Do you want delete this account? <a href="#" onclick="javascript:cancel();">Delete</a></p>
+                                <input type="text" value="<%=msgBuilder.getMessage("modify",locale)%>" onclick="javascript:modify();"/>
+                                <p class="delete"><%=msgBuilder.getMessage("deleteAccount",locale)%> <a href="#" onclick="javascript:cancel();"><%=msgBuilder.getMessage("delete",locale)%></a></p>
                             </div>
                         </fieldset>
                     </form>
