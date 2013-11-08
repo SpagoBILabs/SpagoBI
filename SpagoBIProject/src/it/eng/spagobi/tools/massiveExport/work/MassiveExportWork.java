@@ -199,16 +199,20 @@ public class MassiveExportWork implements Work {
 					logger.debug("progress Id incremented");
 				}
 				else{
+					
+					String cleanLabel = cleanFileName(document.getLabel());
+					String cleanName = cleanFileName(document.getName());
+					
 					String checkerror = new String(returnByteArray);
 					if(checkerror.startsWith("error") || checkerror.startsWith("{\"errors\":")){
 						logger.error("Error found in execution, make txt file");
-						String fileName = "Error "+document.getLabel()+"-"+document.getName();
+						String fileName = "Error "+cleanLabel+"-"+cleanName;
 						exportFile = File.createTempFile(fileName, ".txt");
 						randomNamesToName.put(exportFile.getName(), fileName+".txt");
 					}
 					else{
 						logger.debug("Export ok for biObj with label "+document.getLabel());
-						String fileName = document.getLabel()+"-"+document.getName();
+						String fileName = cleanLabel+"-"+cleanName;
 						exportFile = File.createTempFile(fileName, fileExtension); 
 						randomNamesToName.put(exportFile.getName(), fileName+fileExtension);
 					}
@@ -444,5 +448,18 @@ public class MassiveExportWork implements Work {
 
 	}
 
+	
+	public String cleanFileName(String name){
+		logger.debug("IN");
+		char[] forbiddenCharList = {'/','?','!',';',':','.',',','*','#','@','\'','%','&','(',')'};
+		
+		for (int i = 0; i < forbiddenCharList.length; i++) {
+			char f = forbiddenCharList[i];
+			name = name.replace(f, '_');
+		}
+		logger.debug("OUT");		
+		return name;
+	}
+	
 
 }
