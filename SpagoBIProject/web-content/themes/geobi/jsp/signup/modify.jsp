@@ -28,8 +28,10 @@
 	String defaultOrganization = msgBuilder.getMessage("profileattr.company",locale); 
 	String defaultName = msgBuilder.getMessage("profileattr.firstname",locale);
 	String defaultSurname = msgBuilder.getMessage("profileattr.lastname",locale);
-	String defaultUsername = msgBuilder.getMessage("username",locale);
-	String defaultPassword = msgBuilder.getMessage("password",locale);
+	//String defaultUsername = msgBuilder.getMessage("username",locale);
+	//String defaultPassword = msgBuilder.getMessage("password",locale);
+	String defaultUsername = "Username";
+	String defaultPassword = "Password";
 	String defaultEmail = msgBuilder.getMessage("profileattr.email",locale);
 	String defaultConfirmPwd = msgBuilder.getMessage("confirmPwd",locale);         
 %> 
