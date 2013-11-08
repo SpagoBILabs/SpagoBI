@@ -204,19 +204,19 @@ commented by Davide Zerbetto on 12/10/2009: there are problems with MIF (Ext Man
 
 
 
-<script type="text/javascript" src='../js/lib/ext-4.1.1a/ext-all-debug.js'/></script>
-<script type="text/javascript" src='../js/lib/ext-4.1.1a/examples/ux/IFrame.js'/></script>
-<script type="text/javascript" src='../js/lib/ext-4.1.1a/ux/RowExpander.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/lib/ext-4.1.1a/ext-all-debug.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/lib/ext-4.1.1a/examples/ux/IFrame.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}./js/lib/ext-4.1.1a/ux/RowExpander.js'/></script>
     
-<script type="text/javascript" src='../js/src/ext/sbi/service/ServiceRegistry.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext/sbi/service/ServiceRegistry.js'/></script>
     
     
 <!-- Include Ext stylesheets here: -->
-<link id="extall"     rel="styleSheet" href ="../js/lib/ext-4.1.1a/resources/css/ext-all.css" type="text/css" />
-<link id="theme-gray" rel="styleSheet" href ="../js/lib/ext-4.1.1a/resources/css/ext-all-gray.css" type="text/css" />
+<link id="extall"     rel="styleSheet" href ="${pageContext.request.contextPath}/js/lib/ext-4.1.1a/resources/css/ext-all.css" type="text/css" />
+<link id="theme-gray" rel="styleSheet" href ="${pageContext.request.contextPath}/js/lib/ext-4.1.1a/resources/css/ext-all-gray.css" type="text/css" />
 
 
-<link id="spagobi-ext-4" rel="styleSheet" href ="../js/lib/ext-4.1.1a/overrides/resources/css/spagobi.css" type="text/css" />
+<link id="spagobi-ext-4" rel="styleSheet" href ="${pageContext.request.contextPath}/js/lib/ext-4.1.1a/overrides/resources/css/spagobi.css" type="text/css" />
 
 <!-- load of the service registry to define the variable Sbi.config.serviceRegistry  -->
 <script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext4/sbi/service/ServiceRegistry.js")%>'></script>

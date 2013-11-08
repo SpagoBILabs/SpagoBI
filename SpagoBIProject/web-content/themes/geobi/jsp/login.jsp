@@ -203,8 +203,8 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
                           </div>
                           <div class="submit">
                               <input type="submit" value="Login" />                              
-                              <!-- <p><%=msgBuilder.getMessage("noAccount")%> <a href="#" onclick="signup();"><%=msgBuilder.getMessage("signup")%></a></p> -->
-                              <p>You don't have an account? <a href="#" onclick="signup();">Register</a></p>
+                              <p><%=msgBuilder.getMessage("noAccount")%> <a href="#" onclick="signup();"><%=msgBuilder.getMessage("signup")%></a></p> 
+                             <!--  <p>You don't have an account? <a href="#" onclick="signup();">Register</a></p> -->
                           </div>
                       </fieldset>
                   </form>

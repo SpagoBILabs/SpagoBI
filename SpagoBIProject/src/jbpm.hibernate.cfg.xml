@@ -7,7 +7,7 @@
 <hibernate-configuration>
   <session-factory>
 	
-	<property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
+	<property name="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</property>
 	
     <!-- jdbc connection properties -->
     <!-- property name="hibernate.dialect">org.hibernate.dialect.HSQLDialect</property-->

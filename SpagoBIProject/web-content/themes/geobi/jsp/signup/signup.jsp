@@ -4,13 +4,15 @@
          pageEncoding="ISO-8859-1"
          session="true" 
          import="it.eng.spago.base.*,
-                 it.eng.spagobi.commons.constants.SpagoBIConstants"
+                 it.eng.spagobi.commons.constants.SpagoBIConstants,
+         		 it.eng.spagobi.commons.utilities.messages.IMessageBuilder"
 %>
 <%@page import="it.eng.spagobi.commons.utilities.ChannelUtilities"%>
-<%@page import="it.eng.spagobi.commons.utilities.messages.IMessageBuilder"%>
+<%@page import="it.eng.spagobi.commons.utilities.messages.MessageBuilder"%>
 <%@page import="it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory"%>
 <%@page import="it.eng.spagobi.commons.utilities.urls.UrlBuilderFactory"%>
 <%@page import="it.eng.spagobi.commons.utilities.urls.IUrlBuilder"%>
+<%@page import="java.util.Locale"%>
 <%@page import="it.eng.spago.base.SourceBean"%>
 <%@page import="it.eng.spago.navigation.LightNavigationManager"%>
 <%@page import="it.eng.spagobi.utilities.themes.ThemesManager"%>
@@ -18,23 +20,18 @@
 <%@page import="org.apache.commons.lang.StringEscapeUtils"%>
 <%@page import="java.util.Enumeration"%>
 
+<%@ include file="/WEB-INF/jsp/commons/portlet_base410.jsp"%>  
 
- <%
-    // RequestContainer requestContainer = RequestContainer.getRequestContainer();
-    String currTheme = (String)request.getAttribute("currTheme");
-   	if (currTheme == null)
-  		currTheme = ThemesManager.getDefaultTheme();
+<% 
+	String defaultOrganization = msgBuilder.getMessage("profileattr.company",locale); 
+	String defaultName = msgBuilder.getMessage("profileattr.firstname",locale);
+	String defaultSurname = msgBuilder.getMessage("profileattr.lastname",locale);
+	String defaultUsername = msgBuilder.getMessage("username",locale);
+	String defaultPassword = msgBuilder.getMessage("password",locale);
+	String defaultEmail = msgBuilder.getMessage("profileattr.email",locale);
+	String defaultConfirmPwd = msgBuilder.getMessage("confirmPwd",locale);         
 
- 	
- 	String sbiMode = "WEB";
- 	IUrlBuilder urlBuilder = null;
- 	urlBuilder = UrlBuilderFactory.getUrlBuilder(sbiMode);
-   	
-%>
-
-<script type="text/javascript" src='${pageContext.request.contextPath}/js/lib/ext-4.1.1a/ext-all-debug.js'/></script>
-<script type="text/javascript" src='${pageContext.request.contextPath}/js/lib/ext-4.1.1a/examples/ux/IFrame.js'/></script>
-<script type="text/javascript" src='${pageContext.request.contextPath}/js/lib/ext-4.1.1a/ux/RowExpander.js'/></script>
+%> 
 
 <script type="text/javascript">
 
@@ -78,7 +75,9 @@ function register() {
 		baseParams: {}
 	});
 
-    var form             = document.myForm;	var nome             = document.getElementById("nome").value;
+    var form             = document.myForm;	
+    var nome             = (document.getElementById("nome").value !== "<%=defaultName%>")?document.getElementById("nome").value:"";
+    alert(nome);
 	var cognome          = document.getElementById("cognome").value;
 	var username         = document.getElementById("username").value;
 	var password         = document.getElementById("password").value;
@@ -129,58 +128,29 @@ function changefield(el){
 	
 
 </script>
-<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext/sbi/service/ServiceRegistry.js'/></script>
-<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext/sbi/exception/ExceptionHandler.js'/></script>
 
-<link id="extall"     rel="styleSheet" href ="${pageContext.request.contextPath}/js/lib/ext-4.1.1a/resources/css/ext-all.css" type="text/css" />
-<link id="theme-gray" rel="styleSheet" href ="${pageContext.request.contextPath}/js/lib/ext-4.1.1a/resources/css/ext-all-gray.css" type="text/css" />
-<link id="spagobi-ext-4" rel="styleSheet" href ="${pageContext.request.contextPath}/js/lib/ext-4.1.1a/overrides/resources/css/spagobi.css" type="text/css" />
 <link rel='stylesheet' type='text/css' href='<%=urlBuilder.getResourceLinkByTheme(request, "css/home40/standard.css",currTheme)%>'/>
 
 <html>
 
   <body>
-         <% 
-     		//IUrlBuilder urlBuilder = null;
-         /*
-     		IMessageBuilder msgBuilder = MessageBuilderFactory.getMessageBuilder();
-    		urlBuilder = UrlBuilderFactory.getUrlBuilder(sbiMode);
-         	String defaultOrganization = msgBuilder.getMessage("profileattr.company"); 
-         	String defaultName = msgBuilder.getMessage("profileattr.firstname");
-         	String defaultSurname = msgBuilder.getMessage("profileattr.lastname");
-         	String defaultUsername = msgBuilder.getMessage("username");
-         	String defaultPassword = msgBuilder.getMessage("password");
-         	String defaultEmail = msgBuilder.getMessage("profileattr.email");
-         	String defaultConfirmPwd = msgBuilder.getMessage("confirmPwd");         
-         	*/
-        	String defaultOrganization = "Company"; 
-         	String defaultName = "Name";
-         	String defaultSurname = "Surname";
-         	String defaultUsername = "Username";
-         	String defaultPassword = "Password";
-         	String defaultEmail = "Email";
-         	String defaultConfirmPwd = "Confirm Password";         	
-         %>
-       
-		
- 		
  		<main class="loginPage main-maps-list main-list" id="main">
         	<div class="aux">
-            	<div class="reserved-area-container">
-            		<h1>Registration</h1>
+            	<div class="reserved-area-container">            		
+            		<h1><%=msgBuilder.getMessage("registration",locale)%></h1>
                     <form name="myForm" method="post" action="${pageContext.request.contextPath}/" class="reserved-area-form">
                         <fieldset>
                             <div class="field organization">
                                 <label for="organization">Company</label>
-                                <input type="text" name="azienda" id="azienda" value="Company" onfocus="if(value=='<%=defaultOrganization%>') value = ''" onblur="if (this.value=='') this.value = '<%=defaultOrganization%>'" />
+                                <input type="text" name="azienda" id="azienda" value="<%=defaultOrganization%>" onfocus="if(value=='<%=defaultOrganization%>') value = ''" onblur="if (this.value=='') this.value = '<%=defaultOrganization%>'" />
                             </div>
                             <div class="field name">
                                 <label for="name">Name</label>
-                                <input type="text" name="nome" id="nome" value="Name" onfocus="if(value=='<%=defaultName%>') value = ''" onblur="if (this.value=='') this.value = '<%=defaultName%>'" />
+                                <input type="text" name="nome" id="nome" value="<%=defaultName%>" onfocus="if(value=='<%=defaultName%>') value = ''" onblur="if (this.value=='') this.value = '<%=defaultName%>'" />
                             </div>
                             <div class="field surname">
                                 <label for="surname">Surname</label>
-                                <input type="text" name="cognome" id="cognome" value="Surname" onfocus="if(value=='<%=defaultSurname%>') value = ''" onblur="if (this.value=='') this.value = '<%=defaultSurname%>'" />
+                                <input type="text" name="cognome" id="cognome" value="<%=defaultSurname%>" onfocus="if(value=='<%=defaultSurname%>') value = ''" onblur="if (this.value=='') this.value = '<%=defaultSurname%>'" />
                             </div>
                             <div class="field username">
                                 <label for="username">Username</label>
@@ -188,7 +158,7 @@ function changefield(el){
                             </div>
                             <div class="field email">
                                 <label for="email">Email</label>
-                                <input type="text" name="email" id="email" value="Email" onfocus="if(value=='<%=defaultEmail%>') value = ''" onblur="if (this.value=='') this.value = '<%=defaultEmail%>'" />
+                                <input type="text" name="email" id="email" value="<%=defaultEmail%>" onfocus="if(value=='<%=defaultEmail%>') value = ''" onblur="if (this.value=='') this.value = '<%=defaultEmail%>'" />
                             </div>
                             <div class="field password" id="passwordbox">
                                 <label for="password">Password</label>
@@ -196,12 +166,12 @@ function changefield(el){
                             </div>
                             <div class="field confirm" id="confermaPasswordbox">
                                 <label for="confirm">Confirm Password</label>
-                                <input type="text" name="confermaPassword" id="confermaPassword" value="Confirm Password" onfocus="changefield('confermaPassword');"  onblur="if (this.value=='') this.value = '<%=defaultConfirmPwd%>'"/>
+                                <input type="text" name="confermaPassword" id="confermaPassword" value="<%=defaultConfirmPwd%>" onfocus="changefield('confermaPassword');"  onblur="if (this.value=='') this.value = '<%=defaultConfirmPwd%>'"/>
                             </div>
 
                             <div class="submit">
-                                <input type="text" value="Register" onclick="javascript:register();" />
-                                <p>Have you got an account? <a href="${pageContext.request.contextPath}/servlet/AdapterHTTP?PAGE=LoginPage&NEW_SESSION=TRUE">Login</a></p>
+                                <input type="text" value="<%=msgBuilder.getMessage("signup",locale)%>" onclick="javascript:register();" />
+                                <p><%=msgBuilder.getMessage("yesAccount",locale)%> <a href="${pageContext.request.contextPath}/servlet/AdapterHTTP?PAGE=LoginPage&NEW_SESSION=TRUE">Login</a></p>                                
                             </div>
                         </fieldset>
                     </form>

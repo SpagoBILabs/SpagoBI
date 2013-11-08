@@ -624,6 +624,8 @@ Sbi.locale.ln['sbi.worksheet.export.previewtab.title'] = 'Export warning';
 
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.expand'] = 'Espandi/Riduci';
 
+Sbi.locale.ln['sbi.register.title'] = 'Registrati';
+
 Sbi.locale.ln['sbi.home.Welcome'] = 'Benvenuto: ';
 Sbi.locale.ln['sbi.home.Exit'] = 'Esci';
 Sbi.locale.ln['sbi.home.Login'] = 'Entra';
