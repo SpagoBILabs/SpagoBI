@@ -2,6 +2,7 @@ package it.eng.spagobi.signup.validation;
 
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.rest.validation.IFieldsValidator;
+import it.eng.spagobi.utilities.json.JSONUtils;
 
 import java.net.URLDecoder;
 
@@ -86,8 +87,14 @@ public class SignupFieldsValidator implements IFieldsValidator {
             if( password == null ) 
               	  validationErrors.put( new JSONObject("{message: 'Field Password mandatory'}") );
             else{
-              	 if( !validatePassword(password, username )) 
-                     validationErrors.put( new JSONObject("{message: 'Field Password invalid syntax'}") );
+              	 if( !validatePassword(password, username )) {
+              		 String errorMsg = "Field Password invalid syntax. \n " +
+							  		 	" Correct syntax: \n "+
+										" 	- minimum 8 chars \n "+
+							  		 	"	- not start with number \n "+
+										"	- not contain the usename ";
+                     validationErrors.put( new JSONObject("{message: '"+  JSONUtils.escapeJsonString(errorMsg) +"'}") );
+              	 }
             }	  
             
             if( username == null ) 

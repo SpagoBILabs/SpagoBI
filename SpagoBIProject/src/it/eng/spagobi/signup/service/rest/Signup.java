@@ -1,16 +1,13 @@
 package it.eng.spagobi.signup.service.rest;
 
-import it.eng.spago.base.RequestContainer;
-import it.eng.spago.base.SessionContainer;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.SingletonConfig;
+import it.eng.spagobi.commons.bo.Role;
 import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.metadata.SbiCommonInfo;
 import it.eng.spagobi.commons.metadata.SbiExtRoles;
-import it.eng.spagobi.commons.utilities.ChannelUtilities;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.community.bo.CommunityManager;
@@ -307,7 +304,7 @@ public class Signup {
 			logger.error("Invalid captcha");
 		    JSONObject errorMsg = new JSONObject();
 			JSONArray errors = new JSONArray();
-			errors.put(new JSONObject("{message: 'Campo Captcha non verificato'}"));
+			errors.put(new JSONObject("{message: 'Field Captcha not valorized'}"));
 			errorMsg.put("errors", errors);
 			errorMsg.put("message", "validation-error");
 			return errorMsg.toString(); 	  
@@ -318,7 +315,7 @@ public class Signup {
 			logger.error("Username already in use");
 		    JSONObject errorMsg = new JSONObject();
 		    JSONArray errors = new JSONArray();
-		    errors.put(new JSONObject("{message: 'Username in uso'}"));
+		    errors.put(new JSONObject("{message: 'Username in use'}"));
 		    errorMsg.put("errors", errors);
 			errorMsg.put("message", "validation-error");
 			return errorMsg.toString(); 
@@ -333,7 +330,19 @@ public class Signup {
 		  
 		  Set<SbiExtRoles> roles = new HashSet<SbiExtRoles>();
 		  SbiExtRoles r = new SbiExtRoles();
-		  r.setExtRoleId(3);
+		  String defaultRole =  SingletonConfig.getInstance().getConfigValue("SPAGOBI.SECURITY.DEFAULT_ROLE_ON_SIGNUP");
+		  Role signupRole = DAOFactory.getRoleDAO().loadByName(defaultRole);
+		  if (signupRole == null){
+			logger.error("Invalid role "+ defaultRole + " for the new user. "+
+						 " Check the attibute SPAGOBI.SECURITY.DEFAULT_ROLE_ON_SIGNUP configuration and set a valid role name ! ");
+		    JSONObject errorMsg = new JSONObject();
+			JSONArray errors = new JSONArray();
+			errors.put(new JSONObject("{message: 'Invalid role "+ defaultRole + " for the new user. See log for more details.'}"));
+			errorMsg.put("errors", errors);
+			errorMsg.put("message", "validation-error");
+			return errorMsg.toString(); 	  
+		  }
+		  r.setExtRoleId(signupRole.getId());
 		  r.getCommonInfo().setOrganization(defaultTenant);
 		  roles.add(r);
 		  user.setSbiExtUserRoleses(roles);
