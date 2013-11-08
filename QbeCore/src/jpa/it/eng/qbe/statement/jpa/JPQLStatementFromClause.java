@@ -29,6 +29,7 @@ public class JPQLStatementFromClause extends AbstractStatementFromClause {
 	protected JPQLStatementFromClause(JPQLStatement statement) {
 		parentStatement = statement;
 	}
-	
-	
+
+
+
 }

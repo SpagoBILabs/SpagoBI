@@ -20,10 +20,8 @@ public class StatementTockenizer extends StringTokenizer{
 	private List<String> tockens;
 	private int tockenCount;
 	
-
 	private static final String DELIMITERS = "+-|*/()<>=!,";
 	private static final String[] ADDITIONALS_DELIMITERS_SUBSTRING_FUNCTIONS = {" like ", "case when", " when ", " then ", "else", " end ", "not in ", " in ", " between", "is not null ", "is null ", "is not empty " , "is empty ", "not member of", "member of", " and ", " or "};
-
 	
 
 	/**
@@ -72,11 +70,9 @@ public class StatementTockenizer extends StringTokenizer{
 		
 		nextToken = null;
 		try {
-
 			nextToken=tockens.get(tockenCount);
 			nextToken = nextToken.trim();
 			tockenCount++;
-
 
 		} catch(Throwable t) {
 			throw new RuntimeException("An unexpected error occured during tokenization of statement [" + satement + "] (current token: [" + currentToken + "]; next: token: [" + nextToken + "])", t);
@@ -84,14 +80,10 @@ public class StatementTockenizer extends StringTokenizer{
 		
 		return nextToken;
 	}
-
 	
-
-
 	public boolean hasMoreTokens(){
 		return tockenCount<tockens.size();
 	}
 	
-
 
 }

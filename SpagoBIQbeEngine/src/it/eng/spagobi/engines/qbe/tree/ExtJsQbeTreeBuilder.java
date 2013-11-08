@@ -13,10 +13,10 @@ import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.model.structure.IModelField;
 import it.eng.qbe.model.structure.ModelCalculatedField;
 import it.eng.qbe.model.structure.ModelCalculatedField.Slot;
-import it.eng.qbe.model.structure.ModelStructure.RootEntitiesGraph.Relationship;
 import it.eng.qbe.model.structure.filter.QbeTreeFilter;
 import it.eng.qbe.query.serializer.json.QueryJSONSerializer;
 import it.eng.qbe.serializer.SerializationManager;
+import it.eng.qbe.statement.graph.bean.Relationship;
 import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.engines.qbe.serializer.json.QbeSerializationConstants;
@@ -305,7 +305,7 @@ public class ExtJsQbeTreeBuilder  {
 		//DatamartProperties datamartProperties = dataSource.getDataMartProperties();
 		String iconCls = field.getPropertyAsString("type");		
 		String fieldLabel = geFieldLabel( field );
-		String longDescription = QueryJSONSerializer.getFieldLongDescription( field, getDatamartLabels() );
+		String longDescription = QueryJSONSerializer.getFieldLongDescription( field, getDatamartLabels(), null );
 		String fieldTooltip = geFieldTooltip( field );
 		String entityLabel = geEntityLabel( parentEntity );
 		

@@ -157,9 +157,7 @@ public abstract class AbstractStatementFilteringClause extends AbstractStatement
 	protected String buildFieldOperand(Operand operand, Query query, Map entityAliasesMaps) {
 		String operandElement;
 		IModelField datamartField;
-		IModelEntity rootEntity;
-		String queryName;
-		String rootEntityAlias;
+		String fieldName;
 		Map targetQueryEntityAliasesMap;
 		
 		logger.debug("IN");
@@ -171,37 +169,16 @@ public abstract class AbstractStatementFilteringClause extends AbstractStatement
 			
 			datamartField = parentStatement.getDataSource().getModelStructure().getField( operand.values[0] );
 			Assert.assertNotNull(datamartField, "DataMart does not cantain a field named [" + operand.values[0] + "]");
-			Couple queryNameAndRoot = datamartField.getQueryName();
-			
-			queryName = (String) queryNameAndRoot.getFirst();
-			logger.debug("select field query name [" + queryName + "]");
-			
-			if(queryNameAndRoot.getSecond()!=null){
-				rootEntity = (IModelEntity)queryNameAndRoot.getSecond(); 	
-			}else{
-				rootEntity = datamartField.getParent().getRoot(); 	
-			}
-			logger.debug("where field query name [" + queryName + "]");
-			
-			logger.debug("where field root entity unique name [" + rootEntity.getUniqueName() + "]");
-			
-			if(!targetQueryEntityAliasesMap.containsKey(rootEntity.getUniqueName())) {
-				logger.debug("Entity [" + rootEntity.getUniqueName() + "] require a new alias");
-				rootEntityAlias = getEntityAlias(rootEntity, targetQueryEntityAliasesMap, entityAliasesMaps);
-				logger.debug("A new alias has been generated [" + rootEntityAlias + "]");				
-				
-				
-				
-			}
-			rootEntityAlias = (String)targetQueryEntityAliasesMap.get( rootEntity.getUniqueName() );
-			logger.debug("where field root entity alias [" + rootEntityAlias + "]");
+
+			fieldName = parentStatement.getFieldAliasWithRolesFromAlias(datamartField, targetQueryEntityAliasesMap, entityAliasesMaps, operand.alias);
+
 			
 			if (operand instanceof HavingField.Operand) {
 				HavingField.Operand havingFieldOperand = (HavingField.Operand) operand;
 				IAggregationFunction function = havingFieldOperand.function;
-				operandElement = function.apply(parentStatement.getFieldAlias(rootEntityAlias, queryName));
+				operandElement = function.apply(fieldName);
 			} else {
-				operandElement = parentStatement.getFieldAlias(rootEntityAlias, queryName);
+				operandElement = fieldName;
 			}
 			logger.debug("where element operand value [" + operandElement + "]");
 		} finally {
@@ -211,7 +188,7 @@ public abstract class AbstractStatementFilteringClause extends AbstractStatement
 		return operandElement;
 	}
 	
-	protected String buildParentFieldOperand(Operand operand, Query query, Map entityAliasesMaps) {
+	String buildParentFieldOperand(Operand operand, Query query, Map entityAliasesMaps) {
 		String operandElement;
 		
 		String[] chunks;
@@ -269,7 +246,7 @@ public abstract class AbstractStatementFilteringClause extends AbstractStatement
 			}
 			logger.debug("where right-hand field root entity alias [" + rootEntityAlias + "]");
 			
-			operandElement = parentStatement.getFieldAlias(rootEntityAlias, queryName);
+			operandElement = rootEntityAlias + "." + queryName;
 			logger.debug("where element right-hand field value [" + operandElement + "]");
 		} finally {
 			logger.debug("OUT");

@@ -53,20 +53,39 @@ Sbi.exception.ExceptionHandler = function(){
 		
         handleFailure : function(response, options) {
         	
-        	var errMessage = null;
-        	if(response !== undefined) {        		
-        		if(response.responseText !== undefined) {
-        			var content = Ext.util.JSON.decode( response.responseText );
-        			if(content.errors !== undefined && content.errors.length > 0) {
-        				errMessage = '';
+        	var errorSeparator = "error.mesage.description.";
+        	
+        	var errMessage = ''
+        	if(response !== undefined) {
+        		if (response.responseText !== undefined) {
+        			try{
+        				var content = Ext.util.JSON.decode( response.responseText );
+        			}catch(e){
+        				var content =Ext.JSON.decode( response.responseText );
+        			}
+        			
+        			if (content.errors !== undefined  && content.errors.length > 0) {
         				if (content.errors[0].message === 'session-expired') {
+        					// session expired
         					errMessage = LN('sbi.qbe.sessionexpired.msg');
+        				} else if (content.errors[0].message === 'not-enabled-to-call-service') {
+        					Sbi.exception.ExceptionHandler.showErrorMessage(LN('not-enabled-to-call-service'), 'Service Error')
         				} else {
-	        				for(var i = 0; i < content.errors.length; i++) {
-	        					errMessage += content.errors[i].message + '<br>';
-	        				}
+        					for (var count = 0; count < content.errors.length; count++) {
+        						var anError = content.errors[count];
+        						if (anError.message !== undefined && anError.message !== '' && anError.message.indexOf(errorSeparator)>=0) {
+			        				errMessage += LN(anError.message);
+			        			} else if (anError.localizedMessage !== undefined && anError.localizedMessage !== '') {
+			        				errMessage += anError.localizedMessage;
+			        			} else if (anError.message !== undefined && anError.message !== '') {
+			        				errMessage += anError.message;
+			        			}
+			        			if (count < content.errors.length - 1) {
+			        				errMessage += '<br/>';
+			        			}
+        					}
         				}
-        			} 
+        			}
         		} 
         		if(errMessage === null)	errMessage = 'An unspecified error occurred on the server side';
         	} else {

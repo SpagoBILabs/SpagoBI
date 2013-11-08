@@ -6,8 +6,16 @@
 package it.eng.qbe.statement;
 
 import it.eng.qbe.datasource.IDataSource;
+import it.eng.qbe.model.structure.IModelEntity;
+import it.eng.qbe.model.structure.IModelField;
+import it.eng.qbe.query.IQueryField;
+import it.eng.qbe.query.ISelectField;
 import it.eng.qbe.query.Query;
+import it.eng.spagobi.utilities.objects.Couple;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -59,7 +67,16 @@ public interface IStatement {
 	public void setParameters(Map parameters);
 	
 	public String getNextAlias(Map entityAliasesMaps);
-	public String getFieldAlias(String rootEntityAlias, String queryName);
+	//public String getFieldAlias(String rootEntityAlias, String queryName);
+	
+	public String getFieldAliasNoRoles(IModelField datamartField, Map entityAliases, Map entityAliasesMaps);
+	public String getFieldAliasWithRoles(IModelField datamartField, Map entityAliases, Map entityAliasesMaps, String roleName);
+	public List<String> getFieldAliasWithRolesList(IModelField datamartField, Map entityAliases, Map entityAliasesMaps);
+	public String getFieldAliasWithRolesFromAlias(IModelField datamartField, Map entityAliases, Map entityAliasesMaps, String alias);
+	public String getFieldAliasWithRoles(IModelField datamartField, Map entityAliases, Map entityAliasesMaps, IQueryField queryField);
+	public String getEntityAliasWithRoles(IModelEntity rootEntity, Map entityAliases, Map entityAliasesMaps);
+	public String buildFromEntityAliasWithRoles(IModelEntity me, String rel, String entityAlias);
+	public String buildEntityAliasWithRoles(IModelEntity me, String role, String entityAlias);
 
 	
 }

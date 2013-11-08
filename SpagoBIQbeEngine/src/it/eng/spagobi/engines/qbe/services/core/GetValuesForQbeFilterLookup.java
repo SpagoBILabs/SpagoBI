@@ -254,10 +254,10 @@ public class GetValuesForQbeFilterLookup  extends AbstractQbeEngineAction{
 			String typeFilter = (String) filtersJSON.get(SpagoBIConstants.TYPE_FILTER);
 			String typeValueFilter = (String) filtersJSON.get(SpagoBIConstants.TYPE_VALUE_FILTER);
 			
-			WhereField.Operand leftOperand = new WhereField.Operand(new String[] {value}, "", AbstractStatement.OPERAND_TYPE_SIMPLE_FIELD, null, null);
+			WhereField.Operand leftOperand = new WhereField.Operand(new String[] {value}, "", AbstractStatement.OPERAND_TYPE_SIMPLE_FIELD, null, null,"");
 			valuefilter = typeValueFilter.equalsIgnoreCase("NUMBER") ? valuefilter : "" + valuefilter + "";
 			WhereField.Operand rightOperand = new WhereField.Operand(new String[] {valuefilter}, 
-					"", AbstractStatement.OPERAND_TYPE_STATIC, null, null);
+					"", AbstractStatement.OPERAND_TYPE_STATIC, null, null,"");
 			query.addWhereField("Filter1", "", false, leftOperand, typeFilter, rightOperand, "AND");
 			
 		}

@@ -85,7 +85,8 @@ public class QueryJSONSerializer implements IQuerySerializer {
 			result.put(QuerySerializationConstants.DESCRIPTION, query.getDescription());
 			result.put(QuerySerializationConstants.DISTINCT, query.isDistinctClauseEnabled());
 			result.put(QuerySerializationConstants.IS_NESTED_EXPRESSION, query.isNestedExpression());
-
+			result.put(QuerySerializationConstants.RELATIONS_ROLES, query.getRelationsRoles());
+			
 			result.put(QuerySerializationConstants.FIELDS, recordsJOSN);
 
 			result.put(QuerySerializationConstants.FILTERS, filtersJSON);
@@ -192,7 +193,7 @@ public class QueryJSONSerializer implements IQuerySerializer {
 						}
 						label = StringUtilities.isEmpty(label)? datamartField.getName(): label;
 						fieldJSON.put(QuerySerializationConstants.FIELD_NAME, label);
-						longDescription = getFieldLongDescription(datamartField, datamartLabels);
+						longDescription = getFieldLongDescription(datamartField, datamartLabels, null );
 						fieldJSON.put(QuerySerializationConstants.FIELD_LONG_DESCRIPTION, longDescription);
 
 						if( dataMartSelectField.isGroupByField() ) {
@@ -332,12 +333,15 @@ public class QueryJSONSerializer implements IQuerySerializer {
 
 	
 
-	public static String getFieldLongDescription(IModelField field, IModelProperties datamartLabels) {
+	public static String getFieldLongDescription(IModelField field, IModelProperties datamartLabels, String alias) {
 		String label = field.getName();
 		if (datamartLabels != null) {
 			label = datamartLabels.getProperty(field, "label");
 		}
 		String extendedLabel = StringUtilities.isEmpty(label)? field.getName(): label;
+		if(alias!=null){
+			extendedLabel=alias;
+		}
 		IModelEntity parent = field.getParent();
 		if (parent == null) return extendedLabel;
 		else return getEntityLongDescription(parent, datamartLabels) + " : " + extendedLabel;
@@ -438,7 +442,7 @@ public class QueryJSONSerializer implements IQuerySerializer {
 
 						filterJSON.put(QuerySerializationConstants.FILTER_LO_DESCRIPTION, labelE  + " : " + labelF );
 
-						String loLongDescription = getFieldLongDescription(datamartField, datamartLabels);
+						String loLongDescription = getFieldLongDescription(datamartField, datamartLabels, operand.alias);
 						filterJSON.put(QuerySerializationConstants.FILTER_LO_LONG_DESCRIPTION, loLongDescription);
 				} else if(operand.type.equalsIgnoreCase(AbstractStatement.OPERAND_TYPE_SUBQUERY)) {
 					String loLongDescription = "Subquery " + operand.description;
@@ -450,7 +454,7 @@ public class QueryJSONSerializer implements IQuerySerializer {
 					String parentQueryId = chunks[0];
 					String fieldName = chunks[1];
 					datamartField = dataSource.getModelStructure().getField( fieldName );
-					String datamartFieldLongDescription = getFieldLongDescription(datamartField, datamartLabels);
+					String datamartFieldLongDescription = getFieldLongDescription(datamartField, datamartLabels, operand.alias);
 					String loLongDescription = "Query " + parentQueryId + ", " + datamartFieldLongDescription;
 					filterJSON.put(QuerySerializationConstants.FILTER_LO_LONG_DESCRIPTION, loLongDescription);
 
@@ -464,7 +468,7 @@ public class QueryJSONSerializer implements IQuerySerializer {
 				filterJSON.put(QuerySerializationConstants.FILTER_LO_TYPE, operand.type);
 				filterJSON.put(QuerySerializationConstants.FILTER_LO_DEFAULT_VALUE, operand.defaulttValues[0]);
 				filterJSON.put(QuerySerializationConstants.FILTER_LO_LAST_VALUE, operand.lastValues[0]);
-
+				filterJSON.put(QuerySerializationConstants.FILTER_LO_ALIAS, operand.alias);
 				filterJSON.put(QuerySerializationConstants.FILTER_OPERATOR, filter.getOperator());
 				
 				// right perand
@@ -490,7 +494,7 @@ public class QueryJSONSerializer implements IQuerySerializer {
 
 					filterJSON.put(QuerySerializationConstants.FILTER_RO_DESCRIPTION, labelE  + " : " + labelF );
 
-					String roLongDescription = getFieldLongDescription(datamartField, datamartLabels);
+					String roLongDescription = getFieldLongDescription(datamartField, datamartLabels, operand.alias);
 					filterJSON.put(QuerySerializationConstants.FILTER_RO_LONG_DESCRIPTION, roLongDescription);
 				} else if(operand.type.equalsIgnoreCase("Subquery")) {
 					String roLongDescription = "Subquery " + operand.description;
@@ -502,7 +506,7 @@ public class QueryJSONSerializer implements IQuerySerializer {
 					String parentQueryId = chunks[0];
 					String fieldName = chunks[1];
 					datamartField = dataSource.getModelStructure().getField( fieldName );
-					String datamartFieldLongDescription = getFieldLongDescription(datamartField, datamartLabels);
+					String datamartFieldLongDescription = getFieldLongDescription(datamartField, datamartLabels, operand.alias);
 					String loLongDescription = "Query " + parentQueryId + ", " + datamartFieldLongDescription;
 					filterJSON.put(QuerySerializationConstants.FILTER_RO_LONG_DESCRIPTION, loLongDescription);
 
@@ -513,7 +517,7 @@ public class QueryJSONSerializer implements IQuerySerializer {
 				filterJSON.put(QuerySerializationConstants.FILTER_RO_TYPE, operand.type);
 				filterJSON.put(QuerySerializationConstants.FILTER_RO_DEFAULT_VALUE, JSONUtils.asJSONArray(operand.defaulttValues));
 				filterJSON.put(QuerySerializationConstants.FILTER_RO_LAST_VALUE, JSONUtils.asJSONArray(operand.lastValues));
-
+				filterJSON.put(QuerySerializationConstants.FILTER_RO_ALIAS, operand.alias);
 				filterJSON.put(QuerySerializationConstants.FILTER_BOOLEAN_CONNETOR, filter.getBooleanConnector());
 
 			} catch(JSONException e) {
@@ -587,7 +591,7 @@ public class QueryJSONSerializer implements IQuerySerializer {
 
 						havingJSON.put(QuerySerializationConstants.FILTER_LO_DESCRIPTION, labelE  + " : " + labelF );
 
-						String loLongDescription = getFieldLongDescription(datamartField, datamartLabels);
+						String loLongDescription = getFieldLongDescription(datamartField, datamartLabels,operand.alias);
 						havingJSON.put(QuerySerializationConstants.FILTER_LO_LONG_DESCRIPTION, loLongDescription);
 
 				} else if(operand.type.equalsIgnoreCase(AbstractStatement.OPERAND_TYPE_SUBQUERY)) {
@@ -600,7 +604,7 @@ public class QueryJSONSerializer implements IQuerySerializer {
 					String parentQueryId = chunks[0];
 					String fieldName = chunks[1];
 					datamartField = dataSource.getModelStructure().getField( fieldName );
-					String datamartFieldLongDescription = getFieldLongDescription(datamartField, datamartLabels);
+					String datamartFieldLongDescription = getFieldLongDescription(datamartField, datamartLabels,operand.alias);
 					String loLongDescription = "Query " + parentQueryId + ", " + datamartFieldLongDescription;
 					havingJSON.put(QuerySerializationConstants.FILTER_LO_LONG_DESCRIPTION, loLongDescription);
 
@@ -640,7 +644,7 @@ public class QueryJSONSerializer implements IQuerySerializer {
 
 					havingJSON.put(QuerySerializationConstants.FILTER_RO_DESCRIPTION, labelE  + " : " + labelF );
 
-					String roLongDescription = getFieldLongDescription(datamartField, datamartLabels);
+					String roLongDescription = getFieldLongDescription(datamartField, datamartLabels, operand.alias);
 					havingJSON.put(QuerySerializationConstants.FILTER_RO_LONG_DESCRIPTION, roLongDescription);
 				} else if(operand.type.equalsIgnoreCase(AbstractStatement.OPERAND_TYPE_SUBQUERY)) {
 					String roLongDescription = "Subquery " + operand.description;
@@ -652,7 +656,7 @@ public class QueryJSONSerializer implements IQuerySerializer {
 					String parentQueryId = chunks[0];
 					String fieldName = chunks[1];
 					datamartField = dataSource.getModelStructure().getField( fieldName );
-					String datamartFieldLongDescription = getFieldLongDescription(datamartField, datamartLabels);
+					String datamartFieldLongDescription = getFieldLongDescription(datamartField, datamartLabels, operand.alias);
 					String loLongDescription = "Query " + parentQueryId + ", " + datamartFieldLongDescription;
 					havingJSON.put(QuerySerializationConstants.FILTER_RO_LONG_DESCRIPTION, loLongDescription);
 

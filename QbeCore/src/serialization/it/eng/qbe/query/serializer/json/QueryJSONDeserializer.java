@@ -69,6 +69,8 @@ public class QueryJSONDeserializer implements IQueryDeserializer {
 				query.setName(queryJSON.optString(QuerySerializationConstants.NAME));
 				query.setDescription(queryJSON.optString(QuerySerializationConstants.DESCRIPTION));
 				query.setDistinctClauseEnabled(queryJSON.optBoolean( QuerySerializationConstants.DISTINCT ));
+				query.setRelationsRoles(queryJSON.optString( QuerySerializationConstants.RELATIONS_ROLES ));
+				
 				// TODO: move this in AnalysisStateLoader class
 				try {
 					query.setNestedExpression(queryJSON.getBoolean( QuerySerializationConstants.IS_NESTED_EXPRESSION ));
@@ -213,6 +215,7 @@ public class QueryJSONDeserializer implements IQueryDeserializer {
 		String operandType;
 		String[] operandLasDefaulttValues;
 		String[] operandLastValues;
+		String operandAlias;
 		JSONArray operandValuesJSONArray;
 		JSONArray operandDefaultValuesJSONArray;
 		JSONArray operandLastValuesJSONArray;
@@ -238,7 +241,8 @@ public class QueryJSONDeserializer implements IQueryDeserializer {
 					operandType = filterJSON.getString(QuerySerializationConstants.FILTER_LO_TYPE);
 					operandLasDefaulttValues = new String[] {filterJSON.getString(QuerySerializationConstants.FILTER_LO_DEFAULT_VALUE)};
 					operandLastValues = new String[] {filterJSON.getString(QuerySerializationConstants.FILTER_LO_LAST_VALUE)};
-					leftOperand = new WhereField.Operand(operandValues, operandDescription, operandType, operandLasDefaulttValues, operandLastValues);
+					operandAlias = filterJSON.getString(QuerySerializationConstants.FILTER_LO_ALIAS);
+					leftOperand = new WhereField.Operand(operandValues, operandDescription, operandType, operandLasDefaulttValues, operandLastValues,operandAlias);
 					
 					operator = filterJSON.getString(QuerySerializationConstants.FILTER_OPERATOR);
 					
@@ -250,7 +254,8 @@ public class QueryJSONDeserializer implements IQueryDeserializer {
 					operandLasDefaulttValues = JSONUtils.asStringArray(operandDefaultValuesJSONArray);
 					operandLastValuesJSONArray = filterJSON.optJSONArray(QuerySerializationConstants.FILTER_RO_LAST_VALUE);
 					operandLastValues = JSONUtils.asStringArray(operandLastValuesJSONArray);
-					rightOperand = new WhereField.Operand(operandValues, operandDescription, operandType, operandLasDefaulttValues, operandLastValues);
+					operandAlias = filterJSON.getString(QuerySerializationConstants.FILTER_RO_ALIAS);
+					rightOperand = new WhereField.Operand(operandValues, operandDescription, operandType, operandLasDefaulttValues, operandLastValues,operandAlias);
 					
 					booleanConnector = filterJSON.getString(QuerySerializationConstants.FILTER_BOOLEAN_CONNETOR);
 					

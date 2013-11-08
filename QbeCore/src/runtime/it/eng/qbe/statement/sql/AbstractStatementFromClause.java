@@ -46,17 +46,14 @@ public abstract class AbstractStatementFromClause extends AbstractStatementClaus
 			List<IModelEntity> normalEntities = new ArrayList<IModelEntity>();
 			Map<String, String> clauses = new HashMap<String, String>();
 
-			Iterator<String> it = entityAliases.keySet().iterator();
+			Iterator it = entityAliases.keySet().iterator();
 			while (it.hasNext()) {
 				String entityUniqueName = (String) it.next();
 				logger.debug("entity [" + entityUniqueName + "]");
 
-				String entityAlias = (String) entityAliases
-						.get(entityUniqueName);
-				logger.debug("entity alias [" + entityAlias + "]");
+				
 
-				IModelEntity modelEntity = parentStatement.getDataSource()
-						.getModelStructure().getEntity(entityUniqueName);
+				IModelEntity modelEntity = parentStatement.getDataSource().getModelStructure().getEntity(entityUniqueName);
 				
 				String type = (String) modelEntity.getProperty("type");
 				if ("cube".equalsIgnoreCase( type )) {
@@ -65,44 +62,67 @@ public abstract class AbstractStatementFromClause extends AbstractStatementClaus
 					normalEntities.add(modelEntity);
 				}
 
-				String queryName = (String) modelEntity
-						.getProperty("queryName");
-				if (queryName == null || queryName.trim().equals("")) {
-					queryName = modelEntity.getName();
-				}
-				String fromClauseElement =queryName + " "
-						+ entityAlias;
-				logger.debug("from clause element [" + fromClauseElement + "]");
-
-				clauses.put(entityUniqueName, " " + fromClauseElement);
+				
 
 			}
 
-			Iterator<IModelEntity> cubesIt = cubes.iterator();
-			while (cubesIt.hasNext()) {
-				IModelEntity cube = cubesIt.next();
-				buffer.append(clauses.get(cube.getUniqueName()));
-				if (cubesIt.hasNext()) {
-					buffer.append(",");
-				}
-			}
+			addEntityAliases(cubes, buffer, entityAliases);
+
 
 			if (normalEntities.size() > 0 && cubes.size() > 0)
 				buffer.append(",");
 
-			Iterator<IModelEntity> normalEntitiesIt = normalEntities.iterator();
-			while (normalEntitiesIt.hasNext()) {
-				IModelEntity normalEntity = normalEntitiesIt.next();
-				buffer.append(clauses.get(normalEntity.getUniqueName()));
-				if (normalEntitiesIt.hasNext()) {
-					buffer.append(",");
-				}
-			}
+			addEntityAliases(normalEntities, buffer, entityAliases);
+
+
+
 		} finally {
 			logger.debug("OUT");
 		}
-
+		
 		return buffer.toString().trim();
 	}
+	
+	private void addEntityAliases(List<IModelEntity> entities, StringBuffer buffer, Map entityAliases){
+		if(entities!=null){
+			for(int i=0; i<entities.size(); i++){
+				IModelEntity me = entities.get(i);
+				
+				Map<String, List<String>> roleAliasMap = parentStatement.getQuery().getMapEntityRoleField( parentStatement.getDataSource()).get(me);
+				java.util.Set<String> roleAlias = null;
+				if(roleAliasMap!=null){
+					roleAlias = roleAliasMap.keySet();
+				}
+				
+				
+				String entityAlias = (String) entityAliases.get(me.getUniqueName());
+				
+				if(roleAlias!=null && roleAlias.size()>1){
+
+					Iterator<String> iter = roleAlias.iterator();
+					while(iter.hasNext()){
+						
+						String firstRole = iter.next();
+						String fromClauseElement = parentStatement.buildFromEntityAliasWithRoles(me, firstRole, entityAlias);
+						buffer.append(fromClauseElement);
+						if(iter.hasNext()){
+							buffer.append(",");
+						}
+					}
+
+					
+				}else{
+					String fromClauseElement = me.getName() + " "+ entityAlias;
+					buffer.append(fromClauseElement);
+				}
+				if (i<entities.size()-1) {
+					buffer.append(",");
+				}
+			}
+		}
+
+	} 
+	
+
 
 }

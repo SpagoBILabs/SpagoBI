@@ -65,6 +65,14 @@ Sbi.locale.ln['sbi.qbe.qbecardspanel.designer'] = 'Designer';
 
 
 //===================================================================
+//Error messages
+//===================================================================
+Sbi.locale.ln['error.mesage.description.relationship.not.enough'] = 'The specified relationships are not enough to link all entities';
+
+
+
+
+//===================================================================
 //QUERY EDITOR PANEL
 //===================================================================
 Sbi.locale.ln['sbi.qbe.queryeditor.title'] = 'Query';
@@ -86,6 +94,9 @@ Sbi.locale.ln['sbi.qbe.queryeditor.centerregion.tools.view'] = 'Save query as vi
 //Sbi.locale.ln['sbi.qbe.queryeditor.centerregion.tools.execute'] = 'Execute query';
 Sbi.locale.ln['sbi.qbe.queryeditor.centerregion.tools.validate'] = 'Validate query';
 Sbi.locale.ln['sbi.qbe.queryeditor.centerregion.tools.help'] = 'Help me please';
+Sbi.locale.ln['sbi.qbe.queryeditor.centerregion.buttons.relationshipswizard'] = 'Relationships wizard';
+Sbi.locale.ln['sbi.qbe.queryeditor.noambiguousfields.title'] = 'No ambiguous fieds';
+Sbi.locale.ln['sbi.qbe.queryeditor.noambiguousfields.msg'] = 'There are no ambiguous fieds in the current query';
 
 Sbi.locale.ln['sbi.qbe.queryeditor.eastregion.title'] = 'Query Catalogue';
 Sbi.locale.ln['sbi.qbe.queryeditor.eastregion.tools.delete'] = 'Delete query';
@@ -472,6 +483,26 @@ Sbi.locale.ln['sbi.qbe.bands.wizard.invalid.operation.edit.msg'] = 'Node of type
 Sbi.locale.ln['sbi.qbe.bands.wizard.invalid.node'] = 'The node isn\'t a band';
 Sbi.locale.ln['sbi.qbe.bands.range.title'] = 'Limit definition';
 Sbi.locale.ln['sbi.qbe.bands.range.invalid'] = 'Range not correctly set';
+
+
+
+//===================================================================
+//RELATIONSHIPS WIZARD
+//===================================================================
+Sbi.locale.ln['sbi.qbe.relationshipswizard.title'] = 'Relationships wizard';
+Sbi.locale.ln['sbi.qbe.relationshipswizardwindow.title'] = 'Relationships wizard';
+Sbi.locale.ln['sbi.qbe.relationshipswizardwindow.buttons.apply'] = 'Apply';
+Sbi.locale.ln['sbi.qbe.relationshipswizardwindow.buttons.cancel'] = 'Cancel';
+Sbi.locale.ln['sbi.qbe.relationshipswizard.columns.queryName'] = 'Query Field';
+Sbi.locale.ln['sbi.qbe.relationshipswizard.columns.fieldName'] = 'Model Field';
+Sbi.locale.ln['sbi.qbe.relationshipswizard.columns.entity'] = 'Entity';
+Sbi.locale.ln['sbi.qbe.relationshipswizard.columns.path'] = 'Join path';
+Sbi.locale.ln['sbi.qbe.relationshipswizard.buttons.applytoentity'] = 'Apply selection to all fields of this entity';
+Sbi.locale.ln['sbi.qbe.relationshipswizard.buttons.filter.otherentities'] = 'Removes paths with not involved entities';
+Sbi.locale.ln['sbi.qbe.relationshipswizard.roles.validation.no.all.fields'] = 'You should map all fields with one of the aliases';
+Sbi.locale.ln['sbi.qbe.relationshipswizard.roles.validation.alias.no.fieds'] = 'This alias does not contain any field';
+Sbi.locale.ln['sbi.qbe.relationshipswizard.roles.validation.error'] = 'Validation Error';
+Sbi.locale.ln['sbi.qbe.relationshipswizard.roles.validation.no.fields.alias'] = 'Attention if you are interested to use different roles for the same entity and if you are using the same field more than once in the select statement you should define different alias for every occurrence of the field';
 
 //===================================================================
 //SAVE DATASET WIZARD

@@ -10,7 +10,7 @@ package it.eng.qbe.query;
  * @author Andrea Gioia (andrea.gioia@eng.it)
  *
  */
-public class WhereField {
+public class WhereField implements IQueryField{
 	
 	private String name;
 	private String description;
@@ -37,6 +37,9 @@ public class WhereField {
 		setBooleanConnector(booleanConnector);
 	}
 	
+	public String getAlias() {
+		return name;
+	}
 	
 	public String getName() {
 		return name;
@@ -125,8 +128,12 @@ public class WhereField {
 	public static class Operand extends it.eng.qbe.query.Operand {
 
 		public Operand(String[] values, String description, String type,
+				String[] defaulttValues, String[] lastValues, String alias) {
+			super(values, description, type, defaulttValues, lastValues, alias);
+		}
+		public Operand(String[] values, String description, String type,
 				String[] defaulttValues, String[] lastValues) {
-			super(values, description, type, defaulttValues, lastValues);
+			super(values, description, type, defaulttValues, lastValues, "");
 		}
 	}
 	

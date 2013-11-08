@@ -9,23 +9,31 @@ import it.eng.qbe.datasource.IDataSource;
 import it.eng.qbe.datasource.jpa.IJpaDataSource;
 import it.eng.qbe.datasource.jpa.JPADataSource;
 import it.eng.qbe.model.structure.IModelEntity;
+import it.eng.qbe.model.structure.IModelField;
+import it.eng.qbe.query.IQueryField;
+import it.eng.qbe.query.ISelectField;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.statement.AbstractStatement;
+import it.eng.qbe.statement.graph.bean.Relationship;
 import it.eng.spagobi.utilities.StringUtils;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.objects.Couple;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.EntityManager;
 
 import org.apache.log4j.Logger;
+import org.hibernate.annotations.Parent;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -197,6 +205,6 @@ public class JPQLStatement extends AbstractStatement {
 		return clause.getValueBounded(operandValueToBound, operandType);
 	}
 	
-
+	
 	
 }

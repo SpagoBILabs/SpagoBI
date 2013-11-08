@@ -57,6 +57,12 @@ Sbi.locale.ln['sbi.qbe.qbepanel.worksheetdesignerpanel.tools.preview'] = 'Visual
 Sbi.locale.ln['sbi.qbe.qbepanel.emptyquerytitle'] = 'La query è vuota';
 Sbi.locale.ln['sbi.qbe.qbepanel.emptyquerymessage'] = 'La query è vuota e non hai i privilegi per poter creare nuove query. Seleziona una query salvata dalla lista delle viste customizzate';
 
+//===================================================================
+//Error messages
+//===================================================================
+Sbi.locale.ln['error.mesage.description.relationship.not.enough'] = 'le relazioni specificate non sono sufficienti a collegare tutte le entit\u00e0';
+
+
 
 //===================================================================
 //Sbi.qbe.QbeCardsPanel
@@ -88,6 +94,9 @@ Sbi.locale.ln['sbi.qbe.queryeditor.centerregion.tools.view'] = 'Salva come vista
 //Sbi.locale.ln['sbi.qbe.queryeditor.centerregion.tools.execute'] = 'Esegui la query';
 Sbi.locale.ln['sbi.qbe.queryeditor.centerregion.tools.validate'] = 'Valida la  query';
 Sbi.locale.ln['sbi.qbe.queryeditor.centerregion.tools.help'] = 'Help me please';
+Sbi.locale.ln['sbi.qbe.queryeditor.centerregion.buttons.relationshipswizard'] = 'Dettaglio relazioni';
+Sbi.locale.ln['sbi.qbe.queryeditor.noambiguousfields.title'] = 'Non ci sono ambiguit\u00e0';
+Sbi.locale.ln['sbi.qbe.queryeditor.noambiguousfields.msg'] = 'Tra le entit\u00e0 coinvolte nella query non ci sono ambiguit\u00e0';
 
 Sbi.locale.ln['sbi.qbe.queryeditor.eastregion.title'] = 'Catalogo delle query';
 Sbi.locale.ln['sbi.qbe.queryeditor.eastregion.tools.delete'] = 'Cancella';
@@ -471,6 +480,26 @@ Sbi.locale.ln['sbi.qbe.bands.wizard.invalid.operation.edit.msg'] = 'Il nodo di t
 Sbi.locale.ln['sbi.qbe.bands.wizard.invalid.node'] = 'Il nodo non e\' una fascia';
 Sbi.locale.ln['sbi.qbe.bands.range.title'] = 'Definizione limiti';
 Sbi.locale.ln['sbi.qbe.bands.range.invalid'] = 'Range invalido!';
+
+
+
+//===================================================================
+//RELATIONSHIPS WIZARD
+//===================================================================
+Sbi.locale.ln['sbi.qbe.relationshipswizard.title'] = 'Dettaglio relazioni';
+Sbi.locale.ln['sbi.qbe.relationshipswizardwindow.title'] = 'Dettaglio relazioni';
+Sbi.locale.ln['sbi.qbe.relationshipswizardwindow.buttons.apply'] = 'Applica';
+Sbi.locale.ln['sbi.qbe.relationshipswizardwindow.buttons.cancel'] = 'Annulla';
+Sbi.locale.ln['sbi.qbe.relationshipswizard.columns.queryName'] = 'Campo della query';
+Sbi.locale.ln['sbi.qbe.relationshipswizard.columns.fieldName'] = 'Campo del modello';
+Sbi.locale.ln['sbi.qbe.relationshipswizard.columns.entity'] = 'Entit\u00e0';
+Sbi.locale.ln['sbi.qbe.relationshipswizard.columns.path'] = 'Percorso di join';
+Sbi.locale.ln['sbi.qbe.relationshipswizard.buttons.applytoentity'] = 'Applica selezione a tutti i campi di questa entit\u00e0';
+Sbi.locale.ln['sbi.qbe.relationshipswizard.buttons.filter.otherentities'] = 'Nascondi relazioni con entit\u00e0 non presenti nella query';
+Sbi.locale.ln['sbi.qbe.relationshipswizard.roles.validation.no.all.fields'] = '\u00C8 necessario mappare tutti i campi con un\'entit\u00e0';
+Sbi.locale.ln['sbi.qbe.relationshipswizard.roles.validation.alias.no.fieds'] = 'L\'alias non contiene alcun campo';
+Sbi.locale.ln['sbi.qbe.relationshipswizard.roles.validation.error'] = 'Errore di validazione';
+Sbi.locale.ln['sbi.qbe.relationshipswizard.roles.validation.no.fields.alias'] = 'Attenzione, se si ha intenzione di usare delle entit\u00e0 con ruoli differenti e lo stesso campo \u00E8 presente pi\00FA volte tra i select fields, \u00E8 necessario definire alias differti per quel campo';
 
 //===================================================================
 //SAVE DATASET WIZARD

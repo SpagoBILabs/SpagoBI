@@ -79,7 +79,7 @@ public abstract class AbstractStatementClause implements IStatementClause {
 		String newExpression;
 		IModelEntity rootEntity;
 		IModelField modelField;
-		String queryName;
+		String fieldName;
 		String rootEntityAlias;
 		Map entityAliases;
 		
@@ -106,7 +106,9 @@ public abstract class AbstractStatementClause implements IStatementClause {
 				decodedToken = decodedToken.replaceAll("\\[", "(");
 				decodedToken = decodedToken.replaceAll("\\]", ")");
 				modelField = parentStatement.getDataSource().getModelStructure().getField(decodedToken);
-
+			
+				
+				
 				if(modelField != null) {
 					if(cf.getType().equals("undefined")){
 						if(modelField.getType().toLowerCase().contains("timestamp") || modelField.getType().toLowerCase().contains("date")){
@@ -114,23 +116,13 @@ public abstract class AbstractStatementClause implements IStatementClause {
 						}
 					}
 					logger.debug("Expression token [" + token + "] references the model field whose unique name is [" + modelField.getUniqueName()+ "]");
+
+					fieldName = parentStatement.getFieldAliasNoRoles(modelField, entityAliases, entityAliasesMaps);
 					
-					Couple queryNameAndRoot = modelField.getQueryName();
-					queryName = (String) queryNameAndRoot.getFirst();
-					logger.debug("select field query name [" + queryName + "]");
+					logger.debug("Expression token [" + token + "] query name is equal to [" + fieldName + "]");
 					
-					if(queryNameAndRoot.getSecond()!=null){
-						rootEntity = (IModelEntity)queryNameAndRoot.getSecond(); 	
-					}else{
-						rootEntity = modelField.getParent().getRoot(); 	
-					}
-					
-					rootEntityAlias = getEntityAlias(rootEntity, entityAliases, entityAliasesMaps);
-					
-					queryName = parentStatement.getFieldAlias(rootEntityAlias, queryName);
-					logger.debug("Expression token [" + token + "] query name is equal to [" + queryName + "]");
-	
-					fieldQueryNames.add(queryName);
+						
+					fieldQueryNames.add(fieldName);
 					fieldExpressionNames.add(token);
 				} else {
 					logger.debug("Expression token [" + token + "] does not references any model field");
@@ -162,10 +154,11 @@ public abstract class AbstractStatementClause implements IStatementClause {
 		} finally {
 			logger.debug("OUT");
 		}
+		
 
+		
 		return newExpression;
 	}
-	
 
 	
 	

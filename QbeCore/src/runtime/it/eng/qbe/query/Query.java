@@ -5,7 +5,15 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.qbe.query;
 
+import it.eng.qbe.datasource.IDataSource;
+import it.eng.qbe.model.structure.IModelEntity;
+import it.eng.qbe.model.structure.IModelField;
+import it.eng.qbe.statement.AbstractStatement;
+import it.eng.qbe.statement.StatementCompositionException;
+import it.eng.qbe.statement.StatementTockenizer;
+import it.eng.qbe.statement.graph.bean.QueryGraph;
 import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,6 +23,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
  *
@@ -23,22 +36,27 @@ public class Query {
 	String id;
 	String name;
 	String description;
-	
+
 	boolean distinctClauseEnabled;
-	
+
 	List<ISelectField> selectFields;	
 	List<WhereField> whereClause;
 	List<HavingField> havingClause;
-	
+
 	ExpressionNode whereClauseStructure;
 	boolean nestedExpression;
 
 	Map whereFieldMap;
 	Map havingFieldMap;
-	
+
 	Query parentQuery;
 	Map subqueries;
+
+	QueryGraph graph;
+	String relationsRoles;
 	
+	Map<IModelEntity,Map<String, List<String>>> mapEntityRoleField;
+
 	public Query() {
 		selectFields = new ArrayList();		
 		whereClause = new ArrayList();
@@ -47,7 +65,7 @@ public class Query {
 		havingFieldMap = new HashMap();
 		subqueries  = new HashMap();
 	}
-	
+
 
 	public String getId() {
 		return id;
@@ -56,7 +74,7 @@ public class Query {
 	public void setId(String id) {
 		this.id = id;
 	}
-	
+
 	public String getName() {
 		return name;
 	}
@@ -73,67 +91,169 @@ public class Query {
 		this.description = description;
 	}
 
+	public String getRelationsRoles() {
+		return relationsRoles;
+	}
+
+
+	public void setRelationsRoles(String relationsRoles) {
+		this.relationsRoles = relationsRoles;
+	}
+
+	public Map<IModelEntity, Map<String, List<String>>> getMapEntityRoleField(IDataSource datasource) {
+		if(mapEntityRoleField==null){
+			mapEntityRoleField = new HashMap<IModelEntity, Map<String,List<String>>>();
+			try {
+				initFieldsRolesMapInEntity(datasource);
+			} catch (Exception e) {
+				throw new SpagoBIEngineRuntimeException("Error parsing the roles of the query");
+			}
+			
+		}
+		return mapEntityRoleField;
+	}
 	
+	
+	public static Set<IModelEntity> getQueryEntities(Set<IModelField> mf){
+		Set<IModelEntity> me = new HashSet<IModelEntity>();
+		Iterator<IModelField> mfi = mf.iterator();
+		while (mfi.hasNext()) {
+			IModelField iModelField = (IModelField) mfi.next();
+			me.add(iModelField.getParent());
+			
+		}
+		return me;
+	}
+	
+	public void initFieldsRolesMapInEntity( IDataSource datasource) throws JSONException{
+		Map<IModelField, Set<IQueryField>> modelFieldsMap = getQueryFields(datasource);
+		Set<IModelField> modelFields = modelFieldsMap.keySet();
+		Set<IModelEntity> modelEntities = getQueryEntities(modelFields);
+		initFieldsRolesMapInEntity(modelEntities, datasource);
+	}
+	
+	/**
+	 * For each entity creates a property taht contains the map role-->fields associated to that role 
+	 * @param serializedEntityRoles
+	 * @param modelEntities
+	 * @throws JSONException
+	 */
+	public void initFieldsRolesMapInEntity( Set<IModelEntity> modelEntities, IDataSource datasource) throws JSONException{
+		JSONObject serializedEntityRoles=null;
+		if(relationsRoles!=null && !relationsRoles.equals("[]")){
+			serializedEntityRoles = new JSONObject(relationsRoles);
+		}
+		if(serializedEntityRoles!=null && modelEntities!=null && serializedEntityRoles.getJSONArray("entities")!=null){
+			JSONArray serializedEntityRolesArray = serializedEntityRoles.getJSONArray("entities");
+			for(int k=0; k<serializedEntityRolesArray.length(); k++){
+				JSONArray serializedFieldsRoles = serializedEntityRolesArray.getJSONArray(k);
+				for(int i=0; i<serializedFieldsRoles.length(); i++){
+					JSONObject serializedRole = serializedFieldsRoles.getJSONObject(i);
+					
+					//JSONObject entity = serializedRole.getJSONObject("entity");
+					String role = serializedRole.getString("role");
+					JSONArray fields =  serializedRole.getJSONArray("fields");
+					
+					if(fields.length()>0){
+						IModelField datamartField = datasource.getModelStructure().getField(fields.getJSONObject(0).getString("id"));
+						IModelEntity me = datamartField.getParent();
+
+						Map<String, List<String>> mapRoleField = getMapEntityRoleField(datasource).get(me);
+						if(mapRoleField==null){
+							mapRoleField = new HashMap<String, List<String>>();
+						}
+
+						List<String> fieldsForRole = new ArrayList<String>();
+						
+						for(int j=0; j<fields.length(); j++){
+							JSONObject field = fields.getJSONObject(j);
+							String fieldId = field.getString("queryFieldAlias");
+							fieldsForRole.add(fieldId);
+						}
+						
+						mapRoleField.put(role, fieldsForRole);
+						getMapEntityRoleField(datasource).put(me,mapRoleField);
+					}
+				}
+			}
+		}
+	}
+	
+	public Set<String> getEntityRoleAlias(IModelEntity entity, IDataSource datasource) {
+		Map<String, List<String>> roleAliasMap = getMapEntityRoleField(datasource).get(entity);
+		Set<String> roleAlias = null;
+		if(roleAliasMap!=null){
+			roleAlias = roleAliasMap.keySet();
+		}
+		return roleAlias;
+	}
+
+	public void setMapEntityRoleField(
+			Map<IModelEntity, Map<String, List<String>>> mapEntityRoleField) {
+		this.mapEntityRoleField = mapEntityRoleField;
+	}
+
+
 	public boolean isEmpty() {
 		int selectedFieldsCount;
 		List fields, calculatedFields, inlineCalculatedFields;
-		
+
 		fields = getSimpleSelectFields(true);
 		Assert.assertNotNull(fields, "getDataMartSelectFields method cannot return a null value");
 		calculatedFields = getCalculatedSelectFields(true);
 		Assert.assertNotNull(fields, "getCalculatedSelectFields method cannot return a null value");
 		inlineCalculatedFields = getInLineCalculatedSelectFields(true);
 		Assert.assertNotNull(fields, "getInLineCalculatedSelectFields method cannot return a null value");
-		
+
 		selectedFieldsCount = fields.size() + calculatedFields.size() + inlineCalculatedFields.size();
-		
+
 		return (selectedFieldsCount == 0);
 	}
-	
+
 	public void addSelectFiled(String fieldUniqueName, String function, String fieldAlias, boolean include, boolean visible,
 			boolean groupByField, String orderType, String pattern) {
 		selectFields.add( new SimpleSelectField(fieldUniqueName, function, fieldAlias, include, visible, groupByField, orderType, pattern) );
 	}
-	
+
 	public void addCalculatedFiled(String fieldAlias, String expression, String type, boolean included, boolean visible) {
 		selectFields.add( new CalculatedSelectField(fieldAlias, expression, type, included, visible) );
 	}
-	
+
 	public void addInLineCalculatedFiled(String fieldAlias, String expression, String slots, String type, String nature, boolean included, boolean visible, boolean groupByField, String orderType, String funct) {
 		selectFields.add( new InLineCalculatedSelectField(fieldAlias, expression, slots, type, nature, included, visible, groupByField, orderType, funct) );
 	}
 
-	
+
 	public WhereField addWhereField(String name, String description, boolean promptable,
 			it.eng.qbe.query.WhereField.Operand leftOperand, String operator, it.eng.qbe.query.WhereField.Operand rightOperand,
 			String booleanConnector) {
-		
+
 		WhereField whereField = new WhereField(name, description, promptable,  leftOperand, operator, rightOperand, booleanConnector);
-		
+
 		whereClause.add( whereField );
 		whereFieldMap.put("$F{" + name + "}", whereField);
 		return whereField;  
 	}
-	
+
 	public HavingField addHavingField(String name, String description, boolean promptable, 
 			it.eng.qbe.query.HavingField.Operand leftOperand, String operator, it.eng.qbe.query.HavingField.Operand rightOperand,
 			String booleanConnector) {
-		
+
 		HavingField havingField = new HavingField(name, description, promptable, leftOperand, operator, rightOperand, booleanConnector);
-		
+
 		havingClause.add( havingField );
 		havingFieldMap.put("$F{" + name + "}", havingField);
 		return havingField;
 	}
-	
+
 	public WhereField getWhereFieldByName(String fname) {
 		return (WhereField)whereFieldMap.get(fname.trim());
 	}
-	
+
 	public HavingField getHavingFieldByName(String fname) {
 		return (HavingField)havingFieldMap.get(fname.trim());
 	}
-	
+
 
 	/**
 	 * @param onlyIncluded true to return all the select fields. 
@@ -157,10 +277,10 @@ public class Query {
 		}
 		return fields;
 	}
-	
+
 	public List getSelectSimpleFieldsByUniqueName(String uniqueName) {
-	List<SimpleSelectField> matchingSimpleSelectFields;
-		
+		List<SimpleSelectField> matchingSimpleSelectFields;
+
 		matchingSimpleSelectFields = new ArrayList<SimpleSelectField>();
 		List<SimpleSelectField> simpleSelectFields = getSimpleSelectFields(false);
 		for(SimpleSelectField simpleSelectField : simpleSelectFields) {
@@ -168,13 +288,13 @@ public class Query {
 				matchingSimpleSelectFields.add(simpleSelectField);
 			}
 		}
-		
+
 		return matchingSimpleSelectFields;
 	}
-	
+
 	public List<SimpleSelectField> getSelectSimpleFieldsByAlias(String alias) {
 		List<SimpleSelectField> matchingSimpleSelectFields;
-		
+
 		matchingSimpleSelectFields = new ArrayList<SimpleSelectField>();
 		List<SimpleSelectField> simpleSelectFields = getSimpleSelectFields(false);
 		for(SimpleSelectField simpleSelectField : simpleSelectFields) {
@@ -182,35 +302,35 @@ public class Query {
 				matchingSimpleSelectFields.add(simpleSelectField);
 			}
 		}
-		
+
 		return matchingSimpleSelectFields;
 	}
-	
+
 	public void removeSelectField(int fieldIndex) {
 		Assert.assertTrue(fieldIndex >= 0 && fieldIndex < selectFields.size(), "Index [" + fieldIndex + "] out of bound for select fields list (0 - " + selectFields.size() + ")");
 		selectFields.remove(fieldIndex);
 	}
-	
+
 	public void removeWhereField(int fieldIndex) {
 		Assert.assertTrue(fieldIndex >= 0 && fieldIndex < whereClause.size(), "Index [" + fieldIndex + "] out of bound for select fields list (0 - " + whereClause.size() + ")");
 		whereClause.remove(fieldIndex);
 	}
-	
+
 	public void removeHavingField(int fieldIndex) {
 		Assert.assertTrue(fieldIndex >= 0 && fieldIndex < havingClause.size(), "Index [" + fieldIndex + "] out of bound for select fields list (0 - " + havingClause.size() + ")");
 		havingClause.remove(fieldIndex);
 	}
-	
+
 	public ISelectField getSelectFieldByIndex(int fieldIndex) {
 		Assert.assertTrue(fieldIndex >= 0 && fieldIndex < selectFields.size(), "Index [" + fieldIndex + "] out of bound for select fields list (0 - " + selectFields.size() + ")");
 		return (ISelectField)selectFields.get(fieldIndex);
 	}
-	
+
 	public int getSelectFieldIndex(String uniqueName) {
 		int index;
-		
+
 		index = -1;
-				
+
 		for(int i = 0; i < selectFields.size(); i++) {
 			ISelectField f = (ISelectField)selectFields.get(i);
 			if(f.isSimpleField()) {
@@ -221,10 +341,10 @@ public class Query {
 				}
 			}
 		}
-		
+
 		return index;
 	}
-	
+
 
 	/**
 	 * Returns a list of of simple select fields (no inlineCalculatedSelectField & calculatedSelectField)
@@ -236,7 +356,7 @@ public class Query {
 	 */
 	public List<SimpleSelectField> getSimpleSelectFields(boolean onlyIncluded) {
 		List<SimpleSelectField> simpleSelectFields;
-				
+
 		simpleSelectFields = new ArrayList<SimpleSelectField>();
 		for(ISelectField selectField :  selectFields) {			
 			if(selectField.isSimpleField()) {
@@ -245,15 +365,15 @@ public class Query {
 				}				
 			}
 		}
-		
+
 		return simpleSelectFields;
 	}
-	
+
 	public List getCalculatedSelectFields(boolean onlyIncluded) {
 		List calculatedSelectFields;
 		Iterator it;
 		ISelectField field;
-		
+
 		calculatedSelectFields = new ArrayList();
 		it = getSelectFields(false).iterator();
 		while(it.hasNext()) {
@@ -264,10 +384,10 @@ public class Query {
 				}
 			}
 		}
-		
+
 		return calculatedSelectFields;
 	}
-	
+
 	/**
 	 * Returns the list of inline calculated fields included in select clause (no simpleSelectField & calculatedSelectField)
 	 * 
@@ -280,10 +400,10 @@ public class Query {
 	public List getInLineCalculatedSelectFields(boolean onlyIncluded) {
 		List<InLineCalculatedSelectField> inLineCalculatedSelectFields;
 		List<ISelectField>  selectFields;
-		
+
 		selectFields = getSelectFields(false);
 		inLineCalculatedSelectFields = new ArrayList<InLineCalculatedSelectField>();
-		
+
 		for(ISelectField field : selectFields) {
 			if(field.isInLineCalculatedField()) {
 				if( onlyIncluded == false || (onlyIncluded == true && field.isIncluded()) ) {
@@ -291,14 +411,14 @@ public class Query {
 				}
 			}
 		}
-		
+
 		return inLineCalculatedSelectFields;
 	}
-	
+
 	public List<WhereField> getWhereFields() {
 		return whereClause;
 	}
-	
+
 	public List<HavingField> getHavingFields() {
 		return havingClause;
 	}
@@ -306,11 +426,11 @@ public class Query {
 	public boolean isDistinctClauseEnabled() {
 		return distinctClauseEnabled;
 	}
-	
+
 	public void setDistinctClauseEnabled(boolean distinctClauseEnabled) {
 		this.distinctClauseEnabled = distinctClauseEnabled;
 	}
-	
+
 	/**
 	 * Get all the fields in order by clause (i.e. SimpleSelectField + InLineCalculatedSelectedField). Note: CalculatedField cannot
 	 * be used in order by clause. If some CalculateField has been erroneously added to order by clause it will be ignored
@@ -322,23 +442,23 @@ public class Query {
 	public List<ISelectField> getOrderByFields() {
 		List<ISelectField> orderByFields = new ArrayList<ISelectField>();
 		List<ISelectField> selectFields = new ArrayList<ISelectField>();
-		
+
 		List<SimpleSelectField> simpleSelectField = getSimpleSelectFields(false);
 		selectFields.addAll(simpleSelectField);
-		
+
 		List<SimpleSelectField> inlineCalculatedSelectField = this.getInLineCalculatedSelectFields(false);
 		selectFields.addAll(inlineCalculatedSelectField);
-		
+
 		for( ISelectField selectField : selectFields ) {
 			if(selectField.isOrderByField()) {
 				orderByFields.add(selectField);
 			}
 		}
-		
+
 		return orderByFields;
 	}
-	
-	
+
+
 	public List<ISelectField> getGroupByFields() {
 		List<ISelectField> groupByFields = new ArrayList();
 		Iterator it = this.getSimpleSelectFields(false).iterator();
@@ -348,7 +468,7 @@ public class Query {
 				groupByFields.add(selectField);
 			}
 		}
-		
+
 		Iterator<InLineCalculatedSelectField> it2 = this.getInLineCalculatedSelectFields(false).iterator();
 		while( it2.hasNext() ) {
 			InLineCalculatedSelectField selectField = (InLineCalculatedSelectField)it2.next();
@@ -356,11 +476,11 @@ public class Query {
 				groupByFields.add(selectField);
 			}
 		}
-		
+
 		return groupByFields;
 	}
-	
-	
+
+
 	public ExpressionNode getWhereClauseStructure() {
 		return whereClauseStructure;
 	}
@@ -368,7 +488,7 @@ public class Query {
 	public void setWhereClauseStructure(ExpressionNode whereClauseStructure) {
 		this.whereClauseStructure = whereClauseStructure;
 	}
-	
+
 	/*
 	 * true iff it is an expression built using the client side expression wizard
 	 */
@@ -379,8 +499,8 @@ public class Query {
 	public void setNestedExpression(boolean nestedExpression) {
 		this.nestedExpression = nestedExpression;
 	}
-	
-	
+
+
 	public Query getParentQuery() {
 		return parentQuery;
 	}
@@ -388,24 +508,24 @@ public class Query {
 	public void setParentQuery(Query parentQuery) {
 		this.parentQuery = parentQuery;
 	}
-	
+
 	public boolean hasParentQuery() {
 		return getParentQuery() != null;
 	}
-	
+
 	public void addSubquery(Query subquery) {
 		subqueries.put(subquery.getId(), subquery);
 		subquery.setParentQuery(this);
 	}
-	
+
 	public Query getSubquery(String id) {
 		return (Query)subqueries.get(id);
 	}
-	
+
 	public Set getSubqueryIds() {
 		return new HashSet(subqueries.keySet());
 	}
-	
+
 	public Query removeSubquery(String id) {
 		Query subquery = (Query)subqueries.remove(id);
 		if(subquery != null) subquery.setParentQuery(null);
@@ -417,7 +537,7 @@ public class Query {
 			selectFields.clear();
 		}
 	}
-	
+
 	public void clearWhereFields(){
 		if(whereClause!=null){
 			whereClause.clear();
@@ -427,7 +547,7 @@ public class Query {
 		}
 		whereClauseStructure = null;
 	}
-	
+
 	public void clearHavingFields(){
 		if(havingClause!=null){
 			havingClause.clear();
@@ -435,6 +555,154 @@ public class Query {
 		if(havingFieldMap!=null){
 			havingFieldMap.clear();
 		}
+	}
+
+	public void setQueryGraph(QueryGraph graph) {
+		this.graph = graph;
+	}
+
+	public QueryGraph getQueryGraph() {
+		return graph;
+	}
+
+//	public Set<IModelField> getQueryModelFields(IDataSource dataSource){
+//		Map<IModelField, Set<IQueryField>> mf = getQueryFields(dataSource);
+//		return (mf.keySet());
+//	}
+
+	public Map<IModelField, Set<IQueryField>> getQueryFields(IDataSource dataSource){
+		Map<IModelField, Set<IQueryField>> modelFieldsInvolved = new  HashMap<IModelField, Set<IQueryField>>();
+		getSelectIModelFields(modelFieldsInvolved, dataSource);
+		getWhereIModelFields(modelFieldsInvolved, dataSource);
+		return modelFieldsInvolved;
+	}
+
+	public void getSelectIModelFields(Map<IModelField, Set<IQueryField>> modelFieldsInvolved, IDataSource dataSource) {
+
+		List<ISelectField> selectFields;
+
+		selectFields = this.getSelectFields(true);
+
+		for(ISelectField selectAbstractField : selectFields){										
+			if(selectAbstractField.isSimpleField()){
+				IModelField datamartField = dataSource.getModelStructure().getField(((SimpleSelectField)selectAbstractField).getUniqueName());
+				addFieldIntoMap(selectAbstractField,datamartField,modelFieldsInvolved);
+				
+			} else if(selectAbstractField.isInLineCalculatedField()){
+				replaceFieldsIncalculatedFields((InLineCalculatedSelectField)selectAbstractField, modelFieldsInvolved, dataSource);
+			}
+		}
+	}
+	
+	public boolean isAliasDefinedInSelectFields() {
+		List<String> checkedFields = new ArrayList<String>();
+		List<ISelectField> selectFields = this.getSelectFields(true);
+
+		for(ISelectField selectAbstractField : selectFields){										
+			if(selectAbstractField.isSimpleField()){
+				String fieldToString = selectAbstractField.getName()+selectAbstractField.getNature()+selectAbstractField.getType()+selectAbstractField.getAlias();
+				int index = checkedFields.indexOf(fieldToString);
+				if(index>=0){//if in the select fields there is the same field with the same alias there could be some misunderstanding
+					return false;
+				}else{
+					checkedFields.add(fieldToString);
+				}
+			} 
+		}
+		return true;
+	}
+
+	private void replaceFieldsIncalculatedFields(InLineCalculatedSelectField cf,  Map<IModelField, Set<IQueryField>> modelFieldsInvolved, IDataSource dataSource) {
+		IModelField modelField;
+
+		try  {		
+			StatementTockenizer tokenizer = new StatementTockenizer(cf.getExpression());
+			while(tokenizer.hasMoreTokens()) {
+
+				String token = tokenizer.nextTokenInStatement();
+
+				modelField = null;
+				String decodedToken = token;
+				decodedToken = decodedToken.replaceAll("\\[", "(");
+				decodedToken = decodedToken.replaceAll("\\]", ")");
+				modelField = dataSource.getModelStructure().getField(decodedToken);
+
+				if(modelField != null) {
+					addFieldIntoMap(cf,modelField,modelFieldsInvolved);
+				}
+			}
+
+		} catch(Throwable t) {
+			throw new RuntimeException("An unpredicted error occurred while parsing expression [" + cf.getExpression() + "]", t);
+		}
+
+	}
+
+
+	private void getWhereIModelFields(  Map<IModelField, Set<IQueryField>> modelFieldsInvolved, IDataSource dataSource){
+
+
+		try {
+			addUserProvidedConditions(modelFieldsInvolved, dataSource);
+		} catch(Throwable t) {
+			throw new StatementCompositionException("Impossible to build where clause", t);
+		} 
+	}
+
+
+	private void addUserProvidedConditions( Map<IModelField, Set<IQueryField>> modelFieldsInvolved, IDataSource dataSource) {
+		ExpressionNode filterExp = getWhereClauseStructure(); 
+
+		if (filterExp  != null){
+			addUserProvidedConditions(filterExp, modelFieldsInvolved, dataSource);
+		}
+
+	}
+
+	private void addUserProvidedConditions( ExpressionNode filterExp,   Map<IModelField, Set<IQueryField>> modelFieldsInvolved, IDataSource dataSource) {		
+		String type = filterExp.getType();
+		if("NODE_OP".equalsIgnoreCase( type )) {
+			for(int i = 0; i < filterExp.getChildNodes().size(); i++) {
+				ExpressionNode child = (ExpressionNode)filterExp.getChildNodes().get(i);
+				addUserProvidedConditions(child, modelFieldsInvolved, dataSource);
+			}
+		} else {
+			WhereField whereField = getWhereFieldByName( filterExp.getValue() );
+			addOperandCondition(whereField.getLeftOperand(), whereField, dataSource, modelFieldsInvolved);
+			addOperandCondition(whereField.getRightOperand(), whereField, dataSource, modelFieldsInvolved);
+		}
+	}
+	
+	private void addOperandCondition(Operand operand,WhereField whereField, IDataSource dataSource,  Map<IModelField, Set<IQueryField>> modelFieldsInvolved){
+		if (AbstractStatement.OPERAND_TYPE_SIMPLE_FIELD.equalsIgnoreCase(operand.type) 
+				|| AbstractStatement.OPERAND_TYPE_PARENT_FIELD.equalsIgnoreCase(operand.type)) {
+			
+			IModelField datamartField = dataSource.getModelStructure().getField(operand.values[0]);
+			addFieldIntoMap(whereField, datamartField,modelFieldsInvolved);
+		}
+	}
+	
+	private static void addFieldIntoMap(IQueryField queryField, IModelField datamartField,  Map<IModelField, Set<IQueryField>> modelFieldsInvolved){
+		Set<IQueryField> queryfields = modelFieldsInvolved.get(datamartField);
+		if(queryfields==null){
+			queryfields = new HashSet<IQueryField>();
+			modelFieldsInvolved.put(datamartField, queryfields);
+		}
+		queryfields.add(queryField);
+		
+	}
+
+	public Set<IModelEntity> getQueryEntities(IDataSource dataSource){
+		Map<IModelField, Set<IQueryField>> modelFieldsMap = getQueryFields(dataSource);
+		Set<IModelField> mf = modelFieldsMap.keySet();
+		Set<IModelEntity> me = new HashSet<IModelEntity>();
+		Iterator<IModelField> mfi = mf.iterator();
+		while (mfi.hasNext()) {
+			IModelField iModelField = (IModelField) mfi.next();
+			me.add(iModelField.getParent());
+
+		}
+		return me;
 	}
 
 }

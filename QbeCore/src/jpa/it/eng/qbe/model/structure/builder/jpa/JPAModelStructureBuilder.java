@@ -17,7 +17,7 @@ import it.eng.qbe.model.structure.IModelViewEntityDescriptor.IModelViewRelations
 import it.eng.qbe.model.structure.ModelCalculatedField;
 import it.eng.qbe.model.structure.ModelEntity;
 import it.eng.qbe.model.structure.ModelStructure;
-import it.eng.qbe.model.structure.ModelStructure.RootEntitiesGraph;
+import it.eng.qbe.statement.graph.bean.RootEntitiesGraph;
 import it.eng.qbe.model.structure.ModelViewEntity.Join;
 import it.eng.qbe.model.structure.ModelViewEntity.ViewRelationship;
 import it.eng.qbe.model.structure.ModelViewEntity;
@@ -51,6 +51,7 @@ public class JPAModelStructureBuilder implements IModelStructureBuilder {
 	private EntityManager entityManager;
 	private int maxRecursionLevel;
 	IModelStructurePropertiesInitializer propertiesInitializer;
+	public static final String VIEWS_INNER_JOINS_RELATION_NAME = "VIEWS_INNER_JOINS";
 
 	private static int DEFAULT_MAX_RECURSION_LEVEL = 0;
 	
@@ -137,7 +138,7 @@ public class JPAModelStructureBuilder implements IModelStructureBuilder {
 				List<IModelField> destinationFields = join.getDestinationFileds();
 
 				try {
-					modelStructure.addRootEntityRelationship(modelName, sourceEntity, sourceFields, destinationEntity, destinationFields, "many-to-one", "join");
+					modelStructure.addRootEntityRelationship(modelName, sourceEntity, sourceFields, destinationEntity, destinationFields, "many-to-one", VIEWS_INNER_JOINS_RELATION_NAME);
 					logger.debug("Succesfully added relationship between [" + sourceEntity.getName() + "] and [" + destinationEntity.getName() + "]");
 				} catch (Throwable t) {
 					logger.error("Impossible to add relationship between [" + sourceEntity.getName() + "] and [" + destinationEntity.getName() + "]", t);
@@ -155,7 +156,7 @@ public class JPAModelStructureBuilder implements IModelStructureBuilder {
 				List<IModelField> destinationFields = relationship.getDestinationFileds();
 
 				try {
-					modelStructure.addRootEntityRelationship(modelName, sourceEntity, sourceFields, destinationEntity, destinationFields, "many-to-one", "join");
+					modelStructure.addRootEntityRelationship(modelName, sourceEntity, sourceFields, destinationEntity, destinationFields, "many-to-one", VIEWS_INNER_JOINS_RELATION_NAME);
 					logger.debug("Succesfully added relationship between [" + sourceEntity.getName() + "] and [" + destinationEntity.getName() + "]");
 				} catch (Throwable t) {
 					logger.error("Impossible to add relationship between [" + sourceEntity.getName() + "] and [" + destinationEntity.getName() + "]", t);
@@ -201,10 +202,17 @@ public class JPAModelStructureBuilder implements IModelStructureBuilder {
 			if(sourceEntity == null) throw new RuntimeException("Impossibe to find source entity whose name is equal to [" + relationship.getSourceEntityUniqueName() + "]");
 			List<IModelField> sourceFields = new ArrayList<IModelField>();
 			List<String> sourceFieldNames = relationship.getSourceFieldUniqueNames();
-			for(String sourceFieldName: sourceFieldNames) {
+			
+			IModelEntity destinationEntity = rootEntitiesGraph.getRootEntityByName(relationship.getDestinationEntityUniqueName());
+			if(destinationEntity == null) throw new RuntimeException("Impossibe to find destination entity whose name is equal to [" + relationship.getDestinationEntityUniqueName() + "]");
+			List<IModelField> destinationFields = new ArrayList<IModelField>();
+			List<String> destinationFieldNames = relationship.getDestinationFieldUniqueNames();
+			
+			for(int i =0; i<sourceFieldNames.size(); i++) {
+				String sourceFieldName =  sourceFieldNames.get(i);
 				IModelField field = sourceEntity.getField(sourceFieldName);
 				if(field == null) {	// if the field is not part of the key it is not yet added to the entity. we have to create it now.				
-					String generatedFieldName = relationship.getName() + "."  + sourceFieldName.split(":")[1];
+					String generatedFieldName = relationship.getName() + "."  + destinationFieldNames.get(i).split(":")[1];
 					field = sourceEntity.addNormalField(generatedFieldName);
 					field.getProperties().put("visible", "true");
 					field.getProperties().put("position", "" + Integer.MAX_VALUE);
@@ -213,14 +221,12 @@ public class JPAModelStructureBuilder implements IModelStructureBuilder {
 				sourceFields.add(field);
 			}
 			
-			IModelEntity destinationEntity = rootEntitiesGraph.getRootEntityByName(relationship.getDestinationEntityUniqueName());
-			if(destinationEntity == null) throw new RuntimeException("Impossibe to find destination entity whose name is equal to [" + relationship.getDestinationEntityUniqueName() + "]");
-			List<IModelField> destinationFields = new ArrayList<IModelField>();
-			List<String> destinationFieldNames = relationship.getDestinationFieldUniqueNames();
-			for(String destinationFieldName: destinationFieldNames) {
+
+			for(int i =0; i<destinationFieldNames.size(); i++) {
+				String destinationFieldName =  destinationFieldNames.get(i);
 				IModelField field = destinationEntity.getField(destinationFieldName);
 				if(field == null) {
-					String generatedFieldName = relationship.getName() + "."  + destinationFieldName.split(":")[1];
+					String generatedFieldName = relationship.getName() + "."  + sourceFieldNames.get(i).split(":")[1];
 					field = destinationEntity.addNormalField(generatedFieldName);
 					field.getProperties().put("visible", "true");
 					field.getProperties().put("position", "" + Integer.MAX_VALUE);
@@ -230,7 +236,7 @@ public class JPAModelStructureBuilder implements IModelStructureBuilder {
 				destinationFields.add(field);
 			}
 			try {
-				modelStructure.addRootEntityRelationship(modelName, sourceEntity, sourceFields, destinationEntity, destinationFields, relationship.getType(), relationship.getName());
+				modelStructure.addRootEntityRelationship(modelName, sourceEntity, sourceFields, destinationEntity, destinationFields, relationship.getType(), relationship.getLabel());
 				logger.debug("Succesfully added relationship between [" + sourceEntity.getName() + "] and [" + destinationEntity.getName() + "]");
 			} catch (Throwable t) {
 				logger.error("Impossible to add relationship between [" + sourceEntity.getName() + "] and [" + destinationEntity.getName() + "]", t);

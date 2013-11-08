@@ -10,6 +10,9 @@ import it.eng.qbe.query.Query;
 import it.eng.qbe.query.catalogue.QueryCatalogue;
 import it.eng.qbe.query.serializer.SerializerFactory;
 import it.eng.qbe.serializer.SerializationManager;
+import it.eng.qbe.statement.graph.GraphUtilities;
+import it.eng.qbe.statement.graph.bean.QueryGraph;
+import it.eng.qbe.statement.graph.bean.Relationship;
 import it.eng.spagobi.commons.QbeEngineStaticVariables;
 import it.eng.spagobi.engines.qbe.analysisstateloaders.IQbeEngineAnalysisStateLoader;
 import it.eng.spagobi.engines.qbe.analysisstateloaders.QbeEngineAnalysisStateLoaderFactory;
@@ -18,6 +21,7 @@ import it.eng.spagobi.utilities.engines.EngineAnalysisState;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -25,6 +29,14 @@ import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.Version;
+import com.fasterxml.jackson.databind.JsonSerializer;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it), Davide Zerbetto (davide.zerbetto@eng.it), Alberto Ghedin (alberto.ghedin@eng.it)
@@ -133,7 +145,8 @@ public class QbeEngineAnalysisState extends EngineAnalysisState {
 			for(int i = 0; i < queriesJSON.length(); i++) {
 				queryJSON = queriesJSON.getJSONObject(i);
 				query = SerializerFactory.getDeserializer("application/json").deserializeQuery(queryJSON, getDataSource());
-								
+				QueryGraph graph = GraphUtilities.deserializeGraph((JSONArray) queryJSON.opt("graph"), query, getDataSource());
+				query.setQueryGraph(graph);
 				catalogue.addQuery(query);
 			}
 		} catch (Throwable e) {
@@ -143,12 +156,17 @@ public class QbeEngineAnalysisState extends EngineAnalysisState {
 		return catalogue;
 	}
 
+
+
+
+
 	public void setCatalogue(QueryCatalogue catalogue) {
 		Set queries;
 		Query query;
 		JSONObject queryJSON;
 		JSONArray queriesJSON;
 		JSONObject catalogueJSON;
+		JSONArray graphJSON;
 		
 		catalogueJSON = new JSONObject();
 		queriesJSON = new JSONArray();
@@ -159,6 +177,8 @@ public class QbeEngineAnalysisState extends EngineAnalysisState {
 			while(it.hasNext()) {
 				query = (Query)it.next();
 				queryJSON =  (JSONObject)SerializerFactory.getSerializer("application/json").serialize(query, getDataSource(), null);
+				graphJSON = serializeGraph(query);
+				queryJSON.put("graph", graphJSON);
 				queriesJSON.put( queryJSON );
 			}
 			
@@ -168,6 +188,20 @@ public class QbeEngineAnalysisState extends EngineAnalysisState {
 		}
 		
 		setProperty( QbeEngineStaticVariables.CATALOGUE, catalogueJSON );
+	}
+
+	private JSONArray serializeGraph(Query query) throws Exception {
+		QueryGraph graph = query.getQueryGraph();
+		ObjectMapper mapper = new ObjectMapper();
+		SimpleModule simpleModule = new SimpleModule("SimpleModule",
+				new Version(1, 0, 0, null));
+		simpleModule.addSerializer(Relationship.class,
+				new RelationJSONSerializerForAnalysisState());
+
+		mapper.registerModule(simpleModule);
+		String serialized = mapper.writeValueAsString(graph.getConnections());
+		JSONArray array = new JSONArray(serialized);
+		return array;
 	}
 
 	public IDataSource getDataSource() {
@@ -206,6 +240,21 @@ public class QbeEngineAnalysisState extends EngineAnalysisState {
 		}
 		
 		return workSheetDefinition;
+		
+	}
+	
+	public class RelationJSONSerializerForAnalysisState extends JsonSerializer<Relationship> {
+
+		
+		
+		@Override
+		public void serialize(Relationship value, JsonGenerator jgen, SerializerProvider provider) throws IOException,
+				JsonProcessingException {
+			jgen.writeStartObject();
+			jgen.writeStringField(GraphUtilities.RELATIONSHIP_ID, value.getId());
+			jgen.writeEndObject();
+			
+		}
 		
 	}
 	

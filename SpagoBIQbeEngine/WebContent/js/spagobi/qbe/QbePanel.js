@@ -46,6 +46,15 @@ Sbi.qbe.QbePanel = function(config) {
 		, displayWorksheetPanel: true
 	}, config || {});
 
+	
+	if(!Sbi.cache){
+		Sbi.cache = {};
+	}
+	
+	if(!Sbi.cache.memory){
+		Sbi.cache.memory = new Sbi.widgets.Cache({});
+	}
+	
 	this.services = new Array();
 	var params = {};
 	this.services['getFirstQuery'] = Sbi.config.serviceRegistry.getServiceUrl({
@@ -64,6 +73,12 @@ Sbi.qbe.QbePanel = function(config) {
 		serviceName: 'SET_WORKSHEET_DEFINITION_ACTION'
 			, baseParams: params
 	});
+	/*
+	this.services['getAmbiguousFields'] = Sbi.config.serviceRegistry.getServiceUrl({
+		serviceName: 'GET_AMBIGUOUS_FIELDS_ACTION'
+			, baseParams: params
+	});
+	*/
 
 	this.addEvents();
 
@@ -351,6 +366,74 @@ Ext.extend(Sbi.qbe.QbePanel, Ext.Panel, {
 	var newPromptableFilters = { promptableFilters : Ext.encode(promptableFilters)};
 	this.queryResultPanel.execQuery(query, newPromptableFilters);
 }
+
+/*
+, executeQuery: function(query, promptableFilters) {
+	this.checkAmbiguousFields(query, promptableFilters);
+}
+
+, checkAmbiguousFields: function(query, promptableFilters) {
+	// call the server to get ambiguous fields
+	Ext.Ajax.request({
+		url: this.services['getAmbiguousFields'],
+		params: {id: query.id},
+		success : this.onAmbiguousFieldsLoaded.createDelegate(this, [query, promptableFilters], true),
+		scope: this,
+		failure: Sbi.exception.ExceptionHandler.handleFailure      
+	});
+}
+
+, onAmbiguousFieldsLoaded : function (response, opts, query, promptableFilters) {
+	try {
+		var ambiguousFields = Ext.util.JSON.decode( response.responseText );
+		if (ambiguousFields.length == 0) {
+			this.doExecuteQuery(query, promptableFilters);
+		} else {
+			ambiguousFields = this.mergeAmbiguousFieldsWithCache(query, ambiguousFields);
+			var relationshipsWindow = new Sbi.qbe.RelationshipsWizardWindow({
+				ambiguousFields : ambiguousFields
+				, closeAction : 'close'
+				, modal : true
+			});
+			relationshipsWindow.show();
+			relationshipsWindow.on('apply', this.onAmbiguousFieldsSolved.createDelegate(this, [query, promptableFilters], true), this);
+		}
+	} catch (err) {
+		Sbi.exception.ExceptionHandler.handleFailure();
+	}
+}
+
+,
+mergeAmbiguousFieldsWithCache : function (query, ambiguousFields) {
+	var cached = this.getAmbiguousFieldsFromCache(query);
+	var ambiguousFieldsObj = new Sbi.qbe.AmbiguousFields({ ambiguousFields : ambiguousFields });
+	var cachedObj = new Sbi.qbe.AmbiguousFields({ ambiguousFields : cached });
+	ambiguousFieldsObj.merge(cachedObj);
+	return ambiguousFieldsObj.getAmbiguousFieldsAsJSONArray();
+}
+
+,
+putAmbiguousFieldsSolvedOnCache : function (query, ambiguousFieldsSolved) {
+	Sbi.cache.memory.put(query.id, ambiguousFieldsSolved);
+}
+
+,
+getAmbiguousFieldsFromCache : function (query) {
+	var cached = Sbi.cache.memory.get(query.id);
+	return cached;
+}
+
+, onAmbiguousFieldsSolved : function (theWindow, ambiguousFieldsSolved, query, promptableFilters) {
+	theWindow.close();
+	this.putAmbiguousFieldsSolvedOnCache(query, ambiguousFieldsSolved);
+	this.doExecuteQuery(query, promptableFilters, ambiguousFieldsSolved);
+}
+
+, doExecuteQuery: function(query, promptableFilters, ambiguousFieldsSolved) {
+	var newPromptableFilters = { promptableFilters : Ext.encode(promptableFilters)};
+	this.queryResultPanel.execQuery(query, newPromptableFilters, ambiguousFieldsSolved);
+}
+*/
 
 , getPromptableFilters : function(query) {
 	var filters = [];

@@ -22,7 +22,7 @@ import org.apache.log4j.Logger;
 public class JPQLStatementWhereClause extends AbstractStatementWhereClause {
 	
 
-	public static transient Logger logger = Logger.getLogger(JPQLStatementWhereClause.class);
+public static transient Logger logger = Logger.getLogger(JPQLStatementWhereClause.class);
 	
 	public static String build(JPQLStatement parentStatement, Query query, Map<String, Map<String, String>> entityAliasesMaps){
 		JPQLStatementWhereClause clause = new JPQLStatementWhereClause(parentStatement);

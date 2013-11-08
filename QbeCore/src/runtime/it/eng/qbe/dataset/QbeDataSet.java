@@ -16,6 +16,8 @@ import it.eng.qbe.query.Query;
 import it.eng.qbe.query.catalogue.QueryCatalogue;
 import it.eng.qbe.statement.AbstractQbeDataSet;
 import it.eng.qbe.statement.QbeDatasetFactory;
+import it.eng.qbe.statement.graph.GraphUtilities;
+import it.eng.qbe.statement.graph.bean.QueryGraph;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
@@ -55,14 +57,14 @@ import org.json.JSONObject;
  */
 public class QbeDataSet extends ConfigurableDataSet {
 	
-	public static String DS_TYPE = "SbiQbeDataSet";
+public static String DS_TYPE = "SbiQbeDataSet";
 	
 	private static transient Logger logger = Logger.getLogger(QbeDataSet.class);
 	
-	public static final String QBE_DATA_SOURCE = "qbeDataSource";
-	public static final String QBE_DATAMARTS = "qbeDatamarts";
-	public static final String QBE_JSON_QUERY = "qbeJSONQuery";
-	public static final String QBE_SQL_QUERY = "qbeSQLQuery";
+	private static final String QBE_DATA_SOURCE = "qbeDataSource";
+	private static final String QBE_DATAMARTS = "qbeDatamarts";
+	private static final String QBE_JSON_QUERY = "qbeJSONQuery";
+	private static final String QBE_SQL_QUERY = "qbeSQLQuery";
 	
 	protected IDataSet ds = null;
 	protected String jsonQuery = null;
@@ -382,7 +384,8 @@ public class QbeDataSet extends ConfigurableDataSet {
 			for(int i = 0; i < queriesJSON.length(); i++) {
 				queryJSON = queriesJSON.getJSONObject(i);
 				query = it.eng.qbe.query.serializer.SerializerFactory.getDeserializer("application/json").deserializeQuery(queryJSON, dataSource);
-								
+				QueryGraph graph = GraphUtilities.deserializeGraph((JSONArray) queryJSON.opt("graph"), query, dataSource);
+				query.setQueryGraph(graph);
 				catalogue.addQuery(query);
 			}
 		} catch (Throwable e) {
@@ -479,10 +482,6 @@ public class QbeDataSet extends ConfigurableDataSet {
     	}
 	}
 	
-	@Override
-	public String getDsType() {
-		return DS_TYPE;
-	}
 	
 	
 }

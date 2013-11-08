@@ -48,4 +48,9 @@ public interface IModelRelationshipDescriptor {
 	 * @return
 	 */
 	String getName();
+	
+	/**
+	 * @return
+	 */
+	String getLabel();
 }

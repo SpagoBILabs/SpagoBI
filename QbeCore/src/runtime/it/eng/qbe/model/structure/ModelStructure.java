@@ -5,299 +5,23 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.qbe.model.structure;
 
-import it.eng.qbe.model.structure.ModelStructure.RootEntitiesGraph.Relationship;
+import it.eng.qbe.statement.graph.bean.Relationship;
+import it.eng.qbe.statement.graph.bean.RootEntitiesGraph;
 import it.eng.spagobi.utilities.assertion.Assert;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import org.jgrapht.GraphPath;
-import org.jgrapht.UndirectedGraph;
-import org.jgrapht.alg.ConnectivityInspector;
-import org.jgrapht.alg.DijkstraShortestPath;
-import org.jgrapht.graph.DefaultEdge;
-import org.jgrapht.graph.Multigraph;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
  */
 public class ModelStructure extends AbstractModelObject implements IModelStructure {
 	
-	
-	public static class RootEntitiesGraph {
-		
-		public static class Relationship extends DefaultEdge {
-	
-			private static final long serialVersionUID = 1L;
-			private String name;
-			private String type;
-			
-			List<IModelField> sourceFields;
-			List<IModelField> targetFields;
-			
-			public String getType() {
-				return type;
-			}
 
-			public void setType(String type) {
-				this.type = type;
-			}
-			
-			public void setName(String name) {
-				this.name = name;
-			}
-			
-			public String getName() {
-				 return this.name;
-			}
-			
-			public IModelEntity getSourceEntity() {
-				return (IModelEntity)this.getSource();
-			} 
-			
-			public List<IModelField> getSourceFields() {
-				return sourceFields;
-			}
-
-			public void setSourceFields(List<IModelField> sourceFields) {
-				this.sourceFields = sourceFields;
-			}
-			
-			public IModelEntity getTargetEntity() {
-				return (IModelEntity)this.getTarget();
-			}
-
-			public List<IModelField> getTargetFields() {
-				return targetFields;
-			}
-
-			public void setTargetFields(List<IModelField> targetFields) {
-				this.targetFields = targetFields;
-			}
-
-			@Override
-			public int hashCode() {
-				final int prime = 31;
-				int result = 1;
-				result = prime * result
-						+ ((name == null) ? 0 : name.hashCode());
-				result = prime
-						* result
-						+ ((sourceFields == null) ? 0 : sourceFields.hashCode());
-				result = prime
-						* result
-						+ ((targetFields == null) ? 0 : targetFields.hashCode());
-				result = prime * result
-						+ ((type == null) ? 0 : type.hashCode());
-				return result;
-			}
-
-			@Override
-			public boolean equals(Object obj) {
-				if (this == obj)
-					return true;
-				if (obj == null)
-					return false;
-				if (getClass() != obj.getClass())
-					return false;
-				Relationship other = (Relationship) obj;
-				if (name == null) {
-					if (other.name != null)
-						return false;
-				} else if (!name.equals(other.name))
-					return false;
-				if (sourceFields == null) {
-					if (other.sourceFields != null)
-						return false;
-				} else if (!sourceFields.equals(other.sourceFields))
-					return false;
-				if (targetFields == null) {
-					if (other.targetFields != null)
-						return false;
-				} else if (!targetFields.equals(other.targetFields))
-					return false;
-				if (type == null) {
-					if (other.type != null)
-						return false;
-				} else if (!type.equals(other.type))
-					return false;
-				return true;
-			}
-			
-			
-			
-			
-		}
-	
-		Map<String, IModelEntity> rootEntitiesMap;
-		UndirectedGraph<IModelEntity, DefaultEdge> rootEntitiesGraph;
-		
-		public RootEntitiesGraph() {
-			rootEntitiesMap = new HashMap<String, IModelEntity>();
-			rootEntitiesGraph = new Multigraph<IModelEntity, DefaultEdge>(Relationship.class);
-		}
-		
-		public void addRootEntity(IModelEntity entity) {
-			rootEntitiesMap.put(entity.getUniqueName(), entity);
-			rootEntitiesGraph.addVertex(entity);
-		}
-		
-		public IModelEntity getRootEntityByName(String entityName) {
-			return rootEntitiesMap.get(entityName);
-		}
-		
-		public List<IModelEntity> getAllRootEntities() {
-			List<IModelEntity> list = new ArrayList<IModelEntity>();
-			Iterator<String> it = rootEntitiesMap.keySet().iterator();
-			while(it.hasNext()) {
-				String entityName = it.next();
-				// TODO replace with this ...
-				//list.add( entities.get(entityName).getCopy() );
-				list.add( rootEntitiesMap.get(entityName) );
-			}
-			return list;
-		}
-		
-		/**
-		 * @return true if the root entities passed as input belongs to the same connected subgraph
-		 */
-		public boolean areRootEntitiesConnected(Set<IModelEntity> entities) {
-			boolean areConnected = true;
-			if(entities.size() > 1) {
-				ConnectivityInspector inspector = new ConnectivityInspector(rootEntitiesGraph);
-				Iterator<IModelEntity> it = entities.iterator();
-				IModelEntity entity = it.next();
-			//	Set<DefaultEdge> edges = rootEntitiesGraph.edgesOf(entity);
-				Set<IModelEntity> connectedEntitySet = inspector.connectedSetOf(entity);
-				while(it.hasNext()) {
-					entity = it.next();
-					if(connectedEntitySet.contains(entity) == false) {
-						areConnected = false;
-						break;
-					}
-				}
-			}
-			
-			return areConnected;
-		}
-		
-		/**
-		 * 
-		 * @return the list of entities reached by an out bound relation
-		 */
-		public Set<Relationship> getRootEntityDirectConnections(IModelEntity entity) {
-			Set<Relationship> targetEnities = new HashSet<Relationship>();
-
-			IModelEntity entityToCheck = entity;
-			if(entity instanceof FilteredModelEntity){
-				entityToCheck = ((FilteredModelEntity)entity).getWrappedModelEntity();
-			}
-			
-			if(rootEntitiesGraph.containsVertex(entityToCheck)){
-				Set<DefaultEdge> edges = rootEntitiesGraph.edgesOf(entityToCheck);
-				Iterator<DefaultEdge> it = edges.iterator();
-				while(it.hasNext()) {
-					Relationship edge = (Relationship)it.next();
-					IModelEntity target = edge.getTargetEntity();
-					if(!target.equals(entityToCheck)){
-						targetEnities.add(edge);
-					}
-				}
-			}
-
-			return targetEnities;
-		}
-		
-		
-		/**
-		 * 
-		 * @return the sets of direct relations from source to target
-		 */
-		public Set<Relationship> getDirectConnections(IModelEntity source, IModelEntity target) {
-			Set<Relationship> conections = new HashSet<Relationship>();
-
-			IModelEntity sourceEntityToCheck = source;
-			if(source instanceof FilteredModelEntity){
-				sourceEntityToCheck = ((FilteredModelEntity)source).getWrappedModelEntity();
-			}
-			
-			IModelEntity targetEntityToCheck = target;
-			if(target instanceof FilteredModelEntity){
-				targetEntityToCheck = ((FilteredModelEntity)target).getWrappedModelEntity();
-			}
-			
-			Set<DefaultEdge> relation = rootEntitiesGraph.getAllEdges(sourceEntityToCheck, targetEntityToCheck);
-			Iterator<DefaultEdge> it = relation.iterator();
-			while(it.hasNext()) {
-				Relationship edge = (Relationship)it.next();
-				IModelEntity sourceEntity = edge.getTargetEntity();
-				if(!sourceEntity.equals(source)){
-					conections.add(edge);
-				}
-			}
-			
-			return conections;
-		}
-		
-
-
-		public Relationship addRelationship(IModelEntity fromEntity, List<IModelField> fromFields,
-				IModelEntity toEntity, List<IModelField> toFields, String type, String name) {
-			Relationship relationship = new RootEntitiesGraph.Relationship();
-			relationship.setType(type); // MANY_TO_ONE : FK da 1 a 2
-			relationship.setSourceFields(fromFields);
-			relationship.setTargetFields(toFields); 
-			relationship.setName(name);
-			boolean added = rootEntitiesGraph.addEdge(fromEntity, toEntity, relationship);
-			return added? relationship: null;
-		}
-		
-		public Set<Relationship> getConnectingRelatiosnhips(Set<IModelEntity> entities) {
-			
-			Set<Relationship> connectingRelatiosnhips = new HashSet<Relationship>();
-			
-			Set<IModelEntity> connectedEntities = new HashSet<IModelEntity>();
-			
-			Iterator<IModelEntity> it = entities.iterator();
-			connectedEntities.add( it.next() );
-			
-			while(it.hasNext()) {
-				IModelEntity entity = it.next();
-				if(connectedEntities.contains(entity)) continue;
-				GraphPath minimumPath = null;
-				double minPathLength = Double.MAX_VALUE;
-				for(IModelEntity connectedEntity : connectedEntities) {
-					DijkstraShortestPath dsp = new DijkstraShortestPath(rootEntitiesGraph, entity, connectedEntity);
-					double pathLength = dsp.getPathLength();
-					if(minPathLength > pathLength) {
-						minPathLength = pathLength;
-						minimumPath = dsp.getPath();
-					}
-				}
-				List<Relationship> relationships = (List<Relationship>)minimumPath.getEdgeList();
-				connectingRelatiosnhips.addAll(relationships);
-				for(Relationship relatioship: relationships) {
-					connectedEntities.add( rootEntitiesGraph.getEdgeSource(relatioship) );
-					connectedEntities.add( rootEntitiesGraph.getEdgeTarget(relatioship) );
-				}
-			}
-			
-			for(Relationship r : connectingRelatiosnhips) {
-				IModelEntity source = rootEntitiesGraph.getEdgeSource(r);
-				IModelEntity target = rootEntitiesGraph.getEdgeTarget(r);
-				System.err.println(source.getName() + " -> " + target.getName());
-			}
-			
-			return connectingRelatiosnhips;
-		}
-	}
-	
-	
 	
 	public static class ModelRootEntitiesMap {
 		protected Map<String, RootEntitiesGraph> modelRootEntitiesMap;
@@ -443,8 +167,6 @@ public class ModelStructure extends AbstractModelObject implements IModelStructu
 		RootEntitiesGraph rootEntitiesGraph = getRootEntitiesGraph(source.getModelName(), true);
 		return rootEntitiesGraph.getDirectConnections(source, target);
 	}
-	
-		
 	// Root Entities Relationship -------------------------------------------------
 
 	
@@ -454,7 +176,7 @@ public class ModelStructure extends AbstractModelObject implements IModelStructu
 	public void addRootEntityRelationship(String modelName, 
 			IModelEntity fromEntity, List<IModelField> fromFields,
 			IModelEntity toEntity, List<IModelField> toFields,
-			String type, String name) {
+			String type, String relationName) {
 		RootEntitiesGraph rootEntitiesGraph;
 		
 		rootEntitiesGraph = modelRootEntitiesMap.getRootEntities(modelName);
@@ -463,7 +185,7 @@ public class ModelStructure extends AbstractModelObject implements IModelStructu
 			modelRootEntitiesMap.setRootEntities(modelName, rootEntitiesGraph);
 		}
 		
-		rootEntitiesGraph.addRelationship(fromEntity, fromFields, toEntity, toFields, type, name);
+		rootEntitiesGraph.addRelationship(fromEntity, fromFields, toEntity, toFields, type, relationName);
 	}
 	
 	

@@ -8,10 +8,14 @@ package it.eng.qbe.statement;
 
 import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.model.structure.IModelField;
+import it.eng.qbe.model.structure.ModelCalculatedField.Slot;
+import it.eng.qbe.model.structure.ModelCalculatedField.Slot.MappedValuesPunctualDescriptor;
+import it.eng.qbe.model.structure.ModelCalculatedField.Slot.MappedValuesRangeDescriptor;
 import it.eng.qbe.query.ISelectField;
 import it.eng.qbe.query.InLineCalculatedSelectField;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.query.SimpleSelectField;
+import it.eng.qbe.serializer.SerializationManager;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.objects.Couple;
 
@@ -19,8 +23,10 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.json.JSONArray;
 
 /**
  * @author Alberto Ghedin (alberto.ghedin@eng.it)
@@ -39,6 +45,7 @@ public class AbstractSelectStatementClause extends AbstractStatementClause{
 		return this.buildClause(query, entityAliasesMaps, false);
 	}
 	
+
 	public String buildClause(Query query, Map<String, Map<String, String>> entityAliasesMaps, boolean useAliases) {
 		StringBuffer buffer;
 		List<ISelectField> selectFields;
@@ -72,8 +79,7 @@ public class AbstractSelectStatementClause extends AbstractStatementClause{
 			if(statementFiledsNo == 0) {
 				throw new RuntimeException("Impossible to execute a query that contains in the select statemet only (expert) calculated fields");
 			}
-			statementFields = (Couple<String, String>[]) Array.newInstance(new Couple<String, String>("", "").getClass(), selectFields.size() - calculatedFieldNumber);
-			
+			statementFields = (Couple<String, String>[]) Array.newInstance(new Couple<String, String>("", "").getClass(), selectFields.size() - calculatedFieldNumber); 
 			index = 0;
 			
 			for(ISelectField selectAbstractField : selectFields){										
@@ -123,9 +129,90 @@ public class AbstractSelectStatementClause extends AbstractStatementClause{
 		return buffer.toString().trim();
 	}
 	
-	private String generateAlias(int y) {
-		String alias = "c_" + y;
-		return alias;
+	private String addSlots(String expr, InLineCalculatedSelectField selectInLineField) {
+		String newExpr;
+		
+		newExpr = null;
+		
+		try {
+			String s = selectInLineField.getSlots();
+			if(s ==  null || s.trim().length() == 0) return expr;
+			JSONArray slotsJSON = new JSONArray(s);
+			List<Slot> slots = new ArrayList<Slot>();
+			for(int i = 0; i < slotsJSON.length(); i++) {
+				Slot slot = (Slot)SerializationManager.deserialize(slotsJSON.get(i), "application/json", Slot.class);
+				slots.add(slot);
+			}
+			
+			
+			
+			if(slots.isEmpty()) return expr;
+			
+			Slot defaultSlot = null;
+			
+			newExpr = "CASE";
+			for(Slot slot : slots) {
+				List<Slot.IMappedValuesDescriptor> descriptors =  slot.getMappedValuesDescriptors();
+				if(descriptors == null || descriptors.isEmpty()) {
+					defaultSlot = slot;
+					continue;
+				}
+				for(Slot.IMappedValuesDescriptor descriptor : descriptors) {
+					if(descriptor instanceof MappedValuesPunctualDescriptor) {
+					
+						MappedValuesPunctualDescriptor punctualDescriptor = (MappedValuesPunctualDescriptor)descriptor;
+						newExpr += " WHEN (" + expr + ") IN (";
+						String valueSeparator = "";
+						Set<String> values = punctualDescriptor.getValues();
+						for(String value : values) {
+							newExpr += valueSeparator + "'" + value + "'";
+							valueSeparator = ", ";
+						}
+						newExpr += ") THEN '" + slot.getName() + "'";
+						
+					} else if(descriptor instanceof MappedValuesRangeDescriptor) {
+						MappedValuesRangeDescriptor punctualDescriptor = (MappedValuesRangeDescriptor)descriptor;
+						newExpr += " WHEN";
+						String minCondition = null;
+						String maxCondition = null;
+						if(punctualDescriptor.getMinValue() != null) {
+							minCondition = " (" + expr + ")";
+							minCondition += (punctualDescriptor.isIncludeMinValue())? " >= " : ">";
+							minCondition += punctualDescriptor.getMinValue();
+						}
+						if(punctualDescriptor.getMaxValue() != null) {
+							maxCondition = " (" + expr + ")";
+							maxCondition += (punctualDescriptor.isIncludeMaxValue())? " <= " : "<";
+							maxCondition += punctualDescriptor.getMaxValue();
+						}
+						String completeCondition = "";
+						if(minCondition != null) {
+							completeCondition += "(" + minCondition + ")";
+						}
+						if(maxCondition != null) {
+							completeCondition += (minCondition != null)? " AND " : "";
+							completeCondition += "(" + maxCondition + ")";
+						}
+						newExpr += " " + completeCondition;
+						newExpr += " THEN '" + slot.getName() + "'";
+					} else {
+						// ignore slot
+					}
+				
+				}
+			}
+			if(defaultSlot != null) {
+				newExpr += " ELSE '" + defaultSlot.getName() + "'";
+			} else {
+				newExpr += " ELSE (" + expr + ")";
+			}
+			newExpr += " END ";
+		} catch (Throwable t) {
+			logger.error("Impossible to add slots", t);
+			return expr;
+		}
+		
+		return newExpr;
 	}
 
 	private void addSimpleSelectField(SimpleSelectField selectField, Map entityAliasesMaps) {
@@ -141,27 +228,9 @@ public class AbstractSelectStatementClause extends AbstractStatementClause{
 		
 		datamartField = parentStatement.getDataSource().getModelStructure().getField(selectField.getUniqueName());
 		
-		Couple queryNameAndRoot = datamartField.getQueryName();
+
 		
-		queryName = (String) queryNameAndRoot.getFirst();
-		logger.debug("select field query name [" + queryName + "]");
-		
-		if(queryNameAndRoot.getSecond()!=null){
-			rootEntity = (IModelEntity)queryNameAndRoot.getSecond(); 	
-		}else{
-			rootEntity = datamartField.getParent().getRoot(); 	
-		}
-		
-			
-		logger.debug("select field root entity unique name [" + rootEntity.getUniqueName() + "]");
-		
-		
-		rootEntityAlias = getEntityAlias(rootEntity, entityAliases, entityAliasesMaps);
-		
-		logger.debug("select field root entity alias [" + rootEntityAlias + "]");
-			
-		selectClauseElement = parentStatement.getFieldAlias(rootEntityAlias, queryName);
-		
+		selectClauseElement =parentStatement.getFieldAliasWithRoles(datamartField, entityAliases, entityAliasesMaps, selectField);
 		logger.debug("select clause element before aggregation [" + selectClauseElement + "]");
 		
 		selectClauseElement = selectField.getFunction().apply(selectClauseElement);
@@ -173,5 +242,6 @@ public class AbstractSelectStatementClause extends AbstractStatementClause{
 		
 		logger.debug("select clause element succesfully added to select clause");
 	}
+
 
 }

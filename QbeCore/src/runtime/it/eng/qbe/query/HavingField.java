@@ -11,7 +11,7 @@ import it.eng.spagobi.tools.dataset.common.query.IAggregationFunction;
  * @author Davide Zerbetto (davide.zerbetto@eng.it)
  *
  */
-public class HavingField {
+public class HavingField implements IQueryField{
 	
 	private String name;
 	private String description;
@@ -64,7 +64,9 @@ public class HavingField {
 		return name;
 	}
 
-
+	public String getAlias() {
+		return name;
+	}
 
 	public void setName(String name) {
 		this.name = name;
@@ -150,7 +152,7 @@ public class HavingField {
 		
 		public Operand(String[] values, String description, String type,
 				String[] defaulttValues, String[] lastValues, IAggregationFunction function) {
-			super(values, description, type, defaulttValues, lastValues);
+			super(values, description, type, defaulttValues, lastValues, "");
 			this.function = function;
 		}
 	}
