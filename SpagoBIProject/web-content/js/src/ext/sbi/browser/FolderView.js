@@ -283,7 +283,8 @@ Ext.extend(Sbi.browser.FolderView, Ext.DataView, {
             var v1 =(r1[attributeName]==undefined)?0:r1[attributeName].toUpperCase();
             var v2 = (r2[attributeName]==undefined)?0:r2[attributeName].toUpperCase();
             var result;
-            if (type == 'DESC'){
+            //if (type == 'DESC'){
+            if (type == 'ASC'){
             	result = v1 < v2 ? 1 : (v1 > v2 ? -1 : 0);            	
             }else{
             	result = v1 > v2 ? 1 : (v1 < v2 ? -1 : 0);
