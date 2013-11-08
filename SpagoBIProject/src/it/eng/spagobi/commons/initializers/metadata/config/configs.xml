@@ -163,5 +163,7 @@
 <CONFIG label="MAIL.SIGNUP.body" name="Signup mail body" description="Signup mail body" isActive="false" valueCheck="Per confermare l'attivazione dell'account utilizza il link riportato" valueType="STRING" category="GENERIC_CONFIGURATION"/>
 <CONFIG label="MAIL.SIGNUP.subject" name="Signup mail subject" description="Signup mail subject" isActive="false" valueCheck="Creazione account SpagoBI" valueType="STRING" category="GENERIC_CONFIGURATION"/>
 
+<CONFIG label="SPAGOBI.SECURITY.DEFAULT_ROLE_ON_SIGNUP" name="Default user role name" description="Default user role on signup" isActive="true" valueCheck="/spagobi/user" valueType="STRING" category="SECURITY"/>
+
 </CONFIGS>
 

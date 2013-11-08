@@ -76,14 +76,13 @@ function register() {
 	});
 
     var form             = document.myForm;	
-    var nome             = (document.getElementById("nome").value !== "<%=defaultName%>")?document.getElementById("nome").value:"";
-    alert(nome);
+    var nome             = document.getElementById("nome").value;
 	var cognome          = document.getElementById("cognome").value;
 	var username         = document.getElementById("username").value;
 	var password         = document.getElementById("password").value;
 	var confermaPassword = document.getElementById("confermaPassword").value;
 	var email            = document.getElementById("email").value;
-	var azienda          = document.getElementById("azienda").value;
+	var azienda          = ( document.getElementById("azienda").value == "<%=defaultOrganization%>" )?"":document.getElementById("azienda").value;
 	
 	var params = new Object();
 	params.useCaptcha = "false";
