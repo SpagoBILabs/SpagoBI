@@ -354,7 +354,7 @@ public abstract class  AbstractStatement implements IStatement {
 
 			
 
-		return rootEntityAlias + "." + queryName.substring(0,1).toLowerCase()+queryName.substring(1);
+		return rootEntityAlias + "." + queryName;//.substring(0,1).toLowerCase()+queryName.substring(1);
 	}
 	
 	public String getEntityAliasWithRoles(IModelEntity rootEntity, Map entityAliases, Map entityAliasesMaps){
