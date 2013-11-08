@@ -288,8 +288,23 @@ Ext.extend(Sbi.browser.FolderDetailPanel, Ext.Panel, {
 	      			if(content !== undefined) {
 	      				if (this.displayToolbar){
 	      					this.setBreadcrumbs(content);
-	      				}
+	      				}	      				      				
 	      				this.fireEvent('onfolderload', this);
+	      				if (what != null){	      					
+	      					var oldComm = Ext.get('ul-community').dom.childNodes;
+	    					//disactive old communities
+	    					for(var i=0; i< oldComm.length; i++){
+	    						if (oldComm[i].id == what){
+	    							oldComm[i].className = 'active first';
+	    						} else {
+	    							oldComm[i].className = '';
+	    						}
+	    					}
+	    					
+//	    					
+//		      				var newComm = Ext.get(what);
+//		      				Ext.fly(newComm).addClass('active first');
+	      				}	
 	      			} 
 	      		} else {
 	      			Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
@@ -622,7 +637,7 @@ Ext.extend(Sbi.browser.FolderDetailPanel, Ext.Panel, {
     	var communityString = '';
         for(i=0; i< communities.root.length; i++){
         	var funct = communities.root[i].functId;
-        	communityString += '<li><a href="#" onclick="javascript:Ext.getCmp(\'this\').loadFolder('+funct+', null)">';
+        	communityString += '<li  id="'+ communities.root[i].name +'" ><a href="#" onclick="javascript:Ext.getCmp(\'this\').loadFolder('+funct+', null, \''+communities.root[i].name+'\')">';
         	communityString += communities.root[i].name;
         	communityString +='</a></li>';
         }
@@ -641,15 +656,16 @@ Ext.extend(Sbi.browser.FolderDetailPanel, Ext.Panel, {
         }
 
         var bannerHTML = ''+
-//     		'<div class="aux"> '+
-     		'<div class="main-maps-list"> '+
-//    		'    <div class="list-actions-container"> '+ //setted into the container panel
-    		'		<ul class="list-tab"> '+
-    		'	    	<li class="active first"><a href="#" onclick="javascript:Ext.getCmp(\'this\').loadFolder(null, null, \'ALL\')">'+LN('sbi.generic.all')+'</a></li> '+
-    					communityString+
-//    		'	        <li class="favourite last"><a href="#">'+LN('sbi.browser.document.favourites')+'</a></li> '+
-    		'		</ul> '+
-    		'	    <div class="list-actions"> '+
+     		'<div class="main-maps-list"> ';
+     	if (communities.root && communities.root.length>0){
+     			bannerHTML += 
+     			'		<ul id="ul-community" class="list-tab"> '+
+	    		'	    	<li class="active first"><a href="#" onclick="javascript:Ext.getCmp(\'this\').loadFolder(null, null, \'ALL\')">'+LN('sbi.generic.all')+'</a></li> '+
+	    					communityString+
+	//    		'	        <li class="favourite last"><a href="#">'+LN('sbi.browser.document.favourites')+'</a></li> '+
+	    		'		</ul> ';
+     	}
+        bannerHTML +='  <div class="list-actions"> '+
     					createButton +
     		'	        <form action="#" method="get" class="search-form"> '+
     		'	            <fieldset> '+

@@ -495,11 +495,11 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 //     		'<div class="aux"> '+
      		'<div class="main-datasets-list"> '+
     		'    <div class="list-actions-container"> '+ //setted into the container panel
-    		'		<ul class="list-tab"> '+
-    		'	    	<li class="active first"><a href="#" onclick="javascript:Ext.getCmp(\'this\').loadFolder(null, null, \'ALL\')">'+LN('sbi.generic.all')+'</a></li> '+
-    					communityString+
-//    		'	        <li class="favourite last"><a href="#">'+LN('sbi.browser.document.favourites')+'</a></li> '+
-    		'		</ul> '+
+//    		'		<ul class="list-tab"> '+
+//    		'	    	<li class="active first"><a href="#" onclick="javascript:Ext.getCmp(\'this\').loadFolder(null, null, \'ALL\')">'+LN('sbi.generic.all')+'</a></li> '+
+//    					communityString+
+////    		'	        <li class="favourite last"><a href="#">'+LN('sbi.browser.document.favourites')+'</a></li> '+
+//    		'		</ul> '+
     		'	    <div class="list-actions"> '+
     					createButton +
     		'	        <form action="#" method="get" class="search-form"> '+
