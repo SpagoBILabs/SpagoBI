@@ -151,7 +151,7 @@ this.services["update"]= Sbi.config.serviceRegistry.getRestServiceUrl({
                         <fieldset>
                             <div class="field organization">
                                 <label for="organization">Company</label>
-                                <input type="text" name="azienda" id="azienda" value="${data['company']}" onfocus="if(value=='<%=defaultOrganization%>') value = ''" onblur="if (this.value=='') this.value = '<%=defaultOrganization%>'"/>
+                                <input type="text" name="azienda" id="azienda" value="${data['community']}" onfocus="if(value=='<%=defaultOrganization%>') value = ''" onblur="if (this.value=='') this.value = '<%=defaultOrganization%>'"/>
                             </div>
                             <div class="field name">
                                 <label for="name">Name</label>
