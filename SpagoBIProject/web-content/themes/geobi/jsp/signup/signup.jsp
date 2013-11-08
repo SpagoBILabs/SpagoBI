@@ -26,8 +26,10 @@
 	String defaultOrganization = msgBuilder.getMessage("profileattr.company",locale); 
 	String defaultName = msgBuilder.getMessage("profileattr.firstname",locale);
 	String defaultSurname = msgBuilder.getMessage("profileattr.lastname",locale);
-	String defaultUsername = msgBuilder.getMessage("username",locale);
-	String defaultPassword = msgBuilder.getMessage("password",locale);
+	//String defaultUsername = msgBuilder.getMessage("username",locale);
+	//String defaultPassword = msgBuilder.getMessage("password",locale);
+	String defaultUsername = "Username";
+	String defaultPassword = "Password";
 	String defaultEmail = msgBuilder.getMessage("profileattr.email",locale);
 	String defaultConfirmPwd = msgBuilder.getMessage("confirmPwd",locale);         
 
@@ -53,7 +55,7 @@ function nascondi(){
 }
 
 function register() {
-
+	callLoadingDiv();
   	//Service Registry creation
 	 var url = {
 	    	host: '<%= request.getServerName()%>'
@@ -124,7 +126,6 @@ function changefield(el){
     document.getElementById(el).focus();
  
 }
-	
 
 </script>
 
