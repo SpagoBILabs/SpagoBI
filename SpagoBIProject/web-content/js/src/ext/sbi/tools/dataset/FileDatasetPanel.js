@@ -166,7 +166,15 @@ Ext.extend(Sbi.tools.dataset.FileDatasetPanel, Ext.Panel, {
 			readOnly: !this.isOwner || false,
 			style: {
 	            marginRight: '15px'
-	        }
+	        },
+	        listeners: {
+			    afterrender: function(combo) {
+			    	if (!this.rawValue || this.rawValue == ''){
+				        var recordSelected = combo.getStore().getAt(0);                     
+				        combo.setValue(recordSelected.get('csvEndOfLineValue'));
+			    	}
+			    }
+			}
 		});	
 		
 		this.csvDelimiterCombo = new Ext.form.ComboBox({
@@ -176,7 +184,7 @@ Ext.extend(Sbi.tools.dataset.FileDatasetPanel, Ext.Panel, {
 		            'csvDelimiterName',
 		            'csvDelimiterValue'
 		        ],
-		        data: [[';', ';'], [',', ','], ['\\t', '\\t'], ['\|', '\|']]
+		        data: [ [',', ','],[';', ';'], ['\\t', '\\t'], ['\|', '\|']]
 		    }),
 		    width: 180,
 			fieldLabel : LN('sbi.ds.file.csv.delimiter'),
@@ -193,7 +201,15 @@ Ext.extend(Sbi.tools.dataset.FileDatasetPanel, Ext.Panel, {
 			readOnly: !this.isOwner || false,
 			style: {
 	            marginLeft: '10px'
-	        }
+	        },
+	        listeners: {
+			    afterrender: function(combo) {
+			    	if (!this.rawValue || this.rawValue == ''){
+				        var recordSelected = combo.getStore().getAt(0);                     
+				        combo.setValue(recordSelected.get('csvDelimiterValue'));
+			    	}
+			    }
+			}
 		});	
 		
 		this.csvQuoteCombo = new Ext.form.ComboBox({
@@ -220,7 +236,15 @@ Ext.extend(Sbi.tools.dataset.FileDatasetPanel, Ext.Panel, {
 			readOnly: !this.isOwner || false,
 			style: {
 	            marginLeft: '10px'
-	        }
+	        },
+	        listeners: {
+			    afterrender: function(combo) {
+			    	if (!this.rawValue || this.rawValue == ''){
+				        var recordSelected = combo.getStore().getAt(0);                     
+				        combo.setValue(recordSelected.get('csvQuoteValue'));
+			    	}
+			    }
+			}
 		});	
 		 
 		this.csvOptionsPanel = new Ext.Panel({	
