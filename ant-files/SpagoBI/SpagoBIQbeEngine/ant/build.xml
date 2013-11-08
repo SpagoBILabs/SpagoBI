@@ -205,11 +205,10 @@
 				<file name='./spagobi/qbe/FilterGridDropTarget.js' />
 				<file name='./spagobi/qbe/FilterGridPanel.js' />
 				<file name='./spagobi/qbe/QbeCardsPanel.js' />
-						
 				<file name='./spagobi/qbe/HavingGridPanel.js' />
 				<file name='./spagobi/qbe/HavingGridDropTarget.js' />
 				<file name='./spagobi/qbe/SaveWindow.js' />
-				<file name="./spagobi/qbe/SaveDatasetWindow.js" />
+				<file name='./spagobi/qbe/SaveDatasetWindow.js' />
 				<file name='./spagobi/qbe/QueryBuilderPanel.js' />
 				<file name='./spagobi/qbe/QbePanel.js' />
 				<file name='./spagobi/qbe/FreeConditionsWindow.js' />
@@ -225,6 +224,13 @@
 				<file name='./spagobi/qbe/DocumentParametersStore.js' />
 				<file name='./spagobi/qbe/HavingGridPanel.js' />
 
+				<file name='./spagobi/qbe/RelationshipsWizard.js' />
+				<file name='./spagobi/qbe/RelationshipsWizardRoleForEntity.js' />
+				<file name='./spagobi/qbe/RelationshipsWizardRole.js' />
+				<file name='./spagobi/qbe/RelationshipsWizardContainer.js' />
+				<file name='./spagobi/qbe/RelationshipsWizardWindow.js' />
+				<file name='./spagobi/qbe/AmbiguousFields.js' />
+
 				<file name='./spagobi/widgets/LookupField.js' />
 				<file name='./spagobi/widgets/FilterLookupField.js' />
 				<file name='./spagobi/widgets/FilteringToolbar.js' />
@@ -235,6 +241,7 @@
 				<file name='./spagobi/widgets/SimpleValuesChooserWindow.js' />
 				<file name='./spagobi/widgets/FilterLookupPopupWindow.js' />
 				<file name='./spagobi/widgets/ConfigurableForm.js' />
+				<file name='./spagobi/widgets/Cache.js' />
 
 
 				<file name='./spagobi/qbe/FilterComboBox.js' />
