@@ -33,6 +33,34 @@
 			<LEVEL name="regione"
 				layerName="regioni" 
 				layerLabel="Regioni" 
+				layerId="denominazione_regione" 
+				layer_url="http://localhost:6090/geoserver/wfs"
+				layer_zoom="5" 
+				layer_cetral_point="18.530 42.500"/>
+			<LEVEL name="provincia"
+				layerName="province" 
+				layerLabel="Province" 
+				layerId="denominazione_provincia" 
+				layer_url="http://localhost:6090/geoserver/wfs"
+				layer_zoom="5" 
+				layer_cetral_point="18.530 42.500"/>
+			<LEVEL name="comune"
+				layerName="comuni" 
+				layerLabel="Comuni" 
+				layerId="denominazione_in_italiano" 
+				layer_url="http://localhost:6090/geoserver/wfs"
+				layer_zoom="9" 
+				layer_cetral_point="11.400 46.650"/>
+				
+		</LEVELS>
+	</GEO_DIMENSION>
+	
+	<!--  
+	<GEO_DIMENSION>
+		<LEVELS>
+			<LEVEL name="regione"
+				layerName="regioni" 
+				layerLabel="Regioni" 
 				layerId="nome_reg" 
 				layer_url="http://localhost:6090/geoserver/wfs"
 				layer_zoom="5" 
@@ -54,6 +82,7 @@
 				
 		</LEVELS>
 	</GEO_DIMENSION>
+	-->
 	
 	
 	<!-- ====================================================================================== -->
