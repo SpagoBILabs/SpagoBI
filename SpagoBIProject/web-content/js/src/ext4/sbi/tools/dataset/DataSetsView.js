@@ -174,16 +174,15 @@ Ext.define('Sbi.tools.dataset.DataSetsView', {
 			'</div>',{
 			        	includeAction: function(n){
 			        		var toReturn = true;
-			        		if (Sbi.settings.dataset.hiddenActions && Sbi.settings.dataset.hiddenActions.length > 0){
-			        			for (var i=0; i<Sbi.settings.dataset.hiddenActions.length; i++){
-			        				var iconToHide = Sbi.settings.dataset.hiddenActions[i];
+			        		if (Sbi.settings.mydata.hiddenActions && Sbi.settings.mydata.hiddenActions.length > 0){
+			        			for (var i=0; i<Sbi.settings.mydata.hiddenActions.length; i++){
+			        				var iconToHide = Sbi.settings.mydata.hiddenActions[i];
 			        				if (iconToHide == n){
 			        					toReturn = false;
 			        					break;
 			        				}
 			        			}
 			        		}
-			        		//if (n == 'qbe' || n == 'worksheet') toReturn = false;
 			        		
 			        		return toReturn;
 			        	}
