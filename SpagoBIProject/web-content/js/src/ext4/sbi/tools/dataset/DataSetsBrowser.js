@@ -36,7 +36,7 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 			baseParams ={};
 		}
 		baseParams.isTech = this.config.isTech;
-		baseParams.showOnlyOwner = Sbi.settings.myData.showOnlyOwner;
+		baseParams.showOnlyOwner = Sbi.settings.mydata.showOnlyOwner;
 
 		
 		this.services["list"] = Sbi.config.serviceRegistry.getRestServiceUrl({

@@ -8,6 +8,20 @@
  
 Ext.ns("Sbi.settings");
 
+Sbi.settings.mydata = {
+	// the toolbar that appears when a new document is created over a dataset
+	toolbar: {
+		hide: false
+	}
+	, hiddenActions: []
+	/**
+	 * MY DATA :
+	 * put false for previous behavior (all USER public ds + owned)
+	 * put true for showing only owned datasets
+	 */
+	, showOnlyOwner: true
+}
+
 /**
  * Execution  panel settings
  */
@@ -79,13 +93,6 @@ Sbi.settings.kpi = {
 };
 
 /**
- * Datasets
- */
-Sbi.settings.dataset = {
-		hiddenActions: []
-};
-
-/**
  * WIDGETS
  */
 Sbi.settings.widgets = {
@@ -113,12 +120,5 @@ Ext.ns("Sbi.settings.IE");
 // warning message "A script on this page is causing Internet Explorer to run slowly")
 Sbi.settings.IE.destroyExecutionWizardWhenClosed = false;
 
-/**
- * MY DATA :
- * put false for previous behavior (all USER public ds + owned)
- * put true for showing only owned datasets
- */
-Sbi.settings.myData = {
-	showOnlyOwner: true
-};
+
 

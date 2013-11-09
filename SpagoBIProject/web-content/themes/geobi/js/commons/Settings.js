@@ -10,13 +10,35 @@
 Ext.ns("Sbi.settings.geobi");
 
 /**
- * Execution  panel settings
+ * Execution panel settings
  */
 Sbi.settings.geobi.execution = {
-	    toolbar:{
-			hideForEngineLabels: ['Gis Engine'] //list of engines without toolbar
-		}
+    toolbar:{
+		hideForEngineLabels: ['Gis Engine'] //list of engines without toolbar
+	}
 };
+
+/**
+ * MyData settings
+ */
+Sbi.settings.geobi.mydata = {
+	// the toolbar that appears when a new document is created over a dataset
+	// TODO: make it configurable on doc type basis
+	toolbar: {
+		hide: true
+	}
+	, hiddenActions: ['worksheet', 'qbe']
+	/**
+	 * MY DATA :
+	 * put false for previous behavior (all USER public ds + owned)
+	 * put true for showing only owned datasets
+	 */
+	, showOnlyOwner: false
+}
+
+
+
+
 
 
 /**
@@ -46,18 +68,6 @@ Sbi.settings.geobi.browser = {
 }; 
 
 
-/**
- * Datasets
- */
-Sbi.settings.dataset = {
-	hiddenActions: ['worksheet', 'qbe']
-};
-
-Sbi.settings.myData = {
-	showOnlyOwner: false
-};
-
-//Sbi.settings.browser = Ext.apply(Sbi.settings.browser,Sbi.settings.geobi.browser);
 
 Sbi.settings = Ext.apply(Sbi.settings,Sbi.settings.geobi);
 
