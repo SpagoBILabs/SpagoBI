@@ -120,9 +120,12 @@ public class Signup {
 	    
 	    userDao.deleteSbiUserById( user.getId() );
 	    
-	    String host = req.getHeader("Host");
-		int index = host.indexOf(":");
-		URL url = new URL(req.getScheme(), host.substring(0, index), Integer.parseInt(host.substring(index+1)), 
+		String host = req.getServerName();
+	    logger.debug("Activation url host is equal to [" + host + "]");
+	    int port = req.getServerPort();
+	    logger.debug("Activation url port is equal to [" + port + "]");
+
+		URL url = new URL(req.getScheme(), host, port, 
 				req.getContextPath() + "/servlet/AdapterHTTP?ACTION_NAME=LOGOUT_ACTION&LIGHT_NAVIGATOR_DISABLED=TRUE" );
 		
 		servletResponse.sendRedirect(url.toString());
