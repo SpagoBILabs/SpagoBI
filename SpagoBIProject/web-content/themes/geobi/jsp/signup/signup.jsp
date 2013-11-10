@@ -26,12 +26,12 @@
 	String defaultOrganization = msgBuilder.getMessage("profileattr.company",locale); 
 	String defaultName = msgBuilder.getMessage("profileattr.firstname",locale);
 	String defaultSurname = msgBuilder.getMessage("profileattr.lastname",locale);
-	//String defaultUsername = msgBuilder.getMessage("username",locale);
-	//String defaultPassword = msgBuilder.getMessage("password",locale);
 	String defaultUsername = "Username";
 	String defaultPassword = "Password";
 	String defaultEmail = msgBuilder.getMessage("profileattr.email",locale);
-	String defaultConfirmPwd = msgBuilder.getMessage("confirmPwd",locale);         
+	String defaultConfirmPwd = msgBuilder.getMessage("confirmPwd",locale);  
+	
+	String registrationSuccessMsg = msgBuilder.getMessage("signup.msg.success",locale);
 
 %> 
 
@@ -55,7 +55,7 @@ function nascondi(){
 }
 
 function register() {
-	callLoadingDiv();
+	//callLoadingDiv();
   	//Service Registry creation
 	 var url = {
 	    	host: '<%= request.getServerName()%>'
@@ -107,7 +107,7 @@ function register() {
 			    if( jsonData.message != undefined && jsonData.message != null && jsonData.message == 'validation-error' ){
 			      Sbi.exception.ExceptionHandler.handleFailure(response);
 			    }else{
-			      Sbi.exception.ExceptionHandler.showInfoMessage('Register', 'OK', {});
+			      Sbi.exception.ExceptionHandler.showInfoMessage('<%=registrationSuccessMsg%>', 'Success', {});
 			    }		
 			  }		
 			}
