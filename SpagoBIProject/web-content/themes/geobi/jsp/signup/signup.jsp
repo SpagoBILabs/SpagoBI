@@ -86,6 +86,8 @@ function register() {
 	var email            = document.getElementById("email").value;
 	var azienda          = ( document.getElementById("azienda").value == "<%=defaultOrganization%>" )?"":document.getElementById("azienda").value;
 	
+	var registrationSuccessMsg = "<%=registrationSuccessMsg%>";
+	
 	var params = new Object();
 	params.useCaptcha = "false";
 	params.nome     = nome;
@@ -107,7 +109,7 @@ function register() {
 			    if( jsonData.message != undefined && jsonData.message != null && jsonData.message == 'validation-error' ){
 			      Sbi.exception.ExceptionHandler.handleFailure(response);
 			    }else{
-			      Sbi.exception.ExceptionHandler.showInfoMessage('<%=registrationSuccessMsg%>', 'Success', {});
+			      Sbi.exception.ExceptionHandler.showInfoMessage(registrationSuccessMsg, "Success", {});
 			    }		
 			  }		
 			}
