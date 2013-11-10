@@ -64,7 +64,8 @@ public class CommunityUtilities {
 		sb.append("<br/> "+msg4+" "+userToAccept.getFullName()+" "+msg5);		
 		String schema = request.getScheme();
 		String server= request.getServerName();
-		String port= request.getLocalPort()+"";
+		String port= request.getServerPort()+"";
+		
 		
 		sb.append("<br/><a href=\""
 				+schema
