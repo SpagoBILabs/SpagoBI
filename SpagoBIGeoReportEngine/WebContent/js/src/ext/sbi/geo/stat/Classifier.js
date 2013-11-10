@@ -213,12 +213,13 @@ Ext.extend(Sbi.geo.stat.Classifier, Ext.util.Observable, {
     }
 
     
-    , arrayToString: function(a) {
-    	 var s ='';
-         for (i = 0; i < a.length; i++) {
-         	s += a[i] + "; ";
-         }
-         return s.trim();
+    , arrayToString: function(a, format) {
+    	format = format || function(o){return o;};
+    	var s = '';
+        for (i = 0; i < a.length; i++) {
+        	s += format(a[i]) + "; ";
+        }
+        return s.trim();
     }
     
     , classifyByQuantils: function(nbBins) {
@@ -227,9 +228,19 @@ Ext.extend(Sbi.geo.stat.Classifier, Ext.util.Observable, {
     	var values = this.distribution.getValues();
     	Sbi.debug("[Classifier.classifyByQuantils] : Total number of value extracted from distribution is equal to [" + values.length + "];");
         values.sort(function(a,b) {a = a || 0; b = b || 0; return a-b;});
-        
-       
         Sbi.debug("[Classifier.classifyByQuantils] : Sorted values array is equal to [" + this.arrayToString(values) + "];");
+        
+        var distinctValues = [];
+        var lastAddedValue = null;
+        for(var i = 0; i < values.length; i++) {
+        	if(values[i] != lastAddedValue){
+        		distinctValues.push(values[i]);
+        		lastAddedValue = values[i];
+        	}
+        }
+        Sbi.debug("[Classifier.classifyByQuantils] : Sorted distinct values array is equal to [" + this.arrayToString(distinctValues) + "];");
+        
+        values = distinctValues;
         
         var binSize = Math.round(values.length  / nbBins);
         Sbi.debug("[Classifier.classifyByQuantils] : Each one of the [" + nbBins + "] bins will contain [" + binSize + "] values");
@@ -242,11 +253,18 @@ Ext.extend(Sbi.geo.stat.Classifier, Ext.util.Observable, {
             bounds[0] = values[0];
             boundsStr +=  values[0] + "; ";
             for (i = 1; i < nbBins; i++) {
-                bounds[i] = values[binLastValPos];
-                boundsStr +=  values[binLastValPos] + "; ";
+                bounds[i] = values[binLastValPos] || (bounds[i-1]+1);
+                boundsStr +=  bounds[i] + "; ";
                 binLastValPos += binSize;
             }
-            bounds.push(values[values.length - 1]);
+            if(values[values.length - 1] > bounds[bounds.length-1]) {
+            	// this condition is always true except when the number of quantiles is greater 
+            	// then the number of distict values in the distribuction
+            	bounds.push(values[values.length - 1]);
+            } else {
+            	bounds.push(bounds[bounds.length-1] + 1);
+            }
+            
             boundsStr +=  values[values.length - 1] + "; ";
         }
         Sbi.debug("[Classifier.classifyByEqIntervals] : Bounds array is equal to [" + boundsStr.trim() + "];");
@@ -267,7 +285,8 @@ Ext.extend(Sbi.geo.stat.Classifier, Ext.util.Observable, {
             sortedDataPoints.push(this.distribution.getDataPointAt(i));
         }
         sortedDataPoints.sort(function(a,b) {return a.getValue() - b.getValue();});
-        Sbi.debug("[Classifier.classifyByEqIntervals] : Sorted values array is equal to [" + this.arrayToString(sortedDataPoints) + "];");
+        Sbi.debug("[Classifier.classifyWithBounds] : Sorted values array is equal to [" + this.arrayToString(sortedDataPoints, function(o){return o.getValue();}) + "];");
+        Sbi.debug("[Classifier.classifyWithBounds] : Bounds array is equal to [" + this.arrayToString(bounds) + "];");
         
         
         var nbBins = bounds.length - 1;
@@ -283,13 +302,16 @@ Ext.extend(Sbi.geo.stat.Classifier, Ext.util.Observable, {
                 binDataPoints[i].push(sortedDataPoints[0]);
                 sortedDataPoints.shift();
                 Sbi.trace("[Classifier.classifyWithBounds] : bin [" + i + "] now contains [" + binDataPoints[i].length+ "] data points");
+                if(sortedDataPoints[0] === undefined) {
+                	 Sbi.trace("[Classifier.classifyWithBounds] : no more data points to classify");
+                	 break;
+                }
             } else {
                 i++;
                 Sbi.trace("[Classifier.classifyWithBounds] : Increment to bin [" + i + "] because value [" + sortedDataPoints[0].getValue() + "] is greater then lb [" + bounds[i + 1] + "] of type [" + (typeof bounds[i + 1]) + "]");
             }
         }
         
-        //binCount[nbBins - 1] = this.nbVal - mapfish.Util.sum(binCount);
         Sbi.trace("[Classifier.classifyWithBounds]: datapoints not classified [" + sortedDataPoints.length + "]");
         for(var i = 0; i < sortedDataPoints.length; i++) {
         	Sbi.trace("[Classifier.classifyWithBounds]: datapoint [" + sortedDataPoints[i].coordinates[0] + "] whose value is equal to [" + sortedDataPoints[0].getValue() + "] has been not classified. It will be added to the last bin");
