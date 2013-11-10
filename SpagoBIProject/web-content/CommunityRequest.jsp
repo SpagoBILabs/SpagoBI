@@ -19,8 +19,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 --%>
 <%@ page language="java"
          extends="it.eng.spago.dispatching.httpchannel.AbstractHttpJspPagePortlet"
-         contentType="text/html; charset=ISO-8859-1"
-         pageEncoding="ISO-8859-1"
+         contentType="text/html; charset=UTF-8"
+         pageEncoding="UTF-8"
          session="true" %>
 <%@page import="it.eng.spagobi.commons.utilities.ChannelUtilities,
                 it.eng.spagobi.commons.constants.SpagoBIConstants,
@@ -44,7 +44,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
   <script type="text/javascript">
 	function reject(user, community){
 		alert('You refused user '+user+' to become member of the community ' +community);
-
 	}
   </script>
 <TITLE>Community Membership Request</TITLE> 
@@ -64,6 +63,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 <input type="button" value="Reject" onClick="javascript:reject('<%=userToAccept %>','<%=community %>');">
 <input type="submit" value="Accept">
 </form>
+
+<p><b>WARNING: if you are not logged yet in SpagoBI, you will be redirected to the login page, before your decision is applied </b>
 
 </span>
 
