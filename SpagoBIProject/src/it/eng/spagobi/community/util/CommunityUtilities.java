@@ -83,7 +83,7 @@ public class CommunityUtilities {
 				+ "/themes/sbi_default/img/go-community.png\"></a>");
 
 		sb.append("</p>");
-		sb.append("<p style=\"width:100%; text-align:center;\"><b>"+msgwarn+"</b></p>");
+		//sb.append("<p style=\"width:100%; text-align:center;\"><b>"+msgwarn+"</b></p>");
 		sb.append("</BODY>");
 		String mailTxt = sb.toString();
 
