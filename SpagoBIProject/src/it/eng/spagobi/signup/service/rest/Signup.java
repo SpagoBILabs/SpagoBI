@@ -261,7 +261,7 @@ public class Signup {
 		    return new JSONObject("{message: 'Unknow user'}").toString();
 		  
 		  if( !user.getFlgPwdBlocked() )
-		    return new JSONObject("{message: 'User activated'}").toString();
+		    return new JSONObject("{message: 'User already active'}").toString();
 			  
 		  long now = System.currentTimeMillis();
 		  if( now > user.getCommonInfo().getTimeIn().getTime() + Long.parseLong(expired_time) * 24 * 60 * 60 * 1000 )
@@ -270,7 +270,7 @@ public class Signup {
 		  user.setFlgPwdBlocked(false);
 		  userDao.updateSbiUser(user, null );
 		  
-		  return new JSONObject("{message: 'User activated'}").toString();
+		  return new JSONObject("{message: 'User succesfully activated. Now you can login.'}").toString();
 	  } catch (Throwable t) {
 			throw new SpagoBIServiceException(
 					"An unexpected error occured while executing the subscribe action", t);
