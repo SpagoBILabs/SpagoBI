@@ -44,7 +44,7 @@ public class ObjectsAccessVerifier {
 
 	/**
 	 * Controls if the current user can develop the object relative to the input
-	 * folder id.
+	 * folder id. 
 	 * 
 	 * @param state
 	 *                state of the object
@@ -1159,7 +1159,105 @@ public class ObjectsAccessVerifier {
 	}
 	
 	
-	
+	/**
+	 * Check if the user can execute the required document.
+	 * It checks the state of the document and its position on folders, and look for user permissions.
+	 * It also checks if behavioural model is set properly (i.e. the user has valid roles for execution).
+	 * 
+	 * @param obj The document to be executed
+	 * @param profile The user profile object
+	 * @return true if the user can execute the required document, false otherwise
+	 * @throws EMFInternalError
+	 * @throws EMFUserError
+	 */
+	public static boolean canExec(BIObject obj, IEngUserProfile profile) throws EMFInternalError, EMFUserError {
+		logger.debug("IN");
+		Monitor monitor = MonitorFactory
+				.start("spagobi.core.ObjectAccessVerifier.canExec(BIObject obj, IEngUserProfile profile)");
+		boolean canExec = false;
+		String state = obj.getStateCode();
+
+		List foldersId = obj.getFunctionalities();
+		if (foldersId == null || foldersId.size() == 0) {
+			logger.warn("BIObject does not belong to any functionality!!");
+			monitor.stop();
+			throw new EMFInternalError(EMFErrorSeverity.ERROR,
+					"BIObject does not belong to any functionality!!");
+		}
+		
+		boolean canExecByStateAndFolders = false;
+		if ("SUSP".equalsIgnoreCase(state)) {
+			// only admin can exec suspended document 
+			canExecByStateAndFolders = profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN); 
+		}
+		
+		Iterator foldersIdIt = foldersId.iterator();
+		while (foldersIdIt.hasNext()) {
+			Integer folderId = (Integer) foldersIdIt.next();
+			boolean canDev = canDev(state, folderId, profile);
+			if (canDev) {
+				canExecByStateAndFolders = true;
+				break;
+			}
+			boolean canTest = canTest(state, folderId, profile);
+			if (canTest) {
+				canExecByStateAndFolders = true;
+				break;
+			}
+			boolean canExecOnFolder = canExec(state, folderId, profile);
+			if (canExecOnFolder) {
+				// administrators, developers, testers, behavioural model
+				// administrators can see that document
+				if (profile
+						.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN) // for administrators
+						|| profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_DEV) // for developers
+						|| profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_TEST) // for testers
+						|| profile.isAbleToExecuteAction(SpagoBIConstants.PARAMETER_MANAGEMENT)) { // for behavioral model administrators
+					canExecByStateAndFolders = true;
+				} else {
+					canExecByStateAndFolders = checkProfileVisibility(obj, profile);
+				}
+				break;
+			}
+		}
+		
+		if (canExecByStateAndFolders) {
+			Integer id = obj.getId();
+			// get the correct roles for execution
+			List correctRoles = null;
+			if (profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_DEV)
+					|| profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_USER)
+					|| profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN))
+				correctRoles = DAOFactory.getBIObjectDAO()
+						.getCorrectRolesForExecution(id, profile);
+			else
+				correctRoles = DAOFactory.getBIObjectDAO()
+						.getCorrectRolesForExecution(id);
+			logger.debug("correct roles for execution retrived " + correctRoles);
+			if (correctRoles == null || correctRoles.size() == 0) {
+				logger.error("Document [" + obj.getLabel()
+						+ "] cannot be executed by no role of the user ["
+						+ ((UserProfile) profile).getUserId() + "]");
+				canExec = false;
+			} else {
+				logger.debug("Document [" + obj.getLabel()
+						+ "] can be executed by the user ["
+						+ ((UserProfile) profile).getUserId() + "]");
+				canExec = true;
+			}
+		} else {
+			logger.error("User ["
+					+ ((UserProfile) profile).getUserId()
+					+ "] cannot execute the document ["
+					+ obj.getLabel()
+					+ "] according to document's state and his permission on folders");
+			canExec = false;
+		}
+		
+		monitor.stop();
+		logger.debug("OUT.canExec=" + canExec);
+		return canExec;
+	}
 	
 	
 }

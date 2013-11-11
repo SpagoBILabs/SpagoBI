@@ -378,8 +378,8 @@ public class ContentServiceImplSupplier {
 			}
 
 			// Check if the user can execute the document
-			boolean canSee = ObjectsAccessVerifier.canSee(biobj, profile);
-			if (!canSee) {
+			boolean canExec = ObjectsAccessVerifier.canExec(biobj, profile);
+			if (!canExec) {
 				logger.error("Current user cannot execute the required document");
 				throw new SecurityException(
 						"Current user cannot execute the required document");
@@ -387,23 +387,16 @@ public class ContentServiceImplSupplier {
 			Integer id = biobj.getId();
 			// get the correct roles for execution
 			List correctRoles = null;
-			if (profile
-					.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_DEV)
-					|| profile
-							.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_USER)
-					|| profile
-							.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN))
+			if (profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_DEV)
+					|| profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_USER)
+					|| profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN))
 				correctRoles = DAOFactory.getBIObjectDAO()
 						.getCorrectRolesForExecution(id, profile);
 			else
 				correctRoles = DAOFactory.getBIObjectDAO()
 						.getCorrectRolesForExecution(id);
 			logger.debug("correct roles for execution retrived " + correctRoles);
-			if (correctRoles == null || correctRoles.size() == 0) {
-				logger.error("Object cannot be executed by no role of the user");
-				throw new SecurityException(
-						"Object cannot be executed by no role of the user");
-			}
+			// at this point correctRoles must contains at least one role, since the user can execute the document
 
 			if (parameters == null) {
 				logger.debug("Input parameters map is null. It will be considered as an empty map");
