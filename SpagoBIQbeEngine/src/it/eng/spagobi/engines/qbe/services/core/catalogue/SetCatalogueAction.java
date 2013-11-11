@@ -221,6 +221,10 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 			}
 			
 			
+			if(!isDierctlyExecutable){
+				isDierctlyExecutable = serialized==null || serialized.equals("") || serialized.equals("[]");//no ambiguos fields found so the query is executable;
+			}
+			
 			JSONObject toReturn = new JSONObject();
 			toReturn.put(AMBIGUOUS_FIELDS_PATHS, serialized);
 			toReturn.put(AMBIGUOUS_ROLES, roleSelection);

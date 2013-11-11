@@ -22,10 +22,10 @@ public abstract class AbstractGraphValidator implements IGraphValidator {
 			return true;
 		}
 		
-		return validate(G);
+		return validate(G, unjoinedEntities);
 		
 	}
 
-	public abstract boolean validate(Graph G);
+	public abstract boolean validate(Graph G, Set<IModelEntity> unjoinedEntities);
 	
 }
