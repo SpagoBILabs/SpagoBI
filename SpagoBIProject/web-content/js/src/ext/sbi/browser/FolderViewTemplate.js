@@ -41,13 +41,13 @@ Sbi.browser.FolderViewTemplate = function(config) {
 	var author = LN('sbi.generic.author');
 	var documentTpl = ''+
 	'<div class="box-container-browser">'+
-		'<div id="document-item-icon"  class="box-figure">'+
+		'<div id="document-item-icon" class="box-figure">'+
 			'<tpl if="this.isSearchResult(summary) == true">'+
 				'<tpl if="this.exists(previewFile) == true">'+
 					'<img align="center" class="preview-icon" src="'+this.services['getImageContent']+'&fileName={previewFile}" + ext:qtip="<b>{views}</b><br/>{summary}"></img>' +
 				'</tpl>' +
 				'<tpl if="this.exists(previewFile) == false">'+
-					'<img align="center" src="' + img + '" '+ classImg+'" + ext:qtip="<b>{views}</b><br/>{summary}"></img>' +
+					'<img  align="center" src="' + img + '" '+ classImg+'" + ext:qtip="<b>{views}</b><br/>{summary}"></img>' +
 				'</tpl>' +
 			'</tpl>'+
 			'<tpl if="this.isSearchResult(summary) == false">'+ 
@@ -154,7 +154,7 @@ Sbi.browser.FolderViewTemplate = function(config) {
 		                	'{[previewFile=""]}',
 		                        // -- DOCUMENT -----------------------------------------------
 		                        '<tpl if="this.exists(engine) == true">',
-		                        	'<dd class="box">', //document
+		                        	'<dd id="{label}" class="box">', //document
 		                        	documentTpl,
 		                        '</tpl>',
 		                        //'<tpl if="this.exists(description) == false">',

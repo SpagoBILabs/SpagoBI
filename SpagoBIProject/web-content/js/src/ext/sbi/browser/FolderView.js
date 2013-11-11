@@ -103,7 +103,25 @@ Ext.extend(Sbi.browser.FolderView, Ext.DataView, {
     }
     
     , getRecord : function(n){
-        var i = (typeof n == 'number')?n:n.viewIndex;
+   //   var i = (typeof n == 'number')?n:n.viewIndex;
+    	var i;
+    	if (typeof n == 'number'){
+    		i = n;
+    	}else if (typeof n == 'string') {
+    		var j=0;
+    		for (el in this.lookup){
+    			var doc = this.lookup[el];
+    			if (doc.label === n){
+    				i = j;
+    				break;
+    			}
+    			j++;
+    		}
+    	}else{
+    		i = viewIndex;
+    	}
+    	
+     
         return this.lookup[i];
     }
     

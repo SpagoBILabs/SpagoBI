@@ -415,25 +415,32 @@ Ext.extend(Sbi.browser.FolderDetailPanel, Ext.Panel, {
       
     	var action = null;
 
-    	 if (actionDetail != null){
-         	Sbi.debug('view detail ');        	
-         	action = actionDetail.dom.className;
-    	 }else if (actionDelete != null){
-         	Sbi.debug('delete');        	
-         	action = actionDelete.dom.className;
-    	 }else if (actionClone != null){
-         	Sbi.debug('clone');        	
-         	action = actionClone.dom.className;
-    	 }else if (actionMetaData != null){
-         	Sbi.debug('showMetadata');        	
-         	action = actionMetaData.dom.className;
-    	 }else if (actionFavourite != null){
-         	Sbi.debug('favourites');        	
-         	action = actionFavourite.dom.className;
-         	//temporary until favourites aren't managed:
-         	return;
-    	 }         	
-    	var r = this.folderView.getRecord(i);
+    	if (actionDetail != null){
+	     	Sbi.debug('view detail ');        	
+	     	action = actionDetail.dom.className;
+		 }else if (actionDelete != null){
+	     	Sbi.debug('delete');        	
+	     	action = actionDelete.dom.className;
+		 }else if (actionClone != null){
+	     	Sbi.debug('clone');        	
+	     	action = actionClone.dom.className;
+		 }else if (actionMetaData != null){
+	     	Sbi.debug('showMetadata');        	
+	     	action = actionMetaData.dom.className;
+		 }else if (actionFavourite != null){
+	     	Sbi.debug('favourites');        	
+	     	action = actionFavourite.dom.className;
+	     	//temporary until favourites aren't managed:
+	     	return;
+		 }   
+    	
+		 var r; 
+		 if (node.id && node.id !== "" && node.id.indexOf("ext-gen") < 0){
+			 r = this.folderView.getRecord(node.id);
+		 }else{			 
+			 r = this.folderView.getRecord(i);
+		 }
+	 
     	if(r.engine) {
     		if(action !== null) {
     			this.performActionOnDocument(r, action);
@@ -675,7 +682,7 @@ Ext.extend(Sbi.browser.FolderDetailPanel, Ext.Panel, {
      	if (communities.root && communities.root.length>0){
      			bannerHTML += 
      			'		<ul id="ul-community" class="list-tab"> '+
-	    		'	    	<li class="active first"><a href="#" onclick="javascript:Ext.getCmp(\'this\').loadFolder(null, null, \'ALL\')">'+LN('sbi.generic.all')+'</a></li> '+
+	    		'	    	<li  id="ALL" class="active first"><a href="#" onclick="javascript:Ext.getCmp(\'this\').loadFolder(null, null, \'ALL\')">'+LN('sbi.generic.all')+'</a></li> '+
 	    					communityString+
 	//    		'	        <li class="favourite last"><a href="#">'+LN('sbi.browser.document.favourites')+'</a></li> '+
 	    		'		</ul> ';
