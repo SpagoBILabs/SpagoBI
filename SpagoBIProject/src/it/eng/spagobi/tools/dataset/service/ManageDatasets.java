@@ -402,7 +402,8 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 			String hsql = filterList(filtersJSON);
 			items = dsDao.loadFilteredDatasetList(hsql, start, limit, profile.getUserUniqueIdentifier().toString());
 		}else{//not filtered
-			items = dsDao.loadPagedDatasetList(start,limit,profile.getUserUniqueIdentifier().toString(), true);
+			items = dsDao.loadPagedDatasetList(start,limit);
+			//items = dsDao.loadPagedDatasetList(start,limit,profile.getUserUniqueIdentifier().toString(), true);
 		}
 		return items;
 	}

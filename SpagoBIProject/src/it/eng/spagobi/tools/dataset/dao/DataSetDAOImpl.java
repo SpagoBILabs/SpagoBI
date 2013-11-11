@@ -1345,7 +1345,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 						throw new SpagoBIDOAException("The Domain with value_id= "+dataSet.getScopeId()+" does not exist");
 					}
 				}
-				hibDataSet.setScope(scope);
+				//hibDataSet.setScope(scope);
 				Date currentTStamp = new Date();
 				hibDataSet.setTimeIn(currentTStamp);		
 				hibDataSet.setTransformer(transformer);
@@ -1389,7 +1389,11 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				}else{
 					hibDataSet.setOwner(dsActiveDetail.getOwner());
 				}
-				
+				if(scope != null ){
+					hibDataSet.setScope(scope);
+				}else if(dsActiveDetail.getScope() != null){
+					hibDataSet.setScope(dsActiveDetail.getScope());
+				}
 				dsActiveDetail.setActive(false);
 				session.update(dsActiveDetail);
 				session.save(hibDataSet);
