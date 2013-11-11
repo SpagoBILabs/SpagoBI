@@ -79,6 +79,34 @@ public class Relationship extends DefaultEdge implements Comparable<Relationship
 	public void setName(String name) {
 		this.name = name;
 	}
+	
+	public String getTargetFieldsString(){
+		String fields = "";
+		if(this.targetFields!=null){
+			for(int i=0; i<this.targetFields.size(); i++){
+				fields = fields+ this.targetFields.get(i).getName();
+				fields=fields+",";
+			}
+		}
+		if(fields.length()>1){
+			fields = fields.substring(0,fields.length()-1);
+		}
+		return fields;
+	}
+	
+	public String getSourceFieldsString(){
+		String fields = "";
+		if(this.sourceFields!=null){
+			for(int i=0; i<this.sourceFields.size(); i++){
+				fields = fields+ this.sourceFields.get(i).getName();
+				fields=fields+",";
+			}
+		}
+		if(fields.length()>1){
+			fields = fields.substring(0,fields.length()-1);
+		}
+		return fields;
+	}
 
 	@Override
 	public int hashCode() {

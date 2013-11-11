@@ -121,7 +121,7 @@ Ext.extend(Sbi.qbe.RelationshipsWizardRoleForEntity, Ext.Panel, {
 		var sm =  new Ext.grid.RowSelectionModel({singleSelect : true});
 		// Column Model shortcut array
 		var cols = [
-		            { id : 'alias', header:  LN('sbi.qbe.relationshipswizard.columns.entity.alias'), sortable: true, dataIndex: 'alias'}
+		            { id : 'alias', header:  LN('sbi.qbe.relationshipswizard.roles.entity.alias.columns'), sortable: true, dataIndex: 'alias'}
 		            ];
 
 		this.entitiesGrid = new Ext.grid.GridPanel(Ext.apply(gridConfig || {}, {
@@ -130,7 +130,7 @@ Ext.extend(Sbi.qbe.RelationshipsWizardRoleForEntity, Ext.Panel, {
 			, sm : sm
 			, stripeRows       : true
 			, autoExpandColumn : 'alias'
-			, title:  LN('sbi.qbe.relationshipswizard.alias.title')+this.roleEntityConfig.name 
+			, title:  LN('sbi.qbe.relationshipswizard.roles.entity.alias.title')+this.roleEntityConfig.name 
 			, flex: 1
 		}));
 
@@ -154,7 +154,7 @@ Ext.extend(Sbi.qbe.RelationshipsWizardRoleForEntity, Ext.Panel, {
 
 		// Column Model shortcut array
 		this.cols = [
-		            { id : 'name', header: "Record Name", sortable: true, dataIndex: 'queryFieldAlias'}
+		            { id : 'name', header:  LN('sbi.qbe.relationshipswizard.roles.field.column'), sortable: true, dataIndex: 'queryFieldAlias'}
 		            ];
 
 		// declare the source Grid
@@ -166,7 +166,7 @@ Ext.extend(Sbi.qbe.RelationshipsWizardRoleForEntity, Ext.Panel, {
 			enableDragDrop   : true,
 			stripeRows       : true,
 			autoExpandColumn : 'name',
-			title            : LN('sbi.qbe.relationshipswizard.fields.title')
+			title            : LN('sbi.qbe.relationshipswizard.field.title')
 		});
 
 		this.fieldGrid.on("render",function(){
@@ -215,7 +215,7 @@ Ext.extend(Sbi.qbe.RelationshipsWizardRoleForEntity, Ext.Panel, {
 		});
 
 		var cols = [
-			            { id : 'name', header: "Record Name", sortable: true, dataIndex: 'queryFieldAlias'}
+			            { id : 'name', header: LN('sbi.qbe.relationshipswizard.roles.entity.alias.field.column'), sortable: true, dataIndex: 'queryFieldAlias'}
 			            ];
 		
 		// create the destination Grid
