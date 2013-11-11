@@ -23,11 +23,13 @@ package it.eng.spagobi.tools.dataset.normalization;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -56,8 +58,10 @@ public class CSVFileNormalizer {
 	private static transient Logger logger = Logger.getLogger(CSVFileNormalizer.class);
 	public static final String CSV_FILE_DELIMITER_CHARACTER = "csvDelimiter";
 	public static final String CSV_FILE_QUOTE_CHARACTER = "csvQuote";
+	public static final String CSV_FILE_ENCODING = "csvEncoding";
 	private String csvDelimiter;
 	private String csvQuote;
+	private String csvEncoding;
 	
 	private String newColumnName;
 	private String newColumnType;
@@ -92,9 +96,15 @@ public class CSVFileNormalizer {
 			} else {
 				delimiter = ",".charAt(0);
 			}
+			
+			if((csvEncoding != null) && (!csvEncoding.isEmpty())){
+				//do nothing
+			} else {
+				csvEncoding = "windows-1252";
+			}
 			//Open the CSV file
 			InputStream inputDataStream = new FileInputStream(datasetFile);
-	 		InputStreamReader inputStreamReader = new InputStreamReader(inputDataStream);
+	 		InputStreamReader inputStreamReader = new InputStreamReader(inputDataStream,csvEncoding);
 	 		
 	 		//Create a copy of the file with a .tmp extension for the MapWriter
 	 		String absolutePath = datasetFile.getAbsolutePath();
@@ -106,7 +116,9 @@ public class CSVFileNormalizer {
 			//Create the mapReader and mapWriter
        	 	CsvPreference customPreference = new CsvPreference.Builder(quote, delimiter, "\n").build(); 
        	 	mapReader = new CsvMapReader(inputStreamReader, customPreference);
-       	 	mapWriter = new CsvMapWriter(new FileWriter(outputFile), customPreference); 
+       	 	OutputStreamWriter outputStreamWriter = new OutputStreamWriter(new FileOutputStream(outputFile),csvEncoding);
+       	 	//mapWriter = new CsvMapWriter(new FileWriter(outputFile), customPreference); 
+       	 	mapWriter = new CsvMapWriter(outputStreamWriter, customPreference);
        	 	
        	 	// header used to read the original file
             final String[] readHeader = mapReader.getHeader(true);
@@ -315,6 +327,22 @@ public class CSVFileNormalizer {
 	 */
 	public void setCsvQuote(String csvQuote) {
 		this.csvQuote = csvQuote;
+	}
+
+
+	/**
+	 * @return the csvEncoding
+	 */
+	public String getCsvEncoding() {
+		return csvEncoding;
+	}
+
+
+	/**
+	 * @param csvEncoding the csvEncoding to set
+	 */
+	public void setCsvEncoding(String csvEncoding) {
+		this.csvEncoding = csvEncoding;
 	}
 
 

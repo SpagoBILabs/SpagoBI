@@ -246,6 +246,34 @@ Ext.extend(Sbi.tools.dataset.FileDatasetPanel, Ext.Panel, {
 			    }
 			}
 		});	
+		
+		this.csvEncodingCombo = new Ext.form.ComboBox({
+			name : 'csvEncoding',
+			store: new Ext.data.ArrayStore({
+		        fields: [
+		            'csvEncodingName',
+		            'csvEncodingValue'
+		        ],
+		        data: [['windows-1252', 'windows-1252'], ['UTF-8', 'UTF-8']]
+		    }),
+		    width: 200,
+			fieldLabel : 'Encoding',
+			displayField : 'csvEncodingName', 
+			valueField : 'csvEncodingValue', 
+			typeAhead : true,
+			forceSelection : true,
+			value : 'windows-1252', //default value selected on creation
+			mode : 'local',
+			triggerAction : 'all',
+			selectOnFocus : true, 
+			editable : false,
+			allowBlank : false, 
+			validationEvent : false,
+			readOnly: !this.isOwner || false,
+			style: {
+	            marginLeft: '10px'
+	        }
+		});	
 		 
 		this.csvOptionsPanel = new Ext.Panel({	
 			  fieldDefaults: {
@@ -256,7 +284,7 @@ Ext.extend(Sbi.tools.dataset.FileDatasetPanel, Ext.Panel, {
 	          bodyStyle:'padding:5px;',
 	          layout: 'column',
 	    	  width: '100%',
-	          items: [ this.csvDelimiterCombo, this.csvQuoteCombo]
+	          items: [ this.csvDelimiterCombo, this.csvQuoteCombo, this.csvEncodingCombo]
 		});
 		this.csvOptionsPanel.setVisible(false);		
 		
@@ -585,6 +613,10 @@ Ext.extend(Sbi.tools.dataset.FileDatasetPanel, Ext.Panel, {
 		if (formState.csvQuote != null){
 			this.csvQuoteCombo.setValue(formState.csvQuote);
 		}
+		if (formState.csvEncoding != null){
+			this.csvEncodingCombo.setValue(formState.csvEncoding);
+		}
+		
 		if (formState.fileType != null){
 //			this.fileTypeCombo.setValue(formState.fileType);
 			this.fileType.setValue(formState.fileType);
@@ -607,6 +639,7 @@ Ext.extend(Sbi.tools.dataset.FileDatasetPanel, Ext.Panel, {
 		formState.fileName = this.fileNameField.getValue();
 		formState.csvDelimiter = this.csvDelimiterCombo.getValue();
 		formState.csvQuote = this.csvQuoteCombo.getValue();
+		formState.csvEncoding = this.csvEncodingCombo.getValue();
 //		formState.fileType = this.fileTypeCombo.getValue();
 		formState.fileType = this.fileType.getValue();
 		formState.skipRows = this.skipRowsField.getValue();

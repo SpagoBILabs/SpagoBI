@@ -34,6 +34,7 @@
             "fileType",
             "csvDelimiter",
             "csvQuote",
+            "csvEncoding",
             "skipRows",
             "limitRows",
             "xslSheetNumber",

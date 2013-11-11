@@ -42,8 +42,10 @@ public class FileDatasetCsvDataReader extends AbstractDataReader {
 	private static transient Logger logger = Logger.getLogger(FileDatasetCsvDataReader.class);
 	public static final String CSV_FILE_DELIMITER_CHARACTER = "csvDelimiter";
 	public static final String CSV_FILE_QUOTE_CHARACTER = "csvQuote";
+	public static final String CSV_FILE_ENCODING = "csvEncoding";
 	private String csvDelimiter;
 	private String csvQuote;
+	private String csvEncoding;
 
 	public FileDatasetCsvDataReader(JSONObject jsonConf) {
 		super();
@@ -62,6 +64,16 @@ public class FileDatasetCsvDataReader extends AbstractDataReader {
 				} else {
 					csvQuote="";
 				}
+				if (jsonConf.has(CSV_FILE_ENCODING)){
+					if (jsonConf.get(CSV_FILE_ENCODING) != null){
+						csvEncoding = jsonConf.get(CSV_FILE_ENCODING).toString();
+					} else {
+						csvEncoding="windows-1252"; //default
+					}
+				} else {
+					csvEncoding="windows-1252"; //default
+				}
+
 			} catch (JSONException e) {
 				logger.error("Error Deserializing File Dataset Options");
 				throw new RuntimeException("Error Deserializing File Dataset Options", e);
@@ -105,7 +117,7 @@ public class FileDatasetCsvDataReader extends AbstractDataReader {
 	
  	private DataStore readWithCsvMapReader( InputStream inputDataStream ) throws Exception {
  				
- 		InputStreamReader inputStreamReader = new InputStreamReader(inputDataStream,"windows-1252");
+ 		InputStreamReader inputStreamReader = new InputStreamReader(inputDataStream,csvEncoding);
     	DataStore dataStore = null;
 		MetaData dataStoreMeta;
     	dataStore = new DataStore();

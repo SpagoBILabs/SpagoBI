@@ -304,8 +304,10 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
 		if (fileType.value == 'CSV'){
 			var csvDelimiterCombo = this.fileUpload.csvDelimiterCombo;
 			var csvQuoteCombo = this.fileUpload.csvQuoteCombo;
+			var csvEncodingCombo = this.fileUpload.csvEncodingCombo
 			if (csvDelimiterCombo == undefined || csvDelimiterCombo.value == null|| csvDelimiterCombo.value == "" ||
-				csvQuoteCombo == undefined || csvQuoteCombo.value == null || csvQuoteCombo.value == ""){
+				csvQuoteCombo == undefined || csvQuoteCombo.value == null || csvQuoteCombo.value == "" ||
+				csvEncodingCombo == undefined || csvEncodingCombo.value == null || csvEncodingCombo.value == ""){
 				Sbi.exception.ExceptionHandler.showErrorMessage(LN('sbi.ds.mandatoryFields'), '');
 				return false;
 			}
