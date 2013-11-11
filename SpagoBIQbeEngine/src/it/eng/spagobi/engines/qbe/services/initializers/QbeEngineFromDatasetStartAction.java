@@ -5,8 +5,12 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.engines.qbe.services.initializers;
 
+import it.eng.qbe.dataset.QbeDataSet;
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
+import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
+import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.EngineConstants;
@@ -62,23 +66,18 @@ public class QbeEngineFromDatasetStartAction extends QbeEngineStartAction {
 			logger.debug("Parameter [" + DATASET_LABEL + "]  is equal to [" + datasetLabel + "]");
 			Assert.assertNotNull(datasetLabel, "Dataset not specified");
 			dataSet = getDataSetServiceProxy().getDataSetByLabel(datasetLabel);  	
-			logger.debug("OUT");
 		}
+		logger.debug("OUT");
 		return dataSet;
 	}
 
 	@Override
-	// this is engine default datasource (not of interest inthis case)
 	public IDataSource getDataSource() {
-//		logger.debug("IN");
-//		// datasource information is coming with the request
-//		String datasourceLabel = this.getAttributeAsString( DATASOURCE_LABEL );
-//		logger.debug("Parameter [" + DATASOURCE_LABEL + "]  is equal to [" + datasourceLabel + "]");
-//		Assert.assertNotNull(datasourceLabel, "Data source not specified");
-//		IDataSource dataSource = getDataSourceServiceProxy().getDataSourceByLabel(datasourceLabel);
-//		logger.debug("oUT");
-//		return dataSource;
-		return null;
+		logger.debug("IN");
+		IDataSet dataset = this.getDataSet();
+		IDataSource datasource = dataset.getDataSource();
+		logger.debug("OUT : returning [" + datasource + "]");
+		return datasource;
 	}
 
 
@@ -112,7 +111,11 @@ public class QbeEngineFromDatasetStartAction extends QbeEngineStartAction {
 			env.put(EngineConstants.ENV_DATASOURCE, dataSource);
 		}
 		
-		this.checkPersistence(dataset, env);
+		boolean wasPersistedBefore = dataset.isPersisted() || dataset.isFlatDataset();
+		IDataSetTableDescriptor descriptor = this.checkPersistence(dataset, env);
+		if (!wasPersistedBefore && dataset instanceof QbeDataSet) {
+			adjustMetadataForQbeDataset((QbeDataSet) dataset, descriptor);
+		}
 
 		List<IDataSet> dataSets = new ArrayList<IDataSet>();
 		dataSets.add(dataset);
@@ -120,6 +123,20 @@ public class QbeEngineFromDatasetStartAction extends QbeEngineStartAction {
 		return env;
 	}
 	
+	private void adjustMetadataForQbeDataset(QbeDataSet dataset,
+			IDataSetTableDescriptor descriptor) {
+		IMetaData metadata = dataset.getMetadata();
+		int columns = metadata.getFieldCount();
+		for (int i = 0; i < columns; i++) {
+			IFieldMetaData fieldMetadata = metadata.getFieldMeta(i);
+			String newName = descriptor.getColumnName(fieldMetadata
+					.getName());
+			fieldMetadata.setName(newName);
+			fieldMetadata.setProperty("uniqueName", newName);
+		}
+		dataset.setMetadata(metadata);
+	}
+
 	protected boolean tolerateMissingDatasource() {
 		return true;
 	}

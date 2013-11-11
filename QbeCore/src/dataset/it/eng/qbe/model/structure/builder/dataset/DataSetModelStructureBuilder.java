@@ -95,10 +95,11 @@ public class DataSetModelStructureBuilder implements IModelStructureBuilder {
 	
 	private void addEntity (IModelStructure modelStructure, String modelName, IDataSet entity){
 
-		String entityName = entity.getLabel();
+		String entityLabel = entity.getName();
+		String entityName = entity.getTableNameForReading();
 		
 		IModelEntity dataMartEntity = modelStructure.addRootEntity(modelName, entityName, null, null, entityName);
-		dataMartEntity.getProperties().put("label", entity.getName());
+		dataMartEntity.getProperties().put("label", entityLabel);
 		
 		// the query name is used when building the SQL statement, because we need to know the name of the actual table that contains the data of the dataset
 		// i.e. we need to know the persistence table name
@@ -134,9 +135,14 @@ public class DataSetModelStructureBuilder implements IModelStructureBuilder {
 
 	private void addField(IFieldMetaData fieldMetadata, IModelEntity dataMartEntity, String keyPrefix){
 		
-		String fieldName = fieldMetadata.getAlias();
-		if(fieldName==null || fieldName.equals("")){
-			fieldName = fieldMetadata.getName();
+//		String fieldName = fieldMetadata.getAlias();
+//		if(fieldName==null || fieldName.equals("")){
+//			fieldName = fieldMetadata.getName();
+//		}
+		String fieldUniqueName = fieldMetadata.getName();
+		String alias = fieldMetadata.getAlias();
+		if (alias == null || alias.equals("")) {
+			alias = fieldMetadata.getName();
 		}
 		
 		// TODO: SCALE
@@ -152,9 +158,10 @@ public class DataSetModelStructureBuilder implements IModelStructureBuilder {
 			}
 		}
 
-		IModelField datamartField = dataMartEntity.addNormalField(keyPrefix+ fieldName);
+		IModelField datamartField = dataMartEntity.addNormalField(keyPrefix + fieldUniqueName);
 		datamartField.setType(fieldMetadata.getType().getName());
-		datamartField.setName(fieldName);
+		datamartField.setName(fieldUniqueName);
+		datamartField.getProperties().put("label", alias);
 		datamartField.setPrecision(precisionInt);
 		datamartField.setLength(scale);
 		propertiesInitializer.addProperties(datamartField);

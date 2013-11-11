@@ -446,6 +446,5 @@ public class ModelEntity extends AbstractModelNode implements IModelEntity {
 			return 0;
 		}
 	}
-
 	
 }

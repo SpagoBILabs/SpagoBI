@@ -616,19 +616,30 @@ public class AbstractEngineStartAction extends AbstractBaseHttpAction {
 		 return newParValue;
 	 }
 	 
-	protected void checkPersistence(IDataSet dataset, Map env) {
+	protected IDataSetTableDescriptor checkPersistence(IDataSet dataset, Map env) {
+		IDataSetTableDescriptor descriptor = null;
 		if (!dataset.isPersisted() && !dataset.isFlatDataset()) {
 			logger.debug("Dataset is neither persisted nor flat. Persisting dataset into a temporary table...");
 			IDataSource dataSource = (IDataSource) env
 					.get(EngineConstants.DATASOURCE_FOR_WRITING);
 			String tableName = this.getPersistenceTableName();
-			this.persistDataSetWithTemporaryTable(dataset, tableName,
+			descriptor = this.persistDataSetWithTemporaryTable(dataset, tableName,
 					dataSource);
 			logger.debug("Dataset persisted.");
 			dataset.setPersisted(true);
 			dataset.setPersistTableName(tableName);
 			dataset.setDataSourceForReading(dataSource);
+		} else {
+			try {
+				descriptor = TemporaryTableManager.getTableDescriptor(null,
+						dataset.isPersisted() ? dataset.getPersistTableName()
+								: dataset.getFlatTableName(), dataset
+								.getDataSourceForReading());
+			} catch (Exception e) {
+				throw new SpagoBIEngineRuntimeException("Error while getting persistence table's descriptor", e);
+			}
 		}
+		return descriptor;
 	}
 
 	protected String getPersistenceTableName() {
@@ -705,6 +716,7 @@ public class AbstractEngineStartAction extends AbstractBaseHttpAction {
 		TemporaryTableManager.setLastDataSetTableDescriptor(tableName, td);
 		return td;
 	}
+
 
 	protected void recordTemporaryTable(String tableName, IDataSource dataSource) {
 		String attributeName = TemporaryTableRecorder.class.getName();
