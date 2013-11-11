@@ -133,7 +133,9 @@ public class FolderContentUtil {
 				for(Iterator it = tmpObjects.iterator(); it.hasNext();) {
 					BIObject obj = (BIObject)it.next();
 					if(ObjectsAccessVerifier.checkProfileVisibility(obj, profile))
-						objects.add(obj);
+						if (!ObjectsAccessVerifier.devObjectFilter(obj, profile)){
+							objects.add(obj);
+						}
 				}
 			}
 		} else {

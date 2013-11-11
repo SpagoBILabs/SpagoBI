@@ -1259,5 +1259,38 @@ public class ObjectsAccessVerifier {
 		return canExec;
 	}
 	
+	//return true if the user cannot see the passed document
+	public static boolean devObjectFilter(BIObject obj, IEngUserProfile profile){
+		String docState = obj.getStateCode();
+		String docAuthor = obj.getCreationUser();
+		String userName = (String)profile.getUserUniqueIdentifier();
+		Collection roles;
+		try {
+			roles = ((UserProfile) profile).getRolesForUse();
+			IRoleDAO roleDAO = DAOFactory.getRoleDAO();
+			// iterating on user's roles
+			Iterator iterRoles = roles.iterator();
+			String roleName = "";
+			while (iterRoles.hasNext()) {
+				roleName = (String) iterRoles.next();
+				Role role = roleDAO.loadByName(roleName);
+				// if the role is USER role type and the document is in DEV state, user cannot see the document (if is not the author)
+				if (role.getRoleTypeCD().equals("USER") 
+					&& (docState.equalsIgnoreCase(SpagoBIConstants.DOC_STATE_DEV))
+					&& (!docAuthor.equalsIgnoreCase(userName))) {
+					
+					return true;
+				}
+			}
+		} catch (EMFInternalError e) {
+			e.printStackTrace();
+		} catch (EMFUserError e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return false;
+
+	}
+	
 	
 }
