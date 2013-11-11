@@ -30,9 +30,13 @@ public class ConnectionValidator extends AbstractGraphValidator {
 	/**
 	 * Check if the graph is connected
 	 */
-	public boolean validate(Graph G) {
+	public boolean validate(Graph G,  Set<IModelEntity> unjoinedEntities) {
 		
 		if(G==null){
+			return false;
+		}
+		
+		if(G!=null && G.vertexSet()!=null && (unjoinedEntities==null ||  unjoinedEntities.size()>G.vertexSet().size())){
 			return false;
 		}
 		
