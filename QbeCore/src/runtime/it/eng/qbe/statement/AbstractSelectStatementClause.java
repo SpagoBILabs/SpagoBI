@@ -6,6 +6,8 @@
 
 package it.eng.qbe.statement;
 
+import it.eng.qbe.datasource.IDataSource;
+import it.eng.qbe.datasource.dataset.DataSetDataSource;
 import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.model.structure.IModelField;
 import it.eng.qbe.model.structure.ModelCalculatedField.Slot;
@@ -16,6 +18,7 @@ import it.eng.qbe.query.InLineCalculatedSelectField;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.query.SimpleSelectField;
 import it.eng.qbe.serializer.SerializationManager;
+import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.objects.Couple;
 
@@ -112,13 +115,13 @@ public class AbstractSelectStatementClause extends AbstractStatementClause{
 
 					logger.debug("select clause element succesfully added to select clause");
 			}
-				
+			
 			String separator = "";
 			for(int y = 0; y < statementFields.length; y++){
 				buffer.append(separator + statementFields[y].getFirst());
 				String alias = statementFields[y].getSecond();
 				if (useAliases && alias != null) {
-					buffer.append(" as " + alias);
+					buffer.append(" as " + encapsulate(alias));
 				}
 				separator = ",";
 			}		
@@ -129,6 +132,19 @@ public class AbstractSelectStatementClause extends AbstractStatementClause{
 		return buffer.toString().trim();
 	}
 	
+	private String encapsulate(String alias) {
+		IDataSource dataSource = this.parentStatement.getDataSource();
+		if (dataSource instanceof DataSetDataSource) {
+			DataSetDataSource datasetDatasource = (DataSetDataSource) this.parentStatement.getDataSource();
+			it.eng.spagobi.tools.datasource.bo.IDataSource datasourceForReading = datasetDatasource.getDataSourceForReading();
+			// in case of DataSetDataSource, we need to encapsulate alias between quotes
+			return AbstractJDBCDataset.encapsulateColumnName(alias, datasourceForReading);
+		} else {
+			return alias;
+		}
+	}
+
+
 	private String addSlots(String expr, InLineCalculatedSelectField selectInLineField) {
 		String newExpr;
 		

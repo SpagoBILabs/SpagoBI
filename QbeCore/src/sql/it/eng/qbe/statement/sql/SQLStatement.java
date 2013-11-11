@@ -8,9 +8,11 @@
 package it.eng.qbe.statement.sql;
 
 import it.eng.qbe.datasource.IDataSource;
+import it.eng.qbe.datasource.dataset.DataSetDataSource;
 import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.statement.AbstractStatement;
+import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
 import it.eng.spagobi.utilities.StringUtils;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
@@ -183,7 +185,13 @@ public class SQLStatement extends AbstractStatement {
 //		return clause.getValueBounded(operandValueToBound, operandType);
 		return null;
 	}
-	
 
+	@Override
+	protected String buildFieldQueryNameWithEntityAlias(String rootEntityAlias,
+			String queryName) {
+		DataSetDataSource datasetDatasource = (DataSetDataSource) this.getDataSource();
+		it.eng.spagobi.tools.datasource.bo.IDataSource datasourceForReading = datasetDatasource.getDataSourceForReading();
+		return rootEntityAlias + "." + AbstractJDBCDataset.encapsulateColumnName(queryName, datasourceForReading);
+	}
 	
 }

@@ -168,10 +168,6 @@ public abstract class  AbstractStatement implements IStatement {
 		
 		return "t_" + aliasesCount;
 	}
-	
-	public String getFieldAlias(String rootEntityAlias, String queryName){
-		return  rootEntityAlias + "." + queryName;
-	}
 
 
 	private String getEntityAlias(IModelField datamartField, Map entityAliases, Map entityAliasesMaps){
@@ -207,7 +203,7 @@ public abstract class  AbstractStatement implements IStatement {
 		String rootEntityAlias = getEntityAlias(datamartField, entityAliases, entityAliasesMaps);
 
 
-		return rootEntityAlias + "." + queryName;//queryName.substring(0,1).toLowerCase()+queryName.substring(1);
+		return buildFieldQueryNameWithEntityAlias(rootEntityAlias, queryName);//queryName.substring(0,1).toLowerCase()+queryName.substring(1);
 	}
 	
 	/**
@@ -244,7 +240,7 @@ public abstract class  AbstractStatement implements IStatement {
 		}
 
 		
-		return  rootEntityAlias + "." + queryName;//.substring(0,1).toLowerCase()+queryName.substring(1);
+		return  buildFieldQueryNameWithEntityAlias(rootEntityAlias, queryName);//.substring(0,1).toLowerCase()+queryName.substring(1);
 	}
 	
 	/**
@@ -286,10 +282,10 @@ public abstract class  AbstractStatement implements IStatement {
 			while(iter.hasNext()){
 				String firstRole = iter.next();
 				String rootEntityAliasWithRole = buildEntityAliasWithRoles(rootEntity, firstRole, rootEntityAlias);
-				toReturn.add(rootEntityAliasWithRole + "." + queryName);//.substring(0,1).toLowerCase()+queryName.substring(1));
+				toReturn.add(buildFieldQueryNameWithEntityAlias(rootEntityAliasWithRole, queryName));//.substring(0,1).toLowerCase()+queryName.substring(1));
 			}
 		}else{
-			toReturn.add(rootEntityAlias + "." + queryName);//queryName.substring(0,1).toLowerCase()+queryName.substring(1));
+			toReturn.add(buildFieldQueryNameWithEntityAlias(rootEntityAlias, queryName));//queryName.substring(0,1).toLowerCase()+queryName.substring(1));
 		}
 
 		return toReturn;
@@ -352,9 +348,7 @@ public abstract class  AbstractStatement implements IStatement {
 			}
 		}
 
-			
-
-		return rootEntityAlias + "." + queryName;//.substring(0,1).toLowerCase()+queryName.substring(1);
+		return buildFieldQueryNameWithEntityAlias(rootEntityAlias, queryName);
 	}
 	
 	public String getEntityAliasWithRoles(IModelEntity rootEntity, Map entityAliases, Map entityAliasesMaps){
@@ -369,30 +363,6 @@ public abstract class  AbstractStatement implements IStatement {
 
 	}
 	
-	
-//	public String getEntityAliasWithRoles(IModelEntity rootEntity, Map entityAliases, Map entityAliasesMaps){
-//		
-//		List<List<Relationship>> roleAlias = (List<List<Relationship>>) rootEntity.getProperty(GraphUtilities.roleRelationsProperty);
-//		
-//		String rootEntityAlias = (String)entityAliases.get(rootEntity.getUniqueName());
-//		if(rootEntityAlias == null) {
-//			rootEntityAlias = getNextAlias(entityAliasesMaps);
-//			entityAliases.put(rootEntity.getUniqueName(), rootEntityAlias);
-//		}
-//		
-//		if(roleAlias!=null && roleAlias.size()>1){
-//
-////			for(int j=0; j<roleAlias.size(); j++){
-////			List<Relationship> r = roleAlias.get(j);
-//				List<Relationship> r = roleAlias.get(new Double((Math.random()*roleAlias.size())%roleAlias.size()).intValue());
-//				return buildEntityAliasWithRoles(rootEntity, r, rootEntityAlias);
-////			}
-//			
-//		}else{
-//			return rootEntityAlias;
-//		}
-//	}
-	
 	public String buildFromEntityAliasWithRoles(IModelEntity me, String rel, String entityAlias){
 		String fromClauseElement =  me.getName() + " "+ entityAlias;
 		//for(int i=0; i<rel.size(); i++){
@@ -405,6 +375,11 @@ public abstract class  AbstractStatement implements IStatement {
 	public String buildEntityAliasWithRoles(IModelEntity me, String role, String entityAlias){
 		String fromClauseElement = (entityAlias+"_"+role).replace(" ", "");;
 		return fromClauseElement;
+	}
+	
+	
+	protected String buildFieldQueryNameWithEntityAlias(String rootEntityAlias, String queryName) {
+		return rootEntityAlias + "." + queryName;
 	}
 	
 }
