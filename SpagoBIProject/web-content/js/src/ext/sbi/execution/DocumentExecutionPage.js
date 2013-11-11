@@ -71,6 +71,7 @@ Sbi.execution.DocumentExecutionPage = function(config, doc) {
 	c = Ext.apply({}, c, {
 		layout: 'fit',
 		tbar: this.toolbar,
+		border: false,
 		//autoScroll : true,
 		items: [{
 			layout: 'border',
@@ -91,7 +92,8 @@ Sbi.execution.DocumentExecutionPage = function(config, doc) {
 	            	scope: this
 	          	}
 	        },   	        
-			items: [this.mainPanel ,this.parametersSlider]
+			items: [this.mainPanel ,this.parametersSlider],
+			border: false
 		}]
 	});   
 	

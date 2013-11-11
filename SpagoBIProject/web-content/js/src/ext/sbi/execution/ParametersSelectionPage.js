@@ -70,9 +70,11 @@ Sbi.execution.ParametersSelectionPage = function(config, doc) {
 	c = Ext.apply({}, c, {
 		layout: 'fit',
 		tbar: this.toolbar,
+		border : false,
 		//autoScroll : true,
 		items: [{
 			layout: 'border',
+			border : false,
 			listeners: {
 			    'render': {
 	            	fn: function() {

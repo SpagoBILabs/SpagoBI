@@ -62,7 +62,8 @@ Sbi.execution.RoleSelectionPage = function(config, doc) {
     
 	// invoke parent constructor constructor
 	var c = Ext.apply({}, config, {
-		bodyStyle:'padding:16px 16px 16px 16px;'  	
+		bodyStyle:'padding:16px 16px 16px 16px;'
+		, border : false
 		, tbar: this.toolbar
 		, items :[this.roleComboBox]
 		, listeners: {
