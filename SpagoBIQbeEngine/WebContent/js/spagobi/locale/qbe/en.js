@@ -503,6 +503,12 @@ Sbi.locale.ln['sbi.qbe.relationshipswizard.roles.validation.no.all.fields'] = 'Y
 Sbi.locale.ln['sbi.qbe.relationshipswizard.roles.validation.alias.no.fieds'] = 'This alias does not contain any field';
 Sbi.locale.ln['sbi.qbe.relationshipswizard.roles.validation.error'] = 'Validation Error';
 Sbi.locale.ln['sbi.qbe.relationshipswizard.roles.validation.no.fields.alias'] = 'Attention if you are interested to use different roles for the same entity and if you are using the same field more than once in the select statement you should define different alias for every occurrence of the field';
+Sbi.locale.ln['sbi.qbe.relationshipswizard.roles.entity.alias.columns']='Aliases';
+Sbi.locale.ln['sbi.qbe.relationshipswizard.roles.entity.alias.title']='Aliases for the entity ';
+Sbi.locale.ln['sbi.qbe.relationshipswizard.roles.entity.alias.field.column']='Mapping alias/fields';
+Sbi.locale.ln['sbi.qbe.relationshipswizard.roles.field.column']='Query fields';
+Sbi.locale.ln['sbi.qbe.relationshipswizard.roles.field.title']='Fields';
+
 
 //===================================================================
 //SAVE DATASET WIZARD

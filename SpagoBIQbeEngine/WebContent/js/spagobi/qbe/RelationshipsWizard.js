@@ -130,20 +130,35 @@ Ext.extend(Sbi.qbe.RelationshipsWizard, Ext.Panel, {
     	for (var i = 0; i < nodes.length; i++) {
     		var node = nodes[i];
     		if (i == 0) {
-    			toReturn = '<b>'+node.sourceName+'</b>' + this.pathSeparator+'<i>' + node.relationshipName + '</i>'+this.pathSeparator + '<b>'+node.targetName+'</b>';
+    			if(this.useRelation){
+    				toReturn = '<b>'+node.sourceName+'</b>' + this.pathSeparator+'<i>' + node.relationshipName + '</i>'+this.pathSeparator + '<b>'+node.targetName+'</b>';
+    			}else{
+    				toReturn = '<b>'+node.sourceName+'</b>(' + node.sourceFields+')'+this.pathSeparator + '('+node.targetFields+')<b>'+node.targetName+'</b>';
+    			}
+    			
+    			
     			lastTarget = node.targetName;
     			if(nodes.length>1){
     				var secondNode = nodes[1];
     				// if in the first relation the source and the target are inverse ordered
     				if(secondNode.sourceName==node.sourceName || secondNode.targetName==node.sourceName){
-    	    			toReturn = '<b>'+node.targetName+'</b>' + this.pathSeparator+'<i>' + node.relationshipName + '</i>'+this.pathSeparator + '<b>'+node.sourceName+'</b>';
+    	    			if(this.useRelation){
+    	    				toReturn = '<b>'+node.targetName+'</b>' + this.pathSeparator+'<i>' + node.relationshipName + '</i>'+this.pathSeparator + '<b>'+node.sourceName+'</b>';
+    	    			}else{
+    	    				toReturn = '<b>'+node.targetName+'</b>(' + node.targetFields+')'+this.pathSeparator +"(" +node.sourceFields+')<b>'+node.sourceFields+'</b>';
+    	    			}
     	    			lastTarget = node.sourceName;
     				}
     			}
-
     		} else {
     			var nextTarget = node.targetName == lastTarget ? node.sourceName : node.targetName;
-    			toReturn += this.pathSeparator+'<i>' + node.relationshipName + '</i>'+this.pathSeparator+ '<b>'+nextTarget+'</b>';
+    			if(this.useRelation){
+    				toReturn += this.pathSeparator+'<i>' + node.relationshipName + '</i>'+this.pathSeparator+ '<b>'+nextTarget+'</b>';
+    			}else{
+    				toReturn +='(' + node.sourceFields+')'+ this.pathSeparator + '('+node.targetFields+')<b>'+node.targetName+'</b>';
+    			}
+    			
+    			
     			lastTarget = nextTarget;
     		}
     	}
@@ -350,7 +365,27 @@ Ext.extend(Sbi.qbe.RelationshipsWizard, Ext.Panel, {
 	,
 	getCellTooltip: function (value, cell, record) {
 	 	var path = record.data.path;
-	 	var items = path.split(this.pathSeparator);
+	 	var items;
+	 	if(this.useRelation){
+	 		items = path.split(this.pathSeparator);
+	 	}else{
+	 		var expr = ")"+this.pathSeparator+"(";
+	 		var contained = true;
+	 		while (contained){
+	 			path = path.replace(expr,'-->');
+	 			contained = path.indexOf(expr)>=0;
+	 		}
+	 		
+	 		
+	 		contained = true;
+	 		while (contained){
+	 			path = path.replace(")","(");
+	 			contained = path.indexOf(")")>=0;
+	 		}
+	 		
+	 		items = path.split("(");
+	 	}
+	 	
 	 	var tooltipString = '';
 	 	for (var i = 0; i < items.length; i++) {
 	 		for (var j = 0; j < i; j++) {

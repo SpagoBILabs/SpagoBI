@@ -500,6 +500,11 @@ Sbi.locale.ln['sbi.qbe.relationshipswizard.roles.validation.no.all.fields'] = '\
 Sbi.locale.ln['sbi.qbe.relationshipswizard.roles.validation.alias.no.fieds'] = 'L\'alias non contiene alcun campo';
 Sbi.locale.ln['sbi.qbe.relationshipswizard.roles.validation.error'] = 'Errore di validazione';
 Sbi.locale.ln['sbi.qbe.relationshipswizard.roles.validation.no.fields.alias'] = 'Attenzione, se si ha intenzione di usare delle entit\u00e0 con ruoli differenti e lo stesso campo \u00E8 presente pi\00FA volte tra i select fields, \u00E8 necessario definire alias differti per quel campo';
+Sbi.locale.ln['sbi.qbe.relationshipswizard.roles.entity.alias.columns']='Aliases';
+Sbi.locale.ln['sbi.qbe.relationshipswizard.roles.entity.alias.title']='Aliases per l\'entit\u00e0 ';
+Sbi.locale.ln['sbi.qbe.relationshipswizard.roles.entity.alias.field.column']='Mapping campo/alias entit\u00e0';
+Sbi.locale.ln['sbi.qbe.relationshipswizard.roles.field.title']='Campi della query';
+Sbi.locale.ln['sbi.qbe.relationshipswizard.roles.field.column']='Campi';
 
 //===================================================================
 //SAVE DATASET WIZARD

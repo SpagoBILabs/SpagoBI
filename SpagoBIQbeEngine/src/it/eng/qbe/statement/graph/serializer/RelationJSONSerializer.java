@@ -29,6 +29,8 @@ public class RelationJSONSerializer extends JsonSerializer<Relationship> {
 	public static final String TARGET_ID = "targetId";
 	public static final String RELATIONSHIP_NAME = "relationshipName";
 	public static final String RELATIONSHIP_ID = "relationshipId";
+	public static final String SOURCE_FIELDS = "sourceFields";
+	public static final String TARGET_FIELDS = "targetFields";
 	
 	protected RelationJSONSerializer() {
 		super();
@@ -48,6 +50,8 @@ public class RelationJSONSerializer extends JsonSerializer<Relationship> {
 		jgen.writeStringField(TARGET_ID, value.getTargetEntity().getUniqueName());
 		jgen.writeStringField(RELATIONSHIP_NAME, value.getName());
 		jgen.writeStringField(RELATIONSHIP_ID, value.getId());
+		jgen.writeStringField(SOURCE_FIELDS, value.getSourceFieldsString());
+		jgen.writeStringField(TARGET_FIELDS, value.getTargetFieldsString());
 		jgen.writeEndObject();
 	}
 	
