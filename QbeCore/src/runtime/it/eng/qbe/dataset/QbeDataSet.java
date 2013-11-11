@@ -61,10 +61,10 @@ public static String DS_TYPE = "SbiQbeDataSet";
 	
 	private static transient Logger logger = Logger.getLogger(QbeDataSet.class);
 	
-	private static final String QBE_DATA_SOURCE = "qbeDataSource";
-	private static final String QBE_DATAMARTS = "qbeDatamarts";
-	private static final String QBE_JSON_QUERY = "qbeJSONQuery";
-	private static final String QBE_SQL_QUERY = "qbeSQLQuery";
+	public static final String QBE_DATA_SOURCE = "qbeDataSource";
+	public static final String QBE_DATAMARTS = "qbeDatamarts";
+	public static final String QBE_JSON_QUERY = "qbeJSONQuery";
+	public static final String QBE_SQL_QUERY = "qbeSQLQuery";
 	
 	protected IDataSet ds = null;
 	protected String jsonQuery = null;
@@ -428,12 +428,19 @@ public static String DS_TYPE = "SbiQbeDataSet";
 		IMetaData metadata = null;
 		try {
 			DatasetMetadataParser dsp = new DatasetMetadataParser();
-			metadata =  dsp.xmlToMetadata( getDsMetadata() );
+			metadata = dsp.xmlToMetadata( getDsMetadata() );
 		} catch (Exception e) {
 			logger.error("Error loading the metadata",e);
 			throw new SpagoBIEngineRuntimeException("Error loading the metadata",e);
 		}
 		return metadata;
+	}
+	
+	public void setMetadata(IMetaData metadata) {
+		String metadataStr = null;
+		DatasetMetadataParser dsp = new DatasetMetadataParser();
+		metadataStr = dsp.metadataToXML( metadata );
+		this.setDsMetadata( metadataStr );
 	}
 	
 	public IDataSet getSourceDataset() {
@@ -482,6 +489,9 @@ public static String DS_TYPE = "SbiQbeDataSet";
     	}
 	}
 	
-	
+	@Override
+	public String getDsType() {
+		return DS_TYPE;
+	}
 	
 }

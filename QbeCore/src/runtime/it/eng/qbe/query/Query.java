@@ -140,7 +140,7 @@ public class Query {
 	 */
 	public void initFieldsRolesMapInEntity( Set<IModelEntity> modelEntities, IDataSource datasource) throws JSONException{
 		JSONObject serializedEntityRoles=null;
-		if(relationsRoles!=null && !relationsRoles.equals("[]")){
+		if(relationsRoles!=null && !relationsRoles.equals("") && !relationsRoles.equals("[]")){
 			serializedEntityRoles = new JSONObject(relationsRoles);
 		}
 		if(serializedEntityRoles!=null && modelEntities!=null && serializedEntityRoles.getJSONArray("entities")!=null){
