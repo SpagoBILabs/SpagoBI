@@ -185,10 +185,11 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 				    {
 				       region: 'center',
 				       layout: 'fit',
-				       items: [executionPanel]
+				       items: [executionPanel],
+				       border : false
 				    }
 				]
-	
+				, border : false
 			});
 			executionPanel.execute();
 		}

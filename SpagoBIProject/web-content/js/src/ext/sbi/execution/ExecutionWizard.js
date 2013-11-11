@@ -22,6 +22,7 @@ Sbi.execution.ExecutionWizard = function(config, doc) {
 	
 	var c = Ext.apply({}, config, {
 		layout:'card',
+		border : false,
 		hideMode: !Ext.isIE ? 'nosize' : 'display',
 		activeItem: this.activePanel || 0,
 		items: [
