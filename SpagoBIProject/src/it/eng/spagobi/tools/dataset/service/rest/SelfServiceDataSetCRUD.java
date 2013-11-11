@@ -1011,6 +1011,7 @@ public class SelfServiceDataSetCRUD {
 		String fileName = (String)req.getParameter("fileName");
 		String csvDelimiter = (String)req.getParameter("csvDelimiter");
 		String csvQuote = (String)req.getParameter("csvQuote");
+		String csvEncoding = (String)req.getParameter("csvEncoding");
 		String fileType = (String)req.getParameter("fileType");
 		String skipRows = (String)req.getParameter("skipRows");
 		String limitRows = (String)req.getParameter("limitRows");
@@ -1039,6 +1040,7 @@ public class SelfServiceDataSetCRUD {
 			}
 			jsonDsConfig.put(DataSetConstants.CSV_FILE_DELIMITER_CHARACTER, csvDelimiter);
 			jsonDsConfig.put(DataSetConstants.CSV_FILE_QUOTE_CHARACTER, csvQuote);
+			jsonDsConfig.put(DataSetConstants.CSV_FILE_ENCODING, csvEncoding);
 			jsonDsConfig.put(DataSetConstants.XSL_FILE_SKIP_ROWS, skipRows);
 			jsonDsConfig.put(DataSetConstants.XSL_FILE_LIMIT_ROWS, limitRows);
 			jsonDsConfig.put(DataSetConstants.XSL_FILE_SHEET_NUMBER, xslSheetNumber);

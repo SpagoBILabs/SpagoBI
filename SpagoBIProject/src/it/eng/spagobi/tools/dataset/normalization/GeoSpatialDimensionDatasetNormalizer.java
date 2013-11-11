@@ -66,6 +66,8 @@ public class GeoSpatialDimensionDatasetNormalizer implements IDatasetNormalizer 
 	public static final String XSL_FILE_SHEET_NUMBER = "xslSheetNumber";
 	public static final String CSV_FILE_DELIMITER_CHARACTER = "csvDelimiter";
 	public static final String CSV_FILE_QUOTE_CHARACTER = "csvQuote";
+	public static final String CSV_FILE_ENCODING = "csvEncoding";
+
 	
 	public static transient Logger logger = Logger.getLogger(GeoSpatialDimensionDatasetNormalizer.class);
 
@@ -239,6 +241,10 @@ public class GeoSpatialDimensionDatasetNormalizer implements IDatasetNormalizer 
 				if (jsonConf.has(CSV_FILE_QUOTE_CHARACTER)){
 					String csvQuote = jsonConf.getString(CSV_FILE_QUOTE_CHARACTER);
 					csvFileNormalizer.setCsvQuote(csvQuote);
+				}
+				if(jsonConf.has(CSV_FILE_ENCODING)){
+					String csvEncoding = jsonConf.getString(CSV_FILE_ENCODING);
+					csvFileNormalizer.setCsvEncoding(csvEncoding);
 				}
 				
 			}

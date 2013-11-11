@@ -109,6 +109,7 @@ public class DataSetConstants {
 	public static final String FILE_TYPE = "fileType";
 	public static final String CSV_FILE_DELIMITER_CHARACTER = "csvDelimiter";
 	public static final String CSV_FILE_QUOTE_CHARACTER = "csvQuote";
+	public static final String CSV_FILE_ENCODING = "csvEncoding";
 
 	public static final String XSL_FILE_SKIP_ROWS = "skipRows";
 	public static final String XSL_FILE_LIMIT_ROWS = "limitRows";
