@@ -157,9 +157,12 @@ public class QueryCatalogue {
 			//logger.debug("TEST METHOD:First query id is equal to [" + query.getId() + "; " + query.getName() +"]");
 		}
 		
-		
+		if(query != null){
 		logger.debug("First query id is equal to [" + query.getId() + "; " + query.getName() +"]");
-		
+		}
+		else{
+			logger.error("query is null");
+		}
 		logger.debug("OUT");
 		
 		return query;

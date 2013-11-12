@@ -248,13 +248,17 @@ public static String DS_TYPE = "SbiQbeDataSet";
    
         ConnectionDescriptor connection = new ConnectionDescriptor();
         connection.setName( modelName );
-        connection.setDialect( dataSource.getHibDialectClass() );           
-        connection.setJndiName( dataSource.getJndi() );           
-        connection.setDriverClass( dataSource.getDriver() );           
-        connection.setPassword( dataSource.getPwd() );
-        connection.setUrl( dataSource.getUrlConnection() );
-        connection.setUsername( dataSource.getUser() );   
-
+        if(dataSource != null){
+        	connection.setDialect( dataSource.getHibDialectClass() );           
+        	connection.setJndiName( dataSource.getJndi() );           
+        	connection.setDriverClass( dataSource.getDriver() );           
+        	connection.setPassword( dataSource.getPwd() );
+        	connection.setUrl( dataSource.getUrlConnection() );
+        	connection.setUsername( dataSource.getUser() );   
+        }
+        else{
+        	logger.warn("Dataset "+getLabel()+"has no associated datasource");
+        }
         dataSourceProperties.put("connection", connection);
         dataSourceProperties.put("dblinkMap", new HashMap());
         
