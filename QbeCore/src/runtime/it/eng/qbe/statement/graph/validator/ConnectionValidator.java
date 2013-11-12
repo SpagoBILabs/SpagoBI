@@ -31,21 +31,27 @@ public class ConnectionValidator extends AbstractGraphValidator {
 	 * Check if the graph is connected
 	 */
 	public boolean validate(Graph G,  Set<IModelEntity> unjoinedEntities) {
+
+		if(unjoinedEntities==null || unjoinedEntities.size()<2){
+			return true;
+		}
 		
 		if(G==null){
 			return false;
 		}
 		
-		if(G!=null && G.vertexSet()!=null && (unjoinedEntities==null ||  unjoinedEntities.size()>G.vertexSet().size())){
+		if(G!=null && G.vertexSet()!=null && unjoinedEntities.size()>G.vertexSet().size()){
 			return false;
 		}
 		
+			
 		Set<IModelEntity> vertex = G.vertexSet();
 		
 		if(vertex==null || vertex.size()<2){
 			return true;
 		}
 		
+
 		ConnectivityInspector inspector = null;
 		if(G instanceof DirectedGraph){
 			inspector = new ConnectivityInspector((DirectedGraph)G);
