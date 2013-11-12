@@ -53,6 +53,7 @@ Sbi.kpi.KpiGUIDetail =  function(config) {
 		this.initDetail(c);
    
 		Sbi.kpi.KpiGUIDetail.superclass.constructor.call(this, c);
+
 };
 
 Ext.extend(Sbi.kpi.KpiGUIDetail , Ext.form.FormPanel, {
@@ -74,6 +75,7 @@ Ext.extend(Sbi.kpi.KpiGUIDetail , Ext.form.FormPanel, {
 	selectedThr: null,
 	val: null,
 	ticksNumber: 10,
+	scaleNm : new Array(),
 	
 	initDetail: function(){	
 		this.chartid = Ext.id();
@@ -126,7 +128,20 @@ Ext.extend(Sbi.kpi.KpiGUIDetail , Ext.form.FormPanel, {
 		}
 
 		this.items =[this.titleItem, this.chartPanel, this.detailFields, this.threshFields];
-		
+	
+	    this.scaleNm['Day scale'] =' gg';
+		this.scaleNm['Ratio scale']=' %';	 
+	    this.scaleNm['Bytes/s']=' B/s';
+	    this.scaleNm['Mega Bytes']=' MB';
+	    this.scaleNm['Bytes']=' B';
+	    this.scaleNm['Kilo Bytes']=' KB';
+	    this.scaleNm['Giga Bytes']=' GB';
+	    this.scaleNm['Tera Bytes']=' TB';
+	    this.scaleNm['Milliseconds']=' ms';
+	    this.scaleNm['Seconds']=' s';
+	    this.scaleNm['Minutes']=' m';
+	    this.scaleNm['Hours']=' h';
+	    this.scaleNm['KBit/s']=' Kb/s';
 	}
 	, calculateMax: function(threshold){
 		if(threshold.max > this.maxChartValue){
@@ -340,15 +355,20 @@ Ext.extend(Sbi.kpi.KpiGUIDetail , Ext.form.FormPanel, {
 			this.threshFields.doLayout();
 		}
 		//value
+		var un='';
+		if(field.attributes && field.attributes.scaleName && field.attributes.scaleName != null){
+			un = this.scaleNm[field.attributes.scaleName];
+		}
 		this.valueItem = new Ext.form.DisplayField({fieldLabel: LN('sbi.thresholds.value'), 
-													value: this.val, 
-													width: 0.49,
+													value: this.val +un, 
+													//width: 0.49,
 													style: 'margin-left:5px; padding-left:5px; font-style: italic; font-weight: bold;'
 														});
-		this.detailFields.add(this.valueItem );
+
+		this.detailFields.add(this.valueItem);
 
 		//target
-		var target = field.attributes.target;
+		var target = field.attributes.target  +un;
 		if(target === undefined){
 			target='';
 		}
