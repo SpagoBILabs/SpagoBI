@@ -105,7 +105,9 @@ public class SaveAnalysisStateAction extends AbstractGeoEngineAction {
 			}
 			
 			try {
-				writeBackToClient( new JSONSuccess( result ) );
+				String newSubobjectId = result.substring(5);
+//				writeBackToClient( new JSONSuccess( result ) );
+				writeBackToClient( new JSONSuccess( newSubobjectId ) );
 			} catch (IOException e) {
 				String message = "Impossible to write back the responce to the client";
 				throw new SpagoBIEngineServiceException(getActionName(), message, e);
