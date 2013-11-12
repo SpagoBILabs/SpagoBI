@@ -11,6 +11,7 @@ import it.eng.qbe.model.structure.IModelStructure;
 import it.eng.qbe.query.IQueryField;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.query.QueryMeta;
+import it.eng.qbe.query.QueryValidator;
 import it.eng.qbe.query.serializer.SerializerFactory;
 import it.eng.qbe.serializer.SerializationException;
 import it.eng.qbe.statement.graph.GraphManager;
@@ -37,7 +38,6 @@ import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-import it.eng.spagobi.utilities.json.JSONUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -85,6 +85,8 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 	public static final String AMBIGUOUS_ROLES = "ambiguousRoles";
 	public static final String EXECUTE_DIRECTLY = "executeDirectly";
 	public static final String AMBIGUOUS_WARING = "ambiguousWarinig";
+	public static final String CATALOGUE_ERRORS = "catalogueErrors";
+	
 	public static final String MESSAGE = "message";
 	public static final String MESSAGE_SAVE = "save";
 	
@@ -117,15 +119,24 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 		
 			super.service(request, response);		
 
+			//get current query and all the linked objects
 			query = this.getCurrentQuery();
-			
-			
 			if (query == null) {
+				//the qbe is new
 				query = this.getEngineInstance().getQueryCatalogue().getFirstQuery();
 				oldQueryGraph = query.getQueryGraph();
 				roleSelection = query.getRelationsRoles();
+				logger.debug("The query is already defined in the catalogue");
+				if(roleSelection!=null){
+					logger.debug("The previous roleSelection is "+roleSelection);
+				}
+				if(oldQueryGraph!=null){
+					logger.debug("The previous oldQueryGraph is "+oldQueryGraph);
+				}
 			}
 			
+			
+			//get the cataologue from the request
 			jsonEncodedCatalogue = getAttributeAsString( CATALOGUE );			
 			logger.debug(CATALOGUE + " = [" + jsonEncodedCatalogue + "]");
 			
@@ -147,16 +158,15 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 				throw new SpagoBIEngineServiceException(getActionName(), message, e);
 			}
 
-			Set<ModelFieldPaths> ambiguousFields = new HashSet<ModelFieldPaths>();
-			
 			query = this.getCurrentQuery();
-			
 			if (query == null) {
 				query = this.getEngineInstance().getQueryCatalogue().getFirstQuery();
 			}else{
 				oldQueryGraph =null;
 			}
 			
+			//loading the ambiguous fields
+			Set<ModelFieldPaths> ambiguousFields = new HashSet<ModelFieldPaths>();
 			Map<IModelField, Set<IQueryField>> modelFieldsMap = query.getQueryFields(getDataSource());
 			Set<IModelField> modelFields = modelFieldsMap.keySet();
 			Set<IModelEntity> modelEntities = query.getQueryEntities(modelFields);
@@ -165,12 +175,12 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 			pathFiltersMap.put(CubeFilter.PROPERTY_MODEL_STRUCTURE,  getDataSource().getModelStructure());
 			pathFiltersMap.put(CubeFilter.PROPERTY_ENTITIES, modelEntities);
 			
-			if (oldQueryGraph == null && query!=null) {//normal execution
+			if (oldQueryGraph == null && query!=null) {//normal execution: a query exists
 				queryGraph = updateQueryGraphInQuery(query, forceReturnGraph,modelEntities);
 				roleSelection = this.getAttributeAsString(AMBIGUOUS_ROLES);
 				if(queryGraph!=null){
-					String modelName = getDataSource().getConfiguration().getModelName();
-					Graph<IModelEntity, Relationship> graph = getDataSource().getModelStructure().getRootEntitiesGraph(modelName, false).getRootEntitiesGraph();
+					//String modelName = getDataSource().getConfiguration().getModelName();
+					//Graph<IModelEntity, Relationship> graph = getDataSource().getModelStructure().getRootEntitiesGraph(modelName, false).getRootEntitiesGraph();
 					ambiguousFields = getAmbiguousFields(query, modelEntities, modelFieldsMap);
 					//filter paths
 					GraphManager.filterPaths(ambiguousFields, pathFiltersMap, (QbeEngineConfig.getInstance().getPathsFiltersImpl()));
@@ -204,18 +214,19 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 				}
 			}
 
+			
+			//serialize the ambiguous fields
 			ObjectMapper mapper = new ObjectMapper();
 			SimpleModule simpleModule = new SimpleModule("SimpleModule", new Version(1,0,0,null));
 			simpleModule.addSerializer(Relationship.class, new RelationJSONSerializer(getDataSource(), getLocale()));
 			simpleModule.addSerializer(ModelObjectI18n.class, new ModelObjectInternationalizedSerializer(getDataSource(), getLocale()));
-			
 			mapper.registerModule(simpleModule);
-			
 			String serialized = this.getAttributeAsString(AMBIGUOUS_FIELDS_PATHS);
 			if(ambiguousFields.size()>0 || serialized==null){
 				serialized= mapper.writeValueAsString((Set<ModelFieldPaths>) ambiguousFields);	
 			}
 			
+			//validate the response and create the list of warnings and errors
 			if(!query.isAliasDefinedInSelectFields()){
 				ambiguousWarinig="sbi.qbe.relationshipswizard.roles.validation.no.fields.alias";
 			}
@@ -225,11 +236,16 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 				isDierctlyExecutable = serialized==null || serialized.equals("") || serialized.equals("[]");//no ambiguos fields found so the query is executable;
 			}
 			
+			List<String> queryErrors = QueryValidator.validate(query, getDataSource());
+			String serializedQueryErrors =  mapper.writeValueAsString( queryErrors);	
+			
+			
 			JSONObject toReturn = new JSONObject();
 			toReturn.put(AMBIGUOUS_FIELDS_PATHS, serialized);
 			toReturn.put(AMBIGUOUS_ROLES, roleSelection);
 			toReturn.put(EXECUTE_DIRECTLY, isDierctlyExecutable);
 			toReturn.put(AMBIGUOUS_WARING, ambiguousWarinig);
+			toReturn.put(CATALOGUE_ERRORS, serializedQueryErrors);
 			
 			
 			

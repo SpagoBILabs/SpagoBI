@@ -74,9 +74,8 @@ public interface IStatement {
 	public List<String> getFieldAliasWithRolesList(IModelField datamartField, Map entityAliases, Map entityAliasesMaps);
 	public String getFieldAliasWithRolesFromAlias(IModelField datamartField, Map entityAliases, Map entityAliasesMaps, String alias);
 	public String getFieldAliasWithRoles(IModelField datamartField, Map entityAliases, Map entityAliasesMaps, IQueryField queryField);
-	public String getEntityAliasWithRoles(IModelEntity rootEntity, Map entityAliases, Map entityAliasesMaps);
 	public String buildFromEntityAliasWithRoles(IModelEntity me, String rel, String entityAlias);
-	public String buildEntityAliasWithRoles(IModelEntity me, String role, String entityAlias);
+	
 
 	
 }

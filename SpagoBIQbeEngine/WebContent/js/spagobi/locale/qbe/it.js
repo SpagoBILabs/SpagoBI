@@ -97,6 +97,7 @@ Sbi.locale.ln['sbi.qbe.queryeditor.centerregion.tools.help'] = 'Help me please';
 Sbi.locale.ln['sbi.qbe.queryeditor.centerregion.buttons.relationshipswizard'] = 'Dettaglio relazioni';
 Sbi.locale.ln['sbi.qbe.queryeditor.noambiguousfields.title'] = 'Non ci sono ambiguit\u00e0';
 Sbi.locale.ln['sbi.qbe.queryeditor.noambiguousfields.msg'] = 'Tra le entit\u00e0 coinvolte nella query non ci sono ambiguit\u00e0';
+Sbi.locale.ln['sbi.qbe.queryeditor.error.FILTER_ROLES_ERROR'] = 'Se si stanno usando delle entit\u00e0 con pi\00FA ruoli, allora su quelle entit\u00e0 si possono specificare solo filtri che coinvolgono campi della select';
 
 Sbi.locale.ln['sbi.qbe.queryeditor.eastregion.title'] = 'Catalogo delle query';
 Sbi.locale.ln['sbi.qbe.queryeditor.eastregion.tools.delete'] = 'Cancella';

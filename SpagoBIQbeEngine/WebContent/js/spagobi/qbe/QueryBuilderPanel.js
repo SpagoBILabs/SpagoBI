@@ -1002,6 +1002,7 @@ Ext.extend(Sbi.qbe.QueryBuilderPanel, Ext.Panel, {
 					, leftOperandDescription: node.attributes.attributes.entity + ' : ' + node.attributes.attributes.field 
 					, leftOperandType: Sbi.constants.qbe.OPERAND_TYPE_SIMPLE_FIELD
 					, leftOperandLongDescription: node.attributes.attributes.longDescription
+					, leftOperandAlias: node.attributes.attributes.field 
 				};
 				
 		  		this.filterGridPanel.addFilter(filter);
@@ -1031,6 +1032,7 @@ Ext.extend(Sbi.qbe.QueryBuilderPanel, Ext.Panel, {
 							, leftOperandDescription: childNode.attributes.entity + ' : ' + childNode.attributes.field 
 							, leftOperandType: Sbi.constants.qbe.OPERAND_TYPE_SIMPLE_FIELD
 							, leftOperandLongDescription: childNode.attributes.longDescription
+							, leftOperandAlias: node.attributes.attributes.field 
 						};
 						
 						this.filterGridPanel.addFilter(filter);
