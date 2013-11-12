@@ -225,3 +225,7 @@ commit;
 INSERT INTO SBI_ATTRIBUTE (attribute_name,description,attribute_id,user_in,time_in,sbi_version_in,organization) values ('language','language',(SELECT next_val FROM hibernate_sequences WHERE sequence_name = 'sbi_attribute'),'server_init',sysdate(),'4.0','SPAGOBI');
 update hibernate_sequences set next_val = next_val+1 where sequence_name = 'SBI_ATTRIBUTE';
 commit;
+
+DELETE FROM SBI_PARUSE_CK WHERE CHECK_ID = (SELECT CHECK_ID FROM SBI_CHECKS WHERE value_Type_Cd = 'MANDATORY');
+DELETE FROM SBI_CHECKS WHERE CHECK_ID = (SELECT CHECK_ID FROM SBI_CHECKS WHERE value_Type_Cd = 'MANDATORY');
+COMMIT;
