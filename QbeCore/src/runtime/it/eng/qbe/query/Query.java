@@ -9,6 +9,7 @@ import it.eng.qbe.datasource.IDataSource;
 import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.model.structure.IModelField;
 import it.eng.qbe.statement.AbstractStatement;
+import it.eng.qbe.statement.IStatement;
 import it.eng.qbe.statement.StatementCompositionException;
 import it.eng.qbe.statement.StatementTockenizer;
 import it.eng.qbe.statement.graph.bean.QueryGraph;
@@ -16,12 +17,14 @@ import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -108,11 +111,32 @@ public class Query {
 			} catch (Exception e) {
 				throw new SpagoBIEngineRuntimeException("Error parsing the roles of the query");
 			}
-			
 		}
 		return mapEntityRoleField;
 	}
 	
+	public Map<IModelEntity, List<String>> getEntityFieldFromRoleMap(IDataSource datasource) {
+		Map<IModelEntity, Map<String,List<String>>> mapEntityRoleField  = getMapEntityRoleField(datasource);
+		Map<IModelEntity, List<String>> entityFieldFromRoleMap  = new HashMap<IModelEntity, List<String>>();
+		
+		Iterator<IModelEntity> mapEntityRoleFieldIterator = mapEntityRoleField.keySet().iterator();
+		
+		while (mapEntityRoleFieldIterator.hasNext()) {
+			IModelEntity iModelEntity = (IModelEntity) mapEntityRoleFieldIterator.next();
+			List<String> fieldsAliasList = new ArrayList<String>();
+			Collection<List<String>> rolesFieldsMap = mapEntityRoleField.get(iModelEntity).values();
+			if(rolesFieldsMap!=null){
+				Iterator<List<String>>rolesFieldsMapIterator = rolesFieldsMap.iterator();
+				while (rolesFieldsMapIterator.hasNext()) {
+					List<java.lang.String> list = (List<java.lang.String>) rolesFieldsMapIterator.next();
+					fieldsAliasList.addAll(list);
+				}
+			}
+			entityFieldFromRoleMap.put(iModelEntity, fieldsAliasList);
+		}
+		
+		return entityFieldFromRoleMap;
+	}
 	
 	public static Set<IModelEntity> getQueryEntities(Set<IModelField> mf){
 		Set<IModelEntity> me = new HashSet<IModelEntity>();
@@ -639,7 +663,7 @@ public class Query {
 	}
 
 
-	private void getWhereIModelFields(  Map<IModelField, Set<IQueryField>> modelFieldsInvolved, IDataSource dataSource){
+	protected void getWhereIModelFields(  Map<IModelField, Set<IQueryField>> modelFieldsInvolved, IDataSource dataSource){
 
 
 		try {
@@ -704,5 +728,7 @@ public class Query {
 		}
 		return me;
 	}
+
+	
 
 }

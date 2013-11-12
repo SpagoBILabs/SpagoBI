@@ -293,6 +293,7 @@ public abstract class  AbstractStatement implements IStatement {
 	
 	/**
 	 * Check if a select field with the alias exist and if so take it as field to get the query name.
+	 * Used in FILTERS
 	 * @param datamartField
 	 * @param entityAliases
 	 * @param entityAliasesMaps
@@ -302,18 +303,22 @@ public abstract class  AbstractStatement implements IStatement {
 	public String getFieldAliasWithRolesFromAlias(IModelField datamartField, Map entityAliases, Map entityAliasesMaps, String alias){
 		Query query = this.getQuery();
 		List<ISelectField> fields = query.getSelectFields(true);
-		if(alias!=null){
+		if(alias!=null){//if the field contains an alias, check if it contains a role
 			for(int i=0; i<fields.size();i++){
 				ISelectField field = fields.get(i);
 				if(field.getAlias().equals(alias) && field.getName().equals(datamartField.getUniqueName())){
 					return getFieldAliasWithRoles(datamartField, entityAliases, entityAliasesMaps, field);
 				}
 			}
-		}
+		}		
 
 		return getFieldAliasNoRoles(datamartField, entityAliases, entityAliasesMaps);
 	}
 	
+	
+	/**
+	 * Used in select, group, order
+	 */
 	public String getFieldAliasWithRoles(IModelField datamartField, Map entityAliases, Map entityAliasesMaps, IQueryField queryField){
 		
 		IModelEntity rootEntity;
@@ -351,18 +356,10 @@ public abstract class  AbstractStatement implements IStatement {
 		return buildFieldQueryNameWithEntityAlias(rootEntityAlias, queryName);
 	}
 	
-	public String getEntityAliasWithRoles(IModelEntity rootEntity, Map entityAliases, Map entityAliasesMaps){
-		
-		String rootEntityAlias = (String)entityAliases.get(rootEntity.getUniqueName());
-		if(rootEntityAlias == null) {
-			rootEntityAlias = getNextAlias(entityAliasesMaps);
-			entityAliases.put(rootEntity.getUniqueName(), rootEntityAlias);
-		}
-		
-		return rootEntityAlias;
-
-	}
 	
+	/**
+	 * Used to build the from clause
+	 */
 	public String buildFromEntityAliasWithRoles(IModelEntity me, String rel, String entityAlias){
 		String fromClauseElement =  me.getName() + " "+ entityAlias;
 		//for(int i=0; i<rel.size(); i++){
@@ -372,7 +369,7 @@ public abstract class  AbstractStatement implements IStatement {
 	}
 	
 	
-	public String buildEntityAliasWithRoles(IModelEntity me, String role, String entityAlias){
+	private String buildEntityAliasWithRoles(IModelEntity me, String role, String entityAlias){
 		String fromClauseElement = (entityAlias+"_"+role).replace(" ", "");;
 		return fromClauseElement;
 	}

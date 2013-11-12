@@ -160,29 +160,39 @@ Ext.extend(Sbi.qbe.QueryCataloguePanel, Ext.Panel, {
 		var ambiguousFields  = Ext.util.JSON.decode(decodedResponce.ambiguousFieldsPaths);
 		var userRolesSolved = Ext.util.JSON.decode(decodedResponce.ambiguousRoles);
 		var ambiguousWarinig =(decodedResponce.ambiguousWarinig);
+		var catalogueErrors = Ext.util.JSON.decode(decodedResponce.catalogueErrors);
 
-		//open the ambiguous fields wizard but there is no ambiguous fields
-		if (forceOpenAmbiguous && (ambiguousFields.length == 0 )) {
-			Sbi.exception.ExceptionHandler.showInfoMessage(LN('sbi.qbe.queryeditor.noambiguousfields.msg'),LN('sbi.qbe.queryeditor.noambiguousfields.title'));
-		}
-
-		if ((!forceOpenAmbiguous && decodedResponce.executeDirectly) || (forceOpenAmbiguous && (ambiguousFields.length == 0 ) )) {
-			if (callback) {
-				callback.call(scope);  // proced execution with the specified callback function
+		if(catalogueErrors && catalogueErrors.length>0){
+			var error = "";
+			for(var i=0; i<catalogueErrors.length; i++){
+				error = error+ LN("sbi.qbe.queryeditor.error."+catalogueErrors[i]);
 			}
-		} else {
-			
-			ambiguousFields = this.mergeAmbiguousFields(ambiguousFields);
-			var relationshipsWindow = new Sbi.qbe.RelationshipsWizardWindow({
-				ambiguousFields : ambiguousFields
-				, ambiguousRoles : userRolesSolved 
-				, closeAction : 'close'
-				, modal : true
-			});
-			relationshipsWindow.show();
-			relationshipsWindow.on('apply', this.onAmbiguousFieldsSolved.createDelegate(this, [callback, scope], true), this);
-			if(ambiguousWarinig!=null && ambiguousWarinig!="null" && ambiguousWarinig!=""){
-				Sbi.exception.ExceptionHandler.showInfoMessage(LN(ambiguousWarinig));
+			Sbi.exception.ExceptionHandler.showErrorMessage(error);
+		}else{
+		
+			//open the ambiguous fields wizard but there is no ambiguous fields
+			if (forceOpenAmbiguous && (ambiguousFields.length == 0 )) {
+				Sbi.exception.ExceptionHandler.showInfoMessage(LN('sbi.qbe.queryeditor.noambiguousfields.msg'),LN('sbi.qbe.queryeditor.noambiguousfields.title'));
+			}
+	
+			if ((!forceOpenAmbiguous && decodedResponce.executeDirectly) || (forceOpenAmbiguous && (ambiguousFields.length == 0 ) )) {
+				if (callback) {
+					callback.call(scope);  // proced execution with the specified callback function
+				}
+			} else {
+				
+				ambiguousFields = this.mergeAmbiguousFields(ambiguousFields);
+				var relationshipsWindow = new Sbi.qbe.RelationshipsWizardWindow({
+					ambiguousFields : ambiguousFields
+					, ambiguousRoles : userRolesSolved 
+					, closeAction : 'close'
+					, modal : true
+				});
+				relationshipsWindow.show();
+				relationshipsWindow.on('apply', this.onAmbiguousFieldsSolved.createDelegate(this, [callback, scope], true), this);
+				if(ambiguousWarinig!=null && ambiguousWarinig!="null" && ambiguousWarinig!=""){
+					Sbi.exception.ExceptionHandler.showInfoMessage(LN(ambiguousWarinig));
+				}
 			}
 		}
 

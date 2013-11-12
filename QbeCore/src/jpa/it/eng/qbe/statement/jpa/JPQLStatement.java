@@ -204,7 +204,7 @@ public class JPQLStatement extends AbstractStatement {
 		JPQLStatementWhereClause clause = new JPQLStatementWhereClause(this);
 		return clause.getValueBounded(operandValueToBound, operandType);
 	}
-	
+
 	
 	
 }
