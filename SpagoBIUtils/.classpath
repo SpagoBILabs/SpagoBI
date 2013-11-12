@@ -45,7 +45,7 @@
 	<classpathentry kind="lib" path="lib/poi-ooxml-schemas-3.7-20101029.jar"/>
 	<classpathentry kind="lib" path="lib/poi-scratchpad-3.7-20101029.jar"/>
 	<classpathentry kind="lib" path="lib/it.eng.spagobi.commons_1.0.0.jar"/>
-	<classpathentry kind="lib" path="lib/it.eng.spagobi.meta.model_4.0.0.jar"/>
+	<classpathentry kind="lib" path="lib/it.eng.spagobi.meta.model_4.1.0.jar"/>
 	<classpathentry kind="lib" path="lib/org.eclipse.core.runtime_3.6.0.v20100505.jar"/>
 	<classpathentry kind="lib" path="lib/org.eclipse.emf.common_2.8.0.v20130125-0546.jar"/>
 	<classpathentry kind="lib" path="lib/org.eclipse.emf.ecore_2.8.3.v20130125-0546.jar"/>
