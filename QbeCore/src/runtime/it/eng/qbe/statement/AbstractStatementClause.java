@@ -209,9 +209,13 @@ public abstract class AbstractStatementClause implements IStatementClause {
 			IDataSourceConfiguration dataSourceConfiguration = parentStatement.getDataSource().getConfiguration();
 			
 			ConnectionDescriptor connection = (ConnectionDescriptor)dataSourceConfiguration.loadDataSourceProperties().get("connection");	
-			String dialect = connection.getDialect(); 
-			
-			inlineFunctionsMap = dataSourceConfiguration.loadInLineFunctions(dialect);
+			if(connection!=null){
+				String dialect = connection.getDialect(); 
+				inlineFunctionsMap = dataSourceConfiguration.loadInLineFunctions(dialect);
+			}else{
+				logger.debug("The dialect is null, so no in line function will be loaded..");
+			}
+
 		} catch (Throwable t) {
 			throw new RuntimeException("An unexpected error occured while getting inline functions", t);
 		}
