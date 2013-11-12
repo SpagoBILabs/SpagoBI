@@ -429,7 +429,7 @@ Ext.extend(Sbi.qbe.SelectGridPanel, Ext.Panel, {
 	    // button-columns
 	    var delButtonColumn = new Ext.grid.ButtonColumn(
 		    Ext.apply({
-		       header:  LN('sbi.qbe.selectgridpanel.headers.delete')
+		       header:  LN('sbi.qbe.selectgridpanel.headers.delete.column')
 		       , dataIndex: 'delete'
 		       , imgSrc: '../img/actions/delete.gif'
 		       , clickHandler:function(e, t){

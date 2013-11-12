@@ -47,7 +47,8 @@ Sbi.settings.qbe = {
 				, 'visible': {hideable: true, hidden: false, width: 50, sortable: false}
 				, 'include': {hideable: true, hidden: false, width: 50, sortable: false}
 				, 'filter': {hideable: true, hidden: false, width: 50, sortable: false}
-				, 'having': {hideable: true, hidden: false, width: 50, sortable: false}			
+				, 'having': {hideable: true, hidden: false, width: 50, sortable: false}		
+				, 'delete': {hideable: true, hidden: false, sortable: false}
 			}
 		}
 		

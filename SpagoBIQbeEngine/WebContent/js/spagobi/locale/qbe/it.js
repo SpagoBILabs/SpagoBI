@@ -293,6 +293,7 @@ Sbi.locale.ln['sbi.qbe.selectgridpanel.headers.group'] = 'Raggruppa';
 Sbi.locale.ln['sbi.qbe.selectgridpanel.headers.function'] = 'Funzione';
 Sbi.locale.ln['sbi.qbe.selectgridpanel.headers.field'] = 'Campo';
 Sbi.locale.ln['sbi.qbe.selectgridpanel.headers.delete'] = 'Elimina tutti';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.headers.delete.column'] = 'Elimina';
 
 //aggregation functions
 Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.name.none'] = 'nessuno';

@@ -306,6 +306,7 @@ Sbi.locale.ln['sbi.qbe.selectgridpanel.headers.group'] = 'Group';
 Sbi.locale.ln['sbi.qbe.selectgridpanel.headers.function'] = 'Function';
 Sbi.locale.ln['sbi.qbe.selectgridpanel.headers.field'] = 'Field';
 Sbi.locale.ln['sbi.qbe.selectgridpanel.headers.delete'] = 'Delete all';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.headers.delete.column'] = 'Delete';
 
 //aggregation functions
 Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.name.none'] = 'none';
