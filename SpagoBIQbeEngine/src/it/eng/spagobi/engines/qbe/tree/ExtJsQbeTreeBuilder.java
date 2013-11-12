@@ -43,7 +43,7 @@ import org.json.JSONObject;
  * 
  * @author Andrea Gioia (andrea.gioia@eng.it)
  */
-public class ExtJsQbeTreeBuilder  {	
+public class ExtJsQbeTreeBuilder  {
 
 	private QbeTreeFilter qbeTreeFilter;
 
@@ -79,7 +79,7 @@ public class ExtJsQbeTreeBuilder  {
 		return buildQbeTree(datamartName);
 	}
 	
-	private String geEntityLabel(IModelEntity entity) {
+	private String getEntityLabel(IModelEntity entity) {
 		String label;
 		label = getDatamartLabels().getProperty(entity, "label");
 		if (label == null) {
@@ -88,31 +88,25 @@ public class ExtJsQbeTreeBuilder  {
 		return StringUtilities.isEmpty(label)? entity.getName(): label;
 	}
 	
-	private String geEntityTooltip(IModelEntity entity) {
+	private String getEntityTooltip(IModelEntity entity) {
 		String tooltip = getDatamartLabels().getProperty(entity, "tooltip");
 		return tooltip != null ? tooltip : "";
 	}
 	
-	private String geFieldLabel(IModelField field) {
+	private String getFieldLabel(IModelField field) {
 		String label;
-		label = field.getPropertyAsString("label");
-		if ( StringUtilities.isEmpty(label) ) {
-			label = getDatamartLabels().getProperty(field, "label");
-			if( StringUtilities.isEmpty(label) ) {
-				IModelEntity parentEntity = field.getParent();
-				//IModelEntity parentEntity = field.getLogicalParent();
-				IModelEntity rootEntity = field.getStructure().getRootEntity(parentEntity);
-				IModelField rootField = rootEntity.getFieldByName(field.getName());
-				label = getDatamartLabels().getProperty(rootField, "label");
-			}
-			return StringUtilities.isEmpty(label)? field.getName(): label;
-		} else {
-			return label;
+		label = getDatamartLabels().getProperty(field, "label");
+		if( StringUtilities.isEmpty(label) ) {
+			IModelEntity parentEntity = field.getParent();
+			//IModelEntity parentEntity = field.getLogicalParent();
+			IModelEntity rootEntity = field.getStructure().getRootEntity(parentEntity);
+			IModelField rootField = rootEntity.getFieldByName(field.getName());
+			label = getDatamartLabels().getProperty(rootField, "label");
 		}
-
+		return StringUtilities.isEmpty(label)? field.getName(): label;
 	}
 
-	private String geFieldTooltip(IModelField field) {
+	private String getFieldTooltip(IModelField field) {
 		String tooltip = getDatamartLabels().getProperty(field, "tooltip");
 		return tooltip != null ? tooltip : "";
 	}
@@ -194,9 +188,9 @@ public class ExtJsQbeTreeBuilder  {
 		
 		//DatamartProperties datamartProperties = dataSource.getDataMartProperties();	
 		String iconCls = entity.getPropertyAsString("type");			
-		String label = geEntityLabel( entity );
+		String label = getEntityLabel( entity );
 		String londDescription = QueryJSONSerializer.getEntityLongDescription( entity , getDatamartLabels());
-		String tooltip = geEntityTooltip( entity );
+		String tooltip = getEntityTooltip( entity );
 		
 		writer.println("\n\n####################################################");
 		writer.println( entity.getUniqueName().replaceAll(":", "/") + "=");
@@ -310,10 +304,10 @@ public class ExtJsQbeTreeBuilder  {
 		
 		//DatamartProperties datamartProperties = dataSource.getDataMartProperties();
 		String iconCls = field.getPropertyAsString("type");		
-		String fieldLabel = geFieldLabel( field );
+		String fieldLabel = getFieldLabel( field );
 		String longDescription = QueryJSONSerializer.getFieldLongDescription( field, getDatamartLabels(), null );
-		String fieldTooltip = geFieldTooltip( field );
-		String entityLabel = geEntityLabel( parentEntity );
+		String fieldTooltip = getFieldTooltip( field );
+		String entityLabel = getEntityLabel( parentEntity );
 		
 		writer.println( field.getUniqueName().replaceAll(":", "/") + "=");
 		writer.println( field.getUniqueName().replaceAll(":", "/") + ".tooltip=");
@@ -343,9 +337,9 @@ public class ExtJsQbeTreeBuilder  {
 	public  JSONObject getCalculatedFieldNode(IModelEntity parentEntity, ModelCalculatedField field) {
 
 		String iconCls = "calculation";		
-		String fieldLabel = geFieldLabel( field );
-		String fieldTooltip = geFieldTooltip( field );
-		String entityLabel = geEntityLabel( parentEntity );
+		String fieldLabel = getFieldLabel( field );
+		String fieldTooltip = getFieldTooltip( field );
+		String entityLabel = getEntityLabel( parentEntity );
 		
 		writer.println( field.getUniqueName().replaceAll(":", "/") + "=");
 		writer.println( field.getUniqueName().replaceAll(":", "/") + ".tooltip=");
@@ -423,7 +417,7 @@ public class ExtJsQbeTreeBuilder  {
 		if(sources.size()>0){
 			for (int i = 0; i < sources.size(); i++) {
 				IModelField source = sources.get(i);
-				sourceText = sourceText+", "+ geFieldLabel( source );
+				sourceText = sourceText+", "+ getFieldLabel( source );
 			}
 			sourceText = sourceText.substring(2);
 		}
@@ -431,13 +425,13 @@ public class ExtJsQbeTreeBuilder  {
 		if(sources.size()>0){
 			for (int i = 0; i < targets.size(); i++) {
 				IModelField target = targets.get(i);
-				targetText = targetText+", "+ geFieldLabel( target );
+				targetText = targetText+", "+ getFieldLabel( target );
 			}
 			targetText = targetText.substring(2);
 		}
 		
 		
-		String targetEntityLabel = geEntityLabel( relation.getTargetFields().get(0).getParent() );
+		String targetEntityLabel = getEntityLabel( relation.getTargetFields().get(0).getParent() );
 		String relationString = targetEntityLabel;
 		String relationEntityString = "-->"+targetEntityLabel;
 		String relationName = relation.getName();
