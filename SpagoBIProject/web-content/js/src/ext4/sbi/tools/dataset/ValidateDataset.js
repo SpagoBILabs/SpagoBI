@@ -56,7 +56,7 @@ Ext.define('Sbi.tools.dataset.ValidateDataset', {
 			  defaultType: 'displayfield',
 			  height: 330, //318,
 			  layout: 'form',
-			  items: []
+			  items: [this.warningMessage]
 			});
 		
 		return this.mainPanel;
