@@ -6,8 +6,6 @@
 
 package it.eng.qbe.statement;
 
-import it.eng.qbe.datasource.IDataSource;
-import it.eng.qbe.datasource.dataset.DataSetDataSource;
 import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.model.structure.IModelField;
 import it.eng.qbe.model.structure.ModelCalculatedField.Slot;
@@ -18,7 +16,6 @@ import it.eng.qbe.query.InLineCalculatedSelectField;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.query.SimpleSelectField;
 import it.eng.qbe.serializer.SerializationManager;
-import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.objects.Couple;
 
@@ -132,18 +129,15 @@ public class AbstractSelectStatementClause extends AbstractStatementClause{
 		return buffer.toString().trim();
 	}
 	
-	private String encapsulate(String alias) {
-		IDataSource dataSource = this.parentStatement.getDataSource();
-		if (dataSource instanceof DataSetDataSource) {
-			DataSetDataSource datasetDatasource = (DataSetDataSource) this.parentStatement.getDataSource();
-			it.eng.spagobi.tools.datasource.bo.IDataSource datasourceForReading = datasetDatasource.getDataSourceForReading();
-			// in case of DataSetDataSource, we need to encapsulate alias between quotes
-			return AbstractJDBCDataset.encapsulateColumnName(alias, datasourceForReading);
-		} else {
-			return alias;
-		}
+	/**
+	 * This may be overwritten by sub-classes (see it.eng.qbe.statement.sql.SQLStatementSelectClause)
+	 * @param alias The alias to be encapsulated, if necessary
+	 * @return
+	 */
+	protected String encapsulate(String alias) {
+		// by default (JPQL/HQL statement) there is no need to encapsulate aliases
+		return alias;
 	}
-
 
 	private String addSlots(String expr, InLineCalculatedSelectField selectInLineField) {
 		String newExpr;

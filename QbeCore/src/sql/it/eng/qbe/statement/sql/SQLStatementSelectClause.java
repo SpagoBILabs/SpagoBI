@@ -6,9 +6,11 @@
 
 package it.eng.qbe.statement.sql;
 
+import it.eng.qbe.datasource.dataset.DataSetDataSource;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.statement.AbstractSelectStatementClause;
 import it.eng.qbe.statement.IStatement;
+import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
 
 import java.util.Map;
 
@@ -38,5 +40,16 @@ public class SQLStatementSelectClause extends AbstractSelectStatementClause {
 		SQLStatementSelectClause clause = new SQLStatementSelectClause(parentStatement);
 		return clause.buildClause(query, entityAliasesMaps, useAliases);
 	}
+
+
+	@Override
+	protected String encapsulate(String alias) {
+		// in case of DataSetDataSource, we need to encapsulate alias between quotes (example: Customer id --> "Customer id" in most databases)
+		DataSetDataSource dataSource = (DataSetDataSource) this.parentStatement.getDataSource();
+		it.eng.spagobi.tools.datasource.bo.IDataSource datasourceForReading = dataSource.getDataSourceForReading();
+		return AbstractJDBCDataset.encapsulateColumnName(alias, datasourceForReading);
+	}
+	
+	
 	
 }
