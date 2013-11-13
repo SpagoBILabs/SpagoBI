@@ -156,11 +156,30 @@ Ext.extend(Sbi.qbe.QueryCataloguePanel, Ext.Panel, {
 	
 	,
 	onCommitSuccessHandler : function (response, options, callback, scope, forceOpenAmbiguous) {
-		var decodedResponce = Ext.util.JSON.decode( response.responseText );
-		var ambiguousFields  = Ext.util.JSON.decode(decodedResponce.ambiguousFieldsPaths);
-		var userRolesSolved = Ext.util.JSON.decode(decodedResponce.ambiguousRoles);
-		var ambiguousWarinig =(decodedResponce.ambiguousWarinig);
-		var catalogueErrors = Ext.util.JSON.decode(decodedResponce.catalogueErrors);
+		var decodedResponce = "";
+		var catalogueErrors = "";
+		var ambiguousFields = "";
+		var ambiguousWarinig = "";
+		var userRolesSolved = "";
+		
+		if(response.responseText  && response.responseText !=""){
+			decodedResponce = Ext.util.JSON.decode( response.responseText );
+		}
+
+		if(decodedResponce.ambiguousFieldsPaths  && decodedResponce.ambiguousFieldsPaths !=""){
+			ambiguousFields  = Ext.util.JSON.decode(decodedResponce.ambiguousFieldsPaths);
+		}
+		
+		if(decodedResponce.ambiguousRoles  && decodedResponce.ambiguousRoles !=""){
+			userRolesSolved = Ext.util.JSON.decode(decodedResponce.ambiguousRoles);
+		}
+		
+		
+		if(decodedResponce.catalogueErrors  && decodedResponce.catalogueErrors !=""){
+			catalogueErrors = Ext.util.JSON.decode(decodedResponce.catalogueErrors);
+		}
+		
+		ambiguousWarinig =(decodedResponce.ambiguousWarinig);
 
 		if(catalogueErrors && catalogueErrors.length>0){
 			var error = "";
