@@ -164,6 +164,8 @@ Ext.extend(Sbi.qbe.RelationshipsWizardContainer, Ext.Panel, {
     							var rel = node.relationshipName;
     							var src = node.sourceName;
     							var trg = node.targetName;
+    							var sourceFields = node.sourceFields;
+    							var targetFields = node.targetFields;
     							
     							if(!graph[src]){
     								graph[src] = {};
@@ -174,8 +176,23 @@ Ext.extend(Sbi.qbe.RelationshipsWizardContainer, Ext.Panel, {
     							}
     							
     							var relationsBetweenNode = graph[src][trg];
-    							if(relationsBetweenNode.indexOf(rel)<0){
-    								relationsBetweenNode.push(rel);
+    							
+    							var alreadyExists = false;
+    							for(var k=0; k<relationsBetweenNode.length; k++){
+    								var relationObject = relationsBetweenNode[k];
+    								if(relationObject.rel == rel){
+    									alreadyExists = true;
+    									break;
+    								}
+    							}
+    							
+    							if(!alreadyExists){							
+    								var relationObject ={
+    										rel : rel,
+    										targetFields : targetFields,
+    										sourceFields: sourceFields
+    								};
+    								relationsBetweenNode.push(relationObject);
     							}
     						}
     					}
@@ -236,6 +253,7 @@ Ext.extend(Sbi.qbe.RelationshipsWizardContainer, Ext.Panel, {
     		aRoleSelection.aliases.push({
     				name:  trg,
     				alias: this.buildAlias(src, trg, rels[i], i),
+    				aliasTooltip: this.buildTooltip(src, trg, rels[i], i),
     				role: rels[i],
     				fields: []
     			});
@@ -254,7 +272,16 @@ Ext.extend(Sbi.qbe.RelationshipsWizardContainer, Ext.Panel, {
     }
     
     ,buildAlias: function(src, trg, rel, pos){
-    	return trg+"_"+(pos+1);
+    	return trg;
+    }
+    
+    ,buildTooltip: function(src, trg, rel, pos){
+    	var tooltip = src+"("+rel.sourceFields+")<br/>";
+    	tooltip+= '&nbsp;&nbsp;&nbsp;';
+    	tooltip+= rel.rel;
+    	tooltip+= '<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+    	tooltip+="("+rel.targetFields+")"+ trg;
+    	return tooltip;
     }
     
     ,buildFieldsMap: function(){
