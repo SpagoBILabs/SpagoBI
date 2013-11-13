@@ -316,14 +316,6 @@ public abstract class AbstractDataSet implements IDataSet {
 		String toReturn = (String) this.getParamsMap().get(SpagoBIConstants.TEMPORARY_TABLE_NAME);
 		return toReturn;
 	}
-	
-	public IDataSource getDataSourceForPersistence() {
-		if (this.getParamsMap() == null) {
-			return null;
-		}
-		IDataSource toReturn = (IDataSource) this.getParamsMap().get(EngineConstants.ENV_DATASOURCE);
-		return toReturn;
-	}
 
 	// -----------------------------------------------
     // Transformer management
@@ -655,7 +647,12 @@ public abstract class AbstractDataSet implements IDataSet {
 				logger.error("Temporary table name not set, cannot proceed!!");
 				throw new SpagoBIEngineRuntimeException("Temporary table name not set");
 			}
-			IDataSource dataSource = this.getDataSourceForPersistence();
+			IDataSource dataSource = this.getDataSource();
+			if (dataSource == null || dataSource.checkIsReadOnly()) {
+				logger.debug(dataSource == null ? "Datasource not set" : "Datasource is read only");
+				logger.debug("Getting datasource for writing...");
+				dataSource = this.getDataSourceForWriting();
+			}
 			if (dataSource == null) {
 				logger.error("Datasource for persistence not set, cannot proceed!!");
 				throw new SpagoBIEngineRuntimeException("Datasource for persistence not set");
