@@ -105,7 +105,7 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 		JSONObject queryJSON;
 		Query query;
 		QueryGraph oldQueryGraph = null;
-		String roleSelection = null;
+		String roleSelectionFromTheSavedQuery = null;
 		boolean isDierctlyExecutable = false;
 		QueryGraph queryGraph = null; //the query graph (the graph that involves all the entities of the query)
 		String ambiguousWarinig=null;
@@ -125,10 +125,10 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 				//the qbe is new
 				query = this.getEngineInstance().getQueryCatalogue().getFirstQuery();
 				oldQueryGraph = query.getQueryGraph();
-				roleSelection = query.getRelationsRoles();
+				roleSelectionFromTheSavedQuery = query.getRelationsRoles();
 				logger.debug("The query is already defined in the catalogue");
-				if(roleSelection!=null){
-					logger.debug("The previous roleSelection is "+roleSelection);
+				if(roleSelectionFromTheSavedQuery!=null){
+					logger.debug("The previous roleSelection is "+roleSelectionFromTheSavedQuery);
 				}
 				if(oldQueryGraph!=null){
 					logger.debug("The previous oldQueryGraph is "+oldQueryGraph);
@@ -229,6 +229,9 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 			String serializedRoles ="";
 			if(serialized.length()>5){
 				serializedRoles = this.getAttributeAsString(AMBIGUOUS_ROLES);
+				if(serializedRoles==null || serializedRoles.length()<5){
+					serializedRoles = roleSelectionFromTheSavedQuery;
+				}
 				LogMF.debug(logger, AMBIGUOUS_ROLES + "is {0}", serialized);
 				query.setRelationsRoles(serializedRoles);
 				applySelectedRoles(serializedRoles, modelEntities, query);
