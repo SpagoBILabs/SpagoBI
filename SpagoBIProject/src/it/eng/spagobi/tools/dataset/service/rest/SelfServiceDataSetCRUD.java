@@ -12,13 +12,11 @@
 package it.eng.spagobi.tools.dataset.service.rest;
 
 import it.eng.spago.base.SourceBeanException;
+import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
-import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
-import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
-import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.Domain;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IDomainDAO;
 import it.eng.spagobi.commons.serializer.DataSetJSONSerializer;
@@ -26,21 +24,12 @@ import it.eng.spagobi.commons.serializer.SerializationException;
 import it.eng.spagobi.commons.serializer.SerializerFactory;
 import it.eng.spagobi.commons.utilities.AuditLogUtilities;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
-import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.container.ObjectUtils;
-import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.metamodel.MetaModelWrapper;
 import it.eng.spagobi.metamodel.SiblingsFileWrapper;
-import it.eng.spagobi.profiling.bean.SbiAttribute;
-import it.eng.spagobi.profiling.bean.SbiUser;
-import it.eng.spagobi.profiling.bean.SbiUserAttributes;
-import it.eng.spagobi.profiling.dao.ISbiUserDAO;
 import it.eng.spagobi.rest.annotations.ToValidate;
 import it.eng.spagobi.services.exceptions.ExceptionUtilities;
-import it.eng.spagobi.services.security.bo.SpagoBIUserProfile;
-import it.eng.spagobi.services.security.service.ISecurityServiceSupplier;
-import it.eng.spagobi.services.security.service.SecurityServiceSupplierFactory;
 import it.eng.spagobi.tools.dataset.bo.FileDataSet;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
@@ -75,26 +64,11 @@ import it.eng.spagobi.utilities.json.JSONUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.security.Security;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
 
-import javax.mail.Authenticator;
-import javax.mail.Message;
-import javax.mail.Multipart;
-import javax.mail.PasswordAuthentication;
-import javax.mail.Session;
-import javax.mail.Transport;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeBodyPart;
-import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMultipart;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -170,7 +144,7 @@ public class SelfServiceDataSetCRUD {
 
 
 	private JSONArray putActions(IEngUserProfile profile,
-			JSONArray datasetsJSONArray) throws JSONException {
+			JSONArray datasetsJSONArray) throws JSONException, EMFInternalError {
 		//sets action to modify dataset			
 		JSONObject detailAction = new JSONObject();
 		detailAction.put("name", "detaildataset");
@@ -200,7 +174,9 @@ public class SelfServiceDataSetCRUD {
 			actions.put(detailAction);		
 			actions.put(worksheetAction);
 			actions.put(georeportAction); // Annotated view map action to release SpagoBI 4
-			actions.put(qbeAction);
+			if (profile.getFunctionalities().contains(SpagoBIConstants.BUILD_QBE_QUERIES_FUNCTIONALITY)){
+				actions.put(qbeAction);
+			}
 			if (profile.getUserUniqueIdentifier().toString().equals(datasetJSON.get("owner"))){
 				//the delete action is able only for private dataset
 				actions.put(deleteAction);
