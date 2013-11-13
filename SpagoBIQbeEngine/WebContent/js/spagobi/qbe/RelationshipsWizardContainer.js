@@ -77,6 +77,7 @@ Ext.extend(Sbi.qbe.RelationshipsWizardContainer, Ext.Panel, {
     , relationshipsWizard : null
     , ambiguousFields : null // must be set in the object passed to the constructor
     , rolesWizard: null
+    , ambiguousRoles: null //the previous selection
    
     // private methods
     ,
