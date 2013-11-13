@@ -67,7 +67,7 @@ public abstract class AbstractStatementWhereClause extends AbstractStatementFilt
 	 * 			returns an empty String
 	 */
 	public String buildClause(Query query, Map<String, Map<String, String>> entityAliasesMaps) {
-		
+		String whereClause = "";
 		StringBuffer buffer;
 
 		buffer = new StringBuffer();
@@ -84,7 +84,17 @@ public abstract class AbstractStatementWhereClause extends AbstractStatementFilt
 			logger.debug("OUT");
 		}
 	
-		return buffer.toString().trim();
+		whereClause= buffer.toString().trim();
+		
+		int indexOfWhere = whereClause.indexOf(WHERE);
+		if(indexOfWhere>=0){
+			whereClause = whereClause.substring(indexOfWhere+WHERE.length());
+			whereClause = WHERE+" ( " +whereClause + ") ";
+			
+		}
+
+		
+		return whereClause;
 	}
 	
 	private StringBuffer addCondition(StringBuffer buffer, String condition) {
@@ -370,7 +380,7 @@ public abstract class AbstractStatementWhereClause extends AbstractStatementFilt
 
 	protected String injectAutoJoins(String whereClause, Query query, Map entityAliasesMaps) {
 		logger.debug("IN");
-
+		String joinConditions="";
 		try {
 			Map rootEntityAlias = (Map)entityAliasesMaps.get(query.getId());
 
@@ -430,12 +440,10 @@ public abstract class AbstractStatementWhereClause extends AbstractStatementFilt
 								
 								joinCondition = buildJoinClause(sourceEntityAliases, targetEntityAliases, relationship.getType());
 								logger.debug("succesful added auto-join condition [" + joinCondition + "]");
-								if(whereClause == null || whereClause.equals("")) {
-									whereClause = "WHERE ";
-								} else {
-									whereClause = whereClause + " AND ";
+								if(joinConditions != null && !joinConditions.equals("")) {
+									joinConditions = joinConditions + " AND ";
 								}						
-								whereClause += joinCondition;
+								joinConditions += joinCondition;
 
 							}else{
 								List<String> sourceEntityAliases = parentStatement.getFieldAliasWithRolesList(sourceField, rootEntityAlias, entityAliasesMaps);
@@ -444,17 +452,28 @@ public abstract class AbstractStatementWhereClause extends AbstractStatementFilt
 								for(int j=0; j<targetEntityAliases.size();j++){
 									joinCondition = buildJoinClause(sourceEntityAliases.get(j), targetEntityAliases.get(j), relationship.getType());
 									logger.debug("succesful added auto-join condition [" + joinCondition + "]");
-									if(whereClause == null || whereClause.equals("")) {
-										whereClause = "WHERE ";
-									} else {
-										whereClause = whereClause + " AND ";
+									if(joinConditions != null && !joinConditions.equals("")) {
+										joinConditions = joinConditions + " AND ";
 									}						
-									whereClause += joinCondition;
+									joinConditions += joinCondition;
 								}								
 							}
 
 						}
 					}
+					
+					//Encapsulate the join conditions in brackets
+					if(joinConditions!=null && !joinConditions.equals("")){
+						if(whereClause == null || whereClause.equals("")) {
+							whereClause = WHERE+" (" +joinConditions+") ";
+						} else {
+							whereClause = whereClause +" AND (" +joinConditions+") ";
+						}		
+						logger.debug("Join conditions: "+joinConditions);
+					}
+					
+
+					
 					//throw new RuntimeException("Impossible to auto join entities");
 				} else {
 					logger.warn("Impossible to join entities [" + unjoinedEntities + "]. A cartesian product will be generted.");
