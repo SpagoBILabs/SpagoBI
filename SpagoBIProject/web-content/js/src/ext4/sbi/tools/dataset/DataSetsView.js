@@ -142,7 +142,12 @@ Ext.define('Sbi.tools.dataset.DataSetsView', {
 								            '    <ul class="box-actions">'+	    
 								            '		<tpl for="actions">'+  
 								        	' 			<tpl if="name != \'delete\' && this.includeAction(name) == true ">'+
-									        ' 	       		<li class="{name}"><a href="#" title="{description}"></a></li>'+
+								        	'					<tpl if="name == \'detaildataset\' && parent.dsTypeCd == \'File\' ">'+
+									        ' 	       				<li class="{name}"><a href="#" title="{description}"></a></li>'+
+									        '					</tpl>													  '+
+								        	'					<tpl if="name != \'detaildataset\' ">'+
+									        ' 	       				<li class="{name}"><a href="#" title="{description}"></a></li>'+
+									        '					</tpl>													  '+									        
 									        '			</tpl>'+
 									        '		</tpl>'+
 								            '    </ul>'+
