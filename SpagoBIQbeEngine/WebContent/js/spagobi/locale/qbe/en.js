@@ -97,7 +97,7 @@ Sbi.locale.ln['sbi.qbe.queryeditor.centerregion.tools.help'] = 'Help me please';
 Sbi.locale.ln['sbi.qbe.queryeditor.centerregion.buttons.relationshipswizard'] = 'Relationships wizard';
 Sbi.locale.ln['sbi.qbe.queryeditor.noambiguousfields.title'] = 'No ambiguous fieds';
 Sbi.locale.ln['sbi.qbe.queryeditor.noambiguousfields.msg'] = 'There are no ambiguous fieds in the current query';
-Sbi.locale.ln['sbi.qbe.queryeditor.error.FILTER_ROLES_ERROR'] = 'If you are using entities with more than one role, in that entities you can specify filters only in the select fields';
+Sbi.locale.ln['sbi.qbe.queryeditor.error.FILTER_ROLES_ERROR'] = 'If you are using entities with more than one role, in that entities you can specify filters only in the selected fields';
 
 Sbi.locale.ln['sbi.qbe.queryeditor.eastregion.title'] = 'Query Catalogue';
 Sbi.locale.ln['sbi.qbe.queryeditor.eastregion.tools.delete'] = 'Delete query';
