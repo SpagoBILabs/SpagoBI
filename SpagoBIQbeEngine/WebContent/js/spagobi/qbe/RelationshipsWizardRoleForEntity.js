@@ -123,6 +123,9 @@ Ext.extend(Sbi.qbe.RelationshipsWizardRoleForEntity, Ext.Panel, {
 			root   : 'records'
 		});
 
+		
+		entitiesStore.sort('alias', 'ASC');
+		
 		var sm =  new Ext.grid.RowSelectionModel({singleSelect : true});
 		// Column Model shortcut array
 		var cols = [
@@ -282,9 +285,14 @@ Ext.extend(Sbi.qbe.RelationshipsWizardRoleForEntity, Ext.Panel, {
 	setFormState: function(state){
 		for(var i=0; i<state.length; i++){
 			var aState = state[i];
-			var aEntitiyFieldsGrids = this.entitiyFieldsGrids[i];
-			var store = aEntitiyFieldsGrids.getStore();
-			store.loadData(aState);	
+			for(var y=0; y<state.length; y++){
+				var aEntitiyFieldsGrids = this.entitiyFieldsGrids[y];
+				if(aEntitiyFieldsGrids.myEntityAlias.role.rel==aState.role){
+					var store = aEntitiyFieldsGrids.getStore();
+					store.loadData(aState);
+					break;
+				}
+			}
 		}
 		this.fieldGrid.getStore().removeAll();
 	},
