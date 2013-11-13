@@ -193,7 +193,7 @@ Ext.extend(Sbi.qbe.RelationshipsWizardRoleForEntity, Ext.Panel, {
 			enableDragDrop   : true,
 			stripeRows       : true,
 			autoExpandColumn : 'name',
-			title            : LN('sbi.qbe.relationshipswizard.field.title')
+			title            : LN('sbi.qbe.relationshipswizard.roles.field.title')
 		});
 
 		this.fieldGrid.on("render",function(){
