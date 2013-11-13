@@ -289,6 +289,7 @@ public class WorksheetEngineStartAction extends AbstractEngineStartAction {
 			List<IDataSet> dataSets = new ArrayList<IDataSet>();
 			dataSets.add(dataSetLinkedToDoc);
 			env.put(EngineConstants.ENV_DATASETS, dataSets);
+			dataSetLinkedToDoc.setDataSourceForWriting((IDataSource) env.get(EngineConstants.DATASOURCE_FOR_WRITING));
 		}
 		return env;
 	}
