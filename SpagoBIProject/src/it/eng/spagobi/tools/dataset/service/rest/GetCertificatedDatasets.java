@@ -11,7 +11,9 @@
  */
 package it.eng.spagobi.tools.dataset.service.rest;
 
+import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.serializer.SerializerFactory;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
@@ -67,7 +69,7 @@ public class GetCertificatedDatasets {
 			datasetsJSONArray = (JSONArray) SerializerFactory.getSerializer(
 					"application/json").serialize(dataSets, null);
 			
-			JSONArray datasetsJSONReturn = putActions(datasetsJSONArray);
+			JSONArray datasetsJSONReturn = putActions(profile, datasetsJSONArray);
 
 			JSONReturn.put("root", datasetsJSONReturn);
 
@@ -79,8 +81,8 @@ public class GetCertificatedDatasets {
 
 	}
 
-	private JSONArray putActions(JSONArray datasetsJSONArray)
-			throws JSONException {
+	private JSONArray putActions(IEngUserProfile profile, JSONArray datasetsJSONArray)
+			throws JSONException, EMFInternalError {
 		JSONObject worksheetAction = new JSONObject();
 		worksheetAction.put("name", "worksheet");
 		worksheetAction.put("description", "Show Worksheet");
@@ -94,7 +96,9 @@ public class GetCertificatedDatasets {
 			JSONArray actions = new JSONArray();
 			JSONObject datasetJSON = datasetsJSONArray.getJSONObject(i);		
 			actions.put(worksheetAction);
-			actions.put(qbeAction);
+			if (profile.getFunctionalities().contains(SpagoBIConstants.BUILD_QBE_QUERIES_FUNCTIONALITY)){
+				actions.put(qbeAction);
+			}
 			datasetJSON.put("actions", actions);
 			datasetsJSONReturn.put(datasetJSON);
 		}
