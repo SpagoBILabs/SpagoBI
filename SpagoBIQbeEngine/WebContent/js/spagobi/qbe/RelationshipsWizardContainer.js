@@ -178,8 +178,8 @@ Ext.extend(Sbi.qbe.RelationshipsWizardContainer, Ext.Panel, {
     							var relationsBetweenNode = graph[src][trg];
     							
     							var alreadyExists = false;
-    							for(var k=0; k<relationsBetweenNode.length; k++){
-    								var relationObject = relationsBetweenNode[k];
+    							for(var y=0; y<relationsBetweenNode.length; y++){
+    								var relationObject = relationsBetweenNode[y];
     								if(relationObject.rel == rel){
     									alreadyExists = true;
     									break;
