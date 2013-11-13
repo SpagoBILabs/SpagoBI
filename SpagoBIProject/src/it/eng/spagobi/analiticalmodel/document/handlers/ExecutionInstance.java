@@ -823,10 +823,7 @@ public class ExecutionInstance implements Serializable{
 						parameterDescriptions.add(nonDefaultDescriptions.get(defaultValuePosition));
 						defaultValuePosition++;
 					}else{
-						if(biparam.getParameterValuesDescription() != null){
-							parameterDescriptions.add(biparam.getParameterValuesDescription().get(nonDefaultValuePosition));
-							
-						}
+						parameterDescriptions.add(cloned.getParameterValuesDescription().get(nonDefaultValuePosition));
 						nonDefaultValuePosition++;
 					}
 				}
