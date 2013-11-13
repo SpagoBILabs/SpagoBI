@@ -5,20 +5,6 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.utilities.engines;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-
-import org.apache.log4j.Logger;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import sun.misc.BASE64Decoder;
-
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanAttribute;
 import it.eng.spago.base.SourceBeanException;
@@ -46,6 +32,20 @@ import it.eng.spagobi.utilities.service.AbstractBaseHttpAction;
 import it.eng.spagobi.utilities.temporarytable.TemporaryTable;
 import it.eng.spagobi.utilities.temporarytable.TemporaryTableManager;
 import it.eng.spagobi.utilities.temporarytable.TemporaryTableRecorder;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+
+import org.apache.log4j.Logger;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import sun.misc.BASE64Decoder;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -622,6 +622,10 @@ public class AbstractEngineStartAction extends AbstractBaseHttpAction {
 			logger.debug("Dataset is neither persisted nor flat. Persisting dataset into a temporary table...");
 			IDataSource dataSource = (IDataSource) env
 					.get(EngineConstants.DATASOURCE_FOR_WRITING);
+			if (dataSource == null) {
+				logger.error("Datasource for persistence not set, cannot proceed!!");
+				throw new SpagoBIEngineStartupException(getEngineName(), "Datasource for persistence not set");
+			}
 			String tableName = this.getPersistenceTableName();
 			descriptor = this.persistDataSetWithTemporaryTable(dataset, tableName,
 					dataSource);
