@@ -91,7 +91,7 @@ Ext.extend(Sbi.qbe.RelationshipsWizardRole, Ext.TabPanel, {
 			alert("There must be at least an entity to built the field role association wizard");
 		}
 		this.relationshipsWizardsRoleForEntity = new Array();
-		for(var i=0; i<this.entities.length;i++){
+		for(var i=this.entities.length-1; i>=0;i--){
 			var aRelationshipsWizardsRoleForEntityConfig = {roleEntityConfig: this.entities[i]};
 			var aRelationshipsWizardsRoleForEntity = new Sbi.qbe.RelationshipsWizardRoleForEntity(Ext.apply(this.relationshipsWizardRoleForEntityConfig||{},aRelationshipsWizardsRoleForEntityConfig));
 			
