@@ -177,7 +177,6 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 			
 			if (oldQueryGraph == null && query!=null) {//normal execution: a query exists
 				queryGraph = updateQueryGraphInQuery(query, forceReturnGraph,modelEntities);
-				roleSelection = this.getAttributeAsString(AMBIGUOUS_ROLES);
 				if(queryGraph!=null){
 					//String modelName = getDataSource().getConfiguration().getModelName();
 					//Graph<IModelEntity, Relationship> graph = getDataSource().getModelStructure().getRootEntitiesGraph(modelName, false).getRootEntitiesGraph();
@@ -203,7 +202,6 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 				GraphManager.filterPaths(ambiguousFields, pathFiltersMap, (QbeEngineConfig.getInstance().getPathsFiltersImpl()));
 				applySavedGraphPaths(oldQueryGraph,  ambiguousFields);
 				queryGraph = oldQueryGraph;
-				applySelectedRoles(roleSelection, modelEntities, query);
 			}
 			
 			if(queryGraph!=null){
@@ -221,10 +219,21 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 			simpleModule.addSerializer(Relationship.class, new RelationJSONSerializer(getDataSource(), getLocale()));
 			simpleModule.addSerializer(ModelObjectI18n.class, new ModelObjectInternationalizedSerializer(getDataSource(), getLocale()));
 			mapper.registerModule(simpleModule);
+			
 			String serialized = this.getAttributeAsString(AMBIGUOUS_FIELDS_PATHS);
 			if(ambiguousFields.size()>0 || serialized==null){
 				serialized= mapper.writeValueAsString((Set<ModelFieldPaths>) ambiguousFields);	
 			}
+			
+			//update the roles in the query if exists ambiguous paths
+			String serializedRoles ="";
+			if(serialized.length()>5){
+				serializedRoles = this.getAttributeAsString(AMBIGUOUS_ROLES);
+				LogMF.debug(logger, AMBIGUOUS_ROLES + "is {0}", serialized);
+				query.setRelationsRoles(serializedRoles);
+				applySelectedRoles(serializedRoles, modelEntities, query);
+			}
+
 			
 			//validate the response and create the list of warnings and errors
 			if(!query.isAliasDefinedInSelectFields()){
@@ -242,7 +251,7 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 			
 			JSONObject toReturn = new JSONObject();
 			toReturn.put(AMBIGUOUS_FIELDS_PATHS, serialized);
-			toReturn.put(AMBIGUOUS_ROLES, roleSelection);
+			toReturn.put(AMBIGUOUS_ROLES, serializedRoles);
 			toReturn.put(EXECUTE_DIRECTLY, isDierctlyExecutable);
 			toReturn.put(AMBIGUOUS_WARING, ambiguousWarinig);
 			toReturn.put(CATALOGUE_ERRORS, serializedQueryErrors);
@@ -398,12 +407,6 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 		logger.debug("Set<Relationship> retrieved");
 		String serialized = this.getAttributeAsString(AMBIGUOUS_FIELDS_PATHS);
 		LogMF.debug(logger, AMBIGUOUS_FIELDS_PATHS + "is {0}", serialized);
-
-		String serializedRoles = this.getAttributeAsString(AMBIGUOUS_ROLES);
-		LogMF.debug(logger, AMBIGUOUS_ROLES + "is {0}", serialized);
-		query.setRelationsRoles(serializedRoles);
-		
-		applySelectedRoles(serializedRoles, modelEntities, query);
 		
 		List<ModelFieldPaths> list = null;
 		if (StringUtilities.isNotEmpty(serialized)) {
