@@ -254,7 +254,7 @@ Ext.extend(Sbi.tools.dataset.FileDatasetPanel, Ext.Panel, {
 		            'csvEncodingName',
 		            'csvEncodingValue'
 		        ],
-		        data: [['windows-1252', 'windows-1252'], ['UTF-8', 'UTF-8']]
+		        data: [['windows-1252', 'windows-1252'], ['UTF-8', 'UTF-8'], ['UTF-16','UTF-16'], ['US-ASCII','US-ASCII'], ['ISO-8859-1','ISO-8859-1']]
 		    }),
 		    width: 200,
 			fieldLabel : 'Encoding',
