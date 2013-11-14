@@ -17,6 +17,7 @@ import it.eng.spagobi.tools.dataset.common.datastore.IDataStoreFilter;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.common.transformer.IDataStoreTransformer;
 import it.eng.spagobi.tools.dataset.common.transformer.PivotDataSetTransformer;
+import it.eng.spagobi.tools.dataset.persist.DataSetTableDescriptor;
 import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
 import it.eng.spagobi.tools.dataset.persist.PersistedTableManager;
 import it.eng.spagobi.tools.dataset.utils.DatasetMetadataParser;
@@ -639,6 +640,35 @@ public abstract class AbstractDataSet implements IDataSet {
 
 	public IDataStore getDomainValues(String fieldName, Integer start,
 			Integer limit, IDataStoreFilter filter) {
+		if (this.isPersisted() || this.isFlatDataset()) {
+			return getDomainValuesFromPersistenceTable(fieldName, start, limit, filter);
+		} else {
+			return getDomainValuesFromTemporaryTable(fieldName, start, limit, filter);
+		}
+	}
+	
+	protected IDataStore getDomainValuesFromPersistenceTable(String fieldName,
+			Integer start, Integer limit, IDataStoreFilter filter) {
+		IDataStore toReturn = null;
+		try {
+			String tableName = this.getTableNameForReading();
+			IDataSource dataSource = this.getDataSourceForReading();
+			StringBuffer buffer = new StringBuffer("Select DISTINCT "
+					+ AbstractJDBCDataset.encapsulateColumnName(fieldName,
+							dataSource) + " FROM " + tableName);
+			IDataSetTableDescriptor tableDescriptor = new DataSetTableDescriptor(this);
+			manageFilterOnDomainValues(buffer, fieldName, tableDescriptor, filter);
+			String sqlStatement = buffer.toString();
+			toReturn = dataSource.executeStatement(sqlStatement, start, limit);
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException("Error while getting domain values from persistence table", e);
+		}
+		return toReturn;
+	}
+	
+	protected IDataStore getDomainValuesFromTemporaryTable(String fieldName, Integer start,
+				Integer limit, IDataStoreFilter filter) {
+		
 		IDataStore toReturn = null;
 		try {
 			String tableName = this.getTemporaryTableName();
@@ -668,11 +698,14 @@ public abstract class AbstractDataSet implements IDataSet {
 				TemporaryTableManager.setLastDataSetSignature(tableName, signature);
 			}
 			String filterColumnName = tableDescriptor.getColumnName(fieldName);
-			StringBuffer buffer = new StringBuffer("Select DISTINCT " + filterColumnName + " FROM " + tableName);
+			StringBuffer buffer = new StringBuffer("Select DISTINCT "
+					+ AbstractJDBCDataset.encapsulateColumnName(
+							filterColumnName, dataSource) + " FROM "
+					+ tableName);
 			manageFilterOnDomainValues(buffer, fieldName, tableDescriptor, filter);
 			String sqlStatement = buffer.toString();
 			toReturn = TemporaryTableManager.queryTemporaryTable(sqlStatement, dataSource, start, limit);
-			toReturn.getMetaData().changeFieldAlias(0, fieldName);
+			// TODO SERVE??? toReturn.getMetaData().changeFieldAlias(0, fieldName);
 		} catch (Exception e) {
 			logger.error("Error loading the domain values for the field " + fieldName, e);
 			throw new SpagoBIEngineRuntimeException("Error loading the domain values for the field "+fieldName, e);
@@ -681,7 +714,7 @@ public abstract class AbstractDataSet implements IDataSet {
 		return toReturn;
 	}
 	
-	private void manageFilterOnDomainValues(StringBuffer buffer,
+	protected void manageFilterOnDomainValues(StringBuffer buffer,
 			String fieldName, IDataSetTableDescriptor tableDescriptor,
 			IDataStoreFilter filter) {
 		if (filter != null) {
@@ -695,7 +728,7 @@ public abstract class AbstractDataSet implements IDataSet {
 			String value = getFilterValue(filter.getValue(), clazz);
 			IConditionalOperator conditionalOperator = (IConditionalOperator) SQLStatementConditionalOperators
 					.getOperator(filter.getOperator());
-			String temp = conditionalOperator.apply(columnName,
+			String temp = conditionalOperator.apply(AbstractJDBCDataset.encapsulateColumnName(columnName, tableDescriptor.getDataSource()),
 					new String[] { value });
 			buffer.append(" WHERE " + temp);
 		}

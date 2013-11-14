@@ -5,13 +5,14 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.tools.datasource.bo;
 
+import it.eng.spagobi.services.datasource.bo.SpagoBiDataSource;
+import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Set;
 
 import javax.naming.NamingException;
-
-import it.eng.spagobi.services.datasource.bo.SpagoBiDataSource;
 
 public interface IDataSource {
 
@@ -201,5 +202,7 @@ public interface IDataSource {
 	
 	public void setWriteDefault(Boolean writeDefault);
 	public void setReadOnly(Boolean readOnly);
+	
+	public IDataStore executeStatement(String statement, Integer start, Integer limit);
 
 }

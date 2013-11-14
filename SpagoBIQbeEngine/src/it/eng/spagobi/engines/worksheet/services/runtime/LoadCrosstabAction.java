@@ -121,12 +121,7 @@ public class LoadCrosstabAction extends AbstractWorksheetEngineAction {
 			crosstabDefinition = (CrosstabDefinition) SerializationManager.deserialize(crosstabDefinitionJSON, "application/json", CrosstabDefinition.class);
 						
 			String worksheetQuery = null;
-			IDataSource dsForTheTemporaryTable = engineInstance.getDataSourceForWriting();
-//			if(engineInstance.getDataSet() instanceof AbstractQbeDataSet){
-//				dsForTheTemporaryTable =  engineInstance.getDataSourceForWriting();
-//			}else{
-//				dsForTheTemporaryTable = engineInstance.getDataSet().getDataSourceForReading();
-//			}
+			IDataSource dsForTheTemporaryTable = descriptor.getDataSource();
 			
 			worksheetQuery = this.buildSqlStatement(crosstabDefinition, descriptor, whereFields, dsForTheTemporaryTable);
 			// execute SQL query against temporary table
