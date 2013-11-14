@@ -630,9 +630,6 @@ public class AbstractEngineStartAction extends AbstractBaseHttpAction {
 			descriptor = this.persistDataSetWithTemporaryTable(dataset, tableName,
 					dataSource);
 			logger.debug("Dataset persisted.");
-			dataset.setPersisted(true);
-			dataset.setPersistTableName(tableName);
-			dataset.setDataSourceForReading(dataSource);
 		} else {
 			try {
 				descriptor = TemporaryTableManager.getTableDescriptor(null,
@@ -707,6 +704,9 @@ public class AbstractEngineStartAction extends AbstractBaseHttpAction {
 
 			td = dataset.persist(tableName, dataSource);
 			this.recordTemporaryTable(tableName, dataSource);
+			dataset.setPersisted(true);
+			dataset.setPersistTableName(td.getTableName());
+			dataset.setDataSourceForReading(dataSource);
 
 			logger.debug("Dataset persisted");
 		} catch (Throwable t) {
