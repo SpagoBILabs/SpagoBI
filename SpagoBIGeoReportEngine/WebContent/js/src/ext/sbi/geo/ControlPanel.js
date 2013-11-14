@@ -892,8 +892,8 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 		
 		this.initCallbackOnGuiItemClick("authorButton", function(){}, "author button");
 		this.initCallbackOnGuiItemClick("feedback_mail", this.showFeedbackWindow, "feedback button");
-		this.initCallbackOnGuiItemClick("permissions-1", this.setMapPrivate, "private radio button");
-		this.initCallbackOnGuiItemClick("permissions-2", this.setMapPublic, "public radio button");
+		this.initCallbackOnGuiItemClick("scopePrivate", this.setMapPrivate, "private radio button");
+		this.initCallbackOnGuiItemClick("scopePublic", this.setMapPublic, "public radio button");
 		
 	
 		this.initMapThematizationTypeCallbacks();
