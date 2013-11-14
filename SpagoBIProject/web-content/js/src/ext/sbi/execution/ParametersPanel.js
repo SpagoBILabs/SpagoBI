@@ -1128,10 +1128,12 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 	, createTreeField: function( baseConfig, executionInstance ) {
 		
 		var p = baseConfig.parameter;
+		baseConfig.editable = false;
 		
 		var params = this.getBaseParams(p, executionInstance, 'complete');
 		params.PARAMETERS = Sbi.commons.JSON.encode(this.getFormState());;
 		params.LIGHT_NAVIGATOR_DISABLED = 'TRUE';
+		
 		
 		field = new Sbi.widgets.TreeLookUpField(Ext.apply(baseConfig,{
 			params: params, 

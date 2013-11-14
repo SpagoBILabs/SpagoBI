@@ -925,20 +925,21 @@ Sbi.locale.ln['sbi.tools.catalogue.metaModelsCatalogue.datasource']='Data Source
 //BEHAVIOURAL 
 //===================================================================
 	
-Sbi.locale.ln['sbi.behavioural.lov.type.simple']='Normale'
-Sbi.locale.ln['sbi.behavioural.lov.type.tree']='Albero'	
-Sbi.locale.ln['sbi.behavioural.lov.filter.apply']='Filtra'	
-Sbi.locale.ln['sbi.behavioural.lov.save.window.title']='LOV Salvato'
-Sbi.locale.ln['sbi.behavioural.lov.save.window.text']='Il LOV \u00e8 stato salvato correttamente'
-Sbi.locale.ln['sbi.behavioural.lov.save']='Salva'
-Sbi.locale.ln['sbi.behavioural.lov.select.type']='Seleziona una tipologia...'
-Sbi.locale.ln['sbi.behavioural.lov.name']='Nome'
-Sbi.locale.ln['sbi.behavioural.lov.value']='Valore'
-Sbi.locale.ln['sbi.behavioural.lov.description']='Descrizione'
-Sbi.locale.ln['sbi.behavioural.lov.visible']='Visibile'
-Sbi.locale.ln['sbi.behavioural.lov.test.error']='Errore nel test del lov'
-Sbi.locale.ln['sbi.behavioural.lov.back']='Indietro'
-Sbi.locale.ln['sbi.behavioural.delete']='Cancella'
+Sbi.locale.ln['sbi.behavioural.lov.type.simple']='Normale';
+Sbi.locale.ln['sbi.behavioural.lov.type.tree']='Albero';
+Sbi.locale.ln['sbi.behavioural.lov.type.treeinner']='Albero con nodi interni selezionabili';	
+Sbi.locale.ln['sbi.behavioural.lov.filter.apply']='Filtra';
+Sbi.locale.ln['sbi.behavioural.lov.save.window.title']='LOV Salvato';
+Sbi.locale.ln['sbi.behavioural.lov.save.window.text']='Il LOV \u00e8 stato salvato correttamente';
+Sbi.locale.ln['sbi.behavioural.lov.save']='Salva';
+Sbi.locale.ln['sbi.behavioural.lov.select.type']='Seleziona una tipologia...';
+Sbi.locale.ln['sbi.behavioural.lov.name']='Nome';
+Sbi.locale.ln['sbi.behavioural.lov.value']='Valore';
+Sbi.locale.ln['sbi.behavioural.lov.description']='Descrizione';
+Sbi.locale.ln['sbi.behavioural.lov.visible']='Visibile';
+Sbi.locale.ln['sbi.behavioural.lov.test.error']='Errore nel test del lov';
+Sbi.locale.ln['sbi.behavioural.lov.back']='Indietro';
+Sbi.locale.ln['sbi.behavioural.delete']='Cancella';
 
 
 //===================================================================
