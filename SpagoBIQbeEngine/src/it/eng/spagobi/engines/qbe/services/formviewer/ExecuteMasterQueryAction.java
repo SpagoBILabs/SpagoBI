@@ -5,10 +5,9 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.engines.qbe.services.formviewer;
 
-import it.eng.qbe.datasource.ConnectionDescriptor;
-import it.eng.qbe.query.SimpleSelectField;
 import it.eng.qbe.query.HavingField;
 import it.eng.qbe.query.Query;
+import it.eng.qbe.query.SimpleSelectField;
 import it.eng.qbe.query.WhereField;
 import it.eng.qbe.query.serializer.SerializerFactory;
 import it.eng.qbe.statement.IStatement;
@@ -22,7 +21,7 @@ import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
 import it.eng.spagobi.tools.dataset.common.query.AggregationFunctions;
 import it.eng.spagobi.tools.dataset.common.query.GroupByQueryTransformer;
 import it.eng.spagobi.tools.dataset.common.query.IAggregationFunction;
-import it.eng.spagobi.tools.datasource.bo.DataSource;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
@@ -185,14 +184,7 @@ public class ExecuteMasterQueryAction extends AbstractQbeEngineAction {
 				auditlogger.info("[" + userProfile.getUserId() + "]:: SQL: " + sqlQuery);
 				
 				dataSet = new JDBCDataSet();
-				ConnectionDescriptor connection = (ConnectionDescriptor)getDataSource().getConfiguration().loadDataSourceProperties().get("connection");
-				DataSource dataSource = new DataSource();
-				dataSource.setJndi(connection.getJndiName());
-				dataSource.setHibDialectName(connection.getDialect());
-				dataSource.setUrlConnection(connection.getUrl());
-				dataSource.setDriver(connection.getDriverClass());
-				dataSource.setUser(connection.getUsername());
-				dataSource.setPwd(connection.getPassword());
+				IDataSource dataSource = (IDataSource)getDataSource().getConfiguration().loadDataSourceProperties().get("datasource");
 				dataSet.setDataSource(dataSource);
 				dataSet.setQuery(sqlQuery);
 				dataSet.loadData(start, limit, -1);

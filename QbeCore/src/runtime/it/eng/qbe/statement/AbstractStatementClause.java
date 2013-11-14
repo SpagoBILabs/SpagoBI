@@ -6,7 +6,6 @@
 
 package it.eng.qbe.statement;
 
-import it.eng.qbe.datasource.ConnectionDescriptor;
 import it.eng.qbe.datasource.IDataSource;
 import it.eng.qbe.datasource.configuration.IDataSourceConfiguration;
 import it.eng.qbe.datasource.configuration.dao.fileimpl.InLineFunctionsDAOFileImpl.InLineFunction;
@@ -23,7 +22,6 @@ import it.eng.qbe.statement.hive.HiveQLStatement;
 import it.eng.spagobi.utilities.StringUtils;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-import it.eng.spagobi.utilities.objects.Couple;
 import it.eng.spagobi.utilities.sql.SqlUtils;
 
 import java.text.DateFormat;
@@ -208,9 +206,10 @@ public abstract class AbstractStatementClause implements IStatementClause {
 			IDataSource dataSource = parentStatement.getDataSource();
 			IDataSourceConfiguration dataSourceConfiguration = parentStatement.getDataSource().getConfiguration();
 			
-			ConnectionDescriptor connection = (ConnectionDescriptor)dataSourceConfiguration.loadDataSourceProperties().get("connection");	
+			it.eng.spagobi.tools.datasource.bo.IDataSource connection = (it.eng.spagobi.tools.datasource.bo.IDataSource) dataSourceConfiguration
+					.loadDataSourceProperties().get("datasource");	
 			if(connection!=null){
-				String dialect = connection.getDialect(); 
+				String dialect = connection.getHibDialectClass();
 				inlineFunctionsMap = dataSourceConfiguration.loadInLineFunctions(dialect);
 			}else{
 				logger.debug("The dialect is null, so no in line function will be loaded..");
@@ -313,8 +312,10 @@ public abstract class AbstractStatementClause implements IStatementClause {
 			if(defaultSlot != null) {
 				newExpr += " ELSE '" + defaultSlot.getName() + "'";
 			} else {
-				ConnectionDescriptor connection = (ConnectionDescriptor)parentStatement.getDataSource().getConfiguration().loadDataSourceProperties().get("connection");
-				String dialect = connection.getDialect();
+				it.eng.spagobi.tools.datasource.bo.IDataSource connection = (it.eng.spagobi.tools.datasource.bo.IDataSource) parentStatement
+						.getDataSource().getConfiguration()
+						.loadDataSourceProperties().get("datasource");
+				String dialect = connection.getHibDialectClass();
 				newExpr += " ELSE (" + SqlUtils.fromObjectToString(expr, dialect) + ")";
 			}
 			newExpr += " END ";
@@ -339,8 +340,10 @@ public abstract class AbstractStatementClause implements IStatementClause {
 		
 		String toReturn = date;
 		
-		ConnectionDescriptor connection = (ConnectionDescriptor)parentStatement.getDataSource().getConfiguration().loadDataSourceProperties().get("connection");
-		String dialect = connection.getDialect();
+		it.eng.spagobi.tools.datasource.bo.IDataSource connection = (it.eng.spagobi.tools.datasource.bo.IDataSource) parentStatement
+				.getDataSource().getConfiguration()
+				.loadDataSourceProperties().get("datasource");
+		String dialect = connection.getHibDialectClass();
 		
 		if(dialect!=null){
 			

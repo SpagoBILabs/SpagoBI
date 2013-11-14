@@ -6,7 +6,6 @@
 package it.eng.qbe.datasource.hibernate;
 
 import it.eng.qbe.datasource.AbstractDataSource;
-import it.eng.qbe.datasource.ConnectionDescriptor;
 import it.eng.qbe.datasource.IPersistenceManager;
 import it.eng.qbe.datasource.configuration.CompositeDataSourceConfiguration;
 import it.eng.qbe.datasource.configuration.FileDataSourceConfiguration;
@@ -17,30 +16,19 @@ import it.eng.qbe.model.accessmodality.AbstractModelAccessModality;
 import it.eng.qbe.model.structure.IModelStructure;
 import it.eng.qbe.model.structure.builder.IModelStructureBuilder;
 import it.eng.qbe.model.structure.builder.hibernate.HibernateModelStructureBuilder;
-import it.eng.spagobi.engines.qbe.registry.bo.RegistryConfiguration;
-import it.eng.spagobi.engines.qbe.registry.bo.RegistryConfiguration.Column;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.mapping.PersistentClass;
-import org.hibernate.mapping.Property;
 import org.hibernate.mapping.Table;
-import org.hibernate.metadata.ClassMetadata;
-import org.hibernate.property.Setter;
-import org.hibernate.type.ManyToOneType;
-import org.hibernate.type.Type;
-import org.json.JSONObject;
 
 
 public class HibernateDataSource extends AbstractDataSource implements IHibernateDataSource {
@@ -175,8 +163,8 @@ public class HibernateDataSource extends AbstractDataSource implements IHibernat
 		sessionFactoryMap.put(configuration.getModelName(), sf);		
 	}
 	
-	public ConnectionDescriptor getConnection() {
-		ConnectionDescriptor connection = (ConnectionDescriptor)configuration.loadDataSourceProperties().get("connection");
+	public IDataSource getToolsDataSource() {
+		IDataSource connection = (IDataSource)configuration.loadDataSourceProperties().get("datasource");
 		return connection;
 	}
 
@@ -186,29 +174,29 @@ public class HibernateDataSource extends AbstractDataSource implements IHibernat
 	}
 	
 	protected Configuration buildEmptyConfiguration() {
-Configuration cfg = null;
+		Configuration cfg = null;
 		
 		cfg = new Configuration();
 		
-		ConnectionDescriptor connection = getConnection();
+		IDataSource connection = getToolsDataSource();
 		
-		if(connection.isJndiConncetion()) {
-			cfg.setProperty("hibernate.connection.datasource", connection.getJndiName());
+		if(connection.checkIsJndi()) {
+			cfg.setProperty("hibernate.connection.datasource", connection.getJndi());
 			cfg.setProperty("hibernate.validator.apply_to_ddl", "false");
 			cfg.setProperty("hibernate.validator.autoregister_listeners", "false");
 		} else {
-			cfg.setProperty("hibernate.connection.url", connection.getUrl());
-			cfg.setProperty("hibernate.connection.password", connection.getPassword());
-			cfg.setProperty("hibernate.connection.username", connection.getUsername());
-			cfg.setProperty("hibernate.connection.driver_class", connection.getDriverClass());
+			cfg.setProperty("hibernate.connection.url", connection.getUrlConnection());
+			cfg.setProperty("hibernate.connection.password", connection.getPwd());
+			cfg.setProperty("hibernate.connection.username", connection.getUser());
+			cfg.setProperty("hibernate.connection.driver_class", connection.getDriver());
 			cfg.setProperty("hibernate.validator.apply_to_ddl", "false");
 			cfg.setProperty("hibernate.validator.autoregister_listeners", "false");
 		}
 				
-		cfg.setProperty("hibernate.dialect", connection.getDialect());
+		cfg.setProperty("hibernate.dialect", connection.getHibDialectClass());
 		
 		// Ingres does not support scrollable result set
-		if ("org.hibernate.dialect.IngresDialect".equals(connection.getDialect())) {
+		if ("org.hibernate.dialect.IngresDialect".equals(connection.getHibDialectClass())) {
 			cfg.setProperty("hibernate.jdbc.use_scrollable_resultset", "false");
 		}
 		

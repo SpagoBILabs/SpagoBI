@@ -5,7 +5,6 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.engines.qbe.services.formviewer;
 
-import it.eng.qbe.datasource.ConnectionDescriptor;
 import it.eng.qbe.query.HavingField;
 import it.eng.qbe.query.ISelectField;
 import it.eng.qbe.query.Query;
@@ -21,7 +20,7 @@ import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.common.query.FilterQueryTransformer;
-import it.eng.spagobi.tools.datasource.bo.DataSource;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
@@ -193,15 +192,8 @@ public class ExecuteDetailQueryAction extends AbstractQbeEngineAction {
 				
 				dataSet = new JDBCDataSet();
 				//Session session = getDatamartModel().getDataSource().getSessionFactory().openSession();
-				ConnectionDescriptor connection = (ConnectionDescriptor)getDataSource().getConfiguration().loadDataSourceProperties().get("connection");
-				DataSource dataSource = new DataSource();
-				dataSource.setJndi(connection.getJndiName());
-				dataSource.setHibDialectName(connection.getDialect());
-				dataSource.setUrlConnection(connection.getUrl());
-				dataSource.setDriver(connection.getDriverClass());
-				dataSource.setUser(connection.getUsername());
-				dataSource.setPwd(connection.getPassword());
-				dataSet.setDataSource(dataSource);
+				IDataSource datasource = (IDataSource)getDataSource().getConfiguration().loadDataSourceProperties().get("datasource");
+				dataSet.setDataSource(datasource);
 				dataSet.setQuery(sqlQuery);
 				dataSet.loadData(start, limit, -1);
 				dataStore = dataSet.getDataStore();

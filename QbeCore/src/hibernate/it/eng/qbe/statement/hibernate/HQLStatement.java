@@ -5,7 +5,6 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.qbe.statement.hibernate;
 
-import it.eng.qbe.datasource.ConnectionDescriptor;
 import it.eng.qbe.datasource.IDataSource;
 import it.eng.qbe.datasource.hibernate.IHibernateDataSource;
 import it.eng.qbe.model.accessmodality.IModelAccessModality;
@@ -627,8 +626,10 @@ public class HQLStatement extends AbstractStatement {
 			if(operandValueToBound == null || operandValueToBound.equals("")){
 				boundedValue = operandValueToBound;
 			} else {
-				ConnectionDescriptor connection = (ConnectionDescriptor)getDataSource().getConfiguration().loadDataSourceProperties().get("connection");
-				String dbDialect = connection.getDialect();
+				it.eng.spagobi.tools.datasource.bo.IDataSource connection = (it.eng.spagobi.tools.datasource.bo.IDataSource) getDataSource()
+						.getConfiguration().loadDataSourceProperties()
+						.get("datasource");
+				String dbDialect = connection.getHibDialectClass();
 				
 				String userDateFormatPattern = (String)getParameters().get(EngineConstants.ENV_USER_DATE_FORMAT);
 				DateFormat userDataFormat = new SimpleDateFormat(userDateFormatPattern);		

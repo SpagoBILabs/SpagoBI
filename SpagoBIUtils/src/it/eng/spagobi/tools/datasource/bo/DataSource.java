@@ -353,7 +353,7 @@ public class DataSource implements Serializable, IDataSource {
 
 	public Boolean checkIsReadOnly() {
 		if(readOnly == null)
-			readOnly = false;
+			readOnly = true;
 		return readOnly;
 	}
 

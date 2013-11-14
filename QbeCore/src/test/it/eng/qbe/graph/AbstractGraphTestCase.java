@@ -47,7 +47,7 @@ public class AbstractGraphTestCase extends AbstractDataSourceTestCase{
 		
 		File file = new File(QBE_FILE);
 		configuration = new FileDataSourceConfiguration(modelName, file);
-		configuration.loadDataSourceProperties().put("connection", connection);
+		configuration.loadDataSourceProperties().put("datasource", connection);
 		dataSource = DriverManager.getDataSource(JPADriver.DRIVER_ID, configuration);
 		relationShips = new ArrayList<Relationship>();
 		modelStructure = dataSource.getModelStructure();

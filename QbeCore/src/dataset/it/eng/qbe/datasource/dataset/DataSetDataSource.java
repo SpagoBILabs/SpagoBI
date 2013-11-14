@@ -7,7 +7,6 @@
 package it.eng.qbe.datasource.dataset;
 
 import it.eng.qbe.datasource.AbstractDataSource;
-import it.eng.qbe.datasource.ConnectionDescriptor;
 import it.eng.qbe.datasource.IPersistenceManager;
 import it.eng.qbe.datasource.configuration.CompositeDataSourceConfiguration;
 import it.eng.qbe.datasource.configuration.DataSetDataSourceConfiguration;
@@ -22,7 +21,6 @@ import it.eng.qbe.model.structure.builder.IModelStructureBuilder;
 import it.eng.qbe.model.structure.builder.dataset.DataSetModelStructureBuilder;
 import it.eng.qbe.statement.hive.HiveQLStatement;
 import it.eng.qbe.statement.sql.SQLStatement;
-import it.eng.spagobi.services.datasource.bo.SpagoBiDataSource;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
@@ -36,12 +34,9 @@ public class DataSetDataSource  extends AbstractDataSource implements ISQLDataSo
 	
 	
 	private List<IDataSet> datasets;
-	private SpagoBiDataSource spagoBiDataSource;
 	public static final String EMPTY_MODEL_NAME = "";
 	public static final String DATASETS = "DATASETS";
-	public static final String SPAGOBI_DATA_SOURCE = "SPAGOBI_DATA_SOURCE";
-	public ConnectionDescriptor connection;
-	public Class statementType=SQLStatement.class;
+	public Class statementType = SQLStatement.class;
 	
 	private static transient Logger logger = Logger.getLogger(JPADataSource.class);
 
@@ -53,8 +48,6 @@ public class DataSetDataSource  extends AbstractDataSource implements ISQLDataSo
 		datasets= new ArrayList<IDataSet>();
 		
 		Assert.assertNotNull(configuration.loadDataSourceProperties(), "The properties of the datasource can not be empty");
-		spagoBiDataSource = (SpagoBiDataSource)configuration.loadDataSourceProperties().get(SPAGOBI_DATA_SOURCE); 
-		//Assert.assertNotNull(spagoBiDataSource, "There must be a connection definition to connect to the db");
 		
 //		// validate and set configuration
 		if(configuration instanceof DataSetDataSourceConfiguration){
@@ -94,20 +87,8 @@ public class DataSetDataSource  extends AbstractDataSource implements ISQLDataSo
 
 	}
 	
-	public ConnectionDescriptor getConnection() {
-		connection = (ConnectionDescriptor)configuration.loadDataSourceProperties().get("connection");	
-		if(this.connection==null){
-			this.connection = new ConnectionDescriptor();			
-			connection.setName( getDataSourceForReading().getLabel() );
-			connection.setDialect( getDataSourceForReading().getHibDialectClass() );			
-			connection.setJndiName( getDataSourceForReading().getJndi() );			
-			connection.setDriverClass( getDataSourceForReading().getDriver() );			
-			connection.setPassword( getDataSourceForReading().getPwd());
-			connection.setUrl( getDataSourceForReading().getUrlConnection() );
-			connection.setUsername( getDataSourceForReading().getUser() );	
-		}
-		
-		return connection;
+	public IDataSource getToolsDataSource() {
+		return getDataSourceForReading();
 	}
 	
 	
@@ -135,15 +116,6 @@ public class DataSetDataSource  extends AbstractDataSource implements ISQLDataSo
 	public List<IDataSet> getRootEntities(){
 		return datasets;
 	}
-
-	public SpagoBiDataSource getSpagoBiDataSource() {
-		return spagoBiDataSource;
-	}
-
-	public void setSpagoBiDataSource(SpagoBiDataSource spagoBiDataSource) {
-		this.spagoBiDataSource = spagoBiDataSource;
-	}
-
 
 	public Class getStatementType(){
 		return statementType;

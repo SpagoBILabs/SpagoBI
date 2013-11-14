@@ -5,7 +5,6 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.qbe.dataset;
 
-import it.eng.qbe.datasource.ConnectionDescriptor;
 import it.eng.qbe.datasource.DriverManager;
 import it.eng.qbe.datasource.configuration.CompositeDataSourceConfiguration;
 import it.eng.qbe.datasource.configuration.DataSetDataSourceConfiguration;
@@ -21,7 +20,6 @@ import it.eng.qbe.statement.graph.bean.QueryGraph;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
-import it.eng.spagobi.services.datasource.bo.SpagoBiDataSource;
 import it.eng.spagobi.tools.dataset.bo.AbstractDataSet;
 import it.eng.spagobi.tools.dataset.bo.ConfigurableDataSet;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
@@ -245,29 +243,13 @@ public static String DS_TYPE = "SbiQbeDataSet";
         String modelName = getDatamarts();
         List<String> modelNames = new ArrayList<String>();
         modelNames.add( modelName );
-   
-        ConnectionDescriptor connection = new ConnectionDescriptor();
-        connection.setName( modelName );
-        if(dataSource != null){
-        	connection.setDialect( dataSource.getHibDialectClass() );           
-        	connection.setJndiName( dataSource.getJndi() );           
-        	connection.setDriverClass( dataSource.getDriver() );           
-        	connection.setPassword( dataSource.getPwd() );
-        	connection.setUrl( dataSource.getUrlConnection() );
-        	connection.setUsername( dataSource.getUser() );   
-        }
-        else{
-        	logger.warn("Dataset "+getLabel()+"has no associated datasource");
-        }
-        dataSourceProperties.put("connection", connection);
+        dataSourceProperties.put("datasource", dataSource);
         dataSourceProperties.put("dblinkMap", new HashMap());
         
 		if (this.getSourceDataset() != null) {
 			List<IDataSet> dataSets = new ArrayList<IDataSet>();
 			dataSets.add(this.getSourceDataset());
 			dataSourceProperties.put(EngineConstants.ENV_DATASETS, dataSets);
-			SpagoBiDataSource ds = dataSource.toSpagoBiDataSource();
-			dataSourceProperties.put(DataSetDataSource.SPAGOBI_DATA_SOURCE, ds);
 		}
         
 		if (dataSourceProperties.get(EngineConstants.ENV_DATASETS) != null) {
