@@ -45,7 +45,7 @@ url += "&SBI_COUNTRY=" + locale.getCountry();
 	src='<%= url %>'
 	frameBorder = 0
 	width=100%
-	height=<%= height %>
-/>
+	height=<%= height %> >
+</iframe>
 
 <%@ include file="/WEB-INF/jsp/commons/footer.jsp"%>
