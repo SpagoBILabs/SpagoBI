@@ -348,49 +348,10 @@ public abstract class AbstractQbeDataSet extends AbstractDataSet {
 		}
 	}
 	
-	// TODO merge with AbstractDataSet.getDomainValuesFromTemporaryTable
-	protected IDataStore getDomainValuesFromTemporaryTable(String fieldName, Integer start, Integer limit, IDataStoreFilter filter) {
-		IDataStore toReturn = null;
-		try {
-			String tableName = this.getTemporaryTableName();
-			logger.debug("Temporary table name : [" + tableName + "]");
-			if (tableName == null) {
-				logger.error("Temporary table name not set, cannot proceed!!");
-				throw new SpagoBIEngineRuntimeException("Temporary table name not set");
-			}
-			IDataSource dataSource = this.getDataSource();
-			if (dataSource == null || dataSource.checkIsReadOnly()) {
-				logger.debug(dataSource == null ? "Datasource not set" : "Datasource is read only");
-				logger.debug("Getting datasource for writing...");
-				dataSource = this.getDataSourceForWriting();
-			}
-			if (dataSource == null) {
-				logger.error("Datasource for persistence not set, cannot proceed!!");
-				throw new SpagoBIEngineRuntimeException("Datasource for persistence not set");
-			}
-			String sql = getSQLQuery();
-			IDataSetTableDescriptor tableDescriptor = null;
-					
-			if (sql.equals(TemporaryTableManager.getLastDataSetSignature(tableName))) {
-				// signature matches: no need to create a TemporaryTable
-				tableDescriptor = TemporaryTableManager.getLastDataSetTableDescriptor(tableName);
-			} else {
-				
-				List<String> fields = getDataSetSelectedFields(statement.getQuery());
-				tableDescriptor = TemporaryTableManager.createTable(fields, sql, tableName, dataSource);
-			}
-			String filterColumnName = tableDescriptor.getColumnName(fieldName);
-			//			StringBuffer buffer = new StringBuffer("Select DISTINCT " + filterColumnName + ", CONCAT(" + filterColumnName + ", ' Description' ) as description FROM " + tableName);
-			StringBuffer buffer = new StringBuffer("Select DISTINCT " + AbstractJDBCDataset.encapsulateColumnName(filterColumnName, dataSource) + " FROM " + tableName);
-			manageFilterOnDomainValues(buffer, fieldName, tableDescriptor, filter);
-			String sqlStatement = buffer.toString();
-			toReturn = TemporaryTableManager.queryTemporaryTable(sqlStatement, dataSource, start, limit);
-			toReturn.getMetaData().changeFieldAlias(0, fieldName);
-		} catch (Exception e) {
-			logger.error("Error loading the domain values for the field " + fieldName, e);
-			throw new SpagoBIEngineRuntimeException("Error loading the domain values for the field "+fieldName, e);
-
-		}
+	protected IDataStore getDomainValuesFromTemporaryTable(String fieldName,
+			Integer start, Integer limit, IDataStoreFilter filter) {
+		IDataStore toReturn = super.getDomainValuesFromTemporaryTable(fieldName, start, limit, filter);
+		toReturn.getMetaData().changeFieldAlias(0, fieldName);
 		return toReturn;
 	}
 
