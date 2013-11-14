@@ -40,6 +40,10 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 	//SessionContainer sessionContainer = requestContainer.getSessionContainer();
 
 	SingletonConfig serverConfig = SingletonConfig.getInstance();
+	String strActiveSignup = serverConfig
+			.getConfigValue("SPAGOBI.SECURITY.ACTIVE_SIGNUP_FUNCTIONALITY");
+	boolean activeSignup = (strActiveSignup.equalsIgnoreCase("true"))?true:false;
+
 	String strInternalSecurity = serverConfig
 			.getConfigValue("SPAGOBI.SECURITY.PORTAL-SECURITY-CLASS.className");
 	boolean isInternalSecurity = (strInternalSecurity
@@ -88,6 +92,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 	String sbiMode = "WEB";
 	IUrlBuilder urlBuilder = null;
 	urlBuilder = UrlBuilderFactory.getUrlBuilder(sbiMode);
+
 %>
 
 
@@ -300,6 +305,7 @@ a:hover{
 									<td>
 									<table>
 										<tr> 
+										<% if (activeSignup){ %>
 											<td>
 												<a href="#"	onclick="signup();">
 												<img
@@ -307,6 +313,7 @@ a:hover{
 												width='100px' height='37px' />
 												</a>
 											</td>
+											<%} %>
 											<td>
 												<input type="image" align="right"
 												src='<%=urlBuilder.getResourceLinkByTheme(request, "/img/wapp/login40.png", currTheme)%>'

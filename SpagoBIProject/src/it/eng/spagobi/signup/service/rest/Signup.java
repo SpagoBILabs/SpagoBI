@@ -10,6 +10,8 @@ import it.eng.spagobi.commons.metadata.SbiCommonInfo;
 import it.eng.spagobi.commons.metadata.SbiExtRoles;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.StringUtilities;
+import it.eng.spagobi.commons.utilities.messages.IMessageBuilder;
+import it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory;
 import it.eng.spagobi.community.bo.CommunityManager;
 import it.eng.spagobi.community.mapping.SbiCommunity;
 import it.eng.spagobi.profiling.bean.SbiUser;
@@ -76,7 +78,7 @@ public class Signup {
 	@Path("/prepareUpdate")
 	public void prepareUpdate(@Context HttpServletRequest req) {
 		
-	  try{
+	  try{		
 		  UserProfile profile = (UserProfile)req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 		  ISbiUserDAO userDao = DAOFactory.getSbiUserDAO();
 		  SbiUser user = userDao.loadSbiUserByUserId((String)profile.getUserId());
@@ -109,9 +111,10 @@ public class Signup {
 				logger.error("Error writing content");
 		  }
     }
-	@GET
+	@POST
 	@Path("/delete")
-    public void delete(@Context HttpServletRequest req) {
+	@Produces(MediaType.APPLICATION_JSON)
+    public String delete(@Context HttpServletRequest req) {
 		
 	  try{	
 		UserProfile profile = (UserProfile)req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
@@ -120,22 +123,22 @@ public class Signup {
 	    
 	    userDao.deleteSbiUserById( user.getId() );
 	    
-		String host = req.getServerName();
-	    logger.debug("Activation url host is equal to [" + host + "]");
-	    int port = req.getServerPort();
-	    logger.debug("Activation url port is equal to [" + port + "]");
+//		String host = req.getServerName();
+//	    logger.debug("Activation url host is equal to [" + host + "]");
+//	    int port = req.getServerPort();
+//	    logger.debug("Activation url port is equal to [" + port + "]");
 
-		URL url = new URL(req.getScheme(), host, port, 
-				req.getContextPath() + "/servlet/AdapterHTTP?ACTION_NAME=LOGOUT_ACTION&LIGHT_NAVIGATOR_DISABLED=TRUE" );
-		
-		servletResponse.sendRedirect(url.toString());
+//		URL url = new URL(req.getScheme(), host, port, 
+//				req.getContextPath() + "/servlet/AdapterHTTP?ACTION_NAME=LOGOUT_ACTION&LIGHT_NAVIGATOR_DISABLED=TRUE" );
+//		
+//		servletResponse.sendRedirect(url.toString());
 	  
 	  }
 	  catch (Throwable t) {
 	    throw new SpagoBIServiceException(
 					"An unexpected error occured while executing the subscribe action", t);
 	  }
-	  
+	  return new JSONObject().toString();
 		
 	}
 	private void updAttribute(ISbiUserDAO userDao, ISbiAttributeDAO dao, String attributeValue, String userId, int id, int attributeId ) throws EMFUserError{
@@ -250,7 +253,8 @@ public class Signup {
 	@POST
 	@Path("/active")
 	public String active(@Context HttpServletRequest req) {
-		
+	  
+	  IMessageBuilder msgBuilder = MessageBuilderFactory.getMessageBuilder();
 	  String id = req.getParameter("accountId");
 	  String expired_time = SingletonConfig.getInstance().getConfigValue("MAIL.SIGNUP.expired_time");
 	  
@@ -260,20 +264,22 @@ public class Signup {
 		  try{
 		    user = userDao.loadSbiUserById( Integer.parseInt( id ));
 		  }catch(EMFUserError emferr){}
-		  if( user == null ) 
-		    return new JSONObject("{message: 'Unknow user'}").toString();
+		  if( user == null ) {
+		    return new JSONObject("{message: '"+msgBuilder.getMessage("signup.msg.unknownUse" ,"messages", req)+"'}").toString();
+		    
+		  }
 		  
 		  if( !user.getFlgPwdBlocked() )
-		    return new JSONObject("{message: 'User already active'}").toString();
+		    return new JSONObject("{message: '"+msgBuilder.getMessage("signup.msg.userActive" ,"messages", req)+"'}").toString();
 			  
 		  long now = System.currentTimeMillis();
 		  if( now > user.getCommonInfo().getTimeIn().getTime() + Long.parseLong(expired_time) * 24 * 60 * 60 * 1000 )
-		    return new JSONObject("{message: 'User activation expired time'}").toString();
+		    return new JSONObject("{message: '"+msgBuilder.getMessage("signup.msg.userActivationExpired" ,"messages", req)+"'}").toString();
 		  
 		  user.setFlgPwdBlocked(false);
 		  userDao.updateSbiUser(user, null );
 		  
-		  return new JSONObject("{message: 'User succesfully activated. Now you can login.'}").toString();
+		  return new JSONObject("{message: '"+msgBuilder.getMessage("signup.msg.userActivationOK" ,"messages", req)+"'}").toString();
 	  } catch (Throwable t) {
 			throw new SpagoBIServiceException(
 					"An unexpected error occured while executing the subscribe action", t);
