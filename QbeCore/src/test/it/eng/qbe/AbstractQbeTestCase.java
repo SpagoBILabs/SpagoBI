@@ -5,10 +5,10 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.qbe;
 
-import it.eng.qbe.datasource.ConnectionDescriptor;
 import it.eng.qbe.datasource.IDataSource;
 import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.model.structure.IModelStructure;
+import it.eng.spagobi.tools.datasource.bo.DataSource;
 
 import java.util.List;
 import java.util.Set;
@@ -21,7 +21,7 @@ import junit.framework.TestCase;
  */
 public abstract class AbstractQbeTestCase extends TestCase {
 	
-	protected ConnectionDescriptor connection;
+	protected it.eng.spagobi.tools.datasource.bo.IDataSource connection;
 	protected IDataSource dataSource;
 	protected ClassLoader classLoader;
 	
@@ -36,13 +36,13 @@ public abstract class AbstractQbeTestCase extends TestCase {
 		
 		classLoader = Thread.currentThread().getContextClassLoader();
 		
-		connection = new ConnectionDescriptor();			
-		connection.setName( "foodmart" );
-		connection.setDialect(CONNECTION_DIALECT );			
-		connection.setDriverClass( CONNECTION_DRIVER  );	
-		connection.setUrl( CONNECTION_URL );
-		connection.setUsername( CONNECTION_USER );		
-		connection.setPassword( CONNECTION_PWD );
+		connection = new DataSource();			
+		connection.setLabel( "foodmart" );
+		connection.setHibDialectClass(CONNECTION_DIALECT );			
+		connection.setDriver( CONNECTION_DRIVER  );	
+		connection.setUrlConnection( CONNECTION_URL );
+		connection.setUser( CONNECTION_USER );		
+		connection.setPwd( CONNECTION_PWD );
 		
 		setUpDataSource();
 	}

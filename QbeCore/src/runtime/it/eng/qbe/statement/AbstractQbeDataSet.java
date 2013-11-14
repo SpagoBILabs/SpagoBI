@@ -6,7 +6,6 @@
 package it.eng.qbe.statement;
 
 import it.eng.qbe.datasource.AbstractDataSource;
-import it.eng.qbe.datasource.ConnectionDescriptor;
 import it.eng.qbe.model.structure.IModelField;
 import it.eng.qbe.query.CalculatedSelectField;
 import it.eng.qbe.query.HavingField;
@@ -32,7 +31,6 @@ import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData.FieldType;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
 import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
-import it.eng.spagobi.tools.datasource.bo.DataSource;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
@@ -412,17 +410,8 @@ public abstract class AbstractQbeDataSet extends AbstractDataSet {
 	 * @return
 	 */
 	public IDataSource getDataSource(){
-		if(dataSource==null){
-			dataSource = new DataSource();
-			ConnectionDescriptor connectionDescriptor = ((AbstractDataSource)statement.getDataSource()).getConnection();
-			dataSource.setHibDialectName(connectionDescriptor.getDialect());
-			dataSource.setHibDialectClass(connectionDescriptor.getDialect());
-			dataSource.setDriver(connectionDescriptor.getDriverClass());
-			dataSource.setJndi(connectionDescriptor.getJndiName());
-			dataSource.setLabel(connectionDescriptor.getName());
-			dataSource.setPwd(connectionDescriptor.getPassword());
-			dataSource.setUrlConnection(connectionDescriptor.getUrl());
-			dataSource.setUser(connectionDescriptor.getUsername());
+		if (dataSource == null) {
+			dataSource = ((AbstractDataSource)statement.getDataSource()).getToolsDataSource();
 		}
 		return dataSource;
 	}

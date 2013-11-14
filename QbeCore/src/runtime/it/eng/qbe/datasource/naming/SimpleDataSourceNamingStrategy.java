@@ -5,9 +5,9 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.qbe.datasource.naming;
 
-import it.eng.qbe.datasource.ConnectionDescriptor;
 import it.eng.qbe.datasource.configuration.CompositeDataSourceConfiguration;
 import it.eng.qbe.datasource.configuration.IDataSourceConfiguration;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -31,7 +31,7 @@ public class SimpleDataSourceNamingStrategy implements IDataSourceNamingStrategy
 	 * @see it.eng.qbe.naming.NamingStrategy#getDatasourceName(java.util.List, it.eng.qbe.datasource.DBConnection)
 	 */
 	public String getDataSourceName(IDataSourceConfiguration configuration) {
-		ConnectionDescriptor connection = (ConnectionDescriptor)configuration.loadDataSourceProperties().get("connection");
+		IDataSource connection = (IDataSource)configuration.loadDataSourceProperties().get("datasource");
 		List<String> modelNames = new ArrayList<String>();
 		if(configuration instanceof CompositeDataSourceConfiguration){
 			CompositeDataSourceConfiguration cc = (CompositeDataSourceConfiguration)configuration;
@@ -65,13 +65,13 @@ public class SimpleDataSourceNamingStrategy implements IDataSourceNamingStrategy
 		return name;
 	}
 	
-	private String getDatasourceUnqualifiedName(List datamartNames, ConnectionDescriptor connection) {
+	private String getDatasourceUnqualifiedName(List datamartNames, IDataSource connection) {
 		String datasourceName = getDatamartName(datamartNames);
 		if(connection!= null){
-			if ( connection.isJndiConncetion()) {
-				datasourceName += "@" + connection.getJndiName();
+			if ( connection.checkIsJndi()) {
+				datasourceName += "@" + connection.getJndi();
 			} else {
-				datasourceName += "@" + connection.getUsername() + "@" + connection.getUrl();
+				datasourceName += "@" + connection.getUser() + "@" + connection.getUrlConnection();
 			}
 		}
 

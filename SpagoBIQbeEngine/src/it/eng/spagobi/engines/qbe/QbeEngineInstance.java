@@ -5,9 +5,7 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.engines.qbe;
 
-import it.eng.qbe.datasource.ConnectionDescriptor;
 import it.eng.qbe.datasource.IDataSource;
-import it.eng.qbe.datasource.dataset.DataSetDataSource;
 import it.eng.qbe.model.accessmodality.AbstractModelAccessModality;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.query.catalogue.QueryCatalogue;
@@ -22,7 +20,6 @@ import it.eng.spagobi.engines.qbe.template.QbeTemplate;
 import it.eng.spagobi.engines.qbe.template.QbeTemplateParser;
 import it.eng.spagobi.engines.worksheet.bo.WorkSheetDefinition;
 import it.eng.spagobi.services.common.SsoServiceInterface;
-import it.eng.spagobi.services.datasource.bo.SpagoBiDataSource;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.utilities.engines.AbstractEngineInstance;
 import it.eng.spagobi.utilities.engines.EngineConstants;
@@ -75,8 +72,7 @@ public class QbeEngineInstance extends AbstractEngineInstance {
 		
 		
 		it.eng.spagobi.tools.datasource.bo.IDataSource dataSrc = (it.eng.spagobi.tools.datasource.bo.IDataSource)env.get( EngineConstants.ENV_DATASOURCE );
-		SpagoBiDataSource ds = dataSrc == null ? null : dataSrc.toSpagoBiDataSource();
-		logger.debug("Datasource is " + ds);
+		logger.debug("Datasource is " + dataSrc);
 
 		Map<String, Object> dataSourceProperties = new HashMap<String, Object>();
 	
@@ -87,34 +83,9 @@ public class QbeEngineInstance extends AbstractEngineInstance {
 		dataSourceProperties.put("metadataServiceProxy", env.get(EngineConstants.ENV_METAMODEL_PROXY));
 		dataSourceProperties.put(EngineConstants.ENV_DATASETS, env.get(EngineConstants.ENV_DATASETS));
 		
-		if ( env.get(EngineConstants.ENV_DATASETS) != null ) {
-			dataSourceProperties.put(DataSetDataSource.SPAGOBI_DATA_SOURCE, ds);
-			if(((it.eng.spagobi.tools.datasource.bo.IDataSource) env.get(EngineConstants.ENGINE_DATASOURCE))!=null){
-				ConnectionDescriptor connection = new ConnectionDescriptor();	
-				SpagoBiDataSource engineDS = ((it.eng.spagobi.tools.datasource.bo.IDataSource) env.get(EngineConstants.ENGINE_DATASOURCE)).toSpagoBiDataSource();
-			
-				connection.setName( engineDS.getLabel() );
-				connection.setDialect( engineDS.getHibDialectClass() );			
-				connection.setJndiName( engineDS.getJndiName() );			
-				connection.setDriverClass( engineDS.getDriver() );			
-				connection.setPassword( engineDS.getPassword() );
-				connection.setUrl( engineDS.getUrl() );
-				connection.setUsername( engineDS.getUser() );	
-				dataSourceProperties.put("connection", connection);
-			}		
-		} else {	
-			ConnectionDescriptor connection = new ConnectionDescriptor();	
-			connection.setName( ds.getLabel() );
-			connection.setDialect( ds.getHibDialectClass() );			
-			connection.setJndiName( ds.getJndiName() );			
-			connection.setDriverClass( ds.getDriver() );			
-			connection.setPassword( ds.getPassword() );
-			connection.setUrl( ds.getUrl() );
-			connection.setUsername( ds.getUser() );		
-			dataSourceProperties.put("connection", connection);
+		if ( env.get(EngineConstants.ENV_DATASETS) == null ) {
+			dataSourceProperties.put("datasource", dataSrc);
 		}
-
-		
 		
 		dataSource = QbeDataSourceManager.getInstance().getDataSource(
 				template != null ? template.getDatamartNames() : null, 

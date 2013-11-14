@@ -6,7 +6,6 @@
 package it.eng.qbe.datasource.jpa;
 
 import it.eng.qbe.datasource.AbstractDataSource;
-import it.eng.qbe.datasource.ConnectionDescriptor;
 import it.eng.qbe.datasource.IPersistenceManager;
 import it.eng.qbe.datasource.configuration.CompositeDataSourceConfiguration;
 import it.eng.qbe.datasource.configuration.FileDataSourceConfiguration;
@@ -18,6 +17,7 @@ import it.eng.qbe.model.accessmodality.AbstractModelAccessModality;
 import it.eng.qbe.model.structure.IModelStructure;
 import it.eng.qbe.model.structure.builder.IModelStructureBuilder;
 import it.eng.qbe.model.structure.builder.jpa.JPAModelStructureBuilder;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
 
 import java.io.File;
@@ -125,9 +125,9 @@ public class JPADataSource extends AbstractDataSource implements IJpaDataSource{
 		factory = null;
 	}
 	
-	public ConnectionDescriptor getConnection() {
-		ConnectionDescriptor connection = (ConnectionDescriptor)configuration.loadDataSourceProperties().get("connection");
-		return connection;
+	public IDataSource getToolsDataSource() {
+		IDataSource dataSource = (IDataSource)configuration.loadDataSourceProperties().get("datasource");
+		return dataSource;
 	}
 	
 	public IModelStructure getModelStructure() {
@@ -142,17 +142,17 @@ public class JPADataSource extends AbstractDataSource implements IJpaDataSource{
 	
 	protected Map<String,Object> buildEmptyConfiguration() {
 		Map<String,Object> cfg = new HashMap<String,Object>();
-		if(getConnection().isJndiConncetion()) {
-			cfg.put("javax.persistence.nonJtaDataSource", getConnection().getJndiName());
-			cfg.put("hibernate.dialect", getConnection().getDialect());
+		if(getToolsDataSource().checkIsJndi()) {
+			cfg.put("javax.persistence.nonJtaDataSource", getToolsDataSource().getJndi());
+			cfg.put("hibernate.dialect", getToolsDataSource().getHibDialectClass());
 			cfg.put("hibernate.validator.apply_to_ddl", "false");
 			cfg.put("hibernate.validator.autoregister_listeners", "false");
 		} else {
-			cfg.put("javax.persistence.jdbc.url", getConnection().getUrl());
-			cfg.put("javax.persistence.jdbc.password", getConnection().getPassword());
-			cfg.put("javax.persistence.jdbc.user", getConnection().getUsername());
-			cfg.put("javax.persistence.jdbc.driver", getConnection().getDriverClass());
-			cfg.put("hibernate.dialect", getConnection().getDialect());
+			cfg.put("javax.persistence.jdbc.url", getToolsDataSource().getUrlConnection());
+			cfg.put("javax.persistence.jdbc.password", getToolsDataSource().getPwd());
+			cfg.put("javax.persistence.jdbc.user", getToolsDataSource().getUser());
+			cfg.put("javax.persistence.jdbc.driver", getToolsDataSource().getDriver());
+			cfg.put("hibernate.dialect", getToolsDataSource().getHibDialectClass());
 			cfg.put("hibernate.validator.apply_to_ddl", "false");
 			cfg.put("hibernate.validator.autoregister_listeners", "false");
 		}
