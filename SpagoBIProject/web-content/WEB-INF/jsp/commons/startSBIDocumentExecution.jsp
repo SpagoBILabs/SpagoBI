@@ -12,6 +12,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 	contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"%>
 <%@page import="it.eng.spagobi.analiticalmodel.execution.service.ExecuteDocumentAction"%>
 <%@page import="it.eng.spagobi.commons.constants.ObjectsTreeConstants"%>
+<%@page import="it.eng.spagobi.commons.utilities.ChannelUtilities"%>
 
 <%
 String label = ChannelUtilities.getPreferenceValue(aRequestContainer, "DOCUMENT_LABEL", "");
@@ -38,7 +39,7 @@ url += "&SBI_COUNTRY=" + locale.getCountry();
 
 %>
 
-<%@page import="it.eng.spagobi.commons.utilities.ChannelUtilities"%><iframe 
+<iframe 
 	id='documentExecutionIframe'
 	name='documentExecutionIframe'
 	src='<%= url %>'
