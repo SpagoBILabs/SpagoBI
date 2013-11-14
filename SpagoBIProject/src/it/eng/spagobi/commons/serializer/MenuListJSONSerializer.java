@@ -9,6 +9,7 @@ import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
+import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
@@ -197,7 +198,21 @@ public class MenuListJSONSerializer implements Serializer {
 		MessageBuilder messageBuilder = new MessageBuilder();
 		
 		List funcs = (List)userProfile.getFunctionalities();
+		
+		String strActiveSignup = SingletonConfig.getInstance().getConfigValue("SPAGOBI.SECURITY.ACTIVE_SIGNUP_FUNCTIONALITY");
+		boolean activeSignup = (strActiveSignup.equalsIgnoreCase("true")?true:false);
+		if (activeSignup && !userProfile.getUserUniqueIdentifier().toString().equalsIgnoreCase(SpagoBIConstants.PUBLIC_USER_ID)){
+			//build myAccount
+			JSONObject myAccount = new JSONObject();
 	
+			myAccount.put(ICON_CLS, "myAccount");
+			myAccount.put(TOOLTIP, "My Account");
+			myAccount.put(ICON_ALIGN, "top");
+			myAccount.put(SCALE, "large");
+			myAccount.put(TARGET, "_self");
+			myAccount.put(HREF, "javascript:javascript:execDirectUrl('"+contextName+"/restful-services/signup/prepareUpdate', \'Modify user\')");
+			tempMenuList.put(myAccount);
+		}
 		if (isAbleTo(SpagoBIConstants.SEE_DOCUMENT_BROWSER, funcs)){
 			JSONObject browser = createMenuItem(
 					"folder_open",

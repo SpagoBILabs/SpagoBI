@@ -89,6 +89,7 @@ function register() {
 	var registrationSuccessMsg = "<%=registrationSuccessMsg%>";
 	
 	var params = new Object();
+	params.locale	= '<%=locale%>';
 	params.useCaptcha = "false";
 	params.nome     = nome;
 	params.cognome  = cognome;

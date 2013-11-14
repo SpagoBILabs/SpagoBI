@@ -34,6 +34,12 @@
 	String defaultPassword = "Password";
 	String defaultEmail = msgBuilder.getMessage("profileattr.email",locale);
 	String defaultConfirmPwd = msgBuilder.getMessage("confirmPwd",locale);         
+	String confirmDelete = msgBuilder.getMessage("signup.msg.confirmDelete",locale);    
+	
+	String msgConfirm = msgBuilder.getMessage(
+			"signup.msg.confirmDelete", locale);
+	String registrationSuccessMsg = msgBuilder.getMessage(
+			"signup.msg.modifySuccess", locale);
 %> 
 
 <link rel='stylesheet' type='text/css' href='<%=urlBuilder.getResourceLinkByTheme(request, "css/home40/standard.css",currTheme)%>'/>
@@ -42,23 +48,90 @@
 
 Ext.ns("Sbi.config");
 Sbi.config.loginUrl = "";
+
 function cancel(){
 	
 	Ext.MessageBox.confirm(
-	  //LN('sbi.generic.pleaseConfirm'),
-	  //LN('sbi.generic.confirmDelete'),
-	  'Confirm',
-	  'Confirm delete?',
-	  function(btn, text){
-		  if (btn=='yes') {
-			var form = document.myForm;
-			form.method = 'get';
-			form.action = '${pageContext.request.contextPath}/restful-services/signup/delete';
-			form.submit();
-			
-		  }
-		}
-	);
+			  "Warning",
+			  "<%=msgConfirm%>",
+			  
+			  function(btn, text){
+				  
+				  if (btn=='yes') {
+					  //Service Registry creation
+					  var url = {
+					    	host: '<%=request.getServerName()%>'
+					    	, port: '<%=request.getServerPort()%>'
+					    	, contextPath: '<%=request.getContextPath().startsWith("/")
+										|| request.getContextPath().startsWith("\\") ? request
+										.getContextPath().substring(1) : request.getContextPath()%>'
+					    	, controllerPath: null // no cotroller just servlets   
+					    };
+					  
+					  Sbi.config.serviceRegistry = new Sbi.service.ServiceRegistry({
+						baseUrl: url
+					    , baseParams: params
+					  });
+				
+				
+					this.services = [];
+				
+					//Adding a new service to the registry
+					this.services["delete"]= Sbi.config.serviceRegistry.getRestServiceUrl({
+						serviceName: 'signup/delete',
+						baseParams: {}
+					});
+				
+					    var form             = document.myForm;	
+						var params = new Object();
+						
+					     Ext.Ajax.request({
+							url: this.services["delete"],
+							method: "POST",
+							params: params,			
+							success : function(response, options) {	
+							
+						    if(response != undefined  && response.responseText != undefined ) {
+								if( response.responseText != null && response.responseText != undefined ){
+							    var jsonData = Ext.decode( response.responseText );
+							    if( jsonData.message != undefined && jsonData.message != null && jsonData.message == 'validation-error' ){
+							      Sbi.exception.ExceptionHandler.handleFailure(response);
+							    }else{
+							     // Sbi.exception.ExceptionHandler.showInfoMessage('<%=registrationSuccessMsg%>', 'Saved OK', {});
+							    	//redirect out of the container
+									var logoutUrl = "${pageContext.request.contextPath}/servlet/AdapterHTTP?ACTION_NAME=LOGOUT_ACTION&LIGHT_NAVIGATOR_DISABLED=TRUE";
+									var sessionExpiredSpagoBIJSFound = false;
+									try {
+										var currentWindow = window;
+										var parentWindow = parent;
+										while (parentWindow != currentWindow) {
+											if (parentWindow.sessionExpiredSpagoBIJS) {
+												parentWindow.location = logoutUrl;
+												sessionExpiredSpagoBIJSFound = true;
+												break;
+											} else {
+												currentWindow = parentWindow;
+												parentWindow = currentWindow.parent;
+											}
+										}
+									} catch (err) {}
+									
+									if (!sessionExpiredSpagoBIJSFound) {
+										window.location = '<%= GeneralUtilities.getSpagoBiContext() %>';
+									}
+							    }		
+							  }		
+							}
+							else {
+								
+							  Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
+							}
+					    },
+						scope: this,
+						failure: Sbi.exception.ExceptionHandler.handleFailure
+					  })
+			 }}
+			);
 }
 
 function changefield(el){
@@ -103,7 +176,8 @@ this.services["update"]= Sbi.config.serviceRegistry.getRestServiceUrl({
     var azienda          = document.getElementById("azienda").value;
 	
 	var params = new Object();
-	params.useCaptcha = "false";
+	params.locale	   = '<%=locale%>';
+	params.useCaptcha  = "false";
 	params.nome        = nome;
 	params.cognome     = cognome;
 	params.username    = username;
@@ -126,7 +200,7 @@ this.services["update"]= Sbi.config.serviceRegistry.getRestServiceUrl({
 		    if( jsonData.message != undefined && jsonData.message != null && jsonData.message == 'validation-error' ){
 		      Sbi.exception.ExceptionHandler.handleFailure(response);
 		    }else{
-		      Sbi.exception.ExceptionHandler.showInfoMessage('Saved', 'Saved OK', {});
+		      Sbi.exception.ExceptionHandler.showInfoMessage('<%=registrationSuccessMsg%>', 'Saved OK', {});
 		    }		
 		  }		
 		}

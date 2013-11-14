@@ -18,6 +18,33 @@
 <%@page import="org.apache.commons.lang.StringEscapeUtils"%>
 <%@page import="java.util.Enumeration"%>
 
+<%@ include file="/WEB-INF/jsp/commons/portlet_base410.jsp"%>  
+
+<%
+	String defaultOrganization = msgBuilder.getMessage("profileattr.company",locale); 
+	String defaultName = msgBuilder.getMessage("profileattr.firstname",locale);
+	String defaultSurname = msgBuilder.getMessage("profileattr.lastname",locale);
+	String defaultUsername = "Username";
+	String defaultPassword = "Password";
+	String defaultEmail = msgBuilder.getMessage("profileattr.email",locale);
+	String defaultConfirmPwd = msgBuilder.getMessage("confirmPwd",locale);
+	String defaultCaptcha = msgBuilder.getMessage("signup.form.captcha",locale); 
+	String defaultLocation = msgBuilder.getMessage("signup.form.location",locale);
+	String defaultLanguage = msgBuilder.getMessage("signup.form.language",locale);
+	String defaultItalian = msgBuilder.getMessage("signup.form.langItalian",locale);
+	String defaultEnglish = msgBuilder.getMessage("signup.form.langEnglish",locale);
+	String defaultFrench = msgBuilder.getMessage("signup.form.langFrench",locale);
+	String defaultSpanish = msgBuilder.getMessage("signup.form.langSpanish",locale);
+	String defaultBirthday = msgBuilder.getMessage("signup.form.birthday",locale);
+	String defaultGender = msgBuilder.getMessage("signup.form.gender",locale);
+	String defaultMan = msgBuilder.getMessage("signup.form.genderMan",locale);
+	String defaultWoman = msgBuilder.getMessage("signup.form.genderWoman",locale);
+	String defaultCommunity = msgBuilder.getMessage("signup.form.community",locale);
+	String defaultShortBio = msgBuilder.getMessage("signup.form.shortBio",locale);
+		
+	String registrationSuccessMsg = msgBuilder.getMessage("signup.msg.success",locale);
+%>
+
 <script type="text/javascript" src='${pageContext.request.contextPath}/js/lib/ext-4.1.1a/ext-all-debug.js'/></script>
 <script type="text/javascript" src='${pageContext.request.contextPath}/js/lib/ext-4.1.1a/examples/ux/IFrame.js'/></script>
 <script type="text/javascript" src='${pageContext.request.contextPath}/js/lib/ext-4.1.1a/ux/RowExpander.js'/></script>
@@ -33,11 +60,11 @@ function nascondi(){
   var a = document.getElementById("nascondi");
   if (optDiv.style.display == 'none') {
     optDiv.style.display = '';
-    a.innerHTML = 'hide optional field';
+    a.innerHTML = '<%=msgBuilder.getMessage("signup.form.hideOptional",locale) %>';
   }
   else {
     optDiv.style.display = 'none';
-    a.innerHTML = 'display optional field';
+    a.innerHTML = '<%=msgBuilder.getMessage("signup.form.showOptional",locale) %>';
   }
 }
 
@@ -85,6 +112,7 @@ this.services["create"]= Sbi.config.serviceRegistry.getRestServiceUrl({
     if( check.checked ) termini = 'true';
 	
 	var params = new Object();
+	params.locale	= '<%=locale%>';
 	params.nome     = nome;
 	params.cognome  = cognome;
 	params.username = username;
@@ -101,6 +129,8 @@ this.services["create"]= Sbi.config.serviceRegistry.getRestServiceUrl({
 	params.lingua      = lingua;
 	params.captcha     = captcha;
 	
+	var registrationSuccessMsg = "<%=registrationSuccessMsg%>";
+	
      Ext.Ajax.request({
 	url: this.services["create"],
 	method: "POST",
@@ -113,7 +143,7 @@ this.services["create"]= Sbi.config.serviceRegistry.getRestServiceUrl({
 		    if( jsonData.message != undefined && jsonData.message != null && jsonData.message == 'validation-error' ){
 		      Sbi.exception.ExceptionHandler.handleFailure(response);
 		    }else{
-		      Sbi.exception.ExceptionHandler.showInfoMessage('Register', 'OK', {});
+		      Sbi.exception.ExceptionHandler.showInfoMessage(registrationSuccessMsg, 'OK', {});
 		    }		
 		  }		
 		}
@@ -129,14 +159,6 @@ this.services["create"]= Sbi.config.serviceRegistry.getRestServiceUrl({
 </script>
 <script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext/sbi/service/ServiceRegistry.js'/></script>
 <script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext/sbi/exception/ExceptionHandler.js'/></script>
-
-<%
-    String sbiMode = "WEB";
-	IUrlBuilder urlBuilder = null;
-	urlBuilder = UrlBuilderFactory.getUrlBuilder(sbiMode);
-	
-
-%>
 
 <link id="extall"     rel="styleSheet" href ="${pageContext.request.contextPath}/js/lib/ext-4.1.1a/resources/css/ext-all.css" type="text/css" />
 <link id="theme-gray" rel="styleSheet" href ="${pageContext.request.contextPath}/js/lib/ext-4.1.1a/resources/css/ext-all-gray.css" type="text/css" />
@@ -202,6 +224,7 @@ a:hover{
   <body>
  <div id="content" style="height:100%">
     <form name="myForm" method="post" action="${pageContext.request.contextPath}/">
+            	<input type="hidden" id="locale" name="locale" value="<%=locale%>" />
        
 		        	<div style="padding: 80px " >
 		        	<!--
@@ -228,10 +251,10 @@ a:hover{
                             
 							<table border="0">
 								<tr class='header-row-portlet-section'>
-									<td class='login-label' width="90px" align="left">*&nbsp;Name:</td>
+									<td class='login-label' width="90px" align="left">*&nbsp;<%=defaultName%>:</td>
 									<td width="75px">&nbsp;</td>
 
-									<td class='login-label'>*&nbsp;Surname:</td>
+									<td class='login-label'>*&nbsp;<%=defaultSurname%>:</td>
 
 								</tr>
 								<tr>
@@ -247,7 +270,7 @@ a:hover{
 									<td class='login-label' width="90px" align="left">*
 										 Username:</td>
 									<td width="25px"></td>
-									<td class='login-label'>*&nbsp;Email:</td>
+									<td class='login-label'>*&nbsp;<%=defaultEmail%>:</td>
 
 								</tr>
 								<tr>
@@ -264,10 +287,10 @@ a:hover{
 
 
 								<tr class='header-row-portlet-section'>
-									<td class='login-label' width="90px" align="left">*&nbsp;Password:</td>
+									<td class='login-label' width="90px" align="left">*&nbsp;<%=defaultPassword%>:</td>
 									<td width="25px">&nbsp;</td>
 
-									<td class='login-label'>*&nbsp;Confirm Password:</td>
+									<td class='login-label'>*&nbsp;<%=defaultConfirmPwd%>:</td>
 
 								</tr>
 								<tr>
@@ -282,7 +305,7 @@ a:hover{
 
 								</tr>
 								<tr class='header-row-portlet-section'>
-									<td class='login-label' width="90px" align="left">*&nbsp;Captcha:</td>
+									<td class='login-label' width="90px" align="left">*&nbsp;<%=defaultCaptcha%>:</td>
 									<td width="25px">&nbsp;</td>
                                     <td></td>
 							    </tr>
@@ -305,22 +328,22 @@ a:hover{
 								</tr>
 								
 								<tr>
-								  <td colspan="3" class='login-label'>*&nbsp;I Agree with the terms of service:</td>
+								  <td colspan="3" class='login-label'>*&nbsp;<%=msgBuilder.getMessage("signup.form.agreeTerms",locale) %>:</td>
 							    </tr>
 								<tr>
 									<td colspan="3" height="30px"><input type="checkbox"
 										name="termini" id="termini" class="login" />
 									</td>
 								</tr>
-								<tr><td colspan="3"><a href="#" onclick="javascript:nascondi();"><div id="nascondi" style="font-weight:bold">display optional field</div></a></td></tr>
+								<tr><td colspan="3"><a href="#" onclick="javascript:nascondi();"><div id="nascondi" style="font-weight:bold"><%=msgBuilder.getMessage("signup.form.showOptional",locale) %></div></a></td></tr>
 							</table>
 							<div id="optional" style="display:none">
 							<table border="0">
 								<tr class='header-row-portlet-section'>
-									<td class='login-label' width="90px" align="left">Location:</td>
+									<td class='login-label' width="90px" align="left"><%=defaultLocation%>:</td>
 									<td width="75px">&nbsp;</td>
 
-									<td class='login-label'>Language:</td>
+									<td class='login-label'><%=defaultLanguage %>:</td>
 
 								</tr>
 
@@ -333,19 +356,19 @@ a:hover{
 									<td><select class="login" name="lingua" id="lingua"
 										style="width: 214px">
 											<option value=""></option>
-											<option value="it_IT">Italian</option>
-											<option value="en_US">English</option>
-											<option value="fr_FR">Franch</option>
-											<option value="es_ES">Spanis</option>
+											<option value="it_IT"><%=defaultItalian%></option>
+											<option value="en_US"><%=defaultEnglish%></option>
+											<option value="fr_FR"><%=defaultFrench%></option>
+											<option value="es_ES"><%=defaultSpanish%></option>
 									</select>
 									</td>
 
 								</tr>
 								<tr class='header-row-portlet-section'>
-									<td class='login-label' width="90px" align="left">Gender:</td>
+									<td class='login-label' width="90px" align="left"><%=defaultGender %>:</td>
 									<td width="25px">&nbsp;</td>
 
-									<td class='login-label'>Birthday (dd/mm/yyyy):</td>
+									<td class='login-label'><%=defaultBirthday %> (dd/mm/yyyy):</td>
 
 								</tr>
 
@@ -353,8 +376,8 @@ a:hover{
 									<td><select class="login" name="sesso" id="sesso"
 										style="width: 214px">
 											<option value=""></option>
-											<option value="Uomo">Man</option>
-											<option value="Donna">Woman</option>
+											<option value="Uomo"><%=defaultMan %></option>
+											<option value="Donna"><%=defaultWoman %></option>
 									</select>
 									</td>
 									<td></td>
@@ -365,7 +388,7 @@ a:hover{
 
 								</tr>
 								<tr class='header-row-portlet-section'>
-									<td class='login-label' width="90px" align="left" >Company:</td>
+									<td class='login-label' width="90px" align="left" ><%=defaultCommunity %>:</td>
 									<td></td>
 									<td class='login-label'></td>
 								</tr>
@@ -376,7 +399,7 @@ a:hover{
 									<td></td>
 								</tr>
 								<tr class='header-row-portlet-section'>
-									<td class='login-label' width="90px" align="left">Short Biografy:</td>
+									<td class='login-label' width="90px" align="left"><%=defaultShortBio %>:</td>
 									<td width="75px">&nbsp;</td>
 									<td></td>
 
@@ -405,10 +428,10 @@ a:hover{
 									  <td>
 									    <a href="#" onclick="javascript:register();">
 									      <img src='${pageContext.request.contextPath}/themes/sbi_default/img/wapp/register.png' title="Register" alt="Register" />
-									    </a>
+									    </a>                              
 									  </td>
 									  </tr>
-									</table>
+									</table>									
 								   </td>
 
 								</tr>
