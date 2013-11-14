@@ -11,7 +11,6 @@ import it.eng.qbe.query.WhereField;
 import it.eng.qbe.query.WhereField.Operand;
 import it.eng.qbe.serializer.SerializationManager;
 import it.eng.qbe.statement.AbstractStatement;
-import it.eng.qbe.statement.hive.HiveQLDataSet;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.engines.qbe.QbeEngineConfig;
 import it.eng.spagobi.engines.worksheet.WorksheetEngineInstance;
@@ -39,7 +38,6 @@ import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
 import it.eng.spagobi.tools.dataset.persist.DataSetTableDescriptor;
 import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
-import it.eng.spagobi.tools.dataset.persist.PersistedTableManager;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.AbstractEngineAction;
@@ -51,8 +49,6 @@ import it.eng.spagobi.utilities.temporarytable.TemporaryTable;
 import it.eng.spagobi.utilities.temporarytable.TemporaryTableManager;
 import it.eng.spagobi.utilities.temporarytable.TemporaryTableRecorder;
 
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -84,14 +80,13 @@ public abstract class AbstractWorksheetEngineAction extends AbstractEngineAction
 		IDataStore dataStore = null;
 		IDataSet dataset = getDataSet();
 
-		if(dataset.isFlatDataset() || dataset.isPersisted()){
-			dataStore = useDataSetStrategy(worksheetQuery, dataset, start, limit);
-		}else{
-			logger.debug("Using temporary table strategy....");			
+		if (dataset.isFlatDataset() || dataset.isPersisted()) {
+			dataStore = useDataSetStrategy(worksheetQuery, dataset, start,
+					limit);
+		} else {
+			logger.debug("Using temporary table strategy....");
 			dataStore = useTemporaryTableStrategy(worksheetQuery, start, limit);
 		}
-
-
 
 		Assert.assertNotNull(dataStore, "The dataStore cannot be null");
 		logger.debug("Query executed succesfully");
@@ -116,9 +111,8 @@ public abstract class AbstractWorksheetEngineAction extends AbstractEngineAction
 
 		UserProfile userProfile = (UserProfile)getEnv().get(EngineConstants.ENV_USER_PROFILE);
 
-		logger.debug("Querying temporary table: user [" + userProfile.getUserId() + "] (SQL): [" + worksheetQuery + "]");
-
-		auditlogger.info("Querying temporary table: user [" + userProfile.getUserId() + "] (SQL): [" + worksheetQuery + "]");
+		logger.debug("Querying dataset's flat/persistence table: user [" + userProfile.getUserId() + "] (SQL): [" + worksheetQuery + "]");
+		auditlogger.info("Querying dataset's flat/persistence table: user [" + userProfile.getUserId() + "] (SQL): [" + worksheetQuery + "]");
 
 		try {
 
