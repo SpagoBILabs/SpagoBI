@@ -106,7 +106,12 @@ Sbi.browser.FolderViewTemplate = function(config) {
 		    	'<div id="icon" class="folder"></div>' + 
 			'</tpl>' +
 			'<span class="shadow"></span>'+
-			'<div class="hover"/>'+
+			'<div class="hover">'+
+	            '		<tpl for="actions">'+  
+//		        '      		<li class="{name}"><a href="#" title="{description}"></a></li>'+
+	            '			<a href="#" class="{name}" title="{description}">{description}</a>'+
+		        '		</tpl>'+
+	        '</div>'+
 		'</div>'+ 	
 //    '<div class="item-desc">' +
 //        folderAttributes +
@@ -162,8 +167,7 @@ Sbi.browser.FolderViewTemplate = function(config) {
 		                        //'</tpl>',
 		                        // -- FOLDER -----------------------------------------------
 		                        '<tpl if="this.exists(engine) == false">',
-//		                        	'<dd class="group-item">', //Folder
-		                        	'<dd class="box-folder">', //Folder
+		                        	'<dd class="box-folder">', //Folder	
 		                        	folderTpl,
 		                        '</tpl>',
 		                        '</dd>',

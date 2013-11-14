@@ -412,6 +412,8 @@ Ext.extend(Sbi.browser.FolderDetailPanel, Ext.Panel, {
         var actionDelete = e.getTarget('a[class=delete]', 10, true);
         var actionClone = e.getTarget('a[class=clone]', 10, true);
         var actionFavourite = e.getTarget('span.icon', 10, true); //TBD
+        var actionExport = e.getTarget('a[class=export]', 10, true);
+        var actionSchedule = e.getTarget('a[class=schedule]', 10, true);
       
     	var action = null;
 
@@ -432,7 +434,13 @@ Ext.extend(Sbi.browser.FolderDetailPanel, Ext.Panel, {
 	     	action = actionFavourite.dom.className;
 	     	//temporary until favourites aren't managed:
 	     	return;
-		 }   
+		 }else if (actionExport != null){
+		     	Sbi.debug('export massive');        	
+		     	action = actionExport.dom.className;
+		 }else if (actionSchedule != null){
+		     	Sbi.debug('schedule');        	
+		     	action = actionSchedule.dom.className;
+		}   
     	
 		 var r; 
 		 if (node.id && node.id !== "" && node.id.indexOf("ext-gen") < 0){
