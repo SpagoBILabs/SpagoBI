@@ -15,7 +15,13 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
+import org.apache.log4j.Logger;
+
 import it.eng.spagobi.services.datasource.bo.SpagoBiDataSource;
+import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.bo.JDBCDatasetFactory;
+import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 
 
 
@@ -26,7 +32,8 @@ import it.eng.spagobi.services.datasource.bo.SpagoBiDataSource;
 
 public class DataSource implements Serializable, IDataSource {
 	
-
+	private static transient Logger logger = Logger.getLogger(DataSource.class);
+	
 	private int dsId;
 	private String descr;
 	private String label;
@@ -354,6 +361,22 @@ public class DataSource implements Serializable, IDataSource {
 		if(writeDefault == null)
 			writeDefault = false;
 		return writeDefault;
+	}
+
+	public IDataStore executeStatement(String statement, Integer start, Integer limit) {
+		logger.debug("IN: Statement is [" + statement + "], start = [" + start + "], limit = [" + limit + "]");
+		IDataSet dataSet = JDBCDatasetFactory.getJDBCDataSet(this);
+		dataSet.setDataSource(this);
+		((AbstractJDBCDataset) dataSet).setQuery(statement); // all datasets retrieved by the factory extend AbstractJDBCDataset
+		if (start == null && limit == null) {
+			dataSet.loadData();
+		} else {
+			dataSet.loadData(start, limit, -1);
+		}
+		IDataStore dataStore = dataSet.getDataStore();
+		logger.debug("Data store retrieved successfully");
+		logger.debug("OUT");
+		return dataStore;
 	}
 	
 	

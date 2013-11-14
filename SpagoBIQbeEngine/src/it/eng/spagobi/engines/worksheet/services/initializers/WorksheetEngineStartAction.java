@@ -291,6 +291,7 @@ public class WorksheetEngineStartAction extends AbstractEngineStartAction {
 			env.put(EngineConstants.ENV_DATASETS, dataSets);
 			dataSetLinkedToDoc.setDataSourceForWriting((IDataSource) env.get(EngineConstants.DATASOURCE_FOR_WRITING));
 		}
+		
 		return env;
 	}
 

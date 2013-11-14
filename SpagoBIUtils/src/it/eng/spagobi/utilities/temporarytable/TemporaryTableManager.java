@@ -8,8 +8,8 @@ package it.eng.spagobi.utilities.temporarytable;
 
 
 import it.eng.spago.configuration.ConfigSingleton;
-import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
+import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.persist.DataSetTableDescriptor;
 import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
@@ -360,22 +360,12 @@ public class TemporaryTableManager {
 	}
 
 	public static DataStore queryTemporaryTable(String sqlStatement, IDataSource dataSource, Integer start, Integer limit) throws Exception {
-		
 		logger.debug("IN");
-		logger.debug("SQL statement is [" + sqlStatement + "]");
-		JDBCDataSet dataSet = new JDBCDataSet();
-		dataSet.setDataSource(dataSource);
-		dataSet.setQuery(sqlStatement);
-		if (start == null && limit == null) {
-			dataSet.loadData();
-		} else {
-			dataSet.loadData(start, limit, -1);
-		}
-		DataStore dataStore = (DataStore) dataSet.getDataStore();
-		logger.debug("Data store retrieved successfully");
+		logger.debug("Querying temporary table : statement is [" + sqlStatement + "], start = [" + start + "], limit = [" + limit + "]");
+		IDataStore dataStore = dataSource.executeStatement(sqlStatement, start, limit);
+		DataStore toReturn = (DataStore) dataStore;
 		logger.debug("OUT");
-		return dataStore;
-		
+		return toReturn;
 	}
 
 	private static void createTableInternal(String baseQuery, String tableName, IDataSource dataSource) throws Exception {

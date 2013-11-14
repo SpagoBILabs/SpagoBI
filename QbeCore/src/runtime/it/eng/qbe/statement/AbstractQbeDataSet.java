@@ -17,13 +17,9 @@ import it.eng.qbe.query.SimpleSelectField;
 import it.eng.qbe.query.WhereField;
 import it.eng.qbe.query.serializer.json.QueryJSONSerializer;
 import it.eng.qbe.query.serializer.json.QuerySerializationConstants;
-import it.eng.qbe.statement.hibernate.HQLStatement;
-import it.eng.qbe.statement.hibernate.HQLStatement.IConditionalOperator;
-import it.eng.spagobi.services.common.SsoServiceInterface;
 import it.eng.spagobi.tools.dataset.bo.AbstractDataSet;
 import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
 import it.eng.spagobi.tools.dataset.bo.DataSetVariable;
-import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.Field;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
@@ -38,10 +34,8 @@ import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
 import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
 import it.eng.spagobi.tools.datasource.bo.DataSource;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
-import it.eng.spagobi.utilities.StringUtils;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.temporarytable.TemporaryTableManager;
 
 import java.util.ArrayList;
@@ -345,27 +339,19 @@ public abstract class AbstractQbeDataSet extends AbstractDataSet {
 
 	}
 
+	// TODO merge with AbstractDataSet.getDomainValues
 	public IDataStore getDomainValues(String fieldName, Integer start, Integer limit, IDataStoreFilter filter) {
 		if(isPersisted() || isFlatDataset()){
 			int index = this.getStatement().getQuery().getSelectFieldIndex(fieldName);
 			String alias = (this.getStatement().getQuery().getSelectFieldByIndex(index)).getAlias();
-			return  getDomainValuesForPersistedOrFlat(alias, start, limit, filter);
+			return getDomainValuesFromPersistenceTable(alias, start, limit, filter);
 		}else{
 			return getDomainValuesFromTemporaryTable(fieldName, start, limit, filter);
 		}
 	}
 	
-	private IDataStore getDomainValuesForPersistedOrFlat(String fieldName, Integer start, Integer limit, IDataStoreFilter filter) {
-		StringBuffer buffer = new StringBuffer("Select DISTINCT " + fieldName + " FROM " + getTableNameForReading());
-		manageFilterOnDomainValues(buffer, fieldName, filter);
-		JDBCDataSet dataset = new JDBCDataSet();
-		dataset.setQuery(buffer.toString());
-		dataset.setDataSource( getDataSourceForReading() );
-		dataset.loadData(start, limit, -1);
-		return dataset.getDataStore();
-	}
-	
-	private IDataStore getDomainValuesFromTemporaryTable(String fieldName, Integer start, Integer limit, IDataStoreFilter filter) {
+	// TODO merge with AbstractDataSet.getDomainValuesFromTemporaryTable
+	protected IDataStore getDomainValuesFromTemporaryTable(String fieldName, Integer start, Integer limit, IDataStoreFilter filter) {
 		IDataStore toReturn = null;
 		try {
 			String tableName = this.getTemporaryTableName();
@@ -374,7 +360,16 @@ public abstract class AbstractQbeDataSet extends AbstractDataSet {
 				logger.error("Temporary table name not set, cannot proceed!!");
 				throw new SpagoBIEngineRuntimeException("Temporary table name not set");
 			}
-			IDataSource dataSource = getDataSourceForReading();
+			IDataSource dataSource = this.getDataSource();
+			if (dataSource == null || dataSource.checkIsReadOnly()) {
+				logger.debug(dataSource == null ? "Datasource not set" : "Datasource is read only");
+				logger.debug("Getting datasource for writing...");
+				dataSource = this.getDataSourceForWriting();
+			}
+			if (dataSource == null) {
+				logger.error("Datasource for persistence not set, cannot proceed!!");
+				throw new SpagoBIEngineRuntimeException("Datasource for persistence not set");
+			}
 			String sql = getSQLQuery();
 			IDataSetTableDescriptor tableDescriptor = null;
 					
@@ -400,103 +395,6 @@ public abstract class AbstractQbeDataSet extends AbstractDataSet {
 		}
 		return toReturn;
 	}
-
-	private void manageFilterOnDomainValues(StringBuffer buffer,
-			String fieldName, IDataSetTableDescriptor tableDescriptor, IDataStoreFilter filter) {
-		if (filter != null) {
-			String filterColumnName = tableDescriptor.getColumnName(fieldName);
-			if (filterColumnName == null) {
-				throw new SpagoBIRuntimeException("Field name [" + fieldName + "] not found");
-			}
-			String columnName = tableDescriptor.getColumnName(fieldName);
-			Class clazz = tableDescriptor.getColumnType(fieldName);
-			String value = getFilterValue(filter.getValue(), clazz);
-			IConditionalOperator conditionalOperator = (IConditionalOperator) HQLStatement.conditionalOperators.get(filter.getOperator());
-			String temp = conditionalOperator.apply(AbstractJDBCDataset.encapsulateColumnName(columnName, tableDescriptor.getDataSource()), new String[] { value });
-			buffer.append(" WHERE " + temp);
-		}
-	}
-	
-	private void manageFilterOnDomainValues(StringBuffer buffer, String fieldName, IDataStoreFilter filter) {
-		if (filter != null) {
-			
-			//get The fieldByAlias
-			IMetaData md = getMetadata();
-			IFieldMetaData fmd = null;
-			int i=0;
-			if(md!=null){
-				for(i=0; i<md.getFieldCount(); i++){
-					fmd = md.getFieldMeta(i);
-					if(fieldName.equals(fmd.getAlias()) || fieldName.equals(fmd.getName())){
-						break;
-					}
-				}
-			}
-			if(i<md.getFieldCount()){
-				Class clazz = fmd.getType();
-				String value = getFilterValue(filter.getValue(), clazz);
-				IConditionalOperator conditionalOperator = (IConditionalOperator) HQLStatement.conditionalOperators.get(filter.getOperator());
-				String temp = conditionalOperator.apply(fieldName, new String[] { value });
-				buffer.append(" WHERE " + temp);
-			}else{
-				throw new SpagoBIRuntimeException("Field name [" + fieldName + "] not found");
-			}
-
-			
-			
-
-		}
-	}
-
-	private String getFilterValue(String value, Class clazz) {
-		String toReturn = null;
-		if ( String.class.isAssignableFrom(clazz) ) {
-			value = StringUtils.escapeQuotes(value);
-			toReturn = StringUtils.bound(value, "'");
-		} else if ( Number.class.isAssignableFrom(clazz) ) {
-			toReturn = value;
-		} else if ( Boolean.class.isAssignableFrom(clazz) ) {
-			toReturn = value;
-		} else {
-			// TODO manage other types, such as date and timestamp
-			throw new SpagoBIRuntimeException("Unsupported operation: cannot filter on a fild type " + clazz.getName());
-		}
-		return toReturn;
-	}
-
-	private String getUserId() {
-		Map userProfileAttrs = getUserProfileAttributes();
-		String userId = null;
-		if (userProfileAttrs != null) {
-			userId = (String) userProfileAttrs.get(SsoServiceInterface.USER_ID);
-		}
-		return userId;
-	}
-
-	/**
-	 * Get the relation between the fields in the select clause
-	 * of the Qbe Query and its sql representation
-	 * @param sqlQuery Qbe Query translated in sql
-	 * @param qbeQuery Qbe Query 
-	 * @return
-	 */
-	//	private IDataSetTableDescriptor getDataSetTableDescriptor(String sqlQuery, Query qbeQuery, String tableName){
-	//		DataSetTableDescriptor dataSetTableDescriptor = new DataSetTableDescriptor();
-	//		
-	//		List<String[]> selectFieldsColumn = SqlUtils.getSelectFields(sqlQuery);
-	//		List<ISelectField> selectFieldsNames = qbeQuery.getSelectFields(true);
-	//		for(int i=0; i<selectFieldsColumn.size(); i++){
-	//			ISelectField selectField = selectFieldsNames.get(i);
-	//			String fieldName = selectField.getAlias();
-	//			String columnName = selectFieldsColumn.get(i)[1];
-	//			statement.getDataSource().getModelStructure().getField(selectField.);
-	//			Class c = null;
-	//
-	//			dataSetTableDescriptor.addField(fieldName, columnName, c);
-	//		}
-	//		dataSetTableDescriptor.setTableName(tableName);
-	//		return dataSetTableDescriptor;
-	//	}
 
 	private List<String> getDataSetSelectedFields(Query qbeQuery){
 		List<String> toReturn = new ArrayList<String>();
