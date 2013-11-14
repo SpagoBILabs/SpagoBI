@@ -34,7 +34,8 @@ Sbi.widgets.TreeLookUpField = function(config) {
 		triggerClass : 'tree-look-up',
 		enableKeyEvents : true,
 		width : 150,
-		allowInternalNodeSelection: false
+		allowInternalNodeSelection: false,
+		readOnly: true
 	});
 
 	this.rootConfig = {

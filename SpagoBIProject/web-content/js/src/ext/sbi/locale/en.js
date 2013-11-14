@@ -922,6 +922,7 @@ Sbi.locale.ln['sbi.tools.catalogue.metaModelsCatalogue.datasource']='Data Source
 	
 Sbi.locale.ln['sbi.behavioural.lov.type.simple']='Simple';
 Sbi.locale.ln['sbi.behavioural.lov.type.tree']='Tree';
+Sbi.locale.ln['sbi.behavioural.lov.type.treeinner']='Tree selectable internal nodes';	
 Sbi.locale.ln['sbi.behavioural.lov.filter.apply']='Filter';
 Sbi.locale.ln['sbi.behavioural.lov.save.window.title']='LOV Saved';
 Sbi.locale.ln['sbi.behavioural.lov.save.window.text']='The LOV has been successfully saved';
