@@ -273,8 +273,12 @@ Ext.extend(Sbi.qbe.RelationshipsWizardContainer, Ext.Panel, {
     }
     
     ,buildAlias: function(src, trg, rel, pos){
-    	return trg;
-    }
+		var alias = trg+" (rel: "+rel.rel+")";
+    	if(alias && alias.length>40){
+    		alias = alias.substring(0,38)+"...";
+    	}
+    	return alias;
+    }    
     
     ,buildTooltip: function(src, trg, rel, pos){
     	var tooltip = src+"("+rel.sourceFields+")<br/>";

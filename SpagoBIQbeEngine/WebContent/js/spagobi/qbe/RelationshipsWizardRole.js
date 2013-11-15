@@ -41,17 +41,18 @@ Sbi.qbe.RelationshipsWizardRole = function(config) {
 
 	var defaultSettings = {
 			entities: [
-						{
-							   name: "entity1",
-							   aliases: [
-							             {name :"alias1", role:"role", fields: [{name:"field1"},{name:"field3"}]},
-							             {name :"alias2", role:"role", fields: [{name:"field2"}]}],
-							   fields:[
-							           {name: "field1"},
-							           {name: "field2"},
-							           {name: "field4"}
-							           ]
-						}]
+//						{
+//							   name: "entity1",
+//							   aliases: [
+//							             {name :"alias1", alias:"", role:"role", fields: [{name:"field1"},{name:"field3"}]},
+//							             {name :"alias2", alias:"", role:"role", fields: [{name:"field2"}]}],
+//							   fields:[
+//							           {name: "field1"},
+//							           {name: "field2"},
+//							           {name: "field4"}
+//							           ]
+//						}
+						]
 			
 	};
 
