@@ -266,6 +266,9 @@ public class LoginModule extends AbstractHttpModule {
 
 		}
 		
+		boolean isInternalSecurity = ("true".equalsIgnoreCase((String)request.getAttribute("isInternalSecurity")))?true:false;
+		logger.debug("isInternalSecurity: " + isInternalSecurity);
+		
 		ISecurityServiceSupplier supplier=SecurityServiceSupplierFactory.createISecurityServiceSupplier();
 		// If SSO is not active, check username and password, i.e. performs the authentication;
 		// instead, if SSO is active, the authentication mechanism is provided by the SSO itself, so SpagoBI does not make 
@@ -282,8 +285,7 @@ public class LoginModule extends AbstractHttpModule {
 					errorHandler.addError(emfu); 
 					AuditLogUtilities.updateAudit(getHttpRequest(), profile, "SPAGOBI.Login", null, "KO");
 					return;
-				}
-				else{
+				} else if(isInternalSecurity == true) {
 				  SbiUser user = DAOFactory.getSbiUserDAO().loadSbiUserByUserId(userId);
 				  if( user.getFlgPwdBlocked() != null && user.getFlgPwdBlocked() ){
 				    logger.error("userName/pwd uncorrect");
@@ -291,16 +293,13 @@ public class LoginModule extends AbstractHttpModule {
 					errorHandler.addError(emfu); 
 					AuditLogUtilities.updateAudit(getHttpRequest(), profile, "SPAGOBI.Login", null, "KO");
 					return;  
-					  
 				  }	
 				}
 			} catch (Exception e) {
 				logger.error("Reading user information... ERROR", e);
 				throw new SecurityException("Reading user information... ERROR",e);
 			}
-			//getting security type: if it's internal (SpagoBI) active pwd management and checks
-			boolean isInternalSecurity = ("true".equalsIgnoreCase((String)request.getAttribute("isInternalSecurity")))?true:false;
-			logger.debug("isInternalSecurity: " + isInternalSecurity);
+			//if it's internal (SpagoBI) active pwd management and checks
 			if (isInternalSecurity)  {			 
 				//gets the user bo
 				ISbiUserDAO userDao = DAOFactory.getSbiUserDAO();
