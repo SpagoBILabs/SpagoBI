@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -277,10 +278,15 @@ public class UserProfile implements IEngUserProfile {
 		if ( this.functionalities.contains(actionName) ){
 			return true;
 		}
-		String functionality = AuthorizationsBusinessMapper.getInstance().mapActionToBusinessProcess(actionName);
-		if (functionality != null){
-			return this.functionalities.contains(functionality);
-		}else return false;    
+		List<String> businessProcessNames = AuthorizationsBusinessMapper.getInstance().mapActionToBusinessProcess(actionName);
+		if (businessProcessNames != null){
+			for (String businessProcess : businessProcessNames){
+				if (this.functionalities.contains(businessProcess)){
+					return true;
+				}
+			}
+		}
+		return false;    
 	}
 
 	/* (non-Javadoc)
