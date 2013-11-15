@@ -191,7 +191,7 @@ a:hover{
     
     <div id="content" style="height:100%">
       <div style="padding: 80px ">
-        <table border="0" align="center" style="border-collapse:separate; background: none repeat scroll 0 0; border-radius: 5px 5px 5px 5px;  box-shadow: 0px 0px 10px #888;  -webkit-box-shadow:  0px 0px 10px #888;  -moz-box-shadow:  0px 0px 10px #888; color: #009DC3; display: block; font-size: 14px; line-height: 18px; padding: 20px;">
+        <table border="0" align="center" style="border-collapse:separate; background: none repeat scroll 0 0; border-radius: 5px 5px 5px 5px;  box-shadow: 0px 0px 10px #888;  -webkit-box-shadow:  0px 0px 10px #888;  -moz-box-shadow:  0px 0px 10px #888; color: #009DC3; display: block; font-size: 14px; line-height: 18px; padding: 20px;">        
 					<tr>
 						<td></td>
 						<td><img
@@ -237,7 +237,7 @@ a:hover{
 								</tr>
 								<tr>
 									<td>
-									<table border="0">
+									<table border="0" width="100%">
 										<tr> 
 											<td>
 												<a href="#"	onclick="signup();">

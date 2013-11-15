@@ -170,18 +170,18 @@ this.services["create"]= Sbi.config.serviceRegistry.getRestServiceUrl({
 
 	
 	body {
-background: #dedede; /* Old browsers */
-background: -moz-linear-gradient(top,  #dedede 0%, #efefef 100%); /* FF3.6+ */
-background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#dedede), color-stop(100%,#efefef)); /* Chrome,Safari4+ */
-background: -webkit-linear-gradient(top,  #dedede 0%,#efefef 100%); /* Chrome10+,Safari5.1+ */
-background: -o-linear-gradient(top,  #dedede 0%,#efefef 100%); /* Opera 11.10+ */
-background: -ms-linear-gradient(top,  #dedede 0%,#efefef 100%); /* IE10+ */
-background: linear-gradient(to bottom,  #dedede 0%,#efefef 100%); /* W3C */
-filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dedede', endColorstr='#efefef',GradientType=0 ); /* IE6-9 */
-height: 100%;
-margin: 0;
-background-repeat: no-repeat;
-background-attachment: fixed;
+		background: #dedede; /* Old browsers *
+		background: -moz-linear-gradient(top,  #dedede 0%, #efefef 100%); /* FF3.6+ */
+		background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#dedede), color-stop(100%,#efefef)); /* Chrome,Safari4+ */
+		background: -webkit-linear-gradient(top,  #dedede 0%,#efefef 100%); /* Chrome10+,Safari5.1+ */
+		background: -o-linear-gradient(top,  #dedede 0%,#efefef 100%); /* Opera 11.10+ */
+		background: -ms-linear-gradient(top,  #dedede 0%,#efefef 100%); /* IE10+ */
+		background: linear-gradient(to bottom,  #dedede 0%,#efefef 100%); /* W3C */
+		filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dedede', endColorstr='#efefef',GradientType=0 ); /* IE6-9 */
+		height: 100%;
+		margin: 0;
+		background-repeat: no-repeat;
+		background-attachment: fixed;
 	}
 	td.login-label{
  	font-family: Tahoma,Verdana,Geneva,Helvetica,sans-serif;
@@ -191,19 +191,28 @@ background-attachment: fixed;
 
 a:link{
  	font-family: Tahoma,Verdana,Geneva,Helvetica,sans-serif;
-	font-size: 9px;
-	color: #7d7d7d;
+	font-size: 14px;
+	color: #F8A400;
+	text-decoration:none;
 }
 a:visited{
  	font-family: Tahoma,Verdana,Geneva,Helvetica,sans-serif;
-	font-size: 9px;
-	color: #7d7d7d;
+	font-size: 14px;
+	color: #F8A400;
+	text-decoration:none;
 }
 a:hover{
  	font-family: Tahoma,Verdana,Geneva,Helvetica,sans-serif;
-	font-size: 9px;
-	color: #7d7d7d;
+	font-size: 14px;
+	color: #F8A400;
+	text-decoration:none;
 }
+
+.submit{clear:both;width:auto;padding-top:12px;text-align:center}
+.submit input{border:0;height:42px;width:198px;padding:2px 31px 0;text-align:center;cursor:pointer;margin:0 0 20px;font-family:cabinregular,arial,helvetica,sans-serif;font-size:1.33em;font-weight:bold;line-height:100%;text-transform:uppercase;background:#F8A400;color:#fff;-webkit-border-radius:4px;-moz-border-radius:4px;border-radius:4px}
+.submit input:hover{opacity:0.9;filter:alpha(opacity = 90)}
+
+.footerMsg {color:#193B54;}
 
  </style>
   
@@ -222,11 +231,12 @@ a:hover{
   </head>
 
   <body>
- <div id="content" style="height:100%">
-    <form name="myForm" method="post" action="${pageContext.request.contextPath}/">
+   
+	 <div id="content" style="height:100%">  
+    		<form name="myForm" method="post" action="${pageContext.request.contextPath}/">
             	<input type="hidden" id="locale" name="locale" value="<%=locale%>" />
        
-		        	<div style="padding: 80px " >
+		        	<div style="padding: 20px " >
 		        	<!--
 		        	DO NOT DELETE THIS COMMENT
 		        	If you change the tag table with this one  you can have the border of the box with the shadow via css
@@ -419,17 +429,21 @@ a:hover{
 								     <table border="0">
 								      <tr height="20px"><td colspan="3">&nbsp;</td></tr>
 								      <tr>
-									  <td align="right">
+									 <!--  <td align="right">
 									    <a href="${pageContext.request.contextPath}/" >
 									      <img src='${pageContext.request.contextPath}/themes/sbi_default/img/wapp/back.png' width='100px' height='37px' />
 									    </a>
-									  </td>
+									  </td> -->
 									  <td width="50px">&nbsp;</td>
-									  <td>
+									  <!-- <td>
 									    <a href="#" onclick="javascript:register();">
 									      <img src='${pageContext.request.contextPath}/themes/sbi_default/img/wapp/register.png' title="Register" alt="Register" />
 									    </a>                              
-									  </td>
+									  </td> -->
+									    <div class="submit">
+			                                <input type="text" value="<%=msgBuilder.getMessage("signup",locale)%>" onclick="javascript:register();" />
+			                                <p class="footerMsg"><%=msgBuilder.getMessage("yesAccount",locale)%> <a href="${pageContext.request.contextPath}/servlet/AdapterHTTP?PAGE=LoginPage&NEW_SESSION=TRUE">Login</a></p>                                
+			                            </div>
 									  </tr>
 									</table>									
 								   </td>
@@ -440,15 +454,11 @@ a:hover{
 						
 						<td style="padding-top: 20px">
 						</td>
-					</tr>
-					
+					</tr>					
 
 				</table>
 			</div>
 			</form>
 	        </div>
-        
-
-   
   </body>
 </html>

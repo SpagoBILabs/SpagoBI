@@ -272,7 +272,7 @@ public class Signup {
 		    user = userDao.loadSbiUserById( Integer.parseInt( id ));
 		  }catch(EMFUserError emferr){}
 		  if( user == null ) {
-		    return new JSONObject("{message: '"+msgBuilder.getMessage("signup.msg.unknownUse" ,"messages", req)+"'}").toString();
+		    return new JSONObject("{message: '"+msgBuilder.getMessage("signup.msg.unknownUser" ,"messages", req)+"'}").toString();
 		    
 		  }
 		  
