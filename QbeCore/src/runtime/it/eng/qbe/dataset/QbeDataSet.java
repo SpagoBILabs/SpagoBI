@@ -370,8 +370,6 @@ public static String DS_TYPE = "SbiQbeDataSet";
 			for(int i = 0; i < queriesJSON.length(); i++) {
 				queryJSON = queriesJSON.getJSONObject(i);
 				query = it.eng.qbe.query.serializer.SerializerFactory.getDeserializer("application/json").deserializeQuery(queryJSON, dataSource);
-				QueryGraph graph = GraphUtilities.deserializeGraph((JSONArray) queryJSON.opt("graph"), query, dataSource);
-				query.setQueryGraph(graph);
 				catalogue.addQuery(query);
 			}
 		} catch (Throwable e) {
