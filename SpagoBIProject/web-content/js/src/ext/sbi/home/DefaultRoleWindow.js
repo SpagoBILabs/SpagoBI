@@ -63,7 +63,8 @@ Sbi.home.DefaultRoleWindow = function(config) {
 		layout:'fit',
 		width:350,
 		height:150,
-		closeAction:'hide',
+		closeAction:'close',
+		autoDestroy: true,
 		plain: true,
 		title: LN('sbi.browser.defaultRole.title'),
 		items: [this.formPanel]
@@ -139,7 +140,6 @@ Ext.extend(Sbi.home.DefaultRoleWindow, Ext.Window, {
 	, initFormPanel: function(config) {
     	var scopeComboBoxData = [
     		//['-----'],
-    		//['prova1','prova1'],['prova2','prova2']
     	];
     		
     	var scopeComboBoxStore = new Ext.data.SimpleStore({

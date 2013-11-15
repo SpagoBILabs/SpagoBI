@@ -70,7 +70,7 @@ function getLanguageUrl(config){
   return languageUrl;
 }
 
-function role(){
+function roleSelection(){
 	if(Sbi.user.roles && Sbi.user.roles.length > 1){
 		this.win_roles = new Sbi.home.DefaultRoleWindow({'SBI_EXECUTION_ID': ''});
 		this.win_roles.show();

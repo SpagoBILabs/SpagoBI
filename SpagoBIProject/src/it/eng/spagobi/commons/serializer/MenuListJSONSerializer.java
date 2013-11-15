@@ -292,7 +292,7 @@ public class MenuListJSONSerializer implements Serializer {
 			if(label != null && label.equals(INFO)){
 				menuItem.put(HREF, "javascript:info()");
 			}else if(label != null && label.equals(ROLE)){
-				menuItem.put(HREF, "javascript:role()");
+				menuItem.put(HREF, "javascript:roleSelection()");
 			}else if(href!=null && href.length()>0){
 				menuItem.put(HREF, "javascript:execUrl('"+contextName+href+"')");
 			}
