@@ -145,8 +145,6 @@ public class QbeEngineAnalysisState extends EngineAnalysisState {
 			for(int i = 0; i < queriesJSON.length(); i++) {
 				queryJSON = queriesJSON.getJSONObject(i);
 				query = SerializerFactory.getDeserializer("application/json").deserializeQuery(queryJSON, getDataSource());
-				QueryGraph graph = GraphUtilities.deserializeGraph((JSONArray) queryJSON.opt("graph"), query, getDataSource());
-				query.setQueryGraph(graph);
 				catalogue.addQuery(query);
 			}
 		} catch (Throwable e) {
@@ -177,8 +175,7 @@ public class QbeEngineAnalysisState extends EngineAnalysisState {
 			while(it.hasNext()) {
 				query = (Query)it.next();
 				queryJSON =  (JSONObject)SerializerFactory.getSerializer("application/json").serialize(query, getDataSource(), null);
-				graphJSON = serializeGraph(query);
-				queryJSON.put("graph", graphJSON);
+
 				queriesJSON.put( queryJSON );
 			}
 			
@@ -190,19 +187,7 @@ public class QbeEngineAnalysisState extends EngineAnalysisState {
 		setProperty( QbeEngineStaticVariables.CATALOGUE, catalogueJSON );
 	}
 
-	private JSONArray serializeGraph(Query query) throws Exception {
-		QueryGraph graph = query.getQueryGraph();
-		ObjectMapper mapper = new ObjectMapper();
-		SimpleModule simpleModule = new SimpleModule("SimpleModule",
-				new Version(1, 0, 0, null));
-		simpleModule.addSerializer(Relationship.class,
-				new RelationJSONSerializerForAnalysisState());
 
-		mapper.registerModule(simpleModule);
-		String serialized = mapper.writeValueAsString(graph.getConnections());
-		JSONArray array = new JSONArray(serialized);
-		return array;
-	}
 
 	public IDataSource getDataSource() {
 		return (IDataSource)getProperty( QbeEngineStaticVariables.DATASOURCE );
@@ -243,19 +228,6 @@ public class QbeEngineAnalysisState extends EngineAnalysisState {
 		
 	}
 	
-	public class RelationJSONSerializerForAnalysisState extends JsonSerializer<Relationship> {
 
-		
-		
-		@Override
-		public void serialize(Relationship value, JsonGenerator jgen, SerializerProvider provider) throws IOException,
-				JsonProcessingException {
-			jgen.writeStartObject();
-			jgen.writeStringField(GraphUtilities.RELATIONSHIP_ID, value.getId());
-			jgen.writeEndObject();
-			
-		}
-		
-	}
 	
 }
