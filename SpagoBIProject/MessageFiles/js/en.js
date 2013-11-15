@@ -775,6 +775,26 @@ Sbi.locale.ln['sbi.tools.catalogue.metamodelsversionsgridpanel.isactive'] = 'Act
 Sbi.locale.ln['sbi.tools.catalogue.metaModelsCatalogue.datasource']='Data Source';
 
 //===================================================================
+//BEHAVIOURAL 
+//===================================================================
+	
+Sbi.locale.ln['sbi.behavioural.lov.type.simple']='Simple';
+Sbi.locale.ln['sbi.behavioural.lov.type.tree']='Tree';
+Sbi.locale.ln['sbi.behavioural.lov.type.treeinner']='Tree selectable internal nodes';	
+Sbi.locale.ln['sbi.behavioural.lov.filter.apply']='Filter';
+Sbi.locale.ln['sbi.behavioural.lov.save.window.title']='LOV Saved';
+Sbi.locale.ln['sbi.behavioural.lov.save.window.text']='The LOV has been successfully saved';
+Sbi.locale.ln['sbi.behavioural.lov.save']='Save';
+Sbi.locale.ln['sbi.behavioural.lov.select.type']='Select a type...';
+Sbi.locale.ln['sbi.behavioural.lov.name']='Name';
+Sbi.locale.ln['sbi.behavioural.lov.value']='Value';
+Sbi.locale.ln['sbi.behavioural.lov.description']='Description';
+Sbi.locale.ln['sbi.behavioural.lov.visible']='Visible';
+Sbi.locale.ln['sbi.behavioural.lov.test.error']='Error testing the lov';
+Sbi.locale.ln['sbi.behavioural.lov.back']='Back';
+Sbi.locale.ln['sbi.behavioural.delete']='Delete';
+
+//===================================================================
 //Sbi.worksheet.WorksheetFromDatasetPanel : AD-HOC REPORTING
 //===================================================================
 Sbi.locale.ln['sbi.worksheet.worksheetfromdatasetpanel.nodatasetselected.msg']='No dataset selected! Please select one in order to proceed.';
