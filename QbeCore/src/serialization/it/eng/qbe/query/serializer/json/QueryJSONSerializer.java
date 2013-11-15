@@ -21,6 +21,7 @@ import it.eng.qbe.query.serializer.IQuerySerializer;
 import it.eng.qbe.serializer.SerializationException;
 import it.eng.qbe.statement.AbstractStatement;
 import it.eng.qbe.statement.StatementTockenizer;
+import it.eng.qbe.statement.graph.GraphUtilities;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.json.JSONUtils;
@@ -62,8 +63,6 @@ public class QueryJSONSerializer implements IQuerySerializer {
 		Assert.assertNotNull(dataSource, "DataMartModel cannot be null");
 
 		try {
-
-
 			recordsJOSN = serializeFields(query, dataSource, locale);			
 			filtersJSON = serializeFilters(query, dataSource, locale);
 			filterExpJOSN = encodeFilterExp( query.getWhereClauseStructure() );
@@ -78,23 +77,26 @@ public class QueryJSONSerializer implements IQuerySerializer {
 				subqueriesJSON.put(subqueryJSON);
 			} 
 
-
 			result = new JSONObject();
 			result.put(QuerySerializationConstants.ID, query.getId());
 			result.put(QuerySerializationConstants.NAME, query.getName());
 			result.put(QuerySerializationConstants.DESCRIPTION, query.getDescription());
 			result.put(QuerySerializationConstants.DISTINCT, query.isDistinctClauseEnabled());
 			result.put(QuerySerializationConstants.IS_NESTED_EXPRESSION, query.isNestedExpression());
-			result.put(QuerySerializationConstants.RELATIONS_ROLES, query.getRelationsRoles());
 			
+			result.put(QuerySerializationConstants.RELATIONS_ROLES, query.getRelationsRoles());
+			JSONArray graphJSON = GraphUtilities.serializeGraph(query);
+			result.put("graph", graphJSON);
+				
 			result.put(QuerySerializationConstants.FIELDS, recordsJOSN);
-
 			result.put(QuerySerializationConstants.FILTERS, filtersJSON);
 			result.put(QuerySerializationConstants.EXPRESSION, filterExpJOSN);
-
 			result.put(QuerySerializationConstants.HAVINGS, havingsJSON);
-
 			result.put(QuerySerializationConstants.SUBQUERIES, subqueriesJSON);
+			
+			
+			
+			
 		} catch (Throwable t) {
 			throw new SerializationException("An error occurred while serializing object: " + query, t);
 		} finally {

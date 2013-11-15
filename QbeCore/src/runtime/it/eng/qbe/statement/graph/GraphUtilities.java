@@ -8,13 +8,14 @@ package it.eng.qbe.statement.graph;
 import it.eng.qbe.datasource.IDataSource;
 import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.model.structure.IModelStructure;
-import it.eng.qbe.statement.graph.bean.RootEntitiesGraph;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.statement.graph.bean.PathChoice;
 import it.eng.qbe.statement.graph.bean.PathChoicePathTextLengthComparator;
 import it.eng.qbe.statement.graph.bean.QueryGraph;
 import it.eng.qbe.statement.graph.bean.Relationship;
+import it.eng.qbe.statement.graph.bean.RootEntitiesGraph;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -34,6 +35,14 @@ import org.jgrapht.alg.CycleDetector;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.Version;
+import com.fasterxml.jackson.databind.JsonSerializer;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 
 public class GraphUtilities {
 	
@@ -330,6 +339,33 @@ public class GraphUtilities {
 			}
 		}
 		return vertexRelationsMap;
+	}
+	
+	public static JSONArray serializeGraph(Query query) throws Exception {
+		QueryGraph graph = query.getQueryGraph();
+		ObjectMapper mapper = new ObjectMapper();
+		SimpleModule simpleModule = new SimpleModule("SimpleModule",
+				new Version(1, 0, 0, null));
+		simpleModule.addSerializer(Relationship.class,
+				new RelationJSONSerializerForAnalysisState());
+
+		mapper.registerModule(simpleModule);
+		String serialized = mapper.writeValueAsString(graph.getConnections());
+		JSONArray array = new JSONArray(serialized);
+		return array;
+	}
+	
+	public static class RelationJSONSerializerForAnalysisState extends JsonSerializer<Relationship> {
+		
+		@Override
+		public void serialize(Relationship value, JsonGenerator jgen, SerializerProvider provider) throws IOException,
+				JsonProcessingException {
+			jgen.writeStartObject();
+			jgen.writeStringField(GraphUtilities.RELATIONSHIP_ID, value.getId());
+			jgen.writeEndObject();
+			
+		}
+		
 	}
 	
 }

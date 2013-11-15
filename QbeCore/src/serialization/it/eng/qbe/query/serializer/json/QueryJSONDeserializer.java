@@ -14,6 +14,8 @@ import it.eng.qbe.query.Query;
 import it.eng.qbe.query.WhereField;
 import it.eng.qbe.query.serializer.IQueryDeserializer;
 import it.eng.qbe.serializer.SerializationException;
+import it.eng.qbe.statement.graph.GraphUtilities;
+import it.eng.qbe.statement.graph.bean.QueryGraph;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.tools.dataset.common.query.AggregationFunctions;
 import it.eng.spagobi.tools.dataset.common.query.IAggregationFunction;
@@ -70,6 +72,8 @@ public class QueryJSONDeserializer implements IQueryDeserializer {
 				query.setDescription(queryJSON.optString(QuerySerializationConstants.DESCRIPTION));
 				query.setDistinctClauseEnabled(queryJSON.optBoolean( QuerySerializationConstants.DISTINCT ));
 				query.setRelationsRoles(queryJSON.optString( QuerySerializationConstants.RELATIONS_ROLES ));
+				QueryGraph graph = GraphUtilities.deserializeGraph((JSONArray) queryJSON.opt("graph"), query, dataSource);
+				query.setQueryGraph(graph);
 				
 				// TODO: move this in AnalysisStateLoader class
 				try {
