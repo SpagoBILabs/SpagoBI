@@ -105,7 +105,7 @@ Ext.extend(Sbi.home.DefaultRoleWindow, Ext.Window, {
     		role: role
 				};
 
-    			r = new store.recordType(defaultData, recId); // create new record
+    			r = new store.model(defaultData, recId); // create new record
 			store.insert(0, r); // insert a new record into the store (also see add)
 			if (Sbi.user.defaultRole && Sbi.user.defaultRole == role){
 				defIndex = recId;
@@ -118,7 +118,7 @@ Ext.extend(Sbi.home.DefaultRoleWindow, Ext.Window, {
     		view: LN('sbi.browser.defaultRole.noDefRole'),
     		role: ''
 				};
-    	r = new store.recordType(defaultData, recId); // create new record
+    	r = new store.model(defaultData, recId); // create new record
 		if(defIndex == -1){				
 			store.insert(0, r); // insert a new record into the store (also see add)
 			this.scopeField.setValue('')
@@ -139,6 +139,7 @@ Ext.extend(Sbi.home.DefaultRoleWindow, Ext.Window, {
 	, initFormPanel: function(config) {
     	var scopeComboBoxData = [
     		//['-----'],
+    		//['prova1','prova1'],['prova2','prova2']
     	];
     		
     	var scopeComboBoxStore = new Ext.data.SimpleStore({
@@ -147,11 +148,11 @@ Ext.extend(Sbi.home.DefaultRoleWindow, Ext.Window, {
     	});
     		    
     	this.scopeField = new Ext.form.ComboBox({
-    	   	tpl: '<tpl for="."><div ext:qtip="{role}" class="x-combo-list-item">{view}</div></tpl>',	
+    	   	//tpl: '<tpl for="."><div ext:qtip="{role}" class="x-combo-list-item">{view}</div></tpl>',	
     	   	editable  : false,
     	   	fieldLabel : LN('sbi.browser.defaultRole.role'),
     	   	forceSelection : true,
-    	   	mode : 'local',
+    	   	queryMode  : 'local',
     	   	name : 'analysisScope',
     	   	store : scopeComboBoxStore,
     	   	displayField:'view',
