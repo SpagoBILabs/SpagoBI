@@ -298,9 +298,19 @@ public abstract class AbstractWorksheetEngineAction extends AbstractEngineAction
 			
 			td = dataset.persist(tableName, getEngineInstance().getDataSourceForWriting());
 			this.recordTemporaryTable(tableName, getEngineInstance().getDataSourceForWriting());
-			dataset.setDataSourceForReading(getEngineInstance().getDataSourceForWriting());
-			dataset.setPersisted(true);
-			dataset.setPersistTableName(td.getTableName());
+			
+			/**
+			 * Do not remove comments from the following line: we cannot change
+			 * the datatset state, since we are only temporarily persisting the
+			 * dataset, but the dataset itself could change during next user
+			 * interaction (example: the user is using Qbe and he will change
+			 * the dataset itself). We will use TemporaryTableManager to store
+			 * this kind of information.
+			 * 
+			 * dataset.setDataSourceForReading(getEngineInstance().
+			 * getDataSourceForWriting()); dataset.setPersisted(true);
+			 * dataset.setPersistTableName(td.getTableName());
+			 */
 			
 			logger.debug("Dataset persisted");
 		} catch (Throwable t) {

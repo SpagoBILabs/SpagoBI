@@ -161,6 +161,15 @@ public interface IDataSet {
 	
 	IDataSetTableDescriptor persist(String tableName, IDataSource dataSource);
 	
+	/**
+	 * Get the values for a certain dataset's field, considering a optional filter.
+	 * 
+	 * @param fieldName The dataset's field
+	 * @param start The offset on results
+	 * @param limit The limit on result
+	 * @param filter The optional filter
+	 * @return The datastore containing the values for the dataset's field
+	 */
 	public IDataStore getDomainValues(String fieldName, 
             Integer start, Integer limit, IDataStoreFilter filter);
 	

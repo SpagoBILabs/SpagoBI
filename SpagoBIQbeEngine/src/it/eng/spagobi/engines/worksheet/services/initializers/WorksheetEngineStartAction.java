@@ -190,7 +190,7 @@ public class WorksheetEngineStartAction extends AbstractEngineStartAction {
     		IDataSet dataset = this.getDataSet();
     		boolean hasInnerQbe = WorksheetTemplateParser.getInstance().hasInnerQbeQuery(template);
     		if (hasInnerQbe && dataset != null) {
-    			this.checkPersistence(dataset, env);
+    			this.persistDataset(dataset, env);
     		}
     	}
 		

@@ -616,7 +616,7 @@ public class AbstractEngineStartAction extends AbstractBaseHttpAction {
 		 return newParValue;
 	 }
 	 
-	protected IDataSetTableDescriptor checkPersistence(IDataSet dataset, Map env) {
+	protected IDataSetTableDescriptor persistDataset(IDataSet dataset, Map env) {
 		IDataSetTableDescriptor descriptor = null;
 		if (!dataset.isPersisted() && !dataset.isFlatDataset()) {
 			logger.debug("Dataset is neither persisted nor flat. Persisting dataset into a temporary table...");
@@ -704,6 +704,12 @@ public class AbstractEngineStartAction extends AbstractBaseHttpAction {
 
 			td = dataset.persist(tableName, dataSource);
 			this.recordTemporaryTable(tableName, dataSource);
+			
+			// since this a start action, we can consider that the dataset can
+			// be considered to be persistent during all the user session, so we
+			// can change the state of the dataset. Compare with
+			// it.eng.spagobi.engines.worksheet.services.AbstractWorksheetEngineAction
+			// where we cannot
 			dataset.setPersisted(true);
 			dataset.setPersistTableName(td.getTableName());
 			dataset.setDataSourceForReading(dataSource);

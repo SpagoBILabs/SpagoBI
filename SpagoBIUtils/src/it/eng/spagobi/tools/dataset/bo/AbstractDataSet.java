@@ -21,11 +21,9 @@ import it.eng.spagobi.tools.dataset.persist.DataSetTableDescriptor;
 import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
 import it.eng.spagobi.tools.dataset.persist.PersistedTableManager;
 import it.eng.spagobi.tools.dataset.utils.DatasetMetadataParser;
-import it.eng.spagobi.tools.datasource.bo.DataSource;
 import it.eng.spagobi.tools.datasource.bo.DataSourceFactory;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.StringUtils;
-import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.sql.SQLStatementConditionalOperators;
@@ -638,6 +636,25 @@ public abstract class AbstractDataSet implements IDataSet {
 		return toReturn;
 	}
 
+	/**
+	 * Get the values for a certain dataset's field, considering a optional
+	 * filter. In case the dataset is persisted or flat, the values are
+	 * retrieved by the persistence table. In case the dataset is neither
+	 * persisted nor flat, it will look for a temporary table with the same
+	 * signature using TemporaryTableManager; in case there is no temporary
+	 * table, the dataset will be persisted, therefore the datasource must be
+	 * read and write or a datasource for writing must be provided.
+	 * 
+	 * @param fieldName
+	 *            The dataset's field
+	 * @param start
+	 *            The offset on results
+	 * @param limit
+	 *            The limit on result
+	 * @param filter
+	 *            The optional filter
+	 * @return The datastore containing the values for the dataset's field
+	 */
 	public IDataStore getDomainValues(String fieldName, Integer start,
 			Integer limit, IDataStoreFilter filter) {
 		if (this.isPersisted() || this.isFlatDataset()) {
@@ -678,18 +695,6 @@ public abstract class AbstractDataSet implements IDataSet {
 				throw new SpagoBIEngineRuntimeException(
 						"Temporary table name not set");
 			}
-			IDataSource dataSource = this.getDataSource();
-			if (dataSource == null || dataSource.checkIsReadOnly()) {
-				logger.debug(dataSource == null ? "Datasource not set"
-						: "Datasource is read only");
-				logger.debug("Getting datasource for writing...");
-				dataSource = this.getDataSourceForWriting();
-			}
-			if (dataSource == null) {
-				logger.error("Datasource for persistence not set, cannot proceed!!");
-				throw new SpagoBIEngineRuntimeException(
-						"Datasource for persistence not set");
-			}
 			String signature = this.getSignature();
 			IDataSetTableDescriptor tableDescriptor = null;
 			if (signature.equals(TemporaryTableManager
@@ -698,12 +703,26 @@ public abstract class AbstractDataSet implements IDataSet {
 				tableDescriptor = TemporaryTableManager
 						.getLastDataSetTableDescriptor(tableName);
 			} else {
+				IDataSource dataSource = this.getDataSource();
+				if (dataSource == null || dataSource.checkIsReadOnly()) {
+					logger.debug(dataSource == null ? "Datasource not set"
+							: "Datasource is read only");
+					logger.debug("Getting datasource for writing...");
+					dataSource = this.getDataSourceForWriting();
+				}
+				if (dataSource == null) {
+					logger.error("Datasource for persistence not set, cannot proceed!!");
+					throw new SpagoBIEngineRuntimeException(
+							"Datasource for persistence not set");
+				}
+				
 				tableDescriptor = this.persist(tableName, dataSource);
 				TemporaryTableManager.setLastDataSetTableDescriptor(tableName,
 						tableDescriptor);
 				TemporaryTableManager.setLastDataSetSignature(tableName,
 						signature);
 			}
+			IDataSource dataSource = tableDescriptor.getDataSource();
 			String filterColumnName = tableDescriptor.getColumnName(fieldName);
 			StringBuffer buffer = new StringBuffer("Select DISTINCT "
 					+ AbstractJDBCDataset.encapsulateColumnName(
