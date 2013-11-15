@@ -13,7 +13,7 @@
 Sbi.settings.qbe = {
 		relationshipswizard:{
 			pathSeparator: ' -- ',
-			useRelation: true
+			useRelation: false
 		},
 		
 		queryBuilderPanel: {

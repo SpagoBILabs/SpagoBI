@@ -40,17 +40,17 @@ Ext.ns("Sbi.qbe");
 Sbi.qbe.RelationshipsWizardRoleForEntity = function(config) {
 
 	var defaultSettings = {
-			roleEntityConfig: {
-	        	   name: "entity2",
-	        	   aliases: [
-	        	             {alias :"alias21",  fields: [{name:"field1"},{name:"field3"}]},
-	        	             {alias :"alias22",  fields: [{name:"field2"}]}],
-	        	   fields:[
-	        	           {name: "field1"},
-	        	           {name: "field2"},
-	        	           {name: "field4"}
-	        	           ]
-	           }
+//			roleEntityConfig: {
+//	        	   name: "entity2",
+//	        	   aliases: [
+//	        	             {alias :"alias21",  fields: [{name:"field1"},{name:"field3"}]},
+//	        	             {alias :"alias22",  fields: [{name:"field2"}]}],
+//	        	   fields:[
+//	        	           {name: "field1"},
+//	        	           {name: "field2"},
+//	        	           {name: "field4"}
+//	        	           ]
+//	           }
 
 	};
 
@@ -59,24 +59,28 @@ Sbi.qbe.RelationshipsWizardRoleForEntity = function(config) {
 	}
 
 	var c = Ext.apply(defaultSettings, config || {});
-
 	Ext.apply(this, c);
+	
+	if(this.roleEntityConfig){
+		
 
-	this.addEvents();
-	this.init();
-	this.services = this.services || new Array(); 
+		this.addEvents();
+		this.init();
+		this.services = this.services || new Array(); 
 
-	//this.init();
-	c = Ext.apply(c, {
-		layout       : 'hbox',
-		title: this.roleEntityConfig.name || "Entity",
-		layoutConfig : { align : 'stretch' },
-		items        : [
-		                this.entitiesGrid,
-		                this.entityFieldsCard ,
-		                this.fieldGrid
-		                ]
-	});
+		//this.init();
+		c = Ext.apply(c, {
+			layout       : 'hbox',
+			title: this.roleEntityConfig.name || "Entity",
+			layoutConfig : { align : 'stretch' },
+			items        : [
+			                this.entitiesGrid,
+			                this.entityFieldsCard ,
+			                this.fieldGrid
+			                ]
+		});
+	}
+
 
 	// constructor
 	Sbi.qbe.RelationshipsWizardRoleForEntity.superclass.constructor.call(this, c);
@@ -93,10 +97,37 @@ Sbi.qbe.RelationshipsWizardRoleForEntity = function(config) {
 Ext.extend(Sbi.qbe.RelationshipsWizardRoleForEntity, Ext.Panel, {
 
 	init: function(){
+		this.sortRoleEntityConfig();
 		this.initFieldsGrid();
 		this.initAliasGrid();
 		this.initEntityFieldsCard();
 
+	},
+	
+	sortRoleEntityConfig: function(){
+		var aliases= new Array();
+		for(var i=0; i<this.roleEntityConfig.aliases.length; i++){
+			aliases.push(this.roleEntityConfig.aliases[i].alias);
+		}
+		
+		//sort the aliases
+		aliases.sort();
+		var roleEntityConfigSorted = new Array();
+		
+		//sort the alias entities
+		for(var j=0; j<aliases.length; j++){
+			var alias = aliases[j];
+			for(var i=0; i<this.roleEntityConfig.aliases.length; i++){
+		    	var aliasunsorted = this.roleEntityConfig.aliases[i].alias;
+		    	if(alias == aliasunsorted){
+		    		roleEntityConfigSorted.push(this.roleEntityConfig.aliases[i]);
+		    		//this.roleEntityConfig.aliases[i]= null;
+		    		break;
+		    	}	    	
+			}
+		}
+		
+		this.roleEntityConfig.aliases = roleEntityConfigSorted;
 	},
 
 	initAliasGrid: function( gridConfig){
@@ -106,10 +137,10 @@ Ext.extend(Sbi.qbe.RelationshipsWizardRoleForEntity, Ext.Panel, {
 		for(var i=0; i<this.roleEntityConfig.aliases.length; i++){
 	    	var alias = this.roleEntityConfig.aliases[i].alias;
 	    	var role = this.roleEntityConfig.aliases[i].role;
-	    	this.buildEntityAlias(alias,role);
+	    	
 
 			entityAliases.push({
-				alias: this.buildEntityAlias(alias,role),
+				alias: this.roleEntityConfig.aliases[i].alias,
 				aliasTooltip: this.roleEntityConfig.aliases[i].aliasTooltip
 			});
 		}
@@ -122,9 +153,6 @@ Ext.extend(Sbi.qbe.RelationshipsWizardRoleForEntity, Ext.Panel, {
 			},
 			root   : 'records'
 		});
-
-		
-		entitiesStore.sort('alias', 'ASC');
 		
 		var sm =  new Ext.grid.RowSelectionModel({singleSelect : true});
 		// Column Model shortcut array
@@ -157,15 +185,6 @@ Ext.extend(Sbi.qbe.RelationshipsWizardRoleForEntity, Ext.Panel, {
 	 	return value;
 	},
 	
-	buildEntityAlias: function(alias, role){
-    	if(alias && role && role.rel){
-    		alias = alias+" (rel: "+role.rel+")";
-	    	if(alias && alias.length>40){
-	    		alias = alias.substring(0,38)+"...";
-	    	}
-    	}
-    	return alias;
-	},
 
 	initFieldsGrid: function(){
 		// Generic fields array to use in both store defs.
@@ -257,7 +276,7 @@ Ext.extend(Sbi.qbe.RelationshipsWizardRoleForEntity, Ext.Panel, {
 			enableDragDrop   : true,
 			stripeRows       : true,
 			autoExpandColumn : 'name',
-			title            : this.buildEntityAlias(alias,role),
+			title            : alias,
 			myEntityAlias: entityAlias
 		});
 
