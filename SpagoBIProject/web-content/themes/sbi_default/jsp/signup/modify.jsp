@@ -284,23 +284,36 @@ td.login-label {
 	color: #7d7d7d;
 }
 
-a:link {
-	font-family: Tahoma, Verdana, Geneva, Helvetica, sans-serif;
-	font-size: 9px;
-	color: #7d7d7d;
+a:link{
+ 	font-family: Tahoma,Verdana,Geneva,Helvetica,sans-serif;
+	font-size: 14px;
+	/*font-weight:bold;*/
+	color: #F8A400;
+	text-decoration:none;
+}
+a:visited{
+ 	font-family: Tahoma,Verdana,Geneva,Helvetica,sans-serif;
+	font-size: 14px;
+	color: #F8A400;
+	/*font-weight:bold;*/
+	text-decoration:none;
+}
+a:hover{
+ 	font-family: Tahoma,Verdana,Geneva,Helvetica,sans-serif;
+	font-size: 14px;
+	color: #F8A400;
+	/*font-weight:bold;*/
+	text-decoration:none;
 }
 
-a:visited {
-	font-family: Tahoma, Verdana, Geneva, Helvetica, sans-serif;
-	font-size: 9px;
-	color: #7d7d7d;
-}
+.submit{clear:both;width:auto;padding-top:12px;text-align:center}
+.submit input{border:0;height:42px;width:198px;padding:2px 31px 0;text-align:center;cursor:pointer;margin:0 0 20px;font-family:cabinregular,arial,helvetica,sans-serif;font-size:1.33em;font-weight:bold;line-height:100%;text-transform:uppercase;background:#F8A400;color:#fff;-webkit-border-radius:4px;-moz-border-radius:4px;border-radius:4px}
+.submit input:hover{opacity:0.9;filter:alpha(opacity = 90)}
 
-a:hover {
-	font-family: Tahoma, Verdana, Geneva, Helvetica, sans-serif;
-	font-size: 9px;
-	color: #7d7d7d;
-}
+.deleteMsg {color:#193B54;}
+.delete{font-size:1.08em;color:red}!
+.delete a{color:red  !important}
+
 </style>
 
 <link rel="shortcut icon"
@@ -322,7 +335,7 @@ body {
 
 	<form name="myForm" method="post">
 		<div id="content" style="height: 100%">
-			<div style="padding: 80px">
+			<div style="padding: 40px">
 				<!--
 		        	DO NOT DELETE THIS COMMENT
 		        	If you change the tag table with this one  you can have the border of the box with the shadow via css
@@ -515,7 +528,7 @@ body {
 							</table>
 						</td>
 					</tr>
-					<tr>
+				<!-- 	<tr>
 						<td colspan="4" align="center"><a href="#"
 							onclick="javascript:modify();"> <img
 								src='${pageContext.request.contextPath}/themes/sbi_default/img/wapp/confirm_button.png'
@@ -526,8 +539,15 @@ body {
 						</a></td>
 
 					</tr>
-
-
+					 -->
+					 <tr>
+						 <td colspan="4" align="center">
+							<div class="submit">
+		                              <input type="text" value="<%=msgBuilder.getMessage("modify",locale)%>" onclick="javascript:modify();"/>
+		                              <p  class="deleteMsg"><%=msgBuilder.getMessage("deleteAccount",locale)%> <a class="delete" href="#" onclick="javascript:cancel();"><%=msgBuilder.getMessage("delete",locale)%></a></p>
+		                    </div>
+	                    </td>
+					</tr>
 				</table>
 			</div>
 		</div>
