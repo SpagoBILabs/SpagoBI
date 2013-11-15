@@ -112,7 +112,7 @@ public class QbeEngineFromDatasetStartAction extends QbeEngineStartAction {
 		}
 		
 		boolean wasPersistedBefore = dataset.isPersisted() || dataset.isFlatDataset();
-		IDataSetTableDescriptor descriptor = this.checkPersistence(dataset, env);
+		IDataSetTableDescriptor descriptor = this.persistDataset(dataset, env);
 		if (!wasPersistedBefore && dataset instanceof QbeDataSet) {
 			adjustMetadataForQbeDataset((QbeDataSet) dataset, descriptor);
 		}

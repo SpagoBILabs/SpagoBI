@@ -112,7 +112,7 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 
 			// retrieving query specified by id on request
 			query = getQuery();
-			Assert.assertNotNull(query, "Query object with id [" + query.getId() + "] does not exist in the catalogue");
+			Assert.assertNotNull(query, "Query object with id [" + getAttributeAsString( QUERY_ID ) + "] does not exist in the catalogue");
 			if (getEngineInstance().getActiveQuery() == null 
 					|| !getEngineInstance().getActiveQuery().getId().equals(query.getId())) {
 				logger.debug("Query with id [" + query.getId() + "] is not the current active query. A new statment will be generated");
