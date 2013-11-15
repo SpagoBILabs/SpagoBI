@@ -8,6 +8,7 @@ package it.eng.spagobi.security;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.configuration.ConfigSingleton;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -46,7 +47,17 @@ public class AuthorizationsBusinessMapper {
     	    	String businessProcessName = (String) mapAction.getAttribute("businessProcess");
     	    	String actStr = "ACTION[" + actionName + "]";
     	    	//logger.debug("PUT:actStr"+actStr);
-    	    	_mapActions.put(actStr.toUpperCase(), businessProcessName);
+    	    	if (_mapActions.get(actStr.toUpperCase()) != null){
+    	    		//Action already present, add businessProcess to the corresponding List
+    	    		List<String> businessProcessNames = (List<String>)_mapActions.get(actStr.toUpperCase());
+    	    		businessProcessNames.add(businessProcessName);
+    	    		_mapActions.put(actStr.toUpperCase(), businessProcessNames);
+    	    	} else {
+    	    		//Action not present, create a new List for this Action and put the businessProcess
+        	    	List<String> businessProcessNames = new ArrayList<String>();
+        	    	businessProcessNames.add(businessProcessName);
+    	    		_mapActions.put(actStr.toUpperCase(), businessProcessNames);
+    	    	}
 	    }
 	}
 	_mapPages = new HashMap();
@@ -124,15 +135,15 @@ public class AuthorizationsBusinessMapper {
      * 
      * @return the string
      */
-    public String mapActionToBusinessProcess(String actionName) {
+    public List<String> mapActionToBusinessProcess(String actionName) {
 	//logger.debug("IN. actionName="+actionName);
 	String actStr = "ACTION[" + actionName + "]";
-	String businessProcessName = (String) _mapActions.get(actStr.toUpperCase());
-	if (businessProcessName == null) {
+	List<String> businessProcessNames = (List<String>) _mapActions.get(actStr.toUpperCase());
+	if (businessProcessNames == null) {
 	    logger.warn("mapping per action [" + actionName + "] non trovato");
 	}
 	//logger.debug("OUT,businessProcessName="+businessProcessName);
-	return businessProcessName;
+	return businessProcessNames;
     }
     
     /**
