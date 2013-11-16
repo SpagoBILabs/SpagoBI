@@ -8,6 +8,21 @@
  
 Ext.ns("Sbi.settings");
 
+Sbi.settings.tools = {
+	dataset: {
+		filedatasetpanel: {
+			supportedEncodings: [
+			   ['windows-1252', 'windows-1252']
+			   , ['UTF-8', 'UTF-8']
+			   , ['UTF-16','UTF-16']
+			   , ['US-ASCII','US-ASCII']
+			   , ['ISO-8859-1','ISO-8859-1']
+       	    ]
+			, defaultEncoding: "UTF-8"
+		}
+	}
+};
+
 Sbi.settings.mydata = {
 	// the toolbar that appears when a new document is created over a dataset
 	toolbar: {
@@ -20,7 +35,7 @@ Sbi.settings.mydata = {
 	 * put true for showing only owned datasets
 	 */
 	, showOnlyOwner: true
-}
+};
 
 /**
  * Execution  panel settings

@@ -11,24 +11,6 @@
   
 
 /**
- * Object name
- * 
- * 
- * 
- * Public Properties
- * 
- * [list]
- * 
- * 
- * Public Methods
- * 
- * [list]
- * 
- * 
- * Public Events
- * 
- * [list]
- * 
  * Authors
  * 		Marco Cortella  (marco.cortella@eng.it)
  * 		
@@ -50,13 +32,25 @@ Ext.ns("Sbi.tools.dataset");
 
 Sbi.tools.dataset.FileDatasetPanel = function(config) {
 	
-	
 	var defaultSettings =  {
-	        frame:false,
-	        defaultType: 'textfield'      
-		};
+		frame: false
+	    , defaultType: 'textfield'
+	    , supportedEncodings: [
+	        ['windows-1252', 'windows-1252']
+	        , ['UTF-8', 'UTF-8']
+	        //, ['UTF-16','UTF-16']
+	        //, ['US-ASCII','US-ASCII']
+	        //, ['ISO-8859-1','ISO-8859-1']
+	    ]
+	    , defaultEncoding: 'UTF-8'	
+	};
 
-
+	if (Sbi.settings && Sbi.settings.tools && Sbi.settings.tools.dataset && Sbi.settings.tools.dataset.filedatasetpanel) {
+		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.tools.dataset.filedatasetpanel);
+	}
+	
+	Sbi.trace("[FileDatasetPanel.constructor]: default encoding is equal to [" + this.defaultEncoding + "]");
+	
 	var c = Ext.apply(defaultSettings, config || {});
 	Ext.apply(this, c);
 
@@ -68,18 +62,14 @@ Sbi.tools.dataset.FileDatasetPanel = function(config) {
 		panelItems = this.initUploadFormExt3(panelItems,config);
 	}
 	
-
 	c = {
-			items: [
-			        panelItems        
-			       ]
-		};
+		items: [
+		   panelItems        
+		]
+	};
 
 
 	Sbi.tools.dataset.FileDatasetPanel.superclass.constructor.call(this, c);	 	
-	
-	
-	
 };
 
 Ext.extend(Sbi.tools.dataset.FileDatasetPanel, Ext.Panel, {
@@ -247,6 +237,8 @@ Ext.extend(Sbi.tools.dataset.FileDatasetPanel, Ext.Panel, {
 			}
 		});	
 		
+		
+		
 		this.csvEncodingCombo = new Ext.form.ComboBox({
 			name : 'csvEncoding',
 			store: new Ext.data.ArrayStore({
@@ -254,7 +246,7 @@ Ext.extend(Sbi.tools.dataset.FileDatasetPanel, Ext.Panel, {
 		            'csvEncodingName',
 		            'csvEncodingValue'
 		        ],
-		        data: [['windows-1252', 'windows-1252'], ['UTF-8', 'UTF-8'], ['UTF-16','UTF-16'], ['US-ASCII','US-ASCII'], ['ISO-8859-1','ISO-8859-1']]
+		        data: this.supportedEncodings
 		    }),
 		    width: 200,
 			fieldLabel : 'Encoding',
@@ -262,7 +254,7 @@ Ext.extend(Sbi.tools.dataset.FileDatasetPanel, Ext.Panel, {
 			valueField : 'csvEncodingValue', 
 			typeAhead : true,
 			forceSelection : true,
-			value : 'windows-1252', //default value selected on creation
+			value : this.defaultEncoding, //default value selected on creation
 			mode : 'local',
 			triggerAction : 'all',
 			selectOnFocus : true, 
@@ -613,7 +605,7 @@ Ext.extend(Sbi.tools.dataset.FileDatasetPanel, Ext.Panel, {
 		if (formState.csvQuote != null){
 			this.csvQuoteCombo.setValue(formState.csvQuote);
 		}
-		if (formState.csvEncoding != null){
+		if (formState.csvEncoding != null && formState.csvEncoding.trim() != ''){
 			this.csvEncodingCombo.setValue(formState.csvEncoding);
 		}
 		

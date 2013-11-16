@@ -9,6 +9,22 @@
  */
 Ext.ns("Sbi.settings.geobi");
 
+
+Sbi.settings.geobi.tools = {
+	dataset: {
+		filedatasetpanel: {
+			supportedEncodings: [
+			   ['windows-1252', 'windows-1252']
+			   , ['UTF-8', 'UTF-8']
+			   , ['UTF-16','UTF-16']
+			   , ['US-ASCII','US-ASCII']
+			   , ['ISO-8859-1','ISO-8859-1']
+       	    ]
+			, defaultEncoding: "windows-1252"
+		}
+	}
+};
+
 /**
  * Execution panel settings
  */
