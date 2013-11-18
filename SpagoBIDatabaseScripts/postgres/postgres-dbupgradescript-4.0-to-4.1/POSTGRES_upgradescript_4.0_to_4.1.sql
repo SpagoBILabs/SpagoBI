@@ -85,18 +85,18 @@ CREATE TABLE SBI_GEO_LAYERS (
   SBI_VERSION_DE varchar(10) DEFAULT NULL,
   META_VERSION varchar(100) DEFAULT NULL,
   ORGANIZATION varchar(20) DEFAULT NULL,
-  CONSTRAINT SBI_GEO_LAYERS UNIQUE (NAME, TYPE, ORGANIZATION),
+  CONSTRAINT XAK1SBI_GEO_LAYERS UNIQUE (NAME, TYPE, ORGANIZATION),
   PRIMARY KEY (LAYER_ID)
 ) ;
 
 
 
-INSERT into SBI_DOMAINS (VALUE_ID, VALUE_CD,VALUE_NM,DOMAIN_CD,DOMAIN_NM,VALUE_DS, USER_IN) 
-values ((SELECT next_val FROM hibernate_sequences WHERE sequence_name = 'SBI_DOMAINS'),'FILE','FILE','LAYER_TYPE','Layer Type','Layer Type','');
+INSERT into SBI_DOMAINS (VALUE_ID, VALUE_CD,VALUE_NM,DOMAIN_CD,DOMAIN_NM,VALUE_DS, USER_IN, TIME_IN) 
+values ((SELECT next_val FROM hibernate_sequences WHERE sequence_name = 'SBI_DOMAINS'),'FILE','FILE','LAYER_TYPE','Layer Type','Layer Type','server',current_timestamp);
 UPDATE hibernate_sequences SET next_val = (SELECT MAX(VALUE_ID) + 1 FROM SBI_DOMAINS) WHERE sequence_name = 'SBI_DOMAINS';  
 
-INSERT into SBI_DOMAINS (VALUE_ID, VALUE_CD,VALUE_NM,DOMAIN_CD,DOMAIN_NM,VALUE_DS, USER_IN) 
-values ((SELECT next_val FROM hibernate_sequences WHERE sequence_name = 'SBI_DOMAINS'),'WFS','WFS','LAYER_TYPE','Layer Type','Layer Type','');
+INSERT into SBI_DOMAINS (VALUE_ID, VALUE_CD,VALUE_NM,DOMAIN_CD,DOMAIN_NM,VALUE_DS, USER_IN, TIME_IN) 
+values ((SELECT next_val FROM hibernate_sequences WHERE sequence_name = 'SBI_DOMAINS'),'WFS','WFS','LAYER_TYPE','Layer Type','Layer Type','server',current_timestamp);
 UPDATE hibernate_sequences SET next_val = (SELECT MAX(VALUE_ID) + 1 FROM SBI_DOMAINS) WHERE sequence_name = 'SBI_DOMAINS';  
 
 INSERT INTO SBI_USER_FUNC (USER_FUNCT_ID, NAME, DESCRIPTION, USER_IN, TIME_IN)
@@ -110,7 +110,7 @@ INSERT INTO SBI_ROLE_TYPE_USER_FUNC (ROLE_TYPE_ID, USER_FUNCT_ID)
 commit;
 
 
-ALTER TABLE SBI_COMMUNITY ADD UNIQUE INDEX NAME_UNIQUE (ORGANIZATION, NAME ASC) ; 
+ALTER TABLE SBI_COMMUNITY ADD CONSTRAINT NAME_ORG_CONSTRAINT UNIQUE(ORGANIZATION, NAME) ; 
 
 ALTER TABLE SBI_OBJECTS ADD COLUMN IS_PUBLIC BOOLEAN DEFAULT FALSE;
 UPDATE SBI_OBJECTS SET IS_PUBLIC = TRUE;
@@ -138,7 +138,7 @@ ALTER TABLE SBI_COMMUNITY  ALTER COLUMN LAST_CHANGE_DATE SET DEFAULT CURRENT_TIM
 ALTER TABLE SBI_COMMUNITY_USERS  ALTER COLUMN CREATION_DATE SET DEFAULT CURRENT_TIMESTAMP;
 ALTER TABLE SBI_COMMUNITY_USERS  ALTER COLUMN LAST_CHANGE_DATE SET DEFAULT CURRENT_TIMESTAMP;
 
-ALTER TABLE SBI_ENGINES DROP FOREIGN KEY FK_SBI_ENGINE_3;
+ALTER TABLE SBI_ENGINES DROP CONSTRAINT FK_SBI_ENGINE_3;
 ALTER TABLE SBI_ENGINES DROP COLUMN DEFAULT_DS_ID;
 commit;
 
@@ -151,22 +151,6 @@ ALTER TABLE SBI_DATA_SET DROP COLUMN DATA_SOURCE_PERSIST_ID;
 commit;
 
 
-ALTER TABLE SBI_DATA_SET DROP CONSTRAINT SBI_DATA_SET_PKEY;
-ALTER TABLE SBI_DATA_SET ADD CONSTRAINT SBI_DATA_SET_PKEY PRIMARY KEY(DS_ID, VERSION_NUM, ORGANIZATION);
-
-ALTER TABLE SBI_ENGINES DROP CONSTRAINT  FK_SBI_ENGINE_3;
-ALTER TABLE SBI_ENGINES DROP COLUMN DEFAULT_DS_ID;
-commit;
-
-ALTER TABLE SBI_DATA_SOURCE ADD COLUMN READ_ONLY BIT DEFAULT 0;
-ALTER TABLE SBI_DATA_SOURCE ADD COLUMN WRITE_DEFAULT BIT DEFAULT 0;
-commit;
-
-ALTER TABLE SBI_DATA_SET DROP COLUMN DATA_SOURCE_PERSIST_ID;
-commit;
-ALTER TABLE SBI_DATA_SET DROP COLUMN DATA_SOURCE_PERSIST_ID;
-commit;
-
 UPDATE SBI_CONFIG SET VALUE_CHECK = '' WHERE VALUE_CHECK = 'spagobi@eng.it';
 commit;
 
@@ -177,7 +161,7 @@ ALTER TABLE SBI_META_MODELS ADD CONSTRAINT FK_META_MODELS_CATEGORY FOREIGN KEY (
 
 ALTER TABLE SBI_RESOURCES ALTER COLUMN RESOURCE_NAME TYPE VARCHAR(200);
 
-DELETE FROM SBI_ROLE_TYPE_USER_FUNC WHERE ROLE_TYPE_ID= (SELECT value_id FROM SBI_DOMAINS where domain_cd = 'ROLE_TYPE' AND VALUE_CD ='USER')
+DELETE FROM SBI_ROLE_TYPE_USER_FUNC WHERE ROLE_TYPE_ID IN (SELECT value_id FROM SBI_DOMAINS where domain_cd = 'ROLE_TYPE')
 AND USER_FUNCT_ID =(SELECT user_funct_id FROM SBI_USER_FUNC where NAME = 'FinalUsersManagement');
 
 ALTER TABLE SBI_OBJECTS ALTER COLUMN LABEL TYPE VARCHAR(100);
@@ -243,23 +227,23 @@ UPDATE SBI_DATA_SET
                  
 commit;
 
-INSERT INTO SBI_ATTRIBUTE (attribute_name,description,attribute_id,user_in,time_in,sbi_version_in,organization) values ('gender','gender',(SELECT next_val FROM hibernate_sequences WHERE sequence_name = 'sbi_attribute'),'server_init',sysdate(),'4.0','SPAGOBI');
+INSERT INTO SBI_ATTRIBUTE (attribute_name,description,attribute_id,user_in,time_in,sbi_version_in,organization) values ('gender','gender',(SELECT next_val FROM hibernate_sequences WHERE sequence_name = 'SBI_ATTRIBUTE'),'server_init',current_timestamp,'4.0','SPAGOBI');
 update hibernate_sequences set next_val = next_val+1 where sequence_name = 'SBI_ATTRIBUTE';
 commit;
 
-INSERT INTO SBI_ATTRIBUTE (attribute_name,description,attribute_id,user_in,time_in,sbi_version_in,organization) values ('location','location',(SELECT next_val FROM hibernate_sequences WHERE sequence_name = 'sbi_attribute'),'server_init',sysdate(),'4.0','SPAGOBI');
+INSERT INTO SBI_ATTRIBUTE (attribute_name,description,attribute_id,user_in,time_in,sbi_version_in,organization) values ('location','location',(SELECT next_val FROM hibernate_sequences WHERE sequence_name = 'SBI_ATTRIBUTE'),'server_init',current_timestamp,'4.0','SPAGOBI');
 update hibernate_sequences set next_val = next_val+1 where sequence_name = 'SBI_ATTRIBUTE';
 commit;
 
-INSERT INTO SBI_ATTRIBUTE (attribute_name,description,attribute_id,user_in,time_in,sbi_version_in,organization) values ('community','community',(SELECT next_val FROM hibernate_sequences WHERE sequence_name = 'sbi_attribute'),'server_init',sysdate(),'4.0','SPAGOBI');
+INSERT INTO SBI_ATTRIBUTE (attribute_name,description,attribute_id,user_in,time_in,sbi_version_in,organization) values ('community','community',(SELECT next_val FROM hibernate_sequences WHERE sequence_name = 'SBI_ATTRIBUTE'),'server_init',current_timestamp,'4.0','SPAGOBI');
 update hibernate_sequences set next_val = next_val+1 where sequence_name = 'SBI_ATTRIBUTE';
 commit;
 
-INSERT INTO SBI_ATTRIBUTE (attribute_name,description,attribute_id,user_in,time_in,sbi_version_in,organization) values ('short_bio','short_bio',(SELECT next_val FROM hibernate_sequences WHERE sequence_name = 'sbi_attribute'),'server_init',sysdate(),'4.0','SPAGOBI');
+INSERT INTO SBI_ATTRIBUTE (attribute_name,description,attribute_id,user_in,time_in,sbi_version_in,organization) values ('short_bio','short_bio',(SELECT next_val FROM hibernate_sequences WHERE sequence_name = 'SBI_ATTRIBUTE'),'server_init',current_timestamp,'4.0','SPAGOBI');
 update hibernate_sequences set next_val = next_val+1 where sequence_name = 'SBI_ATTRIBUTE';
 commit;
 
-INSERT INTO SBI_ATTRIBUTE (attribute_name,description,attribute_id,user_in,time_in,sbi_version_in,organization) values ('language','language',(SELECT next_val FROM hibernate_sequences WHERE sequence_name = 'sbi_attribute'),'server_init',sysdate(),'4.0','SPAGOBI');
+INSERT INTO SBI_ATTRIBUTE (attribute_name,description,attribute_id,user_in,time_in,sbi_version_in,organization) values ('language','language',(SELECT next_val FROM hibernate_sequences WHERE sequence_name = 'SBI_ATTRIBUTE'),'server_init',current_timestamp,'4.0','SPAGOBI');
 update hibernate_sequences set next_val = next_val+1 where sequence_name = 'SBI_ATTRIBUTE';
 commit;
 
