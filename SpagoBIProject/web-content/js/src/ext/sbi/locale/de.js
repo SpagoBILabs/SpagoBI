@@ -1,6 +1,6 @@
 /** SpagoBI, the Open Source Business Intelligence suite
 
- * Copyright (C) 2012 Engineering Ingegneria InforÃŸÃŸÃŸÃŸtica S.p.A. - SpagoBI Competency Center
+ * Copyright (C) 2012 Engineering Ingegneria Inforßßßßtica S.p.A. - SpagoBI Competency Center
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. **/
  
@@ -30,22 +30,22 @@ Sbi.locale.ln['sbidomains.nm.model_admin'] = 'Model Administrator';
 //START Generic messages
 //Buttons
 Sbi.locale.ln['sbi.generic.clone'] = 'klonen';
-Sbi.locale.ln['sbi.generic.add'] = 'hinzufÃ¼gen';
-Sbi.locale.ln['sbi.generic.delete'] = 'lÃ¶schen';
+Sbi.locale.ln['sbi.generic.add'] = 'hinzufügen';
+Sbi.locale.ln['sbi.generic.delete'] = 'löschen';
 Sbi.locale.ln['sbi.generic.update'] = 'speichern';
 Sbi.locale.ln['sbi.generic.details'] = 'Detail';
 Sbi.locale.ln['sbi.generic.advanced'] = 'Fortgeschritten';
-Sbi.locale.ln['sbi.generic.select'] = 'wÃ¤hlen';
+Sbi.locale.ln['sbi.generic.select'] = 'wählen';
 Sbi.locale.ln['sbi.generic.confirmRestore'] = 'wiederherstellen';
 Sbi.locale.ln['sbi.generic.run'] = 'starten';
 Sbi.locale.ln['sbi.generic.upload'] = 'hochladen';
 Sbi.locale.ln['sbi.generic.download'] = 'herunterladen';
 Sbi.locale.ln['sbi.generic.update2'] = 'Update';
-Sbi.locale.ln['sbi.generic.noItemsSelected'] = 'keine Elemente ausgewÃ¤hlt';
-Sbi.locale.ln['sbi.generic.next'] = 'NÃ¤chste >';
-Sbi.locale.ln['sbi.generic.back'] = '< ZurÃ¼ck';
+Sbi.locale.ln['sbi.generic.noItemsSelected'] = 'keine Elemente ausgewählt';
+Sbi.locale.ln['sbi.generic.next'] = 'Nächste >';
+Sbi.locale.ln['sbi.generic.back'] = '< Zurück';
 Sbi.locale.ln['sbi.kpi.trend.title'] = 'Trend zur Ressource ';
-Sbi.locale.ln['sbi.kpi.trend.nodata'] = 'Keine Daten gefunden! WÃ¤hlen Sie den Knoten, um den spezifischen Daten Trend zu sehen.';
+Sbi.locale.ln['sbi.kpi.trend.nodata'] = 'Keine Daten gefunden! Wählen Sie den Knoten, um den spezifischen Daten Trend zu sehen.';
 Sbi.locale.ln['sbi.generic.filter'] = 'filtern';
 Sbi.locale.ln['sbi.generic.create'] = 'neu';
 Sbi.locale.ln['sbi.generic.load'] = 'laden';
@@ -59,7 +59,7 @@ Sbi.locale.ln['sbi.generic.showmetadata'] = 'Zeige Metadaten';
 //Fields
 Sbi.locale.ln['sbi.generic.name'] = 'Name';
 Sbi.locale.ln['sbi.generic.descr'] = 'Beschreibung';
-Sbi.locale.ln['sbi.generic.missing.description'] = 'Beschreibung nicht verfÃ¼gbar';
+Sbi.locale.ln['sbi.generic.missing.description'] = 'Beschreibung nicht verfügbar';
 Sbi.locale.ln['sbi.generic.code'] = 'Code';
 Sbi.locale.ln['sbi.generic.type'] = 'Typ';
 Sbi.locale.ln['sbi.generic.label'] = 'Beschriftung';
@@ -76,7 +76,7 @@ Sbi.locale.ln['sbi.generic.nodedescr'] = 'Knotenbeschreibung';
 //search filters
 Sbi.locale.ln['sbi.generic.search.title'] = 'suchen';
 Sbi.locale.ln['sbi.generic.search.msg'] = 'Suchbegriff eingeben';
-Sbi.locale.ln['sbi.generic.search.clear'] = 'lÃ¶schen';
+Sbi.locale.ln['sbi.generic.search.clear'] = 'löschen';
 
 //Messages
 Sbi.locale.ln['sbi.generic.validationError'] = 'Validierungsfehler';
@@ -92,11 +92,11 @@ Sbi.locale.ln['sbi.generic.result'] = 'Updates gespeichert';
 Sbi.locale.ln['sbi.generic.serviceError'] = 'Servicefehler';
 Sbi.locale.ln['sbi.generic.serviceResponseEmpty'] = 'Server Antwort ist leer';
 Sbi.locale.ln['sbi.generic.savingItemError'] = 'Fehler beim Speichern der Elemente';
-Sbi.locale.ln['sbi.generic.deletingItemError'] = 'Fehler beim LÃ¶schen der Elemente. Kontrollieren Sie mÃ¶gliche zugeordnete Elemente, und versuchen Sie es erneut!';
+Sbi.locale.ln['sbi.generic.deletingItemError'] = 'Fehler beim Löschen der Elemente. Kontrollieren Sie mögliche zugeordnete Elemente, und versuchen Sie es erneut!';
 Sbi.locale.ln['sbi.generic.warning'] = 'Warnung';
-Sbi.locale.ln['sbi.generic.pleaseConfirm'] = 'Bitte bestÃ¤tigen';
-Sbi.locale.ln['sbi.generic.confirmDelete'] = 'Wollen sie das Element lÃ¶schen?';
-Sbi.locale.ln['sbi.generic.confirmDeleteDataset'] = 'LÃ¶schen des Datensatzes entfernt auch die Dokumente die ihn benutzen. LÃ¶schen bestÃ¤tigen?';
+Sbi.locale.ln['sbi.generic.pleaseConfirm'] = 'Bitte bestätigen';
+Sbi.locale.ln['sbi.generic.confirmDelete'] = 'Wollen sie das Element löschen?';
+Sbi.locale.ln['sbi.generic.confirmDeleteDataset'] = 'Löschen des Datensatzes entfernt auch die Dokumente die ihn benutzen. Löschen bestätigen?';
 Sbi.locale.ln['sbi.generic.confirmChangeNode'] = 'There are unsaved changes. Confirm root node change?';
 Sbi.locale.ln['sbi.generic.deleteKpi'] = 'Delete KPI';
 Sbi.locale.ln['sbi.generic.attributes'] = 'Attribute';
@@ -120,11 +120,11 @@ Sbi.locale.ln['sbi.models.panelTitle'] = 'Models Management'; // Models-Manageme
 Sbi.locale.ln['sbi.models.listTitle'] = 'Models List'; // Models Liste
 Sbi.locale.ln['sbi.models.treeTitle'] = 'Models';// Models 
 Sbi.locale.ln['sbi.models.remodeNode'] = 'Remove Model node';// Modell Knoten entfernen
-Sbi.locale.ln['sbi.models.addNode'] = 'Add Model node';// HinzufÃ¼gen Modell Knoten
+Sbi.locale.ln['sbi.models.addNode'] = 'Add Model node';// Hinzufügen Modell Knoten
 Sbi.locale.ln['sbi.models.DDKpiMsg'] = 'Drag and drop a kpi from Kpi List here';// Ziehen Sie einen KPI von KPI-Liste hier
-Sbi.locale.ln['sbi.models.DDNoParentMsg'] = 'Select parent node';// WÃ¤hlen Ã¼bergeordneten Knoten
-Sbi.locale.ln['sbi.models.confirmSaveParent'] = 'To insert node here parent node must be previously saved. Save now?';// Um Knoten hier einfÃ¼gen Ã¼bergeordneten Knoten muss zuvor gespeichert werden. Sparen Sie jetzt?
-Sbi.locale.ln['sbi.models.selectNode'] = 'Select node to delete';// WÃ¤hlen Sie Knoten zu lÃ¶schen
+Sbi.locale.ln['sbi.models.DDNoParentMsg'] = 'Select parent node';// Wählen übergeordneten Knoten
+Sbi.locale.ln['sbi.models.confirmSaveParent'] = 'To insert node here parent node must be previously saved. Save now?';// Um Knoten hier einfügen übergeordneten Knoten muss zuvor gespeichert werden. Sparen Sie jetzt?
+Sbi.locale.ln['sbi.models.selectNode'] = 'Select node to delete';// Wählen Sie Knoten zu löschen
 
 Sbi.locale.ln['sbi.modelinstances.panelTitle'] = 'Model Instances Management';// Modell-Management-Instanzen
 Sbi.locale.ln['sbi.modelinstances.listTitle'] = 'Model Instances List';// Modell Instanzen Liste
@@ -134,21 +134,21 @@ Sbi.locale.ln['sbi.modelinstances.importCheck'] = 'Import sub-tree also';// Impo
 Sbi.locale.ln['sbi.modelinstances.saveFirstMsg'] = 'Save Model instance first';// Modell speichern Instanz erste
 Sbi.locale.ln['sbi.modelinstances.kpiInstance'] = 'Kpi Instance';// Kpi Instanz
 Sbi.locale.ln['sbi.modelinstances.srcNode'] = 'Source Node';// Quelle Node
-Sbi.locale.ln['sbi.modelinstances.periodicitiesList'] = 'Periodicities List';// PeriodizitÃ¤ten Liste
+Sbi.locale.ln['sbi.modelinstances.periodicitiesList'] = 'Periodicities List';// Periodizitäten Liste
 
-Sbi.locale.ln['sbi.modelinstances.periodicity'] = 'Periodicity';// PeriodizitÃ¤t
-Sbi.locale.ln['sbi.modelinstances.periodicityAdd'] = 'Add Periodicity';// HinzufÃ¼gen PeriodizitÃ¤t
+Sbi.locale.ln['sbi.modelinstances.periodicity'] = 'Periodicity';// Periodizität
+Sbi.locale.ln['sbi.modelinstances.periodicityAdd'] = 'Add Periodicity';// Hinzufügen Periodizität
 Sbi.locale.ln['sbi.modelinstances.chartType'] = 'Chart Type';// Diagrammtyp
 Sbi.locale.ln['sbi.modelinstances.saveHistory'] = 'Save History';// Save History
 Sbi.locale.ln['sbi.modelinstances.restoreDefault'] = 'Restore Default';// Standardeinstellungen wiederherstellen
 Sbi.locale.ln['sbi.modelinstances.DDKpiMsg'] = 'Drag and drop a kpi from Kpi List here';// Ziehen Sie einen KPI von KPI-Liste hier
 Sbi.locale.ln['sbi.modelinstances.DDHierarchy'] = 'Nodes hierarchy must be respected!';// Nodes Hierarchie muss respektiert werden!
 Sbi.locale.ln['sbi.modelinstances.remodeNode'] = 'Remove Model Instance node';// Modell entfernen Instanz Knoten
-Sbi.locale.ln['sbi.modelinstances.selectNode'] = 'Select node to delete';// WÃ¤hlen Sie Knoten zu lÃ¶schen
+Sbi.locale.ln['sbi.modelinstances.selectNode'] = 'Select node to delete';// Wählen Sie Knoten zu löschen
 Sbi.locale.ln['sbi.modelinstances.target'] = 'Ziel'; //'Target'
 Sbi.locale.ln['sbi.modelinstances.code'] = 'Model Code';// Modell Code
 Sbi.locale.ln['sbi.modelinstances.copyalltree'] = 'Copy all model tree';// Kopieren Sie alle Modell Baum
-Sbi.locale.ln['sbi.modelinstances.confirm.periodicity.deletion'] = 'A periodicity references this kpi. Confirming kpi deletion will delete this reference too.';// Eine PeriodizitÃ¤t Referenzen dieses KPI. BestÃ¤tigen kpi LÃ¶schung dieses Referenz zu lÃ¶schen.
+Sbi.locale.ln['sbi.modelinstances.confirm.periodicity.deletion'] = 'A periodicity references this kpi. Confirming kpi deletion will delete this reference too.';// Eine Periodizität Referenzen dieses KPI. Bestätigen kpi Löschung dieses Referenz zu löschen.
 
 //END List Detail messages
 
@@ -240,7 +240,7 @@ Sbi.locale.ln['sbi.browser.searchpanel.title']  = 'Suchen';
 Sbi.locale.ln['sbi.browser.searchpanel.opt.scope']  = 'Suchen';
 
 
-Sbi.locale.ln['sbi.browser.folderdetailpanel.emptytext']  = 'Der gewÃ¤hlte Ordner ist leer';
+Sbi.locale.ln['sbi.browser.folderdetailpanel.emptytext']  = 'Der gewählte Ordner ist leer';
 Sbi.locale.ln['sbi.browser.folderdetailpanel.listviewTT']  = 'List View';
 Sbi.locale.ln['sbi.browser.folderdetailpanel.groupviewTT']  = 'Group View';
 Sbi.locale.ln['sbi.browser.folderdetailpanel.waitmsg']  = 'Bitte warten ...';
@@ -255,7 +255,7 @@ Sbi.locale.ln['sbi.browser.searchpanel.attributes.categories']  = 'Kategorien'; 
 Sbi.locale.ln['sbi.browser.searchpanel.attributes'] = 'Suche in'; //'Search in';
 Sbi.locale.ln['sbi.browser.searchpanel.query'] = 'Abfrage'; //'Query';
 Sbi.locale.ln['sbi.browser.searchpanel.advanced'] = 'Erweiterte Optionen'; //'Advanced options';
-Sbi.locale.ln['sbi.browser.searchpanel.similar'] = 'Suche nach Ã¤hnlichen WÃ¶rtern'; //'search similar words';
+Sbi.locale.ln['sbi.browser.searchpanel.similar'] = 'Suche nach ähnlichen Wörtern'; //'search similar words';
 
 Sbi.locale.ln['sbi.browser.misc.x']  = 'von'; //'by';
 Sbi.locale.ln['sbi.browser.misc.ungroup']  = 'Gruppierung aufheben'; //'ungroup';
@@ -270,80 +270,80 @@ Sbi.locale.ln['sbi.browser.document.engine']  = 'Motor'; //'engine';
 Sbi.locale.ln['sbi.browser.document.creationUser']  = 'Benutzer'; //'user';
 Sbi.locale.ln['sbi.browser.document.creationDate']  = 'Erstellungsdatum'; //'creation date';
 Sbi.locale.ln['sbi.browser.document.typeCode']  = 'Typus'; //'type';
-Sbi.locale.ln['sbi.browser.document.encrypt']  = 'VerschlÃ¼sselungsflag'; //'encryption flag';
-Sbi.locale.ln['sbi.browser.document.profiledVisibility']  = 'SichtverhÃ¤ltnisse'; //'visibility conditions';
+Sbi.locale.ln['sbi.browser.document.encrypt']  = 'Verschlüsselungsflag'; //'encryption flag';
+Sbi.locale.ln['sbi.browser.document.profiledVisibility']  = 'Sichtverhältnisse'; //'visibility conditions';
 Sbi.locale.ln['sbi.browser.document.datasource']  = 'Datenquelle'; //'datasource';
 Sbi.locale.ln['sbi.browser.document.dataset']  = 'Datensatz'; //'dataset';
 Sbi.locale.ln['sbi.browser.document.uuid']  = 'uuid'; //'uuid';
 Sbi.locale.ln['sbi.browser.document.relname']  = 'relname'; //'relname';
 Sbi.locale.ln['sbi.browser.document.stateCode']  = 'Zustandscode'; //'state code';zustand
 Sbi.locale.ln['sbi.browser.document.stateId']  = 'Zustand id'; //'state id';
-Sbi.locale.ln['sbi.browser.document.functionalities']  = 'FunktionalitÃ¤ten'; //'functionalities';
+Sbi.locale.ln['sbi.browser.document.functionalities']  = 'Funktionalitäten'; //'functionalities';
 Sbi.locale.ln['sbi.browser.document.language']  = 'Sprache'; //'language';
 Sbi.locale.ln['sbi.browser.document.objectve']  = 'Ziel'; //'objectve';
 Sbi.locale.ln['sbi.browser.document.keywords']  = 'Stichworte'; //'keywords';
 Sbi.locale.ln['sbi.browser.document.refreshSeconds']  = 'Auffrischintervall'; //'refresh interval';
 Sbi.locale.ln['sbi.browser.document.favourites']  = 'Favoriten'; //'Favorites';
-Sbi.locale.ln['sbi.browser.document.searchDatasets']  = 'Suche nach DatensÃ¤tzen'; //'Search for datasets';
+Sbi.locale.ln['sbi.browser.document.searchDatasets']  = 'Suche nach Datensätzen'; //'Search for datasets';
 Sbi.locale.ln['sbi.browser.document.searchDocuments']  = 'Suche nach Dokumenten'; //'Search for documents';
 Sbi.locale.ln['sbi.browser.document.searchKeyword']  = 'Suche nach Stichwort ...'; //'Search by keyword...';
-Sbi.locale.ln['sbi.browser.document.delete.success']  = 'Dokument(-e) gelÃ¶scht erfolgreich'; //'Document/s deleted succesfully';
+Sbi.locale.ln['sbi.browser.document.delete.success']  = 'Dokument(-e) gelöscht erfolgreich'; //'Document/s deleted succesfully';
 Sbi.locale.ln['sbi.browser.document.clone.success']  = 'Dokument erfolgreich geklont'; //'Document cloned succesfully';
 
-Sbi.locale.ln['sbi.document.saveWarning']  = 'Vor dem Speichern des Dokuments, Name und Etikett angeben. WÃ¤hlen Sie mindestens einen Ziel-Ordner'; //'Before saving the document fill in Name and Label and select at least one folder where to place it';
+Sbi.locale.ln['sbi.document.saveWarning']  = 'Vor dem Speichern des Dokuments, Name und Etikett angeben. Wählen Sie mindestens einen Ziel-Ordner'; //'Before saving the document fill in Name and Label and select at least one folder where to place it';
 
-Sbi.locale.ln['sbi.execution.saveDocument']  = 'FÃ¼llen Sie das Formular aus und legen Sie das Dokument in mindestens einen Ordner dann speichern'; //'Fill in the Form and place your document in at least one folder then Save';
-Sbi.locale.ln['sbi.browser.defaultRole.title']  = 'WÃ¤hlen Sie einen Standard-Rolle'; //'Select a default role';
+Sbi.locale.ln['sbi.execution.saveDocument']  = 'Füllen Sie das Formular aus und legen Sie das Dokument in mindestens einen Ordner dann speichern'; //'Fill in the Form and place your document in at least one folder then Save';
+Sbi.locale.ln['sbi.browser.defaultRole.title']  = 'Wählen Sie einen Standard-Rolle'; //'Select a default role';
 Sbi.locale.ln['sbi.browser.defaultRole.role']  = 'Rolle'; //'Role: ';
 Sbi.locale.ln['sbi.browser.defaultRole.noDefRole']  = 'Keine Standard-Rolle'; //'No default role';
 Sbi.locale.ln['sbi.browser.defaultRole.save']  = 'Speichern'; //'Save';
 Sbi.locale.ln['sbi.browser.defaultRole.cancel']  = 'stornieren'; //'Cancel';
 
 
-Sbi.locale.ln['sbi.execution.error']  = 'WÃ¤hrend der AusfÃ¼hrung Dokument ist ein Fehler aufgetreten'; //'An error has occured while executing document';
-Sbi.locale.ln['sbi.execution.error.nodocid']  = 'Eine Dokument-ID ist erforderlich, um ein Dokument auszufÃ¼hren'; //'Document id is required in order to execute a document';
-Sbi.locale.ln['sbi.execution.error.novalidrole']  = 'Benutzer haben keine gÃ¼ltigen Rollen fÃ¼r die AusfÃ¼hrung des ausgewÃ¤hlten Dokuments'; //'User have no valid roles for the execution of the selected document';
+Sbi.locale.ln['sbi.execution.error']  = 'Während der Ausführung Dokument ist ein Fehler aufgetreten'; //'An error has occured while executing document';
+Sbi.locale.ln['sbi.execution.error.nodocid']  = 'Eine Dokument-ID ist erforderlich, um ein Dokument auszuführen'; //'Document id is required in order to execute a document';
+Sbi.locale.ln['sbi.execution.error.novalidrole']  = 'Benutzer haben keine gültigen Rollen für die Ausführung des ausgewählten Dokuments'; //'User have no valid roles for the execution of the selected document';
 
 
 Sbi.locale.ln['sbi.execution.roleselection.title']  = 'Rollen-Auswahl'; //'Role selection';
 Sbi.locale.ln['sbi.execution.roleselection.fieldlabel']  = 'Rolle'; //'Role';
-Sbi.locale.ln['sbi.execution.roleselection.emptytext']  = 'WÃ¤hlen Sie eine Rolle ...'; //'Select a role ...';
-Sbi.locale.ln['sbi.execution.roleselection.loadingmsg']  = 'LÃ¤dt Rollen ...'; //'Loading roles ...';
-Sbi.locale.ln['sbi.execution.roleselection.toolbar.next']  = 'BestÃ¤tige Rollenauswahl'; //'Confirm role selection';
+Sbi.locale.ln['sbi.execution.roleselection.emptytext']  = 'Wählen Sie eine Rolle ...'; //'Select a role ...';
+Sbi.locale.ln['sbi.execution.roleselection.loadingmsg']  = 'Lädt Rollen ...'; //'Loading roles ...';
+Sbi.locale.ln['sbi.execution.roleselection.toolbar.next']  = 'Bestätige Rollenauswahl'; //'Confirm role selection';
 
 Sbi.locale.ln['sbi.execution.parametersselection.parameters']  = 'Parameter'; //'Parameters';
 Sbi.locale.ln['sbi.execution.parametersselection.loadingmsg']  = 'Laden von Parametern ...'; //'Loading parameters ...';
-Sbi.locale.ln['sbi.execution.parametersselection.noParametersToBeFilled']  = '[Dokument hat keine Parameter zu fÃ¼llen]'; //'[Document has no parameters to be filled]';
-Sbi.locale.ln['sbi.execution.parametersselection.toolbar.back']  = 'Ã„ndere ausgewÃ¤hlt Rolle'; //'Change selected role';
-Sbi.locale.ln['sbi.execution.parametersselection.toolbar.clear']  = 'Parameter zurÃ¼cksetzen'; //'Reset parameters form';
+Sbi.locale.ln['sbi.execution.parametersselection.noParametersToBeFilled']  = '[Dokument hat keine Parameter zu füllen]'; //'[Document has no parameters to be filled]';
+Sbi.locale.ln['sbi.execution.parametersselection.toolbar.back']  = 'Ändere ausgewählt Rolle'; //'Change selected role';
+Sbi.locale.ln['sbi.execution.parametersselection.toolbar.clear']  = 'Parameter zurücksetzen'; //'Reset parameters form';
 Sbi.locale.ln['sRitbi.execution.parametersselection.toolbar.save']  = 'Speichere Parameter Form als Viewpoint'; //'Save parameters form state as viewpoint';
-Sbi.locale.ln['sbi.execution.parametersselection.toolbar.open']  = 'Ã–ffne gespeicherte Parameter'; //'Open saved parameters window';
+Sbi.locale.ln['sbi.execution.parametersselection.toolbar.open']  = 'Öffne gespeicherte Parameter'; //'Open saved parameters window';
 
-Sbi.locale.ln['sbi.execution.parametersselection.toolbar.save.public.description']='Jeder, der dieses Dokument ausfÃ¼hren kann, sieht auch die gespeicherten Parameter'; //'Everybody that can execute this document will see also your saved parameters';
-Sbi.locale.ln['sbi.execution.parametersselection.toolbar.save.private.description']='Die gespeicherten Parameter werden nur fÃ¼r Sie sichtbar'; //'The saved parameters will be visible only to you';
-Sbi.locale.ln['sbi.execution.parametersselection.toolbar.save.scope.description']='WÃ¤hlen Sie einen Bereich...'; // Select a scope...';
+Sbi.locale.ln['sbi.execution.parametersselection.toolbar.save.public.description']='Jeder, der dieses Dokument ausführen kann, sieht auch die gespeicherten Parameter'; //'Everybody that can execute this document will see also your saved parameters';
+Sbi.locale.ln['sbi.execution.parametersselection.toolbar.save.private.description']='Die gespeicherten Parameter werden nur für Sie sichtbar'; //'The saved parameters will be visible only to you';
+Sbi.locale.ln['sbi.execution.parametersselection.toolbar.save.scope.description']='Wählen Sie einen Bereich...'; // Select a scope...';
 
 
-Sbi.locale.ln['sbi.execution.parametersselection.toolbar.next']  = 'Dokument ausfÃ¼hren'; //'Execute document';
-Sbi.locale.ln['sbi.execution.parametersselection.message.page2.fillFormAndExecute']  = 'FÃ¼llen Sie das untenstehende Formular aus und klicken Sie auf die SchaltflÃ¤che oben rechts, um das Dokument auszufÃ¼hren'; //'Fill the form below and click on the top-right button to execute the document';
-Sbi.locale.ln['sbi.execution.parametersselection.message.page2.execute']  = 'Klicken Sie auf die SchaltflÃ¤che AusfÃ¼hrung um Ergebnisse zu sehen'; //'Click on the execution button to see results';
-Sbi.locale.ln['sbi.execution.parametersselection.message.page2.qbe.powerUserMessageWithoutParameters']  = 'Klicken Sie auf die SchaltflÃ¤che AusfÃ¼hrung um Ergebnisse zu sehen'; //'Click on the execution button to see results';
-Sbi.locale.ln['sbi.execution.parametersselection.message.page2.qbe.powerUserMessageWithParameters']  = 'FÃ¼llen Sie das untenstehende Formular aus, dann auf der oberen rechten Button klicken, um das Hauptdokument ausfÃ¼hren oder ausfÃ¼hren eine gespeicherte Abfrage aus den benutzerdefinierten Ansichten'; //'Fill the form below, then click on the top-right button to execute the main document or execute a saved query from the customized views\' list';
-Sbi.locale.ln['sbi.execution.parametersselection.message.page2.qbe.readOnlyUserMessageWithoutParameters']  = 'Klicken Sie auf die SchaltflÃ¤che AusfÃ¼hrung um Ergebnisse zu sehen'; //'Click on the execution button to see results';
-Sbi.locale.ln['sbi.execution.parametersselection.message.page2.qbe.readOnlyUserMessageWithParameters']  = 'FÃ¼llen Sie das untenstehende Formular aus und klicken Sie auf die SchaltflÃ¤che AusfÃ¼hrung um Ergebnisse zu sehen'; //'Fill the form below and click on the execution button to see results';
-Sbi.locale.ln['sbi.execution.parametersselection.message.page3.fillFormAndRefresh']  = 'FÃ¼llen Sie das untenstehende Formular aus und klicken Sie auf den Refresh-Button in der Symbolleiste um das Dokument erneut auszufÃ¼hren'; //'Fill the form below and click on the refresh button on the toolbar to re-execute the document';
-Sbi.locale.ln['sbi.execution.parametersselection.message.page3.refresh']  = 'Klicken Sie auf den Refresh-Button in der Symbolleiste um das Dokument erneut auszufÃ¼hren'; //'Click on the refresh button on the toolbar to re-execute the document';
+Sbi.locale.ln['sbi.execution.parametersselection.toolbar.next']  = 'Dokument ausführen'; //'Execute document';
+Sbi.locale.ln['sbi.execution.parametersselection.message.page2.fillFormAndExecute']  = 'Füllen Sie das untenstehende Formular aus und klicken Sie auf die Schaltfläche oben rechts, um das Dokument auszuführen'; //'Fill the form below and click on the top-right button to execute the document';
+Sbi.locale.ln['sbi.execution.parametersselection.message.page2.execute']  = 'Klicken Sie auf die Schaltfläche Ausführung um Ergebnisse zu sehen'; //'Click on the execution button to see results';
+Sbi.locale.ln['sbi.execution.parametersselection.message.page2.qbe.powerUserMessageWithoutParameters']  = 'Klicken Sie auf die Schaltfläche Ausführung um Ergebnisse zu sehen'; //'Click on the execution button to see results';
+Sbi.locale.ln['sbi.execution.parametersselection.message.page2.qbe.powerUserMessageWithParameters']  = 'Füllen Sie das untenstehende Formular aus, dann auf der oberen rechten Button klicken, um das Hauptdokument ausführen oder ausführen eine gespeicherte Abfrage aus den benutzerdefinierten Ansichten'; //'Fill the form below, then click on the top-right button to execute the main document or execute a saved query from the customized views\' list';
+Sbi.locale.ln['sbi.execution.parametersselection.message.page2.qbe.readOnlyUserMessageWithoutParameters']  = 'Klicken Sie auf die Schaltfläche Ausführung um Ergebnisse zu sehen'; //'Click on the execution button to see results';
+Sbi.locale.ln['sbi.execution.parametersselection.message.page2.qbe.readOnlyUserMessageWithParameters']  = 'Füllen Sie das untenstehende Formular aus und klicken Sie auf die Schaltfläche Ausführung um Ergebnisse zu sehen'; //'Fill the form below and click on the execution button to see results';
+Sbi.locale.ln['sbi.execution.parametersselection.message.page3.fillFormAndRefresh']  = 'Füllen Sie das untenstehende Formular aus und klicken Sie auf den Refresh-Button in der Symbolleiste um das Dokument erneut auszuführen'; //'Fill the form below and click on the refresh button on the toolbar to re-execute the document';
+Sbi.locale.ln['sbi.execution.parametersselection.message.page3.refresh']  = 'Klicken Sie auf den Refresh-Button in der Symbolleiste um das Dokument erneut auszuführen'; //'Click on the refresh button on the toolbar to re-execute the document';
 
-Sbi.locale.ln['sbi.execution.parametersselection.maximizelookup.title']  = 'FÃ¼gen Sie die Werte ein oder kopieren Sie sie aus einem XLS Dokument'; //'Insert the values or copy from a xls document';
+Sbi.locale.ln['sbi.execution.parametersselection.maximizelookup.title']  = 'Fügen Sie die Werte ein oder kopieren Sie sie aus einem XLS Dokument'; //'Insert the values or copy from a xls document';
 Sbi.locale.ln['sbi.execution.parametersselection.maximizelookup.ok']  = 'Ok'; //'Ok';
-Sbi.locale.ln['sbi.execution.parametersselection.maximizelookup.clear']  = 'lÃ¶schen'; //'Clear';
+Sbi.locale.ln['sbi.execution.parametersselection.maximizelookup.clear']  = 'löschen'; //'Clear';
 Sbi.locale.ln['sbi.execution.parametersselection.maximizelookup.cancel']  = 'stornieren'; //'Cancel';
 
 // File menu
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.print'] = 'drucken'; //'Print';
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.export'] = 'Exportieren'; //'Export';
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.send'] = 'Senden Sie per E-Mail'; //'Send by e-mail';
-Sbi.locale.ln['sbi.execution.executionpage.toolbar.saveintopersonalfolder'] = 'In persÃ¶nliche Ordner kopieren'; //'Copy to personal folder';
+Sbi.locale.ln['sbi.execution.executionpage.toolbar.saveintopersonalfolder'] = 'In persönliche Ordner kopieren'; //'Copy to personal folder';
 
 
 // Info menu
@@ -352,60 +352,60 @@ Sbi.locale.ln['sbi.execution.executionpage.toolbar.annotate'] = 'Aufzeichnungen'
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.rating'] = 'Rang'; //'Rank';
 
 //Shortcuts menu
-Sbi.locale.ln['sbi.execution.executionpage.toolbar.addbookmark'] = 'Zu den Favoriten hinzufÃ¼gen'; //'Add to favorites';
+Sbi.locale.ln['sbi.execution.executionpage.toolbar.addbookmark'] = 'Zu den Favoriten hinzufügen'; //'Add to favorites';
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.showbookmark'] = 'Favoriten anzeigen'; //'Show favorites';
-Sbi.locale.ln['sbi.execution.executionpage.toolbar.saveview'] = 'Zu benutzerdefinierten Ansichten hinzufÃ¼gen'; //'Add to customized views';
+Sbi.locale.ln['sbi.execution.executionpage.toolbar.saveview'] = 'Zu benutzerdefinierten Ansichten hinzufügen'; //'Add to customized views';
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.showview'] = 'Zeige benutzerdefinierte Ansichten'; //'Show customized views';
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.showscheduled'] = 'Zeige geplanten Hinrichtungen'; //'Show scheduled executions';
 
-Sbi.locale.ln['sbi.execution.executionpage.toolbar.back'] = 'ZurÃ¼ck zu den Parameter Auswahl-Seite'; //'Go back to parameters selection page';
-Sbi.locale.ln['sbi.execution.executionpage.toolbar.documentView'] = 'ZurÃ¼ck zur der Dokumentenauswahl-Seite'; //'Go back to documents selection page';
-Sbi.locale.ln['sbi.execution.executionpage.toolbar.refresh'] = 'Aktualisieren Dokument AusfÃ¼hrung'; //'Refresh document execution';
+Sbi.locale.ln['sbi.execution.executionpage.toolbar.back'] = 'Zurück zu den Parameter Auswahl-Seite'; //'Go back to parameters selection page';
+Sbi.locale.ln['sbi.execution.executionpage.toolbar.documentView'] = 'Zurück zur der Dokumentenauswahl-Seite'; //'Go back to documents selection page';
+Sbi.locale.ln['sbi.execution.executionpage.toolbar.refresh'] = 'Aktualisieren Dokument Ausführung'; //'Refresh document execution';
 
-Sbi.locale.ln['sbi.execution.executionpage.toolbar.qberefresh'] = 'Aktualisieren der Seite wird bewirken, dass die tatsÃ¤chlichen QBE Einstellungen verloren: weitergehen?'; //'Page refresh will cause the lost of actual QBE settings: go on?';
+Sbi.locale.ln['sbi.execution.executionpage.toolbar.qberefresh'] = 'Aktualisieren der Seite wird bewirken, dass die tatsächlichen QBE Einstellungen verloren: weitergehen?'; //'Page refresh will cause the lost of actual QBE settings: go on?';
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.save'] = 'Speichern'; //'Save';
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.saveas'] = 'Speichern unter ...'; //'Save as ...';
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.view'] = 'Dokument anzeigen'; //'View document';
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.edit'] = 'bearbeiten'; //'Edit';
-Sbi.locale.ln['sbi.execution.executionpage.toolbar.breadcrumbback'] = 'ZurÃ¼ck zum vorherigen Dokument'; //'Go back to previous document';
+Sbi.locale.ln['sbi.execution.executionpage.toolbar.breadcrumbback'] = 'Zurück zum vorherigen Dokument'; //'Go back to previous document';
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.expand'] = 'Erweitern / Reduzieren'; //'Expand/Reduce';
-Sbi.locale.ln['sbi.execution.executionpage.tabs.overMaxNum']  = 'Die Anzahl der geÃ¶ffneten Dokumente hat das Maximum erreicht. SchlieÃŸen Sie den vorherigen Lauf und erneut ausfÃ¼hren das Dokument.'; //'The number of open documents has reached the maximum. Close the previous run and re-execute the document.';
+Sbi.locale.ln['sbi.execution.executionpage.tabs.overMaxNum']  = 'Die Anzahl der geöffneten Dokumente hat das Maximum erreicht. Schließen Sie den vorherigen Lauf und erneut ausführen das Dokument.'; //'The number of open documents has reached the maximum. Close the previous run and re-execute the document.';
 
 Sbi.locale.ln['sbi.execution.viewpoints.title'] = 'Gespeicherte Parameter'; //'Saved parameters';
 Sbi.locale.ln['sbi.execution.viewpoints.emptyText'] = '[Dokument hat keine Parameter gespeichert]'; //'[Document has no saved parameters]';
 Sbi.locale.ln['sbi.execution.viewpoints.name'] = 'Name'; //'name';
 Sbi.locale.ln['sbi.execution.viewpoints.description'] = 'Beschreibung'; //'description';
-Sbi.locale.ln['sbi.execution.viewpoints.owner'] = 'EigentÃ¼mer'; //'owner';
+Sbi.locale.ln['sbi.execution.viewpoints.owner'] = 'Eigentümer'; //'owner';
 Sbi.locale.ln['sbi.execution.viewpoints.creationDate'] = 'Erstellungsdatum'; //'creation date';
 Sbi.locale.ln['sbi.execution.viewpoints.scope'] = 'Anwendungsbereich'; //'scope';
 Sbi.locale.ln['sbi.execution.viewpoints.msg.saved'] = 'Parameter erfolgreich gespeichert'; //'Parameters saved succesfully';
 
-Sbi.locale.ln['sbi.execution.snapshots.title'] = 'Geplante AusfÃ¼hrungen'; //'Scheduled executions';
-Sbi.locale.ln['sbi.execution.snapshots.emptyText'] = '[Dokument hat keine AusfÃ¼hrungen geplant]'; //'[Document has no scheduled executions]';
+Sbi.locale.ln['sbi.execution.snapshots.title'] = 'Geplante Ausführungen'; //'Scheduled executions';
+Sbi.locale.ln['sbi.execution.snapshots.emptyText'] = '[Dokument hat keine Ausführungen geplant]'; //'[Document has no scheduled executions]';
 Sbi.locale.ln['sbi.execution.snapshots.name'] = 'Name'; //'name';
 Sbi.locale.ln['sbi.execution.snapshots.description'] = 'Beschreibung'; //'description';
 Sbi.locale.ln['sbi.execution.snapshots.creationDate'] = 'Erstellungsdatum'; //'creation date';
-Sbi.locale.ln['sbi.execution.snapshots.deleteSelected'] = 'lÃ¶schen'; //'Delete';
-Sbi.locale.ln['sbi.execution.snapshots.deleteSelectedTooltip'] = 'LÃ¶schen ausgewÃ¤hlte geplanten AusfÃ¼hrungen'; //'Delete selected scheduled executions';
-Sbi.locale.ln['sbi.execution.snapshots.noSnapshotsSelected'] = 'Keine gemeinsame AusfÃ¼hrungen ausgewÃ¤hlt'; //'No scheduled executions selected';
+Sbi.locale.ln['sbi.execution.snapshots.deleteSelected'] = 'löschen'; //'Delete';
+Sbi.locale.ln['sbi.execution.snapshots.deleteSelectedTooltip'] = 'Löschen ausgewählte geplanten Ausführungen'; //'Delete selected scheduled executions';
+Sbi.locale.ln['sbi.execution.snapshots.noSnapshotsSelected'] = 'Keine gemeinsame Ausführungen ausgewählt'; //'No scheduled executions selected';
 
 Sbi.locale.ln['sbi.execution.subobjects.title'] = 'Benutzerdefinierte Ansichten'; //'Customized views';
 Sbi.locale.ln['sbi.execution.subobjects.emptyText'] = '[Dokument hat keine benutzerdefinierte Ansichten]'; //'[Document has no customized views]';
 Sbi.locale.ln['sbi.execution.subobjects.name'] = 'Name'; //'name';
 Sbi.locale.ln['sbi.execution.subobjects.description'] = 'Beschreibung'; //'description';
-Sbi.locale.ln['sbi.execution.subobjects.owner'] = 'EigentÃ¼mer'; //'owner';
+Sbi.locale.ln['sbi.execution.subobjects.owner'] = 'Eigentümer'; //'owner';
 Sbi.locale.ln['sbi.execution.subobjects.creationDate'] = 'Erstellungsdatum'; //'creation date';
-Sbi.locale.ln['sbi.execution.subobjects.lastModificationDate'] = 'Datum der letzten Ã„nderung'; //'last modification date';
+Sbi.locale.ln['sbi.execution.subobjects.lastModificationDate'] = 'Datum der letzten Änderung'; //'last modification date';
 Sbi.locale.ln['sbi.execution.subobjects.visibility'] = 'Sichtbarkeit'; //'visibility';
 
-Sbi.locale.ln['sbi.execution.subobjects.visibility.public'] = 'Ã–ffentlich'; //'Public';
+Sbi.locale.ln['sbi.execution.subobjects.visibility.public'] = 'Öffentlich'; //'Public';
 Sbi.locale.ln['sbi.execution.subobjects.visibility.private'] = 'Privat'; //'Private';
 
-Sbi.locale.ln['sbi.execution.subobjects.deleteSelected'] = 'lÃ¶schen'; //'Delete';
-Sbi.locale.ln['sbi.execution.subobjects.deleteSelectedTooltip'] = 'LÃ¶schen ausgewÃ¤hlter benutzerdefinierten Ansichten'; //'Delete selected customized views';
-Sbi.locale.ln['sbi.execution.subobjects.execute'] = 'FÃ¼hren'; //'Execute';
-Sbi.locale.ln['sbi.execution.subobjects.noSubObjectsSelected'] = 'Keine benutzerdefinierten Ansichten ausgewÃ¤hlt'; //'No customized views selected';
-Sbi.locale.ln['sbi.execution.subobjects.cannotDeleteSubObject'] = 'Benutzerdefinierte Ansicht kÃ¶nnen nicht gelÃ¶scht werden'; //'You cannot delete customized view';
+Sbi.locale.ln['sbi.execution.subobjects.deleteSelected'] = 'löschen'; //'Delete';
+Sbi.locale.ln['sbi.execution.subobjects.deleteSelectedTooltip'] = 'Löschen ausgewählter benutzerdefinierten Ansichten'; //'Delete selected customized views';
+Sbi.locale.ln['sbi.execution.subobjects.execute'] = 'Führen'; //'Execute';
+Sbi.locale.ln['sbi.execution.subobjects.noSubObjectsSelected'] = 'Keine benutzerdefinierten Ansichten ausgewählt'; //'No customized views selected';
+Sbi.locale.ln['sbi.execution.subobjects.cannotDeleteSubObject'] = 'Benutzerdefinierte Ansicht können nicht gelöscht werden'; //'You cannot delete customized view';
 
 
 //Metadata
@@ -435,11 +435,11 @@ Sbi.locale.ln['sbi.udp.validString'] = 'Alfanumeric string required ';
 Sbi.locale.ln['sbi.udp.error'] = 'Error';
 
 // Profile Management
-Sbi.locale.ln['sbi.attributes.add'] = 'hinzufÃ¼gen'; //'Add';
-Sbi.locale.ln['sbi.attributes.delete'] = 'lÃ¶schen'; //'Delete';
+Sbi.locale.ln['sbi.attributes.add'] = 'hinzufügen'; //'Add';
+Sbi.locale.ln['sbi.attributes.delete'] = 'löschen'; //'Delete';
 Sbi.locale.ln['sbi.attributes.title'] = 'Profil Attribute'; //'Profile Attributes';
 Sbi.locale.ln['sbi.attributes.update'] = 'Speichern'; //'Save';
-Sbi.locale.ln['sbi.attributes.validationError'] = 'Fehler bei ÃœberprÃ¼fung'; //'Validation Error';
+Sbi.locale.ln['sbi.attributes.validationError'] = 'Fehler bei Überprüfung'; //'Validation Error';
 Sbi.locale.ln['sbi.attributes.headerName'] = 'Name'; //'Name';
 Sbi.locale.ln['sbi.attributes.headerDescr'] = 'Beschreibung'; //'Description';
 Sbi.locale.ln['sbi.attributes.error'] = 'Fehler'; //'Error';
@@ -451,7 +451,7 @@ Sbi.locale.ln['sbi.attributes.resultMsg'] = 'Beenden und SpagoBI neustarten'; //
 Sbi.locale.ln['sbi.roles.resultMsg'] = 'Operation erfolgreich'; //'Operation succeeded';
 
 Sbi.locale.ln['sbi.roles.save'] = 'Speichern'; //'Save';
-Sbi.locale.ln['sbi.roles.savePersonalFolder'] = 'Speichern in persÃ¶nlichen Ordner'; //'Save into Personal Folder';
+Sbi.locale.ln['sbi.roles.savePersonalFolder'] = 'Speichern in persönlichen Ordner'; //'Save into Personal Folder';
 Sbi.locale.ln['sbi.roles.saveMeta'] = 'Speichere Metadaten'; //'Save Metadata';
 Sbi.locale.ln['sbi.roles.saveRemember'] = 'Speichern Angemeldet bleiben'; //'Save Remember Me';
 Sbi.locale.ln['sbi.roles.saveSubobj'] = 'Speichern Sie benutzerdefinierte Ansichten'; //'Save Customized Views';
@@ -466,7 +466,7 @@ Sbi.locale.ln['sbi.roles.send'] = 'senden'; //'Send';
 Sbi.locale.ln['sbi.roles.build'] = 'Erzeugen'; //'Build';
 Sbi.locale.ln['sbi.roles.export'] = 'Exportieren'; //'Export';
 Sbi.locale.ln['sbi.roles.buildQbe'] = 'Erzeuge QbE Queries'; //'Build QbE Queries';
-Sbi.locale.ln['sbi.roles.doMassiveExport'] = 'Massiven Export ausfÃ¼hren'; //'Do Massive Export';
+Sbi.locale.ln['sbi.roles.doMassiveExport'] = 'Massiven Export ausführen'; //'Do Massive Export';
 Sbi.locale.ln['sbi.roles.manage'] = 'verwalten'; //'Manage';
 Sbi.locale.ln['sbi.roles.manageUsers'] = 'Benutzer'; //'Users';
 Sbi.locale.ln['sbi.roles.headerName'] = 'Name'; //'Name';
@@ -487,7 +487,7 @@ Sbi.locale.ln['sbi.roles.edit'] = 'bearbeiten'; //'Edit';
 Sbi.locale.ln['sbi.roles.worksheet'] = 'Arbeitsblatt'; //'Worksheet';
 Sbi.locale.ln['sbi.roles.businessModels'] = 'Business Models'; //'Business Models';
 Sbi.locale.ln['sbi.roles.businessModels.categories'] = 'Business Models Kategorien'; //'Business Models Categories';
-Sbi.locale.ln['sbi.roles.finalUserCan'] = 'Einzelteile fÃ¼r BenutzermenÃ¼:'; //'Items for user menu:';
+Sbi.locale.ln['sbi.roles.finalUserCan'] = 'Einzelteile für Benutzermenü:'; //'Items for user menu:';
 Sbi.locale.ln['sbi.roles.seeDocumentBrowser'] = 'Document Browser anzeigen'; //'View Document Browser';
 Sbi.locale.ln['sbi.roles.seeMyData'] = ''; //'View  \'My Data\'';
 Sbi.locale.ln['sbi.roles.seeFavourites'] = 'Favoriten anzeigen'; //'View Favorites';
@@ -498,17 +498,17 @@ Sbi.locale.ln['sbi.roles.createDocument'] = 'erstellen von Dokumenten'; //'Creat
 Sbi.locale.ln['sbi.users.fullName'] = 'voller Name'; //'Full Name';
 Sbi.locale.ln['sbi.users.userId'] = 'User ID'; //'User ID';
 Sbi.locale.ln['sbi.users.pwd'] = 'Passwort'; //'Password';
-Sbi.locale.ln['sbi.users.confPwd'] = 'Passwort bestÃ¤tigen'; //'Confirm Password';
-Sbi.locale.ln['sbi.users.changePwd'] = 'Passwort Ã¤ndern'; //'Change Password';
+Sbi.locale.ln['sbi.users.confPwd'] = 'Passwort bestätigen'; //'Confirm Password';
+Sbi.locale.ln['sbi.users.changePwd'] = 'Passwort ändern'; //'Change Password';
 Sbi.locale.ln['sbi.users.wrongFormat'] = 'Wrong Format'; //'Wrong Format';
 Sbi.locale.ln['sbi.users.roles'] = 'Rollen'; //'Roles';
 Sbi.locale.ln['sbi.users.attributes'] = 'Attribute'; //'Attributes';
 Sbi.locale.ln['sbi.users.manageUsers'] = 'Benutzer-Management'; //'Users Management';
 Sbi.locale.ln['sbi.users.usersList'] = 'Benutzer-Liste'; //'Users list';
 Sbi.locale.ln['sbi.users.headerValue'] = 'Zeitwert'; //'Value';
-Sbi.locale.ln['sbi.users.pwdNotMatching'] = 'Passwort und Passwort-bestÃ¤tigen Felder mÃ¼ssen gleich sein!'; //'Password and Confirm Password fields must be equal!';
-Sbi.locale.ln['sbi.users.confirm'] = 'Bitte bestÃ¤tigen'; //'Please confirm';
-Sbi.locale.ln['sbi.users.confirmDelete'] = 'Wollen Sie den Benutzer lÃ¶schen?'; //'Confirm User delete?';
+Sbi.locale.ln['sbi.users.pwdNotMatching'] = 'Passwort und Passwort-bestätigen Felder müssen gleich sein!'; //'Password and Confirm Password fields must be equal!';
+Sbi.locale.ln['sbi.users.confirm'] = 'Bitte bestätigen'; //'Please confirm';
+Sbi.locale.ln['sbi.users.confirmDelete'] = 'Wollen Sie den Benutzer löschen?'; //'Confirm User delete?';
 
 //KPI ALARMS
 
@@ -565,10 +565,11 @@ Sbi.locale.ln['sbi.alarms.noThrOrKpiI'] = 'No Threshold and/or Kpi Instance sele
 Sbi.locale.ln['sbi.execution.sendTo'] = 'senden'; //'Send to';
 // Save into personal folder
 Sbi.locale.ln['sbi.execution.stpf.ok'] = 'Dokument korrekt gespeichert'; //'Document saved correctly';
-Sbi.locale.ln['sbi.execution.stpf.alreadyPresent'] = 'Schon im persÃ¶nlichen Verzeichnis abgelegt'; //'Already present in personal folder';
+Sbi.locale.ln['sbi.execution.stpf.alreadyPresent'] = 'Schon im persönlichen Verzeichnis abgelegt'; //'Already present in personal folder';
 Sbi.locale.ln['sbi.execution.stpf.error'] = 'Dokument wegen technischer Probleme nicht gespeichert'; //'Document NOT saved due to technical problems';
 
 // Remember me
+
 Sbi.locale.ln['sbi.execution.saveRememberMe'] = 'Remember me!! (save this execution as my Hot Link)';
 Sbi.locale.ln['sbi.rememberme.name'] = 'Name';
 Sbi.locale.ln['sbi.rememberme.descr'] = 'Description';
@@ -720,14 +721,6 @@ Sbi.locale.ln['sbi.ds.wizard.back']= '< Back';
 Sbi.locale.ln['sbi.ds.wizard.next']= 'Next >';
 Sbi.locale.ln['sbi.ds.wizard.confirm']= 'Confirm';
 Sbi.locale.ln['sbi.ds.wizard.cancel']= 'Cancel';
-
-Sbi.locale.ln['sbi.ds.wizard.startMsg']= 'Select and load your file XLS or CSV ...';
-Sbi.locale.ln['sbi.ds.wizard.file']= 'File';
-Sbi.locale.ln['sbi.ds.wizard.successLoad']= ' loaded succesfully!'
-Sbi.locale.ln['sbi.ds.wizard.selectedFile']='Selected file ';
-Sbi.locale.ln['sbi.ds.wizard.loadedFile']='Loaded file ';
-Sbi.locale.ln['sbi.ds.wizard.selectFile']='Select file';
-
 Sbi.locale.ln['sbi.ds.scope'] = 'Scope';
 Sbi.locale.ln['sbi.ds.noDataset']= 'No datasets available';
 Sbi.locale.ln['sbi.ds.mandatoryFields']= 'Please insert mandatory fields!';
@@ -960,21 +953,21 @@ Sbi.locale.ln["error.mesage.description.generic.can.not.responce"]= 'Kann nicht 
 	
 //DATASOURCE	
 Sbi.locale.ln["error.mesage.description.data.source.cannot.be.null"]= 'Das Etikett der Datenquelle kann nicht null sein'; //'The label of the data source can not be null";
-Sbi.locale.ln["error.mesage.description.data.source.deleting.inuse"] = 'UnmÃ¶glich die Datenquelle zu lÃ¶schen, da sie in Gebrauch ist'; //'Impossible to delete the data source because it is in use";
-Sbi.locale.ln["error.mesage.description.data.source.saving.duplicated"]='UnmÃ¶glich zu speichern Sie die Datenquelle, weil es ein anderer mit dem gleichen Etikett'; //"Impossible to save the data source because there is another one with the same label";
+Sbi.locale.ln["error.mesage.description.data.source.deleting.inuse"] = 'Unmöglich die Datenquelle zu löschen, da sie in Gebrauch ist'; //'Impossible to delete the data source because it is in use";
+Sbi.locale.ln["error.mesage.description.data.source.saving.duplicated"]='Unmöglich zu speichern Sie die Datenquelle, weil es ein anderer mit dem gleichen Etikett'; //"Impossible to save the data source because there is another one with the same label";
 
 //DATASET
 Sbi.locale.ln["error.mesage.description.data.set.cannot.be.null"]= 'Das Etikett des Datensatzes kann nicht null sein'; //'The label of the data set can not be null";
-Sbi.locale.ln["error.mesage.description.data.set.deleting.inuse"] = 'UnmÃ¶glich, den Datensatz lÃ¶schen, da er verwendet wird'; //'Impossible to delete the data set because it is in use";
-Sbi.locale.ln["error.mesage.description.data.set.saving.duplicated"]='UnmÃ¶glich, den Datensatz zu speichern, es gibt einen zweiten mit gleichem Etikett'; //"Impossible to save the data set because there is another one with the same label";
-Sbi.locale.ln["error.mesage.description.data.set.parsing.error"]='UnmÃ¶glich zu Datei zu analysieren. ÃœberprÃ¼fen Sie den Inhalt und laden Sie sie wieder'; //"Impossible to parse file. Check its content and upload it again";
+Sbi.locale.ln["error.mesage.description.data.set.deleting.inuse"] = 'Unmöglich, den Datensatz löschen, da er verwendet wird'; //'Impossible to delete the data set because it is in use";
+Sbi.locale.ln["error.mesage.description.data.set.saving.duplicated"]='Unmöglich, den Datensatz zu speichern, es gibt einen zweiten mit gleichem Etikett'; //"Impossible to save the data set because there is another one with the same label";
+Sbi.locale.ln["error.mesage.description.data.set.parsing.error"]='Unmöglich zu Datei zu analysieren. Überprüfen Sie den Inhalt und laden Sie sie wieder'; //"Impossible to parse file. Check its content and upload it again";
 
 //MEASURES
-Sbi.locale.ln["error.mesage.description.measure.join.no.common.dimension"]= 'UnmÃ¶glich den Join zwischen Messungen auszufÃ¼hren. Die zugehÃ¶rigen DatensÃ¤tze haben keine Dimension gemeinsam.'; //'Impossible to execute the join between measures. The associated datasets haven't any dimension in common.";
-Sbi.locale.ln["error.mesage.description.measure.join.no.complete.common.dimension"]='UnmÃ¶glich den Join zwischen Messungen auszufÃ¼hren. Die zugehÃ¶rigen DatensÃ¤tze haben keine komplette Dimension gemeinsam.';//"Impossible to execute the join between measures. The associated datasets haven't any complete dimension in common.";
+Sbi.locale.ln["error.mesage.description.measure.join.no.common.dimension"]= 'Unmöglich den Join zwischen Messungen auszuführen. Die zugehörigen Datensätze haben keine Dimension gemeinsam.'; //'Impossible to execute the join between measures. The associated datasets haven't any dimension in common.";
+Sbi.locale.ln["error.mesage.description.measure.join.no.complete.common.dimension"]='Unmöglich den Join zwischen Messungen auszuführen. Die zugehörigen Datensätze haben keine komplette Dimension gemeinsam.';//"Impossible to execute the join between measures. The associated datasets haven't any complete dimension in common.";
 
 //LAYER
-Sbi.locale.ln["error.mesage.description.layer.validation.file"]= 'Der Dateiname ist nicht gÃ¼ltig. Er darf keine [/ \ \] enthalten'; //"The file name is not valid. It can't contain [/,\\]";
+Sbi.locale.ln["error.mesage.description.layer.validation.file"]= 'Der Dateiname ist nicht gültig. Er darf keine [/ \ \] enthalten'; //"The file name is not valid. It can't contain [/,\\]";
 
 
 
@@ -988,9 +981,9 @@ Sbi.locale.ln["sbi.execution.toolbar.savedatasetwindow.fields.datasource"]="Data
 // SELF SERVICE
 //===================================================================
 
-Sbi.locale.ln["sbi.tools.dataset.private.datasetbrowser.title"]='Private DatensÃ¤tze';//"Private Datasets";
-Sbi.locale.ln["sbi.tools.dataset.public.datasetbrowser.title"]='Ã–ffentliche DatensÃ¤tze';//"Public Datasets";
-Sbi.locale.ln["sbi.tools.dataset.datasetbrowser.title"]='DatensÃ¤tze';//"Datasets";
+Sbi.locale.ln["sbi.tools.dataset.private.datasetbrowser.title"]='Private Datensätze';//"Private Datasets";
+Sbi.locale.ln["sbi.tools.dataset.public.datasetbrowser.title"]='Öffentliche Datensätze';//"Public Datasets";
+Sbi.locale.ln["sbi.tools.dataset.datasetbrowser.title"]='Datensätze';//"Datasets";
 Sbi.locale.ln["sbi.tools.model.metamodelsbrowser.title"]='Modelle';//"Models";
 
 //===================================================================
@@ -999,11 +992,11 @@ Sbi.locale.ln["sbi.tools.model.metamodelsbrowser.title"]='Modelle';//"Models";
 Sbi.locale.ln["sbi.community.title"]='Gemeinschaften';//"Communities";
 Sbi.locale.ln["sbi.community.name"]='Name';//"Name";
 Sbi.locale.ln["sbi.community.descr"]='Beschreibung';//"Description";
-Sbi.locale.ln["sbi.community.owner"]='EigentÃ¼mer';//"Owner";
-Sbi.locale.ln["sbi.community.functCode"]='FunktionalitÃ¤t';//"Functionality";
+Sbi.locale.ln["sbi.community.owner"]='Eigentümer';//"Owner";
+Sbi.locale.ln["sbi.community.functCode"]='Funktionalität';//"Functionality";
 Sbi.locale.ln["sbi.community.id"]='Id';//"Id";
 Sbi.locale.ln['sbi.community.saved']='Gemeinschaft korrekt gespeichert';// 'Community correctly saved';
-Sbi.locale.ln['sbi.community.deleted']= 'Gemeinschaft korrekt gelÃ¶scht';//'Community correctly deleted';
+Sbi.locale.ln['sbi.community.deleted']= 'Gemeinschaft korrekt gelöscht';//'Community correctly deleted';
 
 //===================================================================
 //WIDGET GROUPPED GRID
@@ -1018,16 +1011,16 @@ Sbi.locale.ln["sbi.widget.grid.groupped.disable.group"]='Deaktiviere gruppieren'
 Sbi.locale.ln["sbi.tools.catalogue.measures.measure.properties"]='Eigenschaften der Messung';//"Measure Properties";
 Sbi.locale.ln["sbi.tools.catalogue.measures.dataset.properties"]='Datensatz Eigenschaften';//"Data Set Properties";
 Sbi.locale.ln["sbi.tools.catalogue.measures.join.btn"]='Join';//"Join";
-Sbi.locale.ln["sbi.tools.catalogue.measures.join.tooltip"]='FÃ¼hren Sie einen Join zwischen den ausgewÃ¤hlten Messungen aus';//"Execute join between the selected measures";
-Sbi.locale.ln["sbi.tools.catalogue.measures.select.tooltip"]='Ã–ffnen Sie den Auswahlrahmen';//"Open the selection frame";
+Sbi.locale.ln["sbi.tools.catalogue.measures.join.tooltip"]='Führen Sie einen Join zwischen den ausgewählten Messungen aus';//"Execute join between the selected measures";
+Sbi.locale.ln["sbi.tools.catalogue.measures.select.tooltip"]='Öffnen Sie den Auswahlrahmen';//"Open the selection frame";
 Sbi.locale.ln["sbi.tools.catalogue.measures.select.btn"]='Auswahl';//"Selection";
 
 //===================================================================
 //LAYERS CATALOGUE
 //===================================================================
 Sbi.locale.ln['sbi.layer.saved']= 'Layer korrekt gespeichert';//'Layer correctly saved';
-Sbi.locale.ln['sbi.layer.deleted']= 'Layer korrekt gelÃ¶scht';//'Layer correctly deleted';
-Sbi.locale.ln['sbi.tools.layer.validation.error']= 'Es gibt einige Fehler in der Layer-Konfiguration. ÃœberprÃ¼fen Sie die markierten Felder.';//'There is some error in the layer configuration. Check the marked fields.';
+Sbi.locale.ln['sbi.layer.deleted']= 'Layer korrekt gelöscht';//'Layer correctly deleted';
+Sbi.locale.ln['sbi.tools.layer.validation.error']= 'Es gibt einige Fehler in der Layer-Konfiguration. Überprüfen Sie die markierten Felder.';//'There is some error in the layer configuration. Check the marked fields.';
 Sbi.locale.ln['sbi.tools.layer.props.name'] = 'Layername';//"Layer name";
 Sbi.locale.ln['sbi.tools.layer.props.label'] ='Layer-Etikett';// "Layer label";
 Sbi.locale.ln['sbi.tools.layer.props.zoom'] = 'Layer-Zoom';//"Layer zoom";
