@@ -35,6 +35,7 @@ urlBuilder = UrlBuilderFactory.getUrlBuilder(sbiMode);
   Sbi.config.loginUrl = "";
   
   function active(accountId) {
+  var locale = '<%= request.getParameter("locale") %>';
   
   //Service Registry creation
   var url = {
@@ -59,7 +60,8 @@ urlBuilder = UrlBuilderFactory.getUrlBuilder(sbiMode);
 
   var params = new Object();
   params.accountId = accountId;
-	
+  params.locale = locale;
+  
   Ext.Ajax.request({
 	   url: this.services["active"],
 	   method: "POST",

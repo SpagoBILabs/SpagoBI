@@ -255,7 +255,10 @@ this.services["update"]= Sbi.config.serviceRegistry.getRestServiceUrl({
                             </div>
                             <div class="submit">
                                 <input type="text" value="<%=msgBuilder.getMessage("modify",locale)%>" onclick="javascript:modify();"/>
-                                <p class="delete"><%=msgBuilder.getMessage("deleteAccount",locale)%> <a href="#" onclick="javascript:cancel();"><%=msgBuilder.getMessage("delete",locale)%></a></p>
+                          
+								 <c:if test="${data['userIn'] == data['username']}">
+	                                <p class="delete"><%=msgBuilder.getMessage("deleteAccount",locale)%> <a href="#" onclick="javascript:cancel();"><%=msgBuilder.getMessage("delete",locale)%></a></p>
+	                             </c:if>
                             </div>
                         </fieldset>
                     </form>

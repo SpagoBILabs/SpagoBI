@@ -169,7 +169,11 @@ public class AbstractHibernateDAO {
 	protected SbiHibernateModel updateSbiCommonInfo4Insert(SbiHibernateModel obj) {
 		obj.getCommonInfo().setTimeIn(new Date());
 		obj.getCommonInfo().setSbiVersionIn(SbiCommonInfo.SBI_VERSION);
-		obj.getCommonInfo().setUserIn(userID);
+		if (obj.getCommonInfo().getUserIn() != null){
+			obj.getCommonInfo().setUserIn(obj.getCommonInfo().getUserIn());
+		}else{
+			obj.getCommonInfo().setUserIn(userID);
+		}
 		// sets the tenant if it is set and input object hasn't
 		String tenantId = this.getTenant();
 		if (tenantId != null && obj.getCommonInfo().getOrganization() == null) {

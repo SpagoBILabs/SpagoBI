@@ -24,8 +24,6 @@
     String currTheme = (String)request.getAttribute("currTheme");
    	if (currTheme == null)
   		currTheme = ThemesManager.getDefaultTheme();
-
-   	System.out.println("currTheme: " + currTheme);
  	
  	String sbiMode = "WEB";
  	IUrlBuilder urlBuilder = null;
@@ -43,6 +41,7 @@
   
   function active(accountId) {
   
+  var locale = '<%= request.getParameter("locale") %>';
   //Service Registry creation
   var url = {
     	host: '<%= request.getServerName()%>'
@@ -66,6 +65,7 @@
 
   var params = new Object();
   params.accountId = accountId;
+  params.locale = locale;
 	
   Ext.Ajax.request({
 	   url: this.services["active"],
