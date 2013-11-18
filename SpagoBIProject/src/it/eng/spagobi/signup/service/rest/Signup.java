@@ -32,6 +32,7 @@ import java.net.URL;
 import java.security.Security;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -90,9 +91,10 @@ public class Signup {
 				  data.put("surname", user.getFullName().substring(i+1));
 			  }else{
 				  data.put("name", user.getFullName());
-			  }
+			  }			 
 		  }
 		  data.put("username", user.getUserId());
+		  data.put("userIn", user.getCommonInfo().getUserIn());
 		  
 		  req.setAttribute("data", data );
 		  
@@ -263,6 +265,8 @@ public class Signup {
 	  
 	  IMessageBuilder msgBuilder = MessageBuilderFactory.getMessageBuilder();
 	  String id = req.getParameter("accountId");
+	  String strLocale = GeneralUtilities.trim(req.getParameter("locale"));
+      Locale locale = new Locale(strLocale.substring(0, strLocale.indexOf("_")), strLocale.substring(strLocale.indexOf("_")+1));
 	  String expired_time = SingletonConfig.getInstance().getConfigValue("MAIL.SIGNUP.expired_time");
 	  
 	  try {
@@ -272,21 +276,21 @@ public class Signup {
 		    user = userDao.loadSbiUserById( Integer.parseInt( id ));
 		  }catch(EMFUserError emferr){}
 		  if( user == null ) {
-		    return new JSONObject("{message: '"+msgBuilder.getMessage("signup.msg.unknownUser" ,"messages", req)+"'}").toString();
+		    return new JSONObject("{message: '"+msgBuilder.getMessage("signup.msg.unknownUser" ,"messages", locale)+"'}").toString();
 		    
 		  }
 		  
 		  if( !user.getFlgPwdBlocked() )
-		    return new JSONObject("{message: '"+msgBuilder.getMessage("signup.msg.userActive" ,"messages", req)+"'}").toString();
+		    return new JSONObject("{message: '"+msgBuilder.getMessage("signup.msg.userActive" ,"messages", locale)+"'}").toString();
 			  
 		  long now = System.currentTimeMillis();
 		  if( now > user.getCommonInfo().getTimeIn().getTime() + Long.parseLong(expired_time) * 24 * 60 * 60 * 1000 )
-		    return new JSONObject("{message: '"+msgBuilder.getMessage("signup.msg.userActivationExpired" ,"messages", req)+"'}").toString();
+		    return new JSONObject("{message: '"+msgBuilder.getMessage("signup.msg.userActivationExpired" ,"messages", locale)+"'}").toString();
 		  
 		  user.setFlgPwdBlocked(false);
 		  userDao.updateSbiUser(user, null );
 		  
-		  return new JSONObject("{message: '"+msgBuilder.getMessage("signup.msg.userActivationOK" ,"messages", req)+"'}").toString();
+		  return new JSONObject("{message: '"+msgBuilder.getMessage("signup.msg.userActivationOK" ,"messages", locale)+"'}").toString();
 	  } catch (Throwable t) {
 			throw new SpagoBIServiceException(
 					"An unexpected error occured while executing the subscribe action", t);
@@ -298,6 +302,9 @@ public class Signup {
 	@Produces(MediaType.APPLICATION_JSON)
 	@ToValidate(typeName=FieldsValidatorFactory.SIGNUP)
 	public String create(@Context HttpServletRequest req) {
+		
+		String strLocale = GeneralUtilities.trim(req.getParameter("locale"));
+       // Locale locale = new Locale(strLocale.substring(0, strLocale.indexOf("_")), strLocale.substring(strLocale.indexOf("_")+1));
 		
 		String nome     	=  GeneralUtilities.trim(req.getParameter("nome"));
 		String cognome  	=  GeneralUtilities.trim(req.getParameter("cognome"));
@@ -342,6 +349,7 @@ public class Signup {
 		  user.setPassword( Password.encriptPassword( password ));
 		  user.setFullName( nome + " " + cognome );
 		  user.getCommonInfo().setOrganization(defaultTenant);
+		  user.getCommonInfo().setUserIn(username);
 		  user.setFlgPwdBlocked(true);
 		  
 		  Set<SbiExtRoles> roles = new HashSet<SbiExtRoles>();
@@ -397,7 +405,7 @@ public class Signup {
 	      logger.debug("Activation url host is equal to [" + host + "]");
 	      int port = req.getServerPort();
 	      logger.debug("Activation url port is equal to [" + port + "]");
-	      URL url = new URL(req.getScheme(), host, port, req.getContextPath() + "/restful-services/signup/prepareActive?accountId=" + id );	  
+	      URL url = new URL(req.getScheme(), host, port, req.getContextPath() + "/restful-services/signup/prepareActive?accountId=" + id + "&locale=" + strLocale );	  
 	      logger.debug("Activation url is equal to [" + url.toExternalForm() + "]");
 		  logger.debug("Activation mail for user [" + username + "] succesfully prepared");
 		  

@@ -539,15 +539,18 @@ body {
 						</a></td>
 
 					</tr>
-					 -->
+					 -->					
 					 <tr>
 						 <td colspan="4" align="center">
 							<div class="submit">
 		                              <input type="text" value="<%=msgBuilder.getMessage("modify",locale)%>" onclick="javascript:modify();"/>
-		                              <p  class="deleteMsg"><%=msgBuilder.getMessage("deleteAccount",locale)%> <a class="delete" href="#" onclick="javascript:cancel();"><%=msgBuilder.getMessage("delete",locale)%></a></p>
+		                              <c:if test="${data['userIn'] == data['username']}">
+		                             	 <p  class="deleteMsg"><%=msgBuilder.getMessage("deleteAccount",locale)%> <a class="delete" href="#" onclick="javascript:cancel();"><%=msgBuilder.getMessage("delete",locale)%></a></p>
+		                              </c:if>
 		                    </div>
 	                    </td>
 					</tr>
+					
 				</table>
 			</div>
 		</div>
