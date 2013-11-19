@@ -206,6 +206,7 @@ Ext.extend(Sbi.kpi.KpiGridPanel ,Ext.ux.tree.TreeGrid, {
 	    		
 	    		}
 	    	}
+	    	this.updateColumnWidths();
 	    	this.show();
 	    }, this);
 
