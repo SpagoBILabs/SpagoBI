@@ -165,13 +165,13 @@ public class GetSQLQueryAction extends AbstractQbeEngineAction {
 				
 				if(selectFields.size()-1==i){
 					int fromPosition =  queryString.indexOf(" FROM ");
-					queryString = queryString.substring(0,fromPosition)+ " as " +fieldAlias+queryString.substring(fromPosition);
+					queryString = queryString.substring(0,fromPosition)+ "as " +fieldAlias+queryString.substring(fromPosition);
 					
 				}else{
 					String queryPeace = splitted[i];
 					int startColAlias =  queryString.indexOf(queryPeace+",");
 										
-					queryString = queryString.substring(0,startColAlias+queryPeace.length())+ " as " +fieldAlias+queryString.substring(startColAlias+queryPeace.length());
+					queryString = queryString.substring(0,startColAlias+queryPeace.length())+ "as " +fieldAlias+queryString.substring(startColAlias+queryPeace.length());
 				}
 			}
 		}

@@ -732,4 +732,19 @@ public class StringUtilities {
 		for( int i = 0; i < len; i++ ) sb.append( AB.charAt( random.nextInt(AB.length()) ) );
 		return sb.toString();
 	}
+	
+	
+	/**
+	 * Format the string in html: replace \n with <br>.. and blank spaces &nbsp;
+	 * @param s
+	 * @return
+	 */
+	public static String fromStringToHTML(String s){
+		if(s!=null){
+			s = s.replace(" ", "&nbsp;");
+			s = s.replace("\n", "<br>");
+		}
+		return s;
+	} 
+
 }

@@ -6,9 +6,8 @@
  
   
  
-  
- 
- Ext.ns("Sbi.settings");
+
+Ext.ns("Sbi.settings");
 
 Sbi.settings.qbe = {
 		relationshipswizard:{
@@ -28,7 +27,9 @@ Sbi.settings.qbe = {
 			
 			enableCatalogueTbDeleteBtn: true,
 			enableCatalogueTbAddBtn: true,
-			enableCatalogueTbInsertBtn: true
+			enableCatalogueTbInsertBtn: true,
+			
+			queryWidowTabs: ['sql','jpql']
 		}
 
 		, selectGridPanel: {
