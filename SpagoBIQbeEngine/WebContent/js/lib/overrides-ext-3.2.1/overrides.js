@@ -203,3 +203,19 @@ Ext.override(Ext.form.HtmlEditor, {
 	}
 
 });
+/* =============================================================================
+* Added by Monica Franceschini (November 2013)
+* to avoid XSS Injection / HTML Injection vulnerabilities
+============================================================================= */
+
+Ext.override(Ext.grid.EditorGridPanel, {
+	listeners: { 'validateedit': function(e){ 
+		var v = e.value;
+		if(v.indexOf('<') != -1 && v.indexOf('>') != -1){
+			var safeVal = Ext.util.Format.stripTags(v); 
+			e.value = safeVal;
+			alert("Characters < and > not allowed at the same time");
+		}	
+	} 
+}
+});
