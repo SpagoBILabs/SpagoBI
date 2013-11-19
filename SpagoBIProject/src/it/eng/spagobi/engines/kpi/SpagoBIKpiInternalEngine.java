@@ -48,6 +48,8 @@ import it.eng.spagobi.tools.udp.bo.UdpValue;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
@@ -718,7 +720,7 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 		line.setModelInstanceCode(modI.getModelCode());
 		setVisibilityInformation(line, modI);
 		
-		List children = new ArrayList();
+		List<KpiLine> children = new ArrayList<KpiLine>();
 		List childrenIds = modI.getChildrenIds();
 		if (!childrenIds.isEmpty()) {
 			Iterator childrenIt = childrenIds.iterator();
@@ -730,6 +732,17 @@ public class SpagoBIKpiInternalEngine extends AbstractDriver implements Internal
 					children.add(childrenLine);
 				}
 			}
+		}
+		
+		Comparator<KpiLine> comparator = new Comparator<KpiLine>() {
+		    public int compare(KpiLine c1, KpiLine c2) {
+		        return c1.getModelNodeName().compareToIgnoreCase(c2.getModelNodeName());
+		    }
+		};
+		Collections.sort(children, comparator); // use the comparator as much as u want
+		logger.debug("Nodes list succesfully ordered. Sorted nodes are..");
+		for(KpiLine kl : children) {
+			logger.debug(">>> Nodes [" + kl.getModelNodeName() + "]");
 		}
 
 		KpiInstance kpiI = modI.getKpiInstanceAssociated();
