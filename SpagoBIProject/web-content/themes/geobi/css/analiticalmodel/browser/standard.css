@@ -397,7 +397,7 @@ li:hover .login-panel .not-registered a:hover,.login-panel .not-registered a:hov
 	background-repeat: no-repeat;
 }
 
-.box .box-figure .DOCUMENT_COMPOSITE-icon {background-image:url('../../../img/analiticalmodel/browser/document_cockpits.png')!important;
+.box .box-figure .DOCUMENT_COMPOSITE-icon {background-image:url('../../../img/analiticalmodel/browser/document_idashboard.png')!important;
 	width:100%;
 	height:200px;
 	display:block;	
@@ -426,7 +426,7 @@ li:hover .login-panel .not-registered a:hover,.login-panel .not-registered a:hov
 }
 
 /*.box .box-figure .MAP-icon {background-image:url('../../../img/analiticalmodel/browser/document_geo.png')!important;*/
-.box .box-figure .MAP-icon {background-image:url('../../../img/analiticalmodel/browser/document_locatiointelligence.jpg')!important;
+.box .box-figure .MAP-icon {background-image:url('../../../img/analiticalmodel/browser/document_geo.jpg')!important;
 	display:block;
 	width:100%;
 	height:200px;	
@@ -490,7 +490,7 @@ li:hover .login-panel .not-registered a:hover,.login-panel .not-registered a:hov
 	background-repeat: no-repeat;
 }
 
-.box .box-figure .CONSOLE-icon {background-image:url('../../../img/analiticalmodel/browser/document_console.png')!important;
+.box .box-figure .CONSOLE-icon {background-image:url('../../../img/analiticalmodel/browser/document_console.gif')!important;
 	display:block;
 	width:100%;
 	height:200px;
