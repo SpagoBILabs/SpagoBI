@@ -85,3 +85,38 @@ if(!Array.indexOf){
     return -1;
     }
 }
+
+/* =============================================================================
+* Added by Monica Franceschini (November 2013)
+* to avoid XSS Injection / HTML Injection vulnerabilities
+============================================================================= */
+
+/* http://www.sencha.com/forum/showthread.php?136911
+ * http://www.sencha.com/forum/showthread.php?232805
+ * http://www.sencha.com/forum/archive/index.php/t-136911.html?s=1b63f75ac473d93b04d1917ed5567746
+ * [EXTJSIV-3414] - validateedit does not have new values*/
+Ext.override(Ext.grid.Panel, {
+
+	listeners: { 
+		'validateedit': function(ed, e) {
+
+			var editor = ed.getEditor(e.record, e.column),
+			v = editor.getValue();
+			//only deletes tags not minus major symbols
+			if(v.indexOf('<') != -1 && v.indexOf('>') != -1){
+				alert("Characters < and > not allowed at the same time");
+				var safeVal = Ext.util.Format.stripTags(v);
+				if(safeVal==""){
+					safeVal=" ";
+				}
+				if(safeVal != v){
+					editor.setValue(safeVal);
+					editor.setRawValue(safeVal);
+				}
+				
+			}
+
+		} 
+	}
+});
+
