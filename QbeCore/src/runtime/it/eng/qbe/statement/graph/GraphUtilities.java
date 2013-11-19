@@ -342,17 +342,21 @@ public class GraphUtilities {
 	}
 	
 	public static JSONArray serializeGraph(Query query) throws Exception {
-		QueryGraph graph = query.getQueryGraph();
-		ObjectMapper mapper = new ObjectMapper();
-		SimpleModule simpleModule = new SimpleModule("SimpleModule",
-				new Version(1, 0, 0, null));
-		simpleModule.addSerializer(Relationship.class,
-				new RelationJSONSerializerForAnalysisState());
+ 		QueryGraph graph = query.getQueryGraph();
+		if(graph!=null){
+			ObjectMapper mapper = new ObjectMapper();
+			SimpleModule simpleModule = new SimpleModule("SimpleModule",new Version(1, 0, 0, null));
+			simpleModule.addSerializer(Relationship.class,
+					new RelationJSONSerializerForAnalysisState());
 
-		mapper.registerModule(simpleModule);
-		String serialized = mapper.writeValueAsString(graph.getConnections());
-		JSONArray array = new JSONArray(serialized);
-		return array;
+			mapper.registerModule(simpleModule);
+			String serialized = mapper.writeValueAsString(graph.getConnections());
+			JSONArray array = new JSONArray(serialized);
+			return array;
+		}else{
+			return new JSONArray();
+		}
+
 	}
 	
 	public static class RelationJSONSerializerForAnalysisState extends JsonSerializer<Relationship> {
