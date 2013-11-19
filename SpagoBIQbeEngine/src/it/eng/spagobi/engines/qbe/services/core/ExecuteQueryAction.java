@@ -230,11 +230,17 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 		Query query = getEngineInstance().getQueryCatalogue().getQuery(queryId);
 		return query;
 	}
-
+	
 	public static void updatePromptableFiltersValue(Query query, AbstractQbeEngineAction action) throws JSONException{
+		updatePromptableFiltersValue(query, action, false);
+	}
+
+	public static void updatePromptableFiltersValue(Query query, AbstractQbeEngineAction action, boolean useDefault) throws JSONException{
 		logger.debug("IN");
 		List whereFields = query.getWhereFields();
 		Iterator whereFieldsIt = whereFields.iterator();
+		String[] question = {"?"}; 
+
 
 		JSONObject requestPromptableFilters = action.getAttributeAsJSONObject("promptableFilters");
 
@@ -243,11 +249,15 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 			WhereField whereField = (WhereField) whereFieldsIt.next();
 			if (whereField.isPromptable()) {
 				// getting filter value on request
-				JSONArray promptValuesList =  requestPromptableFilters.getJSONArray(whereField.getName());
-				if(promptValuesList!=null){
-					String[] promptValues = toStringArray(promptValuesList);
-					logger.debug("Read prompts " + promptValues + " for promptable filter " + whereField.getName() + ".");
-					whereField.getRightOperand().lastValues = promptValues;
+				if(!useDefault || requestPromptableFilters!=null){
+					JSONArray promptValuesList =  requestPromptableFilters.optJSONArray(whereField.getName());
+					if(promptValuesList!=null){
+						String[] promptValues = toStringArray(promptValuesList);
+						logger.debug("Read prompts " + promptValues + " for promptable filter " + whereField.getName() + ".");
+						whereField.getRightOperand().lastValues = promptValues;
+					}
+				}else{
+					whereField.getRightOperand().lastValues =question;
 				}
 			}
 		}
@@ -256,14 +266,18 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 		while (havingFieldsIt.hasNext()) {
 			HavingField havingField = (HavingField) havingFieldsIt.next();
 			if (havingField.isPromptable()) {
-				// getting filter value on request
-				// promptValuesList = action.getAttributeAsList(havingField.getEscapedName());
-				JSONArray promptValuesList =  requestPromptableFilters.getJSONArray(havingField.getName());
-				if(promptValuesList!=null){
-					String[] promptValues = toStringArray(promptValuesList);
-					logger.debug("Read prompt value " + promptValues + " for promptable filter " + havingField.getName() + ".");
-					havingField.getRightOperand().lastValues = promptValues; // TODO how to manage multi-values prompts?
+				if(!useDefault || requestPromptableFilters!=null){
+					// getting filter value on request
+					// promptValuesList = action.getAttributeAsList(havingField.getEscapedName());
+					JSONArray promptValuesList =  requestPromptableFilters.optJSONArray(havingField.getName());
+					if(promptValuesList!=null){
+						String[] promptValues = toStringArray(promptValuesList);
+						logger.debug("Read prompt value " + promptValues + " for promptable filter " + havingField.getName() + ".");
+						havingField.getRightOperand().lastValues = promptValues; // TODO how to manage multi-values prompts?
+					}
 				}
+			}else{
+				havingField.getRightOperand().lastValues =question;
 			}
 		}
 		logger.debug("OUT");

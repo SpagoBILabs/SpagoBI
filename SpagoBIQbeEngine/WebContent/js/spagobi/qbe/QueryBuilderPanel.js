@@ -309,11 +309,13 @@ Ext.extend(Sbi.qbe.QueryBuilderPanel, Ext.Panel, {
 		this.saveViewWindow.show();
 	}
 	
-	, getSQLQuery: function(callbackFn, scope) {
+	, getSQLQuery: function(callbackFn, scope, additionaParams) {
+		var params = additionaParams ||{};
     	this.applyChanges();
     	this.queryCataloguePanel.commit(function() {
            	Ext.Ajax.request({
     			url: this.services['getSQLQuery'],
+    			params: params,
     			success: function(response, options) {
     				var responseJSON = Ext.decode(response.responseText);
     				callbackFn.call(scope, responseJSON);
@@ -539,6 +541,11 @@ Ext.extend(Sbi.qbe.QueryBuilderPanel, Ext.Panel, {
 		});
 		this.getAmbiguousFieldsButton.on('click', this.getAmbiguousFields, this);
 		
+		this.getQueryButton = new Ext.Button({
+		    text: LN('sbi.qbe.queryeditor.centerregion.buttons.getquery')
+		});
+		this.getQueryButton.on('click', this.getQueryString, this);
+		
 	    this.centerRegionPanel = new Ext.Panel({ 
 	    	title: LN('sbi.qbe.queryeditor.centerregion.title'),
 	        region:'center',
@@ -552,7 +559,7 @@ Ext.extend(Sbi.qbe.QueryBuilderPanel, Ext.Panel, {
 	        },
 	        margins: '5 5 5 5',
 	        items: [this.selectGridPanel, this.filterGridPanel, this.havingGridPanel],
-	        tbar: [this.selectGridButton, this.filterGridButton, this.havingGridButton, '->', this.getAmbiguousFieldsButton]
+	        tbar: [this.selectGridButton, this.filterGridButton, this.havingGridButton, '->', this.getQueryButton, this.getAmbiguousFieldsButton]
 	    });
 	    
 	    /*this.centerRegionPanel = new Ext.Panel({ 
@@ -672,6 +679,51 @@ Ext.extend(Sbi.qbe.QueryBuilderPanel, Ext.Panel, {
 		this.queryCataloguePanel.manageAmbiguousFields(function() {
 			// do nothings after commit for the moment
 		}, this);
+	}
+	
+	,getQueryString: function(){
+		
+		var callbackFn = function(params){
+			var jpql = params.jpqlFormatted;
+			var sql = params.sqlFormatted;
+			var win= new Ext.Window({
+                layout:'fit',
+                width:350,
+                height:500,
+                plain: true,
+                items: new Ext.TabPanel({
+                    autoTabs:true,
+                    activeTab:0,
+                    deferredRender:false,
+                    border:false,
+                    items:[{
+                    	title: LN('sbi.generic.query.SQL'),
+                    	layout:'fit',
+                    	html: sql
+                    },{
+                    	title: LN('sbi.generic.query.JPQL'),
+                    	layout:'fit',
+                    	html: jpql
+                    }]
+                }),
+
+                buttons: [{
+                    text: 'Close',
+                    handler: function(){
+                        win.close();
+                    }
+                }]
+            });
+			win.show();
+		}
+		
+		
+		var additionalParams = {
+				//used to set a default value to the parameters of the query
+				replaceParametersWithQuestion: true
+		};
+		
+		this.getSQLQuery(callbackFn, this, additionalParams);
 	}
 	
 	/*

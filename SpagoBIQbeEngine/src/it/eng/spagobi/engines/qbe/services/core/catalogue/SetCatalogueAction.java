@@ -5,6 +5,7 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.engines.qbe.services.core.catalogue;
 
+import it.eng.qbe.datasource.IDataSource;
 import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.model.structure.IModelField;
 import it.eng.qbe.model.structure.IModelStructure;
@@ -14,6 +15,8 @@ import it.eng.qbe.query.QueryMeta;
 import it.eng.qbe.query.QueryValidator;
 import it.eng.qbe.query.serializer.SerializerFactory;
 import it.eng.qbe.serializer.SerializationException;
+import it.eng.qbe.statement.IStatement;
+import it.eng.qbe.statement.StatementFactory;
 import it.eng.qbe.statement.graph.GraphManager;
 import it.eng.qbe.statement.graph.GraphUtilities;
 import it.eng.qbe.statement.graph.ModelFieldPaths;
@@ -51,6 +54,7 @@ import java.util.Set;
 
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
+import org.hibernate.jdbc.util.BasicFormatterImpl;
 import org.jgrapht.Graph;
 import org.jgrapht.GraphPath;
 import org.json.JSONArray;
@@ -63,6 +67,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
+import com.mysql.jdbc.Statement;
 
 
 /**
@@ -86,6 +91,7 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 	public static final String EXECUTE_DIRECTLY = "executeDirectly";
 	public static final String AMBIGUOUS_WARING = "ambiguousWarinig";
 	public static final String CATALOGUE_ERRORS = "catalogueErrors";
+	public static final String QUERY_STRING = "queryString";
 	
 	public static final String MESSAGE = "message";
 	public static final String MESSAGE_SAVE = "save";
@@ -251,6 +257,7 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 			List<String> queryErrors = QueryValidator.validate(query, getDataSource());
 			String serializedQueryErrors =  mapper.writeValueAsString( queryErrors);	
 			
+			//String queryString = buildQueryString(getDataSource(), query);
 			
 			JSONObject toReturn = new JSONObject();
 			toReturn.put(AMBIGUOUS_FIELDS_PATHS, serialized);
@@ -258,8 +265,8 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 			toReturn.put(EXECUTE_DIRECTLY, isDierctlyExecutable);
 			toReturn.put(AMBIGUOUS_WARING, ambiguousWarinig);
 			toReturn.put(CATALOGUE_ERRORS, serializedQueryErrors);
-			
-			
+			//toReturn.put(QUERY_STRING, queryString);
+
 			
 			try {
 				writeBackToClient( toReturn.toString() );
@@ -277,6 +284,8 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 			logger.debug("OUT");
 		}
 	}
+	
+
 
 
 	/**

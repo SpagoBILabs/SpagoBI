@@ -33,6 +33,8 @@ Sbi.locale.ln['sbi.generic.wait'] = "Please wait...";
 Sbi.locale.ln['sbi.generic.error'] = "Error";
 Sbi.locale.ln['sbi.generic.success'] = "Success";
 Sbi.locale.ln['sbi.generic.operationSucceded'] = "Operation succeded";
+Sbi.locale.ln['sbi.generic.query.SQL'] = "SQL Query";
+Sbi.locale.ln['sbi.generic.query.JPQL'] = "JPLQ Query";
 
 //===================================================================
 // MESSAGE WINDOW
@@ -95,6 +97,7 @@ Sbi.locale.ln['sbi.qbe.queryeditor.centerregion.tools.view'] = 'Save query as vi
 Sbi.locale.ln['sbi.qbe.queryeditor.centerregion.tools.validate'] = 'Validate query';
 Sbi.locale.ln['sbi.qbe.queryeditor.centerregion.tools.help'] = 'Help me please';
 Sbi.locale.ln['sbi.qbe.queryeditor.centerregion.buttons.relationshipswizard'] = 'Relationships wizard';
+Sbi.locale.ln['sbi.qbe.queryeditor.centerregion.buttons.getquery'] = 'Generated query';
 Sbi.locale.ln['sbi.qbe.queryeditor.noambiguousfields.title'] = 'No ambiguous fieds';
 Sbi.locale.ln['sbi.qbe.queryeditor.noambiguousfields.msg'] = 'There are no ambiguous fieds in the current query';
 Sbi.locale.ln['sbi.qbe.queryeditor.error.FILTER_ROLES_ERROR'] = 'If you are using entities with more than one role, in that entities you can specify filters only in the selected fields';

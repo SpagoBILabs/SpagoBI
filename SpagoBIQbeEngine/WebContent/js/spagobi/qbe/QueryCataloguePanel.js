@@ -161,6 +161,7 @@ Ext.extend(Sbi.qbe.QueryCataloguePanel, Ext.Panel, {
 		var ambiguousFields = "";
 		var ambiguousWarinig = "";
 		var userRolesSolved = "";
+		var queryString = "";
 		
 		if(response.responseText  && response.responseText !=""){
 			decodedResponce = Ext.util.JSON.decode( response.responseText );
@@ -180,6 +181,7 @@ Ext.extend(Sbi.qbe.QueryCataloguePanel, Ext.Panel, {
 		}
 		
 		ambiguousWarinig =(decodedResponce.ambiguousWarinig);
+		queryString = decodedResponce.queryString;
 
 		if(catalogueErrors && catalogueErrors.length>0){
 			var error = "";
@@ -196,7 +198,14 @@ Ext.extend(Sbi.qbe.QueryCataloguePanel, Ext.Panel, {
 	
 			if ((!forceOpenAmbiguous && decodedResponce.executeDirectly) || (forceOpenAmbiguous && (ambiguousFields.length == 0 ) )) {
 				if (callback) {
-					callback.call(scope);  // proced execution with the specified callback function
+					var callBackParams = {
+							catalogueErrors: catalogueErrors,
+							ambiguousFields: ambiguousFields,
+							ambiguousWarinig: ambiguousWarinig,
+							userRolesSolved: userRolesSolved,
+							queryString: queryString
+					}
+					callback.call(scope, callBackParams);  // proced execution with the specified callback function
 				}
 			} else {
 				
