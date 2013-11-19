@@ -55,8 +55,10 @@ Sbi.qbe.QueryBuilderPanel = function(config) {
 		enableQueryTbValidateBtn: false,
 		enableCatalogueTbDeleteBtn: true,
 		enableCatalogueTbAddBtn: false,
-		enableCatalogueTbInsertBtn: true
+		enableCatalogueTbInsertBtn: true,
+		queryWidowTabs: ['sql','jpql']
   	};
+	
 	if(Sbi.settings && Sbi.settings.qbe && Sbi.settings.qbe.queryBuilderPanel) {
 		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.qbe.queryBuilderPanel);
 	}
@@ -144,6 +146,7 @@ Ext.extend(Sbi.qbe.QueryBuilderPanel, Ext.Panel, {
     
     , saveQueryWindow: null
     , saveViewWindow: null
+    , queryWidowTabs: null
    
     // --------------------------------------------------------------------------------
 	// public methods
@@ -541,10 +544,17 @@ Ext.extend(Sbi.qbe.QueryBuilderPanel, Ext.Panel, {
 		});
 		this.getAmbiguousFieldsButton.on('click', this.getAmbiguousFields, this);
 		
-		this.getQueryButton = new Ext.Button({
-		    text: LN('sbi.qbe.queryeditor.centerregion.buttons.getquery')
-		});
-		this.getQueryButton.on('click', this.getQueryString, this);
+		var toolbar = [this.selectGridButton, this.filterGridButton, this.havingGridButton, '->', this.getAmbiguousFieldsButton];
+		
+		if(this.queryWidowTabs && this.queryWidowTabs.length>0){
+			this.getQueryButton = new Ext.Button({
+			    text: LN('sbi.qbe.queryeditor.centerregion.buttons.getquery')
+			});
+			this.getQueryButton.on('click', this.getQueryString, this);
+			
+			toolbar = [this.selectGridButton, this.filterGridButton, this.havingGridButton, '->', this.getQueryButton, this.getAmbiguousFieldsButton];
+		}
+
 		
 	    this.centerRegionPanel = new Ext.Panel({ 
 	    	title: LN('sbi.qbe.queryeditor.centerregion.title'),
@@ -559,7 +569,7 @@ Ext.extend(Sbi.qbe.QueryBuilderPanel, Ext.Panel, {
 	        },
 	        margins: '5 5 5 5',
 	        items: [this.selectGridPanel, this.filterGridPanel, this.havingGridPanel],
-	        tbar: [this.selectGridButton, this.filterGridButton, this.havingGridButton, '->', this.getQueryButton, this.getAmbiguousFieldsButton]
+	        tbar: toolbar
 	    });
 	    
 	    /*this.centerRegionPanel = new Ext.Panel({ 
@@ -683,9 +693,39 @@ Ext.extend(Sbi.qbe.QueryBuilderPanel, Ext.Panel, {
 	
 	,getQueryString: function(){
 		
+		var thisPanel =this;
+		
 		var callbackFn = function(params){
 			var jpql = params.jpqlFormatted;
 			var sql = params.sqlFormatted;
+
+			
+			var windowsItems = new Array();
+			
+			var jpqlPanel = {
+                	title: LN('sbi.generic.query.JPQL'),
+                	layout:'fit',
+                	name: 'jpql',
+                	html: jpql
+                };
+			
+			var sqlPanel = {
+                	title: LN('sbi.generic.query.SQL'),
+                	layout:'fit',
+                	name: 'sql',
+                	html: sql
+                };
+			
+			if(thisPanel.queryWidowTabs){
+				for(var i=0; i<thisPanel.queryWidowTabs.length; i++){
+					if(thisPanel.queryWidowTabs[i]=='jqpl'){
+						windowsItems.push(jpqlPanel);
+					}else if(thisPanel.queryWidowTabs[i]=='sql'){
+						windowsItems.push(sqlPanel);
+					}
+				}
+			}				
+			
 			var win= new Ext.Window({
                 layout:'fit',
                 width:350,
@@ -696,15 +736,7 @@ Ext.extend(Sbi.qbe.QueryBuilderPanel, Ext.Panel, {
                     activeTab:0,
                     deferredRender:false,
                     border:false,
-                    items:[{
-                    	title: LN('sbi.generic.query.SQL'),
-                    	layout:'fit',
-                    	html: sql
-                    },{
-                    	title: LN('sbi.generic.query.JPQL'),
-                    	layout:'fit',
-                    	html: jpql
-                    }]
+                    items: windowsItems
                 }),
 
                 buttons: [{
