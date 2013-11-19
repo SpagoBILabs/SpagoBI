@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.apache.log4j.Logger;
 import org.jgrapht.DirectedGraph;
 import org.jgrapht.Graph;
 import org.jgrapht.GraphPath;
@@ -48,7 +49,7 @@ public class GraphUtilities {
 	
 	public static final String RELATIONSHIP_ID = "relationshipId";
 	public static final int maxPathLength = 5;
-
+	static private Logger logger = Logger.getLogger(GraphUtilities.class);
 	
 	/**
 	 * Removes the subpaths
@@ -344,6 +345,7 @@ public class GraphUtilities {
 	public static JSONArray serializeGraph(Query query) throws Exception {
  		QueryGraph graph = query.getQueryGraph();
 		if(graph!=null){
+			logger.debug("The graph of the query is not null"+graph.toString());
 			ObjectMapper mapper = new ObjectMapper();
 			SimpleModule simpleModule = new SimpleModule("SimpleModule",new Version(1, 0, 0, null));
 			simpleModule.addSerializer(Relationship.class,
@@ -351,9 +353,11 @@ public class GraphUtilities {
 
 			mapper.registerModule(simpleModule);
 			String serialized = mapper.writeValueAsString(graph.getConnections());
+			logger.debug("The serialization of the graph is "+serialized);
 			JSONArray array = new JSONArray(serialized);
 			return array;
 		}else{
+			logger.debug("The graph of the query is null");
 			return new JSONArray();
 		}
 
