@@ -59,6 +59,8 @@ public class MenuListJSONSerializer implements Serializer {
 	public static final String LANG ="LANG";
 	public static final String HOME ="HOME";
 	public static final String TARGET ="hrefTarget";
+	public static final String HELP ="HELP";
+
 	
 	private static final String HREF_DOC_BROWSER ="/servlet/AdapterHTTP?ACTION_NAME=DOCUMENT_USER_BROWSER_START_ACTION&LIGHT_NAVIGATOR_RESET_INSERT=TRUE";
 	private static final String HREF_BOOKMARK ="/servlet/AdapterHTTP?PAGE=HOT_LINK_PAGE&OPERATION=GET_HOT_LINK_LIST&LIGHT_NAVIGATOR_RESET_INSERT=TRUE";
@@ -293,6 +295,10 @@ public class MenuListJSONSerializer implements Serializer {
 				menuItem.put(HREF, "javascript:info()");
 			}else if(label != null && label.equals(ROLE)){
 				menuItem.put(HREF, "javascript:roleSelection()");
+			}else if(label != null && label.equals(HELP)){
+				menuItem.put(HREF, "http://wiki.spagobi.org/xwiki/bin/view/Main/");
+				menuItem.remove(TARGET);
+				menuItem.put(TARGET, "_blank");
 			}else if(href!=null && href.length()>0){
 				menuItem.put(HREF, "javascript:execUrl('"+contextName+href+"')");
 			}
@@ -325,12 +331,17 @@ public class MenuListJSONSerializer implements Serializer {
 		JSONObject info = createMenuItem("info", "",
 				messageBuilder.getMessage("menu.info", locale), false, "INFO");
 		
+		JSONObject help = createMenuItem("help", "",
+				messageBuilder.getMessage("menu.help", locale), false, "HELP");
+		
 		spacer.put("xtype", "spacer");
 		tempMenuList.put("->");
 
 		tempMenuList.put(roles);
 
 		tempMenuList.put(lang);
+		
+		tempMenuList.put(help);
 
 		tempMenuList.put(info);
 
