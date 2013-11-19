@@ -67,7 +67,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
-import com.mysql.jdbc.Statement;
+
 
 
 /**
