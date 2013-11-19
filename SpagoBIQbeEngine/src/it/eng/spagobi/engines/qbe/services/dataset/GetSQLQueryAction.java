@@ -5,9 +5,11 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.engines.qbe.services.dataset;
 
+import it.eng.qbe.query.ISelectField;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.statement.IStatement;
 import it.eng.spago.base.SourceBean;
+import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.engines.qbe.services.core.AbstractQbeEngineAction;
 import it.eng.spagobi.engines.qbe.services.core.ExecuteQueryAction;
 import it.eng.spagobi.utilities.assertion.Assert;
@@ -16,8 +18,10 @@ import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
 import it.eng.spagobi.utilities.service.JSONSuccess;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.hibernate.jdbc.util.BasicFormatterImpl;
 import org.json.JSONObject;
 
 
@@ -41,6 +45,7 @@ public class GetSQLQueryAction extends AbstractQbeEngineAction {
     private static transient Logger logger = Logger.getLogger(GetSQLQueryAction.class);
     
     public static final String ENGINE_NAME = "SpagoBIQbeEngine";
+    public static final String REPLACE_PARAMETERS_WITH_QUESTION = "replaceParametersWithQuestion";
 		
     public void service(SourceBean request, SourceBean response) {
 		
@@ -52,6 +57,9 @@ public class GetSQLQueryAction extends AbstractQbeEngineAction {
     	try {
 			super.service(request, response);	
 			
+			
+			boolean replaceParametersWithQuestion =  getAttributeAsBoolean("replaceParametersWithQuestion");
+			
 			// retrieving query specified by id on request
 			query = getEngineInstance().getActiveQuery();
 			if (query == null) {
@@ -60,19 +68,32 @@ public class GetSQLQueryAction extends AbstractQbeEngineAction {
 			}
 			Assert.assertNotNull(query, "Query not found!!");
 
-			// promptable filters values may come with request (read-only user modality)
-			ExecuteQueryAction.updatePromptableFiltersValue(query, this);
+			if(replaceParametersWithQuestion){
+				// promptable filters values may come with request (read-only user modality)
+				ExecuteQueryAction.updatePromptableFiltersValue(query, this, true);
+			}else{
+				// promptable filters values may come with request (read-only user modality)
+				ExecuteQueryAction.updatePromptableFiltersValue(query, this);
+			}
+			
+			
+
 			
 			statement = getEngineInstance().getStatment();	
 			statement.setParameters( getEnv() );
 			
 			String jpaQueryStr = statement.getQueryString();
 			String sqlQuery = statement.getSqlQueryString();
+			String jpaQueryStrFormatted = formatQueryString(addAliasInJqpl(query,jpaQueryStr));
+			String sqlQueryFormatted = formatQueryString(addAliasInSql(query,sqlQuery));
+			
 			logger.debug("Executable query (HQL/JPQL): [" +  jpaQueryStr+ "]");
 			logger.debug("Executable query (SQL): [" + sqlQuery + "]");
 			
 			JSONObject toReturn = new JSONObject();
 			toReturn.put("sql", sqlQuery);
+			toReturn.put("jpqlFormatted", jpaQueryStrFormatted);
+			toReturn.put("sqlFormatted", sqlQueryFormatted);
 			
 			try {
 				writeBackToClient( new JSONSuccess(toReturn) );
@@ -87,6 +108,74 @@ public class GetSQLQueryAction extends AbstractQbeEngineAction {
 			logger.debug("OUT");
 		}		
 
+	}
+    
+    
+	/**
+	 * Get the query string of the passed Query. The returned query is formatted
+	 * @param dataSource
+	 * @param query
+	 * @return
+	 */
+	public String formatQueryString(String queryString) {
+		String formattedQuery;
+		BasicFormatterImpl fromatter;
+		
+		if(queryString == null || queryString.equals("")){
+			logger.error("Impossible to get the query string because the query is null");
+			return "";
+		}
+
+		fromatter = new BasicFormatterImpl() ;
+		formattedQuery = fromatter.format(queryString);
+		return StringUtilities.fromStringToHTML(formattedQuery);
+	}
+	
+	public String addAliasInSql(Query query, String queryString){
+		List<ISelectField> selectFields = query.getSelectFields(true);
+		if(selectFields!=null){
+			for(int i=0; i<selectFields.size(); i++){
+				int startColAlias =  queryString.indexOf("as col_");
+				int endColAlias =  queryString.indexOf(",",startColAlias);
+				int fromPosition =  queryString.indexOf(" from ");
+				if(endColAlias==-1 || fromPosition<endColAlias){
+					endColAlias = fromPosition;
+				}
+				String fieldAlias = selectFields.get(i).getAlias();
+				if(fieldAlias==null){
+					fieldAlias = selectFields.get(i).getName();
+				}
+				queryString = queryString.substring(0,startColAlias)+ " as "+fieldAlias+queryString.substring(endColAlias);
+			}
+		}
+		return queryString;
+	}
+	
+	
+	public String addAliasInJqpl(Query query, String queryString){
+		List<ISelectField> selectFields = query.getSelectFields(true);
+		if(selectFields!=null){
+			String[] splitted = queryString.split(",");
+			for(int i=0; i<selectFields.size(); i++){
+				
+				String fieldAlias = selectFields.get(i).getAlias();
+				if(fieldAlias==null){
+					fieldAlias = selectFields.get(i).getName();
+				}
+				
+				if(selectFields.size()-1==i){
+					int fromPosition =  queryString.indexOf(" FROM ");
+					queryString = queryString.substring(0,fromPosition)+ " as " +fieldAlias+queryString.substring(fromPosition);
+					
+				}else{
+					String queryPeace = splitted[i];
+					int startColAlias =  queryString.indexOf(queryPeace+",");
+										
+					queryString = queryString.substring(0,startColAlias+queryPeace.length())+ " as " +fieldAlias+queryString.substring(startColAlias+queryPeace.length());
+				}
+			}
+		}
+		return queryString;
 	}
 
 }
