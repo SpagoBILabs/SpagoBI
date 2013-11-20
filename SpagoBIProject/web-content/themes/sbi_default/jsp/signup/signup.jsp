@@ -17,6 +17,9 @@
 <%@page import="it.eng.spagobi.commons.constants.ObjectsTreeConstants"%>
 <%@page import="org.apache.commons.lang.StringEscapeUtils"%>
 <%@page import="java.util.Enumeration"%>
+<%@page import="java.util.List"%>
+<%@page import="java.util.ArrayList"%>
+<%@page import="it.eng.spagobi.community.mapping.SbiCommunity"%>
 
 <%@ include file="/WEB-INF/jsp/commons/portlet_base410.jsp"%>  
 
@@ -43,6 +46,8 @@
 	String defaultShortBio = msgBuilder.getMessage("signup.form.shortBio",locale);
 		
 	String registrationSuccessMsg = msgBuilder.getMessage("signup.msg.success",locale);
+	
+	List comunities = (request.getAttribute("communities")==null)?new ArrayList():(List)request.getAttribute("communities");
 %>
 
 <script type="text/javascript" src='${pageContext.request.contextPath}/js/lib/ext-4.1.1a/ext-all-debug.js'/></script>
@@ -110,7 +115,7 @@ this.services["create"]= Sbi.config.serviceRegistry.getRestServiceUrl({
 	var check            = document.getElementById("termini");
 	var termini = 'false';
     if( check.checked ) termini = 'true';
-	
+    
 	var params = new Object();
 	params.locale	= '<%=locale%>';
 	params.nome     = nome;
@@ -128,33 +133,56 @@ this.services["create"]= Sbi.config.serviceRegistry.getRestServiceUrl({
 	params.termini     = termini;
 	params.lingua      = lingua;
 	params.captcha     = captcha;
+		
+	//params.modify      = true;
+
+	var goOn = false;
+	if (document.getElementById("aziendaIsChanged").value == "true"){
+		Ext.MessageBox.confirm(
+				  "Warning",
+				  "<%=msgBuilder.getMessage("signup.msg.confirmCreateComm", locale)%>",
+				  function(btn, text){					  
+					  if (btn=='yes') {
+						  execCreation(params);
+						  return;
+					  }
+				  }
+		);
+	}else 
+		goOn=true;
 	
+	if (goOn){
+		execCreation(params);
+	}
+}
+
+function execCreation(params){
 	var registrationSuccessMsg = "<%=registrationSuccessMsg%>";
 	
-     Ext.Ajax.request({
-	url: this.services["create"],
-	method: "POST",
-	params: params,			
-	success : function(response, options) {	
-		
-	    if(response != undefined  && response.responseText != undefined ) {
-			if( response.responseText != null && response.responseText != undefined ){
-		    var jsonData = Ext.decode( response.responseText );
-		    if( jsonData.message != undefined && jsonData.message != null && jsonData.message == 'validation-error' ){
-		      Sbi.exception.ExceptionHandler.handleFailure(response);
-		    }else{
-		      Sbi.exception.ExceptionHandler.showInfoMessage(registrationSuccessMsg, 'OK', {});
-		    }		
-		  }		
-		}
-		else {
+	Ext.Ajax.request({
+		url: this.services["create"],
+		method: "POST",
+		params: params,			
+		success : function(response, options) {	
 			
-		  Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
-		}
-    },
-	scope: this,
-	failure: Sbi.exception.ExceptionHandler.handleFailure
-});
+		    if(response != undefined  && response.responseText != undefined ) {
+				if( response.responseText != null && response.responseText != undefined ){
+			    var jsonData = Ext.decode( response.responseText );
+			    if( jsonData.message != undefined && jsonData.message != null && jsonData.message == 'validation-error' ){
+			      Sbi.exception.ExceptionHandler.handleFailure(response);
+			    }else{
+			      Sbi.exception.ExceptionHandler.showInfoMessage(registrationSuccessMsg, 'OK', {});
+			    }		
+			  }		
+			}
+			else {
+				
+			  Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
+			}
+	    },
+			scope: this,
+			failure: Sbi.exception.ExceptionHandler.handleFailure
+		});
 }
 </script>
 <script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext/sbi/service/ServiceRegistry.js'/></script>
@@ -403,8 +431,19 @@ a:hover{
 									<td class='login-label'></td>
 								</tr>
 								<tr>
-									<td><input id="azienda" name="azienda" type="text" size="25"
-										class="login"/></td>
+									<td>
+										<!-- <input id="azienda" name="azienda" type="text" size="25" class="login"/> --> 
+										<div class="login" style="position:relative;width:200px;height:25px;border:0;padding:0;margin:0;">
+											<select style="position:absolute;top:0px;left:0px;width:214px; height:25px;line-height:20px;margin:0;padding:0;" onchange="document.getElementById('azienda').value=this.options[this.selectedIndex].text;">											
+												<option></option>	
+												<%for(int i=0; i<comunities.size(); i++){
+													SbiCommunity objComm = (SbiCommunity)comunities.get(i); %>
+													<option value="<%=objComm.getName()%>"><%=objComm.getName() %></option>	
+												<%} %>																															
+											</select>											
+											<input type="text" name="azienda" placeholder="" id="azienda" style="position:absolute;top:1px;left:2px;width:183px;height:23px;border:0px;" onfocus="this.select()" onKeyPress="document.getElementById('aziendaIsChanged').value=true">											
+											<input type="hidden" name="aziendaIsChanged" id="aziendaIsChanged"> 									
+										</div>
 									<td></td>
 									<td></td>
 								</tr>

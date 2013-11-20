@@ -18,6 +18,11 @@
 <%@page import="it.eng.spagobi.commons.constants.ObjectsTreeConstants"%>
 <%@page import="org.apache.commons.lang.StringEscapeUtils"%>
 <%@page import="java.util.Enumeration"%>
+<%@page import="java.util.List"%>
+<%@page import="java.util.ArrayList"%>
+<%@page import="java.util.Map"%>
+<%@page import="java.util.HashMap"%>
+<%@page import="it.eng.spagobi.community.mapping.SbiCommunity"%>
 
 <%@ include file="/WEB-INF/jsp/commons/portlet_base410.jsp"%>
 
@@ -71,7 +76,10 @@
 	String registrationSuccessMsg = msgBuilder.getMessage(
 			"signup.msg.modifySuccess", locale);
 	
-	//String urlLogout =  SingletonConfig.getInstance().getConfigValue("SPAGOBI_SSO.SECURITY_LOGOUT_URL");
+	List comunities = (request.getAttribute("communities")==null)?new ArrayList():(List)request.getAttribute("communities");
+	Map data = (request.getAttribute("data")==null)?new HashMap():(Map)request.getAttribute("data");
+	String myCommunity = (data.get("community")==null)?"":(String)data.get("community");
+	
 %>
 <script type="text/javascript">
 
@@ -191,55 +199,83 @@ this.services["update"]= Sbi.config.serviceRegistry.getRestServiceUrl({
 });
 
     var form             = document.myForm;
-	
+	var myCommunity		 = '<%=myCommunity%>';
     var nome             = document.getElementById("nome").value;
     var cognome          = document.getElementById("cognome").value;
 	var password         = document.getElementById("password").value;
+	var confermaPassword = document.getElementById("confermaPassword").value;
     var email            = document.getElementById("email").value;
 	var dataNascita      = document.getElementById("dataNascita").value;
 	var indirizzo        = document.getElementById("indirizzo").value;
 	var azienda          = document.getElementById("azienda").value;
 	var biografia        = document.getElementById("biografia").value;
 	var lingua           = document.getElementById("lingua").value;
-	
+	var username         = document.getElementById("username").value;
 	
 	var params = new Object();
 	params.locale	   = '<%=locale%>';
 	params.nome        = nome;
 	params.cognome     = cognome;
 	params.password    = password;
+	params.confermaPassword = confermaPassword;
 	params.email       = email;
 	params.dataNascita = dataNascita;
 	params.indirizzo   = indirizzo;
 	params.azienda     = azienda;
 	params.biografia   = biografia;
 	params.lingua      = lingua;
-	params.modify      = true;
+	params.useCaptcha  = false;
+	params.termini	   = true;
+	params.username    = username;
+	if (password == null || password == "")
+		params.modify = true;
 	
-     Ext.Ajax.request({
-	url: this.services["update"],
-	method: "POST",
-	params: params,			
-	success : function(response, options) {	
-		
-	    if(response != undefined  && response.responseText != undefined ) {
-			if( response.responseText != null && response.responseText != undefined ){
-		    var jsonData = Ext.decode( response.responseText );
-		    if( jsonData.message != undefined && jsonData.message != null && jsonData.message == 'validation-error' ){
-		      Sbi.exception.ExceptionHandler.handleFailure(response);
-		    }else{
-		      Sbi.exception.ExceptionHandler.showInfoMessage('<%=registrationSuccessMsg%>', 'Saved OK', {});
-		    }		
-		  }		
-		}
-		else {
-			
-		  Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
-		}
-    },
-	scope: this,
-	failure: Sbi.exception.ExceptionHandler.handleFailure
-  });
+	var goOn = false;
+	if (myCommunity !== "" && document.getElementById("aziendaIsChanged").value == "true"){
+		Ext.MessageBox.confirm(
+				  "Warning",
+				  "<%=msgBuilder.getMessage("signup.msg.confirmUpdateComm", locale)%>",
+				  function(btn, text){					  
+					  if (btn=='yes') {
+						  execUpdate(params);
+						  return;
+					  }
+				  }
+		);
+	}else 
+		goOn=true;
+	
+	if (goOn){
+		execUpdate(params);
+	}    
+}
+
+function execUpdate(params){
+	
+	 Ext.Ajax.request({
+			url: this.services["update"],
+			method: "POST",
+			params: params,			
+			success : function(response, options) {	
+				
+			    if(response != undefined  && response.responseText != undefined ) {
+					if( response.responseText != null && response.responseText != undefined ){
+				    var jsonData = Ext.decode( response.responseText );
+				    if( jsonData.message != undefined && jsonData.message != null && jsonData.message == 'validation-error' ){
+				      Sbi.exception.ExceptionHandler.handleFailure(response);
+				    }else{
+				      Sbi.exception.ExceptionHandler.showInfoMessage('<%=registrationSuccessMsg%>', 'Saved OK', {});
+				    }		
+				  }		
+				}
+				else {
+					
+				  Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
+				}
+		    },
+			scope: this,
+			failure: Sbi.exception.ExceptionHandler.handleFailure
+		  });
 }
 </script>
 <script type="text/javascript"
@@ -334,6 +370,7 @@ body {
 <body>
 
 	<form name="myForm" method="post">
+		<input type="hidden" name="username" id="username" value="${data['username']}" />
 		<div id="content" style="height: 100%">
 			<div style="padding: 40px">
 				<!--
@@ -373,16 +410,14 @@ body {
 								</tr>
 
 								<tr class='header-row-portlet-section'>
-									<td class='login-label' width="90px" align="left"><%=defaultPassword%>:
-									</td>
-									<td width="25px">&nbsp;</td>
-
+									<td class='login-label' width="90px" align="left">&nbsp;<%=defaultPassword%>:</td>
+									<td width="25px">&nbsp;</td> 					
 								</tr>
 								<tr>
-									<td><input id="password" name="password" type="password"
-										size="25" class="login"></td>
-									<td></td>
-
+									<td valign="top"><input id="password" name="password"
+										type="password" size="25" class="login">
+									</td>
+									<td></td> 									
 								</tr>
 								<tr class='header-row-portlet-section'>
 									<td class='login-label' width="90px" align="left">*&nbsp;<%=defaultEmail%>:
@@ -406,71 +441,6 @@ body {
 									<td><input id="dataNascita" name="dataNascita" type="text"
 										size="25" class="login" value="${data['birth_date']}" /></td>
 									<td></td>
-
-								</tr>
-
-								<tr>
-									<td colspan="2" height="30px">&nbsp;</td>
-								</tr>
-
-								<tr>
-									<td colspan="2" height="30px">&nbsp;</td>
-								</tr>
-
-							</table>
-						</td>
-						<td width='50px'></td>
-						<td width="350px">
-							<table border="0">
-
-								<tr class='header-row-portlet-section'>
-									<td class='login-label' width="90px" align="left">*&nbsp;<%=defaultSurname%>:
-									</td>
-									<td width="25px">&nbsp;</td>
-
-								</tr>
-								<tr>
-									<td><input id="cognome" name="cognome" type="text"
-										size="25" class="login" value="${data['surname']}"></td>
-									<td></td>
-
-								</tr>
-								<tr class='header-row-portlet-section'>
-									<td class='login-label' width="90px" align="left"><%=defaultLocation%>:
-									</td>
-									<td width="25px">&nbsp;</td>
-
-								</tr>
-								<tr>
-									<td><input id="indirizzo" name="indirizzo" type="text"
-										size="25" class="login" value="${data['location']}" /></td>
-									<td></td>
-
-								</tr>
-								<tr class='header-row-portlet-section'>
-									<td class='login-label' width="90px" align="left"><%=defaultCommunity%>:
-									</td>
-									<td width="25px">&nbsp;</td>
-
-								</tr>
-								<tr>
-									<td><input id="azienda" name="azienda" type="text"
-										size="25" class="login" value="${data['community']}" /></td>
-									<td></td>
-
-								</tr>
-								<tr class='header-row-portlet-section'>
-									<td class='login-label' width="90px" align="left"><%=defaultShortBio%>:
-									</td>
-									<td width="25px">&nbsp;</td>
-
-								</tr>
-								<tr>
-									<td><textarea class="login" rows="5" cols="35"
-											name="biografia" id="biografia">${data['short_bio']}</textarea>
-									</td>
-									<td></td>
-
 								</tr>
 								<tr class='header-row-portlet-section'>
 									<td class='login-label' width="90px" align="left"><%=defaultLanguage%>:
@@ -524,6 +494,100 @@ body {
 									</select></td>
 									<td></td>
 								</tr>
+
+							<!-- 	<tr>
+									<td colspan="2" height="30px">&nbsp;</td>
+								</tr>
+
+								<tr>
+									<td colspan="2" height="30px">&nbsp;</td>
+								</tr>
+ 							-->
+							</table>
+						</td>
+						<td width='50px'></td>
+						<td width="350px">
+							<table border="0">
+
+								<tr class='header-row-portlet-section'>
+									<td class='login-label' width="90px" align="left">*&nbsp;<%=defaultSurname%>:
+									</td>
+									<td width="25px">&nbsp;</td>
+
+								</tr>
+								<tr>
+									<td><input id="cognome" name="cognome" type="text"
+										size="25" class="login" value="${data['surname']}"></td>
+									<td></td>
+
+								</tr>
+								<tr class='header-row-portlet-section'>
+									<td class='login-label' width="90px" align="left">&nbsp;<%=defaultConfirmPwd%>:
+									</td>
+									<td width="25px">&nbsp;</td>
+
+								</tr>
+								<tr>
+									<td><input id="confermaPassword" name="confermaPassword" type="password"
+										size="25" class="login" value=""></td>
+									<td></td>
+
+								</tr>
+								<tr class='header-row-portlet-section'>
+									<td class='login-label' width="90px" align="left"><%=defaultLocation%>:
+									</td>
+									<td width="25px">&nbsp;</td>
+
+								</tr>
+								<tr>
+									<td><input id="indirizzo" name="indirizzo" type="text"
+										size="25" class="login" value="${data['location']}" /></td>
+									<td></td>
+
+								</tr>
+								<tr class='header-row-portlet-section'>
+									<td class='login-label' width="90px" align="left"><%=defaultCommunity%>:
+									</td>
+									<td width="25px">&nbsp;</td>
+
+								</tr>
+								<tr>
+									<td>
+										<!-- <input id="azienda" name="azienda" type="text"size="25" class="login" value="${data['community']}" />-->
+										<div class="login" style="position:relative;width:200px;height:25px;border:0;padding:0;margin:0;">
+											<select style="position:absolute;top:0px;left:0px;width:214px; height:25px;line-height:20px;margin:0;padding:0;" onchange="document.getElementById('azienda').value=this.options[this.selectedIndex].text;document.getElementById('aziendaIsChanged').value=true">											
+												<option></option>	
+												<%for(int i=0; i<comunities.size(); i++){
+													SbiCommunity objComm = (SbiCommunity)comunities.get(i);
+													
+													if (objComm.getName() == myCommunity){%>
+														<option  value="<%=objComm.getName()%>" selected><%=objComm.getName() %>  </option>	
+												<%  } else {%>
+														<option value="<%=objComm.getName()%>"><%=objComm.getName() %></option>
+												<%	} 
+												}%>																															
+											</select>											
+											<input type="text"  value="<%=myCommunity %>" name="azienda" placeholder="" id="azienda" style="position:absolute;top:1px;left:2px;width:183px;height:23px;border:0px;" onfocus="this.select()" onKeyPress="document.getElementById('aziendaIsChanged').value=true;">											
+											<input type="hidden" name="aziendaIsChanged" id="aziendaIsChanged"> 									
+										</div>
+									</td>
+									<td></td>
+
+								</tr>
+								<tr class='header-row-portlet-section'>
+									<td class='login-label' width="90px" align="left"><%=defaultShortBio%>:
+									</td>
+									<td width="25px">&nbsp;</td>
+
+								</tr>
+								<tr>
+									<td><textarea class="login" rows="5" cols="35"
+											name="biografia" id="biografia">${data['short_bio']}</textarea>
+									</td>
+									<td></td>
+
+								</tr>
+								
 
 							</table>
 						</td>

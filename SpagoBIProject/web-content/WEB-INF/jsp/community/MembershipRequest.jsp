@@ -43,7 +43,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 <BODY>
 <h2>Accepted Community Membership Request</h2> 
 <div width="100%" style="float:left; width:100%;">
-<p style="float:left; width:100%;">User <%=userToAccept%> became memeber of <%=community%> community, thanks to your approval.</p>
+<p style="float:left; width:100%;">User <%=userToAccept%> became member of <%=community%> community, thanks to your approval.</p>
 
 </div>
 </BODY>

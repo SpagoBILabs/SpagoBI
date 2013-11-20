@@ -633,5 +633,38 @@ public class SbiCommunityDAOImpl extends AbstractHibernateDAO implements ISbiCom
 		}
 		
 	}
+	
+	public void deleteMemberFromCommunity(String userID, Integer communityId)
+			throws EMFUserError {
+		logger.debug("IN");
+		Session aSession = null;
+		Transaction tx = null;
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+			String q = "from SbiCommunityUsers cu where cu.id.userId = ? and  cu.id.communityId = ? ";
+			Query query = aSession.createQuery(q);
+			query.setString(0, userID);
+			query.setInteger(1, communityId);
+			List <SbiCommunityUsers> result = query.list();
+			if(result != null && !result.isEmpty()){
+				for(int i=0; i<result.size(); i++){
+					aSession.delete(result.get(i));
+				}
+			}
+			tx.commit();
+		} catch (HibernateException he) {
+			logger.error(he.getMessage(), he);
+			if (tx != null)
+				tx.rollback();
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+		} finally {
+			logger.debug("OUT");
+			if (aSession!=null){
+				if (aSession.isOpen()) aSession.close();
+			}
+		}
+		
+	}
 
 }

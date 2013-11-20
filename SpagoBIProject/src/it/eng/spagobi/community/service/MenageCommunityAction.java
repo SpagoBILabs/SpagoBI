@@ -11,27 +11,23 @@ import it.eng.spago.base.SessionContainer;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
-import it.eng.spagobi.analiticalmodel.functionalitytree.dao.ILowFunctionalityDAO;
-import it.eng.spagobi.commons.bo.Role;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.dao.IRoleDAO;
-import it.eng.spagobi.commons.metadata.SbiExtRoles;
+import it.eng.spagobi.commons.utilities.ChannelUtilities;
 import it.eng.spagobi.commons.utilities.messages.IMessageBuilder;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory;
 import it.eng.spagobi.community.bo.CommunityManager;
 import it.eng.spagobi.community.dao.ISbiCommunityDAO;
 import it.eng.spagobi.community.mapping.SbiCommunity;
-import it.eng.spagobi.profiling.bean.SbiUser;
-import it.eng.spagobi.profiling.dao.ISbiUserDAO;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
+import it.eng.spagobi.utilities.themes.ThemesManager;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
@@ -44,17 +40,17 @@ import org.json.JSONObject;
 
 @Path("/community")
 public class MenageCommunityAction {
-	protected IMessageBuilder msgBuilder = MessageBuilderFactory.getMessageBuilder();;
+	protected IMessageBuilder msgBuilder = MessageBuilderFactory.getMessageBuilder();
+	protected Locale locale = null;	
 	private static Logger logger = Logger.getLogger(MenageCommunityAction.class);
 
 	
-	@GET
+	@POST
 	@Path("/accept")
 	@Produces(MediaType.TEXT_HTML)
 	public String accept(@Context HttpServletRequest req) {
 		
 		RequestContainer reqCont = RequestContainerAccess.getRequestContainer(req);
-		Locale locale = null;	
 		if(reqCont != null){
 			SessionContainer aSessionContainer = reqCont.getSessionContainer();
 	
@@ -73,7 +69,8 @@ public class MenageCommunityAction {
 		String userToAccept = (String)req.getParameter("userToAccept");
 		String community = (String)req.getParameter("community");
 		String owner = (String)req.getParameter("owner");
-		String result=msgBuilder.getMessage("community.save.membership.ok.1", "messages", locale)+userToAccept+msgBuilder.getMessage("community.save.membership.ok.2", "messages", locale)+community;
+		String result=msgBuilder.getMessage("community.save.membership.ok.1", "messages", locale)+ "<b> "+userToAccept+ "</b> " +
+					  msgBuilder.getMessage("community.save.membership.ok.2", "messages", locale)+ "<b> "+community + "</b>";
 		
 		if(profile.getUserUniqueIdentifier().equals(owner)){
 
@@ -98,6 +95,8 @@ public class MenageCommunityAction {
 		}else{
 			result= msgBuilder.getMessage("community.save.membership.cannot", "messages", locale);
 		}
+		
+		result = createHTMLPage(result, req);
 		logger.debug("OUT");
 		return result;
 	}
@@ -154,5 +153,46 @@ public class MenageCommunityAction {
 		}
 		
 		return jsonComm.toString();		
+	}
+	
+	private String createHTMLPage (String msg, HttpServletRequest req){
+		StringBuffer sb = new StringBuffer();
+		
+		String currTheme = (String)req.getAttribute("currTheme");
+    	if(currTheme==null)currTheme=ThemesManager.getDefaultTheme();			
+		logger.debug("currTheme: "+currTheme);
+		
+		
+		String contextName = ChannelUtilities.getSpagoBIContextName(req);
+		String schema = req.getScheme();
+		String server= req.getServerName();
+		String port= req.getServerPort()+"";
+		String url = schema	+ "://"+server + ":" + port	+ "/" + contextName;
+		
+		sb.append("<HTML>");
+		sb.append("<HEAD>");
+		sb.append("<TITLE>Community Membership Request</TITLE>");
+		sb.append("</HEAD>");
+		sb.append("<BODY>");
+		sb.append("<link rel='stylesheet' type='text/css' href=\""+contextName+"/themes/"+currTheme+"/css/home40/standard.css\"/>");
+		sb.append("	<span style='float:left; width: 100%; text-align:center;'>");
+		sb.append("	<form method=\"post\" action=\""+url+"\" class=\"reserved-area-form login\">");
+		sb.append("		<main class='main main-msg' id='main'>");
+		sb.append(" 	<div class='aux'> ");
+		sb.append("			<span class='ops'><h2>"+msgBuilder.getMessage("community.save.membership.title", "messages", locale)+"</h2></span>");
+		sb.append("				<p>");
+		sb.append(					msg);
+		sb.append("				</p>");
+		sb.append("				<div class=\"submit\">");
+		sb.append("					<input type=\"submit\" value=\""+msgBuilder.getMessage("community.save.membership.backToSite", "messages", locale)+"\">");
+		sb.append("				</div>");
+		sb.append("		</div>");
+		sb.append("		</main> ");
+		sb.append("	</span>");
+		sb.append("</BODY>");
+		String htmlTxt = sb.toString();
+		
+		return htmlTxt;
+		
 	}
 }

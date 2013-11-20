@@ -36,4 +36,6 @@ public interface ISbiCommunityDAO extends ISpagoBIDao {
 	public Integer updateSbiComunity(SbiCommunity community) throws EMFUserError;
 	
 	public List<SbiCommunityUsers> loadCommunitieMembersByName(SbiCommunity community, SbiUser owner) throws EMFUserError;
+	
+	public void deleteMemberFromCommunity(String userID, Integer communityId) throws EMFUserError;
 }
