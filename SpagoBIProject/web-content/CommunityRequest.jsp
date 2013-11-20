@@ -24,19 +24,38 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
          session="true" %>
 <%@page import="it.eng.spagobi.commons.utilities.ChannelUtilities,
                 it.eng.spagobi.commons.constants.SpagoBIConstants,
-                it.eng.spagobi.commons.SingletonConfig"%>
+                it.eng.spagobi.commons.SingletonConfig,
+                it.eng.spago.base.*"%>
+<%@page import="it.eng.spagobi.commons.utilities.messages.IMessageBuilder"%>
+<%@page import="it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory"%>
+<%@page import="java.util.Locale"%>
                 
 <% 
 	SingletonConfig serverConfig = SingletonConfig.getInstance();
 
+	IMessageBuilder msgBuilder = MessageBuilderFactory.getMessageBuilder();
+
+
 	String owner = request.getParameter("owner");
 	String userToAccept = request.getParameter("userToAccept");
 	String community = request.getParameter("community");
+	String strLocale = request.getParameter("locale");
+	String currTheme = request.getParameter("currTheme");
 	
+	Locale locale=null;
+	if (strLocale != null){
+		locale=new Locale(strLocale.substring(0, strLocale.indexOf("_")), strLocale.substring(strLocale.indexOf("_")+1), "");
+	}
+
 	//default url
 	String contextName = ChannelUtilities.getSpagoBIContextName(request);
-	String communityMngURL = contextName + "/restful-services/community/accept";
+	ResponseContainer aResponseContainer = ResponseContainerAccess
+			.getResponseContainer(request);
+	RequestContainer requestContainer = RequestContainer
+			.getRequestContainer();
 
+	String communityMngURL = contextName + "/restful-services/community/accept";
+	
 %>
 
 <HTML>
@@ -50,21 +69,30 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 </HEAD>
 <BODY>
-<h2>Community Membership Request</h2> 
-<div width="100%" style="float:left; width:100%;">
-<p style="float:left; width:100%;">User <%=userToAccept%> requests to become memeber of <%=community%> community:</p>
-
-<span style="float:left; width: 60%; text-align:center;">
-<form name="input" method="post" action="<%=communityMngURL %>" >
-<input type="hidden" name="owner" value="<%=owner%>"/>
-<input type="hidden" name="userToAccept" value="<%=userToAccept%>"/>
-<input type="hidden" name="community" value="<%=community%>"/>
-<input type="hidden" name="MESSAGE_DET" value="ACCEPT_MEMBER"/>
-<input type="button" value="Reject" onClick="javascript:reject('<%=userToAccept %>','<%=community %>');">
-<input type="submit" value="Accept">
+<link rel='stylesheet' type='text/css' href='<%=contextName%>/themes/<%=currTheme%>/css/home40/standard.css'/>
+<span style="float:left; width: 100%; text-align:center;">
+<form name="input" method="post" action="<%=communityMngURL %>" class="reserved-area-form login">
+<main class="main main-msg" id="main">
+ <div class="aux"> 
+	 <div>  
+		<input type="hidden" name="owner" value="<%=owner%>"/>
+		<input type="hidden" name="userToAccept" value="<%=userToAccept%>"/>
+		<input type="hidden" name="community" value="<%=community%>"/>
+		<input type="hidden" name="MESSAGE_DET" value="ACCEPT_MEMBER"/>    		
+		<span class="ops"><h2><%=msgBuilder.getMessage("community.save.membership.title",locale) %></h2></span> 
+		<p>User <b><%=userToAccept%></b>&nbsp;<%=msgBuilder.getMessage("community.accept.mail.warn.1",locale) %> <b><%=community%></b> <%=msgBuilder.getMessage("community.accept.mail.warn.2",locale) %>:</p>
+		<div class="submit">
+			<input type="button" value="<%=msgBuilder.getMessage("community.accept.mail.btn.reject",locale) %>" onClick="javascript:reject('<%=userToAccept %>','<%=community %>');">
+			<input type="submit" value="<%=msgBuilder.getMessage("community.accept.mail.btn.accept",locale) %>">
+		</div>
+		<br><br>
+		<p class="retry"><%=msgBuilder.getMessage("community.accept.mail.warn",locale) %></p
+  	 </div>
+ </div>
+</main> 
 </form>
 
-<p><b>WARNING: if you are not logged yet in SpagoBI, you will be redirected to the login page, before your decision is applied </b>
+<!-- <p><b>WARNING: if you are not logged yet in SpagoBI, you will be redirected to the login page, before your decision is applied </b> -->
 
 </span>
 

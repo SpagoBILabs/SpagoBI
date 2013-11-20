@@ -45,6 +45,7 @@ public class CommunityManager {
 		try {
 			ISbiAttributeDAO attrsDAO = DAOFactory.getSbiAttributeDAO();
 			ISbiUserDAO userDao = DAOFactory.getSbiUserDAO();
+			ISbiCommunityDAO commDao = DAOFactory.getCommunityDAO();
 			
 			//loads the user:
 			SbiUser user = userDao.loadSbiUserByUserId(userId);
@@ -56,13 +57,25 @@ public class CommunityManager {
 				//1. recovers the e-mail address of the community owner from the user attributes
 				SbiUser owner = userDao.loadSbiUserByUserId(community.getOwner());
 				
+				//2. deletes user from other communities (only one community at a time)
+				mngUserCommunityAfterDelete(user);
+				logger.debug("User-community membership deleted");
+				
+				List communities = commDao.loadSbiCommunityByUser(userId);
+				if (communities != null){
+					for (int i=0; i<communities.size(); i++){
+						SbiCommunity comm = (SbiCommunity)communities.get(i);
+						commDao.deleteMemberFromCommunity(userId, comm.getCommunityId());
+						logger.debug("Erase user by community " + comm.getName() + " for new insertion to " + community.getName());
+					}					
+				}
 				SbiAttribute attrMail = attrsDAO.loadSbiAttributeByName("email");
 				if(attrMail != null){
 					Integer attrId = attrMail.getAttributeId();
 					SbiUserAttributes userAttr= attrsDAO.loadSbiAttributesByUserAndId(owner.getId(), attrId);
 					String emailValue = userAttr.getAttributeValue();
 					
-					//2. sends the email
+					//3. sends the email
 					CommunityUtilities communityUtil = new CommunityUtilities();
 					boolean result = communityUtil.dispatchMail(communityName, user, owner, emailValue, request);
 				}else{
@@ -92,12 +105,25 @@ public class CommunityManager {
 				if(community == null){
 					community = populateCommunity(userId, communityName, code);				
 				}
+								
+				//3. deletes user from other communities (only one community at a time)
+				mngUserCommunityAfterDelete(user);
+				logger.debug("User-community membership deleted");
+					
+				List communities = commDao.loadSbiCommunityByUser(userId);
+				if (communities != null){
+					for (int i=0; i<communities.size(); i++){
+						SbiCommunity comm = (SbiCommunity)communities.get(i);
+						commDao.deleteCommunityById(comm.getCommunityId());
+						logger.debug("Erase user by community " + comm.getName() + " for new insertion to " + community.getName());
+					}					
+				}
 				//4. saves community and user-community relashionship
 				communityId = commDAO.saveSbiComunityUsers(community, userId);
 				
 				Integer functId = lowFunct.insertCommunityFunctionality(aLowFunctionality);
 				
-				//add roles for the user				
+				//5. add roles for the user				
 				addRolesToFunctionality(userId, code);
 			}
 		} catch (EMFUserError e) {

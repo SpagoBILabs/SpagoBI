@@ -19,6 +19,9 @@
 <%@page import="it.eng.spagobi.commons.constants.ObjectsTreeConstants"%>
 <%@page import="org.apache.commons.lang.StringEscapeUtils"%>
 <%@page import="java.util.Enumeration"%>
+<%@page import="java.util.List"%>
+<%@page import="java.util.ArrayList"%>
+<%@page import="it.eng.spagobi.community.mapping.SbiCommunity"%>
 
 <%@ include file="/WEB-INF/jsp/commons/portlet_base410.jsp"%>  
 
@@ -32,6 +35,8 @@
 	String defaultConfirmPwd = msgBuilder.getMessage("confirmPwd",locale);  
 	
 	String registrationSuccessMsg = msgBuilder.getMessage("signup.msg.success",locale);
+	
+	List communities = (request.getAttribute("communities")==null)?new ArrayList():(List)request.getAttribute("communities");
 
 %> 
 
@@ -88,6 +93,7 @@ function register() {
 	
 	var registrationSuccessMsg = "<%=registrationSuccessMsg%>";
 	
+	
 	var params = new Object();
 	params.locale	= '<%=locale%>';
 	params.useCaptcha = "false";
@@ -98,7 +104,40 @@ function register() {
 	params.confermaPassword = confermaPassword;
 	params.azienda     = azienda;	
 	params.email    = email;
-
+	
+	var lstCommunities = [];
+	<%for (int i=0; i < communities.size(); i ++ ){
+		SbiCommunity objComm = (SbiCommunity)communities.get(i);%>
+		lstCommunities.push('<%=objComm.getName()%>');
+	<%}	%>
+	
+	var goOn = false;
+	if (document.getElementById("aziendaIsChanged").value == "true"){
+		for (var i=0; i<lstCommunities.length; i++){
+			if (lstCommunities[i] == azienda){
+				goOn=true;
+				break;
+			}
+		}
+		if (!goOn){
+			Ext.MessageBox.confirm(
+					  "Warning",
+					  "<%=msgBuilder.getMessage("signup.msg.confirmCreateComm", locale)%>",
+					  function(btn, text){					  
+						  if (btn=='yes') {
+							  execCreation(params);
+							  return;
+						  }
+					  }
+			);
+		}
+	}else 
+		goOn=true;
+	
+	if (goOn){
+		execCreation(params);
+	}
+	/*
     Ext.Ajax.request({
 		url: this.services["create"],
 		method: "POST",
@@ -121,8 +160,37 @@ function register() {
 		scope: this,
 		failure: Sbi.exception.ExceptionHandler.handleFailure
 	});
+	*/
 }
 
+function execCreation(params){
+	var registrationSuccessMsg = "<%=registrationSuccessMsg%>";
+	
+	Ext.Ajax.request({
+		url: this.services["create"],
+		method: "POST",
+		params: params,			
+		success : function(response, options) {	
+			
+		    if(response != undefined  && response.responseText != undefined ) {
+				if( response.responseText != null && response.responseText != undefined ){
+			    var jsonData = Ext.decode( response.responseText );
+			    if( jsonData.message != undefined && jsonData.message != null && jsonData.message == 'validation-error' ){
+			      Sbi.exception.ExceptionHandler.handleFailure(response);
+			    }else{
+			      Sbi.exception.ExceptionHandler.showInfoMessage(registrationSuccessMsg, 'OK', {});
+			    }		
+			  }		
+			}
+			else {
+				
+			  Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
+			}
+	    },
+			scope: this,
+			failure: Sbi.exception.ExceptionHandler.handleFailure
+		});
+}
 
 function changefield(el){
     document.getElementById(el+"box").innerHTML = "<input id=\""+el+"\" type=\"password\" name=\""+el+"\" />";
@@ -145,7 +213,8 @@ function changefield(el){
                         <fieldset>
                             <div class="field organization">
                                 <label for="organization">Company</label>
-                                <input type="text" name="azienda" id="azienda" value="<%=defaultOrganization%>" onfocus="if(value=='<%=defaultOrganization%>') value = ''" onblur="if (this.value=='') this.value = '<%=defaultOrganization%>'" />
+                                <input type="text" name="azienda" id="azienda" value="<%=defaultOrganization%>" onKeyPress="document.getElementById('aziendaIsChanged').value=true" onfocus="if(value=='<%=defaultOrganization%>') value = ''" onblur="if (this.value=='') this.value = '<%=defaultOrganization%>'" />
+                                <input type="hidden" name="aziendaIsChanged" id="aziendaIsChanged"> 
                             </div>
                             <div class="field name">
                                 <label for="name">Name</label>

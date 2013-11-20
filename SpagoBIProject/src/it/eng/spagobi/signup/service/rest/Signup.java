@@ -32,6 +32,7 @@ import java.net.URL;
 import java.security.Security;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
@@ -112,12 +113,17 @@ public class Signup {
 			
 			String url = "/themes/" + currTheme	+ "/jsp/signup/modify.jsp";
 			logger.debug("url for modify: "+url);
-		   // req.getRequestDispatcher("/WEB-INF/jsp/signup/modify.jsp").forward(req, servletResponse);
-			 req.getRequestDispatcher(url).forward(req, servletResponse);
+			List communities = DAOFactory.getCommunityDAO().loadAllSbiCommunities();
+			req.setAttribute("communities", communities);
+			req.getRequestDispatcher(url).forward(req, servletResponse);
+			// req.getRequestDispatcher("/WEB-INF/jsp/signup/modify.jsp").forward(req, servletResponse);
 		  } catch (ServletException e) {
 				logger.error("Error dispatching request");
 		  } catch (IOException e) {
 				logger.error("Error writing content");
+		  }catch (Throwable t) {
+			    throw new SpagoBIServiceException(
+						"An unexpected error occured while executing the subscribe action", t);
 		  }
     }
 	@POST
@@ -130,6 +136,10 @@ public class Signup {
 		ISbiUserDAO userDao = DAOFactory.getSbiUserDAO();
 	    SbiUser user = userDao.loadSbiUserByUserId((String)profile.getUserId());
 	    
+	    CommunityManager cm = new CommunityManager();
+		cm.mngUserCommunityAfterDelete(user);
+		logger.debug("User-community membership deleted");
+		
 	    userDao.deleteSbiUserById( user.getId() );
 	    
 //		String host = req.getServerName();
@@ -174,7 +184,11 @@ public class Signup {
 	    userAttribute.setAttributeValue(attributeValue);
 	    userDao.updateSbiUserAttributes(userAttribute);
 	  }else{
-	     try{ userDao.deleteSbiUserAttributeById(id, attributeId); }catch(EMFUserError err){}  
+	     try{
+	    	 if (dao.loadSbiAttributesByUserAndId(id, attributeId) != null){
+	    		 userDao.deleteSbiUserAttributeById(id, attributeId); 
+	    	 }
+	     }catch(EMFUserError err){}  
 	  }
     }
 	@POST
@@ -199,6 +213,8 @@ public class Signup {
 		  UserProfile profile = (UserProfile)req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 		  ISbiUserDAO userDao      = DAOFactory.getSbiUserDAO();
 		  ISbiAttributeDAO attrDao = DAOFactory.getSbiAttributeDAO();
+
+				  
 		  
 		  SbiUser user = userDao.loadSbiUserByUserId((String)profile.getUserId());
 		  int userId = user.getId();
@@ -206,6 +222,11 @@ public class Signup {
 		  user.setFullName(nome + " " + cognome);
 		  if( password != null && !password.equals(defaultPassword)) user.setPassword( Password.encriptPassword( password ));
 		  userDao.updateSbiUser( user, userId );
+		  
+		  //get precedent community
+		  SbiUserAttributes	oldCommAttribute = 
+				  attrDao.loadSbiAttributesByUserAndId(userId, attrDao.loadSbiAttributeByName("community").getAttributeId() );
+		  
 		  
 		  updAttribute( userDao, attrDao, email, user.getUserId(), userId, attrDao.loadSbiAttributeByName("email").getAttributeId() );
 		  updAttribute( userDao, attrDao, dataNascita, user.getUserId(), userId, attrDao.loadSbiAttributeByName("birth_date").getAttributeId() );
@@ -218,13 +239,14 @@ public class Signup {
 		  profile.setAttributeValue("surname",   cognome);
 		  profile.setAttributeValue("language",  lingua); 
 		  profile.setAttributeValue("short_bio", biografia);
-		  profile.setAttributeValue("company",   azienda);
+		  profile.setAttributeValue("community",   azienda);
 		  profile.setAttributeValue("location",  indirizzo);
 		  profile.setAttributeValue("birth_date",dataNascita);
 		  profile.setAttributeValue("email",     email);
 		  
 		  CommunityManager cm = new CommunityManager();							
-		  if(azienda!= null && !azienda.equals("")){
+		  if(azienda!= null && !azienda.equals("") && 
+				  (oldCommAttribute == null || !azienda.equals(oldCommAttribute.getAttributeValue()))){
 			SbiCommunity community = DAOFactory.getCommunityDAO().loadSbiCommunityByName(azienda);
 			cm.saveCommunity(community, azienda, user.getUserId(), req);
 		  }
@@ -442,13 +464,18 @@ public class Signup {
 		String url = "/themes/" + currTheme	+ "/jsp/signup/signup.jsp";
 		logger.debug("url for signup: "+url);
 	  try {
-//	    req.getRequestDispatcher("/WEB-INF/jsp/signup/signup.jsp").forward(req, servletResponse);
+		List communities = DAOFactory.getCommunityDAO().loadAllSbiCommunities();
+		req.setAttribute("communities", communities);
 		req.setAttribute("currTheme", currTheme);
 	    req.getRequestDispatcher(url).forward(req, servletResponse);
+//	    req.getRequestDispatcher("/WEB-INF/jsp/signup/signup.jsp").forward(req, servletResponse);
 	  } catch (ServletException e) {
 			logger.error("Error dispatching request");
 	  } catch (IOException e) {
 			logger.error("Error writing content");
+	  }catch (Exception e) {
+			throw new SpagoBIServiceException(
+					"An unexpected error occured while executing the subscribe action", e);
 	  }
 	}
     

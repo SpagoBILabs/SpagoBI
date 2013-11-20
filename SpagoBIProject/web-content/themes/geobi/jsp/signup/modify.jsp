@@ -20,6 +20,11 @@
 <%@page import="it.eng.spagobi.commons.constants.ObjectsTreeConstants"%>
 <%@page import="org.apache.commons.lang.StringEscapeUtils"%>
 <%@page import="java.util.Enumeration"%>
+<%@page import="java.util.List"%>
+<%@page import="java.util.ArrayList"%>
+<%@page import="java.util.Map"%>
+<%@page import="java.util.HashMap"%>
+<%@page import="it.eng.spagobi.community.mapping.SbiCommunity"%>
 
 <%@ include file="/WEB-INF/jsp/commons/portlet_base410.jsp"%>  
 
@@ -40,6 +45,9 @@
 			"signup.msg.confirmDelete", locale);
 	String registrationSuccessMsg = msgBuilder.getMessage(
 			"signup.msg.modifySuccess", locale);
+
+	Map data = (request.getAttribute("data")==null)?new HashMap():(Map)request.getAttribute("data");
+	String myCommunity = (data.get("community")==null)?"":(String)data.get("community");
 %> 
 
 <link rel='stylesheet' type='text/css' href='<%=urlBuilder.getResourceLinkByTheme(request, "css/home40/standard.css",currTheme)%>'/>
@@ -166,7 +174,7 @@ this.services["update"]= Sbi.config.serviceRegistry.getRestServiceUrl({
 });
 
     var form             = document.myForm;
-	
+    var myCommunity		 = '<%=myCommunity%>';
     var nome             = document.getElementById("nome").value;
     var cognome          = document.getElementById("cognome").value;
     var username         = document.getElementById("username").value;
@@ -185,9 +193,27 @@ this.services["update"]= Sbi.config.serviceRegistry.getRestServiceUrl({
 	params.confermaPassword = confermaPassword;
 	params.email       = email;
 	params.azienda     = azienda;
+		
+	var goOn = false;
+
+	if (myCommunity !== "" && document.getElementById("aziendaIsChanged").value == "true"){				
+		Ext.MessageBox.confirm(
+				  "Warning",
+				  "<%=msgBuilder.getMessage("signup.msg.confirmUpdateComm", locale)%>",
+				  function(btn, text){					  
+					  if (btn=='yes') {
+						  execUpdate(params);
+						  return;
+					  }
+				  }
+		);
+	}else 
+		goOn=true;
 	
-	//params.modify      = true;
-	
+	if (goOn){
+		execUpdate(params);
+	}    
+	/*
      Ext.Ajax.request({
 	url: this.services["update"],
 	method: "POST",
@@ -212,6 +238,35 @@ this.services["update"]= Sbi.config.serviceRegistry.getRestServiceUrl({
 	scope: this,
 	failure: Sbi.exception.ExceptionHandler.handleFailure
   });
+	*/
+}
+
+function execUpdate(params){
+	
+	 Ext.Ajax.request({
+			url: this.services["update"],
+			method: "POST",
+			params: params,			
+			success : function(response, options) {	
+				
+			    if(response != undefined  && response.responseText != undefined ) {
+					if( response.responseText != null && response.responseText != undefined ){
+				    var jsonData = Ext.decode( response.responseText );
+				    if( jsonData.message != undefined && jsonData.message != null && jsonData.message == 'validation-error' ){
+				      Sbi.exception.ExceptionHandler.handleFailure(response);
+				    }else{
+				      Sbi.exception.ExceptionHandler.showInfoMessage('<%=registrationSuccessMsg%>', 'Saved OK', {});
+				    }		
+				  }		
+				}
+				else {
+					
+				  Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
+				}
+		    },
+			scope: this,
+			failure: Sbi.exception.ExceptionHandler.handleFailure
+		  });
 }
 </script>
 
@@ -227,7 +282,8 @@ this.services["update"]= Sbi.config.serviceRegistry.getRestServiceUrl({
                         <fieldset>
                             <div class="field organization">
                                 <label for="organization">Company</label>
-                                <input type="text" name="azienda" id="azienda" value="${data['community']}" onfocus="if(value=='<%=defaultOrganization%>') value = ''" onblur="if (this.value=='') this.value = '<%=defaultOrganization%>'"/>
+                                <input type="text" name="azienda" id="azienda" value="${data['community']}" onKeyPress="document.getElementById('aziendaIsChanged').value=true;" onfocus="if(value=='<%=defaultOrganization%>') value = ''" onblur="if (this.value=='') this.value = '<%=defaultOrganization%>'"/>
+                                <input type="hidden" name="aziendaIsChanged" id="aziendaIsChanged">
                             </div>
                             <div class="field name">
                                 <label for="name">Name</label>
