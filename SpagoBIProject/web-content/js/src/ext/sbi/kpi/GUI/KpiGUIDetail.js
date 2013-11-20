@@ -191,7 +191,7 @@ Ext.extend(Sbi.kpi.KpiGUIDetail , Ext.form.FormPanel, {
 				y = 155;
 			}
 			this.ticksNumber = 20;
-			if(this.tickInterval && this.tickInterval != null){
+			if(this.tickInterval && this.tickInterval != null && this.maxChartValue != this.minChartValue){
 				this.ticksNumber = ((this.maxChartValue - this.minChartValue)/this.tickInterval);
 			}
 			console.log(this.ticksNumber);
