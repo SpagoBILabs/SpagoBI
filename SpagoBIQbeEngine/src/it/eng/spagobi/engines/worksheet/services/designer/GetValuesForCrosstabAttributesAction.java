@@ -99,9 +99,9 @@ public class GetValuesForCrosstabAttributesAction extends AbstractWorksheetEngin
 			Assert.assertNotNull(engineInstance, "It's not possible to execute " + this.getActionName() + " service before having properly created an instance of WorksheetEngineInstance class");
 	
 			IDataSet dataset = engineInstance.getDataSet();
+			Assert.assertNotNull(dataset, "The engine instance is missing the dataset!!");
 			persistDataSet();
 			
-			Assert.assertNotNull(dataset, "The engine instance is missing the dataset!!");
 			// set all filters, because getDomainValues() method may depend on them
 			if (dataset.hasBehaviour(FilteringBehaviour.ID)) {
 				logger.debug("Dataset has FilteringBehaviour.");
