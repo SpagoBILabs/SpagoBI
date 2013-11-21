@@ -45,7 +45,7 @@ public class MenageCommunityAction {
 	private static Logger logger = Logger.getLogger(MenageCommunityAction.class);
 
 	
-	@POST
+	@GET
 	@Path("/accept")
 	@Produces(MediaType.TEXT_HTML)
 	public String accept(@Context HttpServletRequest req) {
@@ -176,7 +176,7 @@ public class MenageCommunityAction {
 		sb.append("<BODY>");
 		sb.append("<link rel='stylesheet' type='text/css' href=\""+contextName+"/themes/"+currTheme+"/css/home40/standard.css\"/>");
 		sb.append("	<span style='float:left; width: 100%; text-align:center;'>");
-		sb.append("	<form method=\"post\" action=\""+url+"\" class=\"reserved-area-form login\">");
+		sb.append("	<form method=\"get\" action=\""+url+"\" class=\"reserved-area-form login\">");
 		sb.append("		<main class='main main-msg' id='main'>");
 		sb.append(" 	<div class='aux'> ");
 		sb.append("			<span class='ops'><h2>"+msgBuilder.getMessage("community.save.membership.title", "messages", locale)+"</h2></span>");
