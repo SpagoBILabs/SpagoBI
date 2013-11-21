@@ -5,14 +5,16 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.commons.serializer;
 
+import it.eng.spagobi.commons.bo.Role;
+import it.eng.spagobi.commons.bo.RoleMetaModelCategory;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.dao.IRoleDAO;
+
 import java.util.List;
 import java.util.Locale;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-
-import it.eng.spagobi.commons.bo.Role;
-import it.eng.spagobi.commons.bo.RoleMetaModelCategory;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -90,7 +92,8 @@ public class RoleJSONSerializer implements Serializer {
 			
 			//create an array for Business Model Categories Ids
 			JSONArray bmCategories = new JSONArray();
-			List<RoleMetaModelCategory> roleMetaModelCategories = role.getRoleMetaModelCategories();
+			IRoleDAO dao = DAOFactory.getRoleDAO();
+			List<RoleMetaModelCategory> roleMetaModelCategories = dao.getMetaModelCategoriesForRole(role.getId());
 			if (roleMetaModelCategories != null ){
 				for (RoleMetaModelCategory roleMetaModelCategory: roleMetaModelCategories){
 					bmCategories.put(roleMetaModelCategory.getCategoryId());

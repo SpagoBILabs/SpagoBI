@@ -126,7 +126,7 @@ public class GetMetaModelsForFinalUserAction extends GetMetaModelsAction {
 			while(userRolesIter.hasNext()) {
 				String roleName = (String)userRolesIter.next();
 				Role role = roledao.loadByName(roleName);
-				List<RoleMetaModelCategory> aRoleCategories = role.getRoleMetaModelCategories();
+				List<RoleMetaModelCategory> aRoleCategories = roledao.getMetaModelCategoriesForRole(role.getId());
 				if(aRoleCategories!=null){
 					for (Iterator iterator = aRoleCategories.iterator(); iterator.hasNext();) {
 						RoleMetaModelCategory roleMetaModelCategory = (RoleMetaModelCategory) iterator.next();
