@@ -119,7 +119,7 @@ Ext.extend(Sbi.qbe.RelationshipsWizardWindow, Ext.Window, {
 			this.nextHandler();
 		}else{
 			var userChoices = this.relationshipsWizard.getUserChoices();
-			this.fireEvent('apply', this, userChoices);
+			this.fireEvent('apply', this, userChoices, null);
 		}
 	}
 

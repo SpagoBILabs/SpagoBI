@@ -238,7 +238,6 @@ Ext.extend(Sbi.qbe.QueryCataloguePanel, Ext.Panel, {
 	,
 	onAmbiguousFieldsSolved : function (theWindow, ambiguousFieldsSolved, userRolesSolved, callback, scope) {
 		theWindow.close();
-		this.userRolesSolved = userRolesSolved;
 		this.storeAmbiguousFields(ambiguousFieldsSolved, userRolesSolved);
 		this.commit(callback, scope);
 	}
