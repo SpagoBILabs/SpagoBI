@@ -28,6 +28,10 @@
  	String sbiMode = "WEB";
  	IUrlBuilder urlBuilder = null;
  	urlBuilder = UrlBuilderFactory.getUrlBuilder(sbiMode);
+ 	
+
+	IMessageBuilder msgBuilder = MessageBuilderFactory
+			.getMessageBuilder();
    	
 %>
 
@@ -115,11 +119,11 @@
           		  <form id="formId" name="login" action="${pageContext.request.contextPath}/servlet/AdapterHTTP?PAGE=LoginPage&NEW_SESSION=TRUE" method="POST" onsubmit="return escapeUserName()"  class="reserved-area-form login">	        		          
                     <fieldset>                    	 
                           <div class="field username">
-                              <label for="username">Username</label>
+                              <label for="username"><%=msgBuilder.getMessage("username")%></label>
                               <input type="text" name="userID" id="userID" value="Username" onfocus="if(value=='<%=userDefaultValue%>') value = ''" onblur="if (this.value=='') this.value = '<%=userDefaultValue%>'"  />                              
                           </div>
                           <div class="field password" id="passwordbox">
-                              <label for="password">Password</label>
+                              <label for="password"><%=msgBuilder.getMessage("password")%></label>
                               <input type="text" name="password" id="password" value="Password" onfocus="changefield();" onblur="if (this.value=='') this.value = '<%=pwdDefaultValue%>'"/>
                           </div>
                           <div class="submit">

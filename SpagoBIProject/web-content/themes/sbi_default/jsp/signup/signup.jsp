@@ -24,28 +24,28 @@
 <%@ include file="/WEB-INF/jsp/commons/portlet_base410.jsp"%>  
 
 <%
-	String defaultOrganization = msgBuilder.getMessage("profileattr.company",locale); 
-	String defaultName = msgBuilder.getMessage("profileattr.firstname",locale);
-	String defaultSurname = msgBuilder.getMessage("profileattr.lastname",locale);
-	String defaultUsername = "Username";
-	String defaultPassword = "Password";
-	String defaultEmail = msgBuilder.getMessage("profileattr.email",locale);
-	String defaultConfirmPwd = msgBuilder.getMessage("confirmPwd",locale);
-	String defaultCaptcha = msgBuilder.getMessage("signup.form.captcha",locale); 
-	String defaultLocation = msgBuilder.getMessage("signup.form.location",locale);
-	String defaultLanguage = msgBuilder.getMessage("signup.form.language",locale);
-	String defaultItalian = msgBuilder.getMessage("signup.form.langItalian",locale);
-	String defaultEnglish = msgBuilder.getMessage("signup.form.langEnglish",locale);
-	String defaultFrench = msgBuilder.getMessage("signup.form.langFrench",locale);
-	String defaultSpanish = msgBuilder.getMessage("signup.form.langSpanish",locale);
-	String defaultBirthday = msgBuilder.getMessage("signup.form.birthday",locale);
-	String defaultGender = msgBuilder.getMessage("signup.form.gender",locale);
-	String defaultMan = msgBuilder.getMessage("signup.form.genderMan",locale);
-	String defaultWoman = msgBuilder.getMessage("signup.form.genderWoman",locale);
-	String defaultCommunity = msgBuilder.getMessage("signup.form.community",locale);
-	String defaultShortBio = msgBuilder.getMessage("signup.form.shortBio",locale);
+	String defaultOrganization = msgBuilder.getMessage("profileattr.company",request); 
+	String defaultName = msgBuilder.getMessage("profileattr.firstname",request);
+	String defaultSurname = msgBuilder.getMessage("profileattr.lastname",request);
+	String defaultUsername = msgBuilder.getMessage("username",request); //"Username";
+	String defaultPassword = msgBuilder.getMessage("password",request); //"Password";
+	String defaultEmail = msgBuilder.getMessage("profileattr.email",request);
+	String defaultConfirmPwd = msgBuilder.getMessage("confirmPwd",request);
+	String defaultCaptcha = msgBuilder.getMessage("signup.form.captcha",request); 
+	String defaultLocation = msgBuilder.getMessage("signup.form.location",request);
+	String defaultLanguage = msgBuilder.getMessage("signup.form.language",request);
+	String defaultItalian = msgBuilder.getMessage("signup.form.langItalian",request);
+	String defaultEnglish = msgBuilder.getMessage("signup.form.langEnglish",request);
+	String defaultFrench = msgBuilder.getMessage("signup.form.langFrench",request);
+	String defaultSpanish = msgBuilder.getMessage("signup.form.langSpanish",request);
+	String defaultBirthday = msgBuilder.getMessage("signup.form.birthday",request);
+	String defaultGender = msgBuilder.getMessage("signup.form.gender",request);
+	String defaultMan = msgBuilder.getMessage("signup.form.genderMan",request);
+	String defaultWoman = msgBuilder.getMessage("signup.form.genderWoman",request);
+	String defaultCommunity = msgBuilder.getMessage("signup.form.community",request);
+	String defaultShortBio = msgBuilder.getMessage("signup.form.shortBio",request);
 		
-	String registrationSuccessMsg = msgBuilder.getMessage("signup.msg.success",locale);
+	String registrationSuccessMsg = msgBuilder.getMessage("signup.msg.success",request);
 	
 	List comunities = (request.getAttribute("communities")==null)?new ArrayList():(List)request.getAttribute("communities");
 %>
@@ -65,11 +65,11 @@ function nascondi(){
   var a = document.getElementById("nascondi");
   if (optDiv.style.display == 'none') {
     optDiv.style.display = '';
-    a.innerHTML = '<%=msgBuilder.getMessage("signup.form.hideOptional",locale) %>';
+    a.innerHTML = '<%=msgBuilder.getMessage("signup.form.hideOptional",request) %>';
   }
   else {
     optDiv.style.display = 'none';
-    a.innerHTML = '<%=msgBuilder.getMessage("signup.form.showOptional",locale) %>';
+    a.innerHTML = '<%=msgBuilder.getMessage("signup.form.showOptional",request) %>';
   }
 }
 
@@ -140,7 +140,7 @@ this.services["create"]= Sbi.config.serviceRegistry.getRestServiceUrl({
 	if (document.getElementById("aziendaIsChanged").value == "true"){
 		Ext.MessageBox.confirm(
 				  "Warning",
-				  "<%=msgBuilder.getMessage("signup.msg.confirmCreateComm", locale)%>",
+				  "<%=msgBuilder.getMessage("signup.msg.confirmCreateComm", request)%>",
 				  function(btn, text){					  
 					  if (btn=='yes') {
 						  execCreation(params);
@@ -306,7 +306,7 @@ a:hover{
 								</tr>
 								<tr class='header-row-portlet-section'>
 									<td class='login-label' width="90px" align="left">*
-										 Username:</td>
+										 <%=defaultUsername%>:</td>
 									<td width="25px"></td>
 									<td class='login-label'>*&nbsp;<%=defaultEmail%>:</td>
 
@@ -366,14 +366,14 @@ a:hover{
 								</tr>
 								
 								<tr>
-								  <td colspan="3" class='login-label'>*&nbsp;<%=msgBuilder.getMessage("signup.form.agreeTerms",locale) %>:</td>
+								  <td colspan="3" class='login-label'>*&nbsp;<%=msgBuilder.getMessage("signup.form.agreeTerms",request) %>:</td>
 							    </tr>
 								<tr>
 									<td colspan="3" height="30px"><input type="checkbox"
 										name="termini" id="termini" class="login" />
 									</td>
 								</tr>
-								<tr><td colspan="3"><a href="#" onclick="javascript:nascondi();"><div id="nascondi" style="font-weight:bold"><%=msgBuilder.getMessage("signup.form.showOptional",locale) %></div></a></td></tr>
+								<tr><td colspan="3"><a href="#" onclick="javascript:nascondi();"><div id="nascondi" style="font-weight:bold"><%=msgBuilder.getMessage("signup.form.showOptional",request) %></div></a></td></tr>
 							</table>
 							<div id="optional" style="display:none">
 							<table border="0">
@@ -480,8 +480,8 @@ a:hover{
 									    </a>                              
 									  </td> -->
 									    <div class="submit">
-			                                <input type="text" value="<%=msgBuilder.getMessage("signup",locale)%>" onclick="javascript:register();" />
-			                                <p class="footerMsg"><%=msgBuilder.getMessage("yesAccount",locale)%> <a href="${pageContext.request.contextPath}/servlet/AdapterHTTP?PAGE=LoginPage&NEW_SESSION=TRUE">Login</a></p>                                
+			                                <input type="text" value="<%=msgBuilder.getMessage("signup",request)%>" onclick="javascript:register();" />
+			                                <p class="footerMsg"><%=msgBuilder.getMessage("yesAccount",request)%> <a href="${pageContext.request.contextPath}/servlet/AdapterHTTP?PAGE=LoginPage&NEW_SESSION=TRUE">Login</a></p>                                
 			                            </div>
 									  </tr>
 									</table>									
