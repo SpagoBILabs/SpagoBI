@@ -17,11 +17,11 @@ import it.eng.qbe.model.structure.IModelViewEntityDescriptor.IModelViewRelations
 import it.eng.qbe.model.structure.ModelCalculatedField;
 import it.eng.qbe.model.structure.ModelEntity;
 import it.eng.qbe.model.structure.ModelStructure;
-import it.eng.qbe.statement.graph.bean.RootEntitiesGraph;
+import it.eng.qbe.model.structure.ModelViewEntity;
 import it.eng.qbe.model.structure.ModelViewEntity.Join;
 import it.eng.qbe.model.structure.ModelViewEntity.ViewRelationship;
-import it.eng.qbe.model.structure.ModelViewEntity;
 import it.eng.qbe.model.structure.builder.IModelStructureBuilder;
+import it.eng.qbe.statement.graph.bean.RootEntitiesGraph;
 import it.eng.spagobi.utilities.assertion.Assert;
 
 import java.lang.reflect.Member;
@@ -216,7 +216,12 @@ public class JPAModelStructureBuilder implements IModelStructureBuilder {
 					field = sourceEntity.addNormalField(generatedFieldName);
 					field.getProperties().put("visible", "true");
 					field.getProperties().put("position", "" + Integer.MAX_VALUE);
-					field.getProperties().put("type", "attribute");	
+					field.getProperties().put("type", "attribute");
+					String columnName = sourceEntity.getPropertyAsString(relationship.getName());
+					if(columnName==null){
+						columnName = generatedFieldName;
+					}
+					field.getProperties().put("joinColumnName", columnName);	
 				}
 				sourceFields.add(field);
 			}
@@ -231,6 +236,11 @@ public class JPAModelStructureBuilder implements IModelStructureBuilder {
 					field.getProperties().put("visible", "true");
 					field.getProperties().put("position", "" + Integer.MAX_VALUE);
 					field.getProperties().put("type", "attribute");
+					String columnName = sourceEntity.getPropertyAsString(relationship.getName());
+					if(columnName==null){
+						columnName = generatedFieldName;
+					}
+					field.getProperties().put("joinColumnName", columnName);	
 					//throw new RuntimeException("Impossibe to find in destination entity [" + destinationEntity.getName() + "] a field whose name is equal to [" + destinationFieldName + "]");
 				}
 				destinationFields.add(field);
@@ -411,9 +421,25 @@ public class JPAModelStructureBuilder implements IModelStructureBuilder {
 				addField(a, modelEntity,"");
 			} else if(a.getPersistentAttributeType().equals(PersistentAttributeType.MANY_TO_ONE)){ // relation
 				Class c = a.getJavaType();
+				javax.persistence.JoinColumn joinColumn = null;
 				String entityType = c.getName();
 				String columnName = a.getName();
+				String joinColumnnName = a.getName();
 				String entityName =  a.getName(); //getEntityNameFromEntityType(entityType);
+				
+				try {
+					joinColumn = (javax.persistence.JoinColumn)(((java.lang.reflect.Field)a.getJavaMember()).getAnnotation(javax.persistence.JoinColumn.class));
+				} catch (Exception e) {
+					logger.error("Error loading the join column annotation for entity "+entityName, e);
+				}
+
+				if(joinColumn!=null){
+					joinColumnnName = joinColumn.name();
+					//add in the entity a property that maps the column name with the join column 
+					modelEntity.getProperties().put(columnName, joinColumnnName);
+				}
+			
+				
 				IModelEntity subentity = new ModelEntity(entityName, null, columnName, entityType, modelEntity.getStructure());		
 				subEntities.add(subentity);		
 			} else if(a.getPersistentAttributeType().equals(PersistentAttributeType.EMBEDDED)){ // key
@@ -439,7 +465,7 @@ public class JPAModelStructureBuilder implements IModelStructureBuilder {
 		Member m = attr.getJavaMember();
 		Class c = attr.getJavaType();
 		String type = c.getName();
-		
+
 		// TODO: SCALE E PREC
 		int scale = 0;
 		int precision = 0;

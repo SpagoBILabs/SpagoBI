@@ -7,6 +7,7 @@ package it.eng.qbe.statement.graph.bean;
 
 import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.model.structure.IModelField;
+import it.eng.spagobi.utilities.sql.SqlUtils;
 
 import java.util.List;
 
@@ -84,7 +85,7 @@ public class Relationship extends DefaultEdge implements Comparable<Relationship
 		String fields = "";
 		if(this.targetFields!=null){
 			for(int i=0; i<this.targetFields.size(); i++){
-				fields = fields+ this.targetFields.get(i).getName();
+				fields = fields+ getFieldName(this.targetFields.get(i));		
 				fields=fields+",";
 			}
 		}
@@ -98,7 +99,7 @@ public class Relationship extends DefaultEdge implements Comparable<Relationship
 		String fields = "";
 		if(this.sourceFields!=null){
 			for(int i=0; i<this.sourceFields.size(); i++){
-				fields = fields+ this.sourceFields.get(i).getName();
+				fields = fields+ getFieldName(this.sourceFields.get(i));		
 				fields=fields+",";
 			}
 		}
@@ -106,6 +107,28 @@ public class Relationship extends DefaultEdge implements Comparable<Relationship
 			fields = fields.substring(0,fields.length()-1);
 		}
 		return fields;
+	}
+	
+	public String getFieldName(IModelField field){
+		String fieldName = field.getName();
+		if(field!=null){
+			
+			//removes the relation from the name of the field
+			if((fieldName.indexOf("rel_")==0) && (fieldName.contains("."))){
+				String joinColumnName = field.getPropertyAsString("joinColumnName");
+				if(joinColumnName==null){
+					joinColumnName = field.getName();
+				}
+				fieldName = SqlUtils.unQuote(joinColumnName);
+			}			
+			
+			//removes the compId prefix
+			if((fieldName.indexOf("compId.")==0) ){
+				fieldName = fieldName.substring(7);
+			}
+			
+		}
+		return fieldName;
 	}
 
 	@Override
