@@ -137,15 +137,14 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 	<LINK rel='StyleSheet' href='<%=urlBuilder.getResourceLinkByTheme(request, "css/spagobi_shared.css",currTheme)%>' type='text/css' />
 	<link rel='stylesheet' type='text/css' href='<%=urlBuilder.getResourceLinkByTheme(request, "css/home40/standard.css",currTheme)%>'/>
 
-	        
    <% 
-   	String userDefaultValue = "Username";
-   	String pwdDefaultValue = "Password";
+   	String userDefaultValue = msgBuilder.getMessage("username",request);
+   	String pwdDefaultValue = msgBuilder.getMessage("password",request); 
    %>
    <main class="loginPage main-maps-list main-list" id="main">
       	<div class="aux">
           	<div class="reserved-area-container">
-          		<h1>Login</h1>
+          		<h1><%=msgBuilder.getMessage("login")%></h1>
                   <form  id="formId" name="login" action="<%=contextName%>/servlet/AdapterHTTP?PAGE=LoginPage&NEW_SESSION=TRUE" method="POST" onsubmit="return escapeUserName()" class="reserved-area-form login">
                    <input type="hidden" id="isInternalSecurity" name="isInternalSecurity" value="<%=isInternalSecurity %>" />        	
 	        		<input type="hidden" id="<%=roleToCheckLbl%>" name="<%=roleToCheckLbl%>" value="<%=roleToCheckVal%>" />
@@ -194,15 +193,15 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
                       <fieldset>
                           <div class="field username" style="width:250px;">
                               <label for="username"><%=msgBuilder.getMessage("username")%></label>
-                              <input type="text" name="userID" id="userID" value="Username" onfocus="if(value=='<%=userDefaultValue%>') value = ''" onblur="if (this.value=='') this.value = '<%=userDefaultValue%>'"  />                              
+                              <input type="text" name="userID" id="userID" value="<%=userDefaultValue%>" onfocus="if(value=='<%=userDefaultValue%>') value = ''" onblur="if (this.value=='') this.value = '<%=userDefaultValue%>'"  />                              
                           </div>
                           <div class="field password" id="passwordbox"  style="width:250px;">
                               <label for="password"><%=msgBuilder.getMessage("password")%></label>
                               <!-- <input type="text" name="password" id="password" value="" onfocus="if(value=='<%=pwdDefaultValue%>') value = ''" onblur="if (this.value=='') this.value = '<%=pwdDefaultValue%>'"/> -->
-                              <input type="text" name="password" id="password" value="Password" onfocus="changefield();" onblur="if (this.value=='') this.value = '<%=pwdDefaultValue%>'"/>
+                              <input type="text" name="password" id="password" value="<%=pwdDefaultValue%>" onfocus="changefield();" onblur="if (this.value=='') this.value = '<%=pwdDefaultValue%>'"/>
                           </div>
                           <div class="submit">
-                              <input type="submit" value="Login" />                              
+                              <input type="submit" value="<%=msgBuilder.getMessage("login")%>" />                              
                               <p><%=msgBuilder.getMessage("noAccount")%> <a href="#" onclick="signup();"><%=msgBuilder.getMessage("signup")%></a></p> 
                              <!--  <p>You don't have an account? <a href="#" onclick="signup();">Register</a></p> -->
                           </div>
