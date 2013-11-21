@@ -124,12 +124,6 @@ public class ManageRolesAction extends AbstractSpagoBIAction{
 				Integer totalResNum = roleDao.countRoles();
 				List<Role> roles = roleDao.loadPagedRolesList(start, limit);	
 				
-				//For each role search if there are any associated Business Model Categories
-				for (Role role : roles){
-					List<RoleMetaModelCategory> roleMetaModelCategories = getMetaModelCategories(roleDao,role);
-					role.setRoleMetaModelCategories(roleMetaModelCategories);
-				}
-				
 				//ArrayList<Role> roles = (ArrayList<Role>)roleDao.loadAllRoles();
 				logger.debug("Loaded roles list");
 				JSONArray rolesJSON = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(roles,	locale);
