@@ -13,13 +13,16 @@ import it.eng.spagobi.engines.worksheet.services.AbstractWorksheetEngineAction;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
+import it.eng.spagobi.utilities.mime.MimeUtils;
 import it.eng.spagobi.utilities.service.IServiceResponse;
 import it.eng.spagobi.utilities.service.JSONResponse;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -45,6 +48,7 @@ public class UploadWorksheetImageAction extends AbstractWorksheetEngineAction {
 			super.service(request, response);
 			
 			FileItem uploaded = (FileItem) request.getAttribute("UPLOADED_FILE");
+
 			if (uploaded == null) {
 				throw new SpagoBIEngineServiceException(getActionName(), "No file was uploaded");
 			}
@@ -59,7 +63,7 @@ public class UploadWorksheetImageAction extends AbstractWorksheetEngineAction {
 			saveFile(uploaded);
 			logger.debug("File saved");
 			
-			replayToClient( null );
+			replayToClient( null);
 			
 		} catch (Throwable t) {
 			SpagoBIEngineServiceException e = SpagoBIEngineServiceExceptionHandler
@@ -76,7 +80,7 @@ public class UploadWorksheetImageAction extends AbstractWorksheetEngineAction {
      * see Ext.form.BasicForm for file upload
      */
 	private void replayToClient(final SpagoBIEngineServiceException e) {
-		
+
 		try {
 			
 			writeBackToClient(  new IServiceResponse() {
@@ -120,7 +124,31 @@ public class UploadWorksheetImageAction extends AbstractWorksheetEngineAction {
 			logger.error("Impossible to write back the responce to the client", ioException);
 		}
 	}
+	
+    private boolean isImgFileExtension(String name){
+		logger.debug("IN");
+		try {
 
+			ArrayList extensions= new ArrayList<String>();
+			extensions.add("bmp");
+			extensions.add("dds");
+			extensions.add("gif");
+			extensions.add("jpg");
+			extensions.add("png");
+			extensions.add("psd");
+			extensions.add("pspimage");
+			extensions.add("tga");
+			extensions.add("thm");
+			extensions.add("tif");
+			extensions.add("tiff");
+			extensions.add("yuv");
+
+			return FilenameUtils.isExtension(name.toLowerCase(), extensions);
+		} finally {
+			logger.debug("OUT");
+
+		}
+    }
 	private void checkUploadedFile(FileItem uploaded) {
 		logger.debug("IN");
 		try {
@@ -146,6 +174,11 @@ public class UploadWorksheetImageAction extends AbstractWorksheetEngineAction {
 			int maxSize = QbeEngineConfig.getInstance().getWorksheetImagesMaxSize();
 			if (uploaded.getSize() > maxSize) {
 				throw new SpagoBIEngineServiceException(getActionName(), "The uploaded file exceeds the maximum size, that is " + maxSize);
+			}
+			//check if it is an image file
+			if(!isImgFileExtension(fileName)){
+				String message = "Not an image file";
+				throw new SpagoBIEngineServiceException(getActionName(), message);
 			}
 		} finally {
 			logger.debug("OUT");
