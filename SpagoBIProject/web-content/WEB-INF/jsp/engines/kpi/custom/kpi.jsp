@@ -53,8 +53,8 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 
 <!--[if lt IE 9]>
 <!--  HighCharts -->
-<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/lib/highcharts-2.1.6/highcharts.js")%>"></script>
-<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/lib/highcharts-2.1.6/modules/exporting.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/lib/highcharts-3.0.7/highcharts.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/lib/highcharts-3.0.7/modules/exporting.js")%>"></script>
 <![endif]-->
 <!--[if !IE]> -->
 <script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/lib/d3/D3.js")%>'></script>
