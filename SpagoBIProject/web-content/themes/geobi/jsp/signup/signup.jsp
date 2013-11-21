@@ -29,8 +29,8 @@
 	String defaultOrganization = msgBuilder.getMessage("profileattr.company",locale); 
 	String defaultName = msgBuilder.getMessage("profileattr.firstname",locale);
 	String defaultSurname = msgBuilder.getMessage("profileattr.lastname",locale);
-	String defaultUsername = "Username";
-	String defaultPassword = "Password";
+	String defaultUsername = msgBuilder.getMessage("username",request); //"Username";
+	String defaultPassword = msgBuilder.getMessage("password",request); //"Password";
 	String defaultEmail = msgBuilder.getMessage("profileattr.email",locale);
 	String defaultConfirmPwd = msgBuilder.getMessage("confirmPwd",locale);  
 	
@@ -122,7 +122,7 @@ function register() {
 		if (!goOn){
 			Ext.MessageBox.confirm(
 					  "Warning",
-					  "<%=msgBuilder.getMessage("signup.msg.confirmCreateComm", locale)%>",
+					  "<%=msgBuilder.getMessage("signup.msg.confirmCreateComm", request)%>",
 					  function(btn, text){					  
 						  if (btn=='yes') {
 							  execCreation(params);
@@ -208,7 +208,7 @@ function changefield(el){
  		<main class="loginPage main-maps-list main-list" id="main">
         	<div class="aux">
             	<div class="reserved-area-container">            		
-            		<h1><%=msgBuilder.getMessage("registration",locale)%></h1>
+            		<h1><%=msgBuilder.getMessage("registration",request)%></h1>
                     <form name="myForm" method="post" action="${pageContext.request.contextPath}/" class="reserved-area-form">
                         <fieldset>
                             <div class="field organization">
@@ -242,8 +242,8 @@ function changefield(el){
                             </div>
 
                             <div class="submit">
-                                <input type="text" value="<%=msgBuilder.getMessage("signup",locale)%>" onclick="javascript:register();" />
-                                <p><%=msgBuilder.getMessage("yesAccount",locale)%> <a href="${pageContext.request.contextPath}/servlet/AdapterHTTP?PAGE=LoginPage&NEW_SESSION=TRUE">Login</a></p>                                
+                                <input type="text" value="<%=msgBuilder.getMessage("signup",request)%>" onclick="javascript:register();" />
+                                <p><%=msgBuilder.getMessage("yesAccount",request)%> <a href="${pageContext.request.contextPath}/servlet/AdapterHTTP?PAGE=LoginPage&NEW_SESSION=TRUE">Login</a></p>                                
                             </div>
                         </fieldset>
                     </form>

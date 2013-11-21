@@ -27,6 +27,10 @@
 String sbiMode = "WEB";
 IUrlBuilder urlBuilder = null;
 urlBuilder = UrlBuilderFactory.getUrlBuilder(sbiMode);
+
+
+IMessageBuilder msgBuilder = MessageBuilderFactory
+		.getMessageBuilder();
 %>
 
 
@@ -209,7 +213,7 @@ a:hover{
 
 							<table border="0">
 								<tr class='header-row-portlet-section'>
-									<td class='login-label' width="90px" align="left">User Name:
+									<td class='login-label' width="90px" align="left"><%=msgBuilder.getMessage("username")%>:
 									</td>
 									
 
@@ -222,7 +226,7 @@ a:hover{
 
 								</tr>
 								<tr class='header-row-portlet-section'>
-									<td class='login-label' width="90px" align="left">Password:
+									<td class='login-label' width="90px" align="left"><%=msgBuilder.getMessage("password")%>:
 									</td>
 									
 
