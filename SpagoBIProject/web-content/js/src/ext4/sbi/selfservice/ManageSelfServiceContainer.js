@@ -21,7 +21,8 @@ Ext.define('Sbi.selfservice.ManageSelfServiceContainer', {
     	qbeFromDataSetBaseUrl : '',
         georeportEngineBaseUrl :  '',
         user : '',
-        datasetsServicePath: ''
+        datasetsServicePath: '',
+        qbeEditDatasetUrl : ''
 	},
 
 	/**
@@ -45,6 +46,7 @@ Ext.define('Sbi.selfservice.ManageSelfServiceContainer', {
 		this.manageSelfService = Ext.create('Sbi.selfservice.ManageSelfService', {
 			selfServiceContainer : this
 			, datasetsServicePath : config.datasetsServicePath
+			, qbeEditDatasetUrl : config.qbeEditDatasetUrl
 		}); 
 					
 		this.items = [ this.manageSelfService, this.documentexecution]

@@ -1045,3 +1045,7 @@ Sbi.locale.ln['sbi.tools.layer.props.params']= "Params";
 Sbi.locale.ln['sbi.tools.layer.props.options']= "Options";
 
 
+//===================================================================
+//Sbi.tools.dataset.QbeDataSetsWizard
+//===================================================================
+Sbi.locale.ln["sbi.tools.dataset.qbedatasetswizard.query"]="Query definition";

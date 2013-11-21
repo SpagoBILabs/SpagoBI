@@ -53,11 +53,12 @@ Ext.define('Sbi.widgets.wizard.WizardWindow', {
 		localConf.items = c.tabs;		
 		localConf.activeTab = 0;
 		localConf.bodyStyle = 'z-index:80000';
-		localConf.height = 360;
+		localConf.height = this.height - 60; //360; 
 		localConf.fieldDefaults= {
 	            labelAlign: 'right',
 	            msgTarget: 'side'
 	        };
+		localConf.border = false;
 		
 	    if (this.isTabbedPanel !== undefined && this.isTabbedPanel === true){	  
 	    	this.wizardPanel = Ext.create('Ext.TabPanel', localConf);

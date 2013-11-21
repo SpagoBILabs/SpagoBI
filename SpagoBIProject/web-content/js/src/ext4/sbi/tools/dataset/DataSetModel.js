@@ -17,7 +17,9 @@
     		root : 'root'
     	}
     },
-    fields:["id",
+    fields:
+    	[
+    	 	"id",
             "version_num",
             "active",
             "label",
@@ -43,5 +45,9 @@
             "userIn",
             "dateIn",
             "dataSource",
-            "meta"]
+            "meta",
+        	"qbeDataSource",
+        	"qbeDatamarts",
+        	"qbeJSONQuery"
+        ]
 }); 

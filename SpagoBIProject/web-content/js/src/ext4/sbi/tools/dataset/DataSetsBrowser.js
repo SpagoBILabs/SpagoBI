@@ -1,3 +1,9 @@
+/** SpagoBI, the Open Source Business Intelligence suite
+
+ * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. **/
+
 Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 	extend : 'Ext.Panel'
 
@@ -11,7 +17,8 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 		displayToolbar: true,
 		PUBLIC_USER: 'public_user',
 	    //id:'this',
-	    isTech: false //for only certified datasets
+	    isTech: false, //for only certified datasets
+	    qbeEditDatasetUrl : ''
 	}
 
 	,
@@ -278,11 +285,25 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 			config.user = this.user;
 			config.record = rec;
 			config.isNew = false;
-			this.wizardWin =  Ext.create('Sbi.tools.dataset.DataSetsWizard',config);	
-			this.wizardWin.on('save', this.saveDataset, this);
-			this.wizardWin.on('delete', this.deleteDataset, this);
-			this.wizardWin.on('getMetaValues', this.getMetaValues, this);
-	    	this.wizardWin.show();
+			config.qbeEditDatasetUrl = this.qbeEditDatasetUrl;
+			switch (rec.dsTypeCd) {
+				case 'File' : 
+					this.wizardWin = Ext.create('Sbi.tools.dataset.DataSetsWizard', config);	
+					this.wizardWin.on('save', this.saveDataset, this);
+					this.wizardWin.on('delete', this.deleteDataset, this);
+					this.wizardWin.on('getMetaValues', this.getMetaValues, this);
+			    	this.wizardWin.show();
+					break;
+				case 'Qbe' :
+					config.width = this.getWidth() - 50,
+					config.height = this.getHeight() - 50,
+					this.wizardWin = Ext.create('Sbi.tools.dataset.QbeDataSetsWizard', config);	
+					this.wizardWin.on('save', this.saveDataset, this);
+					this.wizardWin.on('delete', this.deleteDataset, this);
+					this.wizardWin.on('getMetaValues', this.getMetaValues, this);
+			    	this.wizardWin.show();
+			    	break;
+			}
 		}
 	}
 	
