@@ -15,8 +15,6 @@ import it.eng.qbe.query.Query;
 import it.eng.qbe.query.catalogue.QueryCatalogue;
 import it.eng.qbe.statement.AbstractQbeDataSet;
 import it.eng.qbe.statement.QbeDatasetFactory;
-import it.eng.qbe.statement.graph.GraphUtilities;
-import it.eng.qbe.statement.graph.bean.QueryGraph;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
@@ -55,7 +53,7 @@ import org.json.JSONObject;
  */
 public class QbeDataSet extends ConfigurableDataSet {
 	
-public static String DS_TYPE = "SbiQbeDataSet";
+	public static String DS_TYPE = "SbiQbeDataSet";
 	
 	private static transient Logger logger = Logger.getLogger(QbeDataSet.class);
 	
@@ -433,44 +431,6 @@ public static String DS_TYPE = "SbiQbeDataSet";
 
 	public void setSourceDataset(IDataSet sourceDataset) {
 		this.sourceDataset = sourceDataset;
-	}
-
-	@Override
-	public Integer getCategoryId() {
-    	if (this.ds != null) {
-    		return ds.getCategoryId();
-    	}
-    	return super.getCategoryId();
-	}
-
-	@Override
-	public void setCategoryId(Integer id) {
-    	if (this.ds != null) {
-    		ds.setCategoryId(id);
-    	}
-    	super.setCategoryId(id);
-	}
-
-	
-
-	@Override
-	public String getCategoryCd() {
-    	if (this.ds != null) {
-    		return ds.getCategoryCd();
-    	}
-    	else{
-    	return super.getCategoryCd();
-    	}
-    }
-	
-	@Override
-	public void setCategoryCd(String cd) {
-    	if (this.ds != null) {
-    		ds.setCategoryCd(cd);
-    	}
-    	else{
-    		super.setCategoryCd(cd);
-    	}
 	}
 	
 	@Override
