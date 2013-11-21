@@ -42,10 +42,11 @@ Ext.define('Sbi.selfservice.ManageSelfService', {
 		this.layout = 'fit';
 		
 		var browserConf = {
-				//title: LN("sbi.tools.dataset.datasetbrowser.title")
-				  user: Sbi.user.userId
-				, datasetsServicePath : config.datasetsServicePath
-				, id: 'this'
+			//title: LN("sbi.tools.dataset.datasetbrowser.title")
+			  user: Sbi.user.userId
+			, datasetsServicePath : config.datasetsServicePath
+			, id: 'this'
+			, qbeEditDatasetUrl : config.qbeEditDatasetUrl
 		};
 		
 		if (Sbi.settings.browser.showTitle !== undefined && Sbi.settings.browser.showTitle){
@@ -70,9 +71,9 @@ Ext.define('Sbi.selfservice.ManageSelfService', {
 		//this.modelstPanelTab.on('executeDocument',function(docType, inputType, record){
 		//	this.fireEvent('executeDocument',docType,inputType,record);
 		//},this);
-		this.datasetPanelTab.on('executeDocument',function(docType, inputType, record){
-			this.fireEvent('executeDocument',docType,inputType,record);
-		},this);
+		this.datasetPanelTab.on('executeDocument', function(docType, inputType, record) {
+			this.fireEvent('executeDocument', docType, inputType, record);
+		}, this);
 	}
 
     

@@ -11,6 +11,7 @@
  */
 package it.eng.spagobi.tools.dataset.service.rest;
 
+import it.eng.qbe.dataset.QbeDataSet;
 import it.eng.spago.base.SourceBeanException;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
@@ -25,7 +26,6 @@ import it.eng.spagobi.commons.serializer.SerializerFactory;
 import it.eng.spagobi.commons.utilities.AuditLogUtilities;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.UserUtilities;
-import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.metamodel.MetaModelWrapper;
 import it.eng.spagobi.metamodel.SiblingsFileWrapper;
 import it.eng.spagobi.rest.annotations.ToValidate;
@@ -47,12 +47,14 @@ import it.eng.spagobi.tools.dataset.measurecatalogue.MeasureCatalogue;
 import it.eng.spagobi.tools.dataset.measurecatalogue.MeasureCatalogueSingleton;
 import it.eng.spagobi.tools.dataset.normalization.GeoSpatialDimensionDatasetNormalizer;
 import it.eng.spagobi.tools.dataset.utils.DatasetMetadataParser;
+import it.eng.spagobi.tools.dataset.utils.datamart.SpagoBICoreDatamartRetriever;
 import it.eng.spagobi.tools.dataset.validation.ErrorField;
 import it.eng.spagobi.tools.dataset.validation.GeoDatasetValidatorFactory;
 import it.eng.spagobi.tools.dataset.validation.HierarchyLevel;
 import it.eng.spagobi.tools.dataset.validation.IDatasetValidator;
 import it.eng.spagobi.tools.dataset.validation.IDatasetValidatorFactory;
 import it.eng.spagobi.tools.dataset.validation.ValidationErrors;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.tools.notification.AbstractEvent;
 import it.eng.spagobi.tools.notification.DatasetNotificationEvent;
 import it.eng.spagobi.tools.notification.DatasetNotificationManager;
@@ -279,16 +281,16 @@ public class SelfServiceDataSetCRUD {
 	@Path("/save")
 	@ToValidate(typeName= "dataset")
 	@Produces(MediaType.APPLICATION_JSON)
-	public String saveDataSet(@Context HttpServletRequest req) {
-		IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+	public String saveDataSet(@Context HttpServletRequest request) {
+		IEngUserProfile profile = (IEngUserProfile) request.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 		try {
 			IDataSetDAO dao=DAOFactory.getDataSetDAO();
 			dao.setUserProfile(profile);
-			String label = (String)req.getParameter("label");			
-			String meta = (String)req.getParameter(DataSetConstants.METADATA);			
+			String label = request.getParameter("label");			
+			String meta = request.getParameter(DataSetConstants.METADATA);			
 			
-			IDataSet ds  = dao.loadActiveDataSetByLabel(label);
-			IDataSet dsNew = recoverDataSetDetails(req, ds, true);
+			IDataSet ds = dao.loadActiveDataSetByLabel(label);
+			IDataSet dsNew = recoverDataSetDetails(request, ds, true);
 			
 			logger.debug("Recalculating dataset's metadata: executing the dataset...");
 			String dsMetadata = null;
@@ -309,19 +311,19 @@ public class SelfServiceDataSetCRUD {
 			if (dsNew.getId()==-1) {
 				//if a ds with the same label not exists on db ok else error
 				if (DAOFactory.getDataSetDAO().loadActiveDataSetByLabel(dsNew.getLabel()) != null){
-					updateAudit(req, profile, "DATA_SET.ADD", logParam, "KO");
+					updateAudit(request, profile, "DATA_SET.ADD", logParam, "KO");
 					throw new SpagoBIRuntimeException(saveDuplicatedDSError);
 				}	 		
 				newId = dao.insertDataSet(dsNew);
-				updateAudit(req, profile, "DATA_SET.ADD", logParam, "OK");
+				updateAudit(request, profile, "DATA_SET.ADD", logParam, "OK");
 			} else {				
 				//update ds
 				dao.modifyDataSet(dsNew);
 				
 				//Notifications Management -----------------------------------
-				notificationManagement(req,ds,dsNew);
+				notificationManagement(request,ds,dsNew);
 				
-				updateAudit(req, profile, "DATA_SET.MODIFY", logParam, "OK");
+				updateAudit(request, profile, "DATA_SET.MODIFY", logParam, "OK");
 			}  
 			
 		
@@ -329,7 +331,7 @@ public class SelfServiceDataSetCRUD {
 			return ("{id:"+newId+" }");
 		} catch (SpagoBIRuntimeException ex) {
 			logger.error("Cannot fill response container", ex);
-			updateAudit(req, profile, "DATA_SET.SAVE", null, "ERR");
+			updateAudit(request, profile, "DATA_SET.SAVE", null, "ERR");
 			logger.debug(ex.getMessage());
 			try {
 				return ( ExceptionUtilities.serializeException(ex.getMessage(),null));
@@ -340,7 +342,7 @@ public class SelfServiceDataSetCRUD {
 			}
 		} catch (Exception ex) {
 			logger.error("Cannot fill response container", ex);
-			updateAudit(req, profile, "DATA_SET.SAVE", null, "ERR");
+			updateAudit(request, profile, "DATA_SET.SAVE", null, "ERR");
 			logger.debug(canNotFillResponseError);
 			try {
 				return ( ExceptionUtilities.serializeException(canNotFillResponseError,null));
@@ -970,64 +972,30 @@ public class SelfServiceDataSetCRUD {
 		return dataSetsJSON;
 	}
 
-	private IDataSet recoverDataSetDetails (HttpServletRequest req, IDataSet dataSet, boolean savingDataset) throws EMFUserError, SourceBeanException, IOException  {
-		JSONObject jsonDsConfig = new JSONObject();	
+	private IDataSet recoverDataSetDetails (HttpServletRequest request, IDataSet dataSet, boolean savingDataset) throws EMFUserError, SourceBeanException, IOException  {
 		boolean insertion = (dataSet == null);
 		Integer id=-1;
-		String idStr = (String)(String)req.getParameter("id");
+		String idStr = request.getParameter("id");
 		if(idStr!=null && !idStr.equals("")){
 			id = new Integer(idStr);
 		}
-		String type = (String)req.getParameter("type");
-		String label = (String)req.getParameter("label");
-		String description = (String)req.getParameter("description");	
-		String name = (String)req.getParameter("name");
-		String catTypeVn = (String)req.getParameter("catTypeVn");		
-		String configuration = (String)req.getParameter("configuration");
-		String fileName = (String)req.getParameter("fileName");
-		String csvDelimiter = (String)req.getParameter("csvDelimiter");
-		String csvQuote = (String)req.getParameter("csvQuote");
-		String csvEncoding = (String)req.getParameter("csvEncoding");
-		String fileType = (String)req.getParameter("fileType");
-		String skipRows = (String)req.getParameter("skipRows");
-		String limitRows = (String)req.getParameter("limitRows");
-		String xslSheetNumber = (String)req.getParameter("xslSheetNumber");
-		String meta = (String)req.getParameter(DataSetConstants.METADATA);
+		String type = request.getParameter("type");
+		String label = request.getParameter("label");
+		String description = request.getParameter("description");	
+		String name = request.getParameter("name");
+		String catTypeVn = request.getParameter("catTypeVn");		
+		String meta = request.getParameter(DataSetConstants.METADATA);
 		String scopeCd = DataSetConstants.DS_SCOPE_USER;	
-		Boolean isPublic = Boolean.valueOf((req.getParameter("isPublicDS")==null)?"false":(String)req.getParameter("isPublicDS"));
-		Boolean newFileUploaded = false;
-		if (req.getParameter("fileUploaded") != null){
-			newFileUploaded = Boolean.valueOf(((String)req.getParameter("fileUploaded")));
-		}
+		Boolean isPublic = Boolean.valueOf((request.getParameter("isPublicDS")==null)?"false":request.getParameter("isPublicDS"));
 
-				
-		try{
-			String config = "{}";
-			if (configuration != null)
-				config = JSONUtils.escapeJsonString(configuration);
-			
-			JSONObject jsonConf  = ObjectUtils.toJSONObject(config);			
-			jsonDsConfig.put(DataSetConstants.FILE_TYPE, fileType);
-			if (savingDataset){
-				//when saving the dataset the file associated will get the dataset label name
-				jsonDsConfig.put(DataSetConstants.FILE_NAME, label+"."+fileType.toLowerCase());
-			} else {
-				jsonDsConfig.put(DataSetConstants.FILE_NAME, fileName);
-			}
-			jsonDsConfig.put(DataSetConstants.CSV_FILE_DELIMITER_CHARACTER, csvDelimiter);
-			jsonDsConfig.put(DataSetConstants.CSV_FILE_QUOTE_CHARACTER, csvQuote);
-			jsonDsConfig.put(DataSetConstants.CSV_FILE_ENCODING, csvEncoding);
-			jsonDsConfig.put(DataSetConstants.XSL_FILE_SKIP_ROWS, skipRows);
-			jsonDsConfig.put(DataSetConstants.XSL_FILE_LIMIT_ROWS, limitRows);
-			jsonDsConfig.put(DataSetConstants.XSL_FILE_SHEET_NUMBER, xslSheetNumber);
-			jsonDsConfig.put(DataSetConstants.DS_SCOPE, scopeCd);
+		type = getDatasetTypeName(type);
+		IDataSet toReturn = null;
+		if (type.equals(DataSetConstants.DS_QBE)) {
+			toReturn = this.getQbeDataSet(request);
+		} else {
+			toReturn = this.getFileDataSet(request, savingDataset);
+		}
 		
-
-		}catch (Exception e){
-			logger.error("Error while defining dataset configuration.  Error: " + e.getMessage());
-		}
-		type =  getDatasetTypeName(type); 
-		FileDataSet toReturn = new FileDataSet();
 		if (!insertion){				
 			toReturn.setId(dataSet.getId());			
 			toReturn.setName(dataSet.getName());
@@ -1045,6 +1013,101 @@ public class SelfServiceDataSetCRUD {
 			
 			//set persist values
 			toReturn.setPersisted(dataSet.isPersisted());
+		}
+		
+		//update general informations
+		toReturn.setDsType(type);
+		toReturn.setDsMetadata(meta);
+		toReturn.setId(id.intValue());
+		toReturn.setLabel(label);
+		toReturn.setName(name);
+		toReturn.setDescription(description);
+		
+		//always USER scope
+		toReturn.setScopeCd(scopeCd);
+		Integer scopeId = null;
+		try{
+			scopeId = Integer.parseInt(scopeCd);			
+		}catch (Exception e){
+			logger.debug("Scope must be decodified...");
+			scopeId = getScopeId(scopeCd);
+			logger.debug("Scope Id is : " + scopeId);
+		}
+		toReturn.setScopeId(scopeId);
+		
+		Integer categoryCode = null;
+		try{
+			categoryCode = Integer.parseInt(catTypeVn);			
+		}catch (Exception e){
+			logger.debug("Category must be decodified...");
+			categoryCode = getCategoryCode(catTypeVn);
+			logger.debug("Category value decodified is : " + categoryCode);
+		}
+		logger.debug("Category code is :  " + categoryCode);
+		toReturn.setCategoryId(categoryCode);
+		toReturn.setPublic(isPublic);
+				
+		return toReturn;
+	}
+	
+	private IDataSet getQbeDataSet(HttpServletRequest request) {
+		QbeDataSet toReturn = new QbeDataSet();
+		this.getQbeDataSetConfig(request, toReturn);
+		SpagoBICoreDatamartRetriever retriever = new SpagoBICoreDatamartRetriever();
+		Map parameters = toReturn.getParamsMap();
+		if (parameters == null) {
+			parameters = new HashMap();
+			toReturn.setParamsMap(parameters);
+		}
+		toReturn.getParamsMap().put(SpagoBIConstants.DATAMART_RETRIEVER, retriever);
+		return toReturn;
+	}
+
+
+	private void getQbeDataSetConfig(HttpServletRequest request, QbeDataSet toReturn) {
+		try {
+			JSONObject jsonDsConfig = new JSONObject();
+			String qbeJSONQuery = request
+					.getParameter(DataSetConstants.QBE_JSON_QUERY);
+			String datamarts = request
+					.getParameter(DataSetConstants.QBE_DATAMARTS);
+			String dataSourceLabel = request
+					.getParameter(DataSetConstants.QBE_DATA_SOURCE);
+
+			jsonDsConfig.put(DataSetConstants.QBE_JSON_QUERY, qbeJSONQuery);
+			jsonDsConfig.put(DataSetConstants.QBE_DATAMARTS, datamarts);
+			jsonDsConfig.put(DataSetConstants.QBE_DATA_SOURCE, dataSourceLabel);
+			
+			IDataSource dataSource = DAOFactory.getDataSourceDAO().loadDataSourceByLabel(dataSourceLabel);
+			
+			toReturn.setConfiguration(jsonDsConfig.toString());
+			toReturn.setJsonQuery(qbeJSONQuery);
+			toReturn.setDatamarts(datamarts);
+			toReturn.setDataSource(dataSource);
+			
+		} catch (Exception e) {
+			logger.error("Error while getting Qbe query details", e);
+			throw new SpagoBIRuntimeException("Error while getting Qbe query details", e);
+		}
+	}
+
+
+	private IDataSet getFileDataSet(HttpServletRequest request, boolean savingDataset) {
+		FileDataSet toReturn = new FileDataSet();
+		JSONObject jsonDsConfig = this.getFileDataSetConfig(request, savingDataset);
+		toReturn.setConfiguration(jsonDsConfig.toString());
+		
+		Integer id=-1;
+		String idStr = request.getParameter("id");
+		if(idStr!=null && !idStr.equals("")){
+			id = new Integer(idStr);
+		}
+		String label = request.getParameter("label");
+		String fileName = request.getParameter("fileName");
+		String fileType = request.getParameter("fileType");
+		Boolean newFileUploaded = false;
+		if (request.getParameter("fileUploaded") != null){
+			newFileUploaded = Boolean.valueOf((request.getParameter("fileUploaded")));
 		}
 		
 		if (id == -1){
@@ -1079,51 +1142,58 @@ public class SelfServiceDataSetCRUD {
 
 		}
 		
-		
-
-		
 		//next steps are necessary to define a valid dataProxy
-		((FileDataSet)toReturn).setConfiguration(jsonDsConfig.toString());
 		if (savingDataset){
 			//the file used will have the name equals to dataset's label
 			((FileDataSet)toReturn).setFileName(label+"."+fileType.toLowerCase());
 		} else {
 			((FileDataSet)toReturn).setFileName(fileName);
 		}
-				
-		//update general informations
-		toReturn.setDsType(type);
-		toReturn.setDsMetadata(meta);
-		toReturn.setId(id.intValue());
-		toReturn.setLabel(label);
-		toReturn.setName(name);
-		toReturn.setDescription(description);		
 		
-		//always USER scope
-		toReturn.setScopeCd(scopeCd);
-		Integer scopeId = null;
-		try{
-			scopeId = Integer.parseInt(scopeCd);			
-		}catch (Exception e){
-			logger.debug("Scope must be decodified...");
-			scopeId = getScopeId(scopeCd);
-			logger.debug("Scope Id is : " + scopeId);
-		}
-		toReturn.setScopeId(scopeId);
-		
-		Integer categoryCode = null;
-		try{
-			categoryCode = Integer.parseInt(catTypeVn);			
-		}catch (Exception e){
-			logger.debug("Category must be decodified...");
-			categoryCode = getCategoryCode(catTypeVn);
-			logger.debug("Category value decodified is : " + categoryCode);
-		}
-		logger.debug("Category code is :  " + categoryCode);
-		toReturn.setCategoryId(categoryCode);
-		toReturn.setPublic(isPublic);
-				
 		return toReturn;
+	}
+
+
+	private JSONObject getFileDataSetConfig(HttpServletRequest req, boolean savingDataset) {
+		JSONObject jsonDsConfig = new JSONObject();	
+		try {
+			String label = req.getParameter("label");
+			String fileName = req.getParameter("fileName");
+			String csvDelimiter = req.getParameter("csvDelimiter");
+			String csvQuote = req.getParameter("csvQuote");
+			String csvEncoding = req.getParameter("csvEncoding");
+			String fileType = req.getParameter("fileType");
+			String skipRows = req.getParameter("skipRows");
+			String limitRows = req.getParameter("limitRows");
+			String xslSheetNumber = req.getParameter("xslSheetNumber");
+			String scopeCd = DataSetConstants.DS_SCOPE_USER;	
+			
+			jsonDsConfig.put(DataSetConstants.FILE_TYPE, fileType);
+			if (savingDataset) {
+				// when saving the dataset the file associated will get the
+				// dataset label name
+				jsonDsConfig.put(DataSetConstants.FILE_NAME, label + "."
+						+ fileType.toLowerCase());
+			} else {
+				jsonDsConfig.put(DataSetConstants.FILE_NAME, fileName);
+			}
+			jsonDsConfig.put(DataSetConstants.CSV_FILE_DELIMITER_CHARACTER,
+					csvDelimiter);
+			jsonDsConfig.put(DataSetConstants.CSV_FILE_QUOTE_CHARACTER,
+					csvQuote);
+			jsonDsConfig.put(DataSetConstants.CSV_FILE_ENCODING, csvEncoding);
+			jsonDsConfig.put(DataSetConstants.XSL_FILE_SKIP_ROWS, skipRows);
+			jsonDsConfig.put(DataSetConstants.XSL_FILE_LIMIT_ROWS, limitRows);
+			jsonDsConfig.put(DataSetConstants.XSL_FILE_SHEET_NUMBER,
+					xslSheetNumber);
+			jsonDsConfig.put(DataSetConstants.DS_SCOPE, scopeCd);
+
+		} catch (Exception e) {
+			logger.error("Error while defining dataset configuration. Error: "
+					+ e.getMessage());
+			throw new SpagoBIRuntimeException("Error while defining dataset configuration", e);
+		}
+		return jsonDsConfig;
 	}
 	
 	//This method rename a file and move it from resources\dataset\files\temp to resources\dataset\files

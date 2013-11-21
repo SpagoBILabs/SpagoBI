@@ -115,6 +115,8 @@
 	<!-- ******************** -->
 	<!--  start dataset build -->
 	<!-- ******************** -->
+	
+	<!-- as admin user -->
     <PUBLISHER name="BUILD_QBE_DATASET_START_ACTION_PUBLISHER">		
 		<RENDERING channel="HTTP" type="JSP" mode="FORWARD">
 			<RESOURCES>
@@ -122,9 +124,19 @@
 			</RESOURCES>
 		</RENDERING>    	
 	</PUBLISHER>
+	
+	<!-- as final user -->
+    <PUBLISHER name="QBE_ENGINE_EDIT_DATASET_START_ACTION_PUBLISHER">		
+		<RENDERING channel="HTTP" type="JSP" mode="FORWARD">
+			<RESOURCES>
+				<ITEM prog="0" resource="/WEB-INF/jsp/dataset/editDatasetAsFinalUser.jsp" />
+			</RESOURCES>
+		</RENDERING>    	
+	</PUBLISHER>
 	<!-- ******************** -->
 	<!--  end dataset build   -->
 	<!-- ******************** -->
+	
 	
 	
 	<!-- ***************** -->
