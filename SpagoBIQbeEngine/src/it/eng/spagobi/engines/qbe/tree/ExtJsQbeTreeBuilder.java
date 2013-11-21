@@ -408,27 +408,8 @@ public class ExtJsQbeTreeBuilder  {
 	
 	public  JSONObject getRelationFieldNode(Relationship relation, IModelEntity parentEntity, boolean needRelationInLabel) {
 		String iconCls = "relation";	
-		List<IModelField> sources =  relation.getSourceFields();
-		List<IModelField> targets =  relation.getTargetFields();
-		String sourceText ="";
-		String targetText ="";
-		
-		
-		if(sources.size()>0){
-			for (int i = 0; i < sources.size(); i++) {
-				IModelField source = sources.get(i);
-				sourceText = sourceText+", "+ getFieldLabel( source );
-			}
-			sourceText = sourceText.substring(2);
-		}
-
-		if(sources.size()>0){
-			for (int i = 0; i < targets.size(); i++) {
-				IModelField target = targets.get(i);
-				targetText = targetText+", "+ getFieldLabel( target );
-			}
-			targetText = targetText.substring(2);
-		}
+		String sourceText =relation.getSourceFieldsString();
+		String targetText =relation.getTargetFieldsString();
 		
 		
 		String targetEntityLabel = getEntityLabel( relation.getTargetFields().get(0).getParent() );
