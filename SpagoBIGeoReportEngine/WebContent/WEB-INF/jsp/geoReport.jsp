@@ -8,6 +8,7 @@
 <%-- 
 author: Andrea Gioia (andrea.gioia@eng.it)
 --%>
+<%@page import="it.eng.spago.security.IEngUserProfile"%>
 <%@ page language="java" 
 	     contentType="text/html; charset=UTF-8" 
 	     pageEncoding="UTF-8"%>	
@@ -47,7 +48,8 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 	String docDatasetLabel;
 	String userId;
 	List<String> includes;
-	
+	boolean visibleDataSet;
+
 	engineInstance = (GeoReportEngineInstance)request.getSession().getAttribute(EngineConstants.ENGINE_INSTANCE);
 	env = engineInstance.getEnv();
 	locale = engineInstance.getLocale();
@@ -67,7 +69,8 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 	docCommunities= (engineInstance.getDocumentCommunities()==null)?null:engineInstance.getDocumentCommunities();
 	docCommunity = (docCommunities == null || docCommunities.length == 0) ? "": docCommunities[0];
 	docFunctionalities= (engineInstance.getDocumentFunctionalities()==null)?new ArrayList():engineInstance.getDocumentFunctionalities();
-	
+	visibleDataSet = (engineInstance.isVisibleDataSet());
+
 	includes = engineInstance.getIncludes();
 	
 %>
@@ -179,18 +182,24 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 		    Sbi.config.docCommunities= "<%=docCommunity%>";
 		    Sbi.config.docFunctionalities= <%=docFunctionalities%>;
 		    Sbi.config.docDatasetLabel= "<%=docDatasetLabel%>";
+		    Sbi.config.visibleDataSet=<%=visibleDataSet%>;
 		    
 		    var geoReportPanel = null;
 		    
 			Ext.onReady(function(){
 			
-				Ext.QuickTips.init();   
-				geoReportPanel = new Sbi.geo.MainPanel(Sbi.template);	    
-	      		var viewport = new Ext.Viewport({
-	      			id:    'view',
-		      		layout: 'fit',
-		            items: [geoReportPanel]
-		        });
+				if(Sbi.config.visibleDataSet){
+					Ext.QuickTips.init();   
+					geoReportPanel = new Sbi.geo.MainPanel(Sbi.template);	    
+		      		var viewport = new Ext.Viewport({
+		      			id:    'view',
+			      		layout: 'fit',
+			            items: [geoReportPanel]
+			        });
+				}else{
+					Sbi.exception.ExceptionHandler.showErrorMessage(LN('sbi.dataset.no.visible'));
+				}
+
 			});
 	
 	
