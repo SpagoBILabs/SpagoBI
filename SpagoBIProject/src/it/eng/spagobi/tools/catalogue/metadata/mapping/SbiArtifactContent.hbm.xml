@@ -67,5 +67,9 @@
         <property name="active" type="boolean">
             <column name="active"/>
         </property>
+		<filter name="tenantFilter" condition="organization=:tenant" />
 	</class>
+	<filter-def name="tenantFilter">
+		<filter-param name="tenant" type="string" />
+	</filter-def>
 </hibernate-mapping>
