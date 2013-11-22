@@ -175,7 +175,7 @@ public class SqlUtils {
 		if(toReturn!=null && toReturn.length()>1){
 			for(int i=0; i<quoteSimbols.length; i++){
 				if(toReturn.charAt(0) == quoteSimbols[i] && toReturn.charAt(toReturn.length()-1) ==quoteSimbols[i] ){
-					return toReturn.substring(1,toReturn.length()-2);
+					return toReturn.substring(1,toReturn.length()-1);
 				}
 			}
 			
