@@ -7,20 +7,21 @@
 package it.eng.spagobi.tools.dataset.measurecatalogue.services;
 
 import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.services.exceptions.ExceptionUtilities;
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData.FieldType;
+import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.measurecatalogue.MeasureCatalogue;
 import it.eng.spagobi.tools.dataset.measurecatalogue.MeasureCatalogueMeasure;
+import it.eng.spagobi.tools.dataset.measurecatalogue.MeasureCatalogueMeasureNotVisibleException;
 import it.eng.spagobi.tools.dataset.measurecatalogue.MeasureCatalogueSingleton;
 import it.eng.spagobi.tools.dataset.measurecatalogue.materializer.InMemoryMaterializer;
 import it.eng.spagobi.tools.dataset.measurecatalogue.materializer.exception.NoCommonDimensionsRuntimeException;
 import it.eng.spagobi.tools.dataset.measurecatalogue.materializer.exception.NoCompleteCommonDimensionsRuntimeException;
-import it.eng.spagobi.utilities.assertion.Assert;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +36,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 
+import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -47,7 +49,7 @@ import org.json.JSONObject;
 
 @Path("/measures")
 public class MeasureCatalogueCRUD {
-	
+	public static transient Logger logger = Logger.getLogger(MeasureCatalogueCRUD.class);
 	static private String noCommonDimensionsRuntimeException = "error.mesage.description.measure.join.no.common.dimension";
 	static private String noCompleteCommonDimensionsRuntimeException = "error.mesage.description.measure.join.no.complete.common.dimension";
 	
@@ -64,9 +66,9 @@ public class MeasureCatalogueCRUD {
 	@Consumes("application/x-www-form-urlencoded")
 	@Produces(MediaType.APPLICATION_JSON)
 	public String join(@Context HttpServletRequest req, MultivaluedMap<String, String> form) {
-		MeasureCatalogue catalogue = MeasureCatalogueSingleton.getMeasureCatologue();
 		IDataStore dataStore;
-		
+		MeasureCatalogue catalogue = MeasureCatalogueSingleton.getMeasureCatologue();
+		IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 		List<String> labels = form.get("labels");
 		
 		List<MeasureCatalogueMeasure> measures= new ArrayList<MeasureCatalogueMeasure>();
@@ -74,7 +76,12 @@ public class MeasureCatalogueCRUD {
 		for(int i=0; i<labels.size(); i++){
 			MeasureCatalogueMeasure aMeasure = catalogue.getMeasureByLabel(labels.get(i));
 			if(aMeasure!=null){
-				measures.add(aMeasure);
+				if(!aMeasure.isVisibleToUser(profile)){
+					logger.error("The measure "+aMeasure.getAlias()+" of the dataset "+aMeasure.getDsName()+" is not visible for the user "+profile.getUserUniqueIdentifier().toString());
+					throw new MeasureCatalogueMeasureNotVisibleException(aMeasure);
+				}else{
+					measures.add(aMeasure);
+				}
 			}
 		}
 
@@ -87,10 +94,7 @@ public class MeasureCatalogueCRUD {
 			return ( ExceptionUtilities.serializeException(noCompleteCommonDimensionsRuntimeException,null));
 		}
 		
-		
-		
 
-		
 
 		JSONDataWriter dataSetWriter = new JSONDataWriter();
 		JSONObject dataStroreJSON =  (JSONObject) dataSetWriter.write(dataStore);
@@ -139,6 +143,7 @@ public class MeasureCatalogueCRUD {
 		
 		return  dataStroreJSON.toString();
 	}
+	
 	
 
 }

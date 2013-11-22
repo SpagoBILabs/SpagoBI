@@ -63,6 +63,8 @@ Sbi.locale.formats = {
 //LABELS
 //===================================================================
 
+Sbi.locale.ln['sbi.dataset.no.visible'] = 'il dataset collegato al documento non \u00e8 visibile all\'utente loggato';
+
 //===================================================================
 //GENERIC
 //===================================================================

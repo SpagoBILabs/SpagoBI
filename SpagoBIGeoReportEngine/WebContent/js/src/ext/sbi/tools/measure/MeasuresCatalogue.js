@@ -31,7 +31,8 @@ Sbi.geo.tools.MeasureCatalogue = function(config) {
 	
 	Ext.apply(this,defaultSettings);
 	
-	var tb =  this.buildToolbar(this);
+	var tbar =  this.buildTopToolbar(this);
+	var bbar =  this.buildBottomToolbar(this);
 	var expander = this.buildexpander();
 	var sm = new Ext.grid.CheckboxSelectionModel({SingleSelect:false, grid:this});
 	var cm = this.buildColumns(sm, expander);
@@ -43,7 +44,8 @@ Sbi.geo.tools.MeasureCatalogue = function(config) {
 	   groupTextTpl: '{text} ({[values.rs.length]} {[values.rs.length > 1 ? "Misure" : "Misura"]})'
 	  }),
 	  
-	  tbar: tb,
+	  bbar: bbar,
+	  tbar: tbar,
 	  cm: cm,
 	  sm: sm,
 	  plugins: expander
@@ -122,17 +124,10 @@ Ext.extend(Sbi.geo.tools.MeasureCatalogue, Ext.grid.GridPanel, {
 		});
 	},
 	
-	buildToolbar: function(grid){
+	buildTopToolbar: function(grid){
 		
 		var thisPanel = this;
 		
-		var joinMeasuresButton = new Ext.Toolbar.Button({
-			text    : LN('sbi.tools.catalogue.measures.join.btn'),
-			tooltip : LN('sbi.tools.catalogue.measures.join.tooltip'),
-			handler : function() {
-				thisPanel.executeJoin();
-			}
-		});
 
 		this.search = new Ext.form.TriggerField({
 			enableKeyEvents: true,
@@ -159,7 +154,26 @@ Ext.extend(Sbi.geo.tools.MeasureCatalogue, Ext.grid.GridPanel, {
 		});
 
 		
-		var tb = new Ext.Toolbar([joinMeasuresButton,'->',this.search]);
+		var tb = new Ext.Toolbar(['->',this.search]);
+
+		return tb;
+		
+	},
+	
+	buildBottomToolbar: function(grid){
+		
+		var thisPanel = this;
+		
+		var joinMeasuresButton = new Ext.Toolbar.Button({
+			text    : LN('sbi.tools.catalogue.measures.join.btn'),
+			tooltip : LN('sbi.tools.catalogue.measures.join.tooltip'),
+			handler : function() {
+				thisPanel.executeJoin();
+			}
+		});
+
+		
+		var tb = new Ext.Toolbar(['->',joinMeasuresButton]);
 
 		return tb;
 		
@@ -195,8 +209,8 @@ Ext.extend(Sbi.geo.tools.MeasureCatalogue, Ext.grid.GridPanel, {
 			for(var i=0; i<selected.length; i++){
 				measuresLabels.push(selected[i].data.label);
 			}
-			if(measuresLabels.length<2){
-				alert("Only one measure selected. Nothing to join"); 
+			if(measuresLabels.length<1){
+				alert("Nothing to join"); 
 				return;
 			}
 			Ext.MessageBox.wait('Please wait...');

@@ -122,7 +122,7 @@ public class InMemoryMaterializer implements IMaterializer {
     	
     	//Take all the dimensions of a measure and check if the other dataset contains it
     	
-    	if(measures!= null && measures.size()>=2){
+    	if(measures!= null){
     		
         	//init the array to return
         	for(int i=0; i<measures.size(); i++){
@@ -366,7 +366,7 @@ public class InMemoryMaterializer implements IMaterializer {
 
 	private DataStore joinAggreteMeasures(List<InMemoryAggregator> rolledUpMeasures){
 		DataStore dataStore = new DataStore();
-		if(rolledUpMeasures.size()>1){
+
 			
 			InMemoryAggregator joinedMeasure = rolledUpMeasures.get(0);
 			for(int i=1; i<rolledUpMeasures.size(); i++){
@@ -385,7 +385,7 @@ public class InMemoryMaterializer implements IMaterializer {
 			for(int i=0; i<records.size(); i++){
 				dataStore.appendRecord(records.get(i));
 			}
-		}
+
 
 		return dataStore;
 	}

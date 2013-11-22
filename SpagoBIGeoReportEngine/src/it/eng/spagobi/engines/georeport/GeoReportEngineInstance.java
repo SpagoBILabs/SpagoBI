@@ -5,8 +5,10 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.engines.georeport;
 
+import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.services.proxy.EventServiceProxy;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.utils.DataSetUtilities;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.engines.AbstractEngineInstance;
 import it.eng.spagobi.utilities.engines.AuditServiceProxy;
@@ -107,6 +109,12 @@ public class GeoReportEngineInstance extends AbstractEngineInstance {
 				);
 	}
 	
+	public IEngUserProfile getUserProfile() {
+		return (IEngUserProfile)this.getEnv().get(EngineConstants.ENV_USER_PROFILE);
+	}
+	
+	
+	
 	public String[] getDocumentCommunities() {
 		try{
 			String strCommunities = (String)this.getEnv().get(EngineConstants.ENV_DOCUMENT_COMMUNITIES);
@@ -158,7 +166,14 @@ public class GeoReportEngineInstance extends AbstractEngineInstance {
 		throw new GeoReportEngineRuntimeException("Unsupported method [validate]");		
 	}
 	
-	
+	public boolean isVisibleDataSet(){
+		IDataSet datSet = getDataSet();
+    	if(datSet!=null){
+    		IEngUserProfile profile = getUserProfile();
+    		return DataSetUtilities.isExecutableByUser(datSet, profile);
+    	}
+    	return true;
+	}
 	
 	
 }

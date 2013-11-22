@@ -1223,8 +1223,16 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
 			, params: this.storeConfig.params
 			, success : this.onVirtualStoreLoaded
 			, failure: function(response) {
+				if(response.responseText){
+					var err = Ext.decode(response.responseText);
+					if(err.errors && err.errors[0] && err.errors[0].message && err.errors[0].message.indexOf("is not visible for the")){
+						Sbi.exception.ExceptionHandler.showErrorMessage(err.errors[0].message);
+						return;
+					}
+				}
 				alert("Impossible to load virtual store");
 				Sbi.exception.ExceptionHandler.handleFailure(response);
+
 			}
 			, scope: this
     	 });
