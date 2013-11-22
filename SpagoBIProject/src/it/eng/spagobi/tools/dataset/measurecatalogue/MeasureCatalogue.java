@@ -367,13 +367,7 @@ public class MeasureCatalogue implements Observer {
     public String toString(String owner, boolean isAdminUser){
 		ObjectMapper mapper = new ObjectMapper();    
 		try {
-			Set<MeasureCatalogueMeasure> filteredMeasures = new HashSet<MeasureCatalogueMeasure>();
-			for (Iterator iterator = measures.iterator(); iterator.hasNext();) {
-				MeasureCatalogueMeasure measureCatalogueMeasure = (MeasureCatalogueMeasure) iterator.next();
-				if(isAdminUser || measureCatalogueMeasure.getDataSet().isPublic() || (!owner.equals(null) && owner.equals(measureCatalogueMeasure.getDataSet().getOwner()) ) ){
-					filteredMeasures.add(measureCatalogueMeasure);
-				}
-			}
+			Set<MeasureCatalogueMeasure> filteredMeasures = filterMeasuresByUserVisibility(owner, isAdminUser);
 			return  "{measures:"+mapper.writeValueAsString(filteredMeasures)+"}";
 		} catch (Exception e) {
 			logger.error("Error serializing the measure catalogue",e);
@@ -381,5 +375,15 @@ public class MeasureCatalogue implements Observer {
 		}
     }
     
-
+    private Set<MeasureCatalogueMeasure> filterMeasuresByUserVisibility(String owner, boolean isAdminUser){
+    	Set<MeasureCatalogueMeasure> filteredMeasures = new HashSet<MeasureCatalogueMeasure>();
+    	for (Iterator iterator = measures.iterator(); iterator.hasNext();) {
+    		MeasureCatalogueMeasure measureCatalogueMeasure = (MeasureCatalogueMeasure) iterator.next();
+    		if(isAdminUser || measureCatalogueMeasure.getDataSet().isPublic() || (!owner.equals(null) && owner.equals(measureCatalogueMeasure.getDataSet().getOwner()) ) ){
+    			filteredMeasures.add(measureCatalogueMeasure);
+    		}
+    	}
+    	return filteredMeasures;
+    }
+    
 }

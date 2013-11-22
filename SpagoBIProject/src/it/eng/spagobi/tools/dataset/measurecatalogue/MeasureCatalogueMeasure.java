@@ -6,10 +6,12 @@
 
 package it.eng.spagobi.tools.dataset.measurecatalogue;
 
+import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.metamodel.HierarchyWrapper;
 import it.eng.spagobi.metamodel.MetaModelWrapper;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
+import it.eng.spagobi.tools.dataset.utils.DataSetUtilities;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.util.HashMap;
@@ -168,6 +170,11 @@ public class MeasureCatalogueMeasure implements IMeasureCatalogueField {
 	public IDataSet getDataSet(){
 		return dataset;
 	}
+	
+	@JsonIgnore
+	public boolean isVisibleToUser(IEngUserProfile profile){
+		return DataSetUtilities.isExecutableByUser(dataset, profile);
+	}
 
 
 	
@@ -182,10 +189,6 @@ public class MeasureCatalogueMeasure implements IMeasureCatalogueField {
 	public String getAlias() {
 		return alias;
 	}
-	
-//	public Integer getId() {
-//		return id;
-//	}
 	
 	public String getLabel(){
 		return label;
