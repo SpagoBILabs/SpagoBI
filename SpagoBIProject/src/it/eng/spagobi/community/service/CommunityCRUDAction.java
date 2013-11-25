@@ -73,7 +73,7 @@ public class CommunityCRUDAction {
 
 	}
 	@DELETE
-	@Produces(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public String deleteCommunity(@Context HttpServletRequest req) {
 		ISbiCommunityDAO commDao = null;
 
@@ -97,7 +97,7 @@ public class CommunityCRUDAction {
 	}
 	
 	@POST
-	@Produces(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public String saveCommunity(@Context HttpServletRequest req) {
 
 		ISbiCommunityDAO commDao = null;

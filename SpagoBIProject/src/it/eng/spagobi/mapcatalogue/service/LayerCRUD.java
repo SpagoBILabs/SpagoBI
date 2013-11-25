@@ -54,7 +54,7 @@ public class LayerCRUD {
 	
 	
 	@GET
-	@Produces(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public String loadLayers(@Context HttpServletRequest req) {
 		ISbiGeoLayersDAO dao = DAOFactory.getSbiGeoLayerDao();
 		List<GeoLayer> layers = null;
@@ -86,7 +86,7 @@ public class LayerCRUD {
 	}
 	
 	@DELETE
-	@Produces(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public String deleteLayer(@Context HttpServletRequest req) {
 		Object id=null;
 		Integer layerId = null;
@@ -116,7 +116,7 @@ public class LayerCRUD {
 	}
 	
 	@POST
-	@Produces(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public String saveLayer(@Context HttpServletRequest req) {
 		JSONObject requestBodyJSON=null;
 		Integer id;
@@ -150,7 +150,7 @@ public class LayerCRUD {
 	}
 	
 	@PUT
-	@Produces(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public String modifyLayer(@Context HttpServletRequest req) {
 		JSONObject requestBodyJSON=null;
 		try {
@@ -185,7 +185,7 @@ public class LayerCRUD {
 	@POST
 	@Path("/getLayerProperties")
 	@Consumes("application/x-www-form-urlencoded")
-	@Produces(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public String getLayerProperties(@Context HttpServletRequest req, MultivaluedMap<String, String> form){
 		logger.debug("IN");
 		
