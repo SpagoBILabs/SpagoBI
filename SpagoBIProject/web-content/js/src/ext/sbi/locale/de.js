@@ -511,7 +511,7 @@ Sbi.locale.ln['sbi.users.confirm'] = 'Bitte bestätigen'; //'Please confirm';
 Sbi.locale.ln['sbi.users.confirmDelete'] = 'Wollen Sie den Benutzer löschen?'; //'Confirm User delete?';
 
 //KPI ALARMS
-
+/*
 Sbi.locale.ln['sbi.alarmcontact.contactsManagement'] = ''; //'Contacts Management';
 Sbi.locale.ln['sbi.alarmcontact.contactsList'] = 'Contacts List';
 Sbi.locale.ln['sbi.alarmcontact.name'] = 'Name';
@@ -769,7 +769,7 @@ Sbi.locale.ln['sbi.tools.dataset.qbedatasetbuilder.title'] = 'Qbe Dataset Builde
 Sbi.locale.ln['sbi.tools.managedatasets.datamartcombo.label'] = 'Datamart';
 Sbi.locale.ln['sbi.tools.managedatasets.errors.missingdatamart'] = 'Please select a datamart';
 Sbi.locale.ln['sbi.tools.managedatasets.errors.missingdatasource'] = 'Please select a datasource';
-
+*/
 //===================================================================
 //DATASET - PREVIEW
 //===================================================================
@@ -778,7 +778,7 @@ Sbi.locale.ln['sbi.tools.dataset.previewwindow.title'] = 'Vorschau'; //'Preview'
 //===================================================================
 //DATASTORE PANEL
 //===================================================================
-
+/*
 Sbi.locale.ln['sbi.widgets.datastorepanel.title'] = 'Results';
 
 Sbi.locale.ln['sbi.widgets.datastorepanel.grid.displaymsg'] = 'Displaying {0} - {1} of {2}';
@@ -943,7 +943,7 @@ Sbi.locale.ln['sbi.worksheet.worksheeteditoriframepanelext3.toolbar.export']='Ex
 //Sbi.execution.toolbar.SaveDatasetWindow : AD-HOC REPORTING 
 //===================================================================
 Sbi.locale.ln["sbi.execution.toolbar.savedatasetwindow.title"]="Fill in the dataset details and click on Save";
-
+*/
 //===================================================================
 //ERRORS 
 //===================================================================

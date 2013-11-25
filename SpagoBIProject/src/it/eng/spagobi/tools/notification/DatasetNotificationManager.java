@@ -22,12 +22,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package it.eng.spagobi.tools.notification;
 
 import it.eng.spagobi.commons.SingletonConfig;
+import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.StringUtilities;
+import it.eng.spagobi.commons.utilities.messages.IMessageBuilder;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.service.rest.SelfServiceDataSetCRUD;
 
 import java.security.Security;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
@@ -52,8 +52,14 @@ import org.apache.log4j.Logger;
 public class DatasetNotificationManager implements INotificationManager {
 
 	
-	static private Logger logger = Logger.getLogger(SelfServiceDataSetCRUD.class);
+	static private Logger logger = Logger.getLogger(DatasetNotificationManager.class);
+	private IMessageBuilder msgBuilder = null;
 
+	public DatasetNotificationManager(){}
+	
+	public DatasetNotificationManager(IMessageBuilder msgBuilder){
+		this.msgBuilder  = msgBuilder;
+	}
 	
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.tools.notification.INotificationManager#handleEvent(it.eng.spagobi.tools.notification.AbstractEvent)
@@ -106,45 +112,54 @@ public class DatasetNotificationManager implements INotificationManager {
 		
 		for (AbstractEvent event : events){
 			if (event instanceof DatasetNotificationEvent){
-				String datasetLabel = "";
+				String datasetName = "";
 				datasetEvent = (DatasetNotificationEvent)event;
 				if (event.getArgument() instanceof IDataSet){
 					IDataSet dataset = (IDataSet)event.getArgument();
-					datasetLabel = dataset.getLabel();
-
+					datasetName = dataset.getName();
 				}
 				
 				String eventName = event.getEventName();
+				information = information + msgBuilder.getMessage("SBIDev.DataSet.notify.msg.1", "messages") + " '" +datasetName+ "' " +
+						msgBuilder.getMessage("SBIDev.DataSet.notify.msg.2", "messages")+ " "  ;
 				if (eventName.equals(EventConstants.DATASET_EVENT_LICENCE_CHANGED)){
-					information = information +"The dataset "+datasetLabel+" that you are using in a Map, has changed his licence. \n";
+//					information = information +"The dataset "+datasetLabel+" that you are using in a Map, has changed his licence. \n";
+					information = information + msgBuilder.getMessage("SBIDev.DataSet.notify.msg.3.lic", "messages");
 
 				} else if (eventName.equals(EventConstants.DATASET_EVENT_METADATA_CHANGED)){
-					information = information +"The dataset "+datasetLabel+" that you are using in a Map, has changed the associated metadata. \n";
+//					information = information +"The dataset "+datasetLabel+" that you are using in a Map, has changed the associated metadata. \n";
+					information = information +	msgBuilder.getMessage("SBIDev.DataSet.notify.msg.3.meta", "messages");
 
 				} else if (eventName.equals(EventConstants.DATASET_EVENT_FILE_CHANGED)){
-					information = information +"The dataset "+datasetLabel+" that you are using in a Map, has changed the associated file. \n";
+//					information = information +"The dataset "+datasetLabel+" that you are using in a Map, has changed the associated file. \n";
+					information = information + msgBuilder.getMessage("SBIDev.DataSet.notify.msg.3.file", "messages");
 
 				} else if (eventName.equals(EventConstants.DATASET_EVENT_DELETED_DATASET)){
-					information = information +"The dataset "+datasetLabel+" that you are using in a Map, has been deleted. \n";
+//					information = information +"The dataset "+datasetLabel+" that you are using in a Map, has been deleted. \n";
+					information = information + msgBuilder.getMessage("SBIDev.DataSet.notify.msg.3.delete", "messages");
 
 				} else if(eventName.equals(EventConstants.DATASET_EVENT_NAME_CHANGED)){
-					information = information +"The dataset "+datasetLabel+" that you are using in a Map, has changed his name. \n";
+//					information = information +"The dataset "+datasetLabel+" that you are using in a Map, has changed his name. \n";
+					information = information + msgBuilder.getMessage("SBIDev.DataSet.notify.msg.3.name", "messages");
 					
 				} else if(eventName.equals(EventConstants.DATASET_EVENT_DESCRIPTION_CHANGED)){
-					information = information +"The dataset "+datasetLabel+" that you are using in a Map, has changed his description. \n";
+//					information = information +"The dataset "+datasetLabel+" that you are using in a Map, has changed his description. \n";
+					information = information + msgBuilder.getMessage("SBIDev.DataSet.notify.msg.3.descr", "messages");
 
 				} else if(eventName.equals(EventConstants.DATASET_EVENT_CATEGORY_CHANGED)){
-					information = information +"The dataset "+datasetLabel+" that you are using in a Map, has changed his category. \n";
+//					information = information +"The dataset "+datasetLabel+" that you are using in a Map, has changed his category. \n";
+					information = information + msgBuilder.getMessage("SBIDev.DataSet.notify.msg.3.cat", "messages");
 				
 				} else if(eventName.equals(EventConstants.DATASET_EVENT_SCOPE_CHANGED)){
-					information = information +"The dataset "+datasetLabel+" that you are using in a Map, has changed his scope. \n";
-
+//					information = information +"The dataset "+datasetLabel+" that you are using in a Map, has changed his scope. \n";
+					information = information + msgBuilder.getMessage("SBIDev.DataSet.notify.msg.3.scope", "messages");
+					//adds maps informations
 				}
 			}
 		}
 		
 		if ((datasetEvent != null) &&(!information.isEmpty() )){
-			notifyMapAuthorsMail(datasetEvent, "Changes in dataset used in a Map",information );
+			notifyMapAuthorsMail(datasetEvent, msgBuilder.getMessage("SBIDev.DataSet.notify.msg.title"),information );
 		}
 	}
 	
@@ -171,8 +186,15 @@ public class DatasetNotificationManager implements INotificationManager {
 	private void notifyDatasetNameChanged(DatasetNotificationEvent datasetEvent)throws Exception {
 		if (datasetEvent.getArgument() instanceof IDataSet){
 			IDataSet dataset = (IDataSet)datasetEvent.getArgument();
-			String subject = "The dataset "+dataset.getName()+" has changed the name";
-	    	String emailContent = "The dataset "+dataset.getName()+" that you are using in a Map, has changed the name";
+//			String subject = "The dataset "+dataset.getName()+" has changed the name";
+//	    	String emailContent = "The dataset "+dataset.getName()+" that you are using in a Map, has changed the name";
+			
+			String subject = msgBuilder.getMessage("SBIDev.DataSet.notify.msg.1", "messages") + " '" +dataset.getName()+ "' " +
+					msgBuilder.getMessage("SBIDev.DataSet.notify.msg.3.name", "messages") ;
+
+	    	String emailContent = msgBuilder.getMessage("SBIDev.DataSet.notify.msg.1", "messages")+ " '"  +dataset.getName()+ "' " +
+	    			msgBuilder.getMessage("SBIDev.DataSet.notify.msg.2", "messages") + " " +
+					msgBuilder.getMessage("SBIDev.DataSet.notify.msg.3.name", "messages") ;
 	    	try {
 				notifyMapAuthorsMail(datasetEvent,subject,emailContent);
 	    	} catch (Exception e){
@@ -184,8 +206,14 @@ public class DatasetNotificationManager implements INotificationManager {
 	private void notifyDatasetDescriptionChanged(DatasetNotificationEvent datasetEvent)throws Exception {
 		if (datasetEvent.getArgument() instanceof IDataSet){
 			IDataSet dataset = (IDataSet)datasetEvent.getArgument();
-			String subject = "The dataset "+dataset.getName()+" has changed the description";
-	    	String emailContent = "The dataset "+dataset.getName()+" that you are using in a Map, has changed the description";
+//			String subject = "The dataset "+dataset.getName()+" has changed the description";
+//	    	String emailContent = "The dataset "+dataset.getName()+" that you are using in a Map, has changed the description";
+			String subject = msgBuilder.getMessage("SBIDev.DataSet.notify.msg.1", "messages") + " '" +dataset.getName()+ "' " +
+					msgBuilder.getMessage("SBIDev.DataSet.notify.msg.3.descr", "messages") ;
+
+	    	String emailContent = msgBuilder.getMessage("SBIDev.DataSet.notify.msg.1", "messages") + " '" +dataset.getName()+ "' " +
+	    			msgBuilder.getMessage("SBIDev.DataSet.notify.msg.2", "messages") + " " +
+					msgBuilder.getMessage("SBIDev.DataSet.notify.msg.3.descr", "messages") ;
 	    	try {
 				notifyMapAuthorsMail(datasetEvent,subject,emailContent);
 	    	} catch (Exception e){
@@ -197,8 +225,14 @@ public class DatasetNotificationManager implements INotificationManager {
 	private void notifyDatasetCategoryChanged(DatasetNotificationEvent datasetEvent)throws Exception {
 		if (datasetEvent.getArgument() instanceof IDataSet){
 			IDataSet dataset = (IDataSet)datasetEvent.getArgument();
-			String subject = "The dataset "+dataset.getName()+" has changed the category";
-	    	String emailContent = "The dataset "+dataset.getName()+" that you are using in a Map, has changed the category";
+//			String subject = "The dataset "+dataset.getName()+" has changed the category";
+//	    	String emailContent = "The dataset "+dataset.getName()+" that you are using in a Map, has changed the category";
+			String subject = msgBuilder.getMessage("SBIDev.DataSet.notify.msg.1", "messages") + " '" +dataset.getName()+ "' " +
+					msgBuilder.getMessage("SBIDev.DataSet.notify.msg.3.cat", "messages") ;
+
+	    	String emailContent = msgBuilder.getMessage("SBIDev.DataSet.notify.msg.1", "messages") + " '" +dataset.getName()+ "' " +
+	    			msgBuilder.getMessage("SBIDev.DataSet.notify.msg.2", "messages") + " " +
+					msgBuilder.getMessage("SBIDev.DataSet.notify.msg.3.cat", "messages") ;
 	    	try {
 				notifyMapAuthorsMail(datasetEvent,subject,emailContent);
 	    	} catch (Exception e){
@@ -210,8 +244,14 @@ public class DatasetNotificationManager implements INotificationManager {
 	private void notifyDatasetScopeChanged(DatasetNotificationEvent datasetEvent)throws Exception {
 		if (datasetEvent.getArgument() instanceof IDataSet){
 			IDataSet dataset = (IDataSet)datasetEvent.getArgument();
-			String subject = "The dataset "+dataset.getName()+" has changed the scope";
-	    	String emailContent = "The dataset "+dataset.getName()+" that you are using in a Map, has changed the scope";
+//			String subject = "The dataset "+dataset.getName()+" has changed the scope";
+//	    	String emailContent = "The dataset "+dataset.getName()+" that you are using in a Map, has changed the scope";
+			String subject = msgBuilder.getMessage("SBIDev.DataSet.notify.msg.1", "messages") + " '" +dataset.getName()+ "' " +
+					msgBuilder.getMessage("SBIDev.DataSet.notify.msg.3.scope", "messages") ;
+
+	    	String emailContent = msgBuilder.getMessage("SBIDev.DataSet.notify.msg.1", "messages") + " '" +dataset.getName()+ "' " +
+	    			msgBuilder.getMessage("SBIDev.DataSet.notify.msg.2", "messages")+ " " +
+					msgBuilder.getMessage("SBIDev.DataSet.notify.msg.3.scope", "messages") ;
 	    	try {
 				notifyMapAuthorsMail(datasetEvent,subject,emailContent);
 	    	} catch (Exception e){
@@ -223,8 +263,14 @@ public class DatasetNotificationManager implements INotificationManager {
 	private void notifyDatasetMetadataChanged(DatasetNotificationEvent datasetEvent)throws Exception {
 		if (datasetEvent.getArgument() instanceof IDataSet){
 			IDataSet dataset = (IDataSet)datasetEvent.getArgument();
-			String subject = "The dataset "+dataset.getName()+" has changed the metadata";
-	    	String emailContent = "The dataset "+dataset.getName()+" that you are using in a Map, has changed the associated metadata";
+//			String subject = "The dataset "+dataset.getName()+" has changed the metadata";
+//	    	String emailContent = "The dataset "+dataset.getName()+" that you are using in a Map, has changed the associated metadata";
+			String subject = msgBuilder.getMessage("SBIDev.DataSet.notify.msg.1", "messages") + " '" +dataset.getName()+ "' " +
+					msgBuilder.getMessage("SBIDev.DataSet.notify.msg.3.meta", "messages") ;
+
+	    	String emailContent = msgBuilder.getMessage("SBIDev.DataSet.notify.msg.1", "messages") + " '" +dataset.getName()+ "' " +
+	    			msgBuilder.getMessage("SBIDev.DataSet.notify.msg.2", "messages")+ " " +
+					msgBuilder.getMessage("SBIDev.DataSet.notify.msg.3.meta", "messages") ;
 	    	try {
 				notifyMapAuthorsMail(datasetEvent,subject,emailContent);
 	    	} catch (Exception e){
@@ -237,8 +283,14 @@ public class DatasetNotificationManager implements INotificationManager {
 	private void notifyDatasetFileChanged(DatasetNotificationEvent datasetEvent)throws Exception {
 		if (datasetEvent.getArgument() instanceof IDataSet){
 			IDataSet dataset = (IDataSet)datasetEvent.getArgument();
-			String subject = "The dataset "+dataset.getName()+" has changed the file";
-	    	String emailContent = "The dataset "+dataset.getName()+" that you are using in a Map, has changed the associated file";
+//			String subject = "The dataset "+dataset.getName()+" has changed the file";
+//	    	String emailContent = "The dataset "+dataset.getName()+" that you are using in a Map, has changed the associated file";
+			String subject = msgBuilder.getMessage("SBIDev.DataSet.notify.msg.1", "messages") + " '" +dataset.getName()+ "' " +
+							 msgBuilder.getMessage("SBIDev.DataSet.notify.msg.3.file", "messages") ;
+
+	    	String emailContent = msgBuilder.getMessage("SBIDev.DataSet.notify.msg.1", "messages") + " '" +dataset.getName()+ "' " +
+	    			msgBuilder.getMessage("SBIDev.DataSet.notify.msg.2", "messages") + " " +
+					msgBuilder.getMessage("SBIDev.DataSet.notify.msg.3.file", "messages") ;
 	    	try {
 				notifyMapAuthorsMail(datasetEvent,subject,emailContent);
 	    	} catch (Exception e){
@@ -251,8 +303,14 @@ public class DatasetNotificationManager implements INotificationManager {
 	private void notifyDatasetDeleted(DatasetNotificationEvent datasetEvent)throws Exception {
 		if (datasetEvent.getArgument() instanceof IDataSet){
 			IDataSet dataset = (IDataSet)datasetEvent.getArgument();
-			String subject = "The dataset "+dataset.getName()+" has been deleted";
-	    	String emailContent = "The dataset "+dataset.getName()+" that you are using in a Map, has been deleted.";
+//			String subject = "The dataset "+dataset.getName()+" has been deleted";
+//	    	String emailContent = "The dataset "+dataset.getName()+" that you are using in a Map, has been deleted.";
+			String subject = msgBuilder.getMessage("SBIDev.DataSet.notify.msg.1", "messages") + " '" +dataset.getName()+ " " +
+					msgBuilder.getMessage("SBIDev.DataSet.notify.msg.3.delete", "messages") ;
+
+	    	String emailContent = msgBuilder.getMessage("SBIDev.DataSet.notify.msg.1", "messages") + " '" +dataset.getName()+ "' " +
+	    			msgBuilder.getMessage("SBIDev.DataSet.notify.msg.2", "messages") + " " +
+					msgBuilder.getMessage("SBIDev.DataSet.notify.msg.3.delete", "messages") ;
 	    	try {
 				notifyMapAuthorsMail(datasetEvent,subject,emailContent);
 	    	} catch (Exception e){
@@ -265,8 +323,14 @@ public class DatasetNotificationManager implements INotificationManager {
 	private void notifyLicenceChange(DatasetNotificationEvent datasetEvent) throws Exception {
 		if (datasetEvent.getArgument() instanceof IDataSet){
 			IDataSet dataset = (IDataSet)datasetEvent.getArgument();
-	    	String subject = "The dataset "+dataset.getName()+" has changed is licence";
-	    	String emailContent = "The dataset "+dataset.getName()+" that you are using in a Map, has changed his licence";
+//	    	String subject = "The dataset "+dataset.getName()+" has changed is licence";
+//	    	String emailContent = "The dataset "+dataset.getName()+" that you are using in a Map, has changed his licence";
+			String subject = msgBuilder.getMessage("SBIDev.DataSet.notify.msg.1", "messages") + " '" +dataset.getName()+ " '" +
+					msgBuilder.getMessage("SBIDev.DataSet.notify.msg.3.lic", "messages") ;
+
+	    	String emailContent = msgBuilder.getMessage("SBIDev.DataSet.notify.msg.1", "messages") + " '" +dataset.getName()+ " '" +
+	    			msgBuilder.getMessage("SBIDev.DataSet.notify.msg.2", "messages") +
+					msgBuilder.getMessage("SBIDev.DataSet.notify.msg.3.lic", "messages") ;
 	    	try {
 				notifyMapAuthorsMail(datasetEvent,subject,emailContent);
 	    	} catch (Exception e){
@@ -392,7 +456,6 @@ public class DatasetNotificationManager implements INotificationManager {
 
 
 	}
-	
 	// Private Classes ----------------------------------------------------------------------------
 	
 	private class SMTPAuthenticator extends javax.mail.Authenticator

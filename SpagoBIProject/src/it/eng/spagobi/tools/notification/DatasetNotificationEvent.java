@@ -170,29 +170,33 @@ public class DatasetNotificationEvent extends AbstractEvent {
 					if (mapTemplateJSONObject.has("storeType")){
 						String storeType = mapTemplateJSONObject.getString("storeType");
 						if (storeType.equalsIgnoreCase("virtualStore")){
-							JSONObject storeConfigJSON = mapTemplateJSONObject.getJSONObject("storeConfig");
-							JSONObject paramsJSON = storeConfigJSON.getJSONObject("params");
-							JSONArray measureLabelsArray = paramsJSON.getJSONArray("labels");
-							for (int i = 0; i < measureLabelsArray.length(); i++) {
-								String measureLabel = measureLabelsArray.getString(i);
-								
-								for (MeasureCatalogueMeasure measureDataset : measuresOfDataset){
-									if (measureDataset.getLabel().equals(measureLabel)){
-										String documentCreationUser = sbiDocument.getCreationUser();
-										ISecurityServiceSupplier supplier = SecurityServiceSupplierFactory.createISecurityServiceSupplier();
-										SpagoBIUserProfile userProfile = supplier.createUserProfile(documentCreationUser);
-										HashMap userAttributes = userProfile.getAttributes();
-
-										if (userAttributes.get("email") != null){
-											String emailAddressDocumentCreationUser =(String) userAttributes.get("email");
-											if (!emailAddressDocumentCreationUser.isEmpty()){
-												//ADD EMAIL ADDRESS TO SET OF ADDRESS
-												emailsAddressOfAuthors.add(emailAddressDocumentCreationUser);
+							if (mapTemplateJSONObject.has("storeConfig")){
+								JSONObject storeConfigJSON = mapTemplateJSONObject.getJSONObject("storeConfig");
+								if (storeConfigJSON.has("params")){
+									JSONObject paramsJSON = storeConfigJSON.getJSONObject("params");
+									JSONArray measureLabelsArray = paramsJSON.getJSONArray("labels");
+									for (int i = 0; i < measureLabelsArray.length(); i++) {
+										String measureLabel = measureLabelsArray.getString(i);
+										
+										for (MeasureCatalogueMeasure measureDataset : measuresOfDataset){
+											if (measureDataset.getLabel().equals(measureLabel)){
+												String documentCreationUser = sbiDocument.getCreationUser();
+												ISecurityServiceSupplier supplier = SecurityServiceSupplierFactory.createISecurityServiceSupplier();
+												SpagoBIUserProfile userProfile = supplier.createUserProfile(documentCreationUser);
+												HashMap userAttributes = userProfile.getAttributes();
+		
+												if (userAttributes.get("email") != null){
+													String emailAddressDocumentCreationUser =(String) userAttributes.get("email");
+													if (!emailAddressDocumentCreationUser.isEmpty()){
+														//ADD EMAIL ADDRESS TO SET OF ADDRESS
+														emailsAddressOfAuthors.add(emailAddressDocumentCreationUser);
+													}
+												}
 											}
 										}
+		
 									}
 								}
-
 							}
 						}
 					}					

@@ -39,7 +39,7 @@ Ext.define('Sbi.tools.dataset.ValidateDataset', {
 		
 
     	this.warningMessage = new Ext.form.Label({
-			text : 'The validation didn\'t find errors.',
+			text :  LN('sbi.ds.metadata.msgOK'),
 			width:  400,
 			name: 'warningMessage',
 			readOnly:true,
@@ -67,7 +67,7 @@ Ext.define('Sbi.tools.dataset.ValidateDataset', {
 	, createDynamicGrid: function(values){
 		this.mainPanel.remove(this.warningMessage);
     	this.warningMessage = new Ext.form.Label({
-			text : 'The validation didn\'t find errors.',
+			text :  LN('sbi.ds.metadata.msgOK'),
 			width:  400,
 			name: 'warningMessage',
 			readOnly:true,
@@ -91,7 +91,7 @@ Ext.define('Sbi.tools.dataset.ValidateDataset', {
     	Sbi.debug('ValidateDataset SHOWING ERROR');
 		this.mainPanel.remove(this.warningMessage);
     	this.warningMessage = new Ext.form.Label({
-			text : 'The validation has found some errors.',
+			text : LN('sbi.ds.metadata.msgKO'),
 			width:  400,
 			name: 'warningMessage',
 			readOnly:true,

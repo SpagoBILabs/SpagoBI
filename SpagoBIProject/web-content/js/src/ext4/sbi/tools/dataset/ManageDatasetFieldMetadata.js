@@ -185,7 +185,7 @@ Ext.define('Sbi.tools.dataset.ManageDatasetFieldMetadata', {
 	    	buttonAlign : 'left',
 	    	items:[
 	    	    new Ext.button.Button({
-	            text: 'Add Property',
+	            text: LN('sbi.ds.metadata.addProperty'),
 	            iconCls: 'icon-restore',
 	            handler: function(){
 	                // access the Record constructor through the grid's store
@@ -197,12 +197,12 @@ Ext.define('Sbi.tools.dataset.ManageDatasetFieldMetadata', {
 	            },
 	            scope: this
 	        }), '-', new Ext.button.Button({
-	            text: 'Delete Property',
+	            text: LN('sbi.ds.metadata.deleteProperty'),
 	            iconCls: 'icon-remove',
 	            handler: this.onDelete,
 	            scope: this
 	        }), '-', new Ext.button.Button({
-	            text: 'Clear All',
+	            text: LN('sbi.ds.metadata.clear'),
 	            iconCls: 'icon-clear',
 	            handler: this.onDeleteAll,
 	            scope: this
@@ -212,14 +212,14 @@ Ext.define('Sbi.tools.dataset.ManageDatasetFieldMetadata', {
 		
 		var columnsDefinition =  [
 				             		{
-				             	    	header: 'Column', 
+				             	    	header: LN('sbi.ds.metadata.column.column'), 
 				             	    	width: '33%', 
 				            			sortable: true, 
 				             			id:'column',
 				             			dataIndex:'column',
 				             			editor: this.comboColumn
 				             	    },{
-				             	    	header: 'Attribute', 
+				             	    	header: LN('sbi.ds.metadata.column.attribute'), 
 				             	    	width: '33%', 
 				            			sortable: true, 
 				             			id:'pname',
@@ -227,7 +227,7 @@ Ext.define('Sbi.tools.dataset.ManageDatasetFieldMetadata', {
 				             			//editor: this.attributeTextFieldEditor
 				             			editor: this.comboProperties
 				             	    },{
-				             	    	header: 'Value', 
+				             	    	header: LN('sbi.ds.metadata.column.value'), 
 				             	    	width: '33%', 
 				            			sortable: true, 
 				             			id:'pvalue',
@@ -248,7 +248,7 @@ Ext.define('Sbi.tools.dataset.ManageDatasetFieldMetadata', {
 	        columns: columnsDefinition,
 	        width: '100%',
 	        autoHeight:true,
-	        title: 'Columns Metadata',
+	        title: LN('sbi.ds.metadata.column.title'),
 	        autoScroll: true,
 			selModel: {selType: 'rowmodel'},
 			plugins: [cellEditing],
@@ -281,7 +281,7 @@ Ext.define('Sbi.tools.dataset.ManageDatasetFieldMetadata', {
 		
 		var datasetGridColumnsDefinition =  [
 		                            {
-				             	    	header: 'Attribute', 
+				             	    	header:LN('sbi.ds.metadata.column.attribute'), 
 				             	    	width: '50%', 
 				            			sortable: true, 
 				             			id:'pnameDs',
@@ -289,7 +289,7 @@ Ext.define('Sbi.tools.dataset.ManageDatasetFieldMetadata', {
 				             			//editor: this.attributeTextFieldEditor
 				             			editor: this.comboGenericProperties
 				             	    },{
-				             	    	header: 'Value', 
+				             	    	header: LN('sbi.ds.metadata.column.value'), 
 				             	    	width: '49%', 
 				            			sortable: true, 
 				             			id:'pvalueDs',
@@ -308,7 +308,7 @@ Ext.define('Sbi.tools.dataset.ManageDatasetFieldMetadata', {
 	    	buttonAlign : 'left',
 	    	items:[
 	    	    new Ext.button.Button({
-	            text: 'Add Property',
+	            text: LN('sbi.ds.metadata.addProperty'),
 	            iconCls: 'icon-restore',
 	            handler: function(){
 	                // access the Record constructor through the grid's store
@@ -320,12 +320,12 @@ Ext.define('Sbi.tools.dataset.ManageDatasetFieldMetadata', {
 	            },
 	            scope: this
 	        }), '-', new Ext.button.Button({
-	            text: 'Delete Property',
+	            text: LN('sbi.ds.metadata.deleteProperty'),
 	            iconCls: 'icon-remove',
 	            handler: this.onDeleteDs,
 	            scope: this
 	        }), '-', new Ext.button.Button({
-	            text: 'Clear All',
+	            text: LN('sbi.ds.metadata.clear'),
 	            iconCls: 'icon-clear',
 	            handler: this.onDeleteAllDs,
 	            scope: this
@@ -339,7 +339,7 @@ Ext.define('Sbi.tools.dataset.ManageDatasetFieldMetadata', {
 	        columns: datasetGridColumnsDefinition,
 	        width: '100%',
 	        autoHeight:true,
-	        title: 'Dataset Metadata',
+	        title: LN('sbi.ds.metadata.dataset.title'),
 	        autoScroll: true,
 			selModel: {selType: 'rowmodel'},
 			plugins: [cellEditingDs],
