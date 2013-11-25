@@ -285,7 +285,8 @@ Sbi.geo.control.InlineToolbar = OpenLayers.Class(OpenLayers.Control, {
             plain       : true,
             resizable	: false,
             title		: 'Share map',
-            items       : [shareMapPanel]
+            items       : [shareMapPanel],
+            modal		: true
 		});
 		
 		this.shareMapWindow.show();
