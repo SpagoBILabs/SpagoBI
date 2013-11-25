@@ -50,7 +50,7 @@ Sbi.geo.widgets.DocumentsTree = function(config) {
 	});
 		
     var c = Ext.apply({}, config, {
-//    	title            : 'Cartelle',//LN('sbi.browser.documentstree.title'),
+    	//title            : LN('sbi.geo.controlpanel.savewin.msgDetail'),
     	bodyStyle		 :'padding:6px 6px 6px 6px; background-color:#FFFFFF',
         collapsible      : false,
         enableDD		 : true,
@@ -65,6 +65,10 @@ Sbi.geo.widgets.DocumentsTree = function(config) {
         loader           : this.loader
     });
     
+    var msgDetail = LN('sbi.geo.controlpanel.savewin.msgDetail');
+    if (msgDetail !== ' '){
+    	c.title = msgDetail;
+    }
     Sbi.geo.widgets.DocumentsTree.superclass.constructor.call(this, c);
     
     this.rootNodeId = config.rootNodeId || 'rootNode';    

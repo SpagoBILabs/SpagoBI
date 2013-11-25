@@ -142,6 +142,9 @@ Sbi.locale.ln['sbi.geo.controlpanel.savewin.visibility'] = 'Document visibility'
 Sbi.locale.ln['sbi.geo.controlpanel.savewin.previewfile'] = 'Preview file';
 Sbi.locale.ln['sbi.geo.controlpanel.savewin.community'] = 'Community';
 Sbi.locale.ln['sbi.geo.controlpanel.savewin.scope'] = 'Scope';
+Sbi.locale.ln['sbi.geo.controlpanel.savewin.saveWarning']  = 'Before save document, is necessary to insert the name of the map and select almost a folder.';
+Sbi.locale.ln['sbi.geo.controlpanel.savewin.msgDetail']  = ' ';
+
 
 //===================================================================
 // MAP PANEL

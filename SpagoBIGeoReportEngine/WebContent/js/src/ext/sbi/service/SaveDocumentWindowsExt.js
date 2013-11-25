@@ -57,6 +57,7 @@ Sbi.service.SaveDocumentWindowExt = function(config) {
 			width:700, //640,
 			height:350, //450,
 			resizable:false,
+			modal: true,
 			closeAction: 'destroy',
 			buttons:[{ 
 				  iconCls: 'icon-save' 	
@@ -79,6 +80,7 @@ Sbi.service.SaveDocumentWindowExt = function(config) {
 	};
 
 Ext.extend(Sbi.service.SaveDocumentWindowExt, Ext.Window, {
+	msgArea: null,
 	inputForm: null,
 	saveDocumentForm: null,
 	fileNameUploaded: null,
@@ -242,6 +244,15 @@ Ext.extend(Sbi.service.SaveDocumentWindowExt, Ext.Window, {
 	    });
 	    this.treePanel.setCheckedIdNodesArray(this.OBJECT_FUNCTIONALITIES);
 	    
+//	    this.msgArea = new Ext.form.TextArea({
+//			xtype : 'textarea',
+//			width : '100%', //350,
+//			height : 80,		
+//			autoScroll: true,
+//			value: LN('sbi.geo.controlpanel.savewin.msgDetail'),
+//			readOnly: true
+//		});
+	    
 	    this.saveDocumentForm =  new Ext.Panel({
 		          autoScroll: true,
 		          labelAlign: 'left',
@@ -257,9 +268,9 @@ Ext.extend(Sbi.service.SaveDocumentWindowExt, Ext.Window, {
 		 				activeOnTop : false
 
 		 			},
-		          items: [
-		              this.inputForm
-		              , this.treePanel           	  		
+		          items: [		                
+		                 this.inputForm,
+		                 this.treePanel           	  		
 		          ]
 		          
 		      });
