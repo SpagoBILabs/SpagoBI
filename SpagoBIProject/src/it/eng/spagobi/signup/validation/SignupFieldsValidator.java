@@ -77,28 +77,28 @@ public class SignupFieldsValidator implements IFieldsValidator {
           
           if( email == null ) 
         	 // validationErrors.put( new JSONObject("{message: 'Field Email mandatory'}") );
-          	 validationErrors.put( new JSONObject("{message: \""+msgBuilder.getMessage("signup.check.emailMandatory", locale)+"\"}") );
+          	 validationErrors.put( new JSONObject("{message: \""+msgBuilder.getMessage("signup.check.emailMandatory",locale)+"\"}") );
           else{
         	  if( !validateEmail( email )) 
 //                validationErrors.put( new JSONObject("{message: 'Field Email invalid syntax'}") );
-        		  validationErrors.put( new JSONObject("{message: \""+msgBuilder.getMessage("signup.check.emailInvalid", locale)+"\"}") );
+        		  validationErrors.put( new JSONObject("{message: \""+msgBuilder.getMessage("signup.check.emailInvalid",locale)+"\"}") );
           }
           if( dataNascita != null )
             if( !validateDate(dataNascita) )
 //        	  validationErrors.put( new JSONObject("{message: 'Field Birthday invalid syntax'}") );
-          	  validationErrors.put( new JSONObject("{message: \""+msgBuilder.getMessage("signup.check.birthdayInvalid", locale)+"\"}") );
+          	  validationErrors.put( new JSONObject("{message: \""+msgBuilder.getMessage("signup.check.birthdayInvalid",locale)+"\"}") );
         	  
           if( nome == null) 
 //        	  validationErrors.put( new JSONObject("{message: 'Field Name mandatory'}") );
-        	  validationErrors.put( new JSONObject("{message: \""+msgBuilder.getMessage("signup.check.nameMandatory", locale)+"\"}") );
+        	  validationErrors.put( new JSONObject("{message: \""+msgBuilder.getMessage("signup.check.nameMandatory",locale)+"\"}") );
           if( cognome == null ) 
 //        	  validationErrors.put( new JSONObject("{message: 'Field Surname mandatory'}") );
-          	  validationErrors.put( new JSONObject("{message: \""+msgBuilder.getMessage("signup.check.surnameMandatory", locale)+"\"}") );
+          	  validationErrors.put( new JSONObject("{message: \""+msgBuilder.getMessage("signup.check.surnameMandatory",locale)+"\"}") );
             
           if( modify == null ){	  
             if( password == null ) 
 //              	  validationErrors.put( new JSONObject("{message: 'Field Password mandatory'}") );
-            	  validationErrors.put( new JSONObject("{message: \""+msgBuilder.getMessage("signup.check.pwdMandatory", locale)+"\"}") );
+            	  validationErrors.put( new JSONObject("{message: \""+msgBuilder.getMessage("signup.check.pwdMandatory",locale)+"\"}") );
             else{
               	 if( !validatePassword(password, username )) {
 //              		 String errorMsg = "Field Password invalid syntax. \n " +
@@ -106,32 +106,32 @@ public class SignupFieldsValidator implements IFieldsValidator {
 //										" 	- minimum 8 chars \n "+
 //							  		 	"	- not start with number \n "+
 //										"	- not contain the usename ";
-              		 String errorMsg = msgBuilder.getMessage("signup.check.pwdInvalid", locale);
+              		 String errorMsg = msgBuilder.getMessage("signup.check.pwdInvalid",locale);
               		 validationErrors.put( new JSONObject("{message: '"+  JSONUtils.escapeJsonString(errorMsg) +"'}") );
               	 }
             }	  
             
             if( username == null ) 
 //        	  validationErrors.put( new JSONObject("{message: 'Field Username mandatory'}") );
-              validationErrors.put( new JSONObject("{message: \""+msgBuilder.getMessage("signup.check.usernameMandatory", locale)+"\"}") );
+              validationErrors.put( new JSONObject("{message: \""+msgBuilder.getMessage("signup.check.usernameMandatory",locale)+"\"}") );
           
             if( confermaPassword == null ) 
 //        	  validationErrors.put( new JSONObject("{message: 'Field Confirm Password mandatory'}") );
-              validationErrors.put( new JSONObject("{message: \""+msgBuilder.getMessage("signup.check.confirmPwdMandatory", locale)+"\"}") );
+              validationErrors.put( new JSONObject("{message: \""+msgBuilder.getMessage("signup.check.confirmPwdMandatory",locale)+"\"}") );
           
             if( useCaptcha && !Boolean.valueOf(termini) ) 
 //        	  validationErrors.put( new JSONObject("{message: 'Agree with the terms of service mandatory'}") );
-             validationErrors.put( new JSONObject("{message: \""+msgBuilder.getMessage("signup.check.agreeMandatory", locale)+"\"}") );
+             validationErrors.put( new JSONObject("{message: \""+msgBuilder.getMessage("signup.check.agreeMandatory",locale)+"\"}") );
           
         	  
             if( password != null && !password.equals(defaultPassword) && 
             		confermaPassword != null && !confermaPassword.equals(defaultPasswordConfirm))
         	 if( !password.equals(confermaPassword)) 
 //        	   validationErrors.put( new JSONObject("{message: 'Field Password and Confirm Password not equal'}") );
-               validationErrors.put( new JSONObject("{message: \""+msgBuilder.getMessage("signup.check.pwdNotEqual", locale)+"\"}") );
+               validationErrors.put( new JSONObject("{message: \""+msgBuilder.getMessage("signup.check.pwdNotEqual",locale)+"\"}") );
             if( useCaptcha && captcha == null ) 
 //        	  validationErrors.put( new JSONObject("{message: 'Field Captcha mandatory'}") );
-              validationErrors.put( new JSONObject("{message: \""+msgBuilder.getMessage("signup.check.captchaMandatory", locale)+"\"}") );
+              validationErrors.put( new JSONObject("{message: \""+msgBuilder.getMessage("signup.check.captchaMandatory",locale)+"\"}") );
           }
 		} catch (JSONException e1) {
 		  logger.error(e1.getMessage());
