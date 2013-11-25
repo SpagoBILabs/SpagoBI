@@ -108,7 +108,7 @@ public class SelfServiceDataSetCRUD {
 	
 
 	@GET
-	@Produces(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public String getAllDataSet(@Context HttpServletRequest req) {
 		IDataSetDAO dataSetDao = null;
 		List<IDataSet> dataSets = new ArrayList<IDataSet>();
@@ -194,7 +194,7 @@ public class SelfServiceDataSetCRUD {
 
 	@POST
 	@Path("/delete")
-	@Produces(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public String deleteDataSet(@Context HttpServletRequest req) {
 		IEngUserProfile profile = (IEngUserProfile) req.getSession()
 				.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
@@ -282,7 +282,7 @@ public class SelfServiceDataSetCRUD {
 	@POST
 	@Path("/save")
 	@ToValidate(typeName= "dataset")
-	@Produces(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public String saveDataSet(@Context HttpServletRequest request) {
 		IEngUserProfile profile = (IEngUserProfile) request.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 		try {
