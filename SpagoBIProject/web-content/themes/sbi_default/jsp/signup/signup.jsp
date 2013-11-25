@@ -46,8 +46,9 @@
 	String defaultShortBio = msgBuilder.getMessage("signup.form.shortBio",request);
 		
 	String registrationSuccessMsg = msgBuilder.getMessage("signup.msg.success",request);
-	
+	Locale localeSignup =  (request.getAttribute("locale")==null)?null:(Locale)request.getAttribute("locale");
 	List comunities = (request.getAttribute("communities")==null)?new ArrayList():(List)request.getAttribute("communities");
+	
 %>
 
 <script type="text/javascript" src='${pageContext.request.contextPath}/js/lib/ext-4.1.1a/ext-all-debug.js'/></script>
@@ -117,7 +118,7 @@ this.services["create"]= Sbi.config.serviceRegistry.getRestServiceUrl({
     if( check.checked ) termini = 'true';
     
 	var params = new Object();
-	params.locale	= '<%=locale%>';
+	params.locale	= '<%=localeSignup%>';
 	params.nome     = nome;
 	params.cognome  = cognome;
 	params.username = username;

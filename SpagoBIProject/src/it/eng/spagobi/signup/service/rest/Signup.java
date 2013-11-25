@@ -11,6 +11,7 @@ import it.eng.spagobi.commons.metadata.SbiExtRoles;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.commons.utilities.messages.IMessageBuilder;
+import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory;
 import it.eng.spagobi.community.bo.CommunityManager;
 import it.eng.spagobi.community.mapping.SbiCommunity;
@@ -325,8 +326,11 @@ public class Signup {
 	@ToValidate(typeName=FieldsValidatorFactory.SIGNUP)
 	public String create(@Context HttpServletRequest req) {
 		
-		String strLocale = GeneralUtilities.trim(req.getParameter("locale"));
-       // Locale locale = new Locale(strLocale.substring(0, strLocale.indexOf("_")), strLocale.substring(strLocale.indexOf("_")+1));
+//		String strLocale = GeneralUtilities.trim(req.getParameter("locale"));
+//		Locale locale = new Locale(strLocale.substring(0, strLocale.indexOf("_")), strLocale.substring(strLocale.indexOf("_")+1));
+		MessageBuilder msgBuilder = new MessageBuilder();
+		Locale locale = msgBuilder.getLocale(req);
+
 		
 		String nome     	=  GeneralUtilities.trim(req.getParameter("nome"));
 		String cognome  	=  GeneralUtilities.trim(req.getParameter("cognome"));
@@ -427,7 +431,7 @@ public class Signup {
 	      logger.debug("Activation url host is equal to [" + host + "]");
 	      int port = req.getServerPort();
 	      logger.debug("Activation url port is equal to [" + port + "]");
-	      URL url = new URL(req.getScheme(), host, port, req.getContextPath() + "/restful-services/signup/prepareActive?accountId=" + id + "&locale=" + strLocale );	  
+	      URL url = new URL(req.getScheme(), host, port, req.getContextPath() + "/restful-services/signup/prepareActive?accountId=" + id + "&locale=" + locale );	  
 	      logger.debug("Activation url is equal to [" + url.toExternalForm() + "]");
 		  logger.debug("Activation mail for user [" + username + "] succesfully prepared");
 		  
@@ -463,10 +467,15 @@ public class Signup {
 		
 		String url = "/themes/" + currTheme	+ "/jsp/signup/signup.jsp";
 		logger.debug("url for signup: "+url);
+		
+		MessageBuilder msgBuilder = new MessageBuilder();
+		Locale locale = msgBuilder.getLocale(req);
+		logger.debug("locale for signup: "+locale);
 	  try {
 		List communities = DAOFactory.getCommunityDAO().loadAllSbiCommunities();
 		req.setAttribute("communities", communities);
 		req.setAttribute("currTheme", currTheme);
+		req.setAttribute("locale", locale);
 	    req.getRequestDispatcher(url).forward(req, servletResponse);
 //	    req.getRequestDispatcher("/WEB-INF/jsp/signup/signup.jsp").forward(req, servletResponse);
 	  } catch (ServletException e) {

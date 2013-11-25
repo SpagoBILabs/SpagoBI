@@ -26,15 +26,16 @@
 <%@ include file="/WEB-INF/jsp/commons/portlet_base410.jsp"%>  
 
 <% 
-	String defaultOrganization = msgBuilder.getMessage("profileattr.company",locale); 
-	String defaultName = msgBuilder.getMessage("profileattr.firstname",locale);
-	String defaultSurname = msgBuilder.getMessage("profileattr.lastname",locale);
+	String defaultOrganization = msgBuilder.getMessage("profileattr.company",request); 
+	String defaultName = msgBuilder.getMessage("profileattr.firstname",request);
+	String defaultSurname = msgBuilder.getMessage("profileattr.lastname",request);
 	String defaultUsername = msgBuilder.getMessage("username",request); //"Username";
 	String defaultPassword = msgBuilder.getMessage("password",request); //"Password";
-	String defaultEmail = msgBuilder.getMessage("profileattr.email",locale);
-	String defaultConfirmPwd = msgBuilder.getMessage("confirmPwd",locale);  
+	String defaultEmail = msgBuilder.getMessage("profileattr.email",request);
+	String defaultConfirmPwd = msgBuilder.getMessage("confirmPwd",request);  
 	
-	String registrationSuccessMsg = msgBuilder.getMessage("signup.msg.success",locale);
+	String registrationSuccessMsg = msgBuilder.getMessage("signup.msg.success",request);
+	Locale localeSignup =  (request.getAttribute("locale")==null)?null:(Locale)request.getAttribute("locale");
 	
 	List communities = (request.getAttribute("communities")==null)?new ArrayList():(List)request.getAttribute("communities");
 
@@ -95,7 +96,7 @@ function register() {
 	
 	
 	var params = new Object();
-	params.locale	= '<%=locale%>';
+	params.locale	= '<%=localeSignup%>';
 	params.useCaptcha = "false";
 	params.nome     = nome;
 	params.cognome  = cognome;
@@ -226,7 +227,7 @@ function changefield(el){
                             </div>
                             <div class="field username">
                                 <label for="username">Username</label>
-                                <input type="text" name="username" id="username" value="Username" onfocus="if(value=='<%=defaultUsername%>') value = ''" onblur="if (this.value=='') this.value = '<%=defaultUsername%>'"/>
+                                <input type="text" name="username" id="username" value="<%=defaultUsername%>" onfocus="if(value=='<%=defaultUsername%>') value = ''" onblur="if (this.value=='') this.value = '<%=defaultUsername%>'"/>
                             </div>
                             <div class="field email">
                                 <label for="email">Email</label>
@@ -234,7 +235,7 @@ function changefield(el){
                             </div>
                             <div class="field password" id="passwordbox">
                                 <label for="password">Password</label>
-                                <input type="text" name="password" id="password" value="Password"  onfocus="changefield('password');" onblur="if (this.value=='') this.value = '<%=defaultPassword%>'" />
+                                <input type="text" name="password" id="password" value="<%=defaultPassword%>"  onfocus="changefield('password');" onblur="if (this.value=='') this.value = '<%=defaultPassword%>'" />
                             </div>
                             <div class="field confirm" id="confermaPasswordbox">
                                 <label for="confirm">Confirm Password</label>

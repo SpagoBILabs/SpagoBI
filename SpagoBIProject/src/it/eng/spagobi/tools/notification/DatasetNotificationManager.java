@@ -171,8 +171,8 @@ public class DatasetNotificationManager implements INotificationManager {
 	private void notifyDatasetNameChanged(DatasetNotificationEvent datasetEvent)throws Exception {
 		if (datasetEvent.getArgument() instanceof IDataSet){
 			IDataSet dataset = (IDataSet)datasetEvent.getArgument();
-			String subject = "The dataset "+dataset.getLabel()+" has changed the name";
-	    	String emailContent = "The dataset "+dataset.getLabel()+" that you are using in a Map, has changed the name";
+			String subject = "The dataset "+dataset.getName()+" has changed the name";
+	    	String emailContent = "The dataset "+dataset.getName()+" that you are using in a Map, has changed the name";
 	    	try {
 				notifyMapAuthorsMail(datasetEvent,subject,emailContent);
 	    	} catch (Exception e){
@@ -184,8 +184,8 @@ public class DatasetNotificationManager implements INotificationManager {
 	private void notifyDatasetDescriptionChanged(DatasetNotificationEvent datasetEvent)throws Exception {
 		if (datasetEvent.getArgument() instanceof IDataSet){
 			IDataSet dataset = (IDataSet)datasetEvent.getArgument();
-			String subject = "The dataset "+dataset.getLabel()+" has changed the description";
-	    	String emailContent = "The dataset "+dataset.getLabel()+" that you are using in a Map, has changed the description";
+			String subject = "The dataset "+dataset.getName()+" has changed the description";
+	    	String emailContent = "The dataset "+dataset.getName()+" that you are using in a Map, has changed the description";
 	    	try {
 				notifyMapAuthorsMail(datasetEvent,subject,emailContent);
 	    	} catch (Exception e){
@@ -197,8 +197,8 @@ public class DatasetNotificationManager implements INotificationManager {
 	private void notifyDatasetCategoryChanged(DatasetNotificationEvent datasetEvent)throws Exception {
 		if (datasetEvent.getArgument() instanceof IDataSet){
 			IDataSet dataset = (IDataSet)datasetEvent.getArgument();
-			String subject = "The dataset "+dataset.getLabel()+" has changed the category";
-	    	String emailContent = "The dataset "+dataset.getLabel()+" that you are using in a Map, has changed the category";
+			String subject = "The dataset "+dataset.getName()+" has changed the category";
+	    	String emailContent = "The dataset "+dataset.getName()+" that you are using in a Map, has changed the category";
 	    	try {
 				notifyMapAuthorsMail(datasetEvent,subject,emailContent);
 	    	} catch (Exception e){
@@ -210,8 +210,8 @@ public class DatasetNotificationManager implements INotificationManager {
 	private void notifyDatasetScopeChanged(DatasetNotificationEvent datasetEvent)throws Exception {
 		if (datasetEvent.getArgument() instanceof IDataSet){
 			IDataSet dataset = (IDataSet)datasetEvent.getArgument();
-			String subject = "The dataset "+dataset.getLabel()+" has changed the scope";
-	    	String emailContent = "The dataset "+dataset.getLabel()+" that you are using in a Map, has changed the scope";
+			String subject = "The dataset "+dataset.getName()+" has changed the scope";
+	    	String emailContent = "The dataset "+dataset.getName()+" that you are using in a Map, has changed the scope";
 	    	try {
 				notifyMapAuthorsMail(datasetEvent,subject,emailContent);
 	    	} catch (Exception e){
@@ -223,8 +223,8 @@ public class DatasetNotificationManager implements INotificationManager {
 	private void notifyDatasetMetadataChanged(DatasetNotificationEvent datasetEvent)throws Exception {
 		if (datasetEvent.getArgument() instanceof IDataSet){
 			IDataSet dataset = (IDataSet)datasetEvent.getArgument();
-			String subject = "The dataset "+dataset.getLabel()+" has changed the metadata";
-	    	String emailContent = "The dataset "+dataset.getLabel()+" that you are using in a Map, has changed the associated metadata";
+			String subject = "The dataset "+dataset.getName()+" has changed the metadata";
+	    	String emailContent = "The dataset "+dataset.getName()+" that you are using in a Map, has changed the associated metadata";
 	    	try {
 				notifyMapAuthorsMail(datasetEvent,subject,emailContent);
 	    	} catch (Exception e){
@@ -237,8 +237,8 @@ public class DatasetNotificationManager implements INotificationManager {
 	private void notifyDatasetFileChanged(DatasetNotificationEvent datasetEvent)throws Exception {
 		if (datasetEvent.getArgument() instanceof IDataSet){
 			IDataSet dataset = (IDataSet)datasetEvent.getArgument();
-			String subject = "The dataset "+dataset.getLabel()+" has changed the file";
-	    	String emailContent = "The dataset "+dataset.getLabel()+" that you are using in a Map, has changed the associated file";
+			String subject = "The dataset "+dataset.getName()+" has changed the file";
+	    	String emailContent = "The dataset "+dataset.getName()+" that you are using in a Map, has changed the associated file";
 	    	try {
 				notifyMapAuthorsMail(datasetEvent,subject,emailContent);
 	    	} catch (Exception e){
@@ -251,8 +251,8 @@ public class DatasetNotificationManager implements INotificationManager {
 	private void notifyDatasetDeleted(DatasetNotificationEvent datasetEvent)throws Exception {
 		if (datasetEvent.getArgument() instanceof IDataSet){
 			IDataSet dataset = (IDataSet)datasetEvent.getArgument();
-			String subject = "The dataset "+dataset.getLabel()+" has been deleted";
-	    	String emailContent = "The dataset "+dataset.getLabel()+" that you are using in a Map, has been deleted.";
+			String subject = "The dataset "+dataset.getName()+" has been deleted";
+	    	String emailContent = "The dataset "+dataset.getName()+" that you are using in a Map, has been deleted.";
 	    	try {
 				notifyMapAuthorsMail(datasetEvent,subject,emailContent);
 	    	} catch (Exception e){
@@ -265,8 +265,8 @@ public class DatasetNotificationManager implements INotificationManager {
 	private void notifyLicenceChange(DatasetNotificationEvent datasetEvent) throws Exception {
 		if (datasetEvent.getArgument() instanceof IDataSet){
 			IDataSet dataset = (IDataSet)datasetEvent.getArgument();
-	    	String subject = "The dataset "+dataset.getLabel()+" has changed is licence";
-	    	String emailContent = "The dataset "+dataset.getLabel()+" that you are using in a Map, has changed his licence";
+	    	String subject = "The dataset "+dataset.getName()+" has changed is licence";
+	    	String emailContent = "The dataset "+dataset.getName()+" that you are using in a Map, has changed his licence";
 	    	try {
 				notifyMapAuthorsMail(datasetEvent,subject,emailContent);
 	    	} catch (Exception e){
