@@ -295,7 +295,7 @@ Sbi.geo.control.InlineToolbar = OpenLayers.Class(OpenLayers.Control, {
 		var toReturn = '';
 		var url = ''+Sbi.config.serviceRegistry.baseUrl.protocol +'://' + Sbi.config.serviceRegistry.baseUrl.host+':'+
 		 		  Sbi.config.serviceRegistry.baseUrl.port+'/SpagoBI/servlet/AdapterHTTP?PAGE=LoginPage&NEW_SESSION=TRUE&DIRECT_EXEC=TRUE&'+
-		 		  'OBJECT_LABEL='+ Sbi.config.docLabel+'&OBJECT_VERSION=' + Sbi.config.docVersion;
+		 		  'OBJECT_LABEL='+ Sbi.config.docLabel+'&OBJECT_VERSION=' + Sbi.config.docVersion+'&IS_FROM_SHARE=TRUE';
 		
 		 
 		if (type=='link'){
