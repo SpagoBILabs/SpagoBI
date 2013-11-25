@@ -26,6 +26,8 @@ import it.eng.spagobi.commons.serializer.SerializerFactory;
 import it.eng.spagobi.commons.utilities.AuditLogUtilities;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.UserUtilities;
+import it.eng.spagobi.commons.utilities.messages.IMessageBuilder;
+import it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory;
 import it.eng.spagobi.metamodel.MetaModelWrapper;
 import it.eng.spagobi.metamodel.SiblingsFileWrapper;
 import it.eng.spagobi.rest.annotations.ToValidate;
@@ -401,7 +403,10 @@ public class SelfServiceDataSetCRUD {
 	private void notificationManagement(HttpServletRequest req, IDataSet currentDataset, IDataSet updatedDataset) {
 
 		try{
-			DatasetNotificationManager dsNotificationManager = new DatasetNotificationManager();
+//			DatasetNotificationManager dsNotificationManager = new DatasetNotificationManager();
+			IMessageBuilder msgBuilder = MessageBuilderFactory.getMessageBuilder();
+			
+			DatasetNotificationManager dsNotificationManager = new DatasetNotificationManager(msgBuilder);
 			List<AbstractEvent> datasetEvents = new ArrayList<AbstractEvent>();
 
 			//File change check

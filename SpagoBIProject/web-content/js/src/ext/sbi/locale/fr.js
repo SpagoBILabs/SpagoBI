@@ -649,6 +649,17 @@ Sbi.locale.ln['sbi.ds.skip.checks']='Ecraser';
 Sbi.locale.ln['sbi.ds.changedon']='Modifi\u00e9 ';
 Sbi.locale.ln['sbi.ds.customData'] = 'Attributs';
 
+Sbi.locale.ln['sbi.ds.metadata.msgKO']='The validation has found some errors. ';
+Sbi.locale.ln['sbi.ds.metadata.msgOK']='The validation didn\'t find errors.';
+Sbi.locale.ln['sbi.ds.metadata.addProperty']='Add Property';
+Sbi.locale.ln['sbi.ds.metadata.deleteProperty']='Delete Property';
+Sbi.locale.ln['sbi.ds.metadata.clear']='Clear all';
+Sbi.locale.ln['sbi.ds.metadata.column.title']='Columns Metadata';
+Sbi.locale.ln['sbi.ds.metadata.column.column']='Column';
+Sbi.locale.ln['sbi.ds.metadata.column.attribute']='Attribute';
+Sbi.locale.ln['sbi.ds.metadata.column.value']='Value';
+Sbi.locale.ln['sbi.ds.metadata.dataset.title']='Dataset Metadata';
+
 
 //===================================================================
 //MESSAGE BOX BUTTONS
