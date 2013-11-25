@@ -67,7 +67,7 @@ public class DocumentCRUD {
 	 */
 	@POST
 	@Path("/clone")
-	@Produces(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public String cloneDocument(@Context HttpServletRequest req){
 		
 		logger.debug("IN");
@@ -95,7 +95,7 @@ public class DocumentCRUD {
 	 */
 	@POST
 	@Path("/sendFeedback")
-	@Produces(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public String sendFeedback(@Context HttpServletRequest req){
 		
 		logger.debug("IN");
