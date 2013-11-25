@@ -165,6 +165,11 @@ li:hover .login-panel .not-registered a:hover,.login-panel .not-registered a:hov
 .main-msg .ops{display:block;padding-top:32px;margin-bottom:29px;color:#606060;font-family:cabinregular,arial,helvetica,sans-serif;font-size:3.5em;font-weight:bold}
 .main-msg .retry{font-size:1.83em}
 
+.main-warn{}
+.main-warn h1{display:none}
+.main-warn .ops{display:block;padding-top:32px;margin-bottom:29px;color:#606060;font-family:cabinregular,arial,helvetica,sans-serif;font-size:30px;/*font-weight:bold*/}
+.main-warn .retry{font-size:1.83em}
+
 /* ----------- RESERVED AREA --------------------------------------------------------------------------------------------------------------------------------------------------------------------- */
 
 .reserved-area-container{float:left;width:100%}

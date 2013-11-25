@@ -33,9 +33,12 @@ import it.eng.spagobi.commons.metadata.SbiExtRoles;
 import it.eng.spagobi.commons.utilities.AuditLogUtilities;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.HibernateUtil;
+import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.commons.utilities.UserUtilities;
+import it.eng.spagobi.commons.utilities.messages.IMessageBuilder;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
+import it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory;
 import it.eng.spagobi.profiling.bean.SbiUser;
 import it.eng.spagobi.profiling.dao.ISbiUserDAO;
 import it.eng.spagobi.services.common.SsoServiceFactory;
@@ -92,6 +95,7 @@ public class LoginModule extends AbstractHttpModule {
 	public void service(SourceBean request, SourceBean response) throws Exception {
 		logger.debug("IN");
 
+		Locale locale = null;
 		
 		String theme_name=(String)request.getAttribute(ChangeTheme.THEME_NAME);
 		logger.debug("theme selected: "+theme_name);
@@ -108,6 +112,9 @@ public class LoginModule extends AbstractHttpModule {
 
 		HttpServletRequest servletRequest=getHttpRequest();
 		HttpSession httpSession=servletRequest.getSession();
+		
+		IMessageBuilder msgBuilder = MessageBuilderFactory.getMessageBuilder();
+
 
 		// Set THEME
 		if (theme_name!=null && theme_name.length()>0){
@@ -125,7 +132,7 @@ public class LoginModule extends AbstractHttpModule {
 
 		if(permSess.getAttribute(Constants.USER_LANGUAGE)== null || permSess.getAttribute(Constants.USER_COUNTRY) == null){
 			logger.debug("getting locale...");
-			Locale locale =GeneralUtilities.getStartingDefaultLocale();
+			locale =GeneralUtilities.getStartingDefaultLocale();
 			if(locale == null){
 				locale = MessageBuilder.getBrowserLocaleFromSpago();
 			}
@@ -146,33 +153,38 @@ public class LoginModule extends AbstractHttpModule {
 		// Set BACK URL if present
 		String backUrl=(String)request.getAttribute(SpagoBIConstants.BACK_URL);
 		String fromLogin=(String)request.getAttribute("fromLogin");
+		String fromWarning=(String)request.getAttribute("fromWarning");
 		String docLabel=(String)request.getAttribute(SpagoBIConstants.OBJECT_LABEL);
+		String isFromShare=(request.getAttribute("IS_FROM_SHARE")==null)?"false":(String)request.getAttribute("IS_FROM_SHARE");
 		boolean isPublicDoc = false;
 		boolean isPublicUser = false;
-		if (docLabel != null){
-			BIObject obj = DAOFactory.getBIObjectDAO().loadBIObjectByLabel(docLabel);
-			if (obj.isPublicDoc()) isPublicDoc=true;
+		BIObject obj = null;
+		if (docLabel != null && !docLabel.equals("null") && !docLabel.equals("")){			
+			obj = DAOFactory.getBIObjectDAO().loadBIObjectByLabel(docLabel);
+			if (obj.isPublicDoc()) {
+				isPublicDoc=true;
+			}
+			response.setAttribute(SpagoBIConstants.OBJECT_LABEL,docLabel);
 		}
 		
-		if (backUrl!=null && !backUrl.equalsIgnoreCase("") && fromLogin == null){
+		if (backUrl!=null && !backUrl.equalsIgnoreCase("") && fromLogin == null 
+				&& backUrl.indexOf("?")<0){
 			String parametersStr="";
 			List params = request.getContainedAttributes();
 		    ListIterator it = params.listIterator();
 		    int count =0;
 
 		    while (it.hasNext()) {
-
 				SourceBeanAttribute par = (SourceBeanAttribute) it.next();
 				String name = (String)par.getKey();
 				String val = (String)par.getValue();
-				if(count == 0){
-					parametersStr+="?"+name+"="+val;
-				}else{
-					parametersStr+="&"+name+"="+val;
-				}
-				count++;
-						
-				
+					if(count == 0){
+						parametersStr+="?"+name+"="+val;
+					}else{
+						parametersStr+="&"+name+"="+val;
+					}
+					count++;
+	
 		    }
 		  //append to back url	
 		    backUrl+=parametersStr;
@@ -181,9 +193,12 @@ public class LoginModule extends AbstractHttpModule {
 		}
 
 		errorHandler = getErrorHandler();
-
-		UserProfile previousProfile = (UserProfile) permSess.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
-
+		
+		UserProfile previousProfile = null;
+		if (fromWarning == null || !(fromWarning).equalsIgnoreCase("TRUE")){
+			previousProfile = (UserProfile) permSess.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+		}
+		
 		String userId=null;
 		if (!activeSoo) {
 			if (isPublicDoc){
@@ -194,6 +209,27 @@ public class LoginModule extends AbstractHttpModule {
 			}
 			logger.debug("userID="+userId);
 			if (userId == null) {
+				//if the document is called by shared link and it's private, redirect to warning page with login button		
+				if (!isPublicDoc && isFromShare.equalsIgnoreCase("TRUE") && (fromLogin == null || !fromLogin.equalsIgnoreCase("TRUE"))){					
+					String contextName = GeneralUtilities.getSpagoBiContext();
+					String url = contextName+"/servlet/AdapterHTTP?PAGE=LoginPage&NEW_SESSION=TRUE";
+				
+					response.setAttribute("URL_BTN", url);
+					String strbackUrl =   servletRequest.getRequestURI()+"?"+servletRequest.getQueryString();
+//					if (strbackUrl.indexOf("?")<0){
+//						strbackUrl += "?";
+//					}else{
+//						strbackUrl += "&";
+//					}
+//					strbackUrl += "fromLogin=TRUE";
+					response.setAttribute(SpagoBIConstants.BACK_URL, strbackUrl);					
+					response.setAttribute("MSG", msgBuilder.getMessage("sbi.execution.warn1.msg")); 
+					response.setAttribute("LBL_BTN",  msgBuilder.getMessage("sbi.execution.warn1.lblBtn"));				
+					response.setAttribute("TITLE",  msgBuilder.getMessage("sbi.execution.warn1.title") );	
+					response.setAttribute("currTheme", currTheme);
+					response.setAttribute(SpagoBIConstants.PUBLISHER_NAME, "WarningPublisher");
+					return;
+				}
 				if (previousProfile != null) {
 					profile = previousProfile;
 					// user is authenticated, nothing to do
@@ -209,7 +245,6 @@ public class LoginModule extends AbstractHttpModule {
 						}
 						servletRequest.getSession().setAttribute(LIST_MENU, lstMenu);
 						getHttpRequest().getRequestDispatcher(url).forward(getHttpRequest(), getHttpResponse());
-						//response.setAttribute(SpagoBIConstants.PUBLISHER_NAME, "userhome");
 					}else{
 						servletRequest.getSession().setAttribute(IEngUserProfile.ENG_USER_PROFILE, profile);
 						getHttpResponse().sendRedirect(backUrl);
@@ -222,15 +257,9 @@ public class LoginModule extends AbstractHttpModule {
 					String url = "/themes/" + currTheme	+ "/jsp/login.jsp";
 					getHttpRequest().setAttribute("start_url", url);
 					getHttpRequest().getRequestDispatcher(url).forward(getHttpRequest(), getHttpResponse());
-					//orig:
-//					String url = GeneralUtilities.getSpagoBiHost() + servletRequest.getContextPath();
-//					response.setAttribute("start_url", url);
-//					response.setAttribute(SpagoBIConstants.PUBLISHER_NAME, "login");
 					logger.debug("OUT");
 					return;
 				}
-				//logger.error("User identifier not found. Cannot build user profile object");
-				//throw new SecurityException("User identifier not found.");
 			}			
 		} else {
 
@@ -396,6 +425,31 @@ public class LoginModule extends AbstractHttpModule {
 					return;
 				}
 			}
+			
+			//check if the user can see the document (if it's a direct execution)
+			if (profile != null && obj != null) {
+				boolean canSee = ObjectsAccessVerifier.canSee(obj, profile);
+		    	if (!canSee){		
+					String contextName = GeneralUtilities.getSpagoBiContext();			
+					String url = contextName+"/servlet/AdapterHTTP?PAGE=LoginPage&NEW_SESSION=TRUE";			
+					response.setAttribute("URL_BTN", url);
+					if("TRUE".equals(isFromShare)){
+						backUrl = servletRequest.getRequestURI()+"?"+servletRequest.getQueryString();		
+					}	
+					response.setAttribute(SpagoBIConstants.BACK_URL, backUrl);
+					response.setAttribute("MSG", msgBuilder.getMessage("sbi.execution.warn2.msg")); 
+					response.setAttribute("LBL_BTN",  msgBuilder.getMessage("sbi.execution.warn2.lblBtn"));				
+					response.setAttribute("TITLE",  msgBuilder.getMessage("sbi.execution.warn2.title") );
+					response.setAttribute("currTheme", currTheme);
+					response.setAttribute(SpagoBIConstants.PUBLISHER_NAME, "WarningPublisher");
+					return;
+		    	}else{
+		    		//reset values on visibility variables because the user CAN execute the document!
+//		    		response.setAttribute(SpagoBIConstants.BACK_URL, backUrl);
+		    		response.setAttribute("IS_FROM_SHARE", "");
+		    		response.setAttribute("fromLogin","TRUE");
+		    	}
+			}
 
 			Boolean userHasChanged = Boolean.TRUE;
 			// try to find if the user has changed: if so, the session parameters must be reset, see also homebis.jsp
@@ -457,9 +511,9 @@ public class LoginModule extends AbstractHttpModule {
 				}				
 				servletRequest.getSession().setAttribute(LIST_MENU, lstMenu);				
 				getHttpRequest().getRequestDispatcher(url).forward(getHttpRequest(), getHttpResponse());
-				//response.setAttribute(SpagoBIConstants.PUBLISHER_NAME, "userhome");
 			}else{
 				servletRequest.getSession().setAttribute(IEngUserProfile.ENG_USER_PROFILE, profile);
+				backUrl += "&fromLogin=TRUE";
 				getHttpResponse().sendRedirect(backUrl);
 			}
 		

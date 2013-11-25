@@ -210,9 +210,13 @@ a:hover{
         	//manages backUrl after login
         	String backUrl = (String)request.getAttribute(SpagoBIConstants.BACK_URL);
         	if (backUrl != null && !backUrl.equals("")) {
+        		String objLabel = (String)request.getAttribute(SpagoBIConstants.OBJECT_LABEL);
+        		backUrl += (backUrl.indexOf("?")<0)?"?":"&";
+        		backUrl += "fromLogin=true";
 			%>
 			
 			<input type="hidden" name="<%= SpagoBIConstants.BACK_URL %>" value="<%= backUrl %>" />
+			<input type="hidden" name="<%= SpagoBIConstants.OBJECT_LABEL %>" value="<%= objLabel %>" />
 			<input type="hidden" name="fromLogin" value="true" />
 			<%
         	}
