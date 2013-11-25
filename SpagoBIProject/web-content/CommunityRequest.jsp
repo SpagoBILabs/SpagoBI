@@ -86,7 +86,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 			<input type="submit" value="<%=msgBuilder.getMessage("community.accept.mail.btn.accept",locale) %>">
 		</div>
 		<br><br>
-		<p class="retry"><%=msgBuilder.getMessage("community.accept.mail.warn",locale) %></p
+		<p class="retry"><%=msgBuilder.getMessage("community.accept.mail.warn",locale) %></p>
   	 </div>
  </div>
 </main> 
