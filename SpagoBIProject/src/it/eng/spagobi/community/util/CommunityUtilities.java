@@ -125,7 +125,7 @@ public class CommunityUtilities {
 				+ ":"
 				+ port
 				+ contextName
-				+"/CommunityRequest.jsp?owner="+owner.getUserId()+"&userToAccept="+userToAccept.getUserId()+"&community="+communityName+"&locale="+locale+"&currTheme="+currTheme+"\">");
+				+"/publicjsp/CommunityRequest.jsp?owner="+owner.getUserId()+"&userToAccept="+userToAccept.getUserId()+"&community="+communityName+"&locale="+locale+"&currTheme="+currTheme+"\">");
 		sb.append("<img alt=\"Accept/Reject\" src=\""
 				+schema
 				+ "://"+server
