@@ -156,8 +156,6 @@ UPDATE SBI_DATA_SET
 commit;
 
 
-INSERT INTO HIBERNATE_SEQUENCES(sequence_name, next_val) VALUES('SBI_ATTRIBUTE',0);
-
 INSERT INTO SBI_ATTRIBUTE (attribute_name,description,attribute_id,user_in,time_in,sbi_version_in,organization) values ('gender','gender',(SELECT next_val FROM hibernate_sequences WHERE sequence_name = 'SBI_ATTRIBUTE'),'server_init',CURRENT_DATE,'4.0','SPAGOBI');
 update hibernate_sequences set next_val = next_val+1 where sequence_name = 'SBI_ATTRIBUTE';
 commit;
