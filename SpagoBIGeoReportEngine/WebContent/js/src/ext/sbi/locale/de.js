@@ -105,6 +105,7 @@ Sbi.locale.ln['sbi.geo.controlpanel.map'] = 'Karte'; //'Map ';
 Sbi.locale.ln['sbi.geo.controlpanel.zone'] = 'Zone'; //'zone ';
 Sbi.locale.ln['sbi.geo.controlpanel.point'] = 'Punkt'; //'point ';
 
+Sbi.locale.ln['sbi.geo.controlpanel.filters'] = 'Filter';
 
 Sbi.locale.ln['sbi.geo.layerpanel.title'] = 'Layers'; //'Layers';
 

@@ -91,6 +91,8 @@ Sbi.locale.ln['sbi.geo.analysispanel.tocolor'] = 'To color';
 Sbi.locale.ln['sbi.geo.analysispanel.filter.default'] = 'Set Default';
 Sbi.locale.ln['sbi.geo.analysispanel.filter.default.ok'] = 'Default values correctly set';
 
+Sbi.locale.ln['sbi.geo.controlpanel.filters'] = 'Filtres';
+
 Sbi.locale.ln['sbi.geo.legendpanel.title'] = 'L\u00E9gende';
 Sbi.locale.ln['sbi.geo.legendpanel.changeStyle'] = 'Change style'; 
 Sbi.locale.ln['sbi.geo.earthpanel.title'] = 'Navigation 3D';
