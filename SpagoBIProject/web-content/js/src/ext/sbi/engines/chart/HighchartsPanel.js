@@ -355,7 +355,7 @@ Ext.extend(Sbi.engines.chart.HighchartsPanel, Sbi.engines.chart.GenericChartPane
 	    				}else if (alias == "SERIE_NAME"){
 	    					prefix = "{";
 	    					suffix = "}";
-	    					fieldValue = this.point.name || this.series.name;
+	    					fieldValue = this.series.name ||  this.point.name ;
 	    				}else {
 	    					prefix = "$F{";
 	    					suffix = "}";
