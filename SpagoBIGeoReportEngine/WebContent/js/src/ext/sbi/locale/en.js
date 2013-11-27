@@ -126,7 +126,7 @@ Sbi.locale.ln['sbi.geo.analysispanel.tocolor'] = 'To color';
 Sbi.locale.ln['sbi.geo.analysispanel.filter.default'] = 'Set Default';
 Sbi.locale.ln['sbi.geo.analysispanel.filter.default.ok'] = 'Default values correctly set';
 
-	
+Sbi.locale.ln['sbi.geo.controlpanel.filters'] = 'Filters';
 
 Sbi.locale.ln['sbi.geo.legendpanel.title'] = 'Legend';
 Sbi.locale.ln['sbi.geo.legendpanel.changeStyle'] = 'Change style'; 
