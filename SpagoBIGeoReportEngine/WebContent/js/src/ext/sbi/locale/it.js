@@ -16,7 +16,7 @@ Sbi.locale.formats = {
 			decimalPrecision: 2,
 			groupingSeparator: '.',
 			groupingSize: 3,
-			//currencySymbol: 'Ä',
+			//currencySymbol: '‚Ç¨',
 			nullValue: ''
 		},
 		*/
@@ -25,7 +25,7 @@ Sbi.locale.formats = {
 			decimalPrecision: 2,
 			groupingSeparator: '.',
 			groupingSize: 3,
-			//currencySymbol: 'Ä',
+			//currencySymbol: '‚Ç¨',
 			nullValue: ''
 		},
 		int: {
@@ -33,7 +33,7 @@ Sbi.locale.formats = {
 			decimalPrecision: 0,
 			groupingSeparator: '.',
 			groupingSize: 3,
-			//currencySymbol: 'Ä',
+			//currencySymbol: '‚Ç¨',
 			nullValue: ''
 		},
 		string: {
@@ -155,7 +155,7 @@ Sbi.locale.ln['sbi.geo.mappanel.title'] = 'Mappa';
 Sbi.locale.ln['mf.print.mapTitle'] =  'Titolo';
 Sbi.locale.ln['mf.print.comment'] =  'Commenti';
 Sbi.locale.ln['mf.print.loadingConfig'] =  'Caricamento configurazione...';
-Sbi.locale.ln['mf.print.serverDown'] =  'Il servizio di stampa non Ë disponibile';
+Sbi.locale.ln['mf.print.serverDown'] =  'Il servizio di stampa non √® disponibile';
 Sbi.locale.ln['mf.print.unableToPrint'] =  "UnImpossibile stampare";
 Sbi.locale.ln['mf.print.generatingPDF'] =  "Generazione PDF...";
 Sbi.locale.ln['mf.print.dpi'] =  'DPI';
@@ -173,8 +173,8 @@ Sbi.locale.ln['mf.print.noPage'] =  'Non ci sono pagine selezionate; click sul b
 Sbi.locale.ln['mf.error'] =  'Errore';
 Sbi.locale.ln['mf.warning'] =  'Warning';
 Sbi.locale.ln['mf.information'] =  'Informazione';
-Sbi.locale.ln['sbi.tools.catalogue.measures.measure.properties'] = 'Propriet‡ Misura';
-Sbi.locale.ln['sbi.tools.catalogue.measures.dataset.properties'] = 'Propriet‡ Data Set';
+Sbi.locale.ln['sbi.tools.catalogue.measures.measure.properties'] = 'Propriet√† Misura';
+Sbi.locale.ln['sbi.tools.catalogue.measures.dataset.properties'] = 'Propriet√† Data Set';
 Sbi.locale.ln['sbi.tools.catalogue.measures.join.btn'] = 'Join';
 Sbi.locale.ln['sbi.tools.catalogue.measures.join.tooltip'] = 'Esegui la join tra le misure selezionate';
 Sbi.locale.ln['sbi.tools.catalogue.measures.select.tooltip'] = 'Apri il frame di selezione';
