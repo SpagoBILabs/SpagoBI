@@ -292,7 +292,7 @@ li:hover .login-panel .not-registered a:hover,.login-panel .not-registered a:hov
 .panel .scroll{overflow:hidden;position:relative;width:298px;float:left;background:#f9f9f9;border-bottom:1px solid #e4e4e4;padding:0 32px}
 .panel .scroll-content{float:left;padding:32px 0 12px 0;width:298px;-webkit-transform: translateZ(0);-moz-transform: translateZ(0);-ms-transform: translateZ(0);-o-transform: translateZ(0);transform: translateZ(0);-webkit-touch-callout: none;-webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;-webkit-text-size-adjust: none;-moz-text-size-adjust: none;-ms-text-size-adjust: none;-o-text-size-adjust: none;text-size-adjust: none} /*float*/
 .panel h1{margin:0 0 14px 0;line-height:120%;font-size:1.66em;font-family:cabinmedium, sans-serif, arial, helvetica;font-weight:normal}
-.panel h2{font-size:1.4em;margin:0 0 15px 0;font-family:cabinmedium, sans-serif, arial, helvetica;font-weight:normal}
+.panel h2{font-size:17px;margin:0 0 15px 0;font-family:cabinmedium, sans-serif, arial, helvetica;font-weight:normal}
 .panel p{margin:0 0 8px 0;font-size:1.05em;line-height:175%}
 .panel a{color:#3d90d4}
 
