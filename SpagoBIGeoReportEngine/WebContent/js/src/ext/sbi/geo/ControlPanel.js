@@ -19,21 +19,21 @@ Sbi.geo.ControlPanel = function(config) {
 	
 	// init properties...
 	var defaultSettings = {
-		id:'controlPanel',
-		region      : 'east',
-		split       : false,
-		width       : 365,
-		collapsible : true,
-		collapsed   : false,
-		autoScroll	: true,
-		layout		: 'fit',
-		margins     : '0 0 0 0',
-		cmargins    : '0 0 0 0',
-		collapseMode: 'none',
-        hideCollapseTool: true,
-		hideBorders: true,
-		border		: false,
-		frame: false,
+		id						:'controlPanel',
+		region      			: 'east',
+		split       			: false,
+		width       			: 365,
+		collapsible 			: true,
+		collapsed   			: false,
+		autoScroll				: true,
+		layout					: 'fit',
+		margins     			: '0 0 0 0',
+		cmargins    			: '0 0 0 0',
+		collapseMode			: 'none',
+        hideCollapseTool		: true,
+		hideBorders				: true,
+		border					: false,
+		frame					: false,
 		singleSelectionIndicator: true
 	};
 	
@@ -75,6 +75,10 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
      */
 	services: null
 	  
+	/**
+     * @property {Array} thematizationOptions
+     * The configuration of the enabled thematizers
+     */
 	, thematizationOptions: [{
 			id: 'map-zone'
 			, label: LN('sbi.geo.controlpanel.map')+'<span>'+LN('sbi.geo.controlpanel.zone')+'</span>'
@@ -94,7 +98,17 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 		}*/
 	]
 
+	/**
+	 * @property {Array} selectedThematizationOptionId
+	 * The identifier of the selected thematizer
+	 */
 	, selectedThematizationOptionId: 'map-zone'
+		
+		
+	, filterFileds: null
+	, filterLabels: null
+	, filterValues: null
+	, pendingFilters: false
 	
 	//CONSTANTS
 	, DEFAULT_NAME: LN('sbi.geo.controlpanel.defaultname')
@@ -187,122 +201,213 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
         
         Sbi.trace("[ControlPanel.setIndicators] : OUT");      
     }
-	
-	/**
+
+	 /**
+     * @method
      * Gets filters values
+     *
+     * @return {Array} an array of objects. Each object in the array is composed by three
+     * properties: fieldHeader, fieldName and value. The field is the header of the filtered column. 
+     * The value is the value of the filter to apply.
      */
-    , getFilters:function(){
-    	Sbi.trace("[ControlPanel.getFilters] : IN.. Get the values of the filters"); 
-    	var filters =new Array();
-		if(this.filters){
-			for(var i=0; i<this.filters.length; i++){
-				var filter = this.filters[i];
-				filters.push({
-					field: filter.name,
-					value: filter.getValue()
+    , getFiltersState : function(){
+    	Sbi.trace("[ControlPanel.getFiltersState] : IN"); 
+    	
+    	var filtersState = new Array();
+		
+    	if(this.filterFields){
+			for(var i=0; i<this.filterFields.length; i++){
+				filtersState.push({
+					fieldHeader: this.filterFields[i].fieldHeader,
+					fieldName: this.filterFields[i].fieldName,
+					value: this.filterFields[i].getValue()
 				});
 			}
+		} else {
+			Sbi.watn("[ControlPanel.getFiltersState] : there are no filter fields");
 		}
-		Sbi.trace("[ControlPanel.getFilters] : OUT");
-		return filters;
+		
+		Sbi.trace("[ControlPanel.getFiltersState] : OUT");
+		
+		return filtersState;
     }	
     
+    
     /**
-     * Create the filter comboboxes
-     * @param filters the fiters definition
+     * Create the filter panel
+     * 
+     * @param {Array} filterDescriptors an array of objects. Each object is equal to the field
+     * on which the filter is applied plus the property values that contais all the possible values
+     * for the filter (i.e. the distinct values contained in the store on that field).
      */
-	, setFilters: function(filters){
-		//Adding comboboxes for filters
-		Sbi.debug("[ControlPanel.setFilters]: IN");
+	, createFiltersPanel: function(filterDescriptors){
 		
-		if(!this.filters){
-			this.filters = new Array();
-		}
-
-		/*
-		if(this.setDefaultsValuesToFiltersButton){
-			this.remove(setDefaultsValuesToFiltersButton, true);
-		}
-		*/
+		Sbi.trace("[ControlPanel.createFiltersPanel]: IN");
+		
+		this.resetFiltersPanel();
 	
-		//remove the old filters
-		for(var i=0; i<this.filters.length; i++){
-			this.remove(this.filters[i],true);
-		}
-		this.filters = new Array();
 		
-		//build the new filters
-		for(var i=0; i<filters.length; i++){
+		if(filterDescriptors && filterDescriptors.length > 0) {
+			var filtersDiv = Ext.get("filtersDiv");
+			Ext.DomHelper.append(filtersDiv, "<h2>" +LN('sbi.geo.controlpanel.filters')+ "</h2>");	
+		}
+		
+		for(var i=0; i<filterDescriptors.length; i++){
 			
-			Sbi.debug("[ControlPanel.setFilters]: Filter [" + filters[i].name + "] have [" + filters[i].values.length + "] possible values");
 			
-			var filterDef = filters[i];
-			var filter =new Ext.form.ComboBox  ({
-	            fieldLabel: filterDef.header,
-	            name: filterDef.name,
-	            editable: false,
-	            mode: 'local',
-	            allowBlank: true,
-	            valueField: 'val',
-	            displayField: 'val',
-	            emptyText: 'Select a value',
-	            triggerAction: 'all',
-	            store: new Ext.data.SimpleStore({
-	            	fields: ['val'],
-	                data : 	filterDef.values
-	            }),
-	            listeners: {
-	                'select': {
-	                    fn: function() {
-	                    	this.filterDataSet();
-	                    },
-	                    scope: this
-	                }
-	            }
-	        });
-
-			this.filters.push(filter);
-			
-			var filterLabel = new Ext.form.DisplayField({
-				fieldLabel : filterDef.header,
-				width:  300,
-				allowBlank : false,
-				name: filterDef.header,
-				readOnly:true,
-				hidden: false
-			});
-			filterLabel.setValue(filterDef.header);
-			
+			var filterLabel = this.createFilterLabel(filterDescriptors[i]);
+			this.filterLabels.push(filterLabel);
 			filterLabel.render("filtersDiv");
-			filter.render("filtersDiv");
+			
+			var filterField = this.createFilterField(filterDescriptors[i]);
+			this.filterFields.push(filterField);
+			filterField.render("filtersDiv");
+			
+		}
+		
+		if(this.pendingFilters === true) {
+			this.applyFilters(false);
+			this.pendingFilters = false;
 		}
 		
 		
-		if((Sbi.config.docLabel=="" && this.filters && this.filters.length>0)){
-			this.setDefaultsValuesToFiltersButton =  new Ext.Button({
-		    	text: LN('sbi.geo.analysispanel.filter.default'),
-		        width: 30,
-		        handler: function() {
-		        	this.saveDefaultFiltersValue();
-		        	Sbi.exception.ExceptionHandler.showInfoMessage(LN('sbi.geo.analysispanel.filter.default.ok'));
-           		},
-           		scope: this
-			});
-			this.setDefaultsValuesToFiltersButton.render("filtersDiv");
+		if((Sbi.config.docLabel=="" && this.filterDescriptors && this.filterDescriptors.length>0)){
+			this.setDefaultsValuesToFiltersButton =  this.createFilterButton();
 		}
-		
 		
 		this.doLayout();
 		
-		
-		Sbi.debug("[ControlPanel.setFilters]: OUT");
+		Sbi.trace("[ControlPanel.createFiltersPanel]: OUT");
 	}
+	
+	/**
+	 * @method
+	 * 
+	 * reset filter div
+	 */
+	, resetFiltersPanel: function() {
+    	Sbi.debug("[ControlPanel.resetFiltersPanel]: IN");
+		
+    	if(!this.filterFields) {
+			Sbi.debug("[ControlPanel.resetFiltersPanel]: no filters to remove");
+			this.filterFields = new Array();
+			this.filterLabels = new Array();
+		} else {		
+			Sbi.trace("[ControlPanel.resetFiltersPanel]: removeing div");
+			var filtersDiv = Ext.get("filtersDiv").dom;
+			filtersDiv.parentNode.removeChild(filtersDiv); 
+			Sbi.trace("[ControlPanel.resetFiltersPanel]: div removed");
+			
+			var divHtmlFragment = '<div class="filters" id="filtersDiv" ></div>';
+			
+			Sbi.trace("[ControlPanel.resetFiltersPanel]: adding div");
+			var indicatorsElement = Ext.get("indicatorsDiv");
+			Ext.DomHelper.insertAfter(indicatorsElement, divHtmlFragment);
+			Sbi.trace("[ControlPanel.resetFiltersPanel]: div added");
+
+			this.filterFields = new Array();
+			this.filterLabels = new Array();
+			
+			this.doLayout();
+		}
+		Sbi.debug("[ControlPanel.resetFiltersPanel]: OUT");
+    }
+    
+    , createFilterField: function(filterDescriptor) {
+    	
+    	Sbi.trace("[ControlPanel.createFilterField]: IN");
+    	
+    	var store = new Ext.data.SimpleStore({
+        	fields: ['val'],
+            data : 	filterDescriptor.values
+        });
+    	
+    	var filterField = new Ext.form.ComboBox  ({
+            fieldLabel: filterDescriptor.header,
+            name: filterDescriptor.name,
+            fieldName: filterDescriptor.name,
+            fieldHeader: filterDescriptor.header,
+            width:  300,
+            editable: false,
+            mode: 'local',
+            allowBlank: true,
+            valueField: 'val',
+            displayField: 'val',
+            emptyText: 'Select a value',
+            triggerAction: 'all',
+            store: store,
+        });
+    	
+    	filterField.on("select", this.applyFilters, this);
+    	filterField.on("afterrender", this.onFilterFieldRendered, this);
+    	
+    	Sbi.trace("[ControlPanel.createFilterField]: OUT");
+    	
+    	return filterField;
+    }
+    
+    , createFilterLabel: function(filterDescriptor) {
+    	var filterLabel = new Ext.form.DisplayField({
+			fieldLabel : filterDescriptor.header,
+			name: filterDescriptor.header,
+			width:  300,
+			allowBlank : false,
+			readOnly:true,
+			hidden: false
+		});
+		filterLabel.setValue(filterDescriptor.header);
+		
+		return filterLabel;
+    }
+    
+    , createFilterButton: function() {
+    	var setDefaultsValuesToFiltersButton =  new Ext.Button({
+	    	text: LN('sbi.geo.analysispanel.filter.default'),
+	        width: 30,
+	        handler: function() {
+	        	this.saveDefaultFiltersValue();
+	        	Sbi.exception.ExceptionHandler.showInfoMessage(LN('sbi.geo.analysispanel.filter.default.ok'));
+       		},
+       		scope: this
+		});
+		setDefaultsValuesToFiltersButton.render("filtersDiv");
+		
+		return setDefaultsValuesToFiltersButton;
+    }
+    
+    , onFilterFieldRendered: function(combo) {
+    	Sbi.debug("[ControlPanel.onFilterFieldRendered]: IN");
+    	
+    	var selectedValue = null;
+    	
+    	if(this.filterValues != null) {
+    		Sbi.debug("[ControlPanel.onFilterFieldRendered]: there are already some selected filters");
+    		for(var i = 0; i < this.filterValues.length; i++) {
+    			Sbi.debug("[ControlPanel.onFilterFieldRendered]: [" + Sbi.toSource(this.filterValues[i]) + "]");
+    			Sbi.debug("[ControlPanel.onFilterFieldRendered]: [" + this.filterValues[i].fieldHeader + "] == [" + combo.fieldHeader + "]");
+    			if(this.filterValues[i].fieldHeader === combo.fieldHeader) {
+    				selectedValue = this.filterValues[i].value;
+    				break;
+    			}
+    		}
+    	} else {
+    		Sbi.debug("[ControlPanel.onFilterFieldRendered]: there are no filters selected already");
+    	}
+    	
+    	if(selectedValue != null) {
+    		this.pendingFilters = true;
+    		Sbi.debug("[ControlPanel.onFilterFieldRendered]: apply value [" + selectedValue + "] to filter [" + combo.fieldHeader + "]");
+    		combo.setValue(selectedValue);
+    		//this.applyFilters(false);
+    	}
+    	
+    	Sbi.debug("[ControlPanel.onFilterSelected]: OUT");
+    }
 	
 	// -----------------------------------------------------------------------------------------------------------------
     // public methods
 	// -----------------------------------------------------------------------------------------------------------------
-	
-	
+		
     /**
      * Save the default value of the filter in the filter as filterDefaultValue 
      */
@@ -320,16 +425,23 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
     /**
      * Execute the filters
      */
-    , filterDataSet: function(){
-    	Sbi.trace("[ControlPanel.filterDataSet] : IN");      
-    	//get filter values
-    	var filters = this.getFilters();
+    , applyFilters: function(refreshThematization){
+    	Sbi.trace("[ControlPanel.applyFilters] : IN");      
+    	
+    	this.filterValues = this.getFiltersState();
+    	
     	//filter the store
-    	this.mapComponnet.getActiveThematizer().filterStore(filters);
+    	for(tName in this.mapComponnet.thematizers) {
+    		var thematizer = this.mapComponnet.thematizers[tName];
+    		thematizer.filterStore(this.filterValues);
+    	}
+	
     	//update the thematization
-    	//this.thematizerControlPanel.thematize(false, {resetClassification: true});
-    	this.mapComponnet.getActiveThematizer().thematize({resetClassification: true});
-    	Sbi.trace("[ControlPanel.filterDataSet] : OUT");      
+    	if(refreshThematization !== false) {
+    		this.mapComponnet.getActiveThematizer().thematize({resetClassification: true});
+    	}
+    	
+    	Sbi.trace("[ControlPanel.applyFilters] : OUT");      
     }
 	
     
@@ -519,7 +631,7 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 					               		this.getIndicatorsDiv() +
 					               		'<div class="filters" id="filtersDiv" ></div>'+
 					                    this.getPermissionDiv() + 
-					                '</div>' +
+					               '</div>' +
 					            '</div>' + this.getPanelButtonsDiv() + 
 					        '</form>' +
 					    '</div>' +
@@ -535,7 +647,7 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 			
 			//Handle filtersChanged event for adding filters combo
 			this.mapComponnet.getActiveThematizer().on('filtersChanged', function(thematizer, filters){
-				this.setFilters(filters);
+				this.createFiltersPanel(filters);
 			}, this);
 			
 			this.initInnerPannelCallbacks.defer(2000, this);
@@ -1121,7 +1233,7 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 	, onStoreLoad: function(measureCatalogue, options, store, meta) {
 		Sbi.trace("[ControlPanel.onStoreLoad]: IN");
 		
-		this.measureCatalogueWindow.close();
+		this.measureCatalogueWindow.hide();
 		
 		for(thematizerName in this.mapComponnet.thematizers) {
 			var thematizer = this.mapComponnet.thematizers[thematizerName];
