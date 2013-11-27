@@ -79,17 +79,19 @@ Ext.extend(Sbi.geo.stat.ProportionalSymbolThematizer, Sbi.geo.stat.Thematizer, {
         
     	Sbi.trace("[ProportionalSymbolThematizer.thematize] : IN");
     	
-    	Sbi.trace("[ProportionalSymbolThematizer.thematize] : layer [" + this.layer + "]");
+    	Sbi.trace("[ProportionalSymbolThematizer.thematize] : layer [" + this.layerName + "]");
     	if(this.layer){
-    		Sbi.trace("[ProportionalSymbolThematizer.thematize] : layer [" + this.layer.features.length + "]");
+    		Sbi.trace("[ProportionalSymbolThematizer.thematize] : layer contains [" + this.layer.features.length + "] feature");
     	}
     	
     	if (options) {
     		if(options.resetClassification) {
-    			this.setClassification();
+    			this.classify();
     		} else {
     			this.updateOptions(options);
     		}
+        } else {
+        	Sbi.trace("[ProportionalSymbolThematizer.thematize] : thematizer option not defined");
         }
     	
     	Sbi.trace("[ProportionalSymbolThematizer.thematize] : Checking if the thematizer is ready ...");
@@ -116,9 +118,15 @@ Ext.extend(Sbi.geo.stat.ProportionalSymbolThematizer, Sbi.geo.stat.Thematizer, {
                      var minValue = this.distribution.getMinDataPoint().getValue();
                      var maxValue = this.distribution.getMaxDataPoint().getValue();
                      
+                     if(minValue == maxValue) { // we have only one point in the distribution
+                    	 size = (this.maxRadiusSize + this.minRadiusSize)/2;
+                     } else {
+                    	 size = (value - minValue) / ( maxValue - minValue) *
+                         (this.maxRadiusSize - this.minRadiusSize) + this.minRadiusSize;
+                     }
                      
-                     size = (value - minValue) / ( maxValue - minValue) *
-                                (this.maxRadiusSize - this.minRadiusSize) + this.minRadiusSize;
+                     
+                    
                      
                      Sbi.trace("[ProportionalSymbolThematizer.calculateRadius] : radius for feature [" + feature.attributes[this.layerId] + "]is equal to [" + size + "]");
             	} else {
@@ -296,7 +304,7 @@ Ext.extend(Sbi.geo.stat.ProportionalSymbolThematizer, Sbi.geo.stat.Thematizer, {
 	     
         this.layer.removeAllFeatures();
         this.layer.addFeatures( newFeatures );
-        this.requestSuccess(response);
+        //this.requestSuccess(response);
         
         this.hideMask();
         

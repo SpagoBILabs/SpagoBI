@@ -160,63 +160,81 @@ Ext.extend(Sbi.geo.MainPanel, Ext.Panel, {
 	, validate: function (successHandler, failureHandler, scope) {
 		Sbi.trace("[MainPanel.validate]: IN");
 		
-		var template = {};
+		var template = this.getAnalysisState();
+		var templeteStr = Ext.util.JSON.encode(template);
+		Sbi.trace("[MainPanel.validate]: template = " + templeteStr);
+		
+		Sbi.trace("[MainPanel.validate]: OUT");
+		return templeteStr;
+	}
+	
+	, getAnalysisState: function () {
+		Sbi.trace("[MainPanel.getAnalysisState]: IN");
+		
+		var analysisState = {};
 		
 		var thematizer = this.mapComponent.getActiveThematizer();
 		
-		template.mapName = this.mapName;
-		template.analysisType = this.mapComponent.activeThematizerName;
+		analysisState.mapName = this.mapName;
+		analysisState.analysisType = this.mapComponent.activeThematizerName;
 	
-		template.indicatorContainer = thematizer.indicatorContainer;
-		template.storeType = thematizer.storeType;
+		analysisState.indicatorContainer = thematizer.indicatorContainer;
+		analysisState.storeType = thematizer.storeType;
 		
-		if(template.storeType === 'virtualStore') {
-			template.storeConfig = thematizer.storeConfig;
+		if(analysisState.storeType === 'virtualStore') {
+			analysisState.storeConfig = thematizer.storeConfig;
 		} else { // it's a physicalStore
-			template.feautreInfo = this.feautreInfo;
-			template.indicators = this.indicators;
-			template.businessId = this.businessId;	
+			analysisState.feautreInfo = this.feautreInfo;
+			analysisState.indicators = this.indicators;
+			analysisState.businessId = this.businessId;	
 		}
 		
+		if(thematizer.storeFilters != null) {
+			var encodedFilters = new Array();
+			for(var i = 0; i < thematizer.storeFilters.length; i++) {
+				var encodedFilter = [thematizer.storeFilters[i].fieldHeader, thematizer.storeFilters[i].value];
+				encodedFilters.push(encodedFilter);
+				
+			}
+			analysisState.filters = encodedFilters;
+		}
 		
-		template.geoId = this.geoId;
+		analysisState.geoId = this.geoId;
 				
 		// TODO we assume that different thematizer have no property with the same name
 		// this must be improved in order to manage overlapps in the respect of
 		// old versions
-		template.analysisConf = {};
+		analysisState.analysisConf = {};
 		for(var t in this.mapComponent.thematizers) {
-			template.analysisConf = Ext.apply(template.analysisConf
+			analysisState.analysisConf = Ext.apply(analysisState.analysisConf
 					, this.mapComponent.thematizers[t].getAnalysisConf());
 		}
-		//template.analysisConf = thematizer.getAnalysisConf();
+		//analysisState.analysisConf = thematizer.getAnalysisConf();
 				
-		template.selectedBaseLayer = this.selectedBaseLayer;
+		analysisState.selectedBaseLayer = this.selectedBaseLayer;
 		for(var i=0; i < this.map.getNumLayers(); i++) {
 			var layer = this.map.getLayerIndex(i);
 			if(layer.isBaseLayer && layer.selected) {
-				template.selectedBaseLayer = layer.name;
+				analysisState.selectedBaseLayer = layer.name;
 			}
 		}
 		
-		template.targetLayerConf = this.targetLayerConf;
+		analysisState.targetLayerConf = this.targetLayerConf;
 
-		template.controlPanelConf = this.controlPanelConfOrignal;		
-		template.toolbarConf = this.toolbarConfOrignal;	
+		analysisState.controlPanelConf = this.controlPanelConfOrignal;		
+		analysisState.toolbarConf = this.toolbarConfOrignal;	
 		
 //		var mapCenterPoint = this.map.getCenter();
-//		template.lon = mapCenterPoint.lon;
-//		template.lat = mapCenterPoint.lat;
-//		template.zoomLevel = this.map.getZoom();
+//		analysisState.lon = mapCenterPoint.lon;
+//		analysisState.lat = mapCenterPoint.lat;
+//		analysisState.zoomLevel = this.map.getZoom();
 		
-		template.lon = this.lon;
-		template.lat = this.lat;
-		template.zoomLevel = this.zoomLevel;
+		analysisState.lon = this.lon;
+		analysisState.lat = this.lat;
+		analysisState.zoomLevel = this.zoomLevel;
 		
-		var templeteStr = Ext.util.JSON.encode(template);
-		Sbi.trace("[MainPanel.validate]: template = " + templeteStr);
-		Sbi.trace("[MainPanel.validate]: IN");
-		return templeteStr;
+		Sbi.trace("[MainPanel.getAnalysisState]: OUT");
+		return analysisState;
 	}
 	
 	// -----------------------------------------------------------------------------------------------------------------
@@ -371,9 +389,7 @@ Ext.extend(Sbi.geo.MainPanel, Ext.Panel, {
 	        'layerName': this.targetLayerConf? this.targetLayerConf.name: null,
 	        'layerId' : this.geoId,
 	      	'loadLayerServiceName': loadLayerServiceName,
-	       	//'requestSuccess': this.requestSuccess.createDelegate(this),
-	        //'requestFailure': this.requestFailure.createDelegate(this),
-	            	
+	         	
 	        'format': null,
 	        'featureSourceType': featureSourceType,
 	        'featureSource': featureSource,
@@ -541,6 +557,16 @@ Ext.extend(Sbi.geo.MainPanel, Ext.Panel, {
 		this.controlPanelConf.map = this.map;
 		this.controlPanelConf.mapComponnet = this.mapComponent;
 		this.controlPanelConf.indicators = this.indicators;
+		
+		if(this.filters) {
+			this.controlPanelConf.filterValues = new Array();
+			for(var i = 0; i < this.filters.length; i++) {
+				var filter = this.filters[i];
+				Sbi.debug("[MainPanel.initControlPanel]: added value [" + filter[1] + "] for filter [" + filter[0] + "]");
+				this.controlPanelConf.filterValues.push({fieldHeader: filter[0], value: filter[1]});
+			}
+		}
+	
 		this.controlPanelConf.controlledPanel = this;
 		this.controlPanelConf.analysisType = this.analysisType;
 		this.controlPanelConf.analysisConf = this.analysisConf;

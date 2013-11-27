@@ -68,6 +68,7 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
 	// PROPERTIES
 	// =================================================================================================================
 	
+	
 	/**
 	 * @property {String} indicator
 	 * Defines the name of indicator used to create the thematization
@@ -128,10 +129,17 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
     
     /**
      * @property {Boolean} storeReload
-     * Define if the store must be reloaded at the end of thematizer initialization or not. 
+     * Define if the store must be reloaded at the end of thematizer activation or not. 
      * Defalut to true. Only apply if #indicatorContainer is equal to 'store'
      */
     , storeReload: true
+    
+    /**
+     * @property {Array} storeFilters
+     * The filters applied to the store. Each filter in the array it's an object composed by
+     * two properties: field and value.
+     */
+    , storeFilters: null
     
     /**
      * @property {OpenLayers.Format} format
@@ -156,14 +164,14 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
      * @property {Function} requestSuccess
      * Function called upon success with the HTTP request.
      */
-    , requestSuccess: function(request) {}
+    //, requestSuccess: function(request) {}
 
    
 	/**
 	 * @property {Function} requestFailure
 	 * Function called upon failure with the HTTP request.
 	 */
-    , requestFailure: function(request) {}
+    //, requestFailure: function(request) {}
 
     /**
 	 * @property {Boolean} featureSelection
@@ -340,30 +348,61 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
     /**
      * Apply the filters to the store
      */
-    , filterStore: function(filters){
-    	Sbi.debug("[Thematizer.filterStore] : IN");
-    	if(filters){
-    		Sbi.debug("[Thematizer.filterStore] :  filtering the store for"+filters);
+    , filterStore: function(filterValues){
+    	
+    	Sbi.trace("[Thematizer.filterStore] : IN");
+    	if(filterValues){
     		
-    		var filterFunction = function(record, id){
-    			for(var i=0; i<filters.length; i++){
-	        		var field = filters[i].field;
-	        		var value = filters[i].value;
-	        		if(field && value!=null && value!=undefined && value!=""){
-	        			if(record.data[field]!=value){
-	        				return false;
-	        			}
-	        		}else{
-	        			Sbi.debug("[Thematizer.filterStore] : there are filters with no field defined");
-	        		}
-	    		}
+    		if(this.store.readyForThematization === true) {
     			
-    			return true;
-    		};
-    		
-    		this.store.filterBy(filterFunction, this);
+    			Sbi.debug("[Thematizer.filterStore] : Store is ready so can be filtered");
+    			//(this.thematyzerType + ": filterStore(ready) : " + this.store.readyForThematization);
+    			Sbi.debug("[Thematizer.filterStore] : [" + this.thematyzerType + "] : " + Sbi.toSource(filterValues));
+    			alert(this.thematyzerType + ": filterStore(ready) : " + Sbi.toSource(filterValues));
+    			
+	    		this.storeFilters = filterValues;
+	    		
+	    		var filterFunction = function(record, id) {
+	    			for(var i=0; i<filterValues.length; i++){
+		        		var fieldName = null;
+		        		if(filterValues[i].fieldName) {
+		        			fieldName = filterValues[i].fieldName;
+		        		} else {
+		        			if(filterValues[i].fieldHeader) {
+		        				var field = this.getStoreFieldByHeader(filterValues[i].fieldHeader);
+		        				filterValues[i].fieldName = fieldName;
+		        				fieldName = filterValues[i].fieldName;	
+		        			}
+		        		}
+		        		
+		        		var value = filterValues[i].value;
+		        		if(fieldName && value!=null && value!=undefined && value!="") {
+		        			if(record.data[fieldName]!=value){
+		        				return false;
+		        			}
+		        		} else {
+		        			Sbi.debug("[Thematizer.filterStore] : there are filters with no field defined");
+		        		}
+		    		}
+	    			
+	    			return true;
+	    		};
+	    		
+	    		this.store.filterBy(filterFunction, this);
+	    		var records = this.store.getRange();
+	    		for(var x = 0; x < records.length; x++) {
+	    			Sbi.debug("[Thematizer.filterStore] : [" + this.thematyzerType + "] : records " + Sbi.toSource(this.store.getAt(x).data));
+	    		}
+	    		this.setClassification();
+	    		
+    		} else {
+    			Sbi.debug("[Thematizer.filterStore] : Store is not ready so we filter it later");
+    			this.pendingStoreFilters = filterValues;
+    			alert(this.thematyzerType + ": filterStore(notready) : " + Sbi.toSource(filterValues));
+    			
+    		}
     	}
-    	Sbi.debug("[Thematizer.filterStore] : OUT");
+    	Sbi.trace("[Thematizer.filterStore] : OUT");
     }
     
     /**
@@ -568,7 +607,8 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
     		} else {
     			this.thematize({resetClassification: true});
     	    	this.fireEvent('indicatorsChanged', this, this.indicators, this.indicator);
-    	    	//this.fireEvent('filtersChanged', this, this.filters);
+    	    	this.fireEvent('filtersChanged', this, this.filters);
+    	    	Sbi.debug("[Thematizer.setData] : filtersChanged fired");
     		}
     	} else {
     		Sbi.debug("[Thematizer.setData] : Property [geoIdHierarchyLevel] is not specified in store's metadata it will be used as [geoIdHierarchyLevel] the old one that is equal to [" + this.layerId + "]");
@@ -602,7 +642,7 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
 	     Sbi.debug("[Thematizer.setLayer] : Layer formt is equal to  [" + format + "]");
 	     
 	     var features = format.read(layer);
-	     newFeatures = features;
+	     var newFeatures = features;
 	   
 	     this.setFeatures(newFeatures);
 
@@ -630,7 +670,6 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
     	for(var i = 0; i < meta.fields.length; i++) {
     		
     		var field = meta.fields[i];
-    		//Sbi.debug("[Thematizer.getAttributeFilters] : Scanning field [" + Sbi.toSource(field) + "]");
     		Sbi.debug("[Thematizer.getAttributeFilters] : Property role is equal to [" + field.role + "]");
     		if(field.role == 'ATTRIBUTE' && !((meta.geoId) && (meta.geoId==field.header)) )  {
     			Sbi.debug("[Thematizer.getAttributeFilters] : new filter found. It is equal to [" + field.header + "]");
@@ -661,8 +700,6 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
         	for(value in filtersValueMap[j]) {
         		filters[j].values.push([value]);
         	}
-    		
-//    		filters[j].values = filtersValueMap[j];
     	}
     	Sbi.debug("[Thematizer.getAttributeFilters] : Built the filters");
     	
@@ -778,7 +815,42 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
     	return distribution;
     }
     
+    , getStoreFieldByHeader: function(fieldName) {
+    	var field = null;
+    	
+    	if(this.store === null || this.store.getCount() == 0) return null;
+    	
+    	var firstRecord = this.store.getAt(0);
+    		
+	 	for(var n = 0; n < firstRecord.fields.getCount(); n++) {
+	 		var f = firstRecord.fields.itemAt(n);
+	 		if(f.header == fieldName) {
+	 			field = f;
+	 			break;
+	 		}
+	 	}
+	 	
+	 	return field;
+    }
     
+    , getStoreFieldByName: function(fieldId) {
+    	var field = null;
+    	
+    	if(this.store === null || this.store.getCount() == 0) return null;
+    	
+    	var firstRecord = this.store.getAt(0);
+    		
+	 	for(var n = 0; n < firstRecord.fields.getCount(); n++) {
+	 		var f = firstRecord.fields.itemAt(n);
+	 		Sbi.trace("[Thematizer.getStoreFieldById] : " + Sbi.toSource(f, false));
+	 		if(f.name == fieldId) {
+	 			field = f;
+	 			break;
+	 		}
+	 	}
+	 	
+	 	return field;
+    }
 
     /**
      * @method 
@@ -930,18 +1002,23 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
          			Sbi.exception.ExceptionHandler.showErrorMessage("Error: " + e , "Impossible to load store");
          		});
          		
-             	if(this.storeReload == true) {
+             	if(this.storeReload == true && this.store.readyForThematization !== true) {
              		this.loadPhysicalStore();
              	} else {
              		Sbi.debug("[Thematizer.activate]: Physical store already loaded. It doesn't need to be reloaded");
+             		this.loadLayer();
              	}
          	} else if(this.storeType === 'virtualStore') {
-         		Sbi.debug("[Thematizer.activate]: Loading virtual store...");
-         		if(this.storeConfig.params) {
- 	        		this.loadVirtualStore();
- 	        	} else {
- 	        		Sbi.warn("[Thematizer.activate]: Virtual store wont be loaded because [storeConfig.params] is not defined");
- 	        	}
+         		if(this.storeReload == true) {
+	         		Sbi.debug("[Thematizer.activate]: Loading virtual store...");
+	         		if(this.storeConfig.params) {
+	 	        		this.loadVirtualStore();
+	 	        	} else {
+	 	        		Sbi.warn("[Thematizer.activate]: Virtual store wont be loaded because [storeConfig.params] is not defined");
+	 	        	}
+         		} else {
+             		Sbi.debug("[Thematizer.activate]: Virtual store already loaded. It doesn't need to be reloaded");
+             	}
          	} else {
          		Sbi.debug("[Thematizer.activate]: Property [storeType] value [" + this.storeType + "] is not valid");
          	}
@@ -1028,7 +1105,7 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
      , onHierarchyLevelMetaLoad: function(response, options) {
      	Sbi.trace("[Thematizer.onLoadHierarchyLevelMeta] : IN");
      	     	
-     	Sbi.debug("[Thematizer.onLoadHierarchyLevelMeta] : metadata of level [" + options + "] succesfully loaded");	
+     	Sbi.debug("[Thematizer.onLoadHierarchyLevelMeta] : metadata of level [" + (options?Sbi.toSource(options.headers, true): 'undefined') + "] succesfully loaded");	
      	
      	this.hideMask();
     
@@ -1071,7 +1148,7 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
 	 			break;
 	 		}
 	 	}
-    	var featureIds = this.store.collect(storeIdFiledName);
+    	var featureIds = this.store.collect(storeIdFiledName, false, true);
     	Sbi.debug("[Thematizer.getFeatureIdsFromStore]: found [" + featureIds.length + "] distinct feature id in store");
     	Sbi.trace("[Thematizer.getFeatureIdsFromStore]: OUT");
     	return featureIds;
@@ -1146,25 +1223,75 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
     	 
     	 this.hideMask();
     	 
-		 //this.onSuccess(response);
+    	 this.showMask("Adding layer to map...");
 		 var layer = response.responseXML;
 	     if (!layer || !doc.documentElement) {
 	    	 layer = response.responseText;
 	     }
 	     this.setLayer(layer);
+	     this.hideMask();
 	     
-		 Sbi.debug("[Thematizer.loadLayer.onSuccess] : Thematizing ayer ...");
+	     this.showMask("Thematizing layer...");
+		 Sbi.debug("[Thematizer.onLayerLoaded] : Thematizing layer ...");
 		 this.thematize({resetClassification: true});
-		 Sbi.debug("[Thematizer.loadLayer.onSuccess] : Layer succesfully thematized");
-			
+		 Sbi.debug("[Thematizer.onLayerLoaded] : Layer succesfully thematized");
+		 this.hideMask();	
 		 
 		 this.fireEvent('layerloaded', this, layer);
-		 Sbi.trace("[Thematizer.onSuccess]: event [layerloaded] fired");
+		 Sbi.trace("[Thematizer.onLayerLoaded]: event [layerloaded] fired");
 		 
-	     this.fireEvent('indicatorsChanged', this, this.indicators, this.indicator);
-	     this.fireEvent('filtersChanged', this, this.filters);
+	     //this.fireEvent('indicatorsChanged', this, this.indicators, this.indicator);
+	     //this.fireEvent('filtersChanged', this, this.filters);
 	     
 	     Sbi.trace("[Thematizer.onLayerLoaded] : OUT");
+     }
+     
+     /**
+      * @method 
+      *
+      * @param {Object} response
+      */
+     , onSuccess: function(response) {
+     	 Sbi.trace("[Thematizer.onSuccess]: IN");
+     	
+     	 this.hideMask();
+     	
+     	 this.showMask("Adding layer to map...");
+//       var doc = response.responseXML;
+//       if (!doc || !doc.documentElement) {
+//           doc = response.responseText;
+//       }
+//        
+//       var format = this.format || new OpenLayers.Format.GeoJSON();
+//        
+//       var features = format.read(doc); 
+//       this.layer.removeAllFeatures();
+//       this.layer.addFeatures( features );
+//       this.map.zoomToExtent(this.layer.getDataExtent());
+     	 var layer = response.responseXML;
+	     if (!layer || !doc.documentElement) {
+	    	 layer = response.responseText;
+	     }
+	     this.setLayer(layer);
+        
+         //this.requestSuccess(response);
+         
+         this.hideMask();
+         
+         this.fireEvent('layerloaded', this, this.layer);
+         Sbi.trace("[Thematizer.onSuccess]: event [layerloaded] fired [" + this.layer.features.length+ "]");
+         
+         Sbi.trace("[Thematizer.onSuccess]: OUT");
+     }
+
+     /**
+      * @method 
+      *
+      * @param {Object} response
+      */
+     , onFailure: function(response) {
+     	this.hideMask();
+         this.requestFailure(response);
      }
 
      /**
@@ -1187,13 +1314,18 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
     	Sbi.trace("[Thematizer.onPhysicalStoreLoaded]: IN");
     	Sbi.trace("[Thematizer.onPhysicalStoreLoaded]: Meta property list [" + Sbi.toSourcePropertiesList(this.meta)+ "]");
     	
+    	alert(this.thematyzerType + ": onPhysicalStoreLoaded : " + this.store.readyForThematization);
+    	
+    	this.store.readyForThematization = true;
+    	
     	for(var i = 0; i <  this.meta.fields.length; i++) {
         	Sbi.trace("[Thematizer.onPhysicalStoreLoaded]: Field role [" + this.meta.fields[i].role + "]");
         }
     	
     	this.meta.geoId = this.geoId;
     	this.filters = this.getAttributeFilters(store, this.meta);
-    	//this.fireEvent('filtersChanged', this, this.filters);
+    	this.fireEvent('filtersChanged', this, this.filters);
+    	Sbi.trace("[Thematizer.onPhysicalStoreLoaded]: filtersChanged fired");
     	
     	this.loadLayer();
     	
@@ -1211,12 +1343,18 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
     	 if(!this.storeConfig.params) {
     		 Sbi.warn("Impossible to load virtual store because property [storeConfig.params] is undefined");
     		 return;
+    	 } else {
+    		 Sbi.debug("[Thematizer.loadVirtualStore]: Virtual store loader service's parameters are equal to [" + Sbi.toSource(this.storeConfig.params) + "]");
     	 }
     	 
     	 if(!this.storeConfig.url) {
     		 Sbi.warn("Impossible to load virtual store because property [storeConfig.url] is undefined");
     		 return;
+    	 } else {
+    		 Sbi.debug("[Thematizer.loadVirtualStore]: Virtual store loader service's url is equal to [" + this.storeConfig.url + "]");
     	 }
+    	 
+    	
     	 
     	 Ext.Ajax.request({
 			url: this.storeConfig.url
@@ -1286,6 +1424,7 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
 					    fields: r.metaData.fields
 					});
 					store.loadData(r.rows);
+					Sbi.trace("[Thematizer.onVirtualStoreLoaded]: Store now contains [" + r.rows.length + "] rows");
 					this.setData(store, r.metaData);
 				}
 			}
@@ -1295,57 +1434,6 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
     	 
     	Sbi.trace("[Thematizer.onVirtualStoreLoaded]: OUT");
 	}
-
-
-     
-     // -----------------------------------------------------------------------------------------------------------------
-     // private methods
- 	 // -----------------------------------------------------------------------------------------------------------------
- 	
-    /**
-     * @method 
-     *
-     * @param {Object} response
-     */
-    , onSuccess: function(response) {
-    	Sbi.trace("[Thematizer.onSuccess]: IN");
-    	
-    	this.hideMask();
-    	
-    	this.showMask("Adding layer to map...");
-        var doc = response.responseXML;
-        if (!doc || !doc.documentElement) {
-            doc = response.responseText;
-        }
-        
-        var format = this.format || new OpenLayers.Format.GeoJSON();
-        
-        var features = format.read(doc); 
-        this.layer.removeAllFeatures();
-        this.layer.addFeatures( features );
-        this.map.zoomToExtent(this.layer.getDataExtent());
-            
-        this.requestSuccess(response);
-        
-        this.hideMask();
-        
-        this.fireEvent('layerloaded', this, this.layer);
-        Sbi.trace("[Thematizer.onSuccess]: event [layerloaded] fired [" + this.layer.features.length+ "]");
-        
-        Sbi.trace("[Thematizer.onSuccess]: OUT");
-    }
-
-    /**
-     * @method 
-     *
-     * @param {Object} response
-     */
-    , onFailure: function(response) {
-    	this.hideMask();
-        this.requestFailure(response);
-    }
-    
-
 });
 
 
