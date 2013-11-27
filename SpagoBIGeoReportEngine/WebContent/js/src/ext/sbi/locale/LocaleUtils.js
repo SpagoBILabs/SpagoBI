@@ -45,7 +45,3 @@ Sbi.locale.localize = function(key) {
 // alias
 LN = Sbi.locale.localize;
 FORMATTERS = Sbi.locale.formatters;
-
-
-
-
