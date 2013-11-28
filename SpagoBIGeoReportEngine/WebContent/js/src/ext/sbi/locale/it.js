@@ -143,6 +143,12 @@ Sbi.locale.ln['sbi.geo.controlpanel.savewin.community'] = 'Community';
 Sbi.locale.ln['sbi.geo.controlpanel.savewin.scope'] = 'Scope';
 Sbi.locale.ln['sbi.geo.controlpanel.savewin.saveWarning']  = 'Prima di salvare il documento, inserire il Nome e selezionare almeno una cartella dove posizionare il documento';
 Sbi.locale.ln['sbi.geo.controlpanel.savewin.msgDetail']  = ' ';
+Sbi.locale.ln['sbi.geo.controlpanel.feedback.title']  = 'Invia Feedback';
+Sbi.locale.ln['sbi.geo.controlpanel.feedback.label']  = 'Testo del messaggio';
+Sbi.locale.ln['sbi.geo.controlpanel.feedback.btn.send']  = 'Invia';
+Sbi.locale.ln['sbi.geo.controlpanel.feedback.sendOK']  = 'Feedback inviato al creatore del documento';
+
+Sbi.locale.ln['sbi.geo.controlpanel.control.share.title']  = 'Condividi mappa';
 
 //===================================================================
 //MAP PANEL

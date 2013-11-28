@@ -59,13 +59,45 @@ Sbi.locale.formats = {
 		}
 };
 
-//===================================================================
-//LABELS
-//===================================================================
+//=====================================================================================================
+//=====================================================================================================
+//DA TRADURRE per utente FINALE
+//=====================================================================================================
+//=====================================================================================================
+
+Sbi.locale.ln['sbi.generic.delete'] = 'Delete';
+
+Sbi.locale.ln['sbi.geo.legendpanel.changeStyle'] = 'Change style'; 
+
+Sbi.locale.ln['sbi.geo.layerpanel.layer'] = ' layer';
+Sbi.locale.ln['sbi.geo.layerpanel.add'] = 'Add layers';
+Sbi.locale.ln['sbi.geo.layerpanel.catalogue'] = 'Layers Catalogue';
+
+Sbi.locale.ln['sbi.geo.controlpanel.savewin.saveWarning']  = 'Before save document, is necessary to insert the name of the map and select almost a folder.';
+Sbi.locale.ln['sbi.geo.controlpanel.savewin.msgDetail']  = ' XXX messaggio visualizzato nella window di salvataggio della mappa per dettagliare bottoni & CO. XXX ';
+Sbi.locale.ln['sbi.geo.controlpanel.feedback.title']  = 'Send Feedback';
+Sbi.locale.ln['sbi.geo.controlpanel.feedback.label']  = 'Message text';
+Sbi.locale.ln['sbi.geo.controlpanel.feedback.btn.send']  = 'Send';
+Sbi.locale.ln['sbi.geo.controlpanel.feedback.sendOK']  = 'Feedback sent to document\'s creator';
+
+Sbi.locale.ln['sbi.geo.controlpanel.control.share.title']  = 'Share map';
+
+
+
+
+
+
+
+//=====================================================================================================
+//=====================================================================================================
+//già TRADOTTE
+//=====================================================================================================
+//=====================================================================================================
 
 //===================================================================
 //GENERIC
 //===================================================================
+
 Sbi.locale.ln['sbi.generic.add'] = 'hinzufügen';//'Add';
 Sbi.locale.ln['sbi.generic.cancel'] = 'abbrechen';//'Cancel';
 Sbi.locale.ln['sbi.generic.modify'] = 'ändern';//'Modify';
@@ -89,9 +121,12 @@ Sbi.locale.ln['sbi.generic.warning'] = 'Warnung'; //'Warning';
 Sbi.locale.ln['sbi.generic.pleaseConfirm'] = 'Bitte bestätigen'; //'Please confirm';
 
 
+
+
 //===================================================================
 // CONTROL PANEL
 //===================================================================
+
 Sbi.locale.ln['sbi.geo.controlpanel.title'] = 'Systemsteuerung'; //'Control Panel';
 Sbi.locale.ln['sbi.geo.controlpanel.defaultname'] = 'Neue Kartenname ...'; //'New Map name...';
 Sbi.locale.ln['sbi.geo.controlpanel.defaultdescr'] = 'Neue Kartenbeschreibung ...'; //'New Map description...';
@@ -109,6 +144,8 @@ Sbi.locale.ln['sbi.geo.controlpanel.filters'] = 'Filter';
 
 Sbi.locale.ln['sbi.geo.layerpanel.title'] = 'Layers'; //'Layers';
 
+
+
 Sbi.locale.ln['sbi.geo.analysispanel.title'] = 'Analyse'; //'Analysis';
 Sbi.locale.ln['sbi.geo.analysispanel.addindicators'] = 'Indikatoren hinzufügen'; //'Add indicators';
 Sbi.locale.ln['sbi.geo.analysispanel.indicator'] = 'Indikator'; //'Indicator';
@@ -125,9 +162,11 @@ Sbi.locale.ln['sbi.geo.analysispanel.filter.default.ok'] = 'Default-Werte richti
 Sbi.locale.ln['sbi.geo.legendpanel.title'] = 'Legende'; //'Legend';
 Sbi.locale.ln['sbi.geo.earthpanel.title'] = '3D-Navigation'; //'3D Navigation';
 
+
 //===================================================================
 //CONTROL PANEL - SAVE WINDOW
 //===================================================================
+
 Sbi.locale.ln['sbi.geo.controlpanel.savewin.title'] = 'Mehr Details hinzufügen und Dokument speichern ...'; //'Insert more details and save your document... ';
 Sbi.locale.ln['sbi.geo.controlpanel.savewin.name'] = 'Name'; //'Name';
 Sbi.locale.ln['sbi.geo.controlpanel.savewin.description'] = 'Beschreibung'; //'Description';
@@ -142,6 +181,7 @@ Sbi.locale.ln['sbi.geo.controlpanel.savewin.msgDetail']  = '';
 //===================================================================
 // MAP PANEL
 //===================================================================
+
 Sbi.locale.ln['sbi.geo.mappanel.title'] = 'Karte'; //'Map';
 
 //===================================================================

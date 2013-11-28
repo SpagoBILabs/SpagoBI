@@ -452,7 +452,7 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 		}
 		
 		this.messageField = new Ext.form.TextArea({
-			fieldLabel: 'Message text',
+			fieldLabel: LN('sbi.geo.controlpanel.feedback.label'),
             width: '100%',
             name: 'message',
             maxLength: 2000,
@@ -467,7 +467,7 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 				sendMessage({'label': Sbi.config.docLabel, 'msg': msgToSend},'sendFeedback');
        		},
        		scope: this ,
-       		text:'Send',
+       		text:LN('sbi.geo.controlpanel.feedback.btn.send'),
 	        width: '100%'
 		});
 
@@ -483,12 +483,13 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 		
 		
 		this.feedbackWindow = new Ext.Window({
+			modal		: true,
             layout      : 'fit',
 	        width		: 700,
 	        height		: 170,
             closeAction :'destroy',
             plain       : true,
-            title		: 'Send Feedback',
+            title		: LN('sbi.geo.controlpanel.feedback.title'),
             items       : [feedbackWindowPanel]
 		});
 		
@@ -501,6 +502,7 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 			measureCatalogue.on('storeLoad', this.onStoreLoad, this);
 			
 			this.measureCatalogueWindow = new Ext.Window({
+				modal		: true,
 	            layout      : 'fit',
 		        width		: 700,
 		        height		: 350,

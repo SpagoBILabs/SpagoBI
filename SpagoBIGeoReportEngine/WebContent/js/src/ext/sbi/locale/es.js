@@ -108,7 +108,12 @@ Sbi.locale.ln['sbi.geo.controlpanel.savewin.community'] = 'Community';
 Sbi.locale.ln['sbi.geo.controlpanel.savewin.scope'] = 'Scope';
 Sbi.locale.ln['sbi.geo.controlpanel.savewin.saveWarning']  = 'Before save document, is necessary to insert the name of the map and select almost a folder.';
 Sbi.locale.ln['sbi.geo.controlpanel.savewin.msgDetail']  = ' ';
+Sbi.locale.ln['sbi.geo.controlpanel.feedback.title']  = 'Send Feedback';
+Sbi.locale.ln['sbi.geo.controlpanel.feedback.label']  = 'Message text';
+Sbi.locale.ln['sbi.geo.controlpanel.feedback.btn.send']  = 'Send';
+Sbi.locale.ln['sbi.geo.controlpanel.feedback.sendOK']  = 'Feedback sent to document\'s creator';
 
+Sbi.locale.ln['sbi.geo.controlpanel.control.share.title']  = 'Share map';
 
 //===================================================================
 // MAP PANEL
