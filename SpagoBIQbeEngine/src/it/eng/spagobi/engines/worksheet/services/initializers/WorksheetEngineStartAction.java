@@ -5,6 +5,7 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.engines.worksheet.services.initializers;
 
+import it.eng.qbe.dataset.QbeDataSet;
 import it.eng.qbe.datasource.AbstractDataSource;
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.commons.bo.UserProfile;
@@ -16,11 +17,12 @@ import it.eng.spagobi.engines.worksheet.WorksheetEngineInstance;
 import it.eng.spagobi.engines.worksheet.template.WorksheetTemplateParser;
 import it.eng.spagobi.services.common.SsoServiceInterface;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
+import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
+import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
-import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.AbstractEngineStartAction;
 import it.eng.spagobi.utilities.engines.EngineConstants;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineStartupException;
 import it.eng.spagobi.utilities.service.JSONAcknowledge;
 
@@ -190,12 +192,49 @@ public class WorksheetEngineStartAction extends AbstractEngineStartAction {
     		IDataSet dataset = this.getDataSet();
     		boolean hasInnerQbe = WorksheetTemplateParser.getInstance().hasInnerQbeQuery(template);
     		if (hasInnerQbe && dataset != null) {
-    			this.persistDataset(dataset, env);
+    			IDataSetTableDescriptor descriptor = this.persistDataset(dataset, env);
+    			if (dataset instanceof QbeDataSet) {
+    				adjustMetadataForQbeDataset((QbeDataSet) dataset, descriptor);
+    			}
     		}
     	}
 		
 	}
 
+	/**
+	 * This method solves the following issue: SQLDataSet defines the SQL
+	 * statement directly considering the names' of the wrapped dataset fields,
+	 * but, in case of QbeDataSet, the fields' names are
+	 * "it.eng.spagobi......Entity.fieldName" and not the name of the
+	 * persistence table!!! We modify the dataset's metadata in order to fix
+	 * this.
+	 * 
+	 * @param dataset
+	 *            The persisted Qbe dataset
+	 * @param descriptor
+	 *            The persistence table descriptor
+	 */
+//	TODO move this logic inside the SQLDataSet: when building the
+//	SQL statement, the SQLDataSet should get the columns' names
+//	from the IDataSetTableDescriptor. Replace
+//	IDataSet.getPersistTableName with
+//	IDataSet.getPersistTableDescriptor in order to permit the
+//	IDataSetTableDescriptor to go with its dataset.
+//	TODO merge with it.eng.spagobi.engines.qbe.services.initializers.QbeEngineFromDatasetStartAction.adjustMetadataForQbeDataset
+	private void adjustMetadataForQbeDataset(QbeDataSet dataset,
+			IDataSetTableDescriptor descriptor) {
+		IMetaData metadata = dataset.getMetadata();
+		int columns = metadata.getFieldCount();
+		for (int i = 0; i < columns; i++) {
+			IFieldMetaData fieldMetadata = metadata.getFieldMeta(i);
+			String newName = descriptor.getColumnName(fieldMetadata
+					.getName());
+			fieldMetadata.setName(newName);
+			fieldMetadata.setProperty("uniqueName", newName);
+		}
+		dataset.setMetadata(metadata);
+	}
+    
 	protected boolean goToWorksheetPreentation() {
 		return true;
 	}

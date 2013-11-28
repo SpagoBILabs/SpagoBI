@@ -180,7 +180,7 @@ public class DatasetMetadataParser {
 		}
 		catch (Exception e) {
 			logger.error("Error in building xml from metadata", e);
-			return null;
+			throw new SpagoBIRuntimeException("Error in building xml from metadata", e);
 		}
 
 		String resultXml = sb.toXML(false);
