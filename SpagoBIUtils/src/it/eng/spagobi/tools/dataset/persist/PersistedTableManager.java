@@ -163,7 +163,7 @@ public class PersistedTableManager {
 		logger.debug("create table statement: " + create);
 		try{
 			if (getDialect().contains(DIALECT_HSQL) || getDialect().contains(DIALECT_HSQL_PRED)){
-				//WORKAROUND for HQL : it needs the fisical table for define a prepareStatement.
+				//WORKAROUND for HQL : it needs the physical table for define a prepareStatement.
 				//So, drop and create an empty target table
 				dropTableIfExists(datasource);
 				//creates temporary table 
@@ -197,6 +197,13 @@ public class PersistedTableManager {
 						toReturn.setDate(i2+1,  (Date)field.getValue());
 					}else if (fmd.getType().toString().contains("Timestamp")){
 						toReturn.setTimestamp(i2+1,  (Timestamp)field.getValue());
+					}else if(fmd.getType().toString().contains("Short")) {
+						//only for primitive type is necessary to use setNull method if value is null
+						if (field.getValue() == null){
+							toReturn.setNull(i2+1, java.sql.Types.INTEGER);
+						 }else{
+							 toReturn.setInt(i2+1, ((Short)field.getValue()).intValue());
+						 }	
 					}else if(fmd.getType().toString().contains("Integer")) {
 						//only for primitive type is necessary to use setNull method if value is null
 						if (field.getValue() == null){
@@ -275,6 +282,8 @@ public class PersistedTableManager {
 			}else{
 				toReturn += " (" + getColumnSize().get(fieldMetaData.getName())+ ")";
 			}
+		} else if (type.contains("java.lang.Short")) {
+			toReturn = " INTEGER ";
 		}else if (type.contains("java.lang.Integer")){
 			toReturn = " INTEGER ";			
 		}else if (type.contains("java.lang.Long")){
