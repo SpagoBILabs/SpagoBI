@@ -284,7 +284,7 @@ Sbi.geo.control.InlineToolbar = OpenLayers.Class(OpenLayers.Control, {
             closeAction :'destroy',
             plain       : true,
             resizable	: false,
-            title		: 'Share map',
+            title		: LN('sbi.geo.controlpanel.control.share.title'),
             items       : [shareMapPanel],
             modal		: true
 		});
