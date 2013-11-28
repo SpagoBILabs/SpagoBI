@@ -206,6 +206,7 @@ commented by Davide Zerbetto on 12/10/2009: there are problems with MIF (Ext Man
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/lib/jquery-1.5.1/jquery-1.5.1.js")%>"></script>
 
 <!--  HighCharts -->
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/lib/highcharts-3.0.7/highcharts-more.js")%>"></script>
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/lib/highcharts-3.0.7/highcharts.js")%>"></script>
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/lib/highcharts-3.0.7/modules/exporting.js")%>"></script>
 
