@@ -61,21 +61,24 @@ Sbi.widgets.EditablePanel = function(config) {
     if (config.editable === undefined || config.editable !== false) {
         
         this.on('render', function(panel) {
-            panel.getEl().on('dblclick', function() {
+            panel.getEl().on('click', function() {
             	if (this.state === 'view') {
+            		Ext.QuickTips.init();
 	                this.htmlEditor = new Ext.form.HtmlEditor({
 	                    value: this.contentPanel.body.dom.childNodes[0].innerHTML
 	                    , name: this.fieldName
 	                    , enableLists: false
+	                    
 	                });
 	                this.htmlEditor.setSize(this.getSize());
 	                this.htmlEditor.on('sync', function () {
 	                    this.fireEvent('change', this, this.htmlEditor.getValue());
 	                }, this);
+	                this.remove(this.contentPanel);
+	                //this.doLayout();
 	                this.add(this.htmlEditor);
 	                this.doLayout();
-	                this.remove(this.contentPanel);
-	                this.doLayout();
+
 	                
 	                // workaround: in IE the double-click does not make the editing cursor appear (this happens very often)
 	                this.htmlEditor.focus(); 
