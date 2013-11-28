@@ -99,7 +99,7 @@ Sbi.execution.toolbar.MetadataWindow = function(config) {
         items : this.generalMetadataPanel ,
         buttons : buttons,
         width : 650,
-        height : 410,
+        height : 460,
         plain : true,
         autoScroll : true,
         title : LN('sbi.execution.metadata')
@@ -257,15 +257,17 @@ Ext.extend(Sbi.execution.toolbar.MetadataWindow, Ext.Window, {
             enableTabScroll : true
             , activeTab : 0
             , autoScroll : true
+            , height: 210
             //, hideMode : 'offsets'
         });
 
-        this.longTextMetadataPanel = new Ext.Panel( {
+        this.longTextMetadataPanel = new Ext.form.FieldSet( {
             title : LN('sbi.execution.metadata.longtextmetadata'),
             collapsible : true,
             collapsed : false,
             items : [ this.longTextMetadataTabPanel ],
-            height : 300
+            height : 235,
+            width: 620
         });
         
     }
