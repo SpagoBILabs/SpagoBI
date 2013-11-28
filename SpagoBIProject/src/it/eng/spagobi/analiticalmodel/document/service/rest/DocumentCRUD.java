@@ -138,8 +138,8 @@ public class DocumentCRUD {
 			if ((emailAddressdocumentCreationUser != null) && (!emailAddressdocumentCreationUser.isEmpty())){
 				if ((label != null) && (!label.isEmpty()) ){
 					if ((userSendingFeedback != null) && (!userSendingFeedback.isEmpty())){
-						String subject = msgBuilder.getMessage("document.feedback.msg.1", "messages", req) + 
-						 " "+userSendingFeedback+ " " + msgBuilder.getMessage("document.feedback.msg.2", "messages", req) + "  "+
+						String subject = msgBuilder.getMessage("document.feedback.msg.1", "messages") + 
+						 " "+userSendingFeedback+ " " + msgBuilder.getMessage("document.feedback.msg.2", "messages") + "  "+
 						label;
 						sendMail(emailAddressdocumentCreationUser,subject,message);
 					}
