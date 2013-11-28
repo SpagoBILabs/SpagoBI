@@ -102,7 +102,7 @@ Ext.extend(Sbi.tools.dataset.QbeDatasetBuilder, Ext.Window, {
 	        			} else if (messageName == 'catalogueready') {
 	        				this.setQbeQuery();
 	        			} else { 
-	        				alert('qbedatasetbuilder: Unknown message');
+	        				//alert('qbedatasetbuilder: Unknown message');
 	        			}
 	        		}
 	        		, scope: this
