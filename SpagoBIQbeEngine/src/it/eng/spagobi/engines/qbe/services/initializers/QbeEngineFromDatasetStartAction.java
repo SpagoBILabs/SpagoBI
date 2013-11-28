@@ -111,9 +111,8 @@ public class QbeEngineFromDatasetStartAction extends QbeEngineStartAction {
 			env.put(EngineConstants.ENV_DATASOURCE, dataSource);
 		}
 		
-		boolean wasPersistedBefore = dataset.isPersisted() || dataset.isFlatDataset();
 		IDataSetTableDescriptor descriptor = this.persistDataset(dataset, env);
-		if (!wasPersistedBefore && dataset instanceof QbeDataSet) {
+		if (dataset instanceof QbeDataSet) {
 			adjustMetadataForQbeDataset((QbeDataSet) dataset, descriptor);
 		}
 
@@ -123,6 +122,27 @@ public class QbeEngineFromDatasetStartAction extends QbeEngineStartAction {
 		return env;
 	}
 	
+	
+	/**
+	 * This method solves the following issue: SQLDataSet defines the SQL
+	 * statement directly considering the names' of the wrapped dataset fields,
+	 * but, in case of QbeDataSet, the fields' names are
+	 * "it.eng.spagobi......Entity.fieldName" and not the name of the
+	 * persistence table!!! We modify the dataset's metadata in order to fix
+	 * this.
+	 * 
+	 * @param dataset
+	 *            The persisted Qbe dataset
+	 * @param descriptor
+	 *            The persistence table descriptor
+	 */
+//	TODO move this logic inside the SQLDataSet: when building the
+//	SQL statement, the SQLDataSet should get the columns' names
+//	from the IDataSetTableDescriptor. Replace
+//	IDataSet.getPersistTableName with
+//	IDataSet.getPersistTableDescriptor in order to permit the
+//	IDataSetTableDescriptor to go with its dataset.
+//	TODO merge with it.eng.spagobi.engines.worksheet.services.initializers.WorksheetEngineStartAction.adjustMetadataForQbeDataset
 	private void adjustMetadataForQbeDataset(QbeDataSet dataset,
 			IDataSetTableDescriptor descriptor) {
 		IMetaData metadata = dataset.getMetadata();

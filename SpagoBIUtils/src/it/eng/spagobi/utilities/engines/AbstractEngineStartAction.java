@@ -22,6 +22,7 @@ import it.eng.spagobi.services.proxy.ContentServiceProxy;
 import it.eng.spagobi.services.proxy.DataSetServiceProxy;
 import it.eng.spagobi.services.proxy.DataSourceServiceProxy;
 import it.eng.spagobi.services.proxy.MetamodelServiceProxy;
+import it.eng.spagobi.tools.dataset.bo.AbstractDataSet;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
@@ -630,9 +631,20 @@ public class AbstractEngineStartAction extends AbstractBaseHttpAction {
 			descriptor = this.persistDataSetWithTemporaryTable(dataset, tableName,
 					dataSource);
 			logger.debug("Dataset persisted.");
+			
+			// since this a start action, we can consider that the dataset can
+			// be considered to be persistent during all the user session, so we
+			// can change the state of the dataset. Compare with
+			// it.eng.spagobi.engines.worksheet.services.AbstractWorksheetEngineAction
+			// where we cannot
+			dataset.setPersisted(true);
+			dataset.setPersistTableName(descriptor.getTableName());
+			dataset.setDataSourceForReading(dataSource);
+			
 		} else {
 			try {
-				descriptor = TemporaryTableManager.getTableDescriptor(null,
+				List<String> fields = ((AbstractDataSet) dataset).getFieldsList();
+				descriptor = TemporaryTableManager.getTableDescriptor(fields,
 						dataset.isPersisted() ? dataset.getPersistTableName()
 								: dataset.getFlatTableName(), dataset
 								.getDataSourceForReading());
@@ -705,15 +717,6 @@ public class AbstractEngineStartAction extends AbstractBaseHttpAction {
 			td = dataset.persist(tableName, dataSource);
 			this.recordTemporaryTable(tableName, dataSource);
 			
-			// since this a start action, we can consider that the dataset can
-			// be considered to be persistent during all the user session, so we
-			// can change the state of the dataset. Compare with
-			// it.eng.spagobi.engines.worksheet.services.AbstractWorksheetEngineAction
-			// where we cannot
-			dataset.setPersisted(true);
-			dataset.setPersistTableName(td.getTableName());
-			dataset.setDataSourceForReading(dataSource);
-
 			logger.debug("Dataset persisted");
 		} catch (Throwable t) {
 			logger.error("Error while persisting dataset", t);

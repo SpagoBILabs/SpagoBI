@@ -626,7 +626,7 @@ public abstract class AbstractDataSet implements IDataSet {
 		return descriptor;
 	}
 	
-	protected List<String> getFieldsList() {
+	public List<String> getFieldsList() {
 		List<String> toReturn = new ArrayList<String>();
 		IMetaData metadata = this.getMetadata();
 		int count = metadata.getFieldCount();
