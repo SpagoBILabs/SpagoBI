@@ -20,6 +20,8 @@ import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.StringUtilities;
+import it.eng.spagobi.commons.utilities.messages.IMessageBuilder;
+import it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory;
 import it.eng.spagobi.profiling.bean.SbiAttribute;
 import it.eng.spagobi.profiling.bean.SbiUser;
 import it.eng.spagobi.profiling.bean.SbiUserAttributes;
@@ -99,6 +101,7 @@ public class DocumentCRUD {
 	public String sendFeedback(@Context HttpServletRequest req){
 		
 		logger.debug("IN");
+		IMessageBuilder msgBuilder = MessageBuilderFactory.getMessageBuilder();
 		
 		// 1- Label of current document
 		String label = (String)req.getParameter("label");	
@@ -135,7 +138,9 @@ public class DocumentCRUD {
 			if ((emailAddressdocumentCreationUser != null) && (!emailAddressdocumentCreationUser.isEmpty())){
 				if ((label != null) && (!label.isEmpty()) ){
 					if ((userSendingFeedback != null) && (!userSendingFeedback.isEmpty())){
-						String subject = "Feedback from user "+userSendingFeedback+" about document "+label;
+						String subject = msgBuilder.getMessage("document.feedback.msg.1", "messages", req) + 
+						 " "+userSendingFeedback+ " " + msgBuilder.getMessage("document.feedback.msg.2", "messages", req) + "  "+
+						label;
 						sendMail(emailAddressdocumentCreationUser,subject,message);
 					}
 				}

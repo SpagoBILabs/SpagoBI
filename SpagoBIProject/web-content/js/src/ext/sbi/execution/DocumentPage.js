@@ -374,7 +374,7 @@ Ext.extend(Sbi.execution.DocumentPage, Ext.Panel, {
 									Sbi.exception.ExceptionHandler.handleFailure(response);
 			      				} else {
 			      					this.state = 'LOADING';
-									Sbi.exception.ExceptionHandler.showInfoMessage('Feedback sent to document\'s creator' );
+									Sbi.exception.ExceptionHandler.showInfoMessage(LN('sbi.geo.controlpanel.feedback.sendOK'));
 			      				}
 			      			} 
 			      		} else {
