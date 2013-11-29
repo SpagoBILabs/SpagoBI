@@ -66,7 +66,8 @@ Sbi.geo.widgets.DocumentsTree = function(config) {
     });
     
     var msgDetail = LN('sbi.geo.controlpanel.savewin.msgDetail');
-    if (msgDetail !== ' '){
+    if (Sbi.settings.georeport.georeportPanel.saveWindow && Sbi.settings.georeport.georeportPanel.saveWindow.showDetailBar && 
+    	Sbi.settings.georeport.georeportPanel.saveWindow.showDetailBar == true &&	msgDetail !== ' '){
     	c.title = msgDetail;
     }
     Sbi.geo.widgets.DocumentsTree.superclass.constructor.call(this, c);
