@@ -151,17 +151,6 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeLineChartPanelHighcharts, Sbi.worksheet.
 		});
 	}
 	
-	, getColors : function () {
-		var colors = [];
-		if (this.chartConfig !== undefined && this.chartConfig.series !== undefined && this.chartConfig.series.length > 0) {
-			var i = 0;
-			for (; i < this.chartConfig.series.length; i++) {
-				colors.push(this.chartConfig.series[i].color);
-			}
-		}
-		return colors;
-	}
-	
 	, getPlotOptions : function () {
 		var plotOptions = null;
 

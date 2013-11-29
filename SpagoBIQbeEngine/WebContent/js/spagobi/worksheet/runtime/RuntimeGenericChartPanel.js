@@ -403,10 +403,14 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeGenericChartPanel, Ext.Panel, {
 	
 	, getColors : function () {
 		var colors = [];
-		if (this.chartConfig !== undefined && this.chartConfig.series !== undefined && this.chartConfig.series.length > 0) {
-			var i = 0;
-			for (; i < this.chartConfig.series.length; i++) {
-				colors.push(this.chartConfig.series[i].color);
+		if (this.chartConfig !== undefined && this.chartConfig.groupingVariable != null) {
+			colors = Sbi.widgets.Colors.defaultColors;
+		} else {
+			if (this.chartConfig !== undefined && this.chartConfig.series !== undefined && this.chartConfig.series.length > 0) {
+				var i = 0;
+				for (; i < this.chartConfig.series.length; i++) {
+					colors.push(this.chartConfig.series[i].color);
+				}
 			}
 		}
 		return colors;
