@@ -852,10 +852,22 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 			//COMMUNITY
 			String communityFCode = getAttributeAsString(COMMUNITY); 
 			if(communityFCode != null && !"".equalsIgnoreCase(communityFCode)) {
-				//add community folder to functionalities community folder
-				LowFunctionality commF= DAOFactory.getLowFunctionalityDAO().loadLowFunctionalityByCode(communityFCode, false);
-				Integer commFId= commF.getId();
-				foldersJSON.put(commFId);
+				if (communityFCode.startsWith("-1")){
+					//clean the community
+					String realCode = communityFCode.substring(communityFCode.indexOf("__")+2);
+					for(int i=0; i<foldersJSON.length();i++){
+//						Object pippo = foldersJSON.get(i);
+						if (foldersJSON.get(i).equals(Integer.valueOf(realCode))){
+							foldersJSON.remove(i);
+							break;
+						}							
+					}					
+				}else{
+					//add community folder to functionalities community folder
+					LowFunctionality commF= DAOFactory.getLowFunctionalityDAO().loadLowFunctionalityByCode(communityFCode, false);
+					Integer commFId= commF.getId();
+					foldersJSON.put(commFId);
+				}
 			}
 			
 			logger.debug("Request succesfully parsed: " + request.toString(3));
