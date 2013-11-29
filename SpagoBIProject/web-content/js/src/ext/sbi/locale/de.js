@@ -18,6 +18,9 @@ Sbi.locale.ln['sbi.general.No'] = 'Nein';
 Sbi.locale.ln['sbi.general.close'] = 'Schliessen';
 Sbi.locale.ln['sbi.general.ok'] = 'OK';
 
+Sbi.locale.ln['sbi.generic.genericError'] = 'Generisches Error';
+Sbi.locale.ln['sbi.generic.genericWarning'] = 'Generisches Warnung';
+
 Sbi.locale.ln['sbi.generic.clone'] = 'klonen';
 Sbi.locale.ln['sbi.generic.add'] = 'hinzufügen';
 Sbi.locale.ln['sbi.generic.delete'] = 'löschen';
