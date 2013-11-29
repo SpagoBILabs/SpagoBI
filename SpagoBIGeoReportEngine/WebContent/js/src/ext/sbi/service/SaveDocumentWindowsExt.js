@@ -269,8 +269,14 @@ Ext.extend(Sbi.service.SaveDocumentWindowExt, Ext.Window, {
 		var isPublic = this.isPublic.getValue();		
 		var query = this.OBJECT_QUERY;
 		var previewFile =  this.fileNameUploaded;
-		var docCommunity = this.docCommunity.getValue();
 		var functs = this.treePanel.returnCheckedIdNodesArray();
+		
+		var docCommunity = this.docCommunity.getValue();
+		if (this.OBJECT_COMMUNITIES != "" && this.OBJECT_COMMUNITIES != null &&
+				this.docCommunity.getValue() == ""){
+			//clean from community
+			docCommunity = "-1__" + this.OBJECT_COMMUNITIES.substring(0,this.OBJECT_COMMUNITIES.indexOf("__")); // -1 say that is deleted
+		}
 		
 		if(query!=undefined && query!=null){
 			query = Ext.util.JSON.encode(query);
