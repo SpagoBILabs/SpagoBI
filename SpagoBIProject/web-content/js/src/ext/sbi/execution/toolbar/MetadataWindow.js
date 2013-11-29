@@ -310,6 +310,7 @@ Ext.extend(Sbi.execution.toolbar.MetadataWindow, Ext.Window, {
             items : [ generalMetadataGridPanel ],
             autoWidth : true,
             autoHeight : true
+
         });
     }
 
@@ -367,6 +368,7 @@ Ext.extend(Sbi.execution.toolbar.MetadataWindow, Ext.Window, {
             items : [ this.longTextMetadataTabPanel ],
             height : 235
             //width: 620
+            , animCollapse : false
         });
         
     }
