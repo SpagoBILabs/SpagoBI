@@ -49,7 +49,7 @@ public class MetadataJSONSerializer implements Serializer {
 			result.put(TYPE, meta.getDataTypeCode());
 			
 			if (content != null) {
-				String contentText = new String(content.getContent(),"ISO-8859-1");
+				String contentText = new String(content.getContent(),"UTF-8");
 				result.put(BIOBJECT_ID, content.getBiobjId());
 				result.put(SUBOBJECT_ID, content.getSubobjId() != null ? content.getSubobjId() : -1);
 				result.put(TEXT,contentText );
