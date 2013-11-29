@@ -106,7 +106,7 @@ Ext.define('Sbi.tools.dataset.ManageDatasetFieldMetadata', {
 		        data: [ ['Column', 'Column'], ['Dataset', 'Dataset']]
 		    }),
 			width : 150,
-			fieldLabel : 'Metadata Type',
+			fieldLabel : LN('sbi.ds.metadata.dataset.title2'),
 			displayField : 'metadataTypeName', 
 			valueField : 'metadataTypeValue', 
 			typeAhead : true, forceSelection : true,
