@@ -366,7 +366,7 @@ Ext.extend(Sbi.execution.toolbar.MetadataWindow, Ext.Window, {
             collapsible : true,
             collapsed : false,
             items : [ this.longTextMetadataTabPanel ],
-            height : 235
+            height : 190
             //width: 620
             , animCollapse : false
         });
