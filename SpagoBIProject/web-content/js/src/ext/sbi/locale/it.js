@@ -730,7 +730,7 @@ Sbi.locale.ln['sbi.ds.EXISTS']= 'Il file è già presente nel server';
 Sbi.locale.ln['sbi.ds.failedToUpload']= 'File non caricato';
 Sbi.locale.ln['sbi.ds.skip.checks']='Sovrascrivi il file';
 Sbi.locale.ln['sbi.ds.changedon']='Modificato il ';
-Sbi.locale.ln['sbi.ds.metadata.msgKO']='La validazione ha riscontrato alcuni errori. ';
+Sbi.locale.ln['sbi.ds.metadata.msgKO']='La validazione ha riscontrato alcuni errori. Per visualizzare un tooltip di dettaglio andare con il mouse sulle scritte rosse.';
 Sbi.locale.ln['sbi.ds.metadata.msgOK']='La validazione non ha riscontrato errori';
 Sbi.locale.ln['sbi.ds.metadata.addProperty']='Aggiungi Proprieta';
 Sbi.locale.ln['sbi.ds.metadata.deleteProperty']='Cancella Proproeta';
@@ -740,6 +740,7 @@ Sbi.locale.ln['sbi.ds.metadata.column.column']='Colonna';
 Sbi.locale.ln['sbi.ds.metadata.column.attribute']='Attributo';
 Sbi.locale.ln['sbi.ds.metadata.column.value']='Valore';
 Sbi.locale.ln['sbi.ds.metadata.dataset.title']='Metadata dataset';
+Sbi.locale.ln['sbi.ds.metadata.dataset.title2']='Tipo Metadati';
 
 Sbi.locale.ln['sbi.datasource.label']= 'Etichetta';
 Sbi.locale.ln['sbi.datasource.description']= 'Descrizione';
