@@ -112,9 +112,8 @@ Ext.extend(Sbi.service.SaveDocumentWindowExt, Ext.Window, {
 			inputType: 'text',
 			maxLength: 200,
 			enforceMaxLength: true,
-			width : '95%', //350,
+			anchor : '95%', //350,
 			fieldLabel:LN('sbi.geo.controlpanel.savewin.name') ,
-//			style:'font-size:16;font-family:arial',
 			value:c.docName
 	    });
 		this.docName.setValue(c.docName);
@@ -124,10 +123,9 @@ Ext.extend(Sbi.service.SaveDocumentWindowExt, Ext.Window, {
 	        name: 'docDescr',
 			maxLength : 400,
 			xtype : 'textarea',
-			width : '95%', //350,
+			anchor : '95%', 
 			height : 80,		
 			autoScroll: true,
-			//regexText : LN('sbi.roles.alfanumericString'),
 			fieldLabel : LN('sbi.geo.controlpanel.savewin.description') ,
 			allowBlank : true,
 			value:c.docDescr	
@@ -179,7 +177,7 @@ Ext.extend(Sbi.service.SaveDocumentWindowExt, Ext.Window, {
 		    allowBlank: true,
 		    triggerAction: 'all',
 		    value: selectedComm,
-		    width : '95%', //350,
+		    anchor:'95%' ,
 		    tpl: '<tpl for="."><div class="x-combo-list-item">{name}&nbsp;</div></tpl>'
 		});
 		
@@ -200,7 +198,7 @@ Ext.extend(Sbi.service.SaveDocumentWindowExt, Ext.Window, {
 		    displayField: 'value',
 		    valueField: 'field',
 		    allowBlank: false,
-		    width : '95%', //350,
+		    anchor:'95%' ,
 		    triggerAction : 'all',  //it's necessary to view always ALL values, not only the selected one!
 		    value: c.scope
 		});
@@ -225,7 +223,7 @@ Ext.extend(Sbi.service.SaveDocumentWindowExt, Ext.Window, {
 //	                 "margin-left": "4px",
 //	                 "margin-top": "15px"  //"25px"
 	             },
-	             items: [this.docName,this.docDescr,this.docVisibility,this.fileUpload, this.docCommunity, this.isPublic]
+	             items: [this.docName,this.docDescr, this.fileUpload, this.docVisibility, this.docCommunity, this.isPublic]
 	    	}
 	    });
 	    
