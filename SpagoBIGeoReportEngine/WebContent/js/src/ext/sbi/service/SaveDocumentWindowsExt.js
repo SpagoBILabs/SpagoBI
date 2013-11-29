@@ -112,7 +112,7 @@ Ext.extend(Sbi.service.SaveDocumentWindowExt, Ext.Window, {
 			inputType: 'text',
 			maxLength: 200,
 			enforceMaxLength: true,
-			anchor: '95%',
+			width : '95%', //350,
 			fieldLabel:LN('sbi.geo.controlpanel.savewin.name') ,
 //			style:'font-size:16;font-family:arial',
 			value:c.docName
@@ -124,7 +124,7 @@ Ext.extend(Sbi.service.SaveDocumentWindowExt, Ext.Window, {
 	        name: 'docDescr',
 			maxLength : 400,
 			xtype : 'textarea',
-			width : '100%', //350,
+			width : '95%', //350,
 			height : 80,		
 			autoScroll: true,
 			//regexText : LN('sbi.roles.alfanumericString'),
@@ -163,22 +163,13 @@ Ext.extend(Sbi.service.SaveDocumentWindowExt, Ext.Window, {
 			}),
 
 			autoLoad:true
-//			,listeners: {
-//			     load: function(store, records) {
-//			          store.insert(0, [{
-//			        	  communityId: null,
-//			        	  name: '&nbsp;',
-//			        	  description:'&nbsp;',
-//			        	  owner:'&nbsp;',
-//			        	  functCode:'&nbsp;'
-//			          }]);
-//			     }
-//			  }
 		});
-		
-		
+		storeComm.on("load", function(store) {
+			var defaultData = {};
+            var p = new store.recordType(defaultData); 
+            store.insert(0, p);
+		}, this);
 
-	    
 		this.docCommunity = new Ext.form.ComboBox({
 		    fieldLabel: LN('sbi.geo.controlpanel.savewin.community') ,
 		    mode: 'local',
@@ -187,7 +178,9 @@ Ext.extend(Sbi.service.SaveDocumentWindowExt, Ext.Window, {
 		    valueField: 'functCode',
 		    allowBlank: true,
 		    triggerAction: 'all',
-		    value: selectedComm
+		    value: selectedComm,
+		    width : '95%', //350,
+		    tpl: '<tpl for="."><div class="x-combo-list-item">{name}&nbsp;</div></tpl>'
 		});
 		
 		
@@ -207,6 +200,7 @@ Ext.extend(Sbi.service.SaveDocumentWindowExt, Ext.Window, {
 		    displayField: 'value',
 		    valueField: 'field',
 		    allowBlank: false,
+		    width : '95%', //350,
 		    triggerAction : 'all',  //it's necessary to view always ALL values, not only the selected one!
 		    value: c.scope
 		});
@@ -217,7 +211,7 @@ Ext.extend(Sbi.service.SaveDocumentWindowExt, Ext.Window, {
 	    this.inputForm = new Ext.Panel({
 	         itemId: 'detail'
 	        , columnWidth: 0.6
-	        , border: true
+	        , border: false
 	        , items: {
 	 		   	 columnWidth: 0.4,
 	             xtype: 'fieldset',
@@ -243,15 +237,7 @@ Ext.extend(Sbi.service.SaveDocumentWindowExt, Ext.Window, {
 	          docFunctionalities: this.OBJECT_FUNCTIONALITIES
 	    });
 	    this.treePanel.setCheckedIdNodesArray(this.OBJECT_FUNCTIONALITIES);
-	    
-//	    this.msgArea = new Ext.form.TextArea({
-//			xtype : 'textarea',
-//			width : '100%', //350,
-//			height : 80,		
-//			autoScroll: true,
-//			value: LN('sbi.geo.controlpanel.savewin.msgDetail'),
-//			readOnly: true
-//		});
+
 	    
 	    this.saveDocumentForm =  new Ext.Panel({
 		          autoScroll: true,
