@@ -6,8 +6,8 @@
  
  Ext.ns("Sbi.settings");
 
-c = {
-	
+Sbi.settings.georeport = {
+		
 	georeportPanel: {
 	
 	  	controlPanelConf: {
