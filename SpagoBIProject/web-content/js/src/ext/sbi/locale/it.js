@@ -1054,4 +1054,14 @@ Sbi.locale.ln['sbi.tools.layer.props.options']= "Options";
 //===================================================================
 //Sbi.tools.dataset.QbeDataSetsWizard
 //===================================================================
-Sbi.locale.ln["sbi.tools.dataset.qbedatasetswizard.query"]="Definizione della query";
+Sbi.locale.ln["sbi.tools.dataset.qbedatasetswizard.query"]="Definizione della query"
+
+//===================================================================
+//MYDATA 
+//===================================================================
+Sbi.locale.ln['sbi.mydata.mydataset'] = "I Miei Data Set";
+Sbi.locale.ln['sbi.mydata.enterprisedataset'] = "Data Set Certificati";
+Sbi.locale.ln['sbi.mydata.shareddataset'] = "Data Set Condivisi";
+Sbi.locale.ln['sbi.mydata.alldataset'] = "Tutti i Data Set";
+Sbi.locale.ln['sbi.mydata.sharedataset'] = "Condividi Data Set";
+Sbi.locale.ln['sbi.mydata.unsharedataset'] = "Rendi privato Data Set";

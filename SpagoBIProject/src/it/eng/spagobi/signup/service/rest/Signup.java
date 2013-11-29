@@ -353,7 +353,7 @@ public class Signup {
 			logger.error("Invalid captcha");
 		    JSONObject errorMsg = new JSONObject();
 			JSONArray errors = new JSONArray();
-			errors.put(new JSONObject("{message: 'Field Captcha not valorized'}"));
+			errors.put(new JSONObject("{message: '"+msgBuilder.getMessage("signup.check.captchEmpty" ,"messages", locale)+"'}"));
 			errorMsg.put("errors", errors);
 			errorMsg.put("message", "validation-error");
 			return errorMsg.toString(); 	  
@@ -364,7 +364,7 @@ public class Signup {
 			logger.error("Username already in use");
 		    JSONObject errorMsg = new JSONObject();
 		    JSONArray errors = new JSONArray();
-		    errors.put(new JSONObject("{message: 'Username in use'}"));
+		    errors.put(new JSONObject("{message: '"+msgBuilder.getMessage("signup.check.userInUse" ,"messages", locale)+"'}"));
 		    errorMsg.put("errors", errors);
 			errorMsg.put("message", "validation-error");
 			return errorMsg.toString(); 
@@ -387,7 +387,7 @@ public class Signup {
 						 " Check the attibute SPAGOBI.SECURITY.DEFAULT_ROLE_ON_SIGNUP configuration and set a valid role name ! ");
 		    JSONObject errorMsg = new JSONObject();
 			JSONArray errors = new JSONArray();
-			errors.put(new JSONObject("{message: 'Invalid role "+ defaultRole + " for the new user. See log for more details.'}"));
+			errors.put(new JSONObject("{message: '"+msgBuilder.getMessage("signup.check.invalidRole" ,"messages", locale)+"'}"));
 			errorMsg.put("errors", errors);
 			errorMsg.put("message", "validation-error");
 			return errorMsg.toString(); 	  
@@ -420,25 +420,39 @@ public class Signup {
 			CommunityManager communityManager = new CommunityManager();	
 			communityManager.saveCommunity(community, azienda, user.getUserId(), req);
 		  }
-
-		  logger.debug("Preparing activation mail for user [" + username + "]");
-		  String subject = SingletonConfig.getInstance().getConfigValue("MAIL.SIGNUP.subject");
-		  logger.debug("Activation mail's subject set to [" + subject + "]");
-	      String body    = SingletonConfig.getInstance().getConfigValue("MAIL.SIGNUP.body");
-	      logger.debug("Activation mail's body set to [" + body + "]");
+		  StringBuffer sb = new StringBuffer();
+		  sb.append("<HTML>");
+		  sb.append("	<HEAD>");
+		  sb.append("		<TITLE>Activation user</TITLE>");
+		  sb.append("	</HEAD>");
+		  sb.append("	<BODY>");
 		  
+		  logger.debug("Preparing activation mail for user [" + username + "]");
+//		  String subject = SingletonConfig.getInstance().getConfigValue("MAIL.SIGNUP.subject");
+		  String subject =  msgBuilder.getMessage("signup.active.msg.1" ,"messages", locale);
+		  logger.debug("Activation mail's subject set to [" + subject + "]");
+//	      String body    = SingletonConfig.getInstance().getConfigValue("MAIL.SIGNUP.body");
+	      String body  =  msgBuilder.getMessage("signup.active.msg.2" ,"messages", locale) + " ";	      
+	      logger.debug("Activation mail's body set to [" + body + "]");	      
+	      
 	      String host = req.getServerName();
 	      logger.debug("Activation url host is equal to [" + host + "]");
 	      int port = req.getServerPort();
 	      logger.debug("Activation url port is equal to [" + port + "]");
-	      URL url = new URL(req.getScheme(), host, port, req.getContextPath() + "/restful-services/signup/prepareActive?accountId=" + id + "&locale=" + locale );	  
+	      URL url = new URL(req.getScheme(), host, port, req.getContextPath() + "/restful-services/signup/prepareActive?accountId=" + id + "&locale=" + locale );	      
 	      logger.debug("Activation url is equal to [" + url.toExternalForm() + "]");
+	      body += " <a href=\"" + url.toString() + "\">"+msgBuilder.getMessage("signup.active.labelUrl" ,"messages", locale)+"</a>";
+	      sb.append(body);
 		  logger.debug("Activation mail for user [" + username + "] succesfully prepared");
 		  
-	      sendMail(email, subject, body + " \r\n \r\n " + url.toExternalForm() );
+		  sb.append("	</BODY>");
+		  sb.append("</HTML>");
+		  String mailTxt = sb.toString();
+//	      sendMail(email, subject, body + " \r\n \r\n " + url.toExternalForm() );
+	      sendMail(email, subject, mailTxt );
 		} catch (Throwable t) {
-			throw new SpagoBIServiceException(
-					"An unexpected error occured while executing the subscribe action", t);
+			throw new SpagoBIServiceException(					
+					msgBuilder.getMessage("signup.check.error" ,"messages", locale), t);
 		}
         return new JSONObject().toString();
 	}
@@ -579,13 +593,14 @@ public class Signup {
 		// Setting the Subject and Content Type
 		msg.setSubject(subject);
 		// create and fill the first message part
-		MimeBodyPart mbp1 = new MimeBodyPart();
-		mbp1.setText(emailContent);
-		// create the Multipart and add its parts to it
-		Multipart mp = new MimeMultipart();
-		mp.addBodyPart(mbp1);
-		// add the Multipart to the message
-		msg.setContent(mp);
+//		MimeBodyPart mbp1 = new MimeBodyPart();
+//		mbp1.setText(emailContent);
+//		// create the Multipart and add its parts to it
+//		Multipart mp = new MimeMultipart();
+//		mp.addBodyPart(mbp1);
+//		// add the Multipart to the message
+//		msg.setContent(mp);
+		msg.setContent(emailContent, "text/html");
 		// send message
     	if ((smtpssl.equals("true")) && (!StringUtilities.isEmpty(user)) &&  (!StringUtilities.isEmpty(pass))){
     		//USE SSL Transport comunication with SMTPS

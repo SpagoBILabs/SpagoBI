@@ -97,17 +97,17 @@ Sbi.exception.ExceptionHandler = function(){
         				}
         			}
         		} else {
-        			errMessage = 'Generic error';
+        			errMessage = LN('sbi.generic.genericError');
         		}
         	}
         	
-        	Sbi.exception.ExceptionHandler.showErrorMessage(errMessage, 'Service Error');
+        	Sbi.exception.ExceptionHandler.showErrorMessage(errMessage, LN('sbi.generic.serviceError'));
        	
         },
         
         showErrorMessage : function(errMessage, title) {
-        	var m = errMessage || 'Generic error';
-        	var t = title || 'Error';
+        	var m = errMessage || LN('sbi.generic.genericError');
+        	var t = title || LN('sbi.generic.error');
         	
         	Ext.MessageBox.show({
            		title: t
@@ -119,8 +119,8 @@ Sbi.exception.ExceptionHandler = function(){
         },
         
         showWarningMessage : function(errMessage, title) {
-        	var m = errMessage || 'Generic warning';
-        	var t = title || 'Warning';
+        	var m = errMessage ||LN('sbi.generic.genericWarning');
+        	var t = title || LN('sbi.generic.warning');
         	
         	Ext.MessageBox.show({
            		title: t
@@ -132,8 +132,8 @@ Sbi.exception.ExceptionHandler = function(){
         },
         
         showInfoMessage : function(errMessage, title, config) {
-        	var m = errMessage || 'Info';
-        	var t = title || 'Info';
+        	var m = errMessage || LN('sbi.generic.info');
+        	var t = title || LN('sbi.generic.info');
         	
         	Ext.MessageBox.show(Ext.apply({
            		title: t

@@ -30,11 +30,36 @@ Sbi.settings.mydata = {
 	}
 	, hiddenActions: []
 	/**
+	 * This options will set the default active
+	 * filter used the first time the MyData page is opened
+	 * Possibile values are:
+	 * -'MyDataSet'
+	 * -'EnterpriseDataSet'
+	 * -'SharedDataSet'
+	 * -'AllDataSet'
+	 * 
+	 * Make attention that the default filter selected must be 
+	 * a visible filter, so for example if 
+	 * defaultFilter:'MyDataSet'
+	 * showMyDataSetFilter must be true
+	 */
+	, defaultFilter: 'MyDataSet'
+
+	, showMyDataSetFilter: true
+	, showEnterpriseDataSetFilter: true
+	, showSharedDataSetFilter: true
+	, showAllDataSetFilter: true
+	/**
 	 * MY DATA :
 	 * put false for previous behavior (all USER public ds + owned)
 	 * put true for showing only owned datasets
 	 */
 	, showOnlyOwner: true
+	/**
+	 * Visibility of MyData tabs
+	 */
+	, showDataSetTab: true
+	, showModelsTab: true
 };
 
 /**

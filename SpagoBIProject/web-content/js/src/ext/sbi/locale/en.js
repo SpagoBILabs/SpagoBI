@@ -29,6 +29,8 @@ Sbi.locale.ln['sbidomains.nm.test_role'] = 'Test User';
 Sbi.locale.ln['sbidomains.nm.model_admin'] = 'Model Administrator';
 //START Generic messages
 //Buttons
+Sbi.locale.ln['sbi.generic.genericError'] = 'Generic Error';
+Sbi.locale.ln['sbi.generic.genericWarning'] = 'Generic Warning';
 Sbi.locale.ln['sbi.generic.clone'] = 'Clone';
 Sbi.locale.ln['sbi.generic.add'] = 'Add';
 Sbi.locale.ln['sbi.generic.delete'] = 'Delete';
@@ -1059,3 +1061,13 @@ Sbi.locale.ln['sbi.tools.layer.props.options']= "Options";
 //Sbi.tools.dataset.QbeDataSetsWizard
 //===================================================================
 Sbi.locale.ln["sbi.tools.dataset.qbedatasetswizard.query"]="Query definition";
+
+//===================================================================
+//MYDATA 
+//===================================================================
+Sbi.locale.ln['sbi.mydata.mydataset'] = "My Data Set";
+Sbi.locale.ln['sbi.mydata.enterprisedataset'] = "Enterprise Data Set";
+Sbi.locale.ln['sbi.mydata.shareddataset'] = "Shared Data Set";
+Sbi.locale.ln['sbi.mydata.alldataset'] = "All Data Set";
+Sbi.locale.ln['sbi.mydata.sharedataset'] = "Share Data Set";
+Sbi.locale.ln['sbi.mydata.unsharedataset'] = "Unshare Data Set";
