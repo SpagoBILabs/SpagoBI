@@ -6,7 +6,7 @@
  
  Ext.ns("Sbi.settings");
 
-Sbi.settings.georeport = {
+c = {
 	
 	georeportPanel: {
 	
@@ -26,6 +26,9 @@ Sbi.settings.georeport = {
 	  		, historyButtonGroupEnabled: true
 	  	}
 	
+	  	, saveWindow:{
+	  		showDetailBar: false
+	  	}
 			
 		/**
 		 * base map configuration's options passed to the constructor of OpenLayers Map Object 

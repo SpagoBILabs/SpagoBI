@@ -175,7 +175,7 @@ Sbi.locale.ln['sbi.geo.controlpanel.savewin.previewfile'] = 'Dateivorschau'; //'
 Sbi.locale.ln['sbi.geo.controlpanel.savewin.community'] = 'Gemeinschaft'; //'Community';
 Sbi.locale.ln['sbi.geo.controlpanel.savewin.scope'] = 'Scope'; //'Scope';
 Sbi.locale.ln['sbi.geo.controlpanel.savewin.saveWarning']  = ''; //Before save document, is necessary to insert the name of the map and select almost a folder.
-Sbi.locale.ln['sbi.geo.controlpanel.savewin.msgDetail']  = '';
+Sbi.locale.ln['sbi.geo.controlpanel.savewin.msgDetail']  = 'Wählen Sie den Ordner, in dem die Karte veröffentlichen. Die Ordnerauswahl wird die Sichtbarkeit von anderen Benutzern zu bestimmen';
 
 
 //===================================================================
