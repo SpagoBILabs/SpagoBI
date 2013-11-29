@@ -149,7 +149,8 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 			Sbi.config = {};
 
 			var url = {
-		    	host: '<%= request.getServerName()%>'
+				protocol: '<%= request.getScheme()%>'   
+		    	, host: '<%= request.getServerName()%>'
 		    	, port: '<%= request.getServerPort()%>'
 		    	, contextPath: '<%= request.getContextPath().startsWith("/")||request.getContextPath().startsWith("\\")?request.getContextPath().substring(1): request.getContextPath()%>'
 		    	, controllerPath: null // no cotroller just servlets   
