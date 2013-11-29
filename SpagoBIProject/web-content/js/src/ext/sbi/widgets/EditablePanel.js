@@ -83,6 +83,7 @@ Sbi.widgets.EditablePanel = function(config) {
 	                // workaround: in IE the double-click does not make the editing cursor appear (this happens very often)
 	                this.htmlEditor.focus(); 
 	                
+	                this.htmlEditor.syncSize();
 	                // state changes to 'edit'
 	                this.state = 'edit';
             	}
