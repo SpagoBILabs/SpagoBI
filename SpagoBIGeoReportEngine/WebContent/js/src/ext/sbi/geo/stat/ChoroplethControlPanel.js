@@ -733,7 +733,7 @@ Sbi.geo.stat.ChoroplethControlPanel = Ext.extend(Ext.FormPanel, {
     , measureCatalogueWindow : null
     , showMeasureCatalogueWindow: function(){
 		if(this.measureCatalogueWindow==null){
-			var measureCatalogue = new Sbi.geo.tools.MeasureCatalogue();
+			var measureCatalogue = new Sbi.geo.tools.MeasureCataloguePanel();
 			measureCatalogue.on('storeLoad', this.onStoreLoad, this);
 			
 			this.measureCatalogueWindow = new Ext.Window({

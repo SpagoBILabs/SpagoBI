@@ -242,7 +242,11 @@ Ext.extend(Sbi.geo.stat.ProportionalSymbolThematizer, Sbi.geo.stat.Thematizer, {
 		
 		formState.minRadiusSize = thematizerOption.minRadiusSize || 2;
 		formState.maxRadiusSize = thematizerOption.maxRadiusSize || 20;
-		formState.indicator = thematizerOption.indicator;
+		if(thematizerOption.indicator) {
+			formState.indicator = thematizerOption.indicator;
+			Sbi.trace("[ProportionalSymbolThematizer.getAnalysisConf] : indicator is equal to [" + formState.indicator + "]");
+		}
+	
 		
 		return formState;
     }

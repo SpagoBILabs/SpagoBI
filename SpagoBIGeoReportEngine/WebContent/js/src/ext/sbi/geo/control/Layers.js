@@ -516,7 +516,7 @@ Sbi.geo.control.Layers = OpenLayers.Class(OpenLayers.Control, {
     showLayersCatalogueWindow: function(){
     	var thisPanel = this;
 		if(this.layersCatalogueWindow==null){
-			var layersCatalogue = new Sbi.geo.tools.LayersCatalogue(); 
+			var layersCatalogue = new Sbi.geo.tools.LayersCataloguePanel(); 
 			
 			this.layersCatalogueWindow = new Ext.Window({
 	            layout      : 'fit',

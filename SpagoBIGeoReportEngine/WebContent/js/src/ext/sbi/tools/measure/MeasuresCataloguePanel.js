@@ -7,20 +7,44 @@
  
 Ext.ns("Sbi.geo.tools");
 
-Sbi.geo.tools.MeasureCatalogue = function(config) {
+/**
+ * Sbi.geo.tools.MeasureCataloguePanel
+ * A popup window that shows the content of measure catalogue
+ */
+Sbi.geo.tools.MeasuresCataloguePanel = function(config) {
+
+
+	this.validateConfigObject(config);
+	this.adjustConfigObject(config);
 
 	var defaultSettings = {
-			layout: 'fit',
-			contextPath: "SpagoBI",
-			columnsRef: ['dsName', 'dsCategory', 'dsType'],
-			measuresProperties: [{header:'Alias', dataIndex:'alias'},
-			                     {header:'Type', dataIndex:'classType'},
-			                     {header:'Column', dataIndex:'columnName'}],
-			datasetsProperties: [{header:'Name', dataIndex:'dsName'},
-			                     {header:'Label', dataIndex:'dsLabel'},
-			                     {header:'Category', dataIndex:'dsCategory'},
-			                     {header:'Type', dataIndex:'dsType'}],
-			filteringProperties:['alias','dsName', 'dsCategory', 'dsType']
+		layout : 'fit',
+		contextPath : "SpagoBI",
+		columnsRef : [ 'dsName', 'dsCategory', 'dsType' ],
+		measuresProperties : [ {
+			header : 'Alias',
+			dataIndex : 'alias'
+		}, {
+			header : 'Type',
+			dataIndex : 'classType'
+		}, {
+			header : 'Column',
+			dataIndex : 'columnName'
+		} ],
+		datasetsProperties : [ {
+			header : 'Name',
+			dataIndex : 'dsName'
+		}, {
+			header : 'Label',
+			dataIndex : 'dsLabel'
+		}, {
+			header : 'Category',
+			dataIndex : 'dsCategory'
+		}, {
+			header : 'Type',
+			dataIndex : 'dsType'
+		} ],
+		filteringProperties : [ 'alias', 'dsName', 'dsCategory', 'dsType' ]
 	};
 
 	
@@ -29,37 +53,166 @@ Sbi.geo.tools.MeasureCatalogue = function(config) {
 		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.georeport.tools.measurecatalogue);
 	}
 	
-	Ext.apply(this,defaultSettings);
+	Ext.apply(this, defaultSettings);
 	
-	var tbar =  this.buildTopToolbar(this);
-	var bbar =  this.buildBottomToolbar(this);
-	var expander = this.buildexpander();
-	var sm = new Ext.grid.CheckboxSelectionModel({SingleSelect:false, grid:this});
-	var cm = this.buildColumns(sm, expander);
+	
+	this.init();
+	
+	
 	 
-	 var c = ({
-	  store: this.buildStore(),
-	  view: new Ext.grid.GroupingView({
-	   forceFit:true,
-	   groupTextTpl: '{text} ({[values.rs.length]} {[values.rs.length > 1 ? "Misure" : "Misura"]})'
-	  }),
-	  
-	  bbar: bbar,
-	  tbar: tbar,
-	  cm: cm,
-	  sm: sm,
-	  plugins: expander
-	 });
+
+	var c = ({
+		store : this.buildStore(),
+		view : new Ext.grid.GroupingView(
+				{
+					forceFit : true,
+					groupTextTpl : '{text} ({[values.rs.length]} {[values.rs.length > 1 ? "Misure" : "Misura"]})'
+				}),
+
+		tbar : this.topToolbar,
+		cm : this.columnModel,
+		sm : this.selectionModel,
+		plugins : this.expander
+	});
+	
+	if(this.showBottomToolbar === false) {
+		c.bbar = this.bottomToolbar;
+	}
 
 	this.addEvents('storeLoad');
 
-	Sbi.geo.tools.MeasureCatalogue.superclass.constructor.call(this,c);
+	Sbi.geo.tools.MeasuresCataloguePanel.superclass.constructor.call(this,c);
 };
 
 
-Ext.extend(Sbi.geo.tools.MeasureCatalogue, Ext.grid.GridPanel, {
+Ext.extend(Sbi.geo.tools.MeasuresCataloguePanel, Ext.grid.GridPanel, {
 
-	buildColumns: function(sm, expander){
+	// =================================================================================================================
+	// PROPERTIES
+	// =================================================================================================================
+	
+	
+	/**
+     * @property {Array} services
+     * This array contains all the services invoked by this class
+     */
+	services: null
+	, topToolbar: null
+	, bottomToolbar: null
+	, showBottomToolbar: true
+	
+	   // =================================================================================================================
+	// METHODS
+	// =================================================================================================================
+	
+	/**
+	 * @method 
+	 * 
+	 * Controls that the configuration object passed in to the class constructor contains all the compulsory properties. 
+	 * If it is not the case an exception is thrown. Use it when there are properties necessary for the object
+	 * construction for whom is not possible to find out a valid default value.
+	 * 
+	 * @param {Object} the configuration object passed in to the class constructor
+	 * 
+	 * @return {Object} the config object received as input
+	 */
+	, validateConfigObject: function(config) {
+		
+	}
+
+	/**
+	 * @method 
+	 * 
+	 * Modify the configuration object passed in to the class constructor adding/removing properties. Use it for example to 
+	 * rename a property or to filter out not necessary properties.
+	 * 
+	 * @param {Object} the configuration object passed in to the class constructor
+	 * 
+	 * @return {Object} the modified version config object received as input
+	 * 
+	 */
+	, adjustConfigObject: function(config) {
+		
+	}
+
+	// -----------------------------------------------------------------------------------------------------------------
+    // accessor methods
+	// -----------------------------------------------------------------------------------------------------------------
+	// ...
+	
+	// -----------------------------------------------------------------------------------------------------------------
+    // public methods
+	// -----------------------------------------------------------------------------------------------------------------
+	// ...
+
+	//-----------------------------------------------------------------------------------------------------------------
+	// init methods
+	// -----------------------------------------------------------------------------------------------------------------
+
+	, init: function() {
+		this.topToolbar =  this.initTopToolbar();
+		if(this.showBottomToolbar === true) {
+			this.bottomToolbar =  this.initBottomToolbar();
+		}
+		this.expander = this.initExpanderPlugin();
+		this.selectionModel = new Ext.grid.CheckboxSelectionModel({SingleSelect:false, grid:this});
+		this.columnModel = this.initColumnModel(this.selectionModel, this.expander);
+	}
+	
+	, initTopToolbar: function(){
+		
+		var thisPanel = this;
+		
+		this.search = new Ext.form.TriggerField({
+			enableKeyEvents: true,
+			cls: ' x-form-text-search',
+			triggerClass:'x-form-clear-trigger',
+	    	onTriggerClick: function(e) {
+	    		if(this.el.dom.className.indexOf("x-form-text-search")<0){
+            		this.el.dom.className+=" x-form-text-search";
+            	}
+	    		this.setValue("");
+	    		thisPanel.filter("");
+			},
+			listeners:{
+				keyup:function(textField, event){
+					thisPanel.filter(textField.getValue());
+	            	if(textField.getValue()==""){
+	            		textField.el.dom.className+=" x-form-text-search";
+	            	}else if(textField.el.dom.className.indexOf("x-form-text-search")>=0){
+	            		textField.el.dom.className=textField.el.dom.className.replace("x-form-text-search","");
+	            	}
+				},
+				scope: thisPanel
+			}
+		});
+
+		
+		var tb = new Ext.Toolbar(['->',this.search]);
+
+		return tb;	
+	}
+	
+	, initBottomToolbar: function(grid){
+		
+		var thisPanel = this;
+		
+		var joinMeasuresButton = new Ext.Toolbar.Button({
+			text    : LN('sbi.tools.catalogue.measures.join.btn'),
+			tooltip : LN('sbi.tools.catalogue.measures.join.tooltip'),
+			handler : function() {
+				thisPanel.executeJoin();
+			}
+		});
+
+		
+		var tb = new Ext.Toolbar(['->',joinMeasuresButton]);
+
+		return tb;
+		
+	}
+	
+	, initColumnModel: function(sm, expander){
 		var thisPanel = this;
 		
 		var highlightSearchString = function (value, a, b) {
@@ -90,9 +243,9 @@ Ext.extend(Sbi.geo.tools.MeasureCatalogue, Ext.grid.GridPanel, {
 		columnsDesc.push(sm);
 		
 		return new Ext.grid.ColumnModel(columnsDesc);
-	},
+	}
 
-	buildStore: function(){
+	, buildStore: function(){
 		return new Ext.data.GroupingStore({
 
 			proxy:new Ext.data.HttpProxy({
@@ -122,64 +275,9 @@ Ext.extend(Sbi.geo.tools.MeasureCatalogue, Ext.grid.GridPanel, {
 			,  groupField:'dsName'
 
 		});
-	},
+	}
 	
-	buildTopToolbar: function(grid){
-		
-		var thisPanel = this;
-		
-
-		this.search = new Ext.form.TriggerField({
-			enableKeyEvents: true,
-			cls: ' x-form-text-search',
-			triggerClass:'x-form-clear-trigger',
-	    	onTriggerClick: function(e) {
-	    		if(this.el.dom.className.indexOf("x-form-text-search")<0){
-            		this.el.dom.className+=" x-form-text-search";
-            	}
-	    		this.setValue("");
-	    		thisPanel.filter("");
-			},
-			listeners:{
-				keyup:function(textField, event){
-					thisPanel.filter(textField.getValue());
-	            	if(textField.getValue()==""){
-	            		textField.el.dom.className+=" x-form-text-search";
-	            	}else if(textField.el.dom.className.indexOf("x-form-text-search")>=0){
-	            		textField.el.dom.className=textField.el.dom.className.replace("x-form-text-search","");
-	            	}
-				},
-				scope: thisPanel
-			}
-		});
-
-		
-		var tb = new Ext.Toolbar(['->',this.search]);
-
-		return tb;
-		
-	},
-	
-	buildBottomToolbar: function(grid){
-		
-		var thisPanel = this;
-		
-		var joinMeasuresButton = new Ext.Toolbar.Button({
-			text    : LN('sbi.tools.catalogue.measures.join.btn'),
-			tooltip : LN('sbi.tools.catalogue.measures.join.tooltip'),
-			handler : function() {
-				thisPanel.executeJoin();
-			}
-		});
-
-		
-		var tb = new Ext.Toolbar(['->',joinMeasuresButton]);
-
-		return tb;
-		
-	},
-	
-	filter: function(value){
+	, filter: function(value){
 		if(value!=null && value!=undefined && value!=''){
 			this.getStore().filterBy(function(record,id){
 				
@@ -200,9 +298,9 @@ Ext.extend(Sbi.geo.tools.MeasureCatalogue, Ext.grid.GridPanel, {
 		}else{
 			this.getStore().clearFilter();
 		}
-	},
+	}
 	
-	executeJoin: function(){
+	, executeJoin: function(){
 		var measuresLabels = new Array();
 		var selected = this.getSelectionModel().getSelections();
 		if(selected!=null && selected!=undefined && selected.length>0){
@@ -242,9 +340,9 @@ Ext.extend(Sbi.geo.tools.MeasureCatalogue, Ext.grid.GridPanel, {
 				failure: Sbi.exception.ExceptionHandler.handleFailure
 			});
 		}
-	},
+	}
 	
-	buildexpander: function(){
+	, initExpanderPlugin: function(){
 		
     	var measuresProperties = "";
     	for(var i=0; i<this.measuresProperties.length; i++){
@@ -289,7 +387,7 @@ Ext.extend(Sbi.geo.tools.MeasureCatalogue, Ext.grid.GridPanel, {
 		
 		
 	    return expander;
-	},
+	}
 	
 
 
@@ -297,7 +395,7 @@ Ext.extend(Sbi.geo.tools.MeasureCatalogue, Ext.grid.GridPanel, {
 	/**
 	 * @Private
 	 */
-	highlightSearchStringInternal: function (value, startIndex, searchString, thisPanel) {
+	, highlightSearchStringInternal: function (value, startIndex, searchString, thisPanel) {
         var startPosition = value.toLowerCase().indexOf(searchString.toLowerCase(), startIndex);
         if (startPosition >= 0 ) {
             var prefix = "";

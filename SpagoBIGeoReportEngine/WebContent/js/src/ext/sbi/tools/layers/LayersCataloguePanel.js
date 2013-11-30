@@ -7,7 +7,7 @@
  
 Ext.ns("Sbi.geo.tools");
 
-Sbi.geo.tools.LayersCatalogue = function(config) {
+Sbi.geo.tools.LayersCataloguePanel = function(config) {
 	var defaultSettings = {
 			layout: 'fit',
 			contextPath: "SpagoBI",
@@ -33,11 +33,11 @@ Sbi.geo.tools.LayersCatalogue = function(config) {
 		}
 	});
 	
-	Sbi.geo.tools.LayersCatalogue.superclass.constructor.call(this,c);
+	Sbi.geo.tools.LayersCataloguePanel.superclass.constructor.call(this,c);
 
 };
 
-Ext.extend(Sbi.geo.tools.LayersCatalogue, Ext.grid.GridPanel, {
+Ext.extend(Sbi.geo.tools.LayersCataloguePanel, Ext.grid.GridPanel, {
 	buildColumns: function(sm){
 		var thisPanel = this;
 		

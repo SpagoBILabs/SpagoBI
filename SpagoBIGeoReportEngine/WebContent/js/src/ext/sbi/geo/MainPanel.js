@@ -37,8 +37,6 @@ Sbi.geo.MainPanel = function(config) {
 	if(Sbi.settings && Sbi.settings.georeport && Sbi.settings.georeport.georeportPanel) {
 		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.georeport.georeportPanel);
 	}
-	
-	
 		
 	var c = Ext.apply(defaultSettings, config || {});
 	c.toolbarConf.enabled = false;
@@ -204,12 +202,19 @@ Ext.extend(Sbi.geo.MainPanel, Ext.Panel, {
 		// TODO we assume that different thematizer have no property with the same name
 		// this must be improved in order to manage overlapps in the respect of
 		// old versions
+		Sbi.trace("[MainPanel.getAnalysisState]: Reading analysis configuration from thematizers ...");
 		analysisState.analysisConf = {};
 		for(var t in this.mapComponent.thematizers) {
-			analysisState.analysisConf = Ext.apply(analysisState.analysisConf
-					, this.mapComponent.thematizers[t].getAnalysisConf());
+			var thematizer = this.mapComponent.thematizers[t];
+			var thematizerConf = thematizer.getAnalysisConf();
+			Sbi.trace("[MainPanel.getAnalysisState]: Analysis configuration of thematizer [" + thematizer.thematyzerType + "] " +
+					"is equal to [" + Sbi.toSource(thematizerConf) + "]");
+			analysisState.analysisConf = Ext.apply(
+					analysisState.analysisConf
+					, thematizerConf
+			);
 		}
-		//analysisState.analysisConf = thematizer.getAnalysisConf();
+		Sbi.trace("[MainPanel.getAnalysisState]: Analysis configuration read succesfully from thematizers. It is equal to [" + Sbi.toSource(analysisState.analysisConf) + "]");
 				
 		analysisState.selectedBaseLayer = this.selectedBaseLayer;
 		for(var i=0; i < this.map.getNumLayers(); i++) {

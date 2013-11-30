@@ -380,7 +380,7 @@ Ext.extend(Sbi.geo.controlPanel, Ext.Panel, {
 	
 	, showMeasureCatalogueWindow: function(){
 		if(this.measureCatalogueWindow==null){
-			var measureCatalogue = new Sbi.geo.tools.MeasureCatalogue();
+			var measureCatalogue = new Sbi.geo.tools.MeasureCataloguePanel();
 			measureCatalogue.on('storeLoad', this.onStoreLoad, this);
 			
 			this.measureCatalogueWindow = new Ext.Window({
@@ -459,7 +459,7 @@ Ext.extend(Sbi.geo.controlPanel, Ext.Panel, {
 		}
 		documentWindowsParams.formState = formState;		
 		
-		this.saveWindow = new Sbi.service.SaveDocumentWindowExt(documentWindowsParams);
+		this.saveWindow = new Sbi.tools.documents.SaveDocumentWindow(documentWindowsParams);
 		this.saveWindow.addListener('syncronizePanel', this.onSyncronizePanel, this);
 		this.saveWindow.show();		
 
