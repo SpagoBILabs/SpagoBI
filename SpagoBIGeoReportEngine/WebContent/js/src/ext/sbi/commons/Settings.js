@@ -125,30 +125,27 @@ Sbi.settings.georeport = {
     		        displayOutsideMaxExtent: true
     		    }, 
 				enabled: true
-    		}/*,
-//    		{
-//    			type: 'Google',
-//    			name: 'GoogleMap',
-//    			options: {'sphericalMercator': true}, 
-//				enabled: true
-//    		}, 
-//    		{
-//    			type: 'Google',
-//    			name: 'Google Satellite',
-//    			options: {type: G_SATELLITE_MAP, 'sphericalMercator': true, numZoomLevels: 22},
-//    			enabled: true
-//    		}, 
-//    		{
-//    			type: 'Google',
-//    			name: 'Google Hybrid',
-//    			options: {type: G_HYBRID_MAP, 'sphericalMercator': true}, 
-//				enabled: true
-//    		},
-    		{
-    			type: 'OSM', 
-				enabled: false
-    		}*/
-    		
+    		}/*, {
+    			type: 'Google',
+    			name: 'Google Physical',
+    			options:  {type: google.maps.MapTypeId.TERRAIN},
+				enabled: true
+    		}, {
+    			type: 'Google',
+    			name: 'Google Streets',
+    			options:  {numZoomLevels: 20},
+				enabled: true
+    		}, {
+    			type: 'Google',
+    			name: 'Google Hybrid',
+    			options: {type: google.maps.MapTypeId.HYBRID, numZoomLevels: 20},
+				enabled: true
+    		}, {
+    			type: 'Google',
+    			name: 'Google Satellite',
+    			options:  {type: google.maps.MapTypeId.SATELLITE, numZoomLevels: 22},
+    			enabled: true
+    		}  */   		
      	]
      	
      	/**
