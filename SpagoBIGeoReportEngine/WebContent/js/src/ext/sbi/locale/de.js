@@ -98,7 +98,8 @@ Sbi.locale.ln['sbi.geo.controlpanel.control.share.title']  = 'Share map';
 //GENERIC
 //===================================================================
 
-Sbi.locale.ln['sbi.generic.add'] = 'hinzufügen';//'Add';
+Sbi.locale.ln['sbi.generic.add'] = 'In Indikatoren aus dem Katalog';//'Add';
+Sbi.locale.ln['sbi.generic.select'] = 'Wählen Indikatoren aus dem Katalog';//'Select';
 Sbi.locale.ln['sbi.generic.cancel'] = 'abbrechen';//'Cancel';
 Sbi.locale.ln['sbi.generic.modify'] = 'ändern';//'Modify';
 Sbi.locale.ln['sbi.generic.save'] = 'speichern';//'Save ';

@@ -362,7 +362,7 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 	
 	, showMeasureCatalogueWindow: function(){
 		if(this.measureCatalogueWindow==null){
-			var measureCatalogue = new Sbi.geo.tools.MeasureCatalogue();
+			var measureCatalogue = new Sbi.geo.tools.MeasureCataloguePanel();
 			measureCatalogue.on('storeLoad', this.onStoreLoad, this);
 			
 			this.measureCatalogueWindow = new Ext.Window({
@@ -383,7 +383,7 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 	, showLayersCatalogueWindow: function(){
 		var thisPanel = this;
 		if(this.layersCatalogueWindow==null){
-			var layersCatalogue = new Sbi.geo.tools.LayersCatalogue(); 
+			var layersCatalogue = new Sbi.geo.tools.LayersCataloguePanel(); 
 			//layersCatalogue.on('storeLoad', this.onStoreLoad, this);
 			
 			this.layersCatalogueWindow = new Ext.Window({

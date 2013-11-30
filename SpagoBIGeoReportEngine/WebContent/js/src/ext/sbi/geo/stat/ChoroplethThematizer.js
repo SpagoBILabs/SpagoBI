@@ -126,7 +126,10 @@ Ext.extend(Sbi.geo.stat.ChoroplethThematizer, Sbi.geo.stat.Thematizer, {
 		}
 		
 		
-		formState.indicator = thematizerOption.indicator;
+		if(thematizerOption.indicator) {
+			formState.indicator = thematizerOption.indicator;
+			Sbi.trace("[ChoroplethThematizer.getAnalysisConf] : indicator is equal to [" + formState.indicator + "]");
+		}
 		
 		return formState;
     }

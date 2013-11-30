@@ -13,9 +13,9 @@
  * @author Andrea Gioia (andrea.gioia@eng.it)
  */
 
-Ext.ns("Sbi.geo.widgets");
+Ext.ns("Sbi.tools.documents");
 
-Sbi.geo.widgets.DocumentsTree = function(config) {    
+Sbi.tools.documents.DocumentsTree = function(config) {    
 
 	// always declare exploited services first!
 	this.services = new Array();
@@ -70,7 +70,7 @@ Sbi.geo.widgets.DocumentsTree = function(config) {
     	Sbi.settings.georeport.georeportPanel.saveWindow.showDetailBar == true &&	msgDetail !== ' '){
     	c.title = msgDetail;
     }
-    Sbi.geo.widgets.DocumentsTree.superclass.constructor.call(this, c);
+    Sbi.tools.documents.DocumentsTree.superclass.constructor.call(this, c);
     
     this.rootNodeId = config.rootNodeId || 'rootNode';    
     this.rootNode = new Ext.tree.AsyncTreeNode({
@@ -87,7 +87,7 @@ Sbi.geo.widgets.DocumentsTree = function(config) {
 }
 
 
-Ext.extend(Sbi.geo.widgets.DocumentsTree, Ext.tree.TreePanel, {
+Ext.extend(Sbi.tools.documents.DocumentsTree, Ext.tree.TreePanel, {
     
 	services: null
 	, loader: null

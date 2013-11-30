@@ -358,7 +358,6 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
     			Sbi.debug("[Thematizer.filterStore] : Store is ready so can be filtered");
     			//(this.thematyzerType + ": filterStore(ready) : " + this.store.readyForThematization);
     			Sbi.debug("[Thematizer.filterStore] : [" + this.thematyzerType + "] : " + Sbi.toSource(filterValues));
-    			alert(this.thematyzerType + ": filterStore(ready) : " + Sbi.toSource(filterValues));
     			
 	    		this.storeFilters = filterValues;
 	    		
@@ -398,8 +397,6 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
     		} else {
     			Sbi.debug("[Thematizer.filterStore] : Store is not ready so we filter it later");
     			this.pendingStoreFilters = filterValues;
-    			alert(this.thematyzerType + ": filterStore(notready) : " + Sbi.toSource(filterValues));
-    			
     		}
     	}
     	Sbi.trace("[Thematizer.filterStore] : OUT");
@@ -544,6 +541,7 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
     , setData: function(store, meta) {
     	Sbi.trace("[Thematizer.setData] : IN " + store.getTotalCount());
     	
+    	
     	if(this.active === false) {
     		Sbi.trace("[Thematizer.setData] : thematizer is not active");
     		this.pendingSetData = true;
@@ -664,6 +662,9 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
     	var filtersValueMap = new Array();//array with the values of the filters
     	var filters = new Array();//array with filters: contains definitions and values
     	//the order of the 3 arrays is the same. The values of the filter with name filtersNames[j] stay in filtersValueMap[j]
+    	
+    	Sbi.debug("[Thematizer.getAttributeFilters] : store type is equal to [" + this.storeType + "]");
+    	Sbi.debug("[Thematizer.getAttributeFilters] : geoId column is equal to [" + meta.geoId + "]");
     	
     	Sbi.debug("[Thematizer.getAttributeFilters] : Building the array of filters positions ");
 
@@ -1104,7 +1105,7 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
      
      , onHierarchyLevelMetaLoad: function(response, options) {
      	Sbi.trace("[Thematizer.onLoadHierarchyLevelMeta] : IN");
-     	     	
+     	
      	Sbi.debug("[Thematizer.onLoadHierarchyLevelMeta] : metadata of level [" + (options?Sbi.toSource(options.headers, true): 'undefined') + "] succesfully loaded");	
      	
      	this.hideMask();
@@ -1163,8 +1164,6 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
     	//try {
 	    	Sbi.debug("[Thematizer.loadLayer]: onSuccess callback defined [" + (onSuccess != undefined) + "]");
 	    	Sbi.debug("[Thematizer.loadLayer]: onFailure callback defined [" + (onFailure != undefined) + "]");
-	    	
-	    	//alert("loadlayer");
 	    	
 	     	var params = {
 	     		layer: this.layerName
@@ -1240,8 +1239,8 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
 		 this.fireEvent('layerloaded', this, layer);
 		 Sbi.trace("[Thematizer.onLayerLoaded]: event [layerloaded] fired");
 		 
-	     //this.fireEvent('indicatorsChanged', this, this.indicators, this.indicator);
-	     //this.fireEvent('filtersChanged', this, this.filters);
+	     this.fireEvent('indicatorsChanged', this, this.indicators, this.indicator);
+	     this.fireEvent('filtersChanged', this, this.filters);
 	     
 	     Sbi.trace("[Thematizer.onLayerLoaded] : OUT");
      }
@@ -1314,15 +1313,15 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
     	Sbi.trace("[Thematizer.onPhysicalStoreLoaded]: IN");
     	Sbi.trace("[Thematizer.onPhysicalStoreLoaded]: Meta property list [" + Sbi.toSourcePropertiesList(this.meta)+ "]");
     	
-    	alert(this.thematyzerType + ": onPhysicalStoreLoaded : " + this.store.readyForThematization);
-    	
     	this.store.readyForThematization = true;
     	
     	for(var i = 0; i <  this.meta.fields.length; i++) {
-        	Sbi.trace("[Thematizer.onPhysicalStoreLoaded]: Field role [" + this.meta.fields[i].role + "]");
+        	Sbi.trace("[Thematizer.onPhysicalStoreLoaded]: Field [" + this.meta.fields[i].header + "] role is equal to  [" + this.meta.fields[i].role + "]");
         }
     	
-    	this.meta.geoId = this.geoId;
+    	Sbi.trace("[Thematizer.onPhysicalStoreLoaded]: Geo Id column is equal to [" + this.storeId + "]");
+    	
+    	this.meta.geoId = this.storeId;
     	this.filters = this.getAttributeFilters(store, this.meta);
     	this.fireEvent('filtersChanged', this, this.filters);
     	Sbi.trace("[Thematizer.onPhysicalStoreLoaded]: filtersChanged fired");
@@ -1368,7 +1367,7 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
 						return;
 					}
 				}
-				alert("Impossible to load virtual store");
+				
 				Sbi.exception.ExceptionHandler.handleFailure(response);
 
 			}

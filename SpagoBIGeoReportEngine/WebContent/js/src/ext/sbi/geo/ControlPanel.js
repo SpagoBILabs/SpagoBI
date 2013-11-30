@@ -254,6 +254,7 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 		
 		for(var i=0; i<filterDescriptors.length; i++){
 			
+			filterDescriptors[i].values.unshift("");
 			
 			var filterLabel = this.createFilterLabel(filterDescriptors[i]);
 			this.filterLabels.push(filterLabel);
@@ -262,7 +263,6 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 			var filterField = this.createFilterField(filterDescriptors[i]);
 			this.filterFields.push(filterField);
 			filterField.render("filtersDiv");
-			
 		}
 		
 		if(this.pendingFilters === true) {
@@ -336,6 +336,7 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
             emptyText: 'Select a value',
             triggerAction: 'all',
             store: store,
+            tpl: '<tpl for="."><div class="x-combo-list-item">{val}&nbsp;</div></tpl>'
         });
     	
     	filterField.on("select", this.applyFilters, this);
@@ -498,8 +499,8 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 	
 	, showMeasureCatalogueWindow: function(){
 		if(this.measureCatalogueWindow==null){
-			var measureCatalogue = new Sbi.geo.tools.MeasureCatalogue();
-			measureCatalogue.on('storeLoad', this.onStoreLoad, this);
+			this.measureCatalogue = new Sbi.geo.tools.MeasureCataloguePanel({showBottomToolbar: false});
+			this.measureCatalogue.on('storeLoad', this.onStoreLoad, this);
 			
 			this.measureCatalogueWindow = new Ext.Window({
 				modal		: true,
@@ -508,8 +509,14 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 		        height		: 350,
 	            closeAction :'hide',
 	            plain       : true,
-	            title		: LN('sbi.tools.catalogue.measures.window.title'), //OpenLayers.Lang.translate('sbi.tools.catalogue.measures.window.title'),
-	            items       : [measureCatalogue]
+	            title		: LN('sbi.tools.catalogue.measures.window.title'), 
+	            buttons		: [{
+	            	text    : LN('sbi.tools.catalogue.measures.join.btn')
+	    			, tooltip : LN('sbi.tools.catalogue.measures.join.tooltip')
+				    , scope : this
+				    , handler : function() { this.measureCatalogue.executeJoin(); }
+	    	    }],
+	            items       : [this.measureCatalogue]
 			});
 		}
 		
@@ -579,7 +586,7 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 		}
 		documentWindowsParams.formState = formState;		
 		
-		this.saveWindow = new Sbi.service.SaveDocumentWindowExt(documentWindowsParams);
+		this.saveWindow = new Sbi.tools.documents.SaveDocumentWindow(documentWindowsParams);
 		this.saveWindow.addListener('syncronizePanel', this.onSyncronizePanel, this);
 		this.saveWindow.show();		
 
@@ -756,18 +763,31 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 						'<a href="#" class="tick"></a>'+ indEl[1]+
 		            '</li>' ;	
 				}
-		       toReturn +=''+
-		       	'</ul>' +
-		        '<span id="addIndicatorButton" class="btn-2">'+LN('sbi.generic.add')+'</span>' +
-		    '</div>';
+		   
+		       toReturn +=	'</ul>';
+		       
+		       if(this.mapComponnet.getActiveThematizer().storeType === 'physicalStore') {
+		    	   toReturn += '<span id="addIndicatorButton" class="btn-2">'+LN('sbi.generic.select')+'</span>';
+		       } else {
+		    	   toReturn += '<span id="addIndicatorButton" class="btn-2">'+LN('sbi.generic.add')+'</span>';
+		       }
+		      
+		       
+		       toReturn += '</div>';
 		} else {
 			var toReturn = '' +
 			'<div class="indicators" id="indicatorsDiv">' +
 		    	'<h2>'+LN('sbi.geo.controlpanel.indicators')+'</h2>' +
 		        '<ul id="ul-indicators" class="group">' +		
-		       	'</ul>' +
-		        '<span id="addIndicatorButton" class="btn-2">'+LN('sbi.generic.add')+'</span>' +
-		    '</div>';
+		       	'</ul>';
+			
+			   if(this.mapComponnet.getActiveThematizer().storeType === 'physicalStore') {
+		    	   toReturn += '<span id="addIndicatorButton" class="btn-2">'+LN('sbi.generic.select')+'</span>';
+		       } else {
+		    	   toReturn += '<span id="addIndicatorButton" class="btn-2">'+LN('sbi.generic.add')+'</span>';
+		       }
+			
+			toReturn += '</div>';
 		}
 		
 		Sbi.trace("[ControlPanel.getIndicatorsDiv]: OUT");

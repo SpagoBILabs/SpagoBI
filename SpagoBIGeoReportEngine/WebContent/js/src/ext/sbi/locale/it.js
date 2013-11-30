@@ -68,7 +68,8 @@ Sbi.locale.ln['sbi.dataset.no.visible'] = 'il dataset collegato al documento non
 //===================================================================
 //GENERIC
 //===================================================================
-Sbi.locale.ln['sbi.generic.add'] = 'Aggiungi';
+Sbi.locale.ln['sbi.generic.add'] = 'Aggiungi indicatori dal catalogo';//'Add';
+Sbi.locale.ln['sbi.generic.select'] = 'Seleziona indicatori dal catalogo';//'Select';
 Sbi.locale.ln['sbi.generic.delete'] = 'Rimuovi';
 Sbi.locale.ln['sbi.generic.cancel'] = 'Annulla';
 Sbi.locale.ln['sbi.generic.modify'] = 'Aggiorna';
