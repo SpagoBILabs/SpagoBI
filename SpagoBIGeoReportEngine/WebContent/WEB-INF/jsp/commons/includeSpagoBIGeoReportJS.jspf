@@ -33,10 +33,6 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='./js/src/ext/sbi/commons/Format.js'/></script>
 <script type="text/javascript" src='./js/src/ext/sbi/locale/LocaleUtils.js'/></script>
 <script type="text/javascript" src='./js/src/ext/sbi/service/ServiceRegistry.js'/></script>
-<script type="text/javascript" src='./js/src/ext/sbi/service/SaveDocumentWindowsExt.js'/></script>
-
-<script type="text/javascript" src='./js/src/ext/sbi/geo/widgets/DocumentsTree.js'/></script>
-<script type="text/javascript" src='./js/src/ext/sbi/geo/widgets/FileUploadPanel.js'/></script>
 
 <script type="text/javascript" src='./js/src/ext/sbi/geo/utils/ColorRgb.js'/></script>
 <script type="text/javascript" src='./js/src/ext/sbi/geo/utils/GeoReportUtils.js'/></script>
@@ -67,9 +63,11 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='./js/src/ext/sbi/geo/MapComponent.js'/></script>
 <script type="text/javascript" src='./js/src/ext/sbi/geo/MainPanel.js'/></script>
 
-
-<script type="text/javascript" src='./js/src/ext/sbi/tools/measure/MeasuresCatalogue.js'/></script>
-<script type="text/javascript" src='./js/src/ext/sbi/tools/layers/LayersCatalogue.js'/></script>
+<script type="text/javascript" src='./js/src/ext/sbi/tools/documents/DocumentsTree.js'/></script>
+<script type="text/javascript" src='./js/src/ext/sbi/tools/documents/FileUploadPanel.js'/></script>
+<script type="text/javascript" src='./js/src/ext/sbi/tools/documents/SaveDocumentWindows.js'/></script>
+<script type="text/javascript" src='./js/src/ext/sbi/tools/measure/MeasuresCataloguePanel.js'/></script>
+<script type="text/javascript" src='./js/src/ext/sbi/tools/layers/LayersCataloguePanel.js'/></script>
 
 <!-- END-DEBUG -->
 
