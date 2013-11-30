@@ -85,28 +85,15 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 		<title>SpagoBIGeoReportEngine</title>
 		
 		<%@include file="commons/includeGeoExt.jspf" %>
-		
-		
-		
 		<%@include file="commons/includeExtensionsJS.jspf" %>	
-		<script language="javascript" type="text/javascript">
-			//alert('includeExtensionsJS.jspf');
-		</script>	
-		
 		<%@include file="commons/includeSpagoBIGeoReportJS.jspf" %>
-		<script language="javascript" type="text/javascript">
-			//alert('includeSpagoBIGeoReportJS.jspf');
-		</script>
 	</head>
 	
-	<body>
-	
-		<!-- Include template here  -->
-		<!--   %@include file="tests/capoluoghiPropRemoteTemplate.jsp" % --> 
-		<!--  %@include file="tests/usastateChorLocalTemplate.jsp" % -->
-		
+	<body>	
 		
 		<script language="javascript" type="text/javascript">
+		
+			
 
 			Sbi.template = <%= template %>;
 
