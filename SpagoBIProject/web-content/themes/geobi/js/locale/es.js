@@ -10,6 +10,6 @@ Sbi.locale.ln['home.herader.conditions'] = 'Términos y condiciones';
 Sbi.locale.ln['home.header.reservedArea'] = 'Area reservada';
 Sbi.locale.ln['home.header.myAccount'] = 'Mi cuenta';
 Sbi.locale.ln['home.footer.logo.tis'] = 'TIS - Innovation Park';
-Sbi.locale.ln['home.footer.logo.pab'] = 'Provincia Autonoma di Bolzano Alto Adige - Autonome Provinz Bozen Sudtirol';
-Sbi.locale.ln['home.footer.logo.ue'] = 'Unione Europea - Provincia Autonoma di Bolzano - Alto Adige';
+Sbi.locale.ln['home.footer.logo.pab'] = 'Provincia Autonoma de Bolzano Alto Adige - Autonome Provinz Bozen Sudtirol';
+Sbi.locale.ln['home.footer.logo.ue'] = 'Union Europea - Provincia Autonoma de Bolzano - Alto Adige';
 
