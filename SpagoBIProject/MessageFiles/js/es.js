@@ -590,3 +590,219 @@ Sbi.locale.ln['sbi.datasource.readwrite']= 'Read and write';
 //===================================================================
 Ext.Msg.buttonText.yes = 'Sí'; 
 Ext.Msg.buttonText.no = 'No';
+
+
+Sbi.locale.ln['sbi.generic.confirmDeleteDataset'] = 'La cancelaci\u00f3n del dataset eliminar\u00e1 tambi\u00e9n todos los documentos usados. \u00bfConfirmar cancelaci\u00f3n?';
+
+
+//START GRANTS messages 
+Sbi.locale.ln['sbi.grants.kpihierarchy'] = 'Modelo de Instancia';
+Sbi.locale.ln['sbi.grants.ouhierarchy'] = 'Jerarqu\u00EDa de unidades organizativas';
+Sbi.locale.ln['sbi.grants.loadtrees'] = 'Los \u00E1rboles de carga';
+Sbi.locale.ln['sbi.grants.panelTitle'] = 'Manejar Subvenciones';
+Sbi.locale.ln['sbi.grants.listTitle'] = 'Lista de Becas';
+Sbi.locale.ln['sbi.grants.trees.tab'] = 'Los \u00E1rboles';
+Sbi.locale.ln['sbi.grants.hide.leafs'] ='Ocultar unidades de hojas de organizaci\u00F3n ';
+Sbi.locale.ln['sbi.grants.hide.nogrants.kpi'] ='Ocultar KPI sin concesiones';
+Sbi.locale.ln['sbi.grants.hide.nogrants.ous'] ='Ocultar las unidades de organizaci\u00F3n, sin concesiones';
+Sbi.locale.ln['sbi.grants.synchronize.ous.btn.text'] ='Sincronizar las unidades de organizaci\u00F3n';
+Sbi.locale.ln['sbi.grants.synchronize.ous.wait.title'] ='Por favor, espere ...';
+Sbi.locale.ln['sbi.grants.synchronize.ous.wait.msg'] ='La sincronizaci\u00F3n de las unidades de organizaci\u00F3n, por favor espere ... ';
+Sbi.locale.ln['sbi.grants.synchronize.ous.performed.title'] ='La operaci\u00F3n se realiz\u00F3 ';
+Sbi.locale.ln['sbi.grants.synchronize.ous.performed.msg'] ='Las unidades organizativas sincronizados!';
+Sbi.locale.ln['sbi.grants.contextmenu.enable.children'] = 'Habilitar todos los descendientes';
+Sbi.locale.ln['sbi.grants.contextmenu.disable.children'] = 'Desactivar todos los descendientes';
+Sbi.locale.ln['sbi.grants.unavailable.during.save'] = 'Grant no est\u00E1 disponible. Operaci\u00F3n en curso.';
+//END GRANTS messages
+
+
+
+Sbi.locale.ln['sbi.execution.export.qbe.results'] = 'Resultados';
+Sbi.locale.ln['sbi.execution.export.qbe.crosstab'] = 'Tabla de referencias cruzadas';
+Sbi.locale.ln['sbi.worksheet.export.previewtab.msg'] = 'Por favor, abra la pesta\u00F1a de vista previa de hoja de c\u00E1lculo para exportar el documento';
+Sbi.locale.ln['sbi.worksheet.export.previewtab.title'] = 'Advertencia de exportaci\u00F3n';
+
+
+Sbi.locale.ln['sbi.ds.flatTableName'] = 'Nombre de la Tabla';
+
+
+
+Sbi.locale.ln['sbi.execution.export.qbe.results'] = 'Resultados';
+Sbi.locale.ln['sbi.execution.export.qbe.crosstab'] = 'Tabla de referencias cruzadas';
+Sbi.locale.ln['sbi.worksheet.export.previewtab.msg'] = 'Por favor, abra la pesta\u00F1a de vista previa de hoja de c\u00E1lculo para exportar el documento';
+Sbi.locale.ln['sbi.worksheet.export.previewtab.title'] = 'Advertencia de exportaci\u00F3n';
+
+
+Sbi.locale.ln['sbi.ds.flatTableName'] = 'Nombre de la Tabla';
+
+
+Sbi.locale.ln['sbi.execution.export.qbe.results'] = 'Resultados';
+Sbi.locale.ln['sbi.execution.export.qbe.crosstab'] = 'Tabla de referencias cruzadas';
+Sbi.locale.ln['sbi.worksheet.export.previewtab.msg'] = 'Por favor, abra la pesta\u00F1a de vista previa de hoja de c\u00E1lculo para exportar el documento';
+Sbi.locale.ln['sbi.worksheet.export.previewtab.title'] = 'Advertencia de exportaci\u00F3n';
+
+
+//===================================================================
+//MESSAGE BOX BUTTONS 
+//===================================================================
+Sbi.locale.ln['sbi.generic.from'] = 'Fecha de inicio';
+Sbi.locale.ln['sbi.generic.to'] = 'Fecha de finalizaci\u00F3n';
+
+
+//===================================================================
+//MESSAGE FOR QBE DATASET BUILDER 
+//===================================================================
+Sbi.locale.ln['sbi.tools.dataset.qbedatasetbuilder.title'] = 'Constructor de QbE conjunto de datos';
+
+//===================================================================
+//DATASET - CHOOSE DATAMART
+//===================================================================
+Sbi.locale.ln['sbi.tools.managedatasets.datamartcombo.label'] = 'Datamart';
+Sbi.locale.ln['sbi.tools.managedatasets.errors.missingdatamart'] = 'Por favor, seleccione un datamart';
+Sbi.locale.ln['sbi.tools.managedatasets.errors.missingdatasource'] = 'Por favor, seleccione un origen de datos';
+
+//===================================================================
+//DATASET - PREVIEW 
+//===================================================================
+Sbi.locale.ln['sbi.tools.dataset.previewwindow.title'] = 'Vista previa';
+
+//===================================================================
+//DATASTORE PANEL 
+//===================================================================
+Sbi.locale.ln['sbi.widgets.datastorepanel.title'] = 'Resultados';
+
+Sbi.locale.ln['sbi.widgets.datastorepanel.grid.displaymsg'] = 'Mostrando {0} - {1} de {2}';
+Sbi.locale.ln['sbi.widgets.datastorepanel.grid.emptymsg'] = 'No hay datos para mostrar';
+Sbi.locale.ln['sbi.widgets.datastorepanel.grid.emptywarningmsg'] = 'Consulta no devuelve ning\u00FAn dato';
+Sbi.locale.ln['sbi.widgets.datastorepanel.grid.beforeoverflow'] = 'El lï¿½mite m\u00E1ximo n\u00FAmero de registros';
+Sbi.locale.ln['sbi.widgets.datastorepanel.grid.afteroverflow'] = 'superado';
+Sbi.locale.ln['sbi.widgets.datastorepanel.grid.beforepagetext'] = 'P\u00E1ina';
+Sbi.locale.ln['sbi.widgets.datastorepanel.grid.afterpagetext'] = 'de {0}';
+Sbi.locale.ln['sbi.widgets.datastorepanel.grid.firsttext'] = 'Primera p\u00E1gina';
+Sbi.locale.ln['sbi.widgets.datastorepanel.grid.prevtext'] = 'P\u00E1gina anterior';
+Sbi.locale.ln['sbi.widgets.datastorepanel.grid.nexttext'] = 'P\u00E1gina siguiente';
+Sbi.locale.ln['sbi.widgets.datastorepanel.grid.lasttext'] = 'P\u00E1gina siguiente';
+Sbi.locale.ln['sbi.widgets.datastorepanel.grid.refreshtext'] = 'Actualizar';
+
+Sbi.locale.ln['sbi.widgets.datastorepanel.button.tt.exportto'] = 'Exportar a';
+
+//===================================================================
+//DOMAIN  
+//===================================================================
+Sbi.locale.ln['sbi.domain.managedomains.fields.valuecd'] = 'El c\u00F3digo de valor';
+Sbi.locale.ln['sbi.domain.managedomains.fields.valuenm'] = 'Nombre de valor';
+Sbi.locale.ln['sbi.domain.managedomains.fields.valueds'] = 'Descripci\u00F3n de valor';
+Sbi.locale.ln['sbi.domain.managedomains.fields.domaincd'] = 'C\u00F3digo de dominio';
+Sbi.locale.ln['sbi.domain.managedomains.fields.domainnm'] = 'Nombre de dominio';
+
+//===================================================================
+//CONFIG  
+//===================================================================
+Sbi.locale.ln['sbi.config.manageconfig.fields.label'] = 'Etiqueta';
+Sbi.locale.ln['sbi.config.manageconfig.fields.name'] = 'Nombre';
+Sbi.locale.ln['sbi.config.manageconfig.fields.description'] = 'Descripci\u00F3n';
+Sbi.locale.ln['sbi.config.manageconfig.fields.isactive'] = 'Activo';
+Sbi.locale.ln['sbi.config.manageconfig.fields.valuecheck'] = 'Valor de verificaci\u00F3n';
+Sbi.locale.ln['sbi.config.manageconfig.fields.valuetype'] = 'Tipo';
+Sbi.locale.ln['sbi.config.manageconfig.delete'] = 'Datos correctamente borrado';
+Sbi.locale.ln['sbi.config.manageconfig.save'] = 'Datos guardados correctamente';
+Sbi.locale.ln['sbi.config.manageconfig.fields.category'] = 'Categor\u00EDa';
+Sbi.locale.ln['sbi.config.manageconfig.fields.clearFilter'] = 'Eliminar filtro';
+Sbi.locale.ln['sbi.config.manageconfig.fields.selectCategory'] = 'Seleccionar categor\u00EDa';
+Sbi.locale.ln['sbi.config.manageconfig.fields.searchName'] = 'Introduzca el nombre de la b\u00FAsqueda';
+Sbi.locale.ln['sbi.config.manageconfig.fields.searchLabel'] = 'Introduzca la etiqueta de b\u00FAsqueda';
+
+//===================================================================
+//MASSIVE EXPORT
+//===================================================================
+Sbi.locale.ln['sbi.browser.mexport.massiveExportWizard.title'] = 'Asistente para la exportaci\u00F3n masiva de hoja de c\u00E1lculo';
+Sbi.locale.ln['sbi.browser.mexport.massiveExportWizard.button.back'] = '< Volver';
+Sbi.locale.ln['sbi.browser.mexport.massiveExportWizard.button.next'] = 'Siguiente >';
+Sbi.locale.ln['sbi.browser.mexport.massiveExportWizard.button.finish'] = 'Finish';
+Sbi.locale.ln['sbi.browser.mexport.massiveExportWizard.button.cancel'] = 'Cancelar';
+
+
+Sbi.locale.ln['sbi.browser.mexport.massiveExportWizardOptionsPage.title'] = 'Opciones de exportaci\u00F3n';
+Sbi.locale.ln['sbi.browser.mexport.massiveExportWizardOptionsPage.field.cycle.label'] = 'Ciclo de filtros';
+Sbi.locale.ln['sbi.browser.mexport.massiveExportWizardOptionsPage.field.role.label'] = 'Rol';
+Sbi.locale.ln['sbi.browser.mexport.massiveExportWizardOptionsPage.field.role.emptyText'] = 'Seleccione un rol';
+Sbi.locale.ln['sbi.browser.mexport.massiveExportWizardOptionsPage.field.documents.label'] = 'Los documentos de hoja de c\u00E1lculo para la exportaci\u00F3n';
+Sbi.locale.ln['sbi.browser.mexport.massiveExportWizardOptionsPage.msg.noDoc'] = 'No hay documentos de hoja de c\u00E1lculo para la exportaci\u00F3n';
+
+Sbi.locale.ln['sbi.browser.mexport.massiveExportWizardParametersPage.title'] = 'Parï¿½metros';
+
+Sbi.locale.ln['Sbi.browser.mexport.massiveExportWizardTriggerPage.title'] = 'Trigger';
+Sbi.locale.ln['sbi.browser.progresspanel.title'] = 'Progreso de la exportaci\u00F3n masiva'; 
+
+Sbi.locale.ln['Sbi.browser.ProgressPanel.noProgress'] = 'No se ejecuta la exportaci\u00F3n';
+Sbi.locale.ln['Sbi.browser.ProgressPanel.noDownload'] = 'No se puede descargar a la exportaci\u00F3n';
+Sbi.locale.ln['Sbi.browser.ProgressPanel.exporting'] = 'Exportar ';
+Sbi.locale.ln['Sbi.browser.ProgressPanel.document'] = ' documento ';
+Sbi.locale.ln['Sbi.browser.ProgressPanel.of'] = ' de ';
+Sbi.locale.ln['Sbi.browser.ProgressPanel.finished'] = ' terminado de exportaci\u00F3n';
+Sbi.locale.ln['Sbi.browser.ProgressPanel.startedExport'] = 'Las exportaciones en marcha';
+Sbi.locale.ln['Sbi.browser.ProgressPanel.completedExport'] = 'Las exportaciones en marcha';
+Sbi.locale.ln['Sbi.browser.ProgressPanel.scheduledExport'] = 'Las exportaciones Programadas';
+Sbi.locale.ln['Sbi.browser.ProgressPanel.initializing'] = 'Inicializando';
+Sbi.locale.ln['Sbi.browser.mexport.MassiveExportWizardOptionsPage.title'] = 'Opciones de configuraci\u00F3n de exportaci\u00F3n de los grandes';
+Sbi.locale.ln['Sbi.browser.mexport.MassiveExportWizardOptionsPage.exportFormat'] = 'Formato de exportaci\u00F3n';
+Sbi.locale.ln['Sbi.browser.mexport.MassiveExportWizardOptionsPage.options'] = 'Opciones';
+Sbi.locale.ln['Sbi.browser.mexport.MassiveExportWizardParametersPage.parameters'] = 'Par\u00E1metros';
+Sbi.locale.ln['Sbi.browser.mexport.MassiveExportWizardParametersPage.title'] = 'Configuraci\u00F3n de los par\u00E1metros de configuraci\u00F3n ';
+Sbi.locale.ln['sbi.execution.parametersselection.message.page2.fillFormAndExecute.additionalinformation1']=' '
+Sbi.locale.ln['sbi.execution.parametersselection.message.page2.fillFormAndExecute.additionalinformation2']=' '
+
+//OFFICE DOCUMENTS - ZOOM 
+Sbi.locale.ln['Sbi.office.zoomIn'] = 'El aumento de las dimensiones';
+Sbi.locale.ln['Sbi.office.zoomOut'] = 'Reduce las dimensiones';
+
+
+if(Ext.DatePicker){
+Ext.override(Ext.DatePicker, {
+todayText : "Hoy",
+minText : "La Fecha es anterior al minimo permitido",
+maxText : "La Fecha es posterior al maximo permitido",
+disabledDaysText : "",
+disabledDatesText : "",
+monthNames : ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"],
+dayNames : ["Domingo","Lunes","Martes","Miercoles","Jueves","Viernes","Sabado"],
+nextText: 'Mes Siguiente (Control+Right)',
+prevText: 'Mes Anterior (Control+Left)',
+monthYearText: 'Elija un Mes (Control+Up/Down moverse entre aÃ±os)',
+todayTip : "{0} (Spacebar)",
+okText : " OK ",
+cancelText : "Cancelar",
+format : "dd/mm/yyyyy",
+startDay : 1
+});
+}
+
+
+//===================================================================
+//COMMUNITY
+//===================================================================
+Sbi.locale.ln["sbi.community.title"]="Communities";
+Sbi.locale.ln["sbi.community.name"]="Name";
+Sbi.locale.ln["sbi.community.descr"]="Description";
+Sbi.locale.ln["sbi.community.owner"]="Owner";
+Sbi.locale.ln["sbi.community.id"]="Id";
+
+
+//===================================================================
+//LAYERS CATALOGUE
+//===================================================================
+Sbi.locale.ln['sbi.layer.saved']= 'Layer correctly saved';
+Sbi.locale.ln['sbi.layer.deleted']= 'Layer correctly deleted';
+Sbi.locale.ln['sbi.tools.layer.validation.error']= 'There is some error in the layer configuration. Check the marked fields.';
+Sbi.locale.ln['sbi.tools.layer.props.name'] = "Layer name";
+Sbi.locale.ln['sbi.tools.layer.props.label'] = "Layer label";
+Sbi.locale.ln['sbi.tools.layer.props.zoom'] = "Layer zoom";
+Sbi.locale.ln['sbi.tools.layer.props.id'] = "Layer id";
+Sbi.locale.ln['sbi.tools.layer.props.central.point']= "Layer central point";
+Sbi.locale.ln['sbi.tools.layer.props.url']= "Url";
+Sbi.locale.ln['sbi.tools.layer.props.file']= "File";
+Sbi.locale.ln['sbi.tools.layer.baseLayer']= "Base Layer";
+Sbi.locale.ln['sbi.tools.layer.props.params']= "Params";
+Sbi.locale.ln['sbi.tools.layer.props.options']= "Options";
+
+
