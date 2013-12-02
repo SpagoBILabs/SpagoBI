@@ -54,7 +54,7 @@ public class MeasureCatalogueCRUD {
 	static private String noCompleteCommonDimensionsRuntimeException = "error.mesage.description.measure.join.no.complete.common.dimension";
 	
 	@GET
-	@Produces(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public String getAllMeasures(@Context HttpServletRequest req) {
 		IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 		String measures =  MeasureCatalogueSingleton.getMeasureCatologue().toString(profile.getUserUniqueIdentifier().toString(), UserUtilities.isAdministrator(profile));
@@ -64,27 +64,35 @@ public class MeasureCatalogueCRUD {
 	@POST
 	@Path("/join")
 	@Consumes("application/x-www-form-urlencoded")
-	@Produces(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public String join(@Context HttpServletRequest req, MultivaluedMap<String, String> form) {
+		
+		logger.debug("IN");
+		
 		IDataStore dataStore;
+		logger.debug("Loading measure catalogue ...");
 		MeasureCatalogue catalogue = MeasureCatalogueSingleton.getMeasureCatologue();
+		logger.debug("Measure catalogue succesfully loaded");
+		
+		
+		
 		IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 		List<String> labels = form.get("labels");
-		
 		List<MeasureCatalogueMeasure> measures= new ArrayList<MeasureCatalogueMeasure>();
-		
 		for(int i=0; i<labels.size(); i++){
 			MeasureCatalogueMeasure aMeasure = catalogue.getMeasureByLabel(labels.get(i));
 			if(aMeasure!=null){
 				if(!aMeasure.isVisibleToUser(profile)){
 					logger.error("The measure "+aMeasure.getAlias()+" of the dataset "+aMeasure.getDsName()+" is not visible for the user "+profile.getUserUniqueIdentifier().toString());
 					throw new MeasureCatalogueMeasureNotVisibleException(aMeasure);
-				}else{
+				} else {
+					logger.debug("The measure ["+aMeasure.getAlias()+"] of the dataset ["+aMeasure.getDsName()+"] whose label is equal to [" + aMeasure.getDsId() + "] is visible for the user "+profile.getUserUniqueIdentifier().toString() + " and so will be joined in the final dataset");
 					measures.add(aMeasure);
 				}
 			}
 		}
 
+		logger.debug("Creating joined dataset ...");
 		InMemoryMaterializer imm = new InMemoryMaterializer();
 		try {
 			dataStore =  imm.joinMeasures(measures);
@@ -93,9 +101,16 @@ public class MeasureCatalogueCRUD {
 		} catch (NoCompleteCommonDimensionsRuntimeException e) {
 			return ( ExceptionUtilities.serializeException(noCompleteCommonDimensionsRuntimeException,null));
 		}
+		logger.debug("Joined dataset succesfully created. It contains [" + dataStore.getRecordsCount() + "] records");
+
+		if(dataStore.getRecordsCount() == 0) {
+			String joinedDatasetStr = "";
+			for(MeasureCatalogueMeasure measure : measures) joinedDatasetStr += measure.getDsName() + "(" + measure .getDsId() + "); ";
+			throw new RuntimeException("There is no join between datasets [" + joinedDatasetStr + "] that contain the selected measures");
+		}
 		
-
-
+		logger.debug("Serializing joined dataset ...");
+		
 		JSONDataWriter dataSetWriter = new JSONDataWriter();
 		JSONObject dataStroreJSON =  (JSONObject) dataSetWriter.write(dataStore);
 		JSONObject metaData;
@@ -140,6 +155,9 @@ public class MeasureCatalogueCRUD {
 			t.printStackTrace();
 		}
 		
+		logger.debug("Joined dataset succesfully serialized");
+		
+		logger.debug("OUT");
 		
 		return  dataStroreJSON.toString();
 	}
