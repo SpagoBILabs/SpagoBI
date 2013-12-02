@@ -71,7 +71,7 @@ Sbi.locale.ln['sbi.generic.confirmChangeNode'] = 'Hay cambios sin guardar. ¿Dese
 Sbi.locale.ln['sbi.generic.deleteKpi'] = 'Borrar Kpi';
 Sbi.locale.ln['sbi.generic.attributes'] = 'Atributos';
 
-Sbi.locale.ln['sbi.generic.confirmClone'] = 'Confirm item clone?';
+Sbi.locale.ln['sbi.generic.confirmClone'] = '¿Confirmar elemento a Clonar?';
 //END Generic messages
 
 //START List Detail messages
@@ -582,7 +582,7 @@ Sbi.locale.ln['sbi.ds.metadata.column.value']='Value';
 Sbi.locale.ln['sbi.ds.metadata.dataset.title']='Dataset Metadata';
 
 // DATASOURCE
-Sbi.locale.ln['sbi.datasource.validation.writeDefault']= ': datasource already as write default: do you want to substitute with current?';
+Sbi.locale.ln['sbi.datasource.validation.writeDefault']= ': El datasource es de escritura por defecto: ¿Quieres sustituirlo por acutal?';
 Sbi.locale.ln['sbi.datasource.readwrite']= 'Read and write';
 
 //===================================================================
