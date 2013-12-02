@@ -48,6 +48,7 @@ Sbi.tools.documents.SaveDocumentWindow = function(config) {
 		this.OBJECT_PREVIEW_FILE = config.OBJECT_PREVIEW_FILE;		
 		this.OBJECT_COMMUNITIES = config.formState.OBJECT_COMMUNITIES;
 		this.OBJECT_SCOPE = config.OBJECT_SCOPE;
+		this.isInsert = config.isInsert;
 		
 		this.initFormPanel(config.formState);
 		
@@ -94,6 +95,7 @@ Ext.extend(Sbi.tools.documents.SaveDocumentWindow, Ext.Window, {
 	OBJECT_PREVIEW_FILE: null,
 	OBJECT_COMMUNITIES: null,
 	OBJECT_SCOPE: null,
+	isInsert: false,
 	
 	initFormPanel: function (c){
 		this.docLabel =  new Ext.form.TextField({
@@ -158,14 +160,21 @@ Ext.extend(Sbi.tools.documents.SaveDocumentWindow, Ext.Window, {
 				         "functCode"
 				         ],
 				         root: 'root'
-			}),
+			})
 
-			autoLoad:true
+			//,autoLoad:true
 		});
+		storeComm.load();
 		storeComm.on("load", function(store) {
 			var defaultData = {};
             var p = new store.recordType(defaultData); 
             store.insert(0, p);
+            if (this.isInsert && this.docCommunity){
+         	   var recordSelected = store.getAt(1);   
+ 		        if (recordSelected){
+ 		        	this.docCommunity.setValue(recordSelected.get('functCode'));
+ 		        }
+             }
 		}, this);
 
 		this.docCommunity = new Ext.form.ComboBox({
@@ -286,9 +295,7 @@ Ext.extend(Sbi.tools.documents.SaveDocumentWindow, Ext.Window, {
 		}
 		
 		if(docLabel == null || docLabel == undefined || docLabel == '' ||
-		   ((functs == null || functs == undefined || functs.length == 0)
-			&&   (docCommunity == null || docCommunity == undefined || docCommunity == '')
-			)){
+		   ((functs == null || functs == undefined || functs.length == 0))){
 				var msgWarning = LN('sbi.geo.controlpanel.savewin.saveWarning');
 				Ext.MessageBox.show({
 	                title: LN('sbi.generic.warning'),
