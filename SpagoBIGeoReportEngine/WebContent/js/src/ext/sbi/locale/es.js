@@ -77,89 +77,84 @@ Sbi.locale.formats = {
 //===================================================================
 // CONTROL PANEL
 //===================================================================
-Sbi.locale.ln['sbi.geo.controlpanel.title'] = 'Navigation';
-Sbi.locale.ln['sbi.geo.layerpanel.title'] = 'Layers';
+Sbi.locale.ln['sbi.geo.controlpanel.title'] = 'Navegaci\u00f3n';
+Sbi.locale.ln['sbi.geo.layerpanel.title'] = 'Niveles';
 
-Sbi.locale.ln['sbi.geo.analysispanel.title'] = 'Analysis';
-Sbi.locale.ln['sbi.geo.analysispanel.addindicators'] = 'Add indicators';
-Sbi.locale.ln['sbi.geo.analysispanel.indicator'] = 'Indicator';
-Sbi.locale.ln['sbi.geo.analysispanel.emptytext'] = 	'Select an indicator';
-Sbi.locale.ln['sbi.geo.analysispanel.method'] = 'Method';
-Sbi.locale.ln['sbi.geo.analysispanel.classes'] = 'Number of classes';
-Sbi.locale.ln['sbi.geo.analysispanel.fromcolor'] = 'From color';
-Sbi.locale.ln['sbi.geo.analysispanel.tocolor'] = 'To color';
-Sbi.locale.ln['sbi.geo.analysispanel.filter.default'] = 'Set Default';
-Sbi.locale.ln['sbi.geo.analysispanel.filter.default.ok'] = 'Default values correctly set';
+Sbi.locale.ln['sbi.geo.analysispanel.title'] = 'An\u00e1lisis';
+Sbi.locale.ln['sbi.geo.analysispanel.addindicators'] = 'A\u00f1adir indicadores';
+Sbi.locale.ln['sbi.geo.analysispanel.indicator'] = 'Indicador';
+Sbi.locale.ln['sbi.geo.analysispanel.emptytext'] = 	'Seleccionar un indicador';
+Sbi.locale.ln['sbi.geo.analysispanel.method'] = 'M\u00e9todo';
+Sbi.locale.ln['sbi.geo.analysispanel.classes'] = 'N\u00famero de clases';
+Sbi.locale.ln['sbi.geo.analysispanel.fromcolor'] = 'desde color';
+Sbi.locale.ln['sbi.geo.analysispanel.tocolor'] = 'a color';
+Sbi.locale.ln['sbi.geo.analysispanel.filter.default'] = 'establecer por defecto';
+Sbi.locale.ln['sbi.geo.analysispanel.filter.default.ok'] = 'valores por defecto correctamente establecidos';
 
 
-Sbi.locale.ln['sbi.geo.legendpanel.title'] = 'Legend';
-Sbi.locale.ln['sbi.geo.legendpanel.changeStyle'] = 'Change style'; 
-Sbi.locale.ln['sbi.geo.earthpanel.title'] = '3D Navigation';
+Sbi.locale.ln['sbi.geo.legendpanel.title'] = 'Leyenda';
+Sbi.locale.ln['sbi.geo.legendpanel.changeStyle'] = 'Cambio de estilo'; 
+Sbi.locale.ln['sbi.geo.earthpanel.title'] = 'Navegaci\u00f3n 3D';
 
 //===================================================================
 //CONTROL PANEL - SAVE WINDOW
 //===================================================================
-Sbi.locale.ln['sbi.geo.controlpanel.savewin.title'] = 'Insert more details and save your document... ';
-Sbi.locale.ln['sbi.geo.controlpanel.savewin.name'] = 'Name';
-Sbi.locale.ln['sbi.geo.controlpanel.savewin.description'] = 'Description';
-Sbi.locale.ln['sbi.geo.controlpanel.savewin.visibility'] = 'Document visibility';
-Sbi.locale.ln['sbi.geo.controlpanel.savewin.previewfile'] = 'Preview file';
-Sbi.locale.ln['sbi.geo.controlpanel.savewin.community'] = 'Community';
-Sbi.locale.ln['sbi.geo.controlpanel.savewin.scope'] = 'Scope';
-Sbi.locale.ln['sbi.geo.controlpanel.savewin.saveWarning']  = 'Before save document, is necessary to insert the name of the map and select almost a folder.';
+Sbi.locale.ln['sbi.geo.controlpanel.savewin.title'] = 'Insertar m\u00e1s detalles y salvar tus documentos...';
+Sbi.locale.ln['sbi.geo.controlpanel.savewin.name'] = 'Nombre';
+Sbi.locale.ln['sbi.geo.controlpanel.savewin.description'] = 'Descripci\u00f3n';
+Sbi.locale.ln['sbi.geo.controlpanel.savewin.visibility'] = 'Visibilidad documento';
+Sbi.locale.ln['sbi.geo.controlpanel.savewin.previewfile'] = 'Vista previa de archivos';
+Sbi.locale.ln['sbi.geo.controlpanel.savewin.community'] = 'Communidad';
+Sbi.locale.ln['sbi.geo.controlpanel.savewin.scope'] = 'Alcance';
+Sbi.locale.ln['sbi.geo.controlpanel.savewin.saveWarning']  = 'Antes de guardar el documento, es necesario insertar el nombre del mapa y seleccionar al menos una carpeta.';
 Sbi.locale.ln['sbi.geo.controlpanel.savewin.msgDetail']  = ' ';
-Sbi.locale.ln['sbi.geo.controlpanel.feedback.title']  = 'Send Feedback';
-Sbi.locale.ln['sbi.geo.controlpanel.feedback.label']  = 'Message text';
-Sbi.locale.ln['sbi.geo.controlpanel.feedback.btn.send']  = 'Send';
-Sbi.locale.ln['sbi.geo.controlpanel.feedback.sendOK']  = 'Feedback sent to document\'s creator';
 
-Sbi.locale.ln['sbi.geo.controlpanel.control.share.title']  = 'Share map';
 
 //===================================================================
 // MAP PANEL
 //===================================================================
-Sbi.locale.ln['sbi.geo.mappanel.title'] = 'Map';
+Sbi.locale.ln['sbi.geo.mappanel.title'] = 'Mapa';
 
 //===================================================================
 //OPENLAYERS
 //===================================================================
-Sbi.locale.ln['mf.print.mapTitle'] =  'Title';
-Sbi.locale.ln['mf.print.comment'] =  'Comments';
-Sbi.locale.ln['mf.print.loadingConfig'] =  'Loading the configuration...';
-Sbi.locale.ln['mf.print.serverDown'] =  'The print service is not working';
-Sbi.locale.ln['mf.print.unableToPrint'] =  "Unable to print";
-Sbi.locale.ln['mf.print.generatingPDF'] =  "Generating PDF...";
+Sbi.locale.ln['mf.print.mapTitle'] =  'T\u00edtulo';
+Sbi.locale.ln['mf.print.comment'] =  'Commentarios';
+Sbi.locale.ln['mf.print.loadingConfig'] =  'Cargando la configuraci\u00f3n...';
+Sbi.locale.ln['mf.print.serverDown'] =  'El servicio de impresi\u00f3n no est\u00e1 funcionando';
+Sbi.locale.ln['mf.print.unableToPrint'] =  "No se puede imprimir";
+Sbi.locale.ln['mf.print.generatingPDF'] =  "Generando PDF...";
 Sbi.locale.ln['mf.print.dpi'] =  'DPI';
-Sbi.locale.ln['mf.print.scale'] =  'Scale';
-Sbi.locale.ln['mf.print.rotation'] =  'Rotation';
-Sbi.locale.ln['mf.print.print'] =  'Print';
-Sbi.locale.ln['mf.print.resetPos'] =  'Reset Pos.';
-Sbi.locale.ln['mf.print.layout'] =  'Layout';
-Sbi.locale.ln['mf.print.addPage'] =  'Add page';
-Sbi.locale.ln['mf.print.remove'] =  'Remove page';
-Sbi.locale.ln['mf.print.clearAll'] =  'Clear all';
-Sbi.locale.ln['mf.print.popupBlocked'] =  'Popup windows are blocked by your browser.<br />' +
-                         '<br />Use this url to download your document] = ';
-Sbi.locale.ln['mf.print.noPage'] =  'No page selected; click on the "Add page" button to add one.';
+Sbi.locale.ln['mf.print.scale'] =  'Escala';
+Sbi.locale.ln['mf.print.rotation'] =  'Rotaci\u00f3n';
+Sbi.locale.ln['mf.print.print'] =  'Imprimir';
+Sbi.locale.ln['mf.print.resetPos'] =  'Restablecer Pos.';
+Sbi.locale.ln['mf.print.layout'] =  'Disposici\u00f3n de la pantalla';
+Sbi.locale.ln['mf.print.addPage'] =  'A\u00f1adir p\u00e1gina';
+Sbi.locale.ln['mf.print.remove'] =  'Eliminar p\u00e1gina';
+Sbi.locale.ln['mf.print.clearAll'] =  'Limpiar todo';
+Sbi.locale.ln['mf.print.popupBlocked'] =  'Las ventanas emergentes est\u00e1n bloqueadas por su navegador. <br />' +
+                         '<br />Use este url para descargar su documento] = ';
+Sbi.locale.ln['mf.print.noPage'] =  'No p\u00e1gina seleccionada; click en el bot\u00f3n "A\u00f1adir p\u00e1gina" para a\u00f1adir una.';
 Sbi.locale.ln['mf.error'] =  'Error';
-Sbi.locale.ln['mf.warning'] =  'Warning';
-Sbi.locale.ln['mf.information'] =  'Information';
-Sbi.locale.ln['sbi.tools.catalogue.measures.measure.properties'] = 'Measure Properties';
-Sbi.locale.ln['sbi.tools.catalogue.measures.dataset.properties'] = 'Data Set Properties';
+Sbi.locale.ln['mf.warning'] =  'Atenci\u00f3n';
+Sbi.locale.ln['mf.information'] =  'Informaci\u00f3n';
+Sbi.locale.ln['sbi.tools.catalogue.measures.measure.properties'] = 'Propiedades de medida';
+Sbi.locale.ln['sbi.tools.catalogue.measures.dataset.properties'] = 'Propiedades del Data Set';
 Sbi.locale.ln['sbi.tools.catalogue.measures.join.btn'] = 'Join';
-Sbi.locale.ln['sbi.tools.catalogue.measures.join.tooltip'] = 'Execute join between the selected measures';
-Sbi.locale.ln['sbi.tools.catalogue.measures.select.tooltip'] = 'Open the selection frame';
-Sbi.locale.ln['sbi.tools.catalogue.measures.select.btn'] = 'Selection';
-Sbi.locale.ln['sbi.tools.catalogue.measures.window.title'] =  'Measures Catalogue';
-Sbi.locale.ln['error.mesage.description.measure.join.no.common.dimension'] = 'Impossible to execute the join between measures. The associated datasets haven\'t any dimension in common.';
-Sbi.locale.ln['error.mesage.description.measure.join.no.complete.common.dimension'] = 'Impossible to execute the join between measures. The associated datasets haven\'t any complete dimension in common.';
+Sbi.locale.ln['sbi.tools.catalogue.measures.join.tooltip'] = 'Ejecutar la combinaci\u00f3n de medidas seleccionadas';
+Sbi.locale.ln['sbi.tools.catalogue.measures.select.tooltip'] = 'Abra el cuadro de selecci\u00f3n';
+Sbi.locale.ln['sbi.tools.catalogue.measures.select.btn'] = 'Selecci\u00f3n';
+Sbi.locale.ln['sbi.tools.catalogue.measures.window.title'] =  'Cat\u00e1logo de medidas';
+Sbi.locale.ln['error.mesage.description.measure.join.no.common.dimension'] = 'Imposible ejecutar la combinaci\u00f3n de medidas seleccionadas. Los conjuntos de datos asociados no tienen ninguna dimensi\u00f3n en com\u00fan.';
+Sbi.locale.ln['error.mesage.description.measure.join.no.complete.common.dimension'] = 'Imposible ejecutar la combinaci\u00f3n de medidas seleccionadas. Los data Los datasets asociados no tienen ninguna dimensi\u00f3n en com\u00fan';
 Sbi.locale.ln['sbi.tools.catalogue.measures.column.header.alias'] = 'Alias';
-Sbi.locale.ln['sbi.tools.catalogue.measures.column.header.dsName'] = 'Name';
-Sbi.locale.ln['sbi.tools.catalogue.measures.column.header.dsLabel'] = 'Label';
-Sbi.locale.ln['sbi.tools.catalogue.measures.column.header.dsCategory'] = 'Category';
-Sbi.locale.ln['sbi.tools.catalogue.measures.column.header.dsType'] = 'Type';
-Sbi.locale.ln['sbi.tools.catalogue.layers.column.header.label'] = 'Label';
-Sbi.locale.ln['sbi.tools.catalogue.layers.column.header.descr'] = 'Description';
-Sbi.locale.ln['sbi.tools.catalogue.layers.column.header.type'] = 'Type';
-Sbi.locale.ln['sbi.tools.catalogue.layers.column.header.baseLayer'] = 'Base Layer';
+Sbi.locale.ln['sbi.tools.catalogue.measures.column.header.dsName'] = 'Nombre';
+Sbi.locale.ln['sbi.tools.catalogue.measures.column.header.dsLabel'] = 'Etiqueta';
+Sbi.locale.ln['sbi.tools.catalogue.measures.column.header.dsCategory'] = 'Categor\u00eda';
+Sbi.locale.ln['sbi.tools.catalogue.measures.column.header.dsType'] = 'Tipo';
+Sbi.locale.ln['sbi.tools.catalogue.layers.column.header.label'] = 'Etiqueta';
+Sbi.locale.ln['sbi.tools.catalogue.layers.column.header.descr'] = 'Descripci\u00f3n';
+Sbi.locale.ln['sbi.tools.catalogue.layers.column.header.type'] = 'Tipo';
+Sbi.locale.ln['sbi.tools.catalogue.layers.column.header.baseLayer'] = 'Base capa';
 
