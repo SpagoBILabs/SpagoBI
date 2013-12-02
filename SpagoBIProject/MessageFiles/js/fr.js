@@ -723,3 +723,109 @@ Sbi.locale.ln['sbi.worksheet.validation.error.text']='Certaines feuilles ne sont
 //===================================================================
 Sbi.locale.ln['sbi.datasource.validation.writeDefault']= ': datasource already as write default: do you want to substitute with current?';
 Sbi.locale.ln['sbi.datasource.readwrite']= 'Read and write';
+
+
+
+Sbi.locale.ln['sbi.generic.run'] = 'Ex\u00E9cuter';
+Sbi.locale.ln['sbi.generic.upload'] = 'Charger';
+Sbi.locale.ln['sbi.generic.download'] = 'T\u00E9l\u00E9charger';
+Sbi.locale.ln['sbi.generic.update2'] = 'Mise \u00e0 jour';
+Sbi.locale.ln['sbi.kpi.trend.title'] = 'Tendance de la ressource ';
+Sbi.locale.ln['sbi.kpi.trend.nodata'] = 'Aucune donn\u00E9e trouv\u00E9e! S\u00E9lectionnez le noeud sp\u00E9cifique pour afficher la tendance des donn\u00E9es. ';
+Sbi.locale.ln['sbi.generic.create'] = 'Cr\u00E9er';
+
+Sbi.locale.ln['sbi.generic.confirmDeleteDataset'] = 'Suppression de l\'ensemble de données va également supprimer les documents qui l\'utilisent. Confirmer la suppression?';
+
+
+Sbi.locale.ln['sbi.roles.export'] = 'Exporter';
+Sbi.locale.ln['sbi.roles.doMassiveExport'] = 'Exportation massive';
+Sbi.locale.ln['sbi.roles.manage'] = 'G\u00E9rer';
+Sbi.locale.ln['sbi.roles.manageUsers'] = 'Utilisateurs';
+
+Sbi.locale.ln['sbi.roles.edit'] = 'Edit';
+Sbi.locale.ln['sbi.roles.worksheet'] = 'Worksheet';
+
+//===================================================================
+//MASSIVE EXPORT
+//===================================================================
+Sbi.locale.ln['sbi.browser.mexport.massiveExportWizard.title'] = 'Wizard pour l\'exportation massive du worksheet';
+Sbi.locale.ln['sbi.browser.mexport.massiveExportWizard.button.back'] = '< Retour';
+Sbi.locale.ln['sbi.browser.mexport.massiveExportWizard.button.next'] = 'Suivant >';
+Sbi.locale.ln['sbi.browser.mexport.massiveExportWizard.button.finish'] = 'Terminer';
+Sbi.locale.ln['sbi.browser.mexport.massiveExportWizard.button.cancel'] = 'Annuler';
+Sbi.locale.ln['sbi.browser.mexport.massiveExportWizardOptionsPage.title'] = 'Options d\'exportation';
+Sbi.locale.ln['sbi.browser.mexport.massiveExportWizardOptionsPage.field.cycle.label'] = 'Cycle sur les filtres'
+Sbi.locale.ln['sbi.browser.mexport.massiveExportWizardOptionsPage.field.role.label'] = 'R\u00f4le';
+Sbi.locale.ln['sbi.browser.mexport.massiveExportWizardOptionsPage.field.role.emptyText'] = 'S\u00e9lectionner un r\u00f4le';
+Sbi.locale.ln['sbi.browser.mexport.massiveExportWizardOptionsPage.field.documents.label'] = 'Documents Worksheet \u00e0 exporter';
+Sbi.locale.ln['sbi.browser.mexport.massiveExportWizardOptionsPage.msg.noDoc'] = 'Pas de documents Worksheet \u00e0 exporter';
+Sbi.locale.ln['sbi.browser.mexport.massiveExportWizardParametersPage.title'] = 'Param\u00e8tres';
+Sbi.locale.ln['Sbi.browser.mexport.massiveExportWizardTriggerPage.title'] = 'Trigger';
+Sbi.locale.ln['sbi.browser.progresspanel.title'] = 'Progression de l\'exportation massive'; 
+Sbi.locale.ln['Sbi.browser.ProgressPanel.noProgress'] = 'Pas d\'exportation en cours d\'ex\u00e9cution';
+Sbi.locale.ln['Sbi.browser.ProgressPanel.noDownload'] = 'Pas d\'exportation \u00e0 t\u00e9l\u00e9charger';
+Sbi.locale.ln['Sbi.browser.ProgressPanel.exporting'] = 'Exportation ';
+Sbi.locale.ln['Sbi.browser.ProgressPanel.document'] = ' document ';
+Sbi.locale.ln['Sbi.browser.ProgressPanel.of'] = ' de ';
+Sbi.locale.ln['Sbi.browser.ProgressPanel.finished'] = ' Exportation termin\u00e9';
+Sbi.locale.ln['Sbi.browser.ProgressPanel.startedExport'] = 'Exportation  d\u00e9marr\u00e9';
+Sbi.locale.ln['Sbi.browser.ProgressPanel.completedExport'] = 'Exportation achev\u00e9s ';
+Sbi.locale.ln['Sbi.browser.ProgressPanel.scheduledExport'] = 'Exportation planifi\u00e9es ';
+Sbi.locale.ln['Sbi.browser.ProgressPanel.initializing'] = 'Initialisation';
+Sbi.locale.ln['Sbi.browser.mexport.MassiveExportWizardOptionsPage.title'] = 'Options de configuration pour l\'exportation massives';
+Sbi.locale.ln['Sbi.browser.mexport.MassiveExportWizardOptionsPage.exportFormat'] = 'Format d\'exportation';
+Sbi.locale.ln['Sbi.browser.mexport.MassiveExportWizardOptionsPage.options'] = 'Options';
+Sbi.locale.ln['Sbi.browser.mexport.MassiveExportWizardParametersPage.parameters'] = 'Param\u00e8tres';
+Sbi.locale.ln['Sbi.browser.mexport.MassiveExportWizardParametersPage.title'] = 'Configuration  param\u00e8tres\' configuration';
+//OFFICE DOCUMENTS - ZOOM 
+Sbi.locale.ln['Sbi.office.zoomIn'] = 'Augmente les dimensions';
+Sbi.locale.ln['Sbi.office.zoomOut'] = 'D\u00e9cr\u00e9mente les dimensions';
+
+Sbi.locale.ln['ext.date.dateformat.error.title']='Date \u00E9rron\u00E9e'
+Sbi.locale.ln['ext.date.dateformat.error.text']='La date saisie contient des erreurs. Elle sera automatiquement remplac\u00E9e par la date correcte.'
+Sbi.locale.ln['sbi.execution.parametersselection.message.page2.fillFormAndExecute.additionalinformation1']='(la p\u00E9riode d\'analyse par d\u00E9faut est la veille)'
+Sbi.locale.ln['sbi.execution.parametersselection.message.page2.fillFormAndExecute.additionalinformation2']='(par d\u00E9faut, la date correspond au mois dernier)'
+
+if(Ext.DatePicker){
+	Ext.override(Ext.DatePicker, {
+	todayText : "Aujourd'hui",
+	minText : "Cette date est antérieure à la date minimum",
+	maxText : "Cette date est postérieure à la date maximum",
+	disabledDaysText : "",
+	disabledDatesText : "",
+	monthNames : ["Janvier","Février","Mars","Avril","Mai","Juin","Juillet","Aout","Septembre","Octobre","Novembre","Decembre"],
+	dayNames : ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"],
+	nextText: 'Mois suivant (CTRL+Flèche droite)',
+	prevText: "Mois précédent (CTRL+Flèche gauche)",
+	monthYearText: "Choisissez un mois (CTRL+Flèche haut ou bas pour changer d'année.)",
+	todayTip : "{0} (Barre d'espace)",
+	okText : "&#160;OK&#160;",
+	cancelText : "Annuler",
+	format : "dd/mm/yyyyy",
+	startDay : 1
+	});
+}
+//===================================================================
+//COMMUNITY
+//===================================================================
+Sbi.locale.ln["sbi.community.title"]="Communities";
+Sbi.locale.ln["sbi.community.name"]="Name";
+Sbi.locale.ln["sbi.community.descr"]="Description";
+Sbi.locale.ln["sbi.community.owner"]="Owner";
+Sbi.locale.ln["sbi.community.id"]="Id";
+//===================================================================
+//LAYERS CATALOGUE
+//===================================================================
+Sbi.locale.ln['sbi.layer.saved']= 'Layer correctly saved';
+Sbi.locale.ln['sbi.layer.deleted']= 'Layer correctly deleted';
+Sbi.locale.ln['sbi.tools.layer.validation.error']= 'There is some error in the layer configuration. Check the marked fields.';
+Sbi.locale.ln['sbi.tools.layer.props.name'] = "Layer name";
+Sbi.locale.ln['sbi.tools.layer.props.label'] = "Layer label";
+Sbi.locale.ln['sbi.tools.layer.props.zoom'] = "Layer zoom";
+Sbi.locale.ln['sbi.tools.layer.props.id'] = "Layer id";
+Sbi.locale.ln['sbi.tools.layer.props.central.point']= "Layer central point";
+Sbi.locale.ln['sbi.tools.layer.props.url']= "Url";
+Sbi.locale.ln['sbi.tools.layer.props.file']= "File";
+Sbi.locale.ln['sbi.tools.layer.baseLayer']= "Base Layer";
+Sbi.locale.ln['sbi.tools.layer.props.params']= "Params";
+Sbi.locale.ln['sbi.tools.layer.props.options']= "Options";
