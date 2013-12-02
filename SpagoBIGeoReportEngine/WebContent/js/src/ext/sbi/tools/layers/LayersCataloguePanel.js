@@ -60,7 +60,7 @@ Ext.extend(Sbi.geo.tools.LayersCataloguePanel, Ext.grid.GridPanel, {
 		return new Ext.grid.ColumnModel(columnsDesc);
 	}
 	,buildStore: function(){
-		return new Ext.data.Store({
+		this.store = new Ext.data.Store({
 			
 			proxy:new Ext.data.HttpProxy({
 				type: 'json',
@@ -86,6 +86,8 @@ Ext.extend(Sbi.geo.tools.LayersCataloguePanel, Ext.grid.GridPanel, {
 
 
 		});
+		
+		return this.store;
 	}
 	
 	,getSelectedLayers: function(){
@@ -98,4 +100,43 @@ Ext.extend(Sbi.geo.tools.LayersCataloguePanel, Ext.grid.GridPanel, {
 		}
 		return layersLabels;
 	}
+	
+	, getUnselectedLayers: function(){
+		var layersLabels = new Array();
+		var selections = this.getSelectionModel().getSelections();
+        var all = this.store.getRange();
+        var diff = this.difference(all, selections);
+        if(diff!=null && diff!=undefined && diff.length>0){
+			for(var i=0; i<diff.length; i++){
+				layersLabels.push(diff[i].data.label);
+			}
+		}
+        
+		return layersLabels;
+	}
+	
+	 /**
+     * Perform a set difference A-B by subtracting all items in array B from array A.
+     *
+     * @param {Array} array A
+     * @param {Array} array B
+     * @return {Array} difference
+     */
+    , difference: function(arrayA, arrayB) {
+        var clone = arrayA.slice(0),
+            ln = clone.length,
+            i, j, lnB;
+
+        for (i = 0,lnB = arrayB.length; i < lnB; i++) {
+            for (j = 0; j < ln; j++) {
+                if (clone[j] === arrayB[i]) {
+                    clone.splice(j, 1);
+                    j--;
+                    ln--;
+                }
+            }
+        }
+
+        return clone;
+    }
 });

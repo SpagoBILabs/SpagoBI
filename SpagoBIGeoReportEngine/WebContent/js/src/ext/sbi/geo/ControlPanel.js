@@ -457,7 +457,7 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
             width: '100%',
             name: 'message',
             maxLength: 2000,
-            height: 100,
+            height: '100%',
             autoCreate: {tag: 'textArea', type: 'text',  autocomplete: 'off', maxlength: '2000'}
 		});
 		
@@ -475,23 +475,26 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 		
 		var feedbackWindowPanel = new Ext.form.FormPanel({
 			layout: 'form',
+			bodyStyle: 'padding:5px',
 			defaults: {
 	            xtype: 'textfield'
 	        },
 
-	        items: [this.messageField,this.sendButton]
+	        items: [this.messageField]
 		});
 		
 		
 		this.feedbackWindow = new Ext.Window({
 			modal		: true,
             layout      : 'fit',
-	        width		: 700,
-	        height		: 170,
+	        width		: 550,
+	        height		: 210,
             closeAction :'destroy',
             plain       : true,
             title		: LN('sbi.geo.controlpanel.feedback.title'),
+            buttons		: [this.sendButton],
             items       : [feedbackWindowPanel]
+			
 		});
 		
 		this.feedbackWindow.show();
@@ -499,7 +502,24 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 	
 	, showMeasureCatalogueWindow: function(){
 		if(this.measureCatalogueWindow==null){
-			this.measureCatalogue = new Sbi.geo.tools.MeasureCataloguePanel({showBottomToolbar: false});
+			
+			var measureCatalogueConfig = {showBottomToolbar: false}
+			
+			var activeThemtizer = this.mapComponnet.getActiveThematizer();
+			if(activeThemtizer.storeConfig 
+					&& activeThemtizer.storeConfig.params 
+					&& activeThemtizer.storeConfig.params.labels ){
+				var selectedMeasureMap = {};
+				for(var i = 0; i < activeThemtizer.storeConfig.params.labels.length; i++) {
+					selectedMeasureMap[activeThemtizer.storeConfig.params.labels[i]] = activeThemtizer.storeConfig.params.labels[i];
+				}
+				measureCatalogueConfig.selectedMeasures = selectedMeasureMap;
+			} else {
+				Sbi.debug("[ControlPanel.showMeasureCatalogueWindow] : no measure already slected");
+			}
+						
+			
+			this.measureCatalogue = new Sbi.geo.tools.MeasuresCataloguePanel(measureCatalogueConfig);
 			this.measureCatalogue.on('storeLoad', this.onStoreLoad, this);
 			
 			this.measureCatalogueWindow = new Ext.Window({

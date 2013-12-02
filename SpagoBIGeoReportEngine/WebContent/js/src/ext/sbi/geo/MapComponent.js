@@ -69,6 +69,12 @@ Ext.extend(Sbi.geo.MapComponent, Ext.Panel, {
 	, baseLayersConf: null
 	
 	/**
+	 * @property {Object} baseLayersConf
+     * over layer's configurations.
+     */
+	, overLayersConf: null
+	
+	/**
 	 * @property {Array} layers
      * the layers that compose this map
      */
@@ -227,7 +233,31 @@ Ext.extend(Sbi.geo.MapComponent, Ext.Panel, {
         
         Sbi.trace("MapComponent.setCenter: OUT");
          
-     }
+    }
+	
+	, getBaseLayersConfig: function() {
+		var layers = this.map.layers;
+		var layersConf = [];
+		for(var i = 0; i < layers.length; i++) {
+			if(layers[i].conf && layers[i].conf.isBaseLayer === true) {
+				layersConf.push(layers[i].conf);
+			}
+		}
+		
+		return layersConf;
+	}
+	
+	, getOverLayersConfig: function() {
+		var layers = this.map.layers;
+		var layersConf = [];
+		for(var i = 0; i < layers.length; i++) {
+			if(layers[i].conf && layers[i].conf.isBaseLayer === false) {
+				layersConf.push(layers[i].conf);
+			}
+		}
+		
+		return layersConf;
+	}
 
 	
 	// -----------------------------------------------------------------------------------------------------------------
@@ -353,6 +383,19 @@ Ext.extend(Sbi.geo.MapComponent, Ext.Panel, {
 					} else {
 						l.selected = false;
 					}
+					l.conf = this.baseLayersConf[i];
+					l.conf.isBaseLayer = true;
+					this.layers.push( l	);
+				}
+			}			
+		}
+		
+		if(this.overLayersConf && this.overLayersConf.length > 0) {
+			for(var i = 0; i < this.overLayersConf.length; i++) {
+				if(this.overLayersConf[i].enabled === true) {
+					var l = Sbi.geo.utils.LayerFactory.createLayer( this.overLayersConf[i] );
+					l.conf = this.baseLayersConf[i];
+					l.conf.isBaseLayer = false;
 					this.layers.push( l	);
 				}
 			}			

@@ -224,6 +224,9 @@ Ext.extend(Sbi.geo.MainPanel, Ext.Panel, {
 			}
 		}
 		
+		analysisState.baseLayersConf = this.mapComponent.getBaseLayersConfig();
+		analysisState.overLayersConf = this.mapComponent.getOverLayersConfig();
+		
 		analysisState.targetLayerConf = this.targetLayerConf;
 
 		analysisState.controlPanelConf = this.controlPanelConfOrignal;		
