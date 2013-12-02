@@ -28,6 +28,7 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 
+import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
 import it.eng.spagobi.meta.model.olap.Level;
 import it.eng.spagobi.metamodel.HierarchyWrapper;
 import it.eng.spagobi.metamodel.MetaModelWrapper;
@@ -59,6 +60,7 @@ public class GeoSpatialDimensionDatasetValidator  extends AbstractDatasetValidat
 	 */
 	@Override
 	public ValidationErrors doValidateDataset(IDataStore dataStore,Map<String, HierarchyLevel> hierarchiesColumnsToCheck ) {
+		MessageBuilder msgBuild = new MessageBuilder();
 		ValidationErrors validationErrors = new ValidationErrors();
 		MeasureCatalogue measureCatalogue = MeasureCatalogueSingleton.getMeasureCatologue();
 		if (measureCatalogue.isValid()){
@@ -104,12 +106,23 @@ public class GeoSpatialDimensionDatasetValidator  extends AbstractDatasetValidat
 					    	    				String valueString = (String)fieldValue;
 					    	    				//Case Empty String
 					    	    				if (valueString.isEmpty()){
-					    	    					String errorDescription = "Error in validation: empty value is not valid for hierarchy "+GEO_HIERARCHY_NAME+" on level "+levelName+". "+hint+"...";
+					    	    					String errorDescription = msgBuild.getMessage("dataset.wizard.validation.err.emptyvalue");
+					    	    					errorDescription = errorDescription
+					    	    						.replaceAll("%0", GEO_HIERARCHY_NAME)
+					    	    						.replaceAll("%1", levelName)
+					    	    						.replaceAll("%2", hint);
+					    	    					//errorDescription = "Error in validation: empty value is not valid for hierarchy "+GEO_HIERARCHY_NAME+" on level "+levelName+". "+hint+"...";
 						    	    				validationErrors.addError(rowNumber, columnIndex, field, errorDescription);
 					    	    				} else {
 							    	    			if (!admissibleValues.contains(fieldValue))
 							    	    			{
-							    	    				String errorDescription = "Error in validation: "+fieldValue+" is not valid for hierarchy "+GEO_HIERARCHY_NAME+" on level "+levelName+". "+hint+"...";
+							    	    				String errorDescription = msgBuild.getMessage("dataset.wizard.validation.err.wrongvalue");
+						    	    					errorDescription = errorDescription
+						    	    						.replaceAll("%0", (String)fieldValue)
+						    	    						.replaceAll("%1", GEO_HIERARCHY_NAME)
+						    	    						.replaceAll("%2", levelName)
+						    	    						.replaceAll("%3", hint);
+							    	    				//errorDescription = "Error in validation: "+fieldValue+" is not valid for hierarchy "+GEO_HIERARCHY_NAME+" on level "+levelName+". "+hint+"...";
 							    	    				validationErrors.addError(rowNumber, columnIndex, field, errorDescription);
 							    	    			}
 					    	    				}
@@ -122,7 +135,12 @@ public class GeoSpatialDimensionDatasetValidator  extends AbstractDatasetValidat
 					    	    			}
 
 					    	    		} else {
-				    	    				String errorDescription = "Error in validation: null is not valid for hierarchy "+GEO_HIERARCHY_NAME+" on level "+levelName+". "+hint+"...";
+					    	    			String errorDescription = msgBuild.getMessage("dataset.wizard.validation.err.nullvalue");
+			    	    					errorDescription = errorDescription
+			    	    						.replaceAll("%0", GEO_HIERARCHY_NAME)
+			    	    						.replaceAll("%1", levelName)
+			    	    						.replaceAll("%2", hint);
+				    	    				//errorDescription = "Error in validation: null is not valid for hierarchy "+GEO_HIERARCHY_NAME+" on level "+levelName+". "+hint+"...";
 				    	    				validationErrors.addError(rowNumber, columnIndex, field, errorDescription);
 					    	    		}
 					    	    		rowNumber++;
@@ -212,7 +230,9 @@ public class GeoSpatialDimensionDatasetValidator  extends AbstractDatasetValidat
 	
 	//Generate a String with some possible admissible values as an hint
 	public String generateHintValues(Set<String> admissibleValues){
-		String hint = "Some possible values are: ";
+		MessageBuilder msgBuild = new MessageBuilder();
+		String hint = msgBuild.getMessage("dataset.wizard.validation.hints");
+		hint += ": ";
 		
 		Iterator<String> it = admissibleValues.iterator();
 		int counter = 0;
