@@ -17,6 +17,7 @@ import it.eng.spagobi.tools.objmetadata.bo.ObjMetadata;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.service.JSONSuccess;
 
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -79,7 +80,7 @@ public class GetMetadataAction extends AbstractSpagoBIAction {
 				metaSubObjName.setDataTypeCode("GENERAL_META");
 				ObjMetacontent metaContentSubObjName = new ObjMetacontent();
 				SubObject subobj = DAOFactory.getSubObjectDAO().getSubObject(subObjectId);
-				metaContentSubObjName.setContent(subobj.getName().getBytes());
+				metaContentSubObjName.setContent(subobj.getName().getBytes("UTF-8"));
 				DocumentMetadataProperty metaAndContentSubObjName = new DocumentMetadataProperty();
 				metaAndContentSubObjName.setMetadataPropertyDefinition(metaSubObjName);
 				metaAndContentSubObjName.setMetadataPropertyValue(metaContentSubObjName);
@@ -93,7 +94,7 @@ public class GetMetadataAction extends AbstractSpagoBIAction {
 			metaObjLabel.setName(textLabel);
 			metaObjLabel.setDataTypeCode("GENERAL_META");
 			ObjMetacontent metaContentObjLabel = new ObjMetacontent();
-			metaContentObjLabel.setContent(obj.getLabel().getBytes());
+			metaContentObjLabel.setContent(obj.getLabel().getBytes("UTF-8"));
 			DocumentMetadataProperty metaAndContentObjLabel = new DocumentMetadataProperty();
 			metaAndContentObjLabel.setMetadataPropertyDefinition(metaObjLabel);
 			metaAndContentObjLabel.setMetadataPropertyValue(metaContentObjLabel);
@@ -105,7 +106,7 @@ public class GetMetadataAction extends AbstractSpagoBIAction {
 			metaObjName.setName(textName);
 			metaObjName.setDataTypeCode("GENERAL_META");
 			ObjMetacontent metaContentObjName = new ObjMetacontent();
-			metaContentObjName.setContent(obj.getName().getBytes());
+			metaContentObjName.setContent(obj.getName().getBytes("UTF-8"));
 			DocumentMetadataProperty metaAndContentObjName = new DocumentMetadataProperty();
 			metaAndContentObjName.setMetadataPropertyDefinition(metaObjName);
 			metaAndContentObjName.setMetadataPropertyValue(metaContentObjName);
@@ -118,7 +119,7 @@ public class GetMetadataAction extends AbstractSpagoBIAction {
 			metaObjType.setName(textType);
 			metaObjType.setDataTypeCode("GENERAL_META");
 			ObjMetacontent metaContentObjType = new ObjMetacontent();
-			metaContentObjType.setContent(obj.getBiObjectTypeCode().getBytes());
+			metaContentObjType.setContent(obj.getBiObjectTypeCode().getBytes("UTF-8"));
 			DocumentMetadataProperty metaAndContentObjType = new DocumentMetadataProperty();
 			metaAndContentObjType.setMetadataPropertyDefinition(metaObjType);
 			metaAndContentObjType.setMetadataPropertyValue(metaContentObjType);
@@ -133,7 +134,7 @@ public class GetMetadataAction extends AbstractSpagoBIAction {
 			ObjMetacontent metaContentObjRating = new ObjMetacontent();
 			Double temp =  DAOFactory.getBIObjectRatingDAO().calculateBIObjectRating(obj);
 			String docRating = ( temp != null ? temp.toString() : "" );
-			metaContentObjRating.setContent(docRating.getBytes());
+			metaContentObjRating.setContent(docRating.getBytes("UTF-8"));
 			ObjMetaDataAndContent metaAndContentObjRating = new ObjMetaDataAndContent();
 			metaAndContentObjRating.setMeta(metaObjRating);
 			metaAndContentObjRating.setMetacontent(metaContentObjRating);
@@ -145,7 +146,7 @@ public class GetMetadataAction extends AbstractSpagoBIAction {
 			metaObjEngineName.setName(textEngName);
 			metaObjEngineName.setDataTypeCode("GENERAL_META");
 			ObjMetacontent metaContentObjEngineName = new ObjMetacontent();
-			metaContentObjEngineName.setContent(obj.getEngine().getName().getBytes());
+			metaContentObjEngineName.setContent(obj.getEngine().getName().getBytes("UTF-8"));
 			DocumentMetadataProperty metaAndContentObjEngineName = new DocumentMetadataProperty();
 			metaAndContentObjEngineName.setMetadataPropertyDefinition(metaObjEngineName);
 			metaAndContentObjEngineName.setMetadataPropertyValue(metaContentObjEngineName);
