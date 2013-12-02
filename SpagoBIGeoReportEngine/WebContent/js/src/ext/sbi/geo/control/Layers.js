@@ -529,9 +529,10 @@ Sbi.geo.control.Layers = OpenLayers.Class(OpenLayers.Control, {
 	            buttons		: [{
                     text: LN('sbi.geo.layerpanel.add'),
                     handler: function(){
-                    	
                     	var selectedLayers = layersCatalogue.getSelectedLayers();
+                    	var unselectedLayers = layersCatalogue.getUnselectedLayers();
                     	thisPanel.addSelectedLayers(selectedLayers);
+                    	thisPanel.removeUnselectedLayers(unselectedLayers);
                     	thisPanel.layersCatalogueWindow.hide();
                     }
                 }]
@@ -541,6 +542,34 @@ Sbi.geo.control.Layers = OpenLayers.Class(OpenLayers.Control, {
 		
 		
 		this.layersCatalogueWindow.show();
+	},
+	
+	removeUnselectedLayers: function(layers) {
+		var layerLabelsMap = {};
+		var needRedraw = false;
+		
+		
+		for(var i = 0; i < layers.length; i++) {
+			layerLabelsMap[layers[i]] = layers[i];
+			//alert("UNSELECT: " + layers[i]);
+		}
+		
+		for(var i = 0; i < this.map.layers.length; i++) {
+			
+			if(this.map.layers[i].conf) {
+				if( layerLabelsMap[this.map.layers[i].conf.label] ) {
+					//alert("REMOVED: " + this.map.layers[i].conf.label + ": " + Sbi.toSource(this.map.layers[i].conf));
+					this.map.removeLayer(this.map.layers[i]);
+					needRedraw = true;
+				} else {
+					//alert("NOT REMOVED: " + this.map.layers[i].conf.label + " : " + layerLabelsMap[this.map.layers[i].label] + " - " + Sbi.toSource(this.map.layers[i].conf));
+				}
+			}
+		}
+		
+		if(needRedraw === true) {
+			//this.redraw();
+		}
 	},
 	
 	addSelectedLayers: function(layers) {
@@ -564,9 +593,18 @@ Sbi.geo.control.Layers = OpenLayers.Class(OpenLayers.Control, {
 							Sbi.exception.ExceptionHandler.handleFailure(response);
 						}else{
 							var obj = JSON.parse(response.responseText);
-							//alert("add " + response.responseText);
-							var layer = Sbi.geo.utils.LayerFactory.createLayer(obj.root[0]);
-							this.map.addLayer(layer);
+							for(var i = 0; i < obj.root.length; i++) {
+								var layerConf = obj.root[i];
+								layerConf.options = Ext.util.JSON.decode(layerConf.propsOptions);
+								delete layerConf.propsOptions;
+								if(this.map.getLayersByName(layerConf.name).length > 0) {
+									Sbi.debug("[Layers.addSelectedLayers] : Map already contains layer [" + layerConf.name + "]");
+								} else {
+									var layer = Sbi.geo.utils.LayerFactory.createLayer(layerConf);
+									layer.conf = layerConf;	
+									this.map.addLayer(layer);
+								}
+							}
 							thisPanel.redraw();
 						}
 					}

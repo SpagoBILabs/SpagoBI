@@ -53,14 +53,13 @@ Sbi.geo.tools.MeasuresCataloguePanel = function(config) {
 		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.georeport.tools.measurecatalogue);
 	}
 	
+	
+	defaultSettings = Ext.apply(defaultSettings, config || {});	
 	Ext.apply(this, defaultSettings);
 	
 	
 	this.init();
 	
-	
-	 
-
 	var c = ({
 		store : this.buildStore(),
 		view : new Ext.grid.GroupingView(
@@ -80,6 +79,31 @@ Sbi.geo.tools.MeasuresCataloguePanel = function(config) {
 	}
 
 	this.addEvents('storeLoad');
+	
+	this.store.on("load", function(store, records, options) {
+		var selected = [];
+		
+		Sbi.debug("[MeasuresCataloguePanel.onStoreLoad]: selected measures are [" + this.selectedMeasures + "]");
+		
+		if(this.selectedMeasures) {
+			for(var i = 0; i < records.length; i++) {
+				if( this.selectedMeasures[records[i].data.label] ) {
+					Sbi.debug("[MeasuresCataloguePanel.onStoreLoad]: Record [" + records[i].data.label + "] selected");
+					selected.push(records[i]);
+				} else {
+					Sbi.debug("[MeasuresCataloguePanel.onStoreLoad]: Record [" + records[i].data.label + "] not selected");
+				}
+				
+			}
+		}
+		if(selected.length > 1) {
+			Sbi.debug("[MeasuresCataloguePanel.onStoreLoad]: Select [" + selected.length + "] records");
+			this.selectionModel.selectRecords(selected);
+		}
+		
+		delete this.selectedMeasures;
+		
+	}, this);
 
 	Sbi.geo.tools.MeasuresCataloguePanel.superclass.constructor.call(this,c);
 };
@@ -246,7 +270,7 @@ Ext.extend(Sbi.geo.tools.MeasuresCataloguePanel, Ext.grid.GridPanel, {
 	}
 
 	, buildStore: function(){
-		return new Ext.data.GroupingStore({
+		this.store=  new Ext.data.GroupingStore({
 
 			proxy:new Ext.data.HttpProxy({
 				type: 'json',
@@ -275,6 +299,8 @@ Ext.extend(Sbi.geo.tools.MeasuresCataloguePanel, Ext.grid.GridPanel, {
 			,  groupField:'dsName'
 
 		});
+		
+		return this.store;
 	}
 	
 	, filter: function(value){
