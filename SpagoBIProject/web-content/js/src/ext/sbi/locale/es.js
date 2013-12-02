@@ -67,12 +67,11 @@ Sbi.locale.ln['sbi.generic.deletingItemError'] = 'Error mientras borraba element
 Sbi.locale.ln['sbi.generic.warning'] = 'Advertencia';
 Sbi.locale.ln['sbi.generic.pleaseConfirm'] = 'Por favor, confirme';
 Sbi.locale.ln['sbi.generic.confirmDelete'] = '\u00bfBorrar elemento?';
-Sbi.locale.ln['sbi.generic.confirmDeleteDataset'] = 'La cancelaci\u00f3n del dataset eliminar\u00e1 tambi\u00e9n todos los documentos usados. \u00bfConfirmar cancelaci\u00f3n?';
 Sbi.locale.ln['sbi.generic.confirmChangeNode'] = 'Hay cambios sin guardar. \u00bfDesea guardarlos?';
 Sbi.locale.ln['sbi.generic.deleteKpi'] = 'Borrar Kpi';
 Sbi.locale.ln['sbi.generic.attributes'] = 'Atributos';
 
-Sbi.locale.ln['sbi.generic.confirmClone'] = 'Confirm item clone?';
+Sbi.locale.ln['sbi.generic.confirmClone'] = '\u00bfConfirmar elemento a Clonar?';
 //END Generic messages
 
 //START List Detail messages
@@ -117,42 +116,6 @@ Sbi.locale.ln['sbi.modelinstances.target'] = 'Objetivo';
 Sbi.locale.ln['sbi.modelinstances.code'] = 'C\u00f3digo Modelo';
 Sbi.locale.ln['sbi.modelinstances.copyalltree'] = 'Copia todo el \u00e1rbol del modelo';
 //END List Detail messages
-
-//START GRANTS messages
-Sbi.locale.ln['sbi.grants.kpihierarchy'] = 'Modelo de Instancia';
-Sbi.locale.ln['sbi.grants.ouhierarchy'] = 'Jerarqu\u00EDa de unidades organizativas';
-Sbi.locale.ln['sbi.grants.loadtrees'] = 'Los \u00E1rboles de carga';
-Sbi.locale.ln['sbi.grants.panelTitle'] = 'Manejar Subvenciones';
-Sbi.locale.ln['sbi.grants.listTitle'] = 'Lista de Becas';
-Sbi.locale.ln['sbi.grants.trees.tab'] = 'Los \u00E1rboles';
-Sbi.locale.ln['sbi.grants.hide.leafs'] ='Ocultar unidades de hojas de organizaci\u00F3n ';
-Sbi.locale.ln['sbi.grants.hide.nogrants.kpi'] ='Ocultar KPI sin concesiones';
-Sbi.locale.ln['sbi.grants.hide.nogrants.ous'] ='Ocultar las unidades de organizaci\u00F3n, sin concesiones';
-Sbi.locale.ln['sbi.grants.synchronize.ous.btn.text'] ='Sincronizar las unidades de organizaci\u00F3n';
-Sbi.locale.ln['sbi.grants.synchronize.ous.wait.title'] ='Por favor, espere ...';
-Sbi.locale.ln['sbi.grants.synchronize.ous.wait.msg'] ='La sincronizaci\u00F3n de las unidades de organizaci\u00F3n, por favor espere ... ';
-Sbi.locale.ln['sbi.grants.synchronize.ous.performed.title'] ='La operaci\u00F3n se realiz\u00F3 ';
-Sbi.locale.ln['sbi.grants.synchronize.ous.performed.msg'] ='Las unidades organizativas sincronizados!';
-Sbi.locale.ln['sbi.grants.contextmenu.enable.children'] = 'Habilitar todos los descendientes';
-Sbi.locale.ln['sbi.grants.contextmenu.disable.children'] = 'Desactivar todos los descendientes';
-Sbi.locale.ln['sbi.grants.unavailable.during.save'] = 'Grant no est\u00E1 disponible. Operaci\u00F3n en curso.';
-//END GRANTS messages
-
-
-//START GOALS messages
-Sbi.locale.ln['sbi.goals.listTitle'] = 'Lista de Objetivos';
-Sbi.locale.ln['sbi.goals.nogrant'] = 'Debe seleccionar una subvenci\u00F3n'
-Sbi.locale.ln['sbi.goals.nogoal'] = 'Guardar la meta antes que procedi\u00F3'
-Sbi.locale.ln['sbi.goals.define.goal'] = 'Definir Objetivo'
-Sbi.locale.ln['sbi.goals.removed'] = 'Objetivos eliminado con \u00e9xito'
-Sbi.locale.ln['sbi.goal.grant'] = 'Grant'
-Sbi.locale.ln['sbi.goal.insert.all.data'] = 'Insertar los campos requeridos'	
-Sbi.locale.ln['sbi.goals.weight1'] = 'Peso  1';
-Sbi.locale.ln['sbi.goals.weight2'] = 'Peso  2';
-Sbi.locale.ln['sbi.goals.threshold'] = 'Umbral';
-	
-//END GOALS messages
-
 
 //START kpi interface messages
 Sbi.locale.ln['sbi.resources.tablename'] = 'Nombre Tabla';
@@ -252,9 +215,10 @@ Sbi.locale.ln['sbi.browser.document.favourites']  = 'Preferidos';
 Sbi.locale.ln['sbi.browser.document.searchDatasets']  = 'Buscar de bases de datos';
 Sbi.locale.ln['sbi.browser.document.searchDocuments']  = 'Buscar de documentos';
 Sbi.locale.ln['sbi.browser.document.searchKeyword']  = 'Buscar por palabra clave ...';
-Sbi.locale.ln['sbi.document.saveWarning']  = 'Antes de guardar el documento complete Nombre y Etiqueta y seleccione al menos una carpeta d\u00f3nde colocarla';
 Sbi.locale.ln['sbi.browser.document.delete.success']  = 'Document/s deleted succesfully';
 Sbi.locale.ln['sbi.browser.document.clone.success']  = 'Document cloned succesfully';
+
+Sbi.locale.ln['sbi.document.saveWarning']  = 'Antes de guardar el documento complete Nombre y Etiqueta y seleccione al menos una carpeta d\u00f3nde colocarla';
 
 Sbi.locale.ln['sbi.execution.saveDocument']  = 'Rellene el formulario y coloque el documento en al menos una carpeta y luego Guardela';
 Sbi.locale.ln['sbi.browser.defaultRole.title']  = 'Seleccione un rol predeterminado';
@@ -519,12 +483,6 @@ Sbi.locale.ln['sbi.execution.docExport'] = 'DOC';
 Sbi.locale.ln['sbi.execution.jrxmlExport'] = 'JRXML';
 Sbi.locale.ln['sbi.execution.jsonExport'] = 'JSON';
 
-Sbi.locale.ln['sbi.execution.export.qbe.results'] = 'Resultados';
-Sbi.locale.ln['sbi.execution.export.qbe.crosstab'] = 'Tabla de referencias cruzadas';
-Sbi.locale.ln['sbi.worksheet.export.previewtab.msg'] = 'Por favor, abra la pesta\u00F1a de vista previa de hoja de c\u00E1lculo para exportar el documento';
-Sbi.locale.ln['sbi.worksheet.export.previewtab.title'] = 'Advertencia de exportaci\u00F3n';
-
-
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.expand'] = 'Expandir/Reducir';
 
 Sbi.locale.ln['sbi.home.Welcome'] = 'Bienvenido: ';
@@ -533,12 +491,6 @@ Sbi.locale.ln['sbi.home.Info'] = 'Informaci\u00f3n sobre SpagoBI';
 
 Sbi.locale.ln['sbi.lookup.ValueOfColumn'] ='El valor de la columna';
 Sbi.locale.ln['sbi.lookup.asA'] = 'como a';
-Sbi.locale.ln['sbi.lookup.asString'] = 'Cadena';
-Sbi.locale.ln['sbi.lookup.asNumber'] = 'N\u00FAmero';
-Sbi.locale.ln['sbi.lookup.asDate'] = 'Fecha';
-Sbi.locale.ln['sbi.lookup.Contains'] = 'Contiene';
-Sbi.locale.ln['sbi.lookup.StartsWith'] = 'Comience con';
-Sbi.locale.ln['sbi.lookup.EndsWith'] = 'Termina con';
 
 
 //Datasets
@@ -578,6 +530,8 @@ Sbi.locale.ln['sbi.ds.advancedTab'] = 'Avanzado';
 Sbi.locale.ln['sbi.ds.helpAdvanced'] = 'Ayudar';
 Sbi.locale.ln['sbi.ds.persist'] = 'Registrada configuraci\u00f3n del dataset';
 Sbi.locale.ln['sbi.ds.isPersisted'] = 'Persistir en la Tabla';
+Sbi.locale.ln['sbi.ds.flat'] = 'Configuraci\u00f3n dataset plano';
+Sbi.locale.ln['sbi.ds.isFlatDataset'] = 'Dataset plano';
 Sbi.locale.ln['sbi.ds.flatTableName'] = 'Nombre de la Tabla';
 Sbi.locale.ln['sbi.ds.saved']= 'Dataset correctamente guardado';
 Sbi.locale.ln['sbi.ds.deleted']= 'Dataset correctamente borrado';
@@ -587,7 +541,7 @@ Sbi.locale.ln['sbi.ds.name']= 'Nombre';
 Sbi.locale.ln['sbi.ds.description']= 'Descripci\u00f3n';
 Sbi.locale.ln ['sbi.ds.wizard.general'] = 'Guardar el conjunto de datos';
 Sbi.locale.ln ['sbi.ds.wizard.detail'] = 'Cargar archivo';
-Sbi.locale.ln ['sbi.ds.wizard.metadata'] = 'Definición Datos';
+Sbi.locale.ln ['sbi.ds.wizard.metadata'] = 'Definici\u00f3n Datos';
 Sbi.locale.ln ['sbi.ds.wizard.validation'] = 'Los datos de validaci\u00f3n';
 Sbi.locale.ln['sbi.ds.wizard.back']= '< Anterior';
 Sbi.locale.ln['sbi.ds.wizard.next']= 'Siguiente >';
@@ -599,16 +553,12 @@ Sbi.locale.ln['sbi.ds.mandatoryFields']= '\u00a1Por favor insertar los campos ob
 Sbi.locale.ln['sbi.ds.noWorksheetDesigner']= '\u00a1El Dise\u00f1ador Worksheet  no est\u00e1 disponible en dataset param\u00e9tricos!';
 Sbi.locale.ln['sbi.ds.file.type'] = 'Tipo';
 Sbi.locale.ln['sbi.ds.file.upload.button'] = 'Carga de archivos';
-Sbi.locale.ln['sbi.ds.file.csv.delimiter'] = 'Delimitaci\u00f3n de caracteres';
-Sbi.locale.ln['sbi.ds.file.csv.quote'] = 'Cita  <br /> Car\u00e1cter';
+Sbi.locale.ln['sbi.ds.file.csv.delimiter'] = 'Delimitaci\u00f3n <br /> de caracteres';
+Sbi.locale.ln['sbi.ds.file.csv.quote'] = 'Cita Car\u00e1cter';
 Sbi.locale.ln['sbi.ds.file.xsl.sheetnumber'] = 'N\u00famero <br /> de hoja';
 Sbi.locale.ln['sbi.ds.file.xsl.limitrows'] = 'L\u00edmite el n\u00famero de l\u00edneas';
 Sbi.locale.ln['sbi.ds.file.xsl.skiprows'] = 'Ir <br /> l\u00edneas';
-Sbi.locale.ln['sbi.ds.advancedTab'] = 'Avanzado';
-Sbi.locale.ln['sbi.ds.helpAdvanced'] = 'Ayudar';
-Sbi.locale.ln['sbi.ds.persist'] = 'Registrada configuraci\u00F3n del dataset';
-Sbi.locale.ln['sbi.ds.isPersisted'] = 'Persistir en la Tabla';
-Sbi.locale.ln['sbi.ds.flatTableName'] = 'Nombre de la Tabla';
+
 Sbi.locale.ln['sbi.ds.mandatoryUploadFile']= '\u00a1Es necesario cargar el archivo!';
 Sbi.locale.ln['sbi.ds.orderComboLabel']= 'Ordenar por...';
 Sbi.locale.ln['sbi.ds.filterLabel']= 'Filtrar por ...';
@@ -631,12 +581,65 @@ Sbi.locale.ln['sbi.ds.metadata.column.attribute']='Attribute';
 Sbi.locale.ln['sbi.ds.metadata.column.value']='Value';
 Sbi.locale.ln['sbi.ds.metadata.dataset.title']='Dataset Metadata';
 
+// DATASOURCE
+Sbi.locale.ln['sbi.datasource.validation.writeDefault']= ': El datasource es de escritura por defecto: \u00bfQuieres sustituirlo por acutal?';
+Sbi.locale.ln['sbi.datasource.readwrite']= 'Read and write';
+
 //===================================================================
 //MESSAGE BOX BUTTONS
 //===================================================================
 Ext.Msg.buttonText.yes = 'S\u00ed'; 
 Ext.Msg.buttonText.no = 'No';
 
+
+Sbi.locale.ln['sbi.generic.confirmDeleteDataset'] = 'La cancelaci\u00f3n del dataset eliminar\u00e1 tambi\u00e9n todos los documentos usados. \u00bfConfirmar cancelaci\u00f3n?';
+
+
+//START GRANTS messages  
+Sbi.locale.ln['sbi.grants.kpihierarchy'] = 'Modelo de Instancia';
+Sbi.locale.ln['sbi.grants.ouhierarchy'] = 'Jerarqu\u00EDa de unidades organizativas';
+Sbi.locale.ln['sbi.grants.loadtrees'] = 'Los \u00E1rboles de carga';
+Sbi.locale.ln['sbi.grants.panelTitle'] = 'Manejar Subvenciones';
+Sbi.locale.ln['sbi.grants.listTitle'] = 'Lista de Becas';
+Sbi.locale.ln['sbi.grants.trees.tab'] = 'Los \u00E1rboles';
+Sbi.locale.ln['sbi.grants.hide.leafs'] ='Ocultar unidades de hojas de organizaci\u00F3n ';
+Sbi.locale.ln['sbi.grants.hide.nogrants.kpi'] ='Ocultar KPI sin concesiones';
+Sbi.locale.ln['sbi.grants.hide.nogrants.ous'] ='Ocultar las unidades de organizaci\u00F3n, sin concesiones';
+Sbi.locale.ln['sbi.grants.synchronize.ous.btn.text'] ='Sincronizar las unidades de organizaci\u00F3n';
+Sbi.locale.ln['sbi.grants.synchronize.ous.wait.title'] ='Por favor, espere ...';
+Sbi.locale.ln['sbi.grants.synchronize.ous.wait.msg'] ='La sincronizaci\u00F3n de las unidades de organizaci\u00F3n, por favor espere ... ';
+Sbi.locale.ln['sbi.grants.synchronize.ous.performed.title'] ='La operaci\u00F3n se realiz\u00F3 ';
+Sbi.locale.ln['sbi.grants.synchronize.ous.performed.msg'] ='Las unidades organizativas sincronizados!';
+Sbi.locale.ln['sbi.grants.contextmenu.enable.children'] = 'Habilitar todos los descendientes';
+Sbi.locale.ln['sbi.grants.contextmenu.disable.children'] = 'Desactivar todos los descendientes';
+Sbi.locale.ln['sbi.grants.unavailable.during.save'] = 'Grant no est\u00E1 disponible. Operaci\u00F3n en curso.';
+//END GRANTS messages
+
+
+
+Sbi.locale.ln['sbi.execution.export.qbe.results'] = 'Resultados';
+Sbi.locale.ln['sbi.execution.export.qbe.crosstab'] = 'Tabla de referencias cruzadas';
+Sbi.locale.ln['sbi.worksheet.export.previewtab.msg'] = 'Por favor, abra la pesta\u00F1a de vista previa de hoja de c\u00E1lculo para exportar el documento';
+Sbi.locale.ln['sbi.worksheet.export.previewtab.title'] = 'Advertencia de exportaci\u00F3n';
+
+
+Sbi.locale.ln['sbi.ds.flatTableName'] = 'Nombre de la Tabla';
+
+
+
+Sbi.locale.ln['sbi.execution.export.qbe.results'] = 'Resultados';
+Sbi.locale.ln['sbi.execution.export.qbe.crosstab'] = 'Tabla de referencias cruzadas';
+Sbi.locale.ln['sbi.worksheet.export.previewtab.msg'] = 'Por favor, abra la pesta\u00F1a de vista previa de hoja de c\u00E1lculo para exportar el documento';
+Sbi.locale.ln['sbi.worksheet.export.previewtab.title'] = 'Advertencia de exportaci\u00F3n';
+
+
+Sbi.locale.ln['sbi.ds.flatTableName'] = 'Nombre de la Tabla';
+
+
+Sbi.locale.ln['sbi.execution.export.qbe.results'] = 'Resultados';
+Sbi.locale.ln['sbi.execution.export.qbe.crosstab'] = 'Tabla de referencias cruzadas';
+Sbi.locale.ln['sbi.worksheet.export.previewtab.msg'] = 'Por favor, abra la pesta\u00F1a de vista previa de hoja de c\u00E1lculo para exportar el documento';
+Sbi.locale.ln['sbi.worksheet.export.previewtab.title'] = 'Advertencia de exportaci\u00F3n';
 
 
 //===================================================================
@@ -659,12 +662,12 @@ Sbi.locale.ln['sbi.tools.managedatasets.errors.missingdatamart'] = 'Por favor, s
 Sbi.locale.ln['sbi.tools.managedatasets.errors.missingdatasource'] = 'Por favor, seleccione un origen de datos';
 
 //===================================================================
-//DATASET - PREVIEW
+//DATASET - PREVIEW 
 //===================================================================
 Sbi.locale.ln['sbi.tools.dataset.previewwindow.title'] = 'Vista previa';
 
 //===================================================================
-//DATASTORE PANEL
+//DATASTORE PANEL 
 //===================================================================
 Sbi.locale.ln['sbi.widgets.datastorepanel.title'] = 'Resultados';
 
@@ -684,7 +687,7 @@ Sbi.locale.ln['sbi.widgets.datastorepanel.grid.refreshtext'] = 'Actualizar';
 Sbi.locale.ln['sbi.widgets.datastorepanel.button.tt.exportto'] = 'Exportar a';
 
 //===================================================================
-//DOMAIN 
+//DOMAIN  
 //===================================================================
 Sbi.locale.ln['sbi.domain.managedomains.fields.valuecd'] = 'El c\u00F3digo de valor';
 Sbi.locale.ln['sbi.domain.managedomains.fields.valuenm'] = 'Nombre de valor';
@@ -693,7 +696,7 @@ Sbi.locale.ln['sbi.domain.managedomains.fields.domaincd'] = 'C\u00F3digo de domi
 Sbi.locale.ln['sbi.domain.managedomains.fields.domainnm'] = 'Nombre de dominio';
 
 //===================================================================
-//CONFIG 
+//CONFIG  
 //===================================================================
 Sbi.locale.ln['sbi.config.manageconfig.fields.label'] = 'Etiqueta';
 Sbi.locale.ln['sbi.config.manageconfig.fields.name'] = 'Nombre';
@@ -773,6 +776,8 @@ format : "dd/mm/yyyyy",
 startDay : 1
 });
 }
+
+
 //===================================================================
 //COMMUNITY
 //===================================================================
@@ -781,6 +786,8 @@ Sbi.locale.ln["sbi.community.name"]="Name";
 Sbi.locale.ln["sbi.community.descr"]="Description";
 Sbi.locale.ln["sbi.community.owner"]="Owner";
 Sbi.locale.ln["sbi.community.id"]="Id";
+
+
 //===================================================================
 //LAYERS CATALOGUE
 //===================================================================
@@ -798,8 +805,6 @@ Sbi.locale.ln['sbi.tools.layer.baseLayer']= "Base Layer";
 Sbi.locale.ln['sbi.tools.layer.props.params']= "Params";
 Sbi.locale.ln['sbi.tools.layer.props.options']= "Options";
 
-//===================================================================
-//DATASOURCE
-//===================================================================
-Sbi.locale.ln['sbi.datasource.validation.writeDefault']= ': datasource already as write default: do you want to substitute with current?';
-Sbi.locale.ln['sbi.datasource.readwrite']= 'Read and write';
+
+
+
