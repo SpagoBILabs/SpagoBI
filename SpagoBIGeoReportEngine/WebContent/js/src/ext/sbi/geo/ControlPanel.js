@@ -584,7 +584,8 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 			formState.docLabel = Sbi.config.docLabel;
 			documentWindowsParams.MESSAGE_DET= 'MODIFY_GEOREPORT';	
 		}
-		documentWindowsParams.formState = formState;		
+		documentWindowsParams.formState = formState;
+		documentWindowsParams.isInsert = isInsert;
 		
 		this.saveWindow = new Sbi.tools.documents.SaveDocumentWindow(documentWindowsParams);
 		this.saveWindow.addListener('syncronizePanel', this.onSyncronizePanel, this);
