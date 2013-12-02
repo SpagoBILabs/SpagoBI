@@ -1,11 +1,3 @@
-/** SpagoBI, the Open Source Business Intelligence suite
-
- * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
- * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. **/
- 
-  
- 
 Ext.ns("Sbi.locale");
 Sbi.locale.ln = new Array();
 
@@ -36,19 +28,12 @@ Sbi.locale.ln['sbi.generic.details']='D\u00E9tail';
 Sbi.locale.ln['sbi.generic.advanced']='Avanc\u00E9';
 Sbi.locale.ln['sbi.generic.select']='S\u00E9lectionner';
 Sbi.locale.ln['sbi.generic.confirmRestore']='Restaurer';
-Sbi.locale.ln['sbi.generic.run'] = 'Ex\u00E9cuter';
-Sbi.locale.ln['sbi.generic.upload'] = 'Charger';
-Sbi.locale.ln['sbi.generic.download'] = 'T\u00E9l\u00E9charger';
-Sbi.locale.ln['sbi.generic.update2'] = 'Mise \u00e0 jour';
-Sbi.locale.ln['sbi.kpi.trend.title'] = 'Tendance de la ressource ';
-Sbi.locale.ln['sbi.kpi.trend.nodata'] = 'Aucune donn\u00E9e trouv\u00E9e! S\u00E9lectionnez le noeud sp\u00E9cifique pour afficher la tendance des donn\u00E9es. ';
-Sbi.locale.ln['sbi.generic.create'] = 'Cr\u00E9er';
+Sbi.locale.ln['sbi.generic.create'] = 'Cr\u00C9er';
 Sbi.locale.ln['sbi.generic.load'] = 'Charger';
 Sbi.locale.ln['sbi.generic.document'] = 'Document';
 Sbi.locale.ln['sbi.generic.map'] = 'Carte';
 Sbi.locale.ln['sbi.generic.maps'] = 'Cartes';
 Sbi.locale.ln['sbi.generic.all'] = 'Tous';
-
 //Fields
 Sbi.locale.ln['sbi.generic.name']='Nom';
 Sbi.locale.ln['sbi.generic.descr']='Description';
@@ -81,7 +66,6 @@ Sbi.locale.ln['sbi.generic.deletingItemError']='Erreur durant la suppression de 
 Sbi.locale.ln['sbi.generic.warning']='Avertissement';
 Sbi.locale.ln['sbi.generic.pleaseConfirm']='Veuillez confirmer';
 Sbi.locale.ln['sbi.generic.confirmDelete']='Confirmer la suppression de l\'\u00E9l\u00E9ment !';
-Sbi.locale.ln['sbi.generic.confirmDeleteDataset'] = 'Suppression de l\'ensemble de données va également supprimer les documents qui l\'utilisent. Confirmer la suppression?';
 Sbi.locale.ln['sbi.generic.confirmChangeNode']='Certaines modifications n\'ont pas \u00E9t\u00E9 enregistr\u00E9es. Confirmer le changement de racine ?';
 Sbi.locale.ln['sbi.generic.deleteKpi']='Supprimer le Kpi';
 Sbi.locale.ln['sbi.generic.attributes']='Attributs';
@@ -293,15 +277,11 @@ Sbi.locale.ln['sbi.execution.parametersselection.toolbar.back']='Changer le r\u0
 Sbi.locale.ln['sbi.execution.parametersselection.toolbar.clear']='r\u00E9initialiser les param\u00E8tres du formulaire';
 Sbi.locale.ln['sbi.execution.parametersselection.toolbar.save']='Enregistrer les param\u00E8tres comme vue pr\u00E9d\u00E9finie';
 Sbi.locale.ln['sbi.execution.parametersselection.toolbar.next']='ex\u00E9cuter le document';
-Sbi.locale.ln['sbi.execution.parametersselection.toolbar.save.public.description']='Tous ceux qui peuvent ex\u00E9cuter ce document ont \u00E9galement acc\u00E8s \u00E0 vos param\u00E8tres';
-Sbi.locale.ln['sbi.execution.parametersselection.toolbar.save.private.description']='Les param\u00E8tres sauvegard\u00E9es seront visibles uniquement par vous';
-Sbi.locale.ln['sbi.execution.parametersselection.toolbar.save.scope.description']='S\u00E9lectionnez une visibilit\u00E9...';
-
 Sbi.locale.ln['sbi.execution.parametersselection.message.page2.fillFormAndExecute']='Remplir le formulaire ci-dessous et cliquer sur le bouton ex\u00E9cuter pour lancer le document';
 Sbi.locale.ln['sbi.execution.parametersselection.message.page2.execute']  = 'Click on the execution button to see results';
-Sbi.locale.ln['sbi.execution.parametersselection.message.page2.qbe.powerUserMessageWithoutParameters']  = 'Cliquez sur le bouton d\'execution pour visualiser les resultats';
-Sbi.locale.ln['sbi.execution.parametersselection.message.page2.qbe.powerUserMessageWithParameters']  = 'Compl\u00E9tez les champs ci-dessous, cliquez sur le bouton d\'ex\u00E9cution en haut a droite pour ex\u00E9cuter le document principal, ou ex\u00E9cutez la requ\u00E9te enregistr\u00E9e a travers une vue personnalis\u00E9e.';
-Sbi.locale.ln['sbi.execution.parametersselection.message.page2.qbe.readOnlyUserMessageWithoutParameters']  = 'Compl\u00E9tez les champs ci-dessous et cliquez sur le bouton d\'ex\u00E9cution pour visualiser les r\u00E9sultats';
+Sbi.locale.ln['sbi.execution.parametersselection.message.page2.qbe.powerUserMessageWithoutParameters']  = 'Click on the execution button to see results';
+Sbi.locale.ln['sbi.execution.parametersselection.message.page2.qbe.powerUserMessageWithParameters']  = 'Fill the form below, then click on the top-right button to execute the main document or execute a saved query from the customized views\' list';
+Sbi.locale.ln['sbi.execution.parametersselection.message.page2.qbe.readOnlyUserMessageWithoutParameters']  = 'Click on the execution button to see results';
 Sbi.locale.ln['sbi.execution.parametersselection.message.page2.qbe.readOnlyUserMessageWithParameters']  = 'Fill the form below and click on the execution button to see results';
 Sbi.locale.ln['sbi.execution.parametersselection.message.page3.fillFormAndRefresh']='Remplir le formulaire ci-dessous et cliquer sur le bouton actualiser dans la barre d\'outil pour re-ex\u00E9cuter le document';
 Sbi.locale.ln['sbi.execution.parametersselection.message.page3.refresh']='cliquer sur le bouton actualiser dans la toolbar pour re-ex\u00E9cuter le document';
@@ -420,10 +400,6 @@ Sbi.locale.ln['sbi.roles.sendMail']='Envoyer par email';
 Sbi.locale.ln['sbi.roles.send']='Envoyer';
 Sbi.locale.ln['sbi.roles.build']='Construire';
 Sbi.locale.ln['sbi.roles.buildQbe']='Construire Interrogations QbE';
-Sbi.locale.ln['sbi.roles.export'] = 'Exporter';
-Sbi.locale.ln['sbi.roles.doMassiveExport'] = 'Exportation massive';
-Sbi.locale.ln['sbi.roles.manage'] = 'G\u00E9rer';
-Sbi.locale.ln['sbi.roles.manageUsers'] = 'Utilisateurs';
 Sbi.locale.ln['sbi.roles.headerName']='Nom';
 Sbi.locale.ln['sbi.roles.headerDescr']='Description';
 Sbi.locale.ln['sbi.roles.headerCode']='Code';
@@ -438,8 +414,6 @@ Sbi.locale.ln['sbi.roles.rolesList']='Liste R\u00F4les';
 Sbi.locale.ln['sbi.roles.error']='Erreur';
 Sbi.locale.ln['sbi.roles.result']='Resultat';
 Sbi.locale.ln['sbi.roles.rolesSynchronization']='Synchroniser';
-Sbi.locale.ln['sbi.roles.edit'] = 'Edit';
-Sbi.locale.ln['sbi.roles.worksheet'] = 'Worksheet';
 Sbi.locale.ln['sbi.roles.businessModels'] = 'Business Models';
 
 Sbi.locale.ln['sbi.users.fullName']='Nom Complet';
@@ -611,6 +585,8 @@ Sbi.locale.ln['sbi.ds.advancedTab'] = 'Avanc\u00e8me';
 Sbi.locale.ln['sbi.ds.helpAdvanced'] = 'Aide';
 Sbi.locale.ln['sbi.ds.persist'] = 'Configuration de dataset persistants';
 Sbi.locale.ln['sbi.ds.isPersisted'] = 'Persistent';
+Sbi.locale.ln['sbi.ds.flat'] = 'Configuratione flat dataset';
+Sbi.locale.ln['sbi.ds.isFlatDataset'] = 'Dataset plat';
 Sbi.locale.ln['sbi.ds.flatTableName'] = 'Nom de la table';
 Sbi.locale.ln['sbi.ds.saved']= 'Data set correctement sauv\u00e9';
 Sbi.locale.ln['sbi.ds.deleted']= ' Data set correctement supprim\u00e9';
@@ -632,8 +608,8 @@ Sbi.locale.ln['sbi.ds.mandatoryFields']= 'S\'il vous pla\u00eet ins\u00e9rer le 
 Sbi.locale.ln['sbi.ds.noWorksheetDesigner']= 'Worksheet designer n\'est disponible sur dataset param\u00e9trique!';
 Sbi.locale.ln['sbi.ds.file.type'] = 'Type';
 Sbi.locale.ln['sbi.ds.file.upload.button'] = 'Envoyer un fichier';
-Sbi.locale.ln['sbi.ds.file.csv.delimiter'] = 'S\u00e9parateur caract\u00e9re';
-Sbi.locale.ln['sbi.ds.file.csv.quote'] = 'Quote <br /> caract\u00e9re';
+Sbi.locale.ln['sbi.ds.file.csv.delimiter'] = 'S\u00e9parateur caract\u00e8re';
+Sbi.locale.ln['sbi.ds.file.csv.quote'] = 'Quote <br /> caract\u00e8re';
 Sbi.locale.ln['sbi.ds.file.xsl.sheetnumber'] = 'Feuille <br /> Number';
 Sbi.locale.ln['sbi.ds.file.xsl.limitrows'] = 'Limite lignes Nombre';
 Sbi.locale.ln['sbi.ds.file.xsl.skiprows'] = 'Aller <br /> lignes';
@@ -647,7 +623,6 @@ Sbi.locale.ln['sbi.ds.EXISTS']= ' Le fichier existe d\u00e9j\u00e0';
 Sbi.locale.ln['sbi.ds.failedToUpload']= 'Impossible de t\u00e9l\u00e9charger ';
 Sbi.locale.ln['sbi.ds.skip.checks']='Ecraser';
 Sbi.locale.ln['sbi.ds.changedon']='Modifi\u00e9 ';
-Sbi.locale.ln['sbi.ds.customData'] = 'Attributs';
 
 Sbi.locale.ln['sbi.ds.metadata.msgKO']='The validation has found some errors. ';
 Sbi.locale.ln['sbi.ds.metadata.msgOK']='The validation didn\'t find errors.';
@@ -742,8 +717,32 @@ Sbi.locale.ln['sbi.config.manageconfig.fields.category']='Categorie';
 //===================================================================
 Sbi.locale.ln['sbi.worksheet.validation.error.title']='Erreur Validation';
 Sbi.locale.ln['sbi.worksheet.validation.error.text']='Certaines feuilles ne sont pas valides... V\u00E9rifier que toutes les feuilles ont un contenu valide.';
-Sbi.locale.ln['sbi.worksheet.export.previewtab.msg'] = 'S\'il vous pla\u00eet, ouvrez l\'onglet de aper\u00e7u du worksheet pour exporter le document';
-Sbi.locale.ln['sbi.worksheet.export.previewtab.title'] = 'Alerte Exportation';
+
+//===================================================================
+// DATASOURCE
+//===================================================================
+Sbi.locale.ln['sbi.datasource.validation.writeDefault']= ': datasource already as write default: do you want to substitute with current?';
+Sbi.locale.ln['sbi.datasource.readwrite']= 'Read and write';
+
+
+Sbi.locale.ln['sbi.generic.run'] = 'Ex\u00E9cuter';
+Sbi.locale.ln['sbi.generic.upload'] = 'Charger';
+Sbi.locale.ln['sbi.generic.download'] = 'T\u00E9l\u00E9charger';
+Sbi.locale.ln['sbi.generic.update2'] = 'Mise \u00e0 jour';
+Sbi.locale.ln['sbi.kpi.trend.title'] = 'Tendance de la ressource ';
+Sbi.locale.ln['sbi.kpi.trend.nodata'] = 'Aucune donn\u00E9e trouv\u00E9e! S\u00E9lectionnez le noeud sp\u00E9cifique pour afficher la tendance des donn\u00E9es. ';
+Sbi.locale.ln['sbi.generic.create'] = 'Cr\u00E9er';
+
+Sbi.locale.ln['sbi.generic.confirmDeleteDataset'] = 'Suppression de l\'ensemble de données va également supprimer les documents qui l\'utilisent. Confirmer la suppression?';
+
+
+Sbi.locale.ln['sbi.roles.export'] = 'Exporter';
+Sbi.locale.ln['sbi.roles.doMassiveExport'] = 'Exportation massive';
+Sbi.locale.ln['sbi.roles.manage'] = 'G\u00E9rer';
+Sbi.locale.ln['sbi.roles.manageUsers'] = 'Utilisateurs';
+
+Sbi.locale.ln['sbi.roles.edit'] = 'Edit';
+Sbi.locale.ln['sbi.roles.worksheet'] = 'Worksheet';
 
 //===================================================================
 //MASSIVE EXPORT
@@ -829,9 +828,3 @@ Sbi.locale.ln['sbi.tools.layer.props.file']= "File";
 Sbi.locale.ln['sbi.tools.layer.baseLayer']= "Base Layer";
 Sbi.locale.ln['sbi.tools.layer.props.params']= "Params";
 Sbi.locale.ln['sbi.tools.layer.props.options']= "Options";
-
-//===================================================================
-//DATASOURCE
-//===================================================================
-Sbi.locale.ln['sbi.datasource.validation.writeDefault']= ': datasource already as write default: do you want to substitute with current?';
-Sbi.locale.ln['sbi.datasource.readwrite']= 'Read and write';
