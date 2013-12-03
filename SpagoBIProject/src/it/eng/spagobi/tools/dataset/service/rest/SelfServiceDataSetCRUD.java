@@ -27,6 +27,7 @@ import it.eng.spagobi.commons.utilities.AuditLogUtilities;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.commons.utilities.messages.IMessageBuilder;
+import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory;
 import it.eng.spagobi.metamodel.MetaModelWrapper;
 import it.eng.spagobi.metamodel.SiblingsFileWrapper;
@@ -71,6 +72,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -789,6 +791,10 @@ public class SelfServiceDataSetCRUD {
 						IDatasetValidatorFactory geoValidatorFactory = new GeoDatasetValidatorFactory();
 						
 						IDatasetValidator geoValidator = geoValidatorFactory.getValidator(categoryValueName);
+						
+						MessageBuilder msgBuild = new MessageBuilder();
+						Locale locale = msgBuild.getLocale(req);
+						geoValidator.setLocale(locale);
 						
 						if (geoValidator != null){
 

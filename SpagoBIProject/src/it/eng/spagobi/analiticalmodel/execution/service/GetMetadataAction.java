@@ -69,13 +69,13 @@ public class GetMetadataAction extends AbstractSpagoBIAction {
 			
 			HttpServletRequest httpRequest = getHttpRequest();
 			MessageBuilder msgBuild = new MessageBuilder();
-			//Locale locale = msgBuild.getLocale(httpRequest);
+			Locale locale = msgBuild.getLocale(httpRequest);
 			
 			//START GENERAL METADATA
 			if(subObjectId!=null){
 				//SubObj Name
 				ObjMetadata metaSubObjName = new ObjMetadata();
-				String textSubName = msgBuild.getMessage(SUBOBJ_NAME);	
+				String textSubName = msgBuild.getMessage(SUBOBJ_NAME, locale);	
 				metaSubObjName.setName(textSubName);
 				metaSubObjName.setDataTypeCode("GENERAL_META");
 				ObjMetacontent metaContentSubObjName = new ObjMetacontent();
@@ -90,7 +90,7 @@ public class GetMetadataAction extends AbstractSpagoBIAction {
 			BIObject obj = DAOFactory.getBIObjectDAO().loadBIObjectById(objectId);
 			//Obj Label
 			ObjMetadata metaObjLabel = new ObjMetadata();
-			String textLabel = msgBuild.getMessage(LABEL);	
+			String textLabel = msgBuild.getMessage(LABEL, locale);	
 			metaObjLabel.setName(textLabel);
 			metaObjLabel.setDataTypeCode("GENERAL_META");
 			ObjMetacontent metaContentObjLabel = new ObjMetacontent();
@@ -102,7 +102,7 @@ public class GetMetadataAction extends AbstractSpagoBIAction {
 			
 			//Obj Name
 			ObjMetadata metaObjName = new ObjMetadata();
-			String textName = msgBuild.getMessage(NAME);	
+			String textName = msgBuild.getMessage(NAME, locale);	
 			metaObjName.setName(textName);
 			metaObjName.setDataTypeCode("GENERAL_META");
 			ObjMetacontent metaContentObjName = new ObjMetacontent();
@@ -115,7 +115,7 @@ public class GetMetadataAction extends AbstractSpagoBIAction {
 			
 			//Obj Type
 			ObjMetadata metaObjType = new ObjMetadata();
-			String textType = msgBuild.getMessage(TYPE);	
+			String textType = msgBuild.getMessage(TYPE, locale);	
 			metaObjType.setName(textType);
 			metaObjType.setDataTypeCode("GENERAL_META");
 			ObjMetacontent metaContentObjType = new ObjMetacontent();
@@ -142,7 +142,7 @@ public class GetMetadataAction extends AbstractSpagoBIAction {
 			
 			//Obj Engine Name
 			ObjMetadata metaObjEngineName = new ObjMetadata();
-			String textEngName = msgBuild.getMessage(ENG_NAME);	
+			String textEngName = msgBuild.getMessage(ENG_NAME, locale);	
 			metaObjEngineName.setName(textEngName);
 			metaObjEngineName.setDataTypeCode("GENERAL_META");
 			ObjMetacontent metaContentObjEngineName = new ObjMetacontent();

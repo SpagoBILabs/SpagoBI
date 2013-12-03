@@ -106,7 +106,7 @@ public class GeoSpatialDimensionDatasetValidator  extends AbstractDatasetValidat
 					    	    				String valueString = (String)fieldValue;
 					    	    				//Case Empty String
 					    	    				if (valueString.isEmpty()){
-					    	    					String errorDescription = msgBuild.getMessage("dataset.wizard.validation.err.emptyvalue");
+					    	    					String errorDescription = msgBuild.getMessage("dataset.wizard.validation.err.emptyvalue", getLocale());
 					    	    					errorDescription = errorDescription
 					    	    						.replaceAll("%0", GEO_HIERARCHY_NAME)
 					    	    						.replaceAll("%1", levelName)
@@ -116,9 +116,10 @@ public class GeoSpatialDimensionDatasetValidator  extends AbstractDatasetValidat
 					    	    				} else {
 							    	    			if (!admissibleValues.contains(fieldValue))
 							    	    			{
-							    	    				String errorDescription = msgBuild.getMessage("dataset.wizard.validation.err.wrongvalue");
-						    	    					errorDescription = errorDescription
-						    	    						.replaceAll("%0", (String)fieldValue)
+							    	    				String errorDescription = msgBuild.getMessage("dataset.wizard.validation.err.wrongvalue", getLocale());
+							    	    				String f = (fieldValue.toString()).replace("'", "\\'");
+							    	    				errorDescription = errorDescription
+						    	    						.replaceAll("%0", f)
 						    	    						.replaceAll("%1", GEO_HIERARCHY_NAME)
 						    	    						.replaceAll("%2", levelName)
 						    	    						.replaceAll("%3", hint);
@@ -129,13 +130,19 @@ public class GeoSpatialDimensionDatasetValidator  extends AbstractDatasetValidat
 					    	    			} else {
 						    	    			if (!admissibleValues.contains(fieldValue))
 						    	    			{
-						    	    				String errorDescription = "Error in validation: "+fieldValue+" is not valid for hierarchy "+GEO_HIERARCHY_NAME+" on level "+levelName+". "+hint+"...";
+						    	    				String errorDescription = msgBuild.getMessage("dataset.wizard.validation.err.wrongvalue", getLocale());
+					    	    					errorDescription = errorDescription
+					    	    						.replaceAll("%0", (fieldValue.toString()).replace("'", "\\'"))
+					    	    						.replaceAll("%1", GEO_HIERARCHY_NAME)
+					    	    						.replaceAll("%2", levelName)
+					    	    						.replaceAll("%3", hint);
+						    	    				//String errorDescription = "Error in validation: "+fieldValue+" is not valid for hierarchy "+GEO_HIERARCHY_NAME+" on level "+levelName+". "+hint+"...";
 						    	    				validationErrors.addError(rowNumber, columnIndex, field, errorDescription);
 						    	    			}
 					    	    			}
 
 					    	    		} else {
-					    	    			String errorDescription = msgBuild.getMessage("dataset.wizard.validation.err.nullvalue");
+					    	    			String errorDescription = msgBuild.getMessage("dataset.wizard.validation.err.nullvalue", getLocale());
 			    	    					errorDescription = errorDescription
 			    	    						.replaceAll("%0", GEO_HIERARCHY_NAME)
 			    	    						.replaceAll("%1", levelName)
@@ -231,7 +238,7 @@ public class GeoSpatialDimensionDatasetValidator  extends AbstractDatasetValidat
 	//Generate a String with some possible admissible values as an hint
 	public String generateHintValues(Set<String> admissibleValues){
 		MessageBuilder msgBuild = new MessageBuilder();
-		String hint = msgBuild.getMessage("dataset.wizard.validation.hints");
+		String hint = msgBuild.getMessage("dataset.wizard.validation.hints", getLocale());
 		hint += ": ";
 		
 		Iterator<String> it = admissibleValues.iterator();
