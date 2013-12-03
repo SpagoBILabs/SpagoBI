@@ -66,6 +66,7 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 	docIsVisible= (engineInstance.getDocumentIsVisible()==null)?"":engineInstance.getDocumentIsVisible().toString();
 	docPreviewFile= (engineInstance.getDocumentPreviewFile()==null)?"":engineInstance.getDocumentPreviewFile().toString();	
 	docDatasetLabel = (engineInstance.getDataSet()==null)?"":engineInstance.getDataSet().getLabel();
+	String docDatasetName = (engineInstance.getDataSet()==null)?"":engineInstance.getDataSet().getName();
 	docCommunities= (engineInstance.getDocumentCommunities()==null)?null:engineInstance.getDocumentCommunities();
 	docCommunity = (docCommunities == null || docCommunities.length == 0) ? "": docCommunities[0];
 	docFunctionalities= (engineInstance.getDocumentFunctionalities()==null)?new ArrayList():engineInstance.getDocumentFunctionalities();
@@ -170,6 +171,8 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 		    Sbi.config.docCommunities= "<%=docCommunity%>";
 		    Sbi.config.docFunctionalities= <%=docFunctionalities%>;
 		    Sbi.config.docDatasetLabel= "<%=docDatasetLabel%>";
+		    Sbi.config.docDatasetName= "<%=docDatasetName%>";
+		    
 		    Sbi.config.visibleDataSet=<%=visibleDataSet%>;
 		    
 		    var geoReportPanel = null;
@@ -185,7 +188,9 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 			            items: [geoReportPanel]
 			        });
 				}else{
-					Sbi.exception.ExceptionHandler.showErrorMessage(LN('sbi.dataset.no.visible'));
+					
+					
+					Sbi.exception.ExceptionHandler.showErrorMessage(LN('sbi.dataset.no.visible', [Sbi.config.docDatasetName, Sbi.config.docName]));
 				}
 
 			});
