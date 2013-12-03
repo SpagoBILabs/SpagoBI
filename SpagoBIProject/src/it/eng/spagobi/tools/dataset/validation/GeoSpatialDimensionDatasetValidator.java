@@ -117,7 +117,7 @@ public class GeoSpatialDimensionDatasetValidator  extends AbstractDatasetValidat
 							    	    			if (!admissibleValues.contains(fieldValue))
 							    	    			{
 							    	    				String errorDescription = msgBuild.getMessage("dataset.wizard.validation.err.wrongvalue", getLocale());
-							    	    				String f = (fieldValue.toString()).replace("'", "\\'");
+							    	    				String f = (fieldValue.toString()).replace("'", " ");
 							    	    				errorDescription = errorDescription
 						    	    						.replaceAll("%0", f)
 						    	    						.replaceAll("%1", GEO_HIERARCHY_NAME)
@@ -132,7 +132,7 @@ public class GeoSpatialDimensionDatasetValidator  extends AbstractDatasetValidat
 						    	    			{
 						    	    				String errorDescription = msgBuild.getMessage("dataset.wizard.validation.err.wrongvalue", getLocale());
 					    	    					errorDescription = errorDescription
-					    	    						.replaceAll("%0", (fieldValue.toString()).replace("'", "\\'"))
+					    	    						.replaceAll("%0", (fieldValue.toString()).replace("'", " "))
 					    	    						.replaceAll("%1", GEO_HIERARCHY_NAME)
 					    	    						.replaceAll("%2", levelName)
 					    	    						.replaceAll("%3", hint);
@@ -245,7 +245,7 @@ public class GeoSpatialDimensionDatasetValidator  extends AbstractDatasetValidat
 		int counter = 0;
         while (it.hasNext()) {
         	if (counter < 3){
-            	hint = hint+it.next()+", ";
+            	hint = hint + it.next()+", ";
                 counter++;
         	} else {
         		break;
