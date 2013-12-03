@@ -9,7 +9,6 @@
  */
 Ext.ns("Sbi.settings.geobi");
 
-
 Sbi.settings.geobi.tools = {
 	dataset: {
 		filedatasetpanel: {
