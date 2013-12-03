@@ -273,6 +273,75 @@ Ext.extend(Sbi.engines.chart.GenericChartPanel, Ext.Panel, {
 		}
 	}
 	
+	/**
+	 * Loads the series for the waterfall chart where data is an array of name and y values
+	 */
+	, getWaterfallSeries: function(serieValues, colors){
+		if(this.store!=null){
+			//single serie
+		   	var series = [];
+
+			//coordinates or multiple columns for 1 value
+		   	if (serieValues.alias != undefined && serieValues.alias != null){
+		   		this.serieAlias = serieValues.alias.trim().split(",");
+		   	}
+
+			var records = this.store.getRange();
+	    	for (var j = 0; j < records.length; j++) {
+	    		var rec = records[j].data;
+				if(rec) {
+					var obj = {};
+					var recArray = [];
+					for(i = 0; i<this.serieAlias.length; i++){								
+				    	var serieColumn =  this.store.getFieldNameByAlias(this.serieAlias[i]);
+				    	var tmpValue =  rec[serieColumn];
+				    	var isSumColumn =  this.store.getFieldNameByAlias(serieValues.isSumAlias);
+				    	var isInterSumColumn=  this.store.getFieldNameByAlias(serieValues.isIntSumAlias);
+				    	var isSum =(isSumColumn)? rec[isSumColumn]:false;
+				    	var isInterSum =(isInterSumColumn)? rec[isInterSumColumn]:false;
+				    	if (tmpValue == undefined) tmpValue = 0;
+				    	var posValue = recArray.indexOf(recArray[serieColumn]);					    	
+						if (posValue == -1){
+							if ( this.chartConfig.xAxis && this.chartConfig.xAxis.alias &&
+									this.serieAlias[i] == this.chartConfig.xAxis.alias){
+								obj.name = tmpValue;
+							}else{
+								if (isSum && isSum == "true"){
+									obj.isSum = true;
+									obj.color =colors.sumColor || "";
+								}
+								else if (isInterSum && isInterSum == "true") {
+									obj.isIntermediateSum = true;
+									obj.color = colors.intSumColor || colors.sumColor || "";
+								}
+								else
+									obj.y = tmpValue;
+							}	
+						}
+					}
+					series.push(obj);
+					
+//						if(group && series.length>0){
+//							var name = series[series.length-1][0];
+//							var value = series[series.length-1][1];
+//							var recArrayName = recArray[0];
+//							var recArrayValue = recArray[1]; 
+//							if(name==recArrayName){
+//								recArrayValue = parseFloat(recArrayValue)+parseFloat(value);
+//								series.pop();
+//								recArray[0]=recArrayName;
+//								recArray[1]=recArrayValue;
+//							}
+//						}
+//						series.push(recArray);
+				}
+	    	}
+		
+			return  series;
+		}
+	}
+	
+	
     , format: function(value, type, format) {
     	if(value==null){
     		return value;

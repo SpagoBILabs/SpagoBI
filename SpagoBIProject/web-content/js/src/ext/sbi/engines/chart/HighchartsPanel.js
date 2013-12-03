@@ -109,11 +109,6 @@ Ext.extend(Sbi.engines.chart.HighchartsPanel, Sbi.engines.chart.GenericChartPane
 			}				
 			
 			//defines tooltip
-			// orig:
-			//if(singleChartConfig.tooltip && singleChartConfig.tooltip.formatter){
-			//	var formatterCode = this.getFormatter(singleChartConfig.tooltip.formatter);				
-			//	singleChartConfig.tooltip.formatter = formatterCode;
-			//}
 			if(singleChartConfig.tooltip){
 				if (singleChartConfig.tooltip.formatter){
 					var formatterCode = this.getFormatter(singleChartConfig.tooltip.formatter);				
@@ -189,27 +184,12 @@ Ext.extend(Sbi.engines.chart.HighchartsPanel, Sbi.engines.chart.GenericChartPane
 	}
 	
 	, defineSeriesData: function(config){
-		//gets series values and adds theme to the config
-		var seriesNode = [];
-
-		if (config.series !== undefined ){
-			var serieValue = config.series;
-			if (Ext.isArray(serieValue)){
-				var seriesData =  {};
-				var str = "";
-				for(var i = 0; i < serieValue.length; i++) {
-					seriesData = serieValue[i];					
-					seriesData.data = this.getSeries(serieValue[i].alias,serieValue[i].group );//values from dataset
-					seriesNode.push(seriesData);
-				}
-			}
-		}else if (config.plotOptions){ 
-			seriesData = config.series;//other attributes too
-			seriesData.data = this.getSeries();//values from dataset
-			seriesNode.push(seriesData);
+		if (config.chart.type == 'waterfall'){
+			this.defineWaterfallSeriesData(config);
+		}else{
+			this.defineStandardSeriesData(config);
 		}
-
-		config.series = seriesNode;
+		
 	}
 	
 	, definesCategoriesX: function(config){
@@ -259,6 +239,58 @@ Ext.extend(Sbi.engines.chart.HighchartsPanel, Sbi.engines.chart.GenericChartPane
 			}
 		}
 	}
+	
+	, defineStandardSeriesData: function(config){
+		//gets series values and adds theme to the config
+		var seriesNode = [];
+
+		if (config.series !== undefined ){
+			var serieValue = config.series;
+			if (Ext.isArray(serieValue)){
+				var seriesData =  {};
+				var str = "";
+				for(var i = 0; i < serieValue.length; i++) {
+					seriesData = serieValue[i];					
+					seriesData.data = this.getSeries(serieValue[i].alias,serieValue[i].group );//values from dataset
+					seriesNode.push(seriesData);
+				}
+			}
+		}else if (config.plotOptions){ 
+			seriesData = config.series;//other attributes too
+			seriesData.data = this.getSeries();//values from dataset
+			seriesNode.push(seriesData);
+		}
+
+		config.series = seriesNode;
+	}
+	
+	, defineWaterfallSeriesData: function(config){
+		//gets series values and adds theme to the config
+		var seriesNode = [];
+
+		if (config.series !== undefined ){
+			var serieValue = config.series;
+			var colors = (config.colors)? config.colors[0] : {};
+			if (Ext.isArray(serieValue)){
+				var seriesData =  {};
+				var str = "";																				
+				for(var i = 0; i < serieValue.length; i++) {
+					seriesData = serieValue[i];						
+					seriesData.data = this.getWaterfallSeries(serieValue[i], colors);//values from dataset
+					seriesData.color = colors.downColor || colors.color;
+					seriesData.upColor = colors.upColor;	
+					seriesNode.push(seriesData);
+				}
+			}
+		}else if (config.plotOptions){ 
+			seriesData = config.series;//other attributes too
+			seriesData.data = this.getSeries();//values from dataset
+			seriesNode.push(seriesData);
+		}
+
+		config.series = seriesNode;
+	}
+	
 	
 	//formatter definition 
 	, formatWithName: function (){
