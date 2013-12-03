@@ -28,6 +28,7 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 
+import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
 import it.eng.spagobi.meta.model.olap.Level;
 import it.eng.spagobi.metamodel.HierarchyWrapper;
 import it.eng.spagobi.metamodel.MetaModelWrapper;
@@ -64,6 +65,7 @@ public class TimeDimensionDatasetValidator  extends AbstractDatasetValidator {
 			
 			for (Map.Entry<String, HierarchyLevel> entry : hierarchiesColumnsToCheck.entrySet())
 			{
+				MessageBuilder msgBuild = new MessageBuilder();
 			    logger.debug("Column Name= "+entry.getKey() + " / HierarchyLevel" + entry.getValue());
 			    String columnName = entry.getKey();
 			    HierarchyLevel hierarchyLevel = entry.getValue();
@@ -94,11 +96,22 @@ public class TimeDimensionDatasetValidator  extends AbstractDatasetValidator {
 					    	    		if(fieldValue != null)  {
 					    	    			if (!admissibleValues.contains(fieldValue))
 					    	    			{
-					    	    				String errorDescription = "Error in validation: "+fieldValue+" is not valid for hierarchy "+TIME_HIERARCHY_NAME+" on level "+levelName+". "+hint+"...";
+					    	    				String errorDescription = msgBuild.getMessage("dataset.wizard.validation.err.wrongvalue", getLocale());
+				    	    					errorDescription = errorDescription
+				    	    						.replaceAll("%0", ((String)fieldValue).replaceAll("'", "\'"))
+				    	    						.replaceAll("%1", TIME_HIERARCHY_NAME)
+				    	    						.replaceAll("%2", levelName)
+				    	    						.replaceAll("%3", hint);
+					    	    				//String errorDescription = "Error in validation: "+fieldValue+" is not valid for hierarchy "+TIME_HIERARCHY_NAME+" on level "+levelName+". "+hint+"...";
 					    	    				validationErrors.addError(rowNumber, columnIndex, field, errorDescription);
 					    	    			}
 					    	    		} else {
-				    	    				String errorDescription = "Error in validation: null is not valid for hierarchy "+TIME_HIERARCHY_NAME+" on level "+levelName+". "+hint+"...";
+					    	    			String errorDescription = msgBuild.getMessage("dataset.wizard.validation.err.nullvalue", getLocale());
+			    	    					errorDescription = errorDescription
+			    	    						.replaceAll("%0", TIME_HIERARCHY_NAME)
+			    	    						.replaceAll("%1", levelName)
+			    	    						.replaceAll("%2", hint);
+				    	    				//String errorDescription = "Error in validation: null is not valid for hierarchy "+TIME_HIERARCHY_NAME+" on level "+levelName+". "+hint+"...";
 				    	    				validationErrors.addError(rowNumber, columnIndex, field, errorDescription);
 					    	    		}
 					    	    		rowNumber++;
@@ -126,7 +139,8 @@ public class TimeDimensionDatasetValidator  extends AbstractDatasetValidator {
 	
 	//Generate a String with some possible admissible values as an hint
 	public String generateHintValues(Set<String> admissibleValues){
-		String hint = "Some possible values are: ";
+		MessageBuilder msgBuild = new MessageBuilder();
+		String hint = msgBuild.getMessage("dataset.wizard.validation.hints", getLocale());
 		
 		Iterator<String> it = admissibleValues.iterator();
 		int counter = 0;

@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.spagobi.tools.dataset.validation;
 
+import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IField;
 import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
@@ -47,6 +48,7 @@ public class NumericColumnValidator extends AbstractDatasetValidator {
 	@Override
 	public ValidationErrors doValidateDataset(IDataStore dataStore,
 			Map<String, HierarchyLevel> hierarchiesColumnsToCheck) {
+		MessageBuilder msgBuild = new MessageBuilder();
 		ValidationErrors validationErrors = new ValidationErrors();
 		for (Map.Entry<String, HierarchyLevel> entry : hierarchiesColumnsToCheck.entrySet())
 		{
@@ -68,12 +70,15 @@ public class NumericColumnValidator extends AbstractDatasetValidator {
 		    		if(fieldValue != null)  {
 		    			if (!fieldValue.toString().isEmpty()){
 				    		if (!isNumeric(fieldValue)){
-			    				String errorDescription = "Error in validation: "+fieldValue+" is not a numeric value ";
+				    			String errorDescription = msgBuild.getMessage("dataset.wizard.validation.err.notanumber", getLocale());
+    	    					errorDescription = errorDescription.replaceAll("%0", ((String)fieldValue).replaceAll("'", "\'"));
+    	 
+			    				//String errorDescription = "Error in validation: "+fieldValue+" is not a numeric value ";
 			    				validationErrors.addError(rowNumber, columnIndex, field, errorDescription);
 				    		}
 		    			}
 		    		}else {
-	    				String errorDescription = "Error in validation: null is not valid for a valid numeric value";
+		    			String errorDescription = msgBuild.getMessage("	dataset.wizard.validation.err.nullnotanumber", getLocale());
 	    				validationErrors.addError(rowNumber, columnIndex, field, errorDescription);
 		    		}
 		    		rowNumber++;

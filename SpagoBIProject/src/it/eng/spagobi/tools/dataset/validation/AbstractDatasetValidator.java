@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.spagobi.tools.dataset.validation;
 
+import java.util.Locale;
 import java.util.Map;
 
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
@@ -32,8 +33,21 @@ import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 public abstract class AbstractDatasetValidator implements IDatasetValidator {
 
     IDatasetValidator childValidator = null;
+    Locale locale = null;
 
-    public ValidationErrors validateDataset(IDataStore dataStore, Map<String, HierarchyLevel> hierarchiesColumnsToCheck) {
+    public Locale getLocale() {
+    	Locale locale = this.locale;
+    	if(locale == null && childValidator != null) {
+    		locale = childValidator.getLocale();
+    	}
+		return locale;
+	}
+
+	public void setLocale(Locale locale) {
+		this.locale = locale;
+	}
+
+	public ValidationErrors validateDataset(IDataStore dataStore, Map<String, HierarchyLevel> hierarchiesColumnsToCheck) {
     	ValidationErrors errors = new ValidationErrors();
         if(childValidator != null) {
         	ValidationErrors childValidationErrors = childValidator.validateDataset( dataStore, hierarchiesColumnsToCheck );
