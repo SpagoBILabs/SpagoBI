@@ -1302,8 +1302,8 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 		var newDescr =  p.docDescr.getEl().getValue();
 		Ext.get('docMapName').dom.value = newName;
 		Ext.get('docMapDesc').dom.value = newDescr;
-
-		this.setIsPublicValue(p.isPublic.getEl().getValue());
+//		this.setIsPublicValue(p.isPublic.getEl().getValue());
+		this.setIsPublicValue(p.isPublic.value);
 		//after insert redefines the buttons div (for modify)
 		if (this.isInsertion = true && p.docLabel.value !== undefined && p.docLabel.value !== null && 
 				p.docLabel.value !==""){
@@ -1327,12 +1327,14 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 	}
 	
 	, setIsPublicValue: function(v){
+		//v is the value ("true"/"false") for public visibility
 		var el1div =  Ext.get("div-private");
 		var el2div =  Ext.get("div-public");
 		var el1 = Ext.get("scopePrivate");
 		var el2 = Ext.get("scopePublic");
 		if (Ext.fly(el1div) && Ext.fly(el2div)){
-			if (Ext.fly(el1div).hasClass('checked')){
+//			if (Ext.fly(el1div).hasClass('checked')){
+			if (v == "true"){
 				el1.dom.checked = false;
 				el2.dom.checked = true;
 				Ext.fly(el1div).removeClass('checked');
