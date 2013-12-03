@@ -63,7 +63,7 @@ Sbi.locale.formats = {
 //LABELS
 //===================================================================
 
-Sbi.locale.ln['sbi.dataset.no.visible'] = 'il dataset collegato al documento non \u00e8 visibile all\'utente loggato';
+Sbi.locale.ln['sbi.dataset.no.visible'] = 'Ci dispiace ma è imposible eseguire il documento [%1] perché il dataset [%0] ad esso associato non è più visibile';
 
 //===================================================================
 //GENERIC
@@ -113,6 +113,7 @@ Sbi.locale.ln['sbi.geo.layerpanel.title'] = 'Livelli';
 Sbi.locale.ln['sbi.geo.layerpanel.layer'] = ' livello';
 Sbi.locale.ln['sbi.geo.layerpanel.add'] = 'Aggiungi livello';
 Sbi.locale.ln['sbi.geo.layerpanel.catalogue'] = 'Catalogo Livelli';
+Sbi.locale.ln['sbi.geo.layerpanel.addremove'] = 'Aggiungi/Rimuovi Layer';
 
 
 Sbi.locale.ln['sbi.geo.analysispanel.title'] = 'Analisi';
@@ -143,7 +144,7 @@ Sbi.locale.ln['sbi.geo.controlpanel.savewin.previewfile'] = 'Preview file';
 Sbi.locale.ln['sbi.geo.controlpanel.savewin.community'] = 'Community';
 Sbi.locale.ln['sbi.geo.controlpanel.savewin.scope'] = 'Scope';
 Sbi.locale.ln['sbi.geo.controlpanel.savewin.saveWarning']  = 'Prima di salvare il documento, inserire il Nome e selezionare almeno una cartella dove posizionare il documento';
-Sbi.locale.ln['sbi.geo.controlpanel.savewin.msgDetail']  = 'Selezionare la cartella in cui pubblicare la mappa. La selezione della cartella determina la visibilita\' da parte degli altri utenti';
+Sbi.locale.ln['sbi.geo.controlpanel.savewin.msgDetail']  = 'Selezionare la cartella in cui pubblicare la mappa. Salvando nella cartella [public] tutti potranno vedere la mappa. Salvando nella cartella [private] solo gli utenti loggati potranno vedere la mappa. Se desideri che la mappa sia invece visibile solo a te seleziona l\'opzione private nel pannello di sinistra';
 Sbi.locale.ln['sbi.geo.controlpanel.feedback.title']  = 'Invia Feedback';
 Sbi.locale.ln['sbi.geo.controlpanel.feedback.label']  = 'Testo del messaggio';
 Sbi.locale.ln['sbi.geo.controlpanel.feedback.btn.send']  = 'Invia';
