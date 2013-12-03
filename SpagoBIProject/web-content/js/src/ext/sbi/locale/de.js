@@ -10,6 +10,9 @@ Ext.ns("Sbi.locale");
 
 Sbi.locale.ln = new Array();
 
+Sbi.locale.ln['sbi.ds.metadata.msgKO']='Die Validierung hat einige Fehler eingeschlichen. Die Zellen, die Fehler enthalten, werden rot hervorgehoben. Bewegen Sie die Maus über diesen Zellen wird eine Quickinfo mit mehr Informationen über die aufgetretenen Fehler zeigen';
+Sbi.locale.ln['sbi.ds.metadata.msgOK']='Die Validierung hat keine Fehler gefunden';
+
 //===================================================================
 //GENERICS
 //===================================================================
