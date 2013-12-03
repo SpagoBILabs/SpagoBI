@@ -246,7 +246,7 @@ Sbi.geo.control.Layers = OpenLayers.Class(OpenLayers.Control, {
         OpenLayers.Element.addClass(editButton, "labelSpan olButton");
         editButton.id = "EditButton";
         editButton._editButton = this.id;
-        editButton.innerHTML = "<a style='color:#3d90d4;' href='#'>"+LN('sbi.generic.add')+"/"+LN('sbi.generic.delete')+LN('sbi.geo.layerpanel.layer')+"</a><\p>.<\p> "; 
+        editButton.innerHTML = "<a style='color:#3d90d4;' href='#'>"+LN('sbi.geo.layerpanel.addremove')+"</a><\p>.<\p> "; 
         this.layersContentBodyElement.appendChild(editButton);
         
         // from layer switcher

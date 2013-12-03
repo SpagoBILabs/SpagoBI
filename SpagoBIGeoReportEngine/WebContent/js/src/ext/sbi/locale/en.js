@@ -64,7 +64,7 @@ Sbi.locale.formats = {
 //===================================================================
 
 
-Sbi.locale.ln['sbi.dataset.no.visible'] = 'The dataset linked to the document is not visible for the logged user';
+Sbi.locale.ln['sbi.dataset.no.visible'] = 'Sorry but it is imposible to execute document [%1] because the dataset [%0] associted to it is not visible anymore';
 
 //===================================================================
 //GENERIC
@@ -115,6 +115,7 @@ Sbi.locale.ln['sbi.geo.layerpanel.title'] = 'Layers';
 Sbi.locale.ln['sbi.geo.layerpanel.layer'] = ' layer';
 Sbi.locale.ln['sbi.geo.layerpanel.add'] = 'Add layers';
 Sbi.locale.ln['sbi.geo.layerpanel.catalogue'] = 'Layers Catalogue';
+Sbi.locale.ln['sbi.geo.layerpanel.addremove'] = 'Add/Remove Layer';
 
 Sbi.locale.ln['sbi.geo.analysispanel.title'] = 'Analysis';
 Sbi.locale.ln['sbi.geo.analysispanel.addindicators'] = 'Add indicators';
@@ -144,7 +145,7 @@ Sbi.locale.ln['sbi.geo.controlpanel.savewin.previewfile'] = 'Preview file';
 Sbi.locale.ln['sbi.geo.controlpanel.savewin.community'] = 'Community';
 Sbi.locale.ln['sbi.geo.controlpanel.savewin.scope'] = 'Scope';
 Sbi.locale.ln['sbi.geo.controlpanel.savewin.saveWarning']  = 'Before save document, is necessary to insert the name of the map and select almost a folder.';
-Sbi.locale.ln['sbi.geo.controlpanel.savewin.msgDetail']  = 'Select the folder in which to publish the map. The folder selection will determine the visibility from other users';
+Sbi.locale.ln['sbi.geo.controlpanel.savewin.msgDetail']  = 'Select the folder in which to publish the map. Saving in the [public] everyone will see the map. Saving in the [private] only logged in users will be able to see the map. If you want the map to be visible only to you instead select the private option in the left panel';
 Sbi.locale.ln['sbi.geo.controlpanel.feedback.title']  = 'Send Feedback';
 Sbi.locale.ln['sbi.geo.controlpanel.feedback.label']  = 'Message text';
 Sbi.locale.ln['sbi.geo.controlpanel.feedback.btn.send']  = 'Send';

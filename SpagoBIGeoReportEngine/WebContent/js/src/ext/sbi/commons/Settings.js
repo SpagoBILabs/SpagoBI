@@ -27,7 +27,7 @@ Sbi.settings.georeport = {
 	  	}
 	
 	  	, saveWindow:{
-	  		showDetailBar: false
+	  		showDetailBar: true
 	  	}
 			
 		/**

@@ -67,20 +67,20 @@ Sbi.locale.formats = {
 
 Sbi.locale.ln['sbi.generic.delete'] = 'Delete';
 
-Sbi.locale.ln['sbi.geo.legendpanel.changeStyle'] = 'Change style'; 
+Sbi.locale.ln['sbi.geo.legendpanel.changeStyle'] = 'Stil ändern'; 
 
 Sbi.locale.ln['sbi.geo.layerpanel.layer'] = ' layer';
-Sbi.locale.ln['sbi.geo.layerpanel.add'] = 'Add layers';
-Sbi.locale.ln['sbi.geo.layerpanel.catalogue'] = 'Layers Catalogue';
+Sbi.locale.ln['sbi.geo.layerpanel.add'] = 'In Schicht';
+Sbi.locale.ln['sbi.geo.layerpanel.catalogue'] = 'Layer-Katalog';
 
-Sbi.locale.ln['sbi.geo.controlpanel.savewin.saveWarning']  = 'Before save document, is necessary to insert the name of the map and select almost a folder.';
-Sbi.locale.ln['sbi.geo.controlpanel.savewin.msgDetail']  = ' XXX messaggio visualizzato nella window di salvataggio della mappa per dettagliare bottoni & CO. XXX ';
-Sbi.locale.ln['sbi.geo.controlpanel.feedback.title']  = 'Send Feedback';
-Sbi.locale.ln['sbi.geo.controlpanel.feedback.label']  = 'Message text';
-Sbi.locale.ln['sbi.geo.controlpanel.feedback.btn.send']  = 'Send';
-Sbi.locale.ln['sbi.geo.controlpanel.feedback.sendOK']  = 'Feedback sent to document\'s creator';
+Sbi.locale.ln['sbi.geo.controlpanel.savewin.saveWarning']  = 'Bevor Dokument zu speichern, ist notwendig, um den Namen der Karte und wählen Sie Einfügen fast einen Ordner.';
+Sbi.locale.ln['sbi.geo.controlpanel.savewin.msgDetail']  = 'Wählen Sie den Ordner, in dem die Karte veröffentlichen. Speichern in der [public] jeder sehen Sie die Karte. Speichern in der [private] nur angemeldete Benutzer sind in der Lage, um die Karte zu sehen. Wenn Sie wollen, dass die Karte nur für Sie sichtbar zu sein, anstatt wählen Sie die Option Privat im linken Fenster';
+Sbi.locale.ln['sbi.geo.controlpanel.feedback.title']  = 'Denden Feedback';
+Sbi.locale.ln['sbi.geo.controlpanel.feedback.label']  = 'Die Mitteilung';
+Sbi.locale.ln['sbi.geo.controlpanel.feedback.btn.send']  = 'Senden';
+Sbi.locale.ln['sbi.geo.controlpanel.feedback.sendOK']  = 'Feedback zu Ersteller des Dokuments gesendet';
 
-Sbi.locale.ln['sbi.geo.controlpanel.control.share.title']  = 'Share map';
+Sbi.locale.ln['sbi.geo.controlpanel.control.share.title']  = 'Teilen Karte';
 
 
 
@@ -93,6 +93,15 @@ Sbi.locale.ln['sbi.geo.controlpanel.control.share.title']  = 'Share map';
 //già TRADOTTE
 //=====================================================================================================
 //=====================================================================================================
+
+//===================================================================
+//LABELS
+//===================================================================
+
+
+Sbi.locale.ln['sbi.dataset.no.visible'] = 'Es tut uns leid, aber es ist zu imposible Dokument ausführen [%1], weil die Datenmenge [%0] verbunden, um es nicht mehr sichtbar ist';
+	
+
 
 //===================================================================
 //GENERIC
@@ -131,7 +140,7 @@ Sbi.locale.ln['sbi.generic.pleaseConfirm'] = 'Bitte bestätigen'; //'Please conf
 Sbi.locale.ln['sbi.geo.controlpanel.title'] = 'Systemsteuerung'; //'Control Panel';
 Sbi.locale.ln['sbi.geo.controlpanel.defaultname'] = 'Neue Kartenname ...'; //'New Map name...';
 Sbi.locale.ln['sbi.geo.controlpanel.defaultdescr'] = 'Neue Kartenbeschreibung ...'; //'New Map description...';
-Sbi.locale.ln['sbi.geo.controlpanel.publishedby'] = 'Veröffentlicht von'; //'Published by ';
+Sbi.locale.ln['sbi.geo.controlpanel.publishedby'] = 'Veröffentlicht von '; //'Published by ';
 Sbi.locale.ln['sbi.geo.controlpanel.sendfeedback'] = 'Feedback senden'; //' Send feedback ';
 Sbi.locale.ln['sbi.geo.controlpanel.indicators'] = 'Indikatoren'; //' Indicators ';
 Sbi.locale.ln['sbi.geo.controlpanel.permissionlabel'] = 'Diese Karte ist:'; //'This map is: ';
@@ -144,6 +153,7 @@ Sbi.locale.ln['sbi.geo.controlpanel.point'] = 'Punkt'; //'point ';
 Sbi.locale.ln['sbi.geo.controlpanel.filters'] = 'Filter';
 
 Sbi.locale.ln['sbi.geo.layerpanel.title'] = 'Layers'; //'Layers';
+Sbi.locale.ln['sbi.geo.layerpanel.addremove'] = 'Hinzufügen/Entfernen Layer'; //'Add/Reomove Layer';
 
 
 

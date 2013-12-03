@@ -37,9 +37,25 @@ if(Sbi.commons.Format){
 };
 
 
-Sbi.locale.localize = function(key) {
+Sbi.locale.localize = function(key, params) {
 	if(!Sbi.locale.ln) return key;
-	return Sbi.locale.ln[key] || key;
+	var msg = Sbi.locale.ln[key];
+	if(msg) {
+		msg = Sbi.locale.sobstituteParams(Sbi.locale.ln[key], params);
+	} else {
+		msg = key;
+	}
+	return  msg;
+};
+
+Sbi.locale.sobstituteParams = function(msg, params) {
+	if(params && params.length > 0) {
+		for(var i = 0; i < params.length; i++) {
+			var parStr = "%" + i;
+			msg = msg.replace(parStr, params[i]);
+		}
+	}
+	return msg;
 };
 
 // alias
