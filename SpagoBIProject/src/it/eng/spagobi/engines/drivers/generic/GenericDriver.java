@@ -345,7 +345,7 @@ public class GenericDriver extends AbstractDriver implements IEngineDriver {
 				ILowFunctionalityDAO functDao = DAOFactory.getLowFunctionalityDAO();
 				LowFunctionality funct= functDao.loadLowFunctionalityByCode(functCode, false);
 				String name = community.getName();
-				toReturn.add("\"" + funct.getId().toString() + "__" + name + "\"");
+				toReturn.add("\"" + funct.getId().toString() + "||" + funct.getCode() + "__" + name + "\"");
 			}
 		}
 	    return toReturn;
