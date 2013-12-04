@@ -159,7 +159,8 @@ Ext.extend(Sbi.tools.documents.SaveDocumentWindow, Ext.Window, {
 				         "name",
 				         "description",
 				         "owner",
-				         "functCode"
+				         "functCode",
+				         "functId"
 				         ],
 				         root: 'root'
 			})
@@ -460,15 +461,18 @@ Ext.extend(Sbi.tools.documents.SaveDocumentWindow, Ext.Window, {
 	}
 	
 	, getCommunitySelected: function(){
-		var toReturn = "";
+		
 		if(this.OBJECT_COMMUNITIES == null) return toReturn;
 		
 		this.OBJECT_COMMUNITIES_CODE = this.OBJECT_COMMUNITIES.substring(this.OBJECT_COMMUNITIES.indexOf("||")+2,this.OBJECT_COMMUNITIES.indexOf("__") );	
-		this.OBJECT_COMMUNITIES_ID = this.OBJECT_COMMUNITIES.substring(0,this.OBJECT_COMMUNITIES.indexOf("||") );	
+		this.OBJECT_COMMUNITIES_ID = this.OBJECT_COMMUNITIES.substring(0,this.OBJECT_COMMUNITIES.indexOf("||") );
+		//var toReturn = this.OBJECT_COMMUNITIES.substring(this.OBJECT_COMMUNITIES.indexOf("__")+2);
+		var toReturn = "";
+		var funcCode = "";
 		for (var i=0; i<this.OBJECT_FUNCTIONALITIES.length; i++){
 			var f = this.OBJECT_FUNCTIONALITIES[i];
 			if (f == this.OBJECT_COMMUNITIES_ID){
-				var funcCode = this.OBJECT_COMMUNITIES.substring(this.OBJECT_COMMUNITIES.indexOf("__")+2 );
+				funcCode = this.OBJECT_COMMUNITIES.substring(this.OBJECT_COMMUNITIES.indexOf("__")+2 );
 				toReturn = funcCode; //gets the first community
 				break;
 			}			
