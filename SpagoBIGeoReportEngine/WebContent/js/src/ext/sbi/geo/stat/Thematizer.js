@@ -778,9 +778,15 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
     	var records = this.store.getRange();
 	 	Sbi.trace("[Thematizer.getDistributionFromStore] : Records number is equal to [" + records.length + "]");
    	 	
+	 	
+	 	Sbi.trace("[Thematizer.getDistributionFromStore] : Indicator is equal to [" + indicator + "]");
+	 	Sbi.trace("[Thematizer.getDistributionFromStore] : Store id is equal to [" + id + "]");
+	 	
 	 	var indicatorFiledName, idFiledName;
 	 	for(var n = 0; n < records[0].fields.getCount(); n++) {
 	 		var field = records[0].fields.itemAt(n);
+	 		
+	 		Sbi.trace("[Thematizer.getDistributionFromStore] : Store column [" + (n+1) + "] is equal to [" + field.header + "]");
 	 		if(field.header == indicator) {
 	 			indicatorFiledName = field.name;
 	 		}
@@ -793,6 +799,9 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
 	 	
 	 	if(!idFiledName) {
 	 		alert("Impossible to find a column was header is equal to [" + id + "]");
+	 	} else {
+	 		Sbi.trace("[Thematizer.getDistributionFromStore] : Indicator column name is equal to [" + indicatorFiledName + "]");
+		 	Sbi.trace("[Thematizer.getDistributionFromStore] : Store id column name is equal to [" + idFiledName + "]");
 	 	}
 	 	
 	 	for (var i = 0; i < records.length; i++) {	
@@ -999,8 +1008,12 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
          		}, this);
          		this.store.on('load', this.onPhysicalStoreLoaded, this);
          		
-         		this.store.on('loadexception', function(store, ptions, response, e) {
-         			Sbi.exception.ExceptionHandler.showErrorMessage("Error: " + e , "Impossible to load store");
+         		this.store.on('loadexception', function(store, options, response, e) {
+         			Sbi.exception.ExceptionHandler.showErrorMessage("Error: " + e + ": " + Sbi.toSource(response, true), "Impossible to load store");
+         			
+         			Sbi.debug("[Thematizer.activate]: response text: " + response.responseText);
+         			var r = Ext.util.JSON.decode(response.responseText);
+         			//Sbi.debug("[Thematizer.activate]: response: " + Sbi.toSource(response, false));
          		});
          		
              	if(this.storeReload == true && this.store.readyForThematization !== true) {
