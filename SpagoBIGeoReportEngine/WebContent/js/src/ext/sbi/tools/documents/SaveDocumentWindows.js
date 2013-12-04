@@ -94,6 +94,8 @@ Ext.extend(Sbi.tools.documents.SaveDocumentWindow, Ext.Window, {
 	OBJECT_PARS: null,
 	OBJECT_PREVIEW_FILE: null,
 	OBJECT_COMMUNITIES: null,
+	OBJECT_COMMUNITIES_ID: null,
+	OBJECT_COMMUNITIES_CODE: null,
 	OBJECT_SCOPE: null,
 	isInsert: false,
 	
@@ -284,8 +286,9 @@ Ext.extend(Sbi.tools.documents.SaveDocumentWindow, Ext.Window, {
 		if (this.OBJECT_COMMUNITIES != "" && this.OBJECT_COMMUNITIES != null &&
 				this.docCommunity.getValue() == ""){
 			//clean from community
-			docCommunity = "-1__" + this.OBJECT_COMMUNITIES.substring(0,this.OBJECT_COMMUNITIES.indexOf("__")); // -1 say that is deleted
-		}
+			docCommunity = "-1__" + this.OBJECT_COMMUNITIES.substring(0,this.OBJECT_COMMUNITIES.indexOf("||")); // -1 say that is deleted
+		}else if (this.OBJECT_COMMUNITIES_ID)
+			docCommunity = this.OBJECT_COMMUNITIES_CODE;
 		
 		if(query!=undefined && query!=null){
 			query = Ext.util.JSON.encode(query);
@@ -457,14 +460,14 @@ Ext.extend(Sbi.tools.documents.SaveDocumentWindow, Ext.Window, {
 	}
 	
 	, getCommunitySelected: function(){
-		var toReturn = null;
-		
+		var toReturn = "";
 		if(this.OBJECT_COMMUNITIES == null) return toReturn;
 		
-		var functID = this.OBJECT_COMMUNITIES.substring(0,this.OBJECT_COMMUNITIES.indexOf("__") );
+		this.OBJECT_COMMUNITIES_CODE = this.OBJECT_COMMUNITIES.substring(this.OBJECT_COMMUNITIES.indexOf("||")+2,this.OBJECT_COMMUNITIES.indexOf("__") );	
+		this.OBJECT_COMMUNITIES_ID = this.OBJECT_COMMUNITIES.substring(0,this.OBJECT_COMMUNITIES.indexOf("||") );	
 		for (var i=0; i<this.OBJECT_FUNCTIONALITIES.length; i++){
 			var f = this.OBJECT_FUNCTIONALITIES[i];
-			if (f == functID){
+			if (f == this.OBJECT_COMMUNITIES_ID){
 				var funcCode = this.OBJECT_COMMUNITIES.substring(this.OBJECT_COMMUNITIES.indexOf("__")+2 );
 				toReturn = funcCode; //gets the first community
 				break;
