@@ -135,7 +135,6 @@ Ext.extend(Sbi.engines.chart.HighchartsPanel, Sbi.engines.chart.GenericChartPane
 			var newColors = this.getColors(singleChartConfig);
 			//Highcharts.setOptions({colors: newColors }); with this instruction a black color is added on the last category (pie case)
 			singleChartConfig.colors = newColors;
-			
 			this.chart = new Highcharts.Chart(singleChartConfig);
 			//saves the chart for eventually multiple export
 			this.chartsArr.push(this.chart);
@@ -277,17 +276,19 @@ Ext.extend(Sbi.engines.chart.HighchartsPanel, Sbi.engines.chart.GenericChartPane
 				for(var i = 0; i < serieValue.length; i++) {
 					seriesData = serieValue[i];						
 					seriesData.data = this.getWaterfallSeries(serieValue[i], colors);//values from dataset
-					seriesData.color = colors.downColor || colors.color;
-					seriesData.upColor = colors.upColor;	
+					seriesData.color = colors.downColor || colors.color ||  Highcharts.getOptions().colors[3];
+					seriesData.upColor = colors.upColor || Highcharts.getOptions().colors[2];	
 					seriesNode.push(seriesData);
 				}
 			}
 		}else if (config.plotOptions){ 
 			seriesData = config.series;//other attributes too
-			seriesData.data = this.getSeries();//values from dataset
+			seriesData.data = this.getWaterfallSeries();//values from dataset
+			seriesData.color = colors.downColor || colors.color ||  Highcharts.getOptions().colors[3];
+			seriesData.upColor = colors.upColor || Highcharts.getOptions().colors[2];	
 			seriesNode.push(seriesData);
 		}
-
+		alert(seriesData.color);
 		config.series = seriesNode;
 	}
 	
