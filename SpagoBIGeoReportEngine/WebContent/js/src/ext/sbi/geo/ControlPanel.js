@@ -1302,7 +1302,17 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 		var newDescr =  p.docDescr.getEl().getValue();
 		Ext.get('docMapName').dom.value = newName;
 		Ext.get('docMapDesc').dom.value = newDescr;
-//		this.setIsPublicValue(p.isPublic.getEl().getValue());
+		var idxComm = p.docCommunity.store.find('functCode',p.docCommunity.value );
+		if (idxComm == -1) //search with name (if element combo isn't selected)
+			idxComm = p.docCommunity.store.find('name',p.docCommunity.value );
+		if(idxComm > -1){
+			var recComm = p.docCommunity.store.getAt(idxComm).data;
+			Sbi.config.docCommunities =  recComm["functId"] + "||" + recComm["functCode"] + "__"  + recComm["name"];
+			if (Sbi.config.docFunctionalities.indexOf(recComm["functId"]) == -1 )
+				Sbi.config.docFunctionalities.push(recComm["functId"]); 
+		}else{
+			Sbi.config.docCommunities = "||__" ; //reset value
+		}
 		this.setIsPublicValue(p.isPublic.value);
 		//after insert redefines the buttons div (for modify)
 		if (this.isInsertion = true && p.docLabel.value !== undefined && p.docLabel.value !== null && 
