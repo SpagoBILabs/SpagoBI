@@ -304,7 +304,7 @@ Ext.extend(Sbi.tools.documents.SaveDocumentWindow, Ext.Window, {
 				Ext.MessageBox.show({
 	                title: LN('sbi.generic.warning'),
 	                msg: msgWarning,
-	                width: 180,
+	                //width: 180,
 	                buttons: Ext.MessageBox.OK
 	           });
 		}else{	
