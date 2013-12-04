@@ -274,7 +274,7 @@ Ext.extend(Sbi.engines.chart.GenericChartPanel, Ext.Panel, {
 	}
 	
 	/**
-	 * Loads the series for the waterfall chart where data is an array of name and y values
+	 * Loads the series for the 	 chart where data is an array of name and y values
 	 */
 	, getWaterfallSeries: function(serieValues, colors){
 		if(this.store!=null){
@@ -292,33 +292,46 @@ Ext.extend(Sbi.engines.chart.GenericChartPanel, Ext.Panel, {
 				if(rec) {
 					var obj = {};
 					var recArray = [];
-					for(i = 0; i<this.serieAlias.length; i++){								
+					for(i = 0; i<this.serieAlias.length; i++){			
+						var serieColor;
+						var isSumColumn;
+						var isInterSumColumn;				    	
+				    	if (serieValues.isSumAlias)
+				    		isSumColumn =  this.store.getFieldNameByAlias(serieValues.isSumAlias);
+				    	if (serieValues.isIntSumAlias)
+				    		isInterSumColumn =  this.store.getFieldNameByAlias(serieValues.isIntSumAlias);
+				    	if (serieValues.colorAlias)
+				    		serieColor =  this.store.getFieldNameByAlias(serieValues.colorAlias);
 				    	var serieColumn =  this.store.getFieldNameByAlias(this.serieAlias[i]);
 				    	var tmpValue =  rec[serieColumn];
-				    	var isSumColumn =  this.store.getFieldNameByAlias(serieValues.isSumAlias);
-				    	var isInterSumColumn=  this.store.getFieldNameByAlias(serieValues.isIntSumAlias);
-				    	var isSum =(isSumColumn)? rec[isSumColumn]:false;
-				    	var isInterSum =(isInterSumColumn)? rec[isInterSumColumn]:false;
+				    	var isSum = (isSumColumn)? rec[isSumColumn]:false;
+				    	var isInterSum = (isInterSumColumn)? rec[isInterSumColumn]:false;
+				    	var color = (serieColor)? rec[serieColor]:undefined;
+				    	if (color == "") color = undefined;
 				    	if (tmpValue == undefined) tmpValue = 0;
 				    	var posValue = recArray.indexOf(recArray[serieColumn]);					    	
 						if (posValue == -1){
 							if ( this.chartConfig.xAxis && this.chartConfig.xAxis.alias &&
 									this.serieAlias[i] == this.chartConfig.xAxis.alias){
-								obj.name = tmpValue;
+								obj.name = tmpValue;								
 							}else{
 								if (isSum && isSum == "true"){
 									obj.isSum = true;
-									obj.color =colors.sumColor || "";
+									obj.color  =  color || colors.sumColor || "";
 								}
 								else if (isInterSum && isInterSum == "true") {
 									obj.isIntermediateSum = true;
-									obj.color = colors.intSumColor || colors.sumColor || "";
+									obj.color =   color ||  colors.intSumColor || colors.sumColor || Highcharts.getOptions().colors[1];
 								}
-								else
+								else{
 									obj.y = tmpValue;
+									obj.color = color;									
+								}
 							}	
 						}
 					}
+					alert(obj.color);
+					obj.borderColor = obj.color;
 					series.push(obj);
 					
 //						if(group && series.length>0){
