@@ -330,7 +330,6 @@ Ext.extend(Sbi.engines.chart.GenericChartPanel, Ext.Panel, {
 							}	
 						}
 					}
-					alert(obj.color);
 					obj.borderColor = obj.color;
 					series.push(obj);
 					
