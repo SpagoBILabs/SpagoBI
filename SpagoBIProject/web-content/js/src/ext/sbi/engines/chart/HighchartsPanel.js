@@ -287,8 +287,7 @@ Ext.extend(Sbi.engines.chart.HighchartsPanel, Sbi.engines.chart.GenericChartPane
 			seriesData.color = colors.downColor || colors.color ||  Highcharts.getOptions().colors[3];
 			seriesData.upColor = colors.upColor || Highcharts.getOptions().colors[2];	
 			seriesNode.push(seriesData);
-		}
-		alert(seriesData.color);
+		}		
 		config.series = seriesNode;
 	}
 	
