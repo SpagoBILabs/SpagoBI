@@ -17,6 +17,7 @@
 <%@page import="it.eng.spagobi.commons.constants.ObjectsTreeConstants"%>
 <%@page import="org.apache.commons.lang.StringEscapeUtils"%>
 <%@page import="java.util.Enumeration"%>
+<%@page import="java.util.Locale"%>
 
 <script type="text/javascript" src='${pageContext.request.contextPath}/js/lib/ext-4.1.1a/ext-all-debug.js'/></script>
 <script type="text/javascript" src='${pageContext.request.contextPath}/js/lib/ext-4.1.1a/examples/ux/IFrame.js'/></script>
@@ -28,7 +29,10 @@ String sbiMode = "WEB";
 IUrlBuilder urlBuilder = null;
 urlBuilder = UrlBuilderFactory.getUrlBuilder(sbiMode);
 
+String strLocale = request.getParameter("locale"); 	
+Locale locale=new Locale(strLocale.substring(0,strLocale.indexOf("_")), strLocale.substring(strLocale.indexOf("_")+1), "");
 
+	
 IMessageBuilder msgBuilder = MessageBuilderFactory
 		.getMessageBuilder();
 %>
@@ -39,7 +43,7 @@ IMessageBuilder msgBuilder = MessageBuilderFactory
   Sbi.config.loginUrl = "";
   
   function active(accountId) {
-  var locale = '<%= request.getParameter("locale") %>';
+  var locale = '<%= strLocale %>';
   
   //Service Registry creation
   var url = {
@@ -75,11 +79,11 @@ IMessageBuilder msgBuilder = MessageBuilderFactory
 	    if(response != undefined  && response.responseText != undefined ) {
 			if( response.responseText != null && response.responseText != undefined ){
 		      var jsonData = Ext.decode( response.responseText );
-		      Sbi.exception.ExceptionHandler.showInfoMessage(jsonData.message, 'Attivazione account', {});
+		      Sbi.exception.ExceptionHandler.showInfoMessage(jsonData.message, <%=msgBuilder.getMessage("signup.active.title")%>, {});
 		    }		
 		}
 		else {
-		  Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
+			  Sbi.exception.ExceptionHandler.showErrorMessage(LN('sbi.generic.serviceResponseEmpty'), LN('sbi.generic.serviceError'));
 		}
       },
 	  scope: this,
