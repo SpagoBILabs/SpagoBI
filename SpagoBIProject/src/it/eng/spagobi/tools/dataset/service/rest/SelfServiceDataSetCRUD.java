@@ -358,6 +358,79 @@ public class SelfServiceDataSetCRUD {
 		}
 	}
 	
+	/*
+	 * Change the scope of the dataset.
+	 * If the dataset is private change it to public (SHARE)
+	 * If the dataset is public change it to private (UNSHARE)
+	 */
+	@POST
+	@Path("/share")
+	@Produces(MediaType.APPLICATION_JSON)
+	public String shareDataSet(@Context HttpServletRequest req) {
+		IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+		try {
+			IDataSetDAO dao=DAOFactory.getDataSetDAO();
+			dao.setUserProfile(profile);
+			int id = Integer.valueOf(req.getParameter("id"));			
+			
+			IDataSet ds  = dao.loadActiveIDataSetByID(id);
+			//IDataSet dsNew = recoverDataSetDetails(req, ds, true);
+			
+			//logger.debug("Recalculating dataset's metadata: executing the dataset...");
+			//String dsMetadata = null;
+			//dsMetadata = getDatasetTestMetadata(dsNew, profile, meta);
+			//dsNew.setDsMetadata(dsMetadata);	
+			//LogMF.debug(logger, "Dataset executed, metadata are [{0}]", dsMetadata);
+			
+			HashMap<String, String> logParam = new HashMap();
+			
+			logParam.put("LABEL",ds.getLabel());
+			if(ds.isPublic()){
+				//If dataset is shared change it to unshared (from public to private)
+				ds.setPublic(false);
+			} else {
+				//Share dataset (from private to public)
+				ds.setPublic(true); 
+			}
+			String type =  getDatasetTypeName(ds.getDsType()); 
+			ds.setDsType(type);
+
+			dao.modifyDataSet(ds);
+			
+			//Notifications Management -----------------------------------
+			//notificationManagement(req,ds,ds);
+			
+			updateAudit(req, profile, "DATA_SET.MODIFY", logParam, "OK");
+			
+			int newId = ds.getId();
+		
+					
+			return ("{\"id\":"+newId+", \"isPublic\":"+ds.isPublic()+" }");
+		} catch (SpagoBIRuntimeException ex) {
+			logger.error("Cannot fill response container", ex);
+			updateAudit(req, profile, "DATA_SET.SHARE", null, "ERR");
+			logger.debug(ex.getMessage());
+			try {
+				return ( ExceptionUtilities.serializeException(ex.getMessage(),null));
+			} catch (Exception e) {
+				logger.debug("Cannot fill response container.");
+				throw new SpagoBIRuntimeException(
+						"Cannot fill response container", e);
+			}
+		} catch (Exception ex) {
+			logger.error("Cannot fill response container", ex);
+			updateAudit(req, profile, "DATA_SET.SHARE", null, "ERR");
+			logger.debug(canNotFillResponseError);
+			try {
+				return ( ExceptionUtilities.serializeException(canNotFillResponseError,null));
+			} catch (Exception e) {
+				logger.debug("Cannot fill response container.");
+				throw new SpagoBIRuntimeException(
+						"Cannot fill response container", e);
+			}
+		}
+	}	
+	
 	//Modifiy the original file associated to the dataset adding a column with correct values to use for geo hierarchy
 	//then set this column as the hierarchy level column inside the dataset metadata
 	private IDataSet normalizeDataset(IDataSet dataSet, String datasetMetadata){
@@ -792,11 +865,12 @@ public class SelfServiceDataSetCRUD {
 						
 						IDatasetValidator geoValidator = geoValidatorFactory.getValidator(categoryValueName);
 						
-						MessageBuilder msgBuild = new MessageBuilder();
-						Locale locale = msgBuild.getLocale(req);
-						geoValidator.setLocale(locale);
-						
+
 						if (geoValidator != null){
+							MessageBuilder msgBuild = new MessageBuilder();
+							Locale locale = msgBuild.getLocale(req);
+							geoValidator.setLocale(locale);
+							
 
 							//Validate the dataset and return the fields not valid
 							ValidationErrors hierarchiesColumnsValidationErrors = geoValidator.validateDataset(dataStore,hierarchiesColumnsToCheck);
