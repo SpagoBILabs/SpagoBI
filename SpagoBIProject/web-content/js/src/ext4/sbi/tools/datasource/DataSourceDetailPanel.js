@@ -28,6 +28,9 @@ Ext.define('Sbi.tools.datasource.DataSourceDetailPanel', {
     }
 
 	, constructor: function(config) {
+		
+		this.isSuperadmin = config.isSuperadmin;
+		
 		this.initConfig(config);
 		this.initFields();
 		this.items=[this.dataSourceId, this.dataSourceDialectId, this.dataSourceLabel , this.dataSourceDescription, this.dataSourceDialect, this.dataSourceMultischema , this.dataSourceMultischemaAttribute, this.dataSourceReadOnly, this.dataSourceReadWrite, this.dataSourceWriteDefault, this.dataSourceTypeJdbc, this.dataSourceTypeJndi,this.dataSourceJndiName, this.dataSourceJdbcUrl, this.dataSourceJdbcUser, this.dataSourceJdbcPassword ,this.dataSourceDriver]
@@ -149,7 +152,7 @@ Ext.define('Sbi.tools.datasource.DataSourceDetailPanel', {
 			name: 'TYPE' , 
 			inputValue:'jdbc'
 		})
-		
+
 		this.dataSourceTypeJndi = Ext.create("Ext.form.field.Radio",{
             hideEmptyLabel: false,
 			boxLabel: LN('sbi.datasource.type.jndi'), 
@@ -158,7 +161,7 @@ Ext.define('Sbi.tools.datasource.DataSourceDetailPanel', {
 			inputValue:'jndi'
 		});
 
-		
+
 
 		var thisPanel = this;
 		this.dataSourceJndiName= Ext.create('Ext.form.field.Trigger', {
@@ -196,7 +199,10 @@ Ext.define('Sbi.tools.datasource.DataSourceDetailPanel', {
 	    	
 	    });
 		
-
+		 if(!this.isSuperadmin){
+			 this.dataSourceTypeJndi.disable();
+			 this.dataSourceJndiName.disable();
+		 }
 		
 		this.dataSourceJdbcUser = Ext.create("Ext.form.field.Text",{
 			name: "USER",

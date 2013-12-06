@@ -19,9 +19,12 @@ Ext.define('Sbi.tools.datasource.DataSourceListDetailPanel', {
 	}
 
 	, constructor: function(config) {
+		
+		var isSuperadmin= config.isSuperadmin;
+		
 		this.services =[];
 		this.initServices();
-		this.detailPanel =  Ext.create('Sbi.tools.datasource.DataSourceDetailPanel',{services: this.services});
+		this.detailPanel =  Ext.create('Sbi.tools.datasource.DataSourceDetailPanel',{services: this.services, isSuperadmin: isSuperadmin });
 		this.columns = [{dataIndex:"DATASOURCE_LABEL", header:LN('sbi.generic.label')}, {dataIndex:"DESCRIPTION", header:LN('sbi.generic.descr')}];
 		this.fields = ["DATASOURCE_ID","DATASOURCE_LABEL","DESCRIPTION","DRIVER","DIALECT_ID","DIALECT_CLASS","DIALECT_NAME","JNDI_URL","USER","PASSWORD","SCHEMA","MULTISCHEMA","READ_ONLY","WRITE_DEFAULT","CONNECTION_URL"];
 		this.detailPanel.on("save",this.checkCanSave,this);
@@ -39,6 +42,7 @@ Ext.define('Sbi.tools.datasource.DataSourceListDetailPanel', {
 	}
 	
 	, initServices: function(baseParams){
+		
 		this.services["test"]= Sbi.config.serviceRegistry.getRestServiceUrl({
 			serviceName: 'datasources/test'
 				, baseParams: baseParams
