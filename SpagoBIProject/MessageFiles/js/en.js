@@ -596,6 +596,16 @@ Sbi.locale.ln['sbi.datasource.validation.error']= 'There is some error in the da
 Sbi.locale.ln['sbi.datasource.test.failed']= 'Error testing the datasource';
 Sbi.locale.ln['sbi.datasource.validation.writeDefault']= ' : datasource already marked as write default: do you want to substitute with current?';
 
+//Multitenant
+Sbi.locale.ln['sbi.multitenant.saved']= 'Tenant correctly saved';
+Sbi.locale.ln['sbi.multitenant.deleted']= 'Tenant correctly deleted';
+Sbi.locale.ln['sbi.multitenant.validation.error']= 'There are error(s) in the tenant configuration. Check the marked fields.';
+Sbi.locale.ln["error.mesage.name.multitenant.cannot.be.null"]= "The tenant name can not be null";
+Sbi.locale.ln["error.mesage.multitenant.deleting.inuse"] = "Impossible to delete the tenant because it is in use";
+Sbi.locale.ln["error.mesage.multitenant.saving.duplicated"]="Impossible to save the tenant because there is another one with the same name";
+Sbi.locale.ln['sbi.multitenant.theme']= 'Theme';
+Sbi.locale.ln['sbi.multitenant.id'] = 'Identifier';
+
 //Datasets
 Sbi.locale.ln['sbi.ds.clearOldVersion'] = 'Clear All';
 Sbi.locale.ln['sbi.ds.deleteVersion'] = 'Delete Version';
