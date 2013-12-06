@@ -1,8 +1,9 @@
-/* SpagoBI, the Open Source Business Intelligence suite
-
- * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
- * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+/**
+ * SpagoBIUserProfile.java
+ *
+ * This file was auto-generated from WSDL
+ * by the Apache Axis 1.4 Apr 22, 2006 (06:55:48 PDT) WSDL2Java emitter.
+ */
 
 package it.eng.spagobi.services.security.bo;
 
@@ -11,15 +12,17 @@ public class SpagoBIUserProfile  implements java.io.Serializable {
 
     private java.lang.String[] functions;
 
-    private java.lang.String[] roles;
+    private java.lang.Boolean isSuperadmin;
 
-    private java.lang.String userId;
+    private java.lang.String organization;
+
+    private java.lang.String[] roles;
 
     private java.lang.String uniqueIdentifier;
 
+    private java.lang.String userId;
+
     private java.lang.String userName;
-    
-    private java.lang.String organization;
 
     public SpagoBIUserProfile() {
     }
@@ -27,18 +30,20 @@ public class SpagoBIUserProfile  implements java.io.Serializable {
     public SpagoBIUserProfile(
            java.util.HashMap attributes,
            java.lang.String[] functions,
+           java.lang.Boolean isSuperadmin,
+           java.lang.String organization,
            java.lang.String[] roles,
-           java.lang.String userId,
            java.lang.String uniqueIdentifier,
-           java.lang.String userName,
-           java.lang.String organization) {
+           java.lang.String userId,
+           java.lang.String userName) {
            this.attributes = attributes;
            this.functions = functions;
-           this.roles = roles;
-           this.userId = userId;
-           this.uniqueIdentifier = uniqueIdentifier;
-           this.userName = userName;
+           this.isSuperadmin = isSuperadmin;
            this.organization = organization;
+           this.roles = roles;
+           this.uniqueIdentifier = uniqueIdentifier;
+           this.userId = userId;
+           this.userName = userName;
     }
 
 
@@ -83,6 +88,46 @@ public class SpagoBIUserProfile  implements java.io.Serializable {
 
 
     /**
+     * Gets the isSuperadmin value for this SpagoBIUserProfile.
+     * 
+     * @return isSuperadmin
+     */
+    public java.lang.Boolean getIsSuperadmin() {
+        return isSuperadmin;
+    }
+
+
+    /**
+     * Sets the isSuperadmin value for this SpagoBIUserProfile.
+     * 
+     * @param isSuperadmin
+     */
+    public void setIsSuperadmin(java.lang.Boolean isSuperadmin) {
+        this.isSuperadmin = isSuperadmin;
+    }
+
+
+    /**
+     * Gets the organization value for this SpagoBIUserProfile.
+     * 
+     * @return organization
+     */
+    public java.lang.String getOrganization() {
+        return organization;
+    }
+
+
+    /**
+     * Sets the organization value for this SpagoBIUserProfile.
+     * 
+     * @param organization
+     */
+    public void setOrganization(java.lang.String organization) {
+        this.organization = organization;
+    }
+
+
+    /**
      * Gets the roles value for this SpagoBIUserProfile.
      * 
      * @return roles
@@ -99,26 +144,6 @@ public class SpagoBIUserProfile  implements java.io.Serializable {
      */
     public void setRoles(java.lang.String[] roles) {
         this.roles = roles;
-    }
-
-
-    /**
-     * Gets the userId value for this SpagoBIUserProfile.
-     * 
-     * @return userId
-     */
-    public java.lang.String getUserId() {
-        return userId;
-    }
-
-
-    /**
-     * Sets the userId value for this SpagoBIUserProfile.
-     * 
-     * @param userId
-     */
-    public void setUserId(java.lang.String userId) {
-        this.userId = userId;
     }
 
 
@@ -143,6 +168,26 @@ public class SpagoBIUserProfile  implements java.io.Serializable {
 
 
     /**
+     * Gets the userId value for this SpagoBIUserProfile.
+     * 
+     * @return userId
+     */
+    public java.lang.String getUserId() {
+        return userId;
+    }
+
+
+    /**
+     * Sets the userId value for this SpagoBIUserProfile.
+     * 
+     * @param userId
+     */
+    public void setUserId(java.lang.String userId) {
+        this.userId = userId;
+    }
+
+
+    /**
      * Gets the userName value for this SpagoBIUserProfile.
      * 
      * @return userName
@@ -150,6 +195,7 @@ public class SpagoBIUserProfile  implements java.io.Serializable {
     public java.lang.String getUserName() {
         return userName;
     }
+
 
     /**
      * Sets the userName value for this SpagoBIUserProfile.
@@ -159,15 +205,6 @@ public class SpagoBIUserProfile  implements java.io.Serializable {
     public void setUserName(java.lang.String userName) {
         this.userName = userName;
     }
-
-	public String getOrganization() {
-		return organization;
-	}
-
-	public void setOrganization(String organization) {
-		this.organization = organization;
-	}
-    
 
     private java.lang.Object __equalsCalc = null;
     public synchronized boolean equals(java.lang.Object obj) {
@@ -187,21 +224,24 @@ public class SpagoBIUserProfile  implements java.io.Serializable {
             ((this.functions==null && other.getFunctions()==null) || 
              (this.functions!=null &&
               java.util.Arrays.equals(this.functions, other.getFunctions()))) &&
+            ((this.isSuperadmin==null && other.getIsSuperadmin()==null) || 
+             (this.isSuperadmin!=null &&
+              this.isSuperadmin.equals(other.getIsSuperadmin()))) &&
+            ((this.organization==null && other.getOrganization()==null) || 
+             (this.organization!=null &&
+              this.organization.equals(other.getOrganization()))) &&
             ((this.roles==null && other.getRoles()==null) || 
              (this.roles!=null &&
               java.util.Arrays.equals(this.roles, other.getRoles()))) &&
-            ((this.userId==null && other.getUserId()==null) || 
-             (this.userId!=null &&
-              this.userId.equals(other.getUserId()))) &&
             ((this.uniqueIdentifier==null && other.getUniqueIdentifier()==null) || 
              (this.uniqueIdentifier!=null &&
               this.uniqueIdentifier.equals(other.getUniqueIdentifier()))) &&
+            ((this.userId==null && other.getUserId()==null) || 
+             (this.userId!=null &&
+              this.userId.equals(other.getUserId()))) &&
             ((this.userName==null && other.getUserName()==null) || 
              (this.userName!=null &&
-              this.userName.equals(other.getUserName()))) &&
-            ((this.organization==null && other.getOrganization()==null) || 
-              (this.organization!=null &&
-               this.organization.equals(other.getOrganization())));
+              this.userName.equals(other.getUserName())));
         __equalsCalc = null;
         return _equals;
     }
@@ -227,6 +267,12 @@ public class SpagoBIUserProfile  implements java.io.Serializable {
                 }
             }
         }
+        if (getIsSuperadmin() != null) {
+            _hashCode += getIsSuperadmin().hashCode();
+        }
+        if (getOrganization() != null) {
+            _hashCode += getOrganization().hashCode();
+        }
         if (getRoles() != null) {
             for (int i=0;
                  i<java.lang.reflect.Array.getLength(getRoles());
@@ -238,17 +284,14 @@ public class SpagoBIUserProfile  implements java.io.Serializable {
                 }
             }
         }
-        if (getUserId() != null) {
-            _hashCode += getUserId().hashCode();
-        }
         if (getUniqueIdentifier() != null) {
             _hashCode += getUniqueIdentifier().hashCode();
         }
+        if (getUserId() != null) {
+            _hashCode += getUserId().hashCode();
+        }
         if (getUserName() != null) {
             _hashCode += getUserName().hashCode();
-        }
-        if (getOrganization() != null) {
-            _hashCode += getOrganization().hashCode();
         }
         __hashCodeCalc = false;
         return _hashCode;
@@ -273,14 +316,20 @@ public class SpagoBIUserProfile  implements java.io.Serializable {
         elemField.setNillable(true);
         typeDesc.addFieldDesc(elemField);
         elemField = new org.apache.axis.description.ElementDesc();
-        elemField.setFieldName("roles");
-        elemField.setXmlName(new javax.xml.namespace.QName("", "roles"));
+        elemField.setFieldName("isSuperadmin");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "isSuperadmin"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "boolean"));
+        elemField.setNillable(true);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("organization");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "organization"));
         elemField.setXmlType(new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"));
         elemField.setNillable(true);
         typeDesc.addFieldDesc(elemField);
         elemField = new org.apache.axis.description.ElementDesc();
-        elemField.setFieldName("userId");
-        elemField.setXmlName(new javax.xml.namespace.QName("", "userId"));
+        elemField.setFieldName("roles");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "roles"));
         elemField.setXmlType(new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"));
         elemField.setNillable(true);
         typeDesc.addFieldDesc(elemField);
@@ -291,14 +340,14 @@ public class SpagoBIUserProfile  implements java.io.Serializable {
         elemField.setNillable(true);
         typeDesc.addFieldDesc(elemField);
         elemField = new org.apache.axis.description.ElementDesc();
-        elemField.setFieldName("userName");
-        elemField.setXmlName(new javax.xml.namespace.QName("", "userName"));
+        elemField.setFieldName("userId");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "userId"));
         elemField.setXmlType(new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"));
         elemField.setNillable(true);
         typeDesc.addFieldDesc(elemField);
         elemField = new org.apache.axis.description.ElementDesc();
-        elemField.setFieldName("organization");
-        elemField.setXmlName(new javax.xml.namespace.QName("", "organization"));
+        elemField.setFieldName("userName");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "userName"));
         elemField.setXmlType(new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"));
         elemField.setNillable(true);
         typeDesc.addFieldDesc(elemField);
