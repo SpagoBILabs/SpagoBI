@@ -37,32 +37,26 @@ public class ExportersInitializer extends SpagoBIInitializer {
 		configurationFileName = "it/eng/spagobi/commons/initializers/metadata/config/exporters.xml";
 	}
 	
-	public void init(SourceBean config, Session hibernateSession) {
+/*	public void init(SourceBean config, Session hibernateSession) {
 		logger.debug("IN");
 		try {
-			String hql = "from SbiTenant";
-			Query hqlQuery = hibernateSession.createQuery(hql);
-			List<SbiTenant> tenants = hqlQuery.list();
-			for (SbiTenant tenant : tenants) {
-				init(config, hibernateSession, tenant);
-			}
+			init(config, hibernateSession);
 		} finally {
 			logger.debug("OUT");
 		}
 	}
-	
-	public void init(SourceBean config, Session hibernateSession, SbiTenant tenant) {
+	*/
+	public void init(SourceBean config, Session hibernateSession) {
 		logger.debug("IN");
 		try {
-			String hql = "from SbiExporters e where e.sbiEngines.commonInfo.organization = :organization";
+			String hql = "from SbiExporters";
 			Query hqlQuery = hibernateSession.createQuery(hql);
-			hqlQuery.setString("organization", tenant.getName());
 			List exporters = hqlQuery.list();
 			if (exporters.isEmpty()) {
-				logger.info("No exporters for tenant " + tenant.getName() + ". Starting populating predefined exporters...");
-				writeExporters(hibernateSession, tenant);
+				logger.info("No exporters . Starting populating predefined exporters...");
+				writeExporters(hibernateSession);
 			} else {
-				logger.debug("Exporters table is already populated for tenant " + tenant.getName());
+				logger.debug("Exporters table is already populated");
 			}
 		} catch (Throwable t) {
 			throw new SpagoBIRuntimeException("Ab unexpected error occured while initializeng LOVs", t);
@@ -71,7 +65,7 @@ public class ExportersInitializer extends SpagoBIInitializer {
 		}
 	}
 	
-	private void writeExporters(Session aSession, SbiTenant tenant) throws Exception {
+	private void writeExporters(Session aSession) throws Exception {
 		logger.debug("IN");
 		SourceBean exportersSB = getConfiguration();
 		if (exportersSB == null) {
@@ -95,7 +89,7 @@ public class ExportersInitializer extends SpagoBIInitializer {
 			}
 
 			String engineLabel = ((String) anExporterSB.getAttribute("engine"));
-			SbiEngines hibEngine = findEngine(aSession, engineLabel, tenant);
+			SbiEngines hibEngine = findEngine(aSession, engineLabel);
 			if (hibEngine == null) {
 				logger.error("Could not find engine with label [" + engineLabel + "] for exporter");
 			}else{

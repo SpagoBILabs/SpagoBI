@@ -18,6 +18,7 @@ import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IRoleDAO;
 import it.eng.spagobi.commons.metadata.SbiTenant;
+import it.eng.spagobi.profiling.bean.SbiUser;
 import it.eng.spagobi.services.common.SsoServiceFactory;
 import it.eng.spagobi.services.common.SsoServiceInterface;
 import it.eng.spagobi.services.security.bo.SpagoBIUserProfile;
@@ -149,14 +150,15 @@ public class UserUtilities {
 			return null;
 		ISecurityServiceSupplier supplier = SecurityServiceSupplierFactory
 				.createISecurityServiceSupplier();
+
 		try {
 			SpagoBIUserProfile user = supplier.createUserProfile(userId);
 			if (user == null)
 				return null;
 			checkTenant(user);
-			user.setFunctions(readFunctionality(user.getRoles(),
-					user.getOrganization()));
+			user.setFunctions(readFunctionality(user));
 			return new UserProfile(user);
+
 		} catch (Exception e) {
 			logger.error("Exception while creating user profile", e);
 			throw new SecurityException(
@@ -354,11 +356,36 @@ public class UserUtilities {
 		logger.debug("OUT");
 	}
     }
+    public static String[] readFunctionality(SpagoBIUserProfile user) {
+    	logger.debug("IN");
+    	List<String> functionalities = new ArrayList<String>();
+    	List<String> roleFunct = readFunctionalityByRole(user);
+    	List<String> userFunct = readFunctionalityByUser(user);
+    	functionalities.addAll(roleFunct);
+    	functionalities.addAll(userFunct);
+    	String[] a = new String[]{""};
+    	logger.debug("OUT");
+    	
+    	return functionalities.toArray(a);
+    }
+    public static List<String> readFunctionalityByUser(SpagoBIUserProfile user) {
+		logger.debug("IN");
+		List<String> superadminFunctionalities = new ArrayList<String>();
+		Boolean isSuperAdm = user.getIsSuperadmin();
+		if(isSuperAdm != null && isSuperAdm){
+			superadminFunctionalities.add(SpagoBIConstants.TENANT_MANAGEMENT);
+			superadminFunctionalities.add(SpagoBIConstants.DATASOURCE_MANAGEMENT);
+			superadminFunctionalities.add(SpagoBIConstants.ENGINES_MANAGEMENT);
+		}
+		String[] a = new String[]{""};
+		return superadminFunctionalities;
+    }
 
-
-    public static String[] readFunctionality(String[] roles, String organization) {
+    public static List<String> readFunctionalityByRole(SpagoBIUserProfile user) {
 		logger.debug("IN");
 		try {
+			String[] roles= user.getRoles();
+			String organization = user.getOrganization();
 		    it.eng.spagobi.commons.dao.IUserFunctionalityDAO dao = DAOFactory.getUserFunctionalityDAO();
 		    dao.setTenant(organization);
 		    String[] functionalities = dao.readUserFunctionality(roles);
@@ -431,11 +458,10 @@ public class UserUtilities {
 			if (!roleFunctionalities.isEmpty()) {
 				List<String> roleTypeFunctionalities = Arrays.asList(functionalities);
 				roleFunctionalities.addAll(roleTypeFunctionalities);
-				String[] a = new String[]{""};
-				functionalities = roleFunctionalities.toArray(a);
+
 			}
 		    
-		    return functionalities;
+		    return roleFunctionalities;
 		} catch (Exception e) {
 		    logger.error("Exception", e);
 		    throw new RuntimeException("Error while loading functionalities", e);

@@ -251,6 +251,14 @@ public class InternalSecurityInitializer implements InitializerIFace {
 			    if (organization == null) {
 			    	throw new SpagoBIRuntimeException("Predefined user [" + userId + "] has no organization set.");
 			    }
+			    //superadmin management for multi-tenency
+			    defaultUser.setIsSuperadmin(false);
+			    String isSuperadmin = (String) defaultUserSB.getAttribute("isSuperadmin");
+			    if (organization != null) {
+			    	Boolean isSuperadm= new Boolean(isSuperadmin);
+			    	defaultUser.setIsSuperadmin(isSuperadm);
+			    }
+			    
 			    defaultUser.getCommonInfo().setOrganization(organization);
 			    
 			    defaultUsers.add(defaultUser);

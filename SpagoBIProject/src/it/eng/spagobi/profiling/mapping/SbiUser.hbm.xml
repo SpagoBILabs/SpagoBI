@@ -68,6 +68,9 @@
         <property name="dtLastAccess" type="timestamp">
             <column name="DT_LAST_ACCESS" length="19" />
         </property>
+        <property name="isSuperadmin" type="java.lang.Boolean">
+            <column name="IS_SUPERADMIN" />
+        </property>
         <set name="sbiExtUserRoleses" inverse="false" lazy="true" table="SBI_EXT_USER_ROLES" cascade="all" >
             <key>
                 <column name="ID" not-null="true" />

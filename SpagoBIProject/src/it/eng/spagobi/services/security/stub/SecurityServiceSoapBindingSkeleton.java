@@ -1,8 +1,9 @@
-/* SpagoBI, the Open Source Business Intelligence suite
-
- * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
- * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+/**
+ * SecurityServiceSoapBindingSkeleton.java
+ *
+ * This file was auto-generated from WSDL
+ * by the Apache Axis 1.4 Apr 22, 2006 (06:55:48 PDT) WSDL2Java emitter.
+ */
 
 package it.eng.spagobi.services.security.stub;
 
@@ -32,19 +33,6 @@ public class SecurityServiceSoapBindingSkeleton implements it.eng.spagobi.servic
         _params = new org.apache.axis.description.ParameterDesc [] {
             new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "in0"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"), java.lang.String.class, false, false), 
             new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "in1"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"), java.lang.String.class, false, false), 
-        };
-        _oper = new org.apache.axis.description.OperationDesc("getUserProfile", _params, new javax.xml.namespace.QName("", "getUserProfileReturn"));
-        _oper.setReturnType(new javax.xml.namespace.QName("http://bo.security.services.spagobi.eng.it", "SpagoBIUserProfile"));
-        _oper.setElementQName(new javax.xml.namespace.QName("urn:spagobisecurity", "getUserProfile"));
-        _oper.setSoapAction("");
-        _myOperationsList.add(_oper);
-        if (_myOperations.get("getUserProfile") == null) {
-            _myOperations.put("getUserProfile", new java.util.ArrayList());
-        }
-        ((java.util.List)_myOperations.get("getUserProfile")).add(_oper);
-        _params = new org.apache.axis.description.ParameterDesc [] {
-            new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "in0"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"), java.lang.String.class, false, false), 
-            new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "in1"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"), java.lang.String.class, false, false), 
             new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "in2"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"), java.lang.String.class, false, false), 
             new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "in3"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"), java.lang.String.class, false, false), 
         };
@@ -71,6 +59,19 @@ public class SecurityServiceSoapBindingSkeleton implements it.eng.spagobi.servic
             _myOperations.put("checkAuthorization", new java.util.ArrayList());
         }
         ((java.util.List)_myOperations.get("checkAuthorization")).add(_oper);
+        _params = new org.apache.axis.description.ParameterDesc [] {
+            new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "in0"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"), java.lang.String.class, false, false), 
+            new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "in1"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"), java.lang.String.class, false, false), 
+        };
+        _oper = new org.apache.axis.description.OperationDesc("getUserProfile", _params, new javax.xml.namespace.QName("", "getUserProfileReturn"));
+        _oper.setReturnType(new javax.xml.namespace.QName("http://bo.security.services.spagobi.eng.it", "SpagoBIUserProfile"));
+        _oper.setElementQName(new javax.xml.namespace.QName("urn:spagobisecurity", "getUserProfile"));
+        _oper.setSoapAction("");
+        _myOperationsList.add(_oper);
+        if (_myOperations.get("getUserProfile") == null) {
+            _myOperations.put("getUserProfile", new java.util.ArrayList());
+        }
+        ((java.util.List)_myOperations.get("getUserProfile")).add(_oper);
     }
 
     public SecurityServiceSoapBindingSkeleton() {
@@ -80,12 +81,6 @@ public class SecurityServiceSoapBindingSkeleton implements it.eng.spagobi.servic
     public SecurityServiceSoapBindingSkeleton(it.eng.spagobi.services.security.stub.SecurityService impl) {
         this.impl = impl;
     }
-    public it.eng.spagobi.services.security.bo.SpagoBIUserProfile getUserProfile(java.lang.String in0, java.lang.String in1) throws java.rmi.RemoteException
-    {
-        it.eng.spagobi.services.security.bo.SpagoBIUserProfile ret = impl.getUserProfile(in0, in1);
-        return ret;
-    }
-
     public boolean isAuthorized(java.lang.String in0, java.lang.String in1, java.lang.String in2, java.lang.String in3) throws java.rmi.RemoteException
     {
         boolean ret = impl.isAuthorized(in0, in1, in2, in3);
@@ -95,6 +90,12 @@ public class SecurityServiceSoapBindingSkeleton implements it.eng.spagobi.servic
     public boolean checkAuthorization(java.lang.String in0, java.lang.String in1, java.lang.String in2) throws java.rmi.RemoteException
     {
         boolean ret = impl.checkAuthorization(in0, in1, in2);
+        return ret;
+    }
+
+    public it.eng.spagobi.services.security.bo.SpagoBIUserProfile getUserProfile(java.lang.String in0, java.lang.String in1) throws java.rmi.RemoteException
+    {
+        it.eng.spagobi.services.security.bo.SpagoBIUserProfile ret = impl.getUserProfile(in0, in1);
         return ret;
     }
 

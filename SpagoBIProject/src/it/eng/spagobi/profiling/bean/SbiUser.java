@@ -27,6 +27,7 @@ public class SbiUser extends SbiHibernateModel{
 	private Date dtPwdEnd;
 	private Boolean flgPwdBlocked;
 	private Date dtLastAccess;
+	private Boolean isSuperadmin;
 	
 	private Set<SbiExtRoles> sbiExtUserRoleses = new HashSet<SbiExtRoles>(
 			0);
@@ -45,7 +46,7 @@ public class SbiUser extends SbiHibernateModel{
 			Date dtPwdBegin, Date dtPwdEnd, Boolean flgPwdBlocked,
 			Date dtLastAccess,
 			Set<SbiExtRoles> sbiExtUserRoleses,
-			Set<SbiUserAttributes> sbiUserAttributeses) {
+			Set<SbiUserAttributes> sbiUserAttributeses, Boolean isSuperadmin) {
 		this.id = id;
 		this.userId = userId;
 		this.password = password;
@@ -56,6 +57,7 @@ public class SbiUser extends SbiHibernateModel{
 		this.dtLastAccess = dtLastAccess;
 		this.sbiExtUserRoleses = sbiExtUserRoleses;
 		this.sbiUserAttributeses = sbiUserAttributeses;
+		this.isSuperadmin = isSuperadmin;
 	}
 
 	public int getId() {
@@ -139,4 +141,11 @@ public class SbiUser extends SbiHibernateModel{
 		this.sbiUserAttributeses = sbiUserAttributeses;
 	}
 
+	public Boolean getIsSuperadmin() {
+		return this.isSuperadmin;
+	}
+
+	public void setIsSuperadmin(Boolean isSuperadmin) {
+		this.isSuperadmin = isSuperadmin;
+	}
 }

@@ -54,6 +54,7 @@ public class InternalSecurityServiceSupplierImpl implements
 			obj.setUserId(user.getUserId());
 			obj.setUserName(user.getFullName());
 			obj.setOrganization(user.getCommonInfo().getOrganization());
+			obj.setIsSuperadmin(user.getIsSuperadmin());
 			
 			logger.debug("OUT");
 			return obj;
@@ -114,6 +115,7 @@ public class InternalSecurityServiceSupplierImpl implements
 			profile.setUserId(user.getUserId());
 			profile.setUserName(user.getFullName());
 			profile.setOrganization(user.getCommonInfo().getOrganization());
+			profile.setIsSuperadmin(user.getIsSuperadmin());
 	
 			// get user name
 			String userName = userId;

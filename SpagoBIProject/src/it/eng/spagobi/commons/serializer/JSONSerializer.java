@@ -17,6 +17,7 @@ import it.eng.spagobi.commons.bo.Config;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.bo.Role;
 import it.eng.spagobi.commons.bo.RoleMetaModelCategory;
+import it.eng.spagobi.commons.metadata.SbiTenant;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.hotlink.rememberme.bo.RememberMe;
 import it.eng.spagobi.kpi.alarm.metadata.SbiAlarm;
@@ -133,6 +134,7 @@ public class JSONSerializer implements Serializer {
 		mappings.put( MetaModel.class, new MetaModelJSONSerializer());
 		mappings.put( Artifact.class, new ArtifactJSONSerializer());
 		mappings.put( Content.class, new ContentJSONSerializer());
+		mappings.put( SbiTenant.class, new TenantJSONSerializer());
 	}
 
 	public Object serialize(Object o, Locale locale) throws SerializationException {

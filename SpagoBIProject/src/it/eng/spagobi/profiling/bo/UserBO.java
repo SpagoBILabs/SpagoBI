@@ -26,6 +26,7 @@ public class UserBO implements Serializable{
 	private Date dtPwdEnd;
 	private Boolean flgPwdBlocked;
 	private Date dtLastAccess;
+	private Boolean isSuperadmin;
 	
 	private List sbiExtUserRoleses = new ArrayList();
 	private HashMap<Integer, HashMap<String, String>> sbiUserAttributeses = new HashMap<Integer, HashMap<String,String>>();
@@ -92,6 +93,12 @@ public class UserBO implements Serializable{
 			HashMap<Integer, HashMap<String, String>> sbiUserAttributeses) {
 		this.sbiUserAttributeses = sbiUserAttributeses;
 	}
+	public Boolean getIsSuperadmin() {
+		return this.isSuperadmin;
+	}
 
+	public void setIsSuperadmin(Boolean isSuperadmin) {
+		this.isSuperadmin = isSuperadmin;
+	}
 
 }

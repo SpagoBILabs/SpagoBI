@@ -5,7 +5,6 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.engines.service;
 
-import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.deserializer.DeserializerFactory;
@@ -13,10 +12,9 @@ import it.eng.spagobi.commons.serializer.SerializerFactory;
 import it.eng.spagobi.commons.services.AbstractSpagoBIAction;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.engines.config.dao.IEngineDAO;
-import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
+import it.eng.spagobi.tenant.TenantManager;
 import it.eng.spagobi.tools.datasource.bo.DataSource;
 import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
-import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.service.JSONSuccess;
 
@@ -59,13 +57,15 @@ public class ManageEnginesAction extends AbstractSpagoBIAction {
 		profile = getUserProfile();
 		try {
 			engineDao = DAOFactory.getEngineDAO();
-			engineDao.setUserProfile(profile);
+//			engineDao.setUserProfile(profile);
+			
+			//engines must not be filtered by tenant, so unset tenant filter		
+			TenantManager.unset();
+			
 		} catch (Throwable t) {
 			throw new SpagoBIServiceException(SERVICE_NAME,	"An unexpected error occured while instatiating the dao", t);			
 		}
-
-		
-		
+	
 		String serviceType = this.getAttributeAsString(MESSAGE_DET);
 		logger.debug("Service type "+serviceType);
 
@@ -90,6 +90,8 @@ public class ManageEnginesAction extends AbstractSpagoBIAction {
 		List<Engine> engines;
 		try {
 			engines = engineDao.loadAllEngines();
+
+			
 		} catch (Throwable t) {
 			throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to load engines from database", t);
 		}

@@ -42,9 +42,9 @@
         <property name="sbiVersionDe" type="string">
             <column name="SBI_VERSION_DE" length="10" not-null="false" />
         </property>                 
-        <property name="organization" type="string">
+		<property name="organization" type="string">
             <column name="ORGANIZATION" length="20" not-null="false" />
-        </property>  			 
+        </property> 	 
   </component>
   
         <many-to-one name="dialect" class="it.eng.spagobi.commons.metadata.SbiDomains">
@@ -83,9 +83,11 @@
         <property name="writeDefault" type="boolean">
             <column name="WRITE_DEFAULT" />
         </property>        
-        <filter name="tenantFilter" condition="organization=:tenant"/>  
+        <set name="sbiOrganizationDatasources" inverse="true">
+            <key>
+                <column name="DATASOURCE_ID" not-null="true" />
+            </key>
+            <one-to-many class="it.eng.spagobi.commons.metadata.SbiOrganizationDatasource" />
+        </set>
     </class>
-	<filter-def name="tenantFilter">
-		<filter-param name="tenant" type="string"/>
-	</filter-def>
 </hibernate-mapping>
