@@ -158,6 +158,9 @@
 	<CONFIGURATOR path="/WEB-INF/conf/tools/dataset/dataset.xml" />
 	<CONFIGURATOR path="/WEB-INF/conf/tools/dataset/business_map.xml" />
 	
+	<!-- tools.multitenant -->	
+	<CONFIGURATOR path="/WEB-INF/conf/tools/multitenant/business_map.xml" />
+	
 	<!-- tools.distributionlist -->	
 	<CONFIGURATOR path="/WEB-INF/conf/tools/distributionlist/modules.xml" />
 	<CONFIGURATOR path="/WEB-INF/conf/tools/distributionlist/pages.xml" />
