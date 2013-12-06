@@ -6,6 +6,7 @@
 package it.eng.spagobi.commons.bo;
 
 import java.io.Serializable;
+import java.util.List;
 
 
 /**
@@ -47,7 +48,7 @@ public class Role  implements Serializable  {
     
 	private boolean defaultRole;
 	
-//	private List<RoleMetaModelCategory> roleMetaModelCategories;
+	private List<RoleMetaModelCategory> roleMetaModelCategories;
     
 	/**
 	 * Checks if is able to save subobjects.
@@ -500,6 +501,21 @@ public class Role  implements Serializable  {
 
 	public void setOrganization(String organization) {
 		this.organization = organization;
+	}
+
+	/**
+	 * @return the roleMetaModelCategories
+	 */
+	public List<RoleMetaModelCategory> getRoleMetaModelCategories() {
+		return roleMetaModelCategories;
+	}
+
+	/**
+	 * @param roleMetaModelCategories the roleMetaModelCategories to set
+	 */
+	public void setRoleMetaModelCategories(
+			List<RoleMetaModelCategory> roleMetaModelCategories) {
+		this.roleMetaModelCategories = roleMetaModelCategories;
 	}
 	
 }

@@ -314,7 +314,10 @@ public class SpagoBIConstants {
 	public static final String SUBOBJECT = "SUBOBJECT";
 	
 	//constants for user profiles
+	//---superadmin functionalities
+	public static final String TENANT_MANAGEMENT = "TenantManagement";
 	public static final String ENGINES_MANAGEMENT = "EnginesManagement";
+	//---end
 	public static final String DATASET_MANAGEMENT = "DatasetManagement";
 	public static final String FUNCTIONALITIES_MANAGEMENT = "FunctionalitiesManagement";
 	public static final String LOVS_MANAGEMENT = "LovsManagement";
@@ -373,6 +376,9 @@ public class SpagoBIConstants {
 	public static final String SEE_SUBSCRIPTIONS = "SeeSubscriptions";
 	public static final String SEE_TODO_LIST = "SeeToDoList";
 	public static final String CREATE_DOCUMENT = "CreateDocument";
+	
+
+	
 	
 	public static final String DOCUMENT_MOVE_DOWN_STATE = "DocumentMoveDownState" ;
 	public static final String DOCUMENT_MOVE_UP_STATE = "DocumentMoveUpState" ;

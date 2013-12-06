@@ -45,6 +45,9 @@ public class UserProfile implements IEngUserProfile {
 	private Collection functionalities = null;
 	private String defaultRole = null;
 	private String organization = null;
+	private Boolean isSuperadmin = null;
+
+
 	private SpagoBIUserProfile spagoBIUserProfile = null;
 
 	/**
@@ -59,6 +62,7 @@ public class UserProfile implements IEngUserProfile {
 		this.userName = profile.getUserName();
 		this.userId = profile.getUserId();
 		this.organization = profile.getOrganization();
+		this.isSuperadmin = profile.getIsSuperadmin();
 		roles = new ArrayList();
 		if (profile.getRoles() != null) {
 			int l = profile.getRoles().length;
@@ -102,7 +106,7 @@ public class UserProfile implements IEngUserProfile {
 		this.userName = userName;
 		this.organization = organization;
 	}
-	
+
 	public UserProfile(String userId, String organization) {
 		this.userUniqueIdentifier = userId;
 		this.userId = userId;
@@ -402,7 +406,14 @@ public class UserProfile implements IEngUserProfile {
 	public void setSpagoBIUserProfile(SpagoBIUserProfile spagoBIUserProfile) {
 		this.spagoBIUserProfile = spagoBIUserProfile;
 	}
+	
+	public Boolean getIsSuperadmin() {
+		return isSuperadmin;
+	}
 
+	public void setIsSuperadmin(Boolean isSuperadmin) {
+		this.isSuperadmin = isSuperadmin;
+	}
 	/**
 	 * To be user by external engines ONLY.
 	 * The user identifier must match this syntax:
