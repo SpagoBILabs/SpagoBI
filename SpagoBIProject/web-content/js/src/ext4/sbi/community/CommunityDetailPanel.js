@@ -26,7 +26,7 @@ Ext.define('Sbi.community.CommunityDetailPanel', {
 			if(this.validateForm()){
 				this.fireEvent("save", this.getValues());
 			}else{
-				Sbi.exception.ExceptionHandler.showErrorMessage('sbi.community.validation.error','sbi.generic.validationError');
+				Sbi.exception.ExceptionHandler.showErrorMessage(LN('sbi.community.validation.error'),LN('sbi.generic.validationError'));
 			}
 			
 		},this)
