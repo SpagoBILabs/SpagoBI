@@ -41,7 +41,7 @@ Ext.define('Sbi.tools.datasource.DataSourceDetailPanel', {
 			if(this.validateForm()){
 				this.fireEvent("save", this.getValues());
 			}else{
-				Sbi.exception.ExceptionHandler.showErrorMessage('sbi.datasource.validation.error','sbi.generic.validationError');
+				Sbi.exception.ExceptionHandler.showErrorMessage(LN('sbi.datasource.validation.error'),LN('sbi.generic.validationError'));
 			}
 			
 		},this);

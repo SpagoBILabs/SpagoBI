@@ -38,7 +38,7 @@ Ext.define('Sbi.tools.multitenant.MultitenantDetailPanel', {
 			if(this.validateForm()){
 				this.fireEvent("save", this.getAllTabValues());
 			}else{
-				Sbi.exception.ExceptionHandler.showErrorMessage('sbi.datasource.validation.error','sbi.generic.validationError');
+				Sbi.exception.ExceptionHandler.showErrorMessage(LN('sbi.multitenant.validation.error'),LN('sbi.generic.validationError'));
 			}
 	
 		},this);
@@ -111,7 +111,7 @@ Ext.define('Sbi.tools.multitenant.MultitenantDetailPanel', {
 		var valid = true;
 		var v = this.getValues();
 
-		valid = valid && (v.MULTITENANT_NAME!=null && v.MULTITENANT_NAME!=undefined &&  v.MULTITENANT_NAME!="");	
+		valid = valid && (v.MULTITENANT_NAME!=null && v.MULTITENANT_NAME!=undefined && v.MULTITENANT_NAME!="" && v.MULTITENANT_NAME.length <= 20);	
 		valid = valid && (v.MULTITENANT_THEME!=null && v.MULTITENANT_THEME!=undefined &&  v.MULTITENANT_THEME!="");
 		
 		return valid;
@@ -126,6 +126,8 @@ Ext.define('Sbi.tools.multitenant.MultitenantDetailPanel', {
 		this.tenantName = new Ext.form.field.Text({
 			name: "MULTITENANT_NAME",
 			width: 500,
+			maxLengthText: 20,
+			maxLength: 20,
 			fieldLabel: LN('sbi.generic.name'),
 			allowBlank: false
 		});
