@@ -75,6 +75,8 @@ Sbi.locale.ln['sbi.generic.kpi'] = 'Kpi';
 Sbi.locale.ln['sbi.generic.nodetype'] = 'Node Type';
 Sbi.locale.ln['sbi.generic.nodedescr'] = 'Node Description';
 
+Sbi.locale.ln['sbi.generic.id'] = 'Identifier';
+
 //search filters
 Sbi.locale.ln['sbi.generic.search.title'] = 'Search';
 Sbi.locale.ln['sbi.generic.search.msg'] = 'enter search string';
@@ -769,6 +771,17 @@ Sbi.locale.ln['sbi.ds.metadata.column.attribute']='Attribute';
 Sbi.locale.ln['sbi.ds.metadata.column.value']='Value';
 Sbi.locale.ln['sbi.ds.metadata.dataset.title']='Dataset Metadata';
 Sbi.locale.ln['sbi.ds.metadata.dataset.title2']='Metadata Type';
+
+
+//Multitenant
+Sbi.locale.ln['sbi.multitenant.saved']= 'Tenant correctly saved';
+Sbi.locale.ln['sbi.multitenant.deleted']= 'Tenant correctly deleted';
+Sbi.locale.ln['sbi.multitenant.validation.error']= 'There are error(s) in the tenant configuration. Check the marked fields.';
+Sbi.locale.ln["error.mesage.name.multitenant.cannot.be.null"]= "The tenant name can not be null";
+Sbi.locale.ln["error.mesage.multitenant.deleting.inuse"] = "Impossible to delete the tenant because it is in use";
+Sbi.locale.ln["error.mesage.multitenant.saving.duplicated"]="Impossible to save the tenant because there is another one with the same name";
+Sbi.locale.ln['sbi.multitenant.theme']= 'Theme';
+Sbi.locale.ln['sbi.multitenant.id'] = 'Identifier';
 
 //===================================================================
 //MESSAGE BOX BUTTONS
