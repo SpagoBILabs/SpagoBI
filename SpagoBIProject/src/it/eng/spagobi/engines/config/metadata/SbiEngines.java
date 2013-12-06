@@ -38,6 +38,7 @@ public class SbiEngines  extends SbiHibernateModel {
      private Boolean useDataSource;
      private Boolean useDataSet;
      private Set sbiExporterses = new HashSet(0);
+     private Set sbiOrganizationEngines = new HashSet(0);
 
 
     // Constructors
@@ -341,6 +342,12 @@ public class SbiEngines  extends SbiHibernateModel {
 		this.sbiExporterses = sbiExporterses;
 	}
 
+	public Set getSbiOrganizationEngines() {
+		return this.sbiOrganizationEngines;
+	}
 
+	public void setSbiOrganizationEngines(Set sbiOrganizationEngines) {
+		this.sbiOrganizationEngines = sbiOrganizationEngines;
+	}
 	
 }

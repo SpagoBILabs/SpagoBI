@@ -126,12 +126,11 @@ public abstract class SpagoBIInitializer extends AbstractHibernateDAO implements
 		return domain;
 	}
 	
-	protected SbiEngines findEngine(Session aSession, String label, SbiTenant tenant) {
+	protected SbiEngines findEngine(Session aSession, String label) {
 		logger.debug("IN");
-		String hql = "from SbiEngines e where e.label = :label and e.commonInfo.organization = :organization";
+		String hql = "from SbiEngines e where e.label = :label";
 		Query hqlQuery = aSession.createQuery(hql);
 		hqlQuery.setParameter("label", label);
-		hqlQuery.setString("organization", tenant.getName());
 		SbiEngines engine = (SbiEngines) hqlQuery.uniqueResult();
 		logger.debug("OUT");
 		return engine;

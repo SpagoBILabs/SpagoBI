@@ -18,6 +18,7 @@ import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spago.validation.EMFValidationError;
+import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.AdmintoolsConstants;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
@@ -164,8 +165,9 @@ public class DetailDataSourceModule extends AbstractHttpModule{
 	 * @throws EMFUserError If an exception occurs
 	 * @throws SourceBeanException If a SourceBean exception occurs
 	 */
-	private void modifyDataSource(SourceBean serviceRequest, String mod, SourceBean serviceResponse)
-		throws EMFUserError, SourceBeanException {
+	private void modifyDataSource(SourceBean serviceRequest, String mod, SourceBean serviceResponse) throws EMFUserError, SourceBeanException {
+		
+		
 		try {
 			IDataSourceDAO dao=DAOFactory.getDataSourceDAO();
 			dao.setUserProfile(profile);
@@ -216,7 +218,7 @@ public class DetailDataSourceModule extends AbstractHttpModule{
 					return;
 				}	 		
 
-				dao.insertDataSource(dsNew);
+				dao.insertDataSource(dsNew, ((UserProfile)profile).getOrganization());
 				
 				IDataSource tmpDS = dao.loadDataSourceByLabel(dsNew.getLabel());
 				dsNew.setDsId(tmpDS.getDsId());

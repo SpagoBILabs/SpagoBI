@@ -79,7 +79,7 @@ public interface IDataSourceDAO extends ISpagoBIDao{
 	 * 
 	 * @throws EMFUserError If an Exception occurred
 	 */
-	public void insertDataSource(IDataSource aDataSource) throws EMFUserError;
+	public void insertDataSource(IDataSource aDataSource, String organization) throws EMFUserError;
 	
 	/**
 	 * Implements the query to erase a data source. All information needed is stored
@@ -91,8 +91,6 @@ public interface IDataSourceDAO extends ISpagoBIDao{
 	 */	
 	public void eraseDataSource(IDataSource aDataSource) throws EMFUserError;
 
-
-	
 	/**
 	 * Tells if a data source is associated to any
 	 * BI Object. It is useful because a data source cannot be deleted
@@ -115,5 +113,24 @@ public interface IDataSourceDAO extends ISpagoBIDao{
 	 */
 	
 	public IDataSource loadDataSourceWriteDefault()  throws EMFUserError;
+	
+	/**Method called by superadmin to associate a datasource to a tenant
+	 * @param tenantId
+	 * @param datasourceId
+	 * @throws EMFUserError
+	 */
+	public void associateToTenant(Integer tenantId, Integer datasourceId) throws EMFUserError;
+	
+	/**
+	 * Method called by superadmin to load all data sources. For each of them, detail
+	 * information is stored into a <code>datasource</code> object. After that, all data sources
+	 * are stored into a <code>List</code>, which is returned.
+	 * 
+	 * @return A list containing all datasource objects
+	 * 
+	 * @throws EMFUserError If an Exception occurred
+	 */
+	
+	public List loadDataSourcesForSuperAdmin() throws EMFUserError;
 
 }

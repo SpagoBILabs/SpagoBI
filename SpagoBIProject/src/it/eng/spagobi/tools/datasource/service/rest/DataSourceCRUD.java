@@ -10,12 +10,14 @@ import it.eng.spago.base.SourceBeanException;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.bo.Domain;
+import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IDomainDAO;
 import it.eng.spagobi.commons.serializer.SerializationException;
 import it.eng.spagobi.commons.serializer.SerializerFactory;
 import it.eng.spagobi.commons.utilities.AuditLogUtilities;
 import it.eng.spagobi.services.exceptions.ExceptionUtilities;
+import it.eng.spagobi.tenant.TenantManager;
 import it.eng.spagobi.tools.datasource.bo.DataSource;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
@@ -62,13 +64,20 @@ public class DataSourceCRUD {
 		IDomainDAO domaindao = null;
 		List<DataSource> dataSources;
 		List<Domain> dialects = null;
-		IEngUserProfile profile = (IEngUserProfile) req.getSession()
-				.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+		UserProfile profile = (UserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 		JSONObject datasorcesJSON = new JSONObject();
 		try {
 			dataSourceDao = DAOFactory.getDataSourceDAO();
-			dataSourceDao.setUserProfile(profile);
-			dataSources = dataSourceDao.loadAllDataSources();
+			
+			if(profile.getIsSuperadmin() != null && profile.getIsSuperadmin()){
+				TenantManager.unset();
+				dataSources = dataSourceDao.loadDataSourcesForSuperAdmin();
+			}else{
+				dataSourceDao.setUserProfile(profile);
+				dataSources = dataSourceDao.loadAllDataSources();
+			}
+						
+			
 
 			domaindao = DAOFactory.getDomainDAO();
 			dialects = domaindao.loadListDomainsByType("DIALECT_HIB");
@@ -130,15 +139,18 @@ public class DataSourceCRUD {
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	public String saveDataSource(@Context HttpServletRequest req) {
-		IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+		UserProfile profile = (UserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 		try {
 			
 			JSONObject requestBodyJSON = RestUtilities.readBodyAsJSONObject(req);
-			
-			
-			
 			IDataSourceDAO dao=DAOFactory.getDataSourceDAO();
-			dao.setUserProfile(profile);
+
+			if(profile.getIsSuperadmin()){
+				TenantManager.unset();
+			}else{
+				dao.setUserProfile(profile);
+			}			
+			
 			DataSource dsNew = recoverDataSourceDetails(requestBodyJSON);
 
 			HashMap<String, String> logParam = new HashMap();
@@ -146,15 +158,13 @@ public class DataSourceCRUD {
 			logParam.put("NAME",dsNew.getLabel());
 			logParam.put("URL",dsNew.getUrlConnection());
 
-
-
 			if (dsNew.getDsId()==-1) {
 				//if a ds with the same label not exists on db ok else error
 				if (DAOFactory.getDataSourceDAO().loadDataSourceByLabel(dsNew.getLabel()) != null){
 					updateAudit(req, profile, "DATA_SOURCE.ADD", logParam, "KO");
 					throw new SpagoBIRuntimeException(saveDuplicatedDSError);
 				}	 		
-				dao.insertDataSource(dsNew);
+				dao.insertDataSource(dsNew, profile.getOrganization());
 							
 				IDataSource tmpDS = dao.loadDataSourceByLabel(dsNew.getLabel());
 				dsNew.setDsId(tmpDS.getDsId());

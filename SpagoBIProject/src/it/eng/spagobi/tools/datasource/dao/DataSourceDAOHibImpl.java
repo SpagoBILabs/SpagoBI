@@ -17,12 +17,17 @@ import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.behaviouralmodel.lov.metadata.SbiLov;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
+import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.metadata.SbiDomains;
+import it.eng.spagobi.commons.metadata.SbiOrganizationDatasource;
+import it.eng.spagobi.commons.metadata.SbiOrganizationDatasourceId;
+import it.eng.spagobi.commons.metadata.SbiTenant;
 import it.eng.spagobi.tools.datasource.bo.DataSource;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.tools.datasource.metadata.SbiDataSource;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -168,10 +173,51 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 		Transaction tx = null;
 		List realResult = new ArrayList();
 		try {
+
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 
-			Query hibQuery = aSession.createQuery(" from SbiDataSource");
+			Query hibQuery = null;
+			
+			//superadmin task
+			hibQuery = aSession.createQuery("select ds.sbiDataSource from SbiOrganizationDatasource ds where ds.sbiOrganizations.name = :tenantName");
+			hibQuery.setString("tenantName", getTenant());
+			
+			List hibList = hibQuery.list();
+			Iterator it = hibList.iterator();
+
+			while (it.hasNext()) {
+				realResult.add(toDataSource((SbiDataSource) it.next()));
+			}
+			tx.commit();
+		} catch (HibernateException he) {
+			logger.error("Error while loading all data sources ", he);
+
+			if (tx != null)
+				tx.rollback();
+
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+
+		} finally {
+			if (aSession!=null){
+				if (aSession.isOpen()) aSession.close();				
+			}
+		}
+		logger.debug("OUT");
+		return realResult;
+	}
+		
+	public List loadDataSourcesForSuperAdmin() throws EMFUserError {
+		logger.debug("IN");
+		Session aSession = null;
+		Transaction tx = null;
+		List realResult = new ArrayList();
+		try {
+
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+
+			Query	hibQuery = aSession.createQuery(" from SbiDataSource");
 			
 			List hibList = hibQuery.list();
 			Iterator it = hibList.iterator();
@@ -334,7 +380,7 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 	 * 
 	 * @see it.eng.spagobi.tools.datasource.dao.IDataSourceDAO#insertDataSource(it.eng.spagobi.tools.datasource.bo.DataSource)
 	 */
-	public void insertDataSource(IDataSource aDataSource) throws EMFUserError {
+	public void insertDataSource(IDataSource aDataSource, String organization) throws EMFUserError {
 		logger.debug("IN");
 		Session aSession = null;
 		Transaction tx = null;
@@ -365,13 +411,36 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 			hibDataSource.setMultiSchema(aDataSource.getMultiSchema());
 			hibDataSource.setSchemaAttribute(aDataSource.getSchemaAttribute());
 			hibDataSource.setReadOnly(aDataSource.checkIsReadOnly());
-
+			
 			disableOtherWriteDefault(aDataSource, hibDataSource, aSession);
 
 			hibDataSource.setWriteDefault(aDataSource.checkIsWriteDefault());
 			
+			hibDataSource.getCommonInfo().setOrganization(organization);
+		
 			updateSbiCommonInfo4Insert(hibDataSource);
-			aSession.save(hibDataSource);
+			Integer idds = (Integer)aSession.save(hibDataSource);	
+			tx.commit();
+			aSession.flush();
+			tx.begin();
+			SbiTenant sbiOrganizations= DAOFactory.getTenantsDAO().loadTenantByName(hibDataSource.getCommonInfo().getOrganization());
+			
+			SbiOrganizationDatasource sbiOrganizationDatasource = new SbiOrganizationDatasource();
+			sbiOrganizationDatasource.setSbiDataSource(hibDataSource);
+			sbiOrganizationDatasource.setSbiOrganizations(sbiOrganizations);
+			SbiOrganizationDatasourceId idRel = new SbiOrganizationDatasourceId();
+			idRel.setDatasourceId(idds);
+			idRel.setOrganizationId(sbiOrganizations.getId());
+			sbiOrganizationDatasource.setId(idRel);
+			sbiOrganizationDatasource.setCreationDate(new Date());
+			sbiOrganizationDatasource.setLastChangeDate(new Date());
+			
+			sbiOrganizationDatasource.getCommonInfo().setOrganization(organization);
+			
+			updateSbiCommonInfo4Insert(sbiOrganizationDatasource);
+		
+			aSession.save(sbiOrganizationDatasource);
+			
 			tx.commit();
 		} catch (HibernateException he) {
 			logger.error("Error while inserting the data source with id " + ((aDataSource == null)?"":String.valueOf(aDataSource.getDsId())), he);
@@ -506,6 +575,50 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 		}
 		logger.debug("OUT");
 		return bool;
+		
+	}
+
+	public void associateToTenant(Integer tenantId, Integer datasourceId)
+			throws EMFUserError {
+		logger.debug("IN");
+		Session aSession = null;
+		Transaction tx = null;
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+
+			SbiTenant sbiOrganizations= DAOFactory.getTenantsDAO().loadTenantById(tenantId);
+			SbiDataSource datasource = (SbiDataSource) aSession.load(SbiDataSource.class, datasourceId);
+			
+			SbiOrganizationDatasource sbiOrganizationDatasource = new SbiOrganizationDatasource();
+			sbiOrganizationDatasource.setSbiDataSource(datasource);
+			sbiOrganizationDatasource.setSbiOrganizations(sbiOrganizations);
+			SbiOrganizationDatasourceId idRel = new SbiOrganizationDatasourceId();
+			idRel.setDatasourceId(datasourceId);
+			idRel.setOrganizationId(sbiOrganizations.getId());
+			sbiOrganizationDatasource.setId(idRel);
+			sbiOrganizationDatasource.setCreationDate(new Date());
+			sbiOrganizationDatasource.setLastChangeDate(new Date());
+			updateSbiCommonInfo4Insert(sbiOrganizationDatasource);
+
+			
+			aSession.save(sbiOrganizationDatasource);
+			
+			tx.commit();
+		} catch (HibernateException he) {
+			logger.error("Error while inserting realationship for data source with id "+datasourceId+" and the tenant with id "+tenantId, he);
+
+			if (tx != null)
+				tx.rollback();
+
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+
+		} finally {
+			if (aSession!=null){
+				if (aSession.isOpen()) aSession.close();
+				logger.debug("OUT");
+			}
+		}
 		
 	}
 	

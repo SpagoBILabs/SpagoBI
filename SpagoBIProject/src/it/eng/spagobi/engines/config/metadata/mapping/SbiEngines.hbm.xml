@@ -17,7 +17,7 @@
    </generator>
         </id>
         
-                    <component name="commonInfo" insert="true" update="true" 
+   <component name="commonInfo" insert="true" update="true" 
   			 class="it.eng.spagobi.commons.metadata.SbiCommonInfo">
         <property name="userIn" type="string">
             <column name="USER_IN" length="100" not-null="true" />
@@ -46,9 +46,9 @@
         <property name="sbiVersionDe" type="string">
             <column name="SBI_VERSION_DE" length="10" not-null="false" />
         </property>                 
-        <property name="organization" type="string">
+		<property name="organization" type="string">
             <column name="ORGANIZATION" length="20" not-null="false" />
-        </property>  			 
+        </property> 
   </component> 
   
         <property name="encrypt" type="short">
@@ -101,10 +101,13 @@
                 <column name="ENGINE_ID" not-null="true" />
             </key>
             <one-to-many class="it.eng.spagobi.engines.config.metadata.SbiExporters" />
-        </set>        
-        <filter name="tenantFilter" condition="organization=:tenant"/>  
+        </set>   
+        <set name="sbiOrganizationEngines" inverse="true">
+            <key>
+                <column name="ENGINE_ID" not-null="true" />
+            </key>
+            <one-to-many class="it.eng.spagobi.commons.metadata.SbiOrganizationEngine" />
+        </set>     
     </class>
-	<filter-def name="tenantFilter">
-		<filter-param name="tenant" type="string"/>
-	</filter-def>
+
 </hibernate-mapping>

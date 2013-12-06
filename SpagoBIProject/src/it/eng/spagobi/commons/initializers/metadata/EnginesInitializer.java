@@ -32,34 +32,29 @@ public class EnginesInitializer extends SpagoBIInitializer {
 		configurationFileName = "it/eng/spagobi/commons/initializers/metadata/config/engines.xml";
 	}
 	
-	public void init(SourceBean config, Session hibernateSession) {
+/*	public void init(SourceBean config, Session hibernateSession) {
 		logger.debug("IN");
 		try {
-			String hql = "from SbiTenant";
-			Query hqlQuery = hibernateSession.createQuery(hql);
-			List<SbiTenant> tenants = hqlQuery.list();
-			for (SbiTenant tenant : tenants) {
-				init(config, hibernateSession, tenant);
-			}
+			init(config, hibernateSession);
+
 		} catch(Throwable t){
 			logger.error("Impossible to init EnginesInitializer", t);
 		}finally {
 			logger.debug("OUT");
 		}
-	}
+	}*/
 	
-	public void init(SourceBean config, Session hibernateSession, SbiTenant tenant) {
+	public void init(SourceBean config, Session hibernateSession) { 
 		logger.debug("IN");
 		try {
-			String hql = "from SbiEngines e where e.commonInfo.organization = :organization";
+			String hql = "from SbiEngines";
 			Query hqlQuery = hibernateSession.createQuery(hql);
-			hqlQuery.setString("organization", tenant.getName());
 			List engines = hqlQuery.list();
 			if (engines.isEmpty()) {
-				logger.info("No engines for tenant " + tenant.getName() + ". Starting populating predefined engines...");
-				writeEngines(hibernateSession, tenant);
+				logger.info("No engines. Starting populating predefined engines...");
+				writeEngines(hibernateSession);
 			} else {
-				logger.debug("Engines table is already populated for tenant " + tenant.getName());
+				logger.debug("Engines table is already populated");
 			}
 		} catch (Throwable t) {
 			throw new SpagoBIRuntimeException("Ab unexpected error occured while initializeng Engines", t);
@@ -68,7 +63,7 @@ public class EnginesInitializer extends SpagoBIInitializer {
 		}
 	}
 	
-	private void writeEngines(Session aSession, SbiTenant tenant) throws Exception {
+	private void writeEngines(Session aSession) throws Exception {
 		logger.debug("IN");
 		SourceBean enginesSB = getConfiguration();
 		if (enginesSB == null) {
@@ -105,8 +100,6 @@ public class EnginesInitializer extends SpagoBIInitializer {
 			SbiDomains domainBiobjectType = findDomain(aSession, biobjTypeCd, "BIOBJ_TYPE");
 			anEngine.setBiobjType(domainBiobjectType);
 
-			// setting tenant/organization info
-			anEngine.getCommonInfo().setOrganization(tenant.getName());
 			
 			logger.debug("Inserting Engine with label = [" + anEngineSB.getAttribute("label") + "] ...");
 
