@@ -622,6 +622,10 @@
 				<file name="./src/ext4/sbi/tools/datasource/DataSourceModel.js" />
 				<file name="./src/ext4/sbi/tools/datasource/DataSourceListDetailPanel.js" />
 				<file name="./src/ext4/sbi/tools/datasource/DataSourceDetailPanel.js" />
+				
+				<file name="./src/ext4/sbi/tools/multitenant/MultitenantModel.js" />
+				<file name="./src/ext4/sbi/tools/multitenant/MultitenantListDetailPanel.js" />
+				<file name="./src/ext4/sbi/tools/multitenant/MultitenantDetailPanel.js" />
 
 				<file name="./src/ext/sbi/tools/dataset/FileDatasetPanel.js" />
 
