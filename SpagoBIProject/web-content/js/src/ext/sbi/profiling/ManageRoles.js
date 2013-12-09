@@ -121,6 +121,9 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
 	                        	          , 'seeToDoList'
 	                        	          , 'createDocument'
 	                        	          , 'bmCategories'
+	                        	          , 'kpiCommentEditAll'
+	                        	          , 'kpiCommentEditMy'
+	                        	          , 'kpiCommentDelete'
 	                        	        ];
 		
 		this.configurationObject.emptyRecToAdd = new Ext.data.Record({
@@ -149,6 +152,9 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
 		                        	        seeMyData:true,
 		                        	        seeToDoList:true,
 		                        	        createDocument:true,
+		                        	        kpiCommentEditAll: true,
+		                        	        kpiCommentEditMy: true,
+		                        	        kpiCommentDelete: true,
 											bmCategories: []
 										});
 		
@@ -479,6 +485,39 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
 		        },
 		        {
 		            xtype: 'checkboxgroup',
+		            columns: 1,
+		            boxMinWidth  : 150,
+		            hideLabel  : false,
+		            fieldLabel: LN('sbi.roles.edit'),
+		            itemId: 'isAbleTokpiCommentEditAll',
+		            items: [
+		                {boxLabel: LN('sbi.roles.allKpiComment'), name: 'kpiCommentEditAll', checked:'kpiCommentEditAll',inputValue: 1}
+		            ]
+		        },
+		        {
+		            xtype: 'checkboxgroup',
+		            columns: 1,
+		            boxMinWidth  : 150,
+		            hideLabel  : false,
+		            fieldLabel: LN('sbi.roles.edit'),
+		            itemId: 'isAbleTokpiCommentEditMy',
+		            items: [
+		                {boxLabel: LN('sbi.roles.myKpiComment'), name: 'kpiCommentEditMy', checked:'kpiCommentEditMy',inputValue: 1}
+		            ]
+		        },
+		        {
+		            xtype: 'checkboxgroup',
+		            columns: 1,
+		            boxMinWidth  : 150,
+		            hideLabel  : false,
+		            fieldLabel: LN('sbi.roles.delete'),
+		            itemId: 'isAbleTokpiCommentDelete',
+		            items: [
+		                {boxLabel: LN('sbi.roles.kpiComment'), name: 'kpiCommentDelete', checked:'kpiCommentDelete',inputValue: 1}
+		            ]
+		        },
+		        {
+		            xtype: 'checkboxgroup',
 		            itemId: 'finalUserCan',
 		            columns: 1,
 		            boxMinWidth  : 150,
@@ -531,6 +570,12 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
             		  item.setValue('manageUsers', rec.get('manageUsers'));
         		  }else if(item.getItemId() == 'isAbleToEditWorksheet'){
             		  item.setValue('editWorksheet', rec.get('editWorksheet'));
+        		  }else if(item.getItemId() == 'isAbleTokpiCommentDelete'){
+            		  item.setValue('kpiCommentDelete', rec.get('kpiCommentDelete'));
+        		  }else if(item.getItemId() == 'isAbleTokpiCommentEditMy'){
+            		  item.setValue('kpiCommentEditMy', rec.get('kpiCommentEditMy'));
+        		  }else if(item.getItemId() == 'isAbleTokpiCommentEditAll'){
+            		  item.setValue('kpiCommentEditAll', rec.get('kpiCommentEditAll'));
         		  }else  if(item.getItemId() == 'finalUserCan'){
         			  item.setValue('seeDocBrowser', rec.get('seeDocBrowser'));
         			  item.setValue('seeMyData', rec.get('seeMyData'));
@@ -606,6 +651,9 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
                     	        seeMyData:true,
                     	        seeToDoList:true,
                     	        createDocument:true,
+                    	        kpiCommentEditAll:true,
+                    	        kpiCommentEditMy:true,
+                    	        kpiCommentDelete:true,
 								bmCategories: []
 							});
 		
@@ -640,7 +688,9 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
         var seeSubscriptions =values['seeSubscriptions'];  
         var seeToDoList =values['seeToDoList'];  
         var createDocument =values['createDocument'];  
-        
+        var kpiCommentEditAll =values['kpiCommentEditAll'];  
+        var kpiCommentEditMy =values['kpiCommentEditMy'];  
+        var kpiCommentDelete =values['kpiCommentDelete'];  
 
 		if(savePf == 1){
         	record.set('savePersonalFolder', true);
@@ -742,6 +792,21 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
         }else{
         	record.set('createDocument', false);
         }
+        if(kpiCommentEditAll == 1){
+        	record.set('kpiCommentEditAll', true);
+        }else{
+        	record.set('kpiCommentEditAll', false);
+        }
+        if(kpiCommentEditMy == 1){
+        	record.set('kpiCommentEditMy', true);
+        }else{
+        	record.set('kpiCommentEditMy', false);
+        }
+        if(kpiCommentDelete == 1){
+        	record.set('kpiCommentDelete', true);
+        }else{
+        	record.set('kpiCommentDelete', false);
+        }
         
         //Find selected business models categories
 		var bmCategoriesArray = [];
@@ -822,6 +887,9 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
 			seeSubscriptions: newRec.data.seeSubscriptions,
 			seeToDoList: newRec.data.seeToDoList,
 			createDocument: newRec.data.createDocument,
+			kpiCommentEditAll: newRec.data.kpiCommentEditAll,
+			kpiCommentEditMy: newRec.data.kpiCommentEditMy,
+			kpiCommentDelete: newRec.data.kpiCommentDelete,
 			bmCategories: newRec.data.bmCategories
         };
         if(idRec){

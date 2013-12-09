@@ -62,6 +62,7 @@ Ext.extend(Sbi.kpi.KpiGUIDocCollegato , Ext.Panel, {
 	, miframe : null
     , perWin: null
     , noDocText: null
+
 	, initWindow: function(conf){
 	
 		this.perWin = new Ext.Panel({
@@ -83,9 +84,12 @@ Ext.extend(Sbi.kpi.KpiGUIDocCollegato , Ext.Panel, {
 			, minWidth: 475
 			, height: 400
 	        , defaultSrc: 'about:blank'
+	        , scope:this
 
 	    });
+
 	}
+
 	, getDocViewUrl: function(field) {
 		var url = null;
 
@@ -123,4 +127,5 @@ Ext.extend(Sbi.kpi.KpiGUIDocCollegato , Ext.Panel, {
 			this.perWin.doLayout();
 		}
 	}
+
 });

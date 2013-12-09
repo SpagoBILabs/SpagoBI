@@ -48,7 +48,10 @@ public class RoleJSONSerializer implements Serializer {
 	private static final String SEE_SUBSCRIPTIONS="seeSubscriptions";
 	private static final String SEE_TODO_LIST="seeToDoList";
 	private static final String CREATE_DOCUMENT="createDocument";
-	private static final String BUSINESS_MODEL_CATEGORIES="bmCategories";	
+	private static final String BUSINESS_MODEL_CATEGORIES="bmCategories";
+	private static final String KPI_COMMENT_EDIT_ALL="kpiCommentEditAll";
+	private static final String KPI_COMMENT_EDIT_MY="kpiCommentEditMy";
+	private static final String KPI_COMMENT_DELETE="kpiCommentDelete";
 
 	
 	public Object serialize(Object o, Locale locale) throws SerializationException {
@@ -89,6 +92,9 @@ public class RoleJSONSerializer implements Serializer {
 			result.put(SEE_SUBSCRIPTIONS, role.isAbleToSeeSubscriptions() );
 			result.put(SEE_TODO_LIST, role.isAbleToSeeToDoList() );
 			result.put(CREATE_DOCUMENT, role.isAbleToCreateDocuments() );
+			result.put(KPI_COMMENT_EDIT_ALL, role.isAbleToEditAllKpiComm() );
+			result.put(KPI_COMMENT_EDIT_MY, role.isAbleToEditMyKpiComm() );
+			result.put(KPI_COMMENT_DELETE, role.isAbleToDeleteKpiComm() );
 			
 			//create an array for Business Model Categories Ids
 			JSONArray bmCategories = new JSONArray();

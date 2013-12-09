@@ -47,6 +47,7 @@ Sbi.kpi.KpiGUILayout =  function(config) {
 
 		Ext.apply(this, c);
 		this.addEvents();
+
 		this.intPanels(config);
 		this.title = config.accordion.titleDate;
 		c = {
@@ -69,11 +70,12 @@ Ext.extend(Sbi.kpi.KpiGUILayout , Ext.Panel, {
 		var gridconf= config.grid;
 		var accordionconf = config.accordion;
 		
-
+		
 		this.kpiMainPanel = new Ext.Panel({
 
 			region: 'center',
 			border: false,
+			name: 'eeee',
 			layoutConfig: {
 				padding: '2',
 				align: 'left'
@@ -123,7 +125,11 @@ Ext.extend(Sbi.kpi.KpiGUILayout , Ext.Panel, {
 		this.add(this.kpiMainPanel);
 		this.kpiMainPanel.doLayout();
 		this.doLayout();
+
 	}
 
-	
 });
+function execCrossNavigation(d,l,p,s,ti,t){
+	sendMessage({'label': l, parameters: p, windowName: d, subobject: s, target: t, title: ti},'crossnavigation');
+	
+};

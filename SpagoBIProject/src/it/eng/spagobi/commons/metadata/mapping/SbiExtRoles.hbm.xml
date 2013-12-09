@@ -15,7 +15,7 @@
 		<param name="initial_value">1</param>	
    </generator>
         </id>
-            <component name="commonInfo" insert="true" update="true" 
+<component name="commonInfo" insert="true" update="true" 
   			 class="it.eng.spagobi.commons.metadata.SbiCommonInfo">
         <property name="userIn" type="string">
             <column name="USER_IN" length="100" not-null="true" />
@@ -63,69 +63,7 @@
         <property name="descr" type="string">
             <column name="DESCR" length="160" />
         </property>
-		<property name="isAbleToSaveSubobjects" type="boolean">
-            <column name="save_subobjects" />
-        </property>
-		<property name="isAbleToSeeSubobjects" type="boolean">
-            <column name="see_subobjects" />
-        </property>
-		<property name="isAbleToSeeViewpoints" type="boolean">
-            <column name="see_viewpoints" />
-        </property>
-        <property name="isAbleToSeeSnapshots" type="boolean">
-            <column name="see_snapshots" />
-        </property>
-        <property name="isAbleToSeeNotes" type="boolean">
-            <column name="see_notes" />
-        </property>
-        <property name="isAbleToSendMail" type="boolean">
-            <column name="send_mail" />
-        </property>
-        <property name="isAbleToSaveIntoPersonalFolder" type="boolean">
-            <column name="save_into_folder" />
-        </property>
-        <property name="isAbleToEditWorksheet" type="boolean">
-           	<column name="edit_worksheet" />
-       	</property>
-        <property name="isAbleToSaveRememberMe" type="boolean">
-            <column name="save_remember_me" />
-        </property>
-        <property name="isAbleToSeeMetadata" type="boolean">
-            <column name="see_metadata" />
-        </property>
-        <property name="isAbleToSaveMetadata" type="boolean">
-            <column name="save_metadata" />
-        </property>
-        <property name="isAbleToBuildQbeQuery" type="boolean">
-            <column name="build_qbe_query" />
-        </property>
-		<property name="isAbleToDoMassiveExport" type="boolean">
-           	<column name="do_massive_export" />
-       	</property>
-        <property name="isAbleToManageUsers" type="boolean">
-            <column name="MANAGE_USERS" />
-        </property> 
-        
-         <property name="isAbleToSeeDocumentBrowser" type="boolean">
-            <column name="SEE_DOCUMENT_BROWSER" />
-        </property> 
-         <property name="isAbleToSeeFavourites" type="boolean">
-            <column name="SEE_FAVOURITES" />
-        </property> 
-         <property name="isAbleToSeeSubscriptions" type="boolean">
-            <column name="SEE_SUBSCRIPTIONS" />
-        </property> 
-         <property name="isAbleToSeeMyData" type="boolean">
-            <column name="SEE_MY_DATA" />
-        </property> 
-         <property name="isAbleToSeeToDoList" type="boolean">
-            <column name="CREATE_DOCUMENTS" />
-        </property> 
-        <property name="isAbleToCreateDocuments" type="boolean">
-            <column name="SEE_TODO_LIST" />
-        </property> 
-        
-        <set name="sbiFuncRoles" inverse="true">
+		<set name="sbiFuncRoles" inverse="true">
             <key>
                 <column name="ROLE_ID" not-null="true" />
             </key>
@@ -140,7 +78,13 @@
         <set name="sbiMetaModelCategories" table="SBI_EXT_ROLES_CATEGORY">
 			<key column="EXT_ROLE_ID"/>
 			<many-to-many column="CATEGORY_ID"  class="it.eng.spagobi.commons.metadata.SbiDomains"/>
-		</set>    
+		</set> 
+		<set name="sbiFunctionalitiesRoleses" table="SBI_FUNCTIONALITIES_ROLES">
+            <key>
+                <column name="ROLE_ID" not-null="true" />
+            </key>
+            <one-to-many class="it.eng.spagobi.commons.metadata.SbiFunctionalitiesRoles" />
+        </set>   
         <filter name="tenantFilter" condition="organization=:tenant"/>  
     </class>
 	<filter-def name="tenantFilter">

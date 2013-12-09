@@ -454,7 +454,15 @@ public class UserUtilities {
 			if (virtualRole.isAbleToCreateDocuments()) {
 				roleFunctionalities.add(SpagoBIConstants.CREATE_DOCUMENT);
 			}
-			
+			if (virtualRole.isAbleToEditAllKpiComm()) {
+				roleFunctionalities.add(SpagoBIConstants.KPI_COMMENT_EDIT_ALL);
+			}
+			if (virtualRole.isAbleToEditMyKpiComm()) {
+				roleFunctionalities.add(SpagoBIConstants.KPI_COMMENT_EDIT_MY);
+			}
+			if (virtualRole.isAbleToDeleteKpiComm()) {
+				roleFunctionalities.add(SpagoBIConstants.KPI_COMMENT_DELETE);
+			}
 			if (!roleFunctionalities.isEmpty()) {
 				List<String> roleTypeFunctionalities = Arrays.asList(functionalities);
 				roleFunctionalities.addAll(roleTypeFunctionalities);
@@ -495,6 +503,11 @@ public class UserUtilities {
 		virtualRole.setIsAbleToBuildQbeQuery(false);
 		virtualRole.setIsAbleToDoMassiveExport(false);
 		virtualRole.setIsAbleToManageUsers(false);
+		virtualRole.setIsAbleToManageUsers(false);
+		virtualRole.setAbleToDeleteKpiComm(false);
+		virtualRole.setAbleToEditAllKpiComm(false);
+		virtualRole.setAbleToEditMyKpiComm(false);		
+		
 		if (roles != null) {
 			for (int i = 0; i < roles.length; i++) {
 				String roleName = roles[i];
@@ -583,6 +596,19 @@ public class UserUtilities {
 						logger.debug("User has role " + roleName + " that is able to create documents.");
 						virtualRole.setIsAbleToCreateDocuments(true);
 					}
+					if (anotherRole.isAbleToEditAllKpiComm()) {
+						logger.debug("User has role " + roleName + " that is able to edit all kpi comments.");
+						virtualRole.setAbleToEditAllKpiComm(true);
+					}
+					if (anotherRole.isAbleToEditMyKpiComm()) {
+						logger.debug("User has role " + roleName + " that is able to edit owned kpi comments.");
+						virtualRole.setAbleToEditMyKpiComm(true);
+					}
+					if (anotherRole.isAbleToEditAllKpiComm()) {
+						logger.debug("User has role " + roleName + " that is able to delete kpi comments.");
+						virtualRole.setAbleToDeleteKpiComm(true);
+					}
+					
 				}
 			}
 		}
