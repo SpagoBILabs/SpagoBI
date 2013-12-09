@@ -292,8 +292,11 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			Iterator itf = functionalities.iterator();
 			while(itf.hasNext()){
 				SbiFunctionalitiesRoles fr = (SbiFunctionalitiesRoles)itf.next();
+
 				aSession.delete(fr);
 				aSession.flush();
+				aSession.refresh(hibRole);
+
 			}
 
 			aSession.delete(hibRole);
