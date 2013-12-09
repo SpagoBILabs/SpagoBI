@@ -135,7 +135,10 @@ Ext.extend(Sbi.engines.chart.GenericChartPanel, Ext.Panel, {
 			if (Ext.isArray(strValue)){
 				var str = "";
 				for(var i = 0; i < strValue.length; i++) {
-					if (toFilter && this.isFilteredSerie(strValue[i].alias, filterSeries )){
+					var alias = strValue[i].alias;
+					var aliases = strValue[i].alias.split(",");
+					if (aliases.length == 2) alias = aliases[1]; //cat,ser definition
+					if (toFilter && this.isFilteredSerie(alias, filterSeries )){
 						finalSeries.push(strValue[i]);
 						str += strValue[i].alias;
 						if (i < (strValue.length-1)) str += ",";
@@ -691,7 +694,8 @@ Ext.extend(Sbi.engines.chart.GenericChartPanel, Ext.Panel, {
     	var toReturn = false;
     	
     	for(var i=0, l=filterSeries.length; i<l; i++){
-    		if (serie.indexOf(filterSeries[i]) >= 0) {
+    		if (serie === filterSeries[i] ) { //to test
+//    		if (serie.indexOf(filterSeries[i]) >= 0) { //orig
     			toReturn = true;
     			break;
     		}
