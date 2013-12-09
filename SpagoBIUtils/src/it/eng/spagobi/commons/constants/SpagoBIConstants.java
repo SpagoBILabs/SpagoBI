@@ -376,6 +376,9 @@ public class SpagoBIConstants {
 	public static final String SEE_SUBSCRIPTIONS = "SeeSubscriptions";
 	public static final String SEE_TODO_LIST = "SeeToDoList";
 	public static final String CREATE_DOCUMENT = "CreateDocument";
+	public static final String KPI_COMMENT_EDIT_ALL = "KpiCommentEditAll";
+	public static final String KPI_COMMENT_EDIT_MY = "KpiCommentEditMy";
+	public static final String KPI_COMMENT_DELETE = "KpiCommentDelete";
 	
 
 	
