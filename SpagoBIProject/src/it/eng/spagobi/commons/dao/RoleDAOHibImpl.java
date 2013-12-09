@@ -288,6 +288,14 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 					aSession.delete(event);
 				}
 			}
+			Set<SbiFunctionalitiesRoles> functionalities = hibRole.getSbiFunctionalitiesRoleses();
+			Iterator itf = functionalities.iterator();
+			while(itf.hasNext()){
+				SbiFunctionalitiesRoles fr = (SbiFunctionalitiesRoles)itf.next();
+				aSession.delete(fr);
+				aSession.flush();
+			}
+
 			aSession.delete(hibRole);
 			tx.commit();
 		} catch (HibernateException he) {
@@ -397,9 +405,7 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 				}
 				
 			}
-/*			
-			hibRole.setSbiFunctionalitiesRoleses(functionalitiesNew);
-			aSession.save(hibRole);*/
+
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
