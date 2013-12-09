@@ -45,6 +45,10 @@ public class Role  implements Serializable  {
     private boolean isAbleToSeeMyData;
     private boolean isAbleToSeeToDoList;
     private boolean isAbleToCreateDocuments;
+
+	private boolean isAbleToEditAllKpiComm;
+    private boolean isAbleToEditMyKpiComm;
+    private boolean isAbleToDeleteKpiComm;
     
 	private boolean defaultRole;
 	
@@ -517,5 +521,28 @@ public class Role  implements Serializable  {
 			List<RoleMetaModelCategory> roleMetaModelCategories) {
 		this.roleMetaModelCategories = roleMetaModelCategories;
 	}
-	
+    public boolean isAbleToEditAllKpiComm() {
+		return isAbleToEditAllKpiComm;
+	}
+
+	public void setAbleToEditAllKpiComm(boolean isAbleToEditAllKpiComm) {
+		this.isAbleToEditAllKpiComm = isAbleToEditAllKpiComm;
+	}
+
+	public boolean isAbleToEditMyKpiComm() {
+		return isAbleToEditMyKpiComm;
+	}
+
+	public void setAbleToEditMyKpiComm(boolean isAbleToEditMyKpiComm) {
+		this.isAbleToEditMyKpiComm = isAbleToEditMyKpiComm;
+	}
+
+	public boolean isAbleToDeleteKpiComm() {
+		return isAbleToDeleteKpiComm;
+	}
+
+	public void setAbleToDeleteKpiComm(boolean isAbleToDeleteKpiComm) {
+		this.isAbleToDeleteKpiComm = isAbleToDeleteKpiComm;
+	}
+
 }
