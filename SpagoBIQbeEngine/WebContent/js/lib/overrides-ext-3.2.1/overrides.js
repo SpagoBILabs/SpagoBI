@@ -219,3 +219,16 @@ Ext.override(Ext.grid.EditorGridPanel, {
 	} 
 }
 });
+
+Ext.override(Ext.tree.TreeEditor, {
+	listeners: { 'beforecomplete': function( treeEditor, value, startValue){ 
+
+		if(value.indexOf('<') != -1 && value.indexOf('>') != -1){
+			var safeVal = Ext.util.Format.stripTags(value); 
+			treeEditor.setValue(safeVal);
+			treeEditor.value= safeVal;
+			alert("Characters < and > not allowed at the same time");
+		}	
+	} 
+}
+});
