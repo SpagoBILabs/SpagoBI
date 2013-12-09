@@ -13,6 +13,7 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.metadata.SbiBinContents;
 import it.eng.spagobi.commons.metadata.SbiCommonInfo;
 import it.eng.spagobi.commons.metadata.SbiDomains;
+import it.eng.spagobi.community.mapping.SbiCommunityUsers;
 import it.eng.spagobi.kpi.config.bo.KpiAlarmInstance;
 import it.eng.spagobi.kpi.config.bo.KpiInstance;
 import it.eng.spagobi.kpi.config.metadata.SbiKpi;
@@ -562,13 +563,14 @@ public class KpiInstanceDAOImpl extends AbstractHibernateDAO implements IKpiInst
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
-			
+
 			SbiKpiInstance sbiKpiInstance = (SbiKpiInstance) aSession.load(SbiKpiInstance.class, idKpiInstance);
 			
 			SbiBinContents hibBinContent = new SbiBinContents();
 			hibBinContent.setContent(comment.getBytes());
 			updateSbiCommonInfo4Insert(hibBinContent);
 			Integer idBin = (Integer)aSession.save(hibBinContent);
+			
 			// recover the saved binary hibernate object
 			hibBinContent = (SbiBinContents) aSession.load(SbiBinContents.class, idBin);
 			
@@ -604,6 +606,76 @@ public class KpiInstanceDAOImpl extends AbstractHibernateDAO implements IKpiInst
 			}
 		}
 		return idToReturn;
+	}
+
+	public void deleteKpiComment(Integer commentId) throws EMFUserError {
+		logger.debug("IN");
+		Session aSession = null;
+		Transaction tx = null;
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+			SbiKpiComments comment = (SbiKpiComments)aSession.load(SbiKpiComments.class, commentId);
+			aSession.delete(comment);
+
+			tx.commit();
+		} catch (HibernateException he) {
+			logger.error(he.getMessage(), he);
+			if (tx != null)
+				tx.rollback();
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+		} finally {
+			logger.debug("OUT");
+			if (aSession!=null){
+				if (aSession.isOpen()) aSession.close();
+			}
+		}
+	}
+
+	public void editKpiComment(Integer commentId, String comment, String owner) throws EMFUserError {
+		logger.debug("IN");
+		Session aSession = null;
+		Transaction tx = null;
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+			SbiKpiComments kpiComment = (SbiKpiComments)aSession.load(SbiKpiComments.class, commentId);
+			
+			if(kpiComment == null){
+				return ;
+			}
+
+			SbiBinContents hibBinContent = kpiComment.getSbiBinContents();
+
+			hibBinContent.setContent(comment.getBytes());
+			
+			updateSbiCommonInfo4Update(hibBinContent);
+			
+			aSession.update(hibBinContent);
+			
+			kpiComment.setSbiBinContents(hibBinContent);
+			kpiComment.setLastChangeDate(new Date());
+			kpiComment.setSbiVersionIn(SbiCommonInfo.SBI_VERSION);
+			
+			aSession.update(kpiComment);
+			tx.commit();
+
+
+		} catch (HibernateException he) {
+			logger.error("Error while inserting kpi comment ", he);
+
+			if (tx != null)
+				tx.rollback();
+
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 10117);
+
+		} finally {
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
+				logger.debug("OUT");
+			}
+		}
 	}
 
 }

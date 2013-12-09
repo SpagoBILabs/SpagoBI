@@ -34,15 +34,17 @@ Ext.ns("Sbi.kpi");
 
 Sbi.kpi.KpiGUIComments =  function(config) {
 		
-		var defaultSettings = {autoScroll: true, 
-								height: 350,
-								layout: 'column',
+		var defaultSettings = { //autoScroll: true, 
+								//height: 500,
+								layout: 'fit',
 								border:false,
-								style:'padding: 5px;'};
+								style:'padding: 5px;'
+							};
 		
 		var execId = config.SBI_EXECUTION_ID;
 		var paramsList = {SBI_EXECUTION_ID: execId, LIGHT_NAVIGATOR_DISABLED: 'TRUE',MESSAGE_DET: "COMMENTS_LIST"};
 		var paramsSave = {SBI_EXECUTION_ID: execId, LIGHT_NAVIGATOR_DISABLED: 'TRUE',MESSAGE_DET: "SAVE_COMMENT"};
+		var paramsDel = {SBI_EXECUTION_ID: execId, LIGHT_NAVIGATOR_DISABLED: 'TRUE',MESSAGE_DET: "DELETE_COMMENT"};
 		
 		var c = Ext.apply(defaultSettings, config || {});
 		
@@ -56,13 +58,18 @@ Sbi.kpi.KpiGUIComments =  function(config) {
 			serviceName: 'MANAGE_COMMENTS'
 			, baseParams: paramsSave
 		});
+		this.services['commentDelete'] = Sbi.config.serviceRegistry.getServiceUrl({
+			serviceName: 'MANAGE_COMMENTS'
+			, baseParams: paramsDel
+		});
 		this.store = new Ext.data.JsonStore({
 	    	autoLoad: false    	  
 	    	, id : 'id'		
 	        , fields: ['owner'
          	          , 'creationDate'
-          	          //, 'lastModificationDate'
           	          , 'comment'
+          	          , 'id'
+          	          , 'binId'
           	          ]
 	    	, root: 'comments'
 			, url: this.services['commentsList']		
@@ -82,29 +89,68 @@ Ext.extend(Sbi.kpi.KpiGUIComments , Ext.form.FormPanel, {
 	kpiInstId: null,
 	saveBtn: null,
 	selectedField: null,
-	
-	
+	commentId: null,
+	owner: null,
+
 	initComments: function(c){
+
+		var h = c.height;
+		
 		this.rowselModel = new Ext.grid.RowSelectionModel({
 	          singleSelect: true
 	          
 	    });
+		
+        this.deleteColumn = new Ext.grid.ButtonColumn({
+  	       header:  ' '
+  	       ,iconCls: 'icon-remove'
+  	       ,scope: this
+  	       ,width: 25
+  	       ,renderer : function(v, p, record){
+  	           return '<center><img class="x-mybutton-'+this.id+' grid-button ' +this.iconCls+'" width="16px" height="16px" src="'+Ext.BLANK_IMAGE_URL+'"/></center>';
+  	       }
+          });
+        
+        if(!c.canDelete){
+        	 this.deleteColumn = new Ext.grid.ButtonColumn({
+        	       header:  ' '
+        	       ,iconCls: 'icon-remove'
+        	       ,scope: this
+        	       ,width: 25
+        	       ,renderer : function(v, p, record){
+        	           return '&nbsp;';
+        	       }
+                });
+        }
 	    this.listPanel = new Ext.grid.GridPanel({
 	        store: this.store,
-	        width: 400,
-	        height: 150,
-	        autoScroll: true,
+	        minWidth: 400,
+	        //height: 200,
+	        //maxHeight: 200,
+	        //autoScroll: true,
 	        viewConfig:{forceFit:true},
 	        selModel: this.rowselModel,
 	     	hideHeaders : true,
+	     	layout: 'fit',
+	     	scope: this,
 	     	listeners: {
-	        	'click': {
-					fn: function(){
-	    				var row = this.rowselModel.getSelected();		
-	    				this.editor.setValue(row.data.comment);
-	     			}
-					, scope: this
-				}
+	        	'cellclick':{
+	        		fn: function(grid, rowIndex, columnIndex, e) {
+	        		    var record = grid.getStore().getAt(rowIndex);  // Get the Record
+	        		    var fieldName = grid.getColumnModel().getDataIndex(columnIndex); // Get field name
+	        		    var data = record.get(fieldName);
+	        		    if(fieldName != undefined){
+		    				this.editor.setValue(record.data.comment);
+		    				this.commentId=record.data.id;	
+		    				this.owner= record.data.owner;
+	        		    }else{
+	        		    	//delete button
+	        		    	this.deleteItem( record.data.id, columnIndex);
+	        		    }
+
+	        		},
+	        		scope:this
+	        	}
 	        },
 	        columns: [{
 	            header: 'Owner',       
@@ -126,7 +172,9 @@ Ext.extend(Sbi.kpi.KpiGUIComments , Ext.form.FormPanel, {
 	            dataIndex: 'comment',
 	            align: 'right',
 	            tooltip : 'Text Comment'
-	        }]
+	        },
+	        this.deleteColumn
+	        ]
 	        ,fbar: [{
 	            text: 'Save comment'
 	            , handler: this.saveComment
@@ -136,10 +184,10 @@ Ext.extend(Sbi.kpi.KpiGUIComments , Ext.form.FormPanel, {
 	
 	  this.editor = new Ext.form.HtmlEditor({
 		  	enableSourceEdit: false
-		  	, width: 400
-		  	, height: 140
+		  	, width: 500
+		  	, height: 200
 		  	, autoScroll: true
-		  	, style:'padding-left: 5px; margin: 5px;'
+		  	, style:'align: center;'
 		  	, layout: 'fit'
     
 	  }); 
@@ -170,14 +218,26 @@ Ext.extend(Sbi.kpi.KpiGUIComments , Ext.form.FormPanel, {
 		}
 	}
 	, saveComment: function () {
+		var commId= this.commentId;
 		Ext.Ajax.request({
 	        url: this.services['commentSave'],
-	        params: {'comment': this.editor.getValue(), 'kpiInstId': this.kpiInstId},
+	        params: {'comment': this.editor.getValue(), 'kpiInstId': this.kpiInstId, 'commentId': this.commentId, 'owner': this.owner},
 			success: function(response, options) {
 	      		if(response !== undefined && response.responseText !== undefined) {
-	      			var content = Ext.util.JSON.decode( response.responseText );
+	      			var content = Ext.util.JSON.decode( response.responseText);
 	      			if (content !== undefined) {
-				      			Ext.MessageBox.show({
+
+	      				if(content.text == 'Forbidden'){
+			      			Ext.MessageBox.show({
+			      				title: 'Status',
+			      				msg: 'Operation forbidden',
+			      				modal: false,
+			      				buttons: Ext.MessageBox.OK,
+			      				width:300,
+			      				icon: Ext.MessageBox.INFO  			
+			      			});
+	      				}else{
+			      			Ext.MessageBox.show({
 			      				title: 'Status',
 			      				msg: 'Success',
 			      				modal: false,
@@ -186,6 +246,8 @@ Ext.extend(Sbi.kpi.KpiGUIComments , Ext.form.FormPanel, {
 			      				icon: Ext.MessageBox.INFO  			
 			      			});
 				      		this.update(this.selectedField);
+	      				}
+				      		
 	      			}
 	      		} else {
 	      			Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
@@ -203,11 +265,64 @@ Ext.extend(Sbi.kpi.KpiGUIComments , Ext.form.FormPanel, {
 			this.loadComments(field);
 			
 		}else{
+
 			this.kpiInstId = null;
 		}
 		this.editor.setValue('');
 		this.editor.show();
-		this.doLayout();
-        this.render();
+
+	}
+	, deleteItem: function(id, index) {
+		
+		Ext.MessageBox.confirm(
+			LN('sbi.generic.pleaseConfirm'),
+			LN('sbi.generic.confirmDelete'),            
+            function(btn, text) {
+                if (btn=='yes') {
+                	if (id != null) {
+                		
+						Ext.Ajax.request({
+				            url: this.services['commentDelete'],
+				            params: {'commentId': id},
+				            method: 'GET',
+				            success: function(response, options) {
+				            	if(response !== undefined && response.responseText != undefined ){
+				            		var res = Ext.decode(response.responseText);
+				      				if(res.text == 'Forbidden'){
+						      			Ext.MessageBox.show({
+						      				title: 'Status',
+						      				msg: 'Operation forbidden',
+						      				modal: false,
+						      				buttons: Ext.MessageBox.OK,
+						      				width:300,
+						      				icon: Ext.MessageBox.INFO  			
+						      			});
+				      				}else{
+						      			Ext.MessageBox.show({
+						      				title: 'Status',
+						      				msg: 'Success',
+						      				modal: false,
+						      				buttons: Ext.MessageBox.OK,
+						      				width:300,
+						      				icon: Ext.MessageBox.INFO  			
+						      			});
+										var deleteRow = this.rowselModel.getSelected();
+										this.store.remove(deleteRow);
+										this.store.commitChanges();
+										if(this.store.getCount()>0){
+											this.rowselModel.selectRow(0);
+										}
+				      				}
+				            	}
+				            }
+				            , failure: this.onDeleteItemFailure
+				            , scope: this
+			
+						});
+					} 
+                }
+            },
+            this
+		);
 	}
 });

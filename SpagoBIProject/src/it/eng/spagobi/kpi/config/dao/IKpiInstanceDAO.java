@@ -67,5 +67,9 @@ public interface IKpiInstanceDAO extends ISpagoBIDao{
 	public List<SbiKpiComments> loadCommentsByKpiInstanceId(Integer kpiInstId) throws Exception;
 	
 	public Integer saveKpiComment(Integer idKpiInstance, String comment, String owner) throws EMFUserError;
+	
+	public void deleteKpiComment(Integer commentId) throws EMFUserError;
+	
+	public void editKpiComment(Integer commentId, String comment, String owner) throws EMFUserError;
 
 }

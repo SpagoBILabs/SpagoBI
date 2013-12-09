@@ -25,45 +25,7 @@
         <property name="descr" type="string">
             <column name="DESCR" length="160" />
         </property>
-		<property name="isAbleToSaveSubobjects" type="boolean">
-            <column name="save_subobjects" />
-        </property>
-		<property name="isAbleToSeeSubobjects" type="boolean">
-            <column name="see_subobjects" />
-        </property>
-		<property name="isAbleToSeeViewpoints" type="boolean">
-            <column name="see_viewpoints" />
-        </property>
-        <property name="isAbleToSeeSnapshots" type="boolean">
-            <column name="see_snapshots" />
-        </property>
-        <property name="isAbleToSeeNotes" type="boolean">
-            <column name="see_notes" />
-        </property>
-        <property name="isAbleToSendMail" type="boolean">
-            <column name="send_mail" />
-        </property>
-        <property name="isAbleToSaveIntoPersonalFolder" type="boolean">
-            <column name="save_into_folder" />
-        </property>
-        <property name="isAbleToEditWorksheet" type="boolean">
-           	<column name="edit_worksheet" />
-       	</property>
-        <property name="isAbleToSaveRememberMe" type="boolean">
-            <column name="save_remember_me" />
-        </property>
-        <property name="isAbleToSeeMetadata" type="boolean">
-            <column name="see_metadata" />
-        </property>
-        <property name="isAbleToBuildQbeQuery" type="boolean">
-            <column name="BUILD_QBE_QUERY" />
-        </property>
-        <property name="isAbleToDoMassiveExport" type="boolean">
-            <column name="DO_MASSIVE_EXPORT" />
-        </property>
-        <property name="isAbleToManageUsers" type="boolean">
-            <column name="MANAGE_USERS" />
-        </property> 
+
         <set name="sbiFuncRoles" inverse="true">
             <key>
                 <column name="ROLE_ID" not-null="true" />
@@ -76,5 +38,11 @@
             </key>
             <one-to-many class="it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParuseDet" />
         </set>
+        <set name="sbiFunctionalitiesRoleses" table="SBI_FUNCTIONALITIES_ROLES">
+            <key>
+                <column name="ROLE_ID" not-null="true" />
+            </key>
+            <one-to-many class="it.eng.spagobi.commons.metadata.SbiFunctionalitiesRoles" />
+        </set>   
     </class>
 </hibernate-mapping>

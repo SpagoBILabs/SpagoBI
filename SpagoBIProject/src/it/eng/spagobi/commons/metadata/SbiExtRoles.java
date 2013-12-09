@@ -6,6 +6,7 @@
 package it.eng.spagobi.commons.metadata;
 
 
+import java.util.HashSet;
 import java.util.Set;
 
 
@@ -24,29 +25,11 @@ public class SbiExtRoles  extends SbiHibernateModel{
      private String code;
      private String name;
      private String descr;
-     private Boolean isAbleToSaveSubobjects;
-     private Boolean isAbleToSeeSubobjects;
-     private Boolean isAbleToSeeViewpoints;
-     private Boolean isAbleToSeeSnapshots;
-     private Boolean isAbleToSeeNotes;
-     private Boolean isAbleToSendMail;
-     private Boolean isAbleToSaveIntoPersonalFolder;
-     private Boolean isAbleToEditWorksheet;
-     private Boolean isAbleToSaveRememberMe;
-     private Boolean isAbleToSeeMetadata;
-     private Boolean isAbleToSaveMetadata;
-     private Boolean isAbleToBuildQbeQuery;
-     private Boolean isAbleToDoMassiveExport;
-     private Boolean isAbleToManageUsers;
-     private Boolean isAbleToSeeDocumentBrowser;
-     private Boolean isAbleToSeeFavourites;
-     private Boolean isAbleToSeeSubscriptions;
-     private Boolean isAbleToSeeMyData;
-     private Boolean isAbleToSeeToDoList;
-     private Boolean isAbleToCreateDocuments;
+
      private Set sbiFuncRoles;
      private Set sbiParuseDets;
      private Set sbiMetaModelCategories;
+     private Set sbiFunctionalitiesRoleses = new HashSet(0);
 
 
     // Constructors
@@ -215,292 +198,7 @@ public class SbiExtRoles  extends SbiHibernateModel{
         this.sbiParuseDets = sbiParuseDets;
     }
 
-	/**
-	 * Gets the checks if is able to see subobjects.
-	 * 
-	 * @return the checks if is able to see subobjects
-	 */
-	public Boolean getIsAbleToSeeSubobjects() {
-		return isAbleToSeeSubobjects;
-	}
-
-	/**
-	 * Sets the checks if is able to see subobjects.
-	 * 
-	 * @param isAbleToSeeSubobjects the new checks if is able to see subobjects
-	 */
-	public void setIsAbleToSeeSubobjects(Boolean isAbleToSeeSubobjects) {
-		this.isAbleToSeeSubobjects = isAbleToSeeSubobjects;
-	}
-
-	/**
-	 * Gets the checks if is able to see viewpoints.
-	 * 
-	 * @return the checks if is able to see viewpoints
-	 */
-	public Boolean getIsAbleToSeeViewpoints() {
-		return isAbleToSeeViewpoints;
-	}
-
-	/**
-	 * Sets the checks if is able to see viewpoints.
-	 * 
-	 * @param isAbleToSeeViewpoints the new checks if is able to see viewpoints
-	 */
-	public void setIsAbleToSeeViewpoints(Boolean isAbleToSeeViewpoints) {
-		this.isAbleToSeeViewpoints = isAbleToSeeViewpoints;
-	}
-
-	/**
-	 * Gets the checks if is able to see snapshots.
-	 * 
-	 * @return the checks if is able to see snapshots
-	 */
-	public Boolean getIsAbleToSeeSnapshots() {
-		return isAbleToSeeSnapshots;
-	}
-
-	/**
-	 * Sets the checks if is able to see snapshots.
-	 * 
-	 * @param isAbleToSeeSnapshots the new checks if is able to see snapshots
-	 */
-	public void setIsAbleToSeeSnapshots(Boolean isAbleToSeeSnapshots) {
-		this.isAbleToSeeSnapshots = isAbleToSeeSnapshots;
-	}
-
-	/**
-	 * Gets the checks if is able to see notes.
-	 * 
-	 * @return the checks if is able to see notes
-	 */
-	public Boolean getIsAbleToSeeNotes() {
-		return isAbleToSeeNotes;
-	}
-
-	/**
-	 * Sets the checks if is able to see notes.
-	 * 
-	 * @param isAbleToSeeNotes the new checks if is able to see notes
-	 */
-	public void setIsAbleToSeeNotes(Boolean isAbleToSeeNotes) {
-		this.isAbleToSeeNotes = isAbleToSeeNotes;
-	}
-
-	/**
-	 * Gets the checks if is able to send mail.
-	 * 
-	 * @return the checks if is able to send mail
-	 */
-	public Boolean getIsAbleToSendMail() {
-		return isAbleToSendMail;
-	}
-
-	/**
-	 * Sets the checks if is able to send mail.
-	 * 
-	 * @param isAbleToSendMail the new checks if is able to send mail
-	 */
-	public void setIsAbleToSendMail(Boolean isAbleToSendMail) {
-		this.isAbleToSendMail = isAbleToSendMail;
-	}
-
-	/**
-	 * Gets the checks if is able to save into personal folder.
-	 * 
-	 * @return the checks if is able to save into personal folder
-	 */
-	public Boolean getIsAbleToSaveIntoPersonalFolder() {
-		return isAbleToSaveIntoPersonalFolder;
-	}
-
-	/**
-	 * Sets the checks if is able to save into personal folder.
-	 * 
-	 * @param isAbleToSaveIntoPersonalFolder the new checks if is able to save into personal folder
-	 */
-	public void setIsAbleToSaveIntoPersonalFolder(
-			Boolean isAbleToSaveIntoPersonalFolder) {
-		this.isAbleToSaveIntoPersonalFolder = isAbleToSaveIntoPersonalFolder;
-	}
-
-	/**
-	 * Gets the checks if is able to save remember me.
-	 * 
-	 * @return the checks if is able to save remember me
-	 */
-	public Boolean getIsAbleToSaveRememberMe() {
-		return isAbleToSaveRememberMe;
-	}
-
-	/**
-	 * Sets the checks if is able to save remember me.
-	 * 
-	 * @param isAbleToSaveRememberMe the new checks if is able to save remember me
-	 */
-	public void setIsAbleToSaveRememberMe(Boolean isAbleToSaveRememberMe) {
-		this.isAbleToSaveRememberMe = isAbleToSaveRememberMe;
-	}
-
-	/**
-	 * Gets the checks if is able to see metadata.
-	 * 
-	 * @return the checks if is able to see metadata
-	 */
-	public Boolean getIsAbleToSeeMetadata() {
-		return isAbleToSeeMetadata;
-	}
-
-	/**
-	 * Sets the checks if is able to see metadata.
-	 * 
-	 * @param isAbleToSeeMetadata the new checks if is able to see metadata
-	 */
-	public void setIsAbleToSeeMetadata(Boolean isAbleToSeeMetadata) {
-		this.isAbleToSeeMetadata = isAbleToSeeMetadata;
-	}
-
-	
-	/**
-	 * @return the isAbleToSaveMetadata
-	 */
-	public Boolean getIsAbleToSaveMetadata() {
-		return isAbleToSaveMetadata;
-	}
-
-	/**
-	 * @param isAbleToSaveMetadata the isAbleToSaveMetadata to set
-	 */
-	public void setIsAbleToSaveMetadata(Boolean isAbleToSaveMetadata) {
-		this.isAbleToSaveMetadata = isAbleToSaveMetadata;
-	}
-
-	public Boolean getIsAbleToSaveSubobjects() {
-		return isAbleToSaveSubobjects;
-	}
-
-	public void setIsAbleToSaveSubobjects(Boolean isAbleToSaveSubobjects) {
-		this.isAbleToSaveSubobjects = isAbleToSaveSubobjects;
-	}
-	
-    public Boolean getIsAbleToBuildQbeQuery() {
-		return isAbleToBuildQbeQuery;
-	}
-
-	public void setIsAbleToBuildQbeQuery(Boolean isAbleToBuildQbeQuery) {
-		this.isAbleToBuildQbeQuery = isAbleToBuildQbeQuery;
-	}
-
-	public Boolean getIsAbleToDoMassiveExport() {
-		return isAbleToDoMassiveExport;
-	}
-
-	public void setIsAbleToDoMassiveExport(Boolean isAbleToDoMassiveExport) {
-		this.isAbleToDoMassiveExport = isAbleToDoMassiveExport;
-	}
-	
-    public Boolean getIsAbleToEditWorksheet() {
-		return isAbleToEditWorksheet;
-	}
-
-	public void setIsAbleToEditWorksheet(Boolean isAbleToEditWorksheet) {
-		this.isAbleToEditWorksheet = isAbleToEditWorksheet;
-	}
-
-    public Boolean getIsAbleToManageUsers() {
-		return isAbleToManageUsers;
-	}
-
-    
-	/**
-	 * @return the isAbleToSeeDocumentBrowser
-	 */
-	public Boolean getIsAbleToSeeDocumentBrowser() {
-		return isAbleToSeeDocumentBrowser;
-	}
-
-	/**
-	 * @param isAbleToSeeDocumentBrowser the isAbleToSeeDocumentBrowser to set
-	 */
-	public void setIsAbleToSeeDocumentBrowser(Boolean isAbleToSeeDocumentBrowser) {
-		this.isAbleToSeeDocumentBrowser = isAbleToSeeDocumentBrowser;
-	}
-
-	/**
-	 * @return the isAbleToSeeFavourites
-	 */
-	public Boolean getIsAbleToSeeFavourites() {
-		return isAbleToSeeFavourites;
-	}
-
-	/**
-	 * @param isAbleToSeeFavourites the isAbleToSeeFavourites to set
-	 */
-	public void setIsAbleToSeeFavourites(Boolean isAbleToSeeFavourites) {
-		this.isAbleToSeeFavourites = isAbleToSeeFavourites;
-	}
-
-	/**
-	 * @return the isAbleToSeeSubscriptions
-	 */
-	public Boolean getIsAbleToSeeSubscriptions() {
-		return isAbleToSeeSubscriptions;
-	}
-
-	/**
-	 * @param isAbleToSeeSubscriptions the isAbleToSeeSubscriptions to set
-	 */
-	public void setIsAbleToSeeSubscriptions(Boolean isAbleToSeeSubscriptions) {
-		this.isAbleToSeeSubscriptions = isAbleToSeeSubscriptions;
-	}
-
-	/**
-	 * @return the isAbleToSeeMyData
-	 */
-	public Boolean getIsAbleToSeeMyData() {
-		return isAbleToSeeMyData;
-	}
-
-	/**
-	 * @param isAbleToSeeMyData the isAbleToSeeMyData to set
-	 */
-	public void setIsAbleToSeeMyData(Boolean isAbleToSeeMyData) {
-		this.isAbleToSeeMyData = isAbleToSeeMyData;
-	}
-
-	/**
-	 * @return the isAbleToSeeToDoList
-	 */
-	public Boolean getIsAbleToSeeToDoList() {
-		return isAbleToSeeToDoList;
-	}
-
-	/**
-	 * @param isAbleToSeeToDoList the isAbleToSeeToDoList to set
-	 */
-	public void setIsAbleToSeeToDoList(Boolean isAbleToSeeToDoList) {
-		this.isAbleToSeeToDoList = isAbleToSeeToDoList;
-	}
-
-	/**
-	 * @return the isAbleToCreateDocuments
-	 */
-	public Boolean getIsAbleToCreateDocuments() {
-		return isAbleToCreateDocuments;
-	}
-
-	/**
-	 * @param isAbleToCreateDocuments the isAbleToCreateDocuments to set
-	 */
-	public void setIsAbleToCreateDocuments(Boolean isAbleToCreateDocuments) {
-		this.isAbleToCreateDocuments = isAbleToCreateDocuments;
-	}
-
-	public void setIsAbleToManageUsers(Boolean isAbleToManageUsers) {
-		this.isAbleToManageUsers = isAbleToManageUsers;
-	}
-
-	/**
+		/**
 	 * @return the sbiMetaModelCategories
 	 */
 	public Set getSbiMetaModelCategories() {
@@ -512,5 +210,13 @@ public class SbiExtRoles  extends SbiHibernateModel{
 	 */
 	public void setSbiMetaModelCategories(Set sbiMetaModelCategories) {
 		this.sbiMetaModelCategories = sbiMetaModelCategories;
+	}
+	
+	public Set getSbiFunctionalitiesRoleses() {
+		return this.sbiFunctionalitiesRoleses;
+	}
+
+	public void setSbiFunctionalitiesRoleses(Set sbiFunctionalitiesRoleses) {
+		this.sbiFunctionalitiesRoleses = sbiFunctionalitiesRoleses;
 	}
 }

@@ -13,6 +13,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 				 org.json.JSONArray,
 				 it.eng.spagobi.analiticalmodel.document.handlers.*"%>
 <%@ page import="java.util.Map" %>
+<%@ page import="java.util.Collection" %>
 <%@page import="it.eng.spago.navigation.LightNavigationManager"%>
 <%@page import="java.util.HashMap"%>
 <%@page import="java.util.List"%>
@@ -40,6 +41,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 <%@page import="it.eng.spagobi.analiticalmodel.document.service.ExecuteBIObjectModule"%>
 <%@page import="it.eng.spagobi.commons.utilities.ParameterValuesEncoder"%>
 <%@page import="it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter"%>
+<%@page import="it.eng.spagobi.commons.constants.SpagoBIConstants"%>
 
 <%@ include file="/WEB-INF/jsp/commons/portlet_base311.jsp"%>
 <script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/service/ServiceRegistry.js")%>'></script>
@@ -180,6 +182,12 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
     }
 	//determines execution instance for each detail document
 
+	//determines functionalities for the user:
+	Collection functionalities = userProfile.getFunctionalities();
+	String canDelete ="false";
+	if(functionalities.contains(SpagoBIConstants.KPI_COMMENT_DELETE)){
+		canDelete ="true";
+	}
 %>		
 <script type="text/javascript">
 		var url = {
@@ -224,7 +232,8 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 						serverDateFormat: '<%=serverDateFormat%>',
 						chartBaseUrl: '/<%= engineContext %>/js/lib/ext-3.1.1/resources/charts.swf',
 						titleDate: dt+' ',
-						tickInterval: <%=tickInterval%>
+						tickInterval: <%=tickInterval%>,
+						canDelete: <%=canDelete%>
 						};
 		
 		var config ={grid: grid, accordion: accordion};

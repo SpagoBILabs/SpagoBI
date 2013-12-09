@@ -39,15 +39,18 @@
         <mapping resource="it/eng/spagobi/commons/metadata/mapping/SbiDomains.hbm.xml" />
         <mapping resource="it/eng/spagobi/commons/metadata/mapping/SbiConfig.hbm.xml" />
         <mapping resource="it/eng/spagobi/commons/metadata/mapping/SbiEventRole.hbm.xml" /> 
+  
+        <mapping resource="it/eng/spagobi/commons/metadata/mapping/SbiFunctionalities.hbm.xml" />
         <mapping resource="it/eng/spagobi/commons/metadata/mapping/SbiExtRoles.hbm.xml" />
-        <mapping resource="it/eng/spagobi/commons/metadata/mapping/SbiUserFunctionality.hbm.xml" />
+        <mapping resource="it/eng/spagobi/commons/metadata/mapping/SbiFunctionalitiesRoles.hbm.xml" />
+        <mapping resource="it/eng/spagobi/commons/metadata/mapping/SbiUserFunctionality.hbm.xml" />      
         <mapping resource="it/eng/spagobi/behaviouralmodel/analyticaldriver/metadata/mapping/SbiParameters.hbm.xml" />
         <mapping resource="it/eng/spagobi/behaviouralmodel/analyticaldriver/metadata/mapping/SbiParuseDet.hbm.xml" />
         <mapping resource="it/eng/spagobi/behaviouralmodel/analyticaldriver/metadata/mapping/SbiParuse.hbm.xml" />
         <mapping resource="it/eng/spagobi/behaviouralmodel/analyticaldriver/metadata/mapping/SbiParuseCk.hbm.xml" />
         <mapping resource="it/eng/spagobi/behaviouralmodel/analyticaldriver/metadata/mapping/SbiObjParuse.hbm.xml" />
         <mapping resource="it/eng/spagobi/behaviouralmodel/analyticaldriver/metadata/mapping/SbiObjParview.hbm.xml" />
-                <mapping resource="it/eng/spagobi/behaviouralmodel/lov/metadata/mapping/SbiLov.hbm.xml" />
+        <mapping resource="it/eng/spagobi/behaviouralmodel/lov/metadata/mapping/SbiLov.hbm.xml" />
         <mapping resource="it/eng/spagobi/behaviouralmodel/check/metadata/mapping/SbiChecks.hbm.xml" />
         <mapping resource="it/eng/spagobi/analiticalmodel/document/metadata/mapping/SbiObjPar.hbm.xml" />
         <mapping resource="it/eng/spagobi/analiticalmodel/document/metadata/mapping/SbiObjects.hbm.xml" /> 

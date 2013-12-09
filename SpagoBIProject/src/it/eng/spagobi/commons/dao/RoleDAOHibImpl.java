@@ -21,8 +21,10 @@ import it.eng.spagobi.commons.bo.RoleMetaModelCategory;
 import it.eng.spagobi.commons.metadata.SbiDomains;
 import it.eng.spagobi.commons.metadata.SbiEventRole;
 import it.eng.spagobi.commons.metadata.SbiExtRoles;
+import it.eng.spagobi.commons.metadata.SbiFunctionalities;
+import it.eng.spagobi.commons.metadata.SbiFunctionalitiesRoles;
+import it.eng.spagobi.commons.metadata.SbiFunctionalitiesRolesId;
 import it.eng.spagobi.events.metadata.SbiEventsLog;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -325,32 +327,79 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			hibRole.setCode(aRole.getCode());
 			hibRole.setDescr(aRole.getDescription());
 			hibRole.setName(aRole.getName());
-			hibRole.setIsAbleToSaveSubobjects(new Boolean(aRole.isAbleToSaveSubobjects()));
-			hibRole.setIsAbleToSeeSubobjects(new Boolean(aRole.isAbleToSeeSubobjects()));
-			hibRole.setIsAbleToSeeSnapshots(new Boolean(aRole.isAbleToSeeSnapshots()));
-			hibRole.setIsAbleToSeeViewpoints(new Boolean(aRole.isAbleToSeeViewpoints()));
-			hibRole.setIsAbleToSeeNotes(new Boolean(aRole.isAbleToSeeNotes()));
-			hibRole.setIsAbleToSeeMetadata(new Boolean(aRole.isAbleToSeeMetadata()));
-			hibRole.setIsAbleToSaveMetadata(new Boolean(aRole.isAbleToSaveMetadata()));
-			hibRole.setIsAbleToSendMail(new Boolean(aRole.isAbleToSendMail()));
-			hibRole.setIsAbleToSaveRememberMe(new Boolean(aRole.isAbleToSaveRememberMe()));
-			hibRole.setIsAbleToSaveIntoPersonalFolder(new Boolean(aRole.isAbleToSaveIntoPersonalFolder()));
-			hibRole.setIsAbleToBuildQbeQuery(new Boolean(aRole.isAbleToBuildQbeQuery()));
-			hibRole.setIsAbleToDoMassiveExport(new Boolean(aRole.isAbleToDoMassiveExport()));
-			hibRole.setIsAbleToEditWorksheet(new Boolean(aRole.isAbleToEditWorksheet()));
-			hibRole.setIsAbleToManageUsers(new Boolean(aRole.isAbleToManageUsers()));
-			hibRole.setIsAbleToSeeDocumentBrowser(new Boolean(aRole.isAbleToSeeDocumentBrowser()));
-			hibRole.setIsAbleToSeeFavourites(new Boolean(aRole.isAbleToSeeFavourites()));
-			hibRole.setIsAbleToSeeSubscriptions(new Boolean(aRole.isAbleToSeeSubscriptions()));
-			hibRole.setIsAbleToSeeMyData(new Boolean(aRole.isAbleToSeeMyData()));
-			hibRole.setIsAbleToSeeToDoList(new Boolean(aRole.isAbleToSeeToDoList()));
-			hibRole.setIsAbleToCreateDocuments(new Boolean(aRole.isAbleToCreateDocuments()));
-			
+			Set<SbiFunctionalitiesRoles> functionalities = hibRole.getSbiFunctionalitiesRoleses();
+			Iterator it = functionalities.iterator();
+			while(it.hasNext()){
+				SbiFunctionalitiesRoles fr = (SbiFunctionalitiesRoles)it.next();
+				aSession.delete(fr);
+				aSession.flush();
+			}
+
+
 			SbiDomains roleType = (SbiDomains)aSession.load(SbiDomains.class,  aRole.getRoleTypeID());
 			hibRole.setRoleType(roleType);
 			
 			hibRole.setRoleTypeCode(aRole.getRoleTypeCD());
 			updateSbiCommonInfo4Update(hibRole);
+			
+			aSession.update(hibRole);
+			aSession.flush();
+			
+			
+			//create new association
+			String hqlall = "from SbiFunctionalities ";
+			Query hqlQueryAll = aSession.createQuery(hqlall);
+			List<SbiFunctionalities> allFunct = hqlQueryAll.list();
+			
+			Set<SbiFunctionalitiesRoles> functionalitiesNew  = new HashSet();
+			
+			Iterator allFunIt = allFunct.iterator();
+			while(allFunIt.hasNext()){
+				
+				SbiFunctionalities functI = (SbiFunctionalities)allFunIt.next();
+				
+				if((functI.getName().equals("SAVE_SUBOBJECTS") && aRole.isAbleToSaveSubobjects())||
+					(functI.getName().equals("SEE_SUBOBJECTS") && aRole.isAbleToSeeSubobjects())||
+					(functI.getName().equals("SEE_SNAPSHOTS") && aRole.isAbleToSeeSnapshots())||
+					(functI.getName().equals("SEE_VIEWPOINTS") && aRole.isAbleToSeeViewpoints())||
+					(functI.getName().equals("SEE_NOTES") && aRole.isAbleToSeeNotes())||
+					(functI.getName().equals("SEE_METADATA") && aRole.isAbleToSeeMetadata())||
+					(functI.getName().equals("SAVE_METADATA") && aRole.isAbleToSaveMetadata())||
+					(functI.getName().equals("SEND_MAIL") && aRole.isAbleToSendMail())||
+					(functI.getName().equals("SAVE_REMEMBER_ME") && aRole.isAbleToSaveRememberMe())||
+					(functI.getName().equals("SAVE_INTO_FOLDER") && aRole.isAbleToSaveIntoPersonalFolder())||
+					(functI.getName().equals("BUILD_QBE_QUERY") && aRole.isAbleToBuildQbeQuery())||
+					(functI.getName().equals("DO_MASSIVE_EXPORT") && aRole.isAbleToDoMassiveExport())||
+					(functI.getName().equals("EDIT_WORKSHEET") && aRole.isAbleToEditWorksheet())||
+					(functI.getName().equals("MANAGE_USERS") && aRole.isAbleToManageUsers())||
+					(functI.getName().equals("SEE_DOCUMENT_BROWSER") && aRole.isAbleToSeeDocumentBrowser())||
+					(functI.getName().equals("SEE_FAVOURITES") && aRole.isAbleToSeeFavourites())||
+					(functI.getName().equals("SEE_SUBSCRIPTIONS") && aRole.isAbleToSeeSubscriptions())||
+					(functI.getName().equals("SEE_MY_DATA") && aRole.isAbleToSeeMyData())||
+					(functI.getName().equals("SEE_TODO_LIST") && aRole.isAbleToSeeToDoList())||
+					(functI.getName().equals("KPI_COMMENT_EDIT_ALL") && aRole.isAbleToEditAllKpiComm())||
+					(functI.getName().equals("KPI_COMMENT_EDIT_MY") && aRole.isAbleToEditMyKpiComm())||
+					(functI.getName().equals("KPI_COMMENT_DELETE") && aRole.isAbleToDeleteKpiComm())||
+					(functI.getName().equals("CREATE_DOCUMENTS") && aRole.isAbleToCreateDocuments())){
+					
+					SbiFunctionalitiesRoles fr = new SbiFunctionalitiesRoles();
+					SbiFunctionalitiesRolesId id = new SbiFunctionalitiesRolesId(functI.getId(), hibRole.getExtRoleId());
+					id.setRoleId(hibRole.getExtRoleId());
+					id.setFunctionalityId(functI.getId());
+					
+					fr.setSbiExtRoles(hibRole);
+					fr.setSbiFunctionalities(functI);
+					fr.setId(id);
+					updateSbiCommonInfo4Update(fr);
+					aSession.save(fr);
+					aSession.flush();
+					functionalitiesNew.add(fr);
+				}
+				
+			}
+/*			
+			hibRole.setSbiFunctionalitiesRoleses(functionalitiesNew);
+			aSession.save(hibRole);*/
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
@@ -528,28 +577,61 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 		role.setDescription(hibRole.getDescr());
 		role.setId(hibRole.getExtRoleId());
 		role.setName(hibRole.getName());
-		role.setIsAbleToSaveSubobjects(hibRole.getIsAbleToSaveSubobjects() == null || hibRole.getIsAbleToSaveSubobjects().booleanValue());
-		role.setIsAbleToSeeSubobjects(hibRole.getIsAbleToSeeSubobjects() == null || hibRole.getIsAbleToSeeSubobjects().booleanValue());
-		role.setIsAbleToSeeSnapshots(hibRole.getIsAbleToSeeSnapshots() == null || hibRole.getIsAbleToSeeSnapshots().booleanValue());
-		role.setIsAbleToSeeViewpoints(hibRole.getIsAbleToSeeViewpoints() == null || hibRole.getIsAbleToSeeViewpoints().booleanValue());
-		role.setIsAbleToSeeNotes(hibRole.getIsAbleToSeeNotes() == null || hibRole.getIsAbleToSeeNotes().booleanValue());
-		role.setIsAbleToSeeMetadata(hibRole.getIsAbleToSeeMetadata() == null || hibRole.getIsAbleToSeeMetadata().booleanValue());
-		role.setIsAbleToSaveMetadata(hibRole.getIsAbleToSaveMetadata() == null || hibRole.getIsAbleToSaveMetadata().booleanValue());
-		role.setIsAbleToSendMail(hibRole.getIsAbleToSendMail() == null || hibRole.getIsAbleToSendMail().booleanValue());
-		role.setIsAbleToSaveRememberMe(hibRole.getIsAbleToSaveRememberMe() == null || hibRole.getIsAbleToSaveRememberMe().booleanValue());
-		role.setIsAbleToSaveIntoPersonalFolder(hibRole.getIsAbleToSaveIntoPersonalFolder() == null || hibRole.getIsAbleToSaveIntoPersonalFolder().booleanValue());
-		role.setIsAbleToBuildQbeQuery(hibRole.getIsAbleToBuildQbeQuery() == null || hibRole.getIsAbleToBuildQbeQuery().booleanValue());
-		role.setIsAbleToDoMassiveExport(hibRole.getIsAbleToDoMassiveExport() == null || hibRole.getIsAbleToDoMassiveExport().booleanValue());
-		role.setIsAbleToEditWorksheet(hibRole.getIsAbleToEditWorksheet() == null || hibRole.getIsAbleToEditWorksheet().booleanValue());
-		role.setIsAbleToSeeDocumentBrowser(hibRole.getIsAbleToSeeDocumentBrowser() == null || hibRole.getIsAbleToSeeDocumentBrowser().booleanValue());
-		role.setIsAbleToSeeFavourites(hibRole.getIsAbleToSeeFavourites() == null || hibRole.getIsAbleToSeeFavourites().booleanValue());
-		role.setIsAbleToSeeSubscriptions(hibRole.getIsAbleToSeeSubscriptions() == null || hibRole.getIsAbleToSeeSubscriptions().booleanValue());
-		role.setIsAbleToSeeMyData(hibRole.getIsAbleToSeeMyData() == null || hibRole.getIsAbleToSeeMyData().booleanValue());
-		role.setIsAbleToSeeToDoList(hibRole.getIsAbleToSeeToDoList() == null || hibRole.getIsAbleToSeeToDoList().booleanValue());
-		role.setIsAbleToCreateDocuments(hibRole.getIsAbleToCreateDocuments() == null || hibRole.getIsAbleToCreateDocuments().booleanValue());
-		// for ManageUsers the default is false
-		role.setIsAbleToManageUsers(hibRole.getIsAbleToManageUsers() != null && hibRole.getIsAbleToManageUsers().booleanValue());
+		
+		Set< SbiFunctionalitiesRoles> functionalities = hibRole.getSbiFunctionalitiesRoleses();
+		Iterator it= functionalities.iterator();
+		while(it.hasNext()){
+			SbiFunctionalitiesRoles fr = (SbiFunctionalitiesRoles)it.next();
+			SbiFunctionalities f = fr.getSbiFunctionalities();
 
+			String name = f.getName();
+			if(name.equals("SAVE_SUBOBJECTS")){
+				role.setIsAbleToSaveSubobjects(true);		}
+			if(name.equals("SEE_SUBOBJECTS")){
+				role.setIsAbleToSeeSubobjects(true);}
+			if(name.equals("SEE_VIEWPOINTS")){
+				role.setIsAbleToSeeViewpoints(true);	}
+			if(name.equals("SEE_SNAPSHOTS")){
+				role.setIsAbleToSeeSnapshots(true);		}
+			if(name.equals("SEE_NOTES")){
+				role.setIsAbleToSeeNotes(true);		}
+			if(name.equals("SEND_MAIL")){
+				role.setIsAbleToSendMail(true);	}
+			if(name.equals("SAVE_INTO_FOLDER")){
+				role.setIsAbleToSaveIntoPersonalFolder(true);}
+			if(name.equals("SAVE_REMEMBER_ME")){
+				role.setIsAbleToSaveRememberMe(true);}
+			if(name.equals("SEE_METADATA")){
+				role.setIsAbleToSeeMetadata(true);}
+			if(name.equals("SAVE_METADATA")){
+				role.setIsAbleToSaveMetadata(true);	}
+			if(name.equals("BUILD_QBE_QUERY")){
+				role.setIsAbleToBuildQbeQuery(true);}
+			if(name.equals("DO_MASSIVE_EXPORT")){
+				role.setIsAbleToDoMassiveExport(true);}
+			if(name.equals("EDIT_WORKSHEET")){
+				role.setIsAbleToEditWorksheet(true);}
+			if(name.equals("MANAGE_USERS")){
+				role.setIsAbleToManageUsers(true);}
+			if(name.equals("SEE_DOCUMENT_BROWSER")){
+				role.setIsAbleToSeeDocumentBrowser(true);	}
+			if(name.equals("SEE_FAVOURITES")){
+				role.setIsAbleToSeeFavourites(true);}
+			if(name.equals("SEE_SUBSCRIPTIONS")){
+				role.setIsAbleToSeeSubscriptions(true);	}
+			if(name.equals("SEE_MY_DATA")){
+				role.setIsAbleToSeeMyData(true);}
+			if(name.equals("SEE_TODO_LIST")){
+				role.setIsAbleToSeeToDoList(true);}
+			if(name.equals("CREATE_DOCUMENTS")){
+				role.setIsAbleToCreateDocuments(true);	}
+			if(name.equals("KPI_COMMENT_EDIT_ALL")){
+				role.setAbleToEditAllKpiComm(true);	}
+			if(name.equals("KPI_COMMENT_EDIT_MY")){
+				role.setAbleToEditMyKpiComm(true);	}
+			if(name.equals("KPI_COMMENT_DELETE")){
+				role.setAbleToDeleteKpiComm(true);	}
+		}
 		
 		role.setRoleTypeCD(hibRole.getRoleTypeCode());
 		role.setRoleTypeID(hibRole.getRoleType().getValueId());
@@ -666,30 +748,60 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			hibRole.setRoleType(roleType);
 			
 			hibRole.setRoleTypeCode(role.getRoleTypeCD());
-			//abilitations
-			hibRole.setIsAbleToSaveSubobjects(new Boolean(role.isAbleToSaveSubobjects()));
-			hibRole.setIsAbleToSeeSubobjects(new Boolean(role.isAbleToSeeSubobjects()));
-			hibRole.setIsAbleToSeeSnapshots(new Boolean(role.isAbleToSeeSnapshots()));
-			hibRole.setIsAbleToSeeViewpoints(new Boolean(role.isAbleToSeeViewpoints()));
-			hibRole.setIsAbleToSeeNotes(new Boolean(role.isAbleToSeeNotes()));
-			hibRole.setIsAbleToSeeMetadata(new Boolean(role.isAbleToSeeMetadata()));
-			hibRole.setIsAbleToSaveMetadata(new Boolean(role.isAbleToSaveMetadata()));
-			hibRole.setIsAbleToSendMail(new Boolean(role.isAbleToSendMail()));
-			hibRole.setIsAbleToSaveRememberMe(new Boolean(role.isAbleToSaveRememberMe()));
-			hibRole.setIsAbleToSaveIntoPersonalFolder(new Boolean(role.isAbleToSaveIntoPersonalFolder()));
-			hibRole.setIsAbleToBuildQbeQuery(new Boolean(role.isAbleToBuildQbeQuery()));
-			hibRole.setIsAbleToDoMassiveExport(new Boolean(role.isAbleToDoMassiveExport()));
-			hibRole.setIsAbleToEditWorksheet(new Boolean(role.isAbleToEditWorksheet()));
-			hibRole.setIsAbleToManageUsers(new Boolean(role.isAbleToManageUsers()));
-			hibRole.setIsAbleToSeeDocumentBrowser(new Boolean(role.isAbleToSeeDocumentBrowser()));
-			hibRole.setIsAbleToSeeFavourites(new Boolean(role.isAbleToSeeFavourites()));
-			hibRole.setIsAbleToSeeSubscriptions(new Boolean(role.isAbleToSeeSubscriptions()));
-			hibRole.setIsAbleToSeeMyData(new Boolean(role.isAbleToSeeMyData()));
-			hibRole.setIsAbleToSeeToDoList(new Boolean(role.isAbleToSeeToDoList()));
-			hibRole.setIsAbleToCreateDocuments(new Boolean(role.isAbleToCreateDocuments()));
+			HashSet<SbiFunctionalitiesRoles> functs = new HashSet<SbiFunctionalitiesRoles>();
+
+
 			updateSbiCommonInfo4Insert(hibRole);
 			roleId = (Integer)aSession.save(hibRole);
+			aSession.flush();			
 			
+			//abilitations
+			
+			String hqlall = "from SbiFunctionalities ";
+			Query hqlQueryAll = aSession.createQuery(hqlall);
+			List<SbiFunctionalities> allFunct = hqlQueryAll.list();
+			
+			Iterator allFunIt = allFunct.iterator();
+			while(allFunIt.hasNext()){
+				
+				SbiFunctionalities functI = (SbiFunctionalities)allFunIt.next();
+				
+				if((functI.getName().equals("SAVE_SUBOBJECTS") && role.isAbleToSaveSubobjects())||
+					(functI.getName().equals("SEE_SUBOBJECTS") && role.isAbleToSeeSubobjects())||
+					(functI.getName().equals("SEE_SNAPSHOTS") && role.isAbleToSeeSnapshots())||
+					(functI.getName().equals("SEE_VIEWPOINTS") && role.isAbleToSeeViewpoints())||
+					(functI.getName().equals("SEE_NOTES") && role.isAbleToSeeNotes())||
+					(functI.getName().equals("SEE_METADATA") && role.isAbleToSeeMetadata())||
+					(functI.getName().equals("SAVE_METADATA") && role.isAbleToSaveMetadata())||
+					(functI.getName().equals("SEND_MAIL") && role.isAbleToSendMail())||
+					(functI.getName().equals("SAVE_REMEMBER_ME") && role.isAbleToSaveRememberMe())||
+					(functI.getName().equals("SAVE_INTO_FOLDER") && role.isAbleToSaveIntoPersonalFolder())||
+					(functI.getName().equals("BUILD_QBE_QUERY") && role.isAbleToBuildQbeQuery())||
+					(functI.getName().equals("DO_MASSIVE_EXPORT") && role.isAbleToDoMassiveExport())||
+					(functI.getName().equals("EDIT_WORKSHEET") && role.isAbleToEditWorksheet())||
+					(functI.getName().equals("MANAGE_USERS") && role.isAbleToManageUsers())||
+					(functI.getName().equals("SEE_DOCUMENT_BROWSER") && role.isAbleToSeeDocumentBrowser())||
+					(functI.getName().equals("SEE_FAVOURITES") && role.isAbleToSeeFavourites())||
+					(functI.getName().equals("SEE_SUBSCRIPTIONS") && role.isAbleToSeeSubscriptions())||
+					(functI.getName().equals("SEE_MY_DATA") && role.isAbleToSeeMyData())||
+					(functI.getName().equals("SEE_TODO_LIST") && role.isAbleToSeeToDoList())||
+					(functI.getName().equals("KPI_COMMENT_EDIT_ALL") && role.isAbleToEditAllKpiComm())||
+					(functI.getName().equals("KPI_COMMENT_EDIT_MY") && role.isAbleToEditMyKpiComm())||
+					(functI.getName().equals("KPI_COMMENT_DELETE") && role.isAbleToDeleteKpiComm())||
+					(functI.getName().equals("CREATE_DOCUMENTS") && role.isAbleToCreateDocuments())){
+
+						SbiFunctionalitiesRoles fr = new SbiFunctionalitiesRoles();
+						SbiFunctionalitiesRolesId id = new SbiFunctionalitiesRolesId(functI.getId(), hibRole.getExtRoleId());
+						fr.setId(id);
+						updateSbiCommonInfo4Insert(fr);
+						aSession.save(fr);
+						functs.add(fr);
+				}
+				
+			}
+			aSession.flush();
+			hibRole.setSbiFunctionalitiesRoleses(functs);
+			aSession.save(hibRole);
 			tx.commit();
 			
 		} catch (HibernateException he) {
@@ -766,8 +878,9 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			}
 			
 			hibernateQuery = aSession.createQuery("from SbiExtRoles order by name");
-			hibernateQuery.setFirstResult(offset);
-			if(fetchSize > 0) hibernateQuery.setMaxResults(fetchSize);			
+			
+			//hibernateQuery.setFirstResult(offset);
+			//if(fetchSize > 0) hibernateQuery.setMaxResults(fetchSize);			
 
 			toTransform = hibernateQuery.list();				
 		
