@@ -1479,7 +1479,8 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 			//maintains functionalities that have the same user's role
 			while (it.hasNext()) {
 				SbiFunctions tmpFunc = (SbiFunctions) it.next();
-				if(tmpFunc.getFunctTypeCd().equalsIgnoreCase("USER_FUNCT") || tmpFunc.getFunctTypeCd().equalsIgnoreCase("COMMUNITY_FUNCT")){
+				if((UserUtilities.isAdministrator(profile) &&tmpFunc.getFunctTypeCd().equalsIgnoreCase("USER_FUNCT")) || 
+						tmpFunc.getFunctTypeCd().equalsIgnoreCase("COMMUNITY_FUNCT")){
 					realResult.add(toLowFunctionality(tmpFunc, recoverBIObjects));
 				}else{
 					Object[] tmpRole = tmpFunc.getSbiFuncRoles().toArray();
@@ -1567,14 +1568,17 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 				//+ "order by sfr.id.function.parentFunct.functId, sfr.id.function.prog");
 				hibQuery.setInteger(0, tmpParentId.intValue());
 				hibQuery.setString(1, permission);
-				hibQuery.setParameterList("roles", roles);		
-				Query hibQueryPersonalFolder = aSession.createQuery("select f from SbiFunctions f where f.path like ? ");
-				hibQueryPersonalFolder.setString(0, "/"+username);
-				List hibListPersF = hibQueryPersonalFolder.list();	
-				Iterator it = hibListPersF.iterator();
-				while (it.hasNext()) {
-					SbiFunctions tmpFunc = (SbiFunctions) it.next();
-					realResult.add(toLowFunctionality(tmpFunc, recoverBIObjects));
+				hibQuery.setParameterList("roles", roles);	
+				//only for administrator are getted personal folders (since SpagoBI 5)
+				if (UserUtilities.isAdministrator(profile)){
+					Query hibQueryPersonalFolder = aSession.createQuery("select f from SbiFunctions f where f.path like ? ");
+					hibQueryPersonalFolder.setString(0, "/"+username);
+					List hibListPersF = hibQueryPersonalFolder.list();	
+					Iterator it = hibListPersF.iterator();
+					while (it.hasNext()) {
+						SbiFunctions tmpFunc = (SbiFunctions) it.next();
+						realResult.add(toLowFunctionality(tmpFunc, recoverBIObjects));
+					}
 				}
 			} else {
 				hibQuery = aSession.createQuery("select distinct sfr.id.function from SbiFuncRole sfr where "
