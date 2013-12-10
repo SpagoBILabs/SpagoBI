@@ -15,17 +15,18 @@
 Ext.define('Sbi.adhocreporting.AdhocreportingContainer', {
 	extend: 'Ext.panel.Panel',
 
-	congig:{
+	config:{
     	worksheetEngineBaseUrl : '',
     	qbeFromBMBaseUrl : '',
     	qbeFromDataSetBaseUrl : '',
         user : '',
-        datasetsServicePath: ''
+        myAnalysisServicePath: ''
+        //datasetsServicePath: ''
 	},
 
 	/**
 	 * @property {Panel} adhocreportingTabsPanel
-	 *  Tab panel that contains the datasets and the model views
+	 *  Tab panel that contains the my analysis documents
 	 */
     adhocreportingTabsPanel: null,
 	
@@ -43,7 +44,7 @@ Ext.define('Sbi.adhocreporting.AdhocreportingContainer', {
 		this.documentexecution = Ext.create('Sbi.selfservice.SelfServiceExecutionIFrame',{}); 
 		this.adhocreportingTabsPanel = Ext.create('Sbi.adhocreporting.AdhocreportingTabsPanel', {
 			adhocreportingContainer : this
-			, datasetsServicePath : config.datasetsServicePath
+			, myAnalysisServicePath : config.myAnalysisServicePath
 		}); 
 					
 		this.items = [ this.adhocreportingTabsPanel, this.documentexecution]

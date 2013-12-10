@@ -170,7 +170,7 @@ li:hover .login-panel .not-registered a:hover,.login-panel .not-registered a:hov
 .main-datasets-list .list-tab li.first{border-left:0}
 .main-datasets-list .list-tab li.last{border-right:0}
 .main-datasets-list .list-tab li.active{background-image:url(../../../images/bg-list-tab-active.gif)}
-.main-datasets-list .list-tab a{font-family:cabinmedium, sans-serif;color:#A7A7A7;height:36px;padding:15px 25px 0 25px;display:block;text-transform:uppercase;font-size:1.16em}
+.main-datasets-list .list-tab a{font-family:cabinmedium, sans-serif;color:#A7A7A7;height:36px;padding:15px 25px 0 25px;display:block;text-transform:uppercase;font-size:1em}
 .main-datasets-list .list-tab .favourite a{padding-left:0;padding-right:0;width:65px;background:url(../../../images/bg-fav-list-tab.png) 23px 14px no-repeat;text-indent:-9999px;font-size:0;line-height:0;color:#fff}
 .main-datasets-list .list-tab .favourite a:hover{background-position:23px -30px}
 .main-datasets-list .list-tab .active a{font-family:cabinbold, sans-serif}
@@ -301,6 +301,12 @@ li:hover .login-panel .not-registered a:hover,.login-panel .not-registered a:hov
 .box-fav .fav .showmetadata{background-position:0 -16px}
 .box .fav .showmetadata:hover{background-position:0 -16px}
 
+.box .fav-container .share{position:relative;height:40px;width:45px;background:url(../../../images/bg-fav-bottom.png) 0 bottom no-repeat}
+.box .share .icon{cursor:pointer;position:absolute;left:13px;top:6px;display:block;width:19px;height:16px;background:url(../../../images/ico-share.png) 0 0 no-repeat}	
+.box .share .icon:hover{background-position:0 -16px}
+.box .share .iconActive{cursor:pointer;position:absolute;left:13px;top:6px;display:block;width:19px;height:16px;background:url(../../../images/ico-share.png) 0 0 no-repeat; background-position:0 -16px}	
+	
+	
 .box .hover{display:none;position:absolute;top:0;left:0;width:100%;height:100%;background:url(../../../images/bg-hover.png) 0 0 repeat}
 .box:hover .hover{display:block}
 .box .hover .box-actions-container{float:left;position:relative;left:50%;top:38%}

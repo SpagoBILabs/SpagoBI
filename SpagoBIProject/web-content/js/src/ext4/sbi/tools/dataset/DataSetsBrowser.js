@@ -45,11 +45,14 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 		baseParams.isTech = this.config.isTech;
 		baseParams.showOnlyOwner = Sbi.settings.mydata.showOnlyOwner;
 
-		
+		/*
 		this.services["list"] = Sbi.config.serviceRegistry.getRestServiceUrl({
 			serviceName : this.datasetsServicePath,
 			baseParams : baseParams
 		});
+		*/
+		this.initDefaultFilter(); //initialize the correct 'list' service depending on the default filter set
+		
 		this.services["getCategories"]= Sbi.config.serviceRegistry.getRestServiceUrl({
 			serviceName: 'domainsforfinaluser/listValueDescriptionByType',
 			baseParams: baseParams
@@ -66,12 +69,28 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 			serviceName: 'selfservicedataset/testDataSet',
 			baseParams: baseParams
 		});
+		this.services["share"]= Sbi.config.serviceRegistry.getRestServiceUrl({
+			serviceName: 'selfservicedataset/share',
+			baseParams: baseParams
+		});
 		/*
 		this.services["getDataStore"]= Sbi.config.serviceRegistry.getRestServiceUrl({
 			serviceName: 'selfservicedataset/getDataStore',
 			baseParams: baseParams
 		});
 		*/
+	}
+	,initDefaultFilter: function(){
+		if (Sbi.settings.mydata.defaultFilter != undefined){
+			var defaultFilter = Sbi.settings.mydata.defaultFilter;
+			this.activateFilter(defaultFilter);
+		} else {
+			//using old initialization
+			this.services["list"] = Sbi.config.serviceRegistry.getRestServiceUrl({
+				serviceName : this.datasetsServicePath,
+				baseParams : baseParams
+			});
+		}
 	}
 	
 	,
@@ -153,9 +172,59 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 		this.viewPanel = Ext.create('Sbi.tools.dataset.DataSetsView', config);
 		this.viewPanel.on('detail', this.modifyDataset, this);
 		this.viewPanel.on('delete', this.deleteDataset, this);
+		this.viewPanel.on('share', this.shareDataset, this);
 		this.viewPanel.on('executeDocument',function(docType, inputType,  record){
 			this.fireEvent('executeDocument',docType, inputType,  record);
 		},this);
+	}
+	
+	, activateFilter: function(datasetType){
+		if (datasetType == 'MyDataSet'){			
+			baseParams ={};
+			baseParams.isTech = false;
+			baseParams.showOnlyOwner = true;
+
+			this.services["list"] = Sbi.config.serviceRegistry.getRestServiceUrl({
+				serviceName : 'selfservicedataset',
+				baseParams : baseParams
+			});		
+			
+			
+		} else if (datasetType == 'EnterpriseDataSet'){			
+			baseParams ={};
+			baseParams.isTech = true;
+			baseParams.showOnlyOwner = false;
+
+			this.services["list"] = Sbi.config.serviceRegistry.getRestServiceUrl({
+				serviceName : 'certificateddatasets',
+				baseParams : baseParams
+			});
+	
+			
+		} else if (datasetType == 'SharedDataSet'){
+			baseParams ={};
+			baseParams.isTech = false;
+			baseParams.showOnlyOwner = false;
+
+			this.services["list"] = Sbi.config.serviceRegistry.getRestServiceUrl({
+				serviceName : 'certificateddatasets',
+				baseParams : baseParams
+			});
+		
+			
+		} else if (datasetType == 'AllDataSet'){
+
+			baseParams ={};
+			baseParams.isTech = false;
+			baseParams.showOnlyOwner = false;
+			baseParams.allMyDataDs = true;
+
+			this.services["list"] = Sbi.config.serviceRegistry.getRestServiceUrl({
+				serviceName : 'certificateddatasets',
+				baseParams : baseParams
+			});
+		
+		}
 	}
 	
 	, createCategoriesStore: function(){
@@ -306,6 +375,44 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 			}
 		}
 	}
+	
+	, 
+	shareDataset: function(rec){
+		if (rec != undefined){
+			var params =  {};
+			params.id = rec.id;
+			
+			
+			//Sbi.exception.ExceptionHandler.showInfoMessage('Dataset shared');
+			Ext.Ajax.request({
+				url: this.services["share"],
+				params: params,			
+				success : function(response, options) {				
+					if(response !== undefined  && response.responseText !== undefined && response.statusText=="OK") {
+						if(response.responseText!=null && response.responseText!=undefined){
+							if(response.responseText.indexOf("error.mesage.description")>=0){
+								Sbi.exception.ExceptionHandler.handleFailure(response);
+							}else{						
+								this.store.load({reset:true});
+								this.viewPanel.refresh();
+								var result = JSON.parse(response.responseText);
+								if (result.isPublic) {
+									Sbi.exception.ExceptionHandler.showInfoMessage('Dataset shared');
+								} else {
+									Sbi.exception.ExceptionHandler.showInfoMessage('Dataset unshared');
+								}
+							}
+						}
+					} else {
+						Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
+					}
+				},
+				scope: this,
+				failure: Sbi.exception.ExceptionHandler.handleFailure      
+			});
+		}
+	}
+		
 	
 	,
 	saveDataset: function(values){
@@ -462,6 +569,83 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 		
 		this.viewPanel.refresh();
 	}	
+	
+	//Show only the dataset of the passed type
+	, showDataset: function(datasetType) {
+		//alert(datasetType);
+		var tabEls = Ext.get('list-tab').dom.childNodes;
+		
+		//Change active dataset type on toolbar
+		for(var i=0; i< tabEls.length; i++){
+			//nodeType == 1 is  Node.ELEMENT_NODE
+			if (tabEls[i].nodeType == 1){
+				if (tabEls[i].id == datasetType){					
+					tabEls[i].className += ' active '; //append class name to existing others
+				} else {
+					tabEls[i].className = tabEls[i].className.replace( /(?:^|\s)active(?!\S)/g , '' ); //remove active class
+				}
+			}
+		}
+		//Change content of DatasetView
+		this.activateFilter(datasetType);
+		if (datasetType == 'MyDataSet'){
+			this.createButtonVisibility(true);
+		} else if (datasetType == 'EnterpriseDataSet'){
+			this.createButtonVisibility(false);
+		} else if (datasetType == 'SharedDataSet'){
+			this.createButtonVisibility(false);
+		} else if (datasetType == 'AllDataSet'){
+			this.createButtonVisibility(true);
+		}	
+		
+		this.storeConfig = Ext.apply({
+			model : this.getModelName(),
+			filteredProperties : this.filteredProperties, 
+			sorters: [],
+			proxy: {
+		        type: 'ajax'
+		        , url: this.services["list"]
+	         	, reader : {
+	        		type : 'json',
+	        		root : 'root'
+	        	}
+		     }
+		}, {});
+
+		this.store = Ext.create('Sbi.widgets.store.InMemoryFilteredStore', this.storeConfig);				
+		
+		//load store and refresh datasets view
+		this.store.load(function(records, operation, success) {
+		    console.log('***DATASETS BROWSER loaded records***');
+		});
+		this.viewPanel.bindStore(this.store);
+		this.viewPanel.refresh();
+
+	}
+	
+	, createButtonVisibility: function(visible){
+		var dh = Ext.DomHelper;	
+		if (visible == true){
+			//check if button already present
+			var button = Ext.get('newDataset');
+			if (!button){
+				//add button
+		        if (this.user !== '' && this.user !== this.PUBLIC_USER){
+		        	var createButton = ' <a id="newDataset" href="#" onclick="javascript:Ext.getCmp(\'this\').addNewDataset(\'\')" class="btn-add"><span class="highlighted">'+LN('sbi.generic.create')+'</span> '+LN('sbi.browser.document.dataset')+'<span class="plus">+</span></a> ';
+		        	var actionsDiv = Ext.get('list-actions').dom;
+		        	dh.insertHtml('afterBegin',actionsDiv,createButton);
+		        }
+			}
+		} else {
+			//remove button if exist
+			if (Ext.get('newDataset') != null && Ext.get('newDataset') != undefined){
+				var button = Ext.get('newDataset').dom;
+				if (button){
+					button.parentNode.removeChild(button);
+				}				
+			}
+		}
+	}
 
 	, createBannerHtml: function(communities){
     	var communityString = '';
@@ -474,20 +658,61 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 //        }
 //        
         var createButton = '';
-        if (this.user !== '' && this.user !== this.PUBLIC_USER){
-        	createButton += ' <a id="newDataset" href="#" onclick="javascript:Ext.getCmp(\'this\').addNewDataset(\'\')" class="btn-add"><span class="highlighted">'+LN('sbi.generic.create')+'</span> '+LN('sbi.browser.document.dataset')+'<span class="plus">+</span></a> ';
+        if ( (Sbi.settings.mydata.defaultFilter == 'MyDataSet') || (Sbi.settings.mydata.defaultFilter == 'AllDataSet') ){
+            if (this.user !== '' && this.user !== this.PUBLIC_USER){
+            	createButton += ' <a id="newDataset" href="#" onclick="javascript:Ext.getCmp(\'this\').addNewDataset(\'\')" class="btn-add"><span class="highlighted">'+LN('sbi.generic.create')+'</span> '+LN('sbi.browser.document.dataset')+'<span class="plus">+</span></a> ';
+            }
         }
+
         
+        var activeClass = '';
         var bannerHTML = ''+
 //     		'<div class="aux"> '+
      		'<div class="main-datasets-list"> '+
     		'    <div class="list-actions-container"> '+ //setted into the container panel
-//    		'		<ul class="list-tab"> '+
+    		'		<ul class="list-tab" id="list-tab"> ';
+        if (Sbi.settings.mydata.showMyDataSetFilter){	
+        	if (Sbi.settings.mydata.defaultFilter == 'MyDataSet'){
+        		activeClass = 'active';
+        	} else {
+        		activeClass = '';
+        	}
+        	bannerHTML = bannerHTML+	
+        	'	    	<li class="first '+activeClass+'" id="MyDataSet"><a href="#" onclick="javascript:Ext.getCmp(\'this\').showDataset( \'MyDataSet\')">'+LN('sbi.mydata.mydataset')+'</a></li> '; 
+        }	
+        if (Sbi.settings.mydata.showEnterpriseDataSetFilter){
+        	if (Sbi.settings.mydata.defaultFilter == 'EnterpriseDataSet'){
+        		activeClass = 'active';
+        	} else {
+        		activeClass = '';
+        	}
+        	bannerHTML = bannerHTML+	
+    		'	    	<li class="'+activeClass+'" id="EnterpriseDataSet"><a href="#" onclick="javascript:Ext.getCmp(\'this\').showDataset( \'EnterpriseDataSet\')">'+LN('sbi.mydata.enterprisedataset')+'</a></li> ';    
+        }
+         if (Sbi.settings.mydata.showSharedDataSetFilter){
+         	if (Sbi.settings.mydata.defaultFilter == 'SharedDataSet'){
+        		activeClass = 'active';
+        	} else {
+        		activeClass = '';
+        	}
+         	bannerHTML = bannerHTML+	
+     		'	    	<li class="'+activeClass+'" id="SharedDataSet"><a href="#" onclick="javascript:Ext.getCmp(\'this\').showDataset( \'SharedDataSet\')">'+LN('sbi.mydata.shareddataset')+'</a></li> ';    	
+         }
+         if (Sbi.settings.mydata.showAllDataSetFilter){
+          	if (Sbi.settings.mydata.defaultFilter == 'AllDataSet'){
+        		activeClass = 'active';
+        	} else {
+        		activeClass = '';
+        	}
+          	bannerHTML = bannerHTML+	
+    		'	    	<li id="AllDataSet" class="last '+activeClass+'"><a href="#" onclick="javascript:Ext.getCmp(\'this\').showDataset( \'AllDataSet\')">'+LN('sbi.mydata.alldataset')+'</a></li> ';    		    		    		    		        	 
+         }
 //    		'	    	<li class="active first"><a href="#" onclick="javascript:Ext.getCmp(\'this\').loadFolder(null, null, \'ALL\')">'+LN('sbi.generic.all')+'</a></li> '+
 //    					communityString+
-////    		'	        <li class="favourite last"><a href="#">'+LN('sbi.browser.document.favourites')+'</a></li> '+
-//    		'		</ul> '+
-    		'	    <div class="list-actions"> '+
+//    		'	        <li class="favourite last"><a href="#">'+LN('sbi.browser.document.favourites')+'</a></li> '+
+        bannerHTML = bannerHTML+
+            '		</ul> '+
+    		'	    <div id="list-actions" class="list-actions"> '+
     					createButton +
     		'	        <form action="#" method="get" class="search-form"> '+
     		'	            <fieldset> '+

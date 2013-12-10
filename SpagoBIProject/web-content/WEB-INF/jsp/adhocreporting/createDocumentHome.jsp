@@ -30,7 +30,8 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
             , qbeFromBMBaseUrl : '<%= StringEscapeUtils.escapeJavaScript(qbeEditFromBMActionUrl) %>'
             , qbeFromDataSetBaseUrl : '<%= StringEscapeUtils.escapeJavaScript(qbeEditFromDataSetActionUrl) %>'
             , user: Sbi.user.userUniqueIdentifier
-            , datasetsServicePath: 'certificateddatasets'
+            //, datasetsServicePath: 'certificateddatasets'
+            , myAnalysisServicePath: 'documents/myAnalysisDocsList'
 		}); //by alias
 		var datasetListViewport = Ext.create('Ext.container.Viewport', {
 			layout:'fit',

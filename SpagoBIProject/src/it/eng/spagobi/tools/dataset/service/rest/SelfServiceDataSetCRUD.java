@@ -374,13 +374,6 @@ public class SelfServiceDataSetCRUD {
 			int id = Integer.valueOf(req.getParameter("id"));			
 			
 			IDataSet ds  = dao.loadActiveIDataSetByID(id);
-			//IDataSet dsNew = recoverDataSetDetails(req, ds, true);
-			
-			//logger.debug("Recalculating dataset's metadata: executing the dataset...");
-			//String dsMetadata = null;
-			//dsMetadata = getDatasetTestMetadata(dsNew, profile, meta);
-			//dsNew.setDsMetadata(dsMetadata);	
-			//LogMF.debug(logger, "Dataset executed, metadata are [{0}]", dsMetadata);
 			
 			HashMap<String, String> logParam = new HashMap();
 			

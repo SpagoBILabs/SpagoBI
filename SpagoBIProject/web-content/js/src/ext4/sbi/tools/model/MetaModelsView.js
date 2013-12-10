@@ -90,6 +90,7 @@ Ext.define('Sbi.tools.model.MetaModelsView', {
 
 			var noItem = LN('sbi.browser.folderdetailpanel.emptytext');
 			var title = LN('sbi.ds.listTitle');
+			/*
 			this.tpl = new Ext.XTemplate(
 					'<div id="sample-ct">', 	            
 		 	           '<div class="group-view-small">',
@@ -126,7 +127,39 @@ Ext.define('Sbi.tools.model.MetaModelsView', {
 		 	          '</div>',
 		 	        '</div>');
 			
+*/
+			this.tpl = new Ext.XTemplate(
+					'<div id="list-container" class="main-datasets-list">', 	            
+		 	            	'<tpl if="root.length == 0">',
+		 	            		'<div id="empty-group-message">',
+		 	            		noItem,
+		 	            		'</div>',
+		 	            	'</tpl>', 
+		 	            	'<tpl for=".">',
+								'<dd class="box">',
+									'<div class="box-container">',
+										'<div class="box-figure">',
+											'<img  align="center" src="'+Sbi.config.contextName+'/themes/sbi_default/img/metamodel/metamodel.png" alt=" " />',
+											'<span class="shadow"></span>',
+											'<div class="hover">',
+												'<div class="box-actions-container">',
+									            '    <ul class="box-actions">',	    
+									            		'<li class="qbe"><a href="#" title="Show Qbe"></a></li>',
+									            '    </ul>',
+												'</div>',
+											'</div>',										
+										'</div>',
+										'<div title="{name}" class="box-text">',
+											'<h2>{name}</h2>',
+											'<p>{[Ext.String.ellipsis(values.description, 100, false)]}</p>',
+										'</div>',
+									'</div>',
+								'</dd>',
+							 '</tpl>',	 
+							 '<div style="clear:left"></div>',
 
+				'</div>'
+			);			
 			Sbi.debug('DataViewPanel tpl built.');
 
 			return this.tpl;

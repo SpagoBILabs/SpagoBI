@@ -1089,3 +1089,14 @@ Sbi.locale.ln['sbi.mydata.shareddataset'] = "Shared Data Set";
 Sbi.locale.ln['sbi.mydata.alldataset'] = "All Data Set";
 Sbi.locale.ln['sbi.mydata.sharedataset'] = "Share Data Set";
 Sbi.locale.ln['sbi.mydata.unsharedataset'] = "Unshare Data Set";
+
+//===================================================================
+//MYANALYSIS
+//===================================================================
+Sbi.locale.ln['sbi.myanalysis.analysis'] = "Analysis";
+Sbi.locale.ln['sbi.myanalysis.report'] = "Report";
+Sbi.locale.ln['sbi.myanalysis.cockpit'] = "Cockpit";
+Sbi.locale.ln['sbi.myanalysis.map'] = "Map";
+Sbi.locale.ln['sbi.myanalysis.all'] = "All";
+Sbi.locale.ln['sbi.myanalysis.sharedocument'] = "Share Document";
+Sbi.locale.ln['sbi.myanalysis.unsharedocument'] = "Unshare Document";

@@ -65,7 +65,8 @@ public class MenuListJSONSerializer implements Serializer {
 	private static final String HREF_DOC_BROWSER ="/servlet/AdapterHTTP?ACTION_NAME=DOCUMENT_USER_BROWSER_START_ACTION&LIGHT_NAVIGATOR_RESET_INSERT=TRUE";
 	private static final String HREF_BOOKMARK ="/servlet/AdapterHTTP?PAGE=HOT_LINK_PAGE&OPERATION=GET_HOT_LINK_LIST&LIGHT_NAVIGATOR_RESET_INSERT=TRUE";
 	private static final String HREF_PENCIL ="/servlet/AdapterHTTP?ACTION_NAME=CREATE_DOCUMENT_START_ACTION&LIGHT_NAVIGATOR_RESET_INSERT=TRUE";
-	private static final String HREF_MYDATA ="/servlet/AdapterHTTP?ACTION_NAME=SELF_SERVICE_DATASET_START_ACTION&LIGHT_NAVIGATOR_RESET_INSERT=TRUE&MYDATA=TRUE";
+	private static final String HREF_MYDATA ="/servlet/AdapterHTTP?ACTION_NAME=SELF_SERVICE_DATASET_START_ACTION&LIGHT_NAVIGATOR_RESET_INSERT=TRUE&MYDATA=true";
+	private static final String HREF_MYDATA_ADMIN ="/servlet/AdapterHTTP?ACTION_NAME=SELF_SERVICE_DATASET_START_ACTION&LIGHT_NAVIGATOR_RESET_INSERT=TRUE&MYDATA=false";
 	private static final String HREF_LOGIN ="/servlet/AdapterHTTP?ACTION_NAME=LOGOUT_ACTION&LIGHT_NAVIGATOR_DISABLED=TRUE";
 	private static final String HREF_LOGOUT ="/servlet/AdapterHTTP?ACTION_NAME=LOGOUT_ACTION&LIGHT_NAVIGATOR_DISABLED=TRUE";
 	
@@ -165,6 +166,14 @@ public class MenuListJSONSerializer implements Serializer {
 							if(menuElem.getCode() != null && menuElem.getCode().equals("doc_admin")){
 								temp.put(HREF, "javascript:javascript:execDirectUrl('"+contextName+HREF_DOC_BROWSER+"', '"+text+"')");
 							}
+							if(menuElem.getCode() != null && menuElem.getCode().equals("my_data_admin")) {
+								// admins and devs can see ONLY models tab, while tester can see datasets and models
+								if( UserUtilities.isTechDsManager(this.getUserProfile())){								
+									temp.put(HREF, "javascript:javascript:execDirectUrl('"+contextName+HREF_MYDATA_ADMIN+"', '"+text+"')");
+								}else if(UserUtilities.isTester(this.getUserProfile())){
+									temp.put(HREF, "javascript:javascript:execDirectUrl('"+contextName+HREF_MYDATA+"', '"+text+"')");
+								}
+							}
 							
 							if (menuElem.getHasChildren()){		
 	
@@ -233,24 +242,10 @@ public class MenuListJSONSerializer implements Serializer {
 			JSONObject createDoc = createMenuItem(
 					"pencil",
 					HREF_PENCIL,
-					messageBuilder.getMessage("menu.CreateDocument", locale), true, null);
+					messageBuilder.getMessage("menu.MyAnalysis", locale), true, null);
 			tempMenuList.put(createDoc);
 		}
-		
-//		if (isAbleTo(SpagoBIConstants.SEE_SUBSCRIPTIONS, funcs)){
-//			JSONObject subscription = createMenuItem(
-//					"edit",
-//					"/servlet/AdapterHTTP?PAGE=ListDistributionListUserPage&LIGHT_NAVIGATOR_RESET_INSERT=TRUE",
-//					messageBuilder.getMessage("menu.Subscriptions", locale), true, null);
-//			tempMenuList.put(subscription);
-//		}
-//		if (isAbleTo(SpagoBIConstants.SEE_TODO_LIST, funcs)){
-//			JSONObject toDoList = createMenuItem(
-//					"list",
-//					"/servlet/AdapterHTTP?PAGE=WorkflowToDoListPage&WEBMODE=TRUE&LIGHT_NAVIGATOR_RESET_INSERT=TRUE",
-//					messageBuilder.getMessage("menu.ToDoList", locale), true, null);
-//			tempMenuList.put(toDoList);
-//		}
+
 		if (isAbleTo(SpagoBIConstants.SEE_MY_DATA, funcs)){
 			JSONObject myData = createMenuItem(
 					"my_data",
@@ -268,12 +263,6 @@ public class MenuListJSONSerializer implements Serializer {
 							+ persFoldId, messageBuilder.getMessage("menu.MyFolder", locale), true, null);
 			tempMenuList.put(myFolder);
 		}
-		
-//		
-//		JSONObject logo = new JSONObject();
-//		logo.put("xtype", "tbtext");
-//		logo.put("text", "<DIV style=\"WIDTH: 25px; HEIGHT: 100px; margin-left: 10px; background-image: url(/SpagoBI/themes/sbi_default/img/logo_toolbar.png);\" align=\"center\"> &nbsp; </DIV>");
-//		tempMenuList.put(logo);
 
 		return tempMenuList;
 	}

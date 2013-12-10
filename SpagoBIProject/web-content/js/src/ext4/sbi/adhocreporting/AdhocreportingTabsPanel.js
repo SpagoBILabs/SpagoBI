@@ -14,32 +14,33 @@
  
   
 Ext.define('Sbi.adhocreporting.AdhocreportingTabsPanel', {
-	extend: 'Ext.tab.Panel',
+	//extend: 'Ext.tab.Panel',
+	extend: 'Ext.Panel',
 
     config: {
     	executionPanel: null,
-    	datasetsServicePath : ''
-    },
+    	myAnalysisServicePath : ''
+    }
 	
 
 	/**
 	 * @property {Panel} datasetPanelTab
 	 *  Tab panel that contains the datasets
 	 */
-	datasetPanelTab: null,
+	//datasetPanelTab: null
 	
 	/**
 	 * @property {Panel} modelstPanelTab
 	 *  Tab panel that contains the models
 	 */
-	modelstPanelTab: null
+	//modelstPanelTab: null
 	
 	
 	, constructor : function(config) {
 		this.initConfig(config);
 		
 		this.layout = 'fit';
-		
+		/*
 		var browserConfCert = {
 				title: LN("sbi.tools.dataset.public.datasetbrowser.title")
 				, user: Sbi.user.userId
@@ -47,6 +48,7 @@ Ext.define('Sbi.adhocreporting.AdhocreportingTabsPanel', {
 				, displayToolbar : false
 				, isTech: true
 		};
+		
 		var browserConfCustom = {
 				title: LN("sbi.tools.dataset.private.datasetbrowser.title")
 				, user: Sbi.user.userId
@@ -54,13 +56,27 @@ Ext.define('Sbi.adhocreporting.AdhocreportingTabsPanel', {
 				, displayToolbar : false
 				, isTech: false
 		};
-		this.datasetPanelTabCert = Ext.create('Sbi.tools.dataset.DataSetsBrowser', browserConfCert );
-		this.datasetPanelTabCustom = Ext.create('Sbi.tools.dataset.DataSetsBrowser', browserConfCustom );
-		this.items = [ this.datasetPanelTabCert, this.datasetPanelTabCustom ];
+		*/
+		//this.datasetPanelTabCert = Ext.create('Sbi.tools.dataset.DataSetsBrowser', browserConfCert );
+		//this.datasetPanelTabCustom = Ext.create('Sbi.tools.dataset.DataSetsBrowser', browserConfCustom );
+		
+		var myAnalysisBrowserConf = {
+				 user: Sbi.user.userId
+				, myAnalysisServicePath: config.myAnalysisServicePath
+				, id: 'this'
+
+		};
+		
+		this.myAnalysisBrowser = Ext.create('Sbi.adhocreporting.MyAnalysisBrowser',myAnalysisBrowserConf);
+		
+		
+		this.items = [ this.myAnalysisBrowser ];
+		/*
 		if (Sbi.user.functionalities.contains('BuildQbeQueriesFunctionality')) {
 			this.modelstPanelTab = Ext.create('Sbi.tools.model.MetaModelsBrowser',{title: LN("sbi.tools.model.metamodelsbrowser.title")});
 		}
 		this.items.push(this.modelstPanelTab);
+		*/
 
 		this.callParent(arguments);
 		this.addEvents(
@@ -73,17 +89,21 @@ Ext.define('Sbi.adhocreporting.AdhocreportingTabsPanel', {
 		         */
 		        'executeDocument'
 				);
+		/*
 		if (this.modelstPanelTab != null) {
 			this.modelstPanelTab.on('executeDocument',function(docType, inputType, record){
 				this.fireEvent('executeDocument',docType,inputType,record);
 			},this);
-		}
+		} 
 		this.datasetPanelTabCert.on('executeDocument',function(docType, inputType, record){
 			this.fireEvent('executeDocument',docType,inputType,record);
 		},this);
+		*/
+		/*
 		this.datasetPanelTabCustom.on('executeDocument',function(docType, inputType, record){
 			this.fireEvent('executeDocument',docType,inputType,record);
-		},this);		
+		},this);	
+		*/	
 	}
 
     

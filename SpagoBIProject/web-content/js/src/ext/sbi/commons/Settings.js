@@ -60,6 +60,36 @@ Sbi.settings.mydata = {
 	 */
 	, showDataSetTab: true
 	, showModelsTab: true
+	/**
+	 * Visibility of MyData TabToolbar (this hide the whole tab toolbar)
+	 */
+	, showTabToolbar: true
+};
+
+/**
+ * My Analysis
+ */
+Sbi.settings.myanalysis = {
+		/**
+		 * This options will set the default active
+		 * filter used the first time the MyAnalysis page is opened
+		 * Possibile values are:
+		 * -'Report'
+		 * -'Cockpit'
+		 * -'Map'
+		 * -'All'
+		 * 
+		 * Make attention that the default filter selected must be 
+		 * a visible filter, so for example if 
+		 * defaultFilter:'Report'
+		 * showReportFilter must be true
+		 */
+		 defaultFilter: 'All'
+
+		, showReportFilter: true
+		, showCockpitFilter: true
+		, showMapFilter: true
+		, showAllFilter: true		
 };
 
 /**

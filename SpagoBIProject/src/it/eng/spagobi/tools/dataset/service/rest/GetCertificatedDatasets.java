@@ -57,11 +57,17 @@ public class GetCertificatedDatasets {
 			dataSetDao = DAOFactory.getDataSetDAO();
 			dataSetDao.setUserProfile(profile);
 			String isTech = req.getParameter("isTech");
+			String allMyDataDS = req.getParameter("allMyDataDs");
+
 
 			if(isTech != null && isTech.equals("true")){
 				//if is technical dataset == ENTERPRISE --> get all ADMIN/DEV public datasets
 				dataSets = dataSetDao.loadEnterpriseDatasets(profile.getUserUniqueIdentifier().toString());
-			}else{
+			} else if (allMyDataDS != null && allMyDataDS.equals("true")){
+				//get all the Datasets visible for the current user (MyData,Enterprise,Shared Datasets) 
+				dataSets = dataSetDao.loadMyDataAllDatasets(profile.getUserUniqueIdentifier().toString());
+			}
+			else{
 				//else it is a custom dataset list --> get all datasets public with owner != user itself
 				dataSets = dataSetDao.loadSharedDatasets(profile.getUserUniqueIdentifier().toString());
 			}
@@ -83,9 +89,21 @@ public class GetCertificatedDatasets {
 
 	private JSONArray putActions(IEngUserProfile profile, JSONArray datasetsJSONArray)
 			throws JSONException, EMFInternalError {
+		JSONObject detailAction = new JSONObject();
+		detailAction.put("name", "detaildataset");
+		detailAction.put("description", "Dataset detail");	
+		
+		JSONObject deleteAction = new JSONObject();
+		deleteAction.put("name", "delete");
+		deleteAction.put("description", "Delete dataset");		
+		
 		JSONObject worksheetAction = new JSONObject();
 		worksheetAction.put("name", "worksheet");
 		worksheetAction.put("description", "Show Worksheet");
+		
+		JSONObject georeportAction = new JSONObject();
+		georeportAction.put("name", "georeport");
+		georeportAction.put("description", "Show Map");
 		
 		JSONObject qbeAction = new JSONObject();
 		qbeAction.put("name", "qbe");
@@ -94,11 +112,21 @@ public class GetCertificatedDatasets {
 		JSONArray datasetsJSONReturn = new JSONArray();	
 		for(int i = 0; i < datasetsJSONArray.length(); i++) {
 			JSONArray actions = new JSONArray();
-			JSONObject datasetJSON = datasetsJSONArray.getJSONObject(i);		
+			JSONObject datasetJSON = datasetsJSONArray.getJSONObject(i);	
+			if (profile.getUserUniqueIdentifier().toString().equals(datasetJSON.get("owner"))){
+				actions.put(detailAction);		
+			}
 			actions.put(worksheetAction);
+			if (profile.getUserUniqueIdentifier().toString().equals(datasetJSON.get("owner"))){
+				actions.put(georeportAction); 
+			}
 			if (profile.getFunctionalities().contains(SpagoBIConstants.BUILD_QBE_QUERIES_FUNCTIONALITY)){
 				actions.put(qbeAction);
 			}
+			if (profile.getUserUniqueIdentifier().toString().equals(datasetJSON.get("owner"))){
+				actions.put(deleteAction);
+			}
+
 			datasetJSON.put("actions", actions);
 			datasetsJSONReturn.put(datasetJSON);
 		}
