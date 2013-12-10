@@ -27,8 +27,8 @@ Ext.define('Sbi.adhocreporting.MyAnalysisBrowser', {
 		displayToolbar: true,
 		PUBLIC_USER: 'public_user',	    
 	    qbeEditDatasetUrl : '',
-	    treePanel : null
-	    	
+	    treePanel : null,
+	    docCommunity : null	    	
 	}
 
 	,
@@ -78,6 +78,14 @@ Ext.define('Sbi.adhocreporting.MyAnalysisBrowser', {
 		this.services['deleteDocument'] = Sbi.config.serviceRegistry.getServiceUrl({
 			serviceName: 'DELETE_OBJECT_ACTION'
 			, baseParams: params
+		});
+		
+		this.services['getCommunities'] =  Sbi.config.serviceRegistry.getRestServiceUrl({
+			serviceName: 'community/user'
+				, baseParams: {
+					LIGHT_NAVIGATOR_DISABLED: 'TRUE',
+					EXT_VERSION: "3"
+				}
 		});
 
 	}
@@ -267,14 +275,45 @@ Ext.define('Sbi.adhocreporting.MyAnalysisBrowser', {
 		    	  columnWidth: 0.4,
 		          border: false,
 		          drawUncheckedChecks: true,
-		          title: LN('sbi.browser.document.share.win.titleDetail'),
-		          buttons		: [{
-		            	text    : LN('sbi.browser.document.share.win.btn')
-		    			, tooltip : LN('sbi.browser.document.share.win.tooltip')
-					    , scope : this
-					    , handler : function() { this.makeDocumentShared(rec); }
-		    	    }],
+		          title: LN('sbi.browser.document.share.win.titleDetail')		         
 		    });
+		    
+		 // The data store holding the communities
+			var storeComm = Ext.create('Ext.data.Store', {
+				proxy:{
+					type: 'rest',
+					url : this.services['getCommunities'],
+					reader: {
+						type: 'json',
+						root: 'root'
+					}
+				},
+
+				fields: [
+				         "communityId",
+				         "name",
+				         "description",
+				         "owner",
+				         "functCode"],
+			   // autoLoad: true
+			});
+			storeComm.on("load", function(store) {
+				var defaultData = {};
+				store.insert(0, defaultData);
+			}, this);
+			
+			storeComm.load();
+			
+
+			this.docCommunity = Ext.create('Ext.form.ComboBox', {
+			    fieldLabel: 'Community',
+			    queryMode: 'local',
+			    store: storeComm,
+			    displayField: 'name',
+			    valueField: 'functCode',
+			    width: 120,
+			    allowBlank: true
+			});
 		    
 		    if(this.shareWindow != null){			
 				this.shareWindow.destroy();
@@ -288,9 +327,8 @@ Ext.define('Sbi.adhocreporting.MyAnalysisBrowser', {
 		            xtype: 'textfield'
 		        },
 
-		        items: [this.treePanel]
+		        items: [this.treePanel, this.docCommunity]
 			});
-			
 			
 			this.shareWindow = new Ext.Window({
 				modal		: true,
@@ -300,7 +338,13 @@ Ext.define('Sbi.adhocreporting.MyAnalysisBrowser', {
 	            closeAction :'destroy',
 	            plain       : true,
 	            title		: LN('sbi.browser.document.share.win.title'),
-	            items       : [shareWindowPanel]
+	            items       : [shareWindowPanel],
+	            buttons		: [{
+				            	text    : LN('sbi.browser.document.share.win.btn')
+				    			, tooltip : LN('sbi.browser.document.share.win.tooltip')
+							    , scope : this
+							    , handler : function() { this.makeDocumentShared(rec); }
+				    	    }]
 			});
 			
 			this.shareWindow.show();
@@ -325,8 +369,10 @@ Ext.define('Sbi.adhocreporting.MyAnalysisBrowser', {
 		                         method: "POST",
 		                         callback : function(options , success, response){
 		            	       	  	 if(success && response !== undefined) {   
-		            	   	      		if(response.responseText !== undefined) {
-		            	   	      			Ext.MessageBox.show({
+		            	   	      		if(response.responseText !== undefined) {		            	   	      			
+											this.store.load({reset:true});										
+		            	   	      			this.viewPanel.refresh();
+			            	   	      		Ext.MessageBox.show({
 		            		      				title: 'Status',
 		            		      				msg: LN('sbi.browser.document.unshare.success'),
 		            		      				modal: false,
@@ -334,8 +380,6 @@ Ext.define('Sbi.adhocreporting.MyAnalysisBrowser', {
 		            		      				width:300,
 		            		      				icon: Ext.MessageBox.INFO 			
 		            		      			});
-											this.store.load({reset:true});										
-		            	   	      			this.viewPanel.refresh();
 		            	   	      		} else {
 		            	   	      			Sbi.exception.ExceptionHandler.showErrorMessage(LN('sbi.generic.serviceResponseEmpty'), LN('sbi.generic.serviceError'));
 		            	   	      		}
@@ -352,7 +396,9 @@ Ext.define('Sbi.adhocreporting.MyAnalysisBrowser', {
 	}
 	
 	, makeDocumentShared: function(rec) {
-        if (!this.treePanel.returnCheckedIdNodesArray() || this.treePanel.returnCheckedIdNodesArray().length == 0){
+//        if (!this.treePanel.returnCheckedIdNodesArray() || this.treePanel.returnCheckedIdNodesArray().length == 0 ||
+//        		!this.docCommunity || this.docCommunity.value == ''){
+        if (!this.treePanel.returnCheckedIdNodesArray() || this.treePanel.returnCheckedIdNodesArray().length == 0 ){
         	Ext.MessageBox.show({
                 title: LN('sbi.generic.warning'),
                 msg:  LN('sbi.browser.document.functsMandatory'),
@@ -381,18 +427,18 @@ Ext.define('Sbi.adhocreporting.MyAnalysisBrowser', {
 	                         method: "POST",
 	                         callback : function(options , success, response){
 	            	       	  	 if(success && response !== undefined) {   
-	            	   	      		if(response.responseText !== undefined) {
-	            	   	      			Ext.MessageBox.show({
+	            	   	      		if(response.responseText !== undefined) {	            	   	      			        	   	      		
+										this.store.load({reset:true});										
+	            	   	      			this.viewPanel.refresh();
+	            	   	      			this.shareWindow.close();
+		            	   	      		Ext.MessageBox.show({
 	            		      				title: 'Status',
 	            		      				msg: LN('sbi.browser.document.share.success'),
 	            		      				modal: false,
 	            		      				buttons: Ext.MessageBox.OK,
 	            		      				width:300,
 	            		      				icon: Ext.MessageBox.INFO 			
-	            		      			});	            	   	      			
-										this.store.load({reset:true});										
-	            	   	      			this.viewPanel.refresh();
-	            	   	      			this.shareWindow.close();
+	            		      			});	    
 	            	   	      		} else {
 	            	   	      			Sbi.exception.ExceptionHandler.showErrorMessage(LN('sbi.generic.serviceResponseEmpty'), LN('sbi.generic.serviceError'));
 	            	   	      		}
