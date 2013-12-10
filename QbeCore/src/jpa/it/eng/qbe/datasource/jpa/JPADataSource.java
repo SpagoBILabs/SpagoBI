@@ -6,6 +6,7 @@
 package it.eng.qbe.datasource.jpa;
 
 import it.eng.qbe.datasource.AbstractDataSource;
+import it.eng.qbe.datasource.ConnectionDescriptor;
 import it.eng.qbe.datasource.IPersistenceManager;
 import it.eng.qbe.datasource.configuration.CompositeDataSourceConfiguration;
 import it.eng.qbe.datasource.configuration.FileDataSourceConfiguration;
@@ -127,6 +128,13 @@ public class JPADataSource extends AbstractDataSource implements IJpaDataSource{
 	
 	public IDataSource getToolsDataSource() {
 		IDataSource dataSource = (IDataSource)configuration.loadDataSourceProperties().get("datasource");
+		//FOR SPAGOBIMETA
+		if(dataSource==null){
+			ConnectionDescriptor connectionDescriptor = (ConnectionDescriptor)configuration.loadDataSourceProperties().get("connection");
+			if(connectionDescriptor!=null){
+				dataSource = connectionDescriptor.getDataSource();
+			}
+		}
 		return dataSource;
 	}
 	
