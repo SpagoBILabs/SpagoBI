@@ -8,19 +8,33 @@ package it.eng.spagobi.analiticalmodel.document.service.rest;
 
 import java.security.Security;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
 import java.util.Properties;
 import java.util.Set;
 
+import it.eng.spago.base.SessionContainer;
+import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.AnalyticalModelDocumentManagementAPI;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
+import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
+import it.eng.spagobi.analiticalmodel.functionalitytree.dao.ILowFunctionalityDAO;
 import it.eng.spagobi.commons.SingletonConfig;
+import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.serializer.DocumentsJSONDecorator;
+import it.eng.spagobi.commons.serializer.SerializationException;
+import it.eng.spagobi.commons.serializer.SerializerFactory;
 import it.eng.spagobi.commons.utilities.StringUtilities;
+import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.commons.utilities.messages.IMessageBuilder;
+import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory;
 import it.eng.spagobi.profiling.bean.SbiAttribute;
 import it.eng.spagobi.profiling.bean.SbiUser;
@@ -44,6 +58,7 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -51,6 +66,9 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * @authors Alberto Ghedin (alberto.ghedin@eng.it)
@@ -60,6 +78,10 @@ import org.apache.log4j.Logger;
 public class DocumentCRUD {
 
 	public static final String OBJECT_ID = "docId";
+	public static final String USER = "user";
+	public static final String DOCUMENT_TYPE = "docType";
+
+
 	static private Logger logger = Logger.getLogger(DocumentCRUD.class);
 	
 	/**
@@ -171,6 +193,154 @@ public class DocumentCRUD {
 		logger.debug("OUT");
 		return "{}";
 	}
+	
+	@GET
+	@Path("/myAnalysisDocsList")
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	public String getMyAnalysisDocuments(@Context HttpServletRequest req){
+		logger.debug("IN");
+		String user = req.getParameter(USER);
+		String docType = req.getParameter(DOCUMENT_TYPE);
+
+		logger.debug("Searching documents inside personal folder of user ["+user+"]");
+
+		IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+		List userFunctionalties;
+		LowFunctionality personalFolder = null;
+		try {
+			
+			//Search personal folder of current user
+			ILowFunctionalityDAO functionalitiesDAO = DAOFactory.getLowFunctionalityDAO();
+
+			userFunctionalties = functionalitiesDAO.loadAllUserFunct();
+			for(Iterator it = userFunctionalties.iterator(); it.hasNext();) {
+				LowFunctionality funct =  (LowFunctionality)it.next();
+				if(UserUtilities.isPersonalFolder(funct, (UserProfile)profile)){
+					personalFolder = funct;
+					break;
+				}				
+			}
+
+			List myObjects = new ArrayList();
+			if (personalFolder != null){
+				//return all documents inside the personal folder
+				if ((docType == null) || (docType.equalsIgnoreCase("ALL"))){
+					myObjects = DAOFactory.getBIObjectDAO().loadBIObjects(Integer.valueOf(personalFolder.getId()), profile, true);
+				} else if (docType.equalsIgnoreCase("Report")){
+					//return only Worksheets inside the personal folder
+					myObjects = DAOFactory.getBIObjectDAO().loadBIObjects("WORKSHEET", "REL", personalFolder.getPath());					
+					
+				} else if (docType.equalsIgnoreCase("Map")){
+					//return only Geo Map (GIS) documents inside the personal folder
+					myObjects = DAOFactory.getBIObjectDAO().loadBIObjects("MAP", "REL", personalFolder.getPath());					
+
+				} else if (docType.equalsIgnoreCase("Cockpit")){
+					//return only Cockpits inside the personal folder
+
+					//TODO: to be defined
+				}
+
+				//Serialize documents list
+				MessageBuilder m = new MessageBuilder();
+				Locale locale = m.getLocale(req);
+				JSONArray documentsJSON = (JSONArray)SerializerFactory.getSerializer("application/json").serialize( myObjects ,locale);
+				DocumentsJSONDecorator.decorateDocuments(documentsJSON, profile, personalFolder);
+				JSONObject documentsResponseJSON = createJSONResponseDocuments(documentsJSON);
+
+
+				boolean recoverBiObjects = false;
+				// for massive export must also get the objects to check if there are worksheets
+				/*
+				Collection userFunctionalities = profile.getFunctionalities();
+				if (userFunctionalities.contains("DoMassiveExportFunctionality")) {
+					recoverBiObjects = true;
+				}
+
+				List functionalities = DAOFactory.getLowFunctionalityDAO().loadUserFunctionalities(Integer.valueOf(personalFolder.getId()), recoverBiObjects, profile);
+				*/
+				//JSONArray foldersJSON = (JSONArray)SerializerFactory.getSerializer("application/json").serialize( functionalities,locale );	
+				//JSONObject foldersResponseJSON =  createJSONResponseFolders(foldersJSON);
+
+				//JSONObject canAddResponseJSON =null;
+
+				//JSONObject result = createJSONResponse(foldersResponseJSON, documentsResponseJSON, canAddResponseJSON) ;
+
+				//JSONObject JSONReturn = new JSONObject();
+				//JSONReturn.put("root", result);
+
+
+				return documentsResponseJSON.toString();
+			}
+
+		} catch (EMFUserError e) {
+			logger.error("Error in myAnalysisDocsList Service: "+e);
+		} catch (SerializationException e) {
+			logger.error("Serializing Error in myAnalysisDocsList Service: "+e);
+		} catch (JSONException e) {
+			logger.error("JSONException Error in myAnalysisDocsList Service: "+e);
+		} /*catch (EMFInternalError e) {
+			logger.error("Error in myAnalysisDocsList Service: "+e);
+		}*/
+
+
+		logger.debug("OUT");
+		return "{}";
+	}
+
+	/**
+	 * Creates a json array with children document informations
+	 * @param rows
+	 * @return
+	 * @throws JSONException
+	 */
+	public JSONObject createJSONResponse(JSONObject folders, JSONObject documents, JSONObject canAdd) throws JSONException {
+		JSONObject results = new JSONObject();
+		JSONArray folderContent = new JSONArray();
+
+		//folderContent.put(folders);
+		folderContent.put(documents);
+		if(canAdd != null){
+			folderContent.put(canAdd);
+		}
+		results.put("folderContent", folderContent);
+
+		return results;
+	}	
+	
+	/**
+	 * Creates a json array with children folders informations
+	 * @param rows
+	 * @return
+	 * @throws JSONException
+	 */
+	public JSONObject createJSONResponseFolders(JSONArray rows) throws JSONException {
+		JSONObject results;
+
+		results = new JSONObject();
+		results.put("title", "Folders");
+		results.put("icon", "folder.png");
+		results.put("samples", rows);
+		return results;
+	}
+	
+
+	/**
+	 * Creates a json array with children document informations
+	 * @param rows
+	 * @return
+	 * @throws JSONException
+	 */
+	public JSONObject createJSONResponseDocuments(JSONArray rows) throws JSONException {
+		JSONObject results;
+	
+		results = new JSONObject();
+		//results.put("title", "Documents");
+		//results.put("icon", "document.png");
+		results.put("root", rows);
+		return results;
+	}	
+	
+	
 	
 	//sending email to emailAddress with passed subject and emailContent
 	private void sendMail(String emailAddress, String subject, String emailContent) throws Exception{

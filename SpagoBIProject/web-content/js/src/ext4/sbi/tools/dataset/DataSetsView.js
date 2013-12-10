@@ -101,7 +101,9 @@ Ext.define('Sbi.tools.dataset.DataSetsView', {
 		this.addListener('itemmouseenter', this.onMouseOverX, this);
 		this.addListener('itemmouseleave', this.onMouseOutX, this);
 		
-		this.addEvents('detail');		
+		this.addEvents('detail');
+		this.addEvents('share');		
+
 	}
 	
 	, 
@@ -121,6 +123,8 @@ Ext.define('Sbi.tools.dataset.DataSetsView', {
 //		}
 		
 		var author = LN('sbi.generic.author');
+		var currentUser = this.config.user;
+		
 
 		this.tpl = new Ext.XTemplate(
 				'<div id="list-container" class="main-datasets-list">', 	            
@@ -171,6 +175,20 @@ Ext.define('Sbi.tools.dataset.DataSetsView', {
 //									'    <span class="icon"><a href="#" onclick="alert(\'Functionality not supported yet!\');"/></span> '+
 //									'</div>',
 //								'</div>',
+								'<tpl if="owner == \''+currentUser+'\'">'+
+									'<div class="fav-container" >',
+						            '<tpl if="isPublic == false">'+
+									'	<div class="share"  title="'+LN('sbi.mydata.sharedataset')+'">',
+									'    <a href="#"><span class="icon"></span></a> '+
+									'	</div>',
+						            '</tpl>'+
+						            '<tpl if="isPublic == true">'+
+									'	<div class="share"  title="'+LN('sbi.mydata.unsharedataset')+'">',
+									'    <a href="#"><span class="iconActive"></span></a> '+
+									'	</div>',
+						            '</tpl>'+					            
+									'</div>',		
+								'</tpl>'+	
 							'</dd>',
 						 '</tpl>',	 
 						 '<div style="clear:left"></div>',
@@ -214,7 +232,9 @@ Ext.define('Sbi.tools.dataset.DataSetsView', {
     	var actionQbe = e.getTarget('li[class=qbe]', 10, true);
     	var actionGeoreport = e.getTarget('li[class=georeport]', 10, true);
         var actionDelete = e.getTarget('a[class=delete]', 10, true);       
-        var actionFavourite = e.getTarget('span.icon', 10, true); //TBD
+       // var actionFavourite = e.getTarget('span.icon', 10, true); //TBD
+        
+        var actionShareDataset = e.getTarget('div[class=share]',10,true)
         
         //if (!this.fromMyDataCtx) actionWorksheet = true;
         
@@ -246,6 +266,11 @@ Ext.define('Sbi.tools.dataset.DataSetsView', {
         		return true;
         	}
    			scope.fireEvent('executeDocument','GEOREPORT','DATASET',record);
+        } else if (actionShareDataset != null){
+        	Sbi.debug('DataSetView actionShareDataset raise event...'); 
+        	scope.fireEvent('share', record.data);   
+
+   			
         } /*else {
         	Sbi.debug('DataSetView default click event...'); 
         	if (record.data.pars != undefined && record.data.pars != ''){

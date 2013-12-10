@@ -91,8 +91,8 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
          {label: LN('sbi.ds.description'), name:"description", type:"textarea", readOnly:(!this.isOwner), value:this.record.description}];
 		//the category is moved at the first tab because it's necessary for the validation action 
 //		toReturn.push({label:LN('sbi.ds.catType'), name:"catTypeVn", type:"combo", valueCol:"VALUE_ID", descCol:"VALUE_DS", readOnly:!this.isOwner, value:this.record.catTypeId, data:this.categoriesStore});
-		var valueScope = (this.record.isPublic==true)?'true':'false' ;
-		toReturn.push({label:LN('sbi.ds.scope'), name:"isPublicDS", type:"combo", valueCol:"field", descCol:"value", readOnly:!this.isOwner, value:valueScope, data:this.scopeStore});
+		//var valueScope = (this.record.isPublic==true)?'true':'false' ;
+		//toReturn.push({label:LN('sbi.ds.scope'), name:"isPublicDS", type:"combo", valueCol:"field", descCol:"value", readOnly:!this.isOwner, value:valueScope, data:this.scopeStore});
 		
 		return toReturn;
 	}
@@ -236,6 +236,9 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
 				 Ext.apply(values, fileValues);
 				 //If true a new file is uploaded
 				 values.fileUploaded = this.fileUploaded;
+				 //Scope of the dataset (default is private otherwise is public-shared)
+				 var valueScope = (this.record.isPublic==true)?'true':'false' ;
+				 values.isPublicDS = valueScope;
 				 var datasetMetadata = this.fieldsStep2.getFormState();
 				 values.datasetMetadata = Ext.JSON.encode(datasetMetadata) ;
 
@@ -279,6 +282,9 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
 			}
 			//If true a new file is uploaded
 			values.fileUploaded = thisPanel.params.fileUploaded;
+			//Scope of the dataset (default is private otherwise is public-shared)
+			var valueScope = (this.record.isPublic==true)?'true':'false' ;
+			values.isPublicDS = valueScope;
 			this.fireEvent('save', values);
 		}
 	}

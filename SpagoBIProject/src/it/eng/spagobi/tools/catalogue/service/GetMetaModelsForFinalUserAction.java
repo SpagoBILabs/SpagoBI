@@ -13,6 +13,7 @@ import it.eng.spagobi.commons.dao.IDomainDAO;
 import it.eng.spagobi.commons.dao.IRoleDAO;
 import it.eng.spagobi.commons.serializer.SerializationException;
 import it.eng.spagobi.commons.serializer.SerializerFactory;
+import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.tools.catalogue.bo.MetaModel;
 import it.eng.spagobi.tools.catalogue.dao.IMetaModelsDAO;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
@@ -45,26 +46,30 @@ public class GetMetaModelsForFinalUserAction extends GetMetaModelsAction {
 			List<MetaModel> allModels = null;
 			List<Integer> categories = getCategories();
 			
-			if(categories==null){//no category defined in the db
-				if (requestContainsAttribute(FILTERS)){
-					String filterString = getAttributeAsString(FILTERS);
-					JSONObject jsonObject = new JSONObject(filterString);
-					allModels = getFilteredModels(jsonObject, dao);
-				} else {
-					allModels = dao.loadAllMetaModels();
-				}
+			//the administrator can see ALL models
+			if (UserUtilities.isAdministrator(this.getUserProfile())){
+				allModels = dao.loadAllMetaModels();
 			}else{
-				if(categories.size()>0){
+				if(categories==null){//no category defined in the db
 					if (requestContainsAttribute(FILTERS)){
 						String filterString = getAttributeAsString(FILTERS);
 						JSONObject jsonObject = new JSONObject(filterString);
-						allModels = getFilteredModels(jsonObject, dao, categories);
+						allModels = getFilteredModels(jsonObject, dao);
 					} else {
-						allModels = dao.loadMetaModelByCategories(categories);				
+						allModels = dao.loadAllMetaModels();
+					}
+				}else{
+					if(categories.size()>0){
+						if (requestContainsAttribute(FILTERS)){
+							String filterString = getAttributeAsString(FILTERS);
+							JSONObject jsonObject = new JSONObject(filterString);
+							allModels = getFilteredModels(jsonObject, dao, categories);
+						} else {
+							allModels = dao.loadMetaModelByCategories(categories);				
+						}
 					}
 				}
 			}
-
 
 			if(allModels==null){
 				allModels = new ArrayList<MetaModel>();

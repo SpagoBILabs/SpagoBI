@@ -18,6 +18,7 @@
 		<MAP_REST_SERVICE serviceUrl="/selfservicedataset/delete" businessProcess="SelfServiceDatasetManagement" />
 		<MAP_REST_SERVICE serviceUrl="/selfservicedataset/testDataSet" businessProcess="SelfServiceDatasetManagement" />
 		<MAP_REST_SERVICE serviceUrl="/selfservicedataset/getDataStore" businessProcess="SelfServiceDatasetManagement" />
+		<MAP_REST_SERVICE serviceUrl="/selfservicedataset/share" businessProcess="SelfServiceDatasetManagement" />
 		
 	</MAP_REST_SERVICES>
 	

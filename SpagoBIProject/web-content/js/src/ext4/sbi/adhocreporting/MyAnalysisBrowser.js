@@ -1,0 +1,526 @@
+/** SpagoBI, the Open Source Business Intelligence suite
+
+ * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. **/
+ 
+  
+ 
+  
+
+/**
+ * 
+ * @author Marco Cortella (marco.cortella@eng.it)
+ */
+
+Ext.define('Sbi.adhocreporting.MyAnalysisBrowser', {
+	extend : 'Ext.Panel'
+		
+	,
+	config : {
+		//id:'this',
+		modelName : "Sbi.adhocreporting.MyAnalysisModel", 
+		dataView : null,
+		user : '',
+		myAnalysisServicePath: '',
+		autoScroll:true,
+		displayToolbar: true,
+		PUBLIC_USER: 'public_user',	    
+	    qbeEditDatasetUrl : ''
+	    	
+	}
+
+	,
+	constructor : function(config) {
+		this.initConfig(config);
+		this.initServices();
+		this.initStore();
+		this.initToolbar();
+		this.initViewPanel();
+		this.items = [this.bannerPanel
+		              ,this.viewPanel
+		              ];
+		this.callParent(arguments);
+		
+		this.addEvents('order');
+
+	}
+	
+	/*
+	 * Initialization Functions
+	 */
+	
+	,initDefaultFilter: function(){
+		if (Sbi.settings.myanalysis.defaultFilter != undefined){
+			var defaultFilter = Sbi.settings.myanalysis.defaultFilter;
+			this.activateFilter(defaultFilter);
+		} 
+	}
+	
+	
+	,
+	initServices : function(baseParams) {
+		this.services = [];
+		
+		if(baseParams == undefined){
+			baseParams ={};
+		}
+		
+		baseParams.user = this.user;
+		
+		/*
+		this.services["list"] = Sbi.config.serviceRegistry.getRestServiceUrl({
+			serviceName : this.myAnalysisServicePath,
+			baseParams : baseParams
+		});
+		*/
+		this.initDefaultFilter(); //initialize the correct 'list' service depending on the default filter set
+		
+		this.services['cloneDocument'] = Sbi.config.serviceRegistry.getRestServiceUrl({serviceName: 'documents/clone'});
+		
+		var params = {LIGHT_NAVIGATOR_DISABLED: 'TRUE'};
+		this.services['deleteDocument'] = Sbi.config.serviceRegistry.getServiceUrl({
+			serviceName: 'DELETE_OBJECT_ACTION'
+			, baseParams: params
+		});
+
+	}
+	
+	,
+	initStore : function(baseParams) {
+		Sbi.debug('MyAnalysis Browser bulding the store...');
+		
+		this.filteredProperties = [ "label","name","description","creationUser" ];
+				
+		this.sorters = [{property : 'creationDate', direction: 'DESC', description: LN('sbi.ds.moreRecent')}, 
+		                {property : 'label', direction: 'ASC', description:  LN('sbi.ds.label')}, 
+		                {property : 'name', direction: 'ASC', description: LN('sbi.ds.name')}, 				
+						{property : 'creationUser', direction: 'ASC', description: LN('sbi.ds.owner')}];
+		
+
+		this.storeConfig = Ext.apply({
+			model : this.getModelName(),
+			filteredProperties : this.filteredProperties, 
+			sorters: [],
+			proxy: {
+		        type: 'ajax'
+		        , url: this.services["list"]
+	         	, reader : {
+	        		type : 'json',
+	        		root : 'root'
+	        	}
+		     }
+		}, {});
+
+		// creates and returns the store
+		Sbi.debug('MyAnalysis Browser store built.');
+
+		this.store = Ext.create('Sbi.widgets.store.InMemoryFilteredStore', this.storeConfig);				
+		this.store.load({});
+		
+		this.sortersCombo = this.createSortersStore({sorters: this.sorters});		
+		
+	}
+	
+	, initToolbar: function() {
+		
+		if (this.displayToolbar) {
+			
+			var bannerHTML = this.createBannerHtml({});
+			this.bannerPanel = new Ext.Panel({
+				height: 105,
+				border:0,
+			   	autoScroll: false,
+			   	html: bannerHTML
+			});			
+		}
+	}
+	
+	, initViewPanel: function() {
+		var config = {};
+		config.services = this.services;
+		config.store = this.store;
+		config.actions = this.actions;
+		config.user = this.user;
+		this.viewPanel = Ext.create('Sbi.adhocreporting.MyAnalysisView', config); //TODO: da definire
+		this.viewPanel.on('detail', this.modifyDocument, this);
+		this.viewPanel.on('delete', this.deleteDocument, this);
+		this.viewPanel.on('clone', this.cloneDocument, this);
+		this.viewPanel.on('showMetadata', this.showMetadataDocument, this);
+		this.viewPanel.on('share', this.shareDocument, this);
+		this.viewPanel.on('executeDocument',function(docType, inputType,  record){
+			this.fireEvent('executeDocument',docType, inputType,  record);
+		},this);
+	}
+	
+	
+	/*
+	 * ----------------------------------------------------------------------
+	 * Private methods
+	 * ----------------------------------------------------------------------
+	 */
+	
+	, modifyDocument: function(rec){
+		//TODO
+		Sbi.exception.ExceptionHandler.showInfoMessage('TODO: Modify Document');
+	}
+	
+	, deleteDocument: function(rec){
+		//TODO
+		Sbi.exception.ExceptionHandler.showInfoMessage('TODO: Delete Document');
+		
+		
+		//TODO: TO CHECK 
+		Ext.MessageBox.confirm(
+				LN('sbi.generic.pleaseConfirm')
+				, LN('sbi.generic.confirmDelete')
+	            , function(btn, text) {
+	                if ( btn == 'yes' ) {
+	                	var p = {};
+	                    
+	                    if(rec.id) {
+	                  	  p.docId = rec.id;
+	                  	  p.folderId = rec.functionalities[0]; //TODO: to check if correct
+	                    }
+	                    
+	                	Ext.Ajax.request({
+	                         url: this.services['deleteDocument'],
+	                         params: p,
+	                         callback : function(options , success, response){
+	                			 //alert(options.params.docId));
+	            	       	  	 if(success && response !== undefined) {   
+	            	   	      		if(response.responseText !== undefined) {
+	            	   	      			Ext.MessageBox.show({
+	            		      				title: 'Status',
+	            		      				msg: LN('sbi.browser.document.delete.success'),
+	            		      				modal: false,
+	            		      				buttons: Ext.MessageBox.OK,
+	            		      				width:300,
+	            		      				icon: Ext.MessageBox.INFO 			
+	            		      			});
+										this.store.load({reset:true});										
+	            	   	      			this.viewPanel.refresh();
+	            	   	      		} else {
+	            	   	      			Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
+	            	   	      		}
+	            	       	  	}
+	                         },
+	                         scope: this,
+	                 		 failure: Sbi.exception.ExceptionHandler.handleFailure      
+	                   });
+	                }
+				}
+				, this
+			);
+	}
+	
+	, cloneDocument: function(rec){
+		//TODO
+		Sbi.exception.ExceptionHandler.showInfoMessage('TODO: Clone Document');
+		
+		Ext.MessageBox.confirm(
+				LN('sbi.generic.pleaseConfirm')
+				, LN('sbi.generic.confirmClone')
+	            , function(btn, text) {
+	                if ( btn == 'yes' ) {
+	                	var p = {};
+	                    
+	                    if(rec.id) {
+	                  	  p.docId = rec.id;
+	                  	  p.folderId = rec.functionalities[0]; //TODO: to check if correct
+	                    }
+	                    
+	                	Ext.Ajax.request({
+	                         url: this.services['cloneDocument'],
+	                         params: p,
+	                         method: "POST",
+	                         callback : function(options , success, response){
+	            	       	  	 if(success && response !== undefined) {   
+	            	   	      		if(response.responseText !== undefined) {
+	            	   	      			Ext.MessageBox.show({
+	            		      				title: 'Status',
+	            		      				msg: LN('sbi.browser.document.clone.success'),
+	            		      				modal: false,
+	            		      				buttons: Ext.MessageBox.OK,
+	            		      				width:300,
+	            		      				icon: Ext.MessageBox.INFO 			
+	            		      			});
+										this.store.load({reset:true});										
+	            	   	      			this.viewPanel.refresh();
+	            	   	      		} else {
+	            	   	      			Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
+	            	   	      		}
+	            	       	  	}
+	                         },
+	                         scope: this,
+	                 		 failure: Sbi.exception.ExceptionHandler.handleFailure      
+	                   });
+	                }
+				}
+				, this
+			);
+
+	}
+	
+	, showMetadataDocument: function(rec){
+		//TODO
+		Sbi.exception.ExceptionHandler.showInfoMessage('TODO: Show Metadata Document');		
+	}
+	
+	, shareDocument: function(rec){
+		if (!rec.isPublic){
+			Sbi.exception.ExceptionHandler.showInfoMessage('TODO: Share Document');					
+		} else {
+			Sbi.exception.ExceptionHandler.showInfoMessage('TODO: Unshare Document');					
+		}
+	}
+	
+	, createSortersStore: function(config){		
+		var ordersStore = Ext.create('Ext.data.Store', {
+		    fields: ["property","direction","description"],
+		    data : config.sorters
+		});
+    	
+		ordersStore.load();
+    	
+    	return ordersStore;
+	}
+	
+	, createBannerHtml: function(communities){
+    	var communityString = '';
+  
+        var createButton = '';
+        if (this.user !== '' && this.user !== this.PUBLIC_USER){
+        	createButton += ' <a id="newDocument" href="#" onclick="javascript:Ext.getCmp(\'this\').addNewDocument(\'\')" class="btn-add"><span class="highlighted">'+LN('sbi.generic.create')+'</span> '+LN('sbi.myanalysis.analysis')+'<span class="plus">+</span></a> ';
+        }
+        
+   
+        var activeClass = '';
+        var bannerHTML = ''+
+//     		'<div class="aux"> '+
+     		'<div class="main-datasets-list"> '+
+    		'    <div class="list-actions-container"> '+ //set into the container panel
+    		'		<ul class="list-tab" id="list-tab"> ';
+        if (Sbi.settings.myanalysis.showReportFilter){	
+        	if (Sbi.settings.myanalysis.defaultFilter == 'Report'){
+        		activeClass = 'active';
+        	} else {
+        		activeClass = '';
+        	}
+        	bannerHTML = bannerHTML+	
+        	'	    	<li class="first '+activeClass+'" id="Report"><a href="#" onclick="javascript:Ext.getCmp(\'this\').showDocument( \'Report\')">'+LN('sbi.myanalysis.report')+'</a></li> '; 
+        }	
+        if (Sbi.settings.myanalysis.showCockpitFilter){
+        	if (Sbi.settings.myanalysis.defaultFilter == 'Cockpit'){
+        		activeClass = 'active';
+        	} else {
+        		activeClass = '';
+        	}
+        	bannerHTML = bannerHTML+	
+    		'	    	<li class="'+activeClass+'" id="Cockpit"><a href="#" onclick="javascript:Ext.getCmp(\'this\').showDocument( \'Cockpit\')">'+LN('sbi.myanalysis.cockpit')+'</a></li> ';    
+        }
+         if (Sbi.settings.myanalysis.showMapFilter){
+         	if (Sbi.settings.myanalysis.defaultFilter == 'Map'){
+        		activeClass = 'active';
+        	} else {
+        		activeClass = '';
+        	}
+         	bannerHTML = bannerHTML+	
+     		'	    	<li class="'+activeClass+'" id="Map"><a href="#" onclick="javascript:Ext.getCmp(\'this\').showDocument( \'Map\')">'+LN('sbi.myanalysis.map')+'</a></li> ';    	
+         }
+         if (Sbi.settings.myanalysis.showAllFilter){
+          	if (Sbi.settings.myanalysis.defaultFilter == 'All'){
+        		activeClass = 'active';
+        	} else {
+        		activeClass = '';
+        	}
+          	bannerHTML = bannerHTML+	
+    		'	    	<li id="All" class="last '+activeClass+'"><a href="#" onclick="javascript:Ext.getCmp(\'this\').showDocument( \'All\')">'+LN('sbi.myanalysis.all')+'</a></li> ';    		    		    		    		        	 
+         }
+
+        bannerHTML = bannerHTML+
+            '		</ul> '+
+    		'	    <div id="list-actions" class="list-actions"> '+
+    					createButton +
+    		'	        <form action="#" method="get" class="search-form"> '+
+    		'	            <fieldset> '+
+    		'	                <div class="field"> '+
+    		'	                    <label for="search">'+LN('sbi.browser.document.searchDatasets')+'</label> '+
+    		'	                    <input type="text" name="search" id="search" onclick="this.value=\'\'" onkeyup="javascript:Ext.getCmp(\'this\').filterStore(this.value)" value="'+LN('sbi.browser.document.searchKeyword')+'" /> '+
+    		'	                </div> '+
+    		'	                <div class="submit"> '+
+    		'	                    <input type="text" value="Cerca" /> '+
+    		'	                </div> '+
+    		'	            </fieldset> '+
+    		'	        </form> '+
+    		'	         <ul class="order" id="sortList">'+
+    		'	            <li id="dateIn" class="active"><a href="#" onclick="javascript:Ext.getCmp(\'this\').sortStore(\'creationDate\')">'+LN('sbi.ds.moreRecent')+'</a> </li> '+
+    		'	            <li id="name"><a href="#" onclick="javascript:Ext.getCmp(\'this\').sortStore(\'name\')">'+LN('sbi.ds.name')+'</a></li> '+
+    		'	            <li id="owner"><a href="#" onclick="javascript:Ext.getCmp(\'this\').sortStore(\'creationUser\')">'+LN('sbi.ds.owner')+'</a></li> '+
+    		'	        </ul> '+
+    		'	    </div> '+
+    		'	</div> '+
+    		'</div>' ;
+
+
+        return bannerHTML;
+    }
+	
+	
+	, addNewDocument : function() {		 
+		alert('TODO: Apertura Wizard di creazione nuovo documento');
+	}
+	
+	/*
+	 * 	Show only the document of the passed type
+	 */
+	, showDocument: function(documentType) {
+		//alert('Show Document of type '+documentType);
+		
+		var tabEls = Ext.get('list-tab').dom.childNodes;
+		
+		//Change active dataset type on toolbar
+		for(var i=0; i< tabEls.length; i++){
+			//nodeType == 1 is  Node.ELEMENT_NODE
+			if (tabEls[i].nodeType == 1){
+				if (tabEls[i].id == documentType){					
+					tabEls[i].className += ' active '; //append class name to existing others
+				} else {
+					tabEls[i].className = tabEls[i].className.replace( /(?:^|\s)active(?!\S)/g , '' ); //remove active class
+				}
+			}
+		}
+		//Change content of DatasetView
+		this.activateFilter(documentType);
+		
+		this.storeConfig = Ext.apply({
+			model : this.getModelName(),
+			filteredProperties : this.filteredProperties, 
+			sorters: [],
+			proxy: {
+		        type: 'ajax'
+		        , url: this.services["list"]
+	         	, reader : {
+	        		type : 'json',
+	        		root : 'root'
+	        	}
+		     }
+		}, {});
+
+		this.store = Ext.create('Sbi.widgets.store.InMemoryFilteredStore', this.storeConfig);				
+		
+		//load store and refresh datasets view
+		this.store.load(function(records, operation, success) {
+		    console.log('***MYANALYSIS BROWSER loaded records***');
+		});
+		this.viewPanel.bindStore(this.store);
+		this.viewPanel.refresh();
+		
+	}
+	
+	, activateFilter: function(documentType){
+		if (documentType == 'All'){			
+			baseParams ={};
+			baseParams.user = this.user;
+			baseParams.docType = 'All';
+
+			this.services["list"] = Sbi.config.serviceRegistry.getRestServiceUrl({
+				serviceName : this.myAnalysisServicePath,
+				baseParams : baseParams
+			});
+			
+			
+		} else if (documentType == 'Map'){			
+			baseParams ={};
+			baseParams.user = this.user;
+			baseParams.docType = 'Map';
+
+			this.services["list"] = Sbi.config.serviceRegistry.getRestServiceUrl({
+				serviceName : this.myAnalysisServicePath,
+				baseParams : baseParams
+			});
+	
+			
+		} else if (documentType == 'Cockpit'){
+			baseParams ={};
+			baseParams.user = this.user;
+			baseParams.docType = 'Cockpit';
+
+			this.services["list"] = Sbi.config.serviceRegistry.getRestServiceUrl({
+				serviceName : this.myAnalysisServicePath,
+				baseParams : baseParams
+			});
+		
+			
+		} else if (documentType == 'Report'){
+			baseParams ={};
+			baseParams.user = this.user;
+			baseParams.docType = 'Report';
+
+			this.services["list"] = Sbi.config.serviceRegistry.getRestServiceUrl({
+				serviceName : this.myAnalysisServicePath,
+				baseParams : baseParams
+			});
+		
+		}
+	}
+	
+	/**
+	 * Opens the loading mask 
+	*/
+    , showMask : function(){
+    	this.un('afterlayout',this.showMask,this);
+    	if (this.loadMask == null) {    		
+    		this.loadMask = new Ext.LoadMask(Ext.getBody(), {msg: "  Wait...  "});
+    	}
+    	if (this.loadMask){
+    		this.loadMask.show();
+    	}
+    }
+
+	/**
+	 * Closes the loading mask
+	*/
+	, hideMask: function() {
+    	if (this.loadMask && this.loadMask != null) {	
+    		this.loadMask.hide();
+    	}
+	} 
+	
+	, filterStore: function(filterString) {
+		this.store.load({filterString: filterString});
+	}
+	
+	, sortStore: function(value) {			
+		var sortEls = Ext.get('sortList').dom.childNodes;
+		//move the selected value to the first element
+		for(var i=0; i< sortEls.length; i++){
+			if (sortEls[i].id == value){					
+				sortEls[i].className = 'active';
+				break;
+			} 
+		}
+		//append others elements
+		for(var i=0; i< sortEls.length; i++){
+			if (sortEls[i].id !== value){
+				sortEls[i].className = '';		
+			}
+		}
+		
+
+		for (sort in this.sorters){
+			var s = this.sorters[sort];
+			if (s.property == value){
+				this.store.sort(s.property, s.direction);
+				break;
+			}
+		}
+		
+		this.viewPanel.refresh();
+	}	
+	
+	
+
+	
+	
+});	

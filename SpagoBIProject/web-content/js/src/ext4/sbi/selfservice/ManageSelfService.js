@@ -13,8 +13,8 @@
  
   
 Ext.define('Sbi.selfservice.ManageSelfService', {
-//	extend: 'Ext.tab.Panel',
-	extend: 'Ext.Panel',
+	extend: 'Ext.tab.Panel',
+//	extend: 'Ext.Panel',
 
     config: {
     	executionPanel: null,
@@ -26,15 +26,15 @@ Ext.define('Sbi.selfservice.ManageSelfService', {
 	 * @property {Panel} datasetPanelTab
 	 *  Tab panel that contains the datasets
 	 */
-	datasetPanelTab: null
+	datasetPanelTab: null,
 	
-	/*
+	/**
 	 * @property {Panel} modelstPanelTab
 	 *  Tab panel that contains the models
 	 *
-	 * modelstPanelTab: null
+	 * 
 	 */
-	
+	modelsPanelTab: null
 	, 
 	constructor : function(config) {
 		this.initConfig(config);
@@ -52,10 +52,20 @@ Ext.define('Sbi.selfservice.ManageSelfService', {
 		if (Sbi.settings.browser.showTitle !== undefined && Sbi.settings.browser.showTitle){
 			browserConf.title =  LN("sbi.tools.dataset.datasetbrowser.title");
 		}
-		 
-		this.datasetPanelTab = Ext.create('Sbi.tools.dataset.DataSetsBrowser', browserConf );
+		this.items = [];
 		
-		this.items = [ this.datasetPanelTab ];
+		
+		if (Sbi.settings.mydata.showDataSetTab == true){
+			this.datasetPanelTab = Ext.create('Sbi.tools.dataset.DataSetsBrowser', browserConf );
+			this.items.push(this.datasetPanelTab);
+		}
+		if (Sbi.settings.mydata.showModelsTab == true){
+			this.modelsPanelTab = Ext.create('Sbi.tools.model.MetaModelsBrowser',{title: LN("sbi.tools.model.metamodelsbrowser.title")});
+			this.items.push(this.modelsPanelTab);
+		}
+		
+
+		//this.items = [ this.datasetPanelTab,this.modelsPanelTab ];
 
 		this.callParent(arguments);
 		this.addEvents(
@@ -68,12 +78,23 @@ Ext.define('Sbi.selfservice.ManageSelfService', {
 		         */
 		        'executeDocument'
 				);
-		//this.modelstPanelTab.on('executeDocument',function(docType, inputType, record){
-		//	this.fireEvent('executeDocument',docType,inputType,record);
-		//},this);
-		this.datasetPanelTab.on('executeDocument', function(docType, inputType, record) {
-			this.fireEvent('executeDocument', docType, inputType, record);
-		}, this);
+		if (Sbi.settings.mydata.showModelsTab == true){
+			this.modelsPanelTab.on('executeDocument',function(docType, inputType, record){
+				this.fireEvent('executeDocument',docType,inputType,record);
+			},this);
+		}
+		if (Sbi.settings.mydata.showDataSetTab == true){
+			this.datasetPanelTab.on('executeDocument',function(docType, inputType, record){
+				this.fireEvent('executeDocument',docType,inputType,record);
+			},this);
+		}
+		
+		if (Sbi.settings.mydata.showTabToolbar == false){
+			this.getTabBar().setVisible(false);
+		}
+
+
+
 	}
 
     

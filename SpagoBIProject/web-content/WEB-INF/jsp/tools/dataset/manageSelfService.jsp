@@ -33,6 +33,7 @@ if (isMyData.equalsIgnoreCase("FALSE")) {%>
 
 
     Ext.onReady(function(){
+    	Sbi.settings.mydata.showDataSetTab = <%=isMyData%>;
 		var selfService = Ext.create('Sbi.selfservice.ManageSelfServiceContainer',{
         	worksheetEngineBaseUrl : '<%= StringEscapeUtils.escapeJavaScript(worksheetEditActionUrl) %>'
             , qbeFromBMBaseUrl : '<%= StringEscapeUtils.escapeJavaScript(qbeEditFromBMActionUrl) %>'

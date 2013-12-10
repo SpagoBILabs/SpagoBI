@@ -1390,8 +1390,8 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 			String username = null;
 			Collection roles = null;
 			try {
-				RequestContainer reqCont = RequestContainer.getRequestContainer();
-				if(reqCont!=null){
+				//RequestContainer reqCont = RequestContainer.getRequestContainer();
+				if(profile!=null){
 					username = (String)((UserProfile)profile).getUserId();
 					roles  = ((UserProfile)profile).getRolesForUse();
 					

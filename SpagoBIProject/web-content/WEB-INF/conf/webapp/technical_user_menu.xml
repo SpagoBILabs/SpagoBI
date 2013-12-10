@@ -135,6 +135,12 @@
 			iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/wapp/bidocuments16.png" 
 			iconCls="folder_open"/>
 
+	<ITEM code="my_data_admin" title="#menu.MyData"  
+	             functionality="SelfServiceMetaModelManagement" 
+	             url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=SELF_SERVICE_DATASET_START_ACTION&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE&amp;MYDATA=TRUE" 
+	             iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/wapp/40/mydata.png"
+	             iconCls="my_data"/>
+			
 	<ITEM	code="analyticalModel" 
 			title="#menu.AnalyticalModel"
 			iconCls="charts">
@@ -210,29 +216,6 @@
 		</ITEM>
 
 	</ITEM>
-
-<!-- 	
-	<ITEM	code="userMenu" 
-			title="#menu.UserMenu">
-		<ITEM	title="#menu.Events"
-				functionality="EventsManagement"
-				url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=EVENTS_MONITOR_PAGE&amp;WEBMODE=TRUE&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
-				iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/wapp/events16.png" />
-		<ITEM	title="#menu.Worklist"
-				functionality="WorklistManagement"
-				url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=WorkflowToDoListPage&amp;WEBMODE=TRUE&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
-				iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/wapp/worklist16.png" />
-
-		<ITEM	title="#menu.HotLink"
-				functionality="HotLinkManagement"
-				url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=HOT_LINK_PAGE&amp;OPERATION=GET_HOT_LINK_LIST&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
-				iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/wapp/hotlinks16.gif" />
-		<ITEM	title="#menu.Browser"  
-				functionality="DocumentUserManagement" 
-				url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=DOCUMENT_USER_BROWSER_START_ACTION&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE" 
-				iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/wapp/bidocuments16.png" />
-	</ITEM> -->
-
  
 	<APPLICATION code="DocumentAdmin" 
 	             title="#menu.DocumentAdmin"  
@@ -243,6 +226,7 @@
 	             height="500"
 	             iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/wapp/bidocuments16.png">
 	</APPLICATION>
+	
 	<APPLICATION code="DocumentDev" 
 	             title="#menu.DocumentDev"  
 	             functionality="DocumentDevManagement" 

@@ -216,6 +216,20 @@ public class UserUtilities {
 		}
 	}  
 
+	public static boolean isTester (IEngUserProfile profile) {
+		Assert.assertNotNull(profile, "Object in input is null");
+		logger.debug("IN.user unique id = [" + profile.getUserUniqueIdentifier() + "]");
+		try {
+			if (profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_TEST)){
+				return true;
+			} else {
+				return false;
+			}
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException("Error while getting user's information", e);
+		}
+	}  
+
     /**
      * User functionality root exists.
      * 
