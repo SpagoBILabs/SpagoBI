@@ -292,7 +292,7 @@ Sbi.locale.ln['sbi.browser.document.delete.success']  = 'Document/s deleted succ
 Sbi.locale.ln['sbi.browser.document.clone.success']  = 'Document cloned succesfully';
 
 Sbi.locale.ln['sbi.browser.document.share.win.title']  = 'Share Document';
-Sbi.locale.ln['sbi.browser.document.share.win.titleDetail']  = 'Select the folders where share the document';
+Sbi.locale.ln['sbi.browser.document.share.win.titleDetail']  = 'Select the folders or the community where share the document';
 Sbi.locale.ln['sbi.browser.document.share.win.btn']  = 'Share';
 Sbi.locale.ln['sbi.browser.document.share.win.tooltip']  = 'Click to share the document';
 Sbi.locale.ln['sbi.browser.document.unshare.success']  = 'Unshare document ended correctly!';
