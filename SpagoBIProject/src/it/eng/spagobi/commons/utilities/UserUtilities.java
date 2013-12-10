@@ -481,7 +481,20 @@ public class UserUtilities {
 				List<String> roleTypeFunctionalities = Arrays.asList(functionalities);
 				roleFunctionalities.addAll(roleTypeFunctionalities);
 			}else{
-				roleFunctionalities = Arrays.asList(functionalities);;
+				Boolean isSuperAdm = user.getIsSuperadmin();
+
+				if(!isSuperAdm){
+					for(int i=0; i< functionalities.length; i++){
+						String f = functionalities[i];
+						if(!f.equalsIgnoreCase(SpagoBIConstants.TENANT_MANAGEMENT) &&
+								!f.equalsIgnoreCase(SpagoBIConstants.ENGINES_MANAGEMENT)){
+							roleFunctionalities.add(f);
+						}
+					}
+
+				}else{
+					roleFunctionalities = Arrays.asList(functionalities);
+				}
 			}
 		    
 		    return roleFunctionalities;
