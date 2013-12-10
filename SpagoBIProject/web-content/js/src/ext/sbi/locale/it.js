@@ -292,6 +292,15 @@ Sbi.locale.ln['sbi.browser.document.searchKeyword']  = 'Cerca per parola chiave.
 Sbi.locale.ln['sbi.browser.document.delete.success']  = 'Documento eliminato con successo';
 Sbi.locale.ln['sbi.browser.document.clone.success']  = 'Documento clonato con successo';
 
+Sbi.locale.ln['sbi.browser.document.share.win.title']  = 'Condividi Documento';
+Sbi.locale.ln['sbi.browser.document.share.win.titleDetail']  = 'Seleziona le cartelle in cui condividere il documento';
+Sbi.locale.ln['sbi.browser.document.share.win.btn']  = 'Condividi';
+Sbi.locale.ln['sbi.browser.document.share.win.tooltip']  = 'Seleziona per condividere il documento';
+Sbi.locale.ln['sbi.browser.document.unshare.success']  = 'Operazione di annullamento della condivisione terminata correttamente !';
+Sbi.locale.ln['sbi.generic.confirmUnshare'] = 'Confermi l\'annullamento della condivisione del documento ?';
+Sbi.locale.ln['sbi.browser.document.functsMandatory']  = 'Prima di condividere il documento seleziona almeno una cartella dove posizionare il documento';
+Sbi.locale.ln['sbi.generic.confirmShare']  = 'Confermi la condivisione del documento ?';
+Sbi.locale.ln['sbi.browser.document.share.success']  = 'Operazione di condivisione del documento terminata correttamente';
 
 Sbi.locale.ln['sbi.document.saveWarning']  = 'Prima di salvare il documento, riempire i campi Nome e Label e selezionare almeno una cartella dove posizionare il documento';
 
