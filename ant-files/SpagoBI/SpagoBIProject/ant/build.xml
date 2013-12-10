@@ -653,6 +653,10 @@
 
 				<file name="./src/ext4/sbi/adhocreporting/AdhocreportingTabsPanel.js" />
 				<file name="./src/ext4/sbi/adhocreporting/AdhocreportingContainer.js" />
+				<file name="./src/ext4/sbi/adhocreporting/MyAnalysisBrowser.js" />
+				<file name="./src/ext4/sbi/adhocreporting/MyAnalysisModel.js" />
+				<file name="./src/ext4/sbi/adhocreporting/MyAnalysisView.js" />
+
 
 				<file name="./src/ext4/sbi/community/CommunityDetailPanel.js" />
 				<file name="./src/ext4/sbi/community/CommunityListDetailPanel.js" />
