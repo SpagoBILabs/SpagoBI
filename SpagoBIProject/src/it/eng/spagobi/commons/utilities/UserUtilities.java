@@ -480,7 +480,8 @@ public class UserUtilities {
 			if (!roleFunctionalities.isEmpty()) {
 				List<String> roleTypeFunctionalities = Arrays.asList(functionalities);
 				roleFunctionalities.addAll(roleTypeFunctionalities);
-
+			}else{
+				roleFunctionalities = Arrays.asList(functionalities);;
 			}
 		    
 		    return roleFunctionalities;

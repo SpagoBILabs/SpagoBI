@@ -109,10 +109,15 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 		try {
 			tmpSession = getSession();
 			tx = tmpSession.beginTransaction();
-			Criterion labelCriterrion = Expression.eq("label", label);
-			Criteria criteria = tmpSession.createCriteria(SbiDataSource.class);
-			criteria.add(labelCriterrion);	
-			SbiDataSource hibDS = (SbiDataSource) criteria.uniqueResult();
+			
+			Query hibQuery = null;
+
+			hibQuery = tmpSession.createQuery("select ds.sbiDataSource from SbiOrganizationDatasource ds where ds.sbiOrganizations.name = :tenantName and ds.sbiDataSource.label = :dsLabel");
+			hibQuery.setString("tenantName", getTenant());
+			hibQuery.setString("dsLabel", label);
+
+			SbiDataSource hibDS = (SbiDataSource)hibQuery.uniqueResult();
+			
 			if (hibDS == null) return null;
 			biDS = toDataSource(hibDS);				
 			
