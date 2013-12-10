@@ -6,18 +6,6 @@
 
 package it.eng.spagobi.analiticalmodel.document.service.rest;
 
-import java.security.Security;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Properties;
-import java.util.Set;
-
-import it.eng.spago.base.SessionContainer;
-import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.AnalyticalModelDocumentManagementAPI;
@@ -36,16 +24,21 @@ import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.commons.utilities.messages.IMessageBuilder;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory;
-import it.eng.spagobi.profiling.bean.SbiAttribute;
-import it.eng.spagobi.profiling.bean.SbiUser;
-import it.eng.spagobi.profiling.bean.SbiUserAttributes;
-import it.eng.spagobi.profiling.dao.ISbiUserDAO;
+import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.services.exceptions.ExceptionUtilities;
 import it.eng.spagobi.services.security.bo.SpagoBIUserProfile;
 import it.eng.spagobi.services.security.service.ISecurityServiceSupplier;
 import it.eng.spagobi.services.security.service.SecurityServiceSupplierFactory;
-import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.json.JSONUtils;
+
+import java.security.Security;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Properties;
 
 import javax.mail.Authenticator;
 import javax.mail.Message;
@@ -78,6 +71,8 @@ import org.json.JSONObject;
 public class DocumentCRUD {
 
 	public static final String OBJECT_ID = "docId";
+	public static final String OBJECT_FUNCTS = "functs";
+	public static final String IS_SHARE = "isShare";
 	public static final String USER = "user";
 	public static final String DOCUMENT_TYPE = "docType";
 
@@ -287,6 +282,66 @@ public class DocumentCRUD {
 		return "{}";
 	}
 
+	/**
+	 * Service to share/unshare a document
+	 * @param req
+	 * @return
+	 */
+	@POST
+	@Path("/share")
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	public String shareDocument(@Context HttpServletRequest req){
+		
+		logger.debug("IN");
+		String ids = req.getParameter(OBJECT_ID);
+		String isShare = req.getParameter(IS_SHARE);
+		Integer id = -1;
+		try {
+			id = new Integer(ids);
+		} catch (Exception e) {
+			logger.error("Error sharing the document.. Impossible to parse the id of the document "+ids,e);
+			throw new SpagoBIRuntimeException("Error sharing the document.. Impossible to parse the id of the document "+ids,e);
+		}
+		IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+		
+		AnalyticalModelDocumentManagementAPI documentManagementAPI = new AnalyticalModelDocumentManagementAPI( profile );
+		String oper =  ("true".equalsIgnoreCase(isShare)) ? "Sharing" : "Unsharing";
+		logger.debug("Execute " + oper);
+		if( id!=null ){
+			BIObject document = documentManagementAPI.getDocument(id);
+			List lstFuncts = new ArrayList();
+			document.setPublicDoc(false);  //for unshare
+			
+			if ("true".equalsIgnoreCase(isShare)){
+				//share
+				JSONArray functs = ( req.getParameter(OBJECT_FUNCTS)==null)?new JSONArray() : ObjectUtils.toJSONArray( req.getParameter(OBJECT_FUNCTS) ) ;
+				lstFuncts = JSONUtils.asList(functs);
+				document.setPublicDoc(true);
+			}
+			//add personal folder for default
+			LowFunctionality userFunc = null;
+			try{
+				ILowFunctionalityDAO functionalitiesDAO = DAOFactory.getLowFunctionalityDAO();
+				userFunc = functionalitiesDAO.loadLowFunctionalityByPath("/"+profile.getUserUniqueIdentifier(),false);
+			} catch (Exception e) {
+				logger.error("Error " + oper + "  the document.. Impossible to get the id of the personal folder for document "+ids,e);
+				throw new SpagoBIRuntimeException("Error "+oper+"  the document.. Impossible to get the id of the personal folder for document "+ids,e);
+			}
+			if (userFunc != null)
+				lstFuncts.add(userFunc.getId());
+			else
+				logger.error("Error "+oper+" the document.. Impossible to get the id of the personal folder for document "+ids);
+			
+			document.setFunctionalities(lstFuncts);
+			
+			//save 
+			documentManagementAPI.saveDocument(document, null);
+		}
+		logger.debug("OUT");
+		return "{}";
+	}
+	
+	
 	/**
 	 * Creates a json array with children document informations
 	 * @param rows

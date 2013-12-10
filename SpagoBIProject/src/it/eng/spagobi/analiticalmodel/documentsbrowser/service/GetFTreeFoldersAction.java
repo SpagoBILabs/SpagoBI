@@ -54,7 +54,7 @@ public class GetFTreeFoldersAction extends AbstractBaseHttpAction {
 		
 		String nodeId;
 		List<LowFunctionality> folders;
-		boolean includePersonalFolders;
+		//boolean includePersonalFolders;
 		
 		logger.debug("IN");
 		
@@ -68,12 +68,12 @@ public class GetFTreeFoldersAction extends AbstractBaseHttpAction {
 			logger.debug("Parameter [" + NODE_ID + "] is equal to [" + nodeId + "]");
 			
 			
-			String includePersonalFoldersAttribute = getAttributeAsString( INCLUDE_PERSONAL_FOLDERS );
-			if(includePersonalFoldersAttribute == null) {
-				includePersonalFolders = true;
-			} else {
-				includePersonalFolders = Boolean.parseBoolean(includePersonalFoldersAttribute);
-			}
+//			String includePersonalFoldersAttribute = getAttributeAsString( INCLUDE_PERSONAL_FOLDERS );
+//			if(includePersonalFoldersAttribute == null) {
+//				includePersonalFolders = true;
+//			} else {
+//				includePersonalFolders = Boolean.parseBoolean(includePersonalFoldersAttribute);
+//			}
 			
 			SessionContainer sessCont = getSessionContainer();
 			SessionContainer permCont = sessCont.getPermanentContainer();
@@ -83,23 +83,25 @@ public class GetFTreeFoldersAction extends AbstractBaseHttpAction {
 			if (nodeId.equalsIgnoreCase(ROOT_NODE_ID)) {
 				//getting all I° level folders
 				if(permission_on_folder!=null && permission_on_folder.equals(PERMISSION_CREATION)){
-					List<LowFunctionality> tmpFolders = lfDao.loadUserFunctionalitiesFiltered(null, false, profile, PERMISSION_CREATION);
-					if(includePersonalFolders) {
-						folders = tmpFolders;
-					} else {
-						folders = new ArrayList<LowFunctionality>();
-						for(LowFunctionality folder : tmpFolders) {
-							if(folder.getCodType().equalsIgnoreCase("LOW_FUNCT")){
-								folders.add(folder);
-							}
-						}
-					}
+					folders = lfDao.loadUserFunctionalitiesFiltered(null, false, profile, PERMISSION_CREATION); 
+//					List<LowFunctionality> tmpFolders = lfDao.loadUserFunctionalitiesFiltered(null, false, profile, PERMISSION_CREATION);
+//					if(includePersonalFolders) {
+//						folders = tmpFolders;
+//					} else {
+//						folders = new ArrayList<LowFunctionality>();
+//						for(LowFunctionality folder : tmpFolders) {
+//							if(folder.getCodType().equalsIgnoreCase("LOW_FUNCT")){
+//								folders.add(folder);
+//							}
+//						}
+//					}
 					
 					
 					
 					String userId = (String) ((UserProfile) profile).getUserId();
 					// if user functionality does not exist, add it to the list but without creating it (it will be created if necessary)
-					if (!DAOFactory.getLowFunctionalityDAO().checkUserRootExists(userId) && includePersonalFolders) {
+//					if (!DAOFactory.getLowFunctionalityDAO().checkUserRootExists(userId) && includePersonalFolders) {
+					if (!DAOFactory.getLowFunctionalityDAO().checkUserRootExists(userId)) {
 						LowFunctionality userFunct = getPersonalFolder((UserProfile) profile);
 						folders.add(userFunct);
 					}
