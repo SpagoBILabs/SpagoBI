@@ -281,7 +281,7 @@ Sbi.locale.ln['sbi.browser.document.delete.success']  = 'Documento eliminato con
 Sbi.locale.ln['sbi.browser.document.clone.success']  = 'Documento clonato con successo';
 
 Sbi.locale.ln['sbi.browser.document.share.win.title']  = 'Condividi Documento';
-Sbi.locale.ln['sbi.browser.document.share.win.titleDetail']  = 'Seleziona le cartelle in cui condividere il documento';
+Sbi.locale.ln['sbi.browser.document.share.win.titleDetail']  = 'Seleziona le cartelle o la community in cui condividere il documento';
 Sbi.locale.ln['sbi.browser.document.share.win.btn']  = 'Condividi';
 Sbi.locale.ln['sbi.browser.document.share.win.tooltip']  = 'Seleziona per condividere il documento';
 Sbi.locale.ln['sbi.browser.document.unshare.success']  = 'Operazione di annullamento della condivisione terminata correttamente !';
