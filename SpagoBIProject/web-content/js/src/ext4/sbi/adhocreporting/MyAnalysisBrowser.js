@@ -26,7 +26,8 @@ Ext.define('Sbi.adhocreporting.MyAnalysisBrowser', {
 		autoScroll:true,
 		displayToolbar: true,
 		PUBLIC_USER: 'public_user',	    
-	    qbeEditDatasetUrl : ''
+	    qbeEditDatasetUrl : '',
+	    treePanel : null
 	    	
 	}
 
@@ -67,16 +68,11 @@ Ext.define('Sbi.adhocreporting.MyAnalysisBrowser', {
 		}
 		
 		baseParams.user = this.user;
-		
-		/*
-		this.services["list"] = Sbi.config.serviceRegistry.getRestServiceUrl({
-			serviceName : this.myAnalysisServicePath,
-			baseParams : baseParams
-		});
-		*/
+
 		this.initDefaultFilter(); //initialize the correct 'list' service depending on the default filter set
 		
 		this.services['cloneDocument'] = Sbi.config.serviceRegistry.getRestServiceUrl({serviceName: 'documents/clone'});
+		this.services['shareDocument'] = Sbi.config.serviceRegistry.getRestServiceUrl({serviceName: 'documents/share'});
 		
 		var params = {LIGHT_NAVIGATOR_DISABLED: 'TRUE'};
 		this.services['deleteDocument'] = Sbi.config.serviceRegistry.getServiceUrl({
@@ -201,7 +197,7 @@ Ext.define('Sbi.adhocreporting.MyAnalysisBrowser', {
 										this.store.load({reset:true});										
 	            	   	      			this.viewPanel.refresh();
 	            	   	      		} else {
-	            	   	      			Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
+	            	   	      			Sbi.exception.ExceptionHandler.showErrorMessage(LN('sbi.generic.serviceResponseEmpty'), LN('sbi.generic.serviceError'));
 	            	   	      		}
 	            	       	  	}
 	                         },
@@ -214,10 +210,7 @@ Ext.define('Sbi.adhocreporting.MyAnalysisBrowser', {
 			);
 	}
 	
-	, cloneDocument: function(rec){
-		//TODO
-		Sbi.exception.ExceptionHandler.showInfoMessage('TODO: Clone Document');
-		
+	, cloneDocument: function(rec){		
 		Ext.MessageBox.confirm(
 				LN('sbi.generic.pleaseConfirm')
 				, LN('sbi.generic.confirmClone')
@@ -248,7 +241,7 @@ Ext.define('Sbi.adhocreporting.MyAnalysisBrowser', {
 										this.store.load({reset:true});										
 	            	   	      			this.viewPanel.refresh();
 	            	   	      		} else {
-	            	   	      			Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
+	            	   	      			Sbi.exception.ExceptionHandler.showErrorMessage(LN('sbi.generic.serviceResponseEmpty'), LN('sbi.generic.serviceError'));
 	            	   	      		}
 	            	       	  	}
 	                         },
@@ -268,12 +261,152 @@ Ext.define('Sbi.adhocreporting.MyAnalysisBrowser', {
 	}
 	
 	, shareDocument: function(rec){
-		if (!rec.isPublic){
-			Sbi.exception.ExceptionHandler.showInfoMessage('TODO: Share Document');					
+		if (!rec.isPublic){			
+			//share
+		    this.treePanel =  Ext.create("Sbi.browser.DocumentsTree",{
+		    	  columnWidth: 0.4,
+		          border: false,
+		          drawUncheckedChecks: true,
+		          title: LN('sbi.browser.document.share.win.titleDetail'),
+		          buttons		: [{
+		            	text    : LN('sbi.browser.document.share.win.btn')
+		    			, tooltip : LN('sbi.browser.document.share.win.tooltip')
+					    , scope : this
+					    , handler : function() { this.makeDocumentShared(rec); }
+		    	    }],
+		    });
+		    
+		    if(this.shareWindow != null){			
+				this.shareWindow.destroy();
+				this.shareWindow.close();
+			}
+			
+			var shareWindowPanel = new Ext.form.FormPanel({
+				layout: 'form',
+				bodyStyle: 'padding:5px',
+				defaults: {
+		            xtype: 'textfield'
+		        },
+
+		        items: [this.treePanel]
+			});
+			
+			
+			this.shareWindow = new Ext.Window({
+				modal		: true,
+	            layout      : 'fit',
+		        width		: 550,
+		        height		: 210,
+	            closeAction :'destroy',
+	            plain       : true,
+	            title		: LN('sbi.browser.document.share.win.title'),
+	            items       : [shareWindowPanel]
+			});
+			
+			this.shareWindow.show();
+	
 		} else {
-			Sbi.exception.ExceptionHandler.showInfoMessage('TODO: Unshare Document');					
+			//unshare
+			Ext.MessageBox.confirm(
+					LN('sbi.generic.pleaseConfirm')
+					, LN('sbi.generic.confirmUnshare')
+		            , function(btn, text) {
+		                if ( btn == 'yes' ) {
+		                	var p = {};
+		                    
+		                    if(rec.id) {
+		                  	  p.docId = rec.id
+		                    }
+		                    p.isShare = "false";  //is an unshare operation
+		                    
+		                    Ext.Ajax.request({
+		                         url: this.services['shareDocument'],
+		                         params: p,
+		                         method: "POST",
+		                         callback : function(options , success, response){
+		            	       	  	 if(success && response !== undefined) {   
+		            	   	      		if(response.responseText !== undefined) {
+		            	   	      			Ext.MessageBox.show({
+		            		      				title: 'Status',
+		            		      				msg: LN('sbi.browser.document.unshare.success'),
+		            		      				modal: false,
+		            		      				buttons: Ext.MessageBox.OK,
+		            		      				width:300,
+		            		      				icon: Ext.MessageBox.INFO 			
+		            		      			});
+											this.store.load({reset:true});										
+		            	   	      			this.viewPanel.refresh();
+		            	   	      		} else {
+		            	   	      			Sbi.exception.ExceptionHandler.showErrorMessage(LN('sbi.generic.serviceResponseEmpty'), LN('sbi.generic.serviceError'));
+		            	   	      		}
+		            	       	  	}
+		                         },
+		                         scope: this,
+		                 		 failure: Sbi.exception.ExceptionHandler.handleFailure      
+		                   });
+		                }
+					}
+					, this
+				);				
 		}
 	}
+	
+	, makeDocumentShared: function(rec) {
+        if (!this.treePanel.returnCheckedIdNodesArray() || this.treePanel.returnCheckedIdNodesArray().length == 0){
+        	Ext.MessageBox.show({
+                title: LN('sbi.generic.warning'),
+                msg:  LN('sbi.browser.document.functsMandatory'),
+                width: 180,
+                buttons: Ext.MessageBox.OK
+           });
+        	return;
+        }
+        
+		Ext.MessageBox.confirm(
+				LN('sbi.generic.pleaseConfirm')
+				, LN('sbi.generic.confirmShare')
+	            , function(btn, text) {
+	                if ( btn == 'yes' ) {
+	                	var p = {};
+	                    
+	                    if(rec.id) {
+	                  	  p.docId = rec.id;
+	                    }
+	                    p.isShare = "true"; //is a share operation
+	                    p.functs =  Ext.JSON.encode(this.treePanel.returnCheckedIdNodesArray());
+	                    
+	                	Ext.Ajax.request({
+	                         url: this.services['shareDocument'],
+	                         params: p,
+	                         method: "POST",
+	                         callback : function(options , success, response){
+	            	       	  	 if(success && response !== undefined) {   
+	            	   	      		if(response.responseText !== undefined) {
+	            	   	      			Ext.MessageBox.show({
+	            		      				title: 'Status',
+	            		      				msg: LN('sbi.browser.document.share.success'),
+	            		      				modal: false,
+	            		      				buttons: Ext.MessageBox.OK,
+	            		      				width:300,
+	            		      				icon: Ext.MessageBox.INFO 			
+	            		      			});	            	   	      			
+										this.store.load({reset:true});										
+	            	   	      			this.viewPanel.refresh();
+	            	   	      			this.shareWindow.close();
+	            	   	      		} else {
+	            	   	      			Sbi.exception.ExceptionHandler.showErrorMessage(LN('sbi.generic.serviceResponseEmpty'), LN('sbi.generic.serviceError'));
+	            	   	      		}
+	            	       	  	}
+	                         },
+	                         scope: this,
+	                 		 failure: Sbi.exception.ExceptionHandler.handleFailure      
+	                   });
+	                }
+				}
+				, this
+			);
+	}
+	
 	
 	, createSortersStore: function(config){		
 		var ordersStore = Ext.create('Ext.data.Store', {
@@ -518,9 +651,6 @@ Ext.define('Sbi.adhocreporting.MyAnalysisBrowser', {
 		
 		this.viewPanel.refresh();
 	}	
-	
-	
 
-	
 	
 });	
