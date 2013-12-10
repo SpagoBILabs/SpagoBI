@@ -71,7 +71,7 @@ public class DocumentsJSONDecorator {
 		if (userFunctionalities.contains("SeeMetadataFunctionality")) {
 			JSONObject showmetadataAction = new JSONObject();
 			MessageBuilder msgBuild=new MessageBuilder();
-			showmetadataAction.put("name", msgBuild.getMessage( "sbiobjects.actions.metadata.name", locale));
+			showmetadataAction.put("name", "showmetadata");
 			showmetadataAction.put("description", msgBuild.getMessage( "sbiobjects.actions.metadata.description", locale));
 			document.getJSONArray(DocumentsJSONSerializer.ACTIONS).put(
 					showmetadataAction);
@@ -82,7 +82,7 @@ public class DocumentsJSONDecorator {
 			IEngUserProfile profile, Locale locale) throws JSONException {
 		JSONObject detailAction = new JSONObject();
 		MessageBuilder msgBuild=new MessageBuilder();
-		detailAction.put("name", msgBuild.getMessage( "sbiobjects.actions.detail.name", locale));
+		detailAction.put("name", "detail");
 		detailAction.put("description", msgBuild.getMessage( "sbiobjects.actions.detail.description", locale));
 		if (ObjectsAccessVerifier
 				.canDevBIObject(document.getInt(DocumentsJSONSerializer.ID), profile)) {
@@ -101,7 +101,7 @@ public class DocumentsJSONDecorator {
 		if (canDelete) {
 			JSONObject deleteAction = new JSONObject();
 			MessageBuilder msgBuild=new MessageBuilder();
-			deleteAction.put("name", msgBuild.getMessage( "sbiobjects.actions.delete.name", locale));
+			deleteAction.put("name", "delete");
 			deleteAction.put("description", msgBuild.getMessage( "sbiobjects.actions.delete.description", locale));
 			document.getJSONArray(DocumentsJSONSerializer.ACTIONS).put(
 					deleteAction);
@@ -119,7 +119,7 @@ public class DocumentsJSONDecorator {
 		if (canClone) {
 			JSONObject cloneAction = new JSONObject();
 			MessageBuilder msgBuild=new MessageBuilder();
-			cloneAction.put("name", msgBuild.getMessage( "sbiobjects.actions.clone.name", locale));
+			cloneAction.put("name", "clone");
 			cloneAction.put("description", msgBuild.getMessage( "sbiobjects.actions.clone.description", locale));
 			document.getJSONArray(DocumentsJSONSerializer.ACTIONS).put(
 					cloneAction);
