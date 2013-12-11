@@ -127,7 +127,7 @@ public class ParameterValuesEncoder {
     public String encode(BIObjectParameter biobjPar) {
 	logger.debug("IN");
 	if (biobjPar.getParameterValues() == null) {
-	    logger.error("biobjPar.getParameterValues() == null");
+	    logger.debug("biobjPar.getParameterValues() == null");
 	    return null;
 	}
 	
@@ -199,7 +199,7 @@ public class ParameterValuesEncoder {
     public String encodeDescription(BIObjectParameter biobjPar) {
     	logger.debug("IN");
     	if (biobjPar.getParameterValues() == null) {
-    	    logger.error("biobjPar.getParameterValues() == null");
+    	    logger.debug("biobjPar.getParameterValues() == null");
     	    return null;
     	}
 
