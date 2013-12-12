@@ -76,8 +76,6 @@ public class DataSourceCRUD {
 				dataSourceDao.setUserProfile(profile);
 				dataSources = dataSourceDao.loadAllDataSources();
 			}
-						
-			
 
 			domaindao = DAOFactory.getDomainDAO();
 			dialects = domaindao.loadListDomainsByType("DIALECT_HIB");
@@ -147,6 +145,7 @@ public class DataSourceCRUD {
 
 			if(profile.getIsSuperadmin()){
 				TenantManager.unset();
+				dao.setUserID(profile.getUserId().toString());
 			}else{
 				dao.setUserProfile(profile);
 			}			
@@ -213,22 +212,20 @@ public class DataSourceCRUD {
 		}
 	}
 	
-	private JSONObject serializeDatasources(List<DataSource> dataSources,
-			List<Domain> dialects) throws SerializationException, JSONException {
+	private JSONObject serializeDatasources(List<DataSource> dataSources, List<Domain> dialects) throws SerializationException, JSONException {
+		
 		JSONObject dataSourcesJSON = new JSONObject();
 		// JSONObject aDataSourcesJSON = new JSONObject();
 		JSONArray dataSourcesJSONArray = new JSONArray();
 		JSONArray dialectsJSONArray = new JSONArray();
 		if (dataSources != null) {
-			dataSourcesJSONArray = (JSONArray) SerializerFactory.getSerializer(
-					"application/json").serialize(dataSources, null);
+			dataSourcesJSONArray = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(dataSources, null);
 			dataSourcesJSON.put("root", dataSourcesJSONArray);
 			// aDataSourcesJSON = dataSourcesJSONArray.getJSONObject(0);
 			// Iterator<String> iter = aDataSourcesJSON.keys();
 		}
 		if (dialects != null) {
-			dialectsJSONArray = (JSONArray) SerializerFactory.getSerializer(
-					"application/json").serialize(dialects, null);
+			dialectsJSONArray = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(dialects, null);
 			dataSourcesJSON.put("dialects", dialectsJSONArray);
 		}
 		return dataSourcesJSON;

@@ -8,12 +8,7 @@ package it.eng.spagobi.adhocreporting.services;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.serializer.SerializerFactory;
 import it.eng.spagobi.commons.services.AbstractSpagoBIAction;
-import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
-import it.eng.spagobi.tools.dataset.bo.JDBCHBaseDataSet;
-import it.eng.spagobi.tools.dataset.bo.JDBCHiveDataSet;
-import it.eng.spagobi.tools.dataset.service.ManageDatasets;
 import it.eng.spagobi.tools.datasource.bo.DataSource;
 import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
@@ -22,7 +17,6 @@ import it.eng.spagobi.utilities.service.JSONSuccess;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -79,8 +73,7 @@ public class GetDatasourcesListUserAction extends AbstractSpagoBIAction {
 					String dialect = datasource.getHibDialectClass();
 					// HBase and Hive cannot be selected in order to persist a dataset, therefore we exclude them.
 					// TODO When implementing dataset persistence on those system, remove this filter.
-					if (dialect.contains("hbase")
-							&& dialect.contains("hive")) {
+					if (dialect.contains("hbase") && dialect.contains("hive")) {
 						continue;
 					}
 					JSONObject obj = new JSONObject();

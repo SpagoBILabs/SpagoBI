@@ -5,22 +5,35 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.commons.dao;
 
+import it.eng.spago.base.SourceBean;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.commons.bo.Config;
+import it.eng.spagobi.commons.bo.Domain;
+import it.eng.spagobi.commons.bo.Role;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.metadata.SbiDomains;
+import it.eng.spagobi.commons.metadata.SbiExtRoles;
 import it.eng.spagobi.commons.metadata.SbiOrganizationDatasource;
 import it.eng.spagobi.commons.metadata.SbiOrganizationDatasourceId;
 import it.eng.spagobi.commons.metadata.SbiOrganizationEngine;
 import it.eng.spagobi.commons.metadata.SbiOrganizationEngineId;
 import it.eng.spagobi.commons.metadata.SbiTenant;
 import it.eng.spagobi.engines.config.metadata.SbiEngines;
+import it.eng.spagobi.profiling.bean.SbiExtUserRoles;
+import it.eng.spagobi.profiling.bean.SbiExtUserRolesId;
 import it.eng.spagobi.profiling.bean.SbiUser;
+import it.eng.spagobi.profiling.dao.ISbiUserDAO;
+import it.eng.spagobi.security.Password;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.tools.datasource.metadata.SbiDataSource;
+import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -183,9 +196,13 @@ public class TenantsDAOHibImpl extends AbstractHibernateDAO implements ITenantsD
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 			
+			this.disableTenantFilter(aSession);
+			
 			updateSbiCommonInfo4Insert(aTenant);	
 			Integer idTenant = (Integer)aSession.save(aTenant);			
 			aSession.flush();
+			
+			createUser(aTenant, idTenant, aSession);
 			
 			Set<SbiOrganizationDatasource> ds = aTenant.getSbiOrganizationDatasources();
 			for (SbiOrganizationDatasource sbiOrganizationDatasource: ds) {
@@ -208,7 +225,6 @@ public class TenantsDAOHibImpl extends AbstractHibernateDAO implements ITenantsD
 				aSession.save(sbiOrganizationEngine);
 				aSession.flush();
 			}
-
 			tx.commit();
 		} catch (HibernateException he) {
 			logger.error("Error while inserting the tenant with id " + ((aTenant == null)?"":String.valueOf(aTenant.getId())), he);
@@ -223,6 +239,81 @@ public class TenantsDAOHibImpl extends AbstractHibernateDAO implements ITenantsD
 				if (aSession.isOpen()) aSession.close();
 				logger.debug("insertTenant OUT");
 			}
+		}
+	}
+	
+	private void createUser(SbiTenant aTenant, Integer idTenant, Session aSession) throws HibernateException {
+		
+		logger.debug("createUser IN");
+			
+		try {
+				
+			ISbiUserDAO userDAO = DAOFactory.getSbiUserDAO();
+			String userId = aTenant.getName().toLowerCase()+"_admin";
+			
+			SbiUser existingUser = userDAO.loadSbiUserByUserId(userId);
+
+		    if (existingUser == null) {
+		    	
+		    	createRole(aTenant.getName(), aSession);
+			    logger.debug("Storing user [" + userId + "] into database ");
+			    SbiUser tenantAdmin = new SbiUser();
+			    tenantAdmin.setUserId(userId);
+			    tenantAdmin.setFullName(aTenant.getName()+" ADMIN");
+			    String pwd = Password.encriptPassword(userId);
+			    tenantAdmin.setPassword(pwd);
+			    tenantAdmin.setIsSuperadmin(false);
+			    tenantAdmin.getCommonInfo().setOrganization(aTenant.getName());
+			    Integer newId = userDAO.saveSbiUser(tenantAdmin);
+			    setRole(aTenant.getName(), newId, aSession);
+			    logger.debug("User [" + userId + "] sucesfully stored into database with id [" + newId + "]");
+			}			  
+		} catch(Throwable t) {
+			logger.error("An unexpected error occurred while creating user", t);
+			throw new HibernateException(t);
+		} finally {
+			logger.debug("createUser OUT");
+		}
+	}
+	
+	private void createRole(String tenant, Session aSession) throws HibernateException{
+		
+		Role aRole = new Role();
+		try {
+			RoleDAOHibImpl roleDAO = new RoleDAOHibImpl();
+			String roleDes = "/"+tenant.toLowerCase()+"/admin";
+			aRole.setName(roleDes);
+			aRole.setDescription(roleDes);
+			aRole.setOrganization(tenant);
+			Domain domain = DAOFactory.getDomainDAO().loadDomainByCodeAndValue("ROLE_TYPE", "ADMIN");	
+			aRole.setRoleTypeCD("ADMIN");
+			aRole.setRoleTypeID(domain.getValueId());
+			roleDAO.insertRoleWithSession(aRole, aSession);
+		} catch(Throwable t) {
+			logger.error("An unexpected error occurred while setting user role", t);
+			throw new HibernateException(t);
+		} finally {
+			logger.debug("setRole OUT");
+		}
+	}
+	
+	private void setRole(String tenant, int userIdInt, Session aSession) throws HibernateException {
+		SbiExtUserRoles sbiExtUserRole = new SbiExtUserRoles();
+		SbiExtUserRolesId id = new SbiExtUserRolesId();
+
+		try {
+			RoleDAOHibImpl roleDAO = new RoleDAOHibImpl();	
+			SbiExtRoles role = roleDAO.loadByNameInSession("/"+tenant.toLowerCase()+"/admin", aSession);
+			id.setExtRoleId(role.getExtRoleId());//role Id
+			id.setId(userIdInt);//user ID
+			sbiExtUserRole.setId(id);
+			aSession.saveOrUpdate(sbiExtUserRole);
+
+		} catch(Throwable t) {
+			logger.error("An unexpected error occurred while setting user role", t);
+			throw new HibernateException(t);
+		} finally {
+			logger.debug("setRole OUT");
 		}
 	}
 

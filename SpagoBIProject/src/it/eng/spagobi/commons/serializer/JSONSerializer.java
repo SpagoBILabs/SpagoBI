@@ -55,6 +55,7 @@ import it.eng.spagobi.tools.dataset.bo.WebServiceDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
 import it.eng.spagobi.tools.datasource.bo.DataSource;
+import it.eng.spagobi.tools.datasource.bo.DataSourceModel;
 import it.eng.spagobi.tools.objmetadata.bo.ObjMetadata;
 import it.eng.spagobi.tools.udp.metadata.SbiUdp;
 import it.eng.spagobi.tools.udp.metadata.SbiUdpValue;
@@ -76,7 +77,8 @@ public class JSONSerializer implements Serializer {
 	
 	public JSONSerializer() {
 		mappings = new HashMap();
-		mappings.put( DataSource.class, new DataSourceJSONSerializer() );		
+		mappings.put( DataSource.class, new DataSourceJSONSerializer() );	
+		mappings.put( DataSourceModel.class, new DataSourceJSONSerializer() );	
 		mappings.put( Domain.class, new DomainJSONSerializer() );
 		mappings.put( Config.class, new ConfigJSONSerializer() );
 		mappings.put( Engine.class, new EngineJSONSerializer() );
