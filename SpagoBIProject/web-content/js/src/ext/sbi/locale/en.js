@@ -678,6 +678,7 @@ Sbi.locale.ln['sbi.datasource.type.jdbc.password']= 'Password';
 Sbi.locale.ln['sbi.datasource.jndiname.info']= 'For the data source configuration you should specify the connection pool configured inside the application server. For example: <ul><li>Tomcat :  java:comp/env/jdbc/foodmart</li> <li> JBoss:     java:comp/env/jdbc/foodmart</li></ul>';
 Sbi.locale.ln['sbi.datasource.saved']= 'Data source correctly saved';
 Sbi.locale.ln['sbi.datasource.deleted']= 'Data source correctly deleted';
+Sbi.locale.ln['sbi.datasource.delete.forbidden']= 'You are not allowed to delete the Data Source!';
 Sbi.locale.ln['sbi.datasource.tested']= 'Data source correctly tested';
 Sbi.locale.ln['sbi.datasource.validation.error']= 'There is some error in the data source configuration. Check the marked fields.';
 Sbi.locale.ln['sbi.datasource.test.failed']= 'Error testing the datasource';
