@@ -23,6 +23,7 @@ import it.eng.spagobi.commons.metadata.SbiOrganizationDatasource;
 import it.eng.spagobi.commons.metadata.SbiOrganizationDatasourceId;
 import it.eng.spagobi.commons.metadata.SbiTenant;
 import it.eng.spagobi.tools.datasource.bo.DataSource;
+import it.eng.spagobi.tools.datasource.bo.DataSourceModel;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.tools.datasource.metadata.SbiDataSource;
 
@@ -479,9 +480,7 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
-			SbiDataSource hibDataSource = (SbiDataSource) aSession.load(SbiDataSource.class,
-					new Integer(aDataSource.getDsId()));
-
+			SbiDataSource hibDataSource = (SbiDataSource) aSession.load(SbiDataSource.class, new Integer(aDataSource.getDsId()));
 			aSession.delete(hibDataSource);
 			tx.commit();
 		} catch (HibernateException he) {
@@ -509,8 +508,8 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 	 * 
 	 * @return The corrispondent <code>DataSource</code> object
 	 */
-	public static DataSource toDataSource(SbiDataSource hibDataSource){
-		DataSource ds = new DataSource();
+	public static DataSourceModel toDataSource(SbiDataSource hibDataSource){
+		DataSourceModel ds = new DataSourceModel();
 		 
 		ds.setDsId(hibDataSource.getDsId());
 		ds.setLabel(hibDataSource.getLabel());
@@ -529,6 +528,7 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 		ds.setHibDialectName(hibDataSource.getDialect().getValueNm());
 		ds.setReadOnly(hibDataSource.getReadOnly());
 		ds.setWriteDefault(hibDataSource.getWriteDefault());
+		ds.setUserIn(hibDataSource.getCommonInfo().getUserIn());
 		return ds;
 	}
 	
