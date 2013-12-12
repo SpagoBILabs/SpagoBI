@@ -86,3 +86,8 @@ COMMIT;\p\g
 
 DELETE from SBI_ENGINES where organization !='SPAGOBI';\p\g
 COMMIT;\p\g
+
+UPDATE SBI_ENGINES SET DRIVER_NM = 'it.eng.spagobi.engines.drivers.gis.GisDriver' 
+		WHERE DRIVER_NM = 'it.eng.spagobi.engines.drivers.generic.GenericDriver' 
+		AND BIOBJ_TYPE IN (SELECT VALUE_ID FROM SBI_DOMAINS WHERE DOMAIN_CD = 'BIOBJ_TYPE' AND VALUE_CD = 'MAP');\p\g 
+COMMIT;\p\g

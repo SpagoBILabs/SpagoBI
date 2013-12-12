@@ -419,3 +419,8 @@ D.EXT_ROLE_ID,
 D.ORGANIZATION, 
 CURRENT_TIMESTAMP, 'server' FROM SBI_EXT_ROLES D WHERE D.SEE_TODO_LIST IS TRUE;
 commit;
+
+UPDATE SBI_ENGINES SET DRIVER_NM = 'it.eng.spagobi.engines.drivers.gis.GisDriver' 
+		WHERE DRIVER_NM = 'it.eng.spagobi.engines.drivers.generic.GenericDriver' 
+		AND BIOBJ_TYPE IN (SELECT VALUE_ID FROM SBI_DOMAINS WHERE DOMAIN_CD = 'BIOBJ_TYPE' AND VALUE_CD = 'MAP'); 
+COMMIT;
