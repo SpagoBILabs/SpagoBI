@@ -462,3 +462,8 @@ values ((SELECT NEXT_VAL FROM hibernate_sequences WHERE SEQUENCE_NAME='SBI_FUNCT
 CURRENT_TIMESTAMP, 'server', CURRENT_TIMESTAMP) ;
 update hibernate_sequences set next_val = next_val+1 where sequence_name = 'SBI_FUNCTIONALITIES';
 commit;
+
+UPDATE SBI_ENGINES SET DRIVER_NM = 'it.eng.spagobi.engines.drivers.gis.GisDriver' 
+		WHERE DRIVER_NM = 'it.eng.spagobi.engines.drivers.generic.GenericDriver' 
+		AND BIOBJ_TYPE IN (SELECT VALUE_ID FROM SBI_DOMAINS WHERE DOMAIN_CD = 'BIOBJ_TYPE' AND VALUE_CD = 'MAP'); 
+COMMIT;
