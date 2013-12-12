@@ -135,12 +135,7 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 			
-			Criterion aCriterion = Expression.eq("name", roleName);
-			Criteria aCriteria = aSession.createCriteria(SbiExtRoles.class);
-			
-			aCriteria.add(aCriterion);
-			
-			SbiExtRoles hibRole = (SbiExtRoles)aCriteria.uniqueResult();
+			SbiExtRoles hibRole = loadByNameInSession(roleName, aSession);
 			if (hibRole == null) return null;
 			
 			toReturn = toRole(hibRole);
@@ -158,6 +153,16 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			}
 		}
 		return toReturn;
+	}
+
+	public SbiExtRoles loadByNameInSession(String roleName, Session aSession) {
+		Criterion aCriterion = Expression.eq("name", roleName);
+		Criteria aCriteria = aSession.createCriteria(SbiExtRoles.class);
+		
+		aCriteria.add(aCriterion);
+		
+		SbiExtRoles hibRole = (SbiExtRoles)aCriteria.uniqueResult();
+		return hibRole;
 	}
 
 	/**
@@ -218,23 +223,8 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
-
-		
-			SbiExtRoles hibRole = new SbiExtRoles();
-			
-			hibRole.setCode(aRole.getCode());
-			hibRole.setDescr(aRole.getDescription());
-			
-			
-			hibRole.setName(aRole.getName());
-			
-			SbiDomains roleType = (SbiDomains)aSession.load(SbiDomains.class,  aRole.getRoleTypeID());
-			hibRole.setRoleType(roleType);
-			
-			hibRole.setRoleTypeCode(aRole.getRoleTypeCD());
-			hibRole.getCommonInfo().setOrganization(aRole.getOrganization());
-			updateSbiCommonInfo4Insert(hibRole);
-			aSession.save(hibRole);
+	
+			insertRoleWithSession(aRole, aSession);
 			
 			tx.commit();
 		} catch (HibernateException he) {
@@ -249,9 +239,24 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			if (aSession!=null){
 				if (aSession.isOpen()) aSession.close();
 			}
-		}
+		}		
+	}
+
+	public void insertRoleWithSession(Role aRole, Session aSession) {
+		SbiExtRoles hibRole = new SbiExtRoles();
 		
+		hibRole.setCode(aRole.getCode());
+		hibRole.setDescr(aRole.getDescription());
+			
+		hibRole.setName(aRole.getName());
 		
+		SbiDomains roleType = (SbiDomains)aSession.load(SbiDomains.class,  aRole.getRoleTypeID());
+		hibRole.setRoleType(roleType);
+		
+		hibRole.setRoleTypeCode(aRole.getRoleTypeCD());
+		hibRole.getCommonInfo().setOrganization(aRole.getOrganization());
+		updateSbiCommonInfo4Insert(hibRole);
+		aSession.save(hibRole);
 	}
 
 	/**
