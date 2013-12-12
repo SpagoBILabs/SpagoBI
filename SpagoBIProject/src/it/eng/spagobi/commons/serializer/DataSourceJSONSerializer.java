@@ -5,12 +5,13 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.commons.serializer;
 
+import it.eng.spagobi.tools.datasource.bo.DataSource;
+import it.eng.spagobi.tools.datasource.bo.DataSource;
+import it.eng.spagobi.tools.datasource.bo.DataSourceModel;
+
 import java.util.Locale;
 
 import org.json.JSONObject;
-
-import it.eng.spagobi.engines.config.bo.Engine;
-import it.eng.spagobi.tools.datasource.bo.DataSource;
 
 /**
  * @author Marco Cortella (marco.cortella@eng.it)
@@ -31,18 +32,26 @@ public class DataSourceJSONSerializer implements Serializer {
 	public static final String CONNECTION_URL = "CONNECTION_URL";		
 	public static final String READ_ONLY = "READ_ONLY";		
 	public static final String WRITE_DEFAULT = "WRITE_DEFAULT";		
+	public static final String USERIN = "USERIN";
 
 	
 	public Object serialize(Object o, Locale locale) throws SerializationException {
 		JSONObject  result = null;
 		
-		if( !(o instanceof DataSource) ) {
+		if( !(o instanceof DataSource) || !(o instanceof DataSourceModel) ) {
 			throw new SerializationException("DataSourceJSONSerializer is unable to serialize object of type: " + o.getClass().getName());
 		}
 		
 		try {
-			DataSource dataSource = (DataSource)o;
+			DataSource dataSource = null;
 			result = new JSONObject();
+			
+			if(o instanceof DataSourceModel){
+				dataSource = (DataSourceModel)o;
+				result.put(USERIN, ((DataSourceModel)dataSource).getUserIn());
+			} else {
+				dataSource = (DataSource)o;
+			}
 			
 			result.put(ID, dataSource.getDsId() );
 			result.put(LABEL, dataSource.getLabel() );	
