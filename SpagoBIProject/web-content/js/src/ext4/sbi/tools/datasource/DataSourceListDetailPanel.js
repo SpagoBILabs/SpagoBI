@@ -54,6 +54,12 @@ Ext.define('Sbi.tools.datasource.DataSourceListDetailPanel', {
 	}
 	
 	, onDeleteRow: function(record){
+		
+		if (Sbi.user.isSuperAdmin != 'true' && record.data.USERIN != Sbi.user.userId) {
+			Ext.Msg.alert('Delete', LN('sbi.datasource.delete.forbidden'));
+			return;
+		}
+		
 		var recordToDelete = Ext.create("Sbi.tools.datasource.DataSourceModel",record.data);
 		recordToDelete.destroy({
 			success : function(object, response, options) {
@@ -105,6 +111,7 @@ Ext.define('Sbi.tools.datasource.DataSourceListDetailPanel', {
 			this.onFormSave(record);
 		}		
 	}	
+	
 	, onFormSave: function(record){
 		 var recordToSave = Ext.create("Sbi.tools.datasource.DataSourceModel",record);
 		 recordToSave.save({
@@ -156,7 +163,6 @@ Ext.define('Sbi.tools.datasource.DataSourceListDetailPanel', {
 		
 	}
 
-	
 	, onFormTest: function(record){
 		Ext.Ajax.request({
 			url: this.services["test"],
@@ -184,6 +190,7 @@ Ext.define('Sbi.tools.datasource.DataSourceListDetailPanel', {
 		this.detailPanel.show();
 		this.detailPanel.setFormState(record.data);
 	}
+	
 	, isThereWriteDefault: function(){
         var store = this.grid.store;
         for (var i = 0; i < this.grid.store.count(); i++) {
