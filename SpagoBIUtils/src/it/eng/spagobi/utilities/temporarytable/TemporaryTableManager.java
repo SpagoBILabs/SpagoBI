@@ -375,7 +375,7 @@ public class TemporaryTableManager {
 			// command in SELECT .... INTO table_name FROM ....
 			String sql = "SELECT * INTO " + tableName + " FROM ( " + baseQuery + " ) T ";
 			executeStatement(sql, dataSource);
-		} else if (dialect.contains("Teradata")) {
+		} else if (dialect.contains("TERADATA")) {
 			// command CREATE TABLE table_name AS ( SELECT .... ) WITH DATA
 			String sql = "CREATE TABLE " + tableName + " AS ( " + baseQuery + " ) WITH DATA";
 			executeStatement(sql, dataSource);
