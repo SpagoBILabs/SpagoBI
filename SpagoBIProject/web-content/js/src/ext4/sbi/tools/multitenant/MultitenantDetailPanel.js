@@ -183,7 +183,14 @@ Ext.define('Sbi.tools.multitenant.MultitenantDetailPanel', {
 		
 		this.enginesList = Ext.create('Ext.grid.Panel', {
 	        store: this.enginesStore,
-	        viewConfig:{forceFit: true},
+	        viewConfig: {
+	            forceFit:true
+	        },
+//	        scroll: 'vertical',
+//	        layout: 'table',
+//	        viewConfig: {
+//				style: { overflow: 'auto', overflowX: 'hidden' }
+//	        },
 	        columns: [{
 	        	hidden: true,
 	            dataIndex: 'ID'
@@ -226,6 +233,13 @@ Ext.define('Sbi.tools.multitenant.MultitenantDetailPanel', {
 		
 		this.dsList = Ext.create('Ext.grid.Panel', {
 	        store: this.dsStore,
+	        scroll: false,
+	        autoHeight: true,
+	        viewConfig: {
+				autoFill: true,
+				scrollOffset: 0,
+				style: { overflow: 'auto', overflowX: 'hidden' }
+	        },
 	        columns: [{
 	        	hidden: true,
 	            dataIndex: 'ID'
@@ -266,12 +280,16 @@ Ext.define('Sbi.tools.multitenant.MultitenantDetailPanel', {
 		this.engineTab = new Ext.form.Panel({
 			title: 'Engines',
 			items: [this.enginesList],
+//			autoScroll: true,
+//			layout: 'fit',
 			border: false
 		});
 		
 		this.dsTab = new Ext.form.Panel({
 			title: 'Data Source',
 			items: [this.dsList],
+//			autoScroll: true,
+//			layout: 'fit',
 			border: false
 		});	
 	}

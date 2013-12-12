@@ -32,6 +32,7 @@ Ext.define('Sbi.tools.datasource.DataSourceModel', {
 	         "USER", 
 	         "CONNECTION_URL", 
 	         "PASSWORD",
-	         "DRIVER"
+	         "DRIVER",
+	         "USERIN"
 	         ]
 });

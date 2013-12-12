@@ -29,7 +29,7 @@ Ext.define('Sbi.tools.datasource.DataSourceDetailPanel', {
 
 	, constructor: function(config) {
 		
-		this.isSuperadmin = config.isSuperadmin;
+		//this.isSuperadmin = config.isSuperadmin;
 		
 		this.initConfig(config);
 		this.initFields();
@@ -118,8 +118,7 @@ Ext.define('Sbi.tools.datasource.DataSourceDetailPanel', {
 				this.dataSourceMultischemaAttribute.hide();
 			}
 		},this);
-		
-		
+			
 		this.dataSourceReadWrite = Ext.create("Ext.form.field.Radio",{
             hideEmptyLabel: false,
             //fieldLabel: LN('sbi.datasource.readonly'),
@@ -136,16 +135,14 @@ Ext.define('Sbi.tools.datasource.DataSourceDetailPanel', {
 			inputValue:'readonly'
 		})
 		this.dataSourceReadOnly.addListener('change', this.readOnlyCheck, this);
-
-		
+	
 		this.dataSourceWriteDefault = Ext.create("Ext.form.Checkbox",{
 	        fieldLabel: LN('sbi.datasource.writedefault'),
 	        name: "WRITE_DEFAULT",
 	        value: false
 		});
 		this.dataSourceWriteDefault.addListener('change', this.writeDefaultCheck, this);
-		
-		
+			
 		this.dataSourceTypeJdbc = Ext.create("Ext.form.field.Radio",{
 			fieldLabel: LN('sbi.datasource.type'),
 			boxLabel: LN('sbi.datasource.type.jdbc'), 
@@ -161,10 +158,8 @@ Ext.define('Sbi.tools.datasource.DataSourceDetailPanel', {
 			inputValue:'jndi'
 		});
 
-
-
 		var thisPanel = this;
-		this.dataSourceJndiName= Ext.create('Ext.form.field.Trigger', {
+		this.dataSourceJndiName = Ext.create('Ext.form.field.Trigger', {
 	    	triggerCls:'x-form-question-trigger',
 			name: "JNDI_URL",
 			fieldLabel: LN('sbi.datasource.type.jndi.name'),
@@ -199,10 +194,11 @@ Ext.define('Sbi.tools.datasource.DataSourceDetailPanel', {
 	    	
 	    });
 		
-		 if(!this.isSuperadmin){
+		 if (Sbi.user.isSuperAdmin !== 'true'){
+
 			 this.dataSourceTypeJndi.disable();
 			 this.dataSourceJndiName.disable();
-		 }
+		 } 
 		
 		this.dataSourceJdbcUser = Ext.create("Ext.form.field.Text",{
 			name: "USER",
@@ -258,7 +254,6 @@ Ext.define('Sbi.tools.datasource.DataSourceDetailPanel', {
 		},this);
 	}
 	
-
 	, setFormState: function(values){
 		var v = values;
 		if(v.JNDI_URL){
@@ -280,6 +275,44 @@ Ext.define('Sbi.tools.datasource.DataSourceDetailPanel', {
 		}
 		
 		this.getForm().setValues(v);
+		
+		if (Sbi.user.isSuperAdmin != 'true' && (this.dataSourceTypeJndi.getValue() || (v.USERIN!="" && v.USERIN != Sbi.user.userId))){
+			 
+			 //set all fields readonly
+			 this.dataSourceLabel.disable();
+			 this.dataSourceDescription.disable();
+			 this.dataSourceDialect.disable();
+			 this.dataSourceMultischema.disable();
+			 this.dataSourceReadOnly.disable();
+			 this.dataSourceReadWrite.disable();
+			 this.dataSourceWriteDefault.disable();
+			 this.dataSourceTypeJdbc.disable();
+			 
+			 this.dataSourceTypeJndi.disable();
+			 this.dataSourceJndiName.disable();
+			 
+			 this.dataSourceJdbcPassword.disable();
+			 this.dataSourceJdbcUrl.disable();
+			 this.dataSourceJdbcUser.disable();
+			 this.dataSourceDriver.disable();
+		 } 
+		 else{
+			 
+			 this.dataSourceLabel.enable();
+			 this.dataSourceDescription.enable();
+			 this.dataSourceDialect.enable();
+			 this.dataSourceMultischema.enable();
+			 this.dataSourceReadOnly.enable();
+			 this.dataSourceReadWrite.enable();
+			 this.dataSourceWriteDefault.enable();
+			 this.dataSourceTypeJdbc.enable();			 
+			 //this.dataSourceTypeJndi.enable();
+			 //this.dataSourceJndiName.enable();
+			 this.dataSourceJdbcPassword.enable();
+			 this.dataSourceJdbcUrl.enable();
+			 this.dataSourceJdbcUser.enable();
+			 this.dataSourceDriver.enable();
+		 }
 	}
 	
 	, getValues: function(){
@@ -319,6 +352,7 @@ Ext.define('Sbi.tools.datasource.DataSourceDetailPanel', {
 		}
 		return valid;
 	}
+	
 	,
 	writeDefaultCheck : function(check, checked) {
 		// var persistSelected = newValue;
@@ -333,6 +367,7 @@ Ext.define('Sbi.tools.datasource.DataSourceDetailPanel', {
 		
 		}
 	}
+	
 	,
 	readOnlyCheck : function(check, checked) {
 		// var persistSelected = newValue;
@@ -346,7 +381,6 @@ Ext.define('Sbi.tools.datasource.DataSourceDetailPanel', {
 		
 		}
 	}
-	
 	
 });
     
