@@ -220,7 +220,21 @@ public class DocumentCRUD {
 			if (personalFolder != null){
 				//return all documents inside the personal folder
 				if ((docType == null) || (docType.equalsIgnoreCase("ALL"))){
+					List filteredMyObjects = new ArrayList();
 					myObjects = DAOFactory.getBIObjectDAO().loadBIObjects(Integer.valueOf(personalFolder.getId()), profile, true);
+					//Get only documents of type Worksheet and Map
+					for (Iterator it = myObjects.iterator(); it.hasNext(); ){
+						BIObject biObject = (BIObject)it.next();
+						String biObjectType = biObject.getBiObjectTypeCode();
+						if ((biObjectType.equalsIgnoreCase("WORKSHEET")) ||
+						   (biObjectType.equalsIgnoreCase("MAP")) 
+							// || biObjectType.equalsIgnoreCase("COCKPIT") TODO: to be defined
+							){
+							filteredMyObjects.add(biObject);
+						}
+					}
+					myObjects = filteredMyObjects;
+					
 				} else if (docType.equalsIgnoreCase("Report")){
 					//return only Worksheets inside the personal folder
 					myObjects = DAOFactory.getBIObjectDAO().loadBIObjects("WORKSHEET", "REL", personalFolder.getPath());					

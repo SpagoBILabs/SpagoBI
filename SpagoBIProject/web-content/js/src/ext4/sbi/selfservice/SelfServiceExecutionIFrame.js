@@ -26,7 +26,9 @@ Ext.define('Sbi.selfservice.SelfServiceExecutionIFrame', {
 			&& Sbi.settings.mydata && Sbi.settings.mydata.toolbar.hide === true) {
 			Sbi.debug("[SelfServiceExecutionIFrame.init]: Toolbar not visible");
 		} else {
-			this.initToolbar(config);
+			if ((config.hideToolbar == undefined) || (config.hideToolbar == false)){
+				this.initToolbar(config);
+			}
 		}
 		
 	}

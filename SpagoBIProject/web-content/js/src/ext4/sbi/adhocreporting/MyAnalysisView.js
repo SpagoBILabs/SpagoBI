@@ -227,7 +227,7 @@ Ext.define('Sbi.adhocreporting.MyAnalysisView', {
 			        	'<div class="box-actions-container">'+
 			            '    <ul class="box-actions">'+	    
 			            '		<tpl for="actions">'+  
-			            ' 			<tpl if="name != \'delete\' && name != \'clone\'">'+
+			            ' 			<tpl if="name != \'delete\' && name != \'clone\' && name != \'showmetadata\'">'+
 				        ' 	       		<li class="{name}"><a href="#" title="{description}"></a></li>'+
 				        '			</tpl>'+
 				        '		</tpl>'+
@@ -269,6 +269,8 @@ Ext.define('Sbi.adhocreporting.MyAnalysisView', {
 	        var actionDelete = e.getTarget('a[class=delete]', 10, true);
 	        var actionClone = e.getTarget('a[class=clone]', 10, true);
 	        var actionShare = e.getTarget('div[class=share]',10,true)
+	        var actionExecution = e.getTarget('div[class=box-container-browser]',10,true)
+
 	        //var actionFavourite = e.getTarget('span.icon', 10, true); //TBD
 
 	        delete record.data.actions; 
@@ -288,6 +290,21 @@ Ext.define('Sbi.adhocreporting.MyAnalysisView', {
 			 }else if (actionShare != null){
 			     Sbi.debug('MyAnalysisView share');        
 		         scope.fireEvent('share', record.data);
+			 } else if (actionExecution != null) {
+				 //Execution of document
+				 if (record.data.engine){
+				     Sbi.debug('MyAnalysisView raise Document execution event');        			     
+				     if ((record.data.typeCode == 'MAP') && (record.data.engine == 'Gis Engine')){
+					   	scope.fireEvent('executeDocument','GEOREPORT','DOCUMENT',record);
+				     } else if (record.data.typeCode == 'WORKSHEET'){
+				   		scope.fireEvent('executeDocument','WORKSHEET','DOCUMENT',record);
+				     } else if (record.data.typeCode == 'COCKPIT'){
+					    alert('TODO: Cockpit execution');
+				    	 //TODO: TO be defined in future
+				     }
+
+				 }
+
 			 }
 	    	/*
 			 else if (actionFavourite != null){

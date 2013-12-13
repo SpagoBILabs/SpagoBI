@@ -22,43 +22,12 @@ Ext.define('Sbi.adhocreporting.AdhocreportingTabsPanel', {
     	myAnalysisServicePath : ''
     }
 	
-
-	/**
-	 * @property {Panel} datasetPanelTab
-	 *  Tab panel that contains the datasets
-	 */
-	//datasetPanelTab: null
-	
-	/**
-	 * @property {Panel} modelstPanelTab
-	 *  Tab panel that contains the models
-	 */
-	//modelstPanelTab: null
-	
 	
 	, constructor : function(config) {
 		this.initConfig(config);
 		
 		this.layout = 'fit';
-		/*
-		var browserConfCert = {
-				title: LN("sbi.tools.dataset.public.datasetbrowser.title")
-				, user: Sbi.user.userId
-				, datasetsServicePath : config.datasetsServicePath
-				, displayToolbar : false
-				, isTech: true
-		};
-		
-		var browserConfCustom = {
-				title: LN("sbi.tools.dataset.private.datasetbrowser.title")
-				, user: Sbi.user.userId
-				, datasetsServicePath : config.datasetsServicePath
-				, displayToolbar : false
-				, isTech: false
-		};
-		*/
-		//this.datasetPanelTabCert = Ext.create('Sbi.tools.dataset.DataSetsBrowser', browserConfCert );
-		//this.datasetPanelTabCustom = Ext.create('Sbi.tools.dataset.DataSetsBrowser', browserConfCustom );
+
 		
 		var myAnalysisBrowserConf = {
 				 user: Sbi.user.userId
@@ -71,39 +40,22 @@ Ext.define('Sbi.adhocreporting.AdhocreportingTabsPanel', {
 		
 		
 		this.items = [ this.myAnalysisBrowser ];
-		/*
-		if (Sbi.user.functionalities.contains('BuildQbeQueriesFunctionality')) {
-			this.modelstPanelTab = Ext.create('Sbi.tools.model.MetaModelsBrowser',{title: LN("sbi.tools.model.metamodelsbrowser.title")});
-		}
-		this.items.push(this.modelstPanelTab);
-		*/
 
 		this.callParent(arguments);
 		this.addEvents(
 		        /**
 		         * @event event1
 		         * Execute the qbe clicking in the model/dataset
-				 * @param {Object} docType engine to execute 'QBE'/'WORKSHEET'
-				 * @param {Object} inputType 'DATASET'/'MODEL'
-				 * @param {Object} record the record that contains all the information of the metamodel/dataset
+				 * @param {Object} docType engine to execute 'QBE'/'WORKSHEET'/'COCKPIT'
+				 * @param {Object} inputType 'DOCUMENT'
+				 * @param {Object} record the record that contains all the information of the document
 		         */
 		        'executeDocument'
 				);
-		/*
-		if (this.modelstPanelTab != null) {
-			this.modelstPanelTab.on('executeDocument',function(docType, inputType, record){
-				this.fireEvent('executeDocument',docType,inputType,record);
-			},this);
-		} 
-		this.datasetPanelTabCert.on('executeDocument',function(docType, inputType, record){
-			this.fireEvent('executeDocument',docType,inputType,record);
+		this.myAnalysisBrowser.on('executeDocument',function(docType, inputType,  record){
+			this.fireEvent('executeDocument',docType, inputType,  record);
 		},this);
-		*/
-		/*
-		this.datasetPanelTabCustom.on('executeDocument',function(docType, inputType, record){
-			this.fireEvent('executeDocument',docType,inputType,record);
-		},this);	
-		*/	
+
 	}
 
     

@@ -1111,3 +1111,8 @@ Sbi.locale.ln['sbi.myanalysis.map'] = "Map";
 Sbi.locale.ln['sbi.myanalysis.all'] = "All";
 Sbi.locale.ln['sbi.myanalysis.sharedocument'] = "Share Document";
 Sbi.locale.ln['sbi.myanalysis.unsharedocument'] = "Unshare Document";
+Sbi.locale.ln['sbi.myanalysis.wizard.wizardname'] = "My Analysis Wizard";
+Sbi.locale.ln['sbi.myanalysis.wizard.myanalysisselection'] = "My Analysis Type Selection";
+Sbi.locale.ln['sbi.myanalysis.wizard.myanalysisdetail'] = "Define Details";
+
+
