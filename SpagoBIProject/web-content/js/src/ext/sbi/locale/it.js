@@ -1101,3 +1101,8 @@ Sbi.locale.ln['sbi.myanalysis.map'] = "Mappa";
 Sbi.locale.ln['sbi.myanalysis.all'] = "Tutti";
 Sbi.locale.ln['sbi.myanalysis.sharedocument'] = "Condividi Documento";
 Sbi.locale.ln['sbi.myanalysis.unsharedocument'] = "Rendi privato Documento";
+Sbi.locale.ln['sbi.myanalysis.wizard.wizardname'] = "Wizard le mie Analisi";
+Sbi.locale.ln['sbi.myanalysis.wizard.myanalysisselection'] = "Seleziona tipologia analisi";
+Sbi.locale.ln['sbi.myanalysis.wizard.myanalysisdetail'] = "Definisci Dettagli";
+
+

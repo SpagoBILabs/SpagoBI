@@ -146,7 +146,7 @@ Ext.define('Sbi.adhocreporting.MyAnalysisBrowser', {
 		config.store = this.store;
 		config.actions = this.actions;
 		config.user = this.user;
-		this.viewPanel = Ext.create('Sbi.adhocreporting.MyAnalysisView', config); //TODO: da definire
+		this.viewPanel = Ext.create('Sbi.adhocreporting.MyAnalysisView', config); 
 		this.viewPanel.on('detail', this.modifyDocument, this);
 		this.viewPanel.on('delete', this.deleteDocument, this);
 		this.viewPanel.on('clone', this.cloneDocument, this);
@@ -170,11 +170,8 @@ Ext.define('Sbi.adhocreporting.MyAnalysisBrowser', {
 	}
 	
 	, deleteDocument: function(rec){
-		//TODO
 		Sbi.exception.ExceptionHandler.showInfoMessage('TODO: Delete Document');
 		
-		
-		//TODO: TO CHECK 
 		Ext.MessageBox.confirm(
 				LN('sbi.generic.pleaseConfirm')
 				, LN('sbi.generic.confirmDelete')
@@ -184,7 +181,7 @@ Ext.define('Sbi.adhocreporting.MyAnalysisBrowser', {
 	                    
 	                    if(rec.id) {
 	                  	  p.docId = rec.id;
-	                  	  p.folderId = rec.functionalities[0]; //TODO: to check if correct
+	                  	  p.folderId = rec.functionalities[0]; 
 	                    }
 	                    
 	                	Ext.Ajax.request({
@@ -228,7 +225,7 @@ Ext.define('Sbi.adhocreporting.MyAnalysisBrowser', {
 	                    
 	                    if(rec.id) {
 	                  	  p.docId = rec.id;
-	                  	  p.folderId = rec.functionalities[0]; //TODO: to check if correct
+	                  	  p.folderId = rec.functionalities[0]; 
 	                    }
 	                    
 	                	Ext.Ajax.request({
@@ -547,7 +544,13 @@ Ext.define('Sbi.adhocreporting.MyAnalysisBrowser', {
 	
 	
 	, addNewDocument : function() {		 
-		alert('TODO: Apertura Wizard di creazione nuovo documento');
+		var config =  {};
+		config.user = this.user;
+		config.isNew = true;
+		this.wizardWin =  Ext.create('Sbi.adhocreporting.MyAnalysisWizard',config);	
+		//this.wizardWin.on('save', this.saveDataset, this);
+		//this.wizardWin.on('getMetaValues', this.getMetaValues, this);
+    	this.wizardWin.show();
 	}
 	
 	/*

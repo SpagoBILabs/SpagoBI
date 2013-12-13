@@ -20,8 +20,10 @@ Ext.define('Sbi.adhocreporting.AdhocreportingContainer', {
     	qbeFromBMBaseUrl : '',
     	qbeFromDataSetBaseUrl : '',
         user : '',
-        myAnalysisServicePath: ''
+        myAnalysisServicePath: '',
+        georeportEngineBaseUrl: ''
         //datasetsServicePath: ''
+        , contextName: ''
 	},
 
 	/**
@@ -41,22 +43,24 @@ Ext.define('Sbi.adhocreporting.AdhocreportingContainer', {
 		
 		this.layout =  'card';
 		
-		this.documentexecution = Ext.create('Sbi.selfservice.SelfServiceExecutionIFrame',{}); 
+		this.documentexecution = Ext.create('Sbi.selfservice.SelfServiceExecutionIFrame',{hideToolbar:true}); 
 		this.adhocreportingTabsPanel = Ext.create('Sbi.adhocreporting.AdhocreportingTabsPanel', {
 			adhocreportingContainer : this
 			, myAnalysisServicePath : config.myAnalysisServicePath
 		}); 
 					
-		this.items = [ this.adhocreportingTabsPanel, this.documentexecution]
+		this.items = [ this.adhocreportingTabsPanel
+		               , this.documentexecution
+		               ]
 		this.callParent(arguments);
 		
 		this.addEvents(
 		        /**
 		         * @event event1
 		         * Execute the qbe clicking in the model/dataset
-				 * @param {Object} docType engine to execute 'QBE'/'WORKSHEET'
-				 * @param {Object} inputType 'DATASET'/'MODEL'
-				 * @param {Object} record the record that contains all the information of the metamodel/dataset
+				 * @param {Object} docType engine to execute 'QBE'/'WORKSHEET'/'COCKPIT'
+				 * @param {Object} inputType 'DOCUMENT'
+				 * @param {Object} record the record that contains all the information of the document
 		         */
 		        'executeDocument'
 				);
@@ -66,46 +70,41 @@ Ext.define('Sbi.adhocreporting.AdhocreportingContainer', {
 
 	,
 	executeDocument: function(docType,inputType, record){
-		if(docType=='QBE'){
-			this.executeQbe(inputType, record);
-		}else{
+		if(docType=='COCKPIT'){
+			//TODO: to be defined
+			Sbi.debug("Cockpit document execution");
+			alert('TODO: Cockpit execution');
+		} else if (docType=='WORKSHEET'){
+			Sbi.debug("Worksheet document execution");
 			this.executeWorksheet(inputType, record);
+		} else if (docType=='GEOREPORT'){
+			Sbi.debug("Georeport document execution");
+			this.executeGeoreport(inputType, record);
+		} else {
+			alert('Impossible to execute document of type [' + docType + ']');
 		}
+		
 		this.getLayout().setActiveItem(1);	
 	}
 	
-	,
-	executeQbe: function(inputType, record){
-		if(inputType == "MODEL"){
-			var modelName = record.data.name;
-			var dataSourceLabel = record.data.data_source_label;
-			var url = this.qbeFromBMBaseUrl+"&MODEL_NAME="+modelName;
-			if(dataSourceLabel || dataSourceLabel!=""){
-				url = url+ 
-				'&DATA_SOURCE_LABEL=' + dataSourceLabel;
-			}
-			this.documentexecution.modelName = modelName;
-			this.documentexecution.load(url);
-		}
-		if(inputType == "DATASET"){
-			var datasetLabel = record.data.label;
-			var dataSourceLabel = record.data.dataSource;
-			var url =  this.qbeFromDataSetBaseUrl+ '&dataset_label=' + datasetLabel;
-			this.documentexecution.load(url);
-			this.documentexecution.datasetLabel = datasetLabel;
+	
+	
+	, executeWorksheet: function(inputType, record){
+		if(inputType == "DOCUMENT"){
+			this.executeDocumentAction(inputType, record);			
 		}
 	}
 	
-	,
-	executeWorksheet: function(inputType, record){
-		if(inputType == "DATASET"){
-			var datasetLabel = record.data.label;
-			var datasourceLabel = record.data.dataSource;
-			var url = this.worksheetEngineBaseUrl+ '&dataset_label=' + datasetLabel;
-			this.documentexecution.load(url);
-			this.documentexecution.datasetLabel = datasetLabel;
-			
+	, executeGeoreport: function(inputType, record){
+		if(inputType == "DOCUMENT"){
+			this.executeDocumentAction(inputType, record);
 		}
+	}
+	
+	,executeDocumentAction: function(inputType, record){
+		var doc = record.data;
+		var executionUrl = this.contextName + '/servlet/AdapterHTTP?ACTION_NAME=EXECUTE_DOCUMENT_ACTION&OBJECT_LABEL='+doc.label+'&OBJECT_ID='+doc.id;
+		this.documentexecution.load(executionUrl);
 	}
 	
    

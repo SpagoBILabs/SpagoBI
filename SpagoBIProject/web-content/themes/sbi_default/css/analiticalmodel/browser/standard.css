@@ -835,4 +835,27 @@ li:hover .login-panel .not-registered a:hover,.login-panel .not-registered a:hov
 	table{border-collapse:collapse}
 	table td,table th{text-align:center;border:1px solid #ccc;padding:10px;font-size:12pt}
 
-} /* END MEDIA PRINT*/	
+} /* END MEDIA PRINT*/
+
+/* ----------- My Analysis Wizard Images---------------------------------------------------------------------------------------------- */
+
+.reportbutton {
+background-image:	url('../../../img/analiticalmodel/browser/document_adhocreporting.png')!important;
+background-size: contain;
+background-position: center center;
+background-color:white;
+}
+
+.geobutton {
+background-image:url('../../../img/analiticalmodel/browser/document_locatiointelligence.png')!important;
+background-size: contain;
+background-position: center center;
+background-color:white;
+}
+
+.cockpitbutton {
+background-image:url('../../../img/analiticalmodel/browser/document_cockpits.png')!important;
+background-size: contain;
+background-position: center center;
+background-color:white;
+}
