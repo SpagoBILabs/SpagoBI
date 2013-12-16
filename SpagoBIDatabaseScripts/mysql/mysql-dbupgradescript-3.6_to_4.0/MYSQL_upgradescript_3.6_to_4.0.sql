@@ -1,11 +1,11 @@
---inserts configuration for check of role in login module
+--  inserts configuration for check of role in login module
 INSERT INTO SBI_CONFIG ( ID, LABEL, NAME, DESCRIPTION, IS_ACTIVE, VALUE_CHECK, VALUE_TYPE_ID, CATEGORY, USER_IN, TIME_IN) VALUES ((SELECT next_val FROM hibernate_sequences WHERE sequence_name = 'SBI_CONFIG'),'SPAGOBI.SECURITY.CHECK_ROLE_LOGIN', 'SPAGOBI.SECURITY.CHECK_ROLE_LOGIN', 'Check the correct role in login action', false, 'false',(select VALUE_ID from SBI_DOMAINS where VALUE_CD = 'STRING' AND DOMAIN_CD = 'PAR_TYPE'), 'SECURITY', 'biadmin', current_timestamp);
 update hibernate_sequences set next_val = next_val+1 where sequence_name = 'SBI_CONFIG';
 INSERT INTO SBI_CONFIG ( ID, LABEL, NAME, DESCRIPTION, IS_ACTIVE, VALUE_CHECK, VALUE_TYPE_ID, CATEGORY, USER_IN, TIME_IN) VALUES ((SELECT next_val FROM hibernate_sequences WHERE sequence_name = 'SBI_CONFIG'),'SPAGOBI.SECURITY.ROLE_LOGIN', 'SPAGOBI.SECURITY.ROLE_LOGIN', 'The value of the role to check at login module', false, '',(select VALUE_ID from SBI_DOMAINS where VALUE_CD = 'STRING' AND DOMAIN_CD = 'PAR_TYPE'), 'SECURITY', 'biadmin', current_timestamp);
 update hibernate_sequences set next_val = next_val+1 where sequence_name = 'SBI_CONFIG';
 
 COMMIT;
--- NETWORK ENGINE
+--  NETWORK ENGINE
 INSERT INTO SBI_DOMAINS (VALUE_ID, VALUE_CD,VALUE_NM,DOMAIN_CD,DOMAIN_NM,VALUE_DS, USER_IN, TIME_IN)
     VALUES ((SELECT next_val FROM hibernate_sequences WHERE sequence_name = 'SBI_DOMAINS'),
     'PNG','PNG','EXPORT_TYPE','Exporters type','Exporters type', 'biadmin', current_timestamp);
@@ -27,7 +27,7 @@ commit;
 SELECT @sequence:=(SELECT next_val FROM hibernate_sequences WHERE sequence_name = 'SBI_ENGINES' )-1;
 INSERT INTO SBI_ENGINES (ENGINE_ID, NAME,DESCR, ENCRYPT, LABEL,MAIN_URL, DRIVER_NM, ENGINE_TYPE,BIOBJ_TYPE,USE_DATASOURCE,USE_DATASET, USER_IN, TIME_IN, SBI_VERSION_IN,ORGANIZATION)
 SELECT @sequence:=@sequence+1, 'Network Analysis Engine','Network Analysis Engine' , 0, 'SpagoBINetworkEngine','/SpagoBINetworkEngine/servlet/AdapterHTTP','it.eng.spagobi.engines.drivers.network.NetworkDriver',(SELECT VALUE_ID FROM SBI_DOMAINS WHERE DOMAIN_CD = 'ENGINE_TYPE' AND VALUE_CD = 'EXT'),(SELECT VALUE_ID FROM SBI_DOMAINS WHERE DOMAIN_CD = 'BIOBJ_TYPE' AND VALUE_CD = 'NETWORK'),false, true, 'biadmin', current_timestamp, '3.6.0', ORGANIZATION.NAME
-FROM sbi_organizations ORGANIZATION;
+FROM SBI_ORGANIZATIONS ORGANIZATION;
 
 INSERT INTO SBI_EXPORTERS (ENGINE_ID,DOMAIN_ID,DEFAULT_VALUE) 
 	VALUES ((SELECT ENGINE_ID FROM SBI_ENGINES WHERE LABEL = 'SpagoBINetworkEngine'),
@@ -270,27 +270,27 @@ CREATE TABLE SBI_DATA_SET_TEMP (
 INSERT SBI_DATA_SET_TEMP (DS_ID, VERSION_NUM, ACTIVE,  LABEL, DESCR, NAME, OBJECT_TYPE, DS_METADATA, PARAMS, CATEGORY_ID, TRANSFORMER_ID, PIVOT_COLUMN, PIVOT_ROW, PIVOT_VALUE, NUM_ROWS, IS_PERSISTED, 
 DATA_SOURCE_PERSIST_ID, IS_FLAT_DATASET, FLAT_TABLE_NAME, DATA_SOURCE_FLAT_ID, USER_IN, USER_UP, USER_DE, TIME_IN, TIME_UP, TIME_DE, SBI_VERSION_IN, SBI_VERSION_UP, SBI_VERSION_DE,
 META_VERSION, ORGANIZATION, CONFIGURATION) 
-SELECT DS.DS_ID, ds_h.VERSION_NUM, ds_h.ACTIVE, ds.LABEL, ds.DESCR, ds.name,
-ds_h.OBJECT_TYPE, ds_h.DS_METADATA,
-ds_h.PARAMS, ds_h.CATEGORY_ID, ds_h.TRANSFORMER_ID, ds_h.PIVOT_COLUMN, ds_h.PIVOT_ROW,
-ds_h.PIVOT_VALUE, ds_h.NUM_ROWS, ds_h.IS_PERSISTED, ds_h.DATA_SOURCE_PERSIST_ID, 
-ds_h.IS_FLAT_DATASET, ds_h.FLAT_TABLE_NAME, ds_h.DATA_SOURCE_FLAT_ID, ds_h.USER_IN, 
-null as USER_UP,null as USER_DE, ds_h.TIME_IN, null as TIME_UP, null as TIME_DE,
-ds_h.SBI_VERSION_IN, null as SBI_VERSION_UP,  null as SBI_VERSION_DE, ds_h.META_VERSION,
-ds_h.ORGANIZATION,
-case when ds_h.OBJECT_TYPE = 'SbiQueryDataSet' then 
-concat('{"Query":"',REPLACE(ds_h.QUERY,'"','\\"'),'","queryScript":"',REPLACE(COALESCE(DS_H.QUERY_SCRIPT,''),'"','\\"'),'","queryScriptLanguage":"',COALESCE(QUERY_SCRIPT_LANGUAGE,''),'","dataSource":"',COALESCE(CAST((SELECT LABEL FROM SBI_DATA_SOURCE WHERE DS_ID = DATA_SOURCE_ID) AS CHAR),''),'"}')  
-WHEN ds_h.OBJECT_TYPE = 'SbiFileDataSet' then 
+SELECT DS.DS_ID, DS_H.VERSION_NUM, DS_H.ACTIVE, DS.LABEL, DS.DESCR, DS.name,
+DS_H.OBJECT_TYPE, DS_H.DS_METADATA,
+DS_H.PARAMS, DS_H.CATEGORY_ID, DS_H.TRANSFORMER_ID, DS_H.PIVOT_COLUMN, DS_H.PIVOT_ROW,
+DS_H.PIVOT_VALUE, DS_H.NUM_ROWS, DS_H.IS_PERSISTED, DS_H.DATA_SOURCE_PERSIST_ID, 
+DS_H.IS_FLAT_DATASET, DS_H.FLAT_TABLE_NAME, DS_H.DATA_SOURCE_FLAT_ID, DS_H.USER_IN, 
+null as USER_UP,null as USER_DE, DS_H.TIME_IN, null as TIME_UP, null as TIME_DE,
+DS_H.SBI_VERSION_IN, null as SBI_VERSION_UP,  null as SBI_VERSION_DE, DS_H.META_VERSION,
+DS_H.ORGANIZATION,
+case when DS_H.OBJECT_TYPE = 'SbiQueryDataSet' then 
+concat('{"Query":"',REPLACE(DS_H.QUERY,'"','\\"'),'","queryScript":"',REPLACE(COALESCE(DS_H.QUERY_SCRIPT,''),'"','\\"'),'","queryScriptLanguage":"',COALESCE(QUERY_SCRIPT_LANGUAGE,''),'","dataSource":"',COALESCE(CAST((SELECT LABEL FROM SBI_DATA_SOURCE WHERE DS_ID = DATA_SOURCE_ID) AS CHAR),''),'"}')  
+WHEN DS_H.OBJECT_TYPE = 'SbiFileDataSet' then 
 CONCAT('{"fileName":"',COALESCE(DS_H.FILE_NAME,''),'"}')
-WHEN ds_h.OBJECT_TYPE = 'SbiFileDataSet' then 
+WHEN DS_H.OBJECT_TYPE = 'SbiFileDataSet' then 
 CONCAT('{"SbiJClassDataSet":"',COALESCE(DS_H.JCLASS_NAME,''),'"}')
-WHEN ds_h.OBJECT_TYPE = 'SbiWSDataSet' then 
+WHEN DS_H.OBJECT_TYPE = 'SbiWSDataSet' then 
 CONCAT('{"wsAddress":"',COALESCE(DS_H.ADRESS,''),'","wsOperation":"',COALESCE(DS_H.OPERATION,''),'"}')
-WHEN ds_h.OBJECT_TYPE = 'SbiScriptDataSet' then 
+WHEN DS_H.OBJECT_TYPE = 'SbiScriptDataSet' then 
 CONCAT('{"Script":"',REPLACE(COALESCE(DS_H.SCRIPT,''),'"','\\"'),'","scriptLanguage":"',COALESCE(DS_H.LANGUAGE_SCRIPT,''),'"}')
-WHEN ds_h.OBJECT_TYPE = 'SbiCustomDataSet' then 
+WHEN DS_H.OBJECT_TYPE = 'SbiCustomDataSet' then 
 CONCAT('{"customData":"',REPLACE(COALESCE(DS_H.CUSTOM_DATA,'"{}"'),'"','\\"'),'","jClassName":"',COALESCE(DS_H.JCLASS_NAME,''),'"}')
-WHEN ds_h.OBJECT_TYPE = 'SbiQbeDataSet' then 
+WHEN DS_H.OBJECT_TYPE = 'SbiQbeDataSet' then 
 CONCAT('{"qbeDatamarts":"',COALESCE(DS_H.DATAMARTS,''),'","qbeDataSource":"',COALESCE(CAST((SELECT LABEL FROM SBI_DATA_SOURCE WHERE DS_ID = DATA_SOURCE_ID) AS CHAR),''),'","qbeJSONQuery":"',REPLACE(COALESCE(DS_H.JSON_QUERY,''),'"','\\"'),'"}')
 end AS CONFIGURATION
 FROM 
@@ -304,25 +304,25 @@ RENAME TABLE SBI_DATA_SET TO SBI_DATA_SET_OLD;
 RENAME TABLE SBI_DATA_SET_HISTORY TO SBI_DATA_SET_HISTORY_OLD;
 RENAME TABLE SBI_DATA_SET_TEMP TO SBI_DATA_SET;
 
--- to do at the end, when all it's ended correctly!
---Dropping older FK to SBI_DATA_SET
---ALTER TABLE SBI_LOV DROP FOREIGN KEY FK_SBI_LOV_2;
---ALTER TABLE SBI_OBJECTS DROP FOREIGN KEY FK_SBI_OBJECTS_7;
+--  to do at the end, when all it's ended correctly!
+--  Dropping older FK to SBI_DATA_SET
+--  ALTER TABLE SBI_LOV DROP FOREIGN KEY FK_SBI_LOV_2;
+--  ALTER TABLE SBI_OBJECTS DROP FOREIGN KEY FK_SBI_OBJECTS_7;
 
---ATTENTION: for the SBI_KPI table the FK haven't an explicity name, so is necessary get it and use it in drop command: 
---select constraint_name from INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS WHERE constraint_schema = '<SCHEMA_DB_NAME>' and
---referenced_table_name = 'SBI_DATA_SET_OLD'  and table_name = 'SBI_KPI';
---ALTER TABLE sbi_kpi DROP FOREIGN KEY <FK_NAME_GETTED>;
+--  ATTENTION: for the SBI_KPI table the FK haven't an explicity name, so is necessary get it and use it in drop command: 
+--  select constraint_name from INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS WHERE constraint_schema = '<SCHEMA_DB_NAME>' and
+--  referenced_table_name = 'SBI_DATA_SET_OLD'  and table_name = 'SBI_KPI';
+--  ALTER TABLE sbi_kpi DROP FOREIGN KEY <FK_NAME_GETTED>;
 
---DROP TABLE SBI_DATA_SET_HISTORY_OLD CASCADE;  
---DROP TABLE SBI_DATA_SET_OLD CASCADE;
--- to do only after drop stmt
---ALTER TABLE SBI_DATA_SET ADD CONSTRAINT FK_SBI_DATA_SET_T  FOREIGN KEY ( TRANSFORMER_ID ) REFERENCES SBI_DOMAINS ( VALUE_ID ) ON DELETE CASCADE;
---ALTER TABLE SBI_DATA_SET ADD CONSTRAINT FK_SBI_DATA_SET_CAT  FOREIGN KEY (CATEGORY_ID) REFERENCES SBI_DOMAINS (VALUE_ID) ON DELETE CASCADE ON UPDATE RESTRICT;
---ALTER TABLE SBI_DATA_SET ADD CONSTRAINT FK_SBI_DATA_SET_DS3 FOREIGN KEY ( DATA_SOURCE_PERSIST_ID ) REFERENCES SBI_DATA_SOURCE( DS_ID ) ON DELETE CASCADE;
---ALTER TABLE SBI_DATA_SET ADD CONSTRAINT FK_SBI_DATA_SET_DS4 FOREIGN KEY ( DATA_SOURCE_FLAT_ID ) REFERENCES SBI_DATA_SOURCE( DS_ID ) ON DELETE CASCADE;
+-- DROP TABLE SBI_DATA_SET_HISTORY_OLD CASCADE;  
+-- DROP TABLE SBI_DATA_SET_OLD CASCADE;
+--  to do only after drop stmt
+-- ALTER TABLE SBI_DATA_SET ADD CONSTRAINT FK_SBI_DATA_SET_T  FOREIGN KEY ( TRANSFORMER_ID ) REFERENCES SBI_DOMAINS ( VALUE_ID ) ON DELETE CASCADE;
+-- ALTER TABLE SBI_DATA_SET ADD CONSTRAINT FK_SBI_DATA_SET_CAT  FOREIGN KEY (CATEGORY_ID) REFERENCES SBI_DOMAINS (VALUE_ID) ON DELETE CASCADE ON UPDATE RESTRICT;
+-- ALTER TABLE SBI_DATA_SET ADD CONSTRAINT FK_SBI_DATA_SET_DS3 FOREIGN KEY ( DATA_SOURCE_PERSIST_ID ) REFERENCES SBI_DATA_SOURCE( DS_ID ) ON DELETE CASCADE;
+-- ALTER TABLE SBI_DATA_SET ADD CONSTRAINT FK_SBI_DATA_SET_DS4 FOREIGN KEY ( DATA_SOURCE_FLAT_ID ) REFERENCES SBI_DATA_SOURCE( DS_ID ) ON DELETE CASCADE;
 
--- insert records for selfservice dataset management 
+--  insert records for selfservice dataset management 
 INSERT INTO SBI_USER_FUNC (USER_FUNCT_ID, NAME, DESCRIPTION, USER_IN, TIME_IN)
     VALUES ((SELECT next_val FROM hibernate_sequences WHERE sequence_name = 'SBI_USER_FUNC'), 
     'SelfServiceDatasetManagement','SelfServiceDatasetManagement', 'server', current_timestamp);
@@ -425,5 +425,5 @@ INSERT into SBI_DOMAINS (VALUE_ID,VALUE_CD,VALUE_NM,DOMAIN_CD,DOMAIN_NM,VALUE_DS
 update hibernate_sequences set next_val = next_val+1 where  sequence_name = 'SBI_DOMAINS';
 commit;
 
-update sbi_engines set label = 'SpagoBIGisEngine' where label = 'GeoReportEngine';
+update SBI_ENGINES set label = 'SpagoBIGisEngine' where label = 'GeoReportEngine';
 commit;
