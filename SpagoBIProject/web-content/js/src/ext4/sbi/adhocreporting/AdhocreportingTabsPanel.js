@@ -55,6 +55,17 @@ Ext.define('Sbi.adhocreporting.AdhocreportingTabsPanel', {
 		this.myAnalysisBrowser.on('executeDocument',function(docType, inputType,  record){
 			this.fireEvent('executeDocument',docType, inputType,  record);
 		},this);
+		
+		this.addEvents('openMyDataForReport');
+		this.myAnalysisBrowser.on('openMyDataForReport',function(){
+			this.fireEvent('openMyDataForReport');
+		},this);
+		
+		this.addEvents('openMyDataForGeo');		
+		this.myAnalysisBrowser.on('openMyDataForGeo',function(){
+			this.fireEvent('openMyDataForGeo');
+		},this);
+		
 
 	}
 

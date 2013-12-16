@@ -10,33 +10,21 @@ Ext.define('Sbi.adhocreporting.MyAnalysisWizard', {
 		,config: {	
 			fieldsStep1: null,
 			fieldsStep2: null,
-//			fieldsStep3: null,
-//			fieldsStep4: null,
-//			categoriesStore: null,
+			fieldsStep3: null,
 			height: 440, //440,
-//			datasetGenericPropertiesStore: null,
-//			datasetPropertiesStore: null,
-//			datasetValuesStore: null,
-//			scopeStore: null,
 			record: {},
-//			isNew:true, 
 			user:'',
-//			fileUpload:null,
-//			metaInfo:null,
-//			isOwner: false,
-			isTabbedPanel:false //if false rendering as 'card layout (without tabs)
-			
+			isTabbedPanel:false, //if false rendering as 'card layout (without tabs)
+			documentType: null
 		}
 
 		, constructor: function(config) {
-//			thisPanel = this;
-//			thisPanel.fileUploaded = false; //default value
+			
+			Ext.QuickTips.init();
+			
+			thisPanel = this;
 			this.initConfig(config);
-//			if (this.record.owner !== undefined && this.record.owner !== this.user) {
-//				this.isOwner = false;
-//			}else{
-//				this.isOwner = true;
-//			}
+
 		
 			this.configureSteps();
 		
@@ -44,15 +32,20 @@ Ext.define('Sbi.adhocreporting.MyAnalysisWizard', {
 			config.bodyPadding = 10;   
 			config.tabs = this.initSteps();
 			config.buttons = this.initWizardBar();
-		
+
+			
 			this.callParent(arguments);
+			
+			Ext.getCmp('move-next').setDisabled(true ); //This disable next button on first page of the wizard
+
 		
 			this.addListener('cancel', this.closeWin, this);
 			this.addListener('navigate', this.navigate, this);
 			this.addListener('confirm', this.save, this);		
 		
-//			this.addEvents('save','delete','getMetaValues','getDataStore');	
-		
+			this.addEvents('openMyDataForReport');
+			this.addEvents('openMyDataForGeo');
+
 		}
 		
 		, configureSteps : function(){
@@ -60,24 +53,12 @@ Ext.define('Sbi.adhocreporting.MyAnalysisWizard', {
 			this.fieldsStep1 =  this.getFieldsTab1(); 
 				
 			this.fieldsStep2 =  this.getFieldsTab2(); 
+			
+			this.fieldsStep3 =  this.getFieldsTab3();
 
 		}
 		
 		, getFieldsTab1: function(){
-			
-			
-			//General tab
-//			var toReturn = [];
-//			
-//			toReturn = [
-//				// {label:"Id", name:"id",type:"text",hidden:"true", value:this.record.id},
-//		        {label: LN('sbi.ds.dsTypeCd'), name:"type",type:"text",hidden:"true", value:this.record.dsTypeCd || 'File'},
-//		        {label: LN('sbi.ds.label'), name:"label", type:"text",hidden:"true", /*mandatory:true, readOnly:(this.isNew || this.isOwner)?false:true,*/ value:''}, 
-//		        {label: LN('sbi.ds.name'), name:"name", type:"text", mandatory:true, readOnly:false, value:'' /*,value:this.record.name*/},
-//		        {label: LN('sbi.ds.description'), name:"description", type:"textarea", readOnly:false, value:'' /*,value:this.record.description*/}
-//	         ];
-//			
-//			return toReturn;
 			
 			this.worksheetSelectionButton = new Ext.Button({
 				  text: ''
@@ -85,7 +66,12 @@ Ext.define('Sbi.adhocreporting.MyAnalysisWizard', {
 		          ,margin: 10
 		          ,height: '100px'
 		          ,cls:'reportbutton'
-		         
+		          ,handler: function() {
+		              thisPanel.documentType = 'Worksheet';
+		              //thisPanel.goNext(1);
+		              thisPanel.fireEvent('openMyDataForReport');
+		          }
+				  ,tooltip:'Create a new Report Analysis Using Worksheet'
 			});
 			
 			this.geoSelectionButton = new Ext.Button({
@@ -94,6 +80,13 @@ Ext.define('Sbi.adhocreporting.MyAnalysisWizard', {
 		          ,margin: 10
 		          ,height: '100px'
 		          ,cls:'geobutton'
+		          ,handler: function() {
+		        	  thisPanel.documentType = 'Geo';
+		        	  //thisPanel.goNext(1);
+		        	  thisPanel.fireEvent('openMyDataForGeo');
+
+		          }
+			  	  ,tooltip:'Create a new Geographical Analysis'
 
 			});
 			
@@ -103,15 +96,16 @@ Ext.define('Sbi.adhocreporting.MyAnalysisWizard', {
 		          ,margin: 10
 		          ,height: '100px'
 			      ,cls:'cockpitbutton'
+			      ,handler: function() {
+		             Ext.Msg.alert('TODO','TODO: Cockpit not yet implemented');
+		          }
+		  	      ,tooltip:'Create a new Cockpit Analysis'
+
 			});
 			
 			this.selectionPanel = new Ext.Panel({
-				//width: '100%',
-				//layout:'column',
 			    layout: 'hbox',
-			    //pack: 'start',
 			    align: 'stretch',
-			    //widthRatio: 0.75,
 			    border: 0,
 			    padding: 10,
 			    style: 'background-color: white;padding: 40px',
@@ -126,7 +120,6 @@ Ext.define('Sbi.adhocreporting.MyAnalysisWizard', {
 				items: [this.selectionPanel]
 			});
 			
-			//return this.selectionPanel;
 			return this.parentPanel;
 			
 			
@@ -145,14 +138,28 @@ Ext.define('Sbi.adhocreporting.MyAnalysisWizard', {
 			return toReturn;
 		}
 		
+		, getFieldsTab3: function() {
+			var toReturn = [];
+			
+			
+//			toReturn = [
+//				        {label: LN('sbi.ds.label'), name:"label", type:"text", mandatory:true, /*readOnly:(this.isNew || this.isOwner)?false:true,*/}, 
+//
+//			         ];
+			
+			return toReturn;
+		}		
+		
 		, initSteps: function(){
 			
 			var steps = [];
 			var item1Label = LN('sbi.myanalysis.wizard.myanalysisselection');
 			var item2Label = item1Label + ' -> ' + LN('sbi.myanalysis.wizard.myanalysisdetail');
-			
+			var item3Label = item2Label + ' -> ' + LN('sbi.myanalysis.wizard.dataselection');
+
 			steps.push({itemId:'0', title:item1Label, items: this.fieldsStep1});
 			steps.push({itemId:'1', title:item2Label, items: Sbi.tools.dataset.DataSetsWizard.superclass.createStepFieldsGUI(this.fieldsStep2)});
+			steps.push({itemId:'2', title:item3Label, items: Sbi.tools.dataset.DataSetsWizard.superclass.createStepFieldsGUI(this.fieldsStep3)});
 
 			
 			return steps;
@@ -217,7 +224,7 @@ Ext.define('Sbi.adhocreporting.MyAnalysisWizard', {
 					 this.wizardPanel.layout.setActiveItem(newTabId);
 				 }
 				 Ext.getCmp('move-prev').setDisabled(newTabId==0);
-				 Ext.getCmp('move-next').setDisabled(newTabId==numTabs);
+				 Ext.getCmp('move-next').setDisabled(newTabId==numTabs || newTabId==0);
 			 	 Ext.getCmp('confirm').setVisible(!(parseInt(newTabId)<parseInt(numTabs)));
 //				 	Ext.getCmp('confirm').setDisabled(parseInt(newTabId)<parseInt(numTabs));
 			 }			 
@@ -238,5 +245,23 @@ Ext.define('Sbi.adhocreporting.MyAnalysisWizard', {
 				//TODO: to implement
 				this.fireEvent('save', values);
 			}
+		}
+		
+		, goNext: function(n){
+			var newTabId;
+			if (this.isTabbedPanel){
+				newTabId  = parseInt(this.wizardPanel.getActiveTab().itemId)+n;
+			}else{
+				newTabId  = parseInt(this.wizardPanel.layout.getActiveItem().itemId)+n;
+			}
+			var numTabs  = (this.wizardPanel.items.length-1);	
+			if (this.isTabbedPanel){
+				this.wizardPanel.setActiveTab(newTabId);
+			} else {
+				this.wizardPanel.layout.setActiveItem(newTabId);
+			}
+			Ext.getCmp('move-prev').setDisabled(newTabId==0);
+			Ext.getCmp('move-next').setDisabled(newTabId==numTabs );
+			Ext.getCmp('confirm').setDisabled(newTabId<numTabs);
 		}
 });		

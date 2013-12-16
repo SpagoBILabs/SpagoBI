@@ -227,7 +227,7 @@ Ext.define('Sbi.adhocreporting.MyAnalysisView', {
 			        	'<div class="box-actions-container">'+
 			            '    <ul class="box-actions">'+	    
 			            '		<tpl for="actions">'+  
-			            ' 			<tpl if="name != \'delete\' && name != \'clone\' && name != \'showmetadata\'">'+
+			            ' 			<tpl if="name != \'delete\' && name != \'clone\' ">'+
 				        ' 	       		<li class="{name}"><a href="#" title="{description}"></a></li>'+
 				        '			</tpl>'+
 				        '		</tpl>'+

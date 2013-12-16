@@ -65,8 +65,30 @@ Ext.define('Sbi.adhocreporting.AdhocreportingContainer', {
 		        'executeDocument'
 				);
 		this.adhocreportingTabsPanel.on('executeDocument', this.executeDocument ,this);
+		
+		this.addEvents('openMyDataForReport');
+		
+		this.adhocreportingTabsPanel.on('openMyDataForReport', this.createReport ,this);
+		
+		this.addEvents('openMyDataForGeo');
+
+		this.adhocreportingTabsPanel.on('openMyDataForGeo', this.createGeo ,this);
+
 
 	}
+	
+	,createReport: function(){
+		alert('TODO: Create Report - Open MyData');
+
+
+	}
+	
+	,createGeo: function(){
+		alert('TODO: Create Geo - Open MyData');
+
+
+	}
+
 
 	,
 	executeDocument: function(docType,inputType, record){

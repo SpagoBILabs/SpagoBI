@@ -1114,5 +1114,6 @@ Sbi.locale.ln['sbi.myanalysis.unsharedocument'] = "Unshare Document";
 Sbi.locale.ln['sbi.myanalysis.wizard.wizardname'] = "My Analysis Wizard";
 Sbi.locale.ln['sbi.myanalysis.wizard.myanalysisselection'] = "My Analysis Type Selection";
 Sbi.locale.ln['sbi.myanalysis.wizard.myanalysisdetail'] = "Define Details";
+Sbi.locale.ln['sbi.myanalysis.wizard.dataselection'] = "Data selection";
 
 
