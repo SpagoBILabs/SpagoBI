@@ -1104,5 +1104,6 @@ Sbi.locale.ln['sbi.myanalysis.unsharedocument'] = "Rendi privato Documento";
 Sbi.locale.ln['sbi.myanalysis.wizard.wizardname'] = "Wizard le mie Analisi";
 Sbi.locale.ln['sbi.myanalysis.wizard.myanalysisselection'] = "Seleziona tipologia analisi";
 Sbi.locale.ln['sbi.myanalysis.wizard.myanalysisdetail'] = "Definisci Dettagli";
+Sbi.locale.ln['sbi.myanalysis.wizard.dataselection'] = "Selezione dati";
 
 

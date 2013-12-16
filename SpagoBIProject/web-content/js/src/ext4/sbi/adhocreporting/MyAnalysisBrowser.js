@@ -44,7 +44,9 @@ Ext.define('Sbi.adhocreporting.MyAnalysisBrowser', {
 		this.callParent(arguments);
 		
 		this.addEvents('order');
-
+		this.addEvents('openMyDataForReport');
+		this.addEvents('openMyDataForGeo');
+		
 	}
 	
 	/*
@@ -155,6 +157,7 @@ Ext.define('Sbi.adhocreporting.MyAnalysisBrowser', {
 		this.viewPanel.on('executeDocument',function(docType, inputType,  record){
 			this.fireEvent('executeDocument',docType, inputType,  record);
 		},this);
+
 	}
 	
 	
@@ -548,8 +551,14 @@ Ext.define('Sbi.adhocreporting.MyAnalysisBrowser', {
 		config.user = this.user;
 		config.isNew = true;
 		this.wizardWin =  Ext.create('Sbi.adhocreporting.MyAnalysisWizard',config);	
-		//this.wizardWin.on('save', this.saveDataset, this);
-		//this.wizardWin.on('getMetaValues', this.getMetaValues, this);
+		//Event for Opening MyData Page only for creating a Report( WS or Qbe)
+		this.wizardWin.on('openMyDataForReport',function(){
+			this.fireEvent('openMyDataForReport');
+		},this);
+		//Event for Opening MyData Page only for creating a Geo Document
+		this.wizardWin.on('openMyDataForGeo',function(){
+			this.fireEvent('openMyDataForGeo');
+		},this);
     	this.wizardWin.show();
 	}
 	
