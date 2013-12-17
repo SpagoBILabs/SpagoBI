@@ -525,6 +525,7 @@ Sbi.geo.control.Layers = OpenLayers.Class(OpenLayers.Control, {
 	            closeAction :'hide',
 	            plain       : true,
 	            title		: LN('sbi.geo.layerpanel.catalogue'),
+	            modal		: true,
 	            items       : [layersCatalogue],
 	            buttons		: [{
                     text: LN('sbi.geo.layerpanel.add'),

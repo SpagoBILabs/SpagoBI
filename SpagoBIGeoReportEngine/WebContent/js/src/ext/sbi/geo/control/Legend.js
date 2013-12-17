@@ -311,6 +311,7 @@ Sbi.geo.control.Legend = OpenLayers.Class(OpenLayers.Control, {
 	            closeAction : 'close',
 	            plain       : true,
 	            title		: 'Style settings',
+	            modal		: true,
 	            items       : [this.thematizerControlPanel],
 	            buttons		: [
 	             {
