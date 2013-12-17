@@ -297,7 +297,7 @@ Sbi.locale.ln['sbi.browser.document.share.win.btn']  = 'Share';
 Sbi.locale.ln['sbi.browser.document.share.win.tooltip']  = 'Click to share the document';
 Sbi.locale.ln['sbi.browser.document.unshare.success']  = 'Unshare document ended correctly!';
 Sbi.locale.ln['sbi.generic.confirmUnshare'] = 'Confirm the unshare of the document?';
-Sbi.locale.ln['sbi.browser.document.functsMandatory']  = 'Before share the document select at least one folder where to place it';
+Sbi.locale.ln['sbi.browser.document.functsMandatory']  = 'Before share the document select at least a folder or a community where to place it';
 Sbi.locale.ln['sbi.generic.confirmShare']  = 'Confirm the share of the document?';
 Sbi.locale.ln['sbi.browser.document.share.success']  = 'Share document ended correctly';
 

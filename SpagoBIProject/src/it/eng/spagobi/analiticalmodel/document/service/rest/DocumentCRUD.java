@@ -30,6 +30,7 @@ import it.eng.spagobi.services.security.bo.SpagoBIUserProfile;
 import it.eng.spagobi.services.security.service.ISecurityServiceSupplier;
 import it.eng.spagobi.services.security.service.SecurityServiceSupplierFactory;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.json.JSONUtils;
 
 import java.security.Security;
@@ -72,6 +73,7 @@ public class DocumentCRUD {
 
 	public static final String OBJECT_ID = "docId";
 	public static final String OBJECT_FUNCTS = "functs";
+	public static final String COMMUNITY = "communityId";
 	public static final String IS_SHARE = "isShare";
 	public static final String USER = "user";
 	public static final String DOCUMENT_TYPE = "docType";
@@ -329,6 +331,18 @@ public class DocumentCRUD {
 			if ("true".equalsIgnoreCase(isShare)){
 				//share
 				JSONArray functs = ( req.getParameter(OBJECT_FUNCTS)==null)?new JSONArray() : ObjectUtils.toJSONArray( req.getParameter(OBJECT_FUNCTS) ) ;
+				String communityFCode = req.getParameter(COMMUNITY); 
+				if (communityFCode != null && !"".equals(communityFCode)){
+					try{
+						//add community folder to functionalities community folder				
+						LowFunctionality commF= DAOFactory.getLowFunctionalityDAO().loadLowFunctionalityByCode(communityFCode, false);
+						Integer commFId= commF.getId();
+						functs.put(commFId);
+					} catch (Exception e) {
+						logger.error("Error sharing the document.. Impossible to parse the community ",e);
+						throw new SpagoBIRuntimeException("Error sharing the document.. Impossible to parse the community",e);
+					}
+				}
 				lstFuncts = JSONUtils.asList(functs);
 				document.setPublicDoc(true);
 			}

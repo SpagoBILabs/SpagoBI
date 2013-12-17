@@ -15,7 +15,7 @@
 
 Ext.define('Sbi.adhocreporting.MyAnalysisBrowser', {
 	extend : 'Ext.Panel'
-		
+	
 	,
 	config : {
 		//id:'this',
@@ -294,8 +294,7 @@ Ext.define('Sbi.adhocreporting.MyAnalysisBrowser', {
 				         "name",
 				         "description",
 				         "owner",
-				         "functCode"],
-			   // autoLoad: true
+				         "functCode"]
 			});
 			storeComm.on("load", function(store) {
 				var defaultData = {};
@@ -303,16 +302,17 @@ Ext.define('Sbi.adhocreporting.MyAnalysisBrowser', {
 			}, this);
 			
 			storeComm.load();
-			
 
 			this.docCommunity = Ext.create('Ext.form.ComboBox', {
-			    fieldLabel: 'Community',
+			    fieldLabel: LN('sbi.community.title'),
 			    queryMode: 'local',
 			    store: storeComm,
 			    displayField: 'name',
 			    valueField: 'functCode',
-			    width: 120,
-			    allowBlank: true
+			    width: 300,
+			    allowBlank: true,
+			    editable: false,
+			    padding: '10 0 0 0'
 			});
 		    
 		    if(this.shareWindow != null){			
@@ -321,7 +321,7 @@ Ext.define('Sbi.adhocreporting.MyAnalysisBrowser', {
 			}
 			
 			var shareWindowPanel = new Ext.form.FormPanel({
-				layout: 'form',
+				layout: 'anchor', //'form',
 				bodyStyle: 'padding:5px',
 				defaults: {
 		            xtype: 'textfield'
@@ -396,9 +396,8 @@ Ext.define('Sbi.adhocreporting.MyAnalysisBrowser', {
 	}
 	
 	, makeDocumentShared: function(rec) {
-//        if (!this.treePanel.returnCheckedIdNodesArray() || this.treePanel.returnCheckedIdNodesArray().length == 0 ||
-//        		!this.docCommunity || this.docCommunity.value == ''){
-        if (!this.treePanel.returnCheckedIdNodesArray() || this.treePanel.returnCheckedIdNodesArray().length == 0 ){
+        if ((!this.treePanel.returnCheckedIdNodesArray() || this.treePanel.returnCheckedIdNodesArray().length == 0) &&
+        		(!this.docCommunity || ! this.docCommunity.value || this.docCommunity.value == '' )){
         	Ext.MessageBox.show({
                 title: LN('sbi.generic.warning'),
                 msg:  LN('sbi.browser.document.functsMandatory'),
@@ -420,6 +419,7 @@ Ext.define('Sbi.adhocreporting.MyAnalysisBrowser', {
 	                    }
 	                    p.isShare = "true"; //is a share operation
 	                    p.functs =  Ext.JSON.encode(this.treePanel.returnCheckedIdNodesArray());
+	                    p.communityId = this.docCommunity.getValue();
 	                    
 	                	Ext.Ajax.request({
 	                         url: this.services['shareDocument'],
