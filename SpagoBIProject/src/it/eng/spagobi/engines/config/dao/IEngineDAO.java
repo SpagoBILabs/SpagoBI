@@ -65,7 +65,30 @@ public interface IEngineDAO extends ISpagoBIDao{
 	 */
 	
 	public List<Engine> loadAllEngines() throws EMFUserError;
-
+	/**
+	 * Loads all detail information for all engines filtered by tenant. For each of them, detail
+	 * information is stored into an <code>engine</code> object. After that, all engines
+	 * are stored into a <code>List</code>, which is returned.
+	 * 
+	 * @return A list containing all engine objects
+	 * 
+	 * @throws EMFUserError If an Exception occurred
+	 */
+	
+	public List<Engine> loadAllEnginesByTenant() throws EMFUserError;
+	/**
+	 * Loads all detail information for all engines compatible to the BIObject type specified 
+	 * at input and the tenant. For each of them, detail information is stored into an <code>engine</code> object.
+	 * After that, all engines are stored into a <code>List</code>, which is returned.
+	 * 
+	 * @param biobjectType the biobject type
+	 * 
+	 * @return A list containing all engine objects compatible with the BIObject type passed at input
+	 * 
+	 * @throws EMFUserError If an Exception occurred
+	 */
+	
+	public List<Engine> loadAllEnginesForBIObjectTypeAndTenant(String biobjectType) throws EMFUserError;
 	/**
 	 * Loads all detail information for all engines compatible to the BIObject type specified
 	 * at input. For each of them, detail information is stored into an <code>engine</code> object.
@@ -79,7 +102,6 @@ public interface IEngineDAO extends ISpagoBIDao{
 	 */
 	
 	public List<Engine> loadAllEnginesForBIObjectType(String biobjectType) throws EMFUserError;
-	
 	/**
 	 * Implements the query to modify an engine. All information needed is stored
 	 * into the input <code>engine</code> object.

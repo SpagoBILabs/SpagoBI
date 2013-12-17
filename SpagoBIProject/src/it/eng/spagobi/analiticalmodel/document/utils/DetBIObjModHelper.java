@@ -34,6 +34,8 @@ import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
 import it.eng.spagobi.commons.utilities.SpagoBITracer;
 import it.eng.spagobi.community.mapping.SbiCommunity;
 import it.eng.spagobi.engines.config.bo.Engine;
+import it.eng.spagobi.engines.config.dao.IEngineDAO;
+import it.eng.spagobi.tenant.TenantManager;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.file.FileUtils;
@@ -387,10 +389,16 @@ public class DetBIObjModHelper {
 	public void fillResponse(String initialPath) throws EMFUserError {
 		try {
 			IDomainDAO domaindao = DAOFactory.getDomainDAO();
-	        List types = domaindao.loadListDomainsByType("BIOBJ_TYPE");	       
+			domaindao.setUserProfile((UserProfile)profile);
+			List types = domaindao.loadListDomainsByTypeAndTenant("BIOBJ_TYPE");	   
+			
+	        //List types = domaindao.loadListDomainsByType("BIOBJ_TYPE");	       
 	        // load list of states and engines
 	        List states = domaindao.loadListDomainsByType("STATE");
-	        List engines =  DAOFactory.getEngineDAO().loadAllEngines();
+	        IEngineDAO enginedao= DAOFactory.getEngineDAO();
+	        enginedao.setUserProfile(profile);
+	        List engines =  enginedao.loadAllEngines();
+	        
 	        List datasource =  DAOFactory.getDataSourceDAO().loadAllDataSources();
 	        List dataset=DAOFactory.getDataSetDAO().loadAllActiveDataSets();
 			List<SbiCommunity> communities = DAOFactory.getCommunityDAO().loadSbiCommunityByUser(profile.getUserUniqueIdentifier().toString());
