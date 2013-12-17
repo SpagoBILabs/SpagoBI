@@ -182,6 +182,43 @@ public class EngineDAOHibImpl extends AbstractHibernateDAO implements IEngineDAO
 		return realResult;
 	}
 
+	public List<Engine> loadAllEnginesByTenant() throws EMFUserError {
+		logger.debug("IN");
+		Session aSession = null;
+		Transaction tx = null;
+		List realResult = new ArrayList();
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+
+			Query hibQuery = aSession.createQuery("select oe.sbiEngines from SbiOrganizationEngine oe "
+					+ "where oe.sbiOrganizations.name = ?" );
+			hibQuery.setString(0, getTenant());
+			List hibList = hibQuery.list();
+			Iterator it = hibList.iterator();
+
+			while (it.hasNext()) {
+				realResult.add(toEngine((SbiEngines) it.next()));
+			}
+			tx.commit();
+		} catch (HibernateException he) {
+			logException(he);
+			logger.error("Error in loading all engines", he);
+			if (tx != null)
+				tx.rollback();
+
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+
+		} finally {
+			if (aSession!=null){
+				if (aSession.isOpen()) aSession.close();
+			}
+		}
+		logger.debug("OUT");
+		return realResult;
+	}
+
+
 	/**
 	 * Load all engines for bi object type.
 	 * 
@@ -206,6 +243,46 @@ public class EngineDAOHibImpl extends AbstractHibernateDAO implements IEngineDAO
 
 			Query hibQuery = aSession.createQuery(" from SbiEngines engines where engines.biobjType.valueCd = ?" );
 			hibQuery.setString(0, biobjectType);
+			List hibList = hibQuery.list();
+			Iterator it = hibList.iterator();
+
+			while (it.hasNext()) {
+				realResult.add(toEngine((SbiEngines) it.next()));
+			}
+		} catch (HibernateException he) {
+			logger.debug("Error in loading ecgines for biObject Type "+biobjectType, he);
+			logException(he);
+
+			if (tx != null)
+				tx.rollback();
+
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+
+		} finally {
+			if (aSession!=null){
+				if (aSession.isOpen()) aSession.close();
+			}
+		}
+		logger.debug("OUT");
+		return realResult;
+	}
+
+	public List<Engine> loadAllEnginesForBIObjectTypeAndTenant(
+			String biobjectType) throws EMFUserError {
+		logger.debug("IN");
+		Session aSession = null;
+		Transaction tx = null;
+
+		logger.debug("BiObject Type is "+biobjectType);
+		List<Engine> realResult = new ArrayList<Engine>();
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+
+			Query hibQuery = aSession.createQuery("select oe.sbiEngines from SbiOrganizationEngine oe "
+					+ "where oe.sbiOrganizations.name = ? and oe.sbiEngines.biobjType.valueCd = ?" );
+			hibQuery.setString(0, getTenant());
+			hibQuery.setString(1, biobjectType);
 			List hibList = hibQuery.list();
 			Iterator it = hibList.iterator();
 
@@ -551,7 +628,6 @@ public class EngineDAOHibImpl extends AbstractHibernateDAO implements IEngineDAO
 	
 
 	}
-
 
 
 }

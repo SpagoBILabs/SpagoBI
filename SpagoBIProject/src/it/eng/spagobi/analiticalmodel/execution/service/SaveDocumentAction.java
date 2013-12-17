@@ -22,6 +22,7 @@ import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.community.mapping.SbiCommunity;
 import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.engines.config.bo.Engine;
+import it.eng.spagobi.engines.config.dao.IEngineDAO;
 import it.eng.spagobi.engines.drivers.worksheet.WorksheetDriver;
 import it.eng.spagobi.tools.catalogue.bo.MetaModel;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
@@ -570,7 +571,9 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 					throw new SpagoBIServiceException(SERVICE_NAME,	"Impossible to load engine with id equals to[" + engineId + "]");
 				}
 			} else {
-				List<Engine> engines = DAOFactory.getEngineDAO().loadAllEnginesForBIObjectType(type);
+				IEngineDAO enginedao= DAOFactory.getEngineDAO();
+				enginedao.setUserProfile(getUserProfile());
+				List<Engine> engines = enginedao.loadAllEnginesForBIObjectTypeAndTenant(type);
 				if ( engines != null && !engines.isEmpty() ){
 					engine = engines.get(0);
 					if("MAP".equalsIgnoreCase(type)) {

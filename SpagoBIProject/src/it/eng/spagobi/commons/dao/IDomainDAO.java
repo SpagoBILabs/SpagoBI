@@ -21,7 +21,19 @@ import java.util.List;
  * Defines the interfaces for all methods needed to operate with a domain.
  */
 public interface IDomainDAO extends ISpagoBIDao{
+	/**
+	 * Loads all possible domain that refer to a given domain type, storing each
+	 * of them into a <code>Domain</objects> and after putting all objects into
+	 * a list filtered by tenant, which is returned.
+	 * 
+	 * @param domainType The String identifying the domain type
+	 * 
+	 * @return The list of all domains
+	 * 
+	 * @throws EMFUserError If an Exception occurred
+	 */
 	
+	public List loadListDomainsByTypeAndTenant(String domainType) throws EMFUserError;
 	/**
 	 * Loads all possible domain that refer to a given domain type, storing each
 	 * of them into a <code>Domain</objects> and after putting all objects into

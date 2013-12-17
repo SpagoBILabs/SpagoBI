@@ -100,6 +100,66 @@ public class DomainDAOHibImpl extends AbstractHibernateDAO implements
 
 	}
 
+	public List loadListDomainsByTypeAndTenant(String domainType)
+			throws EMFUserError {
+		Session aSession = null;
+		Transaction tx = null;
+
+		List realResult = new ArrayList();
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+			
+
+			
+			Criterion domainCdCriterrion = Expression
+					.eq("domainCd", domainType);
+			Criteria criteria = aSession.createCriteria(SbiDomains.class);
+			criteria.add(domainCdCriterrion);
+
+			List hibList = criteria.list();
+			
+			String tenant = getTenant();
+
+
+			Iterator it = hibList.iterator();
+
+			while (it.hasNext()) {
+				Query hibQueryEng = aSession.createQuery("from SbiOrganizationEngine oe "
+						+ "where oe.sbiOrganizations.name = :tenant "
+						+ "and oe.sbiEngines.biobjType.valueCd = :valueCd"
+						);
+
+				hibQueryEng.setString("tenant", tenant);				
+				SbiDomains domain = (SbiDomains) it.next();
+				hibQueryEng.setString("valueCd", domain.getValueCd());
+				
+				List hibListEng  =hibQueryEng.list();
+				if(!hibListEng.isEmpty()){
+					realResult.add(toDomain(domain));
+				}
+				
+				
+			}
+			tx.commit();
+		} catch (HibernateException he) {
+			logException(he);
+
+			if (tx != null)
+				tx.rollback();
+
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+
+		} finally {
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
+			}
+		}
+
+		return realResult;
+
+	}
 	/**
 	 * Load domain by code and value.
 	 * 
@@ -455,5 +515,6 @@ public class DomainDAOHibImpl extends AbstractHibernateDAO implements
 			}
 		}
 	}
+
 
 }
