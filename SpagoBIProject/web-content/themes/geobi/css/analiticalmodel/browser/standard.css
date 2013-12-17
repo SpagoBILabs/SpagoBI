@@ -68,6 +68,7 @@ a {text-decoration:none}
 .clear{clear:both}
 .ext{text-indent:-9999px;font-size:0;display:block;line-height:0}
 .aux{position:relative;margin:0 auto;padding:0 33px} /* ATTENTION! ADDED padding:0 33px */
+.x-boundlist-item {min-height: 20px;}
 	
 
 /* ----------- STRUCTURE --------------------------------------------------------------------------------------------------------------------------------------------------------------------- */

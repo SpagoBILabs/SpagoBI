@@ -286,7 +286,7 @@ Sbi.locale.ln['sbi.browser.document.share.win.btn']  = 'Condividi';
 Sbi.locale.ln['sbi.browser.document.share.win.tooltip']  = 'Seleziona per condividere il documento';
 Sbi.locale.ln['sbi.browser.document.unshare.success']  = 'Operazione di annullamento della condivisione terminata correttamente !';
 Sbi.locale.ln['sbi.generic.confirmUnshare'] = 'Confermi l\'annullamento della condivisione del documento ?';
-Sbi.locale.ln['sbi.browser.document.functsMandatory']  = 'Prima di condividere il documento seleziona almeno una cartella dove posizionare il documento';
+Sbi.locale.ln['sbi.browser.document.functsMandatory']  = 'Prima di condividere il documento seleziona almeno una cartella o una community dove posizionare il documento';
 Sbi.locale.ln['sbi.generic.confirmShare']  = 'Confermi la condivisione del documento ?';
 Sbi.locale.ln['sbi.browser.document.share.success']  = 'Operazione di condivisione del documento terminata correttamente';
 
