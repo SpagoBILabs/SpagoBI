@@ -6,6 +6,10 @@
 
 package it.eng.spagobi.engines.georeport.services;
 
+import java.io.IOException;
+
+import javax.servlet.http.HttpServletResponse;
+
 import it.eng.spagobi.engines.georeport.GeoReportEngineInstance;
 import it.eng.spagobi.services.proxy.DataSetServiceProxy;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
@@ -83,13 +87,47 @@ public class GetTargetDatasetAction extends AbstractBaseServlet {
 			}
 			
 			logger.debug(result.toString(3));
-			servletIOManager.tryToWriteBackToClient( result.toString() );
+			String resultStr = result.toString();
+			writeBackToClient( resultStr,  servletIOManager);
 			
 		} catch(Throwable t) {
 			t.printStackTrace();
 		} finally {
 			logger.debug("OUT");
 		}
+	}
+	
+	public void writeBackToClient(String content, BaseServletIOManager servletIOManager) throws IOException {
+		
+		logger.debug("IN");
+		
+		// setup response header
+		if(servletIOManager.getResponse() instanceof HttpServletResponse) {
+			((HttpServletResponse)servletIOManager.getResponse()).setHeader("Content-Disposition", "inline; filename=\"service-response\";");
+		}
+	
+		
+		servletIOManager.getResponse().setContentType( "text/plain" );
+		logger.debug("Response content type set to [text/plain]");
+		
+		servletIOManager.getResponse().setCharacterEncoding("UTF-8");
+		logger.debug("Response character encoding set to [UTF-8]");
+		
+		byte[] byteContent = content.getBytes("UTF-8");
+		servletIOManager.getResponse().setContentLength( byteContent.length );
+		logger.debug("Response character length is equal to [" + content.length()+ "]");
+		logger.debug("Response byte length is equal to [" + byteContent.length + "]");
+		logger.debug("Response content length set to [" + byteContent.length + "]");
+		
+		if(servletIOManager.getResponse() instanceof HttpServletResponse) {
+			((HttpServletResponse)servletIOManager.getResponse()).setStatus(200);
+			logger.debug("Response status code set to [200]");
+		}
+		
+		servletIOManager.getResponse().getWriter().print(content);
+		servletIOManager.getResponse().getWriter().flush();
+		
+		logger.debug("OUT");
 	}
 
 	public void handleException(BaseServletIOManager servletIOManager,
