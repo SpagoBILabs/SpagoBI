@@ -57,7 +57,7 @@ Ext.onReady(function () {
 		
 	}
 	function hideItem( menu, e, eOpts){
-        console.log('bye bye ');
+        //console.log('bye bye ');
         menu.hide();
     }
    
