@@ -144,7 +144,9 @@ function Gauge(placeholderName, configuration)
 							.outerRadius(0.85 * this.config.raduis))
 						.attr("transform", function() { return "translate(" + self.config.cx + ", " + self.config.cy + ") rotate(270)" });
 		}catch(err){
-			console.log(err);
+			if(!Ext.isIE) {
+				console.log(err);
+			}
 		}
 	}
 
