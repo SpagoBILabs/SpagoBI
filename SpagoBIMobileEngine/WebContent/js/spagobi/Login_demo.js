@@ -78,7 +78,17 @@ Ext.define('app.views.LoginView',{
 	                            {
 	                            	xtype: 'spacer'
 	                            },
-	                        	
+	                        	{
+	                                text: 'Demo User',
+	                                ui: 'confirm',
+	                                cls:'x-button-custom',
+	                                handler: function(){
+	                                	app.views.loginView.doSubmit({
+	                                			userID: "bimobile",
+	                                			password: "bimobile"
+	                                	});
+	                                }
+	                            },
 	                        	{
 	                                text: 'Login',
 	                                ui: 'confirm',
