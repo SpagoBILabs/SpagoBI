@@ -153,8 +153,8 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
     <script type="text/javascript">  
    
     function returnValues(item, template){
-    	console.log('template');	
-    	console.log(template);	
+    	//console.log('template');	
+    	//console.log(template);	
     	if (item=='width') {
     		return template.width;	
     	} else if (item =='height') {	
@@ -239,7 +239,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
      	if(node.parentKey && map[node.parentKey]) 		
      	{
      		parent1 = map[node.parentKey];
-     		console.log(parent1);
+     		//console.log(parent1);
      		
      		if(parent1.children) 
      		{
@@ -264,7 +264,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
     d3.json("<%=urlProva %>", function(data) {
      node=root=prepareData(data,<%=chartTemplate%>);
 			
-      console.log(root);
+      //console.log(root);
       var nodes = treemap.nodes(root)
           .filter(function(d) { return !d.children; });
 
