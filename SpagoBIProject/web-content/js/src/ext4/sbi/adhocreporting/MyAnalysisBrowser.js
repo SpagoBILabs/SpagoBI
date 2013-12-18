@@ -173,8 +173,6 @@ Ext.define('Sbi.adhocreporting.MyAnalysisBrowser', {
 	}
 	
 	, deleteDocument: function(rec){
-		Sbi.exception.ExceptionHandler.showInfoMessage('TODO: Delete Document');
-		
 		Ext.MessageBox.confirm(
 				LN('sbi.generic.pleaseConfirm')
 				, LN('sbi.generic.confirmDelete')
@@ -265,7 +263,10 @@ Ext.define('Sbi.adhocreporting.MyAnalysisBrowser', {
 	
 	, showMetadataDocument: function(rec){
 		//TODO
-		Sbi.exception.ExceptionHandler.showInfoMessage('TODO: Show Metadata Document');		
+		Sbi.exception.ExceptionHandler.showInfoMessage('TODO: Show metadata Document');
+//		var docId = rec.id;
+//		this.win_metadata = new Sbi.execution.toolbar.MetadataWindow({'OBJECT_ID': docId});
+//		this.win_metadata.show();
 	}
 	
 	, shareDocument: function(rec){
@@ -602,7 +603,7 @@ Ext.define('Sbi.adhocreporting.MyAnalysisBrowser', {
 		
 		//load store and refresh datasets view
 		this.store.load(function(records, operation, success) {
-		    console.log('***MYANALYSIS BROWSER loaded records***');
+		    //console.log('***MYANALYSIS BROWSER loaded records***');
 		});
 		this.viewPanel.bindStore(this.store);
 		this.viewPanel.refresh();
