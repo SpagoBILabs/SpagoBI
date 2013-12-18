@@ -100,14 +100,14 @@ Sbi.geo.utils.ContextFactory = function(){
 									var factorK = (feature.layer.map.pieDimensions[fid] - min) / delta;
 									size = (30 + Math.round(70 * factorK));
 		                            feature.layer.map.pieDimensions[fid+'_size'] =size;
-		                            console.log("size: " +size );
+		                          //  console.log("size: " +size );
 								}
 							}
 							//if(feature.layer.map.zoom>6){
 							//return 600;
 					//	}
 						//else{
-							console.log("size:" +  feature.layer.map.pieDimensions[feature.fid+'_size'] );
+							//console.log("size:" +  feature.layer.map.pieDimensions[feature.fid+'_size'] );
 							return feature.layer.map.pieDimensions[feature.fid+'_size'] ;
 						//}
 					},
