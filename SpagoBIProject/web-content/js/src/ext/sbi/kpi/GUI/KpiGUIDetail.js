@@ -194,7 +194,7 @@ Ext.extend(Sbi.kpi.KpiGUIDetail , Ext.form.FormPanel, {
 			if(this.tickInterval && this.tickInterval != null && this.maxChartValue != this.minChartValue){
 				this.ticksNumber = ((this.maxChartValue - this.minChartValue)/this.tickInterval);
 			}
-			console.log(this.ticksNumber);
+			//console.log(this.ticksNumber);
 			if(this.dial == null){
 				// Build the dial
 				this.dial = drawDial({
@@ -278,10 +278,10 @@ Ext.extend(Sbi.kpi.KpiGUIDetail , Ext.form.FormPanel, {
 					 * See also STEP 1 in custom/kpi.jsp					 * 
 					 * */
 					if(typeof d3 !== 'undefined'){	
-						console.log('Not using IE');
+						//console.log('Not using IE');
 						this.drawD3Chart(this.val);
 					}else{
-						console.log('Using IE < 9');
+						//console.log('Using IE < 9');
 						this.drawHighChart(this.val);
 					}
 					

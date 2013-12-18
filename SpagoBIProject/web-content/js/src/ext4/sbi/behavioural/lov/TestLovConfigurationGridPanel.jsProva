@@ -94,7 +94,7 @@ Ext.define('Sbi.behavioural.lov.TestLovCPanel', {
 		
 			
 		
-		console.log('TestLovConfigurationGridPanel costructor IN');
+		//console.log('TestLovConfigurationGridPanel costructor IN');
 		Ext.apply(this,config);
 		
 		this.height = 100;
@@ -133,7 +133,7 @@ Ext.define('Sbi.behavioural.lov.TestLovCPanel', {
 		
 		this.store.load();
     	this.callParent(arguments);
-    	console.log('TestLovConfigurationGridPanel costructor OUT');
+    	//console.log('TestLovConfigurationGridPanel costructor OUT');
     
 
 

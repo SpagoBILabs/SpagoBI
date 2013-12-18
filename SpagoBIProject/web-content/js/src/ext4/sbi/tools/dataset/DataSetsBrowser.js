@@ -616,7 +616,7 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 		
 		//load store and refresh datasets view
 		this.store.load(function(records, operation, success) {
-		    console.log('***DATASETS BROWSER loaded records***');
+		    //console.log('***DATASETS BROWSER loaded records***');
 		});
 		this.viewPanel.bindStore(this.store);
 		this.viewPanel.refresh();

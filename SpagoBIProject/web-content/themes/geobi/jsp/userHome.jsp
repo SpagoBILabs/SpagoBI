@@ -109,7 +109,7 @@ Ext.onReady(function () {
     this.titlePath = Ext.create("Ext.Panel",{title :'Home'});
     
 	function hideItem( menu, e, eOpts){
-        console.log('bye bye ');
+        //console.log('bye bye ');
         menu.hide();
     }
 	
