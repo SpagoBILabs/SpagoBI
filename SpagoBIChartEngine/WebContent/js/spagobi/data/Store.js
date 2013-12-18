@@ -94,7 +94,7 @@ Ext.define('Sbi.extjs.chart.data.Store', {
 		var proxyUrl = Sbi.config.serviceRegistry.getServiceUrl({serviceName:  'GET_CHART_DATA_ACTION'
 			   , baseParams:params
 			    });
-		console.log(proxyUrl);
+		//console.log(proxyUrl);
 		this.proxy =  Ext.apply(this.createProxy(proxyUrl),{});
 
 		this.refreshTime = config.refreshTime;	
