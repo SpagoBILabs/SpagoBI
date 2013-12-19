@@ -47,6 +47,7 @@ Ext.define('Sbi.tools.multitenant.MultitenantListDetailPanel', {
 	, onDeleteRow: function(record){
 		
 		var thisPanel = this;
+
 		var deleteRecord = function(buttonId, text, config){
 			
 			var record = config.record;
@@ -55,8 +56,17 @@ Ext.define('Sbi.tools.multitenant.MultitenantListDetailPanel', {
 				
 				var recordToDelete = Ext.create("Sbi.tools.multitenant.MultitenantModel",record.data);
 				
+				if (!this.loadMask) {    		
+		    		this.loadMask = new Ext.LoadMask(Ext.getBody(), {msg: "  Wait...  "});
+		    	}		   
+		    	this.loadMask.show();
+		    					
 				recordToDelete.destroy({
 					success : function(object, response, options) {
+					
+						if (this.loadMask && this.loadMask != null) {	
+				    		this.loadMask.hide();
+				    	}
 						if(response !== undefined && response.response !== undefined && response.response.responseText !== undefined && response.response.statusText=="OK") {
 							response = response.response ;
 							if(response.responseText!=null && response.responseText!=undefined){
@@ -72,7 +82,13 @@ Ext.define('Sbi.tools.multitenant.MultitenantListDetailPanel', {
 							Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
 						}
 					},
-					failure: Sbi.exception.ExceptionHandler.handleFailure      
+					failure: function(object, response, options){
+						if (this.loadMask && this.loadMask != null) {	
+				    		this.loadMask.hide();
+				    	}
+						Sbi.exception.ExceptionHandler.handleFailure
+					},
+					scope: this
 				});
 			} 
 		};

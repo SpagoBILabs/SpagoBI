@@ -409,7 +409,7 @@ public class TenantsDAOHibImpl extends AbstractHibernateDAO implements ITenantsD
 	}
 	
 	public void deleteTenant(SbiTenant aTenant)throws EMFUserError {
-		
+				
 		logger.debug("deleteTenant IN");
 		Session aSession = null;
 		Connection jdbcConnection = null;
