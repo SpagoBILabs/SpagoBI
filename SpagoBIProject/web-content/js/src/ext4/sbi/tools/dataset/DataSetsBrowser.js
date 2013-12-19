@@ -661,11 +661,11 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 //        	communityString += communities.root[i].name;
 //        	communityString +='</a></li>';
 //        }
-//        
+
         var createButton = '';
         if ( (Sbi.settings.mydata.defaultFilter == 'MyDataSet') || (Sbi.settings.mydata.defaultFilter == 'AllDataSet') ){
             if (this.user !== '' && this.user !== this.PUBLIC_USER &&
-            		(!this.isFromWizard || this.isFromWizard != true)){
+            		(!this.isFromWizard || this.isFromWizard != 'true')){
             	createButton += ' <a id="newDataset" href="#" onclick="javascript:Ext.getCmp(\'this\').addNewDataset(\'\')" class="btn-add"><span class="highlighted">'+LN('sbi.generic.create')+'</span> '+LN('sbi.browser.document.dataset')+'<span class="plus">+</span></a> ';
             }
         }
