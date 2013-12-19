@@ -656,6 +656,7 @@
 				<file name="./src/ext4/sbi/adhocreporting/MyAnalysisBrowser.js" />
 				<file name="./src/ext4/sbi/adhocreporting/MyAnalysisModel.js" />
 				<file name="./src/ext4/sbi/adhocreporting/MyAnalysisView.js" />
+				<file name="./src/ext4/sbi/adhocreporting/MyAnalysisWizard.js" />
 
 
 				<file name="./src/ext4/sbi/community/CommunityDetailPanel.js" />
