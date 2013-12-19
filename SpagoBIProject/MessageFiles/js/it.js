@@ -725,6 +725,8 @@ Sbi.locale.ln['sbi.datasource.validation.writeDefault']= ' : data source già pre
 //Multitenant
 Sbi.locale.ln['sbi.multitenant.saved']= 'Tenant salvato correttamente';
 Sbi.locale.ln['sbi.multitenant.deleted']= 'Tenant cancellato correttamente';
+Sbi.locale.ln['sbi.multitenant.delete.title']= 'Cancellare il Tenant?';
+Sbi.locale.ln['sbi.multitenant.delete.msg']= 'Sei sicuro di voler cancellare il tenant e tutti i dati ad esso associati?';
 Sbi.locale.ln['sbi.multitenant.validation.error']= 'Ci sono degli errori di validazione. Controlla i campi marcati.';
 Sbi.locale.ln["error.mesage.name.multitenant.cannot.be.null"]= "Il nome del tenant non puo' essere nullo";
 Sbi.locale.ln["error.mesage.multitenant.deleting.inuse"] = "Impossibile cancellare il tenant in quanto attualmente in uso";
