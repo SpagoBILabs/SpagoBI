@@ -11,7 +11,10 @@ import it.eng.spago.base.RequestContainerPortletAccess;
 import it.eng.spago.base.SessionContainer;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.message.MessageBundle;
+import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.SingletonConfig;
+import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.PortletUtilities;
@@ -213,6 +216,7 @@ public class MessageBuilder
     {
         logger.debug("IN");
         String sbiMode = getSpagoBIMode(request);
+        UserProfile profile = null;
         Locale locale = null;
         if(sbiMode.equalsIgnoreCase("WEB"))
         {
@@ -225,13 +229,29 @@ public class MessageBuilder
                 SessionContainer permSess = sessCont.getPermanentContainer();
                 language = (String)permSess.getAttribute("AF_LANGUAGE");
                 country = (String)permSess.getAttribute("AF_COUNTRY");
+                profile = (UserProfile)permSess.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
             }
            
             if(country == null)
             {
                 country = "";
             }
-            if(language != null) {
+                        
+            if(profile != null && !profile.getUserId().equals(SpagoBIConstants.PUBLIC_USER_ID)
+            		&& language != null) {
+            	//check preference from user attributes if presents
+            	try{
+					String userLocale = (String)profile.getUserAttribute("language");
+						if (userLocale != null && !("").equals(userLocale)){
+							language = userLocale.substring(0,userLocale.indexOf("_"));
+							country = userLocale.substring(userLocale.indexOf("_")+1);
+							logger.info("User attribute language: " + language);
+							logger.info("User attribute country: " + country);
+						}
+            	}catch(Exception e){
+            		logger.debug("Error on reading user attribute language: " + e);
+            	}
+				           		
                 locale = new Locale(language, country, "");
             } else if(request == null) {
 	            locale = getBrowserLocaleFromSpago();
