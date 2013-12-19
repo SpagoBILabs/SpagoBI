@@ -244,6 +244,8 @@ commented by Davide Zerbetto on 12/10/2009: there are problems with MIF (Ext Man
         	contextName: '<%= GeneralUtilities.getSpagoBiContext() %>',
         	adapterPath: '<%= GeneralUtilities.getSpagoBiContext() + GeneralUtilities.getSpagoAdapterHttpUrl() %>',
         	supportedLocales: <%= GeneralUtilities.getSupportedLocalesAsJSONArray().toString() %>,
+        	 // the timestamp format to be used when communicating with server
+            clientServerTimestampFormat: '<%= GeneralUtilities.getServerTimestampFormatExtJs() %>',
         	
          	<%if(parametersStatePersistenceEnabled != null) {%>
         	isParametersStatePersistenceEnabled: <%= Boolean.valueOf(parametersStatePersistenceEnabled) %>,

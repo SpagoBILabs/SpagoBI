@@ -22,7 +22,8 @@ Ext.define('Sbi.selfservice.ManageSelfServiceContainer', {
         georeportEngineBaseUrl :  '',
         user : '',
         datasetsServicePath: '',
-        qbeEditDatasetUrl : ''
+        qbeEditDatasetUrl : '',
+        isFromWizard: ''
 	},
 
 	/**
@@ -47,6 +48,7 @@ Ext.define('Sbi.selfservice.ManageSelfServiceContainer', {
 			selfServiceContainer : this
 			, datasetsServicePath : config.datasetsServicePath
 			, qbeEditDatasetUrl : config.qbeEditDatasetUrl
+			, isFromWizard : config.isFromWizard
 		}); 
 					
 		this.items = [ this.manageSelfService, this.documentexecution]

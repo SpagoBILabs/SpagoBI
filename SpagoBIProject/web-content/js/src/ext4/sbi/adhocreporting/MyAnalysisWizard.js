@@ -68,8 +68,9 @@ Ext.define('Sbi.adhocreporting.MyAnalysisWizard', {
 		          ,cls:'reportbutton'
 		          ,handler: function() {
 		              thisPanel.documentType = 'Worksheet';
-		              //thisPanel.goNext(1);
-		              thisPanel.fireEvent('openMyDataForReport');
+		              //thisPanel.goNext(1);		              
+		              thisPanel.fireEvent('openMyDataForReport');		 
+		              thisPanel.close();
 		          }
 				  ,tooltip:'Create a new Report Analysis Using Worksheet'
 			});

@@ -12,6 +12,7 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 		modelName : "Sbi.tools.dataset.DataSetModel",
 		dataView : null,
 		user : '',
+		isFromWizard:false,
 		datasetsServicePath: '',
 		autoScroll:true,
 		displayToolbar: true,
@@ -183,6 +184,7 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 			baseParams ={};
 			baseParams.isTech = false;
 			baseParams.showOnlyOwner = true;
+			baseParams.isFromWizard = this.isFromWizard;
 
 			this.services["list"] = Sbi.config.serviceRegistry.getRestServiceUrl({
 				serviceName : 'selfservicedataset',
@@ -194,6 +196,7 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 			baseParams ={};
 			baseParams.isTech = true;
 			baseParams.showOnlyOwner = false;
+			baseParams.isFromWizard = this.isFromWizard;
 
 			this.services["list"] = Sbi.config.serviceRegistry.getRestServiceUrl({
 				serviceName : 'certificateddatasets',
@@ -205,6 +208,7 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 			baseParams ={};
 			baseParams.isTech = false;
 			baseParams.showOnlyOwner = false;
+			baseParams.isFromWizard = this.isFromWizard;
 
 			this.services["list"] = Sbi.config.serviceRegistry.getRestServiceUrl({
 				serviceName : 'certificateddatasets',
@@ -217,6 +221,7 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 			baseParams ={};
 			baseParams.isTech = false;
 			baseParams.showOnlyOwner = false;
+			baseParams.isFromWizard = this.isFromWizard;
 			baseParams.allMyDataDs = true;
 
 			this.services["list"] = Sbi.config.serviceRegistry.getRestServiceUrl({
@@ -659,7 +664,8 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 //        
         var createButton = '';
         if ( (Sbi.settings.mydata.defaultFilter == 'MyDataSet') || (Sbi.settings.mydata.defaultFilter == 'AllDataSet') ){
-            if (this.user !== '' && this.user !== this.PUBLIC_USER){
+            if (this.user !== '' && this.user !== this.PUBLIC_USER &&
+            		(!this.isFromWizard || this.isFromWizard != true)){
             	createButton += ' <a id="newDataset" href="#" onclick="javascript:Ext.getCmp(\'this\').addNewDataset(\'\')" class="btn-add"><span class="highlighted">'+LN('sbi.generic.create')+'</span> '+LN('sbi.browser.document.dataset')+'<span class="plus">+</span></a> ';
             }
         }
