@@ -551,6 +551,7 @@ Ext.define('Sbi.adhocreporting.MyAnalysisBrowser', {
 		var config =  {};
 		config.user = this.user;
 		config.isNew = true;
+	
 		this.wizardWin =  Ext.create('Sbi.adhocreporting.MyAnalysisWizard',config);	
 		//Event for Opening MyData Page only for creating a Report( WS or Qbe)
 		this.wizardWin.on('openMyDataForReport',function(){

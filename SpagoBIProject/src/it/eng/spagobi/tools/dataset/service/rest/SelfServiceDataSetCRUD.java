@@ -116,6 +116,7 @@ public class SelfServiceDataSetCRUD {
 		List<IDataSet> dataSets = new ArrayList<IDataSet>();
 		IEngUserProfile profile = (IEngUserProfile) req.getSession()
 				.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+		Boolean isFromWizard =  (req.getParameter("isFromWizard") != null)?Boolean.valueOf(req.getParameter("isFromWizard")):new Boolean(false);
 		JSONObject JSONReturn = new JSONObject();
 		JSONArray datasetsJSONArray = new JSONArray();
 		try {
@@ -135,7 +136,7 @@ public class SelfServiceDataSetCRUD {
 			datasetsJSONArray = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(dataSets, null);
 			
 			JSONArray datasetsJSONReturn = putActions(profile,
-					datasetsJSONArray);
+					datasetsJSONArray, isFromWizard);
 
 			JSONReturn.put("root", datasetsJSONReturn);
 
@@ -150,23 +151,26 @@ public class SelfServiceDataSetCRUD {
 
 
 	private JSONArray putActions(IEngUserProfile profile,
-			JSONArray datasetsJSONArray) throws JSONException, EMFInternalError {
-		//sets action to modify dataset			
-		JSONObject detailAction = new JSONObject();
-		detailAction.put("name", "detaildataset");
-		detailAction.put("description", "Dataset detail");	
+			JSONArray datasetsJSONArray, Boolean isFromWizard) throws JSONException, EMFInternalError {
 		
-		JSONObject deleteAction = new JSONObject();
-		deleteAction.put("name", "delete");
-		deleteAction.put("description", "Delete dataset");
+		
+			//sets action to modify dataset					
+			JSONObject detailAction = new JSONObject();
+			detailAction.put("name", "detaildataset");
+			detailAction.put("description", "Dataset detail");	
+			
+			JSONObject deleteAction = new JSONObject();
+			deleteAction.put("name", "delete");
+			deleteAction.put("description", "Delete dataset");
+			
+			JSONObject georeportAction = new JSONObject();
+			georeportAction.put("name", "georeport");
+			georeportAction.put("description", "Show Map");
+		
 		
 		JSONObject worksheetAction = new JSONObject();
 		worksheetAction.put("name", "worksheet");
 		worksheetAction.put("description", "Show Worksheet");
-		
-		JSONObject georeportAction = new JSONObject();
-		georeportAction.put("name", "georeport");
-		georeportAction.put("description", "Show Map");
 		
 		JSONObject qbeAction = new JSONObject();
 		qbeAction.put("name", "qbe");
@@ -177,16 +181,20 @@ public class SelfServiceDataSetCRUD {
 		for(int i = 0; i < datasetsJSONArray.length(); i++) {
 			JSONArray actions = new JSONArray();
 			JSONObject datasetJSON = datasetsJSONArray.getJSONObject(i);
-			actions.put(detailAction);		
+			if (isFromWizard.equals(Boolean.FALSE)){
+				actions.put(detailAction);		
+				actions.put(georeportAction); // Annotated view map action to release SpagoBI 4
+				if (profile.getUserUniqueIdentifier().toString().equals(datasetJSON.get("owner"))){
+					//the delete action is able only for private dataset
+					actions.put(deleteAction);
+				}
+			}
 			actions.put(worksheetAction);
-			actions.put(georeportAction); // Annotated view map action to release SpagoBI 4
+		
 			if (profile.getFunctionalities().contains(SpagoBIConstants.BUILD_QBE_QUERIES_FUNCTIONALITY)){
 				actions.put(qbeAction);
 			}
-			if (profile.getUserUniqueIdentifier().toString().equals(datasetJSON.get("owner"))){
-				//the delete action is able only for private dataset
-				actions.put(deleteAction);
-			}
+			
 			datasetJSON.put("actions", actions);
 			datasetsJSONReturn.put(datasetJSON);
 		}

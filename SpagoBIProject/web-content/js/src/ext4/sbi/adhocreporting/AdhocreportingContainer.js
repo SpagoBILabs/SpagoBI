@@ -78,9 +78,10 @@ Ext.define('Sbi.adhocreporting.AdhocreportingContainer', {
 	}
 	
 	,createReport: function(){
-		alert('TODO: Create Report - Open MyData');
-
-
+		var myDataUrl = this.contextName + '/servlet/AdapterHTTP?ACTION_NAME=SELF_SERVICE_DATASET_START_ACTION&LIGHT_NAVIGATOR_RESET_INSERT=TRUE&MYDATA=true&FROM_WIZARD=true';
+		Sbi.debug('myDataUrl: ' + myDataUrl);
+		this.documentexecution.load(myDataUrl);
+		this.getLayout().setActiveItem(1);	
 	}
 	
 	,createGeo: function(){
