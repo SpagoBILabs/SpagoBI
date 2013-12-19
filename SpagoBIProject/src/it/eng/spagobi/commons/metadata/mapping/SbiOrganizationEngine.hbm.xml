@@ -51,7 +51,10 @@
 	        </property> 
 	        <property name="sbiVersionDe" type="string">
 	            <column name="SBI_VERSION_DE" length="10" not-null="false" />
-	        </property>                 		 
+	        </property>
+	        <property name="organization" type="string">
+	            <column name="ORGANIZATION" length="20" not-null="false" />
+	        </property>                  		 
 	  </component>
     </class>
 </hibernate-mapping>

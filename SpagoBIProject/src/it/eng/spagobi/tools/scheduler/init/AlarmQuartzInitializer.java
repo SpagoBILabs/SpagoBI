@@ -16,7 +16,6 @@ import it.eng.spagobi.tools.scheduler.bo.Trigger;
 import it.eng.spagobi.tools.scheduler.dao.ISchedulerDAO;
 
 import java.util.Calendar;
-import java.util.GregorianCalendar;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -40,15 +39,14 @@ public class AlarmQuartzInitializer implements InitializerIFace {
 		try {
 			List<SbiTenant> tenants = DAOFactory.getTenantsDAO().loadAllTenants();
 			for (SbiTenant tenant : tenants) {
-				initInternal(config, tenant);
+				initAlarmForTenant(tenant);
 			}
 		} finally {
 			logger.debug("OUT");
 		}
 	}
 	
-
-	private void initInternal(SourceBean config, SbiTenant tenant) {
+	public void initAlarmForTenant(SbiTenant tenant) {
 		try {
 			logger.debug("IN");
 			boolean alreadyInDB = false;

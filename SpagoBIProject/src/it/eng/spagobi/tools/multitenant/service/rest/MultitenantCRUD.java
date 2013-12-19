@@ -26,6 +26,7 @@ import it.eng.spagobi.tenant.TenantManager;
 import it.eng.spagobi.tools.datasource.bo.DataSource;
 import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
 import it.eng.spagobi.tools.datasource.metadata.SbiDataSource;
+import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
@@ -37,6 +38,7 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -58,8 +60,8 @@ import org.json.JSONObject;
 public class MultitenantCRUD {
 
 	static private Logger logger = Logger.getLogger(MultitenantCRUD.class);
-//	static private String deleteNullIdTenantError = "error.mesage.name.multitenant.cannot.be.null";
-//	static private String deleteInUseError = "error.mesage.multitenant.deleting.inuse";
+	static private String deleteNullIdTenantError = "error.mesage.name.multitenant.cannot.be.null";
+	static private String deleteInUseError = "error.mesage.multitenant.deleting.inuse";
 	static private String canNotFillResponseError = "error.mesage.description.generic.can.not.responce";
 	static private String saveDuplicatedError = "error.mesage.multitenant.saving.duplicated";
 	
@@ -205,45 +207,33 @@ public class MultitenantCRUD {
 		return false;
 	}
 	
-	// TODO:
-//	@DELETE
-//	@Produces(MediaType.APPLICATION_JSON)
-//	public String deleteTenant(@Context HttpServletRequest req) {
-//		
-//		IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
-//		
-//		try {
-//			JSONObject requestBodyJSON = RestUtilities.readBodyAsJSONObject(req);
-//			String id = (String) requestBodyJSON.opt("MULTITENANT_ID");
-//			Assert.assertNotNull(id, deleteNullIdTenantError );
-//			// if the ds is associated with any BIEngine or BIObjects, creates
-//			// an error
-//			boolean bObjects = DAOFactory.getDataSourceDAO().hasBIObjAssociated(id);
-//			if (bObjects){ 
-//				HashMap params = new HashMap();
-//				logger.debug(deleteInUseError);
-//				updateAudit(req, profile, "DATA_SOURCE.DELETE", null, "ERR");
-//				return ( ExceptionUtilities.serializeException(deleteInUseError,null));
-//			}
-//
-//			IDataSource ds = DAOFactory.getDataSourceDAO().loadDataSourceByID(new Integer(id));
-//			DAOFactory.getDataSourceDAO().eraseDataSource(ds);
-//			
-//			updateAudit(req, profile, "DATA_SOURCE.DELETE", null, "OK");
-//			return ("");
-//		} catch (Exception ex) {
-//			logger.error("Cannot fill response container", ex);
-//			updateAudit(req, profile, "DATA_SOURCE.DELETE", null, "ERR");
-//			logger.debug(canNotFillResponseError);
-//			try {
-//				return ( ExceptionUtilities.serializeException(canNotFillResponseError,null));
-//			} catch (Exception e) {
-//				logger.debug("Cannot fill response container.");
-//				throw new SpagoBIRuntimeException(
-//						"Cannot fill response container", e);
-//			}
-//		}
-//	}
+	@DELETE
+	@Produces(MediaType.APPLICATION_JSON)
+	public String deleteTenant(@Context HttpServletRequest req) {
+		
+		IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+		
+		try {
+			JSONObject requestBodyJSON = RestUtilities.readBodyAsJSONObject(req);
+			String id = (String) requestBodyJSON.opt("MULTITENANT_ID");
+			String name = (String) requestBodyJSON.opt("MULTITENANT_NAME");
+			SbiTenant aTenant = new SbiTenant(new Integer(id));
+			aTenant.setName(name);
+			Assert.assertNotNull(id, deleteNullIdTenantError );
+			ITenantsDAO tenantDao = DAOFactory.getTenantsDAO();
+			tenantDao.deleteTenant(aTenant);
+			return ("");
+		} catch (Exception ex) {
+			logger.error("Cannot fill response container", ex);
+			logger.debug(canNotFillResponseError);
+			try {
+				return ( ExceptionUtilities.serializeException(canNotFillResponseError,null));
+			} catch (Exception e) {
+				logger.debug("Cannot fill response container.");
+				throw new SpagoBIRuntimeException("Cannot fill response container", e);
+			}
+		}
+	}
 	
 	@POST
 	@Path("/save")

@@ -48,6 +48,11 @@ Ext.define('Sbi.tools.multitenant.MultitenantDetailPanel', {
 	
 	, setValues: function(data){
 		this.tenantId.setValue(data.MULTITENANT_ID);
+		if(data.MULTITENANT_ID != null && data.MULTITENANT_ID !="")
+			this.tenantName.disable();
+		else
+			this.tenantName.enable();
+			
 		this.tenantName.setValue(data.MULTITENANT_NAME);
 		this.tenantTheme.setValue(data.MULTITENANT_THEME);
 	}

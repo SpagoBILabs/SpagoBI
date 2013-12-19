@@ -5,39 +5,41 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.commons.dao;
 
-import it.eng.spago.base.SourceBean;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
-import it.eng.spagobi.commons.bo.Config;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.bo.Role;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
-import it.eng.spagobi.commons.metadata.SbiDomains;
+import it.eng.spagobi.commons.metadata.SbiCommonInfo;
 import it.eng.spagobi.commons.metadata.SbiExtRoles;
 import it.eng.spagobi.commons.metadata.SbiOrganizationDatasource;
 import it.eng.spagobi.commons.metadata.SbiOrganizationDatasourceId;
 import it.eng.spagobi.commons.metadata.SbiOrganizationEngine;
 import it.eng.spagobi.commons.metadata.SbiOrganizationEngineId;
 import it.eng.spagobi.commons.metadata.SbiTenant;
+import it.eng.spagobi.commons.utilities.HibernateUtil;
 import it.eng.spagobi.engines.config.metadata.SbiEngines;
 import it.eng.spagobi.profiling.bean.SbiExtUserRoles;
 import it.eng.spagobi.profiling.bean.SbiExtUserRolesId;
 import it.eng.spagobi.profiling.bean.SbiUser;
 import it.eng.spagobi.profiling.dao.ISbiUserDAO;
 import it.eng.spagobi.security.Password;
-import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.tools.datasource.metadata.SbiDataSource;
-import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.tools.scheduler.init.AlarmQuartzInitializer;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
@@ -202,7 +204,12 @@ public class TenantsDAOHibImpl extends AbstractHibernateDAO implements ITenantsD
 			Integer idTenant = (Integer)aSession.save(aTenant);			
 			aSession.flush();
 			
-			createUser(aTenant, idTenant, aSession);
+			aTenant.setId(idTenant);
+			
+			createUser(aTenant, aSession);
+			
+			SbiCommonInfo sbiCommoInfo = new SbiCommonInfo();
+			sbiCommoInfo.setOrganization(aTenant.getName());
 			
 			Set<SbiOrganizationDatasource> ds = aTenant.getSbiOrganizationDatasources();
 			for (SbiOrganizationDatasource sbiOrganizationDatasource: ds) {
@@ -210,6 +217,7 @@ public class TenantsDAOHibImpl extends AbstractHibernateDAO implements ITenantsD
 				sbiOrganizationDatasource.setId(new SbiOrganizationDatasourceId(sbiDs.getDsId(), idTenant));
 				sbiOrganizationDatasource.setCreationDate(new Date());
 				sbiOrganizationDatasource.setLastChangeDate(new Date());
+				sbiOrganizationDatasource.setCommonInfo(sbiCommoInfo);
 				updateSbiCommonInfo4Insert(sbiOrganizationDatasource);
 				aSession.save(sbiOrganizationDatasource);
 				aSession.flush();
@@ -221,11 +229,16 @@ public class TenantsDAOHibImpl extends AbstractHibernateDAO implements ITenantsD
 				sbiOrganizationEngine.setId(new SbiOrganizationEngineId(sbiEngine.getEngineId(), idTenant));
 				sbiOrganizationEngine.setCreationDate(new Date());
 				sbiOrganizationEngine.setLastChangeDate(new Date());
+				sbiOrganizationEngine.setCommonInfo(sbiCommoInfo);
 				updateSbiCommonInfo4Insert(sbiOrganizationEngine);
 				aSession.save(sbiOrganizationEngine);
 				aSession.flush();
 			}
 			tx.commit();
+			
+			AlarmQuartzInitializer aqi = new AlarmQuartzInitializer();
+			aqi.initAlarmForTenant(aTenant);
+			
 		} catch (HibernateException he) {
 			logger.error("Error while inserting the tenant with id " + ((aTenant == null)?"":String.valueOf(aTenant.getId())), he);
 
@@ -242,7 +255,7 @@ public class TenantsDAOHibImpl extends AbstractHibernateDAO implements ITenantsD
 		}
 	}
 	
-	private void createUser(SbiTenant aTenant, Integer idTenant, Session aSession) throws HibernateException {
+	private void createUser(SbiTenant aTenant, Session aSession) throws HibernateException {
 		
 		logger.debug("createUser IN");
 			
@@ -307,6 +320,9 @@ public class TenantsDAOHibImpl extends AbstractHibernateDAO implements ITenantsD
 			id.setExtRoleId(role.getExtRoleId());//role Id
 			id.setId(userIdInt);//user ID
 			sbiExtUserRole.setId(id);
+			SbiCommonInfo commonInfo = new SbiCommonInfo();
+			commonInfo.setOrganization(tenant);
+			sbiExtUserRole.setCommonInfo(commonInfo);
 			aSession.saveOrUpdate(sbiExtUserRole);
 
 		} catch(Throwable t) {
@@ -325,6 +341,12 @@ public class TenantsDAOHibImpl extends AbstractHibernateDAO implements ITenantsD
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 			
+			// carica il tenant tramite ID
+			// verifica che il nome sia uguale altrimenti eccezione
+			SbiTenant tenant = loadTenantById(aTenant.getId());
+			if(!tenant.getName().equalsIgnoreCase(aTenant.getName()))
+				new SpagoBIRuntimeException("It's not allowed to modify the name of an existing Tenant.");
+			
 			updateSbiCommonInfo4Update(aTenant);	
 			aSession.update(aTenant);			
 			aSession.flush();
@@ -335,6 +357,9 @@ public class TenantsDAOHibImpl extends AbstractHibernateDAO implements ITenantsD
 			hibQuery.executeUpdate();
 			aSession.flush();
 			
+			SbiCommonInfo sbiCommoInfo = new SbiCommonInfo();
+			sbiCommoInfo.setOrganization(aTenant.getName());
+			
 			// associo i datasource al tenant
 			Set<SbiOrganizationDatasource> ds = aTenant.getSbiOrganizationDatasources();
 			for (SbiOrganizationDatasource sbiOrganizationDatasource: ds) {
@@ -342,6 +367,7 @@ public class TenantsDAOHibImpl extends AbstractHibernateDAO implements ITenantsD
 				sbiOrganizationDatasource.setId(new SbiOrganizationDatasourceId(sbiDs.getDsId(), aTenant.getId()));
 				sbiOrganizationDatasource.setCreationDate(new Date());
 				sbiOrganizationDatasource.setLastChangeDate(new Date());
+				sbiOrganizationDatasource.setCommonInfo(sbiCommoInfo);
 				updateSbiCommonInfo4Insert(sbiOrganizationDatasource);
 				aSession.save(sbiOrganizationDatasource);
 				aSession.flush();
@@ -359,6 +385,7 @@ public class TenantsDAOHibImpl extends AbstractHibernateDAO implements ITenantsD
 				sbiOrganizationEngine.setId(new SbiOrganizationEngineId(sbiEngine.getEngineId(), aTenant.getId()));
 				sbiOrganizationEngine.setCreationDate(new Date());
 				sbiOrganizationEngine.setLastChangeDate(new Date());
+				sbiOrganizationEngine.setCommonInfo(sbiCommoInfo);
 				updateSbiCommonInfo4Insert(sbiOrganizationEngine);
 				aSession.save(sbiOrganizationEngine);
 				aSession.flush();
@@ -381,5 +408,84 @@ public class TenantsDAOHibImpl extends AbstractHibernateDAO implements ITenantsD
 		}
 	}
 	
+	public void deleteTenant(SbiTenant aTenant)throws EMFUserError {
+		
+		logger.debug("deleteTenant IN");
+		Session aSession = null;
+		Connection jdbcConnection = null;
+		InputStream is = null;
+		try {
+			aSession = getSession();			
+			jdbcConnection = HibernateUtil.getConnection(aSession);
+			jdbcConnection.setAutoCommit(false);
+			Thread curThread = Thread.currentThread();
+			ClassLoader classLoad = curThread.getContextClassLoader();
+			is = classLoad.getResourceAsStream("it/eng/spagobi/commons/dao/deleteTenant.sql");
+			String str = null;
+			BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+			if (is!=null) {                         
+				while ((str = reader.readLine()) != null) { 
+					PreparedStatement statement = jdbcConnection.prepareStatement(str);
+//					System.out.println("\n"+str+"\n");
+					statement.setString(1, aTenant.getName());
+					statement.execute();		
+					statement.close();
+				}               
+			}
+			StringEscapeUtils seu = new StringEscapeUtils();
+			
+			str = "DELETE FROM qrtz_cron_triggers WHERE trigger_name IN (SELECT DISTINCT t.trigger_name " +
+				  "FROM QRTZ_TRIGGERS t WHERE t.JOB_GROUP LIKE '"+seu.escapeSql(aTenant.getName())+"/%') " +
+			      "AND trigger_group IN (SELECT DISTINCT t.trigger_group FROM QRTZ_TRIGGERS t WHERE t.JOB_GROUP " +
+			      "LIKE '"+seu.escapeSql(aTenant.getName())+"/%')";
+			PreparedStatement statement = jdbcConnection.prepareStatement(str);
+			statement.execute();		
+			statement.close();
+					
+			str = "DELETE FROM QRTZ_TRIGGERS WHERE JOB_GROUP LIKE '"+seu.escapeSql(aTenant.getName())+"/%'";
+			statement = jdbcConnection.prepareStatement(str);
+			statement.execute();		
+			statement.close();
+			
+			str = "DELETE FROM QRTZ_JOB_DETAILS WHERE JOB_GROUP LIKE '"+seu.escapeSql(aTenant.getName())+"/%'";
+			statement = jdbcConnection.prepareStatement(str);
+			statement.execute();		
+			statement.close();
+
+			jdbcConnection.commit();
+			
+		} catch (Exception e) {
+			logger.error("Error while deleting the tenant with id " + ((aTenant == null)?"":String.valueOf(aTenant.getId())), e);
+
+			if (jdbcConnection != null) {
+				try{
+					jdbcConnection.rollback();
+				} catch (SQLException ex) {
+					logger.error("Error while deleting the tenant with id " + ((aTenant == null)?"":String.valueOf(aTenant.getId())), ex);
+				}
+			}
+
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+
+		} finally {		
+			if (is != null)
+				try {
+					is.close();
+				} catch (IOException e) {
+					logger.error(e);
+				}
+			try{
+				if (jdbcConnection != null && !jdbcConnection.isClosed()) {
+					jdbcConnection.close();
+				}
+			} catch (SQLException ex) {
+				logger.error("Error while deleting the tenant with id " + ((aTenant == null)?"":String.valueOf(aTenant.getId())), ex);
+			}
+			if (aSession!=null){
+				if (aSession.isOpen()) aSession.close();
+				logger.debug("deleteTenant OUT");
+			}
+		}
+	}
 
 }
