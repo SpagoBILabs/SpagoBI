@@ -38,35 +38,56 @@ Ext.define('Sbi.tools.multitenant.MultitenantListDetailPanel', {
 		};
 		
 		this.buttonColumnsConfig ={
-				deletebutton:false
+			deletebutton:true
 		};
 	
 		this.callParent(arguments);
 	}
 	
-//	, onDeleteRow: function(record){
-//		var recordToDelete = Ext.create("Sbi.tools.multitenant.MultitenantModel",record.data);
-//		recordToDelete.destroy({
-//			success : function(object, response, options) {
-//				if(response !== undefined && response.response !== undefined && response.response.responseText !== undefined && response.response.statusText=="OK") {
-//					response = response.response ;
-//					if(response.responseText!=null && response.responseText!=undefined){
-//						if(response.responseText.indexOf("error.mesage.description")>=0){
-//							Sbi.exception.ExceptionHandler.handleFailure(response);
-//						}else{
-//							Sbi.exception.ExceptionHandler.showInfoMessage(LN('sbi.multitenant.deleted'));
-//							this.grid.store.remove(record);
-//							this.grid.store.commitChanges();
-//						}
-//					}
-//				} else {
-//					Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
-//				}
-//			},
-//			scope: this,
-//			failure: Sbi.exception.ExceptionHandler.handleFailure      
-//		});
-//	}
+	, onDeleteRow: function(record){
+		
+		var thisPanel = this;
+		var deleteRecord = function(buttonId, text, config){
+			
+			var record = config.record;
+			
+			if(buttonId == 'yes') {			
+				
+				var recordToDelete = Ext.create("Sbi.tools.multitenant.MultitenantModel",record.data);
+				
+				recordToDelete.destroy({
+					success : function(object, response, options) {
+						if(response !== undefined && response.response !== undefined && response.response.responseText !== undefined && response.response.statusText=="OK") {
+							response = response.response ;
+							if(response.responseText!=null && response.responseText!=undefined){
+								if(response.responseText.indexOf("error.mesage.description")>=0){
+									Sbi.exception.ExceptionHandler.handleFailure(response);
+								}else{
+									Sbi.exception.ExceptionHandler.showInfoMessage(LN('sbi.multitenant.deleted'));
+									thisPanel.grid.store.remove(record);
+									thisPanel.grid.store.commitChanges();
+								}
+							}
+						} else {
+							Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
+						}
+					},
+					failure: Sbi.exception.ExceptionHandler.handleFailure      
+				});
+			} 
+		};
+		
+		Ext.Msg.show({
+			   title: LN('sbi.multitenant.delete.title'),   
+			   msg: LN('sbi.multitenant.delete.msg'),
+			   buttons: Ext.Msg.YESNO,
+			   icon: Ext.MessageBox.QUESTION,
+			   modal: true,
+			   fn: deleteRecord, 
+			   record: record
+			});
+
+	}
 
 	, onFormSave: function(record){
 		
