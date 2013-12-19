@@ -610,6 +610,8 @@ Sbi.locale.ln['sbi.datasource.validation.writeDefault']= ' : datasource already 
 //Multitenant
 Sbi.locale.ln['sbi.multitenant.saved']= 'Tenant correctly saved';
 Sbi.locale.ln['sbi.multitenant.deleted']= 'Tenant correctly deleted';
+Sbi.locale.ln['sbi.multitenant.delete.title']= 'Delete Tenant?';
+Sbi.locale.ln['sbi.multitenant.delete.msg']= 'Are you sure you want to delete the Tenant and all related data?';
 Sbi.locale.ln['sbi.multitenant.validation.error']= 'There are error(s) in the tenant configuration. Check the marked fields.';
 Sbi.locale.ln["error.mesage.name.multitenant.cannot.be.null"]= "The tenant name can not be null";
 Sbi.locale.ln["error.mesage.multitenant.deleting.inuse"] = "Impossible to delete the tenant because it is in use";
