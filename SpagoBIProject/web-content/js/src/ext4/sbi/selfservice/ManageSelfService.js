@@ -47,7 +47,7 @@ Ext.define('Sbi.selfservice.ManageSelfService', {
 			, datasetsServicePath : config.datasetsServicePath
 			, id: 'this'
 			, qbeEditDatasetUrl : config.qbeEditDatasetUrl
-			, isFromWizard : config.isFromWizard
+			, typeDoc : config.typeDoc
 		};
 		
 		if (Sbi.settings.browser.showTitle !== undefined && Sbi.settings.browser.showTitle){

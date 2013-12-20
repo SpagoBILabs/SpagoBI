@@ -50,7 +50,7 @@ public class SelfServiceDatasetStartAction extends ManageDatasets  {
 	
 	public static final String OUTPUT_PARAMETER_GEOREPORT_EDIT_SERVICE_URL = "georeportServiceUrl";
 	public static final String IS_FROM_MYDATA = "MYDATA";
-	public static final String IS_FROM_WIZARD = "FROM_WIZARD";
+	public static final String TYPE_DOC = "TYPE_DOC";
 	
 	//public static final String GEOREPORT_EDIT_ACTION = "GEOREPORT_ENGINE_START_EDIT_ACTION";
 	
@@ -70,7 +70,7 @@ public class SelfServiceDatasetStartAction extends ManageDatasets  {
 			String worksheetEditActionUrl = buildWorksheetEditServiceUrl(executionId);
 			String geoereportEditActionUrl = buildGeoreportEditServiceUrl(executionId);
 			String isFromMyData = (getAttributeAsString("MYDATA")==null)?"FALSE":getAttributeAsString("MYDATA");
-			String isFromWizard = (getAttributeAsString("FROM_WIZARD")==null)?"FALSE":getAttributeAsString("FROM_WIZARD");
+			String typeDoc = getAttributeAsString("TYPE_DOC");
 			logger.trace("Copying output parameters to response...");
 			try {
 				Locale locale = getLocale();
@@ -83,7 +83,7 @@ public class SelfServiceDatasetStartAction extends ManageDatasets  {
 				setAttribute(OUTPUT_PARAMETER_QBE_EDIT_DATASET_SERVICE_URL, qbeEditDataSetActionUrl);
 				setAttribute(OUTPUT_PARAMETER_GEOREPORT_EDIT_SERVICE_URL, geoereportEditActionUrl);
 				setAttribute(IS_FROM_MYDATA, isFromMyData);
-				setAttribute(IS_FROM_WIZARD, isFromWizard);
+				setAttribute(TYPE_DOC, typeDoc);
 				
 			} catch (Throwable t) {
 				throw new SpagoBIServiceException(SERVICE_NAME, "An error occurred while creating service response", t);				
