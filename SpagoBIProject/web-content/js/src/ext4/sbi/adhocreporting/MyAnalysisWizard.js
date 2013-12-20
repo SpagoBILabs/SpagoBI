@@ -85,6 +85,7 @@ Ext.define('Sbi.adhocreporting.MyAnalysisWizard', {
 		        	  thisPanel.documentType = 'Geo';
 		        	  //thisPanel.goNext(1);
 		        	  thisPanel.fireEvent('openMyDataForGeo');
+		        	  thisPanel.close();
 
 		          }
 			  	  ,tooltip:'Create a new Geographical Analysis'

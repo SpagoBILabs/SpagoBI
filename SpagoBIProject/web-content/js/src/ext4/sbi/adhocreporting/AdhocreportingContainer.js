@@ -78,16 +78,17 @@ Ext.define('Sbi.adhocreporting.AdhocreportingContainer', {
 	}
 	
 	,createReport: function(){
-		var myDataUrl = this.contextName + '/servlet/AdapterHTTP?ACTION_NAME=SELF_SERVICE_DATASET_START_ACTION&LIGHT_NAVIGATOR_RESET_INSERT=TRUE&MYDATA=true&FROM_WIZARD=true';
+		var myDataUrl = this.contextName + '/servlet/AdapterHTTP?ACTION_NAME=SELF_SERVICE_DATASET_START_ACTION&LIGHT_NAVIGATOR_RESET_INSERT=TRUE&MYDATA=true&TYPE_DOC=REPORT';
 		Sbi.debug('myDataUrl: ' + myDataUrl);
 		this.documentexecution.load(myDataUrl);
 		this.getLayout().setActiveItem(1);	
 	}
 	
 	,createGeo: function(){
-		alert('TODO: Create Geo - Open MyData');
-
-
+		var myGeoUrl = this.contextName + '/servlet/AdapterHTTP?ACTION_NAME=SELF_SERVICE_DATASET_START_ACTION&LIGHT_NAVIGATOR_RESET_INSERT=TRUE&MYDATA=true&TYPE_DOC=GEO';
+		Sbi.debug('myDataUrl: ' + myGeoUrl);
+		this.documentexecution.load(myGeoUrl);
+		this.getLayout().setActiveItem(1);	
 	}
 
 

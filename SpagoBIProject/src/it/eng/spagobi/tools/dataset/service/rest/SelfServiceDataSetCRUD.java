@@ -116,7 +116,7 @@ public class SelfServiceDataSetCRUD {
 		List<IDataSet> dataSets = new ArrayList<IDataSet>();
 		IEngUserProfile profile = (IEngUserProfile) req.getSession()
 				.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
-		Boolean isFromWizard =  (req.getParameter("isFromWizard") != null)?Boolean.valueOf(req.getParameter("isFromWizard")):new Boolean(false);
+		String typeDocWizard = (req.getParameter("typeDoc") != null && !"null".equals(req.getParameter("typeDoc")))?req.getParameter("typeDoc"):null;
 		JSONObject JSONReturn = new JSONObject();
 		JSONArray datasetsJSONArray = new JSONArray();
 		try {
@@ -136,7 +136,7 @@ public class SelfServiceDataSetCRUD {
 			datasetsJSONArray = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(dataSets, null);
 			
 			JSONArray datasetsJSONReturn = putActions(profile,
-					datasetsJSONArray, isFromWizard);
+					datasetsJSONArray, typeDocWizard);
 
 			JSONReturn.put("root", datasetsJSONReturn);
 
@@ -151,9 +151,8 @@ public class SelfServiceDataSetCRUD {
 
 
 	private JSONArray putActions(IEngUserProfile profile,
-			JSONArray datasetsJSONArray, Boolean isFromWizard) throws JSONException, EMFInternalError {
-		
-		
+			JSONArray datasetsJSONArray, String typeDocWizard) throws JSONException, EMFInternalError {
+					
 			//sets action to modify dataset					
 			JSONObject detailAction = new JSONObject();
 			detailAction.put("name", "detaildataset");
@@ -181,18 +180,22 @@ public class SelfServiceDataSetCRUD {
 		for(int i = 0; i < datasetsJSONArray.length(); i++) {
 			JSONArray actions = new JSONArray();
 			JSONObject datasetJSON = datasetsJSONArray.getJSONObject(i);
-			if (isFromWizard.equals(Boolean.FALSE)){
-				actions.put(detailAction);		
-				actions.put(georeportAction); // Annotated view map action to release SpagoBI 4
+			if (typeDocWizard == null){
+				actions.put(detailAction);						
 				if (profile.getUserUniqueIdentifier().toString().equals(datasetJSON.get("owner"))){
 					//the delete action is able only for private dataset
 					actions.put(deleteAction);
 				}
 			}
-			actions.put(worksheetAction);
+			if (typeDocWizard == null || typeDocWizard.equalsIgnoreCase("GEO")){
+				actions.put(georeportAction); // Annotated view map action to release SpagoBI 4
+			}
+			if (typeDocWizard == null || typeDocWizard.equalsIgnoreCase("REPORT")){
+				actions.put(worksheetAction);			
 		
-			if (profile.getFunctionalities().contains(SpagoBIConstants.BUILD_QBE_QUERIES_FUNCTIONALITY)){
-				actions.put(qbeAction);
+				if (profile.getFunctionalities().contains(SpagoBIConstants.BUILD_QBE_QUERIES_FUNCTIONALITY)){
+					actions.put(qbeAction);
+				}
 			}
 			
 			datasetJSON.put("actions", actions);
