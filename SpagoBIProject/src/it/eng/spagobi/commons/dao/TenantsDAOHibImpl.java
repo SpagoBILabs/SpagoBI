@@ -425,11 +425,13 @@ public class TenantsDAOHibImpl extends AbstractHibernateDAO implements ITenantsD
 			BufferedReader reader = new BufferedReader(new InputStreamReader(is));
 			if (is!=null) {                         
 				while ((str = reader.readLine()) != null) { 
-					PreparedStatement statement = jdbcConnection.prepareStatement(str);
-//					System.out.println("\n"+str+"\n");
-					statement.setString(1, aTenant.getName());
-					statement.execute();		
-					statement.close();
+					if(!str.trim().startsWith("--")){
+						PreparedStatement statement = jdbcConnection.prepareStatement(str);
+						//System.out.println("\n"+str+"\n");
+						statement.setString(1, aTenant.getName());
+						statement.execute();		
+						statement.close();
+					}
 				}               
 			}
 			StringEscapeUtils seu = new StringEscapeUtils();
