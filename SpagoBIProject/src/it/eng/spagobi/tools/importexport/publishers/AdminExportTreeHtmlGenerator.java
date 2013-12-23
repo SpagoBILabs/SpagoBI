@@ -133,6 +133,7 @@ public class AdminExportTreeHtmlGenerator extends AdminTreeHtmlGenerator {
 			if(codeType.equalsIgnoreCase(SpagoBIConstants.LOW_FUNCTIONALITY_TYPE_CODE)) {
 				String imgFolder = urlBuilder.getResourceLinkByTheme(httpRequest, "/img/treefolder.gif",currTheme);
 				String imgFolderOp = urlBuilder.getResourceLinkByTheme(httpRequest, "/img/treefolderopen.gif",currTheme);
+				name = name.replace('\'',' ' );
 				htmlStream.append("	treeCMS.add(" + idFolder + ", " + parentId + ",'" + name + "', 'javascript:linkEmpty()', '', '', '"+imgFolder+"', '"+imgFolderOp+"', '', 'menu" + requestIdentity + "(event, \\'"+path+"\\')');\n");
 				List objects = folder.getBiObjects();
 				for (Iterator it = objects.iterator(); it.hasNext(); ) {
@@ -141,6 +142,8 @@ public class AdminExportTreeHtmlGenerator extends AdminTreeHtmlGenerator {
 					Integer idObj = obj.getId();
 					obj.getFunctionalities();
 					String stateObj = obj.getStateCode();
+					
+					nameObj = nameObj.replace('\'',' ' );
 					htmlStream.append("	treeCMS.add("+dTreeObjects--+", "+idFolder+",'"+nameObj+"', 'javascript:linkEmpty()', '', '', '', '', '', '', '"+ImportExportConstants.OBJECT_ID_PATHFUNCT+"', '"+idObj+"_"+path+"');\n");
 				}
 			}
