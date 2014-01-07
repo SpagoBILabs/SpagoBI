@@ -238,6 +238,11 @@ Ext.extend(Sbi.engines.chart.GenericChartPanel, Ext.Panel, {
 					    	var serieColumn = this.store.getFieldNameByAlias(this.serieAlias[i]);
 					    	var tmpValue = rec[serieColumn];
 					    	if (tmpValue == undefined) tmpValue = 0;
+					    	// 14/10/2013: patched by Terna S.p.A.: converts values with length 0 in null
+					    	if (tmpValue!=null){
+				    	       if(tmpValue.length==0) tmpValue=null;
+				    	    }
+					    	// end of patch
 					    	var posValue = recArray.indexOf(recArray[serieColumn]);					    	
 							if (posValue == -1){
 								//recArray.push(rec[serieColumn]);		
@@ -312,6 +317,9 @@ Ext.extend(Sbi.engines.chart.GenericChartPanel, Ext.Panel, {
 				    	var color = (serieColor)? rec[serieColor]:undefined;
 				    	if (color == "") color = undefined;
 				    	if (tmpValue == undefined) tmpValue = 0;
+				    	if (tmpValue!=null){
+			    	       if(tmpValue.length==0) tmpValue=null;
+			    	    }
 				    	var posValue = recArray.indexOf(recArray[serieColumn]);					    	
 						if (posValue == -1){
 							if ( this.chartConfig.xAxis && this.chartConfig.xAxis.alias &&
