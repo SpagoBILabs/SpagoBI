@@ -238,7 +238,7 @@ Ext.extend(Sbi.engines.chart.GenericChartPanel, Ext.Panel, {
 					    	var serieColumn = this.store.getFieldNameByAlias(this.serieAlias[i]);
 					    	var tmpValue = rec[serieColumn];
 					    	if (tmpValue == undefined) tmpValue = 0;
-					    	// 14/10/2013: patched by Terna S.p.A.: converts values with length 0 in null
+					    	// 14/10/2013: patch: converts values with length 0 in null
 					    	if (tmpValue!=null){
 				    	       if(tmpValue.length==0) tmpValue=null;
 				    	    }
