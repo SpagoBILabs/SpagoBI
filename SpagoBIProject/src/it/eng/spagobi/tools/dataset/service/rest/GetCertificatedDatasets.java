@@ -58,6 +58,7 @@ public class GetCertificatedDatasets {
 			dataSetDao.setUserProfile(profile);
 			String isTech = req.getParameter("isTech");
 			String allMyDataDS = req.getParameter("allMyDataDs");
+			String typeDocWizard = (req.getParameter("typeDoc") != null && !"null".equals(req.getParameter("typeDoc")))?req.getParameter("typeDoc"):null;
 
 
 			if(isTech != null && isTech.equals("true")){
@@ -75,7 +76,7 @@ public class GetCertificatedDatasets {
 			datasetsJSONArray = (JSONArray) SerializerFactory.getSerializer(
 					"application/json").serialize(dataSets, null);
 			
-			JSONArray datasetsJSONReturn = putActions(profile, datasetsJSONArray);
+			JSONArray datasetsJSONReturn = putActions(profile, datasetsJSONArray, typeDocWizard);
 
 			JSONReturn.put("root", datasetsJSONReturn);
 
@@ -87,7 +88,7 @@ public class GetCertificatedDatasets {
 
 	}
 
-	private JSONArray putActions(IEngUserProfile profile, JSONArray datasetsJSONArray)
+	private JSONArray putActions(IEngUserProfile profile, JSONArray datasetsJSONArray, String typeDocWizard)
 			throws JSONException, EMFInternalError {
 		JSONObject detailAction = new JSONObject();
 		detailAction.put("name", "detaildataset");
@@ -112,7 +113,30 @@ public class GetCertificatedDatasets {
 		JSONArray datasetsJSONReturn = new JSONArray();	
 		for(int i = 0; i < datasetsJSONArray.length(); i++) {
 			JSONArray actions = new JSONArray();
-			JSONObject datasetJSON = datasetsJSONArray.getJSONObject(i);	
+			JSONObject datasetJSON = datasetsJSONArray.getJSONObject(i);
+			
+			if (typeDocWizard == null){
+				actions.put(detailAction);						
+				if (profile.getUserUniqueIdentifier().toString().equals(datasetJSON.get("owner"))){
+					//the delete action is able only for private dataset
+					actions.put(deleteAction);
+				}
+			}
+			if (typeDocWizard != null && typeDocWizard.equalsIgnoreCase("GEO")){
+				actions.put(georeportAction); //enable the icon to CREATE a new geo document
+			}else{
+				if (profile.getUserUniqueIdentifier().toString().equals(datasetJSON.get("owner"))){
+					actions.put(georeportAction); // Annotated view map action to release SpagoBI 4
+				}
+			}
+			if (typeDocWizard == null || typeDocWizard.equalsIgnoreCase("REPORT")){
+				actions.put(worksheetAction);			
+		
+				if (profile.getFunctionalities().contains(SpagoBIConstants.BUILD_QBE_QUERIES_FUNCTIONALITY)){
+					actions.put(qbeAction);
+				}
+			}
+			/*
 			if (profile.getUserUniqueIdentifier().toString().equals(datasetJSON.get("owner"))){
 				actions.put(detailAction);		
 			}
@@ -126,7 +150,7 @@ public class GetCertificatedDatasets {
 			if (profile.getUserUniqueIdentifier().toString().equals(datasetJSON.get("owner"))){
 				actions.put(deleteAction);
 			}
-
+			*/
 			datasetJSON.put("actions", actions);
 			datasetsJSONReturn.put(datasetJSON);
 		}

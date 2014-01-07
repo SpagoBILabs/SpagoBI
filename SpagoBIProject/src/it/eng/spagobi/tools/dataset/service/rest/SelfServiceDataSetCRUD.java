@@ -95,7 +95,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 
 /**
  * @authors Antonella Giachino (antonella.giachino@eng.it)
- * Monica Franceschini (monica.franceschini@eng.it)
+ * 			Monica Franceschini (monica.franceschini@eng.it)
  * 
  */
 @Path("/selfservicedataset")
@@ -153,18 +153,18 @@ public class SelfServiceDataSetCRUD {
 	private JSONArray putActions(IEngUserProfile profile,
 			JSONArray datasetsJSONArray, String typeDocWizard) throws JSONException, EMFInternalError {
 					
-			//sets action to modify dataset					
-			JSONObject detailAction = new JSONObject();
-			detailAction.put("name", "detaildataset");
-			detailAction.put("description", "Dataset detail");	
-			
-			JSONObject deleteAction = new JSONObject();
-			deleteAction.put("name", "delete");
-			deleteAction.put("description", "Delete dataset");
-			
-			JSONObject georeportAction = new JSONObject();
-			georeportAction.put("name", "georeport");
-			georeportAction.put("description", "Show Map");
+		//sets action to modify dataset					
+		JSONObject detailAction = new JSONObject();
+		detailAction.put("name", "detaildataset");
+		detailAction.put("description", "Dataset detail");	
+		
+		JSONObject deleteAction = new JSONObject();
+		deleteAction.put("name", "delete");
+		deleteAction.put("description", "Delete dataset");
+		
+		JSONObject georeportAction = new JSONObject();
+		georeportAction.put("name", "georeport");
+		georeportAction.put("description", "Show Map");
 		
 		
 		JSONObject worksheetAction = new JSONObject();
