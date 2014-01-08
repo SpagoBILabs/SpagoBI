@@ -13,7 +13,7 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
 		fieldsStep3: null,
 		fieldsStep4: null,
 		categoriesStore: null,
-		height: 440, //440,
+		height: 440, 
 		datasetGenericPropertiesStore: null,
 		datasetPropertiesStore: null,
 		datasetValuesStore: null,
@@ -89,11 +89,7 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
          {label: LN('sbi.ds.label'), name:"label", type:"text",hidden:"true", /*mandatory:true, readOnly:(this.isNew || this.isOwner)?false:true,*/ value:this.record.label}, 
          {label: LN('sbi.ds.name'), name:"name", type:"text", mandatory:true, readOnly:(!this.isOwner), value:this.record.name},
          {label: LN('sbi.ds.description'), name:"description", type:"textarea", readOnly:(!this.isOwner), value:this.record.description}];
-		//the category is moved at the first tab because it's necessary for the validation action 
-//		toReturn.push({label:LN('sbi.ds.catType'), name:"catTypeVn", type:"combo", valueCol:"VALUE_ID", descCol:"VALUE_DS", readOnly:!this.isOwner, value:this.record.catTypeId, data:this.categoriesStore});
-		//var valueScope = (this.record.isPublic==true)?'true':'false' ;
-		//toReturn.push({label:LN('sbi.ds.scope'), name:"isPublicDS", type:"combo", valueCol:"field", descCol:"value", readOnly:!this.isOwner, value:valueScope, data:this.scopeStore});
-		
+
 		return toReturn;
 	}
 	
@@ -106,7 +102,6 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
 			displayField : 'VALUE_DS',
 			valueField :  'VALUE_ID',
 			width : 300,
-//			emptyText:'Select ...',
 			typeAhead : true, forceSelection : true,
 			mode : 'local',
 			triggerAction : 'all',
@@ -139,11 +134,9 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
 			  isUpload: true,
 			  method: 'POST',
 			  enctype: 'multipart/form-data',
-//  		      margins: '50 50 50 50',
 	          labelAlign: 'left',
 	          bodyStyle:'padding:20px',
-//	          autoScroll:true,
-	          width: '100%', //650,
+	          width: '100%', 
 	          height: 330,
 	          border: false,
 	          trackResetOnLoad: true,
@@ -212,7 +205,7 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
 				 isTabValid = this.validateTab0();					
 			 }
 			 if (newTabId == 1){
-				 isTabValid = this.validateTab1();
+				isTabValid = this.validateTab1();
 				if (isTabValid){						
 					var values = Sbi.tools.dataset.DataSetsWizard.superclass.getFormState();
 					//added manually category because it's moved on the first tab (it's necessary for correct validation action)
@@ -256,7 +249,6 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
 			 Ext.getCmp('move-prev').setDisabled(newTabId==0);
 			 Ext.getCmp('move-next').setDisabled(newTabId==numTabs);
 		 	 Ext.getCmp('confirm').setVisible(!(parseInt(newTabId)<parseInt(numTabs)));
-//			 	Ext.getCmp('confirm').setDisabled(parseInt(newTabId)<parseInt(numTabs));
 		 }			 
 	}
 	
@@ -418,22 +410,7 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
 		 }
 		 Ext.getCmp('move-prev').setDisabled(newTabId==0);
 		 Ext.getCmp('move-next').setDisabled(newTabId==numTabs);
-//		 Ext.getCmp('confirm').setDisabled(newTabId<numTabs);
 	}
-//	
-//	, goNext: function(n){
-//		var newTabId;
-//		 if (this.isTabbedPanel){
-//			 newTabId  = parseInt(this.wizardPanel.getActiveTab().itemId)+n;
-//		 }else{
-//			 newTabId  = parseInt(this.wizardPanel.layout.getActiveItem().itemId)+n;
-//		 }
-//		 var numTabs  = (this.wizardPanel.items.length-1);		 
-//		 this.wizardPanel.setActiveTab(newTabId);
-//		 Ext.getCmp('move-prev').setDisabled(newTabId==0);
-//		 Ext.getCmp('move-next').setDisabled(newTabId==numTabs);
-//		 Ext.getCmp('confirm').setDisabled(newTabId<numTabs);
-//	}
 	
 	, disableButton: function(btn){
 		 Ext.getCmp(btn).setDisabled(true);		
