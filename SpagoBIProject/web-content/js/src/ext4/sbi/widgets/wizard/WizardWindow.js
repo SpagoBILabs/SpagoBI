@@ -20,6 +20,7 @@
 
 Ext.define('Sbi.widgets.wizard.WizardWindow', {
     extend: 'Ext.Window'
+    
     ,config: {    	  	     	
     	width: 	700,
 		height: 700,//500,
@@ -266,130 +267,7 @@ Ext.define('Sbi.widgets.wizard.WizardWindow', {
 		
 		return field;
 	}
-	/*
-	, createCheckListField: function(f){
-		var smLookup = new Ext.grid.CheckboxSelectionModel( {singleSelect: false } );
-		var cmLookup =  new Ext.grid.ColumnModel([
-    	                                          new Ext.grid.RowNumberer(),		    	                                          
-				                    		      {header: "Data", dataIndex: 'value', width: 75},
-				                    		      smLookup
-				                    		    ]);
-		var tmpStore = null; 
-		tmpStore = this.createStore(param.values);
-		
-		
-		tmpStore.on('beforeload', function(store, o) {
-			var p = Sbi.commons.JSON.encode(this.getFormState());
-			o.params.PARAMETERS = p;
-			return true;
-		}, this);
-		
-		
-		var baseConfig = {
-			       fieldLabel: label || param.title
-				  // , name : p.id
-				   , name : name
-				   , width: 250
-				   , sm: smLookup
-				   , cm: cmLookup
-				   , allowBlank: !p.mandatory
-				   , valueField: (param.values.valueField)?param.values.valueField:'code'
-				   , descField: (param.values.descField)?param.values.descField:''		
-				   //, displayField: (param.values.descField)?param.values.valueField:'value'
-				   , defaultValue: param.defaultValue
-				};
-		var field = new Sbi.console.LookupField(Ext.apply(baseConfig, {
-			  	  store: tmpStore
-				//, params: params
-				, params: {}
-				, singleSelect: false
-				
-		}));	 
-		
-		return field;
-	}
-	
-	, createListField: function(label, name, param){
-		var tmpStore = null; 
-		tmpStore = this.createStore(param.values);
-		
-		tmpStore.on('beforeload', function(store, o) {
-			var p = Sbi.commons.JSON.encode(this.getFormState());
-			o.params.PARAMETERS = p;
-			return true;
-		}, this);
-		
-		
-		var baseConfig = {
-			       fieldLabel: label || param.title
-				  // , name : p.id
-				   , name : name
-				   , width: 250
-				   , allowBlank: !p.mandatory
-				   , valueField: (param.values.valueField)?param.values.valueField:'code'
-				   , descField: (param.values.descField)?param.values.descField:''
-				   , defaultValue: param.defaultValue
-				};
-		
-		var field = new Sbi.console.LookupField(Ext.apply(baseConfig, {
-			  	  store: tmpStore
-				//, params: params
-			  	, params: {}
-				, singleSelect: true
-		})); 
-		
-		return field;
-	}
-	
-	, createRadioGroupField: function(label, name, param){
-		var options = [];
-		var tmpParamConfig = null;
-		var tmpField = null;
-		
-		
-		for(var j = 0, l2 = param.values.options.length; j < l2; j++) {			
-			tmpParamConfig = param.values.options[j];
-			var idRadio =  name + '__' + j;
-			
-			//adds the radio as the first field			
-			tmpField =  {
-						 id: idRadio,
-						 name: name,
-		                 labelSeparator: '',
-		                 boxLabel: tmpParamConfig.values.title || '',		                 
-		                 inputValue: idRadio
-			            };
-			options.push(tmpField);
-			//adds all sub parameters		
-			if (tmpParamConfig.defaultValue === undefined || tmpParamConfig.defaultValue === null){
-				tmpParamConfig.defaultValue =  param.defaultValue;
-			}
-			var tmpParam = this.createParameterField(label, idRadio, tmpParamConfig);
-			tmpParam.setVisible(false) ;			
-			options.push(tmpParam);			
-			this.fieldMap[idRadio] = tmpParam;
-			var radioField = new Ext.form.RadioGroup({			
-				id: name,
-				name: name,
-	            fieldLabel: label,	  	            
-	            width: 250, 
-	            autoHeight: true,
-	            autoScroll: true,
-	    	    xtype: 'fieldset',
-	    	    border: false,
-	    	    defaultType: 'radio', // each item will be a radio button
-	    	    columns: 2,
-	    	    items: options,
-	    	    defaultValue: param.defaultValue
-	    	});
 
-			radioField.addListener('change', this.changeRadioField , this);
-			
-		}
-
-		return radioField;
-	}
-*/
 	
 	, getFormState: function() {
     	var state = {};
