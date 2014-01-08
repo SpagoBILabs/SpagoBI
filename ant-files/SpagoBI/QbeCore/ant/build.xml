@@ -95,6 +95,9 @@
 	<src path="${src}/jpa"/>
 	<src path="${src}/runtime"/>
 	<src path="${src}/serialization"/>
+	<src path="${src}/sql"/>
+	<src path="${src}/hive"/>
+	<src path="${src}/dataset"/>
     </javac> 
   </target>
 
