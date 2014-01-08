@@ -4,44 +4,12 @@ Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competenc
 This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
 If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. --%>
 
-<%@page language="java" 
-	contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"
-%>
-<%@ include file="/WEB-INF/jsp/wapp/homeBase.jsp"%> 
+<%@page language="java" contentType="text/html; charset=ISO-8859-1"
+	pageEncoding="ISO-8859-1"%>
+<%@ include file="/WEB-INF/jsp/wapp/homeBase.jsp"%>
 
-<!-- Include Ext stylesheets here: -->
-<link id="extall"     rel="styleSheet" href ="<%=contextName %>/js/lib/ext-4.1.1a/resources/css/ext-all.css" type="text/css" />
-<link id="theme-gray" rel="styleSheet" href ="<%=contextName %>/js/lib/ext-4.1.1a/resources/css/ext-all-gray.css" type="text/css" />
-<link id="spagobi-ext-4" rel="styleSheet" href ="<%=contextName %>/themes/geobi/css/home40/layout.css" type="text/css" />
 
-<script type="text/javascript">
-    Ext.BLANK_IMAGE_URL = '<%=contextName %>/js/lib/ext-4.1.1a/resources/themes/geobi/default/tree/s.gif';
-</script>
-
-<%-- Javascript object useful for session expired management (see also sessionExpired.jsp) --%>
 <% 
-   
-   String userAgent = request.getHeader("user-agent");
-   String subsString = "";
-   String info[] = null;
-   String browsername ="";
-   String browserversion ="";
-   
-   if (userAgent.contains("MSIE")) {
-	   subsString = userAgent.substring( userAgent.indexOf("MSIE"));
-	   info = (subsString.split(";")[0]).split(" ");	  
-   }else if(userAgent.contains("Firefox")){
-       subsString = userAgent.substring( userAgent.indexOf("Firefox"));
-       info = (subsString.split(" ")[0]).split("/");
-   }else if(userAgent.contains("Chrome")){
-       subsString = userAgent.substring( userAgent.indexOf("Chrome"));
-       info = (subsString.split(" ")[0]).split("/");
-   } else {
-	   info = new String[]{"unknown", "unknown"};
-   }
-   
-   browsername = info[0];
-   browserversion = info[1];
    String mapsUrl="#";
    String datasetUrl = "#";
    String logoutUrl="#";
@@ -76,19 +44,24 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 	}
 %>
 
-<link rel='stylesheet' type='text/css' href='<%=urlBuilder.getResourceLinkByTheme(request, "css/home40/standard.css",currTheme)%>'/>
+<link rel='stylesheet' type='text/css' href='<%=urlBuilder.getResourceLinkByTheme(request, "css/home40/standard.css",currTheme)%>' />
 
-<% 
-if (browsername.contains("MSIE")){
-	if (browserversion.contains("7")){ %>
-	 <link href="<%=contextName %>/themes/geobi/css/home40/ie7.css" rel="stylesheet" media="screen,projection,print" type="text/css" />
-<%  }if (browserversion.contains("8")){ %>
-	<link href="<%=contextName %>/themes/geobi/css/home40/ie8.css" rel="stylesheet" media="screen,projection,print" type="text/css" />
-<%  }else{ %>
-	<link href="<%=contextName %>/themes/geobi/css/home40/ie9.css" rel="stylesheet" media="screen,projection,print" type="text/css" />
-<%  }	
-}
-%>
+<!--[if IE]>
+	<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+
+<!-- Stylesheets -->
+<link href="css/standard.css" rel="stylesheet"	media="screen,projection,print" type="text/css" />
+
+<!--[if IE]>
+	<link href="css/ie9.css" rel="stylesheet" media="screen,projection,print" type="text/css" />
+<![endif]-->
+<!--[if lte IE 8]>
+	<link href="css/ie8.css" rel="stylesheet" media="screen,projection,print" type="text/css" />
+<![endif]-->
+<!--[if lte IE 7]>
+	<link href="css/ie7.css" rel="stylesheet" media="screen,projection,print" type="text/css" />
+<![endif]-->
 
 <script>
 sessionExpiredSpagoBIJS = 'sessionExpiredSpagoBIJS';
@@ -109,7 +82,6 @@ Ext.onReady(function () {
     this.titlePath = Ext.create("Ext.Panel",{title :'Home'});
     
 	function hideItem( menu, e, eOpts){
-        //console.log('bye bye ');
         menu.hide();
     }
 	
@@ -198,7 +170,8 @@ Ext.onReady(function () {
     var mainPanel =  Ext.create("Ext.panel.Panel",{
     	autoScroll: false,
     	region: 'center',
-    	height: 700,
+    	 layout: 'fit',
+     	//height: 700,
     	items: [mainframe]  	
     });
     /*
