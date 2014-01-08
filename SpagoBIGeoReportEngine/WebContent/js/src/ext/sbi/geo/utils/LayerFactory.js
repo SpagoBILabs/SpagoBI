@@ -44,7 +44,7 @@ Sbi.geo.utils.LayerFactory = function(){
 				var protocol = new OpenLayers.Protocol.WFS({
 				    version: "1.1.0",
 				    url:  layerConf.propsUrl,
-				    featureType: layerConf.propsName,
+				    featureType: layerConf.propsName
 				    //featureNS: "http://www.openplans.org/topp",
 				    //geometryName: "the_geom"
 				});

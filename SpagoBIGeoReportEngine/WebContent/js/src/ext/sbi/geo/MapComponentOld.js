@@ -14,30 +14,23 @@ Ext.ns("Sbi.geo");
  */
 Sbi.geo.MapComponent = function(config) {
 	
-	Sbi.trace("[MapComponent.costructor] : IN");
 	this.validateConfigObject(config);
 	this.adjustConfigObject(config);
 	
     Ext.apply(this, config);
     
-    if(this.map == null) {
-    	this.initMap();
-    }
+    if(this.map == null) this.initMap();
     
-    //this.contentEl = this.map.div;
+    this.contentEl = this.map.div;
 
     // Set the map container height and width to avoid css 
     // bug in standard mode. 
     // See https://trac.mapfish.org/trac/mapfish/ticket/85
-    //var content = Ext.get(this.contentEl);
-    //content.setStyle('width', '100%');
-    //content.setStyle('height', '100%');
+    var content = Ext.get(this.contentEl);
+    content.setStyle('width', '100%');
+    content.setStyle('height', '100%');
     
     Sbi.geo.MapComponent.superclass.constructor.call(this);
-    
-  
-    
-    Sbi.trace("[MapComponent.costructor] : OUT");
 };
 
 Ext.extend(Sbi.geo.MapComponent, Ext.Panel, {
@@ -107,27 +100,6 @@ Ext.extend(Sbi.geo.MapComponent, Ext.Panel, {
 	// METHODS
 	// =================================================================================================================
 	
-    
-    /** private: method[afterLayout]
-     *  Private method called after owner container has been laid out until
-     *  this panel has dimensions greater than zero.
-     */
-    , afterLayout: function() {
-    	
-        var width = this.getInnerWidth() -
-                                this.body.getBorderWidth("lr");
-        var height = this.getInnerHeight() -
-                                this.body.getBorderWidth("tb");
-        
-     
-        if (width > 0 && height > 0) {
-            this.ownerCt.un("afterlayout", this.afterLayout, this);
-            
-            this.map.render(this.body.dom);
-        }
-    }
-
-    
 	/**
 	 * @method 
 	 * 
@@ -242,7 +214,7 @@ Ext.extend(Sbi.geo.MapComponent, Ext.Panel, {
      */
 	, setCenter: function(center) {
       	
-    	Sbi.trace("[MapComponent.setCenter]: IN");
+    	Sbi.trace("MapComponent.setCenter: IN");
     	
 		center = center || {};
       	this.baseCentralPointConf.lon = center.lon || this.baseCentralPointConf.lon || 18.530;
@@ -259,7 +231,7 @@ Ext.extend(Sbi.geo.MapComponent, Ext.Panel, {
         	alert('Map Projection [' + this.map.projection + '] not supported yet');
         }
         
-        Sbi.trace("[MapComponent.setCenter]: OUT");
+        Sbi.trace("MapComponent.setCenter: OUT");
          
     }
 	
@@ -301,13 +273,6 @@ Ext.extend(Sbi.geo.MapComponent, Ext.Panel, {
     	Sbi.geo.MapComponent.superclass.initComponent.apply(this, arguments);
     	
     	this.on("bodyresize", this.map.updateSize, this.map);
-    	this.on("render", function() {
-    	  	this.ownerCt.on({
-    	  		"afterlayout": this.afterLayout,
-    	  		scope: this
-    	  	});
-    	}, this);
-    	  
         Sbi.trace("MapComponent.initComponent: OUT");
     }
 
@@ -357,6 +322,10 @@ Ext.extend(Sbi.geo.MapComponent, Ext.Panel, {
     	};
     	
 		this.map = new OpenLayers.Map('map', this.baseMapOptions);
+		
+	
+		
+		
 		
 		this.map.addControlToMap = function (control, px) {
 			Sbi.debug("[Map.addControlToMap]: IN");

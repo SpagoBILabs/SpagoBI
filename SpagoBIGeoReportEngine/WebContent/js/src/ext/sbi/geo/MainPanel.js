@@ -69,6 +69,7 @@ Sbi.geo.MainPanel = function(config) {
          layout   : 'border',
          hideBorders: true,
          items    : [this.mapPanel, this.controlPanel]
+         //items: [this.mapPanel]
 	});
 
 	// constructor
@@ -550,6 +551,7 @@ Ext.extend(Sbi.geo.MainPanel, Ext.Panel, {
 				hideBorders: true,
 				border		: false,
 				frame: false,
+				layout: 'fit',
 			    defaults  : {
 					autoScroll : true
 				},

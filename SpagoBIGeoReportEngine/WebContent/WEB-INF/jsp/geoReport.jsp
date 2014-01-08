@@ -74,45 +74,87 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 
 	includes = engineInstance.getIncludes();
 	
+	boolean forceIE8Compatibility = false;
 %>
 
 <%-- ---------------------------------------------------------------------- --%>
 <%-- HTML	 																--%>
 <%-- ---------------------------------------------------------------------- --%>
-
 <html>
-
+	<%-- == HEAD ========================================================== --%>
 	<head>
-		<title>SpagoBIGeoReportEngine</title>
+		<title><%=docName.trim().length() > 0? docName: "SpagoBIGeoReportEngine"%></title>
 		
-		<%@include file="commons/includeGeoExt.jspf" %>
+		<% if (forceIE8Compatibility == true){ %> 
+			<meta http-equiv="X-UA-Compatible" content="IE=8" />
+		<%} %>
+		
+        <!--[if IE]>
+            <script src="https://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+        <![endif]-->
+        
+        <!-- Stylesheets -->
+       
+        <link href="css/standard.css" rel="stylesheet" media="screen,projection,print" type="text/css" />
+        
+        
+        <!--[if IE]>
+            <link href="css/ie9.css" rel="stylesheet" media="screen,projection,print" type="text/css" />
+        <![endif]-->
+        <!--[if lte IE 8]>
+            <link href="css/ie8.css" rel="stylesheet" media="screen,projection,print" type="text/css" />
+        <![endif]-->
+        <!--[if lte IE 7]>
+            <link href="css/ie7.css" rel="stylesheet" media="screen,projection,print" type="text/css" />
+        <![endif]-->
+        
+        <%@include file="commons/includeGeoExt.jspf" %>
 		<%@include file="commons/includeExtensionsJS.jspf" %>	
 		<%@include file="commons/includeSpagoBIGeoReportJS.jspf" %>
-	</head>
+    </head>
 	
-	<body>	
-		
-		<script language="javascript" type="text/javascript">
-		
-			
+	<%-- == BODY ========================================================== --%>
+    
+    <!--[if IE 8]>
+    <body class="lte-8 ie-8 map-body">
+    <![endif]-->
+    
+    <!--[if lte IE 7]>
+    <body class="lte-8 lte-7 map-body">
+    <![endif]-->
+    
+    <!--[if gt IE 8]>
+    <body class="map-body ie-9">
+    <![endif]-->
+    
+    <!--[if !IE]><!-->
+    <!--   <body class="map-body"> -->
+    <body>
+    <script>  
+		if (/*@cc_on!@*/false) {  
+			document.documentElement.className+=' ie10';  
+		}  
+	</script>
+    <!--<![endif]-->
+	
+	<%-- == JAVASCRIPTS  ===================================================== --%>
+	<script language="javascript" type="text/javascript">
 
-			Sbi.template = <%= template %>;
+		Sbi.template = <%= template %>;
 
-			if(Sbi.template.role) {
-				Sbi.template.role = Sbi.template.role.charAt(0) == '/'? 
-									Sbi.template.role.charAt(0): 
-									'/' + Sbi.template.role.charAt(0);
-			}
-			var executionRole = '<%= executionRole%>';
-			Sbi.template.role = executionRole || Sbi.template.role;
+		if(Sbi.template.role) {
+			Sbi.template.role = Sbi.template.role.charAt(0) == '/'? 
+								Sbi.template.role.charAt(0): 
+								'/' + Sbi.template.role.charAt(0);
+		}
+		var executionRole = '<%= executionRole%>';
+		Sbi.template.role = executionRole || Sbi.template.role;
 			
-		    
+		execDoc = function(docLab, role, params, dispToolbar, dispSlide,frameId, height) {
 			
-			execDoc = function(docLab, role, params, dispToolbar, dispSlide,frameId, height) {
-
-				var h = height || '100%';
-				
-				var html = Sbi.sdk.api.getDocumentHtml({
+			var h = height || '100%';
+			
+			var html = Sbi.sdk.api.getDocumentHtml({
 					documentLabel: docLab
 					, executionRole: role // "/" + role
 					, parameters: params 
@@ -129,88 +171,82 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 				
 				//var html = '<h1>Prova provata ' + docLab + ' </h1>'
 			    return html;
-			};		
-		</script>
-		
+		};		
+	</script>
+	
 		<script language="javascript" type="text/javascript">
 
-			Sbi.config = {};
+		Sbi.config = {};
+		var url = {
+			protocol: '<%= request.getScheme()%>'   
+		    , host: '<%= request.getServerName()%>'
+		    , port: '<%= request.getServerPort()%>'
+		    , contextPath: '<%= request.getContextPath().startsWith("/")||request.getContextPath().startsWith("\\")?request.getContextPath().substring(1): request.getContextPath()%>'
+		    , controllerPath: null // no cotroller just servlets   
+		};
 
-			var url = {
-				protocol: '<%= request.getScheme()%>'   
-		    	, host: '<%= request.getServerName()%>'
-		    	, port: '<%= request.getServerPort()%>'
-		    	, contextPath: '<%= request.getContextPath().startsWith("/")||request.getContextPath().startsWith("\\")?request.getContextPath().substring(1): request.getContextPath()%>'
-		    	, controllerPath: null // no cotroller just servlets   
-		    };
-
-			Sbi.sdk.services.setBaseUrl({
-		        protocol: '<%= request.getScheme()%>'     
-		        , host: url.host
-		        , port: url.port
-		        //, contextPath: 'SpagoBI'
-		        //, controllerPath: 'servlet/AdapterHTTP'  
-		    });
+		Sbi.sdk.services.setBaseUrl({
+			protocol: '<%= request.getScheme()%>'     
+		    , host: url.host
+		    , port: url.port
+		    //, contextPath: 'SpagoBI'
+		    //, controllerPath: 'servlet/AdapterHTTP'  
+		});
 	
-		    var params = { };
+		var params = { };
 	
-		    Sbi.config.serviceRegistry = new Sbi.service.ServiceRegistry({
-		    	baseUrl: url
-		        , baseParams: params
-		    });
+		Sbi.config.serviceRegistry = new Sbi.service.ServiceRegistry({
+		  	baseUrl: url
+		    , baseParams: params
+		});
 
-		    Sbi.config.docLabel ="<%=docLabel%>";
-		    Sbi.config.docVersion = "<%=docVersion%>";
-		    Sbi.config.userId = "<%=userId%>";
-		    Sbi.config.docAuthor = "<%=docAuthor%>";
-		    Sbi.config.docName = "<%=docName.replace('\n', ' ')%>";
-		    Sbi.config.docDescription = "<%=docDescription.replace('\n', ' ')%>";
-		    Sbi.config.docIsPublic= "<%=docIsPublic%>";
-		    Sbi.config.docIsVisible= "<%=docIsVisible%>";
-		    Sbi.config.docPreviewFile= "<%=docPreviewFile%>";
-		    Sbi.config.docCommunities= "<%=docCommunity%>";
-		    Sbi.config.docFunctionalities= <%=docFunctionalities%>;
-		    Sbi.config.docDatasetLabel= "<%=docDatasetLabel%>";
-		    Sbi.config.docDatasetName= "<%=docDatasetName%>";
+		Sbi.config.docLabel ="<%=docLabel%>";
+		Sbi.config.docVersion = "<%=docVersion%>";
+		Sbi.config.userId = "<%=userId%>";
+		Sbi.config.docAuthor = "<%=docAuthor%>";
+		Sbi.config.docName = "<%=docName.replace('\n', ' ')%>";
+		Sbi.config.docDescription = "<%=docDescription.replace('\n', ' ')%>";
+		Sbi.config.docIsPublic= "<%=docIsPublic%>";
+		Sbi.config.docIsVisible= "<%=docIsVisible%>";
+		Sbi.config.docPreviewFile= "<%=docPreviewFile%>";
+		Sbi.config.docCommunities= "<%=docCommunity%>";
+		Sbi.config.docFunctionalities= <%=docFunctionalities%>;
+		Sbi.config.docDatasetLabel= "<%=docDatasetLabel%>";
+		Sbi.config.docDatasetName= "<%=docDatasetName%>";
 		    
-		    Sbi.config.visibleDataSet=<%=visibleDataSet%>;
+		Sbi.config.visibleDataSet=<%=visibleDataSet%>;
 		    
-		    var geoReportPanel = null;
+		var geoReportPanel = null;
 		    
-			Ext.onReady(function(){
+		Ext.onReady(function(){
 			
-				if(Sbi.config.visibleDataSet){
-					Ext.QuickTips.init();   
-					geoReportPanel = new Sbi.geo.MainPanel(Sbi.template);	    
-		      		var viewport = new Ext.Viewport({
-		      			id:    'view',
-			      		layout: 'fit',
-			            items: [geoReportPanel]
-			        });
-				}else{
-					
-					
-					Sbi.exception.ExceptionHandler.showErrorMessage(LN('sbi.dataset.no.visible', [Sbi.config.docDatasetName, Sbi.config.docName]));
-				}
-
-			});
-	
+			if(Sbi.config.visibleDataSet){
+				
+				Ext.QuickTips.init();   
+				
+				geoReportPanel = new Sbi.geo.MainPanel(Sbi.template);	
+				
+		   		var viewport = new Ext.Viewport({
+		   			id:    'view',
+		      		layout: 'fit',
+		            items: [geoReportPanel]
+		        });
+		   	
+			}else{
+				Sbi.exception.ExceptionHandler.showErrorMessage(LN('sbi.dataset.no.visible', [Sbi.config.docDatasetName, Sbi.config.docName]));
+			}
+		});
 	
 	</script>
 		
-		
-		
-		
-		<div style="width: 600px; height: 200px; z-index:0;">&nbsp;
-	  
-		<div id="buttonbar"></div>
-		<div id="map"></div>
-	
-		</div>
-		
-		<center id="error"></center>
-		
+	<!-- comment the following blocks  -->	
+	<div style="width: 600px; height: 200px; z-index:0;">&nbsp;
 	 
+	<div id="buttonbar"></div>
+	<div id="map"></div>
+	</div>
+		
+	<center id="error"></center> 
 	</body>
 
 </html>

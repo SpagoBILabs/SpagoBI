@@ -1237,7 +1237,7 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
     	 
     	 this.showMask("Adding layer to map...");
 		 var layer = response.responseXML;
-	     if (!layer || !doc.documentElement) {
+	     if (!layer || !layer.documentElement) {
 	    	 layer = response.responseText;
 	     }
 	     this.setLayer(layer);
@@ -1281,7 +1281,7 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
 //       this.layer.addFeatures( features );
 //       this.map.zoomToExtent(this.layer.getDataExtent());
      	 var layer = response.responseXML;
-	     if (!layer || !doc.documentElement) {
+	     if (!layer || !layer.documentElement) {
 	    	 layer = response.responseText;
 	     }
 	     this.setLayer(layer);
