@@ -3,12 +3,8 @@
 <PRESENTATION>
 
 	<MAPPING business_type="ACTION" 
-			 business_name="CHART_ENGINE_EXTJS_START_ACTION" 
-			 publisher_name="CHART_ENGINE_EXTJS_START_ACTION_PUBLISHER"/>
-
-	<MAPPING business_type="ACTION" 
-			 business_name="CHART_ENGINE_D3_START_ACTION" 
-			 publisher_name="CHART_ENGINE_D3_START_ACTION_PUBLISHER"/>
+			 business_name="CHART_ENGINE_START_ACTION" 
+			 publisher_name="CHART_ENGINE_START_ACTION_PUBLISHER"/>
 			 			
 </PRESENTATION>
 

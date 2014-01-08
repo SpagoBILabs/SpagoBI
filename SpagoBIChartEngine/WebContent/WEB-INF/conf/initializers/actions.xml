@@ -3,13 +3,8 @@
 <ACTIONS>
 	
 	<!-- CHART_ENGINE Initializations -->
-	<ACTION name="CHART_ENGINE_EXTJS_START_ACTION" 
-			class="it.eng.spagobi.engines.chart.services.initializers.ChartEngineEXTJSStartAction" 
-			scope="REQUEST">
-		<CONFIG></CONFIG>
-	</ACTION>
-	<ACTION name="CHART_ENGINE_D3_START_ACTION" 
-			class="it.eng.spagobi.engines.chart.services.initializers.ChartEngineD3StartAction" 
+	<ACTION name="CHART_ENGINE_START_ACTION" 
+			class="it.eng.spagobi.engines.chart.services.initializers.ChartEngineStartAction" 
 			scope="REQUEST">
 		<CONFIG></CONFIG>
 	</ACTION>

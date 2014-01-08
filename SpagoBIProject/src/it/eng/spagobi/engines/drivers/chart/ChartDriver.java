@@ -148,14 +148,15 @@ public class ChartDriver extends GenericDriver {
 			Assert.assertNotNull(parameters, "Input [parameters] cannot be null");
 			//at the moment the initial aztion_name is fixed for extJS... in the future it will be set
 			//by the template content (firstTag EXTCHART,...)
-			if("D3CHART".equalsIgnoreCase(family))
-			{
-				parameters.put(PARAM_SERVICE_NAME, "CHART_ENGINE_D3_START_ACTION");
-			}
-			else
-			{
-				parameters.put(PARAM_SERVICE_NAME, "CHART_ENGINE_EXTJS_START_ACTION");
-			}
+//			if("D3CHART".equalsIgnoreCase(family))
+//			{
+//				parameters.put(PARAM_SERVICE_NAME, "CHART_ENGINE_D3_START_ACTION");
+//			}
+//			else
+//			{
+//				parameters.put(PARAM_SERVICE_NAME, "CHART_ENGINE_EXTJS_START_ACTION");
+//			}
+			parameters.put(PARAM_SERVICE_NAME, "CHART_ENGINE_START_ACTION");
 			
 			parameters.put(PARAM_MODALITY, "VIEW");			
 			parameters.put(PARAM_NEW_SESSION, "TRUE");
