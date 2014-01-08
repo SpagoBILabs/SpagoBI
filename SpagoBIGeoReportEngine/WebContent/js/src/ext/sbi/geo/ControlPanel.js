@@ -652,6 +652,11 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 		this.innerPanel = new Ext.Panel({
 			layout: 'fit', 
 			autoScroll: true,
+//			html:  ' <main class="main main-map" id="main"> ' +
+//			    '<div id="panel" class="panel">' +
+//		    		'Keep calm!' +
+//			    '</div>' +
+//		    '</main>'
 			html: ' <main class="main main-map" id="main"> ' +
 					    '<div id="panel" class="panel">' +
 					    	'<form class="panel-form" action="#" method="post">' +
@@ -662,14 +667,14 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 					               		'<div class="filters" id="filtersDiv" ></div>'+
 					                    this.getPermissionDiv() + 
 					               '</div>' +
-					            '</div>' + this.getPanelButtonsDiv() + 
+					            '</div>' +  this.getPanelButtonsDiv() + 
 					        '</form>' +
 					    '</div>' +
 					'</main>'
 		});
 		
 		this.innerPanel.on('render', function() {		
-			
+		
 			//Handle indicatorsChanged event for updating indicators
 			this.mapComponnet.getActiveThematizer().on('indicatorsChanged', function(thematizer, indicators, selectedIndicator){
 				this.setIndicators(indicators, selectedIndicator, false);
@@ -687,6 +692,7 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 	}	
 	
 	, getThematizersDiv: function(){
+	
 		var mapName = (Sbi.config.docName !== "")?Sbi.config.docName: this.DEFAULT_NAME;
 		var mapDescription = (Sbi.config.docDescription !== "")?Sbi.config.docDescription: this.DEFAULT_DESCRIPTION;
 		
@@ -757,7 +763,6 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 	 */
 	, getIndicatorsDiv: function(){
 		Sbi.trace("[ControlPanel.getIndicatorsDiv]: IN");
-
 		if ( this.indicators != null &&  this.indicators !== undefined)	{	
 			var indicator = null;
 			if(this.analysisConf.indicator) {
@@ -779,12 +784,12 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 					} else {
 						clsName = 'disabled';
 					}
-					toReturn += ''+
-					'<li class="'+clsName+'" id="indicator'+i+'"><span class="button" onclick="javascript:Ext.getCmp(\'controlPanel\').onIndicatorSelected(\'indicator'+i+'\',\''+indEl[0]+'\');">'+
-						'<a href="#" class="tick"></a>'+ indEl[1]+
-		            '</li>' ;	
-				}
-		   
+					toReturn += '<li class="'+clsName+'" id="indicator'+i+'">' + 
+						'<span class="button" onclick="javascript:Ext.getCmp(\'controlPanel\').onIndicatorSelected(\'indicator'+i+'\',\''+indEl[0]+'\');">'+
+							'<a href="#" class="tick"></a>'+ indEl[1]+
+						'</span>' +
+					'</li>';
+				}  
 		       toReturn +=	'</ul>';
 		       
 		       if(this.mapComponnet.getActiveThematizer().storeType === 'physicalStore') {
@@ -829,7 +834,6 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 	 * @return
 	 */
 	, refreshIndicatorsDiv: function(){
-		
 		Sbi.trace("[ControlPanel.refreshIndicatorsDiv]: IN");
 		
 		var containerPanel = Ext.get("containerPanel").dom;
@@ -859,8 +863,6 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 				this.onIndicatorSelected(elementId, indEl[0]);
 			}
 		}
-		
-	
 		
 		Sbi.trace("[ControlPanel.refreshIndicatorsDiv]: OUT");
 	}
@@ -1012,32 +1014,32 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 			}, thisPanel);
 		}
 		
-		var closeMapH = null;
-		var openMapH = null;
-		var elMapType = Ext.get("mapType");	
-		if(elMapType && elMapType !== null) {
-			elMapType.on('click', function() {				
-				
-				var el1 =  Ext.get("mapType");
-				
-				if (closeMapH == null){
-					closeMapH =  Ext.fly(el1).getHeight();
-					openMapH = closeMapH * this.thematizationOptions.length;
-				}
-				if (Ext.fly(el1).hasClass('open')){
-					Ext.fly(el1).dom.style.height = closeMapH-1; 
-					Ext.fly(el1).removeClass('open');
-				}else{
-					Ext.fly(el1).dom.style.height = openMapH; 
-					Ext.fly(el1).addClass('open');
-				}
-			}, thisPanel);
-		} else {
-			//alert('Impossible to find element [maptype]');
-		}
+		this.closeMapH = null;
+		this.openMapH = null;
 	}
 	
-
+	, isThematizationDivOpen: function() {
+		var el1 =  Ext.get("mapType");
+		return Ext.fly(el1).hasClass('open');
+	}
+	
+	, toggleThematizationDiv: function() {
+		var el1 =  Ext.get("mapType");
+		
+		if (this.closeMapH == null){
+			this.closeMapH =  Ext.fly(el1).getHeight();
+			this.openMapH = this.closeMapH * this.thematizationOptions.length;
+		}
+		if (this.isThematizationDivOpen()) {
+			alert("close");
+			Ext.fly(el1).dom.style.height = this.closeMapH-1; 
+			Ext.fly(el1).removeClass('open');
+		} else {
+			alert("open");
+			Ext.fly(el1).dom.style.height = this.openMapH; 
+			Ext.fly(el1).addClass('open');
+		}
+	}
 	
 	, initInnerPannelCallbacks: function() {
 		
@@ -1130,6 +1132,8 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 	, onThematizerSelected: function(el, list){
 		Sbi.trace("[ControlPanel.onThematizerSelected]: IN");
 		
+		this.toggleThematizationDiv();
+		
 		if (el.id != list.item(0).first().id){
 			var oldThematizer = this.mapComponnet.getActiveThematizer();
 			var newThematizer = null;
@@ -1183,15 +1187,23 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 			Ext.fly(el).addClass('active');
 			var lItems = Ext.fly(el).down('a');
 			dh.append(lItems, '<span class=\"arrow\" />');
+			
 			//refresh the list items (move the selected elem as first)
-			var len = list.item(0).dom.childElementCount;
+			//var len = list.item(0).dom.childElementCount;
+			var len = 0;
 			var newList = [el.dom];
-			for(var z=0;z<len;z++){
-				var optEl =list.item(0).dom.childNodes[z];							
-				if (optEl !== undefined && el.id != optEl.id){
-					newList.push(optEl);
+			var listItem = list.item(0).dom.firstChild;
+			while (listItem) { 
+				len++;						
+				if (listItem !== undefined && el.id != listItem.id){
+					newList.push(listItem);
+				} else {
+					//alert("[" +el.id + "] != [" + listItem.id + "]");
 				}
+				
+				listItem = listItem.nextSibling;
 			}
+			
 			//clear			
 			this.clearList(list);
 			//add
@@ -1202,7 +1214,7 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 	}
 	
 	, clearList: function(list){
-		for(var z=0;z<list.item(0).dom.childElementCount;z++){				
+		for(var z=0;z<list.item(0).dom.childElementCount;z++){	
 			list.item(0).dom.childNodes[z].remove();
 		}
 	}
@@ -1211,6 +1223,7 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 		for(var z=0;z<elems.length;z++){				
 			list.item(0).appendChild(elems[z]);
 		}
+		
 	}
 	
 	, openIndicatorDetail: function(el){

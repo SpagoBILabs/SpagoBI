@@ -6,7 +6,6 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 
 <!-- Include Ext stylesheets here: -->
 <link id="theme" rel="styleSheet" href ="./css/georeport.css" type="text/css" />
-<link id="controlpaneltheme" rel="styleSheet" href ="./css/standard.css" type="text/css" />
 
 <!--  
 <script type="text/javascript" src="./js/src/ext/sbi/commons/OpenStreetMap.js"></script>

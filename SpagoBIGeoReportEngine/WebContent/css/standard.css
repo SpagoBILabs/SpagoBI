@@ -179,7 +179,11 @@ li:hover .login-panel .not-registered a:hover,.login-panel .not-registered a:hov
 
 .main{width:100%;float:left;position:relative;z-index:1}
 .main.main-list{padding-top:29px}
-.map-body .main.main-map{position:absolute;top:142px;left:0;right:0;bottom:71px;overflow:hidden} /* ATTENTION! ADDED */
+	
+/* ATTENTION! ADDED */
+/*
+.map-body .main.main-map{position:absolute;top:142px;left:0;right:0;bottom:71px;overflow:hidden} 
+*/
 
 
 

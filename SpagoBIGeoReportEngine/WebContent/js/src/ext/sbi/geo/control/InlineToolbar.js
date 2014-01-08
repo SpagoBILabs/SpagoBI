@@ -133,6 +133,7 @@ Sbi.geo.control.InlineToolbar = OpenLayers.Class(OpenLayers.Control, {
      
         OpenLayers.Control.prototype.initialize.apply(this, [options]);
         this.displayClass = "panel-actions"; 
+        //this.displayClass = "toolbar-actions"; 
          
         Sbi.trace("[InlineToolbar.initialize] : OUT");
     },
@@ -187,11 +188,16 @@ Sbi.geo.control.InlineToolbar = OpenLayers.Class(OpenLayers.Control, {
     createContents: function(){
     	Sbi.trace("[InlineToolbar.createContents] : IN");
          
-        this.div.appendChild(this.createLIEl('span', 'Collapse control panel', 'btn-toggle first open', 'elBtnArrow' ));        
-        this.div.appendChild(this.createLIEl('span', 'Print this map', 'btn-print', 'elBtnPrint' ));
-        this.div.appendChild(this.createLIEl('span', 'Share this map', 'btn-share last', 'elBtnShare' ));
-//        this.div.appendChild(this.createLIEl('a', 'Download this map', 'btn-download last', 'elBtnDownload' ));
-//        this.div.appendChild(this.createLIEl('a', 'Make this map favourite', 'btn-favourite last', 'elBtnFavourite' ));
+    	var actionsPanel = document.createElement('ul');
+    	actionsPanel.className = "list-actions";;
+    	 
+    	this.div.appendChild( actionsPanel );
+        
+    	actionsPanel.appendChild(this.createLIEl('span', 'Collapse control panel', 'btn-toggle first open', 'elBtnArrow' ));        
+    	actionsPanel.appendChild(this.createLIEl('span', 'Print this map', 'btn-print', 'elBtnPrint' ));
+    	actionsPanel.appendChild(this.createLIEl('span', 'Share this map', 'btn-share last', 'elBtnShare' ));
+//      actionsPanel.appendChild(this.createLIEl('a', 'Download this map', 'btn-download last', 'elBtnDownload' ));
+//      actionsPanel.appendChild(this.createLIEl('a', 'Make this map favourite', 'btn-favourite last', 'elBtnFavourite' ));
         
                
         Sbi.trace("[InlineToolbar.createContents] : OUT");
@@ -208,16 +214,16 @@ Sbi.geo.control.InlineToolbar = OpenLayers.Class(OpenLayers.Control, {
      * id - {String} Identifier of the element
      */
     createLIEl: function(d, t, c, id ){
-	    var toReturn = document.createElement('li'),
-	    	toReturnDet = document.createElement(d);
-	    	if (t !== null && t !== undefined){
-	    		toReturnDet.innerHTML = t;    
-	    	} 
-	    	toReturn.appendChild(toReturnDet);
-	    	toReturn.className = c;
-	    	toReturnDet.innerHTML = t; 
-	    	toReturn.id = OpenLayers.Util.createUniqueID(id);   
-		    OpenLayers.Event.observe(toReturn, "click", OpenLayers.Function.bindAsEventListener(this.execClick, this));
+	    var toReturn = document.createElement('li');
+	    var	toReturnDet = document.createElement(d);
+	    if (t !== null && t !== undefined){
+	    	toReturnDet.innerHTML = t;    
+	    } 
+	    
+	    toReturn.appendChild(toReturnDet);
+	    toReturn.className = c;
+	    toReturn.id = OpenLayers.Util.createUniqueID(id);  
+	    OpenLayers.Event.observe(toReturn, "click", OpenLayers.Function.bindAsEventListener(this.execClick, this));
 		    
 		return toReturn;
     },
@@ -226,23 +232,29 @@ Sbi.geo.control.InlineToolbar = OpenLayers.Class(OpenLayers.Control, {
      * Method: execClick
      * Executes the specific action
      */
-    execClick: function(el){
-	
-    	if (el.currentTarget.id.indexOf('elBtnArrow')>=0){
+    execClick: function(event){
+    	var targetEl = null;
+    	if(event.currentTarget) {
+    		targetEl = event.currentTarget 
+    	} else {
+    		targetEl = event.srcElement.parentNode;
+    	}
+    	
+    	if (targetEl.id.indexOf('elBtnArrow')>=0){
     		if(this.mainPanel.controlPanel.collapsed) {
-    			el.currentTarget.className += ' open';
+    			targetEl.className += ' open';
     			this.mainPanel.controlPanel.setVisible(true);
     			this.mainPanel.controlPanel.expand();
     		} else {
-    			el.currentTarget.className = el.currentTarget.className.replace(/\bopen\b/,'');
+    			targetEl.className = targetEl.className.replace(/\bopen\b/,'');
     			this.mainPanel.controlPanel.collapse();
     			this.mainPanel.controlPanel.setVisible(false);
     		}
-    	} else if (el.currentTarget.id.indexOf('elBtnPrint')>=0){
+    	} else if (targetEl.id.indexOf('elBtnPrint')>=0){
     	     window.print();
-    	} else if (el.currentTarget.id.indexOf('elBtnShare')>=0){
+    	} else if (targetEl.id.indexOf('elBtnShare')>=0){
     		this.showShareMapWindow('elBtnShare');
-    	} else if (el.currentTarget.id.indexOf('elBtnDownload')>=0){
+    	} else if (targetEl.id.indexOf('elBtnDownload')>=0){
     		var printProvider = new GeoExt.data.PrintProvider({
                 capabilities: {"scales":[{"name":"1:25.000","value":"25000"},{"name":"1:50.000","value":"50000"},{"name":"1:100.000","value":"100000"},{"name":"1:200.000","value":"200000"},{"name":"1:500.000","value":"500000"},{"name":"1:1.000.000","value":"1000000"},{"name":"1:2.000.000","value":"2000000"},{"name":"1:4.000.000","value":"4000000"}],"dpis":[{"name":"56","value":"56"},{"name":"127","value":"127"},{"name":"190","value":"190"},{"name":"256","value":"256"}],"outputFormats":[{"name":"pdf"}],"layouts":[{"name":"A4 portrait","map":{"width":440,"height":483},"rotation":true}],"printURL":"http://localhost:8080/SpagoBIGeoReportEngine/pdf/print.pdf","createURL":"http://localhost:8080/SpagoBIGeoReportEngine/pdf/create.json"},
                 customParams: {
@@ -256,7 +268,7 @@ Sbi.geo.control.InlineToolbar = OpenLayers.Class(OpenLayers.Control, {
             });
             printPage.fit(this.map, true);
             printProvider.print(this.map, printPage);
-    	} else if (el.currentTarget.id.indexOf('elBtnFavourite')>=0){
+    	} else if (targetEl.id.indexOf('elBtnFavourite')>=0){
     		alert('elBtnFavourite');
     	}
     },
