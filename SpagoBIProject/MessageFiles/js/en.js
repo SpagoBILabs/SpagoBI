@@ -279,8 +279,9 @@ Sbi.locale.ln['sbi.generic.confirmShare']  = 'Confirm the share of the document?
 Sbi.locale.ln['sbi.browser.document.share.success']  = 'Share document ended correctly';
 
 Sbi.locale.ln['sbi.document.saveWarning']  = 'Before saving the document fill in Name and Label and select at least one folder where to place it';
+Sbi.locale.ln['sbi.document.saveWarning2']  = 'Before saving the document fill the Name of the document ';
 
-Sbi.locale.ln['sbi.execution.saveDocument']  = 'Fill in the Form and place your document in at least one folder then Save';
+Sbi.locale.ln['sbi.execution.saveDocument']  = 'Fill in the Form and Save your document';
 Sbi.locale.ln['sbi.browser.defaultRole.title']  = 'Select a default role';
 Sbi.locale.ln['sbi.browser.defaultRole.role']  = 'Role: ';
 Sbi.locale.ln['sbi.browser.defaultRole.noDefRole']  = 'No default role';

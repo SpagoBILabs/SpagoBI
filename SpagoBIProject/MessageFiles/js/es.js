@@ -219,8 +219,9 @@ Sbi.locale.ln['sbi.browser.document.delete.success']  = 'Document/s deleted succ
 Sbi.locale.ln['sbi.browser.document.clone.success']  = 'Document cloned succesfully';
 
 Sbi.locale.ln['sbi.document.saveWarning']  = 'Antes de guardar el documento complete Nombre y Etiqueta y seleccione al menos una carpeta dónde colocarla';
+Sbi.locale.ln['sbi.document.saveWarning2']  = 'Antes de guardar el documento complete Nombre del documento';
 
-Sbi.locale.ln['sbi.execution.saveDocument']  = 'Rellene el formulario y coloque el documento en al menos una carpeta y luego Guardela';
+Sbi.locale.ln['sbi.execution.saveDocument']  = 'Rellene el formulario y Guardela el documento';
 Sbi.locale.ln['sbi.browser.defaultRole.title']  = 'Seleccione un rol predeterminado';
 Sbi.locale.ln['sbi.browser.defaultRole.role']  = 'Rol: ';
 Sbi.locale.ln['sbi.browser.defaultRole.noDefRole']  = 'Ningún rol predeterminado';

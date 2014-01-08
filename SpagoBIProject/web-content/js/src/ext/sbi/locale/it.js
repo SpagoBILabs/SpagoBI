@@ -302,14 +302,13 @@ Sbi.locale.ln['sbi.browser.document.functsMandatory']  = 'Prima di condividere i
 Sbi.locale.ln['sbi.generic.confirmShare']  = 'Confermi la condivisione del documento ?';
 Sbi.locale.ln['sbi.browser.document.share.success']  = 'Operazione di condivisione del documento terminata correttamente';
 
-Sbi.locale.ln['sbi.document.saveWarning']  = 'Prima di salvare il documento, riempire i campi Nome e Label e selezionare almeno una cartella dove posizionare il documento';
+Sbi.locale.ln['sbi.document.saveWarning']  = 'Prima di salvare il documento, valorizza i campi Nome e Label e selezionare almeno una cartella dove posizionare il documento';
+Sbi.locale.ln['sbi.document.saveWarning2']  = 'Prima di salvare il documento, valorizza il Nome del documento';
 
-Sbi.locale.ln['sbi.execution.saveDocument']  = 'Riempi la Form, posiziona il tuo documento in una o pi\u00f9 cartelle e Salva';
+Sbi.locale.ln['sbi.execution.saveDocument']  = 'Completa con maggiori dettagli e Salva il tuo documento.';
 Sbi.locale.ln['sbi.execution.error']  = 'Un errore si \u00e8 verificato durante l\'esecuzione del documento';
 Sbi.locale.ln['sbi.execution.error.nodocid']  = 'Per poter eseguire il documento \u00e8 necessario specificarne l\'id';
 Sbi.locale.ln['sbi.execution.error.novalidrole']  = 'L\'untente non ha ruoli validi per eseguire il documento';
-
-Sbi.locale.ln['sbi.execution.saveDocument']  = 'Riempi il form, posiziona il documento su una o pi\u00f9 cartelle e salva';
 
 Sbi.locale.ln['sbi.execution.roleselection.title']  = 'Selezione ruolo';
 Sbi.locale.ln['sbi.execution.roleselection.fieldlabel']  = 'Ruolo';
