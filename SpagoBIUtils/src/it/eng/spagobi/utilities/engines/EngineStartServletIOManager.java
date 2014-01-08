@@ -6,6 +6,7 @@
 package it.eng.spagobi.utilities.engines;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -431,6 +432,13 @@ public class EngineStartServletIOManager extends BaseServletIOManager {
 
 		logger.debug("IN");
 
+		try {
+			this.getRequest().setCharacterEncoding("UTF-8");
+		} catch (UnsupportedEncodingException t) {
+			// TODO Auto-generated catch block
+			t.printStackTrace();
+		}
+		
 		parameterStopList = new HashSet();
 		parameterStopList.add("template");
 		parameterStopList.add("ACTION_NAME");
@@ -444,7 +452,8 @@ public class EngineStartServletIOManager extends BaseServletIOManager {
 		parameterNames = getRequestContainer().getKeys().iterator();
 		while (parameterNames.hasNext()) {
 			String parameterName = (String) parameterNames.next();
-			Object parameterValue = this.getParameter(parameterName);
+			String parameterValue = (String)this.getParameter(parameterName);
+			
 			logger.debug("Parameter [" + parameterName
 					+ "] has been read from request");
 			logger.debug("Parameter [" + parameterName + "] is of type  "
