@@ -5,6 +5,7 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.analiticalmodel.execution.service;
 
+import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.AnalyticalModelDocumentManagementAPI;
 import it.eng.spagobi.analiticalmodel.document.DocumentTemplateBuilder;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
@@ -12,6 +13,7 @@ import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
 import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
 import it.eng.spagobi.analiticalmodel.document.handlers.ExecutionInstance;
 import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
+import it.eng.spagobi.analiticalmodel.functionalitytree.dao.ILowFunctionalityDAO;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
@@ -29,6 +31,7 @@ import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.json.JSONUtils;
 import it.eng.spagobi.utilities.service.JSONSuccess;
@@ -152,8 +155,8 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 			Assert.assertNotNull( StringUtilities.isNotEmpty( documentJSON.optString("type") ) , "Document's type cannot be null or empty");
 			
 			JSONArray foldersJSON = request.optJSONArray("folders");
-			Assert.assertNotNull( foldersJSON , "Destination folders' list cannot be null");
-			Assert.assertNotNull( foldersJSON.length() > 0 , "Destination folders' list cannot be empty");
+			//Assert.assertNotNull( foldersJSON , "Destination folders' list cannot be null");
+			//Assert.assertNotNull( foldersJSON.length() > 0 , "Destination folders' list cannot be empty");
 			
 			if( documentManagementAPI.getDocument( documentJSON.getString("label") ) != null ){
 				throw new SpagoBIServiceException(SERVICE_NAME,	"sbi.document.labelAlreadyExistent");
@@ -239,8 +242,22 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 		try {
 			String sourceModelName = getAttributeAsString("model_name");
 			JSONObject documentJSON = request.optJSONObject("document");
-			JSONArray filteredFoldersJSON = filterFolders(request.optJSONArray("folders"));
-
+			JSONArray filteredFoldersJSON = new JSONArray(); 
+			if(request.optJSONArray("folders") == null){
+				IEngUserProfile profile = (IEngUserProfile) getUserProfile();
+				//add personal folder for default
+				LowFunctionality userFunc = null;
+				try{
+					ILowFunctionalityDAO functionalitiesDAO = DAOFactory.getLowFunctionalityDAO();
+					userFunc = functionalitiesDAO.loadLowFunctionalityByPath("/"+profile.getUserUniqueIdentifier(),false);
+				} catch (Exception e) {
+					logger.error("Error on insertion of the document.. Impossible to get the id of the personal folder ",e);
+					throw new SpagoBIRuntimeException("Error on insertion of the document.. Impossible to get the id of the personal folder ",e);
+				}
+				filteredFoldersJSON.put(userFunc.getId());
+			}else{
+				filteredFoldersJSON = filterFolders(request.optJSONArray("folders"));
+			}
 			JSONObject customDataJSON = request.optJSONObject("customData");
 			Assert.assertNotNull( customDataJSON , "Custom data object cannot be null");
 		
@@ -321,6 +338,20 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 			String sourceModelName = getAttributeAsString("model_name");
 			JSONObject documentJSON = request.optJSONObject("document");
 			JSONArray foldersJSON = request.optJSONArray("folders");
+			if(foldersJSON == null){
+				IEngUserProfile profile = (IEngUserProfile) getUserProfile();
+				//add personal folder for default
+				LowFunctionality userFunc = null;
+				try{
+					ILowFunctionalityDAO functionalitiesDAO = DAOFactory.getLowFunctionalityDAO();
+					userFunc = functionalitiesDAO.loadLowFunctionalityByPath("/"+profile.getUserUniqueIdentifier(),false);
+				} catch (Exception e) {
+					logger.error("Error on insertion of the document.. Impossible to get the id of the personal folder ",e);
+					throw new SpagoBIRuntimeException("Error on insertion of the document.. Impossible to get the id of the personal folder ",e);
+				}
+				foldersJSON = new JSONArray();
+				foldersJSON.put(userFunc.getId());
+			}
 			JSONObject customDataJSON = request.optJSONObject("customData");
 			Assert.assertNotNull( customDataJSON , "Custom data object cannot be null");
 			Assert.assertNotNull( customDataJSON.has("worksheet") , "Worksheet data object cannot be null");

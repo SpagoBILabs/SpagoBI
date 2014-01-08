@@ -83,8 +83,8 @@ Ext.define('Sbi.execution.SaveDocumentWindowExt4', {
 		var c = Ext.apply({}, config, {
 			id:'popup_docSave',
 			layout:'fit',
-			width:700,//640,
-			height:450,
+			width: 450, //640,
+			height: 300,//450,
 			closeAction: 'destroy',
 			buttons:[{ 
 				  iconCls: 'icon-save' 	
@@ -124,7 +124,8 @@ Ext.define('Sbi.execution.SaveDocumentWindowExt4', {
 	        maxLength: 20,
 	        enforceMaxLength: true,
 	        anchor: '95%',
-			fieldLabel: LN('sbi.generic.label')  
+			fieldLabel: LN('sbi.generic.label'),
+			hidden: true //since SpagoBI 5
 	    });
 		
 		this.docDescr =  Ext.create("Ext.form.TextArea",{
@@ -144,7 +145,8 @@ Ext.define('Sbi.execution.SaveDocumentWindowExt4', {
 	        boxLabel  : 'Visible',
             name      : 'docVisibility',
             inputValue: 1,
-            checked   : true
+            checked   : true,
+            hidden	  : true //since SpagoBI 5
            });
 		// The data store holding the communities
 		var storeComm = Ext.create('Ext.data.Store', {
@@ -172,25 +174,30 @@ Ext.define('Sbi.execution.SaveDocumentWindowExt4', {
 		    store: storeComm,
 		    displayField: 'name',
 		    valueField: 'functCode',
-		    allowBlank: true
+		    allowBlank: true,
+		    hidden: true //since SpagoBI 5
 		});
+			
 		
-		var storeScope = Ext.create('Ext.data.Store', {
-		    fields: ['field', 'value'],
-		    data : [
-		        {"field":"true", "value":"Public"},
-		        {"field":"false", "value":"Private"}
-		    ]
-		});
-		
-		this.isPublic = Ext.create('Ext.form.ComboBox', {
-		    fieldLabel: 'Scope',
-//		    queryMode: 'local',
-		    store: storeScope,
-		    displayField: 'value',
-		    valueField: 'field',
-		    allowBlank: false
-		});
+//		if (Sbi.settings.saveWindow && Sbi.settings.saveWindow.showScopeInfo && Sbi.settings.saveWindow.showScopeInfo == true){
+			var storeScope = Ext.create('Ext.data.Store', {
+			    fields: ['field', 'value'],
+			    data : [
+			        {"field":"true", "value":"Public"},
+			        {"field":"false", "value":"Private"}
+			    ]
+			}); 
+			
+			this.isPublic = Ext.create('Ext.form.ComboBox', {
+			    fieldLabel: 'Scope',
+	//		    queryMode: 'local',
+			    store: storeScope,
+			    displayField: 'value',
+			    valueField: 'field',
+			    allowBlank: false,
+			    hidden: true //since SpagoBI 5
+			});
+//		}
 		
 		this.fileUpload = this.initFileUpload();
 	    
@@ -214,21 +221,22 @@ Ext.define('Sbi.execution.SaveDocumentWindowExt4', {
 	    	}
 	    });
 	    
-	    
+	    /* Since SpagoBI 5 the folder is setted automatically with the personal folder
 	    this.treePanel =  Ext.create("Sbi.browser.DocumentsTree",{
 	    	  columnWidth: 0.4,
 	          border: false,
 
 	          drawUncheckedChecks: true
 	    });
+	    */
 	    
 	    this.saveDocumentForm =  Ext.create("Ext.form.FormPanel",{
 		          autoScroll: true,
 		          labelAlign: 'left',
 		          autoWidth: true,
 		          height: 350,
-		          layout: 'column',
-		          columnWidth:	0.1,
+		          layout: 'fit',
+//		          columnWidth:	1, //0.1,
 		          scope:this,
 		          forceLayout: true,
 		          trackResetOnLoad: true,
@@ -239,7 +247,7 @@ Ext.define('Sbi.execution.SaveDocumentWindowExt4', {
 		 			},
 		          items: [
 		              this.inputForm
-		              , this.treePanel           	  		
+		            //  , this.treePanel    //since SpagoBI 5 no folder are selected at this time       	  		
 		          ]
 		          
 		      });
@@ -248,16 +256,19 @@ Ext.define('Sbi.execution.SaveDocumentWindowExt4', {
 	,saveDocument: function () {
 		 
 		var docName = this.docName.getValue();
-		var docLabel = this.docLabel.getValue();
+		//defines the document label internally (Since SpagoBI 5 is not more visible in the GUI)
+//		var docLabel = this.docLabel.getValue();		
+		var docLabel = (this.OBJECT_TYPE == 'WORKSHEET')? 'ws__' : 'map__';
+		docLabel +=  Math.floor((Math.random()*1000000000)+1); 
 		var docDescr = this.docDescr.getValue();
 		var docVisibility = this.docVisibility.getValue();
-		var functs = this.treePanel.returnCheckedIdNodesArray();
+		//var functs = this.treePanel.returnCheckedIdNodesArray();
 		var query = this.OBJECT_QUERY;
 		var formValues = this.OBJECT_FORM_VALUES;// the values of the form for the smart filter
 		var wk_definition = this.OBJECT_WK_DEFINITION;
 		var previewFile =  this.fileNameUploaded;
 		var docCommunity = this.docCommunity.getValue();
-		var isPublic = this.isPublic.getValue();
+		var isPublic = (this.isPublic) ? this.isPublic.getValue() : false;
 		
 		if(formValues!=undefined && formValues!=null){
 			formValues=Ext.encode(formValues);
@@ -274,17 +285,18 @@ Ext.define('Sbi.execution.SaveDocumentWindowExt4', {
 		}
 		
 		if(docName == null || docName == undefined || docName == '' ||
-		   docLabel == null || docLabel == undefined || docLabel == '' ||
-//		   isPublic == null || isPublic == undefined || isPublic == '' ||
-		   ((functs == null || functs == undefined || functs.length == 0) && (docCommunity == null || docCommunity == undefined || docCommunity == ''))){
+		   docLabel == null || docLabel == undefined || docLabel == '' 
+//		   ((functs == null || functs == undefined || functs.length == 0) &&
+//				   (docCommunity == null || docCommunity == undefined || docCommunity == ''))
+			){
 				Ext.MessageBox.show({
 	                title: LN('sbi.generic.warning'),
-	                msg:  LN('sbi.document.saveWarning'),
+	                msg:  LN('sbi.document.saveWarning2'),
 	                width: 180,
 	                buttons: Ext.MessageBox.OK
 	           });
 		}else{	
-			functs = Ext.JSON.encode(functs);
+//			functs = Ext.JSON.encode(functs);
 			var params = {
 		        	name :  docName,
 		        	label : docLabel,
@@ -300,8 +312,8 @@ Ext.define('Sbi.execution.SaveDocumentWindowExt4', {
 					datasourceid: this.OBJECT_DATA_SOURCE,
 					communityid: docCommunity,
 					isPublic: isPublic,
-					SBI_EXECUTION_ID: this.SBI_EXECUTION_ID,
-					functs: functs
+					SBI_EXECUTION_ID: this.SBI_EXECUTION_ID
+//					functs: functs
 		        };
 			
 			Ext.Ajax.request({

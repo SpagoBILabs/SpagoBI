@@ -124,6 +124,13 @@ Sbi.settings.execution = {
 };
 
 /**
+ * Details for save window GUI (final user side)
+Sbi.settings.saveWindow = {
+		showScopeInfo: false
+};
+ */
+
+/**
  * Document browser settings
  */
 Sbi.settings.browser = {

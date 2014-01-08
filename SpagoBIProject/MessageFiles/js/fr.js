@@ -257,12 +257,13 @@ Sbi.locale.ln['sbi.browser.defaultRole.save']='Enregistrer';
 Sbi.locale.ln['sbi.browser.defaultRole.cancel']='Annuler';
 
 Sbi.locale.ln['sbi.document.saveWarning']='Avant d\'enregistrer votre document, veuillez remplir les champs Nom et Libell\u00E9 et v\u00E9rifier qu\'il y a au moins un dossier o\u00F9 le placer !';
+Sbi.locale.ln['sbi.document.saveWarning2']='Avant d\'enregistrer votre document, veuillez remplir les champs Nom du document';
 
 Sbi.locale.ln['sbi.execution.error']='Une erreur est arriv\u00E9 pendant l\'ex\u00E9cution du document';
 Sbi.locale.ln['sbi.execution.error.nodocid']='L\'ID du document est requis pour ex\u00E9cuter le document';
 Sbi.locale.ln['sbi.execution.error.novalidrole']='Cet utilisateur n\'a pas de r\u00F4les valides pour ex\u00E9cuter le document selectionn\u00E9';
 
-Sbi.locale.ln['sbi.execution.saveDocument']='Remplir le formulaire, s\u00E9lectionner un ou plusieurs dossiers, et Enregistrer';
+Sbi.locale.ln['sbi.execution.saveDocument']='Remplir le formulaire, et Enregistrer votre document';
 
 
 Sbi.locale.ln['sbi.execution.roleselection.title']='S\u00E9lection du r\u00F4le';
