@@ -1031,11 +1031,9 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 			this.openMapH = this.closeMapH * this.thematizationOptions.length;
 		}
 		if (this.isThematizationDivOpen()) {
-			alert("close");
 			Ext.fly(el1).dom.style.height = this.closeMapH-1; 
 			Ext.fly(el1).removeClass('open');
 		} else {
-			alert("open");
 			Ext.fly(el1).dom.style.height = this.openMapH; 
 			Ext.fly(el1).addClass('open');
 		}
