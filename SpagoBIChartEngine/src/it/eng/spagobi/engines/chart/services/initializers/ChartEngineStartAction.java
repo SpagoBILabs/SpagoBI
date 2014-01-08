@@ -15,10 +15,8 @@ import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineStartupException;
 import it.eng.spagobi.utilities.json.JSONTemplateUtils;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -30,7 +28,7 @@ import org.json.JSONObject;
 /**
  * Entry point action.
  */
-public class ChartEngineEXTJSStartAction extends AbstractEngineStartAction {
+public class ChartEngineStartAction extends AbstractEngineStartAction {
 
 	/*private String[] lstEnvVariables = {"SBICONTEXT", "SBI_COUNTRY", "SBI_LANGUAGE", 
 			"SBI_SPAGO_CONTROLLER",  "SBI_EXECUTION_ROLE", "SBI_HOST", 
@@ -46,14 +44,11 @@ public class ChartEngineEXTJSStartAction extends AbstractEngineStartAction {
 	public static final String DOCUMENT_LABEL = "DOCUMENT_LABEL";
 	public static final String DOCUMENT_PARAMETERS = "DOCUMENT_PARAMETERS";
 
-
-
-	
 	// SESSION PARAMETRES	
 	public static final String ENGINE_INSTANCE = EngineConstants.ENGINE_INSTANCE;
 	
 	/** Logger component. */
-    public static transient Logger logger = Logger.getLogger(ChartEngineEXTJSStartAction.class);
+    public static transient Logger logger = Logger.getLogger(ChartEngineStartAction.class);
     
     private String documentLabel;
     
@@ -90,6 +85,9 @@ public class ChartEngineEXTJSStartAction extends AbstractEngineStartAction {
 			try {
 				parsJSON = getParametersAsJSON();
 				SourceBean content = SourceBean.fromXMLString(getTemplateAsString());
+				
+				serviceResponse.setAttribute("ENGINE", content.getName());
+				
 				JSONObject template = templateUtil.getJSONTemplateFromXml( content, parsJSON); 				
 				//System.out.println(template.toString(4));
 				
