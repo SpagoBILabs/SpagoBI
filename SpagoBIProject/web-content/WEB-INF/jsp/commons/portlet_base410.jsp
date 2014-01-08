@@ -3,19 +3,33 @@
 Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
 This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
 If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. --%>
- 
+
 <%@ page language="java"
          contentType="text/html; charset=ISO-8859-1"
          pageEncoding="ISO-8859-1"
          session="true" 
-         import="it.eng.spago.base.*,
-         		 it.eng.spagobi.commons.utilities.urls.IUrlBuilder,
-         		 it.eng.spagobi.commons.utilities.messages.IMessageBuilder"
 %>
-<%--
-The following directive catches exceptions thrown by jsps, must be commented in development environment
---%>
+
+<%-- ---------------------------------------------------------------------- --%>
+<%-- ERROR PAGE																--%>
+<%-- ---------------------------------------------------------------------- --%>
+<%-- The following directive catches exceptions thrown by jsps.				--%>
+<%-- must be commented in development environment.							--%>												
+<%-- ---------------------------------------------------------------------- --%>
 <%@page errorPage="/WEB-INF/jsp/commons/genericError.jsp"%>
+
+<%-- ---------------------------------------------------------------------- --%>
+<%-- TAG LIBRARIES													--%>
+<%-- ---------------------------------------------------------------------- --%>
+<%@ taglib uri="/WEB-INF/tlds/spagobi.tld" prefix="spagobi" %>
+
+<%-- ---------------------------------------------------------------------- --%>
+<%-- JAVA IMPORTS															--%>
+<%-- ---------------------------------------------------------------------- --%>
+<%@page import="it.eng.spago.base.*"%>
+<%@page import="it.eng.spagobi.commons.SingletonConfig"%>
+<%@page import="it.eng.spagobi.commons.utilities.urls.IUrlBuilder"%>
+<%@page import="it.eng.spagobi.commons.utilities.messages.IMessageBuilder"%>
 <%@page import="it.eng.spagobi.commons.utilities.urls.WebUrlBuilder"%>
 <%@page import="it.eng.spagobi.commons.utilities.urls.PortletUrlBuilder"%>
 <%@page import="it.eng.spagobi.commons.utilities.messages.MessageBuilder"%>
@@ -38,17 +52,11 @@ The following directive catches exceptions thrown by jsps, must be commented in 
 <%@page import="java.util.List"%>
 <%@page import="java.util.ArrayList"%>
 
-<!-- IMPORT TAG LIBRARY  -->
-<%@ taglib uri="/WEB-INF/tlds/spagobi.tld" prefix="spagobi" %>
 
-<%-- START SCRIPT FOR DOMAIN DEFINITION (MUST BE EQUAL BETWEEN SPAGOBI AND EXTERNAL ENGINES) -->
-commented by Davide Zerbetto on 12/10/2009: there are problems with MIF (Ext ManagedIFrame library) library
-<script type="text/javascript">
-	document.domain='<%= GeneralUtilities.getSpagoBiDomain() %>';
-</script>
-<!-- END SCRIPT FOR DOMAIN DEFINITION --%>
 
-<!-- GET SPAGO OBJECTS  -->
+<%-- ---------------------------------------------------------------------- --%>
+<%-- JAVA CODE 																--%>
+<%-- ---------------------------------------------------------------------- --%>
 <%
 	//Enumeration headers = request.getHeaderNames();
 	//while (headers.hasMoreElements()) {
@@ -88,6 +96,8 @@ commented by Davide Zerbetto on 12/10/2009: there are problems with MIF (Ext Man
 	String channelType = aRequestContainer.getChannelType();
 	if ("PORTLET".equalsIgnoreCase(channelType)) sbiMode = "PORTLET";
 	else sbiMode = "WEB";
+	
+	boolean forceIE8Compatibility = true;
 
     // = (String)sessionContainer.getAttribute(Constants.USER_LANGUAGE);
     //country = (String)sessionContainer.getAttribute(Constants.USER_COUNTRY);
@@ -182,45 +192,69 @@ commented by Davide Zerbetto on 12/10/2009: there are problems with MIF (Ext Man
 	request.getSession().setAttribute(IEngUserProfile.ENG_USER_PROFILE, userProfile);
 	request.getSession().setAttribute(Constants.USER_LANGUAGE, locale.getLanguage());
 	request.getSession().setAttribute(Constants.USER_COUNTRY, locale.getCountry());
+%>
 
-
-	
-	%>
-
+<%-- ---------------------------------------------------------------------- --%>
+<%-- HTML	 																--%>
+<%-- ---------------------------------------------------------------------- --%>
 
 <!-- based on ecexution mode include initial html  -->   
 <% if (sbiMode.equalsIgnoreCase("WEB")){ %> 
-
-
-
-<%@page import="it.eng.spagobi.commons.SingletonConfig"%><html lang="<%=locale != null ? locale.getLanguage() : GeneralUtilities.getDefaultLocale().getLanguage()%>">
-<head>
-	<meta http-equiv="X-UA-Compatible" content="IE=8" />
-	<link rel="shortcut icon" href="<%=urlBuilder.getResourceLinkByTheme(request, "img/favicon.ico", currTheme)%>" />
-</head>
-<body>
+	<html lang="<%=locale != null ? locale.getLanguage() : GeneralUtilities.getDefaultLocale().getLanguage()%>">
+		<head>
+			<% if (forceIE8Compatibility == true){ %> 
+			<meta http-equiv="X-UA-Compatible" content="IE=8" />
+			<%} %>
+			<link rel="shortcut icon" href="<%=urlBuilder.getResourceLinkByTheme(request, "img/favicon.ico", currTheme)%>" />
+		</head>
+		
+		<!--[if IE 8]>
+	        <body class="lte-8 ie-8">
+	    <![endif]-->
+	    <!--[if lte IE 7]>
+	        <body class="lte-8 lte-7">
+	    <![endif]-->
+	    <!--[if gt IE 8]>
+	        <body class="ie-9">
+	    <![endif]-->
+	    <!--[if !IE]><!-->
+        <body>
+        <script>  
+			if (/*@cc_on!@*/false) {  
+				document.documentElement.className+=' ie10';  
+			}  
+		</script>
+     	<!--<![endif]-->
 <%} %>
 
 
+<%-- START SCRIPT FOR DOMAIN DEFINITION (MUST BE EQUAL BETWEEN SPAGOBI AND EXTERNAL ENGINES) -->
+commented by Davide Zerbetto on 12/10/2009: there are problems with MIF (Ext ManagedIFrame library) library
+<script type="text/javascript">
+	document.domain='<%= GeneralUtilities.getSpagoBiDomain() %>';
+</script>
+<!-- END SCRIPT FOR DOMAIN DEFINITION --%>
 
 
+<%-- ---------------------------------------------------------------------- --%>
+<%-- INCLUDE EXT UX															--%>
+<%-- ---------------------------------------------------------------------- --%>
 <script type="text/javascript" src='${pageContext.request.contextPath}/js/lib/ext-4.1.1a/ext-all-debug.js'/></script>
 <script type="text/javascript" src='${pageContext.request.contextPath}/js/lib/ext-4.1.1a/examples/ux/IFrame.js'/></script>
 <script type="text/javascript" src='${pageContext.request.contextPath}/js/lib/ext-4.1.1a/ux/RowExpander.js'/></script>
 
-    
+<%-- ---------------------------------------------------------------------- --%>
+<%-- INCLUDE CUSTOM CODE													--%>
+<%-- ---------------------------------------------------------------------- --%>
 <script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext/sbi/service/ServiceRegistry.js'/></script>
+<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext4/sbi/service/ServiceRegistry.js")%>'></script>   
+<link id="spagobi-ext-4" rel="styleSheet" href ="${pageContext.request.contextPath}/js/lib/ext-4.1.1a/overrides/resources/css/spagobi.css" type="text/css" />
     
-    
-<!-- Include Ext stylesheets here: -->
+<%-- ---------------------------------------------------------------------- --%>
+<%-- INCLUDE CUSTOM EXT													--%>
+<%-- ---------------------------------------------------------------------- --%>
 <link id="extall"     rel="styleSheet" href ="${pageContext.request.contextPath}/js/lib/ext-4.1.1a/resources/css/ext-all.css" type="text/css" />
 <link id="theme-gray" rel="styleSheet" href ="${pageContext.request.contextPath}/js/lib/ext-4.1.1a/resources/css/ext-all-gray.css" type="text/css" />
-
-
-<link id="spagobi-ext-4" rel="styleSheet" href ="${pageContext.request.contextPath}/js/lib/ext-4.1.1a/overrides/resources/css/spagobi.css" type="text/css" />
-
-<!-- load of the service registry to define the variable Sbi.config.serviceRegistry  -->
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext4/sbi/service/ServiceRegistry.js")%>'></script>
 
 <script type="text/javascript">
 	Ext.BLANK_IMAGE_URL = '<%=urlBuilder.getResourceLink(request, "/js/lib/ext-2.0.1/resources/images/default/s.gif")%>';
@@ -296,6 +330,7 @@ commented by Davide Zerbetto on 12/10/2009: there are problems with MIF (Ext Man
     Sbi.user.isSuperAdmin = '<%= userProfile != null ? ((UserProfile)userProfile).getIsSuperadmin() : false%>';
 	Sbi.user.roles = new Array();
 	Sbi.user.defaultRole = '<%= defaultRole != null ? StringEscapeUtils.escapeJavaScript(defaultRole)  : ""%>';
+	
 	<%
 	StringBuffer buffer = new StringBuffer("[");
 	if (userProfile != null && userProfile.getFunctionalities() != null && !userProfile.getFunctionalities().isEmpty()) {
@@ -329,21 +364,18 @@ commented by Davide Zerbetto on 12/10/2009: there are problems with MIF (Ext Man
 	Sbi.user.functionalities = <%= buffer.toString() %>;
 </script>
  
-<SCRIPT language='JavaScript' src='<%=linkSbijs%>'></SCRIPT>
+<script type="text/javascript" src='<%=linkSbijs%>'></script>
 
 
-
-
-	 
-	 <% // get the current ext theme
-	 String extTheme=ThemesManager.getTheExtTheme(currTheme);
-	 %>
+<% // get the current ext theme
+String extTheme=ThemesManager.getTheExtTheme(currTheme);
+%>
 	  	  
-
 
 <script>
 	document.onselectstart = function() { return true; }
 </script>
+
 
 <%@ include file="/WEB-INF/jsp/commons/importSbiJS410.jspf"%>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/ext-4.1.1a/overrides/overrides.js"/></script>

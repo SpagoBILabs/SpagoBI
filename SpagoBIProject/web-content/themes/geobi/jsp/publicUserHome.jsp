@@ -10,36 +10,10 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 <%@ include file="/WEB-INF/jsp/wapp/homeBase.jsp"%>
 
     
-<!-- Include Ext stylesheets here: 
-<link id="spagobi-ext-4" rel="styleSheet" href ="/SpagoBI/themes/geobi/css/home40/layout.css" type="text/css" />
--->
-<%-- Javascript object useful for session expired management (see also sessionExpired.jsp) --%>
-<% 
-   
-   String userAgent = request.getHeader("user-agent");
-   String subsString = "";
-   String info[] = null;
-   String browsername ="";
-   String browserversion ="";
-   
-   if (userAgent.contains("MSIE")) {
-	   subsString = userAgent.substring( userAgent.indexOf("MSIE"));
-	   info = (subsString.split(";")[0]).split(" ");	  
-   }else if(userAgent.contains("Firefox")){
-       subsString = userAgent.substring( userAgent.indexOf("Firefox"));
-       info = (subsString.split(" ")[0]).split("/");
-   }else if(userAgent.contains("Chrome")){
-       subsString = userAgent.substring( userAgent.indexOf("Chrome"));
-       info = (subsString.split(" ")[0]).split("/");
-   } else {
-	   info = new String[]{"unknown", "unknown"};
-   }
-   browsername = info[0];
-   browserversion = info[1];
+<%   
    String mapsUrl="#";
    String datasetUrl = "#";
    String loginUrl = "#";
-   
    Map langUrls = new HashMap();
 
    for(int i=0; i< jsonMenuList.length(); i++){
@@ -69,21 +43,25 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 
 <link rel='stylesheet' type='text/css' href='<%=urlBuilder.getResourceLinkByTheme(request, "css/home40/standard.css",currTheme)%>'/>
 
-<% 
-if (browsername.contains("MSIE")){
-	if (browserversion.contains("7")){ %>
-	 <link href="<%=contextName %>/themes/geobi/css/home40/ie7.css" rel="stylesheet" media="screen,projection,print" type="text/css" />
-<%  }if (browserversion.contains("8")){ %>
-	<link href="<%=contextName %>/themes/geobi/css/home40/ie8.css" rel="stylesheet" media="screen,projection,print" type="text/css" />
-<%  }else{ %>
-	<link href="<%=contextName %>/themes/geobi/css/home40/ie9.css" rel="stylesheet" media="screen,projection,print" type="text/css" />
-<%  }	
-}
-%>
-
-
-
+        
+        <!--[if IE]>
+            <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+        <![endif]-->
+        
+        <!-- Stylesheets -->
+        <link href="css/standard.css" rel="stylesheet" media="screen,projection,print" type="text/css" />
+        <!--[if IE]>
+            <link href="css/ie9.css" rel="stylesheet" media="screen,projection,print" type="text/css" />
+        <![endif]-->
+        <!--[if lte IE 8]>
+            <link href="css/ie8.css" rel="stylesheet" media="screen,projection,print" type="text/css" />
+        <![endif]-->
+        <!--[if lte IE 7]>
+            <link href="css/ie7.css" rel="stylesheet" media="screen,projection,print" type="text/css" />
+        <![endif]-->
+        
 <script>
+
 sessionExpiredSpagoBIJS = 'sessionExpiredSpagoBIJS';
 
 Ext.onReady(function () {
@@ -100,7 +78,6 @@ Ext.onReady(function () {
     this.titlePath = Ext.create("Ext.Panel",{title :'Home'});
     
 	function hideItem( menu, e, eOpts){
-       // console.log('bye bye ');
         menu.hide();
     }
 	
@@ -176,7 +153,8 @@ Ext.onReady(function () {
     var mainPanel =  Ext.create("Ext.panel.Panel",{
     	autoScroll: false,
     	region: 'center',
-    	height: 700,
+    	 layout: 'fit',
+    	//height: 700,
     	items: [mainframe]  	
     });
     
