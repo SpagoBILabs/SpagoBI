@@ -43,13 +43,20 @@ Ext.define('Sbi.selfservice.ManageSelfServiceContainer', {
 		
 		this.layout =  'card';
 		
-		this.documentexecution = Ext.create('Sbi.selfservice.SelfServiceExecutionIFrame',{}); 
+		this.fromMyAnalysis = config.fromMyAnalysis;
+		this.contextName = config.contextName;
+		
+		this.documentexecution = Ext.create('Sbi.selfservice.SelfServiceExecutionIFrame',{
+			fromMyAnalysis: this.fromMyAnalysis,
+			contextName: this.contextName
+		}); 
 		this.manageSelfService = Ext.create('Sbi.selfservice.ManageSelfService', {
 			selfServiceContainer : this
 			, datasetsServicePath : config.datasetsServicePath
 			, qbeEditDatasetUrl : config.qbeEditDatasetUrl
 			, typeDoc : config.typeDoc
 		}); 
+		
 					
 		this.items = [ this.manageSelfService, this.documentexecution]
 		this.callParent(arguments);

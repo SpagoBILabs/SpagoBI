@@ -80,7 +80,9 @@ Sbi.qbe.QbePanel = function(config) {
 	});
 	*/
 
-	this.addEvents();
+	this.addEvents('save');
+	this.addEvents('returnToMyAnalysis');
+
 
 	if (c.initialQueriesCatalogue) {
 		this.setInitialQueriesCatalogue(c.initialQueriesCatalogue);
@@ -514,10 +516,19 @@ getAmbiguousFieldsFromCache : function (query) {
 }
 
 ,
-openSaveDataSetWizard: function() {
+openSaveDataSetWizard: function(fromMyAnalysis) {
+	if (fromMyAnalysis != undefined && fromMyAnalysis != null && fromMyAnalysis == 'TRUE'){
+		this.fromMyAnalysis = fromMyAnalysis;
+	}
 	var queries = this.getQueriesCatalogue();
 	var saveDatasetWindow = new Sbi.qbe.SaveDatasetWindow( { queries : queries } );
-	saveDatasetWindow.on('save', function(theWindow, formState) { theWindow.close(); }, this);
+	saveDatasetWindow.on('save', function(theWindow, formState) { 
+		theWindow.close(); 
+		if (this.fromMyAnalysis != undefined && this.fromMyAnalysis != null && this.fromMyAnalysis == 'TRUE'){
+			this.fireEvent('save') 
+		}
+	}, this);
+	
 	saveDatasetWindow.show();
 }
 

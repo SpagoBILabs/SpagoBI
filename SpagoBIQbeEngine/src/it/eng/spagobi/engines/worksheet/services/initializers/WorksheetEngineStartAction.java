@@ -148,6 +148,7 @@ public class WorksheetEngineStartAction extends AbstractEngineStartAction {
 			setAttribute(LANGUAGE, locale.getLanguage());
 			setAttribute(COUNTRY, locale.getCountry());
 			
+			
 			if(!this.goToWorksheetPreentation()){
 				writeBackToClient(new JSONAcknowledge());
 			}

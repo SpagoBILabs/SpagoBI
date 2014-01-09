@@ -51,6 +51,8 @@ public class SelfServiceDatasetStartAction extends ManageDatasets  {
 	public static final String OUTPUT_PARAMETER_GEOREPORT_EDIT_SERVICE_URL = "georeportServiceUrl";
 	public static final String IS_FROM_MYDATA = "MYDATA";
 	public static final String TYPE_DOC = "TYPE_DOC";
+	public static final String IS_FROM_MYANALYSIS = "MYANALYSIS";
+
 	
 	//public static final String GEOREPORT_EDIT_ACTION = "GEOREPORT_ENGINE_START_EDIT_ACTION";
 	
@@ -70,6 +72,7 @@ public class SelfServiceDatasetStartAction extends ManageDatasets  {
 			String worksheetEditActionUrl = buildWorksheetEditServiceUrl(executionId);
 			String geoereportEditActionUrl = buildGeoreportEditServiceUrl(executionId);
 			String isFromMyData = (getAttributeAsString("MYDATA")==null)?"FALSE":getAttributeAsString("MYDATA");
+			String isFromMyAnalysis = (getAttributeAsString("MYANALYSIS")==null)?"FALSE":getAttributeAsString("MYANALYSIS");
 			String typeDoc = getAttributeAsString("TYPE_DOC");
 			logger.trace("Copying output parameters to response...");
 			try {
@@ -84,6 +87,7 @@ public class SelfServiceDatasetStartAction extends ManageDatasets  {
 				setAttribute(OUTPUT_PARAMETER_GEOREPORT_EDIT_SERVICE_URL, geoereportEditActionUrl);
 				setAttribute(IS_FROM_MYDATA, isFromMyData);
 				setAttribute(TYPE_DOC, typeDoc);
+				setAttribute(IS_FROM_MYANALYSIS,isFromMyAnalysis);
 				
 			} catch (Throwable t) {
 				throw new SpagoBIServiceException(SERVICE_NAME, "An error occurred while creating service response", t);				
