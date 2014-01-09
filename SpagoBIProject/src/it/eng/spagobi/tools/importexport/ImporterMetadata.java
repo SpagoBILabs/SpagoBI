@@ -25,6 +25,8 @@ import it.eng.spagobi.behaviouralmodel.lov.metadata.SbiLov;
 import it.eng.spagobi.commons.bo.Role;
 import it.eng.spagobi.commons.metadata.SbiDomains;
 import it.eng.spagobi.commons.metadata.SbiExtRoles;
+import it.eng.spagobi.commons.metadata.SbiAuthorizations;
+import it.eng.spagobi.commons.metadata.SbiAuthorizationsRoles;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.engines.config.metadata.SbiEngines;
 import it.eng.spagobi.kpi.alarm.metadata.SbiAlarm;
@@ -113,6 +115,35 @@ public class ImporterMetadata {
 		}
 		return roles;
 	}
+	
+	
+	
+	
+	/**
+	 * Get the list of exported hibernate authorizationsRoles objects associated to given roles
+	 * 
+	 * @param session  Hiberante session for the exported database
+	 * @param roleId  the role
+	 * @return         The list of exported hibernate authorizations roles
+	 * 
+	 * @throws EMFUserError the EMF user error
+	 */
+	public List getExportedAuthorizationsRolesByRole(Session session, Integer roleId) throws EMFUserError {
+		logger.debug("IN");
+		List authorizationsRoles = new ArrayList();
+		try {
+			Query hibQuery = session.createQuery(" from SbiAuthorizationsRoles where id.roleId ="+roleId);
+			authorizationsRoles = hibQuery.list();
+
+		} catch (HibernateException he) {
+			logger.error("Error while getting exported authorizations roles associated to role "+roleId, he);
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8013", ImportManager.messageBundle);
+		} finally {
+			logger.debug("OUT");
+		}
+		return authorizationsRoles;
+	}
+	
 
 	/**
 	 * Get the list of exported hibernate engine objects.
@@ -376,6 +407,13 @@ public class ImporterMetadata {
 			hqlQuery = sessionCurrDB.createQuery(hql);
 			SbiExtRoles hibRole = (SbiExtRoles) hqlQuery.uniqueResult();
 			return hibRole;
+		} else if (hibObj instanceof SbiAuthorizations) {
+			param = "SbiAuthorizations";
+			String authName = (String) unique;
+			hql = "from SbiAuthorizations er where er.name = '" + authName + "'";
+			hqlQuery = sessionCurrDB.createQuery(hql);
+			SbiAuthorizations hibAuthorizations = (SbiAuthorizations) hqlQuery.uniqueResult();
+			return hibAuthorizations;
 		} else if (hibObj instanceof SbiObjects) {
 			param = "SbiObjects";
 			String label = (String) unique;

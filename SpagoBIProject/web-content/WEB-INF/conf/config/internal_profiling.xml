@@ -52,4 +52,28 @@
 			<ROLE roleName="/spagobi/user/demo" description="/spagobi/user/demo" roleTypeCD="USER" organization="SPAGOBI"/>	
 
 		</DEFAULT_ROLES>
+		<DEFAULT_AUTHORIZATIONS>
+			<AUTHORIZATION authorizationName="SAVE_SUBOBJECTS" organization="SPAGOBI"/>
+			<AUTHORIZATION authorizationName="SEE_SUBOBJECTS" organization="SPAGOBI"/>
+			<AUTHORIZATION authorizationName="SEE_VIEWPOINTS" organization="SPAGOBI"/>
+			<AUTHORIZATION authorizationName="SEE_SNAPSHOTS" organization="SPAGOBI"/>
+			<AUTHORIZATION authorizationName="SEE_NOTES" organization="SPAGOBI"/>
+			<AUTHORIZATION authorizationName="SEND_MAIL" organization="SPAGOBI"/>
+			<AUTHORIZATION authorizationName="SAVE_INTO_FOLDER" organization="SPAGOBI"/>
+			<AUTHORIZATION authorizationName="SAVE_REMEMBER_ME" organization="SPAGOBI"/>
+			<AUTHORIZATION authorizationName="SEE_METADATA" organization="SPAGOBI"/>
+			<AUTHORIZATION authorizationName="SAVE_METADATA" organization="SPAGOBI"/>
+			<AUTHORIZATION authorizationName="BUILD_QBE_QUERY" organization="SPAGOBI"/>
+			<AUTHORIZATION authorizationName="DO_MASSIVE_EXPORT" organization="SPAGOBI"/>
+			<AUTHORIZATION authorizationName="EDIT_WORKSHEET" organization="SPAGOBI"/>
+			<AUTHORIZATION authorizationName="MANAGE_USERS" organization="SPAGOBI"/>
+			<AUTHORIZATION authorizationName="SEE_DOCUMENT_BROWSER" organization="SPAGOBI"/>
+			<AUTHORIZATION authorizationName="SEE_FAVOURITES" organization="SPAGOBI"/>
+			<AUTHORIZATION authorizationName="SEE_SUBSCRIPTIONS" organization="SPAGOBI"/>
+			<AUTHORIZATION authorizationName="SEE_MY_DATA" organization="SPAGOBI"/>
+			<AUTHORIZATION authorizationName="SEE_TODO_LIST" organization="SPAGOBI"/>
+			<AUTHORIZATION authorizationName="CREATE_DOCUMENTS" organization="SPAGOBI"/>
+		</DEFAULT_AUTHORIZATIONS>
+		
+		
 </INTERNAL_PROFILING_INITIALIZER>

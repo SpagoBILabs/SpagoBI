@@ -3,10 +3,10 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <!-- Generated 2-dic-2013 14.44.45 by Hibernate Tools 3.4.0.CR1 -->
 <hibernate-mapping>
-    <class name="it.eng.spagobi.commons.metadata.SbiFunctionalitiesRoles" table="SBI_FUNCTIONALITIES_ROLES">
-        <composite-id name="id" class="it.eng.spagobi.commons.metadata.SbiFunctionalitiesRolesId">
-            <key-property name="functionalityId" type="int">
-                <column name="FUNCTIONALITY_ID" />
+    <class name="it.eng.spagobi.commons.metadata.SbiAuthorizationsRoles" table="SBI_AUTHORIZATIONS_ROLES">
+        <composite-id name="id" class="it.eng.spagobi.commons.metadata.SbiAuthorizationsRolesId">
+            <key-property name="authorizationId" type="int">
+                <column name="AUTHORIZATION_ID" />
             </key-property>
             <key-property name="roleId" type="int">
                 <column name="ROLE_ID" />
@@ -15,8 +15,8 @@
         <many-to-one name="sbiExtRoles" class="it.eng.spagobi.commons.metadata.SbiExtRoles" insert="false" update="false">
             <column name="ROLE_ID" not-null="true" />
         </many-to-one>
-        <many-to-one name="sbiFunctionalities" class="it.eng.spagobi.commons.metadata.SbiFunctionalities" update="false" insert="false">
-            <column name="FUNCTIONALITY_ID" not-null="true" />
+        <many-to-one name="sbiAuthorizations" class="it.eng.spagobi.commons.metadata.SbiAuthorizations" update="false" insert="false">
+            <column name="AUTHORIZATION_ID" not-null="true" />
         </many-to-one>
 		<component name="commonInfo" insert="true" update="true" 
   			 class="it.eng.spagobi.commons.metadata.SbiCommonInfo">

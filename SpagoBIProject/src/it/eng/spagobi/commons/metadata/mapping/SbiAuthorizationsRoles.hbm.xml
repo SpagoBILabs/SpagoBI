@@ -3,25 +3,22 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <!-- Generated 2-dic-2013 14.44.45 by Hibernate Tools 3.4.0.CR1 -->
 <hibernate-mapping>
-    <class name="it.eng.spagobi.commons.metadata.SbiFunctionalities"  table="SBI_FUNCTIONALITIES">
-        <id name="id" type="int">
-            <column name="ID" />
-		   <generator class="org.hibernate.id.enhanced.TableGenerator">
-				<param name="optimizer">none</param>
-				<param name="segment_value">SBI_FUNCTIONALITIES</param>	
-				<param name="initial_value">1</param>	
-		   </generator>
-        </id>
-        <property name="name" type="string">
-            <column name="NAME" length="200" />
-        </property>
-        <property name="creationDate" type="timestamp">
-            <column name="CREATION_DATE" length="0" not-null="true" />
-        </property>
-        <property name="lastChangeDate" type="timestamp">
-            <column name="LAST_CHANGE_DATE" length="0" not-null="true" />
-        </property>
-        <component name="commonInfo" insert="true" update="true" 
+    <class name="it.eng.spagobi.commons.metadata.SbiAuthorizationsRoles" table="SBI_AUTHORIZATIONS_ROLES">
+        <composite-id name="id" class="it.eng.spagobi.commons.metadata.SbiAuthorizationsRolesId">
+            <key-property name="authorizationId" type="int">
+                <column name="AUTHORIZATION_ID" />
+            </key-property>
+            <key-property name="roleId" type="int">
+                <column name="ROLE_ID" />
+            </key-property>
+        </composite-id>
+        <many-to-one name="sbiExtRoles" class="it.eng.spagobi.commons.metadata.SbiExtRoles" insert="false" update="false">
+            <column name="ROLE_ID" not-null="true" />
+        </many-to-one>
+        <many-to-one name="sbiAuthorizations" class="it.eng.spagobi.commons.metadata.SbiAuthorizations" update="false" insert="false">
+            <column name="AUTHORIZATION_ID" not-null="true" />
+        </many-to-one>
+		<component name="commonInfo" insert="true" update="true" 
   			 class="it.eng.spagobi.commons.metadata.SbiCommonInfo">
 	        <property name="userIn" type="string">
 	            <column name="USER_IN" length="100" not-null="true" />
@@ -53,12 +50,6 @@
 	        <property name="organization" type="string">
 	            <column name="ORGANIZATION" length="20" not-null="false" />
 	        </property>  			 
-	    </component>        
-        <set name="sbiFunctionalitiesRoleses" table="SBI_FUNCTIONALITIES_ROLES">
-            <key>
-                <column name="FUNCTIONALITY_ID" not-null="true" />
-            </key>
-            <one-to-many class="it.eng.spagobi.commons.metadata.SbiFunctionalitiesRoles" />
-        </set>
+	    </component>
     </class>
 </hibernate-mapping>

@@ -61,6 +61,9 @@ import it.eng.spagobi.commons.dao.IDomainDAO;
 import it.eng.spagobi.commons.metadata.SbiBinContents;
 import it.eng.spagobi.commons.metadata.SbiDomains;
 import it.eng.spagobi.commons.metadata.SbiExtRoles;
+import it.eng.spagobi.commons.metadata.SbiAuthorizations;
+import it.eng.spagobi.commons.metadata.SbiAuthorizationsRoles;
+import it.eng.spagobi.commons.metadata.SbiAuthorizationsRolesId;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.engines.config.metadata.SbiEngines;
 import it.eng.spagobi.kpi.alarm.bo.Alarm;
@@ -213,6 +216,49 @@ public class ExporterMetadata {
 			logger.debug("OUT");
 		}	
 	}
+	
+	
+	
+	/**
+	 * Insert a authorization into the exported database.
+	 * 
+	 * @param authorization Authorizations object to export
+	 * @param session Hibernate session for the exported database
+	 * 
+	 * @throws EMFUserError the EMF user error
+	 */
+	public void insertAuthorizations(SbiAuthorizations auth, Session session) throws EMFUserError {
+		logger.debug("IN");
+		try {
+			Transaction tx = session.beginTransaction();
+			Query hibQuery = session.createQuery(" from SbiAuthorizations where id = " + auth.getId());
+			List hibList = hibQuery.list();
+			if(!hibList.isEmpty()) {
+				return;
+			}
+			SbiAuthorizations hibAuthorizations = new SbiAuthorizations();
+			hibAuthorizations.setId(auth.getId());
+			hibAuthorizations.setName(auth.getName());
+			hibAuthorizations.setOrganization(auth.getOrganization());
+			hibAuthorizations.setCreationDate(auth.getCreationDate());
+			hibAuthorizations.setLastChangeDate(auth.getLastChangeDate());
+			hibAuthorizations.setUserIn(auth.getUserIn());
+			hibAuthorizations.setUserUp(auth.getUserUp());
+			hibAuthorizations.setUserDe(auth.getUserDe());
+			hibAuthorizations.setTimeIn(auth.getTimeIn());
+			hibAuthorizations.setTimeUp(auth.getTimeUp());
+			hibAuthorizations.setTimeDe(auth.getTimeDe());
+			
+			session.save(hibAuthorizations);
+			tx.commit();
+		} catch (Exception e) {
+			logger.error("Error while inserting authorization into export database ",e);
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8005", ImportManager.messageBundle);
+		}finally{
+			logger.debug("OUT");
+		}	
+	}
+	
 
 
 	/**
@@ -1660,6 +1706,7 @@ public class ExporterMetadata {
 			for(int i=0; i<devRoles.length; i++) {
 				Role devRole = devRoles[i];
 				insertRole(devRole, session);
+				insertAuthorizationsRole(devRole, session);
 				insertFunctRole(devRole, funct, devDom.getValueId(), devDom.getValueCd(), session);
 			}
 			Role[] testRoles = funct.getTestRoles();
@@ -1668,6 +1715,7 @@ public class ExporterMetadata {
 			for(int i=0; i<testRoles.length; i++) {
 				Role testRole = testRoles[i];
 				insertRole(testRole, session);
+				insertAuthorizationsRole(testRole, session);
 				insertFunctRole(testRole, funct, testDom.getValueId(), testDom.getValueCd(), session);
 			}
 			Role[] execRoles = funct.getExecRoles();
@@ -1676,6 +1724,7 @@ public class ExporterMetadata {
 			for(int i=0; i<execRoles.length; i++) {
 				Role execRole = execRoles[i];
 				insertRole(execRole, session);
+				insertAuthorizationsRole(execRole, session);
 				insertFunctRole(execRole, funct, execDom.getValueId(), execDom.getValueCd(), session);
 			}
 			Role[] createRoles = funct.getCreateRoles();
@@ -1684,6 +1733,7 @@ public class ExporterMetadata {
 			for(int i=0; i<createRoles.length; i++) {
 				Role createRole = createRoles[i];
 				insertRole(createRole, session);
+				insertAuthorizationsRole(createRole, session);
 				insertFunctRole(createRole, funct, createDom.getValueId(), createDom.getValueCd(), session);
 			}
 
@@ -1692,7 +1742,7 @@ public class ExporterMetadata {
 			throw new EMFUserError(EMFErrorSeverity.ERROR, "8005", ImportManager.messageBundle);
 		}
 
-		// recursively insert parent functionalities
+		// recursively insert parent functions
 		Integer parentId = funct.getParentId();
 		if(parentId!=null){
 			ILowFunctionalityDAO lowFunctDAO = DAOFactory.getLowFunctionalityDAO();
@@ -1753,6 +1803,59 @@ public class ExporterMetadata {
 		}
 	}
 
+	
+	
+	/**
+	 * Insert association between a role and authorizations associated.
+	 * 
+	 * @param role The role object to export
+	 * @param session Hibernate session for the exported database
+	 * 
+	 * @throws EMFUserError the EMF user error
+	 */
+	public void insertAuthorizationsRole(Role role, Session session) throws EMFUserError {
+		logger.debug("IN");
+		try {
+			
+			List<SbiAuthorizations> hibAuthorizations = DAOFactory.getRoleDAO().LoadAuthorizationsAssociatedToRole(role.getId());
+						
+			Transaction tx = session.beginTransaction();
+			
+			for (Iterator iterator = hibAuthorizations.iterator(); iterator.hasNext();) {
+				SbiAuthorizations authorizations = (SbiAuthorizations) iterator.next();
+				
+				Query hibQuery = session.createQuery(" from SbiAuthorizationsRoles where id.roleId= " + role.getId() +" and id.authorizationId = "+authorizations.getId());				
+
+				List hibAuthRole =  hibQuery.list();
+				if(!hibAuthRole.isEmpty()){
+					continue;
+				}
+
+				SbiAuthorizationsRoles hibRF = new SbiAuthorizationsRoles();
+
+				SbiAuthorizationsRolesId hibRFId = new SbiAuthorizationsRolesId();
+				hibRFId.setAuthorizationId(authorizations.getId());
+				hibRFId.setRoleId(role.getId());
+				
+				hibRF.setId(hibRFId);				
+				SbiExtRoles hibRole = (SbiExtRoles)session.load(SbiExtRoles.class, role.getId());
+				hibRF.setSbiExtRoles(hibRole);
+
+				hibRF.setSbiAuthorizations(authorizations);
+				
+				session.save(hibRF);
+				logger.debug("Inserted in export DB association between role "+role.getName()+" and authorization "+authorizations.getName());				
+			}
+			tx.commit();
+		} catch (Exception e) {
+			logger.error("Error while inserting association between role "+role.getName()+" and authorizations into export database " , e);
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8005", ImportManager.messageBundle);
+		}finally{
+			logger.debug("OUT");
+		}
+	}
+
+	
 
 
 	/**

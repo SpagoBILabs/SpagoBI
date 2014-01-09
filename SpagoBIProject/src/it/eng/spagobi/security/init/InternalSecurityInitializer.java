@@ -16,6 +16,7 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IConfigDAO;
 import it.eng.spagobi.commons.dao.IDomainDAO;
 import it.eng.spagobi.commons.dao.IRoleDAO;
+import it.eng.spagobi.commons.metadata.SbiAuthorizations;
 import it.eng.spagobi.profiling.bean.SbiAttribute;
 import it.eng.spagobi.profiling.bean.SbiExtUserRoles;
 import it.eng.spagobi.profiling.bean.SbiExtUserRolesId;
@@ -61,6 +62,7 @@ public class InternalSecurityInitializer implements InitializerIFace {
 			List<SbiAttribute> attributesList = initProfileAttributes(config);
 			List<Role> rolesList = initRoles(config);
 			Map<String,Integer> usersLookupMap = initUsers(config);
+			initDefaultAuthorizations(config);
 			
 			ISbiUserDAO userDAO= DAOFactory.getSbiUserDAO();
 			
@@ -332,6 +334,9 @@ public class InternalSecurityInitializer implements InitializerIFace {
 		return rolesList;
 	}
 	
+	
+	
+	
 	public List<Role> readDefaultRoles(SourceBean config) {
 		List<Role> defaultRoles;
 		List<SourceBean> defaultRolesSB;
@@ -489,4 +494,49 @@ public class InternalSecurityInitializer implements InitializerIFace {
 		return defaultProfileAttributes;
 	}
 
+	
+	public void initDefaultAuthorizations(SourceBean config) {
+		List<SourceBean> defaultAuthorizationsSB;
+		
+		logger.debug("IN");
+		try {
+			Assert.assertNotNull(config, "Input parameter [config] cannot be null");
+			defaultAuthorizationsSB = config.getAttributeAsList("DEFAULT_AUTHORIZATIONS.AUTHORIZATION");
+
+			logger.debug("Succesfully read from configuration [" + defaultAuthorizationsSB.size() + "] defualt authorization(s)");
+
+			List<SbiAuthorizations> authorizations = DAOFactory.getRoleDAO().loadAllAuthorizations();
+
+
+			if(authorizations == null || authorizations.isEmpty()){
+				logger.debug("Initializer inserts default authorization");
+				for (SourceBean defaultAuthSB : defaultAuthorizationsSB) {
+					String authName = (String) defaultAuthSB.getAttribute("authorizationName");	
+					logger.debug("insert "+authName);
+
+					String organization = (String) defaultAuthSB.getAttribute("organization");
+					if (organization == null) {
+						throw new SpagoBIRuntimeException("Predefined authorization [" + authName + "] has no organization set.");
+					}
+
+					if(!authorizations.contains(authName)){
+						DAOFactory.getRoleDAO().insertAuthorization(authName, organization);
+						logger.debug("Succesfully inserted authorization [" + authName  + "]");		
+					}
+					else{
+						logger.debug("Not inserted authorization [" + authName  + "] because already present.");		
+						
+					}
+				}
+			}
+			
+		} catch(Throwable t) {
+			logger.error("An unexpected error occurred while reading defualt profile attibutes", t);
+		} finally {
+			logger.debug("OUT");
+		}
+		
+		return;
+	}
+	
 }

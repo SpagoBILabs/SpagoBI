@@ -21,12 +21,13 @@ import it.eng.spagobi.commons.bo.RoleMetaModelCategory;
 import it.eng.spagobi.commons.metadata.SbiDomains;
 import it.eng.spagobi.commons.metadata.SbiEventRole;
 import it.eng.spagobi.commons.metadata.SbiExtRoles;
-import it.eng.spagobi.commons.metadata.SbiFunctionalities;
-import it.eng.spagobi.commons.metadata.SbiFunctionalitiesRoles;
-import it.eng.spagobi.commons.metadata.SbiFunctionalitiesRolesId;
+import it.eng.spagobi.commons.metadata.SbiAuthorizations;
+import it.eng.spagobi.commons.metadata.SbiAuthorizationsRoles;
+import it.eng.spagobi.commons.metadata.SbiAuthorizationsRolesId;
 import it.eng.spagobi.events.metadata.SbiEventsLog;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -293,10 +294,10 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 					aSession.delete(event);
 				}
 			}
-			Set<SbiFunctionalitiesRoles> functionalities = hibRole.getSbiFunctionalitiesRoleses();
-			Iterator itf = functionalities.iterator();
+			Set<SbiAuthorizationsRoles> authorizations = hibRole.getSbiAuthorizationsRoleses();
+			Iterator itf = authorizations.iterator();
 			while(itf.hasNext()){
-				SbiFunctionalitiesRoles fr = (SbiFunctionalitiesRoles)itf.next();
+				SbiAuthorizationsRoles fr = (SbiAuthorizationsRoles)itf.next();
 
 				aSession.delete(fr);
 				aSession.flush();
@@ -343,10 +344,10 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			hibRole.setCode(aRole.getCode());
 			hibRole.setDescr(aRole.getDescription());
 			hibRole.setName(aRole.getName());
-			Set<SbiFunctionalitiesRoles> functionalities = hibRole.getSbiFunctionalitiesRoleses();
-			Iterator it = functionalities.iterator();
+			Set<SbiAuthorizationsRoles> authorizations = hibRole.getSbiAuthorizationsRoleses();
+			Iterator it = authorizations.iterator();
 			while(it.hasNext()){
-				SbiFunctionalitiesRoles fr = (SbiFunctionalitiesRoles)it.next();
+				SbiAuthorizationsRoles fr = (SbiAuthorizationsRoles)it.next();
 				aSession.delete(fr);
 				aSession.flush();
 			}
@@ -363,53 +364,53 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			
 			
 			//create new association
-			String hqlall = "from SbiFunctionalities ";
+			String hqlall = "from SbiAuthorizations ";
 			Query hqlQueryAll = aSession.createQuery(hqlall);
-			List<SbiFunctionalities> allFunct = hqlQueryAll.list();
+			List<SbiAuthorizations> allFunct = hqlQueryAll.list();
 			
-			Set<SbiFunctionalitiesRoles> functionalitiesNew  = new HashSet();
+			Set<SbiAuthorizationsRoles> authorizzationsNew  = new HashSet();
 			
 			Iterator allFunIt = allFunct.iterator();
 			while(allFunIt.hasNext()){
 				
-				SbiFunctionalities functI = (SbiFunctionalities)allFunIt.next();
+				SbiAuthorizations authI = (SbiAuthorizations)allFunIt.next();
 				
-				if((functI.getName().equals("SAVE_SUBOBJECTS") && aRole.isAbleToSaveSubobjects())||
-					(functI.getName().equals("SEE_SUBOBJECTS") && aRole.isAbleToSeeSubobjects())||
-					(functI.getName().equals("SEE_SNAPSHOTS") && aRole.isAbleToSeeSnapshots())||
-					(functI.getName().equals("SEE_VIEWPOINTS") && aRole.isAbleToSeeViewpoints())||
-					(functI.getName().equals("SEE_NOTES") && aRole.isAbleToSeeNotes())||
-					(functI.getName().equals("SEE_METADATA") && aRole.isAbleToSeeMetadata())||
-					(functI.getName().equals("SAVE_METADATA") && aRole.isAbleToSaveMetadata())||
-					(functI.getName().equals("SEND_MAIL") && aRole.isAbleToSendMail())||
-					(functI.getName().equals("SAVE_REMEMBER_ME") && aRole.isAbleToSaveRememberMe())||
-					(functI.getName().equals("SAVE_INTO_FOLDER") && aRole.isAbleToSaveIntoPersonalFolder())||
-					(functI.getName().equals("BUILD_QBE_QUERY") && aRole.isAbleToBuildQbeQuery())||
-					(functI.getName().equals("DO_MASSIVE_EXPORT") && aRole.isAbleToDoMassiveExport())||
-					(functI.getName().equals("EDIT_WORKSHEET") && aRole.isAbleToEditWorksheet())||
-					(functI.getName().equals("MANAGE_USERS") && aRole.isAbleToManageUsers())||
-					(functI.getName().equals("SEE_DOCUMENT_BROWSER") && aRole.isAbleToSeeDocumentBrowser())||
-					(functI.getName().equals("SEE_FAVOURITES") && aRole.isAbleToSeeFavourites())||
-					(functI.getName().equals("SEE_SUBSCRIPTIONS") && aRole.isAbleToSeeSubscriptions())||
-					(functI.getName().equals("SEE_MY_DATA") && aRole.isAbleToSeeMyData())||
-					(functI.getName().equals("SEE_TODO_LIST") && aRole.isAbleToSeeToDoList())||
-					(functI.getName().equals("KPI_COMMENT_EDIT_ALL") && aRole.isAbleToEditAllKpiComm())||
-					(functI.getName().equals("KPI_COMMENT_EDIT_MY") && aRole.isAbleToEditMyKpiComm())||
-					(functI.getName().equals("KPI_COMMENT_DELETE") && aRole.isAbleToDeleteKpiComm())||
-					(functI.getName().equals("CREATE_DOCUMENTS") && aRole.isAbleToCreateDocuments())){
+				if((authI.getName().equals("SAVE_SUBOBJECTS") && aRole.isAbleToSaveSubobjects())||
+					(authI.getName().equals("SEE_SUBOBJECTS") && aRole.isAbleToSeeSubobjects())||
+					(authI.getName().equals("SEE_SNAPSHOTS") && aRole.isAbleToSeeSnapshots())||
+					(authI.getName().equals("SEE_VIEWPOINTS") && aRole.isAbleToSeeViewpoints())||
+					(authI.getName().equals("SEE_NOTES") && aRole.isAbleToSeeNotes())||
+					(authI.getName().equals("SEE_METADATA") && aRole.isAbleToSeeMetadata())||
+					(authI.getName().equals("SAVE_METADATA") && aRole.isAbleToSaveMetadata())||
+					(authI.getName().equals("SEND_MAIL") && aRole.isAbleToSendMail())||
+					(authI.getName().equals("SAVE_REMEMBER_ME") && aRole.isAbleToSaveRememberMe())||
+					(authI.getName().equals("SAVE_INTO_FOLDER") && aRole.isAbleToSaveIntoPersonalFolder())||
+					(authI.getName().equals("BUILD_QBE_QUERY") && aRole.isAbleToBuildQbeQuery())||
+					(authI.getName().equals("DO_MASSIVE_EXPORT") && aRole.isAbleToDoMassiveExport())||
+					(authI.getName().equals("EDIT_WORKSHEET") && aRole.isAbleToEditWorksheet())||
+					(authI.getName().equals("MANAGE_USERS") && aRole.isAbleToManageUsers())||
+					(authI.getName().equals("SEE_DOCUMENT_BROWSER") && aRole.isAbleToSeeDocumentBrowser())||
+					(authI.getName().equals("SEE_FAVOURITES") && aRole.isAbleToSeeFavourites())||
+					(authI.getName().equals("SEE_SUBSCRIPTIONS") && aRole.isAbleToSeeSubscriptions())||
+					(authI.getName().equals("SEE_MY_DATA") && aRole.isAbleToSeeMyData())||
+					(authI.getName().equals("SEE_TODO_LIST") && aRole.isAbleToSeeToDoList())||
+					(authI.getName().equals("KPI_COMMENT_EDIT_ALL") && aRole.isAbleToEditAllKpiComm())||
+					(authI.getName().equals("KPI_COMMENT_EDIT_MY") && aRole.isAbleToEditMyKpiComm())||
+					(authI.getName().equals("KPI_COMMENT_DELETE") && aRole.isAbleToDeleteKpiComm())||
+					(authI.getName().equals("CREATE_DOCUMENTS") && aRole.isAbleToCreateDocuments())){
 					
-					SbiFunctionalitiesRoles fr = new SbiFunctionalitiesRoles();
-					SbiFunctionalitiesRolesId id = new SbiFunctionalitiesRolesId(functI.getId(), hibRole.getExtRoleId());
+					SbiAuthorizationsRoles fr = new SbiAuthorizationsRoles();
+					SbiAuthorizationsRolesId id = new SbiAuthorizationsRolesId(authI.getId(), hibRole.getExtRoleId());
 					id.setRoleId(hibRole.getExtRoleId());
-					id.setFunctionalityId(functI.getId());
+					id.setAuthorizationId(authI.getId());
 					
 					fr.setSbiExtRoles(hibRole);
-					fr.setSbiFunctionalities(functI);
+					fr.setSbiAuthorizations(authI);
 					fr.setId(id);
 					updateSbiCommonInfo4Update(fr);
 					aSession.save(fr);
 					aSession.flush();
-					functionalitiesNew.add(fr);
+					authorizzationsNew.add(fr);
 				}
 				
 			}
@@ -592,11 +593,11 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 		role.setId(hibRole.getExtRoleId());
 		role.setName(hibRole.getName());
 		
-		Set< SbiFunctionalitiesRoles> functionalities = hibRole.getSbiFunctionalitiesRoleses();
-		Iterator it= functionalities.iterator();
+		Set< SbiAuthorizationsRoles> authorizations = hibRole.getSbiAuthorizationsRoleses();
+		Iterator it= authorizations.iterator();
 		while(it.hasNext()){
-			SbiFunctionalitiesRoles fr = (SbiFunctionalitiesRoles)it.next();
-			SbiFunctionalities f = fr.getSbiFunctionalities();
+			SbiAuthorizationsRoles fr = (SbiAuthorizationsRoles)it.next();
+			SbiAuthorizations f = fr.getSbiAuthorizations();
 
 			String name = f.getName();
 			if(name.equals("SAVE_SUBOBJECTS")){
@@ -657,11 +658,11 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 	
 	
 	/**
-	 * Gets all the functionalities associated to the role.
+	 * Gets all the authorizations associated to the role.
 	 * 
 	 * @param roleID The role id
 	 * 
-	 * @return The functionalities associated to the role
+	 * @return The authorizations associated to the role
 	 * 
 	 * @throws EMFUserError the EMF user error
 	 */
@@ -762,7 +763,7 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			hibRole.setRoleType(roleType);
 			
 			hibRole.setRoleTypeCode(role.getRoleTypeCD());
-			HashSet<SbiFunctionalitiesRoles> functs = new HashSet<SbiFunctionalitiesRoles>();
+			HashSet<SbiAuthorizationsRoles> functs = new HashSet<SbiAuthorizationsRoles>();
 
 
 			updateSbiCommonInfo4Insert(hibRole);
@@ -771,14 +772,14 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			
 			//abilitations
 			
-			String hqlall = "from SbiFunctionalities ";
+			String hqlall = "from SbiAuthorizations ";
 			Query hqlQueryAll = aSession.createQuery(hqlall);
-			List<SbiFunctionalities> allFunct = hqlQueryAll.list();
+			List<SbiAuthorizations> allFunct = hqlQueryAll.list();
 			
 			Iterator allFunIt = allFunct.iterator();
 			while(allFunIt.hasNext()){
 				
-				SbiFunctionalities functI = (SbiFunctionalities)allFunIt.next();
+				SbiAuthorizations functI = (SbiAuthorizations)allFunIt.next();
 				
 				if((functI.getName().equals("SAVE_SUBOBJECTS") && role.isAbleToSaveSubobjects())||
 					(functI.getName().equals("SEE_SUBOBJECTS") && role.isAbleToSeeSubobjects())||
@@ -804,8 +805,8 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 					(functI.getName().equals("KPI_COMMENT_DELETE") && role.isAbleToDeleteKpiComm())||
 					(functI.getName().equals("CREATE_DOCUMENTS") && role.isAbleToCreateDocuments())){
 
-						SbiFunctionalitiesRoles fr = new SbiFunctionalitiesRoles();
-						SbiFunctionalitiesRolesId id = new SbiFunctionalitiesRolesId(functI.getId(), hibRole.getExtRoleId());
+						SbiAuthorizationsRoles fr = new SbiAuthorizationsRoles();
+						SbiAuthorizationsRolesId id = new SbiAuthorizationsRolesId(functI.getId(), hibRole.getExtRoleId());
 						fr.setId(id);
 						updateSbiCommonInfo4Insert(fr);
 						aSession.save(fr);
@@ -814,7 +815,7 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 				
 			}
 			aSession.flush();
-			hibRole.setSbiFunctionalitiesRoleses(functs);
+			hibRole.setSbiAuthorizationsRoleses(functs);
 			aSession.save(hibRole);
 			tx.commit();
 			
@@ -1061,5 +1062,191 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 	}
 	
 	
+	
+	
+	/**
+	 * Gets all the Authorizationsations present
+	 * 
+	 * 
+	 * @return The authorizations
+	 * 
+	 * @throws EMFUserError the EMF user error
+	 */
+	public List loadAllAuthorizations() throws EMFUserError {
+		List functs = new ArrayList();
+logger.debug("IN");
+		Session aSession = null;
+		Transaction tx = null;
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+			
+			String hql = "select f from SbiAuthorizations f"; 
+			
+			Query hqlQuery = aSession.createQuery(hql);
+			functs = hqlQuery.list();
+			tx.commit();
+		} catch (HibernateException he) {
+			logException(he);
+			if (tx != null)
+				tx.rollback();
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+		} finally {
+			if (aSession!=null){
+				if (aSession.isOpen()) aSession.close();
+			}
+		}
+		logger.debug("OUT");
+		return functs;
+	}
+	
+	/**
+	 * Gets all the authorizations associated to the role.
+	 * 
+	 * @param roleID The role id
+	 * 
+	 * @return The authorizations associated to the role
+	 * 
+	 * @throws EMFUserError the EMF user error
+	 */
+	public List<SbiAuthorizations> LoadAuthorizationsAssociatedToRole(Integer roleID) throws EMFUserError {
+		logger.debug("IN");
+		List<SbiAuthorizations> functs = new ArrayList();
+		Session aSession = null;
+		Transaction tx = null;
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+			String hql = "select f from SbiAuthorizations f, SbiAuthorizationsRoles fr, SbiExtRoles r "
+				+" where f.id = fr.sbiAuthorizations.id" 
+				+" and r.extRoleId = fr.sbiExtRoles.extRoleId "
+				+" and r.extRoleId = ?"; 
+			
+			Query hqlQuery = aSession.createQuery(hql);
+			hqlQuery.setInteger(0, roleID.intValue());
+			functs = hqlQuery.list();
+			tx.commit();
+		} catch (HibernateException he) {
+			logException(he);
+			if (tx != null)
+				tx.rollback();
+			
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+		} finally {
+			if (aSession!=null){
+				if (aSession.isOpen()) aSession.close();
+			}
+		}
+		logger.debug("OUT");
+		return functs;
+	}
+	
+	
+	/**
+	 * Gets all the authorizationsRoles object (relationn objects) associated to the role.
+	 * 
+	 * @param roleID The role id
+	 * 
+	 * @return The authorizations associated to the role
+	 * 
+	 * @throws EMFUserError the EMF user error
+	 */
+	public List<SbiAuthorizationsRoles> LoadAuthorizationsRolesAssociatedToRole(Integer roleID) throws EMFUserError {
+		logger.debug("IN");
+		List<SbiAuthorizationsRoles> functs = new ArrayList<SbiAuthorizationsRoles>();
+		Session aSession = null;
+		Transaction tx = null;
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+			String hql = "select fr from SbiAuthorizations f, SbiAuthorizationsRoles fr, SbiExtRoles r "
+				+" where f.id = fr.SbiAuthorizations.id" 
+				+" and r.extRoleId = fr.sbiExtRoles.extRoleId "
+				+" and r.extRoleId = ?"; 
+			
+			Query hqlQuery = aSession.createQuery(hql);
+			hqlQuery.setInteger(0, roleID.intValue());
+			functs = hqlQuery.list();
+			tx.commit();
+		} catch (HibernateException he) {
+			logException(he);
+			if (tx != null)
+				tx.rollback();
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+		} finally {
+			if (aSession!=null){
+				if (aSession.isOpen()) aSession.close();
+			}
+		}
+		logger.debug("OUT");
+		return functs;
+	}
+	
+	
+	
+	public void eraseAuthorizationsRolesAssociatedToRole(Integer roleID, Session currSessionDB) throws EMFUserError{
+		logger.debug("IN");
+
+		try{
+			String hql = "select fr from SbiAuthorizations f, SbiAuthorizationsRoles fr, SbiExtRoles r "
+				+" where f.id = fr.sbiAuthorizations.id" 
+				+" and r.extRoleId = fr.sbiExtRoles.extRoleId "
+				+" and r.extRoleId = ?"; 
+			
+			Query hqlQuery = currSessionDB.createQuery(hql);
+			hqlQuery.setInteger(0, roleID.intValue());
+			List<SbiAuthorizationsRoles> functs = hqlQuery.list();
+			
+			for (Iterator iterator = functs.iterator(); iterator.hasNext();) {
+				SbiAuthorizationsRoles SbiAuthorizationsRoles = (SbiAuthorizationsRoles) iterator.next();
+				currSessionDB.delete(SbiAuthorizationsRoles);
+			}
+			
+		}
+		catch (HibernateException he) {
+			logException(he);
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+		} finally {
+		}
+		logger.debug("OUT");
+	}
+
+	public SbiAuthorizations insertAuthorization(String authorizationName, String organization)
+			throws EMFUserError {
+		logger.debug("IN");
+		SbiAuthorizations toInsert = null; 
+		Session aSession = null;
+		Transaction tx = null;
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+	
+			toInsert = new SbiAuthorizations();		
+			toInsert.setCreationDate(new Date());
+			toInsert.setName(authorizationName);
+			toInsert.getCommonInfo().setOrganization(organization);
+			updateSbiCommonInfo4Insert(toInsert);
+			aSession.save(toInsert);
+			
+			tx.commit();
+		} catch (HibernateException he) {
+			logException(he);
+
+			if (tx != null)
+				tx.rollback();
+
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+
+		} finally {
+			if (aSession!=null){
+				if (aSession.isOpen()) aSession.close();
+			}
+		}	
+		
+		logger.debug("OUT");
+		return toInsert;
+	}
+	
+
 	
 }

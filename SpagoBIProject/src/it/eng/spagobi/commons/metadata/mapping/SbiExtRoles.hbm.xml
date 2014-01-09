@@ -79,11 +79,11 @@
 			<key column="EXT_ROLE_ID"/>
 			<many-to-many column="CATEGORY_ID"  class="it.eng.spagobi.commons.metadata.SbiDomains"/>
 		</set> 
-		<set name="sbiFunctionalitiesRoleses" table="SBI_FUNCTIONALITIES_ROLES">
+		<set name="sbiAuthorizationsRoleses" table="SBI_AUTHORIZATIONS_ROLES">
             <key>
                 <column name="ROLE_ID" not-null="true" />
             </key>
-            <one-to-many class="it.eng.spagobi.commons.metadata.SbiFunctionalitiesRoles" />
+            <one-to-many class="it.eng.spagobi.commons.metadata.SbiAuthorizationsRoles" />
         </set>   
         <filter name="tenantFilter" condition="organization=:tenant"/>  
     </class>

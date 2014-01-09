@@ -38,11 +38,11 @@
             </key>
             <one-to-many class="it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParuseDet" />
         </set>
-        <set name="sbiFunctionalitiesRoleses" table="SBI_FUNCTIONALITIES_ROLES">
+        <set name="sbiAuthorizationsRoleses" table="SBI_AUTHORIZATIONS_ROLES">
             <key>
                 <column name="ROLE_ID" not-null="true" />
             </key>
-            <one-to-many class="it.eng.spagobi.commons.metadata.SbiFunctionalitiesRoles" />
+            <one-to-many class="it.eng.spagobi.commons.metadata.SbiAuthorizationsRoles" />
         </set>   
     </class>
 </hibernate-mapping>
