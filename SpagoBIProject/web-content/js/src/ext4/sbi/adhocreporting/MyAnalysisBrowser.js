@@ -335,9 +335,10 @@ Ext.define('Sbi.adhocreporting.MyAnalysisBrowser', {
 				modal		: true,
 	            layout      : 'fit',
 		        width		: 550,
-		        height		: 210,
+		        height		: 310,
 	            closeAction :'destroy',
 	            plain       : true,
+	            autoscroll	: true,
 	            title		: LN('sbi.browser.document.share.win.title'),
 	            items       : [shareWindowPanel],
 	            buttons		: [{
