@@ -48,14 +48,8 @@
     	 	"isPublic",
     	 	"actions",
     	 	"exporters",
-    	 	"decorators"
-    	 	/*
-    	 	"title",
-    	 	"icon",
-    	 	"samples"
-    	 	*/
-    	 
-    	 	
+    	 	"decorators",
+    	 	"previewFile"
 
         ]
 }); 
