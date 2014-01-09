@@ -163,7 +163,8 @@ public class EngineStartServletIOManager extends BaseServletIOManager {
 	public JSONObject getTemplateAsJSONObject() {
 		JSONObject templateJSON = null;
 		try {
-			templateJSON = new JSONObject(getTemplateAsString());
+			String template = getTemplateAsString();
+			templateJSON = template!=null? new JSONObject(template): null;
 		} catch (Throwable t) {
 			logger.error("Impossible to decode template's content\n" + t);
 			throw new SpagoBIRuntimeException(
@@ -178,7 +179,8 @@ public class EngineStartServletIOManager extends BaseServletIOManager {
 	public SourceBean getTemplateAsSourceBean() {
 		SourceBean templateSB = null;
 		try {
-			templateSB = SourceBean.fromXMLString(getTemplateAsString());
+			String template = getTemplateAsString();
+			templateSB = template!=null? SourceBean.fromXMLString(template): null;
 		} catch (SourceBeanException e) {
 			logger.error("Impossible to decode template's content\n" + e);
 			throw new SpagoBIRuntimeException(
@@ -191,7 +193,8 @@ public class EngineStartServletIOManager extends BaseServletIOManager {
 	}
 
 	public String getTemplateAsString() {
-		return new String(getTemplate());
+		byte[] template = getTemplate();
+		return template!=null? new String(getTemplate()): null;
 	}
 
 	public byte[] getTemplate() {
@@ -201,19 +204,24 @@ public class EngineStartServletIOManager extends BaseServletIOManager {
 			contentProxy = getContentServiceProxy();
 			HashMap requestParameters = ParametersDecoder.getDecodedRequestParameters(getRequestContainer());
 			template = contentProxy.readTemplate(getDocumentId(), requestParameters);
-			templateName = template.getFileName();
-			logger.debug("Read the template [" + template.getFileName() + "]");
 		}
 
-		try {
-			// BASE64Decoder cannot be used in a static way, since it is not thread-safe;
-			// see https://spagobi.eng.it/jira/browse/SPAGOBI-881
-			BASE64Decoder decoder = new BASE64Decoder();
-			templateContent = decoder.decodeBuffer(template.getContent());
-		} catch (IOException e) {
-			throw new SpagoBIRuntimeException(
-					"Impossible to get content from template ["
-							+ template.getFileName() + "]", e);
+		if(template != null) {			
+			templateName = template.getFileName();
+			logger.debug("Read the template [" + template.getFileName() + "]");
+			
+			try {
+				// BASE64Decoder cannot be used in a static way, since it is not thread-safe;
+				// see https://spagobi.eng.it/jira/browse/SPAGOBI-881
+				BASE64Decoder decoder = new BASE64Decoder();
+				templateContent = decoder.decodeBuffer(template.getContent());
+			} catch (IOException e) {
+				throw new SpagoBIRuntimeException(
+						"Impossible to get content from template ["
+								+ template.getFileName() + "]", e);
+			}
+		} else {
+			logger.warn("Document template is not defined or it is impossible to get it from the server");
 		}
 
 		return templateContent;
@@ -224,8 +232,12 @@ public class EngineStartServletIOManager extends BaseServletIOManager {
 			contentProxy = getContentServiceProxy();
 			HashMap requestParameters = ParametersDecoder.getDecodedRequestParameters(getRequestContainer());
 			template = contentProxy.readTemplate(getDocumentId(), requestParameters);
-			templateName = template.getFileName();
-			logger.debug("Read the template [" + template.getFileName() + "]");
+			if(template != null) {
+				templateName = template.getFileName();
+				logger.debug("Read the template [" + template.getFileName() + "]");
+			} else {
+				logger.warn("Document template is not defined or it is impossible to get it from the server");
+			}
 		}
 		return templateName;
 	}
