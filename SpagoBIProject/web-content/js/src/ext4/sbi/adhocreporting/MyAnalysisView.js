@@ -206,7 +206,7 @@ Ext.define('Sbi.adhocreporting.MyAnalysisView', {
 			
 			
 			var documentTpl = ''+
-			'<div class="box-container-browser">'+
+			'<div class="box-container-myanalysis">'+
 				'<div id="document-item-icon" class="box-figure">'+
 					'<tpl if="this.isSearchResult(summary) == true">'+
 						'<tpl if="this.exists(previewFile) == true">'+
