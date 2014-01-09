@@ -41,7 +41,9 @@ Ext.define('Sbi.adhocreporting.MyAnalysisView', {
 			
 			sorters : new Array(),
 			
-			autoScroll : false
+			autoScroll : false,
+			
+			PUBLIC_USER: 'public_user'
 						
 		  //  ,DETAIL_DOCUMENT: 'DocumentDetailManagement',
 		  //  CREATE_DOCUMENT: 'CreateDocument'
@@ -144,7 +146,7 @@ Ext.define('Sbi.adhocreporting.MyAnalysisView', {
 				                        '<tpl if="this.exists(engine) == true">',
 					                       	'<dd id="{label}" class="box">', //document
 					                        	documentTpl,
-												'<tpl if="creationUser == \''+currentUser+'\'">'+
+												'<tpl if="creationUser == \''+currentUser+'\' && \''+currentUser+'\' != \''+this.PUBLIC_USER+'\'">'+
 													'<div class="fav-container" >',
 										            '<tpl if="isPublic == false">'+
 													'	<div class="share"  title="'+LN('sbi.myanalysis.sharedocument')+'">',
