@@ -887,35 +887,37 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 		Sbi.trace("[ControlPanel.getPermissionDiv]: IN");
 		
 		var toReturn = '';
-		
-		if ( (Sbi.config.userId === Sbi.config.docAuthor) || !this.isFinalUser){
-			toReturn = '<div class="map-permissions">' +
-		    	'<div class="radio">' +
-		        	'<span class="label">'+LN('sbi.geo.controlpanel.permissionlabel')+'</span>' ;
-		
-			if (Sbi.config.docIsPublic == 'false'){
-				toReturn += '' +
-					'<div  id="div-private" class="radio-option checked">' +
-			        	'<input id="scopePrivate" type="radio" name="permissions" value="0" checked />' +
-			            '<label for="permissions-1">'+LN('sbi.geo.controlpanel.permissionprivate')+'</label>' +
-		            '</div>' +
-		            '<div  id="div-public" class="radio-option ">' +
-			        	'<input id="scopePublic" type="radio" name="permissions" value="1" />' +
-			            '<label for="permissions-2">&nbsp;'+LN('sbi.geo.controlpanel.permissionpublic')+'</label>' +
-			        '</div>';
-			} else {
-				toReturn += '' +
-					'<div id="div-private" class="radio-option ">' +
-			        	'<input id="scopePrivate" type="radio" name="permissions" value="0"  />' +
-			            '<label for="permissions-1">'+LN('sbi.geo.controlpanel.permissionprivate')+'</label>' +
-		            '</div>' +
-		            '<div id="div-public" class="radio-option checked">' +
-			        	'<input id="scopePublic" type="radio" name="permissions" value="1" checked />' +
-			            '<label for="permissions-2">&nbsp;'+LN('sbi.geo.controlpanel.permissionpublic')+'</label>' +
-			        '</div>';
+		if (Sbi.settings.georeport.georeportPanel.controlPanelConf && Sbi.settings.georeport.georeportPanel.controlPanelConf.scopeInfoEnabled && 
+				 Sbi.settings.georeport.georeportPanel.controlPanelConf.scopeInfoEnabled == true){
+			
+			if ( (Sbi.config.userId === Sbi.config.docAuthor) || !this.isFinalUser){
+				toReturn = '<div class="map-permissions">' +
+			    	'<div class="radio">' +
+			        	'<span class="label">'+LN('sbi.geo.controlpanel.permissionlabel')+'</span>' ;
+			
+				if (Sbi.config.docIsPublic == 'false'){
+					toReturn += '' +
+						'<div  id="div-private" class="radio-option checked">' +
+				        	'<input id="scopePrivate" type="radio" name="permissions" value="0" checked />' +
+				            '<label for="permissions-1">'+LN('sbi.geo.controlpanel.permissionprivate')+'</label>' +
+			            '</div>' +
+			            '<div  id="div-public" class="radio-option ">' +
+				        	'<input id="scopePublic" type="radio" name="permissions" value="1" />' +
+				            '<label for="permissions-2">&nbsp;'+LN('sbi.geo.controlpanel.permissionpublic')+'</label>' +
+				        '</div>';
+				} else {
+					toReturn += '' +
+						'<div id="div-private" class="radio-option ">' +
+				        	'<input id="scopePrivate" type="radio" name="permissions" value="0"  />' +
+				            '<label for="permissions-1">'+LN('sbi.geo.controlpanel.permissionprivate')+'</label>' +
+			            '</div>' +
+			            '<div id="div-public" class="radio-option checked">' +
+				        	'<input id="scopePublic" type="radio" name="permissions" value="1" checked />' +
+				            '<label for="permissions-2">&nbsp;'+LN('sbi.geo.controlpanel.permissionpublic')+'</label>' +
+				        '</div>';
+				}
 			}
-		}
-		
+		}		
 		Sbi.trace("[ControlPanel.getPermissionDiv]: OUT");
 		
 		return toReturn;
@@ -923,41 +925,43 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 	
 	, getPanelButtonsDiv: function(){
 		var toReturn = '' ;
-				
-		if (this.isOwner){
-			toReturn += ''+
-				'<!-- // Mapper modify own map -->' +
-		        '<div id="panel-buttons-container" class="panel-buttons-container map-owner">' +
-		             '<div class="panel-buttons">' +
-		                 //'<a href="#" class="btn-2">Annulla</a>' +
-		                 '<input type="submit" id="btn-cancel" class="btn-2" value="'+LN('sbi.generic.cancel')+'" />' +
-//		                 '<input type="submit" id="btn-modify-map" class="btn-1" value="Aggiorna" />' +
-		                 '<a href="#" id="btn-modify-map" class="btn-1">'+LN('sbi.generic.modify')+'</a>'  +
-		             '</div>' +
-		             '<p>'+LN('sbi.generic.save')+' <a  id="btn-new-map" href="#">'+LN('sbi.generic.newmap')+'</a></p>' +
-		         '</div>';
-		}else if (!this.isInsertion){
-			toReturn += ''+
-			     '<!-- // Mapper modify sombody else map -->' +
-			     '<div id="panel-buttons-container" class="panel-buttons-container">' +
-			         '<div class="panel-buttons">' +
-//			             '<a href="#" class="btn-2">Annulla</a>' +
-			             '<input type="submit" id="btn-cancel" class="btn-2" value="'+LN('sbi.generic.cancel')+'" />' +
-			             '<a href="#" id="btn-new-map" class="btn-1">'+LN('sbi.generic.savenewmap')+'</a>'  +
-//			             '<input type="submit" id="btn-new-map" class="btn-1" value="Salva nuova mappa" />' +
-			         '</div>' +
-			     '</div>';
-		}else if (this.isInsertion){
-			toReturn += ''+
-				'<!-- // Mapper new map -->' +
-		         '<div id="panel-buttons-container" class="panel-buttons-container">' +
-		             '<div class="panel-buttons">	' +
-//		                 '<input type="submit" id="btn-modify-map" class="btn-1" value="salva" />' +
-		                 '<a href="#" id="btn-new-map" class="btn-1">'+LN('sbi.generic.save')+'</a>'  +
-		             '</div>' +
-		         '</div>';
-		}
 		
+		if (Sbi.settings.georeport.georeportPanel.saveWindow && Sbi.settings.georeport.georeportPanel.saveWindow.showSaveButton && 
+				 Sbi.settings.georeport.georeportPanel.saveWindow.showSaveButton == true){
+			if (this.isOwner){
+				toReturn += ''+
+					'<!-- // Mapper modify own map -->' +
+			        '<div id="panel-buttons-container" class="panel-buttons-container map-owner">' +
+			             '<div class="panel-buttons">' +
+			                 //'<a href="#" class="btn-2">Annulla</a>' +
+			                 '<input type="submit" id="btn-cancel" class="btn-2" value="'+LN('sbi.generic.cancel')+'" />' +
+	//		                 '<input type="submit" id="btn-modify-map" class="btn-1" value="Aggiorna" />' +
+			                 '<a href="#" id="btn-modify-map" class="btn-1">'+LN('sbi.generic.modify')+'</a>'  +
+			             '</div>' +
+			             '<p>'+LN('sbi.generic.save')+' <a  id="btn-new-map" href="#">'+LN('sbi.generic.newmap')+'</a></p>' +
+			         '</div>';
+			}else if (!this.isInsertion){
+				toReturn += ''+
+				     '<!-- // Mapper modify sombody else map -->' +
+				     '<div id="panel-buttons-container" class="panel-buttons-container">' +
+				         '<div class="panel-buttons">' +
+	//			             '<a href="#" class="btn-2">Annulla</a>' +
+				             '<input type="submit" id="btn-cancel" class="btn-2" value="'+LN('sbi.generic.cancel')+'" />' +
+				             '<a href="#" id="btn-new-map" class="btn-1">'+LN('sbi.generic.savenewmap')+'</a>'  +
+	//			             '<input type="submit" id="btn-new-map" class="btn-1" value="Salva nuova mappa" />' +
+				         '</div>' +
+				     '</div>';
+			}else if (this.isInsertion){
+				toReturn += ''+
+					'<!-- // Mapper new map -->' +
+			         '<div id="panel-buttons-container" class="panel-buttons-container">' +
+			             '<div class="panel-buttons">	' +
+	//		                 '<input type="submit" id="btn-modify-map" class="btn-1" value="salva" />' +
+			                 '<a href="#" id="btn-new-map" class="btn-1">'+LN('sbi.generic.save')+'</a>'  +
+			             '</div>' +
+			         '</div>';
+			}
+		}
 		return toReturn;
 	}
 
