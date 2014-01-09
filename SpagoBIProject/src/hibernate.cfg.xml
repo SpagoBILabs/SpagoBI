@@ -8,8 +8,8 @@
 
     	<property name="hibernate.connection.datasource">java:/comp/env/jdbc/spagobi</property>
 
-        <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
-        
+                  <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
+                  
                <!-- 
         <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
         <property name="hibernate.dialect">org.hibernate.dialect.SQLServerDialect</property>
@@ -23,7 +23,7 @@
         
         <property name="hibernate.cache.use_second_level_cache">false</property>
         <property name="hibernate.cache.use_query_cache">false</property>
-        
+		<!-- <property name="hibernate.connection.zeroDateTimeBehavior">convertToNull</property>  -->
         
         <!--
         <property name="hibernate.show_sql">true</property>
@@ -33,6 +33,7 @@
         <property name="hibernate.hbm2ddl.auto">create</property>
         -->
         
+        
         <mapping resource="it/eng/spagobi/commons/metadata/mapping/SbiTenant.hbm.xml" />
         <mapping resource="it/eng/spagobi/events/metadata/mapping/SbiEvents.hbm.xml" />
         <mapping resource="it/eng/spagobi/events/metadata/mapping/SbiEventsLog.hbm.xml" />
@@ -40,9 +41,9 @@
         <mapping resource="it/eng/spagobi/commons/metadata/mapping/SbiConfig.hbm.xml" />
         <mapping resource="it/eng/spagobi/commons/metadata/mapping/SbiEventRole.hbm.xml" /> 
   
-        <mapping resource="it/eng/spagobi/commons/metadata/mapping/SbiFunctionalities.hbm.xml" />
+        <mapping resource="it/eng/spagobi/commons/metadata/mapping/SbiAuthorizations.hbm.xml" />
         <mapping resource="it/eng/spagobi/commons/metadata/mapping/SbiExtRoles.hbm.xml" />
-        <mapping resource="it/eng/spagobi/commons/metadata/mapping/SbiFunctionalitiesRoles.hbm.xml" />
+        <mapping resource="it/eng/spagobi/commons/metadata/mapping/SbiAuthorizationsRoles.hbm.xml" />
         <mapping resource="it/eng/spagobi/commons/metadata/mapping/SbiUserFunctionality.hbm.xml" />      
         <mapping resource="it/eng/spagobi/behaviouralmodel/analyticaldriver/metadata/mapping/SbiParameters.hbm.xml" />
         <mapping resource="it/eng/spagobi/behaviouralmodel/analyticaldriver/metadata/mapping/SbiParuseDet.hbm.xml" />
