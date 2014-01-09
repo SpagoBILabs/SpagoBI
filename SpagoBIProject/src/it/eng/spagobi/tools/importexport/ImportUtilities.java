@@ -41,6 +41,7 @@ import it.eng.spagobi.commons.metadata.SbiBinContents;
 import it.eng.spagobi.commons.metadata.SbiCommonInfo;
 import it.eng.spagobi.commons.metadata.SbiDomains;
 import it.eng.spagobi.commons.metadata.SbiExtRoles;
+import it.eng.spagobi.commons.metadata.SbiAuthorizations;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.engines.config.metadata.SbiEngines;
@@ -5369,6 +5370,28 @@ MetadataLogger metaLog;
 	}
 
 
+	
+	
+	/**
+	 * Creates a new hibernate authorizations (role) object.
+	 * 
+	 * @param role old hibernate authorizations object
+	 * 
+	 * @return the new hibernate authorizations object
+	 */
+	public  SbiAuthorizations makeNew(SbiAuthorizations func){
+		logger.debug("IN");
+		SbiAuthorizations newAuthorizations = new SbiAuthorizations();
+		newAuthorizations.setName(func.getName());
+		newAuthorizations.setCreationDate(func.getCreationDate());
+		newAuthorizations.setLastChangeDate(func.getLastChangeDate());
+		newAuthorizations.setCommonInfo(func.getCommonInfo());
+		logger.debug("OUT");
+		return newAuthorizations;
+	}
+	
+	
+	
 	public  List<String> retrieveLovMetadataById(SbiLov sbiLov){
 		logger.debug("IN");
 

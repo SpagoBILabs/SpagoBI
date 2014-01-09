@@ -29,7 +29,7 @@ public class SbiExtRoles  extends SbiHibernateModel{
      private Set sbiFuncRoles;
      private Set sbiParuseDets;
      private Set sbiMetaModelCategories;
-     private Set sbiFunctionalitiesRoleses = new HashSet(0);
+     private Set sbiAuthorizationsRoleses = new HashSet(0);
 
 
     // Constructors
@@ -212,11 +212,11 @@ public class SbiExtRoles  extends SbiHibernateModel{
 		this.sbiMetaModelCategories = sbiMetaModelCategories;
 	}
 	
-	public Set getSbiFunctionalitiesRoleses() {
-		return this.sbiFunctionalitiesRoleses;
+	public Set getSbiAuthorizationsRoleses() {
+		return this.sbiAuthorizationsRoleses;
 	}
 
-	public void setSbiFunctionalitiesRoleses(Set sbiFunctionalitiesRoleses) {
-		this.sbiFunctionalitiesRoleses = sbiFunctionalitiesRoleses;
+	public void setSbiAuthorizationsRoleses(Set sbiAuthorizationsRoleses) {
+		this.sbiAuthorizationsRoleses = sbiAuthorizationsRoleses;
 	}
 }

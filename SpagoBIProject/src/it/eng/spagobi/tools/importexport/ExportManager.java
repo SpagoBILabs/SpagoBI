@@ -31,6 +31,7 @@ import it.eng.spagobi.commons.bo.Role;
 import it.eng.spagobi.commons.bo.Subreport;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.metadata.SbiAuthorizations;
 import it.eng.spagobi.commons.utilities.FileUtilities;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.kpi.ou.bo.OrganizationalUnit;
@@ -140,6 +141,10 @@ public class ExportManager implements IExportManager {
 			exportPropertiesFile();
 			logger.debug("export domains ");
 			exportDomains();
+			
+			logger.debug("export authorizations ");
+			exportAuthorizations();
+			
 			logger.debug("export metadata categories");
 			exportObjectMetadata();
 			logger.debug("export udp");
@@ -322,6 +327,30 @@ public class ExportManager implements IExportManager {
 			logger.debug("OUT");
 		}
 	}
+	
+	/**
+	 * Exports SpagoBI authorizations
+	 * 
+	 * @throws EMFUserError
+	 */
+	private void exportAuthorizations() throws EMFUserError {
+		logger.debug("IN");
+		try {
+			List authorizations = DAOFactory.getRoleDAO().loadAllAuthorizations();
+			Iterator itAuth = authorizations.iterator();
+			while (itAuth.hasNext()) {
+				SbiAuthorizations auth = (SbiAuthorizations) itAuth.next();
+				exporter.insertAuthorizations(auth, session);
+			}
+		} catch (Exception e) {
+			logger.error("Error while exporting domains ", e);
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8005", ImportManager.messageBundle);
+		} finally {
+			logger.debug("OUT");
+		}
+	}
+	
+	
 	/**
 	 * Exports SpagoBI Udp Items
 	 * 
@@ -809,10 +838,16 @@ public class ExportManager implements IExportManager {
 		while (iterRoles.hasNext()) {
 			Role role = (Role) iterRoles.next();
 			exporter.insertRole(role, session);
+			exporter.insertAuthorizationsRole(role, session);
 		}
+			
 		logger.debug("OUT");
 	}
 
+
+	
+	
+	
 	/**
 	 * Close hibernate session and session factory relative to the export
 	 * database

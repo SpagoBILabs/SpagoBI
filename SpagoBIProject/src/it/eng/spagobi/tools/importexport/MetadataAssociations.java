@@ -14,6 +14,7 @@ import it.eng.spagobi.behaviouralmodel.check.metadata.SbiChecks;
 import it.eng.spagobi.behaviouralmodel.lov.metadata.SbiLov;
 import it.eng.spagobi.commons.metadata.SbiDomains;
 import it.eng.spagobi.commons.metadata.SbiExtRoles;
+import it.eng.spagobi.commons.metadata.SbiAuthorizations;
 import it.eng.spagobi.engines.config.metadata.SbiEngines;
 import it.eng.spagobi.kpi.alarm.metadata.SbiAlarm;
 import it.eng.spagobi.kpi.alarm.metadata.SbiAlarmContact;
@@ -101,7 +102,10 @@ public class MetadataAssociations {
 	private Map ouNodesAssociation = new TreeMap();
 	private Map ouGrantAssociation = new HashMap();
 	private Map ouGrantNodesAssociation = new HashMap();
+	private Map authorizationsIDAssociation = new HashMap();
+	private Map authorizationsAssociation = new HashMap();
 
+	
 	/**
 	 * Checks if the metadata association is empty.
 	 * 
@@ -190,6 +194,11 @@ public class MetadataAssociations {
 			return false;
 		if(!artifactIDAssociation.keySet().isEmpty())
 			return false;
+		if(!authorizationsAssociation.keySet().isEmpty())
+			return false;
+		if(!authorizationsIDAssociation.keySet().isEmpty())
+			return false;
+		
 		return true;
 	}
 
@@ -256,6 +265,9 @@ public class MetadataAssociations {
 		ouGrantNodesAssociation = new HashMap();
 		metaModelIDAssociation = new HashMap();
 		artifactIDAssociation = new HashMap();	
+		authorizationsAssociation = new HashMap();	
+		authorizationsIDAssociation = new HashMap();	
+		
 	}
 
 
@@ -1619,4 +1631,46 @@ public class MetadataAssociations {
 	public void insertCoupleIdOuGrantNodesAssociation(SbiOrgUnitGrantNodesId exp, SbiOrgUnitGrantNodesId curr) {
 		ouGrantNodesAssociation.put(exp, curr);	
 	}
+	
+	
+	
+
+	/**
+	 * Gets the Map of associations between current and exported authorizations ids.
+	 * 
+	 * @return Map of associations
+	 */
+	public Map getAuthorizationsIDAssociation() {
+		return authorizationsIDAssociation;
+	}
+
+	/**
+	 * Gets the Map of associations between current and exported authorizations.
+	 * 
+	 * @return Map of associations
+	 */
+	public Map getAuthorizationsAssociation() {
+		return authorizationsAssociation;
+	}
+
+	/**
+	 * Inserts a couple of authorizations into the associations.
+	 * 
+	 * @param exp the exp
+	 * @param curr the curr
+	 */
+	public void insertCoupleAuthorizations(SbiAuthorizations exp, SbiAuthorizations curr) {
+		authorizationsAssociation.put(exp, curr);
+	}
+
+	/**
+	 * Inserts a couple of authorizations ids into the associations.
+	 * 
+	 * @param exp the exp
+	 * @param curr the curr
+	 */
+	public void insertCoupleAuthorizations(Integer exp, Integer curr) {
+		authorizationsIDAssociation.put(exp, curr);
+	}
+	
 }

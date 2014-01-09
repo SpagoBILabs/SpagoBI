@@ -42,6 +42,9 @@ import it.eng.spagobi.commons.dao.IRoleDAO;
 import it.eng.spagobi.commons.metadata.SbiBinContents;
 import it.eng.spagobi.commons.metadata.SbiDomains;
 import it.eng.spagobi.commons.metadata.SbiExtRoles;
+import it.eng.spagobi.commons.metadata.SbiAuthorizations;
+import it.eng.spagobi.commons.metadata.SbiAuthorizationsRoles;
+import it.eng.spagobi.commons.metadata.SbiAuthorizationsRolesId;
 import it.eng.spagobi.commons.utilities.FileUtilities;
 import it.eng.spagobi.commons.utilities.indexing.LuceneIndexer;
 import it.eng.spagobi.engines.config.bo.Engine;
@@ -274,8 +277,10 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 		importDataSource(overwrite);
 		metaLog.log("-------Data Set-----");
 		importDataSet(overwrite);
+		metaLog.log("-------Authorizations-----");
+		importAuthorizations();
 		metaLog.log("-------Roles-----");
-		importRoles();
+		importRoles(overwrite);
 		metaLog.log("-------Engines-----");
 		importEngines();
 		metaLog.log("-------Functionalities-----");
@@ -579,12 +584,132 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 	}
 
 
+	
+	/**
+	 * Import exported Authorizations
+	 * 
+	 * @throws EMFUserError
+	 */
+	private void importAuthorizations() throws EMFUserError {
+		logger.debug("IN");
+		SbiAuthorizations authorizations = null;
+		try {
+			List exportedAuthorizations = importer.getAllExportedSbiObjects(sessionExpDB, "SbiAuthorizations", null);
+			Iterator iterAuthorizations = exportedAuthorizations.iterator();
+			while (iterAuthorizations.hasNext()) {
+				authorizations = (SbiAuthorizations) iterAuthorizations.next();
+				
+				Integer oldId = authorizations.getId();
+				
+				Map functionalityIdAss = metaAss.getAuthorizationsIDAssociation();
+				Set functionalityIdAssSet = functionalityIdAss.keySet();
+				if (functionalityIdAssSet.contains(oldId)) {
+					metaLog.log("Exported functionality " + authorizations.getName() + " not inserted"
+							+ " because it has been associated to an existing authorizations by having same name");
+					logger.debug("Exported functionality " + authorizations.getName() + " not inserted"
+							+ " because it has been associated to an existing authorizations by having same name");
+
+					continue;
+				}
+				SbiAuthorizations newFunctionality = importUtilities.makeNew(authorizations);
+				
+				this.updateSbiCommonInfo4Insert(newFunctionality);
+				sessionCurrDB.save(newFunctionality);
+				sessionCurrDB.flush();
+				metaLog.log("Inserted new functionality " + newFunctionality.getName());
+				logger.debug("Inserted new functionality " + newFunctionality.getName());
+				Integer newId = newFunctionality.getId();
+				metaAss.insertCoupleAuthorizations(oldId, newId);
+			}
+		} 
+		catch (EMFUserError he) {
+			throw he;
+		}
+		catch (Exception e) {
+			if (authorizations != null) {
+				logger.error("Error while importing exported authorizations with name [" + authorizations.getName() + "].", e);
+			}
+			logger.error("Error while inserting object ", e);
+			List params = new ArrayList();
+			params.add("SbiAuthorizations");
+			if(authorizations != null)params.add(authorizations.getName());
+			else params.add("");
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params, ImportManager.messageBundle);
+		} finally {
+			logger.debug("OUT");
+		}
+	}
+	
+	
+	
+	
+	private void importAuthorizationsRoles(Integer roleId, Session sessionCurrDb, boolean deletePrevious) throws EMFUserError {
+		logger.debug("IN");
+		try{
+		
+			Map roleIdAss = metaAss.getRoleIDAssociation();
+			Map authorizationsIdAss = metaAss.getAuthorizationsIDAssociation();
+			
+			if(deletePrevious){
+				Integer roleIdToUse = roleIdAss.get(roleId) != null ? (Integer)roleIdAss.get(roleId) : roleId;
+				DAOFactory.getRoleDAO().eraseAuthorizationsRolesAssociatedToRole(roleIdToUse, sessionCurrDb);
+			}
+			
+
+		
+			SbiAuthorizationsRoles authorizationsRoles = null;
+			//List exportedAuthorizationsRoles = importer.getAllExportedSbiObjects(sessionExpDB, "SbiAuthorizationsRoles", null);
+			List exportedAuthorizationsRoles = importer.getExportedAuthorizationsRolesByRole(sessionExpDB, roleId);
+			
+			Iterator iterfr = exportedAuthorizationsRoles.iterator();
+			while (iterfr.hasNext()) {
+
+				authorizationsRoles = (SbiAuthorizationsRoles) iterfr.next();
+
+				Integer oldAuthorizationsId = authorizationsRoles.getSbiAuthorizations().getId();
+
+				Integer roleIdToUse = roleIdAss.get(roleId) != null ? (Integer)roleIdAss.get(roleId) : roleId;
+				Integer functionalityIdToUse = authorizationsIdAss.get(oldAuthorizationsId) != null ? (Integer)authorizationsIdAss.get(oldAuthorizationsId) : oldAuthorizationsId;
+
+				SbiAuthorizationsRolesId id = new SbiAuthorizationsRolesId(functionalityIdToUse, roleIdToUse);
+				SbiAuthorizationsRoles sbiFR = new SbiAuthorizationsRoles();
+				sbiFR.setId(id);
+				SbiExtRoles role = (SbiExtRoles) sessionCurrDB.load(SbiExtRoles.class, roleIdToUse);
+				SbiAuthorizations funcs = (SbiAuthorizations) sessionCurrDB.load(SbiAuthorizations.class, functionalityIdToUse);
+				sbiFR.setSbiAuthorizations(funcs);
+				sbiFR.setSbiExtRoles(role);
+				sessionCurrDb.save(sbiFR);
+				logger.debug("Inserted relation between role "+role.getName()+" and functionality "+funcs.getName());
+				
+			}
+		
+		
+		}
+		catch (EMFUserError he) {
+			throw he;
+		}
+		catch (Exception e) {
+				logger.error("Error while importing exported functionality role association of role [" + roleId + "].", e);
+			List params = new ArrayList();
+			params.add("SbiAuthorizationsRoles");
+			if(roleId!= null)params.add(roleId);
+			else params.add("");
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params, ImportManager.messageBundle);
+		} 
+		
+		
+		logger.debug("OUT");
+		
+	}
+	
+	
+	
 	/**
 	 * Import exported roles
 	 * 
 	 * @throws EMFUserError
 	 */
-	private void importRoles() throws EMFUserError {
+	private void importRoles(boolean overwrite) throws EMFUserError {
 		logger.debug("IN");
 		SbiExtRoles role = null;
 		try {
@@ -596,12 +721,24 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 				Map roleIdAss = metaAss.getRoleIDAssociation();
 				Set roleIdAssSet = roleIdAss.keySet();
 				if (roleIdAssSet.contains(oldId)) {
+
 					metaLog.log("Exported role " + role.getName() + " not inserted"
 							+ " because it has been associated to an existing role or it has the same name "
 							+ " of an existing role");
 					logger.debug("Exported role " + role.getName() + " not inserted"
 							+ " because it has been associated to an existing role or it has the same name "
 							+ " of an existing role");
+
+					if(overwrite){
+						Integer newId = (Integer)roleIdAss.get(oldId);
+						// delete and overwrite related authorizations 
+						importAuthorizationsRoles(role.getExtRoleId(), sessionCurrDB, true);
+					
+						logger.debug("deleted previous authorizations of role with id "+newId+" and inserted new ones" );
+
+						
+					}
+					
 
 					continue;
 				}
@@ -622,6 +759,9 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 				logger.debug("Inserted new role " + newRole.getName());
 				Integer newId = newRole.getExtRoleId();
 				metaAss.insertCoupleRole(oldId, newId);
+				
+				importAuthorizationsRoles(role.getExtRoleId(), sessionCurrDB, false);
+							
 			}
 		} 
 		catch (EMFUserError he) {
@@ -642,6 +782,11 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 		}
 	}
 
+	
+	
+	
+	
+	
 	/**
 	 * Imports exported engines
 	 * 
@@ -3251,6 +3396,29 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 			}
 		}
 
+		
+		List exportedAuthorizations = importer.getAllExportedSbiObjects(sessionExpDB, "SbiAuthorizations", null);
+		Iterator iterAuthorizations = exportedAuthorizations.iterator();
+		while (iterAuthorizations.hasNext()) {
+			SbiAuthorizations authorizationsExp = (SbiAuthorizations) iterAuthorizations.next();
+			String authorizationsName = authorizationsExp.getName();
+			Integer authorizationsId = authorizationsExp.getId();
+			Map authorizationsAss = metaAss.getAuthorizationsIDAssociation();
+			Set keysExpAuthorizationsAss = authorizationsAss.keySet();
+			if (keysExpAuthorizationsAss.contains(authorizationsId))
+				continue;
+			Object existObj = importer.checkExistence(authorizationsName, sessionCurrDB, new SbiAuthorizations());
+			if (existObj != null) {
+				SbiAuthorizations functionalityCurr = (SbiAuthorizations) existObj;
+				metaAss.insertCoupleAuthorizations(authorizationsExp.getId(), functionalityCurr.getId());
+				metaAss.insertCoupleAuthorizations(authorizationsExp, functionalityCurr);
+				logger.debug("Found an existing Functionality " + functionalityCurr.getName() + " with "
+						+ "the same name of the exported Functionality " + authorizationsExp.getName());
+				metaLog.log("Found an existing Functionality " + functionalityCurr.getName() + " with "
+						+ "the same name of the exported Functionality " + authorizationsExp.getName());
+			}
+		}
+		
 		List exportedRoles = importer.getAllExportedSbiObjects(sessionExpDB, "SbiExtRoles", null);
 		Iterator iterSbiRoles = exportedRoles.iterator();
 		while (iterSbiRoles.hasNext()) {
@@ -5921,4 +6089,15 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 	//			logger.debug("OUT");
 	//		}
 	//	}
+	
+	
+	
+	/**
+	 *  Handle already present parameter's paruse
+	 *  if a paruse is not present between exported delete
+	 *  
+	 */
+
+
+	
 }
