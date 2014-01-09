@@ -5,6 +5,8 @@ This Source Code Form is subject to the terms of the Mozilla Public License, v. 
 If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. --%>
 
 <%@page import="it.eng.spagobi.tools.dataset.service.SelfServiceDatasetStartAction"%>
+<%@page import="it.eng.spagobi.commons.utilities.ChannelUtilities"%>
+
 <%@ include file="/WEB-INF/jsp/commons/portlet_base410.jsp"%>
 <link rel='stylesheet' type='text/css' href='<%=urlBuilder.getResourceLinkByTheme(request, "css/tools/dataset/main.css", currTheme)%>'/>
 <link rel='stylesheet' type='text/css' href='<%=urlBuilder.getResourceLinkByTheme(request, "css/tools/dataset/listview.css", currTheme)%>'/>
@@ -27,7 +29,9 @@ if (isMyData.equalsIgnoreCase("FALSE")) {%>
     String qbeEditDatasetActionUrl = (String) aResponseContainer.getServiceResponse().getAttribute(SelfServiceDatasetStartAction.OUTPUT_PARAMETER_QBE_EDIT_DATASET_SERVICE_URL);
     String georeportEditActionUrl = (String) aResponseContainer.getServiceResponse().getAttribute(SelfServiceDatasetStartAction.OUTPUT_PARAMETER_GEOREPORT_EDIT_SERVICE_URL);
     String typeDoc = (String) aResponseContainer.getServiceResponse().getAttribute(SelfServiceDatasetStartAction.TYPE_DOC);
-    
+    String fromMyAnalysis = (String) aResponseContainer.getServiceResponse().getAttribute(SelfServiceDatasetStartAction.IS_FROM_MYANALYSIS);
+    String contextName = ChannelUtilities.getSpagoBIContextName(request);
+
 %>
 
 <script type="text/javascript">
@@ -45,7 +49,9 @@ if (isMyData.equalsIgnoreCase("FALSE")) {%>
             , georeportEngineBaseUrl : '<%= StringEscapeUtils.escapeJavaScript(georeportEditActionUrl) %>'
             , user: Sbi.user.userUniqueIdentifier
             , typeDoc: '<%=typeDoc%>'
+            , fromMyAnalysis: '<%=fromMyAnalysis%>'
             , datasetsServicePath: 'selfservicedataset'
+            , contextName: '<%=StringEscapeUtils.escapeJavaScript(contextName)%>'
 		}); //by alias
 		var datasetListViewport = Ext.create('Ext.container.Viewport', {
 			layout:'fit',

@@ -28,6 +28,7 @@ Sbi.qbe.SaveDatasetWindow = function(config) {
 	Ext.apply(this, c);
 	
 	this.addEvents('save');
+	this.addEvents('returnToMyAnalysis');
 	
 	this.initServices();
 	this.initScopeStore();
@@ -186,12 +187,14 @@ Ext.extend(Sbi.qbe.SaveDatasetWindow, Ext.Window, {
                     width: 150,
                     buttons: Ext.MessageBox.OK
                });
-      		} else {			      			
+      		} else {			 
+      			var theWindow = this;
       			Ext.MessageBox.show({
                         title: LN('sbi.generic.success'),
                         msg: LN('sbi.generic.operationSucceded'),
                         width: 200,
-                        buttons: Ext.MessageBox.OK
+                       buttons: Ext.MessageBox.OK
+
                 });
       			this.fireEvent('save', this, this.getFormState());
       		}  

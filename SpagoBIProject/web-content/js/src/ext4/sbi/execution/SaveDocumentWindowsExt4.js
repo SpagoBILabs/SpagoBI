@@ -21,7 +21,8 @@ Ext.define('Sbi.execution.SaveDocumentWindowExt4', {
 	,OBJECT_PREVIEW_FILE: null
 	,OBJECT_COMMUNITY: null
 	,OBJECT_SCOPE: null
-
+	,fromMyAnalysis: null
+	,id: null
 	
 	,constructor: function(config) {
 
@@ -30,7 +31,7 @@ Ext.define('Sbi.execution.SaveDocumentWindowExt4', {
 		var saveDocParams= {
 			LIGHT_NAVIGATOR_DISABLED: 'TRUE'
 		};
-		
+				
 		// case coming from createWorksheetObject.jsp
 		if(config.MESSAGE_DET != undefined && config.MESSAGE_DET != null ){
 			saveDocParams.MESSAGE_DET = config.MESSAGE_DET;
@@ -51,6 +52,14 @@ Ext.define('Sbi.execution.SaveDocumentWindowExt4', {
 		} else{
 			saveDocParams.MESSAGE_DET = 'DOC_SAVE';		
 		}
+		
+		/*
+		if (config.fromMyAnalysis != undefined && config.fromMyAnalysis != null){
+			if (config.fromMyAnalysis == 'TRUE'){
+				this.fromMyAnalysis = true;
+			}
+		}
+		*/
 		
 	
 		this.services['saveDocumentService'] = Sbi.config.serviceRegistry.getServiceUrl({
@@ -99,6 +108,8 @@ Ext.define('Sbi.execution.SaveDocumentWindowExt4', {
 		Ext.apply(this,c);
 		
 	    this.callParent(arguments);
+		this.addEvents('returnToMyAnalysis');
+
 	    
 	}
 
@@ -328,15 +339,28 @@ Ext.define('Sbi.execution.SaveDocumentWindowExt4', {
 			                        msg: content,
 			                        width: 150,
 			                        buttons: Ext.MessageBox.OK
-			                   });              
-				      		}else{			      			
+			                   });   
+				      		}else{	
+				      			var thisWindow = this;
 				      			Ext.MessageBox.show({
 				                        title: LN('sbi.generic.result'),
 				                        msg: LN('sbi.generic.resultMsg'),
 				                        width: 200,
-				                        buttons: Ext.MessageBox.OK
+				                        //buttons: Ext.MessageBox.OK
+				                        buttonText: { 
+				                        	 ok: 'Ok'
+				                        }
+					      			, fn: function(btn){
+						                //jump back to MyAnalysis page
+						                if (thisWindow.fromMyAnalysis != undefined && thisWindow.fromMyAnalysis != null && thisWindow.fromMyAnalysis == 'TRUE'){
+						                	thisWindow.fireEvent('returnToMyAnalysis',thisWindow);  //fire event to jump to the MyAnalysis page 
+						                }
+		                            	
+		                                Ext.MessageBox.hide(); 
+		                                this.destroy();
+					      		    }
 				                });
-				      			 this.destroy();
+
 				      		}  
 			      		} else {
 			      			Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
@@ -345,6 +369,8 @@ Ext.define('Sbi.execution.SaveDocumentWindowExt4', {
 		        scope: this,
 				failure: Sbi.exception.ExceptionHandler.handleFailure      
 			});
+			
+			
 		}
 	}
 	, initFileUpload: function(){

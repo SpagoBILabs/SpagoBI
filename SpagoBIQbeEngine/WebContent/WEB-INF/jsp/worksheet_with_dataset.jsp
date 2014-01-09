@@ -33,6 +33,7 @@
 	UserProfile profile;
 	Locale locale;
 	String isFromCross;
+	String isFromMyAnalysis;
 	boolean isPowerUser;
 	Integer resultLimit = 10;
 	boolean isMaxResultLimitBlocking = false;
@@ -46,6 +47,7 @@
 	worksheetEngineInstance = (WorksheetEngineInstance) serviceResponse.getAttribute(WorksheetEngineInstance.class.getName());
 	profile = (UserProfile)worksheetEngineInstance.getEnv().get(EngineConstants.ENV_USER_PROFILE);
 	locale = (Locale) worksheetEngineInstance.getEnv().get(EngineConstants.ENV_LOCALE);
+
 	
 	QbeEngineConfig qbeEngineConfig = QbeEngineConfig.getInstance();
 	if ( qbeEngineConfig != null ) {

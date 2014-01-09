@@ -17,10 +17,15 @@ Ext.define('Sbi.selfservice.SelfServiceExecutionIFrame', {
 		
 	, modelName: null
 	, datasetLabel: null
-
+	, fromMyAnalysis: null
+	, contextName: null
+	, frame: false
+	, border: 0
 	
 	, init: function(config){
 		this.callParent(arguments);
+		
+		
 		if( Sbi.settings && Sbi.settings 
 			&& Sbi.settings.mydata && Sbi.settings.mydata.toolbar 
 			&& Sbi.settings.mydata && Sbi.settings.mydata.toolbar.hide === true) {
@@ -29,6 +34,14 @@ Ext.define('Sbi.selfservice.SelfServiceExecutionIFrame', {
 			if ((config.hideToolbar == undefined) || (config.hideToolbar == false)){
 				this.initToolbar(config);
 			}
+		}
+		
+		if ((config.fromMyAnalysis != undefined) && (config.fromMyAnalysis != null)){
+			this.fromMyAnalysis = config.fromMyAnalysis;
+		}
+		
+		if ((config.contextName != undefined) && (config.contextName != null)){
+			this.contextName = config.contextName;
 		}
 		
 	}
@@ -52,7 +65,13 @@ Ext.define('Sbi.selfservice.SelfServiceExecutionIFrame', {
 		
 	}
 	
+	, returnToMyAnalysis : function() {
+		window.location = this.contextName + '/servlet/AdapterHTTP?ACTION_NAME=CREATE_DOCUMENT_START_ACTION&LIGHT_NAVIGATOR_RESET_INSERT=TRUE';
+		
+	}
+	
 	, saveHandler : function() {
+		
 		var theWindow = this.iframe.getWin();
 		Sbi.debug('[SelfServiceExecutionIFrame.saveWorksheet]: got window');
 		
@@ -83,7 +102,9 @@ Ext.define('Sbi.selfservice.SelfServiceExecutionIFrame', {
 				'OBJECT_TYPE': 'MAP',
 				'OBJECT_TEMPLATE': template,
 				'model_name': this.modelName,
-				'typeid': 'GEOREPORT' 
+				'typeid': 'GEOREPORT',
+				'fromMyAnalysis': this.fromMyAnalysis
+					
 		};
 
 		if(this.datasetLabel!=null){
@@ -95,6 +116,7 @@ Ext.define('Sbi.selfservice.SelfServiceExecutionIFrame', {
 		}
 		
 		this.win_saveDoc = Ext.create("Sbi.execution.SaveDocumentWindowExt4", documentWindowsParams);
+		this.win_saveDoc.on('returnToMyAnalysis', this.returnToMyAnalysis, this);
 		this.win_saveDoc.show();
     
     }
@@ -145,7 +167,9 @@ Ext.define('Sbi.selfservice.SelfServiceExecutionIFrame', {
 				'OBJECT_WK_DEFINITION': wkDefinition,
 				'OBJECT_QUERY': worksheetQuery,
 				'model_name': this.modelName,
-				'typeid': 'WORKSHEET' 
+				'typeid': 'WORKSHEET' ,
+				'fromMyAnalysis': this.fromMyAnalysis
+
 		};
 
 		if(this.datasetLabel!=null){
@@ -156,7 +180,10 @@ Ext.define('Sbi.selfservice.SelfServiceExecutionIFrame', {
 			documentWindowsParams.MESSAGE_DET= 'DOC_SAVE_FROM_MODEL';
 		}
 		
+		
 		this.win_saveDoc = Ext.create("Sbi.execution.SaveDocumentWindowExt4",documentWindowsParams);
+		this.win_saveDoc.on('returnToMyAnalysis', this.returnToMyAnalysis, this);
+
 		this.win_saveDoc.show();
     
     }
@@ -183,7 +210,8 @@ Ext.define('Sbi.selfservice.SelfServiceExecutionIFrame', {
 		Sbi.debug('[SelfServiceExecutionIFrame.getQbeQueryDefinition]: got window');
 		var qbePanel = qbeWindow.qbe;
 		Sbi.debug('[SelfServiceExecutionIFrame.getQbeQueryDefinition]: got qbe panel object');
-		qbePanel.openSaveDataSetWizard();
+		qbePanel.on('save', this.returnToMyAnalysis, this); //added
+		qbePanel.openSaveDataSetWizard(this.fromMyAnalysis);
 	}	
 	
 });
