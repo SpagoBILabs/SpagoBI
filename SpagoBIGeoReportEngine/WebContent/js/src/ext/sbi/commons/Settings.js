@@ -14,6 +14,7 @@ Sbi.settings.georeport = {
 	   		analysisPanelEnabled: true
 	   		, measurePanelEnabled: false
 	   		, earthPanelEnabled: false
+	   		, scopeInfoEnabled: false //if true shows the scope options when is possible
 	  	} 
 	 
 	  	, toolbarConf: {
@@ -28,6 +29,7 @@ Sbi.settings.georeport = {
 	
 	  	, saveWindow:{
 	  		showDetailBar: true
+	  	  , showSaveButton: false //if true shows the save button at the end of page
 	  	}
 			
 		/**
