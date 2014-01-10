@@ -271,7 +271,7 @@ Ext.define('Sbi.adhocreporting.MyAnalysisView', {
 	        var actionDelete = e.getTarget('a[class=delete]', 10, true);
 	        var actionClone = e.getTarget('a[class=clone]', 10, true);
 	        var actionShare = e.getTarget('div[class=share]',10,true)
-	        var actionExecution = e.getTarget('div[class=box-container-browser]',10,true)
+	        var actionExecution = e.getTarget('div[class=box-container-myanalysis]',10,true)
 
 	        //var actionFavourite = e.getTarget('span.icon', 10, true); //TBD
 
