@@ -30,6 +30,7 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/commons/Session.js")%>'></script>	
 <script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/commons/Log.js")%>'></script>	
 
+
 <script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/home/DefaultRoleWindow.js")%>'></script> 
 
 
@@ -101,6 +102,7 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext4/sbi/adhocreporting/MyAnalysisModel.js")%>'></script>
 <script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext4/sbi/adhocreporting/MyAnalysisView.js")%>'></script>
 <script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext4/sbi/adhocreporting/MyAnalysisWizard.js")%>'></script>
+<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext4/sbi/adhocreporting/MyAnalysisMetadataWindow.js")%>'></script>
 
 
 <script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext4/sbi/community/CommunityDetailPanel.js")%>'></script>
