@@ -262,11 +262,9 @@ Ext.define('Sbi.adhocreporting.MyAnalysisBrowser', {
 	}
 	
 	, showMetadataDocument: function(rec){
-		//TODO
-		Sbi.exception.ExceptionHandler.showInfoMessage('TODO: Show metadata Document');
-//		var docId = rec.id;
-//		this.win_metadata = new Sbi.execution.toolbar.MetadataWindow({'OBJECT_ID': docId});
-//		this.win_metadata.show();
+		var docId = rec.id;
+		this.win_metadata = new Sbi.adhocreporting.MyAnalysisMetadataWindow({'OBJECT_ID': docId});
+		this.win_metadata.show();
 	}
 	
 	, shareDocument: function(rec){
