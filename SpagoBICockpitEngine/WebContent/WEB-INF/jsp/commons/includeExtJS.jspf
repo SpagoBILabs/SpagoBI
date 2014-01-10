@@ -1,0 +1,12 @@
+<!-- Include Ext 3.4.1 -->
+
+<script type="text/javascript" src="./js/lib/ext/3.4.1/adapter/ext/ext-base.js"></script>
+<script type="text/javascript" src="./js/lib/ext/3.4.1/ext-all.js" ></script> 
+<!--<script type="text/javascript" src="./js/lib/ext/3.4.1/ext-all-debug.js" ></script> -->
+
+<link   type="text/css" rel="stylesheet" href="./js/lib/ext/3.4.1/resources/css/ext-all.css" ></link>
+
+<script type="text/javascript">
+	Ext.Ajax.timeout = 5000000;
+	Ext.BLANK_IMAGE_URL = './js/lib/ext/3.4.1/resources/images/default/s.gif';
+</script>
