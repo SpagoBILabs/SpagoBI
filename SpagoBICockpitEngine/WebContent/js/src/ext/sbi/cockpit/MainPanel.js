@@ -166,12 +166,24 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 	 * Initialize the GUI
 	 */
 	, init: function() {
-		this.msgtPanel();
+		this.msgPanelInit();
 	}
 	
-	, msgtPanel: function() {  
-		this.msgPanel = new Ext.Panel({
-			html : 'Ciao, sono il nuovo motore cockpit'
+	, msgPanelInit: function() { 
+		Sbi.trace("[MainPanel.msgPanelInit]: IN");
+		var dummyWidget = new Sbi.cockpit.widgets.DummyWidget();
+		Sbi.trace("[MainPanel.msgPanelInit]: dummy widget succesfully created");
+		
+		this.msgPanel = new Sbi.cockpit.widgets.WidgetPanel({
+			items: [dummyWidget]
 		});
+		Sbi.trace("[MainPanel.msgPanelInit]: widget panel succesfully created");
+		
+		Sbi.trace("[MainPanel.msgPanelInit]: IN");
+
+//		this.msgPanel = new Ext.Panel({
+//			html : 'Ciao, sono il nuovo motore cockpit'
+//		});	
+		Sbi.trace("[MainPanel.trace]: OUT");
 	}
 });

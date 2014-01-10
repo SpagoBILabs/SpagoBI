@@ -20,6 +20,14 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='./js/src/ext/sbi/service/ServiceRegistry.js'/></script>
 
 <script type="text/javascript" src='./js/src/ext/sbi/cockpit/MainPanel.js'/></script>
+
+
+<script type="text/javascript" src='./js/src/ext/sbi/cockpit/widgets/Widget.js'/></script>
+<script type="text/javascript" src='./js/src/ext/sbi/cockpit/widgets/WidgetContainer.js'/></script>
+<script type="text/javascript" src='./js/src/ext/sbi/cockpit/widgets/WidgetPanel.js'/></script>
+
+<script type="text/javascript" src='./js/src/ext/sbi/cockpit/widgets/DummyWidget.js'/></script>
+
 <!-- END-DEBUG -->
 
 <!-- START-PRODUCTION
