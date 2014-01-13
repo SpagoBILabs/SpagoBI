@@ -173,6 +173,66 @@ Ext.define('Sbi.adhocreporting.MyAnalysisBrowser', {
 	}
 	
 	, deleteDocument: function(rec){
+		var thisPanel = this;
+		Ext.MessageBox.show({    
+		    title: LN('sbi.generic.pleaseConfirm'),
+		    msg: LN('sbi.generic.confirmDelete'),
+		    buttons: Ext.Msg.YESNOCANCEL,
+		    buttonText: {
+		        yes: LN('sbi.myanalysis.delete.personalfolder'),
+		        no: LN('sbi.myanalysis.delete.everywhere'),
+		        cancel: LN('sbi.myanalysis.delete.cancel')
+		    },
+			fn: function(btn){
+				
+				if (btn != 'cancel'){
+                	var p = {};
+                    
+                    if(rec.id) {
+                  	  p.docId = rec.id;
+                  	  p.folderId = rec.functionalities[0]; 
+                  	  p.fromMyAnalysis = true;
+                    }
+                    
+    				if ( btn == 'yes' ){
+    					// delete only from Personal Folder of user
+    					p.deleteOnlyFromPersonalFolder = true;
+    				} else if ( btn == 'no' ) {
+    					// delete everywhere
+    					p.deleteOnlyFromPersonalFolder = false;
+    				}
+                    
+                	Ext.Ajax.request({
+                         url: thisPanel.services['deleteDocument'],
+                         params: p,
+                         callback : function(options , success, response){
+                			 //alert(options.params.docId));
+            	       	  	 if(success && response !== undefined) {   
+            	   	      		if(response.responseText !== undefined) {
+            	   	      			Ext.MessageBox.show({
+            		      				title: 'Status',
+            		      				msg: LN('sbi.browser.document.delete.success'),
+            		      				modal: false,
+            		      				buttons: Ext.MessageBox.OK,
+            		      				width:300,
+            		      				icon: Ext.MessageBox.INFO 			
+            		      			});
+            	   	      			thisPanel.store.load({reset:true});										
+            	   	      			thisPanel.viewPanel.refresh();
+            	   	      		} else {
+            	   	      			Sbi.exception.ExceptionHandler.showErrorMessage(LN('sbi.generic.serviceResponseEmpty'), LN('sbi.generic.serviceError'));
+            	   	      		}
+            	       	  	}
+                         },
+                         scope: thisPanel,
+                 		 failure: Sbi.exception.ExceptionHandler.handleFailure      
+                   });
+				}
+
+			}
+		});
+		
+		/*
 		Ext.MessageBox.confirm(
 				LN('sbi.generic.pleaseConfirm')
 				, LN('sbi.generic.confirmDelete')
@@ -183,6 +243,7 @@ Ext.define('Sbi.adhocreporting.MyAnalysisBrowser', {
 	                    if(rec.id) {
 	                  	  p.docId = rec.id;
 	                  	  p.folderId = rec.functionalities[0]; 
+	                  	  p.fromMyAnalysis = true;
 	                    }
 	                    
 	                	Ext.Ajax.request({
@@ -214,6 +275,7 @@ Ext.define('Sbi.adhocreporting.MyAnalysisBrowser', {
 				}
 				, this
 			);
+			*/
 	}
 	
 	, cloneDocument: function(rec){		

@@ -1118,5 +1118,7 @@ Sbi.locale.ln['sbi.myanalysis.wizard.wizardname'] = "My Analysis Wizard";
 Sbi.locale.ln['sbi.myanalysis.wizard.myanalysisselection'] = "My Analysis Type Selection";
 Sbi.locale.ln['sbi.myanalysis.wizard.myanalysisdetail'] = "Define Details";
 Sbi.locale.ln['sbi.myanalysis.wizard.dataselection'] = "Data selection";
-
+Sbi.locale.ln['sbi.myanalysis.delete.everywhere']= 'Delete everywhere';
+Sbi.locale.ln['sbi.myanalysis.delete.personalfolder']= 'Delete only in my personal folder';
+Sbi.locale.ln['sbi.myanalysis.delete.cancel']= 'Cancel';
 
