@@ -178,7 +178,7 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 		    items: [
 		        '->', // same as {xtype: 'tbfill'}, // Ext.Toolbar.Fill
 		        {
-		        	text: 'Button'
+		        	text: 'Add widget'
 		        	, handler: this.addWidget
 		        	, scope: this
 		        }
