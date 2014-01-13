@@ -116,8 +116,13 @@ Sbi.execution.ParametersPanel = function(config, doc) {
             bodyStyle:'padding:5px 5px 5px 5px'
 		}
 	}
-		
-	this.initViewpointsPanel(config, doc)
+
+	if(this.contest=='massiveExport'){
+		var formState = this.getFormState();
+	}
+	if(this.contest== undefined || this.contest!='massiveExport'){
+		this.initViewpointsPanel(config, doc)
+	}
 	this.initTootlbar();
 
 	c = Ext.apply({}, c, {
@@ -292,7 +297,9 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 					}
 				}
 				params.viewpoint = Sbi.commons.JSON.encode( formState );
-				Ext.Ajax.request({
+	
+			
+					Ext.Ajax.request({
 			          url: this.services['saveViewpointService'],
 			          
 			          params: params,
@@ -322,6 +329,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 			          scope: this,
 			  		  failure: Sbi.exception.ExceptionHandler.handleFailure      
 			     });
+				
 			}, this);
 		}
 		this.saveViewpointWin.show();
