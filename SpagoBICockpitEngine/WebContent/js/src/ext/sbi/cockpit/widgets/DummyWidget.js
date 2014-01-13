@@ -88,7 +88,7 @@ Ext.extend(Sbi.cockpit.widgets.DummyWidget, Sbi.cockpit.widgets.Widget, {
 			, bodyBorder: false
 			, hideBorders: true
 			, frame: false
-			, html: 'Bella di padella'
+			, html: this.msg || 'Sono un widget qualunque'
 		});
 		
 		this.items.each( function(item) {

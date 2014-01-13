@@ -3,35 +3,6 @@
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. **/
- 
-  
- 
-  
- 
-/**
-  * WidgetPanel
-  * 
-  * handle layout of widgets (maybe also d&d)
-  * 
-  * 
-  * Public Properties
-  * 
-  * [list]
-  * 
-  * 
-  * Public Methods
-  * 
-  *  [list]
-  * 
-  * 
-  * Public Events
-  * 
-  *  [list]
-  * 
-  * Authors
-  * 
-  * - Andrea Gioia (andrea.gioia@eng.it)
-  */
 
 Ext.ns("Sbi.cockpit.widgets");
 
@@ -41,12 +12,12 @@ Sbi.cockpit.widgets.WidgetPanel = function(config) {
 	this.adjustConfigObject(config);
 	
 	var defaultSettings = {
-		layout:'whiteboard'
-		, layoutConfig: {
-			tableAttrs: {
-				style: {width: '100%', height:'100%'}
-			}
-        }
+//		layout: 'whiteboard'
+//		, layoutConfig: {
+//			tableAttrs: {
+//				style: {width: '100%', height:'100%'}
+//			}
+//        }
 	};
 		
 	if(Sbi.settings && Sbi.settings.console && Sbi.settings.console.widgetPanel) {
@@ -55,6 +26,8 @@ Sbi.cockpit.widgets.WidgetPanel = function(config) {
 	var c = Ext.apply(defaultSettings, config || {});
 	
 	Ext.apply(this, c);
+	
+	this.regions = {};
 		
 	// constructor
 	Sbi.cockpit.widgets.WidgetPanel.superclass.constructor.call(this, c);	
@@ -131,9 +104,11 @@ Ext.extend(Sbi.cockpit.widgets.WidgetPanel, Sbi.cockpit.widgets.Widget, {
     // public methods
 	// -----------------------------------------------------------------------------------------------------------------
 	
-    , addWidget: function(widget, position) {	
+    , addWidget: function(widget, region) {	
     	Sbi.trace("[WidgetPanel.addWidget]: IN");
-		this.widgetContainer.register(widget);	
+		this.widgetContainer.register(widget);
+		this.regions[widget.id] = region;
+		this.renderWidget(widget);
 		Sbi.trace("[WidgetPanel.addWidget]: OUT");
 	}
     
@@ -167,8 +142,7 @@ Ext.extend(Sbi.cockpit.widgets.WidgetPanel, Sbi.cockpit.widgets.Widget, {
     
     , renderWidget: function(widget) {
     	
-    	var vpSize = Ext.getBody().getViewSize();
-    	alert(vpSize.height);
+    	Sbi.trace("[WidgetPanel.renderWidget]: IN");
     	
     	var winConf = {
     		title : 'Widget'
@@ -179,12 +153,7 @@ Ext.extend(Sbi.cockpit.widgets.WidgetPanel, Sbi.cockpit.widgets.Widget, {
     		, plain : true
     		
     		, constrain: true
-    		
-    		, width : vpSize.width * 0.5
-    		, height : vpSize.height * 0.5
-    		, x : '50%'
-    		, y: '50%'
-    		
+    
     		,layout : 'fit'
     		, items : [widget]
     		, tools  :  [{
@@ -204,6 +173,25 @@ Ext.extend(Sbi.cockpit.widgets.WidgetPanel, Sbi.cockpit.widgets.Widget, {
      	       	}
         	}]
     	};
+    	
+    	var region = this.regions[widget.id];
+    	if(region == undefined) {
+    		region = {
+    			width : 0.5
+    	    	, height : 0.5
+    	    	, x : '50%'
+    	    	, y: '50%'
+    		};
+    		this.regions[widget.id] = region;
+    	}
+    	
+    	Sbi.trace("[WidgetPanel.renderWidget]: region is equal to: [" + Sbi.toSource(region) + "]");
+    	
+    	Ext.apply(winConf, region);
+    	var vpSize = Ext.getBody().getViewSize();
+    	winConf.width = Math.ceil(vpSize.width * winConf.width);
+    	winConf.height = Math.ceil(vpSize.height * winConf.height);
+    	
     	var win = new Ext.Window(winConf);
     	
     	this.windows = new Array();
@@ -211,6 +199,8 @@ Ext.extend(Sbi.cockpit.widgets.WidgetPanel, Sbi.cockpit.widgets.Widget, {
     	win.show();
     	
     	//this.add(widget);
+    	
+    	Sbi.trace("[WidgetPanel.renderWidget]: OUT");
     }
 
 }); 
