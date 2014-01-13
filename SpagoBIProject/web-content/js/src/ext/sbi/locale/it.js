@@ -1106,5 +1106,7 @@ Sbi.locale.ln['sbi.myanalysis.wizard.wizardname'] = "Wizard le mie Analisi";
 Sbi.locale.ln['sbi.myanalysis.wizard.myanalysisselection'] = "Seleziona tipologia analisi";
 Sbi.locale.ln['sbi.myanalysis.wizard.myanalysisdetail'] = "Definisci Dettagli";
 Sbi.locale.ln['sbi.myanalysis.wizard.dataselection'] = "Selezione dati";
-
+Sbi.locale.ln['sbi.myanalysis.delete.everywhere']= 'Cancella ovunque';
+Sbi.locale.ln['sbi.myanalysis.delete.personalfolder']= 'Cancella solo nella mia cartella personale';
+Sbi.locale.ln['sbi.myanalysis.delete.cancel']= 'Annulla';
 

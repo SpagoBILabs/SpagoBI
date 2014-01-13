@@ -29,6 +29,9 @@ public class DeleteObjectAction extends AbstractSpagoBIAction {
 	public static final String SERVICE_NAME = "DELETE_OBJECT_ACTION";
 	public static final String OBJECT_ID = "docId";
 	public static final String FUNCT_ID = "folderId";
+	public static final String FROM_MY_ANALYSIS = "fromMyAnalysis";
+	public static final String DELETE_ONLY_FROM_PERSONAL_FOLDER = "deleteOnlyFromPersonalFolder";
+
 
 	// logger component
 	private static Logger logger = Logger.getLogger(DeleteObjectAction.class);
@@ -51,6 +54,12 @@ public class DeleteObjectAction extends AbstractSpagoBIAction {
 			String ids = this.getAttributeAsString(OBJECT_ID);
 			
 			Object folder = this.getAttribute(FUNCT_ID);
+			
+			Boolean isFromMyAnalysis = this.getAttributeAsBoolean(FROM_MY_ANALYSIS);
+			
+			Boolean deleteOnlyFromPersonalFolder = this.getAttributeAsBoolean(DELETE_ONLY_FROM_PERSONAL_FOLDER);
+
+			
 			Integer folderId = null;
 			if (folder != null){
 				if (folder instanceof Integer){
@@ -76,6 +85,12 @@ public class DeleteObjectAction extends AbstractSpagoBIAction {
 					lowFunctionality = functDAO.loadRootLowFunctionality(false); //TODO: to fix
 				} else {
 					lowFunctionality = functDAO.loadLowFunctionalityByID(folderId, false);
+				}
+				
+				if ((isFromMyAnalysis == true) && (deleteOnlyFromPersonalFolder == true)){
+					//for deleting only inside user personal folder
+					lowFunctionality = functDAO.loadLowFunctionalityByPath("/"+userProfile.getUserUniqueIdentifier(),false);
+					folderId = lowFunctionality.getId();
 				}
 				
 				Assert.assertNotNull(lowFunctionality, "Folder with id [" + folderId + "] not found");
