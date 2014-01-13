@@ -35,7 +35,7 @@ Sbi.cockpit.MainPanel = function(config) {
 	c = Ext.apply(c, {
          //layout   : 'fit',
          hideBorders: true,
-         items    : [this.widgetPanel]
+         items    : [this.widgetContainer]
 	});
 
 	// constructor
@@ -167,7 +167,7 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 	 */
 	, init: function() {
 		this.initToolbar();
-		this.initWidgetPanel();
+		this.initWidgetContainer();
 	}
 	
 	, initToolbar: function() {
@@ -189,7 +189,7 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 	, addWidget: function() {
 		var dummyWidget = new Sbi.cockpit.widgets.DummyWidget();
 		dummyWidget.setParentContainer(null);
-		this.widgetPanel.addWidget(dummyWidget, {
+		this.widgetContainer.addWidget(dummyWidget, {
 			x : 0
 	    	, y: 0
 			, width : 0.5
@@ -197,21 +197,21 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 		});
 	}
 	
-	, initWidgetPanel: function() { 
-		Sbi.trace("[MainPanel.initWidgetPanel]: IN");
+	, initWidgetContainer: function() { 
+		Sbi.trace("[MainPanel.initWidgetContainer]: IN");
 		var dummyWidget = new Sbi.cockpit.widgets.DummyWidget({msg: "paperino"});
-		Sbi.trace("[MainPanel.initWidgetPanel]: dummy widget succesfully created");
+		Sbi.trace("[MainPanel.initWidgetContainer]: dummy widget succesfully created");
 		
-		this.widgetPanel = new Sbi.cockpit.widgets.WidgetPanel({
+		this.widgetContainer = new Sbi.cockpit.widgets.WidgetContainer({
 			items: [dummyWidget]
 		});
-		Sbi.trace("[MainPanel.initWidgetPanel]: widget panel succesfully created");
+		Sbi.trace("[MainPanel.initWidgetContainer]: widget panel succesfully created");
 		
-		Sbi.trace("[MainPanel.initWidgetPanel]: IN");
+		Sbi.trace("[MainPanel.initWidgetContainer]: IN");
 
 //		this.msgPanel = new Ext.Panel({
 //			html : 'Ciao, sono il nuovo motore cockpit'
 //		});	
-		Sbi.trace("[MainPanel.trace]: OUT");
+		Sbi.trace("[MainPanel.initWidgetContainer]: OUT");
 	}
 });
