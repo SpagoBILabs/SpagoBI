@@ -144,7 +144,7 @@ Ext.extend(Sbi.cockpit.widgets.WidgetContainer, Sbi.cockpit.widgets.Widget, {
             layout:'fit',
             width:500,
             height:300,
-            closeAction:'hide',
+            //closeAction:'hide',
             plain: true,
             title: "Widget [" + widget.id + "] configuration",
             items: new Ext.form.TextArea({
@@ -163,7 +163,41 @@ Ext.extend(Sbi.cockpit.widgets.WidgetContainer, Sbi.cockpit.widgets.Widget, {
             {
             	text: 'Close',
                 handler: function(){
-                	win.hide();
+                	win.close();
+                }
+            }]
+        });
+    	win.show();
+    }
+    
+    , showWidgetEditor: function(widget) {
+    	
+    	var win = new Ext.Window({
+            layout:'fit',
+            width:800,
+            height:450,
+            //closeAction:'hide',
+            plain: true,
+            modal: true,
+            title: "Widget [" + widget.id + "] editor",
+            items: new Ext.form.TextArea({
+            	border: false
+            	, value: "Ciao sono un editor"
+                , name: 'configuration'
+            }),
+
+            buttons: [
+            {
+            	text:'Save',
+            	disabled: true,
+              	handler: function(){
+                
+            	}
+            },
+            {
+            	text: 'Close',
+                handler: function(){
+                	win.close();
                 }
             }]
         });
@@ -216,9 +250,9 @@ Ext.extend(Sbi.cockpit.widgets.WidgetContainer, Sbi.cockpit.widgets.Widget, {
     		, widget: widget
     		, tools  :  [{
     			id:'gear',
-    	        handler: function(){
-    	            Ext.Msg.alert('Message', 'The EDIT tool was clicked.');
-    	        },
+    			handler: function(event, button, win, tc){
+        	    	this.onShowWidgetEditor(win.widget);
+        	    },
     			scope: this
     		}, {
         		id:'help',
@@ -268,4 +302,11 @@ Ext.extend(Sbi.cockpit.widgets.WidgetContainer, Sbi.cockpit.widgets.Widget, {
     	this.showWidgetConfiguration(widget);
     	//Ext.Msg.alert('Message', 'The CONFIG tool was clicked.');
     } 
+    
+    , onShowWidgetEditor: function(widget) {
+    	this.showWidgetEditor(widget);
+    	//Ext.Msg.alert('Message', 'The CONFIG tool was clicked.');
+    } 
+    
+    
 }); 
