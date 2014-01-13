@@ -133,11 +133,11 @@ Ext.extend(Sbi.cockpit.widgets.WidgetContainer, Ext.util.Observable, {
 	// -----------------------------------------------------------------------------------------------------------------
     
     , onWidgetAdd: function(index, widget, key) {
-    	widget.setParentContainer(this);
+    	//widget.setParentContainer(this);
     }
     
     , onWidgetRemove: function(widget, key) {
-    	widget.setParentContainer(null);
+    	//widget.setParentContainer(null);
     }
     
     // =================================================================================================================

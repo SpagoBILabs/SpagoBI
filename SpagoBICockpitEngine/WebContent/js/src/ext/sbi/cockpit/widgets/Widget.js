@@ -82,8 +82,8 @@ Ext.extend(Sbi.cockpit.widgets.Widget, Ext.Panel, {
 	// =================================================================================================================
 	
 	/**
-     * @property {Sbi.cockpit.widgets.WidgetContainer} parentContainer
-     * The WidgetContainer object that contains this widget
+     * @property {Sbi.cockpit.widgets.WidgetPanel} parentContainer
+     * The WidgetPanel object that contains this widget
      */
     parentContainer: null
     
@@ -96,7 +96,21 @@ Ext.extend(Sbi.cockpit.widgets.Widget, Ext.Panel, {
 	// -----------------------------------------------------------------------------------------------------------------
    
     , getConfiguration: function() {
-		
+    	var config = {};
+    	config.custom = this.getCustomConfiguration();
+    	config.layout = this.getRegion();
+    	config.style = this.getStyleConfiguration();
+		return config;
+	}
+
+	, getCustomConfiguration: function() {
+		var config = {};
+		return config;
+	}
+	
+	, getStyleConfiguration: function() {
+		var config = {};
+		return config;
 	}
 
     , getParentContainer: function(c) {	
@@ -106,18 +120,50 @@ Ext.extend(Sbi.cockpit.widgets.Widget, Ext.Panel, {
     , setParentContainer: function(c) {	
 		this.parentContainer = c;	
 	}
-
-    , getPosition: function() {
+    
+    , isBoundToAContainer: function() {
+    	return this.parentContainer != null;
+    }
+    
+    , getWidgetManager: function() {
+    	var wm = null;
     	
+    	Sbi.trace("[Widget.getWidgetManager]: IN");
+    	
+    	if(this.isBoundToAContainer() === true) {
+    		wm = this.parentContainer.getWidgetManager();
+    		if(wm === null) {
+    			Sbi.error("[Widget.getWidgetManager]: Widget [" + this.toString() + "] is bound to a widget container but it is not possible to retrive from it a valid widget manager");
+    		}
+    	} else {
+    		Sbi.warn("[Widget.getWidgetManager]: It's not possble to retrieve widget manager of widget [" + this.toString() + "] because it is not bound to any widget container");
+    	}
+    	
+    	Sbi.trace("[Widget.getWidgetManager]: OUT");
+    	
+    	return wm;
+    }
+
+    , getRegion: function() {
+    	var r = null;
+    	
+    	if(this.isBoundToAContainer() === true) {
+    		r = this.getParentContainer().getWidgetRegion(this);
+    		if(r === null) {
+    			Sbi.warn("[Widget.getWidgetManager]: Widget [" + this.toString() + "] is bound to a widget container but it is not possible to retrive the region it occupies");
+    		}
+    	}
+    	
+    	return r;
     }
     
 	, getStore: function(storeiId) {
 		var store;
 		
-		if(this.parentContainer) {
-			var sm = this.parentContainer.getStoreManager();
-			if(sm) {
-				store = sm.getStore(storeiId);
+		if(this.getWidgetManager) {
+			var wm = this.getWidgetManager();
+			if(wm) {
+				store = wm.getStore(storeiId);
 			} else {
 				alert("getStore: storeManager not defined");
 			}
@@ -125,6 +171,10 @@ Ext.extend(Sbi.cockpit.widgets.Widget, Ext.Panel, {
 			alert("getStore: container not defined");
 		}	
 		return store;
+	}
+	
+	, toString: function() {
+		return this.id;
 	}
 	
 	// -----------------------------------------------------------------------------------------------------------------
