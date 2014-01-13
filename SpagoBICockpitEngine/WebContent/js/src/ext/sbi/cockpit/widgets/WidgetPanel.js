@@ -51,10 +51,10 @@ Ext.extend(Sbi.cockpit.widgets.WidgetPanel, Sbi.cockpit.widgets.Widget, {
 	// =================================================================================================================
 	
 	/**
-     * @property {Sbi.cockpit.widgets.WidgetContainer} widgetContainer
+     * @property {Sbi.cockpit.widgets.WidgetManager} widgetManager
      * The container that manages the all the widgets rendered within this panel
      */
-	widgetContainer: null
+	widgetManager: null
 	 
 	// =================================================================================================================
 	// METHODS
@@ -87,15 +87,15 @@ Ext.extend(Sbi.cockpit.widgets.WidgetPanel, Sbi.cockpit.widgets.Widget, {
 	 * 
 	 */
 	, adjustConfigObject: function(config) {
-		if(config.widgetContainer === undefined) {
-			config.widgetContainer = new Sbi.cockpit.widgets.WidgetContainer({storeManager: config.storeManager});
+		if(config.widgetManager === undefined) {
+			config.widgetManager = new Sbi.cockpit.widgets.WidgetContainer({storeManager: config.storeManager});
 			if(config.storeManager) {
 				delete config.storeManager;
 			}
 		}
 			
 		if(config.items !== undefined) {
-			config.widgetContainer.register(config.items);
+			config.widgetManager.register(config.items);
 			delete config.items;
 		}	
 	}
@@ -106,11 +106,51 @@ Ext.extend(Sbi.cockpit.widgets.WidgetPanel, Sbi.cockpit.widgets.Widget, {
 	
     , addWidget: function(widget, region) {	
     	Sbi.trace("[WidgetPanel.addWidget]: IN");
-		this.widgetContainer.register(widget);
-		this.regions[widget.id] = region;
+		this.widgetManager.register(widget);
+		this.setWigetRegion(widget, region);
 		this.renderWidget(widget);
+		widget.setParentContainer(this);
 		Sbi.trace("[WidgetPanel.addWidget]: OUT");
 	}
+    
+    , getWidgetRegion: function(widget) {
+    	return this.regions[widget.id];
+    }
+    
+    , setWigetRegion: function(widget, region) {
+    	this.regions[widget.id] = region;
+    }
+    
+    , getWidgetManager: function() {
+    	return this.widgetManager;
+    }
+    
+    , showWidgetConfiguration: function(widget) {
+    	var win = new Ext.Window({
+            layout:'fit',
+            width:500,
+            height:300,
+            closeAction:'hide',
+            plain: true,
+            title: "Widget [" + widget.id + "] configuration",
+            items: new Ext.form.TextArea({
+            	border: false
+            	, value: Ext.util.JSON.encode(widget.getConfiguration())
+                , name: 'configuration'
+            }),
+
+            buttons: [{
+            	text:'Submit',
+                    disabled:true
+                },{
+                    text: 'Close',
+                    handler: function(){
+                        win.hide();
+                    }
+            }]
+        });
+    	win.show();
+    }
     
     // -----------------------------------------------------------------------------------------------------------------
     // private methods
@@ -134,7 +174,7 @@ Ext.extend(Sbi.cockpit.widgets.WidgetPanel, Sbi.cockpit.widgets.Widget, {
     }
     
     , renderContent: function() {
-    	var widgets = this.widgetContainer.getWidgets();
+    	var widgets = this.widgetManager.getWidgets();
 		widgets.each(function(widget, index, length) {
 			this.renderWidget(widget);
 		}, this);	
@@ -146,7 +186,7 @@ Ext.extend(Sbi.cockpit.widgets.WidgetPanel, Sbi.cockpit.widgets.Widget, {
     	
     	var winConf = {
     		title : 'Widget'
-    		
+    		, id : 'pippo-' + Ext.id()
     		, bodyBorder: true
     		, frame: true
     		, shadow: false
@@ -156,21 +196,27 @@ Ext.extend(Sbi.cockpit.widgets.WidgetPanel, Sbi.cockpit.widgets.Widget, {
     
     		,layout : 'fit'
     		, items : [widget]
+    		, widget: widget
     		, tools  :  [{
     			id:'gear',
     	        handler: function(){
     	            Ext.Msg.alert('Message', 'The EDIT tool was clicked.');
-    	        }
+    	        },
+    			scope: this
     		}, {
         		id:'help',
-        	    handler: function(){
-        	    	Ext.Msg.alert('Message', 'The CONFIG tool was clicked.');
-        	    }
+        	    handler: function(event, button, win, tc){
+        	    	alert(win.id);
+        	    	alert(Sbi.toSource(tc, true));
+        	    	this.onShowWidgetConfiguration(win.widget);
+        	    },
+    			scope: this
         	}, {
         		id:'refresh',
      	       	handler: function(){
      	           Ext.Msg.alert('Message', 'The REFRESH tool was clicked.');
-     	       	}
+     	       	},
+    			scope: this
         	}]
     	};
     	
@@ -202,5 +248,9 @@ Ext.extend(Sbi.cockpit.widgets.WidgetPanel, Sbi.cockpit.widgets.Widget, {
     	
     	Sbi.trace("[WidgetPanel.renderWidget]: OUT");
     }
-
+    
+    , onShowWidgetConfiguration: function(widget) {
+    	this.showWidgetConfiguration(widget);
+    	//Ext.Msg.alert('Message', 'The CONFIG tool was clicked.');
+    } 
 }); 
