@@ -125,7 +125,21 @@ Ext.extend(Sbi.cockpit.widgets.WidgetPanel, Sbi.cockpit.widgets.Widget, {
     	return this.widgetManager;
     }
     
+    /**
+     * TODO: integrate ace-extjs editor to have the configuration not only pretty printed 
+     * but also highlighted
+     */
     , showWidgetConfiguration: function(widget) {
+    	
+    	// to be sure to have the conf pretty printed also on old browser that dont support
+    	// JSON object natively it is possible to include json2.jd by Douglas Crockford (
+    	// https://github.com/douglascrockford/JSON-js)
+    	var confStr = (typeof JSON === 'object')
+    					? JSON.stringify(widget.getConfiguration(), null, 2)
+    					: Ext.util.JSON.encode(widget.getConfiguration());
+    	    		
+    		
+    	
     	var win = new Ext.Window({
             layout:'fit',
             width:500,
@@ -135,18 +149,22 @@ Ext.extend(Sbi.cockpit.widgets.WidgetPanel, Sbi.cockpit.widgets.Widget, {
             title: "Widget [" + widget.id + "] configuration",
             items: new Ext.form.TextArea({
             	border: false
-            	, value: Ext.util.JSON.encode(widget.getConfiguration())
+            	, value: confStr
                 , name: 'configuration'
             }),
 
-            buttons: [{
-            	text:'Submit',
-                    disabled:true
-                },{
-                    text: 'Close',
-                    handler: function(){
-                        win.hide();
-                    }
+            buttons: [
+//          {
+//            	text:'Copy to clipboard',
+//              	handler: function(){
+//                		...
+//            		}
+//          },
+            {
+            	text: 'Close',
+                handler: function(){
+                	win.hide();
+                }
             }]
         });
     	win.show();
@@ -186,7 +204,6 @@ Ext.extend(Sbi.cockpit.widgets.WidgetPanel, Sbi.cockpit.widgets.Widget, {
     	
     	var winConf = {
     		title : 'Widget'
-    		, id : 'pippo-' + Ext.id()
     		, bodyBorder: true
     		, frame: true
     		, shadow: false
@@ -206,8 +223,6 @@ Ext.extend(Sbi.cockpit.widgets.WidgetPanel, Sbi.cockpit.widgets.Widget, {
     		}, {
         		id:'help',
         	    handler: function(event, button, win, tc){
-        	    	alert(win.id);
-        	    	alert(Sbi.toSource(tc, true));
         	    	this.onShowWidgetConfiguration(win.widget);
         	    },
     			scope: this
