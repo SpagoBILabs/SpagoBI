@@ -94,10 +94,23 @@ Ext.extend(Sbi.cockpit.widgets.Widget, Ext.Panel, {
     // -----------------------------------------------------------------------------------------------------------------
     // public methods
 	// -----------------------------------------------------------------------------------------------------------------
+   
+    , getConfiguration: function() {
+		
+	}
+
+    , getParentContainer: function(c) {	
+		return this.parentContainer;	
+	}
+
     , setParentContainer: function(c) {	
 		this.parentContainer = c;	
 	}
 
+    , getPosition: function() {
+    	
+    }
+    
 	, getStore: function(storeiId) {
 		var store;
 		

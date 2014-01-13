@@ -76,7 +76,7 @@ Ext.extend(Sbi.cockpit.widgets.WidgetContainer, Ext.util.Observable, {
     , init: function() {
     	  
     	if(!this.storeManager) {
-    		alert("Store manager not defined");
+    		//alert("Store manager not defined");
     		this.storeManager = new Ext.util.MixedCollection();
 	    	var testStore = new Ext.data.JsonStore({
 		        fields:['name', 'visits', 'views'],
@@ -105,6 +105,10 @@ Ext.extend(Sbi.cockpit.widgets.WidgetContainer, Ext.util.Observable, {
 
         
     , register: function(w) {
+    	if(Ext.isArray(w) === false) {
+    		w.setParentContainer(null);
+    		w = [w];
+    	}
 		this.widgets.addAll(w);
 	}
 

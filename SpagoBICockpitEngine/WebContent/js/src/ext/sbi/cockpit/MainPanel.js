@@ -35,7 +35,7 @@ Sbi.cockpit.MainPanel = function(config) {
 	c = Ext.apply(c, {
          //layout   : 'fit',
          hideBorders: true,
-         items    : [this.msgPanel]
+         items    : [this.widgetPanel]
 	});
 
 	// constructor
@@ -166,20 +166,48 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 	 * Initialize the GUI
 	 */
 	, init: function() {
-		this.msgPanelInit();
+		this.initToolbar();
+		this.initWidgetPanel();
 	}
 	
-	, msgPanelInit: function() { 
-		Sbi.trace("[MainPanel.msgPanelInit]: IN");
+	, initToolbar: function() {
+		this.tbar = new Ext.Toolbar({
+			//renderTo: document.body,
+		    //width: 300,
+		    //height: 100,
+		    items: [
+		        '->', // same as {xtype: 'tbfill'}, // Ext.Toolbar.Fill
+		        {
+		        	text: 'Button'
+		        	, handler: this.addWidget
+		        	, scope: this
+		        }
+		    ]
+		});
+	}
+	
+	, addWidget: function() {
 		var dummyWidget = new Sbi.cockpit.widgets.DummyWidget();
-		Sbi.trace("[MainPanel.msgPanelInit]: dummy widget succesfully created");
+		dummyWidget.setParentContainer(null);
+		this.widgetPanel.addWidget(dummyWidget, {
+			x : 0
+	    	, y: 0
+			, width : 0.5
+    		, height : 0.5
+		});
+	}
+	
+	, initWidgetPanel: function() { 
+		Sbi.trace("[MainPanel.initWidgetPanel]: IN");
+		var dummyWidget = new Sbi.cockpit.widgets.DummyWidget({msg: "paperino"});
+		Sbi.trace("[MainPanel.initWidgetPanel]: dummy widget succesfully created");
 		
-		this.msgPanel = new Sbi.cockpit.widgets.WidgetPanel({
+		this.widgetPanel = new Sbi.cockpit.widgets.WidgetPanel({
 			items: [dummyWidget]
 		});
-		Sbi.trace("[MainPanel.msgPanelInit]: widget panel succesfully created");
+		Sbi.trace("[MainPanel.initWidgetPanel]: widget panel succesfully created");
 		
-		Sbi.trace("[MainPanel.msgPanelInit]: IN");
+		Sbi.trace("[MainPanel.initWidgetPanel]: IN");
 
 //		this.msgPanel = new Ext.Panel({
 //			html : 'Ciao, sono il nuovo motore cockpit'
