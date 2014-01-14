@@ -144,6 +144,8 @@ public class GetSQLQueryAction extends AbstractQbeEngineAction {
 				String fieldAlias = selectFields.get(i).getAlias();
 				if(fieldAlias==null){
 					fieldAlias = selectFields.get(i).getName();
+					fieldAlias = fieldAlias.replace(" ", "_");
+					fieldAlias = "`"+fieldAlias+"`";
 				}
 				queryString = queryString.substring(0,startColAlias)+ " as "+fieldAlias+queryString.substring(endColAlias);
 			}
@@ -161,6 +163,8 @@ public class GetSQLQueryAction extends AbstractQbeEngineAction {
 				String fieldAlias = selectFields.get(i).getAlias();
 				if(fieldAlias==null){
 					fieldAlias = selectFields.get(i).getName();
+					fieldAlias = fieldAlias.replace(" ", "_");
+					fieldAlias = "`"+fieldAlias+"`";
 				}
 				
 				if(selectFields.size()-1==i){
