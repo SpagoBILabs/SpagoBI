@@ -210,6 +210,11 @@ Ext.extend(Sbi.execution.ExecutionWizard, Ext.Panel, {
 					this.roleSelectionPage.callFromTreeListDoc = true;
 				}
 			}
+			if(config.preferences.fromMyAnalysis){
+				if(config.preferences.fromMyAnalysis == true){		
+					this.roleSelectionPage.fromMyAnalysis = true;
+				}
+			}
 		}
 		
 		this.roleSelectionPage.on('movetonextpagerequest', this.moveToNextPage, this);
@@ -238,6 +243,11 @@ Ext.extend(Sbi.execution.ExecutionWizard, Ext.Panel, {
 			if(config.preferences.fromDocTreeOrList){
 				if(config.preferences.fromDocTreeOrList == true){		
 					documentExecutionPageConfig.callFromTreeListDoc = true;
+				}
+			}
+			if(config.preferences.fromMyAnalysis){
+				if(config.preferences.fromMyAnalysis == true){		
+					documentExecutionPageConfig.fromMyAnalysis = true;
 				}
 			}
 		}

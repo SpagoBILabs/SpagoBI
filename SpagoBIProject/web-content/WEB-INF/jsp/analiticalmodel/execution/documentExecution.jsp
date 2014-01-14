@@ -38,7 +38,6 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 
 	<%@ include file="/WEB-INF/jsp/commons/importSbiJS.jspf"%>
 	
-    
 	<script type="text/javascript">
     Ext.BLANK_IMAGE_URL = '<%=urlBuilder.getResourceLink(request, "/js/lib/ext-2.0.1/resources/images/default/s.gif")%>';
     
@@ -54,6 +53,9 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
     Sbi.config.clientServerDateFormat = '<%= GeneralUtilities.getServerDateFormatExtJs() %>';
     // the timestamp format to be used when communicating with server
     Sbi.config.clientServerTimestampFormat = '<%= GeneralUtilities.getServerTimestampFormatExtJs() %>';
+    //the SpagoBI Context name
+    Sbi.config.contextName = '<%= GeneralUtilities.getSpagoBiContext() %>';
+
     
     var url = {
     	host: '<%= request.getServerName()%>'
@@ -127,6 +129,12 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 		comingFromDocOrTreeList = true;
 	}
 	
+	boolean fromMyAnalysis = false;
+	if(request.getParameter("MYANALYSIS") != null && request.getParameter("MYANALYSIS").equalsIgnoreCase("TRUE")){
+		fromMyAnalysis = true;
+	}
+	
+	
 	JSONObject biobjectJSON = (JSONObject) SerializerFactory.getSerializer("application/json").serialize( obj , locale);
 	DocumentsJSONDecorator.decorateDocument(biobjectJSON, userProfile, null);%>
     //var menuConfig = <%= aServiceResponse.getAttribute("metaConfiguration")%>;
@@ -165,6 +173,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 			, toolbarHidden: toolbarHidden
 			, shortcutsHidden: shortcutsHidden
 			, fromDocTreeOrList : <%=comingFromDocOrTreeList%>
+    		, fromMyAnalysis : <%=fromMyAnalysis%>
 	    }
 	};
 	

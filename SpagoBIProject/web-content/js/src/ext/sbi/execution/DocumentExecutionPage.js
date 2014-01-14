@@ -360,8 +360,9 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 		this.toolbarHiddenPreference = config.toolbarHidden!== undefined ? config.toolbarHidden : false;
 		if (this.toolbarHiddenPreference || this.hideToolbar(doc.engine)) return;		
 		config.executionToolbarConfig = config.executionToolbarConfig || {};
-		config.executionToolbarConfig.callFromTreeListDoc = config.callFromTreeListDoc;
+		config.executionToolbarConfig.callFromTreeListDoc = config.callFromTreeListDoc;		
 		config.executionToolbarConfig.preferenceSubobjectId = this.getSubObjectId();
+		config.executionToolbarConfig.fromMyAnalysis = config.fromMyAnalysis;
 
 		
 		this.toolbar = new Sbi.execution.toolbar.DocumentExecutionPageToolbar(config.executionToolbarConfig);

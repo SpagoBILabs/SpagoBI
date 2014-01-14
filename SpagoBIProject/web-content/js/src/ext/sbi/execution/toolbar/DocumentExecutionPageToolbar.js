@@ -23,14 +23,10 @@ Sbi.execution.toolbar.DocumentExecutionPageToolbar = function(config) {
 	
 	var c = Ext.apply(defaultSettings, config || {});	
 	Ext.apply(this, c);
-	
 	this.addEvents('beforeinit', 'click', 'showmask');
 	this.initServices();
 	this.init();
-	
 	Sbi.execution.toolbar.DocumentExecutionPageToolbar.superclass.constructor.call(this, c);
-	
-	
 };
 
 /**
@@ -103,7 +99,16 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 	
 	, executionInstance: null
 	
+	
+	, fromMyAnalysis: false
    
+	, isInsert: false
+	
+	// =================================================================================================================
+	// CONSTANTS
+	// =================================================================================================================
+	, PUBLIC_USER: 'public_user'
+	
 	// =================================================================================================================
 	// METHODS
 	// =================================================================================================================
@@ -213,6 +218,7 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 		this.addFill();
 		
 		Sbi.trace('[DocumentExecutionPageToolbar.synchronize]: Document mode is equal to [' + this.documentMode + ']');
+		
 		if (this.documentMode === 'INFO') {
 			this.addButtonsForInfoMode();
 		} else if (this.documentMode === 'VIEW') {
@@ -324,22 +330,25 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 					}
 				}));
 		   }
-		   
-		   if (this.executionInstance.document && this.executionInstance.document.decorators &&  this.executionInstance.document.decorators.isSavable && (this.executionInstance.document.typeCode === 'WORKSHEET' || this.executionInstance.document.typeCode === 'DATAMART')) {
-			  
+
+		   if (this.executionInstance.document && this.executionInstance.document.decorators &&  
+				   this.executionInstance.document.decorators.isSavable && 
+				   (this.executionInstance.document.typeCode === 'MAP' && Sbi.user.userId !== this.PUBLIC_USER)) {
 			   var conf ={
 				   iconCls: 'icon-save' 
 					   , tooltip: LN('sbi.execution.executionpage.toolbar.save')
 					   , scope: this
-					   , handler : this.saveWorksheetAs
-					   , hidden: true
+//					   , handler : this.saveDocumentAs
+					   , handler : function(){this.isInsert=false;this.saveDocumentAs()}
+					   , hidden: (this.executionInstance.document.creationUser==Sbi.user.userId)?false:true
 			  };
 			 
-			  this.saveWorksheetButton = new Ext.Toolbar.Button(conf);
-			  this.addButton(this.saveWorksheetButton);
+			  this.saveButton = new Ext.Toolbar.Button(conf);
+			  this.addButton(this.saveButton);
 		   }
 	   			
-			if (Sbi.user.functionalities.contains('EditWorksheetFunctionality') && this.executionInstance.document.typeCode === 'WORKSHEET') {
+			if (Sbi.user.userId !== this.PUBLIC_USER && 
+				Sbi.user.functionalities.contains('EditWorksheetFunctionality') && this.executionInstance.document.typeCode === 'WORKSHEET') {
 				this.addButton(new Ext.Toolbar.Button({
 					iconCls: 'icon-edit' 
 					, tooltip: LN('sbi.execution.executionpage.toolbar.edit')
@@ -403,7 +412,9 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 				   iconCls: 'icon-save' 
 					   , tooltip: LN('sbi.execution.executionpage.toolbar.save')
 					   , scope: this
-					   , handler : this.saveWorksheet
+//					   , handler : this.saveWorksheet
+//					   , handler : this.saveDocumentAs
+					   , handler : function(){this.isInsert=false;this.saveDocumentAs()}
 			   }));
 		   }
 
@@ -411,7 +422,8 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 			   iconCls: 'icon-saveas' 
 				   , tooltip: LN('sbi.execution.executionpage.toolbar.saveas')
 				   , scope: this
-				   , handler : this.saveWorksheetAs	
+//				   , handler : this.saveDocumentAs
+				   , handler : function(){this.isInsert=true;this.saveDocumentAs()}
 		   }));
 
 		   if(this.executionInstance.document.exporters.length > 0){
@@ -675,13 +687,14 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 			itemConfig = Ext.apply(baseMenuItemConfig, {
 				text: LN('sbi.execution.executionpage.toolbar.saveview')
 				, iconCls: 'icon-add-subobject' 
-				, handler : this.saveWorksheetAs	
+//				, handler : this.saveDocumentAs
+				, handler : function(){this.isInsert=true;this.saveDocumentAs()}
 	        });    	
 	    	menuItems.push(	
 				new Ext.menu.Item(itemConfig)
 			); 
 		} else if (this.executionInstance.document.typeCode === 'OLAP' 
-			|| this.executionInstance.document.typeCode === 'MAP') {
+			    || this.executionInstance.document.typeCode === 'MAP') {
 			itemConfig = Ext.apply(baseMenuItemConfig, {
 				text: LN('sbi.execution.executionpage.toolbar.saveview')
 				, iconCls: 'icon-add-subobject' 
@@ -847,54 +860,8 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 	   this.controller.getFrame().setSrc(newUrl);
    }
    
-   , saveWorksheet: function () {
-		var templateJSON = this.getWorksheetTemplateAsJSONObject();
-		var wkDefinition = templateJSON.OBJECT_WK_DEFINITION;
-		var query = templateJSON.OBJECT_QUERY;
-		var formValues = templateJSON.OBJECT_FORM_VALUES;
-		var params = this.executionInstance;
-				
-		if(wkDefinition!=null){
-			params = Ext.apply(params, {'wk_definition': Ext.util.JSON.encode(wkDefinition)});
-		}
-		if(query!=null){
-			params = Ext.apply(params, {'query': Ext.util.JSON.encode(query)});
-		}
-		if(formValues!=null){//the values of the smart filter
-			params = Ext.apply(params, {'formValues': Ext.util.JSON.encode(formValues)});
-		}
-
-		Ext.Ajax.request({
-	        url: this.services['updateDocumentService'],
-	        params: params,
-	        success : function(response, options) {
-	      		if(response !== undefined && response.responseText !== undefined) {
-	      			var content = Ext.util.JSON.decode( response.responseText );
-	      			if (content.text !== 'Operation succeded' && content.responseText !== 'Operation succeded') {
-	                    Ext.MessageBox.show({
-	                        title: LN('sbi.generic.error'),
-	                        msg: content,
-	                        width: 150,
-	                        buttons: Ext.MessageBox.OK
-	                   });              
-		      		} else {			      			
-		      			Ext.MessageBox.show({
-	                        title: LN('sbi.generic.result'),
-	                        msg: LN('sbi.generic.resultMsg'),
-	                        width: 200,
-	                        buttons: Ext.MessageBox.OK
-		                });
-		      		}  
-	      		} else {
-	      			Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
-	      		}
-	        },
-	        scope: this,
-			failure: Sbi.exception.ExceptionHandler.handleFailure      
-		});
-   }
    
-   , getWorksheetTemplateAsString: function() {
+   , getDocumentTemplateAsString: function() {
 		try {
 			var thePanel = null;
 			if(this.executionInstance.document.typeCode == 'WORKSHEET'){
@@ -912,20 +879,23 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 				thePanel = this.controller.getFrame().getWindow().qbe;
 			}else if(this.executionInstance.document.typeCode == 'SMART_FILTER'){
 				thePanel = this.controller.getFrame().getWindow().Sbi.formviewer.formEnginePanel;
+			}else if(this.executionInstance.document.typeCode == 'MAP'){
+				thePanel = this.controller.getFrame().getWindow().geoReportPanel;
 			}else{
 				alert('Sorry, cannot perform operation. Invalid engine..');
 				return null;
 			}
-			//var template = thePanel.getWorksheetTemplateAsString();
+
 			var template = thePanel.validate();	
+			
 			return template;
 		} catch (err) {
 			throw err;
 		}
-   }
+  }
    
-   , getWorksheetTemplateAsJSONObject: function() {
-		var template = this.getWorksheetTemplateAsString();
+   , getDocumentTemplateAsJSONObject: function() {
+		var template = this.getDocumentTemplateAsString();
 		if(template==null){
 			return null;
 		}
@@ -933,33 +903,52 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 		return templateJSON;
   }
    
-   , saveWorksheetAs: function () {
-		var templateJSON = this.getWorksheetTemplateAsJSONObject();
+   , returnToMyAnalysis : function() {
+	  
+	   var url = Sbi.config.contextName + '/servlet/AdapterHTTP?ACTION_NAME=CREATE_DOCUMENT_START_ACTION&LIGHT_NAVIGATOR_RESET_INSERT=TRUE';
+	   window.location = url;
+		
+	}
+   
+   , saveDocumentAs: function () {
+
+	   var templateJSON = this.getDocumentTemplateAsJSONObject();
+
 		if(templateJSON==null){
 			// if it is null validation error has been already showed in QbePanel
 			//Sbi.exception.ExceptionHandler.showWarningMessage(LN('sbi.worksheet.validation.error.text'),LN('sbi.worksheet.validation.error.title'));
 		}else{
 
 			var documentWindowsParams = this.getSaveDocumentWindowsParams(templateJSON);
-			this.win_saveDoc = new Sbi.execution.SaveDocumentWindow(documentWindowsParams);
+			documentWindowsParams.fromMyAnalysis = this.fromMyAnalysis;
+			documentWindowsParams.isInsert = this.isInsert;
+			this.win_saveDoc = new Sbi.execution.SaveDocumentWindow(documentWindowsParams);		
+			this.win_saveDoc.on('returnToMyAnalysis', this.returnToMyAnalysis, this);
 			this.win_saveDoc.show();
 		}
-   }
+   } 
    
    , getSaveDocumentWindowsParams: function(templateJSON){
 		var wkDefinition = templateJSON.OBJECT_WK_DEFINITION;
 		var params = {
-				'OBJECT_ID': this.executionInstance.OBJECT_ID,
-				'OBJECT_TYPE': 'WORKSHEET',
+				'OBJECT_ID': this.executionInstance.OBJECT_ID,			
 				'OBJECT_WK_DEFINITION': wkDefinition,
-				'OBJECT_DATA_SOURCE': this.executionInstance.document.datasource
+				'OBJECT_DATA_SOURCE': this.executionInstance.document.datasource,
+				'OBJECT_FUNCTIONALITIES': this.executionInstance.document.functionalities,
+				'OBJECT_SCOPE':  this.executionInstance.document.isPublic
 			};
 		if(this.executionInstance.document.typeCode == 'DATAMART' || this.executionInstance.document.typeCode == 'WORKSHEET'){
 			params.OBJECT_QUERY = templateJSON.OBJECT_QUERY;
+			params.OBJECT_TYPE = 'WORKSHEET';
 		}else if(this.executionInstance.document.typeCode == 'SMART_FILTER'){
-			params.OBJECT_FORM_VALUES=templateJSON.OBJECT_FORM_VALUES;
-			params = Ext.apply(this.executionInstance, params);
+			params.OBJECT_FORM_VALUES=templateJSON.OBJECT_FORM_VALUES;			
+			params.OBJECT_TYPE = 'WORKSHEET';
+		}else if(this.executionInstance.document.typeCode == 'MAP'){
+			params.OBJECT_TYPE = 'MAP';
+			params.typeid = 'GEOREPORT';
+			params.OBJECT_TEMPLATE = Ext.util.JSON.encode(templateJSON);
 		}
+		params = Ext.apply(this.executionInstance, params);
 		return params;
    }
    
@@ -990,7 +979,8 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 		try {
 			if (!Sbi.user.functionalities.contains('BuildQbeQueriesFunctionality')) {
 				// If user is not a Qbe power user, he can only save worksheet
-				this.saveWorksheetAs();
+				this.isInsert = true;
+				this.saveDocumentAs();
 			} else {
 				// If the user is a Qbe power user, he can save both current query and worksheet definition.
 				// We must get the current active tab in order to understand what must be saved.
@@ -1001,7 +991,8 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 				var isBuildingWorksheet = (activeTabId === 'WorksheetPanel');
 				if (isBuildingWorksheet) {
 					// save worksheet as document
-					this.saveWorksheetAs();
+					this.isInsert = true;
+					this.saveDocumentAs();
 				} else {
 					// save query as customized view
 					qbePanel.queryEditorPanel.showSaveQueryWindow();

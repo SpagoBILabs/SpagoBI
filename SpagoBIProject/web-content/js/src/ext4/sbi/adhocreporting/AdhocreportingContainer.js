@@ -127,7 +127,7 @@ Ext.define('Sbi.adhocreporting.AdhocreportingContainer', {
 	
 	,executeDocumentAction: function(inputType, record){
 		var doc = record.data;
-		var executionUrl = this.contextName + '/servlet/AdapterHTTP?ACTION_NAME=EXECUTE_DOCUMENT_ACTION&OBJECT_LABEL='+doc.label+'&OBJECT_ID='+doc.id;
+		var executionUrl = this.contextName + '/servlet/AdapterHTTP?ACTION_NAME=EXECUTE_DOCUMENT_ACTION&OBJECT_LABEL='+doc.label+'&OBJECT_ID='+doc.id+'&MYANALYSIS=TRUE';		
 		this.documentexecution.load(executionUrl);
 	}
 	

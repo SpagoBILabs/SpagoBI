@@ -87,7 +87,8 @@ Ext.extend(Sbi.widgets.FileUploadPanel, Ext.Panel, {
 		
 		//Panel with the load file field
 		this.fileUploadFormPanel = new Ext.Panel({
-			height: 45,
+			id: 'file-upload-panel',
+			height: 60, //45,
 			layout:'column',
 //			frame: true,
 			header: false,
