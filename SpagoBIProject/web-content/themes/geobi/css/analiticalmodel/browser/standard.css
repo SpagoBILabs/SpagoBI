@@ -755,21 +755,25 @@ li:hover .login-panel .not-registered a:hover,.login-panel .not-registered a:hov
 /* ----------- My Analysis Wizard Images---------------------------------------------------------------------------------------------- */
 
 .reportbutton {
-background-image:	url('../../../img/analiticalmodel/browser/document_adhocreporting.png')!important;
+background:	transparent url('../../../img/analiticalmodel/browser/document_adhocreporting_wizard.png') no-repeat center center  !important;
+background-image: url('../../../img/analiticalmodel/browser/document_adhocreporting_wizard.png')!important;
 background-size: contain;
 background-position: center center;
 background-color:white;
+
 }
 
 .geobutton {
-background-image:url('../../../img/analiticalmodel/browser/document_locatiointelligence.png')!important;
+background:	transparent url('../../../img/analiticalmodel/browser/document_locatiointelligence_wizard.png') no-repeat center center  !important;
+background-image:url('../../../img/analiticalmodel/browser/document_locatiointelligence_wizard.png')!important;
 background-size: contain;
 background-position: center center;
 background-color:white;
 }
 
 .cockpitbutton {
-background-image:url('../../../img/analiticalmodel/browser/document_cockpits.png')!important;
+background:	transparent url('../../../img/analiticalmodel/browser/document_cockpits_wizard.png') no-repeat center center  !important;
+background-image:url('../../../img/analiticalmodel/browser/document_cockpits_wizard.png')!important;
 background-size: contain;
 background-position: center center;
 background-color:white;
