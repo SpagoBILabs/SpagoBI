@@ -106,15 +106,19 @@ Ext.extend(Sbi.qbe.SaveDatasetWindow, Ext.Window, {
 			fieldLabel: LN('sbi.generic.descr') 
 		});
 		this.scopeField = new Ext.form.ComboBox({
-		    fieldLabel: LN('sbi.generic.scope') ,
+		    //fieldLabel: LN('sbi.generic.scope') ,
 		    mode : 'local',
 		    store: this.scopesStore,
 		    displayField: 'description',
 		    valueField: 'value',
 		    allowBlank: false,
     	   	editable: false,
-    	   	forceSelection : true
+    	   	forceSelection : true,
+    	   	hidden: true
 		});
+		
+		//default value
+		this.scopeField.setValue(this.scopesStore.getAt(1).get('value'));
 		
 	    this.datasetForm = new Ext.FormPanel({
 	        columnWidth: 0.6
