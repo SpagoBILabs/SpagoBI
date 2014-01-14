@@ -39,6 +39,7 @@ public class GetWorksheetFieldsAction  extends AbstractWorksheetEngineAction {
 
 	// PROPERTIES TO LOOK FOR INTO THE FIELDS
 	public static final String PROPERTY_VISIBLE = "visible";
+	public static final String PROPERTY_CALCULATED_EXPERT = "calculatedExpert";
 	public static final String PROPERTY_IS_SEGMENT_ATTRIBUTE = "isSegmentAttribute";
 	public static final String PROPERTY_IS_MANDATORY_MEASURE = "isMandatoryMeasure";
 	public static final String PROPERTY_AGGREGATION_FUNCTION = "aggregationFunction";
@@ -95,6 +96,13 @@ public class GetWorksheetFieldsAction  extends AbstractWorksheetEngineAction {
 			Assert.assertNotNull(fieldMetaData, "Field metadata for position " + i + " not found.");
 			logger.debug("Evaluating field with name [" + fieldMetaData.getName() + "], alias [" + fieldMetaData.getAlias() + "] ...");
 
+			Boolean isCalculatedExpert= (Boolean) fieldMetaData.getProperty(PROPERTY_CALCULATED_EXPERT);
+			
+			if(isCalculatedExpert!=null && isCalculatedExpert){
+				logger.debug("The field is a expert calculated field so we skip it");
+				//continue;
+			}
+			
 			Object propertyRawValue = fieldMetaData.getProperty(PROPERTY_VISIBLE);
 			logger.debug("Read property " + PROPERTY_VISIBLE + ": its value is [" + propertyRawValue + "]");
 			
