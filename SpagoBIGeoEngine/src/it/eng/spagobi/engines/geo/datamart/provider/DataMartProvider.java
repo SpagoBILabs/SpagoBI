@@ -52,7 +52,7 @@ public class DataMartProvider extends AbstractDataMartProvider {
 	/** Logger component. */
     public static transient Logger logger = Logger.getLogger(DataMartProvider.class);
 	
-    public static final String QUERY = "Query";
+    public static final String QUERY = "query";
 
     public DataMartProvider() {
         super();
@@ -92,7 +92,7 @@ public class DataMartProvider extends AbstractDataMartProvider {
 				logger.warn("success!!");
 			} catch (Throwable e) {
 				logger.error("failure!!",e);
-				throw new GeoEngineException("Impossible to load data from dataset");
+				throw new GeoEngineException("Impossible to load data from dataset", e);
 			}
     		
 			IDataStore dataStore = dataSet.getDataStore();
