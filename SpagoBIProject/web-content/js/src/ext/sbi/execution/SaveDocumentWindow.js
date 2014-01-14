@@ -55,9 +55,7 @@ Sbi.execution.SaveDocumentWindow = function(config) {
 			saveDocParams.business_metadata = Ext.util.JSON.encode(config.business_metadata);
 		}
 		
-	} else{
-		saveDocParams.MESSAGE_DET = 'DOC_SAVE';		
-	}
+	} 
 	
 
 	this.services['saveDocumentService'] = Sbi.config.serviceRegistry.getServiceUrl({
@@ -74,13 +72,17 @@ Sbi.execution.SaveDocumentWindow = function(config) {
 	this.OBJECT_WK_DEFINITION = config.OBJECT_WK_DEFINITION;
 	this.OBJECT_QUERY = config.OBJECT_QUERY;
 	this.OBJECT_FORM_VALUES = config.OBJECT_FORM_VALUES;
+	this.OBJECT_PREVIEW_FILE = config.OBJECT_PREVIEW_FILE;
+	this.OBJECT_FUNCTIONALITIES = config.OBJECT_FUNCTIONALITIES;	
+	this.OBJECT_SCOPE = config.OBJECT_SCOPE;
+	this.isInsert = config.isInsert;
 	
-	this.initFormPanel();
+	this.initFormPanel(config.document || {});
 	
 	var c = Ext.apply({}, config, {
 		id:'popup_docSave',
-		layout:'fit',
-		width:640,
+		layout: 'anchor', //'fit',
+		width: 640,
 		height:350,
 		closeAction: 'close',
 		buttons:[{ 
@@ -94,13 +96,16 @@ Sbi.execution.SaveDocumentWindow = function(config) {
 	});   
 	
     Sbi.execution.SaveDocumentWindow.superclass.constructor.call(this, c);
+    this.addEvents('returnToMyAnalysis');
     
 };
 
 Ext.extend(Sbi.execution.SaveDocumentWindow, Ext.Window, {
 	
-	inputForm: null
+	inputForm: null	
 	,saveDocumentForm: null
+	,isInsert: null
+	,fromMyAnalysis: null
 	,SBI_EXECUTION_ID: null
 	,OBJECT_ID: null
 	,OBJECT_TYPE: null
@@ -108,8 +113,23 @@ Ext.extend(Sbi.execution.SaveDocumentWindow, Ext.Window, {
 	,OBJECT_TEMPLATE: null
 	,OBJECT_DATA_SOURCE: null
 	,OBJECT_PARS: null
+	,OBJECT_PREVIEW_FILE: null
+	,OBJECT_FUNCTIONALITIES: null
+	,OBJECT_SCOPE: null
 	
-	,initFormPanel: function (){
+	,initFormPanel: function (c){
+		
+		this.docLabel = new Ext.form.TextField({
+	        id:'docLabel',
+	        name: 'docLabel',
+	        allowBlank: true, 
+	        inputType: 'text',
+	        maxLength: 20,
+	        autoCreate: {tag: 'input', type: 'text', autocomplete: 'off', maxlength: '20'},
+	        anchor: '95%',
+			hidden : true, //Since SpagoBI 5 the folder is setted automatically with the personal folder or by sharing action
+			value: (this.isInsert)? '' : c.label 
+	    });
 		
 		this.docName = new Ext.form.TextField({
 			id: 'docName',
@@ -119,19 +139,9 @@ Ext.extend(Sbi.execution.SaveDocumentWindow, Ext.Window, {
 			maxLength: 200,
 			autoCreate: {tag: 'input', type: 'text', autocomplete: 'off', maxlength: '200'},
 			anchor: '95%',
-			fieldLabel: LN('sbi.generic.name') 
+			fieldLabel: LN('sbi.generic.name'),
+			value: (this.isInsert)? '' : c.name 
 		});
-		
-		this.docLabel = new Ext.form.TextField({
-	        id:'docLabel',
-	        name: 'docLabel',
-	        allowBlank: false, 
-	        inputType: 'text',
-	        maxLength: 20,
-	        autoCreate: {tag: 'input', type: 'text', autocomplete: 'off', maxlength: '20'},
-	        anchor: '95%',
-			fieldLabel: LN('sbi.generic.label')  
-	    });
 		
 		this.docDescr = new Ext.form.TextArea({
 	        id:'docDescr',
@@ -141,9 +151,12 @@ Ext.extend(Sbi.execution.SaveDocumentWindow, Ext.Window, {
 	        maxLength: 400,
 	        anchor:	 '95%',
 	        height: 80,
-			fieldLabel: LN('sbi.generic.descr')  
+			fieldLabel: LN('sbi.generic.descr'),
+			value: (this.isInsert)? '' :  c.description 
 	    });
 	    
+		this.fileUpload = this.initFileUpload();
+		
 	    this.inputForm = new Ext.Panel({
 	         itemId: 'detail'
 	        , columnWidth: 0.6
@@ -163,27 +176,18 @@ Ext.extend(Sbi.execution.SaveDocumentWindow, Ext.Window, {
 	                 "margin-left": "4px",
 	                 "margin-top": "25px"
 	             },
-	             items: [this.docLabel,this.docName,this.docDescr]
+	             items: [this.docName,this.docDescr,this.fileUpload]
 	    	}
 	    });
 	    
-	    
-	    this.treePanel = new Sbi.browser.DocumentsTree({
-	    	  columnWidth: 0.4,
-	          border: true,
-	          collapsible: false,
-	          title: '',
-	          drawUncheckedChecks: true,
-	          bodyStyle:'padding:6px 6px 6px 6px;'
-	    });
-	    
-	    this.saveDocumentForm = new Ext.form.FormPanel({
+	    this.saveDocumentForm = new Ext.Panel({
+	    		  id: 'saveFormPanel',
 		          frame: true,
 		          autoScroll: true,
 		          labelAlign: 'left',
 		          autoWidth: true,
-		          height: 650,
-		          layout: 'column',
+		          height: 350,// 650,
+		          layout: 'fit', //'column',
 		          scope:this,
 		          forceLayout: true,
 		          trackResetOnLoad: true,
@@ -193,22 +197,19 @@ Ext.extend(Sbi.execution.SaveDocumentWindow, Ext.Window, {
 
 		 			},
 		          items: [
-		              this.inputForm
-		              , this.treePanel           	  		
+		              this.inputForm        	  		
 		          ]
 		          
 		      });
 	}
 	
-	,saveDocument: function () {
-		 
+	,saveDocument: function () {		
 		var docName = this.docName.getValue();
-		var docLabel = this.docLabel.getValue();
 		var docDescr = this.docDescr.getValue();
-		var functs = this.treePanel.returnCheckedIdNodesArray();
 		var query = this.OBJECT_QUERY;
 		var formValues = this.OBJECT_FORM_VALUES;// the values of the form for the smart filter
 		var wk_definition = this.OBJECT_WK_DEFINITION;
+		var previewFile =  this.fileNameUploaded;
 		
 		if(formValues!=undefined && formValues!=null){
 			formValues=Ext.encode(formValues);
@@ -220,33 +221,49 @@ Ext.extend(Sbi.execution.SaveDocumentWindow, Ext.Window, {
 			wk_definition = Ext.util.JSON.encode(wk_definition);
 		}
 		
-		if(docName == null || docName == undefined || docName == '' ||
-		   docLabel == null || docLabel == undefined || docLabel == '' ||
-		   functs == null || functs == undefined 
-		   || functs.length == 0){
+		if(previewFile!=undefined && previewFile!=null){
+			previewFile = Ext.encode(previewFile);
+		}
+		
+		if(docName == null || docName == undefined || docName == ''){
 				Ext.MessageBox.show({
 	                title: LN('sbi.generic.warning'),
-	                msg:  LN('sbi.document.saveWarning'),
+	                msg:  LN('sbi.document.saveWarning2'),
 	                width: 180,
 	                buttons: Ext.MessageBox.OK
 	           });
 		}else{	
-			functs = Ext.util.JSON.encode(functs);
+			var functs = Ext.util.JSON.encode(this.OBJECT_FUNCTIONALITIES);
 			var params = {
 		        	name :  docName,
-		        	label : docLabel,
 		        	description : docDescr,
 		        	obj_id: this.OBJECT_ID,
 					typeid: this.OBJECT_TYPE,
 					wk_definition: wk_definition,
+					previewFile: previewFile,
 					query: query,
 					formValues: formValues,
 					//engineid: this.OBJECT_ENGINE,
 					template: this.OBJECT_TEMPLATE,
 					datasourceid: this.OBJECT_DATA_SOURCE,
 					SBI_EXECUTION_ID: this.SBI_EXECUTION_ID,
+					isPublic: this.OBJECT_SCOPE,
 					functs: functs
 		        };
+			
+			//defines the document label internally (Since SpagoBI 5 is not more visible in the GUI)
+			if (this.isInsert == undefined || this.isInsert == null || this.isInsert == true){
+				params.label = (this.OBJECT_TYPE == 'WORKSHEET')? 'ws__' : 'map__';
+				params.label +=  Math.floor((Math.random()*1000000000)+1); 
+				params.MESSAGE_DET = 'DOC_SAVE';	
+			}else{
+				params.label = this.docLabel.getValue();
+				if (this.OBJECT_TYPE == 'MAP'){
+					params.MESSAGE_DET = 'MODIFY_GEOREPORT';
+				}else{
+					params.MESSAGE_DET = 'DOC_UPDATE';					
+				}				
+			}
 			
 			Ext.Ajax.request({
 		        url: this.services['saveDocumentService'],
@@ -261,14 +278,17 @@ Ext.extend(Sbi.execution.SaveDocumentWindow, Ext.Window, {
 			                        width: 150,
 			                        buttons: Ext.MessageBox.OK
 			                   });              
-				      		}else{			      			
+				      		}else{			
 				      			Ext.MessageBox.show({
 				                        title: LN('sbi.generic.result'),
 				                        msg: LN('sbi.generic.resultMsg'),
 				                        width: 200,
-				                        buttons: Ext.MessageBox.OK
+				                        buttons: Ext.MessageBox.OK				                       
 				                });
-				      			 this.close();
+				      			if (this.fromMyAnalysis != undefined && this.fromMyAnalysis != null && this.fromMyAnalysis == true){
+				      				this.fireEvent('returnToMyAnalysis',this);  //fire event to jump to the MyAnalysis page 
+				                }
+				      			this.close();
 				      		}  
 			      		} else {
 			      			Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
@@ -278,6 +298,108 @@ Ext.extend(Sbi.execution.SaveDocumentWindow, Ext.Window, {
 				failure: Sbi.exception.ExceptionHandler.handleFailure      
 			});
 		}
+	}
+	
+	, initFileUpload: function(){
+		//upload preview file
+		var config={
+				fromExt4:false, 
+				isEnabled: true, 
+				labelFileName:'Preview file'
+		};
+		var c = {};
+		if (Sbi.settings.widgets.FileUploadPanel && Sbi.settings.widgets.FileUploadPanel.imgUpload)
+			c = Ext.apply({}, config, Sbi.settings.widgets.FileUploadPanel.imgUpload); 		
+		else
+			c = Ext.apply({}, config); 	
+		Ext.apply(this,c);
+		
+		this.fileUpload = new Sbi.widgets.FileUploadPanel(c);
+
+		var uploadButton = this.fileUpload.fileUploadFormPanel.getComponent('fileUploadButton');	
+		uploadButton.setHandler(this.uploadFileButtonHandler,this);
+		var toReturn = new  Ext.FormPanel({
+			  id: 'previewFileForm',
+			  fileUpload: true, // this is a multipart form!!
+			  isUpload: true,
+			  border:false,
+			  method: 'POST',
+			  enctype: 'multipart/form-data',
+	          labelAlign: 'left',
+	          bodyStyle:'padding:1px',
+	          autoScroll:true,
+	          trackResetOnLoad: true,
+	          items: this.fileUpload
+	      });
+		
+		return toReturn;
+	}
+	
+	//handler for the upload file button
+	,uploadFileButtonHandler: function(btn, e) {
+		
+		Sbi.debug("[PreviewFileWizard.uploadFileButtonHandler]: IN");
+		
+        var form = Ext.getCmp('previewFileForm').getForm();
+        
+        Sbi.debug("[PreviewFileWizard.uploadFileButtonHandler]: form is equal to [" + form + "]");
+		
+        var completeUrl =  Sbi.config.serviceRegistry.getServiceUrl({
+					    		serviceName : 'MANAGE_FILE_ACTION',
+					    		baseParams : {LIGHT_NAVIGATOR_DISABLED: 'TRUE'}
+					    	});
+
+		var baseUrl = completeUrl.substr(0, completeUrl
+				.indexOf("?"));
+		
+		Sbi.debug("[PreviewFileWizard.uploadFileButtonHandler]: base url is equal to [" + baseUrl + "]");
+	 	
+		var queryStr = completeUrl.substr(completeUrl.indexOf("?") + 1);
+		var params = Ext.urlDecode(queryStr);
+		params.operation = 'UPLOAD';
+		params.directory = this.directory || '';
+		params.maxSize = this.maxSizeFile || '';
+		params.extFiles = Ext.encode(this.extFiles) || '';
+ 
+		Sbi.debug("[PreviewFileWizard.uploadFileButtonHandler]: form is valid [" + form.isValid() + "]");		
+		this.fileNameUploaded = Ext.getCmp('fileUploadField').getValue();
+		this.fileNameUploaded = this.fileNameUploaded.replace("C:\\fakepath\\", "");
+
+		form.submit({
+			clientValidation: false,
+			url : baseUrl // a multipart form cannot
+							// contain parameters on its
+							// main URL; they must POST
+							// parameters
+			,
+			params :  params,
+			waitMsg : LN('sbi.generic.wait'),
+			success : function(form, action) {
+				Ext.MessageBox.alert('Success!','File Uploaded to the Server');
+				this.fileNameUploaded = action.result.fileName;
+			},
+			failure : function(form, action) {
+				switch (action.failureType) {
+	            case Ext.form.Action.CLIENT_INVALID:
+	                Ext.Msg.alert('Failure', 'Form fields may not be submitted with invalid values');
+	                break;
+	            case Ext.form.Action.CONNECT_FAILURE:
+	                Ext.Msg.alert('Failure', 'Ajax communication failed');
+	                break;
+	            case Ext.form.Action.SERVER_INVALID:
+	            	if(action.result.msg && action.result.msg.indexOf("NonBlockingError:")>=0){
+	            		var error = Ext.JSON.decode(action.result.msg);
+	            		Sbi.exception.ExceptionHandler.showErrorMessage(LN('sbi.ds.'+error.error),LN("sbi.ds.failedToUpload"));
+	            	}else{
+	            		Sbi.exception.ExceptionHandler.showErrorMessage(action.result.msg,'Failure');
+	            	}
+	               
+				}
+			},
+			scope : this
+		});		
+		
+		Sbi.debug("[PreviewFileWizard.uploadFileButtonHandler]: OUT");
 	}
 	
 });

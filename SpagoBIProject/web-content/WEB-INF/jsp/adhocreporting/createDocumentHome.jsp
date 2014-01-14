@@ -20,6 +20,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
     String qbeEditFromBMActionUrl = (String) aResponseContainer.getServiceResponse().getAttribute(SelfServiceDatasetStartAction.OUTPUT_PARAMETER_QBE_EDIT_FROM_BM_SERVICE_URL);
     String qbeEditFromDataSetActionUrl = (String) aResponseContainer.getServiceResponse().getAttribute(SelfServiceDatasetStartAction.OUTPUT_PARAMETER_QBE_EDIT_FROM_DATA_SET_SERVICE_URL);
     String georeportEditActionUrl = (String) aResponseContainer.getServiceResponse().getAttribute(SelfServiceDatasetStartAction.OUTPUT_PARAMETER_GEOREPORT_EDIT_SERVICE_URL);
+    String fromMyAnalysis = (String) aResponseContainer.getServiceResponse().getAttribute(SelfServiceDatasetStartAction.IS_FROM_MYANALYSIS);
     String contextName = ChannelUtilities.getSpagoBIContextName(request);
 %>
 
@@ -36,6 +37,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
             , georeportEngineBaseUrl : '<%= StringEscapeUtils.escapeJavaScript(georeportEditActionUrl) %>'
             //, datasetsServicePath: 'certificateddatasets'
             , myAnalysisServicePath: 'documents/myAnalysisDocsList'
+            , fromMyAnalysis: '<%=fromMyAnalysis%>'
             , contextName: '<%= StringEscapeUtils.escapeJavaScript(contextName) %>'
 		}); //by alias
 		var datasetListViewport = Ext.create('Ext.container.Viewport', {
