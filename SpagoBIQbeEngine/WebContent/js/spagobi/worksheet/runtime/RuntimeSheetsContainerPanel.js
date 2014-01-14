@@ -235,7 +235,9 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeSheetsContainerPanel, Ext.TabPanel, {
 		if (this.sheetItems != undefined && this.sheetItems != null) {
 			var i = 0;
 			for (; i < this.sheetItems.length; i++) {
-				data. push(this.sheetItems[i].getAdditionalData());
+				if(this.sheetItems[i]){
+					data. push(this.sheetItems[i].getAdditionalData());
+				}
 			}
 		}
 		return data;

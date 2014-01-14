@@ -662,29 +662,32 @@ refreshWorksheetPreview : function () {
 		var frame = this.worksheetPreviewPanel.getFrame();
 		var window = frame.getWindow();
 		var panel = window.workSheetPanel;
-		var additionalData = panel.getAdditionalData();
-		if(additionalData!=undefined && additionalData!=null){
-			var sheets = sheetTemplate.sheets;
-			for(var i=0; i<sheets.length; i++){
-				if(additionalData[i]!=undefined && 
-						additionalData[i]!=null && 
-							additionalData[i].data!=undefined && 
-								additionalData[i].data!=null && 
-									!Ext.isEmpty(additionalData[i].data) && 
-										sheets[i].content.crosstabDefinition!=undefined && 
-											sheets[i].content.crosstabDefinition!=null){
-					if (additionalData[i].data.crosstabDefinition) {
-						var crosstabDefinition = additionalData[i].data.crosstabDefinition;
-						if (crosstabDefinition.calculatedFields) {
-							sheets[i].content.crosstabDefinition.calculatedFields = crosstabDefinition.calculatedFields;
-						}
-						if (crosstabDefinition.additionalData) {
-							sheets[i].content.crosstabDefinition.additionalData = crosstabDefinition.additionalData;
+		if(panel){
+			var additionalData = panel.getAdditionalData();
+			if(additionalData!=undefined && additionalData!=null){
+				var sheets = sheetTemplate.sheets;
+				for(var i=0; i<sheets.length; i++){
+					if(additionalData[i]!=undefined && 
+							additionalData[i]!=null && 
+								additionalData[i].data!=undefined && 
+									additionalData[i].data!=null && 
+										!Ext.isEmpty(additionalData[i].data) && 
+											sheets[i].content.crosstabDefinition!=undefined && 
+												sheets[i].content.crosstabDefinition!=null){
+						if (additionalData[i].data.crosstabDefinition) {
+							var crosstabDefinition = additionalData[i].data.crosstabDefinition;
+							if (crosstabDefinition.calculatedFields) {
+								sheets[i].content.crosstabDefinition.calculatedFields = crosstabDefinition.calculatedFields;
+							}
+							if (crosstabDefinition.additionalData) {
+								sheets[i].content.crosstabDefinition.additionalData = crosstabDefinition.additionalData;
+							}
 						}
 					}
-				}
-			}	
+				}	
+			}
 		}
+
 	}else{
 		this.addSheetAdditionalData(sheetTemplate,this.worksheetDesignerPanel.worksheetTemplate);
 	}

@@ -81,6 +81,9 @@ Ext.extend(Sbi.worksheet.runtime.WorkSheetsRuntimePanel, Ext.Panel, {
 	}
 	
 	,getAdditionalData: function(){
-		return this.sheetsContainerPanel.getAdditionalData();
+		if( this.sheetsContainerPanel){
+			return this.sheetsContainerPanel.getAdditionalData();
+		}
+		
 	}
 });
