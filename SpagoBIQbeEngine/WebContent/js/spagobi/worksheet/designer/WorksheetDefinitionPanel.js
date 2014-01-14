@@ -163,7 +163,9 @@ Ext.extend(Sbi.worksheet.designer.WorksheetDefinitionPanel, Ext.Panel, {
 
 	, addAdditionalData : function(sheetTemplate){
 
-		if(this.worksheetPreviewPanel.rendered === true){
+		if(this.worksheetPreviewPanel.rendered === true &&
+		   this.worksheetPreviewPanel.getFrame().getWindow() &&
+		   this.worksheetPreviewPanel.getFrame().getWindow().workSheetPanel){
 			var additionalData = this.worksheetPreviewPanel.getFrame().getWindow().workSheetPanel.getAdditionalData();
 			if(additionalData!=undefined && additionalData!=null){
 				var sheets = sheetTemplate.sheets;
