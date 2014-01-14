@@ -191,10 +191,26 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 			IBIObjectDAO biObjectDao = DAOFactory.getBIObjectDAO();
 			String documentLabel = documentJSON.getString("label");
 			BIObject document = biObjectDao.loadBIObjectByLabel(documentLabel);
-			JSONArray filteredFoldersJSON = filterFolders(request.optJSONArray("folders"));
+//			JSONArray filteredFoldersJSON = filterFolders(request.optJSONArray("folders"));
+			JSONArray filteredFoldersJSON = new JSONArray(); 
+			if(request.optJSONArray("folders") == null){
+				IEngUserProfile profile = (IEngUserProfile) getUserProfile();
+				//add personal folder for default
+				LowFunctionality userFunc = null;
+				try{
+					ILowFunctionalityDAO functionalitiesDAO = DAOFactory.getLowFunctionalityDAO();
+					userFunc = functionalitiesDAO.loadLowFunctionalityByPath("/"+profile.getUserUniqueIdentifier(),false);
+				} catch (Exception e) {
+					logger.error("Error on insertion of the document.. Impossible to get the id of the personal folder ",e);
+					throw new SpagoBIRuntimeException("Error on insertion of the document.. Impossible to get the id of the personal folder ",e);
+				}
+				filteredFoldersJSON.put(userFunc.getId());
+			}else{
+				filteredFoldersJSON = filterFolders(request.optJSONArray("folders"));
+			}
 			
 			//update document informations
-			document = syncronizeDocument(document, documentJSON, filteredFoldersJSON);
+			document = syncronizeDocument(document, filteredFoldersJSON);
 			
 			String templateContent = customDataJSON.optString("templateContent");
 
@@ -212,16 +228,22 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 		}
 	}
 	
-	private BIObject syncronizeDocument(BIObject obj, JSONObject props, JSONArray folders){
+	private BIObject syncronizeDocument(BIObject obj, JSONArray folders){
 		logger.debug("IN");
 		try {
 			BIObject toReturn = obj;
-			toReturn.setName(props.getString("name"));
-			toReturn.setDescription(props.getString("description"));
-			toReturn.setVisible(props.getBoolean("visibility"));
-			toReturn.setPublicDoc(props.getBoolean("isPublic"));
-			if (!"".equals(props.getString("previewFile"))) 
-				toReturn.setPreviewFile(props.getString("previewFile").replace("\"", ""));
+			String name = getAttributeAsString("name");
+			String description = getAttributeAsString("description");
+			Boolean isPublic = getAttributeAsBoolean("visibility");
+			String previewFile = getAttributeAsString("previewFile");
+			
+			toReturn.setName(name);
+			toReturn.setDescription(description);
+			if (isPublic != null)
+				toReturn.setVisible(isPublic);
+			if (previewFile != null && !previewFile.equals(""))
+				toReturn.setPreviewFile(previewFile.replace("\"", ""));
+			
 			//syncronize the folders
 			toReturn = setFolders(obj, folders);
 			
@@ -229,7 +251,7 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 		} catch (SpagoBIServiceException e) {
 			throw e;
 		} catch (Exception e) {
-			throw new SpagoBIServiceException(SERVICE_NAME, "An unexpected error occured while creating geo document", e);
+			throw new SpagoBIServiceException(SERVICE_NAME, "An unexpected error occured while creating document", e);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -939,10 +961,32 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 
 	private void updateWorksheetDocumentTemplate() throws Exception {
 		logger.debug("IN");
+		JSONArray filteredFoldersJSON = new JSONArray(); 
+//		if(getAttributeAsJSONArray("folders") == null){
+		if(getAttributeAsJSONArray("functs") == null){
+			IEngUserProfile profile = (IEngUserProfile) getUserProfile();
+			//add personal folder for default
+			LowFunctionality userFunc = null;
+			try{
+				ILowFunctionalityDAO functionalitiesDAO = DAOFactory.getLowFunctionalityDAO();
+				userFunc = functionalitiesDAO.loadLowFunctionalityByPath("/"+profile.getUserUniqueIdentifier(),false);
+			} catch (Exception e) {
+				logger.error("Error on insertion of the document.. Impossible to get the id of the personal folder ",e);
+				throw new SpagoBIRuntimeException("Error on insertion of the document.. Impossible to get the id of the personal folder ",e);
+			}
+			filteredFoldersJSON.put(userFunc.getId());
+		}else{
+//			filteredFoldersJSON = filterFolders(getAttributeAsJSONArray("folders"));
+			filteredFoldersJSON = filterFolders(getAttributeAsJSONArray("functs"));
+		}
+		
 		byte[] content = getTemplateContent();
 		ObjTemplate objTemp = createNewTemplate(content);
 		ExecutionInstance executionInstance = getContext().getExecutionInstance( ExecutionInstance.class.getName() );
 		BIObject biobj = executionInstance.getBIObject();
+		//update document informations
+		biobj = syncronizeDocument(biobj, filteredFoldersJSON);
+
 		UserProfile userProfile = (UserProfile) this.getUserProfile();
 		logger.info("User with unique identifier " + userProfile.getUserUniqueIdentifier() + ", id " + userProfile.getUserId() 
 				+ ", name " + userProfile.getUserName() + " is updating document with id " + biobj.getId() 
