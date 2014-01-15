@@ -35,14 +35,14 @@ Sbi.tools.ManageDatasetFieldMetadata = function(config) {
 	this.fieldsColumns =  [
 	    {
 	    	header: LN('sbi.ds.field.name'), 
-	    	width: 160, 
+	    	width: '50%', //160, 
 			id:'name',
 			sortable: true, 
 			dataIndex: 'name' 
 	    },{
         	header: LN('sbi.ds.field.metadata'),
             dataIndex: 'fieldType',
-            width: 150,
+            width: '50%', // 150,
             editor: new Ext.form.ComboBox({
             	typeAhead: true,
                 triggerAction: 'all',
