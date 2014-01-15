@@ -180,11 +180,7 @@ Ext.extend(Sbi.cockpit.widgets.WidgetContainer, Sbi.cockpit.widgets.Widget, {
             plain: true,
             modal: true,
             title: "Widget [" + widget.id + "] editor",
-            items: new Ext.form.TextArea({
-            	border: false
-            	, value: "Ciao sono un editor"
-                , name: 'configuration'
-            }),
+            items: new Sbi.cockpit.widgets.WidgetEditor({}),
 
             buttons: [
             {
