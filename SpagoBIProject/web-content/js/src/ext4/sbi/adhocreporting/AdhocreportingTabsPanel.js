@@ -66,7 +66,10 @@ Ext.define('Sbi.adhocreporting.AdhocreportingTabsPanel', {
 			this.fireEvent('openMyDataForGeo');
 		},this);
 		
-
+		this.addEvents('openCockpitDesigner');		
+		this.myAnalysisBrowser.on('openCockpitDesigner',function(){
+			this.fireEvent('openCockpitDesigner');
+		},this);
 	}
 
     

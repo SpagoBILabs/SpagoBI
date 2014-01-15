@@ -49,6 +49,7 @@ public class SelfServiceDatasetStartAction extends ManageDatasets  {
 	public static final String QBE_EDIT_DATA_SET_ACTION = "QBE_ENGINE_EDIT_DATASET_START_ACTION";
 	
 	public static final String OUTPUT_PARAMETER_GEOREPORT_EDIT_SERVICE_URL = "georeportServiceUrl";
+	public static final String OUTPUT_PARAMETER_COCKPIT_EDIT_SERVICE_URL = "cockpitServiceUrl";
 	public static final String IS_FROM_MYDATA = "MYDATA";
 	public static final String TYPE_DOC = "TYPE_DOC";
 	public static final String IS_FROM_MYANALYSIS = "MYANALYSIS";
@@ -71,6 +72,7 @@ public class SelfServiceDatasetStartAction extends ManageDatasets  {
 			String qbeEditDataSetActionUrl = buildQbeEditDataSetServiceUrl(executionId);
 			String worksheetEditActionUrl = buildWorksheetEditServiceUrl(executionId);
 			String geoereportEditActionUrl = buildGeoreportEditServiceUrl(executionId);
+			String cockpitEditActionUrl = buildCockpitEditServiceUrl(executionId);
 			String isFromMyData = (getAttributeAsString("MYDATA")==null)?"FALSE":getAttributeAsString("MYDATA");
 			String isFromMyAnalysis = (getAttributeAsString("MYANALYSIS")==null)?"FALSE":getAttributeAsString("MYANALYSIS");
 			String typeDoc = getAttributeAsString("TYPE_DOC");
@@ -85,6 +87,7 @@ public class SelfServiceDatasetStartAction extends ManageDatasets  {
 				setAttribute(OUTPUT_PARAMETER_QBE_EDIT_FROM_DATA_SET_SERVICE_URL, qbeEditFromDataSetActionUrl);
 				setAttribute(OUTPUT_PARAMETER_QBE_EDIT_DATASET_SERVICE_URL, qbeEditDataSetActionUrl);
 				setAttribute(OUTPUT_PARAMETER_GEOREPORT_EDIT_SERVICE_URL, geoereportEditActionUrl);
+				setAttribute(OUTPUT_PARAMETER_COCKPIT_EDIT_SERVICE_URL, cockpitEditActionUrl);				
 				setAttribute(IS_FROM_MYDATA, isFromMyData);
 				setAttribute(TYPE_DOC, typeDoc);
 				setAttribute(IS_FROM_MYANALYSIS,isFromMyAnalysis);
@@ -280,6 +283,26 @@ public class SelfServiceDatasetStartAction extends ManageDatasets  {
 
 		return parametersMap;
 	}
+	
+	// COCKPIT
+	protected String buildCockpitEditServiceUrl(String executionId) {
+		Map<String, String> parametersMap = buildCockpitEditServiceBaseParametersMap();
+		parametersMap.put("SBI_EXECUTION_ID" , executionId);
+		
+		Engine cockpitEngine = ExecuteAdHocUtility.getCockpitEngine();
+		// GeoReportEngineStartEditAction
+		
+		String baseEditUrl = cockpitEngine.getUrl().replace("CockpitEngineStartAction", "CockpitEngineStartEditAction");
+		String cockpitEditActionUrl = GeneralUtilities.getUrl(baseEditUrl, parametersMap);
+		LogMF.debug(logger, "Cockpit edit service invocation url is equal to [{}]", cockpitEditActionUrl);
+		
+		return cockpitEditActionUrl;
+	}	
 
+	protected Map<String, String> buildCockpitEditServiceBaseParametersMap() {
+		Map<String, String> parametersMap = buildServiceBaseParametersMap();
+		
+		return parametersMap;
+	}
 
 }

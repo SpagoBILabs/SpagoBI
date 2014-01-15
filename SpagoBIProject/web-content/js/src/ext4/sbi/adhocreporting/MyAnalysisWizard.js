@@ -9,8 +9,6 @@ Ext.define('Sbi.adhocreporting.MyAnalysisWizard', {
 
 		,config: {	
 			fieldsStep1: null,
-//			fieldsStep2: null,
-//			fieldsStep3: null,
 			height: 280, //440,
 			record: {},
 			user:'',
@@ -31,30 +29,21 @@ Ext.define('Sbi.adhocreporting.MyAnalysisWizard', {
 			config.title =  LN('sbi.myanalysis.wizard.wizardname') + ' - ' + LN('sbi.myanalysis.wizard.myanalysisselection') + '...'; 	
 //			config.bodyPadding = 10;   
 			config.tabs = this.initSteps();
-			//config.buttons = this.initWizardBar();
-
-			
+		
 			this.callParent(arguments);
 			
-//			Ext.getCmp('move-next').setDisabled(true ); //This disable next button on first page of the wizard
-
-		
 			this.addListener('cancel', this.closeWin, this);
 			this.addListener('navigate', this.navigate, this);
 			this.addListener('confirm', this.save, this);		
 		
 			this.addEvents('openMyDataForReport');
 			this.addEvents('openMyDataForGeo');
-
+			this.addEvents('openCockpitDesigner');
 		}
 		
 		, configureSteps : function(){
 			   
 			this.fieldsStep1 =  this.getFieldsTab1(); 
-//				
-//			this.fieldsStep2 =  this.getFieldsTab2(); 
-//			
-//			this.fieldsStep3 =  this.getFieldsTab3();
 
 		}
 		
@@ -67,8 +56,7 @@ Ext.define('Sbi.adhocreporting.MyAnalysisWizard', {
 		          ,height: '100px'
 		          ,cls:'reportbutton'
 		          ,handler: function() {
-		              thisPanel.documentType = 'Worksheet';
-		              //thisPanel.goNext(1);		              
+		              thisPanel.documentType = 'Worksheet';             
 		              thisPanel.fireEvent('openMyDataForReport');		 
 		              thisPanel.close();
 		          }
@@ -83,10 +71,8 @@ Ext.define('Sbi.adhocreporting.MyAnalysisWizard', {
 		          ,cls:'geobutton'
 		          ,handler: function() {
 		        	  thisPanel.documentType = 'Geo';
-		        	  //thisPanel.goNext(1);
 		        	  thisPanel.fireEvent('openMyDataForGeo');
 		        	  thisPanel.close();
-
 		          }
 			  	  ,tooltip:'Create a new Geographical Analysis'
 
@@ -99,7 +85,10 @@ Ext.define('Sbi.adhocreporting.MyAnalysisWizard', {
 		          ,height: '100px'
 			      ,cls:'cockpitbutton'
 			      ,handler: function() {
-		             Ext.Msg.alert('TODO','TODO: Cockpit not yet implemented');
+		           //  Ext.Msg.alert('TODO','TODO: Cockpit not yet implemented');
+			    	  thisPanel.documentType = 'Cockpit';
+			    	  thisPanel.fireEvent('openCockpitDesigner');
+			    	  thisPanel.close();
 		          }
 		  	      ,tooltip:'Create a new Cockpit Analysis'
 
@@ -156,16 +145,9 @@ Ext.define('Sbi.adhocreporting.MyAnalysisWizard', {
 		, initSteps: function(){
 			
 			var steps = [];
-//			var item1Label = LN('sbi.myanalysis.wizard.myanalysisselection');
-//			var item2Label = item1Label + ' -> ' + LN('sbi.myanalysis.wizard.myanalysisdetail');
-//			var item3Label = item2Label + ' -> ' + LN('sbi.myanalysis.wizard.dataselection');
 
 			steps.push({itemId:'0', items: this.fieldsStep1});
-//			steps.push({itemId:'0', title:item1Label, items: this.fieldsStep1});
-//			steps.push({itemId:'1', title:item2Label, items: Sbi.tools.dataset.DataSetsWizard.superclass.createStepFieldsGUI(this.fieldsStep2)});
-//			steps.push({itemId:'2', title:item3Label, items: Sbi.tools.dataset.DataSetsWizard.superclass.createStepFieldsGUI(this.fieldsStep3)});
 
-			
 			return steps;
 		}
 		
