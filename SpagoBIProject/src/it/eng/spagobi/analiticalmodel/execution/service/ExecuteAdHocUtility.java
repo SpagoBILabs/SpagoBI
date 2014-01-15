@@ -30,6 +30,10 @@ public class ExecuteAdHocUtility {
 		return getEngineByLabel("SpagoBIGisEngine");
 	}
 	
+	public static Engine getCockpitEngine() {
+		return getEngineByLabel("SpagoBICockpitEngine");
+	}
+	
 	
 	public static Engine getEngineByLabel(String engineLabel) {
 		Engine engine;

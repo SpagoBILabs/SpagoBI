@@ -21,9 +21,10 @@ Ext.define('Sbi.adhocreporting.AdhocreportingContainer', {
     	qbeFromDataSetBaseUrl : '',
         user : '',
         myAnalysisServicePath: '',
-        georeportEngineBaseUrl: ''
+        georeportEngineBaseUrl: '',
+        cockpitEngineBaseUrl: '',
         //datasetsServicePath: ''
-        , contextName: ''
+        contextName: ''
 	},
 
 	/**
@@ -73,7 +74,10 @@ Ext.define('Sbi.adhocreporting.AdhocreportingContainer', {
 		this.addEvents('openMyDataForGeo');
 
 		this.adhocreportingTabsPanel.on('openMyDataForGeo', this.createGeo ,this);
+		
+		this.addEvents('openCockpitDesigner');
 
+		this.adhocreportingTabsPanel.on('openCockpitDesigner', this.createCockpit ,this);
 
 	}
 	
@@ -90,10 +94,16 @@ Ext.define('Sbi.adhocreporting.AdhocreportingContainer', {
 		this.documentexecution.load(myGeoUrl);
 		this.getLayout().setActiveItem(1);	
 	}
+	
+	,createCockpit: function(){
+		var cockpitUrl = this.cockpitEngineBaseUrl;
+		Sbi.debug('cockpitUrl: ' + cockpitUrl);
+		this.documentexecution.load(cockpitUrl);
+		this.getLayout().setActiveItem(1);	
+	}
 
 
-	,
-	executeDocument: function(docType,inputType, record){
+	,executeDocument: function(docType,inputType, record){
 		if(docType=='COCKPIT'){
 			//TODO: to be defined
 			Sbi.debug("Cockpit document execution");
@@ -125,7 +135,7 @@ Ext.define('Sbi.adhocreporting.AdhocreportingContainer', {
 		}
 	}
 	
-	,executeDocumentAction: function(inputType, record){
+	, executeDocumentAction: function(inputType, record){
 		var doc = record.data;
 		var executionUrl = this.contextName + '/servlet/AdapterHTTP?ACTION_NAME=EXECUTE_DOCUMENT_ACTION&OBJECT_LABEL='+doc.label+'&OBJECT_ID='+doc.id+'&MYANALYSIS=TRUE';		
 		this.documentexecution.load(executionUrl);

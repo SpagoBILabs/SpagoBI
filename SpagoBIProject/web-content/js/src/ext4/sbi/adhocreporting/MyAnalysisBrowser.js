@@ -46,7 +46,7 @@ Ext.define('Sbi.adhocreporting.MyAnalysisBrowser', {
 		this.addEvents('order');
 		this.addEvents('openMyDataForReport');
 		this.addEvents('openMyDataForGeo');
-		
+		this.addEvents('openCockpitDesigner');
 	}
 	
 	/*
@@ -621,6 +621,10 @@ Ext.define('Sbi.adhocreporting.MyAnalysisBrowser', {
 		//Event for Opening MyData Page only for creating a Geo Document
 		this.wizardWin.on('openMyDataForGeo',function(){
 			this.fireEvent('openMyDataForGeo');
+		},this);
+		//Event for Opening Cockpit designer only for creating a Cockpit
+		this.wizardWin.on('openCockpitDesigner',function(){
+			this.fireEvent('openCockpitDesigner');
 		},this);
     	this.wizardWin.show();
 	}
