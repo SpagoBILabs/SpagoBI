@@ -6,34 +6,9 @@
 
 package it.eng.spagobi.engines.commonj.services;
 
-import java.io.IOException;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
-import org.apache.log4j.Logger;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import sun.misc.BASE64Decoder;
-import sun.nio.cs.ext.MS932DB.Decoder;
-
-import commonj.work.Work;
-import commonj.work.WorkEvent;
-import commonj.work.WorkItem;
-
-import de.myfoo.commonj.work.FooRemoteWorkItem;
-
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanAttribute;
 import it.eng.spago.base.SourceBeanException;
-import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.engines.commonj.CommonjEngine;
 import it.eng.spagobi.engines.commonj.runtime.CommonjWork;
 import it.eng.spagobi.engines.commonj.runtime.CommonjWorkContainer;
@@ -49,12 +24,31 @@ import it.eng.spagobi.utilities.engines.AbstractEngineAction;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineStartupException;
-import it.eng.spagobi.utilities.service.JSONAcknowledge;
 import it.eng.spagobi.utilities.service.JSONFailure;
 import it.eng.spagobi.utilities.service.JSONSuccess;
 import it.eng.spagobi.utilities.threadmanager.WorkManager;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
+import org.apache.log4j.Logger;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import sun.misc.BASE64Decoder;
+
+import commonj.work.Work;
+import commonj.work.WorkEvent;
+import commonj.work.WorkItem;
+
+import de.myfoo.commonj.work.FooRemoteWorkItem;
 
 
 public class StartWorkAction extends AbstractEngineAction {
