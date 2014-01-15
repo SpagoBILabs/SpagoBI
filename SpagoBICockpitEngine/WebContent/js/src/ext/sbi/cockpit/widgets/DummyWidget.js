@@ -108,6 +108,9 @@ Ext.extend(Sbi.cockpit.widgets.DummyWidget, Sbi.cockpit.widgets.Widget, {
 	// =================================================================================================================
 
 	// ...
-    
-	
+});
+
+Sbi.regsterWidget('dummy', {
+	runtimeClass: 'Sbi.cockpit.widgets.DummyWidget'
+	, designerClass: 'Sbi.cockpit.widgets.DummyWidgetDesigner'
 });

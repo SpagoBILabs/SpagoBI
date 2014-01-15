@@ -146,3 +146,34 @@ Ext.extend(Sbi.cockpit.widgets.WidgetManager, Ext.util.Observable, {
 
 	// ...
 });
+
+
+Sbi.cockpit.widgets.registry = {}; 
+
+Sbi.cockpit.widgets.WidgetManager.regsterWidget = function(wtype, wdescriptor) {
+	Sbi.cockpit.widgets.registry[wtype] = wdescriptor;
+};
+
+Sbi.regsterWidget = Sbi.cockpit.widgets.WidgetManager.regsterWidget;
+
+Sbi.cockpit.widgets.WidgetManager.getWidget = function(wtype, wconf) {
+	
+	var wdescriptor = Sbi.cockpit.widgets.registry[wtype];
+	
+	if(wdescriptor !== undefined) {
+		return new wdescriptor.runtimeClass(wconf); 
+	} else {
+		alert("Widget of type [" + wtype +"] not supprted");
+	}
+};
+
+Sbi.cockpit.widgets.WidgetManager.getWidgetDesigner = function(wtype, wconf) {
+	
+	var wdescriptor = Sbi.cockpit.widgets.registry[wtype];
+	
+	if(wdescriptor !== undefined) {
+		return new wdescriptor.designerClass(wconf); 
+	} else {
+		alert("Widget of type [" + wtype +"] not supprted");
+	}
+};
