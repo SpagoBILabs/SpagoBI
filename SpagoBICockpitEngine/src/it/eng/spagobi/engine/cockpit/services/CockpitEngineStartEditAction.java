@@ -27,7 +27,7 @@ public class CockpitEngineStartEditAction extends AbstractEngineStartServlet {
 
 	private static final long serialVersionUID = 1L;
 	private static final String ENGINE_NAME = "CockpitReportEngine";
-	private static final String REQUEST_DISPATCHER_URL = "/WEB-INF/jsp/geoReport.jsp";
+	private static final String REQUEST_DISPATCHER_URL = "/WEB-INF/jsp/cockpit.jsp";
 	
 	/** Logger component. */
     private static transient Logger logger = Logger.getLogger(CockpitEngineStartEditAction.class);
