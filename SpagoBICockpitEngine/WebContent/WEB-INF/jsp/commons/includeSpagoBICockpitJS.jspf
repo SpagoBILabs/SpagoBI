@@ -19,15 +19,23 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='./js/src/ext/sbi/locale/LocaleUtils.js'/></script>
 <script type="text/javascript" src='./js/src/ext/sbi/service/ServiceRegistry.js'/></script>
 
+<script type="text/javascript" src='./js/src/ext/sbi/utils/GenericDropTarget.js'/></script>
+
 <script type="text/javascript" src='./js/src/ext/sbi/cockpit/MainPanel.js'/></script>
 
+<script type="text/javascript" src='./js/src/ext/sbi/cockpit/runtime/Widget.js'/></script>
+<script type="text/javascript" src='./js/src/ext/sbi/cockpit/runtime/WidgetManager.js'/></script>
+<script type="text/javascript" src='./js/src/ext/sbi/cockpit/runtime/WidgetContainer.js'/></script>
+<script type="text/javascript" src='./js/src/ext/sbi/cockpit/runtime/WidgetExtensionPoint.js'/></script>
+<script type="text/javascript" src='./js/src/ext/sbi/cockpit/editor/WidgetEditor.js'/></script>
+<script type="text/javascript" src='./js/src/ext/sbi/cockpit/editor/WidgetEditorMainPanel.js'/></script>
+<script type="text/javascript" src='./js/src/ext/sbi/cockpit/editor/WidgetEditorControlPanel.js'/></script>
+<script type="text/javascript" src='./js/src/ext/sbi/cockpit/editor/WidgetEditorDesignerPalette.js'/></script>
 
-<script type="text/javascript" src='./js/src/ext/sbi/cockpit/widgets/Widget.js'/></script>
-<script type="text/javascript" src='./js/src/ext/sbi/cockpit/widgets/WidgetManager.js'/></script>
-<script type="text/javascript" src='./js/src/ext/sbi/cockpit/widgets/WidgetContainer.js'/></script>
 
 
-<script type="text/javascript" src='./js/src/ext/sbi/cockpit/widgets/DummyWidget.js'/></script>
+
+<script type="text/javascript" src='./js/src/ext/sbi/cockpit/widgets/dummy/DummyWidget.js'/></script>
 
 <!-- END-DEBUG -->
 
