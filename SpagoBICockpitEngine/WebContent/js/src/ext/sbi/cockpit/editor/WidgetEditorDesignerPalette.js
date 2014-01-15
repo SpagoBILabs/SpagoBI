@@ -30,7 +30,7 @@ Ext.extend(Sbi.cockpit.editor.WidgetEditorDesignerPalette, Ext.Panel, {
 	initPanel:function(){
 
 		var store = new Ext.data.ArrayStore({
-			fields: ['name', 'url'],
+			fields: ['type', 'name', 'description', 'icon'],
 			data   : this.getAvailablePallettes()
 		});
 
@@ -38,7 +38,7 @@ Ext.extend(Sbi.cockpit.editor.WidgetEditorDesignerPalette, Ext.Panel, {
 				'<tpl for=".">',
 
 				'<div  style="float: left; clear: left; padding-bottom: 10px;">',
-					'<div style="float: left;"><img src="{0}" title="{1}" width="40"></div>',
+					'<div style="float: left;"><img src="{3}" title="{1}" width="40"></div>',
 					'<div style="float: left; padding-top:10px; padding-left:10px;">{1}</div>',
 				'</div>',
 	
@@ -53,7 +53,9 @@ Ext.extend(Sbi.cockpit.editor.WidgetEditorDesignerPalette, Ext.Panel, {
 	    	, sortable: false
 	   	    , renderer : function(value, metaData, record, rowIndex, colIndex, store){
 	        	return this.tpl.apply(	
-	        			[record.json.url, record.json.name]	);
+	        			[record.json.type, record.json.name
+	        			 , record.json.description, record.json.icon]	
+	        	);
 	    	}
 	        , scope: this
 	    });
@@ -86,13 +88,40 @@ Ext.extend(Sbi.cockpit.editor.WidgetEditorDesignerPalette, Ext.Panel, {
 	
 	
 	getAvailablePallettes:function(){
-		var pallette = [];
-		pallette.push({name: 'Bar Chart', url:'img/widgets/palette_bar_chart.png'});
-		pallette.push({name: 'Pie Chart', url:'img/widgets/palette_pie_chart.png'});
-		pallette.push({name: 'Line Chart', url:'img/widgets/palette_line_chart.png'});
-		pallette.push({name: 'Table', url:'img/widgets/palette_table.png'});
-		pallette.push({name: 'Pivot Table', url:'img/widgets/palette_crosstab.png'});	
-		pallette.push({name: 'Static Pivot Table', url:'img/widgets/palette_crosstab.png'});
+		Sbi.trace("[WidgetEditorDesignerPalette.getAvailablePallettes]: IN");
+		
+		var pallette = new Array();
+		
+		Sbi.cockpit.runtime.WidgetExtensionPoint.forEachWidget(function(wtype, wdescriptor) {
+			pallette.push({
+				type: wtype
+				, name: wdescriptor.name
+				, description:wdescriptor.description
+				, icon: wdescriptor.icon
+			});
+		}, this);
+		
+		//alert("Palete length: " + pallette.length);
+		
+//		var widgetDescriptors = Sbi.cockpit.runtime.WidgetExtensionPoint.getWidgetDescriptors();
+//		for(var i = 0; i < widgetDescriptors.length; i++) {
+//			pallette.push({
+//				type: 
+//				, name: widgetDescriptors[i].name
+//				, description: widgetDescriptors[i].description
+//				, icon: widgetDescriptors[i].icon
+//			});
+//			Sbi.debug("[WidgetEditorDesignerPalette.getAvailablePallettes]: added widget [" + widgetDescriptors[i].name + "] to the palette");
+//		}
+//		pallette.push({name: 'Bar Chart', url:'img/widgets/palette_bar_chart.png'});
+//		pallette.push({name: 'Pie Chart', url:'img/widgets/palette_pie_chart.png'});
+//		pallette.push({name: 'Line Chart', url:'img/widgets/palette_line_chart.png'});
+//		pallette.push({name: 'Table', url:'img/widgets/palette_table.png'});
+//		pallette.push({name: 'Pivot Table', url:'img/widgets/palette_crosstab.png'});	
+//		pallette.push({name: 'Static Pivot Table', url:'img/widgets/palette_crosstab.png'});
+		
+		Sbi.trace("[WidgetEditorDesignerPalette.getAvailablePallettes]: IN");
+		
 		return pallette;
 	}
 

@@ -3,35 +3,21 @@
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. **/
- 
- 
 
-Ext.ns("Sbi.cockpit.widgets.dummy");
+Ext.ns("Sbi.cockpit.widgets.table");
 
-Sbi.cockpit.widgets.dummy.DummyWidget = function(config) {	
-		
-	Sbi.trace("[DummyWidget]: IN");
-	// init properties...
-	var defaultSettings = {
-	};
-
-	if(Sbi.settings && Sbi.settings.console && Sbi.settings.console.widget) {
-		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.console.widget);
-	}
-	var c = Ext.apply(defaultSettings, config || {});
-		
-	Ext.apply(this, c);
-		
+Sbi.cockpit.widgets.table.TableWidget = function(config) {	
+	Sbi.trace("[TableWidget]: IN");
 	// constructor
-	Sbi.cockpit.widgets.dummy.DummyWidget.superclass.constructor.call(this, c);
-	Sbi.trace("[DummyWidget]: OUT");
+	Sbi.cockpit.widgets.table.TableWidget.superclass.constructor.call(this, c);
+	Sbi.trace("[TableWidget]: OUT");
 };
 
 /**
  * @cfg {Object} config
  * ...
  */
-Ext.extend(Sbi.cockpit.widgets.dummy.DummyWidget, Sbi.cockpit.runtime.Widget, {
+Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.widgets.dummy.DummyWidget, {
     
 	// =================================================================================================================
 	// PROPERTIES
@@ -53,27 +39,14 @@ Ext.extend(Sbi.cockpit.widgets.dummy.DummyWidget, Sbi.cockpit.runtime.Widget, {
 	// -----------------------------------------------------------------------------------------------------------------
 
 	onRender: function(ct, position) {	
-		Sbi.trace("[DummyWidget.onRender]: IN");
-		Sbi.cockpit.widgets.dummy.DummyWidget.superclass.onRender.call(this, ct, position);	
+		Sbi.trace("[TableWidget.onRender]: IN");
 		
-		this.dummyContent = new Ext.Panel({
-			border: false
-			, bodyBorder: false
-			, hideBorders: true
-			, frame: false
-			, html: this.msg || 'Sono un widget qualunque'
-		});
+		this.msg = 'Sono un widget di tipo TABLE';
 		
-		this.items.each( function(item) {
-			this.items.remove(item);
-	        item.destroy();           
-	    }, this);   
+		Sbi.cockpit.widgets.table.TableWidget.superclass.onRender.call(this, ct, position);	
 		
-		if(this.chart !== null) {
-			this.add(this.dummyContent);
-			this.doLayout();
-		}	
-		Sbi.trace("[DummyWidget.onRender]: OUT");
+	
+		Sbi.trace("[TableWidget.onRender]: OUT");
 	}
 	
 	// =================================================================================================================
@@ -83,10 +56,10 @@ Ext.extend(Sbi.cockpit.widgets.dummy.DummyWidget, Sbi.cockpit.runtime.Widget, {
 	// ...
 });
 
-Sbi.registerWidget('dummy', {
-	name: 'Dummy'
-	, icon: 'js/src/ext/sbi/cockpit/widgets/dummy/dummy_64x64_ico.png'
-	, runtimeClass: 'Sbi.cockpit.widgets.dummy.DummyWidget'
-	//, designerClass: 'Sbi.cockpit.widgets.dummy.DummyWidgetDesigner'
+Sbi.registerWidget('table', {
+	name: 'Table'
+	, icon: 'js/src/ext/sbi/cockpit/widgets/table/table_64x64_ico.png'
+	, runtimeClass: 'Sbi.cockpit.widgets.table.TableWidget'
+	//, designerClass: 'Sbi.cockpit.widgets.table.TableWidgetDesigner'
 	, designerClass: 'Ext.Panel'
 });

@@ -118,7 +118,7 @@ Ext.extend(Sbi.cockpit.editor.WidgetEditorMainPanel, Ext.Panel, {
 		}
 		var row = rows[0];
 		var state = {};
-		state.designer = row.json.name;
+		state.designer = row.json.type;
 		if (this.designer !== null) {
 			this.fireEvent('addDesigner', this, state);
 			return;
@@ -131,28 +131,41 @@ Ext.extend(Sbi.cockpit.editor.WidgetEditorMainPanel, Ext.Panel, {
 	// -----------------------------------------------------------------------------------------------------------------
 	, addDesigner: function (state) {
 		var sheredConf = {padding: Ext.isIE ? '10 0 0 35' : '0'};
-		switch (state.designer) {
-	        case 'Pivot Table':
-	        	this.insertCrosstabDesigner(sheredConf);
-	            break;
-	        case 'Static Pivot Table':
-	        	this.insertStaticCrosstabDesigner(sheredConf);
-	            break;
-	        case 'Bar Chart':
-	        	this.insertBarchartDesigner(sheredConf);
-	            break;
-	        case 'Line Chart':
-	        	this.insertLinechartDesigner(sheredConf);
-	            break;
-	        case 'Pie Chart':
-	        	this.insertPiechartDesigner(sheredConf);
-	            break;
-	        case 'Table':
-	        	this.insertTableDesigner(sheredConf);
-	            break;
-	        default: 
-	        	alert('Unknown widget!');
-		}
+		
+		this.designer =  Sbi.cockpit.runtime.WidgetExtensionPoint.getWidgetDesigner(state.designer, Ext.apply({
+			html: state.designer + ' widget designer'
+			, ddGroup: 'worksheetDesignerDDGroup'
+			, tools:  [{
+				id: 'close'
+		        , handler: this.removeDesigner
+		        , scope: this
+		        , qtip: LN('Sbi.cockpit.editor.widgeteditormainpanel.tools.tt.remove')
+			}]
+		},sheredConf));
+		this.insertDesigner();
+		
+//		switch (state.designer) {
+//	        case 'Pivot Table':
+//	        	this.insertCrosstabDesigner(sheredConf);
+//	            break;
+//	        case 'Static Pivot Table':
+//	        	this.insertStaticCrosstabDesigner(sheredConf);
+//	            break;
+//	        case 'Bar Chart':
+//	        	this.insertBarchartDesigner(sheredConf);
+//	            break;
+//	        case 'Line Chart':
+//	        	this.insertLinechartDesigner(sheredConf);
+//	            break;
+//	        case 'Pie Chart':
+//	        	this.insertPiechartDesigner(sheredConf);
+//	            break;
+//	        case 'Table':
+//	        	this.insertTableDesigner(sheredConf);
+//	            break;
+//	        default: 
+//	        	alert('Unknown widget!');
+//		}
 		
 		this.designerState = state;
 		

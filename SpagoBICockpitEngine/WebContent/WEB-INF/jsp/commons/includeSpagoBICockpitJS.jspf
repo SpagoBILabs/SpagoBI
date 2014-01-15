@@ -13,6 +13,7 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <!-- START-DEBUG -->
 <script type="text/javascript" src='./js/src/ext/sbi/commons/Settings.js'/></script>
 <script type="text/javascript" src='./js/src/ext/sbi/overrides/overrides.js'/></script>
+<script type="text/javascript" src='./js/src/ext/sbi/commons/Sbi.js'/></script>
 <script type="text/javascript" src='./js/src/ext/sbi/commons/Log.js'/></script>
 <script type="text/javascript" src='./js/src/ext/sbi/exceptions/ExceptionHandler.js'/></script>
 <script type="text/javascript" src='./js/src/ext/sbi/commons/Format.js'/></script>
@@ -36,6 +37,7 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 
 
 <script type="text/javascript" src='./js/src/ext/sbi/cockpit/widgets/dummy/DummyWidget.js'/></script>
+<script type="text/javascript" src='./js/src/ext/sbi/cockpit/widgets/table/TableWidget.js'/></script>
 
 <!-- END-DEBUG -->
 

@@ -113,3 +113,9 @@ Sbi.exception.ExceptionHandler = function(){
 
 	};
 }();
+
+// shortcuts
+
+Sbi.showErrorMessage = Sbi.exception.ExceptionHandler.showErrorMessage;
+Sbi.showWarningMessage = Sbi.exception.ExceptionHandler.showWarningMessage;
+Sbi.showInfoMessage = Sbi.exception.ExceptionHandler.showInfoMessage;
