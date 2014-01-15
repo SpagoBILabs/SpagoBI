@@ -24,7 +24,9 @@ Sbi.engines.EngineManagementPanel = function(config) {
 		defaultSettings = Ext.apply(defaultSettings,
 				Sbi.settings.engines.engineManagementPanel);
 	}
-
+	config.tabPanelWidth ='50%'; // 520;
+	config.gridWidth = '50%'; //470;
+	
 	var c = Ext.apply(defaultSettings, config || {});
 	c.configurationObject = this.initConfigObject();
 

@@ -168,13 +168,13 @@ Sbi.widgets.ListDetailForm = function(config) {
 	if(conf.tabPanelWidth){
 		this.tabPanelWidth = conf.tabPanelWidth;
     }else{
-    	this.tabPanelWidth ='70%'; // 520;
+    	this.tabPanelWidth ='60%'; // 520;
     }
 	
 	if(conf.gridWidth){
 		this.gridWidth = conf.gridWidth;
     }else{
-    	this.gridWidth = '30%'; //470;
+    	this.gridWidth = '40%'; //470;
     }
 	
 	
@@ -448,7 +448,8 @@ Ext.extend(Sbi.widgets.ListDetailForm, Ext.FormPanel, {
 	                  colModel: this.colModel,
 	                  plugins: pluginsToAdd ,
 	                  selModel: this.rowselModel,
-	                  width: '35%',
+//	                  width: '35%',
+	                  width: this.gridWidth,
 					  //autoWidth: true,
 					  frame: true,
 					  border:true,  	        

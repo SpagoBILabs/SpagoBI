@@ -57,6 +57,8 @@ Sbi.udp.ManageUdp = function(config) {
 	
 	this.initConfigObject();
 	config.configurationObject = this.configurationObject;
+	config.tabPanelWidth ='70%'; // 520;
+	config.gridWidth = '30%'; //470;
 	
 	var c = Ext.apply({}, config || {}, {});
 
