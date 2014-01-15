@@ -33,9 +33,9 @@
   * - Andrea Gioia (andrea.gioia@eng.it)
   */
 
-Ext.ns("Sbi.cockpit.widgets");
+Ext.ns("Sbi.cockpit.widgets.dummy");
 
-Sbi.cockpit.widgets.DummyWidget = function(config) {	
+Sbi.cockpit.widgets.dummy.DummyWidget = function(config) {	
 		
 	Sbi.trace("[DummyWidget]: IN");
 	// init properties...
@@ -50,7 +50,7 @@ Sbi.cockpit.widgets.DummyWidget = function(config) {
 	Ext.apply(this, c);
 		
 	// constructor
-	Sbi.cockpit.widgets.DummyWidget.superclass.constructor.call(this, c);
+	Sbi.cockpit.widgets.dummy.DummyWidget.superclass.constructor.call(this, c);
 	Sbi.trace("[DummyWidget]: OUT");
 };
 
@@ -58,7 +58,7 @@ Sbi.cockpit.widgets.DummyWidget = function(config) {
  * @cfg {Object} config
  * ...
  */
-Ext.extend(Sbi.cockpit.widgets.DummyWidget, Sbi.cockpit.runtime.Widget, {
+Ext.extend(Sbi.cockpit.widgets.dummy.DummyWidget, Sbi.cockpit.runtime.Widget, {
     
 	// =================================================================================================================
 	// PROPERTIES
@@ -81,7 +81,7 @@ Ext.extend(Sbi.cockpit.widgets.DummyWidget, Sbi.cockpit.runtime.Widget, {
 
 	onRender: function(ct, position) {	
 		Sbi.trace("[DummyWidget.onRender]: IN");
-		Sbi.cockpit.widgets.DummyWidget.superclass.onRender.call(this, ct, position);	
+		Sbi.cockpit.widgets.dummy.DummyWidget.superclass.onRender.call(this, ct, position);	
 		
 		this.dummyContent = new Ext.Panel({
 			border: false
@@ -111,6 +111,6 @@ Ext.extend(Sbi.cockpit.widgets.DummyWidget, Sbi.cockpit.runtime.Widget, {
 });
 
 Sbi.regsterWidget('dummy', {
-	runtimeClass: 'Sbi.cockpit.widgets.DummyWidget'
-	, designerClass: 'Sbi.cockpit.widgets.DummyWidgetDesigner'
+	runtimeClass: 'Sbi.cockpit.widgets.dummy.DummyWidget'
+	, designerClass: 'Sbi.cockpit.widgets.dummy.DummyWidgetDesigner'
 });

@@ -202,7 +202,7 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 		var dummyWidget = new Sbi.cockpit.widgets.DummyWidget({msg: "paperino"});
 		Sbi.trace("[MainPanel.initWidgetContainer]: dummy widget succesfully created");
 		
-		this.widgetContainer = new Sbi.cockpit.widgets.WidgetContainer({
+		this.widgetContainer = new Sbi.cockpit.runtime.WidgetContainer({
 			items: [dummyWidget]
 		});
 		Sbi.trace("[MainPanel.initWidgetContainer]: widget panel succesfully created");
