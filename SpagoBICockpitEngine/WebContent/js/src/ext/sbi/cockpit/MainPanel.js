@@ -187,7 +187,7 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 	}
 	
 	, addWidget: function() {
-		var dummyWidget = new Sbi.cockpit.widgets.DummyWidget();
+		var dummyWidget = new Sbi.cockpit.widgets.dummy.DummyWidget();
 		dummyWidget.setParentContainer(null);
 		this.widgetContainer.addWidget(dummyWidget, {
 			x : 0
@@ -199,7 +199,7 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 	
 	, initWidgetContainer: function() { 
 		Sbi.trace("[MainPanel.initWidgetContainer]: IN");
-		var dummyWidget = new Sbi.cockpit.widgets.DummyWidget({msg: "paperino"});
+		var dummyWidget = new Sbi.cockpit.widgets.dummy.DummyWidget({msg: "paperino"});
 		Sbi.trace("[MainPanel.initWidgetContainer]: dummy widget succesfully created");
 		
 		this.widgetContainer = new Sbi.cockpit.runtime.WidgetContainer({
