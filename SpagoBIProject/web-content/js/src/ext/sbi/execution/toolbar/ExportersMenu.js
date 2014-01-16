@@ -194,7 +194,8 @@ Ext.extend(Sbi.execution.toolbar.ExportersMenu, Ext.menu.Menu, {
 			,'JPG' : function() { this.exportGeoTo('jpeg'); }
 		},
 		'DOCUMENT_COMPOSITE': {
-			'PDF' : this.exportCompositeDocumentTo
+//			'PDF' : this.exportCompositeDocumentTo
+			'PDF' : function() {this.exportCompositeDocumentTo(); }
 		},
 		'DATAMART': {
 			 'PDF'    : function() { this.exportQbeTo('application/pdf'); }
@@ -291,7 +292,6 @@ Ext.extend(Sbi.execution.toolbar.ExportersMenu, Ext.menu.Menu, {
 		var handler = undefined;
 		
 		handler = function() {alert('No handler available for the specified exportation format')};
-		
 		var handlers = this.exportationHandlers[documentType];
 		if(handlers) {
 			handler = handlers[format];
