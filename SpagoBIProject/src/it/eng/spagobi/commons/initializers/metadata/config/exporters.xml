@@ -35,4 +35,5 @@
 <EXPORTER domain="GRAPHML" engine="SpagoBINetworkEngine" defaultValue="true"/>
 <EXPORTER domain="PNG" engine="SpagoBINetworkEngine" defaultValue="true"/>
 <EXPORTER domain="PDF" engine="SpagoBINetworkEngine" defaultValue="false"/>
+<EXPORTER domain="PDF" engine="SpagoBICompositeDocE" defaultValue="true"/>
 </EXPORTERS>
