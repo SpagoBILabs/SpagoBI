@@ -1,4 +1,4 @@
-<Context docBase="SpagoBIXXXSpagoEngine" path="/SpagoBIXXXSpagoEngine" reloadable="true" >
+<Context docBase="SpagoBINetworkEngine" path="/SpagoBINetworkEngine" reloadable="true" >
     <Manager className="org.apache.catalina.session.PersistentManager" saveOnRestart="false"/>
     <ResourceLink global="jdbc/foodmart" name="jdbc/foodmart" type="javax.sql.DataSource"/>
     <ResourceLink global="jdbc/spagobi" name="jdbc/spagobi" type="javax.sql.DataSource"/>
