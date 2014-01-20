@@ -79,6 +79,7 @@
 		<!-- Compile the java code from ${src} into ${build}/${webapp_name}/WEB-INF/classes -->
 		<javac srcdir="${src}" destdir="${build}/${webapp_name}/WEB-INF/classes" debug="on">
 			<classpath refid="web.classpath" />
+						<compilerarg value="-XDignore.symbol.file"/>
 		</javac>
 	</target>
 
