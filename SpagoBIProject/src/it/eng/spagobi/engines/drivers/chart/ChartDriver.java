@@ -225,34 +225,85 @@ public class ChartDriver extends GenericDriver {
 	}
    
     
-    /**
-     * Returns the template elaborated.
-     * 
-     * @param byte[] the template
-     * @param profile the profile
-     * 
-     * @return the byte[] with the modification of the document template
-     * 
-     * @throws InvalidOperationRequest the invalid operation request
-     */
-    public byte[] ElaborateTemplate(byte[] template) throws InvalidOperationRequest{
-    	logger.warn("Internationalization chart template begin...");
-    	byte[] toReturn = null;
-    	try{
-    		SourceBean content = SourceBean.fromXMLString(new String(template));
-    		List atts = ((SourceBean) content).getContainedAttributes();    		
-    		for (int i = 0; i < atts.size(); i++) {
-    			SourceBeanAttribute object = (SourceBeanAttribute) atts.get(i);		
-    			replaceAllMessages(object);    				    			
-    		}
-    		String result = content.toString();
-    		toReturn = result.getBytes();
-    	} catch(Exception e) {
-    		logger.error("Error while elaborating chart's template: " + e.getMessage());
-		}    	
-    	logger.warn("Internationalization chart template end");
-    	return toReturn;
-    }
+	public byte[] ElaborateTemplate(byte[] template) throws InvalidOperationRequest {
+		logger.warn("Internationalization chart template begin...");
+		byte[] toReturn = null;
+
+		SourceBean content;
+		try {
+			content = SourceBean.fromXMLString(new String(template));
+		} catch (Throwable t) {
+			// no xml but json
+			logger.warn("Impossible to parse template as XML", t);
+			logger.debug("Orginal template will be returned without futher elaboration", t);
+		
+			String templateStr = new String(template);
+			String localizedTemplate = replaceMessagesInString(templateStr);
+			
+			return localizedTemplate.getBytes();
+		}
+
+		try {
+			List atts = ((SourceBean) content).getContainedAttributes();
+			for (int i = 0; i < atts.size(); i++) {
+				SourceBeanAttribute object = (SourceBeanAttribute) atts.get(i);
+				replaceAllMessages(object);
+			}
+			String result = content.toString();
+			toReturn = result.getBytes();
+		} catch (Exception e) {
+			logger.error("Error while elaborating chart's template: " + e.getMessage());
+		}
+		logger.warn("Internationalization chart template end");
+		return toReturn;
+	}
+	
+	private String replaceMessagesInString(String targetString) {
+		StringBuffer sb = new StringBuffer();
+
+		IMessageBuilder engineMessageBuilder = MessageBuilderFactory
+				.getMessageBuilder();
+
+		String remainingString = targetString;
+		int nextMessageStartIndex = -1;
+		int nextMessageEndIndex = -1;
+		while ((nextMessageStartIndex = remainingString.indexOf("$R{")) != -1) {
+			nextMessageEndIndex = remainingString.indexOf("}",
+					nextMessageStartIndex);
+
+			String headString = remainingString.substring(0,
+					nextMessageStartIndex);
+			String parName = remainingString.substring(
+					nextMessageStartIndex + 3, nextMessageEndIndex);
+			remainingString = remainingString
+					.substring(nextMessageEndIndex + 1);
+			if (!parName.equals("")) {
+				try {
+					if (headString != null && !headString.equals("")) {
+						sb.append(headString);
+					}
+					String val = engineMessageBuilder.getI18nMessage(
+							this.getLocale(), parName).replaceAll("'", "");
+					// String val = parName.toUpperCase();
+					if (!val.equals("%")) {
+						sb.append(val);
+					}
+				} catch (Exception e1) {
+					logger.error("Error while replacing message in value: ", e1);
+				}
+
+			} else {
+				sb.append("");
+			}
+		}
+
+		if (remainingString != null && !remainingString.equals("")) {
+			sb.append(remainingString);
+		}
+
+		return sb.toString();
+	}
+	
     
     private String replaceMessagesInValue(String valueString, boolean addFinalSpace) {
 		StringBuffer sb = new StringBuffer();
@@ -327,6 +378,15 @@ public class ChartDriver extends GenericDriver {
 		} catch (Exception e) {
 			logger.error("Error while defining json chart template: " + e.getMessage());
 		}
+	}
+	
+	public static void main(String[] args) {
+		ChartDriver driver = new ChartDriver();
+		//String str = "xxx $R{pippo}tail head$R{pippo}tail $R{pippo} xxx";
+		String str = "dnsadn dknwk ldwnd lkwndxlkw xnwlknd";
+		System.out.println(str);
+		String newStr = driver.replaceMessagesInString(str);
+		System.out.println(newStr);
 	}
 
 }
