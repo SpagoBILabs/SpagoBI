@@ -78,6 +78,7 @@ Ext.onReady(function () {
   	  	, src: firstUrl
   	  	}
     );
+    Sbi.execution.ExporterUtils.setIFrame( this.mainframe );
     
     this.titlePath = Ext.create("Ext.Panel",{title :'Home'});
     

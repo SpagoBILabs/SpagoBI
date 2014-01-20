@@ -59,7 +59,8 @@ Sbi.execution.ParametersPanel = function(config, doc) {
 		, moveInMementoUsingCtrlKey: false
 		, viewportWindowWidth: 300
 		, viewportWindowHeight: 300
-		
+		, fieldsPadding : 5
+		, maxFieldHeight : 300
 	};
 	
 	
@@ -105,17 +106,7 @@ Sbi.execution.ParametersPanel = function(config, doc) {
 	});
 	
 	
-	this.formWidth = (c.columnWidth * c.columnNo) ;
-	var columnsBaseConfig = [];
-	for(var i = 0; i < c.columnNo; i++) {		
-		columnsBaseConfig[i] = {
-			width: c.columnWidth,
-            layout: 'form',
-            autoDestroy: false,
-            border: false,
-            bodyStyle:'padding:5px 5px 5px 5px'
-		}
-	}
+	this.formWidth = ( (c.columnWidth + c.fieldsPadding) * c.columnNo) ;
 
 	if(this.contest=='massiveExport'){
 		var formState = this.getFormState();
@@ -124,39 +115,53 @@ Sbi.execution.ParametersPanel = function(config, doc) {
 		this.initViewpointsPanel(config, doc)
 	}
 	this.initTootlbar();
-
+	this.initExecutionButton();
+	
+	
 	c = Ext.apply({}, c, {
 		labelAlign: c.labelAlign,
 		tbar: this.toolbar,
         border: false,
         //bodyStyle:'padding:10px 0px 10px 10px',
-        autoScroll: true,
-        items: [{
-            layout:'column',
-            width: this.formWidth, 
-            border: false,
-            items: columnsBaseConfig
-        }]
+        autoHeight: true,
+        items: [
+            {
+            	items: this.executionButton
+                , border: false
+                , bodyStyle:'padding:' + c.fieldsPadding + 'px 0px 0px ' + c.fieldsPadding + 'px'
+            }
+	        , {
+	            layout:'table'
+	            , layoutConfig: {
+	                columns: c.columnNo
+	            }
+	            , width: this.formWidth 
+	            , border: false
+	        }]
 	});
 	
 	// constructor
     Sbi.execution.ParametersPanel.superclass.constructor.call(this, c);
 	
-	var columnContainer = this.items.get(0);
-	this.columns = [];
-	for(var i = 0; i < c.columnNo; i++) {
-		this.columns[i] = columnContainer.items.get(i);
-	}
+    this.tableContainer = this.items.get(1);
 	
-	this.addEvents('beforesynchronize', 'synchronize',
-			'parametersForExecutionLoaded', 'viewpointexecutionrequest', 'applyviewpoint','hideparameterspanel');	
+	this.addEvents(
+			'beforesynchronize'
+			, 'synchronize'
+			, 'parametersForExecutionLoaded'
+			, 'viewpointexecutionrequest'
+			, 'applyviewpoint'
+			, 'hideparameterspanel'
+			, 'executionbuttonclicked'
+	);	
 };
 
 Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
     
     services: null
     , executionInstance: null
-        
+    , executionButton: null
+    
     /**
      * parameters configuration as returned from getParametersForExecutionService. 
      * @see function loadParametersForExecution()
@@ -188,7 +193,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
     , columns: null
     , baseConfig: null
     , modality : null
-    , drawHelpMessage : true
+    , drawHelpMessage : false
     , mandatoryFieldAdditionalString: null
     
     , manageDataDependencies: true // not used so far but reserved for future use
@@ -246,6 +251,19 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		var state = Ext.apply(defaultValuesFormState, this.preferenceState);
 		Sbi.debug('[ParametersPanel.clearParametersForm] : preference state applied to default values [' + Sbi.toSource(state) + ']');
 		this.setFormState(state);
+	}
+	
+	, initExecutionButton: function () {
+    	this.executionButton = new Ext.Button({
+	        text: LN('sbi.execution.parametersselection.executionbutton.message')
+	        , tooltip: LN('sbi.execution.parametersselection.executionbutton.tooltip')
+	        , handler: this.executionButtonHandler
+	        , scope: this
+		});
+	}
+	
+    , executionButtonHandler : function() {
+    	this.fireEvent('executionbuttonclicked', this);
 	}
 	
 	, initViewpointsPanel: function(config, doc){
@@ -636,7 +654,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 				} else {
 					if (parameters[i].visible === true && parameters[i].vizible !== false) {
 						this.addField(field, nonTransientField++);
-						Sbi.debug('field [' + parameters[i].id + '] is added added');
+						Sbi.debug('field [' + parameters[i].id + '] is added');
 					} else {
 						Sbi.debug('field [' + parameters[i].id + '] is not added');
 					}
@@ -655,7 +673,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 			// set focus on first field
 			// this is a work-around for this problem on IE: very often, the manual input field is not editable;
 			// in order to let it be editable, you should click on input label, or above + TAB button
-			var firstItem = this.columns[0].items.get(0);
+			var firstItem = this.tableContainer.items.get(0).items.get(0); // remember that input fields are wrapped by a panel
 			var itemParameter = firstItem.behindParameter;
 			if (itemParameter.typeCode == 'MAN_IN') {
 				firstItem.on('render', function(theField) {
@@ -664,8 +682,6 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 				}, this);
 			}
 		}
-		
-		this.insertHelpMessage();
 		
 		this.doLayout();
 		
@@ -693,12 +709,13 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 			Sbi.debug('[ParametersPanel.getDefaultValuesFormState] : default values for field [' + field.name + '] is [' + value + ']');
 			var description = this.concatenateDefaultValuesDescription(behindParameter.defaultValues);
 			Sbi.debug('[ParametersPanel.getDefaultValuesFormState] : default description for field [' + field.name + '] is [' + description + ']');
-			if (value != null) {
+			if (!field.isTransient) {
+				// in case the parameters is transient (i.e. it is single-value and therefore hidden), it is not considered
+				Sbi.debug('[ParametersPanel.getDefaultValuesFormState] : field [' + field.name + '] is not transient');
 				state[field.name] = value;
 				state[field.name + '_field_visible_description'] = description;
 			} else {
-				// in case the default value is not set, we don't set into the state because in that case the null value wuold 
-				// overwrite the value of a single-value driver)
+				Sbi.debug('[ParametersPanel.getDefaultValuesFormState] : field [' + field.name + '] is transient and therefore skipped');
 			}
 		}
 		
@@ -889,7 +906,8 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		Sbi.trace('[ParametersPanel.doRemoveNotVisibleFields] : IN');
 		
 		var state = this.getFormState();			
-		this.removeAllFields();		
+		this.removeAllFields();
+		
 		this.initializeParametersPanel(this.parameters, false);	
 		//Sbi.trace('[ParametersPanel.doRemoveNotVisibleFields] : restore state [' + state.toSource() + ']');
 		this.setFormState(state);
@@ -1007,6 +1025,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 			// if input field has an element (it means that the field was displayed)
 			if (this.fields[p].el !== undefined) {
 				// retrieves the element containing label plus input field and removes it
+				Sbi.trace('[ParametersPanel.refreshFields] : removing field [' + p + '] ...');
 				var el = this.fields[p].el.up('.x-form-item');
 				this.columns[this.fields[p].columnNo].remove( this.fields[p], false );
 				this.columns[this.fields[p].columnNo].doLayout();
@@ -1040,8 +1059,18 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 	
 	, addField: function(field, index) {
 		field.isTransient = false;
-		field.columnNo = (index)%this.columns.length;
-		this.columns[field.columnNo].add( field );
+		var newPanel = new Ext.Panel({
+	        layout: 'form'
+	        , autoDestroy: false
+	        , border: false
+	        , autoScroll: true
+	        , bodyStyle : {
+	        	padding : '' + this.fieldsPadding + 'px 0px 0px ' + this.fieldsPadding + 'px'  // padding is applied on top and left regions
+	        	, maxHeight : '' + this.maxFieldHeight + 'px'
+	        }
+	        , items : [ field ]
+		});
+		this.tableContainer.add ( newPanel );
 	}
 	
 	/**
@@ -1050,15 +1079,19 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 	 * use reset().
 	 */
 	, removeAllFields : function() {
-		for(p in this.fields) {
-			// if input field has an element (it means that the field was displayed)
-			if (this.fields[p].el !== undefined) {
-				// retrieves the element containing label plus input field and removes it
-				var el = this.fields[p].el.up('.x-form-item');
-				this.columns[this.fields[p].columnNo].remove( this.fields[p], true );
-				el.remove();
-			}
-		}
+		
+		this.remove(this.tableContainer, true);
+		this.doLayout();
+		this.add({
+            layout:'table'
+            , layoutConfig: {
+                columns: this.columnNo
+            }
+            , width: this.formWidth 
+            , border: false
+        });
+		this.tableContainer = this.items.get(1);
+		
 		this.fields = {};
 	}
 	

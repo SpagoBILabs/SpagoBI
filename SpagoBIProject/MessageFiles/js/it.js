@@ -8,6 +8,10 @@ Sbi.locale.ln['sbi.general.yes'] = 'Si';
 Sbi.locale.ln['sbi.general.No'] = 'No';
 Sbi.locale.ln['sbi.general.close'] = 'Chiudi';
 Sbi.locale.ln['sbi.general.ok'] = 'OK';
+Sbi.locale.ln['sbi.general.cancel'] = 'Cancella';
+Sbi.locale.ln['sbi.general.continue'] = 'Continua';
+Sbi.locale.ln['sbi.general.sessionexpired.title'] = 'Attenzione: sessione scaduta!';
+Sbi.locale.ln['sbi.general.sessionexpired.message'] = 'La sessione di lavoro è scaduta, è necessario effettuare nuovamente l\'accesso';
 
 Sbi.locale.ln['sbidomains.ds.Generic_Node'] = 'Nodo Generico';
 Sbi.locale.ln['sbidomains.ds.Generic_root'] = 'Radice Generica';
@@ -319,9 +323,13 @@ Sbi.locale.ln['sbi.execution.parametersselection.message.page2.qbe.readOnlyUserM
 Sbi.locale.ln['sbi.execution.parametersselection.message.page3.fillFormAndRefresh']  = 'Riempi il form sottostante e clicca sul pulsante di refresh sulla barra per rieseguire il documento';
 Sbi.locale.ln['sbi.execution.parametersselection.message.page3.refresh']  = 'Clicca sul pulsante di refresh sulla barra per rieseguire il documento';
 
+Sbi.locale.ln['sbi.execution.parametersselection.executionbutton.message'] = 'Visualizza i risultati';
+Sbi.locale.ln['sbi.execution.parametersselection.executionbutton.tooltip'] = 'Compila il form e clicca qui per visualizzare il risultato';
+
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.back'] = 'Torna alla pagina di selezione parametri';
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.documentView'] = 'Torna alla pagina di vista documenti';
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.refresh'] = 'Riesegui il documento';
+Sbi.locale.ln['sbi.execution.executionpage.toolbar.refreshlastwarning'] = 'Sono state apportate delle modifiche ai parametri; cliccando su Prosegui verrà rieseguito il documento con i parametri impostati precedentemente. Se invece vuoi eseguire il documento con i nuovi parametri, clicca su Cancella e poi sul pulsante di esecuzione dentro il form dei parametri';
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.rating'] = 'Dai un voto al documento';
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.print'] = 'Stampa il documento';
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.send'] = 'Invia il documento per posta elettronica';

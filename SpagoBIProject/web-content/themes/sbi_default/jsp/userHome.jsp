@@ -25,6 +25,7 @@ Ext.onReady(function () {
   	  			, src: firstUrl
   	  			, height: '100%'
   	  			});
+    Sbi.execution.ExporterUtils.setIFrame( this.mainframe );
     
     this.titlePath = Ext.create("Ext.Panel",{title :'Home'});
     var itemsM = <%=jsonMenuList%>;
