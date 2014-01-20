@@ -948,6 +948,7 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 		Sbi.trace('[DocumentExecutionPage.executeDocument]: IN');
 		
 		var formState = this.parametersPanel.getFormState();
+		this.setLastParametersFormState(formState);
 		if(this.fireEvent('beforeexecution', this, this.executionInstance, formState) !== false){
 			delete executionInstance.SBI_SUBOBJECT_ID;
 			delete executionInstance.SBI_SNAPSHOT_ID;
