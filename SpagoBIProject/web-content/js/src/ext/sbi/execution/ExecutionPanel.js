@@ -9,6 +9,16 @@ Ext.ns("Sbi.execution");
 
 Sbi.execution.ExecutionPanel = function(config, doc) {
 	
+	var defaultSettings = {
+		border : false
+	};
+	
+	if (Sbi.settings && Sbi.settings.execution && Sbi.settings.execution.executionPanel) {
+		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.execution.executionPanel);
+	}
+	
+	config = Ext.apply(defaultSettings, config || {});
+	
 	// declare exploited services
 	var params = {LIGHT_NAVIGATOR_DISABLED: 'TRUE', SBI_EXECUTION_ID: null};
 	this.services = new Array();

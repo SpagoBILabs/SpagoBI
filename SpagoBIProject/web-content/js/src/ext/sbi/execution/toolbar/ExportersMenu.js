@@ -194,8 +194,8 @@ Ext.extend(Sbi.execution.toolbar.ExportersMenu, Ext.menu.Menu, {
 			,'JPG' : function() { this.exportGeoTo('jpeg'); }
 		},
 		'DOCUMENT_COMPOSITE': {
-//			'PDF' : this.exportCompositeDocumentTo
-			'PDF' : function() {this.exportCompositeDocumentTo(); }
+			// 'PDF' : this.exportCompositeDocumentTo
+			'PDF' : function() { this.exportCompositeDocumentTo(); }
 		},
 		'DATAMART': {
 			 'PDF'    : function() { this.exportQbeTo('application/pdf'); }
@@ -212,9 +212,6 @@ Ext.extend(Sbi.execution.toolbar.ExportersMenu, Ext.menu.Menu, {
 			,'XLS'    : function() { this.exportWorksheetsTo('application/vnd.ms-excel'); }
 			,'XLSX'    : function() { this.exportWorksheetsTo('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'); }
 		},
-		'KPI': {
-			'PDF' : this.exportKpiTo
-		},
 		'NETWORK': {
 			 'PDF'     : function() { this.exportNetworkTo('pdf'); }
 			,'PNG'     : function() { this.exportNetworkTo('png'); }
@@ -229,7 +226,150 @@ Ext.extend(Sbi.execution.toolbar.ExportersMenu, Ext.menu.Menu, {
 	// =================================================================================================================
 	// METHODS
 	// =================================================================================================================
-	
+	, getExportationUrl: function(format, documentType){
+			Sbi.debug('[ExportersMenu.getExportationUrl] : format = [' + format + '], documentType = [' + documentType + ']');
+		 	if (!this.exportationHandlers[documentType]) {
+		 		Sbi.error('[ExportersMenu.getExportationUrl] : no available exporters for documentType = [' + documentType + ']');
+		 		alert('No available exporters for this document');
+		 		throw new Error('No available exporters for document type ' + documentType);
+		 	}
+		 	if (!this.exportationHandlers[documentType][format]) {
+		 		Sbi.error('[ExportersMenu.getExportationUrl] : format [' + format + '] not supported for documentType = [' + documentType + ']');
+		 		alert('Format ' + format + ' not supported for this document');
+		 		throw new Error('Format ' + format + ' not supported for document type ' + documentType);
+		 	}
+		 	
+			if(documentType != null && documentType == 'REPORT'){
+				var documentUrl = this.getDocumentUrl();
+				var exportationUrl = this.getUrlWithAddedParameters(documentUrl, {'outputType': format}, true);
+				if(exportationUrl == null) {
+					alert("Impossible to build exportation url");
+					return;
+				}
+				return exportationUrl;
+			}else if(documentType != null && documentType == 'OLAP'){
+			    var documentUrl = this.getDocumentUrl();
+			    var documentBaseUrl = this.getBaseUrlPart(documentUrl);
+			    var exportationBaseUrl = this.getUrlWithReplacedEndpoint(documentBaseUrl, 'Print', false);
+			    
+			    parameters = {cube: '01'};
+			    if (format == "PDF") parameters.type = '1';
+			    else if(format == "XLS") parameters.type = '0';
+			    var exportationUrl = this.getUrlWithAddedParameters(exportationBaseUrl, parameters, false);
+			    return exportationUrl;
+			}/*else if(documentType != null && (documentType == 'DASH' || documentType == 'CHART')){
+			    var documentUrl = this.getDocumentUrl();
+			    var documentBaseUrl = this.getBaseUrlPart(documentUrl);
+			    var exportationBaseUrl = this.getUrlWithReplacedEndpoint(documentBaseUrl, 'Print', false);
+			    
+			    parameters = {cube: '01'};
+			    if (format == "PDF") parameters.type = '1';
+			    else if(format == "XLS") parameters.type = '0';
+			    var exportationUrl = this.getUrlWithAddedParameters(exportationBaseUrl, parameters, false);
+			    return exportationUrl;
+			}*/else if(documentType != null && documentType == 'MAP'){
+				if(format == 'PDF') {format = 'pdf';  }
+				if(format == 'JPG') {format = 'jpeg'; }
+				var documentUrl = this.getDocumentUrl();
+				var documentBaseUrl = this.getBaseUrlPart(documentUrl);
+				var exportationUrl = this.getUrlWithAddedParameters(documentBaseUrl, {
+					ACTION_NAME: 'DRAW_MAP_ACTION'
+					, SBI_EXECUTION_ID: this.executionInstance.SBI_EXECUTION_ID
+					, outputFormat: format
+					, inline: false
+				}, false);
+			    return exportationUrl;
+			}else if(documentType != null && documentType == 'DOCUMENT_COMPOSITE'){
+					var documentWindow = this.getDocumentWindow();
+					
+					var newPars='';
+					var isHighchart = false;
+					var isExtChart = false;
+					var randUUID = Math.random();
+					var idxElements = 0;
+					for (var i=0; i<documentWindow.frames.length; i++) {
+						
+						childFrame = documentWindow.frames[i];
+						
+						//if the iframe contains a console document, it's not exported!
+						if (childFrame.Sbi !== undefined && childFrame.Sbi.console !== undefined  ){
+							continue;
+						}
+						
+						var fullName = childFrame.name;
+						var cutName= fullName.substring(7);
+						var urlNotEncoded= childFrame.location.href;
+						
+						// I have to substitute %25 in '%' and %20 in ' ' 
+						urlNotEncoded = urlNotEncoded.replace(/%25/g,'%');
+						urlNotEncoded = urlNotEncoded.replace(/%20/g,' ');
+						
+						// encodeURIComponent is a standard js function. see: http://www.w3schools.com/jsref/jsref_encodeURIComponent.asp
+						var urlEncoded = encodeURIComponent(urlNotEncoded);
+						
+						newPars += '&TRACE_PAR_' + cutName + '=' + urlEncoded;
+						
+						//for highcharts and ext charts documents gets the SVG and send it as a hidden form
+						if (childFrame.chartPanel !== undefined && childFrame.chartPanel.chart !== undefined) {
+							var svg = '';
+							if (childFrame.chartPanel.chartsArr !== undefined){
+								isHighchart = true;
+								svg = this.getHighchartSvg(childFrame);
+							}else{
+								isExtChart = true;
+								svg = this.getExtchartSvg(childFrame);
+							}
+							Ext.DomHelper.useDom = true; // need to use dom because otherwise an html string is composed as a string concatenation,
+							 // but, if a value contains a " character, then the html produced is not correct!!!
+							 // See source of DomHelper.append and DomHelper.overwrite methods
+							 // Must use DomHelper.append method, since DomHelper.overwrite use HTML fragments in any case.
+							 var dh = Ext.DomHelper;
+							 var form = document.getElementById('export-chart-form__'+ randUUID);
+							 if (form === undefined || form === null) {
+							     var form = dh.append(Ext.getBody(), { // creating the hidden form
+											  id: 'export-chart-form__' + randUUID
+											  , tag: 'form'
+											  , method: 'post'
+										  });
+							 }	  
+							 
+							 dh.append(form, {		// creating the hidden input in form
+									tag: 'input'
+									, type: 'hidden'
+									, name: 'SVG_' + cutName
+									, value: ''  // do not put value now since DomHelper.overwrite does not work properly!!
+									});
+							 
+							// putting the chart data into hidden input
+							//form.elements[i].value =  Ext.encode(svg);     
+							form.elements[idxElements].value = svg;  
+							idxElements ++;
+							
+						}				
+					}//for 
+					
+					var urlExporter = this.services['toDCPdf'] + '&OBJECT_ID=' + this.executionInstance.OBJECT_ID;
+					urlExporter += newPars;
+					return urlExporter;
+					
+			}else if(documentType != null && documentType == 'DATAMART'){
+				if(format == 'PDF') {format = 'application/pdf'; }
+				if(format == 'XLS') {format = 'application/vnd.ms-excel'; }
+				if(format == 'XLSX') {format = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'; }
+				if(format == 'RTF') {format = 'application/rtf'; }
+				if(format == 'CSV') {format = 'text/csv'; }
+				if(format == 'JRXML') {format = 'text/jrxml'; }
+				if(format == 'JSON' ) {format = 'application/json'; }
+				var documentUrl = this.getDocumentUrl();
+			    var exportationUrl = this.getUrlWithAddedParameters(documentUrl, {
+			    	ACTION_NAME: 'EXPORT_RESULT_ACTION'
+			    	, SBI_EXECUTION_ID: this.executionInstance.SBI_EXECUTION_ID
+			    	, MIME_TYPE: format
+			    	, RESPONSE_TYPE: 'RESPONSE_TYPE_ATTACHMENT'
+			    }, false);
+			    return exportationUrl;
+			}
+	 }
 	// -----------------------------------------------------------------------------------------------------------------
     // accessor methods
 	// -----------------------------------------------------------------------------------------------------------------
@@ -292,6 +432,7 @@ Ext.extend(Sbi.execution.toolbar.ExportersMenu, Ext.menu.Menu, {
 		var handler = undefined;
 		
 		handler = function() {alert('No handler available for the specified exportation format')};
+		
 		var handlers = this.exportationHandlers[documentType];
 		if(handlers) {
 			handler = handlers[format];
@@ -475,12 +616,8 @@ Ext.extend(Sbi.execution.toolbar.ExportersMenu, Ext.menu.Menu, {
 	 * @param {format} target exportation format
 	 */
 	, exportReportTo: function(format) {
-		var documentUrl = this.getDocumentUrl();
-		var exportationUrl = this.getUrlWithAddedParameters(documentUrl, {'outputType': format}, true);
-		if(exportationUrl == null) {
-			alert("Impossible to build exportation url");
-			return;
-		}
+
+		var exportationUrl =  this.getExportationUrl(format, 'REPORT');
 		window.open(exportationUrl, 'name', 'resizable=1,height=750,width=1000');
 	}
 	
@@ -490,15 +627,8 @@ Ext.extend(Sbi.execution.toolbar.ExportersMenu, Ext.menu.Menu, {
 	 * @param {format} target exportation format
 	 */
 	, exportOlapTo: function (format) {
-	    var documentUrl = this.getDocumentUrl();
-	    var documentBaseUrl = this.getBaseUrlPart(documentUrl);
-	    var exportationBaseUrl = this.getUrlWithReplacedEndpoint(documentBaseUrl, 'Print', false);
-	    
-	    parameters = {cube: '01'};
-	    if (format == "PDF") parameters.type = '1';
-	    else if(format == "XLS") parameters.type = '0';
-	    var exportationUrl = this.getUrlWithAddedParameters(exportationBaseUrl, parameters, false);
-	    
+
+	    var exportationUrl = this.getExportationUrl(format, 'OLAP');	    
 		window.open(exportationUrl,'name','resizable=1,height=750,width=1000');
 	}
 	
@@ -520,15 +650,8 @@ Ext.extend(Sbi.execution.toolbar.ExportersMenu, Ext.menu.Menu, {
 	 * @param {format} target exportation format
 	 */
 	, exportGeoTo: function (format) {	
-		var documentUrl = this.getDocumentUrl();
-		var documentBaseUrl = this.getBaseUrlPart(documentUrl);
-		var exportationUrl = this.getUrlWithAddedParameters(documentBaseUrl, {
-			ACTION_NAME: 'DRAW_MAP_ACTION'
-			, SBI_EXECUTION_ID: this.executionInstance.SBI_EXECUTION_ID
-			, outputFormat: format
-			, inline: false
-		}, false);
-		
+
+		var exportationUrl = this.getExportationUrl(format, 'MAP');	 
 		window.open(exportationUrl,'name','resizable=1,height=750,width=1000');
 	}
 	
@@ -538,77 +661,8 @@ Ext.extend(Sbi.execution.toolbar.ExportersMenu, Ext.menu.Menu, {
 	 * @TODO terrible code. refactor when possible!
 	 */
 	, exportCompositeDocumentTo: function () {
-		
-		var documentWindow = this.getDocumentWindow();
-		
-		var newPars='';
-		var isHighchart = false;
-		var isExtChart = false;
-		var randUUID = Math.random();
-		var idxElements = 0;
-		for (var i=0; i<documentWindow.frames.length; i++) {
-			
-			childFrame = documentWindow.frames[i];
-			
-			//if the iframe contains a console document, it's not exported!
-			if (childFrame.Sbi !== undefined && childFrame.Sbi.console !== undefined  ){
-				continue;
-			}
-			
-			var fullName = childFrame.name;
-			var cutName= fullName.substring(7);
-			var urlNotEncoded= childFrame.location.href;
-			
-			// I have to substitute %25 in '%' and %20 in ' ' 
-			urlNotEncoded = urlNotEncoded.replace(/%25/g,'%');
-			urlNotEncoded = urlNotEncoded.replace(/%20/g,' ');
-			
-			// encodeURIComponent is a standard js function. see: http://www.w3schools.com/jsref/jsref_encodeURIComponent.asp
-			var urlEncoded = encodeURIComponent(urlNotEncoded);
-			
-			newPars += '&TRACE_PAR_' + cutName + '=' + urlEncoded;
-			
-			//for highcharts and ext charts documents gets the SVG and send it as a hidden form
-			if (childFrame.chartPanel !== undefined && childFrame.chartPanel.chart !== undefined) {
-				var svg = '';
-				if (childFrame.chartPanel.chartsArr !== undefined){
-					isHighchart = true;
-					svg = this.getHighchartSvg(childFrame);
-				}else{
-					isExtChart = true;
-					svg = this.getExtchartSvg(childFrame);
-				}
-				Ext.DomHelper.useDom = true; // need to use dom because otherwise an html string is composed as a string concatenation,
-				 // but, if a value contains a " character, then the html produced is not correct!!!
-				 // See source of DomHelper.append and DomHelper.overwrite methods
-				 // Must use DomHelper.append method, since DomHelper.overwrite use HTML fragments in any case.
-				 var dh = Ext.DomHelper;
-				 var form = document.getElementById('export-chart-form__'+ randUUID);
-				 if (form === undefined || form === null) {
-				     var form = dh.append(Ext.getBody(), { // creating the hidden form
-								  id: 'export-chart-form__' + randUUID
-								  , tag: 'form'
-								  , method: 'post'
-							  });
-				 }	  
-				 
-				 dh.append(form, {		// creating the hidden input in form
-						tag: 'input'
-						, type: 'hidden'
-						, name: 'SVG_' + cutName
-						, value: ''  // do not put value now since DomHelper.overwrite does not work properly!!
-						});
-				 
-				// putting the chart data into hidden input
-				//form.elements[i].value =  Ext.encode(svg);     
-				form.elements[idxElements].value = svg;  
-				idxElements ++;
-				
-			}				
-		}//for 
-		
-		var urlExporter = this.services['toDCPdf'] + '&OBJECT_ID=' + this.executionInstance.OBJECT_ID;
-		urlExporter += newPars;
+
+		var urlExporter = this.getExportationUrl(null, 'DOCUMENT_COMPOSITE');	
 		
 		window.open(urlExporter,'exportWindow','resizable=1,height=750,width=1000');
 		
@@ -686,12 +740,7 @@ Ext.extend(Sbi.execution.toolbar.ExportersMenu, Ext.menu.Menu, {
 	 */
 	, exportQbeTo: function (mimeType) {	
 		var documentUrl = this.getDocumentUrl();
-	    var exportationUrl = this.getUrlWithAddedParameters(documentUrl, {
-	    	ACTION_NAME: 'EXPORT_RESULT_ACTION'
-	    	, SBI_EXECUTION_ID: this.executionInstance.SBI_EXECUTION_ID
-	    	, MIME_TYPE: mimeType
-	    	, RESPONSE_TYPE: 'RESPONSE_TYPE_ATTACHMENT'
-	    }, false);
+	    var exportationUrl = this.getExportationUrl(mimeType, 'DATAMART');	 
 	   
 	    if(Ext.isIE6) {
 		    var form = document.getElementById('export-form');
@@ -808,7 +857,9 @@ Ext.extend(Sbi.execution.toolbar.ExportersMenu, Ext.menu.Menu, {
 	// -----------------------------------------------------------------------------------------------------------------
     // utility methods
 	// -----------------------------------------------------------------------------------------------------------------
-
+	 
+	 
+	 
 	/**
 	 * @deprecated
 	 */

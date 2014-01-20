@@ -202,6 +202,9 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 				, border : false
 			});
 			executionPanel.execute();
+			
+			// utility class for invoking export from an external application
+			Sbi.execution.ExporterUtils.setExecutionPanel(executionPanel);
 		}
 	});
     

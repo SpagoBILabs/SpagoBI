@@ -173,4 +173,23 @@ Ext.extend(Sbi.browser.DocBrowserContainer, Ext.Panel, {
 			this.documentexecution.datasetLabel = datasetLabel;
 		}
 	}
+
+	,
+	getActiveExecutionPanel : function () {
+		if (this.brSheet instanceof Ext.TabPanel) {
+			var activeTab = this.brSheet.getActiveTab();
+			if (activeTab instanceof Sbi.execution.ExecutionPanel) {
+				return activeTab;
+			} else {
+				return null;
+			}
+		} else {
+			var activePanel = this.brSheet.activeItem;
+			if (activeTab instanceof Sbi.execution.ExecutionPanel) {
+				return activeTab;
+			} else {
+				return null;
+			}
+		}
+	}
 });

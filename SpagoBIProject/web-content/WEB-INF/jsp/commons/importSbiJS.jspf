@@ -117,7 +117,7 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 
  END-PRODUCTION -->
 
-
+<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/execution/ExporterUtils.js")%>'></script>
 
 <script>
 	// Session parameters manager must be initialized

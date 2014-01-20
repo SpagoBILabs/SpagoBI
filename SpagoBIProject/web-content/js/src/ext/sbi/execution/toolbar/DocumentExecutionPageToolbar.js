@@ -23,10 +23,14 @@ Sbi.execution.toolbar.DocumentExecutionPageToolbar = function(config) {
 	
 	var c = Ext.apply(defaultSettings, config || {});	
 	Ext.apply(this, c);
+	
 	this.addEvents('beforeinit', 'click', 'showmask');
 	this.initServices();
 	this.init();
+	
 	Sbi.execution.toolbar.DocumentExecutionPageToolbar.superclass.constructor.call(this, c);
+	
+	
 };
 
 /**
@@ -218,7 +222,6 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 		this.addFill();
 		
 		Sbi.trace('[DocumentExecutionPageToolbar.synchronize]: Document mode is equal to [' + this.documentMode + ']');
-		
 		if (this.documentMode === 'INFO') {
 			this.addButtonsForInfoMode();
 		} else if (this.documentMode === 'VIEW') {
@@ -281,30 +284,30 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 		}
 		
 		
-		// if document is QBE datamart and user is a read-only user, he cannot execute main document, but only saved queries.
-		// If there is a subobject preference, the execution button starts the subobject execution
-		if (
-				this.executionInstance.document.typeCode != 'DATAMART' || 
-				(
-					Sbi.user.functionalities.contains('BuildQbeQueriesFunctionality') || 
-					(this.preferenceSubobjectId !== undefined && this.preferenceSubobjectId !== null)
-				)
-			) {
-			this.addSeparator();
-			this.addButton(new Ext.Toolbar.Button({
-				iconCls: 'icon-execute'
-				, tooltip: LN('sbi.execution.parametersselection.toolbar.next')
-				, scope: this
-				, handler : function() {
-					if (this.preferenceSubobjectId !== undefined && this.preferenceSubobjectId !== null) {
-						this.executionInstance.SBI_SUBOBJECT_ID = this.preferenceSubobjectId;
-						this.controller.refreshDocument();
-					} else {
-						this.controller.executeDocument(this.executionInstance);
-					}
-				}
-			}));
-		}
+//		// if document is QBE datamart and user is a read-only user, he cannot execute main document, but only saved queries.
+//		// If there is a subobject preference, the execution button starts the subobject execution
+//		if (
+//				this.executionInstance.document.typeCode != 'DATAMART' || 
+//				(
+//					Sbi.user.functionalities.contains('BuildQbeQueriesFunctionality') || 
+//					(this.preferenceSubobjectId !== undefined && this.preferenceSubobjectId !== null)
+//				)
+//			) {
+//			this.addSeparator();
+//			this.addButton(new Ext.Toolbar.Button({
+//				iconCls: 'icon-execute'
+//				, tooltip: LN('sbi.execution.parametersselection.toolbar.next')
+//				, scope: this
+//				, handler : function() {
+//					if (this.preferenceSubobjectId !== undefined && this.preferenceSubobjectId !== null) {
+//						this.executionInstance.SBI_SUBOBJECT_ID = this.preferenceSubobjectId;
+//						this.controller.refreshDocument();
+//					} else {
+//						this.controller.executeDocument(this.executionInstance);
+//					}
+//				}
+//			}));
+//		}
 		
 		Sbi.trace('[DocumentExecutionPageToolbar.addButtonsForInfoMode]: OUT');
 	}
@@ -358,7 +361,7 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 			}
 		
 			this.addButton(new Ext.Toolbar.Button({
-				iconCls: 'icon-execute' 
+				iconCls: 'icon-refresh' 
 				, tooltip: LN('sbi.execution.executionpage.toolbar.refresh')
 			    , scope: this
 			    , handler : function() {
@@ -372,18 +375,18 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 	            					LN('sbi.execution.executionpage.toolbar.qberefresh'),            
 	            					function(btn, text) {
 	                					if (btn=='yes') {
-											this.controller.refreshDocument();
+											this.controller.refreshLastExecution();
 	                					}
 	            					},
 	            					this
 									);
 								}else{
 									//user who cannot build qbe queries
-									this.controller.refreshDocument();
+									this.controller.refreshLastExecution();
 								}
 						} // it 's not a qbe
 						else {
-							this.controller.refreshDocument();
+							this.controller.refreshLastExecution();
 					}
 				}			
 			}));

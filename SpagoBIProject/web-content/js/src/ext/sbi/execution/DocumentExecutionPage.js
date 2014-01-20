@@ -30,8 +30,12 @@ Sbi.execution.DocumentExecutionPage = function(config, doc) {
 		labelAlign: 'left'
 		, maskOnRender: true
 		, parametersSliderWidth: 300
-		, collapseParametersSliderOnExecution: false
+		, parametersSliderHeight: 250
+		//, collapseParametersSliderOnExecution: false
 		, shortcutsHidden: false
+		, parametersRegion : "east"
+		, parametersSliderCollapsed : false
+		, parametersSliderFloatable : true
 		
 		// private...
 		, isParameterPanelReady: false
@@ -132,6 +136,9 @@ Sbi.execution.DocumentExecutionPage = function(config, doc) {
 /**
  * @cfg {Object} subobject an object that contains information related to the subobject to execute. It is optional.
  */
+/**
+ * @cfg {String} parametersRegion a String representing the region where parameters are placed; admissible values are "east" or "north"
+ */
 
 Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
     
@@ -184,11 +191,6 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
      */
 	, snapshotId: null
 	
-	/**
-	 * @property {Boolean} collapseParametersSliderOnExecution true to collapse parameters panel when the executed document 
-	 * is displayed, false otherwise. The default is false.
-	 */
-	, collapseParametersSliderOnExecution: null
 	/**
      * @property {String} shortcutsHidden true if shortcuts panel is hidden, 
      * false otherwise. The default is false.
@@ -269,7 +271,12 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
      * in the toolbar. It is hided on close an resynch on show. 
      */
     , favouritesWin: null
-   
+    
+    /**
+     * @property {Object} lastParametersFormState The last parameters form state applied for execution
+     */
+    , lastParametersFormState: null
+    
     , loadingMask: null
     , maskOnRender: null
    
@@ -293,10 +300,31 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 	/**
 	 * @method
 	 * 
+	 * @return {Object} the value of #lastParametersFormState
+	 */
+	, getLastParametersFormState : function () {
+		return this.lastParametersFormState;
+	}
+
+
+	/**
+	 * @method
+	 * 
+	 * Sets the value of #lastParametersFormState
+	 * 
+	 * @param {Object} state The last parameters form state applied to an execution 
+	 */
+	, setLastParametersFormState : function (state) {
+		this.lastParametersFormState = state;
+	}
+	
+	/**
+	 * @method
+	 * 
 	 * @return {Boolean} true if #documentVisualizationModality is equal to 'INFO'
 	 */
 	, isInfoPageVisible: function() {
-		return getDocumentVisualizationModality() === 'INFO';
+		return this.getDocumentVisualizationModality() === 'INFO';
 	}
 	/**
 	 * @method
@@ -304,7 +332,7 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 	 * @return {Boolean} true if #documentVisualizationModality is equal to 'VIEW'
 	 */
 	, isDocumentPageVisible: function() {
-		return getDocumentVisualizationModality() === 'VIEW';
+		return this.getDocumentVisualizationModality() === 'VIEW';
 	}
 	
 	/**
@@ -412,12 +440,12 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 		this.infoPage = new Sbi.execution.InfoPage(config, doc);
 		this.documentPage = new Sbi.execution.DocumentPage(config, doc);
 		this.documentPage.on('crossnavigation', function(config) {
-			Sbi.trace('[ParametersSelectionPage.documentPage.on(\'crossnavigation\')]: IN');
+			Sbi.trace('[DocumentExecutionPage.documentPage.on(\'crossnavigation\')]: IN');
 			this.fireEvent('crossnavigation', config);
-			Sbi.trace('[ParametersSelectionPage.documentPage.on(\'crossnavigation\')]: OUT');
+			Sbi.trace('[DocumentExecutionPage.documentPage.on(\'crossnavigation\')]: OUT');
 		}, this);
 		this.documentPage.on('loadurlfailure', function(errors ) {
-			Sbi.trace('[ParametersSelectionPage.documentPage.on(\'loadurlfailure\')]: IN');
+			Sbi.trace('[DocumentExecutionPage.documentPage.on(\'loadurlfailure\')]: IN');
 			this.showInfo();
 			var messageBox = Ext.MessageBox.show({
 				title: 'Error',
@@ -429,7 +457,7 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 				animEl: 'root-menu'        			
 			});
 			this.fireEvent('loadurlfailure', errors);
-			Sbi.trace('[ParametersSelectionPage.documentPage.on(\'loadurlfailure\')]: OUT');
+			Sbi.trace('[DocumentExecutionPage.documentPage.on(\'loadurlfailure\')]: OUT');
 		}, this);
 		//event comung from the document
 		this.documentPage.on('managebutton', function(button, property, value ) {
@@ -456,6 +484,7 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 			, items:[{
 				layout: 'border'
 				, items: [this.documentPanel]
+				, border: false
 			}]
 		});
 		
@@ -479,7 +508,7 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 		}
 		
 		this.parametersSlider = new Ext.Panel({
-			region:'east'
+			region: config.parametersRegion
 			, title: LN('sbi.execution.parametersselection.parameters')
 			, border: true
 			, frame: false
@@ -488,12 +517,19 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 			//, hideCollapseTool: true
 			//, titleCollapse: true
 			//, collapseMode: 'mini'
-			//, split: true
+			, split: true
+			, floatable : config.parametersSliderFloatable
 			, autoScroll: true
-			, width: this.parametersSliderWidth 
+			, width: config.parametersRegion == 'east' ?  this.parametersSliderWidth : undefined
+			, height: config.parametersRegion == 'north' ? config.parametersSliderHeight : undefined
+			//, autoHeight : true  // uncomment this if you want auto height and comment height
 			, layout: 'fit'
 			, items: [this.parametersPanel]
 		});
+		
+		// uncomment this if you want auto height
+		// workaround: when using autoHeight, the panel is displayed above (NOT on top) the info panel; forcing a deferred doLayout solves the problem 
+		//this.parametersSlider.on('render', function(thePanel) {this.doLayout.defer(1000, this);}, this);
 		
 		return this.parametersSlider;
 	}
@@ -562,8 +598,34 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 			this.doLayout();
 		}, this);
 		
+		this.parametersPanel.on('executionbuttonclicked', this.parametersExecutionButtonHandler, this);
 		
 		return this.parametersPanel;
+	}
+	
+	, parametersExecutionButtonHandler : function () {
+		// if type is QBE inform user that will lose configurations
+		if (this.executionInstance.document.typeCode == 'DATAMART') {
+			if (Sbi.user.functionalities.contains('BuildQbeQueriesFunctionality') && Sbi.user.functionalities.contains('SaveSubobjectFunctionality')) {
+				
+				Ext.MessageBox.confirm(
+				    LN('sbi.generic.warning'),
+					LN('sbi.execution.executionpage.toolbar.qberefresh'),            
+					function(btn, text) {
+    					if (btn=='yes') {
+							this.refreshDocument();
+    					}
+					},
+					this
+				);
+			} else {
+				//user who cannot build qbe queries
+				this.refreshDocument();
+			}
+		} // it 's not a qbe
+		else {
+			this.refreshDocument();
+		}
 	}
 	
 	/**
@@ -627,7 +689,7 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 	 * @method
 	 */
     , synchronize: function( executionInstance ) {
-    	Sbi.trace('[ParametersSelectionPage.synchronize]: IN');
+    	Sbi.trace('[DocumentExecutionPage.synchronize]: IN');
 		if(this.fireEvent('beforesynchronize', this, executionInstance, this.executionInstance) !== false){
 			this.executionInstance = executionInstance;
 			
@@ -642,16 +704,16 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 			this.shortcutsPanelSynchronizationPending = true;
 			this.shortcutsPanel.synchronize( this.executionInstance );
 		}
-		Sbi.trace('[ParametersSelectionPage.synchronize]: OUT');
+		Sbi.trace('[DocumentExecutionPage.synchronize]: OUT');
 	}
 
     , synchronizeToolbar: function( executionInstance, documentMode ){
-    	Sbi.trace('[ParametersSelectionPage.synchronizeToolbar]: IN');
+    	Sbi.trace('[DocumentExecutionPage.synchronizeToolbar]: IN');
 		if(this.toolbar){
 			this.toolbar.documentMode = documentMode || 'INFO';
 			this.toolbar.synchronize( this, executionInstance);
 		}
-		Sbi.trace('[ParametersSelectionPage.synchronizeToolbar]: OUT');
+		Sbi.trace('[DocumentExecutionPage.synchronizeToolbar]: OUT');
     }
     
 	// ----------------------------------------------------------------------------------------
@@ -663,12 +725,12 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 	 * @method
 	 */
 	, showInfo: function() {
-		Sbi.trace('[ParametersSelectionPage.showInfo]: IN');
+		Sbi.trace('[DocumentExecutionPage.showInfo]: IN');
 		this.documentVisualizationModality = 'INFO';
 		this.synchronizeToolbar( this.executionInstance, this.documentVisualizationModality );
 		
 		this.documentPanel.getLayout().setActiveItem( 0 );
-		Sbi.trace('[ParametersSelectionPage.showInfo]: OUT');
+		Sbi.trace('[DocumentExecutionPage.showInfo]: OUT');
 	}
 	
 	/**
@@ -678,13 +740,13 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 	 * @method
 	 */
 	, showDocument: function() {
-		Sbi.trace('[ParametersSelectionPage.showDocument]: IN');
+		Sbi.trace('[DocumentExecutionPage.showDocument]: IN');
 		
 		this.documentVisualizationModality = 'VIEW';
 		this.synchronizeToolbar( this.executionInstance, this.documentVisualizationModality );
 		
 		this.documentPanel.getLayout().setActiveItem( 1 );
-		Sbi.trace('[ParametersSelectionPage.showDocument]: OUT');
+		Sbi.trace('[DocumentExecutionPage.showDocument]: OUT');
 	}
 	
 
@@ -695,7 +757,7 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 	 */
 	, collapseParametersSlider: function() {
 		this.parametersSlider.collapse(false);
-		Sbi.trace('[ParametersSelectionPage.collapseParametersSlider]: slider succesfully collapsed');
+		Sbi.trace('[DocumentExecutionPage.collapseParametersSlider]: slider succesfully collapsed');
 	}
 	
 	/**
@@ -705,7 +767,7 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 	 */
 	, expandParametersSlider: function() {
 		this.parametersSlider.expand(false);
-		Sbi.trace('[ParametersSelectionPage.expandParametersSlider]: slider succesfully expanded');
+		Sbi.trace('[DocumentExecutionPage.expandParametersSlider]: slider succesfully expanded');
 	}
 	
 	/**
@@ -715,7 +777,7 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 	 */
 	, showParametersSlider: function() {
 		this.parametersSlider.show();
-		Sbi.trace('[ParametersSelectionPage.showParametersSlider]: slider succesfully shown');
+		Sbi.trace('[DocumentExecutionPage.showParametersSlider]: slider succesfully shown');
 	}
 	
 	/**
@@ -725,7 +787,7 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 	 */
 	, hideParametersSlider: function() {
 		this.parametersSlider.hide();
-		Sbi.trace('[ParametersSelectionPage.hideParametersSlider]: slider succesfully hided');
+		Sbi.trace('[DocumentExecutionPage.hideParametersSlider]: slider succesfully hided');
 	}
 	
 	
@@ -761,7 +823,6 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 		subobjectPanel.on('executionrequest', function(subObjectId) {
 			this.executionInstance.SBI_SUBOBJECT_ID = subObjectId;
 			this.subobjectWin.cardPanel.getLayout().setActiveItem( 1 );
-			this.subobjectWin.executeButton.enable();
 			if(!this.subobjectWin.parametersPanel.sync) {
 				this.subobjectWin.parametersPanel.synchronize( this.executionInstance );
 				this.subobjectWin.parametersPanel.sync = true;
@@ -782,6 +843,12 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 			this.subobjectWin.parametersPanel.setFormState(this.parametersPanel.getFormState());
 		}, this);
 		
+		parametersPanel.on('executionbuttonclicked', function() {
+          	 this.subobjectWin.close();
+             this.parametersPanel.setFormState(this.subobjectWin.parametersPanel.getFormState());
+             this.refreshDocument();
+        }, this);
+		
 		var cardPanel = new Ext.Panel({layout:'card'
 			, border: false
 			, hideMode: !Ext.isIE ? 'nosize' : 'display'
@@ -791,24 +858,13 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 			]
 		});
 		
-		var executeButton = new Ext.Button({
-            text:'Execute',
-            disabled:true,
-            scope: this,
-            handler: function(){
-           	 this.subobjectWin.close();
-                this.parametersPanel.setFormState(this.subobjectWin.parametersPanel.getFormState());
-                this.refreshDocument();
-            }
-        });
-		
 		this.subobjectWin = new Ext.Window({
 			title: "Execute customized view...",
 			layout: 'fit',
 			width: 600,
 			height: 400,
 			modal: true,
-			buttons: [executeButton ,{
+			buttons: [{
                  text: 'Close',
                  scope: this,
                  handler: function(){
@@ -819,7 +875,6 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 		});
 		this.subobjectWin.cardPanel = cardPanel;
 		this.subobjectWin.parametersPanel = parametersPanel;
-		this.subobjectWin.executeButton = executeButton;
 		this.subobjectWin.show();
 		
 		subobjectPanel.synchronize( this.executionInstance );		
@@ -890,7 +945,7 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 	 * @method
 	 */
 	, executeDocument: function(executionInstance) {
-		Sbi.trace('[ParametersSelectionPage.executeDocument]: IN');
+		Sbi.trace('[DocumentExecutionPage.executeDocument]: IN');
 		
 		var formState = this.parametersPanel.getFormState();
 		if(this.fireEvent('beforeexecution', this, this.executionInstance, formState) !== false){
@@ -899,7 +954,7 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 			this.doExecuteDocumunt(executionInstance, formState);
 		}
 		this.showDocument();
-		Sbi.trace('[ParametersSelectionPage.executeDocument]: OUT');
+		Sbi.trace('[DocumentExecutionPage.executeDocument]: OUT');
 	}
 	
 	/**
@@ -910,21 +965,71 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 	 * @method
 	 */
 	, refreshDocument: function(executionInstance) {
-		Sbi.trace('[ParametersSelectionPage.refreshDocument]: IN');
+		Sbi.trace('[DocumentExecutionPage.refreshDocument]: IN');
 		
 		var formState = this.parametersPanel.getFormState();
 		if(this.fireEvent('beforeexecution', this, this.executionInstance, formState) !== false){
 			this.doExecuteDocumunt(executionInstance, formState);
+			this.setLastParametersFormState(formState);
 		}		
 		this.showDocument();
-		Sbi.trace('[ParametersSelectionPage.refreshDocument]: OUT');
+		Sbi.trace('[DocumentExecutionPage.refreshDocument]: OUT');
 	}
+	
+	, refreshLastExecution : function () {
+		Sbi.trace('[DocumentExecutionPage.refreshLastExecution]: IN');
+		if (this.isParametersFormChangedSinceLastExecution()) {
+			Ext.MessageBox.show({
+				title : LN('sbi.generic.warning')
+				, msg : LN('sbi.execution.executionpage.toolbar.refreshlastwarning')
+				, buttons : {ok:LN('sbi.general.continue'), cancel:LN('sbi.general.cancel')}
+				, fn : function(btn, text) {
+					if (btn == 'ok') {
+						this.doRefreshLastExecution();
+					}
+				}
+				, scope: this
+				, icon: Ext.MessageBox.QUESTION
+			});
+		} else {
+			this.doRefreshLastExecution();
+		}
+		Sbi.trace('[DocumentExecutionPage.refreshLastExecution]: OUT');
+	}
+	
+	, isParametersFormChangedSinceLastExecution : function () {
+		Sbi.trace('[DocumentExecutionPage.isParametersFormChangedSinceLastExecution]: IN');
+		var lastState = this.getLastParametersFormState();
+		Sbi.trace('[DocumentExecutionPage.isParametersFormChangedSinceLastExecution]: last state = ' + Sbi.commons.JSON.encode(lastState));
+		if (lastState == null) lastState = {}; // Sbi.commons.JSON.encode gives different results for null and {} but we don't have to distinguish
+		var formState = this.parametersPanel.getFormState();
+		Sbi.trace('[DocumentExecutionPage.isParametersFormChangedSinceLastExecution]: current form state = ' + Sbi.commons.JSON.encode(formState));
+		if (formState == null) formState = {}; // Sbi.commons.JSON.encode gives different results for null and {} but we don't have to distinguish
+		var toReturn = Sbi.commons.JSON.encode(lastState) != Sbi.commons.JSON.encode(formState);
+		Sbi.trace('[DocumentExecutionPage.isParametersFormChangedSinceLastExecution]: OUT : ' + toReturn);
+		return toReturn;
+	}
+	
+	, doRefreshLastExecution : function () {
+		Sbi.trace('[DocumentExecutionPage.doRefreshLastExecution]: IN');
+		var lastState = this.getLastParametersFormState();
+		if(this.fireEvent('beforeexecution', this, this.executionInstance, lastState) !== false){
+			this.doExecuteDocumunt(this.executionInstance, lastState);
+		}
+		this.showDocument();
+		Sbi.trace('[DocumentExecutionPage.doRefreshLastExecution]: OUT');
+	}
+	
 	
 	, doExecuteDocumunt: function(executionInstance, formState) {
 		this.memorizeParametersInSession();
 		this.executionInstance.PARAMETERS = Sbi.commons.JSON.encode( formState );
-		Sbi.trace('[ParametersSelectionPage.doExecuteDocumunt]: Executing document with these parameters: ' + this.executionInstance.PARAMETERS);
+		Sbi.trace('[DocumentExecutionPage.doExecuteDocumunt]: Executing document with these parameters: ' + this.executionInstance.PARAMETERS);
 		this.documentPage.synchronize( this.executionInstance );
+		
+		if (this.parametersSliderCollapsed) {
+			this.collapseParametersSlider(true);
+		}
 	}
 
 	
