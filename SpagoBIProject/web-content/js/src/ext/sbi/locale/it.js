@@ -761,6 +761,11 @@ Sbi.locale.ln['sbi.ds.metadata.column.attribute']='Attributo';
 Sbi.locale.ln['sbi.ds.metadata.column.value']='Valore';
 Sbi.locale.ln['sbi.ds.metadata.dataset.title']='Metadata dataset';
 Sbi.locale.ln['sbi.ds.metadata.dataset.title2']='Tipo Metadati';
+Sbi.locale.ln['sbi.ds.metadata.dataset.hierarchy.column']='Colonna Gerarchia';
+Sbi.locale.ln['sbi.ds.metadata.dataset.hierarchy.level']='Livello Gerarchia';
+Sbi.locale.ln['sbi.ds.metadata.dataset.hierarchy.clear']='Pulisci';
+Sbi.locale.ln['sbi.ds.metadata.dataset.hierarchy.expert']='Modalit\u00e0 Esperto';
+Sbi.locale.ln['sbi.ds.metadata.dataset.hierarchy.simple']='Modalit\u00e0 Semplificata';
 
 Sbi.locale.ln['sbi.datasource.label']= 'Etichetta';
 Sbi.locale.ln['sbi.datasource.description']= 'Descrizione';
