@@ -14,11 +14,13 @@ import it.eng.spagobi.engines.qbe.QbeEngineAnalysisState;
 import it.eng.spagobi.engines.qbe.QbeEngineInstance;
 import it.eng.spagobi.engines.qbe.SmartFilterAnalysisState;
 import it.eng.spagobi.engines.qbe.template.QbeTemplateParseException;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.engines.AbstractEngineStartAction;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineStartupException;
 
 import java.util.Locale;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
@@ -173,6 +175,21 @@ public class FormEngineStartAction extends AbstractEngineStartAction {
 		}		
 
 		
+	}
+    
+	public Map getEnv() {
+		Map env = super.getEnv();
+		
+		IDataSource datasource = this.getDataSource();
+		if (datasource == null || datasource.checkIsReadOnly()) {
+			logger.debug("Getting datasource for writing, since the datasource is not defined or it is read-only");
+			IDataSource datasourceForWriting = this.getDataSourceForWriting();
+			env.put(EngineConstants.DATASOURCE_FOR_WRITING, datasourceForWriting);
+		} else {
+			env.put(EngineConstants.DATASOURCE_FOR_WRITING, datasource);
+		}
+
+		return env;
 	}
     
 }
