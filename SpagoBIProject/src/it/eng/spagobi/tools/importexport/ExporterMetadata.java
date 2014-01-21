@@ -1699,13 +1699,13 @@ public class ExporterMetadata {
 			hibFunct.setPath(funct.getPath());
 			hibFunct.setProg(funct.getProg());
 
-			Integer parentId2 = funct.getParentId();
-			if(parentId2!=null){
-				SbiFunctions hibFunctParent = (SbiFunctions)session.load(SbiFunctions.class, parentId2);
-				if(hibFunctParent != null){
-					hibFunct.setParentFunct(hibFunctParent);
-				}
-			}
+//			Integer parentId2 = funct.getParentId();
+//			if(parentId2!=null){
+//				SbiFunctions hibFunctParent = (SbiFunctions)session.load(SbiFunctions.class, parentId2);
+//				if(hibFunctParent != null){
+//					hibFunct.setParentFunct(hibFunctParent);
+//				}
+//			}
 			
 			session.save(hibFunct);
 			tx.commit();
