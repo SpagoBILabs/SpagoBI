@@ -60,6 +60,36 @@ Sbi.settings.mydata = {
 	 */
 	, showDataSetTab: true
 	, showModelsTab: true
+	/**
+	 * Visibility of MyData TabToolbar (this hide the whole tab toolbar)
+	 */
+	, showTabToolbar: true
+};
+
+/**
+ * My Analysis
+ */
+Sbi.settings.myanalysis = {
+		/**
+		 * This options will set the default active
+		 * filter used the first time the MyAnalysis page is opened
+		 * Possibile values are:
+		 * -'Report'
+		 * -'Cockpit'
+		 * -'Map'
+		 * -'All'
+		 * 
+		 * Make attention that the default filter selected must be 
+		 * a visible filter, so for example if 
+		 * defaultFilter:'Report'
+		 * showReportFilter must be true
+		 */
+		 defaultFilter: 'All'
+
+		, showReportFilter: true
+		, showCockpitFilter: true
+		, showMapFilter: true
+		, showAllFilter: true		
 };
 
 /**
@@ -97,13 +127,20 @@ Sbi.settings.execution = {
 		
 		, parametersselectionpage : {
 			parametersRegion : "east" // admissible values: east/north
-			, parametersSliderWidth : 320 // valid in case of east region
+			, parametersSliderWidth : 300 // valid in case of east region
 			, parametersSliderHeight : 200 // valid in case of north region
 			, parametersSliderCollapsed : false // applied only in case there are no parameters to fill
 			, parametersSliderFloatable : false // true to allow clicking on collapsed parameters panel's bar to display the parameters' panel floated above the layout, 
 												// false to force the user to fully expand parameters' panel by clicking the expand button to see it again
 		}
 };
+
+/**
+ * Details for save window GUI (final user side)
+Sbi.settings.saveWindow = {
+		showScopeInfo: false
+};
+ */
 
 /**
  * Document browser settings
