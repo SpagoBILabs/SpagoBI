@@ -259,7 +259,7 @@ Sbi.locale.ln['sbi.execution.parametersselection.loadingmsg']  = 'Laden von Para
 Sbi.locale.ln['sbi.execution.parametersselection.noParametersToBeFilled']  = '[Dokument hat keine Parameter zu füllen]'; //'[Document has no parameters to be filled]';
 Sbi.locale.ln['sbi.execution.parametersselection.toolbar.back']  = 'Ändere ausgewählt Rolle'; //'Change selected role';
 Sbi.locale.ln['sbi.execution.parametersselection.toolbar.clear']  = 'Parameter zurücksetzen'; //'Reset parameters form';
-Sbi.locale.ln['sRitbi.execution.parametersselection.toolbar.save']  = 'Speichere Parameter Form als Viewpoint'; //'Save parameters form state as viewpoint';
+Sbi.locale.ln['sbi.execution.parametersselection.toolbar.save']  = 'Speichere Parameter Form als Viewpoint'; //'Save parameters form state as viewpoint';
 Sbi.locale.ln['sbi.execution.parametersselection.toolbar.open']  = 'Öffne gespeicherte Parameter'; //'Open saved parameters window';
 
 Sbi.locale.ln['sbi.execution.parametersselection.toolbar.save.public.description']='Jeder, der dieses Dokument ausführen kann, sieht auch die gespeicherten Parameter'; //'Everybody that can execute this document will see also your saved parameters';
