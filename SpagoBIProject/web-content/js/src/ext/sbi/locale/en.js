@@ -795,6 +795,11 @@ Sbi.locale.ln['sbi.ds.metadata.column.attribute']='Attribute';
 Sbi.locale.ln['sbi.ds.metadata.column.value']='Value';
 Sbi.locale.ln['sbi.ds.metadata.dataset.title']='Dataset Metadata';
 Sbi.locale.ln['sbi.ds.metadata.dataset.title2']='Metadata Type';
+Sbi.locale.ln['sbi.ds.metadata.dataset.hierarchy.column']='Hierarchy Column';
+Sbi.locale.ln['sbi.ds.metadata.dataset.hierarchy.level']='Hierarchy Level';
+Sbi.locale.ln['sbi.ds.metadata.dataset.hierarchy.clear']='Clear';
+Sbi.locale.ln['sbi.ds.metadata.dataset.hierarchy.expert']='Expert mode';
+Sbi.locale.ln['sbi.ds.metadata.dataset.hierarchy.simple']='Simple mode';
 
 
 //Multitenant
