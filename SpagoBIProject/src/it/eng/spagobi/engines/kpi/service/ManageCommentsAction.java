@@ -102,7 +102,10 @@ public class ManageCommentsAction extends AbstractSpagoBIAction {
 				IEngUserProfile profile = getUserProfile();
 				Collection functions = ((UserProfile)profile).getFunctionalities();
 
-				if(commentId != null && !commentId.equals("") && functions.contains(SpagoBIConstants.KPI_COMMENT_DELETE)){
+				if(commentId != null && !commentId.equals("") 
+						&& ( functions.contains(SpagoBIConstants.KPI_COMMENT_DELETE) 
+								|| functions.contains(SpagoBIConstants.KPI_COMMENT_EDIT_MY) 
+								|| functions.contains(SpagoBIConstants.KPI_COMMENT_EDIT_ALL)) ){
 						DAOFactory.getKpiInstanceDAO().deleteKpiComment(Integer.valueOf(commentId));
 						logger.debug("Comment deleted");
 						writeBackToClient(new JSONSuccess("1"));

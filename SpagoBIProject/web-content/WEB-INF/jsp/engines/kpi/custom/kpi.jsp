@@ -184,9 +184,17 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 
 	//determines functionalities for the user:
 	Collection functionalities = userProfile.getFunctionalities();
-	String canDelete ="false";
+	String canDeleteComments ="false";
 	if(functionalities.contains(SpagoBIConstants.KPI_COMMENT_DELETE)){
-		canDelete ="true";
+		canDeleteComments ="true";
+	}
+	String canEditPersonalComments ="false";
+	if(functionalities.contains(SpagoBIConstants.KPI_COMMENT_EDIT_MY)){
+		canEditPersonalComments ="true";
+	}
+	String canEditAllComments ="false";
+	if(functionalities.contains(SpagoBIConstants.KPI_COMMENT_EDIT_ALL)){
+		canEditAllComments ="true";
 	}
 %>		
 <script type="text/javascript">
@@ -197,7 +205,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 			
 
 		};
-
+		
 		Sbi.config.serviceRegistry = new Sbi.service.ServiceRegistry({
 			baseUrl: url
 			
@@ -233,7 +241,10 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 						chartBaseUrl: '/<%= engineContext %>/js/lib/ext-3.1.1/resources/charts.swf',
 						titleDate: dt+' ',
 						tickInterval: <%=tickInterval%>,
-						canDelete: <%=canDelete%>
+						canDelete: <%=canDeleteComments%>,
+						canEditPersonal: <%=canEditPersonalComments%>,
+						canEditAll: <%=canEditAllComments%>,
+						loggedUser: '<%=userId%>'
 						};
 		
 		var config ={grid: grid, accordion: accordion};
