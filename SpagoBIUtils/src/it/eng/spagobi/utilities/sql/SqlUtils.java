@@ -148,7 +148,7 @@ public class SqlUtils {
 			if( dialect.equalsIgnoreCase(DIALECT_MYSQL)){
 				toReturn = " concat("+toReturn+",'') ";
 			}else if( dialect.equalsIgnoreCase(DIALECT_HSQL)){
-				toReturn = " concat("+toReturn+",\"\") ";
+				toReturn = " concat("+toReturn+",'') ";
 			}else if( dialect.equalsIgnoreCase(DIALECT_INGRES)){
 				toReturn = toReturn +"||''";
 			}else if( dialect.equalsIgnoreCase(DIALECT_ORACLE)){
