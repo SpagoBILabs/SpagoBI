@@ -101,27 +101,47 @@ Ext.extend(Sbi.kpi.KpiGUIComments , Ext.form.FormPanel, {
 	          
 	    });
 		
-        this.deleteColumn = new Ext.grid.ButtonColumn({
-  	       header:  ' '
-  	       ,iconCls: 'icon-remove'
-  	       ,scope: this
-  	       ,width: 25
-  	       ,renderer : function(v, p, record){
-  	           return '<center><img class="x-mybutton-'+this.id+' grid-button ' +this.iconCls+'" width="16px" height="16px" src="'+Ext.BLANK_IMAGE_URL+'"/></center>';
-  	       }
-          });
+		
+		var deleteButtonBaseConf = {
+			header:  ' '
+			, iconCls: 'icon-remove'
+			, width: 25
+			, scope: this
+			, loggedUser: this.loggedUser
+		};
+		
+		Sbi.debug("[KpiGUIComments.initComponents]: user [" + this.loggedUser + "] can delete all notes [" + c.canDelete + "]");
+		Sbi.debug("[KpiGUIComments.initComponents]: user [" + this.loggedUser + "] can edit personal notes [" + c.canEditPersonal + "]");
+		Sbi.debug("[KpiGUIComments.initComponents]: user [" + this.loggedUser + "] can edit all notes [" + c.canEditAll + "]");
+		
+		if(c.canDelete === true) {
+			deleteButtonBaseConf.renderer = function(v, p, record){
+				return '<center><img class="x-mybutton-'+this.id+' grid-button ' +this.iconCls+'" width="16px" height="16px" src="'+Ext.BLANK_IMAGE_URL+'"/></center>';
+	  	    };
+	  	    Sbi.debug("[KpiGUIComments.initComponents]: added delete button to all records");
+		} else if(c.canEditPersonal === true || c.canEditAll === true) {
+			deleteButtonBaseConf.renderer = function(v, p, record){
+				Sbi.debug("[KpiGUIComments.initComponents]: [" + record.get('owner') +"] === [" + this.loggedUser + "] ? " + (record.get('owner') === this.loggedUser));
+				if(record.get('owner') === this.loggedUser) {
+					Sbi.debug("[KpiGUIComments.initComponents]: delete button added during rendering to record [" + record.get('comment') + "]");
+					return '<center><img class="x-mybutton-'+this.id+' grid-button ' +this.iconCls+'" width="16px" height="16px" src="'+Ext.BLANK_IMAGE_URL+'"/></center>';
+				} else {
+					Sbi.debug("[KpiGUIComments.initComponents]: delete button not added during rendering to record [" + record.get('comment') + "]");
+					 return '&nbsp;';
+				}
+	  	    };
+	  	    Sbi.debug("[KpiGUIComments.initComponents]: added delete button only to personal record");
+		} else {
+			deleteButtonBaseConf.renderer = function(v, p, record){
+   	           return '&nbsp;';
+   	       }
+			Sbi.debug("[KpiGUIComments.initComponents]: delete button not added");
+		}
         
-        if(!c.canDelete){
-        	 this.deleteColumn = new Ext.grid.ButtonColumn({
-        	       header:  ' '
-        	       ,iconCls: 'icon-remove'
-        	       ,scope: this
-        	       ,width: 25
-        	       ,renderer : function(v, p, record){
-        	           return '&nbsp;';
-        	       }
-                });
-        }
+		 this.deleteColumn = new Ext.grid.ButtonColumn(deleteButtonBaseConf);
+       
+ 
+       
 	    this.listPanel = new Ext.grid.GridPanel({
 	        store: this.store,
 	        minWidth: 400,
