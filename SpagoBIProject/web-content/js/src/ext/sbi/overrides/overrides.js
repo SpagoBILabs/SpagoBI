@@ -647,9 +647,62 @@
 	
 	
 	/* =============================================================================
-	* Added by Davide Zerbetto (January 2014)
-	* There are problems with the table layout
+	* Added by Davide Zerbetto (Dicember 2013)
+	* When a panel is initially collapsed into a border layout, there are problem when expanding the panel, 
+	* in particular if the panel is a form and contains comboboxes, lookup fields ....
+	* See http://www.sencha.com/forum/showthread.php?63985-FIXED-2.*-3.0-layout-in-collapsed-Panels
 	============================================================================= */
+	/*
+	Ext.override(Ext.Container, {
+	    doLayout : function(shallow){
+	        if(!this.isVisible() || this.collapsed){
+	            this.deferLayout = this.deferLayout || !shallow;
+	            return;
+	        }
+	        shallow = shallow && !this.deferLayout;
+	        delete this.deferLayout;
+	        if(this.rendered && this.layout){
+	            this.layout.layout();
+	        }
+	        if(shallow !== false && this.items){
+	            var cs = this.items.items;
+	            for(var i = 0, len = cs.length; i < len; i++) {
+	                var c  = cs[i];
+	                if(c.doLayout){
+	                    c.doLayout();
+	                }
+	            }
+	        }
+	    },
+	    onShow : function(){
+	        Ext.Container.superclass.onShow.apply(this, arguments);
+	        if(this.deferLayout !== undefined){
+	            this.doLayout(true);
+	        }
+	    }
+	});
+	Ext.override(Ext.Panel, {
+	    afterExpand : function(){
+	        this.collapsed = false;
+	        this.afterEffect();
+	        if(this.deferLayout !== undefined){
+	            this.doLayout(true);
+	        }
+	        this.fireEvent('expand', this);
+	    }
+	});
+	
+	Ext.override(Ext.Panel, {
+	    afterExpand : function(){
+	        this.collapsed = false;
+	        this.afterEffect();
+	        this.fireEvent('expand', this);
+	        alert("mmmm....");
+	        this.doLayout();
+	    }
+	});
+	*/
+	
 	Ext.override(Ext.layout.TableLayout, {
 	    onLayout : function(ct, target){
 	        var cs = ct.items.items, len = cs.length, c, i;
@@ -662,3 +715,29 @@
 		this.renderAll(ct, target);//move out that can render items more than once.
 	    }
 	});
+	
+	
+    /**
+     * Utility method for getting the width of the browser scrollbar. This can differ depending on
+     * operating system settings, such as the theme or font size.
+     * @param {Boolean} force (optional) true to force a recalculation of the value.
+     * @return {Number} The width of the scrollbar.
+     */
+    Ext.getScrollBarWidth = function(force){
+        if(!Ext.isReady){
+            return 0;
+        }
+
+        if(force === true || Ext.scrollWidth === null){
+                // Append our div, do our calculation and then remove it
+            var div = Ext.getBody().createChild('<div class="x-hide-offsets" style="width:100px;height:50px;overflow:hidden;"><div style="height:200px;"></div></div>'),
+                child = div.child('div', true);
+            var w1 = child.offsetWidth;
+            div.setStyle('overflow', (Ext.isWebKit || Ext.isGecko) ? 'auto' : 'scroll');
+            var w2 = child.offsetWidth;
+            div.remove();
+            // Need to add 2 to ensure we leave enough space
+            Ext.scrollWidth = w1 - w2 + 2;
+        }
+        return Ext.scrollWidth;
+    };

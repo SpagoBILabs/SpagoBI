@@ -79,6 +79,9 @@ Sbi.execution.DocumentExecutionPage = function(config, doc) {
 		//autoScroll : true,
 		items: [{
 			layout: 'border',
+			layoutConfig: {
+				renderHidden: true
+			},
 			listeners: {
 			    'render': {
 	            	fn: function() {
@@ -125,7 +128,7 @@ Sbi.execution.DocumentExecutionPage = function(config, doc) {
 /**
  * @cfg {Boolean} maskOnRender ...
  */
-/**
+/*
  * @cfg {Boolean} collapseParametersSliderOnExecution true to collapse parameters panel when the executed document 
  * is displayed, false otherwise. The default is false.
  */
@@ -191,6 +194,11 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
      */
 	, snapshotId: null
 	
+	/*
+	 * @property {Boolean} collapseParametersSliderOnExecution true to collapse parameters panel when the executed document 
+	 * is displayed, false otherwise. The default is false.
+	 */
+	//, collapseParametersSliderOnExecution: null
 	/**
      * @property {String} shortcutsHidden true if shortcuts panel is hidden, 
      * false otherwise. The default is false.
@@ -388,9 +396,8 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 		this.toolbarHiddenPreference = config.toolbarHidden!== undefined ? config.toolbarHidden : false;
 		if (this.toolbarHiddenPreference || this.hideToolbar(doc.engine)) return;		
 		config.executionToolbarConfig = config.executionToolbarConfig || {};
-		config.executionToolbarConfig.callFromTreeListDoc = config.callFromTreeListDoc;		
+		config.executionToolbarConfig.callFromTreeListDoc = config.callFromTreeListDoc;
 		config.executionToolbarConfig.preferenceSubobjectId = this.getSubObjectId();
-		config.executionToolbarConfig.fromMyAnalysis = config.fromMyAnalysis;
 
 		
 		this.toolbar = new Sbi.execution.toolbar.DocumentExecutionPageToolbar(config.executionToolbarConfig);
@@ -520,12 +527,22 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 			, split: true
 			, floatable : config.parametersSliderFloatable
 			, autoScroll: true
-			, width: config.parametersRegion == 'east' ?  this.parametersSliderWidth : undefined
+			, width: config.parametersRegion == 'east' ?  config.parametersSliderWidth : undefined
 			, height: config.parametersRegion == 'north' ? config.parametersSliderHeight : undefined
 			//, autoHeight : true  // uncomment this if you want auto height and comment height
-			, layout: 'fit'
+			, layout: config.parametersRegion == 'east' ?  'fit' : undefined
+			, layoutConfig: config.parametersRegion == 'north' ? {scrollOffset: Ext.getScrollBarWidth()} : undefined   // this is to get only the vertical scrollbar and to avoid 
+																	 												   // the horizontal scrollbar, then we have to force a doLayout, see below
 			, items: [this.parametersPanel]
+			//, bodyStyle : 'overflow-y:scroll;overflow-x:auto;'
 		});
+		
+		if ( config.parametersRegion == 'north' ) {
+			// we need this because of layoutConfig: {scrollOffset: Ext.getScrollBarWidth()}; if we don't do this, no parameters are displayed in case the panel is 
+			// initially collapsed
+			this.parametersSlider.on('render', function(thePanel) {this.doLayout.defer(100, this);}, this);
+		}
+		
 		
 		// uncomment this if you want auto height
 		// workaround: when using autoHeight, the panel is displayed above (NOT on top) the info panel; forcing a deferred doLayout solves the problem 
