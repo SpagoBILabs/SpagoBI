@@ -84,6 +84,8 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 			<meta http-equiv="X-UA-Compatible" content="IE=8" />
 		<%} %>
 		
+		<!-- Stylesheets -->       
+        <link href="css/cockpit.css" rel="stylesheet" media="screen,projection,print" type="text/css" />
        
         <%@include file="commons/includeExtJS.jspf" %>
 		<%@include file="commons/includeSpagoBICockpitJS.jspf" %>
