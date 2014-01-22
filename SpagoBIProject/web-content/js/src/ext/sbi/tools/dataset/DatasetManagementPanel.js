@@ -2335,10 +2335,11 @@ Ext.extend(Sbi.tools.dataset.DatasetManagementPanel, Sbi.widgets.ListDetailForm,
 					if(!this.win_info_metadata){
 						this.win_info_metadata= new Ext.Window({     				
 							layout:'fit',
-							width:360,
+							width:370,
 							height:350,
 							closeAction:'hide',
-							autoScroll: true,
+							autoScroll: false,
+							title: LN('sbi.ds.metadata'),
 							items: [this.manageDatasetFieldMetadataGrid]
 							,buttonAlign : 'right',
 						    buttons: [{
