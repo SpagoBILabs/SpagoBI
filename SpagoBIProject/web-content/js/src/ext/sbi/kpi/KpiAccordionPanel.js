@@ -108,7 +108,7 @@ Ext.extend(Sbi.kpi.KpiAccordionPanel , Ext.Panel, {
                     p.doLayout();
                 }
             },
-	        autoScroll: true
+            autoScroll: true
 	    });
 
 	    var item4 = new Ext.Panel({
@@ -120,7 +120,8 @@ Ext.extend(Sbi.kpi.KpiAccordionPanel , Ext.Panel, {
 	            expand: function(p){
 	                p.doLayout();
 	            }
-	        }
+	        },
+	        autoScroll: true
 	    });
 
 	    var item5 = new Ext.Panel({
