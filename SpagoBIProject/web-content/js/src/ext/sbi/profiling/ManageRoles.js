@@ -72,7 +72,8 @@ Sbi.profiling.ManageRoles = function(config) {
 	this.initConfigObject(configSecurity);
 	config.configurationObject = this.configurationObject;
 	config.singleSelection = true;
-	
+	config.configurationObject.gridWidth = 470;
+
 	var c = Ext.apply({}, config || {}, {});
 
 	Sbi.profiling.ManageRoles.superclass.constructor.call(this, c);	 
@@ -276,17 +277,19 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
 	 	   
 	 	  this.detailTab = new Ext.Panel({
 		        title: LN('sbi.roles.details')
+		        , autoScroll  : true
 		        , id: 'detail'
 		        , layout: 'fit'
 		        , items: {
 		 		   	     id: 'role-detail',   	              
 		 		   	     columnWidth: 0.4,
+		 		   	     autoWidth: true,
 			             xtype: 'fieldset',
 			             labelWidth: 110,
 			             defaults: {width: 220, border:false},    
 			             defaultType: 'textfield',
 			             autoHeight: true,
-			             autoScroll  : true,
+			             border: false,
 			             bodyStyle: Ext.isIE ? 'padding:0 0 5px 15px;' : 'padding:10px 15px;',
 			             border: false,
 			             style: {
@@ -322,21 +325,19 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
 		this.businessModelsCheckGroup = {
 		           xtype:'fieldset'
 		           ,id: 'businessModelsCheckGroup'
-		           ,columnWidth: 0.8
-		           , width: 250
-			        , height: 350
-		           , defaults: {
-		               anchor: '-20' // leave room for error icon
-		           }
+		           //,columnWidth: 0.8
+		           ,autoHeight: true
+		           ,autoWidth: true
 		           ,items :[]
+				   ,border: false
 		 	    };
 
 		
 		//Create the main panel Tab
 		this.businessModelsTab = new Ext.Panel({
 		        title: LN('sbi.roles.businessModels')
-		        , width: 430
-		       // , autoScroll: true
+		        //, width: 430
+		        , autoScroll: true
 		        , items: [this.businessModelsCheckGroup]
 		        , itemId: 'businessModelsCategoriesTab'
 		        , layout: 'fit'
@@ -390,11 +391,9 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
            xtype:'fieldset'
            ,id: 'checks-form'
            ,columnWidth: 0.8
-           , width: 250
-	        , height: 350
-           , defaults: {
-               anchor: '-20' // leave room for error icon
-           }
+           ,autoHeight: true
+           ,autoWidth: true
+           ,border: false
            ,items :[
 				{
 		            xtype: 'checkboxgroup',
@@ -538,10 +537,10 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
  	    
  	    this.authorizationTab = new Ext.Panel({
 	        title: LN('sbi.roles.authorizations')
-	        , width: 430
 	        , items: this.checkGroup
 	        , itemId: 'checks'
 	        , layout: 'fit'
+	        , autoScroll: true
 	    });
  	    
 

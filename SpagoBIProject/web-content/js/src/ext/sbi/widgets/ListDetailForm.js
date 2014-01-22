@@ -168,13 +168,13 @@ Sbi.widgets.ListDetailForm = function(config) {
 	if(conf.tabPanelWidth){
 		this.tabPanelWidth = conf.tabPanelWidth;
     }else{
-    	this.tabPanelWidth ='60%'; // 520;
+    	this.tabPanelWidth ='70%'; // 520;
     }
 	
 	if(conf.gridWidth){
 		this.gridWidth = conf.gridWidth;
     }else{
-    	this.gridWidth = '40%'; //470;
+    	this.gridWidth = '30%'; //470;
     }
 	
 	
@@ -364,14 +364,13 @@ Ext.extend(Sbi.widgets.ListDetailForm, Ext.FormPanel, {
  	    });
 
  	   this.tabs = new Ext.TabPanel({
-           enableTabScroll : true
-           , activeTab : 0
+           //enableTabScroll : true
+            activeTab : 0
            , tabPosition: 'top'
-           , autoScroll : true
+           //, autoScroll : true
            , deferredRender: false
-           , width: this.tabPanelWidth         
-           , height: this.baseHeight
-           , autoScroll  : true
+           //, width: this.tabPanelWidth         
+           //, height: this.baseHeight
 		   //, layout: 'fit'
            , itemId: 'tabs' 
            , tbar: this.tbSave
@@ -439,7 +438,6 @@ Ext.extend(Sbi.widgets.ListDetailForm, Ext.FormPanel, {
  	  if(this.filter === undefined || ! this.filter){
  		 filteringToolbar.setVisible(false);
  	  }
-
  	  
  	   this.mainGrid = {
  			   		  id: 'maingrid',
