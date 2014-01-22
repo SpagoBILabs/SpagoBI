@@ -35,14 +35,14 @@ Sbi.tools.ManageDatasetFieldMetadata = function(config) {
 	this.fieldsColumns =  [
 	    {
 	    	header: LN('sbi.ds.field.name'), 
-	    	width: '50%', //160, 
+	    	//width: 140,  
 			id:'name',
 			sortable: true, 
-			dataIndex: 'name' 
+			dataIndex: 'displayedName' 
 	    },{
         	header: LN('sbi.ds.field.metadata'),
             dataIndex: 'fieldType',
-            width: '50%', // 150,
+           // width: 140, 
             editor: new Ext.form.ComboBox({
             	typeAhead: true,
                 triggerAction: 'all',
@@ -60,7 +60,7 @@ Sbi.tools.ManageDatasetFieldMetadata = function(config) {
 	 
 	 this.fieldStore = new Ext.data.JsonStore({
 		    id : 'name',
-		    fields: ['name', 'fieldType','type' ],
+		    fields: ['displayedName','name', 'fieldType','type' ],
 		    idIndex: 0,
 		    data:{}
 		});
@@ -77,8 +77,12 @@ Sbi.tools.ManageDatasetFieldMetadata = function(config) {
 	        layout: 'fit',
 	        cm: cm,
 	        sm: sm,
-	        frame: true,
-	        autoscroll: true
+	        frame: false,
+	        autoscroll: true,
+	        viewConfig: {
+	            forceFit: true
+	        },
+	        width:280
 	    };
 
     var c = Ext.apply( {}, config, grid);
@@ -111,8 +115,17 @@ Ext.extend(Sbi.tools.ManageDatasetFieldMetadata, Ext.grid.EditorGridPanel, {
   				
   				
   				for (var i = 0; i < columnsNames.length; i++) {
-  					var columnObject = {name:'',fieldType:'',type:''};
+  					var columnObject = {displayedName:'', name:'',fieldType:'',type:''};
   					var currentColumnName = columnsNames[i];
+  					//this will remove the part before the double dot if the column is in the format ex: it.eng.spagobi.Customer:customerId
+  					if (currentColumnName.indexOf(":") != -1){
+  					    var arr = currentColumnName.split(':');
+  					     
+  	  					columnObject.displayedName = arr[1];
+  					} else {
+  	  					columnObject.displayedName = currentColumnName;
+  					}
+
   					columnObject.name = currentColumnName;
   					for (var j = 0; j < fieldsColumns.columns.length; j++) {
   	  					var element = fieldsColumns.columns[j];
