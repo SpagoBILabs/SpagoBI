@@ -128,6 +128,47 @@ Ext.extend(Sbi.cockpit.runtime.WidgetManager, Ext.util.Observable, {
 		return this.storeManager;
 	}
 	
+	, addStore: function(s) {
+		if (s != undefined && s.dsLabel !== undefined){
+			var newStore = new  Ext.data.JsonStore({
+				 datasetLabel: s.dsLabel
+//				, autoLoad: false
+//				, refreshTime: c[i].refreshTime
+//				, limitSS: this.limitSS
+//				, memoryPagination: c[i].memoryPagination || false 
+			});
+			this.storeManager.add(newStore.datasetLabel, newStore);								
+		}
+	}
+
+	, removeStore: function(s) {
+		if (s != undefined){
+			this.storeManager.remove(this.storeManager.get(s));								
+		}
+	}
+
+	, existsStore: function(s) {
+		var toReturn = false;
+		if (s != undefined){
+			if (this.storeManager.get(s) !== null && this.storeManager.get(s) !== undefined)
+					toReturn = true;
+		}
+		return toReturn;
+	}	
+	
+	, getWidgetUsedByStore: function(s){
+		var toReturn = new Ext.util.MixedCollection();
+		if (s != undefined){
+			for(var i=0; i < this.widgets.getCount(); i++){
+				var w = this.widgets.item(i);
+				if (w.dataset !== undefined && w.dataset == s  ){
+					toReturn.add(w);
+				}
+			}
+		}
+		return toReturn;
+	}
+	
 	// -----------------------------------------------------------------------------------------------------------------
     // private methods
 	// -----------------------------------------------------------------------------------------------------------------

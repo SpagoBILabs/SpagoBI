@@ -28,9 +28,13 @@ Sbi.cockpit.runtime.WidgetContainer = function(config) {
 	Ext.apply(this, c);
 	
 	this.regions = {};
-		
+
 	// constructor
-	Sbi.cockpit.runtime.WidgetContainer.superclass.constructor.call(this, c);	
+	Sbi.cockpit.runtime.WidgetContainer.superclass.constructor.call(this, c);
+	
+//	this.addListener('cancel', this.close(), this);
+	
+
 };
 
 /**
@@ -141,6 +145,7 @@ Ext.extend(Sbi.cockpit.runtime.WidgetContainer, Sbi.cockpit.runtime.Widget, {
     		
     	
     	var win = new Ext.Window({
+    		id: 'configuration',
             layout:'fit',
             width:500,
             height:300,
@@ -171,32 +176,30 @@ Ext.extend(Sbi.cockpit.runtime.WidgetContainer, Sbi.cockpit.runtime.Widget, {
     }
     
     , showWidgetEditor: function(widget) {
-    	
+    	var config = {};
+    	config.widgetManager = this.getWidgetManager();
+    	config.widget = widget;
     	var win = new Ext.Window({
+    		id: 'wizard',
             layout:'fit',
-            width:800,
+            width:1000, //800,
             height:450,
-            //closeAction:'hide',
             plain: true,
             modal: true,
             title: "Widget [" + widget.id + "] editor",
-            items: new Sbi.cockpit.editor.WidgetEditor({}),
-
-            buttons: [
-            {
-            	text:'Save',
-            	disabled: true,
-              	handler: function(){
-                
-            	}
-            },
-            {
-            	text: 'Close',
-                handler: function(){
-                	win.close();
-                }
-            }]
+//            items: new Sbi.cockpit.editor.WidgetEditor({}),
+            items: new Sbi.cockpit.editor.WidgetEditorWizardPanel(config)
         });
+    	
+    	win.on("cancel",function(p){
+    		win.close();
+    		return true;
+    	},this);
+    	
+    	win.on("select", function(){
+    		alert("catched select event!! ");
+    	});
+    	
     	win.show();
     }
     
@@ -304,5 +307,5 @@ Ext.extend(Sbi.cockpit.runtime.WidgetContainer, Sbi.cockpit.runtime.Widget, {
     	//Ext.Msg.alert('Message', 'The CONFIG tool was clicked.');
     } 
     
-    
+  
 }); 

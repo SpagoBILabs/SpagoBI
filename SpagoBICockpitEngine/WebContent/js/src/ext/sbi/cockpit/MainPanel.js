@@ -8,7 +8,7 @@ Ext.ns("Sbi.cockpit");
 
 /**
  * Class: Sbi.cockpit.MainPanel
- * Main GUI of SpagoBIGeoReportEngine
+ * Main GUI of SpagoBICockpitEngine
  */
 Sbi.cockpit.MainPanel = function(config) {
 	

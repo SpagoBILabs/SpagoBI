@@ -63,3 +63,33 @@ Sbi.locale.formats = {
 //=====================================================================================================
 
 Sbi.locale.ln['sbi.generic.example'] = 'example';
+
+//===================================================================
+//WIZARD 
+//===================================================================
+Sbi.locale.ln['sbi.ds.wizard.general']= 'Salva il dataset';
+Sbi.locale.ln['sbi.ds.wizard.detail']= 'Carica file';
+Sbi.locale.ln['sbi.ds.wizard.metadata']= 'Definisci dati';
+Sbi.locale.ln['sbi.ds.wizard.validation']= 'Valida dati';
+Sbi.locale.ln['sbi.ds.wizard.back']= '< Indietro';
+Sbi.locale.ln['sbi.ds.wizard.next']= 'Sucessivo >';
+Sbi.locale.ln['sbi.ds.wizard.confirm']= 'Conferma';
+Sbi.locale.ln['sbi.ds.wizard.cancel']= 'Annulla';
+Sbi.locale.ln['sbi.ds.wizard.startMsg']= 'Seleziona e carica il file XLS o CSV ...';
+Sbi.locale.ln['sbi.ds.wizard.file']= 'File';
+Sbi.locale.ln['sbi.ds.wizard.successLoad']= ' caricato con successo!'
+Sbi.locale.ln['sbi.ds.wizard.selectedFile']='File selezionato ';
+Sbi.locale.ln['sbi.ds.wizard.loadedFile']='Caricato file ';
+Sbi.locale.ln['sbi.ds.wizard.selectFile']='Seleziona il file';
+
+
+//===================================================================
+//MYDATA 
+//===================================================================
+Sbi.locale.ln['sbi.mydata.useddataset'] = "Data Set in uso";
+Sbi.locale.ln['sbi.mydata.mydataset'] = "I Miei Data Set";
+Sbi.locale.ln['sbi.mydata.enterprisedataset'] = "Data Set Certificati";
+Sbi.locale.ln['sbi.mydata.shareddataset'] = "Data Set Condivisi";
+Sbi.locale.ln['sbi.mydata.alldataset'] = "Tutti i Data Set";
+Sbi.locale.ln['sbi.mydata.sharedataset'] = "Condividi Data Set";
+Sbi.locale.ln['sbi.mydata.unsharedataset'] = "Rendi privato Data Set";
