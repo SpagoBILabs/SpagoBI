@@ -11,6 +11,18 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 
 <link id="spagobi-ext-4" rel="styleSheet" href ="<%=contextName %>/themes/sbi_default/css/home40/layout.css" type="text/css" />
 
+<%
+/*
+	if(isFirstUrlToCallEqualsToDefaultPage == true && jsonMenuList.length() > 0 ){
+		JSONObject menuItem = jsonMenuList.getJSONObject(0);
+		String url = menuItem.optString("firstUrl");
+		if(url != null) {
+			firstUrlToCall = url;
+		}
+	}
+*/
+%>
+
 <%-- Javascript object useful for session expired management (see also sessionExpired.jsp) --%>
 <script>
 sessionExpiredSpagoBIJS = 'sessionExpiredSpagoBIJS';

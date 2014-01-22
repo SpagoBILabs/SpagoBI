@@ -68,8 +68,10 @@ sessionExpiredSpagoBIJS = 'sessionExpiredSpagoBIJS';
 		characterEncoding = "UTF-8";
 	}
     String firstUrlToCall = "";
+    boolean isFirstUrlToCallEqualsToDefaultPage = false;
+    
 	// if a document or a dataset execution is required, execute it
-	if (aServiceRequest.getAttribute(ObjectsTreeConstants.OBJECT_LABEL) != null || aServiceRequest.getAttribute(ObjectsTreeConstants.DATASET_LABEL) != null) {
+ 	if (aServiceRequest.getAttribute(ObjectsTreeConstants.OBJECT_LABEL) != null || aServiceRequest.getAttribute(ObjectsTreeConstants.DATASET_LABEL) != null) {
         StringBuffer temp = new StringBuffer();	
 		// dcument execution case
 		if(aServiceRequest.getAttribute(ObjectsTreeConstants.OBJECT_LABEL) != null){
@@ -158,7 +160,7 @@ sessionExpiredSpagoBIJS = 'sessionExpiredSpagoBIJS';
 				}else{
 					firstUrlToCall = contextName+"/themes/" + currTheme + "/html/finalUserIntro.html";
 				}
-				
+				isFirstUrlToCallEqualsToDefaultPage = true;	
 			}
 		} else{
 			if(isTechnicalUser){
@@ -166,6 +168,7 @@ sessionExpiredSpagoBIJS = 'sessionExpiredSpagoBIJS';
 			}else{
 				firstUrlToCall = contextName+"/themes/" + currTheme + "/html/finalUserIntro.html";
 			}
+			isFirstUrlToCallEqualsToDefaultPage = true;
 		}
 		
 	}
