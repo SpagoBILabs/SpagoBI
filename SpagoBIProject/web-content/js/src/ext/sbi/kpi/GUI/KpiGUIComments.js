@@ -9,25 +9,6 @@
   
 
 /**
- * Object name
- * 
- * [description]
- * 
- * 
- * Public Properties
- * 
- * [list]
- * 
- * 
- * Public Methods
- * 
- * [list]
- * 
- * 
- * Public Events
- * 
- * [list]
- * 
  * Authors - Monica Franceschini
  */
 Ext.ns("Sbi.kpi");
@@ -35,33 +16,100 @@ Ext.ns("Sbi.kpi");
 Sbi.kpi.KpiGUIComments =  function(config) {
 		
 		var defaultSettings = { //autoScroll: true, 
-								//height: 500,
+								height: 400,
 								layout: 'fit',
-								border:false,
-								style:'padding: 5px;'
+								border:false,		
+								padding: 5
 							};
 		
-		var execId = config.SBI_EXECUTION_ID;
+		var c = Ext.apply(defaultSettings, config || {});
+		Ext.apply(this, c);
+
+		this.init(c);
+   
+		Sbi.kpi.KpiGUIComments.superclass.constructor.call(this, c);
+
+};
+
+/**
+ * @cfg {Object} config
+ * ...
+ */
+Ext.extend(Sbi.kpi.KpiGUIComments , Ext.form.FormPanel, {
+	
+	// =================================================================================================================
+	// PROPERTIES
+	// =================================================================================================================
+	
+	/**
+     * @property {Array} services
+     * This array contains all the services invoked by this class
+     */
+	services: null,
+	
+	editorPanel: null,
+	listPanel: null,
+		
+	kpiInstId: null,
+	saveBtn: null,
+	selectedField: null,
+	commentId: null,
+	owner: null,
+	
+	// =================================================================================================================
+	// METHODS
+	// =================================================================================================================
+	
+	// -----------------------------------------------------------------------------------------------------------------
+    // init methods
+	// -----------------------------------------------------------------------------------------------------------------
+	
+	init: function(c){
+		this.initServices(c);
+		this.initStore(c);
+		this.initCommentsGrid(c);
+		this.initCommentEditor(c);
+//		this.setAutoScroll(true);
+		this.items =[{
+			layout:'border'
+			, autoScroll: true
+			, items: [this.listPanel,  this.editorPanel]
+		}];
+	},
+	
+	/**
+	 * @method 
+	 * 
+	 * Initialize the following services exploited by this component:
+	 * 
+	 *    - commentsList
+	 *    - commentSave
+	 *    - commentDelete
+	 */
+	initServices: function(c) {
+
+		var execId = c.SBI_EXECUTION_ID;
 		var paramsList = {SBI_EXECUTION_ID: execId, LIGHT_NAVIGATOR_DISABLED: 'TRUE',MESSAGE_DET: "COMMENTS_LIST"};
 		var paramsSave = {SBI_EXECUTION_ID: execId, LIGHT_NAVIGATOR_DISABLED: 'TRUE',MESSAGE_DET: "SAVE_COMMENT"};
-		var paramsDel = {SBI_EXECUTION_ID: execId, LIGHT_NAVIGATOR_DISABLED: 'TRUE',MESSAGE_DET: "DELETE_COMMENT"};
+		var paramsDel = {SBI_EXECUTION_ID: execId, LIGHT_NAVIGATOR_DISABLED: 'TRUE',MESSAGE_DET: "DELETE_COMMENT"};		
 		
-		var c = Ext.apply(defaultSettings, config || {});
+		this.services = this.services || new Array();
 		
-		this.services = new Array();
-		
-		this.services['commentsList'] = Sbi.config.serviceRegistry.getServiceUrl({
+		this.services['commentsList'] = this.services['commentsList'] || Sbi.config.serviceRegistry.getServiceUrl({
 			serviceName: 'MANAGE_COMMENTS'
 			, baseParams: paramsList
 		});
-		this.services['commentSave'] = Sbi.config.serviceRegistry.getServiceUrl({
+		this.services['commentSave'] = this.services['commentSave'] || Sbi.config.serviceRegistry.getServiceUrl({
 			serviceName: 'MANAGE_COMMENTS'
 			, baseParams: paramsSave
 		});
-		this.services['commentDelete'] = Sbi.config.serviceRegistry.getServiceUrl({
+		this.services['commentDelete'] = this.services['commentDelete'] || Sbi.config.serviceRegistry.getServiceUrl({
 			serviceName: 'MANAGE_COMMENTS'
 			, baseParams: paramsDel
 		});
+	},
+	
+	initStore: function(c) {
 		this.store = new Ext.data.JsonStore({
 	    	autoLoad: false    	  
 	    	, id : 'id'		
@@ -74,34 +122,79 @@ Sbi.kpi.KpiGUIComments =  function(config) {
 	    	, root: 'comments'
 			, url: this.services['commentsList']		
 		});
-
-		Ext.apply(this, c);
-		
-		this.initComments(c);
-   
-		Sbi.kpi.KpiGUIComments.superclass.constructor.call(this, c);
-
-};
-
-Ext.extend(Sbi.kpi.KpiGUIComments , Ext.form.FormPanel, {
-	editor: null,
-	listPanel: null,
-	kpiInstId: null,
-	saveBtn: null,
-	selectedField: null,
-	commentId: null,
-	owner: null,
-
-	initComments: function(c){
-
-		var h = c.height;
+	},
+	
+	/**
+	 * @method 
+	 * 
+	 * Initialize the GUI
+	 */
+	initCommentsGrid: function(c) {
 		
 		this.rowselModel = new Ext.grid.RowSelectionModel({
 	          singleSelect: true
 	          
 	    });
 		
+		this.initDeleteButton(c);
+        
+		var columns = [
+	        {
+	            header: 'Owner',       
+	            dataIndex: 'owner',
+	            tooltip : 'Ownner'
+	        }, {
+	            header: 'Creation Date',
+	            dataIndex: 'creationDate',
+	            tpl: '{lastmod:date("m-d h:i a")}',
+	            tooltip : 'Creation Date'
+	        }
+	//	    ,{
+	//            header: 'Last Modified',
+	//            dataIndex: 'lastModificationDate',
+	//            tpl: '{lastmod:date("m-d h:i a")}'
+	//        }
+	        , {
+	            header: 'Comment',
+	            dataIndex: 'comment',
+	            align: 'right',
+	            tooltip : 'Text Comment'
+	        },
+	        this.deleteColumn
+        ];
+       
+		this.saveButton = new Ext.Button({
+			text: 'Save comment'
+			, disabled: (!c.canEditPersonal && !c.canEditAll)
+			, tooltip:   (!c.canEditPersonal && !c.canEditAll)?'You have no the authorization to save a comment': 'Click to save comment'
+		    , handler: this.saveComment
+		    , scope: this
+		    
+		});
 		
+		var fbarConf = [this.saveButton];
+		
+		
+		
+		this.listPanel = new Ext.grid.GridPanel({
+	        store: this.store,
+	        minHeight: 100,
+	        region: 'center',
+	        //height: 200,
+	        //maxHeight: 200,
+	        //autoScroll: true,
+	        viewConfig:{forceFit:true},
+	        selModel: this.rowselModel,
+	     	hideHeaders : true,
+	     	//layout: 'fit',
+	        columns: columns,
+	        fbar: fbarConf
+	    });
+		
+		this.listPanel.on('cellclick', this.onSelectComment, this);
+	},
+	
+	initDeleteButton: function(c) {
 		var deleteButtonBaseConf = {
 			header:  ' '
 			, iconCls: 'icon-remove'
@@ -109,16 +202,16 @@ Ext.extend(Sbi.kpi.KpiGUIComments , Ext.form.FormPanel, {
 			, scope: this
 			, loggedUser: this.loggedUser
 		};
-		
+			
 		Sbi.debug("[KpiGUIComments.initComponents]: user [" + this.loggedUser + "] can delete all notes [" + c.canDelete + "]");
 		Sbi.debug("[KpiGUIComments.initComponents]: user [" + this.loggedUser + "] can edit personal notes [" + c.canEditPersonal + "]");
 		Sbi.debug("[KpiGUIComments.initComponents]: user [" + this.loggedUser + "] can edit all notes [" + c.canEditAll + "]");
-		
+			
 		if(c.canDelete === true) {
 			deleteButtonBaseConf.renderer = function(v, p, record){
 				return '<center><img class="x-mybutton-'+this.id+' grid-button ' +this.iconCls+'" width="16px" height="16px" src="'+Ext.BLANK_IMAGE_URL+'"/></center>';
-	  	    };
-	  	    Sbi.debug("[KpiGUIComments.initComponents]: added delete button to all records");
+		    };
+		    Sbi.debug("[KpiGUIComments.initComponents]: added delete button to all records");
 		} else if(c.canEditPersonal === true || c.canEditAll === true) {
 			deleteButtonBaseConf.renderer = function(v, p, record){
 				Sbi.debug("[KpiGUIComments.initComponents]: [" + record.get('owner') +"] === [" + this.loggedUser + "] ? " + (record.get('owner') === this.loggedUser));
@@ -129,95 +222,52 @@ Ext.extend(Sbi.kpi.KpiGUIComments , Ext.form.FormPanel, {
 					Sbi.debug("[KpiGUIComments.initComponents]: delete button not added during rendering to record [" + record.get('comment') + "]");
 					 return '&nbsp;';
 				}
-	  	    };
-	  	    Sbi.debug("[KpiGUIComments.initComponents]: added delete button only to personal record");
+		    };
+		    Sbi.debug("[KpiGUIComments.initComponents]: added delete button only to personal record");
 		} else {
 			deleteButtonBaseConf.renderer = function(v, p, record){
-   	           return '&nbsp;';
-   	       }
+	   	        return '&nbsp;';
+	   	    };
 			Sbi.debug("[KpiGUIComments.initComponents]: delete button not added");
 		}
-        
-		 this.deleteColumn = new Ext.grid.ButtonColumn(deleteButtonBaseConf);
-       
- 
-       
-	    this.listPanel = new Ext.grid.GridPanel({
-	        store: this.store,
-	        minWidth: 400,
-	        //height: 200,
-	        //maxHeight: 200,
-	        //autoScroll: true,
-	        viewConfig:{forceFit:true},
-	        selModel: this.rowselModel,
-	     	hideHeaders : true,
-	     	layout: 'fit',
-	     	scope: this,
-	     	listeners: {
-	        	'cellclick':{
-	        		fn: function(grid, rowIndex, columnIndex, e) {
-	        		    var record = grid.getStore().getAt(rowIndex);  // Get the Record
-	        		    var fieldName = grid.getColumnModel().getDataIndex(columnIndex); // Get field name
-	        		    var data = record.get(fieldName);
-	        		    if(fieldName != undefined){
-		    				this.editor.setValue(record.data.comment);
-		    				this.commentId=record.data.id;	
-		    				this.owner= record.data.owner;
-	        		    }else{
-	        		    	//delete button
-	        		    	this.deleteItem( record.data.id, columnIndex);
-	        		    }
-
-	        		},
-	        		scope:this
-	        	}
-	        },
-	        columns: [{
-	            header: 'Owner',       
-	            dataIndex: 'owner',
-	            tooltip : 'Ownner'
-	        },{
-	            header: 'Creation Date',
-	            dataIndex: 'creationDate',
-	            tpl: '{lastmod:date("m-d h:i a")}',
-	            tooltip : 'Creation Date'
-	        }
-/*	        ,{
-	            header: 'Last Modified',
-	            dataIndex: 'lastModificationDate',
-	            tpl: '{lastmod:date("m-d h:i a")}'
-	        }*/
-	        ,{
-	            header: 'Comment',
-	            dataIndex: 'comment',
-	            align: 'right',
-	            tooltip : 'Text Comment'
-	        },
-	        this.deleteColumn
-	        ]
-	        ,fbar: [{
-	            text: 'Save comment'
-	            , handler: this.saveComment
-	            , scope: this
-	        }]
-	    });
+	       
+		this.deleteColumn = new Ext.grid.ButtonColumn(deleteButtonBaseConf);
+	},
 	
-	  this.editor = new Ext.form.HtmlEditor({
-		  	enableSourceEdit: false
-		  	, width: 500
-		  	, height: 200
-		  	, autoScroll: true
-		  	, style:'align: center;'
-		  	, layout: 'fit'
-    
-	  }); 
-
-	  this.setAutoScroll(true);
-	  this.items =[this.listPanel,  this.editor];
-	  
-	}
+	onSelectComment: function(grid, rowIndex, columnIndex, e) {
+	    var record = grid.getStore().getAt(rowIndex);  // Get the Record
+	    var fieldName = grid.getColumnModel().getDataIndex(columnIndex); // Get field name
+	    var data = record.get(fieldName);
+	    if(fieldName != undefined){
+			this.editorPanel.setValue(record.data.comment);
+			this.commentId=record.data.id;	
+			this.owner= record.data.owner;
+	    }else{
+	    	//delete button
+	    	this.deleteItem( record.data.id, columnIndex);
+	    }
+	}, 
 	
-	, loadComments: function (field) {
+	initCommentEditor: function(c) {
+		 this.editorPanel = new Ext.form.HtmlEditor({
+			  	enableSourceEdit: false
+			  	, region: 'south'
+//			  	, width: 500
+			  	, height: 200
+			  	, autoScroll: true
+			  	, split: true
+			  	, margins: '10 0 0 0'
+			  	, style:'align: center;'
+//			  	, layout: 'fit'
+		  }); 
+		 
+		 this.editorPanel.setReadOnly((!c.canEditPersonal && !c.canEditAll));
+		 
+	},
+	
+
+	
+	loadComments: function (field) {
 		if(field.attributes.kpiInstId != null && field.attributes.kpiInstId !== undefined){
 			Ext.Ajax.request({
 		        url: this.services['commentsList'],
@@ -237,11 +287,12 @@ Ext.extend(Sbi.kpi.KpiGUIComments , Ext.form.FormPanel, {
 			});
 		}
 	}
+	
 	, saveComment: function () {
 		var commId= this.commentId;
 		Ext.Ajax.request({
 	        url: this.services['commentSave'],
-	        params: {'comment': this.editor.getValue(), 'kpiInstId': this.kpiInstId, 'commentId': this.commentId, 'owner': this.owner},
+	        params: {'comment': this.editorPanel.getValue(), 'kpiInstId': this.kpiInstId, 'commentId': this.commentId, 'owner': this.owner},
 			success: function(response, options) {
 	      		if(response !== undefined && response.responseText !== undefined) {
 	      			var content = Ext.util.JSON.decode( response.responseText);
@@ -278,6 +329,7 @@ Ext.extend(Sbi.kpi.KpiGUIComments , Ext.form.FormPanel, {
 		});
 		
 	}
+	
 	, update:  function(field){	
 		if(field !== undefined && field != null){
 			this.kpiInstId = field.attributes.kpiInstId;
@@ -288,10 +340,11 @@ Ext.extend(Sbi.kpi.KpiGUIComments , Ext.form.FormPanel, {
 
 			this.kpiInstId = null;
 		}
-		this.editor.setValue('');
-		this.editor.show();
+		this.editorPanel.setValue('');
+		this.editorPanel.show();
 
 	}
+	
 	, deleteItem: function(id, index) {
 		
 		Ext.MessageBox.confirm(
