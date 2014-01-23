@@ -406,6 +406,7 @@ Ext.extend(Sbi.widgets.ListDetailForm, Ext.FormPanel, {
  	    });
  	    
  	   var pagingBar = new Ext.PagingToolbar({
+ 		   	id:'pagingToolbar',
 	        pageSize: 20, //15, 
 	        store: this.mainElementsStore,
 	        displayInfo: true,
@@ -519,6 +520,10 @@ Ext.extend(Sbi.widgets.ListDetailForm, Ext.FormPanel, {
 										this.rowselModel.selectRow(0);
 									}else{
 										this.addNewItem();
+									}
+									var pagingToolbar = Ext.getCmp('pagingToolbar');
+									if (pagingToolbar != null){
+										pagingToolbar.doRefresh();
 									}
 								} else {
 									Sbi.exception.ExceptionHandler.showErrorMessage(LN('sbi.generic.deletingItemError'), LN('sbi.generic.serviceError'));
