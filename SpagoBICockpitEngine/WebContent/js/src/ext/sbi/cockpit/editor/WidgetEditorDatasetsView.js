@@ -120,8 +120,8 @@ Ext.extend(Sbi.cockpit.editor.WidgetEditorDatasetsView, Ext.DataView, {
 
 		var classImg = ' class="measure-detail-dataset" ';
 		
-		var author = 'Autore'; //LN('sbi.generic.author');
-		var changed = 'Modificato il ';//LN('sbi.ds.changedon');
+		var author = LN('sbi.generic.author');
+//		var changed = LN('sbi.ds.changedon');
 
 		var currentUser = Sbi.config.userId;
 		
@@ -136,8 +136,8 @@ Ext.extend(Sbi.cockpit.editor.WidgetEditorDatasetsView, Ext.DataView, {
 				'<h2>{name}</h2>'+
 //				'<p>{[Ext.String.ellipsis(values.description, 100, false)]}</p>'+
 				'<p>{description}</p>'+
-				'<p><b>'+author+':</b> {creationUser}</p>'+
-//				'<p class="modified">'+changed+' {creationDate}</p>'+
+				'<p><b>'+author+':</b> {owner}</p>'+
+//				'<p class="modified">'+changed+' {dateIn}</p>'+
 			'</div>'+
 		'</div>';
 		

@@ -59,10 +59,13 @@ Sbi.locale.formats = {
 
 
 //=====================================================================================================
-//Example
+//GENERIC
 //=====================================================================================================
 
-Sbi.locale.ln['sbi.generic.example'] = 'example';
+Sbi.locale.ln['sbi.generic.author'] = 'Autore';
+Sbi.locale.ln['sbi.generic.creationdate'] = 'Data di creazione';
+Sbi.locale.ln['sbi.generic.owner']= 'Autore';
+Sbi.locale.ln['sbi.generic.name']= 'Nome';
 
 //===================================================================
 //WIZARD 
@@ -77,11 +80,21 @@ Sbi.locale.ln['sbi.ds.wizard.confirm']= 'Conferma';
 Sbi.locale.ln['sbi.ds.wizard.cancel']= 'Annulla';
 Sbi.locale.ln['sbi.ds.wizard.startMsg']= 'Seleziona e carica il file XLS o CSV ...';
 Sbi.locale.ln['sbi.ds.wizard.file']= 'File';
-Sbi.locale.ln['sbi.ds.wizard.successLoad']= ' caricato con successo!'
+Sbi.locale.ln['sbi.ds.wizard.successLoad']= ' caricato con successo!';
 Sbi.locale.ln['sbi.ds.wizard.selectedFile']='File selezionato ';
 Sbi.locale.ln['sbi.ds.wizard.loadedFile']='Caricato file ';
 Sbi.locale.ln['sbi.ds.wizard.selectFile']='Seleziona il file';
 
+Sbi.locale.ln['sbi.ds.orderComboLabel']= 'Ordina per ...';
+Sbi.locale.ln['sbi.ds.filterLabel']= 'Filtra per ...';
+Sbi.locale.ln['sbi.ds.moreRecent']= 'Recenti';
+
+
+//===================================================================
+//BROWSER 
+//===================================================================
+Sbi.locale.ln['sbi.browser.document.searchDatasets']  = 'Cerca fra i dataset';
+Sbi.locale.ln['sbi.browser.document.searchKeyword']  = 'Cerca per parola chiave...';
 
 //===================================================================
 //MYDATA 
