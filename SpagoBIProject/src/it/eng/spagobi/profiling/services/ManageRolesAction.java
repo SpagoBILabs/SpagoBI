@@ -87,7 +87,7 @@ public class ManageRolesAction extends AbstractSpagoBIAction{
 	public static String START = "start";
 	public static String LIMIT = "limit";
 	public static Integer START_DEFAULT = 0;
-	public static Integer LIMIT_DEFAULT = 15;
+	public static Integer LIMIT_DEFAULT = 20;
 	
 	@Override
 	public void doService() {

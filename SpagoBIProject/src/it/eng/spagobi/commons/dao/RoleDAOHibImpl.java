@@ -889,13 +889,13 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			
 			offset = offset < 0 ? 0 : offset;
 			if(resultNumber > 0) {
-				fetchSize = (fetchSize > 0)? Math.min(fetchSize, resultNumber): resultNumber;
+				fetchSize = (fetchSize > 0)? Math.min(fetchSize, resultNumber.intValue()): resultNumber.intValue();
 			}
 			
 			hibernateQuery = aSession.createQuery("from SbiExtRoles order by name");
 			
-			//hibernateQuery.setFirstResult(offset);
-			//if(fetchSize > 0) hibernateQuery.setMaxResults(fetchSize);			
+			hibernateQuery.setFirstResult(offset);
+			if(fetchSize > 0) hibernateQuery.setMaxResults(fetchSize);			
 
 			toTransform = hibernateQuery.list();				
 		
