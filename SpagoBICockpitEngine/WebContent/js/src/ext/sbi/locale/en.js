@@ -60,10 +60,13 @@ Sbi.locale.formats = {
 };
 
 //=====================================================================================================
-//Example
+//GENERIC
 //=====================================================================================================
 
-Sbi.locale.ln['sbi.generic.example'] = 'example';
+Sbi.locale.ln['sbi.generic.author'] = 'Author';
+Sbi.locale.ln['sbi.generic.creationdate'] = 'Creation date';
+Sbi.locale.ln['sbi.generic.owner']= 'Autor';
+Sbi.locale.ln['sbi.generic.name']= 'Name';
 
 //===================================================================
 //WIZARD 
@@ -82,6 +85,17 @@ Sbi.locale.ln['sbi.ds.wizard.successLoad']= ' loaded succesfully!'
 Sbi.locale.ln['sbi.ds.wizard.selectedFile']='Selected file ';
 Sbi.locale.ln['sbi.ds.wizard.loadedFile']='Loaded file ';
 Sbi.locale.ln['sbi.ds.wizard.selectFile']='Select file';
+
+Sbi.locale.ln['sbi.ds.orderComboLabel']= 'Order by...';
+Sbi.locale.ln['sbi.ds.filterLabel']= 'Filter by ...';
+Sbi.locale.ln['sbi.ds.moreRecent']= 'Recent';
+
+
+//===================================================================
+//BROWSER 
+//===================================================================
+Sbi.locale.ln['sbi.browser.document.searchDatasets']  = 'Search for datasets';
+Sbi.locale.ln['sbi.browser.document.searchKeyword']  = 'Search by keyword...';
 
 //===================================================================
 //MYDATA 

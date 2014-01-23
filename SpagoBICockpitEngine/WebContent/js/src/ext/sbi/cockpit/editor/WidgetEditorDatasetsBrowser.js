@@ -51,7 +51,7 @@ Ext.extend(Sbi.cockpit.editor.WidgetEditorDatasetsBrowser, Ext.Panel, {
 			var bannerHTML = this.createBannerHtml({});
 			this.bannerPanel = new Ext.Panel({
 				height: 70, //105,
-				border:0,
+				border: false, 
 			   	autoScroll: false,
 			   	html: bannerHTML
 			});			
@@ -132,7 +132,7 @@ Ext.extend(Sbi.cockpit.editor.WidgetEditorDatasetsBrowser, Ext.Panel, {
 	
 	//Show only the dataset of the passed type
 	, showDataset: function(datasetType) { 
-		this.activeFilter = datasetType;
+		this.activeFilter = datasetType;	
 		
 		var scope = this;
 		var sm = this.widgetManager.getStoreManager();
@@ -169,6 +169,8 @@ Ext.extend(Sbi.cockpit.editor.WidgetEditorDatasetsBrowser, Ext.Panel, {
 		
 		this.store = new Ext.data.JsonStore({
 			 url: this.services['list']
+			 , filteredProperties : this.filteredProperties 
+			 , sorters: []
 			 , root: 'root'
 			 , fields: ["id",
 			    	 	"label",
@@ -184,8 +186,8 @@ Ext.extend(Sbi.cockpit.editor.WidgetEditorDatasetsBrowser, Ext.Panel, {
 			    	 	"stateCode",
 			    	 	"stateId",
 			    	 	"functionalities",
-			    	 	"creationDate",
-			    	 	"creationUser",
+			    	 	"dateIn",//"creationDate",
+			    	 	"owner", //"creationUser",
 			    	 	"refreshSeconds",
 			    	 	"isPublic",
 			    	 	"actions",
@@ -289,22 +291,22 @@ Ext.extend(Sbi.cockpit.editor.WidgetEditorDatasetsBrowser, Ext.Panel, {
             '		</ul> '+
     		'	    <div id="list-actions" class="list-actions"> '+
     					createButton +
-//    		'	        <form action="#" method="get" class="search-form"> '+
-//    		'	            <fieldset> '+
-//    		'	                <div class="field"> '+
-//    		'	                    <label for="search">'+LN('sbi.browser.document.searchDatasets')+'</label> '+
-//    		'	                    <input type="text" name="search" id="search" onclick="this.value=\'\'" onkeyup="javascript:Ext.getCmp(\'this\').filterStore(this.value)" value="'+LN('sbi.browser.document.searchKeyword')+'" /> '+
-//    		'	                </div> '+
-//    		'	                <div class="submit"> '+
-//    		'	                    <input type="text" value="Cerca" /> '+
-//    		'	                </div> '+
-//    		'	            </fieldset> '+
-//    		'	        </form> '+
-//    		'	         <ul class="order" id="sortList">'+
-//    		'	            <li id="dateIn" class="active"><a href="#" onclick="javascript:Ext.getCmp(\'this\').sortStore(\'dateIn\')">'+LN('sbi.ds.moreRecent')+'</a> </li> '+
-//    		'	            <li id="name"><a href="#" onclick="javascript:Ext.getCmp(\'this\').sortStore(\'name\')">'+LN('sbi.ds.name')+'</a></li> '+
-//    		'	            <li id="owner"><a href="#" onclick="javascript:Ext.getCmp(\'this\').sortStore(\'owner\')">'+LN('sbi.ds.owner')+'</a></li> '+
-//    		'	        </ul> '+
+    		'	        <form action="#" method="get" class="search-form"> '+
+    		'	            <fieldset> '+
+    		'	                <div class="field"> '+
+    		'	                    <label for="search">'+LN('sbi.browser.document.searchDatasets')+'</label> '+
+    		'	                    <input type="text" name="search" id="search" onclick="this.value=\'\'" onkeyup="javascript:Ext.getCmp(\'this\').filterStore(this.value)" value="'+LN('sbi.browser.document.searchKeyword')+'" /> '+
+    		'	                </div> '+
+    		'	                <div class="submit"> '+
+    		'	                    <input type="text" value="Cerca" /> '+
+    		'	                </div> '+
+    		'	            </fieldset> '+
+    		'	        </form> '+
+    		'	         <ul class="order" id="sortList">'+
+    		'	            <li id="dateIn" class="active"><a href="#" onclick="javascript:Ext.getCmp(\'this\').sortStore(\'dateIn\')">'+LN('sbi.ds.moreRecent')+'</a> </li> '+
+    		'	            <li id="name"><a href="#" onclick="javascript:Ext.getCmp(\'this\').sortStore(\'name\')">'+LN('sbi.generic.name')+'</a></li> '+
+    		'	            <li id="owner"><a href="#" onclick="javascript:Ext.getCmp(\'this\').sortStore(\'owner\')">'+LN('sbi.generic.owner')+'</a></li> '+
+    		'	        </ul> '+
     		'	    </div> '+
     		'	</div> '+
     		'</div>' ;
@@ -322,7 +324,7 @@ Ext.extend(Sbi.cockpit.editor.WidgetEditorDatasetsBrowser, Ext.Panel, {
 		}
 		
 		if (actionSelect != null){
-			 Sbi.debug('WidgetEditorWizardPanel clicked on dataset...[' + r.name + ']');
+			 Sbi.debug('WidgetEditorDatasetsBrowser clicked on dataset...[' + r.name + ']');
 		     	    
 		     if (this.widgetManager.existsStore(r.label) ){ 		
 		    	 var deleteStore = false;
@@ -358,4 +360,62 @@ Ext.extend(Sbi.cockpit.editor.WidgetEditorDatasetsBrowser, Ext.Panel, {
     	return true;
 	}
 
+	, filterStore: function(filterString) {
+
+		this.filteredProperties =  [ "label","name","description","owner" ];		
+		
+		if(filterString!=null && filterString!=undefined && filterString!=''){
+			this.store.filterBy(function(record,id){
+				
+				if(record!=null && record!=undefined){
+					var data = record.data;
+					if(data!=null && data!=undefined){
+						for(var p in data){
+							if(this.filteredProperties.indexOf(p)>=0){//if the column should be considered by the filter
+								if(data[p]!=null && data[p]!=undefined && ((""+data[p]).toUpperCase()).indexOf(filterString.toUpperCase())>=0){
+									return true;
+								}
+							}
+						}
+					}
+				}
+				return false;		
+			},this);
+		}else{
+			this.store.clearFilter();
+		}
+	}
+	
+	, sortStore: function(value) {		
+		var sorters = [{property : 'dateIn', direction: 'DESC', description: LN('sbi.ds.moreRecent')}, 
+		               {property : 'label', direction: 'ASC', description:  LN('sbi.ds.label')}, 
+		               {property : 'name', direction: 'ASC', description: LN('sbi.ds.name')}, 				
+		               {property : 'owner', direction: 'ASC', description: LN('sbi.ds.owner')}];
+
+		var sortEls = Ext.get('sortList').dom.childNodes;
+		//move the selected value to the first element
+		for(var i=0; i< sortEls.length; i++){
+			if (sortEls[i].id == value){					
+				sortEls[i].className = 'active';
+				break;
+			} 
+		}
+		//append others elements
+		for(var i=0; i< sortEls.length; i++){
+			if (sortEls[i].id !== value){
+				sortEls[i].className = '';		
+			}
+		}
+		
+
+		for (sort in sorters){
+			var s = sorters[sort];
+			if (s.property == value){
+				this.store.sort(s.property, s.direction);
+				break;
+			}
+		}
+		
+		this.viewPanel.refresh();
+	}	
 });
