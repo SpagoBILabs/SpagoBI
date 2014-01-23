@@ -350,7 +350,7 @@ END-CAS -->
 -->
     <jsp-config>
     
-	<taglib>
+<!-- 	<taglib>
 		<taglib-uri>http://www.tonbeller.com/wcf</taglib-uri>
 		<taglib-location>/WEB-INF/wcf/wcf-tags.tld</taglib-location>
 	</taglib>
@@ -368,7 +368,7 @@ END-CAS -->
 			/WEB-INF/spagobi/spagobi-tags.tld
 		</taglib-location>
 	</taglib>
-	
+	 -->
 	<jsp-property-group>
 		<url-pattern>*.jsp</url-pattern>
 		<el-ignored>true</el-ignored>
