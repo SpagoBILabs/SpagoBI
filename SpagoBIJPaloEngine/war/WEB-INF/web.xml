@@ -283,10 +283,8 @@ END-CAS -->
 		<welcome-file>default.htm</welcome-file>
 		<welcome-file>default.jsp</welcome-file>
 	</welcome-file-list>
-  <taglib>
-    <taglib-uri>http://www.tonbeller.com/wcf</taglib-uri>
-    <taglib-location>/WEB-INF/wcf/wcf-tags.tld</taglib-location>
-  </taglib>
+
+
 
 	  <error-page>
 	  	<exception-type>java.lang.Throwable</exception-type>
