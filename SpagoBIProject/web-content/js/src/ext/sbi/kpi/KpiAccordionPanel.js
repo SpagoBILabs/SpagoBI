@@ -78,7 +78,7 @@ Ext.extend(Sbi.kpi.KpiAccordionPanel , Ext.Panel, {
 	
 	, initAccordion: function(c){
 
-		this.itemNoKpi = new Ext.form.DisplayField({value: 'Nessun Kpi associato.', 
+		this.itemNoKpi = new Ext.form.DisplayField({value: LN('sbi.kpi.nokpi'), 
 			style: 'font-weight: bold; align:center; margin: 20px;'});
 		
 	    this.itemDetail = new Ext.Panel({

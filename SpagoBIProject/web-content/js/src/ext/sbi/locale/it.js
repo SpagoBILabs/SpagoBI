@@ -917,7 +917,7 @@ Sbi.locale.ln['Sbi.browser.mexport.MassiveExportWizardParametersPage.title'] = '
 Sbi.locale.ln['Sbi.office.zoomIn'] = 'Incrementa dimensioni';
 Sbi.locale.ln['Sbi.office.zoomOut'] = 'Decrementa dimensioni';
 
-
+Sbi.locale.ln['sbi.kpi.nokpi']= 'Nessun KPI associato';
 Sbi.locale.ln['sbi.kpi.accordionmenu.desciption']= 'Descrizione';
 Sbi.locale.ln['sbi.kpi.accordionmenu.linkeddoc']=  'Documento collegato';
 Sbi.locale.ln['sbi.kpi.accordionmenu.comments']= 'Commenti';
