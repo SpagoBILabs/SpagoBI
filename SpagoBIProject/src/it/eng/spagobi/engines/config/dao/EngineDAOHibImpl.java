@@ -402,7 +402,7 @@ public class EngineDAOHibImpl extends AbstractHibernateDAO implements IEngineDAO
 			hibEngine.setBiobjType(hibDomainBiobjType);
 			hibEngine.setUseDataSet(new Boolean(aEngine.getUseDataSet()));
 			hibEngine.setUseDataSource(new Boolean(aEngine.getUseDataSource()));
-			updateSbiCommonInfo4Insert(hibEngine);
+			updateSbiCommonInfo4Insert(hibEngine,true);
 			aSession.save(hibEngine);
 			tx.commit();
 		} catch (HibernateException he) {
