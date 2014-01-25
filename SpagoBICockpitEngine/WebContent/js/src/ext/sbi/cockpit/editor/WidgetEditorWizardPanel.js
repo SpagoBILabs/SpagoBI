@@ -18,15 +18,14 @@ Sbi.cockpit.editor.WidgetEditorWizardPanel = function(config) {
 	if(Sbi.settings && Sbi.cockpit && Sbi.cockpit.editor && Sbi.cockpit.editor.widgetEditorWizardPanel) {
 		defaultSettings = Ext.apply(defaultSettings, Sbi.cockpit.editor.widgetEditorWizardPanel);
 	}
-	
 	var c = Ext.apply(defaultSettings, config || {});
-	
 	Ext.apply(this, c);
-	
+		
+	this.init();
 	
 	c = Ext.apply(c, {
-					items: this.initContent(),
-					buttons: this.initButtons()
+		items: this.pages,
+		buttons: this.buttons
 	}); 
 	
 	Sbi.cockpit.editor.WidgetEditorWizardPanel.superclass.constructor.call(this, c);
@@ -35,9 +34,182 @@ Sbi.cockpit.editor.WidgetEditorWizardPanel = function(config) {
 
 };
 
+/**
+ * @class Sbi.xxx.Xxxx
+ * @extends Ext.util.Observable
+ * 
+ * bla bla bla bla bla ...
+ */
+
+/**
+ * @cfg {Object} config
+ * ...
+ */
 Ext.extend(Sbi.cockpit.editor.WidgetEditorWizardPanel, Ext.Panel, {
 	
-	initButtons: function() {
+	pages: null
+	, buttons: null
+	
+	, getActivePage: function() {
+		return this.layout.activeItem;
+	}
+
+	, getActivePageNumber: function() {
+		return this.layout.activeItem.itemId;
+	}
+	
+	, getPageNumber: function(page) {
+		if(page) return page.itemId;
+		return -1;
+	}
+	
+	, getPageCount: function() {
+		return this.items.length;
+	}
+	
+	, isValidPageNumber: function(pageNumber) {
+		return pageNumber >= 1 && pageNumber <= this.getPageCount();
+	}
+	
+	, getPage: function(pageNumber) {
+		var page = null;
+		if(Sbi.isValorized(pageNumber) && this.isValidPageNumber(pageNumber)) {
+			page = this.pages[pageNumber];
+		}
+		return page;
+	}
+	
+	, moveToNextPage: function() {
+		var activePageNumber =  this.getActivePageNumber();
+		this.moveToPage(activePageNumber+1);
+	}
+	
+	, moveToPreviousPage: function() {
+		var activePageNumber =  this.getActivePageNumber();
+		this.moveToPage(activePageNumber-1);
+	}
+	
+	, moveToPage: function(targetPageNumber){	
+		Sbi.trace("[WidgetEditorWizardPanel.moveToPage]: IN");
+		
+		Sbi.trace("[WidgetEditorWizardPanel.moveToPage]: target page number is equal to [" + targetPageNumber + "]");
+		var activePageNumber =  this.getActivePageNumber();
+		var totPageNumber  = this.getPageCount();
+		var isTabValid = true;
+		 
+		if(this.isValidPageNumber(targetPageNumber) === false) {
+			return;
+		}
+		
+		Sbi.trace("[WidgetEditorWizardPanel.moveToPage]: target page number is valid");
+		
+		if (this.isPageValid(targetPageNumber)){
+			
+			Sbi.trace("[WidgetEditorWizardPanel.moveToPage]: target page is valid");
+			
+			this.layout.setActiveItem(targetPageNumber);
+			 
+			Ext.getCmp('move-prev').setDisabled(targetPageNumber==0);
+			Ext.getCmp('move-next').setDisabled(targetPageNumber==totPageNumber);
+		 	Ext.getCmp('confirm').setVisible(!(parseInt(activePageNumber)<parseInt(totPageNumber)));
+		
+		} else {
+			Sbi.trace("[WidgetEditorWizardPanel.moveToPage]: target page is not valid");
+		}	
+		
+		Sbi.trace("[WidgetEditorWizardPanel.moveToPage]:Page [" + this.getActivePageNumber() + "] is now the active page");
+				
+		Sbi.trace("[WidgetEditorWizardPanel.moveToPage]: OUT");
+	}
+	
+	, isPageValid: function(pageNumber) {
+		Sbi.trace("[WidgetEditorWizardPanel.isPageValid]: IN");
+		
+		var page = this.getPage(pageNumber);
+		if(Sbi.isNull(page)) {
+			return false;
+		}
+		
+		var isPageValid = true;
+		if(Sbi.isValorized(page.isValid)) {
+			isPageValid = isPageValid && page.isValid();
+		}
+		
+		isPageValid = isPageValid && this.doPageValidation(page);
+		
+		Sbi.trace("[WidgetEditorWizardPanel.isPageValid]: OUT");
+		
+		return isPageValid;
+	}
+	
+	, doPageValidation: function(page) {
+		Sbi.trace("[WidgetEditorWizardPanel.doPageValidation]: IN");
+		
+		var isValid = true;
+		
+		Sbi.trace("[WidgetEditorWizardPanel.doPageValidation]: Page number is equal to [" + this.getPageNumber(page) + "]");
+		if (this.getPageNumber(page) === 1){
+			isValid = isValid && this.isDatasetBrowserPageValid();	
+		}
+		Sbi.trace("[WidgetEditorWizardPanel.doPageValidation]: OUT");
+		
+		return isValid;
+	}
+	
+	, isDatasetBrowserPageValid: function() {
+		Sbi.trace("[WidgetEditorWizardPanel.isDatasetBrowserPageValid]: IN");
+		Sbi.trace("[WidgetEditorWizardPanel.isDatasetBrowserPageValid]: 0.dataset: " + this.pages[0].dataset);
+		Sbi.trace("[WidgetEditorWizardPanel.isDatasetBrowserPageValid]: 1.dataset: " + this.pages[1].dataset);
+		
+		if (this.pages[0].widget.dataset === undefined || this.pages[0].widget.dataset === null){
+			alert('Per procedere e\' necessario selezionare un dataset!');
+			return false;
+		}
+		Sbi.trace("[WidgetEditorWizardPanel.isDatasetBrowserPageValid]: OUT");
+		return true;
+	}
+
+	// -----------------------------------------------------------------------------------------------------------------
+    // init methods
+	// -----------------------------------------------------------------------------------------------------------------
+
+	/**
+	 * @method 
+	 * 
+	 * Initialize the GUI
+	 */
+	, init: function() {
+		this.initPages();
+		this.initButtons();
+	}
+
+	, initPages: function(){
+		Sbi.trace("[WidgetEditorWizardPanel.initPages]: IN");
+		
+		this.pages = new Array();
+		
+		Sbi.trace("[WidgetEditorWizardPanel.initPages]: widget: " + this.widget);
+		Sbi.trace("[WidgetEditorWizardPanel.initPages]: widgetManager: " + this.widgetManager);
+		
+		var datasetsBrowserPage = new Sbi.cockpit.editor.WidgetEditorDatasetsBrowser({
+			widgetManager: this.widgetManager
+			, widget: this.widget
+			, itemId: 0
+		}); 
+		datasetsBrowserPage.addListener('click', this.onClick, this);
+		this.pages.push(datasetsBrowserPage);
+		
+		var widgetDesignerPage = new Sbi.cockpit.editor.WidgetEditor({
+			itemId: 1
+		});
+		this.pages.push(widgetDesignerPage);
+		
+		Sbi.trace("[WidgetEditorWizardPanel.initPages]: OUT");
+		
+		return this.pages;
+	}
+	
+	, initButtons: function() {
 		var thisPanel = this;
 		var buttonsBar = [];
 		
@@ -45,7 +217,7 @@ Ext.extend(Sbi.cockpit.editor.WidgetEditorWizardPanel, Ext.Panel, {
 		buttonsBar.push({ id: 'move-prev',
 	        text: LN('sbi.ds.wizard.back'),
 	        handler: function(btn) {
-	        	thisPanel.navigate(btn.findParentByType("panel"), "prev");
+	        	thisPanel.moveToNextPrevious();
 	        }, 
 	        scope: this,
 	        disabled: true
@@ -54,7 +226,7 @@ Ext.extend(Sbi.cockpit.editor.WidgetEditorWizardPanel, Ext.Panel, {
 		buttonsBar.push({id: 'move-next',
 	        text:  LN('sbi.ds.wizard.next'),
 	        handler: function(btn) {
-	        	thisPanel.navigate(btn.findParentByType("panel"), "next");
+	        	thisPanel.moveToNextPage();
 	        }, scope: this
 	    	});
 		
@@ -75,177 +247,9 @@ Ext.extend(Sbi.cockpit.editor.WidgetEditorWizardPanel, Ext.Panel, {
 	        }, scope: this
 	    	});
 		
+		this.buttons = buttonsBar;
+		
 		return buttonsBar;
 	}
 
-
-	, initContent: function(){
-		
-		var datasetsBrowser = new Sbi.cockpit.editor.WidgetEditorDatasetsBrowser({widgetManager: this.widgetManager, widget: this.widget}); 
-		datasetsBrowser.itemId = 0;
-		datasetsBrowser.addListener('click', this.onClick, this);
-	
-		var editor = new Sbi.cockpit.editor.WidgetEditor({});
-		editor.itemId  = 1;
-
-		var cards = [];
-		cards.push(datasetsBrowser);
-		cards.push(editor);
-		
-		return cards;
-	}
-	
-	, navigate: function(panel, direction){		
-        // This routine could contain business logic required to manage the navigation steps.
-        // It would call setActiveItem as needed, manage navigation button state, handle any
-         // branching logic that might be required, handle alternate actions like cancellation
-         // or finalization, etc.  A complete wizard implementation could get pretty
-         // sophisticated depending on the complexity required, and should probably be
-         // done as a subclass of CardLayout in a real-world implementation.
-		 var newTabId =  this.layout.activeItem.itemId;
-		 var numTabs  = (this.items.length-1);
-		 var isTabValid = true;
-		 
-		 if (direction == 'next'){
-			 newTabId += (newTabId < numTabs)?1:0;	
-			 if (newTabId == 1){
-				 isTabValid = this.validateTab0();		
-			 }
-		 }else{			
-			newTabId -= (newTabId <= numTabs)?1:0;					
-		 }
-		 if (isTabValid){
-			
-			 this.layout.setActiveItem(newTabId);
-			 
-			 Ext.getCmp('move-prev').setDisabled(newTabId==0);
-			 Ext.getCmp('move-next').setDisabled(newTabId==numTabs);
-		 	 Ext.getCmp('confirm').setVisible(!(parseInt(newTabId)<parseInt(numTabs)));
-		 }			 
-	}
-		
-
-//	, onClick : function(obj, i, node, e) {
-//		alert('clickedd!!!');
-//		var actionSelect = e.getTarget('div[class=select]',10,true);
-//		
-//		var s = obj.getStore();
-//		var r = s.getAt(s.findExact('label',node.id));
-//		if (r){
-//			r = r.data;
-//		}
-//		
-//		if (actionSelect != null){
-//			 Sbi.debug('WidgetEditorWizardPanel clicked on dataset...[' + r.name + ']');
-//		     var storeConfig = {};
-//		     storeConfig.dsLabel = r.label;		     
-//		     this.widgetManager.addStore(storeConfig);
-//		     this.widget.dataset =  r.label; //this.widgetManager.getStore(storeConfig.dsLabel);    			
-//		}	
-//    	return true;
-//	}
-
-	
-	// -----------------------------------------------------------------------------------------------------------------
-    // utility methods
-	// -----------------------------------------------------------------------------------------------------------------
-	
-	, validateTab0: function() {
-		if (this.widget.dataset == undefined || this.widget.dataset == null){
-			alert('Per procedere e\' necessario selezionare un dataset!');
-			return false;
-		}
-		
-		return true;
-	}
-	
-//	, getDatasetStore : function() {
-//		var scope = this;
-//
-//		var baseParams ={};
-//		baseParams.isTech = false;
-//		baseParams.showOnlyOwner = false;
-//		baseParams.allMyDataDs = true;
-//
-//		var services = new Array();
-//		services["list"] = Sbi.config.serviceRegistry.getRestServiceUrl({
-//			serviceName : 'certificateddatasets',
-//			baseParams : baseParams,
-//			baseUrl:{contextPath: 'SpagoBI', controllerPath: 'servlet/AdapterHTTP'}
-//		});
-//		
-//		
-//		Sbi.debug('WidgetEditorDatasetsView bulding the store...');
-//		var store = new Ext.data.JsonStore({
-//			 url: services['list']
-//			 , root: 'root'
-////			 , autoLoad: true
-//			 , fields: ["id",
-//			    	 	"label",
-//			    	 	"name",
-//			    	 	"description",
-//			    	 	"typeCode",
-//			    	 	"typeId",
-//			    	 	"encrypt",
-//			    	 	"visible",
-//			    	 	"engine",
-//			    	 	"engineId",
-//			    	 	"dataset",
-//			    	 	"stateCode",
-//			    	 	"stateId",
-//			    	 	"functionalities",
-//			    	 	"creationDate",
-//			    	 	"creationUser",
-//			    	 	"refreshSeconds",
-//			    	 	"isPublic",
-//			    	 	"actions",
-//			    	 	"exporters",
-//			    	 	"decorators",
-//			    	 	"previewFile",
-//			    	 	"isUsed" /*local property*/]
-//		});	
-//	
-//		store.on('load', this.checkUsage, this);
-//		
-////		store.load({callback : function(records, options, success) {
-////				            if (success) {
-////				            	alert('store.load!');
-////				            	var sm = scope.widgetManager.getStoreManager();			
-////				            	
-////				            	for (var i=0; i< records.length; i++){
-////				            		if ( sm.get(records[i].data.label) != undefined &&   sm.get(records[i].data.label) != null){
-////				            			records[i].data.isUsed = 'true';	
-////				            			alert('isUsed is TRUE!!');
-////				            		}else{
-////				            			records[i].data.isUsed = 'false';
-////				            		}
-////				            	}				           
-////				            }}
-////        },scope);
-//		store.load();
-//
-//		
-//		Sbi.debug('WidgetEditorDatasetsView store loaded.');
-//		
-//		return store;
-//	}	
-////	(records, options, success) {
-//	, checkUsage: function  (s, records, success, operation, eOpts){
-//		alert('checkUsage');
-//            if (success) {
-//            	alert('store.load!');
-//            	var sm = this.widgetManager.getStoreManager();			
-//            	
-//            	for (var i=0; i< records.length; i++){
-//            		if ( sm.get(records[i].data.label) != undefined &&   sm.get(records[i].data.label) != null){
-//            			records[i].data.isUsed = 'true';	
-//            			alert('isUsed is TRUE!!');
-//            		}else{
-//            			records[i].data.isUsed = 'false';
-//            		}
-//            	}				           
-//            }
-//            
-//            return true;
-//	}
 });
