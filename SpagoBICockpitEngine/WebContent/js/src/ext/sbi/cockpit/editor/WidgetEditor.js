@@ -8,6 +8,8 @@ Ext.ns("Sbi.cockpit.editor");
 
 Sbi.cockpit.editor.WidgetEditor = function(config) { 
 
+	Sbi.trace("[WidgetEditor.constructor]: IN");
+	
 	var defaultSettings = {
 		//title: LN('Sbi.cockpit.editor.WidgetEditor.title')
 		engineAlreadyInitialized : false
@@ -73,6 +75,8 @@ Sbi.cockpit.editor.WidgetEditor = function(config) {
 			this.fireEvent('afterworksheetinitialized', this);
 		}
 	}, this, { single : true } );
+	
+	Sbi.trace("[WidgetEditor.constructor]: OUT");
 	
 };
 
