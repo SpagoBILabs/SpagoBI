@@ -17,15 +17,11 @@ Sbi.cockpit.editor.WidgetEditorDatasetsBrowser = function(config) {
 	if(Sbi.settings && Sbi.cockpit && Sbi.cockpit.editor && Sbi.cockpit.editor.widgetEditorDatasetsBrowser) {
 		defaultSettings = Ext.apply(defaultSettings, Sbi.cockpit.editor.widgetEditorDatasetsBrowser);
 	}
-
-	
 	var c = Ext.apply(defaultSettings, config || {});
-	
 	Ext.apply(this, c);
 	
 	this.initServices();
-	this.initToolbar();
-	this.initViewPanel();
+	this.init();
 	
 	this.items = [this.bannerPanel,this.viewPanel];
 		
@@ -37,19 +33,57 @@ Sbi.cockpit.editor.WidgetEditorDatasetsBrowser = function(config) {
 
 Ext.extend(Sbi.cockpit.editor.WidgetEditorDatasetsBrowser, Ext.Panel, {
 	
-	services: null
-  , store: null
-  , widgetManager: null
-  , id:'this' 
-  , activeFilter: null
+	// =================================================================================================================
+	// PROPERTIES
+	// =================================================================================================================
 	
-  , initServices : function() {
+	/**
+     * @property {Array} services
+     * This array contains all the services invoked by this class
+     */
+	services: null
+  
+	, store: null
+	, widgetManager: null
+	, id:'this' 
+	, activeFilter: null
+	
+	// =================================================================================================================
+	// METHODS
+	// =================================================================================================================
+	
+	/**
+	 * @method 
+	 * 
+	 * Initialize the following services exploited by this component:
+	 * 
+	 *    - none
+	 */
+	, initServices: function() {
+//		var params = {LIGHT_NAVIGATOR_DISABLED: 'TRUE'};
+//		
+//		this.services = this.services || new Array();
+//		
+//		this.services['exampleService'] = this.services['exampleService'] || Sbi.config.serviceRegistry.getServiceUrl({
+//			serviceName: 'EXAMPLE_ACTION'
+//			, baseParams: params
+//		});	
 		this.services = [];
-
-		this.showDataset('UsedDataSet'); //for default are shown dataset already used in the cockpit 
-		
+		this.showDataset('UsedDataSet'); //for default are shown dataset already used in the cockpit 	
 	}
-    
+
+
+	/**
+	 * @method 
+	 * 
+	 * Initialize the GUI
+	 */
+	, init: function() {
+		this.initToolbar();
+		this.initViewPanel();
+	}
+	
+	
 	, initToolbar: function() {
 
 			var bannerHTML = this.createBannerHtml({});
