@@ -7,7 +7,9 @@
 Ext.ns("Sbi.cockpit.editor");
 
 Sbi.cockpit.editor.WidgetEditorDatasetsView = function(config) { 
-
+	
+	Sbi.trace("[WidgetEditorDatasetsView.constructor]: IN");
+	
 	var defaultSettings = {		
 			autoScroll: true
 	};
@@ -23,8 +25,9 @@ Sbi.cockpit.editor.WidgetEditorDatasetsView = function(config) {
 	
 	Ext.apply(this, c);
 	
-	Sbi.cockpit.editor.WidgetEditorWizardPanel.superclass.constructor.call(this, c);
+	Sbi.cockpit.editor.WidgetEditorDatasetsView.superclass.constructor.call(this, c);
 	
+	Sbi.trace("[WidgetEditorDatasetsView.constructor]: OUT");
 };
 
 Ext.extend(Sbi.cockpit.editor.WidgetEditorDatasetsView, Ext.DataView, {

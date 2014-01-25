@@ -8,6 +8,8 @@ Ext.ns("Sbi.cockpit.editor");
 
 Sbi.cockpit.editor.WidgetEditorDatasetsBrowser = function(config) { 
 
+	Sbi.trace("[WidgetEditorDatasetsBrowser.constructor]: IN");
+	
 	var defaultSettings = {		
 		autoScroll: true
 	};
@@ -28,6 +30,8 @@ Sbi.cockpit.editor.WidgetEditorDatasetsBrowser = function(config) {
 	this.items = [this.bannerPanel,this.viewPanel];
 		
 	Sbi.cockpit.editor.WidgetEditorDatasetsBrowser.superclass.constructor.call(this, c);
+	
+	Sbi.trace("[WidgetEditorDatasetsBrowser.constructor]: IN");
 	
 };
 
