@@ -74,7 +74,7 @@ Ext.extend(Sbi.cockpit.editor.WidgetEditorWizardPanel, Sbi.widgets.WizardPanel, 
 		
 		this.pages = new Array();
 		
-		var datasetsBrowserPage = new Sbi.cockpit.editor.WidgetEditorDatasetsBrowser({
+		var datasetsBrowserPage = new Sbi.widgets.DatasetsBrowserPanel({
 			widgetManager: this.widgetManager
 			, widget: this.widget
 			, itemId: 0
