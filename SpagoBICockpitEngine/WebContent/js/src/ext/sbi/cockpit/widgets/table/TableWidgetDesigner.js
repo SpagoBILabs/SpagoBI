@@ -73,31 +73,36 @@ Sbi.cockpit.widgets.table.TableWidgetDesigner = function(config) {
 	};
 	
 	Sbi.cockpit.widgets.table.TableWidgetDesigner.superclass.constructor.call(this, c);
-	
 };
 
-Ext.extend(Sbi.cockpit.widgets.table.TableWidgetDesigner, Ext.Panel, {
+Ext.extend(Sbi.cockpit.widgets.table.TableWidgetDesigner, Sbi.cockpit.editor.WidgetDesigner, {
 	tableDesigner: null,
 	
 	getFormState: function() {
-		var state = {};
+		var state = Sbi.cockpit.widgets.table.TableWidgetDesigner.superclass.getFormState(this);
 		state.designer = 'Table';
 		state.visibleselectfields = this.tableDesigner.tableDesigner.getContainedValues();
 		return state;
 	}
 	
 	, setFormState: function(state) {
+		Sbi.cockpit.widgets.table.TableWidgetDesigner.superclass.setFormState(this, state);
 		if(state.visibleselectfields!=undefined && state.visibleselectfields!=null){
 			this.tableDesigner.tableDesigner.setValues(state.visibleselectfields);
 		}
 	}
+	
 	/* tab validity: rules are
 	 * - at least one measure or attribute is in
 	 */
-
 	, validate: function(validFields){
 		
-		var valErr = ''+this.tableDesigner.validate(validFields);
+		var valErr = Sbi.cockpit.widgets.table.TableWidgetDesigner.superclass.validate(this, validFields);
+		if(valErr!= ''){
+			return varErr;
+		}
+		
+		valErr = ''+this.tableDesigner.validate(validFields);
 
 		if(valErr!= ''){
 			valErr = valErr.substring(0, valErr.length - 1);
@@ -108,7 +113,7 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidgetDesigner, Ext.Panel, {
 		if (vals && vals.length> 0) {return;} // OK
 		else {
 				return LN("sbi.designertable.tableValidation.noElement");
-		} // ERROR MESSAGE
+		} 
 	}
 	
 	, containsAttribute: function (attributeId) {
