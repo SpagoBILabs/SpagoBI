@@ -20,7 +20,7 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='./js/src/ext/sbi/locale/LocaleUtils.js'/></script>
 <script type="text/javascript" src='./js/src/ext/sbi/service/ServiceRegistry.js'/></script>
 
-<script type="text/javascript" src='./js/src/ext/sbi/utils/GenericDropTarget.js'/></script>
+<script type="text/javascript" src='./js/src/ext/sbi/widgets/GenericDropTarget.js'/></script>
 <script type="text/javascript" src='./js/src/ext/sbi/widgets/WizardPanel.js'/></script>
 <script type="text/javascript" src='./js/src/ext/sbi/widgets/DatasetsBrowserPanel.js'/></script>
 <script type="text/javascript" src='./js/src/ext/sbi/widgets/DatasetsBrowserView.js'/></script>
@@ -36,12 +36,13 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='./js/src/ext/sbi/cockpit/editor/WidgetEditorControlPanel.js'/></script>
 <script type="text/javascript" src='./js/src/ext/sbi/cockpit/editor/WidgetEditorDesignerPalette.js'/></script>
 
-
-
-
-
 <script type="text/javascript" src='./js/src/ext/sbi/cockpit/widgets/dummy/DummyWidget.js'/></script>
+
 <script type="text/javascript" src='./js/src/ext/sbi/cockpit/widgets/table/TableWidget.js'/></script>
+<script type="text/javascript" src='./js/src/ext/sbi/cockpit/widgets/table/QueryFieldsContainerPanel.js'/></script>
+<script type="text/javascript" src='./js/src/ext/sbi/cockpit/widgets/table/QueryFieldsCardPanel.js'/></script>
+<script type="text/javascript" src='./js/src/ext/sbi/cockpit/widgets/table/TableWidgetDesigner.js'/></script>
+
 
 <!-- END-DEBUG -->
 
