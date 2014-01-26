@@ -26,15 +26,80 @@ Sbi.isNotNull = function(o) {
 	return !Sbi.isNull(o);
 };
 
-// TODO ...
-//Sbi.getObjectByName  = function(objectName) {
-//	
-//};
+Sbi.getObjectSettings = function(objectQilifiedName, defaultSettings) {
+	var settings = null;
+	
+	if( Sbi.isValorized(objectQilifiedName) && Ext.isString(objectQilifiedName)) {
+		var nameParts = objectQilifiedName.split(".");
+		if(nameParts.length > 0 && nameParts[0] === "Sbi") {
+			nameParts.shift(); // remove the first element
+			nameParts.unshift("Sbi", "settings");
+		}
+		if(nameParts.length > 2) { // it's a real object not just general settings
+			var objectName = nameParts.pop();
+			objectName = objectName.charAt(0).toLowerCase() + objectName.slice(1);
+			nameParts.push(objectName);
+		}
+		
+		settings = Sbi.getObjectByName(nameParts.join("."));
+		if(settings) {
+			settings = Ext.apply(defaultSettings || {}, settings);	
+		}
+	} 
+	
+	if(!settings && defaultSettings) {
+		settings = defaultSettings;
+	}
+	
+	
+	return settings;
+};
 
-//TODO ...
-//Sbi.execFunctionByName = function(fnName, fnArgs) {
-//	
-//};
+
+Sbi.getObjectByName  = function(objectName) {
+	
+	Sbi.trace("[Sbi.getObjectByName]: IN");
+	
+	if( Sbi.isNotValorized(objectName)) {
+		Sbi.showErrorMessage("Input parameter [objectName] must be valorized");
+		return null;
+	}
+	
+	if( Ext.isString(objectName) === false) {
+		Sbi.showErrorMessage("Input parameter [objectName] must be of type string");
+		return null;
+	}
+	
+	Sbi.trace("[Sbi.getObjectByName]: Input parameter [objectName] is equal to [" + objectName + "]");
+	
+	var scope = window; 
+	var scopeStr = 'window'; // used by debug logs
+	
+	
+	var namespace = objectName.split('.');
+	objectName = namespace.pop();
+	if(namespace.length > 0) {
+		for(var i = 0; i< namespace.length; i++) {
+			var o = scope[namespace[i]];
+			if (typeof o === "object") {
+				Sbi.trace("Object [" + namespace[i] + "] found in scope [" + scopeStr + "]");
+				scope = o;
+				if(scopeStr === 'window') {
+					scopeStr = namespace[i];
+				} else {
+					scopeStr += '.' + namespace[i];
+				}
+			} else {
+				Sbi.warn("Impossible to find an object named [" + namespace[i] + "] in scope [" + scopeStr + "]");
+				return null;
+			}
+		}
+	} 
+	
+	Sbi.trace("[Sbi.getObjectByName]: OUT");
+	
+	return scope[objectName];
+};
 
 Sbi.createObjectByClassName = function(fnName, fnArgs) {
 	
@@ -45,46 +110,75 @@ Sbi.createObjectByClassName = function(fnName, fnArgs) {
 	Sbi.trace("[Sbi.execFunctionByName]: function name is equal to [" + fnName + "]");
 	if( Sbi.isNotValorized(fnName)) {
 		Sbi.showErrorMessage("Input parameter [fnName] must be valorized");
-		return undefined;
+		return null;
 	}
 	
-	var namespaceStr = 'window';
-	var namespace = fnName.split('.');
-	if(namespace.length > 1) {
-		fnName = namespace.pop();
-		
-		var scope = window; 
-		for(var i = 0; i< namespace.length; i++) {
-			
-			var o = scope[namespace[i]];
-			Sbi.trace(typeof o);
-			if (typeof o === "object") {
-				Sbi.trace("Object [" + namespace[i] + "] found in scope [" + namespaceStr + "]");
-				scope = o;
-				if(namespaceStr === 'window') {
-					namespaceStr = namespace[i];
-				} else {
-					namespaceStr += '.' + namespace[i];
-				}
-			} else {
-				Sbi.showErrorMessage("Impossible to find an object named [" + namespace[i] + "] in scope [" + namespaceStr + "]");
-			}
-		}
-	} 
-	
 	// find object
-	var fn = scope[fnName];
+	var fn = Sbi.getObjectByName(fnName);
 	 
 	// is object a function?
 	if (typeof fn === "function") {
-		Sbi.trace("Function [" + fnName + "] found in scope [" + namespaceStr + "]");
+		Sbi.trace("Function [" + fnName + "] found in scope");
 		output =  new fn(fnArgs);
-		Sbi.trace("Function [" + fnName + "] sucesfully called in scope [" + namespaceStr + "]");
+		Sbi.trace("Function [" + fnName + "] sucesfully called in scope");
 	} else {
-		Sbi.showErrorMessage("Impossible to find a function named [" + fnName + "] in scope [" + namespaceStr + "]");
+		Sbi.showErrorMessage("Impossible to find a function named [" + fnName + "] in scope");
 	}
 	
 	Sbi.trace("[Sbi.execFunctionByName]: OUT");
 	
 	return output;
 };
+
+//Sbi.createObjectByClassName = function(fnName, fnArgs) {
+//	
+//	var output;
+//	
+//	Sbi.trace("[Sbi.execFunctionByName]: IN");
+//	
+//	Sbi.trace("[Sbi.execFunctionByName]: function name is equal to [" + fnName + "]");
+//	if( Sbi.isNotValorized(fnName)) {
+//		Sbi.showErrorMessage("Input parameter [fnName] must be valorized");
+//		return undefined;
+//	}
+//	
+//	var namespaceStr = 'window';
+//	var namespace = fnName.split('.');
+//	if(namespace.length > 1) {
+//		fnName = namespace.pop();
+//		
+//		var scope = window; 
+//		for(var i = 0; i< namespace.length; i++) {
+//			
+//			var o = scope[namespace[i]];
+//			Sbi.trace(typeof o);
+//			if (typeof o === "object") {
+//				Sbi.trace("Object [" + namespace[i] + "] found in scope [" + namespaceStr + "]");
+//				scope = o;
+//				if(namespaceStr === 'window') {
+//					namespaceStr = namespace[i];
+//				} else {
+//					namespaceStr += '.' + namespace[i];
+//				}
+//			} else {
+//				Sbi.showErrorMessage("Impossible to find an object named [" + namespace[i] + "] in scope [" + namespaceStr + "]");
+//			}
+//		}
+//	} 
+//	
+//	// find object
+//	var fn = scope[fnName];
+//	 
+//	// is object a function?
+//	if (typeof fn === "function") {
+//		Sbi.trace("Function [" + fnName + "] found in scope [" + namespaceStr + "]");
+//		output =  new fn(fnArgs);
+//		Sbi.trace("Function [" + fnName + "] sucesfully called in scope [" + namespaceStr + "]");
+//	} else {
+//		Sbi.showErrorMessage("Impossible to find a function named [" + fnName + "] in scope [" + namespaceStr + "]");
+//	}
+//	
+//	Sbi.trace("[Sbi.execFunctionByName]: OUT");
+//	
+//	return output;
+//};
