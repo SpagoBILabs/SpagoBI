@@ -82,8 +82,8 @@ Ext.extend(Sbi.cockpit.editor.WidgetEditorControlPanel, Ext.Panel, {
 	initPanels: function() {
 
 		this.designToolsPallettePanel = new Sbi.cockpit.editor.WidgetEditorDesignerPalette({}); 
-		this.designToolsFieldsPanel = new Ext.Panel({html: "Fields Panel"});
-		this.designToolsLayoutPanel  = new Ext.Panel({html: "Layout Panel"});
+		this.designToolsFieldsPanel = new Ext.Panel({title: "Data", html: "Fields Panel"});
+		this.designToolsLayoutPanel  = new Ext.Panel({title: "Style", html: "Layout Panel"});
 		
 //		this.designToolsPallettePanel = new Sbi.worksheet.designer.DesignToolsPallettePanel({region : 'north'});
 //	
