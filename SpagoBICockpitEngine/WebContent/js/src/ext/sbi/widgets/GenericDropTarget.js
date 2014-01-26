@@ -5,9 +5,9 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. **/
 
 
-Ext.ns("Sbi.utils");
+Ext.ns("Sbi.widgets");
 
-Sbi.utils.GenericDropTarget = function(targetPanel, config) {
+Sbi.widgets.GenericDropTarget = function(targetPanel, config) {
 	
 	this.validateConfigObject(config);
 	this.adjustConfigObject(config);
@@ -24,11 +24,11 @@ Sbi.utils.GenericDropTarget = function(targetPanel, config) {
 	this.targetPanel = targetPanel;
 	
 	// constructor
-    Sbi.utils.GenericDropTarget.superclass.constructor.call(this, this.targetPanel.getEl(), c);
+    Sbi.widgets.GenericDropTarget.superclass.constructor.call(this, this.targetPanel.getEl(), c);
 };
 
 /**
- * @class Sbi.utils.GenericDropTarget
+ * @class Sbi.widgets.GenericDropTarget
  * @extends Ext.dd.DropTarget
  * 
  * bla bla bla bla bla ...
@@ -38,7 +38,7 @@ Sbi.utils.GenericDropTarget = function(targetPanel, config) {
  * @cfg {Object} config
  * ...
  */
-Ext.extend(Sbi.utils.GenericDropTarget, Ext.dd.DropTarget, {
+Ext.extend(Sbi.widgets.GenericDropTarget, Ext.dd.DropTarget, {
     
 	
 	// =================================================================================================================
