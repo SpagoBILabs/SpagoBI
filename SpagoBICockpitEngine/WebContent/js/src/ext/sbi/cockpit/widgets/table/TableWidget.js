@@ -60,6 +60,6 @@ Sbi.registerWidget('table', {
 	name: 'Table'
 	, icon: 'js/src/ext/sbi/cockpit/widgets/table/table_64x64_ico.png'
 	, runtimeClass: 'Sbi.cockpit.widgets.table.TableWidget'
-	//, designerClass: 'Sbi.cockpit.widgets.table.TableWidgetDesigner'
-	, designerClass: 'Ext.Panel'
+	, designerClass: 'Sbi.cockpit.widgets.table.TableWidgetDesigner'
+	//, designerClass: 'Ext.Panel'
 });

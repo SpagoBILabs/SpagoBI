@@ -90,7 +90,7 @@ Ext.extend(Sbi.cockpit.editor.WidgetEditorMainPanel, Ext.Panel, {
 	
 	, initDropTarget: function() {
 		this.removeListener('render', this.initDropTarget, this);
-		var dropTarget = new Sbi.utils.GenericDropTarget(this, {
+		var dropTarget = new Sbi.widgets.GenericDropTarget(this, {
 			ddGroup: 'paleteDDGroup'
 			, onFieldDrop: this.onFieldDrop
 		});
