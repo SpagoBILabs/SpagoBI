@@ -62,7 +62,7 @@ Ext.extend(Sbi.cockpit.editor.WidgetEditorDesignerPalette, Ext.Panel, {
 	    this.cm = new Ext.grid.ColumnModel([fieldColumn]);
 
 		var conf = {
-			title : 'Palette',
+			title : 'Visualization',
 			autoScroll : true,
 			border : false,
 				items : [ new Ext.Panel({
