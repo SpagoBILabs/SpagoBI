@@ -32,7 +32,7 @@
  * toolschange(change): the value of the tools is changed.. change a map with the change value.
  * for example {layout: layout-header}
  * 
- * Authors - Alberto Ghedin
+ * Authors - Antonella Giachino (antonella.giachino@eng.it)
  */
 Ext.ns("Sbi.cockpit.editor");
 
@@ -50,11 +50,12 @@ Sbi.cockpit.editor.WidgetEditorControlPanel = function(config) {
 
 	Ext.apply(this, c);
 	
-//	this.services = this.services || new Array();	
-//	this.services['getQueryFields'] = this.services['getQueryFields'] || Sbi.config.serviceRegistry.getServiceUrl({
-//		serviceName: 'GET_WORKSHEET_FIELDS_ACTION'
-//		, baseParams: new Object()
-//	});
+	this.services = this.services || new Array();	
+	var baseParams = {};
+	this.services["getQueryFields"] = Sbi.config.serviceRegistry.getRestServiceUrl({
+		serviceName : 'datasets/metafields', 
+		baseParams : baseParams
+	});		
 	
 	this.addEvents("attributeDblClick", "fieldRightClick", "validateInvalidFieldsAfterLoad");
 
@@ -82,29 +83,26 @@ Ext.extend(Sbi.cockpit.editor.WidgetEditorControlPanel, Ext.Panel, {
 	initPanels: function() {
 
 		this.designToolsPallettePanel = new Sbi.cockpit.editor.WidgetEditorDesignerPalette({}); 
-		this.designToolsFieldsPanel = new Ext.Panel({title: "Data", html: "Fields Panel"});
-		this.designToolsLayoutPanel  = new Ext.Panel({title: "Style", html: "Layout Panel"});
+//		this.designToolsFieldsPanel = new Ext.Panel({html: "Fields Panel"});
+
+		this.designToolsFieldsPanel = new Sbi.cockpit.editor.WidgetEditorFieldPalette({
+			displayRefreshButton : true,
+			border: false,
+	        gridConfig: {
+				ddGroup: 'worksheetDesignerDDGroup'
+	        	, type: 'queryFieldsPanel'
+	        },
+			region : 'center',
+			split: true,
+			height : 120,
+			services : this.services
+		});
+		this.designToolsFieldsPanel.store.on('load', this.fieldsLoadedHandler, this);
+		this.designToolsFieldsPanel.store.on('beforeload', this.getGlobalFilters, this); // forces a calculation of global filters
+		this.designToolsFieldsPanel.grid.on('rowdblclick', this.fieldDblClickHandler, this);
+		this.designToolsFieldsPanel.grid.on('rowcontextmenu', this.fieldRightClickHandler, this);
 		
-//		this.designToolsPallettePanel = new Sbi.worksheet.designer.DesignToolsPallettePanel({region : 'north'});
-//	
-//		this.designToolsFieldsPanel = new Sbi.formbuilder.QueryFieldsPanel({
-//			displayRefreshButton : false,
-//			border: false,
-//	        gridConfig: {
-//				ddGroup: 'worksheetDesignerDDGroup'
-//	        	, type: 'queryFieldsPanel'
-//	        },
-//			region : 'center',
-//			split: true,
-//			height : 120,
-//			services : this.services
-//		});
-//		this.designToolsFieldsPanel.store.on('load', this.fieldsLoadedHandler, this);
-//		this.designToolsFieldsPanel.store.on('beforeload', this.getGlobalFilters, this); // forces a calculation of global filters
-//		this.designToolsFieldsPanel.grid.on('rowdblclick', this.fieldDblClickHandler, this);
-//		this.designToolsFieldsPanel.grid.on('rowcontextmenu', this.fieldRightClickHandler, this);
-//		
-//
+
 //		this.designToolsLayoutPanel = new Sbi.worksheet.designer.DesignToolsLayoutPanel({region : 'south', height : 130 , split: true});
 //
 //		this.designToolsLayoutPanel.on('layoutchange', function(sheetLayout){
@@ -113,6 +111,8 @@ Ext.extend(Sbi.cockpit.editor.WidgetEditorControlPanel, Ext.Panel, {
 //			};
 //			this.fireEvent('toolschange',change);
 //		}, this);
+		
+		this.designToolsLayoutPanel  = new Ext.Panel({html: "Layout Panel"});
 	}
 
 	, fieldDblClickHandler : function (grid, rowIndex, event) {

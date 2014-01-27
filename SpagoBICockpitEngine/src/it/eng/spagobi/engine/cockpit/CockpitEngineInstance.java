@@ -5,11 +5,14 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.engine.cockpit;
 
+import it.eng.qbe.datasource.IDataSource;
+import it.eng.qbe.query.Query;
+import it.eng.qbe.query.catalogue.QueryCatalogue;
+import it.eng.qbe.statement.IStatement;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.services.proxy.EventServiceProxy;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.utils.DataSetUtilities;
-import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.engines.AbstractEngineInstance;
 import it.eng.spagobi.utilities.engines.AuditServiceProxy;
 import it.eng.spagobi.utilities.engines.EngineConstants;
@@ -18,17 +21,18 @@ import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.json.JSONUtils;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-
-import org.json.JSONObject;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
  */
 public class CockpitEngineInstance extends AbstractEngineInstance {
+	
+	QueryCatalogue queryCatalogue;
+	String activeQueryId;
+	IStatement statement;
 	
 	public CockpitEngineInstance(String template, Map env) {
 		super( env );
@@ -125,6 +129,32 @@ public class CockpitEngineInstance extends AbstractEngineInstance {
     		return DataSetUtilities.isExecutableByUser(datSet, profile);
     	}
     	return true;
+	}
+	
+	public QueryCatalogue getQueryCatalogue() {
+		return queryCatalogue;
+	}
+
+	public void setQueryCatalogue(QueryCatalogue queryCatalogue) {
+		this.queryCatalogue = queryCatalogue;
+	}
+	
+	public Query getActiveQuery() {
+		return getQueryCatalogue().getQuery( getActiveQueryId() );
+	}
+
+	public void setActiveQuery(Query query) {
+		setActiveQueryId(query.getId());
+		this.statement = getDataSource().createStatement( query );
+	}
+	
+	
+	private String getActiveQueryId() {
+		return activeQueryId;
+	}
+
+	private void setActiveQueryId(String activeQueryId) {
+		this.activeQueryId = activeQueryId;
 	}
 	
 	// -- unimplemented methods ------------------------------------------------------------

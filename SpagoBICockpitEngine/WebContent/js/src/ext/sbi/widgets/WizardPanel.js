@@ -222,7 +222,7 @@ Ext.extend(Sbi.widgets.WizardPanel, Ext.Panel, {
 		buttonsBar.push({ id: 'move-prev',
 	        text: LN('sbi.ds.wizard.back'),
 	        handler: function(btn) {
-	        	thisPanel.moveToNextPrevious();
+	        	thisPanel.moveToPreviousPage();
 	        }, 
 	        scope: this,
 	        disabled: true

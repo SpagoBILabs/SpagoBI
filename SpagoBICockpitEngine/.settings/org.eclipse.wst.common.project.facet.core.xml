@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <faceted-project>
-  <runtime name="Tomcat v6.0 Server on Postgres-9.0"/>
-  <secondary-runtime name="Tomcat v6.0 Server on MySql-5.0"/>
+  <runtime name="Apache Tomcat v6.0"/>
   <fixed facet="jst.java"/>
   <fixed facet="jst.web"/>
   <installed facet="jst.web" version="2.5"/>
