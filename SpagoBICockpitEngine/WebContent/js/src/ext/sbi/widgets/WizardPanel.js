@@ -73,7 +73,7 @@ Ext.extend(Sbi.widgets.WizardPanel, Ext.Panel, {
 	}
 	
 	, isValidPageNumber: function(pageNumber) {
-		return pageNumber >= 1 && pageNumber <= this.getPageCount();
+		return pageNumber >= 0 && pageNumber <= this.getPageCount();
 	}
 	
 	, getPage: function(pageNumber) {
@@ -197,13 +197,13 @@ Ext.extend(Sbi.widgets.WizardPanel, Ext.Panel, {
 		this.pages.push(page1);
 		
 		var page2 = new Ext.Panel({
-			itemId: 0
+			itemId: 1
 			, html: 'Page 2'
 		}); 
 		this.pages.push(page2);
 		
 		var page3 = new Ext.Panel({
-			itemId: 0
+			itemId: 2
 			, html: 'Page 3'
 		}); 
 		this.pages.push(page3);
@@ -225,14 +225,15 @@ Ext.extend(Sbi.widgets.WizardPanel, Ext.Panel, {
 	        	thisPanel.moveToPreviousPage();
 	        }, 
 	        scope: this,
-	        disabled: true
+	        disabled: (this.activeItem == 0)?true:false
 	    });
 		
 		buttonsBar.push({id: 'move-next',
 	        text:  LN('sbi.ds.wizard.next'),
 	        handler: function(btn) {
 	        	thisPanel.moveToNextPage();
-	        }, scope: this
+	        }, scope: this,
+	        disabled: (this.activeItem == 0)?false:true
 	    	});
 		
 		buttonsBar.push({id: 'confirm',
@@ -240,7 +241,8 @@ Ext.extend(Sbi.widgets.WizardPanel, Ext.Panel, {
 	        text:  LN('sbi.ds.wizard.confirm'),
 	        handler: function(){
 	        	thisPanel.fireEvent('confirm', this);   
-	        }, scope: this            
+	        }, scope: this,
+	        disabled: (this.activeItem == 0)?false:true
 	    	});
 		
 		buttonsBar.push({id: 'cancel',
