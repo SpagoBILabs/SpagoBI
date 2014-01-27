@@ -141,6 +141,14 @@ Ext.extend(Sbi.cockpit.runtime.WidgetManager, Ext.util.Observable, {
 		}
 	}
 
+	, getStoreByLabel: function(s) {
+		var toReturn = null;
+		if (s != undefined){
+			toReturn = this.storeManager.get(s);								
+		}
+		return toReturn;
+	}
+	
 	, removeStore: function(s) {
 		if (s != undefined){
 			this.storeManager.remove(this.storeManager.get(s));								

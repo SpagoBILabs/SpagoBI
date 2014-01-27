@@ -110,7 +110,9 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 		    , controllerPath: null // no cotroller just servlets   
 		};
 	
-		var params = { };
+		var params = {
+				SBI_EXECUTION_ID: <%= request.getParameter("SBI_EXECUTION_ID")!=null?"'" + request.getParameter("SBI_EXECUTION_ID") +"'": "null" %>
+		};
 	
 		Sbi.config.serviceRegistry = new Sbi.service.ServiceRegistry({
 		  	baseUrl: url
@@ -127,8 +129,9 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 		Sbi.config.docIsVisible= "<%=docIsVisible%>";
 		Sbi.config.docPreviewFile= "<%=docPreviewFile%>";
 		Sbi.config.docCommunities= "<%=docCommunity%>";
-		Sbi.config.docFunctionalities= <%=docFunctionalities%>;
-	    
+		Sbi.config.docFunctionalities= <%=docFunctionalities%>;		
+		Sbi.config.SBI_EXECUTION_ID= <%= request.getParameter("SBI_EXECUTION_ID")!=null?"'" + request.getParameter("SBI_EXECUTION_ID") +"'": "null" %>;
+		
 		var cockpitPanel = null;
 		    
 		Ext.onReady(function(){

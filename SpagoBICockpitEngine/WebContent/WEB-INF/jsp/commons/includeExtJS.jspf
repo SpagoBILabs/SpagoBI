@@ -4,7 +4,8 @@
 <script type="text/javascript" src="./js/lib/ext/3.4.1/ext-all.js" ></script> 
 <!--<script type="text/javascript" src="./js/lib/ext/3.4.1/ext-all-debug.js" ></script> -->
 
-<link   type="text/css" rel="stylesheet" href="./js/lib/ext/3.4.1/resources/css/ext-all.css" ></link>
+<link type="text/css" rel="stylesheet" href="./js/lib/ext/3.4.1/resources/css/ext-all.css" ></link>
+<link id="theme-gray" rel="styleSheet" href ="./js/lib/ext/3.4.1/resources/css/xtheme-gray.css" type="text/css" />
 
 <script type="text/javascript">
 	Ext.Ajax.timeout = 5000000;
