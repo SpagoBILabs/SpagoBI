@@ -11,7 +11,7 @@ Sbi.cockpit.editor.WidgetEditorWizardPanel = function(config) {
 	Sbi.trace("[WidgetEditorWizardPanel.constructor]: IN");
 
 	var defaultSettings = {		
-		activeItem : 0 //set to 1 if the dataset was already selected
+		activeItem : (config.widget && config.widget.dataset)?1:0 //sets to 1 if the dataset was already selected
 	};
 		
 	if(Sbi.settings && Sbi.cockpit && Sbi.cockpit.editor && Sbi.cockpit.editor.widgetEditorWizardPanel) {
@@ -79,12 +79,18 @@ Ext.extend(Sbi.cockpit.editor.WidgetEditorWizardPanel, Sbi.widgets.WizardPanel, 
 			, widget: this.widget
 			, itemId: 0
 		}); 
-		datasetsBrowserPage.addListener('click', this.onClick, this);
+		datasetsBrowserPage.on('click', this.onClick, this);
+		datasetsBrowserPage.on('selectDataSet',  function(l){
+			this.onSelect(l);
+			datasetsBrowserPage.viewPanel.refresh();
+		}
+	, this);	
 		this.pages.push(datasetsBrowserPage);
 		Sbi.trace("[WidgetEditorWizardPanel.initPages]: dataset browser page succesfully adedd");
 		
 		var widgetDesignerPage = new Sbi.cockpit.editor.WidgetEditor({
-			itemId: 1
+			itemId: 1,
+			dataset: this.widget.dataset || undefined
 		});
 		this.pages.push(widgetDesignerPage);
 		Sbi.trace("[WidgetEditorWizardPanel.initPages]: widget editor page succesfully adedd");
@@ -92,5 +98,38 @@ Ext.extend(Sbi.cockpit.editor.WidgetEditorWizardPanel, Sbi.widgets.WizardPanel, 
 		Sbi.trace("[WidgetEditorWizardPanel.initPages]: OUT");
 		
 		return this.pages;
+	}
+	
+	, moveToNextPage: function() {
+		alert('sono io ' + this.widget.dataset);
+		this.superclass().moveToNextPage.call(this);
+		var newPage = this.superclass().getActivePage.call(this);
+		if (newPage.updateValues){
+			var formState = this.getFormState();
+			newPage.updateValues(formState);
+		}
+	}
+	
+	
+	// -----------------------------------------------------------------------------------------------------------------
+    // utility methods
+	// -----------------------------------------------------------------------------------------------------------------
+	, onSelect: function(l){	
+		//removes old selection from the storeManager (if exists)
+		if (this.widgetManager.getStoreByLabel(this.widget.dataset) != null)
+			this.widgetManager.removeStore(this.widget.dataset);
+		//adds the dataset to the storeManager (throught the WidgetManager)
+		this.widget.dataset = l;
+		var storeConfig = {};
+	    storeConfig.dsLabel = this.widget.dataset;	
+	    this.widgetManager.addStore(storeConfig);		
+	}
+	
+	, getFormState: function (){
+		var form = {};
+		
+		form.dataset = this.widget.dataset;
+		
+		return form;
 	}
 });

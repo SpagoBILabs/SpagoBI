@@ -24,6 +24,8 @@ Sbi.widgets.DatasetsBrowserPanel = function(config) {
 	this.init();
 	
 	this.items = [this.bannerPanel,this.viewPanel];
+	
+	this.addEvents("selectDataSet");
 		
 	Sbi.widgets.DatasetsBrowserPanel.superclass.constructor.call(this, c);
 	
@@ -60,14 +62,6 @@ Ext.extend(Sbi.widgets.DatasetsBrowserPanel, Ext.Panel, {
 	 *    - none
 	 */
 	, initServices: function() {
-//		var params = {LIGHT_NAVIGATOR_DISABLED: 'TRUE'};
-//		
-//		this.services = this.services || new Array();
-//		
-//		this.services['exampleService'] = this.services['exampleService'] || Sbi.config.serviceRegistry.getServiceUrl({
-//			serviceName: 'EXAMPLE_ACTION'
-//			, baseParams: params
-//		});	
 		this.services = [];
 		this.showDataset('UsedDataSet'); //for default are shown dataset already used in the cockpit 	
 	}
@@ -224,8 +218,8 @@ Ext.extend(Sbi.widgets.DatasetsBrowserPanel, Ext.Panel, {
 			    	 	"stateCode",
 			    	 	"stateId",
 			    	 	"functionalities",
-			    	 	"dateIn",//"creationDate",
-			    	 	"owner", //"creationUser",
+			    	 	"dateIn",
+			    	 	"owner",
 			    	 	"refreshSeconds",
 			    	 	"isPublic",
 			    	 	"actions",
@@ -386,13 +380,9 @@ Ext.extend(Sbi.widgets.DatasetsBrowserPanel, Ext.Panel, {
 		    	 if (deleteStore){
 		    		this.widgetManager.removeStore(r.label);
 					this.viewPanel.refresh();
-		    	 }
-		     }else{
-		    	 var storeConfig = {};
-			     storeConfig.dsLabel = r.label;	
-			     this.widgetManager.addStore(storeConfig);
-			     this.widget.dataset =  r.label; 	
-			     this.viewPanel.refresh();
+		    	 }		     
+		     }else{	    	 
+			     this.fireEvent("selectDataSet", r.label); 
 		     }
 		}
     	return true;

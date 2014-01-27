@@ -48,19 +48,12 @@ Sbi.cockpit.editor.WidgetEditorFieldPalette = function(config) {
 		defaultSettings = Ext.apply(defaultSettings, Sbi.cockpit.editor.WidgetEditorFieldPalette);
 	}
 		
+	this.initServices(config);
+	
 	var c = Ext.apply(defaultSettings, config || {});
-		
+	
 	Ext.apply(this, c);
 			
-	this.services = this.services || new Array();	
-	////////////////////  T E S T //////////////////////////////////
-	var baseParams = {dataset: 'myqbe'}; //solo per TEST ...ovviamente dovrà essere dinamico!
-	////////////////////T E S T //////////////////////////////////
-	this.services["getQueryFields"] = Sbi.config.serviceRegistry.getRestServiceUrl({
-		serviceName : 'datasets/metafields', 
-		baseParams : baseParams || {}
-	});	
-
 	this.addEvents("validateInvalidFieldsAfterLoad");
 		
 		
@@ -78,7 +71,7 @@ Sbi.cockpit.editor.WidgetEditorFieldPalette = function(config) {
 		    id:'refresh',
 		    qtip: LN('sbi.formbuilder.queryfieldspanel.tools.refresh'),
 		    handler: function(){
-      			this.refresh();
+      			this.updateValues(null);
 		    }
 		    , scope: this
       	}]
@@ -96,6 +89,18 @@ Ext.extend(Sbi.cockpit.editor.WidgetEditorFieldPalette, Ext.Panel, {
     , displayRefreshButton: null  // if true, display the refresh button
     
     // private
+    
+    , initServices: function(c){
+    	alert(c.dataset);
+    	var baseParams = {};
+    	if (c.dataset)
+    		baseParams.dataset = c.dataset;
+    	this.services = this.services || new Array();	
+    	this.services["getQueryFields"] = Sbi.config.serviceRegistry.getRestServiceUrl({
+    		serviceName : 'datasets/metafields'
+    	  , baseParams:	baseParams
+    	});	
+    }
     
     , initGrid: function(c) {
 	
@@ -156,8 +161,25 @@ Ext.extend(Sbi.cockpit.editor.WidgetEditorFieldPalette, Ext.Panel, {
     
     // public methods 
     
-	, refresh: function() {		
-		this.store.load();
+	, updateValues: function(values) {
+		if (values) {			
+			//redefines the store with the dataset label
+			var opt = {dataset: values.dataset};
+			this.store = new Ext.data.JsonStore({
+				autoLoad : true //false
+				, idProperty : 'alias'
+				, root: 'results'
+				, fields: ['id', 'alias', 'funct', 'iconCls', 'nature', 'values', 'precision', 'options']
+				, url: Sbi.config.serviceRegistry.getRestServiceUrl({
+					serviceName : 'datasets/metafields',
+					baseParams: opt
+				})
+			}); 
+			this.store.load({});	
+//			this.doLayout();				
+		}else{
+			this.store.load();
+		}
 	}
 
     , getFields : function () {
@@ -168,5 +190,5 @@ Ext.extend(Sbi.cockpit.editor.WidgetEditorFieldPalette, Ext.Panel, {
     	}
     	return fields;
     }
-    
+
 });

@@ -121,7 +121,7 @@ Ext.extend(Sbi.cockpit.editor.WidgetEditor, Ext.Panel, {
 	}
 	
 	, initDesignToolPanel: function(config) {
-		this.designToolsPanel = new Sbi.cockpit.editor.WidgetEditorControlPanel({});
+		this.designToolsPanel = new Sbi.cockpit.editor.WidgetEditorControlPanel(config);
 		
 //		this.designToolsPanel = new Sbi.worksheet.designer.DesignToolsPanel({
 //		});
@@ -345,5 +345,11 @@ Ext.extend(Sbi.cockpit.editor.WidgetEditor, Ext.Panel, {
 	, fake : function () {
 
 	}
-	
+
+	, updateValues: function(values) {
+		if (this.designToolsPanel.updateValues)
+			this.designToolsPanel.updateValues(values);
+		if (this.sheetsContainerPanel.updateValues)
+			this.sheetsContainerPanel.updateValues(values);
+	}
 });

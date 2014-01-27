@@ -52,6 +52,9 @@ Sbi.cockpit.editor.WidgetEditorControlPanel = function(config) {
 	
 	this.services = this.services || new Array();	
 	var baseParams = {};
+	
+	if (c.dataset)
+		baseParams.dataset = c.dataset;
 	this.services["getQueryFields"] = Sbi.config.serviceRegistry.getRestServiceUrl({
 		serviceName : 'datasets/metafields', 
 		baseParams : baseParams
@@ -83,18 +86,18 @@ Ext.extend(Sbi.cockpit.editor.WidgetEditorControlPanel, Ext.Panel, {
 	initPanels: function() {
 
 		this.designToolsPallettePanel = new Sbi.cockpit.editor.WidgetEditorDesignerPalette({}); 
-//		this.designToolsFieldsPanel = new Ext.Panel({html: "Fields Panel"});
 
 		this.designToolsFieldsPanel = new Sbi.cockpit.editor.WidgetEditorFieldPalette({
 			displayRefreshButton : true,
 			border: false,
 	        gridConfig: {
 				ddGroup: 'worksheetDesignerDDGroup'
-	        	, type: 'queryFieldsPanel'
+	          , type: 'queryFieldsPanel'
 	        },
 			region : 'center',
 			split: true,
 			height : 120,
+			dataset: this.dataset,
 			services : this.services
 		});
 		this.designToolsFieldsPanel.store.on('load', this.fieldsLoadedHandler, this);
@@ -253,6 +256,12 @@ Ext.extend(Sbi.cockpit.editor.WidgetEditorControlPanel, Ext.Panel, {
 	, fieldRightClickHandler : function ( grid, rowIndex, e ) {
 		var record = grid.store.getAt(rowIndex);
 		this.fireEvent("fieldRightClick", this, record.data, e);
+	}
+	
+	, updateValues: function(values){
+		if (this.designToolsFieldsPanel.updateValues)
+			this.designToolsFieldsPanel.updateValues(values);
+		
 	}
 
 	
