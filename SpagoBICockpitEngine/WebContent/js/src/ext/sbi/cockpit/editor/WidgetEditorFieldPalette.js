@@ -121,9 +121,9 @@ Ext.extend(Sbi.cockpit.editor.WidgetEditorFieldPalette, Ext.Panel, {
     
 	, initStore: function() {
 		Sbi.trace("[WidgetEditorFieldPalette.initStore]: IN");
-		
+
 		this.store = new Ext.data.JsonStore({
-			autoLoad : false
+			autoLoad : (this.dataset)?true:false
 			, idProperty : 'alias'
 			, root: 'results'
 			, fields: ['id', 'alias', 'funct', 'iconCls', 'nature', 'values', 'precision', 'options']
