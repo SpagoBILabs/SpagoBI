@@ -5,18 +5,39 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.behaviouralmodel.lov.bo;
 
-import it.eng.spagobi.analiticalmodel.document.handlers.ExecutionInstance;
+import java.util.List;
+import java.util.Locale;
+
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 
 public abstract class AbstractJavaClassLov implements IJavaClassLov {
 
-	protected ExecutionInstance executionInstance;
-
-	public ExecutionInstance getExecutionInstance() {
-		return executionInstance;
+	List<BIObjectParameter> BIObjectParameter;
+	Locale locale;
+	/**
+	 * @return the bIObjectParameter
+	 */
+	public List<BIObjectParameter> getBIObjectParameter() {
+		return BIObjectParameter;
 	}
-
-	public void setExecutionInstance(ExecutionInstance executionInstance) {
-		this.executionInstance = executionInstance;
+	/**
+	 * @param bIObjectParameter the bIObjectParameter to set
+	 */
+	public void setBIObjectParameter(List<BIObjectParameter> bIObjectParameter) {
+		BIObjectParameter = bIObjectParameter;
 	}
+	/**
+	 * @return the locale
+	 */
+	public Locale getLocale() {
+		return locale;
+	}
+	/**
+	 * @param locale the locale to set
+	 */
+	public void setLocale(Locale locale) {
+		this.locale = locale;
+	}
+	
 	
 }

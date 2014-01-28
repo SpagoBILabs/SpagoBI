@@ -7,11 +7,12 @@ package it.eng.spagobi.behaviouralmodel.lov.bo;
 
 import it.eng.spago.base.SourceBeanException;
 import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.analiticalmodel.document.handlers.ExecutionInstance;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParuse;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Defines methods to manage a lov
@@ -43,17 +44,17 @@ public interface ILovDetail extends Serializable {
 	 * @param dependencies
 	 *            the dependencies to be considered for the lov. It may be null,
 	 *            since when testing a lov, there is no correlation.
-	 * @param executionInstance
-	 *            the execution instance object, that contains the BIObject
-	 *            being executed. It may be null, since when testing a lov,
-	 *            there is no execution instance.
+	 * @param BIObjectParameters
+	 *            used by QueryDetail implementation.
+	 * @param locale
+	 * 			  used by ScriptDetail implementation.           
 	 * 
 	 * @return the string result of the lov
 	 * 
 	 * @throws Exception
 	 *             the exception
 	 */
-	public String getLovResult(IEngUserProfile profile, List<ObjParuse> dependencies, ExecutionInstance executionInstance) throws Exception;
+	public String getLovResult(IEngUserProfile profile, List<ObjParuse> dependencies, List<BIObjectParameter> BIObjectParameters, Locale locale) throws Exception;
 	
 	/**
 	 * Checks if the lov requires one or more profile attributes.
