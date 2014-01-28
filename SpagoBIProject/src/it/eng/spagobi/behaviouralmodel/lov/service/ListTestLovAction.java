@@ -121,7 +121,7 @@ public class ListTestLovAction extends AbstractSpagoBIAction{
 			} else if(typeLov.equalsIgnoreCase("FIXED_LIST")) {
 				FixedListDetail fixlistDet = FixedListDetail.fromXML(looProvider);
 				try{
-					String result = fixlistDet.getLovResult(profile, null, null);
+					String result = fixlistDet.getLovResult(profile, null, null, null);
 					rowsSourceBean = SourceBean.fromXMLString(result);
 					colNames = findFirstRowAttributes(rowsSourceBean);
 					if(!rowsSourceBean.getName().equalsIgnoreCase("ROWS")) {
@@ -142,7 +142,7 @@ public class ListTestLovAction extends AbstractSpagoBIAction{
 			} else if(typeLov.equalsIgnoreCase("SCRIPT")) {
 				ScriptDetail scriptDetail = ScriptDetail.fromXML(looProvider);
 				try{
-					String result = scriptDetail.getLovResult(profile, null, null);
+					String result = scriptDetail.getLovResult(profile, null, null, null);
 					rowsSourceBean = SourceBean.fromXMLString(result);
 					colNames = findFirstRowAttributes(rowsSourceBean);
 				} catch (Exception e) {
@@ -176,7 +176,7 @@ public class ListTestLovAction extends AbstractSpagoBIAction{
 			} else if(typeLov.equalsIgnoreCase("DATASET")) {
 				DatasetDetail datasetClassDetail = DatasetDetail.fromXML(looProvider);
 				try{		
-					String result = datasetClassDetail.getLovResult(profile, null, null);
+					String result = datasetClassDetail.getLovResult(profile, null, null, null);
 					rowsSourceBean = SourceBean.fromXMLString(result);
 					colNames = findFirstRowAttributes(rowsSourceBean);
 				} catch (Exception e) {

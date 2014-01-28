@@ -7,11 +7,10 @@ package it.eng.spagobi.behaviouralmodel.lov.bo;
 
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
-import it.eng.spago.dbaccess.sql.DataRow;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.analiticalmodel.document.handlers.ExecutionInstance;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParuse;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
@@ -21,6 +20,7 @@ import it.eng.spagobi.commons.utilities.SpagoBITracer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Defines the <code>JavaClassDetail</code> objects. This object is used to store 
@@ -144,10 +144,11 @@ public class JavaClassDetail extends DependenciesPostProcessingLov implements IL
 	/**
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#getLovResult(IEngUserProfile profile, List<ObjParuse> dependencies, ExecutionInstance executionInstance) throws Exception;
 	 */
-	public String getLovResult(IEngUserProfile profile, List<ObjParuse> dependencies, ExecutionInstance executionInstance) throws Exception {
+	public String getLovResult(IEngUserProfile profile, List<ObjParuse> dependencies, List<BIObjectParameter> BIObjectParameters, Locale locale) throws Exception {
 		IJavaClassLov javaClassLov = createClassInstance();
 		if (javaClassLov instanceof AbstractJavaClassLov) {
-			((AbstractJavaClassLov) javaClassLov).setExecutionInstance(executionInstance);
+			((AbstractJavaClassLov) javaClassLov).setBIObjectParameter(BIObjectParameters);
+			
 		}
 		String result = javaClassLov.getValues(profile);
 		result = result.trim();

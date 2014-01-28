@@ -37,7 +37,7 @@ public class LovToListService extends AbstractListLookupModule  {
 	public LovToListService(ILovDetail lovDet, IEngUserProfile profile) {
 		this.lovDetail = lovDet;
 		try {
-			this.lovResult = this.lovDetail.getLovResult(profile, null, null);
+			this.lovResult = this.lovDetail.getLovResult(profile, null, null,null);
 		} catch (Exception e) {
 			SpagoBITracer.major(SpagoBIConstants.NAME_MODULE, this.getClass().getName(),
 					            "LovToListService", "Error while getting lov result " + e);

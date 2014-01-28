@@ -148,7 +148,7 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 			} else {
 				String lovprov = paruse.getLovProvider();
 				ILovDetail lovDetail = LovDetailFactory.getLovFromXML(lovprov);
-				String lovResult = lovDetail.getLovResult(profile, null, null);
+				String lovResult = lovDetail.getLovResult(profile, null, null, null);
 				LovResultHandler lovResultHandler = new LovResultHandler(lovResult);
 				List rows = lovResultHandler.getRows();
 				values = new SDKDocumentParameterValue[rows.size()];

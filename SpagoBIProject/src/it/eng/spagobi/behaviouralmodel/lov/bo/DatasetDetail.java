@@ -8,7 +8,7 @@ package it.eng.spagobi.behaviouralmodel.lov.bo;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
 import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.analiticalmodel.document.handlers.ExecutionInstance;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParuse;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -198,8 +199,7 @@ public class DatasetDetail implements ILovDetail {
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#getLovResult(it.eng.spago.security.IEngUserProfile, java.util.List, it.eng.spagobi.analiticalmodel.document.handlers.ExecutionInstance)
 	 */
-	public String getLovResult(IEngUserProfile profile,
-			List<ObjParuse> dependencies, ExecutionInstance executionInstance)
+	public String getLovResult(IEngUserProfile profile, List<ObjParuse> dependencies, List<BIObjectParameter> BIObjectParameters, Locale locale)
 			throws Exception {
 		//gets the dataset object informations
 		IDataSet dataset = DAOFactory.getDataSetDAO().loadActiveIDataSetByID(new Integer(getDatasetId()));
