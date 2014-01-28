@@ -73,9 +73,6 @@ import org.hibernate.criterion.Expression;
 import org.safehaus.uuid.UUID;
 import org.safehaus.uuid.UUIDGenerator;
 
-import com.jamonapi.Monitor;
-import com.jamonapi.MonitorFactory;
-
 /**
  *	Defines the Hibernate implementations for all DAO methods,
  *  for a BI Object.  
@@ -122,7 +119,6 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 	 */
 	public BIObject loadBIObjectForExecutionByIdAndRole(Integer id, String role) throws EMFUserError {
 		logger.debug("IN");
-		Monitor monitor = MonitorFactory.start("spagobi.core.BIObjectDAO.loadBIObjectForExecutionByIdAndRole");
 		Session aSession = null;
 		Transaction tx = null;
 		BIObject biObject = null;
@@ -178,7 +174,6 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			if (aSession!=null){
 				if (aSession.isOpen()) aSession.close();
 			}
-			monitor.stop();
 		}
 		logger.debug("OUT");
 		return biObject;
@@ -201,7 +196,6 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 	 */
 	public BIObject loadBIObjectById(Integer biObjectID) throws EMFUserError {
 		logger.debug("IN");
-		Monitor monitor = MonitorFactory.start("spagobi.core.BIObjectDAO.loadBIObjectById");
 		BIObject toReturn = null;
 		Session aSession = null;
 		Transaction tx = null;
@@ -220,7 +214,6 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			if (aSession!=null){
 				if (aSession.isOpen()) aSession.close();
 			}
-			monitor.stop();
 		}
 		logger.debug("OUT");
 		return toReturn;
@@ -283,7 +276,6 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 	 */
 	public BIObject loadBIObjectByLabel(String label) throws EMFUserError {
 		logger.debug("IN");
-		Monitor monitor = MonitorFactory.start("spagobi.core.BIObjectDAO.loadBIObjectByLabel");
 		BIObject biObject = null;
 		Session aSession = null;
 		Transaction tx = null;
@@ -307,7 +299,6 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			if (aSession!=null){
 				if (aSession.isOpen()) aSession.close();
 			}
-			monitor.stop();
 		}
 		logger.debug("OUT");
 		return biObject;
@@ -958,7 +949,6 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 		Query hqlQuery = null;
 		String hql = null;
 		List correctRoles = new ArrayList();
-		Monitor monitor = MonitorFactory.start("spagobi.core.BIObjectDAO.getCorrectRoles");
 
 		try {
 			aSession = getSession();
@@ -1079,7 +1069,6 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			if (aSession!=null){
 				if (aSession.isOpen()) aSession.close();
 			}
-			monitor.stop();
 		}
 		logger.debug("OUT");
 		return correctRoles;
@@ -2160,7 +2149,6 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 		Session aSession = null;
 		Transaction tx = null;
 		BIObject biObject = null;
-		Monitor monitor = MonitorFactory.start("spagobi.core.BIObjectDAO.loadBIObjectForExecutionByLabelAndRole");
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
@@ -2212,7 +2200,6 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			if (aSession!=null){
 				if (aSession.isOpen()) aSession.close();
 			}
-			monitor.stop();
 		}
 		logger.debug("OUT");
 		return biObject;

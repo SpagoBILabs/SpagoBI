@@ -734,7 +734,7 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 		try {
 			if(hasChild(aLowFunctionality.getId())) {
 				HashMap params = new HashMap();
-				params.put(AdmintoolsConstants.PAGE, BIObjectsModule.MODULE_PAGE);
+				params.put(AdmintoolsConstants.PAGE, "BIObjectsPage");
 				//params.put(SpagoBIConstants.ACTOR, SpagoBIConstants.ADMIN_ACTOR);
 				params.put(SpagoBIConstants.OPERATION, SpagoBIConstants.FUNCTIONALITIES_OPERATION);
 				throw new EMFUserError(EMFErrorSeverity.ERROR, 1000, new Vector(), params);
