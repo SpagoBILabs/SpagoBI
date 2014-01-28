@@ -12,6 +12,7 @@ Sbi.widgets.DatasetsBrowserPanel = function(config) {
 	
 	var defaultSettings = {		
 		autoScroll: true
+//	  , height: 500
 	};
 		
 	if(Sbi.settings && Sbi.cockpit && Sbi.widgets && Sbi.widgets.datasetsBrowserPanel) {
@@ -63,9 +64,8 @@ Ext.extend(Sbi.widgets.DatasetsBrowserPanel, Ext.Panel, {
 	 */
 	, initServices: function() {
 		this.services = [];
-//		this.showDataset('UsedDataSet'); //for default are shown dataset already used in the cockpit 	
 		var defaultFilter = Sbi.settings.mydata.defaultFilter || 'UsedDataSet';
-		this.showDataset(Sbi.settings.mydata.defaultFilter);
+		this.showDataset(defaultFilter);
 	}
 
 
@@ -168,8 +168,8 @@ Ext.extend(Sbi.widgets.DatasetsBrowserPanel, Ext.Panel, {
 	, showDataset: function(datasetType) { 
 		this.activeFilter = datasetType;	
 		
-		var scope = this;
-		var sm = this.widgetManager.getStoreManager();
+//		var scope = this;
+//		var sm = this.widgetManager.getStoreManager();
 
 		if (Ext.get('list-tab') != null){
 			var tabEls = Ext.get('list-tab').dom.childNodes;
@@ -349,45 +349,43 @@ Ext.extend(Sbi.widgets.DatasetsBrowserPanel, Ext.Panel, {
     }
 	
 	, onClick : function(obj, i, node, e) {
-		var actionSelect = e.getTarget('div[class=select]',10,true);
-		
-		var s = obj.getStore();
-		var r = s.getAt(s.findExact('label',node.id));
-		if (r){
+		 var s = obj.getStore();
+		 var r = s.getAt(s.findExact('label',node.id));
+		 if (r){
 			r = r.data;
-		}
-		
-		if (actionSelect != null){
-			 Sbi.debug('DatasetsBrowserPanel clicked on dataset...[' + r.name + ']');
-		     	    
-		     if (this.widgetManager.existsStore(r.label) ){ 		
-		    	 var deleteStore = false;
-		    	 if (this.widgetManager.getWidgetUsedByStore(r.label).getCount()>1){
-		    		 //asks confirm is the store is used by more widgets
-//			    	 Ext.MessageBox.confirm(
-//			 				LN('sbi.generic.pleaseConfirm')
-//	//		 				, LN('sbi.generic.confirmDelete')
-//			 				, 'Il dataset può essere in uso da altri widget, vuoi procedere con la deselezione?'
-//			 	            , function(btn, text) {
-//			 					 if ( btn == 'yes' ) {
-//			 						deleteStore = true;
-//			 					 }
-//			 				}
-//			 				, this
-//			 			);
-		    		 alert('Operazione non consentita. Il dataset e\' utilizzato da altri widgets!');
-		    	 }else{
-		    		 deleteStore = true;
-		    	 }
-		    	 if (deleteStore){
-		    		this.widgetManager.removeStore(r.label);
-					this.viewPanel.refresh();
-		    	 }		     
-		     }else{	    	 
-			     this.fireEvent("selectDataSet", r.label); 
-		     }
-		}
-    	return true;
+		 }
+
+	     if (this.widgetManager.existsStore(r.label) ){ 		
+	    	 var deleteStore = false;
+	    	 if (this.widgetManager.getWidgetUsedByStore(r.label).getCount()>1){
+	    		 //asks confirm is the store is used by more widgets
+	//			    	 Ext.MessageBox.confirm(
+	//			 				LN('sbi.generic.pleaseConfirm')
+	//	//		 				, LN('sbi.generic.confirmDelete')
+	//			 				, 'Il dataset può essere in uso da altri widget, vuoi procedere con la deselezione?'
+	//			 	            , function(btn, text) {
+	//			 					 if ( btn == 'yes' ) {
+	//			 						deleteStore = true;
+	//			 					 }
+	//			 				}
+	//			 				, this
+	//			 			);
+	    		 alert('Operazione non consentita. Il dataset e\' utilizzato da altri widgets!');
+	    	 }else{
+	    		 deleteStore = true;
+	    	 }
+	    	 if (deleteStore){
+	    		this.widgetManager.removeStore(r.label);
+				this.viewPanel.refresh();
+	    	 }		     
+	     }else{	    	 
+	        var el = Ext.get('box-figure-' + r.label);
+	 		if (el)
+	 			el.dom.className += ' selectbox ';
+		     this.fireEvent("selectDataSet", r.label); 
+	     }
+
+    	 return true;
 	}
 
 	, filterStore: function(filterString) {

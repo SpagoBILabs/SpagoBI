@@ -189,7 +189,7 @@ Ext.extend(Sbi.cockpit.runtime.WidgetContainer, Sbi.cockpit.runtime.Widget, {
     		id: 'wizard',
             layout:'fit',
             width:1000, //800,
-            height:450,
+            height: 450,
             plain: true,
             modal: true,
             title: "Widget [" + widget.id + "] editor",
