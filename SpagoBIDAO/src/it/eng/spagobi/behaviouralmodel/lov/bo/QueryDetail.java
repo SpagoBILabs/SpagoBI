@@ -16,7 +16,6 @@ import it.eng.spago.dbaccess.sql.result.ScrollableDataResult;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.analiticalmodel.document.handlers.ExecutionInstance;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParuse;
 import it.eng.spagobi.commons.bo.UserProfile;
@@ -36,6 +35,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.validator.GenericValidator;
@@ -196,9 +196,9 @@ public class QueryDetail  implements ILovDetail  {
 	/**
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#getLovResult(IEngUserProfile profile, List<ObjParuse> dependencies, ExecutionInstance executionInstance) throws Exception;
 	 */
-	public String getLovResult(IEngUserProfile profile, List<ObjParuse> dependencies, ExecutionInstance executionInstance) throws Exception {
+	public String getLovResult(IEngUserProfile profile, List<ObjParuse> dependencies, List<BIObjectParameter> BIObjectParameters, Locale locale) throws Exception {
 		logger.debug("IN");
-		String statement = getWrappedStatement(dependencies, executionInstance);
+		String statement = getWrappedStatement(dependencies, BIObjectParameters);
 		statement = StringUtilities.substituteProfileAttributesInString(statement, profile);
 		logger.info("User [" + ((UserProfile) profile).getUserId() + "] is executing sql: " + statement);
 		String result = getLovResult(profile,statement);
@@ -216,13 +216,13 @@ public class QueryDetail  implements ILovDetail  {
 	 * @param executionInstance The execution instance (useful to retrieve dependencies values)
 	 * @return the in-line view that filters the original lov using the dependencies.
 	 */
-	public String getWrappedStatement(List<ObjParuse> dependencies, ExecutionInstance executionInstance) {
+	public String getWrappedStatement(List<ObjParuse> dependencies, List<BIObjectParameter> BIObjectParameters) {
 		logger.debug("IN");
 		String result = getQueryDefinition();
-		if (dependencies != null && dependencies.size() > 0 && executionInstance != null) {
+		if (dependencies != null && dependencies.size() > 0 && BIObjectParameters != null) {
 			StringBuffer buffer = new StringBuffer();
 			buffer.append("SELECT * FROM (" + getQueryDefinition() + ") LovTableForCache ");
-			buildWhereClause(buffer, dependencies, executionInstance);
+			buildWhereClause(buffer, dependencies, BIObjectParameters);
 			result = buffer.toString();
 		}
 		logger.debug("OUT.result=" + result);
@@ -242,18 +242,18 @@ public class QueryDetail  implements ILovDetail  {
 	 * @param executionInstance The execution instance
 	 */
 	private void buildWhereClause(StringBuffer buffer,
-			List<ObjParuse> dependencies, ExecutionInstance executionInstance) {
+			List<ObjParuse> dependencies, List<BIObjectParameter> BIObjectParameters) {
 		buffer.append(" WHERE ");
 		if (dependencies.size() == 1) {
 			ObjParuse dependency = (ObjParuse) dependencies.get(0);
-			addFilter(buffer, dependency, executionInstance);
+			addFilter(buffer, dependency, BIObjectParameters);
 		} else if (dependencies.size() == 2) {
 			ObjParuse leftPart = (ObjParuse) dependencies.get(0);
 			ObjParuse rightPart = (ObjParuse) dependencies.get(1);
 			String lo = leftPart.getLogicOperator();
-			addFilter(buffer, leftPart, executionInstance);
+			addFilter(buffer, leftPart, BIObjectParameters);
 			buffer.append(" " + lo + " ");
-			addFilter(buffer, rightPart, executionInstance);
+			addFilter(buffer, rightPart, BIObjectParameters);
 		} else {
 			// build the expression
 			Iterator iterOps = dependencies.iterator();
@@ -261,7 +261,7 @@ public class QueryDetail  implements ILovDetail  {
 				ObjParuse op = (ObjParuse) iterOps.next();
 				if (op.getPreCondition() != null )
 					buffer.append(" " + op.getPreCondition() + " ");				
-				addFilter(buffer, op, executionInstance);
+				addFilter(buffer, op, BIObjectParameters);
 				if (op.getPostCondition() != null)
 					buffer.append(" " + op.getPostCondition() + " ");
 				if (op.getLogicOperator() != null)
@@ -278,9 +278,9 @@ public class QueryDetail  implements ILovDetail  {
 	 * @param dependency The dependency's configuration
 	 * @param executionInstance The execution instance
 	 */
-	private void addFilter(StringBuffer buffer, ObjParuse dependency, ExecutionInstance executionInstance) {
-		String operator = findOperator(dependency, executionInstance);
-		String value = findValue(dependency, executionInstance);
+	private void addFilter(StringBuffer buffer, ObjParuse dependency, List<BIObjectParameter> BIObjectParameters) {
+		String operator = findOperator(dependency, BIObjectParameters);
+		String value = findValue(dependency, BIObjectParameters);
 		if (value != null) {
 			buffer.append(" ( ");
 			buffer.append( getColumnSQLName(dependency.getFilterColumn()) );
@@ -307,9 +307,9 @@ public class QueryDetail  implements ILovDetail  {
 	 * @return the value to be used in the wrapped statement
 	 */
 	private String findValue(ObjParuse dependency,
-			ExecutionInstance executionInstance) {
+			List<BIObjectParameter> BIObjectParameters) {
 		String typeFilter = dependency.getFilterOperation();
-		BIObjectParameter fatherPar = getFatherParameter(dependency, executionInstance);
+		BIObjectParameter fatherPar = getFatherParameter(dependency, BIObjectParameters);
 		List values = fatherPar.getParameterValues();
 		if (values == null || values.isEmpty() 
 				|| (values.size() == 1 && values.get(0).equals(""))) {
@@ -529,7 +529,7 @@ public class QueryDetail  implements ILovDetail  {
 	 * @param executionInstance The Execution instance
 	 * @return the suitable operator for the input dependency
 	 */
-	private String findOperator(ObjParuse dependency, ExecutionInstance executionInstance) {
+	private String findOperator(ObjParuse dependency, List<BIObjectParameter> BIObjectParameters) {
 		String typeFilter = dependency.getFilterOperation();
 		if (typeFilter.equalsIgnoreCase(SpagoBIConstants.START_FILTER)) {
 			return "LIKE";
@@ -540,7 +540,7 @@ public class QueryDetail  implements ILovDetail  {
 			return "LIKE";
 		} else if (typeFilter
 				.equalsIgnoreCase(SpagoBIConstants.EQUAL_FILTER)) {
-			BIObjectParameter fatherPar = getFatherParameter(dependency, executionInstance);
+			BIObjectParameter fatherPar = getFatherParameter(dependency, BIObjectParameters);
 			List values = fatherPar.getParameterValues();
 			if (values != null && values.size() > 1) {
 				return "IN";
@@ -566,10 +566,9 @@ public class QueryDetail  implements ILovDetail  {
 	}
 
 	private BIObjectParameter getFatherParameter(ObjParuse dependency,
-			ExecutionInstance executionInstance) {
-		List parameters = executionInstance.getBIObject().getBiObjectParameters();
+			List<BIObjectParameter> BIObjectParameters) {
 		Integer fatherId = dependency.getObjParFatherId();
-		Iterator it = parameters.iterator();
+		Iterator it = BIObjectParameters.iterator();
 		while (it.hasNext()) {
 			BIObjectParameter temp = (BIObjectParameter) it.next();
 			if (temp.getId().equals(fatherId)) {
