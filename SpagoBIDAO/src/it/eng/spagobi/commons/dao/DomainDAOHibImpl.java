@@ -14,9 +14,7 @@ package it.eng.spagobi.commons.dao;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.bo.Domain;
-import it.eng.spagobi.commons.metadata.SbiConfig;
 import it.eng.spagobi.commons.metadata.SbiDomains;
-import it.eng.spagobi.commons.services.ManageDomainService;
 
 import java.util.ArrayList;
 import java.util.Iterator;
