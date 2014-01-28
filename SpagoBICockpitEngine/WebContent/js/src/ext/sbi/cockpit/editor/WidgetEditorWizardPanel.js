@@ -22,6 +22,8 @@ Sbi.cockpit.editor.WidgetEditorWizardPanel = function(config) {
 		
 	Sbi.cockpit.editor.WidgetEditorWizardPanel.superclass.constructor.call(this, c);
 	
+	this.addEvents('cancel');
+	
 	Sbi.trace("[WidgetEditorWizardPanel.constructor]: OUT");
 };
 
@@ -101,15 +103,14 @@ Ext.extend(Sbi.cockpit.editor.WidgetEditorWizardPanel, Sbi.widgets.WizardPanel, 
 	}
 	
 	, moveToNextPage: function() {
-		alert('sono io ' + this.widget.dataset);
 		this.superclass().moveToNextPage.call(this);
 		var newPage = this.superclass().getActivePage.call(this);
+		newPage.on('cancel',this.closeWizard, this);
 		if (newPage.updateValues){
 			var formState = this.getFormState();
 			newPage.updateValues(formState);
 		}
 	}
-	
 	
 	// -----------------------------------------------------------------------------------------------------------------
     // utility methods

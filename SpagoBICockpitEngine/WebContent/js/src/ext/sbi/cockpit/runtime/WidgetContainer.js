@@ -31,10 +31,6 @@ Sbi.cockpit.runtime.WidgetContainer = function(config) {
 
 	// constructor
 	Sbi.cockpit.runtime.WidgetContainer.superclass.constructor.call(this, c);
-	
-//	this.addListener('cancel', this.close(), this);
-	
-
 };
 
 /**
@@ -59,6 +55,12 @@ Ext.extend(Sbi.cockpit.runtime.WidgetContainer, Sbi.cockpit.runtime.Widget, {
      * The container that manages the all the widgets rendered within this panel
      */
 	widgetManager: null
+
+  /**
+   * @property { Sbi.cockpit.editor.WidgetEditorWizardPanel} wizard
+   * The wizard that manages the single widget definition
+   */
+  , wizard: null
 	 
 	// =================================================================================================================
 	// METHODS
@@ -175,11 +177,15 @@ Ext.extend(Sbi.cockpit.runtime.WidgetContainer, Sbi.cockpit.runtime.Widget, {
     	win.show();
     }
     
-    , showWidgetEditor: function(widget) {
+    , showWidgetEditor: function(widget) {    	
     	var config = {};
     	config.widgetManager = this.getWidgetManager();
     	config.widget = widget;
-    	var win = new Ext.Window({
+    	
+    	var widgetWizard = new Sbi.cockpit.editor.WidgetEditorWizardPanel(config);
+    	widgetWizard.on('cancel', this.closeWizard, this);
+    	
+    	this.wizard = new Ext.Window({
     		id: 'wizard',
             layout:'fit',
             width:1000, //800,
@@ -187,20 +193,10 @@ Ext.extend(Sbi.cockpit.runtime.WidgetContainer, Sbi.cockpit.runtime.Widget, {
             plain: true,
             modal: true,
             title: "Widget [" + widget.id + "] editor",
-//            items: new Sbi.cockpit.editor.WidgetEditor({}),
-            items: new Sbi.cockpit.editor.WidgetEditorWizardPanel(config)
+    		items: widgetWizard
         });
     	
-    	win.on("cancel",function(p){
-    		win.close();
-    		return true;
-    	},this);
-    	
-    	win.on("select", function(){
-    		alert("catched select event!! ");
-    	});
-    	
-    	win.show();
+    	this.wizard.show();
     }
     
     // -----------------------------------------------------------------------------------------------------------------
@@ -306,6 +302,10 @@ Ext.extend(Sbi.cockpit.runtime.WidgetContainer, Sbi.cockpit.runtime.Widget, {
     	this.showWidgetEditor(widget);
     	//Ext.Msg.alert('Message', 'The CONFIG tool was clicked.');
     } 
+    
+    , closeWizard: function(){
+    	this.wizard.close();
+    }
     
   
 }); 
