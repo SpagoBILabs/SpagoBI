@@ -63,7 +63,9 @@ Ext.extend(Sbi.widgets.DatasetsBrowserPanel, Ext.Panel, {
 	 */
 	, initServices: function() {
 		this.services = [];
-		this.showDataset('UsedDataSet'); //for default are shown dataset already used in the cockpit 	
+//		this.showDataset('UsedDataSet'); //for default are shown dataset already used in the cockpit 	
+		var defaultFilter = Sbi.settings.mydata.defaultFilter || 'UsedDataSet';
+		this.showDataset(Sbi.settings.mydata.defaultFilter);
 	}
 
 
@@ -446,4 +448,9 @@ Ext.extend(Sbi.widgets.DatasetsBrowserPanel, Ext.Panel, {
 		
 		this.viewPanel.refresh();
 	}	
+	
+	, closeWin: function(){		
+		alert('closeWin called');
+		this.hide();
+	}
 });

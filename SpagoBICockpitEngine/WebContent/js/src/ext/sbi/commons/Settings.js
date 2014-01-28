@@ -27,12 +27,12 @@ Sbi.settings.mydata = {
 		 * defaultFilter:'MyDataSet'
 		 * showMyDataSetFilter must be true
 		 */
-		  defaultFilter: 'UsedDataSet'
+		  defaultFilter: 'AllDataSet' //'UsedDataSet'
 		
 		, showUsedDataSetFilter: true
-		, showMyDataSetFilter: true
-		, showEnterpriseDataSetFilter: true
-		, showSharedDataSetFilter: true
+		, showMyDataSetFilter: false
+		, showEnterpriseDataSetFilter: false
+		, showSharedDataSetFilter: false
 		, showAllDataSetFilter: true
 		/**
 		 * MY DATA :

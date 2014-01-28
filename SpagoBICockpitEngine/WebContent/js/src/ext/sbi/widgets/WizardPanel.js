@@ -247,9 +247,7 @@ Ext.extend(Sbi.widgets.WizardPanel, Ext.Panel, {
 		
 		buttonsBar.push({id: 'cancel',
 	        text:  LN('sbi.ds.wizard.cancel'),
-	        handler: function(){
-	        	alert("fire event cancel");
-	        	thisPanel.hide();  
+	        handler: function(){ 
 	        	thisPanel.fireEvent('cancel', this);  
 	        }, scope: this
 	    	});
