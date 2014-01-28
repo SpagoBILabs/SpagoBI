@@ -14,7 +14,6 @@ import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.dao.BIObjectDAOHibImpl;
 import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjFunc;
-import it.eng.spagobi.analiticalmodel.document.service.BIObjectsModule;
 import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
 import it.eng.spagobi.analiticalmodel.functionalitytree.bo.UserFunctionality;
 import it.eng.spagobi.analiticalmodel.functionalitytree.metadata.SbiFuncRole;
