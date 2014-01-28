@@ -115,7 +115,7 @@ Ext.extend(Sbi.widgets.DatasetsBrowserPanel, Ext.Panel, {
 			this.services["list"] = Sbi.config.serviceRegistry.getRestServiceUrl({
 				serviceName : 'selfservicedataset',
 				baseParams : baseParams,
-				baseUrl:{contextPath: 'SpagoBI', controllerPath: 'servlet/AdapterHTTP'}
+				baseUrl:{contextPath: 'SpagoBI', restServicesPath: 'restful-services' }
 			});		
 			
 			
@@ -128,7 +128,7 @@ Ext.extend(Sbi.widgets.DatasetsBrowserPanel, Ext.Panel, {
 			this.services["list"] = Sbi.config.serviceRegistry.getRestServiceUrl({
 				serviceName : 'certificateddatasets',
 				baseParams : baseParams,
-				baseUrl:{contextPath: 'SpagoBI', controllerPath: 'servlet/AdapterHTTP'}
+				baseUrl:{contextPath: 'SpagoBI', restServicesPath: 'restful-services' }
 			});
 	
 			
@@ -141,7 +141,7 @@ Ext.extend(Sbi.widgets.DatasetsBrowserPanel, Ext.Panel, {
 			this.services["list"] = Sbi.config.serviceRegistry.getRestServiceUrl({
 				serviceName : 'certificateddatasets',
 				baseParams : baseParams,
-				baseUrl:{contextPath: 'SpagoBI', controllerPath: 'servlet/AdapterHTTP'}
+				baseUrl:{contextPath: 'SpagoBI', restServicesPath: 'restful-services' }
 			});
 		
 			
@@ -156,7 +156,7 @@ Ext.extend(Sbi.widgets.DatasetsBrowserPanel, Ext.Panel, {
 			this.services["list"] = Sbi.config.serviceRegistry.getRestServiceUrl({
 				serviceName : 'certificateddatasets',
 				baseParams : baseParams, 
-				baseUrl:{contextPath: 'SpagoBI', controllerPath: 'servlet/AdapterHTTP'}
+				baseUrl:{contextPath: 'SpagoBI', restServicesPath: 'restful-services' }
 			});
 		
 		}
