@@ -12,6 +12,7 @@ Sbi.widgets.DatasetsBrowserView = function(config) {
 	
 	var defaultSettings = {		
 			autoScroll: true
+//		  , height: '100%'
 	};
 		
 	if(Sbi.settings && Sbi.cockpit && Sbi.widgets && Sbi.widgets.datasetsBrowserView) {
@@ -89,18 +90,18 @@ Ext.extend(Sbi.widgets.DatasetsBrowserView, Ext.DataView, {
 					    '{[label=""]}',
 				 		'<dd id="{label}" class="box">',
 				 		documentTpl,
-						'<div class="fav-container" >',
-						 '<tpl if="this.isAlreadyUsed(isUsed, label) == false">'+
-							'	<div class="select"  title="'+LN('sbi.mydata.selectdocument')+'">',
-							'    <a href="#"><span class="icon"></span></a> '+
-							'	</div>',
-				            '</tpl>'+
-				            '<tpl if="this.isAlreadyUsed(isUsed, label) == true">'+
-							'	<div class="select"  title="'+LN('sbi.mydata.unselectdocument')+'">',
-							'    <a href="#"><span class="iconActive"></span></a> '+
-							'	</div>',
-				            '</tpl>'+
-						'</div>',		
+//						'<div class="fav-container" >',
+//						 '<tpl if="this.isAlreadyUsed(isUsed, label) == false">'+
+//							'	<div class="select"  title="'+LN('sbi.mydata.selectdocument')+'">',
+//							'    <a href="#"><span class="icon"></span></a> '+
+//							'	</div>',
+//				            '</tpl>'+
+//				            '<tpl if="this.isAlreadyUsed(isUsed, label) == true">'+
+//							'	<div class="select"  title="'+LN('sbi.mydata.unselectdocument')+'">',
+//							'    <a href="#"><span class="iconActive"></span></a> '+
+//							'	</div>',
+//				            '</tpl>'+
+//						'</div>',		
 
 					    '</dd>',
 				    '</tpl>',
@@ -131,11 +132,19 @@ Ext.extend(Sbi.widgets.DatasetsBrowserView, Ext.DataView, {
 		
 		var documentTpl = ''+
 		'<div class="box-container">'+
-			'<div id="document-item-icon" class="box-figure">'+
+		'<tpl if="this.isAlreadyUsed(isUsed, label) == true">'+		
+			'<div id="box-figure-{label}" class="box-figure selectbox">'+
 				'<img  align="center" src="' + img + '" '+ classImg+'" + ext:qtip="<b>{views}</b><br/>{summary}"></img>' +
 				'<span class="shadow"></span>'+		
 			'</div>'+ //box-figure
-			'<div title="{name}" class="box-text">'+
+        '</tpl>'+
+        '<tpl if="this.isAlreadyUsed(isUsed, label) == false">'+
+	        '<div id="box-figure-{label}" class="box-figure">'+
+				'<img  align="center" src="' + img + '" '+ classImg+'" + ext:qtip="<b>{views}</b><br/>{summary}"></img>' +
+				'<span class="shadow"></span>'+		
+			'</div>'+ //box-figure
+        '</tpl>'+
+		'<div title="{name}" class="box-text">'+
 				'<h2>{name}</h2>'+
 //				'<p>{[Ext.String.ellipsis(values.description, 100, false)]}</p>'+
 				'<p>{description}</p>'+
