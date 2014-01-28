@@ -11,7 +11,7 @@ import it.eng.spago.base.SourceBeanException;
 import it.eng.spago.dbaccess.sql.DataRow;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.analiticalmodel.document.handlers.ExecutionInstance;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParuse;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
@@ -178,11 +178,11 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 	/**
 	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#getLovResult(IEngUserProfile profile, List<ObjParuse> dependencies, ExecutionInstance executionInstance) throws Exception;
 	 */
-	public String getLovResult(IEngUserProfile profile, List<ObjParuse> dependencies, ExecutionInstance executionInstance) throws Exception {
+	public String getLovResult(IEngUserProfile profile, List<ObjParuse> dependencies, List<BIObjectParameter> BIObjectParameters, Locale locale) throws Exception {
 		logger.debug("IN");
 		String result = null;
 		HashMap attributes = GeneralUtilities.getAllProfileAttributes(profile); // to be cancelled, now substitutution inline
-		attributes.putAll(this.getSystemBindings(executionInstance));
+		attributes.putAll(this.getSystemBindings(locale));
 		//Substitute profile attributes with their value
 		String cleanScript=substituteProfileAttributes(getScript(), attributes);
 		setScript(cleanScript);
@@ -223,11 +223,8 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 	}
 
 
-	private Map getSystemBindings(ExecutionInstance executionInstance) {
-		Locale locale = null;
-		if (executionInstance != null) {
-			locale = executionInstance.getLocale();
-		}
+	private Map getSystemBindings(Locale locale) {
+
 		if (locale == null) {
 			locale = GeneralUtilities.getDefaultLocale();
 			logger.debug("Execution instance's locale is null; considering default one: " + locale);

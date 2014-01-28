@@ -6,7 +6,6 @@
 package it.eng.spagobi.analiticalmodel.document.handlers;
 
 import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParuse;
 import it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail;
 import it.eng.spagobi.behaviouralmodel.lov.bo.QueryDetail;
@@ -73,7 +72,7 @@ public class LovResultCacheManager {
 				logger.debug(lovResult);
 			} else if (retrieveIfNotcached) {
 				logger.info("Executing lov to get result ...");
-				lovResult = lovDefinition.getLovResult(profile, dependencies, executionInstance);
+				lovResult = lovDefinition.getLovResult(profile, dependencies, executionInstance.getBIObject().getBiObjectParameters(),executionInstance.getLocale());
 				logger.debug(lovResult);
 				// insert the data in cache
 				if (lovResult != null) 
@@ -82,7 +81,7 @@ public class LovResultCacheManager {
 		} else {
 			// scrips, fixed list and java classes are not cached, and returned without considering retrieveIfNotcached input
 			logger.info("Executing lov (NOT QUERY TYPE) to get result ...");
-			lovResult = lovDefinition.getLovResult(profile, dependencies, executionInstance);
+			lovResult = lovDefinition.getLovResult(profile, dependencies, executionInstance.getBIObject().getBiObjectParameters(),executionInstance.getLocale());
 			logger.debug(lovResult);
 		}
 		
@@ -118,7 +117,7 @@ public class LovResultCacheManager {
 		if (lovDefinition instanceof QueryDetail) {
 			QueryDetail queryDetail = (QueryDetail) lovDefinition;
 			QueryDetail clone = queryDetail.clone();
-			clone.setQueryDefinition(queryDetail.getWrappedStatement(dependencies, executionInstance));
+			clone.setQueryDefinition(queryDetail.getWrappedStatement(dependencies, executionInstance.getBIObject().getBiObjectParameters()));
 			toReturn = userID + ";" + clone.toXML();
 		} else {
 			toReturn = userID + ";" + lovDefinition.toXML();
