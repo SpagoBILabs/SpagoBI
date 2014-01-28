@@ -176,8 +176,16 @@ public class ProfileFilter implements Filter {
 
 	private UsernamePasswordCredentials findUserCredentials(HttpServletRequest httpRequest) {
 		UsernamePasswordCredentials toReturn = null;
-		String userId = httpRequest.getParameter(SsoServiceInterface.USER_NAME_REQUEST_PARAMETER);
-		String password = httpRequest.getParameter(SsoServiceInterface.PASSWORD_REQUEST_PARAMETER);
+		String userId = httpRequest.getParameter(SsoServiceInterface.USER_NAME_REQUEST_PARAMETER.toLowerCase());
+		logger.debug("Request parameter " + SsoServiceInterface.USER_NAME_REQUEST_PARAMETER.toLowerCase() + " is [" + userId + "]");
+		if (userId == null) {
+			userId = httpRequest.getParameter(SsoServiceInterface.USER_NAME_REQUEST_PARAMETER.toUpperCase());
+			logger.debug("Request parameter " + SsoServiceInterface.USER_NAME_REQUEST_PARAMETER.toUpperCase() + " is [" + userId + "]");
+		}
+		String password = httpRequest.getParameter(SsoServiceInterface.PASSWORD_REQUEST_PARAMETER.toLowerCase());
+		if (password == null) {
+			password = httpRequest.getParameter(SsoServiceInterface.PASSWORD_REQUEST_PARAMETER.toUpperCase());
+		}
 		if (!StringUtilities.isEmpty(userId) && !StringUtilities.isNull(password)) {
 			logger.debug("Read credentials from request: user id is [" + userId + "]");
 			String passwordMode = httpRequest.getParameter(SsoServiceInterface.PASSWORD_MODE_REQUEST_PARAMETER);
