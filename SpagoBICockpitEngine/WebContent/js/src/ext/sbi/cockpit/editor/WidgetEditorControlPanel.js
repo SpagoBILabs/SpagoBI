@@ -56,7 +56,7 @@ Sbi.cockpit.editor.WidgetEditorControlPanel = function(config) {
 	if (c.dataset)
 		baseParams.dataset = c.dataset;
 	this.services["getQueryFields"] = Sbi.config.serviceRegistry.getRestServiceUrl({
-		serviceName : 'datasets/metafields', 
+		serviceName : 'api/1.1/dataset/{label}/fields', 
 		baseParams : baseParams
 	});		
 	
@@ -69,7 +69,7 @@ Sbi.cockpit.editor.WidgetEditorControlPanel = function(config) {
         layout: {
         	type:'accordion'
         },
-        items:[ this.designToolsPallettePanel, this.designToolsFieldsPanel, this.designToolsLayoutPanel]
+        items:[ this.designerPalettePanel, this.fieldsPalettePanel, this.stylePalettePanel]
 	};
 	
 	Sbi.cockpit.editor.WidgetEditorControlPanel.superclass.constructor.call(this, c);
@@ -77,17 +77,17 @@ Sbi.cockpit.editor.WidgetEditorControlPanel = function(config) {
 };
 
 Ext.extend(Sbi.cockpit.editor.WidgetEditorControlPanel, Ext.Panel, {
-	designToolsFieldsPanel: null,
-	designToolsPallettePanel: null,
-	designToolsLayoutPanel: null,
+	fieldsPalettePanel: null,
+	designerPalettePanel: null,
+	stylePalettePanel: null,
 	globalFilters: null,
 	fieldsOptions: null, // JSON object that contains options for attributes (code/description visualization) and measures (scale factor)
 
 	initPanels: function() {
 
-		this.designToolsPallettePanel = new Sbi.cockpit.editor.WidgetEditorDesignerPalette({}); 
+		this.designerPalettePanel = new Sbi.cockpit.editor.WidgetEditorDesignerPalette({}); 
 
-		this.designToolsFieldsPanel = new Sbi.cockpit.editor.WidgetEditorFieldPalette({
+		this.fieldsPalettePanel = new Sbi.cockpit.editor.WidgetEditorFieldPalette({
 			displayRefreshButton : true,
 			border: false,
 	        gridConfig: {
@@ -100,22 +100,22 @@ Ext.extend(Sbi.cockpit.editor.WidgetEditorControlPanel, Ext.Panel, {
 			dataset: this.dataset,
 			services : this.services
 		});
-		this.designToolsFieldsPanel.store.on('load', this.fieldsLoadedHandler, this);
-		this.designToolsFieldsPanel.store.on('beforeload', this.getGlobalFilters, this); // forces a calculation of global filters
-		this.designToolsFieldsPanel.grid.on('rowdblclick', this.fieldDblClickHandler, this);
-		this.designToolsFieldsPanel.grid.on('rowcontextmenu', this.fieldRightClickHandler, this);
+		this.fieldsPalettePanel.store.on('load', this.fieldsLoadedHandler, this);
+		this.fieldsPalettePanel.store.on('beforeload', this.getGlobalFilters, this); // forces a calculation of global filters
+		this.fieldsPalettePanel.grid.on('rowdblclick', this.fieldDblClickHandler, this);
+		this.fieldsPalettePanel.grid.on('rowcontextmenu', this.fieldRightClickHandler, this);
 		
 
-//		this.designToolsLayoutPanel = new Sbi.worksheet.designer.DesignToolsLayoutPanel({region : 'south', height : 130 , split: true});
+//		this.stylePalettePanel = new Sbi.worksheet.designer.stylePalettePanel({region : 'south', height : 130 , split: true});
 //
-//		this.designToolsLayoutPanel.on('layoutchange', function(sheetLayout){
+//		this.stylePalettePanel.on('layoutchange', function(sheetLayout){
 //			var change = {
 //				'sheetLayout' : sheetLayout
 //			};
 //			this.fireEvent('toolschange',change);
 //		}, this);
 		
-		this.designToolsLayoutPanel  = new Ext.Panel({html: "Layout Panel"});
+		this.stylePalettePanel  = new Ext.Panel({html: "Layout Panel"});
 	}
 
 	, fieldDblClickHandler : function (grid, rowIndex, event) {
@@ -179,13 +179,13 @@ Ext.extend(Sbi.cockpit.editor.WidgetEditorControlPanel, Ext.Panel, {
 	//Update the tools info for the active sheet
 	, updateToolsForActiveTab: function(activeSheet){
 		if ( activeSheet.sheetLayout !== null ) {
-			this.designToolsLayoutPanel.setLayoutValue(activeSheet.sheetLayout);
+			this.stylePalettePanel.setLayoutValue(activeSheet.sheetLayout);
 		}
 	}
 	
 	, refresh: function(){
-		this.designToolsFieldsPanel.refresh();
-		this.designToolsFieldsPanel.on('validateInvalidFieldsAfterLoad', 
+		this.fieldsPalettePanel.refresh();
+		this.fieldsPalettePanel.on('validateInvalidFieldsAfterLoad', 
 				function(){
 					this.fireEvent("validateInvalidFieldsAfterLoad", this); 	
 		}, this);
@@ -193,10 +193,10 @@ Ext.extend(Sbi.cockpit.editor.WidgetEditorControlPanel, Ext.Panel, {
 	}
 	
     , getFields : function () {
-    	return this.designToolsFieldsPanel.getFields();
+    	return this.fieldsPalettePanel.getFields();
     }
-    , getDesignToolsFieldsPanel : function () {
-    	return this.designToolsFieldsPanel;
+    , getFieldsPalettePanel : function () {
+    	return this.fieldsPalettePanel;
     }    
 	, getGlobalFilters : function () {
 		var fields = this.getFields();
@@ -259,9 +259,7 @@ Ext.extend(Sbi.cockpit.editor.WidgetEditorControlPanel, Ext.Panel, {
 	}
 	
 	, updateValues: function(values){
-		if (this.designToolsFieldsPanel.updateValues)
-			this.designToolsFieldsPanel.updateValues(values);
-		
+		this.fieldsPalettePanel.refreshFieldsList(values.dataset);
 	}
 
 	

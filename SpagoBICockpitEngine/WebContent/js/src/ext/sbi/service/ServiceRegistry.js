@@ -26,7 +26,8 @@ Sbi.service.ServiceRegistry = function(config) {
 	    , port: '8080'
 	    , contextPath: 'SpagoBI'
 	    , controllerPath: 'servlet/AdapterHTTP'   
-	    , restServicesPath: 'restful-services' 
+	    //, restServicesPath: 'restful-services' 
+	    , restServicesPath: 'api/1.0' 
 	});
 	
 	this.baseParams = Ext.apply({}, config.baseParams || {}, {

@@ -15,6 +15,8 @@ import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.engine.cockpit.CockpitEngineInstance;
 import it.eng.spagobi.services.proxy.DataSetServiceProxy;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData.FieldType;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
@@ -24,13 +26,18 @@ import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
@@ -39,12 +46,12 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 /**
- * @author Antonella Giachino (antonella.giachino@eng.it)
+ * @authors Andrea Gioia (andrea.gioia@eng.it), Antonella Giachino (antonella.giachino@eng.it)
  * 
  */
 
-@Path("/xdatasets/metafields")
-public class GetDatasetMetaFields { 
+@Path("/1.0")
+public class DataSetResource { 
 	
 	// PROPERTIES TO LOOK FOR INTO THE FIELDS
 	public static final String PROPERTY_VISIBLE = "visible";
@@ -53,44 +60,137 @@ public class GetDatasetMetaFields {
 	public static final String PROPERTY_IS_MANDATORY_MEASURE = "isMandatoryMeasure";
 	public static final String PROPERTY_AGGREGATION_FUNCTION = "aggregationFunction";
 
-	
-	static private Logger logger = Logger.getLogger(GetDatasetMetaFields.class);
+	static private Logger logger = Logger.getLogger(DataSetResource.class);
 
 	@GET
+	@Path("/datasets")
 	@Produces(MediaType.APPLICATION_JSON)
-	public String getDataSetMetaFields(@Context HttpServletRequest req) {
-		
-		CockpitEngineInstance engineInstance = (CockpitEngineInstance)req.getSession().getAttribute(EngineConstants.ENGINE_INSTANCE );
-		Assert.assertNotNull(engineInstance, "It's not possible to execute GetDataSetMetaFields service before having properly created an instance of EngineInstance class");
-		
-		IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
-
-		String dsLabel = req.getParameter("dataset");
-		Assert.assertNotNull(dsLabel, "The dataset label is null!!");
+	public String getDataSets(@Context HttpServletRequest req) {
 		try {
-			DataSetServiceProxy datasetProxy = new DataSetServiceProxy((String)profile.getUserUniqueIdentifier() , req.getSession());
-			IDataSet dataset = datasetProxy.getDataSetByLabel(dsLabel);
-
-			Assert.assertNotNull(dataset, "The engine instance is missing the dataset!!");
-			IMetaData metadata = dataset.getMetadata();
-			Assert.assertNotNull(metadata, "No metadata retrieved by the dataset");
-	
-			JSONArray fieldsJSON = writeFields(metadata);
-			logger.debug("Metadata read:");
-			logger.debug(fieldsJSON);
+			DataSetServiceProxy proxy = getProxy(req);
 			
-			JSONObject resultsJSON = new JSONObject();
-			resultsJSON.put("results", fieldsJSON);
-		
-			return resultsJSON.toString();
-			
+			JSONArray resultsJSON = new JSONArray();
+			return resultsJSON.toString();	
 		} catch(Throwable t) {
-			throw SpagoBIEngineServiceExceptionHandler.getInstance().getWrappedException("", engineInstance, t);
+			throw SpagoBIEngineServiceExceptionHandler.getInstance().getWrappedException("", getEngineInstance(req), t);
 		} finally {			
 			logger.debug("OUT");
 		}	
 	}
 	
+	@GET
+	@Path("/dataset/{label}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public String getDataSetMeta(@Context HttpServletRequest req, @PathParam("label") String label) {
+		try {
+			DataSetServiceProxy proxy = getProxy(req);
+			IDataSet dataSet = proxy.getDataSetByLabel(label);
+			
+			JSONObject resultsJSON = new JSONObject();
+			
+			resultsJSON.put("id", dataSet.getId());
+			resultsJSON.put("label", dataSet.getLabel());
+			resultsJSON.put("name", dataSet.getName());
+			resultsJSON.put("description", dataSet.getDescription());
+			resultsJSON.put("category", dataSet.getCategoryCd());
+			resultsJSON.put("creationDate", dataSet.getDateIn());
+			resultsJSON.put("author", dataSet.getOwner());
+				
+			return resultsJSON.toString();	
+		} catch(Throwable t) {
+			throw SpagoBIEngineServiceExceptionHandler.getInstance().getWrappedException("", getEngineInstance(req), t);
+		} finally {			
+			logger.debug("OUT");
+		}	
+	}
+	
+	@GET
+	@Path("/dataset/{label}/fields")
+	@Produces(MediaType.APPLICATION_JSON)
+	public String getDataSetFieldsMeta(@Context HttpServletRequest req, @PathParam("label") String label) {
+		try {
+			DataSetServiceProxy proxy = getProxy(req);
+			IDataSet dataSet = proxy.getDataSetByLabel(label);
+			
+			Assert.assertNotNull(dataSet, "The engine instance is missing the dataset!!");
+			IMetaData metadata = dataSet.getMetadata();
+			Assert.assertNotNull(metadata, "No metadata retrieved by the dataset");
+	
+			JSONArray fieldsJSON = writeFields(metadata);
+			JSONObject resultsJSON = new JSONObject();
+			resultsJSON.put("results", fieldsJSON);
+		
+			return resultsJSON.toString();	
+		} catch(Throwable t) {
+			throw SpagoBIEngineServiceExceptionHandler.getInstance().getWrappedException("", getEngineInstance(req), t);
+		} finally {			
+			logger.debug("OUT");
+		}	
+	}
+	
+	@GET
+	@Path("/dataset/{label}/data")
+	@Produces(MediaType.APPLICATION_JSON)
+	public String getDataStore(@Context HttpServletRequest req
+			, @PathParam("label") String label
+			, @QueryParam("offset") @DefaultValue("-1") int offset
+			, @QueryParam("fetchSize") @DefaultValue("-1") int fetchSize
+			, @QueryParam("maxResults") @DefaultValue("-1") int maxResults) {
+		try {
+			DataSetServiceProxy proxy = getProxy(req);
+			IDataSet dataSet = proxy.getDataSetByLabel(label);
+			dataSet.loadData(offset, fetchSize, maxResults);
+			
+			IDataStore dataStore = dataSet.getDataStore();
+			
+			Map<String, Object> properties = new HashMap<String, Object>();
+			//JSONArray fieldOptions = this.getAttributeAsJSONArray("fieldsOptions");
+			JSONArray fieldOptions = new JSONArray("[{id: 1, options: {measureScaleFactor: 0.5}}]");
+			properties.put(JSONDataWriter.PROPERTY_FIELD_OPTION, fieldOptions);
+			JSONDataWriter dataSetWriter = new JSONDataWriter(properties);
+			//JSONDataWriter dataSetWriter = new JSONDataWriter();
+			JSONObject gridDataFeed = (JSONObject)dataSetWriter.write(dataStore);
+			
+			return gridDataFeed.toString();	
+		} catch(Throwable t) {
+			throw SpagoBIEngineServiceExceptionHandler.getInstance().getWrappedException("", getEngineInstance(req), t);
+		} finally {			
+			logger.debug("OUT");
+		}	
+	}
+	
+	// ==========================================================================================
+	// Utility methods
+	// ==========================================================================================
+	private CockpitEngineInstance getEngineInstance(HttpServletRequest req) {
+		CockpitEngineInstance engineInstance = (CockpitEngineInstance)req.getSession().getAttribute(EngineConstants.ENGINE_INSTANCE );
+		return engineInstance;
+	}
+	private DataSetServiceProxy getProxy(HttpServletRequest req) {
+		DataSetServiceProxy datasetProxy = null;
+		
+		logger.debug("IN");
+		
+		CockpitEngineInstance engineInstance = getEngineInstance(req);
+		Assert.assertNotNull(engineInstance, "It's not possible to execute GetDataSetMetaFields service before having properly created an instance of EngineInstance class");
+		
+		IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+		String dsLabel = req.getParameter("dataset");
+		
+		try {
+			datasetProxy = new DataSetServiceProxy((String)profile.getUserUniqueIdentifier() , req.getSession());
+		} catch(Throwable t) {
+			throw SpagoBIEngineServiceExceptionHandler.getInstance().getWrappedException("", engineInstance, t);
+		} finally {			
+			logger.debug("OUT");
+		}	
+		
+		return datasetProxy;
+	}
+	
+	// ==========================================================================================
+	// Serialization methods
+	// ==========================================================================================
 	public JSONArray writeFields(IMetaData metadata) throws Exception {
 
 		// field's meta
