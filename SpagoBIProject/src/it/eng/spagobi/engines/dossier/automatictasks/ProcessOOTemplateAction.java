@@ -17,11 +17,11 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.ExecutionProxy;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.engines.dossier.bo.ConfiguredBIDocument;
-import it.eng.spagobi.engines.dossier.bo.DossierAnalyticalDriversManager;
 import it.eng.spagobi.engines.dossier.constants.DossierConstants;
 import it.eng.spagobi.engines.dossier.dao.IDossierDAO;
 import it.eng.spagobi.engines.dossier.dao.IDossierPartsTempDAO;
 import it.eng.spagobi.engines.dossier.exceptions.OpenOfficeConnectionException;
+import it.eng.spagobi.engines.dossier.utils.DossierAnalyticalDriversManager;
 import it.eng.spagobi.monitoring.dao.AuditManager;
 
 import java.io.File;

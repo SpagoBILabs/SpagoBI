@@ -26,11 +26,11 @@ import it.eng.spagobi.commons.dao.IRoleDAO;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.SpagoBITracer;
 import it.eng.spagobi.engines.dossier.bo.ConfiguredBIDocument;
-import it.eng.spagobi.engines.dossier.bo.DossierAnalyticalDriversManager;
 import it.eng.spagobi.engines.dossier.bo.WorkflowConfiguration;
 import it.eng.spagobi.engines.dossier.constants.DossierConstants;
 import it.eng.spagobi.engines.dossier.dao.DossierDAOHibImpl;
 import it.eng.spagobi.engines.dossier.dao.IDossierDAO;
+import it.eng.spagobi.engines.dossier.utils.DossierAnalyticalDriversManager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
