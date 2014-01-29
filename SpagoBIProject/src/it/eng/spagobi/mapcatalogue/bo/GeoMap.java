@@ -11,9 +11,7 @@ import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IBinContentDAO;
 import it.eng.spagobi.commons.metadata.SbiBinContents;
-import it.eng.spagobi.mapcatalogue.metadata.SbiGeoFeatures;
 import it.eng.spagobi.mapcatalogue.metadata.SbiGeoMaps;
-import it.eng.spagobi.sdk.maps.impl.MapsSDKServiceImpl;
 
 import java.io.Serializable;
 
