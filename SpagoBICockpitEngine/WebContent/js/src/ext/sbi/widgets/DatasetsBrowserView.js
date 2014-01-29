@@ -34,7 +34,7 @@ Sbi.widgets.DatasetsBrowserView = function(config) {
 Ext.extend(Sbi.widgets.DatasetsBrowserView, Ext.DataView, {
 	  itemSelector : 'dd' 
 	, trackOver : true
-	, overClass : 'box.over'
+	, overClass : 'over'
 	, frame : true
 	, emptyText : LN('No Documents')
 	, inline : {wrap : false}
@@ -79,7 +79,7 @@ Ext.extend(Sbi.widgets.DatasetsBrowserView, Ext.DataView, {
 		Sbi.debug('DatasetsBrowserView building the tpl...');
 
 		var tpl = null;
-		var documentTpl = this.getDocumentTemplate();
+		var datasetsTpl = this.getDatasetsTemplate();
 
 		
 		tpl = new Ext.XTemplate(
@@ -88,29 +88,26 @@ Ext.extend(Sbi.widgets.DatasetsBrowserView, Ext.DataView, {
 					'<tpl for=".">',
 					    '{[isUsed=""]}',
 					    '{[label=""]}',
-				 		'<dd id="{label}" class="box">',
-				 		documentTpl,
-//						'<div class="fav-container" >',
-//						 '<tpl if="this.isAlreadyUsed(isUsed, label) == false">'+
-//							'	<div class="select"  title="'+LN('sbi.mydata.selectdocument')+'">',
-//							'    <a href="#"><span class="icon"></span></a> '+
-//							'	</div>',
-//				            '</tpl>'+
-//				            '<tpl if="this.isAlreadyUsed(isUsed, label) == true">'+
-//							'	<div class="select"  title="'+LN('sbi.mydata.unselectdocument')+'">',
-//							'    <a href="#"><span class="iconActive"></span></a> '+
-//							'	</div>',
-//				            '</tpl>'+
-//						'</div>',		
-
-					    '</dd>',
+					    '<tpl if="this.isAlreadyUsed(isUsed, label) == true">'+		
+					 		'<dd id="{label}" class="box selectbox">',
+					 			datasetsTpl,
+						    '</dd>',
+					    '</tpl>'+
+				        '<tpl if="this.isAlreadyUsed(isUsed, label) == false">'+
+					        '<dd id="{label}" class="box">',
+					 			datasetsTpl,
+						    '</dd>',
+					    '</tpl>'+
 				    '</tpl>',
 				    '<div style="clear:left"></div>',
 				    '</dl>',
 			      '</div>', {
-			      isAlreadyUsed: function(v, l) {
+			        isAlreadyUsed: function(v, l) {
 			    	  return v == 'true';		        		
-		        	}
+		        	},
+		        	shorten: function(text){
+		                return Ext.util.Format.ellipsis(text,55,false);
+		            }
 				 }
 				);
 		Sbi.debug('DatasetsBrowserView tpl built.');
@@ -119,41 +116,38 @@ Ext.extend(Sbi.widgets.DatasetsBrowserView, Ext.DataView, {
 	}
 
 	
-	,getDocumentTemplate : function(){
+	,getDatasetsTemplate : function(){
 		var img = Ext.BLANK_IMAGE_URL ;
 
 		var classImg = ' class="measure-detail-dataset" ';
 		
 		var author = LN('sbi.generic.author');
 //		var changed = LN('sbi.ds.changedon');
-
-		var currentUser = Sbi.config.userId;
 		
-		
-		var documentTpl = ''+
+		var datasetTpl = ''+
 		'<div class="box-container">'+
-		'<tpl if="this.isAlreadyUsed(isUsed, label) == true">'+		
-			'<div id="box-figure-{label}" class="box-figure selectbox">'+
-				'<img  align="center" src="' + img + '" '+ classImg+'" + ext:qtip="<b>{views}</b><br/>{summary}"></img>' +
-				'<span class="shadow"></span>'+		
-			'</div>'+ //box-figure
-        '</tpl>'+
-        '<tpl if="this.isAlreadyUsed(isUsed, label) == false">'+
 	        '<div id="box-figure-{label}" class="box-figure">'+
-				'<img  align="center" src="' + img + '" '+ classImg+'" + ext:qtip="<b>{views}</b><br/>{summary}"></img>' +
-				'<span class="shadow"></span>'+		
+				'<img  align="center" src="' + img + '" '+ classImg+'" + ext:qtip="<b>{views}</b><br/>{summary}"></img>' +	
 			'</div>'+ //box-figure
-        '</tpl>'+
-		'<div title="{name}" class="box-text">'+
-				'<h2>{name}</h2>'+
-//				'<p>{[Ext.String.ellipsis(values.description, 100, false)]}</p>'+
-				'<p>{description}</p>'+
-				'<p><b>'+author+':</b> {owner}</p>'+
-//				'<p class="modified">'+changed+' {dateIn}</p>'+
-			'</div>'+
+			'<tpl if="this.isAlreadyUsed(isUsed, label) == true">'+	
+				'<div id="box-text-{label}" title="{name}" class="box-text box-text-select">'+
+					'<h2>{name}</h2>'+
+					'<p>{[this.shorten(values.description)]}</p>'+
+//					'<p>{description}</p>'+				
+					'<p><b>'+author+':</b> {owner}</p>'+
+				'</div>'+
+			'</tpl>'+
+	        '<tpl if="this.isAlreadyUsed(isUsed, label) == false">'+
+		        '<div id="box-text-{label}" title="{name}" class="box-text">'+
+					'<h2>{name}</h2>'+
+						'<p>{[this.shorten(values.description)]}</p>'+
+//					'<p>{description}</p>'+
+					'<p><b>'+author+':</b> {owner}</p>'+
+				'</div>'+
+			'</tpl>'+
 		'</div>';
 		
-		return documentTpl;
+		return datasetTpl;
 	}
 	
 	

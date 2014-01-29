@@ -379,9 +379,14 @@ Ext.extend(Sbi.widgets.DatasetsBrowserPanel, Ext.Panel, {
 				this.viewPanel.refresh();
 	    	 }		     
 	     }else{	    	 
-	        var el = Ext.get('box-figure-' + r.label);
+	        var el = Ext.get(r.label);
 	 		if (el)
 	 			el.dom.className += ' selectbox ';
+	 		
+	 		var elText = Ext.get('box-text-'+r.label);
+		 	if (elText)
+		 		elText.dom.className += ' box-text-select ';
+	 		
 		     this.fireEvent("selectDataSet", r.label); 
 	     }
 
@@ -447,8 +452,4 @@ Ext.extend(Sbi.widgets.DatasetsBrowserPanel, Ext.Panel, {
 		this.viewPanel.refresh();
 	}	
 	
-	, closeWin: function(){		
-		alert('closeWin called');
-		this.hide();
-	}
 });
