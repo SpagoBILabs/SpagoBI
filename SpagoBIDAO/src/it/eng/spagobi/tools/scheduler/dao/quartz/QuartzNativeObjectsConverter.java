@@ -15,12 +15,8 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 import org.quartz.JobDataMap;
 import org.quartz.Scheduler;
-import org.quartz.SimpleTrigger;
 import org.quartz.TriggerUtils;
 
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
-import it.eng.spagobi.commons.deserializer.TriggerXMLDeserializer;
-import it.eng.spagobi.commons.utilities.SpagoBITracer;
 import it.eng.spagobi.tools.scheduler.bo.CronExpression;
 import it.eng.spagobi.tools.scheduler.bo.Job;
 import it.eng.spagobi.tools.scheduler.bo.Trigger;
