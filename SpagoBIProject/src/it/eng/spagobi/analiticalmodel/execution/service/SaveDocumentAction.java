@@ -21,7 +21,6 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.services.AbstractSpagoBIAction;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.commons.utilities.UserUtilities;
-import it.eng.spagobi.community.mapping.SbiCommunity;
 import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.engines.config.dao.IEngineDAO;
@@ -365,8 +364,7 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 				//add personal folder for default
 				LowFunctionality userFunc = null;
 				try{
-					ILowFunctionalityDAO functionalitiesDAO = DAOFactory.getLowFunctionalityDAO();
-					userFunc = functionalitiesDAO.loadLowFunctionalityByPath("/"+profile.getUserUniqueIdentifier(),false);
+					userFunc = UserUtilities.loadUserFunctionalityRoot((UserProfile) profile, true);
 				} catch (Exception e) {
 					logger.error("Error on insertion of the document.. Impossible to get the id of the personal folder ",e);
 					throw new SpagoBIRuntimeException("Error on insertion of the document.. Impossible to get the id of the personal folder ",e);
@@ -693,13 +691,8 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 				Integer id = new Integer(functsArrayJSon.getInt(i));
 				if (id.intValue() == -1) {
 					// -1 stands for personal folder: check is it exists
-					boolean exists = UserUtilities.userFunctionalityRootExists( (UserProfile)getUserProfile() );
-					if (!exists) {
-						// create personal folder if it doesn't exist
-						UserUtilities.createUserFunctionalityRoot( (UserProfile)getUserProfile() );
-					}
-					// load personal folder to get its id
-					LowFunctionality folder = UserUtilities.loadUserFunctionalityRoot( (UserProfile)getUserProfile() );
+					// load personal folder to get its id: in case it does not exist, create it
+					LowFunctionality folder = UserUtilities.loadUserFunctionalityRoot( (UserProfile)getUserProfile(), true );
 					id = folder.getId();
 				}
 				folders.add(id);

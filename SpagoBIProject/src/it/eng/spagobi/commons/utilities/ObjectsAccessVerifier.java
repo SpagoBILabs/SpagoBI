@@ -697,7 +697,7 @@ public class ObjectsAccessVerifier {
 		}
 
 		if(profile!=null){
-			LowFunctionality personalFolder = UserUtilities.loadUserFunctionalityRoot((UserProfile)profile);
+			LowFunctionality personalFolder = UserUtilities.loadUserFunctionalityRoot((UserProfile)profile, false);
 			if (personalFolder!= null && personalFolder.getId()==folderId){
 				return true;
 			}

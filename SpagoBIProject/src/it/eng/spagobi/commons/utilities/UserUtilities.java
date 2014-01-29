@@ -18,7 +18,6 @@ import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IRoleDAO;
 import it.eng.spagobi.commons.metadata.SbiTenant;
-import it.eng.spagobi.profiling.bean.SbiUser;
 import it.eng.spagobi.services.common.SsoServiceFactory;
 import it.eng.spagobi.services.common.SsoServiceInterface;
 import it.eng.spagobi.services.security.bo.SpagoBIUserProfile;
@@ -264,27 +263,34 @@ public class UserUtilities {
     public static boolean userFunctionalityRootExists(UserProfile userProfile) {
     	Assert.assertNotNull(userProfile, "User profile in input is null");
     	boolean toReturn = false;
-    	String userName = (String) userProfile.getUserName();
+    	String userId = (String) userProfile.getUserId();
     	try {
-    		toReturn = userFunctionalityRootExists(userName);
+    		toReturn = userFunctionalityRootExists(userId);
     	} catch (Exception e) {
-    		throw new SpagoBIRuntimeException("Cannot find if user functionality exists for user [" + userName + "]", e);
+    		throw new SpagoBIRuntimeException("Cannot find if user functionality exists for user [" + userId + "]", e);
     	}
     	return toReturn;
     }
     
     /**
-     * User functionality root exists.
+     * Load the user personal folder as a LowFunctionality object.
+     * If the personal folder exists, it is returned; if it does not exist and create is false, null is returned, otherwise the personal folder is created and then returned.
      * 
-     * @param userProfile the user profile
+     * @param userProfile UserProfile the user profile object
+     * @param createIfNotExisting Boolean that specifies if the personal folder must be created if it doesn't exist
      * 
-     * @return true, if successful
-     * 
-     * @throws Exception the exception
+     * @return the personal folder as a LowFunctionality object, or null in case the personal folder does not exist and create is false
      */
-    public static LowFunctionality loadUserFunctionalityRoot(UserProfile userProfile) {
+    public static LowFunctionality loadUserFunctionalityRoot(UserProfile userProfile, boolean createIfNotExisting) {
     	Assert.assertNotNull(userProfile, "User profile in input is null");
     	String userId = (String) userProfile.getUserId();
+    	if (createIfNotExisting && !userFunctionalityRootExists(userProfile)) {
+	    	try {
+	    		createUserFunctionalityRoot(userProfile);
+			} catch (Exception e) {
+				throw new SpagoBIRuntimeException("Cannot create personal functionality for user with id [" + userId + "]", e);
+			}
+    	}
     	LowFunctionality lf = null;
     	try {
     		lf = DAOFactory.getLowFunctionalityDAO().loadLowFunctionalityByPath("/" + userId, false);
@@ -297,7 +303,7 @@ public class UserUtilities {
     public static boolean isPersonalFolder(LowFunctionality folder, UserProfile userProfile) {
     	Assert.assertNotNull(userProfile, "User profile in input is null");
     	Assert.assertNotNull(folder, "Folder in input is null");
-    	LowFunctionality personalFolder = loadUserFunctionalityRoot(userProfile);
+    	LowFunctionality personalFolder = loadUserFunctionalityRoot(userProfile, false);
     	if (personalFolder == null) {
     		String userId = (String) userProfile.getUserId();
     		logger.debug("Personal folder for user [" + userId + "] does not exist");
