@@ -11,8 +11,8 @@ Sbi.widgets.DatasetsBrowserView = function(config) {
 	Sbi.trace("[DatasetsBrowserView.constructor]: IN");
 	
 	var defaultSettings = {		
-			autoScroll: true
-//		  , height: '100%'
+			autoScroll: false
+			, height: '350px'
 	};
 		
 	if(Sbi.settings && Sbi.cockpit && Sbi.widgets && Sbi.widgets.datasetsBrowserView) {
@@ -127,7 +127,8 @@ Ext.extend(Sbi.widgets.DatasetsBrowserView, Ext.DataView, {
 		var datasetTpl = ''+
 		'<div class="box-container">'+
 	        '<div id="box-figure-{label}" class="box-figure">'+
-				'<img  align="center" src="' + img + '" '+ classImg+'" + ext:qtip="<b>{views}</b><br/>{summary}"></img>' +	
+//				'<img  align="center" src="' + img + '" '+ classImg+'" + ext:qtip="<b>{views}</b><br/>{summary}"></img>' +	
+				'<img  align="center" src="' + img + '" '+ classImg +'"></img>' +
 			'</div>'+ //box-figure
 			'<tpl if="this.isAlreadyUsed(isUsed, label) == true">'+	
 				'<div id="box-text-{label}" title="{name}" class="box-text box-text-select">'+

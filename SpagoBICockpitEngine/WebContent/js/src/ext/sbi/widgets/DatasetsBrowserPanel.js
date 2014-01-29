@@ -12,7 +12,7 @@ Sbi.widgets.DatasetsBrowserPanel = function(config) {
 	
 	var defaultSettings = {		
 		autoScroll: true
-//	  , height: 500
+	  , height: '100%'
 	};
 		
 	if(Sbi.settings && Sbi.cockpit && Sbi.widgets && Sbi.widgets.datasetsBrowserPanel) {
