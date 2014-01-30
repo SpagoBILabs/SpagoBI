@@ -100,11 +100,13 @@ Ext.extend(Sbi.cockpit.runtime.Widget, Ext.Panel, {
     	config.custom = this.getCustomConfiguration();
     	config.layout = this.getRegion();
     	config.style = this.getStyleConfiguration();
+    	config.common = this.getCommonConfiguration();
 		return config;
 	}
 
 	, getCustomConfiguration: function() {
 		var config = {};
+		config.dataset = this.dataset;
 		return config;
 	}
 	
@@ -113,6 +115,20 @@ Ext.extend(Sbi.cockpit.runtime.Widget, Ext.Panel, {
 		return config;
 	}
 
+	,getCommonConfiguration: function(){
+		var config = {};
+		
+		var datasets = [];
+		var sm = this.getWidgetManager().getStoreManager();
+		for (var i=0; i < sm.length; i++){
+			var s = sm.get(i);
+			datasets.push(s.datasetLabel);
+		}
+		
+		config.datasets = datasets;
+		return config;
+	}
+	
     , getParentContainer: function(c) {	
 		return this.parentContainer;	
 	}
@@ -163,12 +179,7 @@ Ext.extend(Sbi.cockpit.runtime.Widget, Ext.Panel, {
     			Sbi.warn("[Widget.getWidgetManager]: Widget [" + this.toString() + "] is bound to a widget container but it is not possible to retrive the region it occupies");
     		}    	
     	}
-    	
-//    	if(this.isBoundToAContainer() === true) {
-//    		r = this.getRelativeDimensions(this.getParentContainer(), r);
-//    		this.getParentContainer().setWidgetRegion(this, r);	
-//    	}
-    	
+
     	return r;
     }
     
