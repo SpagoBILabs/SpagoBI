@@ -5,48 +5,48 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. **/
  
  
-Ext.ns("Sbi.xxx");
+Ext.ns("Sbi.cockpit.runtime");
 
-
-/**
- * Every time you create a new class add it to the following files:
- *  - importSbiJS.jspf
- *  - ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml
- */
-Sbi.xxx.Xxxx = function(config) {
+Sbi.cockpit.runtime.WidgetContainerComponent = function(config) {
 	
 	this.adjustConfigObject(config);
 	this.validateConfigObject(config);
 	
-	
 	// init properties...
 	var defaultSettings = {
-		// set default values here
+		title : config.widget? 'Widget [' + config.widget.id + ']': 'Widget'
+	    , bodyBorder: true
+	    , frame: true
+	    , shadow: false
+	    , plain : true
+	    , constrain: true
+	    , layout : 'fit'
 	};
 	
-	var settings = Sbi.getObjectSettings('Sbi.xxx.Xxxx', defaultSettings);
+	var settings = Sbi.getObjectSettings('Sbi.cockpit.runtime.WidgetContainerComponent', defaultSettings);
 	
 	var c = Ext.apply(settings, config || {});
 	Ext.apply(this, c);
 	
-	
-
-		
 	// init events...
-	this.addEvents();
+	this.addEvents('performaction', 'move', 'resize');
 	
 	this.initServices();
 	this.init();
 	
-	
+	if(this.widget) {
+		this.items = [this.widget];
+	} else {
+		this.html = "Please configure the widget";
+	}
 	
 	// constructor
-    Sbi.xxx.Xxxx.superclass.constructor.call(this, c);
+	Sbi.cockpit.runtime.WidgetContainerComponent.superclass.constructor.call(this, c);
 };
 
 /**
- * @class Sbi.xxx.Xxxx
- * @extends Ext.util.Observable
+ * @class Sbi.cockpit.runtime.WidgetContainerComponent
+ * @extends Ext.Window
  * 
  * bla bla bla bla bla ...
  */
@@ -55,7 +55,7 @@ Sbi.xxx.Xxxx = function(config) {
  * @cfg {Object} config
  * ...
  */
-Ext.extend(Sbi.xxx.Xxxx, Ext.util.Observable, {
+Ext.extend(Sbi.cockpit.runtime.WidgetContainerComponent, Ext.Window, {
     
 	// =================================================================================================================
 	// PROPERTIES
@@ -83,7 +83,7 @@ Ext.extend(Sbi.xxx.Xxxx, Ext.util.Observable, {
 	 * @return {Object} the config object received as input
 	 */
 	, validateConfigObject: function(config) {
-		
+		return config;
 	}
 
 	/**
@@ -100,6 +100,30 @@ Ext.extend(Sbi.xxx.Xxxx, Ext.util.Observable, {
 	, adjustConfigObject: function(config) {
 		
 	}
+	
+	// -----------------------------------------------------------------------------------------------------------------
+    // public methods
+	// -----------------------------------------------------------------------------------------------------------------
+	
+	, setWidget: function(widget) {
+		// sostituisce il vecchio widget embeddato con quello ricevuto come argomento
+	}
+	
+	, setWidgetConfiguration: function(widget) {
+		// se è un tipo di widget diverso da quello attualmente embeddato lo crea e lo sostiruisce al vecchio
+		// se è dello stesso tipo chiama il metodo setConfiguration sul vecchi senza ricrearne uno nuovo
+	}
+	
+	// -----------------------------------------------------------------------------------------------------------------
+    // private methods
+	// -----------------------------------------------------------------------------------------------------------------
+	, onShowWidgetConfiguration: function(widget) {
+		this.fireEvent('performaction', this, widget, 'showConfiguration');
+    } 
+    
+    , onShowWidgetEditor: function(widget) {
+    	this.fireEvent('performaction', this, widget, 'showEditor');
+    } 
 	
 	// -----------------------------------------------------------------------------------------------------------------
     // init methods
@@ -129,34 +153,40 @@ Ext.extend(Sbi.xxx.Xxxx, Ext.util.Observable, {
 	 * 
 	 * Initialize the GUI
 	 */
-	, init: Ext.emptyFn
+	, init: function() {
+		this.tools =  [{
+    		id:'gear',
+    		handler: function(event, button, win, tc){
+    			this.onShowWidgetEditor(win.widget);
+        	},
+    		scope: this
+    	}, {
+        	id:'help',
+            handler: function(event, button, win, tc){
+            	this.onShowWidgetConfiguration(win.widget);
+            },
+    		scope: this
+        }, {
+        	id:'refresh',
+     	   	handler: function(){
+     	   		Ext.Msg.alert('Message', 'The REFRESH tool was clicked.');
+     	    },
+    		scope: this
+        }];
+	}
 	
-	// -----------------------------------------------------------------------------------------------------------------
-    // public methods
-	// -----------------------------------------------------------------------------------------------------------------
-	
-	// -----------------------------------------------------------------------------------------------------------------
-    // private methods
-	// -----------------------------------------------------------------------------------------------------------------
-
 	// =================================================================================================================
 	// EVENTS
 	// =================================================================================================================
 	
-	//this.addEvents(
-	/**
-     * @event eventone
-     * Fired when ...
-     * @param {Sbi.xxx.Xxxx} this
-     * @param {Ext.Toolbar} ...
-     */
-	//'eventone'
-	/**
-     * @event eventtwo
-     * Fired before ...
-     * @param {Sbi.xxx.Xxxx} this
-     * @param {Object} ...
-     */
-	//'eventtwo'
-	//);	
+//	, this.addEvents(
+//		/**
+//	     * @event performaction
+//	     * Fired when the user trigger the execution of a specific action doing something on this widget 
+//	     * @param {Sbi.xxx.Xxxx} this
+//	     * @param {Ext.Toolbar} the contained widget
+//	     * @param {Sring} action
+//	     */
+//		'performaction'
+//	);	
 });
