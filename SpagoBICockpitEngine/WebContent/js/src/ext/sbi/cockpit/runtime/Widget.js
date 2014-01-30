@@ -146,13 +146,28 @@ Ext.extend(Sbi.cockpit.runtime.Widget, Ext.Panel, {
 
     , getRegion: function() {
     	var r = null;
+    	var h =   this.getHeight();
+    	var w =  this.getWidth();
+    	var p = this.getPosition();
+    	
+    	r =  {
+	   			  x : p[0]
+	   	    	, y: p[1]
+	   			, width : w
+	       		, height : h
+	    	};
     	
     	if(this.isBoundToAContainer() === true) {
     		r = this.getParentContainer().getWidgetRegion(this);
     		if(r === null) {
     			Sbi.warn("[Widget.getWidgetManager]: Widget [" + this.toString() + "] is bound to a widget container but it is not possible to retrive the region it occupies");
-    		}
+    		}    	
     	}
+    	
+//    	if(this.isBoundToAContainer() === true) {
+//    		r = this.getRelativeDimensions(this.getParentContainer(), r);
+//    		this.getParentContainer().setWidgetRegion(this, r);	
+//    	}
     	
     	return r;
     }
@@ -184,6 +199,8 @@ Ext.extend(Sbi.cockpit.runtime.Widget, Ext.Panel, {
 	, onRender: function(ct, position) {	
 		Sbi.cockpit.runtime.Widget.superclass.onRender.call(this, ct, position);	
 	}
+	
+	
 	
 	// =================================================================================================================
 	// EVENTS

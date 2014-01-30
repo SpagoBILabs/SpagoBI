@@ -34,7 +34,7 @@ Sbi.widgets.WizardPanel = function(config) {
 	Sbi.widgets.WizardPanel.superclass.constructor.call(this, c);
 	Sbi.trace("[WizardPanel.constructor]: parent costructor succesfully called");
 	
-	this.addEvents('cancel', 'navigate', 'confirm');
+	this.addEvents('close', 'navigate', 'confirm');
 	
 	Sbi.trace("[WizardPanel.constructor]: OUT");
 };
@@ -245,10 +245,10 @@ Ext.extend(Sbi.widgets.WizardPanel, Ext.Panel, {
 	        disabled: (this.activeItem == 0)?false:true
 	    	});
 		
-		buttonsBar.push({id: 'cancel',
-	        text:  LN('sbi.ds.wizard.cancel'),
+		buttonsBar.push({id: 'close',
+	        text:  LN('sbi.ds.wizard.close'),
 	        handler: function(){ 
-	        	thisPanel.fireEvent('cancel', this);  
+	        	thisPanel.fireEvent('close', this);  
 	        }, scope: this
 	    	});
 		

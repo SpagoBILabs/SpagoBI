@@ -167,9 +167,6 @@ Ext.extend(Sbi.widgets.DatasetsBrowserPanel, Ext.Panel, {
 	//Show only the dataset of the passed type
 	, showDataset: function(datasetType) { 
 		this.activeFilter = datasetType;	
-		
-//		var scope = this;
-//		var sm = this.widgetManager.getStoreManager();
 
 		if (Ext.get('list-tab') != null){
 			var tabEls = Ext.get('list-tab').dom.childNodes;
@@ -275,15 +272,6 @@ Ext.extend(Sbi.widgets.DatasetsBrowserPanel, Ext.Panel, {
     		'    <div class="list-actions-container"> '+ //setted into the container panel
     		'		<ul class="list-tab" id="list-tab"> ';
         
-        if (Sbi.settings.mydata.showUsedDataSetFilter){	
-	    	if (Sbi.settings.mydata.defaultFilter == 'UsedDataSet'){
-	    		activeClass = 'active';
-	    	} else {
-	    		activeClass = '';
-	    	}
-	    	bannerHTML = bannerHTML+	
-	    	'	    	<li class="first '+activeClass+'" id="UsedDataSet"><a href="#" onclick="javascript:Ext.getCmp(\'this\').showDataset( \'UsedDataSet\')">'+LN('sbi.mydata.useddataset')+'</a></li> '; 
-        }
         if (Sbi.settings.mydata.showMyDataSetFilter){	
         	if (Sbi.settings.mydata.defaultFilter == 'MyDataSet'){
         		activeClass = 'active';
@@ -319,6 +307,15 @@ Ext.extend(Sbi.widgets.DatasetsBrowserPanel, Ext.Panel, {
         	}
           	bannerHTML = bannerHTML+	
     		'	    	<li id="AllDataSet" class="last '+activeClass+'"><a href="#" onclick="javascript:Ext.getCmp(\'this\').showDataset( \'AllDataSet\')">'+LN('sbi.mydata.alldataset')+'</a></li> ';    		    		    		    		        	 
+         }
+         if (Sbi.settings.mydata.showUsedDataSetFilter){	
+ 	    	if (Sbi.settings.mydata.defaultFilter == 'UsedDataSet'){
+ 	    		activeClass = 'active';
+ 	    	} else {
+ 	    		activeClass = '';
+ 	    	}
+ 	    	bannerHTML = bannerHTML+	
+ 	    	'	    	<li class="first '+activeClass+'" id="UsedDataSet"><a href="#" onclick="javascript:Ext.getCmp(\'this\').showDataset( \'UsedDataSet\')">'+LN('sbi.mydata.useddataset')+'</a></li> '; 
          }
         
          bannerHTML = bannerHTML+

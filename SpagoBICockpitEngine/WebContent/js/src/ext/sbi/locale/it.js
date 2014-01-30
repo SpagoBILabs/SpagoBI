@@ -78,6 +78,7 @@ Sbi.locale.ln['sbi.ds.wizard.back']= '< Indietro';
 Sbi.locale.ln['sbi.ds.wizard.next']= 'Sucessivo >';
 Sbi.locale.ln['sbi.ds.wizard.confirm']= 'Conferma';
 Sbi.locale.ln['sbi.ds.wizard.cancel']= 'Annulla';
+Sbi.locale.ln['sbi.ds.wizard.close']= 'Chiudi';
 Sbi.locale.ln['sbi.ds.wizard.startMsg']= 'Seleziona e carica il file XLS o CSV ...';
 Sbi.locale.ln['sbi.ds.wizard.file']= 'File';
 Sbi.locale.ln['sbi.ds.wizard.successLoad']= ' caricato con successo!';
