@@ -51,7 +51,8 @@ Ext.extend(Sbi.widgets.DatasetsBrowserView, Ext.DataView, {
 		var sm = this.widgetManager.getStoreManager();
 		
 		if (this.activeFilter == 'UsedDataSet' &&
-				(sm == null || sm.getCount()== 0 || (sm.getCount() == 1 && sm.get('testStore') != undefined))){
+				(sm == null || sm.getCount()== 0 )){
+//			(sm == null || sm.getCount()== 0 || (sm.getCount() == 1 && sm.get('testStore') != undefined))){
 			return toReturn;
 		}
 		

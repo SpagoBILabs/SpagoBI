@@ -110,7 +110,7 @@ Ext.extend(Sbi.cockpit.runtime.WidgetContainer, Sbi.cockpit.runtime.Widget, {
 //    	alert("Widget: " + (widget instanceof Sbi.cockpit.runtime.Widget));
 //    	alert("DummyWidget: " + (widget instanceof Sbi.cockpit.widgets.dummy.DummyWidget));
 //    	alert("TableWidget: " + (widget instanceof Sbi.cockpit.widgets.table.TableWidget));
-		Sbi.trace("[WidgetPanel.addWidget]: IN");
+		Sbi.trace("[WidgetContainer.addWidget]: IN");
     	
     	if(!widget) {
     		// what we do?
@@ -127,14 +127,12 @@ Ext.extend(Sbi.cockpit.runtime.WidgetContainer, Sbi.cockpit.runtime.Widget, {
 		this.widgetManager.register(widget);
 		this.setWidgetRegion(widget, region);
 		var containerComponent = this.renderWidget(widget);
-		// TODO update region object properly when container component is moved or resized
-		// containerComponent.on('move', ...
-		// containerComponent.on('resize', ...
+		// update region object properly when container component is moved or resized
+		containerComponent.on('move', this.onMoveComponent, this);
+		containerComponent.on('resize', this.onResizeComponent, this);
 		widget.setParentContainer(this);
 		
-		
-		
-		Sbi.trace("[WidgetPanel.addWidget]: OUT");
+		Sbi.trace("[WidgetContainer.addWidget]: OUT");
 	}
     
     , getWidgetRegion: function(widget) {
@@ -201,7 +199,7 @@ Ext.extend(Sbi.cockpit.runtime.WidgetContainer, Sbi.cockpit.runtime.Widget, {
     	config.widget = widget;
     	
     	var widgetWizard = new Sbi.cockpit.editor.WidgetEditorWizardPanel(config);
-    	widgetWizard.on('cancel', this.closeWizard, this);
+    	widgetWizard.on('close', this.closeWizard, this);
     	
     	this.wizard = new Ext.Window({
     		id: 'wizard',
@@ -222,13 +220,13 @@ Ext.extend(Sbi.cockpit.runtime.WidgetContainer, Sbi.cockpit.runtime.Widget, {
 	// -----------------------------------------------------------------------------------------------------------------
 	
     , onRender: function(ct, position) {	
-    	Sbi.trace("[WidgetPanel.onRender]: IN");
+    	Sbi.trace("[WidgetContainer.onRender]: IN");
     	
 		Sbi.cockpit.runtime.WidgetContainer.superclass.onRender.call(this, ct, position);
 	
 		this.clearContent();
 		this.renderContent();
-		Sbi.trace("[WidgetPanel.onRender]: OUT");
+		Sbi.trace("[WidgetContainer.onRender]: OUT");
 	}
      
     , clearContent: function() {
@@ -247,7 +245,7 @@ Ext.extend(Sbi.cockpit.runtime.WidgetContainer, Sbi.cockpit.runtime.Widget, {
     
     , renderWidget: function(widget) {
     	
-    	Sbi.trace("[WidgetPanel.renderWidget]: IN");
+    	Sbi.trace("[WidgetContainer.renderWidget]: IN");
     	
     	var componentConf = {widget: widget};
     	
@@ -262,7 +260,7 @@ Ext.extend(Sbi.cockpit.runtime.WidgetContainer, Sbi.cockpit.runtime.Widget, {
     		this.regions[widget.id] = region;
     	}
     	
-    	Sbi.trace("[WidgetPanel.renderWidget]: region is equal to: [" + Sbi.toSource(region) + "]");
+    	Sbi.trace("[WidgetContainer.renderWidget]: region is equal to: [" + Sbi.toSource(region) + "]");
     	
     	Ext.apply(componentConf, region);
     	var vpSize = Ext.getBody().getViewSize();
@@ -281,7 +279,7 @@ Ext.extend(Sbi.cockpit.runtime.WidgetContainer, Sbi.cockpit.runtime.Widget, {
     	this.components.push(component);
     	component.show();
     	
-    	Sbi.trace("[WidgetPanel.renderWidget]: OUT");
+    	Sbi.trace("[WidgetContainer.renderWidget]: OUT");
     	
     	return component;
     }
@@ -300,5 +298,42 @@ Ext.extend(Sbi.cockpit.runtime.WidgetContainer, Sbi.cockpit.runtime.Widget, {
     	this.wizard.close();
     }
     
-  
+    , onMoveComponent: function(c){
+    	//refresh xy informations of region obj
+    	Sbi.trace("[WidgetContainer.onMoveComponent]: IN");
+
+    	var container = c.getWidget().getParentContainer();		
+    	var r = container.getRegion();
+    	
+		r.x = c.getWidget().getPosition()[0];
+		r.y = c.getWidget().getPosition()[1];
+		
+		this.setWidgetRegion(c.getWidget(),r);
+		
+		Sbi.trace("[WidgetContainer.onMoveComponent]: OUT");
+    	
+    }
+    
+    , onResizeComponent: function(c){
+    	//refresh size informations of region obj
+    	Sbi.trace("[WidgetContainer.onResizeComponent]: IN");
+    	
+    	var r =  c.getWidget().getParentContainer().getRegion();
+    	r.width = c.getWidget().getWidth();
+    	r.height = c.getWidget().getHeight();
+    	
+    	if (Sbi.settings.cockpit && Sbi.settings.cockpit.layout && 
+    			Sbi.settings.cockpit.layout.useRelativeDimensions == true){
+    		//get realtive dimensions if necessary
+    		var vpSize = Ext.getBody().getViewSize();
+	    	var newW = ((100*c.getWidget().getWidth()) / vpSize.width)/100;
+			var newH = ((100*c.getWidget().getHeight()) / vpSize.height)/100;
+	    	r.width = Ext.util.Format.number(newW, '0.00');
+	    	r.height =Ext.util.Format.number(newH, '0.00');
+    	}
+    	
+		this.setWidgetRegion(c.getWidget(),r);
+		
+		Sbi.trace("[WidgetContainer.onResizeComponent]: OUT");
+    }
 }); 

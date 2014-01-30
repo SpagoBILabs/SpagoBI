@@ -7,7 +7,9 @@
 Ext.ns("Sbi.settings");
 
 Sbi.settings.cockpit = {
-		
+		layout : {
+			useRelativeDimensions: false
+		}
 	
 };
 

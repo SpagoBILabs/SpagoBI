@@ -22,7 +22,7 @@ Sbi.cockpit.editor.WidgetEditorWizardPanel = function(config) {
 		
 	Sbi.cockpit.editor.WidgetEditorWizardPanel.superclass.constructor.call(this, c);
 	
-	this.addEvents('cancel');
+	this.addEvents('close');
 	
 	Sbi.trace("[WidgetEditorWizardPanel.constructor]: OUT");
 };
@@ -58,10 +58,16 @@ Ext.extend(Sbi.cockpit.editor.WidgetEditorWizardPanel, Sbi.widgets.WizardPanel, 
 		Sbi.trace("[WidgetEditorWizardPanel.isDatasetBrowserPageValid]: IN");
 		Sbi.trace("[WidgetEditorWizardPanel.isDatasetBrowserPageValid]: 0.dataset: " + this.pages[0].dataset);
 		Sbi.trace("[WidgetEditorWizardPanel.isDatasetBrowserPageValid]: 1.dataset: " + this.pages[1].dataset);
-		
-		if (this.pages[0].widget.dataset === undefined || this.pages[0].widget.dataset === null){
+		var sm = this.widgetManager.getStoreManager();
+		if ((sm == null || sm.getCount()== 0 ) &&
+				this.pages[0].widget.dataset === undefined || this.pages[0].widget.dataset === null){
 			alert('Per procedere e\' necessario selezionare un dataset!');
 			return false;
+		}else{
+			//gets the first dataset available
+			var dsDefault = sm.get(0);
+			if (dsDefault)
+				this.pages[0].widget.dataset = dsDefault.datasetLabel;
 		}
 		Sbi.trace("[WidgetEditorWizardPanel.isDatasetBrowserPageValid]: OUT");
 		return true;
@@ -105,11 +111,12 @@ Ext.extend(Sbi.cockpit.editor.WidgetEditorWizardPanel, Sbi.widgets.WizardPanel, 
 	, moveToNextPage: function() {
 		this.superclass().moveToNextPage.call(this);
 		var newPage = this.superclass().getActivePage.call(this);
-		newPage.on('cancel',this.closeWizard, this);
+		newPage.on('close',this.closeWizard, this);
 		if (newPage.updateValues){
 			var formState = this.getFormState();
 			newPage.updateValues(formState);
 		}
+		Ext.getCmp('move-next').setDisabled(true);
 	}
 	
 	// -----------------------------------------------------------------------------------------------------------------
