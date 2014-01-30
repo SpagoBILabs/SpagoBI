@@ -11,8 +11,11 @@ import it.eng.spago.dbaccess.sql.mappers.SQLMapper;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.bo.Domain;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.dao.IDomainDAO;
 import it.eng.spagobi.services.datasource.bo.SpagoBiDataSource;
-import it.eng.spagobi.services.datasource.service.DataSourceSupplier;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -39,8 +42,7 @@ public class DataSourceUtilities {
 		Connection connection =  null;
 		//calls implementation for gets data source object
 		
-		DataSourceSupplier supplierDS = new DataSourceSupplier();		
-		SpagoBiDataSource ds = supplierDS.getDataSourceByLabel(dsLabel);
+		SpagoBiDataSource ds = getDataSourceByLabel(dsLabel);
 		logger.debug("Schema Attributes:"+ ds.getSchemaAttribute());
 		String schema=UserUtilities.getSchema(ds.getSchemaAttribute(),requestContainer);
 		logger.debug("Schema:"+ schema);
@@ -69,8 +71,7 @@ public class DataSourceUtilities {
 		//calls implementation for gets data source object
 		
 		
-		DataSourceSupplier supplierDS = new DataSourceSupplier();		
-		SpagoBiDataSource ds = supplierDS.getDataSourceByLabel(dsLabel);
+		SpagoBiDataSource ds = getDataSourceByLabel(dsLabel);
 		logger.debug("Schema Attribute:"+ ds.getSchemaAttribute());
 		String schema=null;
 		if (profile!=null){
@@ -111,6 +112,58 @@ public class DataSourceUtilities {
 		return dataCon;
 	}
 	
-	
+	/*
+	 * Methods copied from DataSourceSupplier for DAO refactoring
+	 */
+	/**
+	 * Gets the data source by label.
+	 * 
+	 * @param dsLabel
+	 *            the ds label
+	 * 
+	 * @return the data source by label
+	 */
+	public SpagoBiDataSource getDataSourceByLabel(String dsLabel) {
+		logger.debug("IN");
+		SpagoBiDataSource sbds = new SpagoBiDataSource();
+
+		// gets data source data from database
+		try {
+			IDataSource ds = DAOFactory.getDataSourceDAO()
+					.loadDataSourceByLabel(dsLabel);
+			if (ds == null) {
+				logger.warn("The data source with label " + dsLabel
+						+ " is not found on the database.");
+				return null;
+			}
+			sbds = toSpagoBiDataSource(ds);
+
+		} catch (Exception e) {
+			logger.error("The data source is not correctly returned", e);
+		}
+		logger.debug("OUT");
+		return sbds;
+	}
+
+	private SpagoBiDataSource toSpagoBiDataSource(IDataSource ds)
+	throws Exception {
+		SpagoBiDataSource sbds = new SpagoBiDataSource();
+		sbds.setLabel(ds.getLabel());
+		sbds.setJndiName(ds.getJndi());
+		sbds.setUrl(ds.getUrlConnection());
+		sbds.setUser(ds.getUser());
+		sbds.setPassword(ds.getPwd());
+		sbds.setDriver(ds.getDriver());
+		sbds.setMultiSchema(ds.getMultiSchema());
+		sbds.setSchemaAttribute(ds.getSchemaAttribute());
+		// gets dialect informations
+		IDomainDAO domaindao = DAOFactory.getDomainDAO();
+		Domain doDialect = domaindao.loadDomainById(ds.getDialectId());
+		sbds.setHibDialectClass(doDialect.getValueCd());
+		sbds.setHibDialectName(doDialect.getValueName());
+		sbds.setReadOnly(ds.checkIsReadOnly());
+		sbds.setWriteDefault(ds.checkIsWriteDefault());
+		return sbds;
+	}	
 
 }
