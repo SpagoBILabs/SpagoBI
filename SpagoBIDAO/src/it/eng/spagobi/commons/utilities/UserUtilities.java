@@ -12,6 +12,7 @@ import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
 import it.eng.spagobi.analiticalmodel.functionalitytree.bo.UserFunctionality;
 import it.eng.spagobi.analiticalmodel.functionalitytree.dao.ILowFunctionalityDAO;
+import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.Role;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
@@ -23,7 +24,6 @@ import it.eng.spagobi.services.common.SsoServiceInterface;
 import it.eng.spagobi.services.security.bo.SpagoBIUserProfile;
 import it.eng.spagobi.services.security.exceptions.SecurityException;
 import it.eng.spagobi.services.security.service.ISecurityServiceSupplier;
-import it.eng.spagobi.services.security.service.SecurityServiceSupplierFactory;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
@@ -147,8 +147,7 @@ public class UserUtilities {
 		logger.debug("IN.userId=" + userId);
 		if (userId == null)
 			return null;
-		ISecurityServiceSupplier supplier = SecurityServiceSupplierFactory
-				.createISecurityServiceSupplier();
+		ISecurityServiceSupplier supplier = createISecurityServiceSupplier();
 
 		try {
 			SpagoBIUserProfile user = supplier.createUserProfile(userId);
@@ -166,6 +165,8 @@ public class UserUtilities {
 			logger.debug("OUT");
 		}
 	}  
+	
+	
 	
 	
 	
@@ -672,5 +673,31 @@ public class UserUtilities {
 		}
 	}
 
+	/*
+	 * Method copied from SecurityServiceSupplierFactory for DAO refactoring
+	 */
+	
+	public static ISecurityServiceSupplier createISecurityServiceSupplier(){
+		logger.debug("IN");
+		SingletonConfig configSingleton = SingletonConfig.getInstance();
+		String engUserProfileFactorySB = configSingleton.getConfigValue("SPAGOBI.SECURITY.USER-PROFILE-FACTORY-CLASS.className");
+		if (engUserProfileFactorySB==null){
+			logger.warn("SPAGOBI.SECURITY.USER-PROFILE-FACTORY-CLASS ... NOT FOUND");
+		}
+		String engUserProfileFactoryClass = engUserProfileFactorySB;
+		engUserProfileFactoryClass = engUserProfileFactoryClass.trim(); 
+		try {
+			return  (ISecurityServiceSupplier)Class.forName(engUserProfileFactoryClass).newInstance();
+		} catch (InstantiationException e) {
+			logger.warn("InstantiationException",e);
+		} catch (IllegalAccessException e) {
+			logger.warn("IllegalAccessException",e);
+		} catch (ClassNotFoundException e) {
+			logger.warn("ClassNotFoundException",e);
+		}finally{
+			logger.debug("OUT");
+		}
+		return null;
+	}
 
 }
