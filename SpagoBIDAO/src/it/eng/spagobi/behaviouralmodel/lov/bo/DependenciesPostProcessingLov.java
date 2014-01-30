@@ -5,20 +5,29 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.behaviouralmodel.lov.bo;
 
+import it.eng.spago.base.Constants;
 import it.eng.spago.base.SourceBean;
+import it.eng.spago.error.EMFErrorSeverity;
+import it.eng.spago.tracing.TracerSingleton;
+import it.eng.spago.validation.EMFValidationError;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParuse;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterDAO;
+import it.eng.spagobi.commons.SingletonConfig;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.services.DelegatedBasicListService;
+import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.utilities.assertion.Assert;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Vector;
 
 import org.apache.log4j.Logger;
 
@@ -108,10 +117,10 @@ public abstract class DependenciesPostProcessingLov {
 				case 0: return list;
 				case 1: valueFilter = (String) filterValues[0];
 						if (valueFilter != null && !valueFilter.equals(""))
-							return DelegatedBasicListService.filterList(list, valueFilter, valueTypeFilter, 
+							return filterList(list, valueFilter, valueTypeFilter, 
 								objParuse.getFilterColumn(), objParuse.getFilterOperation());
 						else return list;
-				default: return DelegatedBasicListService.filterList(list, filterValues, valueTypeFilter, 
+				default: return filterList(list, filterValues, valueTypeFilter, 
 								objParuse.getFilterColumn(), objParuse.getFilterOperation());
 			}
 		} catch (Exception e) {
@@ -119,7 +128,6 @@ public abstract class DependenciesPostProcessingLov {
 			return list;
 		}
 	}
-
 	
 	private List evaluateSingleLogicOperation(List list, ObjParuse obpuLeft, ObjParuse obpuRight, Map selectedParameterValues) {
 		List listToReturn = list;
@@ -285,5 +293,344 @@ public abstract class DependenciesPostProcessingLov {
 		
 		return newlist;
 	}
+	
+	//-------------------------------------------------------------------------
+	// Methods copied from DelegatedBasicListService after DAO refactoring
+	//-------------------------------------------------------------------------
+	public static List filterList(List list, String valuefilter,
+			String valuetypefilter, String columnfilter, String typeFilter) {
+
+		List newList = new ArrayList();
+
+		Assert.assertTrue(!StringUtilities.isEmpty(valuefilter),
+				"the value filter is not set");
+
+		if (StringUtilities.isEmpty(columnfilter)) {
+			return list;
+		}
+		if (StringUtilities.isEmpty(typeFilter)) {
+			return list;
+		}
+
+		if (StringUtilities.isEmpty(valuetypefilter)) {
+			return list;
+		}
+
+		// controls the correctness of the filtering conditions
+		// boolean filterConditionsAreCorrect =
+		// verifyFilterConditions(valuetypefilter, typeFilter, errorHandler);
+		// if (!filterConditionsAreCorrect) return list;
+
+		Iterator iterRow = list.iterator();
+		while (iterRow.hasNext()) {
+			SourceBean row = (SourceBean) iterRow.next();
+			boolean doesRowSatisfyCondition = false;
+			try {
+				doesRowSatisfyCondition = doesRowSatisfyCondition(row,
+						valuefilter, valuetypefilter, columnfilter, typeFilter);
+			} catch (EMFValidationError error) {
+				error.printStackTrace();
+				return list;
+			}
+			if (doesRowSatisfyCondition)
+				newList.add(row);
+		}
+
+		return newList;
+	}	
+	
+	
+	
+	private static boolean doesRowSatisfyCondition(SourceBean row, String valuefilter, String valuetypefilter, String columnfilter, 
+			String typeFilter) throws EMFValidationError {
+		Object attribute = row.getAttribute(columnfilter);
+		if (attribute == null) return false;
+		String value = attribute.toString();
+		if (value == null)
+			value = "";
+		// case of string filtering
+		if (valuetypefilter.equalsIgnoreCase(SpagoBIConstants.STRING_TYPE_FILTER)) {
+			valuefilter = valuefilter.toUpperCase();
+			value = value.toUpperCase();
+			if (typeFilter.equalsIgnoreCase(SpagoBIConstants.START_FILTER)) {
+				return value.trim().startsWith(valuefilter);
+			} else if (typeFilter.equalsIgnoreCase(SpagoBIConstants.END_FILTER)) {
+				return value.trim().endsWith(valuefilter);
+			} else if (typeFilter
+					.equalsIgnoreCase(SpagoBIConstants.CONTAIN_FILTER)) {
+				return value.indexOf(valuefilter) != -1;
+			} else if (typeFilter
+					.equalsIgnoreCase(SpagoBIConstants.EQUAL_FILTER)) {
+				return value.equals(valuefilter)
+						|| value.trim().equals(valuefilter);
+			} else if (typeFilter
+					.equalsIgnoreCase(SpagoBIConstants.LESS_FILTER)) {
+				return value.trim().compareToIgnoreCase(valuefilter) < 0; 
+			} else if (typeFilter
+					.equalsIgnoreCase(SpagoBIConstants.LESS_OR_EQUAL_FILTER)) {
+				return value.trim().compareToIgnoreCase(valuefilter) <= 0;
+			} else if (typeFilter
+					.equalsIgnoreCase(SpagoBIConstants.GREATER_FILTER)) {
+				return value.trim().compareToIgnoreCase(valuefilter) > 0;
+			} else if (typeFilter
+					.equalsIgnoreCase(SpagoBIConstants.GREATER_OR_EQUAL_FILTER)) {
+				return value.trim().compareToIgnoreCase(valuefilter) >= 0;
+			} else {
+				TracerSingleton.log(
+						Constants.NOME_MODULO,
+						TracerSingleton.WARNING,
+						"DelegatedBasicListService::filterList: the filter type '" + typeFilter + "' is not a valid filter type");
+				HashMap params = new HashMap();
+				params.put(Constants.NOME_MODULO,
+						"DelegatedBasicListService::filterList: the filter type '" + typeFilter + "' is not a valid filter type");
+				EMFValidationError error = new EMFValidationError(EMFErrorSeverity.ERROR, SpagoBIConstants.TYPE_FILTER, "100", null, params);
+				throw error;
+			}
+		}
+		// case of number filtering
+		else if (valuetypefilter.equalsIgnoreCase(SpagoBIConstants.NUMBER_TYPE_FILTER)) {
+			Double valueDouble = null;
+			Double valueFilterDouble = null;
+			try {
+				valueDouble = new Double(value);
+			} catch (Exception e) {
+				TracerSingleton.log(
+						Constants.NOME_MODULO,
+						TracerSingleton.WARNING,
+						"DelegatedBasicListService::filterList: the string value is not a recognizable number representations: value to be filtered = " + value, e);
+				HashMap params = new HashMap();
+				params.put(Constants.NOME_MODULO,
+						"DelegatedBasicListService::filterList");
+				Vector v = new Vector();
+				v.add(value);
+				EMFValidationError error = new EMFValidationError(EMFErrorSeverity.WARNING, SpagoBIConstants.TYPE_VALUE_FILTER, "1051", v, params);
+				throw error;
+			}
+			try {
+				valueFilterDouble = new Double(valuefilter);
+			} catch (Exception e) {
+				TracerSingleton.log(
+						Constants.NOME_MODULO,
+						TracerSingleton.WARNING,
+						"DelegatedBasicListService::filterList: input string value is not a recognizable number representations: filter value = " + valuefilter, e);
+				HashMap params = new HashMap();
+				params.put(Constants.NOME_MODULO,
+						"DelegatedBasicListService::filterList");
+				Vector v = new Vector();
+				v.add(valuefilter);
+				EMFValidationError error = new EMFValidationError(EMFErrorSeverity.WARNING, SpagoBIConstants.VALUE_FILTER, "1052", v, params);
+				throw error;
+			}
+			
+			//if (valueDouble == null || valueFilterDouble == null) return list;
+			
+			if (typeFilter
+					.equalsIgnoreCase(SpagoBIConstants.EQUAL_FILTER)) {
+				return valueDouble.doubleValue() == valueFilterDouble.doubleValue();
+			} else if (typeFilter
+					.equalsIgnoreCase(SpagoBIConstants.LESS_FILTER)) {
+				return valueDouble.doubleValue() < valueFilterDouble.doubleValue();
+			} else if (typeFilter
+					.equalsIgnoreCase(SpagoBIConstants.LESS_OR_EQUAL_FILTER)) {
+				return valueDouble.doubleValue() <= valueFilterDouble.doubleValue();
+			} else if (typeFilter
+					.equalsIgnoreCase(SpagoBIConstants.GREATER_FILTER)) {
+				return valueDouble.doubleValue() > valueFilterDouble.doubleValue();
+			} else if (typeFilter
+					.equalsIgnoreCase(SpagoBIConstants.GREATER_OR_EQUAL_FILTER)) {
+				return valueDouble.doubleValue() >= valueFilterDouble.doubleValue();
+			} else {
+				TracerSingleton.log(
+						Constants.NOME_MODULO,
+						TracerSingleton.WARNING,
+						"DelegatedBasicListService::filterList: the filter type '" + typeFilter + "' is not a valid filter type");
+				HashMap params = new HashMap();
+				params.put(Constants.NOME_MODULO,
+						"DelegatedBasicListService::filterList: the filter type '" + typeFilter + "' is not a valid filter type");
+				EMFValidationError error = new EMFValidationError(EMFErrorSeverity.ERROR, SpagoBIConstants.TYPE_FILTER, "100", null, params);
+				throw error;
+			}
+		}
+		// case of date filtering
+		else if (valuetypefilter.equalsIgnoreCase(SpagoBIConstants.DATE_TYPE_FILTER)) {
+
+		    String format = SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-SERVER.format");
+		    TracerSingleton.log(
+					Constants.NOME_MODULO,
+					TracerSingleton.WARNING,
+					"DelegatedBasicListService::filterList: applying date format " + format + " for filtering.");
+//		    format = format.replaceAll("D", "d");
+//		    format = format.replaceAll("m", "M");
+//		    format = format.replaceAll("Y", "y");
+	        Date valueDate = null;
+	        Date valueFilterDate = null;
+			try {
+				valueDate = toDate(value, format);
+	        } catch (Exception e) { 
+				TracerSingleton.log(
+						Constants.NOME_MODULO,
+						TracerSingleton.WARNING,
+						"DelegatedBasicListService::filterList: the string value is not a valid date representation according to the format " + format + ": value to be filtered = " + value, e);
+				HashMap params = new HashMap();
+				params.put(Constants.NOME_MODULO,
+						"DelegatedBasicListService::filterList");
+				Vector v = new Vector();
+				v.add(value);
+				v.add(format);
+				EMFValidationError error = new EMFValidationError(EMFErrorSeverity.WARNING, SpagoBIConstants.TYPE_VALUE_FILTER, "1054", v, params);
+				throw error;
+	        }
+			try {
+				valueFilterDate = toDate(valuefilter, format);
+	        } catch (Exception e) { 
+				TracerSingleton.log(
+						Constants.NOME_MODULO,
+						TracerSingleton.WARNING,
+						"DelegatedBasicListService::filterList: input string is not a valid date representation according to the format " + format + ": filter value = " + valuefilter, e);
+				HashMap params = new HashMap();
+				params.put(Constants.NOME_MODULO,
+						"DelegatedBasicListService::filterList");
+				Vector v = new Vector();
+				v.add(valuefilter);
+				v.add(format);
+				EMFValidationError error = new EMFValidationError(EMFErrorSeverity.WARNING, SpagoBIConstants.VALUE_FILTER, "1055", v, params);
+				throw error;
+	        }
+	        
+	        //if (valueDate == null || valueFilterDate == null) return list;
+	        
+			if (typeFilter
+					.equalsIgnoreCase(SpagoBIConstants.EQUAL_FILTER)) {
+				return valueDate.compareTo(valueFilterDate) == 0;
+			} else if (typeFilter
+					.equalsIgnoreCase(SpagoBIConstants.LESS_FILTER)) {
+				return valueDate.compareTo(valueFilterDate) < 0;
+			} else if (typeFilter
+					.equalsIgnoreCase(SpagoBIConstants.LESS_OR_EQUAL_FILTER)) {
+				return valueDate.compareTo(valueFilterDate) <= 0;
+			} else if (typeFilter
+					.equalsIgnoreCase(SpagoBIConstants.GREATER_FILTER)) {
+				return valueDate.compareTo(valueFilterDate) > 0;
+			} else if (typeFilter
+					.equalsIgnoreCase(SpagoBIConstants.GREATER_OR_EQUAL_FILTER)) {
+				return valueDate.compareTo(valueFilterDate) >= 0;
+			} else {
+				TracerSingleton.log(
+						Constants.NOME_MODULO,
+						TracerSingleton.WARNING,
+						"DelegatedBasicListService::filterList: the filter type '" + typeFilter + "' is not a valid filter type");
+				HashMap params = new HashMap();
+				params.put(Constants.NOME_MODULO,
+						"DelegatedBasicListService::filterList: the filter type '" + typeFilter + "' is not a valid filter type");
+				EMFValidationError error = new EMFValidationError(EMFErrorSeverity.ERROR, SpagoBIConstants.TYPE_FILTER, "100", null, params);
+				throw error;
+			}
+		}
+		else {
+			TracerSingleton.log(
+					Constants.NOME_MODULO,
+					TracerSingleton.WARNING,
+					"DelegatedBasicListService::filterList: the filter value type '" + valuetypefilter + "' is not a valid filter value type");
+			HashMap params = new HashMap();
+			params.put(Constants.NOME_MODULO,
+					"DelegatedBasicListService::filterList: the filter value type '" + valuetypefilter + "' is not a valid filter value type");
+			EMFValidationError error = new EMFValidationError(EMFErrorSeverity.ERROR, SpagoBIConstants.TYPE_FILTER, "100", null, params);
+			throw error;
+		}
+	}
+	
+	/**
+	 * Filters the list with a list of filtering values.
+	 * 
+	 * @param list The list to be filtered
+	 * @param valuesfilter The list of filtering values
+	 * @param valuetypefilter The type of the value of the filter (STRING/NUM/DATE)
+	 * @param columnfilter The column to be filtered
+	 * @param typeFilter The type of the filter
+	 * @param errorHandler The EMFErrorHandler object, in which errors are stored if they occurs
+	 * 
+	 * @return the filtered list
+	 */
+	public static List filterList(List list, String[] valuesfilter, String valuetypefilter, String columnfilter, 
+						String typeFilter) {
+		
+		
+		List newList = new ArrayList();
+		
+		if ((valuesfilter == null) || (valuesfilter.length ==0)) {
+			return list;
+		}
+		
+		if (StringUtilities.isEmpty(columnfilter)) {
+			return list;
+		}
+		if (StringUtilities.isEmpty(typeFilter)) {
+			return list;
+		}
+		
+		if (StringUtilities.isEmpty(valuetypefilter)) {
+			return list;
+		}
+		
+		if (typeFilter.equalsIgnoreCase(SpagoBIConstants.LESS_FILTER)
+				|| typeFilter.equalsIgnoreCase(SpagoBIConstants.LESS_OR_EQUAL_FILTER)
+				|| typeFilter.equalsIgnoreCase(SpagoBIConstants.GREATER_FILTER)
+				|| typeFilter.equalsIgnoreCase(SpagoBIConstants.GREATER_OR_EQUAL_FILTER)) {
+
+			Assert.assertUnreachable("filterList with a list of filtering values: the filter type " + typeFilter + " is not applicable for multi-values filtering.");
+		}
+
+		// controls the correctness of the filtering conditions
+		//boolean filterConditionsAreCorrect = verifyFilterConditions(valuetypefilter, typeFilter, errorHandler);
+		//if (!filterConditionsAreCorrect) return list;
+
+		
+		Iterator iterRow = list.iterator();
+		while (iterRow.hasNext()) {
+			SourceBean row = (SourceBean) iterRow.next();
+			boolean doesRowSatisfyCondition = false;
+			for(int i = 0; i < valuesfilter.length; i++) {
+				String valuefilter = valuesfilter[i];
+				try {
+					if (valuefilter != null && !valuefilter.equals(""))
+						doesRowSatisfyCondition = 
+							doesRowSatisfyCondition(row, valuefilter, valuetypefilter, columnfilter, typeFilter);
+					else doesRowSatisfyCondition = true;
+				} catch (EMFValidationError error) {
+					error.printStackTrace();
+					return list;
+				}
+				if (doesRowSatisfyCondition) break;
+			}
+			if (doesRowSatisfyCondition) newList.add(row);
+		}
+	
+		return newList;
+	}
+	
+	/**
+	 * Converts a String representing a date into a Date object, given the date format.
+	 * 
+	 * @param dateStr The String representing the date
+	 * @param format The date format
+	 * 
+	 * @return the relevant Date object
+	 * 
+	 * @throws Exception if any parsing exception occurs
+	 */
+	public static Date toDate(String dateStr, String format) throws Exception {
+		SimpleDateFormat dateFormat = new SimpleDateFormat();
+        Date date = null;
+		try {
+            dateFormat.applyPattern(format);
+            dateFormat.setLenient(false);
+            date = dateFormat.parse(dateStr);
+        } catch (Exception e) { 
+        	throw e;
+        }
+        return date;
+	}	
+	
+	//----------------------------------------------------------------------------------------------------
 
 }
