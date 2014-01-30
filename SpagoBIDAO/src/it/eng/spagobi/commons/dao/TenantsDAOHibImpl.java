@@ -18,13 +18,17 @@ import it.eng.spagobi.commons.metadata.SbiOrganizationEngineId;
 import it.eng.spagobi.commons.metadata.SbiTenant;
 import it.eng.spagobi.commons.utilities.HibernateUtil;
 import it.eng.spagobi.engines.config.metadata.SbiEngines;
+import it.eng.spagobi.kpi.alarm.service.AlarmInspectorJob;
 import it.eng.spagobi.profiling.bean.SbiExtUserRoles;
 import it.eng.spagobi.profiling.bean.SbiExtUserRolesId;
 import it.eng.spagobi.profiling.bean.SbiUser;
 import it.eng.spagobi.profiling.dao.ISbiUserDAO;
 import it.eng.spagobi.security.Password;
 import it.eng.spagobi.tools.datasource.metadata.SbiDataSource;
-import it.eng.spagobi.tools.scheduler.init.AlarmQuartzInitializer;
+import it.eng.spagobi.tools.scheduler.bo.CronExpression;
+import it.eng.spagobi.tools.scheduler.bo.Job;
+import it.eng.spagobi.tools.scheduler.bo.Trigger;
+import it.eng.spagobi.tools.scheduler.dao.ISchedulerDAO;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.io.BufferedReader;
@@ -35,6 +39,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -48,6 +53,7 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Expression;
+import org.safehaus.uuid.UUIDGenerator;
 
 /** 
  * @author Davide Zerbetto (davide.zerbetto@eng.it)
@@ -236,8 +242,7 @@ public class TenantsDAOHibImpl extends AbstractHibernateDAO implements ITenantsD
 			}
 			tx.commit();
 			
-			AlarmQuartzInitializer aqi = new AlarmQuartzInitializer();
-			aqi.initAlarmForTenant(aTenant);
+			initAlarmForTenant(aTenant);
 			
 		} catch (HibernateException he) {
 			logger.error("Error while inserting the tenant with id " + ((aTenant == null)?"":String.valueOf(aTenant.getId())), he);
@@ -254,6 +259,61 @@ public class TenantsDAOHibImpl extends AbstractHibernateDAO implements ITenantsD
 			}
 		}
 	}
+	
+	/*
+	 * Method copied from it.eng.spagobi.tools.scheduler.init.AlarmQuartzInitializer for removing dependecy
+	 */
+	public void initAlarmForTenant(SbiTenant tenant) {
+		try {
+			logger.debug("IN");
+			boolean alreadyInDB = false;
+			ISchedulerDAO schedulerDAO = DAOFactory.getSchedulerDAO();
+			schedulerDAO.setTenant(tenant.getName());
+			alreadyInDB = schedulerDAO.jobExists("AlarmInspectorJob", "AlarmInspectorJob");
+			if (!alreadyInDB) {
+
+				// CREATE JOB DETAIL
+				Job jobDetail = new Job();
+				jobDetail.setName("AlarmInspectorJob");
+				jobDetail.setGroupName("AlarmInspectorJob");
+				jobDetail.setDescription("AlarmInspectorJob");
+				jobDetail.setDurable(true);
+				jobDetail.setVolatile(false);
+				jobDetail.setRequestsRecovery(true);
+				jobDetail.setJobClass(AlarmInspectorJob.class);
+
+				schedulerDAO.insertJob(jobDetail);
+
+				Calendar startDate = new java.util.GregorianCalendar(2012,
+						Calendar.JANUARY, 01);
+				startDate.set(Calendar.AM_PM, Calendar.AM);
+				startDate.set(Calendar.HOUR, 00);
+				startDate.set(Calendar.MINUTE, 00);
+				startDate.set(Calendar.SECOND, 0);
+				startDate.set(Calendar.MILLISECOND, 0);
+
+				String nameTrig = "schedule_uuid_"
+						+ UUIDGenerator.getInstance().generateTimeBasedUUID()
+								.toString();
+
+				CronExpression cronExpression = new CronExpression("minute{numRepetition=5}");
+				
+				Trigger simpleTrigger = new Trigger();
+				simpleTrigger.setName(nameTrig);
+				simpleTrigger.setStartTime(startDate.getTime());
+				simpleTrigger.setJob(jobDetail);
+				simpleTrigger.setCronExpression(cronExpression);
+				simpleTrigger.setRunImmediately(false);
+
+				schedulerDAO.insertTrigger(simpleTrigger);
+
+				logger.debug("Added job with name AlarmInspectorJob");
+			}
+			logger.debug("OUT");
+		} catch (Exception e) {
+			logger.error("Error while initializing scheduler ", e);
+		}
+	}	
 	
 	private void createUser(SbiTenant aTenant, Session aSession) throws HibernateException {
 		
