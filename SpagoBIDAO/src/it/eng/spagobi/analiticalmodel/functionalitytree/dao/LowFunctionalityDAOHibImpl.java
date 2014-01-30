@@ -21,7 +21,6 @@ import it.eng.spagobi.analiticalmodel.functionalitytree.metadata.SbiFuncRoleId;
 import it.eng.spagobi.analiticalmodel.functionalitytree.metadata.SbiFunctions;
 import it.eng.spagobi.commons.bo.Role;
 import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.commons.constants.AdmintoolsConstants;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.dao.DAOFactory;
@@ -58,6 +57,8 @@ import org.hibernate.criterion.MatchMode;
  */
 public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements ILowFunctionalityDAO{
 	private static transient Logger logger = Logger.getLogger(LowFunctionalityDAOHibImpl.class);
+	
+	public static final String PAGE = "PAGE";
 
 
 	/* ********* start luca changes ************************************************** */
@@ -733,7 +734,7 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 		try {
 			if(hasChild(aLowFunctionality.getId())) {
 				HashMap params = new HashMap();
-				params.put(AdmintoolsConstants.PAGE, "BIObjectsPage");
+				params.put(PAGE, "BIObjectsPage");
 				//params.put(SpagoBIConstants.ACTOR, SpagoBIConstants.ADMIN_ACTOR);
 				params.put(SpagoBIConstants.OPERATION, SpagoBIConstants.FUNCTIONALITIES_OPERATION);
 				throw new EMFUserError(EMFErrorSeverity.ERROR, 1000, new Vector(), params);
