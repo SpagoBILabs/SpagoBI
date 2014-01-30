@@ -27,6 +27,7 @@ import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjFuncId;
 import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjPar;
 import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjTemplates;
 import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects;
+import it.eng.spagobi.analiticalmodel.document.util.DocumentCompositionUtil;
 import it.eng.spagobi.analiticalmodel.functionalitytree.metadata.SbiFunctions;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
@@ -44,11 +45,9 @@ import it.eng.spagobi.commons.metadata.SbiDomains;
 import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
 import it.eng.spagobi.engines.config.dao.EngineDAOHibImpl;
 import it.eng.spagobi.engines.config.metadata.SbiEngines;
-import it.eng.spagobi.engines.documentcomposition.configuration.DocumentCompositionConfiguration;
 import it.eng.spagobi.engines.dossier.dao.IDossierPartsTempDAO;
 import it.eng.spagobi.engines.dossier.dao.IDossierPresentationsDAO;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
-import it.eng.spagobi.tools.dataset.metadata.SbiDataSetId;
 import it.eng.spagobi.tools.datasource.metadata.SbiDataSource;
 import it.eng.spagobi.tools.objmetadata.bo.ObjMetacontent;
 import it.eng.spagobi.tools.objmetadata.bo.ObjMetadata;
@@ -1472,7 +1471,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			byte[] contentBytes = template.getContent();
 			String contentStr = new String(contentBytes);
 			SourceBean content = SourceBean.fromXMLString(contentStr);
-			DocumentCompositionConfiguration docConf = new DocumentCompositionConfiguration(content);
+			DocumentCompositionUtil docConf = new DocumentCompositionUtil(content);
 			List lstLabeldDocs = docConf.getSbiObjLabelsArray();
 			List totalParameters = new ArrayList();
 
@@ -1585,7 +1584,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			byte[] contentBytes = template.getContent();
 			String contentStr = new String(contentBytes);
 			SourceBean content = SourceBean.fromXMLString(contentStr);
-			DocumentCompositionConfiguration docConf = new DocumentCompositionConfiguration(content);
+			DocumentCompositionUtil docConf = new DocumentCompositionUtil(content);
 			List lstLabeldDocs = docConf.getSbiObjLabelsArray();
 			List totalParameters = new ArrayList();
 
