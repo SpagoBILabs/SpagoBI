@@ -18,13 +18,16 @@ import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParuse;
+import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.dao.IDomainDAO;
 import it.eng.spagobi.commons.utilities.DataSourceUtilities;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.services.datasource.bo.SpagoBiDataSource;
-import it.eng.spagobi.services.datasource.service.DataSourceSupplier;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.sql.Connection;
@@ -421,8 +424,7 @@ public class QueryDetail  implements ILovDetail  {
 	}
 
 	private void setDataSourceDialect() {
-		DataSourceSupplier supplierDS = new DataSourceSupplier();		
-		SpagoBiDataSource ds = supplierDS.getDataSourceByLabel(dataSource);
+		SpagoBiDataSource ds = getDataSourceByLabel(dataSource);
 		if(ds != null){
 			databaseDialect = ds.getHibDialectClass();
 			if (databaseDialect.equalsIgnoreCase(DIALECT_MYSQL)) {
@@ -447,6 +449,7 @@ public class QueryDetail  implements ILovDetail  {
 			}
 		}
 	}
+	
 
 	private String escapeString(String value) {
 		if (value == null) return null;
@@ -902,6 +905,59 @@ public class QueryDetail  implements ILovDetail  {
 		this.treeLevelsColumns = treeLevelsColumns;
 	}
 
+	/*
+	 * Methods copied from DataSourceSupplier for DAO refactoring
+	 */
+	
+	/**
+	 * Gets the data source by label.
+	 * 
+	 * @param dsLabel
+	 *            the ds label
+	 * 
+	 * @return the data source by label
+	 */
+	public SpagoBiDataSource getDataSourceByLabel(String dsLabel) {
+		logger.debug("IN");
+		SpagoBiDataSource sbds = new SpagoBiDataSource();
 
+		// gets data source data from database
+		try {
+			IDataSource ds = DAOFactory.getDataSourceDAO()
+					.loadDataSourceByLabel(dsLabel);
+			if (ds == null) {
+				logger.warn("The data source with label " + dsLabel
+						+ " is not found on the database.");
+				return null;
+			}
+			sbds = toSpagoBiDataSource(ds);
+
+		} catch (Exception e) {
+			logger.error("The data source is not correctly returned", e);
+		}
+		logger.debug("OUT");
+		return sbds;
+	}
+	
+	private SpagoBiDataSource toSpagoBiDataSource(IDataSource ds)
+	throws Exception {
+		SpagoBiDataSource sbds = new SpagoBiDataSource();
+		sbds.setLabel(ds.getLabel());
+		sbds.setJndiName(ds.getJndi());
+		sbds.setUrl(ds.getUrlConnection());
+		sbds.setUser(ds.getUser());
+		sbds.setPassword(ds.getPwd());
+		sbds.setDriver(ds.getDriver());
+		sbds.setMultiSchema(ds.getMultiSchema());
+		sbds.setSchemaAttribute(ds.getSchemaAttribute());
+		// gets dialect informations
+		IDomainDAO domaindao = DAOFactory.getDomainDAO();
+		Domain doDialect = domaindao.loadDomainById(ds.getDialectId());
+		sbds.setHibDialectClass(doDialect.getValueCd());
+		sbds.setHibDialectName(doDialect.getValueName());
+		sbds.setReadOnly(ds.checkIsReadOnly());
+		sbds.setWriteDefault(ds.checkIsWriteDefault());
+		return sbds;
+	}
 
 }
