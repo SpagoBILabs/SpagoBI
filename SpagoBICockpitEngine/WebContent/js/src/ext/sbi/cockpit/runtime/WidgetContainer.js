@@ -12,12 +12,7 @@ Sbi.cockpit.runtime.WidgetContainer = function(config) {
 	this.adjustConfigObject(config);
 	
 	var defaultSettings = {
-//		layout: 'whiteboard'
-//		, layoutConfig: {
-//			tableAttrs: {
-//				style: {width: '100%', height:'100%'}
-//			}
-//        }
+
 	};
 		
 	if(Sbi.settings && Sbi.settings.console && Sbi.settings.console.widgetPanel) {
@@ -111,11 +106,34 @@ Ext.extend(Sbi.cockpit.runtime.WidgetContainer, Sbi.cockpit.runtime.Widget, {
 	// -----------------------------------------------------------------------------------------------------------------
 	
     , addWidget: function(widget, region) {	
-    	Sbi.trace("[WidgetPanel.addWidget]: IN");
+    	
+//    	alert("Widget: " + (widget instanceof Sbi.cockpit.runtime.Widget));
+//    	alert("DummyWidget: " + (widget instanceof Sbi.cockpit.widgets.dummy.DummyWidget));
+//    	alert("TableWidget: " + (widget instanceof Sbi.cockpit.widgets.table.TableWidget));
+		Sbi.trace("[WidgetPanel.addWidget]: IN");
+    	
+    	if(!widget) {
+    		// what we do?
+    	}
+    	
+    	if( (widget instanceof Sbi.cockpit.runtime.Widget) === false) {
+    		if(typeof widget === 'object' && !(widget instanceof Ext.util.Observable) === false) {
+    			// ok is a conf object. Use a factory method to instatiate a new widget object
+    		} else {
+    			// it's not a valid config object
+    		}
+    	} 
+    	
 		this.widgetManager.register(widget);
-		this.setWigetRegion(widget, region);
-		this.renderWidget(widget);
+		this.setWidgetRegion(widget, region);
+		var containerComponent = this.renderWidget(widget);
+		// TODO update region object properly when container component is moved or resized
+		// containerComponent.on('move', ...
+		// containerComponent.on('resize', ...
 		widget.setParentContainer(this);
+		
+		
+		
 		Sbi.trace("[WidgetPanel.addWidget]: OUT");
 	}
     
@@ -123,7 +141,7 @@ Ext.extend(Sbi.cockpit.runtime.WidgetContainer, Sbi.cockpit.runtime.Widget, {
     	return this.regions[widget.id];
     }
     
-    , setWigetRegion: function(widget, region) {
+    , setWidgetRegion: function(widget, region) {
     	this.regions[widget.id] = region;
     }
     
@@ -231,38 +249,7 @@ Ext.extend(Sbi.cockpit.runtime.WidgetContainer, Sbi.cockpit.runtime.Widget, {
     	
     	Sbi.trace("[WidgetPanel.renderWidget]: IN");
     	
-    	var winConf = {
-    		title : 'Widget'
-    		, bodyBorder: true
-    		, frame: true
-    		, shadow: false
-    		, plain : true
-    		
-    		, constrain: true
-    
-    		,layout : 'fit'
-    		, items : [widget]
-    		, widget: widget
-    		, tools  :  [{
-    			id:'gear',
-    			handler: function(event, button, win, tc){
-        	    	this.onShowWidgetEditor(win.widget);
-        	    },
-    			scope: this
-    		}, {
-        		id:'help',
-        	    handler: function(event, button, win, tc){
-        	    	this.onShowWidgetConfiguration(win.widget);
-        	    },
-    			scope: this
-        	}, {
-        		id:'refresh',
-     	       	handler: function(){
-     	           Ext.Msg.alert('Message', 'The REFRESH tool was clicked.');
-     	       	},
-    			scope: this
-        	}]
-    	};
+    	var componentConf = {widget: widget};
     	
     	var region = this.regions[widget.id];
     	if(region == undefined) {
@@ -277,20 +264,26 @@ Ext.extend(Sbi.cockpit.runtime.WidgetContainer, Sbi.cockpit.runtime.Widget, {
     	
     	Sbi.trace("[WidgetPanel.renderWidget]: region is equal to: [" + Sbi.toSource(region) + "]");
     	
-    	Ext.apply(winConf, region);
+    	Ext.apply(componentConf, region);
     	var vpSize = Ext.getBody().getViewSize();
-    	winConf.width = Math.ceil(vpSize.width * winConf.width);
-    	winConf.height = Math.ceil(vpSize.height * winConf.height);
+    	componentConf.width = Math.ceil(vpSize.width * componentConf.width);
+    	componentConf.height = Math.ceil(vpSize.height * componentConf.height);
     	
-    	var win = new Ext.Window(winConf);
-    	
-    	this.windows = new Array();
-    	this.windows.push(win);
-    	win.show();
-    	
-    	//this.add(widget);
+    	var component = new Sbi.cockpit.runtime.WidgetContainerComponent(componentConf);
+    	component.on("performaction", function(component, widget, action) {
+    		if(action === 'showEditor') {
+    			this.showWidgetEditor(widget);
+    		} else if(action === 'showConfiguration') {
+    			this.showWidgetConfiguration(widget);
+    		}
+    	}, this);
+    	this.components = this.components || new Array();
+    	this.components.push(component);
+    	component.show();
     	
     	Sbi.trace("[WidgetPanel.renderWidget]: OUT");
+    	
+    	return component;
     }
     
     , onShowWidgetConfiguration: function(widget) {
