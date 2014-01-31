@@ -588,7 +588,8 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 			this.parametersPanelSynchronizationPending = false;
 		}, this);
 		
-		this.parametersPanel.on('synchronize', 
+		
+		this.parametersPanel.on('synchronize', this.parametersPanel.on('ready',
 			function(panel, readyForExecution, parametersPreference) {
 				this.isParameterPanelReady = true;
 				if (readyForExecution) {
@@ -602,11 +603,12 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 				Sbi.execution.SessionParametersManager.restoreMementoObject(panel);
 				if(this.automaticStartChecked === false) {
 					this.automaticStartChecked = true;
+					this.isParameterPanelReady = true;
+					this.isParameterPanelReadyForExecution = true;
 					this.checkAutomaticStart();
 				}
-				
 			}
-		, this);
+		, this), this);
 
 		this.parametersPanel.on('viewpointexecutionrequest', this.onExecuteViewpoint, this);
 		
@@ -709,7 +711,6 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
     	Sbi.trace('[DocumentExecutionPage.synchronize]: IN');
 		if(this.fireEvent('beforesynchronize', this, executionInstance, this.executionInstance) !== false){
 			this.executionInstance = executionInstance;
-			
 			
 			
 			this.infoPage.synchronize( executionInstance );
@@ -966,11 +967,13 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 		
 		var formState = this.parametersPanel.getFormState();
 		this.setLastParametersFormState(formState);
+		
 		if(this.fireEvent('beforeexecution', this, this.executionInstance, formState) !== false){
 			delete executionInstance.SBI_SUBOBJECT_ID;
 			delete executionInstance.SBI_SNAPSHOT_ID;
 			this.doExecuteDocumunt(executionInstance, formState);
 		}
+		
 		this.showDocument();
 		Sbi.trace('[DocumentExecutionPage.executeDocument]: OUT');
 	}
@@ -986,7 +989,8 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 		Sbi.trace('[DocumentExecutionPage.refreshDocument]: IN');
 		
 		var formState = this.parametersPanel.getFormState();
-		if(this.fireEvent('beforeexecution', this, this.executionInstance, formState) !== false){
+		if((this.fireEvent('beforeexecution', this, this.executionInstance, formState) !== false)
+				&& (this.parametersPanel.fireEvent('ready', this) !== false)){
 			this.doExecuteDocumunt(executionInstance, formState);
 			this.setLastParametersFormState(formState);
 		}		
@@ -1031,7 +1035,8 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 	, doRefreshLastExecution : function () {
 		Sbi.trace('[DocumentExecutionPage.doRefreshLastExecution]: IN');
 		var lastState = this.getLastParametersFormState();
-		if(this.fireEvent('beforeexecution', this, this.executionInstance, lastState) !== false){
+		if((this.fireEvent('beforeexecution', this, this.executionInstance, formState) !== false)
+				&& (this.parametersPanel.fireEvent('ready', this) !== false)){
 			this.doExecuteDocumunt(this.executionInstance, lastState);
 		}
 		this.showDocument();
@@ -1103,7 +1108,8 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 			return;
 		}
 		// parameters form follows: if there are no parameters to be filled, start main document execution
-		if (this.isParameterPanelReadyForExecution == true) {
+		if (this.isParameterPanelReadyForExecution == true) {	
+			//this.parametersPanel.on('ready', this.executeDocument(this.executionInstance));
 			this.executeDocument(this.executionInstance);
 		}
 	}
