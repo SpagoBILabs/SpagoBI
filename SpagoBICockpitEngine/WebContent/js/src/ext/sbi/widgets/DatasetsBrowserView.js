@@ -67,6 +67,12 @@ Ext.extend(Sbi.widgets.DatasetsBrowserView, Ext.DataView, {
 				records[i].isUsed = 'false';
 				addRecord = true;
 			}
+						
+			if(this.widget && this.widget.dataset && this.widget.dataset == records[i].label)
+				records[i].isMyDataset = 'true';
+			else
+				records[i].isMyDataset = 'false';
+			
 			if (addRecord) toReturn.push(records[i]);
 		}
 		return toReturn;
@@ -89,12 +95,18 @@ Ext.extend(Sbi.widgets.DatasetsBrowserView, Ext.DataView, {
 					'<tpl for=".">',
 					    '{[isUsed=""]}',
 					    '{[label=""]}',
-					    '<tpl if="this.isAlreadyUsed(isUsed, label) == true">'+		
+					    '{[isMyDataset=""]}',
+					    '<tpl if="this.checkMyDataset(isMyDataset, label) == true">'+		
+					 		'<dd id="{label}" class="box selectboxDS">',
+					 			datasetsTpl,
+						    '</dd>',
+					    '</tpl>'+
+					    '<tpl if="this.checkMyDataset(isMyDataset, label) == false && this.isAlreadyUsed(isUsed, label) == true">'+		
 					 		'<dd id="{label}" class="box selectbox">',
 					 			datasetsTpl,
 						    '</dd>',
 					    '</tpl>'+
-				        '<tpl if="this.isAlreadyUsed(isUsed, label) == false">'+
+				        '<tpl if="this.checkMyDataset(isMyDataset, label) == false && this.isAlreadyUsed(isUsed, label) == false">'+
 					        '<dd id="{label}" class="box">',
 					 			datasetsTpl,
 						    '</dd>',
@@ -104,6 +116,9 @@ Ext.extend(Sbi.widgets.DatasetsBrowserView, Ext.DataView, {
 				    '</dl>',
 			      '</div>', {
 			        isAlreadyUsed: function(v, l) {
+			    	  return v == 'true';		        		
+		        	},
+	        	    checkMyDataset: function(v, l) {
 			    	  return v == 'true';		        		
 		        	},
 		        	shorten: function(text){

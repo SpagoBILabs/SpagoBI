@@ -181,7 +181,17 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 		        	text: 'Add widget'
 		        	, handler: this.addWidget
 		        	, scope: this
-		        }
+		        },	new Ext.Toolbar.Button({
+		 			   iconCls: 'icon-save' 
+		 				   , tooltip: 'Save'
+		 				   , scope: this
+		 				   , handler:  this.save
+		 		 }), new Ext.Toolbar.Button({
+		 			   iconCls: 'icon-saveas' 
+		 				   , tooltip: 'Save As'
+		 				   , scope: this
+		 				   , handler:  this.saveAs
+		 		 })
 		    ]
 		});
 	}
@@ -195,6 +205,14 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 			, width : 0.5
     		, height : 0.5
 		});
+	}
+	
+	, save: function(){
+		alert('Function save in progress...');
+	}
+	
+	, saveAs: function(){
+		alert('Function saveAs in progress...');
 	}
 	
 	, initWidgetContainer: function() { 

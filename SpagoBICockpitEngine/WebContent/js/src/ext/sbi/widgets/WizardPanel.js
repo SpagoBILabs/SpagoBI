@@ -99,10 +99,10 @@ Ext.extend(Sbi.widgets.WizardPanel, Ext.Panel, {
 		
 		Sbi.trace("[WizardPanel.moveToPage]: target page number is equal to [" + targetPageNumber + "]");
 		var activePageNumber =  this.getActivePageNumber();
-		var totPageNumber  = this.getPageCount();
+		var totPageNumber  = this.getPageCount()-1;
 		var isTabValid = true;
 		 
-		if(this.isValidPageNumber(targetPageNumber) === false) {
+		if(this.isValidPageNumber(targetPageNumber) === false) {		
 			return;
 		}
 		
@@ -113,12 +113,17 @@ Ext.extend(Sbi.widgets.WizardPanel, Ext.Panel, {
 			Sbi.trace("[WizardPanel.moveToPage]: target page is valid");
 			
 			this.layout.setActiveItem(targetPageNumber);
-			 
 			Ext.getCmp('move-prev').setDisabled(targetPageNumber==0);
 			Ext.getCmp('move-next').setDisabled(targetPageNumber==totPageNumber);
-		 	Ext.getCmp('confirm').setVisible(!(parseInt(activePageNumber)<parseInt(totPageNumber)));
+		 	Ext.getCmp('confirm').setVisible(!(parseInt(targetPageNumber)<parseInt(totPageNumber)));
 		
 		} else {
+//			targetPageNumber--;
+//			alert('targetPageNumber: '  + targetPageNumber + ' totPageNumber: ' +totPageNumber );
+//			Ext.getCmp('move-prev').setDisabled(targetPageNumber==0);
+//			Ext.getCmp('move-next').setDisabled(targetPageNumber==totPageNumber);
+//		 	Ext.getCmp('confirm').setVisible(!(parseInt(activePageNumber)<parseInt(totPageNumber)));
+
 			Sbi.trace("[WizardPanel.moveToPage]: target page is not valid");
 		}	
 		
@@ -143,7 +148,6 @@ Ext.extend(Sbi.widgets.WizardPanel, Ext.Panel, {
 		isPageValid = isPageValid && this.isPageValid(page);
 		
 		Sbi.trace("[WizardPanel.doPageValidation]: OUT");
-		
 		return isPageValid;
 	}
 	
@@ -241,8 +245,8 @@ Ext.extend(Sbi.widgets.WizardPanel, Ext.Panel, {
 	        text:  LN('sbi.ds.wizard.confirm'),
 	        handler: function(){
 	        	thisPanel.fireEvent('confirm', this);   
-	        }, scope: this,
-	        disabled: (this.activeItem == 0)?false:true
+	        }, scope: this
+//	        disabled: (this.activeItem == 0)?true:false
 	    	});
 		
 		buttonsBar.push({id: 'close',
