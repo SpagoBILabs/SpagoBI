@@ -9,7 +9,10 @@ Ext.ns("Sbi.cockpit.widgets.table");
 Sbi.cockpit.widgets.table.TableWidget = function(config) {	
 	Sbi.trace("[TableWidget]: IN");
 	// constructor
-	Sbi.cockpit.widgets.table.TableWidget.superclass.constructor.call(this, c);
+	Sbi.cockpit.widgets.table.TableWidget.superclass.constructor.call(this, config);
+	
+	this.addListener('getCustomConfiguration',this.getCustomConfiguration, this);
+	
 	Sbi.trace("[TableWidget]: OUT");
 };
 
@@ -47,6 +50,18 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.widgets.dummy.Dumm
 		
 	
 		Sbi.trace("[TableWidget.onRender]: OUT");
+	}
+
+   , getCustomConfiguration: function(){
+	    Sbi.trace("[TableWidget.getCustomConfiguration]: IN");
+		
+	    alert('TableWidget.getCustomComfiguration()!!! ');
+		
+		var config = {};
+		config.dataset = this.dataset;
+		return config;
+		
+		Sbi.trace("[TableWidget.getCustomConfiguration]: OUT");
 	}
 	
 	// =================================================================================================================

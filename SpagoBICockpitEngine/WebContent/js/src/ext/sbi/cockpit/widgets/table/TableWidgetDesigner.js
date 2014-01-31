@@ -37,6 +37,7 @@ Ext.ns("Sbi.cockpit.widgets.table");
 Sbi.cockpit.widgets.table.TableWidgetDesigner = function(config) { 
 
 	var defaultSettings = {
+		name: 'tableWidgetDesigner',
 		title: LN('sbi.cockpit.widgets.table.tableWidgetDesigner.title')
 	};
 		

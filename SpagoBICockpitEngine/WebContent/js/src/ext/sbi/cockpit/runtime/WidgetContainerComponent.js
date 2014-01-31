@@ -118,6 +118,7 @@ Ext.extend(Sbi.cockpit.runtime.WidgetContainerComponent, Ext.Window, {
 		// se è dello stesso tipo chiama il metodo setConfiguration sul vecchi senza ricrearne uno nuovo
 	}
 	
+	
 	// -----------------------------------------------------------------------------------------------------------------
     // private methods
 	// -----------------------------------------------------------------------------------------------------------------

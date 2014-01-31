@@ -112,22 +112,22 @@ Ext.extend(Sbi.cockpit.editor.WidgetEditorWizardPanel, Sbi.widgets.WizardPanel, 
 		this.superclass().moveToNextPage.call(this);
 		var newPage = this.superclass().getActivePage.call(this);
 		newPage.on('close',this.closeWizard, this);
+		newPage.on('confirm',this.defineTemplate, this);
 		if (newPage.updateValues){
 			var formState = this.getFormState();
 			newPage.updateValues(formState);
 		}
-		Ext.getCmp('move-next').setDisabled(true);
 	}
 	
 	// -----------------------------------------------------------------------------------------------------------------
     // utility methods
 	// -----------------------------------------------------------------------------------------------------------------
-	, onSelect: function(l){	
+	, onSelect: function(c){	
 		//removes old selection from the storeManager (if exists)
-		if (this.widgetManager.getStoreByLabel(this.widget.dataset) != null)
-			this.widgetManager.removeStore(this.widget.dataset);
+		if (c.label != c.oldLabel && this.widgetManager.getStoreByLabel(c.oldLabel) != null)
+			this.widgetManager.removeStore(c.oldLabel);
 		//adds the dataset to the storeManager (throught the WidgetManager)
-		this.widget.dataset = l;
+		this.widget.dataset = c.label;
 		var storeConfig = {};
 	    storeConfig.dsLabel = this.widget.dataset;	
 	    this.widgetManager.addStore(storeConfig);		

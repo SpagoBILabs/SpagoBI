@@ -55,13 +55,14 @@ Sbi.cockpit.editor.WidgetDesigner = function(config) {
 
 Ext.extend(Sbi.cockpit.editor.WidgetDesigner, Ext.Panel, {
 	
-	getFormState: function() {
-		var state = {};
-		return state;
+	state: null
+	
+	, getFormState: function() {
+		return this.state || {};
 	}
 	
 	, setFormState: function(state) {
-		
+		this.state = state;
 	}
 
 	, validate: function(validFields){

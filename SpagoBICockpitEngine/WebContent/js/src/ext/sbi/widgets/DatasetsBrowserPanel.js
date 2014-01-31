@@ -97,6 +97,7 @@ Ext.extend(Sbi.widgets.DatasetsBrowserPanel, Ext.Panel, {
 		config.services = this.services;
 		config.store = this.store;
 		config.widgetManager = this.widgetManager;
+		config.widget = this.widget;
 		config.actions = this.actions;
 		config.user = this.user;
 		config.fromMyDataCtx = this.displayToolbar;
@@ -225,7 +226,8 @@ Ext.extend(Sbi.widgets.DatasetsBrowserPanel, Ext.Panel, {
 			    	 	"exporters",
 			    	 	"decorators",
 			    	 	"previewFile",
-			    	 	"isUsed" /*local property*/]
+			    	 	"isUsed", 	/*local property*/
+			    	 	"myDSLabel" /*local property*/]
 		});	
 	
 		
@@ -351,28 +353,26 @@ Ext.extend(Sbi.widgets.DatasetsBrowserPanel, Ext.Panel, {
 		 if (r){
 			r = r.data;
 		 }
-
-	     if (this.widgetManager.existsStore(r.label) ){ 		
+		 var oldLabel = this.widget.dataset || r.label;
+		 		 
+		 this.widget.dataset = r.label;		 
+	     if (this.widgetManager.existsStore(r.label) ){ 	
 	    	 var deleteStore = false;
-	    	 if (this.widgetManager.getWidgetUsedByStore(r.label).getCount()>1){
-	    		 //asks confirm is the store is used by more widgets
-	//			    	 Ext.MessageBox.confirm(
-	//			 				LN('sbi.generic.pleaseConfirm')
-	//	//		 				, LN('sbi.generic.confirmDelete')
-	//			 				, 'Il dataset può essere in uso da altri widget, vuoi procedere con la deselezione?'
-	//			 	            , function(btn, text) {
-	//			 					 if ( btn == 'yes' ) {
-	//			 						deleteStore = true;
-	//			 					 }
-	//			 				}
-	//			 				, this
-	//			 			);
-	    		 alert('Operazione non consentita. Il dataset e\' utilizzato da altri widgets!');
+    		 var nWidgetsForDS = this.widgetManager.getWidgetUsedByStore(r.label).getCount();
+    		 if(this.widget.dataset != r.label && nWidgetsForDS >= 1){		    		 
+	    		 alert('Operazione di deselezione non consentita. Il dataset e\' utilizzato da altri widgets!');
+	    		 deleteStore = false;
+    		 }else if(this.widget.dataset == r.label && nWidgetsForDS > 1){
+//    			 alert('Operazione di deselezione non consentita. Il dataset e\' utilizzato da altri widgets!');
+	    		 deleteStore = false;	 
+	    		 this.viewPanel.refresh();
 	    	 }else{
 	    		 deleteStore = true;
 	    	 }
+	    	 
 	    	 if (deleteStore){
 	    		this.widgetManager.removeStore(r.label);
+	    		this.widget.dataset = null;
 				this.viewPanel.refresh();
 	    	 }		     
 	     }else{	    	 
@@ -384,7 +384,8 @@ Ext.extend(Sbi.widgets.DatasetsBrowserPanel, Ext.Panel, {
 		 	if (elText)
 		 		elText.dom.className += ' box-text-select ';
 	 		
-		     this.fireEvent("selectDataSet", r.label); 
+		 	 var cfg = {label: r.label, oldLabel: oldLabel};
+		     this.fireEvent("selectDataSet", cfg); 
 	     }
 
     	 return true;

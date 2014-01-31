@@ -200,6 +200,7 @@ Ext.extend(Sbi.cockpit.runtime.WidgetContainer, Sbi.cockpit.runtime.Widget, {
     	
     	var widgetWizard = new Sbi.cockpit.editor.WidgetEditorWizardPanel(config);
     	widgetWizard.on('close', this.closeWizard, this);
+    	widgetWizard.on('confirm', this.defineTemplate, this);
     	
     	this.wizard = new Ext.Window({
     		id: 'wizard',
@@ -298,6 +299,46 @@ Ext.extend(Sbi.cockpit.runtime.WidgetContainer, Sbi.cockpit.runtime.Widget, {
     	this.wizard.close();
     }
     
+    , defineTemplate: function(wEditor){
+    	Sbi.trace("[WidgetContainer.defineTemplate]: IN");
+
+    	//gets the containerComponent to update  (is Dummy for default)
+    	var myWidget = this.components[0];
+    	var newWidget = myWidget;
+    	//Recupero della tipologia : 
+    	//si potrebbe ottimizzare  sfruttando l'evento drug dalla palette?
+    	var editor = wEditor.getComponent(1).getComponent(1);
+    	var widgetEditorMainPanel = editor.getComponent(0);
+    	var designer = widgetEditorMainPanel.getComponent(0);  
+//
+//	    if (designer instanceof Sbi.cockpit.widgets.table.TableWidgetDesigner){
+//	    	//gets informations about table widget
+//	    	var state = designer.getFormState();
+////	    	newWidget = new Sbi.cockpit.widgets.table.TableWidget(); NO PERCHé E? IL  RUNTIME
+//	    	if (newWidget.setFormState)
+//	    		newWidget.setFormState(state);
+//	    	
+//	    }
+	    
+//	    myWidget.setWidget(newWidget);
+	    
+//	    var template = (typeof JSON === 'object')
+//		? JSON.stringify(myWidget.getCustomConfiguration(), null, 2)
+//		: Ext.util.JSON.encode(myWidget.getCustomConfiguration());
+    	
+		var state = {};
+    	state.fields =  designer.getFormState().visibleselectfields || [];
+    	state.type = 'Table';
+		var template = (typeof JSON === 'object')
+		? JSON.stringify(state, null, 2)
+		: Ext.util.JSON.encode(state);
+		
+		alert(template);
+	    	
+	    Sbi.trace("[WidgetContainer.defineTemplate]: OUT");
+	    return template;
+    }
+    
     , onMoveComponent: function(c){
     	//refresh xy informations of region obj
     	Sbi.trace("[WidgetContainer.onMoveComponent]: IN");
@@ -321,6 +362,8 @@ Ext.extend(Sbi.cockpit.runtime.WidgetContainer, Sbi.cockpit.runtime.Widget, {
     	var r =  c.getWidget().getParentContainer().getRegion();
     	r.width = c.getWidget().getWidth();
     	r.height = c.getWidget().getHeight();
+//    	r.width = c.width;
+//    	r.height = c.height;
     	
     	if (Sbi.settings.cockpit && Sbi.settings.cockpit.layout && 
     			Sbi.settings.cockpit.layout.useRelativeDimensions == true){

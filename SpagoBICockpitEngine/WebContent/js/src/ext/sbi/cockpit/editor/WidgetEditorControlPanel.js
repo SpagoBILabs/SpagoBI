@@ -154,11 +154,13 @@ Ext.extend(Sbi.cockpit.editor.WidgetEditorControlPanel, Ext.Panel, {
 	
 	, getGlobalFilterForRecord : function (record) {
 		var toReturn = null;
-		for (var i = 0; i < this.globalFilters.length; i++) {
-			var aGlobalFilter = this.globalFilters[i];
-			if (record.data.alias == aGlobalFilter.alias) {
-				toReturn = aGlobalFilter;
-				break;
+		if (this.globalFilters){
+			for (var i = 0; i < this.globalFilters.length; i++) {
+				var aGlobalFilter = this.globalFilters[i];
+				if (record.data.alias == aGlobalFilter.alias) {
+					toReturn = aGlobalFilter;
+					break;
+				}
 			}
 		}
 		return toReturn;
@@ -166,11 +168,13 @@ Ext.extend(Sbi.cockpit.editor.WidgetEditorControlPanel, Ext.Panel, {
 	
 	, getOptionsForRecord : function (record) {
 		var toReturn = null;
-		for (var i = 0; i < this.fieldsOptions.length; i++) {
-			var aFieldOptions = this.fieldsOptions[i];
-			if (record.data.alias == aFieldOptions.alias) {
-				toReturn = aFieldOptions;
-				break;
+		if ( this.fieldsOptions != null) {
+			for (var i = 0; i < this.fieldsOptions.length; i++) {
+				var aFieldOptions = this.fieldsOptions[i];
+				if (record.data.alias == aFieldOptions.alias) {
+					toReturn = aFieldOptions;
+					break;
+				}
 			}
 		}
 		return toReturn;
