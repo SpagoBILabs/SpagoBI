@@ -153,6 +153,8 @@ Sbi.execution.ParametersPanel = function(config, doc) {
 			, 'applyviewpoint'
 			, 'hideparameterspanel'
 			, 'executionbuttonclicked'
+			, 'checkReady'
+			, 'ready'
 	);	
 };
 
@@ -161,6 +163,12 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
     services: null
     , executionInstance: null
     , executionButton: null
+    
+	/* ATTENTION: patch for bug 1594 --> firstLoadCounter counter over firstLoadTotParams: every time a store calling the getParametersValuesForExecution has loaded
+	 * the counter is updated (for all the parameters that need the load = firstLoadTotParams) . When the counter matches the total then the 'ready' event is thrown.
+	 * DocumentExecutionPanel is listening on ParametersPnel on 'synchronize' AND on 'ready'. */
+    , firstLoadCounter: 0
+    , firstLoadTotParams: 0
     
     /**
      * parameters configuration as returned from getParametersForExecutionService. 
@@ -623,10 +631,19 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 	  		  failure: Sbi.exception.ExceptionHandler.handleFailure      
 	     });
 	}
-	
+
 	, initializeParametersPanel: function( parameters, reset ) {
 			
 		Sbi.trace('[ParametersPanel.initializeParametersPanel] : IN');
+		
+		this.on('checkReady', function () {
+			if((this.firstLoadCounter == this.firstLoadTotParams )
+					|| (this.firstLoadTotParams == 0)){	
+				this.fireEvent('ready', this);
+			}
+				
+		}, this);
+		
 		this.setParameters(parameters);
 		
 		this.removeAllFields();		
@@ -663,7 +680,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 			
 			 this.fields[parameters[i].id] = field;
 		}
-		
+
 		if(this.thereAreParametersToBeFilled() !== true) {
 			if (this.rendered) {
 				Ext.DomHelper.append(this.body, '<div class="x-grid-empty">' + LN('sbi.execution.parametersselection.noParametersToBeFilled') + '</div>');
@@ -692,9 +709,13 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		var state = Ext.apply(defaultValuesFormState, this.preferenceState);
 		Sbi.debug('[ParametersPanel.initializeParametersPanel] : preference state applied to default values [' + Sbi.toSource(state) + ']');
 		this.setFormState(state);
-		
-		
-		this.fireEvent('synchronize', this, this.isReadyForExecution(), state);
+
+			
+		if(this.firstLoadTotParams == 0){
+			this.fireEvent('ready', this);
+			this.fireEvent('synchronize', this, this.isReadyForExecution(), state);	
+					
+		}
 		Sbi.trace('[ParametersPanel.initializeParametersPanel] : OUT');
 	}
 	
@@ -1177,6 +1198,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		var p = baseConfig.parameter;
 		baseConfig.editable = false;
 		
+		
 		var params = this.getBaseParams(p, executionInstance, 'complete');
 		params.PARAMETERS = Sbi.commons.JSON.encode(this.getFormState());;
 		params.LIGHT_NAVIGATOR_DISABLED = 'TRUE';
@@ -1186,11 +1208,12 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 			params: params, 
 			service: this.services['getParameterValueForExecutionService']
 		}));
-		//var thisPanel = this;
-//		field.on('lookup',function(){
-//			var p = Sbi.commons.JSON.encode(this.getFormState());
-//			field.reloadTree(p);
-//		},this);
+
+		field.treeLoader.on('load', function(loader, node, response) {
+			//fires after the sore is loaded: can apply
+			this.firstLoadCounter++;
+			this.fireEvent('checkReady', this);
+		}, this);
 		
 		return field;
 	}
@@ -1200,6 +1223,10 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		Sbi.trace('[ParametersPanel.createSliderField] : IN');
 		Sbi.trace('[ParametersPanel.createSliderField] : executionInstance [' + executionInstance + ']');
 		
+		/*ATTENTION:: keep this variable updated in all the create parameter depending by type ,
+		 * that need to be loaded at first document execution (those loading a store)*/
+		this.firstLoadTotParams ++;
+		/*--------------------------------------------------------------------------------------*/
 		
 		var p = baseConfig.parameter;
 		var store = this.createCompleteStore(p, executionInstance, 'simple');
@@ -1288,6 +1315,10 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 	, createListField: function( baseConfig, executionInstance ) {
 		
 		var p = baseConfig.parameter;
+		/*ATTENTION:: keep this variable updated in all the create parameter depending by type ,
+		 * that need to be loaded at first document execution (those loading a store)*/
+		this.firstLoadTotParams ++;
+		/*--------------------------------------------------------------------------------------*/
 		
 		var store = this.createCompleteStore(p, executionInstance, 'simple');
 		
@@ -1392,19 +1423,19 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		} else if(p.selectionType === 'SLIDER') { 
 			field = this.createSliderField( baseConfig, this.executionInstance );
 		} else { 
-			if(p.type === 'DATE' || p.type ==='DATE_DEFAULT') {		
-				baseConfig.format = Sbi.config.localizedDateFormat;
-				field = new Ext.form.DateField(baseConfig);
-				if(p.type ==='DATE_DEFAULT') {
-					field.setValue(new Date());
-				}		
-			} else {
+//			if(p.type === 'DATE' || p.type ==='DATE_DEFAULT') {		
+//				baseConfig.format = Sbi.config.localizedDateFormat;
+//				field = new Ext.form.DateField(baseConfig);
+//				if(p.type ==='DATE_DEFAULT') {
+//					field.setValue(new Date());
+//				}		
+//			} else {
 				if (p.enableMaximizer) {
 					field = new Sbi.execution.LookupFieldWithMaximize(baseConfig);
 				} else {
 					field = new Ext.form.TextField(baseConfig);
 				}	
-			}			
+//			}			
 		}
 		
 		if(!field) {
@@ -1469,6 +1500,12 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 			Sbi.exception.ExceptionHandler.handleFailure(response, options);
 		});
 		
+		store.on('load', function(store, records, options) {
+			//fires after the sore is loaded: can apply 
+			this.firstLoadCounter++;
+			this.fireEvent('checkReady', this);
+		}, this);
+
 		return store;
 		
 	}
