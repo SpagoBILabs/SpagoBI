@@ -68,11 +68,16 @@ Sbi.cockpit.runtime.WidgetExtensionPoint = {
 	, getWidgetDesigner: function(wtype, wconf) {
 		Sbi.trace("[WidgetExtensionPoint.getWidgetDesigner]: IN");
 		var wdescriptor = Sbi.cockpit.runtime.WidgetExtensionPoint.registry[wtype];
-			
+		
+		wconf.wtype = wtype;
 		if(wdescriptor !== undefined) {
-			return Sbi.createObjectByClassName(wdescriptor.designerClass, wconf);
+			var widgetDesigner = Sbi.createObjectByClassName(wdescriptor.designerClass, wconf);
+			if(Sbi.isNotValorized( widgetDesigner.getDesignerType() ) ) {
+				widgetDesigner.wtype = wtype;
+			}
+			return widgetDesigner;
 		} else {
-			alert("Widget of type [" + wtype +"] not supprted. Supported types are [" + Sbi.cockpit.runtime.WidgetExtensionPoint.getWidgetTypes().join() + "]");
+			alert("Widget of type [" + wtype +"] not supported. Supported types are [" + Sbi.cockpit.runtime.WidgetExtensionPoint.getWidgetTypes().join() + "]");
 		}
 		Sbi.trace("[WidgetExtensionPoint.getWidgetDesigner]: OUT");
 	}

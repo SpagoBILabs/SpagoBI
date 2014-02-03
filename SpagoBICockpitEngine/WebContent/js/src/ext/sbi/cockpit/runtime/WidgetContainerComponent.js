@@ -113,9 +113,10 @@ Ext.extend(Sbi.cockpit.runtime.WidgetContainerComponent, Ext.Window, {
 		return this.widget;
 	}
 	
-	, setWidgetConfiguration: function(widget) {
+	, setWidgetConfiguration: function(widgetConf) {
 		// se è un tipo di widget diverso da quello attualmente embeddato lo crea e lo sostiruisce al vecchio
 		// se è dello stesso tipo chiama il metodo setConfiguration sul vecchi senza ricrearne uno nuovo
+		alert(Sbi.toSource(widgetConf));
 	}
 	
 	

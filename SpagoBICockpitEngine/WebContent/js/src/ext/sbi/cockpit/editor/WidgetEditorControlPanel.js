@@ -263,7 +263,11 @@ Ext.extend(Sbi.cockpit.editor.WidgetEditorControlPanel, Ext.Panel, {
 	}
 	
 	, updateValues: function(values){
-		this.fieldsPalettePanel.refreshFieldsList(values.dataset);
+		Sbi.trace("[WidgetEditorControlPanel.updateValues]: IN");
+		if(values && values.selectedDatasetLabel) {
+			this.fieldsPalettePanel.refreshFieldsList(values.selectedDatasetLabel);
+		}
+		Sbi.trace("[WidgetEditorControlPanel.updateValues]: OUT");
 	}
 
 	

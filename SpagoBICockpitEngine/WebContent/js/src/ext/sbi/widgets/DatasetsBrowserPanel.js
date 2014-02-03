@@ -45,7 +45,9 @@ Ext.extend(Sbi.widgets.DatasetsBrowserPanel, Ext.Panel, {
      * This array contains all the services invoked by this class
      */
 	services: null
-  
+	
+	, selectedDatasetLabel: null
+	, usedDatasetLabels: null
 	, store: null
 	, widgetManager: null
 	, id:'this' 
@@ -97,7 +99,7 @@ Ext.extend(Sbi.widgets.DatasetsBrowserPanel, Ext.Panel, {
 		config.services = this.services;
 		config.store = this.store;
 		config.widgetManager = this.widgetManager;
-		config.widget = this.widget;
+		config.selectedDatasetLabel = this.selectedDatasetLabel;
 		config.actions = this.actions;
 		config.user = this.user;
 		config.fromMyDataCtx = this.displayToolbar;
@@ -353,16 +355,16 @@ Ext.extend(Sbi.widgets.DatasetsBrowserPanel, Ext.Panel, {
 		 if (r){
 			r = r.data;
 		 }
-		 var oldLabel = this.widget.dataset || r.label;
+		 var oldLabel = this.selectedDatasetLabel || r.label;
 		 		 
-		 this.widget.dataset = r.label;		 
+		 this.selectedDatasetLabel = r.label;		 
 	     if (this.widgetManager.existsStore(r.label) ){ 	
 	    	 var deleteStore = false;
     		 var nWidgetsForDS = this.widgetManager.getWidgetUsedByStore(r.label).getCount();
-    		 if(this.widget.dataset != r.label && nWidgetsForDS >= 1){		    		 
+    		 if(this.selectedDatasetLabel != r.label && nWidgetsForDS >= 1){		    		 
 	    		 alert('Operazione di deselezione non consentita. Il dataset e\' utilizzato da altri widgets!');
 	    		 deleteStore = false;
-    		 }else if(this.widget.dataset == r.label && nWidgetsForDS > 1){
+    		 }else if(this.selectedDatasetLabel == r.label && nWidgetsForDS > 1){
 //    			 alert('Operazione di deselezione non consentita. Il dataset e\' utilizzato da altri widgets!');
 	    		 deleteStore = false;	 
 	    		 this.viewPanel.refresh();
@@ -372,7 +374,7 @@ Ext.extend(Sbi.widgets.DatasetsBrowserPanel, Ext.Panel, {
 	    	 
 	    	 if (deleteStore){
 	    		this.widgetManager.removeStore(r.label);
-	    		this.widget.dataset = null;
+	    		this.selectedDatasetLabel = null;
 				this.viewPanel.refresh();
 	    	 }		     
 	     }else{	    	 
@@ -449,5 +451,13 @@ Ext.extend(Sbi.widgets.DatasetsBrowserPanel, Ext.Panel, {
 		
 		this.viewPanel.refresh();
 	}	
+	
+	, applyPageState: function(state) {
+		Sbi.trace("[DatasetsBrowserPanel.applyState]: IN");
+		state =  state || {};
+		state.selectedDatasetLabel = this.selectedDatasetLabel;
+		Sbi.trace("[DatasetsBrowserPanel.applyState]: OUT");
+		return state;
+	}
 	
 });

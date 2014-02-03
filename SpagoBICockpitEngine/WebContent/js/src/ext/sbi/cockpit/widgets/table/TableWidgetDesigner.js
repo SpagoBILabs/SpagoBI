@@ -77,17 +77,22 @@ Sbi.cockpit.widgets.table.TableWidgetDesigner = function(config) {
 };
 
 Ext.extend(Sbi.cockpit.widgets.table.TableWidgetDesigner, Sbi.cockpit.editor.WidgetDesigner, {
-	tableDesigner: null,
+	tableDesigner: null
 	
-	getFormState: function() {
-		var state = Sbi.cockpit.widgets.table.TableWidgetDesigner.superclass.getFormState(this);
-		state.designer = 'Table';
+	, getDesignerState: function() {
+		Sbi.trace("[TableWidgetDesigner.getDesignerState]: IN");
+		Sbi.trace("[TableWidgetDesigner.getDesignerState]: " + Sbi.cockpit.widgets.table.TableWidgetDesigner.superclass.getDesignerState);
+		
+		var state = Sbi.cockpit.widgets.table.TableWidgetDesigner.superclass.getDesignerState(this);
+		state.wtype = 'Table';
 		state.visibleselectfields = this.tableDesigner.tableDesigner.getContainedValues();
+		
+		Sbi.trace("[TableWidgetDesigner.getDesignerState]: OUT");
 		return state;
 	}
 	
-	, setFormState: function(state) {
-		Sbi.cockpit.widgets.table.TableWidgetDesigner.superclass.setFormState(this, state);
+	, setDesignerState: function(state) {
+		Sbi.cockpit.widgets.table.TableWidgetDesigner.superclass.setDesignerState(this, state);
 		if(state.visibleselectfields!=undefined && state.visibleselectfields!=null){
 			this.tableDesigner.tableDesigner.setValues(state.visibleselectfields);
 		}

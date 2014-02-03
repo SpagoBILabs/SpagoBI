@@ -68,7 +68,7 @@ Ext.extend(Sbi.widgets.DatasetsBrowserView, Ext.DataView, {
 				addRecord = true;
 			}
 						
-			if(this.widget && this.widget.dataset && this.widget.dataset == records[i].label)
+			if(this.selectedDatasetLabel == records[i].label)
 				records[i].isMyDataset = 'true';
 			else
 				records[i].isMyDataset = 'false';
