@@ -12,9 +12,8 @@
 package it.eng.spagobi.commons.utilities;
 
 import it.eng.spago.base.PortletAccess;
-import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.commons.SingletonConfig;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.util.Iterator;
 import java.util.List;
@@ -227,7 +226,7 @@ public class PortletUtilities {
 			 		locale = portalLocale; 
 			 	} else {
 			 		logger.warn("Portal locale [" +  portalLocale.getLanguage() + "," + portalLocale.getCountry() + "] is not supported by SpagoBI");
-			 		locale = GeneralUtilities.getDefaultLocale();
+			 		locale = getDefaultLocale();
 			 		logger.debug("Default locale [" +  locale.getLanguage() + "," + locale.getCountry() + "] will be used");
 			 	}
 			 	
@@ -278,4 +277,41 @@ public class PortletUtilities {
 
 		 	 return languageConfig.substring(0, 2);
 	    } 
+	
+	/*
+	 * Methods copied from GeneralUtilities for DAO Refactoring
+	 */
+
+		 /**
+		  * Gets the default locale.
+		  * 
+		  * @return the default locale
+		  */
+		 public static Locale getDefaultLocale() {
+			 logger.trace("IN");
+			 Locale locale = null;
+			 String languageConfig = null;
+			 try {
+				 String country = null;
+				 String language = null;
+				 languageConfig = SingletonConfig.getInstance().getConfigValue("SPAGOBI.LANGUAGE_SUPPORTED.LANGUAGE.default");
+				 logger.trace("Default locale found: " + languageConfig);
+				 if (languageConfig != null && !languageConfig.trim().equals("")) {
+					 language = languageConfig.substring(0, 2);
+					 country = languageConfig.substring(3);
+					 if ((country == null) || country.trim().equals("") || (language == null) || language.trim().equals("")) {
+						 country = "US";
+						 language = "en";
+					 }
+				 } else {
+					 country = "US";
+					 language = "en";
+				 }
+				 locale = new Locale(language, country);
+			 } catch (Throwable t) {
+				 throw new SpagoBIRuntimeException("Error while getting default locale", t);
+			 }
+			 logger.debug("OUT:" + locale.toString());
+			 return locale;
+		 }	 
 }
