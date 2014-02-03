@@ -91,7 +91,6 @@ Ext.extend(Sbi.service.ServiceRegistry, Ext.util.Observable, {
         	}
         }
         
-        alert(serviceUrl);
         return serviceUrl;
     }     
     

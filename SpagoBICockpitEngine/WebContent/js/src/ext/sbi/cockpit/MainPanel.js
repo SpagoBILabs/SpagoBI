@@ -61,6 +61,8 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
     services: null
     
     , msgPanel: null
+    
+    , isInsert: null
    
     
 
@@ -171,6 +173,8 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 	}
 	
 	, initToolbar: function() {
+		this.isInsert = (Sbi.config.docLabel === '')?true:false;
+		
 		this.tbar = new Ext.Toolbar({
 			//renderTo: document.body,
 		    //width: 300,
@@ -182,15 +186,18 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 		        	, handler: this.addWidget
 		        	, scope: this
 		        },	new Ext.Toolbar.Button({
-		 			   iconCls: 'icon-save' 
+		        			id: 'save'
+		        		   , iconCls: 'icon-save' 
 		 				   , tooltip: 'Save'
 		 				   , scope: this
-		 				   , handler:  this.save
+		 				   , handler:  this.showSaveWindow
+		 				   , hidden: this.isInsert
 		 		 }), new Ext.Toolbar.Button({
-		 			   iconCls: 'icon-saveas' 
+		 			 		id: 'saveAs'
+		 			   	   , iconCls: 'icon-saveas' 
 		 				   , tooltip: 'Save As'
 		 				   , scope: this
-		 				   , handler:  this.saveAs
+		 				   , handler:  this.showSaveWindow
 		 		 })
 		    ]
 		});
@@ -206,14 +213,7 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
     		, height : 0.5
 		});
 	}
-	
-	, save: function(){
-		alert('Function save in progress...');
-	}
-	
-	, saveAs: function(){
-		alert('Function saveAs in progress...');
-	}
+		
 	
 	, initWidgetContainer: function() { 
 		Sbi.trace("[MainPanel.initWidgetContainer]: IN");
@@ -224,4 +224,78 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 		
 		Sbi.trace("[MainPanel.initWidgetContainer]: OUT");
 	}
+	
+	, showSaveWindow: function(){
+
+		if(this.saveWindow != null){			
+			this.saveWindow.destroy();
+			this.saveWindow.close();
+		}
+
+		var template = '{}'; //this.controlledPanel.validate();	
+		if (template == null) {
+    		alert("Impossible to get template");
+    		return;
+    	}
+    	
+    	Sbi.debug('[ControlPanel.showSaveWindow]: ' + template);
+    	
+		var documentWindowsParams = {				
+				'OBJECT_TYPE': 'DOCUMENT_COMPOSITE',
+				'OBJECT_TEMPLATE': template,
+				'typeid': 'COCKPIT'
+		};
+		
+		var formState = {};
+		//gets the input values (name, description,..)
+//		var el = Ext.get('docMapName');
+//		if ((el != null) && (el !== undefined ) && (el.getValue() !== '' )){
+//			formState.docName = el.getValue();
+//		}
+//		var el = Ext.get('docMapDesc');
+//		if ((el != null) && (el !== undefined )){
+//			formState.docDescr = el.getValue();
+//		}
+//		var el = Ext.get('scopePublic');
+//		if ((el != null) && (el !== undefined )){
+//			formState.scope = (el.dom.checked)?"true":"false";			
+//		}else{
+//			formState.scope = "false"; //default
+//		}
+//		formState.scope.visibility = Sbi.config.visibility;
+//		formState.OBJECT_COMMUNITIES  = Sbi.config.docCommunities;
+//		formState.OBJECT_FUNCTIONALITIES  = Sbi.config.docFunctionalities;
+		
+		if (this.isInsert){
+			formState.docLabel = 'cockpit__' + Math.floor((Math.random()*1000000000)+1); 
+			if (Sbi.config.docDatasetLabel) 
+				documentWindowsParams.dataset_label= Sbi.config.docDatasetLabel;
+			documentWindowsParams.MESSAGE_DET= 'DOC_SAVE';
+		}else{
+			formState.docLabel = Sbi.config.docLabel;
+			documentWindowsParams.MESSAGE_DET= 'DOC_UPDATE';	
+		}
+		documentWindowsParams.formState = formState;
+		documentWindowsParams.isInsert = this.isInsert;
+		
+		this.saveWindow = new Sbi.widgets.SaveDocumentWindow(documentWindowsParams);
+		this.saveWindow.addListener('syncronizePanel', this.onSyncronizePanel, this);
+		this.saveWindow.show();		
+
+	}
+	
+	, onSyncronizePanel: function(p) {		
+		//after insert redefines the buttons toolbar
+		if (this.isInsert == true && p.docLabel.value !== undefined && p.docLabel.value !== null && 
+				p.docLabel.value !==""){
+			this.isInsert = false;
+			
+			var itemEl = Ext.get('save');
+			if(itemEl && itemEl !== null) {
+				itemEl.hidden = false;
+			}	
+			Sbi.config.docLabel = p.docLabel.value;
+		}
+	}
+	
 });

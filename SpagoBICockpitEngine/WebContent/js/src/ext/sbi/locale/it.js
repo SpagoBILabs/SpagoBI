@@ -66,6 +66,8 @@ Sbi.locale.ln['sbi.generic.author'] = 'Autore';
 Sbi.locale.ln['sbi.generic.creationdate'] = 'Data di creazione';
 Sbi.locale.ln['sbi.generic.owner']= 'Autore';
 Sbi.locale.ln['sbi.generic.name']= 'Nome';
+Sbi.locale.ln['sbi.generic.save'] = 'Salva ';
+Sbi.locale.ln['sbi.generic.resultMsg'] = 'Operazione riuscita';
 
 //===================================================================
 //WIZARD 
@@ -107,3 +109,12 @@ Sbi.locale.ln['sbi.mydata.shareddataset'] = "Data Set Condivisi";
 Sbi.locale.ln['sbi.mydata.alldataset'] = "Tutti i Data Set";
 Sbi.locale.ln['sbi.mydata.sharedataset'] = "Condividi Data Set";
 Sbi.locale.ln['sbi.mydata.unsharedataset'] = "Rendi privato Data Set";
+
+//===================================================================
+//SAVE WINDOW
+//===================================================================
+Sbi.locale.ln['sbi.savewin.title'] = 'Inserisci ulteriori dettagli e salva il tuo documento... ';
+Sbi.locale.ln['sbi.savewin.name'] = 'Nome';
+Sbi.locale.ln['sbi.savewin.description'] = 'Descrizione';
+Sbi.locale.ln['sbi.savewin.previewfile'] = 'Preview file';
+Sbi.locale.ln['sbi.savewin.saveWarning']  = 'Inserire il Nome prima di salvare il documento';
