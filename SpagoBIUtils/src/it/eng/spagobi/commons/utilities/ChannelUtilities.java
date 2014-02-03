@@ -5,6 +5,7 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.commons.utilities;
 
+import it.eng.spago.base.PortletAccess;
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.RequestContainerAccess;
 import it.eng.spago.base.RequestContainerPortletAccess;
@@ -79,7 +80,7 @@ public class ChannelUtilities {
 				if (prefValueObj != null) prefValue = prefValueObj.toString();
 				else prefValue = defaultValue;
 			} else if  (sbiMode.equalsIgnoreCase("PORTLET")){
-				PortletRequest portReq = PortletUtilities.getPortletRequest();
+				PortletRequest portReq = getPortletRequest();
 				PortletPreferences prefs = portReq.getPreferences();
 				prefValue = (String)prefs.getValue(preferenceName, defaultValue);
 			}
@@ -113,7 +114,7 @@ public class ChannelUtilities {
 		if (sbiMode.equalsIgnoreCase("WEB")) {
 			contextName = httpRequest.getContextPath();
 		} else if  (sbiMode.equalsIgnoreCase("PORTLET")){
-			PortletRequest portletRequest = PortletUtilities.getPortletRequest();
+			PortletRequest portletRequest = getPortletRequest();
 			contextName = portletRequest.getContextPath();
 		}
 		return contextName;
@@ -161,5 +162,16 @@ public class ChannelUtilities {
 		}
 	}
 	
+	/*
+	 * Methods copied from PortletUtilities for DAO refactoring
+	 */
+	/**
+	 * Gets the <code>PortletRequest</code> object.
+	 * 
+	 * @return The portlet request object
+	 */
+	public static PortletRequest getPortletRequest(){
+		return PortletAccess.getPortletRequest();
+	}
 	
 }
