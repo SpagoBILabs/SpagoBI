@@ -115,7 +115,7 @@ Ext.extend(Sbi.cockpit.runtime.Widget, Ext.Panel, {
 		return config;
 	}
 
-	,getCommonConfiguration: function(){
+	, getCommonConfiguration: function(){
 		var config = {};
 		
 		var datasets = [];

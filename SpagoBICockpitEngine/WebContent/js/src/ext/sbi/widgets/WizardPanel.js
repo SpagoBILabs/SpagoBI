@@ -34,7 +34,7 @@ Sbi.widgets.WizardPanel = function(config) {
 	Sbi.widgets.WizardPanel.superclass.constructor.call(this, c);
 	Sbi.trace("[WizardPanel.constructor]: parent costructor succesfully called");
 	
-	this.addEvents('close', 'navigate', 'confirm');
+	this.addEvents('navigate', 'cancel', 'confirm');
 	
 	Sbi.trace("[WizardPanel.constructor]: OUT");
 };
@@ -85,13 +85,13 @@ Ext.extend(Sbi.widgets.WizardPanel, Ext.Panel, {
 	}
 	
 	, moveToNextPage: function() {
-		var activePageNumber =  this.getActivePageNumber();
-		this.moveToPage(activePageNumber+1);
+		var activePageNumber = this.getActivePageNumber();
+		return this.moveToPage(activePageNumber+1);
 	}
 	
 	, moveToPreviousPage: function() {
 		var activePageNumber =  this.getActivePageNumber();
-		this.moveToPage(activePageNumber-1);
+		return this.moveToPage(activePageNumber-1);
 	}
 	
 	, moveToPage: function(targetPageNumber){	
@@ -118,18 +118,14 @@ Ext.extend(Sbi.widgets.WizardPanel, Ext.Panel, {
 		 	Ext.getCmp('confirm').setVisible(!(parseInt(targetPageNumber)<parseInt(totPageNumber)));
 		
 		} else {
-//			targetPageNumber--;
-//			alert('targetPageNumber: '  + targetPageNumber + ' totPageNumber: ' +totPageNumber );
-//			Ext.getCmp('move-prev').setDisabled(targetPageNumber==0);
-//			Ext.getCmp('move-next').setDisabled(targetPageNumber==totPageNumber);
-//		 	Ext.getCmp('confirm').setVisible(!(parseInt(activePageNumber)<parseInt(totPageNumber)));
-
 			Sbi.trace("[WizardPanel.moveToPage]: target page is not valid");
 		}	
 		
 		Sbi.trace("[WizardPanel.moveToPage]:Page [" + this.getActivePageNumber() + "] is now the active page");
 				
 		Sbi.trace("[WizardPanel.moveToPage]: OUT");
+		
+		return this.getActivePage();
 	}
 	
 	, doPageValidation: function(pageNumber) {
@@ -149,6 +145,33 @@ Ext.extend(Sbi.widgets.WizardPanel, Ext.Panel, {
 		
 		Sbi.trace("[WizardPanel.doPageValidation]: OUT");
 		return isPageValid;
+	}
+	
+	, getState: function() {
+		Sbi.trace("[WizardPanel.getState]: IN");
+		var state = {};
+		for(var i = 0; i < this.getPageCount(); i++) {
+			var page = this.getPage(i);
+			if(page.applyPageState) {
+				
+				Sbi.trace("[WizardPanel.getState]: apply page [" + i + "] state");
+				state = page.applyPageState(state);
+			}
+		}
+		
+		Sbi.trace("[WizardPanel.getState]: state is equal to [" + Sbi.toSource(state) + "]");
+		
+		Sbi.trace("[WizardPanel.getState]: OUT");
+		return state;
+	}
+	
+	, setState: function(state) {
+		for(var i = 0; i < this.getPageCount(); i++) {
+			var page = this.getPage(i);
+			if(page.setState) {
+				page.setState(state);
+			}
+		}
 	}
 	
 	
@@ -219,42 +242,48 @@ Ext.extend(Sbi.widgets.WizardPanel, Ext.Panel, {
 	
 	, initButtons: function() {
 		Sbi.trace("[WizardPanel.initButtons]: IN");
-		var thisPanel = this;
+		
 		var buttonsBar = [];
 		
 		buttonsBar.push('->');
-		buttonsBar.push({ id: 'move-prev',
-	        text: LN('sbi.ds.wizard.back'),
-	        handler: function(btn) {
-	        	thisPanel.moveToPreviousPage();
-	        }, 
-	        scope: this,
-	        disabled: (this.activeItem == 0)?true:false
+		buttonsBar.push({ 
+			id: 'move-prev'
+	        ,text: LN('sbi.ds.wizard.back')
+	        , handler: this.onMovePrevious 
+	        , scope: this
+	        , disabled: (this.activeItem == 0)?true:false
 	    });
 		
-		buttonsBar.push({id: 'move-next',
-	        text:  LN('sbi.ds.wizard.next'),
-	        handler: function(btn) {
-	        	thisPanel.moveToNextPage();
-	        }, scope: this,
-	        disabled: (this.activeItem == 0)?false:true
-	    	});
+		buttonsBar.push({
+			id: 'move-next'
+	        , text:  LN('sbi.ds.wizard.next')
+	        , handler: this.onMoveNext
+	        , scope: this
+	        , disabled: (this.activeItem == 0)?false:true
+	    });
 		
-		buttonsBar.push({id: 'confirm',
-			hidden: true,
-	        text:  LN('sbi.ds.wizard.confirm'),
-	        handler: function(){
-	        	thisPanel.fireEvent('confirm', this);   
-	        }, scope: this
-//	        disabled: (this.activeItem == 0)?true:false
-	    	});
+		buttonsBar.push({
+			id: 'confirm'
+			, hidden: true
+	        , text:  LN('sbi.ds.wizard.confirm')
+	        , handler: this.onConfirm
+	        , scope: this
+	    });
 		
-		buttonsBar.push({id: 'close',
-	        text:  LN('sbi.ds.wizard.close'),
-	        handler: function(){ 
-	        	thisPanel.fireEvent('close', this);  
-	        }, scope: this
-	    	});
+		buttonsBar.push({
+			id: 'apply'
+			, hidden: true
+	        , text:  LN('sbi.ds.wizard.apply')
+	        , handler: this.onApply
+	        , scope: this
+	    });
+		
+		buttonsBar.push({
+			id: 'cancel'
+	        , text:  LN('sbi.ds.wizard.cancel')
+	        , handler: this.onCancel
+	        , scope: this
+	    });
 		
 		this.buttons = buttonsBar;
 		
@@ -262,5 +291,52 @@ Ext.extend(Sbi.widgets.WizardPanel, Ext.Panel, {
 		
 		return buttonsBar;
 	}
+	
+	// -----------------------------------------------------------------------------------------------------------------
+    // private methods
+	// -----------------------------------------------------------------------------------------------------------------
+	
+	, onMoveNext: function() {
+		Sbi.trace("[WizardPanel.onMoveNext]: IN");
+		var page = this.moveToNextPage();
+		// pass the current wizard state to the active page so it cat refresh if needed
+		// its content. This is useful if some info contained in the active page depends uppon
+		// values inserted by user in some other page of the wizard
+		if (page.updateValues){
+			var wizardState = this.getState();
+			page.updateValues(wizardState);
+		}
+		Sbi.trace("[WizardPanel.onMoveNext]: OUT");
+	}
+	
+	, onMovePrevious: function() {
+		Sbi.trace("[WizardPanel.onMovePrevious]: IN");
+		var page  = this.moveToPreviousPage();
+		// pass the current wizard state to the active page so it cat refresh if needed
+		// its content. This is useful if some info contained in the active page depends uppon
+		// values inserted by user in some other page of the wizard
+		if (page.updateValues){
+			var wizardState = this.getState();
+			page.updateValues(wizardState);
+		}
+		Sbi.trace("[WizardPanel.onMovePrevious]: OUT");
+	}
 
+	, onCancel: function() {
+		Sbi.trace("[WizardPanel.onCancel]: IN");
+		var page = this.fireEvent('cancel', this);  
+		Sbi.trace("[WizardPanel.onCancel]: OUT");
+	}
+	
+	, onApply: function() {
+		Sbi.trace("[WizardPanel.onApply]: IN");
+		this.fireEvent('apply', this);  
+		Sbi.trace("[WizardPanel.onApply]: OUT");
+	}
+
+	, onConfirm: function() {
+		Sbi.trace("[WizardPanel.onConfirm]: IN");
+		this.fireEvent('confirm', this, this.getState());  
+		Sbi.trace("[WizardPanel.onConfirm]: OUT");
+	}
 });

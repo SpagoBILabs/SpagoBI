@@ -143,6 +143,7 @@ Ext.extend(Sbi.cockpit.editor.WidgetEditor, Ext.Panel, {
 	, initSheetsContainerPanel: function(config) {
 		this.mainPanel = new Sbi.cockpit.editor.WidgetEditorMainPanel();
 		
+		
 //		this.mainPanel = new Sbi.worksheet.designer.SheetsContainerPanel(Ext.apply(this.mainPanelCfg  || {}, {
 //			sheets : this.worksheetTemplate.sheets || []  ,
 //			smartFilter: config.smartFilter || false
@@ -347,9 +348,24 @@ Ext.extend(Sbi.cockpit.editor.WidgetEditor, Ext.Panel, {
 	}
 
 	, updateValues: function(values) {
-		if (this.controlPanel.updateValues)
+		Sbi.trace("[WidgetEditor.updateValues]: IN");
+		
+		Sbi.trace("[WidgetEditor.updateValues]: Input parameter values is equal to [" + values + "]");
+		
+		if (this.controlPanel.updateValues) {
 			this.controlPanel.updateValues(values);
-		if (this.mainPanel.updateValues)
-			this.mainPanel.updateValues(values);
+		}
+		Sbi.trace("[WidgetEditor.updateValues]: OUT");
+	}
+	
+	, applyPageState: function(state) {
+		Sbi.trace("[WidgetEditor.applyPageState]: IN");
+		state =  state || {};
+		if(this.mainPanel.designer) {
+			state.wtype = this.mainPanel.designer.getDesignerType();
+			state.wconf = this.mainPanel.designer.getDesignerState();
+		}
+		Sbi.trace("[WidgetEditor.applyPageState]: OUT");
+		return state;
 	}
 });

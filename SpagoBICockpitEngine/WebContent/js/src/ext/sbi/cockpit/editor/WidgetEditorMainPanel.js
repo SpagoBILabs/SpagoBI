@@ -131,6 +131,8 @@ Ext.extend(Sbi.cockpit.editor.WidgetEditorMainPanel, Ext.Panel, {
     // factory methods
 	// -----------------------------------------------------------------------------------------------------------------
 	, addDesigner: function (state) {
+		Sbi.trace("[WidgetEditorMainPanel.addDesigner]: IN");
+		
 		var sheredConf = {padding: Ext.isIE ? '10 0 0 35' : '0'};
 		
 		this.designer =  Sbi.cockpit.runtime.WidgetExtensionPoint.getWidgetDesigner(state.designer, Ext.apply({
@@ -193,6 +195,8 @@ Ext.extend(Sbi.cockpit.editor.WidgetEditorMainPanel, Ext.Panel, {
 			}, 
 			this
 		);
+		
+		Sbi.trace("[WidgetEditorMainPanel.addDesigner]: OUT");
 	}
 
 	, createDummyDesigner: function(msg) {
@@ -319,9 +323,12 @@ Ext.extend(Sbi.cockpit.editor.WidgetEditorMainPanel, Ext.Panel, {
 	// -----------------------------------------------------------------------------------------------------------------
 	
 	, insertDesigner: function() {
+		Sbi.trace("[WidgetEditorMainPanel.insertDesigner]: IN");
 		this.emptyMsgPanel.destroy();
+		Sbi.trace("[WidgetEditorMainPanel.insertDesigner]: [" + this.designer + "]");
 		this.add(this.designer);
 		this.doLayout();
+		Sbi.trace("[WidgetEditorMainPanel.insertDesigner]: OUT");
 	}
 	
 	, removeDesigner: function (event, tool, panel, tc) {
@@ -345,7 +352,7 @@ Ext.extend(Sbi.cockpit.editor.WidgetEditorMainPanel, Ext.Panel, {
 		
 		if(this.designerState==null){
 			if (this.designer !== null) {
-				return this.designer.getFormState();
+				return this.designer.getDesignerState();
 			} else {
 				return null;
 			}
@@ -356,7 +363,7 @@ Ext.extend(Sbi.cockpit.editor.WidgetEditorMainPanel, Ext.Panel, {
 	
 	, setDesignerState: function (state) {
 		if (this.designer !== null) {
-			this.designer.setFormState(state);
+			this.designer.setDesignerState(state);
 			this.designerState = null;
 		}
 	}

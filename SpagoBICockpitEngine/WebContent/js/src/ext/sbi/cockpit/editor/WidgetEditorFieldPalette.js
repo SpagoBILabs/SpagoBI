@@ -72,10 +72,13 @@ Ext.extend(Sbi.cockpit.editor.WidgetEditorFieldPalette, Ext.Panel, {
 	// =================================================================================================================
 	
     
-    , refreshFieldsList: function(dataset) {
+    , refreshFieldsList: function(datasetLabel) {
     	Sbi.trace("[WidgetEditorFieldPalette.refreshFieldsList]: IN");
-		if (dataset) {	
-			this.dataset = dataset;
+    	
+    	Sbi.trace("[WidgetEditorFieldPalette.refreshFieldsList]: input parameter datasetLabel is equal to [" + datasetLabel + "]");
+    	
+		if (datasetLabel) {	
+			this.dataset = datasetLabel;
 			this.store.proxy.setUrl(url = Sbi.config.serviceRegistry.getRestServiceUrl({
 				serviceName : 'dataset/' + this.dataset + '/fields'
 			}), true);

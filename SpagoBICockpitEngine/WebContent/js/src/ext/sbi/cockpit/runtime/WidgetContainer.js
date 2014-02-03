@@ -52,10 +52,10 @@ Ext.extend(Sbi.cockpit.runtime.WidgetContainer, Sbi.cockpit.runtime.Widget, {
 	widgetManager: null
 
   /**
-   * @property { Sbi.cockpit.editor.WidgetEditorWizardPanel} wizard
+   * @property {Ext.Window} widgetEditor
    * The wizard that manages the single widget definition
    */
-  , wizard: null
+  , widgetEditor: null
 	 
 	// =================================================================================================================
 	// METHODS
@@ -106,10 +106,7 @@ Ext.extend(Sbi.cockpit.runtime.WidgetContainer, Sbi.cockpit.runtime.Widget, {
 	// -----------------------------------------------------------------------------------------------------------------
 	
     , addWidget: function(widget, region) {	
-    	
-//    	alert("Widget: " + (widget instanceof Sbi.cockpit.runtime.Widget));
-//    	alert("DummyWidget: " + (widget instanceof Sbi.cockpit.widgets.dummy.DummyWidget));
-//    	alert("TableWidget: " + (widget instanceof Sbi.cockpit.widgets.table.TableWidget));
+
 		Sbi.trace("[WidgetContainer.addWidget]: IN");
     	
     	if(!widget) {
@@ -193,27 +190,50 @@ Ext.extend(Sbi.cockpit.runtime.WidgetContainer, Sbi.cockpit.runtime.Widget, {
     	win.show();
     }
     
-    , showWidgetEditor: function(widget) {    	
-    	var config = {};
-    	config.widgetManager = this.getWidgetManager();
-    	config.widget = widget;
+    
+    , showWidgetEditor: function(component) {    	
     	
-    	var widgetWizard = new Sbi.cockpit.editor.WidgetEditorWizardPanel(config);
-    	widgetWizard.on('close', this.closeWizard, this);
-    	widgetWizard.on('confirm', this.defineTemplate, this);
+    	Sbi.trace("[WidgetContainer.showWidgetEditor]: IN");
     	
-    	this.wizard = new Ext.Window({
-    		id: 'wizard',
-            layout:'fit',
-            width:1000, //800,
-            height: 510,
-            plain: true,
-            modal: true,
-            title: "Widget [" + widget.id + "] editor",
-    		items: widgetWizard
-        });
+    	if(this.widgetEditor === null) {
+    		
+    		Sbi.trace("[WidgetContainer.showWidgetEditor]: instatiating the editor");
+    		
+    		var widgetEditorMainPanel = new Sbi.cockpit.editor.WidgetEditorWizardPanel({
+    			widgetManager: this.getWidgetManager() // used by datasetBrowser page to filter on already used datasets
+    		});
+    		widgetEditorMainPanel.on('cancel', this.onCloseWidgetEditor, this);
+    		widgetEditorMainPanel.on('confirm', function(widgetEditorMainPanel, editorState) {
+    			var component = widgetEditorMainPanel.getTargetComponent();
+    			component.setWidgetConfiguration(editorState);
+    			this.widgetEditor.hide();
+    		}, this);
     	
-    	this.wizard.show();
+	    	this.widgetEditor = new Ext.Window({
+	    		id: 'wizard',
+	            layout:'fit',
+	            width: 1000, //800,
+	            height: 510,
+	            closeAction:'hide',
+	            plain: true,
+	            modal: true,
+	            //title: "Widget [" + widget.id + "] editor",
+	            title: "Widget editor",
+	    		items: widgetEditorMainPanel,
+	    		mainPanel: widgetEditorMainPanel
+	        });
+	    	
+	    	Sbi.trace("[WidgetContainer.showWidgetEditor]: editor succesfully instantiated");
+    	}
+    	
+    	
+    	//this.widgetEditor.setTitle("Widget [" + widget.id + "] editor");
+    	this.widgetEditor.mainPanel.setTargetComponent(component);
+    	
+ 
+    	this.widgetEditor.show();
+    	
+    	Sbi.trace("[WidgetContainer.showWidgetEditor]: OUT");
     }
     
     // -----------------------------------------------------------------------------------------------------------------
@@ -271,7 +291,7 @@ Ext.extend(Sbi.cockpit.runtime.WidgetContainer, Sbi.cockpit.runtime.Widget, {
     	var component = new Sbi.cockpit.runtime.WidgetContainerComponent(componentConf);
     	component.on("performaction", function(component, widget, action) {
     		if(action === 'showEditor') {
-    			this.showWidgetEditor(widget);
+    			this.showWidgetEditor(component);
     		} else if(action === 'showConfiguration') {
     			this.showWidgetConfiguration(widget);
     		}
@@ -290,15 +310,16 @@ Ext.extend(Sbi.cockpit.runtime.WidgetContainer, Sbi.cockpit.runtime.Widget, {
     	//Ext.Msg.alert('Message', 'The CONFIG tool was clicked.');
     } 
     
-    , onShowWidgetEditor: function(widget) {
-    	this.showWidgetEditor(widget);
+    , onShowWidgetEditor: function(component) {
+    	this.showWidgetEditor(component);
     	//Ext.Msg.alert('Message', 'The CONFIG tool was clicked.');
     } 
     
-    , closeWizard: function(){
-    	this.wizard.close();
+    , onCloseWidgetEditor: function(){
+    	this.widgetEditor.resetState();
+    	this.widgetEditor.hide();
     }
-    
+ 
     , defineTemplate: function(wEditor){
     	Sbi.trace("[WidgetContainer.defineTemplate]: IN");
 
