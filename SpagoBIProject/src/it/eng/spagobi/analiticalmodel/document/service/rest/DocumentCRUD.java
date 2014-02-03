@@ -229,9 +229,9 @@ public class DocumentCRUD {
 						BIObject biObject = (BIObject)it.next();
 						String biObjectType = biObject.getBiObjectTypeCode();
 						if ((biObjectType.equalsIgnoreCase("WORKSHEET")) ||
-						   (biObjectType.equalsIgnoreCase("MAP")) 
-							// || biObjectType.equalsIgnoreCase("COCKPIT") TODO: to be defined
-							){
+						   (biObjectType.equalsIgnoreCase("MAP")) ||
+							(biObjectType.equalsIgnoreCase("DOCUMENT_COMPOSITE") && 
+								biObject.getEngine().getDriverName().contains("CockpitDriver"))){
 							filteredMyObjects.add(biObject);
 						}
 					}
@@ -247,8 +247,15 @@ public class DocumentCRUD {
 
 				} else if (docType.equalsIgnoreCase("Cockpit")){
 					//return only Cockpits inside the personal folder
-
-					//TODO: to be defined
+					List filteredMyObjects = new ArrayList();
+					myObjects = DAOFactory.getBIObjectDAO().loadBIObjects("DOCUMENT_COMPOSITE", "REL", personalFolder.getPath());
+					for (Iterator it = myObjects.iterator(); it.hasNext(); ){
+						BIObject biObject = (BIObject)it.next();
+						if (biObject.getEngine().getDriverName().contains("CockpitDriver")){
+							filteredMyObjects.add(biObject);
+						}
+					}
+					myObjects = filteredMyObjects;
 				}
 
 				//Serialize documents list

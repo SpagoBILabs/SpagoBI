@@ -5,6 +5,7 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.analiticalmodel.execution.service;
 
+import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.AnalyticalModelDocumentManagementAPI;
 import it.eng.spagobi.analiticalmodel.document.DocumentTemplateBuilder;
@@ -154,8 +155,6 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 			Assert.assertNotNull( StringUtilities.isNotEmpty( documentJSON.optString("type") ) , "Document's type cannot be null or empty");
 			
 			JSONArray foldersJSON = request.optJSONArray("folders");
-			//Assert.assertNotNull( foldersJSON , "Destination folders' list cannot be null");
-			//Assert.assertNotNull( foldersJSON.length() > 0 , "Destination folders' list cannot be empty");
 			
 			if( documentManagementAPI.getDocument( documentJSON.getString("label") ) != null ){
 				throw new SpagoBIServiceException(SERVICE_NAME,	"sbi.document.labelAlreadyExistent");
@@ -166,7 +165,10 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 				insertWorksheetDocument(request);
 			} else if("MAP".equalsIgnoreCase(type)) {
 				insertGeoreportDocument(request);
-			} else {
+			} else if ("DOCUMENT_COMPOSITE".equalsIgnoreCase(type)){
+				insertCockpitDocument(request);
+			}
+			else {
 				throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to create a document of type [" + type + "]");
 			}		
 		} catch (SpagoBIServiceException e) {
@@ -296,6 +298,62 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 			throw e;
 		} catch (Exception e) {
 			throw new SpagoBIServiceException(SERVICE_NAME, "An unexpected error occured while creating geo document", e);
+		} finally {
+			logger.debug("OUT");
+		}
+	}
+	
+	private void insertCockpitDocument(JSONObject request) {
+		
+		logger.debug("IN");
+		
+		try {
+			JSONObject documentJSON = request.optJSONObject("document");
+			JSONArray filteredFoldersJSON = new JSONArray(); 
+			if(request.optJSONArray("folders") == null){
+				IEngUserProfile profile = (IEngUserProfile) getUserProfile();
+				//add personal folder for default
+				LowFunctionality userFunc = null;
+				try{
+					ILowFunctionalityDAO functionalitiesDAO = DAOFactory.getLowFunctionalityDAO();
+					userFunc = functionalitiesDAO.loadLowFunctionalityByPath("/"+profile.getUserUniqueIdentifier(),false);
+				} catch (Exception e) {
+					logger.error("Error on insertion of the document.. Impossible to get the id of the personal folder ",e);
+					throw new SpagoBIRuntimeException("Error on insertion of the document.. Impossible to get the id of the personal folder ",e);
+				}
+				filteredFoldersJSON.put(userFunc.getId());
+			}else{
+				filteredFoldersJSON = filterFolders(request.optJSONArray("folders"));
+			}
+			JSONObject customDataJSON = request.optJSONObject("customData");
+			Assert.assertNotNull( customDataJSON , "Custom data object cannot be null");
+		
+//			String sourceDocumentId = sourceDocumentJSON.optString("id").trim();
+//			Assert.assertNotNull( StringUtilities.isNotEmpty( sourceDocumentId ) , "Source document's id cannot be null or empty");
+//			
+//			BIObject sourceDocument = null;
+//			try {
+//				Integer id = new Integer(sourceDocumentId);
+//				sourceDocument = documentManagementAPI.getDocument(id);
+//			} catch (NumberFormatException e1) {
+//				throw new SpagoBIServiceException(SERVICE_NAME, "Source document id [" + sourceDocumentId + "] is not a valid number");
+//			} catch (Throwable t) {
+//				throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to load document [" + sourceDocumentId + "]");
+//			}
+//			if(sourceDocument == null) {
+//				throw new SpagoBIServiceException(SERVICE_NAME, "Source document [" + sourceDocumentId + "] does not exist");
+//			}
+			
+			
+			BIObject document = createBaseDocument(documentJSON, null, filteredFoldersJSON);
+			ObjTemplate template = buildDocumentTemplate("template.sbicockpit", customDataJSON, null);
+												
+			documentManagementAPI.saveDocument(document, template);
+
+		} catch (SpagoBIServiceException e) {
+			throw e;
+		} catch (Exception e) {
+			throw new SpagoBIServiceException(SERVICE_NAME, "An unexpected error occured while creating cockpit document", e);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -590,7 +648,38 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 			document.setPreviewFile(previewFile.replace("\"", ""));
 		}
 		document.setPublicDoc(isPublic);
-		setDocumentEngine(document, type, engineId);
+		
+		if("DOCUMENT_COMPOSITE".equalsIgnoreCase(type)) {	
+			//gets correct type of the engine for DOCUMENT_COMPOSITION (it's cockpit and it uses the EXTERNAL engine)
+			Engine engine = null;
+			Domain engineType = null;
+			try{							
+				List<Engine> engines = DAOFactory.getEngineDAO().loadAllEnginesForBIObjectTypeAndTenant(type);
+				if ( engines != null && !engines.isEmpty() ){
+					if("DOCUMENT_COMPOSITE".equalsIgnoreCase(type)) {	
+						for(Engine e : engines) {						
+							try {
+								engineType = DAOFactory.getDomainDAO().loadDomainById(
+										e.getEngineTypeId());
+							} catch (EMFUserError ex) {
+								throw new SpagoBIServiceException("Impossible to load engine type domain", ex);
+							}
+						
+							if ("EXT".equalsIgnoreCase(engineType.getValueCd())) {
+								engine = e;
+							}
+						}
+					} 	
+				}
+			} catch(Throwable t) {
+				throw new SpagoBIServiceException(SERVICE_NAME,	"An unexpected error occured while loading the engine", t);
+			}
+			document.setBiObjectTypeID(engine.getBiobjTypeId());
+			document.setBiObjectTypeCode(type);
+			document.setEngine(engine);
+		}else{
+			setDocumentEngine(document, type, engineId);
+		}
 		Boolean isVisible = Boolean.parseBoolean(visibility);
 		document.setVisible(isVisible);
 		
