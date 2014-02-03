@@ -148,6 +148,10 @@
 		background-image: url('../img/save-as16.png') !important;
 	}
 	
+	.uploadImgIcon {
+	 	background-image:url('../img/browser_globe_upload.png') !important;
+	}
+	
 	
 
  </style>
