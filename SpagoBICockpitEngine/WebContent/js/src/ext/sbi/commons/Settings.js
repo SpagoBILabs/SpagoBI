@@ -52,3 +52,14 @@ Sbi.settings.mydata = {
 		 */
 		, showTabToolbar: true
 	};
+
+Sbi.settings.widgets = {
+		//Details for specific file upload management (ex: img for document preview,...)
+	   FileUploadPanel: {
+			imgUpload: {
+				maxSizeFile: 10485760
+			  , directory: '/preview/images' //starting from /resources directory
+			  , extFiles: ['BMP', 'IMG', 'JPG', 'PNG', 'GIF']
+			}
+		}
+};
