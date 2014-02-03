@@ -12,10 +12,13 @@ import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.bo.SubObject;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
+import it.eng.spagobi.behaviouralmodel.lov.bo.ModalitiesValue;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.utilities.ParameterValuesEncoder;
+//import it.eng.spagobi.commons.utilities.ParameterValuesEncoder;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.monitoring.metadata.SbiAudit;
 
@@ -46,6 +49,10 @@ public class AuditManager {
 	private static boolean _disabled = false;
 	private static String _documentState = "ALL";
 	private static IAuditDAO _auditDAO = null;
+	
+    private String separator;
+    private String openBlockMarker;
+    private String closeBlockMarker;
 
 	private AuditManager() {
 		logger.debug("Begin istantiation of AuditManager");
@@ -195,13 +202,12 @@ public class AuditManager {
 
 		String documentParameters = "";
 		List parameters = obj.getBiObjectParameters();
-		ParameterValuesEncoder parValuesEncoder = new ParameterValuesEncoder();
 		if (parameters != null && parameters.size() > 0) {
 			for (int i = 0; i < parameters.size(); i++) {
 				BIObjectParameter parameter = (BIObjectParameter) parameters.get(i);
 				documentParameters += parameter.getParameterUrlName() + "=";
 				if (parameter.getParameterValues() != null) {
-					String value = parValuesEncoder.encode(parameter);
+					String value = encode(parameter);
 					documentParameters += value;
 				} else
 					documentParameters += "NULL";
@@ -413,4 +419,113 @@ public class AuditManager {
 		}
 		return toReturn;
 	}
+	
+	/*
+	 * Methods copied from ParameterValuesEncoder for DAO Refactoring
+	 */
+	
+	/**
+	 * Encode.
+	 * 
+	 * @param biobjPar the biobj par
+	 * 
+	 * @return the string
+	 */
+	public String encode(BIObjectParameter biobjPar) {
+		logger.debug("IN");
+		if (biobjPar.getParameterValues() == null) {
+			logger.debug("biobjPar.getParameterValues() == null");
+			return null;
+		}
+
+
+
+		Parameter parameter = biobjPar.getParameter();
+		if (parameter != null) {
+
+			String type = parameter.getType();
+			ModalitiesValue modValue = parameter.getModalityValue();
+			if (modValue != null) {
+
+				boolean multivalue =  biobjPar.isMultivalue();
+
+				String typeCode = biobjPar.getParameter().getModalityValue().getITypeCd();
+				logger.debug("typeCode="+typeCode);
+				if (typeCode.equalsIgnoreCase(SpagoBIConstants.INPUT_TYPE_MAN_IN_CODE)) {
+					multivalue = false;
+				}
+
+				if (!multivalue) {
+					return (String) biobjPar.getParameterValues().get(0);
+				} else {
+					return encodeMultivaluesParam(biobjPar.getParameterValues(), type);
+				}
+			} else {
+				List values = biobjPar.getParameterValues();
+				if (values != null && values.size() > 0) {
+					if (values.size() == 1)
+						return (String) biobjPar.getParameterValues().get(0);
+					else
+						return encodeMultivaluesParam(biobjPar.getParameterValues(), type);
+				} else
+					return "";
+			}
+		} else {
+			Integer parId = biobjPar.getParID();
+			String type = null;
+			if (parId == null) {
+				logger.warn("Parameter object nor parameter id are set into BiObjectPrameter with label = "
+						+ biobjPar.getLabel() + " of document with id = " + biobjPar.getBiObjectID());
+			} else {
+				try {
+					Parameter aParameter = DAOFactory.getParameterDAO().loadForDetailByParameterID(parId);
+					type = aParameter.getType();
+				} catch (EMFUserError e) {
+					logger.warn("Error loading parameter with id = " + biobjPar.getParID());
+				}
+			}
+			List values = biobjPar.getParameterValues();
+			if (values != null && values.size() > 0) {
+				if (values.size() == 1)
+					return (String) biobjPar.getParameterValues().get(0);
+				else
+					return encodeMultivaluesParam(biobjPar.getParameterValues(), type);
+			} else
+				return "";
+		}
+
+	}
+	
+	/**
+	 * Multi values parameters are encoded in the following way:
+	 * openBlockMarker + separator + openBlockMarker + [values separated by the separator] + closeBlockMarker + parameterType + closeBlockMarker
+	 * Examples:
+	 * {,{string1,string2,string3}STRING}
+	 * {,{number1,number1,number1}NUM}
+	 * 
+	 * parameterType: the type of the parameter (NUM/STRING/DATE)
+	 */
+	private String encodeMultivaluesParam(List values, String parameterType) {
+		logger.debug("IN");
+		String value = "";
+
+		if (values == null || values.size() == 0)
+			return value;
+
+		value += openBlockMarker;
+		value += separator;
+		value += openBlockMarker;
+		for (int i = 0; i < values.size(); i++) {
+			String valueToBeAppended = (values.get(i) == null) ? "" : (String) values.get(i);
+			value += (i > 0) ? separator : "";
+			value += valueToBeAppended;
+		}
+		value += closeBlockMarker;
+		value += parameterType;
+		value += closeBlockMarker;
+		logger.debug("IN.value=" + value);
+		return value;
+	}
+	
+	//----------------------------------------------------------------
 }
