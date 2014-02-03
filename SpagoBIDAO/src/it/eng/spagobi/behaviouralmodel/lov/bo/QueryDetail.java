@@ -11,9 +11,11 @@ import it.eng.spago.dbaccess.Utils;
 import it.eng.spago.dbaccess.sql.DataConnection;
 import it.eng.spago.dbaccess.sql.DataRow;
 import it.eng.spago.dbaccess.sql.SQLCommand;
+import it.eng.spago.dbaccess.sql.mappers.SQLMapper;
 import it.eng.spago.dbaccess.sql.result.DataResult;
 import it.eng.spago.dbaccess.sql.result.ScrollableDataResult;
 import it.eng.spago.error.EMFErrorSeverity;
+import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
@@ -23,14 +25,16 @@ import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IDomainDAO;
-import it.eng.spagobi.commons.utilities.DataSourceUtilities;
+//import it.eng.spagobi.commons.utilities.DataSourceUtilities;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.StringUtilities;
+import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.services.datasource.bo.SpagoBiDataSource;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -39,6 +43,8 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+
+import javax.naming.NamingException;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.validator.GenericValidator;
@@ -595,9 +601,8 @@ public class QueryDetail  implements ILovDetail  {
 		DataResult dataResult = null;
 		try {
 			//gets connection
-			DataSourceUtilities dsUtil = new DataSourceUtilities();
-			Connection conn = dsUtil.getConnection(profile,dataSource); 
-			dataConnection = dsUtil.getDataConnection(conn);
+			Connection conn = getConnection(profile,dataSource); 
+			dataConnection = getDataConnection(conn);
 			sqlCommand = dataConnection.createSelectCommand(statement, false);
 			dataResult = sqlCommand.execute();
 			ScrollableDataResult scrollableDataResult = (ScrollableDataResult) dataResult.getDataObject();
@@ -636,9 +641,8 @@ public class QueryDetail  implements ILovDetail  {
 		try {
 			statement = getValidationQuery(profile, biparam, values);
 			//gets connection
-			DataSourceUtilities dsUtil = new DataSourceUtilities();
-			Connection conn = dsUtil.getConnection(profile,dataSource); 
-			dataConnection = dsUtil.getDataConnection(conn);
+			Connection conn = getConnection(profile,dataSource); 
+			dataConnection = getDataConnection(conn);
 			sqlCommand = dataConnection.createSelectCommand(statement, false);
 			dataResult = sqlCommand.execute();
 			ScrollableDataResult scrollableDataResult = (ScrollableDataResult) dataResult.getDataObject();
@@ -958,6 +962,63 @@ public class QueryDetail  implements ILovDetail  {
 		sbds.setReadOnly(ds.checkIsReadOnly());
 		sbds.setWriteDefault(ds.checkIsWriteDefault());
 		return sbds;
+	}
+	
+	/*
+	 * Methods copied from DataSourceUtilities for DAO refactoring
+	 */
+	
+	/**
+	 * use this method in service implementation. If RequestContainer isn't correct.
+	 * @param profile
+	 * @param dsLabel
+	 * @return
+	 */
+	public Connection getConnection(IEngUserProfile profile,String dsLabel) {
+		Connection connection =  null;
+		//calls implementation for gets data source object
+		
+		
+		SpagoBiDataSource ds = getDataSourceByLabel(dsLabel);
+		logger.debug("Schema Attribute:"+ ds.getSchemaAttribute());
+		String schema=null;
+		if (profile!=null){
+			schema=UserUtilities.getSchema(ds.getSchemaAttribute(),profile);
+			logger.debug("Schema:"+ schema);
+		}
+		try {
+			connection = ds.readConnection(schema);
+		} catch (NamingException e) {
+			logger.error("JNDI error", e);
+		} catch (SQLException e) {
+			logger.error("Cannot retrive connection", e);
+		} catch (ClassNotFoundException e) {
+			logger.error("Driver not found", e);
+		}
+		
+		return connection;
+	}	
+	
+	/**
+	 * Creates a ago DataConnection object starting from a sql connection.
+	 * 
+	 * @param con Connection to the export database
+	 * 
+	 * @return The Spago DataConnection Object
+	 * 
+	 * @throws EMFInternalError the EMF internal error
+	 */
+	public DataConnection getDataConnection(Connection con) throws EMFInternalError {
+		DataConnection dataCon = null;
+		try {
+			Class mapperClass = Class.forName("it.eng.spago.dbaccess.sql.mappers.OracleSQLMapper");
+			SQLMapper sqlMapper = (SQLMapper)mapperClass.newInstance();
+			dataCon = new DataConnection(con, "2.1", sqlMapper);
+		} catch(Exception e) {
+			logger.error("Error while getting Data Source " + e);
+			throw new EMFInternalError(EMFErrorSeverity.ERROR, "cannot build spago DataConnection object");
+		}
+		return dataCon;
 	}
 
 }
