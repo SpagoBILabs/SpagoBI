@@ -40,6 +40,8 @@ Sbi.cockpit.MainPanel = function(config) {
 
 	// constructor
 	Sbi.cockpit.MainPanel.superclass.constructor.call(this, c);
+	
+	this.addEvents('returnToMyAnalysis');
 };
 
 /**
@@ -63,10 +65,10 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
     , msgPanel: null
     
     , isInsert: null
+    
+    , fromMyAnalysis: false
    
-    
 
-    
     // =================================================================================================================
 	// METHODS
 	// =================================================================================================================
@@ -232,11 +234,11 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 			this.saveWindow.close();
 		}
 
-		var template = '{}'; //this.controlledPanel.validate();	
-		if (template == null) {
-    		alert("Impossible to get template");
-    		return;
-    	}
+		var template = null; //this.controlledPanel.validate();	
+//		if (template == null) {
+//    		alert("Impossible to get template");
+//    		return;
+//    	}
     	
     	Sbi.debug('[ControlPanel.showSaveWindow]: ' + template);
     	
@@ -277,9 +279,11 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 		}
 		documentWindowsParams.formState = formState;
 		documentWindowsParams.isInsert = this.isInsert;
+		documentWindowsParams.fromMyAnalysis = Sbi.config.fromMyAnalysis;//this.fromMyAnalysis;
 		
 		this.saveWindow = new Sbi.widgets.SaveDocumentWindow(documentWindowsParams);
 		this.saveWindow.addListener('syncronizePanel', this.onSyncronizePanel, this);
+		this.saveWindow.addListener('returnToMyAnalysis', this.returnToMyAnalysis, this);
 		this.saveWindow.show();		
 
 	}
@@ -296,6 +300,13 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 			}	
 			Sbi.config.docLabel = p.docLabel.value;
 		}
+	}
+	
+	 , returnToMyAnalysis : function() {
+//	   var url = Sbi.config.contextName + '/servlet/AdapterHTTP?ACTION_NAME=CREATE_DOCUMENT_START_ACTION&LIGHT_NAVIGATOR_RESET_INSERT=TRUE';
+	   var url = '/SpagoBI/servlet/AdapterHTTP?ACTION_NAME=CREATE_DOCUMENT_START_ACTION&LIGHT_NAVIGATOR_RESET_INSERT=TRUE';
+	   window.location = url;
+		
 	}
 	
 });

@@ -64,7 +64,7 @@ Sbi.widgets.SaveDocumentWindow = function(config) {
 		Ext.apply(this,c);
 		
 		// init events...
-		this.addEvents("syncronizePanel");
+		this.addEvents('syncronizePanel','returnToMyAnalysis');		
 		
 		// constructor
 		Sbi.widgets.SaveDocumentWindow.superclass.constructor.call(this, c);
@@ -76,6 +76,7 @@ Ext.extend(Sbi.widgets.SaveDocumentWindow, Ext.Window, {
 	inputForm: null,
 	saveDocumentForm: null,
 	fileNameUploaded: null,
+	fromMyAnalysis: null,
 	SBI_EXECUTION_ID: null,
 	OBJECT_ID: null,
 	OBJECT_TYPE: null,
@@ -214,7 +215,11 @@ Ext.extend(Sbi.widgets.SaveDocumentWindow, Ext.Window, {
 				                        msg: LN('sbi.generic.resultMsg'),
 				                        width: 200,
 				                        buttons: Ext.MessageBox.OK
-				                });
+				                });			      			
+				      			
+				      			if (this.fromMyAnalysis != undefined && this.fromMyAnalysis != null && this.fromMyAnalysis == true){
+				      				this.fireEvent('returnToMyAnalysis',this);  //fire event to jump to the MyAnalysis page 
+				                }
 				      			this.fireEvent('syncronizePanel', this);
 				      			this.destroy();
 				      		}  
