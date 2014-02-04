@@ -135,7 +135,7 @@ Ext.extend(Sbi.cockpit.editor.WidgetEditorMainPanel, Ext.Panel, {
 		
 		var sheredConf = {padding: Ext.isIE ? '10 0 0 35' : '0'};
 		
-		this.designer =  Sbi.cockpit.runtime.WidgetExtensionPoint.getWidgetDesigner(state.designer, Ext.apply({
+		this.designer =  Sbi.cockpit.core.WidgetExtensionPoint.getWidgetDesigner(state.designer, Ext.apply({
 			html: state.designer + ' widget designer'
 			, ddGroup: 'worksheetDesignerDDGroup'
 			, tools:  [{

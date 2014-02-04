@@ -220,7 +220,7 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 	, initWidgetContainer: function() { 
 		Sbi.trace("[MainPanel.initWidgetContainer]: IN");
 
-		this.widgetContainer = new Sbi.cockpit.runtime.WidgetContainer({});
+		this.widgetContainer = new Sbi.cockpit.core.WidgetContainer({});
 
 		Sbi.trace("[MainPanel.initWidgetContainer]: widget panel succesfully created");
 		

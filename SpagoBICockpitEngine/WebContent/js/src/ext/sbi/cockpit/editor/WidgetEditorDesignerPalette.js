@@ -92,7 +92,7 @@ Ext.extend(Sbi.cockpit.editor.WidgetEditorDesignerPalette, Ext.Panel, {
 		
 		var pallette = new Array();
 		
-		Sbi.cockpit.runtime.WidgetExtensionPoint.forEachWidget(function(wtype, wdescriptor) {
+		Sbi.cockpit.core.WidgetExtensionPoint.forEachWidget(function(wtype, wdescriptor) {
 			pallette.push({
 				type: wtype
 				, name: wdescriptor.name
@@ -103,7 +103,7 @@ Ext.extend(Sbi.cockpit.editor.WidgetEditorDesignerPalette, Ext.Panel, {
 		
 		//alert("Palete length: " + pallette.length);
 		
-//		var widgetDescriptors = Sbi.cockpit.runtime.WidgetExtensionPoint.getWidgetDescriptors();
+//		var widgetDescriptors = Sbi.cockpit.core.WidgetExtensionPoint.getWidgetDescriptors();
 //		for(var i = 0; i < widgetDescriptors.length; i++) {
 //			pallette.push({
 //				type: 
