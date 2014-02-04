@@ -105,8 +105,14 @@ Ext.extend(Sbi.cockpit.runtime.WidgetContainerComponent, Ext.Window, {
     // public methods
 	// -----------------------------------------------------------------------------------------------------------------
 	
+	// sostituisce il vecchio widget embeddato con quello ricevuto come argomento
 	, setWidget: function(widget) {
-		// sostituisce il vecchio widget embeddato con quello ricevuto come argomento
+		Sbi.trace("[WidgetContainerComponent.setWidget]: IN");
+		alert(this.items.length);
+		this.removeAll(true);
+		this.add(widget);
+		this.doLayout();
+		Sbi.trace("[WidgetContainerComponent.setWidget]: OUT");
 	}
 	
 	, getWidget: function() {
@@ -114,9 +120,13 @@ Ext.extend(Sbi.cockpit.runtime.WidgetContainerComponent, Ext.Window, {
 	}
 	
 	, setWidgetConfiguration: function(widgetConf) {
-		// se è un tipo di widget diverso da quello attualmente embeddato lo crea e lo sostiruisce al vecchio
+		Sbi.trace("[WidgetContainerComponent.setWidgetConfiguration]: IN");
+		// TODO se è un tipo di widget diverso da quello attualmente embeddato lo crea e lo sostiruisce al vecchio
 		// se è dello stesso tipo chiama il metodo setConfiguration sul vecchi senza ricrearne uno nuovo
-		alert(Sbi.toSource(widgetConf));
+		Sbi.trace("[WidgetContainerComponent.setWidgetConfiguration]: widhetConf is equal to [" + Sbi.toSource(widgetConf) + "]");
+		var widget = Sbi.cockpit.runtime.WidgetExtensionPoint.getWidget(widgetConf.wtype, widgetConf);
+		this.setWidget(widget);
+		Sbi.trace("[WidgetContainerComponent.setWidgetConfiguration]: OUT");
 	}
 	
 	
