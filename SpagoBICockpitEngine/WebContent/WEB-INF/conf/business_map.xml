@@ -7,7 +7,6 @@
 	
     <MAP_REST_SERVICES>
         <MAP_REST_SERVICE serviceUrl="/test" businessProcess="CreateCockpitFunctionality" />     
-     	<MAP_REST_SERVICE serviceUrl="/datasets/metafields" businessProcess="CreateCockpitFunctionality" />
     	<MAP_REST_SERVICE serviceUrl="/datasets" businessProcess="CreateCockpitFunctionality" />
     </MAP_REST_SERVICES>
     

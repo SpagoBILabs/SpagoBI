@@ -70,6 +70,11 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 	docFunctionalities= (engineInstance.getDocumentFunctionalities()==null)?new ArrayList():engineInstance.getDocumentFunctionalities();
 	
 	boolean forceIE8Compatibility = false;
+	
+	boolean fromMyAnalysis = false;
+	if(request.getParameter("MYANALYSIS") != null && request.getParameter("MYANALYSIS").equalsIgnoreCase("TRUE")){
+		fromMyAnalysis = true;
+	}
 %>
 
 <%-- ---------------------------------------------------------------------- --%>
@@ -131,7 +136,7 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 		Sbi.config.docCommunities= "<%=docCommunity%>";
 		Sbi.config.docFunctionalities= <%=docFunctionalities%>;		
 		Sbi.config.SBI_EXECUTION_ID= <%= request.getParameter("SBI_EXECUTION_ID")!=null?"'" + request.getParameter("SBI_EXECUTION_ID") +"'": "null" %>;
-		
+		Sbi.config.fromMyAnalysis = <%=fromMyAnalysis%>;
 		var cockpitPanel = null;
 		    
 		Ext.onReady(function(){
