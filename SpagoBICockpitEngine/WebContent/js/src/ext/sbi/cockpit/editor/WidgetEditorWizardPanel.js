@@ -120,7 +120,7 @@ Ext.extend(Sbi.cockpit.editor.WidgetEditorWizardPanel, Sbi.widgets.WizardPanel, 
 	}
 	
 	, initWidgetEditorPage: function() {
-		var widgetEditorPage = new Sbi.cockpit.editor.WidgetEditor({
+		var widgetEditorPage = new Sbi.cockpit.editor.widget.WidgetEditor({
 			itemId: 1
 			//dataset: this.widget.dataset || undefined
 		});
