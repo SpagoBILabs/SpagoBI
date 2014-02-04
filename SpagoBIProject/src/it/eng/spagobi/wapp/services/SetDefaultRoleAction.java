@@ -12,6 +12,9 @@ import it.eng.spagobi.commons.services.AbstractSpagoBIAction;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.services.security.bo.SpagoBIUserProfile;
+import it.eng.spagobi.services.security.exceptions.SecurityException;
+import it.eng.spagobi.services.security.service.ISecurityServiceSupplier;
+import it.eng.spagobi.services.security.service.SecurityServiceSupplierFactory;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.service.JSONAcknowledge;
@@ -108,7 +111,13 @@ public class SetDefaultRoleAction extends AbstractSpagoBIAction{
 				logger.debug("Selected role is not null, put right functionality");				
 				String[] selRoleArray = new String[1];
 				selRoleArray[0] = selRole;
-				String[] arrayFuncs = UserUtilities.readFunctionality((SpagoBIUserProfile)profile);
+				
+				String userId = (String)profile.getUserUniqueIdentifier();
+				ISecurityServiceSupplier supplier = SecurityServiceSupplierFactory
+						.createISecurityServiceSupplier();
+
+				SpagoBIUserProfile spagobiUserProfile = supplier.createUserProfile(userId);
+				String[] arrayFuncs = UserUtilities.readFunctionality(spagobiUserProfile);
 
 				//String[] arrayFuncs = dao.readUserFunctionality(selRoleArray);
 				//String[] arrayFuncs = UserUtilities.readFunctionality(selRoleArray);
