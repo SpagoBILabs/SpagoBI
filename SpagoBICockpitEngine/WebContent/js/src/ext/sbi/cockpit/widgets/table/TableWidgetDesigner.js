@@ -76,7 +76,7 @@ Sbi.cockpit.widgets.table.TableWidgetDesigner = function(config) {
 	Sbi.cockpit.widgets.table.TableWidgetDesigner.superclass.constructor.call(this, c);
 };
 
-Ext.extend(Sbi.cockpit.widgets.table.TableWidgetDesigner, Sbi.cockpit.editor.WidgetDesigner, {
+Ext.extend(Sbi.cockpit.widgets.table.TableWidgetDesigner, Sbi.cockpit.core.WidgetDesigner, {
 	tableDesigner: null
 	
 	, getDesignerState: function() {
