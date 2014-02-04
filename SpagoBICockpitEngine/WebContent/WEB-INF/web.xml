@@ -10,6 +10,15 @@
 		SpagoBI - Cockpit Engine
 	</description>
 	
+	<!--  ============================================================================ -->
+	<!--  FILTERS								 									   -->
+	<!--  ============================================================================ -->
+	
+	<filter>
+		<filter-name>EngineCheckSessionFilter</filter-name>
+		<filter-class>it.eng.spagobi.utilities.filters.EngineCheckSessionFilter</filter-class>
+	</filter>
+	
 	
 	<!--  ============================================================================ -->
 	<!--  FILTERS								 									                                   -->
