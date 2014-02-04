@@ -54,15 +54,18 @@ Sbi.cockpit.runtime.WidgetExtensionPoint = {
 	}
 	
 	, getWidget: function(wtype, wconf) {
+		Sbi.trace("[WidgetExtensionPoint.getWidget]: IN");
 		
 		var wdescriptor = Sbi.cockpit.runtime.WidgetExtensionPoint.registry[wtype];
 		
 		if(wdescriptor !== undefined) {
-			return new wdescriptor.runtimeClass(wconf); 
+			Sbi.trace("[WidgetExtensionPoint.getWidget]: runtime class for widget of type [" + wtype + "] is equal to [" + wdescriptor.runtimeClass + "]");
+			var widget = Sbi.createObjectByClassName(wdescriptor.runtimeClass, wconf);
+			return widget;
 		} else {
 			alert("Widget of type [" + wtype +"] not supprted. Supported types are [" + Sbi.cockpit.runtime.WidgetExtensionPoint.getWidgetTypes().join() + "]");
 		}
-		
+		Sbi.trace("[WidgetExtensionPoint.getWidget]: OUT");
 	}
 	
 	, getWidgetDesigner: function(wtype, wconf) {
