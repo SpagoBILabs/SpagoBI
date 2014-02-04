@@ -46,7 +46,7 @@
 	  </init-param> 
 	  <init-param>
 			<param-name>proxyCallbackUrl</param-name>
-			<param-value>https://localhost:1447/SpagoBIGeoReportEngine/proxyCallback</param-value>
+			<param-value>https://localhost:1447/SpagoBICockpitReportEngine/proxyCallback</param-value>
 	   </init-param>  
 	</filter>
 
@@ -79,18 +79,18 @@
    
    	<filter-mapping>
     	<filter-name>CAS Authentication Filter</filter-name>
-    	<url-pattern>/GeoReportEngineStartAction/*</url-pattern>
+    	<url-pattern>/CockpitEngineStartEditAction/*</url-pattern>
   	</filter-mapping> 
     	
    	<filter-mapping>
     	<filter-name>CAS Validation Filter</filter-name>
-    	<url-pattern>/GeoReportEngineStartAction/*</url-pattern>
+    	<url-pattern>/CockpitEngineStartEditAction/*</url-pattern>
   	</filter-mapping> 
    	
 
    	<filter-mapping>
     	<filter-name>CAS HttpServletRequest Wrapper Filter</filter-name>
-    	<url-pattern>/GeoReportEngineStartAction/*</url-pattern>
+    	<url-pattern>/CockpitEngineStartEditAction/*</url-pattern>
   	</filter-mapping> 
   
   	<filter-mapping>
