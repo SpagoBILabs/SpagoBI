@@ -139,6 +139,7 @@ Ext.extend(Sbi.worksheet.runtime.RuntimeLineChartPanelHighcharts, Sbi.worksheet.
 				}
 			},
 			xAxis : {
+				type:linear,
 				categories : categories,
 				title : {
 					text : this.chartConfig.category.alias
