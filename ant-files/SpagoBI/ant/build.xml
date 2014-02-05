@@ -69,7 +69,7 @@
 	<target name="create-bin.SpagoBI.war" depends="create.qbe.core.jar">
 		<ant dir="../SpagoBIProject/ant" target="create-bin.war" />
 	</target>
-	<target name="deploy.SpagoBI.war" depends="create.sbi.utils.jar,create.exo.security.jar,create.xlm.security.jar,create.ldap.security.jar,create.liferay.security.jar,create.SpagoBI.war">
+	<target name="deploy.SpagoBI.war" depends="create.sbi.utils.jar,create.sbi.dao.jar,create.exo.security.jar,create.xlm.security.jar,create.ldap.security.jar,create.liferay.security.jar,create.SpagoBI.war">
 		<delete dir="${tomcat.home}/webapps/SpagoBI" />
 		<mkdir dir="${tomcat.home}/webapps/SpagoBI" />
 		<unzip src="../../../SpagoBIProject/dist/SpagoBI.war" dest="${tomcat.home}/webapps/SpagoBI" />
@@ -99,6 +99,10 @@
 		<ant dir="../QbeCore/ant" />
 	</target>
 
+	<target name="create.sbi.dao.jar" depends="create.sbi.utils.jar,create.qbe.core.jar">
+		<ant dir="../SpagoBIDAO/ant" />
+	</target>
+	
 	<target name="create.exo.security.jar" >
 		<ant dir="../SpagoBIExoSecurityProvider/ant" />
 	</target>
@@ -313,6 +317,7 @@
 
 		<antcall target="create.sbi.utils.jar" />
 		<antcall target="create.qbe.core.jar" />
+		<antcall target="create.sbi.dao.jar" />
 		<antcall target="create.exo.security.jar" />
 		<antcall target="create.liferay.security.jar" />
 		<antcall target="create.xlm.security.jar" />
@@ -399,6 +404,7 @@
 
 		<antcall target="create.sbi.utils.jar" />
 		<antcall target="create.qbe.core.jar" />
+		<antcall target="create.sbi.dao.jar" />
 		<antcall target="create.exo.security.jar" />
 		<antcall target="create.liferay.security.jar" />
 		<antcall target="create.xlm.security.jar" />
@@ -474,6 +480,8 @@
 		<delete dir="../../../SpagoBITalendEngine/dist"/>
 		<delete dir="../../../SpagoBIProject/ant-build"/>
 		<delete dir="../../../SpagoBIProject/dist"/>
+		<delete dir="../../../SpagoBIDAO/ant-build"/>
+		<delete dir="../../../SpagoBIDAO/dist"/>
 		<delete dir="../../../SpagoBIUtils/ant-build"/>
 		<delete dir="../../../SpagoBIUtils/dist"/>
 		<delete dir="../../../SpagoBIUtilsJSON/ant-build"/>
@@ -528,6 +536,7 @@
 		<ant dir="../SpagoBIProject/ant" target="svn.checkout"/>
 		<ant dir="../SpagoBIQbeEngine/ant" target="svn.checkout"/>
 		<ant dir="../SpagoBITalendEngine/ant" target="svn.checkout"/>
+		<ant dir="../SpagoBIDAO/ant" target="svn.checkout"/>
 		<ant dir="../SpagoBIUtils/ant" target="svn.checkout"/>
 		<ant dir="../SpagoBIUtilsJSON/ant" target="svn.checkout"/>
 		<ant dir="../SpagoBIWekaEngine/ant" target="svn.checkout"/>
@@ -558,6 +567,7 @@
 		<ant dir="../SpagoBIProject/ant" target="javadoc"/>
 		<ant dir="../SpagoBIQbeEngine/ant" target="javadoc"/>
 		<ant dir="../SpagoBITalendEngine/ant" target="javadoc"/>
+		<ant dir="../SpagoBIDAO/ant" target="javadoc"/>
 		<ant dir="../SpagoBIUtils/ant" target="javadoc"/>
 		<ant dir="../SpagoBIUtilsJSON/ant" target="javadoc"/>
 		<ant dir="../SpagoBIWekaEngine/ant" target="javadoc"/>
