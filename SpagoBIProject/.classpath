@@ -9,5 +9,6 @@
 	<classpathentry kind="lib" path="/SpagoBIUtils/lib/commonj-twm.jar"/>
 	<classpathentry kind="lib" path="/SpagoBIUtils/lib/foo-commonj.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.web.container"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/SpagoBIDAO"/>
 	<classpathentry kind="output" path="web-content/WEB-INF/classes"/>
 </classpath>
