@@ -180,13 +180,20 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 			logger.debug(WORKSHEETS + ": " + worksheetJSON);
 
 
+
 			if( requestContainsAttribute(METADATA) ) {
-				metadataPropertiesJSON = getAttributeAsJSONArray( METADATA );	
+				String check = getAttributeAsString( METADATA );
+				if(check!=null && !check.equals("") && !check.equals("null") ){
+					metadataPropertiesJSON = getAttributeAsJSONArray( METADATA );		
+				}
 				logger.debug(METADATA + ": " + metadataPropertiesJSON);
 			}
 
 			if( requestContainsAttribute(PARAMETERS) ) {
-				parametersJSON = getAttributeAsJSONArray( PARAMETERS );	
+				String check = getAttributeAsString( PARAMETERS );
+				if(check!=null && !check.equals("") && !check.equals("null") ){
+					parametersJSON = getAttributeAsJSONArray( PARAMETERS );		
+				}
 				logger.debug(PARAMETERS + ": " + parametersJSON);
 			}
 
