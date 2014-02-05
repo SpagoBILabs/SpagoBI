@@ -329,11 +329,11 @@ public abstract class AbstractStatementClause implements IStatementClause {
 	
 	
 	/**
-	 * Parse the date: get the user locale and format the date in the db format
+	 * Parse the date: get the user locale and format the timestamp in the db format
 	 * @param date the localized date
 	 * @return the date in the db format
 	 */
-	protected String parseDate(String date){
+	protected String parseTimestamp(String date){
 		if (date == null || date.equals("")) {
 			return "";
 		}
@@ -392,6 +392,107 @@ public abstract class AbstractStatementClause implements IStatementClause {
 					toReturn = " TO_TIMESTAMP("+toReturn+",'DD/MM/YYYY HH24:MI:SS.FF') ";
 				}else{
 					toReturn = " TO_TIMESTAMP('"+toReturn+"','DD/MM/YYYY HH24:MI:SS.FF') ";
+				}
+			}else if( dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_SQLSERVER)){
+				if (toReturn.startsWith("'") && toReturn.endsWith("'")) {
+					toReturn = toReturn;
+				}else{
+					toReturn = "'"+toReturn+"'";
+				}
+			} else if (dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_TERADATA)) {
+				/*
+				 * Unfortunately we cannot use neither
+				 * CAST(" + dateStr + " AS DATE FORMAT 'dd/mm/yyyy') 
+				 * nor
+				 * CAST((" + dateStr + " (Date,Format 'dd/mm/yyyy')) As Date)
+				 * because Hibernate does not recognize (and validate) those SQL functions.
+				 * Therefore we must use a predefined date format (yyyy-MM-dd).
+				 */
+				try {
+					DateFormat dateFormat;
+					if ( StringUtils.isBounded(toReturn, "'") ) {
+						dateFormat = new SimpleDateFormat("'dd/MM/yyyy'");
+					} else {
+						dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+					}
+					Date myDate = dateFormat.parse(toReturn);
+					dateFormat = new SimpleDateFormat("yyyy-MM-dd");		
+					toReturn = "'" + dateFormat.format(myDate) + "'";
+				} catch (Exception e) {
+					logger.error("Error parsing the date " + toReturn, e);
+					throw new SpagoBIRuntimeException("Error parsing the date " + toReturn + ".");
+				}
+			}
+		}
+		
+		return toReturn;
+	}
+	
+
+	/**
+	 * Parse the date: get the user locale and format the date in the db format
+	 * @param date the localized date
+	 * @return the date in the db format
+	 */
+	protected String parseDate(String date){
+		if (date == null || date.equals("")) {
+			return "";
+		}
+		
+		String toReturn = date;
+		
+		it.eng.spagobi.tools.datasource.bo.IDataSource connection = (it.eng.spagobi.tools.datasource.bo.IDataSource) parentStatement
+				.getDataSource().getConfiguration()
+				.loadDataSourceProperties().get("datasource");
+		String dialect = connection.getHibDialectClass();
+		
+		if(dialect!=null){
+			
+			if( dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_MYSQL)){
+				if (toReturn.startsWith("'") && toReturn.endsWith("'")) {
+					toReturn = " STR_TO_DATE("+toReturn+",'%d/%m/%Y %H:%i:%s') ";
+				}else{
+					toReturn = " STR_TO_DATE('"+toReturn+"','%d/%m/%Y %H:%i:%s') ";
+				}
+			}else if( dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_HSQL)){
+				try {
+					DateFormat daf;
+					if ( StringUtils.isBounded(toReturn, "'") ) {
+						daf = new SimpleDateFormat("'dd/MM/yyyy HH:mm:SS'");
+					}else{
+						daf = new SimpleDateFormat("dd/MM/yyyy HH:mm:SS");
+					}
+					
+					Date myDate = daf.parse(toReturn);
+					SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");		
+					toReturn =  "'"+df.format(myDate)+"'";
+
+				} catch (Exception e) {
+					toReturn = "'" +toReturn+ "'";
+				}
+			}else if( dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_INGRES)){
+				if (toReturn.startsWith("'") && toReturn.endsWith("'")) {
+					toReturn = " STR_TO_DATE("+toReturn+",'%d/%m/%Y') ";
+				}else{
+					toReturn = " STR_TO_DATE('"+toReturn+"','%d/%m/%Y') ";
+				}
+			}else if( dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_ORACLE)){
+				if (toReturn.startsWith("'") && toReturn.endsWith("'")) {
+					toReturn = " TO_DATE("+toReturn+",'DD/MM/YYYY HH24:MI:SS') ";
+				}else{
+					toReturn = " TO_DATE('"+toReturn+"','DD/MM/YYYY HH24:MI:SS') ";
+				}
+			}else if( dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_ORACLE9i10g)){
+				if (toReturn.startsWith("'") && toReturn.endsWith("'")) {
+					toReturn = " TO_DATE("+toReturn+",'DD/MM/YYYY HH24:MI:SS') ";
+				}else{
+					toReturn = " TO_DATE('"+toReturn+"','DD/MM/YYYY HH24:MI:SS') ";
+				}
+			}else if( dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_POSTGRES)){
+				if (toReturn.startsWith("'") && toReturn.endsWith("'")) {
+					toReturn = " TO_DATE("+toReturn+",'DD/MM/YYYY HH24:MI:SS') ";
+				}else{
+					toReturn = " TO_DATE('"+toReturn+"','DD/MM/YYYY HH24:MI:SS') ";
 				}
 			}else if( dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_SQLSERVER)){
 				if (toReturn.startsWith("'") && toReturn.endsWith("'")) {

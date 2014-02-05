@@ -316,9 +316,12 @@ public abstract class AbstractStatementFilteringClause extends AbstractStatement
 				operandValueToBound = StringUtils.escapeQuotes(operandValueToBound);
 				return StringUtils.bound(operandValueToBound, "'");
 			}
-		} else if(operandType.equalsIgnoreCase("TIMESTAMP") || operandType.equalsIgnoreCase("DATE") || operandType.equalsIgnoreCase("java.sql.TIMESTAMP") || operandType.equalsIgnoreCase("java.sql.date") || operandType.equalsIgnoreCase("java.util.date")){
+		} else if( operandType.equalsIgnoreCase("DATE")  || operandType.equalsIgnoreCase("java.sql.date") || operandType.equalsIgnoreCase("java.util.date")){
 			boundedValue = parseDate(operandValueToBound);
+		} else if(operandType.equalsIgnoreCase("TIMESTAMP") || operandType.equalsIgnoreCase("java.sql.TIMESTAMP")){
+			boundedValue = parseTimestamp(operandValueToBound);
 		}
+		
 		
 		return boundedValue;
 	}
