@@ -133,6 +133,7 @@ public abstract class AbstractQbeDataSet extends AbstractDataSet {
 				CalculatedSelectField claculatedQueryField = (CalculatedSelectField)queryFiled;
 				dataStoreFieldMeta.setName(claculatedQueryField.getAlias());
 				dataStoreFieldMeta.setProperty("calculated", new Boolean(true));	
+				dataStoreFieldMeta.setProperty("calculatedExpert", new Boolean(true));	
 				// FIXME also calculated field must have uniquename for uniformity
 				dataStoreFieldMeta.setProperty("uniqueName", claculatedQueryField.getAlias());
 				DataSetVariable variable = new DataSetVariable(claculatedQueryField.getAlias(), claculatedQueryField.getType(), claculatedQueryField.getExpression());
