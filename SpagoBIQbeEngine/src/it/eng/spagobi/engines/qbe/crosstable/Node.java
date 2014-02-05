@@ -350,7 +350,15 @@ public class Node implements Cloneable, Comparable<Node>{
 		 * order always for value
 		 */
 		public int compareTo(Node arg0) {
-			return value.compareTo(arg0.getValue());
+			//check if the values are floats
+			try {
+				Float thisValue = new Float(value);
+				Float arg0Value = new Float(arg0.getValue());
+				return thisValue.compareTo(arg0Value);
+			} catch (Exception e) {
+				//if its not possible to convert the values in float, consider them as strings
+				return value.compareTo(arg0.getValue());
+			}
 		}
 		
 		public void orderedSubtree(){
