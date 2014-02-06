@@ -84,12 +84,7 @@ Ext.define('Sbi.adhocreporting.MyAnalysisView', {
 			this.addEvents('clone');		
 			this.addEvents('showMetadata');		
 
-			this.addEvents('share');	
-
-			
-			
-
-			
+			this.addEvents('share');		
 		}
 		
 		,initServices : function(){

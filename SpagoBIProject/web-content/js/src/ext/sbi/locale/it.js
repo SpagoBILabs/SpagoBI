@@ -1122,4 +1122,4 @@ Sbi.locale.ln['sbi.myanalysis.wizard.dataselection'] = "Selezione dati";
 Sbi.locale.ln['sbi.myanalysis.delete.everywhere']= 'Cancella ovunque';
 Sbi.locale.ln['sbi.myanalysis.delete.personalfolder']= 'Cancella solo nella mia cartella personale';
 Sbi.locale.ln['sbi.myanalysis.delete.cancel']= 'Annulla';
-
+Sbi.locale.ln['sbi.myanalysis.noEngines']= 'Nell\'installazione in uso non sono presenti motori con cui procedere. Contattare il sistemista.'

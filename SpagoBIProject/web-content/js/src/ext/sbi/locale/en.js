@@ -1135,4 +1135,5 @@ Sbi.locale.ln['sbi.myanalysis.wizard.dataselection'] = "Data selection";
 Sbi.locale.ln['sbi.myanalysis.delete.everywhere']= 'Delete everywhere';
 Sbi.locale.ln['sbi.myanalysis.delete.personalfolder']= 'Delete only in my personal folder';
 Sbi.locale.ln['sbi.myanalysis.delete.cancel']= 'Cancel';
-
+Sbi.locale.ln['sbi.myanalysis.noEngines']= 'In this installation are missing drivers necessary to continue. Please, contact the System Administrator.'
+	

@@ -13,7 +13,11 @@ Ext.define('Sbi.adhocreporting.MyAnalysisWizard', {
 			record: {},
 			user:'',
 			isTabbedPanel:false, //if false rendering as 'card layout (without tabs)
-			documentType: null
+			documentType: null,
+			useCockpitEngine: null,
+		    useWSEngine: null,
+		    useQbeEngine: null,
+		    useGeoEngine: null
 		}
 
 		, constructor: function(config) {
@@ -85,7 +89,6 @@ Ext.define('Sbi.adhocreporting.MyAnalysisWizard', {
 		          ,height: '100px'
 			      ,cls:'cockpitbutton'
 			      ,handler: function() {
-		           //  Ext.Msg.alert('TODO','TODO: Cockpit not yet implemented');
 			    	  thisPanel.documentType = 'Cockpit';
 			    	  thisPanel.fireEvent('openCockpitDesigner');
 			    	  thisPanel.close();
@@ -94,13 +97,25 @@ Ext.define('Sbi.adhocreporting.MyAnalysisWizard', {
 
 			});
 			
+			var buttons = [];
+			
+			if (this.useWSEngine || this.useQbeEngine)
+				buttons.push(this.worksheetSelectionButton);
+			
+			if (this.useGeoEngine)
+				buttons.push(this.geoSelectionButton);
+			
+			if (this.useCockpitEngine)
+				buttons.push(this.cockpitSelectionButton);
+			
 			this.selectionPanel = new Ext.Panel({
 			    layout: 'hbox',
 			    align: 'stretch',
 			    border: 0,
 			    padding: 10,
 			    style: 'background-color: white;padding: 40px',
-				items: [this.worksheetSelectionButton, this.geoSelectionButton, this.cockpitSelectionButton]				
+//				items: [this.worksheetSelectionButton, this.geoSelectionButton, this.cockpitSelectionButton]				
+				items: buttons
 			});
 			
 			this.parentPanel = new Ext.Panel({

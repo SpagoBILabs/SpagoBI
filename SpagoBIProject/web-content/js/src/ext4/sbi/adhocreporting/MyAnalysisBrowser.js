@@ -28,19 +28,27 @@ Ext.define('Sbi.adhocreporting.MyAnalysisBrowser', {
 		PUBLIC_USER: 'public_user',	    
 	    qbeEditDatasetUrl : '',
 	    treePanel : null,
-	    docCommunity : null	    	
+	    docCommunity : null,
+	    useCockpitEngine: null,
+	    useWSEngine: null,
+	    useQbeEngine: null,
+	    useGeoEngine: null
 	}
 
 	,
 	constructor : function(config) {
 		this.initConfig(config);
-		this.initServices();
-		this.initStore();
-		this.initToolbar();
-		this.initViewPanel();
-		this.items = [this.bannerPanel
-		              ,this.viewPanel
-		              ];
+		if (this.enginesAreAvailable()){
+			this.initServices();
+			this.initStore();		
+			this.initToolbar();
+			this.initViewPanel();
+			this.items = [this.bannerPanel
+			              ,this.viewPanel
+			              ];
+		}else{
+			alert(LN('sbi.myanalysis.noEngines'));
+		}
 		this.callParent(arguments);
 		
 		this.addEvents('order');
@@ -230,52 +238,7 @@ Ext.define('Sbi.adhocreporting.MyAnalysisBrowser', {
 				}
 
 			}
-		});
-		
-		/*
-		Ext.MessageBox.confirm(
-				LN('sbi.generic.pleaseConfirm')
-				, LN('sbi.generic.confirmDelete')
-	            , function(btn, text) {
-	                if ( btn == 'yes' ) {
-	                	var p = {};
-	                    
-	                    if(rec.id) {
-	                  	  p.docId = rec.id;
-	                  	  p.folderId = rec.functionalities[0]; 
-	                  	  p.fromMyAnalysis = true;
-	                    }
-	                    
-	                	Ext.Ajax.request({
-	                         url: this.services['deleteDocument'],
-	                         params: p,
-	                         callback : function(options , success, response){
-	                			 //alert(options.params.docId));
-	            	       	  	 if(success && response !== undefined) {   
-	            	   	      		if(response.responseText !== undefined) {
-	            	   	      			Ext.MessageBox.show({
-	            		      				title: 'Status',
-	            		      				msg: LN('sbi.browser.document.delete.success'),
-	            		      				modal: false,
-	            		      				buttons: Ext.MessageBox.OK,
-	            		      				width:300,
-	            		      				icon: Ext.MessageBox.INFO 			
-	            		      			});
-										this.store.load({reset:true});										
-	            	   	      			this.viewPanel.refresh();
-	            	   	      		} else {
-	            	   	      			Sbi.exception.ExceptionHandler.showErrorMessage(LN('sbi.generic.serviceResponseEmpty'), LN('sbi.generic.serviceError'));
-	            	   	      		}
-	            	       	  	}
-	                         },
-	                         scope: this,
-	                 		 failure: Sbi.exception.ExceptionHandler.handleFailure      
-	                   });
-	                }
-				}
-				, this
-			);
-			*/
+		});	
 	}
 	
 	, cloneDocument: function(rec){		
@@ -530,19 +493,18 @@ Ext.define('Sbi.adhocreporting.MyAnalysisBrowser', {
 	, createBannerHtml: function(communities){
     	var communityString = '';
   
-        var createButton = '';
-        if (this.user !== '' && this.user !== this.PUBLIC_USER){
+        var createButton = '';    	
+        if (this.user !== '' && this.user !== this.PUBLIC_USER ){
         	createButton += ' <a id="newDocument" href="#" onclick="javascript:Ext.getCmp(\'this\').addNewDocument(\'\')" class="btn-add"><span class="highlighted">'+LN('sbi.generic.create')+'</span> '+LN('sbi.myanalysis.analysis')+'<span class="plus">+</span></a> ';
         }
         
    
         var activeClass = '';
         var bannerHTML = ''+
-//     		'<div class="aux"> '+
      		'<div class="main-datasets-list"> '+
     		'    <div class="list-actions-container"> '+ //set into the container panel
     		'		<ul class="list-tab" id="list-tab"> ';
-        if (Sbi.settings.myanalysis.showReportFilter){	
+        if (Sbi.settings.myanalysis.showReportFilter &&  (this.useWSEngine == true || this.useQbeEngine == true)){	
         	if (Sbi.settings.myanalysis.defaultFilter == 'Report'){
         		activeClass = 'active';
         	} else {
@@ -551,7 +513,7 @@ Ext.define('Sbi.adhocreporting.MyAnalysisBrowser', {
         	bannerHTML = bannerHTML+	
         	'	    	<li class="first '+activeClass+'" id="Report"><a href="#" onclick="javascript:Ext.getCmp(\'this\').showDocument( \'Report\')">'+LN('sbi.myanalysis.report')+'</a></li> '; 
         }	
-        if (Sbi.settings.myanalysis.showCockpitFilter){
+        if (Sbi.settings.myanalysis.showCockpitFilter &&  this.useCockpitEngine == true){
         	if (Sbi.settings.myanalysis.defaultFilter == 'Cockpit'){
         		activeClass = 'active';
         	} else {
@@ -560,7 +522,7 @@ Ext.define('Sbi.adhocreporting.MyAnalysisBrowser', {
         	bannerHTML = bannerHTML+	
     		'	    	<li class="'+activeClass+'" id="Cockpit"><a href="#" onclick="javascript:Ext.getCmp(\'this\').showDocument( \'Cockpit\')">'+LN('sbi.myanalysis.cockpit')+'</a></li> ';    
         }
-         if (Sbi.settings.myanalysis.showMapFilter){
+         if (Sbi.settings.myanalysis.showMapFilter  &&  this.useGeoEngine == true){
          	if (Sbi.settings.myanalysis.defaultFilter == 'Map'){
         		activeClass = 'active';
         	} else {
@@ -611,6 +573,10 @@ Ext.define('Sbi.adhocreporting.MyAnalysisBrowser', {
 	, addNewDocument : function() {		 
 		var config =  {};
 		config.user = this.user;
+		config.useCockpitEngine = this.useCockpitEngine;
+		config.useWSEngine = this.useWSEngine;
+		config.useQbeEngine = this.useQbeEngine;
+		config.useGeoEngine = this.useGeoEngine;
 		config.isNew = true;
 	
 		this.wizardWin =  Ext.create('Sbi.adhocreporting.MyAnalysisWizard',config);	
@@ -777,5 +743,9 @@ Ext.define('Sbi.adhocreporting.MyAnalysisBrowser', {
 		this.viewPanel.refresh();
 	}	
 
+	, enginesAreAvailable: function(){
+		return (this.useCockpitEngine == true || this.useWSEngine == true || 
+				this.useQbeEngine == true || this.useGeoEngine == true)
+	}
 	
 });	
