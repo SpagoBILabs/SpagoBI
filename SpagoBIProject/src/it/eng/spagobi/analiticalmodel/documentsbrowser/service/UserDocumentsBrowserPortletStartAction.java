@@ -25,6 +25,7 @@ import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.services.common.SsoServiceInterface;
 import it.eng.spagobi.utilities.exceptions.SpagoBIException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -144,7 +145,13 @@ public class UserDocumentsBrowserPortletStartAction extends PortletLoginAction {
 				//----------------------------------------------
 				//Defining action urls
 				String executionId = ExecuteAdHocUtility.createNewExecutionId();
-				String geoereportEditActionUrl = buildGeoreportEditServiceUrl(executionId);
+				String geoereportEditActionUrl = null;
+				try{
+					geoereportEditActionUrl = buildGeoreportEditServiceUrl(executionId);
+				}catch(SpagoBIRuntimeException r){
+					//the geo engine is not found
+					logger.info("[DAJS]:: error", r);
+				}
 				JSONObject jsonUrlObj  = config.toJSON();
 				if (geoereportEditActionUrl != null){
 					jsonUrlObj.put(OUTPUT_PARAMETER_GEOREPORT_EDIT_SERVICE_URL, geoereportEditActionUrl);

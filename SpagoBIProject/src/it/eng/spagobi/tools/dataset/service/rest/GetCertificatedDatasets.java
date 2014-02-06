@@ -13,11 +13,14 @@ package it.eng.spagobi.tools.dataset.service.rest;
 
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.analiticalmodel.execution.service.ExecuteAdHocUtility;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.serializer.SerializerFactory;
+import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 import java.util.List;
@@ -90,6 +93,30 @@ public class GetCertificatedDatasets {
 
 	private JSONArray putActions(IEngUserProfile profile, JSONArray datasetsJSONArray, String typeDocWizard)
 			throws JSONException, EMFInternalError {
+		
+		Engine wsEngine = null;
+		try{
+			wsEngine = ExecuteAdHocUtility.getWorksheetEngine() ;
+		}catch(SpagoBIRuntimeException r){
+			//the ws engine is not found
+			logger.info("Engine not found. ", r);
+		}
+		
+		Engine qbeEngine = null;
+		try{
+			qbeEngine = ExecuteAdHocUtility.getQbeEngine() ;
+		}catch(SpagoBIRuntimeException r){
+			//the qbe engine is not found
+			logger.info("Engine not found. ", r);
+		}
+		
+		Engine geoEngine = null;
+		try{
+			geoEngine = ExecuteAdHocUtility.getGeoreportEngine() ;
+		}catch(SpagoBIRuntimeException r){
+			//the geo engine is not found
+			logger.info("Engine not found. ", r);
+		}
 		JSONObject detailAction = new JSONObject();
 		detailAction.put("name", "detaildataset");
 		detailAction.put("description", "Dataset detail");	
@@ -122,37 +149,39 @@ public class GetCertificatedDatasets {
 					actions.put(deleteAction);
 				}
 			}
-			if (typeDocWizard != null && typeDocWizard.equalsIgnoreCase("GEO")){
+			
+			boolean isGeoDataset = false;
+			try{
+				String meta = datasetJSON.getString("meta");
+				isGeoDataset = ExecuteAdHocUtility.hasGeoHierarchy(meta);				
+			} catch(Exception e) {
+				logger.error("Error during ceck of Geo spatial column", e);
+			}
+			if (isGeoDataset && geoEngine != null && typeDocWizard != null && 
+					typeDocWizard.equalsIgnoreCase("GEO")){
 				actions.put(georeportAction); //enable the icon to CREATE a new geo document
 			}else{
-				if (profile.getUserUniqueIdentifier().toString().equals(datasetJSON.get("owner"))){
+				if (isGeoDataset && geoEngine != null){
+//				if (isGeoDataset && geoEngine != null && 
+//						profile.getUserUniqueIdentifier().toString().equals(datasetJSON.get("owner"))){
 					actions.put(georeportAction); // Annotated view map action to release SpagoBI 4
 				}
 			}
-			if (typeDocWizard == null || typeDocWizard.equalsIgnoreCase("REPORT")){
+			if (wsEngine != null && typeDocWizard == null || typeDocWizard.equalsIgnoreCase("REPORT")){
 				actions.put(worksheetAction);			
 		
-				if (profile.getFunctionalities().contains(SpagoBIConstants.BUILD_QBE_QUERIES_FUNCTIONALITY)){
+				if (qbeEngine != null && profile.getFunctionalities().contains(SpagoBIConstants.BUILD_QBE_QUERIES_FUNCTIONALITY)){
 					actions.put(qbeAction);
 				}
 			}
-			/*
-			if (profile.getUserUniqueIdentifier().toString().equals(datasetJSON.get("owner"))){
-				actions.put(detailAction);		
-			}
-			actions.put(worksheetAction);
-			if (profile.getUserUniqueIdentifier().toString().equals(datasetJSON.get("owner"))){
-				actions.put(georeportAction); 
-			}
-			if (profile.getFunctionalities().contains(SpagoBIConstants.BUILD_QBE_QUERIES_FUNCTIONALITY)){
-				actions.put(qbeAction);
-			}
-			if (profile.getUserUniqueIdentifier().toString().equals(datasetJSON.get("owner"))){
-				actions.put(deleteAction);
-			}
-			*/
+			
 			datasetJSON.put("actions", actions);
-			datasetsJSONReturn.put(datasetJSON);
+			if (typeDocWizard != null && typeDocWizard.equalsIgnoreCase("GEO")){
+				//if is caming from myAnalysis - create Geo Document - must shows only ds geospatial --> isGeoDataset == true
+				if (geoEngine != null  && isGeoDataset)
+					datasetsJSONReturn.put(datasetJSON);
+			}else
+				datasetsJSONReturn.put(datasetJSON);
 		}
 		return datasetsJSONReturn;
 	}

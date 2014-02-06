@@ -16,6 +16,7 @@ import it.eng.spago.base.SourceBeanException;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.analiticalmodel.execution.service.ExecuteAdHocUtility;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
@@ -29,6 +30,7 @@ import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.commons.utilities.messages.IMessageBuilder;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory;
+import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.metamodel.MetaModelWrapper;
 import it.eng.spagobi.metamodel.SiblingsFileWrapper;
 import it.eng.spagobi.rest.annotations.ToValidate;
@@ -152,6 +154,30 @@ public class SelfServiceDataSetCRUD {
 
 	private JSONArray putActions(IEngUserProfile profile,
 			JSONArray datasetsJSONArray, String typeDocWizard) throws JSONException, EMFInternalError {
+		
+		Engine wsEngine = null;
+		try{
+			wsEngine = ExecuteAdHocUtility.getWorksheetEngine() ;
+		}catch(SpagoBIRuntimeException r){
+			//the ws engine is not found
+			logger.info("Engine not found. ", r);
+		}
+		
+		Engine qbeEngine = null;
+		try{
+			qbeEngine = ExecuteAdHocUtility.getQbeEngine() ;
+		}catch(SpagoBIRuntimeException r){
+			//the qbe engine is not found
+			logger.info("Engine not found. ", r);
+		}
+		
+		Engine geoEngine = null;
+		try{
+			geoEngine = ExecuteAdHocUtility.getGeoreportEngine() ;
+		}catch(SpagoBIRuntimeException r){
+			//the geo engine is not found
+			logger.info("Engine not found. ", r);
+		}
 					
 		//sets action to modify dataset					
 		JSONObject detailAction = new JSONObject();
@@ -187,19 +213,33 @@ public class SelfServiceDataSetCRUD {
 					actions.put(deleteAction);
 				}
 			}
-			if (typeDocWizard == null || typeDocWizard.equalsIgnoreCase("GEO")){
-				actions.put(georeportAction); // Annotated view map action to release SpagoBI 4
+			boolean isGeoDataset = false;
+			//all execution action are added ONLY if the relative engine (getted throught the driver) exists.
+			if (geoEngine != null && typeDocWizard == null || typeDocWizard.equalsIgnoreCase("GEO")){				
+				try{
+					String meta = datasetJSON.getString("meta");
+					isGeoDataset = ExecuteAdHocUtility.hasGeoHierarchy(meta);				
+				} catch(Exception e) {
+					logger.error("Error during ceck of Geo spatial column", e);
+				}
+				if(isGeoDataset)
+					actions.put(georeportAction); // Annotated view map action to release SpagoBI 4				
 			}
-			if (typeDocWizard == null || typeDocWizard.equalsIgnoreCase("REPORT")){
+			if (wsEngine != null && typeDocWizard == null || typeDocWizard.equalsIgnoreCase("REPORT")){
 				actions.put(worksheetAction);			
 		
-				if (profile.getFunctionalities().contains(SpagoBIConstants.BUILD_QBE_QUERIES_FUNCTIONALITY)){
+				if (qbeEngine != null && profile.getFunctionalities().contains(SpagoBIConstants.BUILD_QBE_QUERIES_FUNCTIONALITY)){
 					actions.put(qbeAction);
 				}
 			}
 			
 			datasetJSON.put("actions", actions);
-			datasetsJSONReturn.put(datasetJSON);
+			if (typeDocWizard != null && typeDocWizard.equalsIgnoreCase("GEO")){
+				//if is caming from myAnalysis - create Geo Document - must shows only ds geospatial --> isGeoDataset == true
+				if (geoEngine != null  && isGeoDataset)
+					datasetsJSONReturn.put(datasetJSON);
+			}else
+				datasetsJSONReturn.put(datasetJSON);
 		}
 		return datasetsJSONReturn;
 	}
@@ -1599,6 +1639,4 @@ public class SelfServiceDataSetCRUD {
 		return columnsJSON;
 		
 	}
-
-
 }

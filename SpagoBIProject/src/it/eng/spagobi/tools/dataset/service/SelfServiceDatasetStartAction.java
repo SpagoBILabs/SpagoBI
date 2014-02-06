@@ -109,14 +109,19 @@ public class SelfServiceDatasetStartAction extends ManageDatasets  {
 	protected String buildGeoreportEditServiceUrl(String executionId) {
 		Map<String, String> parametersMap = buildGeoreportEditServiceBaseParametersMap();
 		parametersMap.put("SBI_EXECUTION_ID" , executionId);
-		
-		Engine georeportEngine = ExecuteAdHocUtility.getGeoreportEngine();
-		// GeoReportEngineStartEditAction
-		
-		String baseEditUrl = georeportEngine.getUrl().replace("GeoReportEngineStartAction", "GeoReportEngineStartEditAction");
-		String georeportEditActionUrl = GeneralUtilities.getUrl(baseEditUrl, parametersMap);
-		LogMF.debug(logger, "Georeport edit service invocation url is equal to [{}]", georeportEditActionUrl);
-		
+		Engine georeportEngine = null;
+		String georeportEditActionUrl = null;
+		try{
+			georeportEngine = ExecuteAdHocUtility.getGeoreportEngine();
+		}catch(SpagoBIRuntimeException r){
+			//the geo engine is not found
+			logger.info("Engine not found. Error: ", r);
+		}
+		if (georeportEngine != null){
+			String baseEditUrl = georeportEngine.getUrl().replace("GeoReportEngineStartAction", "GeoReportEngineStartEditAction");
+			georeportEditActionUrl = GeneralUtilities.getUrl(baseEditUrl, parametersMap);
+			LogMF.debug(logger, "Georeport edit service invocation url is equal to [{}]", georeportEditActionUrl);
+		}
 		return georeportEditActionUrl;
 	}
 	
@@ -129,6 +134,9 @@ public class SelfServiceDatasetStartAction extends ManageDatasets  {
 	
 	// WORKSHEET
 	protected String buildWorksheetEditServiceUrl(String executionId) {
+		Engine worksheetEngine = null;
+		String worksheetEditActionUrl = null;
+		
 		Map<String, String> parametersMap = buildWorksheetEditServiceBaseParametersMap();
 		parametersMap.put("SBI_EXECUTION_ID" , executionId);
 		
@@ -145,12 +153,19 @@ public class SelfServiceDatasetStartAction extends ManageDatasets  {
 			logger.debug("There is no default datasource for writing");
 		}
 		
-		Engine worksheetEngine = ExecuteAdHocUtility.getWorksheetEngine();
-		LogMF.debug(logger, "Engine label is equal to [{0}]", worksheetEngine.getLabel());
-
-		// create the WorkSheet Edit Service's URL
-		String worksheetEditActionUrl = GeneralUtilities.getUrl(worksheetEngine.getUrl(), parametersMap);
-		LogMF.debug(logger, "Worksheet edit service invocation url is equal to [{}]", worksheetEditActionUrl);
+		try{
+			worksheetEngine = ExecuteAdHocUtility.getWorksheetEngine();			
+		}catch(SpagoBIRuntimeException r){
+			//the ws engine is not found
+			logger.info("Engine not found. Error: ", r);
+		}
+		if (worksheetEngine != null){
+			LogMF.debug(logger, "Engine label is equal to [{0}]", worksheetEngine.getLabel());
+			// create the WorkSheet Edit Service's URL
+			worksheetEditActionUrl = GeneralUtilities.getUrl(worksheetEngine.getUrl(), parametersMap);
+			LogMF.debug(logger, "Worksheet edit service invocation url is equal to [{}]", worksheetEditActionUrl);
+		}
+		
 		
 		return worksheetEditActionUrl;
 	}
@@ -164,6 +179,9 @@ public class SelfServiceDatasetStartAction extends ManageDatasets  {
 	
 	// QBE from BM
 	protected String buildQbeEditFromBMServiceUrl(String executionId) {
+		Engine qbeEngine = null;
+		String qbeEditActionUrl = null;
+		
 		Map<String, String> parametersMap = buildQbeEditFromBMServiceBaseParametersMap();
 		parametersMap.put("SBI_EXECUTION_ID" , executionId);
 		
@@ -180,18 +198,28 @@ public class SelfServiceDatasetStartAction extends ManageDatasets  {
 			logger.debug("There is no default datasource for writing");
 		}
 		
-		Engine qbeEngine = ExecuteAdHocUtility.getQbeEngine();
-		LogMF.debug(logger, "Engine label is equal to [{0}]", qbeEngine.getLabel());
-
-		// create the qbe Edit Service's URL
-		String qbeEditActionUrl = GeneralUtilities.getUrl(qbeEngine.getUrl(), parametersMap);
-		LogMF.debug(logger, "Qbe edit service invocation url is equal to [{}]", qbeEditActionUrl);
+		try{
+			qbeEngine = ExecuteAdHocUtility.getQbeEngine();
+		}catch(SpagoBIRuntimeException r){
+			//the qbe engine is not found
+			logger.info("Engine not found. Error: ", r);
+		}
 		
+		if (qbeEngine != null){
+			LogMF.debug(logger, "Engine label is equal to [{0}]", qbeEngine.getLabel());
+	
+			// create the qbe Edit Service's URL
+			qbeEditActionUrl = GeneralUtilities.getUrl(qbeEngine.getUrl(), parametersMap);
+			LogMF.debug(logger, "Qbe edit service invocation url is equal to [{}]", qbeEditActionUrl);
+		}
 		return qbeEditActionUrl;
 	}
 	
 	// QBE from dataset
 	protected String buildQbeEditFromDataSetServiceUrl(String executionId) {
+		Engine qbeEngine = null;
+		String qbeEditActionUrl = null;
+		
 		Map<String, String> parametersMap = buildQbeEditFromDataSetServiceBaseParametersMap();
 		parametersMap.put("SBI_EXECUTION_ID" , executionId);
 		
@@ -208,18 +236,28 @@ public class SelfServiceDatasetStartAction extends ManageDatasets  {
 			logger.debug("There is no default datasource for writing");
 		}
 		
-		Engine qbeEngine = ExecuteAdHocUtility.getQbeEngine();
-		LogMF.debug(logger, "Engine label is equal to [{0}]", qbeEngine.getLabel());
-
-		// create the qbe Edit Service's URL
-		String qbeEditActionUrl = GeneralUtilities.getUrl(qbeEngine.getUrl(), parametersMap);
-		LogMF.debug(logger, "Qbe edit service invocation url is equal to [{}]", qbeEditActionUrl);
+		try{
+			qbeEngine = ExecuteAdHocUtility.getQbeEngine();
+		}catch(SpagoBIRuntimeException r){
+			//the qbe engine is not found
+			logger.info("Engine not found. Error: ", r);
+		}
 		
+		if (qbeEngine != null){
+			LogMF.debug(logger, "Engine label is equal to [{0}]", qbeEngine.getLabel());
+	
+			// create the qbe Edit Service's URL
+			qbeEditActionUrl = GeneralUtilities.getUrl(qbeEngine.getUrl(), parametersMap);
+			LogMF.debug(logger, "Qbe edit service invocation url is equal to [{}]", qbeEditActionUrl);
+		}
 		return qbeEditActionUrl;
 	}
 
 	// QBE to edit a dataset
 	protected String buildQbeEditDataSetServiceUrl(String executionId) {
+		Engine qbeEngine = null;
+		String qbeEditActionUrl = null;
+		
 		Map<String, String> parametersMap = buildQbeEditDataSetServiceBaseParametersMap();
 		parametersMap.put("SBI_EXECUTION_ID" , executionId);
 		
@@ -236,13 +274,20 @@ public class SelfServiceDatasetStartAction extends ManageDatasets  {
 			logger.debug("There is no default datasource for writing");
 		}
 		
-		Engine qbeEngine = ExecuteAdHocUtility.getQbeEngine();
-		LogMF.debug(logger, "Engine label is equal to [{0}]", qbeEngine.getLabel());
-
-		// create the qbe Edit Service's URL
-		String qbeEditActionUrl = GeneralUtilities.getUrl(qbeEngine.getUrl(), parametersMap);
-		LogMF.debug(logger, "Qbe edit service invocation url is equal to [{}]", qbeEditActionUrl);
+		try{
+			qbeEngine = ExecuteAdHocUtility.getQbeEngine();
+		}catch(SpagoBIRuntimeException r){
+			//the qbe engine is not found
+			logger.info("Engine not found. Error: ", r);
+		}
 		
+		if (qbeEngine != null){
+			LogMF.debug(logger, "Engine label is equal to [{0}]", qbeEngine.getLabel());
+	
+			// create the qbe Edit Service's URL
+			qbeEditActionUrl = GeneralUtilities.getUrl(qbeEngine.getUrl(), parametersMap);
+			LogMF.debug(logger, "Qbe edit service invocation url is equal to [{}]", qbeEditActionUrl);
+		}
 		return qbeEditActionUrl;
 	}
 	
@@ -286,15 +331,24 @@ public class SelfServiceDatasetStartAction extends ManageDatasets  {
 	
 	// COCKPIT
 	protected String buildCockpitEditServiceUrl(String executionId) {
+		Engine cockpitEngine = null;
+		String cockpitEditActionUrl  = null;
+		
 		Map<String, String> parametersMap = buildCockpitEditServiceBaseParametersMap();
 		parametersMap.put("SBI_EXECUTION_ID" , executionId);
 		
-		Engine cockpitEngine = ExecuteAdHocUtility.getCockpitEngine();
-		// GeoReportEngineStartEditAction
+		try{
+			cockpitEngine = ExecuteAdHocUtility.getCockpitEngine();
+		}catch(SpagoBIRuntimeException r){
+			//the cockpit engine is not found
+			logger.info("Engine not found. Error: ", r);
+		}
 		
-		String baseEditUrl = cockpitEngine.getUrl().replace("CockpitEngineStartAction", "CockpitEngineStartEditAction");
-		String cockpitEditActionUrl = GeneralUtilities.getUrl(baseEditUrl, parametersMap);
-		LogMF.debug(logger, "Cockpit edit service invocation url is equal to [{}]", cockpitEditActionUrl);
+		if (cockpitEngine != null){
+			String baseEditUrl = cockpitEngine.getUrl().replace("CockpitEngineStartAction", "CockpitEngineStartEditAction");
+			cockpitEditActionUrl = GeneralUtilities.getUrl(baseEditUrl, parametersMap);
+			LogMF.debug(logger, "Cockpit edit service invocation url is equal to [{}]", cockpitEditActionUrl);
+		}
 		
 		return cockpitEditActionUrl;
 	}	
