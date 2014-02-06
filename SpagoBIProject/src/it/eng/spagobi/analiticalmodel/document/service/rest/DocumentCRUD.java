@@ -11,6 +11,7 @@ import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.AnalyticalModelDocumentManagementAPI;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
+import it.eng.spagobi.analiticalmodel.execution.service.ExecuteAdHocUtility;
 import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
 import it.eng.spagobi.analiticalmodel.functionalitytree.dao.ILowFunctionalityDAO;
 import it.eng.spagobi.commons.SingletonConfig;
@@ -25,12 +26,12 @@ import it.eng.spagobi.commons.utilities.messages.IMessageBuilder;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory;
 import it.eng.spagobi.container.ObjectUtils;
+import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.services.exceptions.ExceptionUtilities;
 import it.eng.spagobi.services.security.bo.SpagoBIUserProfile;
 import it.eng.spagobi.services.security.service.ISecurityServiceSupplier;
 import it.eng.spagobi.services.security.service.SecurityServiceSupplierFactory;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.json.JSONUtils;
 
 import java.security.Security;
@@ -220,6 +221,30 @@ public class DocumentCRUD {
 
 			List myObjects = new ArrayList();
 			if (personalFolder != null){
+				Engine geoEngine = null;
+				Engine wsEngine = null;
+				Engine cockpitEngine = null;
+				
+				try{
+					geoEngine = ExecuteAdHocUtility.getGeoreportEngine();
+				}catch(SpagoBIRuntimeException r){
+					//the geo engine is not found
+					logger.info("Engine not found. ", r);
+				}
+				try{
+					wsEngine = ExecuteAdHocUtility.getWorksheetEngine() ;
+				}catch(SpagoBIRuntimeException r){
+					//the ws engine is not found
+					logger.info("Engine not found. ", r);
+				}
+				
+				try{
+					cockpitEngine = ExecuteAdHocUtility.getCockpitEngine() ;
+				}catch(SpagoBIRuntimeException r){
+					//the cockpit engine is not found
+					logger.info("Engine not found. ", r);
+				}
+				
 				//return all documents inside the personal folder
 				if ((docType == null) || (docType.equalsIgnoreCase("ALL"))){
 					List filteredMyObjects = new ArrayList();
@@ -228,30 +253,29 @@ public class DocumentCRUD {
 					for (Iterator it = myObjects.iterator(); it.hasNext(); ){
 						BIObject biObject = (BIObject)it.next();
 						String biObjectType = biObject.getBiObjectTypeCode();
-						if ((biObjectType.equalsIgnoreCase("WORKSHEET")) ||
-						   (biObjectType.equalsIgnoreCase("MAP")) ||
-							(biObjectType.equalsIgnoreCase("DOCUMENT_COMPOSITE") && 
-								biObject.getEngine().getDriverName().contains("CockpitDriver"))){
+						if ((wsEngine != null && biObject.getEngine().getId().equals(wsEngine.getId())) ||
+						    (geoEngine != null && biObject.getEngine().getId().equals(geoEngine.getId())) ||
+							(biObject.getEngine().getId().equals(cockpitEngine.getId()))){
 							filteredMyObjects.add(biObject);
 						}
 					}
 					myObjects = filteredMyObjects;
 					
-				} else if (docType.equalsIgnoreCase("Report")){
+				} else if (docType.equalsIgnoreCase("Report") && wsEngine != null){
 					//return only Worksheets inside the personal folder
 					myObjects = DAOFactory.getBIObjectDAO().loadBIObjects("WORKSHEET", "REL", personalFolder.getPath());					
 					
-				} else if (docType.equalsIgnoreCase("Map")){
+				} else if (docType.equalsIgnoreCase("Map") && geoEngine != null){
 					//return only Geo Map (GIS) documents inside the personal folder
 					myObjects = DAOFactory.getBIObjectDAO().loadBIObjects("MAP", "REL", personalFolder.getPath());					
 
-				} else if (docType.equalsIgnoreCase("Cockpit")){
+				} else if (docType.equalsIgnoreCase("Cockpit") && cockpitEngine != null){
 					//return only Cockpits inside the personal folder
 					List filteredMyObjects = new ArrayList();
 					myObjects = DAOFactory.getBIObjectDAO().loadBIObjects("DOCUMENT_COMPOSITE", "REL", personalFolder.getPath());
 					for (Iterator it = myObjects.iterator(); it.hasNext(); ){
 						BIObject biObject = (BIObject)it.next();
-						if (biObject.getEngine().getDriverName().contains("CockpitDriver")){
+						if (biObject.getEngine().getId().equals(cockpitEngine.getId())){
 							filteredMyObjects.add(biObject);
 						}
 					}
@@ -264,29 +288,7 @@ public class DocumentCRUD {
 				JSONArray documentsJSON = (JSONArray)SerializerFactory.getSerializer("application/json").serialize( myObjects ,locale);
 				DocumentsJSONDecorator.decorateDocuments(documentsJSON, profile, personalFolder);
 				JSONObject documentsResponseJSON = createJSONResponseDocuments(documentsJSON);
-
-
-				boolean recoverBiObjects = false;
-				// for massive export must also get the objects to check if there are worksheets
-				/*
-				Collection userFunctionalities = profile.getFunctionalities();
-				if (userFunctionalities.contains("DoMassiveExportFunctionality")) {
-					recoverBiObjects = true;
-				}
-
-				List functionalities = DAOFactory.getLowFunctionalityDAO().loadUserFunctionalities(Integer.valueOf(personalFolder.getId()), recoverBiObjects, profile);
-				*/
-				//JSONArray foldersJSON = (JSONArray)SerializerFactory.getSerializer("application/json").serialize( functionalities,locale );	
-				//JSONObject foldersResponseJSON =  createJSONResponseFolders(foldersJSON);
-
-				//JSONObject canAddResponseJSON =null;
-
-				//JSONObject result = createJSONResponse(foldersResponseJSON, documentsResponseJSON, canAddResponseJSON) ;
-
-				//JSONObject JSONReturn = new JSONObject();
-				//JSONReturn.put("root", result);
-
-
+				
 				return documentsResponseJSON.toString();
 			}
 
@@ -296,10 +298,7 @@ public class DocumentCRUD {
 			logger.error("Serializing Error in myAnalysisDocsList Service: "+e);
 		} catch (JSONException e) {
 			logger.error("JSONException Error in myAnalysisDocsList Service: "+e);
-		} /*catch (EMFInternalError e) {
-			logger.error("Error in myAnalysisDocsList Service: "+e);
-		}*/
-
+		}
 
 		logger.debug("OUT");
 		return "{}";
