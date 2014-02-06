@@ -139,6 +139,54 @@ public class EngineDAOHibImpl extends AbstractHibernateDAO implements IEngineDAO
 
 
 	/**
+	 * Load engine by driver name.
+	 * 
+	 * @param engineLabel the driver name
+	 * 
+	 * @return the engine
+	 * 
+	 * @throws EMFUserError the EMF user error
+	 * 
+	 * @see it.eng.spagobi.engines.config.dao.IEngineDAO#loadEngineByID(java.lang.Integer)
+	 */
+
+
+	public Engine loadEngineByDriver(String driver) throws EMFUserError {
+		logger.debug("IN");
+		Engine engine = null;
+		Session aSession = null;
+		Transaction tx = null;
+		try {
+			logger.debug("engine driver is "+driver);
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+			Criterion labelCriterrion = Expression.eq("driverNm",
+					driver);
+			Criteria criteria = aSession.createCriteria(SbiEngines.class);
+			criteria.add(labelCriterrion);
+			SbiEngines hibEngine = (SbiEngines) criteria.uniqueResult();
+			if (hibEngine == null) {
+				logger.error("A null engine has been returned for label"+driver);
+				return null;
+			}
+			engine = toEngine(hibEngine);
+			tx.commit();
+		} catch (HibernateException he) {
+			logger.error("Error in retrieving engine by label "+driver, he);
+
+			if (tx != null)
+				tx.rollback();
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+		} finally {
+			if (aSession!=null){
+				if (aSession.isOpen()) aSession.close();
+			}
+		}
+		logger.debug("OUT");
+		return engine;
+	}
+
+	/**
 	 * Load all engines.
 	 * 
 	 * @return the list
