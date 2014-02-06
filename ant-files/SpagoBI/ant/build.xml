@@ -310,6 +310,17 @@
 		<mkdir dir="${tomcat.home}/webapps/SpagoBINetworkEngine" />
 		<unzip src="../../../SpagoBINetworkEngine/dist/SpagoBINetworkEngine.war" dest="${tomcat.home}/webapps/SpagoBINetworkEngine" />
 	</target>
+	
+	<!-- WHATIF ENGINE -->
+	<target name="create.SpagoBIWhatIfEngine.war" depends="create.sbi.utils.jar">
+		<ant dir="../SpagoBIWhatIfEngine/ant" />
+	</target>
+	<target name="deploy.SpagoBIWhatIfEngine.war" depends="create.sbi.utils.jar,create.SpagoBIWhatIfEngine.war">
+		<delete dir="${tomcat.home}/work/Catalina/localhost/SpagoBIWhatIfEngine" />
+		<delete dir="${tomcat.home}/webapps/SpagoBIWhatIfEngine" />
+		<mkdir dir="${tomcat.home}/webapps/SpagoBIWhatIfEngine" />
+		<unzip src="../../../SpagoBIWhatIfEngine/dist/SpagoBIWhatIfEngine.war" dest="${tomcat.home}/webapps/SpagoBIWhatIfEngine" />
+	</target>
 
 
 	<!--   TO BE EXECUTED FIRST FOR ALL IN ONE DEMO WARS CREATION  -->
@@ -338,7 +349,6 @@
 		<antcall target="create.SpagoBI.war" />
 		<copy file="../../../SpagoBIProject/dist/SpagoBI.war" 
         todir="../../../dist" overwrite="true" />
-
 
 
 		<antcall target="create.SpagoBIBirtReportEngine.war" />
@@ -395,6 +405,10 @@
 		<antcall target="create.SpagoBINetworkEngine.war" />
 		<copy file="../../../SpagoBINetworkEngine/dist/SpagoBINetworkEngine.war" 
   	        todir="../../../dist" overwrite="true" />
+		
+		<antcall target="create.SpagoBIWhatIfEngine.war" />
+		<copy file="../../../SpagoBIChartEngine/dist/SpagoBIWhatIfEngine.war" 
+        todir="../../../dist" overwrite="true" />
 
 	</target>
 
@@ -437,6 +451,7 @@
 		<antcall target="deploy.SpagoBIChartEngine.war" />
 		<antcall target="deploy.SpagoBIMobileEngine.war" />
 		<antcall target="deploy.SpagoBINetworkEngine.war" />
+		<antcall target="deploy.SpagoBIWhatIfEngine.war" />
 	</target>
 
 	<target name="clean-bin.all" >
@@ -502,6 +517,8 @@
 		<delete dir="../../../SpagoBIMobileEngine/dist"/>
 		<delete dir="../../../SpagoBINetworkEngine/ant-build"/>
 		<delete dir="../../../SpagoBINetworkEngine/dist"/>
+		<delete dir="../../../SpagoBIWhatIfEngine/ant-build"/>
+		<delete dir="../../../SpagoBIWhatIfEngine/dist"/>
 	</target>
 
 	<target name="copy.ss" >
@@ -552,6 +569,7 @@
 		<ant dir="../LibraryRepo" target="svn.checkout"/>
 		<ant dir="../SpagoBIMobileEngine/ant" target="svn.checkout"/>
 		<ant dir="../SpagoBINetworkEngine/ant" target="svn.checkout"/>
+		<ant dir="../SpagoBIWhatIfEngine/ant" target="svn.checkout"/>
 	</target>
 
 	<target name="javadoc" >
@@ -581,6 +599,7 @@
 		<ant dir="../SpagoBIChartEngine/ant" target="javadoc"/>
 		<ant dir="../SpagoBIMobileEngine/ant" target="javadoc"/>
 		<ant dir="../SpagoBINetworkEngine/ant" target="javadoc"/>
+		<ant dir="../SpagoBIWhatIfEngine/ant" target="javadoc"/>
 	</target>
 
 	<target name="package.all" >
@@ -603,6 +622,7 @@
 		<ant dir="../SpagoBIChartEngine/ant" target="package"/>
 		<ant dir="../SpagoBIMobileEngine/ant" target="package"/>
 		<ant dir="../SpagoBINetworkEngine/ant" target="package"/>
+		<ant dir="../SpagoBIWhatIfEngine/ant" target="package"/>
 	</target>
 
 	<target name="package.all.src" depends="clean.all">
