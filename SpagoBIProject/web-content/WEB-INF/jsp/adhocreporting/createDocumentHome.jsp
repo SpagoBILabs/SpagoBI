@@ -37,11 +37,11 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
             , user: Sbi.user.userUniqueIdentifier
             , georeportEngineBaseUrl : '<%= StringEscapeUtils.escapeJavaScript(georeportEditActionUrl) %>'
             , cockpitEngineBaseUrl: '<%= StringEscapeUtils.escapeJavaScript(cockpitEditActionUrl) %>'
-            //, datasetsServicePath: 'certificateddatasets'
             , myAnalysisServicePath: 'documents/myAnalysisDocsList'
             , fromMyAnalysis: '<%=fromMyAnalysis%>'
             , contextName: '<%= StringEscapeUtils.escapeJavaScript(contextName) %>'
 		}); //by alias
+		
 		var datasetListViewport = Ext.create('Ext.container.Viewport', {
 			layout:'fit',
 	     	items: [selfService]	     	

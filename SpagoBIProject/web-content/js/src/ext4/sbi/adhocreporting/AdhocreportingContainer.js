@@ -96,7 +96,7 @@ Ext.define('Sbi.adhocreporting.AdhocreportingContainer', {
 	}
 	
 	,createCockpit: function(){
-		var cockpitUrl = this.cockpitEngineBaseUrl;
+		var cockpitUrl = this.cockpitEngineBaseUrl + '&MYANALYSIS=TRUE';
 		Sbi.debug('cockpitUrl: ' + cockpitUrl);
 		this.documentexecution.load(cockpitUrl);
 		this.getLayout().setActiveItem(1);	
@@ -107,7 +107,7 @@ Ext.define('Sbi.adhocreporting.AdhocreportingContainer', {
 		if(docType=='COCKPIT'){
 			//TODO: to be defined
 			Sbi.debug("Cockpit document execution");
-			alert('TODO: Cockpit execution');
+			this.executeCockpit(inputType, record);
 		} else if (docType=='WORKSHEET'){
 			Sbi.debug("Worksheet document execution");
 			this.executeWorksheet(inputType, record);
@@ -122,6 +122,11 @@ Ext.define('Sbi.adhocreporting.AdhocreportingContainer', {
 	}
 	
 	
+	, executeCockpit: function(inputType, record){
+		if(inputType == "DOCUMENT"){
+			this.executeDocumentAction(inputType, record);			
+		}
+	}
 	
 	, executeWorksheet: function(inputType, record){
 		if(inputType == "DOCUMENT"){

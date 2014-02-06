@@ -28,12 +28,14 @@ Ext.define('Sbi.adhocreporting.AdhocreportingTabsPanel', {
 		
 		this.layout = 'fit';
 
-		
 		var myAnalysisBrowserConf = {
 				 user: Sbi.user.userId
 				, myAnalysisServicePath: config.myAnalysisServicePath
 				, id: 'this'
-
+				, useCockpitEngine: (config.adhocreportingContainer.cockpitEngineBaseUrl != 'null')?true:false
+				, useWSEngine: (config.adhocreportingContainer.worksheetEngineBaseUrl != 'null')?true:false
+				, useQbeEngine: (config.adhocreportingContainer.qbeFromDataSetBaseUrl != 'null')?true:false
+				, useGeoEngine: (config.adhocreportingContainer.georeportEngineBaseUrl != 'null')?true:false
 		};
 		
 		this.myAnalysisBrowser = Ext.create('Sbi.adhocreporting.MyAnalysisBrowser',myAnalysisBrowserConf);
