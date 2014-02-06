@@ -504,7 +504,7 @@ Ext.define('Sbi.adhocreporting.MyAnalysisBrowser', {
      		'<div class="main-datasets-list"> '+
     		'    <div class="list-actions-container"> '+ //set into the container panel
     		'		<ul class="list-tab" id="list-tab"> ';
-        if (Sbi.settings.myanalysis.showReportFilter &&  (this.useWSEngine == true || this.useQbeEngine == true)){	
+        if (Sbi.settings.myanalysis.showReportFilter &&  (this.useWSEngine == true && this.useQbeEngine == true)){	
         	if (Sbi.settings.myanalysis.defaultFilter == 'Report'){
         		activeClass = 'active';
         	} else {
@@ -745,7 +745,7 @@ Ext.define('Sbi.adhocreporting.MyAnalysisBrowser', {
 
 	, enginesAreAvailable: function(){
 		return (this.useCockpitEngine == true || this.useWSEngine == true || 
-				this.useQbeEngine == true || this.useGeoEngine == true)
+				 this.useGeoEngine == true)
 	}
 	
 });	
