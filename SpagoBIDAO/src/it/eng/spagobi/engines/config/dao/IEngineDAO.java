@@ -52,6 +52,18 @@ public interface IEngineDAO extends ISpagoBIDao{
 	 */
 	public Engine loadEngineByLabel(String engineLabel) throws EMFUserError;
 	
+	/**
+	 * Loads all detail information for an engine identified by its <code>driver</code>. All these information,
+	 * achived by a query to the DB, are stored into an <code>engine</code> object, which is
+	 * returned.
+	 * 
+	 * @param driver The name for the engine to load
+	 * 
+	 * @return An <code>engine</code> object containing all loaded information
+	 * 
+	 * @throws EMFUserError If an Exception occurred
+	 */
+	public Engine loadEngineByDriver(String driver) throws EMFUserError;
 	
 	
 	/**
