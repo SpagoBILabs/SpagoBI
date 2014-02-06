@@ -99,7 +99,7 @@ Ext.define('Sbi.adhocreporting.MyAnalysisWizard', {
 			
 			var buttons = [];
 			
-			if (this.useWSEngine || this.useQbeEngine)
+			if (this.useWSEngine && this.useQbeEngine)
 				buttons.push(this.worksheetSelectionButton);
 			
 			if (this.useGeoEngine)
