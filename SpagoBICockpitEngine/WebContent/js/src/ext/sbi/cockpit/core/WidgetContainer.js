@@ -198,39 +198,17 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.Widget, {
     	if(this.widgetEditor === null) {
     		
     		Sbi.trace("[WidgetContainer.showWidgetEditor]: instatiating the editor");
-    		
-    		var widgetEditorMainPanel = new Sbi.cockpit.editor.WidgetEditorWizardPanel({
+
+    		this.widgetEditor = new Sbi.cockpit.editor.WidgetEditorWizard({
     			widgetManager: this.getWidgetManager() // used by datasetBrowser page to filter on already used datasets
     		});
-    		widgetEditorMainPanel.on('cancel', this.onCloseWidgetEditor, this);
-    		widgetEditorMainPanel.on('confirm', function(widgetEditorMainPanel, editorState) {
-    			var component = widgetEditorMainPanel.getTargetComponent();
-    			component.setWidgetConfiguration(editorState);
-    			this.widgetEditor.hide();
-    		}, this);
-    	
-	    	this.widgetEditor = new Ext.Window({
-	    		id: 'wizard',
-	            layout:'fit',
-	            width: 1000, //800,
-	            height: 510,
-	            closeAction:'hide',
-	            plain: true,
-	            modal: true,
-	            //title: "Widget [" + widget.id + "] editor",
-	            title: "Widget editor",
-	    		items: widgetEditorMainPanel,
-	    		mainPanel: widgetEditorMainPanel
-	        });
-	    	
+    		
 	    	Sbi.trace("[WidgetContainer.showWidgetEditor]: editor succesfully instantiated");
     	}
     	
     	
     	//this.widgetEditor.setTitle("Widget [" + widget.id + "] editor");
-    	this.widgetEditor.mainPanel.setTargetComponent(component);
-    	
- 
+    	this.widgetEditor.setWizardTargetComponent(component);
     	this.widgetEditor.show();
     	
     	Sbi.trace("[WidgetContainer.showWidgetEditor]: OUT");
@@ -315,10 +293,10 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.Widget, {
     	//Ext.Msg.alert('Message', 'The CONFIG tool was clicked.');
     } 
     
-    , onCloseWidgetEditor: function(){
-    	this.widgetEditor.resetState();
-    	this.widgetEditor.hide();
-    }
+//    , onCloseWidgetEditor: function(){
+//    	this.widgetEditor.resetState();
+//    	this.widgetEditor.hide();
+//    }
  
     , defineTemplate: function(wEditor){
     	Sbi.trace("[WidgetContainer.defineTemplate]: IN");

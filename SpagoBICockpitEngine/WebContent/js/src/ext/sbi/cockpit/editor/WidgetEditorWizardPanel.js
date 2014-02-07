@@ -40,6 +40,10 @@ Sbi.cockpit.editor.WidgetEditorWizardPanel = function(config) {
  */
 Ext.extend(Sbi.cockpit.editor.WidgetEditorWizardPanel, Sbi.widgets.WizardPanel, {
 	
+	// -----------------------------------------------------------------------------------------------------------------
+    // public methods
+	// -----------------------------------------------------------------------------------------------------------------
+	
 	isPageValid: function(page) {
 		Sbi.trace("[WidgetEditorWizardPanel.isPageValid]: IN");
 		
@@ -73,13 +77,6 @@ Ext.extend(Sbi.cockpit.editor.WidgetEditorWizardPanel, Sbi.widgets.WizardPanel, 
 		return true;
 	}
 	
-	, getTargetComponent: function(){
-		return this.targetComponent;
-	}
-	
-	, setTargetComponent: function(component){
-		this.targetComponent = component;
-	}
 
 	// -----------------------------------------------------------------------------------------------------------------
     // init methods
@@ -104,17 +101,28 @@ Ext.extend(Sbi.cockpit.editor.WidgetEditorWizardPanel, Sbi.widgets.WizardPanel, 
 	}
 	
 	, initDatasetBrowserPage: function() {
-		var datasetsBrowserPage = new Sbi.widgets.DatasetsBrowserPanel({
-			widgetManager: this.widgetManager
-			//, widget: this.widget
-			, itemId: 0
-		}); 
-		datasetsBrowserPage.on('click', this.onClick, this);
-		datasetsBrowserPage.on('selectDataSet',  function(l){
-			this.onSelect(l);
-			datasetsBrowserPage.viewPanel.refresh();
-		}
-		, this);	
+		
+//		var datasetsBrowserPage = new Sbi.widgets.DatasetsBrowserPanel({
+//			widgetManager: this.widgetManager
+//			//, widget: this.widget
+//			, itemId: 0
+//		}); 
+//		datasetsBrowserPage.on('click', this.onClick, this);
+//		datasetsBrowserPage.on('selectDataSet',  function(l){
+//			this.onSelect(l);
+//			datasetsBrowserPage.viewPanel.refresh();
+//		}
+//		, this);	
+		
+		Sbi.trace("[WidgetEditorWizardPanel.initDatasetBrowserPage]: IN");
+		
+		var datasetsBrowserPage = new Sbi.cockpit.editor.dataset.DatasetBrowserPage({
+			itemId: 0
+			, widgetManager: this.widgetManager
+		});
+		//var datasetsBrowserPage = new Ext.Panel({itemId: 0, html: "DatasetsBrowser"});
+		
+		Sbi.trace("[WidgetEditorWizardPanel.initDatasetBrowserPage]: OUT");
 		
 		return datasetsBrowserPage;
 	}
@@ -124,22 +132,14 @@ Ext.extend(Sbi.cockpit.editor.WidgetEditorWizardPanel, Sbi.widgets.WizardPanel, 
 			itemId: 1
 			//dataset: this.widget.dataset || undefined
 		});
+	
 		return widgetEditorPage;
 	}
 	
-	
+
 	
 	// -----------------------------------------------------------------------------------------------------------------
     // utility methods
 	// -----------------------------------------------------------------------------------------------------------------
-	, onSelect: function(c){	
-		//removes old selection from the storeManager (if exists)
-		if (c.label != c.oldLabel && this.widgetManager.getStoreByLabel(c.oldLabel) != null)
-			this.widgetManager.removeStore(c.oldLabel);
-		//adds the dataset to the storeManager (throught the WidgetManager)
-		//this.widget.dataset = c.label;
-		var storeConfig = {};
-		storeConfig.dsLabel = c.label; //storeConfig.dsLabel = this.widget.dataset;	
-	    this.widgetManager.addStore(storeConfig);		
-	}
+
 });

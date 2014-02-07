@@ -44,7 +44,9 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='./js/src/ext/sbi/cockpit/editor/widget/WidgetEditorDesignerPalette.js'/></script>
 <script type="text/javascript" src='./js/src/ext/sbi/cockpit/editor/widget/WidgetEditorFieldPalette.js'/></script>
 
+<script type="text/javascript" src='./js/src/ext/sbi/cockpit/editor/dataset/DatasetBrowserPage.js'/></script>
 <script type="text/javascript" src='./js/src/ext/sbi/cockpit/editor/WidgetEditorWizardPanel.js'/></script>
+<script type="text/javascript" src='./js/src/ext/sbi/cockpit/editor/WidgetEditorWizard.js'/></script>
 
 <script type="text/javascript" src='./js/src/ext/sbi/cockpit/MainPanel.js'/></script>
 

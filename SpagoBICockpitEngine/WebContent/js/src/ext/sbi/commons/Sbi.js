@@ -47,6 +47,12 @@ Sbi.getObjectSettings = function(objectQilifiedName, defaultSettings) {
 		}
 	} 
 	
+	if(settings) {
+		Sbi.trace("[Sbi.getObjectSettings]: for object [" + objectQilifiedName + "] the following settings [" + Sbi.toSource(settings) + "] has been found");
+	} else {
+		Sbi.trace("[Sbi.getObjectSettings]: No settings has been found for object [" + objectQilifiedName + "]");
+	}
+	
 	if(!settings && defaultSettings) {
 		settings = defaultSettings;
 	}
@@ -58,7 +64,7 @@ Sbi.getObjectSettings = function(objectQilifiedName, defaultSettings) {
 
 Sbi.getObjectByName  = function(objectName) {
 	
-	Sbi.trace("[Sbi.getObjectByName]: IN");
+	//Sbi.trace("[Sbi.getObjectByName]: IN");
 	
 	if( Sbi.isNotValorized(objectName)) {
 		Sbi.showErrorMessage("Input parameter [objectName] must be valorized");
@@ -70,7 +76,7 @@ Sbi.getObjectByName  = function(objectName) {
 		return null;
 	}
 	
-	Sbi.trace("[Sbi.getObjectByName]: Input parameter [objectName] is equal to [" + objectName + "]");
+	//Sbi.trace("[Sbi.getObjectByName]: Input parameter [objectName] is equal to [" + objectName + "]");
 	
 	var scope = window; 
 	var scopeStr = 'window'; // used by debug logs
@@ -82,7 +88,7 @@ Sbi.getObjectByName  = function(objectName) {
 		for(var i = 0; i< namespace.length; i++) {
 			var o = scope[namespace[i]];
 			if (typeof o === "object") {
-				Sbi.trace("Object [" + namespace[i] + "] found in scope [" + scopeStr + "]");
+				//Sbi.trace("[Sbi.getObjectByName]: Object [" + namespace[i] + "] found in scope [" + scopeStr + "]");
 				scope = o;
 				if(scopeStr === 'window') {
 					scopeStr = namespace[i];
@@ -96,7 +102,7 @@ Sbi.getObjectByName  = function(objectName) {
 		}
 	} 
 	
-	Sbi.trace("[Sbi.getObjectByName]: OUT");
+	//Sbi.trace("[Sbi.getObjectByName]: OUT");
 	
 	return scope[objectName];
 };
@@ -129,56 +135,3 @@ Sbi.createObjectByClassName = function(fnName, fnArgs) {
 	
 	return output;
 };
-
-//Sbi.createObjectByClassName = function(fnName, fnArgs) {
-//	
-//	var output;
-//	
-//	Sbi.trace("[Sbi.execFunctionByName]: IN");
-//	
-//	Sbi.trace("[Sbi.execFunctionByName]: function name is equal to [" + fnName + "]");
-//	if( Sbi.isNotValorized(fnName)) {
-//		Sbi.showErrorMessage("Input parameter [fnName] must be valorized");
-//		return undefined;
-//	}
-//	
-//	var namespaceStr = 'window';
-//	var namespace = fnName.split('.');
-//	if(namespace.length > 1) {
-//		fnName = namespace.pop();
-//		
-//		var scope = window; 
-//		for(var i = 0; i< namespace.length; i++) {
-//			
-//			var o = scope[namespace[i]];
-//			Sbi.trace(typeof o);
-//			if (typeof o === "object") {
-//				Sbi.trace("Object [" + namespace[i] + "] found in scope [" + namespaceStr + "]");
-//				scope = o;
-//				if(namespaceStr === 'window') {
-//					namespaceStr = namespace[i];
-//				} else {
-//					namespaceStr += '.' + namespace[i];
-//				}
-//			} else {
-//				Sbi.showErrorMessage("Impossible to find an object named [" + namespace[i] + "] in scope [" + namespaceStr + "]");
-//			}
-//		}
-//	} 
-//	
-//	// find object
-//	var fn = scope[fnName];
-//	 
-//	// is object a function?
-//	if (typeof fn === "function") {
-//		Sbi.trace("Function [" + fnName + "] found in scope [" + namespaceStr + "]");
-//		output =  new fn(fnArgs);
-//		Sbi.trace("Function [" + fnName + "] sucesfully called in scope [" + namespaceStr + "]");
-//	} else {
-//		Sbi.showErrorMessage("Impossible to find a function named [" + fnName + "] in scope [" + namespaceStr + "]");
-//	}
-//	
-//	Sbi.trace("[Sbi.execFunctionByName]: OUT");
-//	
-//	return output;
-//};
