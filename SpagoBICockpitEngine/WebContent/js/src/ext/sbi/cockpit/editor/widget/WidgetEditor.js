@@ -348,11 +348,8 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditor, Ext.Panel, {
 	, updateValues: function(values) {
 		Sbi.trace("[WidgetEditor.updateValues]: IN");
 		
-		Sbi.trace("[WidgetEditor.updateValues]: Input parameter values is equal to [" + values + "]");
-		
-		if (this.controlPanel.updateValues) {
-			this.controlPanel.updateValues(values);
-		}
+		Sbi.trace("[WidgetEditor.updateValues]: Input parameter values is equal to [" + Sbi.toSource(values) + "]");
+		this.controlPanel.updateValues(values);
 		Sbi.trace("[WidgetEditor.updateValues]: OUT");
 	}
 	

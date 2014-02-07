@@ -6,6 +6,11 @@
 
 Ext.ns("Sbi.widgets");
 
+/**
+ * Class: Sbi.widgets.DatasetsBrowserPanel
+ * A panel that shows the list of dataset available to te logged in user grouped by category. 
+ * In line sort and filter are also provided.
+ */
 Sbi.widgets.DatasetsBrowserPanel = function(config) { 
 
 	Sbi.trace("[DatasetsBrowserPanel.constructor]: IN");
@@ -14,21 +19,27 @@ Sbi.widgets.DatasetsBrowserPanel = function(config) {
 		autoScroll: true
 	  , height: '100%'
 	};
-		
-	if(Sbi.settings && Sbi.cockpit && Sbi.widgets && Sbi.widgets.datasetsBrowserPanel) {
-		defaultSettings = Ext.apply(defaultSettings, Sbi.widgets.datasetsBrowserPanel);
-	}
-	var c = Ext.apply(defaultSettings, config || {});
+	var settings = Sbi.getObjectSettings('Sbi.widgets.DatasetsBrowserPanel', defaultSettings);
+	var c = Ext.apply(settings, config || {});
 	Ext.apply(this, c);
 	
+	this.filterOption = this.defaultFilterOption;
+	Sbi.trace("[DatasetsBrowserPanel.constructor]: initially the list will be filtered on type [" + this.filterOption + "]");
+	
 	this.initServices();
+	this.initDatasetStore();
 	this.init();
 	
-	this.items = [this.bannerPanel,this.viewPanel];
-	
-	this.addEvents("selectDataSet");
+	this.items = [this.toolbar, this.viewPanel];
 		
 	Sbi.widgets.DatasetsBrowserPanel.superclass.constructor.call(this, c);
+	
+	this.addEvents("select");
+	
+	this.on("render", function() {
+		Sbi.trace("[DatasetsBrowserPanel.constructor]: panel succesfully rendered.");
+		this.refresh();
+	}, this);
 	
 	Sbi.trace("[DatasetsBrowserPanel.constructor]: IN");
 	
@@ -46,72 +57,258 @@ Ext.extend(Sbi.widgets.DatasetsBrowserPanel, Ext.Panel, {
      */
 	services: null
 	
+	/**
+     * @property {Ext.Panel} toolbar
+     * The inline toolbar that contains category buttons, filter and sort options
+     */
+	, toolbar: null
+	
+	/**
+     * @property {Array} services
+     * This array contains all the services invoked by this class
+     */
+	, viewPanel: null
+
+	, id:'this'  // TODO remove
+	
 	, selectedDatasetLabel: null
 	, usedDatasetLabels: null
-	, store: null
-	, widgetManager: null
-	, id:'this' 
-	, activeFilter: null
+	
+	, datasetStore: null
+	, widgetManager: null  // TODO remove
+	
+	, filterOption: null
+	, defaultFilterOption: Sbi.settings.mydata.defaultFilter || "UsedDataSet"
+	
+	, searchOption: null
+	, defaultSearchOption: Sbi.settings.mydata.defaultSortOption || null
+	
+	, sortOption: null
+	, defaultSortOption: Sbi.settings.mydata.defaultSortOption || "dateIn"
+	
 	
 	// =================================================================================================================
 	// METHODS
 	// =================================================================================================================
 	
+	// -----------------------------------------------------------------------------------------------------------------
+    // public methods
+	// -----------------------------------------------------------------------------------------------------------------
+	
+	, resetToolbarOptions: function() {
+		this.resetFilter(true);
+		this.resetSearch(true);
+		this.resetSort(true);
+	}
+
+//	, getToolbarOptions: function() {
+//		this.resetFilter(true);
+//		this.resetSearch(true);
+//		this.resetSort(true);
+//	}
+
+	, getSelection: function() {
+		return [this.selectedDatasetLabel];
+	}
+
+	, resetSelection: function() {
+		Sbi.trace("[DatasetsBrowserPanel.resetDatasetSelection]: IN");
+		if(this.selectedDatasetLabel !== null) {
+			Sbi.trace("[DatasetsBrowserPanel.resetDatasetSelection]: deselected dataset [" + this.selectedDatasetLabel + "]");
+			this.selectedDatasetLabel = null;
+			this.refreshView();
+		}
+		Sbi.trace("[DatasetsBrowserPanel.resetDatasetSelection]: OUT");
+	}
+	
+	, select: function(datasetLabel, updateControl) {
+		Sbi.trace("[DatasetsBrowserPanel.select]: IN");
+		
+		Sbi.trace("[DatasetsBrowserPanel.select]: dataset to select is equal to [" + datasetLabel + "]");
+		Sbi.trace("[DatasetsBrowserPanel.select]: dataset currently selected is equal to [" + this.selectedDatasetLabel + "]");
+		
+		var previouslySelectedDatasetLabel = this.selectedDatasetLabel;
+		this.selectedDatasetLabel = datasetLabel;
+
+		
+		// remove from selection previously slected dataset 
+	 	if (datasetLabel != previouslySelectedDatasetLabel 
+	 			&& this.widgetManager.getStoreByLabel(previouslySelectedDatasetLabel) != null) {
+			this.widgetManager.removeStore(previouslySelectedDatasetLabel);
+			Sbi.trace("[DatasetsBrowserPanel.select]: dataset  [" + previouslySelectedDatasetLabel + "] removed from selection");
+		}
+	
+		//adds the dataset to the storeManager (through the WidgetManager)
+		var storeConfig = {};
+		storeConfig.dsLabel = datasetLabel; //storeConfig.dsLabel = this.widget.dataset;	
+	    this.widgetManager.addStore(storeConfig);	
+	    Sbi.trace("[DatasetsBrowserPanel.select]: dataset  [" + datasetLabel + "] added to selection");
+	    
+	    if(updateControl === true) {
+	    	this.unselectDatasetComponent(previouslySelectedDatasetLabel);
+	    	this.selectDatasetComponent(datasetLabel);
+	    }
+	    
+	    Sbi.trace("[DatasetsBrowserPanel.select]: OUT");
+	}
+	
+	/**
+     * @method
+     *
+     * Filter the list of dataset contained in the DatasetBrowserView by dataset type type.
+     * 
+     * @param {String} type the dataset type to use for filtering the list. Admissible types
+     * are: UsedDataSet, EnterpriseDataSet, SharedDataSet, AllDataSet
+     */
+	, filter: function(filterOption, updateControl) { 
+		Sbi.trace("[DatasetsBrowserPanel.filter]: IN");
+		
+		Sbi.trace("[DatasetsBrowserPanel.filter]: dataset filterOption parameter is equal to [" + filterOption + "]");
+		
+		if (filterOption == 'UsedDataSet' || filterOption == 'MyDataSet' 
+			|| filterOption == 'EnterpriseDataSet' || filterOption == 'SharedDataSet'
+			|| filterOption == 'AllDataSet'){
+			this.filterOption = filterOption;	
+			this.refresh();
+			if(updateControl === true) {
+				this.setFilterControl(filterOption);
+			}
+			
+		} else {
+			Sbi.trace("[DatasetsBrowserPanel.filter]: value [" + filterOption + "] is not a valid dataset type");
+		}
+
+		Sbi.trace("[DatasetsBrowserPanel.filter]: OUT");
+	}
+	
+	, resetFilter: function(updateControl) {
+		Sbi.trace("[DatasetsBrowserPanel.resetFilter]: IN");
+		this.filterOption = this.defaultFilterOption;
+		if(updateControl === true) {
+			this.setFilterControl(this.filterOption);
+		}
+		Sbi.trace("[DatasetsBrowserPanel.resetFilter]: OUT");
+	}
+	
+	, search: function(query, updateControl) {
+		
+		Sbi.trace("[DatasetsBrowserPanel.search]: IN");
+		
+		this.filteredProperties =  [ "label","name","description","owner" ];		
+		
+		if(query!=null && query!=undefined && query!=''){
+			this.datasetStore.filterBy(function(record,id){	
+				if(Sbi.isValorized(record.data)){
+					var data = record.data;
+					for(var p in data){
+						if(this.filteredProperties.indexOf(p)>=0){//if the column should be considered by the filter
+							if(data[p]!=null && data[p]!=undefined && ((""+data[p]).toUpperCase()).indexOf(query.toUpperCase())>=0){
+								return true;
+							}
+						}
+					}
+				}
+				return false;		
+			}, this);
+		} else{
+			this.datasetStore.clearFilter();
+		}
+		
+		if(updateControl === true) {
+			this.setSearchControl(query);
+		}
+		
+		Sbi.trace("[DatasetsBrowserPanel.search]: OUT");
+	}
+	
+	, resetSearch: function(updateControl) {
+		Sbi.trace("[DatasetsBrowserPanel.resetSearch]: IN");
+		this.searchOption = this.defaultSearchOption;
+		this.search(this.searchOption, updateControl);
+		Sbi.trace("[DatasetsBrowserPanel.resetSearch]: OUT");
+	}
+	
+	, sort: function(sortOption, updateControl) {	
+		Sbi.trace("[DatasetsBrowserPanel.sort]: IN");
+		
+		this.sortOption = sortOption;
+		
+		var sorters = [{property : 'dateIn', direction: 'DESC', description: LN('sbi.ds.moreRecent')}, 
+		               {property : 'label', direction: 'ASC', description:  LN('sbi.ds.label')}, 
+		               {property : 'name', direction: 'ASC', description: LN('sbi.ds.name')}, 				
+		               {property : 'owner', direction: 'ASC', description: LN('sbi.ds.owner')}];
+
+		
+		for (sort in sorters){
+			var s = sorters[sort];
+			if (s.property == sortOption){
+				this.datasetStore.sort(s.property, s.direction);
+				break;
+			}
+		}
+				
+		this.refreshView();
+		
+		if(updateControl === true) {
+			this.setSortControl(sortOption);
+		}
+		
+		Sbi.trace("[DatasetsBrowserPanel.sort]: OUT");
+	}
+	
+	, resetSort: function(updateControl) {
+		this.sortOption = this.defaultSortOption;
+		this.sort(this.sortOption, updateControl);
+	}
+	
+	, refresh: function() {
+		Sbi.trace("[DatasetsBrowserPanel.refreshDatasetList]: IN");
+		
+		this.initDatasetListService();
+		this.initDatasetStore();	
+		
+		this.datasetStore.on('load', function() {
+			Sbi.trace("[DatasetsBrowserPanel.refreshDatasetList]: refreshing view panel ...");
+			
+			if (this.viewPanel){
+				this.viewPanel.filterOnType = this.filterOption;
+				this.viewPanel.bindStore(this.datasetStore);
+				Sbi.trace("[DatasetsBrowserPanel.refreshDatasetList]: refreshing view panel 1");
+				this.refreshView();
+				
+				Sbi.trace("[DatasetsBrowserPanel.refreshDatasetList]: refreshing view panel 2");
+			}
+		}, this);
+			
+		this.datasetStore.load();	
+		
+		Sbi.trace("[DatasetsBrowserPanel.refreshDatasetList]: OUT");
+	}
+	
+	, refreshView: function() {
+		if(this.viewPanel && this.viewPanel.redered === true) {
+			this.viewPanel.refresh();
+		}
+	}
+	
+	// -----------------------------------------------------------------------------------------------------------------
+    // init methods
+	// -----------------------------------------------------------------------------------------------------------------
 	/**
 	 * @method 
 	 * 
 	 * Initialize the following services exploited by this component:
 	 * 
-	 *    - none
+	 *    - list
 	 */
 	, initServices: function() {
 		this.services = [];
-		var defaultFilter = Sbi.settings.mydata.defaultFilter || 'UsedDataSet';
-		this.showDataset(defaultFilter);
-	}
-
-
-	/**
-	 * @method 
-	 * 
-	 * Initialize the GUI
-	 */
-	, init: function() {
-		this.initToolbar();
-		this.initViewPanel();
+		this.initDatasetListService();
 	}
 	
-	
-	, initToolbar: function() {
-
-			var bannerHTML = this.createBannerHtml({});
-			this.bannerPanel = new Ext.Panel({
-				height: 70, //105,
-				border: false, 
-			   	autoScroll: false,
-			   	html: bannerHTML
-			});			
-		
-	}
-	
-	, initViewPanel: function() {
-		var config = {};
-		config.services = this.services;
-		config.store = this.store;
-		config.widgetManager = this.widgetManager;
-		config.selectedDatasetLabel = this.selectedDatasetLabel;
-		config.actions = this.actions;
-		config.user = this.user;
-		config.fromMyDataCtx = this.displayToolbar;
-		config.activeFilter = this.activeFilter;
-		this.viewPanel = new Sbi.widgets.DatasetsBrowserView(config);
-		this.viewPanel.addListener('click', this.onClick, this);
-
-	}
-	
-	, activateFilter: function(datasetType){
-		
-		if (datasetType == 'MyDataSet'){			
+	, initDatasetListService: function(){
+		Sbi.trace("[DatasetsBrowserPanel.initDatasetListService]: IN");
+		if (this.filterOption == 'MyDataSet'){			
 			baseParams ={};
 			baseParams.isTech = false;
 			baseParams.showOnlyOwner = true;
@@ -124,7 +321,7 @@ Ext.extend(Sbi.widgets.DatasetsBrowserPanel, Ext.Panel, {
 			});		
 			
 			
-		} else if (datasetType == 'EnterpriseDataSet'){			
+		} else if (this.filterOption == 'EnterpriseDataSet'){			
 			baseParams ={};
 			baseParams.isTech = true;
 			baseParams.showOnlyOwner = false;
@@ -137,7 +334,7 @@ Ext.extend(Sbi.widgets.DatasetsBrowserPanel, Ext.Panel, {
 			});
 	
 			
-		} else if (datasetType == 'SharedDataSet'){
+		} else if (this.filterOption == 'SharedDataSet'){
 			baseParams ={};
 			baseParams.isTech = false;
 			baseParams.showOnlyOwner = false;
@@ -150,7 +347,7 @@ Ext.extend(Sbi.widgets.DatasetsBrowserPanel, Ext.Panel, {
 			});
 		
 			
-		} else if (datasetType == 'AllDataSet' || datasetType == 'UsedDataSet'){
+		} else if (this.filterOption == 'AllDataSet' || this.filterOption == 'UsedDataSet'){
 
 			baseParams ={};
 			baseParams.isTech = false;
@@ -165,43 +362,14 @@ Ext.extend(Sbi.widgets.DatasetsBrowserPanel, Ext.Panel, {
 			});
 		
 		}
+		
+		Sbi.trace("[DatasetsBrowserPanel.initDatasetListService]: OUT");
 	}
 	
-	//Show only the dataset of the passed type
-	, showDataset: function(datasetType) { 
-		this.activeFilter = datasetType;	
-
-		if (Ext.get('list-tab') != null){
-			var tabEls = Ext.get('list-tab').dom.childNodes;
-			
-			//Change active dataset type on toolbar
-			for(var i=0; i< tabEls.length; i++){
-				//nodeType == 1 is  Node.ELEMENT_NODE
-				if (tabEls[i].nodeType == 1){
-					if (tabEls[i].id == datasetType){					
-						tabEls[i].className += ' active '; //append class name to existing others
-					} else {
-						tabEls[i].className = tabEls[i].className.replace( /(?:^|\s)active(?!\S)/g , '' ); //remove active class
-					}
-				}
-			}
-		}
-		//Change content of DatasetView
-		this.activateFilter(datasetType);
-		if (datasetType == 'UsedDataSet'){
-			this.createButtonVisibility(true);
-		} else if (datasetType == 'MyDataSet'){
-			this.createButtonVisibility(true);
-		} else if (datasetType == 'EnterpriseDataSet'){
-			this.createButtonVisibility(false);
-		} else if (datasetType == 'SharedDataSet'){
-			this.createButtonVisibility(false);
-		} else if (datasetType == 'AllDataSet'){
-			this.createButtonVisibility(true);
-		}	
+	, initDatasetStore: function() {
+		Sbi.trace("[DatasetsBrowserPanel.initDatasetStore]: IN");
 		
-		
-		this.store = new Ext.data.JsonStore({
+		this.datasetStore = new Ext.data.JsonStore({
 			 url: this.services['list']
 			 , filteredProperties : this.filteredProperties 
 			 , sorters: []
@@ -230,234 +398,353 @@ Ext.extend(Sbi.widgets.DatasetsBrowserPanel, Ext.Panel, {
 			    	 	"previewFile",
 			    	 	"isUsed", 	/*local property*/
 			    	 	"myDSLabel" /*local property*/]
-		});	
-	
+		});
 		
-		//load store and refresh datasets view
-		this.store.load(function(records, operation, success) {});	
+		Sbi.trace("[DatasetsBrowserPanel.initDatasetStore]: OUT");
+	}
 
-		if (this.viewPanel){
-			this.viewPanel.activeFilter = this.activeFilter;
-			this.viewPanel.bindStore(this.store);
-			this.viewPanel.refresh();
-		}
+	/**
+	 * @method 
+	 * 
+	 * Initialize the GUI
+	 */
+	, init: function() {
+		Sbi.trace("[DatasetsBrowserPanel.init]: IN");
+		this.initToolbar();
+		this.initViewPanel();
+		Sbi.trace("[DatasetsBrowserPanel.init]: OUT");
 	}
 	
-	, createButtonVisibility: function(visible){
-		var dh = Ext.DomHelper;	
-		if (visible == true){
-			//check if button already present
-			var button = Ext.get('newDataset');
-			if (!button){
-				//add button
-		        if (this.user !== '' && this.user !== this.PUBLIC_USER){
-		        	var createButton = ' <a id="newDataset" href="#" onclick="javascript:Ext.getCmp(\'this\').addNewDataset(\'\')" class="btn-add"><span class="highlighted">'+LN('sbi.generic.create')+'</span> '+LN('sbi.browser.document.dataset')+'<span class="plus">+</span></a> ';
-		        	var actionsDiv = Ext.get('list-actions').dom;
-		        	dh.insertHtml('afterBegin',actionsDiv,createButton);
-		        }
-			}
-		} else {
-			//remove button if exist
-			if (Ext.get('newDataset') != null && Ext.get('newDataset') != undefined){
-				var button = Ext.get('newDataset').dom;
-				if (button){
-					button.parentNode.removeChild(button);
-				}				
-			}
-		}
+	
+	/**
+	 * @method 
+	 * 
+	 * Initialize the toolbar
+	 */
+	, initToolbar: function() {
+		
+		Sbi.trace("[DatasetsBrowserPanel.initToolbar]: IN");
+		
+		var toolbarInnerHtml = this.getToolbarInnerHtml({});
+		this.toolbar = new Ext.Panel({
+			height: 70, 
+			border: false, 
+		   	autoScroll: false,
+		   	html: toolbarInnerHtml
+		});	
+		
+		Sbi.trace("[DatasetsBrowserPanel.initToolbar]: OUT");	
 	}
-
-	, createBannerHtml: function(communities){	
-		var createButton = '';
-
-        var activeClass = '';
-        var bannerHTML = ''+
+	
+	
+	/**
+	 * @method 
+	 * 
+	 * Create the inner html of the toolbar
+	 * 
+	 * @param {???} communities ???
+	 * 
+	 * @return {String} the html code of the toolbar
+	 */
+	, getToolbarInnerHtml: function(communities){	
+		var activeClass = '';
+        
+        var  toolbarInnerHtml = ''+
      		'<div class="main-datasets-list"> '+
-    		'    <div class="list-actions-container"> '+ //setted into the container panel
-    		'		<ul class="list-tab" id="list-tab"> ';
+    		'    <div class="list-actions-container"> ';
         
-        if (Sbi.settings.mydata.showMyDataSetFilter){	
-        	if (Sbi.settings.mydata.defaultFilter == 'MyDataSet'){
-        		activeClass = 'active';
-        	} else {
-        		activeClass = '';
-        	}
-        	bannerHTML = bannerHTML+	
-        	'	    	<li class="first '+activeClass+'" id="MyDataSet"><a href="#" onclick="javascript:Ext.getCmp(\'this\').showDataset( \'MyDataSet\')">'+LN('sbi.mydata.mydataset')+'</a></li> '; 
-        }	
-        if (Sbi.settings.mydata.showEnterpriseDataSetFilter){
-        	if (Sbi.settings.mydata.defaultFilter == 'EnterpriseDataSet'){
-        		activeClass = 'active';
-        	} else {
-        		activeClass = '';
-        	}
-        	bannerHTML = bannerHTML+	
-    		'	    	<li class="'+activeClass+'" id="EnterpriseDataSet"><a href="#" onclick="javascript:Ext.getCmp(\'this\').showDataset( \'EnterpriseDataSet\')">'+LN('sbi.mydata.enterprisedataset')+'</a></li> ';    
-        }
-         if (Sbi.settings.mydata.showSharedDataSetFilter){
-         	if (Sbi.settings.mydata.defaultFilter == 'SharedDataSet'){
-        		activeClass = 'active';
-        	} else {
-        		activeClass = '';
-        	}
-         	bannerHTML = bannerHTML+	
-     		'	    	<li class="'+activeClass+'" id="SharedDataSet"><a href="#" onclick="javascript:Ext.getCmp(\'this\').showDataset( \'SharedDataSet\')">'+LN('sbi.mydata.shareddataset')+'</a></li> ';    	
-         }
-         if (Sbi.settings.mydata.showAllDataSetFilter){
-          	if (Sbi.settings.mydata.defaultFilter == 'AllDataSet'){
-        		activeClass = 'active';
-        	} else {
-        		activeClass = '';
-        	}
-          	bannerHTML = bannerHTML+	
-    		'	    	<li id="AllDataSet" class="last '+activeClass+'"><a href="#" onclick="javascript:Ext.getCmp(\'this\').showDataset( \'AllDataSet\')">'+LN('sbi.mydata.alldataset')+'</a></li> ';    		    		    		    		        	 
-         }
-         if (Sbi.settings.mydata.showUsedDataSetFilter){	
- 	    	if (Sbi.settings.mydata.defaultFilter == 'UsedDataSet'){
- 	    		activeClass = 'active';
- 	    	} else {
- 	    		activeClass = '';
- 	    	}
- 	    	bannerHTML = bannerHTML+	
- 	    	'	    	<li class="first '+activeClass+'" id="UsedDataSet"><a href="#" onclick="javascript:Ext.getCmp(\'this\').showDataset( \'UsedDataSet\')">'+LN('sbi.mydata.useddataset')+'</a></li> '; 
-         }
-        
-         bannerHTML = bannerHTML+
-            '		</ul> '+
+        toolbarInnerHtml += this.getDatasetFilterControlHtml();
+        toolbarInnerHtml +=
     		'	    <div id="list-actions" class="list-actions"> '+
-    					createButton +
-    		'	        <form action="#" method="get" class="search-form"> '+
+    		this.getDatasetSearchControlHtml() + 
+    		this.getDatasetSortControlHtml() + 
+    		'	    </div> '+
+    		'	</div> '+
+    		'</div>' ;
+
+        return toolbarInnerHtml;
+    }
+	
+	, getDatasetFilterControlHtml: function() {
+		
+		var buttonsHtml = '';
+		
+		buttonsHtml += '<ul class="list-tab" id="list-tab"> ';
+     
+		if (Sbi.settings.mydata.showMyDataSetFilter){	
+	     	if (this.filterOption == 'MyDataSet'){
+	     		activeClass = 'active';
+	     	} else {
+	     		activeClass = '';
+	     	}
+	     	buttonsHtml +=	
+	     	'<li class="first '+activeClass+'" id="MyDataSet"><a href="#" onclick="javascript:Ext.getCmp(\'this\').filter( \'MyDataSet\', true)">'+LN('sbi.mydata.mydataset')+'</a></li> '; 
+	     }	
+	     
+	     if (Sbi.settings.mydata.showEnterpriseDataSetFilter){
+	     	if (this.filterOption == 'EnterpriseDataSet'){
+	     		activeClass = 'active';
+	     	} else {
+	     		activeClass = '';
+	     	}
+	     	buttonsHtml +=
+	 		'	    	<li class="'+activeClass+'" id="EnterpriseDataSet"><a href="#" onclick="javascript:Ext.getCmp(\'this\').filter( \'EnterpriseDataSet\', true)">'+LN('sbi.mydata.enterprisedataset')+'</a></li> ';    
+	     }
+	     if (Sbi.settings.mydata.showSharedDataSetFilter){
+	      	if (this.filterOption == 'SharedDataSet'){
+	     		activeClass = 'active';
+	     	} else {
+	     		activeClass = '';
+	     	}
+	      	buttonsHtml +=	
+	  		'	    	<li class="'+activeClass+'" id="SharedDataSet"><a href="#" onclick="javascript:Ext.getCmp(\'this\').filter( \'SharedDataSet\', true)">'+LN('sbi.mydata.shareddataset')+'</a></li> ';    	
+	     }
+	     
+	     if (Sbi.settings.mydata.showAllDataSetFilter){
+	       	if (this.filterOption == 'AllDataSet'){
+	     		activeClass = 'active';
+	     	} else {
+	     		activeClass = '';
+	     	}
+	       	buttonsHtml +=
+	 		'	    	<li id="AllDataSet" class="last '+activeClass+'"><a href="#" onclick="javascript:Ext.getCmp(\'this\').filter( \'AllDataSet\', true)">'+LN('sbi.mydata.alldataset')+'</a></li> ';    		    		    		    		        	 
+	     }
+	     if (Sbi.settings.mydata.showUsedDataSetFilter){	
+		    	if (this.filterOption == 'UsedDataSet'){
+		    		activeClass = 'active';
+		    	} else {
+		    		activeClass = '';
+		    	}
+		    	buttonsHtml +=	
+		    	'	    	<li class="first '+activeClass+'" id="UsedDataSet"><a href="#" onclick="javascript:Ext.getCmp(\'this\').filter( \'UsedDataSet\', true)">'+LN('sbi.mydata.useddataset')+'</a></li> '; 
+	      }
+	     
+	      buttonsHtml+= '</ul>';
+	      
+	      return buttonsHtml;
+	}
+	
+	, getDatasetSearchControlHtml: function() {
+		var html = 
+			'	        <form action="#" method="get" class="search-form"> '+
     		'	            <fieldset> '+
     		'	                <div class="field"> '+
     		'	                    <label for="search">'+LN('sbi.browser.document.searchDatasets')+'</label> '+
-    		'	                    <input type="text" name="search" id="search" onclick="this.value=\'\'" onkeyup="javascript:Ext.getCmp(\'this\').filterStore(this.value)" value="'+LN('sbi.browser.document.searchKeyword')+'" /> '+
+    		'	                    <input type="text" name="search" id="search" onclick="this.value=\'\'" onkeyup="javascript:Ext.getCmp(\'this\').search(this.value)" value="'+LN('sbi.browser.document.searchKeyword')+'" /> '+
     		'	                </div> '+
     		'	                <div class="submit"> '+
     		'	                    <input type="text" value="Cerca" /> '+
     		'	                </div> '+
     		'	            </fieldset> '+
-    		'	        </form> '+
-    		'	         <ul class="order" id="sortList">'+
-    		'	            <li id="dateIn" class="active"><a href="#" onclick="javascript:Ext.getCmp(\'this\').sortStore(\'dateIn\')">'+LN('sbi.ds.moreRecent')+'</a> </li> '+
-    		'	            <li id="name"><a href="#" onclick="javascript:Ext.getCmp(\'this\').sortStore(\'name\')">'+LN('sbi.generic.name')+'</a></li> '+
-    		'	            <li id="owner"><a href="#" onclick="javascript:Ext.getCmp(\'this\').sortStore(\'owner\')">'+LN('sbi.generic.owner')+'</a></li> '+
-    		'	        </ul> '+
-    		'	    </div> '+
-    		'	</div> '+
-    		'</div>' ;
-
-        return bannerHTML;
-    }
+    		'	        </form> ';
+    		
+    	return html;
+	}
 	
+	, getDatasetSortControlHtml: function() {
+		var html = 
+			'	        <ul class="order" id="sortList">'+
+    		'	            <li id="dateIn" class="active"><a href="#" onclick="javascript:Ext.getCmp(\'this\').sort(\'dateIn\')">'+LN('sbi.ds.moreRecent')+'</a> </li> '+
+    		'	            <li id="name"><a href="#" onclick="javascript:Ext.getCmp(\'this\').sort(\'name\')">'+LN('sbi.generic.name')+'</a></li> '+
+    		'	            <li id="owner"><a href="#" onclick="javascript:Ext.getCmp(\'this\').sort(\'owner\')">'+LN('sbi.generic.owner')+'</a></li> '+
+    		'	        </ul> ';
+		
+		return html;
+	}
+	
+	, initViewPanel: function() {
+		
+		Sbi.trace("[DatasetsBrowserPanel.initViewPanel]: IN");
+		
+		var config = {};
+		config.services = this.services;
+		config.store = this.datasetStore;
+		config.widgetManager = this.widgetManager;
+		config.selectedDatasetLabel = this.selectedDatasetLabel;
+		config.actions = this.actions;
+		config.user = this.user;
+		config.fromMyDataCtx = this.displayToolbar;
+		config.filterOnType = this.filterOption;
+		
+		this.viewPanel = new Sbi.widgets.DatasetsBrowserView(config);
+		this.viewPanel.addListener('click', this.onClick, this);
+		
+		Sbi.trace("[DatasetsBrowserPanel.initViewPanel]: OUT");
+	}
+	
+	// -----------------------------------------------------------------------------------------------------------------
+    // GUI utils
+	// -----------------------------------------------------------------------------------------------------------------
+	
+	// TODO : the followings methods work only on the gui. They do not modify the state
+	
+	, selectDatasetComponent: function(datasetLabel) {
+		Sbi.trace("[DatasetsBrowserPanel.selectDatasetComponent]: IN");
+		if(this.rendered === true) {
+			var el = Ext.get(datasetLabel);
+	 		if (el) {
+	 			Sbi.trace("[DatasetsBrowserPanel.selectDatasetComponent]: class before [" + el.dom.className + "]");
+	 			el.dom.className += ' selectbox ';
+	 			Sbi.trace("[DatasetsBrowserPanel.selectDatasetComponent]: class after [" + el.dom.className + "]");
+	 		} else {
+	 			Sbi.trace("[DatasetsBrowserPanel.selectDatasetComponent]: Impossible to find dataset [" + datasetLabel +"]");
+	 		}
+	 			
+	 		var elText = Ext.get('box-text-' + datasetLabel);
+		 	if (elText) {
+		 		Sbi.trace("[DatasetsBrowserPanel.selectDatasetComponent]: class before [" + elText.dom.className + "]");
+		 		elText.dom.className += ' box-text-select ';
+		 		Sbi.trace("[DatasetsBrowserPanel.selectDatasetComponent]: class after [" + elText.dom.className + "]");
+		 	}
+		 	
+		 	Sbi.trace("[DatasetsBrowserPanel.selectDatasetComponent]: dataset [" + datasetLabel +"] succesfully selected");
+		}
+		Sbi.trace("[DatasetsBrowserPanel.selectDatasetComponent]: OUT");
+	}
+	
+	, unselectDatasetComponent: function(datasetLabel) {
+		Sbi.trace("[DatasetsBrowserPanel.selectDatasetComponent]: IN");
+		if(this.rendered === true) {
+			var el = Ext.get(datasetLabel);
+	 		if (el) {
+	 			Sbi.trace("[DatasetsBrowserPanel.unselectDatasetComponent]: class before [" + el.dom.className + "]");
+	 			el.dom.className = el.dom.className.replace( /(?:^|\s)selectbox(?!\S)/g , '' ); //remove active class
+	 			Sbi.trace("[DatasetsBrowserPanel.unselectDatasetComponent]: class after [" + el.dom.className + "]");
+	 		} else {
+	 			Sbi.trace("[DatasetsBrowserPanel.selectDatasetComponent]: Impossible to find dataset [" + datasetLabel +"]");
+	 		}
+	 			
+	 		var elText = Ext.get('box-text-' + datasetLabel);
+		 	if (elText) {
+		 		Sbi.trace("[DatasetsBrowserPanel.unselectDatasetComponent]: class before [" + elText.dom.className + "]");
+		 		elText.dom.className = elText.dom.className.replace( /(?:^|\s)box-text-select(?!\S)/g , '' ); //remove active class
+		 		Sbi.trace("[DatasetsBrowserPanel.unselectDatasetComponent]: class after [" + elText.dom.className + "]");
+		 	}
+		 	
+		 	Sbi.trace("[DatasetsBrowserPanel.selectDatasetComponent]: dataset [" + datasetLabel +"] succesfully unselected");
+		}
+		Sbi.trace("[DatasetsBrowserPanel.selectDatasetComponent]: OUT");
+	}
+	
+	
+	, setFilterControl: function(filterOption) {
+		Sbi.trace("[DatasetsBrowserPanel.setFilterControl]: IN");
+		if(this.rendered === true) {
+			if (Ext.get('list-tab') != null){
+				var tabEls = Ext.get('list-tab').dom.childNodes;
+				
+				//Change active dataset type on toolbar
+				for(var i=0; i< tabEls.length; i++){
+					//nodeType == 1 is  Node.ELEMENT_NODE
+					if (tabEls[i].nodeType == 1){
+						if (tabEls[i].id === filterOption){					
+							tabEls[i].className += ' active '; //append class name to existing others
+						} else {
+							tabEls[i].className = tabEls[i].className.replace( /(?:^|\s)active(?!\S)/g , '' ); //remove active class
+						}
+					}
+				}
+			}
+			Sbi.trace("[DatasetsBrowserPanel.setFilterControl]: filter control succesfully set");
+		}
+		Sbi.trace("[DatasetsBrowserPanel.setFilterControl]: OUT");
+	}
+	
+	, resetFilterControl: function() {
+		Sbi.trace("[DatasetsBrowserPanel.resetFilterControl]: IN");
+		this.setFilterControl(null);	
+		Sbi.trace("[DatasetsBrowserPanel.resetFilterControl]: OUT");
+	}
+	
+	, setSearchControl: function(searchOption) {
+		Sbi.trace("[DatasetsBrowserPanel.setSearchControl]: IN");
+		if(this.rendered === true) {
+			var inputField = Ext.get('search').dom;
+			inputField.value = searchOption || '';
+			Sbi.trace("[DatasetsBrowserPanel.setSearchControl]: search control succesfully set");
+		}		
+		Sbi.trace("[DatasetsBrowserPanel.setSearchControl]: OUT");
+	}
+	
+	, resetSearchControl: function() {
+		Sbi.trace("[DatasetsBrowserPanel.resetSearchControl]: IN");
+		this.setSearchControl(null);	
+		Sbi.trace("[DatasetsBrowserPanel.resetSearchControl]: OUT");
+	}
+	
+	, setSortControl: function(sortOption) {
+		Sbi.trace("[DatasetsBrowserPanel.setSortControl]: IN");
+		if(this.rendered === true) {
+			var sortEls = Ext.get('sortList').dom.childNodes;
+			
+			//move the selected value to the first element
+			for(var i=0; i< sortEls.length; i++){
+				if (sortEls[i].id === sortOption){					
+					sortEls[i].className = 'active';
+					break;
+				} 
+			}
+			//append others elements
+			for(var i=0; i< sortEls.length; i++){
+				if (sortEls[i].id !== sortOption){
+					sortEls[i].className = '';		
+				}
+			}
+			
+			Sbi.trace("[DatasetsBrowserPanel.setSortControl]: sort control succesfully set");
+		}
+		Sbi.trace("[DatasetsBrowserPanel.setSortControl]: OUT");
+	}
+	
+	, resetSortControl: function() {
+		Sbi.trace("[DatasetsBrowserPanel.resetSortControl]: IN");
+		this.setSortControl(null);
+		Sbi.trace("[DatasetsBrowserPanel.resetSortControl]: OUT");
+	}
+	
+	
+
+	// -----------------------------------------------------------------------------------------------------------------
+    // General utils
+	// -----------------------------------------------------------------------------------------------------------------
+		
 	, onClick : function(obj, i, node, e) {
-		 var s = obj.getStore();
-		 var r = s.getAt(s.findExact('label',node.id));
-		 if (r){
-			r = r.data;
+		Sbi.trace("[DatasetsBrowserPanel.onClick]: IN");
+		
+		 var store = obj.getStore();
+		 var record = store.getAt(store.findExact('label',node.id));
+		 if (record){
+			 record = record.data;
 		 }
-		 var oldLabel = this.selectedDatasetLabel || r.label;
-		 		 
-		 this.selectedDatasetLabel = r.label;		 
-	     if (this.widgetManager.existsStore(r.label) ){ 	
-	    	 var deleteStore = false;
-    		 var nWidgetsForDS = this.widgetManager.getWidgetUsedByStore(r.label).getCount();
-    		 if(this.selectedDatasetLabel != r.label && nWidgetsForDS >= 1){		    		 
-	    		 alert('Operazione di deselezione non consentita. Il dataset e\' utilizzato da altri widgets!');
-	    		 deleteStore = false;
-    		 }else if(this.selectedDatasetLabel == r.label && nWidgetsForDS > 1){
-//    			 alert('Operazione di deselezione non consentita. Il dataset e\' utilizzato da altri widgets!');
-	    		 deleteStore = false;	 
-	    		 this.viewPanel.refresh();
-	    	 }else{
-	    		 deleteStore = true;
+		 var clickedDatasetLabel = record.label;
+		 Sbi.trace("[DatasetsBrowserPanel.onClick]: clicked dataset label is equal to [" + clickedDatasetLabel + "]");
+		 Sbi.trace("[DatasetsBrowserPanel.onClick]: selected dataset label is equal to [" + this.selectedDatasetLabel + "]");
+		 
+		 
+		 if (clickedDatasetLabel == this.selectedDatasetLabel){  // it's an unselect
+			 var deleteStoreFromWidgetContainer = false;
+    		 var nWidgetsForDS = this.widgetManager.getWidgetUsedByStore(clickedDatasetLabel).getCount();
+    		 Sbi.trace("[DatasetsBrowserPanel.onClick]: dataset [" + clickedDatasetLabel + "] is used by [" + nWidgetsForDS + "] widgets");
+    		 if(nWidgetsForDS === 1) { // it is used only by this widget
+	    		deleteStoreFromWidgetContainer = true;
 	    	 }
 	    	 
-	    	 if (deleteStore){
-	    		this.widgetManager.removeStore(r.label);
-	    		this.selectedDatasetLabel = null;
-				this.viewPanel.refresh();
+    		 this.resetSelection();
+    		 
+	    	 if (deleteStoreFromWidgetContainer === true){
+	    		 Sbi.trace("[DatasetsBrowserPanel.onClick]: remove dataset from [" + clickedDatasetLabel + "] container");
+	    		 this.widgetManager.removeStore(clickedDatasetLabel);
 	    	 }		     
-	     }else{	    	 
-	        var el = Ext.get(r.label);
-	 		if (el)
-	 			el.dom.className += ' selectbox ';
-	 		
-	 		var elText = Ext.get('box-text-'+r.label);
-		 	if (elText)
-		 		elText.dom.className += ' box-text-select ';
-	 		
-		 	 var cfg = {label: r.label, oldLabel: oldLabel};
-		     this.fireEvent("selectDataSet", cfg); 
+	     } else {	   
+	    	 this.select(clickedDatasetLabel, true);
 	     }
+		 
+		 Sbi.trace("[DatasetsBrowserPanel.onClick]: OUT");
 
     	 return true;
 	}
 
-	, filterStore: function(filterString) {
-
-		this.filteredProperties =  [ "label","name","description","owner" ];		
-		
-		if(filterString!=null && filterString!=undefined && filterString!=''){
-			this.store.filterBy(function(record,id){
-				
-				if(record!=null && record!=undefined){
-					var data = record.data;
-					if(data!=null && data!=undefined){
-						for(var p in data){
-							if(this.filteredProperties.indexOf(p)>=0){//if the column should be considered by the filter
-								if(data[p]!=null && data[p]!=undefined && ((""+data[p]).toUpperCase()).indexOf(filterString.toUpperCase())>=0){
-									return true;
-								}
-							}
-						}
-					}
-				}
-				return false;		
-			},this);
-		}else{
-			this.store.clearFilter();
-		}
-	}
 	
-	, sortStore: function(value) {		
-		var sorters = [{property : 'dateIn', direction: 'DESC', description: LN('sbi.ds.moreRecent')}, 
-		               {property : 'label', direction: 'ASC', description:  LN('sbi.ds.label')}, 
-		               {property : 'name', direction: 'ASC', description: LN('sbi.ds.name')}, 				
-		               {property : 'owner', direction: 'ASC', description: LN('sbi.ds.owner')}];
 
-		var sortEls = Ext.get('sortList').dom.childNodes;
-		//move the selected value to the first element
-		for(var i=0; i< sortEls.length; i++){
-			if (sortEls[i].id == value){					
-				sortEls[i].className = 'active';
-				break;
-			} 
-		}
-		//append others elements
-		for(var i=0; i< sortEls.length; i++){
-			if (sortEls[i].id !== value){
-				sortEls[i].className = '';		
-			}
-		}
 		
-
-		for (sort in sorters){
-			var s = sorters[sort];
-			if (s.property == value){
-				this.store.sort(s.property, s.direction);
-				break;
-			}
-		}
-		
-		this.viewPanel.refresh();
-	}	
-	
-	, applyPageState: function(state) {
-		Sbi.trace("[DatasetsBrowserPanel.applyState]: IN");
-		state =  state || {};
-		state.selectedDatasetLabel = this.selectedDatasetLabel;
-		Sbi.trace("[DatasetsBrowserPanel.applyState]: OUT");
-		return state;
-	}
-	
 });

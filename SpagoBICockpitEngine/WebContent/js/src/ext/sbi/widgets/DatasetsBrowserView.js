@@ -11,21 +11,15 @@ Sbi.widgets.DatasetsBrowserView = function(config) {
 	Sbi.trace("[DatasetsBrowserView.constructor]: IN");
 	
 	var defaultSettings = {		
-			autoScroll: false
-			, height: '350px'
+		autoScroll: false
+		, height: '350px'
 	};
-		
-	if(Sbi.settings && Sbi.cockpit && Sbi.widgets && Sbi.widgets.datasetsBrowserView) {
-		defaultSettings = Ext.apply(defaultSettings, Sbi.widgets.datasetsBrowserView);
-	}
-
-	this.initTemplate();
-	
-	
-	var c = Ext.apply(defaultSettings, config || {});
-	
+	var settings = Sbi.getObjectSettings('Sbi.widgets.DatasetsBrowserView', defaultSettings);
+	var c = Ext.apply(settings, config || {});
 	Ext.apply(this, c);
 	
+	this.initTemplate();
+
 	Sbi.widgets.DatasetsBrowserView.superclass.constructor.call(this, c);
 	
 	Sbi.trace("[DatasetsBrowserView.constructor]: OUT");
@@ -42,28 +36,31 @@ Ext.extend(Sbi.widgets.DatasetsBrowserView, Ext.DataView, {
 	, services: null
 	, store: null
 	, widgetManager: null
-	, activeFilter: null
+	, filterOnType: null
     , tpl: null
 
     //override of the DataView.collectData method to manage visibility correctly
-	,collectData: function(records, startIndex){
+	, collectData: function(records, startIndex){
+		Sbi.trace("[DatasetsBrowserView.collectData]: IN");
 		var toReturn = new Array();
-		var sm = this.widgetManager.getStoreManager();
-		
-		if (this.activeFilter == 'UsedDataSet' &&
-				(sm == null || sm.getCount()== 0 )){
-//			(sm == null || sm.getCount()== 0 || (sm.getCount() == 1 && sm.get('testStore') != undefined))){
+
+		var storeManager = this.widgetManager.getStoreManager();
+
+		if (this.filterOnType == 'UsedDataSet' &&
+				(storeManager == null || storeManager.getCount()== 0 )){
+			Sbi.trace("[DatasetsBrowserView.collectData]: There are no datasets in use");
 			return toReturn;
 		}
 		
+		Sbi.trace("[DatasetsBrowserView.collectData]: There are [" + records.length + "] dataset in use");
 		for(var i=0; i < records.length; i++){	
 			var addRecord = false;
-			var lkey = sm.get(records[i].data.label);
+			var lkey = storeManager.get(records[i].data.label);
 			records[i] = this.prepareData(records[i].data, startIndex + i, records[i]);
 			if (lkey !== null && lkey !== undefined){															
 				records[i].isUsed = 'true';
 				addRecord = true;
-			}else if (this.activeFilter != 'UsedDataSet'){
+			} else if (this.filterOnType != 'UsedDataSet'){
 				records[i].isUsed = 'false';
 				addRecord = true;
 			}
@@ -75,16 +72,18 @@ Ext.extend(Sbi.widgets.DatasetsBrowserView, Ext.DataView, {
 			
 			if (addRecord) toReturn.push(records[i]);
 		}
-		return toReturn;
 		
+		Sbi.trace("[DatasetsBrowserView.collectData]: OUT");
+		
+		return toReturn;
 	}
 
    
 	//Build the TPL
-	,initTemplate : function() {
+	, initTemplate : function() {
 
-		Sbi.debug('DatasetsBrowserView building the tpl...');
-
+		Sbi.trace("[DatasetsBrowserView.initTemplate]: IN");
+		
 		var tpl = null;
 		var datasetsTpl = this.getDatasetsTemplate();
 
@@ -126,9 +125,10 @@ Ext.extend(Sbi.widgets.DatasetsBrowserView, Ext.DataView, {
 		            }
 				 }
 				);
-		Sbi.debug('DatasetsBrowserView tpl built.');
-	
+			
 		this.tpl = tpl;
+		
+		Sbi.trace("[DatasetsBrowserView.initTemplate]: OUT");
 	}
 
 	
