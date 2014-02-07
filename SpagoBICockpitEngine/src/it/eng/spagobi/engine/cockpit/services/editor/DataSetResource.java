@@ -12,6 +12,8 @@
 package it.eng.spagobi.engine.cockpit.services.editor;
 
 import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.dataset.cache.ICache;
+import it.eng.spagobi.engine.cockpit.CockpitEngineConfig;
 import it.eng.spagobi.engine.cockpit.CockpitEngineInstance;
 import it.eng.spagobi.services.proxy.DataSetServiceProxy;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
@@ -139,7 +141,16 @@ public class DataSetResource {
 		try {
 			DataSetServiceProxy proxy = getProxy(req);
 			IDataSet dataSet = proxy.getDataSetByLabel(label);
+			
+			/*
+			 * TODO: Controlla se il resultset del dataset è già in cache o no
+			 *  
+			 */
+			ICache cache = CockpitEngineConfig.getCache();
+			
 			dataSet.loadData(offset, fetchSize, maxResults);
+			
+			
 			
 			IDataStore dataStore = dataSet.getDataStore();
 			
