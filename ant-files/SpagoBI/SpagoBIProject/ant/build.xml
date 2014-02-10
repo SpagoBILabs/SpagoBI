@@ -174,7 +174,6 @@
 			</fileset>
 		</copy>
 
-		<copy file="${web.dir}/${license}" todir="${dist}" overwrite="true" />
 
 	</target>
 	<!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
