@@ -126,19 +126,20 @@ END-CAS -->
 		<filter-name>AntiInjectionFilter</filter-name>
 		<url-pattern>/servlet/AdapterHTTP/*</url-pattern>
 	</filter-mapping>
-	
+
+
+
+
 	<!--  ============================================================================ -->
-	<!--  START LISTENERS								 							   -->
+	<!--  LISTENERS								 									   -->
 	<!--  ============================================================================ -->
-	<listener>
-		<listener-class>
-			it.eng.spagobi.engines.worksheet.listeners.SessionListener
-		</listener-class>
-	</listener>
-	<!--  ============================================================================ -->
-	<!--  END LISTENERS								 								   -->
-	<!--  ============================================================================ -->
-	
+
+
+    <listener>
+        <listener-class>
+            org.jboss.resteasy.plugins.server.servlet.ResteasyBootstrap
+        </listener-class>
+    </listener>
 
 	<!--  ============================================================================ -->
 	<!--  SERVLETS								 									   -->
@@ -166,6 +167,11 @@ END-CAS -->
 			it.eng.spagobi.utilities.engines.EngineTestServlet
 		</servlet-class>
 	</servlet>
+	
+	<servlet>
+        <servlet-name>Resteasy</servlet-name>
+        <servlet-class>org.jboss.resteasy.plugins.server.servlet.HttpServletDispatcher</servlet-class>
+    </servlet>
     
     
     <!--  ============================================================================ -->
@@ -186,6 +192,12 @@ END-CAS -->
 		<servlet-name>EngineTestServlet</servlet-name>
 		<url-pattern>/servlet/AdapterHTTPTest</url-pattern>
 	</servlet-mapping>
+	
+    <servlet-mapping>
+        <servlet-name>Resteasy</servlet-name>
+        <url-pattern>/restful-services/*</url-pattern>
+    </servlet-mapping>
+
     
     
 	<session-config>
@@ -215,6 +227,17 @@ END-CAS -->
 	  	<error-code>500</error-code>
 	  	<location>/html/error.html</location>
 	  </error-page>
+	  
+
+    <context-param>
+         <param-name>resteasy.scan</param-name>
+        <param-value>true</param-value>    
+    </context-param>
+    
+    <context-param>
+        <param-name>resteasy.servlet.mapping.prefix</param-name>
+        <param-value>/restful-services</param-value>
+    </context-param>
 <!--
 	  <env-entry>
 	  	<env-entry-name>spagobi_resource_path</env-entry-name>
