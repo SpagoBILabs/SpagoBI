@@ -33,7 +33,7 @@ author:...
 
 <%-- ---------------------------------------------------------------------- --%>
 <%-- JAVA CODE 																--%>
-<%-- ---------------------------------------------------------------------- --%>
+<%-- ---------------------------------------------------------------------- 
 <%
 	WhatIfEngineInstance whatIfEngineInstance;
 	UserProfile profile;
@@ -58,7 +58,7 @@ author:...
     spagobiContext = request.getParameter(SpagoBIConstants.SBI_CONTEXT);
     spagobiSpagoController = request.getParameter(SpagoBIConstants.SBI_SPAGO_CONTROLLER);
 %>
-
+--%>
 
 <%-- ---------------------------------------------------------------------- --%>
 <%-- HTML	 																--%>
@@ -80,8 +80,16 @@ author:...
 	<body>
 	
     	<script type="text/javascript">  
-		        //...
-	    </script>
+
+        Ext.onReady(function(){
+    		var whatIfPanel = Ext.create('Sbi.olap.OlapPanel',{}); //by alias
+    		var whatIfPanelViewport = Ext.create('Ext.container.Viewport', {
+    			layout:'fit',
+    	     	items: [whatIfPanel]
+    	    });
+        });
+        
+        </script>
 	
 	</body>
 
