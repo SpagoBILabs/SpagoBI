@@ -90,12 +90,12 @@ public class GeoReportEngineStartEditAction extends AbstractEngineStartServlet {
             try {
             	requestDispatcher.forward(servletIOManager.getRequest(), servletIOManager.getResponse());
     		} catch (Throwable t) {
-    			throw new SpagoBIServiceException(ENGINE_NAME, "An error occurred while dispatching request to [" + REQUEST_DISPATCHER_URL + "]", t);
+    			throw new SpagoBIEngineException(ENGINE_NAME, "An error occurred while dispatching request to [" + REQUEST_DISPATCHER_URL + "]", t);
     		} 
         } catch(Throwable t) {
         	logger.error("Impossible to execute document", t);
         	t.printStackTrace();
-        	throw new SpagoBIServiceException(ENGINE_NAME, t);
+        	throw new SpagoBIEngineException(ENGINE_NAME, t.getMessage(),t);
         } finally {
         	logger.debug("OUT");        	 
         }        
@@ -182,7 +182,7 @@ public class GeoReportEngineStartEditAction extends AbstractEngineStartServlet {
 			template.put("zoomLevel", levelProps.getProperty("layer_zoom") );
 		} catch (Throwable t) {
 			throw new RuntimeException(
-					"An unexpected error occured while executing building template",
+					"An unexpected error occured while executing building template: "+t.getMessage(),
 					t);
 		} finally {
 			logger.debug("OUT");
@@ -206,7 +206,7 @@ public class GeoReportEngineStartEditAction extends AbstractEngineStartServlet {
 		}
 		
 		if(geoFieldsMeta.size() == 0) {
-			throw new RuntimeException("The dataset [" + dataSet.getName() + "] does not cntain any columns that point to the geographical dimension");
+			throw new RuntimeException("The dataset [" + dataSet.getName() + "] does not contain any columns that point to the geographical dimension");
 		}
 		
 		if(geoFieldsMeta.size() > 1) {

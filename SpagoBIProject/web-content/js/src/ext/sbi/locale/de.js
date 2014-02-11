@@ -13,6 +13,49 @@ Sbi.locale.ln = new Array();
 Sbi.locale.ln['sbi.ds.metadata.msgKO']='Die Validierung hat einige Fehler eingeschlichen. Die Zellen, die Fehler enthalten, werden rot hervorgehoben. Bewegen Sie die Maus über diesen Zellen wird eine Quickinfo mit mehr Informationen über die aufgetretenen Fehler zeigen';
 Sbi.locale.ln['sbi.ds.metadata.msgOK']='Die Validierung hat keine Fehler gefunden';
 
+//Datasets
+Sbi.locale.ln['sbi.ds.wizard.startMsg']= 'Wählen und laden Sie Ihre Datei XLS-oder CSV-...';
+Sbi.locale.ln['sbi.ds.wizard.selectedFile']='Die ausgewählte Datei';
+Sbi.locale.ln['sbi.ds.file.upload.button'] = 'Upload File';
+Sbi.locale.ln['sbi.ds.catType'] = 'Kategorie';
+Sbi.locale.ln['sbi.ds.wizard']= 'Dataset-Assistent';
+Sbi.locale.ln['sbi.ds.mandatoryUploadFile']= 'Ist notwendig, die Datei hochladen!';
+Sbi.locale.ln['sbi.ds.wizard.back']= '< Zurück';
+Sbi.locale.ln['sbi.ds.wizard.next']= 'Nächste >';
+Sbi.locale.ln['sbi.ds.wizard.cancel']= 'Stornieren';
+Sbi.locale.ln['sbi.ds.wizard.selectFile']='Datei auswählen';
+Sbi.locale.ln['sbi.ds.wizard.detail']= 'Datei laden';
+Sbi.locale.ln['sbi.ds.wizard.loadedFile']='geladen-Datei ';
+Sbi.locale.ln['sbi.ds.file.csv.delimiter'] = 'Trennzeichens';
+Sbi.locale.ln['sbi.ds.file.csv.quote'] = 'Zitat <br /> Charakter';
+Sbi.locale.ln['sbi.ds.file.xsl.sheetnumber'] = 'Noten <br /> Anzahl';
+Sbi.locale.ln['sbi.ds.file.xsl.limitrows'] = 'Limit-Zeilen Anzahl';
+Sbi.locale.ln['sbi.ds.file.xsl.skiprows'] = 'Weiter <br /> Zeilen';
+Sbi.locale.ln['sbi.ds.wizard.metadata']= 'Definition Daten';
+Sbi.locale.ln['sbi.ds.metadata.dataset.title2']='Metadatentyp-';
+Sbi.locale.ln['sbi.ds.metadata.addProperty']='Eigenschaft hinzufügen';
+Sbi.locale.ln['sbi.ds.metadata.deleteProperty']='Eigenschaft löschen';
+Sbi.locale.ln['sbi.ds.metadata.clear']='alle löschen';
+Sbi.locale.ln['sbi.ds.metadata.column.column']='Spalte';
+Sbi.locale.ln['sbi.ds.metadata.column.attribute']='Attribut';
+Sbi.locale.ln['sbi.ds.metadata.column.value']='Wert';
+Sbi.locale.ln['sbi.ds.wizard.file']= 'Datei';
+Sbi.locale.ln['sbi.ds.wizard.successLoad']= ' erfolgreich geladen!'
+Sbi.locale.ln['sbi.ds.metadata.dataset.title']='Datensatz Metadaten';
+Sbi.locale.ln['sbi.ds.metadata.column.title']='Spalten Metadaten';
+Sbi.locale.ln['sbi.ds.metadata.dataset.hierarchy.column']='Hierarchie Spalte';
+Sbi.locale.ln['sbi.ds.metadata.dataset.hierarchy.level']='Hierarchieebene';
+Sbi.locale.ln['sbi.ds.metadata.dataset.hierarchy.clear']='Klar';
+Sbi.locale.ln['sbi.ds.metadata.dataset.hierarchy.expert']='Experten-Modus';
+Sbi.locale.ln['sbi.ds.metadata.dataset.hierarchy.simple']='Einfach-Modus';
+Sbi.locale.ln['sbi.ds.wizard.validation']= 'Validierungsdaten';
+Sbi.locale.ln['sbi.ds.wizard.general']= 'Speichern Sie die Datenmenge';
+Sbi.locale.ln['sbi.ds.description']= 'Beschreibung';
+Sbi.locale.ln['sbi.ds.scope'] = 'Umfang';
+Sbi.locale.ln['sbi.ds.wizard.confirm']= 'Bestätigen';
+Sbi.locale.ln['sbi.ds.saved']= 'Daten richtig eingestellt gespeichert';
+Sbi.locale.ln['sbi.ds.deleted']= 'Daten richtig eingestellt gelöscht';
+
 //===================================================================
 //GENERICS
 //===================================================================
