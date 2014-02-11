@@ -6,11 +6,20 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <!-- Include WHATIF stylesheets -->
 <link rel="styleSheet" href ="../css/WhatIf.css" type="text/css" />
 
-<!-- Include localized labels  -->
-<script type="text/javascript" src='../js/spagobi/locale/<%=locale.getLanguage()%>.js'/></script>
 
 <!-- START-DEBUG -->
 
+
+<script type="text/javascript" src='js/spagobi/olap/execution/chart/OlapExecutionChart.js'></script>
+<script type="text/javascript" src='js/spagobi/olap/execution/table/OlapExecutionPivot.js'></script>
+<script type="text/javascript" src='js/spagobi/olap/execution/OlapExecutionPanel.js'></script>
+
+
+<script type="text/javascript" src='js/spagobi/olap/tools/OlapViewCubeSelector.js'></script>
+<script type="text/javascript" src='js/spagobi/olap/tools/OlapViewMeasuresSelector.js'></script>
+<script type="text/javascript" src='js/spagobi/olap/tools/OlapViewDimensionsSelector.js'></script>
+<script type="text/javascript" src='js/spagobi/olap/tools/OlapViewDefinitionTools.js'></script>
+<script type="text/javascript" src='js/spagobi/olap/OlapPanel.js'></script>
 <!-- END-DEBUG -->
  
 <!-- START-PRODUCTION -->
