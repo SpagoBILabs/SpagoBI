@@ -478,7 +478,9 @@ public class ExecutionInstance implements Serializable{
 					// trim value at beginning and end of the string
 					String valToInsert = o.toString();
 					valToInsert = valToInsert.trim();
-					values.add(valToInsert);
+					if (!valToInsert.isEmpty()) {
+						values.add(valToInsert);
+					}
 				}
 			}
 		} catch (JSONException e) {
