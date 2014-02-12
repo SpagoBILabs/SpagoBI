@@ -16,6 +16,7 @@ import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData.FieldType;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.utilities.StringUtils;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.temporarytable.TemporaryTableManager;
@@ -31,6 +32,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.safehaus.uuid.UUID;
+import org.safehaus.uuid.UUIDGenerator;
 
 
 
@@ -105,6 +108,11 @@ public class PersistedTableManager {
 		dataset.loadData();
 		IDataStore datastore = dataset.getDataStore();		
 		persistDataset(datastore, dsPersist);
+	}
+	
+	public void persistDataset(IDataStore datastore, IDataSource datasource, String tableName)throws Exception {
+		this.setTableName(tableName);
+		persistDataset(datastore,datasource);
 	}
 	
 	private void persistDataset(IDataStore datastore, IDataSource datasource)throws Exception {
@@ -453,6 +461,22 @@ public class PersistedTableManager {
 			throw new SpagoBIEngineRuntimeException("Impossible to drop the persisted table with name " + tableName, e);
 		}
 	}
+	
+	/*
+	 * Create a random unique name for a creating a new table
+	 */
+	public String generateRandomTableName(){
+		UUIDGenerator uuidGen  = UUIDGenerator.getInstance();
+		UUID uuidObj = uuidGen.generateTimeBasedUUID();
+		String generatedId = uuidObj.toString();
+    	generatedId = generatedId.replaceAll("-", "");
+    	generatedId = StringUtils.convertNonAscii(generatedId);
+		if (generatedId.length() > 30) {
+			generatedId = generatedId.substring(0, 30);
+		}
+		generatedId = generatedId.toLowerCase();
+    	return generatedId;
+	}
 
 	
 	public String getTableName() {
@@ -482,5 +506,7 @@ public class PersistedTableManager {
 	public void setDialect(String dialect) {
 		this.dialect = dialect;
 	}
+	
+	
 	
 }
