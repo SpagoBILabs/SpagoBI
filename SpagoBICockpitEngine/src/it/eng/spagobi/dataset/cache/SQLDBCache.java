@@ -78,8 +78,7 @@ public class SQLDBCache implements ICache {
 	 */
 	@Override
 	public boolean contains(String resultsetSignature) {
-		// TODO Auto-generated method stub
-		return false;
+		return cacheRegistry.containsKey(resultsetSignature);
 	}
 
 
@@ -183,13 +182,12 @@ public class SQLDBCache implements ICache {
 		PersistedTableManager persistedTableManager = new PersistedTableManager();
 		
 		try {
-			String datasetLabel = dataset.getLabel();
 			String tableName = persistedTableManager.generateRandomTableName();
 			persistedTableManager.persistDataset(resultset, getDataSource(), tableName);
 			//4- Aggiorna il cacheRegistry con la nuova coppia <resultsetSignature,nometabellaCreata>
 			cacheRegistry.put(resultsetSignature, tableName);
 		} catch (Exception e) {
-			logger.debug("Cannot perform persistence of result set on database");
+			logger.debug("[SQLDBCACHE]Cannot perform persistence of result set on database");
 		}
 		
 		
