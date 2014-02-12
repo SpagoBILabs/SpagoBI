@@ -343,20 +343,6 @@ Ext.extend(Sbi.engines.chart.GenericChartPanel, Ext.Panel, {
 					}
 					obj.borderColor = obj.color;
 					series.push(obj);
-					
-//						if(group && series.length>0){
-//							var name = series[series.length-1][0];
-//							var value = series[series.length-1][1];
-//							var recArrayName = recArray[0];
-//							var recArrayValue = recArray[1]; 
-//							if(name==recArrayName){
-//								recArrayValue = parseFloat(recArrayValue)+parseFloat(value);
-//								series.pop();
-//								recArray[0]=recArrayName;
-//								recArray[1]=recArrayValue;
-//							}
-//						}
-//						series.push(recArray);
 				}
 	    	}
 		
@@ -702,7 +688,7 @@ Ext.extend(Sbi.engines.chart.GenericChartPanel, Ext.Panel, {
     	var toReturn = false;
     	
     	for(var i=0, l=filterSeries.length; i<l; i++){
-    		if (serie === filterSeries[i] ) { //to test
+    		if (serie === filterSeries[i] ) {
 //    		if (serie.indexOf(filterSeries[i]) >= 0) { //orig
     			toReturn = true;
     			break;
