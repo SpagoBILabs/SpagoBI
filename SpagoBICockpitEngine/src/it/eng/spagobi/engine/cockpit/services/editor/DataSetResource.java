@@ -144,15 +144,28 @@ public class DataSetResource {
 			
 			/*
 			 * TODO: Controlla se il resultset del dataset è già in cache o no
+			 * 
+			 * - se è presente in cache basta recuperarlo con una get
+			 * - se non è presente in cache: carico tramite dataSet.loadData() 
+			 * 	 e poi lo scrivo in cache (poi in contemporanea con thread diversi)
 			 *  
 			 */
 			ICache cache = CockpitEngineConfig.getCache();
+			String resultsetSignature = dataSet.getSignature();
+			IDataStore cachedResultSet = cache.get(resultsetSignature);
+			IDataStore dataStore = null;
+			if (cachedResultSet == null){
+				dataSet.loadData(offset, fetchSize, maxResults);
+				dataStore = dataSet.getDataStore();
+				//TODO: da eseguire su altro thread concorrente
+				cache.put(dataSet,resultsetSignature, dataStore);
+			} else {
+				dataStore = cachedResultSet;
+			}
 			
-			dataSet.loadData(offset, fetchSize, maxResults);
 			
 			
 			
-			IDataStore dataStore = dataSet.getDataStore();
 			
 			Map<String, Object> properties = new HashMap<String, Object>();
 			//JSONArray fieldOptions = this.getAttributeAsJSONArray("fieldsOptions");

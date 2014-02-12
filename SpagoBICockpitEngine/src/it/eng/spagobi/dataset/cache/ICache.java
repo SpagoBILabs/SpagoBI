@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.spagobi.dataset.cache;
 
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 
 import java.util.List;
@@ -57,6 +58,15 @@ public interface ICache {
 	 * @return true if resultSet is deleted from cache, false if resultSet wasn't cached
 	 */
 	boolean delete(String resultsetSignature);
+	
+	/**
+	 * Insert a resultSet inside the cache using the resultsetSignature
+	 * as an identifier
+	 * @param dataset the dataSet from which derives the resultSet 
+	 * @param resultsetSignature the unique resultSet signature
+	 * @param resultset the resultSet to cache
+	 */
+	void put(IDataSet dataset, String resultsetSignature, IDataStore resultset);
 	
 	/**
 	 * Delete all objects inside the cache
