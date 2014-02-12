@@ -30,6 +30,7 @@ import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import org.apache.log4j.Logger;
 import org.safehaus.uuid.UUID;
@@ -61,6 +62,9 @@ public class PersistedTableManager {
 	private String dialect = new String();
 	private Map<String, Integer> columnSize =  new HashMap<String, Integer>();
 	private IEngUserProfile profile = null;
+	
+	static final String Alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
 
 	public PersistedTableManager(){
 		
@@ -112,6 +116,14 @@ public class PersistedTableManager {
 	
 	public void persistDataset(IDataStore datastore, IDataSource datasource, String tableName)throws Exception {
 		this.setTableName(tableName);
+		this.setDialect(datasource.getHibDialectClass());
+		logger.debug("DataSource target dialect is [" + getDialect() + "]");
+		//for the first version not all target dialect are enable
+		if (getDialect().contains(DIALECT_SQLSERVER) || getDialect().contains(DIALECT_DB2) ||
+			getDialect().contains(DIALECT_INGRES) ||  getDialect().contains(DIALECT_TERADATA)){
+			logger.debug("Persistence management isn't able for " +  getDialect() + ".");
+			throw new SpagoBIServiceException("","sbi.ds.dsCannotPersistDialect");
+		}
 		persistDataset(datastore,datasource);
 	}
 	
@@ -474,8 +486,26 @@ public class PersistedTableManager {
 		if (generatedId.length() > 30) {
 			generatedId = generatedId.substring(0, 30);
 		}
+		
+		//If the generatedId begins with a non-letter character replace it with a random letter (for ORACLE)
+		if (!Character.isLetter(generatedId.charAt(0))){
+			String randomLetter = randomAlphabetString(1);
+			generatedId = generatedId.substring(1);
+			generatedId = randomLetter + generatedId;
+		}
 		generatedId = generatedId.toLowerCase();
+		
     	return generatedId;
+	}
+	
+	private String randomAlphabetString( int len ){
+		Random random = new Random();
+
+		StringBuilder sb = new StringBuilder( len );
+		for( int i = 0; i < len; i++ ) {
+			sb.append( Alphabet.charAt( random.nextInt(Alphabet.length()) ) );
+		}
+		return sb.toString();
 	}
 
 	
