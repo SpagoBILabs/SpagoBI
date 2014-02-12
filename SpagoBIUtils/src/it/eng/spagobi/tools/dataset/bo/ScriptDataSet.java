@@ -104,6 +104,10 @@ public class ScriptDataSet extends ConfigurableDataSet {
 		return getDataProxy().getLanguage();
 	}
 	
+	public String getSignature() {
+		return this.getDataProxy().getStatement();
+	}
+	
 	
 
 }

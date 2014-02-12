@@ -75,7 +75,7 @@ public class FlatDataSet extends ConfigurableDataSet {
 	}
 
 	public String getSignature() {
-		return this.getDataSource().toString() + ": " + this.getTableName();
+		return this.getDataSource().getLabel().toString() + ": " + this.getTableName();
 	}
 
 	public void setDataSource(IDataSource dataSource) {
