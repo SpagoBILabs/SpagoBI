@@ -21,10 +21,19 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.spagobi.dataset.cache;
 
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.persist.PersistedTableManager;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 
+import java.util.HashMap;
 import java.util.List;
+
+
+import org.apache.log4j.Logger;
+
+
 
 /**
  * @author Marco Cortella (marco.cortella@eng.it)
@@ -32,11 +41,18 @@ import java.util.List;
  */
 public class SQLDBCache implements ICache {
 	
+	static private Logger logger = Logger.getLogger(SQLDBCache.class);
+
+
+	// Key is resultsetSignature, Entry is Table Name
+	HashMap<String,String> cacheRegistry;	
 	
 	private IDataSource dataSource;
 	
 	public SQLDBCache(IDataSource dataSource){
 		this.dataSource = dataSource;
+		cacheRegistry = new HashMap<String,String>();
+
 	}
 	
 
@@ -72,8 +88,22 @@ public class SQLDBCache implements ICache {
 	 */
 	@Override
 	public IDataStore get(String resultsetSignature) {
-		// TODO Auto-generated method stub
+		logger.debug("IN");
+
+		if (cacheRegistry.containsKey(resultsetSignature)){
+			String tableName = cacheRegistry.get(resultsetSignature);
+			logger.debug("Found resultSet with signature ["+resultsetSignature+"] inside the Cache, table used ["+tableName+"]");
+			
+			// TODO: collegarsi al db, fare una select, ricavare il risultato e restituirlo come DataStore
+			IDataStore dataStore = dataSource.executeStatement("SELECT * FROM "+tableName, 0, 0);
+			DataStore toReturn = (DataStore) dataStore;
+			
+			return toReturn;
+		} 		
+		logger.debug("Not found resultSet with signature ["+resultsetSignature+"] inside the Cache");
+		logger.debug("OUT");
 		return null;
+
 	}
 
 
@@ -136,6 +166,35 @@ public class SQLDBCache implements ICache {
 	public void scheduleActivity(ICacheActivity activity, ICacheTrigger trigger) {
 		// TODO Auto-generated method stub
 		
+	}
+
+
+	/* (non-Javadoc)
+	 * @see it.eng.spagobi.dataset.cache.ICache#put(java.lang.String, it.eng.spagobi.tools.dataset.common.datastore.IDataStore)
+	 */
+	@Override
+	public void put(IDataSet dataset,String resultsetSignature, IDataStore resultset) {
+		logger.debug("IN");
+		
+		
+		//1- Ricava connessione alla sorgente dati dal DataSource per la scrittura
+		//2- Ricava la struttura della tabella da creare dal resultset (SQL CREATE) - attenzione ai dialetti DBMS
+		//3- Ricava i dati dal resultset da inserire nella tabella appena creata (SQL INSERT) - attenzione ai dialetti DBMS
+		PersistedTableManager persistedTableManager = new PersistedTableManager();
+		
+		try {
+			String datasetLabel = dataset.getLabel();
+			String tableName = persistedTableManager.generateRandomTableName();
+			persistedTableManager.persistDataset(resultset, getDataSource(), tableName);
+			//4- Aggiorna il cacheRegistry con la nuova coppia <resultsetSignature,nometabellaCreata>
+			cacheRegistry.put(resultsetSignature, tableName);
+		} catch (Exception e) {
+			logger.debug("Cannot perform persistence of result set on database");
+		}
+		
+		
+		logger.debug("OUT");
+
 	}
 
 }
