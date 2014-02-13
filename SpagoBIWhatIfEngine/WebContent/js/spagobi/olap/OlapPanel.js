@@ -10,7 +10,6 @@
  * <ul>
  *		<li>View definition tools</li>
  *		<li>Table/Chart</li>
- *		<li>Toolbar</li>
  *		<li>Options</li>
  *	</ul>
  * 
@@ -21,11 +20,9 @@
  
   
 Ext.define('Sbi.olap.OlapPanel', {
-	//class to extends
 	extend: 'Ext.panel.Panel',
 	layout: {
-        type: 'border',
-        padding: 5
+        type: 'border'
     },
 	
 	config:{
@@ -44,6 +41,12 @@ Ext.define('Sbi.olap.OlapPanel', {
      */
 	executionPanel: null,
 
+	/**
+     * @property {Sbi.olap.options.OlapOptions} optionsPanel
+     *  Panel that contains the options of the chart
+     */
+	optionsPanel: null,
+
 	constructor : function(config) {
 		this.initConfig(config||{});
 //		if(Sbi.settings && Sbi.settings.olap && Sbi.settings.olap.OlapPanel) {
@@ -54,12 +57,12 @@ Ext.define('Sbi.olap.OlapPanel', {
 
 	initComponent: function() {
 
-		this.definitionTools = Ext.create('Sbi.olap.tools.OlapViewDefinitionTools', {region:"west",width: '20%'});
-		this.executionPanel = Ext.create('Sbi.olap.execution.OlapExecutionPanel', {region:"center",width: '50%'});
-
+		this.definitionTools = Ext.create('Sbi.olap.tools.OlapViewDefinitionTools', {region:"west",width: '15%'});
+		this.executionPanel = Ext.create('Sbi.olap.execution.OlapExecutionPanel', {region:"center",width: '45%'});
+		this.optionsPanel = Ext.create('Sbi.olap.options.OlapOptions', {region:"east",width: '10%'});
 
 		Ext.apply(this, {
-			items: [this.definitionTools, this.executionPanel]
+			items: [this.definitionTools, this.executionPanel, this.optionsPanel]
 		});
 		this.callParent();
 	}
