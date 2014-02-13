@@ -4,7 +4,7 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
  -->
 
 <!-- Include WHATIF stylesheets -->
-<link rel="styleSheet" href ="../css/whatIf.css" type="text/css" />
+<link rel="styleSheet" href ="css/whatIf.css" type="text/css" />
 
 
 <!-- START-DEBUG -->
