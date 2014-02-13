@@ -12,7 +12,11 @@
 package it.eng.spagobi.engine.cockpit.services.editor;
 
 import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.dataset.cache.FilterCriteria;
+import it.eng.spagobi.dataset.cache.GroupCriteria;
 import it.eng.spagobi.dataset.cache.ICache;
+import it.eng.spagobi.dataset.cache.Operand;
+import it.eng.spagobi.dataset.cache.ProjectionCriteria;
 import it.eng.spagobi.engine.cockpit.CockpitEngineConfig;
 import it.eng.spagobi.engine.cockpit.CockpitEngineInstance;
 import it.eng.spagobi.services.proxy.DataSetServiceProxy;
@@ -152,6 +156,7 @@ public class DataSetResource {
 			 */
 			ICache cache = CockpitEngineConfig.getCache();
 			String resultsetSignature = dataSet.getSignature();
+			
 			IDataStore cachedResultSet = cache.get(resultsetSignature);
 			IDataStore dataStore = null;
 			if (cachedResultSet == null){
@@ -159,6 +164,7 @@ public class DataSetResource {
 				dataStore = dataSet.getDataStore();
 				//TODO: da eseguire su altro thread concorrente
 				cache.put(dataSet,resultsetSignature, dataStore);
+
 			} else {
 				dataStore = cachedResultSet;
 			}
