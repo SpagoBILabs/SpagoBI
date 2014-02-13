@@ -28,7 +28,11 @@ Ext.define('Sbi.olap.options.OlapOptions', {
 	layout: 'vbox',
 	
 	config:{
-		width: "100%"
+		width: "100%",
+		collapsible: true, 
+		split: true, 
+		collapseMode: "mini",
+		title: "Options"
 	},
 
 	/**
