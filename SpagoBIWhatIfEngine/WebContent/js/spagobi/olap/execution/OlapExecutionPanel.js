@@ -5,7 +5,13 @@
 
 /**
  * 
- * Container for the execution of the olap. It contains the pivot and the chart.
+ * Container for the execution of the olap. 
+ * It contains:
+ * <ul>
+ *		<li>Toolbar</li>
+ *		<li>Table</li>
+ *		<li>Chart</li>
+ *	</ul>
  * 
  *     
  *  @author
@@ -34,6 +40,12 @@ Ext.define('Sbi.olap.execution.OlapExecutionPanel', {
      */
 	olapExecutionPivot: null,
 	
+	/**
+     * @property {Sbi.olap.toolbar.OlapToolbar} olapToolbar
+     *  The toolbar
+     */
+	olapToolbar: null,
+	
 	constructor : function(config) {
 		this.initConfig(config);
 		if(Sbi.settings && Sbi.settings.olap && Sbi.settings.olap.execution && Sbi.settings.olap.execution.OlapExecutionPanel) {
@@ -45,9 +57,11 @@ Ext.define('Sbi.olap.execution.OlapExecutionPanel', {
 	initComponent: function() {
 		this.olapExecutionPivot = Ext.create('Sbi.olap.execution.table.OlapExecutionPivot', {});
 		this.olapExecutionChart = Ext.create('Sbi.olap.execution.chart.OlapExecutionChart', {});
-
+		this.olapToolbar  = Ext.create('Sbi.olap.toolbar.OlapToolbar', {}); 
+		
 		Ext.apply(this, {
-			items: [this.olapExecutionPivot,this.olapExecutionChart]
+			items: [this.olapExecutionPivot,this.olapExecutionChart],
+			tbar: this.olapToolbar
 		});
 		this.callParent();
 	}

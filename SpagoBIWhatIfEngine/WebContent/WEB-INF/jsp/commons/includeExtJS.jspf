@@ -9,14 +9,22 @@
  <!-- Include Ext and app-specific scripts:
 <script type="text/javascript" src='../js/lib/extjs-4/ext.js'/></script> -->
 <script type="text/javascript" src='js/lib/extjs-4/ext-all-debug.js'/></script>
-<script type="text/javascript" src='js/lib/extjs-4/ext-theme-neptune.js'/></script>  
+<!-- script type="text/javascript" src='js/lib/extjs-4/ext-theme-neptune.js'/></script-->
+<script type="text/javascript" src='js/lib/extjs-4/ext-theme-access.js'/></script>  
 
+
+<!-- Include the extensions here -->
+<script type="text/javascript" src='js/lib/extjs-4/ux/BoxReorderer.js'/></script>  
+BoxReorderer.js
     
 <!-- Include Ext stylesheets here: -->
 <link id="extall" rel="styleSheet" href ="js/lib/extjs-4/resources/css/ext-all.css" type="text/css" />
 <!-- link id="theme-gray" rel="styleSheet" href ="../js/lib/extjs-4/resources/css/ext-all-gray.css" type="text/css" /-->
-<link id="theme-neptune" rel="styleSheet" href ="js/lib/extjs-4/resources/css/ext-all-neptune.css" type="text/css" />
+<!-- <link id="theme-neptune" rel="styleSheet" href ="js/lib/extjs-4/resources/css/ext-all-neptune.css" type="text/css" />  -->
+<link id="theme-access" rel="styleSheet" href ="js/lib/extjs-4/resources/css/ext-all-access.css" type="text/css" />
 <link id="theme-overrides" rel="styleSheet" href ="js/spagobi/overrides/overrides.css" type="text/css" />
+
+
 
 <script type="text/javascript">
 	Ext.Ajax.timeout = 300000;

@@ -9,6 +9,13 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 
 <!-- START-DEBUG -->
 
+<script type="text/javascript" src='js/spagobi/olap/options/OlapOptionsChart.js'></script>
+<script type="text/javascript" src='js/spagobi/olap/options/OlapOptionsTable.js'></script>
+<script type="text/javascript" src='js/spagobi/olap/options/OlapOptionsToolbar.js'></script>
+<script type="text/javascript" src='js/spagobi/olap/options/OlapOptionsContainer.js'></script>
+<script type="text/javascript" src='js/spagobi/olap/options/OlapOptions.js'></script>
+
+<script type="text/javascript" src='js/spagobi/olap/toolbar/OlapToolbar.js'></script>
 
 <script type="text/javascript" src='js/spagobi/olap/execution/chart/OlapExecutionChart.js'></script>
 <script type="text/javascript" src='js/spagobi/olap/execution/table/OlapExecutionPivot.js'></script>

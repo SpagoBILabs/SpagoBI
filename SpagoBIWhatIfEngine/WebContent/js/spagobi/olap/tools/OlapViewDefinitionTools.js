@@ -5,7 +5,7 @@
 
 /**
  * 
- * Container of teh tools for the view definition.<br>
+ * Container of the tools for the view definition.<br>
  * It contains:
  * <ul>
  *		<li>Cube Selector</li>
