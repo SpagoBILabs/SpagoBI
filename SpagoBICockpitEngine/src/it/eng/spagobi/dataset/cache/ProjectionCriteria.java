@@ -21,12 +21,52 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.spagobi.dataset.cache;
 
+
+
 /**
  * @author Marco Cortella (marco.cortella@eng.it)
  *
  */
 public class ProjectionCriteria {
-	/*
-	 * TODO
+
+	//Projection for the SELECT clause
+	
+	String columnName; //the column name
+	String aggregateFunction; //optional aggregate function like SUM, AVG, etc...
+	
+	
+	public ProjectionCriteria(String columnName, String aggregateFunction){
+		this.columnName = columnName;
+		this.aggregateFunction = aggregateFunction;
+	}
+	
+	
+
+	/**
+	 * @return the columnName
 	 */
+	public String getColumnName() {
+		return columnName;
+	}
+	/**
+	 * @param columnName the columnName to set
+	 */
+	public void setColumnName(String columnName) {
+		this.columnName = columnName;
+	}
+	/**
+	 * @return the aggregateFunction
+	 */
+	public String getAggregateFunction() {
+		return aggregateFunction;
+	}
+	/**
+	 * @param aggregateFunction the aggregateFunction to set
+	 */
+	public void setAggregateFunction(String aggregateFunction) {
+		this.aggregateFunction = aggregateFunction;
+	}
+	
+	
+	
 }

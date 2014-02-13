@@ -26,7 +26,68 @@ package it.eng.spagobi.dataset.cache;
  *
  */
 public class FilterCriteria {
-	/*
-	 * TODO
+
+	//Filter for the WHERE clause
+	
+	Operand leftOperand;
+	String operator;
+	Operand rightOperand;
+	
+	/**
+	 * @param leftOperand
+	 * @param operator
+	 * @param rightOperand
 	 */
+	public FilterCriteria(Operand leftOperand, String operator,
+			Operand rightOperand) {
+		this.leftOperand = leftOperand;
+		this.operator = operator;
+		this.rightOperand = rightOperand;
+	}
+
+	/**
+	 * @return the leftOperand
+	 */
+	public Operand getLeftOperand() {
+		return leftOperand;
+	}
+
+	/**
+	 * @param leftOperand the leftOperand to set
+	 */
+	public void setLeftOperand(Operand leftOperand) {
+		this.leftOperand = leftOperand;
+	}
+
+	/**
+	 * @return the operator
+	 */
+	public String getOperator() {
+		return operator;
+	}
+
+	/**
+	 * @param operator the operator to set
+	 */
+	public void setOperator(String operator) {
+		this.operator = operator;
+	}
+
+	/**
+	 * @return the rightOperand
+	 */
+	public Operand getRightOperand() {
+		return rightOperand;
+	}
+
+	/**
+	 * @param rightOperand the rightOperand to set
+	 */
+	public void setRightOperand(Operand rightOperand) {
+		this.rightOperand = rightOperand;
+	}
+	
+	
+	
+	
 }

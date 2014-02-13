@@ -25,47 +25,49 @@ package it.eng.spagobi.dataset.cache;
  * @author Marco Cortella (marco.cortella@eng.it)
  *
  */
-public class GroupCriteria {
+public class Operand {
 	
-	//For the GROUP BY clause
-	
-	String columnName; //the column name
-	String aggregateFunction; //optional aggregate function like SUM, AVG, etc...
-	
-	
+	private String operandText;
+	private boolean isCostant; //operand type, if true is a constant value
 	
 	/**
-	 * @param columnName
-	 * @param aggregateFunction
+	 * @param operandName
+	 * @param isCostant true is a constant value, false elsewhere
 	 */
-	public GroupCriteria(String columnName, String aggregateFunction) {
-		this.columnName = columnName;
-		this.aggregateFunction = aggregateFunction;
+	public Operand(String operandText, boolean isCostant) {
+		this.operandText = operandText;
+		this.isCostant = isCostant;
 	}
+
 	/**
-	 * @return the columnName
+	 * @return the operandText
 	 */
-	public String getColumnName() {
-		return columnName;
+	public String getOperandText() {
+		return operandText;
 	}
+
 	/**
-	 * @param columnName the columnName to set
+	 * @param operandText the operandText to set
 	 */
-	public void setColumnName(String columnName) {
-		this.columnName = columnName;
+	public void setOperandText(String operandText) {
+		this.operandText = operandText;
 	}
+
 	/**
-	 * @return the aggregateFunction
+	 * @return the isCostant
 	 */
-	public String getAggregateFunction() {
-		return aggregateFunction;
+	public boolean isCostant() {
+		return isCostant;
 	}
+
 	/**
-	 * @param aggregateFunction the aggregateFunction to set
+	 * @param isCostant the isCostant to set
 	 */
-	public void setAggregateFunction(String aggregateFunction) {
-		this.aggregateFunction = aggregateFunction;
+	public void setCostant(boolean isCostant) {
+		this.isCostant = isCostant;
 	}
+	
+	
 	
 	
 }

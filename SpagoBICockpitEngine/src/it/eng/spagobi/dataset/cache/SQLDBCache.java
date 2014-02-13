@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.spagobi.dataset.cache;
 
+import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
@@ -28,7 +29,9 @@ import it.eng.spagobi.tools.dataset.persist.PersistedTableManager;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 
 import org.apache.log4j.Logger;
@@ -45,7 +48,7 @@ public class SQLDBCache implements ICache {
 
 
 	// Key is resultsetSignature, Entry is Table Name
-	HashMap<String,String> cacheRegistry;	
+	private HashMap<String,String> cacheRegistry;	
 	
 	private IDataSource dataSource;
 	
@@ -93,12 +96,11 @@ public class SQLDBCache implements ICache {
 			String tableName = cacheRegistry.get(resultsetSignature);
 			logger.debug("Found resultSet with signature ["+resultsetSignature+"] inside the Cache, table used ["+tableName+"]");
 			
-			// TODO: collegarsi al db, fare una select, ricavare il risultato e restituirlo come DataStore
 			IDataStore dataStore = dataSource.executeStatement("SELECT * FROM "+tableName, 0, 0);
 			DataStore toReturn = (DataStore) dataStore;
 			
 			return toReturn;
-		} 		
+		} 	
 		logger.debug("Not found resultSet with signature ["+resultsetSignature+"] inside the Cache");
 		logger.debug("OUT");
 		return null;
@@ -113,8 +115,68 @@ public class SQLDBCache implements ICache {
 	public IDataStore get(String resultsetSignature,
 			List<GroupCriteria> groups, List<FilterCriteria> filters,
 			List<ProjectionCriteria> projections) {
-		// TODO Auto-generated method stub
+		logger.debug("IN");
+		
+		if (cacheRegistry.containsKey(resultsetSignature)){
+			String tableName = cacheRegistry.get(resultsetSignature);
+			logger.debug("Found resultSet with signature ["+resultsetSignature+"] inside the Cache, table used ["+tableName+"]");
+			
+			SelectBuilder sqlBuilder = new SelectBuilder();
+			sqlBuilder.from(tableName);
+			
+			//Columns to SELECT
+			for (ProjectionCriteria projection : projections ){
+				String aggregateFunction = projection.getAggregateFunction();
+				String columnName = projection.getColumnName();
+				columnName = AbstractJDBCDataset.encapsulateColumnName(columnName, dataSource);
+				if ((aggregateFunction != null) && (!aggregateFunction.isEmpty()) && (columnName != "*")){
+					columnName = aggregateFunction + "("+columnName+")";
+				}
+				sqlBuilder.column(columnName);
+				
+			}
+			
+			//WHERE conditions
+			for (FilterCriteria filter : filters ){
+				String leftOperand = filter.getLeftOperand().getOperandText();
+				if (!filter.getLeftOperand().isCostant()){
+					leftOperand = AbstractJDBCDataset.encapsulateColumnName(leftOperand, dataSource);
+				}
+				String operator = filter.getOperator();
+				String rightOperand = filter.getRightOperand().getOperandText();
+				if (!filter.getRightOperand().isCostant()){
+					rightOperand = AbstractJDBCDataset.encapsulateColumnName(rightOperand, dataSource);
+				}
+				
+				sqlBuilder.where(leftOperand+" "+operator+" "+rightOperand);
+			}
+			
+			//GROUP BY conditions 
+			for (GroupCriteria group : groups ){
+				String aggregateFunction = group.getAggregateFunction();
+				String columnName = group.getColumnName();
+				columnName = AbstractJDBCDataset.encapsulateColumnName(columnName, dataSource);
+				if ((aggregateFunction != null) && (!aggregateFunction.isEmpty()) && (columnName != "*")){
+					columnName = aggregateFunction + "("+columnName+")";
+				}
+				sqlBuilder.groupBy(columnName);
+
+			}
+			
+			
+			String queryText = sqlBuilder.toString();
+			IDataStore dataStore = dataSource.executeStatement(queryText, 0, 0);
+			DataStore toReturn = (DataStore) dataStore;
+			
+			return toReturn;
+		} else {
+			logger.debug("Not found resultSet with signature ["+resultsetSignature+"] inside the Cache");
+		}
+		
+		
+		logger.debug("OUT");
 		return null;
+
 	}
 
 
@@ -123,7 +185,14 @@ public class SQLDBCache implements ICache {
 	 */
 	@Override
 	public boolean delete(String resultsetSignature) {
-		// TODO Auto-generated method stub
+		if (cacheRegistry.containsKey(resultsetSignature)){
+			PersistedTableManager persistedTableManager = new PersistedTableManager();
+			String tableName = cacheRegistry.get(resultsetSignature);
+			persistedTableManager.dropTableIfExists(getDataSource(), tableName);
+			cacheRegistry.remove(resultsetSignature);
+			logger.debug("Removed table "+tableName+" from [SQLDBCache] corresponding to the result Set: "+resultsetSignature);
+			return true;
+		}
 		return false;
 	}
 
@@ -133,8 +202,15 @@ public class SQLDBCache implements ICache {
 	 */
 	@Override
 	public void deleteAll() {
-		// TODO Auto-generated method stub
-		
+		logger.debug("Removing all tables from [SQLDBCache]");
+		Iterator it = cacheRegistry.entrySet().iterator();
+	    while (it.hasNext()) {
+	        Map.Entry<String,String> entry = (Map.Entry<String,String>)it.next();
+	        String resultsetSignature = entry.getKey();
+	        this.delete(resultsetSignature);
+	        //it.remove(); // avoids a ConcurrentModificationException
+	    }
+		logger.debug("[SQLDBCache] All tables removed, Cache cleaned ");
 	}
 
 
@@ -183,7 +259,7 @@ public class SQLDBCache implements ICache {
 		
 		try {
 			String tableName = persistedTableManager.generateRandomTableName();
-			persistedTableManager.persistDataset(resultset, getDataSource(), tableName);
+			persistedTableManager.persistDataset(dataset, resultset, getDataSource(), tableName);
 			//4- Aggiorna il cacheRegistry con la nuova coppia <resultsetSignature,nometabellaCreata>
 			cacheRegistry.put(resultsetSignature, tableName);
 		} catch (Exception e) {
