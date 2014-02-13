@@ -3,8 +3,6 @@
 <head></head>
 <body>
   
-<jsp:include page="/WEB-INF/jsp/whatIf.jsp">
-
-</jsp:include>
+<jsp:include page="/WEB-INF/jsp/whatIf.jsp"/>
 </body>
 </html>
