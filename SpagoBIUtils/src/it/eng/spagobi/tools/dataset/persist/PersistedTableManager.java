@@ -8,6 +8,7 @@ package it.eng.spagobi.tools.dataset.persist;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
+import it.eng.spagobi.tools.dataset.bo.FileDataSet;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IField;
@@ -114,9 +115,14 @@ public class PersistedTableManager {
 		persistDataset(datastore, dsPersist);
 	}
 	
-	public void persistDataset(IDataStore datastore, IDataSource datasource, String tableName)throws Exception {
+	public void persistDataset(IDataSet dataSet, IDataStore datastore, IDataSource datasource, String tableName)throws Exception {
 		this.setTableName(tableName);
 		this.setDialect(datasource.getHibDialectClass());
+		
+		if (dataSet instanceof FileDataSet){
+			datastore = normalizeFileDataSet(dataSet,datastore);
+		}
+		
 		logger.debug("DataSource target dialect is [" + getDialect() + "]");
 		//for the first version not all target dialect are enable
 		if (getDialect().contains(DIALECT_SQLSERVER) || getDialect().contains(DIALECT_DB2) ||
@@ -125,6 +131,42 @@ public class PersistedTableManager {
 			throw new SpagoBIServiceException("","sbi.ds.dsCannotPersistDialect");
 		}
 		persistDataset(datastore,datasource);
+	}
+	
+	private IDataStore normalizeFileDataSet(IDataSet dataSet, IDataStore datastore){
+		if (dataSet instanceof FileDataSet){
+			//TODO: Change dataStore fields type according to the metadata specified on the DataSet metadata
+			//because FileDataSet has all dataStore field set as String by default
+			IMetaData dataStoreMetaData = datastore.getMetaData();
+			IMetaData dataSetMetaData = dataSet.getMetadata();
+			
+			int filedNo = dataStoreMetaData.getFieldCount();
+			for (int i=0, l=filedNo; i<l; i++){	
+				//Apply DataSet FieldType to DataStore FieldType
+				IFieldMetaData dataStoreFieldMetaData = dataStoreMetaData.getFieldMeta(i);
+				dataStoreFieldMetaData.setFieldType(dataSetMetaData.getFieldMeta(i).getFieldType());
+				
+			}
+			
+			//Change Object Type of field records according to metadata's field type
+			for (int i=0; i<Integer.parseInt(String.valueOf(datastore.getRecordsCount())); i++){
+				IRecord rec = datastore.getRecordAt(i);			
+				for (int j=0; j<rec.getFields().size(); j++){		
+					IFieldMetaData fmd = dataStoreMetaData.getFieldMeta(j);
+					IField field = rec.getFieldAt(j);
+					//change content type
+					if(fmd.getType().toString().contains("Integer")) {
+						Integer intValue = Integer.valueOf((String)field.getValue());
+						field.setValue(intValue);
+					} else if(fmd.getType().toString().contains("Double")) {
+						Double doubleValue = Double.valueOf((String)field.getValue());
+						field.setValue(doubleValue);
+					}
+					
+				}
+			}
+		}
+		return datastore;
 	}
 	
 	private void persistDataset(IDataStore datastore, IDataSource datasource)throws Exception {
@@ -470,6 +512,17 @@ public class PersistedTableManager {
 			TemporaryTableManager.dropTableIfExists(getTableName(), datasource);
 		} catch (Exception e) {
 			logger.error("Impossible to drop the temporary table with name " + getTableName(), e);
+			throw new SpagoBIEngineRuntimeException("Impossible to drop the persisted table with name " + tableName, e);
+		}
+	}
+	
+	public void dropTableIfExists(IDataSource datasource, String tableName){
+		//drop the persisted table if one exists
+		try {
+			logger.debug("Dropping PersistedTable " + tableName + " if it exists...");
+			TemporaryTableManager.dropTableIfExists(tableName, datasource);
+		} catch (Exception e) {
+			logger.error("Impossible to drop the table with name " + tableName, e);
 			throw new SpagoBIEngineRuntimeException("Impossible to drop the persisted table with name " + tableName, e);
 		}
 	}
