@@ -407,8 +407,8 @@ Ext.extend(Sbi.browser.FolderDetailPanel, Ext.Panel, {
     // private methods 
     
     , onClick: function(dataview, i, node, e) {
-    	var actionDetail = e.getTarget('li[class=detail]', 10, true);
-    	var actionMetaData = e.getTarget('li[class=showmetadata]', 10, true);
+    	var actionDetail = e.getTarget('a[class=detail]', 10, true);
+    	var actionMetaData = e.getTarget('a[class=showmetadata]', 10, true);
         var actionDelete = e.getTarget('a[class=delete]', 10, true);
         var actionClone = e.getTarget('a[class=clone]', 10, true);
         var actionFavourite = e.getTarget('span.icon', 10, true); //TBD

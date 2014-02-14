@@ -221,16 +221,19 @@ Ext.define('Sbi.adhocreporting.MyAnalysisView', {
 					'</tpl>'+	
 					'<span class="shadow"></span>'+
 					'<div class="hover">'+
-			        	'<div class="box-actions-container">'+
-			            '    <ul class="box-actions">'+	    
-			            '		<tpl for="actions">'+  
-			            ' 			<tpl if="name != \'delete\' && name != \'clone\' ">'+
-				        ' 	       		<li class="{name}"><a href="#" title="{description}"></a></li>'+
-				        '			</tpl>'+
-				        '		</tpl>'+
-			            '    </ul>'+
-			            '</div>'+
+//			        	'<div class="box-actions-container">'+
+//			            '    <ul class="box-actions">'+	    
+//			            '		<tpl for="actions">'+  
+//			            ' 			<tpl if="name != \'delete\' && name != \'clone\' ">'+
+//				        ' 	       		<li class="{name}"><a href="#" title="{description}"></a></li>'+
+//				        '			</tpl>'+
+//				        '		</tpl>'+
+//			            '    </ul>'+
+//			            '</div>'+
 			            '<tpl for="actions">'+   //TO OPTIMIZE WITHOUT CICLE ON ACTIONS!!!!
+			            '	<tpl if="name != \'delete\' && name != \'clone\'">'+
+			            '		<a href="#" class="{name}" title="{description}">{name}</a>'+
+			            '	</tpl>' +
 			            '	<tpl if="name == \'delete\'">'+
 			            '		<a href="#" class="delete" title="{description}">Cancella</a>'+
 			            '	</tpl>' +
@@ -261,8 +264,8 @@ Ext.define('Sbi.adhocreporting.MyAnalysisView', {
 		onClick : function(obj, record, item, index, e, eOpts) {
 			var scope = this;
 			
-			var actionDetail = e.getTarget('li[class=detail]', 10, true);
-	    	var actionMetaData = e.getTarget('li[class=showmetadata]', 10, true);
+			var actionDetail = e.getTarget('a[class=detail]', 10, true);
+	    	var actionMetaData = e.getTarget('a[class=showmetadata]', 10, true);
 	        var actionDelete = e.getTarget('a[class=delete]', 10, true);
 	        var actionClone = e.getTarget('a[class=clone]', 10, true);
 	        var actionShare = e.getTarget('div[class=share]',10,true)

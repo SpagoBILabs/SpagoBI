@@ -60,16 +60,10 @@ Sbi.browser.FolderViewTemplate = function(config) {
 			'</tpl>'+	
 			'<span class="shadow"></span>'+
 			'<div class="hover">'+
-	        	'<div class="box-actions-container">'+
-	            '    <ul class="box-actions">'+	    
-	            '		<tpl for="actions">'+  
-	            ' 			<tpl if="name != \'delete\' && name != \'clone\'">'+
-		        ' 	       		<li class="{name}"><a href="#" title="{description}"></a></li>'+
-		        '			</tpl>'+
-		        '		</tpl>'+
-	            '    </ul>'+
-	            '</div>'+
 	            '<tpl for="actions">'+   //TO OPTIMIZE WITHOUT CICLE ON ACTIONS!!!!
+	            '	<tpl if="name != \'delete\' && name != \'clone\'">'+
+	            '		<a href="#" class="{name}" title="{description}">{name}</a>'+
+	            '	</tpl>' +
 	            '	<tpl if="name == \'delete\'">'+
 	            '		<a href="#" class="delete" title="{description}">Cancella</a>'+
 	            '	</tpl>' +
