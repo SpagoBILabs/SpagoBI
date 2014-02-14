@@ -110,11 +110,6 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsCardPanel, Ext.Panel, {
 			ddGroup: this.ddGroup
 			, onFieldDrop: this.onFieldDrop
 		});
-//		this.on("beforeDestroy", function() {
-//			Sbi.trace("[QueryFieldsCardPanel.onBeforeDestroy]: IN");
-//			this.dropTarget.destroy();
-//			Sbi.trace("[QueryFieldsCardPanel.onBeforeDestroy]: OUT");
-//		}, this);
 	}
 
 	, onFieldDrop: function(ddSource) {
