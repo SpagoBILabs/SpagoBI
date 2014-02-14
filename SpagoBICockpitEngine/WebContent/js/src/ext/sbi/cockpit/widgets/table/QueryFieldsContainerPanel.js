@@ -185,6 +185,7 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsContainerPanel, Ext.grid.GridPan
 	}
 	
 	, notifyDropFromQueryFieldsPanel: function(ddSource) {
+		Sbi.trace("[QueryFieldsContainerPanel.notifyDropFromQueryFieldsPanel]: IN");
 		var rows = ddSource.dragData.selections;
 		var i = 0;
 		for (; i < rows.length; i++) {
@@ -199,6 +200,8 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsContainerPanel, Ext.grid.GridPan
 				});
 				return;
 			}
+			Sbi.trace("[QueryFieldsContainerPanel.notifyDropFromQueryFieldsPanel]: 1");
+			
 			// if the field is a postLineCalculated show an error
 			if (aRow.data.nature === 'postLineCalculated') {
 				Ext.Msg.show({
@@ -209,9 +212,12 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsContainerPanel, Ext.grid.GridPan
 				});
 				return;
 			}
+			Sbi.trace("[QueryFieldsContainerPanel.notifyDropFromQueryFieldsPanel]: 2");
+			
 			this.addField(aRow.data);
 			this.fireEvent('storeChanged', this.store.getCount());
 		}
+		Sbi.trace("[QueryFieldsContainerPanel.notifyDropFromQueryFieldsPanel]: OUT");
 	}
 	
 	
@@ -232,6 +238,7 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsContainerPanel, Ext.grid.GridPan
 	}
 	
 	, setValues: function (attributes) {
+		Sbi.trace("[QueryFieldsContainerPanel.setValues]: IN");
 		this.removeAllValues();
 		var i = 0;
 		for (; i < attributes.length; i++) {
@@ -239,31 +246,32 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsContainerPanel, Ext.grid.GridPan
   			this.addField(attribute); 
   		}
 		this.fireEvent('storeChanged', this.store.getCount());
+		Sbi.trace("[QueryFieldsContainerPanel.setValues]: OUT");
 	}
 	
 	, addField : function (field) {
+		Sbi.trace("[QueryFieldsContainerPanel.addField]: IN");
 		var data = Ext.apply({}, field); // making a clone
 		var record = new this.Record(data);
 		this.store.add(record); 
+		Sbi.trace("[QueryFieldsContainerPanel.addField]: field [" + Sbi.toSource(field)+ "] succesfully added");
+		Sbi.trace("[QueryFieldsContainerPanel.addField]: IN");
 	}
-//    , getRecordFields : function () {
-//    	var recordFields = [];
-//    	var count = this.store.getCount();
-//    	for (var i = 0; i < count; i++) {
-//    		recordFields.push(this.store.getAt(i));
-//    	}
-//    	return recordFields;
-//    }
+
 	, removeSelectedValues: function() {
+		Sbi.trace("[QueryFieldsContainerPanel.removeSelectedValues]: IN");
         var sm = this.getSelectionModel();
         var rows = sm.getSelections();
         this.store.remove(rows);
         this.fireEvent('storeChanged', this.store.getCount());
+        Sbi.trace("[QueryFieldsContainerPanel.removeSelectedValues]: OUT");
 	}
 	
 	, removeAllValues: function() {
+		Sbi.trace("[QueryFieldsContainerPanel.removeAllValues]: IN");
 		this.store.removeAll(false); // CANNOT BE SILENT!!! it must throw the clear event for attributeRemoved event
 		this.fireEvent('storeChanged',0);
+		Sbi.trace("[QueryFieldsContainerPanel.removeAllValues]: OUT");
 	}
 
 	, containsAttribute: function (attributeId) {

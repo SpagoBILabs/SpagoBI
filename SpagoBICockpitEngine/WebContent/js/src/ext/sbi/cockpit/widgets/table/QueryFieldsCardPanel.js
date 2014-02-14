@@ -123,15 +123,19 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsCardPanel, Ext.Panel, {
 	}
 	
 	, setActiveItem: function() {
+		Sbi.trace("[QueryFieldsCardPanel.setActiveItem]: IN");
 		this.un('afterLayout', this.setActiveItem, this);
     	if (this.tableDesigner.getContainedValues().length > 0) {
+    		Sbi.trace("[QueryFieldsCardPanel.setActiveItem]: the designer contains [" + this.tableDesigner.getContainedValues().length + "] fields");
     		this.getLayout().setActiveItem( 1 );
     	} else {
+    		Sbi.trace("[QueryFieldsCardPanel.setActiveItem]: The designer contains no field");
     		this.getLayout().setActiveItem( 0 );
     	}
     	
     	//if the table has no data we show the empty message 
     	this.tableDesigner.on('storeChanged', this.setActiveItem, this);
+    	Sbi.trace("[QueryFieldsCardPanel.setActiveItem]: OUT");
 	}
 	
 	, containsAttribute: function (attributeId) {

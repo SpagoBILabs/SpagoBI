@@ -48,11 +48,16 @@ Ext.extend(Sbi.cockpit.editor.WidgetEditorWizard, Ext.Window, {
 	
 	editorMainPanel: null
 	, targetComponent: null
-	, widgetManager: null
+	, usedDatasets: null
+	//, widgetManager: null
 	
 	// -----------------------------------------------------------------------------------------------------------------
     // public methods
 	// -----------------------------------------------------------------------------------------------------------------
+	
+	, setUsedDatasets: function(datasets) {
+		this.usedDatasets = datasets;
+	}
 	
 	, getWizardTargetComponent: function() {
 		return this.targetComponent;
@@ -64,11 +69,19 @@ Ext.extend(Sbi.cockpit.editor.WidgetEditorWizard, Ext.Window, {
 		var widget = this.targetComponent.getWidget();
 		if(Sbi.isValorized(widget)) {
 			Sbi.trace("[WidgetEditorWizard.setWizardTargetComponent]: target component already contains a widget");
-			//this.setWizardState(widget.getConfiguration());
 			this.resetWizardState();
+			var widgetConf = widget.getConfiguration();
+			if(widgetConf.dataset) {
+				this.editorMainPanel.selectDataset(widgetConf.dataset);
+				this.editorMainPanel.setWidgetEditorPageState(widgetConf.custom);
+				this.editorMainPanel.moveToPage (1);
+			} else {
+				this.editorMainPanel.moveToPage(0);
+			}	
 		} else {
 			Sbi.trace("[WidgetEditorWizard.setWizardTargetComponent]: target component does not contains any widget");
 			this.resetWizardState();
+			this.editorMainPanel.moveToPage(0);
 		}
 		Sbi.trace("[WidgetEditorWizard.setWizardTargetComponent]: OUT");
 	}
@@ -99,7 +112,7 @@ Ext.extend(Sbi.cockpit.editor.WidgetEditorWizard, Ext.Window, {
 		Sbi.trace("[WidgetEditorWizard.init]: IN");
 		
 		this.editorMainPanel = new Sbi.cockpit.editor.WidgetEditorWizardPanel({
-			widgetManager: this.widgetManager
+			usedDatasets: this.usedDatasets
 		});
 		this.editorMainPanel.on('cancel', this.onCancel, this);
 		this.editorMainPanel.on('confirm', this.onConfirm, this);
@@ -121,6 +134,7 @@ Ext.extend(Sbi.cockpit.editor.WidgetEditorWizard, Ext.Window, {
 		var component = this.getWizardTargetComponent();
 		component.setWidgetConfiguration(editorState);
 		this.hide();
+		// TODO update store manager
 	}
 
 });

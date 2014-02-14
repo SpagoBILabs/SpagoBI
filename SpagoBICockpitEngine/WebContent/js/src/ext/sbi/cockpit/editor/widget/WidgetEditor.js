@@ -14,6 +14,8 @@ Sbi.cockpit.editor.widget.WidgetEditor = function(config) {
 		//title: LN('Sbi.cockpit.editor.widget.WidgetEditor.title')
 		engineAlreadyInitialized : false
 		, border : false
+		, layout: 'border'
+		, autoScroll: true
 	};
 
 	var settings = Sbi.getObjectSettings('Sbi.cockpit.editor.widget.WidgetEditor', defaultSettings);
@@ -95,6 +97,9 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditor, Ext.Panel, {
 	, worksheetTemplate: {}  // the initial worksheet template; to be passed as a property of the constructor's input object!!!
 	, engineAlreadyInitialized : null
 
+	// =================================================================================================================
+	// METHODS
+	// =================================================================================================================
 	
 	, initializeEngineInstance : function (config) {
 //		Ext.Ajax.request({
@@ -343,24 +348,5 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditor, Ext.Panel, {
 	}
 	, fake : function () {
 
-	}
-
-	, updateValues: function(values) {
-		Sbi.trace("[WidgetEditor.updateValues]: IN");
-		
-		Sbi.trace("[WidgetEditor.updateValues]: Input parameter values is equal to [" + Sbi.toSource(values) + "]");
-		this.controlPanel.updateValues(values);
-		Sbi.trace("[WidgetEditor.updateValues]: OUT");
-	}
-	
-	, applyPageState: function(state) {
-		Sbi.trace("[WidgetEditor.applyPageState]: IN");
-		state =  state || {};
-		if(this.mainPanel.designer) {
-			state.wtype = this.mainPanel.designer.getDesignerType();
-			state.wconf = this.mainPanel.designer.getDesignerState();
-		}
-		Sbi.trace("[WidgetEditor.applyPageState]: OUT");
-		return state;
 	}
 });

@@ -16,6 +16,9 @@ Sbi.cockpit.editor.dataset.DatasetBrowserPage = function(config) {
 	};
 	var settings = Sbi.getObjectSettings('Sbi.cockpit.editor.dataset.DatasetBrowserPage', defaultSettings);
 	var c = Ext.apply(settings, config || {});
+	
+	Sbi.trace("[DatasetBrowserPage.constructor]: config [" + Sbi.toSource(c) + "]");
+	
 	Ext.apply(this, c);
 	
 	this.init();
@@ -41,16 +44,47 @@ Sbi.cockpit.editor.dataset.DatasetBrowserPage = function(config) {
 Ext.extend(Sbi.cockpit.editor.dataset.DatasetBrowserPage, Ext.Panel, {
 	
 	datasetsBrowserPanel: null
-	, widgetManager: null
+	//, widgetManager: null
+	, usedDatasets: null
+	
+	// =================================================================================================================
+	// METHODS
+	// =================================================================================================================
 	
 	// -----------------------------------------------------------------------------------------------------------------
     // public methods
 	// -----------------------------------------------------------------------------------------------------------------
 	
+	, getValidationErrorMessages: function() {
+		Sbi.trace("[DatasetBrowserPage.getValidationErrorMessage]: IN");
+		var msg = null;
+		
+		var selectedDatasets = this.datasetsBrowserPanel.getSelection();
+		if(selectedDatasets.length === 0) {
+			msg = "Per procedere e' necessario selezionare un dataset";
+		}
+		
+		Sbi.trace("[DatasetBrowserPage.getValidationErrorMessage]: OUT");
+		
+		return msg;
+	}
+	
+	, isValid: function() {
+		Sbi.trace("[DatasetBrowserPage.isValid]: IN");
+	
+		var isValid = this.getValidationErrorMessages() === null;
+		
+		Sbi.trace("[DatasetBrowserPage.isValid]: OUT");
+		
+		return isValid;
+	}
+
 	, applyPageState: function(state) {
 		Sbi.trace("[WidgetEditor.applyPageState]: IN");
 		state =  state || {};
 		state.selectedDatasetLabel = this.datasetsBrowserPanel.getSelection()[0];
+		// TODO manage also unselection
+		state.unselectedDatasetLabel = null;
 		Sbi.trace("[WidgetEditor.applyPageState]: OUT");
 		return state;
 	}	
@@ -60,7 +94,8 @@ Ext.extend(Sbi.cockpit.editor.dataset.DatasetBrowserPage, Ext.Panel, {
 		Sbi.trace("[WidgetEditor.setPageState]: state parameter is equal to [" + Sbi.toSource(state) + "]");
 		
 		if(Sbi.isValorized(state.dataset)) {
-			this.datasetsBrowserPanel.selectDatasetByLabel(state.dataset);
+			this.datasetsBrowserPanel.resetSelection();
+			this.datasetsBrowserPanel.select(state.dataset);
 			Sbi.trace("[WidgetEditor.setPageState]: selected dataset [" + state.dataset + "]");
 		} else {
 			this.datasetsBrowserPanel.resetSelection();
@@ -82,8 +117,10 @@ Ext.extend(Sbi.cockpit.editor.dataset.DatasetBrowserPage, Ext.Panel, {
 	// -----------------------------------------------------------------------------------------------------------------
 
 	, init: function(){
+		//var usedDatasets = this.widgetManager.getUsedStoreLabels();
+		
 		this.datasetsBrowserPanel = new Sbi.widgets.DatasetsBrowserPanel({
-			widgetManager: this.widgetManager
+			usedDatasets: this.usedDatasets
 		}); 
 //		this.datasetsBrowserPanel.on('select',  function(l) {
 //			this.onSelect(l);

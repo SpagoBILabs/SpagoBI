@@ -66,6 +66,12 @@ Ext.extend(Sbi.cockpit.core.WidgetContainerComponent, Ext.Window, {
      * This array contains all the services invoked by this class
      */
 	services: null
+	
+	/**
+     * @property {Sbi.cockpit.core.WidgetContainer} parentContainer
+     * The parent container
+     */
+	, parentContainer: null
    
 	// =================================================================================================================
 	// METHODS
@@ -110,6 +116,8 @@ Ext.extend(Sbi.cockpit.core.WidgetContainerComponent, Ext.Window, {
 		Sbi.trace("[WidgetContainerComponent.setWidget]: IN");
 		this.removeAll(true);
 		this.add(widget);
+		this.widget = widget;
+		this.widget.setParentComponent(this);
 		this.doLayout();
 		Sbi.trace("[WidgetContainerComponent.setWidget]: OUT");
 	}
@@ -128,16 +136,24 @@ Ext.extend(Sbi.cockpit.core.WidgetContainerComponent, Ext.Window, {
 		Sbi.trace("[WidgetContainerComponent.setWidgetConfiguration]: OUT");
 	}
 	
-	
+	, getParentContainer: function(c) {	
+		return this.parentContainer;	
+	}
+
+    , setParentContainer: function(c) {	
+    	Sbi.trace("[WidgetContainerComponent.setParentContainer]: IN");
+		this.parentContainer = c;	
+		Sbi.trace("[WidgetContainerComponent.setParentContainer]: OUT");
+	}
 	// -----------------------------------------------------------------------------------------------------------------
     // private methods
 	// -----------------------------------------------------------------------------------------------------------------
-	, onShowWidgetConfiguration: function(widget) {
-		this.fireEvent('performaction', this, widget, 'showConfiguration');
+	, onShowWidgetConfiguration: function() {
+		this.fireEvent('performaction', this, 'showConfiguration');
     } 
     
-    , onShowWidgetEditor: function(widget) {
-    	this.fireEvent('performaction', this, widget, 'showEditor');
+    , onShowWidgetEditor: function() {
+    	this.fireEvent('performaction', this, 'showEditor');
     } 
 	
 	// -----------------------------------------------------------------------------------------------------------------
@@ -171,15 +187,11 @@ Ext.extend(Sbi.cockpit.core.WidgetContainerComponent, Ext.Window, {
 	, init: function() {
 		this.tools =  [{
     		id:'gear',
-    		handler: function(event, button, win, tc){
-    			this.onShowWidgetEditor(win.widget);
-        	},
+    		handler: this.onShowWidgetEditor,
     		scope: this
     	}, {
         	id:'help',
-            handler: function(event, button, win, tc){
-            	this.onShowWidgetConfiguration(win.widget);
-            },
+            handler: this.onShowWidgetConfiguration,
     		scope: this
         }, {
         	id:'refresh',

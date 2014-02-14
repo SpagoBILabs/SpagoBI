@@ -67,6 +67,18 @@ Sbi.cockpit.widgets.table.TableWidgetDesigner = function(config) {
 		this
 	);
 	
+	this.tableDesigner.on(
+		'render' , 
+		function (thePanel, attribute) { 
+			if(Sbi.isValorized(this.visibleselectfields)) {
+				this.setDesignerState({visibleselectfields: this.visibleselectfields});
+			}
+		}, 
+		this
+	);
+	
+	
+	
 	c = {
 		layout: 'fit',
 		height: 350,
@@ -84,7 +96,7 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidgetDesigner, Sbi.cockpit.core.Widge
 		Sbi.trace("[TableWidgetDesigner.getDesignerState]: " + Sbi.cockpit.widgets.table.TableWidgetDesigner.superclass.getDesignerState);
 		
 		var state = Sbi.cockpit.widgets.table.TableWidgetDesigner.superclass.getDesignerState(this);
-		state.wtype = 'Table';
+		state.wtype = 'table';
 		state.visibleselectfields = this.tableDesigner.tableDesigner.getContainedValues();
 		
 		Sbi.trace("[TableWidgetDesigner.getDesignerState]: OUT");
@@ -92,10 +104,15 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidgetDesigner, Sbi.cockpit.core.Widge
 	}
 	
 	, setDesignerState: function(state) {
+		Sbi.trace("[TableWidgetDesigner.setDesignerState]: IN");
 		Sbi.cockpit.widgets.table.TableWidgetDesigner.superclass.setDesignerState(this, state);
 		if(state.visibleselectfields!=undefined && state.visibleselectfields!=null){
+			Sbi.trace("[TableWidgetDesigner.setDesignerState]: there are [" + state.visibleselectfields.length + "] fields slected");
 			this.tableDesigner.tableDesigner.setValues(state.visibleselectfields);
+		} else {
+			Sbi.trace("[TableWidgetDesigner.setDesignerState]: no fields selected");
 		}
+		Sbi.trace("[TableWidgetDesigner.setDesignerState]: OUT");
 	}
 	
 	/* tab validity: rules are
