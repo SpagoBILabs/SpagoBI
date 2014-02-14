@@ -5,10 +5,10 @@
 
 /**
  * 
- * This component manage all the events of the table.
- * The standard use case is: the view notify an event to the event manager,
+ * This component manage all the events. The standard use case is: the view notify an event to the event manager,
  * the manager decorates it and calls a method of the controller.
- * The controller execute the request and return the result at the event manager that manage the response
+ * The controller execute the request and return the result at the event manager that manage the response.<br>
+ * It's a Singleton and all classes can notify an event directly to the component
  * 
  *     
  *  @author
