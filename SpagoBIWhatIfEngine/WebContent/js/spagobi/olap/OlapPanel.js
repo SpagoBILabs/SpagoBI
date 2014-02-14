@@ -77,15 +77,11 @@ Ext.define('Sbi.olap.OlapPanel', {
 		this.definitionTools = Ext.create('Sbi.olap.tools.OlapViewDefinitionTools', {region:"west",width: '15%'});
 		this.executionPanel = Ext.create('Sbi.olap.execution.OlapExecutionPanel', {region:"center",width: '45%'});
 		this.optionsPanel = Ext.create('Sbi.olap.options.OlapOptions', {region:"east",width: '10%'});
-		this.eventManager = Ext.create('Sbi.olap.control.EventManager', {olapPanel: this});
+		Sbi.olap.eventManager = Ext.create('Sbi.olap.control.EventManager', {olapPanel: this});
 
 		Ext.apply(this, {
 			items: [this.definitionTools, this.executionPanel, this.optionsPanel]
 		});
 		this.callParent();
-	},
-	
-	initEvents: function(){ 
-		this.optionsPanel.olapOptionsContainer.olapOptionsTable.on('mdxChanged',  this.eventManager.executeMdx, this.eventManager);
 	}
 });
