@@ -435,3 +435,6 @@ INSERT INTO SBI_ORGANIZATION_ENGINE (ENGINE_ID, ORGANIZATION_ID, CREATION_DATE, 
 values((SELECT engine_id from sbi_engines where label='SpagoBICockpitEngine'), (select id from sbi_organizations where name = 'SPAGOBI'),
 NOW(), NOW(), 'server', NOW(), '4.1');
 commit;
+
+update SBI_ENGINES SET DRIVER_NM = 'it.eng.spagobi.engines.drivers.xmla.XMLADriver' where label = 'XMLAEngine';
+commit;

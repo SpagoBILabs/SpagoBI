@@ -3,6 +3,8 @@ VALUES ((SELECT next_val FROM hibernate_sequences WHERE sequence_name = 'SBI_USE
 'TenantManagement','TenantManagement', 'server', CURRENT_TIMESTAMP);\p\g
 UPDATE hibernate_sequences SET next_val = next_val+1 WHERE sequence_name = 'SBI_USER_FUNC';\p\g
 
+update SBI_ENGINES SET DRIVER_NM = 'it.eng.spagobi.engines.drivers.xmla.XMLADriver' where label = 'XMLAEngine';
+commit;
 INSERT INTO SBI_ROLE_TYPE_USER_FUNC (ROLE_TYPE_ID, USER_FUNCT_ID)
 VALUES ((SELECT VALUE_ID FROM SBI_DOMAINS WHERE VALUE_CD = 'ADMIN' AND DOMAIN_CD = 'ROLE_TYPE'),
 (SELECT USER_FUNCT_ID FROM SBI_USER_FUNC WHERE NAME = 'TenantManagement'));\p\g
