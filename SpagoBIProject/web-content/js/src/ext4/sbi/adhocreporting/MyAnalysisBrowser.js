@@ -346,6 +346,7 @@ Ext.define('Sbi.adhocreporting.MyAnalysisBrowser', {
 			
 			var shareWindowPanel = new Ext.form.FormPanel({
 				layout: 'anchor', //'form',
+				autoScroll: true,
 				bodyStyle: 'padding:5px',
 				defaults: {
 		            xtype: 'textfield'
@@ -361,7 +362,6 @@ Ext.define('Sbi.adhocreporting.MyAnalysisBrowser', {
 		        height		: 310,
 	            closeAction :'destroy',
 	            plain       : true,
-	            autoscroll	: true,
 	            title		: LN('sbi.browser.document.share.win.title'),
 	            items       : [shareWindowPanel],
 	            buttons		: [{
