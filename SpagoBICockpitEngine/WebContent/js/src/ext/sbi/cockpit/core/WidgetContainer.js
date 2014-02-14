@@ -52,10 +52,10 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.Widget, {
 	widgetManager: null
 
   /**
-   * @property {Ext.Window} widgetEditor
+   * @property {Ext.Window} widgetEditorWizard
    * The wizard that manages the single widget definition
    */
-  , widgetEditor: null
+  , widgetEditorWizard: null
 	 
 	// =================================================================================================================
 	// METHODS
@@ -208,27 +208,46 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.Widget, {
     }
     
     
-    , showWidgetEditor: function(component) {    	
+    , showWidgetEditorWizard: function(component) {    	
     	
-    	Sbi.trace("[WidgetContainer.showWidgetEditor]: IN");
+    	Sbi.trace("[WidgetContainer.showWidgetEditorWizard]: IN");
     	
-    	if(this.widgetEditor === null) {
+    	if(this.widgetEditorWizard === null) {
     		
-    		Sbi.trace("[WidgetContainer.showWidgetEditor]: instatiating the editor");
+    		Sbi.trace("[WidgetContainer.showWidgetEditorWizard]: instatiating the editor");
 
-    		this.widgetEditor = new Sbi.cockpit.editor.WidgetEditorWizard();
+    		this.widgetEditorWizard = new Sbi.cockpit.editor.WidgetEditorWizard();
+    		this.widgetEditorWizard.on("submit", function(wizard) {
+    			Sbi.trace("[WidgetContainer.onSubmit]: IN");
+    			wizard.hide();
+    			var component = wizard.getWizardTargetComponent();
+    			component.setWidgetConfiguration( wizard.getWizardState() );
+    			Sbi.trace("[WidgetContainer.onSubmit]: OUT");
+    		}, this);
+    		this.widgetEditorWizard.on("cancel", function(wizard) {
+    			Sbi.trace("[WidgetContainer.onCancel]: IN");
+    			wizard.hide();
+    			Sbi.trace("[WidgetContainer.onCancel]: OUT");
+    		}, this);
+    		this.widgetEditorWizard.on("apply", function(wizard) {
+    			Sbi.trace("[WidgetContainer.onApply]: IN");
+    			var component = wizard.getWizardTargetComponent();
+    			component.setWidgetConfiguration( wizard.getWizardState() );
+    			Sbi.trace("[WidgetContainer.onApply]: OUT");
+    		}, this);
     		
-	    	Sbi.trace("[WidgetContainer.showWidgetEditor]: editor succesfully instantiated");
+	    	Sbi.trace("[WidgetContainer.showWidgetEditorWizard]: editor succesfully instantiated");
     	}
     	
-    	//this.widgetEditor.setTitle("Widget [" + widget.id + "] editor");
-    	this.widgetEditor.setUsedDatasets(this.getWidgetManager().getUsedStoreLabels());
-    	this.widgetEditor.setWizardTargetComponent(component);
+    	// TODO implement setTitle method
+    	//this.widgetEditorWizard.setTitle("Widget [" + widget.id + "] editor");
+    	this.widgetEditorWizard.setUsedDatasets(this.getWidgetManager().getUsedStoreLabels());
+    	this.widgetEditorWizard.setWizardTargetComponent(component);
     	
     	
-    	this.widgetEditor.show();
+    	this.widgetEditorWizard.show();
     	
-    	Sbi.trace("[WidgetContainer.showWidgetEditor]: OUT");
+    	Sbi.trace("[WidgetContainer.showWidgetEditorWizard]: OUT");
     }
     
     // -----------------------------------------------------------------------------------------------------------------
@@ -315,14 +334,14 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.Widget, {
     	//Ext.Msg.alert('Message', 'The CONFIG tool was clicked.');
     } 
     
-    , onShowWidgetEditor: function(component) {
-    	this.showWidgetEditor(component);
+    , onShowWidgetEditorWizard: function(component) {
+    	this.showWidgetEditorWizard(component);
     	//Ext.Msg.alert('Message', 'The CONFIG tool was clicked.');
     } 
     
-//    , onCloseWidgetEditor: function(){
-//    	this.widgetEditor.resetState();
-//    	this.widgetEditor.hide();
+//    , onCloseWidgetEditorWizard: function(){
+//    	this.widgetEditorWizard.resetState();
+//    	this.widgetEditorWizard.hide();
 //    }
  
     , defineTemplate: function(wEditor){
@@ -410,7 +429,7 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.Widget, {
     	}
     	
     	if(action === 'showEditor') {
-			this.showWidgetEditor(component);
+			this.showWidgetEditorWizard(component);
 		} else if(action === 'showConfiguration') {
 			this.showWidgetConfiguration(component);
 		} else {

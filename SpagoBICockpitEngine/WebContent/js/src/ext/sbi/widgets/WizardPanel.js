@@ -34,7 +34,7 @@ Sbi.widgets.WizardPanel = function(config) {
 	Sbi.widgets.WizardPanel.superclass.constructor.call(this, c);
 	Sbi.trace("[WizardPanel.constructor]: parent costructor succesfully called");
 	
-	this.addEvents('navigate', 'cancel', 'confirm');
+	this.addEvents('navigate', 'cancel', 'submit');
 	
 	Sbi.trace("[WizardPanel.constructor]: OUT");
 };
@@ -141,7 +141,7 @@ Ext.extend(Sbi.widgets.WizardPanel, Ext.Panel, {
 			this.layout.setActiveItem(targetPageNumber);
 			Ext.getCmp('move-prev').setDisabled(targetPageNumber==0);
 			Ext.getCmp('move-next').setDisabled(targetPageNumber==totPageNumber);
-		 	Ext.getCmp('confirm').setVisible(!(parseInt(targetPageNumber)<parseInt(totPageNumber)));
+		 	Ext.getCmp('submit').setVisible(!(parseInt(targetPageNumber)<parseInt(totPageNumber)));
 		
 		} else {
 			var messages = this.getMoveToPageValidationErrorMessages(targetPageNumber);
@@ -367,10 +367,10 @@ Ext.extend(Sbi.widgets.WizardPanel, Ext.Panel, {
 	    });
 		
 		buttonsBar.push({
-			id: 'confirm'
+			id: 'submit'
 			, hidden: true
-	        , text:  LN('sbi.ds.wizard.confirm')
-	        , handler: this.onConfirm
+	        , text:  LN('sbi.ds.wizard.submit')
+	        , handler: this.onSubmit
 	        , scope: this
 	    });
 		
@@ -440,9 +440,9 @@ Ext.extend(Sbi.widgets.WizardPanel, Ext.Panel, {
 		Sbi.trace("[WizardPanel.onApply]: OUT");
 	}
 
-	, onConfirm: function() {
-		Sbi.trace("[WizardPanel.onConfirm]: IN");
-		this.fireEvent('confirm', this, this.getWizardState());  
-		Sbi.trace("[WizardPanel.onConfirm]: OUT");
+	, onSubmit: function() {
+		Sbi.trace("[WizardPanel.onSubmit]: IN");
+		this.fireEvent('submit', this);  
+		Sbi.trace("[WizardPanel.onSubmit]: OUT");
 	}
 });

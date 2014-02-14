@@ -96,7 +96,7 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditorPage, Ext.Panel, {
 
 	, setPageState: function(state) {
 		Sbi.trace("[WidgetEditorPage.setPageState]: IN");
-		Sbi.trace("[WidgetEditorPage.setPageState]: state parameter is equal to [" + Sbi.toSource(state) + "]");
+		Sbi.trace("[WidgetEditorPage.setPageState]: state parameter is equal to [" + Sbi.toSource(state, true) + "]");
 		
 		this.widgetEditorPanel.mainPanel.setDesigner(state);
 		

@@ -53,11 +53,11 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.widgets.dummy.Dumm
    , getCustomConfiguration: function(){
 	    Sbi.trace("[TableWidget.getCustomConfiguration]: IN");
 		
-	    Sbi.trace("[TableWidget.getCustomConfiguration]: wconf: " + Sbi.toSource(this.wconf));
+	    Sbi.trace("[TableWidget.getCustomConfiguration]: wconf: " + Sbi.toSource(this.wconf, true));
 		
 		Sbi.trace("[TableWidget.getCustomConfiguration]: OUT");
 		
-		return this.wconf;
+		return Ext.apply({}, this.wconf);
 	}
 	
 	// =================================================================================================================

@@ -25,6 +25,9 @@ Sbi.cockpit.editor.WidgetEditorWizard = function(config) {
 	Ext.apply(this, c);
 	
 	this.init();
+	this.initEvents();
+	
+
 	
 	c.items = [this.editorMainPanel];
 	
@@ -115,9 +118,32 @@ Ext.extend(Sbi.cockpit.editor.WidgetEditorWizard, Ext.Window, {
 			usedDatasets: this.usedDatasets
 		});
 		this.editorMainPanel.on('cancel', this.onCancel, this);
-		this.editorMainPanel.on('confirm', this.onConfirm, this);
+		this.editorMainPanel.on('submit', this.onSubmit, this);
 		
 		Sbi.trace("[WidgetEditorWizard.init]: OUT");
+	}
+	
+	, initEvents: function() {
+		this.addEvents(
+			/**
+			* @event indicatorsChanged
+			* Fires when data inserted in the wizard is canceled by the user
+			* @param {WidgetEditorWizard} this
+			*/
+			'cancel'
+			/**
+			* @event apply
+			* Fires when data inserted in the wizard is applied by the user
+			* @param {WidgetEditorWizard} this
+			*/
+			, 'apply'
+			/**
+			* @event submit
+			* Fires when data inserted in the wizard is submitted by the user
+			* @param {WidgetEditorWizard} this
+			*/
+			, 'submit'
+		);
 	}
 	
 	
@@ -126,15 +152,15 @@ Ext.extend(Sbi.cockpit.editor.WidgetEditorWizard, Ext.Window, {
 	// -----------------------------------------------------------------------------------------------------------------
 	
 	, onCancel: function(){
-		this.resetWizardState();
-		this.hide();
+		this.fireEvent("cancel", this);
 	}
 	
-	, onConfirm: function(editorPanel, editorState){
-		var component = this.getWizardTargetComponent();
-		component.setWidgetConfiguration(editorState);
-		this.hide();
-		// TODO update store manager
+	, onApply: function(){
+		this.fireEvent("apply", this);
+	}
+	
+	, onSubmit: function(editorPanel){
+		this.fireEvent("submit", this);
 	}
 
 });

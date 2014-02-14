@@ -130,7 +130,7 @@ Ext.extend(Sbi.cockpit.core.WidgetContainerComponent, Ext.Window, {
 		Sbi.trace("[WidgetContainerComponent.setWidgetConfiguration]: IN");
 		// TODO se è un tipo di widget diverso da quello attualmente embeddato lo crea e lo sostiruisce al vecchio
 		// se è dello stesso tipo chiama il metodo setConfiguration sul vecchi senza ricrearne uno nuovo
-		Sbi.trace("[WidgetContainerComponent.setWidgetConfiguration]: widhetConf is equal to [" + Sbi.toSource(widgetConf) + "]");
+		Sbi.trace("[WidgetContainerComponent.setWidgetConfiguration]: widgetConf is equal to [" + Sbi.toSource(widgetConf) + "]");
 		var widget = Sbi.cockpit.core.WidgetExtensionPoint.getWidget(widgetConf.wtype, widgetConf);
 		this.setWidget(widget);
 		Sbi.trace("[WidgetContainerComponent.setWidgetConfiguration]: OUT");
