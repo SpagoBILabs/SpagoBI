@@ -26,7 +26,8 @@ Ext.define('Sbi.olap.tools.OlapViewDefinitionTools', {
 		collapsible: true, 
 		split: true, 
 		collapseMode: "mini",
-		title: "View Editor"
+		title: "View Editor",
+		width: "100%"
 	},
 	
 	/**

@@ -18,6 +18,31 @@ Ext.define('Sbi.olap.options.OlapOptionsTable', {
 	
 	config:{
 		html: "Table options"
+	},
+
+
+	initComponent: function() {
+	
+		Ext.tip.QuickTipManager.init();  // enable tooltips
+		var editor = Ext.create('Ext.form.field.TextArea', {
+			height: 400,
+			width: 500
+		});
+		var thisPanel = this;
+		
+		var button = Ext.create('Ext.Button', {
+		    text: 'Send MDX',
+		    renderTo: Ext.getBody(),
+		    handler: function() {
+		    	thisPanel.fireEvent('mdxChanged',[editor.getValue()]);
+		    }
+		});
+		
+		Ext.apply(this, {
+			items: [editor, button]
+		});
+		this.callParent();
 	}
+
 });
 

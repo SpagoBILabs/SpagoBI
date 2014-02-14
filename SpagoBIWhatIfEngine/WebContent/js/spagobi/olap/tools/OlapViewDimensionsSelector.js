@@ -20,7 +20,8 @@ Ext.define('Sbi.olap.tools.OlapViewDimensionsSelector', {
 	
 	config:{
 		rootVisible: false,
-		title: "Dimensions"
+		title: "Dimensions",
+		border: false
 	},
 	
 	constructor : function(config) {

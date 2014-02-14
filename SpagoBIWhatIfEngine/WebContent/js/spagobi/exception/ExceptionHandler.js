@@ -8,6 +8,8 @@
  
   
  
+  
+ 
 /**
   * Object name 
   * 
@@ -40,9 +42,8 @@ Sbi.exception.ExceptionHandler = function(){
 	// do NOT access DOM from here; elements don't exist yet
  
     // private variables
-	var loginUrl = Sbi.config.loginUrl;
-
-	// public space
+ 
+    // public space
 	return {
 	
 		init : function() {
@@ -66,21 +67,10 @@ Sbi.exception.ExceptionHandler = function(){
         			if (content.errors !== undefined  && content.errors.length > 0) {
         				if (content.errors[0].message === 'session-expired') {
         					// session expired
-        		        	Sbi.exception.ExceptionHandler.redirectToLoginUrl();
-        		        	return;
+        					errMessage = LN('sbi.qbe.sessionexpired.msg');
         				} else if (content.errors[0].message === 'not-enabled-to-call-service') {
         					Sbi.exception.ExceptionHandler.showErrorMessage(LN('not-enabled-to-call-service'), 'Service Error')
-        				}  else if (content.message === 'validation-error') {
-        					for (var count = 0; count < content.errors.length; count++) {
-        						var anError = content.errors[count];
-        						if (anError.message !== undefined && anError.message !== '') {
-			        				errMessage += anError.message;
-			        			}
-			        			if (count < content.errors.length - 1) {
-			        				errMessage += '<br/>';
-			        			}
-        					}
-        				}else {
+        				} else {
         					for (var count = 0; count < content.errors.length; count++) {
         						var anError = content.errors[count];
         						if (anError.message !== undefined && anError.message !== '' && anError.message.indexOf(errorSeparator)>=0) {
@@ -96,18 +86,23 @@ Sbi.exception.ExceptionHandler = function(){
         					}
         				}
         			}
-        		} else {
-        			errMessage = LN('sbi.generic.genericError');
-        		}
+        		} 
+        		if(errMessage === null)	errMessage = 'An unspecified error occurred on the server side';
+        	} else {
+        		errMessage = 'Request has been aborted due to a timeout trigger';
         	}
+        		
+        	errMessage = errMessage || 'An error occurred while processing the server error response';
         	
-        	Sbi.exception.ExceptionHandler.showErrorMessage(errMessage, LN('sbi.generic.serviceError'));
+        	Sbi.exception.ExceptionHandler.showErrorMessage(errMessage, 'Service Error');
        	
         },
+
+        
         
         showErrorMessage : function(errMessage, title) {
-        	var m = errMessage || LN('sbi.generic.genericError');
-        	var t = title || LN('sbi.generic.error');
+        	var m = errMessage || 'Generic error';
+        	var t = title || 'Error';
         	
         	Ext.MessageBox.show({
            		title: t
@@ -119,55 +114,29 @@ Sbi.exception.ExceptionHandler = function(){
         },
         
         showWarningMessage : function(errMessage, title) {
-        	var m = errMessage ||LN('sbi.generic.genericWarning');
-        	var t = title || LN('sbi.generic.warning');
+        	var m = errMessage || 'Generic warning';
+        	var t = title || 'Warning';
         	
         	Ext.MessageBox.show({
            		title: t
            		, msg: m
            		, buttons: Ext.MessageBox.OK     
-           		, icon: Ext.MessageBox. WARNING
+           		, icon: Ext.MessageBox.WARNING
            		, modal: false
        		});
         },
         
-        showInfoMessage : function(errMessage, title, config) {
-        	var m = errMessage || LN('sbi.generic.info');
-        	var t = title || LN('sbi.generic.info');
+        showInfoMessage : function(errMessage, title) {
+        	var m = errMessage || 'Info';
+        	var t = title || 'Info';
         	
-        	Ext.MessageBox.show(Ext.apply({
+        	Ext.MessageBox.show({
            		title: t
            		, msg: m
            		, buttons: Ext.MessageBox.OK     
            		, icon: Ext.MessageBox.INFO
            		, modal: false
-       		},config||{}));
-        },
-        
-        redirectToLoginUrl: function() {
-        	var sessionExpiredSpagoBIJSFound = false;
-        	try {
-        		var currentWindow = window;
-        		var parentWindow = parent;
-        		while (parentWindow != currentWindow) {
-        			if (parentWindow.sessionExpiredSpagoBIJS) {
-        				parentWindow.location = loginUrl;
-        				sessionExpiredSpagoBIJSFound = true;
-        				break;
-        			} else {
-        				currentWindow = parentWindow;
-        				parentWindow = currentWindow.parent;
-        			}
-        		}
-        	} catch (err) {}
-        	
-        	if (!sessionExpiredSpagoBIJSFound) {
-        		window.location = loginUrl;
-        	}
-        }
-        
-        , onStoreLoadException : function(proxy, type, action, options, response, arg) {
-        	Sbi.exception.ExceptionHandler.handleFailure(response, options);
+       		});
         }
 
 	};

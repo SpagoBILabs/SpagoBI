@@ -47,12 +47,29 @@ Ext.define('Sbi.olap.OlapPanel', {
      */
 	optionsPanel: null,
 
+	/**
+     * @property {Sbi.olap.control.EventManager} eventManager
+     *  Manager of all the events fired by the UI
+     */
+	eventManager: null,
+	
 	constructor : function(config) {
 		this.initConfig(config||{});
 //		if(Sbi.settings && Sbi.settings.olap && Sbi.settings.olap.OlapPanel) {
 //			this.initConfig(Sbi.settings.olap.OlapPanel);
 //		}
+		
 		this.callParent(arguments);
+		
+		this.addEvents(
+		        /**
+		         * @event mdxChanged
+		         * Fired When the query MDX is changed
+				 * @param {String} mdx
+		         */
+		        'mdxChanged'
+				);
+		this.initEvents();
 	},
 
 	initComponent: function() {
@@ -60,10 +77,15 @@ Ext.define('Sbi.olap.OlapPanel', {
 		this.definitionTools = Ext.create('Sbi.olap.tools.OlapViewDefinitionTools', {region:"west",width: '15%'});
 		this.executionPanel = Ext.create('Sbi.olap.execution.OlapExecutionPanel', {region:"center",width: '45%'});
 		this.optionsPanel = Ext.create('Sbi.olap.options.OlapOptions', {region:"east",width: '10%'});
+		this.eventManager = Ext.create('Sbi.olap.control.EventManager', {olapPanel: this});
 
 		Ext.apply(this, {
 			items: [this.definitionTools, this.executionPanel, this.optionsPanel]
 		});
 		this.callParent();
+	},
+	
+	initEvents: function(){ 
+		this.optionsPanel.olapOptionsContainer.olapOptionsTable.on('mdxChanged',  this.eventManager.executeMdx, this.eventManager);
 	}
 });
