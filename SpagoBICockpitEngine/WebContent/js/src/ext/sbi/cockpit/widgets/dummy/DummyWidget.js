@@ -10,10 +10,12 @@ Ext.ns("Sbi.cockpit.widgets.dummy");
 
 Sbi.cockpit.widgets.dummy.DummyWidget = function(config) {	
 		
-	Sbi.trace("[DummyWidget]: IN");
+	Sbi.trace("[DummyWidget.constructor]: IN");
 	// init properties...
 	var defaultSettings = {
 	};
+	
+	Sbi.trace("[DummyWidget.constructor]: config: " + Sbi.toSource(config));
 
 	if(Sbi.settings && Sbi.settings.console && Sbi.settings.console.widget) {
 		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.console.widget);
@@ -24,7 +26,7 @@ Sbi.cockpit.widgets.dummy.DummyWidget = function(config) {
 		
 	// constructor
 	Sbi.cockpit.widgets.dummy.DummyWidget.superclass.constructor.call(this, c);
-	Sbi.trace("[DummyWidget]: OUT");
+	Sbi.trace("[DummyWidget.constructor]: OUT");
 };
 
 /**

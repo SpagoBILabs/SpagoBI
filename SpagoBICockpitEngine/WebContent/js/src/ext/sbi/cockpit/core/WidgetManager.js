@@ -126,6 +126,14 @@ Ext.extend(Sbi.cockpit.core.WidgetManager, Ext.util.Observable, {
 		return this.storeManager;
 	}
 	
+	, getUsedStoreLabels: function() {
+		var storeLabels = [];
+		for(var l in this.storeManager.map) {
+			storeLabels.push(l);
+		}
+		return storeLabels;
+	}
+	
 	, addStore: function(s) {
 		if (s != undefined && s.dsLabel !== undefined){
 			var newStore = new  Ext.data.JsonStore({

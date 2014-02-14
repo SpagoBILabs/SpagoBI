@@ -92,19 +92,26 @@ Ext.extend(Sbi.cockpit.core.Widget, Ext.Panel, {
     // -----------------------------------------------------------------------------------------------------------------
     // public methods
 	// -----------------------------------------------------------------------------------------------------------------
-   
     , getConfiguration: function() {
+    	Sbi.trace("[Widget.getConfiguration]: IN");
     	var config = {};
+		config.dataset = this.selectedDatasetLabel;
+		config.wtype = this.wtype;
     	config.custom = this.getCustomConfiguration();
+    	
     	config.layout = this.getRegion();
     	config.style = this.getStyleConfiguration();
     	config.common = this.getCommonConfiguration();
-		return config;
+		
+    	Sbi.trace("[Widget.getConfiguration]: OUT");
+    	
+    	return config;
 	}
 
 	, getCustomConfiguration: function() {
+		Sbi.trace("[Widget.getCustomConfiguration]: IN");
 		var config = {};
-		config.dataset = this.dataset;
+		Sbi.trace("[Widget.getCustomConfiguration]: OUT");
 		return config;
 	}
 	
@@ -127,26 +134,55 @@ Ext.extend(Sbi.cockpit.core.Widget, Ext.Panel, {
 		return config;
 	}
 	
-    , getParentContainer: function(c) {	
-		return this.parentContainer;	
+    , getParentComponent: function() {	
+    	Sbi.trace("[Widget.getParentComponent]: IN");
+    	Sbi.trace("[Widget.getParentComponent]: OUT");
+		return this.parentComponent;	
 	}
 
-    , setParentContainer: function(c) {	
-		this.parentContainer = c;	
+    , setParentComponent: function(component) {
+    	Sbi.trace("[Widget.setParentComponent]: IN");
+		this.parentComponent = component;	
+		Sbi.trace("[Widget.setParentComponent]: Parent container of widget [" + this.id +  "] is [" + (component?component.id:"null") + "]");
+		Sbi.trace("[Widget.setParentComponent]: OUT");
+	}
+    
+    , getParentContainer: function() {	
+    	Sbi.trace("[Widget.getParentContainer]: IN");
+		var container = null;
+		
+		var component = this.getParentComponent();
+			
+		if(Sbi.isValorized(component)) {
+			Sbi.trace("[Widget.getParentContainer]: widget [" + this.id +  "] is bound to component [" + component.id + "]");
+			container = component.getParentContainer();
+		} else {
+			Sbi.warn("[Widget.getParentContainer]: widget [" + this.id + "] is not bound to any component");
+		}
+		Sbi.trace("[Widget.getParentContainer]: OUT");
+    	return container;	
 	}
     
     , isBoundToAContainer: function() {
-    	return this.parentContainer != null;
+    	Sbi.trace("[Widget.isBoundToAContainer]: IN");
+    	var isBound = false;
+    	var container = this.getParentContainer();
+    	if(container != null) {
+    		isBound = true;
+    		Sbi.trace("[Widget.getParentContainer]: widget [" + this.id +  "] is bound to container [" + container.id + "]");
+    	}
+    	Sbi.trace("[Widget.isBoundToAContainer]: OUT");
+    	return isBound;
     }
     
     , getWidgetManager: function() {
-    	var wm = null;
+    	var widgetManager = null;
     	
     	Sbi.trace("[Widget.getWidgetManager]: IN");
     	
     	if(this.isBoundToAContainer() === true) {
-    		wm = this.parentContainer.getWidgetManager();
-    		if(wm === null) {
+    		widgetManager = this.getParentContainer().getWidgetManager();
+    		if(widgetManager === null) {
     			Sbi.error("[Widget.getWidgetManager]: Widget [" + this.toString() + "] is bound to a widget container but it is not possible to retrive from it a valid widget manager");
     		}
     	} else {
@@ -155,7 +191,7 @@ Ext.extend(Sbi.cockpit.core.Widget, Ext.Panel, {
     	
     	Sbi.trace("[Widget.getWidgetManager]: OUT");
     	
-    	return wm;
+    	return widgetManager;
     }
 
     , getRegion: function() {

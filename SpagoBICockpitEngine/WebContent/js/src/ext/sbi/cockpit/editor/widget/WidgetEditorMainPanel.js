@@ -73,110 +73,48 @@ Sbi.cockpit.editor.widget.WidgetEditorMainPanel = function(config) {
 
 Ext.extend(Sbi.cockpit.editor.widget.WidgetEditorMainPanel, Ext.Panel, {
 	
+	// =================================================================================================================
+	// PROPERTIES
+	// =================================================================================================================
+	
 	emptyMsg: null
 	, emptyMsgPanel: null
 	, designer: null
 	, designerState: null //State of the designer.. (see setDesignerState & getDesignerState)
 	
-	, initEmptyMsgPanel: function() {
-		this.emptyMsgPanel = new Ext.Panel({
-			html: this.emptyMsg
-			, border: false
-			, frame: true
-		});
-	}
+	// =================================================================================================================
+	// METHODS
+	// =================================================================================================================
 	
-	, initDropTarget: function() {
-		this.removeListener('render', this.initDropTarget, this);
-		var dropTarget = new Sbi.widgets.GenericDropTarget(this, {
-			ddGroup: 'paleteDDGroup'
-			, onFieldDrop: this.onFieldDrop
-		});
+	// -----------------------------------------------------------------------------------------------------------------
+    // public methods
+	// -----------------------------------------------------------------------------------------------------------------
+	
+	, setDesigner: function (widgetConf) {
+		Sbi.trace("[WidgetEditorMainPanel.setDesigner]: IN");
+		this.removeAllDesigners();
+		this.addDesigner(widgetConf);
+		Sbi.trace("[WidgetEditorMainPanel.setDesigner]: OUT");
 	}
 
-	, onFieldDrop: function(ddSource) {
-		if (ddSource.grid && ddSource.grid.type && ddSource.grid.type === 'palette') {
-			// dragging from palette
-			this.notifyDropFromPalette(ddSource);
-		} else {
-			alert('Unknown DD source!!');
-		}
-	}
-	
-	, notifyDropFromPalette: function(ddSource) {
-		var rows = ddSource.dragData.selections;
-		if (rows.length > 1) {
-			Ext.Msg.show({
-				   title:'Drop not allowed',
-				   msg: 'You can insert a single widget on a sheet',
-				   buttons: Ext.Msg.OK,
-				   icon: Ext.MessageBox.WARNING
-			});
-			return;
-		}
-		var row = rows[0];
-		var state = {};
-		state.designer = row.json.type;
-		if (this.designer !== null) {
-			this.fireEvent('addDesigner', this, state);
-			return;
-		}
-		this.addDesigner(state);
-	}
-	
-	// -----------------------------------------------------------------------------------------------------------------
-    // factory methods
-	// -----------------------------------------------------------------------------------------------------------------
-	, addDesigner: function (state) {
+	, addDesigner: function (widgetConf) {
 		Sbi.trace("[WidgetEditorMainPanel.addDesigner]: IN");
 		
-		var sheredConf = {padding: Ext.isIE ? '10 0 0 35' : '0'};
-		
-		this.designer =  Sbi.cockpit.core.WidgetExtensionPoint.getWidgetDesigner(state.designer, Ext.apply({
-			html: state.designer + ' widget designer'
+		var sheredConf = {
+			padding: Ext.isIE ? '10 0 0 35' : '0'
 			, ddGroup: 'worksheetDesignerDDGroup'
 			, tools:  [{
 				id: 'close'
-		        , handler: this.removeDesigner
-		        , scope: this
-		        , qtip: LN('Sbi.cockpit.editor.widget.widgeteditormainpanel.tools.tt.remove')
+			    , handler: this.removeDesigner
+			    , scope: this
+			    , qtip: LN('Sbi.cockpit.editor.widget.widgeteditormainpanel.tools.tt.remove')
 			}]
-		},sheredConf));
-		this.insertDesigner();
+			, html: widgetConf.wtype + ' widget designer'
+		};
 		
-//		switch (state.designer) {
-//	        case 'Pivot Table':
-//	        	this.insertCrosstabDesigner(sheredConf);
-//	            break;
-//	        case 'Static Pivot Table':
-//	        	this.insertStaticCrosstabDesigner(sheredConf);
-//	            break;
-//	        case 'Bar Chart':
-//	        	this.insertBarchartDesigner(sheredConf);
-//	            break;
-//	        case 'Line Chart':
-//	        	this.insertLinechartDesigner(sheredConf);
-//	            break;
-//	        case 'Pie Chart':
-//	        	this.insertPiechartDesigner(sheredConf);
-//	            break;
-//	        case 'Table':
-//	        	this.insertTableDesigner(sheredConf);
-//	            break;
-//	        default: 
-//	        	alert('Unknown widget!');
-//		}
-		
-		this.designerState = state;
-		
-		if (this.rendered) {
-			this.setDesignerState(state);
-		} else {
-			this.designer.on('render', function() {
-				this.setDesignerState(state);
-			}, this);
-		}
-		
+		var designer =  Sbi.cockpit.core.WidgetExtensionPoint.getWidgetDesigner(widgetConf.wtype, Ext.apply(widgetConf, sheredConf));
+		this.insertDesigner(designer);
+				
 		// propagate events
 		this.designer.on(
 			'attributeDblClick' , 
@@ -195,6 +133,69 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditorMainPanel, Ext.Panel, {
 		
 		Sbi.trace("[WidgetEditorMainPanel.addDesigner]: OUT");
 	}
+	
+	, insertDesigner: function(designer) {
+		Sbi.trace("[WidgetEditorMainPanel.insertDesigner]: IN");
+		
+		if(this.designer !== null) {
+			Sbi.exception.ExceptionHandler.showErrorMessage("A designer is already present. " +
+					"No more than one designer is allowed at the moment. " +
+					"Please delete teh existing designer before to add the new one"
+					, "Impossible to insert designer");
+		}
+		
+		if(this.emptyMsgPanel !== null) {
+			this.emptyMsgPanel.destroy();
+			this.emptyMsgPanel = null;
+		} 
+		
+		this.add(designer);
+		this.doLayout();
+		this.designer = designer;
+		Sbi.trace("[WidgetEditorMainPanel.insertDesigner]: OUT");
+	}
+	
+	, removeDesigner: function (event, tool, panel, tc) {
+		Sbi.trace("[WidgetEditorMainPanel.removeDesigner]: IN");
+		if(this.designer != null) {
+			this.designer.destroy();
+			this.designer = null;
+			this.initEmptyMsgPanel();
+			this.add(this.emptyMsgPanel);
+			this.fireEvent('designerRemoved');
+			this.doLayout();
+		} else {
+			Sbi.warn("[WidgetEditorMainPanel.removeDesigner]: there is no designer to remove");
+		}
+		Sbi.trace("[WidgetEditorMainPanel.removeDesigner]: OUT");
+	}
+	
+	, removeAllDesigners: function() {
+		this.removeDesigner();
+	}
+	
+	// -----------------------------------------------------------------------------------------------------------------
+    // init methods
+	// -----------------------------------------------------------------------------------------------------------------
+	
+	, initEmptyMsgPanel: function() {
+		this.emptyMsgPanel = new Ext.Panel({
+			html: this.emptyMsg
+			, border: false
+			, frame: true
+		});
+	}
+	
+	, initDropTarget: function() {
+		this.removeListener('render', this.initDropTarget, this);
+		var dropTarget = new Sbi.widgets.GenericDropTarget(this, {
+			ddGroup: 'paleteDDGroup'
+			, onFieldDrop: this.onFieldDrop
+		});
+	}
+
+	
+
 
 	, createDummyDesigner: function(msg) {
 		var sheredConf = {padding: Ext.isIE ? '10 0 0 35' : '0'};
@@ -315,27 +316,7 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditorMainPanel, Ext.Panel, {
 //		this.insertDesigner();
 	}
 	
-	// -----------------------------------------------------------------------------------------------------------------
-    // utility methods
-	// -----------------------------------------------------------------------------------------------------------------
 	
-	, insertDesigner: function() {
-		Sbi.trace("[WidgetEditorMainPanel.insertDesigner]: IN");
-		this.emptyMsgPanel.destroy();
-		Sbi.trace("[WidgetEditorMainPanel.insertDesigner]: [" + this.designer + "]");
-		this.add(this.designer);
-		this.doLayout();
-		Sbi.trace("[WidgetEditorMainPanel.insertDesigner]: OUT");
-	}
-	
-	, removeDesigner: function (event, tool, panel, tc) {
-		this.designer.destroy();
-		this.designer = null;
-		this.initEmptyMsgPanel();
-		this.add(this.emptyMsgPanel);
-		this.fireEvent('designerRemoved');
-		this.doLayout();
-	}
 	
 	/**
 	 * Gets the state of the designer.. 
@@ -376,5 +357,40 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditorMainPanel, Ext.Panel, {
 
 	, containsAttribute: function (attributeId) {
 		return this.designer.containsAttribute(attributeId);
+	}
+	
+	
+	// -----------------------------------------------------------------------------------------------------------------
+    // utility methods
+	// -----------------------------------------------------------------------------------------------------------------
+	
+	, onFieldDrop: function(ddSource) {
+		if (ddSource.grid && ddSource.grid.type && ddSource.grid.type === 'palette') {
+			// dragging from palette
+			this.notifyDropFromPalette(ddSource);
+		} else {
+			alert('Unknown DD source!!');
+		}
+	}
+	
+	, notifyDropFromPalette: function(ddSource) {
+		var rows = ddSource.dragData.selections;
+		if (rows.length > 1) {
+			Ext.Msg.show({
+				   title:'Drop not allowed',
+				   msg: 'You can insert a single widget on a sheet',
+				   buttons: Ext.Msg.OK,
+				   icon: Ext.MessageBox.WARNING
+			});
+			return;
+		}
+		var row = rows[0];
+		var widgetConf = {};
+		widgetConf.wtype = row.json.type;
+		if (this.designer !== null) {
+			this.fireEvent('addDesigner', this, widgetConf);
+			return;
+		}
+		this.addDesigner(widgetConf);
 	}
 });

@@ -48,9 +48,9 @@ Sbi.getObjectSettings = function(objectQilifiedName, defaultSettings) {
 	} 
 	
 	if(settings) {
-		Sbi.trace("[Sbi.getObjectSettings]: for object [" + objectQilifiedName + "] the following settings [" + Sbi.toSource(settings) + "] has been found");
+		//Sbi.trace("[Sbi.getObjectSettings]: for object [" + objectQilifiedName + "] the following settings [" + Sbi.toSource(settings) + "] has been found");
 	} else {
-		Sbi.trace("[Sbi.getObjectSettings]: No settings has been found for object [" + objectQilifiedName + "]");
+		//Sbi.trace("[Sbi.getObjectSettings]: No settings has been found for object [" + objectQilifiedName + "]");
 	}
 	
 	if(!settings && defaultSettings) {
@@ -96,7 +96,7 @@ Sbi.getObjectByName  = function(objectName) {
 					scopeStr += '.' + namespace[i];
 				}
 			} else {
-				Sbi.warn("Impossible to find an object named [" + namespace[i] + "] in scope [" + scopeStr + "]");
+				//Sbi.warn("Impossible to find an object named [" + namespace[i] + "] in scope [" + scopeStr + "]");
 				return null;
 			}
 		}

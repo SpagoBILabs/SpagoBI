@@ -206,13 +206,20 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 	}
 	
 	, addWidget: function() {
-		var dummyWidget = new Sbi.cockpit.widgets.dummy.DummyWidget();
-		dummyWidget.setParentContainer(null);
-		this.widgetContainer.addWidget(dummyWidget, {
+//		var dummyWidget = new Sbi.cockpit.widgets.dummy.DummyWidget();
+//		dummyWidget.setParentContainer(null);
+//		this.widgetContainer.addWidget(dummyWidget, {
+//			  x : 0
+//	    	, y: 0
+//			, width : 0.5
+//    		, height : 0.5
+//		});
+		
+		this.widgetContainer.addWidget(null, {
 			  x : 0
 	    	, y: 0
 			, width : 0.5
-    		, height : 0.5
+			, height : 0.5
 		});
 	}
 		

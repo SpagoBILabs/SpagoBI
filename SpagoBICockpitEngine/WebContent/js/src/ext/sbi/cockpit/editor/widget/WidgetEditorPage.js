@@ -4,32 +4,36 @@
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. **/
 
-Ext.ns("Sbi.cockpit.editor.dataset");
+Ext.ns("Sbi.cockpit.editor.widget");
 
-Sbi.cockpit.editor.dataset.DatasetBrowserPage = function(config) { 
+Sbi.cockpit.editor.widget.WidgetEditorPage = function(config) { 
 	
-	Sbi.trace("[DatasetBrowserPage.constructor]: IN");
+	Sbi.trace("[WidgetEditorPage.constructor]: IN");
 
 	// init properties...
 	var defaultSettings = {
-		itemId: 0
+		itemId: 1
+		, layout: 'fit'
 	};
-	var settings = Sbi.getObjectSettings('Sbi.cockpit.editor.dataset.DatasetBrowserPage', defaultSettings);
+	var settings = Sbi.getObjectSettings('Sbi.cockpit.editor.widget.WidgetEditorPage', defaultSettings);
 	var c = Ext.apply(settings, config || {});
+	
+	Sbi.trace("[WidgetEditorPage.constructor]: config [" + Sbi.toSource(c)+ "]");
+	
 	Ext.apply(this, c);
 	
 	this.init();
 	
-	c.items = [this.datasetsBrowserPanel];
+	c.items = [this.widgetEditorPanel];
 	
-	Sbi.cockpit.editor.dataset.DatasetBrowserPage.superclass.constructor.call(this, c);
+	Sbi.cockpit.editor.widget.WidgetEditorPage.superclass.constructor.call(this, c);
 	
-	Sbi.trace("[DatasetBrowserPage.constructor]: OUT");
+	Sbi.trace("[WidgetEditorPage.constructor]: OUT");
 };
 
 /**
- * @class Sbi.xxx.Xxxx
- * @extends Ext.util.Observable
+ * @class Sbi.cockpit.editor.widget.WidgetEditorPage
+ * @extends Ext.Panel
  * 
  * bla bla bla bla bla ...
  */
@@ -38,29 +42,71 @@ Sbi.cockpit.editor.dataset.DatasetBrowserPage = function(config) {
  * @cfg {Object} config
  * ...
  */
-Ext.extend(Sbi.cockpit.editor.dataset.DatasetBrowserPage, Ext.Panel, {
+Ext.extend(Sbi.cockpit.editor.widget.WidgetEditorPage, Ext.Panel, {
 	
-	datasetsBrowserPanel: null
-	, widgetManager: null
+	widgetEditorPanel: null
+	
+	// =================================================================================================================
+	// METHODS
+	// =================================================================================================================
 	
 	// -----------------------------------------------------------------------------------------------------------------
     // public methods
 	// -----------------------------------------------------------------------------------------------------------------
 	
+	, updateValues: function(values) {
+		Sbi.trace("[WidgetEditorPage.updateValues]: IN");
+		
+		Sbi.trace("[WidgetEditorPage.updateValues]: Input parameter values is equal to [" + Sbi.toSource(values) + "]");
+		this.widgetEditorPanel.controlPanel.updateValues(values);
+		Sbi.trace("[WidgetEditorPage.updateValues]: OUT");
+	}
+
+	, getValidationErrorMessages: function() {
+		Sbi.trace("[DatasetBrowserPage.getValidationErrorMessage]: IN");
+		var msg = null;
+
+		// TODO check if the designer is properly defined
+		
+		Sbi.trace("[DatasetBrowserPage.getValidationErrorMessage]: OUT");
+		
+		return msg;
+	}
+	
+	, isValid: function() {
+		Sbi.trace("[WidgetEditorPage.isValid]: IN");
+	
+		var isValid = this.getValidationErrorMessages() === null;
+		
+		Sbi.trace("[WidgetEditorPage.isValid]: OUT");
+		
+		return isValid;
+	}
+
 	, applyPageState: function(state) {
-		Sbi.trace("[WidgetEditor.applyPageState]: IN");
+		Sbi.trace("[WidgetEditorPage.applyPageState]: IN");
 		state =  state || {};
-		state.selectedDatasetLabel = this.datasetsBrowserPanel.getSelectedDatasetLabel();
-		Sbi.trace("[WidgetEditor.applyPageState]: OUT");
+		if(this.widgetEditorPanel.mainPanel.designer) {
+			state.wtype = this.widgetEditorPanel.mainPanel.designer.getDesignerType();
+			state.wconf = this.widgetEditorPanel.mainPanel.designer.getDesignerState();
+		}
+		Sbi.trace("[WidgetEditorPage.applyPageState]: OUT");
 		return state;
 	}	
 
 	, setPageState: function(state) {
-		if(Sbi.isValorized(state.dataset)) {
-			datasetsBrowserPanel.setSelectedDatasetLabel(state.dataset);
-		} else {
-			
-		}
+		Sbi.trace("[WidgetEditorPage.setPageState]: IN");
+		Sbi.trace("[WidgetEditorPage.setPageState]: state parameter is equal to [" + Sbi.toSource(state) + "]");
+		
+		this.widgetEditorPanel.mainPanel.setDesigner(state);
+		
+		Sbi.trace("[WidgetEditorPage.setPageState]: OUT");
+	}
+	
+	, resetPageState: function() {
+		Sbi.trace("[WidgetEditorPage.resetPageState]: IN");
+		this.widgetEditorPanel.mainPanel.removeAllDesigners();
+		Sbi.trace("[WidgetEditorPage.resetPageState]: OUT");
 	}
 	
 	// -----------------------------------------------------------------------------------------------------------------
@@ -68,31 +114,13 @@ Ext.extend(Sbi.cockpit.editor.dataset.DatasetBrowserPage, Ext.Panel, {
 	// -----------------------------------------------------------------------------------------------------------------
 
 	, init: function(){
-		this.datasetsBrowserPanel = new Sbi.widgets.DatasetsBrowserPanel({
-			widgetManager: this.widgetManager
-		}); 
-//		this.datasetsBrowserPanel.on('select',  function(l) {
-//			this.onSelect(l);
-//			this.datasetsBrowserPanel.viewPanel.refresh();
-//		}, this);	
-//		
-
-		return this.datasetsBrowserPanel;
+		this.widgetEditorPanel = new Sbi.cockpit.editor.widget.WidgetEditor(); 
+		return this.widgetEditorPanel;
 	}
 
 	
 	// -----------------------------------------------------------------------------------------------------------------
     // utility methods
 	// -----------------------------------------------------------------------------------------------------------------
-//	, onSelect: function(c){	
-//		//removes old selection from the storeManager (if exists)
-//		if (c.label != c.oldLabel && this.widgetManager.getStoreByLabel(c.oldLabel) != null) {
-//			this.widgetManager.removeStore(c.oldLabel);
-//		}
-//		//adds the dataset to the storeManager (throught the WidgetManager)
-//		//this.widget.dataset = c.label;
-//		var storeConfig = {};
-//		storeConfig.dsLabel = c.label; //storeConfig.dsLabel = this.widget.dataset;	
-//	    this.widgetManager.addStore(storeConfig);		
-//	}
+
 });

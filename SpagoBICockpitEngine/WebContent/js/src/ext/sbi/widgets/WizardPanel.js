@@ -40,10 +40,10 @@ Sbi.widgets.WizardPanel = function(config) {
 };
 
 /**
- * @class Sbi.xxx.Xxxx
- * @extends Ext.util.Observable
+ * @class Sbi.widgets.WizardPanel
+ * @extends Ext.Panel
  * 
- * bla bla bla bla bla ...
+ * Base class for multisteps wizard implementation
  */
 
 /**
@@ -52,8 +52,29 @@ Sbi.widgets.WizardPanel = function(config) {
  */
 Ext.extend(Sbi.widgets.WizardPanel, Ext.Panel, {
 	
+	// =================================================================================================================
+	// PROPERTIES
+	// =================================================================================================================
+	
+	/**
+     * @property {Array} pages
+     * The pages that compose this wizard
+     */
 	pages: null
+	
+	/**
+     * @property {Array} buttons
+     * The buttons that compose this wizard button bar
+     */
 	, buttons: null
+	
+	// =================================================================================================================
+	// METHODS
+	// =================================================================================================================
+	
+	// -----------------------------------------------------------------------------------------------------------------
+    // public methods
+	// -----------------------------------------------------------------------------------------------------------------
 	
 	, getActivePage: function() {
 		return this.layout.activeItem;
@@ -97,6 +118,11 @@ Ext.extend(Sbi.widgets.WizardPanel, Ext.Panel, {
 	, moveToPage: function(targetPageNumber){	
 		Sbi.trace("[WizardPanel.moveToPage]: IN");
 		
+		if(this.rendered === false) {
+			this.activeItem = targetPageNumber;
+			return;
+		}
+		
 		Sbi.trace("[WizardPanel.moveToPage]: target page number is equal to [" + targetPageNumber + "]");
 		var activePageNumber =  this.getActivePageNumber();
 		var totPageNumber  = this.getPageCount()-1;
@@ -108,7 +134,7 @@ Ext.extend(Sbi.widgets.WizardPanel, Ext.Panel, {
 		
 		Sbi.trace("[WizardPanel.moveToPage]: target page number is valid");
 		
-		if (this.doPageValidation(targetPageNumber)){
+		if (this.doMoveToPageValidation(targetPageNumber)){
 			
 			Sbi.trace("[WizardPanel.moveToPage]: target page is valid");
 			
@@ -118,6 +144,8 @@ Ext.extend(Sbi.widgets.WizardPanel, Ext.Panel, {
 		 	Ext.getCmp('confirm').setVisible(!(parseInt(targetPageNumber)<parseInt(totPageNumber)));
 		
 		} else {
+			var messages = this.getMoveToPageValidationErrorMessages(targetPageNumber);
+			Sbi.exception.ExceptionHandler.showWarningMessage(Sbi.toSource(messages), "Impossible to move to page [" + targetPageNumber + "]");
 			Sbi.trace("[WizardPanel.moveToPage]: target page is not valid");
 		}	
 		
@@ -128,6 +156,61 @@ Ext.extend(Sbi.widgets.WizardPanel, Ext.Panel, {
 		return this.getActivePage();
 	}
 	
+	
+	, getMoveToPageValidationErrorMessages: function(destinationPageNumber){
+		Sbi.trace("[WizardPanel.messages]: IN");
+		var messages = null;
+		for(var i = 0; i < destinationPageNumber; i++) {
+			var msg = this.getPageValidationErrorMessages(i);
+			if(msg !== null) {
+				if(messages === null) {
+					messages = msg;
+				} else {
+					messages.addAll(msg);
+				}
+			}		
+		}
+		
+		Sbi.trace("[WizardPanel.messages]: OUT");
+		return messages;
+	}
+	
+	/**
+	 * @returns true if the move to the specified page is valid. false otherwise. In general a 
+	 * the move is valid if all the pages that came before the destination page are valid
+	 */
+	, doMoveToPageValidation: function(destinationPageNumber){
+		Sbi.trace("[WizardPanel.doMoveToPageValidation]: IN");
+		var isValidMove = true;
+		for(var i = 0; i < destinationPageNumber; i++) {
+			isValidMove = isValidMove && this.doPageValidation(i);
+		}
+		
+		Sbi.trace("[WizardPanel.doMoveToPageValidation]: OUT");
+		return isValidMove;
+	}
+	
+	, getPageValidationErrorMessages: function(pageNumber) {
+		Sbi.trace("[WizardPanel.getPageValidationErrorMessages]: IN");
+
+		
+		var page = this.getPage(pageNumber);
+		if(Sbi.isNull(page)) {
+			return "Page [" + i + "] does not exist";
+		}
+		
+		var messages = null;
+		if(Sbi.isValorized(page.getValidationErrorMessages)) {
+			messages = page.getValidationErrorMessages(pageNumber);
+		}
+	
+		Sbi.trace("[WizardPanel.getPageValidationErrorMessages]: OUT");
+		return messages;
+	}
+	
+	/**
+	 * @returns true if the specified page is valid. false otherwise
+	 */
 	, doPageValidation: function(pageNumber) {
 		Sbi.trace("[WizardPanel.doPageValidation]: IN");
 		
@@ -145,6 +228,32 @@ Ext.extend(Sbi.widgets.WizardPanel, Ext.Panel, {
 		
 		Sbi.trace("[WizardPanel.doPageValidation]: OUT");
 		return isPageValid;
+	}
+	
+	/**
+	 * @method 
+	 * @abstract 
+	 * 
+	 * TODO override it in subclasses
+	 * 
+	 * Validate the target page
+	 */
+	, isPageValid: function(page) {
+		return true;
+	}
+	
+	, getPageState: function(page) {
+		var state = {};
+		if(page && page.applyPageState) {
+			state = page.applyPageState(state);
+		}
+		return state;
+	}
+	
+	, setPageState: function(page, state) {
+		if(page && page.setPageState) {
+			page.setPageState(state);
+		}
 	}
 	
 	, getWizardState: function() {
@@ -180,19 +289,6 @@ Ext.extend(Sbi.widgets.WizardPanel, Ext.Panel, {
 				page.resetPageState();
 			}
 		}
-	}
-	
-	
-	/**
-	 * @method 
-	 * @abstract 
-	 * 
-	 * TODO override it in subclasses
-	 * 
-	 * Validate the target page
-	 */
-	, isPageValid: function(page) {
-		return true;
 	}
 	
 	// -----------------------------------------------------------------------------------------------------------------
