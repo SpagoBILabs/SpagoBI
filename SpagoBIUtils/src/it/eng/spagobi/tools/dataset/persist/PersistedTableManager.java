@@ -135,7 +135,7 @@ public class PersistedTableManager {
 	
 	private IDataStore normalizeFileDataSet(IDataSet dataSet, IDataStore datastore){
 		if (dataSet instanceof FileDataSet){
-			//TODO: Change dataStore fields type according to the metadata specified on the DataSet metadata
+			//Change dataStore fields type according to the metadata specified on the DataSet metadata
 			//because FileDataSet has all dataStore field set as String by default
 			IMetaData dataStoreMetaData = datastore.getMetaData();
 			IMetaData dataSetMetaData = dataSet.getMetadata();
@@ -527,15 +527,62 @@ public class PersistedTableManager {
 		}
 	}
 	
-	/*
+	public void dropTablesWithPrefix(IDataSource datasource, String prefix){
+		logger.debug("Dropping Tables with name prefix " + prefix + " if they exists...");
+
+		String dialect = datasource.getHibDialectClass();
+		
+		String statement = null;
+		
+		//get the list of tables names
+		if (dialect.contains(DIALECT_ORACLE)) {
+			statement = "SELECT TABLE_NAME "+
+						"FROM USER_TABLES "+
+						"WHERE TABLE_NAME LIKE '" + prefix.toUpperCase() + "%'";
+		} else if (dialect.contains(DIALECT_SQLSERVER) || (dialect.contains(DIALECT_MYSQL) || dialect.contains(DIALECT_POSTGRES))){
+			statement = "SELECT TABLE_NAME "+
+						"FROM INFORMATION_SCHEMA.TABLES " +
+						"WHERE TABLE_NAME LIKE '" + prefix.toLowerCase()+ "%'";
+		}  
+		
+		if ((statement != null) && (!statement.isEmpty())){
+			IDataStore dataStore = datasource.executeStatement(statement,0,0);
+			int dataStoreRecordsCount = Integer.parseInt(String.valueOf(dataStore.getRecordsCount()));
+			
+			if (dataStoreRecordsCount > 0){
+				//iterate the dataStore for each table name found then delete it
+				for (int i=0; i < dataStoreRecordsCount; i++){
+					IRecord rec = dataStore.getRecordAt(i);			
+					for (int j=0; j<rec.getFields().size(); j++){		
+						IField field = rec.getFieldAt(j);
+						Object fieldValue = field.getValue();
+						if (fieldValue instanceof String){
+							String tableName = (String)fieldValue;
+							//delete table
+							dropTableIfExists(datasource,tableName);
+						}
+					}
+				}
+			}
+	
+		}
+		logger.debug("Dropped Tables with name prefix " + prefix );
+
+	}
+	
+	/**
 	 * Create a random unique name for a creating a new table
+	 * @param prefix an optional prefix to use for the generated table name
 	 */
-	public String generateRandomTableName(){
+	public String generateRandomTableName(String prefix){
 		UUIDGenerator uuidGen  = UUIDGenerator.getInstance();
 		UUID uuidObj = uuidGen.generateTimeBasedUUID();
 		String generatedId = uuidObj.toString();
     	generatedId = generatedId.replaceAll("-", "");
     	generatedId = StringUtils.convertNonAscii(generatedId);
+    	if ((prefix != null) && (!prefix.isEmpty())){
+    		generatedId = prefix+generatedId;
+    	}
 		if (generatedId.length() > 30) {
 			generatedId = generatedId.substring(0, 30);
 		}

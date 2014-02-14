@@ -19,8 +19,18 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 **/
-package it.eng.spagobi.dataset.cache;
+package it.eng.spagobi.dataset.cache.impl.sqldbcache;
 
+import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.commons.bo.Config;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.dao.IConfigDAO;
+import it.eng.spagobi.dataset.cache.ICache;
+import it.eng.spagobi.dataset.cache.ICacheActivity;
+import it.eng.spagobi.dataset.cache.ICacheEvent;
+import it.eng.spagobi.dataset.cache.ICacheListener;
+import it.eng.spagobi.dataset.cache.ICacheMetadata;
+import it.eng.spagobi.dataset.cache.ICacheTrigger;
 import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
@@ -45,6 +55,8 @@ import org.apache.log4j.Logger;
 public class SQLDBCache implements ICache {
 	
 	static private Logger logger = Logger.getLogger(SQLDBCache.class);
+	
+	public static final String CACHE_NAME_PREFIX_CONFIG = "SPAGOBI.CACHE.NAMEPREFIX";
 
 
 	// Key is resultsetSignature, Entry is Table Name
@@ -52,9 +64,26 @@ public class SQLDBCache implements ICache {
 	
 	private IDataSource dataSource;
 	
+	private Config tableNamePrefixConfig;
+	
 	public SQLDBCache(IDataSource dataSource){
 		this.dataSource = dataSource;
 		cacheRegistry = new HashMap<String,String>();
+		try {
+			IConfigDAO configDao = DAOFactory.getSbiConfigDAO();
+			tableNamePrefixConfig = configDao.loadConfigParametersByLabel(CACHE_NAME_PREFIX_CONFIG);
+			if (tableNamePrefixConfig.isActive()){
+				String tablePrefix = tableNamePrefixConfig.getValueCheck();
+				eraseExistingTables(tablePrefix.toUpperCase());
+			}
+
+		} catch (EMFUserError e) {
+			logger.debug("Impossible to instantiate SbiConfigDAO in SQLDBCache");
+		} catch (Exception e) {
+			logger.debug("Impossible to instantiate SbiConfigDAO in SQLDBCache");
+		}
+
+		
 
 	}
 	
@@ -73,6 +102,16 @@ public class SQLDBCache implements ICache {
 	 */
 	public void setDataSource(IDataSource dataSource) {
 		this.dataSource = dataSource;
+	}
+	
+	/**
+	 * Erase existing tables that begins with the prefix
+	 * @param prefix table name prefix
+	 * 
+	 */
+	private void eraseExistingTables(String prefix){
+		PersistedTableManager persistedTableManager = new PersistedTableManager();
+		persistedTableManager.dropTablesWithPrefix(getDataSource(), prefix);
 	}
 
 
@@ -256,9 +295,14 @@ public class SQLDBCache implements ICache {
 		//2- Ricava la struttura della tabella da creare dal resultset (SQL CREATE) - attenzione ai dialetti DBMS
 		//3- Ricava i dati dal resultset da inserire nella tabella appena creata (SQL INSERT) - attenzione ai dialetti DBMS
 		PersistedTableManager persistedTableManager = new PersistedTableManager();
+		String tablePrefix = null;
 		
 		try {
-			String tableName = persistedTableManager.generateRandomTableName();
+			if (tableNamePrefixConfig.isActive()){
+				tablePrefix = tableNamePrefixConfig.getValueCheck();
+				tablePrefix.toUpperCase();
+			}
+			String tableName = persistedTableManager.generateRandomTableName(tablePrefix);
 			persistedTableManager.persistDataset(dataset, resultset, getDataSource(), tableName);
 			//4- Aggiorna il cacheRegistry con la nuova coppia <resultsetSignature,nometabellaCreata>
 			cacheRegistry.put(resultsetSignature, tableName);

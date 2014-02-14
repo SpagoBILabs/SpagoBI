@@ -19,29 +19,29 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 **/
-package it.eng.spagobi.dataset.cache;
+package it.eng.spagobi.dataset.cache.impl.sqldbcache;
+
+
 
 /**
  * @author Marco Cortella (marco.cortella@eng.it)
  *
  */
-public class GroupCriteria {
-	
-	//For the GROUP BY clause
+public class ProjectionCriteria {
+
+	//Projection for the SELECT clause
 	
 	String columnName; //the column name
 	String aggregateFunction; //optional aggregate function like SUM, AVG, etc...
 	
 	
-	
-	/**
-	 * @param columnName
-	 * @param aggregateFunction
-	 */
-	public GroupCriteria(String columnName, String aggregateFunction) {
+	public ProjectionCriteria(String columnName, String aggregateFunction){
 		this.columnName = columnName;
 		this.aggregateFunction = aggregateFunction;
 	}
+	
+	
+
 	/**
 	 * @return the columnName
 	 */
@@ -66,6 +66,7 @@ public class GroupCriteria {
 	public void setAggregateFunction(String aggregateFunction) {
 		this.aggregateFunction = aggregateFunction;
 	}
+	
 	
 	
 }
