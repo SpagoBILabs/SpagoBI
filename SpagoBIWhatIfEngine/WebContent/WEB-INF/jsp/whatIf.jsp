@@ -103,7 +103,7 @@ author:...
 	        , baseParams: params
 	    });
     	
-    	
+	    Sbi.olap.eventManager={};
         Ext.onReady(function(){
     		var whatIfPanel = Ext.create('Sbi.olap.OlapPanel',{}); //by alias
     		var whatIfPanelViewport = Ext.create('Ext.container.Viewport', {

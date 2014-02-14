@@ -6,10 +6,10 @@
 /**
  * 
  * This component manage all the events of the table.
- * The standard use case is: the view send an event at the event manager,
- * the manager captures it, decores it and calls a method of the controller.
- * The controller execute the request and return the result at the event manager. 
- *
+ * The standard use case is: the view notify an event to the event manager,
+ * the manager decorates it and calls a method of the controller.
+ * The controller execute the request and return the result at the event manager that manage the response
+ * 
  *     
  *  @author
  *  Alberto Ghedin (alberto.ghedin@eng.it)
@@ -37,10 +37,18 @@ Ext.define('Sbi.olap.control.EventManager', {
 		this.olapController = Ext.create('Sbi.olap.control.Controller', {eventManager: this});
 	},
 	
-	executeMdx: function(mdx){
+    /**
+     * Notifies the manager that the mdx query is changed
+     * @param {String} mdx the mdx query. If null the server will load the initial mdx query
+     */
+	notifyMdxChanged: function(mdx){
 		this.olapController.executeMdx(mdx);
 	},
-	
+
+    /**
+     * Updates the view after the execution of the mdx query
+     * @param {String} pivotHtml the html representation of the pivot table
+     */
 	updateAfterMDXExecution: function(pivotHtml){
 		this.olapPanel.executionPanel.updateAfterMDXExecution(pivotHtml);
 	}

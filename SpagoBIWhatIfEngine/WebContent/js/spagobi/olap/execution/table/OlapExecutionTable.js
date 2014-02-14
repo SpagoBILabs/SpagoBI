@@ -44,19 +44,11 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionTable', {
 		this.update(pivotHtml);
 	},
 
+    /**
+     * Loads the template starting MDX
+     */
 	loadTable: function(){
-		Ext.Ajax.request({
-			url: Sbi.service.Service.mdx(),
-			success : function(response, options) {
-				if(response !== undefined && response.statusText !== undefined) {
-					this.update(response.responseText);
-				} else {
-					Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
-				}
-			},
-			scope: this,
-			failure: Sbi.exception.ExceptionHandler.handleFailure      
-		});
+		Sbi.olap.eventManager.notifyMdxChanged();
 	}
 	
 });

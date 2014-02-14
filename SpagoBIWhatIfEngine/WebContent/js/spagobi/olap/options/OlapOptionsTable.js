@@ -28,13 +28,12 @@ Ext.define('Sbi.olap.options.OlapOptionsTable', {
 			height: 400,
 			width: 500
 		});
-		var thisPanel = this;
 		
 		var button = Ext.create('Ext.Button', {
 		    text: 'Send MDX',
 		    renderTo: Ext.getBody(),
 		    handler: function() {
-		    	thisPanel.fireEvent('mdxChanged',[editor.getValue()]);
+		    	Sbi.olap.eventManager.notifyMdxChanged(editor.getValue());
 		    }
 		});
 		
