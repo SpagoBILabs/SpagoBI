@@ -12,11 +12,11 @@
 package it.eng.spagobi.engine.cockpit.services.editor;
 
 import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.dataset.cache.FilterCriteria;
-import it.eng.spagobi.dataset.cache.GroupCriteria;
 import it.eng.spagobi.dataset.cache.ICache;
-import it.eng.spagobi.dataset.cache.Operand;
-import it.eng.spagobi.dataset.cache.ProjectionCriteria;
+import it.eng.spagobi.dataset.cache.impl.sqldbcache.FilterCriteria;
+import it.eng.spagobi.dataset.cache.impl.sqldbcache.GroupCriteria;
+import it.eng.spagobi.dataset.cache.impl.sqldbcache.Operand;
+import it.eng.spagobi.dataset.cache.impl.sqldbcache.ProjectionCriteria;
 import it.eng.spagobi.engine.cockpit.CockpitEngineConfig;
 import it.eng.spagobi.engine.cockpit.CockpitEngineInstance;
 import it.eng.spagobi.services.proxy.DataSetServiceProxy;

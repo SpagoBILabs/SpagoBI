@@ -21,6 +21,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.spagobi.dataset.cache;
 
+import it.eng.spagobi.dataset.cache.impl.sqldbcache.FilterCriteria;
+import it.eng.spagobi.dataset.cache.impl.sqldbcache.GroupCriteria;
+import it.eng.spagobi.dataset.cache.impl.sqldbcache.ProjectionCriteria;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 
