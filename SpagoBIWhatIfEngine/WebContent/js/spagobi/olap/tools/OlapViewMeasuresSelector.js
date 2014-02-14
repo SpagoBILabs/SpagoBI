@@ -22,7 +22,8 @@ Ext.define('Sbi.olap.tools.OlapViewMeasuresSelector', {
 	config:{
 		rootVisible: false,
 		title:"Measures",
-		autoHeight: true 
+		autoHeight: true,
+		border: false
 	},
 
 	constructor : function(config) {

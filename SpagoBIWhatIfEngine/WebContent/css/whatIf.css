@@ -9,8 +9,21 @@
  * Actions
  ********************************************************************************************************/
         
-/*   
-.add {
-    background-image:url(../img/actions/add.gif) !important;
+  
+.x-pivot-header{
+    	position: relative !important;
+    	border-top-width: 1px !important;
+    	border-right-width: 1px !important;
+    }
+
+.x-pivot-cell{
+    	border-top-width: 1px !important;
+    	border-right-width: 1px !important;
 }
-*/
+
+.x-pivot-table{
+    	border-bottom-width: 1px !important;
+    	border-left-width: 1px !important;
+    	border-right-width: 0px !important;
+    	border-top-width: 0px !important;
+}

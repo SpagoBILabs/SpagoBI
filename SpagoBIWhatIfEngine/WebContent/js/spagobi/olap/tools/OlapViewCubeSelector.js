@@ -19,7 +19,8 @@ Ext.define('Sbi.olap.tools.OlapViewCubeSelector', {
 	extend: 'Ext.panel.Panel',
 	
 	config:{
-		title: 'Cubes'
+		title: 'Cubes',
+		border: false
 	},
 
 	constructor: function(config) {

@@ -60,7 +60,7 @@ Ext.define('Sbi.olap.options.OlapOptions', {
 		this.olapOptionsToolbar   = Ext.create('Sbi.olap.options.OlapOptionsToolbar',  {height: 100, align:'stretch', width: "100%"}); 
 		
 		Ext.apply(this, {
-			items: [this.olapOptionsToolbar,this.olapOptionsContainer],
+			items: [this.olapOptionsToolbar,this.olapOptionsContainer]
 		});
 		this.callParent();
 	}

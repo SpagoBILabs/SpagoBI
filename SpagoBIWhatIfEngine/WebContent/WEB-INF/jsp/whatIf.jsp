@@ -81,6 +81,29 @@ author:...
 	
     	<script type="text/javascript">  
 
+    	
+    	
+    	Sbi.config = {};
+    	
+		var url = {
+	    	host: '<%= request.getServerName()%>'
+	    	, port: '<%= request.getServerPort()%>'
+	    	, contextPath: '<%= request.getContextPath().startsWith("/")||request.getContextPath().startsWith("\\")?
+	    	   				  request.getContextPath().substring(1):
+	    	   				  request.getContextPath()%>'
+	    	    
+	    };
+
+	    var params = {
+	    	SBI_EXECUTION_ID: <%= request.getParameter("SBI_EXECUTION_ID")!=null?"'" + request.getParameter("SBI_EXECUTION_ID") +"'": "null" %>
+	    };
+
+	    Sbi.config.serviceRegistry = new Sbi.service.ServiceRegistry({
+	    	baseUrl: url
+	        , baseParams: params
+	    });
+    	
+    	
         Ext.onReady(function(){
     		var whatIfPanel = Ext.create('Sbi.olap.OlapPanel',{}); //by alias
     		var whatIfPanelViewport = Ext.create('Ext.container.Viewport', {

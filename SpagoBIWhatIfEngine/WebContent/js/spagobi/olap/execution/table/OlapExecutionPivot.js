@@ -5,7 +5,13 @@
 
 /**
  * 
- * Container for the pivot table
+ * Container for the pivot table. Contains:
+ * <ul>
+ * <li>Filters definition</li>
+ * <li>Columns definition</li>
+ * <li>Rows definition</li>
+ * <li>Table</li>
+ * </ul>
  * 
  *     
  *  @author
@@ -14,50 +20,33 @@
 
 
 Ext.define('Sbi.olap.execution.table.OlapExecutionPivot', {
-	extend: 'Ext.grid.Panel',
+	extend: 'Ext.panel.Panel',
 	
 	config:{},
 
+	/**
+     * @property {Sbi.olap.execution.table.OlapExecutionTable} olapExecutionTable
+     *  The table with the data
+     */
+	olapExecutionTable: null,
 		
 	constructor : function(config) {
 		this.initConfig(config);
 		if(Sbi.settings && Sbi.settings.olap && Sbi.settings.olap.execution && Sbi.settings.olap.execution.table && Sbi.settings.olap.execution.table.OlapExecutionPivot) {
-			this.initConfig(Sbi.settings.olap.execution.OlapExecutionPanel);
+			this.initConfig(Sbi.settings.olap.execution.table.OlapExecutionPivot);
 		}
 		this.callParent(arguments);
 	},
 	
 	initComponent: function() {
 		
-		Ext.create('Ext.data.Store', {
-		    storeId:'simpsonsStore',
-		    fields:['name', 'email', 'phone'],
-		    data:{'items':[
-		        { 'name': 'Lisa',  "email":"lisa@simpsons.com",  "phone":"555-111-1224"  },
-		        { 'name': 'Bart',  "email":"bart@simpsons.com",  "phone":"555-222-1234" },
-		        { 'name': 'Homer', "email":"home@simpsons.com",  "phone":"555-222-1244"  },
-		        { 'name': 'Marge', "email":"marge@simpsons.com", "phone":"555-222-1254"  }
-		    ]},
-		    proxy: {
-		        type: 'memory',
-		        reader: {
-		            type: 'json',
-		            root: 'items'
-		        }
-		    }
-		});
-
+		this.olapExecutionTable   = Ext.create('Sbi.olap.execution.table.OlapExecutionTable',  {}); 
+		
 		Ext.apply(this, {
-		    title: 'Simpsons',
-		    store: Ext.data.StoreManager.lookup('simpsonsStore'),
-		    columns: [
-		        { text: 'Name',  dataIndex: 'name' },
-		        { text: 'Email', dataIndex: 'email', flex: 1 },
-		        { text: 'Phone', dataIndex: 'phone' }
-		    ],
-		    height: 200,
-		    width: 400,
+			items: [this.olapExecutionTable]
+			
 		});
+		
 		this.callParent();
 	}
 });

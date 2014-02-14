@@ -64,6 +64,12 @@ Ext.define('Sbi.olap.execution.OlapExecutionPanel', {
 			tbar: this.olapToolbar
 		});
 		this.callParent();
+	},
+	
+	updateAfterMDXExecution: function(pivotHtml){
+		this.olapExecutionPivot.olapExecutionTable.updateAfterMDXExecution(pivotHtml);
 	}
+	
+	
 });
 
