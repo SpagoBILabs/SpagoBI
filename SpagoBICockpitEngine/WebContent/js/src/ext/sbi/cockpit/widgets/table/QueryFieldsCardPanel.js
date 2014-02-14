@@ -105,14 +105,20 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsCardPanel, Ext.Panel, {
 	}
 	
 	, initDropTarget: function() {
-		this.removeListener('render', this.initDropTarget, this);
-		var dropTarget = new Sbi.widgets.GenericDropTarget(this, {
+		this.removeListener("render", this.initDropTarget, this);
+		this.dropTarget = new Sbi.widgets.GenericDropTarget(this, {
 			ddGroup: this.ddGroup
 			, onFieldDrop: this.onFieldDrop
 		});
+//		this.on("beforeDestroy", function() {
+//			Sbi.trace("[QueryFieldsCardPanel.onBeforeDestroy]: IN");
+//			this.dropTarget.destroy();
+//			Sbi.trace("[QueryFieldsCardPanel.onBeforeDestroy]: OUT");
+//		}, this);
 	}
 
 	, onFieldDrop: function(ddSource) {
+		Sbi.trace("[QueryFieldsCardPanel.onFieldDrop]: IN");
 		if (ddSource.grid && ddSource.grid.type && ddSource.grid.type === 'queryFieldsPanel') {
 			this.tableDesigner.notifyDropFromQueryFieldsPanel(ddSource);
 		} else if (ddSource.grid && ddSource.grid.type && ddSource.grid.type === 'queryFieldsContainerPanel') {
@@ -120,6 +126,7 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsCardPanel, Ext.Panel, {
 		} else {
 			alert('Unknown drag source');
 		}
+		Sbi.trace("[QueryFieldsCardPanel.onFieldDrop]: OUT");
 	}
 	
 	, setActiveItem: function() {

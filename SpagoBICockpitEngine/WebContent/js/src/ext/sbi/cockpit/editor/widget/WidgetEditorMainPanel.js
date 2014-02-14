@@ -158,12 +158,17 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditorMainPanel, Ext.Panel, {
 	, removeDesigner: function (event, tool, panel, tc) {
 		Sbi.trace("[WidgetEditorMainPanel.removeDesigner]: IN");
 		if(this.designer != null) {
-			this.designer.destroy();
+			this.remove(this.designer, true);
 			this.designer = null;
+			
 			this.initEmptyMsgPanel();
 			this.add(this.emptyMsgPanel);
-			this.fireEvent('designerRemoved');
+			
 			this.doLayout();
+			
+			this.fireEvent('designerRemoved');
+			
+			Sbi.trace("[WidgetEditorMainPanel.removeDesigner]: designer succesfully removed");
 		} else {
 			Sbi.warn("[WidgetEditorMainPanel.removeDesigner]: there is no designer to remove");
 		}
@@ -365,15 +370,18 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditorMainPanel, Ext.Panel, {
 	// -----------------------------------------------------------------------------------------------------------------
 	
 	, onFieldDrop: function(ddSource) {
+		Sbi.trace("[WidgetEditorMainPanel.onFieldDrop]: IN");
 		if (ddSource.grid && ddSource.grid.type && ddSource.grid.type === 'palette') {
-			// dragging from palette
+			Sbi.trace("[WidgetEditorMainPanel.onFieldDrop]: dragged object comes from palette");
 			this.notifyDropFromPalette(ddSource);
 		} else {
 			alert('Unknown DD source!!');
 		}
+		Sbi.trace("[WidgetEditorMainPanel.onFieldDrop]: OUT");
 	}
 	
 	, notifyDropFromPalette: function(ddSource) {
+		Sbi.trace("[WidgetEditorMainPanel.notifyDropFromPalette]: IN");
 		var rows = ddSource.dragData.selections;
 		if (rows.length > 1) {
 			Ext.Msg.show({
@@ -392,5 +400,6 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditorMainPanel, Ext.Panel, {
 			return;
 		}
 		this.addDesigner(widgetConf);
+		Sbi.trace("[WidgetEditorMainPanel.notifyDropFromPalette]: OUT");
 	}
 });
