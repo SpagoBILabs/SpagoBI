@@ -22,6 +22,11 @@ Sbi.widgets.GenericDropTarget = function(targetPanel, config) {
 	Ext.apply(this, c);
 	
 	this.targetPanel = targetPanel;
+	this.targetPanel.on("beforeDestroy", function() {
+		Sbi.trace("[GenericDropTarget.onBeforeDestroy]: IN");
+		this.destroy();
+		Sbi.trace("[GenericDropTarget.onBeforeDestroy]: OUT");
+	}, this);
 	
 	// constructor
     Sbi.widgets.GenericDropTarget.superclass.constructor.call(this, this.targetPanel.getEl(), c);
