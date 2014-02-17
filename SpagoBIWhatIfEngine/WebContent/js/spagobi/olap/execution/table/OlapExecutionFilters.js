@@ -18,6 +18,7 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionFilters', {
 	html:'Fliters',
 	
 	config:{
+		frame: true,
 		border: false
     },
 	

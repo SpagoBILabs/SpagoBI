@@ -19,11 +19,7 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionTable', {
 	html:'<div id="_table_container_" style="height: 100%; width:100%"> table </div>',
 	
 	config:{
-		border: false,
-		style: {
-			marginLeft: '20px',
-			marginTop: '20px'
-        }
+		border: false
     },
 	
 

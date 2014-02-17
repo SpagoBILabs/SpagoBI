@@ -18,6 +18,7 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionRows', {
 	html:'Rows',
 	
 	config:{
+		frame: true,
 		border: false
     },
 	
