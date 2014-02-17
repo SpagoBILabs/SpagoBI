@@ -25,7 +25,7 @@ Ext.define('Sbi.olap.execution.OlapExecutionPanel', {
 	layout: 'card',
 	
 	config:{
-		
+		border: false
 	},
 
 	/**
