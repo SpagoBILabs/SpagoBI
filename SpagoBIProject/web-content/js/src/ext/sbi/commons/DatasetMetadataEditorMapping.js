@@ -17,7 +17,7 @@ Sbi.DatasetMetadataEditorMapping = {
 //			        	guiName: 'Pluto'
 //			      }
 		]
-		, showExpertButton : false
+		, showExpertButton : true
 		, domainValues: [] //admissible values for hierarchy level (Simplified GUI), no values = no filter
 		//, domainValues: ['comune','provincia'] //example
 	};
