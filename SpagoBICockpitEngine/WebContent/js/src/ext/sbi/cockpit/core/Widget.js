@@ -9,27 +9,6 @@
   
  
 /**
-  * Object name 
-  * 
-  * [description]
-  * 
-  * 
-  * Public Properties
-  * 
-  * [list]
-  * 
-  * 
-  * Public Methods
-  * 
-  *  [list]
-  * 
-  * 
-  * Public Events
-  * 
-  *  [list]
-  * 
-  * Authors
-  * 
   * - Andrea Gioia (andrea.gioia@eng.it)
   */
 
@@ -51,17 +30,22 @@ Sbi.cockpit.core.Widget = function(config) {
 	
 	var c = Ext.apply(settings, config || {});
 	Ext.apply(this, c);
-			
-	this.msgPanel = new Ext.Panel({
-		html: this.defaultMsg
-	});
-	c = Ext.apply(c, { 
-		border: false
-		, bodyBorder: false
-		, hideBorders: true
-		, frame: false
-	   	, items: [this.msgPanel]
-	});
+		
+	if(Sbi.isNotValorized(this.items) || (Ext.isArray(this.items) && this.items.length === 0)) {
+		this.msgPanel = new Ext.Panel({
+			html: this.defaultMsg
+		});
+		c = Ext.apply(c, { 
+			border: false
+			, bodyBorder: false
+			, hideBorders: true
+			, frame: false
+		   	, items: [this.msgPanel]
+		});
+	} else {
+		
+	}
+	
 		
 	// constructor
 	Sbi.cockpit.core.Widget.superclass.constructor.call(this, c);
@@ -85,6 +69,14 @@ Ext.extend(Sbi.cockpit.core.Widget, Ext.Panel, {
      */
     parentContainer: null
     
+    /**
+     * @property {String} storeId
+     * The label of the storeId used to feed this widget
+     */
+    , storeId: null
+    , wtype: null
+    , wconf: null
+    
     // =================================================================================================================
 	// METHODS
 	// =================================================================================================================
@@ -92,16 +84,38 @@ Ext.extend(Sbi.cockpit.core.Widget, Ext.Panel, {
     // -----------------------------------------------------------------------------------------------------------------
     // public methods
 	// -----------------------------------------------------------------------------------------------------------------
+    
+    , getStoreId: function() {
+    	return this.storeId;
+    }
+
+	, setStoreId: function(storeId) {
+		Sbi.trace("[Widget.setStoreId]: IN");
+		this.storeId = storeId;
+		Sbi.trace("[Widget.setStoreId]: OUT");
+	}
+    
+	, setConfiguration: function(config) {
+		Sbi.trace("[Widget.getConfiguration]: IN");
+		
+		this.setStoreId(config.storeId);
+		this.wtype =  config.wtype;
+		this.setCustomConfiguration(config);
+		// TODO set layout and style config
+		
+		Sbi.trace("[Widget.getConfiguration]: OUT");
+	}
+	
     , getConfiguration: function() {
     	Sbi.trace("[Widget.getConfiguration]: IN");
     	var config = {};
-		config.dataset = this.selectedDatasetLabel;
+		config.storeId = this.getStoreId();
 		config.wtype = this.wtype;
     	config.custom = this.getCustomConfiguration();
     	
     	config.layout = this.getRegion();
     	config.style = this.getStyleConfiguration();
-    	config.common = this.getCommonConfiguration();
+    	
 		
     	Sbi.trace("[Widget.getConfiguration]: OUT");
     	
@@ -110,27 +124,13 @@ Ext.extend(Sbi.cockpit.core.Widget, Ext.Panel, {
 
 	, getCustomConfiguration: function() {
 		Sbi.trace("[Widget.getCustomConfiguration]: IN");
-		var config = {};
+		var config = Ext.apply({}, this.wconf || {});
 		Sbi.trace("[Widget.getCustomConfiguration]: OUT");
 		return config;
 	}
 	
 	, getStyleConfiguration: function() {
 		var config = {};
-		return config;
-	}
-
-	, getCommonConfiguration: function(){
-		var config = {};
-		
-		var datasets = [];
-		var sm = this.getWidgetManager().getStoreManager();
-		for (var i=0; i < sm.length; i++){
-			var s = sm.get(i);
-			datasets.push(s.datasetLabel);
-		}
-		
-		config.datasets = datasets;
 		return config;
 	}
 	
