@@ -21,12 +21,41 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.spagobi.dataset.cache;
 
+import java.util.List;
+
 /**
- * @author Marco Cortella (marco.cortella@eng.it)
+ * @author  Marco Cortella (marco.cortella@eng.it)
+ * 			Antonella Giachino (antonella.giachino@eng.it)
  *
  */
 public interface ICacheMetadata {
-	/*
-	 * TODO
+	/**
+	 * @return the cache dimension space free
 	 */
+	Double getDimensionSpaceAvailable();
+	
+	/**
+	 * @return the cache dimension space used
+	 */
+	Double getDimensionSpaceUsed();
+	
+	/**
+	 * @return the number of the objects cached
+	 */
+	Double getNumberOfObjects();
+	
+	/**
+	 * @return true if the cache space is near the full limit
+	 */
+	boolean isFull();
+	
+	/**
+	 * @return a list of the cached objects ordered by dimension (largest at the begin)
+	 */
+	List getObjectsByDimension();
+	
+	/**
+	 * @return a list of the cached objects ordered by store time (oldest at the begin)
+	 */
+	List getObjectsByTime();
 }
