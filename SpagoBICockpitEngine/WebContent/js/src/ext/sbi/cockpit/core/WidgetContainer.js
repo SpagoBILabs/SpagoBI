@@ -221,7 +221,14 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.Widget, {
     			Sbi.trace("[WidgetContainer.onSubmit]: IN");
     			wizard.hide();
     			var component = wizard.getWizardTargetComponent();
-    			component.setWidgetConfiguration( wizard.getWizardState() );
+    			var wizardState = wizard.getWizardState();
+    			
+    			// TODO manage datasetSelection
+    			wizardState.storeId = wizardState.selectedDatasetLabel;
+    			delete wizardState.selectedDatasetLabel;
+    			delete wizardState.unselectedDatasetLabel;
+    			    			
+    			component.setWidgetConfiguration( wizardState );
     			Sbi.trace("[WidgetContainer.onSubmit]: OUT");
     		}, this);
     		this.widgetEditorWizard.on("cancel", function(wizard) {
@@ -232,7 +239,14 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.Widget, {
     		this.widgetEditorWizard.on("apply", function(wizard) {
     			Sbi.trace("[WidgetContainer.onApply]: IN");
     			var component = wizard.getWizardTargetComponent();
-    			component.setWidgetConfiguration( wizard.getWizardState() );
+    			var wizardState = wizard.getWizardState();
+    			
+    			// TODO manage datasetSelection
+    			wizardState.storeId = wizardState.selectedStoreId;
+    			delete wizardState.selectedStoreId;
+    			delete wizardState.unselectedStoreId;
+    			
+    			component.setWidgetConfiguration( wizardState );
     			Sbi.trace("[WidgetContainer.onApply]: OUT");
     		}, this);
     		

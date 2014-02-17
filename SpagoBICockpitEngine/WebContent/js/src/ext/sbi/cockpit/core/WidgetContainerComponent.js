@@ -72,6 +72,12 @@ Ext.extend(Sbi.cockpit.core.WidgetContainerComponent, Ext.Window, {
      * The parent container
      */
 	, parentContainer: null
+	
+	/**
+     * @property {Sbi.cockpit.core.Widget} widget
+     * The wrapped widget object
+     */
+	, widget: null
    
 	// =================================================================================================================
 	// METHODS
@@ -111,27 +117,61 @@ Ext.extend(Sbi.cockpit.core.WidgetContainerComponent, Ext.Window, {
     // public methods
 	// -----------------------------------------------------------------------------------------------------------------
 	
-	// sostituisce il vecchio widget embeddato con quello ricevuto come argomento
+	/**
+	 * @method
+	 * 
+	 * Replace the old embedded widget with the new one passed as argumnt
+	 * @param {Object} the configuration object passed in to the class constructor
+	 */
 	, setWidget: function(widget) {
 		Sbi.trace("[WidgetContainerComponent.setWidget]: IN");
 		this.removeAll(true);
-		this.add(widget);
-		this.widget = widget;
-		this.widget.setParentComponent(this);
+		if(Sbi.isValorized(widget)) {
+			// TODO check if widget is an instance of widget
+			this.add(widget);
+			this.widget = widget;
+			this.widget.setParentComponent(this);
+		} else {
+			this.widget = widget;
+		}
 		this.doLayout();
+		
 		Sbi.trace("[WidgetContainerComponent.setWidget]: OUT");
 	}
 	
+	/**
+	 * @method
+	 * 
+	 * @return {Sbi.cockpit.core.Widget} the wrapped widget. null if there is widget wrapped
+	 */
 	, getWidget: function() {
-		return this.widget;
+		var w = null;
+		if(Sbi.isValorized(this.widget)) {
+			w = this.widget;
+		} 
+		return w;
+	}
+	
+	/**
+	 * @method
+	 * 
+	 * @return {boolean} false if there is a wrapped widget; true otherwise
+	 */
+	, isEmpty: function() {
+		return (this.getWidget() === null);
 	}
 	
 	, setWidgetConfiguration: function(widgetConf) {
 		Sbi.trace("[WidgetContainerComponent.setWidgetConfiguration]: IN");
-		// TODO se è un tipo di widget diverso da quello attualmente embeddato lo crea e lo sostiruisce al vecchio
-		// se è dello stesso tipo chiama il metodo setConfiguration sul vecchi senza ricrearne uno nuovo
+		var widget;
+		if(this.isEmpty()) {
+			widget = Sbi.cockpit.core.WidgetExtensionPoint.getWidget(widgetConf.wtype, widgetConf);
+		} else {
+			widget = this.getWidget();
+			widget.setConfiguration(widgetConf);
+		}
 		Sbi.trace("[WidgetContainerComponent.setWidgetConfiguration]: widgetConf is equal to [" + Sbi.toSource(widgetConf) + "]");
-		var widget = Sbi.cockpit.core.WidgetExtensionPoint.getWidget(widgetConf.wtype, widgetConf);
+	
 		this.setWidget(widget);
 		Sbi.trace("[WidgetContainerComponent.setWidgetConfiguration]: OUT");
 	}

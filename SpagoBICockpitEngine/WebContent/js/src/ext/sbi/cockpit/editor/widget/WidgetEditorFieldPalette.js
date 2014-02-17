@@ -79,7 +79,7 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditorFieldPalette, Ext.Panel, {
     	
 		if (datasetLabel) {	
 			this.dataset = datasetLabel;
-			this.store.proxy.setUrl(url = Sbi.config.serviceRegistry.getRestServiceUrl({
+			this.store.proxy.setUrl(Sbi.config.serviceRegistry.getRestServiceUrl({
 				serviceName : 'dataset/' + this.dataset + '/fields'
 			}), true);
 			Sbi.trace("[WidgetEditorFieldPalette.refreshFieldsList]: url: " + this.store.url);

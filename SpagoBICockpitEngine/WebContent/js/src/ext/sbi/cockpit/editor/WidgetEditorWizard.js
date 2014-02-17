@@ -74,11 +74,14 @@ Ext.extend(Sbi.cockpit.editor.WidgetEditorWizard, Ext.Window, {
 			Sbi.trace("[WidgetEditorWizard.setWizardTargetComponent]: target component already contains a widget");
 			this.resetWizardState();
 			var widgetConf = widget.getConfiguration();
-			if(widgetConf.dataset) {
-				this.editorMainPanel.selectDataset(widgetConf.dataset);
+			if(widgetConf.storeId) {
+				Sbi.trace("[WidgetEditorWizard.setWizardTargetComponent]: used dataset is [" + widgetConf.storeId + "]");
+				this.editorMainPanel.selectDataset(widgetConf.storeId);
 				this.editorMainPanel.setWidgetEditorPageState(widgetConf.custom);
 				this.editorMainPanel.moveToPage (1);
 			} else {
+				Sbi.trace("[WidgetEditorWizard.setWizardTargetComponent]: there are no a used dataset");
+				Sbi.trace("[WidgetEditorWizard.setWizardTargetComponent]: widgetConf [" + Sbi.toSource(widgetConf) + "]");
 				this.editorMainPanel.moveToPage(0);
 			}	
 		} else {
