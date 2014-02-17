@@ -51,19 +51,44 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionPivot', {
 		border: false,
     	/**
     	 * @cfg {Number} filtersHeight
-    	 * Height of the filters definition panel. Default 125 
+    	 * Height of the filters definition panel. Default 75 
     	 */
-		filtersHeight: 125,
+		filtersHeight: 75,
     	/**
     	 * @cfg {Number} columnsHeight
-    	 * Height of the columns definition panel. Default 100
+    	 * Height of the columns definition panel. Default 50
     	 */
-		filtersHeight: 100,
+		columnsHeight: 50,
     	/**
     	 * @cfg {Number} rowsWidth
-    	 * Width of the rows panel. Default 75 
+    	 * Width of the rows panel. Default 50 
     	 */
-		filtersHeight: 75
+		rowsWidth: 50,
+    	/**
+    	 * @cfg {Number} leftMargin
+    	 * Margin left of the pivot table (filters, row, column , table) 
+    	 */	
+		leftMargin: 8,
+    	/**
+    	 * @cfg {Number} rightMargin
+    	 * Margin right of the pivot table (filters, row, column , table) 
+    	 */	
+		rightMargin: 8,
+    	/**
+    	 * @cfg {Number} topMargin
+    	 * Margin top of the pivot table (filters, row, column , table) 
+    	 */	
+		topMargin: 8,
+    	/**
+    	 * @cfg {Number} bottomMargin
+    	 * Margin bottom of the pivot table (filters, row, column , table) 
+    	 */	
+		bottomMargin: 8,
+    	/**
+    	 * @cfg {Number} betweenColumnRowTableMargin
+    	 * Margin between columns/rows/table 
+    	 */	
+		betweenColumnRowTableMargin: 5
 	},
 
 	/**
@@ -101,12 +126,19 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionPivot', {
 	
 	initComponent: function() {
 		
-		//defining the components
-		this.olapExecutionFilters   = Ext.create('Sbi.olap.execution.table.OlapExecutionFilters',  {height: this.filtersHeight}); 
-		this.olapExecutionColumns   = Ext.create('Sbi.olap.execution.table.OlapExecutionColumns',  {height: this.olapExecutionColumns});
-		this.olapExecutionRows   = Ext.create('Sbi.olap.execution.table.OlapExecutionRows',  {width: this.olapExecutionRows});
-		this.olapExecutionTable   = Ext.create('Sbi.olap.execution.table.OlapExecutionTable',  {flex: 1});
 		
+		// set margins top, right, bottom, and left
+		columnsMargin =  this.topMargin+" "+this.rightMargin+" 0 0";
+		filtersMargin = this.topMargin+" "+this.rightMargin+" 0 "+this.leftMargin;
+		rowsTableMargin = this.betweenColumnRowTableMargin+" "+this.rightMargin+" "+this.bottomMargin+" "+this.leftMargin;
+		rowsMargin = "0 "+this.betweenColumnRowTableMargin+" 0 0";
+		crossMargin = this.topMargin+" "+this.betweenColumnRowTableMargin+" 0 "+this.leftMargin;
+		
+		//defining the components
+		this.olapExecutionFilters   = Ext.create('Sbi.olap.execution.table.OlapExecutionFilters',  {height: this.filtersHeight, margin: filtersMargin}); 
+		this.olapExecutionColumns   = Ext.create('Sbi.olap.execution.table.OlapExecutionColumns',  {flex: 1, margin: columnsMargin});
+		this.olapExecutionRows   = Ext.create('Sbi.olap.execution.table.OlapExecutionRows',  {width: this.rowsWidth, margin: rowsMargin});
+		this.olapExecutionTable   = Ext.create('Sbi.olap.execution.table.OlapExecutionTable',  {flex: 1});
 		
 		//defining the structure of the layout
 		Ext.apply(this, {
@@ -118,8 +150,23 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionPivot', {
 							type: 'vbox',
 							align : 'stretch'
 						},
-						items:[this.olapExecutionColumns ,
+						items:[	{
+									border: false,
+									layout: {
+										type: 'hbox',
+										align : 'stretch'
+									},
+									height: this.columnsHeight,
+									items:[	{
+										margin: crossMargin,
+										border: false,
+										frame: true,
+										width: this.rowsWidth,
+										html: "opt"
+									},this.olapExecutionColumns]
+								},
 						        {
+									margin: rowsTableMargin,	
 									border: false,
 									flex:1,
 									layout: {
