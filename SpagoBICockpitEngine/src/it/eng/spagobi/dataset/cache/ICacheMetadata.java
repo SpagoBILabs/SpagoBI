@@ -42,7 +42,7 @@ public interface ICacheMetadata {
 	/**
 	 * @return the number of the objects cached
 	 */
-	Double getNumberOfObjects();
+	Integer getNumberOfObjects();
 	
 	/**
 	 * @return true if the cache space is near the full limit
