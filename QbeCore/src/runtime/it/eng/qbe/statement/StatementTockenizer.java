@@ -21,7 +21,7 @@ public class StatementTockenizer extends StringTokenizer{
 	private int tockenCount;
 	
 	private static final String DELIMITERS = "+-|*/()<>=!,";
-	private static final String[] ADDITIONALS_DELIMITERS_SUBSTRING_FUNCTIONS = {" like ", "case when", " when ", " then ", "else", " end ", "not in ", " in ", " between", "is not null ", "is null ", "is not empty " , "is empty ", "not member of", "member of", " and ", " or "};
+	private static final String[] ADDITIONALS_DELIMITERS_SUBSTRING_FUNCTIONS = {"distinct", " like ", "case when", " when ", " then ", "else", " end ", "not in ", " in ", " between", "is not null ", "is null ", "is not empty " , "is empty ", "not member of", "member of", " and ", " or "};
 	
 
 	/**
@@ -47,7 +47,7 @@ public class StatementTockenizer extends StringTokenizer{
 		while(tocken.length()>0){
 			boolean foundAdditional = false;
 			for(int i=0; i<ADDITIONALS_DELIMITERS_SUBSTRING_FUNCTIONS.length; i++){
-				position = tocken.indexOf(ADDITIONALS_DELIMITERS_SUBSTRING_FUNCTIONS[i]);
+				position = tocken.toLowerCase().indexOf(ADDITIONALS_DELIMITERS_SUBSTRING_FUNCTIONS[i]);
 				if(position>=0){
 					if(position>0){
 						tockens.add(tocken.substring(0,position));
