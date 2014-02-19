@@ -112,11 +112,10 @@ Ext.extend(Sbi.cockpit.core.Widget, Ext.Panel, {
 		config.storeId = this.getStoreId();
 		config.wtype = this.wtype;
     	config.custom = this.getCustomConfiguration();
-    	
-    	config.layout = this.getRegion();
+    	//config.layout = this.getWidgetRegion(false);
+    	config.layout = this.getWidgetRegion(true);
     	config.style = this.getStyleConfiguration();
-    	
-		
+
     	Sbi.trace("[Widget.getConfiguration]: OUT");
     	
     	return config;
@@ -130,8 +129,10 @@ Ext.extend(Sbi.cockpit.core.Widget, Ext.Panel, {
 	}
 	
 	, getStyleConfiguration: function() {
+		Sbi.trace("[Widget.getStyleConfiguration]: IN");
 		var config = {};
 		return config;
+		Sbi.trace("[Widget.getStyleConfiguration]: OUT");
 	}
 	
     , getParentComponent: function() {	
@@ -169,7 +170,7 @@ Ext.extend(Sbi.cockpit.core.Widget, Ext.Panel, {
     	var container = this.getParentContainer();
     	if(container != null) {
     		isBound = true;
-    		Sbi.trace("[Widget.getParentContainer]: widget [" + this.id +  "] is bound to container [" + container.id + "]");
+    		//Sbi.trace("[Widget.getParentContainer]: widget [" + this.id +  "] is bound to container [" + container.id + "]");
     	}
     	Sbi.trace("[Widget.isBoundToAContainer]: OUT");
     	return isBound;
@@ -194,26 +195,25 @@ Ext.extend(Sbi.cockpit.core.Widget, Ext.Panel, {
     	return widgetManager;
     }
 
-    , getRegion: function() {
-    	var r = null;
-    	var h =   this.getHeight();
-    	var w =  this.getWidth();
-    	var p = this.getPosition();
+    , getWidgetRegion: function(relative) {
+    	Sbi.trace("[Widget.getWidgetRegion]: IN");
     	
-    	r =  {
-	   			  x : p[0]
-	   	    	, y: p[1]
-	   			, width : w
-	       		, height : h
-	    	};
+    	var r = {};
     	
     	if(this.isBoundToAContainer() === true) {
-    		r = this.getParentContainer().getWidgetRegion(this);
+    		Sbi.trace("[Widget.getWidgetRegion]: widget [" + this.getId()+ "] is bound to a container");
+    		var parentContainer = this.getParentContainer(); 
+    		var parentComponent = this.getParentComponent();
+    		r = parentContainer.getComponentRegion( parentComponent, relative );
     		if(r === null) {
     			Sbi.warn("[Widget.getWidgetManager]: Widget [" + this.toString() + "] is bound to a widget container but it is not possible to retrive the region it occupies");
     		}    	
+    	} else {
+    		Sbi.trace("[Widget.getWidgetRegion]: widget [" + this.getId()+ "] is not bound to a container");
     	}
 
+    	Sbi.trace("[Widget.getWidgetRegion]: OUT");
+    	
     	return r;
     }
     

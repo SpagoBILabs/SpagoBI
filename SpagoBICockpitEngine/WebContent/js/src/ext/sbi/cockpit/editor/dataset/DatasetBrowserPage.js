@@ -13,6 +13,9 @@ Sbi.cockpit.editor.dataset.DatasetBrowserPage = function(config) {
 	// init properties...
 	var defaultSettings = {
 		itemId: 0
+		, layout: "fit"
+		, frame: false
+		, border: false
 	};
 	var settings = Sbi.getObjectSettings('Sbi.cockpit.editor.dataset.DatasetBrowserPage', defaultSettings);
 	var c = Ext.apply(settings, config || {});

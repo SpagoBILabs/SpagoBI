@@ -9,7 +9,8 @@ Ext.ns("Sbi.cockpit.editor.widget");
 Sbi.cockpit.editor.widget.WidgetEditorDesignerPalette = function(config) { 
 
 	var defaultSettings = {
-		border: false
+		border: false,
+		layout: "fit"
 	};
 	
 	var settings = Sbi.getObjectSettings('Sbi.cockpit.editor.widget.WidgetEditorDesignerPalette', defaultSettings);
@@ -62,8 +63,9 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditorDesignerPalette, Ext.Panel, {
 			title : 'Visualization',
 			autoScroll : true,
 			border : false,
-				items : [ new Ext.Panel({
-					height : 342,
+			items : [ new Ext.Panel({
+					//height : 342,
+					layout: "fit",
 					border : false,
 					style : 'padding-top: 0px; padding-left: 0px',
 					items : [ new Ext.grid.GridPanel({
