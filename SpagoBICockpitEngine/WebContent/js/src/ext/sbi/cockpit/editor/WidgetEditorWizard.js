@@ -12,13 +12,14 @@ Sbi.cockpit.editor.WidgetEditorWizard = function(config) {
 
 	// init properties...
 	var defaultSettings = {
-	    layout:'fit'
+		title: "Widget editor"
+	    , layout:'fit'
 	    , width: 1000
 	    , height: 510
 	    , closeAction:'hide'
 	    , plain: true
 	    , modal: true
-	    , title: "Widget editor"
+	    
 	};
 	var settings = Sbi.getObjectSettings('Sbi.cockpit.editor.WidgetEditorWizard', defaultSettings);
 	var c = Ext.apply(settings, config || {});

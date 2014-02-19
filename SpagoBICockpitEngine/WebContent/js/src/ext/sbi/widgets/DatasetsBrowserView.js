@@ -14,12 +14,11 @@ Sbi.widgets.DatasetsBrowserView = function(config) {
 		itemSelector : 'dd' 
 		, trackOver : true
 		, overClass : 'over'
-		, frame : true
+		, frame : false
+		, border: false
 		, emptyText : LN('No Documents')
 		, inline : {wrap : false}
-		, scrollable : 'horizontal'
-		, autoScroll: false
-		, height: '350px'
+		, autoScroll: true
 	};
 	var settings = Sbi.getObjectSettings('Sbi.widgets.DatasetsBrowserView', defaultSettings);
 	var c = Ext.apply(settings, config || {});

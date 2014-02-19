@@ -17,7 +17,9 @@ Sbi.widgets.DatasetsBrowserPanel = function(config) {
 	
 	var defaultSettings = {		
 		autoScroll: true
-	  , height: '100%'
+	  , layout: "border"
+	  , frame: false
+	  , border: false
 	};
 	var settings = Sbi.getObjectSettings('Sbi.widgets.DatasetsBrowserPanel', defaultSettings);
 	var c = Ext.apply(settings, config || {});
@@ -30,7 +32,45 @@ Sbi.widgets.DatasetsBrowserPanel = function(config) {
 	this.initDatasetStore();
 	this.init();
 	
-	this.items = [this.toolbar, this.viewPanel];
+	// inline ovveride to add none as possible collapse mode for border layout 
+	// TODO move it to ovverides file
+	Ext.layout.BorderLayout.Region.prototype.getCollapsedEl = Ext.layout.BorderLayout.Region.prototype.getCollapsedEl.createSequence(function(){
+		if(this.collapseMode == 'none'){
+            this.collapsedEl.enableDisplayMode('none');
+        }
+    });
+	
+	this.items = [{
+		region      			: 'north',
+		split       			: false,
+		collapsible 			: true,
+		collapsed   			: false,
+		autoScroll				: true,
+		layout					: 'fit',
+		margins     			: '0 0 0 0',
+		cmargins    			: '0 0 0 0',
+		collapseMode			: 'none',
+        hideCollapseTool		: true,
+		hideBorders				: true,
+		border					: true,
+		frame					: false,
+		items					: [this.toolbar]
+	}, {
+		region      			: 'center',
+		split       			: false,
+		collapsible 			: true,
+		collapsed   			: false,
+		autoScroll				: true,
+		layout					: 'fit',
+		margins     			: '0 0 0 0',
+		cmargins    			: '0 0 0 0',
+		collapseMode			: 'none',
+        hideCollapseTool		: true,
+		hideBorders				: true,
+		border					: false,
+		frame					: false,
+		items					: [this.viewPanel]
+	}];
 		
 	Sbi.widgets.DatasetsBrowserPanel.superclass.constructor.call(this, c);
 	

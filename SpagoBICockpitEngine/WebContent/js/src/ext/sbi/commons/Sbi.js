@@ -4,7 +4,7 @@ Sbi.isValorized = function(o, subProperties) {
 	var isValorized = Ext.isDefined(o) && Sbi.isNotNull(o);
 	if(isValorized && subProperties) {
 		if(Ext.isString( subProperties ) ) {
-			subProperties = subProperty.split(".");
+			subProperties = subProperties.split(".");
 		}
 		if(subProperties.length > 0) {
 			var property = subProperties.shift();

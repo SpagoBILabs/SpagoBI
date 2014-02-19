@@ -12,7 +12,8 @@ Sbi.cockpit.editor.WidgetEditorWizardPanel = function(config) {
 
 	// init properties...
 	var defaultSettings = {
-		// set default values here
+		frame: false,
+		border: false
 	};
 	var settings = Sbi.getObjectSettings('Sbi.cockpit.editor.WidgetEditorWizardPanel', defaultSettings);
 	var c = Ext.apply(settings, config || {});

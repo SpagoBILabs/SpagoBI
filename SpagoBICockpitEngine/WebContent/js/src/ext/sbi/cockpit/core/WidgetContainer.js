@@ -18,12 +18,11 @@ Sbi.cockpit.core.WidgetContainer = function(config) {
 	};
 	
 	var settings = Sbi.getObjectSettings('Sbi.cockpit.core', defaultSettings);
-	
 	var c = Ext.apply(settings, config || {});
 	Ext.apply(this, c);
-	
-	this.regions = {};
 
+	this.components = new Ext.util.MixedCollection();
+	
 	// constructor
 	Sbi.cockpit.core.WidgetContainer.superclass.constructor.call(this, c);
 };
@@ -51,11 +50,22 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.Widget, {
      */
 	widgetManager: null
 
-  /**
-   * @property {Ext.Window} widgetEditorWizard
-   * The wizard that manages the single widget definition
-   */
-  , widgetEditorWizard: null
+	/**
+	 * @property {Ext.Window} widgetEditorWizard
+	 * The wizard that manages the single widget definition
+	 */
+	, widgetEditorWizard: null
+  
+	/**
+	 * @property {Object} defaultRegion
+	 * The region of the container to  which all new widgets will be added if not explicitly specified otherwise
+	 */
+	, defaultRegion: {
+		width : 0.5
+	   	, height : 0.5
+	   	, x : '50%'
+	   	, y: '50%'
+	}
 	 
 	// =================================================================================================================
 	// METHODS
@@ -127,19 +137,31 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.Widget, {
     	}
     	
     	var component = this.addComponent(widget, region);
-    	
-		
-		
-		
+
 		Sbi.trace("[WidgetContainer.addWidget]: OUT");
 	}
     
-    , getWidgetRegion: function(component) {
-    	return this.regions[component.id];
+    , getComponentRegion: function(component, relative) {
+    	Sbi.trace("[WidgetContainer.getComponentRegion]: IN");
+    	var region = null;
+    	if( this.components.contains(component) ) {
+    		var box = component.getBox();
+    		region = {};
+    		region.x = box.x;
+    		region.y = box.y;
+    		region.width = box.width;
+    		region.height = box.height;
+    		
+    		if(relative === true) {
+    			region = this.convertToRelativeRegion(region);
+    		}
+    	}
+    	Sbi.trace("[WidgetContainer.getComponentRegion]: OUT");
+    	return region;
     }
     
     , setComponentRegion: function(component, region) {
-    	this.regions[component.id] = region;
+    	
     }
     
     , getWidgetManager: function() {
@@ -268,31 +290,86 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.Widget, {
     // private methods
 	// -----------------------------------------------------------------------------------------------------------------
 	
-//    , onRender: function(ct, position) {	
-//    	Sbi.trace("[WidgetContainer.onRender]: IN");
-//    	
-//		Sbi.cockpit.core.WidgetContainer.superclass.onRender.call(this, ct, position);
-//	
-//		this.clearContent();
-//		this.renderContent();
-//		Sbi.trace("[WidgetContainer.onRender]: OUT");
-//	}
-//     
-//    , clearContent: function() {
-//    	 this.items.each( function(item) {
-// 			this.items.remove(item);
-// 	        item.destroy();           
-// 	    }, this); 
-//    }
-//    
-//    , renderContent: function() {
-//    	var widgets = this.widgetManager.getWidgets();
-//		widgets.each(function(widget, index, length) {
-//			this.addComponent(widget);
-//		}, this);	
-//    }
+    , getContainerSize: function() {
+    	return Ext.getBody().getViewSize();
+    }
     
+    , getContainerWidth: function() {
+    	return this.getContainerSize().width;
+    }
+     
+    , getContainerHeight: function() {
+    	return this.getContainerSize().height;
+    }
+    
+    , convertToAbsoluteWidth: function(relativeWidth) {
+    	return Math.ceil(this.getContainerWidth() * relativeWidth);
+    }
+    
+    , convertToAbsoluteX: function(relativeX) {
+    	return this.convertToAbsoluteWidth(relativeX);
+    }
+    
+    , convertToAbsoluteHeight: function(relativeHeight) {
+    	return Math.ceil(this.getContainerHeight() * relativeHeight);
+    }
+    
+    , convertToAbsoluteY: function(relativeY) {
+    	return this.convertToAbsoluteHeight(relativeY);
+    }
+    
+    , convertToAbsolteRegion: function(relativeRegion) {
+    	var absoluteRegion = {};
+    	
+    	absoluteRegion.width = this.convertToAbsoluteWidth(relativeRegion.width);
+    	absoluteRegion.height = this.convertToAbsoluteHeight(relativeRegion.height);
+    	absoluteRegion.x = this.convertToAbsoluteX(relativeRegion.x);
+    	absoluteRegion.y = this.convertToAbsoluteY(relativeRegion.y);
+    	
+    	return absoluteRegion;
+    }
+    
+    , convertToRelativeWidth: function(absoluteWidth) {
+    	var relativeWidth =  absoluteWidth / this.getContainerWidth();
+    	relativeWidth = relativeWidth.toFixed(2);
+    	return relativeWidth;
+    }
+    
+    , convertToRelativeX: function(absoluteX) {
+    	return this.convertToRelativeWidth(absoluteX);
+    }
+    
+    , convertToRelativeHeight: function(absoluteHeight) {
+    	var relativeHeight =  absoluteHeight / this.getContainerHeight();
+    	relativeHeight = relativeHeight.toFixed(2);
+    	return relativeHeight;
+    }
+    
+    , convertToRelativeY: function(absoluteY) {
+    	return this.convertToRelativeHeight(absoluteY);
+    }
+    
+    , convertToRelativeRegion: function(absoluteRegion) {
+    	var relativeRegion = {};
+    	
+    	relativeRegion.width = this.convertToRelativeWidth(absoluteRegion.width);
+    	relativeRegion.height = this.convertToRelativeHeight(absoluteRegion.height);
+    	relativeRegion.x = this.convertToRelativeX(absoluteRegion.x);
+    	relativeRegion.y = this.convertToRelativeY(absoluteRegion.y);
+    	
+    	return relativeRegion;
+    }
    
+    /**
+     * @method
+     * 
+     * @return  The default region of the container to  which all new widgets will 
+     * be added if not explicitly specified otherwise
+     */
+    , getDefaultRegion: function() {
+    	return this.deafultRegion;
+    }
+    
     , addComponent: function(widget, region) {
     	
     	Sbi.trace("[WidgetContainer.addComponent]: IN");
@@ -303,34 +380,23 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.Widget, {
     	}
     	
     	if( Sbi.isNotValorized(region) ) {
-    		region = {
-        		width : 0.5
-        	   	, height : 0.5
-        	   	, x : '50%'
-        	   	, y: '50%'
-        	};
-    		this.regions[widget.id] = region;
+    		region = this.getDefaultRegion();
     	}
     	
     	Sbi.trace("[WidgetContainer.addComponent]: region is equal to: [" + Sbi.toSource(region) + "]");
     	
     	Ext.apply(componentConf, region);
     	
-    	var vpSize = Ext.getBody().getViewSize();
-    	componentConf.width = Math.ceil(vpSize.width * componentConf.width);
-    	componentConf.height = Math.ceil(vpSize.height * componentConf.height);
-    	
+    	componentConf = this.convertToAbsolteRegion(componentConf);
+      	
     	var component = new Sbi.cockpit.core.WidgetContainerComponent(componentConf);
     	
     	component.on('move', this.onComponentMove, this);
     	component.on('resize', this.onComponentResize, this);
     	component.on("performaction", this.onComponentAction, this);
     	
-    	this.components = this.components || new Array();
-    	this.components.push(component);
+    	this.components.add(component.getId(), component);
     	component.setParentContainer(this);
-    	
-    	this.regions[component.id] = region;
     	
     	if(widget) {
     		widget.setParentComponent(component);
@@ -399,40 +465,40 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.Widget, {
     }
     
     , onComponentMove: function(component){
-    	Sbi.trace("[WidgetContainer.onComponentMove]: IN");
-    
-    	var r = this.getRegion();
-    	
-    	r.x = component.getPosition()[0];
-    	r.y = component.getPosition()[1];
-		
-		this.setComponentRegion(component, r);
-		
-		Sbi.trace("[WidgetContainer.onComponentMove]: OUT");
+//    	Sbi.trace("[WidgetContainer.onComponentMove]: IN");
+//    
+//    	var componentRegion = this.getComponentRegion(component);
+//    	
+//    	componentRegion.x = component.getPosition()[0];
+//    	componentRegion.y = component.getPosition()[1];
+//		
+//		this.setComponentRegion(component, componentRegion);
+//		
+//		Sbi.trace("[WidgetContainer.onComponentMove]: OUT");
     	
     }
     
     , onComponentResize: function(component){
-    	//refresh size informations of region obj
-    	Sbi.trace("[WidgetContainer.onComponentResize]: IN");
     	
-    	var r =  this.getRegion();
-    	r.width = component.getWidth();
-    	r.height = component.getHeight();
-    	
-    	if (Sbi.settings.cockpit && Sbi.settings.cockpit.layout && 
-    			Sbi.settings.cockpit.layout.useRelativeDimensions == true){
-    		//get realtive dimensions if necessary
-    		var vpSize = Ext.getBody().getViewSize();
-	    	var newW = ((100*c.getWidget().getWidth()) / vpSize.width)/100;
-			var newH = ((100*c.getWidget().getHeight()) / vpSize.height)/100;
-	    	r.width = Ext.util.Format.number(newW, '0.00');
-	    	r.height =Ext.util.Format.number(newH, '0.00');
-    	}
-    	
-		this.setComponentRegion(component,r);
-		
-		Sbi.trace("[WidgetContainer.onComponentResize]: OUT");
+//    	Sbi.trace("[WidgetContainer.onComponentResize]: IN");
+//    	
+//    	var componentRegion = this.getComponentRegion(component);
+//    	componentRegion.width = component.getWidth();
+//    	componentRegion.height = component.getHeight();
+//    	
+//    	if (Sbi.isValorized(Sbi, "settings.cockpit.layout.useRelativeDimensions")
+//    			&& Sbi.settings.cockpit.layout.useRelativeDimensions === true) {
+//    		
+//    		var vpSize = Ext.getBody().getViewSize();
+//	    	var newW = ((100*c.getWidget().getWidth()) / vpSize.width)/100;
+//			var newH = ((100*c.getWidget().getHeight()) / vpSize.height)/100;
+//			componentRegion.width = Ext.util.Format.number(newW, '0.00');
+//			componentRegion.height =Ext.util.Format.number(newH, '0.00');
+//    	}
+//    	
+//		this.setComponentRegion(component, componentRegion);
+//		
+//		Sbi.trace("[WidgetContainer.onComponentResize]: OUT");
     }
     
     , onComponentAction: function(component, action) {
