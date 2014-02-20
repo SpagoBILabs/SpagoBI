@@ -271,8 +271,9 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 				//add personal folder for default
 				LowFunctionality userFunc = null;
 				try{
-					ILowFunctionalityDAO functionalitiesDAO = DAOFactory.getLowFunctionalityDAO();
-					userFunc = functionalitiesDAO.loadLowFunctionalityByPath("/"+profile.getUserUniqueIdentifier(),false);
+//					ILowFunctionalityDAO functionalitiesDAO = DAOFactory.getLowFunctionalityDAO();
+//					userFunc = functionalitiesDAO.loadLowFunctionalityByPath("/"+profile.getUserUniqueIdentifier(),false);
+					userFunc = UserUtilities.loadUserFunctionalityRoot((UserProfile) profile, true);
 				} catch (Exception e) {
 					logger.error("Error on insertion of the document.. Impossible to get the id of the personal folder ",e);
 					throw new SpagoBIRuntimeException("Error on insertion of the document.. Impossible to get the id of the personal folder ",e);
@@ -315,8 +316,7 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 				//add personal folder for default
 				LowFunctionality userFunc = null;
 				try{
-					ILowFunctionalityDAO functionalitiesDAO = DAOFactory.getLowFunctionalityDAO();
-					userFunc = functionalitiesDAO.loadLowFunctionalityByPath("/"+profile.getUserUniqueIdentifier(),false);
+					userFunc = UserUtilities.loadUserFunctionalityRoot((UserProfile) profile, true);
 				} catch (Exception e) {
 					logger.error("Error on insertion of the document.. Impossible to get the id of the personal folder ",e);
 					throw new SpagoBIRuntimeException("Error on insertion of the document.. Impossible to get the id of the personal folder ",e);
@@ -328,23 +328,6 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 			JSONObject customDataJSON = request.optJSONObject("customData");
 			Assert.assertNotNull( customDataJSON , "Custom data object cannot be null");
 		
-//			String sourceDocumentId = sourceDocumentJSON.optString("id").trim();
-//			Assert.assertNotNull( StringUtilities.isNotEmpty( sourceDocumentId ) , "Source document's id cannot be null or empty");
-//			
-//			BIObject sourceDocument = null;
-//			try {
-//				Integer id = new Integer(sourceDocumentId);
-//				sourceDocument = documentManagementAPI.getDocument(id);
-//			} catch (NumberFormatException e1) {
-//				throw new SpagoBIServiceException(SERVICE_NAME, "Source document id [" + sourceDocumentId + "] is not a valid number");
-//			} catch (Throwable t) {
-//				throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to load document [" + sourceDocumentId + "]");
-//			}
-//			if(sourceDocument == null) {
-//				throw new SpagoBIServiceException(SERVICE_NAME, "Source document [" + sourceDocumentId + "] does not exist");
-//			}
-			
-			
 			BIObject document = createBaseDocument(documentJSON, null, filteredFoldersJSON);
 			ObjTemplate template = buildDocumentTemplate("template.sbicockpit", customDataJSON, null);
 												
