@@ -174,28 +174,41 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.Widget, {
 	
 	, onStoreMetaChange: function(store, meta) {
 		Sbi.trace("[TableWidget.onStoreMetaChange]: IN");	
+		var fields = new Array();
+		fields.push(new Ext.grid.RowNumberer());
+		
 		for(var i = 0; i < meta.fields.length; i++) {
-			this.applyRendererOnField(meta, i);
-			this.applySortableOnField(meta, i);
+			this.applyRendererOnField(meta.fields[i]);
+			this.applySortableOnField(meta.fields[i]);
+			Sbi.trace("[TableWidget.onStoreMetaChange]: checking if field [" + Sbi.toSource(meta.fields[i]) + "] is visible ...");	
+			for(var j = 0; j < this.wconf.visibleselectfields.length; j++) {
+				if(this.wconf.visibleselectfields[j].id === meta.fields[i].header) {
+					Sbi.trace("[TableWidget.onStoreMetaChange]: field [" + meta.fields[i].header + "] is equal to [" + this.wconf.visibleselectfields[j].id + "]");	
+					fields.push(meta.fields[i]);
+					break;
+				} else {
+					Sbi.trace("[TableWidget.onStoreMetaChange]: field [" + meta.fields[i].header + "] is not equal to [" + this.wconf.visibleselectfields[j].id + "]");	
+				}
+			}
 		}
-		meta.fields[0] = new Ext.grid.RowNumberer();
-		this.grid.getColumnModel().setConfig(meta.fields);
+		//meta.fields[0] = new Ext.grid.RowNumberer();
+		this.grid.getColumnModel().setConfig(fields);
 		Sbi.trace("[TableWidget.onStoreMetaChange]: OUT");	
 	}
 	
-	, applyRendererOnField: function(meta, fieldIndex) {
+	, applyRendererOnField: function(field) {
 		Sbi.trace("[TableWidget.applyRendererOnField]: IN");	
-		if(meta.fields[fieldIndex].type) {
-			var t = meta.fields[fieldIndex].type;
-			if (meta.fields[fieldIndex].format) { // format is applied only to numbers
+		if(field.type) {
+			var t = field.type;
+			if (field.format) { // format is applied only to numbers
 				Sbi.trace("[TableWidget.applyRendererOnField]: cpA");	
-				var format = Sbi.commons.Format.getFormatFromJavaPattern(meta.fields[fieldIndex].format);
-				var formatDataSet = meta.fields[fieldIndex].format;
+				var format = Sbi.commons.Format.getFormatFromJavaPattern(field.format);
+				var formatDataSet = field.format;
 				if((typeof formatDataSet == "string") || (typeof formatDataSet == "String")){
 					try {
-						formatDataSet =  Ext.decode(meta.fields[fieldIndex].format);
+						formatDataSet =  Ext.decode(field.format);
 					} catch(e) {
-						formatDataSet = meta.fields[fieldIndex].format;
+						formatDataSet = field.format;
 					}
 				}
 				var f = Ext.apply( {}, Sbi.locale.formats[t]);
@@ -209,21 +222,21 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.Widget, {
 			
 			Sbi.trace("[TableWidget.applyRendererOnField]: cp1");	
 			
-			if (meta.fields[fieldIndex].measureScaleFactor && (t === 'float' || t ==='int')) { // format is applied only to numbers
-			   this.applyScaleRendererOnField(numberFormatterFunction,meta.fields[fieldIndex]);
+			if (field.measureScaleFactor && (t === 'float' || t ==='int')) { // format is applied only to numbers
+			   this.applyScaleRendererOnField(numberFormatterFunction,field);
 			} else {
-			   meta.fields[fieldIndex].renderer = numberFormatterFunction;
+			   field.renderer = numberFormatterFunction;
 			}
 		}
 		
-		if(meta.fields[fieldIndex].subtype && meta.fields[fieldIndex].subtype === 'html') {
-		   meta.fields[fieldIndex].renderer  =  Sbi.locale.formatters['html'];
+		if(field.subtype && field.subtype === 'html') {
+		   field.renderer  =  Sbi.locale.formatters['html'];
 		}
 		
 		Sbi.trace("[TableWidget.applyRendererOnField]: cp3");	
 		
-		if(meta.fields[fieldIndex].subtype && meta.fields[fieldIndex].subtype === 'timestamp') {
-		   meta.fields[fieldIndex].renderer  =  Sbi.locale.formatters['timestamp'];
+		if(field.subtype && field.subtype === 'timestamp') {
+		   field.renderer  =  Sbi.locale.formatters['timestamp'];
 		}
 		
 		Sbi.trace("[TableWidget.applyRendererOnField]: OUT");	
@@ -264,13 +277,13 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.Widget, {
 		Sbi.trace("[TableWidget.applyScaleRendererOnField]: OUT");	
 	}
 	
-	, applySortableOnField: function(meta, fieldIndex) {
+	, applySortableOnField: function(field) {
 		Sbi.trace("[TableWidget.applySortableOnField]: IN");	
 		if(this.sortable === false) {
-		   meta.fields[fieldIndex].sortable = false;
+		   field.sortable = false;
 		} else {
-		   if(meta.fields[fieldIndex].sortable === undefined) { // keep server value if defined
-			   meta.fields[fieldIndex].sortable = true;
+		   if(field.sortable === undefined) { // keep server value if defined
+			   field.sortable = true;
 		   }
 		}
 		Sbi.trace("[TableWidget.applySortableOnField]: OUT");	
