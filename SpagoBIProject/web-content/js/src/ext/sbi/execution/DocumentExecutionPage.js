@@ -1035,7 +1035,7 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 	, doRefreshLastExecution : function () {
 		Sbi.trace('[DocumentExecutionPage.doRefreshLastExecution]: IN');
 		var lastState = this.getLastParametersFormState();
-		if((this.fireEvent('beforeexecution', this, this.executionInstance, formState) !== false)
+		if((this.fireEvent('beforeexecution', this, this.executionInstance, lastState) !== false)
 				&& (this.parametersPanel.fireEvent('ready', this) !== false)){
 			this.doExecuteDocumunt(this.executionInstance, lastState);
 		}
