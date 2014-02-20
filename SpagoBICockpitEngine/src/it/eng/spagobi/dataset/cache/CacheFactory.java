@@ -30,7 +30,7 @@ import it.eng.spagobi.tools.datasource.bo.IDataSource;
  */
 public class CacheFactory {
 
-	public ICache initCache(IDataSource dataSource){
+	public ICache getCache(IDataSource dataSource){
 		return new SQLDBCache(dataSource);		
 	}
 }
