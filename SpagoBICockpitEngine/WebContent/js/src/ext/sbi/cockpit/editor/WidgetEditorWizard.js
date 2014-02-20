@@ -75,6 +75,7 @@ Ext.extend(Sbi.cockpit.editor.WidgetEditorWizard, Ext.Window, {
 			Sbi.trace("[WidgetEditorWizard.setWizardTargetComponent]: target component already contains a widget");
 			this.resetWizardState();
 			var widgetConf = widget.getConfiguration();
+			Sbi.trace("[WidgetEditorWizard.setWizardTargetComponent]: widget conf is equal to [" + Sbi.toSource(widgetConf) + "]");
 			if(widgetConf.storeId) {
 				Sbi.trace("[WidgetEditorWizard.setWizardTargetComponent]: used dataset is [" + widgetConf.storeId + "]");
 				this.editorMainPanel.selectDataset(widgetConf.storeId);
