@@ -104,7 +104,6 @@ Ext.extend(Sbi.cockpit.core.WidgetManager, Ext.util.Observable, {
         
     , register: function(w) {
     	if(Ext.isArray(w) === false) {
-    		w.setParentContainer(null);
     		w = [w];
     	}
 		this.widgets.addAll(w);

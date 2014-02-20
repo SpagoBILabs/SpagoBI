@@ -25,19 +25,28 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import org.json.JSONObject;
+
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
  */
 public class CockpitEngineInstance extends AbstractEngineInstance {
 	
-	QueryCatalogue queryCatalogue;
-	String activeQueryId;
-	IStatement statement;
+	JSONObject template;
 	
 	public CockpitEngineInstance(String template, Map env) {
 		super( env );
+		try {
+			this.template = new JSONObject(template);
+		} catch (Throwable t) {
+			throw new SpagoBIRuntimeException("Impossible to parse template", t);
+		}
 	}
 
+	public JSONObject getTemplate() {
+		return template;
+	}
+	
 	public IDataSource getDataSource() {
 		return (IDataSource)this.getEnv().get(EngineConstants.ENV_DATASOURCE);
 	}
@@ -131,31 +140,7 @@ public class CockpitEngineInstance extends AbstractEngineInstance {
     	return true;
 	}
 	
-	public QueryCatalogue getQueryCatalogue() {
-		return queryCatalogue;
-	}
 
-	public void setQueryCatalogue(QueryCatalogue queryCatalogue) {
-		this.queryCatalogue = queryCatalogue;
-	}
-	
-	public Query getActiveQuery() {
-		return getQueryCatalogue().getQuery( getActiveQueryId() );
-	}
-
-	public void setActiveQuery(Query query) {
-		setActiveQueryId(query.getId());
-		this.statement = getDataSource().createStatement( query );
-	}
-	
-	
-	private String getActiveQueryId() {
-		return activeQueryId;
-	}
-
-	private void setActiveQueryId(String activeQueryId) {
-		this.activeQueryId = activeQueryId;
-	}
 	
 	// -- unimplemented methods ------------------------------------------------------------
 

@@ -65,7 +65,10 @@ Sbi.cockpit.widgets.table.TableWidget = function(config) {
 	
 	Sbi.cockpit.widgets.table.TableWidget.superclass.constructor.call(this, c);
 	
-	this.on("render", function(){this.store.load();}, this);
+	this.on("render", function(){
+		this.store.load();
+		Sbi.trace("[TableWidget.onRender]: store loaded");
+	}, this);
 	
 	Sbi.trace("[TableWidget.constructor]: OUT");
 };
@@ -96,14 +99,17 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.Widget, {
     
 	, setStoreId: function(storeId) {
 		Sbi.trace("[TableWidget.setStoreId]: IN");
-		Sbi.cockpit.widgets.table.TableWidget.superclass.setDataset.call(this, setStoreId);
+		Sbi.cockpit.widgets.table.TableWidget.superclass.setStoreId.call(this, storeId);
 		this.services['loadDataStore'] = Sbi.config.serviceRegistry.getServiceUrl({
 			serviceName : 'api/1.0/dataset/' + this.getStoreId() + '/data'
 			, baseParams: new Object()
 		});
 		
 		this.proxy.setUrl(this.services['loadDataStore'], true);
-		this.refresh();
+		if(this.rendered === true) {
+			this.refresh();
+		}
+		
 		Sbi.trace("[TableWidget.setStoreId]: OUT");
 	}
 
@@ -135,8 +141,8 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.Widget, {
 	}
 	
 	
-	, onStoreLoaded: function(store) {
-		Sbi.trace("[TableWidget.onStoreLoaded]: IN");
+	, onStoreLoad: function(store) {
+		Sbi.trace("[TableWidget.onStoreLoad]: IN");
 		
 		this.fireEvent('contentloaded');
 		
@@ -160,7 +166,7 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.Widget, {
      	} else {
      		this.warningMessageItem.hide();
      	}
-     	Sbi.trace("[TableWidget.onStoreLoaded]: OUT");		
+     	Sbi.trace("[TableWidget.onStoreLoad]: OUT");		
 	}
 	
 	, onStoreLoadException: function(response, options) {
@@ -169,14 +175,14 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.Widget, {
 	}
 	
 	, onStoreMetaChange: function(store, meta) {
-		Sbi.trace("[TableWidget.onStoreLoaded]: IN");	
+		Sbi.trace("[TableWidget.onStoreMetaChange]: IN");	
 		for(var i = 0; i < meta.fields.length; i++) {
 			this.applyRendererOnField(meta, i);
 			this.applySortableOnField(meta, i);
 		}
 		meta.fields[0] = new Ext.grid.RowNumberer();
 		this.grid.getColumnModel().setConfig(meta.fields);
-		Sbi.trace("[TableWidget.onStoreLoaded]: OUT");	
+		Sbi.trace("[TableWidget.onStoreMetaChange]: OUT");	
 	}
 	
 	, applyRendererOnField: function(meta, fieldIndex) {
@@ -184,7 +190,8 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.Widget, {
 		if(meta.fields[fieldIndex].type) {
 			var t = meta.fields[fieldIndex].type;
 			if (meta.fields[fieldIndex].format) { // format is applied only to numbers
-				var format = Sbi.qbe.commons.Format.getFormatFromJavaPattern(meta.fields[fieldIndex].format);
+				Sbi.trace("[TableWidget.applyRendererOnField]: cpA");	
+				var format = Sbi.commons.Format.getFormatFromJavaPattern(meta.fields[fieldIndex].format);
 				var formatDataSet = meta.fields[fieldIndex].format;
 				if((typeof formatDataSet == "string") || (typeof formatDataSet == "String")){
 					try {
@@ -198,8 +205,11 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.Widget, {
 	
 				numberFormatterFunction = Sbi.qbe.commons.Format.numberRenderer(f);
 			} else {
+				Sbi.trace("[TableWidget.applyRendererOnField]: cpB");	
 				numberFormatterFunction = Sbi.locale.formatters[t];
 			}	
+			
+			Sbi.trace("[TableWidget.applyRendererOnField]: cp1");	
 			
 			if (meta.fields[fieldIndex].measureScaleFactor && (t === 'float' || t ==='int')) { // format is applied only to numbers
 			   this.applyScaleRendererOnField(numberFormatterFunction,meta.fields[fieldIndex]);
@@ -208,12 +218,14 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.Widget, {
 			}
 		}
 		
-		if(meta.fields[i].subtype && meta.fields[i].subtype === 'html') {
-		   meta.fields[i].renderer  =  Sbi.locale.formatters['html'];
+		if(meta.fields[fieldIndex].subtype && meta.fields[fieldIndex].subtype === 'html') {
+		   meta.fields[fieldIndex].renderer  =  Sbi.locale.formatters['html'];
 		}
 		
-		if(meta.fields[i].subtype && meta.fields[i].subtype === 'timestamp') {
-		   meta.fields[i].renderer  =  Sbi.locale.formatters['timestamp'];
+		Sbi.trace("[TableWidget.applyRendererOnField]: cp3");	
+		
+		if(meta.fields[fieldIndex].subtype && meta.fields[fieldIndex].subtype === 'timestamp') {
+		   meta.fields[fieldIndex].renderer  =  Sbi.locale.formatters['timestamp'];
 		}
 		
 		Sbi.trace("[TableWidget.applyRendererOnField]: OUT");	
@@ -326,7 +338,7 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.Widget, {
 	    });
 		
 		this.store.on('metachange', this.onStoreMetaChange, this);
-		this.store.on('load', this.onStoreLoaded, this);
+		this.store.on('load', this.onStoreLoad, this);
 		Sbi.trace("[TableWidget.initStore]: OUT");
 	}
 

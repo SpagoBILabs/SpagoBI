@@ -27,33 +27,4 @@ public abstract class AbstractCockpitEngineAction extends AbstractEngineAction {
     public CockpitEngineInstance getEngineInstance() {
     	return (CockpitEngineInstance)getAttributeFromSession( EngineConstants.ENGINE_INSTANCE );
     }
-    
-//	public IDataSource getDataSource() {
-//		CockpitEngineInstance cockpitEngineInstance  = null;
-//		cockpitEngineInstance = getEngineInstance();
-//    	if(cockpitEngineInstance == null) {
-//    		return null;
-//    	}
-//    	return cockpitEngineInstance.getDataSource();
-//	}
-
-//	public void setDataSource(IDataSource dataSource) {
-//		CockpitEngineInstance cockpitEngineInstance  = null;
-//		cockpitEngineInstance = getEngineInstance();
-//    	if(cockpitEngineInstance == null) {
-//    		return;
-//    	}
-//    	cockpitEngineInstance.setDataSource(dataSource);
-//	}
-	
-	
-	public Query getQuery() {
-		CockpitEngineInstance cockpitEngineInstance  = null;
-		cockpitEngineInstance = getEngineInstance();
-    	if(cockpitEngineInstance == null) {
-    		return null;
-    	}
-    	return cockpitEngineInstance.getActiveQuery();
-	}	
-	
 }

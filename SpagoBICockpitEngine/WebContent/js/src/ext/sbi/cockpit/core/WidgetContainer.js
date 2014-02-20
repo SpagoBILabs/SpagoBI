@@ -20,8 +20,9 @@ Sbi.cockpit.core.WidgetContainer = function(config) {
 	var settings = Sbi.getObjectSettings('Sbi.cockpit.core', defaultSettings);
 	var c = Ext.apply(settings, config || {});
 	Ext.apply(this, c);
-
-	this.components = new Ext.util.MixedCollection();
+	
+	this.init();
+	
 	
 	// constructor
 	Sbi.cockpit.core.WidgetContainer.superclass.constructor.call(this, c);
@@ -122,11 +123,12 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.Widget, {
     	if(!widget) {
     		Sbi.trace("[WidgetContainer.addWidget]: Widget is not valorized. An empty componnt will be created in the specified region");	
     	} else if( (widget instanceof Sbi.cockpit.core.Widget) === false) {
-    		if(typeof widget === 'object' && !(widget instanceof Ext.util.Observable) === false) {
+    		if(typeof widget === 'object' && (widget instanceof Ext.util.Observable) === false) {
     			Sbi.trace("[WidgetContainer.addWidget]: The passed in parameter is a widget configuration object");	
     			widget = Sbi.cockpit.core.WidgetExtensionPoint.getWidget(widget.wtype, widget);
     		} else {
-    			Sbi.error("[WidgetContainer.addWidget]: The passed in parameter is not valid");	
+    			Sbi.error("[WidgetContainer.addWidget]: The passed in parameter of type [" + (typeof widget) + "] is not valid");	
+    			Sbi.error("[WidgetContainer.addWidget]: Passed object is equal to [" +  Sbi.toSource(widget) + "]");	
     		}
     	} else {
     		Sbi.trace("[WidgetContainer.addWidget]: The passed in widget object will be added to a new component placed in the specified region");	
@@ -139,6 +141,8 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.Widget, {
     	var component = this.addComponent(widget, region);
 
 		Sbi.trace("[WidgetContainer.addWidget]: OUT");
+		
+		return widget;
 	}
     
     , getComponentRegion: function(component, relative) {
@@ -198,7 +202,7 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.Widget, {
                 height:300,
                 //closeAction:'hide',
                 plain: true,
-                title: "Widget [" + widget.id + "] configuration",
+                title: "Widget [" + component.getWidgetId() + "] configuration",
                 items: new Ext.form.TextArea({
                 	border: false
                 	, value: confStr
@@ -287,6 +291,30 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.Widget, {
     }
     
     // -----------------------------------------------------------------------------------------------------------------
+    // init methods
+	// -----------------------------------------------------------------------------------------------------------------
+    , init: function() {
+    	this.components = new Ext.util.MixedCollection();
+    }
+    
+    , onRender : function(ct, position){
+    	Sbi.trace("[WidgetContainer.onRender]: IN");
+    	Sbi.cockpit.core.WidgetContainer.superclass.onRender.call(this, ct, position);
+    	if( Sbi.isValorized(this.widgets)) {
+    		Sbi.trace("[WidgetContainer.onRender]: There are [" + this.widgets.length + "] widget(s) to render");
+    		for(var i = 0; i < this.widgets.length; i++) {
+    			var widgetConf = this.widgets[i];
+    			var w = this.addWidget(widgetConf.custom, widgetConf.layout);
+    			w.setStoreId(widgetConf.storeId);
+    		}
+    	} else {
+    		Sbi.trace("[WidgetContainer.onRender]: There are no widget to render");
+    	}
+    	Sbi.trace("[WidgetContainer.onRender]: OUT");
+    }
+    
+   
+    // -----------------------------------------------------------------------------------------------------------------
     // private methods
 	// -----------------------------------------------------------------------------------------------------------------
 	
@@ -318,7 +346,7 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.Widget, {
     	return this.convertToAbsoluteHeight(relativeY);
     }
     
-    , convertToAbsolteRegion: function(relativeRegion) {
+    , convertToAbsoluteRegion: function(relativeRegion) {
     	var absoluteRegion = {};
     	
     	absoluteRegion.width = this.convertToAbsoluteWidth(relativeRegion.width);
@@ -376,6 +404,7 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.Widget, {
     	
     	var componentConf = {};
     	if(widget) {
+    		Sbi.trace("[WidgetContainer.addComponent]: add a component with an alredy embedded widget");
     		componentConf.widget = widget;
     	}
     	
@@ -385,9 +414,9 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.Widget, {
     	
     	Sbi.trace("[WidgetContainer.addComponent]: region is equal to: [" + Sbi.toSource(region) + "]");
     	
-    	Ext.apply(componentConf, region);
+    	Ext.apply(componentConf, this.convertToAbsoluteRegion(region));
     	
-    	componentConf = this.convertToAbsolteRegion(componentConf);
+
       	
     	var component = new Sbi.cockpit.core.WidgetContainerComponent(componentConf);
     	
@@ -409,96 +438,41 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.Widget, {
     	return component;
     }
     
-    , onShowWidgetConfiguration: function(widget) {
-    	this.showWidgetConfiguration(widget);
-    	//Ext.Msg.alert('Message', 'The CONFIG tool was clicked.');
-    } 
+    , getComponents: function() {
+    	return this.components.getRange();
+    }
     
-    , onShowWidgetEditorWizard: function(component) {
-    	this.showWidgetEditorWizard(component);
-    	//Ext.Msg.alert('Message', 'The CONFIG tool was clicked.');
-    } 
+ 
     
 //    , onCloseWidgetEditorWizard: function(){
 //    	this.widgetEditorWizard.resetState();
 //    	this.widgetEditorWizard.hide();
 //    }
  
-    , defineTemplate: function(wEditor){
-    	Sbi.trace("[WidgetContainer.defineTemplate]: IN");
+    , getConfiguration: function(){
+    	Sbi.trace("[WidgetContainer.getConfiguration]: IN");
 
-    	//gets the containerComponent to update  (is Dummy for default)
-    	var myWidget = this.components[0];
-    	var newWidget = myWidget;
-    	//Recupero della tipologia : 
-    	//si potrebbe ottimizzare  sfruttando l'evento drug dalla palette?
-    	var editor = wEditor.getComponent(1).getComponent(1);
-    	var widgetEditorMainPanel = editor.getComponent(0);
-    	var designer = widgetEditorMainPanel.getComponent(0);  
-//
-//	    if (designer instanceof Sbi.cockpit.widgets.table.TableWidgetDesigner){
-//	    	//gets informations about table widget
-//	    	var state = designer.getFormState();
-////	    	newWidget = new Sbi.cockpit.widgets.table.TableWidget(); NO PERCHé E? IL  RUNTIME
-//	    	if (newWidget.setFormState)
-//	    		newWidget.setFormState(state);
-//	    	
-//	    }
-	    
-//	    myWidget.setWidget(newWidget);
-	    
-//	    var template = (typeof JSON === 'object')
-//		? JSON.stringify(myWidget.getCustomConfiguration(), null, 2)
-//		: Ext.util.JSON.encode(myWidget.getCustomConfiguration());
+    	var conf = {};
+    	conf.widgets = [];
     	
-		var state = {};
-    	state.fields =  designer.getFormState().visibleselectfields || [];
-    	state.type = 'Table';
-		var template = (typeof JSON === 'object')
-		? JSON.stringify(state, null, 2)
-		: Ext.util.JSON.encode(state);
-		
-		alert(template);
-	    	
-	    Sbi.trace("[WidgetContainer.defineTemplate]: OUT");
-	    return template;
+    	var components = this.components.getRange();
+    	for(var i = 0; i < components.length; i++) {
+    		if(components[i].isNotEmpty()) {
+    			conf.widgets.push( components[i].getWidgetConfiguration() );
+    		}
+    	}
+    	
+    	Sbi.trace("[WidgetContainer.getConfiguration]: OUT");
+    	
+    	return conf;
     }
     
     , onComponentMove: function(component){
-//    	Sbi.trace("[WidgetContainer.onComponentMove]: IN");
-//    
-//    	var componentRegion = this.getComponentRegion(component);
-//    	
-//    	componentRegion.x = component.getPosition()[0];
-//    	componentRegion.y = component.getPosition()[1];
-//		
-//		this.setComponentRegion(component, componentRegion);
-//		
-//		Sbi.trace("[WidgetContainer.onComponentMove]: OUT");
-    	
+
     }
     
     , onComponentResize: function(component){
-    	
-//    	Sbi.trace("[WidgetContainer.onComponentResize]: IN");
-//    	
-//    	var componentRegion = this.getComponentRegion(component);
-//    	componentRegion.width = component.getWidth();
-//    	componentRegion.height = component.getHeight();
-//    	
-//    	if (Sbi.isValorized(Sbi, "settings.cockpit.layout.useRelativeDimensions")
-//    			&& Sbi.settings.cockpit.layout.useRelativeDimensions === true) {
-//    		
-//    		var vpSize = Ext.getBody().getViewSize();
-//	    	var newW = ((100*c.getWidget().getWidth()) / vpSize.width)/100;
-//			var newH = ((100*c.getWidget().getHeight()) / vpSize.height)/100;
-//			componentRegion.width = Ext.util.Format.number(newW, '0.00');
-//			componentRegion.height =Ext.util.Format.number(newH, '0.00');
-//    	}
-//    	
-//		this.setComponentRegion(component, componentRegion);
-//		
-//		Sbi.trace("[WidgetContainer.onComponentResize]: OUT");
+
     }
     
     , onComponentAction: function(component, action) {
@@ -509,12 +483,20 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.Widget, {
     	}
     	
     	if(action === 'showEditor') {
-			this.showWidgetEditorWizard(component);
+			this.onShowWidgetEditorWizard(component);
 		} else if(action === 'showConfiguration') {
-			this.showWidgetConfiguration(component);
+			this.onShowWidgetConfiguration(component);
 		} else {
 			Sbi.warn("[WidgetContainer.onComponentAction]: action [" + action + "] not recognized");
 		}
 		Sbi.trace("[WidgetContainer.onComponentAction]: OUT");
 	}
+    
+    , onShowWidgetConfiguration: function(component) {
+    	this.showWidgetConfiguration(component);
+    } 
+    
+    , onShowWidgetEditorWizard: function(component) {
+    	this.showWidgetEditorWizard(component);
+    }
 }); 

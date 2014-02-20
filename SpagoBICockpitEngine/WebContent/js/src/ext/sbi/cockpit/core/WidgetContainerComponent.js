@@ -9,6 +9,8 @@ Ext.ns("Sbi.cockpit.core");
 
 Sbi.cockpit.core.WidgetContainerComponent = function(config) {
 	
+	Sbi.trace("[WidgetContainerComponent.costructor]: IN");
+	
 	this.adjustConfigObject(config);
 	this.validateConfigObject(config);
 	
@@ -36,12 +38,15 @@ Sbi.cockpit.core.WidgetContainerComponent = function(config) {
 	
 	if(this.widget) {
 		this.items = [this.widget];
+		this.widget.setParentComponent(this);
 	} else {
 		this.html = "Please configure the widget";
 	}
 	
 	// constructor
 	Sbi.cockpit.core.WidgetContainerComponent.superclass.constructor.call(this, c);
+	
+	Sbi.trace("[WidgetContainerComponent.costructor]: OUT");
 };
 
 /**
@@ -117,6 +122,32 @@ Ext.extend(Sbi.cockpit.core.WidgetContainerComponent, Ext.Window, {
     // public methods
 	// -----------------------------------------------------------------------------------------------------------------
 	
+	
+//	, onRender : function(ct, position){
+//    	Sbi.trace("[WidgetContainerComponent.onRender]: IN");
+//    	Sbi.cockpit.core.WidgetContainerComponent.superclass.onRender.call(this, ct, position);
+//    	if( Sbi.isValorized(this.widget)) {
+//    		Sbi.trace("[WidgetContainerComponent.onRender]: There is an embedded widget to render");
+//    		this.setWidget(this.widget);
+//    	} else {
+//    		Sbi.trace("[WidgetContainerComponent.onRender]: There are no embedded widget to render");
+//    	}
+//    	Sbi.trace("[WidgetContainerComponent.onRender]: OUT");
+//    }
+	
+	/**
+	 * @method
+	 * 
+	 * @return {boolean} false if there is a wrapped widget; true otherwise
+	 */
+	, isEmpty: function() {
+		return (this.getWidget() === null);
+	}
+	
+	, isNotEmpty: function() {
+		return (this.isEmpty() === false);
+	}
+	
 	/**
 	 * @method
 	 * 
@@ -126,15 +157,18 @@ Ext.extend(Sbi.cockpit.core.WidgetContainerComponent, Ext.Window, {
 	, setWidget: function(widget) {
 		Sbi.trace("[WidgetContainerComponent.setWidget]: IN");
 		this.removeAll(true);
+		Sbi.trace("[WidgetContainerComponent.setWidget]: removed component content");
 		if(Sbi.isValorized(widget)) {
 			// TODO check if widget is an instance of widget
 			this.add(widget);
 			this.widget = widget;
 			this.widget.setParentComponent(this);
+			Sbi.trace("[WidgetContainerComponent.setWidget]: widget added");
 		} else {
 			this.widget = widget;
 		}
 		this.doLayout();
+		Sbi.trace("[WidgetContainerComponent.setWidget]: layout refreshed");
 		
 		Sbi.trace("[WidgetContainerComponent.setWidget]: OUT");
 	}
@@ -152,14 +186,15 @@ Ext.extend(Sbi.cockpit.core.WidgetContainerComponent, Ext.Window, {
 		return w;
 	}
 	
-	/**
-	 * @method
-	 * 
-	 * @return {boolean} false if there is a wrapped widget; true otherwise
-	 */
-	, isEmpty: function() {
-		return (this.getWidget() === null);
+	, getWidgetId: function(){
+		var id = null;
+		if(Sbi.isValorized(this.widget)) {
+			id = this.widget.getId();
+		} 
+		return id;
 	}
+	
+	
 	
 	, setWidgetConfiguration: function(widgetConf) {
 		Sbi.trace("[WidgetContainerComponent.setWidgetConfiguration]: IN");
@@ -176,13 +211,21 @@ Ext.extend(Sbi.cockpit.core.WidgetContainerComponent, Ext.Window, {
 		Sbi.trace("[WidgetContainerComponent.setWidgetConfiguration]: OUT");
 	}
 	
-	, getParentContainer: function(c) {	
+	, getWidgetConfiguration: function(widgetConf) {
+		var widgetConf = null;
+		if(Sbi.isValorized(this.widget)) {
+			widgetConf = this.widget.getConfiguration();
+		}
+		return widgetConf;
+	}
+	
+	, getParentContainer: function() {	
 		return this.parentContainer;	
 	}
 
-    , setParentContainer: function(c) {	
+    , setParentContainer: function(container) {	
     	Sbi.trace("[WidgetContainerComponent.setParentContainer]: IN");
-		this.parentContainer = c;	
+		this.parentContainer = container;	
 		Sbi.trace("[WidgetContainerComponent.setParentContainer]: OUT");
 	}
 	// -----------------------------------------------------------------------------------------------------------------
