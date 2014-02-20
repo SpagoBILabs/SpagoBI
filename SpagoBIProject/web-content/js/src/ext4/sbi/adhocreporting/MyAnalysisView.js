@@ -298,9 +298,8 @@ Ext.define('Sbi.adhocreporting.MyAnalysisView', {
 					   	scope.fireEvent('executeDocument','GEOREPORT','DOCUMENT',record);
 				     } else if (record.data.typeCode == 'WORKSHEET'){
 				   		scope.fireEvent('executeDocument','WORKSHEET','DOCUMENT',record);
-				     } else if (record.data.typeCode == 'COCKPIT'){
-					    alert('TODO: Cockpit execution');
-				    	 //TODO: TO be defined in future
+				     } else if (record.data.typeCode == 'DOCUMENT_COMPOSITE'){
+				    	 scope.fireEvent('executeDocument','COCKPIT','DOCUMENT',record);
 				     }
 
 				 }
