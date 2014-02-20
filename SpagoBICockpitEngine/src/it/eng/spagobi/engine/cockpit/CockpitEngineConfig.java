@@ -5,6 +5,10 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.engine.cockpit;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
+
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.dao.DAOFactory;
@@ -21,7 +25,8 @@ import org.apache.log4j.Logger;
  */
 public class CockpitEngineConfig {
 	
-	private EnginConf engineConfig;
+	private static EnginConf engineConfig;
+
 	
 	private static transient Logger logger = Logger.getLogger(CockpitEngineConfig.class);
 	
@@ -42,7 +47,7 @@ public class CockpitEngineConfig {
 	// -- singleton pattern  --------------------------------------------
 	
 	// -- ACCESSOR Methods  -----------------------------------------------
-	public EnginConf getEngineConfig() {
+	public static EnginConf getEngineConfig() {
 		return engineConfig;
 	}
 
@@ -50,13 +55,14 @@ public class CockpitEngineConfig {
 		this.engineConfig = engineConfig;
 	}
 	
-	public SourceBean getConfigSourceBean() {
+	public static SourceBean getConfigSourceBean() {
 		return getEngineConfig().getConfig();
 	}
 	
 	
 	//----- DataSets Cache Singleton -------------------------------------
 	private static ICache cache = null;
+	private static List<Properties> dimensionTypes = null;
 	
 	public static ICache getCache(){
 		
@@ -75,6 +81,15 @@ public class CockpitEngineConfig {
 	}	
 	
 	
+	public static List<Properties> getDimensionTypes() {
+		
+		if(dimensionTypes == null) {
+			initCacheConfiguration();
+		}
+		
+		return dimensionTypes;
+	}
+	
 	//--------------------------------------------------------------------
 	
 	// -- CORE SETTINGS ACCESSOR Methods---------------------------------
@@ -83,8 +98,31 @@ public class CockpitEngineConfig {
 	
 	
 	// -- PARSE Methods -------------------------------------------------
-	
-	
+	private final static String CACHE_CONFIG_TAG = "CACHE_CONFIG";
+	private final static String DATA_TYPES_TAG = "DATA_TYPES";
+	private final static String TYPE_TAG = "TYPE";
+
+	public static void initCacheConfiguration(){
+		try{ 
+			SourceBean configSB = (SourceBean) getConfigSourceBean().getAttribute(CACHE_CONFIG_TAG);
+			SourceBean typesSB = (SourceBean) configSB.getAttribute(DATA_TYPES_TAG);
+			List<SourceBean> typesList = typesSB.getAttributeAsList(TYPE_TAG);
+			dimensionTypes = new ArrayList<Properties>();
+			for(SourceBean type : typesList) {
+				String name = (String)type.getAttribute("name");
+				String bytes = (String)type.getAttribute("bytes");			
+				
+				Properties props = new Properties();
+				if(name != null) props.setProperty("name", name);
+				if(bytes != null) props.setProperty("bytes", bytes);
+				dimensionTypes.add(props);
+			}
+		} catch(Throwable t) {
+			throw new RuntimeException("An error occured while loading geo dimension levels' properties from file engine-config.xml", t);
+		} finally {
+			logger.debug("OUT");
+		}
+	}
 	
 	
 }

@@ -21,6 +21,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.spagobi.dataset.cache;
 
+import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -32,12 +35,12 @@ public interface ICacheMetadata {
 	/**
 	 * @return the cache dimension space free
 	 */
-	Double getDimensionSpaceAvailable();
+	BigDecimal getDimensionSpaceAvailable();
 	
 	/**
 	 * @return the cache dimension space used
 	 */
-	Double getDimensionSpaceUsed();
+	BigDecimal getDimensionSpaceUsed(IDataStore resultset);
 	
 	/**
 	 * @return the number of the objects cached
@@ -45,9 +48,14 @@ public interface ICacheMetadata {
 	Integer getNumberOfObjects();
 	
 	/**
-	 * @return true if the cache space is near the full limit
+	 * @return true if the configuration about the clean action are correctly defined
 	 */
-	boolean isFull();
+	boolean isActiveCleanAction();
+	
+	/**
+	 * @return true if the cache space can contains the resultset
+	 */
+	boolean hasSpaceForResultSet(IDataStore resultset);
 	
 	/**
 	 * @return a list of the cached objects ordered by dimension (largest at the begin)
