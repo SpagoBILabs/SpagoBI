@@ -16,7 +16,7 @@ Ext.ns("Sbi.cockpit.core");
 
 Sbi.cockpit.core.Widget = function(config) {	
 		
-	Sbi.trace("[Widget]: IN");
+	Sbi.trace("[Widget.constructor]: IN");
 	// init properties...
 	var defaultSettings = {
 		border: false
@@ -50,7 +50,7 @@ Sbi.cockpit.core.Widget = function(config) {
 	// constructor
 	Sbi.cockpit.core.Widget.superclass.constructor.call(this, c);
 	
-	Sbi.trace("[Widget]: OUT");
+	Sbi.trace("[Widget.constructor]: OUT");
 };
 
 /**

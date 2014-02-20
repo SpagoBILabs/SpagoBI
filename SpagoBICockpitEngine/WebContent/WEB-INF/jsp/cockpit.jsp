@@ -55,8 +55,7 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 
 	executionRole = (String)env.get(EngineConstants.ENV_EXECUTION_ROLE);
 	userId = (engineInstance.getDocumentUser()==null)?"":engineInstance.getDocumentUser().toString();
-	//template = engineInstance.getGuiSettings().toString();
-	template = "{}";
+	template = engineInstance.getTemplate().toString();
 	docLabel = (engineInstance.getDocumentLabel()==null)?"":engineInstance.getDocumentLabel().toString();
 	docVersion = (engineInstance.getDocumentVersion()==null)?"":engineInstance.getDocumentVersion().toString();
 	docAuthor = (engineInstance.getDocumentAuthor()==null)?"":engineInstance.getDocumentAuthor().toString();
@@ -104,7 +103,7 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 	<%-- == JAVASCRIPTS  ===================================================== --%>
 	<script language="javascript" type="text/javascript">
 
-		Sbi.template = <%= template %>;
+		var template = <%= template %>;
 
 		Sbi.config = {};
 		var url = {
@@ -143,7 +142,7 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 					
 			Ext.QuickTips.init();   
 				
-			cockpitPanel = new Sbi.cockpit.MainPanel(Sbi.template);	
+			cockpitPanel = new Sbi.cockpit.MainPanel({template: template});	
 				
 			var viewport = new Ext.Viewport({
 				id:    'view',

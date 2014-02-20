@@ -28,8 +28,6 @@ Sbi.cockpit.MainPanel = function(config) {
 	Ext.apply(this, c);
 	
 	this.initServices();
-	//this.initStore();
-	
 	this.init();
 	
 	c = Ext.apply(c, {
@@ -117,7 +115,7 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 	, getAnalysisState: function () {
 		Sbi.trace("[MainPanel.getAnalysisState]: IN");
 		
-		var analysisState = {};
+		var analysisState = this.widgetContainer.getConfiguration();
 		
 		Sbi.trace("[MainPanel.getAnalysisState]: OUT");
 		return analysisState;
@@ -205,16 +203,7 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 		});
 	}
 	
-	, addWidget: function() {
-//		var dummyWidget = new Sbi.cockpit.widgets.dummy.DummyWidget();
-//		dummyWidget.setParentContainer(null);
-//		this.widgetContainer.addWidget(dummyWidget, {
-//			  x : 0
-//	    	, y: 0
-//			, width : 0.5
-//    		, height : 0.5
-//		});
-		
+	, addWidget: function() {	
 		this.widgetContainer.addWidget(null, {
 			  x : 0
 	    	, y: 0
@@ -227,7 +216,7 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 	, initWidgetContainer: function() { 
 		Sbi.trace("[MainPanel.initWidgetContainer]: IN");
 
-		this.widgetContainer = new Sbi.cockpit.core.WidgetContainer({});
+		this.widgetContainer = new Sbi.cockpit.core.WidgetContainer(this.template);
 
 		Sbi.trace("[MainPanel.initWidgetContainer]: widget panel succesfully created");
 		
@@ -235,64 +224,43 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 	}
 	
 	, showSaveWindow: function(){
-
-		if(this.saveWindow != null){			
-			this.saveWindow.destroy();
+		Sbi.trace("[MainPanel.showSaveWindow]: IN");
+		if(this.saveWindow != null){		
 			this.saveWindow.close();
+			this.saveWindow.destroy();
 		}
 
-		var template = null; //this.controlledPanel.validate();	
-//		if (template == null) {
-//    		alert("Impossible to get template");
-//    		return;
-//    	}
-    	
-    	Sbi.debug('[ControlPanel.showSaveWindow]: ' + template);
-    	
+		var template = this.getAnalysisState();
+		var templeteStr = Ext.util.JSON.encode(template);
+		
 		var documentWindowsParams = {				
-				'OBJECT_TYPE': 'DOCUMENT_COMPOSITE',
-				'OBJECT_TEMPLATE': template,
-				'typeid': 'COCKPIT'
+			'OBJECT_TYPE': 'DOCUMENT_COMPOSITE',
+			'OBJECT_TEMPLATE': templeteStr,
+			'typeid': 'COCKPIT'
 		};
 		
 		var formState = {};
-		//gets the input values (name, description,..)
-//		var el = Ext.get('docMapName');
-//		if ((el != null) && (el !== undefined ) && (el.getValue() !== '' )){
-//			formState.docName = el.getValue();
-//		}
-//		var el = Ext.get('docMapDesc');
-//		if ((el != null) && (el !== undefined )){
-//			formState.docDescr = el.getValue();
-//		}
-//		var el = Ext.get('scopePublic');
-//		if ((el != null) && (el !== undefined )){
-//			formState.scope = (el.dom.checked)?"true":"false";			
-//		}else{
-//			formState.scope = "false"; //default
-//		}
-//		formState.scope.visibility = Sbi.config.visibility;
-//		formState.OBJECT_COMMUNITIES  = Sbi.config.docCommunities;
-//		formState.OBJECT_FUNCTIONALITIES  = Sbi.config.docFunctionalities;
-		
+
 		if (this.isInsert){
 			formState.docLabel = 'cockpit__' + Math.floor((Math.random()*1000000000)+1); 
-			if (Sbi.config.docDatasetLabel) 
+			if (Sbi.config.docDatasetLabel) {
 				documentWindowsParams.dataset_label= Sbi.config.docDatasetLabel;
+			}
 			documentWindowsParams.MESSAGE_DET= 'DOC_SAVE';
-		}else{
+		} else {
 			formState.docLabel = Sbi.config.docLabel;
 			documentWindowsParams.MESSAGE_DET= 'DOC_UPDATE';	
 		}
 		documentWindowsParams.formState = formState;
 		documentWindowsParams.isInsert = this.isInsert;
-		documentWindowsParams.fromMyAnalysis = Sbi.config.fromMyAnalysis;//this.fromMyAnalysis;
+		documentWindowsParams.fromMyAnalysis = Sbi.config.fromMyAnalysis;
 		
 		this.saveWindow = new Sbi.widgets.SaveDocumentWindow(documentWindowsParams);
 		this.saveWindow.addListener('syncronizePanel', this.onSyncronizePanel, this);
 		this.saveWindow.addListener('returnToMyAnalysis', this.returnToMyAnalysis, this);
 		this.saveWindow.show();		
 
+		Sbi.trace("[MainPanel.showSaveWindow]: OUT");
 	}
 	
 	, onSyncronizePanel: function(p) {		
@@ -309,11 +277,9 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 		}
 	}
 	
-	 , returnToMyAnalysis : function() {
-//	   var url = Sbi.config.contextName + '/servlet/AdapterHTTP?ACTION_NAME=CREATE_DOCUMENT_START_ACTION&LIGHT_NAVIGATOR_RESET_INSERT=TRUE';
+	, returnToMyAnalysis : function() {
 	   var url = '/SpagoBI/servlet/AdapterHTTP?ACTION_NAME=CREATE_DOCUMENT_START_ACTION&LIGHT_NAVIGATOR_RESET_INSERT=TRUE';
-	   window.location = url;
-		
+	   window.location = url;	
 	}
 	
 });
