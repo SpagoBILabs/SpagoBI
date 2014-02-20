@@ -85,7 +85,7 @@ public class SQLDBCacheTest extends TestCase {
 		
 		if (cache == null){
 			CacheFactory cacheFactory = new CacheFactory();
-			cache = cacheFactory.initCache(dataSourceWriting);
+			cache = cacheFactory.getCache(dataSourceWriting);
 		}
 
 
