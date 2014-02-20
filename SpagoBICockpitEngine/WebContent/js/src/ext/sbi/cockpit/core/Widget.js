@@ -17,6 +17,7 @@ Ext.ns("Sbi.cockpit.core");
 Sbi.cockpit.core.Widget = function(config) {	
 		
 	Sbi.trace("[Widget.constructor]: IN");
+	
 	// init properties...
 	var defaultSettings = {
 		border: false
@@ -96,14 +97,14 @@ Ext.extend(Sbi.cockpit.core.Widget, Ext.Panel, {
 	}
     
 	, setConfiguration: function(config) {
-		Sbi.trace("[Widget.getConfiguration]: IN");
+		Sbi.trace("[Widget.setConfiguration]: IN");
 		
 		this.setStoreId(config.storeId);
 		this.wtype =  config.wtype;
-		this.setCustomConfiguration(config);
+		this.setCustomConfiguration(config.custom);
 		// TODO set layout and style config
 		
-		Sbi.trace("[Widget.getConfiguration]: OUT");
+		Sbi.trace("[Widget.setConfiguration]: OUT");
 	}
 	
     , getConfiguration: function() {
@@ -126,6 +127,12 @@ Ext.extend(Sbi.cockpit.core.Widget, Ext.Panel, {
 		var config = Ext.apply({}, this.wconf || {});
 		Sbi.trace("[Widget.getCustomConfiguration]: OUT");
 		return config;
+	}
+	
+	, setCustomConfiguration: function(wconf) {
+		Sbi.trace("[Widget.setCustomConfiguration]: IN");
+		this.wconf = wconf;
+		Sbi.trace("[Widget.setCustomConfiguration]: OUT");
 	}
 	
 	, getStyleConfiguration: function() {

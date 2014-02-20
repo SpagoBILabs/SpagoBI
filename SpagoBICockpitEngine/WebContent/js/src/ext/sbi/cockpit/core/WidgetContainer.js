@@ -124,8 +124,8 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.Widget, {
     		Sbi.trace("[WidgetContainer.addWidget]: Widget is not valorized. An empty componnt will be created in the specified region");	
     	} else if( (widget instanceof Sbi.cockpit.core.Widget) === false) {
     		if(typeof widget === 'object' && (widget instanceof Ext.util.Observable) === false) {
-    			Sbi.trace("[WidgetContainer.addWidget]: The passed in parameter is a widget configuration object");	
-    			widget = Sbi.cockpit.core.WidgetExtensionPoint.getWidget(widget.wtype, widget);
+    			Sbi.trace("[WidgetContainer.addWidget]: The passed in parameter is a widget configuration object equlas to [" + Sbi.toSource(widget, true) + "]");	
+    			widget = Sbi.cockpit.core.WidgetExtensionPoint.getWidget(widget.wtype,  {wconf: widget});
     		} else {
     			Sbi.error("[WidgetContainer.addWidget]: The passed in parameter of type [" + (typeof widget) + "] is not valid");	
     			Sbi.error("[WidgetContainer.addWidget]: Passed object is equal to [" +  Sbi.toSource(widget) + "]");	

@@ -51,8 +51,6 @@ Sbi.cockpit.widgets.table.TableWidget = function(config) {
 	var c = Ext.apply(settings, config || {});
 	Ext.apply(this, c);
 	
-	this.visibleselectfields = config.visibleselectfields;
-	
 	this.initServices();
 	this.init();
 	
