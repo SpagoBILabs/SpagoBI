@@ -258,8 +258,7 @@ public class SQLDBCache implements ICache {
 	 */
 	@Override
 	public ICacheMetadata getCacheMetadata() {
-		// TODO Auto-generated method stub
-		return null;
+		return new SQLDBCacheMetadata(getDataSource(), cacheRegistry);
 	}
 
 
@@ -290,7 +289,13 @@ public class SQLDBCache implements ICache {
 	public void put(IDataSet dataset,String resultsetSignature, IDataStore resultset) {
 		logger.debug("IN");
 		
-		
+		//0- Controlla che ci sia lo spazio disponibile nella cache (se i parametri sono correttamente configurati)
+		ICacheMetadata mdCache = this.getCacheMetadata();
+		if (mdCache.isActiveCleanAction()){
+			if (!mdCache.hasSpaceForResultSet(resultset)){
+				//start clean action from the cache
+			}
+		}
 		//1- Ricava connessione alla sorgente dati dal DataSource per la scrittura
 		//2- Ricava la struttura della tabella da creare dal resultset (SQL CREATE) - attenzione ai dialetti DBMS
 		//3- Ricava i dati dal resultset da inserire nella tabella appena creata (SQL INSERT) - attenzione ai dialetti DBMS

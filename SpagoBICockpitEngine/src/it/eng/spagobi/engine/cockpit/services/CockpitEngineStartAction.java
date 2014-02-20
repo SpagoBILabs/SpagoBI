@@ -5,11 +5,8 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.engine.cockpit.services;
 
-import javax.servlet.RequestDispatcher;
-
-import org.apache.log4j.Logger;
-
 import it.eng.spagobi.engine.cockpit.CockpitEngine;
+import it.eng.spagobi.engine.cockpit.CockpitEngineConfig;
 import it.eng.spagobi.engine.cockpit.CockpitEngineInstance;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
@@ -18,6 +15,12 @@ import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.EngineStartServletIOManager;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
+
+import java.util.List;
+
+import javax.servlet.RequestDispatcher;
+
+import org.apache.log4j.Logger;
 
 
 /**
@@ -63,9 +66,8 @@ public class CockpitEngineStartAction extends AbstractEngineStartServlet {
         			servletIOManager.getEnv()
         	);
         	
-        	
         	servletIOManager.getHttpSession().setAttribute(EngineConstants.ENGINE_INSTANCE, engineInstance);
-        	
+       
         	// dispatch the request to the presentation layer
         	requestDispatcher = getServletContext().getRequestDispatcher( REQUEST_DISPATCHER_URL );
             try {
