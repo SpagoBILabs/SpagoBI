@@ -65,20 +65,26 @@ public class CockpitEngineConfig {
 	private static List<Properties> dimensionTypes = null;
 	
 	public static ICache getCache(){
-		
-		try{
-			if (cache == null){
-				CacheFactory cacheFactory = new CacheFactory();
-				IDataSourceDAO dataSourceDAO= DAOFactory.getDataSourceDAO();
-				IDataSource dataSource = dataSourceDAO.loadDataSourceWriteDefault();
-				cache = cacheFactory.initCache(dataSource);
-			}  
-		} catch (EMFUserError e){
-			
-		}
-
+		if (cache == null){
+			initializeCache();
+		}  
 		return cache;
 	}	
+	
+	private static void initializeCache(){
+		try {
+			CacheFactory cacheFactory = new CacheFactory();
+			IDataSourceDAO dataSourceDAO = DAOFactory.getDataSourceDAO();
+			IDataSource dataSource = dataSourceDAO.loadDataSourceWriteDefault();
+			if(dataSource == null) {
+				logger.warn("Impossible to initialize cache because there are no datasource defined as defualt write datasource");
+			} else {
+				cache = cacheFactory.getCache(dataSource);
+			}
+		} catch (Throwable t){
+			logger.error("An unexpected error occured while initializing cache");
+		}
+	}
 	
 	
 	public static List<Properties> getDimensionTypes() {
