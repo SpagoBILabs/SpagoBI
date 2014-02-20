@@ -78,8 +78,7 @@ public class FirstTest extends TestCase {
     	ConfigSingleton.setConfigurationCreation( new FileCreatorConfiguration( "C:/Users/cortella/workspaceJEE/SpagoBICockpitEngine/WebContent" ) );
 
 		//System.getProperty("AF_ROOT_PATH", "C:/Users/cortella/workspaceJEE/SpagoBICockpitEngine/WebContent/WEB-INF/conf/");
-		//UserUtilities userUtilities = new UserUtilities();
-    	//IEngUserProfile user = userUtilities.getUserProfile("biadmin");
+
     	TenantManager.setTenant(new Tenant("SPAGOBI"));
 		CacheFactory cacheFactory = new CacheFactory();
 		IDataSourceDAO dataSourceDAO= DAOFactory.getDataSourceDAO();
@@ -101,12 +100,12 @@ public class FirstTest extends TestCase {
 	public void testCachePut(){
 		IDataStore resultset;
 		//Test JDBCDataset
-		/*
+		
 		sqlDataset.loadData();
-		IDataStore resultset = sqlDataset.getDataStore();
+		resultset = sqlDataset.getDataStore();
 		cache.put(sqlDataset, sqlDataset.getSignature(), resultset);
 		logger.debug("JDBCDataset inserted inside cache");
-		*/
+		
 		//Test FileDataset
 		fileDataset.loadData();
 		resultset =	fileDataset.getDataStore();
@@ -149,13 +148,14 @@ public class FirstTest extends TestCase {
 	}
 	
 	public void createDatasets() throws JSONException{
-		/*
+		//Create JDBCDataSet
 		sqlDataset = new JDBCDataSet();
 		sqlDataset.setQuery("select * from customer");
 		sqlDataset.setQueryScript("");
 		sqlDataset.setQueryScriptLanguage("");
 		sqlDataset.setDataSource(dataSourceFoodmart);
-		*/
+		
+		//Create FileDataSet
 		fileDataset = new FileDataSet();
 		fileDataset.setFileType("CSV");
 		JSONObject jsonConf = new JSONObject();
@@ -168,7 +168,7 @@ public class FirstTest extends TestCase {
 		jsonConf.put("DS_SCOPE", "USER");
 		
 		//TODO: completare dataset metadata
-		fileDataset.setDsMetadata("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?><META version=\"1\"><COLUMNLIST></COLUMNLIST><DATASET><PROPERTY name=\"resultNumber\" value=\"10281\"/> </DATASET></META>");
+		fileDataset.setDsMetadata("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?><META version=\"1\"><COLUMNLIST><COLUMN alias=\"customer_id\" fieldType=\"ATTRIBUTE\" name=\"customer_id\" type=\"java.lang.Integer\"/><COLUMN alias=\"lname\" fieldType=\"ATTRIBUTE\" name=\"lname\" type=\"java.lang.String\"/><COLUMN alias=\"fname\" fieldType=\"ATTRIBUTE\" name=\"fname\" type=\"java.lang.String\"/><COLUMN alias=\"num_children_at_home\" fieldType=\"ATTRIBUTE\" name=\"num_children_at_home\" type=\"java.lang.Integer\"/></COLUMNLIST><DATASET><PROPERTY name=\"resultNumber\" value=\"49\"/> </DATASET></META>");
 				
 		fileDataset.setConfiguration(jsonConf.toString());
 		fileDataset.setResourcePath(RESOURCE_PATH);
