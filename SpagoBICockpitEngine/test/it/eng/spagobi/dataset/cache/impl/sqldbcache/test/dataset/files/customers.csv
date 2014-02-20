@@ -1,50 +1,50 @@
-"customer_id","account_num","lname","fname","mi","address1","address2","address3","address4","city","state_province","postal_code","country","customer_region_id","phone1","phone2","birthdate","marital_status","yearly_income","gender","total_children","num_children_at_home","education","date_accnt_opened","member_card","occupation","houseowner","num_cars_owned","fullname"
-1,87462024688,"Nowmer","Sheri","A.","2433 Bailey Road","","","","Tlaxiaco","Oaxaca","15057","Mexico",30,"271-555-9715","119-555-1969","1961-08-26","M","$30K - $50K","F",4,2,"Partial High School","1991-09-10","Bronze","Skilled Manual","Y",4,"Sheri Nowmer"
-2,87470586299,"Whelply","Derrick","I.","2219 Dewing Avenue","","","","Sooke","BC","17172","Canada",101,"211-555-7669","807-555-9033","1915-07-03","S","$70K - $90K","M",1,0,"Partial High School","1993-03-11","Bronze","Professional","N",3,"Derrick Whelply"
-3,87475757600,"Derry","Jeanne","","7640 First Ave.","","","","Issaquah","WA","73980","USA",21,"656-555-2272","221-555-2493","1910-06-21","M","$50K - $70K","F",1,1,"Bachelors Degree","1991-06-11","Bronze","Professional","Y",2,"Jeanne Derry"
-4,87500482201,"Spence","Michael","J.","337 Tosca Way","","","","Burnaby","BC","74674","Canada",92,"929-555-7279","272-555-2844","1969-06-20","M","$10K - $30K","M",4,4,"Partial High School","1994-05-21","Normal","Skilled Manual","N",2,"Michael Spence"
-5,87514054179,"Gutierrez","Maya","","8668 Via Neruda","","","","Novato","CA","57355","USA",42,"387-555-7172","260-555-6936","1951-05-10","S","$30K - $50K","F",3,0,"Partial College","1992-08-21","Silver","Manual","N",3,"Maya Gutierrez"
-6,87517782449,"Damstra","Robert","F.","1619 Stillman Court","","","","Lynnwood","WA","90792","USA",75,"922-555-5465","333-555-5915","1942-10-08","S","$70K - $90K","F",3,0,"Bachelors Degree","1992-04-05","Bronze","Professional","Y",3,"Robert Damstra"
-7,87521172800,"Kanagaki","Rebecca","","2860 D Mt. Hood Circle","","","","Tlaxiaco","Oaxaca","13343","Mexico",30,"515-555-6247","934-555-9211","1949-03-27","M","$30K - $50K","F",2,1,"Partial High School","1991-05-01","Bronze","Manual","Y",3,"Rebecca Kanagaki"
-8,87539744377,"Brunner","Kim","H.","6064 Brodia Court","","","","San Andres","DF","12942","Mexico",106,"411-555-6825","130-555-6818","1922-08-10","M","$50K - $70K","M",2,2,"Bachelors Degree","1992-06-11","Bronze","Professional","Y",3,"Kim Brunner"
-9,87544797658,"Blumberg","Brenda","C.","7560 Trees Drive","","","","Richmond","BC","17256","Canada",90,"815-555-3975","642-555-6483","1979-06-23","M","$10K - $30K","M",5,3,"Partial High School","1993-11-14","Normal","Skilled Manual","Y",1,"Brenda Blumberg"
-10,87568712234,"Stanz","Darren","M.","1019 Kenwal Rd.","","","","Lake Oswego","OR","82017","USA",64,"847-555-5443","212-555-8635","1949-08-26","S","$30K - $50K","M",4,0,"Bachelors Degree","1993-05-04","Golden","Management","N",4,"Darren Stanz"
-11,87572821378,"Murraiin","Jonathan","V.","5423 Camby Rd.","","","","La Mesa","CA","35890","USA",11,"612-555-4878","747-555-6928","1967-06-20","S","$50K - $70K","M",4,0,"High School Degree","1992-04-23","Bronze","Manual","N",2,"Jonathan Murraiin"
-12,87579237222,"Creek","Jewel","C.","1792 Belmont Rd.","","","","Chula Vista","CA","40520","USA",13,"555-555-2714","228-555-5450","1971-10-18","S","$30K - $50K","F",1,0,"High School Degree","1991-07-06","Bronze","Skilled Manual","N",3,"Jewel Creek"
-13,87587122917,"Medina","Peggy","A.","3796 Keller Ridge","","","","Mexico City","Mexico","59554","Mexico",2,"343-555-9778","785-555-2371","1975-10-12","S","$30K - $50K","M",4,0,"High School Degree","1990-10-09","Bronze","Manual","N",4,"Peggy Medina"
-14,87592626810,"Rutledge","Bryan","K.","3074 Ardith Drive","","","","Lincoln Acres","CA","30346","USA",10,"659-555-3160","640-555-5439","1912-07-09","M","$50K - $70K","F",2,2,"Bachelors Degree","1992-10-19","Bronze","Management","Y",2,"Bryan Rutledge"
-15,87597749829,"Cavestany","Walter","G.","7987 Seawind Dr.","","","","Oak Bay","BC","15542","Canada",99,"471-555-8853","560-555-4646","1941-11-05","S","$90K - $110K","M",3,0,"Graduate Degree","1991-08-09","Bronze","Professional","Y",3,"Walter Cavestany"
-16,87603285908,"Planck","Peggy","M.","4864 San Carlos","","","","Camacho","Zacatecas","77787","Mexico",27,"698-555-7603","986-555-9424","1919-06-02","M","$50K - $70K","F",2,2,"High School Degree","1993-12-17","Bronze","Skilled Manual","Y",2,"Peggy Planck"
-17,87625473141,"Marshall","Brenda","S.","2687 Ridge Road","","","","Arcadia","CA","28530","USA",51,"771-555-6581","929-555-7260","1928-03-20","S","$90K - $110K","M",3,0,"High School Degree","1993-10-23","Bronze","Management","Y",3,"Brenda Marshall"
-18,87637655735,"Wolter","Daniel","P.","2473 Orchard Way","","","","Altadena","CA","49680","USA",50,"121-555-3960","717-555-5324","1914-09-21","M","$30K - $50K","M",3,2,"Partial College","1992-10-24","Bronze","Professional","Y",4,"Daniel Wolter"
-19,87650814652,"Collins","Dianne","","551 Rainier Dr","","","","Oakland","CA","21486","USA",37,"217-555-1567","921-555-5446","1953-07-20","S","$70K - $90K","F",1,0,"High School Degree","1992-09-21","Bronze","Professional","N",1,"Dianne Collins"
-20,87653979700,"Baker","Beverly","","591 Merriewood Drive","","","","Spring Valley","CA","88762","USA",15,"617-555-7972","860-555-3536","1974-04-16","S","$10K - $30K","F",2,0,"Partial High School","1993-04-02","Normal","Manual","Y",2,"Beverly Baker"
-21,87663244009,"Castillo","Pedro","","1579 Plaza Rosa","","","","Renton","WA","71442","USA",73,"975-555-7865","187-555-2286","1918-11-04","S","$30K - $50K","M",1,0,"High School Degree","1992-04-26","Normal","Manual","Y",2,"Pedro Castillo"
-22,87675641200,"Borges","Laurie","","1873 Lyon Circle","","","","Bellingham","WA","78588","USA",78,"610-555-6158","921-555-6608","1947-10-07","M","$30K - $50K","F",4,4,"High School Degree","1991-08-08","Golden","Skilled Manual","Y",4,"Laurie Borges"
-23,87678398489,"Wyro","Shauna","K.","3114 Notre Dame Ave.","","","","La Jolla","CA","27430","USA",33,"444-555-1517","625-555-9824","1916-10-24","S","$30K - $50K","F",2,0,"High School Degree","1992-08-12","Silver","Manual","N",3,"Shauna Wyro"
-24,87681713700,"Wyllie","Jacqueline","","6318 Marclair Dr.","","","","Santa Fe","DF","99737","Mexico",109,"102-555-7439","721-555-7431","1921-12-04","S","$30K - $50K","F",0,0,"High School Degree","1991-05-19","Bronze","Manual","N",3,"Jacqueline Wyllie"
-25,87686740159,"Conley","Lin","N.","7814 Milburn Dr.","","","","Haney","BC","65710","Canada",93,"506-555-4589","333-555-7096","1952-09-26","S","$70K - $90K","F",3,0,"High School Degree","1991-11-18","Bronze","Professional","N",2,"Lin Conley"
-26,87691326700,"Bernard","Jose","","3928 San Francisco","","","","Burbank","CA","51809","USA",53,"425-555-3796","452-555-3332","1954-08-25","S","$10K - $30K","M",0,0,"Partial High School","1992-09-21","Normal","Skilled Manual","N",1,"Jose Bernard"
-27,87700161933,"Macaluso","Charles","B.","5678 McElroy Court","","","","Anacortes","WA","58052","USA",79,"852-555-8574","986-555-1624","1934-03-17","M","$30K - $50K","F",1,1,"High School Degree","1991-10-21","Bronze","Manual","Y",3,"Charles Macaluso"
-28,87709978818,"Wood","Lois","M.","2046 Las Palmas","","","","Everett","WA","88974","USA",81,"794-555-6410","467-555-9146","1970-03-12","S","$10K - $30K","F",1,0,"Partial High School","1993-09-28","Silver","Manual","Y",1,"Lois Wood"
-29,87717585563,"Armstrong","Kevin","A.","608 Lincoln Dr.","","","","Oak Bay","BC","90098","Canada",99,"583-555-4474","125-555-6067","1937-10-04","S","$10K - $30K","F",2,0,"Partial High School","1993-09-01","Normal","Manual","N",1,"Kevin Armstrong"
-30,87718932032,"Goldey","Cody","A.","7230 Berrellesa Street","","","","Milwaukie","OR","78800","USA",65,"548-555-9939","529-555-3217","1917-07-08","S","$50K - $70K","F",4,0,"Bachelors Degree","1993-05-09","Bronze","Professional","Y",3,"Cody Goldey"
-31,87729650139,"Nickell","Paula","B.","2144 San Rafael","","","","Concord","CA","63996","USA",46,"598-555-1289","448-555-2424","1978-07-02","M","$50K - $70K","F",4,3,"Graduate Degree","1991-02-06","Golden","Professional","Y",3,"Paula Nickell"
-32,87738383412,"Long","Eric","J.","1676 Greer Ave.","","","","Ladner","BC","99949","Canada",96,"937-555-2299","326-555-4120","1930-01-08","S","$10K - $30K","F",2,0,"Partial High School","1991-06-23","Normal","Manual","Y",2,"Eric Long"
-33,87742803692,"Solimena","Mary","K.","6843 San Simeon Dr.","","","","Santa Cruz","CA","51307","USA",40,"111-555-1278","268-555-1956","1971-07-23","M","$30K - $50K","F",2,2,"High School Degree","1992-08-15","Bronze","Skilled Manual","N",2,"Mary Solimena"
-34,87767067000,"Muenich","Nathan","","6629 Polson Circle","","","","La Mesa","CA","53422","USA",11,"361-555-7656","957-555-9020","1919-10-21","M","$50K - $70K","F",3,1,"Bachelors Degree","1990-02-27","Silver","Management","Y",2,"Nathan Muenich"
-35,87771052718,"Young","Ed","","Rt. 470 Box A","","","","Merida","Yucatan","69940","Mexico",26,"457-555-5263","261-555-9142","1920-04-17","M","$30K - $50K","M",5,1,"Partial College","1992-09-21","Bronze","Skilled Manual","Y",3,"Ed Young"
-36,87788449525,"Arnold","Donna","K.","7403 N. Broadway","","","","Oregon City","OR","38217","USA",68,"969-555-4928","972-555-5835","1915-11-22","S","$10K - $30K","M",1,0,"Partial High School","1990-06-24","Normal","Skilled Manual","N",1,"Donna Arnold"
-37,87797676324,"Cooper","Jennifer","K.","5734 Ashford Court","","","","Seattle","WA","93604","USA",18,"188-555-1163","299-555-4585","1961-04-06","S","$50K - $70K","M",0,0,"Bachelors Degree","1992-06-02","Bronze","Professional","N",3,"Jennifer Cooper"
-38,87801286578,"Petty","Peggy","J.","8684 Military East","","","","Arcadia","CA","28043","USA",51,"722-555-8456","134-555-8906","1958-04-09","S","$30K - $50K","M",1,0,"Partial College","1993-06-08","Bronze","Management","N",1,"Peggy Petty"
-39,87808394432,"Olguin","Jessica","A.","7270 Pepperidge Way","","","","Lebanon","OR","49592","USA",72,"203-555-6978","384-555-6285","1959-01-23","M","$90K - $110K","F",4,2,"Graduate Degree","1992-03-10","Bronze","Professional","Y",2,"Jessica Olguin"
-40,87814209461,"Burchett","Phyllis","","475 Santa Maria","","","","Santa Cruz","CA","49192","USA",40,"761-555-3899","719-555-7549","1926-10-27","S","$110K - $130K","M",1,0,"Partial College","1992-08-14","Bronze","Professional","Y",2,"Phyllis Burchett"
-41,87818307900,"Bechard","Howard","","1970 Napa Ct.","","","","W. Linn","OR","36903","USA",66,"616-555-6966","443-555-9474","1919-04-19","S","$110K - $130K","M",1,0,"High School Degree","1990-10-10","Bronze","Professional","N",2,"Howard Bechard"
-42,87849287390,"Carter","Doris","M.","8084 Cardiff Drive","","","","San Andres","DF","94169","Mexico",106,"535-555-6174","562-555-5709","1965-03-27","M","$70K - $90K","F",3,3,"Bachelors Degree","1993-07-21","Golden","Management","Y",3,"Doris Carter"
-43,87855359911,"Sharp","Juanita","D.","9833 Mt. Dias Blv.","","","","Burbank","CA","48042","USA",53,"962-555-1952","196-555-4002","1977-05-16","S","$50K - $70K","F",2,0,"Bachelors Degree","1993-03-19","Bronze","Professional","N",4,"Juanita Sharp"
-44,87868926525,"Brunner","Sandra","B.","6202 Seeno St.","","","","Bellflower","CA","52673","USA",55,"904-555-8788","577-555-2523","1917-05-20","S","$30K - $50K","M",1,0,"High School Degree","1992-01-07","Bronze","Skilled Manual","Y",2,"Sandra Brunner"
-45,87869548800,"Staton","Ernest","","862 The Alameda","","","","Renton","WA","71706","USA",73,"693-555-6852","235-555-8445","1916-08-09","S","$50K - $70K","M",5,0,"Bachelors Degree","1994-05-07","Golden","Management","Y",2,"Ernest Staton"
-46,87894418239,"Sims","Rose","M.","7484 Roundtree Drive","","","","Mill Valley","CA","68791","USA",38,"658-555-3316","639-555-5595","1928-02-10","M","$70K - $90K","F",1,1,"Graduate Degree","1992-11-22","Silver","Professional","N",2,"Rose Sims"
-47,87894944000,"De Carlo","Lauretta","E.","5053 Loftus Road","","","","Oak Bay","BC","53986","Canada",99,"708-555-3666","558-555-4802","1951-09-01","M","$50K - $70K","M",0,0,"Bachelors Degree","1992-05-17","Bronze","Professional","N",1,"Lauretta De Carlo"
-48,87901939153,"Williams","Mary","R.","1930 Almondwood Drive","","","","Camacho","Zacatecas","89939","Mexico",27,"696-555-7759","324-555-4238","1927-10-17","M","$50K - $70K","M",0,0,"Bachelors Degree","1994-05-04","Bronze","Professional","N",3,"Mary Williams"
-49,87902239561,"Burke","Terri","L.","9752 Jeanne Circle","","","","Arcadia","CA","41297","USA",51,"770-555-6738","266-555-2074","1930-12-02","S","$30K - $50K","F",4,0,"High School Degree","1992-04-20","Bronze","Skilled Manual","N",2,"Terri Burke"
+"customer_id","lname","fname","num_children_at_home"
+1,"Nowmer","Sheri",2
+2,"Whelply","Derrick",0
+3,"Derry","Jeanne",1
+4,"Spence","Michael",4
+5,"Gutierrez","Maya",0
+6,"Damstra","Robert",0
+7,"Kanagaki","Rebecca",1
+8,"Brunner","Kim",2
+9,"Blumberg","Brenda",3
+10,"Stanz","Darren",0
+11,"Murraiin","Jonathan",0
+12,"Creek","Jewel",0
+13,"Medina","Peggy",0
+14,"Rutledge","Bryan",2
+15,"Cavestany","Walter",0
+16,"Planck","Peggy",2
+17,"Marshall","Brenda",0
+18,"Wolter","Daniel",2
+19,"Collins","Dianne",0
+20,"Baker","Beverly",0
+21,"Castillo","Pedro",0
+22,"Borges","Laurie",4
+23,"Wyro","Shauna",0
+24,"Wyllie","Jacqueline",0
+25,"Conley","Lin",0
+26,"Bernard","Jose",0
+27,"Macaluso","Charles",1
+28,"Wood","Lois",0
+29,"Armstrong","Kevin",0
+30,"Goldey","Cody",0
+31,"Nickell","Paula",3
+32,"Long","Eric",0
+33,"Solimena","Mary",2
+34,"Muenich","Nathan",1
+35,"Young","Ed",1
+36,"Arnold","Donna",0
+37,"Cooper","Jennifer",0
+38,"Petty","Peggy",0
+39,"Olguin","Jessica",2
+40,"Burchett","Phyllis",0
+41,"Bechard","Howard",0
+42,"Carter","Doris",3
+43,"Sharp","Juanita",0
+44,"Brunner","Sandra",0
+45,"Staton","Ernest",0
+46,"Sims","Rose",1
+47,"De Carlo","Lauretta",0
+48,"Williams","Mary",0
+49,"Burke","Terri",0
