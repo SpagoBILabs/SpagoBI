@@ -123,8 +123,8 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 		String query = "SELECT ";	
 		
 		if (dataSource.getHibDialectClass().contains(DIALECT_POSTGRES)){
-			query += " pg_size_pretty(sum(pg_total_relation_size('\"' || table_schema || '\".\"' || table_name || \'\"\'))) AS size, " +
-					 " sum(pg_total_relation_size('\"' || table_schema || '\".\"' || table_name || '\"')) as size_num " +
+			query += //" pg_size_pretty(sum(pg_total_relation_size('\"' || table_schema || '\".\"' || table_name || \'\"\'))) AS size, " +
+					 " sum(pg_total_relation_size('\"' || table_schema || '\".\"' || table_name || '\"')) as size " +
 					 " FROM information_schema.tables " +
 					 " where table_name like '"+ tableNamePrefix +"%'";
 		}else if (dataSource.getHibDialectClass().contains(DIALECT_MYSQL)){
