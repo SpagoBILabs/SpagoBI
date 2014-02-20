@@ -23,6 +23,9 @@ package it.eng.spagobi.dataset.cache.impl.sqldbcache.test;
 
 
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -30,64 +33,60 @@ import org.json.JSONObject;
 import it.eng.qbe.dataset.QbeDataSet;
 import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spago.configuration.FileCreatorConfiguration;
-import it.eng.spago.error.EMFUserError;
-import it.eng.spago.security.IEngUserProfile;
 
-import it.eng.spagobi.commons.dao.DAOFactory;
-
-import it.eng.spagobi.commons.utilities.UserUtilities;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.dataset.cache.CacheFactory;
 import it.eng.spagobi.dataset.cache.ICache;
+import it.eng.spagobi.dataset.cache.test.TestConstants;
+import it.eng.spagobi.dataset.cache.test.TestDataSourceFactory;
 
 import it.eng.spagobi.tenant.Tenant;
 import it.eng.spagobi.tenant.TenantManager;
 import it.eng.spagobi.tools.dataset.bo.FileDataSet;
-import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
-import it.eng.spagobi.tools.dataset.dao.DataSetFactory;
-import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
+import it.eng.spagobi.tools.dataset.utils.datamart.DefaultEngineDatamartRetriever;
+
 import it.eng.spagobi.tools.datasource.bo.DataSource;
-import it.eng.spagobi.tools.datasource.bo.IDataSource;
-import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
+
 import junit.framework.TestCase;
 
 /**
  * @author Marco Cortella (marco.cortella@eng.it)
  *
  */
-public class FirstTest extends TestCase {
+public class SQLDBCacheTest extends TestCase {
 
 	private static ICache cache = null;
 	
 	private JDBCDataSet sqlDataset;
 	private QbeDataSet qbeDataset;
 	private FileDataSet fileDataset;
-	private DataSource dataSourceFoodmart;
-	
-	private static String RESOURCE_PATH = "C:/Users/cortella/workspaceJEE/SpagoBICockpitEngine/test/it/eng/spagobi/dataset/cache/impl/sqldbcache/test/";
+	private DataSource dataSourceReading;
+	private DataSource dataSourceWriting;
 
-	static private Logger logger = Logger.getLogger(FirstTest.class);
+	
+
+	static private Logger logger = Logger.getLogger(SQLDBCacheTest.class);
 
 	/* (non-Javadoc)
 	 * @see junit.framework.TestCase#setUp()
 	 */
 	protected void setUp() throws Exception {
 		super.setUp();
-		System.setProperty("AF_CONFIG_FILE", "/WEB-INF/conf/master.xml");
-    	ConfigSingleton.setConfigurationCreation( new FileCreatorConfiguration( "C:/Users/cortella/workspaceJEE/SpagoBICockpitEngine/WebContent" ) );
-
-		//System.getProperty("AF_ROOT_PATH", "C:/Users/cortella/workspaceJEE/SpagoBICockpitEngine/WebContent/WEB-INF/conf/");
+		System.setProperty("AF_CONFIG_FILE", TestConstants.AF_CONFIG_FILE);
+    	ConfigSingleton.setConfigurationCreation( new FileCreatorConfiguration( TestConstants.WEBCONTENT_PATH ) );
 
     	TenantManager.setTenant(new Tenant("SPAGOBI"));
-		CacheFactory cacheFactory = new CacheFactory();
-		IDataSourceDAO dataSourceDAO= DAOFactory.getDataSourceDAO();
-		IDataSource dataSource = dataSourceDAO.loadDataSourceWriteDefault();
-		cache = cacheFactory.initCache(dataSource);
-		
-		//creazione datasource per persistenza e dataset
+
+		//Creating DataSources and DataSets
 		this.createDataSources();
 		this.createDatasets();
+		
+		if (cache == null){
+			CacheFactory cacheFactory = new CacheFactory();
+			cache = cacheFactory.initCache(dataSourceWriting);
+		}
 
 
 	}
@@ -97,53 +96,51 @@ public class FirstTest extends TestCase {
 		assertNotNull("Cache correctly initialized", cache );
 	}
 	
-	public void testCachePut(){
-		IDataStore resultset;
-		//Test JDBCDataset
+	public void testCachePutJDBCDataSet(){
+		IDataStore resultset;	
 		
 		sqlDataset.loadData();
 		resultset = sqlDataset.getDataStore();
 		cache.put(sqlDataset, sqlDataset.getSignature(), resultset);
+		assertNotNull(cache.get(sqlDataset.getSignature()));
 		logger.debug("JDBCDataset inserted inside cache");
-		
-		//Test FileDataset
+	}
+	
+	public void testCachePutFileDataSet(){
+		IDataStore resultset;
+
 		fileDataset.loadData();
 		resultset =	fileDataset.getDataStore();
 		cache.put(fileDataset, fileDataset.getSignature(), resultset);
+		assertNotNull(cache.get(fileDataset.getSignature()));
 		logger.debug("FileDataSet inserted inside cache");
+	}
+	
+	public void testCachePutQbeDataSet(){
+		IDataStore resultset;
 
-		
+		qbeDataset.loadData();
+		resultset =	qbeDataset.getDataStore();
+		cache.put(qbeDataset, qbeDataset.getSignature(), resultset);
+		assertNotNull(cache.get(qbeDataset.getSignature()));
+		logger.debug("QbeDataSet inserted inside cache");
 	}
 
 	/* (non-Javadoc)
 	 * @see junit.framework.TestCase#tearDown()
 	 */
 	protected void tearDown() throws Exception {
-		super.tearDown();
+		cache.deleteAll();
+		//clean cache in memory and on db
 	}
+	
+	//-----------------------------------------------------------------------
 	
 	
 	//initialization methods
 	public void createDataSources(){
-		dataSourceFoodmart = new DataSource();
-		
-		dataSourceFoodmart.setDsId(999999);
-		dataSourceFoodmart.setLabel("datasetTest_foodmart");
-		dataSourceFoodmart.setDescr("datasetTest_foodmart");
-		dataSourceFoodmart.setJndi("");
-		dataSourceFoodmart.setUrlConnection("jdbc:mysql://localhost:3306/foodmart");
-		dataSourceFoodmart.setUser("root");
-		dataSourceFoodmart.setPwd("root");
-		dataSourceFoodmart.setDriver("com.mysql.jdbc.Driver");
-		//dataSourceFoodmart.setDialectId(hibDataSource.getDialect().getValueId());
-		//dataSourceFoodmart.setEngines(hibDataSource.getSbiEngineses());
-		//dataSourceFoodmart.setObjects(hibDataSource.getSbiObjectses());
-		dataSourceFoodmart.setSchemaAttribute("");
-		dataSourceFoodmart.setMultiSchema(false);
-		dataSourceFoodmart.setHibDialectClass("org.hibernate.dialect.MySQLInnoDBDialect");
-		dataSourceFoodmart.setHibDialectName("sbidomains.nm.mysql");
-		dataSourceFoodmart.setReadOnly(false);
-		dataSourceFoodmart.setWriteDefault(false);
+		dataSourceReading = TestDataSourceFactory.createDataSource(TestConstants.DatabaseType.MYSQL, false);
+		dataSourceWriting = TestDataSourceFactory.createDataSource(TestConstants.DatabaseType.MYSQL, true);
 
 	}
 	
@@ -153,7 +150,7 @@ public class FirstTest extends TestCase {
 		sqlDataset.setQuery("select * from customer");
 		sqlDataset.setQueryScript("");
 		sqlDataset.setQueryScriptLanguage("");
-		sqlDataset.setDataSource(dataSourceFoodmart);
+		sqlDataset.setDataSource(dataSourceReading);
 		
 		//Create FileDataSet
 		fileDataset = new FileDataSet();
@@ -167,16 +164,28 @@ public class FirstTest extends TestCase {
 		jsonConf.put("csvEncoding", "UTF-8");
 		jsonConf.put("DS_SCOPE", "USER");
 		
-		//TODO: completare dataset metadata
 		fileDataset.setDsMetadata("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?><META version=\"1\"><COLUMNLIST><COLUMN alias=\"customer_id\" fieldType=\"ATTRIBUTE\" name=\"customer_id\" type=\"java.lang.Integer\"/><COLUMN alias=\"lname\" fieldType=\"ATTRIBUTE\" name=\"lname\" type=\"java.lang.String\"/><COLUMN alias=\"fname\" fieldType=\"ATTRIBUTE\" name=\"fname\" type=\"java.lang.String\"/><COLUMN alias=\"num_children_at_home\" fieldType=\"ATTRIBUTE\" name=\"num_children_at_home\" type=\"java.lang.Integer\"/></COLUMNLIST><DATASET><PROPERTY name=\"resultNumber\" value=\"49\"/> </DATASET></META>");
 				
 		fileDataset.setConfiguration(jsonConf.toString());
-		fileDataset.setResourcePath(RESOURCE_PATH);
+		fileDataset.setResourcePath(TestConstants.RESOURCE_PATH);
 		fileDataset.setFileName("customers.csv");
 		
-		
+		//Create QbeDataset
+		//TODO: non riesco a recuperare datamart retrivier
+		/*
+		qbeDataset = new QbeDataSet();
+		qbeDataset.setJsonQuery("{\"catalogue\": {\"queries\": [{\"id\":\"q1390389018208\",\"distinct\":false,\"isNestedExpression\":false,\"fields\":[{\"alias\":\"Lname\",\"visible\":true,\"include\":true,\"type\":\"datamartField\",\"id\":\"it.eng.spagobi.meta.Customer:lname\",\"entity\":\"Customer\",\"field\":\"Lname\",\"longDescription\":\"Customer : Lname\",\"group\":\"\",\"funct\":\"NONE\",\"iconCls\":\"attribute\",\"nature\":\"attribute\"},{\"alias\":\"Fname\",\"visible\":true,\"include\":true,\"type\":\"datamartField\",\"id\":\"it.eng.spagobi.meta.Customer:fname\",\"entity\":\"Customer\",\"field\":\"Fname\",\"longDescription\":\"Customer : Fname\",\"group\":\"\",\"funct\":\"NONE\",\"iconCls\":\"attribute\",\"nature\":\"attribute\"},{\"alias\":\"City\",\"visible\":true,\"include\":true,\"type\":\"datamartField\",\"id\":\"it.eng.spagobi.meta.Customer:city\",\"entity\":\"Customer\",\"field\":\"City\",\"longDescription\":\"Customer : City\",\"group\":\"true\",\"funct\":\"NONE\",\"iconCls\":\"attribute\",\"nature\":\"attribute\"}],\"filters\":[],\"expression\":{},\"havings\":[],\"subqueries\":[]}]}, \t\"version\":7,\t\"generator\": \"SpagoBIMeta\" }\t");
+		qbeDataset.setResourcePath(TestConstants.RESOURCE_PATH);
+		qbeDataset.setDatamarts("MyModel41");
+		qbeDataset.setDataSource(dataSourceReading);
+		qbeDataset.setDataSourceForWriting(dataSourceWriting);
+		Map props = new HashMap();
+		props.put(SpagoBIConstants.DATAMART_RETRIEVER, new DefaultEngineDatamartRetriever(null));
+		*/
+
 	}
 	
+
 	
 
 
