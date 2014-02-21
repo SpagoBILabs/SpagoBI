@@ -68,6 +68,8 @@ Ext.extend(Sbi.widgets.WizardPanel, Ext.Panel, {
      */
 	, buttons: null
 	
+	, pageToActivateOnRender: null
+	
 	// =================================================================================================================
 	// METHODS
 	// =================================================================================================================
@@ -81,6 +83,10 @@ Ext.extend(Sbi.widgets.WizardPanel, Ext.Panel, {
 	}
 
 	, getActivePageNumber: function() {
+//		if(!this.layout.activeItem) {
+//			Sbi.trace("[WizardPanel.getActivePageNumber]: [" + Sbi.toSource(this.layout, true) +  "]");
+//			this.layout.setActiveItem(0); 
+//		}
 		return this.layout.activeItem.itemId;
 	}
 	
@@ -119,7 +125,17 @@ Ext.extend(Sbi.widgets.WizardPanel, Ext.Panel, {
 		Sbi.trace("[WizardPanel.moveToPage]: IN");
 		
 		if(this.rendered === false) {
-			this.activeItem = targetPageNumber;
+			Sbi.trace("[WizardPanel.moveToPage]: Wizard not yet rendered");
+			this.pageToActivateOnRender = targetPageNumber;
+			this.on("afterrender", function() {
+				Sbi.trace("[WizardPanel.afterrender]: IN");
+				if(this.pageToActivateOnRender !== null) {
+					this.moveToPage(this.pageToActivateOnRender);
+					this.pageToActivateOnRender = null;
+				}
+				Sbi.trace("[WizardPanel.afterrender]: OUT");
+			}, this);
+			Sbi.trace("[WizardPanel.moveToPage]: OUT");
 			return;
 		}
 		
