@@ -105,7 +105,6 @@ Ext.define('Sbi.adhocreporting.AdhocreportingContainer', {
 
 	,executeDocument: function(docType,inputType, record){
 		if(docType=='COCKPIT'){
-			//TODO: to be defined
 			Sbi.debug("Cockpit document execution");
 			this.executeCockpit(inputType, record);
 		} else if (docType=='WORKSHEET'){
@@ -142,7 +141,7 @@ Ext.define('Sbi.adhocreporting.AdhocreportingContainer', {
 	
 	, executeDocumentAction: function(inputType, record){
 		var doc = record.data;
-		var executionUrl = this.contextName + '/servlet/AdapterHTTP?ACTION_NAME=EXECUTE_DOCUMENT_ACTION&OBJECT_LABEL='+doc.label+'&OBJECT_ID='+doc.id+'&MYANALYSIS=TRUE';		
+		var executionUrl = this.contextName + '/servlet/AdapterHTTP?ACTION_NAME=EXECUTE_DOCUMENT_ACTION&OBJECT_LABEL='+doc.label+'&OBJECT_ID='+doc.id+'&MYANALYSIS=TRUE';
 		this.documentexecution.load(executionUrl);
 	}
 	
