@@ -30,7 +30,6 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionColumns', {
 		}
 		this.callParent(arguments);
 	}
-	
 });
 
 
