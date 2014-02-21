@@ -36,13 +36,14 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionMember', {
 		}
 		this.callParent(arguments);
 		this.on("render",function(){
-		var dd = Ext.create('Ext.dd.DD', this.getEl(), 'memberDDGroup', {
+		var dd = Ext.create('Ext.dd.DDProxy', this.getEl(), 'memberDDGroup', {
             isTarget  : false
         });
 		
 		var thisPanel = this;
 		
 		Ext.apply(dd, {
+
 
 		    onDragDrop : function(evtObj, targetElId) {
 		    	

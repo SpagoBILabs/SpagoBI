@@ -134,11 +134,24 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionPivot', {
 		rowsMargin = "0 "+this.betweenColumnRowTableMargin+" 0 0";
 		crossMargin = this.topMargin+" "+this.betweenColumnRowTableMargin+" 0 "+this.leftMargin;
 		
+		
+
+		
 		//defining the components
 		this.olapExecutionFilters   = Ext.create('Sbi.olap.execution.table.OlapExecutionFilters',  {height: this.filtersHeight, margin: filtersMargin}); 
 		this.olapExecutionColumns   = Ext.create('Sbi.olap.execution.table.OlapExecutionColumns',  {flex: 1, margin: columnsMargin});
 		this.olapExecutionRows   = Ext.create('Sbi.olap.execution.table.OlapExecutionRows',  {width: this.rowsWidth, margin: rowsMargin});
 		this.olapExecutionTable   = Ext.create('Sbi.olap.execution.table.OlapExecutionTable',  {flex: 1});
+		
+		var m = Ext.create('Sbi.olap.execution.table.OlapExecutionMember',{
+			containerPanel: this.olapExecutionRows ,
+			filtersPanel: this.olapExecutionFilters,
+			rowsPanel: this.olapExecutionRows,
+			columnsPanel: this.olapExecutionColumns,
+		});
+		this.olapExecutionRows.add(m);
+
+		
 		
 		//defining the structure of the layout
 		Ext.apply(this, {
