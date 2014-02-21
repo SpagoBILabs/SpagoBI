@@ -40,7 +40,7 @@ Ext.ns("Sbi.cockpit.widgets.table");
 Sbi.cockpit.widgets.table.QueryFieldsContainerPanel = function(config) {
 	
 	var defaultSettings = {
-		title: LN('Sbi.cockpit.widgets.table.tabledesignerpanel.fields')
+		title: LN('sbi.cockpit.widgets.table.tabledesignerpanel.fields')
 	};
 	
 	if (Sbi.settings && Sbi.settings.worksheet && Sbi.settings.worksheet.designer && Sbi.settings.worksheet.designer.queryFieldsContainerPanel) {

@@ -17,7 +17,7 @@ Ext.ns("Sbi.cockpit.editor.widget");
 Sbi.cockpit.editor.widget.WidgetEditorFieldPalette = function(config) {
 	
 	var defaultSettings = {
-		title: LN('sbi.formbuilder.queryfieldspanel.title')
+		title: LN('sbi.cockpit.queryfieldspanel.title')
 		, displayRefreshButton : true
 		, border: true,
 		//bodyStyle:'background:green',

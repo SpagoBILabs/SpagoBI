@@ -37,7 +37,7 @@ Ext.ns("Sbi.cockpit.core");
 Sbi.cockpit.core.WidgetDesigner = function(config) { 
 
 	var defaultSettings = {
-		title: LN('Sbi.cockpit.core.WidgetDesigner.title')
+		title: LN('sbi.cockpit.core.WidgetDesigner.title')
 		, layout: 'fit'
 	};
 	var settings = Sbi.getObjectSettings('Sbi.cockpit.core.WidgetDesigner', defaultSettings);

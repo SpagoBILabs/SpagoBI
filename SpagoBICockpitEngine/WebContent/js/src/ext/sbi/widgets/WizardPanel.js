@@ -385,7 +385,7 @@ Ext.extend(Sbi.widgets.WizardPanel, Ext.Panel, {
 		buttonsBar.push({
 			id: 'submit'
 			, hidden: true
-	        , text:  LN('sbi.ds.wizard.submit')
+	        , text:  LN('sbi.ds.wizard.confirm')
 	        , handler: this.onSubmit
 	        , scope: this
 	    });
