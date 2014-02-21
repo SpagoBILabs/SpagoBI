@@ -37,6 +37,7 @@ import it.eng.spago.configuration.FileCreatorConfiguration;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.dataset.cache.CacheFactory;
 import it.eng.spagobi.dataset.cache.ICache;
+import it.eng.spagobi.dataset.cache.test.FakeDatamartRetriever;
 import it.eng.spagobi.dataset.cache.test.TestConstants;
 import it.eng.spagobi.dataset.cache.test.TestDataSourceFactory;
 
@@ -117,6 +118,7 @@ public class SQLDBCacheTest extends TestCase {
 	}
 	
 	public void testCachePutQbeDataSet(){
+		
 		IDataStore resultset;
 
 		qbeDataset.loadData();
@@ -124,6 +126,7 @@ public class SQLDBCacheTest extends TestCase {
 		cache.put(qbeDataset, qbeDataset.getSignature(), resultset);
 		assertNotNull(cache.get(qbeDataset.getSignature()));
 		logger.debug("QbeDataSet inserted inside cache");
+		
 	}
 
 	/* (non-Javadoc)
@@ -170,20 +173,25 @@ public class SQLDBCacheTest extends TestCase {
 		fileDataset.setResourcePath(TestConstants.RESOURCE_PATH);
 		fileDataset.setFileName("customers.csv");
 		
-		//Create QbeDataset
-		//TODO: non riesco a recuperare datamart retrivier
-		/*
+
+		//Create QbeDataset, the datamart model is based on foodmart
 		qbeDataset = new QbeDataSet();
 		qbeDataset.setJsonQuery("{\"catalogue\": {\"queries\": [{\"id\":\"q1390389018208\",\"distinct\":false,\"isNestedExpression\":false,\"fields\":[{\"alias\":\"Lname\",\"visible\":true,\"include\":true,\"type\":\"datamartField\",\"id\":\"it.eng.spagobi.meta.Customer:lname\",\"entity\":\"Customer\",\"field\":\"Lname\",\"longDescription\":\"Customer : Lname\",\"group\":\"\",\"funct\":\"NONE\",\"iconCls\":\"attribute\",\"nature\":\"attribute\"},{\"alias\":\"Fname\",\"visible\":true,\"include\":true,\"type\":\"datamartField\",\"id\":\"it.eng.spagobi.meta.Customer:fname\",\"entity\":\"Customer\",\"field\":\"Fname\",\"longDescription\":\"Customer : Fname\",\"group\":\"\",\"funct\":\"NONE\",\"iconCls\":\"attribute\",\"nature\":\"attribute\"},{\"alias\":\"City\",\"visible\":true,\"include\":true,\"type\":\"datamartField\",\"id\":\"it.eng.spagobi.meta.Customer:city\",\"entity\":\"Customer\",\"field\":\"City\",\"longDescription\":\"Customer : City\",\"group\":\"true\",\"funct\":\"NONE\",\"iconCls\":\"attribute\",\"nature\":\"attribute\"}],\"filters\":[],\"expression\":{},\"havings\":[],\"subqueries\":[]}]}, \t\"version\":7,\t\"generator\": \"SpagoBIMeta\" }\t");
 		qbeDataset.setResourcePath(TestConstants.RESOURCE_PATH);
 		qbeDataset.setDatamarts("MyModel41");
 		qbeDataset.setDataSource(dataSourceReading);
 		qbeDataset.setDataSourceForWriting(dataSourceWriting);
-		Map props = new HashMap();
-		props.put(SpagoBIConstants.DATAMART_RETRIEVER, new DefaultEngineDatamartRetriever(null));
-		*/
+		Map params = new HashMap();
+		FakeDatamartRetriever fakeDatamartRetriever = new FakeDatamartRetriever();
+		fakeDatamartRetriever.setResourcePath(TestConstants.RESOURCE_PATH);
+		params.put(SpagoBIConstants.DATAMART_RETRIEVER, fakeDatamartRetriever);
+		qbeDataset.setParamsMap(params);
+		
+		
 
 	}
+	
+	
 	
 
 	
