@@ -44,7 +44,9 @@ import it.eng.spagobi.dataset.cache.test.TestDataSourceFactory;
 import it.eng.spagobi.tenant.Tenant;
 import it.eng.spagobi.tenant.TenantManager;
 import it.eng.spagobi.tools.dataset.bo.FileDataSet;
+import it.eng.spagobi.tools.dataset.bo.FlatDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
+import it.eng.spagobi.tools.dataset.bo.ScriptDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.utils.datamart.DefaultEngineDatamartRetriever;
 
@@ -63,6 +65,8 @@ public class SQLDBCacheTest extends TestCase {
 	private JDBCDataSet sqlDataset;
 	private QbeDataSet qbeDataset;
 	private FileDataSet fileDataset;
+	private FlatDataSet flatDataset;
+	private ScriptDataSet scriptDataset;
 	private DataSource dataSourceReading;
 	private DataSource dataSourceWriting;
 
@@ -93,7 +97,6 @@ public class SQLDBCacheTest extends TestCase {
 	}
 	
 	public void testCacheInit(){
-		//assertTrue("Cache correctly initialized", cache != null);
 		assertNotNull("Cache correctly initialized", cache );
 	}
 	
@@ -117,8 +120,7 @@ public class SQLDBCacheTest extends TestCase {
 		logger.debug("FileDataSet inserted inside cache");
 	}
 	
-	public void testCachePutQbeDataSet(){
-		
+	public void testCachePutQbeDataSet(){		
 		IDataStore resultset;
 
 		qbeDataset.loadData();
@@ -128,6 +130,28 @@ public class SQLDBCacheTest extends TestCase {
 		logger.debug("QbeDataSet inserted inside cache");
 		
 	}
+	
+	public void testCachePutFlatDataSet(){		
+		IDataStore resultset;
+
+		flatDataset.loadData();
+		resultset =	flatDataset.getDataStore();
+		cache.put(flatDataset, flatDataset.getSignature(), resultset);
+		assertNotNull(cache.get(flatDataset.getSignature()));
+		logger.debug("FlatDataSet inserted inside cache");
+		
+	}
+	
+	public void testCachePutScriptDataSet(){		
+		IDataStore resultset;
+
+		scriptDataset.loadData();
+		resultset =	scriptDataset.getDataStore();
+		cache.put(scriptDataset, scriptDataset.getSignature(), resultset);
+		assertNotNull(cache.get(scriptDataset.getSignature()));
+		logger.debug("ScriptDataset inserted inside cache");
+		
+	}	
 
 	/* (non-Javadoc)
 	 * @see junit.framework.TestCase#tearDown()
@@ -137,44 +161,55 @@ public class SQLDBCacheTest extends TestCase {
 		//clean cache in memory and on db
 	}
 	
-	//-----------------------------------------------------------------------
+	/*
+	* ----------------------------------------------------
+	* Initialization Methods
+	* ----------------------------------------------------
+	*/
 	
-	
-	//initialization methods
 	public void createDataSources(){
 		dataSourceReading = TestDataSourceFactory.createDataSource(TestConstants.DatabaseType.MYSQL, false);
 		dataSourceWriting = TestDataSourceFactory.createDataSource(TestConstants.DatabaseType.MYSQL, true);
 
 	}
 	
-	public void createDatasets() throws JSONException{
+	public JDBCDataSet createJDBCDataset(){
 		//Create JDBCDataSet
 		sqlDataset = new JDBCDataSet();
 		sqlDataset.setQuery("select * from customer");
 		sqlDataset.setQueryScript("");
 		sqlDataset.setQueryScriptLanguage("");
 		sqlDataset.setDataSource(dataSourceReading);
-		
-		//Create FileDataSet
+		return sqlDataset;
+	}
+	
+	public FileDataSet createFileDataset(){
 		fileDataset = new FileDataSet();
-		fileDataset.setFileType("CSV");
-		JSONObject jsonConf = new JSONObject();
-		jsonConf.put("fileType", "CSV");
-		jsonConf.put("fileName", "customers.csv");
-		jsonConf.put("csvDelimiter", ",");
-		jsonConf.put("csvDelimiter", ",");
-		jsonConf.put("csvQuote", "\"");
-		jsonConf.put("csvEncoding", "UTF-8");
-		jsonConf.put("DS_SCOPE", "USER");
-		
-		fileDataset.setDsMetadata("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?><META version=\"1\"><COLUMNLIST><COLUMN alias=\"customer_id\" fieldType=\"ATTRIBUTE\" name=\"customer_id\" type=\"java.lang.Integer\"/><COLUMN alias=\"lname\" fieldType=\"ATTRIBUTE\" name=\"lname\" type=\"java.lang.String\"/><COLUMN alias=\"fname\" fieldType=\"ATTRIBUTE\" name=\"fname\" type=\"java.lang.String\"/><COLUMN alias=\"num_children_at_home\" fieldType=\"ATTRIBUTE\" name=\"num_children_at_home\" type=\"java.lang.Integer\"/></COLUMNLIST><DATASET><PROPERTY name=\"resultNumber\" value=\"49\"/> </DATASET></META>");
-				
-		fileDataset.setConfiguration(jsonConf.toString());
-		fileDataset.setResourcePath(TestConstants.RESOURCE_PATH);
-		fileDataset.setFileName("customers.csv");
-		
 
-		//Create QbeDataset, the datamart model is based on foodmart
+		try {
+			fileDataset.setFileType("CSV");
+			JSONObject jsonConf = new JSONObject();
+			jsonConf.put("fileType", "CSV");
+			jsonConf.put("fileName", "customers.csv");
+			jsonConf.put("csvDelimiter", ",");
+			jsonConf.put("csvDelimiter", ",");
+			jsonConf.put("csvQuote", "\"");
+			jsonConf.put("csvEncoding", "UTF-8");
+			jsonConf.put("DS_SCOPE", "USER");	
+			fileDataset.setDsMetadata("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?><META version=\"1\"><COLUMNLIST><COLUMN alias=\"customer_id\" fieldType=\"ATTRIBUTE\" name=\"customer_id\" type=\"java.lang.Integer\"/><COLUMN alias=\"lname\" fieldType=\"ATTRIBUTE\" name=\"lname\" type=\"java.lang.String\"/><COLUMN alias=\"fname\" fieldType=\"ATTRIBUTE\" name=\"fname\" type=\"java.lang.String\"/><COLUMN alias=\"num_children_at_home\" fieldType=\"ATTRIBUTE\" name=\"num_children_at_home\" type=\"java.lang.Integer\"/></COLUMNLIST><DATASET><PROPERTY name=\"resultNumber\" value=\"49\"/> </DATASET></META>");			
+			fileDataset.setConfiguration(jsonConf.toString());
+			fileDataset.setResourcePath(TestConstants.RESOURCE_PATH);
+			fileDataset.setFileName("customers.csv");
+		}
+		catch(JSONException e){
+			logger.error("JSONException when creating a FileDataset");
+		}
+		return fileDataset;
+
+
+	}
+	
+	public QbeDataSet createQbeDataset(){
 		qbeDataset = new QbeDataSet();
 		qbeDataset.setJsonQuery("{\"catalogue\": {\"queries\": [{\"id\":\"q1390389018208\",\"distinct\":false,\"isNestedExpression\":false,\"fields\":[{\"alias\":\"Lname\",\"visible\":true,\"include\":true,\"type\":\"datamartField\",\"id\":\"it.eng.spagobi.meta.Customer:lname\",\"entity\":\"Customer\",\"field\":\"Lname\",\"longDescription\":\"Customer : Lname\",\"group\":\"\",\"funct\":\"NONE\",\"iconCls\":\"attribute\",\"nature\":\"attribute\"},{\"alias\":\"Fname\",\"visible\":true,\"include\":true,\"type\":\"datamartField\",\"id\":\"it.eng.spagobi.meta.Customer:fname\",\"entity\":\"Customer\",\"field\":\"Fname\",\"longDescription\":\"Customer : Fname\",\"group\":\"\",\"funct\":\"NONE\",\"iconCls\":\"attribute\",\"nature\":\"attribute\"},{\"alias\":\"City\",\"visible\":true,\"include\":true,\"type\":\"datamartField\",\"id\":\"it.eng.spagobi.meta.Customer:city\",\"entity\":\"Customer\",\"field\":\"City\",\"longDescription\":\"Customer : City\",\"group\":\"true\",\"funct\":\"NONE\",\"iconCls\":\"attribute\",\"nature\":\"attribute\"}],\"filters\":[],\"expression\":{},\"havings\":[],\"subqueries\":[]}]}, \t\"version\":7,\t\"generator\": \"SpagoBIMeta\" }\t");
 		qbeDataset.setResourcePath(TestConstants.RESOURCE_PATH);
@@ -186,8 +221,29 @@ public class SQLDBCacheTest extends TestCase {
 		fakeDatamartRetriever.setResourcePath(TestConstants.RESOURCE_PATH);
 		params.put(SpagoBIConstants.DATAMART_RETRIEVER, fakeDatamartRetriever);
 		qbeDataset.setParamsMap(params);
-		
-		
+		return qbeDataset;
+	}
+	
+	public FlatDataSet createFlatDataset(){
+		flatDataset = new FlatDataSet();
+		flatDataset.setDataSource(dataSourceReading);
+		flatDataset.setTableName("department"); //name of the table corresponding to the flat dataset (persisted dataset)
+		return flatDataset;
+	}
+	
+	public ScriptDataSet createScriptDataSet(){
+		scriptDataset=new ScriptDataSet();
+		scriptDataset.setScriptLanguage("groovy");
+		scriptDataset.setScript("returnValue(new Double(5).toString());\n");
+		return scriptDataset;
+	}
+	
+	public void createDatasets() throws JSONException{
+		createJDBCDataset();
+		createFileDataset();
+		createQbeDataset();
+		createFlatDataset();
+		createScriptDataSet();
 
 	}
 	
