@@ -59,7 +59,7 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 	private final String DOC_UPDATE = "DOC_UPDATE";
 	private final String SAVE_WORKSHEET_FROM_MODEL = "DOC_SAVE_FROM_MODEL";
 	private final String MODIFY_GEOREPORT = "MODIFY_GEOREPORT";
-	
+	private final String MODIFY_COCKPIT = "MODIFY_COCKPIT";
 
 	// RES detail
 	private final String ID = "id";
@@ -123,8 +123,9 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 				doInsertDocument(request);
 			} else if ( DOC_UPDATE.equalsIgnoreCase( action ) ) {
 				updateWorksheetDocumentTemplate();
-			} else if ( MODIFY_GEOREPORT.equalsIgnoreCase( action ) ) {
-				modifyGeoreportDocument(request);
+			} else if ( MODIFY_GEOREPORT.equalsIgnoreCase( action ) || MODIFY_COCKPIT.equalsIgnoreCase( action ) ) {
+				//modifyGeoreportDocument(request);
+				doModifyDocument(request);
 			} else {
 				throw new SpagoBIServiceException(SERVICE_NAME, "sbi.document.unsupported.action");
 			}
@@ -181,7 +182,8 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 	}
 	
 	
-	private void modifyGeoreportDocument(JSONObject request){
+//	private void modifyGeoreportDocument(JSONObject request){
+	private void doModifyDocument(JSONObject request){		
 		logger.debug("IN");
 		try {
 			JSONObject documentJSON = request.optJSONObject("document");
@@ -192,7 +194,6 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 			IBIObjectDAO biObjectDao = DAOFactory.getBIObjectDAO();
 			String documentLabel = documentJSON.getString("label");
 			BIObject document = biObjectDao.loadBIObjectByLabel(documentLabel);
-//			JSONArray filteredFoldersJSON = filterFolders(request.optJSONArray("folders"));
 			JSONArray filteredFoldersJSON = new JSONArray(); 
 			if(request.optJSONArray("folders") == null){
 				IEngUserProfile profile = (IEngUserProfile) getUserProfile();
@@ -241,7 +242,7 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 			toReturn.setName(name);
 			toReturn.setDescription(description);
 			if (isPublic != null)
-				toReturn.setVisible(isPublic);
+				toReturn.setPublicDoc(isPublic);
 			if (previewFile != null && !previewFile.equals(""))
 				toReturn.setPreviewFile(previewFile.replace("\"", ""));
 			
