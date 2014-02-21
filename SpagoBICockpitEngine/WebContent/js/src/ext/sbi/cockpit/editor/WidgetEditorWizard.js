@@ -77,13 +77,15 @@ Ext.extend(Sbi.cockpit.editor.WidgetEditorWizard, Ext.Window, {
 			var widgetConf = widget.getConfiguration();
 			Sbi.trace("[WidgetEditorWizard.setWizardTargetComponent]: widget conf is equal to [" + Sbi.toSource(widgetConf) + "]");
 			if(widgetConf.storeId) {
-				Sbi.trace("[WidgetEditorWizard.setWizardTargetComponent]: used dataset is [" + widgetConf.storeId + "]");
+				Sbi.trace("[WidgetEditorWizard.setWizardTargetComponent]: select dataset [" + widgetConf.storeId + "]");
 				this.editorMainPanel.selectDataset(widgetConf.storeId);
 				this.editorMainPanel.setWidgetEditorPageState(widgetConf.custom);
+				Sbi.trace("[WidgetEditorWizard.setWizardTargetComponent]: move to page [" + 1 + "]");
 				this.editorMainPanel.moveToPage (1);
 			} else {
 				Sbi.trace("[WidgetEditorWizard.setWizardTargetComponent]: there are no a used dataset");
 				Sbi.trace("[WidgetEditorWizard.setWizardTargetComponent]: widgetConf [" + Sbi.toSource(widgetConf) + "]");
+				Sbi.trace("[WidgetEditorWizard.setWizardTargetComponent]: move to page [" + 0 + "]");
 				this.editorMainPanel.moveToPage(0);
 			}	
 		} else {
