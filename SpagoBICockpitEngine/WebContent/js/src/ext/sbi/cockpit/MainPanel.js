@@ -190,14 +190,14 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 		        		   , iconCls: 'icon-save' 
 		 				   , tooltip: 'Save'
 		 				   , scope: this
-		 				   , handler:  this.showSaveWindow
+		 				   , handler:  this.showSaveWin
 		 				   , hidden: this.isInsert
 		 		 }), new Ext.Toolbar.Button({
 		 			 		id: 'saveAs'
 		 			   	   , iconCls: 'icon-saveas' 
 		 				   , tooltip: 'Save As'
 		 				   , scope: this
-		 				   , handler:  this.showSaveWindow
+		 				   , handler:  this.showSaveWinAs
 		 		 })
 		    ]
 		});
@@ -223,6 +223,16 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 		Sbi.trace("[MainPanel.initWidgetContainer]: OUT");
 	}
 	
+	
+	, showSaveWin: function() {
+		this.isInsert = false;
+		this.showSaveWindow();
+	}
+	
+	, showSaveWinAs: function() {
+		this.isInsert = true;
+		this.showSaveWindow();
+	}
 	, showSaveWindow: function(){
 		Sbi.trace("[MainPanel.showSaveWindow]: IN");
 		if(this.saveWindow != null){		
@@ -240,7 +250,7 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 		};
 		
 		var formState = {};
-
+		formState.visibility = true;
 		if (this.isInsert){
 			formState.docLabel = 'cockpit__' + Math.floor((Math.random()*1000000000)+1); 
 			if (Sbi.config.docDatasetLabel) {
@@ -249,7 +259,9 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 			documentWindowsParams.MESSAGE_DET= 'DOC_SAVE';
 		} else {
 			formState.docLabel = Sbi.config.docLabel;
-			documentWindowsParams.MESSAGE_DET= 'DOC_UPDATE';	
+			formState.docName = Sbi.config.docName;
+			formState.docDescr = Sbi.config.docDescription;
+			documentWindowsParams.MESSAGE_DET= 'MODIFY_COCKPIT';	
 		}
 		documentWindowsParams.formState = formState;
 		documentWindowsParams.isInsert = this.isInsert;

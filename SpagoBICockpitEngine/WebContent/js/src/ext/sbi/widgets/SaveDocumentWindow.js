@@ -89,6 +89,8 @@ Ext.extend(Sbi.widgets.SaveDocumentWindow, Ext.Window, {
 	isInsert: false,
 	
 	initFormPanel: function (c){
+		this.docVisibility = c.visibility;
+		
 		this.docLabel =  new Ext.form.TextField({
 			id:'docLabel',
 	        name: 'docLabel',
@@ -184,7 +186,7 @@ Ext.extend(Sbi.widgets.SaveDocumentWindow, Ext.Window, {
 	                buttons: Ext.MessageBox.OK
 	           });
 		}else{	
-			var params = {
+		var params = {
 		        	name :  docName,
 		        	label : docLabel,
 		        	description : docDescr,
@@ -193,8 +195,11 @@ Ext.extend(Sbi.widgets.SaveDocumentWindow, Ext.Window, {
 					previewFile: previewFile,
 					template: this.OBJECT_TEMPLATE,
 					datasourceid: this.OBJECT_DATA_SOURCE,
+					visibility: this.docVisibility,
 					SBI_EXECUTION_ID: this.SBI_EXECUTION_ID
 		        };
+			Sbi.config.docName = docName;
+			Sbi.config.docDescription = docDescr;
 			
 			Ext.Ajax.request({
 		        url: this.services['saveDocumentService'],
