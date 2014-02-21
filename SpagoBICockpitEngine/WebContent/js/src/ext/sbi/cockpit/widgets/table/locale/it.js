@@ -12,7 +12,7 @@ Sbi.locale.ln = Sbi.locale.ln || new Array();
 //===================================================================
 //MESSAGE BOX BUTTONS
 //===================================================================
-Ext.Msg.buttonText.yes = 'Sì'; 
+Ext.Msg.buttonText.yes = 'SÃ¬'; 
 Ext.Msg.buttonText.no = 'No';
 
 
@@ -49,7 +49,7 @@ Sbi.locale.ln['sbi.qbe.messagewin.info.title'] = 'Informazione';
 //===================================================================
 //SESSION EXPIRED
 //===================================================================
-Sbi.locale.ln['sbi.qbe.sessionexpired.msg'] = 'La sessione di lavoro è scaduta. Prova a rieseguire il documento';
+Sbi.locale.ln['sbi.qbe.sessionexpired.msg'] = 'La sessione di lavoro Ã¨ scaduta. Prova a rieseguire il documento';
 
 //===================================================================
 //DATASTORE PANEL
