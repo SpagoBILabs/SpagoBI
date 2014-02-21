@@ -25,7 +25,6 @@ import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.bo.Config;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IConfigDAO;
-import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.dataset.cache.ICacheMetadata;
 import it.eng.spagobi.engine.cockpit.CockpitEngineConfig;
 import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
@@ -38,7 +37,10 @@ import it.eng.spagobi.tools.datasource.bo.IDataSource;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -68,25 +70,25 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 	public static final String DIALECT_INGRES = "Ingres";
 	public static final String DIALECT_TERADATA = "Teradata";
 
+	private LinkedHashMap<String, CacheItem> cacheRegistry = new LinkedHashMap<String, CacheItem>();	
 	
+
 	private IDataSource dataSource;
 	private BigDecimal dimensionSpaceFree ;
 	private BigDecimal dimensionSpaceUsed ;
-	private HashMap<String,String> cacheRegistry;	
 	
 	private String  tableNamePrefix;
 	private BigDecimal cacheSpaceAvailable;
-	private Integer cacheLimit4Clean;
+	private Integer cachePercentageToClean;
 	private boolean isActiveCleanAction = false;
 	
 	private List objectsDimension = new ArrayList();
 	private Map<String, Integer> columnSize =  new HashMap<String, Integer>();
 	private enum FieldType {ATTRIBUTE, MEASURE}
 	
-	public SQLDBCacheMetadata(IDataSource ds, HashMap<String,String> registry){
+	public SQLDBCacheMetadata(IDataSource ds){
 		try {
 			dataSource = ds;
-			cacheRegistry = registry;
 			objectsDimension = CockpitEngineConfig.getDimensionTypes();
 			
 			
@@ -102,10 +104,10 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 			}			
 			Config cacheSpaceCleanableConfig = configDao.loadConfigParametersByLabel(CACHE_LIMIT_FOR_CLEAN_CONFIG);
 			if (cacheSpaceAvailableConfig.isActive()){
-				cacheLimit4Clean = Integer.valueOf(cacheSpaceCleanableConfig.getValueCheck());
+				cachePercentageToClean = Integer.valueOf(cacheSpaceCleanableConfig.getValueCheck());
 			}
 			if (tableNamePrefix != null && !"".equals(tableNamePrefix) &&
-				cacheSpaceAvailable != null && cacheLimit4Clean != null  ) 
+				cacheSpaceAvailable != null && cachePercentageToClean != null  ) 
 					isActiveCleanAction = true;
 		
 		} catch (EMFUserError e) {
@@ -137,10 +139,21 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 					 " where table_name like '"+ tableNamePrefix +"%'";
 		}else{
 			//get approximate dimension
-//			for (int i=0, l=cacheRegistry.size(); i<l; i++){
-//				//cfr delete all 
-//				query = " select * from " + cacheRegistry.get(key);
-//			}
+			Iterator it = cacheRegistry.entrySet().iterator();
+		    while (it.hasNext()) {
+		    	BigDecimal size = null;
+		        Map.Entry<String,String> entry = (Map.Entry<String,String>)it.next();
+		        String signature = entry.getValue();
+		        query = " select * from " + signature;
+		        IDataStore dataStore  = dataSource.executeStatement(query, 0, 0);
+				DataStore ds = (DataStore) dataStore;				
+				BigDecimal rowWeight = getRowWeight(ds.getRecordAt(0), ds.getMetaData());
+				size = rowWeight.multiply(new BigDecimal(ds.getRecordsCount())) ;
+				logger.debug("Dimension stimated for cached object "+ signature +" [rowWeight*rows]: " + size + " ["+rowWeight+" * "+ds.getRecordsCount()+"]");
+				if (size != null) dimensionSpaceFree = dimensionSpaceFree.subtract(size);		        
+		    }
+		    logger.debug("Remaining cache free space: " + dimensionSpaceFree);
+		    return dimensionSpaceFree;
 		}
 		logger.debug("Defined query: " +query);
 		IDataStore dataStore  = dataSource.executeStatement(query, 0, 0);
@@ -155,6 +168,7 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 		}
 		logger.debug("Size of object cached: " + size);
 		if (size != null) dimensionSpaceFree = dimensionSpaceFree.subtract(size);
+		logger.debug("Remaining cache free space: " + dimensionSpaceFree);
 		return dimensionSpaceFree;
 	}	
 	
@@ -168,12 +182,6 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 		return dimensionSpaceUsed;
 	}
 	
-
-	public Integer getNumberOfObjects(){
-		//TODO
-		return null;
-	}
-	
 	public boolean isActiveCleanAction(){ 
 		return isActiveCleanAction;
 	} 
@@ -185,16 +193,20 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 			return true;
 		}
 	}
-
-	public List getObjectsByDimension(){
-		//TODO
-		return null;
+	
+	public 	Integer getSpaceFreeAsPercentage(){
+		Integer toReturn = 0;
+		BigDecimal spaceAvailable = getDimensionSpaceAvailable();
+		toReturn = Integer.valueOf(((spaceAvailable.multiply(new BigDecimal(100)).divide(cacheSpaceAvailable)).intValue()));
+		return toReturn;
 	}
 	
+	public Integer getPercentageFreeCache(){
+		return cachePercentageToClean;
+	}
 
-	public List getObjectsByTime(){
-		//TODO
-		return null;
+	public Integer getNumberOfObjects(){		
+		return cacheRegistry.size();
 	}
 
 	private BigDecimal getBytesForType(String type){
@@ -224,14 +236,88 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 				fmd.setType(java.lang.Double.class);
 				logger.debug("Column type is string but the field is measure: converting it into a double");	
 			}else if(fmd.getType().toString().contains("[B")) {  //BLOB		
-				//TODO something?
+				//TODO something else?
 			}else if(fmd.getType().toString().contains("[C")) {	 //CLOB				
-				//TODO something?
+				//TODO something else?
 			}
 
 			toReturn = toReturn.add(getBytesForType(fmd.getType().toString()));			
 		}
 
 		return toReturn;
+	}
+	
+	public LinkedHashMap<String, CacheItem> getCacheRegistry() {
+		return cacheRegistry;
+	}
+
+	public void setCacheRegistry(LinkedHashMap<String, CacheItem> cacheRegistry) {
+		this.cacheRegistry = cacheRegistry;
+	}
+
+
+	public void addCacheItem(String resultsetSignature, String tableName, IDataStore resultset) {
+		CacheItem item = new CacheItem();
+		item.setName(tableName);
+		item.setTable(tableName);
+		item.setSignature(resultsetSignature);				
+		item.setDimension(getDimensionSpaceUsed(resultset));
+		item.setCreationDate(new Date());
+		getCacheRegistry().put(tableName,item);		
+		
+		logger.debug("Added cacheItem : [ Name: " + item.getName() + " \n Signature: " + item.getSignature() +
+				" \n Dimension: "+ item.getDimension() +" bytes (approximately)  ]");
+	}
+
+
+	public void removeCacheItem(String signature) {
+		getCacheRegistry().remove(signature);		
+	}
+
+
+	public void removeAllCacheItems() {
+		Iterator it = getCacheRegistry().entrySet().iterator();
+	    while (it.hasNext()) {
+	        Map.Entry<String,CacheItem> entry = (Map.Entry<String,CacheItem>)it.next();
+	        String signature = entry.getKey();
+	        this.removeCacheItem(signature);
+	        //it.remove(); // avoids a ConcurrentModificationException
+	    }		
+	}
+
+	public CacheItem getCacheItem(String signature) {
+		CacheItem toReturn = null;
+		Iterator it = getCacheRegistry().entrySet().iterator();
+	    while (it.hasNext()) {
+	        Map.Entry<String,CacheItem> entry = (Map.Entry<String,CacheItem>)it.next();	
+	        CacheItem item =  entry.getValue();
+	        if (item.getTable().equalsIgnoreCase(signature)){
+	        	toReturn = item;
+	        	break;
+	        }
+	    }
+		return toReturn;
+	}
+
+	public CacheItem getCacheItemByResultsetSignature(String resultSetSignature){
+		CacheItem toReturn = null;
+		Iterator it = getCacheRegistry().entrySet().iterator();
+	    while (it.hasNext()) {
+	        Map.Entry<String,CacheItem> entry = (Map.Entry<String,CacheItem>)it.next();	
+	        CacheItem item =  entry.getValue();
+	        if (item.getSignature().equalsIgnoreCase(resultSetSignature)){
+	        	toReturn = item;
+	        	break;
+	        }
+	    }
+		return toReturn;
+	}
+
+	public boolean containsCacheItem(String signature) {
+		return getCacheItem(signature) != null;
+	}
+	
+	public boolean containsCacheItemByResultsetSignature(String resultSetSignature) {
+		return getCacheItemByResultsetSignature(resultSetSignature) != null;
 	}
 }

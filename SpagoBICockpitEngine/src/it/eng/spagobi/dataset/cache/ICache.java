@@ -36,12 +36,6 @@ import java.util.List;
 public interface ICache {
 	/**
 	 * @param resultsetSignature the unique resultSet signature
-	 * @return true if resultSet is cached, false if not
-	 */
-	boolean contains(String resultsetSignature);
-	
-	/**
-	 * @param resultsetSignature the unique resultSet signature
 	 * @return the resultSet if cached, null elsewhere 
 	 */
 	IDataStore get(String resultsetSignature);
