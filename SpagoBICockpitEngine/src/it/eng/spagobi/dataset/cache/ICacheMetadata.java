@@ -21,9 +21,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.spagobi.dataset.cache;
 
+import it.eng.spagobi.dataset.cache.impl.sqldbcache.CacheItem;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 
 import java.math.BigDecimal;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 /**
@@ -43,9 +45,9 @@ public interface ICacheMetadata {
 	BigDecimal getDimensionSpaceUsed(IDataStore resultset);
 	
 	/**
-	 * @return the number of the objects cached
+	 * @return the percentage of the cache to be clean
 	 */
-	Integer getNumberOfObjects();
+	Integer getPercentageFreeCache();
 	
 	/**
 	 * @return true if the configuration about the clean action are correctly defined
@@ -58,12 +60,57 @@ public interface ICacheMetadata {
 	boolean hasSpaceForResultSet(IDataStore resultset);
 	
 	/**
-	 * @return a list of the cached objects ordered by dimension (largest at the begin)
+	 * @return the percentage of the cache space free (on the total bytes available)
 	 */
-	List getObjectsByDimension();
+	Integer getSpaceFreeAsPercentage();
 	
 	/**
-	 * @return a list of the cached objects ordered by store time (oldest at the begin)
+	 * @return the cache registry map
 	 */
-	List getObjectsByTime();
+	public LinkedHashMap<String, CacheItem> getCacheRegistry();
+	
+	/**
+	 * set the cache registry map
+	 */
+	public void setCacheRegistry(LinkedHashMap<String, CacheItem> cacheRegistry);
+	
+	/**
+	 * add a cacheItem 
+	 */
+	public void addCacheItem(String resultsetSignature, String tableName, IDataStore resultset);
+	
+	/**
+	 * remove the cacheItem
+	 */
+	public void removeCacheItem(String signature);
+	
+	/**
+	 * remove all the cacheItems
+	 */
+	public void removeAllCacheItems();
+	
+	/**
+	 * @return the cache item getted by table name
+	 */
+	public CacheItem getCacheItem(String signature);
+	
+	/**
+	 * @return the  cache item getted by resultset signature
+	 */
+	public CacheItem getCacheItemByResultsetSignature(String resultSetSignature);
+	
+	/**
+	 *@return true if the signature (tablename) already esists
+	 */
+	public boolean containsCacheItem(String signature);
+	
+	/**
+	 *@return true if the resultsetSignature already esists
+	 */
+	public boolean containsCacheItemByResultsetSignature(String resultSetSignature);
+	
+	/**
+	 * @return the number of the objects cached
+	 */
+	Integer getNumberOfObjects();
 }
