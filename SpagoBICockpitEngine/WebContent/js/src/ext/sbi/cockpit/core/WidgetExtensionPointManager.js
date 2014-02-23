@@ -54,16 +54,16 @@ Sbi.cockpit.core.WidgetExtensionPointManager = {
 	 * Registers a widget extension.
 	 * 
 	 * @param {String} wtype The mnemonic code of the registered widget extension.
-	 * @param {Object} wdescriptor The object that describe the registered widget extension.
-	 * @param {String} wdescriptor.name The descriptive name of the widget extension.
-	 * @param {String} wdescriptor.icon The icon associate to the widget extension.
-	 * @param {String} wdescriptor.runtimeClass The name of the class used as widget's runtime. It must extend Sbi.cockpit.core.WidgetRuntime
-	 * @param {String} wdescriptor.designerClass The name of the class used as widget's designer. It must extend Sbi.cockpit.core.WidgetDesigner
+	 * @param {Object} descriptor The object that describe the registered widget extension.
+	 * @param {String} descriptor.name The descriptive name of the widget extension.
+	 * @param {String} descriptor.icon The icon associate to the widget extension.
+	 * @param {String} descriptor.runtimeClass The name of the class used as widget's runtime. It must extend Sbi.cockpit.core.WidgetRuntime
+	 * @param {String} descriptor.designerClass The name of the class used as widget's designer. It must extend Sbi.cockpit.core.WidgetDesigner
 	 */
-	, registerWidget: function(wtype, wdescriptor) {
+	, registerWidget: function(wtype, descriptor) {
 		Sbi.trace("[WidgetExtensionPoint.registerWidget]: IN");
 		Sbi.debug("[WidgetExtensionPoint.registerWidget]: registered widget extension type [" + wtype + "]");
-		Sbi.cockpit.core.WidgetExtensionPointManager.registry[wtype] = wdescriptor;
+		Sbi.cockpit.core.WidgetExtensionPointManager.registry[wtype] = descriptor;
 		Sbi.trace("[WidgetExtensionPoint.registerWidget]: OUT");
 	}
 	
@@ -87,7 +87,7 @@ Sbi.cockpit.core.WidgetExtensionPointManager = {
 	 * 
 	 * Returns true if a widget extension of the passed in <code>wtype</code> is registered, false otherwise.
 	 * 
-	 * @param {String} the widget type
+	 * @param {String} wtype The widget type
 	 * 
 	 * @return {boolean} true if a widget of the specified type is registered
 	 */
