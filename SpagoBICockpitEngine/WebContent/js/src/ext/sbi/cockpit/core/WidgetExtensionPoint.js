@@ -9,14 +9,14 @@ Ext.ns("Sbi.cockpit.core");
 /**
  * @class Sbi.cockpit.core.WidgetExtensionPoint
  * <p>This object provides a registry of available Widget's extensions
- * indexed by a mnemonic code known as the Widget's {@link Sbi.cockpit.core.Widget#wtype wtype}. 
- * The <code>{@link Sbi.cockpit.core.Widget#wtype wtype}</code> provides a way to dynamically instantiate a widget's runtime or designer 
+ * indexed by a mnemonic code known as the Widget's {@link Sbi.cockpit.core.WidgetRuntime#wtype wtype}. 
+ * The <code>{@link Sbi.cockpit.core.WidgetRuntime#wtype wtype}</code> provides a way to dynamically instantiate a widget's runtime or designer 
  * component without hard coding their constructors into the code. In this way new widgets can easily plugged into the platform</p>. 
  * To implement a new widget extension it is necessary to implement the following two classes:
  * 
  * <ul>
- * <li>{@link Sbi.cockpit.core.Sbi.cockpit.core.Widget Sbi.cockpit.core.Widget}</li> that manage the runtime facet of the widget 
- * <li>{@link Sbi.cockpit.core.Sbi.cockpit.core.Widget Sbi.cockpit.core.WidgetDesigner}</li> that manage teh edit facet of the widget
+ * <li>{@link Sbi.cockpit.core.Sbi.cockpit.core.WidgetRuntime Sbi.cockpit.core.WidgetRuntime}</li> that manage the runtime facet of the widget 
+ * <li>{@link Sbi.cockpit.core.Sbi.cockpit.core.WidgetDesigner Sbi.cockpit.core.WidgetDesigner}</li> that manage teh edit facet of the widget
  * </ul>  
  * 
  * Onece the two calsses has been implemented the new extension can be registered as shown in the following example:
@@ -50,7 +50,7 @@ Sbi.cockpit.core.WidgetExtensionPoint = {
 	 * @param {Object} wdescriptor The object that describe the registered widget extension
 	 * @param {String} wdescriptor.name The descriptive name of the widget extension
 	 * @param {String} wdescriptor.icon The icon associate to the widget extension
-	 * @param {String} wdescriptor.runtimeClass The name of the class used as widget's runtime. It must extend Sbi.cockpit.core.Widget
+	 * @param {String} wdescriptor.runtimeClass The name of the class used as widget's runtime. It must extend Sbi.cockpit.core.WidgetRuntime
 	 * @param {String} wdescriptor.designerClass The name of the class used as widget's designer. It must extend Sbi.cockpit.core.WidgetDesigner
 	 */
 	, registerWidget: function(wtype, wdescriptor) {
@@ -171,7 +171,7 @@ Sbi.cockpit.core.WidgetExtensionPoint.getWidget(widget);
 		Sbi.trace("[WidgetExtensionPoint.getWidget]: IN");
 		if(Sbi.isNotValorized(widget)) {
     		Sbi.warn("[WidgetExtensionPoint.getWidget]: Input parameter [widget] is not valorized.");	
-    	} else if( (widget instanceof Sbi.cockpit.core.Widget) === true) {
+    	} else if( (widget instanceof Sbi.cockpit.core.WidgetRuntime) === true) {
     		var wtype = widget.getWType();
     		Sbi.warn("[WidgetExtensionPoint.getWidget]: Input parameter [widget] is a widget object of type [" + wtype + "]");
     		if( this.isWidgetRegistered(wtype) ) {
@@ -204,7 +204,7 @@ Sbi.cockpit.core.WidgetExtensionPoint.getWidget(widget);
 	 * @param {Object} conf.wlayout (optional) The layout configuration of the new widget
 	 * @param {Object} conf.wstyle (optional) The style configuration of the new widget
 	 * 
-	 * @return {Sbi.cockpit.core.Widget} The new widget
+	 * @return {Sbi.cockpit.core.WidgetRuntime} The new widget
 	 */
 	, createWidget: function(conf) {
 		Sbi.trace("[WidgetExtensionPoint.createWidget]: IN");
@@ -265,7 +265,7 @@ Sbi.cockpit.core.WidgetExtensionPoint.createWidgetDesigner(designer);
 	 * 
 	 * @param {Object} The widget designer configuration oject
 	 *  
-	 * @return {Sbi.cockpit.core.Widget} The new widget designer
+	 * @return {Sbi.cockpit.core.WidgetDesigner} The new widget designer
 	 */
 	, createWidgetDesigner: function(conf) {
 		Sbi.trace("[WidgetExtensionPoint.createWidgetDesigner]: IN");

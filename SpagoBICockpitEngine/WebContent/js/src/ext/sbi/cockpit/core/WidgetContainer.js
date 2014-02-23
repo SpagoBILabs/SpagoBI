@@ -39,7 +39,7 @@ Sbi.cockpit.core.WidgetContainer = function(config) {
 	Sbi.cockpit.core.WidgetContainer.superclass.constructor.call(this, c);
 };
 
-Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.Widget, {
+Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.WidgetRuntime, {
     
 	// =================================================================================================================
 	// PROPERTIES
