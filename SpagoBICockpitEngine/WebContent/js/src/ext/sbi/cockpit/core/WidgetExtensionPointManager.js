@@ -304,5 +304,3 @@ Sbi.cockpit.core.WidgetExtensionPointManager.createWidgetDesigner(designer);
 // shortcuts
 Sbi.registerWidget = Sbi.cockpit.core.WidgetExtensionPointManager.registerWidget;
 Sbi.unregisterWidget = Sbi.cockpit.core.WidgetExtensionPointManager.unregisterWidget;
-
-
