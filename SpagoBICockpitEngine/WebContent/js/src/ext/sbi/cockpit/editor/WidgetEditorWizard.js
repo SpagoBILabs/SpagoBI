@@ -79,7 +79,7 @@ Ext.extend(Sbi.cockpit.editor.WidgetEditorWizard, Ext.Window, {
 			if(widgetConf.storeId) {
 				Sbi.trace("[WidgetEditorWizard.setWizardTargetComponent]: select dataset [" + widgetConf.storeId + "]");
 				this.editorMainPanel.selectDataset(widgetConf.storeId);
-				this.editorMainPanel.setWidgetEditorPageState(widgetConf.custom);
+				this.editorMainPanel.setWidgetEditorPageState(widgetConf.wconf);
 				Sbi.trace("[WidgetEditorWizard.setWizardTargetComponent]: move to page [" + 1 + "]");
 				this.editorMainPanel.moveToPage (1);
 			} else {

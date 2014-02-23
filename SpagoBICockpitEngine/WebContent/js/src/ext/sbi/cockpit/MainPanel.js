@@ -203,13 +203,9 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 		});
 	}
 	
-	, addWidget: function() {	
-		this.widgetContainer.addWidget(null, {
-			  x : 0
-	    	, y: 0
-			, width : 0.5
-			, height : 0.5
-		});
+	, addWidget: function() {
+		// add an empty widget in the default region of the container
+		this.widgetContainer.addWidget();
 	}
 		
 	

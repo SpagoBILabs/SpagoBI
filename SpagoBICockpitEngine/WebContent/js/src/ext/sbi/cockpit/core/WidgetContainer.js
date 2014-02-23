@@ -6,6 +6,17 @@
 
 Ext.ns("Sbi.cockpit.core");
 
+/**
+ * @class Sbi.cockpit.core.WidgetContainer
+ * @extends Ext.util.Observable
+ * 
+ * bla bla bla bla bla ...
+ */
+
+/**
+ * @cfg {Object} config
+ * ...
+ */
 Sbi.cockpit.core.WidgetContainer = function(config) {
 	
 	this.validateConfigObject(config);
@@ -28,17 +39,6 @@ Sbi.cockpit.core.WidgetContainer = function(config) {
 	Sbi.cockpit.core.WidgetContainer.superclass.constructor.call(this, c);
 };
 
-/**
- * @class Sbi.cockpit.core.WidgetContainer
- * @extends Ext.util.Observable
- * 
- * bla bla bla bla bla ...
- */
-
-/**
- * @cfg {Object} config
- * ...
- */
 Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.Widget, {
     
 	// =================================================================================================================
@@ -64,8 +64,8 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.Widget, {
 	, defaultRegion: {
 		width : 0.5
 	   	, height : 0.5
-	   	, x : '50%'
-	   	, y: '50%'
+	   	, x : 0.5
+	   	, y: 0.5
 	}
 	 
 	// =================================================================================================================
@@ -116,29 +116,28 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.Widget, {
     // public methods
 	// -----------------------------------------------------------------------------------------------------------------
 	
-    , addWidget: function(widget, region) {	
+	/**
+	 * @method
+	 */
+    , addWidget: function(widget, layoutConf) {	
 
 		Sbi.trace("[WidgetContainer.addWidget]: IN");
     	
-    	if(!widget) {
-    		Sbi.trace("[WidgetContainer.addWidget]: Widget is not valorized. An empty componnt will be created in the specified region");	
-    	} else if( (widget instanceof Sbi.cockpit.core.Widget) === false) {
-    		if(typeof widget === 'object' && (widget instanceof Ext.util.Observable) === false) {
-    			Sbi.trace("[WidgetContainer.addWidget]: The passed in parameter is a widget configuration object equlas to [" + Sbi.toSource(widget, true) + "]");	
-    			widget = Sbi.cockpit.core.WidgetExtensionPoint.getWidget(widget.wtype,  {wconf: widget});
-    		} else {
-    			Sbi.error("[WidgetContainer.addWidget]: The passed in parameter of type [" + (typeof widget) + "] is not valid");	
-    			Sbi.error("[WidgetContainer.addWidget]: Passed object is equal to [" +  Sbi.toSource(widget) + "]");	
-    		}
-    	} else {
-    		Sbi.trace("[WidgetContainer.addWidget]: The passed in widget object will be added to a new component placed in the specified region");	
-    	}
-    	
+		widget = Sbi.cockpit.core.WidgetExtensionPoint.getWidget(widget);
     	if(widget) {
     		this.widgetManager.register(widget);
+    		if(Sbi.isValorized(layoutConf)) {
+        		Sbi.trace("[WidgetContainer.addWidget]: Input parameter [layoutConf] is valorized");
+        		widget.setLayoutConfiguration(layoutConf);
+        	} else {
+        		Sbi.trace("[WidgetContainer.addWidget]: Input parameter [layoutConf] is not valorized so it will e replaced with the [wlayout] property of the widget]");
+        		layoutConf = widget.getLayoutConfiguration();
+        	}
     	}
+    	 	
+    	Sbi.trace("[WidgetContainer.addWidget]: [layoutConf] is equal to [" + Sbi.toSource(layoutConf) + "]");
     	
-    	var component = this.addComponent(widget, region);
+    	var component = this.addComponent(widget, layoutConf);
 
 		Sbi.trace("[WidgetContainer.addWidget]: OUT");
 		
@@ -304,8 +303,8 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.Widget, {
     		Sbi.trace("[WidgetContainer.onRender]: There are [" + this.widgets.length + "] widget(s) to render");
     		for(var i = 0; i < this.widgets.length; i++) {
     			var widgetConf = this.widgets[i];
-    			var w = this.addWidget(widgetConf.custom, widgetConf.layout);
-    			w.setStoreId(widgetConf.storeId);
+    			var w = this.addWidget(widgetConf);
+    			//w.setStoreId(widgetConf.storeId);
     		}
     	} else {
     		Sbi.trace("[WidgetContainer.onRender]: There are no widget to render");
@@ -346,13 +345,61 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.Widget, {
     	return this.convertToAbsoluteHeight(relativeY);
     }
     
+    /**
+     * @method
+     * Returns the region received as argument with all measures converted from relative unit (i.e. %)) to absolute unit (i.e. %). The 
+     * original object is not modified
+     * 
+     * @param {Objcet} relativeRegion The region to convert in relative units
+     * @param {Number} relativeRegion.x The region x position in percentage
+     * @param {Number} relativeRegion.y The region y position in percentage
+     * @param {Number} relativeRegion.width The region width in percentage
+     * @param {Number} relativeRegion.height The region height in percentage   
+     * 
+     * @return {Object} The region with all measure express in absolute units (i.e. px)
+     */
     , convertToAbsoluteRegion: function(relativeRegion) {
     	var absoluteRegion = {};
     	
-    	absoluteRegion.width = this.convertToAbsoluteWidth(relativeRegion.width);
-    	absoluteRegion.height = this.convertToAbsoluteHeight(relativeRegion.height);
-    	absoluteRegion.x = this.convertToAbsoluteX(relativeRegion.x);
-    	absoluteRegion.y = this.convertToAbsoluteY(relativeRegion.y);
+    	Sbi.trace("[WidgetContainer.convertToAbsoluteRegion]: IN");
+    	
+    	Sbi.trace("[WidgetContainer.convertToAbsoluteRegion]: Input relative region is equal to [" + Sbi.toSource(relativeRegion) + "]");
+    	
+    	if(Sbi.isNotValorized(relativeRegion)) {
+    		Sbi.trace("[WidgetContainer.convertToAbsoluteRegion]: Input parameter [relativeRegion] is not defined");
+    		Sbi.trace("[WidgetContainer.convertToAbsoluteRegion]: OUT");
+    		return null;
+    	}
+    	
+    	if(Sbi.isValorized(relativeRegion.width)) {
+    		absoluteRegion.width = this.convertToAbsoluteWidth(relativeRegion.width);
+    	} else {
+    		Sbi.warn("[WidgetContainer.convertToAbsoluteRegion]: attribute [width] is not defined in the region to convert");
+    	}
+    	
+    	if(Sbi.isValorized(relativeRegion.height)) {
+    		absoluteRegion.height = this.convertToAbsoluteHeight(relativeRegion.height);
+    	} else {
+    		Sbi.warn("[WidgetContainer.convertToAbsoluteRegion]: attribute [height] is not defined in the region to convert");
+    	}
+    	
+    	if(Sbi.isValorized(relativeRegion.x)) {
+    		absoluteRegion.x = this.convertToAbsoluteX(relativeRegion.x);
+    	} else {
+    		Sbi.warn("[WidgetContainer.convertToAbsoluteRegion]: attribute [x] is not defined in the region to convert");
+    	}
+    	
+    	
+    	if(Sbi.isValorized(relativeRegion.y)) {
+    		absoluteRegion.y = this.convertToAbsoluteY(relativeRegion.y);
+    	} else {
+    		Sbi.warn("[WidgetContainer.convertToAbsoluteRegion]: attribute [y] is not defined in the region to convert");
+    	}
+    	
+    	
+    	Sbi.trace("[WidgetContainer.convertToAbsoluteRegion]: Output absolute region is equal to [" + Sbi.toSource(absoluteRegion) + "]");
+    	
+    	Sbi.trace("[WidgetContainer.convertToAbsoluteRegion]: OUT");
     	
     	return absoluteRegion;
     }
@@ -395,10 +442,12 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.Widget, {
      * be added if not explicitly specified otherwise
      */
     , getDefaultRegion: function() {
-    	return this.deafultRegion;
+    	var r = Ext.apply({}, this.defaultRegion || {});
+    	Sbi.trace("[WidgetContainer.getDefaultRegion]: default region is equal to: [" + Sbi.toSource(r) + "]");
+    	return r;
     }
     
-    , addComponent: function(widget, region) {
+    , addComponent: function(widget, layoutConf) {
     	
     	Sbi.trace("[WidgetContainer.addComponent]: IN");
     	
@@ -408,16 +457,19 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.Widget, {
     		componentConf.widget = widget;
     	}
     	
-    	if( Sbi.isNotValorized(region) ) {
-    		region = this.getDefaultRegion();
+    	if( Sbi.isNotValorized(layoutConf) ) {
+    		Sbi.trace("[WidgetContainer.addComponent]: input parameter [layoutConf] is not defined");
+    		layoutConf = {};
+    	}
+    	if( Sbi.isNotValorized(layoutConf.region) ) {
+    		Sbi.trace("[WidgetContainer.addComponent]: attribute [region] of input parameter [layoutConf] is not defined");
+    		layoutConf.region = this.getDefaultRegion();
     	}
     	
-    	Sbi.trace("[WidgetContainer.addComponent]: region is equal to: [" + Sbi.toSource(region) + "]");
+    	layoutConf.region = this.convertToAbsoluteRegion(layoutConf.region);
+    	Sbi.trace("[WidgetContainer.addComponent]: the new component will be added to region: [" + Sbi.toSource(layoutConf.region) + "]");
     	
-    	Ext.apply(componentConf, this.convertToAbsoluteRegion(region));
-    	
-
-      	
+    	Ext.apply(componentConf, layoutConf);
     	var component = new Sbi.cockpit.core.WidgetContainerComponent(componentConf);
     	
     	component.on('move', this.onComponentMove, this);

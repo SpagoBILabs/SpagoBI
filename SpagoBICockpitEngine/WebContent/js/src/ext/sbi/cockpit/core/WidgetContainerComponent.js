@@ -7,6 +7,17 @@
  
 Ext.ns("Sbi.cockpit.core");
 
+/**
+ * @class Sbi.cockpit.core.WidgetContainerComponent
+ * @extends Ext.Window
+ * 
+ * bla bla bla bla bla ...
+ */
+
+/**
+ * @cfg {Object} config
+ * ...
+ */
 Sbi.cockpit.core.WidgetContainerComponent = function(config) {
 	
 	Sbi.trace("[WidgetContainerComponent.costructor]: IN");
@@ -23,12 +34,20 @@ Sbi.cockpit.core.WidgetContainerComponent = function(config) {
 	    , plain : true
 	    , constrain: true
 	    , layout : 'fit'
+	    , width:653
+	    , height:332
+	    , x: 100
+	    , y: 100
 	};
 	
 	var settings = Sbi.getObjectSettings('Sbi.cockpit.core.WidgetContainerComponent', defaultSettings);
 	
 	var c = Ext.apply(settings, config || {});
 	Ext.apply(this, c);
+	Sbi.trace("[WidgetContainerComponent.costructor]: region is equal to [" + Sbi.toSource(this.region) + "]");
+	
+	Ext.apply(c, this.region);
+	delete this.region;
 	
 	// init events...
 	this.addEvents('performaction', 'move', 'resize');
@@ -49,17 +68,6 @@ Sbi.cockpit.core.WidgetContainerComponent = function(config) {
 	Sbi.trace("[WidgetContainerComponent.costructor]: OUT");
 };
 
-/**
- * @class Sbi.cockpit.core.WidgetContainerComponent
- * @extends Ext.Window
- * 
- * bla bla bla bla bla ...
- */
-
-/**
- * @cfg {Object} config
- * ...
- */
 Ext.extend(Sbi.cockpit.core.WidgetContainerComponent, Ext.Window, {
     
 	// =================================================================================================================
@@ -115,25 +123,12 @@ Ext.extend(Sbi.cockpit.core.WidgetContainerComponent, Ext.Window, {
 	 * 
 	 */
 	, adjustConfigObject: function(config) {
-		
+		return config;
 	}
 	
 	// -----------------------------------------------------------------------------------------------------------------
     // public methods
 	// -----------------------------------------------------------------------------------------------------------------
-	
-	
-//	, onRender : function(ct, position){
-//    	Sbi.trace("[WidgetContainerComponent.onRender]: IN");
-//    	Sbi.cockpit.core.WidgetContainerComponent.superclass.onRender.call(this, ct, position);
-//    	if( Sbi.isValorized(this.widget)) {
-//    		Sbi.trace("[WidgetContainerComponent.onRender]: There is an embedded widget to render");
-//    		this.setWidget(this.widget);
-//    	} else {
-//    		Sbi.trace("[WidgetContainerComponent.onRender]: There are no embedded widget to render");
-//    	}
-//    	Sbi.trace("[WidgetContainerComponent.onRender]: OUT");
-//    }
 	
 	/**
 	 * @method
@@ -200,7 +195,7 @@ Ext.extend(Sbi.cockpit.core.WidgetContainerComponent, Ext.Window, {
 		Sbi.trace("[WidgetContainerComponent.setWidgetConfiguration]: IN");
 		var widget;
 		if(this.isEmpty()) {
-			widget = Sbi.cockpit.core.WidgetExtensionPoint.getWidget(widgetConf.wtype, widgetConf);
+			widget = Sbi.cockpit.core.WidgetExtensionPoint.getWidget(widgetConf);
 		} else {
 			widget = this.getWidget();
 			widget.setConfiguration(widgetConf);

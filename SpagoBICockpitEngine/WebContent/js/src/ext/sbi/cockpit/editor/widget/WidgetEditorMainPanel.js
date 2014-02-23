@@ -112,7 +112,7 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditorMainPanel, Ext.Panel, {
 			, html: widgetConf.wtype + ' widget designer'
 		};
 		
-		var designer =  Sbi.cockpit.core.WidgetExtensionPoint.getWidgetDesigner(widgetConf.wtype, Ext.apply(widgetConf, sheredConf));
+		var designer =  Sbi.cockpit.core.WidgetExtensionPoint.getWidgetDesigner(Ext.apply(widgetConf, sheredConf));
 		this.insertDesigner(designer);
 				
 		// propagate events
