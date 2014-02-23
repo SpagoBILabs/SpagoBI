@@ -33,7 +33,7 @@ Sbi.cockpit.widgets.dummy.DummyWidget = function(config) {
  * @cfg {Object} config
  * ...
  */
-Ext.extend(Sbi.cockpit.widgets.dummy.DummyWidget, Sbi.cockpit.core.Widget, {
+Ext.extend(Sbi.cockpit.widgets.dummy.DummyWidget, Sbi.cockpit.core.WidgetRuntime, {
     
 	// =================================================================================================================
 	// PROPERTIES

@@ -38,12 +38,18 @@ Ext.ns("Sbi.cockpit.core");
  * @class Sbi.cockpit.core.WidgetDesigner
  * @extends Ext.Panel
  * 
- * The abstract class extneded by the specific designer of each widget extensions. It have the responsability to manage
- * the editing facet of the widget.
+ * It's an abstract class that simplify the implementation of the design facet of a new widget extension.
+ * See {@link Sbi.cockpit.core.WidgetExtensionPointManager WidgetExtensionPointManager} to find out more 
+ * information on widget's extension point.
  */
 
 /**
- * @cfg {Object} config No specific configuration defined
+ * @cfg {Object} config the widget configuration object
+ * @cfg {String} config.storeId The label of the dataset used to feed the widget
+ * @cfg {String} config.wtype The type of the widget
+ * @cfg {Object} config.wconf The custom configuration of the widget. Its content depends on the widget's #wtype 
+ * @cfg {Object} config.wstyle The style configuration of the widget. Its content depends on the widget's #wtype 
+ * @cfg {Object} config.wlayout The layout configuration of the widget. Its content depends on the widget's parent {@link #parentContainer container container}
  */
 Sbi.cockpit.core.WidgetDesigner = function(config) { 
 	
@@ -64,12 +70,20 @@ Sbi.cockpit.core.WidgetDesigner = function(config) {
 	
 	Sbi.cockpit.core.WidgetDesigner.superclass.constructor.call(this, c);
 	
-	Sbi.trace("[WidgetDesigner.constructor]: OUT");
-	
+	Sbi.trace("[WidgetDesigner.constructor]: OUT");	
 };
 
 Ext.extend(Sbi.cockpit.core.WidgetDesigner, Ext.Panel, {
 	
+	// =================================================================================================================
+	// PROPERTIES
+	// =================================================================================================================
+	
+	/**
+     * @property {String} wtype
+     * The wtype of the widget extension as registered in {@link Sbi.cockpit.core.WidgetExtensionPointManager}
+     * to which this runtime class is associated. 
+     */
 	wtype: null
 	
 	, getDesignerType: function() {

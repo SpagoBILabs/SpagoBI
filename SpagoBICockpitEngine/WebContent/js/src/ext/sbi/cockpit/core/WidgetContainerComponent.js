@@ -195,7 +195,7 @@ Ext.extend(Sbi.cockpit.core.WidgetContainerComponent, Ext.Window, {
 		Sbi.trace("[WidgetContainerComponent.setWidgetConfiguration]: IN");
 		var widget;
 		if(this.isEmpty()) {
-			widget = Sbi.cockpit.core.WidgetExtensionPoint.getWidget(widgetConf);
+			widget = Sbi.cockpit.core.WidgetExtensionPointManager.getWidgetRuntime(widgetConf);
 		} else {
 			widget = this.getWidget();
 			widget.setConfiguration(widgetConf);

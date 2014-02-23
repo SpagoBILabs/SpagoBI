@@ -18,12 +18,18 @@ Ext.ns("Sbi.cockpit.core");
  * @class Sbi.cockpit.core.WidgetRuntime
  * @extends Ext.Panel
  * 
- * bla bla bla bla bla ...
+ * It's an abstract class that simplify the implementation of the runtime facet of a new widget extension. 
+ * See {@link Sbi.cockpit.core.WidgetExtensionPointManager WidgetExtensionPointManager} to find out more 
+ * information on widget's extension point.
  */
 
 /**
- * @cfg {Object} config
- * ...
+ * @cfg {Object} config the widget configuration object
+ * @cfg {String} config.storeId The label of the dataset used to feed the widget
+ * @cfg {String} config.wtype The type of the widget
+ * @cfg {Object} config.wconf The custom configuration of the widget. Its content depends on the widget's #wtype 
+ * @cfg {Object} config.wstyle The style configuration of the widget. Its content depends on the widget's #wtype 
+ * @cfg {Object} config.wlayout The layout configuration of the widget. Its content depends on the widget's parent {@link #parentContainer container container}
  */
 Sbi.cockpit.core.WidgetRuntime = function(config) {	
 		
@@ -86,7 +92,8 @@ Ext.extend(Sbi.cockpit.core.WidgetRuntime, Ext.Panel, {
     
     /**
      * @property {String} wtype
-     * The wtype of the widget as registered in {@link Sbi.cockpit.core.WidgetExtensionPoint}. 
+     * The wtype of the widget extension as registered in {@link Sbi.cockpit.core.WidgetExtensionPointManager}
+     * to which this runtime class is associated. 
      */
     , wtype: null
     
@@ -233,7 +240,7 @@ Ext.extend(Sbi.cockpit.core.WidgetRuntime, Ext.Panel, {
 	/**
 	 * @method
 	 * 
-     * Gets the wtype for this widget as registered in {@link Sbi.cockpit.core.WidgetExtensionPoint}
+     * Gets the wtype for this widget as registered in {@link Sbi.cockpit.core.WidgetExtensionPointManager}
      * 
      * @return {String} The wtype
      */

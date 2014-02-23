@@ -123,7 +123,7 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.WidgetRuntime, {
 
 		Sbi.trace("[WidgetContainer.addWidget]: IN");
     	
-		widget = Sbi.cockpit.core.WidgetExtensionPoint.getWidget(widget);
+		widget = Sbi.cockpit.core.WidgetExtensionPointManager.getWidgetRuntime(widget);
     	if(widget) {
     		this.widgetManager.register(widget);
     		if(Sbi.isValorized(layoutConf)) {
