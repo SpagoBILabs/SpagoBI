@@ -123,6 +123,9 @@ Ext.extend(Sbi.cockpit.core.WidgetRuntime, Ext.Panel, {
     // public methods
 	// -----------------------------------------------------------------------------------------------------------------
     
+    /**
+     * Refresh the widget's content. This method is abstract and so must be implemented properly by subclass.
+     */
     , refresh:  function() {  
 		Sbi.trace("[Widget.refresh]: IN");
 		Sbi.trace("[Widget.refresh]: OUT");
@@ -130,12 +133,17 @@ Ext.extend(Sbi.cockpit.core.WidgetRuntime, Ext.Panel, {
 
 	/**
 	 * @method
-	 * Sets the configuration of the wizard 
 	 * 
-	 * @param {Object} config The configuration object
-	 * @param {String} config.storeId The label of the dataset used to feed the widget
-	 * @param {String} config.wtype The type of the widget
-	 * @param {Object} config.wconf The custom configuration of the widget. Its content depends on the widget's type
+	 * Sets the configuration of the widget. All part of the configuration are optional. If a part of the configuratio is not specified
+	 * it is simply not applied.
+	 * 
+	 * @param {Object} config The widget configuration object.
+	 * @param {String} config.storeId The label of the dataset used to feed the widget.
+	 * @param {String} config.wtype The wtype of the widget.
+	 * @param {Object} config.wconf The custom configuration of the widget. Its content depends on the widget's #wtype.
+	 * @param {Object} config.wstyle The style configuration of the widget. Its content depends on the widget's #wtype.
+	 * @param {Object} config.wlayout The layout configuration of the widget. Its content depends on the widget's #parentContainer
+	 * @param {boolean} refresh true to force the refresh of the widget after after the the configuration is set, false otherwise. The default is true.
 	 */
 	, setConfiguration: function(config, refresh) {
 		Sbi.trace("[Widget.setConfiguration]: IN");
@@ -159,12 +167,14 @@ Ext.extend(Sbi.cockpit.core.WidgetRuntime, Ext.Panel, {
 	/**
 	 * @method
 	 * 
-	 * Returns the widget configuration
+	 * Returns the widget configuration object.
 	 * 
-	 * @return {Object} The configuration object
-	 * @return {String} return.storeId The label of the dataset used to feed the widget
-	 * @return {String} return.wtype The type of the widget
-	 * @return {Object} return.custom The custom configuration of the widget. Its content depends on the widget's type
+	 * @return {Object} The widget configuration object.
+	 * @return {String} return.storeId The label of the dataset used to feed the widget.
+	 * @return {String} return.wtype The wtype of the widget.
+	 * @return {Object} return.wconf The custom configuration of the widget. Its content depends on the widget's #wtype.
+	 * @return {Object} return.wstyle The style configuration of the widget. Its content depends on the widget's #wtype.
+	 * @return {Object} return.wlayout The layout configuration of the widget. Its content depends on the widget's #parentContainer
 	 */
     , getConfiguration: function() {
     	Sbi.trace("[Widget.getConfiguration]: IN");
@@ -183,23 +193,12 @@ Ext.extend(Sbi.cockpit.core.WidgetRuntime, Ext.Panel, {
     	return config;
 	}
     
-    /**
-     * @method
-     * 
-     * Returns the label of the dataset used to feed the widget
-     * 
-     * @return {String} the dataset's label
-     */
-    , getStoreId: function() {
-    	return this.storeId;
-    	
-    }
-
 	/**
 	 * @method
 	 * Sets the label of the dataset used to feed the widget
 	 * 
 	 * @param {String} storeId The dataset's label
+	 * @param {boolean} refresh true to force the refresh after the setting of the property, false otherwise. The default is true.
 	 */
 	, setStoreId: function(storeId, refresh) {
 		if(Sbi.isValorized(storeId)) {
@@ -216,8 +215,28 @@ Ext.extend(Sbi.cockpit.core.WidgetRuntime, Ext.Panel, {
 		
 	}
 	
+    /**
+     * @method
+     * 
+     * Returns the label of the dataset used to feed the widget
+     * 
+     * @return {String} the dataset's label
+     */
+    , getStoreId: function() {
+    	return this.storeId;
+    	
+    }
+	
 	/**
 	 * @method
+	 * 
+	 * Returns the store associated to the store id passed in as argument in the widget manager
+	 * to which this widget is registered. If no #storeId is passed is retuned the store that feed
+	 * this widget.
+	 * 
+	 * @param {String} storeId the id of the store 
+	 * 
+	 * @return {Ext.data.Store} The store
 	 */
 	, getStore: function(storeiId) {
 		var store;
@@ -237,16 +256,6 @@ Ext.extend(Sbi.cockpit.core.WidgetRuntime, Ext.Panel, {
 		return store;
 	}
 	
-	/**
-	 * @method
-	 * 
-     * Gets the wtype for this widget as registered in {@link Sbi.cockpit.core.WidgetExtensionPointManager}
-     * 
-     * @return {String} The wtype
-     */
-	, getWType: function() {
-		return this.wtype;
-	}
 	
 	/**
 	 * @method
@@ -255,6 +264,7 @@ Ext.extend(Sbi.cockpit.core.WidgetRuntime, Ext.Panel, {
      * Sets the wtype for this widget
      * 
      * @param {String} The wtype
+     * @param {boolean} refresh true to force the refresh after the setting of the property, false otherwise. The default is true.
      */
 	, setWType: function(wtype, refresh) {
 		if(Sbi.isValorized(wtype)) {
@@ -270,19 +280,25 @@ Ext.extend(Sbi.cockpit.core.WidgetRuntime, Ext.Panel, {
 		}
 		
 	}
-
-    /**
-	 * @method
-	 */
-	, getCustomConfiguration: function() {
-		Sbi.trace("[Widget.getCustomConfiguration]: IN");
-		var config = Ext.apply({}, this.wconf || {});
-		Sbi.trace("[Widget.getCustomConfiguration]: OUT");
-		return config;
-	}
 	
 	/**
 	 * @method
+	 * 
+     * Gets the wtype for this widget as registered in {@link Sbi.cockpit.core.WidgetExtensionPointManager}
+     * 
+     * @return {String} The wtype
+     */
+	, getWType: function() {
+		return this.wtype;
+	}
+		
+	/**
+	 * @method
+	 * 
+	 * Sets the custom configuration of the widget. Its content depends on the widget's #wtype.
+	 * 
+	 * @param {Object} wconf The custom configuration of the widget.
+	 * @param {boolean} refresh true to force the refresh after the setting of the property, false otherwise. The default is true.
 	 */
 	, setCustomConfiguration: function(wconf, refresh) {
 		if(Sbi.isValorized(wconf)) {
@@ -298,8 +314,81 @@ Ext.extend(Sbi.cockpit.core.WidgetRuntime, Ext.Panel, {
 		}
 	}
 	
+    /**
+	 * @method
+	 * 
+	 * Gets the custom configuration of the widget. Its content depends on the widget's #wtype.
+	 * 
+	 * @return The custom configuration of the widget.
+	 */
+	, getCustomConfiguration: function() {
+		Sbi.trace("[Widget.getCustomConfiguration]: IN");
+		var config = Ext.apply({}, this.wconf || {});
+		Sbi.trace("[Widget.getCustomConfiguration]: OUT");
+		return config;
+	}
+	
 	/**
 	 * @method
+	 * 
+	 * Sets the style configuration of the widget. Its content depends on the widget's #wtype.
+	 * 
+	 * @param {Object} wconf The custom configuration of the widget.
+	 * @param {boolean} refresh true to force the refresh after the setting of the property, false otherwise. The default is true.
+	 */
+	, setStyleConfiguration: function(wstyle) {
+		if(Sbi.isValorized(wlayout)) {
+			this.wstyle = wstyle;
+			Sbi.trace("[Widget.setStyleConfiguration]: wstyle set to [" + Sbi.toSource(wstyle) + "]");
+		} else {
+			Sbi.trace("[Widget.setStyleConfiguration]: Input parameter [wstyle] is not valorized so the property [wstyle] will be left unchanged");
+		}	
+	}
+	
+	
+	 /**
+	 * @method
+	 * 
+	 * Gets the style configuration of the widget. Its content depends on the widget's #wtype.
+	 * 
+	 * @return The style configuration of the widget.
+	 */
+	, getStyleConfiguration: function() {
+		return this.wstyle;
+	}
+
+	
+	/**
+	 * @method
+	 * 
+	 * Sets the layout configuration of the widget. Its content depends on the widget's #parentContainer.
+	 * 
+	 * @param {Object} wlayout The layout configuration of the widget.
+	 * @param {boolean} toContainer true to force the set of the new layout also in the #parentContainer. The default is false.
+	 */
+	, setLayoutConfiguration: function(wlayout, toContainer) {
+		if(Sbi.isValorized(wlayout)) {
+			this.wlayout = wlayout;
+			if(toContainer === true) {
+				Sbi.trace("[Widget.setLayoutConfiguration]: update layout configuration also in parent container");
+				//TODO update the layoutcof of this widet also in its container
+			}
+			Sbi.trace("[Widget.setLayoutConfiguration]: wlayout set to [" + Sbi.toSource(wlayout) + "]");
+		} else {
+			Sbi.trace("[Widget.setLayoutConfiguration]: Input parameter [wlayout] is not valorized so the property [wlayout] will be left unchanged");
+		}
+	}
+	
+	 /**
+	 * @method
+	 * 
+	 * Gets the layout configuration of the widget. Its content depends on the widget's #parentContainer.
+	 * 
+	 * @param {boolean} fromContainer true to get the layoutConf directly form #parentConatiner, false to get it from the widget cached copy.
+	 * The widget's cached copy may be different from the one that come from the #parentContainer that is the most updated. Usually the 
+	 * widget's cached copy is synchronized with the #parentContainer one when the widget configuration is saved.
+	 * 
+	 * @return The layout configuration of the widget.
 	 */
 	, getLayoutConfiguration: function(fromContainer) {
 		var wl =  this.wlayout;
@@ -316,26 +405,12 @@ Ext.extend(Sbi.cockpit.core.WidgetRuntime, Ext.Panel, {
 	
 	/**
 	 * @method
-	 */
-	, setLayoutConfiguration: function(wlayout, toContainer) {
-		if(Sbi.isValorized(wlayout)) {
-			this.wlayout = wlayout;
-			if(toContainer === true) {
-				Sbi.trace("[Widget.setLayoutConfiguration]: update layout configuration also in parent container");
-				//TODO update the layoutcof of this widet also in its container
-			}
-			Sbi.trace("[Widget.setLayoutConfiguration]: wlayout set to [" + Sbi.toSource(wlayout) + "]");
-		} else {
-			Sbi.trace("[Widget.setLayoutConfiguration]: Input parameter [wlayout] is not valorized so the property [wlayout] will be left unchanged");
-		}
-	}
-	
-	/**
-	 * @method
 	 * @deprecated
 	 * 
-	 * Returns the region used by this widget in the container to which it is bound. Its content depends on the particular implementation 
-	 * of the container used
+	 * Returns the region used by this widget in the #parentContainer to which it is bound. Its content depends on the particular implementation 
+	 * of the container used.
+	 * 
+	 * @param {boolean} relative true to return all measures expressed in relative units (i.e. % of the #parentContainer dimensions).
 	 * 
 	 * @returns {Object} The region used by the widget
 	 */
@@ -366,27 +441,8 @@ Ext.extend(Sbi.cockpit.core.WidgetRuntime, Ext.Panel, {
 	
 	/**
 	 * @method
-	 */
-	, getStyleConfiguration: function() {
-		return this.wstyle;
-	}
-	
-	/**
-	 * @method
-	 */
-	, setStyleConfiguration: function(wstyle) {
-		if(Sbi.isValorized(wlayout)) {
-			this.wstyle = wstyle;
-			Sbi.trace("[Widget.setStyleConfiguration]: wstyle set to [" + Sbi.toSource(wstyle) + "]");
-		} else {
-			Sbi.trace("[Widget.setStyleConfiguration]: Input parameter [wstyle] is not valorized so the property [wstyle] will be left unchanged");
-		}	
-	}
-	
-	/**
-	 * @method
 	 * 
-	 * Returns the parent component that embed the widget. The parent component implementation depends on the container in
+	 * Returns the #parentContainer that embed the widget. The parent component implementation depends on the container in
 	 * which the widget is deployed
 	 * 
 	 * @return {Sbi.cockpit.core.WidgetContainerComponent} The parent component
@@ -438,7 +494,9 @@ Ext.extend(Sbi.cockpit.core.WidgetRuntime, Ext.Panel, {
     /**
 	 * @method
 	 * 
-	 * @return {Boolean} true if the widget is bounded to a container, false otherwise
+	 * Returns true if the widget is bounded to a container, false otherwise.
+	 * 
+	 * @return {boolean} true if the widget is bounded to a container, false otherwise.
 	 */
     , isBoundToAContainer: function() {
     	Sbi.trace("[Widget.isBoundToAContainer]: IN");
@@ -455,8 +513,10 @@ Ext.extend(Sbi.cockpit.core.WidgetRuntime, Ext.Panel, {
     /**
 	 * @method
 	 * 
-	 * @return {Sbi.cockpit.core.WidgetManager} the widget manager to which the widget is registered. The widget magaer manage the lifecycle
-	 * of all widget bounded to a particular widget container. 
+	 * Returns the widget manager to which the widget is registered. The widget manager manage the lifecycle
+	 * of all widgets bounded to a particular widget container. 
+	 * 
+	 * @return {Sbi.cockpit.core.WidgetManager} the widget manager to which the widget is registered.
 	 */
     , getWidgetManager: function() {
     	Sbi.trace("[Widget.getWidgetManager]: IN");
