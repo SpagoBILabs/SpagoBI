@@ -75,7 +75,7 @@ Sbi.cockpit.widgets.table.TableWidget = function(config) {
  * @cfg {Object} config
  * ...
  */
-Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.Widget, {
+Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime, {
     
 	// =================================================================================================================
 	// PROPERTIES
