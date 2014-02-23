@@ -6,6 +6,20 @@
  
 Ext.ns("Sbi.cockpit.core");
 
+/**
+ * @class Sbi.cockpit.core.WidgetManager
+ * @extends Ext.util.Observable
+ * 
+ *  It handles:
+ *  - widgets lifecycle management: register, unregister, lookup
+ *  - shared resources: through env
+ *  - intra-widgets comunications: sendMessage (asyncronous: point to point or broadcast)
+ */
+
+/**  
+ * @cfg {Object} config
+ * ...
+ */
 Sbi.cockpit.core.WidgetManager = function(config) {
 	
 	// init properties...
@@ -24,20 +38,7 @@ Sbi.cockpit.core.WidgetManager = function(config) {
 	Sbi.cockpit.core.WidgetManager.superclass.constructor.call(this, c);
 };
 
-/**
- * @class Sbi.cockpit.core.WidgetManager
- * @extends Ext.util.Observable
- * 
- *  It handles:
- *  - widgets lifecycle management: register, unregister, lookup
- *  - shared resources: through env
- *  - intra-widgets comunications: sendMessage (asyncronous: point to point or broadcast)
- */
 
-/**  
- * @cfg {Object} config
- * ...
- */
 Ext.extend(Sbi.cockpit.core.WidgetManager, Ext.util.Observable, {
     
 	// =================================================================================================================

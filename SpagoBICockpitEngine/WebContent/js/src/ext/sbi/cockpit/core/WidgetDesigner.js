@@ -34,8 +34,21 @@
  */
 Ext.ns("Sbi.cockpit.core");
 
-Sbi.cockpit.core.WidgetDesigner = function(config) { 
+/**
+ * @class Sbi.cockpit.core.WidgetDesigner
+ * @extends Ext.Panel
+ * 
+ * The abstract class extneded by the specific designer of each widget extensions. It have the responsability to manage
+ * the editing facet of the widget.
+ */
 
+/**
+ * @cfg {Object} config No specific configuration defined
+ */
+Sbi.cockpit.core.WidgetDesigner = function(config) { 
+	
+	Sbi.trace("[WidgetDesigner.constructor]: OUT");
+	
 	var defaultSettings = {
 		title: LN('sbi.cockpit.core.WidgetDesigner.title')
 		, layout: 'fit'
@@ -46,10 +59,12 @@ Sbi.cockpit.core.WidgetDesigner = function(config) {
 	Ext.apply(this, c);
 	
 	if(!c.items) {
-		c.html = "Sono un widget designer";
+		c.html = "I'm a widget designer";
 	}
 	
 	Sbi.cockpit.core.WidgetDesigner.superclass.constructor.call(this, c);
+	
+	Sbi.trace("[WidgetDesigner.constructor]: OUT");
 	
 };
 
