@@ -98,42 +98,86 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 	 * the store is an extension provided by SpagoBI. The default is "ext".
 	 * @param {Numeric} store.refreshTime The refresh time of the dataset in seconds. The defaut is 0.
 	 */
-	, addStore: function(s) {
+	, addStore: function(store) {
 		Sbi.trace("[StoreManager.addStore]: IN");
 		
-		if (s.storeId !== undefined){
-			s.ready = s.ready || false;
-			s.storeType = s.storeType || 'ext';
+		if(Sbi.isNotValorized(store)) {
+			Sbi.warn("[StoreManager.addStore]: Input parameter [s] is not defined");
+			Sbi.trace("[StoreManager.addStore]: OUT");
+			return;
+		}
+		
+		if(Ext.isArray(store)) {
+			Sbi.trace("[StoreManager.addStore]: Input parameter [s] is of type [Array]");
+			for(var i = 0; i < store.length; i++) {
+				this.addStore(store[i]);
+			}
+		} else if(Ext.isString(store)) {
+			Sbi.trace("[StoreManager.addStore]: Input parameter [s] is of type [String]");	
+			this.addStore({storeId: store});
+		} else if(Sbi.isNotExtObject(store)) {
+			Sbi.trace("[StoreManager.addStore]: Input parameter [s] is of type [Object]");	
+			store = this.createStore(store);
+		} else if((store instanceof Sbi.cockpit.core.WidgetRuntime) === true) {
+			Sbi.trace("[StoreManager.addStore]: Input parameter [s] is of type [Store]");
+			// nothing to do here
+		} else {
+			Sbi.error("[StoreManager.addStore]: Input parameter [s] of type [" + (typeof store) + "] is not valid");	
+		}
+		
+		
+		if (store.storeId !== undefined){
+			store.ready = store.ready || false;
+			store.storeType = store.storeType || 'ext';
 			//s.filterPlugin = new Sbi.data.StorePlugin({store: s});
 			
-			this.stores.add(s);
+			this.stores.add(store);
 					
-			
-			if(s.refreshTime) {
+			if(store.refreshTime) {
 				var task = {
 					run: function(){
 						//if the console is hidden doesn't refresh the datastore
-						if(s.stopped) return;
+						if(store.stopped) return;
 						
 						// if store is paging...
-						if(s.lastParams) {
+						if(store.lastParams) {
 							// ...force remote reload
-							delete s.lastParams;
+							delete store.lastParams;
 						}
-						s.load({
-							params: s.pagingParams || {}, 
+						store.load({
+							params: store.pagingParams || {}, 
 							callback: function(){this.ready = true;}, 
-							scope: s, 
+							scope: store, 
 							add: false
 						});
 					},
-					interval: s.refreshTime * 1000 //1 second
+					interval: store.refreshTime * 1000 //1 second
 				};
 				Ext.TaskMgr.start(task);
 			}
 		}
 		
 		Sbi.trace("[StoreManager.addStore]: OUT");
+	}
+
+	, createStore: function(storeConf) {
+		var proxy = new Ext.data.HttpProxy({
+			url: Sbi.config.serviceRegistry.getServiceUrl({
+				serviceName : 'api/1.0/dataset/' + storeConf.storeId + '/data'
+				, baseParams: new Object()
+			})
+	    	//, timeout : this.timeout
+	    	//, failure: this.onStoreLoadException
+	    });
+		
+		var store = new Ext.data.Store({
+			storeId: storeConf.storeId,
+	        proxy: this.proxy,
+	        reader: new Ext.data.JsonReader(),
+	        remoteSort: true
+	    });
+		
+		return store;
 	}
 
 	, getStore: function(storeId) {
