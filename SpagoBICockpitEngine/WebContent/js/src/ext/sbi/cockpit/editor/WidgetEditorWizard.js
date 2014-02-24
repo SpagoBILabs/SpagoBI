@@ -6,6 +6,17 @@
 
 Ext.ns("Sbi.cockpit.editor");
 
+
+/**
+ * @class Sbi.xxx.Xxxx
+ * @extends Ext.util.Observable
+ * 
+ * bla bla bla bla bla ...
+ */
+
+/**
+ * @cfg {Object} config The configuration object passed to the cnstructor
+ */
 Sbi.cockpit.editor.WidgetEditorWizard = function(config) { 
 	
 	Sbi.trace("[WidgetEditorWizard.constructor]: IN");
@@ -37,36 +48,27 @@ Sbi.cockpit.editor.WidgetEditorWizard = function(config) {
 	Sbi.trace("[WidgetEditorWizard.constructor]: OUT");
 };
 
-/**
- * @class Sbi.xxx.Xxxx
- * @extends Ext.util.Observable
- * 
- * bla bla bla bla bla ...
- */
-
-/**
- * @cfg {Object} config
- * ...
- */
 Ext.extend(Sbi.cockpit.editor.WidgetEditorWizard, Ext.Window, {
 	
 	editorMainPanel: null
 	, targetComponent: null
-	, usedDatasets: null
-	//, widgetManager: null
 	
 	// -----------------------------------------------------------------------------------------------------------------
     // public methods
 	// -----------------------------------------------------------------------------------------------------------------
 	
-	, setUsedDatasets: function(datasets) {
-		this.usedDatasets = datasets;
-	}
-	
 	, getWizardTargetComponent: function() {
 		return this.targetComponent;
 	}
-
+	
+	, getDatasetBrowserPage: function() {
+		return this.editorMainPanel.getDatasetBrowserPage();
+	}
+	
+	, getWidgetEditorPage: function() {
+		return this.editorMainPanel.getWidgetEditorPage();
+	}
+	
 	, setWizardTargetComponent: function(component) {
 		Sbi.trace("[WidgetEditorWizard.setWizardTargetComponent]: IN");
 		this.targetComponent = component;
@@ -78,8 +80,10 @@ Ext.extend(Sbi.cockpit.editor.WidgetEditorWizard, Ext.Window, {
 			Sbi.trace("[WidgetEditorWizard.setWizardTargetComponent]: widget conf is equal to [" + Sbi.toSource(widgetConf) + "]");
 			if(widgetConf.storeId) {
 				Sbi.trace("[WidgetEditorWizard.setWizardTargetComponent]: select dataset [" + widgetConf.storeId + "]");
-				this.editorMainPanel.selectDataset(widgetConf.storeId);
-				this.editorMainPanel.setWidgetEditorPageState(widgetConf.wconf);
+				this.getDatasetBrowserPage().setPageState({
+					dataset: widgetConf.storeId
+				});
+				this.getWidgetEditorPage().setPageState(widgetConf.wconf);
 				Sbi.trace("[WidgetEditorWizard.setWizardTargetComponent]: move to page [" + 1 + "]");
 				this.editorMainPanel.moveToPage (1);
 			} else {

@@ -10,12 +10,14 @@ Ext.ns("Sbi.cockpit.core");
  * @class Sbi.cockpit.core.WidgetContainer
  * @extends Ext.util.Observable
  * 
- * bla bla bla bla bla ...
+ * It manage the widget layout. At the moment it support only white board layout.
+ * In the future it should be extended in order to a support different layouts (ex.
+ * table, portal, ecc ...). The layout should be managed as an extension point and new
+ * layouts should be plugged at any time.
  */
 
 /**
- * @cfg {Object} config
- * ...
+ * @cfg {Object} config The configuration object passed to the cnstructor
  */
 Sbi.cockpit.core.WidgetContainer = function(config) {
 	
@@ -125,7 +127,13 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.WidgetRuntime, {
     	
 		widget = Sbi.cockpit.core.WidgetExtensionPointManager.getWidgetRuntime(widget);
     	if(widget) {
-    		this.widgetManager.register(widget);
+    		this.getWidgetManager().register(widget);
+    		var storeManager = this.getWidgetManager().getStoreManager();
+			if(storeManager.containsStore(widget.getStoreId()) === false) {
+    			var store = this.createStore(widget.getStoreId());
+    			storeManager.addStore(store);
+			}
+    		
     		if(Sbi.isValorized(layoutConf)) {
         		Sbi.trace("[WidgetContainer.addWidget]: Input parameter [layoutConf] is valorized");
         		widget.setLayoutConfiguration(layoutConf);
@@ -233,6 +241,26 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.WidgetRuntime, {
     }
     
     
+    , createStore: function(storeId) {
+    	var proxy = new Ext.data.HttpProxy({
+			url: Sbi.config.serviceRegistry.getServiceUrl({
+				serviceName : 'api/1.0/dataset/' + storeId + '/data'
+				, baseParams: new Object()
+			})
+//	    	, timeout : this.timeout
+//	    	, failure: this.onStoreLoadException
+	    });
+		
+		var store = new Ext.data.Store({
+			storeId: storeId,
+	        proxy: this.proxy,
+	        reader: new Ext.data.JsonReader(),
+	        remoteSort: true
+	    });
+		
+		return store;
+    }
+    
     , showWidgetEditorWizard: function(component) {    	
     	
     	Sbi.trace("[WidgetContainer.showWidgetEditorWizard]: IN");
@@ -250,6 +278,15 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.WidgetRuntime, {
     			
     			// TODO manage datasetSelection
     			wizardState.storeId = wizardState.selectedDatasetLabel;
+    			var storeManager = this.getWidgetManager().getStoreManager();
+    			
+    			if(storeManager.containsStore(wizardState.storeId) === false) {
+        			var store = this.createStore(wizardState.storeId);
+        			storeManager.addStore(store);
+    			}
+    			storeManager.removeStore(wizardState.unselectedDatasetLabel);
+    			alert(storeManager.getStoreIds().join(";"));
+    			
     			delete wizardState.selectedDatasetLabel;
     			delete wizardState.unselectedDatasetLabel;
     			    			
@@ -280,7 +317,7 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.WidgetRuntime, {
     	
     	// TODO implement setTitle method
     	//this.widgetEditorWizard.setTitle("Widget [" + widget.id + "] editor");
-    	this.widgetEditorWizard.setUsedDatasets(this.getWidgetManager().getUsedStoreLabels());
+    	this.widgetEditorWizard.getDatasetBrowserPage().setUsedDatasets(this.getWidgetManager().getStoreManager().getStoreIds());
     	this.widgetEditorWizard.setWizardTargetComponent(component);
     	
     	
