@@ -26,6 +26,15 @@ Sbi.isNotNull = function(o) {
 	return !Sbi.isNull(o);
 };
 
+Sbi.isExtObject = function(o) {
+	return typeof widget === 'object' && (widget instanceof Ext.util.Observable);
+};
+
+Sbi.isNotExtObject = function(o) {
+	return !Sbi.isExtObject(o);
+};
+
+
 Sbi.getObjectSettings = function(objectQilifiedName, defaultSettings) {
 	var settings = null;
 	

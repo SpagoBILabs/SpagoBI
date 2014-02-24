@@ -130,8 +130,8 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.WidgetRuntime, {
     		this.getWidgetManager().register(widget);
     		var storeManager = this.getWidgetManager().getStoreManager();
 			if(storeManager.containsStore(widget.getStoreId()) === false) {
-    			var store = this.createStore(widget.getStoreId());
-    			storeManager.addStore(store);
+    			//var store = this.createStore(widget.getStoreId());
+    			storeManager.addStore(widget.getStoreId());
 			}
     		
     		if(Sbi.isValorized(layoutConf)) {
@@ -241,25 +241,25 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.WidgetRuntime, {
     }
     
     
-    , createStore: function(storeId) {
-    	var proxy = new Ext.data.HttpProxy({
-			url: Sbi.config.serviceRegistry.getServiceUrl({
-				serviceName : 'api/1.0/dataset/' + storeId + '/data'
-				, baseParams: new Object()
-			})
-//	    	, timeout : this.timeout
-//	    	, failure: this.onStoreLoadException
-	    });
-		
-		var store = new Ext.data.Store({
-			storeId: storeId,
-	        proxy: this.proxy,
-	        reader: new Ext.data.JsonReader(),
-	        remoteSort: true
-	    });
-		
-		return store;
-    }
+//    , createStore: function(storeId) {
+//    	var proxy = new Ext.data.HttpProxy({
+//			url: Sbi.config.serviceRegistry.getServiceUrl({
+//				serviceName : 'api/1.0/dataset/' + storeId + '/data'
+//				, baseParams: new Object()
+//			})
+////	    	, timeout : this.timeout
+////	    	, failure: this.onStoreLoadException
+//	    });
+//		
+//		var store = new Ext.data.Store({
+//			storeId: storeId,
+//	        proxy: this.proxy,
+//	        reader: new Ext.data.JsonReader(),
+//	        remoteSort: true
+//	    });
+//		
+//		return store;
+//    }
     
     , showWidgetEditorWizard: function(component) {    	
     	
@@ -281,8 +281,8 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.WidgetRuntime, {
     			var storeManager = this.getWidgetManager().getStoreManager();
     			
     			if(storeManager.containsStore(wizardState.storeId) === false) {
-        			var store = this.createStore(wizardState.storeId);
-        			storeManager.addStore(store);
+        			//var store = this.createStore(wizardState.storeId);
+        			storeManager.addStore(wizardState.storeId);
     			}
     			storeManager.removeStore(wizardState.unselectedDatasetLabel);
     			alert(storeManager.getStoreIds().join(";"));
