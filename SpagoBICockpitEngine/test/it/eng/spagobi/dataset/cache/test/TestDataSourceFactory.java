@@ -66,12 +66,13 @@ public class TestDataSourceFactory {
 	        	}
 	        	break;
 	        case SQLSERVER:  
-	        	//TODO
 	        	if (isWritingDatasource){
-	        		
+		        	dataSource = createDataSource(TestConstants.SQLSERVER_LABEL_WRITING, TestConstants.SQLSERVER_URL_WRITING, TestConstants.SQLSERVER_USER_WRITING, TestConstants.SQLSERVER_PWD_WRITING,
+		        						TestConstants.SQLSERVER_DRIVER, TestConstants.SQLSERVER_DIALECT_CLASS ,TestConstants.SQLSERVER_DIALECT_NAME, false, true );
 	        	} else {
-	        		
-	        	}	
+		        	dataSource = createDataSource(TestConstants.SQLSERVER_LABEL_READING, TestConstants.SQLSERVER_URL_READING, TestConstants.SQLSERVER_USER_READING, TestConstants.SQLSERVER_PWD_READING,
+    						TestConstants.SQLSERVER_DRIVER, TestConstants.SQLSERVER_DIALECT_CLASS ,TestConstants.SQLSERVER_DIALECT_NAME, true, false );
+	        	}
 	        	break;
 		}
 		
