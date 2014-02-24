@@ -72,9 +72,9 @@ public class SQLDBCache implements ICache {
 				eraseExistingTables(tablePrefix.toUpperCase());
 			}
 		} catch (EMFUserError e) {
-			logger.debug("Impossible to instantiate SbiConfigDAO in SQLDBCache");
+			logger.error("Impossible to instantiate SbiConfigDAO in SQLDBCache");
 		} catch (Exception e) {
-			logger.debug("Impossible to instantiate SbiConfigDAO in SQLDBCache");
+			logger.error("Impossible to instantiate SbiConfigDAO in SQLDBCache");
 		}
 	}
 	
@@ -306,7 +306,7 @@ public class SQLDBCache implements ICache {
 			//4- Update cacheRegistry with the new couple <resultsetSignature,nometabellaCreata>
 			getCacheMetadata().addCacheItem(resultsetSignature, tableName, resultset);
 		} catch (Exception e) {
-			logger.debug("[SQLDBCACHE]Cannot perform persistence of result set on database");
+			logger.error("[SQLDBCACHE]Cannot perform persistence of result set on database");
 		}
 		
 		

@@ -42,6 +42,7 @@ import it.eng.spagobi.tools.dataset.bo.FileDataSet;
 import it.eng.spagobi.tools.dataset.bo.FlatDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
 import it.eng.spagobi.tools.dataset.bo.ScriptDataSet;
+import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.datasource.bo.DataSource;
 import junit.framework.TestCase;
@@ -84,6 +85,8 @@ public abstract class AbstractSQLDBCacheTest extends TestCase {
 
 
 	}
+	
+	//Test cases
 	
 	public void testCacheInit(){
 		assertNotNull("Cache correctly initialized", cache );
@@ -142,6 +145,75 @@ public abstract class AbstractSQLDBCacheTest extends TestCase {
 		
 	}	
 	
+	public void testCacheGetJDBCDataSet(){
+		String signature = sqlDataset.getSignature();
+		IDataStore dataStore = cache.get(signature);
+		assertNull(dataStore);
+		if (dataStore == null){
+			sqlDataset.loadData();
+			dataStore =	sqlDataset.getDataStore();
+			cache.put(sqlDataset,signature,dataStore);
+		}
+		dataStore = cache.get(signature);
+		assertNotNull(dataStore);
+	}
+	
+	public void testCacheGetFileDataSet(){
+		String signature = fileDataset.getSignature();
+		IDataStore dataStore = cache.get(signature);
+		assertNull(dataStore);
+		if (dataStore == null){
+			fileDataset.loadData();
+			dataStore =	fileDataset.getDataStore();
+			cache.put(fileDataset,signature,dataStore);
+		}
+		dataStore = cache.get(signature);
+		assertNotNull(dataStore);
+	}
+	
+	public void testCacheGetQbeDataSet(){
+		String signature = qbeDataset.getSignature();
+		IDataStore dataStore = cache.get(signature);
+		assertNull(dataStore);
+		if (dataStore == null){
+			qbeDataset.loadData();
+			dataStore =	qbeDataset.getDataStore();
+			cache.put(qbeDataset,signature,dataStore);
+		}
+		dataStore = cache.get(signature);
+		assertNotNull(dataStore);
+	}	
+	
+	public void testCacheGetFlatDataSet(){
+		String signature = flatDataset.getSignature();
+		IDataStore dataStore = cache.get(signature);
+		assertNull(dataStore);
+		if (dataStore == null){
+			flatDataset.loadData();
+			dataStore =	flatDataset.getDataStore();
+			cache.put(flatDataset,signature,dataStore);
+		}
+		dataStore = cache.get(signature);
+		assertNotNull(dataStore);
+	}
+	
+	public void testCacheGetScriptDataSet(){
+		String signature = scriptDataset.getSignature();
+		IDataStore dataStore = cache.get(signature);
+		assertNull(dataStore);
+		if (dataStore == null){
+			scriptDataset.loadData();
+			dataStore =	scriptDataset.getDataStore();
+			cache.put(scriptDataset,signature,dataStore);
+		}
+		dataStore = cache.get(signature);
+		assertNotNull(dataStore);
+	}	
+	
+	//------------------------------------------------------------------------------
+	
+	
+	
 	/* (non-Javadoc)
 	 * @see junit.framework.TestCase#tearDown()
 	 */
@@ -170,6 +242,7 @@ public abstract class AbstractSQLDBCacheTest extends TestCase {
 		sqlDataset.setQueryScript("");
 		sqlDataset.setQueryScriptLanguage("");
 		sqlDataset.setDataSource(dataSourceReading);
+		sqlDataset.setLabel("test_jdbcDataset");
 		return sqlDataset;
 	}
 	
@@ -190,6 +263,8 @@ public abstract class AbstractSQLDBCacheTest extends TestCase {
 			fileDataset.setConfiguration(jsonConf.toString());
 			fileDataset.setResourcePath(TestConstants.RESOURCE_PATH);
 			fileDataset.setFileName("customers.csv");
+			fileDataset.setLabel("test_fileDataset");
+
 		}
 		catch(JSONException e){
 			logger.error("JSONException when creating a FileDataset");
@@ -211,6 +286,7 @@ public abstract class AbstractSQLDBCacheTest extends TestCase {
 		fakeDatamartRetriever.setResourcePath(TestConstants.RESOURCE_PATH);
 		params.put(SpagoBIConstants.DATAMART_RETRIEVER, fakeDatamartRetriever);
 		qbeDataset.setParamsMap(params);
+		qbeDataset.setLabel("test_qbeDataset");
 		return qbeDataset;
 	}
 	
@@ -218,6 +294,7 @@ public abstract class AbstractSQLDBCacheTest extends TestCase {
 		flatDataset = new FlatDataSet();
 		flatDataset.setDataSource(dataSourceReading);
 		flatDataset.setTableName("department"); //name of the table corresponding to the flat dataset (persisted dataset)
+		flatDataset.setLabel("test_flatDataset");
 		return flatDataset;
 	}
 	
@@ -225,6 +302,7 @@ public abstract class AbstractSQLDBCacheTest extends TestCase {
 		scriptDataset=new ScriptDataSet();
 		scriptDataset.setScriptLanguage("groovy");
 		scriptDataset.setScript("returnValue(new Double(5).toString());\n");
+		scriptDataset.setLabel("test_scriptDataset");
 		return scriptDataset;
 	}
 	
