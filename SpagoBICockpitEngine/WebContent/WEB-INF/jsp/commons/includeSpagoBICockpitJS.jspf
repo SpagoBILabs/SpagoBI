@@ -27,7 +27,7 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='./js/src/ext/sbi/widgets/FileUploadPanel.js'/></script>
 <script type="text/javascript" src='./js/src/ext/sbi/widgets/SaveDocumentWindow.js'/></script>
 
-
+<script type="text/javascript" src='./js/src/ext/sbi/data/StoreManager.js'/></script>
 
 <script type="text/javascript" src='./js/src/ext/sbi/cockpit/core/WidgetRuntime.js'/></script>
 <script type="text/javascript" src='./js/src/ext/sbi/cockpit/core/WidgetDesigner.js'/></script>
