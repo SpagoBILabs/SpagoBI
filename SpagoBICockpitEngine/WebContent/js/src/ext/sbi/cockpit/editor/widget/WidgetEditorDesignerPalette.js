@@ -91,7 +91,7 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditorDesignerPalette, Ext.Panel, {
 		
 		var pallette = new Array();
 		
-		Sbi.cockpit.core.WidgetExtensionPoint.forEachWidget(function(wtype, wdescriptor) {
+		Sbi.cockpit.core.WidgetExtensionPointManager.forEachWidget(function(wtype, wdescriptor) {
 			pallette.push({
 				type: wtype
 				, name: wdescriptor.name
