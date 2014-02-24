@@ -159,7 +159,7 @@ public class DataSetResource {
 			 * 
 			 * - se è presente in cache basta recuperarlo con una get
 			 * - se non è presente in cache: carico tramite dataSet.loadData() 
-			 * 	 e poi lo scrivo in cache (poi in contemporanea con thread diversi)
+			 * 	 e poi lo scrivo in cache (successivamente in contemporanea con thread diversi)
 			 *  
 			 */
 			ICache cache = CockpitEngineConfig.getCache();

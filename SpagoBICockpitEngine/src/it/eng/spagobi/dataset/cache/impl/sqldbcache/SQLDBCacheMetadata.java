@@ -111,9 +111,9 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 					isActiveCleanAction = true;
 		
 		} catch (EMFUserError e) {
-			logger.debug("Impossible to instantiate SbiConfigDAO in SQLDBCacheMetadata");
+			logger.error("Impossible to instantiate SbiConfigDAO in SQLDBCacheMetadata");
 		} catch (Exception e) {
-			logger.debug("Impossible to instantiate SbiConfigDAO in SQLDBCacheMetadata");
+			logger.error("Impossible to instantiate SbiConfigDAO in SQLDBCacheMetadata");
 		}
 	}
 	
