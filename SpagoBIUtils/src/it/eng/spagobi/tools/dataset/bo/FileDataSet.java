@@ -111,7 +111,7 @@ public class FileDataSet extends ConfigurableDataSet{
 	 * @param fileName the target filename
 	 */
 	public void setDataReader(String fileName) {
-		JSONObject jsonConf = ObjectUtils.toJSONObject(this.getConfiguration());;
+		JSONObject jsonConf = ObjectUtils.toJSONObject(this.getConfiguration());
 		String fileExtension = fileName.lastIndexOf('.') > 0 ? fileName
 				.substring(fileName.lastIndexOf('.') + 1) : null;
 		logger.debug("File extension: [" + fileExtension +"]");
