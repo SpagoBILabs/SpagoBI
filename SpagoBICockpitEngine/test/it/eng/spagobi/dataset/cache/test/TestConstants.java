@@ -31,11 +31,17 @@ public class TestConstants {
 	
 	public static String workspaceFolder = "C:/Users/cortella/workspaceJEE";
 	
-	public static String RESOURCE_PATH = workspaceFolder+"/SpagoBICockpitEngine/test/it/eng/spagobi/dataset/cache/impl/sqldbcache/test/";
+	public static String RESOURCE_PATH = workspaceFolder+"/SpagoBICockpitEngine/test/resources/";
 	public static String WEBCONTENT_PATH = workspaceFolder+"/SpagoBICockpitEngine/WebContent";
 	public static String AF_CONFIG_FILE = "/WEB-INF/conf/master.xml";
 	
 	public enum DatabaseType { MYSQL, POSTGRES, ORACLE, SQLSERVER };
+	
+	public static boolean enableTestsOnMySql = false;
+	public static boolean enableTestsOnPostgres = false;
+	public static boolean enableTestsOnOracle = true;
+	public static boolean enableTestsOnSQLServer = false;
+
 
 
 	// =======================================================
@@ -106,4 +112,27 @@ public class TestConstants {
 	public static String ORACLE_URL_READING = "jdbc:oracle:thin:@172.27.1.83:1521:repo";
 	public static String ORACLE_USER_READING = "bilancio_mi";
 	public static String ORACLE_PWD_READING = "bilancio_mi";
+	
+	// =======================================================
+	// SQL SERVER
+	// =======================================================
+	public static String SQLSERVER_DRIVER = "com.microsoft.sqlserver.jdbc.SQLServerDriver";
+	public static String SQLSERVER_DIALECT_CLASS = "org.hibernate.dialect.SQLServerDialect";
+	public static String SQLSERVER_DIALECT_NAME = "sbidomains.nm.sqlserver";
+
+	//-------------
+	// FOR WRITING
+	//-------------
+	public static String SQLSERVER_LABEL_WRITING = "datasetTest_sqlserver_write";
+	public static String SQLSERVER_URL_WRITING = "jdbc:sqlserver://172.27.1.80:1410;databaseName=testSpagoBI"; //server Padova
+	public static String SQLSERVER_USER_WRITING = "brasile";
+	public static String SQLSERVER_PWD_WRITING = "spagobi";
+	
+	//-------------
+	// FOR READING
+	//-------------
+	public static String SQLSERVER_LABEL_READING = "datasetTest_sqlserver_read";
+	public static String SQLSERVER_URL_READING = "jdbc:sqlserver://172.27.1.80:1410;databaseName=testSpagoBI";
+	public static String SQLSERVER_USER_READING = "brasile";
+	public static String SQLSERVER_PWD_READING = "spagobi";
 }
