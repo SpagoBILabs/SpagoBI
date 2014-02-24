@@ -52,8 +52,8 @@ Ext.extend(Sbi.cockpit.core.WidgetManager, Ext.util.Observable, {
     widgets: null
     
     /**
-     * @property {Ext.util.MixedCollection} storeManager
-     * The collection of stores managed by this container
+     * @property {Sbi.data.StoreManager} storeManager
+     * The object that manage the dataset used by the widget in this container
      */
     , storeManager: null
     
@@ -75,22 +75,7 @@ Ext.extend(Sbi.cockpit.core.WidgetManager, Ext.util.Observable, {
     , init: function() {
     	  
     	if(!this.storeManager) {
-    		//alert("Store manager not defined");
-    		this.storeManager = new Ext.util.MixedCollection();
-//	    	var testStore = new Ext.data.JsonStore({
-//		        fields:['name', 'visits', 'views'],
-//		        data: [
-//		            {name:'Jul 07', visits: 245000, views: 3000000},
-//		            {name:'Aug 07', visits: 240000, views: 3500000},
-//		            {name:'Sep 07', visits: 355000, views: 4000000},
-//		            {name:'Oct 07', visits: 375000, views: 4200000},
-//		            {name:'Nov 07', visits: 490000, views: 4500000},
-//		            {name:'Dec 07', visits: 495000, views: 5800000},
-//		            {name:'Jan 08', visits: 520000, views: 6000000},
-//		            {name:'Feb 08', visits: 620000, views: 7500000}
-//		        ]
-//		    });
-//	    	this.storeManager.add('testStore', testStore);
+    		this.storeManager = new Sbi.data.StoreManager();
     	}
     	
     	this.widgets = new Ext.util.MixedCollection();
@@ -126,13 +111,6 @@ Ext.extend(Sbi.cockpit.core.WidgetManager, Ext.util.Observable, {
 		return this.storeManager;
 	}
 	
-	, getUsedStoreLabels: function() {
-		var storeLabels = [];
-		for(var l in this.storeManager.map) {
-			storeLabels.push(l);
-		}
-		return storeLabels;
-	}
 	
 	, addStore: function(s) {
 		if (s != undefined && s.dsLabel !== undefined){
@@ -201,34 +179,3 @@ Ext.extend(Sbi.cockpit.core.WidgetManager, Ext.util.Observable, {
 
 	// ...
 });
-
-
-Sbi.cockpit.core.registry = {}; 
-
-Sbi.cockpit.core.WidgetManager.regsterWidget = function(wtype, wdescriptor) {
-	Sbi.cockpit.core.registry[wtype] = wdescriptor;
-};
-
-Sbi.regsterWidget = Sbi.cockpit.core.WidgetManager.regsterWidget;
-
-Sbi.cockpit.core.WidgetManager.getWidget = function(wtype, wconf) {
-	
-	var wdescriptor = Sbi.cockpit.core.registry[wtype];
-	
-	if(wdescriptor !== undefined) {
-		return new wdescriptor.runtimeClass(wconf); 
-	} else {
-		alert("Widget of type [" + wtype +"] not supprted");
-	}
-};
-
-Sbi.cockpit.core.WidgetManager.getWidgetDesigner = function(wtype, wconf) {
-	
-	var wdescriptor = Sbi.cockpit.core.registry[wtype];
-	
-	if(wdescriptor !== undefined) {
-		return new wdescriptor.designerClass(wconf); 
-	} else {
-		alert("Widget of type [" + wtype +"] not supprted");
-	}
-};

@@ -6,6 +6,17 @@
 
 Ext.ns("Sbi.cockpit.editor");
 
+/**
+ * @class Sbi.xxx.Xxxx
+ * @extends Ext.util.Observable
+ * 
+ * bla bla bla bla bla ...
+ */
+
+/**
+ * @cfg {Object} config The configuration object passed to the cnstructor
+ */
+
 Sbi.cockpit.editor.WidgetEditorWizardPanel = function(config) { 
 	
 	Sbi.trace("[WidgetEditorWizardPanel.constructor]: IN");
@@ -27,20 +38,34 @@ Sbi.cockpit.editor.WidgetEditorWizardPanel = function(config) {
 	Sbi.trace("[WidgetEditorWizardPanel.constructor]: OUT");
 };
 
-/**
- * @class Sbi.xxx.Xxxx
- * @extends Ext.util.Observable
- * 
- * bla bla bla bla bla ...
- */
-
-/**
- * @cfg {Object} config
- * ...
- */
 Ext.extend(Sbi.cockpit.editor.WidgetEditorWizardPanel, Sbi.widgets.WizardPanel, {
 	
+	// =================================================================================================================
+	// PROPERTIES
+	// =================================================================================================================
+	
+	/**
+     * @property {String[]} usedDatasets
+     * The list of the labels of used datasets. It is used only for the initialization of #datasetsBrowserPage
+     * After the inizialization it is removed. In order to get this list after initialization
+     * use #getDatasetBrowserPage method as shown in the following example:
+     * <pre><code>
+wizardPanel.getDatasetBrowserPage().getUsedDatasets();
+</code></pre>
+     */
 	usedDatasets: null
+	
+	/**
+     * @property {Sbi.cockpit.editor.dataset.DatasetBrowserPage} datasetsBrowserPage
+     * The page that manages dataset selection (by default it is the first, index 0)
+     */
+	, datasetsBrowserPage: null
+	
+	/**
+     * @property {Sbi.cockpit.editor.widget.WidgetEditorPage} widgetEditorPage
+     * The page that manages widget editing (by default it is the second, index 1)
+     */
+	, widgetEditorPage: null
 	
 	// =================================================================================================================
 	// METHODS
@@ -51,24 +76,15 @@ Ext.extend(Sbi.cockpit.editor.WidgetEditorWizardPanel, Sbi.widgets.WizardPanel, 
 	// -----------------------------------------------------------------------------------------------------------------
 
 	, getDatasetBrowserPage: function() {
-		return this.getPage(0);
+		//return this.getPage(0);
+		return this.datasetsBrowserPage;
 	}
 
 	, getWidgetEditorPage: function() {
-		return this.getPage(1);
+		//return this.getPage(1);
+		return this.widgetEditorPage;
 	}
 	
-	, setDatasetBrowserPageState: function(state) {
-		this.getDatasetBrowserPage().setPageState(state);
-	}
-	
-	, setWidgetEditorPageState: function(state) {
-		this.getWidgetEditorPage().setPageState(state);
-	}
-	
-	, selectDataset: function(dataset) {
-		this.setDatasetBrowserPageState({dataset: dataset});
-	}
 	// -----------------------------------------------------------------------------------------------------------------
     // init methods
 	// -----------------------------------------------------------------------------------------------------------------
@@ -78,12 +94,12 @@ Ext.extend(Sbi.cockpit.editor.WidgetEditorWizardPanel, Sbi.widgets.WizardPanel, 
 		
 		this.pages = new Array();
 		
-		var datasetsBrowserPage = this.initDatasetBrowserPage();
-		this.pages.push(datasetsBrowserPage);
+		this.initDatasetBrowserPage();
+		this.pages.push(this.datasetsBrowserPage);
 		Sbi.trace("[WidgetEditorWizardPanel.initPages]: dataset browser page succesfully adedd");
 		
-		var widgetEditorPage = this.initWidgetEditorPage();
-		this.pages.push(widgetEditorPage);
+		this.initWidgetEditorPage();
+		this.pages.push(this.widgetEditorPage);
 		Sbi.trace("[WidgetEditorWizardPanel.initPages]: widget editor page succesfully adedd");
 		
 		Sbi.trace("[WidgetEditorWizardPanel.initPages]: OUT");
@@ -93,26 +109,20 @@ Ext.extend(Sbi.cockpit.editor.WidgetEditorWizardPanel, Sbi.widgets.WizardPanel, 
 	
 	, initDatasetBrowserPage: function() {
 		Sbi.trace("[WidgetEditorWizardPanel.initDatasetBrowserPage]: IN");
-		
-		var datasetsBrowserPage = new Sbi.cockpit.editor.dataset.DatasetBrowserPage({
-			//itemId: 0, 
+		this.datasetsBrowserPage = new Sbi.cockpit.editor.dataset.DatasetBrowserPage({
 			usedDatasets: this.usedDatasets
 		});
-		
 		Sbi.trace("[WidgetEditorWizardPanel.initDatasetBrowserPage]: OUT");
-		
-		return datasetsBrowserPage;
+		return this.datasetsBrowserPage;
 	}
 	
 	, initWidgetEditorPage: function() {
-//		var widgetEditorPage = new Sbi.cockpit.editor.widget.WidgetEditor({
-//			itemId: 1
-//			
-//		});
-	
-		var widgetEditorPage = new Sbi.cockpit.editor.widget.WidgetEditorPage({});
-		
-		return widgetEditorPage;
+		Sbi.trace("[WidgetEditorWizardPanel.initWidgetEditorPage]: IN");
+		this.widgetEditorPage = new Sbi.cockpit.editor.widget.WidgetEditorPage({
+			// nothing to declare here
+		});
+		Sbi.trace("[WidgetEditorWizardPanel.initWidgetEditorPage]: IN");
+		return this.widgetEditorPage;
 	}
 	
 

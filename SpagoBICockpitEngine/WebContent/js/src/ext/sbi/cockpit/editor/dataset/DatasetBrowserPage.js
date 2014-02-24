@@ -6,6 +6,16 @@
 
 Ext.ns("Sbi.cockpit.editor.dataset");
 
+/**
+ * @class Sbi.cockpit.editor.dataset.DatasetBrowserPage
+ * @extends Ext.Panel
+ * 
+ * bla bla bla bla bla ...
+ */
+
+/**
+ * @cfg {Object} config The configuration object passed to the cnstructor
+ */
 Sbi.cockpit.editor.dataset.DatasetBrowserPage = function(config) { 
 	
 	Sbi.trace("[DatasetBrowserPage.constructor]: IN");
@@ -33,22 +43,16 @@ Sbi.cockpit.editor.dataset.DatasetBrowserPage = function(config) {
 	Sbi.trace("[DatasetBrowserPage.constructor]: OUT");
 };
 
-/**
- * @class Sbi.xxx.Xxxx
- * @extends Ext.util.Observable
- * 
- * bla bla bla bla bla ...
- */
-
-/**
- * @cfg {Object} config
- * ...
- */
 Ext.extend(Sbi.cockpit.editor.dataset.DatasetBrowserPage, Ext.Panel, {
 	
 	datasetsBrowserPanel: null
-	//, widgetManager: null
+	
+	/**
+	 * used just for initialization.
+	 */
 	, usedDatasets: null
+	
+	, originallySelectedDataset: null
 	
 	// =================================================================================================================
 	// METHODS
@@ -58,6 +62,16 @@ Ext.extend(Sbi.cockpit.editor.dataset.DatasetBrowserPage, Ext.Panel, {
     // public methods
 	// -----------------------------------------------------------------------------------------------------------------
 	
+	/**
+	 * @method 
+	 * Sets the list of used dataset's label.
+	 * 
+	 * @param {String[]} datasets The dataset's label list.
+	 */
+	, setUsedDatasets: function(datasets) {
+		this.datasetsBrowserPanel.setUsedDatasets(datasets);
+	}
+
 	, getValidationErrorMessages: function() {
 		Sbi.trace("[DatasetBrowserPage.getValidationErrorMessage]: IN");
 		var msg = null;
@@ -86,8 +100,12 @@ Ext.extend(Sbi.cockpit.editor.dataset.DatasetBrowserPage, Ext.Panel, {
 		Sbi.trace("[WidgetEditor.applyPageState]: IN");
 		state =  state || {};
 		state.selectedDatasetLabel = this.datasetsBrowserPanel.getSelection()[0];
-		// TODO manage also unselection
-		state.unselectedDatasetLabel = null;
+		if(this.originallySelectedDataset !== null && this.originallySelectedDataset !== state.selectedDatasetLabel) {
+			state.unselectedDatasetLabel = this.originallySelectedDataset;
+		} else {
+			state.unselectedDatasetLabel = null;
+		}
+			
 		Sbi.trace("[WidgetEditor.applyPageState]: OUT");
 		return state;
 	}	
@@ -96,19 +114,25 @@ Ext.extend(Sbi.cockpit.editor.dataset.DatasetBrowserPage, Ext.Panel, {
 		Sbi.trace("[WidgetEditor.setPageState]: IN");
 		Sbi.trace("[WidgetEditor.setPageState]: state parameter is equal to [" + Sbi.toSource(state) + "]");
 		
+		this.datasetsBrowserPanel.resetSelection();
+		Sbi.trace("[WidgetEditor.setPageState]: dataset selection cleared");
+		
+		state = state || {};
 		if(Sbi.isValorized(state.dataset)) {
-			this.datasetsBrowserPanel.resetSelection();
-			this.datasetsBrowserPanel.select(state.dataset);
+			this.originallySelectedDataset = state.dataset;
+			Sbi.trace("[WidgetEditor.setPageState]: originally selected dataset [" + this.originallySelectedDataset + "]");
+			this.datasetsBrowserPanel.select(state.dataset, true); // true to refresh also the underlying GUI control
 			Sbi.trace("[WidgetEditor.setPageState]: selected dataset [" + state.dataset + "]");
 		} else {
-			this.datasetsBrowserPanel.resetSelection();
-			Sbi.trace("[WidgetEditor.setPageState]: dataset selection cleared");
+			Sbi.trace("[WidgetEditor.setPageState]: no dataset to select");
 		}
 		Sbi.trace("[WidgetEditor.setPageState]: OUT");
 	}
 	
 	, resetPageState: function() {
 		Sbi.trace("[WidgetEditor.resetPageState]: IN");
+		this.originallySelectedDataset = null;
+		Sbi.trace("[WidgetEditor.setPageState]: originally selected dataset [null]");
 		this.datasetsBrowserPanel.resetSelection();
 		this.datasetsBrowserPanel.resetToolbarOptions();
 		
@@ -120,16 +144,11 @@ Ext.extend(Sbi.cockpit.editor.dataset.DatasetBrowserPage, Ext.Panel, {
 	// -----------------------------------------------------------------------------------------------------------------
 
 	, init: function(){
-		//var usedDatasets = this.widgetManager.getUsedStoreLabels();
 		
 		this.datasetsBrowserPanel = new Sbi.widgets.DatasetsBrowserPanel({
 			usedDatasets: this.usedDatasets
 		}); 
-//		this.datasetsBrowserPanel.on('select',  function(l) {
-//			this.onSelect(l);
-//			this.datasetsBrowserPanel.viewPanel.refresh();
-//		}, this);	
-//		
+		delete this.usedDatasets;
 
 		return this.datasetsBrowserPanel;
 	}

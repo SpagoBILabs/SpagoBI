@@ -111,11 +111,9 @@ Ext.extend(Sbi.widgets.DatasetsBrowserPanel, Ext.Panel, {
 
 	, id:'this'  // TODO remove
 	
-	, selectedDatasetLabel: null
-	, usedDatasets: null
+
 	
 	, datasetStore: null
-	//, widgetManager: null 
 	
 	, filterOption: null
 	, defaultFilterOption: Sbi.settings.mydata.defaultFilter || "UsedDataSet"
@@ -141,6 +139,14 @@ Ext.extend(Sbi.widgets.DatasetsBrowserPanel, Ext.Panel, {
 		this.resetSort(true);
 	}
 
+	, getUsedDatasets: function() {
+		return this.viewPanel.getUsedDatasets();
+	}
+	
+	, setUsedDatasets: function(datasets) {
+		this.viewPanel.setUsedDatasets(datasets);
+	}
+	
 	, getSelectedDataset: function() {
 		var datasetLabel = null;
 		if (this.viewPanel){
@@ -150,15 +156,23 @@ Ext.extend(Sbi.widgets.DatasetsBrowserPanel, Ext.Panel, {
 	}
 	
 	, setSelectedDataset: function(datasetLabel) {
+		Sbi.trace("[DatasetsBrowserPanel.setSelectedDataset]: IN");
 		if (this.viewPanel){
 			this.viewPanel.selectedDataset = datasetLabel;
+			Sbi.trace("[DatasetsBrowserPanel.setSelectedDataset]: selected dataset set to [" + this.viewPanel.selectedDataset + "]");
 		}
+		Sbi.trace("[DatasetsBrowserPanel.setSelectedDataset]: OUT");
 	}
 
 	, getSelection: function() {
 		return Sbi.isValorized(this.getSelectedDataset())? [this.getSelectedDataset()]: [];
 	}
 
+	/**
+	 * @method
+	 * 
+	 * If there is a selected dataset it deselects it and the force a GUI refresh
+	 */
 	, resetSelection: function() {
 		Sbi.trace("[DatasetsBrowserPanel.resetDatasetSelection]: IN");
 		if(this.getSelectedDataset() !== null) {
@@ -169,6 +183,14 @@ Ext.extend(Sbi.widgets.DatasetsBrowserPanel, Ext.Panel, {
 		Sbi.trace("[DatasetsBrowserPanel.resetDatasetSelection]: OUT");
 	}
 	
+	/**
+	 * @method 
+	 * 
+	 * Selects a dataset whose label is equal to parameter #datasetLabel. Then force a GUI refresh if parameter #updateControl is true.
+	 * 
+	 * @param {String} datasetLabel The label of the dataset.
+	 * @param {boolean} updateControl true to force the GUI refresh false otherwise. The default value is false.
+	 */
 	, select: function(datasetLabel, updateControl) {
 		Sbi.trace("[DatasetsBrowserPanel.select]: IN");
 		
@@ -177,26 +199,10 @@ Ext.extend(Sbi.widgets.DatasetsBrowserPanel, Ext.Panel, {
 		
 		var previouslySelectedDatasetLabel = this.getSelectedDataset();
 		this.setSelectedDataset(datasetLabel);
-
 		
-		
-		
-		// remove from selection previously slected dataset 
-//	 	if (datasetLabel != previouslySelectedDatasetLabel 
-//	 			&& this.widgetManager.getStoreByLabel(previouslySelectedDatasetLabel) != null) {
-//			this.widgetManager.removeStore(previouslySelectedDatasetLabel);
-//			Sbi.trace("[DatasetsBrowserPanel.select]: dataset  [" + previouslySelectedDatasetLabel + "] removed from selection");
-//		}
-	
-		//adds the dataset to the storeManager (through the WidgetManager)
-//		var storeConfig = {};
-//		storeConfig.dsLabel = datasetLabel; //storeConfig.dsLabel = this.widget.dataset;	
-//	    this.widgetManager.addStore(storeConfig);	
-//	    Sbi.trace("[DatasetsBrowserPanel.select]: dataset  [" + datasetLabel + "] added to selection");
-	    
 	    if(updateControl === true) {
 	    	this.unselectDatasetComponent(previouslySelectedDatasetLabel);
-	    	this.selectDatasetComponent(datasetLabel);
+	    	this.selectDatasetComponent(this.getSelectedDataset());
 	    }
 	    
 	    Sbi.trace("[DatasetsBrowserPanel.select]: OUT");
@@ -633,50 +639,12 @@ Ext.extend(Sbi.widgets.DatasetsBrowserPanel, Ext.Panel, {
 	, selectDatasetComponent: function(datasetLabel) {
 		Sbi.trace("[DatasetsBrowserPanel.selectDatasetComponent]: IN");
 		this.viewPanel.selectDatasetComponent(datasetLabel);
-//		if(this.rendered === true) {
-//			var el = Ext.get(datasetLabel);
-//	 		if (el) {
-//	 			Sbi.trace("[DatasetsBrowserPanel.selectDatasetComponent]: class before [" + el.dom.className + "]");
-//	 			el.dom.className += ' selectbox ';
-//	 			Sbi.trace("[DatasetsBrowserPanel.selectDatasetComponent]: class after [" + el.dom.className + "]");
-//	 		} else {
-//	 			Sbi.trace("[DatasetsBrowserPanel.selectDatasetComponent]: Impossible to find dataset [" + datasetLabel +"]");
-//	 		}
-//	 			
-//	 		var elText = Ext.get('box-text-' + datasetLabel);
-//		 	if (elText) {
-//		 		Sbi.trace("[DatasetsBrowserPanel.selectDatasetComponent]: class before [" + elText.dom.className + "]");
-//		 		elText.dom.className += ' box-text-select ';
-//		 		Sbi.trace("[DatasetsBrowserPanel.selectDatasetComponent]: class after [" + elText.dom.className + "]");
-//		 	}
-//		 	
-//		 	Sbi.trace("[DatasetsBrowserPanel.selectDatasetComponent]: dataset [" + datasetLabel +"] succesfully selected");
-//		}
 		Sbi.trace("[DatasetsBrowserPanel.selectDatasetComponent]: OUT");
 	}
 	
 	, unselectDatasetComponent: function(datasetLabel) {
 		Sbi.trace("[DatasetsBrowserPanel.selectDatasetComponent]: IN");
 		this.viewPanel.unselectDatasetComponent(datasetLabel);
-//		if(this.rendered === true) {
-//			var el = Ext.get(datasetLabel);
-//	 		if (el) {
-//	 			Sbi.trace("[DatasetsBrowserPanel.unselectDatasetComponent]: class before [" + el.dom.className + "]");
-//	 			el.dom.className = el.dom.className.replace( /(?:^|\s)selectbox(?!\S)/g , '' ); //remove active class
-//	 			Sbi.trace("[DatasetsBrowserPanel.unselectDatasetComponent]: class after [" + el.dom.className + "]");
-//	 		} else {
-//	 			Sbi.trace("[DatasetsBrowserPanel.selectDatasetComponent]: Impossible to find dataset [" + datasetLabel +"]");
-//	 		}
-//	 			
-//	 		var elText = Ext.get('box-text-' + datasetLabel);
-//		 	if (elText) {
-//		 		Sbi.trace("[DatasetsBrowserPanel.unselectDatasetComponent]: class before [" + elText.dom.className + "]");
-//		 		elText.dom.className = elText.dom.className.replace( /(?:^|\s)box-text-select(?!\S)/g , '' ); //remove active class
-//		 		Sbi.trace("[DatasetsBrowserPanel.unselectDatasetComponent]: class after [" + elText.dom.className + "]");
-//		 	}
-//		 	
-//		 	Sbi.trace("[DatasetsBrowserPanel.selectDatasetComponent]: dataset [" + datasetLabel +"] succesfully unselected");
-//		}
 		Sbi.trace("[DatasetsBrowserPanel.selectDatasetComponent]: OUT");
 	}
 	
