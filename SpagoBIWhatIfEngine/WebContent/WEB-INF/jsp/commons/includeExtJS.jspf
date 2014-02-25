@@ -26,7 +26,7 @@
 	if(request.getParameter("theme")!=null && !request.getParameter("theme").equals("")){
 %>
 	<script type="text/javascript" src='js/lib/extjs-4/ext-theme-<%= request.getParameter("theme") %>.js'/></script>  
-	<link id="theme-access" rel="styleSheet" href ="js/lib/extjs-4/resources/css/ext-all-<%= request.getParameter("theme") %>.css" type="text/css" />
+	<link id="theme-access" rel="styleSheet" href ="js/lib/extjs-4/resources/css/ext-all-<%= request.getParameter("theme") %>-debug.css" type="text/css" />
 <%
 	}
 %>

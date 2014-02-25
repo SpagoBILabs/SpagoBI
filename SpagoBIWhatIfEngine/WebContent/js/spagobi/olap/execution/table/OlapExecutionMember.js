@@ -5,7 +5,7 @@
 
 /**
  * 
- * A member..
+ * The super class of the rows and columns container
  *
  *     
  *  @author
@@ -15,17 +15,25 @@
 
 Ext.define('Sbi.olap.execution.table.OlapExecutionMember', {
 	extend: 'Ext.panel.Panel',
-	html:'MM',
 	
-	config:{
-		frame: true,
-		border: false,
-		height: 20,
-		width: 40,
+	config:{		
+		/**
+	     * @cfg {Sbi.olap.MemberModel} member
+	     * The member represented by the column
+	     */
+		member: null,
+		/**
+	     * @cfg {Sbi.olap.execution.table.OlapExecutionPivot} pivotContainer
+	     * The container of the columns
+	     */
+		pivotContainer: null,
+		/**
+	     * @cfg {Sbi.olap.execution.table.OlapExecutionRow/Column/Filter} containerPanel
+	     * The container of the member: filters, columns, rows
+	     */
 		containerPanel: null,
-		filtersPanel: null,
-		rowsPanel: null,
-		columnsPanel: null,
+		frame: true
+
     },
 	
 
@@ -47,34 +55,47 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionMember', {
 
 		    onDragDrop : function(evtObj, targetElId) {
 		    	
-		    	if(thisPanel.containerPanel.getId()!= targetElId){
+		    	if(thisPanel.containerPanel.getId()!= targetElId && (thisPanel.pivotContainer.olapExecutionFilters.getId()== targetElId || thisPanel.pivotContainer.olapExecutionRows.getId()== targetElId || thisPanel.pivotContainer.olapExecutionColumns.getId()== targetElId)){
 		    		
-		    		thisPanel.containerPanel.remove(thisPanel,false);
+		    		thisPanel.containerPanel.removeMember(thisPanel);
 		    		
-			        if(thisPanel.filtersPanel.getId()== targetElId){
-			        	thisPanel.filtersPanel.add(thisPanel);
-			        	thisPanel.containerPanel= thisPanel.filtersPanel;
+			        if(thisPanel.pivotContainer.olapExecutionFilters.getId()== targetElId){
+			        	thisPanel.pivotContainer.olapExecutionFilters.addMember(thisPanel);
+			        //	thisPanel.containerPanel= thisPanel.pivotContainer.olapExecutionFilters;
 			        }
-			        if(thisPanel.rowsPanel.getId()== targetElId){
-			        	thisPanel.rowsPanel.add(thisPanel);
-			        	thisPanel.containerPanel= thisPanel.rowsPanel;
+			        if(thisPanel.pivotContainer.olapExecutionRows.getId()== targetElId){
+			        	thisPanel.pivotContainer.olapExecutionRows.addMember(thisPanel);
+			        //	thisPanel.containerPanel= thisPanel.pivotContainer.olapExecutionRows;
 			        }
-			        if(thisPanel.columnsPanel.getId()== targetElId){
-			        	thisPanel.columnsPanel.add(thisPanel);
-			        	thisPanel.containerPanel= thisPanel.columnsPanel;
+			        if(thisPanel.pivotContainer.olapExecutionColumns.getId()== targetElId){
+			        	thisPanel.pivotContainer.olapExecutionColumns.addMember(thisPanel);
+			        //	thisPanel.containerPanel= thisPanel.pivotContainer.olapExecutionColumns;
 			        }
 		        }
 
+		    },
+		    endDrag : function() {
+		        // Empty. Just to prevent the user to drag the elements outside the dd area
 		    }
 		});
 		
 		
-		Ext.create('Ext.dd.DDTarget', thisPanel.filtersPanel.getId(), 'memberDDGroup');
-		Ext.create('Ext.dd.DDTarget', thisPanel.rowsPanel.getId(), 'memberDDGroup');
-		Ext.create('Ext.dd.DDTarget', thisPanel.columnsPanel.getId(), 'memberDDGroup');
+		Ext.create('Ext.dd.DDTarget', thisPanel.pivotContainer.olapExecutionFilters.getId(), 'memberDDGroup');
+		Ext.create('Ext.dd.DDTarget', thisPanel.pivotContainer.olapExecutionRows.getId(), 'memberDDGroup');
+		Ext.create('Ext.dd.DDTarget', thisPanel.pivotContainer.olapExecutionColumns.getId(), 'memberDDGroup');
 		},this);
 		
-	}
+	},
+	
+	
+	initComponent: function() {
+		
+		Ext.apply(this, {html: this.member.get("name")});
+		this.callParent();
+	},
+	
+	
+    
 	
 });
 

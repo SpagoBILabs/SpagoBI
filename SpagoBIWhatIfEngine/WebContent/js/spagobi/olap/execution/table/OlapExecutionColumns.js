@@ -13,16 +13,26 @@
  */
 
 
-Ext.define('Sbi.olap.execution.table.OlapExecutionColumns', {
-	extend: 'Ext.panel.Panel',
-	html:'Columns',
-	
-	config:{
-		frame: true,
-		border: false
-    },
-	
 
+
+Ext.define('Sbi.olap.execution.table.OlapExecutionColumns', {
+	extend: 'Sbi.olap.execution.table.OlapExecutionMembers',
+	
+	layout: {
+	    type: 'hbox',
+	    pack: 'start',
+	    align: 'stretch'
+	},
+		
+	config:{
+		/**
+	     * @cfg {String} memberClassName
+	     * The name of the class that extends the Sbi.olap.execution.table.OlapExecutionMember class.
+	     * The class name is used to build the subclass 
+	     */
+		memberClassName: 'Sbi.olap.execution.table.OlapExecutionColumn'
+    },
+		
 	constructor : function(config) {
 		this.initConfig(config);
 		if(Sbi.settings && Sbi.settings.olap && Sbi.settings.olap.execution && Sbi.settings.olap.execution.table && Sbi.settings.olap.execution.table.OlapExecutionColumns) {
