@@ -2,6 +2,7 @@ package it.eng.spagobi.engines.whatif.services.prototype;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.sql.DriverManager;
 import java.util.List;
 import java.util.Properties;
 
@@ -12,6 +13,8 @@ import javax.ws.rs.core.Context;
 
 import org.olap4j.CellSet;
 import org.olap4j.CellSetAxis;
+import org.olap4j.OlapConnection;
+import org.olap4j.OlapWrapper;
 import org.olap4j.Position;
 import org.olap4j.metadata.Member;
 
@@ -29,6 +32,12 @@ public class SimpleQuery {
 	public String executeSimpleQuery(@Context HttpServletRequest req){
 		
 		
+		try {
+			Class.forName("mondrian.olap4j.MondrianOlap4jDriver");
+		} catch (ClassNotFoundException e) {
+			throw new RuntimeException("Cannot load Mondrian Olap4j Driver", e);
+		}
+		
 		String initialMdx = "SELECT {[Measures].[Unit Sales]} ON COLUMNS, {[Product].[Drink]} ON ROWS FROM [Sales]";
 		
 		if(req.getParameter("mdx")!=null && !req.getParameter("mdx").equals("")){
@@ -37,18 +46,23 @@ public class SimpleQuery {
 
 		Properties connectionProps = new Properties();
 		connectionProps.put("JdbcUser","root");
-		connectionProps.put("JdbcPassword","root");
-		connectionProps.put("Catalog","file:D:/Sviluppo/mondrian/FoodMartMySQL.xml");
+		connectionProps.put("JdbcPassword","");
+		connectionProps.put("Catalog","file:D:/Progetti/SpagoBI/SpagoBI-4.x-Juno-runtimes/apache-tomcat-7.0.14/resources/Olap/FoodMart.xml");
 		connectionProps.put("JdbcDrivers","com.mysql.jdbc.Driver");
 		connectionProps.put("Provider","Mondrian");
 		//connectionProps.put("jdbc:mondrian:Jdbc","jdbc:mysql:/localhost:3306/foodmart");
 
 
 		SimpleOlapDataSource dataSource = new SimpleOlapDataSource();
-		dataSource.setConnectionString( "jdbc:mondrian:Jdbc=jdbc:mysql://localhost:3306/foodmart_key");
+		dataSource.setConnectionString( "jdbc:mondrian:Jdbc=jdbc:mysql://localhost:3306/foodmart");
 		dataSource.setConnectionProperties(connectionProps);
-		//dataSource.setConnectionString( "jdbc:mondrian:Jdbc=jdbc:mysql://172.27.1.83:3306/foodmart;Provider=Mondrian;JdbcDrivers=com.mysql.jdbc.Driver;JdbcUser=foodmart;JdbcPassword=foodmart;Catalog=file:D:/Sviluppo/mondrian/FoodMartMySQL.xml;");
+//		dataSource.setConnectionString( "jdbc:mondrian:Jdbc=jdbc:mysql://localhost/foodmart;Provider=Mondrian;JdbcDrivers=com.mysql.jdbc.Driver;JdbcUser=root;JdbcPassword=;Catalog=file:D:/Progetti/SpagoBI/SpagoBI-4.x-Juno-runtimes/apache-tomcat-7.0.14/resources/Olap/FoodMart.xml;");
 
+		
+//		dataSource.setConnectionString( 
+//				 "jdbc:mondrian:" + 
+//				 "Jdbc=jdbc:mysql://sibilla2/foodmart;Provider=Mondrian;PoolNeeded=false;JdbcDrivers=com.mysql.jdbc.Driver;JdbcUser=foodmart;JdbcPassword=foodmart;" + 
+//				 "Catalog=file:D:/Progetti/SpagoBI/SpagoBI-4.x-Juno-runtimes/apache-tomcat-7.0.14/resources/Olap/FoodMart.xml;");
 
 
 		PivotModel model = new PivotModelImpl(dataSource);
