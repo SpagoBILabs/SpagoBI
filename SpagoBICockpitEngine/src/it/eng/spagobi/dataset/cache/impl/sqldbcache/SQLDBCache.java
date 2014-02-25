@@ -38,10 +38,12 @@ import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.persist.PersistedTableManager;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import org.apache.log4j.Logger;
 
@@ -59,6 +61,8 @@ public class SQLDBCache implements ICache {
 
 	private ICacheMetadata cacheMetadata;
 	private IDataSource dataSource;
+	private List<Properties> objectsTypeDimension = new ArrayList<Properties>();
+
 	
 	private Config tableNamePrefixConfig;
 	
@@ -242,6 +246,9 @@ public class SQLDBCache implements ICache {
 	public ICacheMetadata getCacheMetadata() {
 		if (cacheMetadata == null){		
 			cacheMetadata = new SQLDBCacheMetadata(getDataSource());
+			if (cacheMetadata instanceof SQLDBCacheMetadata){
+				((SQLDBCacheMetadata)cacheMetadata).setObjectsTypeDimension(getObjectsTypeDimension());
+			}
 		}  
 		return cacheMetadata;
 	}
@@ -290,28 +297,52 @@ public class SQLDBCache implements ICache {
 			    }				
 			}
 		}
-		//1- Gets the connection for writing (from the datasource) 
-		//2- Derive the structure of the table to be created from the resultset (SQL CREATE) - attention to DBMS dialects
-		//3- Draws the data from the resultset to be included in the newly created table (SQL INSERT) - attention to DBMS dialects
-		PersistedTableManager persistedTableManager = new PersistedTableManager();
-		String tablePrefix = null;
-		
-		try {
-			if (tableNamePrefixConfig.isActive()){
-				tablePrefix = tableNamePrefixConfig.getValueCheck();
-				tablePrefix.toUpperCase();
+		//check again if there is enough space for the resultset
+		if ( ((getCacheMetadata().isActiveCleanAction()) && (getCacheMetadata().hasSpaceForResultSet(resultset))) || 
+		(!getCacheMetadata().isActiveCleanAction()) ){
+			//1- Gets the connection for writing (from the datasource) 
+			//2- Derive the structure of the table to be created from the resultset (SQL CREATE) - attention to DBMS dialects
+			//3- Draws the data from the resultset to be included in the newly created table (SQL INSERT) - attention to DBMS dialects
+			PersistedTableManager persistedTableManager = new PersistedTableManager();
+			String tablePrefix = null;
+			
+			try {
+				if (tableNamePrefixConfig.isActive()){
+					tablePrefix = tableNamePrefixConfig.getValueCheck();
+					tablePrefix.toUpperCase();
+				}
+				String tableName = persistedTableManager.generateRandomTableName(tablePrefix);
+				persistedTableManager.persistDataset(dataset, resultset, getDataSource(), tableName);
+				//4- Update cacheRegistry with the new couple <resultsetSignature,nometabellaCreata>
+				getCacheMetadata().addCacheItem(resultsetSignature, tableName, resultset);
+			} catch (Exception e) {
+				logger.error("[SQLDBCACHE]Cannot perform persistence of result set on database");
 			}
-			String tableName = persistedTableManager.generateRandomTableName(tablePrefix);
-			persistedTableManager.persistDataset(dataset, resultset, getDataSource(), tableName);
-			//4- Update cacheRegistry with the new couple <resultsetSignature,nometabellaCreata>
-			getCacheMetadata().addCacheItem(resultsetSignature, tableName, resultset);
-		} catch (Exception e) {
-			logger.error("[SQLDBCACHE]Cannot perform persistence of result set on database");
+		} else {
+			logger.warn("The resultset ["+resultsetSignature+"] cannot be cached because there is not enough space avaiable");
 		}
+		
+
 		
 		
 		logger.debug("OUT");
 
+	}
+
+
+	/**
+	 * @return the objectsTypeDimension
+	 */
+	public List<Properties> getObjectsTypeDimension() {
+		return objectsTypeDimension;
+	}
+
+
+	/**
+	 * @param objectsTypeDimension the objectsTypeDimension to set
+	 */
+	public void setObjectsTypeDimension(List<Properties> objectsTypeDimension) {
+		this.objectsTypeDimension = objectsTypeDimension;
 	}
 
 }

@@ -38,7 +38,7 @@ public class OracleSQLDBCacheTest extends AbstractSQLDBCacheTest {
 	//Create Datasources specific for this test
 	@Override
 	public void createDataSources(){
-		dataSourceReading = TestDataSourceFactory.createDataSource(TestConstants.DatabaseType.ORACLE, false);
+		dataSourceReading = TestDataSourceFactory.createDataSource(TestConstants.DatabaseType.MYSQL, false);
 		dataSourceWriting = TestDataSourceFactory.createDataSource(TestConstants.DatabaseType.ORACLE, true);
 	}
 	

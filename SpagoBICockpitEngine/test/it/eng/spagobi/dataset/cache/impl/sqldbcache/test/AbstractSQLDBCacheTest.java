@@ -34,6 +34,8 @@ import it.eng.spago.configuration.FileCreatorConfiguration;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.dataset.cache.CacheFactory;
 import it.eng.spagobi.dataset.cache.ICache;
+import it.eng.spagobi.dataset.cache.impl.sqldbcache.DataType;
+import it.eng.spagobi.dataset.cache.impl.sqldbcache.SQLDBCache;
 import it.eng.spagobi.dataset.cache.test.FakeDatamartRetriever;
 import it.eng.spagobi.dataset.cache.test.TestConstants;
 import it.eng.spagobi.tenant.Tenant;
@@ -81,6 +83,10 @@ public abstract class AbstractSQLDBCacheTest extends TestCase {
 		if (cache == null){
 			CacheFactory cacheFactory = new CacheFactory();
 			cache = cacheFactory.getCache(dataSourceWriting);
+			if (cache instanceof SQLDBCache){
+				DataType dataType = new DataType(); //class used for setting data type dimension properties
+				((SQLDBCache)cache).setObjectsTypeDimension(dataType.getProps());
+			}
 		}
 
 

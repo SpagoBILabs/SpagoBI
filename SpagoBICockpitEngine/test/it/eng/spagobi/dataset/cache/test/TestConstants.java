@@ -37,9 +37,9 @@ public class TestConstants {
 	
 	public enum DatabaseType { MYSQL, POSTGRES, ORACLE, SQLSERVER };
 	
-	public static boolean enableTestsOnMySql = true;
+	public static boolean enableTestsOnMySql = false;
 	public static boolean enableTestsOnPostgres = false;
-	public static boolean enableTestsOnOracle = false;
+	public static boolean enableTestsOnOracle = true;
 	public static boolean enableTestsOnSQLServer = false;
 
 
@@ -55,17 +55,17 @@ public class TestConstants {
 	// FOR WRITING
 	//-------------
 	public static String MYSQL_LABEL_WRITING = "datasetTest_mysql_write";
-	public static String MYSQL_URL_WRITING = "jdbc:mysql://localhost:3306/writetestschema";
-	public static String MYSQL_USER_WRITING = "root";
-	public static String MYSQL_PWD_WRITING = "root";
+	public static String MYSQL_URL_WRITING = "jdbc:mysql://172.27.1.83:3306/spagobi_testw";
+	public static String MYSQL_USER_WRITING = "spagobi";
+	public static String MYSQL_PWD_WRITING = "bispago";
 	
 	//-------------
 	// FOR READING
 	//-------------
 	public static String MYSQL_LABEL_READING = "datasetTest_mysql_read";
-	public static String MYSQL_URL_READING = "jdbc:mysql://localhost:3306/foodmart";
-	public static String MYSQL_USER_READING = "root";
-	public static String MYSQL_PWD_READING = "root";
+	public static String MYSQL_URL_READING = "jdbc:mysql://172.27.1.83:3306/spagobi_testr";
+	public static String MYSQL_USER_READING = "spagobi";
+	public static String MYSQL_PWD_READING = "bispago";
 	
 	// =======================================================
 	// POSTGRES
@@ -78,17 +78,17 @@ public class TestConstants {
 	// FOR WRITING
 	//-------------
 	public static String POSTGRES_LABEL_WRITING = "datasetTest_postgres_write";
-	public static String POSTGRES_URL_WRITING = "jdbc:postgresql://localhost:5433/testwrite";
-	public static String POSTGRES_USER_WRITING = "postgres";
-	public static String POSTGRES_PWD_WRITING = "postgres";
+	public static String POSTGRES_URL_WRITING = "jdbc:postgresql://172.27.1.83:5432/spagobi_testw";
+	public static String POSTGRES_USER_WRITING = "spagobi";
+	public static String POSTGRES_PWD_WRITING = "spagobi";
 	
 	//-------------
 	// FOR READING
 	//-------------
 	public static String POSTGRES_LABEL_READING = "datasetTest_postgres_read";
-	public static String POSTGRES_URL_READING = "jdbc:postgresql://localhost:5433/testwrite";
-	public static String POSTGRES_USER_READING = "postgres";
-	public static String POSTGRES_PWD_READING = "postgres";
+	public static String POSTGRES_URL_READING = "jdbc:postgresql://172.27.1.83:5432/spagobi_testr";
+	public static String POSTGRES_USER_READING = "spagobi";
+	public static String POSTGRES_PWD_READING = "spagobi";
 	
 	// =======================================================
 	// ORACLE
@@ -102,16 +102,16 @@ public class TestConstants {
 	//-------------
 	public static String ORACLE_LABEL_WRITING = "datasetTest_oracle_write";
 	public static String ORACLE_URL_WRITING = "jdbc:oracle:thin:@172.27.1.83:1521:repo"; //sibilla2
-	public static String ORACLE_USER_WRITING = "bilancio_mi";
-	public static String ORACLE_PWD_WRITING = "bilancio_mi";
+	public static String ORACLE_USER_WRITING = "spagobi_testw";
+	public static String ORACLE_PWD_WRITING = "spagobi_testw";
 	
 	//-------------
 	// FOR READING
 	//-------------
 	public static String ORACLE_LABEL_READING = "datasetTest_oracle_read";
 	public static String ORACLE_URL_READING = "jdbc:oracle:thin:@172.27.1.83:1521:repo";
-	public static String ORACLE_USER_READING = "bilancio_mi";
-	public static String ORACLE_PWD_READING = "bilancio_mi";
+	public static String ORACLE_USER_READING = "spagobi_testr";
+	public static String ORACLE_PWD_READING = "spagobi_testr";
 	
 	// =======================================================
 	// SQL SERVER

@@ -38,7 +38,7 @@ public class PostgresSQLDBCacheTest extends AbstractSQLDBCacheTest {
 	//Create Datasources specific for this test
 	@Override
 	public void createDataSources(){
-		dataSourceReading = TestDataSourceFactory.createDataSource(TestConstants.DatabaseType.POSTGRES, false);
+		dataSourceReading = TestDataSourceFactory.createDataSource(TestConstants.DatabaseType.MYSQL, false);
 		dataSourceWriting = TestDataSourceFactory.createDataSource(TestConstants.DatabaseType.POSTGRES, true);
 	}
 	
