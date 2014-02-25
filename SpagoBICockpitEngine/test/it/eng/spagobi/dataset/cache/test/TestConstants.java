@@ -39,7 +39,7 @@ public class TestConstants {
 	
 	public static boolean enableTestsOnMySql = false;
 	public static boolean enableTestsOnPostgres = false;
-	public static boolean enableTestsOnOracle = true;
+	public static boolean enableTestsOnOracle = false;
 	public static boolean enableTestsOnSQLServer = false;
 
 
