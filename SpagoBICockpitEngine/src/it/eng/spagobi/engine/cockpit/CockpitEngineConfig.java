@@ -14,6 +14,7 @@ import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.dataset.cache.CacheFactory;
 import it.eng.spagobi.dataset.cache.ICache;
+import it.eng.spagobi.dataset.cache.impl.sqldbcache.SQLDBCache;
 import it.eng.spagobi.services.common.EnginConf;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
@@ -80,6 +81,9 @@ public class CockpitEngineConfig {
 				logger.warn("Impossible to initialize cache because there are no datasource defined as defualt write datasource");
 			} else {
 				cache = cacheFactory.getCache(dataSource);
+				if (cache instanceof SQLDBCache){
+					((SQLDBCache)cache).setObjectsTypeDimension(getDimensionTypes());
+				}
 			}
 		} catch (Throwable t){
 			logger.error("An unexpected error occured while initializing cache");

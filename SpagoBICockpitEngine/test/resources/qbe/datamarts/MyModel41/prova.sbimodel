@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="ASCII"?>
 <it.eng.spagobi.meta.model:Model xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:it.eng.spagobi.meta.model="http:///it/eng/spagobi/meta/model.ecore" xmlns:it.eng.spagobi.meta.model.business="http:///it/eng/spagobi/meta/model/businessl.ecore" name="MyModel41">
-  <physicalModels name="MyModel41" databaseName="MySQL" databaseVersion="5.1.42-community" catalog="foodmart_key">
+  <physicalModels name="MyModel41" databaseName="MySQL" databaseVersion="5.0.95-log" catalog="spagobi_testr">
     <properties key="connection.name">
       <value propertyType="//@propertyTypes.0"/>
     </properties>
@@ -328,13 +328,13 @@
       <value propertyType="//@propertyTypes.18"/>
     </properties>
     <properties key="structural.file">
-      <value propertyType="//@propertyTypes.19" value="C:\Users\cortella\runtime-EclipseApplication\test41\Business Models\prova.sbimodel"/>
+      <value propertyType="//@propertyTypes.19" value="E:\SpagoBIStudio_4.1.0_win_64\workspace\MyModel41\Business Models\prova.sbimodel"/>
     </properties>
     <properties key="structural.initializer.name">
       <value propertyType="//@propertyTypes.20" value="StandardSpagoBIBusinessModelInitializer"/>
     </properties>
     <properties key="structural.initializer.version">
-      <value propertyType="//@propertyTypes.21" value="4.0.0"/>
+      <value propertyType="//@propertyTypes.21" value="4.1.0"/>
     </properties>
     <tables xsi:type="it.eng.spagobi.meta.model.business:BusinessTable" name="Currency" uniqueName="currency" physicalTable="//@physicalModels.0/@tables.0">
       <properties key="structural.visible">
@@ -5807,10 +5807,10 @@
   </businessModels>
   <olapModels name="MyModel41"/>
   <propertyTypes id="connection.name" name="Connection Name" description="Data Source Connection Name" category="//@propertyCategories.0" defaultValue="New MySQL"/>
-  <propertyTypes id="connection.url" name="Connection Url" description="Data Source Connection Url" category="//@propertyCategories.0" defaultValue="jdbc:mysql://localhost:3306/foodmart_key"/>
-  <propertyTypes id="connection.username" name="Connection Username" description="Data Source Connection Username" category="//@propertyCategories.0" defaultValue="root"/>
-  <propertyTypes id="connection.password" name="Connection Password" description="Data Source Connection Password" category="//@propertyCategories.0" defaultValue="root"/>
-  <propertyTypes id="connection.databasename" name="Connection DatabaseName" description="Data Source Connection Database Name" category="//@propertyCategories.0" defaultValue="mydb"/>
+  <propertyTypes id="connection.url" name="Connection Url" description="Data Source Connection Url" category="//@propertyCategories.0" defaultValue="jdbc:mysql://172.27.1.83:3306/spagobi_testr"/>
+  <propertyTypes id="connection.username" name="Connection Username" description="Data Source Connection Username" category="//@propertyCategories.0" defaultValue="spagobi"/>
+  <propertyTypes id="connection.password" name="Connection Password" description="Data Source Connection Password" category="//@propertyCategories.0" defaultValue="bispago"/>
+  <propertyTypes id="connection.databasename" name="Connection DatabaseName" description="Data Source Connection Database Name" category="//@propertyCategories.0" defaultValue="spagobi_testr"/>
   <propertyTypes id="connection.driver" name="Connection driver" description="Data Source Connection driver" category="//@propertyCategories.0" defaultValue="com.mysql.jdbc.Driver"/>
   <propertyTypes id="connection.databasequotestring" name="Connection DatabaseQuoteString" description="Data Source Connection Database Quote String" category="//@propertyCategories.0" defaultValue="`"/>
   <propertyTypes id="structural.visible" name="Visible" description="Specify if this column is visible in the query editor" category="//@propertyCategories.1" defaultValue="true">

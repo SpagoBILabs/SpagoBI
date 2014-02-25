@@ -26,7 +26,6 @@ import it.eng.spagobi.commons.bo.Config;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IConfigDAO;
 import it.eng.spagobi.dataset.cache.ICacheMetadata;
-import it.eng.spagobi.engine.cockpit.CockpitEngineConfig;
 import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IField;
@@ -82,28 +81,26 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 	private Integer cachePercentageToClean;
 	private boolean isActiveCleanAction = false;
 	
-	private List objectsDimension = new ArrayList();
+	private List<Properties> objectsTypeDimension = new ArrayList<Properties>();
 	private Map<String, Integer> columnSize =  new HashMap<String, Integer>();
 	private enum FieldType {ATTRIBUTE, MEASURE}
 	
 	public SQLDBCacheMetadata(IDataSource ds){
 		try {
 			dataSource = ds;
-			objectsDimension = CockpitEngineConfig.getDimensionTypes();
-			
 			
 			IConfigDAO configDao = DAOFactory.getSbiConfigDAO();
 			Config tableNamePrefixConfig = configDao.loadConfigParametersByLabel(CACHE_NAME_PREFIX_CONFIG);
-			if (tableNamePrefixConfig.isActive()){
+			if ((tableNamePrefixConfig != null) && (tableNamePrefixConfig.isActive())){
 				tableNamePrefix = tableNamePrefixConfig.getValueCheck();
 
 			}
 			Config cacheSpaceAvailableConfig = configDao.loadConfigParametersByLabel(CACHE_SPACE_AVAILABLE_CONFIG);
-			if (cacheSpaceAvailableConfig.isActive()){
+			if ((cacheSpaceAvailableConfig != null) && (cacheSpaceAvailableConfig.isActive())){
 				cacheSpaceAvailable = BigDecimal.valueOf(Double.valueOf(cacheSpaceAvailableConfig.getValueCheck()));
 			}			
 			Config cacheSpaceCleanableConfig = configDao.loadConfigParametersByLabel(CACHE_LIMIT_FOR_CLEAN_CONFIG);
-			if (cacheSpaceAvailableConfig.isActive()){
+			if ((cacheSpaceCleanableConfig != null) && (cacheSpaceAvailableConfig.isActive())){
 				cachePercentageToClean = Integer.valueOf(cacheSpaceCleanableConfig.getValueCheck());
 			}
 			if (tableNamePrefix != null && !"".equals(tableNamePrefix) &&
@@ -134,7 +131,7 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 					 " FROM information_schema.TABLES WHERE table_name like '"+ tableNamePrefix +"%'";
 		}else if (dataSource.getHibDialectClass().contains(DIALECT_ORACLE) ||
 				dataSource.getHibDialectClass().contains(DIALECT_ORACLE9i10g)){
-			query += " select sum(num_rows*avg_row_len) as size " +
+			query += " sum(num_rows*avg_row_len) as sizet " +
 					 " from all_tables " + 
 					 " where table_name like '"+ tableNamePrefix +"%'";
 		}else{
@@ -178,7 +175,7 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 	public BigDecimal getDimensionSpaceUsed(IDataStore resultset){
 		BigDecimal rowWeight = getRowWeight(resultset.getRecordAt(0), resultset.getMetaData());
 		dimensionSpaceUsed = rowWeight.multiply(new BigDecimal(resultset.getRecordsCount())) ;
-		logger.debug("Dimension stimated for the new resultset [rowWeight*rows]: " + dimensionSpaceUsed + " ["+rowWeight+" * "+resultset.getRecordsCount()+"]");
+		logger.debug("Dimension estimated for the new resultset [rowWeight*rows]: " + dimensionSpaceUsed + " ["+rowWeight+" * "+resultset.getRecordsCount()+"]");
 		return dimensionSpaceUsed;
 	}
 	
@@ -211,10 +208,10 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 
 	private BigDecimal getBytesForType(String type){
 		BigDecimal toReturn = new BigDecimal(8); //for default sets a generic Object size
-		for (int i=0, l=objectsDimension.size(); i<l; i++){
-			String typeName = ((Properties)objectsDimension.get(i)).getProperty("name");
+		for (int i=0, l=objectsTypeDimension.size(); i<l; i++){
+			String typeName = ((Properties)objectsTypeDimension.get(i)).getProperty("name");
 			if (type.contains(typeName)){
-				toReturn = new BigDecimal(((Properties)objectsDimension.get(i)).getProperty("bytes"));
+				toReturn = new BigDecimal(((Properties)objectsTypeDimension.get(i)).getProperty("bytes"));
 				logger.debug("Used configurated type: " + type + " - weight: " + toReturn.toString());
 				break;
 			}
@@ -320,4 +317,20 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 	public boolean containsCacheItemByResultsetSignature(String resultSetSignature) {
 		return getCacheItemByResultsetSignature(resultSetSignature) != null;
 	}
+
+	/**
+	 * @return the objectsTypeDimension
+	 */
+	public List<Properties> getObjectsTypeDimension() {
+		return objectsTypeDimension;
+	}
+
+	/**
+	 * @param objectsTypeDimension the objectsTypeDimension to set
+	 */
+	public void setObjectsTypeDimension(List<Properties> objectsTypeDimension) {
+		this.objectsTypeDimension = objectsTypeDimension;
+	}
+
+
 }
