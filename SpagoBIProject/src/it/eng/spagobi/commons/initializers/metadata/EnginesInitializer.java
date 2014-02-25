@@ -6,12 +6,16 @@
 package it.eng.spagobi.commons.initializers.metadata;
 
 import it.eng.spago.base.SourceBean;
-import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.metadata.SbiCommonInfo;
 import it.eng.spagobi.commons.metadata.SbiDomains;
+import it.eng.spagobi.commons.metadata.SbiOrganizationEngine;
+import it.eng.spagobi.commons.metadata.SbiOrganizationEngineId;
 import it.eng.spagobi.commons.metadata.SbiTenant;
 import it.eng.spagobi.engines.config.metadata.SbiEngines;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -26,7 +30,7 @@ import org.hibernate.Session;
 public class EnginesInitializer extends SpagoBIInitializer {
 
 	static private Logger logger = Logger.getLogger(EnginesInitializer.class);
-
+	
 	public EnginesInitializer() {
 		targetComponentName = "Engines";
 		configurationFileName = "it/eng/spagobi/commons/initializers/metadata/config/engines.xml";
@@ -99,13 +103,45 @@ public class EnginesInitializer extends SpagoBIInitializer {
 			String biobjTypeCd = (String) anEngineSB.getAttribute("biobjTypeCd");
 			SbiDomains domainBiobjectType = findDomain(aSession, biobjTypeCd, "BIOBJ_TYPE");
 			anEngine.setBiobjType(domainBiobjectType);
-
+			
+			Integer engineId = (Integer)aSession.save(anEngine);
 			
 			logger.debug("Inserting Engine with label = [" + anEngineSB.getAttribute("label") + "] ...");
 
-			aSession.save(anEngine);
+			///associate to default tenant
+			SbiTenant aTenant = getDefaultTenant(aSession);
+
+			SbiOrganizationEngine association = new SbiOrganizationEngine();
+			association.setSbiEngines(anEngine);
+			association.setSbiOrganizations(aTenant);
+			SbiCommonInfo commonInfo = new SbiCommonInfo();
+			commonInfo.setUserIn("server");
+			commonInfo.setTimeIn(new Date());
+			
+			association.setCommonInfo(commonInfo);
+			association.setCreationDate(new Date());
+			association.setLastChangeDate(new Date());
+			
+			SbiOrganizationEngineId id = new SbiOrganizationEngineId();
+			id.setEngineId(engineId);
+			id.setOrganizationId(aTenant.getId());
+			association.setId(id);
+			
+			aSession.save(association);
+			
+			
 		}
 		logger.debug("OUT");
 	}
-
+	private SbiTenant getDefaultTenant(Session hibernateSession) throws Exception {
+		logger.debug("IN");
+		SbiTenant aTenant = new SbiTenant();
+		String hql = "from SbiTenant t where t.name =?";
+		Query hqlQuery = hibernateSession.createQuery(hql);
+		hqlQuery.setString(0, "SPAGOBI");
+		SbiTenant defaultenant = (SbiTenant)hqlQuery.uniqueResult();
+		logger.debug("OUT");
+		return defaultenant;
+		
+	}
 }
