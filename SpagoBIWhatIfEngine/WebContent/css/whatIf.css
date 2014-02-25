@@ -29,3 +29,22 @@
     	margin: 0px !important;
     	padding: 0px !important;
 }
+
+.rotate span {
+	height: auto!important;
+     -moz-transform: rotate(90.0deg);  /* FF3.5+ */
+       -o-transform: rotate(90.0deg);  /* Opera 10.5 */
+  -webkit-transform: rotate(90.0deg);  /* Saf3.1+, Chrome */
+             filter:  progid:DXImageTransform.Microsoft.BasicImage(rotation=0.917);  /* IE6,IE7 */
+         -ms-filter: "progid:DXImageTransform.Microsoft.BasicImage(rotation=0.917)"; /* IE8 */
+}
+
+
+/*  DA DEFINIRE PER TIPO DI STILE  */
+.empty-member{
+	border-color: gray !important;
+ 	border-style: dashed !important;
+ 	border-width: 1px;
+}
+
+

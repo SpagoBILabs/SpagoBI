@@ -14,14 +14,22 @@
 
 
 Ext.define('Sbi.olap.execution.table.OlapExecutionRows', {
-	extend: 'Ext.panel.Panel',
-	html:'Rows',
+	extend: 'Sbi.olap.execution.table.OlapExecutionMembers',
 	
+	layout: {
+	    type: 'vbox',
+	    pack: 'start',
+	    align: 'stretch'
+	},
+		
 	config:{
-		frame: true,
-		border: false
-    },
-	
+		/**
+	     * @cfg {String} memberClassName
+	     * The name of the class that extends the Sbi.olap.execution.table.OlapExecutionMember class.
+	     * The class name is used to build the subclass 
+	     */
+		memberClassName: 'Sbi.olap.execution.table.OlapExecutionRow'
+	},
 
 	constructor : function(config) {
 		this.initConfig(config);
