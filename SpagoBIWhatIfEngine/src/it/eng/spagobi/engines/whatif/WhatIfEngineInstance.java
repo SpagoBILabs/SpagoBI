@@ -11,6 +11,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.json.JSONObject;
+import org.olap4j.OlapDataSource;
 
 import it.eng.spagobi.services.proxy.EventServiceProxy;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
@@ -28,6 +29,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 public class WhatIfEngineInstance extends AbstractEngineInstance {
 	private JSONObject guiSettings;
 	private List<String> includes;
+	private OlapDataSource olapDataSource;
 
 	public WhatIfEngineInstance(Object template, Map env) {
 		super( env );	
@@ -38,8 +40,13 @@ public class WhatIfEngineInstance extends AbstractEngineInstance {
 		}
 		
 		includes = WhatIfEngine.getConfig().getIncludes();
+		
+		// TODO initialize olapDataSource
 	}
 	
+	public OlapDataSource getOlapDataSource () {
+		return olapDataSource;
+	}
 
 	public JSONObject getGuiSettings() {
 		return guiSettings;
