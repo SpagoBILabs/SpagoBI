@@ -31,9 +31,8 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionMember', {
 	     * @cfg {Sbi.olap.execution.table.OlapExecutionRow/Column/Filter} containerPanel
 	     * The container of the member: filters, columns, rows
 	     */
-		containerPanel: null,
-		frame: true
-
+		containerPanel: null
+		
     },
 	
 
@@ -89,10 +88,17 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionMember', {
 	
 	
 	initComponent: function() {
-		
-		Ext.apply(this, {html: this.member.get("name")});
+		Ext.apply(this, {html: this.getText(), frame: true});
 		this.callParent();
 	},
+	
+    /**
+     * Gets the text to show in the panel
+     * It's the name of the member
+     */
+	getText: function(){
+		return this.member.get("name");
+	}
 	
 	
     

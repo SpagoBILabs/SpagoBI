@@ -35,8 +35,7 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionMembers', {
 	     * @cfg {String} memberClassName
 	     * The name of the children classes
 	     */
-		memberClassName: null,
-		frame: true
+		memberClassName: null
 //		,style: {
 //			backgroundColor: "transparent",
 //			border: "none"
@@ -59,7 +58,7 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionMembers', {
 			Ext.apply(this, {items: items});
 //			this.removeCls("empty-member");
 		}
-		
+		Ext.apply(this, {frame: true});
 		this.callParent();
 	},
 	
