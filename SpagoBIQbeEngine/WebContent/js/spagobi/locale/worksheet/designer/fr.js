@@ -48,31 +48,6 @@ Sbi.locale.ln['sbi.worksheet.designer.sheettitlepanel.laodimage'] = 'Chargez une
 //===================================================================
 Sbi.locale.ln['sbi.worksheet.designer.chooseimagewindow.title'] = 'Choisissez l\'image ...';
 
-
-//===================================================================
-// DESIGNER SHEETCONTAINER
-//===================================================================
-Sbi.locale.ln['sbi.worksheet.designer.msg.deletetab.title'] = 'Veuillez confirmer';
-Sbi.locale.ln['sbi.worksheet.designer.msg.deletetab.msg'] = 'Veuillez confirmer la suppression de l\'\u00E9l\u00E9ment';
-Sbi.locale.ln['sbi.worksheet.designer.msg.newsheet.title'] = 'Nouvelle Feuille';
-Sbi.locale.ln['sbi.worksheet.designer.msg.newsheet.msg'] = 'Une nouvelle feuille a \u00E9t\u00E9 ajout\u00E9e';
-Sbi.locale.ln['sbi.worksheet.designer.msg.emptyworksheet'] = 'Le classeur ne contient pas de feuille';
-Sbi.locale.ln['sbi.worksheet.designer.msg.samenamesheets'] =  'Il existe une autre feuille avec le m\u00E9me nom';
-
-//===================================================================
-//DESIGNER SHEET
-//===================================================================
-Sbi.locale.ln['sbi.worksheet.designer.sheetpanel.tool.up.filter'] = 'D\u00E9placez les filtres au-dessus du contenu';
-Sbi.locale.ln['sbi.worksheet.designer.sheetpanel.tool.left.filter'] = 'D\u00E9placez les filtres \u00E0 gauche du contenu';
-
-
-//===================================================================
-//DESIGNER TOOLS
-//===================================================================
-Sbi.locale.ln['sbi.worksheet.designer.palete']= 'Palette' ;
-Sbi.locale.ln['sbi.worksheet.designer.image'] = 'Image';
-Sbi.locale.ln['sbi.worksheet.designer.position'] = 'Position';
-
 //===================================================================
 //Sbi.worksheet.designer.DesignSheetFiltersPanel
 //===================================================================
@@ -91,12 +66,36 @@ Sbi.locale.ln['sbi.worksheet.designer.designsheetfilterseditwizard.title'] = 'As
 Sbi.locale.ln['sbi.worksheet.designer.designsheetfilterseditwizard.selection'] = 'S\u00e9lection';
 Sbi.locale.ln['sbi.worksheet.designer.designsheetfilterseditwizard.siglevalue'] = 'Valeur simple';
 Sbi.locale.ln['sbi.worksheet.designer.designsheetfilterseditwizard.multivalue'] = 'Valeur multiple';
-Sbi.locale.ln['sbi.worksheet.designer.designsheetfilterseditwizard.mandatory'] = 'obligatoire';
-Sbi.locale.ln['sbi.worksheet.designer.designsheetfilterseditwizard.mandatory.yes'] = 'Oui';
-Sbi.locale.ln['sbi.worksheet.designer.designsheetfilterseditwizard.mandatory.no'] = 'Non';
+Sbi.locale.ln['sbi.worksheet.designer.designsheetfilterseditwizard.mandatory'] = 'Valorisation';
+Sbi.locale.ln['sbi.worksheet.designer.designsheetfilterseditwizard.mandatory.yes'] = ' obligatoire';
+Sbi.locale.ln['sbi.worksheet.designer.designsheetfilterseditwizard.mandatory.no'] = 'optionale';
 Sbi.locale.ln['sbi.worksheet.designer.designsheetfilterseditwizard.apply'] = 'Appliquer';
 Sbi.locale.ln['sbi.worksheet.designer.designsheetfilterseditwizard.cancel'] = 'Annuler';
 Sbi.locale.ln['sbi.worksheet.designer.designsheetfilterseditwizard.splittingFilter'] = 'Fractionnement du filtre';
+// DESIGNER SHEETCONTAINER
+//===================================================================
+Sbi.locale.ln['sbi.worksheet.designer.msg.deletetab.title'] = 'Veuillez confirmer';
+Sbi.locale.ln['sbi.worksheet.designer.msg.deletetab.msg'] = 'Veuillez confirmer la suppression de l\'\u00E9l\u00E9ment';
+Sbi.locale.ln['sbi.worksheet.designer.msg.newsheet.title'] = 'Nouvelle Feuille';
+Sbi.locale.ln['sbi.worksheet.designer.msg.newsheet.msg'] = 'Une nouvelle feuille a \u00E9t\u00E9 ajout\u00E9e';
+Sbi.locale.ln['sbi.worksheet.designer.msg.emptyworksheet'] = 'Le classeur ne contient pas de feuille';
+Sbi.locale.ln['sbi.worksheet.designer.msg.samenamesheets'] =  'Il existe une autre feuille avec le m\u00E9me nom';
+Sbi.locale.ln['sbi.worksheet.designer.designsheetfilterspanel.cannotdrophere.postlinecalculated'] = 'Impossible de glisser ici les champs calcul\u00e9s par un script';
+
+//===================================================================
+//DESIGNER SHEET
+//===================================================================
+Sbi.locale.ln['sbi.worksheet.designer.sheetpanel.tool.up.filter'] = 'D\u00E9placez les filtres au-dessus du contenu';
+Sbi.locale.ln['sbi.worksheet.designer.sheetpanel.tool.left.filter'] = 'D\u00E9placez les filtres \u00E0 gauche du contenu';
+
+
+//===================================================================
+//DESIGNER TOOLS
+//===================================================================
+Sbi.locale.ln['sbi.worksheet.designer.palete']= 'Palette' ;
+Sbi.locale.ln['sbi.worksheet.designer.image'] = 'Image';
+Sbi.locale.ln['sbi.worksheet.designer.position'] = 'Position';
+
 
 //===================================================================
 //Sbi.worksheet.designer.DesignToolsLayoutPanel
@@ -165,6 +164,11 @@ Sbi.locale.ln['sbi.worksheet.designer.chartcategorypanel.cannotdrophere.postline
 
 
 //===================================================================
+//Sbi.worksheet.designer.SeriesGroupingPanel
+//===================================================================
+Sbi.locale.ln['sbi.worksheet.designer.seriesgroupingpanel.title'] = 'Variable de regroupement pour la s\u00e9rie';
+Sbi.locale.ln['sbi.worksheet.designer.seriesgroupingpanel.emptymsg'] = 'Glisse un attribut de la requ\u00eate comme variable de regroupement pour les s\u00e9ries';
+
 //Sbi.worksheet.designer.ChartSeriesPanel
 //===================================================================
 Sbi.locale.ln['sbi.worksheet.designer.chartseriespanel.title'] = 'S\u00E9ries';
@@ -197,9 +201,9 @@ Sbi.locale.ln['sbi.worksheet.designer.sheettabmenu.menu.rename']='Renommer';
 Sbi.locale.ln['sbi.worksheet.designer.sheettabmenu.rename.sheetname']='Nom de la feuille';
 Sbi.locale.ln['sbi.worksheet.designer.sheettabmenu.buttons.apply']='Appliquer';
 Sbi.locale.ln['sbi.worksheet.designer.sheettabmenu.buttons.cancel']='Supprimer';
-Sbi.locale.ln['sbi.worksheet.designer.sheettabmenu.buttons.error']='Erreur';
-Sbi.locale.ln['sbi.worksheet.designer.sheettabmenu.buttons.error.sheetnamealreadyinuse']='Une feuille ayant le m\u00c3\u00aame nom existe d\u00E9j\u00E0';
-Sbi.locale.ln['sbi.worksheet.designer.sheettabmenu.buttons.error.nosheetname']='Le nom de la feuille n\'a pas \u00E9t\u00E9 sp\u00E8cifi\u00E9';
+Sbi.locale.ln['sbi.worksheet.designer.sheettabmenu.error']='Erreur';
+Sbi.locale.ln['sbi.worksheet.designer.sheettabmenu.error.sheetnamealreadyinuse']='Une feuille ayant le m\u00c3\u00aame nom existe d\u00E9j\u00E0';
+Sbi.locale.ln['sbi.worksheet.designer.sheettabmenu.error.nosheetname']='Le nom de la feuille n\'a pas \u00E9t\u00E9 sp\u00E8cifi\u00E9';
 
 //===================================================================
 //Field Validation: method Validate
