@@ -20,6 +20,7 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionRow', {
 		cls: "x-column-header rotate",
 		bodyStyle: "background-color: transparent",
 		style: "margin-bottom: 3px;"
+
 	},
 	
 	constructor : function(config) {
@@ -29,7 +30,37 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionRow', {
 		}
 		//this.height= this.member.get("name").length*12+4;
 		this.callParent(arguments);
-		this.on("render",function(){this.setHeight(this.member.get("name").length*6.3+12);},this);
+		//The text is rounded so we must fix the height of the panel
+		if(!Ext.isIE){
+			this.on("render",function(){this.setHeight(this.member.get("name").length*6.3+12);},this);
+		}
+	},
+	
+    /**
+     * Gets the text to show in the panel
+     * If the browser is IE the text is from left to right and a <br> follow every char.
+     * If the browser is not IE the text is rounded via CSS
+     */
+	getText: function(){
+		if(Ext.isIE){
+			var text ="";
+			var n = this.member.get("name");
+			if(n){
+				for(var i=0; i<n.length; i++){
+					text = text + n.charAt(i) +'<br>';
+					if(i>10){
+						text=text+"..";
+						return text;
+					}
+				}
+				if(text.length>0){
+					text = text.substring(0,text.length-4);
+				}
+			}
+			return text;
+		}else{
+			return this.member.get("name");
+		}
 	}
 	
 	

@@ -16,7 +16,7 @@
 Ext.define('Sbi.olap.execution.chart.OlapExecutionChart', {
 	//class to extends
 	extend: 'Ext.panel.Panel',
-	html: 'chart',
+	html: 'chart'
 	
 });
 

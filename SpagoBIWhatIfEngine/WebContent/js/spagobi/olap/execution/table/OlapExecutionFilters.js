@@ -15,16 +15,17 @@
 
 Ext.define('Sbi.olap.execution.table.OlapExecutionFilters', {
 	extend: 'Ext.panel.Panel',
-	html:'Fliters',
+	
 	
 	config:{
+		html:'Fliters',
 		frame: true,
 		border: false
     },
 	
 
 	constructor : function(config) {
-		this.initConfig(config);
+		//this.initConfig(config);
 		if(Sbi.settings && Sbi.settings.olap && Sbi.settings.olap.execution && Sbi.settings.olap.execution.table && Sbi.settings.olap.execution.table.OlapExecutionFilters) {
 			this.initConfig(Sbi.settings.olap.execution.OlapExecutionFilters);
 		}

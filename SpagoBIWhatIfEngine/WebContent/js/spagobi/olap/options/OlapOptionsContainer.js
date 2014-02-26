@@ -46,7 +46,7 @@ Ext.define('Sbi.olap.options.OlapOptionsContainer', {
 		this.olapOptionsChart = Ext.create('Sbi.olap.options.OlapOptionsChart', {});
 		
 		Ext.apply(this, {
-			items: [this.olapOptionsTable,this.olapOptionsChart],
+			items: [this.olapOptionsTable,this.olapOptionsChart]
 		});
 		this.callParent();
 	}
