@@ -26,6 +26,7 @@ Sbi.locale.ln['sbi.worksheet.runtime.runtimesheetpanel.filterspanel.filter.qtip'
 //Sbi.worksheet.designer.WorkSheetPreviewPage
 //===================================================================
 Sbi.locale.ln['sbi.worksheet.runtime.worksheetpreviewpage.title'] = 'Pr\u00E9visualisation de la feuille de calcul';
+Sbi.locale.ln['sbi.worksheet.runtime.worksheetruntimepanel.chart.includeInTheExport']= 'Cliquez ici pour inclure le tableau dans le processus d\'exportation';
 
 //===================================================================
 //Sbi.worksheet.RuntimeSheetFiltersPanel
@@ -39,7 +40,6 @@ Sbi.locale.ln['sbi.worksheet.runtimeSheetFiltersPanel.errorwindow.text.maxselect
 //Sbi.worksheet.runtime.xxxChart
 //===================================================================
 Sbi.locale.ln['sbi.worksheet.runtime.worksheetruntimepanel.chart.visibleseries']= 'S\u00e9rie visible ';
-Sbi.locale.ln['sbi.worksheet.runtime.worksheetruntimepanel.chart.includeInTheExport']= 'Cliquez ici pour inclure le tableau dans le processus d\'exportation';
 
 //===========================================================
 //Sbi.worksheet.runtime.RuntimeSheetFiltersInfoPanel
