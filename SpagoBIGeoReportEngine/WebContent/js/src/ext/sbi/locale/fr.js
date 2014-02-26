@@ -7,51 +7,34 @@
  Ext.ns("Sbi.locale");
 Sbi.locale.ln = Sbi.locale.ln || new Array();
 
-//once all the labels have been translated remove the following block
-
-//< block START
-Sbi.locale.unsupportedmsg = 'Sorry, french localization is not yet supported by SpagoBIGeoReportEngine.'
-	+ 'In order to add fench localization you can modify properly the file ' 
-	+ 'SpagoBIGeoReportEngine/js/spagobi/locale/fr.js translating text from english to french.'
-	+ 'Once done please contribute it back to the project.';
-
-Ext.Msg.show({
-	   title:'Unimplemented functionality',
-	   msg: Sbi.locale.unsupportedmsg,
-	   buttons: Ext.Msg.OK,
-	   icon: Ext.MessageBox.INFO
-});
-//block END >
 
 Sbi.locale.formats = {
 		/*
 		number: {
-			decimalSeparator: '.',
+			decimalSeparator: ',',
 			decimalPrecision: 2,
-			groupingSeparator: ',',
+			groupingSeparator: '.',
 			groupingSize: 3,
-			//currencySymbol: '$',
+			//currencySymbol: '€',
 			nullValue: ''
 		},
 		*/
-		
 		float: {
-			decimalSeparator: '.',
+			decimalSeparator: ',',
 			decimalPrecision: 2,
-			groupingSeparator: ',',
+			groupingSeparator: '.',
 			groupingSize: 3,
-			//currencySymbol: '$',
+			//currencySymbol: '€',
 			nullValue: ''
 		},
 		int: {
-			decimalSeparator: '.',
+			decimalSeparator: ',',
 			decimalPrecision: 0,
-			groupingSeparator: ',',
+			groupingSeparator: '.',
 			groupingSize: 3,
-			//currencySymbol: '$',
+			//currencySymbol: '€',
 			nullValue: ''
 		},
-		
 		string: {
 			trim: true,
     		maxLength: null,
@@ -63,7 +46,7 @@ Sbi.locale.formats = {
 		},
 		
 		date: {
-			dateFormat: 'm/Y/d',
+			dateFormat: 'd/m/Y',
     		nullValue: ''
 		},
 		
@@ -74,11 +57,58 @@ Sbi.locale.formats = {
 		}
 };
 
+
 //===================================================================
+//LABELS
+//===================================================================
+
+Sbi.locale.ln['sbi.dataset.no.visible'] = 'Le dataset li\u00e9 au document n\'est pas visible pour l\'utilisateur logg\u00e9';
+
+//===================================================================
+//GENERIC
+//===================================================================
+Sbi.locale.ln['sbi.generic.add'] = 'Ajouter indicateurs du catalogue';//'Add';
+Sbi.locale.ln['sbi.generic.select'] = 'S\u00e9lectionner indicateurs du catalogue';//'Select';
+Sbi.locale.ln['sbi.generic.delete'] = 'Eliminer';
+Sbi.locale.ln['sbi.generic.cancel'] = 'Annuller';
+Sbi.locale.ln['sbi.generic.modify'] = 'Mettre \u00e0 jour';
+Sbi.locale.ln['sbi.generic.save'] = 'Enregistrer ';
+Sbi.locale.ln['sbi.generic.newmap'] = 'Nouvelle carte';
+Sbi.locale.ln['sbi.generic.savenewmap'] = 'Enregistrer nouvelle carte';
+Sbi.locale.ln['sbi.generic.wait'] = 'Veuilliez patienter...';
+Sbi.locale.ln['sbi.generic.info'] = 'Info';
+Sbi.locale.ln['sbi.generic.error'] = 'Erreur';
+Sbi.locale.ln['sbi.generic.error.msg'] = 'Operation \u00e9chou\u00e9e';
+Sbi.locale.ln['sbi.generic.ok'] = 'Info';
+Sbi.locale.ln['sbi.generic.ok.msg'] = 'Operation termin\u00e9e avec succ\u00e8s';
+Sbi.locale.ln['sbi.generic.resultMsg'] = 'Operation termin\u00e9e avec succ\u00e8s';
+Sbi.locale.ln['sbi.generic.result'] = 'Modifications enregistr\u00e9es avec succ\u00e8s';
+Sbi.locale.ln['sbi.generic.serviceError'] = 'Erreurs du Service';
+Sbi.locale.ln['sbi.generic.serviceResponseEmpty'] = 'R\u00e9ponse vide par le serveur ';
+Sbi.locale.ln['sbi.generic.savingItemError'] = 'Erreur dans l\'enregistrement de l\'objet';
+Sbi.locale.ln['sbi.generic.deletingItemError'] = 'Erreur dans l\'\u00e9limination de l\'objet. V\u00e9rifier les objets \u00e9ventuels auxquels il est associ\u00e9, puis r\u00e9-essayer!';
+Sbi.locale.ln['sbi.generic.warning'] = 'Attention';
+Sbi.locale.ln['sbi.generic.pleaseConfirm'] = 'Confirmer';
+
 // CONTROL PANEL
 //===================================================================
-Sbi.locale.ln['sbi.geo.controlpanel.title'] = 'Navigation';
-Sbi.locale.ln['sbi.geo.layerpanel.title'] = 'Niveaux';
+Sbi.locale.ln['sbi.geo.controlpanel.title'] = 'Panneau de contr\u00f4le';
+Sbi.locale.ln['sbi.geo.controlpanel.defaultname'] = 'Nom nouvelle carte...';
+Sbi.locale.ln['sbi.geo.controlpanel.defaultdescr'] = 'Description nouvelle carte...';
+Sbi.locale.ln['sbi.geo.controlpanel.publishedby'] = 'Publi\u00e9 par ';
+Sbi.locale.ln['sbi.geo.controlpanel.sendfeedback'] = ' Envoi feedback ';
+Sbi.locale.ln['sbi.geo.controlpanel.indicators'] = ' Indicateurs ';
+Sbi.locale.ln['sbi.geo.controlpanel.permissionlabel'] = 'Cette carte est: ';
+Sbi.locale.ln['sbi.geo.controlpanel.permissionprivate'] = 'Priv\u00e9e ';
+Sbi.locale.ln['sbi.geo.controlpanel.permissionpublic'] = 'Publique ';
+Sbi.locale.ln['sbi.geo.controlpanel.map'] = 'Carte ';
+Sbi.locale.ln['sbi.geo.controlpanel.zone'] = 'zones ';
+Sbi.locale.ln['sbi.geo.controlpanel.point'] = 'par points ';
+Sbi.locale.ln['sbi.geo.earthpanel.title'] = 'Navigation 3D';
+Sbi.locale.ln['sbi.geo.layerpanel.title'] = 'Couches';
+Sbi.locale.ln['sbi.geo.layerpanel.layer'] = ' couche';
+Sbi.locale.ln['sbi.geo.layerpanel.add'] = 'Ajouter une couche';
+Sbi.locale.ln['sbi.geo.layerpanel.catalogue'] = 'Catalogue des couches';
 
 Sbi.locale.ln['sbi.geo.analysispanel.title'] = 'Analyse';
 Sbi.locale.ln['sbi.geo.analysispanel.addindicators'] = 'Ajouter indicateurs';
@@ -91,9 +121,9 @@ Sbi.locale.ln['sbi.geo.analysispanel.tocolor'] = 'A cette couleur';
 Sbi.locale.ln['sbi.geo.analysispanel.filter.default'] = 'Set Default';
 Sbi.locale.ln['sbi.geo.analysispanel.filter.default.ok'] = 'Les valeurs par d\u00e9faut d\u00e9finies correctement';
 
+Sbi.locale.ln['sbi.geo.controlpanel.filters'] = 'Filtres';
 Sbi.locale.ln['sbi.geo.legendpanel.title'] = 'L\u00E9gende';
 Sbi.locale.ln['sbi.geo.legendpanel.changeStyle'] = 'Change style'; 
-Sbi.locale.ln['sbi.geo.earthpanel.title'] = 'Navigation 3D';
 
 //===================================================================
 //CONTROL PANEL - SAVE WINDOW
@@ -103,11 +133,16 @@ Sbi.locale.ln['sbi.geo.controlpanel.savewin.name'] = 'Nom';
 Sbi.locale.ln['sbi.geo.controlpanel.savewin.description'] = 'Description';
 Sbi.locale.ln['sbi.geo.controlpanel.savewin.visibility'] = 'Visibilit\u00e9 du document';
 Sbi.locale.ln['sbi.geo.controlpanel.savewin.previewfile'] = 'Aper\u00e7u du fichier';
-Sbi.locale.ln['sbi.geo.controlpanel.savewin.community'] = 'Community';
+Sbi.locale.ln['sbi.geo.controlpanel.savewin.community'] = 'Communaut\u00e9';
 Sbi.locale.ln['sbi.geo.controlpanel.savewin.scope'] = 'Scope';
-Sbi.locale.ln['sbi.geo.controlpanel.savewin.saveWarning']  = 'Avant de enregistrer il est n\u00e9cessaire ins\u00e9rer le nom de la carte et s\u00e9lectionnez aumoin un dossier.';
+Sbi.locale.ln['sbi.geo.controlpanel.savewin.saveWarning']  = 'Avant de enregistrer il est n\u00e9cessaire d\'ins\u00e9rer le nom de la carte et s\u00e9lectionner au moins un dossier.';
 Sbi.locale.ln['sbi.geo.controlpanel.savewin.msgDetail']  = ' ';
+Sbi.locale.ln['sbi.geo.controlpanel.feedback.title']  = 'Envoyer Feedback';
+Sbi.locale.ln['sbi.geo.controlpanel.feedback.label']  = 'Texte du message';
+Sbi.locale.ln['sbi.geo.controlpanel.feedback.btn.send']  = 'Envoyer';
+Sbi.locale.ln['sbi.geo.controlpanel.feedback.sendOK']  = 'Feedback envoy\u00e9 au cr\u00e9ateur du document';
 
+Sbi.locale.ln['sbi.geo.controlpanel.control.share.title']  = 'Partager la carte';
 //===================================================================
 // MAP PANEL
 //===================================================================
@@ -119,11 +154,11 @@ Sbi.locale.ln['sbi.geo.mappanel.title'] = 'Carte';
 Sbi.locale.ln['mf.print.mapTitle'] =  'Titre';
 Sbi.locale.ln['mf.print.comment'] =  'Commentaires';
 Sbi.locale.ln['mf.print.loadingConfig'] =  'Chargement de la configuration...';
-Sbi.locale.ln['mf.print.serverDown'] =  'Le service impression semble pas fonctionner';
-Sbi.locale.ln['mf.print.unableToPrint'] =  "Impossible d'imprimer";
+Sbi.locale.ln['mf.print.serverDown'] =  'Le service impression ne semble pas fonctionner';
+Sbi.locale.ln['mf.print.unableToPrint'] =  "Impossible d\'imprimer";
 Sbi.locale.ln['mf.print.generatingPDF'] =  "G\u00e9n\u00e9rer un PDF...";
 Sbi.locale.ln['mf.print.dpi'] =  'DPI';
-Sbi.locale.ln['mf.print.scale'] =  'Scale';
+Sbi.locale.ln['mf.print.scale'] =  'Echelle';
 Sbi.locale.ln['mf.print.rotation'] =  'Rotation';
 Sbi.locale.ln['mf.print.print'] =  'Imprimer';
 Sbi.locale.ln['mf.print.resetPos'] =  'Reset Pos.';
@@ -145,13 +180,13 @@ Sbi.locale.ln['sbi.tools.catalogue.measures.select.tooltip'] = 'Ouvrez le cadre 
 Sbi.locale.ln['sbi.tools.catalogue.measures.select.btn'] = 'S\u00e9lection';
 Sbi.locale.ln['sbi.tools.catalogue.measures.window.title'] =  'Catalogue mesures';
 Sbi.locale.ln['error.mesage.description.measure.join.no.common.dimension'] = 'Impossible d\'ex\u00e9cuter la jointure entre les mesures. L\'ensembles de donn\u00e9es associ\u00e9s n\'ont aucune dimension en commun.';
-Sbi.locale.ln['error.mesage.description.measure.join.no.complete.common.dimension'] = 'Impossible d\ex\u00e9cuter la jointure entre les mesures. Les ensembles de donn\u00e9es associ\u00e9s n\'ont aucune dimension compl\u00e8te en commun.';
+Sbi.locale.ln['error.mesage.description.measure.join.no.complete.common.dimension'] = 'Impossible d\'ex\u00e9cuter la jointure entre les mesures. Les ensembles de donn\u00e9es associ\u00e9s n\'ont aucune dimension compl\u00e8te en commun.';
 Sbi.locale.ln['sbi.tools.catalogue.measures.column.header.alias'] = 'Alias';
 Sbi.locale.ln['sbi.tools.catalogue.measures.column.header.dsName'] = 'Nom';
 Sbi.locale.ln['sbi.tools.catalogue.measures.column.header.dsLabel'] = '\u00e9tiquette';
 Sbi.locale.ln['sbi.tools.catalogue.measures.column.header.dsCategory'] = 'cat\u00e9gorie';
 Sbi.locale.ln['sbi.tools.catalogue.measures.column.header.dsType'] = 'Type';
-Sbi.locale.ln['sbi.tools.catalogue.layers.column.header.label'] = 'Label';
+Sbi.locale.ln['sbi.tools.catalogue.layers.column.header.label'] = 'Libell\u00e9';
 Sbi.locale.ln['sbi.tools.catalogue.layers.column.header.descr'] = 'Description';
 Sbi.locale.ln['sbi.tools.catalogue.layers.column.header.type'] = 'Type';
 Sbi.locale.ln['sbi.tools.catalogue.layers.column.header.baseLayer'] = 'Couche de base';
