@@ -61,9 +61,9 @@ Sbi.locale.ln['sbi.formbuilder.variableeditorpanel.validationerrors.missingadmis
 Sbi.locale.ln['sbi.formbuilder.variablegroupeditor.grouptitle'] = 'Variable de rupture';
 Sbi.locale.ln['sbi.formbuilder.variablegroupeditor.emptymsg'] = 'Glisser un champ ici pour ajouter une nouvelle valeur \u00E0 la variable';
 
+
 Sbi.locale.ln['sbi.formbuilder.editordroptarget.wrongdropmsg.title'] = 'Mauvaise source gliss\u00E9e';
 Sbi.locale.ln['sbi.formbuilder.editordroptarget.wrongdropmsg.msg'] = 'S\u00E9lectionner juste un champ';
-
 
 Sbi.locale.ln['sbi.formbuilder.editorpanel.add'] = 'Ajouter';
 Sbi.locale.ln['sbi.formbuilder.editorpanel.clearall'] = 'Tout effacer';
@@ -87,20 +87,20 @@ Sbi.locale.ln['sbi.formbuilder.staticopenfilterwizard.fields.maxselectionnumber.
 Sbi.locale.ln['sbi.formbuilder.staticopenfilterwizard.fields.orderbyfield.label'] = 'Ordonn\u00E9 par';
 Sbi.locale.ln['sbi.formbuilder.staticopenfilterwizard.fields.ordertype.label'] = 'Type d\'ordonnancement';
 Sbi.locale.ln['sbi.formbuilder.staticopenfilterwizard.lookupquerydetailssection.title'] = 'Recherche D\u00E9tails requ\u00EAte';
-Sbi.locale.ln['sbi.formbuilder.staticopenfilterwizard.lookupquerydetailssection.promptvalues'] = 'Pr\u00E9senter l\'invite de valeur';
-Sbi.locale.ln['sbi.formbuilder.staticopenfilterwizard.lookupquerydetailssection.donotqueryrootentity'] = 'Il y a des champs autoris\u00E9s pour les filtres';
-Sbi.locale.ln['sbi.formbuilder.staticopenfilterwizard.lookupquerydetailssection.queryrootentity'] = 'Il y a des champs autoris\u00E9s pour la racine';
-Sbi.locale.ln['sbi.formbuilder.staticopenfilterwizard.buttons.apply'] = 'Appliquer';
-Sbi.locale.ln['sbi.formbuilder.staticopenfilterwizard.buttons.cancel'] = 'Annuler';
 Sbi.locale.ln['sbi.formbuilder.staticopenfilterwizard.customquerydetailssection.title'] = 'Requ\u00EAte personnalis\u00E9e';
 Sbi.locale.ln['sbi.formbuilder.staticopenfilterwizard.standardquerydetailssection.title'] = 'Requ\u00EAte standard';
 Sbi.locale.ln['sbi.formbuilder.staticopenfilterwizard.customquerydetailssection.lookupquery'] = 'Requ\u00EAte de recherche';
 
 
+Sbi.locale.ln['sbi.formbuilder.staticopenfilterwizard.lookupquerydetailssection.promptvalues'] = 'Pr\u00E9senter l\'invite de valeur';
+Sbi.locale.ln['sbi.formbuilder.staticopenfilterwizard.lookupquerydetailssection.donotqueryrootentity'] = 'Il y a des champs autoris\u00E9s pour les filtres';
+Sbi.locale.ln['sbi.formbuilder.staticopenfilterwizard.lookupquerydetailssection.queryrootentity'] = 'Il y a des champs autoris\u00E9s pour la racine';
+Sbi.locale.ln['sbi.formbuilder.staticopenfilterwizard.buttons.apply'] = 'Appliquer';
+Sbi.locale.ln['sbi.formbuilder.staticopenfilterwizard.buttons.cancel'] = 'Annuler';
+
 Sbi.locale.ln['sbi.formbuilder.staticclosefiltereditorpanel.title'] = 'Filtres statiques ferm\u00E9s';
 Sbi.locale.ln['sbi.formbuilder.staticclosefiltereditorpanel.emptymsg'] = 'Cliquer sur le bouton en haut \u00E0 droite pour ajouter un groupe de filtres';
 Sbi.locale.ln['sbi.formbuilder.staticclosefiltereditorpanel.filteritemname'] = 'Groupe de filtres statiques ferm\u00E9s';
-
 
 Sbi.locale.ln['sbi.formbuilder.staticclosefiltergroupeditor.toolbar.add'] = 'Ajouter';
 Sbi.locale.ln['sbi.formbuilder.staticclosefiltergroupeditor.toolbar.edit'] = 'Editer';
