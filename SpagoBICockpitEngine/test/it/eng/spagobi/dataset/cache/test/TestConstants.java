@@ -21,7 +21,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.spagobi.dataset.cache.test;
 
-import java.io.File;
 
 /**
  * @author Marco Cortella (marco.cortella@eng.it)
@@ -37,7 +36,7 @@ public class TestConstants {
 	
 	public enum DatabaseType { MYSQL, POSTGRES, ORACLE, SQLSERVER };
 	
-	public static boolean enableTestsOnMySql = false;
+	public static boolean enableTestsOnMySql = true;
 	public static boolean enableTestsOnPostgres = false;
 	public static boolean enableTestsOnOracle = false;
 	public static boolean enableTestsOnSQLServer = false;
