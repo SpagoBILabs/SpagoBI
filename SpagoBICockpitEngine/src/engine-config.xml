@@ -21,6 +21,8 @@
 			<TYPE name="[C" bytes="10000" />   <!-- CLOB -->
 		</DATA_TYPES>
 	</CACHE_CONFIG>
+	
+	<JNDI_THREAD_MANAGER>java:/comp/env/wm/SpagoWorkManager</JNDI_THREAD_MANAGER>
 			
 	
 	<!-- ====================================================================================== -->
