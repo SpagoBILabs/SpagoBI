@@ -208,6 +208,16 @@
         <param-name>resteasy.servlet.mapping.prefix</param-name>
         <param-value>/api</param-value>
     </context-param>
+    
+    <!--  ============================================================================ -->
+	<!--  RESOURCES								 									   -->
+	<!--  ============================================================================ -->
+	<resource-ref>
+		<res-ref-name>wm/SpagoWorkManager</res-ref-name>
+ 		<res-type>commonj.work.WorkManager</res-type>
+ 		<res-auth>Container</res-auth>
+ 		<res-sharing-scope>Shareable</res-sharing-scope>
+	</resource-ref>
   	
 	<!--  ============================================================================ -->
 	<!--  GENERAL SETTINGS						 									   -->

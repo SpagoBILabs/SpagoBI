@@ -17,6 +17,7 @@ import it.eng.spagobi.dataset.cache.impl.sqldbcache.FilterCriteria;
 import it.eng.spagobi.dataset.cache.impl.sqldbcache.GroupCriteria;
 import it.eng.spagobi.dataset.cache.impl.sqldbcache.Operand;
 import it.eng.spagobi.dataset.cache.impl.sqldbcache.ProjectionCriteria;
+import it.eng.spagobi.dataset.cache.impl.sqldbcache.work.SQLDBCacheWriteWork;
 import it.eng.spagobi.engine.cockpit.CockpitEngineConfig;
 import it.eng.spagobi.engine.cockpit.CockpitEngineInstance;
 import it.eng.spagobi.services.proxy.DataSetServiceProxy;
@@ -30,6 +31,7 @@ import it.eng.spagobi.tools.dataset.common.query.AggregationFunctions;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
+import it.eng.spagobi.utilities.threadmanager.WorkManager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -52,6 +54,10 @@ import javax.ws.rs.core.MediaType;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import commonj.work.Work;
+
+import de.myfoo.commonj.work.FooRemoteWorkItem;
 
 /**
  * @authors Andrea Gioia (andrea.gioia@eng.it), Antonella Giachino (antonella.giachino@eng.it)
@@ -155,7 +161,7 @@ public class DataSetResource {
 			IDataSet dataSet = proxy.getDataSetByLabel(label);
 			
 			/*
-			 * TODO: Controlla se il resultset del dataset è già in cache o no
+			 * Controlla se il resultset del dataset è già in cache o no
 			 * 
 			 * - se è presente in cache basta recuperarlo con una get
 			 * - se non è presente in cache: carico tramite dataSet.loadData() 
@@ -170,8 +176,15 @@ public class DataSetResource {
 			if (cachedResultSet == null){
 				dataSet.loadData(offset, fetchSize, maxResults);
 				dataStore = dataSet.getDataStore();
-				//TODO: da eseguire su altro thread concorrente
-				cache.put(dataSet,resultsetSignature, dataStore);
+				//---- Write on the cache with a separated thread --------
+				WorkManager workManager = new WorkManager();
+				Work cacheWriteWork = new SQLDBCacheWriteWork(cache, dataStore, resultsetSignature, dataSet);
+				
+				workManager.run(cacheWriteWork, null);
+
+				//--------------------------------------------------------
+				
+				//cache.put(dataSet,resultsetSignature, dataStore);
 			} else {
 				dataStore = cachedResultSet;
 			}
@@ -204,7 +217,7 @@ public class DataSetResource {
 			IDataSet dataSet = proxy.getDataSetByLabel(label);
 			
 			/*
-			 * TODO: Controlla se il resultset del dataset è già in cache o no
+			 * Controlla se il resultset del dataset è già in cache o no
 			 * 
 			 * - se è presente in cache basta recuperarlo con una get
 			 * - se non è presente in cache: carico tramite dataSet.loadData() 
@@ -219,8 +232,15 @@ public class DataSetResource {
 			if (cachedResultSet == null){
 				dataSet.loadData(offset, fetchSize, maxResults);
 				dataStore = dataSet.getDataStore();
-				//TODO: da eseguire su altro thread concorrente
-				cache.put(dataSet,resultsetSignature, dataStore);
+				//---- Write on the cache with a separated thread --------
+				WorkManager workManager = new WorkManager();
+				Work cacheWriteWork = new SQLDBCacheWriteWork(cache, dataStore, resultsetSignature, dataSet);
+				
+				workManager.run(cacheWriteWork, null);
+
+				//--------------------------------------------------------
+				
+				//cache.put(dataSet,resultsetSignature, dataStore);
 			} else {
 				dataStore = cachedResultSet;
 			}
