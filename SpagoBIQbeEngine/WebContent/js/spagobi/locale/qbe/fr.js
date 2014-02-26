@@ -8,7 +8,7 @@
  
   
  
- Ext.ns("Sbi.locale");
+Ext.ns("Sbi.locale");
 Sbi.locale.ln = Sbi.locale.ln || new Array();
 
 
@@ -26,7 +26,20 @@ Sbi.locale.ln['sbi.qbe.messagewin.yes'] = 'Oui';
 Sbi.locale.ln['sbi.qbe.messagewin.no'] = 'Non';
 Sbi.locale.ln['sbi.qbe.messagewin.cancel'] = 'Annuler';
 
+Sbi.locale.ln['sbi.generic.label'] = 'Libell\u00e9';
+Sbi.locale.ln['sbi.generic.name'] = 'Nom';
+Sbi.locale.ln['sbi.generic.descr'] = 'Description';
+Sbi.locale.ln['sbi.generic.scope'] = 'Scope';
+Sbi.locale.ln['sbi.generic.scope.private'] = 'Priv\u00e9';
+Sbi.locale.ln['sbi.generic.scope.public'] = 'Public';
+Sbi.locale.ln['sbi.generic.actions.save'] = 'Enregistrer';
 
+Sbi.locale.ln['sbi.generic.wait'] = "Veuilliez patienter...";
+Sbi.locale.ln['sbi.generic.error'] = "Erreur";
+Sbi.locale.ln['sbi.generic.success'] = "Succ\u00e9s";
+Sbi.locale.ln['sbi.generic.operationSucceded'] = "Op\u00e9ration termin\u00e9e avec succ\u00e8s";
+Sbi.locale.ln['sbi.generic.query.SQL'] = "Requ\u00eate SQL";
+Sbi.locale.ln['sbi.generic.query.JPQL'] = "Requ\u00eate JPLQ";
 //===================================================================
 // MESSAGE WINDOW
 //===================================================================
@@ -48,8 +61,18 @@ Sbi.locale.ln['sbi.qbe.qbepanel.worksheetdesignerpanel.tools.preview'] = 'Pr\u00
 Sbi.locale.ln['sbi.qbe.qbepanel.emptyquerytitle'] = 'La requ\u00EAte est vide';
 Sbi.locale.ln['sbi.qbe.qbepanel.emptyquerymessage'] = 'La requ\u00EAte est vide et vous n\'avez pas la permission de cr\u00E9er de nouvelles requ\u00EAte. S\u00E9lectionnez une requ\u00EAte enregistr\u00E9e dans la liste des vues personnalis\u00E9es.';
 
+//===================================================================
+//Error messages
+//===================================================================
+Sbi.locale.ln['error.mesage.description.relationship.not.enough'] = 'le r\u00e9lations specifi\u00e9es ne sont pas suffisants pour lier toures les entit\u00e9es';
 
 //===================================================================
+//Sbi.qbe.QbeCardsPanel
+//===================================================================
+Sbi.locale.ln['sbi.qbe.qbecardspanel.title'] = 'QbE';
+Sbi.locale.ln['sbi.qbe.qbecardspanel.preview'] = 'Apercue';
+Sbi.locale.ln['sbi.qbe.qbecardspanel.designer'] = 'Concepteur';
+
 //QUERY EDITOR PANEL
 //===================================================================
 Sbi.locale.ln['sbi.qbe.queryeditor.title'] = 'Requ\u00EAte';
@@ -72,7 +95,11 @@ Sbi.locale.ln['sbi.qbe.queryeditor.centerregion.tools.view'] = 'Enregistrer la r
 Sbi.locale.ln['sbi.qbe.queryeditor.centerregion.tools.execute'] = 'Ex\u00E9cuter la requ\u00EAte';
 Sbi.locale.ln['sbi.qbe.queryeditor.centerregion.tools.validate'] = 'Valider la requ\u00EAte';
 Sbi.locale.ln['sbi.qbe.queryeditor.centerregion.tools.help'] = 'Aidez-moi';
-
+Sbi.locale.ln['sbi.qbe.queryeditor.centerregion.buttons.relationshipswizard'] = 'D\u00e9tail r\u00e9lations';
+Sbi.locale.ln['sbi.qbe.queryeditor.centerregion.buttons.getquery'] = 'Requ\u00EAte gener\u00e9e';
+Sbi.locale.ln['sbi.qbe.queryeditor.noambiguousfields.title'] = 'Aucun ambiguit\u00e9 detect\u00e9e';
+Sbi.locale.ln['sbi.qbe.queryeditor.noambiguousfields.msg'] = 'Aucun ambiguit\u00e9 entre les entit\u00e9es impliqu\u00e9es dans la requ\u00eate';
+Sbi.locale.ln['sbi.qbe.queryeditor.error.FILTER_ROLES_ERROR'] = 'Si des entit\u00e9es avec plusieurs roles sont utilis\u00e9es, alors sur les dites entit\u00e9es on peut sp\u00e9cifier des filtres qui contiennent seulement les champs de la requ\u00eate';
 Sbi.locale.ln['sbi.qbe.queryeditor.eastregion.title'] = 'Biblioth\u00E8que de requ\u00EAte';
 Sbi.locale.ln['sbi.qbe.queryeditor.eastregion.tools.delete'] = 'Supprimer la requ\u00EAte';
 Sbi.locale.ln['sbi.qbe.queryeditor.eastregion.tools.add'] = 'Ajouter une requ\u00EAte';
@@ -138,31 +165,35 @@ Sbi.locale.ln['sbi.qbe.savewindow.selectmetadata'] = 'Ins\u00E9rer des m\u00E9ta
 //===================================================================
 //FILTER GRID
 //===================================================================
-Sbi.locale.ln['sbi.qbe.filtergridpanel.title'] = 'clause Where';
+Sbi.locale.ln['sbi.qbe.filtergridpanel.title'] = 'Filtres';
 
 Sbi.locale.ln['sbi.qbe.filtergridpanel.namePrefix'] = 'Filtre';
 
 //column headers
+Sbi.locale.ln['sbi.qbe.filtergridpanel.headers.delete'] = 'Tout supprimer';
 Sbi.locale.ln['sbi.qbe.filtergridpanel.headers.name'] = 'Nom du filtre';
-Sbi.locale.ln['sbi.qbe.filtergridpanel.headers.desc'] = 'Filtre d\u00E9croissant';
-
+Sbi.locale.ln['sbi.qbe.filtergridpanel.headers.entity'] = 'Entit\u00e9\'';
+Sbi.locale.ln['sbi.qbe.filtergridpanel.headers.field'] = 'Champ';
 Sbi.locale.ln['sbi.qbe.filtergridpanel.headers.loval'] = 'Valeur de l\'op\u00E9rande gauche';
-Sbi.locale.ln['sbi.qbe.filtergridpanel.headers.lodesc'] = 'Op\u00E9rande gauche';
-Sbi.locale.ln['sbi.qbe.filtergridpanel.headers.lotype'] = 'Type de l\'op\u00E9rande gauche';
 Sbi.locale.ln['sbi.qbe.filtergridpanel.headers.lodef'] = 'Valeur par d\u00E9faut de l\'op\u00E9rande';
 Sbi.locale.ln['sbi.qbe.filtergridpanel.headers.lolast'] = 'Derni\u00E8re valeur de l\'op\u00E9rande gauche';
 
 Sbi.locale.ln['sbi.qbe.filtergridpanel.headers.operator'] = 'Op\u00E9rateur';
+Sbi.locale.ln['sbi.qbe.filtergridpanel.headers.value'] = 'Op\u00e9rand';
+Sbi.locale.ln['sbi.qbe.filtergridpanel.headers.isfree'] = 'Champs \u00e0 la demande';
+
 
 Sbi.locale.ln['sbi.qbe.filtergridpanel.headers.roval'] = 'Valeur de l\'op\u00E9rande droite';
-Sbi.locale.ln['sbi.qbe.filtergridpanel.headers.rodesc'] = 'Op\u00E9rande droite';
-Sbi.locale.ln['sbi.qbe.filtergridpanel.headers.rotype'] = 'Type de l\'op\u00E9rande droite';
+Sbi.locale.ln['sbi.qbe.filtergridpanel.headers.boperator'] = 'Op\u00E9rateur bool\u00E9en';
+
 Sbi.locale.ln['sbi.qbe.filtergridpanel.headers.rodef'] = 'Valeur par d\u00E9faut de l\'op\u00E9rande droite';
 Sbi.locale.ln['sbi.qbe.filtergridpanel.headers.rolast'] = 'Derni\u00E8re valeur de l\'op\u00E9rande droite';
+Sbi.locale.ln['sbi.qbe.filtergridpanel.headers.desc'] = 'Filtre d\u00E9croissant';
+Sbi.locale.ln['sbi.qbe.filtergridpanel.headers.lotype'] = 'Type de l\'op\u00E9rande gauche';
+Sbi.locale.ln['sbi.qbe.filtergridpanel.headers.rotype'] = 'Type de l\'op\u00E9rande droite';
+Sbi.locale.ln['sbi.qbe.filtergridpanel.headers.lodesc'] = 'Op\u00E9rande gauche';
 
-Sbi.locale.ln['sbi.qbe.filtergridpanel.headers.isfree'] = 'est pour l\'invite';
-Sbi.locale.ln['sbi.qbe.filtergridpanel.headers.delete'] = 'Tout supprimer';
-Sbi.locale.ln['sbi.qbe.filtergridpanel.headers.boperator'] = 'Op\u00E9rateur bool\u00E9en';
+Sbi.locale.ln['sbi.qbe.filtergridpanel.headers.rodesc'] = 'Op\u00E9rande droite';
 
 //column tooltip
 Sbi.locale.ln['sbi.qbe.filtergridpanel.tooltip.notdef'] = 'Infobulle pas encore d\u00E9finie';
@@ -240,14 +271,13 @@ Sbi.locale.ln['sbi.qbe.filtergridpanel.foperators.desc.isnull'] = 'vrai si la va
 Sbi.locale.ln['sbi.qbe.filtergridpanel.foperators.editor.emptymsg'] = 'S\u00E9lectionner un op\u00E9rateur...';
 
 //buttons 
-Sbi.locale.ln['sbi.qbe.filtergridpanel.buttons.text.add'] = 'Nouveau';
-Sbi.locale.ln['sbi.qbe.filtergridpanel.buttons.tt.add'] = 'Cr\u00E9er un nouveau filtre';
-
 Sbi.locale.ln['sbi.qbe.filtergridpanel.buttons.text.delete'] = 'Supprimer tout';
 Sbi.locale.ln['sbi.qbe.filtergridpanel.buttons.tt.delete'] = 'Supprimer tous les filtres';
 
 Sbi.locale.ln['sbi.qbe.filtergridpanel.buttons.text.wizard'] = 'Assistant Exp.';
 Sbi.locale.ln['sbi.qbe.filtergridpanel.buttons.tt.wizard'] = 'Visualiser l\'assistant de composition des filtres';
+Sbi.locale.ln['sbi.qbe.filtergridpanel.buttons.text.add'] = 'Nouveau';
+Sbi.locale.ln['sbi.qbe.filtergridpanel.buttons.tt.add'] = 'Cr\u00E9er un nouveau filtre';
 
 //warnings
 Sbi.locale.ln['sbi.qbe.filtergridpanel.warning.delete.title'] = 'Supprimer le filtre ?';
@@ -266,17 +296,19 @@ Sbi.locale.ln['sbi.qbe.filtergridpanel.warning.changebolop.msg'] = 'Changer le c
 Sbi.locale.ln['sbi.qbe.selectgridpanel.title'] = 'S\u00E9lection des champs';
 
 // column headers
-Sbi.locale.ln['sbi.qbe.selectgridpanel.headers.visible'] = 'Visible';
 Sbi.locale.ln['sbi.qbe.selectgridpanel.headers.include'] = 'Inclure';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.headers.having'] = 'Having';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.headers.visible'] = 'Visible';
 Sbi.locale.ln['sbi.qbe.selectgridpanel.headers.group'] = 'Groupe';
 Sbi.locale.ln['sbi.qbe.selectgridpanel.headers.filter'] = 'Filtre';
-Sbi.locale.ln['sbi.qbe.selectgridpanel.headers.having'] = 'Having';
 Sbi.locale.ln['sbi.qbe.selectgridpanel.headers.entity'] = 'Entit\u00E9';
 Sbi.locale.ln['sbi.qbe.selectgridpanel.headers.alias'] = 'Alias';
 Sbi.locale.ln['sbi.qbe.selectgridpanel.headers.order'] = 'Ordonner';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.headers.group'] = 'Groupe';
 Sbi.locale.ln['sbi.qbe.selectgridpanel.headers.function'] = 'Fonction';
 Sbi.locale.ln['sbi.qbe.selectgridpanel.headers.field'] = 'Champ';
 Sbi.locale.ln['sbi.qbe.selectgridpanel.headers.delete'] = 'Supprimer tout';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.headers.delete.column'] = 'Eliminer';
 
 //aggregation functions
 Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.name.none'] = 'aucun';
@@ -286,6 +318,13 @@ Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.name.max'] = 'maximum';
 Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.name.min'] = 'minimum';
 Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.name.count'] = 'd\u00E9compte';
 Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.name.countdistinct'] = 'D\u00E9compte distinct';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.desc.none'] = 'Aucune modalit\u00e9 d\'agr\u00e9gation activ\u00e9e';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.desc.sum'] = 'Rende la somme des valeurs dans le groupe';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.desc.avg'] = 'Rende la moyenne des valeurs dans le groupe';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.desc.max'] = 'Rende la valeur maximale dans le group';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.desc.min'] = 'Rende la valeur minimale dans le group';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.desc.count'] = 'Rende le nombre total de valeurs dans le group';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.desc.countdistinct'] = 'Rende le nombre total de valeurs distinctes dans le groupe';
 Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.desc.labelOpSum'] = 'Attribut \u00E0 utiliser dans la fonction somme';
 Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.desc.labelOpMin'] = 'Attribut \u00E0 utiliser dans la fonction minimum';
 Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.desc.labelOpMax'] = 'Attribut \u00E0 utiliser en fonction maximum';
@@ -295,7 +334,6 @@ Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.desc.labelOpAVG'] = 'Attribut \u0
 Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.desc.labelOpDate'] = 'Date \u00E0 utiliser dans la fonction';
 Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.desc.labelOpDate1'] = 'Date de d\u00E9but \u00E0 utiliser dans la fonction';
 Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.desc.labelOpDate2'] = 'Date de fin d\'utilisation de la fonction ';
-
 Sbi.locale.ln['sbi.qbe.selectgridpanel.func.link.tip'] = 'Cr\u00E9er un lien vers une page Web externe';
 Sbi.locale.ln['sbi.qbe.selectgridpanel.func.image.tip'] = 'Inclure une image externe';
 Sbi.locale.ln['sbi.qbe.selectgridpanel.func.cross.tip'] = 'Cr\u00E9er un lien de drill';
@@ -314,6 +352,12 @@ Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.desc.max'] = 'Calcule la valeur m
 Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.desc.min'] = 'Calcule la valeur minimale dans le groupe';
 Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.desc.count'] = 'Calcule le nombre de valeurs pr\u00E9sentes dans le groupe';
 Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.desc.countdistinct'] = 'Retourner le d\u00E9compte de valeurs distinctes dans le groupe';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.datefunc.desc.ggbetweendates'] = 'Rende la diff\u00e9rence en jours entre deux dates';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.datefunc.desc.mmbetweendates'] = 'Rende la diff\u00e9rence en mois entre deux dates';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.datefunc.desc.aabetweendates'] = 'Rende la diff\u00e9rence en ans entre deux dates';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.datefunc.desc.gguptoday'] = 'Rende la diff\u00e9rence en jours entre la date d\'aujourd\'hui et un champ de type \'date\'';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.datefunc.desc.mmuptoday'] = 'Rende la diff\u00e9rence en mois entre la date d\'aujourd\'hui et un champ de type \'date\'';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.datefunc.desc.aauptoday'] = 'Rende la diff\u00e9rence en ans entre la date d\'aujourd\'hui et un champ de type \'date\'';
 
 Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.editor.emptymsg'] = 'S\u00E9lectionner une fonction...';
 
@@ -338,8 +382,8 @@ Sbi.locale.ln['sbi.qbe.selectgridpanel.buttons.tt.group'] = 'Grouper les champs 
 
 Sbi.locale.ln['sbi.qbe.selectgridpanel.buttons.text.add'] = 'Ajouter un champ calcul\u00E9';
 Sbi.locale.ln['sbi.qbe.selectgridpanel.buttons.tt.add'] = 'Ajouter un champ calcul\u00E9 ad-hoc (ex. valide uniquement pour une requ\u00EAte)';
-
 Sbi.locale.ln['sbi.qbe.selectgridpanel.buttons.text.expert'] = 'Utilisateur Expert';
+
 
 Sbi.locale.ln['sbi.qbe.selectgridpanel.buttons.text.delete'] = 'Supprimer tout';
 Sbi.locale.ln['sbi.qbe.selectgridpanel.buttons.tt.delete'] = 'Supprimer les champ s\u00E9lectionn\u00E9s';
@@ -366,6 +410,7 @@ Sbi.locale.ln['sbi.qbe.cataloguepanel.title'] = 'Biblioth\u00E8que de requ\u00EA
 //===================================================================
 Sbi.locale.ln['sbi.qbe.havinggridpanel.title'] = 'Condition de groupement';
 
+Sbi.locale.ln['sbi.qbe.operandchooserwindow.title'] = 'Selection operand de la requ\u00eate p\u00e8re';
 //===================================================================
 //DOCUMENT PARAMETERS PANEL
 //===================================================================
@@ -388,14 +433,13 @@ Sbi.locale.ln['sbi.qbe.datastore.refreshgrid'] = 'Restaurer le style grille'
 //===================================================================
 //CALCULATED FIELD WIZARD
 //===================================================================
-Sbi.locale.ln['sbi.qbe.inlineCalculatedFields.title'] = 'Assistant champ calcul\u00e9';
-
 Sbi.locale.ln['sbi.qbe.calculatedFields.title'] = 'Assistant champ calcul\u00e9 (Modalit\u00e9 Expert)';
 Sbi.locale.ln['sbi.qbe.inlineCalculatedFields.title'] = 'Assistant champ calcul\u00e9 (Modalit\u00e9 Simple)';
 Sbi.locale.ln['sbi.qbe.calculatedFields.validationwindow.success.title'] = 'Validation';
 Sbi.locale.ln['sbi.qbe.calculatedFields.validationwindow.success.text'] = 'Validation OK';
 Sbi.locale.ln['sbi.qbe.calculatedFields.validationwindow.fail.title'] = 'Validation \u00E9chou\u00E9e';
 Sbi.locale.ln['sbi.qbe.calculatedFields.expert.nofilterwindow.title'] = 'Attention: impossible d\'utiliser un filtre avec ce type de champ ';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.buttons.text.expert'] = 'Utilisateur expert ';
 Sbi.locale.ln['sbi.qbe.calculatedFields.buttons.text.ok'] = 'OK';
 Sbi.locale.ln['sbi.qbe.calculatedFields.buttons.text.cancel'] = 'Annuler';
 
@@ -453,5 +497,31 @@ Sbi.locale.ln['sbi.qbe.bands.range.title'] = 'Limite d\u00E9finition ';
 Sbi.locale.ln['sbi.qbe.bands.range.invalid'] = 'Le range n\'est pas correctement d\u00E9fini';
 
 
-Sbi.locale.ln['sbi.qbe.filtergridpanel.headers.boperator.desc'] = 'Connecteur booléens entre les conditions';
-Sbi.locale.ln['sbi.qbe.filtergridpanel.headers.isfree.desc'] = 'L\'utilisateur peut sélectionner la valeur dans une fenêtre popup lorsque la requête est exécutée';
+
+//===================================================================
+//RELATIONSHIPS WIZARD
+//===================================================================
+Sbi.locale.ln['sbi.qbe.relationshipswizard.title'] = 'D\u00e9tail r\u00e9lations';
+Sbi.locale.ln['sbi.qbe.relationshipswizardwindow.title'] = 'D\u00e9tail r\u00e9lations';
+Sbi.locale.ln['sbi.qbe.relationshipswizardwindow.buttons.apply'] = 'Appliquer';
+Sbi.locale.ln['sbi.qbe.relationshipswizardwindow.buttons.cancel'] = 'Annuler';
+Sbi.locale.ln['sbi.qbe.relationshipswizard.columns.queryName'] = 'Champ de la requ\u00eate';
+Sbi.locale.ln['sbi.qbe.relationshipswizard.columns.fieldName'] = 'Champ du mod\u00e8le';
+Sbi.locale.ln['sbi.qbe.relationshipswizard.columns.entity'] = 'Entit\u00e9';
+Sbi.locale.ln['sbi.qbe.relationshipswizard.columns.path'] = 'Parcours de join';
+Sbi.locale.ln['sbi.qbe.relationshipswizard.buttons.applytoentity'] = 'Appliquer la s\u00e9lection \u00e0 tous les champs de cette entit\u00e9e';
+Sbi.locale.ln['sbi.qbe.relationshipswizard.buttons.filter.otherentities'] = 'Cacher les r\u00e9lations avec des entit\u00e9es non pr\u00e9sentes dans la requ\u00eate';
+Sbi.locale.ln['sbi.qbe.relationshipswizard.roles.validation.no.all.fields'] = 'il est n\u00e9cessaire de mapper tous les champs avec une entit\u00e9';
+Sbi.locale.ln['sbi.qbe.relationshipswizard.roles.validation.alias.no.fieds'] = 'L\'alias ne contient pas aucun champ';
+Sbi.locale.ln['sbi.qbe.relationshipswizard.roles.validation.error'] = 'Erreur de validation';
+Sbi.locale.ln['sbi.qbe.relationshipswizard.roles.validation.no.fields.alias'] = 'Attention, si on veut utiliser des entit\u00e9s avec roles diff\u00e9rentes sur un champ pres\u00e9nt plusieurs fois dans les champs s\u00e9lectionn\u00e9s, il est n\u00e9cessaire de definir alias diff\u00e9rentes pour ce champ';
+Sbi.locale.ln['sbi.qbe.relationshipswizard.roles.entity.alias.columns']='Aliases';
+Sbi.locale.ln['sbi.qbe.relationshipswizard.roles.entity.alias.title']='Aliases pour l\'entit\u00e9 ';
+Sbi.locale.ln['sbi.qbe.relationshipswizard.roles.entity.alias.field.column']='Mapping champ/alias entit\u00e9';
+Sbi.locale.ln['sbi.qbe.relationshipswizard.roles.field.title']='Champs de la requ\u00eate';
+Sbi.locale.ln['sbi.qbe.relationshipswizard.roles.field.column']='Champs';
+
+//===================================================================
+//SAVE DATASET WIZARD
+//===================================================================
+Sbi.locale.ln['sbi.qbe.savedatasetwindow.title'] = 'Ins\u00e9rer les d\u00e9tails du dataset et cliquer sur le bouton \'Enregistrer\'';
