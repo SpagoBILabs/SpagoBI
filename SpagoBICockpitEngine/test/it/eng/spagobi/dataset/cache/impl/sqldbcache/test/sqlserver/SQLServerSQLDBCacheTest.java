@@ -38,7 +38,7 @@ public class SQLServerSQLDBCacheTest extends AbstractSQLDBCacheTest {
 	//Create Datasources specific for this test
 	@Override
 	public void createDataSources(){
-		dataSourceReading = TestDataSourceFactory.createDataSource(TestConstants.DatabaseType.SQLSERVER, false);
+		dataSourceReading = TestDataSourceFactory.createDataSource(TestConstants.DatabaseType.MYSQL, false);
 		dataSourceWriting = TestDataSourceFactory.createDataSource(TestConstants.DatabaseType.SQLSERVER, true);
 	}
 	
