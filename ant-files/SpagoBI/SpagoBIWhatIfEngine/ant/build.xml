@@ -79,7 +79,7 @@
 	<!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 	<target name="compile" depends="sbi.utils.update,qbe.core.update" description="compile the source">
 		<!-- Compile the java code from ${src} into ${build}/${webapp_name}/WEB-INF/classes -->
-		<javac srcdir="${src}" destdir="${build}/${webapp_name}/WEB-INF/classes" debug="on">
+		<javac srcdir="${src}" destdir="${build}/${webapp_name}/WEB-INF/classes" debug="on" encoding="${encoding}">
 			<classpath refid="web.classpath" />
 		</javac>
 	</target>
@@ -100,7 +100,7 @@
 				<exclude name="**/*.svn" />
 			</fileset>
 		</copy>
-		<copy file="${web.dir}/${license}" todir="${dist}" overwrite="true" />
+
 	</target>
 
 	<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
@@ -169,6 +169,8 @@
 	</target>
 
 	<target name="create-debug" depends="delete-debug">
+
+<!--
 		<concat destfile="${build}/${webapp_name}/js/spagobi/whatif-all-debug.js" append="true">
 			<filelist dir="${build}/${webapp_name}/js">
 		
@@ -176,12 +178,16 @@
 			</filelist>
 
 		</concat>
+
+-->
 	</target>
 
 	<target name="create-production" depends="create-debug">
+<!--
 		<java jar="./yuicompressor-2.4.2.jar" fork="true">
 			<arg line="-o ${build}/${webapp_name}/js/spagobi/whatif-all-${project.version}.js ${build}/${webapp_name}/js/spagobi/whatif-all-debug.js" />
 		</java>
+-->
 	</target>
 
 

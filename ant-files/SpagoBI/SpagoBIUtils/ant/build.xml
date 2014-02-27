@@ -16,7 +16,7 @@
     		<fileset dir="${runtime.lib}">
           		<include name="**/*.jar"/>
     		</fileset>
-    		<!-- LIBRERIA SBI.UTILS.JSON necessaria per la compilazione -->
+    		<!-- LIBRERIA SBI.UTILS DI SPAGOBI necessaria per la compilazione -->
     		<fileset dir="${sbiutils.json.dir}/dist">
           		<include name="**/*.jar"/>
     		</fileset>
@@ -72,7 +72,7 @@
   <target name="compile"  description="compile the source" >
   	<antcall target="upgrade.mf" />
     <!-- Compile the java code from ${src} into ${build}/${webapp_name}/WEB-INF/classes -->
-    <javac srcdir="${src}" destdir="${build}" debug="on">
+    <javac srcdir="${src}" destdir="${build}" debug="on" encoding="${encoding}">
       <classpath refid="jar.classpath"/>
     </javac> 
   </target>
