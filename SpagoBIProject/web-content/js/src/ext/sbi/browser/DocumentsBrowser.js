@@ -167,6 +167,8 @@ Sbi.browser.DocumentsBrowser = function(config) {
     if (Sbi.settings.browser.showBreadCrumbs !== undefined && Sbi.settings.browser.showBreadCrumbs){
     	this.detailPanel.addListener('onbreadcrumbclick', this.onBreadCrumbClick, this);
     }
+    
+    this.addEvents('closeDocument');
 };
 
 
@@ -223,7 +225,7 @@ Ext.extend(Sbi.browser.DocumentsBrowser, Ext.Panel, {
 		executionPanel.tabType = 'document';
 		
 		executionPanel.addListener('crossnavigationonothertab', this.onCrossNavigation, this);
-		executionPanel.addListener('openfavourite', this.onOpenFavourite, this);
+		executionPanel.addListener('openfavourite', this.onOpenFavourite, this);		
 		this.addPanelToSheet(executionPanel);
 		
 		executionPanel.execute();
@@ -281,6 +283,9 @@ Ext.extend(Sbi.browser.DocumentsBrowser, Ext.Panel, {
 		
 		executionPanel.addListener('crossnavigationonothertab', this.onCrossNavigation, this);
 		executionPanel.addListener('openfavourite', this.onOpenFavourite, this);
+		executionPanel.addListener('closeDocument', function(){this.detailPanel.folderView.refresh();
+															   this.fireEvent('closeDocument');}, 
+									this);
 		
 		this.addPanelToSheet(executionPanel);
 		executionPanel.execute();

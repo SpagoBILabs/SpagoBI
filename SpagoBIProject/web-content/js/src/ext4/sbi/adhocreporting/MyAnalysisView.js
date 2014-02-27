@@ -55,7 +55,7 @@ Ext.define('Sbi.adhocreporting.MyAnalysisView', {
 		 */
 		,
 		constructor : function(config) {
-			
+
 			this.initServices();
 			this.initConfig(config);
 			this.initTemplate();
@@ -78,12 +78,11 @@ Ext.define('Sbi.adhocreporting.MyAnalysisView', {
 			this.addListener('itemclick', this.onClick, this);
 			this.addListener('itemmouseenter', this.onMouseOverX, this);
 			this.addListener('itemmouseleave', this.onMouseOutX, this);
-		
+			
 			this.addEvents('detail');
 			this.addEvents('delete');		
 			this.addEvents('clone');		
 			this.addEvents('showMetadata');		
-
 			this.addEvents('share');		
 		}
 		
@@ -325,6 +324,5 @@ Ext.define('Sbi.adhocreporting.MyAnalysisView', {
 		onMouseOutX : function( obj, record, item, index, e, eOpts ) {
 			
 		}
-		
 		
 });

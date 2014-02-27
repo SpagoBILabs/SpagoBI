@@ -67,6 +67,7 @@ Sbi.execution.DocumentExecutionPage = function(config, doc) {
 		, 'crossnavigation'
 		, 'openfavourite'
 		, 'loadurlfailure'
+		, 'closeDocument'
 	);	
 	
 	this.initServices();
@@ -469,6 +470,9 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 		//event comung from the document
 		this.documentPage.on('managebutton', function(button, property, value ) {
 			this.toolbar.manageButton(button, property, value);
+		},this);
+		this.documentPage.on('closeDocument', function(config) {
+			this.fireEvent('closeDocument', config);
 		},this);
 		
 		

@@ -65,7 +65,7 @@ public class GetUrlForExecutionAction extends AbstractSpagoBIAction {
 			
 			isFromCross = this.getAttributeAsBoolean( IS_FROM_CROSS );
 			logger.debug("Parameter [" + IS_FROM_CROSS + "] is equals to [" + isFromCross + "]");
-			
+						
 			response = null;
 			if (snapshotId != null) {
 				response = handleSnapshotExecution(snapshotId);
@@ -360,6 +360,12 @@ public class GetUrlForExecutionAction extends AbstractSpagoBIAction {
 				// there are no errors, we can proceed, so calculate the execution url and send it back to the client
 				String url = executionInstance.getExecutionUrl(locale);
 				url += "&isFromCross=" + (isFromCross == true ? "true" : "false");
+				//adds information about the environment
+				String env= (String)this.getAttributeAsString("SBI_ENVIRONMENT");
+				if (env==null){
+					env = "DOCBROWSER";
+				}				
+				url += "&SBI_ENVIRONMENT=" + env;
 				try {
 					response.put("url", url);
 				} catch (JSONException e) {
@@ -369,7 +375,6 @@ public class GetUrlForExecutionAction extends AbstractSpagoBIAction {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
-					//PER MONIA, DOCUMENT.GET_URL, user, executionInstance.getBIObject().getName(), executionInstance.getBIObject().getEngine()
 					try {
 						AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DOCUMENT.GET_URL",logParam , "ERR");
 					} catch (Exception e1) {

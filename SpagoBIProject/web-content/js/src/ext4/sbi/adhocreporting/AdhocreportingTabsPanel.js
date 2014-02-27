@@ -24,6 +24,7 @@ Ext.define('Sbi.adhocreporting.AdhocreportingTabsPanel', {
 	
 	
 	, constructor : function(config) {
+
 		this.initConfig(config);
 		
 		this.layout = 'fit';

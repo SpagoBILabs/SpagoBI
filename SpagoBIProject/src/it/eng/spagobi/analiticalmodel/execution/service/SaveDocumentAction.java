@@ -195,7 +195,7 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 			String documentLabel = documentJSON.getString("label");
 			BIObject document = biObjectDao.loadBIObjectByLabel(documentLabel);
 			JSONArray filteredFoldersJSON = new JSONArray(); 
-			if(request.optJSONArray("folders") == null){
+			if(request.optJSONArray("folders") == null || request.optJSONArray("folders").length() == 0){
 				IEngUserProfile profile = (IEngUserProfile) getUserProfile();
 				//add personal folder for default
 				LowFunctionality userFunc = null;
@@ -236,7 +236,7 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 			BIObject toReturn = obj;
 			String name = getAttributeAsString("name");
 			String description = getAttributeAsString("description");
-			Boolean isPublic = getAttributeAsBoolean("visibility");
+			Boolean isPublic = getAttributeAsBoolean("isPublic");
 			String previewFile = getAttributeAsString("previewFile");
 			
 			toReturn.setName(name);
@@ -267,7 +267,7 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 			String sourceModelName = getAttributeAsString("model_name");
 			JSONObject documentJSON = request.optJSONObject("document");
 			JSONArray filteredFoldersJSON = new JSONArray(); 
-			if(request.optJSONArray("folders") == null){
+			if(request.optJSONArray("folders") == null || request.optJSONArray("folders").length() == 0){
 				IEngUserProfile profile = (IEngUserProfile) getUserProfile();
 				//add personal folder for default
 				LowFunctionality userFunc = null;
@@ -312,7 +312,7 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 		try {
 			JSONObject documentJSON = request.optJSONObject("document");
 			JSONArray filteredFoldersJSON = new JSONArray(); 
-			if(request.optJSONArray("folders") == null){
+			if(request.optJSONArray("folders") == null || request.optJSONArray("folders").length() == 0){
 				IEngUserProfile profile = (IEngUserProfile) getUserProfile();
 				//add personal folder for default
 				LowFunctionality userFunc = null;

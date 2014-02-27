@@ -40,6 +40,7 @@ Ext.define('Sbi.adhocreporting.AdhocreportingContainer', {
     documentexecution: null
 	
 	, constructor : function(config) {
+
 		this.initConfig(config);
 		
 		this.layout =  'card';
@@ -101,9 +102,8 @@ Ext.define('Sbi.adhocreporting.AdhocreportingContainer', {
 		this.documentexecution.load(cockpitUrl);
 		this.getLayout().setActiveItem(1);	
 	}
-
-
-	,executeDocument: function(docType,inputType, record){
+	
+	,executeDocument: function(docType,inputType, record){		
 		if(docType=='COCKPIT'){
 			Sbi.debug("Cockpit document execution");
 			this.executeCockpit(inputType, record);
@@ -116,7 +116,6 @@ Ext.define('Sbi.adhocreporting.AdhocreportingContainer', {
 		} else {
 			alert('Impossible to execute document of type [' + docType + ']');
 		}
-		
 		this.getLayout().setActiveItem(1);	
 	}
 	

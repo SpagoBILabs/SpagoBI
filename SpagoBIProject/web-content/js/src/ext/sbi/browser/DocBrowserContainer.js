@@ -18,6 +18,7 @@ Sbi.browser.DocBrowserContainer = function(config) {
 	config.baseLayout = config.baseLayout || {}; 	
 	config.parentTab = this;
     var browser = new Sbi.browser.DocumentsBrowser(config);
+    browser.addListener('closeDocument', this.closeDocument, this);
     
     //The type of layout is configurable trought the property 'typeLayout'. 
     //Possible values are 'tab' or 'card'. the first shows a tabPanel, the second a panel with a card layout.
@@ -191,5 +192,10 @@ Ext.extend(Sbi.browser.DocBrowserContainer, Ext.Panel, {
 				return null;
 			}
 		}
+	}
+	
+	, closeDocument: function(){
+		var el = this.brSheet.getActiveTab();
+		this.brSheet.remove(el, true);	
 	}
 });
