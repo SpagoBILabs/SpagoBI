@@ -19,6 +19,8 @@
 .x-pivot-cell{
     	border-top-width: 1px !important;
     	border-right-width: 1px !important;
+    	text-align: right;
+    	padding : 2px;
 }
 
 .x-pivot-table{
@@ -46,5 +48,18 @@
  	border-style: dashed !important;
  	border-width: 1px;
 }
-
+/*expandable members*/
+.expanded{
+    	color: red;
+    	background-image: url(../img/elbow-minus-nl.gif);
+    	background-repeat: no-repeat;
+    	background-position: left;
+    	
+}
+.collapsed{
+    	color: green;
+    	background-image: url(../img/elbow-plus-nl.gif);
+    	background-repeat: no-repeat;
+    	background-position: left;
+}
 
