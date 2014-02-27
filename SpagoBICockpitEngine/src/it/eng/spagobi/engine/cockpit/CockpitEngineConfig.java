@@ -5,13 +5,17 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.engine.cockpit;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.commons.bo.Config;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.dao.IConfigDAO;
+import it.eng.spagobi.dataset.cache.CacheConfiguration;
 import it.eng.spagobi.dataset.cache.CacheFactory;
 import it.eng.spagobi.dataset.cache.ICache;
 import it.eng.spagobi.dataset.cache.impl.sqldbcache.SQLDBCache;
@@ -25,6 +29,11 @@ import org.apache.log4j.Logger;
  * @author Andrea Gioia (andrea.gioia@eng.it)
  */
 public class CockpitEngineConfig {
+	public static final String CACHE_NAME_PREFIX_CONFIG = "SPAGOBI.CACHE.NAMEPREFIX";
+	public static final String CACHE_SPACE_AVAILABLE_CONFIG = "SPAGOBI.CACHE.SPACE_AVAILABLE";
+	public static final String CACHE_LIMIT_FOR_CLEAN_CONFIG = "SPAGOBI.CACHE.LIMIT_FOR_CLEAN";
+	
+
 	
 	private static EnginConf engineConfig;
 
@@ -74,13 +83,39 @@ public class CockpitEngineConfig {
 	
 	private static void initializeCache(){
 		try {
+			//Cache configuration parameters
+			String tableNamePrefix;
+			BigDecimal cacheSpaceAvailable;
+			Integer cachePercentageToClean;
+			
+			
 			CacheFactory cacheFactory = new CacheFactory();
 			IDataSourceDAO dataSourceDAO = DAOFactory.getDataSourceDAO();
 			IDataSource dataSource = dataSourceDAO.loadDataSourceWriteDefault();
 			if(dataSource == null) {
 				logger.warn("Impossible to initialize cache because there are no datasource defined as defualt write datasource");
 			} else {
-				cache = cacheFactory.getCache(dataSource);
+				
+				CacheConfiguration cacheConfiguration = new CacheConfiguration();
+
+				IConfigDAO configDao = DAOFactory.getSbiConfigDAO();
+				Config tableNamePrefixConfig = configDao.loadConfigParametersByLabel(CACHE_NAME_PREFIX_CONFIG);
+				if ((tableNamePrefixConfig != null) && (tableNamePrefixConfig.isActive())){
+					tableNamePrefix = tableNamePrefixConfig.getValueCheck();
+					cacheConfiguration.setTableNamePrefix(tableNamePrefix);
+				}
+				Config cacheSpaceAvailableConfig = configDao.loadConfigParametersByLabel(CACHE_SPACE_AVAILABLE_CONFIG);
+				if ((cacheSpaceAvailableConfig != null) && (cacheSpaceAvailableConfig.isActive())){
+					cacheSpaceAvailable = BigDecimal.valueOf(Double.valueOf(cacheSpaceAvailableConfig.getValueCheck()));
+					cacheConfiguration.setCacheSpaceAvailable(cacheSpaceAvailable);
+				}			
+				Config cacheSpaceCleanableConfig = configDao.loadConfigParametersByLabel(CACHE_LIMIT_FOR_CLEAN_CONFIG);
+				if ((cacheSpaceCleanableConfig != null) && (cacheSpaceAvailableConfig.isActive())){
+					cachePercentageToClean = Integer.valueOf(cacheSpaceCleanableConfig.getValueCheck());
+					cacheConfiguration.setCachePercentageToClean(cachePercentageToClean);
+				}				
+
+				cache = cacheFactory.getCache(dataSource,cacheConfiguration);
 				if (cache instanceof SQLDBCache){
 					((SQLDBCache)cache).setObjectsTypeDimension(getDimensionTypes());
 				}

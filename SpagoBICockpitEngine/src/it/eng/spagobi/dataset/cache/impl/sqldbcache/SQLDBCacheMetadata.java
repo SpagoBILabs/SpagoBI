@@ -25,6 +25,7 @@ import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.bo.Config;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IConfigDAO;
+import it.eng.spagobi.dataset.cache.CacheConfiguration;
 import it.eng.spagobi.dataset.cache.ICacheMetadata;
 import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
@@ -35,6 +36,7 @@ import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -70,7 +72,7 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 	public static final String DIALECT_TERADATA = "Teradata";
 
 	private LinkedHashMap<String, CacheItem> cacheRegistry = new LinkedHashMap<String, CacheItem>();	
-	
+	CacheConfiguration cacheConfiguration;
 
 	private IDataSource dataSource;
 	private BigDecimal dimensionSpaceFree ;
@@ -85,32 +87,20 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 	private Map<String, Integer> columnSize =  new HashMap<String, Integer>();
 	private enum FieldType {ATTRIBUTE, MEASURE}
 	
-	public SQLDBCacheMetadata(IDataSource ds){
-		try {
-			dataSource = ds;
-			
-			IConfigDAO configDao = DAOFactory.getSbiConfigDAO();
-			Config tableNamePrefixConfig = configDao.loadConfigParametersByLabel(CACHE_NAME_PREFIX_CONFIG);
-			if ((tableNamePrefixConfig != null) && (tableNamePrefixConfig.isActive())){
-				tableNamePrefix = tableNamePrefixConfig.getValueCheck();
+	public SQLDBCacheMetadata(IDataSource ds, CacheConfiguration cacheConfiguration){
 
-			}
-			Config cacheSpaceAvailableConfig = configDao.loadConfigParametersByLabel(CACHE_SPACE_AVAILABLE_CONFIG);
-			if ((cacheSpaceAvailableConfig != null) && (cacheSpaceAvailableConfig.isActive())){
-				cacheSpaceAvailable = BigDecimal.valueOf(Double.valueOf(cacheSpaceAvailableConfig.getValueCheck()));
-			}			
-			Config cacheSpaceCleanableConfig = configDao.loadConfigParametersByLabel(CACHE_LIMIT_FOR_CLEAN_CONFIG);
-			if ((cacheSpaceCleanableConfig != null) && (cacheSpaceAvailableConfig.isActive())){
-				cachePercentageToClean = Integer.valueOf(cacheSpaceCleanableConfig.getValueCheck());
-			}
-			if (tableNamePrefix != null && !"".equals(tableNamePrefix) &&
-				cacheSpaceAvailable != null && cachePercentageToClean != null  ) 
-					isActiveCleanAction = true;
+		dataSource = ds;
+		this.cacheConfiguration = cacheConfiguration;
+		if (this.cacheConfiguration != null){
+			tableNamePrefix = this.cacheConfiguration.getTableNamePrefix();
+			cacheSpaceAvailable = this.cacheConfiguration.getCacheSpaceAvailable();
+			cachePercentageToClean = this.cacheConfiguration.getCachePercentageToClean();
+		}
 		
-		} catch (EMFUserError e) {
-			logger.error("Impossible to instantiate SbiConfigDAO in SQLDBCacheMetadata");
-		} catch (Exception e) {
-			logger.error("Impossible to instantiate SbiConfigDAO in SQLDBCacheMetadata");
+		
+		if (tableNamePrefix != null && !"".equals(tableNamePrefix) &&
+			cacheSpaceAvailable != null && cachePercentageToClean != null  ) {
+			isActiveCleanAction = true;
 		}
 	}
 	
@@ -194,7 +184,7 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 	public 	Integer getSpaceFreeAsPercentage(){
 		Integer toReturn = 0;
 		BigDecimal spaceAvailable = getDimensionSpaceAvailable();
-		toReturn = Integer.valueOf(((spaceAvailable.multiply(new BigDecimal(100)).divide(cacheSpaceAvailable)).intValue()));
+		toReturn = Integer.valueOf(((spaceAvailable.multiply(new BigDecimal(100)).divide(cacheSpaceAvailable,RoundingMode.HALF_UP)).intValue()));
 		return toReturn;
 	}
 	
@@ -282,13 +272,13 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 	    }		
 	}
 
-	public CacheItem getCacheItem(String signature) {
+	public CacheItem getCacheItem(String tableName) {
 		CacheItem toReturn = null;
 		Iterator it = getCacheRegistry().entrySet().iterator();
 	    while (it.hasNext()) {
 	        Map.Entry<String,CacheItem> entry = (Map.Entry<String,CacheItem>)it.next();	
 	        CacheItem item =  entry.getValue();
-	        if (item.getTable().equalsIgnoreCase(signature)){
+	        if (item.getTable().equalsIgnoreCase(tableName)){
 	        	toReturn = item;
 	        	break;
 	        }
@@ -310,8 +300,8 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 		return toReturn;
 	}
 
-	public boolean containsCacheItem(String signature) {
-		return getCacheItem(signature) != null;
+	public boolean containsCacheItem(String tableName) {
+		return getCacheItem(tableName) != null;
 	}
 	
 	public boolean containsCacheItemByResultsetSignature(String resultSetSignature) {
