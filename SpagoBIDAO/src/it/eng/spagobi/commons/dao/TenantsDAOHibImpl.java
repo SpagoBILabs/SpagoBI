@@ -496,7 +496,7 @@ public class TenantsDAOHibImpl extends AbstractHibernateDAO implements ITenantsD
 			}
 			StringEscapeUtils seu = new StringEscapeUtils();
 			
-			str = "DELETE FROM qrtz_cron_triggers WHERE trigger_name IN (SELECT DISTINCT t.trigger_name " +
+			str = "DELETE FROM QRTZ_CRON_TRIGGERS WHERE trigger_name IN (SELECT DISTINCT t.trigger_name " +
 				  "FROM QRTZ_TRIGGERS t WHERE t.JOB_GROUP LIKE '"+seu.escapeSql(aTenant.getName())+"/%') " +
 			      "AND trigger_group IN (SELECT DISTINCT t.trigger_group FROM QRTZ_TRIGGERS t WHERE t.JOB_GROUP " +
 			      "LIKE '"+seu.escapeSql(aTenant.getName())+"/%')";
