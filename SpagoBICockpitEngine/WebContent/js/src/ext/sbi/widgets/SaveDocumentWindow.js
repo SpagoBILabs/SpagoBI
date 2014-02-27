@@ -74,7 +74,7 @@ Sbi.widgets.SaveDocumentWindow = function(config) {
 		Ext.apply(this,c);
 		
 		// init events...
-		this.addEvents('syncronizePanel','closeDocument');		
+		this.addEvents('savedocument','closedocument');		
 		
 		// constructor
 		Sbi.widgets.SaveDocumentWindow.superclass.constructor.call(this, c);
@@ -248,11 +248,12 @@ Ext.extend(Sbi.widgets.SaveDocumentWindow, Ext.Window, {
 				                        buttons: Ext.MessageBox.OK
 				                });			      			
 				      			
-				      			if (goBack){		
-				      				this.fireEvent('closeDocument', this);  	 //fire event to jump to the MyAnalysis page	
-				                }
+//				      			if (goBack){		
+//				      				this.fireEvent('closedocument', this);  	 //fire event to jump to the MyAnalysis page	
+//				                }
+				      			Sbi.config.docLabel = this.docLabel.value;
 				      			
-				      			this.fireEvent('syncronizePanel', this);
+				      			this.fireEvent('savedocument', this, goBack, params);
 				      			this.destroy();
 				      		}  
 			      		} else {

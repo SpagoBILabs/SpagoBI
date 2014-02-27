@@ -23,7 +23,7 @@ Sbi.data.StoreManager = function(config) {
 	
 	// init properties...
 	var defaultSettings = {
-		// set default values here
+		autoDestroy: true
 	};
 	
 	var settings = Sbi.getObjectSettings('Sbi.data.StoreManager', defaultSettings);
@@ -71,9 +71,36 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 	 * @return {Object} The configuration object
 	 */
 	, getConfiguration: function() {
+		Sbi.trace("[StoreManager.getConfiguration]: IN");
 		var config = {};
-		config.storeConfigs = this.getStoreConfigurations();
+		config.stores = this.getStoreConfigurations();
+		Sbi.trace("[StoreManager.getConfiguration]: IN");
 		return config;
+	}
+
+	/**
+	 * Removes all stores registered to this manager.  
+	 * 
+	 * @param {Boolean} autoDestroy (optional) True to automatically also destry the each store after removal.
+	 * Defaults to the value of this Manager's {@link #autoDestroy} config.
+	 */
+	, resetConfiguration: function(autoDestroy) {
+		Sbi.trace("[StoreManager.resetConfiguration]: IN");
+				
+		if(Sbi.isValorized(this.stores)) {
+			Sbi.trace("[StoreManager.resetConfiguration]: There are [" + this.stores.getCount() + "] store(s) to remove");
+			autoDestroy = autoDestroy || this.autoDestroy;
+			this.stores.each(function(store, index, length) {
+				this.removeStore(store, autoDestroy);
+			}, this);
+		}
+		
+		this.stores = new Ext.util.MixedCollection();
+		this.stores.getKey = function(o){
+            return o.storeId;
+        };
+        
+        Sbi.trace("[StoreManager.resetConfiguration]: OUT");
 	}
 
 	/**
@@ -86,21 +113,19 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 		Sbi.trace("[StoreManager.init]: IN");
     	
 		conf = conf || {};
-		var storeConfigs = conf.storeConfigs || [];
+		var stores = conf.stores || [];
 	
-		this.stores = new Ext.util.MixedCollection();
-		this.stores.getKey = function(o){
-            return o.storeId;
-        };
+		this.resetConfiguration();
 		
-		for(var i = 0; i < storeConfigs.length; i++) {
-			var store = this.createStore(storeConfigs[i]);
-			//var store = this.createStoreOld(storeConfigs[i]);
+		for(var i = 0; i < stores.length; i++) {
+			var store = this.createStore(stores[i]);
+			//var store = this.createStoreOld(stores[i]);
 			this.addStore(store);
 		}
 	
 		// for easy debug purpose
 		var testStore = this.createTestStore();
+		Sbi.trace("[StoreManager.init]: adding test store whose type is equal to [" + testStore.storeType + "]");
 		this.addStore(testStore);
 		
 		Sbi.trace("[StoreManager.init]: OUT");
@@ -137,7 +162,7 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 		} else if(Sbi.isNotExtObject(store)) {
 			Sbi.trace("[StoreManager.addStore]: Input parameter [s] is of type [Object]");	
 			store = this.createStore(store);
-		} else if((store instanceof Sbi.cockpit.core.WidgetRuntime) === true) {
+		} else if((store instanceof Ext.data.Store) === true) {
 			Sbi.trace("[StoreManager.addStore]: Input parameter [s] is of type [Store]");
 			// nothing to do here
 		} else {
@@ -145,7 +170,9 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 		}
 		
 		
-		if (store.storeId !== undefined){
+		if (store.storeId !== undefined){ //TODO this is valid only for store of type sbi. Generalize!
+			
+			Sbi.trace("[StoreManager.addStore]: Adding store [" + store.storeId + "] of type [" + store.storeType + "] to manager");
 			store.ready = store.ready || false;
 			store.storeType = store.storeType || 'ext';
 			//s.filterPlugin = new Sbi.data.StorePlugin({store: s});
@@ -206,18 +233,24 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 	}
 	
 	, getStoreConfiguration: function(storeId) {
-		var store = this.getStore();
+		
+		Sbi.trace("[StoreManager.getStoreConfiguration]: IN");
+		
+		var store = this.getStore(storeId);
 		var storeConf = null;
 		
 		if(Sbi.isValorized(store)) {
 			if(store.storeType === "sbi") {
-				storeConf = Ext.apply({}, storeConf);
+				Sbi.trace("[StoreManager.getStoreConfiguration]: conf of store [" + storeId + "] of type [" + store.storeType + "] is equal to [" + Sbi.toSource(store.storeConf, true)+ "]");
+				storeConf = Ext.apply({}, store.storeConf);
 			} else {
 				Sbi.warn("[StoreManager.getStoreConfiguration]: impossible to extract configuration from store of type different from [sbi]");
 			}
 		} else {
 			Sbi.warn("[StoreManager.getStoreConfiguration]: impossible to find store [" + storeId + "]");
 		}
+		
+		Sbi.trace("[StoreManager.getStoreConfiguration]: OUT");
 		
 		return storeConf;
 	}
@@ -230,13 +263,45 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 		}
 	}
 	
-	, removeStore: function(store) {
+	/**
+	 * @method
+	 * 
+	 * @param {Ext.data.Store/String} store The store to rmove or its id.
+	 * @param {Boolean} autoDestroy (optional) True to automatically also destroy the each store after removal.
+	 * Defaults to the value of this Manager's {@link #autoDestroy} config.
+	 * 
+	 * @return {Ext.data.Store} the store removed. False if it was impossible to remove the store. null if the store after removal
+	 * has been destroyed (see autoDestroy parameter).
+	 */
+	, removeStore: function(store, autoDestroy) {
+		
+		Sbi.trace("[StoreManager.removeStore]: IN");
+		
+		var storeId = null;
+		
 		Sbi.trace("[StoreManager.removeStore]: typeof store: " + (typeof store));
+		
 		if(typeof store === 'String') {
-			return this.stores.removeKey(store);
+			storeId = store;
+			store = this.stores.removeKey(store);
 		} else {
-			return this.stores.remove(store);
+			storeId = store.id;
+			store = this.stores.remove(store);
 		}
+		
+		if(store === false) {
+			Sbi.trace("[StoreManager.removeStore]: Impossible to remove store [" + storeId  + "]");
+		}
+		
+		autoDestroy = autoDestroy || this.autoDestroy;
+		if(autoDestroy) {
+			store.destroy();
+			store = null;
+		}
+		
+		Sbi.trace("[StoreManager.removeStore]: OUT");
+		
+		return store;
 	}
 	
 	, getStoreIds: function() {
@@ -288,6 +353,9 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 
     
     , createStore: function(storeConf) {
+    	
+    	Sbi.trace("[StoreManager.createStore]: store [" + storeConf.storeId + "] conf is equal to [" + Sbi.toSource(storeConf, true)+ "]");
+    	
 		var proxy = new Ext.data.HttpProxy({
 			url: Sbi.config.serviceRegistry.getServiceUrl({
 				serviceName : 'api/1.0/dataset/' + storeConf.storeId + '/data'

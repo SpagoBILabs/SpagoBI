@@ -27,7 +27,10 @@ Sbi.isNotNull = function(o) {
 };
 
 Sbi.isExtObject = function(o) {
-	return typeof widget === 'object' && (widget instanceof Ext.util.Observable);
+	Sbi.trace("[Sbi.isExtObject]: type of: " + (typeof o));	
+	Sbi.trace("[Sbi.isExtObject]: Is an insance of [Ext.data.Store]: " + (o instanceof Ext.data.Store));	
+	Sbi.trace("[Sbi.isExtObject]: Is an insance of [Ext.util.Observable]: " + (o instanceof Ext.util.Observable));
+	return typeof o === 'object' && (o instanceof Ext.util.Observable);
 };
 
 Sbi.isNotExtObject = function(o) {
