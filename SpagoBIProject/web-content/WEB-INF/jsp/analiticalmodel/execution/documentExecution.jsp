@@ -65,11 +65,12 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
     	   				  request.getContextPath()%>'
     	    
     };
-
     var params = {
     	SBI_EXECUTION_ID: <%= request.getParameter("SBI_EXECUTION_ID")!=null?"'" + request.getParameter("SBI_EXECUTION_ID") +"'": "null" %>
+    	, SBI_ENVIRONMENT: <%= (request.getParameter("MYANALYSIS") !=null && request.getParameter("MYANALYSIS").equalsIgnoreCase("TRUE"))?"'MYANALYSIS'": "'DOCBROWSER'" %>
     	, LIGHT_NAVIGATOR_DISABLED: 'TRUE'
     };
+    
 
     Sbi.config.serviceRegistry = new Sbi.service.ServiceRegistry({
     	baseUrl: url

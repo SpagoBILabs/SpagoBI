@@ -25,7 +25,7 @@ Sbi.execution.DocumentPage = function(config, doc) {
 	Ext.apply(this, c);
 		
 	// add events
-    this.addEvents('beforesynchronize', 'loadurlfailure', 'crossnavigation');
+    this.addEvents('beforesynchronize', 'loadurlfailure', 'crossnavigation', 'closeDocument');
 
 	// declare exploited services
 	this.initServices();
@@ -299,6 +299,7 @@ Ext.extend(Sbi.execution.DocumentPage, Ext.Panel, {
 		listeners['message:contentexported'] = this.initContentExportedMessageListner();
     	listeners['message:worksheetexporttaberror'] = this.initWorksheetExportTabErrorMessageListner();
 		listeners['message:crossnavigation'] = this.initCrossNavigationaMessageListner();
+		listeners['message:closeDocument'] = this.closeDocumentListener();
 		listeners['message:managebutton'] = this.initManageButton();
 		listeners['message:sendFeedback'] = this.initSendFeedbackListner();
 		listeners['message:modifyGeoReportDocument'] = this.initModifyGeoReportDocumentListner();
@@ -456,7 +457,22 @@ Ext.extend(Sbi.execution.DocumentPage, Ext.Panel, {
 	Sbi.debug('[DocumentPage.ModifyGeoReportDocumentListner] : OUT' );
 
 	}
-	
+	/**
+	 * @method
+	 * 
+	 * init the listner for event 'message:closeDocument'
+	 */
+	, closeDocumentListener: function(){
+		return {
+	    	fn: function(srcFrame, message) {
+	        	if (this.loadMask != null) {
+	        		this.hideMask();
+	        	}  
+	        	this.fireEvent('closeDocument', message.data);
+	    	}
+	    	, scope: this
+	    };
+	} 
 	
 	/**
 	 * @method

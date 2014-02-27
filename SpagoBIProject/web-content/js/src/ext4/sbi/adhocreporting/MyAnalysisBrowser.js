@@ -37,6 +37,7 @@ Ext.define('Sbi.adhocreporting.MyAnalysisBrowser', {
 
 	,
 	constructor : function(config) {
+
 		this.initConfig(config);
 		if (this.enginesAreAvailable()){
 			this.initServices();
@@ -165,7 +166,6 @@ Ext.define('Sbi.adhocreporting.MyAnalysisBrowser', {
 		this.viewPanel.on('executeDocument',function(docType, inputType,  record){
 			this.fireEvent('executeDocument',docType, inputType,  record);
 		},this);
-
 	}
 	
 	

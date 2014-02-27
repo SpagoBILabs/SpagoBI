@@ -72,6 +72,15 @@ public class ExecuteDocumentAction extends AbstractSpagoBIAction {
 						obj.setDocVersion(objVersion);	
 					}
 					this.getServiceResponse().setAttribute(SpagoBIConstants.OBJECT, obj);
+					
+					//add the environment
+					String myAnalysis = this.getAttributeAsString("MYANALYSIS");
+		    		if (myAnalysis != null &&  myAnalysis.equalsIgnoreCase("true")){
+		    			this.getServiceResponse().setAttribute("SBI_ENVIRONMENT", "MYANALYSIS");		    			
+					}else{
+						this.getServiceResponse().setAttribute("SBI_ENVIRONMENT", "DOCBROWSER");	
+					}
+					
 	
 					SubObject subObject = getRequiredSubObject(obj);
 					if (subObject != null) {

@@ -48,6 +48,11 @@ Sbi.execution.ExecutionPanel = function(config, doc) {
 	this.activeDocument.documentExecutionPage.on('openfavourite', function(doc){
 		this.fireEvent('openfavourite', doc);
 	} , this);	
+	
+	this.activeDocument.documentExecutionPage.on('closeDocument',  function(config){		
+		this.closeDocument(config);
+	} , this);	
+	
 	var c = Ext.apply({}, config || {}, {
 		title: (this.hideToolbar(doc.engine))?'':title
 		, closable: closable
@@ -73,6 +78,8 @@ Sbi.execution.ExecutionPanel = function(config, doc) {
 	    	return true; // now the execution panel can be destroyed
 	    }, this);
     }
+    
+    this.addEvents('closeDocument');
 };
 
 /**
@@ -144,6 +151,18 @@ Ext.extend(Sbi.execution.ExecutionPanel, Ext.Panel, {
 		return this.activeDocument;
 	}
 
+	,closeDocument: function(config){
+		if (config.newUrl !== undefined && config.newUrl !== null){
+			//MyAnalysis env: update url
+			parent.location = config.newUrl;
+		}else{
+			//DocBrowser env: close tab
+//			var el = this.documentsStack.pop();
+//			this.remove(el, true);
+			this.fireEvent('closeDocument');
+		}
+	}
+	
 	// -----------------------------------------------------------------------------------------------------------------
 	// public methods
 	// -----------------------------------------------------------------------------------------------------------------
