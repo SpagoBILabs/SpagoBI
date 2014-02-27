@@ -283,9 +283,7 @@ Ext.extend(Sbi.browser.DocumentsBrowser, Ext.Panel, {
 		
 		executionPanel.addListener('crossnavigationonothertab', this.onCrossNavigation, this);
 		executionPanel.addListener('openfavourite', this.onOpenFavourite, this);
-		executionPanel.addListener('closeDocument', function(){this.detailPanel.folderView.refresh();
-															   this.fireEvent('closeDocument');}, 
-									this);
+		executionPanel.addListener('closeDocument', this.closeDocument,this);
 		
 		this.addPanelToSheet(executionPanel);
 		executionPanel.execute();
@@ -366,4 +364,11 @@ Ext.extend(Sbi.browser.DocumentsBrowser, Ext.Panel, {
 			this.containerBrowser.brSheet.add(panel).show();
 		}
 	}
+	
+	, closeDocument: function(){
+		   this.fireEvent('closeDocument');
+		   this.detailPanel.folderView.store.reload();
+
+	}
+	
 });

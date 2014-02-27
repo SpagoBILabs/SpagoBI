@@ -157,8 +157,6 @@ Ext.extend(Sbi.execution.ExecutionPanel, Ext.Panel, {
 			parent.location = config.newUrl;
 		}else{
 			//DocBrowser env: close tab
-//			var el = this.documentsStack.pop();
-//			this.remove(el, true);
 			this.fireEvent('closeDocument');
 		}
 	}
