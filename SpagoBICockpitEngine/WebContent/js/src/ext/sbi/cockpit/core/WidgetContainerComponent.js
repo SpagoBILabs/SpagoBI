@@ -146,7 +146,7 @@ Ext.extend(Sbi.cockpit.core.WidgetContainerComponent, Ext.Window, {
 	/**
 	 * @method
 	 * 
-	 * Replace the old embedded widget with the new one passed as argumnt
+	 * Replace the old embedded widget with the new one passed as argument
 	 * @param {Object} the configuration object passed in to the class constructor
 	 */
 	, setWidget: function(widget) {
@@ -233,6 +233,15 @@ Ext.extend(Sbi.cockpit.core.WidgetContainerComponent, Ext.Window, {
     , onShowWidgetEditor: function() {
     	this.fireEvent('performaction', this, 'showEditor');
     } 
+    
+    , onWidgetRefresh: function() {
+    	if(this.isNotEmpty()) {
+    		var widget = this.getWidget();
+    		widget.refresh();
+    	} else {
+    		Ext.Msg.alert('Message', 'No widget to refresh.');
+    	}
+    }
 	
 	// -----------------------------------------------------------------------------------------------------------------
     // init methods
@@ -273,9 +282,10 @@ Ext.extend(Sbi.cockpit.core.WidgetContainerComponent, Ext.Window, {
     		scope: this
         }, {
         	id:'refresh',
-     	   	handler: function(){
-     	   		Ext.Msg.alert('Message', 'The REFRESH tool was clicked.');
-     	    },
+        	handler: this.onWidgetRefresh,
+//     	   	handler: function(){
+//     	   		Ext.Msg.alert('Message', 'The REFRESH tool was clicked.');
+//     	    },
     		scope: this
         }];
 	}

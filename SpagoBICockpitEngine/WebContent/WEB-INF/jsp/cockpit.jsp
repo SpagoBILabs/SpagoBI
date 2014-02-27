@@ -132,6 +132,8 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 		  	baseUrl: url
 		    , baseParams: params
 		});
+		
+		Sbi.storeManager = new Sbi.data.StoreManager();
 
 		Sbi.config.docLabel ="<%=docLabel%>";
 		Sbi.config.docVersion = "<%=docVersion%>";

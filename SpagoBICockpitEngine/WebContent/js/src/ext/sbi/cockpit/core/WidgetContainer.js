@@ -34,6 +34,8 @@ Sbi.cockpit.core.WidgetContainer = function(config) {
 	var c = Ext.apply(settings, config || {});
 	Ext.apply(this, c);
 	
+	this.widgetManager = this.widgetManager ||  new Sbi.cockpit.core.WidgetManager();
+	
 	this.init();
 	
 	
@@ -66,8 +68,8 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.WidgetRuntime, {
 	, defaultRegion: {
 		width : 0.5
 	   	, height : 0.5
-	   	, x : 0.5
-	   	, y: 0.5
+	   	, x : 0.25
+	   	, y: 0.25
 	}
 	 
 	// =================================================================================================================
@@ -101,17 +103,7 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.WidgetRuntime, {
 	 * 
 	 */
 	, adjustConfigObject: function(config) {
-		if(config.widgetManager === undefined) {
-			config.widgetManager = new Sbi.cockpit.core.WidgetManager({storeManager: config.storeManager});
-			if(config.storeManager) {
-				delete config.storeManager;
-			}
-		}
-			
-		if(config.items !== undefined) {
-			config.widgetManager.register(config.items);
-			delete config.items;
-		}	
+
 	}
     
 	// -----------------------------------------------------------------------------------------------------------------
@@ -120,28 +112,102 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.WidgetRuntime, {
 	
 	/**
 	 * @method
+	 * 
+	 * Returns the cockpit configuration. This object can be used as argument to the constructor
+	 * of a new cockpit in order to clone the current one. It can also be passed to the 
+	 * #setConfiguration method at any time  roll back the configuration.
+	 */
+    , getConfiguration: function(){
+    	Sbi.trace("[WidgetContainer.getConfiguration]: IN");
+
+    	var conf = {};
+    	conf.widgets = [];
+    	
+    	var components = this.components.getRange();
+    	Sbi.trace("[WidgetContainer.getConfiguration]: the container contains [" + components.length + "] component(s)");
+    	for(var i = 0; i < components.length; i++) {
+    		if(components[i].isNotEmpty()) {
+    			conf.widgets.push( components[i].getWidgetConfiguration() );
+    		} else {
+    			Sbi.trace("[WidgetContainer.getConfiguration]: component [" + components.id + "] is empty");
+    		}
+    	}
+    	
+    	Sbi.trace("[WidgetContainer.getConfiguration]: OUT");
+    	
+    	return conf;
+    }
+    
+    /**
+     * @method
+     * 
+     * Sets the configuration of this container. 
+     * 
+     * @param {Object} The configuration object.
+     */
+    , setConfiguration: function(configuration) {
+    	Sbi.trace("[WidgetContainer.setConfiguration]: IN");
+    	for(var i = 0; i < configuration.widgets.length; i++) {
+			var widgetConf = configuration.widgets[i];
+			var w = this.addWidget(widgetConf);
+		}
+    	Sbi.trace("[WidgetContainer.setConfiguration]: OUT");
+    }
+    
+    /**
+     * @method
+     * 
+     * Resets the configuration of this container. 
+     */
+    , resetConfiguration: function() {
+    	Sbi.trace("[WidgetContainer.resetConfiguration]: IN");
+    	this.removeAllWidgets();
+    	Sbi.trace("[WidgetContainer.resetConfiguration]: OUT");
+    }
+    
+    
+    , getWidgetsCount: function() {
+    	return this.getWidgetManager().getWidgets().length;
+    }
+   
+	/**
+	 * @method
+	 * 
+	 * Adds the widget to the container using the passed in layout configuration to render it 
+	 * properly.
+	 * 
+	 * @param {Sbi.cockpit.core.WidgetRuntime/Object} widget The widget to add or it configuration 
+	 * object.
+	 * @parm {Object} The layout configuration to use in oreder to render properly yhe widhet into
+	 * the container. It's opetional. If not provided the Sbi.cockpit.core.WidgetRuntime#wlayout proeprty of 
+	 * the widget will be used (see Sbi.cockpit.core.WidgetRuntime#getLayoutConfiguration).
+	 * 
+	 * @return The added widget
 	 */
     , addWidget: function(widget, layoutConf) {	
 
 		Sbi.trace("[WidgetContainer.addWidget]: IN");
     	
-		widget = Sbi.cockpit.core.WidgetExtensionPointManager.getWidgetRuntime(widget);
-    	if(widget) {
-    		this.getWidgetManager().register(widget);
-    		var storeManager = this.getWidgetManager().getStoreManager();
-			if(storeManager.containsStore(widget.getStoreId()) === false) {
-    			//var store = this.createStore(widget.getStoreId());
-    			storeManager.addStore(widget.getStoreId());
-			}
-    		
-    		if(Sbi.isValorized(layoutConf)) {
-        		Sbi.trace("[WidgetContainer.addWidget]: Input parameter [layoutConf] is valorized");
-        		widget.setLayoutConfiguration(layoutConf);
-        	} else {
-        		Sbi.trace("[WidgetContainer.addWidget]: Input parameter [layoutConf] is not valorized so it will e replaced with the [wlayout] property of the widget]");
-        		layoutConf = widget.getLayoutConfiguration();
-        	}
-    	}
+		if(Sbi.isNotValorized(widget)) {
+			Sbi.trace("[WidgetContainer.addWidget]: [widget] parameter is not defined. An empty component will be added to the container.");
+		} else {
+			widget = Sbi.cockpit.core.WidgetExtensionPointManager.getWidgetRuntime(widget);
+	    	if(Sbi.isValorized(widget)) {
+	    		this.getWidgetManager().register(widget);
+					    		
+	    		if(Sbi.isValorized(layoutConf)) {
+	        		Sbi.trace("[WidgetContainer.addWidget]: Input parameter [layoutConf] is valorized");
+	        		widget.setLayoutConfiguration(layoutConf);
+	        	} else {
+	        		Sbi.trace("[WidgetContainer.addWidget]: Input parameter [layoutConf] is not valorized so it will e replaced with the [wlayout] property of the widget]");
+	        		layoutConf = widget.getLayoutConfiguration();
+	        	}
+	    	} else {
+	    		Sbi.error("[WidgetContainer.addWidget]: Impossible to create a widget from [widget] parameter passed in as argument. An empty container will be added to the container.");
+	    	}
+		}
+		
+		
     	 	
     	Sbi.trace("[WidgetContainer.addWidget]: [layoutConf] is equal to [" + Sbi.toSource(layoutConf) + "]");
     	
@@ -152,6 +218,32 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.WidgetRuntime, {
 		return widget;
 	}
     
+    , removeWidget: function(widget) {
+    	Sbi.trace("[WidgetContainer.removeWidget]: IN");
+    	this.removeComponent(widget);
+    	this.getWidgetManager().unregister(widget);
+    	Sbi.trace("[WidgetContainer.removeWidget]: OUT");
+    }
+    
+    /**
+     * @method
+     * 
+     * Remove all widgets contained in this container
+     */
+    , removeAllWidgets: function() {
+    	Sbi.trace("[WidgetContainer.removeAllWidgets]: IN");
+    	this.getWidgetManager().forEachWidget(function(widget, index, length) {
+    		this.removeWidget(widget);
+    	}, this);
+    	if(this.components.getCount() > 0) { // there are some empty components (= not yet associated to any widget)
+    		this.components.each(function(component, index, length) {
+        		component.close();
+        	}, this);
+    		this.components.clear();
+    	}
+    	Sbi.trace("[WidgetContainer.removeAllWidgets]: OUT");
+    }
+
     , getComponentRegion: function(component, relative) {
     	Sbi.trace("[WidgetContainer.getComponentRegion]: IN");
     	var region = null;
@@ -278,19 +370,21 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.WidgetRuntime, {
     			
     			// TODO manage datasetSelection
     			wizardState.storeId = wizardState.selectedDatasetLabel;
-    			var storeManager = this.getWidgetManager().getStoreManager();
     			
-    			if(storeManager.containsStore(wizardState.storeId) === false) {
-        			//var store = this.createStore(wizardState.storeId);
-        			storeManager.addStore(wizardState.storeId);
+    			
+    			if(Sbi.storeManager.containsStore(wizardState.storeId) === false) {
+        			Sbi.storeManager.addStore({storeId: wizardState.storeId});
     			}
-    			storeManager.removeStore(wizardState.unselectedDatasetLabel);
-    			alert(storeManager.getStoreIds().join(";"));
+    			Sbi.storeManager.removeStore(wizardState.unselectedDatasetLabel);
+    			alert(Sbi.storeManager.getStoreIds().join(";"));
     			
     			delete wizardState.selectedDatasetLabel;
     			delete wizardState.unselectedDatasetLabel;
     			    			
     			component.setWidgetConfiguration( wizardState );
+    			var widget = component.getWidget();
+    			this.getWidgetManager().register(widget);
+    			
     			Sbi.trace("[WidgetContainer.onSubmit]: OUT");
     		}, this);
     		this.widgetEditorWizard.on("cancel", function(wizard) {
@@ -309,6 +403,9 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.WidgetRuntime, {
     			delete wizardState.unselectedStoreId;
     			
     			component.setWidgetConfiguration( wizardState );
+    			var widget = component.getWidget();
+    			this.getWidgetManager().register(widget);
+    			
     			Sbi.trace("[WidgetContainer.onApply]: OUT");
     		}, this);
     		
@@ -317,7 +414,7 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.WidgetRuntime, {
     	
     	// TODO implement setTitle method
     	//this.widgetEditorWizard.setTitle("Widget [" + widget.id + "] editor");
-    	this.widgetEditorWizard.getDatasetBrowserPage().setUsedDatasets(this.getWidgetManager().getStoreManager().getStoreIds());
+    	this.widgetEditorWizard.getDatasetBrowserPage().setUsedDatasets(Sbi.storeManager.getStoreIds());
     	this.widgetEditorWizard.setWizardTargetComponent(component);
     	
     	
@@ -338,11 +435,8 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.WidgetRuntime, {
     	Sbi.cockpit.core.WidgetContainer.superclass.onRender.call(this, ct, position);
     	if( Sbi.isValorized(this.widgets)) {
     		Sbi.trace("[WidgetContainer.onRender]: There are [" + this.widgets.length + "] widget(s) to render");
-    		for(var i = 0; i < this.widgets.length; i++) {
-    			var widgetConf = this.widgets[i];
-    			var w = this.addWidget(widgetConf);
-    			//w.setStoreId(widgetConf.storeId);
-    		}
+    		this.setConfiguration({widgets: this.widgets});
+    		delete this.widgets;
     	} else {
     		Sbi.trace("[WidgetContainer.onRender]: There are no widget to render");
     	}
@@ -527,6 +621,31 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.WidgetRuntime, {
     	return component;
     }
     
+    /**
+     * @method
+     * Removes the component that contains the specified widget
+     * 
+     * @param {Sbi.cockpit.core.WidgetRuntime/String} widget the widget or the id of the widget to remove
+     */
+    , removeComponent: function(widget) {
+    	Sbi.trace("[WidgetContainer.removeComponent]: IN");
+    	var widget = this.getWidgetManager().getWidget(widget);
+    	if(Sbi.isValorized(widget)) {
+    		var component = widget.getParentComponent();
+    		if(Sbi.isValorized(component)) {
+    			this.components.remove(component);
+    			component.close();
+    			Sbi.trace("[WidgetContainer.removeComponent]: component removed");
+    		} else {
+    			Sbi.warn("[WidgetContainer.removeComponent]: widget is not bound to any container");
+    		}
+    		
+    	} else {
+    		Sbi.warn("[WidgetContainer.removeComponent]: widget not found");
+    	}
+    	Sbi.trace("[WidgetContainer.removeComponent]: OUT");
+    }
+    
     , getComponents: function() {
     	return this.components.getRange();
     }
@@ -538,23 +657,7 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.WidgetRuntime, {
 //    	this.widgetEditorWizard.hide();
 //    }
  
-    , getConfiguration: function(){
-    	Sbi.trace("[WidgetContainer.getConfiguration]: IN");
 
-    	var conf = {};
-    	conf.widgets = [];
-    	
-    	var components = this.components.getRange();
-    	for(var i = 0; i < components.length; i++) {
-    		if(components[i].isNotEmpty()) {
-    			conf.widgets.push( components[i].getWidgetConfiguration() );
-    		}
-    	}
-    	
-    	Sbi.trace("[WidgetContainer.getConfiguration]: OUT");
-    	
-    	return conf;
-    }
     
     , onComponentMove: function(component){
 
