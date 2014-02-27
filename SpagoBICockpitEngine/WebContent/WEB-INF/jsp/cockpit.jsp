@@ -8,7 +8,7 @@
 <%-- 
 author: Andrea Gioia (andrea.gioia@eng.it)
 --%>
-<%@page import="it.eng.spago.security.IEngUserProfile"%>
+
 
 <%@ page language="java" 
 	     contentType="text/html; charset=UTF-8" 
@@ -24,7 +24,9 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 <%@page import="java.util.Map"%>
 <%@page import="it.eng.spagobi.engine.cockpit.CockpitEngineInstance"%>
 <%@page import="it.eng.spagobi.utilities.engines.EngineConstants"%>
-
+<%@page import="it.eng.spago.security.IEngUserProfile"%>
+<%@page import="it.eng.spagobi.commons.utilities.ChannelUtilities"%>
+<%@page import="it.eng.spagobi.commons.constants.SpagoBIConstants"%>
 
 <%-- ---------------------------------------------------------------------- --%>
 <%-- JAVA CODE 																--%>
@@ -32,6 +34,8 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 <% 
 	CockpitEngineInstance engineInstance;
 	Map env;
+	String contextName;
+	String environment;
 	String executionRole;
 	Locale locale;
 	String template;
@@ -52,7 +56,9 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 	engineInstance = (CockpitEngineInstance)request.getSession().getAttribute(EngineConstants.ENGINE_INSTANCE);
 	env = engineInstance.getEnv();
 	locale = engineInstance.getLocale();
-
+	
+	contextName = request.getParameter(SpagoBIConstants.SBI_CONTEXT); 
+	environment = request.getParameter("SBI_ENVIRONMENT"); 
 	executionRole = (String)env.get(EngineConstants.ENV_EXECUTION_ROLE);
 	userId = (engineInstance.getDocumentUser()==null)?"":engineInstance.getDocumentUser().toString();
 	template = engineInstance.getTemplate().toString();
@@ -73,6 +79,10 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 	boolean fromMyAnalysis = false;
 	if(request.getParameter("MYANALYSIS") != null && request.getParameter("MYANALYSIS").equalsIgnoreCase("TRUE")){
 		fromMyAnalysis = true;
+	}else{
+		if (request.getParameter("SBI_ENVIRONMENT") != null && request.getParameter("SBI_ENVIRONMENT").equalsIgnoreCase("MYANALYSIS")){
+			fromMyAnalysis = true;
+		}
 	}
 %>
 
@@ -136,6 +146,9 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 		Sbi.config.docFunctionalities= <%=docFunctionalities%>;		
 		Sbi.config.SBI_EXECUTION_ID= <%= request.getParameter("SBI_EXECUTION_ID")!=null?"'" + request.getParameter("SBI_EXECUTION_ID") +"'": "null" %>;
 		Sbi.config.fromMyAnalysis = <%=fromMyAnalysis%>;
+		Sbi.config.environment = "<%=environment%>";
+		Sbi.config.contextName =  '<%= contextName %>';
+		
 		var cockpitPanel = null;
 		    
 		Ext.onReady(function(){

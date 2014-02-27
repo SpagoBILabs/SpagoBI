@@ -38,7 +38,8 @@ Sbi.widgets.SaveDocumentWindow = function(config) {
 		this.OBJECT_ENGINE = config.OBJECT_ENGINE;
 		this.OBJECT_TEMPLATE = config.OBJECT_TEMPLATE;
 		this.OBJECT_DATA_SOURCE = config.OBJECT_DATA_SOURCE;
-		this.OBJECT_PREVIEW_FILE = config.OBJECT_PREVIEW_FILE;		
+		this.OBJECT_PREVIEW_FILE = config.OBJECT_PREVIEW_FILE;	
+		this.OBJECT_FUNCTIONALITIES = config.formState.OBJECT_FUNCTIONALITIES;
 		this.isInsert = config.isInsert;
 		
 		this.initFormPanel(config.formState);
@@ -56,7 +57,16 @@ Sbi.widgets.SaveDocumentWindow = function(config) {
 				, handler: this.saveDocument
 				, scope: this
 				, text: LN('sbi.generic.save')
-	           }],
+	           },{ 
+				  iconCls: 'icon-saveAndGoBack' 	
+				, handler: this.saveDocumentAndGoBack
+				, scope: this
+				, text: LN('sbi.generic.saveAndGoBack')
+	           }, {
+               	text:  LN('sbi.generic.cancel')
+              , handler: this.closeWin
+              , scope: this
+            }],
 			title: LN('sbi.savewin.title'), 
 			items: this.saveDocumentForm
 		});   
@@ -64,7 +74,7 @@ Sbi.widgets.SaveDocumentWindow = function(config) {
 		Ext.apply(this,c);
 		
 		// init events...
-		this.addEvents('syncronizePanel','returnToMyAnalysis');		
+		this.addEvents('syncronizePanel','closeDocument');		
 		
 		// constructor
 		Sbi.widgets.SaveDocumentWindow.superclass.constructor.call(this, c);
@@ -86,10 +96,13 @@ Ext.extend(Sbi.widgets.SaveDocumentWindow, Ext.Window, {
 	OBJECT_PARS: null,
 	OBJECT_PREVIEW_FILE: null,
 	OBJECT_SCOPE: null,
+	OBJECT_FUNCTIONALITIES: null,
 	isInsert: false,
 	
 	initFormPanel: function (c){
 		this.docVisibility = c.visibility;
+		this.isPublic = c.isPublic;
+//		this.docCommunity = this.OBJECT_COMMUNITIES_CODE;
 		
 		this.docLabel =  new Ext.form.TextField({
 			id:'docLabel',
@@ -166,7 +179,16 @@ Ext.extend(Sbi.widgets.SaveDocumentWindow, Ext.Window, {
 		      });
 	}
 	
-	,saveDocument: function () {
+	, saveDocument: function () {
+		this.save(false);
+	}
+	
+	, saveDocumentAndGoBack: function () {
+		this.save(true);
+	}
+	 
+
+	, save: function (goBack) {
 		 
 		var docLabel = this.docLabel.getValue();
 		var docName = this.docName.getValue();
@@ -176,7 +198,7 @@ Ext.extend(Sbi.widgets.SaveDocumentWindow, Ext.Window, {
 		if(previewFile!=undefined && previewFile!=null){
 			previewFile = Ext.util.JSON.encode(previewFile);
 		}
-		
+
 		if(docName == null || docName == undefined || docName == '' ){
 				var msgWarning = LN('sbi.savewin.saveWarning');
 				Ext.MessageBox.show({
@@ -186,7 +208,8 @@ Ext.extend(Sbi.widgets.SaveDocumentWindow, Ext.Window, {
 	                buttons: Ext.MessageBox.OK
 	           });
 		}else{	
-		var params = {
+			var functs = Ext.util.JSON.encode(this.OBJECT_FUNCTIONALITIES);
+			var params = {
 		        	name :  docName,
 		        	label : docLabel,
 		        	description : docDescr,
@@ -196,7 +219,10 @@ Ext.extend(Sbi.widgets.SaveDocumentWindow, Ext.Window, {
 					template: this.OBJECT_TEMPLATE,
 					datasourceid: this.OBJECT_DATA_SOURCE,
 					visibility: this.docVisibility,
-					SBI_EXECUTION_ID: this.SBI_EXECUTION_ID
+					isPublic: this.isPublic,
+					SBI_EXECUTION_ID: this.SBI_EXECUTION_ID,
+					functs: functs
+
 		        };
 			Sbi.config.docName = docName;
 			Sbi.config.docDescription = docDescr;
@@ -216,15 +242,16 @@ Ext.extend(Sbi.widgets.SaveDocumentWindow, Ext.Window, {
 			                   });              
 				      		}else{			      			
 				      			Ext.MessageBox.show({
-				                        title: LN('sbi.generic.result'),
+				                       title: LN('sbi.generic.result'),
 				                        msg: LN('sbi.generic.resultMsg'),
 				                        width: 200,
 				                        buttons: Ext.MessageBox.OK
 				                });			      			
 				      			
-				      			if (this.fromMyAnalysis != undefined && this.fromMyAnalysis != null && this.fromMyAnalysis == true){
-				      				this.fireEvent('returnToMyAnalysis',this);  //fire event to jump to the MyAnalysis page 
+				      			if (goBack){		
+				      				this.fireEvent('closeDocument', this);  	 //fire event to jump to the MyAnalysis page	
 				                }
+				      			
 				      			this.fireEvent('syncronizePanel', this);
 				      			this.destroy();
 				      		}  
@@ -237,6 +264,11 @@ Ext.extend(Sbi.widgets.SaveDocumentWindow, Ext.Window, {
 			});
 		}
 	}
+	
+	, closeWin: function(){
+		this.close();
+	}
+	
 	, initFileUpload: function(){
 		//upload preview file
 		var config={
