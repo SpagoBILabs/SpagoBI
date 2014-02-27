@@ -72,7 +72,7 @@
 		<!-- copies the newly created jar file -->
 		<copy file="${qbe.core.dir}/dist/qbe.core-${project.version}.jar" todir="${web.dir}/WEB-INF/lib" overwrite="true" />
 	</target>
-	
+
 	<!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 	<!--   AGGIORNAMENTO JAR SBI.DAO							                                  -->
 	<!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
@@ -92,7 +92,7 @@
 	<!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 	<target name="compile" depends="sbi.utils.update,qbe.core.update,sbi.dao.update" description="compile the source">
 		<!-- Compile the java code from ${src} into ${build}/${webapp_name}/WEB-INF/classes -->
-		<javac srcdir="${src}" destdir="${build}/${webapp_name}/WEB-INF/classes" debug="on">
+		<javac srcdir="${src}" destdir="${build}/${webapp_name}/WEB-INF/classes" debug="on" encoding="${encoding}">
 			<classpath refid="web.classpath" />
 		</javac>
 	</target>

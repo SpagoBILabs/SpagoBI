@@ -56,8 +56,15 @@
 		<delete>
 			<fileset dir="${web.dir}/WEB-INF/lib" includes="**/sbi.utils*.jar" />
 		</delete>
+
+		<delete>
+			<fileset dir="${web.dir}/WEB-INF/lib" includes="**/sbi.utils.json*.jar" />
+		</delete>
+
 		<!-- copies the newly created jar file -->
+		<copy file="${sbiutils.json.dir}/dist/sbi.utils.json-${project.version}.jar" todir="${web.dir}/WEB-INF/lib" overwrite="true" />
 		<copy file="${sbiutils.dir}/dist/sbi.utils-${project.version}.jar" todir="${web.dir}/WEB-INF/lib" overwrite="true" />
+		
 	</target>
 
 	<!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
@@ -76,7 +83,7 @@
 	<!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 	<target name="compile" depends="sbi.utils.update,qbe.core.update" description="compile the source">
 		<!-- Compile the java code from ${src} into ${build}/${webapp_name}/WEB-INF/classes -->
-		<javac srcdir="${src}" destdir="${build}/${webapp_name}/WEB-INF/classes" debug="on">
+		<javac srcdir="${src}" destdir="${build}/${webapp_name}/WEB-INF/classes" debug="on" encoding="${encoding}">
 			<classpath refid="web.classpath" />
 		</javac>
 	</target>

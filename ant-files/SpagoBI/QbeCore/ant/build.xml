@@ -88,16 +88,16 @@
   <target name="compile"  description="compile the source" >
 	<antcall target="upgrade.mf" />
     <!-- Compile the java code from ${src} into ${build}/${webapp_name}/WEB-INF/classes -->
-    <javac destdir="${build}" debug="on">
+    <javac destdir="${build}" debug="on" encoding="${encoding}">
       <classpath refid="jar.classpath"/>
 	<src path="${src}/test"/>
 	<src path="${src}/hibernate"/>
 	<src path="${src}/jpa"/>
 	<src path="${src}/runtime"/>
 	<src path="${src}/serialization"/>
-	<src path="${src}/sql"/>
-	<src path="${src}/hive"/>
-	<src path="${src}/dataset"/>
+  <src path="${src}/dataset"/>
+  <src path="${src}/hive"/>
+  <src path="${src}/sql"/>
     </javac> 
   </target>
 
@@ -123,6 +123,18 @@
         <exclude name="**/*.java"/>
       </fileset>
       <fileset dir="${src}/serialization">
+        <exclude name="**/*.svn"/>
+        <exclude name="**/*.java"/>
+      </fileset>
+      <fileset dir="${src}/dataset">
+        <exclude name="**/*.svn"/>
+        <exclude name="**/*.java"/>
+      </fileset>
+      <fileset dir="${src}/hive">
+        <exclude name="**/*.svn"/>
+        <exclude name="**/*.java"/>
+      </fileset>
+      <fileset dir="${src}/sql">
         <exclude name="**/*.svn"/>
         <exclude name="**/*.java"/>
       </fileset>
