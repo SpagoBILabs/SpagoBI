@@ -30,8 +30,9 @@ import java.math.BigDecimal;
  */
 public class TestConstants {
 	
-	public static String workspaceFolder = "C:/Users/cortella/workspaceJEE";
-	
+	public static String workspaceFolder = "D:/Documenti/Sviluppo/workspaces/helios/spagobi/server";
+	//public static String workspaceFolder = "C:/Users/cortella/workspaceJEE";
+
 	public static String RESOURCE_PATH = workspaceFolder+"/SpagoBICockpitEngine/test/resources/";
 	public static String WEBCONTENT_PATH = workspaceFolder+"/SpagoBICockpitEngine/WebContent";
 	public static String AF_CONFIG_FILE = "/WEB-INF/conf/master.xml";
@@ -44,9 +45,9 @@ public class TestConstants {
 	public enum DatabaseType { MYSQL, POSTGRES, ORACLE, SQLSERVER };
 	
 	public static boolean enableTestsOnMySql = true;
-	public static boolean enableTestsOnPostgres = false;
-	public static boolean enableTestsOnOracle = false;
-	public static boolean enableTestsOnSQLServer = false;
+	public static boolean enableTestsOnPostgres = true;
+	public static boolean enableTestsOnOracle = true;
+	public static boolean enableTestsOnSQLServer = true;
 
 
 
