@@ -21,6 +21,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.spagobi.dataset.cache.impl.sqldbcache.test;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,8 +35,10 @@ import it.eng.qbe.dataset.QbeDataSet;
 import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spago.configuration.FileCreatorConfiguration;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.dataset.cache.CacheConfiguration;
 import it.eng.spagobi.dataset.cache.CacheFactory;
 import it.eng.spagobi.dataset.cache.ICache;
+import it.eng.spagobi.dataset.cache.ICacheMetadata;
 import it.eng.spagobi.dataset.cache.impl.sqldbcache.DataType;
 import it.eng.spagobi.dataset.cache.impl.sqldbcache.SQLDBCache;
 import it.eng.spagobi.dataset.cache.test.FakeDatamartRetriever;
@@ -82,7 +87,17 @@ public abstract class AbstractSQLDBCacheTest extends TestCase {
 		
 		if (cache == null){
 			CacheFactory cacheFactory = new CacheFactory();
-			cache = cacheFactory.getCache(dataSourceWriting);
+			
+			//Set configuration parameters for the cache (in SpagoBI Server this is the sbi_config table)
+			CacheConfiguration cacheConfiguration = new CacheConfiguration();
+			//table prefix for tables created by the cache
+			cacheConfiguration.setTableNamePrefix(TestConstants.CACHE_CONFIG_TABLE_PREFIX); 
+			//Dimension of cache in bytes
+			cacheConfiguration.setCacheSpaceAvailable(TestConstants.CACHE_CONFIG_CACHE_DIMENSION); 
+			//percentage of the cache to clean (from 0 to 100)
+			cacheConfiguration.setCachePercentageToClean(TestConstants.CACHE_CONFIG_PERCENTAGE_TO_CLEAN); 
+			
+			cache = cacheFactory.getCache(dataSourceWriting, cacheConfiguration);
 			if (cache instanceof SQLDBCache){
 				DataType dataType = new DataType(); //class used for setting data type dimension properties
 				((SQLDBCache)cache).setObjectsTypeDimension(dataType.getProps());
@@ -216,6 +231,179 @@ public abstract class AbstractSQLDBCacheTest extends TestCase {
 		assertNotNull(dataStore);
 	}	
 	
+	
+	public void testCacheDeleteCachedDataset(){
+		IDataStore resultset;
+
+		fileDataset.loadData();
+		resultset =	fileDataset.getDataStore();
+		cache.put(fileDataset, fileDataset.getSignature(), resultset);
+		logger.debug("FileDataSet inserted inside cache");
+		String tableName = cache.getCacheMetadata().getCacheItemByResultsetSignature(fileDataset.getSignature()).getTable();
+		assertTrue(cache.delete(fileDataset.getSignature()));	
+		IDataStore dataStore = null;
+		//Check that the table is not present, if this fail with an exception  we know that the table isn't on DB
+		try {
+			dataStore = dataSourceWriting.executeStatement("SELECT * FROM "+tableName, 0, 0);
+
+		} catch (Exception e){
+			logger.debug("The table ["+tableName+"] not found on cache database");
+		}
+		
+		assertNull("Delete fail: Dataset is still present on cache ",dataStore);
+		
+	}
+	
+	//Trying to delete a dataset that is not in the cache
+	public void testCacheDeleteUncachedDataset(){
+		IDataStore resultset;
+
+		fileDataset.loadData();
+		resultset =	fileDataset.getDataStore();
+		
+		assertFalse(cache.delete(fileDataset.getSignature()));	
+		
+	}
+	
+	public void testCacheDeleteAll(){
+		testCachePutJDBCDataSet();
+		testCachePutFileDataSet();
+		cache.deleteAll();
+		
+		ICacheMetadata cacheMetadata = cache.getCacheMetadata();
+		BigDecimal cacheSpaceAvaiable = cacheMetadata.getDimensionSpaceAvailable();
+		boolean cacheCleaned = false;
+		if (cacheSpaceAvaiable.compareTo(TestConstants.CACHE_CONFIG_CACHE_DIMENSION) == 0){
+			cacheCleaned = true;
+		}
+		assertTrue("The cache wasn't cleaned correctly",cacheCleaned);
+	}
+	
+	
+	public void testCacheDatasetDimension(){
+		ICacheMetadata cacheMetadata = cache.getCacheMetadata();
+		BigDecimal cacheSpaceAvaiable = cacheMetadata.getDimensionSpaceAvailable();
+		
+		IDataStore resultset;
+
+		fileDataset.loadData();
+		resultset =	fileDataset.getDataStore();
+		
+		BigDecimal estimatedDimension = cacheMetadata.getDimensionSpaceUsed(resultset);
+		
+		BigDecimal usedSpacePrevision = cacheSpaceAvaiable.subtract(estimatedDimension);
+		
+		boolean flag = false;
+		if (usedSpacePrevision.compareTo(BigDecimal.ZERO) >= 0) {
+			flag = true;
+			cache.put(fileDataset, fileDataset.getSignature(), resultset);
+			IDataStore cachedResultSet = cache.get(fileDataset.getSignature());
+			if (cachedResultSet != null){
+				flag = true;
+			} else {
+				flag = false;
+			}
+		} else {
+			flag = true;
+			logger.debug("Not enought space for inserting the dataset in cache");
+
+		}
+		assertTrue("Problem calculating space avaiable for inserting dataset in cache",flag);
+
+	}
+	
+	public void testCacheHasSpaceForDataset(){
+		IDataStore resultset;
+
+		fileDataset.loadData();
+		resultset =	fileDataset.getDataStore();
+		
+		
+		ICacheMetadata cacheMetadata = cache.getCacheMetadata();
+		if (cacheMetadata.hasSpaceForResultSet(resultset)){
+			cache.put(fileDataset, fileDataset.getSignature(), resultset);
+			IDataStore cachedResultSet = cache.get(fileDataset.getSignature());
+			assertNotNull("Checking space for dataset is wrong",cachedResultSet);
+
+		}
+	}
+	
+	
+	public void testCacheZeroSpaceAvaiable(){
+		
+		//Create a cache with space available equal to zero
+		ICache cacheZero = createCacheZero();
+		
+		IDataStore resultset;	
+		
+		sqlDataset.loadData();
+		resultset = sqlDataset.getDataStore();
+		cacheZero.put(sqlDataset, sqlDataset.getSignature(), resultset);
+		assertNull("Wrong behavior: dataset cached even if the space available is zero",cacheZero.get(sqlDataset.getSignature()));
+		
+		cacheZero.deleteAll();
+		
+	}
+	
+	public void testGetDimensionSpaceAvailable(){
+		ICacheMetadata cacheMetadata = cache.getCacheMetadata();
+		BigDecimal cacheSpaceAvaiable = cacheMetadata.getDimensionSpaceAvailable();
+		assertNotNull("Error calculating avaiable cache space", cacheSpaceAvaiable);
+		System.out.println(" >> Avaiable cache space: "+cacheSpaceAvaiable+" byte");
+	}
+	
+	public void testGetDimensionSpaceUsed(){
+		IDataStore resultset;
+
+		fileDataset.loadData();
+		resultset =	fileDataset.getDataStore();		
+		
+		ICacheMetadata cacheMetadata = cache.getCacheMetadata();
+		BigDecimal estimatedDatasetDimension = cacheMetadata.getDimensionSpaceUsed(resultset);
+		assertNotNull("Error calculating dimension of dataset", estimatedDatasetDimension);
+		System.out.println(" >> Estimated dataset dimension: "+estimatedDatasetDimension+" byte");
+	}
+	
+	public void testCountNumberOfObjects(){
+		testCachePutJDBCDataSet();
+		testCachePutFileDataSet();
+		testCachePutQbeDataSet();
+		
+		ICacheMetadata cacheMetadata = cache.getCacheMetadata();
+		boolean result = false;
+		if(cacheMetadata.getNumberOfObjects() == 3){
+			result = true;
+		}
+		assertTrue(result);
+	}
+	
+	public void testCacheCleaning(){
+		ICache cacheCustom = createCache(791449);
+		IDataStore resultset;
+
+		//Insert first dataset
+		qbeDataset.loadData();
+		resultset =	qbeDataset.getDataStore();
+		cacheCustom.put(qbeDataset, qbeDataset.getSignature(), resultset);
+		assertNotNull(cacheCustom.get(qbeDataset.getSignature()));
+		logger.debug("QbeDataSet inserted inside cache");
+		
+		ICacheMetadata cacheMetadata = cacheCustom.getCacheMetadata();
+		
+		//Second dataset (too big for avaiable space)
+		fileDataset.loadData();
+		resultset =	fileDataset.getDataStore();		
+		
+		assertFalse(cacheMetadata.hasSpaceForResultSet(resultset));
+		
+		cacheCustom.put(fileDataset, fileDataset.getSignature(), resultset);
+		assertNotNull("Not enought space on cache",cacheCustom.get(fileDataset.getSignature()));
+		
+		cacheCustom.deleteAll();
+		
+	}
+	
+	
 	//------------------------------------------------------------------------------
 	
 	
@@ -320,5 +508,53 @@ public abstract class AbstractSQLDBCacheTest extends TestCase {
 		createScriptDataSet();
 
 	}
+	
+	public ICache createCacheZero(){
+		//Create a cache with space available equal to zero
+		/*
+		CacheFactory cacheFactory = new CacheFactory();
+		
+		//Set configuration parameters for the cache (in SpagoBI Server this is the sbi_config table)
+		CacheConfiguration cacheConfigurationZero = new CacheConfiguration();
+		//table prefix for tables created by the cache
+		cacheConfigurationZero.setTableNamePrefix(TestConstants.CACHE_CONFIG_TABLE_PREFIX); 
+		//Dimension of cache in bytes
+		cacheConfigurationZero.setCacheSpaceAvailable(new BigDecimal(0)); 
+		//percentage of the cache to clean (from 0 to 100)
+		cacheConfigurationZero.setCachePercentageToClean(TestConstants.CACHE_CONFIG_PERCENTAGE_TO_CLEAN); 
+		
+		ICache cacheZero = cacheFactory.getCache(dataSourceWriting, cacheConfigurationZero);
+		if (cacheZero instanceof SQLDBCache){
+			DataType dataType = new DataType(); //class used for setting data type dimension properties
+			((SQLDBCache)cacheZero).setObjectsTypeDimension(dataType.getProps());
+		}
+		return cacheZero;
+		*/
+		return createCache(0);
+	}
+	
+	public ICache createCache(int dimension ){
+		//Create a cache with space available equal to zero
+		
+		CacheFactory cacheFactory = new CacheFactory();
+		
+		//Set configuration parameters for the cache (in SpagoBI Server this is the sbi_config table)
+		CacheConfiguration cacheConfigurationCustom = new CacheConfiguration();
+		//table prefix for tables created by the cache
+		cacheConfigurationCustom.setTableNamePrefix(TestConstants.CACHE_CONFIG_TABLE_PREFIX); 
+		//Dimension of cache in bytes
+		cacheConfigurationCustom.setCacheSpaceAvailable(new BigDecimal(dimension)); 
+		//percentage of the cache to clean (from 0 to 100)
+		cacheConfigurationCustom.setCachePercentageToClean(TestConstants.CACHE_CONFIG_PERCENTAGE_TO_CLEAN); 
+		
+		ICache cacheCustom = cacheFactory.getCache(dataSourceWriting, cacheConfigurationCustom);
+		if (cacheCustom instanceof SQLDBCache){
+			DataType dataType = new DataType(); //class used for setting data type dimension properties
+			((SQLDBCache)cacheCustom).setObjectsTypeDimension(dataType.getProps());
+		}
+		return cacheCustom;
+	}
+	
+	
 
 }

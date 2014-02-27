@@ -25,6 +25,7 @@ import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.bo.Config;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IConfigDAO;
+import it.eng.spagobi.dataset.cache.CacheConfiguration;
 import it.eng.spagobi.dataset.cache.ICache;
 import it.eng.spagobi.dataset.cache.ICacheActivity;
 import it.eng.spagobi.dataset.cache.ICacheEvent;
@@ -62,23 +63,19 @@ public class SQLDBCache implements ICache {
 	private ICacheMetadata cacheMetadata;
 	private IDataSource dataSource;
 	private List<Properties> objectsTypeDimension = new ArrayList<Properties>();
-
+	private CacheConfiguration cacheConfiguration;
 	
-	private Config tableNamePrefixConfig;
+	private String tableNamePrefix;
 	
-	public SQLDBCache(IDataSource dataSource){
+	public SQLDBCache(IDataSource dataSource, CacheConfiguration cacheConfiguration){
 		this.dataSource = dataSource;
-		try {
-			IConfigDAO configDao = DAOFactory.getSbiConfigDAO();
-			tableNamePrefixConfig = configDao.loadConfigParametersByLabel(CACHE_NAME_PREFIX_CONFIG);
-			if (tableNamePrefixConfig.isActive()){
-				String tablePrefix = tableNamePrefixConfig.getValueCheck();
-				eraseExistingTables(tablePrefix.toUpperCase());
+		this.cacheConfiguration = cacheConfiguration;
+
+		if (this.cacheConfiguration != null){
+			tableNamePrefix = this.cacheConfiguration.getTableNamePrefix();
+			if (tableNamePrefix != null){
+				eraseExistingTables(tableNamePrefix.toUpperCase());
 			}
-		} catch (EMFUserError e) {
-			logger.error("Impossible to instantiate SbiConfigDAO in SQLDBCache");
-		} catch (Exception e) {
-			logger.error("Impossible to instantiate SbiConfigDAO in SQLDBCache");
 		}
 	}
 	
@@ -210,9 +207,9 @@ public class SQLDBCache implements ICache {
 	 */
 	@Override
 	public boolean delete(String signature) {
-		if (getCacheMetadata().containsCacheItem(signature)){
+		if (getCacheMetadata().containsCacheItemByResultsetSignature(signature)){
 			PersistedTableManager persistedTableManager = new PersistedTableManager();
-			String tableName = getCacheMetadata().getCacheItem(signature).getTable();
+			String tableName = getCacheMetadata().getCacheItemByResultsetSignature(signature).getTable();
 			persistedTableManager.dropTableIfExists(getDataSource(), tableName);
 			getCacheMetadata().removeCacheItem(signature);
 			logger.debug("Removed table "+tableName+" from [SQLDBCache] corresponding to the result Set: "+signature);
@@ -231,9 +228,9 @@ public class SQLDBCache implements ICache {
 		Iterator it = getCacheMetadata().getCacheRegistry().entrySet().iterator();
 	    while (it.hasNext()) {
 	        Map.Entry<String,CacheItem> entry = (Map.Entry<String,CacheItem>)it.next();
-	        String signature = entry.getKey();
-	        delete(signature);
-	        //it.remove(); // avoids a ConcurrentModificationException
+	        CacheItem item =  entry.getValue();
+	        delete(item.getSignature());
+	        it.remove(); // avoids a ConcurrentModificationException
 	    }	
 		logger.debug("[SQLDBCache] All tables removed, Cache cleaned ");
 	}
@@ -245,7 +242,7 @@ public class SQLDBCache implements ICache {
 	@Override
 	public ICacheMetadata getCacheMetadata() {
 		if (cacheMetadata == null){		
-			cacheMetadata = new SQLDBCacheMetadata(getDataSource());
+			cacheMetadata = new SQLDBCacheMetadata(getDataSource(), cacheConfiguration);
 			if (cacheMetadata instanceof SQLDBCacheMetadata){
 				((SQLDBCacheMetadata)cacheMetadata).setObjectsTypeDimension(getObjectsTypeDimension());
 			}
@@ -289,7 +286,8 @@ public class SQLDBCache implements ICache {
 				Iterator it = getCacheMetadata().getCacheRegistry().entrySet().iterator();
 			    while (it.hasNext()) {
 			        Map.Entry<String,CacheItem> entry = (Map.Entry<String,CacheItem>)it.next();
-			        String signature = entry.getKey();
+			        CacheItem item = entry.getValue();
+			        String signature = item.getSignature();
 			        logger.debug("Delete object ["+signature+"] for cleaning cache event.");
 			        delete(signature); 
 			        if (getCacheMetadata().getSpaceFreeAsPercentage() > getCacheMetadata().getPercentageFreeCache())
@@ -307,10 +305,13 @@ public class SQLDBCache implements ICache {
 			String tablePrefix = null;
 			
 			try {
-				if (tableNamePrefixConfig.isActive()){
-					tablePrefix = tableNamePrefixConfig.getValueCheck();
-					tablePrefix.toUpperCase();
+				if (this.cacheConfiguration != null){
+					tableNamePrefix = this.cacheConfiguration.getTableNamePrefix();
+					if (tableNamePrefix != null){
+						tablePrefix = tableNamePrefix.toUpperCase();
+					}
 				}
+				
 				String tableName = persistedTableManager.generateRandomTableName(tablePrefix);
 				persistedTableManager.persistDataset(dataset, resultset, getDataSource(), tableName);
 				//4- Update cacheRegistry with the new couple <resultsetSignature,nometabellaCreata>

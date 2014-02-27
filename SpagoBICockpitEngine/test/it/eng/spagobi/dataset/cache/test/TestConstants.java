@@ -21,6 +21,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.spagobi.dataset.cache.test;
 
+import java.math.BigDecimal;
+
 
 /**
  * @author Marco Cortella (marco.cortella@eng.it)
@@ -33,6 +35,11 @@ public class TestConstants {
 	public static String RESOURCE_PATH = workspaceFolder+"/SpagoBICockpitEngine/test/resources/";
 	public static String WEBCONTENT_PATH = workspaceFolder+"/SpagoBICockpitEngine/WebContent";
 	public static String AF_CONFIG_FILE = "/WEB-INF/conf/master.xml";
+	
+	public static String CACHE_CONFIG_TABLE_PREFIX = "sbicache";
+	public static BigDecimal CACHE_CONFIG_CACHE_DIMENSION = BigDecimal.valueOf(104857600); //in bytes
+	public static int CACHE_CONFIG_PERCENTAGE_TO_CLEAN = 50;
+
 	
 	public enum DatabaseType { MYSQL, POSTGRES, ORACLE, SQLSERVER };
 	
@@ -123,15 +130,15 @@ public class TestConstants {
 	// FOR WRITING
 	//-------------
 	public static String SQLSERVER_LABEL_WRITING = "datasetTest_sqlserver_write";
-	public static String SQLSERVER_URL_WRITING = "jdbc:sqlserver://172.27.1.80:1410;databaseName=testSpagoBI"; //server Padova
-	public static String SQLSERVER_USER_WRITING = "brasile";
-	public static String SQLSERVER_PWD_WRITING = "spagobi";
+	public static String SQLSERVER_URL_WRITING = "jdbc:sqlserver://172.27.1.80:1433;databaseName=testSpagoBI;schema=spagobi_testw"; //server Padova
+	public static String SQLSERVER_USER_WRITING = "spagobi";
+	public static String SQLSERVER_PWD_WRITING = "bispago";
 	
 	//-------------
 	// FOR READING
 	//-------------
 	public static String SQLSERVER_LABEL_READING = "datasetTest_sqlserver_read";
-	public static String SQLSERVER_URL_READING = "jdbc:sqlserver://172.27.1.80:1410;databaseName=testSpagoBI";
-	public static String SQLSERVER_USER_READING = "brasile";
-	public static String SQLSERVER_PWD_READING = "spagobi";
+	public static String SQLSERVER_URL_READING = "jdbc:sqlserver://172.27.1.80:1433;databaseName=testSpagoBI;schema=spagobi_testr";
+	public static String SQLSERVER_USER_READING = "spagobi";
+	public static String SQLSERVER_PWD_READING = "bispago";
 }
