@@ -25,9 +25,7 @@ Sbi.cockpit.widgets.table.TableWidget = function(config) {
 		sortable: false,
 		gridConfig: {
 			height: 400,
-			//autoHeight: true // setting autoHeight to true, scrollbars do not appear (ExtJS sets overflow : visible to the element style)
 			clicksToEdit:1,
-		    //style:'padding:10px',
 		    frame: false,
 		    border:false,
 		    autoScroll: true,
@@ -63,9 +61,15 @@ Sbi.cockpit.widgets.table.TableWidget = function(config) {
 	
 	Sbi.cockpit.widgets.table.TableWidget.superclass.constructor.call(this, c);
 	
-	this.on("render", function(){
-		this.store.load();
+	this.on("afterRender", function(){
+		this.getStore().load();
+		//this.refresh();
 		Sbi.trace("[TableWidget.onRender]: store loaded");
+	}, this);
+	
+	this.on("beforeDestroy", function(){
+		this.unboundStore();
+		Sbi.trace("[TableWidget.onBeforeDestroy]: store unbounded");
 	}, this);
 	
 	Sbi.trace("[TableWidget.constructor]: OUT");
@@ -103,7 +107,7 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 			, baseParams: new Object()
 		});
 		
-		this.proxy.setUrl(this.services['loadDataStore'], true);
+		this.getStore().proxy.setUrl(this.services['loadDataStore'], true);
 		if(this.rendered === true) {
 			this.refresh();
 		}
@@ -113,10 +117,10 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 
 	, refresh:  function() {  
 		Sbi.trace("[TableWidget.refresh]: IN");
-		this.store.removeAll();
-		this.store.baseParams = {};
+		this.getStore().removeAll();
+		this.getStore().baseParams = {};
 		var requestParameters = {start: 0, limit: this.pageSize};
-		this.store.load({params: requestParameters});
+		this.getStore().load({params: requestParameters});
 		this.doLayout();
 		Sbi.trace("[TableWidget.refresh]: OUT");
 	}
@@ -177,6 +181,8 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 		var fields = new Array();
 		fields.push(new Ext.grid.RowNumberer());
 		
+		var columns = [];
+		
 		for(var i = 0; i < meta.fields.length; i++) {
 			this.applyRendererOnField(meta.fields[i]);
 			this.applySortableOnField(meta.fields[i]);
@@ -185,13 +191,14 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 				if(this.wconf.visibleselectfields[j].id === meta.fields[i].header) {
 					Sbi.trace("[TableWidget.onStoreMetaChange]: field [" + meta.fields[i].header + "] is equal to [" + this.wconf.visibleselectfields[j].id + "]");	
 					fields.push(meta.fields[i]);
+					columns.push(meta.fields[i].header);
 					break;
 				} else {
 					Sbi.trace("[TableWidget.onStoreMetaChange]: field [" + meta.fields[i].header + "] is not equal to [" + this.wconf.visibleselectfields[j].id + "]");	
 				}
 			}
 		}
-		//meta.fields[0] = new Ext.grid.RowNumberer();
+		Sbi.trace("[TableWidget.onStoreMetaChange]: visible fields are [" + columns.join(",") + "]");
 		this.grid.getColumnModel().setConfig(fields);
 		Sbi.trace("[TableWidget.onStoreMetaChange]: OUT");	
 	}
@@ -201,7 +208,6 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 		if(field.type) {
 			var t = field.type;
 			if (field.format) { // format is applied only to numbers
-				Sbi.trace("[TableWidget.applyRendererOnField]: cpA");	
 				var format = Sbi.commons.Format.getFormatFromJavaPattern(field.format);
 				var formatDataSet = field.format;
 				if((typeof formatDataSet == "string") || (typeof formatDataSet == "String")){
@@ -216,11 +222,8 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 	
 				numberFormatterFunction = Sbi.qbe.commons.Format.numberRenderer(f);
 			} else {
-				Sbi.trace("[TableWidget.applyRendererOnField]: cpB");	
 				numberFormatterFunction = Sbi.locale.formatters[t];
 			}	
-			
-			Sbi.trace("[TableWidget.applyRendererOnField]: cp1");	
 			
 			if (field.measureScaleFactor && (t === 'float' || t ==='int')) { // format is applied only to numbers
 			   this.applyScaleRendererOnField(numberFormatterFunction,field);
@@ -232,8 +235,6 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 		if(field.subtype && field.subtype === 'html') {
 		   field.renderer  =  Sbi.locale.formatters['html'];
 		}
-		
-		Sbi.trace("[TableWidget.applyRendererOnField]: cp3");	
 		
 		if(field.subtype && field.subtype === 'timestamp') {
 		   field.renderer  =  Sbi.locale.formatters['timestamp'];
@@ -322,7 +323,7 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 	 */
 	, init: function() {
 		Sbi.trace("[TableWidget.init]: IN");
-		this.initStore();
+		this.boundStore();
 		this.initGridPanel();
 		Sbi.trace("[TableWidget.init]: OUT");
 	}
@@ -332,25 +333,18 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 	 * 
 	 * Initialize the store
 	 */
-	, initStore: function() {
-		Sbi.trace("[TableWidget.initStore]: IN");
-		var numberFormatterFunction;
-		
-		this.proxy = new Ext.data.HttpProxy({
-			url: this.services['loadDataStore']
-	    	, timeout : this.timeout
-	    	, failure: this.onStoreLoadException
-	    });
-		
-		this.store = new Ext.data.Store({
-	        proxy: this.proxy,
-	        reader: new Ext.data.JsonReader(),
-	        remoteSort: true
-	    });
-		
-		this.store.on('metachange', this.onStoreMetaChange, this);
-		this.store.on('load', this.onStoreLoad, this);
-		Sbi.trace("[TableWidget.initStore]: OUT");
+	, boundStore: function() {
+		Sbi.trace("[TableWidget.boundStore]: IN");		
+		this.getStore().on('metachange', this.onStoreMetaChange, this);
+		this.getStore().on('load', this.onStoreLoad, this);
+		Sbi.trace("[TableWidget.boundStore]: OUT");
+	}
+	
+	, unboundStore: function() {
+		Sbi.trace("[TableWidget.unboundStore]: IN");		
+		this.getStore().un('metachange', this.onStoreMetaChange, this);
+		this.getStore().un('load', this.onStoreLoad, this);
+		Sbi.trace("[TableWidget.unboundStore]: OUT");
 	}
 
 	/**
@@ -419,7 +413,7 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 		
 		this.pagingTBar = new Ext.PagingToolbar({
             pageSize: this.pageSize,
-            store: this.store,
+            store: this.getStore(),
             displayInfo: this.displayInfo,
             displayMsg: LN('sbi.qbe.datastorepanel.grid.displaymsg'),
             emptyMsg: LN('sbi.qbe.datastorepanel.grid.emptymsg'),
@@ -434,7 +428,6 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 		this.pagingTBar.on('render', function() {
 			this.pagingTBar.addItem(this.warningMessageItem);
 			this.warningMessageItem.setVisible(false);
-			//this.pagingTBar.loading.setVisible(false); // it does not work with Ext 3.2.1
 		}, this);
 		
 		var gridConf = {};
@@ -444,10 +437,10 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 		
 		// create the Grid
 	    this.grid = new Ext.grid.GridPanel(Ext.apply({
-	    	store: this.store,
-	        cm: cm,
+	    	store: this.getStore(),
+	        cm: cm
 	        //tbar:this.exportTBar,
-	        bbar: this.pagingTBar
+	        //bbar: this.pagingTBar
 	    },gridConf));   
 	    
 	    Sbi.trace("[TableWidget.initGridPanel]: OUT");

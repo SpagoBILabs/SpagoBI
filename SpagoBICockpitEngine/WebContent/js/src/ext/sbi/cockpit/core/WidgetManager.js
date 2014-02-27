@@ -52,12 +52,6 @@ Ext.extend(Sbi.cockpit.core.WidgetManager, Ext.util.Observable, {
     widgets: null
     
     /**
-     * @property {Sbi.data.StoreManager} storeManager
-     * The object that manage the dataset used by the widget in this container
-     */
-    , storeManager: null
-    
-    /**
      * @property {Object} env
      * This container environment
      * WARNINGS: not used at the moment
@@ -73,11 +67,6 @@ Ext.extend(Sbi.cockpit.core.WidgetManager, Ext.util.Observable, {
 	// -----------------------------------------------------------------------------------------------------------------
 	
     , init: function() {
-    	  
-    	if(!this.storeManager) {
-    		this.storeManager = new Sbi.data.StoreManager();
-    	}
-    	
     	this.widgets = new Ext.util.MixedCollection();
     	this.widgets.on('add', this.onWidgetAdd, this);
     	this.widgets.on('remove', this.onWidgetRemove, this);
@@ -87,68 +76,82 @@ Ext.extend(Sbi.cockpit.core.WidgetManager, Ext.util.Observable, {
     // private methods
 	// -----------------------------------------------------------------------------------------------------------------
 
-        
+    /**
+     * @method 
+     * 
+     * Registers a widget to this widget manager.
+     * 
+     * @param {Sbi.cockpit.core.WidgetRuntime} The widget.
+     */    
     , register: function(w) {
-    	if(Ext.isArray(w) === false) {
-    		w = [w];
-    	}
-		this.widgets.addAll(w);
+    	this.widgets.add(w);
+    	Sbi.info("[WidgetManager.register]: widget [" + this.widgets.getKey(w) + "] succesfully registered. Now there are [" + this.widgets.getCount()+ "] registered widget(s)");
 	}
 
+    /**
+     * @method 
+     * 
+     * Unregisters a widget from this widget manager.
+     * 
+     * @param {Sbi.cockpit.core.WidgetRuntime} The widget.
+     */  
 	, unregister: function(w) {
-		this.remove(w);
+		this.widgets.remove(w);
+		Sbi.info("[WidgetManager.unregister]: widget [" + this.widgets.getKey(w) + "] succesfully unregistered. Now there are [" + this.widgets.getCount()+ "] registered widget(s)");
 	}
 	
-	, lookup: function(w) {
-		this.widgets.get(w);
+	/**
+	 * @method
+	 * 
+	 * Gets the specified registered widget
+	 * 
+	 * @param {Sbi.cockpit.core.WidgetRuntime/String} The widget or its id.
+	 */
+	, getWidget: function(w) {
+		if(Ext.isString(w)) {
+			return this.widgets.getKey(w);
+		} else {
+			return this.widgets.get(w);
+		}	
 	}
 	
+	/**
+	 * @methods 
+	 * 
+	 * Returns all the registered widgets.
+	 * 
+	 * @return {Sbi.cockpit.core.WidgetRuntime[]} the list of registered widgets.
+	 */
 	, getWidgets: function() {
-		return this.widgets;
-	}
-	
-	, getStoreManager: function() {
-		return this.storeManager;
-	}
-	
-	
-	, addStore: function(s) {
-		if (s != undefined && s.dsLabel !== undefined){
-			var newStore = new  Ext.data.JsonStore({
-				 datasetLabel: s.dsLabel
-//				, autoLoad: false
-//				, refreshTime: c[i].refreshTime
-//				, limitSS: this.limitSS
-//				, memoryPagination: c[i].memoryPagination || false 
-			});
-			this.storeManager.add(newStore.datasetLabel, newStore);								
-		}
-	}
-
-	, getStoreByLabel: function(s) {
-		var toReturn = null;
-		if (s != undefined){
-			toReturn = this.storeManager.get(s);								
-		}
-		return toReturn;
-	}
-	
-	, removeStore: function(s) {
-		if (s != undefined){
-			this.storeManager.remove(this.storeManager.get(s));								
-		}
-	}
-
-	, existsStore: function(s) {
-		var toReturn = false;
-		if (s != undefined){
-			if (this.storeManager.get(s) !== null && this.storeManager.get(s) !== undefined)
-					toReturn = true;
-		}
-		return toReturn;
+		return this.widgets.getRange();
 	}	
 	
-	, getWidgetUsedByStore: function(s){
+	 /**
+	  * @method
+	  * 
+     * Executes the specified function once for every registered widget, passing the following arguments:
+     * <div class="mdetail-params"><ul>
+     * <li><b>item</b> : Sbi.cockpit.core.WidgetRuntime<p class="sub-desc">The widget</p></li>
+     * <li><b>index</b> : Number<p class="sub-desc">The widget's index</p></li>
+     * <li><b>length</b> : Number<p class="sub-desc">The total number of widgets in the collection</p></li>
+     * </ul></div>
+     * The function should return a boolean value. Returning false from the function will stop the iteration.
+     * @param {Function} fn The function to execute for each widget.
+     * @param {Object} scope (optional) The scope (<code>this</code> reference) in which the function is executed. Defaults to the current widget in the iteration.
+     */
+	, forEachWidget: function(fn, scope) {
+		this.widgets.each(fn, scope);
+	}
+	/**
+	 * @method
+	 * 
+	 * Returns a list of widgets that are feed by the specified store.
+	 * 
+	 * @param {String} storeId The id of the store.
+	 * 
+	 * @return {Sbi.cockpit.core.WidgetRuntime[]} The list of widgets.
+	 */
+	, getWidgetsByStore: function(storeId){
 		var toReturn = new Ext.util.MixedCollection();
 		if (s != undefined){
 			for(var i=0; i < this.widgets.getCount(); i++){

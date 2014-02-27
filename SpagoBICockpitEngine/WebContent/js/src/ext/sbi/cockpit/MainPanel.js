@@ -188,9 +188,24 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 		 				   , tooltip: 'Save As'
 		 				   , scope: this
 		 				   , handler:  this.showSaveWinAs
-		 		 })
+		 		 }), new Ext.Toolbar.Button({
+	 			 		id: 'saveAs'
+			 	   	   , text: 'Debug'
+			 	       , scope: this
+			 		   , handler:  this.debug
+			 	 })
 		    ]
 		});
+	}
+	
+	, debug: function() {
+		var conf = this.widgetContainer.getConfiguration();
+		this.widgetContainer.resetConfiguration();
+		Sbi.trace("[MainPanel.debug]: Configuration succesfully reset");
+		alert("Configuration succesfully reset");
+		this.widgetContainer.setConfiguration(conf);
+		alert("Configuration succesfully set: " + this.widgetContainer.getWidgetsCount());
+		Sbi.trace("[MainPanel.debug]: Configuration succesfully set: " + this.widgetContainer.getWidgetsCount());
 	}
 	
 	, addWidget: function() {

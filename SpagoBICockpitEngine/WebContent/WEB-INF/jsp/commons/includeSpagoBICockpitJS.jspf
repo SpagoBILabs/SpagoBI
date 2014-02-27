@@ -19,6 +19,7 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='./js/src/ext/sbi/commons/Format.js'/></script>
 <script type="text/javascript" src='./js/src/ext/sbi/locale/LocaleUtils.js'/></script>
 <script type="text/javascript" src='./js/src/ext/sbi/service/ServiceRegistry.js'/></script>
+<script type="text/javascript" src='./js/src/ext/sbi/data/StoreManager.js'/></script>
 
 <script type="text/javascript" src='./js/src/ext/sbi/widgets/GenericDropTarget.js'/></script>
 <script type="text/javascript" src='./js/src/ext/sbi/widgets/WizardPanel.js'/></script>
@@ -26,8 +27,6 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='./js/src/ext/sbi/widgets/DatasetsBrowserView.js'/></script>
 <script type="text/javascript" src='./js/src/ext/sbi/widgets/FileUploadPanel.js'/></script>
 <script type="text/javascript" src='./js/src/ext/sbi/widgets/SaveDocumentWindow.js'/></script>
-
-<script type="text/javascript" src='./js/src/ext/sbi/data/StoreManager.js'/></script>
 
 <script type="text/javascript" src='./js/src/ext/sbi/cockpit/core/WidgetRuntime.js'/></script>
 <script type="text/javascript" src='./js/src/ext/sbi/cockpit/core/WidgetDesigner.js'/></script>

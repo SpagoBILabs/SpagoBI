@@ -230,29 +230,27 @@ Ext.extend(Sbi.cockpit.core.WidgetRuntime, Ext.Panel, {
 	/**
 	 * @method
 	 * 
-	 * Returns the store associated to the store id passed in as argument in the widget manager
-	 * to which this widget is registered. If no #storeId is passed is retuned the store that feed
-	 * this widget.
+	 * Returns the store that feed this widget
 	 * 
-	 * @param {String} storeId the id of the store 
-	 * 
+	 * @param {boolean} forceCreation true to create and add a new store to <code>Sbi.storeManager</code> if there is not
+	 * yet a store with #storeId already managed by global store manager, false otherwise. The default value is false.
+	 *   
 	 * @return {Ext.data.Store} The store
 	 */
-	, getStore: function(storeiId) {
+	, getStore: function(forceCreation) {
 		var store;
 		
-		storeiId = storeiId || this.getStoreId();
+		if(Sbi.isNotValorized(this.getStoreId())) {
+			Sbi.warn("[Widget.getStore]: The widget have no store associated (i.e storeId in not valorized)");
+			return null;
+		}
 		
-		if(this.getWidgetManager) {
-			var wm = this.getWidgetManager();
-			if(wm) {
-				store = wm.getStore(storeiId);
-			} else {
-				alert("getStore: storeManager not defined");
-			}
-		} else {
-			alert("getStore: container not defined");
-		}	
+		if(Sbi.storeManager.containsStore(this.getStoreId()) === false && forceCreation !== false) {
+			Sbi.warn("[Widget.getStore]: store [" + this.getStoreId() + "] will be added to store manager");
+			Sbi.storeManager.addStore({storeId: this.getStoreId()});
+		}
+		store = Sbi.storeManager.getStore( this.getStoreId() );
+		
 		return store;
 	}
 	
@@ -337,7 +335,7 @@ Ext.extend(Sbi.cockpit.core.WidgetRuntime, Ext.Panel, {
 	 * @param {boolean} refresh true to force the refresh after the setting of the property, false otherwise. The default is true.
 	 */
 	, setStyleConfiguration: function(wstyle) {
-		if(Sbi.isValorized(wlayout)) {
+		if(Sbi.isValorized(wstyle)) {
 			this.wstyle = wstyle;
 			Sbi.trace("[Widget.setStyleConfiguration]: wstyle set to [" + Sbi.toSource(wstyle) + "]");
 		} else {
@@ -480,10 +478,10 @@ Ext.extend(Sbi.cockpit.core.WidgetRuntime, Ext.Panel, {
 		var component = this.getParentComponent();
 			
 		if(Sbi.isValorized(component)) {
-			Sbi.trace("[Widget.getParentContainer]: widget [" + this.id +  "] is bound to component [" + component.id + "]");
+			//.trace("[Widget.getParentContainer]: widget [" + this.id +  "] is bound to component [" + component.id + "]");
 			container = component.getParentContainer();
 		} else {
-			Sbi.warn("[Widget.getParentContainer]: widget [" + this.id + "] is not bound to any component");
+			//Sbi.warn("[Widget.getParentContainer]: widget [" + this.id + "] is not bound to any component");
 		}
 		
 		Sbi.trace("[Widget.getParentContainer]: OUT");

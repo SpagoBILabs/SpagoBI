@@ -3,35 +3,6 @@
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. **/
- 
-  
- 
-  
- 
-/**
-  * Object name 
-  * 
-  * [description]
-  * 
-  * 
-  * Public Properties
-  * 
-  * [list]
-  * 
-  * 
-  * Public Methods
-  * 
-  *  [list]
-  * 
-  * 
-  * Public Events
-  * 
-  *  [list]
-  * 
-  * Authors
-  * 
-  * - Andrea Gioia (andrea.gioia@eng.it)
-  */
 
 Ext.ns("Sbi.data");
 
@@ -39,7 +10,9 @@ Ext.ns("Sbi.data");
  * @class Sbi.data.StoreManager
  * @extends Ext.util.Observable
  * 
- * ...
+ * This class manages a group of stores shared by different component. It can be instantiated
+ * at any level of the application classes hierarchy depending of the components that need to use it.
+ * For example it can be instantiated within a panel whose child need to share different stores. 
  */
 
 /**
@@ -48,18 +21,16 @@ Ext.ns("Sbi.data");
 Sbi.data.StoreManager = function(config) {
 	Sbi.trace("[StoreManager.constructor]: IN");
 	
+	// init properties...
 	var defaultSettings = {
-			
+		// set default values here
 	};
-		
-	if(Sbi.settings && Sbi.settings.console && Sbi.settings.console.storeManager) {
-		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.console.storeManager);
-	}
-		
-	var c = Ext.apply(defaultSettings, config || {});
+	
+	var settings = Sbi.getObjectSettings('Sbi.data.StoreManager', defaultSettings);
+	var c = Ext.apply(settings, config || {});
 	Ext.apply(this, c);
 		
-	this.init(c.datasetsConfig);
+	this.setConfiguration(c);
 		
 	// constructor
 	Sbi.data.StoreManager.superclass.constructor.call(this, c);
@@ -87,16 +58,65 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 	// -----------------------------------------------------------------------------------------------------------------
 	
 	/**
+	 * @method
+	 * Gets the store configuration object. This object can be passed to #setConfiguration method
+	 * at any time to roll back to the current configuration. It can also be passed to the constructor 
+	 * of this class to create a clone of this instance of store manager.
+	 * 
+	 * <b>WARNING: </b> what stated above is true only for store whose storeType is equal to "sbi". In other words
+	 * it s true only for stores created using the method #createStore. Other stores managed by this manager are not included 
+	 * in the configuration object and so will be lost. This is due to the fact that the method getStoreConfiguration is not able 
+	 * to extract configuration for a general Ext.data.Store object.
+	 * 
+	 * @return {Object} The configuration object
+	 */
+	, getConfiguration: function() {
+		var config = {};
+		config.storeConfigs = this.getStoreConfigurations();
+		return config;
+	}
+
+	/**
+	 * @method
+	 * Sets the configuration of this manage
+	 * 
+	 * @param {Object} conf The configuration object
+	 */
+	, setConfiguration: function(conf) {
+		Sbi.trace("[StoreManager.init]: IN");
+    	
+		conf = conf || {};
+		var storeConfigs = conf.storeConfigs || [];
+	
+		this.stores = new Ext.util.MixedCollection();
+		this.stores.getKey = function(o){
+            return o.storeId;
+        };
+		
+		for(var i = 0; i < storeConfigs.length; i++) {
+			var store = this.createStore(storeConfigs[i]);
+			//var store = this.createStoreOld(storeConfigs[i]);
+			this.addStore(store);
+		}
+	
+		// for easy debug purpose
+		var testStore = this.createTestStore();
+		this.addStore(testStore);
+		
+		Sbi.trace("[StoreManager.init]: OUT");
+	}
+	
+	/**
 	 * @method 
 	 * 
 	 * Adds a new store to the ones already managed by this manager.
 	 * 
 	 * @param {Ext.data.Store} store The store to add.
-	 * @param {String} store.storeId The store identifier. For datatset related to a SpagoBI's dataset it is equal to the dataset' label
+	 * @param {String} store.storeId The store identifier. For store related to a SpagoBI's dataset it is equal to the dataset' label
 	 * @param {boolean} store.raedy true if the store has been already loaded, false otherwise. The default is false.
 	 * @param {String} store.storeType The type of the store. It can be equal to "ext" if the store is a standrad extjs store "sbi" if
 	 * the store is an extension provided by SpagoBI. The default is "ext".
-	 * @param {Numeric} store.refreshTime The refresh time of the dataset in seconds. The defaut is 0.
+	 * @param {Numeric} store.refreshTime The refresh time of the store in seconds. The default is 0.
 	 */
 	, addStore: function(store) {
 		Sbi.trace("[StoreManager.addStore]: IN");
@@ -104,7 +124,6 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 		if(Sbi.isNotValorized(store)) {
 			Sbi.warn("[StoreManager.addStore]: Input parameter [s] is not defined");
 			Sbi.trace("[StoreManager.addStore]: OUT");
-			return;
 		}
 		
 		if(Ext.isArray(store)) {
@@ -159,34 +178,52 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 		
 		Sbi.trace("[StoreManager.addStore]: OUT");
 	}
-
-	, createStore: function(storeConf) {
-		var proxy = new Ext.data.HttpProxy({
-			url: Sbi.config.serviceRegistry.getServiceUrl({
-				serviceName : 'api/1.0/dataset/' + storeConf.storeId + '/data'
-				, baseParams: new Object()
-			})
-	    	//, timeout : this.timeout
-	    	//, failure: this.onStoreLoadException
-	    });
-		
-		var store = new Ext.data.Store({
-			storeId: storeConf.storeId,
-	        proxy: this.proxy,
-	        reader: new Ext.data.JsonReader(),
-	        remoteSort: true
-	    });
-		
-		return store;
+	
+	/**
+	 * @methods
+	 * 
+	 * Returns all the stores managed by this store manager
+	 * 
+	 *  @return {Ext.data.Store[]} The stores list
+	 */
+	, getStores: function() {
+		return this.stores.getRange();
 	}
-
+	
+	, getStoreConfigurations: function() {
+		var confs = [];
+		this.stores.each(function(store, index, length) {
+			var c = this.getStoreConfiguration(store.storeId);
+			if(Sbi.isValorized(c)) {
+				confs.push(c);
+			}
+		}, this);
+		return confs;
+	}
+	
 	, getStore: function(storeId) {
 		return this.stores.get(storeId);
 	}
 	
+	, getStoreConfiguration: function(storeId) {
+		var store = this.getStore();
+		var storeConf = null;
+		
+		if(Sbi.isValorized(store)) {
+			if(store.storeType === "sbi") {
+				storeConf = Ext.apply({}, storeConf);
+			} else {
+				Sbi.warn("[StoreManager.getStoreConfiguration]: impossible to extract configuration from store of type different from [sbi]");
+			}
+		} else {
+			Sbi.warn("[StoreManager.getStoreConfiguration]: impossible to find store [" + storeId + "]");
+		}
+		
+		return storeConf;
+	}
+	
 	, containsStore: function(store) {
-		Sbi.trace("[StoreManager.containsStore]: typeof store: " + (typeof store));
-		if(typeof store === 'String') {
+		if(typeof store === 'string') {
 			return this.stores.containsKey(store);
 		} else {
 			return this.stores.contains(store);
@@ -248,51 +285,70 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 	// -----------------------------------------------------------------------------------------------------------------
 	// init methods
 	// -----------------------------------------------------------------------------------------------------------------
+
     
-    , init: function(c) {
-    	Sbi.trace("[StoreManager.init]: IN");
-    	
-		c = c || [];
-	
-		this.stores = new Ext.util.MixedCollection();
-		this.stores.getKey = function(o){
-            return o.storeId;
-        };
+    , createStore: function(storeConf) {
+		var proxy = new Ext.data.HttpProxy({
+			url: Sbi.config.serviceRegistry.getServiceUrl({
+				serviceName : 'api/1.0/dataset/' + storeConf.storeId + '/data'
+				, baseParams: new Object()
+			})
+	    	//, timeout : this.timeout
+	    	, failure: this.onStoreLoadException
+	    });
 		
-		for(var i = 0, l = c.length, s; i < l; i++) {
-			if (c[i].memoryPagination !== undefined &&  c[i].memoryPagination === false){
-				//server pagination	
-				s = new Sbi.data.Store({
-					storeId: c[i].id
-					, datasetLabel: c[i].label
-					, autoLoad: false
-					, refreshTime: c[i].refreshTime
-					, limitSS: this.limitSS
-					, memoryPagination: c[i].memoryPagination || false 
-				});
-			}else{
-				//local pagination (default)		
-				s = new Sbi.data.MemoryStore({
-					storeId: c[i].id
-					, datasetLabel: c[i].label
-					, autoLoad: false
-					, refreshTime: c[i].refreshTime
-					, rowsLimit:  c[i].rowsLimit || this.rowsLimit
-					, memoryPagination: c[i].memoryPagination || true	//default pagination type is client side
-				});
-			}
-			s.ready = c[i].ready || false;
-			s.storeType = 'sbi';
-			
-			//to optimize the execution time, the store is created with the stopped property to false, so it's loaded
-			//when the component (widget or grid) is viewed. 
-			s.stopped = true;
-			
-			this.addStore(s);
+		var store = new Ext.data.Store({
+			storeId: storeConf.storeId,
+			storeType: 'sbi',
+			storeConf: storeConf,
+	        proxy: proxy,
+	        reader: new Ext.data.JsonReader(),
+	        remoteSort: true
+	    });
+		
+		return store;
+	}
+    
+    , onStoreLoadException: function(response, options) {
+    	Sbi.trace("[TableWidget.onStoreLoadException]: IN");	
+		Sbi.exception.ExceptionHandler.handleFailure(response, options);
+		Sbi.trace("[TableWidget.onStoreLoadException]: OUT");	
+	}
+    
+    , createStoreOld: function(c) {
+    	var s = null;
+    	if (c[i].memoryPagination !== undefined &&  c[i].memoryPagination === false){
+			//server pagination	
+			s = new Sbi.data.Store({
+				storeId: c[i].storeId
+				, autoLoad: false
+				, refreshTime: c[i].refreshTime
+				, limitSS: this.limitSS
+				, memoryPagination: c[i].memoryPagination || false 
+			});
+		} else {
+			//local pagination (default)		
+			s = new Sbi.data.MemoryStore({
+				storeId: c[i].storeId
+				, autoLoad: false
+				, refreshTime: c[i].refreshTime
+				, rowsLimit:  c[i].rowsLimit || this.rowsLimit
+				, memoryPagination: c[i].memoryPagination || true	//default pagination type is client side
+			});
 		}
-	
-		// for easy debug purpose
-		var testStore = new Ext.data.JsonStore({
+		
+    	s.ready = c[i].ready || false;
+		s.storeType = 'sbi';
+		
+		//to optimize the execution time, the store is created with the stopped property to false, so it's loaded
+		//when the component (widget or grid) is viewed. 
+		s.stopped = true;
+		
+		return s;
+    }
+    
+    , createTestStore: function(c) {
+    	var testStore = new Ext.data.JsonStore({
 			id: 'testStore'
 			, fields:['name', 'visits', 'views']
 	        , data: [
@@ -309,12 +365,9 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 		
 		testStore.ready = true;
 		testStore.storeType = 'ext';
-		
-		this.addStore(testStore);
-		
-		Sbi.trace("[StoreManager.init]: OUT");
-		
-	}
-    
-    
+		return testStore;
+    }
 });
+	
+	
+	
