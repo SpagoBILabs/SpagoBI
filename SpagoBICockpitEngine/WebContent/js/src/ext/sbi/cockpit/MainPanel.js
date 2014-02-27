@@ -38,8 +38,8 @@ Sbi.cockpit.MainPanel = function(config) {
 
 	// constructor
 	Sbi.cockpit.MainPanel.superclass.constructor.call(this, c);
-	
-	this.addEvents('returnToMyAnalysis');
+	 
+	this.addEvents("returnToMyAnalysis");
 };
 
 /**
@@ -64,7 +64,7 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
     
     , isInsert: null
     
-    , fromMyAnalysis: false
+//    , fromMyAnalysis: false
    
 
     // =================================================================================================================
@@ -149,16 +149,6 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 	 */
 	, initServices: function() {
 		this.services = this.services || new Array();	
-		
-		var params = {
-			
-		};
-		
-//		this.services['GetTargetDataset'] = this.services['GetTargetDataset'] || Sbi.config.serviceRegistry.getServiceUrl({
-//			serviceName: 'GetTargetDataset'
-//			, baseParams: params
-//		});
-
 	}
 	
 	
@@ -246,7 +236,9 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 		};
 		
 		var formState = {};
-		formState.visibility = true;
+		formState.visibility = true; //default for insertion
+		formState.OBJECT_FUNCTIONALITIES  = Sbi.config.docFunctionalities;
+		
 		if (this.isInsert){
 			formState.docLabel = 'cockpit__' + Math.floor((Math.random()*1000000000)+1); 
 			if (Sbi.config.docDatasetLabel) {
@@ -257,6 +249,8 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 			formState.docLabel = Sbi.config.docLabel;
 			formState.docName = Sbi.config.docName;
 			formState.docDescr = Sbi.config.docDescription;
+			formState.visibility = Sbi.config.docIsVisible;
+			formState.isPublic = Sbi.config.docIsPublic;
 			documentWindowsParams.MESSAGE_DET= 'MODIFY_COCKPIT';	
 		}
 		documentWindowsParams.formState = formState;
@@ -265,7 +259,7 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 		
 		this.saveWindow = new Sbi.widgets.SaveDocumentWindow(documentWindowsParams);
 		this.saveWindow.addListener('syncronizePanel', this.onSyncronizePanel, this);
-		this.saveWindow.addListener('returnToMyAnalysis', this.returnToMyAnalysis, this);
+		this.saveWindow.addListener('closeDocument', this.returnToMyAnalysis, this);
 		this.saveWindow.show();		
 
 		Sbi.trace("[MainPanel.showSaveWindow]: OUT");
@@ -286,8 +280,14 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 	}
 	
 	, returnToMyAnalysis : function() {
-	   var url = '/SpagoBI/servlet/AdapterHTTP?ACTION_NAME=CREATE_DOCUMENT_START_ACTION&LIGHT_NAVIGATOR_RESET_INSERT=TRUE';
-	   window.location = url;	
+	   var url = Sbi.config.contextName + '/servlet/AdapterHTTP?ACTION_NAME=CREATE_DOCUMENT_START_ACTION&LIGHT_NAVIGATOR_RESET_INSERT=TRUE';
+	   if (Sbi.config.environment == "MYANALYSIS")
+		   sendMessage({newUrl:url},'closeDocument');		  
+	   else if (Sbi.config.environment == "DOCBROWSER")
+		   sendMessage({},'closeDocument');
+	   else
+		   window.location = url;
+	   
 	}
 	
 });

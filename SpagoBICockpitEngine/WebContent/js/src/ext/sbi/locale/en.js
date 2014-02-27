@@ -68,6 +68,8 @@ Sbi.locale.ln['sbi.generic.creationdate'] = 'Creation date';
 Sbi.locale.ln['sbi.generic.owner']= 'Autor';
 Sbi.locale.ln['sbi.generic.name']= 'Name';
 Sbi.locale.ln['sbi.generic.save'] = 'Save ';
+Sbi.locale.ln['sbi.generic.saveAndGoBack'] = 'Save and return ';
+Sbi.locale.ln['sbi.generic.cancel'] = 'Cancel';
 Sbi.locale.ln['sbi.generic.resultMsg'] = 'Operation succeded';
 
 //===================================================================
