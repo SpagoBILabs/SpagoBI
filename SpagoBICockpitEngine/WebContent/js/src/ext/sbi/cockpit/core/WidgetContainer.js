@@ -17,7 +17,7 @@ Ext.ns("Sbi.cockpit.core");
  */
 
 /**
- * @cfg {Object} config The configuration object passed to the cnstructor
+ * @cfg {Object} config The configuration object passed to the constructor
  */
 Sbi.cockpit.core.WidgetContainer = function(config) {
 	
@@ -218,6 +218,13 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.WidgetRuntime, {
 		return widget;
 	}
     
+    /**
+     * @method 
+     * 
+     * Removes the specified widget
+     * 
+     * @param {Sbi.cockpit.core.WidgetRuntime/Object} The widget to remove or its id
+     */
     , removeWidget: function(widget) {
     	Sbi.trace("[WidgetContainer.removeWidget]: IN");
     	this.removeComponent(widget);
