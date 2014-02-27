@@ -194,7 +194,6 @@ Sbi.browser.FolderDetailPanel = function(config) {
     if (config.engineUrls.georeportServiceUrl != null){
         this.georeportServiceUrl = config.engineUrls.georeportServiceUrl;
     }
-
 };
 
 

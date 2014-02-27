@@ -155,6 +155,7 @@ Sbi.browser.DocBrowserContainer = function(config) {
 	   }
 	   , this
 	);
+	
 };
 
 
