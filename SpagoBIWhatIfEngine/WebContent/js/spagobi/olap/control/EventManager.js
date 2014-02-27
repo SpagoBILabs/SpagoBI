@@ -51,8 +51,16 @@ Ext.define('Sbi.olap.control.EventManager', {
      */
 	updateAfterMDXExecution: function(pivotHtml){
 		this.olapPanel.executionPanel.updateAfterMDXExecution(pivotHtml);
+	},
+    /**
+     * Updates the view after drill down operation
+     * @param {int} axis position of the row
+     * @param {int} member position of the member
+     * @param {int} position in the Position array
+     */
+	drillDown: function(axis, position,  member){
+		this.olapController.drillDown(axis, member, position);
 	}
-	
 });
 
 
