@@ -194,6 +194,7 @@ Ext.define('Sbi.tools.multitenant.MultitenantDetailPanel', {
 	        layout: 'fit',
 	        height: 800,
 	        autoScroll: true,
+	        style: 'overflow: scroll;',
 	        columns: [{
 	        	hidden: true,
 	            dataIndex: 'ID'
