@@ -1008,10 +1008,16 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 			Ext.MessageBox.show({
 				title : LN('sbi.generic.warning')
 				, msg : LN('sbi.execution.executionpage.toolbar.refreshlastwarning')
-				, buttons : {ok:LN('sbi.general.continue'), cancel:LN('sbi.general.cancel')}
+				, buttons : {
+					yes: LN('sbi.execution.executionpage.toolbar.usecurrentselection')
+					, no: LN('sbi.execution.executionpage.toolbar.usepreviousselection')
+					, cancel: LN('sbi.general.cancel')}
 				, fn : function(btn, text) {
-					if (btn == 'ok') {
+					if (btn == 'no') {
 						this.doRefreshLastExecution();
+					}
+					if (btn == 'yes') {
+						this.refreshDocument();
 					}
 				}
 				, scope: this
@@ -1039,11 +1045,8 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 	, doRefreshLastExecution : function () {
 		Sbi.trace('[DocumentExecutionPage.doRefreshLastExecution]: IN');
 		var lastState = this.getLastParametersFormState();
-		if((this.fireEvent('beforeexecution', this, this.executionInstance, lastState) !== false)
-				&& (this.parametersPanel.fireEvent('ready', this) !== false)){
-			this.doExecuteDocumunt(this.executionInstance, lastState);
-		}
-		this.showDocument();
+        this.parametersPanel.setFormState(lastState);
+        this.refreshDocument();
 		Sbi.trace('[DocumentExecutionPage.doRefreshLastExecution]: OUT');
 	}
 	

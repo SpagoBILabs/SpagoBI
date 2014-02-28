@@ -382,8 +382,9 @@ Sbi.locale.ln['sbi.execution.executionpage.toolbar.showscheduled'] = 'Show sched
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.back'] = 'Go back to parameters selection page';
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.documentView'] = 'Go back to documents selection page';
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.refresh'] = 'Refresh document execution';
-Sbi.locale.ln['sbi.execution.executionpage.toolbar.refreshlastwarning'] = 'Parameters\' form was changed; if you want to refresh execution with previous parameters\' values click on Continue; if you want to apply new parameters click on Cancel and then on the execution button inside the parameters\' panel.';
-
+Sbi.locale.ln['sbi.execution.executionpage.toolbar.refreshlastwarning'] = 'Parameters\' selection was changed; do you want to execute the document with the previous selection or the current one?';
+Sbi.locale.ln['sbi.execution.executionpage.toolbar.usecurrentselection'] = 'Use current';
+Sbi.locale.ln['sbi.execution.executionpage.toolbar.usepreviousselection'] = 'Use previuos';
 
 
 

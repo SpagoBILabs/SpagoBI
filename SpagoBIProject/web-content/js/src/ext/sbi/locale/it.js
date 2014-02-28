@@ -372,10 +372,9 @@ Sbi.locale.ln['sbi.execution.executionpage.toolbar.showscheduled'] = 'Mostra ese
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.back'] = 'Torna alla pagina di selezione parametri';
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.documentView'] = 'Torna alla pagina di vista documenti';
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.refresh'] = 'Riesegui il documento';
-Sbi.locale.ln['sbi.execution.executionpage.toolbar.refreshlastwarning'] = 'Sono state apportate delle modifiche ai parametri; cliccando su Prosegui verr\u00e0 rieseguito il documento con i parametri impostati precedentemente. Se invece vuoi eseguire il documento con i nuovi parametri, clicca su Cancella e poi sul pulsante di esecuzione dentro il form dei parametri';
-
-
-
+Sbi.locale.ln['sbi.execution.executionpage.toolbar.refreshlastwarning'] = 'La selezione dei parametri è cambiata: vuoi eseguire il documento con la selezione corrente o con quella precedente?';
+Sbi.locale.ln['sbi.execution.executionpage.toolbar.usecurrentselection'] = 'Usa corrente';
+Sbi.locale.ln['sbi.execution.executionpage.toolbar.usepreviousselection'] = 'Usa precedente';
 
 
 
