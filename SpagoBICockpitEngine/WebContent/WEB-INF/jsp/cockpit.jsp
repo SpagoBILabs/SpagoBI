@@ -157,7 +157,7 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 					
 			Ext.QuickTips.init();   
 				
-			cockpitPanel = new Sbi.cockpit.MainPanel({template: template});	
+			cockpitPanel = new Sbi.cockpit.MainPanel({analysisState: template});	
 				
 			var viewport = new Ext.Viewport({
 				id:    'view',
