@@ -4,52 +4,52 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
  -->
 
 <!-- Include WHATIF stylesheets -->
-<link rel="styleSheet" href ="css/whatIf.css" type="text/css" />
-<script type="text/javascript" src='js/spagobi/commons/Settings.js'/></script>	
+<link rel="styleSheet" href ="../css/whatIf.css" type="text/css" />
+<script type="text/javascript" src='../js/spagobi/commons/Settings.js'/></script>	
 
 
 <!-- START-DEBUG -->
 
 
-<script type="text/javascript" src='js/spagobi/olap/model/MemberModel.js'></script>
-<script type="text/javascript" src='js/spagobi/olap/model/PivotModel.js'></script>
+<script type="text/javascript" src='../js/spagobi/olap/model/MemberModel.js'></script>
+<script type="text/javascript" src='../js/spagobi/olap/model/PivotModel.js'></script>
 
-<script type="text/javascript" src='js/spagobi/exception/ExceptionHandler.js'/></script>
-<script type="text/javascript" src='js/spagobi/service/ServiceRegistry.js'/></script>
-<script type="text/javascript" src='js/spagobi/service/Service.js'/></script>
-<script type="text/javascript" src='js/spagobi/commons/Format.js'/></script>
-<script type="text/javascript" src='js/spagobi/commons/Utils.js'/></script>
-<script type="text/javascript" src='js/spagobi/locale/LocaleUtils.js'/></script>
+<script type="text/javascript" src='../js/spagobi/exception/ExceptionHandler.js'/></script>
+<script type="text/javascript" src='../js/spagobi/service/ServiceRegistry.js'/></script>
+<script type="text/javascript" src='../js/spagobi/service/Service.js'/></script>
+<script type="text/javascript" src='../js/spagobi/commons/Format.js'/></script>
+<script type="text/javascript" src='../js/spagobi/commons/Utils.js'/></script>
+<script type="text/javascript" src='../js/spagobi/locale/LocaleUtils.js'/></script>
 
-<script type="text/javascript" src='js/spagobi/olap/options/OlapOptionsChart.js'></script>
-<script type="text/javascript" src='js/spagobi/olap/options/OlapOptionsTable.js'></script>
-<script type="text/javascript" src='js/spagobi/olap/options/OlapOptionsToolbar.js'></script>
-<script type="text/javascript" src='js/spagobi/olap/options/OlapOptionsContainer.js'></script>
-<script type="text/javascript" src='js/spagobi/olap/options/OlapOptions.js'></script>
+<script type="text/javascript" src='../js/spagobi/olap/options/OlapOptionsChart.js'></script>
+<script type="text/javascript" src='../js/spagobi/olap/options/OlapOptionsTable.js'></script>
+<script type="text/javascript" src='../js/spagobi/olap/options/OlapOptionsToolbar.js'></script>
+<script type="text/javascript" src='../js/spagobi/olap/options/OlapOptionsContainer.js'></script>
+<script type="text/javascript" src='../js/spagobi/olap/options/OlapOptions.js'></script>
 
-<script type="text/javascript" src='js/spagobi/olap/toolbar/OlapToolbar.js'></script>
+<script type="text/javascript" src='../js/spagobi/olap/toolbar/OlapToolbar.js'></script>
 
-<script type="text/javascript" src='js/spagobi/olap/execution/table/OlapExecutionMember.js'></script>
-<script type="text/javascript" src='js/spagobi/olap/execution/table/OlapExecutionColumn.js'></script>
-<script type="text/javascript" src='js/spagobi/olap/execution/table/OlapExecutionRow.js'></script>
-<script type="text/javascript" src='js/spagobi/olap/execution/table/OlapExecutionMembers.js'></script>
-<script type="text/javascript" src='js/spagobi/olap/execution/table/OlapExecutionColumns.js'></script>
-<script type="text/javascript" src='js/spagobi/olap/execution/table/OlapExecutionFilters.js'></script>
-<script type="text/javascript" src='js/spagobi/olap/execution/table/OlapExecutionRows.js'></script>
-<script type="text/javascript" src='js/spagobi/olap/execution/table/OlapExecutionTable.js'></script>
-<script type="text/javascript" src='js/spagobi/olap/execution/table/OlapExecutionPivot.js'></script>
-<script type="text/javascript" src='js/spagobi/olap/execution/chart/OlapExecutionChart.js'></script>
-<script type="text/javascript" src='js/spagobi/olap/execution/OlapExecutionPanel.js'></script>
+<script type="text/javascript" src='../js/spagobi/olap/execution/table/OlapExecutionMember.js'></script>
+<script type="text/javascript" src='../js/spagobi/olap/execution/table/OlapExecutionColumn.js'></script>
+<script type="text/javascript" src='../js/spagobi/olap/execution/table/OlapExecutionRow.js'></script>
+<script type="text/javascript" src='../js/spagobi/olap/execution/table/OlapExecutionMembers.js'></script>
+<script type="text/javascript" src='../js/spagobi/olap/execution/table/OlapExecutionColumns.js'></script>
+<script type="text/javascript" src='../js/spagobi/olap/execution/table/OlapExecutionFilters.js'></script>
+<script type="text/javascript" src='../js/spagobi/olap/execution/table/OlapExecutionRows.js'></script>
+<script type="text/javascript" src='../js/spagobi/olap/execution/table/OlapExecutionTable.js'></script>
+<script type="text/javascript" src='../js/spagobi/olap/execution/table/OlapExecutionPivot.js'></script>
+<script type="text/javascript" src='../js/spagobi/olap/execution/chart/OlapExecutionChart.js'></script>
+<script type="text/javascript" src='../js/spagobi/olap/execution/OlapExecutionPanel.js'></script>
 
-<script type="text/javascript" src='js/spagobi/olap/tools/OlapViewCubeSelector.js'></script>
-<script type="text/javascript" src='js/spagobi/olap/tools/OlapViewMeasuresSelector.js'></script>
-<script type="text/javascript" src='js/spagobi/olap/tools/OlapViewDimensionsSelector.js'></script>
-<script type="text/javascript" src='js/spagobi/olap/tools/OlapViewDefinitionTools.js'></script>
+<script type="text/javascript" src='../js/spagobi/olap/tools/OlapViewCubeSelector.js'></script>
+<script type="text/javascript" src='../js/spagobi/olap/tools/OlapViewMeasuresSelector.js'></script>
+<script type="text/javascript" src='../js/spagobi/olap/tools/OlapViewDimensionsSelector.js'></script>
+<script type="text/javascript" src='../js/spagobi/olap/tools/OlapViewDefinitionTools.js'></script>
 
-<script type="text/javascript" src='js/spagobi/olap/control/Controller.js'/></script>
-<script type="text/javascript" src='js/spagobi/olap/control/EventManager.js'/></script>
+<script type="text/javascript" src='../js/spagobi/olap/control/Controller.js'/></script>
+<script type="text/javascript" src='../js/spagobi/olap/control/EventManager.js'/></script>
 
-<script type="text/javascript" src='js/spagobi/olap/OlapPanel.js'></script>
+<script type="text/javascript" src='../js/spagobi/olap/OlapPanel.js'></script>
 
 
 <!-- END-DEBUG -->
