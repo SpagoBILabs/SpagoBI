@@ -125,7 +125,7 @@ public class PersistedTableManager {
 		
 		logger.debug("DataSource target dialect is [" + getDialect() + "]");
 		//for the first version not all target dialect are enable
-		if (getDialect().contains(DIALECT_SQLSERVER) || getDialect().contains(DIALECT_DB2) ||
+		if (getDialect().contains(DIALECT_DB2) ||
 			getDialect().contains(DIALECT_INGRES) ||  getDialect().contains(DIALECT_TERADATA)){
 			logger.debug("Persistence management isn't able for " +  getDialect() + ".");
 			throw new SpagoBIServiceException("","sbi.ds.dsCannotPersistDialect");
