@@ -241,6 +241,7 @@ public abstract class AbstractSQLDBCacheTest extends TestCase {
 		logger.debug("FileDataSet inserted inside cache");
 		String tableName = cache.getCacheMetadata().getCacheItemByResultsetSignature(fileDataset.getSignature()).getTable();
 		assertTrue(cache.delete(fileDataset.getSignature()));	
+		assertNull("Dataset still present in cache registry",cache.get(fileDataset.getSignature()));
 		IDataStore dataStore = null;
 		//Check that the table is not present, if this fail with an exception  we know that the table isn't on DB
 		try {
