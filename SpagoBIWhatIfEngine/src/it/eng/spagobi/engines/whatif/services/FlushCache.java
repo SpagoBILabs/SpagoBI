@@ -32,7 +32,7 @@ public class FlushCache extends AbstractRestService {
 	public void flushCache(@Context HttpServletRequest request) {
 		logger.debug("IN");
 		try {
-			WhatIfEngineInstance engineInstance = this.getEngineInstance(request);
+			WhatIfEngineInstance engineInstance = this.getWhatIfEngineInstance();
 			Assert.assertNotNull(engineInstance, "No engine instance found");
 			OlapDataSource olapDataSource = engineInstance.getOlapDataSource();
 			Assert.assertNotNull(olapDataSource, "No OLAP datasource found");

@@ -15,11 +15,33 @@
 
 Ext.define('Sbi.service.Service', {
 	statics:{
-		mdx:	function(baseParams){
-					return Sbi.config.serviceRegistry.getRestServiceUrl({
-						serviceName: 'mdx'
-						, baseParams: baseParams
-					});
+		addRestPathParameters: function(url, params){
+			if(params && url){
+				for(var i=0; i<params.length; i++){
+					var p = params[i];
+					if(p){
+						url = url+"/"+params[i];
+					}else{
+						url = url+"/null";
+					}
+					
 				}
+			}
+			return url;
+		},
+		
+		addRestSubPathAndParameters: function(url, subpath, pathparams){
+			if(subpath){
+				url = url+"/"+subpath;
+			}
+			return Sbi.service.Service.addRestPathParameters(url, pathparams);
+		},
+		
+		callService:	function( url, subpath, pathparams, baseParams ){
+			return Sbi.config.serviceRegistry.getRestServiceUrl({
+				serviceName: Sbi.service.Service.addRestSubPathAndParameters(url, subpath, pathparams)
+				, baseParams: baseParams
+			});
+		}
 	}
 });

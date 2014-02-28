@@ -33,8 +33,7 @@ Ext.define('Sbi.olap.control.Controller', {
 	executeMdx: function(mdx){
 
 		Ext.Ajax.request({
-			url: Sbi.service.Service.mdx(),
-			params: {"mdx": mdx},
+			url: Sbi.service.Service.callService("model", "mdx", [mdx]),
 			method: "GET",
 			success : function(response, options) {
 				if(response !== undefined && response.statusText !== undefined && response.responseText!=null && response.responseText!=undefined) {
@@ -50,8 +49,7 @@ Ext.define('Sbi.olap.control.Controller', {
 	, drillDown: function(axis, position,  member){
 
 		Ext.Ajax.request({
-			url: Sbi.service.Service.mdx(),
-			params: {"axis": axis, "member": member, "position": position},
+			url: Sbi.service.Service.callService("member","drilldown", [axis, position, member]),
 			method: "GET",
 			success : function(response, options) {
 				if(response !== undefined && response.statusText !== undefined && response.responseText!=null && response.responseText!=undefined) {
