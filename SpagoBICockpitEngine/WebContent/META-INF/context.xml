@@ -1,5 +1,5 @@
-<Context  docBase="SpagoBICockpitEngine" path="/SpagoBICockpitEngine" privileged="true" reloadable="false">
-  		<Manager className="org.apache.catalina.session.PersistentManager" saveOnRestart="false"/>
+<Context   path="/SpagoBICockpitEngine" privileged="true" reloadable="false">
+
         <ResourceLink global="jdbc/spagobi" name="jdbc/spagobi" type="javax.sql.DataSource"/>
         <ResourceLink global="jdbc/foodmart" name="jdbc/foodmart" type="javax.sql.DataSource"/>
         <ResourceLink global="spagobi_resource_path" name="spagobi_resource_path" type="java.lang.String"/>

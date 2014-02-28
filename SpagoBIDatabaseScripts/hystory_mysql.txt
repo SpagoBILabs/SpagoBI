@@ -2109,6 +2109,8 @@ COMMIT;
 DELETE FROM SBI_USER_FUNC WHERE NAME = 'FinalUsersManagement';
 COMMIT;
 
+----------------------------------- 4.1 -----------------------------------------------------------------------------
+
 -- Monica 9/12/2013 Multi-Tenancy functionalities
 INSERT INTO SBI_USER_FUNC (USER_FUNCT_ID, NAME, DESCRIPTION, USER_IN, TIME_IN)
 VALUES ((SELECT next_val FROM hibernate_sequences WHERE sequence_name = 'SBI_USER_FUNC'),
