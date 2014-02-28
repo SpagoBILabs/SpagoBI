@@ -9,9 +9,14 @@ package it.eng.spagobi.engines.whatif;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Properties;
 
 import org.json.JSONObject;
 import org.olap4j.OlapDataSource;
+
+import com.eyeq.pivot4j.PivotModel;
+import com.eyeq.pivot4j.datasource.SimpleOlapDataSource;
+import com.eyeq.pivot4j.impl.PivotModelImpl;
 
 import it.eng.spagobi.services.proxy.EventServiceProxy;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
@@ -30,6 +35,7 @@ public class WhatIfEngineInstance extends AbstractEngineInstance {
 	private JSONObject guiSettings;
 	private List<String> includes;
 	private OlapDataSource olapDataSource;
+	private PivotModel pivotModel;
 
 	public WhatIfEngineInstance(Object template, Map env) {
 		super( env );	
@@ -41,7 +47,31 @@ public class WhatIfEngineInstance extends AbstractEngineInstance {
 		
 		includes = WhatIfEngine.getConfig().getIncludes();
 		
-		// TODO initialize olapDataSource
+		try {
+			Class.forName("mondrian.olap4j.MondrianOlap4jDriver");
+		} catch (ClassNotFoundException e) {
+			throw new RuntimeException("Cannot load Mondrian Olap4j Driver", e);
+		}
+
+		
+		IDataSource ds = (IDataSource)env.get(EngineConstants.ENV_DATASOURCE);
+		
+		String initialMdx = "SELECT {[Measures].[Unit Sales], [Measures].[Store Cost]} ON COLUMNS, {[Product].[Food]} ON ROWS FROM [Sales]";
+		Properties connectionProps = new Properties();
+		connectionProps.put("JdbcUser",ds.getUser());
+		connectionProps.put("JdbcPassword",ds.getPwd());
+		connectionProps.put("Catalog","file:D:/Sviluppo/mondrian/FoodMartMySQL.xml");
+		connectionProps.put("JdbcDrivers",ds.getDriver());
+		connectionProps.put("Provider","Mondrian");
+
+		olapDataSource = new SimpleOlapDataSource();
+		((SimpleOlapDataSource)olapDataSource).setConnectionString( "jdbc:mondrian:Jdbc=jdbc:mysql://localhost:3306/foodmart_key");
+		((SimpleOlapDataSource)olapDataSource).setConnectionProperties(connectionProps);
+		
+		pivotModel = new PivotModelImpl(olapDataSource);
+		pivotModel.setMdx(initialMdx);
+		pivotModel.initialize();
+
 	}
 	
 	public OlapDataSource getOlapDataSource () {
@@ -56,6 +86,10 @@ public class WhatIfEngineInstance extends AbstractEngineInstance {
 		return includes;
 	}
 	
+	public PivotModel getPivotModel() {
+		return pivotModel;
+	}
+
 	public IDataSource getDataSource() {
 		return (IDataSource)this.getEnv().get(EngineConstants.ENV_DATASOURCE);
 	}

@@ -9,6 +9,7 @@
 <%-- 
 author:...
 --%>
+<%@page import="it.eng.spagobi.utilities.engines.rest.ExecutionSession"%>
 <%@ page language="java" 
 	     contentType="text/html; charset=ISO-8859-1" 
 	     pageEncoding="ISO-8859-1"%>	
@@ -33,7 +34,7 @@ author:...
 
 <%-- ---------------------------------------------------------------------- --%>
 <%-- JAVA CODE 																--%>
-<%-- ---------------------------------------------------------------------- 
+<%-- ---------------------------------------------------------------------- --%>
 <%
 	WhatIfEngineInstance whatIfEngineInstance;
 	UserProfile profile;
@@ -43,9 +44,12 @@ author:...
 	String spagobiContext;
 	String spagobiSpagoController;
 	
-	whatIfEngineInstance = (WhatIfEngineInstance)ResponseContainerAccess.getResponseContainer(request).getServiceResponse().getAttribute("ENGINE_INSTANCE");
-	profile = (UserProfile)whatIfEngineInstance.getEnv().get(EngineConstants.ENV_USER_PROFILE);
-	locale = (Locale)whatIfEngineInstance.getEnv().get(EngineConstants.ENV_LOCALE);
+	ExecutionSession es = new ExecutionSession(request, request.getSession());
+	
+	
+	whatIfEngineInstance = (WhatIfEngineInstance)es.getAttributeFromSession(EngineConstants.ENGINE_INSTANCE );
+//	profile = (UserProfile)whatIfEngineInstance.getEnv().get(EngineConstants.ENV_USER_PROFILE);
+//	locale = (Locale)whatIfEngineInstance.getEnv().get(EngineConstants.ENV_LOCALE);
 	
 	isFromCross = (String)whatIfEngineInstance.getEnv().get("isFromCross");
 	if (isFromCross == null) {
@@ -54,11 +58,11 @@ author:...
 	
 	WhatIfEngineConfig whatIfEngineConfig = WhatIfEngineConfig.getInstance();
     
-    spagobiServerHost = request.getParameter(SpagoBIConstants.SBI_HOST);
-    spagobiContext = request.getParameter(SpagoBIConstants.SBI_CONTEXT);
-    spagobiSpagoController = request.getParameter(SpagoBIConstants.SBI_SPAGO_CONTROLLER);
+   // spagobiServerHost = request.getParameter(SpagoBIConstants.SBI_HOST);
+   // spagobiContext = request.getParameter(SpagoBIConstants.SBI_CONTEXT);
+   // spagobiSpagoController = request.getParameter(SpagoBIConstants.SBI_SPAGO_CONTROLLER);
 %>
---%>
+
 
 <%-- ---------------------------------------------------------------------- --%>
 <%-- HTML	 																--%>
