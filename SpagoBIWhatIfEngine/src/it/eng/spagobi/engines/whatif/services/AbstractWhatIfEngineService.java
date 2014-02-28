@@ -47,6 +47,32 @@ public class AbstractWhatIfEngineService {
 
 	}
 	
+	 /**
+	  * Check if the number is null
+	  * @param value the value to check
+	  * @return true if the value is null
+	  */
+	 public boolean isNull(Number value){
+		 return value==null ;
+	 }
+
+	 /**
+	  * Check if the string is null
+	  * @param value the value to check
+	  * @return true if the value is null
+	  */
+	 public boolean isNull(String value){
+		 return value==null || value.equals("null") || value.equals("undefined");
+	 }
+	 
+	 /**
+	  * Check if the string is null or ""
+	  * @param value the value to check
+	  * @return true if the value is null or ""
+	  */
+	 public boolean isNullOrEmpty(String value){
+		 return isNull(value) || value.equals("");
+	 }
 	
 	
 	
