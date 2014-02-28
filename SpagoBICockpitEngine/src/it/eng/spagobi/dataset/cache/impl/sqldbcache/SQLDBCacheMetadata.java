@@ -257,8 +257,8 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 	}
 
 
-	public void removeCacheItem(String signature) {
-		getCacheRegistry().remove(signature);		
+	public void removeCacheItem(String tableName) {
+		getCacheRegistry().remove(tableName);		
 	}
 
 
@@ -266,9 +266,8 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 		Iterator it = getCacheRegistry().entrySet().iterator();
 	    while (it.hasNext()) {
 	        Map.Entry<String,CacheItem> entry = (Map.Entry<String,CacheItem>)it.next();
-	        String signature = entry.getKey();
-	        this.removeCacheItem(signature);
-	        //it.remove(); // avoids a ConcurrentModificationException
+	        String key = entry.getKey();
+	        this.removeCacheItem(key);
 	    }		
 	}
 

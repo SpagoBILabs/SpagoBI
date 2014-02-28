@@ -211,7 +211,7 @@ public class SQLDBCache implements ICache {
 			PersistedTableManager persistedTableManager = new PersistedTableManager();
 			String tableName = getCacheMetadata().getCacheItemByResultsetSignature(signature).getTable();
 			persistedTableManager.dropTableIfExists(getDataSource(), tableName);
-			getCacheMetadata().removeCacheItem(signature);
+			getCacheMetadata().removeCacheItem(tableName);
 			logger.debug("Removed table "+tableName+" from [SQLDBCache] corresponding to the result Set: "+signature);
 			return true;
 		}
