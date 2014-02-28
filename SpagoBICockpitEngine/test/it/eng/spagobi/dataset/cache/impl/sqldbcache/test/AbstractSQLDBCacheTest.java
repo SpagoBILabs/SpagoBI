@@ -249,6 +249,8 @@ public abstract class AbstractSQLDBCacheTest extends TestCase {
 
 		} catch (Exception e){
 			logger.debug("The table ["+tableName+"] not found on cache database");
+			System.out.println("Delete successfull: The table ["+tableName+"] not found on cache database");
+
 		}
 		
 		assertNull("Delete fail: Dataset is still present on cache ",dataStore);
