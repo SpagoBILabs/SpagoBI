@@ -23,10 +23,14 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
+import org.apache.log4j.Logger;
+
 import com.eyeq.pivot4j.PivotModel;
 
 @Path("/model")
 public class ModelTransformer extends AbstractRestService {
+	
+	public static transient Logger logger = Logger.getLogger(ModelTransformer.class);
 	
 	/**
 	 * Executes the mdx query. If the mdx is null it executes the query of the model
@@ -36,14 +40,22 @@ public class ModelTransformer extends AbstractRestService {
 	@GET
 	@Path("/mdx/{mdx}")
 	public String executeSimpleQuery(@PathParam("mdx") String mdx){
+		logger.debug("IN");
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
 		PivotModel model = ei.getPivotModel();
 		
 		if(!isNullOrEmpty(mdx)){
+			logger.debug("Updating the query in the model");
 			model.setMdx(mdx);
+		}else{
+			logger.debug("No query found");
 		}
 		
-		return renderModel(model);
+		
+		String table = renderModel(model);
+		logger.debug("OUT");
+		return table;
+		
 	}
 }
 
