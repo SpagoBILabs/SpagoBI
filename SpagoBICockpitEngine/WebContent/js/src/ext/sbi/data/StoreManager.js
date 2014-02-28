@@ -277,6 +277,12 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 		
 		Sbi.trace("[StoreManager.removeStore]: IN");
 		
+		if(Sbi.isNotValorized(store)) {
+			Sbi.trace("[StoreManager.removeStore]: Parameter [store] is not valorized");
+			Sbi.trace("[StoreManager.removeStore]: OUT");
+			return false;
+		}
+		
 		var storeId = null;
 		
 		Sbi.trace("[StoreManager.removeStore]: typeof store: " + (typeof store));

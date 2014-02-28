@@ -339,27 +339,6 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.WidgetRuntime, {
     	Sbi.trace("[WidgetContainer.showWidgetConfiguration]: OUT");
     }
     
-    
-//    , createStore: function(storeId) {
-//    	var proxy = new Ext.data.HttpProxy({
-//			url: Sbi.config.serviceRegistry.getServiceUrl({
-//				serviceName : 'api/1.0/dataset/' + storeId + '/data'
-//				, baseParams: new Object()
-//			})
-////	    	, timeout : this.timeout
-////	    	, failure: this.onStoreLoadException
-//	    });
-//		
-//		var store = new Ext.data.Store({
-//			storeId: storeId,
-//	        proxy: this.proxy,
-//	        reader: new Ext.data.JsonReader(),
-//	        remoteSort: true
-//	    });
-//		
-//		return store;
-//    }
-    
     , showWidgetEditorWizard: function(component) {    	
     	
     	Sbi.trace("[WidgetContainer.showWidgetEditorWizard]: IN");
@@ -369,52 +348,9 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.WidgetRuntime, {
     		Sbi.trace("[WidgetContainer.showWidgetEditorWizard]: instatiating the editor");
 
     		this.widgetEditorWizard = new Sbi.cockpit.editor.WidgetEditorWizard();
-    		this.widgetEditorWizard.on("submit", function(wizard) {
-    			Sbi.trace("[WidgetContainer.onSubmit]: IN");
-    			wizard.hide();
-    			var component = wizard.getWizardTargetComponent();
-    			var wizardState = wizard.getWizardState();
-    			
-    			// TODO manage datasetSelection
-    			wizardState.storeId = wizardState.selectedDatasetLabel;
-    			
-    			
-    			if(Sbi.storeManager.containsStore(wizardState.storeId) === false) {
-        			Sbi.storeManager.addStore({storeId: wizardState.storeId});
-    			}
-    			Sbi.storeManager.removeStore(wizardState.unselectedDatasetLabel);
-    			alert(Sbi.storeManager.getStoreIds().join(";"));
-    			
-    			delete wizardState.selectedDatasetLabel;
-    			delete wizardState.unselectedDatasetLabel;
-    			    			
-    			component.setWidgetConfiguration( wizardState );
-    			var widget = component.getWidget();
-    			this.getWidgetManager().register(widget);
-    			
-    			Sbi.trace("[WidgetContainer.onSubmit]: OUT");
-    		}, this);
-    		this.widgetEditorWizard.on("cancel", function(wizard) {
-    			Sbi.trace("[WidgetContainer.onCancel]: IN");
-    			wizard.hide();
-    			Sbi.trace("[WidgetContainer.onCancel]: OUT");
-    		}, this);
-    		this.widgetEditorWizard.on("apply", function(wizard) {
-    			Sbi.trace("[WidgetContainer.onApply]: IN");
-    			var component = wizard.getWizardTargetComponent();
-    			var wizardState = wizard.getWizardState();
-    			
-    			// TODO manage datasetSelection
-    			wizardState.storeId = wizardState.selectedStoreId;
-    			delete wizardState.selectedStoreId;
-    			delete wizardState.unselectedStoreId;
-    			
-    			component.setWidgetConfiguration( wizardState );
-    			var widget = component.getWidget();
-    			this.getWidgetManager().register(widget);
-    			
-    			Sbi.trace("[WidgetContainer.onApply]: OUT");
-    		}, this);
+    		this.widgetEditorWizard.on("submit", this.onWidgetEditorWizardSubmit, this);
+    		this.widgetEditorWizard.on("cancel", this.onWidgetEditorWizardCancel, this);
+    		this.widgetEditorWizard.on("apply", this.onWidgetEditorWizardApply, this);
     		
 	    	Sbi.trace("[WidgetContainer.showWidgetEditorWizard]: editor succesfully instantiated");
     	}
@@ -422,35 +358,51 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.WidgetRuntime, {
     	// TODO implement setTitle method
     	//this.widgetEditorWizard.setTitle("Widget [" + widget.id + "] editor");
     	this.widgetEditorWizard.getDatasetBrowserPage().setUsedDatasets(Sbi.storeManager.getStoreIds());
-    	this.widgetEditorWizard.setWizardTargetComponent(component);
-    	
+    	this.widgetEditorWizard.setWizardTargetComponent(component); // TODO verify if it is possible only to set widgetState
     	
     	this.widgetEditorWizard.show();
     	
     	Sbi.trace("[WidgetContainer.showWidgetEditorWizard]: OUT");
+    }  
+    
+    , hideWidgetEditorWizard: function() {
+    	this.widgetEditorWizard.hide();
+    }
+
+    , applyWidgetEditorWizardState: function() {
+    	Sbi.trace("[WidgetContainer.applyWidgetEditorWizardState]: IN");
+    	var component = this.widgetEditorWizard.getWizardTargetComponent(); 
+		var wizardState = this.widgetEditorWizard.getWizardState();
+		
+		wizardState.storeId = wizardState.selectedDatasetLabel;
+		
+		if(Sbi.storeManager.containsStore(wizardState.storeId) === false) {
+			Sbi.storeManager.addStore({storeId: wizardState.storeId});
+			Sbi.trace("[WidgetContainer.applyWidgetEditorWizardState]: selected store [" + wizardState.storeId + "] succesfully added to store manager");
+		} else {
+			Sbi.trace("[WidgetContainer.applyWidgetEditorWizardState]: selected store [" + wizardState.storeId + "] already registered into store manager");
+		}
+		
+		if(Sbi.isValorized(wizardState.unselectedDatasetLabel)) {
+			Sbi.trace("[WidgetContainer.applyWidgetEditorWizardState]: removing from store manger unselected store [" + wizardState.unselectedDatasetLabel + "] ...");
+			Sbi.storeManager.removeStore(wizardState.unselectedDatasetLabel);
+			Sbi.trace("[WidgetContainer.applyWidgetEditorWizardState]: unselected store [" + wizardState.unselectedDatasetLabel + "] succesfully removed from store manager");
+		}
+		
+		Sbi.trace("[WidgetContainer.applyWidgetEditorWizardState]: the list of stores registered in store manager is equal to [" + Sbi.storeManager.getStoreIds().join(";") + "]");
+		
+		delete wizardState.selectedDatasetLabel;
+		delete wizardState.unselectedDatasetLabel;
+		    			
+		component.setWidgetConfiguration( wizardState );
+		var widget = component.getWidget();
+		this.getWidgetManager().register(widget);
+		
+		Sbi.trace("[WidgetContainer.applyWidgetEditorWizardState]: the list of widget registered in widget manager is equal to [" + this.getWidgetManager().getWidgetCount() + "]");
+		
+		Sbi.trace("[WidgetContainer.applyWidgetEditorWizardState]: OUT");
     }
     
-    // -----------------------------------------------------------------------------------------------------------------
-    // init methods
-	// -----------------------------------------------------------------------------------------------------------------
-    , init: function() {
-    	this.components = new Ext.util.MixedCollection();
-    }
-    
-    , onRender : function(ct, position){
-    	Sbi.trace("[WidgetContainer.onRender]: IN");
-    	Sbi.cockpit.core.WidgetContainer.superclass.onRender.call(this, ct, position);
-    	if( Sbi.isValorized(this.widgets)) {
-    		Sbi.trace("[WidgetContainer.onRender]: There are [" + this.widgets.length + "] widget(s) to render");
-    		this.setConfiguration({widgets: this.widgets});
-    		delete this.widgets;
-    	} else {
-    		Sbi.trace("[WidgetContainer.onRender]: There are no widget to render");
-    	}
-    	Sbi.trace("[WidgetContainer.onRender]: OUT");
-    }
-    
-   
     // -----------------------------------------------------------------------------------------------------------------
     // private methods
 	// -----------------------------------------------------------------------------------------------------------------
@@ -691,6 +643,23 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.WidgetRuntime, {
 		Sbi.trace("[WidgetContainer.onComponentAction]: OUT");
 	}
     
+    // -----------------------------------------------------------------------------------------------------------------
+    // utility methods
+	// -----------------------------------------------------------------------------------------------------------------
+    
+    , onRender : function(ct, position){
+    	Sbi.trace("[WidgetContainer.onRender]: IN");
+    	Sbi.cockpit.core.WidgetContainer.superclass.onRender.call(this, ct, position);
+    	if( Sbi.isValorized(this.widgets)) {
+    		Sbi.trace("[WidgetContainer.onRender]: There are [" + this.widgets.length + "] widget(s) to render");
+    		this.setConfiguration({widgets: this.widgets});
+    		delete this.widgets;
+    	} else {
+    		Sbi.trace("[WidgetContainer.onRender]: There are no widget to render");
+    	}
+    	Sbi.trace("[WidgetContainer.onRender]: OUT");
+    }
+    
     , onShowWidgetConfiguration: function(component) {
     	this.showWidgetConfiguration(component);
     } 
@@ -698,4 +667,32 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.WidgetRuntime, {
     , onShowWidgetEditorWizard: function(component) {
     	this.showWidgetEditorWizard(component);
     }
+   
+    , onWidgetEditorWizardSubmit: function(wizard) {
+		Sbi.trace("[WidgetContainer.onWidgetEditorWizardSubmit]: IN");
+		this.hideWidgetEditorWizard();
+		this.applyWidgetEditorWizardState();
+		Sbi.trace("[WidgetContainer.onWidgetEditorWizardSubmit]: OUT");
+	}
+    
+    , onWidgetEditorWizardApply: function(wizard) {
+		Sbi.trace("[WidgetContainer.onWidgetEditorWizardApply]: IN");
+		this.applyWidgetEditorWizardState();		
+		Sbi.trace("[WidgetContainer.onWidgetEditorWizardApply]: OUT");
+	}
+    
+    , onWidgetEditorWizardCancel: function(wizard) {
+		Sbi.trace("[WidgetContainer.onWidgetEditorWizardCancel]: IN");
+		this.hideWidgetEditorWizard();
+		Sbi.trace("[WidgetContainer.onWidgetEditorWizardCancel]: OUT");
+	}
+       
+    // -----------------------------------------------------------------------------------------------------------------
+    // init methods
+	// -----------------------------------------------------------------------------------------------------------------
+    , init: function() {
+    	this.components = new Ext.util.MixedCollection();
+    }
+    
+    
 }); 
