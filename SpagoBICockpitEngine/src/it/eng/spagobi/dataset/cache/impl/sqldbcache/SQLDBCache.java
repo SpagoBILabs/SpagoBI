@@ -139,7 +139,7 @@ public class SQLDBCache implements ICache {
 			List<ProjectionCriteria> projections) {
 		logger.debug("IN");
 		
-		if (getCacheMetadata().containsCacheItem(resultsetSignature)){
+		if (getCacheMetadata().containsCacheItemByResultsetSignature(resultsetSignature)){
 			String tableName = getCacheMetadata().getCacheItemByResultsetSignature(resultsetSignature).getTable();
 			logger.debug("Found resultSet with signature ["+resultsetSignature+"] inside the Cache, table used ["+tableName+"]");
 			
