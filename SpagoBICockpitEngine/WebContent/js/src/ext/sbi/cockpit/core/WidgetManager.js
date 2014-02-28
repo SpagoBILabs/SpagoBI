@@ -126,6 +126,10 @@ Ext.extend(Sbi.cockpit.core.WidgetManager, Ext.util.Observable, {
 		return this.widgets.getRange();
 	}	
 	
+	, getWidgetCount: function() {
+		return this.widgets.getCount();
+	}
+	
 	 /**
 	  * @method
 	  * 

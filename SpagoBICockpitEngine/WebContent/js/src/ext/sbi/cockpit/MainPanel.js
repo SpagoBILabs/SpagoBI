@@ -219,14 +219,12 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 	
 	/**
 	 * @method
-	 * Not implemented 
-	 * TODO implement me asap
 	 */
 	, setAnalysisState: function(analysisState) {
-		Sbi.trace("[MainPanel.setTemplate]: IN");
+		Sbi.trace("[MainPanel.setAnalysisState]: IN");
 		Sbi.storeManager.setConfiguration(analysisState.storesConf);
 		this.widgetContainer.setConfiguration(analysisState.widgetsConf);
-		Sbi.trace("[MainPanel.setTemplate]: OUT");
+		Sbi.trace("[MainPanel.setAnalysisState]: OUT");
 	}
 	
 	, isDocumentSaved: function() {
@@ -257,7 +255,7 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 			window.location = url;
 		}
 			   
-		 Sbi.trace("[MainPanel.closeDocument]: IN");   
+		Sbi.trace("[MainPanel.closeDocument]: IN");   
 	}
 	
 	, showSaveDocumentWin: function() {
@@ -280,7 +278,7 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 		
 		var documentWindowsParams = {				
 			'OBJECT_TYPE': 'DOCUMENT_COMPOSITE',
-			'OBJECT_TEMPLATE': templete,
+			'OBJECT_TEMPLATE': template,
 			'typeid': 'COCKPIT'
 		};
 		
@@ -307,7 +305,7 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 		
 		this.saveWindow = new Sbi.widgets.SaveDocumentWindow(documentWindowsParams);
 		
-		this.saveWindow.on('save', this.onSaveDocument, this);
+		this.saveWindow.on('savedocument', this.onSaveDocument, this);
 		//this.saveWindow.on('closeDocument', this.returnToMyAnalysis, this);
 		
 		this.saveWindow.show();		
@@ -328,15 +326,25 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 		this.showSaveDocumentWin();
 	}
 	
-	, onShowSaveDocumentAdWindow: function() {
+	, onShowSaveDocumentAsWindow: function() {
 		this.showSaveDocumentAsWin();
 	}
 	
-	, onSaveDocument: function(win, closeDocument, params) {		
+	, onSaveDocument: function(win, closeDocument, params) {	
+		Sbi.trace("[MainPanel.onSaveDocument]: IN");
 		this.documentSaved = true;
+		
+		// show save button (the button that allow to perform save as)
+		var itemEl = Ext.get('save');
+		if(itemEl && itemEl !== null) {
+			itemEl.hidden = false;
+		}	
+		
+		Sbi.trace("[MainPanel.onSaveDocument]: Input parameter [closeDocument] is equal to [" + closeDocument + "]");
 		if(closeDocument === true) {
 			this.closeDocument();
 		}
+		Sbi.trace("[MainPanel.onSaveDocument]: OUT");
 	}
 	
 	, onDebug: function() {
@@ -389,9 +397,9 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 		 			   	   , iconCls: 'icon-saveas' 
 		 				   , tooltip: 'Save As'
 		 				   , scope: this
-		 				   , handler:  this.onShowSaveDocumentAdWindow
+		 				   , handler:  this.onShowSaveDocumentAsWindow
 		 		 }), new Ext.Toolbar.Button({
-	 			 		id: 'saveAs'
+	 			 		id: 'debug'
 			 	   	   , text: 'Debug'
 			 	       , scope: this
 			 		   , handler:  this.onDebug
@@ -403,7 +411,12 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 	, initWidgetContainer: function() { 
 		Sbi.trace("[MainPanel.initWidgetContainer]: IN");
 
-		this.widgetContainer = new Sbi.cockpit.core.WidgetContainer(this.template);
+		var conf = {};
+		if(Sbi.isValorized(this.analysisState)) {
+			conf = this.analysisState.widgetsConf;
+		}
+		this.widgetContainer = new Sbi.cockpit.core.WidgetContainer(conf);
+		delete this.analysisState;
 
 		Sbi.trace("[MainPanel.initWidgetContainer]: widget panel succesfully created");
 		

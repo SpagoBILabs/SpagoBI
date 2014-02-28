@@ -196,13 +196,13 @@ Ext.extend(Sbi.cockpit.core.WidgetContainerComponent, Ext.Window, {
 		var widget;
 		if(this.isEmpty()) {
 			widget = Sbi.cockpit.core.WidgetExtensionPointManager.getWidgetRuntime(widgetConf);
+			this.setWidget(widget);
 		} else {
 			widget = this.getWidget();
 			widget.setConfiguration(widgetConf);
 		}
 		Sbi.trace("[WidgetContainerComponent.setWidgetConfiguration]: widgetConf is equal to [" + Sbi.toSource(widgetConf) + "]");
 	
-		this.setWidget(widget);
 		Sbi.trace("[WidgetContainerComponent.setWidgetConfiguration]: OUT");
 	}
 	

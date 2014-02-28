@@ -99,16 +99,16 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
     // public methods
 	// -----------------------------------------------------------------------------------------------------------------
     
-	, setStoreId: function(storeId) {
+	, setStoreId: function(storeId, refresh) {
 		Sbi.trace("[TableWidget.setStoreId]: IN");
-		Sbi.cockpit.widgets.table.TableWidget.superclass.setStoreId.call(this, storeId);
+		Sbi.cockpit.widgets.table.TableWidget.superclass.setStoreId.call(this, storeId, false);
 		this.services['loadDataStore'] = Sbi.config.serviceRegistry.getServiceUrl({
 			serviceName : 'api/1.0/dataset/' + this.getStoreId() + '/data'
 			, baseParams: new Object()
 		});
 		
 		this.getStore().proxy.setUrl(this.services['loadDataStore'], true);
-		if(this.rendered === true) {
+		if(this.rendered === true && refresh !== false) {
 			this.refresh();
 		}
 		
