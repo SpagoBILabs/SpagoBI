@@ -117,38 +117,35 @@ Sbi.execution.ParametersPanel = function(config, doc) {
 	this.initTootlbar();
 	this.initExecutionButton();
 	
-	var panelWithExecutionButtonConfig = {
-    	items: this.executionButton
-    	, width: 70
-        , border: false
-        , style: c.parametersRegion == 'north' 
-        	? 'padding:' + c.fieldsPadding + 'px 0px 0px ' + c.fieldsPadding + 'px'
-        	: 'margin-left: auto; margin-right: auto; padding: 10px 0px 10px 0px;'
-    };
-	
-	var separatorPanelConfig = {
-		html: '&nbsp;'
-		, layout : 'fit'
-		, border : c.parametersRegion == 'east'  // puts border only in case the parameters panel is displayed on east region
-		, height: 0
-	};
-	
-	var parametersContainerConfig = {
-        layout:'table'
-        , layoutConfig: {
-            columns: c.columnNo
-        }
-        , width: this.formWidth 
-        , border: false
-    };
-	
 	c = Ext.apply({}, c, {
 		labelAlign: c.labelAlign,
 		tbar: this.toolbar,
         border: false,
         //bodyStyle:'padding:10px 0px 10px 10px',
         autoHeight: true,
-        items: [panelWithExecutionButtonConfig, separatorPanelConfig, parametersContainerConfig]
+        items: [{
+        		// panel with execution button
+	        	items: this.executionButton
+	        	, width: 70
+	            , border: false
+	            , style: c.parametersRegion == 'north' 
+	            	? 'padding:' + c.fieldsPadding + 'px 0px 0px ' + c.fieldsPadding + 'px;'
+	            	: 'margin-left: auto; margin-right: auto; padding: 10px 0px 10px 0px;'
+	        }, {
+	        	// separator panel
+	        	html: '&nbsp;'
+    			, layout : 'fit'
+    			, border : c.parametersRegion == 'east'  // puts border only in case the parameters panel is displayed on east region
+    			, height: 0
+    		}, {
+    			// panel with parameters
+    	        layout:'table'
+	            , layoutConfig: {
+	                columns: c.columnNo
+	            }
+	            , width: this.formWidth 
+	            , border: false
+    	}]
 	});
 	
 	// constructor
