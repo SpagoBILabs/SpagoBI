@@ -47,14 +47,10 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionMembers', {
     },
 	
 	initComponent: function() {
-		
-		var items = new Array();
-		
+
 		if(this.store && this.store.getCount()>0){
-			var membersCount = this.store.getCount( );
-			for(var i=0; i<membersCount; i++) {
-				items.push(Ext.create(this.memberClassName,{member: this.store.getAt(i), pivotContainer: this.pivotContainer, containerPanel: this}));
-			}
+
+			var items = this.getRefreshedItems();
 			Ext.apply(this, {items: items});
 //			this.removeCls("empty-member");
 		}
@@ -81,23 +77,76 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionMembers', {
 	removeMember: function(member){
 		this.store.remove(member.member);
 		this.remove(member, true);
+		this.refreshItems();
 //		if(this.store.getCount()==0){
 //			this.addCls("empty-member");
 //		}
 	},
 	
+	
+	/**
+     * Moves up the member
+     * @param {Sbi.olap.execution.table.OlapExecutionMember} member the member to move
+	 */
+	moveUpMember: function(member){
+		this.move(member, -1);
+	},
+	
+	
+	/**
+     * Moves down the member
+     * @param {Sbi.olap.execution.table.OlapExecutionMember} member the member to move
+	 */
+	moveDownMember: function(member){
+		this.move(member, 1);
+	},
+
+	/**
+     * Moves the model of pos positions
+     * @param {Sbi.olap.execution.table.OlapExecutionMember} member the member to remove
+	 * @param pos the positions 
+	 */
+	move: function(member, pos){
+		var index = this.store.indexOf(member.member);
+		
+		if((pos+index)>=0 && (pos+index)<this.store.getCount( )){
+			this.store.remove(member.member);
+			this.store.insert((index+pos),member.member);
+			this.refreshItems();
+		}
+	},
+	
     /**
-     * refreshes the list of items. It removes all the items from the container and rebuild them from the store
+     * Refresh content
      */
 	refreshItems: function(){
 		this.removeAll();
 		
 		if(this.store){
-			var membersCount = this.store.getCount( );
-			for(var i=0; i<membersCount; i++) {
-				this.add(Ext.create(this.memberClassName,{member: this.store.getAt(i), pivotContainer: this.pivotContainer, containerPanel: this}));
+			var items = this.getRefreshedItems();
+			for(var i=0; i<items.length; i++) {
+				this.add(items[i]);
 			}
 		}
+	},
+	
+    /**
+     * Get the refreshed items: builds all the members starting from the store
+     */
+	getRefreshedItems: function(){
+		var items = new Array();
+		
+		if(this.store && this.store.getCount()>0){
+			var membersCount = this.store.getCount( );
+			for(var i=0; i<membersCount; i++) {
+				var member = Ext.create(this.memberClassName,{member: this.store.getAt(i), pivotContainer: this.pivotContainer, containerPanel: this, firstMember: (i==0), lastMember: (i==membersCount-1) });
+				member.on("moveUp",this.moveUpMember,this);
+				member.on("moveDown",this.moveDownMember,this);
+				items.push(member);
+			}
+		}
+		
+		return items;
 	}
 });
 

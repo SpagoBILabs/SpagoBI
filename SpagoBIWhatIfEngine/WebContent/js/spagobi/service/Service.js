@@ -19,8 +19,8 @@ Ext.define('Sbi.service.Service', {
 			if(params && url){
 				for(var i=0; i<params.length; i++){
 					var p = params[i];
-					if(p){
-						url = url+"/"+params[i];
+					if(p!=null && p!=undefined){
+						url = url+"/"+p;
 					}else{
 						url = url+"/null";
 					}

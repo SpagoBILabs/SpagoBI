@@ -143,16 +143,23 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionPivot', {
 		var s = Ext.create('Ext.data.Store', {
 		    model: 'Sbi.olap.MemberModel',
 		    data: [
-		        { name: 'eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'},
-		        { name: 'we'},
-		        { name: 'Spencer'},
-		        { name: 'Maintz' }
+		        { name: 'Store'},
+		        { name: 'Products'}
+		    ]
+		});
+		
+		var s1 = Ext.create('Ext.data.Store', {
+		    model: 'Sbi.olap.MemberModel',
+		    data: [
+
+		        { name: 'Unit Sales'},
+		        { name: 'Store Cost' }
 		    ]
 		});
 
 		//defining the components
 		this.olapExecutionFilters   = Ext.create('Sbi.olap.execution.table.OlapExecutionFilters',  {height: this.filtersHeight, margin: filtersMargin, pivotContainer: this });//store: model.get('filters')  
-		this.olapExecutionColumns   = Ext.create('Sbi.olap.execution.table.OlapExecutionColumns',  {flex: 1, margin: columnsMargin,  pivotContainer: this});
+		this.olapExecutionColumns   = Ext.create('Sbi.olap.execution.table.OlapExecutionColumns',  {flex: 1, margin: columnsMargin,  pivotContainer: this, store: s1});
 		this.olapExecutionRows   = Ext.create('Sbi.olap.execution.table.OlapExecutionRows',  {width: this.rowsWidth, margin: rowsMargin, store: s, pivotContainer: this});
 		this.olapExecutionTable   = Ext.create('Sbi.olap.execution.table.OlapExecutionTable',  {flex: 1});
 		
