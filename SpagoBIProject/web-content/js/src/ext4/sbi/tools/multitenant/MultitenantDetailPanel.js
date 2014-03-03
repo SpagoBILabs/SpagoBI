@@ -11,19 +11,18 @@
 
 
 Ext.define('Sbi.tools.multitenant.MultitenantDetailPanel', {
-	extend: 'Ext.tab.Panel'
-
-	,config: {
-		defaults: {
-			width: 400
-			,layout:'fit'
-		},   
+	extend: 'Ext.tab.Panel',
+	layout:'fit',
 	
+	config: {
+
 		fieldDefaults: {
 			labelAlign: 'right',
 			msgTarget: 'side'
 		},
-		border: false
+		border: false,
+		height: 800,
+		autoScroll: true
 	}
 
 	, constructor: function(config) {
@@ -189,12 +188,9 @@ Ext.define('Sbi.tools.multitenant.MultitenantDetailPanel', {
 		
 		this.enginesList = Ext.create('Ext.grid.Panel', {
 	        store: this.enginesStore,
-	       // autoScroll: true,
 	        scroll: true,
 	        layout: 'fit',
-	        height: 750,
 	        autoScroll: true,
-	        style: 'overflow: hidden;',
 	        columns: [{
 	        	hidden: true,
 	            dataIndex: 'ID'
@@ -214,6 +210,7 @@ Ext.define('Sbi.tools.multitenant.MultitenantDetailPanel', {
 	        	  width: 40  
 	          }]
 	    });	
+
 		
 		// Data Source
 		Ext.define("DSModel", {
