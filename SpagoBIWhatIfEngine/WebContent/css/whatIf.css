@@ -65,12 +65,7 @@
 	background-repeat: no-repeat;
 }
 
-/*  DA DEFINIRE PER TIPO DI STILE  */
-.empty-member{
-	border-color: gray !important;
- 	border-style: dashed !important;
- 	border-width: 1px;
-}
+
 /*expandable members*/
 .expanded{
     	color: red;
@@ -84,5 +79,12 @@
     	background-image: url(../img/elbow-plus-nl.gif);
     	background-repeat: no-repeat;
     	background-position: left;
+}
+
+.swapaxes{
+    	background-image: url(../img/double-arrow.png);
+    	background-color: transparent !important;
+    	background-repeat: no-repeat;
+    	background-position: center center;
 }
 
