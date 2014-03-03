@@ -119,8 +119,6 @@ public class EnginesInitializer extends SpagoBIInitializer {
 			commonInfo.setTimeIn(new Date());
 			
 			association.setCommonInfo(commonInfo);
-			association.setCreationDate(new Date());
-			association.setLastChangeDate(new Date());
 			
 			SbiOrganizationEngineId id = new SbiOrganizationEngineId();
 			id.setEngineId(engineId);

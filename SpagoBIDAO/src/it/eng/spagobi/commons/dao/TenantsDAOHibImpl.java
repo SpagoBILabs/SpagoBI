@@ -221,8 +221,6 @@ public class TenantsDAOHibImpl extends AbstractHibernateDAO implements ITenantsD
 			for (SbiOrganizationDatasource sbiOrganizationDatasource: ds) {
 				SbiDataSource sbiDs = sbiOrganizationDatasource.getSbiDataSource();
 				sbiOrganizationDatasource.setId(new SbiOrganizationDatasourceId(sbiDs.getDsId(), idTenant));
-				sbiOrganizationDatasource.setCreationDate(new Date());
-				sbiOrganizationDatasource.setLastChangeDate(new Date());
 				sbiOrganizationDatasource.setCommonInfo(sbiCommoInfo);
 				updateSbiCommonInfo4Insert(sbiOrganizationDatasource);
 				aSession.save(sbiOrganizationDatasource);
@@ -233,8 +231,6 @@ public class TenantsDAOHibImpl extends AbstractHibernateDAO implements ITenantsD
 			for (SbiOrganizationEngine sbiOrganizationEngine: engines) {
 				SbiEngines sbiEngine = sbiOrganizationEngine.getSbiEngines();
 				sbiOrganizationEngine.setId(new SbiOrganizationEngineId(sbiEngine.getEngineId(), idTenant));
-				sbiOrganizationEngine.setCreationDate(new Date());
-				sbiOrganizationEngine.setLastChangeDate(new Date());
 				sbiOrganizationEngine.setCommonInfo(sbiCommoInfo);
 				updateSbiCommonInfo4Insert(sbiOrganizationEngine);
 				aSession.save(sbiOrganizationEngine);
@@ -425,8 +421,6 @@ public class TenantsDAOHibImpl extends AbstractHibernateDAO implements ITenantsD
 			for (SbiOrganizationDatasource sbiOrganizationDatasource: ds) {
 				SbiDataSource sbiDs = sbiOrganizationDatasource.getSbiDataSource();
 				sbiOrganizationDatasource.setId(new SbiOrganizationDatasourceId(sbiDs.getDsId(), aTenant.getId()));
-				sbiOrganizationDatasource.setCreationDate(new Date());
-				sbiOrganizationDatasource.setLastChangeDate(new Date());
 				sbiOrganizationDatasource.setCommonInfo(sbiCommoInfo);
 				updateSbiCommonInfo4Insert(sbiOrganizationDatasource);
 				aSession.save(sbiOrganizationDatasource);
@@ -443,8 +437,6 @@ public class TenantsDAOHibImpl extends AbstractHibernateDAO implements ITenantsD
 			for (SbiOrganizationEngine sbiOrganizationEngine: engines) {
 				SbiEngines sbiEngine = sbiOrganizationEngine.getSbiEngines();
 				sbiOrganizationEngine.setId(new SbiOrganizationEngineId(sbiEngine.getEngineId(), aTenant.getId()));
-				sbiOrganizationEngine.setCreationDate(new Date());
-				sbiOrganizationEngine.setLastChangeDate(new Date());
 				sbiOrganizationEngine.setCommonInfo(sbiCommoInfo);
 				updateSbiCommonInfo4Insert(sbiOrganizationEngine);
 				aSession.save(sbiOrganizationEngine);

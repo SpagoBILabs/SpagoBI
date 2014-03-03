@@ -18,12 +18,6 @@
         <many-to-one name="sbiEngines" class="it.eng.spagobi.engines.config.metadata.SbiEngines" update="false" insert="false" fetch="select">
             <column name="ENGINE_ID" not-null="true" />
         </many-to-one>
-        <property name="creationDate" type="timestamp">
-            <column name="CREATION_DATE" length="0" not-null="true" />
-        </property>
-        <property name="lastChangeDate" type="timestamp">
-            <column name="LAST_CHANGE_DATE" length="0" not-null="true" />
-        </property>
 	   <component name="commonInfo" insert="true" update="true"  class="it.eng.spagobi.commons.metadata.SbiCommonInfo">
 	        <property name="userIn" type="string">
 	            <column name="USER_IN" length="100" not-null="true" />

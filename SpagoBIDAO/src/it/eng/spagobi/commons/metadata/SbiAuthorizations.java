@@ -13,8 +13,6 @@ public class SbiAuthorizations extends SbiHibernateModel{
 
 	private int id;
 	private String name;
-	private Date creationDate;
-	private Date lastChangeDate;
 	private String userIn;
 	private String userUp;
 	private String userDe;
@@ -31,24 +29,18 @@ public class SbiAuthorizations extends SbiHibernateModel{
 	public SbiAuthorizations() {
 	}
 
-	public SbiAuthorizations(int id, Date creationDate, Date lastChangeDate,
-			String userIn, Date timeIn) {
+	public SbiAuthorizations(int id, String userIn, Date timeIn) {
 		this.id = id;
-		this.creationDate = creationDate;
-		this.lastChangeDate = lastChangeDate;
 		this.userIn = userIn;
 		this.timeIn = timeIn;
 	}
 
-	public SbiAuthorizations(int id, String name, Date creationDate,
-			Date lastChangeDate, String userIn, String userUp, String userDe,
+	public SbiAuthorizations(int id, String name, String userIn, String userUp, String userDe,
 			Date timeIn, Date timeUp, Date timeDe, String sbiVersionIn,
 			String sbiVersionUp, String sbiVersionDe, String metaVersion,
 			String organization, Set sbiAuthorizationsRoleses) {
 		this.id = id;
 		this.name = name;
-		this.creationDate = creationDate;
-		this.lastChangeDate = lastChangeDate;
 		this.userIn = userIn;
 		this.userUp = userUp;
 		this.userDe = userDe;
@@ -79,21 +71,6 @@ public class SbiAuthorizations extends SbiHibernateModel{
 		this.name = name;
 	}
 
-	public Date getCreationDate() {
-		return this.creationDate;
-	}
-
-	public void setCreationDate(Date creationDate) {
-		this.creationDate = creationDate;
-	}
-
-	public Date getLastChangeDate() {
-		return this.lastChangeDate;
-	}
-
-	public void setLastChangeDate(Date lastChangeDate) {
-		this.lastChangeDate = lastChangeDate;
-	}
 
 	public String getUserIn() {
 		return this.userIn;

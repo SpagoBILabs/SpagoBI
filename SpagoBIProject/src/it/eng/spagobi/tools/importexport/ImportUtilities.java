@@ -5383,8 +5383,6 @@ MetadataLogger metaLog;
 		logger.debug("IN");
 		SbiAuthorizations newAuthorizations = new SbiAuthorizations();
 		newAuthorizations.setName(func.getName());
-		newAuthorizations.setCreationDate(func.getCreationDate());
-		newAuthorizations.setLastChangeDate(func.getLastChangeDate());
 		newAuthorizations.setCommonInfo(func.getCommonInfo());
 		logger.debug("OUT");
 		return newAuthorizations;

@@ -14,8 +14,6 @@ public class SbiOrganizationEngine extends SbiHibernateModel  {
 	private SbiOrganizationEngineId id;
 	private SbiTenant sbiOrganizations;
 	private SbiEngines sbiEngines;
-	private Date creationDate;
-	private Date lastChangeDate;
 	private String userIn;
 	private String userUp;
 	private String userDe;
@@ -32,27 +30,23 @@ public class SbiOrganizationEngine extends SbiHibernateModel  {
 
 	public SbiOrganizationEngine(SbiOrganizationEngineId id,
 			SbiTenant sbiOrganizations, SbiEngines sbiEngines,
-			Date creationDate, Date lastChangeDate, String userIn, Date timeIn) {
+			String userIn, Date timeIn) {
 		this.id = id;
 		this.sbiOrganizations = sbiOrganizations;
 		this.sbiEngines = sbiEngines;
-		this.creationDate = creationDate;
-		this.lastChangeDate = lastChangeDate;
 		this.userIn = userIn;
 		this.timeIn = timeIn;
 	}
 
 	public SbiOrganizationEngine(SbiOrganizationEngineId id,
 			SbiTenant sbiOrganizations, SbiEngines sbiEngines,
-			Date creationDate, Date lastChangeDate, String userIn,
+			String userIn,
 			String userUp, String userDe, Date timeIn, Date timeUp,
 			Date timeDe, String sbiVersionIn, String sbiVersionUp,
 			String sbiVersionDe, String metaVersion) {
 		this.id = id;
 		this.sbiOrganizations = sbiOrganizations;
 		this.sbiEngines = sbiEngines;
-		this.creationDate = creationDate;
-		this.lastChangeDate = lastChangeDate;
 		this.userIn = userIn;
 		this.userUp = userUp;
 		this.userDe = userDe;
@@ -89,21 +83,6 @@ public class SbiOrganizationEngine extends SbiHibernateModel  {
 		this.sbiEngines = sbiEngines;
 	}
 
-	public Date getCreationDate() {
-		return this.creationDate;
-	}
-
-	public void setCreationDate(Date creationDate) {
-		this.creationDate = creationDate;
-	}
-
-	public Date getLastChangeDate() {
-		return this.lastChangeDate;
-	}
-
-	public void setLastChangeDate(Date lastChangeDate) {
-		this.lastChangeDate = lastChangeDate;
-	}
 
 	public String getUserIn() {
 		return this.userIn;

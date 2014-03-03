@@ -1222,8 +1222,7 @@ logger.debug("IN");
 			tx = aSession.beginTransaction();
 	
 			toInsert = new SbiAuthorizations();		
-			toInsert.setCreationDate(new Date());
-			toInsert.setLastChangeDate(new Date());			
+	
 			toInsert.setName(authorizationName);
 			toInsert.getCommonInfo().setOrganization(organization);
 			updateSbiCommonInfo4Insert(toInsert);
