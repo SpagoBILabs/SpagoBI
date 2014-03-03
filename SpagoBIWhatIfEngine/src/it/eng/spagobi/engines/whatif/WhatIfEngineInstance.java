@@ -6,18 +6,22 @@
 
 package it.eng.spagobi.engines.whatif;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 
+import org.apache.log4j.Logger;
 import org.json.JSONObject;
+import org.olap4j.OlapConnection;
 import org.olap4j.OlapDataSource;
 
 import com.eyeq.pivot4j.PivotModel;
 import com.eyeq.pivot4j.datasource.SimpleOlapDataSource;
 import com.eyeq.pivot4j.impl.PivotModelImpl;
 
+import it.eng.spagobi.engines.whatif.services.table.TableHierachiesTransformer;
 import it.eng.spagobi.services.proxy.EventServiceProxy;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
@@ -26,12 +30,17 @@ import it.eng.spagobi.utilities.engines.AuditServiceProxy;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.IEngineAnalysisState;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
  * @author ...
  */
 public class WhatIfEngineInstance extends AbstractEngineInstance {
+	
+	
+	public static transient Logger logger = Logger.getLogger(WhatIfEngineInstance.class);
+	
 	private JSONObject guiSettings;
 	private List<String> includes;
 	private OlapDataSource olapDataSource;
@@ -72,6 +81,17 @@ public class WhatIfEngineInstance extends AbstractEngineInstance {
 		pivotModel.setMdx(initialMdx);
 		pivotModel.initialize();
 
+	}
+	
+	public OlapConnection getOlapConnection () {
+		OlapConnection connection;
+		try {
+			connection = getOlapDataSource().getConnection();
+		} catch (SQLException e) {
+			logger.error("Error getting the connection", e);
+			throw new SpagoBIEngineRuntimeException("Error getting the connection", e);
+		}
+		return connection;
 	}
 	
 	public OlapDataSource getOlapDataSource () {
