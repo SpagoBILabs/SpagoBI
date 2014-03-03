@@ -15,12 +15,6 @@
         <property name="name" type="string">
             <column name="NAME" length="200" />
         </property>
-        <property name="creationDate" type="timestamp">
-            <column name="CREATION_DATE" length="0" not-null="true" />
-        </property>
-        <property name="lastChangeDate" type="timestamp">
-            <column name="LAST_CHANGE_DATE" length="0" not-null="false" />
-        </property>
         <component name="commonInfo" insert="true" update="true" 
   			 class="it.eng.spagobi.commons.metadata.SbiCommonInfo">
 	        <property name="userIn" type="string">

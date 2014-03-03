@@ -240,8 +240,6 @@ public class ExporterMetadata {
 			hibAuthorizations.setId(auth.getId());
 			hibAuthorizations.setName(auth.getName());
 			hibAuthorizations.setOrganization(auth.getOrganization());
-			hibAuthorizations.setCreationDate(auth.getCreationDate());
-			hibAuthorizations.setLastChangeDate(auth.getLastChangeDate());
 			hibAuthorizations.setUserIn(auth.getUserIn());
 			hibAuthorizations.setUserUp(auth.getUserUp());
 			hibAuthorizations.setUserDe(auth.getUserDe());

@@ -438,8 +438,6 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 			idRel.setDatasourceId(idds);
 			idRel.setOrganizationId(sbiOrganizations.getId());
 			sbiOrganizationDatasource.setId(idRel);
-			sbiOrganizationDatasource.setCreationDate(new Date());
-			sbiOrganizationDatasource.setLastChangeDate(new Date());
 			
 			sbiOrganizationDatasource.getCommonInfo().setOrganization(organization);
 			
@@ -602,8 +600,6 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 			idRel.setDatasourceId(datasourceId);
 			idRel.setOrganizationId(sbiOrganizations.getId());
 			sbiOrganizationDatasource.setId(idRel);
-			sbiOrganizationDatasource.setCreationDate(new Date());
-			sbiOrganizationDatasource.setLastChangeDate(new Date());
 			updateSbiCommonInfo4Insert(sbiOrganizationDatasource);
 
 			
