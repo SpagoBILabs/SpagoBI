@@ -19,23 +19,23 @@ import javax.ws.rs.core.Context;
  * @author Alberto Ghedin (alberto.ghedin@eng.it)
  */
 public class AbstractWhatIfEngineService {
-	
+
 	public ExecutionSession es;
-	
+
 	@Context
 	protected HttpServletRequest servletRequest;
-    	
-    /**
-     * Creates the context manager
-     * @return ExecutionSession container of the execution manager
-     */
-    public ExecutionSession getExecutionSession(){
-    	if(es==null){
-    		es = new ExecutionSession(servletRequest, servletRequest.getSession());
-    	}
-    	return es;
-    }
-		
+
+	/**
+	 * Creates the context manager
+	 * @return ExecutionSession container of the execution manager
+	 */
+	public ExecutionSession getExecutionSession(){
+		if(es==null){
+			es = new ExecutionSession(servletRequest, servletRequest.getSession());
+		}
+		return es;
+	}
+
 	/**
 	 * Gets the what if engine instance.
 	 * 
@@ -43,37 +43,41 @@ public class AbstractWhatIfEngineService {
 	 */
 	public WhatIfEngineInstance getWhatIfEngineInstance() {
 		ExecutionSession es = getExecutionSession();
-    	return (WhatIfEngineInstance)es.getAttributeFromSession( EngineConstants.ENGINE_INSTANCE );
+		return (WhatIfEngineInstance)es.getAttributeFromSession( EngineConstants.ENGINE_INSTANCE );
 
 	}
-	
-	 /**
-	  * Check if the number is null
-	  * @param value the value to check
-	  * @return true if the value is null
-	  */
-	 public boolean isNull(Number value){
-		 return value==null ;
-	 }
 
-	 /**
-	  * Check if the string is null
-	  * @param value the value to check
-	  * @return true if the value is null
-	  */
-	 public boolean isNull(String value){
-		 return value==null || value.equals("null") || value.equals("undefined");
-	 }
-	 
-	 /**
-	  * Check if the string is null or ""
-	  * @param value the value to check
-	  * @return true if the value is null or ""
-	  */
-	 public boolean isNullOrEmpty(String value){
-		 return isNull(value) || value.equals("");
-	 }
-	
-	
-	
+	/**
+	 * Check if the number is null
+	 * @param value the value to check
+	 * @return true if the value is null
+	 */
+	public boolean isNull(Number value){
+		return value==null ;
+	}
+
+	/**
+	 * Check if the string is null
+	 * @param value the value to check
+	 * @return true if the value is null
+	 */
+	public boolean isNull(String value){
+		return value==null || value.equals("null") || value.equals("undefined");
+	}
+
+	/**
+	 * Check if the string is null or ""
+	 * @param value the value to check
+	 * @return true if the value is null or ""
+	 */
+	public boolean isNullOrEmpty(String value){
+		return isNull(value) || value.equals("");
+	}
+
+	public HttpServletRequest getServletRequest() {
+		return servletRequest;
+	}
+
+
+
 }
