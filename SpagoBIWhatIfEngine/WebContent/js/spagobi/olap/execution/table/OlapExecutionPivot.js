@@ -140,27 +140,11 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionPivot', {
 		rowsMargin = "0 "+this.betweenColumnRowTableMargin+" 0 0";
 		crossMargin = this.topMargin+" "+this.betweenColumnRowTableMargin+" 0 "+this.leftMargin;
 		
-		var s = Ext.create('Ext.data.Store', {
-		    model: 'Sbi.olap.MemberModel',
-		    data: [
-		        { name: 'Store'},
-		        { name: 'Products'}
-		    ]
-		});
-		
-		var s1 = Ext.create('Ext.data.Store', {
-		    model: 'Sbi.olap.MemberModel',
-		    data: [
-
-		        { name: 'Unit Sales'},
-		        { name: 'Store Cost' }
-		    ]
-		});
 
 		//defining the components
 		this.olapExecutionFilters   = Ext.create('Sbi.olap.execution.table.OlapExecutionFilters',  {height: this.filtersHeight, margin: filtersMargin, pivotContainer: this });//store: model.get('filters')  
-		this.olapExecutionColumns   = Ext.create('Sbi.olap.execution.table.OlapExecutionColumns',  {flex: 1, margin: columnsMargin,  pivotContainer: this, store: s1});
-		this.olapExecutionRows   = Ext.create('Sbi.olap.execution.table.OlapExecutionRows',  {width: this.rowsWidth, margin: rowsMargin, store: s, pivotContainer: this});
+		this.olapExecutionColumns   = Ext.create('Sbi.olap.execution.table.OlapExecutionColumns',  {flex: 1, margin: columnsMargin,  pivotContainer: this});
+		this.olapExecutionRows   = Ext.create('Sbi.olap.execution.table.OlapExecutionRows',  {width: this.rowsWidth, margin: rowsMargin,  pivotContainer: this});
 		this.olapExecutionTable   = Ext.create('Sbi.olap.execution.table.OlapExecutionTable',  {flex: 1});
 		
 
@@ -219,6 +203,18 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionPivot', {
 		});
 		
 		this.callParent();
+	},
+	
+	/**
+	 * Updates the visualization after the execution of a a mdx query
+	 * @param pivotModel {Sbi.olap.PivotModel} the model instance with the execution query result set
+	 */
+	updateAfterMDXExecution: function(pivotModel){
+
+		this.olapExecutionTable.updateAfterMDXExecution(pivotModel.get('table'));
+		this.olapExecutionRows.updateAfterMDXExecution(pivotModel.get('rows'));
+		this.olapExecutionColumns.updateAfterMDXExecution(pivotModel.get('columns'));
+		
 	}
 });
 
