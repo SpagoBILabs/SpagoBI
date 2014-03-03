@@ -186,9 +186,20 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionPivot', {
 									items:[	{
 										margin: crossMargin,
 										border: false,
-										frame: true,
+										frame: false,
 										width: this.rowsWidth,
-										html: "opt"
+										html: " ",
+										bodyCls: "swapaxes",
+										listeners: {
+											el: {
+												click: {
+													fn: function (event, html, eOpts) {
+														Sbi.olap.eventManager.swapAxis();
+													},
+													scope: this
+												}
+											}
+										}
 									},this.olapExecutionColumns]
 								},
 						        {

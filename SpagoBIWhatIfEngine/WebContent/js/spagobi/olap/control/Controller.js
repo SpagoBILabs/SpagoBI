@@ -62,6 +62,22 @@ Ext.define('Sbi.olap.control.Controller', {
 			failure: Sbi.exception.ExceptionHandler.handleFailure      
 		});
 	}
+	,swapAxis: function(){
+
+		Ext.Ajax.request({
+			url: Sbi.service.Service.callService("table","swap"),
+			method: "GET",
+			success : function(response, options) {
+				if(response !== undefined && response.statusText !== undefined && response.responseText!=null && response.responseText!=undefined) {
+					this.eventManager.updateAfterMDXExecution(response.responseText);
+				} else {
+					Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
+				}
+			},
+			scope: this,
+			failure: Sbi.exception.ExceptionHandler.handleFailure      
+		});
+	}
 });
 
 

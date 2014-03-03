@@ -60,6 +60,13 @@ Ext.define('Sbi.olap.control.EventManager', {
      */
 	drillDown: function(axis, position,  member){
 		this.olapController.drillDown(axis, member, position);
+	},
+	
+    /**
+     * Swaps the axis
+     */
+	swapAxis: function(){
+		this.olapController.swapAxis();
 	}
 });
 
