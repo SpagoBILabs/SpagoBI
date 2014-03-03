@@ -23,9 +23,7 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionMembers', {
 	     * @cfg {Ext.data.Store} store
 	     * The store with the Sbi.olap.execution.table.OlapExecutionMember
 	     */
-		store: Ext.create('Ext.data.Store', {
-		    model: 'Sbi.olap.MemberModel'
-		}),
+		store: null,
 		/**
 	     * @cfg {Sbi.olap.execution.table.OlapExecutionPivot} pivotContainer
 	     * The container of the columns
@@ -46,6 +44,18 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionMembers', {
 	    //cls: "empty-member"
     },
 	
+    
+	constructor : function(config) {
+		this.initConfig(config);
+		this.store = Ext.create('Ext.data.Store', {
+		    model: 'Sbi.olap.MemberModel'
+		});
+		if(Sbi.settings && Sbi.settings.olap && Sbi.settings.olap.execution && Sbi.settings.olap.execution.table && Sbi.settings.olap.execution.table.OlapExecutionMembers) {
+			this.initConfig(Sbi.settings.olap.execution.OlapExecutionMembers);
+		}
+		this.callParent(arguments);
+	},
+    
 	initComponent: function() {
 
 		if(this.store && this.store.getCount()>0){
@@ -76,7 +86,6 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionMembers', {
      */
 	removeMember: function(member){
 		this.store.remove(member.member);
-		this.remove(member, true);
 		this.refreshItems();
 //		if(this.store.getCount()==0){
 //			this.addCls("empty-member");
@@ -120,7 +129,7 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionMembers', {
      * Refresh content
      */
 	refreshItems: function(){
-		this.removeAll();
+		this.removeAll(true);
 		
 		if(this.store){
 			var items = this.getRefreshedItems();
@@ -147,7 +156,22 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionMembers', {
 		}
 		
 		return items;
+	},
+	
+	/**
+	 * Updates the visualization after the execution of a a mdx query
+	 * @param pivotModel {Array} the list of members to add
+	 */
+	updateAfterMDXExecution: function(members){
+		this.store.removeAll();
+		if(members){
+			for(var i=0; i<members.length; i++){
+				this.store.add(Ext.create("Sbi.olap.MemberModel", members[i]));
+			}
+		}
+		this.refreshItems();
 	}
+	
 });
 
 

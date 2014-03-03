@@ -66,8 +66,12 @@ Ext.define('Sbi.olap.execution.OlapExecutionPanel', {
 		this.callParent();
 	},
 	
-	updateAfterMDXExecution: function(pivotHtml){
-		this.olapExecutionPivot.olapExecutionTable.updateAfterMDXExecution(pivotHtml);
+	/**
+	 * Updates the visualization after the execution of a a mdx query
+	 * @param pivotModel {Sbi.olap.PivotModel} the model instance with the execution query result set
+	 */
+	updateAfterMDXExecution: function(pivotModel){
+		this.olapExecutionPivot.updateAfterMDXExecution(pivotModel);
 	}
 	
 	
