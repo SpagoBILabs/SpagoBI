@@ -117,6 +117,30 @@ Sbi.execution.ParametersPanel = function(config, doc) {
 	this.initTootlbar();
 	this.initExecutionButton();
 	
+	var panelWithExecutionButtonConfig = {
+    	items: this.executionButton
+    	, width: 70
+        , border: false
+        , style: c.parametersRegion == 'north' 
+        	? 'padding:' + c.fieldsPadding + 'px 0px 0px ' + c.fieldsPadding + 'px'
+        	: 'margin-left: auto; margin-right: auto; padding: 10px 0px 10px 0px;'
+    };
+	
+	var separatorPanelConfig = {
+		html: '&nbsp;'
+		, layout : 'fit'
+		, border : c.parametersRegion == 'east'  // puts border only in case the parameters panel is displayed on east region
+		, height: 0
+	};
+	
+	var parametersContainerConfig = {
+        layout:'table'
+        , layoutConfig: {
+            columns: c.columnNo
+        }
+        , width: this.formWidth 
+        , border: false
+    };
 	
 	c = Ext.apply({}, c, {
 		labelAlign: c.labelAlign,
@@ -124,26 +148,13 @@ Sbi.execution.ParametersPanel = function(config, doc) {
         border: false,
         //bodyStyle:'padding:10px 0px 10px 10px',
         autoHeight: true,
-        items: [
-            {
-            	items: this.executionButton
-                , border: false
-                , bodyStyle:'padding:' + c.fieldsPadding + 'px 0px 0px ' + c.fieldsPadding + 'px'
-            }
-	        , {
-	            layout:'table'
-	            , layoutConfig: {
-	                columns: c.columnNo
-	            }
-	            , width: this.formWidth 
-	            , border: false
-	        }]
+        items: [panelWithExecutionButtonConfig, separatorPanelConfig, parametersContainerConfig]
 	});
 	
 	// constructor
     Sbi.execution.ParametersPanel.superclass.constructor.call(this, c);
 	
-    this.tableContainer = this.items.get(1);
+    this.tableContainer = this.items.get(2);
 	
 	this.addEvents(
 			'beforesynchronize'
@@ -1111,7 +1122,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
             , width: this.formWidth 
             , border: false
         });
-		this.tableContainer = this.items.get(1);
+		this.tableContainer = this.items.get(2);
 		
 		this.fields = {};
 	}
