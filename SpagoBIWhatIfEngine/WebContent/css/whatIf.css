@@ -35,12 +35,35 @@
 .rotate span {
 	height: auto!important;
      -moz-transform: rotate(90.0deg);  /* FF3.5+ */
-       -o-transform: rotate(90.0deg);  /* Opera 10.5 */
-  -webkit-transform: rotate(90.0deg);  /* Saf3.1+, Chrome */
-             filter:  progid:DXImageTransform.Microsoft.BasicImage(rotation=0.917);  /* IE6,IE7 */
-         -ms-filter: "progid:DXImageTransform.Microsoft.BasicImage(rotation=0.917)"; /* IE8 */
+     -o-transform: rotate(90.0deg);  /* Opera 10.5 */
+  	 -webkit-transform: rotate(90.0deg);  /* Saf3.1+, Chrome */
+     filter:  progid:DXImageTransform.Microsoft.BasicImage(rotation=0.917);  /* IE6,IE7 */
+     -ms-filter: "progid:DXImageTransform.Microsoft.BasicImage(rotation=0.917)"; /* IE8 */
 }
 
+.up-arrow {
+	background-image:url(../img/up.png);
+	background-position: top center;
+	background-repeat: no-repeat;
+}
+
+.down-arrow {
+	background-image:url(../img/down.png);
+	background-position: bottom center;
+	background-repeat: no-repeat;
+}
+
+.left-arrow {
+	background-image:url(../img/left.png);
+	background-position: left;
+	background-repeat: no-repeat;
+}
+
+.right-arrow {
+	background-image:url(../img/right.png);
+	background-position: right;
+	background-repeat: no-repeat;
+}
 
 /*  DA DEFINIRE PER TIPO DI STILE  */
 .empty-member{

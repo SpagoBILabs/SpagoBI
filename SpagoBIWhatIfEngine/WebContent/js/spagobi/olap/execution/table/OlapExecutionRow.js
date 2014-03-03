@@ -17,23 +17,43 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionRow', {
 	extend: 'Sbi.olap.execution.table.OlapExecutionMember',
 	
 	config:{
-		cls: "x-column-header rotate",
-		bodyStyle: "background-color: transparent",
-		style: "margin-bottom: 3px;"
-
+		style: "margin-bottom: 3px;",
+		cls: "x-column-header",
+   		bodyStyle: "background-color: transparent",
+   		roundText: true
 	},
+	
+	subPanelLayout: "auto",
 	
 	constructor : function(config) {
 		this.initConfig(config);
 		if(Sbi.settings && Sbi.settings.olap && Sbi.settings.olap.execution && Sbi.settings.olap.execution.table && Sbi.settings.olap.execution.table.OlapExecutionRow) {
 			this.initConfig(Sbi.settings.olap.execution.OlapExecutionRow);
 		}
-		//this.height= this.member.get("name").length*12+4;
+		this.roundText = this.roundText && (Ext.isChrome);
 		this.callParent(arguments);
-		//The text is rounded so we must fix the height of the panel
-		if(!Ext.isIE){
-			this.on("render",function(){this.setHeight(this.member.get("name").length*6.3+12);},this);
+	},
+	
+	
+    /**
+     * Builds the central panel with the name of the member
+     */
+	buildMemberPanel: function(){
+		var memberConf =  {
+				xtype: "panel",
+				border: false,
+		   		
+		   		bodyStyle: "background-color: transparent; white-space: nowrap",
+		   		style: "background-color: transparent",
+		    	html: this.getText()
+			};
+		if(this.roundText){
+			memberConf.height = this.member.get("name").length*6.3+4;
+			memberConf.cls= "rotate";
 		}
+		
+		
+		this.memberPanel = Ext.create("Ext.Panel",memberConf);
 	},
 	
     /**
@@ -42,7 +62,7 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionRow', {
      * If the browser is not IE the text is rounded via CSS
      */
 	getText: function(){
-		if(Ext.isIE){
+		if(!this.roundText){
 			var text ="";
 			var n = this.member.get("name");
 			if(n){
@@ -61,7 +81,23 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionRow', {
 		}else{
 			return this.member.get("name");
 		}
-	}
+	},
+
 	
+	/**
+	 * Builds the central panel with the name of the member
+	 */
+	buildUpPanelConf: function(){
+		var conf = this.callParent();
+		return Ext.apply(conf,{height: 13, cls: 'up-arrow'});
+	},
+	
+	/**
+	 * Builds the central panel with the name of the member
+	 */
+	buildDownPanelConf: function(){
+		var conf = this.callParent();
+		return Ext.apply(conf,{height: 10, cls: 'down-arrow'});
+	}
 	
 });

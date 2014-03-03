@@ -22,12 +22,30 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionColumn', {
 		style: "margin-right: 3px;"
 	},
 	
+	subPanelLayout: "hbox",
+	
 	constructor : function(config) {
 		this.initConfig(config);
 		if(Sbi.settings && Sbi.settings.olap && Sbi.settings.olap.execution && Sbi.settings.olap.execution.table && Sbi.settings.olap.execution.table.OlapExecutionColumn) {
 			this.initConfig(Sbi.settings.olap.execution.OlapExecutionColumn);
 		}
 		this.callParent(arguments);
+	},
+	
+	/**
+	 * Builds the central panel with the name of the member
+	 */
+	buildUpPanelConf: function(){
+		var conf = this.callParent();
+		return Ext.apply(conf,{height: 13, width: 13, cls: 'left-arrow'});
+	},
+	
+	/**
+	 * Builds the central panel with the name of the member
+	 */
+	buildDownPanelConf: function(){
+		var conf = this.callParent();
+		return Ext.apply(conf,{height: 10,width: 13, cls: 'right-arrow'});
 	}
 	
 });
