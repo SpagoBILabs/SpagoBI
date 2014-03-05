@@ -23,12 +23,24 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionFilter', {
 		 * The value of the filter
 		 */
 		selectedMember: null,
+		/**
+		 * @cfg {int} hierarchyMaxtextLength
+		 * The max length of the text.. If the text is longer we cut it and add 2 dots
+		 */
+		hierarchyMaxtextLength: 17,
+		/**
+		 * @cfg {int} memberMaxtextLength
+		 * The max length of the text.. If the text is longer we cut it and add 2 dots
+		 */
+		memberMaxtextLength: 17,
+		/**
+		 * @cfg {int} width
+		 * The width of the filter
+		 */
+		width: 120,
 		cls: "x-column-header",
 		bodyStyle: "background-color: transparent;",
-		style: "margin-right: 3px; padding: 0px;",
-		width: 120,
-		hierarchyMaxtextLength: 17,
-		memberMaxtextLength: 17
+		style: "margin-right: 3px; padding: 0px;"
 	},
 
 	constructor : function(config) {
@@ -58,7 +70,7 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionFilter', {
 				flex: 1,
 				html: name,
 				border: true,
-				bodyStyle: "background-color: transparent; border-top: 0px !important; border-left: 0px !important; border-right: 0px !important;  padding: 4px; text-align: center;"
+				bodyCls: "filter-title "
 			}, {
 				region: 'center',
 				style: 'height: "100%"; background-color: transparent; margin: 4px',
@@ -77,9 +89,9 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionFilter', {
 				       {
 				    	   width:20, 
 				    	   html:" ", 
-				    	   cls:"filter",
+				    	   cls:"filter-funnel-image",
 				    	   border: true, 
-				    	   bodyStyle: "background-color: transparent; border-top: 0px !important; border-bottom: 0px !important; border-right: 0px !important;  padding: 4px",
+				    	   bodyCls: "filter-funnel-body",
 
 				    	   listeners: {
 				    		   el: {
