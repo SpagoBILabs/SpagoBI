@@ -57,6 +57,7 @@ import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
 import it.eng.spagobi.tools.datasource.bo.DataSource;
 import it.eng.spagobi.tools.datasource.bo.DataSourceModel;
 import it.eng.spagobi.tools.objmetadata.bo.ObjMetadata;
+import it.eng.spagobi.tools.scheduler.bo.Job;
 import it.eng.spagobi.tools.udp.metadata.SbiUdp;
 import it.eng.spagobi.tools.udp.metadata.SbiUdpValue;
 
@@ -137,6 +138,9 @@ public class JSONSerializer implements Serializer {
 		mappings.put( Artifact.class, new ArtifactJSONSerializer());
 		mappings.put( Content.class, new ContentJSONSerializer());
 		mappings.put( SbiTenant.class, new TenantJSONSerializer());
+		
+		mappings.put( Job.class, new JobJSONSerializer());
+
 	}
 
 	public Object serialize(Object o, Locale locale) throws SerializationException {
