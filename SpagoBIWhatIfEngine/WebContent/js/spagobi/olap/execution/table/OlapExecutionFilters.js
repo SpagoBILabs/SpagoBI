@@ -14,25 +14,33 @@
 
 
 Ext.define('Sbi.olap.execution.table.OlapExecutionFilters', {
-	extend: 'Ext.panel.Panel',
+	extend: 'Sbi.olap.execution.table.OlapExecutionMembers',
 	
-	
+	layout: {
+	    type: 'hbox',
+	    pack: 'start',
+	    align: 'stretch'
+	},
+		
 	config:{
-		html:'Fliters',
-		frame: true,
-		border: false
+		/**
+	     * @cfg {String} memberClassName
+	     * The name of the class that extends the Sbi.olap.execution.table.OlapExecutionMember class.
+	     * The class name is used to build the subclass 
+	     */
+		memberClassName: 'Sbi.olap.execution.table.OlapExecutionFilter'
     },
-	
-
+		
 	constructor : function(config) {
-		//this.initConfig(config);
-		if(Sbi.settings && Sbi.settings.olap && Sbi.settings.olap.execution && Sbi.settings.olap.execution.table && Sbi.settings.olap.execution.table.OlapExecutionFilters) {
-			this.initConfig(Sbi.settings.olap.execution.OlapExecutionFilters);
+		this.initConfig(config);
+		if(Sbi.settings && Sbi.settings.olap && Sbi.settings.olap.execution && Sbi.settings.olap.execution.table && Sbi.settings.olap.execution.table.OlapExecutionColumns) {
+			this.initConfig(Sbi.settings.olap.execution.OlapExecutionColumns);
 		}
 		this.callParent(arguments);
 	}
-	
 });
+
+
 
 
 

@@ -12,8 +12,9 @@
 
 Ext.define('Sbi.olap.MemberModel', {
 	extend: 'Ext.data.Model',
-	idProperty: 'name',
+	idProperty: 'uniqueName',
 	fields: [{
-		name: 'name'
+		name: 'name',
+		name: 'uniqueName'
 	}]
 });

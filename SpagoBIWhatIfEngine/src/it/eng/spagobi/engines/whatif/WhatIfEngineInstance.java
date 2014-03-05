@@ -6,6 +6,18 @@
 
 package it.eng.spagobi.engines.whatif;
 
+import it.eng.spagobi.services.proxy.EventServiceProxy;
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.utilities.engines.AbstractEngineInstance;
+import it.eng.spagobi.utilities.engines.AuditServiceProxy;
+import it.eng.spagobi.utilities.engines.EngineConstants;
+import it.eng.spagobi.utilities.engines.IEngineAnalysisState;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+
+import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Locale;
@@ -21,24 +33,18 @@ import com.eyeq.pivot4j.PivotModel;
 import com.eyeq.pivot4j.datasource.SimpleOlapDataSource;
 import com.eyeq.pivot4j.impl.PivotModelImpl;
 
-import it.eng.spagobi.engines.whatif.services.table.TableHierachiesTransformer;
-import it.eng.spagobi.services.proxy.EventServiceProxy;
-import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.datasource.bo.IDataSource;
-import it.eng.spagobi.utilities.engines.AbstractEngineInstance;
-import it.eng.spagobi.utilities.engines.AuditServiceProxy;
-import it.eng.spagobi.utilities.engines.EngineConstants;
-import it.eng.spagobi.utilities.engines.IEngineAnalysisState;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-
 /**
  * @author ...
  */
-public class WhatIfEngineInstance extends AbstractEngineInstance {
+public class WhatIfEngineInstance extends AbstractEngineInstance implements Serializable {
 	
-	
+
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1329486982941461093L;
+
 	public static transient Logger logger = Logger.getLogger(WhatIfEngineInstance.class);
 	
 	private JSONObject guiSettings;

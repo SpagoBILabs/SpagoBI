@@ -14,7 +14,7 @@
 
 
 Ext.define('Sbi.olap.execution.table.OlapExecutionRow', {
-	extend: 'Sbi.olap.execution.table.OlapExecutionMember',
+	extend: 'Sbi.olap.execution.table.OlapExecutionAxisMember',
 	
 	config:{
 		style: "margin-bottom: 3px;",
@@ -48,7 +48,7 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionRow', {
 		    	html: this.getText()
 			};
 		if(this.roundText){
-			memberConf.height = this.member.get("name").length*6.3+4;
+			memberConf.height = this.getMemberName().length*6.3+4;
 			memberConf.cls= "rotate";
 		}
 		
@@ -64,7 +64,7 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionRow', {
 	getText: function(){
 		if(!this.roundText){
 			var text ="";
-			var n = this.member.get("name");
+			var n = this.getMemberName();
 			if(n){
 				for(var i=0; i<n.length; i++){
 					text = text + n.charAt(i) +'<br>';
@@ -79,7 +79,7 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionRow', {
 			}
 			return text;
 		}else{
-			return this.member.get("name");
+			return this.getMemberName();
 		}
 	},
 
