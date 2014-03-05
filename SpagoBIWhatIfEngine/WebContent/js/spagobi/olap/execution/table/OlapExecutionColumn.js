@@ -14,7 +14,7 @@
 
 
 Ext.define('Sbi.olap.execution.table.OlapExecutionColumn', {
-	extend: 'Sbi.olap.execution.table.OlapExecutionMember',
+	extend: 'Sbi.olap.execution.table.OlapExecutionAxisMember',
 	
 	config:{
 		cls: "x-column-header",

@@ -36,9 +36,11 @@ public class PivotJsonHTMLSerializer {
 
 	public static transient Logger logger = Logger.getLogger(PivotJsonHTMLSerializer.class);
 	
-	private static final String HIERARCHY_NAME= "name";
+	private static final String NAME= "name";
+	private static final String UNIQUE_NAME= "uniqueName";
 	private static final String COLUMNS= "columns";
 	private static final String ROWS= "rows";
+	private static final String FILTERS= "filters";
 	private static final String TABLE= "table";
 	
 	public static String renderModel(PivotModel model){
@@ -61,7 +63,6 @@ public class PivotJsonHTMLSerializer {
 		renderer.setCornerStyleClass("x-column-header-inner x-column-header x-column-header-align-left x-box-item x-column-header-default x-unselectable x-grid-header-ct x-docked x-grid-header-ct-default x-docked-top x-grid-header-ct-docked-top x-grid-header-ct-default-docked-top x-box-layout-ct x-docked-noborder-top x-docked-noborder-right x-docked-noborder-left x-pivot-header");
 		renderer.setCellStyleClass("x-grid-cell x-grid-td x-grid-cell-gridcolumn-1014 x-unselectable x-grid-cell-inner  x-grid-row-alt x-grid-data-row x-grid-with-col-lines x-grid-cell x-pivot-cell");
 		renderer.setTableStyleClass("x-panel-body x-grid-body x-panel-body-default x-box-layout-ct x-panel-body-default x-pivot-table");
-		
 		logger.debug("Rendering the model");
 		renderer.render(model);
 
@@ -79,9 +80,19 @@ public class PivotJsonHTMLSerializer {
 		List<CellSetAxis> axis = cellSet.getAxes();
 		
 		try {
+			
+			List<Hierarchy> axisHierarchies = axis.get(0).getAxisMetaData().getHierarchies();
+			axisHierarchies.addAll(axis.get(1).getAxisMetaData().getHierarchies());
+			List otherHierarchies = model.getCube().getHierarchies();
+			
+			otherHierarchies.removeAll(axisHierarchies);
+			
+			
 			pivot.put(TABLE, table);
 			pivot.put(ROWS, serializeAxis(axis, Axis.ROWS));
 			pivot.put(COLUMNS,  serializeAxis(axis, Axis.COLUMNS));
+			pivot.put(FILTERS,  serializeHierarchies(otherHierarchies));
+			
 			
 		} catch (Exception e) {
 			logger.error("Error serializing the pivot table", e);
@@ -113,7 +124,8 @@ public class PivotJsonHTMLSerializer {
 			for (Iterator<Hierarchy> iterator = hierarchies.iterator(); iterator.hasNext();) {
 				Hierarchy hierarchy = (Hierarchy) iterator.next();
 				JSONObject hierarchyObject = new JSONObject();
-				hierarchyObject.put(HIERARCHY_NAME, hierarchy.getName());
+				hierarchyObject.put(NAME, hierarchy.getName());
+				hierarchyObject.put(UNIQUE_NAME, hierarchy.getUniqueName());
 				hierchiesSerialized.put(hierarchyObject);
 			}
 		}

@@ -14,5 +14,6 @@ Ext.define('Sbi.olap.PivotModel', {
 	extend: 'Ext.data.Model',
 	fields: [ {name: 'rows',  type: 'array'},
 	          {name: 'columns',   type: 'array'},
+	          {name: 'filters',   type: 'array'},
 	          {name: 'table', type: 'string'}]
 });

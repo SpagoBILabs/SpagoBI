@@ -1,0 +1,75 @@
+package it.eng.spagobi.engines.whatif.utilis;
+
+import java.util.List;
+
+import org.olap4j.OlapException;
+import org.olap4j.metadata.Cube;
+import org.olap4j.metadata.Hierarchy;
+import org.olap4j.metadata.Member;
+import org.olap4j.metadata.NamedList;
+
+public class CubeUtilities {
+	
+	public static final String PATH_DELIM ="[";
+
+
+	
+	/**
+	 * Looks for the member with id memberUniqueName in the cube
+	 * @param cube the cube wherein to find the member
+	 * @param memberUniqueName the member to find
+	 * @return the olap Member found.. null otherwise
+	 * @throws OlapException
+	 */
+	public static Member getMember(Cube cube, String memberUniqueName) throws OlapException{
+		Hierarchy hierarchy = null;
+		NamedList<Hierarchy> hierarchies = cube.getHierarchies();
+		String t = memberUniqueName.substring(1, memberUniqueName.indexOf("]"));
+		for(int i=0; i<hierarchies.size(); i++){
+			String hName = hierarchies.get(i).getName();
+			if(hName.equals(t)){
+				hierarchy = hierarchies.get(i);
+				break;
+			}
+		}
+		
+		return getMember(hierarchy.getLevels().get(0).getMembers(),memberUniqueName);
+	}
+	
+	/**
+	 * Looks for the member with id memberUniqueName in the hierarchy
+	 * @param hierarchy the hierarchy wherein to find the member
+	 * @param memberUniqueName the member to find
+	 * @return the olap Member found.. null otherwise
+	 * @throws OlapException
+	 */
+	public static Member getMember(Hierarchy hierarchy, String memberUniqueName) throws OlapException{
+		return getMember(hierarchy.getLevels().get(0).getMembers(),memberUniqueName);
+	}
+	
+	/**
+	 * Check if the member is the root
+	 * @param memberUniqueName the name of the member
+	 * @return true if the member is the root
+	 * @throws OlapException
+	 */
+	public static boolean isRoot(String memberUniqueName) throws OlapException{
+		return memberUniqueName==null || memberUniqueName.substring(1).indexOf(PATH_DELIM)==-1;
+	}
+	
+	public static Member getMember(List<Member> members, String memberUniqueName) throws OlapException{
+		for(int i=0; i<members.size();i++){
+			Member m = members.get(i);
+			if(m.getUniqueName().equals(memberUniqueName)){
+				return m;
+			}else if(memberUniqueName.contains(m.getUniqueName()) && memberUniqueName.indexOf(m.getUniqueName())==0){
+				return getMember((List<Member>)m.getChildMembers(),memberUniqueName);
+			}
+		}
+		//all member
+		if(members.size()==1){
+			return getMember((List<Member>)members.get(0).getChildMembers(),memberUniqueName);
+		}
+		return null;
+	}
+}

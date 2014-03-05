@@ -4,87 +4,93 @@
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-
 /*******************************************************************************************************
  * Actions
  ********************************************************************************************************/
-        
-  
-.x-pivot-header{
-    	position: relative !important;
-    	border-top-width: 1px !important;
-    	border-right-width: 1px !important;
-    }
-
-.x-pivot-cell{
-    	border-top-width: 1px !important;
-    	border-right-width: 1px !important;
-    	text-align: right;
-    	padding : 2px;
+.x-pivot-header {
+	position: relative !important;
+	border-top-width: 1px !important;
+	border-right-width: 1px !important;
 }
 
-.x-pivot-table{
-    	border-bottom-width: 1px !important;
-    	border-left-width: 1px !important;
-    	border-right-width: 0px !important;
-    	border-top-width: 0px !important;
-    	margin: 0px !important;
-    	padding: 0px !important;
+.x-pivot-cell {
+	border-top-width: 1px !important;
+	border-right-width: 1px !important;
+	text-align: right;
+	padding: 2px;
+}
+
+.x-pivot-table {
+	border-bottom-width: 1px !important;
+	border-left-width: 1px !important;
+	border-right-width: 0px !important;
+	border-top-width: 0px !important;
+	margin: 0px !important;
+	padding: 0px !important;
 }
 
 .rotate span {
-	height: auto!important;
-     -moz-transform: rotate(90.0deg);  /* FF3.5+ */
-     -o-transform: rotate(90.0deg);  /* Opera 10.5 */
-  	 -webkit-transform: rotate(90.0deg);  /* Saf3.1+, Chrome */
-     filter:  progid:DXImageTransform.Microsoft.BasicImage(rotation=0.917);  /* IE6,IE7 */
-     -ms-filter: "progid:DXImageTransform.Microsoft.BasicImage(rotation=0.917)"; /* IE8 */
+	height: auto !important;
+	-moz-transform: rotate(90.0deg); /* FF3.5+ */
+	-o-transform: rotate(90.0deg); /* Opera 10.5 */
+	-webkit-transform: rotate(90.0deg); /* Saf3.1+, Chrome */
+	filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=0.917);
+	/* IE6,IE7 */
+	-ms-filter:
+		"progid:DXImageTransform.Microsoft.BasicImage(rotation=0.917)";
+	/* IE8 */
 }
 
 .up-arrow {
-	background-image:url(../img/up.png);
+	background-image: url(../img/up.png);
 	background-position: top center;
 	background-repeat: no-repeat;
 }
 
 .down-arrow {
-	background-image:url(../img/down.png);
+	background-image: url(../img/down.png);
 	background-position: bottom center;
 	background-repeat: no-repeat;
 }
 
 .left-arrow {
-	background-image:url(../img/left.png);
+	background-image: url(../img/left.png);
 	background-position: left;
 	background-repeat: no-repeat;
 }
 
 .right-arrow {
-	background-image:url(../img/right.png);
+	background-image: url(../img/right.png);
 	background-position: right;
 	background-repeat: no-repeat;
 }
 
-
 /*expandable members*/
-.expanded{
-    	color: red;
-    	background-image: url(../img/elbow-minus-nl.gif);
-    	background-repeat: no-repeat;
-    	background-position: left;
-    	
-}
-.collapsed{
-    	color: green;
-    	background-image: url(../img/elbow-plus-nl.gif);
-    	background-repeat: no-repeat;
-    	background-position: left;
+.expanded {
+	color: red;
+	background-image: url(../img/elbow-minus-nl.gif);
+	background-repeat: no-repeat;
+	background-position: left;
 }
 
-.swapaxes{
-    	background-image: url(../img/double-arrow.png);
-    	background-color: transparent !important;
-    	background-repeat: no-repeat;
-    	background-position: center center;
+.collapsed {
+	color: green;
+	background-image: url(../img/elbow-plus-nl.gif);
+	background-repeat: no-repeat;
+	background-position: left;
 }
 
+.swapaxes {
+	background-image: url(../img/double-arrow.png);
+	background-color: transparent !important;
+	background-repeat: no-repeat;
+	background-position: center center;
+}
+
+.filter {
+	background-image: url(../img/filter_3.png);
+	background-position: center center;
+	background-repeat: no-repeat;
+	width: "90%";
+	height: "90%";
+}
