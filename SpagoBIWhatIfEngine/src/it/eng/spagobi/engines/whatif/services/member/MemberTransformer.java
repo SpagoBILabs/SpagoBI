@@ -27,12 +27,14 @@ import org.olap4j.CellSet;
 import org.olap4j.CellSetAxis;
 import org.olap4j.Position;
 import org.olap4j.metadata.Hierarchy;
+import org.olap4j.metadata.Hierarchy;
 import org.olap4j.metadata.Level;
 import org.olap4j.metadata.Member;
 import org.olap4j.metadata.NamedList;
 
 import com.eyeq.pivot4j.PivotModel;
 import com.eyeq.pivot4j.transform.DrillReplace;
+import com.eyeq.pivot4j.ui.command.DrillDownReplaceCommand;
 import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
@@ -60,16 +62,48 @@ public class MemberTransformer extends AbstractRestService {
 		List<Position> positions = rowsOrColumns.getPositions();
 
 		Position p = positions.get(positionPos);
-
+		
 
 		List<Member> m = p.getMembers();
 		Member m2 = m.get(memberPos);
 		DrillReplace transform = model.getTransform(DrillReplace.class);
-		transform.drillDown(m2);
+		if(transform.canDrillDown(m2)){
+			transform.drillDown(m2);
+		}
+		
 		
 		return renderModel(model);
 	}
-	
+	@GET
+	@Path("/drillup/{axis}/{position}/{member}")
+	public String drillUp(@javax.ws.rs.core.Context HttpServletRequest req, @PathParam("axis") int axisPos, @PathParam("position") int positionPos, @PathParam("member") int memberPos){
+
+		WhatIfEngineInstance ei = getWhatIfEngineInstance();
+		PivotModel model = ei.getPivotModel();
+		CellSet cellSet = model.getCellSet();
+
+		//Axes of the resulting query.
+		List<CellSetAxis> axes = cellSet.getAxes();
+
+		//The ROWS axis
+		CellSetAxis rowsOrColumns = axes.get(axisPos);
+
+		//Member positions of the ROWS axis.
+		List<Position> positions = rowsOrColumns.getPositions();
+
+		Position p = positions.get(positionPos);
+		
+
+		List<Member> m = p.getMembers();
+		Hierarchy hierarchy = m.get(memberPos).getHierarchy();
+		DrillReplace transform = model.getTransform(DrillReplace.class);
+		if(transform.canDrillUp(hierarchy)){
+			transform.drillUp(hierarchy);
+		}
+		
+		
+		return renderModel(model);
+	}
 	@GET
 	@Path("/filtertree/{hierarchy}")
 	public String getMemberValue(@javax.ws.rs.core.Context HttpServletRequest req, @PathParam("hierarchy") String hierarchyUniqueName){
@@ -140,7 +174,4 @@ public class MemberTransformer extends AbstractRestService {
 		}
 
 	}
-
-	
-	
 }
