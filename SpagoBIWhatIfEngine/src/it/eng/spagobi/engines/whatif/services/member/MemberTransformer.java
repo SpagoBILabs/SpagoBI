@@ -27,14 +27,13 @@ import org.olap4j.CellSet;
 import org.olap4j.CellSetAxis;
 import org.olap4j.Position;
 import org.olap4j.metadata.Hierarchy;
-import org.olap4j.metadata.Hierarchy;
 import org.olap4j.metadata.Level;
 import org.olap4j.metadata.Member;
 import org.olap4j.metadata.NamedList;
 
 import com.eyeq.pivot4j.PivotModel;
-import com.eyeq.pivot4j.transform.DrillReplace;
-import com.eyeq.pivot4j.ui.command.DrillDownReplaceCommand;
+import com.eyeq.pivot4j.transform.DrillExpandPosition;
+import com.eyeq.pivot4j.ui.command.DrillCollapsePositionCommand;
 import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
@@ -66,9 +65,9 @@ public class MemberTransformer extends AbstractRestService {
 
 		List<Member> m = p.getMembers();
 		Member m2 = m.get(memberPos);
-		DrillReplace transform = model.getTransform(DrillReplace.class);
-		if(transform.canDrillDown(m2)){
-			transform.drillDown(m2);
+		DrillExpandPosition transform = model.getTransform(DrillExpandPosition.class);
+		if(transform.canExpand(p, m2)){
+			transform.expand(p, m2);
 		}
 		
 		
@@ -95,13 +94,13 @@ public class MemberTransformer extends AbstractRestService {
 		
 
 		List<Member> m = p.getMembers();
+		Member m2 = m.get(memberPos);
 		Hierarchy hierarchy = m.get(memberPos).getHierarchy();
-		DrillReplace transform = model.getTransform(DrillReplace.class);
-		if(transform.canDrillUp(hierarchy)){
-			transform.drillUp(hierarchy);
+		DrillExpandPosition transform = model.getTransform(DrillExpandPosition.class);
+		if(transform.canCollapse(p, m2)){
+			transform.collapse(p, m2);
 		}
-		
-		
+				
 		return renderModel(model);
 	}
 	@GET
