@@ -156,7 +156,7 @@
 			<fileset dir="${src}">
 				<exclude name="**/*.java" />
 				<exclude name="**/*.svn" />
-        <exclude name="**/*.properties" />  <!-- properties files must be encoded, see below when native2ascii is invoked -->
+		        <exclude name="MessageFiles/*.properties" />  <!-- properties files must be encoded, see below when native2ascii is invoked -->
 			</fileset>
 		</copy>
 		<!-- copies artifacts without filter (jars, jsp, js, ....) -->
