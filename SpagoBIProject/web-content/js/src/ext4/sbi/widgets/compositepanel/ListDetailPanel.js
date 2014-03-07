@@ -92,18 +92,14 @@ Ext.define('Sbi.widgets.compositepannel.ListDetailPanel', {
 	 */
 	, constructor: function(config) {
 		this.initConfig(config);
-		this.layout= 'column';
+		this.layout = 'border';
 		
-		//FORM MANAGEMENTE
-		if(!this.detailPanel){
-			alert('the detailPanel must be defined')
+		if( !this.detailPanel ) {
+			alert('The detailPanel must be defined');
+			throw "The detailPanel must be defined";
 		}
 		
-		this.detailPanel.columnWidth = 3/5;
-		
-		
-		//GRID MANAGEMENT
-		var FixedGridPanelConf= {
+		var fixedGridPanelConf = {
 			pagingConfig:{},
 			storeConfig:{ 
 				pageSize: 5
@@ -119,11 +115,12 @@ Ext.define('Sbi.widgets.compositepannel.ListDetailPanel', {
 		
 		Ext.apply(this,config||{});
 		
-		this.grid=Ext.create('Sbi.widgets.grid.FixedGridPanelInMemoryFiltered',FixedGridPanelConf);
+		this.grid = Ext.create('Sbi.widgets.grid.FixedGridPanelInMemoryFiltered', fixedGridPanelConf);
 		
 
-		
-		//DEFINE ITEMS OF THE GRID
+		this.grid.region = "west";
+		this.grid.width = "35%";
+		this.detailPanel.region = "center";
 		this.items = [this.grid, this.detailPanel];
 			
 		this.callParent(arguments);
