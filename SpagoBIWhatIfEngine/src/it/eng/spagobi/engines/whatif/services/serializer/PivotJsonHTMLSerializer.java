@@ -31,6 +31,9 @@ import org.olap4j.CellSetAxis;
 import org.olap4j.metadata.Hierarchy;
 
 import com.eyeq.pivot4j.PivotModel;
+import com.eyeq.pivot4j.ui.command.DrillCollapseMemberCommand;
+import com.eyeq.pivot4j.ui.command.DrillDownReplaceCommand;
+import com.eyeq.pivot4j.ui.command.DrillExpandMemberCommand;
 
 public class PivotJsonHTMLSerializer {
 
@@ -63,6 +66,16 @@ public class PivotJsonHTMLSerializer {
 		renderer.setCornerStyleClass("x-column-header-inner x-column-header x-column-header-align-left x-box-item x-column-header-default x-unselectable x-grid-header-ct x-docked x-grid-header-ct-default x-docked-top x-grid-header-ct-docked-top x-grid-header-ct-default-docked-top x-box-layout-ct x-docked-noborder-top x-docked-noborder-right x-docked-noborder-left x-pivot-header");
 		renderer.setCellStyleClass("x-grid-cell x-grid-td x-grid-cell-gridcolumn-1014 x-unselectable x-grid-cell-inner  x-grid-row-alt x-grid-data-row x-grid-with-col-lines x-grid-cell x-pivot-cell");
 		renderer.setTableStyleClass("x-panel-body x-grid-body x-panel-body-default x-box-layout-ct x-panel-body-default x-pivot-table");
+		
+
+		renderer.setEnableColumnDrillDown(true);
+		renderer.setEnableRowDrillDown(true);
+		renderer.setEnableSort(true);
+
+		renderer.addCommand(new DrillDownReplaceCommand(renderer));
+		renderer.addCommand(new DrillCollapseMemberCommand(renderer));
+		renderer.addCommand(new DrillExpandMemberCommand(renderer));
+		
 		logger.debug("Rendering the model");
 		renderer.render(model);
 

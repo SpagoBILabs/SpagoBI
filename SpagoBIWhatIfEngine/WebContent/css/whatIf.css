@@ -4,6 +4,7 @@
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+
 /*******************************************************************************************************
  * Actions
  ********************************************************************************************************/
@@ -65,21 +66,29 @@
 	background-repeat: no-repeat;
 }
 
+
 /*expandable members*/
-.expanded {
-	color: red;
-	background-image: url(../img/elbow-minus-nl.gif);
-	background-repeat: no-repeat;
-	background-position: left;
+.expanded{
+    	color: red;
+   		vertical-align:middle;
+   		text-align: right;
+    	
 }
-
-.collapsed {
-	color: green;
-	background-image: url(../img/elbow-plus-nl.gif);
-	background-repeat: no-repeat;
-	background-position: left;
+.collapsed{
+    	color: green;
+   		vertical-align:middle;
+   		text-align: right;
+    	background-color: -webkit-linear-gradient(top,#f9f9f9,#e3e4e6);
 }
-
+.expanded img,
+.collapsed img{
+    position: absolute;
+    margin: auto;
+    top: 0px;
+    left: -40px;
+    right: 0;
+    bottom: 0;
+}
 .swapaxes {
 	background-image: url(../img/double-arrow.png);
 	background-color: transparent !important;
@@ -113,3 +122,4 @@
 	border-right: 0px !important;  
 	padding: 4px"
 }
+
