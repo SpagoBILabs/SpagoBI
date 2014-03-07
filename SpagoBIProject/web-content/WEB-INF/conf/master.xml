@@ -132,6 +132,7 @@
 	<CONFIGURATOR path="/WEB-INF/conf/tools/importexport/business_map.xml" />
   
 	<!-- tools.scheduler -->
+	<CONFIGURATOR path="/WEB-INF/conf/tools/scheduler/actions.xml" />
 	<CONFIGURATOR path="/WEB-INF/conf/tools/scheduler/messages.xml" />
 	<CONFIGURATOR path="/WEB-INF/conf/tools/scheduler/pages.xml" />
 	<CONFIGURATOR path="/WEB-INF/conf/tools/scheduler/modules.xml" />

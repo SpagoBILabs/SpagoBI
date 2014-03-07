@@ -57,7 +57,6 @@ public class JobJSONSerializer implements Serializer {
 	
 	public Object serialize(Object o, Locale locale)
 			throws SerializationException {
-		// TODO Auto-generated method stub
 		JSONObject  result = null;
 		
 		if( !(o instanceof Job) ) {
@@ -86,9 +85,7 @@ public class JobJSONSerializer implements Serializer {
 				parsListJSON.put(jsonPar);
 			}
 			result.put(JOB_PARAMETERS, parsListJSON);	
-			
-			//TODO: aggiungere la parte di jobinfo (per i documenti collegati) -> vedi SchedulerUtilities.getJobInfoFromJobSourceBean()
-			
+						
 			//Search parameters for extracting documents name and linked parameters with values
 			String[] documentsLabels = null;
 			String documentsLabelsParam = parameters.get("documentLabels"); //this is a parameter with documents name
@@ -183,7 +180,6 @@ public class JobJSONSerializer implements Serializer {
 							String parCouple = parCouples[j];
 							String[] parDef = parCouple.split("=");
 							
-							//TODO: controllare corrispondenza parDef con reali parametri del BiObj ricavati da DAO come in SchedulerUtil
 							
 							String parameterName = parDef[0];
 							String parameterValues = parDef[1];
