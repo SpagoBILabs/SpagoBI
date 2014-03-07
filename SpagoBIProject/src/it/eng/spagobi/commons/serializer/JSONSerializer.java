@@ -58,6 +58,7 @@ import it.eng.spagobi.tools.datasource.bo.DataSource;
 import it.eng.spagobi.tools.datasource.bo.DataSourceModel;
 import it.eng.spagobi.tools.objmetadata.bo.ObjMetadata;
 import it.eng.spagobi.tools.scheduler.bo.Job;
+import it.eng.spagobi.tools.scheduler.bo.Trigger;
 import it.eng.spagobi.tools.udp.metadata.SbiUdp;
 import it.eng.spagobi.tools.udp.metadata.SbiUdpValue;
 
@@ -140,6 +141,8 @@ public class JSONSerializer implements Serializer {
 		mappings.put( SbiTenant.class, new TenantJSONSerializer());
 		
 		mappings.put( Job.class, new JobJSONSerializer());
+		mappings.put( Trigger.class, new TriggerJSONSerializer());
+
 
 	}
 
