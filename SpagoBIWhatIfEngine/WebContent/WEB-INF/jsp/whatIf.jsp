@@ -9,7 +9,7 @@
 <%-- 
 author:...
 --%>
-<%@page import="it.eng.spagobi.utilities.engines.rest.ExecutionSession"%>
+
 <%@ page language="java" 
 	     contentType="text/html; charset=ISO-8859-1" 
 	     pageEncoding="ISO-8859-1"%>	
@@ -31,6 +31,7 @@ author:...
 <%@page import="java.util.Map"%>
 <%@page import="java.util.List"%>
 <%@page import="java.util.Iterator"%>
+<%@page import="it.eng.spagobi.utilities.engines.rest.ExecutionSession"%>
 
 <%-- ---------------------------------------------------------------------- --%>
 <%-- JAVA CODE 																--%>
@@ -72,7 +73,7 @@ author:...
 	<head>
 		<%@include file="commons/includeExtJS.jspf" %>
 		<%@include file="commons/includeSbiWhatIfJS.jspf"%>
-		
+
 		<%-- START SCRIPT FOR DOMAIN DEFINITION (MUST BE EQUAL BETWEEN SPAGOBI AND EXTERNAL ENGINES) -->
 		<script type="text/javascript">
 		document.domain='<%= EnginConf.getInstance().getSpagoBiDomain() %>';

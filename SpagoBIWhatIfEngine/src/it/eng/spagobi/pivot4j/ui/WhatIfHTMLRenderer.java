@@ -2,26 +2,32 @@ package it.eng.spagobi.pivot4j.ui;
 
 import java.io.StringWriter;
 import java.io.Writer;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+
+import javax.el.MethodExpression;
+import javax.faces.component.UIParameter;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.olap4j.Axis;
-import org.olap4j.Cell;
 import org.olap4j.OlapException;
-import org.olap4j.metadata.Hierarchy;
-import org.olap4j.metadata.Level;
-import org.olap4j.metadata.Member;
 
+import com.eyeq.pivot4j.transform.DrillReplace;
 import com.eyeq.pivot4j.ui.CellType;
 import com.eyeq.pivot4j.ui.RenderContext;
+import com.eyeq.pivot4j.ui.command.CellCommand;
+import com.eyeq.pivot4j.ui.command.CellParameters;
 import com.eyeq.pivot4j.ui.html.HtmlRenderer;
 import com.eyeq.pivot4j.ui.property.PropertySupport;
 import com.eyeq.pivot4j.util.CssWriter;
 
 public class WhatIfHTMLRenderer extends HtmlRenderer {
+	private Integer paddingLeft = 35;
 
+	private Map<String, String> commands;
 
 	public WhatIfHTMLRenderer(Writer writer) {
 		super(writer);
@@ -42,14 +48,20 @@ public class WhatIfHTMLRenderer extends HtmlRenderer {
 				styleClass = getRowHeaderStyleClass();
 
 				if (getRowHeaderLevelPadding() > 0) {
+
 					int padding = getRowHeaderLevelPadding()
 							* (1 + context.getMember().getDepth());
+					
+					if(paddingLeft != null){
+						padding = paddingLeft +padding;
+					}
 					cssWriter.writeStyle("padding-left", padding + "px");
 				}
 			}
 			break;
 		case Title:
 		case Aggregation:
+
 			if (context.getAxis() == Axis.COLUMNS) {
 				styleClass = getColumnTitleStyleClass();
 			} else if (context.getAxis() == Axis.ROWS) {
@@ -112,20 +124,17 @@ public class WhatIfHTMLRenderer extends HtmlRenderer {
 		if (styleClass != null) {
 			//adds the proper style (depending if it was collapsed or expanded)
 			if(context.getMember() != null && context.getMember().getMemberType() != null && !context.getMember().getMemberType().name().equalsIgnoreCase("Measure")){
-				System.out.println(context.getMember().getMemberType().name());
+
 				try {
 					int childrenNum = context.getMember().getChildMemberCount();
-					int depth = context.getMember().getDepth();
-					int allSize= context.getHierarchy().getLevels().size();
-					System.out.println(depth);
-					System.out.println(allSize);
-
 					
-					if(childrenNum > 0){	
-						if((allSize-1) == depth){
-							styleClass += " " + "expanded";
-						}else{
+					if(childrenNum > 0){
+
+
+						if(getEnableRowDrillDown() || getEnableColumnDrillDown()){
 							styleClass += " " + "collapsed";
+						}else{
+							styleClass += " " + "expanded";
 						}
 						
 
@@ -156,7 +165,7 @@ public class WhatIfHTMLRenderer extends HtmlRenderer {
 			attributes.put("rowspan", Integer.toString(context.getRowSpan()));
 		}
 
-		///spagobi whatif engine 
+/*		///spagobi whatif engine 
 		CellType ct = context.getCellType();
 		//context.getCellSetAxis().getAxisOrdinal().axisOrdinal();
 		int colIdx = context.getColumnIndex();
@@ -180,14 +189,143 @@ public class WhatIfHTMLRenderer extends HtmlRenderer {
 		if(ct.name().equalsIgnoreCase("Header")){
 			//explode or collapse for drill down functionality
 			attributes.put("onClick", "javascript:Sbi.olap.eventManager.drillDown("+axis+" , "+pos+" , "+memb+")");
-
 			
 		}else if(ct.name().equalsIgnoreCase("Value")){
 			//edit cell value functionality
 			attributes.put("onClick", "alert('"+ct.name()+"')");
-		}
+		}*/
 		
 		return attributes;
 	}
+	
+	@Override
+	public void cellContent(RenderContext context, String label) {
+
+		String link = null;
+
+		PropertySupport properties = getProperties(context);
+
+		if (properties != null) {
+			link = getPropertyValue("link", properties, context);
+		}
+
+		if (link == null) {
+			if(context.getMember() != null && context.getMember().getMemberType() != null && !context.getMember().getMemberType().name().equalsIgnoreCase("Measure")){
+				Map<String, String> attributes = new TreeMap<String, String>();
+/*				try {
+					int childrenNum = context.getMember().getChildMemberCount();
+
+					if(childrenNum > 0){
+						*/
+						List <CellCommand<?>> commands = getCommands(context);
+						paddingLeft = 10;
+						
+						if (commands != null && !commands.isEmpty()) {
+							for (CellCommand<?> command : commands) {
+								String cmd = command.getName();
+								///spagobi whatif engine 
+								CellType ct = context.getCellType();
+								//context.getCellSetAxis().getAxisOrdinal().axisOrdinal();
+								int colIdx = context.getColumnIndex();
+								int rowIdx = context.getRowIndex();
+
+								int axis =0;
+								if(context.getAxis()!= null){
+									axis =context.getAxis().axisOrdinal();
+								}
+								int memb =0;
+								if(context.getPosition()!= null){
+									memb =context.getPosition().getOrdinal();
+								}
+								int pos =0;
+								if(context.getAxis() == Axis.COLUMNS){
+									pos = rowIdx;
+								}else{
+									pos = colIdx;
+								}
+								if(cmd != null && cmd.equalsIgnoreCase("expandPosition")){
+									attributes.put("src", "../img/elbow-plus-nl.gif");
+									attributes.put("onClick", "javascript:Sbi.olap.eventManager.drillDown("+axis+" , "+pos+" , "+memb+")");
+									getWriter().startElement("img", attributes);			
+									getWriter().endElement("img");
+								}else if(cmd != null && cmd.equalsIgnoreCase("collapsePosition")){
+									attributes.put("src", "../img/elbow-minus-nl.gif");
+									attributes.put("onClick", "javascript:Sbi.olap.eventManager.drillUp("+axis+" , "+pos+" , "+memb+")");
+									getWriter().startElement("img", attributes);			
+									getWriter().endElement("img");
+								}
+
+							}
+						}
+
+/*					}
+					
+				} catch (OlapException e) {
+					e.printStackTrace();
+				}*/
+			}
+			getWriter().writeContent(label);
+		} else {
+			Map<String, String> attributes = new HashMap<String, String>(1);
+			attributes.put("href", link);
+
+			getWriter().startElement("a", attributes);
+			getWriter().writeContent(label);
+			getWriter().endElement("a");
+		}
+	}
+	@Override
+	public void startCell(RenderContext context, List<CellCommand<?>> commands) {
+		boolean header;
+
+		switch (context.getCellType()) {
+		case Header:
+		case Title:
+		case None:
+			header = true;
+			break;
+		default:
+			header = false;
+			break;
+		}
+
+		String name = header ? "th" : "td";
+
+		if (commands != null && !commands.isEmpty()) {
+			for (CellCommand<?> command : commands) {
+				CellParameters parameters = command.createParameters(context);
+
+				UIParameter commandParam = new UIParameter();
+				commandParam.setName("command");
+				commandParam.setValue(command.getName());
+
+				UIParameter axisParam = new UIParameter();
+				axisParam.setName("axis");
+				axisParam.setValue(parameters.getAxisOrdinal());
+
+
+				UIParameter positionParam = new UIParameter();
+				positionParam.setName("position");
+				positionParam.setValue(parameters.getPositionOrdinal());
+
+
+				UIParameter memberParam = new UIParameter();
+				memberParam.setName("member");
+				memberParam.setValue(parameters.getMemberOrdinal());
+
+
+				UIParameter hierarchyParam = new UIParameter();
+				hierarchyParam.setName("hierarchy");
+				hierarchyParam.setValue(parameters.getHierarchyOrdinal());
+
+				UIParameter cellParam = new UIParameter();
+				cellParam.setName("cell");
+				cellParam.setValue(parameters.getCellOrdinal());
+
+			}
+		}
+		getWriter().startElement(name, getCellAttributes(context));
+	}
+
 
 }
