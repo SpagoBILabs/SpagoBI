@@ -19,6 +19,13 @@ Ext.define('Sbi.tools.scheduler.SchedulerModel', {
 	fields: [
 	         "jobGroup",
 	         "jobName",
-	         "jobDescription"
+	         "jobDescription",
+	         "jobClass",
+	         "jobDurability",
+	         "jobRequestRecovery",
+	         "useVolatility",
+	         "jobParameters",
+	         "documents",
+	         "triggers"
 	         ]
 });

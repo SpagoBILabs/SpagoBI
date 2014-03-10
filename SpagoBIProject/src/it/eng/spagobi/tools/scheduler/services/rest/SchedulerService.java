@@ -37,10 +37,12 @@ import it.eng.spagobi.tools.scheduler.dao.ISchedulerDAO;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.log4j.Logger;
@@ -172,6 +174,25 @@ public class SchedulerService {
 		}
 		
 		return JSONReturn.toString();
+	}
+	
+	@GET
+	@Path("/deleteJob")
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	public String deleteJob(@Context HttpServletRequest req){
+		String jobGroup = req.getParameter("jobGroup");
+		String jobName = req.getParameter("jobName");
+		
+		
+		
+		//TODO: delete a JOB
+		
+		
+		
+		
+		return ("{resp:'ok'}");
+
+
 	}
 
 }
