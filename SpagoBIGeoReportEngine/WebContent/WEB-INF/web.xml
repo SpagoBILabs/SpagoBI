@@ -94,12 +94,15 @@
   	</filter-mapping>
 
 	END-CAS -->
-
+	
 	<filter-mapping>
-		<filter-name>SpagoBIAccessFilter</filter-name>
-		<url-pattern>/GeoReportEngineStartAction/*</url-pattern>
-		<url-pattern>/GeoReportEngineStartEditAction/*</url-pattern>
-	</filter-mapping>
+        <filter-name>SpagoBIAccessFilter</filter-name>
+        <url-pattern>/GeoReportEngineStartAction/*</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>SpagoBIAccessFilter</filter-name>
+        <url-pattern>/GeoReportEngineStartEditAction/*</url-pattern>
+    </filter-mapping>    
 	
 
 
