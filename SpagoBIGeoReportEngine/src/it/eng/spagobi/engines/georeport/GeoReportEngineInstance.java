@@ -19,6 +19,8 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.json.JSONUtils;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -29,6 +31,10 @@ import org.json.JSONObject;
  * @author Andrea Gioia (andrea.gioia@eng.it)
  */
 public class GeoReportEngineInstance extends AbstractEngineInstance {
+	//ENVIRONMENT VARIABLES
+	private String[] lstEnvVariables = {"SBI_EXECUTION_ID", "SBICONTEXT", "SBI_COUNTRY", "SBI_LANGUAGE", 
+										"SBI_SPAGO_CONTROLLER",  "SBI_EXECUTION_ROLE", "SBI_HOST", 
+										"DOCUMENT_ID", "country", "language", "user_id" };
 	private JSONObject guiSettings;
 	private JSONObject docProperties;
 	private List<String> includes;
@@ -148,6 +154,32 @@ public class GeoReportEngineInstance extends AbstractEngineInstance {
 	public EventServiceProxy getEventServiceProxy() {
 		return (EventServiceProxy)this.getEnv().get(EngineConstants.ENV_EVENT_SERVICE_PROXY);
 	}
+	
+	public Map getAnalyticalDrivers() {
+		Map toReturn = new HashMap();
+		Iterator it = getEnv().keySet().iterator();
+		while(it.hasNext()) {
+			String parameterName = (String)it.next();
+			Object parameterValue = (Object) getEnv().get(parameterName);
+
+			if (parameterValue != null && 
+				parameterValue.getClass().getName().equals("java.lang.String") && //test necessary for don't pass complex objects like proxy,...
+				isAnalyticalDriver(parameterName)){
+				toReturn.put(parameterName, parameterValue);
+			}
+		}
+		return toReturn;
+	}
+	
+	private boolean isAnalyticalDriver (String parName){
+		for (int i=0; i < lstEnvVariables.length; i++){
+			if (lstEnvVariables[i].equalsIgnoreCase(parName)){
+				return false;
+			}
+		}
+		return true;
+	}
+	
 
 	
 	// -- unimplemented methods ------------------------------------------------------------

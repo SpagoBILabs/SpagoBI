@@ -365,7 +365,7 @@ Ext.extend(Sbi.geo.MainPanel, Ext.Panel, {
 		
 		Sbi.trace("[MainPanel.initAnalysis]: IN");
 		
-		if(this.indicatorContainer === "layer")  {
+		if(!this.indicatorContainer === "layer")  {
 			for (var i = 0; i < this.indicators.length; i++){
 				this.indicators[i][0] = this.indicators[i][0].toUpperCase();
 			}
@@ -624,9 +624,13 @@ Ext.extend(Sbi.geo.MainPanel, Ext.Panel, {
 			this.detailDocumentConf = [this.detailDocumentConf];
 		}
 		
-		//if(!this.toolbar.selectMode){
+		if(this.selectMode && this.selectMode == 'detail'){
 			this.openPopup(feature);
-		//}
+		}else if(this.selectMode && this.selectMode == 'cross'){
+			this.execCrossNav(feature);
+		}else{
+			this.openPopup(feature); //default
+		}
 		Sbi.trace("[MainPanel.onTargetFeatureClick]: OUT");
 	}
 	
@@ -750,15 +754,86 @@ Ext.extend(Sbi.geo.MainPanel, Ext.Panel, {
 	
 	, getDetailDocParams: function(detailDocumentConf, feature) {
 		var params;
+		var msgErr = ""; 
 		
 		params = Ext.apply({}, detailDocumentConf.staticParams);
-		for(p in detailDocumentConf.dynamicParams) {
-			var attrName = detailDocumentConf.dynamicParams[p].toUpperCase();			
-			params[p] = feature.attributes[attrName];
-		}
 		
-		return params;
+		for(p in detailDocumentConf.dynamicParams) {
+//			Since SpagoBI4.2 scope information is mandatory ('env','dataset','feature');
+			
+			var param = detailDocumentConf.dynamicParams[p];
+			 
+//			if (this.indicatorContainer === undefined || this.indicatorContainer === 'layer'){
+//				//original management
+//				var attrName = detailDocumentConf.dynamicParams[p].toUpperCase();			
+//				params[p] = feature.attributes[attrName];
+//			}else 
+			if (param.scope === 'feature') {		            	  
+	               for(p in param) {
+	            	   if(p === 'scope') continue;	
+	            	   var attrName = param[p];
+	            	   var attrValue = feature.attributes[attrName];
+	                   if( attrValue === undefined) {         			                   
+	                    msgErr += 'Parameter "' + param[p] + '" undefined into the feature.<p>';
+			           } else {			        	   			
+						   params[p] = attrValue; 
+			           }
+	               }
+            } else if (param.scope === 'env'){ 		            	  
+	               for(p in param) { 
+		                if(p === 'scope') continue;			              			            	  		                
+		                  var tmpNamePar =  param[p];
+		            	  if (p !== this.USER_ID && this.executionContext[tmpNamePar] === undefined) {
+		            		   msgErr += 'Parameter "' + tmpNamePar + '" undefined into request. <p>';
+	                    } else { 	                  
+	                    		params[p] = this.executionContext[tmpNamePar]; 
+	                    }
+	               }
+           } else if ((this.indicatorContainer !== undefined || this.indicatorContainer !== 'layer') && 
+        		   			param.scope === 'dataset'){ 		            	  
+               for(p in param) { 
+	                if(p === 'scope') continue;			
+	                var filterValue =  feature.attributes[this.geoId];
+	                if (filterValue == undefined || filterValue == null || filterValue == ''){
+	                	msgErr += 'Filter value '+ this.geoId+' has not a valid value for the feature.<p>';
+	                }else{
+	                	//var field = this.getStoreFieldByHeader(this.businessId);
+	                	var firstRecord = this.store.getAt(0);	  
+	                	var fieldJoin = null;
+	                	var fieldFilter = null;	                	
+	            	 	for(var n = 0; n < firstRecord.fields.getCount(); n++) {
+	            	 		var f = firstRecord.fields.itemAt(n);
+	            	 		if(f.header == this.businessId) {
+	            	 			fieldJoin = f;	            	 			
+	            	 		}else if (f.header == param[p]){
+	            	 			fieldFilter = f;
+	            	 		}
+	            	 		if (fieldJoin != null && fieldFilter != null)
+	            	 			break;
+	            	 	}
+	            	 	
+	                	var filterRecIdx = this.store.find(fieldJoin.dataIndex, filterValue);
+	                	if (filterRecIdx > -1){
+	                		var filterRec = this.store.getAt(filterRecIdx);
+		                	var fieldValue = filterRec.get(fieldFilter.dataIndex);
+		                	if (fieldValue === undefined) {
+			            		msgErr += 'Column "' + param[p] + '" undefined into the dataset. <p>';			            	
+		                    } else {                                   
+		                    	params[p]  = fieldValue;
+		                   }
+	                	}else
+	                		msgErr += 'Column "' + this.businessId + '" with value "'+ filterValue +'" undefined into the dataset. <p>';
+	                }
+              }
+      }	                 
+     }
+	 if  (msgErr != ""){
+		Sbi.exception.ExceptionHandler.showWarningMessage(msgErr, 'Service Warning');
+     }	
+		
+	 return params;
 	}
+	
 	
 	, getDetailDocExecFn: function(detailDocumentConf, detailDocParams) {
 		var execDetailFn = "execDoc(";
@@ -812,5 +887,44 @@ Ext.extend(Sbi.geo.MainPanel, Ext.Panel, {
         );
         
         return content;
+	}
+	
+	, execCrossNav: function(feature){	
+//		this.showMask();
+		var separator = '';
+		
+		var msg = {
+			label: this.crossnav.label
+	    	, windowName: this.name	||  parent.name // parent.name is used in document composition context			
+	    	, typeCross: 'INTERNAL' //for manage correctly the IE workaround in document composition context 
+	    }; 
+		
+		msg.parameters = '';
+		var params = this.getDetailDocParams(this.crossnav, feature);
+		for(p in params) {
+		  	var values = params[p];
+        	if (Ext.isArray(values)){
+        		//multiple values management (...&P1=val1&P1=val2&P1=val3...)
+        		for (var i=0; i< values.length; i++){
+        			msg.parameters += separator + p + '=' + ((values[i]==='%')?'%25':values[i]);
+        		}
+        	} else
+        		msg.parameters += separator + p + '=' + ((params[p]==='%')?'%25':params[p]);
+			separator = '&';
+		}
+		if (this.executionContext.EXECUTION_CONTEXT !== undefined && 
+			this.executionContext.EXECUTION_CONTEXT === 'DOCUMENT_COMPOSITION'){							
+			//document composition context				
+			if (params.typeCross == undefined || 
+				   (params.typeCross !== undefined && params.typeCross == 'INTERNAL')){
+				//internal cross	
+				var frameName = "iframe_" + this.executionContext.DOCUMENT_LABEL;
+	    		parent.execCrossNavigation(frameName, msg.label ,  msg.parameters );
+	    		
+			}
+		}else{
+			sendMessage(msg, 'crossnavigation');
+		}
+//			this.hideMask.defer(2000, this);
 	}
 });
