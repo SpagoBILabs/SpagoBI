@@ -10,6 +10,7 @@ package it.eng.spagobi.engines.whatif.services.table;
 
 import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
 import it.eng.spagobi.engines.whatif.services.common.AbstractRestService;
+import it.eng.spagobi.engines.whatif.utilis.CubeUtilities;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,12 +24,16 @@ import org.apache.log4j.Logger;
 import org.olap4j.CellSet;
 import org.olap4j.CellSetAxis;
 import org.olap4j.OlapConnection;
+import org.olap4j.OlapException;
 import org.olap4j.metadata.Hierarchy;
+import org.olap4j.metadata.Member;
 
 import com.eyeq.pivot4j.PivotModel;
 import com.eyeq.pivot4j.mdx.MdxStatement;
 import com.eyeq.pivot4j.query.QueryAdapter;
+import com.eyeq.pivot4j.transform.ChangeSlicer;
 import com.eyeq.pivot4j.transform.PlaceHierarchiesOnAxes;
+import com.eyeq.pivot4j.transform.impl.ChangeSlicerImpl;
 import com.eyeq.pivot4j.transform.impl.PlaceHierarchiesOnAxesImpl;
 
 @Path("/table")
@@ -82,6 +87,43 @@ public class TableHierachiesTransformer extends AbstractRestService {
 		hierarchies.add(model.getCube().getHierarchies().get(3));
 		
 		ph.placeHierarchies(rowsOrColumns.getAxisOrdinal(),hierarchies ,true);
+		MdxStatement s = qa.updateQuery();
+		model.setMdx(s.toMdx());
+
+		return renderModel(model);
+	}
+	
+	@GET
+	@Path("/slice/{hierarchy}/{member}")
+	public String addSlicer(@javax.ws.rs.core.Context HttpServletRequest req, @PathParam("hierarchy") String hierarchyName, @PathParam("member") String memberName){
+
+		WhatIfEngineInstance ei = getWhatIfEngineInstance();
+		PivotModel model = ei.getPivotModel();
+		OlapConnection connection = ei.getOlapConnection();
+		Hierarchy hierarchy =null;
+		Member member =null;
+		
+		
+		QueryAdapter qa = new QueryAdapter(model);
+		qa.initialize();
+		
+		ChangeSlicer ph = new ChangeSlicerImpl(qa, connection);
+	
+
+		try {
+			hierarchy = CubeUtilities.getHierarchy(model.getCube(), hierarchyName);
+			member = CubeUtilities.getMember(hierarchy, memberName);
+		} catch (OlapException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		List<org.olap4j.metadata.Member> slicers = ph.getSlicer(hierarchy);
+		slicers.add(member);
+		ph.setSlicer(hierarchy,slicers);
+
+
 		MdxStatement s = qa.updateQuery();
 		model.setMdx(s.toMdx());
 
