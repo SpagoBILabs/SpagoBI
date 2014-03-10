@@ -108,12 +108,12 @@ Sbi.execution.ParametersPanel = function(config, doc) {
 	
 	this.formWidth = ( (c.columnWidth + c.fieldsPadding) * c.columnNo) ;
 
-	if(this.contest=='massiveExport'){
+	if (this.isMassiveExportContext()) {
 		var formState = this.getFormState();
-	}
-	if(this.contest== undefined || this.contest!='massiveExport'){
+	} else {
 		this.initViewpointsPanel(config, doc)
 	}
+	
 	this.initTootlbar();
 	this.initExecutionButton();
 	
@@ -125,7 +125,7 @@ Sbi.execution.ParametersPanel = function(config, doc) {
         autoHeight: true,
         items: [{
         		// panel with execution button
-	        	items: this.executionButton
+	        	items: this.isMassiveExportContext() ? {html: "&nbsp;"} : this.executionButton  // do not display execution button on massive export context
 	        	, width: 70
 	            , border: false
 	            , style: c.parametersRegion == 'north' 
@@ -135,7 +135,8 @@ Sbi.execution.ParametersPanel = function(config, doc) {
 	        	// separator panel
 	        	html: '&nbsp;'
     			, layout : 'fit'
-    			, border : c.parametersRegion == 'east'  // puts border only in case the parameters panel is displayed on east region
+    			, border : !this.isMassiveExportContext() && c.parametersRegion == 'east'  	// puts border only in case the parameters panel is displayed on east region
+    																						// and context is not massive export context
     			, height: 0
     		}, {
     			// panel with parameters
@@ -235,7 +236,8 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 				}
 			}));
     	
-    	if (Sbi.user.functionalities.contains('SeeViewpointsFunctionality') && !this.isFromCross) {
+    	if (Sbi.user.functionalities.contains('SeeViewpointsFunctionality') && !this.isFromCross &&
+    			!this.isMassiveExportContext() ) {
 			toolbarItems.push(new Ext.Toolbar.Button({
 				iconCls: 'icon-saved-parameters '
 				, tooltip: LN('sbi.execution.parametersselection.toolbar.open')
@@ -1626,6 +1628,10 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 			f.setRawValue( state.description );
 			this.updateDependentFields( f );
 		}		
+	}
+	
+	, isMassiveExportContext: function () {
+		return (this.contest != undefined && this.contest == 'massiveExport');
 	}
 	
 });
