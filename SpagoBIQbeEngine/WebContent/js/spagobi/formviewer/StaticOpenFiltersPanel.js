@@ -40,8 +40,8 @@ Sbi.formviewer.StaticOpenFiltersPanel = function(openFilters, config) {
 	
 	var defaultSettings = {
 		// set default values here
-		title: LN('sbi.formviewer.staticopenfilterspanel.title')
-        , border: false
+		//title: LN('sbi.formviewer.staticopenfilterspanel.title'),
+        border: false
         , frame: true
         , autoScroll: true
 		, autoWidth: true

@@ -33,7 +33,7 @@ Sbi.locale.ln['sbi.formbuilder.templateeditorpanel.title'] = 'Compteur de formul
 
 Sbi.locale.ln['sbi.formtemplate.documenttemplatebuilder.documentfield.label'] = 'Document';
 Sbi.locale.ln['sbi.formtemplate.documenttemplatebuilder.documentfield.emptytext'] = 'S\u00E9lectionner un document...';
-Sbi.locale.ln['sbi.formtemplate.documenttemplatebuilder.startediting'] = 'D\u00E9marrer le concepteur...';
+Sbi.locale.ln['sbi.formtemplate.documenttemplatebuilder.startwithdocument'] = 'D\u00E9marrer le concepteur...';
 
 Sbi.locale.ln['sbi.formbuilder.dynamicfiltereditorpanel.title'] = 'Filtre dynamique';
 Sbi.locale.ln['sbi.formbuilder.dynamicfiltereditorpanel.emptymsg'] = 'Cliquer sur un bouton en haut \u00E0 droite pour ajouter un filtre dynamique';

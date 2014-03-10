@@ -83,9 +83,7 @@ public class QbeEngineInstance extends AbstractEngineInstance {
 		dataSourceProperties.put("metadataServiceProxy", env.get(EngineConstants.ENV_METAMODEL_PROXY));
 		dataSourceProperties.put(EngineConstants.ENV_DATASETS, env.get(EngineConstants.ENV_DATASETS));
 		
-		if ( env.get(EngineConstants.ENV_DATASETS) == null ) {
-			dataSourceProperties.put("datasource", dataSrc);
-		}
+		dataSourceProperties.put("datasource", dataSrc);
 		
 		dataSource = QbeDataSourceManager.getInstance().getDataSource(
 				template != null ? template.getDatamartNames() : null, 

@@ -52,6 +52,7 @@ public class EngineConstants {
 	public static final Object ENV_DOCUMENT_COMMUNITIES = "DOCUMENT_COMMUNITIES";	
 	public static final Object ENV_DOCUMENT_FUNCTIONALITIES = "DOCUMENT_FUNCTIONALITIES";	
 	
+	public static final String SMART_FILTER_TAG = "SMART_FILTER";
 
 		
 	public static final String ENGINE_DATASOURCE = "ENGINE_DATASOURCE";

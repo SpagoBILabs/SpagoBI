@@ -48,6 +48,7 @@ Sbi.formviewer.FormViewerPage = function(template, config, formValues) {
 		//, bodyStyle: 'padding:30px'
 		, showSaveFormButton : true
 		, showWorksheetButton : true
+		, title: LN('sbi.formviewer.formviewerpage.filters.title')
 	};
 	
 	this.services = this.services || new Array();	
@@ -96,8 +97,10 @@ Ext.extend(Sbi.formviewer.FormViewerPage, Ext.Panel, {
     , dynamicFiltersPanel: null
     , groupingVariablesPanel: null
     , saveFormStateValuesWindow: null
+    , filters: null
     // private methods
     , init: function(template) {
+
 		this.items = [];
 		if (template.staticClosedFilters !== undefined && template.staticClosedFilters !== null && template.staticClosedFilters.length > 0) {
 			this.staticClosedFiltersPanel = new Sbi.formviewer.StaticClosedFiltersPanel(template.staticClosedFilters); 

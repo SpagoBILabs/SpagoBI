@@ -2189,5 +2189,53 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 		
 		return toReturn;		
 	}
+	public List<IDataSet> loadFlatDatasets(String owner) {
+		List<IDataSet>  toReturn;
+		Session session;
+		Transaction transaction;
+		
+		logger.debug("IN");
+		
+		toReturn = new ArrayList<IDataSet>();
+		session = null;
+		transaction = null;
+		try {
+			if(owner == null) {
+				throw new IllegalArgumentException("Input parameter [owner] cannot be null");
+			}
+			try {
+				session = getSession();
+				Assert.assertNotNull(session, "session cannot be null");
+				transaction = session.beginTransaction();
+				Assert.assertNotNull(transaction, "transaction cannot be null");
+			} catch(Throwable t) {
+				throw new SpagoBIDOAException("An error occured while creating the new transaction", t);
+			}
+			//private & public datasets created by the user "owner" 
+			Query myDS = session.createQuery("from SbiDataSet h where h.active = ? and h.scope.valueCd ='TECHNICAL' and h.type='SbiFlatDataSet'" );
+			myDS.setBoolean(0, true);
+			
+			List<SbiDataSet> sbiDataSetList = myDS.list();
+			for (SbiDataSet sbiDataSet : sbiDataSetList) {
+				if(sbiDataSet != null){
+					toReturn.add(DataSetFactory.toDataSet(sbiDataSet));				
+				}
+			}
+
+			transaction.commit();
+		} catch (Throwable t) {
+			if (transaction != null && transaction.isActive()) {
+				transaction.rollback();
+			}
+			throw new SpagoBIDOAException("An unexpected error occured while loading dataset whose owner is equal to [" + owner+ "]", t);	
+		} finally {
+			if (session != null && session.isOpen()) {
+				session.close();
+			}
+			logger.debug("OUT");
+		}
+		
+		return toReturn;
+	}
 
 }

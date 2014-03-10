@@ -44,12 +44,10 @@ Sbi.formbuilder.DynamicFilterEditorPanel = function(config) {
 		title: LN('sbi.formbuilder.dynamicfiltereditorpanel.title')
 		, emptyMsg: LN('sbi.formbuilder.dynamicfiltereditorpanel.emptymsg')
 		, filterItemName: LN('sbi.formbuilder.dynamicfiltereditorpanel.filteritemname')
-		/*
-		, layout: 'table'
-	    , layoutConfig: {
-	        columns: 1
-	    }
-	    */
+		//, ddGroup    : 'formbuilderDDGroup'
+		//, droppable: {
+		//	onFieldDrop: this.onFieldDrop
+		//} 
 		, enableDebugBtn: false
 	};
 	if (Sbi.settings && Sbi.settings.formbuilder && Sbi.settings.formbuilder.dynamicFilterEditorPanel) {
@@ -99,6 +97,8 @@ Ext.extend(Sbi.formbuilder.DynamicFilterEditorPanel, Sbi.formbuilder.EditorPanel
 	    	this.showFilterGroupWizard(editor);
 	    }, this);
 		this.addFilterItem(newGroupEditor);
+		
+		return newGroupEditor;
 	}
 		
 	, addFilter: function(filterConf) {	
@@ -106,18 +106,9 @@ Ext.extend(Sbi.formbuilder.DynamicFilterEditorPanel, Sbi.formbuilder.EditorPanel
 	}
 
 	, showFilterGroupWizard: function(targetFilterGroup) {
-		if(this.wizard === null) {
-			this.wizard = new Sbi.formbuilder.DynamicFilterGroupWizard();
-			this.wizard.on('apply', function(win, target, state) {
-				if(target === null) {
-					this.addFilterGroup(state);
-				} else {
-					target.modifyFilter(state);
-				}
-			}, this);
-		}	
-		this.wizard.setTarget(targetFilterGroup || null);
-		this.wizard.show();
+		var wizard = this.getDynamicFilterGroupWizard();
+		wizard.setTarget(targetFilterGroup || null);
+		wizard.show();
 	}
 	
 	// --------------------------------------------------------------------------------
@@ -128,5 +119,50 @@ Ext.extend(Sbi.formbuilder.DynamicFilterEditorPanel, Sbi.formbuilder.EditorPanel
 		
 	}
 	
+	/* unfortunately, this does not work properly: since there are 2 overlapping drop zones (this one and DynamicFilterGroupEditor's one), 
+	 * the DynamicFilterGroupEditor.onFieldDrop is invoked twice
+	, onFieldDrop: function(fieldConf) {
+		var content = this.createDefaultEditorConfig( fieldConf );
+		var targetFilterGroup = this.addFilterGroup( content );
+		var wizard = this.getDynamicFilterGroupWizard();
+		wizard.setTarget(targetFilterGroup);
+		wizard.show();
+	}
+	*/
+	
+	,
+	createDefaultEditorConfig : function (fieldConf) {
+		var content = {};
+		content.title = fieldConf.alias;
+		content.operator = "EQUALS TO";
+		var admissibleFields = [];
+		
+		var c = Ext.apply({}, fieldConf);
+		c.uniqueName = c.id || c.field || 'not defined';
+		if(c.id) delete c.id;
+		if(c.field) delete c.field;
+		
+		c.alias = c.alias || c.text || 'not defined';
+		delete c.text;
+		
+		admissibleFields[0] = c;
+		content.admissibleFields = admissibleFields;
+		return content;
+	}
+	
+	,
+	getDynamicFilterGroupWizard : function () {
+		if (this.wizard === null) {
+			this.wizard = new Sbi.formbuilder.DynamicFilterGroupWizard();
+			this.wizard.on('apply', function(win, target, state) {
+				if(target === null) {
+					this.addFilterGroup(state);
+				} else {
+					target.modifyFilter(state);
+				}
+			}, this);
+		}
+		return this.wizard;
+	}
   	
 });

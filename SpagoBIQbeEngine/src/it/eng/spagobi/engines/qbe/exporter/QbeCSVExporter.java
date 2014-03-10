@@ -5,6 +5,7 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.engines.qbe.exporter;
 
+import it.eng.spagobi.engines.qbe.QbeEngineConfig;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 
 import java.io.File;
@@ -25,7 +26,7 @@ public class QbeCSVExporter {
     /**
      * The values separator string
      */
-    public static final String VALUES_SEPARATOR = "\t";
+    public static final String VALUES_SEPARATOR = QbeEngineConfig.getInstance().getExportCsvSeparator() ;
     
 	public QbeCSVExporter() {
 		super();

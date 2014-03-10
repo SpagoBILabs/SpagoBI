@@ -74,9 +74,12 @@ public class FormEngineStartAction extends AbstractEngineStartAction {
 				logger.debug("Audit enabled: [FALSE]");
 			}
 			
+			// Add the dataset (if any)
+			Map env = addDatasetsToEnv();
+			
 			logger.debug("Creating engine instance ...");
 			try {
-				qbeEngineInstance = QbeEngine.createInstance(getTemplateAsSourceBean(), getEnv() );
+				qbeEngineInstance = QbeEngine.createInstance(getTemplateAsSourceBean(), env );
 				
 				Query query = qbeEngineInstance.getQueryCatalogue().getFirstQuery();
 				qbeEngineInstance.setActiveQuery(query);
@@ -191,5 +194,10 @@ public class FormEngineStartAction extends AbstractEngineStartAction {
 
 		return env;
 	}
+	
+    public Map addDatasetsToEnv(){
+		Map env = getEnv();
+		return env;
+    }
     
 }

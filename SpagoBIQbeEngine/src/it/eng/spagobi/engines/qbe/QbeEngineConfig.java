@@ -15,6 +15,8 @@ import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.file.FileUtils;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 import org.apache.log4j.Logger;
@@ -345,4 +347,24 @@ public class QbeEngineConfig {
 		isDataSourceCacheEnabled = Boolean.parseBoolean(isDataSourceCacheEnabledStr);
 		return isDataSourceCacheEnabled;
 	}
+	
+	public String getExportCsvSeparator() {
+		List separators = new ArrayList<SourceBean>();
+		String separator = "\t";
+		try {																		 
+			separators =  ConfigSingleton.getInstance().getAttributeAsList("QBE.EXPORT-CSV-SEPARATOR.SEPARATOR") ;
+			for(int i=0; i<separators.size(); i++){
+				SourceBean separBean = (SourceBean)separators.get(i);
+				String defaultattr = (String)separBean.getAttribute("default");
+				if(Boolean.parseBoolean(defaultattr)){
+					separator = (String)separBean.getAttribute("value");
+				}
+			}
+			
+		} catch (Exception e) {
+			logger.debug("No EXPORT-CSV-SEPARATOR.SEPARATOR configuration has been specified in the qbe.xml");
+		}
+		return separator;
+	}
+	
 }

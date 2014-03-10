@@ -61,8 +61,8 @@ Sbi.formviewer.FormEnginePanel = function(formEngineConfig) {
 	this.addEvents('execute');
 	*/
 	
-	this.initFormViewerPage(formEngineConfig.template, c.formViewerPageConfig || {},formEngineConfig.formValues);
-	this.initResultsPage(c.resultsPageConfig || {});
+	this.initFormViewerPage(formEngineConfig.template, c.formViewerPageConfig || {}, formEngineConfig.formValues);
+	this.initResultsPage( Ext.apply( c.resultsPageConfig || {}, {template : formEngineConfig.template} ));
 	this.initWorksheetPage(formEngineConfig.worksheet || {});
 	this.activePageNumber =0;
 	c = Ext.apply(c, {
@@ -114,19 +114,19 @@ Ext.extend(Sbi.formviewer.FormEnginePanel, Ext.Panel, {
     	this.getLayout().setActiveItem( 2 );
     	this.worksheetPage.setFormState(formState);
     	this.worksheetPage.updateWorksheetEngine();
-    	this.activePageNumber =2;
+    	this.activePageNumber = 2;
 	}
 	
     , moveToResultsPage: function(formState) {
     	this.getLayout().setActiveItem( 1 );
     	this.resultsPage.setFormState(formState);
     	this.resultsPage.loadResults(formState.groupingVariables);
-    	this.activePageNumber =1;
+    	this.activePageNumber = 1;
 	}
     
     , moveToFormPage: function() {
     	this.getLayout().setActiveItem( 0 );
-    	this.activePageNumber =0;
+    	this.activePageNumber = 0;
 	}
     
     , validate : function () {

@@ -30,6 +30,7 @@ public class QbeXMLTemplateParser implements IQbeTemplateParser{
 	
 	public static String TAG_ROOT_COMPOSITE = "COMPOSITE-QBE";
 	public static String TAG_ROOT_NORMAL = "QBE";
+	public static String TAG_ROOT_SMART_FILTER = "SMART_FILTER";
 	public static String TAG_DATAMART = "DATAMART";
 	public static String PROP_DATAMART_NAME = "name";
 	public static String PROP_DATAMART_DBLINK = "dblink";
@@ -82,7 +83,8 @@ public class QbeXMLTemplateParser implements IQbeTemplateParser{
 			
 			
 			if(!TAG_ROOT_COMPOSITE.equalsIgnoreCase(templateName)
-					&& !TAG_ROOT_NORMAL.equalsIgnoreCase(templateName)){
+					&& !TAG_ROOT_NORMAL.equalsIgnoreCase(templateName)
+					&& !TAG_ROOT_SMART_FILTER.equalsIgnoreCase(templateName)){
 				
 				QbeTemplateParseException e = new QbeTemplateParseException("Malformed template structure");
 				e.setDescription("template root tag cannot be equals to [" + templateName +"]. " +

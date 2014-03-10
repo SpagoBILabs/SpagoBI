@@ -7,6 +7,7 @@ package it.eng.spagobi.engines.qbe.template;
 
 import it.eng.spagobi.utilities.assertion.Assert;
 
+import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -18,7 +19,6 @@ import org.json.JSONObject;
  * @author Andrea Gioia
  */
 public class QbeJSONTemplateParser implements IQbeTemplateParser {
-	
 
 
 	/** Logger component. */
@@ -137,6 +137,33 @@ public class QbeJSONTemplateParser implements IQbeTemplateParser {
 			throw new QbeTemplateParseException("Cannot parse template [" + template.toString()+ "]", t);
 		} finally {
 			logger.debug("OUT");
+		}
+	}
+
+	/**
+	 * Since grouping variables are optional, we remove them completely if not defined
+	 * @param template The form JSON template
+	 */
+	public static void cleanGroupingVariables(JSONObject template) {
+		LogMF.debug(logger, "IN: input template is {0}", template);
+		try {
+			JSONArray groupingVariables = template.optJSONArray(GROUPING_VARIABLES);
+			if (groupingVariables != null && groupingVariables.length() > 0) {
+				JSONArray newJSONArray = new JSONArray();
+				for (int i = 0; i < groupingVariables.length(); i++) {
+					JSONObject aGroupingVariable = (JSONObject) groupingVariables.get(i);
+					JSONArray admissibleFields = aGroupingVariable.getJSONArray("admissibleFields");
+					if (admissibleFields.length() > 0) {
+						newJSONArray.put(aGroupingVariable);  // we maintain the grouping variable only in case it has at least one admissible field
+					}
+				}
+				template.remove(GROUPING_VARIABLES);
+				template.put(GROUPING_VARIABLES, newJSONArray);
+			}
+		} catch(Throwable t) {
+			throw new QbeTemplateParseException("Cannot parse template [" + template + "]", t);
+		} finally {
+			LogMF.debug(logger, "OUT: output template is {0}", template);
 		}
 	}
 }

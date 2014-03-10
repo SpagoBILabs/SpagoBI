@@ -87,6 +87,15 @@ public class SaveFormAction extends AbstractQbeEngineAction {
 			queryBlock = SourceBean.fromXMLString(dataDefinition.toString());
 			template.updAttribute(queryBlock);
 			
+			String datsetLabel = (String) qbeEngineInstance.getEnv().get(
+					EngineConstants.ENV_DATASET_LABEL);
+			if (datsetLabel != null) {
+				SourceBean dsLbl = new SourceBean("DATASET");
+				dsLbl.setAttribute("label", datsetLabel);
+				template.updAttribute(dsLbl);
+			}
+			
+			
 			logger.debug(template.toString());
 			
 			contentServiceProxy = (ContentServiceProxy)qbeEngineInstance.getEnv().get(EngineConstants.ENV_CONTENT_SERVICE_PROXY);
@@ -95,6 +104,7 @@ public class SaveFormAction extends AbstractQbeEngineAction {
 			String docId = (String)qbeEngineInstance.getEnv().get("DOCUMENT");
 			String result = contentServiceProxy.saveObjectTemplate(docId, templateName, template.toString());
 			
+
 			if (result == null || !result.trim().equals("OK")) {
 				throw new Exception("Error while saving document's template");
 			}

@@ -57,7 +57,11 @@ public class FormEngineTemplateBuilder extends AbstractEngineStartAction {
 			logger.debug("Input " + PARAM_MODALITY + " parameter is " + modality);
 			if (modality != null && modality.trim().equalsIgnoreCase("EDIT")) {
 				// edit template
-				publisherName = "EDIT_FORM_ENGINE_TEMPLATE_BUILD_ACTION_PUBLISHER";
+				if (this.requestContainsAttribute( QbeEngineFromDatasetStartAction.DATASET_LABEL )) {
+					publisherName = "EDIT_FORM_ENGINE_TEMPLATE_BUILD_FROM_DATASET_ACTION_PUBLISHER";
+				} else {
+					publisherName = "EDIT_FORM_ENGINE_TEMPLATE_BUILD_ACTION_PUBLISHER";
+				}
 			}
 			
 			serviceResponse.setAttribute(DynamicPublisher.PUBLISHER_NAME, publisherName);
