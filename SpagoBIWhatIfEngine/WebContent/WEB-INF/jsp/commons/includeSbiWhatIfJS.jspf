@@ -15,8 +15,10 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='../js/spagobi/olap/model/PivotModel.js'></script>
 
 <script type="text/javascript" src='../js/spagobi/exception/ExceptionHandler.js'/></script>
+
 <script type="text/javascript" src='../js/spagobi/service/ServiceRegistry.js'/></script>
-<script type="text/javascript" src='../js/spagobi/service/Service.js'/></script>
+<script type="text/javascript" src='../js/spagobi/service/RestService.js'/></script>
+
 <script type="text/javascript" src='../js/spagobi/commons/Format.js'/></script>
 <script type="text/javascript" src='../js/spagobi/commons/Utils.js'/></script>
 <script type="text/javascript" src='../js/spagobi/locale/LocaleUtils.js'/></script>
