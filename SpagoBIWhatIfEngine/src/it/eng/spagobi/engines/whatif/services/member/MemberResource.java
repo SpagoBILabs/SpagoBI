@@ -9,7 +9,7 @@
 package it.eng.spagobi.engines.whatif.services.member;
 
 import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
-import it.eng.spagobi.engines.whatif.services.common.AbstractRestService;
+import it.eng.spagobi.engines.whatif.services.common.AbstractWhatIfEngineService;
 import it.eng.spagobi.engines.whatif.services.serializer.MemberJsonSerializer;
 import it.eng.spagobi.engines.whatif.utilis.CubeUtilities;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
@@ -38,8 +38,8 @@ import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 
-@Path("/member")
-public class MemberTransformer extends AbstractRestService {
+@Path("/v1.0/member")
+public class MemberResource extends AbstractWhatIfEngineService {
 	
 	private static final String NODE_PARM = "node";
 	

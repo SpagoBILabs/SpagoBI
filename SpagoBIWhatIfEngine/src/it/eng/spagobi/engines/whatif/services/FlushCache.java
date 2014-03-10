@@ -7,7 +7,7 @@
 package it.eng.spagobi.engines.whatif.services;
 
 import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
-import it.eng.spagobi.engines.whatif.services.common.AbstractRestService;
+import it.eng.spagobi.engines.whatif.services.common.AbstractWhatIfEngineService;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 
@@ -23,8 +23,8 @@ import org.apache.log4j.Logger;
 import org.olap4j.OlapConnection;
 import org.olap4j.OlapDataSource;
 
-@Path("/flushCache")
-public class FlushCache extends AbstractRestService {
+@Path("v1.0/flushCache")
+public class FlushCache extends AbstractWhatIfEngineService {
 
 	public static transient Logger logger = Logger.getLogger(FlushCache.class);
 	
