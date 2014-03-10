@@ -32,82 +32,60 @@ Ext.define('Sbi.olap.control.Controller', {
 	
 	executeMdx: function(mdx){
 
-		Ext.Ajax.request({
-			url: Sbi.service.Service.callService("model", "mdx", [mdx]),
-			method: "GET",
-			success : function(response, options) {
-				if(response !== undefined && response.statusText !== undefined && response.responseText!=null && response.responseText!=undefined) {
-					this.eventManager.updateAfterMDXExecution(response.responseText);
-				} else {
-					Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
-				}
-			},
-			scope: this,
-			failure: Sbi.exception.ExceptionHandler.handleFailure      
+		
+		var service = Ext.create("Sbi.service.RestService",{
+			url: "model",
+			subPath: "mdx",
+			method: "PUT",
+			pathParams: [mdx]
 		});
+		
+		service.callService(this);
 	}
 	, drillDown: function(axis, position,  member){
 
-		Ext.Ajax.request({
-			url: Sbi.service.Service.callService("member","drilldown", [axis, position, member]),
-			method: "GET",
-			success : function(response, options) {
-				if(response !== undefined && response.statusText !== undefined && response.responseText!=null && response.responseText!=undefined) {
-					this.eventManager.updateAfterMDXExecution(response.responseText);
-				} else {
-					Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
-				}
-			},
-			scope: this,
-			failure: Sbi.exception.ExceptionHandler.handleFailure      
+		
+		var service = Ext.create("Sbi.service.RestService",{
+			url: "member",
+			subPath: "drilldown",
+			pathParams: [axis, position, member]
 		});
+		
+		service.callService(this);
+		
 	}
 	, drillUp: function(axis, position,  member){
 
-		Ext.Ajax.request({
-			url: Sbi.service.Service.callService("member","drillup", [axis, position, member]),
-			method: "GET",
-			success : function(response, options) {
-				if(response !== undefined && response.statusText !== undefined && response.responseText!=null && response.responseText!=undefined) {
-					this.eventManager.updateAfterMDXExecution(response.responseText);
-				} else {
-					Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
-				}
-			},
-			scope: this,
-			failure: Sbi.exception.ExceptionHandler.handleFailure      
+		
+		var service = Ext.create("Sbi.service.RestService",{
+			url: "member",
+			subPath: "drillup",
+			pathParams: [axis, position, member]
 		});
+		
+		service.callService(this);
+		
 	}
 	,swapAxis: function(){
 
-		Ext.Ajax.request({
-			url: Sbi.service.Service.callService("table","swap"),
-			method: "GET",
-			success : function(response, options) {
-				if(response !== undefined && response.statusText !== undefined && response.responseText!=null && response.responseText!=undefined) {
-					this.eventManager.updateAfterMDXExecution(response.responseText);
-				} else {
-					Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
-				}
-			},
-			scope: this,
-			failure: Sbi.exception.ExceptionHandler.handleFailure      
+		var service = Ext.create("Sbi.service.RestService",{
+			url: "axis",
+			subPath: "swap",
+			method: "PUT"
 		});
+		
+		service.callService(this);
+
 	}
 	,addSlicer: function(hierarchy, member){
-		Ext.Ajax.request({
-			url: Sbi.service.Service.callService("table","slice",[hierarchy, member]),
-			method: "GET",
-			success : function(response, options) {
-				if(response !== undefined && response.statusText !== undefined && response.responseText!=null && response.responseText!=undefined) {
-					this.eventManager.updateAfterMDXExecution(response.responseText);
-				} else {
-					Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
-				}
-			},
-			scope: this,
-			failure: Sbi.exception.ExceptionHandler.handleFailure      
+
+		var service = Ext.create("Sbi.service.RestService",{
+			url: "hierarchy",
+			subPath: "slice",
+			pathParams: [hierarchy, member]
 		});
+		
+		service.callService(this);
 	}
 
 });
