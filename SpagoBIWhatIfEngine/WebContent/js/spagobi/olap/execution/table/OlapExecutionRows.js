@@ -14,7 +14,7 @@
 
 
 Ext.define('Sbi.olap.execution.table.OlapExecutionRows', {
-	extend: 'Sbi.olap.execution.table.OlapExecutionMembers',
+	extend: 'Sbi.olap.execution.table.OlapExecutionHierarchies',
 	
 	layout: {
 	    type: 'vbox',
@@ -24,11 +24,11 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionRows', {
 		
 	config:{
 		/**
-	     * @cfg {String} memberClassName
-	     * The name of the class that extends the Sbi.olap.execution.table.OlapExecutionMember class.
+	     * @cfg {String} hierarchyClassName
+	     * The name of the class that extends the Sbi.olap.execution.table.OlapExecutionHierarchy class.
 	     * The class name is used to build the subclass 
 	     */
-		memberClassName: 'Sbi.olap.execution.table.OlapExecutionRow'
+		hierarchyClassName: 'Sbi.olap.execution.table.OlapExecutionRow'
 	},
 
 	constructor : function(config) {

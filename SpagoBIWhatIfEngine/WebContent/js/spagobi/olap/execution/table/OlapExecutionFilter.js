@@ -20,7 +20,7 @@
 
 
 Ext.define('Sbi.olap.execution.table.OlapExecutionFilter', {
-	extend: 'Sbi.olap.execution.table.OlapExecutionMember',
+	extend: 'Sbi.olap.execution.table.OlapExecutionHierarchy',
 	layout: "border",
 
 	config:{
@@ -64,13 +64,14 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionFilter', {
 		this.selectedValuePanel = Ext.create("Ext.Panel",{flex: 1,html:"...", border: false, bodyCls: "filter-value"});
 
 		this.callParent(arguments);
+		this.addEvents("filterValueChenged");
 	},
 
 
 	initComponent: function() {
 
 		//get the name of the hierarchy
-		var hierarchyName = this.getMemberName();
+		var hierarchyName = this.getHierarchyName();
 		if(hierarchyName.length>this.hierarchyMaxtextLength){
 			hierarchyName = hierarchyName.substring(0,this.hierarchyMaxtextLength-2)+"..";
 		}
@@ -111,7 +112,7 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionFilter', {
 				    			   click: {
 				    				   fn: function (event, html, eOpts) {
 				    					   var win =   Ext.create("Sbi.olap.execution.table.OlapExecutionFilterTree",{
-				    						   hierarchy: thisPanel.member,
+				    						   hierarchy: thisPanel.hierarchy,
 				    						   selectedMember: this.selectedMember
 				    					   });
 				    					   win.show();
@@ -141,6 +142,8 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionFilter', {
 		if(member && member.raw){
 			if(this.selectedMember){
 				isChanged = (this.selectedMember.raw.uniqueName != member.raw.uniqueName);
+			}else{
+				isChanged=true;
 			}
 			
 			this.selectedMember = member;
@@ -152,8 +155,7 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionFilter', {
 			this.selectedValuePanel.update(name);
 		}
 		if(isChanged){
-			Sbi.olap.eventManager.addSlicer(this.member, this.selectedMember);
-			this.fireEvent("filterValueChenged",this);
+			Sbi.olap.eventManager.addSlicer(this.hierarchy, this.selectedMember);
 		}
 	}
 
