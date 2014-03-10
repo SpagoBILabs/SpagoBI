@@ -7,6 +7,8 @@ package it.eng.spagobi.engines.drivers.smartfilter;
 
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.SessionContainer;
+import it.eng.spago.base.SourceBean;
+import it.eng.spago.base.SourceBeanException;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
@@ -26,6 +28,8 @@ import it.eng.spagobi.engines.drivers.EngineURL;
 import it.eng.spagobi.engines.drivers.IEngineDriver;
 import it.eng.spagobi.engines.drivers.exceptions.InvalidOperationRequest;
 import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.engines.EngineConstants;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineStartupException;
 
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -277,10 +281,18 @@ public class SmartFilterDriver extends AbstractDriver implements IEngineDriver {
 			documentId = obj.getId().toString();
 			engine = obj.getEngine();
 			url = engine.getUrl();
-			//url = url.replaceFirst("/servlet/AdapterHTTP", "");
-			//url += "/templateBuilder.jsp";
-				
+			
 			parameters = new HashMap();
+
+			// getting the dataset label from template, if smart filter is based on a dataset
+			ObjTemplate objectTemplate = obj.getActiveTemplate();
+			byte [] content = objectTemplate.getContent();
+			SourceBean sbTemplate = getTemplateAsSourceBean(content);
+			if (sbTemplate.getName().equals(EngineConstants.SMART_FILTER_TAG)  && sbTemplate.containsAttribute("DATASET")) {
+				String label = (String) ((SourceBean) sbTemplate
+						.getAttribute("DATASET")).getAttribute("label");
+				parameters.put("dataset_label", label);
+			}
 			parameters.put("document", documentId);
 			parameters.put(PARAM_SERVICE_NAME, "FORM_ENGINE_TEMPLATE_BUILD_ACTION");
 			parameters.put(PARAM_NEW_SESSION, "TRUE");
@@ -288,6 +300,8 @@ public class SmartFilterDriver extends AbstractDriver implements IEngineDriver {
 			applySecurity(parameters, profile);
 			
 			engineURL = new EngineURL(url, parameters);
+		} catch(Throwable t) {
+			throw new RuntimeException("Cannot get engine edit URL", t);
     	} finally {
 			logger.debug("OUT");
 		}
@@ -352,30 +366,34 @@ public class SmartFilterDriver extends AbstractDriver implements IEngineDriver {
     private final static String PARAM_SERVICE_NAME = "ACTION_NAME";
     private final static String PARAM_NEW_SESSION = "NEW_SESSION";
     private final static String PARAM_MODALITY = "MODALITY";
+
     
 	private Map applyService(Map parameters, BIObject biObject) {
-		ObjTemplate template;
-		
 		logger.debug("IN");
 		
 		try {
 			Assert.assertNotNull(parameters, "Input [parameters] cannot be null");
 			
-			parameters.put(PARAM_SERVICE_NAME, "FORM_ENGINE_START_ACTION");
-			parameters.put(PARAM_MODALITY, "VIEW");
+			ObjTemplate objectTemplate = biObject.getActiveTemplate();
+			byte [] content = objectTemplate.getContent();
+			SourceBean sbTemplate = getTemplateAsSourceBean(content);
 			
-//			template = getTemplate(biObject);
-//			if(template.getName().trim().toLowerCase().endsWith(".xml")) {
-//				parameters.put(PARAM_SERVICE_NAME, "QBE_ENGINE_START_ACTION");
-//			} else if(template.getName().trim().toLowerCase().endsWith(".json")) {
-//				parameters.put(PARAM_SERVICE_NAME, "FORM_ENGINE_START_ACTION");
-//			} else {
-//				Assert.assertUnreachable("Active template [" + template.getName() + "] extension is not valid (valid extensions are: .xml ; .json)");
-//			}
+			if (sbTemplate.getName().equals(EngineConstants.SMART_FILTER_TAG)) {
+				parameters.put(PARAM_SERVICE_NAME,
+						"FORM_ENGINE_FROM_DATASET_START_ACTION");
+				if (sbTemplate.containsAttribute("DATASET")) {
+					String label = (String) ((SourceBean) sbTemplate
+							.getAttribute("DATASET")).getAttribute("label");
+					parameters.put("dataset_label", label);
+				}
+			} else {
+				parameters.put(PARAM_SERVICE_NAME, "FORM_ENGINE_START_ACTION");
+			}
+			parameters.put(PARAM_MODALITY, "VIEW");
 			
 			parameters.put(PARAM_NEW_SESSION, "TRUE");
 		} catch(Throwable t) {
-			throw new RuntimeException("Impossible to guess from template extension the engine startup service to call");
+			throw new RuntimeException("Cannot apply service parameters", t);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -432,6 +450,23 @@ public class SmartFilterDriver extends AbstractDriver implements IEngineDriver {
 		logger.debug("Added parameter [" + pname + "] with value [" + pvalue + "] to request parameters list");
 	}
     
+	public SourceBean getTemplateAsSourceBean(byte [] content) {
+		 SourceBean templateSB = null;
+		 try {
+			 templateSB = SourceBean.fromXMLString(getTemplateAsString(content));
+		 } catch (SourceBeanException e) {
+			 logger.error("Error while getting template source bean", e);
+		 }		
+
+		 return templateSB;
+	 }
+
+	 public String getTemplateAsString(byte [] temp) {
+
+		 if(temp != null)
+			 return new String(temp);
+		 else return new String("");
+	 }
     
 }
 

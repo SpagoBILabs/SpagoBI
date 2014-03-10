@@ -49,6 +49,7 @@ public interface IDataSetDAO extends ISpagoBIDao {
 	public List<IDataSet> loadSharedDatasets(String owner);
 	public List<IDataSet> loadMyDataAllDatasets(String owner);
 
+	public List<IDataSet> loadFlatDatasets(String owner);
 	
 	/**
 	 * @deprecated

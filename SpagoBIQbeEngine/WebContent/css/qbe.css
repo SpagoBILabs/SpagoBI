@@ -655,3 +655,15 @@ See also http://www.sencha.com/deploy/dev/examples/form/check-radio.html */
  * Sbi.qbe.RelationshipsWizard
  ********************************************************************************************************/
 .green-row { background-color: #99CC99 !important; background-image: none !important }
+
+
+/*******************************************************************************************************
+ * Sbi.formtemplate.DocumentTemplateBuilder
+ ********************************************************************************************************/
+.info {
+	background: #dfe8f6 url(../img/info16.png) no-repeat;
+	display: block;
+	padding: 2px 2px 2px 20px;
+	text-align: left;
+	font:11px tahoma,arial,verdana,sans-serif;
+}

@@ -83,7 +83,7 @@ public class QbeEngineStartAction extends AbstractEngineStartAction {
 			Map env = addDatasetsToEnv();
 			logger.debug("Creating engine instance ...");
 			try {
-				qbeEngineInstance = QbeEngine.createInstance( templateBean,env);
+				qbeEngineInstance = QbeEngine.createInstance( templateBean, env);
 			} catch(Throwable t) {
 				SpagoBIEngineStartupException serviceException;
 				String msg = "Impossible to create engine instance for document [" + getDocumentId() + "].";

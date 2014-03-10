@@ -186,4 +186,33 @@ public class GetCertificatedDatasets {
 		return datasetsJSONReturn;
 	}
 
+	@GET
+	@Path("/getflatdataset")
+	@Produces(MediaType.APPLICATION_JSON)
+	public String getFlatDataSet(@Context HttpServletRequest req) {
+		IDataSetDAO dataSetDao = null;
+		List<IDataSet> dataSets;
+		IEngUserProfile profile = (IEngUserProfile) req.getSession()
+				.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+		JSONObject JSONReturn = new JSONObject();
+		JSONArray datasetsJSONArray = new JSONArray();
+		try {
+			dataSetDao = DAOFactory.getDataSetDAO();
+			dataSetDao.setUserProfile(profile);
+			dataSets = dataSetDao.loadFlatDatasets(profile.getUserUniqueIdentifier().toString());
+
+			datasetsJSONArray = (JSONArray) SerializerFactory.getSerializer(
+					"application/json").serialize(dataSets, null);
+			
+			JSONArray datasetsJSONReturn = putActions(profile, datasetsJSONArray, null);
+
+			JSONReturn.put("root", datasetsJSONReturn);
+
+		} catch (Throwable t) {
+			throw new SpagoBIServiceException(
+					"An unexpected error occured while instatiating the dao", t);
+		}
+		return JSONReturn.toString();
+
+	}
 }

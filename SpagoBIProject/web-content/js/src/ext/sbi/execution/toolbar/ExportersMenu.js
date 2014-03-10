@@ -198,13 +198,13 @@ Ext.extend(Sbi.execution.toolbar.ExportersMenu, Ext.menu.Menu, {
 			'PDF' : function() { this.exportCompositeDocumentTo(); }
 		},
 		'DATAMART': {
-			 'PDF'    : function() { this.exportQbeTo('application/pdf'); }
-			,'XLS'    : function() { this.exportQbeTo('application/vnd.ms-excel'); }
-			,'XLSX'   : function() { this.exportQbeTo('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'); }
-			,'RTF'    : function() { this.exportQbeTo('application/rtf'); }
-			,'CSV'    : function() { this.exportQbeTo('text/csv'); }
-			,'JRXML'  : function() { this.exportQbeTo('text/jrxml'); }
-			,'JSON'   : function() { this.exportQbeTo('application/json'); }
+			 'PDF'    : function() { this.exportQbeTo('PDF'); }
+			,'XLS'    : function() { this.exportQbeTo('XLS'); }
+			,'XLSX'   : function() { this.exportQbeTo('XLSX'); }
+			,'RTF'    : function() { this.exportQbeTo('RTF'); }
+			,'CSV'    : function() { this.exportQbeTo('CSV'); }
+			,'JRXML'  : function() { this.exportQbeTo('JRXML'); }
+			,'JSON'   : function() { this.exportQbeTo('JSON'); }
 		},
 		//'SMART_FILTER': null,
 		'WORKSHEET': {

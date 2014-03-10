@@ -27,10 +27,12 @@ import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
 import it.eng.spagobi.tools.dataset.common.behaviour.UserProfileUtils;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
 import it.eng.spagobi.utilities.mime.MimeUtils;
 
@@ -139,14 +141,22 @@ public class ExportResultAction extends AbstractQbeEngineAction {
 			logger.debug("Executable SQL query: [" + sqlQuery + "]");
 			
 			logger.debug("Exctracting fields ...");
-			fieldsReader = new SQLFieldsReader(sqlQuery, transaction.getSQLConnection());
+
+				
+			IDataSource dataSource = (IDataSource)getEngineInstance().getDataSource().getConfiguration().loadDataSourceProperties().get("datasource"); 
+			connection = dataSource.getConnection();
+
+			fieldsReader = new SQLFieldsReader(sqlQuery, connection);
+
 			try {
 				extractedFields = fieldsReader.readFields();
 			} catch (Exception e) {
 				logger.debug("Impossible to extract fields from query");
 				throw new SpagoBIEngineException("Impossible to extract fields from query: " + jpaQueryStr, e);
 			}
+
 			logger.debug("Fields extracted succesfully");
+
 			
 			Assert.assertTrue(getEngineInstance().getActiveQuery().getSimpleSelectFields(true).size()+getEngineInstance().getActiveQuery().getInLineCalculatedSelectFields(true).size() == extractedFields.size(), 
 					"The number of fields extracted from query resultset cannot be different from the number of fields specified into the query select clause");
@@ -199,7 +209,6 @@ public class ExportResultAction extends AbstractQbeEngineAction {
 				}
 				
 				setJasperClasspath();
-				connection = transaction.getSQLConnection();
 				
 				runner = new ReportRunner( );
 				Locale locale = this.getLocale();
@@ -248,7 +257,16 @@ public class ExportResultAction extends AbstractQbeEngineAction {
 		try {
 			csvFile = File.createTempFile("csv", ".csv");
 			QbeCSVExporter exporter = new QbeCSVExporter();
-			exporter.export(csvFile, transaction.getSQLConnection(), sqlQuery);
+			Connection connection = null;
+			try {
+				
+				IDataSource dataSource = (IDataSource)getEngineInstance().getDataSource().getConfiguration().loadDataSourceProperties().get("datasource"); 
+				connection = dataSource.getConnection();
+			} catch (Exception e) {
+				logger.debug("Query execution aborted because of an internal exception");
+				
+			}
+			exporter.export(csvFile, connection, sqlQuery);
 			try {
 				writeBackToClient(csvFile, null, writeBackResponseInline, "report." + fileExtension, mimeType);
 			} catch (IOException ioe) {

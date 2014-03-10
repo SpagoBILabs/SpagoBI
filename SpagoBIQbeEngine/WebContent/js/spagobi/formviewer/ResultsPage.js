@@ -50,7 +50,6 @@ Sbi.formviewer.ResultsPage = function(config) {
 	
 	Ext.apply(this, c);
 		
-		
 	this.services = this.services || new Array();	
 	this.services['getSelectedColumns'] = this.services['getSelectedColumns'] || Sbi.config.serviceRegistry.getServiceUrl({
 		serviceName: 'GET_SELECTED_COLUMNS_ACTION'
@@ -79,7 +78,7 @@ Sbi.formviewer.ResultsPage = function(config) {
 	    style: 'padding:3px;',
 	    //bodyStyle:'background:green',
 	    //items: [this.controlPanel, this.masterResultsPanel, this.detailResultsPanel]
-	    items: [this.masterResultsPanel, this.detailResultsPanel]
+	    items: this.hasGroupingVariables() ? [this.masterResultsPanel, this.detailResultsPanel] : [this.detailResultsPanel]
 	});
 		
 		
@@ -108,21 +107,20 @@ Ext.extend(Sbi.formviewer.ResultsPage, Ext.Panel, {
 	}
     
     , loadResults: function(groupFields) {
-    	var values
-    	
-    	//if(groupFields) {
-    		values = new Array();
+    	if ( this.hasGroupingVariables() ) {
+        	var values = new Array();
     		for(p in this.formState.groupingVariables) {
     			values.push(this.formState.groupingVariables[p]);
-    			//this.groupInputField.setValue(values);
     		}
-		//} else {
-		//	values = this.groupInputField.getValuesList();
-		//}
-    	
-    	var baseParams = {groupFields: Ext.util.JSON.encode(values), formstate: Ext.util.JSON.encode(this.formState)}
-		this.masterResultsPanel.execQuery(baseParams);
-    	this.detailResultsPanel.store.removeAll();
+        	
+        	var baseParams = {groupFields: Ext.util.JSON.encode(values), formstate: Ext.util.JSON.encode(this.formState)}
+    		this.masterResultsPanel.execQuery(baseParams);
+        	this.detailResultsPanel.store.removeAll();
+    	} else {
+	       	var baseParams = {filters: "[]", formState: Ext.util.JSON.encode(this.formState)}
+			this.detailResultsPanel.execQuery(baseParams);
+    	}
+
 	}
     
     // -- private methods -----------------------------------------------------------------------
@@ -261,4 +259,14 @@ Ext.extend(Sbi.formviewer.ResultsPage, Ext.Panel, {
 			this.detailResultsPanel.execQuery(baseParams);
 	    }, this);
 	}
+    
+    ,
+    hasGroupingVariables : function () {
+    	var groupingVariables = this.template.groupingVariables;
+    	if (groupingVariables.length == 0) {
+    		return false;
+    	}
+    	return true;
+    }
+    
 });

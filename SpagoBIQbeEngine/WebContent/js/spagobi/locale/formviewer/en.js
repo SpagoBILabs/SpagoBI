@@ -15,9 +15,10 @@ Sbi.locale.ln = Sbi.locale.ln || new Array();
 //VIEWER PANEL
 //===================================================================
 Sbi.locale.ln['sbi.formviewer.formviewerpage.title'] = 'DATA BROWSER';
-Sbi.locale.ln['sbi.formviewer.formviewerpage.execute'] = 'Show master-detail tables';
+Sbi.locale.ln['sbi.formviewer.formviewerpage.filters.title'] = 'Filters';
+Sbi.locale.ln['sbi.formviewer.formviewerpage.execute'] = 'Show data';
 Sbi.locale.ln['sbi.formviewer.formviewerpage.execute.tooltip'] = 'Submit the form and show results into master-detail tables';
-Sbi.locale.ln['sbi.formviewer.formviewerpage.save'] = 'Save form';
+Sbi.locale.ln['sbi.formviewer.formviewerpage.save'] = 'Save';
 Sbi.locale.ln['sbi.formviewer.formviewerpage.save.tooltip'] = 'Save form state for next executions';
 Sbi.locale.ln['sbi.formviewer.formviewerpage.designworksheet'] = 'Show worksheet';
 Sbi.locale.ln['sbi.formviewer.formviewerpage.designworksheet.tooltip'] = 'Open the worksheet designer';
@@ -30,8 +31,8 @@ Sbi.locale.ln['sbi.formviewer.staticopenfilterspanel.title'] = 'Static open filt
 Sbi.locale.ln['sbi.formviewer.dynamicfilterspanel.title'] = 'Dynamic filters';
 Sbi.locale.ln['sbi.formviewer.dynamicfilterspanel.variable'] = 'Variable';
 Sbi.locale.ln['sbi.formviewer.dynamicfilterspanel.value'] = 'Value';
-Sbi.locale.ln['sbi.formviewer.dynamicfilterspanel.fromvalue'] = 'From value';
-Sbi.locale.ln['sbi.formviewer.dynamicfilterspanel.tovalue'] = 'To value';
+Sbi.locale.ln['sbi.formviewer.dynamicfilterspanel.fromvalue'] = 'from';
+Sbi.locale.ln['sbi.formviewer.dynamicfilterspanel.tovalue'] = 'to';
 Sbi.locale.ln['sbi.formviewer.dynamicfilterspanel.clear.tt'] = 'Clear';
 Sbi.locale.ln['sbi.formviewer.groupingvariablespanel.title'] = 'Grouping variables';
 Sbi.locale.ln['sbi.formviewer.groupingvariablespanel.variable-1'] = 'First variable';

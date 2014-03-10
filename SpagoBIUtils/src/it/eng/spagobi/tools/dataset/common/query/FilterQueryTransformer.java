@@ -8,11 +8,15 @@ package it.eng.spagobi.tools.dataset.common.query;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
  *
  */
 public class FilterQueryTransformer extends AbstractQueryTransformer{
+	
+	 public static transient Logger logger = Logger.getLogger(FilterQueryTransformer.class);
 	
 	List<String> selectColumnNames;
 	List<String> selectColumnAliases;
@@ -31,6 +35,10 @@ public class FilterQueryTransformer extends AbstractQueryTransformer{
 	
 	public Object execTransformation(Object statement) {
 	
+		if (filters.size() == 0) {
+			logger.debug("No filters specified");
+			return statement;
+		}
 		String transformedStatment = null;
 		String alias;
 		

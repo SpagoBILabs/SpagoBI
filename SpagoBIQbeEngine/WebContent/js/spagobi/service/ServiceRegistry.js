@@ -112,7 +112,92 @@ Ext.extend(Sbi.service.ServiceRegistry, Ext.util.Observable, {
     	}
     	return  baseUrlStr;
     }
-    
+
+
+	, getRestServiceUrlObject : function(s){
+		var serviceUrl;
+	
+		var baseUrlStr;
+		var serviceType;
+		var params;
+	
+		if(typeof s == 'string') {
+			s = {serviceName: s};
+		}
+	
+		serviceType = s.serviceType || this.defaultServiceType;
+		params = Ext.apply({}, s.baseParams || {}, this.baseParams);
+	
+		serviceUrl = this.getRestBaseUrlStr(s);
+		serviceUrl += '/'+ s.serviceName;
+	
+		return {
+			url: serviceUrl,
+			params: params
+		}
+	
+	}    
+	
+	, getRestServiceUrl : function(s){
+		var serviceUrl;
+	
+		var baseUrlStr;
+		var serviceType;
+		var params;
+		var paramsString = "";
+	
+		if(typeof s == 'string') {
+			s = {serviceName: s};
+		}
+	
+		serviceType = s.serviceType || this.defaultServiceType;
+		params = Ext.apply({}, s.baseParams || {}, this.baseParams);
+	
+		serviceUrl = this.getRestBaseUrlStr(s);
+		serviceUrl += '/'+ s.serviceName;
+	
+	
+	
+		for(var p in params){
+			if(params[p] !== null) {
+				paramsString += '&' + p + '=' + params[p];
+			}
+		}
+	
+		if(paramsString.length>0){
+			serviceUrl += '?'+paramsString.substring(1);
+		}
+	
+		return serviceUrl;
+	} 
+	, getRestBaseUrlStr: function(s) {
+		var baseUrlStr;
+	
+		var isAbsolute = s.isAbsolute || this.defaultAbsolute;
+		var url = Ext.apply({}, s.baseUrl || {}, this.baseUrl);
+	
+		if(isAbsolute) {
+			baseUrlStr = url.protocol + '://' + url.host + ":" + url.port + '/' + url.contextPath + '/' + url.restServicesPath;
+		} else {
+			baseUrlStr = '/' + url.contextPath+ '/' + url.restServicesPath;
+		}
+	
+		return  baseUrlStr;
+	}
+	, getContextUrlStr: function(s) {
+		var baseUrlStr;
+	
+		var isAbsolute = s.isAbsolute || this.defaultAbsolute;
+		var url = Ext.apply({}, s.baseUrl || {}, this.baseUrl);
+	
+		if(isAbsolute) {
+			baseUrlStr = url.protocol + '://' + url.host + ":" + url.port + '/' + url.contextPath;
+		} else {
+			baseUrlStr = '/' + url.contextPath;
+		}
+	
+		return  baseUrlStr;
+	}
     , getExecutionId: function () {
     	return this.baseParams['SBI_EXECUTION_ID'];
     }

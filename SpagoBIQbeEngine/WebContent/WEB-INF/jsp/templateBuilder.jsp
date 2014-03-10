@@ -97,7 +97,7 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 		var documentTemplateBuilderPanel = new Sbi.formtemplate.DocumentTemplateBuilder({
 			formDocumentId: <%= formDocumentId %>
 		});
-	   	var viewport = new Ext.Viewport(documentTemplateBuilderPanel);  
+		var viewport = new Ext.Viewport({border: false, layout: 'border', items: [{border: false, region: 'center', items: [documentTemplateBuilderPanel]}]});  
 	 </script>
 	</body>
 </html>

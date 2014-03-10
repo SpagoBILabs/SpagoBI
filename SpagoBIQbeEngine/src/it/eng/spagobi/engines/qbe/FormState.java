@@ -111,6 +111,7 @@ public class FormState extends EngineAnalysisState {
 	public void setConf(JSONObject json) {
 		Assert.assertNotNull(json, "JSON form state cannot be null");
 		QbeJSONTemplateParser.addAdditionalInfo(json);
+		QbeJSONTemplateParser.cleanGroupingVariables(json);
 		setProperty(FORM_STATE, json);
 	}
 	

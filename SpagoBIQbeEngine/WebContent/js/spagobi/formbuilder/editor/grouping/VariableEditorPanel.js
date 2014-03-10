@@ -114,12 +114,10 @@ Ext.extend(Sbi.formbuilder.VariableEditorPanel, Sbi.formbuilder.EditorPanel, {
 		var errors = [];
 		var contents = this.getContents();
 		var contents1 = contents[0].admissibleFields;
-		if (contents1 === undefined || contents1 === null || contents1.length === 0) {
-			errors.push(LN('sbi.formbuilder.variableeditorpanel.validationerrors.missingadmissiblefields') + ' 1');
-		}
 		var contents2 = contents[1].admissibleFields;
-		if (contents2 === undefined || contents2 === null || contents2.length === 0) {
-			errors.push(LN('sbi.formbuilder.variableeditorpanel.validationerrors.missingadmissiblefields') + ' 2');
+		if ( (contents1 === undefined || contents1 === null || contents1.length === 0) && // user specified variables for variable 2 but not for variable 1
+				(contents2 != undefined && contents2 != null && contents2.length > 0) ) {
+			errors.push(LN('sbi.formbuilder.variableeditorpanel.validationerrors.missingadmissiblefields') + ' 1');
 		}
 		return errors;
 	}

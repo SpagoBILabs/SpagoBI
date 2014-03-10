@@ -14,6 +14,7 @@ import it.eng.qbe.statement.IStatement;
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.engines.qbe.QbeEngineConfig;
+import it.eng.spagobi.engines.qbe.QbeEngineInstance;
 import it.eng.spagobi.engines.qbe.services.core.AbstractQbeEngineAction;
 import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
@@ -101,7 +102,6 @@ public class ExecuteDetailQueryAction extends AbstractQbeEngineAction {
 			filters = getAttributeAsJSONArray( FILTERS );
 			logger.debug("Parameter [" + FILTERS + "] is equals to [" + filters + "]");
 			Assert.assertNotNull(filters, "Parameter [" + FILTERS + "] cannot be null");
-			Assert.assertTrue(filters.length() > 0, "GroupBy fileds list cannot be empty");
 						
 			maxSize = QbeEngineConfig.getInstance().getResultLimit();			
 			logger.debug("Configuration setting  [" + "QBE.QBE-SQL-RESULT-LIMIT.value" + "] is equals to [" + (maxSize != null? maxSize: "none") + "]");
@@ -191,9 +191,8 @@ public class ExecuteDetailQueryAction extends AbstractQbeEngineAction {
 				auditlogger.info("[" + userProfile.getUserId() + "]:: SQL: " + sqlQuery);
 				
 				dataSet = new JDBCDataSet();
-				//Session session = getDatamartModel().getDataSource().getSessionFactory().openSession();
-				IDataSource datasource = (IDataSource)getDataSource().getConfiguration().loadDataSourceProperties().get("datasource");
-				dataSet.setDataSource(datasource);
+				IDataSource dataSource = (IDataSource)getDataSource().getConfiguration().loadDataSourceProperties().get("datasource"); 
+				dataSet.setDataSource(dataSource);
 				dataSet.setQuery(sqlQuery);
 				dataSet.loadData(start, limit, -1);
 				dataStore = dataSet.getDataStore();

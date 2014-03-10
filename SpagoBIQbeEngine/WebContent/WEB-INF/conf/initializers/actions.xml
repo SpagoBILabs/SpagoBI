@@ -33,6 +33,11 @@
 			scope="REQUEST">
 		<CONFIG></CONFIG>
 	</ACTION>
+	<ACTION name="FORM_ENGINE_FROM_DATASET_START_ACTION" 
+			class="it.eng.spagobi.engines.qbe.services.initializers.FormEngineFromDatasetStartAction" 
+			scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>
 	
 	<!-- FORM_ENGINE Template Wizard -->
 	<ACTION name="FORM_ENGINE_TEMPLATE_BUILD_ACTION" 

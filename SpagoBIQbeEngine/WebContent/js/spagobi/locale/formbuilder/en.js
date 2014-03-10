@@ -31,9 +31,13 @@ Sbi.locale.ln['sbi.formbuilder.queryfieldspanel.fieldname'] = 'Field name';
 
 Sbi.locale.ln['sbi.formbuilder.templateeditorpanel.title'] = 'Form designer';
 
+Sbi.locale.ln['sbi.formtemplate.documenttemplatebuilder.selectsourceinfo.msg'] = 'The Smart Filter document can be designed starting from a Qbe document or, as an alternative, from a flat dataset. Please select the source you prefer and click on the relative button.';
 Sbi.locale.ln['sbi.formtemplate.documenttemplatebuilder.documentfield.label'] = 'Document';
 Sbi.locale.ln['sbi.formtemplate.documenttemplatebuilder.documentfield.emptytext'] = 'Select a document...';
-Sbi.locale.ln['sbi.formtemplate.documenttemplatebuilder.startediting'] = 'Start the designer...';
+Sbi.locale.ln['sbi.formtemplate.documenttemplatebuilder.startwithdocument'] = 'Start designer from selected document';
+Sbi.locale.ln['sbi.formtemplate.documenttemplatebuilder.datasetfield.label'] = 'Flat dataset';
+Sbi.locale.ln['sbi.formtemplate.documenttemplatebuilder.datasetfield.emptytext'] = 'Select a flat dataset...';
+Sbi.locale.ln['sbi.formtemplate.documenttemplatebuilder.startwithdataset'] = 'Start designer from selected dataset';
 
 Sbi.locale.ln['sbi.formbuilder.dynamicfiltereditorpanel.title'] = 'Dynamic filters';
 Sbi.locale.ln['sbi.formbuilder.dynamicfiltereditorpanel.emptymsg'] = 'Click on the button in the top-right corner in order to add a new dynamic filter';

@@ -7,6 +7,8 @@ package it.eng.spagobi.engines.qbe.services.initializers;
 
 import it.eng.qbe.dataset.QbeDataSet;
 import it.eng.spago.base.SourceBean;
+import it.eng.spago.base.SourceBeanException;
+import it.eng.spagobi.engines.qbe.template.QbeXMLTemplateParser;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
@@ -14,6 +16,7 @@ import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.EngineConstants;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,82 +26,41 @@ import org.apache.log4j.Logger;
 
 
 /**
- * The Class QbeEngineFromDatasetStartAction.
- * Called when opening QBE engine by passing a datase, not a document.
- * 
- * @author Giulio Gavardi
+ * @author Davide Zerbetto (davide.zerbetto@eng.it)
  */
-public class QbeEngineFromDatasetStartAction extends QbeEngineStartAction {	
+public class FormEngineFromDatasetStartAction extends FormEngineStartAction {	
 	
 	// INPUT PARAMETERS
-	
-	// OUTPUT PARAMETERS
-	public static final String LANGUAGE = "LANGUAGE";
-	public static final String COUNTRY = "COUNTRY";
-	
-	// SESSION PARAMETRES	
-	public static final String ENGINE_INSTANCE = EngineConstants.ENGINE_INSTANCE;
-	public static final String REGISTRY_CONFIGURATION = "REGISTRY_CONFIGURATION";
-	
-	// INPUT PARAMETERS
-	
-	// The passed dataset label 
-	public static final String DATASET_LABEL = "dataset_label";
-	// label of default datasource associated to Qbe Engine
-	public static final String DATASOURCE_LABEL = "datasource_label";
-	
-	
+	private final static String IS_NEW_DOCUMENT = "IS_NEW_DOCUMENT";
 	
 	/** Logger component. */
-    private static transient Logger logger = Logger.getLogger(QbeEngineFromDatasetStartAction.class);
+    private static transient Logger logger = Logger.getLogger(FormEngineFromDatasetStartAction.class);
     
-    public static final String ENGINE_NAME = "SpagoBIQbeEngine";
-				
     private IDataSet dataSet;
-	
-	
+ 
 	@Override
 	public IDataSet getDataSet() {
 		logger.debug("IN");
 		if (dataSet == null) {
 			// dataset information is coming with the request
-			String datasetLabel = this.getAttributeAsString( DATASET_LABEL );
-			logger.debug("Parameter [" + DATASET_LABEL + "]  is equal to [" + datasetLabel + "]");
+			String datasetLabel = this.getAttributeAsString( QbeEngineFromDatasetStartAction.DATASET_LABEL );
+			logger.debug("Parameter [" + QbeEngineFromDatasetStartAction.DATASET_LABEL + "]  is equal to [" + datasetLabel + "]");
 			Assert.assertNotNull(datasetLabel, "Dataset not specified");
-			dataSet = getDataSetServiceProxy().getDataSetByLabel(datasetLabel);  	
+			dataSet = getDataSetServiceProxy().getDataSetByLabel(datasetLabel);  
+			Assert.assertNotNull(dataSet, "Dataset with label [" + datasetLabel + "] not found");
 		}
 		logger.debug("OUT");
 		return dataSet;
 	}
-
+	
 	@Override
-	public IDataSource getDataSource() {
-		logger.debug("IN");
-		IDataSet dataset = this.getDataSet();
-		IDataSource datasource = dataset.getDataSource();
-		logger.debug("OUT : returning [" + datasource + "]");
-		return datasource;
-	}
-
-
-	@Override
-	public String getDocumentId() {
-		// there is no document at the time
-		return null;
-	}   
-
-	// no template in this use case
-	 public SourceBean getTemplateAsSourceBean() {
-		 SourceBean templateSB = null;
-		 return templateSB;
-	 }
-	 
-	 
-	 
 	public Map addDatasetsToEnv() {
 		Map env = super.getEnv();
 		env.put(EngineConstants.ENV_LOCALE, getLocale());
-		String datasetLabel = this.getAttributeAsString(DATASET_LABEL);
+		String datasetLabel = this.getAttributeAsString( QbeEngineFromDatasetStartAction.DATASET_LABEL );
+		logger.debug("Parameter [" + QbeEngineFromDatasetStartAction.DATASET_LABEL + "] is equals to [" + datasetLabel + "]");
+		Assert.assertNotNull(datasetLabel, "Missing dataset label");
+		
 		env.put(EngineConstants.ENV_DATASET_LABEL, datasetLabel);
 
 		IDataSet dataset = this.getDataSet();
@@ -121,7 +83,6 @@ public class QbeEngineFromDatasetStartAction extends QbeEngineStartAction {
 		env.put(EngineConstants.ENV_DATASETS, dataSets);
 		return env;
 	}
-	
 	
 	/**
 	 * This method solves the following issue: SQLDataSet defines the SQL
@@ -156,9 +117,24 @@ public class QbeEngineFromDatasetStartAction extends QbeEngineStartAction {
 		}
 		dataset.setMetadata(metadata);
 	}
-
-	protected boolean tolerateMissingDatasource() {
-		return true;
+	
+	@Override
+	public String getTemplateAsString() {
+		String template = null;
+		boolean isNewDocument = this.getAttributeAsBoolean( IS_NEW_DOCUMENT );
+		logger.debug("Parameter [" + IS_NEW_DOCUMENT + "] is equals to [" + isNewDocument + "]");
+		if (isNewDocument) {
+			SourceBean sourceBean;
+			try {
+				sourceBean = new SourceBean( QbeXMLTemplateParser.TAG_ROOT_SMART_FILTER );
+			} catch (SourceBeanException e) {
+				throw new SpagoBIEngineRuntimeException("Error while initializing a new template", e);
+			}
+			template = sourceBean.toXML();
+		} else {
+			template = super.getTemplateAsString();
+		}
+		return template;
 	}
-
+	
 }
