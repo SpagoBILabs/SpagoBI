@@ -6,6 +6,12 @@
 /**
  * 
  * The filter member..
+ * The panel contains 3 subpanels:
+ * <ul>
+ * <li>a panel with the name of the hierarchy: with the text of the filter</li>
+ * <li>selectedValuePanel: with the text of the filter</li>
+ * <li>a panel with the funnel iconr</li>
+ * </ul>
  *
  *     
  *  @author
@@ -43,13 +49,19 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionFilter', {
 		style: "margin-right: 3px; padding: 0px;"
 	},
 
+	/**
+     * @property {Ext.Panel} selectedValuePanel
+     *  Panel with the selected value of the filter
+     */
+	selectedValuePanel: null,
+	
 	constructor : function(config) {
 		this.initConfig(config);
 		if(Sbi.settings && Sbi.settings.olap && Sbi.settings.olap.execution && Sbi.settings.olap.execution.table && Sbi.settings.olap.execution.table.OlapExecutionFilter) {
 			this.initConfig(Sbi.settings.olap.execution.OlapExecutionFilter);
 		}
 
-		this.selectedvalue = Ext.create("Ext.Panel",{flex: 1,html:"...", border: false, bodyStyle: "background-color: transparent;padding: 4px; text-align: center;"});
+		this.selectedValuePanel = Ext.create("Ext.Panel",{flex: 1,html:"...", border: false, bodyCls: "filter-value"});
 
 		this.callParent(arguments);
 	},
@@ -57,18 +69,19 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionFilter', {
 
 	initComponent: function() {
 
-		var name = this.getMemberName();
-
-		if(name.length>this.hierarchyMaxtextLength){
-			name = name.substring(0,this.hierarchyMaxtextLength-2)+"..";
+		//get the name of the hierarchy
+		var hierarchyName = this.getMemberName();
+		if(hierarchyName.length>this.hierarchyMaxtextLength){
+			hierarchyName = hierarchyName.substring(0,this.hierarchyMaxtextLength-2)+"..";
 		}
+		
 		var thisPanel = this;
 		Ext.apply(this, {
 
 			items: [{
 				region: 'north',
 				flex: 1,
-				html: name,
+				html: hierarchyName,
 				border: true,
 				bodyCls: "filter-title "
 			}, {
@@ -85,7 +98,7 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionFilter', {
 				},
 				border: false,
 				items:[
-				       this.selectedvalue,
+				       this.selectedValuePanel,
 				       {
 				    	   width:20, 
 				    	   html:" ", 
@@ -124,13 +137,24 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionFilter', {
      * @param {Sbi.olap.MemberModel} member the value of the filter
      */
 	setFilterValue: function(member){
-		this.selectedMember = member;
-		//updates the text
-		var name =  this.selectedMember.raw.name;
-		if(name.length>this.memberMaxtextLength){
-			name = name.substring(0,this.memberMaxtextLength-2)+"..";
+		var isChanged = false;
+		if(member && member.raw){
+			if(this.selectedMember){
+				isChanged = (this.selectedMember.raw.uniqueName != member.raw.uniqueName);
+			}
+			
+			this.selectedMember = member;
+			//updates the text
+			var name =  this.selectedMember.raw.name;
+			if(name.length>this.memberMaxtextLength){
+				name = name.substring(0,this.memberMaxtextLength-2)+"..";
+			}
+			this.selectedValuePanel.update(name);
 		}
-		this.selectedvalue.update(name);
+		if(isChanged){
+			Sbi.olap.eventManager.addSlicer(this.member, this.selectedMember);
+			this.fireEvent("filterValueChenged",this);
+		}
 	}
 
 

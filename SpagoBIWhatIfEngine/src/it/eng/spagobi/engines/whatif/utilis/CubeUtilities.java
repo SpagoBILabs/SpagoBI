@@ -83,4 +83,24 @@ public class CubeUtilities {
 		}
 		return null;
 	}
+	
+	/**
+	 * Searches in the cube for the hierarchy
+	 * @param cube the cube
+	 * @param hierarchyUniqueName the unique name of the hierarchy to search
+	 * @return
+	 * @throws OlapException
+	 */
+	public static Hierarchy getHierarchy(Cube cube, String hierarchyUniqueName) throws OlapException{
+		Hierarchy hierarchy = null;
+		NamedList<Hierarchy> hierarchies = cube.getHierarchies();
+		for(int i=0; i<hierarchies.size(); i++){
+			String hName = hierarchies.get(i).getUniqueName();
+			if(hName.equals(hierarchyUniqueName)){
+				hierarchy = hierarchies.get(i);
+				break;
+			}
+		}
+		return hierarchy;
+	}
 }
