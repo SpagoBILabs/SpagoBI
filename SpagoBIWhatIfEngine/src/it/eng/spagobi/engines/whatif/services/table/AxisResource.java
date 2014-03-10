@@ -1,13 +1,12 @@
 package it.eng.spagobi.engines.whatif.services.table;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
 import it.eng.spagobi.engines.whatif.services.common.AbstractWhatIfEngineService;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -55,7 +54,7 @@ public class AxisResource extends AbstractWhatIfEngineService {
 	}
 	
 	@PUT
-	@Path("/removehierarchy/{axis}/{hierarchy}")
+	@Path("/{axis}/removehierarchy/{hierarchy}")
 	public String removeHierarchy(@javax.ws.rs.core.Context HttpServletRequest req, @PathParam("axis") int axisPos, @PathParam("hierarchy") String hierarchyName){
 
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
@@ -78,7 +77,7 @@ public class AxisResource extends AbstractWhatIfEngineService {
 	}
 	
 	@PUT
-	@Path("/palcehierarchy/{axis}/{hierarchy}")
+	@Path("/{axis}/placehierarchy/{hierarchy}")
 	public String addHierarchy(@javax.ws.rs.core.Context HttpServletRequest req, @PathParam("axis") int axisPos, @PathParam("hierarchy") String hierarchyName){
 
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
@@ -98,6 +97,50 @@ public class AxisResource extends AbstractWhatIfEngineService {
 
 		List<Hierarchy> hierarchies = new ArrayList<Hierarchy>();
 		hierarchies.add(model.getCube().getHierarchies().get(3));
+		
+		ph.placeHierarchies(rowsOrColumns.getAxisOrdinal(),hierarchies ,true);
+		MdxStatement s = qa.updateQuery();
+		model.setMdx(s.toMdx());
+
+		return renderModel(model);
+	}
+	
+	@PUT
+	@Path("/{axis}/swaphierarchies/{hierarchy1}/{hierarchy2}")
+	public String swapHierarchies(@javax.ws.rs.core.Context HttpServletRequest req, @PathParam("axis") int axisPos, @PathParam("hierarchy1") int hierarchyPos1, @PathParam("hierarchy2") int hierarchyPos2){
+		
+		int firstPos;
+		int lastPos;
+		
+		WhatIfEngineInstance ei = getWhatIfEngineInstance();
+		PivotModel model = ei.getPivotModel();
+		OlapConnection connection = ei.getOlapConnection();
+
+		if(hierarchyPos1<hierarchyPos2){
+			firstPos = hierarchyPos1;
+			lastPos = hierarchyPos2;
+		}else{
+			lastPos = hierarchyPos1;
+			firstPos = hierarchyPos2;
+		}
+		
+		QueryAdapter qa = new QueryAdapter(model);
+		qa.initialize();
+		
+		PlaceHierarchiesOnAxes ph = new PlaceHierarchiesOnAxesImpl(qa, connection);
+		
+		CellSet cellSet = model.getCellSet();
+		List<CellSetAxis> axes = cellSet.getAxes();
+		CellSetAxis rowsOrColumns = axes.get(axisPos);
+		List<Hierarchy> hierarchies = rowsOrColumns.getAxisMetaData().getHierarchies();
+		
+		Hierarchy hierarchyLast = hierarchies.remove(lastPos);
+		Hierarchy hierarchyFirst = hierarchies.remove(firstPos);
+		
+		
+		hierarchies.add(hierarchyPos1, hierarchyLast);
+		hierarchies.add(hierarchyPos2, hierarchyFirst);
+				
 		
 		ph.placeHierarchies(rowsOrColumns.getAxisOrdinal(),hierarchies ,true);
 		MdxStatement s = qa.updateQuery();

@@ -5,7 +5,7 @@
 
 /**
  * 
- * The row member
+ * The row hierarchy
  *
  *     
  *  @author
@@ -14,7 +14,7 @@
 
 
 Ext.define('Sbi.olap.execution.table.OlapExecutionRow', {
-	extend: 'Sbi.olap.execution.table.OlapExecutionAxisMember',
+	extend: 'Sbi.olap.execution.table.OlapExecutionAxisHierarchy',
 	
 	config:{
 		style: "margin-bottom: 3px;",
@@ -36,10 +36,10 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionRow', {
 	
 	
     /**
-     * Builds the central panel with the name of the member
+     * Builds the central panel with the name of the hierarchy
      */
-	buildMemberPanel: function(){
-		var memberConf =  {
+	buildHierarchyPanel: function(){
+		var hierarchyConf =  {
 				xtype: "panel",
 				border: false,
 		   		
@@ -48,12 +48,12 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionRow', {
 		    	html: this.getText()
 			};
 		if(this.roundText){
-			memberConf.height = this.getMemberName().length*6.3+4;
-			memberConf.cls= "rotate";
+			hierarchyConf.height = this.getHierarchyName().length*6.3+4;
+			hierarchyConf.cls= "rotate";
 		}
 		
 		
-		this.memberPanel = Ext.create("Ext.Panel",memberConf);
+		this.hierarchyPanel = Ext.create("Ext.Panel",hierarchyConf);
 	},
 	
     /**
@@ -64,7 +64,7 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionRow', {
 	getText: function(){
 		if(!this.roundText){
 			var text ="";
-			var n = this.getMemberName();
+			var n = this.getHierarchyName();
 			if(n){
 				for(var i=0; i<n.length; i++){
 					text = text + n.charAt(i) +'<br>';
@@ -79,13 +79,13 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionRow', {
 			}
 			return text;
 		}else{
-			return this.getMemberName();
+			return this.getHierarchyName();
 		}
 	},
 
 	
 	/**
-	 * Builds the central panel with the name of the member
+	 * Builds the central panel with the name of the hierarchy
 	 */
 	buildUpPanelConf: function(){
 		var conf = this.callParent();
@@ -93,7 +93,7 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionRow', {
 	},
 	
 	/**
-	 * Builds the central panel with the name of the member
+	 * Builds the central panel with the name of the hierarchy
 	 */
 	buildDownPanelConf: function(){
 		var conf = this.callParent();

@@ -15,13 +15,13 @@
 
 
 
-Ext.define('Sbi.olap.execution.table.OlapExecutionMembers', {
+Ext.define('Sbi.olap.execution.table.OlapExecutionHierarchies', {
 	extend: 'Ext.panel.Panel',
 			
 	config:{
 		/**
 	     * @cfg {Ext.data.Store} store
-	     * The store with the Sbi.olap.execution.table.OlapExecutionMember
+	     * The store with the Sbi.olap.execution.table.OlapExecutionHierarchy
 	     */
 		store: null,
 		/**
@@ -30,10 +30,10 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionMembers', {
 	     */
 		pivotContainer: null,
 		/**
-	     * @cfg {String} memberClassName
+	     * @cfg {String} hierarchyClassName
 	     * The name of the children classes
 	     */
-		memberClassName: null
+		hierarchyClassName: null
 //		,style: {
 //			backgroundColor: "transparent",
 //			border: "none"
@@ -48,10 +48,10 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionMembers', {
 	constructor : function(config) {
 		this.initConfig(config);
 		this.store = Ext.create('Ext.data.Store', {
-		    model: 'Sbi.olap.MemberModel'
+		    model: 'Sbi.olap.HierarchyModel'
 		});
-		if(Sbi.settings && Sbi.settings.olap && Sbi.settings.olap.execution && Sbi.settings.olap.execution.table && Sbi.settings.olap.execution.table.OlapExecutionMembers) {
-			this.initConfig(Sbi.settings.olap.execution.OlapExecutionMembers);
+		if(Sbi.settings && Sbi.settings.olap && Sbi.settings.olap.execution && Sbi.settings.olap.execution.table && Sbi.settings.olap.execution.table.OlapExecutionHierarchies) {
+			this.initConfig(Sbi.settings.olap.execution.OlapExecutionHierarchies);
 		}
 		this.callParent(arguments);
 	},
@@ -69,23 +69,23 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionMembers', {
 	},
 	
     /**
-     * Adds the member from in member container
-     * @param {Sbi.olap.execution.table.OlapExecutionMember} member the member to add
+     * Adds the Hierarchy from in Hierarchy container
+     * @param {Sbi.olap.execution.table.OlapExecutionHierarchy} hierarchy the Hierarchy to add
      */
-	addMember: function(member){
+	addHierarchy: function(hierarchy){
 //		if(this.store.getCount()==0){
 //			this.removeCls("empty-member");
 //		}
-		this.store.add(member.member);
+		this.store.add(hierarchy.hierarchy);
 		this.refreshItems();
 	},
 	
     /**
-     * Removes the member from the member container
-     * @param {Sbi.olap.execution.table.OlapExecutionMember} member the member to remove
+     * Removes the hierarchy from the hierarchy container
+     * @param {Sbi.olap.execution.table.OlapExecutionHierarchy} hierarchy the hierarchy to remove
      */
-	removeMember: function(member){
-		this.store.remove(member.member);
+	removeHierarchy: function(hierarchy){
+		this.store.remove(hierarchy.hierarchy);
 		this.refreshItems();
 //		if(this.store.getCount()==0){
 //			this.addCls("empty-member");
@@ -94,33 +94,33 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionMembers', {
 	
 	
 	/**
-     * Moves up the member
-     * @param {Sbi.olap.execution.table.OlapExecutionMember} member the member to move
+     * Moves up the hierarchy
+     * @param {Sbi.olap.execution.table.OlapExecutionHierarchy} hierarchy the hierarchy to move
 	 */
-	moveUpMember: function(member){
-		this.move(member, -1);
+	moveUpHierarchy: function(hierarchy){
+		this.move(hierarchy, -1);
 	},
 	
 	
 	/**
      * Moves down the member
-     * @param {Sbi.olap.execution.table.OlapExecutionMember} member the member to move
+     * @param {Sbi.olap.execution.table.OlapExecutionHierarchy} hierarchy the hierarchy to move
 	 */
-	moveDownMember: function(member){
-		this.move(member, 1);
+	moveDownHierarchy: function(hierarchy){
+		this.move(hierarchy, 1);
 	},
 
 	/**
      * Moves the model of pos positions
-     * @param {Sbi.olap.execution.table.OlapExecutionMember} member the member to remove
+     * @param {Sbi.olap.execution.table.OlapExecutionHierarchy} hierarchy the hierarchy to remove
 	 * @param pos the positions 
 	 */
-	move: function(member, pos){
-		var index = this.store.indexOf(member.member);
+	move: function(hierarchy, pos){
+		var index = this.store.indexOf(hierarchy.hierarchy);
 		
 		if((pos+index)>=0 && (pos+index)<this.store.getCount( )){
-			this.store.remove(member.member);
-			this.store.insert((index+pos),member.member);
+			this.store.remove(hierarchy.hierarchy);
+			this.store.insert((index+pos),hierarchy.hierarchy);
 			this.refreshItems();
 		}
 	},
@@ -140,18 +140,18 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionMembers', {
 	},
 	
     /**
-     * Get the refreshed items: builds all the members starting from the store
+     * Get the refreshed items: builds all the hierarchys starting from the store
      */
 	getRefreshedItems: function(){
 		var items = new Array();
 		
 		if(this.store && this.store.getCount()>0){
-			var membersCount = this.store.getCount( );
-			for(var i=0; i<membersCount; i++) {
-				var member = Ext.create(this.memberClassName,{member: this.store.getAt(i), pivotContainer: this.pivotContainer, containerPanel: this, firstMember: (i==0), lastMember: (i==membersCount-1) });
-				member.on("moveUp",this.moveUpMember,this);
-				member.on("moveDown",this.moveDownMember,this);
-				items.push(member);
+			var hierarchiesCount = this.store.getCount( );
+			for(var i=0; i<hierarchiesCount; i++) {
+				var hierarchy = Ext.create(this.hierarchyClassName,{hierarchy: this.store.getAt(i), pivotContainer: this.pivotContainer, containerPanel: this, firstHierarchy: (i==0), lastHierarchy: (i==hierarchiesCount-1) });
+				hierarchy.on("moveUp",this.moveUpHierarchy,this);
+				hierarchy.on("moveDown",this.moveDownHierarchy,this);
+				items.push(hierarchy);
 			}
 		}
 		
@@ -160,13 +160,13 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionMembers', {
 	
 	/**
 	 * Updates the visualization after the execution of a a mdx query
-	 * @param pivotModel {Array} the list of members to add
+	 * @param pivotModel {Array} the list of hierarchies to add
 	 */
-	updateAfterMDXExecution: function(members){
+	updateAfterMDXExecution: function(hierarchies){
 		this.store.removeAll();
-		if(members){
-			for(var i=0; i<members.length; i++){
-				this.store.add(Ext.create("Sbi.olap.MemberModel", members[i]));
+		if(hierarchies){
+			for(var i=0; i<hierarchies.length; i++){
+				this.store.add(Ext.create("Sbi.olap.HierarchyModel", hierarchies[i]));
 			}
 		}
 		this.refreshItems();

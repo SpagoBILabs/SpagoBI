@@ -5,7 +5,7 @@
 
 /**
  * 
- * The column member..
+ * The column Hierarchy..
  *
  *     
  *  @author
@@ -14,7 +14,7 @@
 
 
 Ext.define('Sbi.olap.execution.table.OlapExecutionColumn', {
-	extend: 'Sbi.olap.execution.table.OlapExecutionAxisMember',
+	extend: 'Sbi.olap.execution.table.OlapExecutionAxisHierarchy',
 	
 	config:{
 		cls: "x-column-header",
@@ -33,7 +33,7 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionColumn', {
 	},
 	
 	/**
-	 * Builds the central panel with the name of the member
+	 * Builds the central panel with the name of the Hierarchy
 	 */
 	buildUpPanelConf: function(){
 		var conf = this.callParent();
@@ -41,7 +41,7 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionColumn', {
 	},
 	
 	/**
-	 * Builds the central panel with the name of the member
+	 * Builds the central panel with the name of the Hierarchy
 	 */
 	buildDownPanelConf: function(){
 		var conf = this.callParent();

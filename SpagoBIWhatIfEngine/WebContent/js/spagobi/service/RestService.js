@@ -32,21 +32,31 @@ Ext.define('Sbi.service.RestService', {
 	
 	getRestUrlWithParameters: function(){
 		var url = this.url;
-		if(this.subPath){
-			url = url+"/"+this.subPath;
-		}
+
 		if( this.serviceVersion){
 			url = this.serviceVersion+"/"+url;
 		}
-		if(this.pathParams && url){
-			for(var i=0; i<this.pathParams.length; i++){
-				var p = this.pathParams[i];
+		
+		var params = new Array();
+		if(this.subPath!=null && this.subPath!=undefined){
+			if(!this.subPath instanceof Array){
+				params.push(this.subPath);
+			}else{
+				params = params.concat(this.subPath);
+			}
+		}
+		
+		params = params.concat(this.pathParams);
+		
+		
+		if(params && url){
+			for(var i=0; i<params.length; i++){
+				var p = params[i];
 				if(p!=null && p!=undefined){
 					url = url+"/"+p;
 				}else{
 					url = url+"/null";
 				}
-
 			}
 		}
 		return url;
@@ -61,9 +71,6 @@ Ext.define('Sbi.service.RestService', {
 		});
 	},
 	
-	getUrl:	function(){
-		return this.url;
-	},
 	
 	callService:function(scope, successCallBack, failureCallBack){
 		

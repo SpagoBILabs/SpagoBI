@@ -13,48 +13,48 @@
  */
 
 
-Ext.define('Sbi.olap.execution.table.OlapExecutionAxisMember', {
-	extend: 'Sbi.olap.execution.table.OlapExecutionMember',
+Ext.define('Sbi.olap.execution.table.OlapExecutionAxisHierarchy', {
+	extend: 'Sbi.olap.execution.table.OlapExecutionHierarchy',
 
 	config:{		
 		/**
-		 * @cfg {boolean} firstMember
-		 * Is this member the first one
+		 * @cfg {boolean} firstHierarchy
+		 * Is this Hierarchy the first one
 		 */
-		firstMember: false,
+		firstHierarchy: false,
 
 		/**
-		 * @cfg {boolean} lastMember
-		 * Is this member the last one
+		 * @cfg {boolean} lastHierarchy
+		 * Is this Hierarchy the last one
 		 */
-		lastMember: false
+		lastHierarchy: false
 
 	},
 
 	/**
 	 * @property {Ext.Panel} moveUpPanel
-	 * ABSTRACT: panel to move up in the axis positions the member
+	 * ABSTRACT: panel to move up in the axis positions the Hierarchy
 	 */
 	moveUpPanel: null,
 
 	/**
 	 * @property {Ext.Panel} moveUpDown
-	 * ABSTRACT: panel to move down in the axis positions the member
+	 * ABSTRACT: panel to move down in the axis positions the Hierarchy
 	 */
 	moveDownPanel: null,
 
 	/**
-	 * @property {Ext.Panel} memberPanel
-	 * central panel with the name of the member
+	 * @property {Ext.Panel} hierarchyPanel
+	 * central panel with the name of the Hierarchy
 	 */
-	memberPanel:null,
+	hierarchyPanel:null,
 	
 	subPanelLayout: null,
 
 	constructor : function(config) {
 		this.initConfig(config);
 		if(Sbi.settings && Sbi.settings.olap && Sbi.settings.olap.execution && Sbi.settings.olap.execution.table && Sbi.settings.olap.execution.table.OlapExecutionAxisMember) {
-			this.initConfig(Sbi.settings.olap.execution.OlapExecutionAxisMember);
+			this.initConfig(Sbi.settings.olap.execution.OlapExecutionAxisHierarchy);
 		}
 
 		this.callParent(arguments);
@@ -63,18 +63,18 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionAxisMember', {
 
 	initComponent: function() {
 		
-		this.buildMemberPanel();
+		this.buildHierarchyPanel();
 		this.moveUpPanel = Ext.create("Ext.Panel",this.buildUpPanelConf());
 		this.moveDownPanel =Ext.create("Ext.Panel",this.buildDownPanelConf());
 
 		var items = [];
-		if(!this.firstMember){
+		if(!this.firstHierarchy){
 			items.push( this.moveUpPanel);
 		}
 
-		items.push( this.memberPanel);
+		items.push( this.hierarchyPanel);
 
-		if(!this.lastMember){
+		if(!this.lastHierarchy){
 			items.push( this.moveDownPanel);
 		}
 
@@ -107,20 +107,20 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionAxisMember', {
 
 	
 	/**
-	 * Builds the central panel with the name of the member
+	 * Builds the central panel with the name of the Hierarchy
 	 */
-	buildMemberPanel: function(){
-		this.memberPanel = Ext.create("Ext.Panel",{
+	buildHierarchyPanel: function(){
+		this.hierarchyPanel = Ext.create("Ext.Panel",{
 			xtype: "panel",
 			border: false,
-			html: this.getMemberName(),
+			html: this.getHierarchyName(),
 			style: "background-color: transparent !important",
 			bodyStyle: "background-color: transparent !important"
 		});
 	},
 	
 	/**
-	 * Builds the central panel with the name of the member
+	 * Builds the central panel with the name of the hierarchy
 	 */
 	buildUpPanelConf: function(){
 		return {
@@ -144,7 +144,7 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionAxisMember', {
 	},
 	
 	/**
-	 * Builds the central panel with the name of the member
+	 * Builds the central panel with the name of the Hierarchy
 	 */
 	buildDownPanelConf: function(){
 		return {
@@ -168,7 +168,7 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionAxisMember', {
 	},
 
 	/**
-	 * Show the panels to move up/down the member
+	 * Show the panels to move up/down the Hierarchy
 	 */
 	showMovePanels: function(){
 		this.moveUpPanel.show();
@@ -176,7 +176,7 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionAxisMember', {
 	},
 
 	/**
-	 * Hide the panels to move up/down the member
+	 * Hide the panels to move up/down the Hierarchy
 	 */
 	hideMovePanels: function(){
 		this.moveUpPanel.hide();

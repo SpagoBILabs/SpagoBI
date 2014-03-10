@@ -10,11 +10,13 @@
  *  Alberto Ghedin (alberto.ghedin@eng.it)
  */
 
-Ext.define('Sbi.olap.MemberModel', {
+Ext.define('Sbi.olap.HierarchyModel', {
 	extend: 'Ext.data.Model',
 	idProperty: 'uniqueName',
-	fields: [		
-	         {name: 'name'},
-	         {name: 'uniqueName'}
+	fields: [
+		{name: 'name'},
+		{name: 'uniqueName'},
+		{name: 'axis'},
+		{name: 'position'},
 	]
 });
