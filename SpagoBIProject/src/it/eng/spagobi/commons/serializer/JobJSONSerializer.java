@@ -53,6 +53,7 @@ public class JobJSONSerializer implements Serializer {
 	public static final String JOB_PARAMETERS = "jobParameters";
 	public static final String JOB_DOCUMENTS = "documents";
 	public static final String JOB_DOCUMENTS_PARAMETERS = "parameters";
+	public static final String JOB_DOCUMENTS_CONDENSED_PARAMETERS = "condensedParameters";
 
 	
 	public Object serialize(Object o, Locale locale)
@@ -100,6 +101,8 @@ public class JobJSONSerializer implements Serializer {
 					JSONObject aDocumentJSON = new JSONObject();
 
 					aDocumentJSON.put("name",documentName);
+					
+					StringBuffer parametersCondensedString = new StringBuffer();
 					
 					JSONArray documentParametersJSON = new JSONArray();
 					//search document parameters
@@ -195,11 +198,15 @@ public class JobJSONSerializer implements Serializer {
 							}
 							documentParametersJSON.put(jsonPar);
 							
+							parametersCondensedString.append(" "+parameterName+" = "+parameterValues+" | ");
+							
 						}
 
 					}
 					
-					
+					//put condensed parameters representation inside aDocument JSONObject
+					aDocumentJSON.put(JOB_DOCUMENTS_CONDENSED_PARAMETERS,parametersCondensedString.toString());
+
 					//put parameters JSONArray inside aDocument JSONObject
 					aDocumentJSON.put(JOB_DOCUMENTS_PARAMETERS,documentParametersJSON);
 					

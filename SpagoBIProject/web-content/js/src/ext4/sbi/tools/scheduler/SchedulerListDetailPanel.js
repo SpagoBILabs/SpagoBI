@@ -22,10 +22,22 @@ Ext.define('Sbi.tools.scheduler.SchedulerListDetailPanel', {
 			var thisPanel = this;
 		
 			this.services =[];
-			//this.initServices();
+			this.initServices();
 			this.detailPanel =  Ext.create('Sbi.tools.scheduler.SchedulerDetailPanel',{services: this.services, isSuperadmin: isSuperadmin });
+			this.detailPanel.on("addSchedulation",this.addSchedulation,this);
+
 			this.columns = [{dataIndex:"jobName", header:LN('sbi.generic.label')}, {dataIndex:"jobDescription", header:LN('sbi.generic.descr')}];
-			this.fields = ["jobName","jobDescription"];
+			this.fields = [
+			               "jobName",
+			               "jobDescription",
+			               "jobClass",
+			               "jobDurability",
+			               "jobRequestRecovery",
+			               "useVolatility",
+			               "jobParameters",
+			               "documents",
+			               "triggers"
+			               ];
 	
 			this.filteredProperties = ["jobName","jobDescription"];
 			this.buttonToolbarConfig = {
@@ -56,13 +68,76 @@ Ext.define('Sbi.tools.scheduler.SchedulerListDetailPanel', {
 			this.callParent(arguments);
 		}
 		
+		
+		, initServices: function(baseParams){
+			
+			this.services["delete"]= Sbi.config.serviceRegistry.getRestServiceUrl({
+				serviceName: 'scheduler/deleteJob'
+					, baseParams: baseParams
+			});
+
+		}
+		
 		, onDeleteRow: function(record){
 			alert('TODO: Delete schedule activity');
+			
+			var recordToDelete = Ext.create("Sbi.tools.scheduler.SchedulerModel",record.data);
+			var values = {};
+			values.jobGroup = record.jobGroup ;
+			values.jobName = record.jobName ;
+			
+			Ext.MessageBox.confirm(
+					LN('sbi.generic.pleaseConfirm'),
+					LN('sbi.generic.confirmDelete'),
+					function(btn, text){
+						if (btn=='yes') {
+							//perform Ajax Request
+							Ext.Ajax.request({
+								url: this.services["delete"],
+								params: values,
+								success : function(response, options) {
+									if(response !== undefined  && response.responseText !== undefined && response.statusText=="OK") {
+										if(response.responseText!=null && response.responseText!=undefined){
+											if(response.responseText.indexOf("error.mesage.description")>=0){
+												Sbi.exception.ExceptionHandler.handleFailure(response);
+											}else{						
+												Sbi.exception.ExceptionHandler.showInfoMessage(LN('sbi.scheduler.activity.deleted'));
+												this.grid.store.remove(record);
+												this.grid.store.commitChanges();
+											}
+										}
+									} else {
+										Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
+									}
+								},
+								scope: this,
+								failure: Sbi.exception.ExceptionHandler.handleFailure      
+							})
+						}
+					},
+					this
+				);
+		}
+		
+		, addSchedulation: function(){
+			if (this.grid.getSelectionModel().hasSelection()) {
+				   var row = this.grid.getSelectionModel().getSelection()[0];
+				   var jobGroup = row.get('jobGroup');
+				   var jobName = row.get('jobName');
+				   window.location.assign(this.contextName + '/servlet/AdapterHTTP?JOBGROUPNAME='+jobGroup+'&PAGE=TriggerManagementPage&TYPE_LIST=TYPE_LIST&MESSAGEDET=MESSAGE_NEW_SCHEDULE&JOBNAME='+jobName);
+
+				}
 		}
 		
 		//overwrite parent method
 		, onAddNewRow: function(){
 			window.location.assign(this.contextName + '/servlet/AdapterHTTP?PAGE=JobManagementPage&TYPE_LIST=TYPE_LIST&MESSAGEDET=MESSAGE_NEW_JOB');
+		}
+		
+		//when selecting a row in the grid list
+		, onGridSelect: function(selectionrowmodel, record, index, eOpts){
+			this.detailPanel.show();
+			this.detailPanel.setFormState(record.data);
 		}
 		
 });		

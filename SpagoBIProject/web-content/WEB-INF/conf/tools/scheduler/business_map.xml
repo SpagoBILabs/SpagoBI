@@ -12,6 +12,7 @@
 	
 	<MAP_REST_SERVICES>
 	 	<MAP_REST_SERVICE serviceUrl="/scheduler/listAllJobs" businessProcess="SchedulerManagement" /> 							
+		<MAP_REST_SERVICE serviceUrl="/scheduler/deleteJob" businessProcess="SchedulerManagement" /> 							
 		
 	</MAP_REST_SERVICES>
 </BUSINESS_MAP>
