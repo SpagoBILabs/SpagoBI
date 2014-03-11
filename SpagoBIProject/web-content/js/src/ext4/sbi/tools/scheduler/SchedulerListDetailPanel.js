@@ -39,7 +39,7 @@ Ext.define('Sbi.tools.scheduler.SchedulerListDetailPanel', {
 			               "triggers"
 			               ];
 	
-			this.filteredProperties = ["jobName","jobDescription"];
+			this.filteredProperties = ["jobName","jobDescription","triggers"];
 			this.buttonToolbarConfig = {
 					newButton: true
 			};
@@ -75,16 +75,19 @@ Ext.define('Sbi.tools.scheduler.SchedulerListDetailPanel', {
 				serviceName: 'scheduler/deleteJob'
 					, baseParams: baseParams
 			});
+			
+			this.services["deleteTrigger"]= Sbi.config.serviceRegistry.getRestServiceUrl({
+				serviceName: 'scheduler/deleteTrigger'
+					, baseParams: baseParams
+			});
 
 		}
 		
-		, onDeleteRow: function(record){
-			alert('TODO: Delete schedule activity');
-			
+		, onDeleteRow: function(record){			
 			var recordToDelete = Ext.create("Sbi.tools.scheduler.SchedulerModel",record.data);
 			var values = {};
-			values.jobGroup = record.jobGroup ;
-			values.jobName = record.jobName ;
+			values.jobGroup = record.data.jobGroup ;
+			values.jobName = record.data.jobName ;
 			
 			Ext.MessageBox.confirm(
 					LN('sbi.generic.pleaseConfirm'),

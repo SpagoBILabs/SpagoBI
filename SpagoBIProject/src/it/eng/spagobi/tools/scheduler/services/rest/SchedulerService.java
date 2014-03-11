@@ -22,8 +22,15 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package it.eng.spagobi.tools.scheduler.services.rest;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
+import it.eng.spago.base.SourceBean;
+import it.eng.spago.error.EMFErrorSeverity;
+import it.eng.spago.error.EMFUserError;
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.deserializer.TriggerXMLDeserializer;
 import it.eng.spagobi.commons.serializer.JSONSerializer;
@@ -31,9 +38,14 @@ import it.eng.spagobi.commons.serializer.JobJSONSerializer;
 import it.eng.spagobi.commons.serializer.SerializationException;
 import it.eng.spagobi.commons.serializer.SerializerFactory;
 import it.eng.spagobi.commons.serializer.XMLSerializer;
+import it.eng.spagobi.commons.utilities.AuditLogUtilities;
+import it.eng.spagobi.services.exceptions.ExceptionUtilities;
+import it.eng.spagobi.services.scheduler.service.ISchedulerServiceSupplier;
+import it.eng.spagobi.services.scheduler.service.SchedulerServiceSupplierFactory;
 import it.eng.spagobi.tools.scheduler.bo.Job;
 import it.eng.spagobi.tools.scheduler.bo.Trigger;
 import it.eng.spagobi.tools.scheduler.dao.ISchedulerDAO;
+import it.eng.spagobi.tools.scheduler.utils.SchedulerUtilities;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
@@ -58,6 +70,8 @@ import org.json.JSONObject;
 @Path("/scheduler")
 public class SchedulerService {
 	static private Logger logger = Logger.getLogger(SchedulerService.class);
+	static private String canNotFillResponseError = "error.mesage.description.generic.can.not.responce";
+
 	
 	@GET
 	@Path("/listAllJobs")
@@ -176,23 +190,163 @@ public class SchedulerService {
 		return JSONReturn.toString();
 	}
 	
-	@GET
+	@POST
 	@Path("/deleteJob")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public String deleteJob(@Context HttpServletRequest req){
-		String jobGroup = req.getParameter("jobGroup");
+		IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+
+		String jobGroupName = req.getParameter("jobGroup");
 		String jobName = req.getParameter("jobName");
-		
-		
-		
-		//TODO: delete a JOB
-		
-		
-		
-		
-		return ("{resp:'ok'}");
+		HashMap<String, String> logParam = new HashMap();
+		try {
+
+			ISchedulerServiceSupplier schedulerService = SchedulerServiceSupplierFactory.getSupplier();
+
+			String xmlSchedList = schedulerService.getJobSchedulationList(jobName, jobGroupName);
+			SourceBean rowsSB_JSL = SourceBean.fromXMLString(xmlSchedList);
+			if(rowsSB_JSL==null) {
+				throw new Exception("List of job triggers not returned by Web service ");
+			}
+			logParam.put("JOB NAME", jobName);
+			logParam.put("JOB GROUP NAME", jobGroupName);
+			
+			// delete each schedulation
+			List schedules = rowsSB_JSL.getAttributeAsList("ROW");
+			Iterator iterSchedules = schedules.iterator();
+			while(iterSchedules.hasNext()) {
+				SourceBean scheduleSB = (SourceBean)iterSchedules.next();
+				String triggerName = (String)scheduleSB.getAttribute("triggerName");
+				String triggerGroup = (String)scheduleSB.getAttribute("triggerGroup");
+				DAOFactory.getDistributionListDAO().eraseAllRelatedDistributionListObjects(triggerName);
+				String delResp = schedulerService.deleteSchedulation(triggerName, triggerGroup);
+				SourceBean schedModRespSB_DS = SchedulerUtilities.getSBFromWebServiceResponse(delResp);
+				if(schedModRespSB_DS==null) {
+					try {
+						updateAudit(req,  profile, "SCHEDULER.DELETE",null , "KO");
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					throw new Exception("Imcomplete response returned by the Web service " +
+							"during schedule "+triggerName+" deletion");
+				}	
+				if(!SchedulerUtilities.checkResultOfWSCall(schedModRespSB_DS)){
+					try {
+						updateAudit(req,  profile, "SCHEDULER.DELETE",logParam , "KO");
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					throw new Exception("Schedule "+triggerName+" not deleted by the Web Service");
+				}
+			}			
+			// delete job	
+			String resp_DJ = schedulerService.deleteJob(jobName, jobGroupName);
+			SourceBean schedModRespSB_DJ = SchedulerUtilities.getSBFromWebServiceResponse(resp_DJ);
+			if(schedModRespSB_DJ==null) {
+				try {
+					updateAudit(req,  profile, "SCHEDULER.DELETE",logParam , "KO");
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				throw new Exception("Imcomplete response returned by the Web service " +
+						"during job "+jobName+" deletion");
+			}	
+			if(!SchedulerUtilities.checkResultOfWSCall(schedModRespSB_DJ)){
+				try {
+					updateAudit(req,  profile, "SCHEDULER.DELETE",logParam , "KO");
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				throw new Exception("JOb "+jobName+" not deleted by the Web Service");
+			}
+			// fill response
+			updateAudit(req,  profile, "SCHEDULER.DELETE",logParam , "OK");
+
+			return ("{resp:'ok'}");
+		} catch (Exception ex) {
+			updateAudit(req,  profile, "SCHEDULER.DELETE",logParam , "KO");
+			logger.error("Error while deleting job", ex);
+			logger.debug(canNotFillResponseError);
+			try {
+				return ( ExceptionUtilities.serializeException(canNotFillResponseError,null));
+			} catch (Exception e) {
+				logger.debug("Cannot fill response container.");
+				throw new SpagoBIRuntimeException(
+						"Cannot fill response container", e);
+			}
+		}
+
+	}
+	
+	@POST
+	@Path("/deleteTrigger")
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	public String deleteTrigger(@Context HttpServletRequest req){
+		IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+		HashMap<String, String> logParam = new HashMap();
+
+		String jobGroupName = req.getParameter("jobGroup");
+		String jobName = req.getParameter("jobName");
+		String triggerGroup = req.getParameter("triggerGroup");
+		String triggerName = req.getParameter("triggerName");
+		logParam.put("JOB NAME", jobName);
+		logParam.put("JOB GROUP", jobGroupName);
+		logParam.put("TRIGGER NAME", triggerName);
+		logParam.put("TRIGGER GROUP", triggerGroup);
+
+		try {
+			DAOFactory.getDistributionListDAO().eraseAllRelatedDistributionListObjects(triggerName);
+			ISchedulerServiceSupplier schedulerService = SchedulerServiceSupplierFactory.getSupplier();
+			String resp = schedulerService.deleteSchedulation(triggerName, triggerGroup);
+			SourceBean schedModRespSB = SchedulerUtilities.getSBFromWebServiceResponse(resp);
+			if(schedModRespSB!=null) {
+				String outcome = (String)schedModRespSB.getAttribute("outcome");
+				if(outcome.equalsIgnoreCase("fault")){
+					try {
+						updateAudit(req,  profile, "SCHED_TRIGGER.DELETE",logParam , "KO");
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					throw new Exception("Trigger not deleted by the service");
+				}
+			}
+			updateAudit(req,  profile, "SCHED_TRIGGER.DELETE",logParam , "OK");
+
+			return ("{resp:'ok'}");
+
+
+		} catch (Exception e) {
+			updateAudit(req,  profile, "SCHEDULER.DELETE",logParam , "KO");
+			logger.error("Error while deleting schedule (trigger) ", e);
+			logger.debug(canNotFillResponseError);
+			try {
+				return ( ExceptionUtilities.serializeException(canNotFillResponseError,null));
+			} catch (Exception ex) {
+				logger.debug("Cannot fill response container.");
+				throw new SpagoBIRuntimeException(
+						"Cannot fill response container", ex);
+			}
+		}
 
 
 	}
+	
+	private static void updateAudit(HttpServletRequest request,
+			IEngUserProfile profile, String action_code,
+			HashMap<String, String> parameters, String esito) {
+		try {
+			AuditLogUtilities.updateAudit(request, profile, action_code,
+					parameters, esito);
+		} catch (Exception e) {
+			logger.debug("Error writing audit", e);
+		}
+	}
+
+
 
 }
