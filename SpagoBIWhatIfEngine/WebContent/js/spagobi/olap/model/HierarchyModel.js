@@ -16,7 +16,7 @@ Ext.define('Sbi.olap.HierarchyModel', {
 	fields: [
 		{name: 'name'},
 		{name: 'uniqueName'},
-		{name: 'axis'},
-		{name: 'position'},
+		{name: 'axis', type: 'int'},
+		{name: 'position', type: 'int'},
 	]
 });

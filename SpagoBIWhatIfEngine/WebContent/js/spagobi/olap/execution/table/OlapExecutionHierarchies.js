@@ -33,7 +33,12 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionHierarchies', {
 	     * @cfg {String} hierarchyClassName
 	     * The name of the children classes
 	     */
-		hierarchyClassName: null
+		hierarchyClassName: null,
+		/**
+	     * @cfg {Number} axisPosition
+	     * The position of the axis
+	     */
+		axisOrdinalPosition: -1
 //		,style: {
 //			backgroundColor: "transparent",
 //			border: "none"
@@ -92,6 +97,15 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionHierarchies', {
 //		}
 	},
 	
+    /**
+     * Adds the Hierarchy from in Hierarchy container
+     * @param {Sbi.olap.execution.table.OlapExecutionHierarchy} hierarchy the Hierarchy to add
+     */
+	moveHierarchyToOtherAxis: function(hierarchy){
+		
+		Sbi.olap.eventManager.moveHierarchy(hierarchy.hierarchy.get("uniqueName"), hierarchy.hierarchy.get("axis"), this.axisOrdinalPosition);
+	},
+	
 	
 	/**
      * Moves up the hierarchy
@@ -119,9 +133,10 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionHierarchies', {
 		var index = this.store.indexOf(hierarchy.hierarchy);
 		
 		if((pos+index)>=0 && (pos+index)<this.store.getCount( )){
-			this.store.remove(hierarchy.hierarchy);
-			this.store.insert((index+pos),hierarchy.hierarchy);
-			this.refreshItems();
+			Sbi.olap.eventManager.swapHierarchies(index, index+pos, hierarchy.hierarchy.get("axis"));
+//			this.store.remove(hierarchy.hierarchy);
+//			this.store.insert((index+pos),hierarchy.hierarchy);
+//			this.refreshItems();
 		}
 	},
 	
@@ -161,8 +176,10 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionHierarchies', {
 	/**
 	 * Updates the visualization after the execution of a a mdx query
 	 * @param pivotModel {Array} the list of hierarchies to add
+	 * @param axisOrdinalPosition {Number} the ordinal position of the axis
 	 */
-	updateAfterMDXExecution: function(hierarchies){
+	updateAfterMDXExecution: function(hierarchies, axisOrdinalPosition){
+		this.axisOrdinalPosition = axisOrdinalPosition;
 		this.store.removeAll();
 		if(hierarchies){
 			for(var i=0; i<hierarchies.length; i++){
