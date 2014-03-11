@@ -18,7 +18,6 @@ import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.json.JSONUtils;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -26,6 +25,8 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.json.JSONObject;
+
+
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
