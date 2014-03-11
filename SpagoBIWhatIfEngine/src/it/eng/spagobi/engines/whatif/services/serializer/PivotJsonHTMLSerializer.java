@@ -18,7 +18,6 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.io.IOException;
 import java.io.StringWriter;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -45,6 +44,12 @@ public class PivotJsonHTMLSerializer {
 	private static final String ROWS= "rows";
 	private static final String FILTERS= "filters";
 	private static final String TABLE= "table";
+	private static final String POSITION= "position";
+	private static final String AXIS= "axis";
+	private static final String ROWSAXISORDINAL = "rowsAxisOrdinal";
+	private static final String COLUMNSAXISORDINAL = "columnsAxisOrdinal";
+    
+	
 	
 	public static String renderModel(PivotModel model){
 
@@ -104,8 +109,9 @@ public class PivotJsonHTMLSerializer {
 			pivot.put(TABLE, table);
 			pivot.put(ROWS, serializeAxis(axis, Axis.ROWS));
 			pivot.put(COLUMNS,  serializeAxis(axis, Axis.COLUMNS));
-			pivot.put(FILTERS,  serializeHierarchies(otherHierarchies));
-			
+			pivot.put(FILTERS,  serializeHierarchies(otherHierarchies, -1));
+			pivot.put(COLUMNSAXISORDINAL, Axis.COLUMNS.axisOrdinal());
+			pivot.put(ROWSAXISORDINAL, Axis.ROWS.axisOrdinal());
 			
 		} catch (Exception e) {
 			logger.error("Error serializing the pivot table", e);
@@ -122,23 +128,27 @@ public class PivotJsonHTMLSerializer {
 	
 	private static JSONArray serializeAxis(List<CellSetAxis> axis, Axis type) throws JSONException{
 		CellSetAxis aAxis= axis.get(0);
+		int axisPos = 0;
 		if(!aAxis.getAxisOrdinal().equals(type)){
 			aAxis = axis.get(1);
+			axisPos = 1;
 		}
 		List<Hierarchy> hierarchies = aAxis.getAxisMetaData().getHierarchies();
-		return serializeHierarchies(hierarchies);
+		return serializeHierarchies(hierarchies, axisPos);
 		
 	}
 
 	
-	private static JSONArray serializeHierarchies(List<Hierarchy> hierarchies) throws JSONException{
+	private static JSONArray serializeHierarchies(List<Hierarchy> hierarchies, int axis) throws JSONException{
 		JSONArray hierchiesSerialized = new JSONArray();
 		if(hierarchies!=null){
-			for (Iterator<Hierarchy> iterator = hierarchies.iterator(); iterator.hasNext();) {
-				Hierarchy hierarchy = (Hierarchy) iterator.next();
+			for (int i=0; i<hierarchies.size(); i++) {
+				Hierarchy hierarchy = hierarchies.get(i);
 				JSONObject hierarchyObject = new JSONObject();
 				hierarchyObject.put(NAME, hierarchy.getName());
 				hierarchyObject.put(UNIQUE_NAME, hierarchy.getUniqueName());
+				hierarchyObject.put(POSITION, hierarchy.getName());
+				hierarchyObject.put(AXIS, axis);
 				hierchiesSerialized.put(hierarchyObject);
 			}
 		}
