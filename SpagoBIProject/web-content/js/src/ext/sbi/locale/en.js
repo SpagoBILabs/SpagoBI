@@ -804,7 +804,7 @@ Sbi.locale.ln['sbi.ds.metadata.dataset.hierarchy.simple']='Simple mode';
 
 
 //Multitenant
-Sbi.locale.ln['sbi.multitenant.saved']= 'Tenant correctly saved';
+Sbi.locale.ln['sbi.multitenant.saved']= 'Tenant correctly saved. \n The administrator of the the tenant has been created too and his username and password is ';
 Sbi.locale.ln['sbi.multitenant.deleted']= 'Tenant correctly deleted';
 Sbi.locale.ln['sbi.multitenant.delete.title']= 'Delete Tenant?';
 Sbi.locale.ln['sbi.multitenant.delete.msg']= 'Are you sure you want to delete the Tenant and all related data?';

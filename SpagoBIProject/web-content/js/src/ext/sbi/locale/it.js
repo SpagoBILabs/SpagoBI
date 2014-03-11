@@ -1078,7 +1078,7 @@ Sbi.locale.ln['sbi.tools.layer.props.params']= "Params";
 Sbi.locale.ln['sbi.tools.layer.props.options']= "Options";
 
 //Multitenant
-Sbi.locale.ln['sbi.multitenant.saved']= 'Tenant salvato correttamente';
+Sbi.locale.ln['sbi.multitenant.saved']= 'Tenant salvato correttamente. \n L\'utente amministratore del tenant è stato creato con username e password ';
 Sbi.locale.ln['sbi.multitenant.deleted']= 'Tenant cancellato correttamente';
 Sbi.locale.ln['sbi.multitenant.delete.title']= 'Cancellare il Tenant?';
 Sbi.locale.ln['sbi.multitenant.delete.msg']= 'Sei sicuro di voler cancellare il tenant e tutti i dati ad esso associati?';

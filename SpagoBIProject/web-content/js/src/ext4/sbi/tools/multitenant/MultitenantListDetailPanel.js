@@ -121,7 +121,7 @@ Ext.define('Sbi.tools.multitenant.MultitenantListDetailPanel', {
 					if(respoceJSON.MULTITENANT_ID){
 						record.MULTITENANT_ID = respoceJSON.MULTITENANT_ID;
 					}
-					Sbi.exception.ExceptionHandler.showInfoMessage(LN('sbi.multitenant.saved'));
+					Sbi.exception.ExceptionHandler.showInfoMessage(LN('sbi.multitenant.saved') + record.MULTITENANT_NAME+'_admin');
 					
 					var selectedRow = this.grid.getSelectionModel().getSelection();
 					selectedRow[0].set("MULTITENANT_ID", record.MULTITENANT_ID);
