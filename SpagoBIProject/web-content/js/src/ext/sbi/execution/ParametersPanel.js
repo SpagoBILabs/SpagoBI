@@ -539,23 +539,6 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 	}
 	
 	, isReadyForExecution: function() {
-		var isReadyForExecution = true;
-		if(this.parameters.length == 0) {
-			isReadyForExecution = true;
-		} else 	{
-			var o = this.getFormState();
-			for(p in o) {
-				// must check is this.fields[p] is undefined because form state contains also parameters' descriptions
-				if(this.fields[p] != undefined && this.fields[p].isTransient === false) {
-					isReadyForExecution = false;
-					break;
-				}
-			}
-		}
-		return isReadyForExecution;
-	}
-	
-	, isReadyForExecution: function() {
 		if(this.parameters.length == 0) {
 			return true;
 		} else 	{
@@ -649,7 +632,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		this.on('checkReady', function () {
 			if((this.firstLoadCounter == this.firstLoadTotParams )
 					|| (this.firstLoadTotParams == 0)){	
-				this.fireEvent('ready', this);
+				this.fireEvent('ready', this);	
 			}
 				
 		}, this);
@@ -722,8 +705,8 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 
 			
 		if(this.firstLoadTotParams == 0){
-			this.fireEvent('ready', this);
-			this.fireEvent('synchronize', this, this.isReadyForExecution(), state);	
+			this.fireEvent('ready', this, this.isReadyForExecution(), state);	
+			this.fireEvent('synchronize', this);	
 					
 		}
 		Sbi.trace('[ParametersPanel.initializeParametersPanel] : OUT');

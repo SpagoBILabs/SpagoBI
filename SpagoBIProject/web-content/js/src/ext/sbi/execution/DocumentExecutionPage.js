@@ -607,8 +607,8 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 				Sbi.execution.SessionParametersManager.restoreMementoObject(panel);
 				if(this.automaticStartChecked === false) {
 					this.automaticStartChecked = true;
-					this.isParameterPanelReady = true;
-					this.isParameterPanelReadyForExecution = true;
+//					this.isParameterPanelReady = true;
+////					this.isParameterPanelReadyForExecution = true;
 					this.checkAutomaticStart();
 				}
 			}
