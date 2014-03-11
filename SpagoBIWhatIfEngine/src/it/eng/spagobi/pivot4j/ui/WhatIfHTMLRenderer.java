@@ -25,9 +25,6 @@ import com.eyeq.pivot4j.ui.property.PropertySupport;
 import com.eyeq.pivot4j.util.CssWriter;
 
 public class WhatIfHTMLRenderer extends HtmlRenderer {
-	private Integer paddingLeft = 35;
-
-	private Map<String, String> commands;
 
 	public WhatIfHTMLRenderer(Writer writer) {
 		super(writer);
@@ -51,10 +48,7 @@ public class WhatIfHTMLRenderer extends HtmlRenderer {
 
 					int padding = getRowHeaderLevelPadding()
 							* (1 + context.getMember().getDepth());
-					
-					if(paddingLeft != null){
-						padding = paddingLeft +padding;
-					}
+
 					cssWriter.writeStyle("padding-left", padding + "px");
 				}
 			}
@@ -165,35 +159,6 @@ public class WhatIfHTMLRenderer extends HtmlRenderer {
 			attributes.put("rowspan", Integer.toString(context.getRowSpan()));
 		}
 
-/*		///spagobi whatif engine 
-		CellType ct = context.getCellType();
-		//context.getCellSetAxis().getAxisOrdinal().axisOrdinal();
-		int colIdx = context.getColumnIndex();
-		int rowIdx = context.getRowIndex();
-
-		int axis =0;
-		if(context.getAxis()!= null){
-			axis =context.getAxis().axisOrdinal();
-		}
-		int memb =0;
-		if(context.getPosition()!= null){
-			memb =context.getPosition().getOrdinal();
-		}
-		int pos =0;
-		if(context.getAxis() == Axis.COLUMNS){
-			pos = rowIdx;
-		}else{
-			pos = colIdx;
-		}
-
-		if(ct.name().equalsIgnoreCase("Header")){
-			//explode or collapse for drill down functionality
-			attributes.put("onClick", "javascript:Sbi.olap.eventManager.drillDown("+axis+" , "+pos+" , "+memb+")");
-			
-		}else if(ct.name().equalsIgnoreCase("Value")){
-			//edit cell value functionality
-			attributes.put("onClick", "alert('"+ct.name()+"')");
-		}*/
 		
 		return attributes;
 	}
@@ -212,57 +177,47 @@ public class WhatIfHTMLRenderer extends HtmlRenderer {
 		if (link == null) {
 			if(context.getMember() != null && context.getMember().getMemberType() != null && !context.getMember().getMemberType().name().equalsIgnoreCase("Measure")){
 				Map<String, String> attributes = new TreeMap<String, String>();
-/*				try {
-					int childrenNum = context.getMember().getChildMemberCount();
 
-					if(childrenNum > 0){
-						*/
-						List <CellCommand<?>> commands = getCommands(context);
-						paddingLeft = 10;
-						
-						if (commands != null && !commands.isEmpty()) {
-							for (CellCommand<?> command : commands) {
-								String cmd = command.getName();
-								///spagobi whatif engine 
-								CellType ct = context.getCellType();
-								//context.getCellSetAxis().getAxisOrdinal().axisOrdinal();
-								int colIdx = context.getColumnIndex();
-								int rowIdx = context.getRowIndex();
+				List <CellCommand<?>> commands = getCommands(context);
 
-								int axis =0;
-								if(context.getAxis()!= null){
-									axis =context.getAxis().axisOrdinal();
-								}
-								int memb =0;
-								if(context.getPosition()!= null){
-									memb =context.getPosition().getOrdinal();
-								}
-								int pos =0;
-								if(context.getAxis() == Axis.COLUMNS){
-									pos = rowIdx;
-								}else{
-									pos = colIdx;
-								}
-								if(cmd != null && cmd.equalsIgnoreCase("expandPosition")){
-									attributes.put("src", "../img/elbow-plus-nl.gif");
-									attributes.put("onClick", "javascript:Sbi.olap.eventManager.drillDown("+axis+" , "+pos+" , "+memb+")");
-									getWriter().startElement("img", attributes);			
-									getWriter().endElement("img");
-								}else if(cmd != null && cmd.equalsIgnoreCase("collapsePosition")){
-									attributes.put("src", "../img/elbow-minus-nl.gif");
-									attributes.put("onClick", "javascript:Sbi.olap.eventManager.drillUp("+axis+" , "+pos+" , "+memb+")");
-									getWriter().startElement("img", attributes);			
-									getWriter().endElement("img");
-								}
+				if (commands != null && !commands.isEmpty()) {
+					for (CellCommand<?> command : commands) {
+						String cmd = command.getName();
 
-							}
+						///spagobi whatif engine 
+
+						int colIdx = context.getColumnIndex();
+						int rowIdx = context.getRowIndex();
+
+						int axis =0;
+						if(context.getAxis()!= null){
+							axis =context.getAxis().axisOrdinal();
+						}
+						int memb =0;
+						if(context.getPosition()!= null){
+							memb =context.getPosition().getOrdinal();
+						}
+						int pos =0;
+						if(context.getAxis() == Axis.COLUMNS){
+							pos = rowIdx;
+						}else{
+							pos = colIdx;
+						}
+						if(cmd != null && (cmd.equalsIgnoreCase("expandPosition")  || cmd.equalsIgnoreCase("drillDown") || cmd.equalsIgnoreCase("expandMember"))){
+							attributes.put("src", "../img/elbow-plus-nl.gif");
+							attributes.put("onClick", "javascript:Sbi.olap.eventManager.drillDown("+axis+" , "+pos+" , "+memb+")");
+							getWriter().startElement("img", attributes);			
+							getWriter().endElement("img");
+						}else if(cmd != null && (cmd.equalsIgnoreCase("collapsePosition") || cmd.equalsIgnoreCase("drillUp") || cmd.equalsIgnoreCase("collapseMember"))){
+							attributes.put("src", "../img/elbow-minus-nl.gif");
+							attributes.put("onClick", "javascript:Sbi.olap.eventManager.drillUp("+axis+" , "+pos+" , "+memb+")");
+							getWriter().startElement("img", attributes);			
+							getWriter().endElement("img");
 						}
 
-/*					}
-					
-				} catch (OlapException e) {
-					e.printStackTrace();
-				}*/
+					}
+				}
+
 			}
 			getWriter().writeContent(label);
 		} else {

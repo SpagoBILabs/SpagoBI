@@ -39,7 +39,7 @@ public class AbstractWhatIfEngineService extends AbstractRestService{
 	 * @param request
 	 * @return the String that contains the HTML table
 	 */
-	public String renderModel(PivotModel model){
+	public String renderModel(PivotModel model, String drillDownMode){
 		logger.debug("IN");
 		
 		HttpServletRequest servletRequest = getServletRequest();
@@ -52,7 +52,7 @@ public class AbstractWhatIfEngineService extends AbstractRestService{
 			//TODO: implement the other serializers
 		}else{
 			logger.debug("Serializing the model in "+OUTPUTFORMAT_JSONHTML);
-			serializedModel = PivotJsonHTMLSerializer.renderModel(model);
+			serializedModel = PivotJsonHTMLSerializer.renderModel(model, drillDownMode);
 		}
 		
 		logger.debug("OUT: table correctly serialized");

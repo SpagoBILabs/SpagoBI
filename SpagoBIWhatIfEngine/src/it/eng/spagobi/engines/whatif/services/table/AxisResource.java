@@ -47,7 +47,7 @@ public class AxisResource extends AbstractWhatIfEngineService {
 			transform.setSwapAxes(true);
 		}
 				
-		String table = renderModel(model);
+		String table = renderModel(model, null);
 		logger.debug("OUT");
 		return table;
 		
@@ -73,7 +73,7 @@ public class AxisResource extends AbstractWhatIfEngineService {
 
 	
 
-		return renderModel(model);
+		return renderModel(model, null);
 	}
 	
 	@PUT
@@ -102,7 +102,7 @@ public class AxisResource extends AbstractWhatIfEngineService {
 		MdxStatement s = qa.updateQuery();
 		model.setMdx(s.toMdx());
 
-		return renderModel(model);
+		return renderModel(model, null);
 	}
 	
 	@PUT
@@ -146,7 +146,7 @@ public class AxisResource extends AbstractWhatIfEngineService {
 		MdxStatement s = qa.updateQuery();
 		model.setMdx(s.toMdx());
 
-		return renderModel(model);
+		return renderModel(model, null);
 	}
 
 }
