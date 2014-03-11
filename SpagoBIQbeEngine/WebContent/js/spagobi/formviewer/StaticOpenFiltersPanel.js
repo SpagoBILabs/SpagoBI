@@ -147,6 +147,7 @@ Ext.extend(Sbi.formviewer.StaticOpenFiltersPanel, Ext.form.FormPanel, {
 		    , forceSelection: false
 		    , store: store
 		    , displayField: 'column_1'
+		    , displayFieldTpl: '<tpl for="."><div ext:qtip="{column_1}">{column_1}</div></tpl>' // tooltip for items selected
 		    , valueField: 'column_1'
 		    , emptyText: ''
 		    , typeAhead: false
@@ -157,6 +158,7 @@ Ext.extend(Sbi.formviewer.StaticOpenFiltersPanel, Ext.form.FormPanel, {
 		    , width: 200
 		    , maxHeight: 250
 		    , displayDateFormat: Sbi.locale.formats.date.dateFormat
+		    , tpl: '<tpl for="."><div ext:qtip="{column_1}" class="x-combo-list-item">{column_1}&nbsp;</div></tpl>' // tooltip for available selections
 		}));
 		
 		return field;
