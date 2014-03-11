@@ -187,7 +187,7 @@ author: Antonella Giachino (antonella.giachino@eng.it)
 					}else{
 						if ( parameterValue.indexOf(",") >= 0){	
 		   %>
-		   					executionContext ['<%=parameterName%>'] = ['<%=parameterValue%>']';
+		   					executionContext ['<%=parameterName%>'] = ['<%=parameterValue%>'];
 		   <%			}else{ %>
 							executionContext ['<%=parameterName%>'] = '<%=parameterValue%>';
 		   <%			}

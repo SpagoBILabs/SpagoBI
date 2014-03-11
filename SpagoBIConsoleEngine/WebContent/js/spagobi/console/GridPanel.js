@@ -270,7 +270,15 @@ Ext.extend(Sbi.console.GridPanel, Ext.grid.GridPanel, {
 			var separator = '';
 			msg.parameters = '';
 			for(p in params) {
-				msg.parameters += separator + p + '=' + params[p];
+				var values = params[p];
+	        	if (Ext.isArray(values)){
+	        		//multiple values management (...&P1=val1&P1=val2&P1=val3...)
+	        		for (var i=0; i< values.length; i++){
+	        			msg.parameters += separator + p + '=' + ((values[i]==='%')?'%25':values[i]);
+	        		}
+	        	} else
+	        		msg.parameters += separator + p + '=' +  ((params[p]==='%')?'%25':params[p]);
+	        	
 				separator = '&';
 			}
 			if (this.executionContext.EXECUTION_CONTEXT !== undefined && 
