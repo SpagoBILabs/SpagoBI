@@ -33,7 +33,6 @@ import org.olap4j.metadata.NamedList;
 
 import com.eyeq.pivot4j.PivotModel;
 import com.eyeq.pivot4j.transform.DrillExpandPosition;
-import com.eyeq.pivot4j.ui.command.DrillCollapsePositionCommand;
 import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
