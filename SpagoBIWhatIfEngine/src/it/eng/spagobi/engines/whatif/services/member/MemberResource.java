@@ -32,7 +32,10 @@ import org.olap4j.metadata.Member;
 import org.olap4j.metadata.NamedList;
 
 import com.eyeq.pivot4j.PivotModel;
+import com.eyeq.pivot4j.transform.DrillExpandMember;
 import com.eyeq.pivot4j.transform.DrillExpandPosition;
+import com.eyeq.pivot4j.transform.DrillReplace;
+import com.eyeq.pivot4j.ui.command.DrillDownCommand;
 import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
@@ -43,8 +46,8 @@ public class MemberResource extends AbstractWhatIfEngineService {
 	private static final String NODE_PARM = "node";
 	
 	@GET
-	@Path("/drilldown/{axis}/{position}/{member}")
-	public String drillDown(@javax.ws.rs.core.Context HttpServletRequest req, @PathParam("axis") int axisPos, @PathParam("position") int positionPos, @PathParam("member") int memberPos){
+	@Path("/drilldown/{axis}/{position}/{member}/{drillType}")
+	public String drillDown(@javax.ws.rs.core.Context HttpServletRequest req, @PathParam("axis") int axisPos, @PathParam("position") int positionPos, @PathParam("member") int memberPos, @PathParam("drillType") String drillType){
 
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
 		PivotModel model = ei.getPivotModel();
@@ -64,17 +67,30 @@ public class MemberResource extends AbstractWhatIfEngineService {
 
 		List<Member> m = p.getMembers();
 		Member m2 = m.get(memberPos);
-		DrillExpandPosition transform = model.getTransform(DrillExpandPosition.class);
-		if(transform.canExpand(p, m2)){
-			transform.expand(p, m2);
-		}
 		
+		if(drillType == null || drillType.equals(DrillDownCommand.MODE_POSITION)){
+			DrillExpandPosition transform = model.getTransform(DrillExpandPosition.class);
+			if(transform.canExpand(p, m2)){
+				transform.expand(p, m2);
+			}
+		}else if(drillType != null && drillType.equals(DrillDownCommand.MODE_REPLACE)){
+			
+			DrillReplace transform = model.getTransform(DrillReplace.class);
+			if(transform.canDrillDown(m2)){
+				transform.drillDown(m2);
+			}
+		}else if(drillType != null && drillType.equals(DrillDownCommand.MODE_MEMBER)){
+			DrillExpandMember transform = model.getTransform(DrillExpandMember.class);
+			if(transform.canExpand(m2)){
+				transform.expand(m2);
+			}
+		}				
 		
-		return renderModel(model);
+		return renderModel(model, drillType);
 	}
 	@GET
-	@Path("/drillup/{axis}/{position}/{member}")
-	public String drillUp(@javax.ws.rs.core.Context HttpServletRequest req, @PathParam("axis") int axisPos, @PathParam("position") int positionPos, @PathParam("member") int memberPos){
+	@Path("/drillup/{axis}/{position}/{member}/{drillType}")
+	public String drillUp(@javax.ws.rs.core.Context HttpServletRequest req, @PathParam("axis") int axisPos, @PathParam("position") int positionPos, @PathParam("member") int memberPos, @PathParam("drillType") String drillType){
 
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
 		PivotModel model = ei.getPivotModel();
@@ -95,12 +111,25 @@ public class MemberResource extends AbstractWhatIfEngineService {
 		List<Member> m = p.getMembers();
 		Member m2 = m.get(memberPos);
 		Hierarchy hierarchy = m.get(memberPos).getHierarchy();
-		DrillExpandPosition transform = model.getTransform(DrillExpandPosition.class);
-		if(transform.canCollapse(p, m2)){
-			transform.collapse(p, m2);
+ 
+		if(drillType == null || drillType.equals(DrillDownCommand.MODE_POSITION)){
+			DrillExpandPosition transform = model.getTransform(DrillExpandPosition.class);
+			if(transform.canCollapse(p, m2)){
+				transform.collapse(p, m2);
+			}
+		}else if(drillType != null && drillType.equals(DrillDownCommand.MODE_REPLACE)){
+			DrillReplace transform = model.getTransform(DrillReplace.class);
+			if(transform.canDrillUp(hierarchy)){
+				transform.drillUp(hierarchy);
+			}
+		}else if(drillType != null && drillType.equals(DrillDownCommand.MODE_MEMBER)){
+			DrillExpandMember transform = model.getTransform(DrillExpandMember.class);
+			if(transform.canCollapse(m2)){
+				transform.collapse(m2);
+			}
 		}
 				
-		return renderModel(model);
+		return renderModel(model, drillType);
 	}
 	@GET
 	@Path("/filtertree/{hierarchy}")

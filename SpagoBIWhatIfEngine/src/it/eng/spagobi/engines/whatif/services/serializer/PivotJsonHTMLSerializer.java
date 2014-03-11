@@ -31,8 +31,12 @@ import org.olap4j.metadata.Hierarchy;
 
 import com.eyeq.pivot4j.PivotModel;
 import com.eyeq.pivot4j.ui.command.DrillCollapseMemberCommand;
+import com.eyeq.pivot4j.ui.command.DrillCollapsePositionCommand;
+import com.eyeq.pivot4j.ui.command.DrillDownCommand;
 import com.eyeq.pivot4j.ui.command.DrillDownReplaceCommand;
 import com.eyeq.pivot4j.ui.command.DrillExpandMemberCommand;
+import com.eyeq.pivot4j.ui.command.DrillExpandPositionCommand;
+import com.eyeq.pivot4j.ui.command.DrillUpReplaceCommand;
 
 public class PivotJsonHTMLSerializer {
 
@@ -51,7 +55,7 @@ public class PivotJsonHTMLSerializer {
     
 	
 	
-	public static String renderModel(PivotModel model){
+	public static String renderModel(PivotModel model, String drillDownMode){
 
 		logger.debug("IN");
 		String table="";
@@ -76,10 +80,23 @@ public class PivotJsonHTMLSerializer {
 		renderer.setEnableColumnDrillDown(true);
 		renderer.setEnableRowDrillDown(true);
 		renderer.setEnableSort(true);
-
-		renderer.addCommand(new DrillDownReplaceCommand(renderer));
-		renderer.addCommand(new DrillCollapseMemberCommand(renderer));
-		renderer.addCommand(new DrillExpandMemberCommand(renderer));
+		String drillDownModeValue = DrillDownCommand.MODE_POSITION;
+		if(drillDownMode != null){
+			drillDownModeValue = drillDownMode;
+		}
+		
+		if(drillDownModeValue.equals(DrillDownCommand.MODE_POSITION)){
+			renderer.addCommand(new DrillExpandPositionCommand(renderer));
+			renderer.addCommand(new DrillCollapsePositionCommand(renderer));
+		}else if(drillDownModeValue.equals(DrillDownCommand.MODE_MEMBER)){
+			renderer.addCommand(new DrillCollapseMemberCommand(renderer));
+			renderer.addCommand(new DrillExpandMemberCommand(renderer));	
+		}else if(drillDownModeValue.equals(DrillDownCommand.MODE_REPLACE)){
+			renderer.addCommand(new DrillDownReplaceCommand(renderer));
+			renderer.addCommand(new DrillUpReplaceCommand(renderer));		
+		}
+		
+		renderer.setDrillDownMode(drillDownModeValue);
 		
 		logger.debug("Rendering the model");
 		renderer.render(model);

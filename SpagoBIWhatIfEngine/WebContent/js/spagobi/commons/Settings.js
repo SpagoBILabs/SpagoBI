@@ -34,4 +34,5 @@ Sbi.settings.qbe = {
 				, 'having': {hideable: true, hidden: false, width: 50, sortable: false}			
 			}
 		}
+		, drillType: 'member' /*position, replace or member from DrillDownCommand.MODE_XXX*/
 }; 

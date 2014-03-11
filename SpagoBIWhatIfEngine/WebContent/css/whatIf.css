@@ -69,25 +69,21 @@
 
 /*expandable members*/
 .expanded{
-    	color: red;
    		vertical-align:middle;
-   		text-align: right;
-    	
+   		text-align: left;
+    	background-color: -webkit-linear-gradient(top,#f9f9f9,#e3e4e6);
 }
 .collapsed{
-    	color: green;
    		vertical-align:middle;
-   		text-align: right;
+   		text-align: left;
     	background-color: -webkit-linear-gradient(top,#f9f9f9,#e3e4e6);
 }
 .expanded img,
 .collapsed img{
-    position: absolute;
-    margin: auto;
-    top: 0px;
-    left: -40px;
-    right: 0;
-    bottom: 0;
+    position: relative;
+    left: 0px;
+    text-align: left;
+    vertical-align: middle;
 }
 .swapaxes {
 	background-image: url(../img/double-arrow.png);
