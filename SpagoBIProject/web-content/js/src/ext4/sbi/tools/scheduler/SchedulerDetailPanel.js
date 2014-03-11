@@ -27,7 +27,8 @@ Ext.define('Sbi.tools.scheduler.SchedulerDetailPanel', {
 			this.addEvents('addSchedulation');
 			
 			thisPanel = this;
-
+			
+			this.triggersData = null;
 
 			this.initFields();
 			this.items=[this.activityLabel , this.documentsGrid, this.schedulationsGrid];
@@ -36,6 +37,8 @@ Ext.define('Sbi.tools.scheduler.SchedulerDetailPanel', {
 			this.on("render",function(){this.hide()},this);
 
 		}
+		
+
 		
 		//initialize fields of the gui
 		, initFields: function(){
@@ -78,7 +81,7 @@ Ext.define('Sbi.tools.scheduler.SchedulerDetailPanel', {
 			});
 			
 			this.schedulationsGridStore = Ext.create('Ext.data.Store', {
-				fields:['jobName','jobGroup','triggerName','triggerDescription' ,'triggerChronString','triggerStartDate','triggerStartTime','triggerEndDate','triggerEndTime'],
+				fields:['jobName','jobGroup','triggerName','triggerGroup','triggerDescription' ,'triggerChronString','triggerStartDate','triggerStartTime','triggerEndDate','triggerEndTime'],
 				data:{},
 				proxy: {
 					type: 'memory',
@@ -102,7 +105,7 @@ Ext.define('Sbi.tools.scheduler.SchedulerDetailPanel', {
 			        		return value;
 			        	} 
 			        },
-			        { text: 'Generation', dataIndex: 'generation' },
+			      //  { text: 'Generation', dataIndex: 'generation' },
 			        { text: 'Type', dataIndex: 'triggerChronString' },
 			        { text: 'Start Date ', dataIndex: 'triggerStartDate' },
 			        { text: 'Start Time ', dataIndex: 'triggerStartTime' },
@@ -116,7 +119,7 @@ Ext.define('Sbi.tools.scheduler.SchedulerDetailPanel', {
 						width: 20,
 						columnType: "decorated",
 						items: [{
-							iconCls   : 'button-select',  // Use a URL in the icon config
+							iconCls   : 'button-select',  
 							handler: function(grid, rowIndex, colIndex) {
 								var selectedRecord =  grid.store.getAt(rowIndex);
 								//TODO
@@ -132,11 +135,10 @@ Ext.define('Sbi.tools.scheduler.SchedulerDetailPanel', {
 						width: 20,
 						columnType: "decorated",
 						items: [{
-							iconCls   : 'button-remove',  // Use a URL in the icon config
-							handler: function(grid, rowIndex, colIndex) {
+							iconCls   : 'button-remove',  
+							handler: function(grid, rowIndex, colIndex) {								
 								var selectedRecord =  grid.store.getAt(rowIndex);
-								//TODO
-								alert("TODO: delete single schedulation "+selectedRecord.get('triggerName'));
+								thisPanel.onDeleteSchedulation(selectedRecord);
 							}
 						}]
 					}
@@ -156,7 +158,72 @@ Ext.define('Sbi.tools.scheduler.SchedulerDetailPanel', {
 			});
 			
 			
-			//Sbi.widget.grid.StaticGridDecorator.addDeleteColumn(this.schedulationsGrid.columns, this.schedulationsGrid) ;
+		}
+		
+		, onDeleteSchedulation: function(record){
+			
+			var values = {}
+			values.jobName = record.data.jobName;
+			values.jobGroup = record.data.jobGroup;
+			values.triggerName = record.data.triggerName;
+			values.triggerGroup = record.data.triggerGroup;
+
+			
+			Ext.MessageBox.confirm(
+					LN('sbi.generic.pleaseConfirm'),
+					LN('sbi.generic.confirmDelete'),
+					function(btn, text){
+
+						if (btn=='yes') {
+							//perform Ajax Request
+
+							Ext.Ajax.request({
+								url: this.services["deleteTrigger"],
+								params: values,
+								success : function(response, options) {
+									if(response !== undefined  && response.responseText !== undefined && response.statusText=="OK") {
+										if(response.responseText!=null && response.responseText!=undefined){
+											if(response.responseText.indexOf("error.mesage.description")>=0){
+												Sbi.exception.ExceptionHandler.handleFailure(response);
+											}else{						
+												Sbi.exception.ExceptionHandler.showInfoMessage(LN('sbi.scheduler.schedulation.deleted'));
+												thisPanel.schedulationsGrid.store.remove(record);
+												thisPanel.schedulationsGrid.store.commitChanges();
+												
+												if ((thisPanel.triggersData != null) && (thisPanel.triggersData !== undefined)){
+													//remove the trigger also from the original json data
+													var index = -1;
+													for (var i = 0; i < thisPanel.triggersData.length; i++) {
+														var element = thisPanel.triggersData[i];
+														if ( (element.jobName == record.get('jobName')) &&
+														     (element.jobGroup == record.get('jobGroup')) &&
+														     (element.triggerGroup == record.get('triggerGroup')) &&
+														     (element.triggerName == record.get('triggerName')) ){		
+															
+															index = i;
+															break;
+														}
+ 
+													}
+													if (index != -1){
+														thisPanel.triggersData.splice(index, 1);
+													}
+												}
+
+											}
+										}
+									} else {
+										Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
+									}
+								},
+								scope: this,
+								failure: Sbi.exception.ExceptionHandler.handleFailure      
+							})
+						}
+						
+					},
+					this
+				);
 		}
 		
 		, onAddClick: function(){
@@ -179,6 +246,8 @@ Ext.define('Sbi.tools.scheduler.SchedulerDetailPanel', {
 				}
 			}
 			this.schedulationsGridStore.loadData(values.triggers,false);
+			//original data for permanent delete (not only on local store)
+			this.triggersData = values.triggers
 
 		}
     	
