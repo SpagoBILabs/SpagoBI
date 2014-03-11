@@ -7,13 +7,13 @@ import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
+import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.security.ExternalServiceController;
 import it.eng.spagobi.services.common.SsoServiceFactory;
 import it.eng.spagobi.services.common.SsoServiceInterface;
 import it.eng.spagobi.services.exceptions.ExceptionUtilities;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
-import java.io.IOException;
 import java.lang.reflect.Method;
 
 import javax.servlet.http.HttpServletRequest;
@@ -32,7 +32,6 @@ import org.jboss.resteasy.spi.Failure;
 import org.jboss.resteasy.spi.HttpRequest;
 import org.jboss.resteasy.spi.LoggableFailure;
 import org.jboss.resteasy.spi.interception.AcceptedByMethod;
-import org.jboss.resteasy.spi.interception.MessageBodyWriterContext;
 import org.jboss.resteasy.spi.interception.PreProcessInterceptor;
 
 /**
@@ -59,7 +58,7 @@ public class SecurityServerInterceptor implements PreProcessInterceptor, Accepte
 	 */
 	public ServerResponse preProcess(HttpRequest req, ResourceMethod arg1)throws Failure, WebApplicationException {
 
-		HttpSession session = servletRequest.getSession();
+		logger.trace("IN");
 		
 		String serviceUrl = InterceptorUtilities.getServiceUrl(req);
 		
@@ -69,46 +68,86 @@ public class SecurityServerInterceptor implements PreProcessInterceptor, Accepte
 
 		if (!isExternalService){
 			//Other checks are required
-			boolean res = checkUserAuthentication(session, req.getUri().getRequestUri().getPath());
-			if(!res){
-				return null;
+			boolean authenticated = isUserAuthenticated();
+			if(!authenticated){
+				//throws unlogged user exception that will be managed by RestExcepionMapper
+			    logger.info("User not logged");
+			    throw new LoggableFailure( req.getUri().getRequestUri().getPath() );
 			}
 			
-			boolean isTheUserEnabled = false;
-			logger.debug("SecurityServerInterceptor:preProcess IN");
-			//String serviceUrl = InterceptorUtilities.getServiceUrl(req);
-			UserProfile profile = (UserProfile) servletRequest.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+			UserProfile profile = (UserProfile) getUserProfile();
 			
-			logger.debug("Checking if the user ["+profile.getUserName()+"] has the rights to call the service ["+serviceUrl+"]");
-			
+			boolean authorized = false;
 			try {
-				isTheUserEnabled = profile.isAbleToExecuteService(serviceUrl);
+				authorized = profile.isAbleToExecuteService(serviceUrl);
 			} catch (EMFInternalError e) {
 				logger.debug("Error checking if the user ["+profile.getUserName()+"] has the rights to call the service ["+serviceUrl+"]",e);
 				throw new SpagoBIRuntimeException("Error checking if the user ["+profile.getUserName()+"] has the rights to call the service ["+serviceUrl+"]",e);
 			}
-			if(!isTheUserEnabled){
-				logger.error("NOT ENABLED TO EXECUTE SERVICE-- The user ["+profile.getUserName()+"] is not enabled to execute the service ["+serviceUrl+"]");
+			
+			if(!authorized){
 				try {
-					return new ServerResponse( ExceptionUtilities.serializeException("not-enabled-to-call-service",null),	400, new Headers<Object>());
+					return new ServerResponse( ExceptionUtilities.serializeException("not-enabled-to-call-service", null),	400, new Headers<Object>());
 				} catch (Exception e) {
 					throw new SpagoBIRuntimeException("Error checking if the user ["+profile.getUserName()+"] has the rights to call the service ["+serviceUrl+"]",e);
-				}
-				
+				}				
 			}else{
 				logger.debug("The user ["+profile.getUserName()+"] is enabled to execute the service ["+serviceUrl+"]");
 			}
 		}
 		
 		
-		logger.debug("SecurityServerInterceptor:preProcess OUT");
+		logger.trace("OUT");
+		
 		return null;
 	}
 	
-	private boolean checkUserAuthentication(HttpSession session, String uri){
+	private boolean isUserAuthenticated(){
 		
-		boolean ret = true;
+		boolean authenticated = true;
 
+		IEngUserProfile engProfile = getUserProfile();
+		if (engProfile == null) {
+			logger.debug("User profile not found in session, creating a new one and putting in session....");
+			// in case the profile does not exist, creates a new one
+				
+			String userId = null;
+			try {
+				userId = getUserIdentifier();
+			} catch (Exception e) {
+				logger.debug("User identifier not found.");
+			}
+								
+			logger.debug("User id = " + userId);
+			if (StringUtilities.isNotEmpty(userId)) {	
+				try {
+					engProfile = GeneralUtilities.createNewUserProfile(userId);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}	
+				setUserProfile(engProfile);
+			}
+		}
+		
+		// in case the user is not specified, does nothing
+		if (engProfile == null) {
+		    authenticated = false;
+		}
+		
+		return authenticated;
+	}
+	
+	private IEngUserProfile getUserProfile() {
+		IEngUserProfile engProfile = (IEngUserProfile) getSessionContainer().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+		return engProfile;
+	}
+	
+	private void setUserProfile(IEngUserProfile engProfile) {
+		getSessionContainer().setAttribute(IEngUserProfile.ENG_USER_PROFILE, engProfile);
+	}
+	
+	private SessionContainer getSessionContainer() {
+		HttpSession session = servletRequest.getSession();
 		RequestContainer requestContainer = (RequestContainer) session.getAttribute(Constants.REQUEST_CONTAINER);
 		if (requestContainer == null) {
 			// RequestContainer does not exists yet (maybe it is the
@@ -122,46 +161,8 @@ public class SecurityServerInterceptor implements PreProcessInterceptor, Accepte
 		}
 		SessionContainer sessionContainer = requestContainer.getSessionContainer();
 		SessionContainer permanentSession = sessionContainer.getPermanentContainer();
-		IEngUserProfile engProfile = (IEngUserProfile) permanentSession.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
-		if (engProfile == null) {
-
-				logger.debug("User profile not found in session, creating a new one and putting in session....");
-				// in case the profile does not exist, creates a new one
-				
-				String userId = null;
-				try {
-					userId = findUserId(servletRequest);
-				} catch (Exception e) {
-					logger.debug("User identifier not found.");
-				}
-				
-				// in case the user is not specified, does nothing
-				if (userId == null || userId.trim().equals("")) {
-					logger.debug("User identifier not found.");
-					//login page redirect
-				      {
-				         //throws unlogged user exception that will be managed by RestExcepionMapper
-				    	  ret = false;
-				    	  logger.info("User not logged");
-				    	  throw new LoggableFailure(uri);
-				    	  
-				      }
-				}
-				logger.debug("User id = " + userId);
-				if (userId!=null) {
-	
-					try {
-						engProfile = GeneralUtilities.createNewUserProfile(userId);
-					} catch (Exception e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}	
-					permanentSession.setAttribute(IEngUserProfile.ENG_USER_PROFILE, engProfile);
-
-				}
-
-		}
-		return ret;
+		
+		return permanentSession;
 	}
 	
 	/**
@@ -180,12 +181,12 @@ public class SecurityServerInterceptor implements PreProcessInterceptor, Accepte
 	 *             on http request is different from the SSO detected one.
 	 */
 
-	private static String findUserId(HttpServletRequest request) throws Exception {
+	private String getUserIdentifier() throws Exception {
 		logger.debug("IN");
 		String userId = null;
 		try {
 			SsoServiceInterface userProxy = SsoServiceFactory.createProxyService();
-			userId = userProxy.readUserIdentifier(request);
+			userId = userProxy.readUserIdentifier(servletRequest);
 		} finally {
 			logger.debug("OUT");
 		}
