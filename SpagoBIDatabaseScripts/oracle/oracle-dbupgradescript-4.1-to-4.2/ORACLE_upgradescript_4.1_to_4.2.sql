@@ -472,3 +472,6 @@ COMMIT;
 
 update SBI_ENGINES SET DRIVER_NM = 'it.eng.spagobi.engines.drivers.xmla.XMLADriver' where label = 'XMLAEngine';
 commit;
+
+ALTER TABLE SBI_AUDIT MODIFY DOC_LABEL varchar(200);
+ALTER TABLE SBI_AUDIT MODIFY DOC_NAME varchar(200);
