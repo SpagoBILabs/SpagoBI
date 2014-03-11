@@ -212,9 +212,9 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionPivot', {
 	updateAfterMDXExecution: function(pivotModel){
 
 		this.olapExecutionTable.updateAfterMDXExecution(pivotModel.get('table'));
-		this.olapExecutionRows.updateAfterMDXExecution(pivotModel.get('rows'));
-		this.olapExecutionColumns.updateAfterMDXExecution(pivotModel.get('columns'));
-		this.olapExecutionFilters.updateAfterMDXExecution(pivotModel.get('filters'));
+		this.olapExecutionRows.updateAfterMDXExecution(pivotModel.get('rows'), pivotModel.get('rowsAxisOrdinal'));
+		this.olapExecutionColumns.updateAfterMDXExecution(pivotModel.get('columns'), pivotModel.get('columnsAxisOrdinal') );
+		this.olapExecutionFilters.updateAfterMDXExecution(pivotModel.get('filters'), -1);
 	}
 });
 

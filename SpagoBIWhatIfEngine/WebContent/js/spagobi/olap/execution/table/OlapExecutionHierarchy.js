@@ -64,18 +64,18 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionHierarchy', {
 
 					if(thisPanel.containerPanel.getId()!= targetElId && (thisPanel.pivotContainer.olapExecutionFilters.getId()== targetElId || thisPanel.pivotContainer.olapExecutionRows.getId()== targetElId || thisPanel.pivotContainer.olapExecutionColumns.getId()== targetElId)){
 
-						thisPanel.containerPanel.removeHierarchy(thisPanel);
+						//thisPanel.containerPanel.removeHierarchy(thisPanel);
 
 						if(thisPanel.pivotContainer.olapExecutionFilters.getId()== targetElId){
-							thisPanel.pivotContainer.olapExecutionFilters.addHierarchy(thisPanel);
+							thisPanel.pivotContainer.olapExecutionFilters.moveHierarchyToOtherAxis(thisPanel);
 							//	thisPanel.containerPanel= thisPanel.pivotContainer.olapExecutionFilters;
 						}
 						if(thisPanel.pivotContainer.olapExecutionRows.getId()== targetElId){
-							thisPanel.pivotContainer.olapExecutionRows.addHierarchy(thisPanel);
+							thisPanel.pivotContainer.olapExecutionRows.moveHierarchyToOtherAxis(thisPanel);
 							//	thisPanel.containerPanel= thisPanel.pivotContainer.olapExecutionRows;
 						}
 						if(thisPanel.pivotContainer.olapExecutionColumns.getId()== targetElId){
-							thisPanel.pivotContainer.olapExecutionColumns.addHierarchy(thisPanel);
+							thisPanel.pivotContainer.olapExecutionColumns.moveHierarchyToOtherAxis(thisPanel);
 							//	thisPanel.containerPanel= thisPanel.pivotContainer.olapExecutionColumns;
 						}
 					}
