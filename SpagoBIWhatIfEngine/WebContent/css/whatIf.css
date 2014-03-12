@@ -19,6 +19,8 @@
 	border-right-width: 1px !important;
 	text-align: right;
 	padding: 2px;
+	vertical-align: middle;
+	border-top-color: #d0d0d0;
 }
 
 .x-pivot-table {
@@ -83,7 +85,8 @@
     position: relative;
     left: 0px;
     text-align: left;
-    vertical-align: middle;
+    vertical-align: top;
+    padding: 3px;
 }
 .swapaxes {
 	background-image: url(../img/double-arrow.png);
