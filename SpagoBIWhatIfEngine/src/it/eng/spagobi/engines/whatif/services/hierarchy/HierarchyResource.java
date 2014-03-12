@@ -72,7 +72,7 @@ public class HierarchyResource extends AbstractWhatIfEngineService {
 		MdxStatement s = qa.updateQuery();
 		model.setMdx(s.toMdx());
 
-		return renderModel(model, null);
+		return renderModel(model);
 	}
 
 }

@@ -43,12 +43,11 @@ Ext.define('Sbi.olap.control.Controller', {
 		service.callService(this);
 	}
 	, drillDown: function(axis, position,  member){
-		var drillType = Sbi.settings.qbe.drillType;
-		
+
 		var service = Ext.create("Sbi.service.RestService",{
 			url: "member",
 			subPath: "drilldown",
-			pathParams: [axis, position, member, drillType]
+			pathParams: [axis, position, member]
 		});
 		
 		service.callService(this);
@@ -56,11 +55,10 @@ Ext.define('Sbi.olap.control.Controller', {
 	}
 	, drillUp: function(axis, position,  member){
 
-		var drillType = Sbi.settings.qbe.drillType;
 		var service = Ext.create("Sbi.service.RestService",{
 			url: "member",
 			subPath: "drillup",
-			pathParams: [axis, position, member, drillType]
+			pathParams: [axis, position, member]
 		});
 		
 		service.callService(this);

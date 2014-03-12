@@ -63,7 +63,7 @@ public class AxisResource extends AbstractWhatIfEngineService {
 			transform.setSwapAxes(true);
 		}
 				
-		String table = renderModel(model, null);
+		String table = renderModel(model);
 		logger.debug("OUT");
 		return table;
 		
@@ -86,7 +86,7 @@ public class AxisResource extends AbstractWhatIfEngineService {
 
 		getAxisBusiness().moveHierarchy(fromAxisPos, toAxisPos, hierarchyName);
 	
-		return renderModel(model, null);
+		return renderModel(model);
 	}
 	
 	/**
@@ -106,7 +106,7 @@ public class AxisResource extends AbstractWhatIfEngineService {
 		
 		getAxisBusiness().swapHierarchies(axisPos, hierarchyPos1, hierarchyPos2);
 		
-		return renderModel(model, null);
+		return renderModel(model);
 	}
 	
 	
