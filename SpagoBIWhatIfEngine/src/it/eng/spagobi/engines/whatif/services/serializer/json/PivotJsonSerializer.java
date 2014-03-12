@@ -8,8 +8,10 @@
  * @authors Alberto Ghedin (alberto.ghedin@eng.it)
  *
  */
-package it.eng.spagobi.engines.whatif.services.serializer;
+package it.eng.spagobi.engines.whatif.services.serializer.json;
 
+import it.eng.spagobi.engines.whatif.services.serializer.ISerializer;
+import it.eng.spagobi.engines.whatif.services.serializer.SerializationException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import org.apache.log4j.Logger;

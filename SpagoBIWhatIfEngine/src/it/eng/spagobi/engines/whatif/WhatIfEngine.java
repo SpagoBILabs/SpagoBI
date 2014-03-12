@@ -6,8 +6,8 @@
 
 package it.eng.spagobi.engines.whatif;
 
-import it.eng.spagobi.engines.whatif.services.serializer.PivotJsonSerializer;
 import it.eng.spagobi.engines.whatif.services.serializer.SerializationManager;
+import it.eng.spagobi.engines.whatif.services.serializer.json.PivotJsonSerializer;
 
 import java.util.Map;
 
