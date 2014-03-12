@@ -12,6 +12,7 @@
  */
 package it.eng.spagobi.engines.whatif.services.serializer.json;
 
+import it.eng.spagobi.engines.whatif.services.model.ModelConfig;
 import it.eng.spagobi.pivot4j.ui.WhatIfHTMLRenderer;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
@@ -67,9 +68,11 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotModel> {
 	private static final String SLICERS = "slicers";
     
 	private OlapConnection connection;
+	private ModelConfig modelConfig;
 	
-	public PivotJsonHTMLSerializer(OlapConnection connection){
+	public PivotJsonHTMLSerializer(OlapConnection connection, ModelConfig modelConfig){
 		this.connection = connection;
+		this.modelConfig = modelConfig;
 	}
 
 	public void serialize(PivotModel value, JsonGenerator jgen, SerializerProvider provider) throws IOException, JsonProcessingException{
@@ -99,10 +102,8 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotModel> {
 		renderer.setEnableColumnDrillDown(true);
 		renderer.setEnableRowDrillDown(true);
 		renderer.setEnableSort(true);
-		String drillDownModeValue = DrillDownCommand.MODE_POSITION;
-//		if(drillDownMode != null){
-//			drillDownModeValue = drillDownMode;
-//		}
+		
+		String drillDownModeValue = modelConfig.getDrillType(); 
 		
 		if(drillDownModeValue.equals(DrillDownCommand.MODE_POSITION)){
 			renderer.addCommand(new DrillExpandPositionCommand(renderer));

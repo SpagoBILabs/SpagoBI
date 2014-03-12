@@ -6,6 +6,7 @@
 
 package it.eng.spagobi.engines.whatif;
 
+import it.eng.spagobi.engines.whatif.services.model.ModelConfig;
 import it.eng.spagobi.services.proxy.EventServiceProxy;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
@@ -51,6 +52,7 @@ public class WhatIfEngineInstance extends AbstractEngineInstance implements Seri
 	private List<String> includes;
 	private OlapDataSource olapDataSource;
 	private PivotModel pivotModel;
+	private ModelConfig modelConfig;
 
 	public WhatIfEngineInstance(Object template, Map env) {
 		super( env );	
@@ -87,6 +89,11 @@ public class WhatIfEngineInstance extends AbstractEngineInstance implements Seri
 		pivotModel = new PivotModelImpl(olapDataSource);
 		pivotModel.setMdx(initialMdx);
 		pivotModel.initialize();
+		
+		
+		
+		//init configs 
+		modelConfig = new ModelConfig();
 
 	}
 	
@@ -100,7 +107,11 @@ public class WhatIfEngineInstance extends AbstractEngineInstance implements Seri
 		}
 		return connection;
 	}
-	
+
+	public ModelConfig getModelConfig() {
+		return modelConfig;
+	}
+
 	public OlapDataSource getOlapDataSource () {
 		return olapDataSource;
 	}

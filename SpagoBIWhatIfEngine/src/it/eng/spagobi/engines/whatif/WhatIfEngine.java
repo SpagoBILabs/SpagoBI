@@ -6,6 +6,7 @@
 
 package it.eng.spagobi.engines.whatif;
 
+import it.eng.spagobi.engines.whatif.services.model.ModelConfig;
 import it.eng.spagobi.engines.whatif.services.serializer.SerializationManager;
 import it.eng.spagobi.engines.whatif.services.serializer.json.PivotJsonSerializer;
 
@@ -45,7 +46,7 @@ public class WhatIfEngine {
 		WhatIfEngineInstance whatIfEngineInstance = null;
 		logger.debug("IN");
 		whatIfEngineInstance = new WhatIfEngineInstance(template, env);
-		initSerializers(whatIfEngineInstance.getOlapConnection());
+		initSerializers(whatIfEngineInstance.getOlapConnection(), whatIfEngineInstance.getModelConfig());
 		logger.debug("OUT");
 		
 		return whatIfEngineInstance;	
@@ -57,8 +58,8 @@ public class WhatIfEngine {
 	}
 
 
-	private static void initSerializers(OlapConnection connection) {
-		PivotJsonSerializer pjs = new PivotJsonSerializer(connection);
+	private static void initSerializers(OlapConnection connection, ModelConfig config) {
+		PivotJsonSerializer pjs = new PivotJsonSerializer(connection, config);
 		SerializationManager.registerSerializer(pjs.getMimetype(), pjs);
 	}
 }
