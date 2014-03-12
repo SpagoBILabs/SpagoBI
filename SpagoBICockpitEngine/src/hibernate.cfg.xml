@@ -6,10 +6,10 @@
 <hibernate-configuration>
       
      <session-factory name="HibernateSessionFactory"> 
-
+	<!--  
     	<property name="hibernate.connection.datasource">java:/comp/env/jdbc/spagobi</property>
         <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
-        
+    -->    
      <!--      
         <session-factory>
         <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
@@ -20,15 +20,15 @@
         <property name="hibernate.connection.pool_size">1</property>     
    	 -->    
    	 
-   	  <!--      
-        <session-factory>
+   	  <!--      -->
+       
         <property name="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</property>
         <property name="hibernate.connection.driver_class">org.postgresql.Driver</property>
         <property name="hibernate.connection.url">jdbc:postgresql://localhost:5433/spagobi</property>
         <property name="hibernate.connection.username">postgres</property>
         <property name="hibernate.connection.password">postgres</property>
         <property name="hibernate.connection.pool_size">1</property>     
-   	 -->  
+   	 <!--  -->  
    	     
      <!-- 
         <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
