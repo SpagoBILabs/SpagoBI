@@ -40,15 +40,16 @@ public class FunctionalitiesInitializer extends SpagoBIInitializer {
 	public void init(SourceBean config, Session hibernateSession) {
 		logger.debug("IN");
 		try {
-			String hql = "from SbiUserFunctionality";
-			Query hqlQuery = hibernateSession.createQuery(hql);
-			List userFunctionalities = hqlQuery.list();
-			if (userFunctionalities.isEmpty()) {
-				logger.info("User functionality table is empty. Starting populating predefined User functionalities...");
-				writeUserFunctionalities(hibernateSession);
-			} else {
-				logger.debug("User functionality table is already populated");
-			}
+//			String hql = "from SbiUserFunctionality";
+//			Query hqlQuery = hibernateSession.createQuery(hql);
+//			List userFunctionalities = hqlQuery.list();
+//			if (userFunctionalities.isEmpty()) {
+//				logger.info("User functionality table is empty. Starting populating predefined User functionalities...");
+//				writeUserFunctionalities(hibernateSession);
+//			} else {
+//				logger.debug("User functionality table is already populated");
+//			}
+			writeUserFunctionalities(hibernateSession);
 		} catch (Throwable t) {
 			throw new SpagoBIRuntimeException("Ab unexpected error occured while initializeng Functionalities", t);
 		} finally {
@@ -76,16 +77,28 @@ public class FunctionalitiesInitializer extends SpagoBIInitializer {
 		Iterator it = userFunctionalitiesList.iterator();
 		while (it.hasNext()) {
 			SourceBean aUSerFunctionalitySB = (SourceBean) it.next();
-			SbiUserFunctionality aUserFunctionality = new SbiUserFunctionality();
+			
 			String userFunctionality = (String) aUSerFunctionalitySB.getAttribute("name");
-			aUserFunctionality.setName(userFunctionality);
-			aUserFunctionality.setDescription((String) aUSerFunctionalitySB.getAttribute("description"));
+			
+			String hql = "from SbiUserFunctionality f where f.name=?";
+			Query hqlQuery = aSession.createQuery(hql);
+			hqlQuery.setParameter(0, userFunctionality);
+			SbiUserFunctionality aUserFunctionality = (SbiUserFunctionality)hqlQuery.uniqueResult();
+			if(aUserFunctionality == null) {
+				aUserFunctionality = new SbiUserFunctionality();
+				aUserFunctionality.setName(userFunctionality);
+				aUserFunctionality.setDescription((String) aUSerFunctionalitySB.getAttribute("description"));
+			}
+			
 			Object roleTypesObject = roleTypeUserFunctionalitiesSB.getFilteredSourceBeanAttribute("ROLE_TYPE_USER_FUNCTIONALITY", "userFunctionality", userFunctionality);
 			if (roleTypesObject == null) {
 				throw new Exception("No role type found for user functionality [" + userFunctionality + "]!!!");
 			}
 			StringBuffer roleTypesStrBuffer = new StringBuffer();
 			Set roleTypes = new HashSet();
+			if(aUserFunctionality.getRoleType() != null) {
+				roleTypes.addAll(aUserFunctionality.getRoleType());
+			}
 			if (roleTypesObject instanceof SourceBean) {
 				SourceBean roleTypeSB = (SourceBean) roleTypesObject;
 				String roleTypeCd = (String) roleTypeSB.getAttribute("roleType");
