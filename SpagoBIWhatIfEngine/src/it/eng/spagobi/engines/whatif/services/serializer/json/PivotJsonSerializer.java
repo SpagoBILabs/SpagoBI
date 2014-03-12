@@ -10,6 +10,7 @@
  */
 package it.eng.spagobi.engines.whatif.services.serializer.json;
 
+import it.eng.spagobi.engines.whatif.services.model.ModelConfig;
 import it.eng.spagobi.engines.whatif.services.serializer.ISerializer;
 import it.eng.spagobi.engines.whatif.services.serializer.SerializationException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
@@ -31,11 +32,11 @@ public class PivotJsonSerializer implements ISerializer {
 	
 	ObjectMapper mapper;
 
-	public PivotJsonSerializer(OlapConnection connection) {
+	public PivotJsonSerializer(OlapConnection connection, ModelConfig config) {
 		mapper = new ObjectMapper();
 		SimpleModule simpleModule = new SimpleModule("SimpleModule", new Version(1,0,0,null));
 		simpleModule.addSerializer(Member.class, new MemberJsonSerializer());
-		simpleModule.addSerializer(PivotModel.class, new PivotJsonHTMLSerializer(connection));
+		simpleModule.addSerializer(PivotModel.class, new PivotJsonHTMLSerializer(connection, config));
 		mapper.registerModule(simpleModule);
 	}
 
