@@ -45,6 +45,8 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
  */
 public class EngineStartServletIOManager extends BaseServletIOManager {
 
+	
+	private UserProfile userProfile;
 	private String userId;
 	private String userUniqueIdentifier;
 	private String userExecutionRole;
@@ -88,7 +90,25 @@ public class EngineStartServletIOManager extends BaseServletIOManager {
 	}
 
 	public UserProfile getUserProfile() {
-		return (UserProfile) getParameterFromSession(IEngUserProfile.ENG_USER_PROFILE);
+		// first we check if there is a user profile in session. If this is the case that means that the user have been authenticated by SpagoBI and the
+		// user profile has been succesfully loaded and stored in session by the AccessFilter
+		UserProfile userProfile = (UserProfile) getParameterFromSession(IEngUserProfile.ENG_USER_PROFILE);
+		if(userProfile == null) {
+			// if the user profile is not in session that means that the user has not been authenticated by spagobi. 
+			// This happens when the user call directly a REST service without log in spagobi before. 
+			// In these cases the request is catched by SecurityServerInterceptor that perform an authentication
+			// based on simple schema (= user and pwd as header proeprties). If the authentication have success 
+			// and also the following authorization check have success the request is performed.
+			// In this case the profile of the user is not stored in session. There is actually no session. 
+			// The service is stateles. For this reason it is necessary to recreate the profile at each query and pass 
+			// it explicitely to the ioManager (see method setProfile).
+			userProfile = this.userProfile;
+		}
+		return userProfile;
+	}
+	
+	public void setUserProfile(UserProfile userProfile) {
+		this.userProfile = userProfile;
 	}
 
 	public String getUserId() {
