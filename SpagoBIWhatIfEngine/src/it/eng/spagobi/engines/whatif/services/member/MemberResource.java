@@ -10,7 +10,6 @@ package it.eng.spagobi.engines.whatif.services.member;
 
 import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
 import it.eng.spagobi.engines.whatif.services.common.AbstractWhatIfEngineService;
-import it.eng.spagobi.engines.whatif.services.serializer.MemberJsonSerializer;
 import it.eng.spagobi.engines.whatif.services.serializer.SerializationManager;
 import it.eng.spagobi.engines.whatif.utilis.CubeUtilities;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
@@ -37,9 +36,6 @@ import com.eyeq.pivot4j.transform.DrillExpandMember;
 import com.eyeq.pivot4j.transform.DrillExpandPosition;
 import com.eyeq.pivot4j.transform.DrillReplace;
 import com.eyeq.pivot4j.ui.command.DrillDownCommand;
-import com.fasterxml.jackson.core.Version;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
 
 @Path("/v1.0/member")
 public class MemberResource extends AbstractWhatIfEngineService {
