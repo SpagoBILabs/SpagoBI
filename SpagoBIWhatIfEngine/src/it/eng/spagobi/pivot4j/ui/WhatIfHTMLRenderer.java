@@ -204,12 +204,12 @@ public class WhatIfHTMLRenderer extends HtmlRenderer {
 							pos = colIdx;
 						}
 						if(cmd != null && (cmd.equalsIgnoreCase("expandPosition")  || cmd.equalsIgnoreCase("drillDown") || cmd.equalsIgnoreCase("expandMember"))){
-							attributes.put("src", "../img/elbow-plus-nl.gif");
+							attributes.put("src", "../img/plus.gif");
 							attributes.put("onClick", "javascript:Sbi.olap.eventManager.drillDown("+axis+" , "+pos+" , "+memb+")");
 							getWriter().startElement("img", attributes);			
 							getWriter().endElement("img");
 						}else if(cmd != null && (cmd.equalsIgnoreCase("collapsePosition") || cmd.equalsIgnoreCase("drillUp") || cmd.equalsIgnoreCase("collapseMember"))){
-							attributes.put("src", "../img/elbow-minus-nl.gif");
+							attributes.put("src", "../img/minus.gif");
 							attributes.put("onClick", "javascript:Sbi.olap.eventManager.drillUp("+axis+" , "+pos+" , "+memb+")");
 							getWriter().startElement("img", attributes);			
 							getWriter().endElement("img");
