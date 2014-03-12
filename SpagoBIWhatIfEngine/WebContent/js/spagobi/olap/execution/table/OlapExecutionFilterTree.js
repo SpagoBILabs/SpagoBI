@@ -142,7 +142,7 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionFilterTree', {
 		node.un("expand",this.expandNode, this);
 		var children = node.childNodes;
 		
-		var memberId = this.selectedMember.raw.id;
+		var memberId = this.selectedMember.raw.uniqueName;
 		var nodeId = node.internalId;
 		
 		if(memberId == nodeId){

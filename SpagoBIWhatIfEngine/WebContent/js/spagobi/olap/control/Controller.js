@@ -75,12 +75,12 @@ Ext.define('Sbi.olap.control.Controller', {
 		service.callService(this);
 
 	}
-	,addSlicer: function(hierarchy, member){
+	,addSlicer: function(hierarchy, member, multiSelection){
 
 		var service = Ext.create("Sbi.service.RestService",{
 			url: "hierarchy",
 			subPath: "slice",
-			pathParams: [hierarchy, member]
+			pathParams: [hierarchy, member, multiSelection]
 		});
 		
 		service.callService(this);

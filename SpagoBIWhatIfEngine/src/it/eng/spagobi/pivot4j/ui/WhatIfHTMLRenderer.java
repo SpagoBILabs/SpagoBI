@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import javax.el.MethodExpression;
 import javax.faces.component.UIParameter;
 
 import org.apache.commons.io.IOUtils;
@@ -15,8 +14,6 @@ import org.apache.commons.lang.StringUtils;
 import org.olap4j.Axis;
 import org.olap4j.OlapException;
 
-import com.eyeq.pivot4j.transform.DrillReplace;
-import com.eyeq.pivot4j.ui.CellType;
 import com.eyeq.pivot4j.ui.RenderContext;
 import com.eyeq.pivot4j.ui.command.CellCommand;
 import com.eyeq.pivot4j.ui.command.CellParameters;

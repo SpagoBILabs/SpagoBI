@@ -84,8 +84,8 @@ Ext.define('Sbi.olap.control.EventManager', {
      * @param {Sbi.olap.HierarchyModel} hierarchy to slice
      * @param {Sbi.olap.MemberModel} member the slicer value
      */
-	addSlicer: function(hierarchy, member){
-		this.olapController.addSlicer(hierarchy.raw.uniqueName, member.raw.uniqueName);
+	addSlicer: function(hierarchy, member, multiSelection){
+		this.olapController.addSlicer(hierarchy.raw.uniqueName, member.raw.uniqueName, multiSelection);
 	},
 	
     /**

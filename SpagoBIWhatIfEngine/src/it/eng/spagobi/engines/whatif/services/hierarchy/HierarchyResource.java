@@ -16,6 +16,7 @@ package it.eng.spagobi.engines.whatif.services.hierarchy;
 import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
 import it.eng.spagobi.engines.whatif.services.common.AbstractWhatIfEngineService;
 import it.eng.spagobi.engines.whatif.utilis.CubeUtilities;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 
 import java.util.List;
 
@@ -24,6 +25,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
+import org.apache.log4j.Logger;
 import org.olap4j.OlapConnection;
 import org.olap4j.OlapException;
 import org.olap4j.metadata.Hierarchy;
@@ -38,9 +40,12 @@ import com.eyeq.pivot4j.transform.impl.ChangeSlicerImpl;
 @Path("/v1.0/hierarchy")
 public class HierarchyResource extends AbstractWhatIfEngineService {
 	
+	
+	public static transient Logger logger = Logger.getLogger(HierarchyResource.class);
+	
 	@GET
-	@Path("/slice/{hierarchy}/{member}")
-	public String addSlicer(@javax.ws.rs.core.Context HttpServletRequest req, @PathParam("hierarchy") String hierarchyName, @PathParam("member") String memberName){
+	@Path("/slice/{hierarchy}/{member}/{multi}")
+	public String addSlicer(@javax.ws.rs.core.Context HttpServletRequest req, @PathParam("hierarchy") String hierarchyName, @PathParam("member") String memberName, @PathParam("multi") boolean multiSelection){
 
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
 		PivotModel model = ei.getPivotModel();
@@ -59,12 +64,17 @@ public class HierarchyResource extends AbstractWhatIfEngineService {
 			hierarchy = CubeUtilities.getHierarchy(model.getCube(), hierarchyName);
 			member = CubeUtilities.getMember(hierarchy, memberName);
 		} catch (OlapException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.debug("Error getting the member "+memberName+" from the hierarchy "+hierarchyName,e);
+			throw new SpagoBIEngineRuntimeException("Error getting the member "+memberName+" from the hierarchy "+hierarchyName,e);
 		}
 		
 		
 		List<org.olap4j.metadata.Member> slicers = ph.getSlicer(hierarchy);
+		
+		if(!multiSelection){
+			slicers.clear();
+		}
+		
 		slicers.add(member);
 		ph.setSlicer(hierarchy,slicers);
 

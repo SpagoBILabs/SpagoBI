@@ -11,6 +11,7 @@ package it.eng.spagobi.engines.whatif.services.member;
 import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
 import it.eng.spagobi.engines.whatif.services.common.AbstractWhatIfEngineService;
 import it.eng.spagobi.engines.whatif.services.serializer.MemberJsonSerializer;
+import it.eng.spagobi.engines.whatif.services.serializer.SerializationManager;
 import it.eng.spagobi.engines.whatif.utilis.CubeUtilities;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
@@ -193,12 +194,11 @@ public class MemberResource extends AbstractWhatIfEngineService {
 		}
 
 
-		ObjectMapper mapper = new ObjectMapper();   
-		SimpleModule simpleModule = new SimpleModule("SimpleModule", new Version(1,0,0,null));
-		simpleModule.addSerializer(Member.class, new MemberJsonSerializer());
-		mapper.registerModule(simpleModule);
+		
+		
+
 		try {
-			return mapper.writeValueAsString(list);
+			return (String) SerializationManager.getDefaultSerializer().serialize(list);
 		} catch (Exception e) {
 			logger.error("Error serializing the MemberEntry",e);
 			throw new SpagoBIRuntimeException("Error serializing the MemberEntry",e);
