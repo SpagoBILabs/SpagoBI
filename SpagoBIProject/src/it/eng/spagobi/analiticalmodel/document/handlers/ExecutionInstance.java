@@ -650,7 +650,7 @@ public class ExecutionInstance implements Serializable{
 		return toReturn;
 	}
 
-
+	//Thanks to Emanuele Granieri  of osmosit.com
 	private List normalizeList(List l){
 		Iterator i = l.iterator();
 		while (i.hasNext()){
