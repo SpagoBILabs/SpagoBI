@@ -55,7 +55,7 @@ public class PivotJsonHTMLSerializer {
     
 	
 	
-	public static String renderModel(PivotModel model, String drillDownMode){
+	public static String renderModel(PivotModel model){
 
 		logger.debug("IN");
 		String table="";
@@ -67,23 +67,26 @@ public class PivotJsonHTMLSerializer {
 		WhatIfHTMLRenderer renderer = new WhatIfHTMLRenderer(writer);
 		
 		logger.debug("Setting the properties of the renderer");
+		
 		renderer.setShowDimensionTitle(false); // Optionally hide the dimension title headers.
 		renderer.setShowParentMembers(true); // Optionally make the parent members visible.
+		
+		
 		renderer.setCellSpacing(0);
 		renderer.setRowHeaderStyleClass("x-column-header-inner x-column-header x-column-header-align-left x-box-item x-column-header-default x-unselectable x-grid-header-ct x-docked x-grid-header-ct-default x-docked-top x-grid-header-ct-docked-top x-grid-header-ct-default-docked-top x-box-layout-ct x-docked-noborder-top x-docked-noborder-right x-docked-noborder-left x-pivot-header");
 		renderer.setColumnHeaderStyleClass("x-column-header-inner x-column-header x-column-header-align-left x-box-item x-column-header-default x-unselectable x-grid-header-ct x-docked x-grid-header-ct-default x-docked-top x-grid-header-ct-docked-top x-grid-header-ct-default-docked-top x-box-layout-ct x-docked-noborder-top x-docked-noborder-right x-docked-noborder-left x-pivot-header");
 		renderer.setCornerStyleClass("x-column-header-inner x-column-header x-column-header-align-left x-box-item x-column-header-default x-unselectable x-grid-header-ct x-docked x-grid-header-ct-default x-docked-top x-grid-header-ct-docked-top x-grid-header-ct-default-docked-top x-box-layout-ct x-docked-noborder-top x-docked-noborder-right x-docked-noborder-left x-pivot-header");
 		renderer.setCellStyleClass("x-grid-cell x-grid-td x-grid-cell-gridcolumn-1014 x-unselectable x-grid-cell-inner  x-grid-row-alt x-grid-data-row x-grid-with-col-lines x-grid-cell x-pivot-cell");
 		renderer.setTableStyleClass("x-panel-body x-grid-body x-panel-body-default x-box-layout-ct x-panel-body-default x-pivot-table");
-		
 
+		
 		renderer.setEnableColumnDrillDown(true);
 		renderer.setEnableRowDrillDown(true);
 		renderer.setEnableSort(true);
 		String drillDownModeValue = DrillDownCommand.MODE_POSITION;
-		if(drillDownMode != null){
-			drillDownModeValue = drillDownMode;
-		}
+//		if(drillDownMode != null){
+//			drillDownModeValue = drillDownMode;
+//		}
 		
 		if(drillDownModeValue.equals(DrillDownCommand.MODE_POSITION)){
 			renderer.addCommand(new DrillExpandPositionCommand(renderer));

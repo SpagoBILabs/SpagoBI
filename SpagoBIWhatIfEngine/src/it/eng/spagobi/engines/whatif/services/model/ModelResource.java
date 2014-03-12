@@ -52,7 +52,7 @@ public class ModelResource extends AbstractWhatIfEngineService {
 		}
 		
 		
-		String table = renderModel(model, null);
+		String table = renderModel(model);
 		logger.debug("OUT");
 		return table;
 		

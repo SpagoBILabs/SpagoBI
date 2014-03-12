@@ -46,8 +46,8 @@ public class MemberResource extends AbstractWhatIfEngineService {
 	private static final String NODE_PARM = "node";
 	
 	@GET
-	@Path("/drilldown/{axis}/{position}/{member}/{drillType}")
-	public String drillDown(@javax.ws.rs.core.Context HttpServletRequest req, @PathParam("axis") int axisPos, @PathParam("position") int positionPos, @PathParam("member") int memberPos, @PathParam("drillType") String drillType){
+	@Path("/drilldown/{axis}/{position}/{member}")
+	public String drillDown(@javax.ws.rs.core.Context HttpServletRequest req, @PathParam("axis") int axisPos, @PathParam("position") int positionPos, @PathParam("member") int memberPos){
 
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
 		PivotModel model = ei.getPivotModel();
@@ -68,6 +68,8 @@ public class MemberResource extends AbstractWhatIfEngineService {
 		List<Member> m = p.getMembers();
 		Member m2 = m.get(memberPos);
 		
+		String drillType="position"; 
+		
 		if(drillType == null || drillType.equals(DrillDownCommand.MODE_POSITION)){
 			DrillExpandPosition transform = model.getTransform(DrillExpandPosition.class);
 			if(transform.canExpand(p, m2)){
@@ -86,11 +88,11 @@ public class MemberResource extends AbstractWhatIfEngineService {
 			}
 		}				
 		
-		return renderModel(model, drillType);
+		return renderModel(model);
 	}
 	@GET
-	@Path("/drillup/{axis}/{position}/{member}/{drillType}")
-	public String drillUp(@javax.ws.rs.core.Context HttpServletRequest req, @PathParam("axis") int axisPos, @PathParam("position") int positionPos, @PathParam("member") int memberPos, @PathParam("drillType") String drillType){
+	@Path("/drillup/{axis}/{position}/{member}")
+	public String drillUp(@javax.ws.rs.core.Context HttpServletRequest req, @PathParam("axis") int axisPos, @PathParam("position") int positionPos, @PathParam("member") int memberPos){
 
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
 		PivotModel model = ei.getPivotModel();
@@ -111,7 +113,9 @@ public class MemberResource extends AbstractWhatIfEngineService {
 		List<Member> m = p.getMembers();
 		Member m2 = m.get(memberPos);
 		Hierarchy hierarchy = m.get(memberPos).getHierarchy();
- 
+		
+		String drillType="position"; 
+		
 		if(drillType == null || drillType.equals(DrillDownCommand.MODE_POSITION)){
 			DrillExpandPosition transform = model.getTransform(DrillExpandPosition.class);
 			if(transform.canCollapse(p, m2)){
@@ -129,7 +133,7 @@ public class MemberResource extends AbstractWhatIfEngineService {
 			}
 		}
 				
-		return renderModel(model, drillType);
+		return renderModel(model);
 	}
 	@GET
 	@Path("/filtertree/{hierarchy}")
