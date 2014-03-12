@@ -54,7 +54,7 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionAxisHierarchy', {
 	constructor : function(config) {
 		this.initConfig(config);
 		if(Sbi.settings && Sbi.settings.olap && Sbi.settings.olap.execution && Sbi.settings.olap.execution.table && Sbi.settings.olap.execution.table.OlapExecutionAxisMember) {
-			this.initConfig(Sbi.settings.olap.execution.OlapExecutionAxisHierarchy);
+			Ext.apply(this,Sbi.settings.olap.execution.OlapExecutionAxisHierarchy);
 		}
 
 		this.callParent(arguments);

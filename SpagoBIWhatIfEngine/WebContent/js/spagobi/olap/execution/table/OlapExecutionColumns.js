@@ -36,7 +36,7 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionColumns', {
 	constructor : function(config) {
 		this.initConfig(config);
 		if(Sbi.settings && Sbi.settings.olap && Sbi.settings.olap.execution && Sbi.settings.olap.execution.table && Sbi.settings.olap.execution.table.OlapExecutionColumns) {
-			this.initConfig(Sbi.settings.olap.execution.OlapExecutionColumns);
+			Ext.apply(this, Sbi.settings.olap.execution.OlapExecutionColumns);
 		}
 		this.callParent(arguments);
 	}

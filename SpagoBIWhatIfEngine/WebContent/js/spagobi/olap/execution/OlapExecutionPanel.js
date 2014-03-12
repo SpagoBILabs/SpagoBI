@@ -49,7 +49,7 @@ Ext.define('Sbi.olap.execution.OlapExecutionPanel', {
 	constructor : function(config) {
 		this.initConfig(config);
 		if(Sbi.settings && Sbi.settings.olap && Sbi.settings.olap.execution && Sbi.settings.olap.execution.OlapExecutionPanel) {
-			this.initConfig(Sbi.settings.olap.execution.OlapExecutionPanel);
+			Ext.apply(this, Sbi.settings.olap.execution.OlapExecutionPanel);
 		}
 		this.callParent(arguments);
 	},

@@ -49,6 +49,9 @@ Ext.define('Sbi.olap.tools.OlapViewDefinitionTools', {
 	
 	constructor : function(config) {
 		this.initConfig(config);
+		if(Sbi.settings && Sbi.settings.olap && Sbi.settings.olap.tools && Sbi.settings.olap.tools.OlapViewDefinitionTools) {
+			Ext.apply(this, Sbi.settings.olap.tools.OlapViewDefinitionTools);
+		}
 		this.callParent(arguments);
 	},
 	

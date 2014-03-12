@@ -69,7 +69,7 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionFilter', {
 	constructor : function(config) {
 		this.initConfig(config);
 		if(Sbi.settings && Sbi.settings.olap && Sbi.settings.olap.execution && Sbi.settings.olap.execution.table && Sbi.settings.olap.execution.table.OlapExecutionFilter) {
-			this.initConfig(Sbi.settings.olap.execution.OlapExecutionFilter);
+			Ext.apply(this, Sbi.settings.olap.execution.OlapExecutionFilter);
 		}
 
 		this.selectedValuePanel = Ext.create("Ext.Panel",{
