@@ -113,5 +113,10 @@
 <ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="MeasuresCatalogueManagement" roleType="MODEL_ADMIN" />
 <ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="MeasuresCatalogueManagement" roleType="DEV_ROLE" />
 <ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="GeoLayersManagement" roleType="ADMIN" />
+<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="CreateCockpitFunctionality" roleType="ADMIN" />
+<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="CreateCockpitFunctionality" roleType="USER" />
+<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="CreateCockpitFunctionality" roleType="DEV_ROLE" />
+<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="CreateCockpitFunctionality" roleType="TEST_ROLE" />
+<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="CreateCockpitFunctionality" roleType="MODEL_ADMIN" />
 
 </ROLE_TYPE_USER_FUNCTIONALITIES>
