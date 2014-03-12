@@ -16,11 +16,12 @@
 Ext.define('Sbi.olap.execution.table.OlapExecutionTable', {
 	extend: 'Ext.panel.Panel',
 	layout:'fit',
-	html:'<div id="_table_container_" style="height: 100%; width:100%"> table </div>',
+	html:'<div id="_table_container_" style="height: 100%; width:100%; "> table </div>',
 	
 	config:{
 		border: false
-    },
+		, autoScroll: true    
+	},
 	
 
 	constructor : function(config) {
