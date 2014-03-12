@@ -5,7 +5,6 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.commons;
 
-import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.bo.Config;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IConfigDAO;
@@ -33,9 +32,7 @@ public class SingletonConfigCache implements ISingletonConfigCache{
 				logger.info("Add: "+config.getLabel() +" / "+config.getValueCheck());
 			}
 			
-		} catch (EMFUserError e) {
-			logger.error("Impossible to load configuration for report engine",e);
-		} catch (Exception e) {
+		} catch (Throwable e) {
 			logger.error("Impossible to load configuration for report engine",e);
 		}finally{
 			logger.debug("OUT");
