@@ -18,18 +18,24 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 import org.olap4j.Axis;
 import org.olap4j.CellSet;
 import org.olap4j.CellSetAxis;
+import org.olap4j.OlapConnection;
 import org.olap4j.metadata.Hierarchy;
+import org.olap4j.metadata.Member;
 
 import com.eyeq.pivot4j.PivotModel;
+import com.eyeq.pivot4j.query.QueryAdapter;
+import com.eyeq.pivot4j.transform.ChangeSlicer;
+import com.eyeq.pivot4j.transform.impl.ChangeSlicerImpl;
 import com.eyeq.pivot4j.ui.command.DrillCollapseMemberCommand;
 import com.eyeq.pivot4j.ui.command.DrillCollapsePositionCommand;
 import com.eyeq.pivot4j.ui.command.DrillDownCommand;
@@ -37,11 +43,17 @@ import com.eyeq.pivot4j.ui.command.DrillDownReplaceCommand;
 import com.eyeq.pivot4j.ui.command.DrillExpandMemberCommand;
 import com.eyeq.pivot4j.ui.command.DrillExpandPositionCommand;
 import com.eyeq.pivot4j.ui.command.DrillUpReplaceCommand;
+import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonSerializer;
+import com.fasterxml.jackson.databind.SerializerProvider;
 
-public class PivotJsonHTMLSerializer {
+public class PivotJsonHTMLSerializer extends JsonSerializer<PivotModel> {
 
 	public static transient Logger logger = Logger.getLogger(PivotJsonHTMLSerializer.class);
 	
+	private static final int FILTERS_AXIS_POS= -1;
 	private static final String NAME= "name";
 	private static final String UNIQUE_NAME= "uniqueName";
 	private static final String COLUMNS= "columns";
@@ -52,14 +64,18 @@ public class PivotJsonHTMLSerializer {
 	private static final String AXIS= "axis";
 	private static final String ROWSAXISORDINAL = "rowsAxisOrdinal";
 	private static final String COLUMNSAXISORDINAL = "columnsAxisOrdinal";
+	private static final String SLICERS = "slicers";
     
+	private OlapConnection connection;
 	
-	
-	public static String renderModel(PivotModel model){
+	public PivotJsonHTMLSerializer(OlapConnection connection){
+		this.connection = connection;
+	}
+
+	public void serialize(PivotModel value, JsonGenerator jgen, SerializerProvider provider) throws IOException, JsonProcessingException{
 
 		logger.debug("IN");
 		String table="";
-		JSONObject pivot = new JSONObject();
 		
 		
 		logger.debug("Creating the renderer");
@@ -102,7 +118,7 @@ public class PivotJsonHTMLSerializer {
 		renderer.setDrillDownMode(drillDownModeValue);
 		
 		logger.debug("Rendering the model");
-		renderer.render(model);
+		renderer.render(value);
 
 		
 		try {
@@ -114,24 +130,25 @@ public class PivotJsonHTMLSerializer {
 			throw new SpagoBIEngineRuntimeException("Error serializing the table",e);
 		}
 
-		CellSet cellSet = model.getCellSet();
+		CellSet cellSet = value.getCellSet();
 		List<CellSetAxis> axis = cellSet.getAxes();
 		
 		try {
 			
 			List<Hierarchy> axisHierarchies = axis.get(0).getAxisMetaData().getHierarchies();
 			axisHierarchies.addAll(axis.get(1).getAxisMetaData().getHierarchies());
-			List otherHierarchies = model.getCube().getHierarchies();
+			List otherHierarchies = value.getCube().getHierarchies();
 			
 			otherHierarchies.removeAll(axisHierarchies);
 			
-			
-			pivot.put(TABLE, table);
-			pivot.put(ROWS, serializeAxis(axis, Axis.ROWS));
-			pivot.put(COLUMNS,  serializeAxis(axis, Axis.COLUMNS));
-			pivot.put(FILTERS,  serializeHierarchies(otherHierarchies, -1));
-			pivot.put(COLUMNSAXISORDINAL, Axis.COLUMNS.axisOrdinal());
-			pivot.put(ROWSAXISORDINAL, Axis.ROWS.axisOrdinal());
+			jgen.writeStartObject();
+			jgen.writeStringField(TABLE, table);
+			serializeAxis(ROWS, jgen,axis, Axis.ROWS);
+			serializeAxis(COLUMNS, jgen,axis, Axis.COLUMNS);
+			serializeFilters(FILTERS, jgen,otherHierarchies,value);
+			jgen.writeNumberField(COLUMNSAXISORDINAL, Axis.COLUMNS.axisOrdinal());
+			jgen.writeNumberField(ROWSAXISORDINAL, Axis.ROWS.axisOrdinal());
+			jgen.writeEndObject();
 			
 		} catch (Exception e) {
 			logger.error("Error serializing the pivot table", e);
@@ -143,10 +160,10 @@ public class PivotJsonHTMLSerializer {
 		
 		logger.debug("OUT");
 		
-		return pivot.toString();
+
 	}
 	
-	private static JSONArray serializeAxis(List<CellSetAxis> axis, Axis type) throws JSONException{
+	private  void serializeAxis(String field,JsonGenerator jgen, List<CellSetAxis> axis, Axis type) throws JSONException, JsonGenerationException, IOException{
 		CellSetAxis aAxis= axis.get(0);
 		int axisPos = 0;
 		if(!aAxis.getAxisOrdinal().equals(type)){
@@ -154,25 +171,64 @@ public class PivotJsonHTMLSerializer {
 			axisPos = 1;
 		}
 		List<Hierarchy> hierarchies = aAxis.getAxisMetaData().getHierarchies();
-		return serializeHierarchies(hierarchies, axisPos);
+		serializeHierarchies(jgen, hierarchies, axisPos, field);
 		
 	}
 
 	
-	private static JSONArray serializeHierarchies(List<Hierarchy> hierarchies, int axis) throws JSONException{
-		JSONArray hierchiesSerialized = new JSONArray();
+	private  void serializeHierarchies(JsonGenerator jgen, List<Hierarchy> hierarchies, int axis, String field) throws JSONException, JsonGenerationException, IOException{
+		jgen.writeArrayFieldStart(field);
 		if(hierarchies!=null){
 			for (int i=0; i<hierarchies.size(); i++) {
 				Hierarchy hierarchy = hierarchies.get(i);
-				JSONObject hierarchyObject = new JSONObject();
+				Map<String, String> hierarchyObject = new HashMap<String, String>();
 				hierarchyObject.put(NAME, hierarchy.getName());
 				hierarchyObject.put(UNIQUE_NAME, hierarchy.getUniqueName());
-				hierarchyObject.put(POSITION, hierarchy.getName());
-				hierarchyObject.put(AXIS, axis);
-				hierchiesSerialized.put(hierarchyObject);
+				hierarchyObject.put(POSITION, ""+i);
+				hierarchyObject.put(AXIS, ""+axis);
+				jgen.writeObject(hierarchyObject);
 			}
 		}
-		return hierchiesSerialized;
+		jgen.writeEndArray();
 	}
+	
+	
+	private void serializeFilters(String field, JsonGenerator jgen,List<Hierarchy> hierarchies, PivotModel model) throws JSONException, JsonGenerationException, IOException{
+
+		QueryAdapter qa = new QueryAdapter(model);
+		qa.initialize();
+		
+		ChangeSlicer ph = new ChangeSlicerImpl(qa, connection);
+	
+		
+		jgen.writeArrayFieldStart(field);
+		if(hierarchies!=null){
+			for (int i=0; i<hierarchies.size(); i++) {
+				Hierarchy hierarchy = hierarchies.get(i);
+				Map<String,Object> hierarchyObject = new HashMap<String,Object>();
+				hierarchyObject.put(NAME, hierarchy.getName());
+				hierarchyObject.put(UNIQUE_NAME, hierarchy.getUniqueName());
+				hierarchyObject.put(POSITION, ""+i);
+				hierarchyObject.put(AXIS, ""+FILTERS_AXIS_POS);
+				
+				
+				List<Member> slicers = ph.getSlicer(hierarchy);
+				if(slicers!= null && slicers.size()>0){
+					List<Map<String,String>> slicerMap = new ArrayList<Map<String,String>>(); 
+					for(int j=0; j<slicers.size(); j++){
+						Map<String,String> slicer = new HashMap<String,String>();
+						slicer.put(UNIQUE_NAME, slicers.get(j).getUniqueName());
+						slicer.put(NAME, slicers.get(j).getName());
+						slicerMap.add(slicer);
+					}
+					hierarchyObject.put(SLICERS, slicerMap);
+				}
+				jgen.writeObject(hierarchyObject);
+
+			}
+		}
+		jgen.writeEndArray();
+	}
+
 	
 }

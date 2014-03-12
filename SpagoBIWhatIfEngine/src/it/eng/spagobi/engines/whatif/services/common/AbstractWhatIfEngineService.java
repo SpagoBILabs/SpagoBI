@@ -7,8 +7,10 @@
 package it.eng.spagobi.engines.whatif.services.common;
 
 import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
-import it.eng.spagobi.engines.whatif.services.serializer.PivotJsonHTMLSerializer;
+import it.eng.spagobi.engines.whatif.services.serializer.SerializationException;
+import it.eng.spagobi.engines.whatif.services.serializer.SerializationManager;
 import it.eng.spagobi.utilities.engines.EngineConstants;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.engines.rest.AbstractRestService;
 import it.eng.spagobi.utilities.engines.rest.ExecutionSession;
 
@@ -27,7 +29,7 @@ import com.eyeq.pivot4j.PivotModel;
 public class AbstractWhatIfEngineService extends AbstractRestService{
 
 	private static final String OUTPUTFORMAT = "OUTPUTFORMAT";
-	private static final String OUTPUTFORMAT_JSONHTML = "JSONHTML";
+	private static final String OUTPUTFORMAT_JSONHTML = "application/json";
 	
 	public static transient Logger logger = Logger.getLogger(AbstractWhatIfEngineService.class);
 
@@ -47,13 +49,18 @@ public class AbstractWhatIfEngineService extends AbstractRestService{
 		
 		String outputFormat = servletRequest.getParameter(OUTPUTFORMAT);
 		
-		if(outputFormat!=null && !outputFormat.equals("") && !outputFormat.equals(OUTPUTFORMAT_JSONHTML)){
-			logger.debug("Serializing the model in "+outputFormat);
-			//TODO: implement the other serializers
-		}else{
-			logger.debug("Serializing the model in "+OUTPUTFORMAT_JSONHTML);
-			serializedModel = PivotJsonHTMLSerializer.renderModel(model);
+		if(outputFormat==null  || outputFormat.equals("") ){
+			logger.debug("the output format is null.. use the default one"+OUTPUTFORMAT_JSONHTML);
+			outputFormat = OUTPUTFORMAT_JSONHTML;
 		}
+
+		try {
+			serializedModel = (String) SerializationManager.getSerializer(outputFormat).serialize(model);
+		} catch (SerializationException e) {
+			logger.error("Error serializing the pivot in format "+outputFormat,e);
+			throw new SpagoBIEngineRuntimeException("Error serializing the pivot in format "+outputFormat,e);
+		}
+
 		
 		logger.debug("OUT: table correctly serialized");
 		return serializedModel;

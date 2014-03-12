@@ -16,7 +16,9 @@ import org.olap4j.metadata.Hierarchy;
 import com.eyeq.pivot4j.PivotModel;
 import com.eyeq.pivot4j.mdx.MdxStatement;
 import com.eyeq.pivot4j.query.QueryAdapter;
+import com.eyeq.pivot4j.transform.ChangeSlicer;
 import com.eyeq.pivot4j.transform.PlaceHierarchiesOnAxes;
+import com.eyeq.pivot4j.transform.impl.ChangeSlicerImpl;
 import com.eyeq.pivot4j.transform.impl.PlaceHierarchiesOnAxesImpl;
 
 public class AxisBusiness {
@@ -65,6 +67,12 @@ public class AxisBusiness {
 			axisHerarchies.remove(hierarchy);
 			ph.placeHierarchies(fromAxis.getAxisOrdinal(),axisHerarchies ,false);
 			logger.debug("Removed the hierarchy from the axis "+fromAxisPos);
+		}else{
+			//removes the slicers
+			ChangeSlicer cs = new ChangeSlicerImpl(qa, getOlapConnection());
+			List<org.olap4j.metadata.Member> slicers = cs.getSlicer(hierarchy);
+			slicers.clear();
+			cs.setSlicer(hierarchy,slicers);
 		}
 
 		//if the axis is -1 the destination are the filters
@@ -76,7 +84,7 @@ public class AxisBusiness {
 			ph.placeHierarchies(toAxis.getAxisOrdinal(),axisHerarchies ,false);
 			logger.debug("Added the hierarchy in the axis "+fromAxisPos);
 		}
-
+		
 		MdxStatement s = qa.updateQuery();
 		qa.getModel().setMdx(s.toMdx());
 		logger.debug("Mdx updated");
