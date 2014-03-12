@@ -36,7 +36,7 @@ Ext.define('Sbi.olap.options.OlapOptionsContainer', {
 	constructor : function(config) {
 		this.initConfig(config);
 		if(Sbi.settings && Sbi.settings.olap && Sbi.settings.olap.options && Sbi.settings.olap.options.OlapOptionsContainer) {
-			this.initConfig(Sbi.settings.olap.options.OlapOptionsContainer);
+			Ext.apply(this, Sbi.settings.olap.options.OlapOptionsContainer);
 		}
 		this.callParent(arguments);
 	},

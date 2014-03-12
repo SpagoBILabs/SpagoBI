@@ -28,7 +28,7 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionRow', {
 	constructor : function(config) {
 		this.initConfig(config);
 		if(Sbi.settings && Sbi.settings.olap && Sbi.settings.olap.execution && Sbi.settings.olap.execution.table && Sbi.settings.olap.execution.table.OlapExecutionRow) {
-			this.initConfig(Sbi.settings.olap.execution.OlapExecutionRow);
+			Ext.apply(this, Sbi.settings.olap.execution.OlapExecutionRow);
 		}
 		this.roundText = this.roundText && (Ext.isChrome);
 		this.callParent(arguments);

@@ -23,7 +23,7 @@ Ext.define('Sbi.olap.options.OlapOptionsToolbar', {
 	constructor : function(config) {
 		this.initConfig(config);
 		if(Sbi.settings && Sbi.settings.olap && Sbi.settings.olap.options && Sbi.settings.olap.options.OlapOptionsToolbar) {
-			this.initConfig(Sbi.settings.olap.options.OlapOptionsToolbar);
+			Ext.apply(this, Sbi.settings.olap.options.OlapOptionsToolbar);
 		}
 		this.callParent(arguments);
 	}

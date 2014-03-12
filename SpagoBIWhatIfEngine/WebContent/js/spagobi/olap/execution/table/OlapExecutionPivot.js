@@ -125,7 +125,7 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionPivot', {
 	constructor : function(config) {
 		this.initConfig(config);
 		if(Sbi.settings && Sbi.settings.olap && Sbi.settings.olap.execution && Sbi.settings.olap.execution.table && Sbi.settings.olap.execution.table.OlapExecutionPivot) {
-			this.initConfig(Sbi.settings.olap.execution.table.OlapExecutionPivot);
+			Ext.apply(this, Sbi.settings.olap.execution.table.OlapExecutionPivot);
 		}
 		this.callParent(arguments);
 	},

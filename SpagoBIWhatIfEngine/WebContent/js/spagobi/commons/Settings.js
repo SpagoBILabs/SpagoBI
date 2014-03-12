@@ -1,6 +1,14 @@
-Ext.ns("Sbi.settings");
+Ext.ns("Sbi.settings.olap");
 
-Sbi.settings.qbe = {
-
-		drillType: 'member' /*position, replace or member from DrillDownCommand.MODE_XXX*/
+Sbi.settings.olap= {
+		options: {
+			OlapOptions: {
+				hidden: true
+			}
+		},
+		tools: {
+			OlapViewDefinitionTools: {
+				hidden: true
+			}
+		}
 }; 

@@ -56,7 +56,7 @@ Ext.define('Sbi.olap.OlapPanel', {
 	constructor : function(config) {
 		this.initConfig(config||{});
 //		if(Sbi.settings && Sbi.settings.olap && Sbi.settings.olap.OlapPanel) {
-//			this.initConfig(Sbi.settings.olap.OlapPanel);
+//			Ext.apply(this, Sbi.settings.olap.OlapPanel);
 //		}
 		
 		this.callParent(arguments);

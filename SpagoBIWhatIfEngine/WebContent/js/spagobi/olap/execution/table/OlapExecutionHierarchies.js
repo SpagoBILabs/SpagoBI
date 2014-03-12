@@ -56,7 +56,7 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionHierarchies', {
 		    model: 'Sbi.olap.HierarchyModel'
 		});
 		if(Sbi.settings && Sbi.settings.olap && Sbi.settings.olap.execution && Sbi.settings.olap.execution.table && Sbi.settings.olap.execution.table.OlapExecutionHierarchies) {
-			this.initConfig(Sbi.settings.olap.execution.OlapExecutionHierarchies);
+			Ext.apply(this, Sbi.settings.olap.execution.OlapExecutionHierarchies);
 		}
 		this.callParent(arguments);
 	},
