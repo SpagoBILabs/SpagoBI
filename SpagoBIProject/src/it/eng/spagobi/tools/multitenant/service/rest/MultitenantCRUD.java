@@ -154,7 +154,7 @@ public class MultitenantCRUD {
 		
 		for (SbiOrganizationEngine orgEngine: selectedEngines) {		
 			SbiEngines sbiEngine = orgEngine.getSbiEngines();
-			if(sbiEngine.getEngineId() == engine.getId())
+			if(sbiEngine.getEngineId().intValue() == engine.getId().intValue())
 				return true;		
 		}
 		
