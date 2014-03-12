@@ -92,6 +92,7 @@ public class UserProfile implements IEngUserProfile {
 			}
 			logger.debug("USER ATTRIBUTES----");
 		} else {
+			userAttributes = new HashMap();
 			logger.debug("NO USER ATTRIBUTES");
 		}
 		// putting tenant id on user attributes (for Spago modules' queries) :
