@@ -89,7 +89,7 @@ public class ExecutionInstance implements Serializable{
 
 	static private Logger logger = Logger.getLogger(ExecutionInstance.class);
 	private static final String TREE_INNER_LOV_TYPE = "treeinner";
-	
+
 	private String flowId = null;
 	private String executionId = null;
 	private BIObject object = null;
@@ -114,10 +114,10 @@ public class ExecutionInstance implements Serializable{
 	 * @throws Exception 
 	 */
 	public ExecutionInstance (IEngUserProfile userProfile, String flowId, String executionId, Integer biobjectId, String executionRole, String executionModality, Locale locale) throws Exception {
-		
+
 		logger.debug("IN: input parameters: userProfile = [" + userProfile + "]; flowId = [" + flowId + "]; executionId = [" + executionId + "]; " +
 				"biobjectId" + biobjectId + "]; executionRole = [" + executionRole + "]");
-		
+
 		if (userProfile == null || flowId == null || executionId == null || biobjectId == null) {
 			throw new Exception("Invalid arguments.");
 		}
@@ -137,19 +137,19 @@ public class ExecutionInstance implements Serializable{
 		this(userProfile, flowId, executionId, biobjectId, executionRole, executionModality, locale);
 		this.displayToolbar = displayToolbar;
 	}
-	
+
 	public ExecutionInstance (IEngUserProfile userProfile, String flowId, String executionId, Integer biobjectId, 
 			String executionRole, String executionModality, boolean displayToolbar, boolean displaySliders, Locale locale) throws Exception {
 		this(userProfile, flowId, executionId, biobjectId, executionRole, executionModality, displayToolbar, locale);
 		this.displaySliders = displaySliders;
 	}
-	
+
 	public ExecutionInstance (IEngUserProfile userProfile, String flowId, String executionId, Integer biobjectId, Integer biobjectVersion, 
 			String executionRole, String executionModality, boolean displayToolbar, boolean displaySliders, Locale locale) throws Exception {
 		this(userProfile, flowId, executionId, biobjectId, executionRole, executionModality, displayToolbar, displaySliders, locale);
 		this.object.setDocVersion(biobjectVersion);
 	}
-	
+
 	/**Used by Kpi Engine for detail documents
 	 * @param userProfile
 	 * @param flowId
@@ -326,7 +326,7 @@ public class ExecutionInstance implements Serializable{
 				String[] chunks = userProvidedParameters[i].split("=");
 				if (chunks == null || chunks.length > 2) {
 					logger.warn("User provided parameter [" + userProvidedParameters[i] + "] cannot be splitted in " +
-					"[parameter url name=parameter value] by '=' characters.");
+							"[parameter url name=parameter value] by '=' characters.");
 					continue;
 				}
 				String parUrlName = chunks[0];
@@ -380,7 +380,7 @@ public class ExecutionInstance implements Serializable{
 				String[] chunks = userProvidedParameters[i].split("=");
 				if (chunks == null || chunks.length > 2) {
 					logger.warn("User provided parameter [" + userProvidedParameters[i] + "] cannot be splitted in " +
-					"[parameter url name=parameter value] by '=' characters.");
+							"[parameter url name=parameter value] by '=' characters.");
 					continue;
 				}
 				String parUrlName = chunks[0];
@@ -619,18 +619,18 @@ public class ExecutionInstance implements Serializable{
 			biparam.setLabel(viewLabel);
 			logger.debug("Evaluating errors for biparameter " + biparam.getLabel() + " ...");
 			List errorsOnChecks = getValidationErrorsOnChecks(biparam);
-			
+
 			List values = biparam.getParameterValues();
-			if (biparam.isRequired() && (values == null || values.isEmpty()) ) {
-					EMFValidationError error = SpagoBIValidationImpl.validateField(biparam.getParameterUrlName(), biparam.getLabel(), null, "MANDATORY", null, null, null);
-					errorsOnChecks.add(error);
+			if (biparam.isRequired() && (values == null || values.isEmpty()) || normalizeList(values).size() == 0) {
+				EMFValidationError error = SpagoBIValidationImpl.validateField(biparam.getParameterUrlName(), biparam.getLabel(), null, "MANDATORY", null, null, null);
+				errorsOnChecks.add(error);
 			}
-			
+
 			if (errorsOnChecks != null && errorsOnChecks.size() > 0) {
 				logger.warn("Found " + errorsOnChecks.size() + " errors on checks for biparameter " + biparam.getLabel());
 			}
 			toReturn.addAll(errorsOnChecks);
-			
+
 			if (values != null && values.size() >= 1 && 
 					!(values.size() == 1 && ( values.get(0) == null || values.get(0).toString().trim().equals("") ) )) {
 				List errorsOnValues = getValidationErrorsOnValues(biparam);
@@ -648,6 +648,20 @@ public class ExecutionInstance implements Serializable{
 		}
 		logger.debug("OUT");
 		return toReturn;
+	}
+
+
+	private List normalizeList(List l){
+		Iterator i = l.iterator();
+		while (i.hasNext()){
+			Object el = i.next();
+			if (el instanceof String){
+				if (((String)el).isEmpty()){
+					i.remove();
+				}
+			}
+		}
+		return l;
 	}
 
 	private List getValidationErrorsOnChecks(BIObjectParameter biparameter) throws Exception {
@@ -777,18 +791,18 @@ public class ExecutionInstance implements Serializable{
 			logger.debug("Parameter [" + biparamLabel + "] has lov defined just for default value: any other chose allowed");
 			return new ArrayList();
 		}
-		
+
 		// from the complete list of values, get the values that are not default values
 		List nonDefaultValues = this.validateAsDefaultValues(biparam);
 		if (nonDefaultValues.isEmpty()) {
 			logger.debug("All selected values are default values");
 			return new ArrayList();
 		}
-		
+
 		// validation must proceed only with non-default values
 		BIObjectParameter clone = biparam.clone();
 		clone.setParameterValues(nonDefaultValues);
-		
+
 		// get the lov provider detail
 		String lovProv = lov.getLovProvider();
 		ILovDetail lovProvDet = LovDetailFactory.getLovFromXML(lovProv);
@@ -808,7 +822,7 @@ public class ExecutionInstance implements Serializable{
 		logger.debug("OUT");
 		return toReturn;
 	}
-	
+
 	private void mergeValuesAndDescriptions(BIObjectParameter biparam, BIObjectParameter cloned){
 		int valuePosition;
 		int defaultValuePosition =0;
@@ -1075,7 +1089,7 @@ public class ExecutionInstance implements Serializable{
 		}
 		return lovProvDet;
 	}
-	
+
 	public ILovDetail getLovDetailForDefault(BIObjectParameter parameter) {
 		Parameter par = parameter.getParameter();
 		ModalitiesValue lov = par.getModalityValueForDefault();
@@ -1318,7 +1332,7 @@ public class ExecutionInstance implements Serializable{
 		} else 
 			return false;
 	}
-	
+
 	public Locale getLocale() {
 		return this.locale;
 	}
