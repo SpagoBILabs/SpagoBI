@@ -5,7 +5,6 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.services.security.service;
 
-import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.commons.SingletonConfig;
 
 import org.apache.log4j.Logger;
