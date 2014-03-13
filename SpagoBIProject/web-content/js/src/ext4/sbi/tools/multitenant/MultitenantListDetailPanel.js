@@ -117,12 +117,17 @@ Ext.define('Sbi.tools.multitenant.MultitenantListDetailPanel', {
 				if(response.responseText.indexOf("error.mesage.description")>=0){
 					Sbi.exception.ExceptionHandler.handleFailure(response);
 				}else{
+
 					var respoceJSON = Ext.decode(response.responseText);
 					if(respoceJSON.MULTITENANT_ID){
 						record.MULTITENANT_ID = respoceJSON.MULTITENANT_ID;
 					}
-					Sbi.exception.ExceptionHandler.showInfoMessage(LN('sbi.multitenant.saved') + record.MULTITENANT_NAME+'_admin');
-					
+					if(respoceJSON.SAVE_TYPE && respoceJSON.SAVE_TYPE == 'INSERT'){
+						Sbi.exception.ExceptionHandler.showInfoMessage(LN('sbi.multitenant.saved') + record.MULTITENANT_NAME+'_admin');
+					}else{
+						Sbi.exception.ExceptionHandler.showInfoMessage(LN('sbi.generic.resultMsg'));
+					}
+								
 					var selectedRow = this.grid.getSelectionModel().getSelection();
 					selectedRow[0].set("MULTITENANT_ID", record.MULTITENANT_ID);
 					selectedRow[0].set("MULTITENANT_NAME", record.MULTITENANT_NAME);
