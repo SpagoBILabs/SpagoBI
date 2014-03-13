@@ -2376,3 +2376,11 @@ commit;
 --14/02/2014: Added XMLADriver:
 update SBI_ENGINES SET DRIVER_NM = 'it.eng.spagobi.engines.drivers.xmla.XMLADriver' where label = 'XMLAEngine';
 commit;
+
+
+-- 10/03/2014  Angelo
+ALTER TABLE SBI_AUDIT MODIFY DOC_LABEL varchar(200);
+ALTER TABLE SBI_AUDIT MODIFY DOC_NAME varchar(200);
+
+13/03/2014 aNGELO
+ALTER TABLE SBI_OBJECTS DROP FOREIGN KEY FK_SBI_OBJECTS_5 
