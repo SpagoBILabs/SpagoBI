@@ -809,6 +809,19 @@ Sbi.locale.ln['sbi.generic.to'] = 'Data fine';
 //MESSAGE FOR SCHEDULER
 //===================================================================
 Sbi.locale.ln['sbi.scheduler.alert'] = 'Attenzione! Inserire una nuova data-ora di inizio schedulazione successiva a quella attuale, per evitare la rischedulazione.';
+Sbi.locale.ln['sbi.scheduler.overview'] = 'Panoramica Attività ';
+Sbi.locale.ln['sbi.scheduler.documents'] = 'Documenti';
+Sbi.locale.ln['sbi.scheduler.name'] = 'Nome';
+Sbi.locale.ln['sbi.scheduler.parameters'] = 'Parametri';
+Sbi.locale.ln['sbi.scheduler.schedulations'] = 'Schedulazione';
+Sbi.locale.ln['sbi.scheduler.type'] = 'Tipo';
+Sbi.locale.ln['sbi.scheduler.startdate'] = 'Data Inizio';
+Sbi.locale.ln['sbi.scheduler.starttime'] = 'Orario Inizio';
+Sbi.locale.ln['sbi.scheduler.enddate'] = 'Data Fine';
+Sbi.locale.ln['sbi.scheduler.endtime'] = 'Orario Fine';
+Sbi.locale.ln['sbi.scheduler.addschedulation'] = 'Aggiungi Schedulazione';
+Sbi.locale.ln['sbi.scheduler.schedulationtype'] = 'Tipo Schedulazione';
+
 
 //===================================================================
 //MESSAGE FOR QBE DATASET BUILDER

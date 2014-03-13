@@ -44,7 +44,7 @@ Ext.define('Sbi.tools.scheduler.SchedulerDetailPanel', {
 		, initFields: function(){
 			
 			this.activityLabel = Ext.create("Ext.form.Label",{
-				text: 'Overview Activity',
+				text: LN('sbi.scheduler.overview'),
 			});
 			
 			this.documentsGridStore = Ext.create('Ext.data.Store', {
@@ -60,11 +60,11 @@ Ext.define('Sbi.tools.scheduler.SchedulerDetailPanel', {
 			});
 			
 			this.documentsGrid = Ext.create('Ext.grid.Panel', {
-			    title: 'Documents',
+			    title: LN('sbi.scheduler.documents'),
 			    store: this.documentsGridStore,
 			    columns: [
-			        { text: 'Name',  dataIndex: 'name' },
-			        { text: 'Parameters', dataIndex: 'condensedParameters', flex: 1,
+			        { text: LN('sbi.scheduler.name'),  dataIndex: 'name' },
+			        { text: LN('sbi.scheduler.parameters'), dataIndex: 'condensedParameters', flex: 1,
 				          renderer : 
 				        		function(value, metadata, record, rowIndex, colIndex) {
 				        			metadata.tdAttr = 'data-qtip="' + value +'"';
@@ -93,10 +93,10 @@ Ext.define('Sbi.tools.scheduler.SchedulerDetailPanel', {
 			});
 			
 			this.schedulationsGrid = Ext.create('Ext.grid.Panel', {
-			    title: 'Schedulations',
+			    title: LN('sbi.scheduler.schedulations'),
 			    store: this.schedulationsGridStore,
 			    columns: [
-			        { text: 'Name',  dataIndex: 'triggerName', flex: 1,
+			        { text: LN('sbi.scheduler.name'),  dataIndex: 'triggerName', flex: 1,
 			          renderer : 
 			        		function(value, metadata, record, rowIndex, colIndex) {
 			        			var triggerDescription = record.get('triggerDescription');
@@ -106,11 +106,11 @@ Ext.define('Sbi.tools.scheduler.SchedulerDetailPanel', {
 			        	} 
 			        },
 			      //  { text: 'Generation', dataIndex: 'generation' },
-			        { text: 'Type', dataIndex: 'triggerChronString' },
-			        { text: 'Start Date ', dataIndex: 'triggerStartDate' },
-			        { text: 'Start Time ', dataIndex: 'triggerStartTime' },
-			        { text: 'End Date ', dataIndex: 'triggerEndDate' },
-			        { text: 'End Time ', dataIndex: 'triggerEndTime' },
+			        { text: LN('sbi.scheduler.type'), dataIndex: 'triggerChronString' },
+			        { text: LN('sbi.scheduler.startdate'), dataIndex: 'triggerStartDate' },
+			        { text: LN('sbi.scheduler.starttime'), dataIndex: 'triggerStartTime' },
+			        { text: LN('sbi.scheduler.enddate'), dataIndex: 'triggerEndDate' },
+			        { text: LN('sbi.scheduler.endtime'), dataIndex: 'triggerEndTime' },
 					{
 						//STATE BUTTON
 			        	menuDisabled: true,
@@ -149,10 +149,10 @@ Ext.define('Sbi.tools.scheduler.SchedulerDetailPanel', {
 			    width: '100%',
 			    margin: '5 0 0 0',
 			    tbar: [{
-			    	text: 'Add',
+			    	text: LN('sbi.generic.add'),
 			        iconCls: 'icon-add',
 			    	scope: this,
-			    	tooltip: 'Add schedulation',
+			    	tooltip: LN('sbi.scheduler.addschedulation'),
 			    	handler: this.onAddClick
 			    }]
 			});
@@ -231,7 +231,7 @@ Ext.define('Sbi.tools.scheduler.SchedulerDetailPanel', {
 		}
 		
 		, setFormState: function(values){
-			this.activityLabel.setText( 'Overview Activity '+values.jobName );
+			this.activityLabel.setText( LN('sbi.scheduler.overview')+values.jobName );
 			this.documentsGridStore.loadData(values.documents,false);
 			
 			if ((values != undefined) && (values.triggers != undefined)){

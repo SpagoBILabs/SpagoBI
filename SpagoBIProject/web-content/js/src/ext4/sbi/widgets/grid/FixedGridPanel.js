@@ -88,7 +88,11 @@ Ext.define('Sbi.widgets.grid.FixedGridPanel', {
     	/**
     	 * The list of the properties that should be filtered 
     	 */
-    	filteredProperties: new Array()
+    	filteredProperties: new Array(),
+    	/**
+    	 * Object with internal properties to filter
+    	 */
+    	filteredObjects: null
     }
 
 	/**

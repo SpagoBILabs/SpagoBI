@@ -827,6 +827,24 @@ Ext.Msg.buttonText.no = 'No';
 Sbi.locale.ln['sbi.generic.from'] = 'Start date';
 Sbi.locale.ln['sbi.generic.to'] = 'End date';
 
+//===================================================================
+//MESSAGE FOR SCHEDULER
+//===================================================================
+Sbi.locale.ln['sbi.scheduler.alert'] = 'Attention! Enter a new date-time scheduling of start after the current one, to avoid rescheduling.';
+Sbi.locale.ln['sbi.scheduler.overview'] = 'Overview Activity ';
+Sbi.locale.ln['sbi.scheduler.documents'] = 'Documents';
+Sbi.locale.ln['sbi.scheduler.name'] = 'Name';
+Sbi.locale.ln['sbi.scheduler.parameters'] = 'Parameters';
+Sbi.locale.ln['sbi.scheduler.schedulations'] = 'Schedulations';
+Sbi.locale.ln['sbi.scheduler.type'] = 'Type';
+Sbi.locale.ln['sbi.scheduler.startdate'] = 'Start Date';
+Sbi.locale.ln['sbi.scheduler.starttime'] = 'Start Time';
+Sbi.locale.ln['sbi.scheduler.enddate'] = 'End Date';
+Sbi.locale.ln['sbi.scheduler.endtime'] = 'End Time';
+Sbi.locale.ln['sbi.scheduler.addschedulation'] = 'Add Schedulation';
+Sbi.locale.ln['sbi.scheduler.schedulationtype'] = 'Schedulation Type';
+
+
 
 //===================================================================
 //MESSAGE FOR QBE DATASET BUILDER
