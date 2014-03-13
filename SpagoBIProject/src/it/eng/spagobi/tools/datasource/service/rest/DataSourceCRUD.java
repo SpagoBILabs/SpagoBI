@@ -163,10 +163,8 @@ public class DataSourceCRUD {
 					updateAudit(req, profile, "DATA_SOURCE.ADD", logParam, "KO");
 					throw new SpagoBIRuntimeException(saveDuplicatedDSError);
 				}	 		
-				dao.insertDataSource(dsNew, profile.getOrganization());
-							
-				IDataSource tmpDS = dao.loadDataSourceByLabel(dsNew.getLabel());
-				dsNew.setDsId(tmpDS.getDsId());
+				Integer id =dao.insertDataSource(dsNew, profile.getOrganization());
+				dsNew.setDsId(id);
 				updateAudit(req, profile, "DATA_SOURCE.ADD", logParam, "OK");
 			} else {				
 				//update ds
