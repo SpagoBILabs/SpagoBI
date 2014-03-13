@@ -22,6 +22,7 @@ import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
+import it.eng.spagobi.utilities.filters.FilterIOManager;
 
 import java.util.List;
 
@@ -44,24 +45,27 @@ import org.json.JSONObject;
 @Path("/certificateddatasets")
 public class GetCertificatedDatasets {
 
-	static private Logger logger = Logger
-			.getLogger(GetCertificatedDatasets.class);
+	static private Logger logger = Logger.getLogger(GetCertificatedDatasets.class);
 
 	@GET
-	@Produces(MediaType.APPLICATION_JSON)
-	public String getAllDataSet(@Context HttpServletRequest req) {
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	public String getAllDataSet(@Context HttpServletRequest request) {
 		IDataSetDAO dataSetDao = null;
 		List<IDataSet> dataSets;
-		IEngUserProfile profile = (IEngUserProfile) req.getSession()
-				.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+		
+		FilterIOManager ioManager = new FilterIOManager(request, null);
+		ioManager.initConetxtManager();	
+		IEngUserProfile profile = (IEngUserProfile)ioManager.getFromSession(IEngUserProfile.ENG_USER_PROFILE);		
+		
 		JSONObject JSONReturn = new JSONObject();
 		JSONArray datasetsJSONArray = new JSONArray();
 		try {
 			dataSetDao = DAOFactory.getDataSetDAO();
 			dataSetDao.setUserProfile(profile);
-			String isTech = req.getParameter("isTech");
-			String allMyDataDS = req.getParameter("allMyDataDs");
-			String typeDocWizard = (req.getParameter("typeDoc") != null && !"null".equals(req.getParameter("typeDoc")))?req.getParameter("typeDoc"):null;
+			
+			String isTech = request.getParameter("isTech");
+			String allMyDataDS = request.getParameter("allMyDataDs");
+			String typeDocWizard = (request.getParameter("typeDoc") != null && !"null".equals(request.getParameter("typeDoc")))?request.getParameter("typeDoc"):null;
 
 
 			if(isTech != null && isTech.equals("true")){
@@ -70,27 +74,23 @@ public class GetCertificatedDatasets {
 			} else if (allMyDataDS != null && allMyDataDS.equals("true")){
 				//get all the Datasets visible for the current user (MyData,Enterprise,Shared Datasets) 
 				dataSets = dataSetDao.loadMyDataAllDatasets(profile.getUserUniqueIdentifier().toString());
-			}
-			else{
+			} else {
 				//else it is a custom dataset list --> get all datasets public with owner != user itself
 				dataSets = dataSetDao.loadSharedDatasets(profile.getUserUniqueIdentifier().toString());
 			}
 
-			datasetsJSONArray = (JSONArray) SerializerFactory.getSerializer(
-					"application/json").serialize(dataSets, null);
+			datasetsJSONArray = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(dataSets, null);
 			
 			JSONArray datasetsJSONReturn = putActions(profile, datasetsJSONArray, typeDocWizard);
 
 			JSONReturn.put("root", datasetsJSONReturn);
 
 		} catch (Throwable t) {
-			throw new SpagoBIServiceException(
-					"An unexpected error occured while instatiating the dao", t);
+			throw new SpagoBIServiceException("An unexpected error occured while instatiating the dao", t);
 		}
 		return JSONReturn.toString();
-
 	}
-
+	
 	private JSONArray putActions(IEngUserProfile profile, JSONArray datasetsJSONArray, String typeDocWizard)
 			throws JSONException, EMFInternalError {
 		
