@@ -9,7 +9,7 @@
  * a copy of the GNU Lesser General Public License along with SpagoBI. If not, see: http://www.gnu.org/licenses/.
  * The complete text of SpagoBI license is included in the COPYING.LESSER file. 
  */
-package it.eng.spagobi.engine.cockpit.services.page;
+package it.eng.spagobi.engine.cockpit.api.page;
 
 import it.eng.spagobi.engine.cockpit.CockpitEngine;
 import it.eng.spagobi.engine.cockpit.CockpitEngineInstance;
