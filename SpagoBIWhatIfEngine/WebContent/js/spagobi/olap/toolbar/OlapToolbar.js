@@ -27,17 +27,30 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 		if(Sbi.settings && Sbi.settings.olap && Sbi.settings.olap.toolbar && Sbi.settings.olap.toolbar.OlapToolbar) {
 			Ext.apply(this, Sbi.settings.olap.toolbar.OlapToolbar);
 		}
+		
+		this.drillMode = Ext.create('Ext.Button', {
+            text: 'Drill Mode',
+            iconCls: 'drill-mode',
+            menu: [{
+            		text: 'Position',
+	                handler: function() {
+	                	Sbi.olap.eventManager.setDrillMode('position');
+	                }},
+                   {text: 'Member',
+		                handler: function() {
+		                	Sbi.olap.eventManager.setDrillMode('member');
+		           }},
+                   {text: 'Replace',
+			                handler: function() {
+			                	Sbi.olap.eventManager.setDrillMode('replace');
+			       }}],
+            reorderable: false
+        });
+		
 		this.callParent(arguments);
 	},
 	
 	initComponent: function() {
-		
-		var buttoB = Ext.create('Ext.Button', {
-            text: 'Menu Button',
-            iconCls: 'add16',
-            menu: [{text: 'Menu Item 1'}],
-            reorderable: false
-        });
 		
 
 		Ext.apply(this, {
@@ -46,28 +59,7 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
             },
 			defaults: {
 	            reorderable: true
-	        },items   : [buttoB
-	                     ,
-	                     {
-	                         xtype:'splitbutton',
-	                         text: 'Cut',
-	                         iconCls: 'add16',
-	                         menu: [{text: 'Cut Menu Item'}]
-	                     },
-	                     {
-	                         text: 'Copy',
-	                         iconCls: 'add16'
-	                     },
-	                     {
-	                         text: 'Paste',
-	                         iconCls: 'add16',
-	                         menu: [{text: 'Paste Menu Item'}]
-	                     },
-	                     {
-	                         text: 'Format',
-	                         iconCls: 'add16'
-	                     }
-	                 ]
+	        },items   : [ this.drillMode ]
 		});
 		this.callParent();
 	},
