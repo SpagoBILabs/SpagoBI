@@ -13,6 +13,7 @@ package it.eng.spagobi.engine.cockpit.services.page;
 
 import it.eng.spagobi.engine.cockpit.CockpitEngine;
 import it.eng.spagobi.engine.cockpit.CockpitEngineInstance;
+import it.eng.spagobi.engine.cockpit.api.AbstractCockpitEngineService;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
 
