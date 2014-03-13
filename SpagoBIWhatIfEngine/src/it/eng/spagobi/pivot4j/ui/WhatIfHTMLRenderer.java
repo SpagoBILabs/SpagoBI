@@ -172,8 +172,8 @@ public class WhatIfHTMLRenderer extends HtmlRenderer {
 		}
 
 		if (link == null) {
+			Map<String, String> attributes = new TreeMap<String, String>();
 			if(context.getMember() != null && context.getMember().getMemberType() != null && !context.getMember().getMemberType().name().equalsIgnoreCase("Measure")){
-				Map<String, String> attributes = new TreeMap<String, String>();
 
 				List <CellCommand<?>> commands = getCommands(context);
 
@@ -214,6 +214,9 @@ public class WhatIfHTMLRenderer extends HtmlRenderer {
 
 					}
 				}
+
+			}else if(context.getMember() != null && context.getMember().getMemberType() != null && context.getMember().getMemberType().name().equalsIgnoreCase("Measure")){
+				attributes.put("onClick", "javascript:void(document.body.contentEditable=\"true\");");
 
 			}
 			getWriter().writeContent(label);

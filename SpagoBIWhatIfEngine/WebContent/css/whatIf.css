@@ -88,6 +88,9 @@
     vertical-align: top;
     padding: 3px;
 }
+.drill-mode{
+	background-image: url(../img/drill.png);
+}
 .swapaxes {
 	background-image: url(../img/double-arrow.png);
 	background-color: transparent !important;
