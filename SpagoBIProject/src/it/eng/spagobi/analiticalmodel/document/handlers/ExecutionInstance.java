@@ -656,7 +656,8 @@ public class ExecutionInstance implements Serializable{
 		while (i.hasNext()){
 			Object el = i.next();
 			if (el instanceof String){
-				if (((String)el).isEmpty()){
+				String elString = ((String)el);
+				if (elString!=null && elString.length()==0){
 					i.remove();
 				}
 			}
