@@ -20,6 +20,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import javax.ws.rs.DefaultValue;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -51,6 +53,8 @@ public class PageResource extends AbstractCockpitEngineService {
 			urls.put("edit", "/WEB-INF/jsp/cockpit.jsp");
 			pages.put("execute", new JSONObject("{name: 'execute', description: 'the cockpit execution page', parameters: ['template']}"));
 			urls.put("execute", "/WEB-INF/jsp/cockpit.jsp");
+			pages.put("test", new JSONObject("{name: 'test', description: 'the cockpit test page', parameters: ['template']}"));
+			urls.put("execute", "/WEB-INF/jsp/test4.jsp");
 		} catch (JSONException t) {
 			// TODO Auto-generated catch block
 			t.printStackTrace();
@@ -82,7 +86,8 @@ public class PageResource extends AbstractCockpitEngineService {
 	@GET
 	@Path("/{pagename}")
 	@Produces("text/html")
-	public void openPage(@PathParam("pagename") String pageName) {
+	public void openPage(@PathParam("pagename") String pageName
+			, @QueryParam("extjs") @DefaultValue("3") String extjs) {
 		CockpitEngineInstance engineInstance;
 		String dispatchUrl = null;
 		
@@ -91,9 +96,13 @@ public class PageResource extends AbstractCockpitEngineService {
 	        	engineInstance = CockpitEngine.createInstance(
 	        			getIOManager().getTemplateAsString(), getIOManager().getEnv()
 	        	);
+	        	// TODO put this not in session but in context
 	        	getIOManager().getHttpSession().setAttribute(EngineConstants.ENGINE_INSTANCE, engineInstance);
-	        	//getExecutionSession().setAttributeInSession( ENGINE_INSTANCE, whatIfEngineInstance);
-	        	dispatchUrl = "/WEB-INF/jsp/cockpit.jsp";
+	        	if(extjs.equalsIgnoreCase("3")) {
+	        		dispatchUrl = "/WEB-INF/jsp/cockpit.jsp";
+	        	} else {
+	        		dispatchUrl = "/WEB-INF/jsp/cockpit4.jsp";
+	        	}	        	
 			} else if("edit".equals(pageName)) {
 				JSONObject template = null;
 	        	template = buildBaseTemplate();
@@ -103,9 +112,15 @@ public class PageResource extends AbstractCockpitEngineService {
 	        			template.toString(), // servletIOManager.getTemplateAsString(), 
 	        			getIOManager().getEnv()
 	        	);
+	        	// TODO put this not in session but in context
 	        	getIOManager().getHttpSession().setAttribute(EngineConstants.ENGINE_INSTANCE, engineInstance);
-	        	//getExecutionSession().setAttributeInSession( ENGINE_INSTANCE, whatIfEngineInstance);
-	        	dispatchUrl = "/WEB-INF/jsp/cockpit.jsp";
+	        	if(extjs.equalsIgnoreCase("3")) {
+	        		dispatchUrl = "/WEB-INF/jsp/cockpit.jsp";
+	        	} else {
+	        		dispatchUrl = "/WEB-INF/jsp/cockpit4.jsp";
+	        	}
+			} else if("test".equals(pageName)) {
+				dispatchUrl = "/WEB-INF/jsp/test4.jsp";
 			} else {
 				//error
 				dispatchUrl = "/WEB-INF/jsp/error.jsp";
