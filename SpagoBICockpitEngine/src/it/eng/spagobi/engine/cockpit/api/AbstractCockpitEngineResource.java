@@ -27,7 +27,7 @@ import org.apache.log4j.Logger;
  * @author Zerbetto Davide (davide.zerbetto@eng.it), Alberto Ghedin (alberto.ghedin@eng.it)
  *
  */
-public class AbstractCockpitEngineService extends AbstractRestService {
+public class AbstractCockpitEngineResource extends AbstractRestService {
 
 	@Context
 	protected HttpServletRequest request;
@@ -36,7 +36,7 @@ public class AbstractCockpitEngineService extends AbstractRestService {
 	
 	
 	
-	public static transient Logger logger = Logger.getLogger(AbstractCockpitEngineService.class);
+	public static transient Logger logger = Logger.getLogger(AbstractCockpitEngineResource.class);
 	
 	public EngineStartServletIOManager getIOManager() {
 		EngineStartServletIOManager ioManager = null;
