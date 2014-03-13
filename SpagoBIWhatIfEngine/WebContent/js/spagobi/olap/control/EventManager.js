@@ -108,11 +108,11 @@ Ext.define('Sbi.olap.control.EventManager', {
 		this.olapController.moveHierarchy(hierarchy1, fromAxis, toAxis);
 	}
     /**
-     * Updates the drill down/up mode on the table renderer
-     * @param {String} mode that can be 'position', 'member' or 'replace'
+     * Updates the model configuration based on the toolbar settings
+     * @param {String} config toolbar configuration for the model
      */
-	,setDrillMode: function(mode){
-		this.olapController.setDrillMode(mode);
+	,setModelConfig: function(config){
+		this.olapController.setModelConfig(config);
 	},
 });
 

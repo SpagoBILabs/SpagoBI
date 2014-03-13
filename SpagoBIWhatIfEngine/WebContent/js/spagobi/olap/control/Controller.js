@@ -107,15 +107,16 @@ Ext.define('Sbi.olap.control.Controller', {
 		
 		service.callService(this);
 	}
-	, setDrillMode: function(mode){
-		alert('mode: '+ mode);
-/*		var service = Ext.create("Sbi.service.RestService",{
-			url: "member",
-			subPath: "drillup",
-			pathParams: [axis, position, member]
+	, setModelConfig: function(config){
+
+		var service = Ext.create("Sbi.service.RestService",{
+			url: "modelconfig",
+			method: 'POST',
+			jsonData: config
+			
 		});
 		
-		service.callService(this);*/
+		service.callService(this);
 		
 	}
 });

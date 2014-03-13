@@ -49,7 +49,7 @@ public class PivotJsonSerializer implements ISerializer {
 		}
 	}
 	
-	public String deserialize(String toDeserialize, Class object) throws SerializationException {
+	public Object deserialize(String toDeserialize, Class object) throws SerializationException {
 		try {
 			return mapper.readValue(toDeserialize, object);
 		} catch (Exception e) {
