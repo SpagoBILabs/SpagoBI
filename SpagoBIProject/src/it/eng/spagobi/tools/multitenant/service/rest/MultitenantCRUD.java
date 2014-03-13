@@ -242,7 +242,7 @@ public class MultitenantCRUD {
 		
 		IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 		try {
-			
+			String saveType = "INSERT";
 			JSONObject requestBodyJSON = RestUtilities.readBodyAsJSONObject(req);
 				 
 			ITenantsDAO dao = DAOFactory.getTenantsDAO();
@@ -263,12 +263,14 @@ public class MultitenantCRUD {
 							
 				SbiTenant tmp = dao.loadTenantByName(tenantNew.getName());
 				tenantNew.setId(tmp.getId());
+				
 			} else {				
 				//update ds
 				dao.modifyTenant(tenantNew);
+				saveType = "UPDATE";
 			}  
 
-			return ("{MULTITENANT_ID:"+tenantNew.getId()+" }");
+			return ("{MULTITENANT_ID:"+tenantNew.getId()+" , SAVE_TYPE: '"+saveType+"'}");
 			
 		} catch (SpagoBIRuntimeException ex) {
 			logger.error("Cannot fill response container", ex);
