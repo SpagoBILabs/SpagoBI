@@ -53,6 +53,12 @@ Ext.define('Sbi.olap.OlapPanel', {
      */
 	eventManager: null,
 	
+	/**
+     * @property {Sbi.olap.PivotModel} pivotModel
+     *  The pivot model
+     */
+	pivotModel: null,
+	
 	constructor : function(config) {
 		this.initConfig(config||{});
 //		if(Sbi.settings && Sbi.settings.olap && Sbi.settings.olap.OlapPanel) {
@@ -83,5 +89,11 @@ Ext.define('Sbi.olap.OlapPanel', {
 			items: [this.definitionTools, this.executionPanel, this.optionsPanel]
 		});
 		this.callParent();
+	},
+	
+	updateAfterMDXExecution: function(pivot){
+		this.pivotModel = pivot;
+		this.executionPanel.updateAfterMDXExecution(pivot);
 	}
+	
 });

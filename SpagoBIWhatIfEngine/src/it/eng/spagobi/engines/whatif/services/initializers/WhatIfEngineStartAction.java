@@ -91,7 +91,7 @@ public class WhatIfEngineStartAction extends AbstractWhatIfEngineService {
 //		 env.put(EngineConstants.ENV_AUDIT_SERVICE_PROXY, getAuditServiceProxy() );
 //		 env.put(EngineConstants.ENV_DATASET_PROXY, getDataSetServiceProxy());
 //		 env.put(EngineConstants.ENV_DATASOURCE_PROXY, getDataSourceServiceProxy()); 
-//		 env.put(EngineConstants.ENV_LOCALE, getLocale()); 
+		 env.put(EngineConstants.ENV_LOCALE, Locale.ITALY); 
 
 		 return env;
 	 }

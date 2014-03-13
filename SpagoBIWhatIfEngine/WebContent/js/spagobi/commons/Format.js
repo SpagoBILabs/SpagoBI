@@ -21,9 +21,9 @@
   * - Andrea Gioia (adrea.gioia@eng.it)
   */
 
-Ext.ns("Sbi.qbe.commons");
+Ext.ns("Sbi.whatif.commons");
 
-Sbi.qbe.commons.Format = function(){
+Sbi.whatif.commons.Format = function(){
  
 	return {
 		/**
@@ -63,7 +63,7 @@ Sbi.qbe.commons.Format = function(){
          */
         , dateRenderer : function(format){
             return function(v){
-                return Sbi.qbe.commons.Format.date(v, format);
+                return Sbi.whatif.commons.Format.date(v, format);
             };
         }
         
@@ -127,7 +127,7 @@ Sbi.qbe.commons.Format = function(){
         
         , numberRenderer : function(format){
             return function(v){
-                return Sbi.qbe.commons.Format.number(v, format);
+                return Sbi.whatif.commons.Format.number(v, format);
             };
         }
         
@@ -171,7 +171,7 @@ Sbi.qbe.commons.Format = function(){
         
         , stringRenderer : function(format){
             return function(v){
-                return Sbi.qbe.commons.Format.string(v, format);
+                return Sbi.whatif.commons.Format.string(v, format);
             };
         }
         
@@ -195,7 +195,7 @@ Sbi.qbe.commons.Format = function(){
         
         , booleanRenderer : function(format){
             return function(v){
-                return Sbi.qbe.commons.Format.boolean(v, format);
+                return Sbi.whatif.commons.Format.boolean(v, format);
             };
         }
         
@@ -208,7 +208,7 @@ Sbi.qbe.commons.Format = function(){
         
         , htmlRenderer : function(format){
             return function(v){
-                return Sbi.qbe.commons.Format.html(v, format);
+                return Sbi.whatif.commons.Format.html(v, format);
             };
         }
         

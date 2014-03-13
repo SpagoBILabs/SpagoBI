@@ -20,7 +20,7 @@ public class ModelConfig {
 	private String drillType;
 
 	public ModelConfig() {
-		drillType = DrillDownCommand.MODE_REPLACE;
+		drillType = DrillDownCommand.MODE_POSITION;
 	}
 
 	public String getDrillType() {

@@ -72,6 +72,7 @@ Ext.define('Sbi.olap.execution.OlapExecutionPanel', {
 	 */
 	updateAfterMDXExecution: function(pivotModel){
 		this.olapExecutionPivot.updateAfterMDXExecution(pivotModel);
+		this.olapToolbar.updateAfterMDXExecution(pivotModel);
 	}
 	
 	

@@ -19,6 +19,7 @@ package it.eng.spagobi.engines.whatif.services.model;
 import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
 import it.eng.spagobi.engines.whatif.services.common.AbstractWhatIfEngineService;
 
+import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -38,8 +39,8 @@ public class ModelResource extends AbstractWhatIfEngineService {
 	 * @return the htm table representing the cellset
 	 */
 	@PUT
-	@Path("/mdx/{mdx}")
-	public String executeSimpleQuery(@PathParam("mdx") String mdx){
+	@Path("/{mdx}")
+	public String setMdx(@PathParam("mdx") String mdx){
 		logger.debug("IN");
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
 		PivotModel model = ei.getPivotModel();
@@ -50,11 +51,32 @@ public class ModelResource extends AbstractWhatIfEngineService {
 		}else{
 			logger.debug("No query found");
 		}
-		
-		
+				
 		String table = renderModel(model);
 		logger.debug("OUT");
 		return table;
+		
+	}
+	
+	/**
+	 * Gets the active mdx statement
+	 * @return the mdx active statement
+	 */
+	@GET
+	public String getMdx(){
+		logger.debug("IN");
+		WhatIfEngineInstance ei = getWhatIfEngineInstance();
+		PivotModel model = ei.getPivotModel();
+		
+		String mdx = model.getMdx();
+		
+		if(mdx==null){
+			mdx = "";
+		}
+		
+		
+		logger.debug("OUT");
+		return mdx;
 		
 	}
 }
