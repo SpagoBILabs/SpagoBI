@@ -335,8 +335,12 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
 		} catch (SourceBeanException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Error while modifing the data source with id " + ((aDataSource == null)?"":String.valueOf(aDataSource.getDsId())), e);
+
+			if (tx != null)
+				tx.rollback();
+
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
 			if (aSession!=null){
 				if (aSession.isOpen()) aSession.close();
@@ -386,10 +390,11 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 	 * 
 	 * @see it.eng.spagobi.tools.datasource.dao.IDataSourceDAO#insertDataSource(it.eng.spagobi.tools.datasource.bo.DataSource)
 	 */
-	public void insertDataSource(IDataSource aDataSource, String organization) throws EMFUserError {
+	public Integer insertDataSource(IDataSource aDataSource, String organization) throws EMFUserError {
 		logger.debug("IN");
 		Session aSession = null;
 		Transaction tx = null;
+		Integer id = null;
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
@@ -425,7 +430,7 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 			hibDataSource.getCommonInfo().setOrganization(organization);
 		
 			updateSbiCommonInfo4Insert(hibDataSource);
-			Integer idds = (Integer)aSession.save(hibDataSource);	
+			id = (Integer)aSession.save(hibDataSource);	
 			tx.commit();
 			aSession.flush();
 			tx.begin();
@@ -435,7 +440,7 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 			sbiOrganizationDatasource.setSbiDataSource(hibDataSource);
 			sbiOrganizationDatasource.setSbiOrganizations(sbiOrganizations);
 			SbiOrganizationDatasourceId idRel = new SbiOrganizationDatasourceId();
-			idRel.setDatasourceId(idds);
+			idRel.setDatasourceId(id);
 			idRel.setOrganizationId(sbiOrganizations.getId());
 			sbiOrganizationDatasource.setId(idRel);
 			
@@ -459,6 +464,7 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 				if (aSession.isOpen()) aSession.close();
 				logger.debug("OUT");
 			}
+			return id;
 		}
 	}
 

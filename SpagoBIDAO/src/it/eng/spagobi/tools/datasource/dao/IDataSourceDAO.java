@@ -76,10 +76,10 @@ public interface IDataSourceDAO extends ISpagoBIDao{
 	 * into the input <code>datasource</code> object.
 	 * 
 	 * @param aDataSource The object containing all insert information
-	 * 
+	 * @return the datasource id
 	 * @throws EMFUserError If an Exception occurred
 	 */
-	public void insertDataSource(IDataSource aDataSource, String organization) throws EMFUserError;
+	public Integer insertDataSource(IDataSource aDataSource, String organization) throws EMFUserError;
 	
 	/**
 	 * Implements the query to erase a data source. All information needed is stored
