@@ -106,9 +106,11 @@
 	<filter-mapping>
 		<filter-name>SpagoBIAccessFilter</filter-name>
 		<url-pattern>/CockpitEngineStartAction/*</url-pattern>
-		<url-pattern>/CockpitEngineStartEditAction/*</url-pattern>
 	</filter-mapping>
-	
+	<filter-mapping>
+		<filter-name>SpagoBIAccessFilter</filter-name>
+		<url-pattern>/CockpitEngineStartEditAction/*</url-pattern>
+	</filter-mapping>	
 
 
     <!--  ============================================================================ -->
