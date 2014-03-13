@@ -48,6 +48,15 @@ public class PivotJsonSerializer implements ISerializer {
 			throw new SpagoBIRuntimeException("Error serializing the MemberEntry",e);
 		}
 	}
+	
+	public String deserialize(String toDeserialize, Class object) throws SerializationException {
+		try {
+			return mapper.readValue(toDeserialize, object);
+		} catch (Exception e) {
+			logger.error("Error deserializing the MemberEntry",e);
+			throw new SpagoBIRuntimeException("Error deserializing the MemberEntry",e);
+		}
+	}
 
 	public static String getMimetype() {
 		return mimeType;
