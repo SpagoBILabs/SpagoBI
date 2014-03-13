@@ -6,22 +6,15 @@
 
 package it.eng.spagobi.engine.cockpit.services.page;
 
-import java.io.IOException;
-import java.util.HashMap;
-
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.engine.cockpit.CockpitEngineInstance;
 import it.eng.spagobi.engine.cockpit.CockpitEngineRuntimeException;
-import it.eng.spagobi.services.content.bo.Content;
-import it.eng.spagobi.services.proxy.ContentServiceProxy;
-import it.eng.spagobi.utilities.ParametersDecoder;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.EngineStartServletIOManager;
 import it.eng.spagobi.utilities.engines.rest.AbstractRestService;
 import it.eng.spagobi.utilities.engines.rest.ExecutionSession;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -29,17 +22,12 @@ import javax.ws.rs.core.Context;
 
 import org.apache.log4j.Logger;
 
-import sun.misc.BASE64Decoder;
-
 /**
  * 
  * @author Zerbetto Davide (davide.zerbetto@eng.it), Alberto Ghedin (alberto.ghedin@eng.it)
  *
  */
 public class AbstractCockpitEngineService extends AbstractRestService {
-
-
-	
 
 	@Context
 	protected HttpServletRequest request;
