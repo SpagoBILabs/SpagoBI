@@ -9,6 +9,10 @@ import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.commons.utilities.UserUtilities;
+import it.eng.spagobi.container.ContextManager;
+import it.eng.spagobi.container.SpagoBIHttpSessionContainer;
+import it.eng.spagobi.container.strategy.ExecutionContextRetrieverStrategy;
+import it.eng.spagobi.container.strategy.IContextRetrieverStrategy;
 import it.eng.spagobi.engine.cockpit.CockpitEngineRuntimeException;
 import it.eng.spagobi.security.ExternalServiceController;
 import it.eng.spagobi.services.common.SsoServiceFactory;
@@ -16,6 +20,7 @@ import it.eng.spagobi.services.common.SsoServiceInterface;
 import it.eng.spagobi.services.security.bo.SpagoBIUserProfile;
 import it.eng.spagobi.services.security.service.ISecurityServiceSupplier;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.filters.FilterIOManager;
 
 import java.lang.reflect.Method;
 
@@ -190,18 +195,16 @@ public class SecurityServerInterceptor implements PreProcessInterceptor, Accepte
 	
 	private IEngUserProfile getUserProfileFromSession() {
 		IEngUserProfile engProfile = null;
-		HttpSession session = servletRequest.getSession(false);
-		if(session != null)  {
-			engProfile = engProfile = (IEngUserProfile)session.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
-		} else {
-			logger.info("Session is not enabled");
-		}
-		
+		FilterIOManager ioManager = new FilterIOManager(servletRequest, null);
+		ioManager.initConetxtManager();	
+		engProfile = (IEngUserProfile)ioManager.getContextManager().get(IEngUserProfile.ENG_USER_PROFILE);		
 		return engProfile;
 	}
 	
 	private void setUserProfileInSession(IEngUserProfile engProfile) {
-		servletRequest.getSession().setAttribute(IEngUserProfile.ENG_USER_PROFILE, engProfile);
+		FilterIOManager ioManager = new FilterIOManager(servletRequest, null);
+		ioManager.initConetxtManager();	
+		ioManager.getContextManager().set(IEngUserProfile.ENG_USER_PROFILE, engProfile);
 	}
 		
 	private IEngUserProfile getUserProfileFromUserId() {
@@ -254,6 +257,9 @@ public class SecurityServerInterceptor implements PreProcessInterceptor, Accepte
 		return userId;
 	}
 
+	
+	
+	
 	public boolean accept(Class arg0, Method arg1) {
 		// TODO Auto-generated method stub
 		return true;
