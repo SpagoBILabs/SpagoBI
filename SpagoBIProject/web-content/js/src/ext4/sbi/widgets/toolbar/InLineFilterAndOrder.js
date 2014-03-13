@@ -46,6 +46,25 @@ Ext.define('Sbi.widgets.toolbar.InLineFilterAndOrder', {
     	 * Milliseconds of delay between the last key pressed and the application of the filter
     	 */
     	keyPressedDelay: 400,
+    	/**
+    	 * Configuration object for the combo to add in the toolbar. 
+    	 * Like this:
+    	 * 			this.customComboToolbarConfig = {
+					data: [{
+							"name": "Name 1",
+							"value": "Value 1",		        
+						}, {
+							"name": "Name 2",
+							"value": "Value 2",	
+						}
+					],
+					fields: ["name","value"],
+					displayField: "name",
+					valueField: "value"
+			
+			}
+    	 */
+    	addCustomCombo: null,
     	
     	alignToRight: false
     	
@@ -102,6 +121,41 @@ Ext.define('Sbi.widgets.toolbar.InLineFilterAndOrder', {
 
 	    this.add( this.valueField ); 
 	    
+		//Add an optional combo for filtering with a single property ---------------------------------
+	    
+	    if (this.addCustomCombo){
+	    	var comboData = this.addCustomCombo.data;
+			
+	    	this.comboStore = Ext.create('Ext.data.Store', {
+	    		fields: this.addCustomCombo.fields,
+			    data: comboData
+			});
+	    	
+			// ComboBox for filtering
+			this.customToolbarCombo = Ext.create('Ext.form.field.ComboBox', {
+				editable: false,
+				displayField: this.addCustomCombo.displayField,
+				valueField: this.addCustomCombo.valueField,
+			    width: 100,
+			    store: this.comboStore,
+			    queryMode: 'local',
+			    listeners: {
+			        change: function (combo, value) {
+			        	thisPanel.filter(thisPanel.valueField.getRawValue());
+			        }
+			    }
+
+			});
+			var recordSelected = this.customToolbarCombo.getStore().getAt(0);                     
+			this.customToolbarCombo.setValue(recordSelected.get(this.addCustomCombo.valueField));
+			
+		    this.add( this.customToolbarCombo ); 
+	    	
+	    }
+
+		
+		//-----------------------------------------------------------------
+	    
 	    if (this.additionalSorters){
 	    	//adds combo with sorters values			
 	    	for(var i=0; i<this.additionalSorters.length;i++){
@@ -117,6 +171,7 @@ Ext.define('Sbi.widgets.toolbar.InLineFilterAndOrder', {
 				this.add(this.additionalButtons[i]);
 			}
 		}
+
 	}
 	
 	/**
@@ -125,12 +180,19 @@ Ext.define('Sbi.widgets.toolbar.InLineFilterAndOrder', {
 	 * @param {String} textValue the value of the filter
 	 */
 	, filter: function(textValue){
+		//check if there is a value selected on a combo for filtering on a specific property
+		var filterSpecificPropertyValue = "";
+		if ((this.customToolbarCombo != null) && (this.customToolbarCombo !== undefined)){
+			filterSpecificPropertyValue = this.customToolbarCombo.getValue();
+		}
+		
+		
 		if(!textValue || textValue==""){
 			this.fireEvent("filter",{filterString: ""});
-			this.store.load({reset: true, filterString: ""});
+			this.store.load({reset: true, filterString: "", filterSpecificProperty: filterSpecificPropertyValue});
 		}else{
 			this.fireEvent("filter",{filterString: textValue});
-			this.store.load({filterString: textValue});
+			this.store.load({filterString: textValue, filterSpecificProperty: filterSpecificPropertyValue});
 		}
 
 	}

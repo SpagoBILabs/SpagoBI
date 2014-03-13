@@ -53,7 +53,11 @@ Ext.define('Sbi.widgets.grid.FixedGridPanelInMemoryFiltered', {
      	/**
     	 * The list of the properties that should be filtered 
     	 */
-    	filteredProperties: new Array()
+    	filteredProperties: new Array(),
+    	/**
+    	 * Object with internal properties to filter
+    	 */
+    	filteredObjects: null
     }
 
 	/**
@@ -109,9 +113,8 @@ Ext.define('Sbi.widgets.grid.FixedGridPanelInMemoryFiltered', {
     addToolbar: function(){
       	//Adds the additional buttons to the toolbar
       	this.additionalButtons = Sbi.widget.grid.StaticGridDecorator.getAdditionalToolbarButtons(this.buttonToolbarConfig, this);
-
       	
-      	this.tbar = Ext.create('Sbi.widgets.toolbar.InLineFilterAndOrder',Ext.apply({store: this.store, additionalButtons:this.additionalButtons}));
+      	this.tbar = Ext.create('Sbi.widgets.toolbar.InLineFilterAndOrder',Ext.apply({store: this.store, additionalButtons:this.additionalButtons, addCustomCombo:this.customComboToolbarConfig }));
       	this.tbar.on("filter",function(filtercofing){
       		this.filterString = filtercofing.filterString;
       	},this);
@@ -128,7 +131,8 @@ Ext.define('Sbi.widgets.grid.FixedGridPanelInMemoryFiltered', {
     	this.storeConfig = Ext.apply({
     		parentGrid: this,
     		model: modelname,
-    		filteredProperties: this.filteredProperties
+    		filteredProperties: this.filteredProperties,
+    		filteredObjects: this.filteredObjects
     	},this.storeConfig||{});
     	Sbi.debug('FixedGridPanel store built.');
     	return Ext.create('Sbi.widgets.store.InMemoryFilteredStore', this.storeConfig);

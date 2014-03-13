@@ -44,13 +44,21 @@ Ext.define('Sbi.widgets.store.InMemoryFilteredStore', {
     	 */
     	filteredProperties: new Array(),
     	/**
+    	 * Object with internal properties to filter
+    	 */
+    	filteredObjects: null,
+    	/**
     	 * False to reload the wrapped store. It force the refresh of the in memory data
     	 */
     	useChache: true, //cache means that the values are cached
     	/**
     	 * The string used as filter
     	 */
-    	filterString: null
+    	filterString: null,
+    	/**
+    	 * Optional parameter for specify a filter only on a specific property
+    	 */
+    	filterSpecificProperty: null
     }
       
     /**
@@ -64,7 +72,7 @@ Ext.define('Sbi.widgets.store.InMemoryFilteredStore', {
     		if(!this.inMemoryData){
     			this.inMemoryData = this.data.items.slice(0);//clone the items
     		}    		
-   			var items = this.getFilteredItems(this.inMemoryData, this.filteredProperties, this.filterString);
+   			var items = this.getFilteredItems(this.inMemoryData, this.filteredProperties, this.filterString, this.filteredObjects, this.filterSpecificProperty);
    			items = this.getPageItems(this.start, this.limit, items);
    			this.removeAll();
    			for(var i=0; i<items.length;i++){
@@ -94,6 +102,10 @@ Ext.define('Sbi.widgets.store.InMemoryFilteredStore', {
 		
 		this.page = options.page;
 		this.filterString = options.filterString;
+		if (options.filterSpecificProperty){
+			this.filterSpecificProperty = options.filterSpecificProperty;
+		}
+
 		
 		if(options.reset || !this.useChache ||  this.inMemoryData==null ||  this.inMemoryData==undefined){
 			//set null the paging configuration to load all the items from the store
@@ -136,8 +148,34 @@ Ext.define('Sbi.widgets.store.InMemoryFilteredStore', {
      * @param {Array} items The list of the items to filter
 	 * @param {Array} properties The list of properties to search
 	 * @param {String} filterString string to find (apply a like)
+	 * @param {Array} propertiesObject array of objects with fields objectName and filteredProperties for properties inside nested objects
+	 * @param {String} filterSpecificProperty a single specific property to use as a filter (optional)
      */
-	, getFilteredItems: function(items, properties, filterString){
+	, getFilteredItems: function(items, properties, filterString, propertiesObject, filterSpecificProperty){
+		
+		//make a copy of the original values and work with them
+		var copyProperties = properties.slice(); //array copy
+		var copyObjectProperties = this.clone(propertiesObject);
+		
+		//Check if there is a specific property to use as single filter (has priority)
+		if ((filterSpecificProperty != null) && (this.filterSpecificProperty !== undefined) && (this.filterSpecificProperty != "")){
+			//clean properties object to filter only with filterSpecificProperty
+			if (copyProperties.contains(filterSpecificProperty)){
+				copyProperties = [filterSpecificProperty];
+			} else {
+				copyProperties = [];
+			}
+			for (var i=0; i<copyObjectProperties.length; i++){
+				var objectFilteredProperties = copyObjectProperties[i].filteredProperties;
+				if (objectFilteredProperties.contains(filterSpecificProperty)){
+					copyObjectProperties[i].filteredProperties = [filterSpecificProperty]
+				} else {
+					copyObjectProperties[i].filteredProperties =  [];
+				}
+			}
+		}
+		//--------------------------
+		
 		var filteredCount = 0;
 		if(filterString){
 			filterString = filterString+"";
@@ -145,9 +183,35 @@ Ext.define('Sbi.widgets.store.InMemoryFilteredStore', {
 			for(var i=0; i<items.length; i++){
 				var item = items[i];
 				for(var p in item.data){
-					var bool = (properties==null || properties==undefined  || 
-							((properties.contains(p)) && 
+					var bool = (copyProperties==null || copyProperties==undefined  || 
+							((copyProperties.contains(p)) && 
 									(((item.data[p].toLowerCase()).indexOf(filterString.toLowerCase()))>=0)));
+					//for filtering properties of nested object in items
+					if(( copyObjectProperties != null) && (copyObjectProperties !== undefined)){
+						for (var j=0; j<copyObjectProperties.length; j++){
+							var objectName = copyObjectProperties[j].objectName;
+							var objectFilteredProperties = copyObjectProperties[j].filteredProperties;
+							
+							if (p == objectName){
+								var object = item.data[p];
+								if ((object != null) && (object !== undefined)){
+									for (var y=0; y<object.length; y++){
+										var aObject = object[y];
+										for ( internalP in aObject ) {
+											if (objectFilteredProperties.contains(internalP)){
+												if(  (aObject[internalP].toLowerCase()).indexOf(filterString.toLowerCase())  == 0   ){
+													bool = true;
+													break;
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+					//-----------------------
+					
 					if(bool){
 						filteredCount++;
 						filteredItems.push(item);
@@ -155,9 +219,14 @@ Ext.define('Sbi.widgets.store.InMemoryFilteredStore', {
 					}
 				}
 			}
+
+			
 			this.totalCount = filteredCount;
 			return filteredItems;
 		}
+		
+
+		
 		return items;
 	}
 	
@@ -167,6 +236,41 @@ Ext.define('Sbi.widgets.store.InMemoryFilteredStore', {
 		}
 		return 0;
 	}
+	
+	, clone: function(obj){
+		{
+		    // Handle the 3 simple types, and null or undefined
+		    if (null == obj || "object" != typeof obj) return obj;
+
+		    // Handle Date
+		    if (obj instanceof Date) {
+		        var copy = new Date();
+		        copy.setTime(obj.getTime());
+		        return copy;
+		    }
+
+		    // Handle Array
+		    if (obj instanceof Array) {
+		        var copy = [];
+		        for (var i = 0, len = obj.length; i < len; i++) {
+		            copy[i] = this.clone(obj[i]);
+		        }
+		        return copy;
+		    }
+
+		    // Handle Object
+		    if (obj instanceof Object) {
+		        var copy = {};
+		        for (var attr in obj) {
+		            if (obj.hasOwnProperty(attr)) copy[attr] = this.clone(obj[attr]);
+		        }
+		        return copy;
+		    }
+
+		    throw new Error("Unable to copy obj! Its type isn't supported.");
+		}
+	}
+	
 
 
 	

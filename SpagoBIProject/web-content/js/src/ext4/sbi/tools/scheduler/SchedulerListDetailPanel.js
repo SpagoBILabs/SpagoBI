@@ -39,13 +39,46 @@ Ext.define('Sbi.tools.scheduler.SchedulerListDetailPanel', {
 			               "triggers"
 			               ];
 	
-			this.filteredProperties = ["jobName","jobDescription","triggers"];
+			
+			this.filteredProperties = ["jobName"];
+			
+			//for filtering inside objects of fields (in this case triggers object)
+			this.filteredObjects = [
+			              {
+			            	 objectName : "triggers",
+			            	 filteredProperties: ["triggerStartTime","triggerEndTime","triggerChronString"]
+			              }          
+			];
+			
 			this.buttonToolbarConfig = {
 					newButton: true
 			};
 			this.buttonColumnsConfig ={
 					deletebutton:true
 			};
+			
+			this.customComboToolbarConfig = {
+					data: [{
+							"name": LN('sbi.scheduler.starttime'),
+							"value": "triggerStartTime",		        
+						}, {
+							"name": LN('sbi.scheduler.endtime'),
+							"value": "triggerEndTime",	
+						}, {
+							"name": LN('sbi.scheduler.schedulationtype'),
+							"value": "triggerChronString",	
+						},
+						{
+							"name": LN('sbi.generic.label'),
+							"value": "jobName",	
+						}
+					],
+					fields: ["name","value"],
+					displayField: "name",
+					valueField: "value"
+			
+			}
+			
 			
 			 Ext.tip.QuickTipManager.init();
 			

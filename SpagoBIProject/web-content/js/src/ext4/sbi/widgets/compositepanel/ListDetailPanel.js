@@ -78,13 +78,36 @@ Ext.define('Sbi.widgets.compositepannel.ListDetailPanel', {
     	 */
     	buttonToolbarConfig: null,
     	/**
+    	 * Configuration object for the combo to add in the toolbar. 
+    	 * Like this:
+    	 * 			this.customComboToolbarConfig = {
+					data: [{
+							"name": "Name 1",
+							"value": "Value 1",		        
+						}, {
+							"name": "Name 2",
+							"value": "Value 2",	
+						}
+					],
+					fields: ["name","value"],
+					displayField: "name",
+					valueField: "value"
+			
+			}
+    	 */
+    	customComboToolbarConfig: null,
+    	/**
     	 * The definition of the columns of the grid. {@link Sbi.widgets.store.InMemoryFilteredStore#InMemoryFilteredStore}
     	 */
     	columns: [],
     	/**
     	 * The list of the properties that should be filtered 
     	 */
-    	filteredProperties: new Array()
+    	filteredProperties: new Array(),
+    	/**
+    	 * Object with internal properties to filter
+    	 */
+    	filteredObjects: null
     }
 
 	/**
@@ -107,10 +130,13 @@ Ext.define('Sbi.widgets.compositepannel.ListDetailPanel', {
 			columnWidth: 2/5,
 			buttonToolbarConfig: this.buttonToolbarConfig,
 			buttonColumnsConfig: this.buttonColumnsConfig,
+			customComboToolbarConfig: this.customComboToolbarConfig,
 			modelName: this.modelName,
 			columns: this.columns,
 			filterConfig: {},
-			filteredProperties: this.filteredProperties
+			filteredProperties: this.filteredProperties,
+    		filteredObjects: this.filteredObjects
+
 		};
 		
 		Ext.apply(this,config||{});
