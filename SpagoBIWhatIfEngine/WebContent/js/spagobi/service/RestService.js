@@ -22,21 +22,22 @@ Ext.define('Sbi.service.RestService', {
 		subPath: null,
 		method: "GET",
 		pathParams: null,
-		baseParams:[]
+		baseParams:[],
+		jsonData: null
 	},
-	
+
 	constructor : function(config) {
 		this.initConfig(config);
 		this.callParent();
 	},
-	
+
 	getRestUrlWithParameters: function(){
 		var url = this.url;
 
 		if( this.serviceVersion){
 			url = this.serviceVersion+"/"+url;
 		}
-		
+
 		var params = new Array();
 		if(this.subPath!=null && this.subPath!=undefined){
 			if(!this.subPath instanceof Array){
@@ -45,10 +46,13 @@ Ext.define('Sbi.service.RestService', {
 				params = params.concat(this.subPath);
 			}
 		}
+
+		if(this.pathParams){
+			params = params.concat(this.pathParams);
+		}
 		
-		params = params.concat(this.pathParams);
-		
-		
+
+
 		if(params && url){
 			for(var i=0; i<params.length; i++){
 				var p = params[i];
@@ -70,13 +74,13 @@ Ext.define('Sbi.service.RestService', {
 			, baseParams: baseParams
 		});
 	},
-	
-	
+
+
 	callService:function(scope, successCallBack, failureCallBack){
-		
+
 		var mySuccessCallBack= successCallBack;
 		var myFailureCallBack= failureCallBack;
-		
+
 		if(!mySuccessCallBack && scope){
 			mySuccessCallBack = function(response, options) {
 				if(response !== undefined && response.statusText !== undefined && response.responseText!=null && response.responseText!=undefined) {
@@ -86,20 +90,26 @@ Ext.define('Sbi.service.RestService', {
 				}
 			};
 		};
-		
+
 		if(!myFailureCallBack && scope){
 			myFailureCallBack = Sbi.exception.ExceptionHandler.handleFailure;
 		};
-		
-		Ext.Ajax.request({
-			url: this.getRestUrlWithParameters(),
-			method: this.method,
-			success : mySuccessCallBack,
-			scope: scope,
-			failure: myFailureCallBack
-		});
+
+		var ajaxConf = {
+				url: this.getRestUrlWithParameters(),
+				method: this.method,
+				success : mySuccessCallBack,
+				scope: scope,
+				failure: myFailureCallBack
+		};
+
+		if(this.jsonData){
+			ajaxConf.jsonData = this.jsonData;
+		}
+
+		Ext.Ajax.request(ajaxConf);
 	}
-	
+
 
 });
 

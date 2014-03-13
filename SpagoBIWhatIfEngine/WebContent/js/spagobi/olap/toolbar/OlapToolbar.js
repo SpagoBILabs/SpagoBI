@@ -19,7 +19,9 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 	plugins : Ext.create('Ext.ux.BoxReorderer', {}),
 	
 	config:{
-		
+		toolbarConfig: {
+			drillType: 'position'
+		}
 	},
 	
 	constructor : function(config) {
@@ -28,31 +30,33 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 			Ext.apply(this, Sbi.settings.olap.toolbar.OlapToolbar);
 		}
 		
-		this.drillMode = Ext.create('Ext.Button', {
-            text: 'Drill Mode',
-            iconCls: 'drill-mode',
-            menu: [{
-            		text: 'Position',
-	                handler: function() {
-	                	Sbi.olap.eventManager.setDrillMode('position');
-	                }},
-                   {text: 'Member',
-		                handler: function() {
-		                	Sbi.olap.eventManager.setDrillMode('member');
-		           }},
-                   {text: 'Replace',
-			                handler: function() {
-			                	Sbi.olap.eventManager.setDrillMode('replace');
-			       }}],
-            reorderable: false
-        });
-		
 		this.callParent(arguments);
 	},
 	
 	initComponent: function() {
 		
-
+		this.drillMode = Ext.create('Ext.Button', {
+            text: 'Drill Mode',
+            iconCls: 'drill-mode',
+            menu: [{
+            		text: 'Position',
+	                scope:this,
+	                handler: function() {
+	                	this.setToolbarConf({drillType: 'position'});
+	                }},
+                   {text: 'Member',
+	                scope:this,
+	                handler: function() {
+	                	this.setToolbarConf({drillType: 'member'});
+		           }},
+                   {text: 'Replace',
+		        	scope:this,
+	                handler: function() {
+	                	this.setToolbarConf({drillType: 'replace'});
+			       }}],
+            reorderable: false
+        });
+		
 		Ext.apply(this, {
 			layout: {
                 overflowHandler: 'Menu'
@@ -80,6 +84,9 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 	setViewState: function(state){
 		
 	}
-	
+	, setToolbarConf: function (conf){
+		this.toolbarConfig = Ext.apply(this.toolbarConfig, conf);
+		Sbi.olap.eventManager.setModelConfig(conf);
+	}
 	
 });

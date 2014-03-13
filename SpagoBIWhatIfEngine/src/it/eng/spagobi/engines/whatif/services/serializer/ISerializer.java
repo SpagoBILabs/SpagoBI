@@ -13,5 +13,5 @@ package it.eng.spagobi.engines.whatif.services.serializer;
  */
 public interface ISerializer {
 	Object serialize(Object object) throws SerializationException;
-	public String deserialize(String toDeserialize, Class object) throws SerializationException ;
+	Object deserialize(String toDeserialize, Class object) throws SerializationException ;
 }

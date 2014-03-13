@@ -10,18 +10,23 @@
  */
 package it.eng.spagobi.engines.whatif.services.model;
 
+import java.io.IOException;
+
 import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
 import it.eng.spagobi.engines.whatif.services.common.AbstractWhatIfEngineService;
 import it.eng.spagobi.engines.whatif.services.serializer.SerializationException;
 import it.eng.spagobi.engines.whatif.services.serializer.SerializationManager;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
+import it.eng.spagobi.utilities.rest.RestUtilities;
 
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
 import org.apache.log4j.Logger;
+import org.json.JSONObject;
 
 
 @Path("/v1.0/modelconfig")
@@ -30,18 +35,28 @@ public class ModelConfigResource extends AbstractWhatIfEngineService {
 	public static transient Logger logger = Logger.getLogger(ModelConfigResource.class);
 	
 	/**
-	 * Sets the drill type
-	 * @param drillType the drill type
+	 * Sets the model configuration defined by the toolbar
 	 * @return the html table representing the cellset
 	 */
-	@PUT
-	@Path("/drilltype/{type}")
-	public String setDrillType(@PathParam("type") String drillType){
+	@POST
+	public String setModelConfig(){
 		logger.debug("IN");
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
 		ModelConfig config = ei.getModelConfig();
+		ModelConfig modelconfig;
 		
-		config.setDrillType(drillType);
+		String modelConfig;
+
+		try {
+			modelConfig = RestUtilities.readBody(getServletRequest());
+		
+			modelconfig = (ModelConfig)SerializationManager.getDefaultSerializer().deserialize(modelConfig, ModelConfig.class);
+			config.setDrillType(modelconfig.getDrillType());
+		} catch (SerializationException e) {
+			logger.error(e.getMessage());
+		}catch (IOException e1) {
+			logger.error(e1.getMessage());
+		}
 		
 		String table = renderModel(ei.getPivotModel());
 		logger.debug("OUT");
