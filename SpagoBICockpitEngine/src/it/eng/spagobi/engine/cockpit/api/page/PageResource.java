@@ -13,7 +13,7 @@ package it.eng.spagobi.engine.cockpit.api.page;
 
 import it.eng.spagobi.engine.cockpit.CockpitEngine;
 import it.eng.spagobi.engine.cockpit.CockpitEngineInstance;
-import it.eng.spagobi.engine.cockpit.api.AbstractCockpitEngineService;
+import it.eng.spagobi.engine.cockpit.api.AbstractCockpitEngineResource;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
 
@@ -40,7 +40,7 @@ import org.json.JSONObject;
  */
 
 @Path("/1.0/page")
-public class PageResource extends AbstractCockpitEngineService {
+public class PageResource extends AbstractCockpitEngineResource {
 
 	static private Map<String, JSONObject> pages;
 	static private Map<String, String> urls;
