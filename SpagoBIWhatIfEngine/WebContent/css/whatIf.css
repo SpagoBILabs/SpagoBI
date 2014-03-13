@@ -88,9 +88,7 @@
     vertical-align: top;
     padding: 3px;
 }
-.drill-mode{
-	background-image: url(../img/drill.png);
-}
+
 .swapaxes {
 	background-image: url(../img/double-arrow.png);
 	background-color: transparent !important;
@@ -133,3 +131,10 @@
 	padding: 4px"
 }
 
+/* toolbar */
+.drill-mode{
+	background-image: url(../img/drill.png);
+}
+.mdx{
+	background-image: url(../img/mdx.png);
+}

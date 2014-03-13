@@ -17,5 +17,6 @@ Ext.define('Sbi.olap.PivotModel', {
 	          {name: 'filters',   type: 'array'},
 	          {name: 'table', type: 'string'},
 	          {name: 'rowsAxisOrdinal', type: 'int'},
-	          {name: 'columnsAxisOrdinal', type: 'int'}]
+	          {name: 'columnsAxisOrdinal', type: 'int'},
+	          {name: 'mdxFormatted', type: 'String'}]
 });

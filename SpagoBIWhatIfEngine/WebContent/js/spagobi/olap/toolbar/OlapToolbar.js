@@ -9,7 +9,7 @@
  * 
  *     
  *  @author
- *  Alberto Ghedin (alberto.ghedin@eng.it)
+ *  Alberto Ghedin (alberto.ghedin@eng.it), Monica Franceschini (monica.franceschini@eng.it)
  */
 
 
@@ -17,76 +17,147 @@
 Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 	extend: 'Ext.toolbar.Toolbar',
 	plugins : Ext.create('Ext.ux.BoxReorderer', {}),
-	
+
 	config:{
 		toolbarConfig: {
 			drillType: 'position'
-		}
+		},
+		mdx: ""
 	},
-	
+
+	/**
+	 * @property {Ext.window.Window} mdxWindow
+	 *  The window with the medx query
+	 */
+	mdxWindow: null,
+
+	mdxContainerPanel: null,
+
+	drillMode: null,
+
+	showMdx: null,
+
+
 	constructor : function(config) {
 		this.initConfig(config);
 		if(Sbi.settings && Sbi.settings.olap && Sbi.settings.olap.toolbar && Sbi.settings.olap.toolbar.OlapToolbar) {
 			Ext.apply(this, Sbi.settings.olap.toolbar.OlapToolbar);
 		}
-		
+
 		this.callParent(arguments);
 	},
-	
+
 	initComponent: function() {
-		
+
 		this.drillMode = Ext.create('Ext.Button', {
-            text: 'Drill Mode',
-            iconCls: 'drill-mode',
-            menu: [{
-            		text: 'Position',
-	                scope:this,
-	                handler: function() {
-	                	this.setToolbarConf({drillType: 'position'});
-	                }},
-                   {text: 'Member',
-	                scope:this,
-	                handler: function() {
-	                	this.setToolbarConf({drillType: 'member'});
-		           }},
-                   {text: 'Replace',
-		        	scope:this,
-	                handler: function() {
-	                	this.setToolbarConf({drillType: 'replace'});
-			       }}],
-            reorderable: false
-        });
-		
+			text: LN('sbi.olap.toolbar.drill.mode'),
+			iconCls: 'drill-mode',
+			menu: [{
+				text: 'Position',
+				scope:this,
+				handler: function() {
+					this.setToolbarConf({drillType: 'position'});
+				}},
+				{text: 'Member',
+					scope:this,
+					handler: function() {
+						this.setToolbarConf({drillType: 'member'});
+					}},
+					{text: 'Replace',
+						scope:this,
+						handler: function() {
+							this.setToolbarConf({drillType: 'replace'});
+						}}],
+						reorderable: true
+		});
+
+		this.showMdx = Ext.create('Ext.Button', {
+			text: LN('sbi.olap.toolbar.mdx'),
+			iconCls: 'mdx',
+			handler: function() {
+				this.showMdxWindow();
+			},
+			scope:this,
+			reorderable: true
+		});
+
 		Ext.apply(this, {
 			layout: {
-                overflowHandler: 'Menu'
-            },
-			defaults: {
-	            reorderable: true
-	        },items   : [ this.drillMode ]
+				overflowHandler: 'Menu'
+			},
+			items   : [ this.drillMode, this.showMdx ]
 		});
 		this.callParent();
 	},
-	
-    /**
-     * Gets the configuration of the view
-     * @return {Object} returns the configuration state: position and visibility of the buttons
-     */
+
+	/**
+	 * Gets the configuration of the view
+	 * @return {Object} returns the configuration state: position and visibility of the buttons
+	 */
 	getViewState: function(){
-		
+
 	},
-	
-    /**
-     * Sets the state of the view. Updates the toolbar setting the order and the visibility of the buttons.
-     * The hidden buttons are grouped in a new menu in the top right 
-     * @param {Object} state of the view 
-     */
+
+	/**
+	 * Sets the state of the view. Updates the toolbar setting the order and the visibility of the buttons.
+	 * The hidden buttons are grouped in a new menu in the top right 
+	 * @param {Object} state of the view 
+	 */
 	setViewState: function(state){
-		
+		this.toolbarConfig = Ext.apply(this.toolbarConfig, state);
 	}
+
+	/**
+	 * Sets the state of the view. Updates the toolbar setting the order and the visibility of the buttons.
+	 * Syncronize the configuration in the server
+	 * @param {Object} state of the view 
+	 */
 	, setToolbarConf: function (conf){
-		this.toolbarConfig = Ext.apply(this.toolbarConfig, conf);
+		this.setViewState(conf);
 		Sbi.olap.eventManager.setModelConfig(conf);
 	}
-	
+
+	/**
+	 * Updates the object after the execution of a mdx query
+	 * @param {Sbi.olap.PivotModel} pivot model
+	 */
+	, updateAfterMDXExecution: function(pivot){
+		this.mdx=pivot.get("mdxFormatted");
+	}
+
+	/**
+	 * Updates the object after the execution of a mdx query
+	 * @param {Sbi.olap.PivotModel} pivot model
+	 */
+	, showMdxWindow: function(){
+		if(!this.mdxWindow){
+
+
+			this.mdxContainerPanel = Ext.create('Ext.panel.Panel', {
+				frame: false,
+				layout: 'fit',
+				html: "" 
+			});
+
+			this.mdxWindow = Ext.create('Ext.window.Window', {
+				height: 400,
+				width: 300,
+				layout: 'fit',
+				closeAction: 'hide',
+				items:[this.mdxContainerPanel],
+				bbar:[
+				      '->',    {
+				    	  text: LN('sbi.common.close'),
+				    	  handler: function(){
+				    		  this.mdxWindow.hide();
+				    	  },
+				    	  scope: this
+				      }]
+			});
+		}
+		this.mdxContainerPanel.update(this.mdx);
+		this.mdxWindow.show();
+	}
+
+
 });

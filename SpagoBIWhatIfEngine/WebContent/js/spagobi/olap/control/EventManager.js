@@ -52,7 +52,7 @@ Ext.define('Sbi.olap.control.EventManager', {
 	updateAfterMDXExecution: function(pivotHtml){
 		var tableJson = Ext.decode(pivotHtml);
 		var pivot = Ext.create('Sbi.olap.PivotModel', tableJson);
-		this.olapPanel.executionPanel.updateAfterMDXExecution(pivot);
+		this.olapPanel.updateAfterMDXExecution(pivot);
 	},
     /**
      * Updates the view after drill down operation

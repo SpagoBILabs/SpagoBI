@@ -31,18 +31,16 @@ Ext.define('Sbi.olap.control.Controller', {
 	},
 	
 	executeMdx: function(mdx){
-
 		
 		var service = Ext.create("Sbi.service.RestService",{
 			url: "model",
-			subPath: "mdx",
 			method: "PUT",
 			pathParams: [mdx]
 		});
 		
 		service.callService(this);
 	}
-	, drillDown: function(axis, position,  member){
+	,drillDown: function(axis, position,  member){
 
 		var service = Ext.create("Sbi.service.RestService",{
 			url: "member",

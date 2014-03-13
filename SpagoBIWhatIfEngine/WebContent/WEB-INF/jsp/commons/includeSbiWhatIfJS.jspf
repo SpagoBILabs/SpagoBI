@@ -5,7 +5,10 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 
 <!-- Include WHATIF stylesheets -->
 <link rel="styleSheet" href ="../css/whatIf.css" type="text/css" />
-<script type="text/javascript" src='../js/spagobi/commons/Settings.js'/></script>	
+<script type="text/javascript" src='../js/spagobi/commons/Settings.js'/></script>
+<script type="text/javascript" src='../js/spagobi/commons/Utils.js'/></script>		
+<script type="text/javascript" src='../js/spagobi/locale/LocaleUtils.js'/></script>
+<script type="text/javascript" src='../js/spagobi/locale/<%=locale.getLanguage()%>.js'/></script>
 
 
 <!-- START-DEBUG -->
@@ -22,7 +25,6 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 
 <script type="text/javascript" src='../js/spagobi/commons/Format.js'/></script>
 <script type="text/javascript" src='../js/spagobi/commons/Utils.js'/></script>
-<script type="text/javascript" src='../js/spagobi/locale/LocaleUtils.js'/></script>
 
 <script type="text/javascript" src='../js/spagobi/olap/options/OlapOptionsChart.js'></script>
 <script type="text/javascript" src='../js/spagobi/olap/options/OlapOptionsTable.js'></script>

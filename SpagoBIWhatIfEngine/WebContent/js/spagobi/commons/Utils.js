@@ -20,10 +20,10 @@
   * 
   * - Andrea Gioia (adrea.gioia@eng.it)
   */
+Ext.ns("Sbi.whatif");
+Ext.ns("Sbi.whatif.commons");
 
-Ext.ns("Sbi.qbe.commons");
-
-Sbi.qbe.commons.Utils = function(){
+Sbi.whatif.commons.Utils = function(){
  
     // private variables
 	
@@ -56,11 +56,11 @@ Sbi.qbe.commons.Utils = function(){
 	
 		
 		, log: function(severity, message) {
-			this.unimplementedFunction('Sbi.qbe.commons.log');
+			this.unimplementedFunction('Sbi.whatif.commons.log');
 		}
 		
 		, assertTrue: function(condition, msg) {
-			this.unimplementedFunction('Sbi.qbe.commons.assertTrue');
+			this.unimplementedFunction('Sbi.whatif.commons.assertTrue');
 		}
         
 	};
