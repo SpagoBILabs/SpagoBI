@@ -50,7 +50,7 @@ author:...
 	
 	whatIfEngineInstance = (WhatIfEngineInstance)es.getAttributeFromSession(EngineConstants.ENGINE_INSTANCE );
 //	profile = (UserProfile)whatIfEngineInstance.getEnv().get(EngineConstants.ENV_USER_PROFILE);
-//	locale = (Locale)whatIfEngineInstance.getEnv().get(EngineConstants.ENV_LOCALE);
+	locale = (Locale)whatIfEngineInstance.getEnv().get(EngineConstants.ENV_LOCALE);
 	
 	isFromCross = (String)whatIfEngineInstance.getEnv().get("isFromCross");
 	if (isFromCross == null) {
@@ -89,6 +89,7 @@ author:...
     	
     	
     	Sbi.config = {};
+    	Sbi.whatif = {};
     	
 		var url = {
 	    	host: '<%= request.getServerName()%>'
