@@ -111,11 +111,17 @@ public class EngineDAOHibImpl extends AbstractHibernateDAO implements IEngineDAO
 			logger.debug("engine label is "+engineLabel);
 			aSession = getSession();
 			tx = aSession.beginTransaction();
-			Criterion labelCriterrion = Expression.eq("label",
-					engineLabel);
-			Criteria criteria = aSession.createCriteria(SbiEngines.class);
-			criteria.add(labelCriterrion);
-			SbiEngines hibEngine = (SbiEngines) criteria.uniqueResult();
+//			Criterion labelCriterrion = Expression.eq("label",
+//					engineLabel);
+//			Criteria criteria = aSession.createCriteria(SbiEngines.class);
+//			criteria.add(labelCriterrion);
+//			SbiEngines hibEngine = (SbiEngines) criteria.uniqueResult();
+			Query hibQuery = aSession.createQuery("select oe.sbiEngines from SbiOrganizationEngine oe "
+					+ "where oe.sbiEngines.label = ? and oe.sbiOrganizations.name = ?" );
+			hibQuery.setString(0, engineLabel);
+			hibQuery.setString(1, getTenant());
+			SbiEngines hibEngine = (SbiEngines) hibQuery.uniqueResult();
+			
 			if (hibEngine == null) {
 				logger.error("A null engine has been returned for label"+engineLabel);
 				return null;
@@ -160,11 +166,20 @@ public class EngineDAOHibImpl extends AbstractHibernateDAO implements IEngineDAO
 			logger.debug("engine driver is "+driver);
 			aSession = getSession();
 			tx = aSession.beginTransaction();
-			Criterion labelCriterrion = Expression.eq("driverNm",
-					driver);
-			Criteria criteria = aSession.createCriteria(SbiEngines.class);
-			criteria.add(labelCriterrion);
-			SbiEngines hibEngine = (SbiEngines) criteria.uniqueResult();
+			
+//			Criterion labelCriterrion = Expression.eq("driverNm",
+//										driver);
+//			Criteria criteria = aSession.createCriteria(SbiEngines.class);
+//			criteria.add(labelCriterrion);
+//			SbiEngines hibEngine = (SbiEngines) criteria.uniqueResult();
+			
+			Query hibQuery = aSession.createQuery("select oe.sbiEngines from SbiOrganizationEngine oe "
+					+ "where oe.sbiEngines.driverNm = ? and oe.sbiOrganizations.name = ?" );
+			hibQuery.setString(0, driver);
+			hibQuery.setString(1, getTenant());
+
+			SbiEngines hibEngine = (SbiEngines) hibQuery.uniqueResult();
+			
 			if (hibEngine == null) {
 				logger.error("A null engine has been returned for label"+driver);
 				return null;
