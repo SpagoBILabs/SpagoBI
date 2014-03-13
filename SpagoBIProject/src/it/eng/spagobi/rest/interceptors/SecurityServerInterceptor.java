@@ -8,11 +8,20 @@ import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.StringUtilities;
+import it.eng.spagobi.commons.utilities.UserUtilities;
+import it.eng.spagobi.container.ContextManager;
+import it.eng.spagobi.container.SpagoBIHttpSessionContainer;
+import it.eng.spagobi.container.strategy.ExecutionContextRetrieverStrategy;
+import it.eng.spagobi.container.strategy.IContextRetrieverStrategy;
 import it.eng.spagobi.security.ExternalServiceController;
 import it.eng.spagobi.services.common.SsoServiceFactory;
 import it.eng.spagobi.services.common.SsoServiceInterface;
 import it.eng.spagobi.services.exceptions.ExceptionUtilities;
+import it.eng.spagobi.services.security.bo.SpagoBIUserProfile;
+import it.eng.spagobi.services.security.service.ISecurityServiceSupplier;
+import it.eng.spagobi.services.security.service.SecurityServiceSupplierFactory;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.filters.FilterIOManager;
 
 import java.lang.reflect.Method;
 
@@ -38,7 +47,7 @@ import org.jboss.resteasy.spi.interception.PreProcessInterceptor;
  * The org.jboss.resteasy.spi.interception.PreProcessInterceptor runs after a JAX-RS resource 
  * method is found to invoke on, but before the actual invocation happens
  * 
- * @author Alberto Ghedin (alberto.ghedin@eng.it)
+ * Similar to SpagoBIAccessFilter but designed for REST services
  *
  */
 @Provider
@@ -52,39 +61,67 @@ public class SecurityServerInterceptor implements PreProcessInterceptor, Accepte
 	private HttpServletRequest servletRequest;
 	
 	/**
-	 * Preprocess all the REST requests..
+	 * Preprocess all the REST requests.
+	 * 
 	 * Get the UserProfile from the session and checks if has
 	 * the grants to execute the service
 	 */
-	public ServerResponse preProcess(HttpRequest req, ResourceMethod arg1)throws Failure, WebApplicationException {
-
+	public ServerResponse preProcess(HttpRequest request, ResourceMethod resourceMethod)
+	throws Failure, WebApplicationException {
+		
+		ServerResponse response;
+		
 		logger.trace("IN");
 		
-		String serviceUrl = InterceptorUtilities.getServiceUrl(req);
-		
-		//Check for Services that can be invoked externally without user login in SpagoBI
-		ExternalServiceController externalServiceController = ExternalServiceController.getInstance();
-		boolean isExternalService = externalServiceController.isExternalService(serviceUrl);
-
-		if (!isExternalService){
-			//Other checks are required
-			boolean authenticated = isUserAuthenticated();
-			if(!authenticated){
-				//throws unlogged user exception that will be managed by RestExcepionMapper
-			    logger.info("User not logged");
-			    throw new LoggableFailure( req.getUri().getRequestUri().getPath() );
+		response = null;
+		try {
+			String serviceUrl = InterceptorUtilities.getServiceUrl(request);
+			serviceUrl = serviceUrl.replaceAll("/1.0/", "/");
+			int index = serviceUrl.indexOf("/", 1);
+			if(index > 0) {
+				serviceUrl = serviceUrl.substring(0, index);
+			}
+						
+			String methodName = resourceMethod.getMethod().getName();
+					
+			logger.info("Receiving request from: " + servletRequest.getRemoteAddr());
+			logger.info("Attempt to invoke method [" + methodName + "] on class [" + resourceMethod.getResourceClass().getName() + "]");
+			
+			//Check for Services that can be invoked externally without user login in SpagoBI
+			ExternalServiceController externalServiceController = ExternalServiceController.getInstance();
+			boolean isExternalService = externalServiceController.isExternalService(serviceUrl);
+			if (isExternalService == true){
+				// TODO check if here we need to create and put in session a profile for the guest user
+				return null; // we return null to continue with the service execution
 			}
 			
-			UserProfile profile = (UserProfile) getUserProfile();
+			UserProfile profile = null;
 			
+			//Other checks are required
+			boolean authenticated = isUserAuthenticatedInSpagoBI();
+			if(!authenticated){
+				// try to authenticate the user on the fly using simple-authentication schema
+				profile = authenticateUser();
+			} else {
+				// get the user profile from session 
+				profile = (UserProfile) getUserProfileFromSession();
+			}
+			
+			if(profile == null) {
+				// TODO check if the error can be processed by the client
+				//throws unlogged user exception that will be managed by RestExcepionMapper
+			    logger.info("User not logged");
+			    throw new LoggableFailure( request.getUri().getRequestUri().getPath() );
+			}
+				
 			boolean authorized = false;
 			try {
 				authorized = profile.isAbleToExecuteService(serviceUrl);
-			} catch (EMFInternalError e) {
-				logger.debug("Error checking if the user ["+profile.getUserName()+"] has the rights to call the service ["+serviceUrl+"]",e);
-				throw new SpagoBIRuntimeException("Error checking if the user ["+profile.getUserName()+"] has the rights to call the service ["+serviceUrl+"]",e);
+			} catch (Throwable e) {
+				logger.debug("Error checking if the user [" + profile.getUserName() + "] has the rights to call the service ["+serviceUrl+"]",e);
+				throw new SpagoBIRuntimeException("Error checking if the user [" + profile.getUserName() + "] has the rights to call the service ["+serviceUrl+"]",e);
 			}
-			
+				
 			if(!authorized){
 				try {
 					return new ServerResponse( ExceptionUtilities.serializeException("not-enabled-to-call-service", null),	400, new Headers<Object>());
@@ -94,75 +131,89 @@ public class SecurityServerInterceptor implements PreProcessInterceptor, Accepte
 			}else{
 				logger.debug("The user ["+profile.getUserName()+"] is enabled to execute the service ["+serviceUrl+"]");
 			}
+		} catch(Throwable t) {
+			if(t instanceof SpagoBIRuntimeException) {
+				// ok it's a known exception
+			} else {
+				new SpagoBIRuntimeException("An unexpected error occured while preprocessing service request", t);
+			}
+			String msg = t.getMessage();
+			if(t.getCause() != null && t.getCause().getMessage() != null) msg += ": " + t.getCause().getMessage();
+			response = new ServerResponse(msg, 400, new Headers<Object>());
+		} finally {
+			logger.trace("OUT");
 		}
 		
-		
-		logger.trace("OUT");
-		
-		return null;
+		return response;
 	}
 	
-	private boolean isUserAuthenticated(){
+	
+	private UserProfile authenticateUser() {
+		UserProfile profile = null;
+		
+		logger.trace("IN");
+		
+		try {
+			String user = servletRequest.getHeader("user");
+			String password = servletRequest.getHeader("password");
+			
+			ISecurityServiceSupplier supplier = SecurityServiceSupplierFactory.createISecurityServiceSupplier();
+			
+			SpagoBIUserProfile spagoBIUserProfile = supplier.checkAuthentication(user, password);
+			if(spagoBIUserProfile != null) {
+				profile = (UserProfile) UserUtilities.getUserProfile(user);
+			}
+		} catch(Throwable t) {
+			throw new RuntimeException("An unexpected error occured while authenticating user", t);
+		} finally {
+			logger.trace("OUT");
+		}
+		
+		return profile;
+	}
+
+	private boolean isUserAuthenticatedInSpagoBI(){
 		
 		boolean authenticated = true;
 
-		IEngUserProfile engProfile = getUserProfile();
-		if (engProfile == null) {
-			logger.debug("User profile not found in session, creating a new one and putting in session....");
-			// in case the profile does not exist, creates a new one
-				
-			String userId = null;
-			try {
-				userId = getUserIdentifier();
-			} catch (Exception e) {
-				logger.debug("User identifier not found.");
-			}
-								
-			logger.debug("User id = " + userId);
-			if (StringUtilities.isNotEmpty(userId)) {	
-				try {
-					engProfile = GeneralUtilities.createNewUserProfile(userId);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}	
-				setUserProfile(engProfile);
-			}
+		IEngUserProfile engProfile = getUserProfileFromSession();
+		
+		if (engProfile != null) {
+			logger.debug("User is authenticated and his profile is already stored in session");
+		} else {
+			engProfile = this.getUserProfileFromUserId();	
 		}
 		
-		// in case the user is not specified, does nothing
-		if (engProfile == null) {
-		    authenticated = false;
+		if (engProfile !=  null) {
+			logger.debug("User is authenticated but his profile is not already stored in session");
+		} else {
+			logger.debug("User is not authenticated");
+			authenticated = false;
 		}
 		
 		return authenticated;
 	}
-	
-	private IEngUserProfile getUserProfile() {
-		IEngUserProfile engProfile = (IEngUserProfile) getSessionContainer().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
-		return engProfile;
-	}
-	
-	private void setUserProfile(IEngUserProfile engProfile) {
-		getSessionContainer().setAttribute(IEngUserProfile.ENG_USER_PROFILE, engProfile);
-	}
-	
-	private SessionContainer getSessionContainer() {
-		HttpSession session = servletRequest.getSession();
-		RequestContainer requestContainer = (RequestContainer) session.getAttribute(Constants.REQUEST_CONTAINER);
-		if (requestContainer == null) {
-			// RequestContainer does not exists yet (maybe it is the
-			// first call to SpagoBI)
-			// initializing SpagoBI objects (user profile object must
-			// be put into PermanentContainer)
-			requestContainer = new RequestContainer();
-			SessionContainer sessionContainer = new SessionContainer(true);
-			requestContainer.setSessionContainer(sessionContainer);
-			session.setAttribute(Constants.REQUEST_CONTAINER, requestContainer);
-		}
-		SessionContainer sessionContainer = requestContainer.getSessionContainer();
-		SessionContainer permanentSession = sessionContainer.getPermanentContainer();
 		
-		return permanentSession;
+	private IEngUserProfile getUserProfileFromUserId() {
+		IEngUserProfile engProfile = null;
+		String userId = null;
+		try {
+			userId = getUserIdentifier();
+		} catch (Exception e) {
+			logger.debug("User identifier not found");
+		}
+							
+		logger.debug("User id = " + userId);
+		if (StringUtilities.isNotEmpty(userId)) {	
+			try {
+				engProfile = GeneralUtilities.createNewUserProfile(userId);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}	
+			setUserProfileInSession(engProfile);
+		}
+		
+		return engProfile;
 	}
 	
 	/**
@@ -198,6 +249,21 @@ public class SecurityServerInterceptor implements PreProcessInterceptor, Accepte
 		return true;
 	}
 
-
+	// these methods should be abstract because are different in SpagoBI and in the engines. In the first case the object is
+	// set and get from session in the second the object is set and get from a specific context withing session(in particular there should
+	// be one different context for each distinct executions lunched by the same user on the same borwser.
+	private IEngUserProfile getUserProfileFromSession() {
+		IEngUserProfile engProfile = null;
+		FilterIOManager ioManager = new FilterIOManager(servletRequest, null);
+		ioManager.initConetxtManager();	
+		engProfile = (IEngUserProfile)ioManager.getFromSession(IEngUserProfile.ENG_USER_PROFILE);		
+		return engProfile;
+	}
+	
+	private void setUserProfileInSession(IEngUserProfile engProfile) {
+		FilterIOManager ioManager = new FilterIOManager(servletRequest, null);
+		ioManager.initConetxtManager();	
+		ioManager.setInSession(IEngUserProfile.ENG_USER_PROFILE, engProfile);
+	}
 
 }
