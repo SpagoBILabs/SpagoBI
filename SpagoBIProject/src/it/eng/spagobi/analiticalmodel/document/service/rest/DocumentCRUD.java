@@ -255,7 +255,7 @@ public class DocumentCRUD {
 						String biObjectType = biObject.getBiObjectTypeCode();
 						if ((wsEngine != null && biObject.getEngine().getId().equals(wsEngine.getId())) ||
 						    (geoEngine != null && biObject.getEngine().getId().equals(geoEngine.getId())) ||
-							(biObject.getEngine().getId().equals(cockpitEngine.getId()))){
+							(cockpitEngine != null && biObject.getEngine().getId().equals(cockpitEngine.getId()))){
 							filteredMyObjects.add(biObject);
 						}
 					}
