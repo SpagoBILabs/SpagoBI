@@ -1302,7 +1302,12 @@ Ext.extend(Sbi.crosstab.core.CrossTab, Ext.Panel, {
     , format: function(value, type, format, percent, percentFontSize, scaleFactor) {
 
     	if(value=='NA'){
-    		return value;
+    		if(this.naCellValue!= undefined && this.naCellValue!=null){
+    			return this.naCellValue;
+    		}else{
+    			return value;
+    		}
+    		
     	}
 		var str;
 		try {
