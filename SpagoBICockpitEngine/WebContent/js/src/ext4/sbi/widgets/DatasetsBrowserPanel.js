@@ -34,22 +34,22 @@ Sbi.widgets.DatasetsBrowserPanel = function(config) {
 	
 	// inline ovveride to add none as possible collapse mode for border layout 
 	// TODO move it to ovverides file
-	Ext.layout.BorderLayout.Region.prototype.getCollapsedEl = Ext.layout.BorderLayout.Region.prototype.getCollapsedEl.createSequence(function(){
-		if(this.collapseMode == 'none'){
-            this.collapsedEl.enableDisplayMode('none');
-        }
-    });
+//	Ext.layout.BorderLayout.Region.prototype.getCollapsedEl = Ext.layout.BorderLayout.Region.prototype.getCollapsedEl.createSequence(function(){
+//		if(this.collapseMode == 'none'){
+//            this.collapsedEl.enableDisplayMode('none');
+//        }
+//    });
 	
 	this.items = [{
 		region      			: 'north',
 		split       			: false,
-		collapsible 			: true,
+		collapsible 			: false,
 		collapsed   			: false,
 		autoScroll				: true,
 		layout					: 'fit',
 		margins     			: '0 0 0 0',
 		cmargins    			: '0 0 0 0',
-		collapseMode			: 'none',
+		collapseMode			: 'mini',
         hideCollapseTool		: true,
 		hideBorders				: true,
 		border					: true,
@@ -58,13 +58,13 @@ Sbi.widgets.DatasetsBrowserPanel = function(config) {
 	}, {
 		region      			: 'center',
 		split       			: false,
-		collapsible 			: true,
+		collapsible 			: false,
 		collapsed   			: false,
 		autoScroll				: true,
 		layout					: 'fit',
 		margins     			: '0 0 0 0',
 		cmargins    			: '0 0 0 0',
-		collapseMode			: 'none',
+		collapseMode			: 'mini',
         hideCollapseTool		: true,
 		hideBorders				: true,
 		border					: false,
@@ -324,7 +324,11 @@ Ext.extend(Sbi.widgets.DatasetsBrowserPanel, Ext.Panel, {
 		this.initDatasetStore();	
 		
 		this.datasetStore.on('load', function() {
+			Sbi.trace("[DatasetsBrowserPanel.ondatasetStoreLoad]: IN");
 			Sbi.trace("[DatasetsBrowserPanel.refreshDatasetList]: refreshing view panel ...");
+			
+			Sbi.trace("[DatasetsBrowserPanel.refreshDatasetList]: record in store [" + this.datasetStore.getTotalCount() + "]");
+			
 			
 			if (this.viewPanel){
 				this.viewPanel.filterOption = this.filterOption;
@@ -333,6 +337,7 @@ Ext.extend(Sbi.widgets.DatasetsBrowserPanel, Ext.Panel, {
 				this.refreshView();
 				
 				Sbi.trace("[DatasetsBrowserPanel.refreshDatasetList]: refreshing view panel 2");
+				Sbi.trace("[DatasetsBrowserPanel.ondatasetStoreLoad]: OUT");
 			}
 		}, this);
 			
@@ -372,11 +377,12 @@ Ext.extend(Sbi.widgets.DatasetsBrowserPanel, Ext.Panel, {
 			baseParams.isTech = false;
 			baseParams.showOnlyOwner = true;
 			baseParams.typeDoc = this.typeDoc;
+			baseParams.user_id = 'astatuser';
 
 			this.services["list"] = Sbi.config.serviceRegistry.getRestServiceUrl({
 				serviceName : 'selfservicedataset',
 				baseParams : baseParams,
-				baseUrl:{contextPath: 'SpagoBI', restServicesPath: 'restful-services' }
+				baseUrl:{contextPath: 'SpagoBI', restServicesPath: 'restful-services'}
 			});		
 			
 			
@@ -385,11 +391,12 @@ Ext.extend(Sbi.widgets.DatasetsBrowserPanel, Ext.Panel, {
 			baseParams.isTech = true;
 			baseParams.showOnlyOwner = false;
 			baseParams.typeDoc = this.typeDoc;
-
+			baseParams.user_id = 'astatuser';
+			
 			this.services["list"] = Sbi.config.serviceRegistry.getRestServiceUrl({
 				serviceName : 'certificateddatasets',
 				baseParams : baseParams,
-				baseUrl:{contextPath: 'SpagoBI', restServicesPath: 'restful-services' }
+				baseUrl:{contextPath: 'SpagoBI', restServicesPath: 'restful-services'}
 			});
 	
 			
@@ -398,7 +405,8 @@ Ext.extend(Sbi.widgets.DatasetsBrowserPanel, Ext.Panel, {
 			baseParams.isTech = false;
 			baseParams.showOnlyOwner = false;
 			baseParams.typeDoc = this.typeDoc;
-
+			baseParams.user_id = 'astatuser';
+			
 			this.services["list"] = Sbi.config.serviceRegistry.getRestServiceUrl({
 				serviceName : 'certificateddatasets',
 				baseParams : baseParams,
@@ -413,6 +421,7 @@ Ext.extend(Sbi.widgets.DatasetsBrowserPanel, Ext.Panel, {
 			baseParams.showOnlyOwner = false;
 			baseParams.typeDoc = this.typeDoc;
 			baseParams.allMyDataDs = true;
+			baseParams.user_id = 'astatuser';
 
 			this.services["list"] = Sbi.config.serviceRegistry.getRestServiceUrl({
 				serviceName : 'certificateddatasets',
@@ -422,11 +431,52 @@ Ext.extend(Sbi.widgets.DatasetsBrowserPanel, Ext.Panel, {
 		
 		}
 		
+		alert(this.services["list"]);
+		
 		Sbi.trace("[DatasetsBrowserPanel.initDatasetListService]: OUT");
 	}
 	
 	, initDatasetStore: function() {
 		Sbi.trace("[DatasetsBrowserPanel.initDatasetStore]: IN");
+		
+//		Ext.define('Dataset', {
+//		    extend: 'Ext.data.Model',
+//		    fields: ["id",
+//			    	 	"label",
+//			    	 	"name",
+//			    	 	"description",
+//			    	 	"typeCode",
+//			    	 	"typeId",
+//			    	 	"encrypt",
+//			    	 	"visible",
+//			    	 	"engine",
+//			    	 	"engineId",
+//			    	 	"dataset",
+//			    	 	"stateCode",
+//			    	 	"stateId",
+//			    	 	"functionalities",
+//			    	 	"dateIn",
+//			    	 	"owner",
+//			    	 	"refreshSeconds",
+//			    	 	"isPublic",
+//			    	 	"actions",
+//			    	 	"exporters",
+//			    	 	"decorators",
+//			    	 	"previewFile",
+//			    	 	"isUsed", 	/*local property*/
+//			    	 	"myDSLabel" /*local property*/
+//			    	]
+//		});
+//		
+//		this.datasetStore =  Ext.create('Ext.data.Store', {
+//		    model: 'Dataset',
+//		    proxy: {
+//		        type: 'ajax',
+//		        url : this.services['list'],
+//		        reader: 'json'
+//		    }
+//			//, autoLoad: true
+//		});
 		
 		this.datasetStore = new Ext.data.JsonStore({
 			 url: this.services['list']

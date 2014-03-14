@@ -57,7 +57,7 @@ Sbi.toSource = function(o, onlyName) {
 	if(onlyName === true) {
 		return Sbi.toSourcePropertiesList(o);
 	} else {
-		return Ext.util.JSON.encode(o);
+		return Ext.JSON.encode(o);
 	}
 };
 
