@@ -1100,7 +1100,7 @@ Sbi.locale.ln["error.mesage.name.multitenant.cannot.be.null"]= "Il nome del tena
 Sbi.locale.ln["error.mesage.multitenant.deleting.inuse"] = "Impossibile cancellare il tenant in quanto attualmente in uso";
 Sbi.locale.ln["error.mesage.multitenant.saving.duplicated"]="Impossibile salvare il tenant in quanto ce n'e gia un'altro con lo stesso nome";
 Sbi.locale.ln['sbi.multitenant.theme']= 'Tema';
-Sbi.locale.ln['sbi.multitenant.id'] = 'Identificativo';
+Sbi.locale.ln['multitenant.error.association'] = 'Impossibile modificare l\'associazione. Controllare le dipendenze di ';
 
 //===================================================================
 //Sbi.tools.dataset.QbeDataSetsWizard

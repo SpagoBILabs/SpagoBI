@@ -30,7 +30,7 @@ public interface ITenantsDAO extends ISpagoBIDao{
 	
 	public void insertTenant(SbiTenant aTenant) throws EMFUserError;
 	
-	public void modifyTenant(SbiTenant aTenant) throws EMFUserError;
+	public void modifyTenant(SbiTenant aTenant) throws EMFUserError, Exception;
 	
 	public void deleteTenant(SbiTenant aTenant)throws EMFUserError;
 	

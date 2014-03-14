@@ -21,6 +21,7 @@ import it.eng.spagobi.commons.metadata.SbiTenant;
 import it.eng.spagobi.commons.serializer.SerializerFactory;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.engines.config.metadata.SbiEngines;
+import it.eng.spagobi.rest.interceptors.RestExceptionMapper;
 import it.eng.spagobi.services.exceptions.ExceptionUtilities;
 import it.eng.spagobi.tenant.TenantManager;
 import it.eng.spagobi.tools.datasource.bo.DataSource;
@@ -266,8 +267,13 @@ public class MultitenantCRUD {
 				
 			} else {				
 				//update ds
-				dao.modifyTenant(tenantNew);
-				saveType = "UPDATE";
+				try{
+					dao.modifyTenant(tenantNew);
+					saveType = "UPDATE";
+				}catch(Throwable e){
+					throw new SpagoBIRuntimeException(e.getMessage());
+				}
+				
 			}  
 
 			return ("{MULTITENANT_ID:"+tenantNew.getId()+" , SAVE_TYPE: '"+saveType+"'}");
@@ -276,10 +282,10 @@ public class MultitenantCRUD {
 			logger.error("Cannot fill response container", ex);
 			logger.debug(ex.getMessage());
 			try {
-				return ( ExceptionUtilities.serializeException(ex.getMessage(),null));
+				return ExceptionUtilities.serializeException(ex.getMessage(),null);
 			} catch (Exception e) {
 				logger.debug("Cannot fill response container.");
-				throw new SpagoBIRuntimeException("Cannot fill response container", e);
+				throw new SpagoBIRuntimeException(ex.getMessage(), e);
 			}
 		} catch (Exception ex) {
 			logger.error("Cannot fill response container", ex);
