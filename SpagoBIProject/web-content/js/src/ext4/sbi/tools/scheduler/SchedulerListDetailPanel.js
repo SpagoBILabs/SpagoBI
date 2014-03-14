@@ -90,6 +90,8 @@ Ext.define('Sbi.tools.scheduler.SchedulerListDetailPanel', {
 				window.location.assign(thisPanel.contextName + '/servlet/AdapterHTTP?JOBGROUPNAME='+jobGroup+'&PAGE=JobManagementPage&TYPE_LIST=TYPE_LIST&MESSAGEDET=MESSAGE_GET_JOB_DETAIL&JOBNAME='+jobName);
 
 			})
+			//Schedulation List button
+			/*
 			Sbi.widget.grid.StaticGridDecorator.addCustomBottonColumn(this.columns, 'button-schedule', LN('sbi.scheduler.activity.schedulationlist'),function(grid, rowIndex, colIndex) {
 				var record = grid.getStore().getAt(rowIndex);
 				var jobName = record.get('jobName');
@@ -97,6 +99,7 @@ Ext.define('Sbi.tools.scheduler.SchedulerListDetailPanel', {
 				window.location.assign(thisPanel.contextName + '/servlet/AdapterHTTP?JOBGROUPNAME='+jobGroup+'&PAGE=TriggerManagementPage&TYPE_LIST=TYPE_LIST&MESSAGEDET=MESSAGE_GET_JOB_SCHEDULES&JOBNAME='+jobName);
 
 			})
+			*/
 		
 			this.callParent(arguments);
 		}
@@ -111,6 +114,11 @@ Ext.define('Sbi.tools.scheduler.SchedulerListDetailPanel', {
 			
 			this.services["deleteTrigger"]= Sbi.config.serviceRegistry.getRestServiceUrl({
 				serviceName: 'scheduler/deleteTrigger'
+					, baseParams: baseParams
+			});
+			
+			this.services["executeTrigger"]= Sbi.config.serviceRegistry.getRestServiceUrl({
+				serviceName: 'scheduler/executeTrigger'
 					, baseParams: baseParams
 			});
 

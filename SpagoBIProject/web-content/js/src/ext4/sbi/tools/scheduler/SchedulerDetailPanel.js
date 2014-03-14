@@ -129,7 +129,23 @@ Ext.define('Sbi.tools.scheduler.SchedulerDetailPanel', {
 								thisPanel.onDetailSchedulation(selectedRecord);
 							}
 						}]
-					},			        
+					},		
+					{
+						//EXECUTE NOW BUTTON
+			        	menuDisabled: true,
+						sortable: false,
+						xtype: 'actioncolumn',
+						width: 20,
+						columnType: "decorated",
+						items: [{
+							iconCls   : 'button-execute', 
+							tooltip: LN('sbi.scheduler.schedulation.execute'),
+							handler: function(grid, rowIndex, colIndex) {
+								var selectedRecord =  grid.store.getAt(rowIndex);
+								thisPanel.onExecuteSchedulation(selectedRecord);
+							}
+						}]
+					},
 					{
 						//STATE BUTTON
 			        	menuDisabled: true,
@@ -177,6 +193,37 @@ Ext.define('Sbi.tools.scheduler.SchedulerDetailPanel', {
 			    }]
 			});
 			
+			
+		}
+		
+		, onExecuteSchedulation: function(record){
+			var values = {}
+			values.jobName = record.data.jobName;
+			values.jobGroup = record.data.jobGroup;
+			values.triggerName = record.data.triggerName;
+			values.triggerGroup = record.data.triggerGroup;
+			
+			//perform Ajax Request
+
+			Ext.Ajax.request({
+				url: this.services["executeTrigger"],
+				params: values,
+				success : function(response, options) {
+					if(response !== undefined  && response.responseText !== undefined && response.statusText=="OK") {
+						if(response.responseText!=null && response.responseText!=undefined){
+							if(response.responseText.indexOf("error.mesage.description")>=0){
+								Sbi.exception.ExceptionHandler.handleFailure(response);
+							}else{						
+								Sbi.exception.ExceptionHandler.showInfoMessage(LN('sbi.scheduler.schedulation.executed'));
+							}
+						}
+					} else {
+						Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
+					}
+				},
+				scope: this,
+				failure: Sbi.exception.ExceptionHandler.handleFailure      
+			})
 			
 		}
 		

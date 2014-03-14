@@ -827,6 +827,8 @@ Sbi.locale.ln['sbi.scheduler.activity.detailactivity'] = 'Dettaglio Attività';
 Sbi.locale.ln['sbi.scheduler.activity.schedulationlist'] = 'Lista Schedulazioni';
 Sbi.locale.ln['sbi.scheduler.activity.deleted'] = 'Attività Eliminata';
 Sbi.locale.ln['sbi.scheduler.schedulation.deleted'] = 'Schedulazione Eliminata';
+Sbi.locale.ln['sbi.scheduler.schedulation.execute'] = 'Esegui ora';
+Sbi.locale.ln['sbi.scheduler.schedulation.executed'] = 'Schedulazione eseguita';
 
 //===================================================================
 //MESSAGE FOR QBE DATASET BUILDER
