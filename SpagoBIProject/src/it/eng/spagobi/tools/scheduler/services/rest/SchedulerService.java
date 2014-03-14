@@ -25,11 +25,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.deserializer.TriggerXMLDeserializer;
@@ -39,12 +43,18 @@ import it.eng.spagobi.commons.serializer.SerializationException;
 import it.eng.spagobi.commons.serializer.SerializerFactory;
 import it.eng.spagobi.commons.serializer.XMLSerializer;
 import it.eng.spagobi.commons.utilities.AuditLogUtilities;
+import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.services.exceptions.ExceptionUtilities;
 import it.eng.spagobi.services.scheduler.service.ISchedulerServiceSupplier;
 import it.eng.spagobi.services.scheduler.service.SchedulerServiceSupplierFactory;
+import it.eng.spagobi.tools.distributionlist.bo.DistributionList;
+import it.eng.spagobi.tools.distributionlist.dao.IDistributionListDAO;
 import it.eng.spagobi.tools.scheduler.bo.Job;
 import it.eng.spagobi.tools.scheduler.bo.Trigger;
 import it.eng.spagobi.tools.scheduler.dao.ISchedulerDAO;
+import it.eng.spagobi.tools.scheduler.to.DispatchContext;
+import it.eng.spagobi.tools.scheduler.to.JobInfo;
+import it.eng.spagobi.tools.scheduler.to.TriggerInfo;
 import it.eng.spagobi.tools.scheduler.utils.SchedulerUtilities;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
@@ -336,6 +346,88 @@ public class SchedulerService {
 
 	}
 	
+	@POST
+	@Path("/executeTrigger")
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	public String executeTrigger(@Context HttpServletRequest req){
+		IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+		HashMap<String, String> logParam = new HashMap();
+		try{
+			String jobGroupName = req.getParameter("jobGroup");
+			String jobName = req.getParameter("jobName");
+			String triggerGroup = req.getParameter("triggerGroup");
+			String triggerName = req.getParameter("triggerName");
+			logParam.put("JOB NAME", jobName);
+			logParam.put("JOB GROUP", jobGroupName);
+			logParam.put("TRIGGER NAME", triggerName);
+			logParam.put("TRIGGER GROUP", triggerGroup);
+			ISchedulerServiceSupplier schedulerService = SchedulerServiceSupplierFactory.getSupplier();
+
+			TriggerInfo triggerInfo = this.getTriggerInfo(jobName, jobGroupName, triggerName, triggerGroup);
+
+			StringBuffer message = createMessageSaveSchedulation(triggerInfo, true, profile);
+
+			// call the web service to create the schedule
+			String resp = schedulerService.scheduleJob(message.toString());
+			SourceBean schedModRespSB = SchedulerUtilities.getSBFromWebServiceResponse(resp);
+			if(schedModRespSB!=null) {
+				String outcome = (String)schedModRespSB.getAttribute("outcome");
+				if(outcome.equalsIgnoreCase("fault")){
+					try {
+						updateAudit(req,  profile, "SCHED_TRIGGER.RUN",logParam , "KO");
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					throw new Exception("Immediate Trigger not created by the web service");
+				}
+			}
+			updateAudit(req,  profile, "SCHED_TRIGGER.RUN",logParam , "OK");
+			return ("{resp:'ok'}");
+
+		} catch (Exception e) {
+			updateAudit(req,  profile, "SCHED_TRIGGER.RUN",logParam , "KO");
+			logger.error("Error while create immediate trigger ", e);
+			logger.debug(canNotFillResponseError);
+			try {
+				return ( ExceptionUtilities.serializeException(canNotFillResponseError,null));
+			} catch (Exception ex) {
+				logger.debug("Cannot fill response container.");
+				throw new SpagoBIRuntimeException(
+						"Cannot fill response container", ex);
+			}
+		}
+
+	}
+	
+	
+	
+	private TriggerInfo getTriggerInfo(String jobName, String jobGroupName, String triggerName, String triggerGroup){
+		try {
+			ISchedulerServiceSupplier schedulerService = SchedulerServiceSupplierFactory.getSupplier();
+			String respStr_gt = schedulerService.getJobSchedulationDefinition(triggerName, triggerGroup);
+			SourceBean triggerDetailSB = SchedulerUtilities.getSBFromWebServiceResponse(respStr_gt);			
+			String respStr_gj = schedulerService.getJobDefinition(jobName, jobGroupName);
+			SourceBean jobDetailSB = SchedulerUtilities.getSBFromWebServiceResponse(respStr_gj);						
+			if(triggerDetailSB!=null) {
+				if(jobDetailSB!=null){
+					TriggerInfo tInfo = SchedulerUtilities.getTriggerInfoFromTriggerSourceBean(triggerDetailSB, jobDetailSB);
+					return tInfo;
+				} else {
+					throw new Exception("Detail not recovered for job " + jobName + 
+							"associated to trigger " + triggerName);
+				}
+			} else {
+				throw new Exception("Detail not recovered for trigger " + triggerName);
+			}
+
+		} catch (Exception ex) {
+			logger.error("Error while getting detail of the schedule(trigger)", ex);
+			throw new SpagoBIRuntimeException(
+					"Error while getting detail of the schedule(trigger)", ex);
+		}
+	}
+	
 	private static void updateAudit(HttpServletRequest request,
 			IEngUserProfile profile, String action_code,
 			HashMap<String, String> parameters, String esito) {
@@ -347,6 +439,344 @@ public class SchedulerService {
 		}
 	}
 
+	// ==========================================================================================================
+	// SERIALIZER (from TriggerManagementModule)
+	// ==========================================================================================================
+	private StringBuffer createMessageSaveSchedulation(TriggerInfo triggerInfo, boolean runImmediately,IEngUserProfile profile) throws EMFUserError {
+		
+		StringBuffer message = new StringBuffer();
+		JobInfo jobInfo = triggerInfo.getJobInfo();
+		
+		message.append("<SERVICE_REQUEST ");
+		
+		message.append(" jobName=\""+jobInfo.getJobName()+"\" ");
+		
+		message.append(" jobGroup=\""+jobInfo.getJobGroupName()+"\" ");
+		if(runImmediately) {
+			message.append(" runImmediately=\"true\" ");
+		} else {
+			message.append(" triggerName=\""+triggerInfo.getTriggerName()+"\" ");
+			
+			message.append(" triggerDescription=\""+triggerInfo.getTriggerDescription()+"\" ");
+			message.append(" startDate=\""+triggerInfo.getStartDate()+"\" ");
+			
+			message.append(" startTime=\""+triggerInfo.getStartTime()+"\" ");
+			
+			message.append(" chronString=\""+triggerInfo.getChronString()+"\" ");
+			
+			String enddate = triggerInfo.getEndDate();
+			String endtime = triggerInfo.getEndTime();
+			if(!enddate.trim().equals("")){
+				message.append(" endDate=\""+enddate+"\" ");
+				
+				if(!endtime.trim().equals("")){
+					message.append(" endTime=\""+endtime+"\" ");
+					
+				}
+			}
+		}
+		String repeatinterval = triggerInfo.getRepeatInterval();
+		if(!repeatinterval.trim().equals("")){
+			message.append(" repeatInterval=\""+repeatinterval+"\" ");
+			
+		}	
+		message.append(">");
+		
+		serializeSaveParameterOptions(message, triggerInfo, runImmediately, profile);
+		
+		message.append("</SERVICE_REQUEST>");
+		
+		return message;
+	}
+	
+	private void serializeSaveParameterOptions(StringBuffer message, TriggerInfo triggerInfo, boolean runImmediately, IEngUserProfile profile) throws EMFUserError {
+		
+		message.append("   <PARAMETERS>");		
+		
+		Map<String, DispatchContext> saveOptions = triggerInfo.getSaveOptions();
+		Set<String> uniqueDispatchContextNames =  saveOptions.keySet();
+		
+		for(String uniqueDispatchContextName : uniqueDispatchContextNames) {
+			DispatchContext dispatchContext = (DispatchContext)saveOptions.get(uniqueDispatchContextName);
+			
+			String saveOptString = "";
+			
+			saveOptString += serializeSaveAsSnapshotOptions(dispatchContext);
+			saveOptString += serializeSaveAsFileOptions(dispatchContext);
+			saveOptString += serializeSaveAsJavaClassOptions(dispatchContext);
+			saveOptString += serializeSaveAsDocumentOptions(dispatchContext);
+			saveOptString += serializeSaveAsMailOptions(dispatchContext);
+			saveOptString += serializeSaveAsDistributionListOptions(dispatchContext, uniqueDispatchContextName, triggerInfo, runImmediately, profile);
+						
+			message.append("   	   <PARAMETER name=\"biobject_id_"+uniqueDispatchContextName+"\" value=\""+saveOptString+"\" />");
+		}
+		
+		message.append("   </PARAMETERS>");
+	}
+
+	
+	
+	
+	private String serializeSaveAsSnapshotOptions(DispatchContext dispatchContext) {
+		String saveOptString = "";
+		
+		if(dispatchContext.isSnapshootDispatchChannelEnabled()) {
+			saveOptString += "saveassnapshot=true%26";
+			if( (dispatchContext.getSnapshotName()!=null) && !dispatchContext.getSnapshotName().trim().equals("") ) {
+				saveOptString += "snapshotname="+dispatchContext.getSnapshotName()+"%26";
+			}
+			if( (dispatchContext.getSnapshotDescription()!=null) && !dispatchContext.getSnapshotDescription().trim().equals("") ) {
+				saveOptString += "snapshotdescription="+dispatchContext.getSnapshotDescription()+"%26";
+			}
+			if( (dispatchContext.getSnapshotHistoryLength()!=null) && !dispatchContext.getSnapshotHistoryLength().trim().equals("") ) {
+				saveOptString += "snapshothistorylength="+dispatchContext.getSnapshotHistoryLength()+"%26";
+			}
+		}
+		
+		return saveOptString;
+	}
+	
+	private String serializeSaveAsJavaClassOptions(DispatchContext dispatchContext) {
+		String saveOptString = "";
+		
+		if(dispatchContext.isJavaClassDispatchChannelEnabled()) {
+			saveOptString += "sendtojavaclass=true%26";
+			if( (dispatchContext.getJavaClassPath()!=null) && !dispatchContext.getJavaClassPath().trim().equals("") ) {
+				saveOptString += "javaclasspath="+dispatchContext.getJavaClassPath()+"%26";
+			}
+		}	
+		
+		return saveOptString;
+	}
+	
+	
+	
+	private String  serializeSaveAsFileOptions(DispatchContext dispatchContext) {
+		String saveOptString = "";
+		
+		if(dispatchContext.isFileSystemDispatchChannelEnabled()) {
+			saveOptString += "saveasfile=true%26";
+			if( StringUtilities.isNotEmpty(dispatchContext.getDestinationFolder()) ) {
+				saveOptString += "destinationfolder="+dispatchContext.getDestinationFolder()+"%26";
+			}
+			if( StringUtilities.isNotEmpty(dispatchContext.getDestinationFolder()) ) {
+				saveOptString += "destinationfolder="+dispatchContext.getDestinationFolder()+"%26";
+			}
+			if(dispatchContext.isDestinationFolderRelativeToResourceFolder()) {
+				saveOptString += "isrelativetoresourcefolder=true%26";
+			} else {
+				saveOptString += "isrelativetoresourcefolder=false%26";
+			}
+			
+			if(dispatchContext.isProcessMonitoringEnabled()) {
+				saveOptString += "isprocessmonitoringenabled=true%26";
+			} else {
+				saveOptString += "isprocessmonitoringenabled=false%26";
+			}
+		}	
+
+		if(dispatchContext.isZipFileDocument()) {
+			saveOptString += "zipFileDocument=true%26";
+		}
+		if(dispatchContext.getFileName() != null) {
+			saveOptString += "fileName="+dispatchContext.getFileName()+"%26";
+		}
+
+		if(dispatchContext.getZipFileName() != null) {
+			saveOptString += "zipFileName="+dispatchContext.getZipFileName()+"%26";
+		}
+		
+		return saveOptString;
+	}
+
+	
+	
+	private String serializeSaveAsDocumentOptions(DispatchContext dispatchContext) {
+		String saveOptString = "";
+		
+		if(dispatchContext.isFunctionalityTreeDispatchChannelEnabled()) {
+			saveOptString += "saveasdocument=true%26";
+			if( (dispatchContext.getDocumentName()!=null) && !dispatchContext.getDocumentName().trim().equals("") ) {
+				saveOptString += "documentname="+dispatchContext.getDocumentName()+"%26";
+			}
+			if( (dispatchContext.getDocumentDescription()!=null) && !dispatchContext.getDocumentDescription().trim().equals("") ) {
+				saveOptString += "documentdescription="+dispatchContext.getDocumentDescription()+"%26";
+			}
+			if(dispatchContext.isUseFixedFolder() && dispatchContext.getFoldersTo() != null && !dispatchContext.getFoldersTo().trim().equals("")) {
+				saveOptString += "foldersTo="+dispatchContext.getFoldersTo()+"%26";
+			}
+			if(dispatchContext.isUseFolderDataSet() && dispatchContext.getDataSetFolderLabel() != null && !dispatchContext.getDataSetFolderLabel().trim().equals("")) {
+				saveOptString += "datasetFolderLabel="+dispatchContext.getDataSetFolderLabel()+"%26";
+				if (dispatchContext.getDataSetFolderParameterLabel() != null && !dispatchContext.getDataSetFolderParameterLabel().trim().equals("")) {
+					saveOptString += "datasetFolderParameterLabel="+dispatchContext.getDataSetFolderParameterLabel()+"%26";
+				}
+			}
+			if( (dispatchContext.getDocumentHistoryLength()!=null) && !dispatchContext.getDocumentHistoryLength().trim().equals("") ) {
+				saveOptString += "documenthistorylength="+dispatchContext.getDocumentHistoryLength()+"%26";
+			}
+			if( (dispatchContext.getFunctionalityIds()!=null) && !dispatchContext.getFunctionalityIds().trim().equals("") ) {
+				saveOptString += "functionalityids="+dispatchContext.getFunctionalityIds()+"%26";
+			}
+		}
+		
+		return saveOptString;
+	}
+	
+	private String serializeSaveAsMailOptions(DispatchContext dispatchContext) {
+		String saveOptString = "";
+		
+		if(dispatchContext.isMailDispatchChannelEnabled()) {
+			saveOptString += "sendmail=true%26";
+			if(dispatchContext.isUseFixedRecipients() && dispatchContext.getMailTos() != null && !dispatchContext.getMailTos().trim().equals("")) {
+				saveOptString += "mailtos="+dispatchContext.getMailTos()+"%26";
+			}
+			if(dispatchContext.isUseDataSet() && dispatchContext.getDataSetLabel() != null && !dispatchContext.getDataSetLabel().trim().equals("")) {
+				saveOptString += "datasetLabel="+dispatchContext.getDataSetLabel()+"%26";
+				if (dispatchContext.getDataSetParameterLabel() != null && !dispatchContext.getDataSetParameterLabel().trim().equals("")) {
+					saveOptString += "datasetParameterLabel="+dispatchContext.getDataSetParameterLabel()+"%26";
+				}
+			}
+			if(dispatchContext.isUseExpression() && dispatchContext.getExpression() != null && !dispatchContext.getExpression().trim().equals("")) {
+				saveOptString += "expression="+dispatchContext.getExpression()+"%26";
+			}
+			if( (dispatchContext.getMailSubj()!=null) && !dispatchContext.getMailSubj().trim().equals("") ) {
+				saveOptString += "mailsubj="+dispatchContext.getMailSubj()+"%26";
+			}
+			if( (dispatchContext.getMailTxt()!=null) && !dispatchContext.getMailTxt().trim().equals("") ) {
+				saveOptString += "mailtxt="+dispatchContext.getMailTxt()+"%26";
+			}
+
+			
+			
+			// Mail			
+			if(dispatchContext.isZipMailDocument()) {
+				saveOptString += "zipMailDocument=true%26";
+			}
+			if(dispatchContext.isReportNameInSubject()) {
+				saveOptString += "reportNameInSubject=true%26";
+			}
+
+			if(dispatchContext.getContainedFileName() != null) {
+				saveOptString += "containedFileName="+dispatchContext.getContainedFileName()+"%26";
+			}
+			if(dispatchContext.getZipMailName() != null) {
+				saveOptString += "zipMailName="+dispatchContext.getZipMailName()+"%26";
+			}
+
+			
+		}
+		
+		return saveOptString;
+	}
+	
+	private String serializeSaveAsDistributionListOptions(DispatchContext dispatchContext, String uniqueDispatchContextName, TriggerInfo triggerInfo, boolean runImmediately, IEngUserProfile profile) throws EMFUserError {
+		String saveOptString = "";
+		
+		JobInfo jobInfo = triggerInfo.getJobInfo();
+		
+		if(dispatchContext.isDistributionListDispatchChannelEnabled()) {
+			String xml = "";
+			if(!runImmediately){
+				xml += "<SCHEDULE ";
+				xml += " jobName=\""+jobInfo.getJobName()+"\" ";					
+				xml += " triggerName=\""+triggerInfo.getTriggerName()+"\" ";					
+				xml += " startDate=\""+triggerInfo.getStartDate()+"\" ";					
+				xml += " startTime=\""+triggerInfo.getStartTime()+"\" ";					
+				xml += " chronString=\""+triggerInfo.getChronString()+"\" ";
+				String enddate = triggerInfo.getEndDate();
+				String endtime = triggerInfo.getEndTime();
+				if(!enddate.trim().equals("")){
+					xml += " endDate=\""+enddate+"\" ";
+					if(!endtime.trim().equals("")){
+						xml += " endTime=\""+endtime+"\" ";
+					}
+				}			
+				
+				String repeatinterval = triggerInfo.getRepeatInterval();
+				if(!repeatinterval.trim().equals("")){
+					xml += " repeatInterval=\""+repeatinterval+"\" ";
+				}	
+				xml += ">";
+				
+				String params = "<PARAMETERS>";
+				
+				
+				List biObjects = jobInfo.getDocuments();
+				Iterator iterbiobj = biObjects.iterator();
+				int index = 0;
+				while (iterbiobj.hasNext()){
+					index ++;
+					BIObject biobj = (BIObject)iterbiobj.next();
+					String objpref = biobj.getId().toString()+"__" + new Integer(index).toString();
+					if(uniqueDispatchContextName.equals(objpref)){
+					
+					List pars = biobj.getBiObjectParameters();
+					Iterator iterPars = pars.iterator();
+					String queryString= "";
+					while(iterPars.hasNext()) {
+						BIObjectParameter biobjpar = (BIObjectParameter)iterPars.next();
+						String concatenatedValue = "";
+						List values = biobjpar.getParameterValues();
+						if(values!=null) {
+							Iterator itervalues = values.iterator();
+							while(itervalues.hasNext()) {
+								String value = (String)itervalues.next();
+								concatenatedValue += value + ",";
+							}
+							if(concatenatedValue.length()>0) {
+								concatenatedValue = concatenatedValue.substring(0, concatenatedValue.length() - 1);
+								queryString += biobjpar.getParameterUrlName() + "=" + concatenatedValue + "%26";
+							}
+						}
+					}
+					if(queryString.length()>0) {
+						queryString = queryString.substring(0, queryString.length()-3);
+					}
+					params += "<PARAMETER name=\""+biobj.getLabel()+"__"+index+"\" value=\""+queryString+"\" />";
+					}else{  
+						continue;
+					}
+				}
+				params += "</PARAMETERS>";
+				
+				xml += params ;
+				xml += "</SCHEDULE>";
+			}
+			
+			saveOptString += "sendtodl=true%26";
+			
+			List l= dispatchContext.getDlIds();
+			if(!l.isEmpty()){
+				
+				String dlIds = "dlId=";
+				int objId = dispatchContext.getBiobjId();
+				Iterator iter = l.iterator();
+				while (iter.hasNext()){
+					
+					Integer dlId = (Integer)iter.next();
+					try {if(!runImmediately){
+						IDistributionListDAO dao=DAOFactory.getDistributionListDAO();
+						dao.setUserProfile(profile);
+						DistributionList dl = dao.loadDistributionListById(dlId);
+						dao.insertDLforDocument(dl, objId, xml);
+					}
+					} catch (Exception ex) {
+						logger.error("Cannot fill response container" + ex.getLocalizedMessage());	
+						throw new EMFUserError(EMFErrorSeverity.ERROR, 100);			
+					}
+					
+					if (iter.hasNext()) {dlIds += dlId.intValue()+"," ;}
+					else {dlIds += dlId.intValue();}
+					
+				}
+				saveOptString += dlIds+"%26";
+			
+			}	
+		}	
+		
+		return saveOptString;
+	}	
+	
 
 
 }

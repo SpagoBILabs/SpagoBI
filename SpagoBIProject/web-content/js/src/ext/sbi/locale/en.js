@@ -852,8 +852,8 @@ Sbi.locale.ln['sbi.scheduler.activity.schedulationlist'] = 'Schedulations List';
 Sbi.locale.ln['sbi.scheduler.activity.schedulationlist'] = 'Schedulations List';
 Sbi.locale.ln['sbi.scheduler.activity.deleted'] = 'Activity Deleted';
 Sbi.locale.ln['sbi.scheduler.schedulation.deleted'] = 'Schedulation Deleted';
-
-
+Sbi.locale.ln['sbi.scheduler.schedulation.execute'] = 'Execute now';
+Sbi.locale.ln['sbi.scheduler.schedulation.executed'] = 'Schedulation executed';
 
 
 //===================================================================
