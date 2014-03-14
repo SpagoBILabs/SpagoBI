@@ -118,9 +118,10 @@ wizardPanel.getDatasetBrowserPage().getUsedDatasets();
 	
 	, initWidgetEditorPage: function() {
 		Sbi.trace("[WidgetEditorWizardPanel.initWidgetEditorPage]: IN");
-		this.widgetEditorPage = new Sbi.cockpit.editor.widget.WidgetEditorPage({
-			// nothing to declare here
-		});
+//		this.widgetEditorPage = new Sbi.cockpit.editor.widget.WidgetEditorPage({
+//			// nothing to declare here
+//		});
+		this.widgetEditorPage = new Ext.Panel({html: "this.widgetEditorPage"});
 		Sbi.trace("[WidgetEditorWizardPanel.initWidgetEditorPage]: IN");
 		return this.widgetEditorPage;
 	}

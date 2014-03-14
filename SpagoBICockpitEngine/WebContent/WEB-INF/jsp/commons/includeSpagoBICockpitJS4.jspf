@@ -1,0 +1,75 @@
+<!-- 
+Ignore this note for the moment (mimification script hasn't been implemented yet)
+IMPORTANT: every time this file get modified (i.e. a new js file is added to the importation list or an old one is removed) also the target
+create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must be updated properly
+ -->
+ 
+<!-- TODO : Make path relative to webapp name -->
+
+<!-- Include Ext stylesheets here: -->
+<link id="theme" rel="styleSheet" href ="/SpagoBICockpitEngine/css/cockpit.css" type="text/css" />
+
+<!-- Include localized labels  -->
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/locale/<%=locale.getLanguage()%>.js'/></script>
+
+<!-- START-DEBUG -->
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/commons/Settings.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/overrides/overrides.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/commons/Sbi.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/commons/Log.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/exceptions/ExceptionHandler.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/commons/Format.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/locale/LocaleUtils.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/service/ServiceRegistry.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/data/StoreManager.js'/></script>
+
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/widgets/GenericDropTarget.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/widgets/WizardPanel.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/widgets/DatasetsBrowserPanel.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/widgets/DatasetsBrowserView.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/widgets/FileUploadPanel.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/widgets/SaveDocumentWindow.js'/></script>
+
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/core/WidgetRuntime.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/core/WidgetDesigner.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/core/WidgetManager.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/core/WidgetContainerComponent.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/core/WidgetContainer.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/core/WidgetExtensionPointManager.js'/></script>
+
+
+
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/editor/widget/WidgetEditor.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/editor/widget/WidgetEditorMainPanel.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/editor/widget/WidgetEditorControlPanel.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/editor/widget/WidgetEditorDesignerPalette.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/editor/widget/WidgetEditorFieldPalette.js'/></script>
+
+
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/editor/dataset/DatasetBrowserPage.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/editor/widget/WidgetEditorPage.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/editor/WidgetEditorWizardPanel.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/editor/WidgetEditorWizard.js'/></script>
+
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/MainPanel.js'/></script>
+
+
+
+
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/widgets/dummy/DummyWidget.js'/></script>
+
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/widgets/table/locale/<%=locale.getLanguage()%>.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/widgets/table/TableWidget.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/widgets/table/QueryFieldsContainerPanel.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/widgets/table/QueryFieldsCardPanel.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/widgets/table/TableWidgetDesigner.js'/></script>
+
+
+<!-- END-DEBUG -->
+
+<!-- START-PRODUCTION
+<script type="text/javascript" src='/SpagoBICockpitEngine/SpagoBICockpitEngine/js/spagobi/cockpit-all.js'></script>
+END-PRODUCTION -->
+
+
+

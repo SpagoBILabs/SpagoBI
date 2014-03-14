@@ -385,20 +385,20 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 		        	text: 'Add widget'
 		        	, handler: this.onAddWidget
 		        	, scope: this
-		        },	new Ext.Toolbar.Button({
+		        },	new Ext.Button({
 		        			id: 'save'
 		        		   , iconCls: 'icon-save' 
 		 				   , tooltip: 'Save'
 		 				   , scope: this
 		 				   , handler:  this.onShowSaveDocumentWindow
 		 				   , hidden: this.isDocumentNotSaved()
-		 		 }), new Ext.Toolbar.Button({
+		 		 }), new Ext.Button({
 		 			 		id: 'saveAs'
 		 			   	   , iconCls: 'icon-saveas' 
 		 				   , tooltip: 'Save As'
 		 				   , scope: this
 		 				   , handler:  this.onShowSaveDocumentAsWindow
-		 		 }), new Ext.Toolbar.Button({
+		 		 }), new Ext.Button({
 	 			 		id: 'debug'
 			 	   	   , text: 'Debug'
 			 	       , scope: this
