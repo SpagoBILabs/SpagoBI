@@ -50,7 +50,7 @@ public class ModelConfigResource extends AbstractWhatIfEngineService {
 		try {
 			modelConfig = RestUtilities.readBody(getServletRequest());
 		
-			modelconfig = (ModelConfig)SerializationManager.getDefaultSerializer().deserialize(modelConfig, ModelConfig.class);
+			modelconfig = (ModelConfig)deserialize(modelConfig, ModelConfig.class);
 			config.setDrillType(modelconfig.getDrillType());
 		} catch (SerializationException e) {
 			logger.error(e.getMessage());
@@ -77,7 +77,7 @@ public class ModelConfigResource extends AbstractWhatIfEngineService {
 		
 		String configSerialized=null;
 		try {
-			configSerialized = (String) SerializationManager.getDefaultSerializer().serialize(config);
+			configSerialized = (String) serialize(config);
 		} catch (SerializationException e) {
 			logger.error("Error serializing the model config",e);
 			throw new SpagoBIEngineRuntimeException("Error serializing the model config",e);

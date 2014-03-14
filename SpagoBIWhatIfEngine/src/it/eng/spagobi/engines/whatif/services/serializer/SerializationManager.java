@@ -5,8 +5,6 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.engines.whatif.services.serializer;
 
-import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,32 +15,113 @@ import java.util.Map;
  */
 public class SerializationManager {
 	
-	static Map<String, ISerializer> serializerFactoryMappings;
-	static Map<String, IDeserializer> deserializerFactoryMappings;
+	//the first key is the output/input type, the second key is the version and the value is the serializer
+	static Map<String, Map<String,ISerializer>> serializerFactoryMappings;
+	public static final String DEFAULT_VERSION = "-1"; 
 	
 	static {
-		serializerFactoryMappings = new HashMap<String, ISerializer>();
-		deserializerFactoryMappings = new HashMap<String, IDeserializer>();
+		serializerFactoryMappings = new HashMap<String, Map<String,ISerializer>>();
 	}
 	
+	/**
+	 * Register a serilizer in this manager. 
+	 * @param mimeType the type of the input/output
+	 * @param serializer the serializer to register
+	 */
 	public static void registerSerializer(String mimeType, ISerializer serializer) {
-		serializerFactoryMappings.put(mimeType, serializer);
-	}
-	
-	public static void registerDeserializerFactory(String mimeType, ISerializer deserializer) {
-		serializerFactoryMappings.put(mimeType, deserializer);
-	}
-
-	public static ISerializer getSerializer(String mimeType) {
-		return  serializerFactoryMappings.get( mimeType );
-	}
-	
-	public static ISerializer getDefaultSerializer() {
-		if(serializerFactoryMappings!=null && serializerFactoryMappings.size()>0){
-			return  serializerFactoryMappings.get( serializerFactoryMappings.keySet().iterator().next() );
+		
+		String version = serializer.getVersion();
+		
+		if(version==null){
+			version = DEFAULT_VERSION;
 		}
-		throw new SpagoBIEngineRuntimeException("No serializer has been registerd");
+		
+		Map<String,ISerializer> outputTypeSerializerMap = serializerFactoryMappings.get(mimeType);
+		if(outputTypeSerializerMap!=null){
+			outputTypeSerializerMap = new HashMap<String,ISerializer>();
+		}
+		
+		outputTypeSerializerMap.put(version, serializer);
 	}
-
+	
+	/**
+	 * Gets the serializer for the specific version and input/output type
+	 * @param mimeType the input/output type
+	 * @param version the version of the serializer
+	 * @return the serializer
+	 */
+	public static ISerializer getSerializer(String mimeType, String version) {
+		Map<String,ISerializer> outputTypeSerializerMap = serializerFactoryMappings.get(mimeType);
+		if(outputTypeSerializerMap!=null){
+			return  outputTypeSerializerMap.get( version );
+		}
+		return null;
+	}
+	
+	/**
+	 * Gets the serializer for the specific input/output type and the default version
+	 * @param mimeType the input/output type
+	 * @return the serializer
+	 */
+	public static ISerializer getSerializer(String mimeType) {
+		return getSerializer(mimeType, DEFAULT_VERSION);
+	}
+	
+	/**
+	 * Serialize the object with the serializer for the specific version and input/output type
+	 * @param mimeType the input/output type
+	 * @param version the version of the serializer
+	 * @param object the object to serialize
+	 * @return the serialized object
+	 */
+	public static Object serialize(String mimeType, String version, Object object) throws SerializationException {
+		return getSerializer(mimeType, version).serialize(object);
+	}
+	
+	
+	/**
+	 * Serialize the object with the serializer for the specific input/output type and the default version
+	 * @param mimeType the input/output type
+	 * @param object the object to serialize
+	 * @return the serialized object
+	 */
+	public static Object serialize(String mimeType, Object object) throws SerializationException {
+		return getSerializer(mimeType).serialize(object);
+	}
+	
+	/**
+	 * Serialize the object with the serializer for the same version of the object to serialize and the specific input/output type 
+	 * @param mimeType the input/output type
+	 * @param object the object to serialize
+	 * @return the serialized object
+	 */
+	public static Object serialize(String mimeType, Versionable object) throws SerializationException {
+		return serialize(mimeType, object.getVersion(), object);
+	}
+	
+	/**
+	 * Deserialize the object with the serializer for the specific version and input/output type
+	 * @param mimeType the input/output type
+	 * @param version the version of the serializer
+	 * @param object the object to serialize
+	 * @param clazz the resulting class type for the deserialization process
+	 * @return the serialized object
+	 */
+	public static Object deserialize(String mimeType, String version, String object, Class clazz) throws SerializationException {
+		return getSerializer(mimeType, version).deserialize(object, clazz);
+	}
+	
+	/**
+	 * Deserialize the object with the serializer for the specific input/output type and the default version
+	 * @param mimeType the input/output type
+	 * @param object the object to serialize
+	 * @param clazz the resulting class type for the deserialization process
+	 * @return the serialized object
+	 */
+	public static Object deserialize(String mimeType, String object, Class clazz) throws SerializationException {
+		return getSerializer(mimeType).deserialize(object, clazz);
+	}
+	
+	
 }
 

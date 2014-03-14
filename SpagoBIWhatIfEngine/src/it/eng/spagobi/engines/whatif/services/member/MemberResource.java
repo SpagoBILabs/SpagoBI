@@ -194,7 +194,7 @@ public class MemberResource extends AbstractWhatIfEngineService {
 		
 
 		try {
-			return (String) SerializationManager.getDefaultSerializer().serialize(list);
+			return (String) serialize(list);
 		} catch (Exception e) {
 			logger.error("Error serializing the MemberEntry",e);
 			throw new SpagoBIRuntimeException("Error serializing the MemberEntry",e);

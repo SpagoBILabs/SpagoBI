@@ -13,6 +13,7 @@ package it.eng.spagobi.engines.whatif.services.serializer.json;
 import it.eng.spagobi.engines.whatif.services.model.ModelConfig;
 import it.eng.spagobi.engines.whatif.services.serializer.ISerializer;
 import it.eng.spagobi.engines.whatif.services.serializer.SerializationException;
+import it.eng.spagobi.engines.whatif.services.serializer.SerializationManager;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import org.apache.log4j.Logger;
@@ -58,8 +59,15 @@ public class PivotJsonSerializer implements ISerializer {
 		}
 	}
 
-	public static String getMimetype() {
+	public String getVersion() {
+		return SerializationManager.DEFAULT_VERSION;
+	}
+
+	/* (non-Javadoc)
+	 * @see it.eng.spagobi.engines.whatif.services.serializer.ISerializer#getFormat()
+	 */
+	public String getFormat() {
 		return mimeType;
 	}   
-	
+
 }

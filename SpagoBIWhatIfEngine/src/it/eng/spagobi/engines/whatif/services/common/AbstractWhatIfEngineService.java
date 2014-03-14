@@ -31,6 +31,7 @@ public class AbstractWhatIfEngineService extends AbstractRestService{
 	private static final String OUTPUTFORMAT = "OUTPUTFORMAT";
 	private static final String OUTPUTFORMAT_JSONHTML = "application/json";
 	
+	
 	public static transient Logger logger = Logger.getLogger(AbstractWhatIfEngineService.class);
 
 	@Context
@@ -44,21 +45,14 @@ public class AbstractWhatIfEngineService extends AbstractRestService{
 	public String renderModel(PivotModel model){
 		logger.debug("IN");
 		
-		HttpServletRequest servletRequest = getServletRequest();
 		String serializedModel = null;
-		
-		String outputFormat = servletRequest.getParameter(OUTPUTFORMAT);
-		
-		if(outputFormat==null  || outputFormat.equals("") ){
-			logger.debug("the output format is null.. use the default one"+OUTPUTFORMAT_JSONHTML);
-			outputFormat = OUTPUTFORMAT_JSONHTML;
-		}
+	
 
 		try {
-			serializedModel = (String) SerializationManager.getSerializer(outputFormat).serialize(model);
+			serializedModel = (String) serialize(model);
 		} catch (SerializationException e) {
-			logger.error("Error serializing the pivot in format "+outputFormat,e);
-			throw new SpagoBIEngineRuntimeException("Error serializing the pivot in format "+outputFormat,e);
+			logger.error("Error serializing the pivot", e);
+			throw new SpagoBIEngineRuntimeException("Error serializing the pivot",e);
 		}
 
 		
@@ -81,5 +75,26 @@ public class AbstractWhatIfEngineService extends AbstractRestService{
 		return (WhatIfEngineInstance)es.getAttributeFromSession( EngineConstants.ENGINE_INSTANCE );
 
 	}
+	
+	public String getOutputFormat(){
+		String outputFormat = servletRequest.getParameter(OUTPUTFORMAT);
+		
+		if(outputFormat==null  || outputFormat.equals("") ){
+			logger.debug("the output format is null.. use the default one"+OUTPUTFORMAT_JSONHTML);
+			outputFormat = OUTPUTFORMAT_JSONHTML;
+		}
 
+		return outputFormat;
+	}
+	
+	public String serialize(Object obj) throws SerializationException{
+		String outputFormat = getOutputFormat();
+		return (String) SerializationManager.serialize(outputFormat, obj);
+	}
+
+	public Object deserialize(String obj, Class clazz) throws SerializationException{
+		String outputFormat = getOutputFormat();
+		return SerializationManager.deserialize(outputFormat, obj, clazz);
+	}
+	
 }

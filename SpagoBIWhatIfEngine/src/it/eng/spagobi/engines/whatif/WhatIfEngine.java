@@ -53,13 +53,8 @@ public class WhatIfEngine {
 	}
 	
 
-	private static void initDeserializers() {
-    	
-	}
-
-
 	private static void initSerializers(OlapConnection connection, ModelConfig config) {
 		PivotJsonSerializer pjs = new PivotJsonSerializer(connection, config);
-		SerializationManager.registerSerializer(pjs.getMimetype(), pjs);
+		SerializationManager.registerSerializer(pjs.getFormat(), pjs);
 	}
 }
