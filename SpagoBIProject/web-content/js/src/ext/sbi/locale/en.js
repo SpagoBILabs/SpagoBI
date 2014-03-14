@@ -845,6 +845,14 @@ Sbi.locale.ln['sbi.scheduler.enddate'] = 'End Date';
 Sbi.locale.ln['sbi.scheduler.endtime'] = 'End Time';
 Sbi.locale.ln['sbi.scheduler.addschedulation'] = 'Add Schedulation';
 Sbi.locale.ln['sbi.scheduler.schedulationtype'] = 'Schedulation Type';
+Sbi.locale.ln['sbi.scheduler.schedulation.detail'] = 'Schedulation Detail';
+Sbi.locale.ln['sbi.scheduler.schedulation.delete'] = 'Delete Schedulation';
+Sbi.locale.ln['sbi.scheduler.activity.detailactivity'] = 'Detail of Activity';
+Sbi.locale.ln['sbi.scheduler.activity.schedulationlist'] = 'Schedulations List';
+Sbi.locale.ln['sbi.scheduler.activity.schedulationlist'] = 'Schedulations List';
+Sbi.locale.ln['sbi.scheduler.activity.deleted'] = 'Activity Deleted';
+Sbi.locale.ln['sbi.scheduler.schedulation.deleted'] = 'Schedulation Deleted';
+
 
 
 

@@ -23,7 +23,7 @@ Ext.define('Sbi.tools.scheduler.SchedulerListDetailPanel', {
 		
 			this.services =[];
 			this.initServices();
-			this.detailPanel =  Ext.create('Sbi.tools.scheduler.SchedulerDetailPanel',{services: this.services, isSuperadmin: isSuperadmin });
+			this.detailPanel =  Ext.create('Sbi.tools.scheduler.SchedulerDetailPanel',{services: this.services, isSuperadmin: isSuperadmin, contextName: this.contextName });
 			this.detailPanel.on("addSchedulation",this.addSchedulation,this);
 
 			this.columns = [{dataIndex:"jobName", header:LN('sbi.generic.label')}, {dataIndex:"jobDescription", header:LN('sbi.generic.descr')}];
@@ -83,14 +83,14 @@ Ext.define('Sbi.tools.scheduler.SchedulerListDetailPanel', {
 			 Ext.tip.QuickTipManager.init();
 			
 			//custom buttons for scheduler operations
-			Sbi.widget.grid.StaticGridDecorator.addCustomBottonColumn(this.columns, 'button-detail', 'Detail of Activity',function(grid, rowIndex, colIndex) {
+			Sbi.widget.grid.StaticGridDecorator.addCustomBottonColumn(this.columns, 'button-detail', LN('sbi.scheduler.activity.detailactivity') ,function(grid, rowIndex, colIndex) {
 				var record = grid.getStore().getAt(rowIndex);
 				var jobName = record.get('jobName');
 				var jobGroup = record.get('jobGroup');
 				window.location.assign(thisPanel.contextName + '/servlet/AdapterHTTP?JOBGROUPNAME='+jobGroup+'&PAGE=JobManagementPage&TYPE_LIST=TYPE_LIST&MESSAGEDET=MESSAGE_GET_JOB_DETAIL&JOBNAME='+jobName);
 
 			})
-			Sbi.widget.grid.StaticGridDecorator.addCustomBottonColumn(this.columns, 'button-schedule', 'Schedule List',function(grid, rowIndex, colIndex) {
+			Sbi.widget.grid.StaticGridDecorator.addCustomBottonColumn(this.columns, 'button-schedule', LN('sbi.scheduler.activity.schedulationlist'),function(grid, rowIndex, colIndex) {
 				var record = grid.getStore().getAt(rowIndex);
 				var jobName = record.get('jobName');
 				var jobGroup = record.get('jobGroup');

@@ -821,7 +821,12 @@ Sbi.locale.ln['sbi.scheduler.enddate'] = 'Data Fine';
 Sbi.locale.ln['sbi.scheduler.endtime'] = 'Orario Fine';
 Sbi.locale.ln['sbi.scheduler.addschedulation'] = 'Aggiungi Schedulazione';
 Sbi.locale.ln['sbi.scheduler.schedulationtype'] = 'Tipo Schedulazione';
-
+Sbi.locale.ln['sbi.scheduler.schedulation.detail'] = 'Dettaglio Schedulazione';
+Sbi.locale.ln['sbi.scheduler.schedulation.delete'] = 'Elimina Schedulazione';
+Sbi.locale.ln['sbi.scheduler.activity.detailactivity'] = 'Dettaglio Attività';
+Sbi.locale.ln['sbi.scheduler.activity.schedulationlist'] = 'Lista Schedulazioni';
+Sbi.locale.ln['sbi.scheduler.activity.deleted'] = 'Attività Eliminata';
+Sbi.locale.ln['sbi.scheduler.schedulation.deleted'] = 'Schedulazione Eliminata';
 
 //===================================================================
 //MESSAGE FOR QBE DATASET BUILDER
