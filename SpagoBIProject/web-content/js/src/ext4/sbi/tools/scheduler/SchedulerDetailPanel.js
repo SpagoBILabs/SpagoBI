@@ -28,6 +28,9 @@ Ext.define('Sbi.tools.scheduler.SchedulerDetailPanel', {
 			
 			thisPanel = this;
 			
+			Ext.tip.QuickTipManager.init();
+
+			
 			this.triggersData = null;
 
 			this.initFields();
@@ -112,6 +115,22 @@ Ext.define('Sbi.tools.scheduler.SchedulerDetailPanel', {
 			        { text: LN('sbi.scheduler.enddate'), dataIndex: 'triggerEndDate' },
 			        { text: LN('sbi.scheduler.endtime'), dataIndex: 'triggerEndTime' },
 					{
+						//DETAIL BUTTON
+			        	menuDisabled: true,
+						sortable: false,
+						xtype: 'actioncolumn',
+						width: 20,
+						columnType: "decorated",
+						items: [{
+							tooltip: LN('sbi.scheduler.schedulation.detail'),
+							iconCls   : 'button-detail',  
+							handler: function(grid, rowIndex, colIndex) {
+								var selectedRecord =  grid.store.getAt(rowIndex);
+								thisPanel.onDetailSchedulation(selectedRecord);
+							}
+						}]
+					},			        
+					{
 						//STATE BUTTON
 			        	menuDisabled: true,
 						sortable: false,
@@ -135,6 +154,7 @@ Ext.define('Sbi.tools.scheduler.SchedulerDetailPanel', {
 						width: 20,
 						columnType: "decorated",
 						items: [{
+							tooltip: LN('sbi.scheduler.schedulation.delete'),
 							iconCls   : 'button-remove',  
 							handler: function(grid, rowIndex, colIndex) {								
 								var selectedRecord =  grid.store.getAt(rowIndex);
@@ -158,6 +178,15 @@ Ext.define('Sbi.tools.scheduler.SchedulerDetailPanel', {
 			});
 			
 			
+		}
+		
+		, onDetailSchedulation: function(record){
+			var jobName = record.get('jobName');
+			var jobGroup = record.get('jobGroup');
+			var triggerName = record.get('triggerName');
+			var triggerGroup = record.get('triggerGroup');
+			
+			window.location.assign(this.contextName + '/servlet/AdapterHTTP?JOBGROUPNAME='+jobGroup+'&PAGE=TriggerManagementPage&TYPE_LIST=TYPE_LIST&MESSAGEDET=MESSAGE_GET_SCHEDULE_DETAIL&TRIGGERGROUP='+triggerGroup+'&JOBNAME='+jobName+'&TRIGGERNAME='+triggerName);
 		}
 		
 		, onDeleteSchedulation: function(record){
