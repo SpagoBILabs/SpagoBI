@@ -87,6 +87,7 @@ Sbi.settings.qbe = {
 			, rowHeight: 25
 			, fontSize: 10
 			, percentageFontSize: 9
+			, naCellValue: "0"
 		}
 		
 };
