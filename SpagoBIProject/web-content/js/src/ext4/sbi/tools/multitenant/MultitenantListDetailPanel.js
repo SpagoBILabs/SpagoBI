@@ -70,7 +70,7 @@ Ext.define('Sbi.tools.multitenant.MultitenantListDetailPanel', {
 						if(response !== undefined && response.response !== undefined && response.response.responseText !== undefined && response.response.statusText=="OK") {
 							response = response.response ;
 							if(response.responseText!=null && response.responseText!=undefined){
-								if(response.responseText.indexOf("error.mesage.description")>=0){
+								if(response.responseText.indexOf("errors")>=0){
 									Sbi.exception.ExceptionHandler.handleFailure(response);
 								}else{
 									Sbi.exception.ExceptionHandler.showInfoMessage(LN('sbi.multitenant.deleted'));
@@ -104,7 +104,62 @@ Ext.define('Sbi.tools.multitenant.MultitenantListDetailPanel', {
 			});
 
 	}
-
+    , handleFailure : function(response, options) {
+    	
+    	var errorEngines = "engine";
+    	var errorDS = "datasource";
+    	
+    	var errMessage = ''
+    	if(response !== undefined) {
+    		if (response.responseText !== undefined) {
+    			try{
+    				var content = Ext.util.JSON.decode( response.responseText );
+    			}catch(e){
+    				var content =Ext.JSON.decode( response.responseText );
+    			}
+    			
+    			if (content.errors !== undefined  && content.errors.length > 0) {
+    				if (content.errors[0].message === 'session-expired') {
+    					// session expired
+    		        	Sbi.exception.ExceptionHandler.redirectToLoginUrl();
+    		        	return;
+    				} else if (content.errors[0].message === 'not-enabled-to-call-service') {
+    					Sbi.exception.ExceptionHandler.showErrorMessage(LN('not-enabled-to-call-service'), 'Service Error')
+    				}  else if (content.message === 'validation-error') {
+    					for (var count = 0; count < content.errors.length; count++) {
+    						var anError = content.errors[count];
+    						if (anError.message !== undefined && anError.message !== '') {
+		        				errMessage += anError.message;
+		        			}
+		        			if (count < content.errors.length - 1) {
+		        				errMessage += '<br/>';
+		        			}
+    					}
+    				}else {
+    					for (var count = 0; count < content.errors.length; count++) {
+    						var anError = content.errors[count];
+    						if (anError.message !== undefined && anError.message !== '' && (anError.message.indexOf(errorEngines)>=0 || anError.message.indexOf(errorDS)>=0)) {
+		        				//errMessage += LN(anError.message);
+    							errMessage += LN('multitenant.error.association')+anError.message;
+		        			} else if (anError.localizedMessage !== undefined && anError.localizedMessage !== '') {
+		        				errMessage += anError.localizedMessage;
+		        			} else if (anError.message !== undefined && anError.message !== '') {
+		        				errMessage += anError.message;
+		        			}
+		        			if (count < content.errors.length - 1) {
+		        				errMessage += '<br/>';
+		        			}
+    					}
+    				}
+    			}
+    		} else {
+    			errMessage = LN('sbi.generic.genericError');
+    		}
+    	}
+    	
+    	Sbi.exception.ExceptionHandler.showErrorMessage(errMessage, LN('sbi.generic.serviceError'));
+   	
+    }
 	, onFormSave: function(record){
 		
 		Ext.Ajax.request({
@@ -114,8 +169,8 @@ Ext.define('Sbi.tools.multitenant.MultitenantListDetailPanel', {
 	        success: function(response, options) {
 
 			if(response !== undefined && response.responseText != undefined && response.responseText != null && response.statusText=="OK") {
-				if(response.responseText.indexOf("error.mesage.description")>=0){
-					Sbi.exception.ExceptionHandler.handleFailure(response);
+				if(response.responseText.indexOf("errors")>=0){
+					this.handleFailure(response);
 				}else{
 
 					var respoceJSON = Ext.decode(response.responseText);

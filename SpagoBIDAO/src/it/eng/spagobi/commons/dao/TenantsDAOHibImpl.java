@@ -40,7 +40,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -389,7 +389,7 @@ public class TenantsDAOHibImpl extends AbstractHibernateDAO implements ITenantsD
 		}
 	}
 
-	public void modifyTenant(SbiTenant aTenant) throws EMFUserError {
+	public void modifyTenant(SbiTenant aTenant) throws EMFUserError, Exception {
 		logger.debug("modifyTenant IN");
 		Session aSession = null;
 		Transaction tx = null;
@@ -407,11 +407,44 @@ public class TenantsDAOHibImpl extends AbstractHibernateDAO implements ITenantsD
 			aSession.update(aTenant);			
 			aSession.flush();
 			
+			this.disableTenantFilter(aSession);
+			
 			// cancello tutti data source associati al tenant
-			Query hibQuery = aSession.createQuery("delete from SbiOrganizationDatasource ds where ds.sbiOrganizations.id = :idTenant");
+
+			Query hibQuery = aSession.createQuery("from SbiOrganizationDatasource ds where ds.sbiOrganizations.id = :idTenant");
 			hibQuery.setInteger("idTenant", aTenant.getId());
-			hibQuery.executeUpdate();
-			aSession.flush();
+			ArrayList<SbiOrganizationDatasource> existingDsAssociated  = (ArrayList<SbiOrganizationDatasource>) hibQuery.list();
+			if(existingDsAssociated != null){
+				Iterator it = existingDsAssociated.iterator();
+				while (it.hasNext()) {
+					SbiOrganizationDatasource assDS = (SbiOrganizationDatasource)it.next();
+					Query docsQ = aSession.createQuery("from SbiObjects o where o.dataSource.dsId = :idDS and o.commonInfo.organization = :tenant");
+					docsQ.setInteger("idDS", assDS.getSbiDataSource().getDsId());
+					docsQ.setString("tenant", aTenant.getName());
+					ArrayList<Object> docs = (ArrayList<Object>) docsQ.list();
+					if(docs != null && !docs.isEmpty()){
+						tx.rollback();	
+						throw new Exception("datasource:"+assDS.getSbiDataSource().getLabel());
+						
+					}else{
+						
+						//check no model associated
+						Query modelQ = aSession.createQuery("from SbiMetaModel m where m.dataSource.dsId = :idDS and m.commonInfo.organization = :tenant");
+						modelQ.setInteger("idDS", assDS.getSbiDataSource().getDsId());
+						modelQ.setString("tenant", aTenant.getName());
+						ArrayList<Object> models = (ArrayList<Object>) modelQ.list();
+						if(models != null && !models.isEmpty()){
+							tx.rollback();	
+							throw new Exception("datasource:"+assDS.getSbiDataSource().getLabel());
+							
+						}else{				
+						
+							aSession.delete(assDS);
+							aSession.flush();
+						}
+					}
+				} 
+			}
 			
 			SbiCommonInfo sbiCommoInfo = new SbiCommonInfo();
 			sbiCommoInfo.setOrganization(aTenant.getName());
@@ -428,10 +461,28 @@ public class TenantsDAOHibImpl extends AbstractHibernateDAO implements ITenantsD
 			}
 			
 			// cancello tutte le Engine associate al tenant
-			hibQuery = aSession.createQuery("delete from SbiOrganizationEngine en where en.sbiOrganizations.id = :idTenant");
+			hibQuery = aSession.createQuery("from SbiOrganizationEngine en where en.sbiOrganizations.id = :idTenant");
 			hibQuery.setInteger("idTenant", aTenant.getId());
-			hibQuery.executeUpdate();
-			aSession.flush();
+			ArrayList<SbiOrganizationEngine> existingEnginesAssociated  = (ArrayList<SbiOrganizationEngine>) hibQuery.list();
+			if(existingEnginesAssociated != null){
+				Iterator it = existingEnginesAssociated.iterator();
+				while (it.hasNext()) {
+					SbiOrganizationEngine assEng = (SbiOrganizationEngine)it.next();
+					Query docsQ = aSession.createQuery("from SbiObjects o where o.sbiEngines.engineId = :idEngine and o.commonInfo.organization = :tenant");
+					docsQ.setInteger("idEngine", assEng.getSbiEngines().getEngineId());
+					docsQ.setString("tenant", aTenant.getName());
+					ArrayList<Object> docs = (ArrayList<Object>) docsQ.list();
+					if(docs != null && !docs.isEmpty()){
+						tx.rollback();	
+						throw new Exception("engine:"+assEng.getSbiEngines().getName());
+						
+					}else{
+						aSession.delete(assEng);
+						aSession.flush();
+					}
+				} 
+			}
+
 
 			Set<SbiOrganizationEngine> engines = aTenant.getSbiOrganizationEngines();
 			for (SbiOrganizationEngine sbiOrganizationEngine: engines) {

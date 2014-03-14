@@ -814,6 +814,8 @@ Sbi.locale.ln["error.mesage.multitenant.deleting.inuse"] = "Impossible to delete
 Sbi.locale.ln["error.mesage.multitenant.saving.duplicated"]="Impossible to save the tenant because there is another one with the same name";
 Sbi.locale.ln['sbi.multitenant.theme']= 'Theme';
 Sbi.locale.ln['sbi.multitenant.id'] = 'Identifier';
+Sbi.locale.ln['multitenant.error.association'] = 'Impossible to modify the association. Check the dependencies of ';
+
 
 //===================================================================
 //MESSAGE BOX BUTTONS
