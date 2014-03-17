@@ -85,7 +85,6 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditorControlPanel, Ext.Panel, {
 		this.designerPalettePanel = new Sbi.cockpit.editor.widget.WidgetEditorDesignerPalette({}); 
 
 		this.fieldsPalettePanel = new Sbi.cockpit.editor.widget.WidgetEditorFieldPalette({
-			displayRefreshButton : true,
 			border: false,
 	        gridConfig: {
 				ddGroup: 'worksheetDesignerDDGroup'
