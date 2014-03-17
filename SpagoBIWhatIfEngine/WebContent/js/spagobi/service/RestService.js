@@ -80,11 +80,12 @@ Ext.define('Sbi.service.RestService', {
 
 		var mySuccessCallBack= successCallBack;
 		var myFailureCallBack= failureCallBack;
-
+		Sbi.olap.eventManager.fireEvent('executeService');
+		
 		if(!mySuccessCallBack && scope){
 			mySuccessCallBack = function(response, options) {
 				if(response !== undefined && response.statusText !== undefined && response.responseText!=null && response.responseText!=undefined) {
-					this.eventManager.updateAfterMDXExecution(response.responseText);
+					Sbi.olap.eventManager.fireEvent('serviceExecuted', response);
 				} else {
 					Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
 				}
