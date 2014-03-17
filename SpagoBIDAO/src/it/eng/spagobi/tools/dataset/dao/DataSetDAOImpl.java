@@ -41,6 +41,229 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 	static private Logger logger = Logger.getLogger(DataSetDAOImpl.class);
 
 	// ========================================================================================
+	// READ operations (cRud)
+	// ========================================================================================
+
+
+	
+	public IDataSet loadDataSetById(Integer id) {
+		IDataSet toReturn;
+		Session session;
+		Transaction transaction;
+		
+		logger.debug("IN");
+
+		toReturn = null;
+		session = null;
+		transaction = null;
+		try {
+			if(id == null) {
+				throw new IllegalArgumentException("Input parameter [id] cannot be null");
+			}
+			
+			try {
+				session = getSession();
+				Assert.assertNotNull(session, "session cannot be null");
+				transaction = session.beginTransaction();
+				Assert.assertNotNull(transaction, "transaction cannot be null");
+			} catch(Throwable t) {
+				throw new SpagoBIDOAException("An error occured while creating the new transaction", t);
+			}
+			
+			Query hibQuery = session.createQuery("from SbiDataSet h where h.active = ? and h.id.dsId = ?" );
+			hibQuery.setBoolean(0, true);
+			hibQuery.setInteger(1, id);	
+			SbiDataSet dsActiveDetail =(SbiDataSet)hibQuery.uniqueResult();
+			if(dsActiveDetail!=null){
+				toReturn = DataSetFactory.toDataSet(dsActiveDetail);
+			}
+			transaction.commit();
+
+		} catch (Throwable t) {
+			if (transaction != null && transaction.isActive()) {
+				transaction.rollback();
+			}
+			throw new SpagoBIDOAException("An unexpected error occured while loading dataset whose id is equal to [" + id+ "]", t);	
+		} finally {
+			if (session != null && session.isOpen()) {
+				session.close();
+			}
+			logger.debug("OUT");
+		}
+		
+		return toReturn;
+	}
+
+	public IDataSet loadDataSetByLabel(String label) {
+		IDataSet toReturn;
+		Session session;
+		Transaction transaction;
+
+		logger.debug("IN");
+		
+		toReturn = null;
+		session = null;
+		transaction = null;
+		try {
+			if(label == null) {
+				throw new IllegalArgumentException("Input parameter [label] cannot be null");
+			}
+			
+			try {
+				session = getSession();
+				Assert.assertNotNull(session, "session cannot be null");
+				transaction = session.beginTransaction();
+				Assert.assertNotNull(transaction, "transaction cannot be null");
+			} catch(Throwable t) {
+				throw new SpagoBIDOAException("An error occured while creating the new transaction", t);
+			}
+			Query hibQuery = session.createQuery("from SbiDataSet h where h.active = ? and h.label = ? " );
+			hibQuery.setBoolean(0, true);
+			hibQuery.setString(1, label);	
+			SbiDataSet sbiDataSet =(SbiDataSet)hibQuery.uniqueResult();
+			if(sbiDataSet!=null){
+				//GuiDataSetDetail detail = DataSetFactory.toGuiDataSet(sbiDataSet);
+				//toReturn = DataSetFactory.toGuiDataSet(sbiDataSet);
+				toReturn = DataSetFactory.toDataSet(sbiDataSet);
+			}
+			
+			transaction.commit();
+
+		} catch (Throwable t) {
+			if (transaction != null && transaction.isActive()) {
+				transaction.rollback();
+			}
+			throw new SpagoBIDOAException("An unexpected error occured while loading dataset whose label is equal to [" + label + "]", t);	
+		} finally {
+			if (session != null && session.isOpen()) {
+				session.close();
+			}
+			logger.debug("OUT");
+		}
+		return toReturn;
+	}
+
+	public List<IDataSet> loadDataSetsOwnedByUser(String user) {
+		return loadDataSetsByOwner(user, true, false);
+	}
+	
+	public List<IDataSet> loadDataSetsByOwner(String owner, Boolean includeOwned, Boolean includePublic) {
+		return loadDataSets(owner, includeOwned, includePublic, null, null, null, null);
+	}
+	
+	public List<IDataSet> loadEnterpriseDataSets() {
+		return loadDataSets(null, null, null, null, "ENTERPRISE", null, null);
+	}
+	
+	public List<IDataSet> loadUserDataSets(String user) {
+		return loadDataSets(user, true, false, null, "USER", null, null);
+	}
+	
+	public List<IDataSet> loadDatasetsSharedWithUser(String user) {
+		return loadDataSets(user, false, false, "PUBLIC", "USER", null, null);
+	}
+	
+	public List<IDataSet> loadDatasetOwnedAndShared(String user) {
+		List<IDataSet>  results = new ArrayList<IDataSet>();
+		
+		List<IDataSet> owened =  loadDataSetsOwnedByUser(user);
+		results.addAll(owened);
+		List<IDataSet> shared =  loadDatasetsSharedWithUser(user);
+		results.addAll(shared);
+		
+		return results;
+	}
+	
+	public List<IDataSet> loadMyDataDataSets(String user) {
+		List<IDataSet> results = new ArrayList<IDataSet>();
+		
+//		"from SbiDataSet h where h.active = ? and ( "+ 
+//		" ((h.owner = ? ) or ( h.publicDS = true and h.scope.valueCd ='USER' AND h.owner !=?)) "+
+//		" OR "+
+//		" (h.scope.valueCd ='ENTERPRISE') "+
+//		" OR "+
+//		" ( h.publicDS = true and h.scope.valueCd ='USER' AND h.owner != ?) "+
+//		")"
+		
+		List<IDataSet> owened =  loadDataSetsOwnedByUser(user);
+		results.addAll(owened);
+		List<IDataSet> shared =  loadDatasetsSharedWithUser(user);
+		results.addAll(shared);
+		List<IDataSet> enterprise = loadEnterpriseDataSets();
+		results.addAll(enterprise);
+		
+		return results;
+	}
+	
+	public List<IDataSet> loadFlatDatasets() {		
+		return loadDataSets(null, false, false, null, "TECHNICAL", null, "SbiFlatDataSet");
+		//"from SbiDataSet h where h.active = ? and h.scope.valueCd ='TECHNICAL' and h.type='SbiFlatDataSet'"
+	}
+	
+
+	public List<IDataSet> loadDataSets() {
+		return loadDataSets(null, null, null, null, null, null, null);
+	}
+	
+	public List<IDataSet> loadDataSets(String owner, Boolean includeOwned, Boolean includePublic, String scope
+			, String type, String category, String implementation) {
+		
+		List<IDataSet>  results;
+		Session session = getSession();
+		
+		logger.debug("IN");
+		
+		results = new ArrayList<IDataSet>();
+		session = null;
+		try {
+			// open session
+			session = getSession();
+			
+			// create statement
+			String statement = "from SbiDataSet h where h.active = ?";
+			if(owner != null) {
+				if(includePublic != null && includePublic == true) {
+					String ownedCondition = includeOwned? "h.owner = ?": "h.owner != ?";
+					statement += " and (" + ownedCondition + " or h.publicDS = ?) ";
+				} else {
+					String ownedCondition = includeOwned? "h.owner = ?": "h.owner != ?";
+					statement += " and " + ownedCondition + " ";
+				}
+			}
+			if(scope != null) statement += " and h.publicDS = ? ";
+			if(type != null) statement += " and h.scope.valueCd = ? ";
+			if(category != null) statement += " and h.category.valueCd = ? ";
+			if(implementation != null) statement += " and h.type = ? ";
+			
+			// inject parameters
+			int paramIndex = 0;
+			Query query = session.createQuery(statement);
+			query.setBoolean(paramIndex++, true);
+			if(owner != null) {
+				query.setString(paramIndex++, owner);
+				if(includePublic != null && includePublic == true) {
+					query.setBoolean(paramIndex++, true);
+				}
+			}
+			if(scope != null) query.setBoolean(paramIndex++, "PUBLIC".equalsIgnoreCase(scope));
+			if(type != null) query.setString(paramIndex++, type);
+			if(category != null) query.setString(paramIndex++, category);
+			if(implementation != null) query.setString(paramIndex++, implementation);
+			
+			results = executeQuery(query, session);
+		} catch (Throwable t) {
+			throw new SpagoBIDOAException("An unexpected error occured while loading dataset whose owner is equal to [" + owner+ "]", t);	
+		} finally {
+			if (session != null && session.isOpen()) {
+				session.close();
+			}
+			logger.debug("OUT");
+		}
+		
+		return results;
+	}
+	
+	// ========================================================================================
 	// CREATE operations (Crud)
 	// ========================================================================================
 	
@@ -192,277 +415,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 	// ========================================================================================
 	// READ operations (cRud)
-	// ========================================================================================
-
-	public List<IDataSet> loadAllActiveDataSets() {
-		List<IDataSet> toReturn;
-		Session session;
-		Transaction transaction;
-		
-		logger.debug("IN");
-		
-		toReturn = null;
-		session = null;
-		transaction = null;
-		try {
-			toReturn = new ArrayList<IDataSet>();
-			
-			try {
-				session = getSession();
-				Assert.assertNotNull(session, "session cannot be null");
-				transaction = session.beginTransaction();
-				Assert.assertNotNull(transaction, "transaction cannot be null");
-			} catch(Throwable t) {
-				throw new SpagoBIDOAException("An error occured while creating the new transaction", t);
-			}
-			
-			Query query = session.createQuery("from SbiDataSet h where h.active = ? " );
-			query.setBoolean(0, true);
-
-			List<SbiDataSet> sbiDataSetList = query.list();
-			for (SbiDataSet sbiDataSet : sbiDataSetList) {
-				if(sbiDataSet != null){
-					toReturn.add(DataSetFactory.toDataSet(sbiDataSet));				
-				}
-			}
-		} catch (Throwable t) {
-			if (transaction != null && transaction.isActive()) {
-				transaction.rollback();
-			}
-			throw new SpagoBIDOAException("An unexpected error occured while loading datasets", t);	
-		} finally {
-			if (session != null && session.isOpen()) {
-				session.close();
-			}
-			logger.debug("OUT");
-		}
-		
-		return toReturn;
-	}	
-	
-	/**
-	 * Load all data set by owner.
-	 * @param ower the owner
-	 * @return list of data set
-	 * @see List#loadActiveDataSetByOwner(string)
-	 */	
-	public  List<IDataSet> loadAllActiveDataSetsByOwner(String owner) {
-		List<IDataSet>  toReturn;
-		Session session;
-		Transaction transaction;
-		
-		logger.debug("IN");
-		
-		toReturn = new ArrayList<IDataSet>();
-		session = null;
-		transaction = null;
-		try {
-			if(owner == null) {
-				throw new IllegalArgumentException("Input parameter [owner] cannot be null");
-			}
-			
-			try {
-				session = getSession();
-				Assert.assertNotNull(session, "session cannot be null");
-				transaction = session.beginTransaction();
-				Assert.assertNotNull(transaction, "transaction cannot be null");
-			} catch(Throwable t) {
-				throw new SpagoBIDOAException("An error occured while creating the new transaction", t);
-			}
-			
-			Query hibQuery = session.createQuery("from SbiDataSet h where h.active = ? and (h.publicDS = ? or h.owner = ?)" );
-			hibQuery.setBoolean(0, true);
-			hibQuery.setBoolean(1, true);
-			hibQuery.setString(2, owner);	
-			
-			List<SbiDataSet> sbiDataSetList = hibQuery.list();
-			for (SbiDataSet sbiDataSet : sbiDataSetList) {
-				if(sbiDataSet != null){
-					toReturn.add(DataSetFactory.toDataSet(sbiDataSet));				
-				}
-			}
-			transaction.commit();
-		} catch (Throwable t) {
-			if (transaction != null && transaction.isActive()) {
-				transaction.rollback();
-			}
-			throw new SpagoBIDOAException("An unexpected error occured while loading dataset whose label is equal to [" + owner+ "]", t);	
-		} finally {
-			if (session != null && session.isOpen()) {
-				session.close();
-			}
-			logger.debug("OUT");
-		}
-		
-		return toReturn;		
-	}
-	
-
-	/**
-	 * Load all data set by owner.
-	 * @param ower the owner
-	 * @return list of data set
-	 * @see List#loadActiveDataSetByOwner(string)
-	 */	
-	public  List<IDataSet> loadAllActiveDataSetsByOwnerAndType(String owner, String type) {
-		List<IDataSet>  toReturn;
-		Session session;
-		Transaction transaction;
-		
-		logger.debug("IN");
-		
-		toReturn = new ArrayList<IDataSet>();
-		session = null;
-		transaction = null;
-		try {
-			if(owner == null) {
-				throw new IllegalArgumentException("Input parameter [owner] cannot be null");
-			}
-			if(type == null) {
-				throw new IllegalArgumentException("Input parameter [type] cannot be null");
-			}
-			
-			try {
-				session = getSession();
-				Assert.assertNotNull(session, "session cannot be null");
-				transaction = session.beginTransaction();
-				Assert.assertNotNull(transaction, "transaction cannot be null");
-			} catch(Throwable t) {
-				throw new SpagoBIDOAException("An error occured while creating the new transaction", t);
-			}
-			
-			Query hibQuery = session.createQuery("from SbiDataSet h where h.active = ? and h.type = ? and (h.publicDS = ? or h.owner = ?)" );
-			hibQuery.setBoolean(0, true);
-			hibQuery.setString(1, type);
-			hibQuery.setBoolean(2, true);
-			hibQuery.setString(3, owner);	
-			
-			List<SbiDataSet> sbiDataSetList = hibQuery.list();
-			for (SbiDataSet sbiDataSet : sbiDataSetList) {
-				if(sbiDataSet != null){
-					toReturn.add(DataSetFactory.toDataSet(sbiDataSet));				
-				}
-			}
-			transaction.commit();
-		} catch (Throwable t) {
-			if (transaction != null && transaction.isActive()) {
-				transaction.rollback();
-			}
-			throw new SpagoBIDOAException("An unexpected error occured while loading dataset whose label is equal to [" + owner+ "]", t);	
-		} finally {
-			if (session != null && session.isOpen()) {
-				session.close();
-			}
-			logger.debug("OUT");
-		}
-		
-		return toReturn;		
-	}
-	
-	/**
-	 * Load data set by label.
-	 * @param label the label
-	 * @return the data set
-	 * @see it.eng.spagobi.tools.dataset.dao.IDataSetDAO#loadDataSetByLabel(string)
-	 */	
-	public IDataSet loadActiveDataSetByLabel(String label) {
-		IDataSet toReturn;
-		Session session;
-		Transaction transaction;
-		
-		logger.debug("IN");
-		
-		toReturn = null;
-		session = null;
-		transaction = null;
-		try {
-			if(label == null) {
-				throw new IllegalArgumentException("Input parameter [label] cannot be null");
-			}
-			
-			try {
-				session = getSession();
-				Assert.assertNotNull(session, "session cannot be null");
-				transaction = session.beginTransaction();
-				Assert.assertNotNull(transaction, "transaction cannot be null");
-			} catch(Throwable t) {
-				throw new SpagoBIDOAException("An error occured while creating the new transaction", t);
-			}
-			
-			Query hibQuery = session.createQuery("from SbiDataSet h where h.active = ? and h.label = ?" );
-			hibQuery.setBoolean(0, true);
-			hibQuery.setString(1, label);					
-			SbiDataSet dsActiveDetail =(SbiDataSet)hibQuery.uniqueResult();
-			if(dsActiveDetail!=null){
-				toReturn = DataSetFactory.toDataSet(dsActiveDetail);
-			}
-			transaction.commit();
-		} catch (Throwable t) {
-			if (transaction != null && transaction.isActive()) {
-				transaction.rollback();
-			}
-			throw new SpagoBIDOAException("An unexpected error occured while loading dataset whose label is equal to [" + label+ "]", t);	
-		} finally {
-			if (session != null && session.isOpen()) {
-				session.close();
-			}
-			logger.debug("OUT");
-		}
-		
-		return toReturn;		
-	}
-		
-	
-	public IDataSet loadActiveIDataSetByID(Integer id) {
-		IDataSet toReturn;
-		Session session;
-		Transaction transaction;
-		
-		logger.debug("IN");
-
-		toReturn = null;
-		session = null;
-		transaction = null;
-		try {
-			if(id == null) {
-				throw new IllegalArgumentException("Input parameter [id] cannot be null");
-			}
-			
-			try {
-				session = getSession();
-				Assert.assertNotNull(session, "session cannot be null");
-				transaction = session.beginTransaction();
-				Assert.assertNotNull(transaction, "transaction cannot be null");
-			} catch(Throwable t) {
-				throw new SpagoBIDOAException("An error occured while creating the new transaction", t);
-			}
-			
-			Query hibQuery = session.createQuery("from SbiDataSet h where h.active = ? and h.id.dsId = ?" );
-			hibQuery.setBoolean(0, true);
-			hibQuery.setInteger(1, id);	
-			SbiDataSet dsActiveDetail =(SbiDataSet)hibQuery.uniqueResult();
-			if(dsActiveDetail!=null){
-				toReturn = DataSetFactory.toDataSet(dsActiveDetail);
-			}
-			transaction.commit();
-
-		} catch (Throwable t) {
-			if (transaction != null && transaction.isActive()) {
-				transaction.rollback();
-			}
-			throw new SpagoBIDOAException("An unexpected error occured while loading dataset whose id is equal to [" + id+ "]", t);	
-		} finally {
-			if (session != null && session.isOpen()) {
-				session.close();
-			}
-			logger.debug("OUT");
-		}
-		
-		return toReturn;
-	}
-	
-	
-	
+	// ========================================================================================	
 
 	public List<IDataSet> loadFilteredDatasetList(String hsql, Integer offset, Integer fetchSize) {
 		
@@ -857,167 +810,10 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 		return toReturn;
 	}
 	
-	/**
-	 * Load data set by id.
-	 * @param dsID the ds id
-	 * @return the data set as genericGuiDataset
-	 * @throws EMFUserError the EMF user error
-	 */
-	public IDataSet loadDataSetById(Integer id) {
-		IDataSet toReturn;
-		Session session;
-		Transaction transaction;
+	
+	
 
-		logger.debug("IN");
-		
-		toReturn = null;
-		session = null;
-		transaction = null;
-		try {
-			if(id == null) {
-				throw new IllegalArgumentException("Input parameter [id] cannot be null");
-			}
-			
-			try {
-				session = getSession();
-				Assert.assertNotNull(session, "session cannot be null");
-				transaction = session.beginTransaction();
-				Assert.assertNotNull(transaction, "transaction cannot be null");
-			} catch(Throwable t) {
-				throw new SpagoBIDOAException("An error occured while creating the new transaction", t);
-			}
-			Query hibQuery = session.createQuery("from SbiDataSet h where h.active = ? and h.id.dsId = ?" );
-			hibQuery.setBoolean(0, true);
-			hibQuery.setInteger(1, id);	
-			SbiDataSet sbiDataSet =(SbiDataSet)hibQuery.uniqueResult();
-			if(sbiDataSet!=null){
-				toReturn = DataSetFactory.toDataSet(sbiDataSet);
-			}	
-			transaction.commit();
-
-		} catch (Throwable t) {
-			if (transaction != null && transaction.isActive()) {
-				transaction.rollback();
-			}
-			throw new SpagoBIDOAException("An unexpected error occured while loading dataset whose id is equal to [" + id + "]", t);	
-		} finally {
-			if (session != null && session.isOpen()) {
-				session.close();
-			}
-			logger.debug("OUT");
-		}
-		return toReturn;
-	}
-
-	/**
-	 * Load data set by id.
-	 * @param label the ds label
-	 * @return the data set as genericGuiDataset
-	 * @throws EMFUserError the EMF user error
-	 */
-	public IDataSet loadDataSetByLabel(String label) {
-		IDataSet toReturn;
-		Session session;
-		Transaction transaction;
-
-		logger.debug("IN");
-		
-		toReturn = null;
-		session = null;
-		transaction = null;
-		try {
-			if(label == null) {
-				throw new IllegalArgumentException("Input parameter [label] cannot be null");
-			}
-			
-			try {
-				session = getSession();
-				Assert.assertNotNull(session, "session cannot be null");
-				transaction = session.beginTransaction();
-				Assert.assertNotNull(transaction, "transaction cannot be null");
-			} catch(Throwable t) {
-				throw new SpagoBIDOAException("An error occured while creating the new transaction", t);
-			}
-			Query hibQuery = session.createQuery("from SbiDataSet h where h.active = ? and h.label = ? " );
-			hibQuery.setBoolean(0, true);
-			hibQuery.setString(1, label);	
-			SbiDataSet sbiDataSet =(SbiDataSet)hibQuery.uniqueResult();
-			if(sbiDataSet!=null){
-				//GuiDataSetDetail detail = DataSetFactory.toGuiDataSet(sbiDataSet);
-				//toReturn = DataSetFactory.toGuiDataSet(sbiDataSet);
-				toReturn = DataSetFactory.toDataSet(sbiDataSet);
-			}
-			
-			transaction.commit();
-
-		} catch (Throwable t) {
-			if (transaction != null && transaction.isActive()) {
-				transaction.rollback();
-			}
-			throw new SpagoBIDOAException("An unexpected error occured while loading dataset whose label is equal to [" + label + "]", t);	
-		} finally {
-			if (session != null && session.isOpen()) {
-				session.close();
-			}
-			logger.debug("OUT");
-		}
-		return toReturn;
-	}
-
-	/**
-	 * Load data set by owner.
-	 * @param owner the ds owner
-	 * @return the data set as genericGuiDataset
-	 * @throws EMFUserError the EMF user error
-	 */
-	public IDataSet loadDataSetByOwner(String owner) {
-		IDataSet toReturn;
-		Session session;
-		Transaction transaction;
-
-		logger.debug("IN");
-		
-		toReturn = null;
-		session = null;
-		transaction = null;
-		try {
-			if(owner == null) {
-				throw new IllegalArgumentException("Input parameter [owner] cannot be null");
-			}
-			
-			try {
-				session = getSession();
-				Assert.assertNotNull(session, "session cannot be null");
-				transaction = session.beginTransaction();
-				Assert.assertNotNull(transaction, "transaction cannot be null");
-			} catch(Throwable t) {
-				throw new SpagoBIDOAException("An error occured while creating the new transaction", t);
-			}
-			Query hibQuery = session.createQuery("from SbiDataSet h where h.active = ? and owner = ? " );
-			hibQuery.setBoolean(0, true);
-			hibQuery.setString(1, owner);	
-			SbiDataSet sbiDataSet =(SbiDataSet)hibQuery.uniqueResult();
-			if(sbiDataSet!=null){
-				//GuiDataSetDetail detail = DataSetFactory.toGuiDataSet(sbiDataSet);
-				//toReturn = DataSetFactory.toGuiDataSet(sbiDataSet);
-				toReturn = DataSetFactory.toDataSet(sbiDataSet);
-			}
-			
-			transaction.commit();
-
-		} catch (Throwable t) {
-			if (transaction != null && transaction.isActive()) {
-				transaction.rollback();
-			}
-			throw new SpagoBIDOAException("An unexpected error occured while loading dataset whose label is equal to [" + owner + "]", t);	
-		} finally {
-			if (session != null && session.isOpen()) {
-				session.close();
-			}
-			logger.debug("OUT");
-		}
-		return toReturn;
-	}
+	
 	
 	/**
 	 * Returns List of all existent SbiDataSet elements (NO DETAIL, only name, label, descr...).
@@ -1930,312 +1726,72 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 		return toReturn;
 	}
 
-	public List<IDataSet> loadMyDataOwnerDatasets(String owner) {
-		List<IDataSet>  toReturn;
-		Session session;
-		Transaction transaction;
-		
-		logger.debug("IN");
-		
-		toReturn = new ArrayList<IDataSet>();
-		session = null;
-		transaction = null;
-		try {
-			if(owner == null) {
-				throw new IllegalArgumentException("Input parameter [owner] cannot be null");
-			}
-			try {
-				session = getSession();
-				Assert.assertNotNull(session, "session cannot be null");
-				transaction = session.beginTransaction();
-				Assert.assertNotNull(transaction, "transaction cannot be null");
-			} catch(Throwable t) {
-				throw new SpagoBIDOAException("An error occured while creating the new transaction", t);
-			}
-			//private & public datasets created by the user "owner" 
-			Query myDS = session.createQuery("from SbiDataSet h where h.active = ? and h.owner = ? AND h.scope.valueCd ='USER'" );
-			myDS.setBoolean(0, true);
-			myDS.setString(1, owner);	
-			
-			List<SbiDataSet> sbiDataSetList = myDS.list();
-			for (SbiDataSet sbiDataSet : sbiDataSetList) {
-				if(sbiDataSet != null){
-					toReturn.add(DataSetFactory.toDataSet(sbiDataSet));				
-				}
-			}
+	
 
-			transaction.commit();
-		} catch (Throwable t) {
-			if (transaction != null && transaction.isActive()) {
-				transaction.rollback();
-			}
-			throw new SpagoBIDOAException("An unexpected error occured while loading dataset whose owner is equal to [" + owner+ "]", t);	
-		} finally {
-			if (session != null && session.isOpen()) {
-				session.close();
-			}
-			logger.debug("OUT");
+	
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+		
+	private Transaction beginTransaction(Session session) {
+		Transaction transaction = null;
+		try {
+			Assert.assertNotNull(session, "session cannot be null");
+			transaction = session.beginTransaction();
+			Assert.assertNotNull(transaction, "transaction cannot be null");
+		} catch(Throwable t) {
+			throw new SpagoBIDOAException("An error occured while creating the new transaction", t);
 		}
 		
-		return toReturn;
-	}
-
-	public List<IDataSet> loadMyDataOwnerAndSharedDatasets(String owner) {
-		List<IDataSet>  toReturn;
-		Session session;
-		Transaction transaction;
-		
-		logger.debug("IN");
-		
-		toReturn = new ArrayList<IDataSet>();
-		session = null;
-		transaction = null;
-		try {
-			if(owner == null) {
-				throw new IllegalArgumentException("Input parameter [owner] cannot be null");
-			}
-			try {
-				session = getSession();
-				Assert.assertNotNull(session, "session cannot be null");
-				transaction = session.beginTransaction();
-				Assert.assertNotNull(transaction, "transaction cannot be null");
-			} catch(Throwable t) {
-				throw new SpagoBIDOAException("An error occured while creating the new transaction", t);
-			}
-			//private & public datasets created by the user "owner" 
-			Query myDS = session.createQuery("from SbiDataSet h where h.active = ? and ((h.owner = ? ) or ( h.publicDS = true and h.scope.valueCd ='USER' AND h.owner != ?))" );
-			myDS.setBoolean(0, true);
-			myDS.setString(1, owner);	
-			myDS.setString(2, owner);
-			
-			List<SbiDataSet> sbiDataSetList = myDS.list();
-			for (SbiDataSet sbiDataSet : sbiDataSetList) {
-				if(sbiDataSet != null){
-					toReturn.add(DataSetFactory.toDataSet(sbiDataSet));				
-				}
-			}
-
-			transaction.commit();
-		} catch (Throwable t) {
-			if (transaction != null && transaction.isActive()) {
-				transaction.rollback();
-			}
-			throw new SpagoBIDOAException("An unexpected error occured while loading dataset whose owner is equal to [" + owner+ "]", t);	
-		} finally {
-			if (session != null && session.isOpen()) {
-				session.close();
-			}
-			logger.debug("OUT");
-		}
-		
-		return toReturn;
+		return transaction;
 	}
 
 
-	public List<IDataSet> loadEnterpriseDatasets(String owner) {
-		List<IDataSet>  toReturn;
-		Session session;
+	private List<IDataSet> executeQuery(Query query, Session session) {
+		List<IDataSet>  results;
 		Transaction transaction;
 		
 		logger.debug("IN");
 		
-		toReturn = new ArrayList<IDataSet>();
-		session = null;
+		results = new ArrayList<IDataSet>();
 		transaction = null;
 		try {
-			if(owner == null) {
-				throw new IllegalArgumentException("Input parameter [owner] cannot be null");
-			}
-			try {
-				session = getSession();
-				Assert.assertNotNull(session, "session cannot be null");
-				transaction = session.beginTransaction();
-				Assert.assertNotNull(transaction, "transaction cannot be null");
-			} catch(Throwable t) {
-				throw new SpagoBIDOAException("An error occured while creating the new transaction", t);
-			}
-			//private & public datasets created by the user "owner" 
-			Query myDS = session.createQuery("from SbiDataSet h where h.active = ? and h.scope.valueCd ='ENTERPRISE'" );
-			myDS.setBoolean(0, true);
-			
-			List<SbiDataSet> sbiDataSetList = myDS.list();
-			for (SbiDataSet sbiDataSet : sbiDataSetList) {
-				if(sbiDataSet != null){
-					toReturn.add(DataSetFactory.toDataSet(sbiDataSet));				
-				}
-			}
-
+			transaction = beginTransaction(session);
+			List<SbiDataSet> sbiDataSetList = query.list();
+			results = parseResult(sbiDataSetList);
 			transaction.commit();
 		} catch (Throwable t) {
 			if (transaction != null && transaction.isActive()) {
 				transaction.rollback();
 			}
-			throw new SpagoBIDOAException("An unexpected error occured while loading dataset whose owner is equal to [" + owner+ "]", t);	
+			throw new SpagoBIDOAException("An unexpected error occured while loading dataset", t);	
 		} finally {
-			if (session != null && session.isOpen()) {
-				session.close();
-			}
 			logger.debug("OUT");
 		}
 		
-		return toReturn;
-	}
-
-
-	public List<IDataSet> loadSharedDatasets(String owner) {
-		List<IDataSet>  toReturn;
-		Session session;
-		Transaction transaction;
-		
-		logger.debug("IN");
-		
-		toReturn = new ArrayList<IDataSet>();
-		session = null;
-		transaction = null;
-		try {
-			if(owner == null) {
-				throw new IllegalArgumentException("Input parameter [owner] cannot be null");
-			}
-			try {
-				session = getSession();
-				Assert.assertNotNull(session, "session cannot be null");
-				transaction = session.beginTransaction();
-				Assert.assertNotNull(transaction, "transaction cannot be null");
-			} catch(Throwable t) {
-				throw new SpagoBIDOAException("An error occured while creating the new transaction", t);
-			}
-			//private & public datasets created by the user "owner" 
-			Query myDS = session.createQuery("from SbiDataSet h where h.active = ? and  ( h.publicDS = true and h.scope.valueCd ='USER' AND h.owner != ?))" );
-			myDS.setBoolean(0, true);
-			myDS.setString(1, owner);	
-			
-			List<SbiDataSet> sbiDataSetList = myDS.list();
-			for (SbiDataSet sbiDataSet : sbiDataSetList) {
-				if(sbiDataSet != null){
-					toReturn.add(DataSetFactory.toDataSet(sbiDataSet));				
-				}
-			}
-
-			transaction.commit();
-		} catch (Throwable t) {
-			if (transaction != null && transaction.isActive()) {
-				transaction.rollback();
-			}
-			throw new SpagoBIDOAException("An unexpected error occured while loading dataset whose owner is equal to [" + owner+ "]", t);	
-		} finally {
-			if (session != null && session.isOpen()) {
-				session.close();
-			}
-			logger.debug("OUT");
-		}
-		
-		return toReturn;
+		return results;
 	}
 	
-	public List<IDataSet> loadMyDataAllDatasets(String owner) {
-		List<IDataSet>  toReturn;
-		Session session;
-		Transaction transaction;
+	private List<IDataSet> parseResult(List<SbiDataSet> sbiDataSetList) {
+		List<IDataSet>  results = null;
 		
-		logger.debug("IN");
-		
-		toReturn = new ArrayList<IDataSet>();
-		session = null;
-		transaction = null;
-		try {
-			if(owner == null) {
-				throw new IllegalArgumentException("Input parameter [owner] cannot be null");
+		results = new ArrayList<IDataSet>();
+		for (SbiDataSet sbiDataSet : sbiDataSetList) {
+			if(sbiDataSet != null){
+				results.add(DataSetFactory.toDataSet(sbiDataSet));				
 			}
-			try {
-				session = getSession();
-				Assert.assertNotNull(session, "session cannot be null");
-				transaction = session.beginTransaction();
-				Assert.assertNotNull(transaction, "transaction cannot be null");
-			} catch(Throwable t) {
-				throw new SpagoBIDOAException("An error occured while creating the new transaction", t);
-			}
-			Query myDS = session.createQuery("from SbiDataSet h where h.active = ? and ( "+ 
-										" ((h.owner = ? ) or ( h.publicDS = true and h.scope.valueCd ='USER' AND h.owner !=?)) "+
-										" OR "+
-										" (h.scope.valueCd ='ENTERPRISE') "+
-										" OR "+
-										" ( h.publicDS = true and h.scope.valueCd ='USER' AND h.owner != ?) "+
-										")" );
-			myDS.setBoolean(0, true);
-			myDS.setString(1, owner);	
-			myDS.setString(2, owner);	
-			myDS.setString(3, owner);	
-
-			
-			List<SbiDataSet> sbiDataSetList = myDS.list();
-			for (SbiDataSet sbiDataSet : sbiDataSetList) {
-				if(sbiDataSet != null){
-					toReturn.add(DataSetFactory.toDataSet(sbiDataSet));				
-				}
-			}
-
-			transaction.commit();
-		} catch (Throwable t) {
-			if (transaction != null && transaction.isActive()) {
-				transaction.rollback();
-			}
-			throw new SpagoBIDOAException("An unexpected error occured while loading dataset whose owner is equal to [" + owner+ "]", t);	
-		} finally {
-			if (session != null && session.isOpen()) {
-				session.close();
-			}
-			logger.debug("OUT");
 		}
-		
-		return toReturn;		
+		return results;
 	}
-	public List<IDataSet> loadFlatDatasets(String owner) {
-		List<IDataSet>  toReturn;
-		Session session;
-		Transaction transaction;
-		
-		logger.debug("IN");
-		
-		toReturn = new ArrayList<IDataSet>();
-		session = null;
-		transaction = null;
-		try {
-			if(owner == null) {
-				throw new IllegalArgumentException("Input parameter [owner] cannot be null");
-			}
-			try {
-				session = getSession();
-				Assert.assertNotNull(session, "session cannot be null");
-				transaction = session.beginTransaction();
-				Assert.assertNotNull(transaction, "transaction cannot be null");
-			} catch(Throwable t) {
-				throw new SpagoBIDOAException("An error occured while creating the new transaction", t);
-			}
-			//private & public datasets created by the user "owner" 
-			Query myDS = session.createQuery("from SbiDataSet h where h.active = ? and h.scope.valueCd ='TECHNICAL' and h.type='SbiFlatDataSet'" );
-			myDS.setBoolean(0, true);
-			
-			List<SbiDataSet> sbiDataSetList = myDS.list();
-			for (SbiDataSet sbiDataSet : sbiDataSetList) {
-				if(sbiDataSet != null){
-					toReturn.add(DataSetFactory.toDataSet(sbiDataSet));				
-				}
-			}
 
-			transaction.commit();
-		} catch (Throwable t) {
-			if (transaction != null && transaction.isActive()) {
-				transaction.rollback();
-			}
-			throw new SpagoBIDOAException("An unexpected error occured while loading dataset whose owner is equal to [" + owner+ "]", t);	
-		} finally {
-			if (session != null && session.isOpen()) {
-				session.close();
-			}
-			logger.debug("OUT");
-		}
-		
-		return toReturn;
-	}
+
+
 
 }

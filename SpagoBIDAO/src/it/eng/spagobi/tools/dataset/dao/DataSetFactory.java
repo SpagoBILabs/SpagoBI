@@ -6,6 +6,7 @@
 package it.eng.spagobi.tools.dataset.dao;
 
 import it.eng.qbe.dataset.QbeDataSet;
+import it.eng.spagobi.commons.dao.DAOConfig;
 import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.tools.dataset.bo.CustomDataSet;
 import it.eng.spagobi.tools.dataset.bo.FileDataSet;
@@ -144,6 +145,8 @@ public class DataSetFactory {
 		try{
 			if(sbiDataSet.getType().equalsIgnoreCase(DataSetConstants.DS_FILE)){
 				ds = new FileDataSet();
+				((FileDataSet)ds).setResourcePath(DAOConfig.getResourcePath());
+				
 				ds.setConfiguration(sbiDataSet.getConfiguration());
 				if (jsonConf.getString(DataSetConstants.FILE_TYPE) != null){
 					((FileDataSet)ds).setFileType(jsonConf.getString(DataSetConstants.FILE_TYPE));		

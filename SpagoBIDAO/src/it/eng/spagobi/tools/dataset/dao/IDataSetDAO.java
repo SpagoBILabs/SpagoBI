@@ -5,11 +5,9 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.tools.dataset.dao;
 
-import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.dao.ISpagoBIDao;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
-import it.eng.spagobi.tools.datasource.bo.IDataSource;
 
 import java.util.List;
 
@@ -19,6 +17,45 @@ import java.util.List;
  */
 public interface IDataSetDAO extends ISpagoBIDao {
 	
+	
+	// ========================================================================================
+	// READ operations (cRud)
+	// ========================================================================================
+	
+	
+	public IDataSet loadDataSetByLabel(String label);
+	public IDataSet loadDataSetById(Integer id);
+	
+	
+	public List<IDataSet> loadDataSetsByOwner(String owner, Boolean includeOwned, Boolean includePublic);
+	public List<IDataSet> loadEnterpriseDataSets();
+	public List<IDataSet> loadUserDataSets(String user);
+	
+	public List<IDataSet> loadFlatDatasets();
+	
+	public List<IDataSet> loadDataSetsOwnedByUser(String user);
+	public List<IDataSet> loadDatasetsSharedWithUser(String user);
+	public List<IDataSet> loadDatasetOwnedAndShared(String user);
+	public List<IDataSet> loadMyDataDataSets(String owner);
+	
+	public List<IDataSet> loadDataSets(String owner, Boolean includeOwned, Boolean includePublic, String visibility
+			, String type, String category, String implementation);
+	
+	public List<IDataSet> loadDataSets();
+	
+	
+	
+
+	
+	
+	
+	
+	
+
+	
+
+	
+	
 	// ========================================================================================
 	// CEATE operations (Crud)
 	// ========================================================================================
@@ -26,30 +63,16 @@ public interface IDataSetDAO extends ISpagoBIDao {
 	
 	
 	// ========================================================================================
-	// READ operations (cRud)
+	// ???
 	// ========================================================================================
 	
-	public List<IDataSet> loadAllActiveDataSets();
-	public List<IDataSet> loadAllActiveDataSetsByOwner(String owner);
-	public List<IDataSet> loadAllActiveDataSetsByOwnerAndType(String owner, String type);
-	public IDataSet loadActiveDataSetByLabel(String label);
-	public IDataSet loadActiveIDataSetByID(Integer id);
+
 	
 	public List<IDataSet> loadFilteredDatasetList(String hsql, Integer offset, Integer fetchSize);
 	public List<IDataSet> loadPagedDatasetList(Integer offset, Integer fetchSize);
 	public List<IDataSet> loadFilteredDatasetList(String hsql, Integer offset, Integer fetchSize, String owner);
 	public List<IDataSet> loadPagedDatasetList(Integer offset, Integer fetchSize, String owner, Boolean isPublic);
-	public IDataSet loadDataSetById(Integer dsId) ;
-	public IDataSet loadDataSetByLabel(String dsLabel);
-	public IDataSet loadDataSetByOwner(String owner);
 	
-	public List<IDataSet> loadMyDataOwnerDatasets(String owner);
-	public List<IDataSet> loadMyDataOwnerAndSharedDatasets(String owner);
-	public List<IDataSet> loadEnterpriseDatasets(String owner);
-	public List<IDataSet> loadSharedDatasets(String owner);
-	public List<IDataSet> loadMyDataAllDatasets(String owner);
-
-	public List<IDataSet> loadFlatDatasets(String owner);
 	
 	/**
 	 * @deprecated
