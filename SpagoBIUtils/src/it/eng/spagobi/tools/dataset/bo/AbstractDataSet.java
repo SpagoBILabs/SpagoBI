@@ -408,19 +408,7 @@ public abstract class AbstractDataSet implements IDataSet {
     // ===============================================
 	
     public String getResourcePath() {
-    	if (resPath == null) {
-			try {
-				String jndiName = SingletonConfig.getInstance().getConfigValue("SPAGOBI.RESOURCE_PATH_JNDI_NAME");
-				resPath = SpagoBIUtilities.readJndiResource(jndiName);
-			} catch (Throwable t) {
-				logger.debug(t);
-				resPath = EnginConf.getInstance().getResourcePath();
-			}
-    	}
-		if (resPath == null) {
-			throw new SpagoBIRuntimeException("Resource path not found!!!");
-		}
-		return resPath;
+    	return resPath;
 	}
     
     
