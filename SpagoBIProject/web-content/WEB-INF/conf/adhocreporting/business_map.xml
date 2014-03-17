@@ -3,12 +3,5 @@
 	<MAP_ACTIONS>
 	</MAP_ACTIONS>
 	<MAP_PAGE_MODULES>
-	</MAP_PAGE_MODULES>
-	
-    <MAP_REST_SERVICES>
-        <MAP_REST_SERVICE serviceUrl="/certificateddatasets" businessProcess="CreateWorksheetFromDatasetUserFunctionality" />  
-        <MAP_REST_SERVICE serviceUrl="/documents/myAnalysisDocsList" businessProcess="CreateWorksheetFromDatasetUserFunctionality" />            
-                  
-    </MAP_REST_SERVICES>
-    
+	</MAP_PAGE_MODULES>    
 </BUSINESS_MAP>

@@ -59,13 +59,5 @@
 		<MAP_PAGE_MODULE pageName="DocumentTemplateBuildPage" moduleName="DocumentTemplateBuildModule" businessProcess="DocumentManagement" />
 		<MAP_PAGE_MODULE pageName="ExecuteBIObjectPage" moduleName="ExecuteBIObjectModule" businessProcess="DocumentUserManagement" />
 	</MAP_PAGE_MODULES>
-	<MAP_REST_SERVICES>
-		<MAP_REST_SERVICE serviceUrl="/community/user" businessProcess="UserSaveDocumentFunctionality" />
-		<MAP_REST_SERVICE serviceUrl="/documents/clone" businessProcess="publicFunctionality" />	
-		<MAP_REST_SERVICE serviceUrl="/documents/share" businessProcess="publicFunctionality" />
-		<MAP_REST_SERVICE serviceUrl="/geoexport/jpg" businessProcess="publicFunctionality" />	
-		<MAP_REST_SERVICE serviceUrl="/documents/sendFeedback" businessProcess="publicFunctionality" />	
-		<MAP_REST_SERVICE serviceUrl="/certificateddatasets/getflatdataset" businessProcess="DocumentDevManagement" />
-				
-	</MAP_REST_SERVICES>
+	
 </BUSINESS_MAP>

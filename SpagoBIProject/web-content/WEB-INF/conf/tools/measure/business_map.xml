@@ -1,7 +1,4 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <BUSINESS_MAP>
-	<MAP_REST_SERVICES>
-		<MAP_REST_SERVICE serviceUrl="/measures" businessProcess="MeasuresCatalogueManagement" />
-		<MAP_REST_SERVICE serviceUrl="/measures/join" businessProcess="MeasuresCatalogueManagement" />								
-	</MAP_REST_SERVICES>
+
 </BUSINESS_MAP>

@@ -6,14 +6,7 @@
 	
 	<MAP_PAGE_MODULES>
 	</MAP_PAGE_MODULES>
-	<MAP_REST_SERVICES>
-		<MAP_REST_SERVICE serviceUrl="/community/accept" businessProcess="publicFunctionality" />		
-		<MAP_REST_SERVICE serviceUrl="/communityCRUD" businessProcess="MenuManagement" />
-		
-	</MAP_REST_SERVICES>
-	<MAP_EXTERNAL_REST_SERVICES>
-		<MAP_EXTERNAL_REST_SERVICE serviceUrl="/subscribe/getUserInfo" />
-	</MAP_EXTERNAL_REST_SERVICES>
+	
 	
 	
 
