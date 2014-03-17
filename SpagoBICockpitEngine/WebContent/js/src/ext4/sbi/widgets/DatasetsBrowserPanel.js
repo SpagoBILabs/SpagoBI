@@ -431,8 +431,6 @@ Ext.extend(Sbi.widgets.DatasetsBrowserPanel, Ext.Panel, {
 		
 		}
 		
-		alert(this.services["list"]);
-		
 		Sbi.trace("[DatasetsBrowserPanel.initDatasetListService]: OUT");
 	}
 	
@@ -675,7 +673,7 @@ Ext.extend(Sbi.widgets.DatasetsBrowserPanel, Ext.Panel, {
 		config.filterOption = this.filterOption;
 		
 		this.viewPanel = new Sbi.widgets.DatasetsBrowserView(config);
-		this.viewPanel.addListener('click', this.onClick, this);
+		this.viewPanel.addListener('itemclick', this.onClick, this);
 		
 		Sbi.trace("[DatasetsBrowserPanel.initViewPanel]: OUT");
 	}
@@ -783,25 +781,24 @@ Ext.extend(Sbi.widgets.DatasetsBrowserPanel, Ext.Panel, {
 	, onClick : function(obj, i, node, e) {
 		Sbi.trace("[DatasetsBrowserPanel.onClick]: IN");
 		
-		 var store = obj.getStore();
-		 var record = store.getAt(store.findExact('label',node.id));
-		 if (record){
-			 record = record.data;
-		 }
-		 var clickedDatasetLabel = record.label;
-		 Sbi.trace("[DatasetsBrowserPanel.onClick]: clicked dataset label is equal to [" + clickedDatasetLabel + "]");
-		 Sbi.trace("[DatasetsBrowserPanel.onClick]: selected dataset label is equal to [" + this.getSelectedDataset() + "]");
+		var store = obj.getStore();
+		var record = store.getAt(store.findExact('label',node.id));
+		if (record){
+			record = record.data;
+		}
+		var clickedDatasetLabel = record.label;
+		Sbi.trace("[DatasetsBrowserPanel.onClick]: clicked dataset label is equal to [" + clickedDatasetLabel + "]");
+		Sbi.trace("[DatasetsBrowserPanel.onClick]: selected dataset label is equal to [" + this.getSelectedDataset() + "]");
 		 
+		if (clickedDatasetLabel == this.getSelectedDataset()){  // it's an unselect
+			this.resetSelection();	     
+	    } else {	   
+	    	this.select(clickedDatasetLabel, true);
+	    }
 		 
-		 if (clickedDatasetLabel == this.getSelectedDataset()){  // it's an unselect
-    		 this.resetSelection();	     
-	     } else {	   
-	    	 this.select(clickedDatasetLabel, true);
-	     }
-		 
-		 Sbi.trace("[DatasetsBrowserPanel.onClick]: OUT");
+		Sbi.trace("[DatasetsBrowserPanel.onClick]: OUT");
 
-    	 return true;
+    	return true;
 	}
 
 	

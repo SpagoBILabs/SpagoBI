@@ -13,7 +13,7 @@ Sbi.widgets.DatasetsBrowserView = function(config) {
 	var defaultSettings = {		
 		itemSelector : 'dd' 
 		, trackOver : true
-		, overClass : 'over'
+		, overItemCls : 'over'
 		, frame : false
 		, border: false
 		, emptyText : LN('No Documents')

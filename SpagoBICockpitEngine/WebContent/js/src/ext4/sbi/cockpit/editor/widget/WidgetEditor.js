@@ -46,6 +46,7 @@ Sbi.cockpit.editor.widget.WidgetEditor = function(config) {
 		        	autoScroll: true,
 		        	split: true,
 		        	layout: 'fit',
+		        	//items: [{html: "this.controlPanel"}]
 		        	items: [this.controlPanel]
 		        },
 		        {
@@ -55,6 +56,7 @@ Sbi.cockpit.editor.widget.WidgetEditor = function(config) {
 		        	collapseMode:'mini',
 		        	autoScroll: true,
 		        	layout: 'fit',
+		        	//items: [{html: "this.mainPanel"}]
 		        	items: [this.mainPanel]
 		        }
 			]
