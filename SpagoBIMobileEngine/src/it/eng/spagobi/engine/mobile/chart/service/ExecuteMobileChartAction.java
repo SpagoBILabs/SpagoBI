@@ -68,7 +68,7 @@ public class ExecuteMobileChartAction extends AbstractExecuteMobileAction {
 			}
 
 			Integer id = documentBIObject.getDataSetId();
-			dataSet = DAOFactory.getDataSetDAO().loadActiveIDataSetByID(id);
+			dataSet = DAOFactory.getDataSetDAO().loadDataSetById(id);
 			//LOAD DATA
 			DataSetExecutorForBIObject dataSetExecutorForBIObject = new DataSetExecutorForBIObject(dataSet, documentBIObject, this.getUserProfile());
 			dataSetExecutorForBIObject.executeDataSet();
