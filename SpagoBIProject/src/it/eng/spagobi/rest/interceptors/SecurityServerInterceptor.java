@@ -40,9 +40,9 @@ import org.jboss.resteasy.spi.interception.PreProcessInterceptor;
  * Similar to SpagoBIAccessFilter but designed for REST services
  *
  */
-@Provider
-@ServerInterceptor
-@Precedence("SECURITY")
+//Provider
+//ServerInterceptor
+//Precedence("SECURITY")
 public class SecurityServerInterceptor implements PreProcessInterceptor, AcceptedByMethod {
 
 	static private Logger logger = Logger.getLogger(SecurityServerInterceptor.class);
