@@ -165,7 +165,7 @@
 		background-attachment: scroll;
 		background-clip: border-box;
 		background-color: rgb(255, 255, 255);
-		background-image: url(http://docs.sencha.com/extjs/4.2.2/extjs-build/examples/build/KitchenSink/ext-theme-neptune/resources/images/square.gif);
+		background-image: url('../img/square.gif');
 		background-origin: padding-box;
 		background-size: auto;
 	}
