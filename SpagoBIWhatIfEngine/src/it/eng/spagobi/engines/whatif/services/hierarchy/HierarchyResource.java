@@ -37,7 +37,7 @@ import com.eyeq.pivot4j.query.QueryAdapter;
 import com.eyeq.pivot4j.transform.ChangeSlicer;
 import com.eyeq.pivot4j.transform.impl.ChangeSlicerImpl;
 
-@Path("/v1.0/hierarchy")
+@Path("/1.0/hierarchy")
 public class HierarchyResource extends AbstractWhatIfEngineService {
 	
 	

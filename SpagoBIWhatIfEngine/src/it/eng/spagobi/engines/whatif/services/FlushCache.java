@@ -23,7 +23,7 @@ import org.apache.log4j.Logger;
 import org.olap4j.OlapConnection;
 import org.olap4j.OlapDataSource;
 
-@Path("v1.0/flushCache")
+@Path("1.0/flushCache")
 public class FlushCache extends AbstractWhatIfEngineService {
 
 	public static transient Logger logger = Logger.getLogger(FlushCache.class);

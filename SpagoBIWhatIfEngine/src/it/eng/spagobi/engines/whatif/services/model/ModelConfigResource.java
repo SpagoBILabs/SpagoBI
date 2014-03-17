@@ -29,7 +29,7 @@ import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
 
-@Path("/v1.0/modelconfig")
+@Path("/1.0/modelconfig")
 public class ModelConfigResource extends AbstractWhatIfEngineService {
 
 	public static transient Logger logger = Logger.getLogger(ModelConfigResource.class);
