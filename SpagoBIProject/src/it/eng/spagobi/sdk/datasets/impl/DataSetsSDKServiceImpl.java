@@ -54,7 +54,7 @@ public class DataSetsSDKServiceImpl extends AbstractSDKService implements DataSe
 				logger.warn("DataSet identifier in input is null!");
 				return null;
 			}
-			IDataSet dataSet = DAOFactory.getDataSetDAO().loadActiveIDataSetByID(dataSetId);
+			IDataSet dataSet = DAOFactory.getDataSetDAO().loadDataSetById(dataSetId);
 			if (dataSet == null) {
 				logger.warn("DataSet with identifier [" + dataSetId + "] not existing.");
 				return null;
@@ -81,7 +81,7 @@ public class DataSetsSDKServiceImpl extends AbstractSDKService implements DataSe
 		
 		try {
 			super.checkUserPermissionForFunctionality(SpagoBIConstants.DATASET_MANAGEMENT, "User cannot see datasets congifuration.");
-			List dataSetList = DAOFactory.getDataSetDAO().loadAllActiveDataSets();
+			List dataSetList = DAOFactory.getDataSetDAO().loadDataSets();
 			toReturn = new SDKDataSet[dataSetList.size()];
 			for (int i = 0; i < dataSetList.size(); i++) {
 				IDataSet dataSet = (IDataSet) dataSetList.get(i);
@@ -117,7 +117,7 @@ public class DataSetsSDKServiceImpl extends AbstractSDKService implements DataSe
 			}
 			dataSetId = sdkDataSet.getId();
 			logger.debug("Looking for dataset with id = " + dataSetId);
-			IDataSet dataSet = DAOFactory.getDataSetDAO().loadActiveIDataSetByID(dataSetId);
+			IDataSet dataSet = DAOFactory.getDataSetDAO().loadDataSetById(dataSetId);
 			if (dataSet == null) {
 				logger.warn("DataSet with identifier [" + dataSetId + "] not found.");
 				return null;
@@ -247,7 +247,7 @@ public class DataSetsSDKServiceImpl extends AbstractSDKService implements DataSe
 				datasetDAO.setUserProfile(profile);
 
 				// if going in update must not change visibility settings
-				IDataSet datasetPrevious = datasetDAO.loadActiveIDataSetByID(dataSetId);
+				IDataSet datasetPrevious = datasetDAO.loadDataSetById(dataSetId);
 
 				logger.debug("keep previous settings as organization "+datasetPrevious.getOrganization()+" anbd visibility public: "+datasetPrevious.isPublic());
 				sbiDataset.setOrganization(datasetPrevious.getOrganization());
@@ -281,7 +281,7 @@ public class DataSetsSDKServiceImpl extends AbstractSDKService implements DataSe
 				logger.warn("DataSet identifier in input is null!");
 				return null;
 			}
-			IDataSet dataSet = DAOFactory.getDataSetDAO().loadActiveDataSetByLabel(label);
+			IDataSet dataSet = DAOFactory.getDataSetDAO().loadDataSetByLabel(label);
 			if (dataSet == null) {
 				logger.warn("DataSet with label [" + label + "] not existing.");
 				return null;

@@ -23,7 +23,7 @@ import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.services.DelegatedBasicListService;
 import it.eng.spagobi.commons.utilities.AuditLogUtilities;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
-import it.eng.spagobi.commons.utilities.HibernateUtil;
+import it.eng.spagobi.commons.utilities.HibernateSessionManager;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.events.EventsManager;
 import it.eng.spagobi.events.bo.EventLog;
@@ -58,7 +58,7 @@ public class ListEventsLogModule extends AbstractBasicListModule {
 		//Start writing log in the DB
 		Session aSession =null;
 		try {
-			aSession = HibernateUtil.currentSession();
+			aSession = HibernateSessionManager.getCurrentSession();
 			AuditLogUtilities.updateAudit(((HttpServletRequest)requestContainer.getRequestContainer().getInternalRequest()),  profile, "EVENT_LIST.OPEN", null, "OK");
 		} catch (HibernateException he) {
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);

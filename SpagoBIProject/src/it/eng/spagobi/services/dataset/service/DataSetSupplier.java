@@ -60,7 +60,7 @@ public class DataSetSupplier {
 	    		return null;
 	    	}
 	    	
-	    	dataSet = DAOFactory.getDataSetDAO().loadActiveIDataSetByID( obj.getDataSetId() );
+	    	dataSet = DAOFactory.getDataSetDAO().loadDataSetById( obj.getDataSetId() );
 		    if (dataSet == null) {
 				logger.warn("The dataSet with id " + obj.getDataSetId() + " deoes not exist on database.");
 				return null;
@@ -91,7 +91,7 @@ public class DataSetSupplier {
     	logger.debug("IN");
 
 		try {
-			ds = DAOFactory.getDataSetDAO().loadActiveDataSetByLabel( label );
+			ds = DAOFactory.getDataSetDAO().loadDataSetByLabel( label );
 			if (ds != null) {
 				datasetConfig = ds.toSpagoBiDataSet();
 			} else {
@@ -121,7 +121,7 @@ public class DataSetSupplier {
 
 		// gets all data source from database
 		try {
-		    datasets = DAOFactory.getDataSetDAO().loadAllActiveDataSets();
+		    datasets = DAOFactory.getDataSetDAO().loadDataSets();
 		    if (datasets == null) {
 		    	logger.warn("There are no datasets defined on the database.");
 		    	return null;

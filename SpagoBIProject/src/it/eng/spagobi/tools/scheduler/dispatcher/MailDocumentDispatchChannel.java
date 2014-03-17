@@ -73,7 +73,7 @@ public class MailDocumentDispatchChannel implements IDocumentDispatchChannel {
 			//gets the dataset data about the email address
 			IDataStore emailDispatchDataStore = null;
 			if (dispatchContext.isUseDataSet()) {
-				IDataSet dataSet = DAOFactory.getDataSetDAO().loadActiveDataSetByLabel(dispatchContext.getDataSetLabel());
+				IDataSet dataSet = DAOFactory.getDataSetDAO().loadDataSetByLabel(dispatchContext.getDataSetLabel());
 				dataSet.setUserProfileAttributes(UserProfileUtils.getProfileAttributes(userProfile));
 				dataSet.loadData();
 				emailDispatchDataStore = dataSet.getDataStore();

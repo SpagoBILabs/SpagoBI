@@ -778,7 +778,7 @@ private IDataSet getGuiGenericDatasetToInsert() {
 		JSONObject dataSetJSON = null;		
 		Integer id = obj.getDataSetId();	
 		//gets the dataset object informations
-		IDataSet dataset = DAOFactory.getDataSetDAO().loadActiveIDataSetByID(id);
+		IDataSet dataset = DAOFactory.getDataSetDAO().loadDataSetById(id);
 		try {
 			if (dataset.getParameters() != null){
 				JSONArray parsJSON = serializeJSONArrayParsList(dataset.getParameters());

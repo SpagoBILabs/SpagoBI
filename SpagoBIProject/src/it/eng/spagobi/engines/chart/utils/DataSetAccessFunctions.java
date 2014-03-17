@@ -66,7 +66,7 @@ public class DataSetAccessFunctions {
 	public static String getDataSetResultFromId(IEngUserProfile profile,String dsId, Map parameters) throws Exception {
 		
 		IDataSetDAO dsDAO = DAOFactory.getDataSetDAO();
-		IDataSet ds = dsDAO.loadActiveIDataSetByID(Integer.valueOf(dsId));
+		IDataSet ds = dsDAO.loadDataSetById(Integer.valueOf(dsId));
 		Assert.assertNotNull(ds, "Impossible to find a dataset whose identifier is [" + dsId + "]");
 		
 		String result=DataSetAccessFunctions.getDataSetResult(profile, ds, parameters);
@@ -89,7 +89,7 @@ public class DataSetAccessFunctions {
 	public static String getDataSetResultFromLabel(IEngUserProfile profile,String label, Map parameters) throws Exception {
 		
 		IDataSetDAO dsDAO = DAOFactory.getDataSetDAO();
-		IDataSet ds = dsDAO.loadActiveDataSetByLabel(label);
+		IDataSet ds = dsDAO.loadDataSetByLabel(label);
 		Assert.assertNotNull(ds, "Impossible to find a dataset whose label is [" + label + "]");
 	
 		String result=DataSetAccessFunctions.getDataSetResult(profile, ds, parameters);

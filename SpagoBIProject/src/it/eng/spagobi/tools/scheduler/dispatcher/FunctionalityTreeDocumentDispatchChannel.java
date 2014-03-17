@@ -52,7 +52,7 @@ public class FunctionalityTreeDocumentDispatchChannel implements IDocumentDispat
 			//gets the dataset data about the folder for the document save
 			IDataStore folderDispatchDataSotre = null;
 			if (dispatchContext.isUseFolderDataSet()) {
-				IDataSet dataSet = DAOFactory.getDataSetDAO().loadActiveDataSetByLabel(dispatchContext.getDataSetFolderLabel());
+				IDataSet dataSet = DAOFactory.getDataSetDAO().loadDataSetByLabel(dispatchContext.getDataSetFolderLabel());
 			  	dataSet.setUserProfileAttributes(UserProfileUtils.getProfileAttributes(userProfile));
 				dataSet.loadData();
 				folderDispatchDataSotre = dataSet.getDataStore();

@@ -56,7 +56,7 @@ public class DataSourceSupplier {
 				Integer datasetId = obj.getDataSetId();
 				if (datasetId != null) {
 					logger.debug("Document has a dataset. Looking for its datasource ...");
-					IDataSet dataset = DAOFactory.getDataSetDAO().loadActiveIDataSetByID(datasetId);
+					IDataSet dataset = DAOFactory.getDataSetDAO().loadDataSetById(datasetId);
 					IDataSource datasource = dataset.getDataSource();
 					if (datasource != null) {
 						logger.debug("Document's dataset has a datasource. Returning this one, that is " + datasource.getLabel());

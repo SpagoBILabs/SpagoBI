@@ -266,7 +266,7 @@ public class SelectDatasetAction extends CreateDatasetForWorksheetAction {
 			
 			IDataSetDAO	dsDao = DAOFactory.getDataSetDAO();
 			
-			dataset = dsDao.loadActiveDataSetByLabel(label);
+			dataset = dsDao.loadDataSetByLabel(label);
 			Assert.assertNotNull(dataset, "Dataset with label [" + label + "] not found");
 			
 		} catch(Throwable t) {

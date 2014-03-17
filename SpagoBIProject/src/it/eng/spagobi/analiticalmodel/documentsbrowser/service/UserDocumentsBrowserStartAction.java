@@ -14,7 +14,7 @@ import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.AuditLogUtilities;
-import it.eng.spagobi.commons.utilities.HibernateUtil;
+import it.eng.spagobi.commons.utilities.HibernateSessionManager;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.utilities.exceptions.SpagoBIException;
 import it.eng.spagobi.utilities.service.AbstractBaseHttpAction;
@@ -41,7 +41,7 @@ public class UserDocumentsBrowserStartAction extends AbstractBaseHttpAction{
 		//Start writing log in the DB
 		Session aSession =null;
 		try {
-			aSession = HibernateUtil.currentSession();
+			aSession = HibernateSessionManager.getCurrentSession();
 
 			AuditLogUtilities.updateAudit(getHttpRequest(),  UserUtilities.getUserProfile(), "DOCUMENTSBROWSER.OPEN", null, "OK");
 		} catch (HibernateException he) {

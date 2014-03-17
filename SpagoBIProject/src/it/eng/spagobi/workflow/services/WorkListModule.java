@@ -23,7 +23,7 @@ import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.utilities.AuditLogUtilities;
-import it.eng.spagobi.commons.utilities.HibernateUtil;
+import it.eng.spagobi.commons.utilities.HibernateSessionManager;
 import it.eng.spagobi.commons.utilities.SpagoBITracer;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 
@@ -196,7 +196,7 @@ public class WorkListModule extends AbstractBasicListModule {
 		//Start writing log in the DB
 		Session aSession =null;
 		try {
-			aSession = HibernateUtil.currentSession();
+			aSession = HibernateSessionManager.getCurrentSession();
 
 			AuditLogUtilities.updateAudit(((HttpServletRequest)getRequestContainer().getRequestContainer().getInternalRequest()),  UserUtilities.getUserProfile(), "WORKFLOW_MENU.LIST", null, "OK");
 		} catch (HibernateException he) {

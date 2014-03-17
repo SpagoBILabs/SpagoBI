@@ -129,9 +129,9 @@ public class SelfServiceDataSetCRUD {
 			String showOnlyOwner =  req.getParameter("showOnlyOwner");
 			if(!isTechDsMngr){
 				if(showOnlyOwner != null && !showOnlyOwner.equalsIgnoreCase("true")){
-					dataSets = dataSetDao.loadMyDataOwnerAndSharedDatasets(profile.getUserUniqueIdentifier().toString());	
+					dataSets = dataSetDao.loadDatasetOwnedAndShared(profile.getUserUniqueIdentifier().toString());	
 				}else{
-					dataSets = dataSetDao.loadMyDataOwnerDatasets(profile.getUserUniqueIdentifier().toString());	
+					dataSets = dataSetDao.loadUserDataSets(profile.getUserUniqueIdentifier().toString());	
 				}
 			}
 			
@@ -256,7 +256,7 @@ public class SelfServiceDataSetCRUD {
 		try {						
 			String id = (String) req.getParameter("id");
 			Assert.assertNotNull(id,deleteNullIdDataSetError );
-			IDataSet ds = DAOFactory.getDataSetDAO().loadActiveIDataSetByID(new Integer(id));
+			IDataSet ds = DAOFactory.getDataSetDAO().loadDataSetById(new Integer(id));
 			//Create DatasetNotificationEvent but wait to notify
 			DatasetNotificationEvent datasetEvent = null;
 			try{
@@ -344,7 +344,7 @@ public class SelfServiceDataSetCRUD {
 			String label = request.getParameter("label");			
 			String meta = request.getParameter(DataSetConstants.METADATA);			
 			
-			IDataSet ds = dao.loadActiveDataSetByLabel(label);
+			IDataSet ds = dao.loadDataSetByLabel(label);
 			IDataSet dsNew = recoverDataSetDetails(request, ds, true);
 			
 			logger.debug("Recalculating dataset's metadata: executing the dataset...");
@@ -365,7 +365,7 @@ public class SelfServiceDataSetCRUD {
 			Integer newId = -1;
 			if (dsNew.getId()==-1) {
 				//if a ds with the same label not exists on db ok else error
-				if (DAOFactory.getDataSetDAO().loadActiveDataSetByLabel(dsNew.getLabel()) != null){
+				if (DAOFactory.getDataSetDAO().loadDataSetByLabel(dsNew.getLabel()) != null){
 					updateAudit(request, profile, "DATA_SET.ADD", logParam, "KO");
 					throw new SpagoBIRuntimeException(saveDuplicatedDSError);
 				}	 		
@@ -424,7 +424,7 @@ public class SelfServiceDataSetCRUD {
 			dao.setUserProfile(profile);
 			int id = Integer.valueOf(req.getParameter("id"));			
 			
-			IDataSet ds  = dao.loadActiveIDataSetByID(id);
+			IDataSet ds  = dao.loadDataSetById(id);
 			
 			HashMap<String, String> logParam = new HashMap();
 			

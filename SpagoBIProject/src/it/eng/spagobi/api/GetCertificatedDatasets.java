@@ -70,13 +70,13 @@ public class GetCertificatedDatasets {
 
 			if(isTech != null && isTech.equals("true")){
 				//if is technical dataset == ENTERPRISE --> get all ADMIN/DEV public datasets
-				dataSets = dataSetDao.loadEnterpriseDatasets(profile.getUserUniqueIdentifier().toString());
+				dataSets = dataSetDao.loadEnterpriseDataSets();
 			} else if (allMyDataDS != null && allMyDataDS.equals("true")){
 				//get all the Datasets visible for the current user (MyData,Enterprise,Shared Datasets) 
-				dataSets = dataSetDao.loadMyDataAllDatasets(profile.getUserUniqueIdentifier().toString());
+				dataSets = dataSetDao.loadMyDataDataSets(profile.getUserUniqueIdentifier().toString());
 			} else {
 				//else it is a custom dataset list --> get all datasets public with owner != user itself
-				dataSets = dataSetDao.loadSharedDatasets(profile.getUserUniqueIdentifier().toString());
+				dataSets = dataSetDao.loadDatasetsSharedWithUser(profile.getUserUniqueIdentifier().toString());
 			}
 
 			datasetsJSONArray = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(dataSets, null);
@@ -199,7 +199,8 @@ public class GetCertificatedDatasets {
 		try {
 			dataSetDao = DAOFactory.getDataSetDAO();
 			dataSetDao.setUserProfile(profile);
-			dataSets = dataSetDao.loadFlatDatasets(profile.getUserUniqueIdentifier().toString());
+			dataSets = dataSetDao.loadFlatDatasets();
+			//dataSets = dataSetDao.loadFlatDatasets(profile.getUserUniqueIdentifier().toString());
 
 			datasetsJSONArray = (JSONArray) SerializerFactory.getSerializer(
 					"application/json").serialize(dataSets, null);

@@ -7,7 +7,7 @@ package it.eng.spagobi.engines.exporters;
 
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.utilities.HibernateUtil;
+import it.eng.spagobi.commons.utilities.HibernateSessionManager;
 import it.eng.spagobi.engines.kpi.bo.KpiResourceBlock;
 import it.eng.spagobi.kpi.utils.BasicTemplateBuilder;
 import it.eng.spagobi.kpi.utils.BasicXmlBuilder;
@@ -146,12 +146,12 @@ public class KpiExporter {
 
 			logger.debug("Filling report ...");
 			Context ctx = new InitialContext();
-			Session aSession = HibernateUtil.currentSession();
+			Session aSession = HibernateSessionManager.getCurrentSession();
 			JasperPrint jasperPrint = null;
 			try {
 				Transaction tx = aSession.beginTransaction();
 				//Connection jdbcConnection = aSession.connection();
-				Connection jdbcConnection = HibernateUtil.getConnection(aSession);
+				Connection jdbcConnection = HibernateSessionManager.getConnection(aSession);
 				jasperPrint = JasperFillManager.fillReport(dirS + File.separatorChar + "Master.jasper", parameters,jdbcConnection);
 				logger.debug("Report filled succesfully");
 			} finally {

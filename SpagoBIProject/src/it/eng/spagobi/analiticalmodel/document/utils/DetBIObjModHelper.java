@@ -188,7 +188,7 @@ public class DetBIObjModHelper {
 		IDataSet dataset  = null;
 		if (datasetIdStr != null && !datasetIdStr.equals("")) {
 			Integer datasetIdInt = new Integer(datasetIdStr);
-			dataset = DAOFactory.getDataSetDAO().loadActiveIDataSetByID(datasetIdInt);
+			dataset = DAOFactory.getDataSetDAO().loadDataSetById(datasetIdInt);
 		}
 		
 		// TRY TO LOAD ALL THE FUNCTIONALITIES ASSOCIATED (into request) TO THE BIOBEJCT
@@ -400,7 +400,7 @@ public class DetBIObjModHelper {
 	        List engines =  enginedao.loadAllEngines();
 	        
 	        List datasource =  DAOFactory.getDataSourceDAO().loadAllDataSources();
-	        List dataset=DAOFactory.getDataSetDAO().loadAllActiveDataSets();
+	        List dataset=DAOFactory.getDataSetDAO().loadDataSets();
 			List<SbiCommunity> communities = DAOFactory.getCommunityDAO().loadSbiCommunityByUser(profile.getUserUniqueIdentifier().toString());
 			
 			

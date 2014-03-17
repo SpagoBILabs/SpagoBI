@@ -82,7 +82,7 @@ public class ExecuteDatasets extends AbstractSpagoBIAction {
 		//Integer id = obj.getDataSetId();	
 		//gets the dataset object informations		
 		try {
-			IDataSet dataset = DAOFactory.getDataSetDAO().loadActiveIDataSetByID(dsId);
+			IDataSet dataset = DAOFactory.getDataSetDAO().loadDataSetById(dsId);
 			if (dataset.getParameters() != null){
 				//JSONArray parsJSON = serializeJSONArrayParsList(dataset.getParameters());
 				JSONArray parsJSON = getAttributeAsJSONArray(DataSetConstants.PARS);

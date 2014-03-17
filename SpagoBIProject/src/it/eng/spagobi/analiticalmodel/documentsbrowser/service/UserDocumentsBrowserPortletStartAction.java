@@ -18,7 +18,7 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.services.PortletLoginAction;
 import it.eng.spagobi.commons.utilities.AuditLogUtilities;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
-import it.eng.spagobi.commons.utilities.HibernateUtil;
+import it.eng.spagobi.commons.utilities.HibernateSessionManager;
 import it.eng.spagobi.commons.utilities.PortletUtilities;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
@@ -71,7 +71,7 @@ public class UserDocumentsBrowserPortletStartAction extends PortletLoginAction {
 		//Start writing log in the DB
 		Session aSession =null;
 		try {
-			aSession = HibernateUtil.currentSession();
+			aSession = HibernateSessionManager.getCurrentSession();
 			//Connection jdbcConnection = aSession.connection();
 			//Connection jdbcConnection = HibernateUtil.getConnection(aSession);
 			//TODO

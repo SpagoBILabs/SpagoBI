@@ -67,7 +67,7 @@ public class BirtReportExportManager extends AbstractTypesExportManager {
 				String datasetLabel = datasets.get(i);
 				IDataSetDAO datasetDao = DAOFactory.getDataSetDAO();
 				IDataSet dataset = datasetDao
-						.loadActiveDataSetByLabel(datasetLabel);
+						.loadDataSetByLabel(datasetLabel);
 				IDataSet guiGenericDataSet = datasetDao
 						.loadDataSetByLabel(datasetLabel);
 				if (dataset == null) {
