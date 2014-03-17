@@ -194,7 +194,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		String kpiName = kpi.getName();
 
 		//SbiDataSet dsC = kpi.getSbiDataSet();
-		IDataSet dsC = DAOFactory.getDataSetDAO().loadActiveIDataSetByID(kpi.getSbiDataSet());
+		IDataSet dsC = DAOFactory.getDataSetDAO().loadDataSetById(kpi.getSbiDataSet());
 		Integer dsId = null;
 		String dsLabel = null;
 		if (dsC != null) {
@@ -1114,7 +1114,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		//SbiDataSet dsC = kpi.getSbiDataSet();
 		IDataSet dsC = null;
 		if (kpi.getSbiDataSet() != null) {
-			dsC = DAOFactory.getDataSetDAO().loadActiveIDataSetByID(kpi.getSbiDataSet());
+			dsC = DAOFactory.getDataSetDAO().loadDataSetById(kpi.getSbiDataSet());
 		}
 		Integer dsId = null;
 		String dsLabel = null;
@@ -1626,7 +1626,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 				toReturn = DAOFactory.getDataSetDAO().loadActiveIDataSetByID(ds.getId().getDsId());
 			}*/
 			if (k.getSbiDataSet()!=null){
-				toReturn = DAOFactory.getDataSetDAO().loadActiveIDataSetByID(k.getSbiDataSet());
+				toReturn = DAOFactory.getDataSetDAO().loadDataSetById(k.getSbiDataSet());
 			}
 		} catch (HibernateException he) {
 
