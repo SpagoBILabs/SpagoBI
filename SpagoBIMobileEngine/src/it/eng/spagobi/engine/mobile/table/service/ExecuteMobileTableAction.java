@@ -68,7 +68,7 @@ public class ExecuteMobileTableAction extends AbstractExecuteMobileAction {
 			logger.debug("Created template instance");
 			//Load the dataset
 			Integer id = documentBIObject.getDataSetId();
-			dataSet = DAOFactory.getDataSetDAO().loadActiveIDataSetByID(id);
+			dataSet = DAOFactory.getDataSetDAO().loadDataSetById(id);
 			logger.debug("Got document dataset");
 			//LOAD DATA
 			
