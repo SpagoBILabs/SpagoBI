@@ -88,7 +88,14 @@
     vertical-align: top;
     padding: 3px;
 }
+td[contenteditable="true"]:focus {
+    border: 1px solid aqua;
+    cursor: text;
+}
 
+/* td[contenteditable="true"]:hover {
+    cursor: pointer;
+} */
 .swapaxes {
 	background-image: url(../img/double-arrow.png);
 	background-color: transparent !important;

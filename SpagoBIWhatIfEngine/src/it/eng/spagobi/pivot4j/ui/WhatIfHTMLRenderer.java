@@ -14,6 +14,7 @@ import org.apache.commons.lang.StringUtils;
 import org.olap4j.Axis;
 import org.olap4j.OlapException;
 
+import com.eyeq.pivot4j.ui.CellType;
 import com.eyeq.pivot4j.ui.RenderContext;
 import com.eyeq.pivot4j.ui.command.CellCommand;
 import com.eyeq.pivot4j.ui.command.CellParameters;
@@ -116,7 +117,7 @@ public class WhatIfHTMLRenderer extends HtmlRenderer {
 
 		if (styleClass != null) {
 			//adds the proper style (depending if it was collapsed or expanded)
-			if(context.getMember() != null && context.getMember().getMemberType() != null && !context.getMember().getMemberType().name().equalsIgnoreCase("Measure")){
+			if(context.getMember() != null && context.getMember().getMemberType() != null && !context.getMember().getMemberType().name().equalsIgnoreCase("Value")){
 
 				try {
 					int childrenNum = context.getMember().getChildMemberCount();
@@ -139,7 +140,9 @@ public class WhatIfHTMLRenderer extends HtmlRenderer {
 			}	
 			attributes.put("class", styleClass);
 		}
-
+		if(context.getCellType() == CellType.Value){
+			attributes.put("contentEditable", "true");
+		}
 		writer.flush();
 		IOUtils.closeQuietly(writer);
 
@@ -178,7 +181,8 @@ public class WhatIfHTMLRenderer extends HtmlRenderer {
 			if(context.getMember() != null && context.getMember().getMemberType() != null && !context.getMember().getMemberType().name().equalsIgnoreCase("Measure")){
 
 				List <CellCommand<?>> commands = getCommands(context);
-
+				String drillMode = this.getDrillDownMode();
+				
 				if (commands != null && !commands.isEmpty()) {
 					for (CellCommand<?> command : commands) {
 						String cmd = command.getName();
@@ -221,9 +225,6 @@ public class WhatIfHTMLRenderer extends HtmlRenderer {
 
 					}
 				}
-
-			}else if(context.getMember() != null && context.getMember().getMemberType() != null && context.getMember().getMemberType().name().equalsIgnoreCase("Measure")){
-				attributes.put("onClick", "javascript:void(document.body.contentEditable=\"true\");");
 
 			}
 			getWriter().writeContent(label);
