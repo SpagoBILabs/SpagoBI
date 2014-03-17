@@ -60,8 +60,8 @@ public class SpagoBiDataSet  implements java.io.Serializable {
     private java.lang.String type;
 
     private int versionNum;
-
-    public SpagoBiDataSet() {
+    
+	public SpagoBiDataSet() {
     }
 
     public SpagoBiDataSet(
@@ -613,7 +613,7 @@ public class SpagoBiDataSet  implements java.io.Serializable {
     public void setVersionNum(int versionNum) {
         this.versionNum = versionNum;
     }
-
+	
     private java.lang.Object __equalsCalc = null;
     public synchronized boolean equals(java.lang.Object obj) {
         if (!(obj instanceof SpagoBiDataSet)) return false;
