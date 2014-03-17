@@ -26,14 +26,14 @@ import sun.misc.BASE64Encoder;
  */
 public class FileDataProxy extends AbstractDataProxy {
 	
-	String fileName;
-	private String resourcePath = null;
+	String fileName;	
+
 	boolean useTempFile = false;
 	
 	private static transient Logger logger = Logger.getLogger(FileDataProxy.class);
 			
 	public FileDataProxy(String resourcePath) {
-		this.resourcePath = resourcePath;
+		this.resPath = resourcePath;
 	}
 	
 	public IDataStore load(String statement, IDataReader dataReader) throws EMFUserError {
@@ -67,7 +67,7 @@ public class FileDataProxy extends AbstractDataProxy {
 
 	public String getCompleteFilePath() {
 				
-		String filePath = resourcePath;
+		String filePath = resPath;
 		if (useTempFile){
 			filePath += File.separatorChar+"dataset"+File.separatorChar+"files"+File.separatorChar+"temp";
 		} else {

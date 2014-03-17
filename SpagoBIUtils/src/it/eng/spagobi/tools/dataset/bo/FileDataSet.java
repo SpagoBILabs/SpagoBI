@@ -5,6 +5,7 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.tools.dataset.bo;
 
+import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
 import it.eng.spagobi.tools.dataset.common.dataproxy.FileDataProxy;
@@ -40,6 +41,7 @@ public class FileDataSet extends ConfigurableDataSet{
 	public static String DS_TYPE = "SbiFileDataSet";
 	public static final String FILE_NAME = "fileName";
 	public static final String FILE_TYPE = "fileType";
+	public static final String RESOURCE_PATH = "resourcePath";
 
 	public String fileType;
 	
@@ -74,6 +76,11 @@ public class FileDataSet extends ConfigurableDataSet{
 			this.setFileName((jsonConf.get(FILE_NAME) != null) ? jsonConf.get(
 					FILE_NAME).toString() : "");
 			logger.info("File name: " + fileName);
+			
+			this.setResourcePath( StringUtilities.isNotEmpty(jsonConf.optString(RESOURCE_PATH)) 
+					? jsonConf.optString(RESOURCE_PATH) : "");
+			logger.info("Resource path: " + this.getResourcePath() );
+			if(this.dataProxy != null) dataProxy.setResPath(this.getResourcePath());
 		}catch (Exception e){
 			logger.error("Error while defining dataset configuration.  Error: " + e.getMessage());
 		}
@@ -85,23 +92,10 @@ public class FileDataSet extends ConfigurableDataSet{
 	
 	public SpagoBiDataSet toSpagoBiDataSet( ) {
 		SpagoBiDataSet sbd;
-		FileDataProxy dataProxy;
 		
 		sbd = super.toSpagoBiDataSet();
 		
 		sbd.setType( DS_TYPE );
-				
-		dataProxy = (FileDataProxy)getDataProxy();
-		/* next informations are already loaded in method super.toSpagoBiDataSet() through the table field configuration
-		try{
-			JSONObject jsonConf  = new JSONObject();
-			jsonConf.put(FILE_NAME,  dataProxy.getFileName());			
-			sbd.setConfiguration(jsonConf.toString());
-		}catch (Exception e){
-			logger.error("Error while defining dataset configuration.  Error: " + e.getMessage());
-		}
-		//sbd.setFileName( dataProxy.getFileName() );
-		*/
 		return sbd;
 	}
 	
