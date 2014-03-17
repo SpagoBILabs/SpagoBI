@@ -7,6 +7,7 @@ package it.eng.spagobi.tools.dataset.dao;
 
 import it.eng.qbe.dataset.QbeDataSet;
 import it.eng.spagobi.commons.dao.DAOConfig;
+import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.tools.dataset.bo.CustomDataSet;
 import it.eng.spagobi.tools.dataset.bo.FileDataSet;
@@ -145,14 +146,24 @@ public class DataSetFactory {
 		try{
 			if(sbiDataSet.getType().equalsIgnoreCase(DataSetConstants.DS_FILE)){
 				ds = new FileDataSet();
-				((FileDataSet)ds).setResourcePath(DAOConfig.getResourcePath());
+				FileDataSet fds = (FileDataSet)ds;
 				
-				ds.setConfiguration(sbiDataSet.getConfiguration());
-				if (jsonConf.getString(DataSetConstants.FILE_TYPE) != null){
-					((FileDataSet)ds).setFileType(jsonConf.getString(DataSetConstants.FILE_TYPE));		
+				String resourcePath = jsonConf.optString("resourcePath");
+				if(StringUtilities.isEmpty(resourcePath)) {
+					resourcePath = DAOConfig.getResourcePath();
+					jsonConf.put("resourcePath", resourcePath);
 				}
-				((FileDataSet)ds).setFileName(jsonConf.getString(DataSetConstants.FILE_NAME));		
-				ds.setDsType(FILE_DS_TYPE);
+				fds.setResourcePath( resourcePath );
+				
+				fds.setConfiguration( jsonConf.toString() );
+				
+				if (jsonConf.getString(DataSetConstants.FILE_TYPE) != null){
+					fds.setFileType(jsonConf.getString(DataSetConstants.FILE_TYPE));		
+				}
+				fds.setFileName(jsonConf.getString(DataSetConstants.FILE_NAME));		
+				fds.setDsType(FILE_DS_TYPE);
+				
+				
 			}
 	
 			if(sbiDataSet.getType().equalsIgnoreCase(DataSetConstants.DS_QUERY)) { 
