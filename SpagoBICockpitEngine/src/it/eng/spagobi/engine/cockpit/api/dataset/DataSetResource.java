@@ -31,6 +31,8 @@ import it.eng.spagobi.tools.dataset.common.query.AggregationFunctions;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.filters.FilterIOManager;
 import it.eng.spagobi.utilities.threadmanager.WorkManager;
 
 import java.util.ArrayList;
@@ -64,7 +66,7 @@ import de.myfoo.commonj.work.FooRemoteWorkItem;
  * 
  */
 
-@Path("/1.0")
+@Path("/1.0/dataset")
 public class DataSetResource { 
 	
 	// PROPERTIES TO LOOK FOR INTO THE FIELDS
@@ -74,53 +76,10 @@ public class DataSetResource {
 	public static final String PROPERTY_IS_MANDATORY_MEASURE = "isMandatoryMeasure";
 	public static final String PROPERTY_AGGREGATION_FUNCTION = "aggregationFunction";
 
-	static private Logger logger = Logger.getLogger(DataSetResource.class);
-
+	static private Logger logger = Logger.getLogger(DataSetResource.class);	
+		
 	@GET
-	@Path("/datasets")
-	@Produces(MediaType.APPLICATION_JSON)
-	public String getDataSets(@Context HttpServletRequest req) {
-		try {
-			DataSetServiceProxy proxy = getProxy(req);
-			
-			JSONArray resultsJSON = new JSONArray();
-			return resultsJSON.toString();	
-		} catch(Throwable t) {
-			throw SpagoBIEngineServiceExceptionHandler.getInstance().getWrappedException("", getEngineInstance(req), t);
-		} finally {			
-			logger.debug("OUT");
-		}	
-	}
-	
-	
-	@GET
-	@Path("/dataset/{label}")
-	@Produces(MediaType.APPLICATION_JSON)
-	public String getDataSetMeta(@Context HttpServletRequest req, @PathParam("label") String label) {
-		try {
-			DataSetServiceProxy proxy = getProxy(req);
-			IDataSet dataSet = proxy.getDataSetByLabel(label);
-			
-			JSONObject resultsJSON = new JSONObject();
-			
-			resultsJSON.put("id", dataSet.getId());
-			resultsJSON.put("label", dataSet.getLabel());
-			resultsJSON.put("name", dataSet.getName());
-			resultsJSON.put("description", dataSet.getDescription());
-			resultsJSON.put("category", dataSet.getCategoryCd());
-			resultsJSON.put("creationDate", dataSet.getDateIn());
-			resultsJSON.put("author", dataSet.getOwner());
-				
-			return resultsJSON.toString();	
-		} catch(Throwable t) {
-			throw SpagoBIEngineServiceExceptionHandler.getInstance().getWrappedException("", getEngineInstance(req), t);
-		} finally {			
-			logger.debug("OUT");
-		}	
-	}
-	
-	@GET
-	@Path("/dataset/{label}/fields")
+	@Path("/{label}/fields")
 	@Produces(MediaType.APPLICATION_JSON)
 	public String getDataSetFieldsMeta(@Context HttpServletRequest req, @PathParam("label") String label) {
 		try {
@@ -149,7 +108,7 @@ public class DataSetResource {
 	}
 	
 	@POST
-	@Path("/dataset/{label}/data")
+	@Path("/{label}/data")
 	@Produces(MediaType.APPLICATION_JSON)
 	public String getDataStoreP(@Context HttpServletRequest req
 			, @PathParam("label") String label
@@ -205,7 +164,7 @@ public class DataSetResource {
 	}
 	
 	@GET
-	@Path("/dataset/{label}/data")
+	@Path("/{label}/data")
 	@Produces(MediaType.APPLICATION_JSON)
 	public String getDataStoreG(@Context HttpServletRequest req
 			, @PathParam("label") String label
@@ -267,21 +226,27 @@ public class DataSetResource {
 		CockpitEngineInstance engineInstance = (CockpitEngineInstance)req.getSession().getAttribute(EngineConstants.ENGINE_INSTANCE );
 		return engineInstance;
 	}
+	
+	private IEngUserProfile getUserProfileFromSession(HttpServletRequest req) {
+		IEngUserProfile engProfile = null;
+		FilterIOManager ioManager = new FilterIOManager(req, null);
+		ioManager.initConetxtManager();	
+		engProfile = (IEngUserProfile)ioManager.getContextManager().get(IEngUserProfile.ENG_USER_PROFILE);		
+		return engProfile;
+	}
+	
 	private DataSetServiceProxy getProxy(HttpServletRequest req) {
 		DataSetServiceProxy datasetProxy = null;
 		
 		logger.debug("IN");
 		
-		CockpitEngineInstance engineInstance = getEngineInstance(req);
-		Assert.assertNotNull(engineInstance, "It's not possible to execute GetDataSetMetaFields service before having properly created an instance of EngineInstance class");
 		
-		IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
-		String dsLabel = req.getParameter("dataset");
-		
+		//IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+		IEngUserProfile profile = getUserProfileFromSession(req);
 		try {
 			datasetProxy = new DataSetServiceProxy((String)profile.getUserUniqueIdentifier() , req.getSession());
 		} catch(Throwable t) {
-			throw SpagoBIEngineServiceExceptionHandler.getInstance().getWrappedException("", engineInstance, t);
+			throw new SpagoBIRuntimeException("An unexpected error occurred while initializing proxy", t);
 		} finally {			
 			logger.debug("OUT");
 		}	
