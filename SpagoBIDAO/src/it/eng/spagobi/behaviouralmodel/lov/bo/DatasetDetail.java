@@ -202,7 +202,7 @@ public class DatasetDetail implements ILovDetail {
 	public String getLovResult(IEngUserProfile profile, List<ObjParuse> dependencies, List<BIObjectParameter> BIObjectParameters, Locale locale)
 			throws Exception {
 		//gets the dataset object informations
-		IDataSet dataset = DAOFactory.getDataSetDAO().loadActiveIDataSetByID(new Integer(getDatasetId()));
+		IDataSet dataset = DAOFactory.getDataSetDAO().loadDataSetById(new Integer(getDatasetId()));
 		Map parameters = new HashMap(); 
 		dataset.setParamsMap(parameters);
 		dataset.setUserProfileAttributes(UserProfileUtils.getProfileAttributes(profile));
