@@ -17,6 +17,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import java.lang.reflect.Method;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.POST;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.ext.Provider;
@@ -40,9 +41,9 @@ import org.jboss.resteasy.spi.interception.PreProcessInterceptor;
  * Similar to SpagoBIAccessFilter but designed for REST services
  *
  */
-//Provider
-//ServerInterceptor
-//Precedence("SECURITY")
+@Provider
+@ServerInterceptor
+@Precedence("SECURITY")
 public class SecurityServerInterceptor implements PreProcessInterceptor, AcceptedByMethod {
 
 	static private Logger logger = Logger.getLogger(SecurityServerInterceptor.class);
@@ -230,11 +231,6 @@ public class SecurityServerInterceptor implements PreProcessInterceptor, Accepte
 		return userId;
 	}
 
-	public boolean accept(Class arg0, Method arg1) {
-		// TODO Auto-generated method stub
-		return true;
-	}
-
 	// these methods should be abstract because are different in SpagoBI and in the engines. In the first case the object is
 	// set and get from session in the second the object is set and get from a specific context withing session(in particular there should
 	// be one different context for each distinct executions lunched by the same user on the same borwser.
@@ -257,5 +253,8 @@ public class SecurityServerInterceptor implements PreProcessInterceptor, Accepte
 		
 		servletRequest.getSession().setAttribute(IEngUserProfile.ENG_USER_PROFILE, engProfile);
 	}
-
+	
+	public boolean accept(Class declaring, Method method) {
+		return !method.isAnnotationPresent(POST.class);
+	}
 }
