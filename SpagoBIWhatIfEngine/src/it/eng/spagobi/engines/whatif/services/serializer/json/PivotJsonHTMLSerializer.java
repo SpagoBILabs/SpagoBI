@@ -102,11 +102,14 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotModel> {
 		renderer.setTableStyleClass("x-panel-body x-grid-body x-panel-body-default x-box-layout-ct x-panel-body-default x-pivot-table");
 
 		
-		renderer.setEnableColumnDrillDown(true);
-		renderer.setEnableRowDrillDown(true);
-		renderer.setEnableSort(true);
-		
 		String drillDownModeValue = modelConfig.getDrillType(); 
+		
+		renderer.removeCommand(new DrillUpReplaceCommand(renderer).getName());
+		renderer.removeCommand(new DrillDownReplaceCommand(renderer).getName());
+		renderer.removeCommand(new DrillExpandMemberCommand(renderer).getName());
+		renderer.removeCommand(new DrillCollapseMemberCommand(renderer).getName());
+		renderer.removeCommand(new DrillCollapsePositionCommand(renderer).getName());
+		renderer.removeCommand(new DrillExpandPositionCommand(renderer).getName());
 		
 		if(drillDownModeValue.equals(DrillDownCommand.MODE_POSITION)){
 			renderer.addCommand(new DrillExpandPositionCommand(renderer));
@@ -119,8 +122,12 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotModel> {
 			renderer.addCommand(new DrillUpReplaceCommand(renderer));		
 		}
 		
+		
 		renderer.setDrillDownMode(drillDownModeValue);
 		
+		renderer.setEnableColumnDrillDown(true);
+		renderer.setEnableRowDrillDown(true);
+		renderer.setEnableSort(true);
 		logger.debug("Rendering the model");
 		renderer.render(value);
 

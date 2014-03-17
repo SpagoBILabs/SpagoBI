@@ -111,7 +111,7 @@ public class MemberResource extends AbstractWhatIfEngineService {
 		Member m2 = m.get(memberPos);
 		Hierarchy hierarchy = m.get(memberPos).getHierarchy();
 		
-		String drillType="position"; 
+		String drillType=ei.getModelConfig().getDrillType();  
 		
 		if(drillType == null || drillType.equals(DrillDownCommand.MODE_POSITION)){
 			DrillExpandPosition transform = model.getTransform(DrillExpandPosition.class);

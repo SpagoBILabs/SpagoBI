@@ -15,16 +15,16 @@
 
 Ext.define('Sbi.olap.execution.table.OlapExecutionTable', {
 	extend: 'Ext.panel.Panel',
-	layout:'fit',
+	layout:'fit',	
 	html:'<div id="_table_container_" style="height: 100%; width:100%; "> table </div>',
 	
 	config:{
 		border: false
 		, autoScroll: true    
-	},
-	
+	}
 
-	constructor : function(config) {
+
+	,constructor : function(config) {
 		this.initConfig(config);
 		if(Sbi.settings && Sbi.settings.olap && Sbi.settings.olap.execution && Sbi.settings.olap.execution.table && Sbi.settings.olap.execution.table.OlapExecutionTable) {
 			Ext.apply(this, Sbi.settings.olap.execution.OlapExecutionTable);

@@ -23,10 +23,12 @@ import com.eyeq.pivot4j.util.CssWriter;
 
 public class WhatIfHTMLRenderer extends HtmlRenderer {
 
+	
 	public WhatIfHTMLRenderer(Writer writer) {
 		super(writer);
-
+		
 	}
+
 	@Override
 	protected Map<String, String> getCellAttributes(RenderContext context) {
 		String styleClass = null;
@@ -200,16 +202,21 @@ public class WhatIfHTMLRenderer extends HtmlRenderer {
 						}else{
 							pos = colIdx;
 						}
-						if(cmd != null && (cmd.equalsIgnoreCase("expandPosition")  || cmd.equalsIgnoreCase("drillDown") || cmd.equalsIgnoreCase("expandMember"))){
-							attributes.put("src", "../img/plus.gif");
-							attributes.put("onClick", "javascript:Sbi.olap.eventManager.drillDown("+axis+" , "+pos+" , "+memb+")");
-							getWriter().startElement("img", attributes);			
-							getWriter().endElement("img");
-						}else if(cmd != null && (cmd.equalsIgnoreCase("collapsePosition") || cmd.equalsIgnoreCase("drillUp") || cmd.equalsIgnoreCase("collapseMember"))){
-							attributes.put("src", "../img/minus.gif");
-							attributes.put("onClick", "javascript:Sbi.olap.eventManager.drillUp("+axis+" , "+pos+" , "+memb+")");
-							getWriter().startElement("img", attributes);			
-							getWriter().endElement("img");
+						if(cmd != null){
+							CellParameters parameters = command.createParameters(context);
+							System.out.println(context.getMember().getName());
+							boolean x = command.canExecute(context);
+							if((cmd.equalsIgnoreCase("collapsePosition") || cmd.equalsIgnoreCase("drillUp") || cmd.equalsIgnoreCase("collapseMember"))){
+								attributes.put("src", "../img/minus.gif");
+								attributes.put("onClick", "javascript:Sbi.olap.eventManager.drillUp("+axis+" , "+pos+" , "+memb+")");
+								getWriter().startElement("img", attributes);			
+								getWriter().endElement("img");
+							}else if((cmd.equalsIgnoreCase("expandPosition")  || cmd.equalsIgnoreCase("drillDown") || cmd.equalsIgnoreCase("expandMember"))){
+								attributes.put("src", "../img/plus.gif");
+								attributes.put("onClick", "javascript:Sbi.olap.eventManager.drillDown("+axis+" , "+pos+" , "+memb+")");
+								getWriter().startElement("img", attributes);			
+								getWriter().endElement("img");
+							}
 						}
 
 					}
@@ -228,58 +235,6 @@ public class WhatIfHTMLRenderer extends HtmlRenderer {
 			getWriter().writeContent(label);
 			getWriter().endElement("a");
 		}
-	}
-	@Override
-	public void startCell(RenderContext context, List<CellCommand<?>> commands) {
-		boolean header;
-
-		switch (context.getCellType()) {
-		case Header:
-		case Title:
-		case None:
-			header = true;
-			break;
-		default:
-			header = false;
-			break;
-		}
-
-		String name = header ? "th" : "td";
-
-		if (commands != null && !commands.isEmpty()) {
-			for (CellCommand<?> command : commands) {
-				CellParameters parameters = command.createParameters(context);
-
-				UIParameter commandParam = new UIParameter();
-				commandParam.setName("command");
-				commandParam.setValue(command.getName());
-
-				UIParameter axisParam = new UIParameter();
-				axisParam.setName("axis");
-				axisParam.setValue(parameters.getAxisOrdinal());
-
-
-				UIParameter positionParam = new UIParameter();
-				positionParam.setName("position");
-				positionParam.setValue(parameters.getPositionOrdinal());
-
-
-				UIParameter memberParam = new UIParameter();
-				memberParam.setName("member");
-				memberParam.setValue(parameters.getMemberOrdinal());
-
-
-				UIParameter hierarchyParam = new UIParameter();
-				hierarchyParam.setName("hierarchy");
-				hierarchyParam.setValue(parameters.getHierarchyOrdinal());
-
-				UIParameter cellParam = new UIParameter();
-				cellParam.setName("cell");
-				cellParam.setValue(parameters.getCellOrdinal());
-
-			}
-		}
-		getWriter().startElement(name, getCellAttributes(context));
 	}
 
 
