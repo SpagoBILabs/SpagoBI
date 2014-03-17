@@ -30,9 +30,9 @@ import org.hibernate.criterion.Expression;
  * 
  * @author Monia Spinelli
  */
-public class ConfigDAO extends AbstractHibernateDAO implements IConfigDAO {
+public class ConfigDAOHibImpl extends AbstractHibernateDAO implements IConfigDAO {
 
-    static private Logger logger = Logger.getLogger(ConfigDAO.class);
+    static private Logger logger = Logger.getLogger(ConfigDAOHibImpl.class);
     
     /* (non-Javadoc)
      * @see it.eng.spagobi.commons.dao.IUserFunctionalityDAO#loadAllConfigParameters()

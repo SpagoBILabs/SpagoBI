@@ -11,6 +11,10 @@
  */
 package it.eng.spagobi.commons.dao;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spago.error.EMFUserError;
@@ -84,9 +88,12 @@ import org.apache.log4j.Logger;
  * it.eng.spagobi.bo package.
  */
 public class DAOFactory {
-
 	
 	static private Logger logger = Logger.getLogger(DAOFactory.class);
+	
+	private static String getDAOClass(String daoName) {
+		return DAOConfig.getMappings().get(daoName);
+	}	
 	
 	/**
 	 * Given, for a defined BO, its DAO name, creates the correct DAO instance 
@@ -97,21 +104,20 @@ public class DAOFactory {
 	 */
 	
 	private static Object createDAOInstance(String daoName) {
-		//logger.trace("Begin Istantiation of DAO ["+daoName+"]");
 		Object daoObject = null;
 		try {
-			ConfigSingleton configSingleton=ConfigSingleton.getInstance();
-			SourceBean daoConfigSourceBean =(SourceBean) configSingleton.getFilteredSourceBeanAttribute("SPAGOBI.DAO-CONF.DAO","name", daoName);
-			String daoClassName = (String)daoConfigSourceBean.getAttribute("implementation");
-			//logger.trace("DAO ["+daoName+"] Implementation class ["+daoClassName+"]");
-			daoObject = Class.forName(daoClassName).newInstance();
-		} catch (Exception e) {
+//			ConfigSingleton configSingleton=ConfigSingleton.getInstance();
+//			SourceBean daoConfigSourceBean =(SourceBean) configSingleton.getFilteredSourceBeanAttribute("SPAGOBI.DAO-CONF.DAO","name", daoName);
+//			String daoClassName = (String)daoConfigSourceBean.getAttribute("implementation");
+//			daoObject = Class.forName(daoClassName).newInstance();
+			daoObject = Class.forName( getDAOClass(daoName) ).newInstance();
+		} catch (Throwable e) {
 			throw new SpagoBIRuntimeException("Cannot instantiate " + daoName, e);
 		}
-		//logger.trace("DAO ["+daoName+"] instantiated successfully");
-		return daoObject;
-		
+		return daoObject;	
 	}
+	
+	
 	
 	/**
 	 * Creates a DAO instance for a BI object.
