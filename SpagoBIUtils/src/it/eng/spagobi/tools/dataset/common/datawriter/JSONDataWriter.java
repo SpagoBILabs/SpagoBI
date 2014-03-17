@@ -299,6 +299,8 @@ public class JSONDataWriter implements IDataWriter {
 		}
 	}
 	
+	// fieldOptions = [{id: 4, options: {measureScaleFactor: 0.5}}]
+	
 	private void addMeasuresScaleFactor(JSONArray fieldOptions, String fieldId,
 			JSONObject fieldMetaDataJSON) {
 		if (fieldOptions != null) {
