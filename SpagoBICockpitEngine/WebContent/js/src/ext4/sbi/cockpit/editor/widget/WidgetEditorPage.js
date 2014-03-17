@@ -25,6 +25,7 @@ Sbi.cockpit.editor.widget.WidgetEditorPage = function(config) {
 	this.init();
 	
 	c.items = [this.widgetEditorPanel];
+	//c.items = [{html: "this.widgetEditorPanel"}];
 	
 	Sbi.cockpit.editor.widget.WidgetEditorPage.superclass.constructor.call(this, c);
 	

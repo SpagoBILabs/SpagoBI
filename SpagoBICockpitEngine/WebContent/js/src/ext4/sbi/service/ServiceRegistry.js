@@ -26,7 +26,6 @@ Sbi.service.ServiceRegistry = function(config) {
 	    , port: '8080'
 	    , contextPath: 'SpagoBI'
 	    , controllerPath: 'servlet/AdapterHTTP'   
-	    //, restServicesPath: 'restful-services' 
 	    , restServicesPath: 'api/1.0' 
 	});
 	
@@ -84,7 +83,6 @@ Ext.extend(Sbi.service.ServiceRegistry, Ext.util.Observable, {
         	serviceUrl += '?';
         }
         
-    
         for(var p in params){
         	if(params[p] !== null) {
         		serviceUrl += '&' + p + '=' + params[p];
@@ -116,22 +114,7 @@ Ext.extend(Sbi.service.ServiceRegistry, Ext.util.Observable, {
     	return  baseUrlStr;
     }
     
-	, getRestBaseUrlStr: function(s) {
-		var baseUrlStr;
-	
-		var isAbsolute = s.isAbsolute || this.defaultAbsolute;
-		var url = Ext.apply({}, s.baseUrl || {}, this.baseUrl);
-	
-		if(isAbsolute) {
-			baseUrlStr = url.protocol + '://' + url.host + ":" + url.port + '/' + url.contextPath + '/' + url.restServicesPath;
-		} else {
-			baseUrlStr = '/' + url.contextPath+ '/' + url.restServicesPath;
-		}
-	
-		return  baseUrlStr;
-	}
-    
-	, getRestServiceUrl : function(s){
+    , getRestServiceUrl : function(s){
 		var serviceUrl;
 	
 		var baseUrlStr;
@@ -163,4 +146,40 @@ Ext.extend(Sbi.service.ServiceRegistry, Ext.util.Observable, {
 	
 		return serviceUrl;
 	}  
+    
+	, getRestBaseUrlStr: function(s) {
+		var baseUrlStr;
+	
+		var isAbsolute = s.isAbsolute || this.defaultAbsolute;
+		var url = Ext.apply({}, s.baseUrl || {}, this.baseUrl);
+	
+		if(isAbsolute) {
+			baseUrlStr = url.protocol + '://' + url.host + ":" + url.port + '/' + url.contextPath + '/' + url.restServicesPath;
+		} else {
+			baseUrlStr = '/' + url.contextPath+ '/' + url.restServicesPath;
+		}
+	
+		return  baseUrlStr;
+	}
+	
+	, getResourceUrl : function(r){
+		var resourceUrl;
+		
+		if(typeof r == 'string') {
+			r = {resourceName: r};
+		}
+		
+		var isAbsolute = r.isAbsolute || this.defaultAbsolute;
+		var url = Ext.apply({}, r.baseUrl || {}, this.baseUrl);
+	
+		if(isAbsolute) {
+			resourceUrl = url.protocol + '://' + url.host + ":" + url.port + '/' + url.contextPath;
+		} else {
+			resourceUrl = '/' + url.contextPath;
+		}
+		
+		resourceUrl += '/'+ r.resourceName;
+	
+		return  resourceUrl;
+	}
 });

@@ -27,38 +27,99 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditorDesignerPalette, Ext.Panel, {
 	
 	initPanel:function(){
 
-		var store = new Ext.data.ArrayStore({
-			fields: ['type', 'name', 'description', 'icon'],
-			data   : this.getAvailablePallettes()
+//		var store = new Ext.data.ArrayStore({
+//			fields: ['type', 'name', 'description', 'icon'],
+//			data   : this.getAvailablePallettes()
+//		});
+		
+		Ext.create('Ext.data.Store', {
+		    storeId:'widgetDesignerStore',
+		    fields: ['type', 'name', 'description', 'icon'],
+		    data:{'items': this.getAvailablePallettes()},
+		    proxy: {
+		        type: 'memory',
+		        reader: {
+		            type: 'json',
+		            root: 'items'
+		        }
+		    }
 		});
-
+		
 		this.tpl = new Ext.Template(
-				'<tpl for=".">',
-
-				'<div  style="float: left; clear: left; padding-bottom: 10px;">',
-					'<div style="float: left;"><img src="{3}" title="{1}" width="40"></div>',
-					'<div style="float: left; padding-top:10px; padding-left:10px;">{1}</div>',
-				'</div>',
+			'<tpl for=".">',
 	
-				'</tpl>'
+			'<div  style="float: left; clear: left; padding-bottom: 10px;">',
+				'<div style="float: left;"><img src="{3}" title="{1}" width="40"></div>',
+				'<div style="float: left; padding-top:10px; padding-left:10px;">{1}</div>',
+			'</div>',
+	
+			'</tpl>'
 		);
 		this.tpl.compile();
-	    var fieldColumn = new Ext.grid.Column({
-	    	width: 300
-	    	, dataIndex: 'name'
-	    	, hideable: false
-	    	, hidden: false	
-	    	, sortable: false
-	   	    , renderer : function(value, metaData, record, rowIndex, colIndex, store){
-	        	return this.tpl.apply(	
-	        			[record.json.type, record.json.name
-	        			 , record.json.description, record.json.icon]	
-	        	);
-	    	}
-	        , scope: this
-	    });
-	    this.cm = new Ext.grid.ColumnModel([fieldColumn]);
+		
+		var gridPanel = Ext.create('Ext.grid.Panel', {
+		    store: Ext.data.StoreManager.lookup('widgetDesignerStore'),
+		    columns: [
+		        {
+		        	width: 300
+		        	, dataIndex: 'name'
+		        	, hideable: false
+		        	, hidden: false	
+		        	, sortable: false
+		        	, renderer : function(value, metaData, record, rowIndex, colIndex, store){
+		        		return this.tpl.apply(	
+		        				[record.get('type'), record.get('name'), record.get('description'), record.get('icon')]	
+		        		);
+		        	}
+		        	, scope: this
+		        }
+		    ],
+		    ddGroup : 'paleteDDGroup',
+			type : 'palette',
+			enableDragDrop : true,
+			header : false,
+			hideHeaders : true,
+			autoHeight : true
+		});
 
+//		this.tpl = new Ext.Template(
+//				'<tpl for=".">',
+//
+//				'<div  style="float: left; clear: left; padding-bottom: 10px;">',
+//					'<div style="float: left;"><img src="{3}" title="{1}" width="40"></div>',
+//					'<div style="float: left; padding-top:10px; padding-left:10px;">{1}</div>',
+//				'</div>',
+//	
+//				'</tpl>'
+//		);
+//		this.tpl.compile();
+//	    var fieldColumn = new Ext.grid.Column({
+//	    	width: 300
+//	    	, dataIndex: 'name'
+//	    	, hideable: false
+//	    	, hidden: false	
+//	    	, sortable: false
+//	   	    , renderer : function(value, metaData, record, rowIndex, colIndex, store){
+//	        	return this.tpl.apply(	
+//	        			[record.json.type, record.json.name
+//	        			 , record.json.description, record.json.icon]	
+//	        	);
+//	    	}
+//	        , scope: this
+//	    });
+//	    this.cm = new Ext.grid.ColumnModel([fieldColumn]);
+//
+//	    var gridPanel = new Ext.grid.GridPanel({
+//			ddGroup : 'paleteDDGroup',
+//			type : 'palette',
+//			header : false,
+//			hideHeaders : true,
+//			enableDragDrop : true,
+//			cm : this.cm,
+//			store : store,
+//			autoHeight : true
+//		});
+	    
 		var conf = {
 			title : 'Visualization',
 			autoScroll : true,
@@ -68,16 +129,7 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditorDesignerPalette, Ext.Panel, {
 					layout: "fit",
 					border : false,
 					style : 'padding-top: 0px; padding-left: 0px',
-					items : [ new Ext.grid.GridPanel({
-						ddGroup : 'paleteDDGroup',
-						type : 'palette',
-						header : false,
-						hideHeaders : true,
-						enableDragDrop : true,
-						cm : this.cm,
-						store : store,
-						autoHeight : true
-					}) ]
+					items : [gridPanel]
 				}) ]
 		};
 	    
@@ -90,35 +142,16 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditorDesignerPalette, Ext.Panel, {
 		Sbi.trace("[WidgetEditorDesignerPalette.getAvailablePallettes]: IN");
 		
 		var pallette = new Array();
-		
+				
 		Sbi.cockpit.core.WidgetExtensionPointManager.forEachWidget(function(wtype, wdescriptor) {
 			pallette.push({
 				type: wtype
 				, name: wdescriptor.name
 				, description:wdescriptor.description
-				, icon: wdescriptor.icon
+				, icon: Sbi.config.serviceRegistry.getResourceUrl(wdescriptor.icon)
 			});
 		}, this);
-		
-		//alert("Palete length: " + pallette.length);
-		
-//		var widgetDescriptors = Sbi.cockpit.core.WidgetExtensionPoint.getWidgetDescriptors();
-//		for(var i = 0; i < widgetDescriptors.length; i++) {
-//			pallette.push({
-//				type: 
-//				, name: widgetDescriptors[i].name
-//				, description: widgetDescriptors[i].description
-//				, icon: widgetDescriptors[i].icon
-//			});
-//			Sbi.debug("[WidgetEditorDesignerPalette.getAvailablePallettes]: added widget [" + widgetDescriptors[i].name + "] to the palette");
-//		}
-//		pallette.push({name: 'Bar Chart', url:'img/widgets/palette_bar_chart.png'});
-//		pallette.push({name: 'Pie Chart', url:'img/widgets/palette_pie_chart.png'});
-//		pallette.push({name: 'Line Chart', url:'img/widgets/palette_line_chart.png'});
-//		pallette.push({name: 'Table', url:'img/widgets/palette_table.png'});
-//		pallette.push({name: 'Pivot Table', url:'img/widgets/palette_crosstab.png'});	
-//		pallette.push({name: 'Static Pivot Table', url:'img/widgets/palette_crosstab.png'});
-		
+
 		Sbi.trace("[WidgetEditorDesignerPalette.getAvailablePallettes]: IN");
 		
 		return pallette;

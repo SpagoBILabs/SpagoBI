@@ -67,6 +67,7 @@ Sbi.cockpit.editor.widget.WidgetEditorControlPanel = function(config) {
         	type:'accordion'
         },
         items:[ this.designerPalettePanel, this.fieldsPalettePanel, this.stylePalettePanel]
+        //items:[ {html: "this.designerPalettePanel"}, this.fieldsPalettePanel, this.stylePalettePanel]
 	};
 	
 	Sbi.cockpit.editor.widget.WidgetEditorControlPanel.superclass.constructor.call(this, c);
