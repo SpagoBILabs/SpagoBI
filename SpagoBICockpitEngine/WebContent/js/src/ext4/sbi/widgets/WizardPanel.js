@@ -4,72 +4,58 @@
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. **/
 
-Ext.ns("Sbi.widgets");
+Ext.define('Sbi.widgets.WizardPanel', {
+	extend: 'Ext.Panel'
 
-Sbi.widgets.WizardPanel = function(config) { 
-
-	Sbi.trace("[WizardPanel.constructor]: IN");
-	
-	var defaultSettings = {		
-		border: false,
-		layout : 'card',
-		activeItem : 0, 
-		autoScroll : true
-	};
+	, config:{	
+		/**
+	     * @property {Array} pages
+	     * The pages that compose this wizard
+	     */
+		pages: null
 		
-	if(Sbi.settings && Sbi.widgets && Sbi.widgets.wizardPanel) {
-		defaultSettings = Ext.apply(defaultSettings,  Sbi.widgets.wizardPanel);
+		/**
+	     * @property {Array} buttons
+	     * The buttons that compose this wizard button bar
+	     */
+		, buttons: null
+		
+		, pageToActivateOnRender: null
 	}
-	var c = Ext.apply(defaultSettings, config || {});
-	Ext.apply(this, c);
+
+	, constructor : function(config) {
+		Sbi.trace("[WizardPanel.constructor]: IN");
 		
-	this.init();
-	
-	c = Ext.apply(c, {
-		items: this.pages,
-		buttons: this.buttons
-	}); 
-	
-	Sbi.trace("[WizardPanel.constructor]: call parent costructor");
-	Sbi.widgets.WizardPanel.superclass.constructor.call(this, c);
-	Sbi.trace("[WizardPanel.constructor]: parent costructor succesfully called");
-	
-	this.addEvents('navigate', 'cancel', 'submit');
-	
-	Sbi.trace("[WizardPanel.constructor]: OUT");
-};
+		var defaultSettings = {		
+			border: false,
+			layout : 'card',
+			activeItem : 0, 
+			autoScroll : true
+		};
+			
+		if(Sbi.settings && Sbi.widgets && Sbi.widgets.wizardPanel) {
+			defaultSettings = Ext.apply(defaultSettings,  Sbi.widgets.wizardPanel);
+		}
+		var c = Ext.apply(defaultSettings, config || {});
+		Ext.apply(this, c);
+			
+		this.init();
+		
+		c = Ext.apply(c, {
+			items: this.pages,
+			buttons: this.buttons
+		}); 
+		
+		Sbi.trace("[WizardPanel.constructor]: call parent costructor");
+		this.callParent(arguments);
+		Sbi.trace("[WizardPanel.constructor]: parent costructor succesfully called");
+		
+		this.addEvents('navigate', 'cancel', 'submit');
+		
+		Sbi.trace("[WizardPanel.constructor]: OUT");
+	}
 
-/**
- * @class Sbi.widgets.WizardPanel
- * @extends Ext.Panel
- * 
- * Base class for multisteps wizard implementation
- */
 
-/**
- * @cfg {Object} config
- * ...
- */
-Ext.extend(Sbi.widgets.WizardPanel, Ext.Panel, {
-	
-	// =================================================================================================================
-	// PROPERTIES
-	// =================================================================================================================
-	
-	/**
-     * @property {Array} pages
-     * The pages that compose this wizard
-     */
-	pages: null
-	
-	/**
-     * @property {Array} buttons
-     * The buttons that compose this wizard button bar
-     */
-	, buttons: null
-	
-	, pageToActivateOnRender: null
-	
 	// =================================================================================================================
 	// METHODS
 	// =================================================================================================================
