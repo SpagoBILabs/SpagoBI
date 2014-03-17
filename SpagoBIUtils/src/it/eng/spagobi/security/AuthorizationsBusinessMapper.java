@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
+import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 
@@ -100,9 +102,9 @@ public class AuthorizationsBusinessMapper {
     		SourceBean mapAction = (SourceBean) actionListIt.next();
         	    	String serviceName = (String) mapAction.getAttribute("serviceUrl");
         	    	String businessProcessName = (String) mapAction.getAttribute("businessProcess");
-        	    	String actStr = "SERVICE[" + serviceName + "]";
+        	    	String serviceRegEx = "SERVICE\\[" + serviceName + "\\]";
         	    	//logger.debug("PUT:actStr"+actStr);
-        	    	_mapRestServices.put(actStr.toUpperCase(), businessProcessName);
+        	    	_mapRestServices.put(serviceRegEx.toUpperCase(), businessProcessName);
     	    }
     	}
   
@@ -155,8 +157,16 @@ public class AuthorizationsBusinessMapper {
      */
     public String mapServiceToBusinessProcess(String serviceUrl) {
 	//logger.debug("IN. actionName="+actionName);
-	String actStr = "SERVICE[" + serviceUrl + "]";
-	String businessProcessName = (String) _mapRestServices.get(actStr.toUpperCase());
+	String service = "SERVICE[" + serviceUrl.toUpperCase() + "]";
+	String businessProcessName = null;
+	Set<String> services = _mapRestServices.keySet();
+	for(String serviceRegEx : services) {
+		if( Pattern.matches(serviceRegEx, service) ) {
+			businessProcessName = (String) _mapRestServices.get(serviceRegEx);
+			break;
+		}
+	}
+	
 	if (businessProcessName == null) {
 	    logger.warn("mapping per service [" + serviceUrl + "] not found");
 	}
@@ -186,5 +196,10 @@ public class AuthorizationsBusinessMapper {
 	}
 	//logger.debug("OUT,businessProcessName="+businessProcessName);
 	return businessProcessName;
+    }
+    
+    public static void main(String[] args) {
+    	System.out.println(Pattern.matches("SERVICE\\[/COMMUNITY/USER\\]", "SERVICE[/COMMUNITY/USER]"));
+    	
     }
 }
