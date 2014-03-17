@@ -294,10 +294,12 @@ public class DataSetResource {
 
 			String fieldName = getFieldName(fieldMetaData);
 			String fieldHeader = getFieldAlias(fieldMetaData);
+			String fieldColumnType = getFieldColumnType(fieldMetaData);
 
 			JSONObject fieldMetaDataJSON = new JSONObject();
 			fieldMetaDataJSON.put("id", fieldName);						
 			fieldMetaDataJSON.put("alias", fieldHeader);
+			fieldMetaDataJSON.put("colType", fieldColumnType);
 
 			FieldType type = fieldMetaData.getFieldType();
 			logger.debug("The field type is " + type.name());
@@ -368,5 +370,10 @@ public class DataSetResource {
 		return fieldName;
 	}
 
+	protected String getFieldColumnType(IFieldMetaData fieldMetaData) {
+		String fieldColumnType = fieldMetaData.getType().toString();
+		fieldColumnType = fieldColumnType.substring(fieldColumnType.lastIndexOf(".")+1); //clean the class type name
+		return fieldColumnType;
+	}
 
 }
