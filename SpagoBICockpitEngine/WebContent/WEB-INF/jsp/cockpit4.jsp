@@ -121,6 +121,8 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 		    , contextPath: '<%= request.getContextPath().startsWith("/")||request.getContextPath().startsWith("\\")?request.getContextPath().substring(1): request.getContextPath()%>'
 		    , controllerPath: null // no cotroller just servlets   
 		};
+		
+		alert(url.contextPath);
 	
 		var params = {
 				SBI_EXECUTION_ID: <%= request.getParameter("SBI_EXECUTION_ID")!=null?"'" + request.getParameter("SBI_EXECUTION_ID") +"'": "null" %>
