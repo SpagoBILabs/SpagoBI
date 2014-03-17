@@ -93,7 +93,7 @@ public class DatasetManagementAPI {
 
 		logger.debug("check the dataset not alreaduy present with same label");
 
-		IDataSet datasetLab = DAOFactory.getDataSetDAO().loadActiveDataSetByLabel(dataSet.getLabel());
+		IDataSet datasetLab = DAOFactory.getDataSetDAO().loadDataSetByLabel(dataSet.getLabel());
 
 		if(datasetLab != null){
 			throw new ValidationException("Dataset with label "+dataSet.getLabel()+" already found");

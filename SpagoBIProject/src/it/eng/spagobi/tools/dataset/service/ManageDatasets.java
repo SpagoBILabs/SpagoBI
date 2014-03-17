@@ -178,7 +178,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 					attributesResponseSuccessJSON.put("userIn", ds.getUserIn());
 					attributesResponseSuccessJSON.put("meta", DataSetJSONSerializer.metadataSerializerChooser(ds.getDsMetadata()));										
 				}else{
-					IDataSet existing = dsDao.loadActiveDataSetByLabel(ds.getLabel());
+					IDataSet existing = dsDao.loadDataSetByLabel(ds.getLabel());
 					if (existing != null) {
 						throw new SpagoBIServiceException(SERVICE_NAME,	"sbi.ds.labelAlreadyExistent");
 					}
@@ -202,7 +202,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 				//Manage persistence of dataset if required. On modify it will drop and create the destination table!
 					logger.debug("Start persistence...");
 					//gets the dataset object informations		
-					IDataSet dataset = DAOFactory.getDataSetDAO().loadActiveDataSetByLabel(ds.getLabel());
+					IDataSet dataset = DAOFactory.getDataSetDAO().loadDataSetByLabel(ds.getLabel());
 					checkQbeDataset(((VersionedDataSet) dataset).getWrappedDataset());
 					JSONArray parsListJSON = getAttributeAsJSONArray(DataSetConstants.PARS);
 					if(parsListJSON.length()>0)  { 
@@ -508,7 +508,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 									logger.debug("Loading existing dataset...");
 									String id = getAttributeAsString(DataSetConstants.ID);
 									if (id != null && !id.equals("") && !id.equals("0")) {
-										IDataSet existingDataSet = DAOFactory.getDataSetDAO().loadActiveIDataSetByID(new Integer(id));
+										IDataSet existingDataSet = DAOFactory.getDataSetDAO().loadDataSetById(new Integer(id));
 										dsMetadata = existingDataSet.getDsMetadata();
 										LogMF.debug(logger, "Reloaded metadata : [{0}]", dsMetadata);
 									} else {
@@ -1474,7 +1474,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 		//Integer id = obj.getDataSetId();	
 		//gets the dataset object informations		
 		try {
-			IDataSet dataset = DAOFactory.getDataSetDAO().loadActiveIDataSetByID(dsId);
+			IDataSet dataset = DAOFactory.getDataSetDAO().loadDataSetById(dsId);
 			if (dataset.getParameters() != null){
 				HashMap<String, String> parametersMap = new HashMap<String, String>();
 				parametersMap = getDataSetParametersAsMap();

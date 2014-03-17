@@ -21,7 +21,7 @@ import it.eng.spago.paginator.basic.PaginatorIFace;
 import it.eng.spago.paginator.basic.impl.GenericList;
 import it.eng.spago.paginator.basic.impl.GenericPaginator;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
-import it.eng.spagobi.commons.utilities.HibernateUtil;
+import it.eng.spagobi.commons.utilities.HibernateSessionManager;
 import it.eng.spagobi.commons.utilities.SpagoBITracer;
 
 import java.sql.Connection;
@@ -73,10 +73,10 @@ public class DelegatedHibernateConnectionListService extends DelegatedBasicListS
 		
 		try {			
 			
-			aSession = HibernateUtil.currentSession();
+			aSession = HibernateSessionManager.getCurrentSession();
 			tx = aSession.beginTransaction();
 			//Connection jdbcConnection = aSession.connection();
-			Connection jdbcConnection = HibernateUtil.getConnection(aSession);
+			Connection jdbcConnection = HibernateSessionManager.getConnection(aSession);
 			DataConnection dataConnection = getDataConnection(jdbcConnection);
 			
 			rowsSourceBean =

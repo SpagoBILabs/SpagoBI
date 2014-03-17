@@ -14,7 +14,7 @@ import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.paginator.basic.ListIFace;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
-import it.eng.spagobi.commons.utilities.HibernateUtil;
+import it.eng.spagobi.commons.utilities.HibernateSessionManager;
 import it.eng.spagobi.commons.utilities.SpagoBITracer;
 
 import java.sql.Connection;
@@ -52,10 +52,10 @@ public class AbstractHibernateConnectionCheckListModule extends
 		DataConnection dataConnection = null;
 		DataResult dataResult = null;
 		try {
-			aSession = HibernateUtil.currentSession();
+			aSession = HibernateSessionManager.getCurrentSession();
 			tx = aSession.beginTransaction();
 			//Connection jdbcConnection = aSession.connection();
-			Connection jdbcConnection = HibernateUtil.getConnection(aSession);
+			Connection jdbcConnection = HibernateSessionManager.getConnection(aSession);
 			dataConnection = DelegatedHibernateConnectionListService.getDataConnection(jdbcConnection);
         	sqlCommand = dataConnection.createSelectCommand(statement);
         	dataResult = sqlCommand.execute();

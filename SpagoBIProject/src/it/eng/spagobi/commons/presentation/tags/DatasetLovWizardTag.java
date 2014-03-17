@@ -162,7 +162,7 @@ public class DatasetLovWizardTag extends CommonWizardLovTag {
 			currDataSetIdValue=currDataSetId.toString();
 			IDataSet dataSet=null;
 			try {
-				dataSet = DAOFactory.getDataSetDAO().loadActiveIDataSetByID(currDataSetId);
+				dataSet = DAOFactory.getDataSetDAO().loadDataSetById(currDataSetId);
 			} catch (EMFUserError e) {
 				logger.error("Error Dataset Loading");
 				e.printStackTrace();

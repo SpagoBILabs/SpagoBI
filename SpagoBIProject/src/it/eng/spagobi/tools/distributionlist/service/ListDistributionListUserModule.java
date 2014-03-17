@@ -16,7 +16,7 @@ import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.services.DelegatedHibernateConnectionListService;
 import it.eng.spagobi.commons.utilities.AuditLogUtilities;
-import it.eng.spagobi.commons.utilities.HibernateUtil;
+import it.eng.spagobi.commons.utilities.HibernateSessionManager;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.services.common.SsoServiceInterface;
 
@@ -53,9 +53,9 @@ public class ListDistributionListUserModule extends AbstractBasicListModule{
 		//Start writing log in the DB
 		Session aSession =null;
 		try {
-			aSession = HibernateUtil.currentSession();
+			aSession = HibernateSessionManager.getCurrentSession();
 			//Connection jdbcConnection = aSession.connection();
-			Connection jdbcConnection = HibernateUtil.getConnection(aSession);
+			Connection jdbcConnection = HibernateSessionManager.getConnection(aSession);
 			IEngUserProfile profile = UserUtilities.getUserProfile();
 			AuditLogUtilities.updateAudit(((HttpServletRequest)getRequestContainer().getRequestContainer().getInternalRequest()),  profile, "DISTRIBUTION_LIST.OPEN", null, "OK");
 		} catch (HibernateException he) {

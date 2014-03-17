@@ -560,7 +560,7 @@ public class ExportManager implements IExportManager {
 						if (datasetnameSB != null) {
 							String datasetLabel = (String) datasetnameSB.getAttribute("value");
 							IDataSetDAO datasetDao = DAOFactory.getDataSetDAO();
-							IDataSet dataset = datasetDao.loadActiveDataSetByLabel(datasetLabel);
+							IDataSet dataset = datasetDao.loadDataSetByLabel(datasetLabel);
 							IDataSet guiGenericDataSet = datasetDao.loadDataSetByLabel(datasetLabel);
 
 

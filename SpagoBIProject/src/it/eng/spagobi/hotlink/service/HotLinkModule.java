@@ -22,7 +22,7 @@ import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.AuditLogUtilities;
-import it.eng.spagobi.commons.utilities.HibernateUtil;
+import it.eng.spagobi.commons.utilities.HibernateSessionManager;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.hotlink.rememberme.bo.RememberMe;
 
@@ -49,7 +49,7 @@ public class HotLinkModule extends AbstractModule {
 		//Start writing log in the DB
 		Session aSession =null;
 		try {
-			aSession = HibernateUtil.currentSession();
+			aSession = HibernateSessionManager.getCurrentSession();
 			RequestContainer requestContainer = this.getRequestContainer();	
 			ResponseContainer responseContainer = this.getResponseContainer();	
 			SessionContainer session = requestContainer.getSessionContainer();

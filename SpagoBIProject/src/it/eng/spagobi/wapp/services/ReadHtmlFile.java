@@ -15,7 +15,7 @@ import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.AuditLogUtilities;
-import it.eng.spagobi.commons.utilities.HibernateUtil;
+import it.eng.spagobi.commons.utilities.HibernateSessionManager;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.wapp.bo.Menu;
@@ -42,7 +42,7 @@ public class ReadHtmlFile extends AbstractHttpAction{
 		//Start writing log in the DB
 		Session aSession =null;
 		try {
-			aSession = HibernateUtil.currentSession();
+			aSession = HibernateSessionManager.getCurrentSession();
 
 			AuditLogUtilities.updateAudit(getHttpRequest(),  UserUtilities.getUserProfile(), "HTML_MENU.OPEN_HTML_FILE", null, "OK");
 		} catch (HibernateException he) {

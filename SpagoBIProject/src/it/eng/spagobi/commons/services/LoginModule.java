@@ -32,7 +32,7 @@ import it.eng.spagobi.commons.dao.IConfigDAO;
 import it.eng.spagobi.commons.metadata.SbiExtRoles;
 import it.eng.spagobi.commons.utilities.AuditLogUtilities;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
-import it.eng.spagobi.commons.utilities.HibernateUtil;
+import it.eng.spagobi.commons.utilities.HibernateSessionManager;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
@@ -434,7 +434,7 @@ public class LoginModule extends AbstractHttpModule {
 			//Start writing log in the DB
 			Session aSession =null;
 			try {
-				aSession = HibernateUtil.currentSession();
+				aSession = HibernateSessionManager.getCurrentSession();
 				AuditLogUtilities.updateAudit(getHttpRequest(), profile, "SPAGOBI.Login", null, "OK");
 			} catch (HibernateException he) {
 				throw new EMFUserError(EMFErrorSeverity.ERROR, 100);

@@ -167,7 +167,7 @@ public class MeasureCatalogue implements Observer {
 		
 		try {
 			IDataSetDAO dataSetDao = DAOFactory.getDataSetDAO();
-			datasets = dataSetDao.loadAllActiveDataSets();
+			datasets = dataSetDao.loadDataSets();
 		} catch (Exception e) {
 			logger.error("Error loading the active dataset",e);
 			throw new SpagoBIRuntimeException("Error loading the active dataset",e);

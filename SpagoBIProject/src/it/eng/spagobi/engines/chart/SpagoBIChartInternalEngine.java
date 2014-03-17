@@ -311,7 +311,7 @@ public class SpagoBIChartInternalEngine implements InternalEngineIFace {
 			if (chartType != null && chartType.startsWith(HIGHCHART_TEMPLATE)){
 				//gets the dataset object informations
 				Integer id = obj.getDataSetId();
-				IDataSet dataset = DAOFactory.getDataSetDAO().loadActiveIDataSetByID(id);
+				IDataSet dataset = DAOFactory.getDataSetDAO().loadDataSetById(id);
 				
 				ManageDatasets mDs = new ManageDatasets();
 				JSONArray parsJSON = getParametersAsJSON(obj);

@@ -1,18 +1,10 @@
 package it.eng.spagobi.rest.interceptors;
 
-import it.eng.spago.base.Constants;
-import it.eng.spago.base.RequestContainer;
-import it.eng.spago.base.SessionContainer;
-import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.commons.utilities.UserUtilities;
-import it.eng.spagobi.container.ContextManager;
-import it.eng.spagobi.container.SpagoBIHttpSessionContainer;
-import it.eng.spagobi.container.strategy.ExecutionContextRetrieverStrategy;
-import it.eng.spagobi.container.strategy.IContextRetrieverStrategy;
 import it.eng.spagobi.security.ExternalServiceController;
 import it.eng.spagobi.services.common.SsoServiceFactory;
 import it.eng.spagobi.services.common.SsoServiceInterface;
@@ -21,12 +13,10 @@ import it.eng.spagobi.services.security.bo.SpagoBIUserProfile;
 import it.eng.spagobi.services.security.service.ISecurityServiceSupplier;
 import it.eng.spagobi.services.security.service.SecurityServiceSupplierFactory;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-import it.eng.spagobi.utilities.filters.FilterIOManager;
 
 import java.lang.reflect.Method;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.ext.Provider;
@@ -77,10 +67,6 @@ public class SecurityServerInterceptor implements PreProcessInterceptor, Accepte
 		try {
 			String serviceUrl = InterceptorUtilities.getServiceUrl(request);
 			serviceUrl = serviceUrl.replaceAll("/1.0/", "/");
-			int index = serviceUrl.indexOf("/", 1);
-			if(index > 0) {
-				serviceUrl = serviceUrl.substring(0, index);
-			}
 						
 			String methodName = resourceMethod.getMethod().getName();
 					
@@ -254,16 +240,22 @@ public class SecurityServerInterceptor implements PreProcessInterceptor, Accepte
 	// be one different context for each distinct executions lunched by the same user on the same borwser.
 	private IEngUserProfile getUserProfileFromSession() {
 		IEngUserProfile engProfile = null;
-		FilterIOManager ioManager = new FilterIOManager(servletRequest, null);
-		ioManager.initConetxtManager();	
-		engProfile = (IEngUserProfile)ioManager.getFromSession(IEngUserProfile.ENG_USER_PROFILE);		
+//		FilterIOManager ioManager = new FilterIOManager(servletRequest, null);
+//		ioManager.initConetxtManager();	
+//		engProfile = (IEngUserProfile)ioManager.getFromSession(IEngUserProfile.ENG_USER_PROFILE);		
+//		return engProfile;
+		
+		String executionId = (String)servletRequest.getParameter("SBI_EXECUTION_ID");
+		engProfile =  (IEngUserProfile)servletRequest.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 		return engProfile;
 	}
 	
 	private void setUserProfileInSession(IEngUserProfile engProfile) {
-		FilterIOManager ioManager = new FilterIOManager(servletRequest, null);
-		ioManager.initConetxtManager();	
-		ioManager.setInSession(IEngUserProfile.ENG_USER_PROFILE, engProfile);
+//		FilterIOManager ioManager = new FilterIOManager(servletRequest, null);
+//		ioManager.initConetxtManager();	
+//		ioManager.setInSession(IEngUserProfile.ENG_USER_PROFILE, engProfile);
+		
+		servletRequest.getSession().setAttribute(IEngUserProfile.ENG_USER_PROFILE, engProfile);
 	}
 
 }

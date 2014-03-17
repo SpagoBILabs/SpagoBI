@@ -258,7 +258,7 @@ public class UploadDatasetFileAction extends AbstractSpagoBIAction {
 
 		try {
 			IDataSetDAO ds = DAOFactory.getDataSetDAO();
-			List<IDataSet> datasets = ds.loadAllActiveDataSets();
+			List<IDataSet> datasets = ds.loadDataSets();
 			if(datasets!=null){
 				for (Iterator<IDataSet> iterator = datasets.iterator(); iterator.hasNext();) {
 					iDataSet =  iterator.next();
