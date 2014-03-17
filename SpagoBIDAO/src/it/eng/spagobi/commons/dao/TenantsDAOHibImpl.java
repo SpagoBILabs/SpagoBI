@@ -55,6 +55,8 @@ import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Expression;
 import org.safehaus.uuid.UUIDGenerator;
 
+import com.sun.org.apache.bcel.internal.generic.NEWARRAY;
+
 /** 
  * @author Davide Zerbetto (davide.zerbetto@eng.it)
  */
@@ -409,8 +411,19 @@ public class TenantsDAOHibImpl extends AbstractHibernateDAO implements ITenantsD
 			
 			this.disableTenantFilter(aSession);
 			
-			// cancello tutti data source associati al tenant
-
+			SbiCommonInfo sbiCommoInfo = new SbiCommonInfo();
+			sbiCommoInfo.setOrganization(aTenant.getName());
+			
+			Set<SbiOrganizationDatasource> ds = aTenant.getSbiOrganizationDatasources();
+			ArrayList<Integer> datasourceToBeAss = new ArrayList<Integer>();
+			ArrayList<Integer> datasourceToBeInsert = new ArrayList<Integer>();
+			//get a list of datasource ids
+			Iterator itds = ds.iterator();
+			while (itds.hasNext()) {
+				SbiOrganizationDatasource dsI = (SbiOrganizationDatasource)itds.next();
+				datasourceToBeAss.add(dsI.getSbiDataSource().getDsId());
+				datasourceToBeInsert.add(dsI.getSbiDataSource().getDsId());
+			}
 			Query hibQuery = aSession.createQuery("from SbiOrganizationDatasource ds where ds.sbiOrganizations.id = :idTenant");
 			hibQuery.setInteger("idTenant", aTenant.getId());
 			ArrayList<SbiOrganizationDatasource> existingDsAssociated  = (ArrayList<SbiOrganizationDatasource>) hibQuery.list();
@@ -418,42 +431,47 @@ public class TenantsDAOHibImpl extends AbstractHibernateDAO implements ITenantsD
 				Iterator it = existingDsAssociated.iterator();
 				while (it.hasNext()) {
 					SbiOrganizationDatasource assDS = (SbiOrganizationDatasource)it.next();
-					Query docsQ = aSession.createQuery("from SbiObjects o where o.dataSource.dsId = :idDS and o.commonInfo.organization = :tenant");
-					docsQ.setInteger("idDS", assDS.getSbiDataSource().getDsId());
-					docsQ.setString("tenant", aTenant.getName());
-					ArrayList<Object> docs = (ArrayList<Object>) docsQ.list();
-					if(docs != null && !docs.isEmpty()){
-						tx.rollback();	
-						throw new Exception("datasource:"+assDS.getSbiDataSource().getLabel());
-						
+					
+					//check whether the ds has to be associated:
+					if(datasourceToBeAss.contains(assDS.getSbiDataSource().getDsId())){
+						//already existing --> do nothing but delete it from the list of associations
+						datasourceToBeInsert.remove(new Integer(assDS.getSbiDataSource().getDsId()));
 					}else{
-						
-						//check no model associated
-						Query modelQ = aSession.createQuery("from SbiMetaModel m where m.dataSource.dsId = :idDS and m.commonInfo.organization = :tenant");
-						modelQ.setInteger("idDS", assDS.getSbiDataSource().getDsId());
-						modelQ.setString("tenant", aTenant.getName());
-						ArrayList<Object> models = (ArrayList<Object>) modelQ.list();
-						if(models != null && !models.isEmpty()){
+						//not existing --> must be deleted					
+						Query docsQ = aSession.createQuery("from SbiObjects o where o.dataSource.dsId = :idDS and o.commonInfo.organization = :tenant");
+						docsQ.setInteger("idDS", assDS.getSbiDataSource().getDsId());
+						docsQ.setString("tenant", aTenant.getName());
+						ArrayList<Object> docs = (ArrayList<Object>) docsQ.list();
+						if(docs != null && !docs.isEmpty()){
 							tx.rollback();	
 							throw new Exception("datasource:"+assDS.getSbiDataSource().getLabel());
 							
-						}else{				
-						
-							aSession.delete(assDS);
-							aSession.flush();
+						}else{
+							
+							//check no model associated
+							Query modelQ = aSession.createQuery("from SbiMetaModel m where m.dataSource.dsId = :idDS and m.commonInfo.organization = :tenant");
+							modelQ.setInteger("idDS", assDS.getSbiDataSource().getDsId());
+							modelQ.setString("tenant", aTenant.getName());
+							ArrayList<Object> models = (ArrayList<Object>) modelQ.list();
+							if(models != null && !models.isEmpty()){
+								tx.rollback();	
+								throw new Exception("datasource:"+assDS.getSbiDataSource().getLabel());
+								
+							}else{				
+								
+								aSession.delete(assDS);
+								aSession.flush();
+							}
 						}
+
 					}
-				} 
+
+				}
 			}
-			
-			SbiCommonInfo sbiCommoInfo = new SbiCommonInfo();
-			sbiCommoInfo.setOrganization(aTenant.getName());
-			
-			// associo i datasource al tenant
-			Set<SbiOrganizationDatasource> ds = aTenant.getSbiOrganizationDatasources();
-			for (SbiOrganizationDatasource sbiOrganizationDatasource: ds) {
-				SbiDataSource sbiDs = sbiOrganizationDatasource.getSbiDataSource();
-				sbiOrganizationDatasource.setId(new SbiOrganizationDatasourceId(sbiDs.getDsId(), aTenant.getId()));
+			//insert filtered datasources ds list
+			for (Integer idDsToAss: datasourceToBeInsert) {
+				SbiOrganizationDatasource sbiOrganizationDatasource = new SbiOrganizationDatasource();
+				sbiOrganizationDatasource.setId(new SbiOrganizationDatasourceId(idDsToAss, aTenant.getId()));
 				sbiOrganizationDatasource.setCommonInfo(sbiCommoInfo);
 				updateSbiCommonInfo4Insert(sbiOrganizationDatasource);
 				aSession.save(sbiOrganizationDatasource);
@@ -461,6 +479,18 @@ public class TenantsDAOHibImpl extends AbstractHibernateDAO implements ITenantsD
 			}
 			
 			// cancello tutte le Engine associate al tenant
+			
+			Set<SbiOrganizationEngine> engines = aTenant.getSbiOrganizationEngines();
+			ArrayList<Integer> enginesToBeAss = new ArrayList<Integer>();
+			ArrayList<Integer> enginesToBeInsert = new ArrayList<Integer>();
+			//get a list of engines ids
+			Iterator iteng = engines.iterator();
+			while (iteng.hasNext()) {
+				SbiOrganizationEngine enI = (SbiOrganizationEngine)iteng.next();
+				enginesToBeAss.add(enI.getSbiEngines().getEngineId());
+				enginesToBeInsert.add(enI.getSbiEngines().getEngineId());
+			}
+			
 			hibQuery = aSession.createQuery("from SbiOrganizationEngine en where en.sbiOrganizations.id = :idTenant");
 			hibQuery.setInteger("idTenant", aTenant.getId());
 			ArrayList<SbiOrganizationEngine> existingEnginesAssociated  = (ArrayList<SbiOrganizationEngine>) hibQuery.list();
@@ -468,26 +498,31 @@ public class TenantsDAOHibImpl extends AbstractHibernateDAO implements ITenantsD
 				Iterator it = existingEnginesAssociated.iterator();
 				while (it.hasNext()) {
 					SbiOrganizationEngine assEng = (SbiOrganizationEngine)it.next();
-					Query docsQ = aSession.createQuery("from SbiObjects o where o.sbiEngines.engineId = :idEngine and o.commonInfo.organization = :tenant");
-					docsQ.setInteger("idEngine", assEng.getSbiEngines().getEngineId());
-					docsQ.setString("tenant", aTenant.getName());
-					ArrayList<Object> docs = (ArrayList<Object>) docsQ.list();
-					if(docs != null && !docs.isEmpty()){
-						tx.rollback();	
-						throw new Exception("engine:"+assEng.getSbiEngines().getName());
-						
-					}else{
-						aSession.delete(assEng);
-						aSession.flush();
+
+					if(enginesToBeAss.contains(assEng.getSbiEngines().getEngineId())){
+						//already existing --> do nothing but delete it from the list of associations
+						enginesToBeInsert.remove(assEng.getSbiEngines().getEngineId());
+					}else{						
+				
+						Query docsQ = aSession.createQuery("from SbiObjects o where o.sbiEngines.engineId = :idEngine and o.commonInfo.organization = :tenant");
+						docsQ.setInteger("idEngine", assEng.getSbiEngines().getEngineId());
+						docsQ.setString("tenant", aTenant.getName());
+						ArrayList<Object> docs = (ArrayList<Object>) docsQ.list();
+						if(docs != null && !docs.isEmpty()){
+							tx.rollback();	
+							throw new Exception("engine:"+assEng.getSbiEngines().getName());
+							
+						}else{
+							aSession.delete(assEng);
+							aSession.flush();
+						}
 					}
-				} 
+				}
 			}
-
-
-			Set<SbiOrganizationEngine> engines = aTenant.getSbiOrganizationEngines();
-			for (SbiOrganizationEngine sbiOrganizationEngine: engines) {
-				SbiEngines sbiEngine = sbiOrganizationEngine.getSbiEngines();
-				sbiOrganizationEngine.setId(new SbiOrganizationEngineId(sbiEngine.getEngineId(), aTenant.getId()));
+			//insert filtered engines list
+			for (Integer idEngToAss: enginesToBeInsert) {
+				SbiOrganizationEngine sbiOrganizationEngine = new SbiOrganizationEngine();
+				sbiOrganizationEngine.setId(new SbiOrganizationEngineId(idEngToAss, aTenant.getId()));
 				sbiOrganizationEngine.setCommonInfo(sbiCommoInfo);
 				updateSbiCommonInfo4Insert(sbiOrganizationEngine);
 				aSession.save(sbiOrganizationEngine);
