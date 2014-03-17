@@ -51,10 +51,15 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/editor/WidgetEditorWizardPanel.js'/></script>
 <script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/editor/WidgetEditorWizard.js'/></script>
 
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/data/editor/relationship/RelationshipEditorList.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/data/editor/relationship/RelationshipEditorDataset.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/data/editor/relationship/RelationshipEditorDatasetContainer.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/data/editor/relationship/RelationshipEditor.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/data/editor/relationship/RelationshipEditorPage.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/data/RelationshipEditorWizardPanel.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/data/RelationshipEditorWizard.js'/></script>
+
 <script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/MainPanel.js'/></script>
-
-
-
 
 <script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/widgets/dummy/DummyWidget.js'/></script>
 
