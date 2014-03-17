@@ -35,7 +35,9 @@ Sbi.cockpit.MainPanel = function(config) {
 	this.init();
 	
 	c = Ext.apply(c, {
-          items    : [this.widgetContainer]
+		//id: "mainPanel",
+		bodyCssClass : "mainPanel",
+        items    : [this.widgetContainer]
 	});
 
 	// constructor
