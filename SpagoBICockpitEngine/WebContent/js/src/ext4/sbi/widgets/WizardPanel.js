@@ -155,7 +155,16 @@ Ext.define('Sbi.widgets.WizardPanel', {
 				
 		Sbi.trace("[WizardPanel.moveToPage]: OUT");
 		
-		return this.getActivePage();
+		var activePage = this.getActivePage();
+		// pass the current wizard state to the active page so it cat refresh if needed
+		// its content. This is useful if some info contained in the active page depends uppon
+		// values inserted by user in some other page of the wizard
+		if (activePage.updateValues){
+			var wizardState = this.getWizardState();
+			activePage.updateValues(wizardState);
+		}
+		
+		return activePage;
 	}
 	
 	
@@ -405,28 +414,12 @@ Ext.define('Sbi.widgets.WizardPanel', {
 	, onMoveNext: function() {
 		Sbi.trace("[WizardPanel.onMoveNext]: IN");
 		var page = this.moveToNextPage();
-		
-		// pass the current wizard state to the active page so it can refresh if needed
-		// its content. This is useful if some info contained in the active page depends uppon
-		// values inserted by user in some other page of the wizard
-		if (page.updateValues){
-			var wizardState = this.getWizardState();
-			page.updateValues(wizardState);
-		}
 		Sbi.trace("[WizardPanel.onMoveNext]: OUT");
 	}
 	
 	, onMovePrevious: function() {
 		Sbi.trace("[WizardPanel.onMovePrevious]: IN");
 		var page  = this.moveToPreviousPage();
-		
-		// pass the current wizard state to the active page so it cat refresh if needed
-		// its content. This is useful if some info contained in the active page depends uppon
-		// values inserted by user in some other page of the wizard
-		if (page.updateValues){
-			var wizardState = this.getWizardState();
-			page.updateValues(wizardState);
-		}
 		Sbi.trace("[WizardPanel.onMovePrevious]: OUT");
 	}
 
