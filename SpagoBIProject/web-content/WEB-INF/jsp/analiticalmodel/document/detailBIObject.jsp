@@ -461,23 +461,23 @@ function saveDocument(goBack) {
 				
 			<%
 								String url = GeneralUtilities.getSpagoBiHost()
-										+ GeneralUtilities.getSpagoBiContext()
-										+ GeneralUtilities.getSpagoAdapterHttpUrl() + "?"
-										+ "PAGE=SelectDatasetLookupPage&NEW_SESSION=TRUE&"
-										+ LightNavigationManager.LIGHT_NAVIGATOR_DISABLED + "=TRUE";
+															+ GeneralUtilities.getSpagoBiContext()
+															+ GeneralUtilities.getSpagoAdapterHttpUrl() + "?"
+															+ "PAGE=SelectDatasetLookupPage&NEW_SESSION=TRUE&"
+															+ LightNavigationManager.LIGHT_NAVIGATOR_DISABLED + "=TRUE";
 
-								String currDataSetLabel = "";
-								Integer currDataSetId = null;
-								String currDataSetIdValue = "";
-								if (obj.getDataSetId() != null) {
-									currDataSetId = obj.getDataSetId();
-									currDataSetIdValue = currDataSetId.toString();
-									IDataSet dataSet = DAOFactory.getDataSetDAO()
-											.loadActiveIDataSetByID(currDataSetId);
-									if (dataSet != null) {
-										currDataSetLabel = dataSet.getLabel();
-									}
-								}
+													String currDataSetLabel = "";
+													Integer currDataSetId = null;
+													String currDataSetIdValue = "";
+													if (obj.getDataSetId() != null) {
+														currDataSetId = obj.getDataSetId();
+														currDataSetIdValue = currDataSetId.toString();
+														IDataSet dataSet = DAOFactory.getDataSetDAO()
+																.loadDataSetById(currDataSetId);
+														if (dataSet != null) {
+															currDataSetLabel = dataSet.getLabel();
+														}
+													}
 							%>
 				<div class='div_detail_form' id="datasetForm" >
 				  	<input type="hidden" name="dataset" id="dataset" value="<%=currDataSetIdValue%>" <%=disableSet%> />	
