@@ -1,10 +1,4 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <BUSINESS_MAP>
-	<MAP_REST_SERVICES>
-		<MAP_REST_SERVICE serviceUrl="/multitenant" businessProcess="TenantManagement" />		
-		<MAP_REST_SERVICE serviceUrl="/multitenant/themes" businessProcess="TenantManagement" />
-		<MAP_REST_SERVICE serviceUrl="/multitenant/engines" businessProcess="TenantManagement" />
-		<MAP_REST_SERVICE serviceUrl="/multitenant/datasources" businessProcess="TenantManagement" />
-		<MAP_REST_SERVICE serviceUrl="/multitenant/save" businessProcess="TenantManagement" />				
-	</MAP_REST_SERVICES>
+
 </BUSINESS_MAP>

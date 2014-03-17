@@ -17,8 +17,4 @@
 		<MAP_PAGE_MODULE pageName="MenuConfigurationPage" moduleName="TreeMenuModule" businessProcess="MenuManagement" />
 		<MAP_PAGE_MODULE pageName="DocumentLookupPage" moduleName="ListLookupDocumentModule" businessProcess="MenuManagement" />
 	</MAP_PAGE_MODULES>
-	<MAP_REST_SERVICES>
-		<MAP_REST_SERVICE serviceUrl="/publish" businessProcess="publicFunctionality" />
-		<MAP_REST_SERVICE serviceUrl="/community/user" businessProcess="publicFunctionality" />
-	</MAP_REST_SERVICES>
 </BUSINESS_MAP>
