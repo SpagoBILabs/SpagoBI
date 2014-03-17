@@ -9,6 +9,9 @@ package it.eng.spagobi.utilities.engines.rest;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.IEngineInstance;
 
+import java.util.Locale;
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -66,6 +69,16 @@ public abstract class AbstractRestService {
 	public boolean isNullOrEmpty(String value){
 		return isNull(value) || value.equals("");
 	}
+	
+	public Map getEnv() {
+		return getEngineInstance().getEnv();
+	}
+	
+	public Locale getLocale() {
+		return  (Locale)getEnv().get(EngineConstants.ENV_LOCALE);
+	}
+	
+	
 
 	/**
 	 * Gets the HttpServletRequest..
@@ -83,5 +96,6 @@ public abstract class AbstractRestService {
 	public abstract HttpServletRequest getServletRequest();
 
 
+	
 
 }
