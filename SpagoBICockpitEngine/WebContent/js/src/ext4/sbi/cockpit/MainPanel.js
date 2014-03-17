@@ -62,6 +62,12 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
      */
     , widgetContainer: null
     
+    /**
+	 * @property {Ext.Window} widgetEditorWizard
+	 * The wizard that manages the single widget definition
+	 */
+	, relationshipEditorWizard: null
+    
     , msgPanel: null
     
     // TODO remove from global
@@ -324,6 +330,25 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 		this.widgetContainer.addWidget();
 	}
 	
+	, onShowRelationshipEditorWizard: function(){
+		if(this.relationshipEditorWizard === null) {    		
+    		Sbi.trace("[MainPanel.showRelationshipEditorWizard]: instatiating the editor");
+    		var config = {};
+    		config.usedDatasets = Sbi.storeManager.getStoreIds();
+    		this.relationshipEditorWizard = Ext.create('Sbi.data.RelationshipEditorWizard',config);
+//    		this.relationshipEditorWizard.on("submit", this.onWidgetEditorWizardSubmit, this);
+    		this.relationshipEditorWizard.on("cancel", this.onRelationshipEditorWizardCancel, this);
+//    		this.relationshipEditorWizard.on("apply", this.onWidgetEditorWizardApply, this);    		
+	    	Sbi.trace("[MainPanel.showRelationshipEditorWizard]: editor succesfully instantiated");
+    	}
+		this.relationshipEditorWizard.show();
+	}
+	
+	, onRelationshipEditorWizardCancel: function(wizard) {
+		Sbi.trace("[MainPanel.onRelationshipEditorWizardCancel]: IN");
+		this.relationshipEditorWizard.hide();
+		Sbi.trace("[MainPanel.onRelationshipEditorWizardCancel]: OUT");
+	}
 	, onShowSaveDocumentWindow: function() {
 		this.showSaveDocumentWin();
 	}
@@ -384,6 +409,10 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 		    items: [
 		        '->', // same as {xtype: 'tbfill'}, // Ext.Toolbar.Fill
 		        {
+		        	text: 'Associations'
+		        	, handler: this.onShowRelationshipEditorWizard
+		        	, scope: this
+		        },{
 		        	text: 'Add widget'
 		        	, handler: this.onAddWidget
 		        	, scope: this
