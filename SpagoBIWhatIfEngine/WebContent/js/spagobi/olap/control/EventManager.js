@@ -17,7 +17,7 @@
 
 
 Ext.define('Sbi.olap.control.EventManager', {
-	extend: 'Object',
+	extend: 'Ext.util.Observable',
 
 	/**
      * @property {Sbi.olap.OlapPanel} olapPanel
@@ -35,8 +35,29 @@ Ext.define('Sbi.olap.control.EventManager', {
 	constructor : function(config) {
 		this.olapPanel = config.olapPanel;
 		this.olapController = Ext.create('Sbi.olap.control.Controller', {eventManager: this});
+		this.callParent(arguments);
+		this.addEvents(
+				/**
+				 * [LIST OF EVENTS]
+				 */
+		        /**
+		         * @event execute
+		         * This event is thrown when a service is called for execution
+		         */
+		        'executeService',
+		        /**
+		         * @event executed
+		         * This event is thrown when a service has finished execution
+				 * @param {Object} response
+		         */
+		        'serviceExecuted'
+				);
+		this.on('executeService', this.executeService, this);
+		this.on('serviceExecuted', this.serviceExecuted, this);
+		this.loadingMask = new Ext.LoadMask(Ext.getBody(), {msg:"Please wait..."});
 	},
 	
+
     /**
      * Notifies the manager that the mdx query is changed
      * @param {String} mdx the mdx query. If null the server will load the initial mdx query
@@ -53,6 +74,7 @@ Ext.define('Sbi.olap.control.EventManager', {
 		var tableJson = Ext.decode(pivotHtml);
 		var pivot = Ext.create('Sbi.olap.PivotModel', tableJson);
 		this.olapPanel.updateAfterMDXExecution(pivot);
+		this.loadingMask.hide();
 	},
     /**
      * Updates the view after drill down operation
@@ -113,7 +135,15 @@ Ext.define('Sbi.olap.control.EventManager', {
      */
 	,setModelConfig: function(config){
 		this.olapController.setModelConfig(config);
-	},
+	}
+	,executeService: function(){
+		this.loadingMask.show();
+	}
+	, serviceExecuted: function (response){
+		this.updateAfterMDXExecution(response.responseText);
+		
+	}
+	
 });
 
 
