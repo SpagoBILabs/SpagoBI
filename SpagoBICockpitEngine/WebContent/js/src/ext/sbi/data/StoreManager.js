@@ -367,6 +367,7 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 				serviceName : 'api/1.0/dataset/' + storeConf.storeId + '/data'
 				, baseParams: new Object()
 			})
+			, method: 'GET'
 	    	//, timeout : this.timeout
 	    	, failure: this.onStoreLoadException
 	    });
