@@ -107,66 +107,66 @@ public class DataSetResource {
 		}	
 	}
 	
-	@POST
-	@Path("/{label}/data")
-	@Produces(MediaType.APPLICATION_JSON)
-	public String getDataStoreP(@Context HttpServletRequest req
-			, @PathParam("label") String label
-			, @FormParam("offset") @DefaultValue("-1") int offset
-			, @FormParam("fetchSize") @DefaultValue("-1") int fetchSize
-			, @FormParam("maxResults") @DefaultValue("-1") int maxResults) {
-		try {
-			DataSetServiceProxy proxy = getProxy(req);
-			IDataSet dataSet = proxy.getDataSetByLabel(label);
-			
-			/*
-			 * Controlla se il resultset del dataset è già in cache o no
-			 * 
-			 * - se è presente in cache basta recuperarlo con una get
-			 * - se non è presente in cache: carico tramite dataSet.loadData() 
-			 * 	 e poi lo scrivo in cache (successivamente in contemporanea con thread diversi)
-			 *  
-			 */
-			ICache cache = CockpitEngineConfig.getCache();
-			String resultsetSignature = dataSet.getSignature();
-			
-			IDataStore cachedResultSet = cache.get(resultsetSignature);
-			IDataStore dataStore = null;
-			if (cachedResultSet == null){
-				dataSet.loadData(offset, fetchSize, maxResults);
-				dataStore = dataSet.getDataStore();
-				//---- Write on the cache with a separated thread --------
-				WorkManager workManager = new WorkManager();
-				Work cacheWriteWork = new SQLDBCacheWriteWork(cache, dataStore, resultsetSignature, dataSet);
-				
-				workManager.run(cacheWriteWork, null);
-
-				//--------------------------------------------------------
-				
-				//cache.put(dataSet,resultsetSignature, dataStore);
-			} else {
-				dataStore = cachedResultSet;
-			}
-			
-			Map<String, Object> properties = new HashMap<String, Object>();
-			//JSONArray fieldOptions = this.getAttributeAsJSONArray("fieldsOptions");
-			JSONArray fieldOptions = new JSONArray("[{id: 1, options: {measureScaleFactor: 0.5}}]");
-			properties.put(JSONDataWriter.PROPERTY_FIELD_OPTION, fieldOptions);
-			JSONDataWriter dataSetWriter = new JSONDataWriter(properties);
-			JSONObject gridDataFeed = (JSONObject)dataSetWriter.write(dataStore);
-			
-			return gridDataFeed.toString();	
-		} catch(Throwable t) {
-			throw SpagoBIEngineServiceExceptionHandler.getInstance().getWrappedException("", getEngineInstance(req), t);
-		} finally {			
-			logger.debug("OUT");
-		}
-	}
+//	@POST
+//	@Path("/{label}/data")
+//	@Produces(MediaType.APPLICATION_JSON)
+//	public String getDataStoreP(@Context HttpServletRequest req
+//			, @PathParam("label") String label
+//			, @FormParam("offset") @DefaultValue("-1") int offset
+//			, @FormParam("fetchSize") @DefaultValue("-1") int fetchSize
+//			, @FormParam("maxResults") @DefaultValue("-1") int maxResults) {
+//		try {
+//			DataSetServiceProxy proxy = getProxy(req);
+//			IDataSet dataSet = proxy.getDataSetByLabel(label);
+//			
+//			/*
+//			 * Controlla se il resultset del dataset è già in cache o no
+//			 * 
+//			 * - se è presente in cache basta recuperarlo con una get
+//			 * - se non è presente in cache: carico tramite dataSet.loadData() 
+//			 * 	 e poi lo scrivo in cache (successivamente in contemporanea con thread diversi)
+//			 *  
+//			 */
+//			ICache cache = CockpitEngineConfig.getCache();
+//			String resultsetSignature = dataSet.getSignature();
+//			
+//			IDataStore cachedResultSet = cache.get(resultsetSignature);
+//			IDataStore dataStore = null;
+//			if (cachedResultSet == null){
+//				dataSet.loadData(offset, fetchSize, maxResults);
+//				dataStore = dataSet.getDataStore();
+//				//---- Write on the cache with a separated thread --------
+//				WorkManager workManager = new WorkManager();
+//				Work cacheWriteWork = new SQLDBCacheWriteWork(cache, dataStore, resultsetSignature, dataSet);
+//				
+//				workManager.run(cacheWriteWork, null);
+//
+//				//--------------------------------------------------------
+//				
+//				//cache.put(dataSet,resultsetSignature, dataStore);
+//			} else {
+//				dataStore = cachedResultSet;
+//			}
+//			
+//			Map<String, Object> properties = new HashMap<String, Object>();
+//			//JSONArray fieldOptions = this.getAttributeAsJSONArray("fieldsOptions");
+//			JSONArray fieldOptions = new JSONArray("[{id: 1, options: {measureScaleFactor: 0.5}}]");
+//			properties.put(JSONDataWriter.PROPERTY_FIELD_OPTION, fieldOptions);
+//			JSONDataWriter dataSetWriter = new JSONDataWriter(properties);
+//			JSONObject gridDataFeed = (JSONObject)dataSetWriter.write(dataStore);
+//			
+//			return gridDataFeed.toString();	
+//		} catch(Throwable t) {
+//			throw SpagoBIEngineServiceExceptionHandler.getInstance().getWrappedException("", getEngineInstance(req), t);
+//		} finally {			
+//			logger.debug("OUT");
+//		}
+//	}
 	
 	@GET
 	@Path("/{label}/data")
 	@Produces(MediaType.APPLICATION_JSON)
-	public String getDataStoreG(@Context HttpServletRequest req
+	public String getDataStore(@Context HttpServletRequest req
 			, @PathParam("label") String label
 			, @QueryParam("offset") @DefaultValue("-1") int offset
 			, @QueryParam("fetchSize") @DefaultValue("-1") int fetchSize
