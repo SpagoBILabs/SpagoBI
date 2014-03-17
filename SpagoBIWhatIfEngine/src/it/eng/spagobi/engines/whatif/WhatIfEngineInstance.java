@@ -75,8 +75,8 @@ public class WhatIfEngineInstance extends AbstractEngineInstance implements Seri
 		
 		String initialMdx = "SELECT {[Measures].[Unit Sales], [Measures].[Store Cost]} ON COLUMNS, {[Product].[Food]} ON ROWS FROM [Sales]";
 		Properties connectionProps = new Properties();
-		connectionProps.put("JdbcUser",ds.getUser());
-		connectionProps.put("JdbcPassword",ds.getPwd());
+		connectionProps.put("JdbcUser","spagobi");//ds.getUser());
+		connectionProps.put("JdbcPassword","bispago");//ds.getPwd());
 		//connectionProps.put("Catalog","file:D:/progetti/SpagoBI/apache-tomcat-7.0.50/FoodMartMySQL.xml");
 		//connectionProps.put("Catalog","file:D:/Sviluppo/mondrian/FoodMartMySQL.xml");
 		connectionProps.put("Catalog","/home/spagobi/apache-tomcat-7.0.50/resources/Olap/FoodMartMySQL.xml");
@@ -84,7 +84,8 @@ public class WhatIfEngineInstance extends AbstractEngineInstance implements Seri
 		connectionProps.put("Provider","Mondrian");
 
 		olapDataSource = new SimpleOlapDataSource();
-		((SimpleOlapDataSource)olapDataSource).setConnectionString( "jdbc:mondrian:Jdbc=jdbc:mysql://localhost:3306/foodmart_key");
+		//((SimpleOlapDataSource)olapDataSource).setConnectionString( "jdbc:mondrian:Jdbc=jdbc:mysql://localhost:3306/foodmart_key");
+		((SimpleOlapDataSource)olapDataSource).setConnectionString( "jdbc:mysql://sibilla2:3306/spagobi");
 		((SimpleOlapDataSource)olapDataSource).setConnectionProperties(connectionProps);
 		
 		pivotModel = new PivotModelImpl(olapDataSource);
