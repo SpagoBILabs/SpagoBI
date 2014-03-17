@@ -9,7 +9,7 @@ import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.metadata.SbiCommonInfo;
 import it.eng.spagobi.commons.metadata.SbiHibernateModel;
-import it.eng.spagobi.commons.utilities.HibernateUtil;
+import it.eng.spagobi.commons.utilities.HibernateSessionManager;
 import it.eng.spagobi.tenant.Tenant;
 import it.eng.spagobi.tenant.TenantManager;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
@@ -114,7 +114,7 @@ public class AbstractHibernateDAO {
 	 * @return The current session object.
 	 */
 	public Session getSession() {
-		Session session = HibernateUtil.currentSession();
+		Session session = HibernateSessionManager.getCurrentSession();
 		String tenantId = this.getTenant();
 		if (tenantId != null) {
 			// if tenant is set, enable tenant filter and put filter's value

@@ -16,7 +16,7 @@ import it.eng.spagobi.commons.metadata.SbiOrganizationDatasourceId;
 import it.eng.spagobi.commons.metadata.SbiOrganizationEngine;
 import it.eng.spagobi.commons.metadata.SbiOrganizationEngineId;
 import it.eng.spagobi.commons.metadata.SbiTenant;
-import it.eng.spagobi.commons.utilities.HibernateUtil;
+import it.eng.spagobi.commons.utilities.HibernateSessionManager;
 import it.eng.spagobi.engines.config.metadata.SbiEngines;
 import it.eng.spagobi.kpi.alarm.service.AlarmInspectorJob;
 import it.eng.spagobi.profiling.bean.SbiExtUserRoles;
@@ -519,7 +519,7 @@ public class TenantsDAOHibImpl extends AbstractHibernateDAO implements ITenantsD
 		InputStream is = null;
 		try {
 			aSession = getSession();			
-			jdbcConnection = HibernateUtil.getConnection(aSession);
+			jdbcConnection = HibernateSessionManager.getConnection(aSession);
 			jdbcConnection.setAutoCommit(false);
 			Thread curThread = Thread.currentThread();
 			ClassLoader classLoad = curThread.getContextClassLoader();
