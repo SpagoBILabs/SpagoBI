@@ -77,8 +77,9 @@ public class WhatIfEngineInstance extends AbstractEngineInstance implements Seri
 		Properties connectionProps = new Properties();
 		connectionProps.put("JdbcUser",ds.getUser());
 		connectionProps.put("JdbcPassword",ds.getPwd());
-		connectionProps.put("Catalog","file:D:/progetti/SpagoBI/apache-tomcat-7.0.50/FoodMartMySQL.xml");
+		//connectionProps.put("Catalog","file:D:/progetti/SpagoBI/apache-tomcat-7.0.50/FoodMartMySQL.xml");
 		//connectionProps.put("Catalog","file:D:/Sviluppo/mondrian/FoodMartMySQL.xml");
+		connectionProps.put("Catalog","/home/spagobi/apache-tomcat-7.0.50/resources/Olap/FoodMartMySQL.xml");
 		connectionProps.put("JdbcDrivers",ds.getDriver());
 		connectionProps.put("Provider","Mondrian");
 
