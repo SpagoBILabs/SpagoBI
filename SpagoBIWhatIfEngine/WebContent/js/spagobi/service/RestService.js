@@ -17,7 +17,7 @@ Ext.define('Sbi.service.RestService', {
 	extend: 'Object',
 
 	config: {
-		serviceVersion: 'v1.0',
+		serviceVersion: '1.0',
 		url: null,
 		subPath: null,
 		method: "GET",

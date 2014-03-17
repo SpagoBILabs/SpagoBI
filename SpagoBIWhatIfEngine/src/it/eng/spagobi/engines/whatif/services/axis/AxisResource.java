@@ -26,7 +26,7 @@ import org.apache.log4j.Logger;
 import com.eyeq.pivot4j.PivotModel;
 import com.eyeq.pivot4j.transform.SwapAxes;
 
-@Path("/v1.0/axis")
+@Path("/1.0/axis")
 public class AxisResource extends AbstractWhatIfEngineService {
 	
 	public static transient Logger logger = Logger.getLogger(AxisResource.class);

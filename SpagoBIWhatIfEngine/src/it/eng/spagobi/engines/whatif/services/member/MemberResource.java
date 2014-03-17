@@ -37,7 +37,7 @@ import com.eyeq.pivot4j.transform.DrillExpandPosition;
 import com.eyeq.pivot4j.transform.DrillReplace;
 import com.eyeq.pivot4j.ui.command.DrillDownCommand;
 
-@Path("/v1.0/member")
+@Path("/1.0/member")
 public class MemberResource extends AbstractWhatIfEngineService {
 	
 	private static final String NODE_PARM = "node";

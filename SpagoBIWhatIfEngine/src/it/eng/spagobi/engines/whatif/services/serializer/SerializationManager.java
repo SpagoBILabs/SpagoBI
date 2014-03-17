@@ -37,8 +37,9 @@ public class SerializationManager {
 		}
 		
 		Map<String,ISerializer> outputTypeSerializerMap = serializerFactoryMappings.get(mimeType);
-		if(outputTypeSerializerMap!=null){
+		if(outputTypeSerializerMap==null){
 			outputTypeSerializerMap = new HashMap<String,ISerializer>();
+			serializerFactoryMappings.put(mimeType, outputTypeSerializerMap);
 		}
 		
 		outputTypeSerializerMap.put(version, serializer);

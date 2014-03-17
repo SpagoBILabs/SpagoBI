@@ -28,7 +28,7 @@ import org.apache.log4j.Logger;
 
 import com.eyeq.pivot4j.PivotModel;
 
-@Path("/v1.0/model")
+@Path("/1.0/model")
 public class ModelResource extends AbstractWhatIfEngineService {
 	
 	public static transient Logger logger = Logger.getLogger(ModelResource.class);

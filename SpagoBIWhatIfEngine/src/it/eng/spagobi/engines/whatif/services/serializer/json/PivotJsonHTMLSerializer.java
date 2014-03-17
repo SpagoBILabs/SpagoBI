@@ -91,7 +91,7 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotModel> {
 		logger.debug("Setting the properties of the renderer");
 		
 		renderer.setShowDimensionTitle(false); // Optionally hide the dimension title headers.
-		renderer.setShowParentMembers(true); // Optionally make the parent members visible.
+		renderer.setShowParentMembers(false); // Optionally make the parent members visible.
 		
 		
 		renderer.setCellSpacing(0);
