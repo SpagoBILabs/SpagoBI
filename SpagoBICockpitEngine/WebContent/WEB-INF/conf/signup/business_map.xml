@@ -6,7 +6,7 @@
 	</MAP_PAGE_MODULES>
 	
     <MAP_REST_SERVICES>
-    	<MAP_REST_SERVICE serviceUrl="/dataset" businessProcess="CreateCockpitFunctionality" />
+    	<MAP_REST_SERVICE serviceUrl="/dataset/*" businessProcess="CreateCockpitFunctionality" />
     	<MAP_REST_SERVICE serviceUrl="/page" businessProcess="CreateCockpitFunctionality" />
     </MAP_REST_SERVICES>
     
