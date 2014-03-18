@@ -33,7 +33,7 @@ Ext.ns("Sbi.cockpit.core");
  */
 Sbi.cockpit.core.WidgetRuntime = function(config) {	
 		
-	Sbi.trace("[Widget.constructor]: IN");
+	Sbi.trace("[WidgetRuntime.constructor]: IN");
 	
 	// init properties...
 	var defaultSettings = {
@@ -50,7 +50,7 @@ Sbi.cockpit.core.WidgetRuntime = function(config) {
 	Ext.apply(this, c);
 		
 	if(Sbi.isNotValorized(this.items) || (Ext.isArray(this.items) && this.items.length === 0)) {
-		Sbi.trace("[Widget.constructor]: the widget is empty");
+		Sbi.trace("[WidgetRuntime.constructor]: the widget is empty");
 		this.msgPanel = new Ext.Panel({
 			html: this.defaultMsg
 		});
@@ -62,14 +62,19 @@ Sbi.cockpit.core.WidgetRuntime = function(config) {
 		   	, items: [this.msgPanel]
 		});
 	} else {
-		Sbi.trace("[Widget.constructor]: the widget has been properly initialized by subclass");
+		Sbi.trace("[WidgetRuntime.constructor]: the widget has been properly initialized by subclass");
 	}
 	
 		
 	// constructor
 	Sbi.cockpit.core.WidgetRuntime.superclass.constructor.call(this, c);
 	
-	Sbi.trace("[Widget.constructor]: OUT");
+	this.on("beforeDestroy", function(){
+		this.unboundStore();
+		Sbi.trace("[WidgetRuntime.onBeforeDestroy]: store unbounded");
+	}, this);
+	
+	Sbi.trace("[WidgetRuntime.constructor]: OUT");
 };
 
 Ext.extend(Sbi.cockpit.core.WidgetRuntime, Ext.Panel, {
@@ -127,8 +132,8 @@ Ext.extend(Sbi.cockpit.core.WidgetRuntime, Ext.Panel, {
      * Refresh the widget's content. This method is abstract and so must be implemented properly by subclass.
      */
     , refresh:  function() {  
-		Sbi.trace("[Widget.refresh]: IN");
-		Sbi.trace("[Widget.refresh]: OUT");
+		Sbi.trace("[WidgetRuntime.refresh]: IN");
+		Sbi.trace("[WidgetRuntime.refresh]: OUT");
 	}
 
 	/**
@@ -146,7 +151,7 @@ Ext.extend(Sbi.cockpit.core.WidgetRuntime, Ext.Panel, {
 	 * @param {boolean} refresh true to force the refresh of the widget after after the the configuration is set, false otherwise. The default is true.
 	 */
 	, setConfiguration: function(config, refresh) {
-		Sbi.trace("[Widget.setConfiguration]: IN");
+		Sbi.trace("[WidgetRuntime.setConfiguration]: IN");
 		
 		this.setStoreId(config.storeId, false);
 		this.setWType(config.wtype, false);
@@ -158,10 +163,10 @@ Ext.extend(Sbi.cockpit.core.WidgetRuntime, Ext.Panel, {
     	if(refresh !== false) {
 			this.refresh();
 		} else {
-			Sbi.trace("[Widget.setConfiguration]: Input parameter [refresh] is equal [" + refresh + "] to so widget won't be refreshed");
+			Sbi.trace("[WidgetRuntime.setConfiguration]: Input parameter [refresh] is equal [" + refresh + "] to so widget won't be refreshed");
 		}
 		
-		Sbi.trace("[Widget.setConfiguration]: OUT");
+		Sbi.trace("[WidgetRuntime.setConfiguration]: OUT");
 	}
 	
 	/**
@@ -177,7 +182,7 @@ Ext.extend(Sbi.cockpit.core.WidgetRuntime, Ext.Panel, {
 	 * @return {Object} return.wlayout The layout configuration of the widget. Its content depends on the widget's #parentContainer
 	 */
     , getConfiguration: function() {
-    	Sbi.trace("[Widget.getConfiguration]: IN");
+    	Sbi.trace("[WidgetRuntime.getConfiguration]: IN");
     	
     	var config = {};
 		
@@ -188,7 +193,7 @@ Ext.extend(Sbi.cockpit.core.WidgetRuntime, Ext.Panel, {
     	
     	config.wlayout = this.getLayoutConfiguration() || {};
 
-    	Sbi.trace("[Widget.getConfiguration]: OUT");
+    	Sbi.trace("[WidgetRuntime.getConfiguration]: OUT");
     	
     	return config;
 	}
@@ -200,20 +205,70 @@ Ext.extend(Sbi.cockpit.core.WidgetRuntime, Ext.Panel, {
 	 * @param {String} storeId The dataset's label
 	 * @param {boolean} refresh true to force the refresh after the setting of the property, false otherwise. The default is true.
 	 */
+//	, setStoreId: function(storeId, refresh) {
+//		if(Sbi.isValorized(storeId)) {
+//			this.storeId = storeId;
+//			Sbi.trace("[WidgetRuntime.setStoreId]: Store id set to [" + storeId + "]");
+//			if(refresh !== false) {
+//				this.refresh();
+//			} else {
+//				Sbi.trace("[WidgetRuntime.setStoreId]: Input parameter [refresh] is equal [" + refresh + "] to so widget won't be refreshed");
+//			}
+//		} else {
+//			Sbi.trace("[WidgetRuntime.setStoreId]: Input parameter [storeId] is not valorized so the property [storeId] will be left unchanged");
+//		}
+//		
+//	}
+    
+    /**
+	 * @method 
+	 * 
+	 * Initialize the store
+	 */
+	, boundStore: function() {
+		Sbi.trace("[WidgetRuntime.boundStore]: IN");		
+		this.getStore().on('metachange', this.onStoreMetaChange, this);
+		this.getStore().on('load', this.onStoreLoad, this);
+		this.getStore().on('exception', this.onStoreException, this);
+		Sbi.trace("[WidgetRuntime.boundStore]: OUT");
+	}
+	
+	, unboundStore: function() {
+		Sbi.trace("[WidgetRuntime.unboundStore]: IN");		
+		this.getStore().un('metachange', this.onStoreMetaChange, this);
+		this.getStore().un('load', this.onStoreLoad, this);
+		this.getStore().un('exception', this.onStoreException, this);
+		Sbi.trace("[WidgetRuntime.unboundStore]: OUT");
+	}
+	
 	, setStoreId: function(storeId, refresh) {
 		if(Sbi.isValorized(storeId)) {
+			
+			if(storeId == this.storeId) {
+				Sbi.trace("[WidgetRuntime.setStoreId]: New store id is equal to the old one. Nothing to update.");
+				Sbi.trace("[WidgetRuntime.setStoreId]: OUT");
+				return;
+			}
+			
+			this.unboundStore();
 			this.storeId = storeId;
-			Sbi.trace("[Widget.setStoreId]: Store id set to [" + storeId + "]");
-			if(refresh !== false) {
+			Sbi.trace("[WidgetRuntime.setStoreId]: Store id set to [" + storeId + "]");
+			this.boundStore();
+		
+			if(this.rendered === true && refresh !== false) {
 				this.refresh();
 			} else {
-				Sbi.trace("[Widget.setStoreId]: Input parameter [refresh] is equal [" + refresh + "] to so widget won't be refreshed");
+				Sbi.trace("[WidgetRuntime.setStoreId]: Input parameter [refresh] is equal [" + refresh + "] to so widget won't be refreshed");
 			}
 		} else {
-			Sbi.trace("[Widget.setStoreId]: Input parameter [storeId] is not valorized so the property [storeId] will be left unchanged");
+			Sbi.trace("[WidgetRuntime.setStoreId]: Input parameter [storeId] is not valorized so the property [storeId] will be left unchanged");
 		}
 		
 	}
+	
+	
+	
+	
 	
     /**
      * @method
@@ -267,14 +322,14 @@ Ext.extend(Sbi.cockpit.core.WidgetRuntime, Ext.Panel, {
 	, setWType: function(wtype, refresh) {
 		if(Sbi.isValorized(wtype)) {
 			this.wtype = wtype;
-			Sbi.trace("[Widget.setWType]: wtype set to [" + wtype + "]");
+			Sbi.trace("[WidgetRuntime.setWType]: wtype set to [" + wtype + "]");
 			if(refresh !== false) {
 				this.refresh();
 			} else {
-				Sbi.trace("[Widget.setWType]: Input parameter [refresh] is equal [" + refresh + "] to so widget won't be refreshed");
+				Sbi.trace("[WidgetRuntime.setWType]: Input parameter [refresh] is equal [" + refresh + "] to so widget won't be refreshed");
 			}
 		} else {
-			Sbi.trace("[Widget.setWType]: Input parameter [wtype] is not valorized so the property [wtype] will be left unchanged");
+			Sbi.trace("[WidgetRuntime.setWType]: Input parameter [wtype] is not valorized so the property [wtype] will be left unchanged");
 		}
 		
 	}
@@ -301,14 +356,14 @@ Ext.extend(Sbi.cockpit.core.WidgetRuntime, Ext.Panel, {
 	, setCustomConfiguration: function(wconf, refresh) {
 		if(Sbi.isValorized(wconf)) {
 			this.wconf = wconf;
-			Sbi.trace("[Widget.setCustomConfiguration]: wconf set to [" + Sbi.toSource(wconf) + "]");
+			Sbi.trace("[WidgetRuntime.setCustomConfiguration]: wconf set to [" + Sbi.toSource(wconf) + "]");
 			if(refresh !== false) {
 				this.refresh();
 			} else {
-				Sbi.trace("[Widget.setCustomConfiguration]: Input parameter [refresh] is equal [" + refresh + "] to so widget won't be refreshed");
+				Sbi.trace("[WidgetRuntime.setCustomConfiguration]: Input parameter [refresh] is equal [" + refresh + "] to so widget won't be refreshed");
 			}
 		} else {
-			Sbi.trace("[Widget.setCustomConfiguration]: Input parameter [wconf] is not valorized so the property [wconf] will be left unchanged");
+			Sbi.trace("[WidgetRuntime.setCustomConfiguration]: Input parameter [wconf] is not valorized so the property [wconf] will be left unchanged");
 		}
 	}
 	
@@ -320,9 +375,9 @@ Ext.extend(Sbi.cockpit.core.WidgetRuntime, Ext.Panel, {
 	 * @return The custom configuration of the widget.
 	 */
 	, getCustomConfiguration: function() {
-		Sbi.trace("[Widget.getCustomConfiguration]: IN");
+		Sbi.trace("[WidgetRuntime.getCustomConfiguration]: IN");
 		var config = Ext.apply({}, this.wconf || {});
-		Sbi.trace("[Widget.getCustomConfiguration]: OUT");
+		Sbi.trace("[WidgetRuntime.getCustomConfiguration]: OUT");
 		return config;
 	}
 	
@@ -337,9 +392,9 @@ Ext.extend(Sbi.cockpit.core.WidgetRuntime, Ext.Panel, {
 	, setStyleConfiguration: function(wstyle) {
 		if(Sbi.isValorized(wstyle)) {
 			this.wstyle = wstyle;
-			Sbi.trace("[Widget.setStyleConfiguration]: wstyle set to [" + Sbi.toSource(wstyle) + "]");
+			Sbi.trace("[WidgetRuntime.setStyleConfiguration]: wstyle set to [" + Sbi.toSource(wstyle) + "]");
 		} else {
-			Sbi.trace("[Widget.setStyleConfiguration]: Input parameter [wstyle] is not valorized so the property [wstyle] will be left unchanged");
+			Sbi.trace("[WidgetRuntime.setStyleConfiguration]: Input parameter [wstyle] is not valorized so the property [wstyle] will be left unchanged");
 		}	
 	}
 	
@@ -368,12 +423,12 @@ Ext.extend(Sbi.cockpit.core.WidgetRuntime, Ext.Panel, {
 		if(Sbi.isValorized(wlayout)) {
 			this.wlayout = wlayout;
 			if(toContainer === true) {
-				Sbi.trace("[Widget.setLayoutConfiguration]: update layout configuration also in parent container");
+				Sbi.trace("[WidgetRuntime.setLayoutConfiguration]: update layout configuration also in parent container");
 				//TODO update the layoutcof of this widet also in its container
 			}
-			Sbi.trace("[Widget.setLayoutConfiguration]: wlayout set to [" + Sbi.toSource(wlayout) + "]");
+			Sbi.trace("[WidgetRuntime.setLayoutConfiguration]: wlayout set to [" + Sbi.toSource(wlayout) + "]");
 		} else {
-			Sbi.trace("[Widget.setLayoutConfiguration]: Input parameter [wlayout] is not valorized so the property [wlayout] will be left unchanged");
+			Sbi.trace("[WidgetRuntime.setLayoutConfiguration]: Input parameter [wlayout] is not valorized so the property [wlayout] will be left unchanged");
 		}
 	}
 	
@@ -413,12 +468,12 @@ Ext.extend(Sbi.cockpit.core.WidgetRuntime, Ext.Panel, {
 	 * @returns {Object} The region used by the widget
 	 */
     , getWidgetRegion: function(relative) {
-    	Sbi.trace("[Widget.getWidgetRegion]: IN");
+    	Sbi.trace("[WidgetRuntime.getWidgetRegion]: IN");
     	
     	var r = null;
     	
     	if(this.isBoundToAContainer() === true) {
-    		Sbi.trace("[Widget.getWidgetRegion]: widget [" + this.getId()+ "] is bound to a container");
+    		Sbi.trace("[WidgetRuntime.getWidgetRegion]: widget [" + this.getId()+ "] is bound to a container");
     		var parentContainer = this.getParentContainer(); 
     		var parentComponent = this.getParentComponent();
     		r = parentContainer.getComponentRegion( parentComponent, relative );
@@ -426,13 +481,13 @@ Ext.extend(Sbi.cockpit.core.WidgetRuntime, Ext.Panel, {
     			Sbi.warn("[Widget.getWidgetManager]: Widget [" + this.toString() + "] is bound to a widget container but it is not possible to retrive the region it occupies");
     		}    	
     	} else {
-    		Sbi.trace("[Widget.getWidgetRegion]: widget [" + this.getId()+ "] is not bound to a container");
+    		Sbi.trace("[WidgetRuntime.getWidgetRegion]: widget [" + this.getId()+ "] is not bound to a container");
     		if(this.wlayout && this.wlayout.region) {
     			r = this.wlayout.region;
     		}
     	}
 
-    	Sbi.trace("[Widget.getWidgetRegion]: OUT");
+    	Sbi.trace("[WidgetRuntime.getWidgetRegion]: OUT");
     	
     	return r;
     }
@@ -460,7 +515,7 @@ Ext.extend(Sbi.cockpit.core.WidgetRuntime, Ext.Panel, {
 	 */
     , setParentComponent: function(component) {
 		this.parentComponent = component;	
-		Sbi.trace("[Widget.setParentComponent]: Parent container of widget [" + this.id +  "] is [" + (component?component.id:"null") + "]");
+		Sbi.trace("[WidgetRuntime.setParentComponent]: Parent container of widget [" + this.id +  "] is [" + (component?component.id:"null") + "]");
 	}
     
     /**
@@ -471,7 +526,7 @@ Ext.extend(Sbi.cockpit.core.WidgetRuntime, Ext.Panel, {
 	 * @return {Sbi.cockpit.core.WidgetContainer} The container to which teh widget is bounded
 	 */
     , getParentContainer: function() {	
-    	Sbi.trace("[Widget.getParentContainer]: IN");
+    	Sbi.trace("[WidgetRuntime.getParentContainer]: IN");
 		
     	var container = null;
 		
@@ -484,7 +539,7 @@ Ext.extend(Sbi.cockpit.core.WidgetRuntime, Ext.Panel, {
 			//Sbi.warn("[Widget.getParentContainer]: widget [" + this.id + "] is not bound to any component");
 		}
 		
-		Sbi.trace("[Widget.getParentContainer]: OUT");
+		Sbi.trace("[WidgetRuntime.getParentContainer]: OUT");
     	
 		return container;	
 	}
@@ -497,14 +552,14 @@ Ext.extend(Sbi.cockpit.core.WidgetRuntime, Ext.Panel, {
 	 * @return {boolean} true if the widget is bounded to a container, false otherwise.
 	 */
     , isBoundToAContainer: function() {
-    	Sbi.trace("[Widget.isBoundToAContainer]: IN");
+    	Sbi.trace("[WidgetRuntime.isBoundToAContainer]: IN");
     	var isBound = false;
     	var container = this.getParentContainer();
     	if(container != null) {
     		isBound = true;
-    		//Sbi.trace("[Widget.getParentContainer]: widget [" + this.id +  "] is bound to container [" + container.id + "]");
+    		//Sbi.trace("[WidgetRuntime.getParentContainer]: widget [" + this.id +  "] is bound to container [" + container.id + "]");
     	}
-    	Sbi.trace("[Widget.isBoundToAContainer]: OUT");
+    	Sbi.trace("[WidgetRuntime.isBoundToAContainer]: OUT");
     	return isBound;
     }
     
@@ -517,7 +572,7 @@ Ext.extend(Sbi.cockpit.core.WidgetRuntime, Ext.Panel, {
 	 * @return {Sbi.cockpit.core.WidgetManager} the widget manager to which the widget is registered.
 	 */
     , getWidgetManager: function() {
-    	Sbi.trace("[Widget.getWidgetManager]: IN");
+    	Sbi.trace("[WidgetRuntime.getWidgetManager]: IN");
     	
     	var widgetManager = null;
     	
@@ -530,7 +585,7 @@ Ext.extend(Sbi.cockpit.core.WidgetRuntime, Ext.Panel, {
     		Sbi.warn("[Widget.getWidgetManager]: It's not possble to retrieve widget manager of widget [" + this.toString() + "] because it is not bound to any widget container");
     	}
     	
-    	Sbi.trace("[Widget.getWidgetManager]: OUT");
+    	Sbi.trace("[WidgetRuntime.getWidgetManager]: OUT");
     	
     	return widgetManager;
     }
@@ -545,6 +600,20 @@ Ext.extend(Sbi.cockpit.core.WidgetRuntime, Ext.Panel, {
 
 	, onRender: function(ct, position) {	
 		Sbi.cockpit.core.WidgetRuntime.superclass.onRender.call(this, ct, position);	
+	}
+	
+	, onStoreLoad: function(store) {
+		// do nothing	
+	}
+	
+	// TODO: see http://docs.sencha.com/extjs/3.4.0/#!/api/Ext.data.DataProxy-event-exception
+	// and implement a better exception handling
+	, onStoreException: function(store, type, action, options, response, arg) {
+		Sbi.exception.ExceptionHandler.handleFailure(response, options);
+	}
+	
+	, onStoreMetaChange: function(store, meta) {
+		// do nothing
 	}
 	
 	
