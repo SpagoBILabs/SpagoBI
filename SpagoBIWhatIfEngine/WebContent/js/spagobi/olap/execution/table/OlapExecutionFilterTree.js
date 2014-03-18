@@ -84,14 +84,16 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionFilterTree', {
 		var thisPanel = this;
 		Ext.apply(this,{
 			items:[this.tree],
-			tbar: [  
+			tools: [  
 			       {
-			    	   text: 'Expand All',
+			    	   type: 'expand',
+			    	   tooltip: LN('sbi.olap.execution.table.filter.expand'),
 			    	   handler: function(){
 			    		   thisPanel.tree.expandAll();
 			    	   }
 			       }, {
-			    	   text: 'Collapse All',
+			    	   type: 'collapse',
+			    	   tooltip: LN('sbi.olap.execution.table.filter.collapse'),
 			    	   handler: function(){
 			    		   thisPanel.tree.collapseAll();
 			    	   }
