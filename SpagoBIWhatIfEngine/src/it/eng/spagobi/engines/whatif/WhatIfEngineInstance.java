@@ -87,7 +87,7 @@ public class WhatIfEngineInstance extends AbstractEngineInstance implements Seri
 
 		olapDataSource = new SimpleOlapDataSource();
 		//((SimpleOlapDataSource)olapDataSource).setConnectionString( "jdbc:mondrian:Jdbc=jdbc:mysql://localhost:3306/foodmart_key");
-		((SimpleOlapDataSource)olapDataSource).setConnectionString( "jdbc:mysql://sibilla2:3306/spagobi");
+		((SimpleOlapDataSource)olapDataSource).setConnectionString( "jdbc:mondrian:Jdbc=jdbc:mysql://sibilla2:3306/spagobi");
 		((SimpleOlapDataSource)olapDataSource).setConnectionProperties(connectionProps);
 		
 		pivotModel = new PivotModelImpl(olapDataSource);
