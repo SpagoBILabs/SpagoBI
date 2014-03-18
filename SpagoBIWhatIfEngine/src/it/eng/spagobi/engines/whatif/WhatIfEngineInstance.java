@@ -66,6 +66,8 @@ public class WhatIfEngineInstance extends AbstractEngineInstance implements Seri
 		
 		try {
 			Class.forName("mondrian.olap4j.MondrianOlap4jDriver");
+			Class.forName("org.olap4j.OlapWrapper");
+			
 		} catch (ClassNotFoundException e) {
 			throw new RuntimeException("Cannot load Mondrian Olap4j Driver", e);
 		}
