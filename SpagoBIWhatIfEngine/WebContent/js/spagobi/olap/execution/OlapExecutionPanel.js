@@ -51,13 +51,16 @@ Ext.define('Sbi.olap.execution.OlapExecutionPanel', {
 		if(Sbi.settings && Sbi.settings.olap && Sbi.settings.olap.execution && Sbi.settings.olap.execution.OlapExecutionPanel) {
 			Ext.apply(this, Sbi.settings.olap.execution.OlapExecutionPanel);
 		}
+		
+		this.olapExecutionPivot = Ext.create('Sbi.olap.execution.table.OlapExecutionPivot', {});
+		this.olapExecutionChart = Ext.create('Sbi.olap.execution.chart.OlapExecutionChart', {});
+		this.olapToolbar  = Ext.create('Sbi.olap.toolbar.OlapToolbar', {}); 
+		
 		this.callParent(arguments);
 	},
 	
 	initComponent: function() {
-		this.olapExecutionPivot = Ext.create('Sbi.olap.execution.table.OlapExecutionPivot', {});
-		this.olapExecutionChart = Ext.create('Sbi.olap.execution.chart.OlapExecutionChart', {});
-		this.olapToolbar  = Ext.create('Sbi.olap.toolbar.OlapToolbar', {}); 
+
 		
 		Ext.apply(this, {
 			items: [this.olapExecutionPivot,this.olapExecutionChart],
