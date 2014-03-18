@@ -18,7 +18,7 @@ Sbi.cockpit.editor.widget.WidgetEditorFieldPalette = function(config) {
 	
 	var defaultSettings = {
 		title: LN('sbi.cockpit.queryfieldspanel.title')
-		, displayRefreshButton : true
+		, displayRefreshButton : false
 		, border: true,
 		//bodyStyle:'background:green',
 		bodyStyle:'padding:3px',
