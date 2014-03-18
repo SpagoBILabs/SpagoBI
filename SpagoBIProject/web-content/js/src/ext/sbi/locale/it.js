@@ -364,7 +364,7 @@ Sbi.locale.ln['sbi.execution.executionpage.toolbar.annotate'] = 'Note';
 
 // Menu shortcuts
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.addbookmark'] = 'Aggiungi ai preferiti';
-Sbi.locale.ln['sbi.execution.executionpage.toolbar.showbookmark'] = 'Aggiungi ai preferiti';
+Sbi.locale.ln['sbi.execution.executionpage.toolbar.showbookmark'] = 'Visualizza i preferiti';
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.saveview'] = 'Aggiungi alle vista customizzta';
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.showview'] = 'Mostra viste customizzate';
 Sbi.locale.ln['sbi.execution.executionpage.toolbar.showscheduled'] = 'Mostra esecuzioni schedulate';
