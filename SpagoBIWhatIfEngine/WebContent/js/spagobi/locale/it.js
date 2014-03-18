@@ -54,7 +54,7 @@ Sbi.locale.formats = {
 //===================================================================
 //COMMONS
 //===================================================================
-Sbi.locale.ln['sbi.common.cancel'] = 'Cancel';
+Sbi.locale.ln['sbi.common.cancel'] = 'Annulla';
 Sbi.locale.ln['sbi.common.close'] = 'Chiudi';
 
 //===================================================================
@@ -62,3 +62,10 @@ Sbi.locale.ln['sbi.common.close'] = 'Chiudi';
 //===================================================================
 Sbi.locale.ln['sbi.olap.toolbar.mdx'] = 'Mdx Query';
 Sbi.locale.ln['sbi.olap.toolbar.drill.mode'] = 'Tipi di Drill';
+
+//===================================================================
+//FILTERS
+//===================================================================
+
+Sbi.locale.ln['sbi.olap.execution.table.filter.collapse'] = 'Chiudi tutti';
+Sbi.locale.ln['sbi.olap.execution.table.filter.expand'] = 'Espandi tutti';
