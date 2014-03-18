@@ -100,19 +100,33 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 	// -----------------------------------------------------------------------------------------------------------------
     
 	, setStoreId: function(storeId, refresh) {
-		Sbi.trace("[TableWidget.setStoreId]: IN");
-		Sbi.cockpit.widgets.table.TableWidget.superclass.setStoreId.call(this, storeId, false);
-		this.services['loadDataStore'] = Sbi.config.serviceRegistry.getServiceUrl({
-			serviceName : 'api/1.0/dataset/' + this.getStoreId() + '/data'
-			, baseParams: new Object()
-		});
+		Sbi.trace("[TableWidget.setStoreIdx]: IN");
 		
-		this.getStore().proxy.setUrl(this.services['loadDataStore'], true);
+		if(storeId == this.getStoreId()) {
+			Sbi.trace("[TableWidget.setStoreId]: New store id is equal to the old one. Nothing to update.");
+			Sbi.trace("[TableWidget.setStoreId]: OUT");
+			return;
+		}
+
+		this.unboundStore();
+		
+		Sbi.cockpit.widgets.table.TableWidget.superclass.setStoreId.call(this, storeId, false);
+		
+		this.boundStore();
+		
+		var cm = new Ext.grid.ColumnModel([
+			new Ext.grid.RowNumberer(), {
+				header : "Data",
+				dataIndex : 'data',
+				width : 75
+		} ]);
+		this.grid.reconfigure(this.getStore(), cm);
+		
 		if(this.rendered === true && refresh !== false) {
 			this.refresh();
 		}
-		
-		Sbi.trace("[TableWidget.setStoreId]: OUT");
+			
+		Sbi.trace("[TableWidget.setStoreIdx]: OUT");
 	}
 
 	, refresh:  function() {  
