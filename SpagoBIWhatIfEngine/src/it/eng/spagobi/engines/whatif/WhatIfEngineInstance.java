@@ -83,6 +83,8 @@ public class WhatIfEngineInstance extends AbstractEngineInstance implements Seri
 		//connectionProps.put("Catalog","file:D:/Sviluppo/mondrian/FoodMartMySQL.xml");
 		connectionProps.put("Catalog","/home/spagobi/apache-tomcat-7.0.50/resources/Olap/FoodMart.xml");
 		connectionProps.put("JdbcDrivers",ds.getDriver());
+		connectionProps.put("inputJdbcSchema","foodmart");
+		
 		connectionProps.put("Provider","Mondrian");
 
 		olapDataSource = new SimpleOlapDataSource();
