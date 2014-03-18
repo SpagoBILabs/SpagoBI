@@ -345,18 +345,26 @@ onload="init(evt);">
               
               
               if(sbi.geo.conf.gui_settings.includeValuesLayer == true) {
+               	
                   var text;
                       
                   var rounded_value = dataset.values[sbi.geo.conf.selected_measure_index];
-                  var value_string = rounded_value.toString();
-		   			      var decimal_location = value_string.indexOf(".");		
-		   			      if (decimal_location != -1) {
-                      var value_float = Utils.roundDecimals( parseFloat(value_string), 2 );
-                   	  text = value_float.toString();
-                  } else {                       	
-                   		text = dataset.values[sbi.geo.conf.selected_measure_index];
+                  if(rounded_value != null) {
+                  	  var value_string = rounded_value.toString();
+	                  var decimal_location = value_string.indexOf(".");	
+			   		
+			   		  if (decimal_location != -1) {
+	                      var value_float = Utils.roundDecimals( parseFloat(value_string), 2 );
+	                   	  text = value_float.toString();
+	                  } else {                       	
+	                   		text = dataset.values[sbi.geo.conf.selected_measure_index];
+	                  }
+                  } else {
+                  	  text = '';
                   }
+                  
                        
+                  
                        
                   var valueLabel = document.createElementNS(svgNS,"text");
                   var centroide = document.getElementById("centroidi_" + targetNode.getAttributeNS(null, "id"));
@@ -375,6 +383,7 @@ onload="init(evt);">
 	                       valuesLayer.appendChild(valueLabel);
 	                       valueLabel.setAttribute("transform", "translate(" + centroide.getAttributeNS(null, "cx")+ " " + centroide.getAttributeNS(null, "cy") + ") scale(" + sbi.geo.conf.gui_settings.valueScale + ")");
 	                       
+	                      
 	                    } else {
 	                    	//alert("Nessun centroide per " + targetNode.getAttributeNS(null, "id") + "!!!");
 	                    }
@@ -695,7 +704,7 @@ onload="init(evt);">
 					
 					var selectedMeasure = sbi.geo.conf.measures[getCurrentKpiIndex()];
 					
-					if(targetNode.getAttributeNS(attribNS,myMapApp.curKpi) == "") {
+					if(targetNode.getAttributeNS(attribNS,myMapApp.curKpi) == null || targetNode.getAttributeNS(attribNS,myMapApp.curKpi) == "") {
 						targetColor = selectedMeasure.no_value_color;
 					} else if(kpiAttrib < selectedMeasure.lower_bound) {
 						targetColor = selectedMeasure.lower_bound_color;
@@ -730,25 +739,30 @@ onload="init(evt);">
 		          }
 					
 					if(sbi.geo.conf.gui_settings.includeValuesLayer == true) {
+										
 					   var text = "";
 					   var rounded_value = targetNode.getAttributeNS(attribNS,myMapApp.curKpi);
-                   	   var value_string = rounded_value.toString();
-		   			   var decimal_location = value_string.indexOf(".");		
-		   			   if (decimal_location != -1) {
-		   			   		//alert(value_string + " - " + parseFloat(value_string) + " - " + Utils.roundDecimals(parseFloat(value_string), 2) );
-                   	   		var value_float = Utils.roundDecimals( parseFloat(value_string), 2 );
-                   	   		text = value_float.toString();
-                   	   } else {                       	
-                       		text = targetNode.getAttributeNS(attribNS,myMapApp.curKpi);
-                  	   }
-						var valueLabel = document.getElementById("label_" + targetNode.getAttributeNS(null, "id"));					
-						if(valueLabel != null) {
-							valueLabel.firstChild.nodeValue = text;
-						}
+					   if(rounded_value != null && rounded_value != "") {
+					   	   var value_string = rounded_value.toString();
+			   			   var decimal_location = value_string.indexOf(".");		
+			   			   if (decimal_location != -1) {
+	                   	   		var value_float = Utils.roundDecimals( parseFloat(value_string), 2 );
+	                   	   		text = value_float.toString();
+	                   	   } else {                       	
+	                       		text = targetNode.getAttributeNS(attribNS,myMapApp.curKpi);
+	                  	   }
+	                  	   
+							var valueLabel = document.getElementById("label_" + targetNode.getAttributeNS(null, "id"));					
+							if(valueLabel != null) {
+								valueLabel.firstChild.nodeValue = text;
+							} 
+					   }
 					}
 				}
 				
 				child = child.nextSibling;
+				
+				
 			}
 			
 			myMapApp.loadStatus.setAttributeNS(null,"display","none");
