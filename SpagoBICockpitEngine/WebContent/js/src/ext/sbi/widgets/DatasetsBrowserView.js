@@ -155,9 +155,9 @@ Ext.extend(Sbi.widgets.DatasetsBrowserView, Ext.DataView, {
 			}
 						
 			if(this.isSelected(preparedItem.label)) {
-				preparedItem.isMyDataset = 'true';
+				preparedItem.isSelected = 'true';
 			} else {
-				preparedItem.isMyDataset = 'false';
+				preparedItem.isSelected = 'false';
 			}
 				
 			
@@ -185,18 +185,18 @@ Ext.extend(Sbi.widgets.DatasetsBrowserView, Ext.DataView, {
 					'<tpl for=".">',
 					    '{[isUsed=""]}',
 					    '{[label=""]}',
-					    '{[isMyDataset=""]}',
-					    '<tpl if="this.checkMyDataset(isMyDataset, label) == true">'+		
-					 		'<dd id="{label}" class="box selectboxDS">',
+					    '{[isSelected=""]}',
+					    '<tpl if="this.checkIsSelected(isSelected, label) == true">'+		
+					 		'<dd id="{label}" class="box selectboxBlu">',
 					 			datasetsTpl,
 						    '</dd>',
 					    '</tpl>'+
-					    '<tpl if="this.checkMyDataset(isMyDataset, label) == false && this.isAlreadyUsed(isUsed, label) == true">'+		
-					 		'<dd id="{label}" class="box selectbox">',
+					    '<tpl if="this.checkIsSelected(isSelected, label) == false && this.checkIsUsed(isUsed, label) == true">'+		
+					 		'<dd id="{label}" class="box selectboxOrange">',
 					 			datasetsTpl,
 						    '</dd>',
 					    '</tpl>'+
-				        '<tpl if="this.checkMyDataset(isMyDataset, label) == false && this.isAlreadyUsed(isUsed, label) == false">'+
+				        '<tpl if="this.checkIsSelected(isSelected, label) == false && this.checkIsUsed(isUsed, label) == false">'+
 					        '<dd id="{label}" class="box">',
 					 			datasetsTpl,
 						    '</dd>',
@@ -205,10 +205,10 @@ Ext.extend(Sbi.widgets.DatasetsBrowserView, Ext.DataView, {
 				    '<div style="clear:left"></div>',
 				    '</dl>',
 			      '</div>', {
-			        isAlreadyUsed: function(v, l) {
+			        checkIsUsed: function(v, l) {
 			    	  return v == 'true';		        		
 		        	},
-	        	    checkMyDataset: function(v, l) {
+	        	    checkIsSelected: function(v, l) {
 			    	  return v == 'true';		        		
 		        	},
 		        	shorten: function(text){
@@ -237,7 +237,7 @@ Ext.extend(Sbi.widgets.DatasetsBrowserView, Ext.DataView, {
 //				'<img  align="center" src="' + img + '" '+ classImg+'" + ext:qtip="<b>{views}</b><br/>{summary}"></img>' +	
 				'<img  align="center" src="' + img + '" '+ classImg +'"></img>' +
 			'</div>'+ //box-figure
-			'<tpl if="this.isAlreadyUsed(isUsed, label) == true">'+	
+			'<tpl if="this.checkIsUsed(isUsed, label) == true">'+	
 				'<div id="box-text-{label}" title="{name}" class="box-text box-text-select">'+
 					'<h2>{name}</h2>'+
 					'<p>{[this.shorten(values.description)]}</p>'+
@@ -245,7 +245,7 @@ Ext.extend(Sbi.widgets.DatasetsBrowserView, Ext.DataView, {
 					'<p><b>'+author+':</b> {owner}</p>'+
 				'</div>'+
 			'</tpl>'+
-	        '<tpl if="this.isAlreadyUsed(isUsed, label) == false">'+
+	        '<tpl if="this.checkIsUsed(isUsed, label) == false">'+
 		        '<div id="box-text-{label}" title="{name}" class="box-text">'+
 					'<h2>{name}</h2>'+
 						'<p>{[this.shorten(values.description)]}</p>'+
@@ -269,10 +269,10 @@ Ext.extend(Sbi.widgets.DatasetsBrowserView, Ext.DataView, {
 			var el = Ext.get(datasetLabel);
 	 		if (el) {
 	 			Sbi.trace("[DatasetsBrowserView.selectDatasetComponent]: class before [" + el.dom.className + "]");
-	 			// the  class selectboxDS is used to mark used datatset. a selected dataset is of course also a used dataset but we 
+	 			// the  class selectboxOrange is used to mark used datatset. a selected dataset is of course also a used dataset but we 
 	 			// want to mark it only as selected so we remove the undesired class
-	 			el.dom.className = el.dom.className.replace( /(?:^|\s)selectboxDS(?!\S)/g , '' ); 
-	 			el.dom.className += ' selectbox ';
+	 			el.dom.className = el.dom.className.replace( /(?:^|\s)selectboxOrange(?!\S)/g , '' ); 
+	 			el.dom.className += ' selectboxBlu ';
 	 			Sbi.trace("[DatasetsBrowserView.selectDatasetComponent]: class after [" + el.dom.className + "]");
 	 		} else {
 	 			Sbi.trace("[DatasetsBrowserView.selectDatasetComponent]: Impossible to find dataset [" + datasetLabel +"]");
@@ -296,7 +296,7 @@ Ext.extend(Sbi.widgets.DatasetsBrowserView, Ext.DataView, {
 			var el = Ext.get(datasetLabel);
 	 		if (el) {
 	 			Sbi.trace("[DatasetsBrowserView.unselectDatasetComponent]: class before [" + el.dom.className + "]");
-	 			el.dom.className = el.dom.className.replace( /(?:^|\s)selectbox(?!\S)/g , '' ); //remove active class
+	 			el.dom.className = el.dom.className.replace( /(?:^|\s)selectboxBlu(?!\S)/g , '' ); //remove active class
 	 			Sbi.trace("[DatasetsBrowserView.unselectDatasetComponent]: class after [" + el.dom.className + "]");
 	 		} else {
 	 			Sbi.trace("[DatasetsBrowserView.selectDatasetComponent]: Impossible to find dataset [" + datasetLabel +"]");
