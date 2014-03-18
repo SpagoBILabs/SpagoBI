@@ -51,6 +51,7 @@ import it.eng.spagobi.tools.distributionlist.bo.DistributionList;
 import it.eng.spagobi.tools.distributionlist.dao.IDistributionListDAO;
 import it.eng.spagobi.tools.scheduler.bo.Job;
 import it.eng.spagobi.tools.scheduler.bo.Trigger;
+import it.eng.spagobi.tools.scheduler.bo.TriggerPaused;
 import it.eng.spagobi.tools.scheduler.dao.ISchedulerDAO;
 import it.eng.spagobi.tools.scheduler.to.DispatchContext;
 import it.eng.spagobi.tools.scheduler.to.JobInfo;
@@ -140,10 +141,6 @@ public class SchedulerService {
 		} catch (JSONException e) {
 			throw new SpagoBIRuntimeException("JSONException in SchedulerService", e);
 
-		}
-		//TODO: to remove
-		for(Job job: jobs){
-			String jobTriggers = getJobTriggers(job);
 		}
 
 		return JSONReturn.toString();
@@ -400,6 +397,89 @@ public class SchedulerService {
 
 	}
 	
+	@POST
+	@Path("/pauseTrigger")
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	public String pauseTrigger(@Context HttpServletRequest req){
+		IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+		HashMap<String, String> logParam = new HashMap();
+		try{
+			String jobGroupName = req.getParameter("jobGroup");
+			String jobName = req.getParameter("jobName");
+			String triggerGroup = req.getParameter("triggerGroup");
+			String triggerName = req.getParameter("triggerName");
+			logParam.put("JOB NAME", jobName);
+			logParam.put("JOB GROUP", jobGroupName);
+			logParam.put("TRIGGER NAME", triggerName);
+			logParam.put("TRIGGER GROUP", triggerGroup);
+			
+			//Insert trigger inside paused triggers table
+			ISchedulerDAO schedulerDAO = DAOFactory.getSchedulerDAO();
+			
+			TriggerPaused triggerPaused = new TriggerPaused();
+			triggerPaused.setJobGroup(jobGroupName);
+			triggerPaused.setJobName(jobName);
+			triggerPaused.setTriggerGroup(triggerGroup);
+			triggerPaused.setTriggerName(triggerName);
+			
+			schedulerDAO.pauseTrigger(triggerPaused);
+			
+			
+			
+			updateAudit(req,  profile, "SCHED_TRIGGER.PAUSE",logParam , "OK");
+			return ("{resp:'ok'}");
+		} catch (Exception e) {
+			updateAudit(req,  profile, "SCHED_TRIGGER.PAUSE",logParam , "KO");
+			logger.error("Error while pausing trigger ", e);
+			logger.debug(canNotFillResponseError);
+			try {
+				return ( ExceptionUtilities.serializeException(canNotFillResponseError,null));
+			} catch (Exception ex) {
+				logger.debug("Cannot fill response container.");
+				throw new SpagoBIRuntimeException(
+						"Cannot fill response container", ex);
+			}
+		}
+	}
+	
+	@POST
+	@Path("/resumeTrigger")
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	public String resumeTrigger(@Context HttpServletRequest req){
+		IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+		HashMap<String, String> logParam = new HashMap();
+		try{
+			String jobGroup = req.getParameter("jobGroup");
+			String jobName = req.getParameter("jobName");
+			String triggerGroup = req.getParameter("triggerGroup");
+			String triggerName = req.getParameter("triggerName");
+			logParam.put("JOB NAME", jobName);
+			logParam.put("JOB GROUP", jobGroup);
+			logParam.put("TRIGGER NAME", triggerName);
+			logParam.put("TRIGGER GROUP", triggerGroup);
+			
+			//Remove trigger from paused triggers table
+			ISchedulerDAO schedulerDAO = DAOFactory.getSchedulerDAO();
+
+			schedulerDAO.resumeTrigger(triggerGroup, triggerName, jobGroup, jobName);
+
+			
+
+			updateAudit(req,  profile, "SCHED_TRIGGER.RESUME",logParam , "OK");
+			return ("{resp:'ok'}");
+		} catch (Exception e) {
+			updateAudit(req,  profile, "SCHED_TRIGGER.RESUME",logParam , "KO");
+			logger.error("Error while resuming trigger ", e);
+			logger.debug(canNotFillResponseError);
+			try {
+				return ( ExceptionUtilities.serializeException(canNotFillResponseError,null));
+			} catch (Exception ex) {
+				logger.debug("Cannot fill response container.");
+				throw new SpagoBIRuntimeException(
+						"Cannot fill response container", ex);
+			}
+		}
+	}
 	
 	
 	private TriggerInfo getTriggerInfo(String jobName, String jobGroupName, String triggerName, String triggerGroup){

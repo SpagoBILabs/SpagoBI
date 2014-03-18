@@ -298,6 +298,18 @@
 	height: 16px !important;
 }
 
+.button-resume-trigger {
+	background-image: url('../../../img/resumeTrigger.png') !important;
+	width: 16px !important;
+	height: 16px !important;
+}
+
+.button-pause-trigger {
+	background-image: url('../../../img/pauseTrigger.png') !important;
+	width: 16px !important;
+	height: 16px !important;
+}
+
 .action-detail-note {
 	width:16px;
     height:16px;

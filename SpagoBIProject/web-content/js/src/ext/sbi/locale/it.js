@@ -829,6 +829,12 @@ Sbi.locale.ln['sbi.scheduler.activity.deleted'] = 'Attività Eliminata';
 Sbi.locale.ln['sbi.scheduler.schedulation.deleted'] = 'Schedulazione Eliminata';
 Sbi.locale.ln['sbi.scheduler.schedulation.execute'] = 'Esegui ora';
 Sbi.locale.ln['sbi.scheduler.schedulation.executed'] = 'Schedulazione eseguita';
+Sbi.locale.ln['sbi.scheduler.schedulation.pause'] = 'Metti in pausa la schedulazione';
+Sbi.locale.ln['sbi.scheduler.schedulation.resume'] = 'Riprendi la schedulazione';
+Sbi.locale.ln['sbi.schedulation.pauseConfirm'] = 'Vuoi mettere in pausa la schedulazione?';
+Sbi.locale.ln['sbi.scheduler.schedulation.paused'] = 'Schedulazione messa in pausa';
+Sbi.locale.ln['sbi.schedulation.resumeConfirm'] = 'Vuoi riprendere la schedulazione?';
+Sbi.locale.ln['sbi.scheduler.schedulation.resumed'] = 'Schedulazione ripresa';
 
 //===================================================================
 //MESSAGE FOR QBE DATASET BUILDER

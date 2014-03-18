@@ -121,6 +121,16 @@ Ext.define('Sbi.tools.scheduler.SchedulerListDetailPanel', {
 				serviceName: 'scheduler/executeTrigger'
 					, baseParams: baseParams
 			});
+			
+			this.services["pauseTrigger"]= Sbi.config.serviceRegistry.getRestServiceUrl({
+				serviceName: 'scheduler/pauseTrigger'
+					, baseParams: baseParams
+			});
+			
+			this.services["resumeTrigger"]= Sbi.config.serviceRegistry.getRestServiceUrl({
+				serviceName: 'scheduler/resumeTrigger'
+					, baseParams: baseParams
+			});
 
 		}
 		

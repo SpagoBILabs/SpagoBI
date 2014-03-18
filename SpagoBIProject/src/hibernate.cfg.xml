@@ -78,6 +78,9 @@
         <mapping resource="it/eng/spagobi/analiticalmodel/document/metadata/mapping/SbiSubObjects.hbm.xml" />
         <mapping resource="it/eng/spagobi/analiticalmodel/document/metadata/mapping/SbiSnapshots.hbm.xml" />
         
+        <mapping resource="it/eng/spagobi/tools/scheduler/metadata/mapping/SbiTriggerPaused.hbm.xml" />
+        
+        
 
         <!-- map catalogue -->
         <mapping resource="it/eng/spagobi/mapcatalogue/metadata/mapping/SbiGeoMapFeatures.hbm.xml" />

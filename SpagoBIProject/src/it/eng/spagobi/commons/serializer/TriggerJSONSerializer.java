@@ -22,8 +22,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package it.eng.spagobi.commons.serializer;
 
 import it.eng.spago.base.SourceBean;
+import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.tools.scheduler.bo.Job;
 import it.eng.spagobi.tools.scheduler.bo.Trigger;
+import it.eng.spagobi.tools.scheduler.dao.ISchedulerDAO;
 import it.eng.spagobi.tools.scheduler.to.DispatchContext;
 import it.eng.spagobi.tools.scheduler.to.JobInfo;
 import it.eng.spagobi.tools.scheduler.utils.SchedulerUtilities;
@@ -60,6 +63,8 @@ public class TriggerJSONSerializer implements Serializer {
 	public static final String TRIGGER_END_DATE = "triggerEndDate";
 	public static final String TRIGGER_END_TIME = "triggerEndTime";	
 	public static final String TRIGGER_CHRON_STRING = "triggerChronString";	
+	public static final String TRIGGER_IS_PAUSED = "triggerIsPaused";	
+
 	public static final String JOB_PARAMETERS = "jobParameters";
 
 	public Object serialize(Object o, Locale locale)
@@ -107,6 +112,16 @@ public class TriggerJSONSerializer implements Serializer {
 			
 			String triggerCronExpression =  ((trigger.getChronExpression().getExpression()) != null)? trigger.getChronExpression().getExpression():"";
 			result.put(TRIGGER_CHRON_STRING, triggerCronExpression);
+			
+			ISchedulerDAO schedulerDAO;
+			boolean isTriggerPaused = false;
+			try {
+				schedulerDAO = DAOFactory.getSchedulerDAO();
+				isTriggerPaused = schedulerDAO.isTriggerPaused(triggerGroup, triggerName, jobGroup, jobName);
+			} catch (EMFUserError e) {
+				logger.error("Error while checking if the trigger ["+triggerName+"] is paused");
+			}
+			result.put(TRIGGER_IS_PAUSED, isTriggerPaused);
 			
 			
 			//Job parameter for trigger details
