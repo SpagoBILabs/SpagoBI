@@ -849,11 +849,16 @@ Sbi.locale.ln['sbi.scheduler.schedulation.detail'] = 'Schedulation Detail';
 Sbi.locale.ln['sbi.scheduler.schedulation.delete'] = 'Delete Schedulation';
 Sbi.locale.ln['sbi.scheduler.activity.detailactivity'] = 'Detail of Activity';
 Sbi.locale.ln['sbi.scheduler.activity.schedulationlist'] = 'Schedulations List';
-Sbi.locale.ln['sbi.scheduler.activity.schedulationlist'] = 'Schedulations List';
 Sbi.locale.ln['sbi.scheduler.activity.deleted'] = 'Activity Deleted';
 Sbi.locale.ln['sbi.scheduler.schedulation.deleted'] = 'Schedulation Deleted';
 Sbi.locale.ln['sbi.scheduler.schedulation.execute'] = 'Execute now';
 Sbi.locale.ln['sbi.scheduler.schedulation.executed'] = 'Schedulation executed';
+Sbi.locale.ln['sbi.scheduler.schedulation.pause'] = 'Pause schedulation';
+Sbi.locale.ln['sbi.scheduler.schedulation.resume'] = 'Resume schedulation';
+Sbi.locale.ln['sbi.schedulation.pauseConfirm'] = 'Do you want to pause the schedulation?';
+Sbi.locale.ln['sbi.scheduler.schedulation.paused'] = 'Schedulation paused';
+Sbi.locale.ln['sbi.schedulation.resumeConfirm'] = 'Do you want to resume the schedulation?';
+Sbi.locale.ln['sbi.scheduler.schedulation.resumed'] = 'Schedulation resumed';
 
 
 //===================================================================

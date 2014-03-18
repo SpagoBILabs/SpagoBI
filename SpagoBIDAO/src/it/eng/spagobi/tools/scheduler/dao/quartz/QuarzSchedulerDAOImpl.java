@@ -6,13 +6,20 @@
 package it.eng.spagobi.tools.scheduler.dao.quartz;
 
 import it.eng.qbe.datasource.configuration.dao.DAOException;
+import it.eng.spago.error.EMFErrorSeverity;
+import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.dao.SpagoBIDOAException;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.tenant.Tenant;
 import it.eng.spagobi.tenant.TenantManager;
+import it.eng.spagobi.tools.dataset.dao.DataSetFactory;
+import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
 import it.eng.spagobi.tools.scheduler.bo.Job;
 import it.eng.spagobi.tools.scheduler.bo.Trigger;
+import it.eng.spagobi.tools.scheduler.bo.TriggerPaused;
 import it.eng.spagobi.tools.scheduler.dao.ISchedulerDAO;
+import it.eng.spagobi.tools.scheduler.metadata.SbiTriggerPaused;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
@@ -23,6 +30,10 @@ import java.util.List;
 
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
+import org.hibernate.HibernateException;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.quartz.JobDetail;
 import org.quartz.Scheduler;
 import org.quartz.impl.StdSchedulerFactory;
@@ -31,7 +42,7 @@ import org.quartz.impl.StdSchedulerFactory;
  * @author Andrea Gioia (andrea.gioia@eng.it)
  *
  */
-public class QuarzSchedulerDAOImpl implements ISchedulerDAO {
+public class QuarzSchedulerDAOImpl extends AbstractHibernateDAO implements ISchedulerDAO {
 	
 	private Scheduler scheduler;
 	
@@ -561,5 +572,188 @@ public class QuarzSchedulerDAOImpl implements ISchedulerDAO {
 		}	
 		
 	}
+	
+	//----------------------------------------------------------------------------
+	// Trigger_Paused Management
+	//----------------------------------------------------------------------------
+	
+	//insert the trigger info in the Trigger_Paused table
+	public void pauseTrigger(TriggerPaused triggerPaused) throws EMFUserError{
+		logger.debug("IN");
+		Session aSession = null;
+		Transaction tx = null;
+
+		try {		
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+
+			SbiTriggerPaused hibTriggerPaused = null;
+
+			//insertion
+			logger.debug("Insert new TriggerPaused");
+			hibTriggerPaused = fromTriggerPaused(triggerPaused);
+			updateSbiCommonInfo4Insert(hibTriggerPaused);
+
+			Integer newId = (Integer) aSession.save(hibTriggerPaused);
+			tx.commit();
+
+			triggerPaused.setId(newId);			
+
+
+		} catch (HibernateException he) {
+			logger.error("HibernateException", he);
+
+			if (tx != null)
+				tx.rollback();
+
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+
+		} finally {
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
+			}
+		}		
+		logger.debug("OUT");
+
+
+	}
+	
+	//delete the trigger info from the Trigger_Paused table
+	public boolean resumeTrigger(String triggerGroup, String triggerName, String jobGroup, String jobName) {
+		logger.debug("IN");
+		Session session = null;
+		Transaction transaction = null;
+		boolean deleted = false;
+
+
+		try {	
+			if(triggerGroup == null) {
+				throw new IllegalArgumentException("Input parameter [triggerGroup] cannot be null");
+			}
+			if(triggerName == null) {
+				throw new IllegalArgumentException("Input parameter [triggerName] cannot be null");
+			}
+			if(jobGroup == null) {
+				throw new IllegalArgumentException("Input parameter [jobGroup] cannot be null");
+			}
+			if(jobName == null) {
+				throw new IllegalArgumentException("Input parameter [jobName] cannot be null");
+			}
+			
+			try {
+				session = getSession();
+				Assert.assertNotNull(session, "session cannot be null");
+				transaction = session.beginTransaction();
+				Assert.assertNotNull(transaction, "transaction cannot be null");
+			} catch(Throwable t) {
+				throw new SpagoBIDOAException("An error occured while creating the new transaction", t);
+			}
+			
+			Query hibQuery = session.createQuery("from SbiTriggerPaused h where h.triggerName = ? and h.triggerGroup = ? and h.jobGroup = ? and h.jobName = ?" );
+			hibQuery.setString(0, triggerName);
+			hibQuery.setString(1, triggerGroup);
+			hibQuery.setString(2, jobGroup);
+			hibQuery.setString(3, jobName);	
+			
+			List<SbiTriggerPaused> sbiTriggerPausedList = hibQuery.list();
+			for (SbiTriggerPaused sbiTriggerPaused : sbiTriggerPausedList) {
+				if(sbiTriggerPaused != null){
+					//delete trigger
+					session.delete(sbiTriggerPaused);	
+					deleted = true;
+				}
+			}
+			transaction.commit();
+		}  catch (Throwable t) {
+			if (transaction != null && transaction.isActive()) {
+				transaction.rollback();
+			}
+			String msg = (t.getMessage()!=null)?t.getMessage():"An unexpected error occured while deleting trigger paused " +
+					"whose triggerName is equal to [" + triggerName + "] and trigger group [" + triggerName + "]";
+			throw new SpagoBIDOAException(msg, t);
+		} finally {
+			if (session != null && session.isOpen()) {
+				session.close();
+			}
+			logger.debug("OUT");
+		}
+		return deleted;
+		
+	}
+	
+	//check if the trigger is in the Trigger_Paused table
+	public boolean isTriggerPaused(String triggerGroup, String triggerName, String jobGroup, String jobName){
+		logger.debug("IN");
+		Session session = null;
+		Transaction transaction = null;
+		boolean isTriggerPaused = false;
+
+
+		try {	
+			if(triggerGroup == null) {
+				throw new IllegalArgumentException("Input parameter [triggerGroup] cannot be null");
+			}
+			if(triggerName == null) {
+				throw new IllegalArgumentException("Input parameter [triggerName] cannot be null");
+			}
+			if(jobGroup == null) {
+				throw new IllegalArgumentException("Input parameter [jobGroup] cannot be null");
+			}
+			if(jobName == null) {
+				throw new IllegalArgumentException("Input parameter [jobName] cannot be null");
+			}
+			
+			try {
+				session = getSession();
+				Assert.assertNotNull(session, "session cannot be null");
+				transaction = session.beginTransaction();
+				Assert.assertNotNull(transaction, "transaction cannot be null");
+			} catch(Throwable t) {
+				throw new SpagoBIDOAException("An error occured while creating the new transaction", t);
+			}
+			
+			Query hibQuery = session.createQuery("from SbiTriggerPaused h where h.triggerName = ? and h.triggerGroup = ? and h.jobGroup = ? and h.jobName = ?" );
+			hibQuery.setString(0, triggerName);
+			hibQuery.setString(1, triggerGroup);
+			hibQuery.setString(2, jobGroup);
+			hibQuery.setString(3, jobName);	
+			
+			List<SbiTriggerPaused> sbiTriggerPausedList = hibQuery.list();
+			if (sbiTriggerPausedList.size() > 0){
+				isTriggerPaused = true;
+			} else {
+				isTriggerPaused = false;
+			}
+
+			transaction.commit();
+		}  catch (Throwable t) {
+			if (transaction != null && transaction.isActive()) {
+				transaction.rollback();
+			}
+			String msg = (t.getMessage()!=null)?t.getMessage():"An unexpected error occured while checking trigger paused " +
+					"whose triggerName is equal to [" + triggerName + "] and trigger group [" + triggerName + "]";
+			throw new SpagoBIDOAException(msg, t);
+		} finally {
+			if (session != null && session.isOpen()) {
+				session.close();
+			}
+			logger.debug("OUT");
+		}
+		return isTriggerPaused;
+	}
+	
+	public SbiTriggerPaused fromTriggerPaused(TriggerPaused triggerPaused){
+		SbiTriggerPaused hibTriggerPaused = new SbiTriggerPaused();
+		hibTriggerPaused.setId(triggerPaused.getId());
+		hibTriggerPaused.setJobGroup(triggerPaused.getJobGroup());
+		hibTriggerPaused.setJobName(triggerPaused.getJobName());
+		hibTriggerPaused.setTriggerGroup(triggerPaused.getTriggerGroup());
+		hibTriggerPaused.setTriggerName(triggerPaused.getTriggerName());
+		return hibTriggerPaused;
+	}
+	
+	
+	
 	
 }

@@ -84,7 +84,7 @@ Ext.define('Sbi.tools.scheduler.SchedulerDetailPanel', {
 			});
 			
 			this.schedulationsGridStore = Ext.create('Ext.data.Store', {
-				fields:['jobName','jobGroup','triggerName','triggerGroup','triggerDescription' ,'triggerChronString','triggerStartDate','triggerStartTime','triggerEndDate','triggerEndTime'],
+				fields:['jobName','jobGroup','triggerName','triggerGroup','triggerDescription' ,'triggerChronString','triggerStartDate','triggerStartTime','triggerEndDate','triggerEndTime','triggerIsPaused'],
 				data:{},
 				proxy: {
 					type: 'memory',
@@ -147,19 +147,40 @@ Ext.define('Sbi.tools.scheduler.SchedulerDetailPanel', {
 						}]
 					},
 					{
-						//STATE BUTTON
+						//STATE RESUME/PAUSE BUTTON
 			        	menuDisabled: true,
 						sortable: false,
 						xtype: 'actioncolumn',
 						width: 20,
 						columnType: "decorated",
+						renderer : 
+			        		function(value, metadata, record, rowIndex, colIndex) {
+							if (record.get('triggerIsPaused') == true) {
+			        			metadata.tdAttr = 'data-qtip="'+LN('sbi.scheduler.schedulation.resume')+'"';
+							} else {
+			        			metadata.tdAttr = 'data-qtip="'+LN('sbi.scheduler.schedulation.pause')+'"';
+							}
+
+			        		return value;
+			        	} ,
 						items: [{
-							iconCls   : 'button-select',  
+							//iconCls   : 'button-select',  
 							handler: function(grid, rowIndex, colIndex) {
 								var selectedRecord =  grid.store.getAt(rowIndex);
-								//TODO
-								alert("TODO: pause / resume schedulation "+selectedRecord.get('triggerName'));
+								if (selectedRecord.get('triggerIsPaused') == true){
+									thisPanel.onResumeSchedulation(selectedRecord);
+								} else {
+									thisPanel.onPauseSchedulation(selectedRecord);
+								}
+							},
+							getClass: function(v, meta, rec) {
+								if (rec.get('triggerIsPaused') == true) {
+									return 'button-resume-trigger';
+								} else {
+									return 'button-pause-trigger';
+								}
 							}
+
 						}]
 					},
 					{
@@ -194,6 +215,134 @@ Ext.define('Sbi.tools.scheduler.SchedulerDetailPanel', {
 			});
 			
 			
+		}
+		
+		, onPauseSchedulation: function(record){
+			var values = {}
+			values.jobName = record.data.jobName;
+			values.jobGroup = record.data.jobGroup;
+			values.triggerName = record.data.triggerName;
+			values.triggerGroup = record.data.triggerGroup;
+			
+			Ext.MessageBox.confirm(
+					LN('sbi.generic.pleaseConfirm'),
+					LN('sbi.schedulation.pauseConfirm'),
+					function(btn, text){
+
+						if (btn=='yes') {
+							//perform Ajax Request
+
+							Ext.Ajax.request({
+								url: this.services["pauseTrigger"],
+								params: values,
+								success : function(response, options) {
+									if(response !== undefined  && response.responseText !== undefined && response.statusText=="OK") {
+										if(response.responseText!=null && response.responseText!=undefined){
+											if(response.responseText.indexOf("error.mesage.description")>=0){
+												Sbi.exception.ExceptionHandler.handleFailure(response);
+											}else{						
+												Sbi.exception.ExceptionHandler.showInfoMessage(LN('sbi.scheduler.schedulation.paused'));
+												record.set('triggerIsPaused',true);
+												thisPanel.schedulationsGrid.store.commitChanges();
+												thisPanel.schedulationsGrid.reconfigure(thisPanel.schedulationsGridStore) 
+												
+												if ((thisPanel.triggersData != null) && (thisPanel.triggersData !== undefined)){
+													//remove the trigger also from the original json data
+													var index = -1;
+													for (var i = 0; i < thisPanel.triggersData.length; i++) {
+														var element = thisPanel.triggersData[i];
+														if ( (element.jobName == record.get('jobName')) &&
+														     (element.jobGroup == record.get('jobGroup')) &&
+														     (element.triggerGroup == record.get('triggerGroup')) &&
+														     (element.triggerName == record.get('triggerName')) ){		
+															
+															element.triggerIsPaused = true;
+															break;
+														}
+ 
+													}
+													
+												}
+
+											}
+										}
+									} else {
+										Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
+									}
+								},
+								scope: this,
+								failure: Sbi.exception.ExceptionHandler.handleFailure      
+							})
+						}
+						
+					},
+					this
+				);
+
+		}
+		
+		, onResumeSchedulation: function(record){
+			var values = {}
+			values.jobName = record.data.jobName;
+			values.jobGroup = record.data.jobGroup;
+			values.triggerName = record.data.triggerName;
+			values.triggerGroup = record.data.triggerGroup;
+			
+			Ext.MessageBox.confirm(
+					LN('sbi.generic.pleaseConfirm'),
+					LN('sbi.schedulation.resumeConfirm'),
+					function(btn, text){
+
+						if (btn=='yes') {
+							//perform Ajax Request
+
+							Ext.Ajax.request({
+								url: this.services["resumeTrigger"],
+								params: values,
+								success : function(response, options) {
+									if(response !== undefined  && response.responseText !== undefined && response.statusText=="OK") {
+										if(response.responseText!=null && response.responseText!=undefined){
+											if(response.responseText.indexOf("error.mesage.description")>=0){
+												Sbi.exception.ExceptionHandler.handleFailure(response);
+											}else{						
+												Sbi.exception.ExceptionHandler.showInfoMessage(LN('sbi.scheduler.schedulation.resumed'));
+												record.set('triggerIsPaused',false);
+												thisPanel.schedulationsGrid.store.commitChanges();
+												thisPanel.schedulationsGrid.reconfigure(thisPanel.schedulationsGridStore) 
+												
+												if ((thisPanel.triggersData != null) && (thisPanel.triggersData !== undefined)){
+													//remove the trigger also from the original json data
+													var index = -1;
+													for (var i = 0; i < thisPanel.triggersData.length; i++) {
+														var element = thisPanel.triggersData[i];
+														if ( (element.jobName == record.get('jobName')) &&
+														     (element.jobGroup == record.get('jobGroup')) &&
+														     (element.triggerGroup == record.get('triggerGroup')) &&
+														     (element.triggerName == record.get('triggerName')) ){		
+															
+															element.triggerIsPaused = false;
+															break;
+														}
+ 
+													}
+													
+												}
+
+											}
+										}
+									} else {
+										Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
+									}
+								},
+								scope: this,
+								failure: Sbi.exception.ExceptionHandler.handleFailure      
+							})
+						}
+						
+					},
+					this
+				);			
+
 		}
 		
 		, onExecuteSchedulation: function(record){

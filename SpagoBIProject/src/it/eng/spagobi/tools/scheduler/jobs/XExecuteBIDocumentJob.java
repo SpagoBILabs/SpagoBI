@@ -5,6 +5,7 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.tools.scheduler.jobs;
 
+import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.bo.DocumentMetadataProperty;
@@ -25,6 +26,7 @@ import it.eng.spagobi.tools.objmetadata.dao.IObjMetadataDAO;
 import it.eng.spagobi.tools.scheduler.Formula;
 import it.eng.spagobi.tools.scheduler.FormulaParameterValuesRetriever;
 import it.eng.spagobi.tools.scheduler.RuntimeLoadingParameterValuesRetriever;
+import it.eng.spagobi.tools.scheduler.dao.ISchedulerDAO;
 import it.eng.spagobi.tools.scheduler.dispatcher.DocumentDispatcher;
 import it.eng.spagobi.tools.scheduler.to.DispatchContext;
 import it.eng.spagobi.tools.scheduler.utils.BIObjectParametersIterator;
@@ -47,6 +49,7 @@ import org.quartz.Job;
 import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
+import org.quartz.Trigger;
 
 
 public class XExecuteBIDocumentJob extends AbstractSpagoBIJob implements Job {
@@ -57,11 +60,36 @@ public class XExecuteBIDocumentJob extends AbstractSpagoBIJob implements Job {
 		logger.debug("IN");
 		try {
 			this.setTenant(jobExecutionContext);
-			this.executeInternal(jobExecutionContext);
+			//Execute internal only if trigger isn't paused
+			if(!isTriggerPaused(jobExecutionContext)){
+				this.executeInternal(jobExecutionContext);
+			}
 		} finally {
 			this.unsetTenant();
 			logger.debug("OUT");
 		}
+	}
+	
+	private boolean isTriggerPaused(JobExecutionContext jobExecutionContext){
+		Trigger trigger = jobExecutionContext.getTrigger();
+		String triggerGroup = trigger.getGroup();
+		String triggerName = trigger.getName();
+		String jobName = trigger.getJobName();
+		String jobGroupOriginal = jobExecutionContext.getJobDetail().getGroup();
+		String[] bits = jobGroupOriginal.split("/");
+		String jobGroup = bits[bits.length-1];
+		boolean result = false;
+		
+		ISchedulerDAO schedulerDAO;
+		try {
+			schedulerDAO = DAOFactory.getSchedulerDAO();
+			result = schedulerDAO.isTriggerPaused(triggerGroup, triggerName, jobGroup, jobName);
+		} catch (EMFUserError e) {
+			logger.error("Error while checking if the trigger ["+triggerName+"] is paused");
+		}
+		
+		return result;
+
 	}
 	
 	private void executeInternal(JobExecutionContext jobExecutionContext) throws JobExecutionException {

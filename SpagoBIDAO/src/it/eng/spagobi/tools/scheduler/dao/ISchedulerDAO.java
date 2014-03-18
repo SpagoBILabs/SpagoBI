@@ -5,9 +5,11 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.tools.scheduler.dao;
 
+import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.tenant.Tenant;
 import it.eng.spagobi.tools.scheduler.bo.Job;
 import it.eng.spagobi.tools.scheduler.bo.Trigger;
+import it.eng.spagobi.tools.scheduler.bo.TriggerPaused;
 
 import java.util.List;
 
@@ -66,5 +68,9 @@ public interface ISchedulerDAO {
 	boolean saveTrigger(Trigger spagobiTrigger);	
 	void insertTrigger(Trigger spagobiTrigger);	
 	void updateTrigger(Trigger spagobiTrigger);
+	
+	void pauseTrigger(TriggerPaused triggerPaused) throws EMFUserError;
+	boolean resumeTrigger(String triggerGroup, String triggerName, String jobGroup, String jobName);
+	boolean isTriggerPaused(String triggerGroup, String triggerName, String jobGroup, String jobName);
 
 }
