@@ -145,7 +145,7 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionFilter', {
 				       }
 				       ]
 			}],
-			frame: true,
+			frame: true
 
 		});
 		this.callParent();
