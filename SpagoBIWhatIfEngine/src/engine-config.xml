@@ -33,5 +33,10 @@
 	<DocumentExecuteServiceProxy_URL>/services/DocumentExecuteService</DocumentExecuteServiceProxy_URL>
 	<DataSetServiceProxy_URL>/services/DataSetService</DataSetServiceProxy_URL>	
 	
+	<USR>root</USR>
+	<PWD>root</PWD>
+	<CATALOG>file:D:/Sviluppo/mondrian/FoodMartMySQL.xml</CATALOG>
+	<CONNECTIONSTRING>jdbc:mondrian:Jdbc=jdbc:mysql://localhost:3306/foodmart_key</CONNECTIONSTRING>
+	<MDX>SELECT {[Measures].[Unit Sales], [Measures].[Store Cost]} ON COLUMNS, {[Product].[Food]} ON ROWS FROM [Sales]</MDX>
 	
 </ENGINE-CONFIGURATION>

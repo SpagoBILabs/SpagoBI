@@ -12,9 +12,13 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.olap4j.OlapDataSource;
+
+import com.eyeq.pivot4j.datasource.SimpleOlapDataSource;
 
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.services.common.EnginConf;
@@ -77,6 +81,63 @@ public class WhatIfEngineConfig {
 	private final static String INCLUDES_TAG = "INCLUDES";
 	private final static String INCLUDE_TAG = "INCLUDE";
 	private final static String URL_TAG = "URL";
+	
+	
+	
+	
+	public String getInitiallMdx() {
+		String initialMdx = "SELECT {[Measures].[Unit Sales], [Measures].[Store Cost]} ON COLUMNS, {[Product].[Food]} ON ROWS FROM [Sales]";
+		SourceBean sb = (SourceBean) getConfigSourceBean().getAttribute("MDX");
+		if(sb!=null){
+			initialMdx = sb.getCharacters();
+		}
+		return initialMdx;
+	}
+	
+	public OlapDataSource getOlapDataSource() {
+		SourceBean sb;
+		Properties connectionProps = new Properties();
+				
+		String usr = "foodmart";
+		String pwd = "foodmart";
+		String catalog = "/home/spagobi/apache-tomcat-7.0.50/resources/Olap/FoodMart.xml";
+		String connectionString =  "jdbc:mondrian:Jdbc=jdbc:mysql://sibilla2:3306/foodmart";
+		
+		
+		
+		sb = (SourceBean) getConfigSourceBean().getAttribute("USR");
+		if(sb!=null)
+			usr = sb.getCharacters();
+		
+		sb = (SourceBean) getConfigSourceBean().getAttribute("PWD");
+		if(sb!=null)
+			pwd = sb.getCharacters();
+		
+		sb = (SourceBean) getConfigSourceBean().getAttribute("CATALOG");
+		if(sb!=null)
+			catalog = sb.getCharacters();
+		
+		sb = (SourceBean) getConfigSourceBean().getAttribute("CONNECTIONSTRING");
+		if(sb!=null)
+			connectionString = sb.getCharacters();
+		
+		
+		connectionProps.put("JdbcUser", usr);
+		connectionProps.put("JdbcPassword", pwd);
+		
+		connectionProps.put("Catalog",catalog);
+		connectionProps.put("JdbcDrivers","com.mysql.jdbc.Driver");
+		
+		connectionProps.put("Provider","Mondrian");
+
+		OlapDataSource olapDataSource = new SimpleOlapDataSource();
+		((SimpleOlapDataSource)olapDataSource).setConnectionString( connectionString);
+
+		
+		((SimpleOlapDataSource)olapDataSource).setConnectionProperties(connectionProps);
+		
+		return olapDataSource;
+	}
 	
 	public void initIncludes() {
 		SourceBean includesSB;
