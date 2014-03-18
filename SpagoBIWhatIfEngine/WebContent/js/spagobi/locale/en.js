@@ -64,3 +64,9 @@ Sbi.locale.ln['sbi.common.close'] = 'Close';
 Sbi.locale.ln['sbi.olap.toolbar.mdx'] = 'Mdx Query';
 Sbi.locale.ln['sbi.olap.toolbar.drill.mode'] = 'Drill mode';
 
+//===================================================================
+//FILTERS
+//===================================================================
+
+Sbi.locale.ln['sbi.olap.execution.table.filter.collapse'] = 'Collapse all';
+Sbi.locale.ln['sbi.olap.execution.table.filter.expand'] = 'Expand all';
