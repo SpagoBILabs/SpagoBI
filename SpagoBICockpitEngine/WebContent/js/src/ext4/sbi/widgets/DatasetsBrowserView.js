@@ -297,6 +297,9 @@ Ext.extend(Sbi.widgets.DatasetsBrowserView, Ext.DataView, {
 	 		if (el) {
 	 			Sbi.trace("[DatasetsBrowserView.unselectDatasetComponent]: class before [" + el.dom.className + "]");
 	 			el.dom.className = el.dom.className.replace( /(?:^|\s)selectboxBlu(?!\S)/g , '' ); //remove active class
+	 			if(this.isUsed(datasetLabel)) {
+	 				el.dom.className += ' selectboxOrange ';
+	 			}
 	 			Sbi.trace("[DatasetsBrowserView.unselectDatasetComponent]: class after [" + el.dom.className + "]");
 	 		} else {
 	 			Sbi.trace("[DatasetsBrowserView.selectDatasetComponent]: Impossible to find dataset [" + datasetLabel +"]");
