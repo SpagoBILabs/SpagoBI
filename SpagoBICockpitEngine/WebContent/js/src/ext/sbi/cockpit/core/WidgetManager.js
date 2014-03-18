@@ -156,16 +156,37 @@ Ext.extend(Sbi.cockpit.core.WidgetManager, Ext.util.Observable, {
 	 * @return {Sbi.cockpit.core.WidgetRuntime[]} The list of widgets.
 	 */
 	, getWidgetsByStore: function(storeId){
+		Sbi.trace("[WidgetManager.getWidgetsByStore]: IN");
+		
 		var toReturn = new Ext.util.MixedCollection();
-		if (s != undefined){
+		if (getStoreId != undefined){
 			for(var i=0; i < this.widgets.getCount(); i++){
 				var w = this.widgets.item(i);
-				if (w.dataset !== undefined && w.dataset == s  ){
+				if (w.getStoreId() !== undefined && w.getStoreId() == storeId  ){
 					toReturn.add(w);
 				}
 			}
 		}
+		
+		Sbi.trace("[WidgetManager.getWidgetsByStore]: OUT");
+		
 		return toReturn;
+	}
+	
+	/**
+	 * @method
+	 * 
+	 * Returns true if the store is used at least by one widget managed by this manager,
+	 * false otherwise
+	 * 
+	 * @param {String} storeId The id of the store.
+	 * 
+	 * @return {boolean} true if the store is used at least by one widget managed by this manager,
+	 * false otherwise.
+	 */
+	, isStoreUsed: function(storeId) {
+		var widgets = this.getWidgetsByStore(storeId);
+		return Sbi.isValorized(widgets)  && widgets.getCount() > 0;
 	}
 	
 	// -----------------------------------------------------------------------------------------------------------------

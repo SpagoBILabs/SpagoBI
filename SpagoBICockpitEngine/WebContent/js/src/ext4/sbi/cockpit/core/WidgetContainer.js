@@ -402,10 +402,13 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.WidgetRuntime, {
     	Sbi.trace("[WidgetContainer.applyStoreUnselection]: IN");
     	
 		if(Sbi.isValorized(unselectedDatasetLabel)) {
-			// TODO: manage the case of store shared by more then one widget
 			Sbi.trace("[WidgetContainer.applyStoreUnselection]: removing from store manger unselected store [" + unselectedDatasetLabel + "] ...");
-			Sbi.storeManager.removeStore(unselectedDatasetLabel);
-			Sbi.trace("[WidgetContainer.applyStoreUnselection]: unselected store [" + unselectedDatasetLabel + "] succesfully removed from store manager");
+			if( this.getStoreManager().isStoreUsed(unselectedDatasetLabel) == false ) {
+				Sbi.storeManager.removeStore(unselectedDatasetLabel);
+				Sbi.trace("[WidgetContainer.applyStoreUnselection]: unselected store [" + unselectedDatasetLabel + "] succesfully removed from store manager");
+			} else {
+				Sbi.trace("[WidgetContainer.applyStoreUnselection]: unselected store [" + unselectedDatasetLabel + "] wont be used because other widgets are using it");
+			}
 		}
 		
 		Sbi.trace("[WidgetContainer.applyWidgetEditorWizardState]: the list of stores registered in store manager is equal to [" + Sbi.storeManager.getStoreIds().join(";") + "]");
