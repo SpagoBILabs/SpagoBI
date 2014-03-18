@@ -256,7 +256,7 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 	}
 	
 	, containsStore: function(store) {
-		if(typeof store === 'string') {
+		if(Ext.isString(store)) {
 			return this.stores.containsKey(store);
 		} else {
 			return this.stores.contains(store);
@@ -287,7 +287,7 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 		
 		Sbi.trace("[StoreManager.removeStore]: typeof store: " + (typeof store));
 		
-		if(typeof store === 'String') {
+		if(Ext.isString(store)) {
 			storeId = store;
 			store = this.stores.removeKey(store);
 		} else {
