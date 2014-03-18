@@ -77,8 +77,8 @@ public class WhatIfEngineInstance extends AbstractEngineInstance implements Seri
 		
 		String initialMdx = "SELECT {[Measures].[Unit Sales], [Measures].[Store Cost]} ON COLUMNS, {[Product].[Food]} ON ROWS FROM [Sales]";
 		Properties connectionProps = new Properties();
-		connectionProps.put("JdbcUser","spagobi");//ds.getUser());
-		connectionProps.put("JdbcPassword","bispago");//ds.getPwd());
+		connectionProps.put("JdbcUser","foodmart");//ds.getUser());
+		connectionProps.put("JdbcPassword","foodmart");//ds.getPwd());
 		//connectionProps.put("Catalog","file:D:/progetti/SpagoBI/apache-tomcat-7.0.50/FoodMartMySQL.xml");
 		//connectionProps.put("Catalog","file:D:/Sviluppo/mondrian/FoodMartMySQL.xml");
 		connectionProps.put("Catalog","/home/spagobi/apache-tomcat-7.0.50/resources/Olap/FoodMart.xml");
