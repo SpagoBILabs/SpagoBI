@@ -66,11 +66,7 @@ Sbi.cockpit.widgets.table.TableWidget = function(config) {
 		//this.refresh();
 		Sbi.trace("[TableWidget.onRender]: store loaded");
 	}, this);
-	
-	this.on("beforeDestroy", function(){
-		this.unboundStore();
-		Sbi.trace("[TableWidget.onBeforeDestroy]: store unbounded");
-	}, this);
+
 	
 	Sbi.trace("[TableWidget.constructor]: OUT");
 };
@@ -90,6 +86,8 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
      * This array contains all the services invoked by this class
      */
 	services: null
+	
+	, grid: null
     
     // =================================================================================================================
 	// METHODS
@@ -99,34 +97,28 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
     // public methods
 	// -----------------------------------------------------------------------------------------------------------------
     
-	, setStoreId: function(storeId, refresh) {
-		Sbi.trace("[TableWidget.setStoreIdx]: IN");
+	, boundStore: function() {
+		Sbi.trace("[TableWidget.boundStore]: IN");		
+		Sbi.cockpit.widgets.table.TableWidget.superclass.boundStore.call(this);
 		
-		if(storeId == this.getStoreId()) {
-			Sbi.trace("[TableWidget.setStoreId]: New store id is equal to the old one. Nothing to update.");
-			Sbi.trace("[TableWidget.setStoreId]: OUT");
-			return;
-		}
-
-		this.unboundStore();
-		
-		Sbi.cockpit.widgets.table.TableWidget.superclass.setStoreId.call(this, storeId, false);
-		
-		this.boundStore();
-		
-		var cm = new Ext.grid.ColumnModel([
-			new Ext.grid.RowNumberer(), {
-				header : "Data",
-				dataIndex : 'data',
-				width : 75
-		} ]);
-		this.grid.reconfigure(this.getStore(), cm);
-		
-		if(this.rendered === true && refresh !== false) {
-			this.refresh();
-		}
+		if(this.grid !== null) { // only if the grid has been already initialized reconfigure it properly
 			
-		Sbi.trace("[TableWidget.setStoreIdx]: OUT");
+			Sbi.trace("[TableWidget.boundStore]: reconfiguring the grid...");
+			var cm = new Ext.grid.ColumnModel([
+			   new Ext.grid.RowNumberer(), {
+				   header : "Data",
+			       dataIndex : 'data',
+			       width : 75
+			   } 
+			]);
+			this.grid.reconfigure(this.getStore(), cm);
+			Sbi.trace("[TableWidget.boundStore]: the grid has been reconfigured succesfully");
+		} else {
+			Sbi.trace("[TableWidget.boundStore]: the grid is not yet initialized.");
+		}
+		
+		                       		
+		Sbi.trace("[TableWidget.boundStore]: OUT");
 	}
 
 	, refresh:  function() {  
@@ -138,6 +130,8 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 		this.doLayout();
 		Sbi.trace("[TableWidget.refresh]: OUT");
 	}
+	
+	
 
 	// -----------------------------------------------------------------------------------------------------------------
     // private methods
@@ -159,6 +153,7 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 	
 	, onStoreLoad: function(store) {
 		Sbi.trace("[TableWidget.onStoreLoad]: IN");
+		Sbi.cockpit.widgets.table.TableWidget.superclass.onStoreLoad.call(this, store);	
 		
 		this.fireEvent('contentloaded');
 		
@@ -185,13 +180,11 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
      	Sbi.trace("[TableWidget.onStoreLoad]: OUT");		
 	}
 	
-	, onStoreLoadException: function(response, options) {
-		this.fireEvent('contentloaded');
-		Sbi.exception.ExceptionHandler.handleFailure(response, options);
-	}
 	
 	, onStoreMetaChange: function(store, meta) {
 		Sbi.trace("[TableWidget.onStoreMetaChange]: IN");	
+		Sbi.cockpit.widgets.table.TableWidget.superclass.onStoreMetaChange.call(this, store, meta);	
+		
 		var fields = new Array();
 		fields.push(new Ext.grid.RowNumberer());
 		
@@ -329,7 +322,6 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 		});
 	}
 
-
 	/**
 	 * @method 
 	 * 
@@ -342,25 +334,6 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 		Sbi.trace("[TableWidget.init]: OUT");
 	}
 	
-	/**
-	 * @method 
-	 * 
-	 * Initialize the store
-	 */
-	, boundStore: function() {
-		Sbi.trace("[TableWidget.boundStore]: IN");		
-		this.getStore().on('metachange', this.onStoreMetaChange, this);
-		this.getStore().on('load', this.onStoreLoad, this);
-		Sbi.trace("[TableWidget.boundStore]: OUT");
-	}
-	
-	, unboundStore: function() {
-		Sbi.trace("[TableWidget.unboundStore]: IN");		
-		this.getStore().un('metachange', this.onStoreMetaChange, this);
-		this.getStore().un('load', this.onStoreLoad, this);
-		Sbi.trace("[TableWidget.unboundStore]: OUT");
-	}
-
 	/**
 	 * @method 
 	 * 
