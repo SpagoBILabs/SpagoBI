@@ -6,6 +6,7 @@
 
 package it.eng.spagobi.engines.whatif;
 
+import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.engines.whatif.services.model.ModelConfig;
 import it.eng.spagobi.services.proxy.EventServiceProxy;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
@@ -74,26 +75,35 @@ public class WhatIfEngineInstance extends AbstractEngineInstance implements Seri
 
 		
 		IDataSource ds = (IDataSource)env.get(EngineConstants.ENV_DATASOURCE);
-		
-		String initialMdx = "SELECT {[Measures].[Unit Sales], [Measures].[Store Cost]} ON COLUMNS, {[Product].[Food]} ON ROWS FROM [Sales]";
-		Properties connectionProps = new Properties();
-		connectionProps.put("JdbcUser","foodmart");//ds.getUser());
-		connectionProps.put("JdbcPassword","foodmart");//ds.getPwd());
-		//connectionProps.put("Catalog","file:D:/progetti/SpagoBI/apache-tomcat-7.0.50/FoodMartMySQL.xml");
-		//connectionProps.put("Catalog","file:D:/Sviluppo/mondrian/FoodMartMySQL.xml");
-		connectionProps.put("Catalog","/home/spagobi/apache-tomcat-7.0.50/resources/Olap/FoodMart.xml");
-		connectionProps.put("JdbcDrivers",ds.getDriver());
-		connectionProps.put("inputJdbcSchema","foodmart");
-		
-		connectionProps.put("Provider","Mondrian");
 
-		olapDataSource = new SimpleOlapDataSource();
-		//((SimpleOlapDataSource)olapDataSource).setConnectionString( "jdbc:mondrian:Jdbc=jdbc:mysql://localhost:3306/foodmart_key");
-		((SimpleOlapDataSource)olapDataSource).setConnectionString( "jdbc:mondrian:Jdbc=jdbc:mysql://sibilla2:3306/foodmart");
-		((SimpleOlapDataSource)olapDataSource).setConnectionProperties(connectionProps);
+//		String initialMdx = "SELECT {[Measures].[Unit Sales], [Measures].[Store Cost]} ON COLUMNS, {[Product].[Food]} ON ROWS FROM [Sales]";
+//		Properties connectionProps = new Properties();
+//		//for athos
+//		//connectionProps.put("Catalog","/home/spagobi/apache-tomcat-7.0.50/resources/Olap/FoodMart.xml");
+//		//connectionProps.put("JdbcUser","foodmart");
+//		//connectionProps.put("JdbcPassword","foodmart");
+//		//connectionProps.put("Catalog","file:D:/progetti/SpagoBI/apache-tomcat-7.0.50/FoodMartMySQL.xml");
+//	
+//		connectionProps.put("JdbcUser",ds.getUser());
+//		connectionProps.put("JdbcPassword",ds.getPwd());
+//		
+//		connectionProps.put("Catalog","file:D:/Sviluppo/mondrian/FoodMartMySQL.xml");
+//		connectionProps.put("JdbcDrivers",ds.getDriver());
+//		connectionProps.put("inputJdbcSchema","foodmart");
+//		
+//		connectionProps.put("Provider","Mondrian");
+
+		olapDataSource =  WhatIfEngineConfig.getInstance().getOlapDataSource();
+//		((SimpleOlapDataSource)olapDataSource).setConnectionString( "jdbc:mondrian:Jdbc=jdbc:mysql://localhost:3306/foodmart_key");
+//		
+//		//for athos
+//		//((SimpleOlapDataSource)olapDataSource).setConnectionString( "jdbc:mondrian:Jdbc=jdbc:mysql://sibilla2:3306/foodmart");
+//		
+//		
+//		((SimpleOlapDataSource)olapDataSource).setConnectionProperties(connectionProps);
 		
 		pivotModel = new PivotModelImpl(olapDataSource);
-		pivotModel.setMdx(initialMdx);
+		pivotModel.setMdx( WhatIfEngineConfig.getInstance().getInitiallMdx());
 		pivotModel.initialize();
 		
 		
