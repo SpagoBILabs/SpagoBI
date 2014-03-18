@@ -182,14 +182,19 @@ Ext.define('Sbi.tools.multitenant.MultitenantListDetailPanel', {
 					}else{
 						Sbi.exception.ExceptionHandler.showInfoMessage(LN('sbi.generic.resultMsg'));
 					}
-								
-					var selectedRow = this.grid.getSelectionModel().getSelection();
-					selectedRow[0].set("MULTITENANT_ID", record.MULTITENANT_ID);
-					selectedRow[0].set("MULTITENANT_NAME", record.MULTITENANT_NAME);
-					selectedRow[0].set("MULTITENANT_THEME", record.MULTITENANT_THEME);
-
-					this.grid.store.commitChanges();						
 					this.detailPanel.setActiveTab(0);
+					
+					var selectedRow = this.grid.getSelectionModel().getSelection();
+				
+					selectedRow[0].data = Ext.apply(selectedRow[0].data, record);	
+					selectedRow[0].raw = Ext.apply(selectedRow[0].raw, record);	
+					selectedRow[0].commit();
+
+					this.grid.store.sync();
+					this.grid.store.load() ;
+					this.grid.getView().select(this.grid.store.data.length -1);
+					//this.grid.getSelectionModel().select(selectedRow[0]);
+					//this.grid.store.commitChanges();
 				}
 			} else {
 				Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
