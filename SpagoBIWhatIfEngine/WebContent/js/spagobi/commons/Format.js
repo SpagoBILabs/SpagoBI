@@ -63,7 +63,7 @@ Sbi.whatif.commons.Format = function(){
          */
         , dateRenderer : function(format){
             return function(v){
-                return Sbi.whatif.commons.Format.date(v, format);
+                return Sbi.qbe.commons.Format.date(v, format);
             };
         }
         
@@ -83,7 +83,7 @@ Sbi.whatif.commons.Format = function(){
 	    		
     		});
 
-        	if(!v) {
+        	if(v === undefined || v === null) {
         		 return format.nullValue;
         	}
         	
@@ -127,10 +127,19 @@ Sbi.whatif.commons.Format = function(){
         
         , numberRenderer : function(format){
             return function(v){
-                return Sbi.whatif.commons.Format.number(v, format);
+            	return '<div style=\'text-align: right;\'>' + Sbi.qbe.commons.Format.number(v, format) + '</div>';
             };
         }
-        
+        , floatRenderer : function(format){
+        	
+            return function(v){
+            	if( typeof v === 'string'){
+            		v = v.replace(',', '.');
+            	}
+            	var fl = parseFloat(v);
+            	return '<div style=\'text-align: right;\'>' + Sbi.qbe.commons.Format.number(fl, format) + '</div>';
+            };
+        }
         , string : function(v, format) {
         	format = Ext.apply({}, format || {}, {
 	    		trim: true,
@@ -171,11 +180,16 @@ Sbi.whatif.commons.Format = function(){
         
         , stringRenderer : function(format){
             return function(v){
-                return Sbi.whatif.commons.Format.string(v, format);
+                return Sbi.qbe.commons.Format.string(v, format);
             };
         }
         
-        , boolean : function(v, format) {
+        , 'boolean' : function(v, format) {
+        	
+        	if (typeof v === 'string') {
+        		v = Sbi.qbe.commons.Format.stringToBoolean(v);
+        	}
+        	
         	format = Ext.apply({}, format || {}, {
 	    		trueSymbol: 'true',
 	    		falseSymbol: 'false',
@@ -184,7 +198,7 @@ Sbi.whatif.commons.Format = function(){
         	
         	if(v === true){
         		 v = format.trueSymbol;
-            } else if(v === true){
+            } else if(v === false){
             	 v = format.falseSymbol;
             } else {
             	 v = format.nullValue;
@@ -195,7 +209,7 @@ Sbi.whatif.commons.Format = function(){
         
         , booleanRenderer : function(format){
             return function(v){
-                return Sbi.whatif.commons.Format.boolean(v, format);
+            	return Sbi.qbe.commons.Format['boolean'](v, format);
             };
         }
         
@@ -208,16 +222,55 @@ Sbi.whatif.commons.Format = function(){
         
         , htmlRenderer : function(format){
             return function(v){
-                return Sbi.whatif.commons.Format.html(v, format);
+                return Sbi.qbe.commons.Format.html(v, format);
             };
+        }
+        
+        , getFormatFromJavaPattern: function(pattern) {
+        	var toReturn = {};
+        	if (pattern === undefined || pattern === null || pattern.trim() === '') {
+        		return toReturn;
+        	}
+        	
+        	var decimalSeparatorIndex = pattern.indexOf(".");
+        	if (decimalSeparatorIndex !== -1) {
+        		toReturn.decimalPrecision = (pattern.length - decimalSeparatorIndex) - 1;
+        	} else {
+        		toReturn.decimalPrecision = 0;
+        		decimalSeparatorIndex = pattern.length;
+        	}
+        	
+        	var groupingSeparatorIndex = pattern.lastIndexOf(",");
+        	if (groupingSeparatorIndex !== -1) {
+        		toReturn.groupingSize = (decimalSeparatorIndex - 1) - groupingSeparatorIndex;
+        	} else {
+        		toReturn.groupingSize = Number.MAX_VALUE;
+        	}
+        	
+        	return toReturn;
+        	
+        }
+        
+
+        , stringToBoolean : function(string) {
+			switch (string.toLowerCase()) {
+				case "true":
+				case "yes":
+				case "1":
+					return true;
+				case "false":
+				case "no":
+				case "0":
+				case null:
+					return false;
+				default:
+					return Boolean(string);
+			}
         }
         
 	};
 	
 }();
-
-
-
 
 
 
