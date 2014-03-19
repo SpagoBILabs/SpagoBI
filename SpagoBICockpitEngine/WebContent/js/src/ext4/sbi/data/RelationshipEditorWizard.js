@@ -7,37 +7,39 @@
 
 Ext.define('Sbi.data.RelationshipEditorWizard', {
 	extend: 'Ext.Window'
-	
-	, config:{  editorMainPanel: null
-			  , targetComponent: null
+	, layout:'fit'
+	, config:{title: "Associations editor"				   
+			  , width: 1000
+			  , height: 510
+			  , closable: false
+			  , plain: true
+			  , modal: true	
 	}
 	
-	, constructor : function(config) {
 
+	/**
+	 * @property {Sbi.data.RelationshipEditorWizardPanel} editorMainPanel
+	 *  Container of the wizard panel
+	 */
+	, editorMainPanel: null
+
+	, constructor : function(config) {
 		Sbi.trace("[RelationshipEditorWizard.constructor]: IN");
-	
-		// init properties...
-		var defaultSettings = {
-			title: "Associations editor"
-		    , layout:'fit'
-		    , width: 1000
-		    , height: 510
-		    , closable: false
-		    , plain: true
-		    , modal: true	    
-		};
-		
-		var settings = Sbi.getObjectSettings('Sbi.data.RelationshipEditorWizard', defaultSettings);
-		var c = Ext.apply(settings, config || {});
-		Ext.apply(this, c);
-		
+		this.initConfig(config);
 		this.init();
 		this.initEvents();
-		
-		this.items = [this.editorMainPanel];
-		this.callParent(c);
+		this.callParent(arguments);
 		Sbi.trace("[RelationshipEditorWizard.constructor]: OUT");
 	}
+	
+	, initComponent: function() {
+  
+        Ext.apply(this, {
+            items: [this.editorMainPanel]
+        });
+        
+        this.callParent();
+    }
 	
 	// -----------------------------------------------------------------------------------------------------------------
     // public methods
@@ -71,7 +73,11 @@ Ext.define('Sbi.data.RelationshipEditorWizard', {
 
 	, init: function(){
 		Sbi.trace("[RelationshipEditorWizard.init]: IN");
-		
+		// ONLY FOR TEST
+		this.usedDatasets = [];
+		this.usedDatasets.push('ds__7525356');
+		this.usedDatasets.push('dsTestForAdmin');
+		//
 		this.editorMainPanel = Ext.create('Sbi.data.RelationshipEditorWizardPanel',{
 			usedDatasets: this.usedDatasets
 		});

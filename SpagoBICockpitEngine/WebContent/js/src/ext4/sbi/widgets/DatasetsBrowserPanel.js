@@ -377,7 +377,7 @@ Ext.extend(Sbi.widgets.DatasetsBrowserPanel, Ext.Panel, {
 			baseParams.isTech = false;
 			baseParams.showOnlyOwner = true;
 			baseParams.typeDoc = this.typeDoc;
-			baseParams.user_id = 'astatuser';
+//			baseParams.user_id = 'paperino';
 
 			this.services["list"] = Sbi.config.serviceRegistry.getRestServiceUrl({
 				serviceName : 'selfservicedataset',
@@ -391,7 +391,7 @@ Ext.extend(Sbi.widgets.DatasetsBrowserPanel, Ext.Panel, {
 			baseParams.isTech = true;
 			baseParams.showOnlyOwner = false;
 			baseParams.typeDoc = this.typeDoc;
-			baseParams.user_id = 'astatuser';
+//			baseParams.user_id = 'paperino';
 			
 			this.services["list"] = Sbi.config.serviceRegistry.getRestServiceUrl({
 				serviceName : 'certificateddatasets',
@@ -405,7 +405,7 @@ Ext.extend(Sbi.widgets.DatasetsBrowserPanel, Ext.Panel, {
 			baseParams.isTech = false;
 			baseParams.showOnlyOwner = false;
 			baseParams.typeDoc = this.typeDoc;
-			baseParams.user_id = 'astatuser';
+//			baseParams.user_id = 'paperino';
 			
 			this.services["list"] = Sbi.config.serviceRegistry.getRestServiceUrl({
 				serviceName : 'certificateddatasets',
@@ -421,7 +421,7 @@ Ext.extend(Sbi.widgets.DatasetsBrowserPanel, Ext.Panel, {
 			baseParams.showOnlyOwner = false;
 			baseParams.typeDoc = this.typeDoc;
 			baseParams.allMyDataDs = true;
-			baseParams.user_id = 'astatuser';
+//			baseParams.user_id = 'paperino';
 
 			this.services["list"] = Sbi.config.serviceRegistry.getRestServiceUrl({
 				serviceName : 'certificateddatasets',

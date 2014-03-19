@@ -7,74 +7,67 @@
 
 Ext.define('Sbi.data.editor.relationship.RelationshipEditor', {
 	extend: 'Ext.Panel'
+    , layout: 'border'
 
 	, config:{	
 		  services: null		
-		, dsContainerPanel: null
-		, relContainerPanel: null
+		, usedDatasets: null
 		, contextMenu: null		
-		, engineAlreadyInitialized : null
-		, layout: 'border'
+//		, engineAlreadyInitialized : null
 		, border: false
 		, autoScroll: true
 	}
 
-	, constructor : function(config) {
+	/**
+	 * @property {Sbi.data.editor.relationship.RelationshipEditorDatasetContainer} dsContainerPanel
+	 * The container of datasets
+	 */
+	, dsContainerPanel: null
+	/**
+	 * @property {Sbi.data.editor.relationship.RelationshipEditorList} relContainerPanel
+	 * The container of relationships
+	 */
+	, relContainerPanel: null
+	/**
+	 * @property {Ext.Array} relationsList
+	 * The list with all relations
+	 */
+	, relationsList: null 	
 
+	, constructor : function(config) {
 		Sbi.trace("[RelationshipEditor.constructor]: IN");
-		
-		var defaultSettings = {
-			engineAlreadyInitialized : false
-			, border : false
-			, autoScroll: true
-		};
-	
-		var settings = Sbi.getObjectSettings('Sbi.data.editor.relationship.RelationshipEditor', defaultSettings);
-		
-		var c = Ext.apply(settings, config || {});
-		Ext.apply(this, c);
-	
-		this.addEvents('addRelation');
-		
-		this.init(config);
-		
-		this.items = [
-			        {
-			        	id: 'dsContainerPanel',
-			        	region: 'center',
-	//		        	collapseMode:'mini',
-	//		        	split: true,
-			        	layout: 'fit',
-			        	autoScroll: true,
-			        	items: [this.dsContainerPanel]
-			        },
-			        {
-			        	id: 'relContainerPanel',	  
-			        	region: 'south',
-	//		        	split: true,
-	//		        	collapseMode:'mini',
-			        	autoScroll: true,
-			        	items: [this.relContainerPanel]
-			        }
-				];
-		this.callParent(c);
-		Sbi.trace("[RelationshipEditor.constructor]: OUT");
-		
+		this.initConfig(config);
+		this.initPanels(config);
+		this.callParent(arguments);		
+		this.addEvents('addRelation','addRelationToList');
+		Sbi.trace("[RelationshipEditor.constructor]: OUT");	
 	}
 
-	
-	
-
+	,  initComponent: function() {
+	        Ext.apply(this, {
+	            items:[{
+						id: 'dsContainerPanel',
+						region: 'center',
+						layout: 'fit',
+						autoScroll: true,
+						items: [this.dsContainerPanel]
+						},
+						{
+						id: 'relContainerPanel',	  
+						region: 'south',
+						autoScroll: true,
+						items: [this.relContainerPanel]
+						}]
+	        });
+	        this.callParent();
+	    }
+	   
 	// =================================================================================================================
 	// METHODS
 	// =================================================================================================================
 	
 	, initializeEngineInstance : function (config) {
 
-	}
-	
-	, init : function (config) {
-		this.initPanels(config);
 	}
 	
 	, initPanels: function(config){
@@ -84,13 +77,12 @@ Ext.define('Sbi.data.editor.relationship.RelationshipEditor', {
 	
 	, initDatasetPanel: function(config) {
 		this.dsContainerPanel = Ext.create('Sbi.data.editor.relationship.RelationshipEditorDatasetContainer',{usedDatasets: this.usedDatasets});
-//		this.dsContainerPanel.on('addRelationship',this.addRelationship, this);
+		this.dsContainerPanel.on('addRelationship',this.addRelationship, this);
 	}
 	
 	, initRelationshipPanel: function(config) {
 		this.relContainerPanel = Ext.create('Sbi.data.editor.relationship.RelationshipEditorList',{height:200});
-//		this.relContainerPanel.addListener('addRelation', this.addRelation, this);
-
+		this.relContainerPanel.addListener('addRelation', this.addRelation, this);
 	}
 	
 	, addRelation: function(){		
@@ -105,9 +97,64 @@ Ext.define('Sbi.data.editor.relationship.RelationshipEditor', {
 				relToAdd.push(f);
 			}
 		}
-		this.dsContainerPanel.addRelation(relToAdd);
+//		this.dsContainerPanel.addRelation(relToAdd);
+		this.addRelationToList(relToAdd);
 		
-		this.fireEvent('addRelation');
+//		this.fireEvent('addRelation');
+//		this.fireEvent('addRelationToList');
+	}
+	
+	, addRelationToList: function(r){
+		if (this.relationsList == null) 
+			this.relationsList = new Array();
+		
+		var obj = '';
+		var objType = '';
+		var equal = '';
+		var wrongTypes = false;
+		
+		for (var i=0; i< r.length; i++){			
+			var el = r[i];			
+			
+			if (i==0){
+				objType = el.colType;
+				equal = '=';
+			}else{
+				//check consistency between type fields
+				if (objType !== el.colType){
+					wrongTypes = true;					
+				}
+			}
+			//create association string (ex: tabA.colA=tabB.colB...)
+			obj += el.ds + '.' + el.alias + ((i<r.length-1)?equal:'');				
+		}
+		
+		if (wrongTypes){
+			Ext.MessageBox.confirm(
+					LN('sbi.generic.pleaseConfirm')
+					, 'Non tutte le tipologie dei campi selezionati coincidono. Si intende proseguire con l\'aggiunta della relazione?'
+		            , function(btn, text) {
+		                if ( btn == 'yes' ) {
+		                	this.relationsList.push({id: r.id, rel:obj});	
+		                	this.relContainerPanel.addRelationToList({id: r.id, rel:obj});
+//		                	this.fireEvent('addRelationToList');
+		                }
+					}
+					, this
+				);
+		}else{
+			if (obj !== ''){
+				this.relationsList.push({id: r.id, rel:obj});
+//				this.fireEvent('addRelationToList');
+				this.relContainerPanel.addRelationToList({id: r.id, rel:obj});
+			}else{
+				alert('Please select fields for the association!');
+			}
+		}
+		
+
+		Sbi.trace("[RelationshipEditor.addRelation]: Associations List updated with  [ " +  Sbi.toSource(this.relationsList) + ']');
+		
 	}
 	
 });
