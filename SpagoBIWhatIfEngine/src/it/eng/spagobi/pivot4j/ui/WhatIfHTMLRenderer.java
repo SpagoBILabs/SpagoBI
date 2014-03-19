@@ -7,28 +7,58 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import javax.faces.component.UIParameter;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.olap4j.Axis;
 import org.olap4j.OlapException;
+import org.olap4j.metadata.Level;
+import org.olap4j.metadata.Member;
+import org.olap4j.metadata.NamedList;
 
 import com.eyeq.pivot4j.ui.CellType;
 import com.eyeq.pivot4j.ui.RenderContext;
 import com.eyeq.pivot4j.ui.command.CellCommand;
 import com.eyeq.pivot4j.ui.command.CellParameters;
+import com.eyeq.pivot4j.ui.command.DrillDownCommand;
 import com.eyeq.pivot4j.ui.html.HtmlRenderer;
 import com.eyeq.pivot4j.ui.property.PropertySupport;
 import com.eyeq.pivot4j.util.CssWriter;
 
 public class WhatIfHTMLRenderer extends HtmlRenderer {
 
+	private List<CellCommand<?>> commands;
 	
 	public WhatIfHTMLRenderer(Writer writer) {
 		super(writer);
 		
 	}
+	@Override
+	public void startCell(RenderContext context, List<CellCommand<?>> commands) {
+		boolean header;
+
+		switch (context.getCellType()) {
+		case Header:
+		case Title:
+		case None:
+			header = true;
+			break;
+		default:
+			header = false;
+			break;
+		}
+
+		String name = header ? "th" : "td";
+
+		getWriter().startElement(name, getCellAttributes(context));
+
+		this.commands = commands;
+
+		if (commands != null && !commands.isEmpty()) {		
+			
+			startCommand(context, commands);
+		}
+	}
+
 
 	@Override
 	protected Map<String, String> getCellAttributes(RenderContext context) {
@@ -67,6 +97,7 @@ public class WhatIfHTMLRenderer extends HtmlRenderer {
 			break;
 		case None:
 			styleClass = getCornerStyleClass();
+			
 			break;
 		default:
 			assert false;
@@ -137,12 +168,16 @@ public class WhatIfHTMLRenderer extends HtmlRenderer {
 				} catch (OlapException e) {
 					e.printStackTrace();
 				}
+			}else if(context.getCellType() == CellType.Title){
+				styleClass = "dimension-title";
+				
 			}	
 			attributes.put("class", styleClass);
 		}
 		if(context.getCellType() == CellType.Value){
 			attributes.put("contentEditable", "true");
 		}
+
 		writer.flush();
 		IOUtils.closeQuietly(writer);
 
@@ -178,10 +213,11 @@ public class WhatIfHTMLRenderer extends HtmlRenderer {
 
 		if (link == null) {
 			Map<String, String> attributes = new TreeMap<String, String>();
+			String drillMode = this.getDrillDownMode();
 			if(context.getMember() != null && context.getMember().getMemberType() != null && !context.getMember().getMemberType().name().equalsIgnoreCase("Measure")){
 
 				List <CellCommand<?>> commands = getCommands(context);
-				String drillMode = this.getDrillDownMode();
+				
 				
 				if (commands != null && !commands.isEmpty()) {
 					for (CellCommand<?> command : commands) {
@@ -208,9 +244,9 @@ public class WhatIfHTMLRenderer extends HtmlRenderer {
 						}
 						if(cmd != null){
 							CellParameters parameters = command.createParameters(context);
-							System.out.println(context.getMember().getName());
-							boolean x = command.canExecute(context);
-							if((cmd.equalsIgnoreCase("collapsePosition") || cmd.equalsIgnoreCase("drillUp") || cmd.equalsIgnoreCase("collapseMember"))){
+
+							if((cmd.equalsIgnoreCase("collapsePosition") || cmd.equalsIgnoreCase("drillUp") || cmd.equalsIgnoreCase("collapseMember")) &&
+									(!drillMode.equals(DrillDownCommand.MODE_REPLACE ))){
 								attributes.put("src", "../img/minus.gif");
 								attributes.put("onClick", "javascript:Sbi.olap.eventManager.drillUp("+axis+" , "+pos+" , "+memb+")");
 								getWriter().startElement("img", attributes);			
@@ -227,7 +263,44 @@ public class WhatIfHTMLRenderer extends HtmlRenderer {
 				}
 
 			}
-			getWriter().writeContent(label);
+			
+			if((context.getCellType() == CellType.Title) && !label.equalsIgnoreCase("Measures")){				
+				///spagobi whatif engine 
+
+				int colIdx = context.getColumnIndex();
+				int rowIdx = context.getRowIndex();
+
+				int axis =0;
+				if(context.getAxis()!= null){
+					axis =context.getAxis().axisOrdinal();
+				}
+				int memb =0;
+				if(context.getPosition()!= null){
+					memb =context.getPosition().getOrdinal();
+				}
+				int pos =0;
+				if(context.getAxis() == Axis.COLUMNS){
+					pos = rowIdx;
+				}else{
+					pos = colIdx;
+				}
+
+				if(drillMode.equals(DrillDownCommand.MODE_REPLACE ) && !this.getShowParentMembers() ){
+
+					if(!label.toLowerCase().startsWith("all")){
+						attributes.put("src", "../img/arrow-up.png");
+						attributes.put("onClick", "javascript:Sbi.olap.eventManager.drillUp("+axis+" , "+pos+" , "+memb+")");
+						getWriter().startElement("img", attributes);			
+						getWriter().endElement("img");
+					}
+					getWriter().writeContent(label);
+					
+				}else if (!drillMode.equals(DrillDownCommand.MODE_REPLACE ) ){
+					getWriter().writeContent(label);
+				}
+			}else{
+				getWriter().writeContent(label);
+			}
 		} else {
 			Map<String, String> attributes = new HashMap<String, String>(1);
 			attributes.put("href", link);
