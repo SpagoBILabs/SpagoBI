@@ -49,7 +49,7 @@ public class WhatIfEngineInstance extends AbstractEngineInstance implements Seri
 
 	public static transient Logger logger = Logger.getLogger(WhatIfEngineInstance.class);
 	
-	private JSONObject guiSettings;
+	//private JSONObject guiSettings;
 	private List<String> includes;
 	private OlapDataSource olapDataSource;
 	private PivotModel pivotModel;
@@ -58,7 +58,7 @@ public class WhatIfEngineInstance extends AbstractEngineInstance implements Seri
 	public WhatIfEngineInstance(Object template, Map env) {
 		super( env );	
 		try {
-			this.guiSettings = new JSONObject(template);
+//			this.guiSettings = new JSONObject(template);
 		} catch (Throwable t) {
 			throw new SpagoBIRuntimeException("Impossible to parse template", t);
 		}
@@ -132,9 +132,9 @@ public class WhatIfEngineInstance extends AbstractEngineInstance implements Seri
 		return olapDataSource;
 	}
 
-	public JSONObject getGuiSettings() {
-		return guiSettings;
-	}
+//	public JSONObject getGuiSettings() {
+//		return guiSettings;
+//	}
 	
 	public List getIncludes() {
 		return includes;
