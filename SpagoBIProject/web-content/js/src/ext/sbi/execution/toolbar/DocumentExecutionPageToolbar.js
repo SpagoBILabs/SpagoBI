@@ -338,7 +338,8 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 				   this.executionInstance.document.decorators.isSavable && 
 				   (this.executionInstance.document.typeCode === 'MAP' 
 					   || this.executionInstance.document.typeCode === 'WORKSHEET' 
-						   || this.executionInstance.document.typeCode === 'DATAMART') && 
+						   || this.executionInstance.document.typeCode === 'DATAMART'
+							   || this.executionInstance.document.typeCode === 'SMART_FILTER') && 
 				   Sbi.user.userId !== this.PUBLIC_USER) {
 			   
 			   var saveButtonHidden = this.executionInstance.document.typeCode === 'MAP' ? 
@@ -1046,6 +1047,10 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 			   this.isInsert = true;
 			   this.saveDocumentAs();
 			   return;
+			case 'SMART_FILTER':
+				   this.isInsert = true;
+				   this.saveDocumentAs();
+				   return;
 			default:
 				throw "Cannot save document type " + this.executionInstance.document.typeCode;
 		}

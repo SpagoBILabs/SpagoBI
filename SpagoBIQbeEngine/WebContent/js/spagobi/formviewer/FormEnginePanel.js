@@ -97,19 +97,29 @@ Ext.extend(Sbi.formviewer.FormEnginePanel, Ext.Panel, {
 		this.formViewerPage = new Sbi.formviewer.FormViewerPage(template, config, formValues);
 		this.formViewerPage.on('submit', this.moveToResultsPage, this);
 		this.formViewerPage.on('crosstabrequired', this.moveToWorksheetPage, this);
+		this.formViewerPage.on('activate', this.getSaveWorksheetButtonEnabler(false), this);
 	}
 
 	, initResultsPage: function(config) {
 		this.resultsPage = new Sbi.formviewer.ResultsPage(config);
 		this.resultsPage.on('edit', this.moveToFormPage, this);
+		this.resultsPage.on('activate', this.getSaveWorksheetButtonEnabler(false), this);
 	}
 	
 	, initWorksheetPage: function(config) {
 		this.worksheetPage = new Sbi.formviewer.WorksheetPage(config);
 		this.worksheetPage.on('edit', this.moveToFormPage, this);
 		this.worksheetPage.on('contentexported', function(){sendMessage({}, 'contentexported');}, this);
+		this.worksheetPage.on('activate', this.getSaveWorksheetButtonEnabler(true), this);
 	}
 
+	, getSaveWorksheetButtonEnabler : function (enabled) {
+		var toReturn = function () {
+			sendMessage({button: "saveworksheet", property:"visibility", value:"" + enabled + ""}, "managebutton");
+		};
+		return toReturn;
+	}
+	
     , moveToWorksheetPage: function(formState) {
     	this.getLayout().setActiveItem( 2 );
     	this.worksheetPage.setFormState(formState);
