@@ -158,6 +158,7 @@ Ext.define('Sbi.tools.scheduler.SchedulerListDetailPanel', {
 												Sbi.exception.ExceptionHandler.showInfoMessage(LN('sbi.scheduler.activity.deleted'));
 												this.grid.store.remove(record);
 												this.grid.store.commitChanges();
+												this.detailPanel.hide();
 											}
 										}
 									} else {
