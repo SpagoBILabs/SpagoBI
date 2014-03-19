@@ -336,14 +336,21 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 
 		   if (this.executionInstance.document && this.executionInstance.document.decorators &&  
 				   this.executionInstance.document.decorators.isSavable && 
-				   (this.executionInstance.document.typeCode === 'MAP' && Sbi.user.userId !== this.PUBLIC_USER)) {
-			   var conf ={
+				   (this.executionInstance.document.typeCode === 'MAP' 
+					   || this.executionInstance.document.typeCode === 'WORKSHEET' 
+						   || this.executionInstance.document.typeCode === 'DATAMART') && 
+				   Sbi.user.userId !== this.PUBLIC_USER) {
+			   
+			   var saveButtonHidden = this.executionInstance.document.typeCode === 'MAP' ? 
+					   !(this.executionInstance.document.creationUser == Sbi.user.userId)
+					   : true;
+					   
+			   var conf = {
 				   iconCls: 'icon-save' 
 					   , tooltip: LN('sbi.execution.executionpage.toolbar.save')
 					   , scope: this
-//					   , handler : this.saveDocumentAs
-					   , handler : function(){this.isInsert=false;this.saveDocumentAs()}
-					   , hidden: (this.executionInstance.document.creationUser==Sbi.user.userId)?false:true
+					   , handler : this.saveButtonHandler
+					   , hidden: saveButtonHidden
 			  };
 			 
 			  this.saveButton = new Ext.Toolbar.Button(conf);
@@ -1010,8 +1017,8 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 	 
 	 , manageButton: function(button, property, value){
 		 var aButton;
-		 if(button == "saveworksheet" && this.saveWorksheetButton){
-			 aButton = this.saveWorksheetButton;
+		 if(button == "saveworksheet" && this.saveButton){
+			 aButton = this.saveButton;
 		 }
 		 if(aButton){
 			 if(button == "saveworksheet"){
@@ -1027,6 +1034,22 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 
 	 }
 	
+	 
+	 ,
+	 saveButtonHandler : function () {
+		switch (this.executionInstance.document.typeCode) {
+			case 'MAP':
+			   this.isInsert = false;
+			   this.saveDocumentAs();
+			   return;
+			case 'DATAMART':
+			   this.isInsert = true;
+			   this.saveDocumentAs();
+			   return;
+			default:
+				throw "Cannot save document type " + this.executionInstance.document.typeCode;
+		}
+	 }
 	 
 		// =================================================================================================================
 		// EVENTS
