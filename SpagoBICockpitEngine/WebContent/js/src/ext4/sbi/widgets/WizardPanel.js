@@ -5,8 +5,8 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. **/
 
 Ext.define('Sbi.widgets.WizardPanel', {
-	extend: 'Ext.Panel'
-
+	extend: 'Ext.panel.Panel'
+	, layout : 'card'
 	, config:{	
 		/**
 	     * @property {Array} pages
@@ -21,40 +21,49 @@ Ext.define('Sbi.widgets.WizardPanel', {
 		, buttons: null
 		
 		, pageToActivateOnRender: null
+		, border: false
+		, activeItem : 0
+		, autoScroll : true
 	}
 
 	, constructor : function(config) {
 		Sbi.trace("[WizardPanel.constructor]: IN");
-		
-		var defaultSettings = {		
-			border: false,
-			layout : 'card',
-			activeItem : 0, 
-			autoScroll : true
-		};
+//		this.initConfig(config);
+//		var defaultSettings = {		
+//			border: false,
+//			
+//			activeItem : 0, 
+//			autoScroll : true
+//		};
 			
-		if(Sbi.settings && Sbi.widgets && Sbi.widgets.wizardPanel) {
-			defaultSettings = Ext.apply(defaultSettings,  Sbi.widgets.wizardPanel);
-		}
-		var c = Ext.apply(defaultSettings, config || {});
-		Ext.apply(this, c);
-			
+//		if(Sbi.settings && Sbi.widgets && Sbi.widgets.wizardPanel) {
+//			defaultSettings = Ext.apply(defaultSettings,  Sbi.widgets.wizardPanel);
+//		}
+//		var c = Ext.apply(defaultSettings, config || {});
+//		var c = Ext.apply({}, config || {});
+//		Ext.apply(this, c);
+//			
 		this.init();
 		
-		c = Ext.apply(c, {
-			items: this.pages,
-			buttons: this.buttons
-		}); 
+//		c = Ext.apply(c, {
+//			items: this.pages,
+//			buttons: this.buttons
+//		}); 
 		
-		Sbi.trace("[WizardPanel.constructor]: call parent costructor");
 		this.callParent(arguments);
-		Sbi.trace("[WizardPanel.constructor]: parent costructor succesfully called");
-		
 		this.addEvents('navigate', 'cancel', 'submit');
 		
 		Sbi.trace("[WizardPanel.constructor]: OUT");
 	}
 
+	,  initComponent: function() {
+	        Ext.apply(this, {
+//	            bbar: this.buttons,
+	            items: this.pages
+	           , buttons: this.buttons
+	        });
+	        this.callParent();
+    }
 
 	// =================================================================================================================
 	// METHODS

@@ -14,36 +14,36 @@
 
 Ext.define('Sbi.data.editor.relationship.RelationshipEditorList', {
 	extend: 'Ext.Panel'
-
+	, layout: 'fit'
 	, config:{	
 		  services: null
 		, grid: null
 		, store: null
 		, displayRefreshButton: null  // if true, display the refresh button
+		, border: true
+//		, bodyStyle:'background:green;',
+		, style: {marginTop: '3px', marginRight: '5px', marginLeft:'5px'}
+		, height: 200	
+//	,	bodyStyle:'padding:3px;background:green'
+  		
 	}
 
 	, constructor : function(config) { 	
-		
-		var defaultSettings = {
-			border: true,
-//			bodyStyle:'background:green;',
-			style: {marginTop: '3px', marginRight: '5px', marginLeft:'5px'}
-	//	,	bodyStyle:'padding:3px;background:green'
-	      ,	layout: 'fit'
-		};
-		var settings = Sbi.getObjectSettings('Sbi.data.editor.relationship.RelationshipEditorList', defaultSettings);
-	
-		var c = Ext.apply(settings, config || {});
-		Ext.apply(this, c);
-			
+		Sbi.trace("[RelationshipEditorList.constructor]: IN");
+		this.initConfig(config);
 		this.initServices();
 		this.init();
-		
-		this.items = [this.grid];
-		this.callParent(c);
+		this.callParent(config);
 		this.addEvents("addRelation");
+		Sbi.trace("[RelationshipEditorList.constructor]: OUT");
 	}
 
+	, initComponent: function() {
+        Ext.apply(this, {
+            items: [this.grid]
+        });
+        this.callParent();
+	}	   
 
 
     // =================================================================================================================
@@ -98,30 +98,19 @@ Ext.define('Sbi.data.editor.relationship.RelationshipEditorList', {
 	 * Initialize the GUI
 	 */
 	, init: function() {
+		this.initStore();
 		this.initGrid();
 	}
     
 	, initStore: function() {
 		Sbi.trace("[RelationshipEditorDataset.initStore]: IN");
-
-		this.store = new Ext.data.JsonStore({
-			autoLoad : (this.dataset)?true:false
-			, idProperty : 'alias'
-			, root: 'results'
-			, fields: ['id', 'alias', 'colType', 'funct', 'iconCls', 'nature', 'values', 'precision', 'options']
-			, url: Sbi.config.serviceRegistry.getRestServiceUrl({
-				serviceName : 'dataset/' + this.dataset + '/fields'
-			})
-		}); 
-    	
-		this.store.on('loadexception', function(store, options, response, e){
-			Sbi.exception.ExceptionHandler.handleFailure(response, options);
-		}, this);
-		
-		this.store.on('load', function(){
-			Sbi.trace("[RelationshipEditorDataset.onLoad]: XXX");
-//			this.fireEvent("validateInvalidFieldsAfterLoad", this); 	 //evento per autodetext?	
-		}, this);
+	   this.store = Ext.create('Ext.data.ArrayStore', {
+	        fields: [
+	           {name: 'id'},
+	           {name: 'rel'}
+	        ],
+	        data: []
+	    });
 		
 		Sbi.trace("[RelationshipEditorDataset.initStore]: OUT");
 	}
@@ -129,8 +118,6 @@ Ext.define('Sbi.data.editor.relationship.RelationshipEditorList', {
     , initGrid: function() {
     	var thisPanel = this;
     	var c = this.gridConfig;
-		
-    	this.initStore();
     	
     	// The add action
     	var title = new Ext.form.Label({text:'Associations List',  style: 'font-weight:bold;'});
@@ -141,25 +128,53 @@ Ext.define('Sbi.data.editor.relationship.RelationshipEditorList', {
             }
         });
 		
-		this.grid = new Ext.grid.GridPanel(Ext.apply(c || {}, {
+        this.grid = Ext.create('Ext.grid.Panel', Ext.apply(c || {}, {
 	        store: this.store,
-	        hideHeaders: true,
+	        tbar: new Ext.Toolbar({items:[title, '->', action]}),
 	        columns: [
-	            {id:'alias' 
-            	, header: 'Column' //LN('sbi.formbuilder.queryfieldspanel.fieldname')
-            	, width: 160
+	            { header: 'Id' //LN('sbi.formbuilder.queryfieldspanel.fieldname')
+            	, width: 10
             	, sortable: true
-            	, dataIndex: 'alias'
-	            , scope: this
-            	}
-	        ],
-	        stripeRows: false,
-	        autoExpandColumn: 'alias',
-	        enableDragDrop: true,
-	        tbar: new Ext.Toolbar({items:[title, '->', action]})	        
+            	, dataIndex: 'id'
+            	, flex: 1
+            	}, {
+        		  header: 'Association ' // LN('sbi.formbuilder.queryfieldspanel.fieldtype')
+            	, width: 700
+            	, sortable: true
+            	, dataIndex: 'rel'
+            	},{
+                    xtype: 'actioncolumn',
+                    width: 50,
+                    items: [{
+//                        icon   : '../shared/icons/fam/delete.gif',  // Use a URL in the icon config
+                        iconCls:'icon-delete',
+                        tooltip: 'Delete association',
+                        handler: function(grid, rowIndex, colIndex) {
+                            var rec = this.store.getAt(rowIndex);
+                            alert("Delete association " + rec.get('rel'));
+                        },
+                        scope:this
+                    }
+                    ]
+                }
+	        ],	        
+	        viewConfig: {
+	        	stripeRows: false
+	        }
 	    }));
     }
     
+    , addRelToStore: function(r){
+    	var relId = '#'+ ((this.store.data.length !== undefined)?this.store.data.length:0);
+    	var myData = [
+		              [relId, r.rel]
+		             ];
+//    	var myData =  this.store.data.items;
+//    	myData.push([relId, r.rel]);
+	
+		this.store.loadData(myData, true);
+		this.doLayout();	
+    }
     
     // public methods 
     , getFields : function () {
@@ -170,5 +185,8 @@ Ext.define('Sbi.data.editor.relationship.RelationshipEditorList', {
     	}
     	return fields;
     }
-
+    
+    , addRelationToList: function(rel){
+    	this.addRelToStore(rel);
+    }
 });

@@ -124,9 +124,9 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 		}
 	
 		// for easy debug purpose
-		var testStore = this.createTestStore();
-		Sbi.trace("[StoreManager.init]: adding test store whose type is equal to [" + testStore.storeType + "]");
-		this.addStore(testStore);
+//		var testStore = this.createTestStore();
+//		Sbi.trace("[StoreManager.init]: adding test store whose type is equal to [" + testStore.storeType + "]");
+//		this.addStore(testStore);
 		
 		Sbi.trace("[StoreManager.init]: OUT");
 	}

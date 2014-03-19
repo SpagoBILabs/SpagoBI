@@ -14,36 +14,44 @@
 
 
 Ext.define('Sbi.data.editor.relationship.RelationshipEditorDataset', {
-	extend: 'Ext.Panel'
-
+	  extend: 'Ext.Panel'
+	, layout: 'fit'
+		
 	, config:{	
-		  services: null
-	    , grid: null
-	    , store: null
-	    , displayRefreshButton: null  // if true, display the refresh button
+		border: true
+		, dataset: null
+		, gridConfig: null
+//		, bodyStyle:'background:green;',
+	    , style: {marginTop: '3px', marginRight: '5px', marginLeft:'5px'}
+//	,	bodyStyle:'padding:3px;background:green'        
+		, services: null
+	    , grid: null	    
+	    , height : 225
+		, width : 180		
+	    , displayRefreshButton: true  // if true, display the refresh button
 	}
 
-	, constructor : function(config) { 	
-
-		var defaultSettings = {
-			border: true,
-			bodyStyle:'background:green;',
-			style: {marginTop: '3px', marginRight: '5px', marginLeft:'5px'}
-	//	,	bodyStyle:'padding:3px;background:green'
-	      ,	layout: 'fit'
-		};
-		var settings = Sbi.getObjectSettings('Sbi.data.editor.relationship.RelationshipEditorDataset', defaultSettings);
-	
-		var c = Ext.apply(settings, config || {});
-		Ext.apply(this, c);
-			
+	/**
+	 * @property {Ext.data.Store} store
+	 *  The store for the grid
+	 */
+	, store: null
+	, constructor : function(config) {
+		Sbi.trace("[RelationshipEditorDataset.constructor]: IN");
+		this.initConfig(config);
 		this.initServices();
 		this.init();
-		
-		this.items = [this.grid];
-		this.callParent(c);
+		this.callParent(config);
 		this.addEvents('addFieldToRelation');	
+		Sbi.trace("[RelationshipEditorDataset.constructor]: OUT");
 	}
+	
+	, initComponent: function() {
+	        Ext.apply(this, {
+	            items: [this.grid]
+	        });
+	        this.callParent();
+	}	   
 
     
     // =================================================================================================================
@@ -83,9 +91,6 @@ Ext.define('Sbi.data.editor.relationship.RelationshipEditorDataset', {
     , initServices: function(){
     	var baseParams = {};
     	if (this.dataset) baseParams.dataset = this.dataset;
-    	
-    	baseParams.user_id = 'paperino';
-    	
     	this.services = this.services || new Array();	
     	this.services["getQueryFields"] = Sbi.config.serviceRegistry.getRestServiceUrl({
     		serviceName : 'dataset/{label}/fields'
@@ -100,34 +105,50 @@ Ext.define('Sbi.data.editor.relationship.RelationshipEditorDataset', {
 	 * Initialize the GUI
 	 */
 	, init: function() {
+		this.initStore();
 		this.initGrid();
 	}
     
 	, initStore: function() {
 		Sbi.trace("[RelationshipEditorDataset.initStore]: IN");
-		//ONLY FOR TEST
-		baseParams ={};
-		baseParams.user_id = 'paperino';
-		//FINE TEST
-		this.store = new Ext.data.JsonStore({
-			autoLoad : (this.dataset)?true:false
-			, idProperty : 'alias'
-			, root: 'results'
-			, fields: ['id', 'alias', 'colType', 'funct', 'iconCls', 'nature', 'values', 'precision', 'options']
-			, url: Sbi.config.serviceRegistry.getRestServiceUrl({
-				serviceName : 'dataset/' + this.dataset + '/fields'
-				,baseParams : baseParams //ONLY FOR TEST
-			})
-		}); 
-    	
-		this.store.on('loadexception', function(store, options, response, e){
-			Sbi.exception.ExceptionHandler.handleFailure(response, options);
-		}, this);
+
 		
-		this.store.on('load', function(){
-			Sbi.trace("[RelationshipEditorDataset.onLoad]: XXX");
-//			this.fireEvent("validateInvalidFieldsAfterLoad", this); 	 //evento per autodetect?	
-		}, this);
+//		var storeConfig = {
+//				   model: 'Sbi.data.DatasetsFieldsModel',
+//				   proxy:{
+//				    	type : 'rest',
+//				    	url : Sbi.config.serviceRegistry.getRestServiceUrl({
+//				    		serviceName : 'dataset/' + this.dataset + '/fields'
+//				    	}),
+//				    	reader : {
+//				    		type : 'json',
+//				    		root : 'results'
+//				    	}
+//				   	},
+//				   	autoLoad: true,
+//				   	autoSync: true
+//		};
+//		this.store = Ext.create('Ext.data.Store', storeConfig);
+		
+		var myData = [
+		              ['Col. 1', 'String'],
+		              ['Col. 2', 'Double'],
+		              ['Col. 3', 'String']
+		              ];
+		
+		this.store = Ext.create('Ext.data.ArrayStore', {
+	        fields: [
+	           {name: 'alias'},
+	           {name: 'colType'}
+	        ],
+	        data: myData
+	    });
+
+//		this.store.on('load', function(){
+//			Sbi.trace("[RelationshipEditorDataset.onLoad]: XXX");
+//			alert('loading store...');
+////			this.fireEvent("validateInvalidFieldsAfterLoad", this); 	 //evento per autodetect?	
+//		}, this);
 		
 		Sbi.trace("[RelationshipEditorDataset.initStore]: OUT");
 	}
@@ -135,32 +156,24 @@ Ext.define('Sbi.data.editor.relationship.RelationshipEditorDataset', {
     , initGrid: function() {
     	var c = this.gridConfig;
 		
-    	this.initStore();
-//		this.grid = new Ext.Panel({title:'sono un pannello ma dovrei essere una griglia'});
-		this.grid = new Ext.grid.Panel(Ext.apply(c || {}, {
+		this.grid = Ext.create('Ext.grid.Panel', Ext.apply(c || {}, {
 	        store: this.store,
-	        hideHeaders: false,
 	        columns: [
 	            { header: 'Column' //LN('sbi.formbuilder.queryfieldspanel.fieldname')
-            	, width: 160
+            	, width: 100
             	, sortable: true
             	, dataIndex: 'alias'
-	            , scope: this
+            	, flex: 1
             	}, {
         		  header: 'Type' // LN('sbi.formbuilder.queryfieldspanel.fieldtype')
             	, width: 75
             	, sortable: true
             	, dataIndex: 'colType'
-	            , scope: this
             	}
 	        ],
-	        viewConfig: {stripeRows: false,
-			        	 autoExpandColumn: 'alias',
-			        	 enableDragDrop: true
-	        }
-//	        stripeRows: false,
-//	        autoExpandColumn: 'alias',
-//	        enableDragDrop: true
+	        viewConfig: {
+	        	stripeRows: false
+	        }	        
 	    }));
 //		this.grid.on('cellClick', this.onCellClick, this);
     }

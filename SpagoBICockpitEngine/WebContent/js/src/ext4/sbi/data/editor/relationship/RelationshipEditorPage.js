@@ -5,35 +5,35 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. **/
 
 Ext.define('Sbi.data.editor.relationship.RelationshipEditorPage', {
-		extend: 'Ext.Panel'
+	  extend: 'Ext.Panel'
+	, layout: 'fit'
+			
+	, config:{	
+		    usedDatasets: null
+		  , itemId: 0
+		  , border: false
+	}
 
-  , config:{	
-	  relationshipEditorPanel: null
-  }
+	/**
+	 * @property {Sbi.data.editor.relationship.RelationshipEditor} relationshipEditorPanel
+	 *  Container of the editor component
+	 */
+	 , relationshipEditorPanel: null
 	
- , constructor : function(config) {
-	Sbi.trace("[RelationshipEditorPage.constructor]: IN");
-
-	// init properties...
-	var defaultSettings = {
-		itemId: 0
-		, layout: 'fit'
-		, border: false
-	};
-	var settings = Sbi.getObjectSettings('Sbi.data.editor.relationship.RelationshipEditorPage', defaultSettings);
-	var c = Ext.apply(settings, config || {});
+	 , constructor : function(config) {
+		Sbi.trace("[RelationshipEditorPage.constructor]: IN");
+		this.initConfig(config);
+		this.init();
+		this.callParent(arguments);
+		Sbi.trace("[RelationshipEditorPage.constructor]: OUT");
+	 }
 	
-	Sbi.trace("[RelationshipEditorPage.constructor]: config [" + Sbi.toSource(c)+ "]");
-	
-	Ext.apply(this, c);
-	
-	this.init();
-	
-	this.items = [this.relationshipEditorPanel];
-	this.callParent(c);
-	Sbi.trace("[RelationshipEditorPage.constructor]: OUT");
- }
-
+	 , initComponent: function() {
+	     Ext.apply(this, {
+	         items: [this.relationshipEditorPanel]
+	     });
+	     this.callParent();
+	 }	   
 
 	
 	// =================================================================================================================

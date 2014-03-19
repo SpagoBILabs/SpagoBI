@@ -16,28 +16,20 @@ Ext.define('Sbi.data.RelationshipEditorWizardPanel', {
 	     * <pre><code>wizardPanel.getDatasetBrowserPage().getUsedDatasets();</code></pre>
 	     */
 		usedDatasets: null
-		
-		/**
-	     * @property {Sbi.cockpit.editor.relationship.RelationshipEditorPage} relationshipEditorPage
-	     * The page that manages relationship editing
-	     */
-		, relationshipEditorPage: null
+	  , frame: false
+	  , border: false
 	}
 
-	, constructor : function(config) {
-
-		Sbi.trace("[RelationshipEditorWizardPanel.constructor]: IN");
+	/**
+	 * @property {Sbi.cockpit.editor.relationship.RelationshipEditorPage} relationshipEditorPage
+	 * The page that manages relationship editing
+	 */
+	, relationshipEditorPage: null
 	
-		// init properties...
-		var defaultSettings = {
-			frame: false,
-			border: false
-		};
-		var settings = Sbi.getObjectSettings('Sbi.data.RelationshipEditorWizardPanel', defaultSettings);
-		var c = Ext.apply(settings, config || {});
-		Ext.apply(this, c);
-		this.callParent(c);
-		
+	, constructor : function(config) {
+		Sbi.trace("[RelationshipEditorWizardPanel.constructor]: IN");
+		this.initConfig(config);
+		this.callParent(config);
 		Sbi.trace("[RelationshipEditorWizardPanel.constructor]: OUT");
 	}
 
@@ -65,6 +57,7 @@ Ext.define('Sbi.data.RelationshipEditorWizardPanel', {
 		
 		this.initRelationshipEditorPage();
 		this.pages.push(this.relationshipEditorPage);
+
 		Sbi.trace("[RelationshipEditorWizardPanel.initPages]: relationship editor page succesfully adedd");
 		
 		Sbi.trace("[RelationshipEditorWizardPanel.initPages]: OUT");
