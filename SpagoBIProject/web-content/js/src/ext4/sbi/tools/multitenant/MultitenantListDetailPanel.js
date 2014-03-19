@@ -188,13 +188,21 @@ Ext.define('Sbi.tools.multitenant.MultitenantListDetailPanel', {
 				
 					selectedRow[0].data = Ext.apply(selectedRow[0].data, record);	
 					selectedRow[0].raw = Ext.apply(selectedRow[0].raw, record);	
+					selectedRow[0].data.MULTITENANT_ID = record.MULTITENANT_ID;
 					selectedRow[0].commit();
 
 					this.grid.store.sync();
-					this.grid.store.load() ;
-					this.grid.getView().select(this.grid.store.data.length -1);
+					this.grid.store.commitChanges() ;
+					this.grid.store.loadData( selectedRow[0], true ) ;
+					
+					this.grid.getView().refresh();
+					
+					this.detailPanel.tenantId.setValue(record.MULTITENANT_ID);
+					
 					//this.grid.getSelectionModel().select(selectedRow[0]);
-					//this.grid.store.commitChanges();
+					//this.grid.getView().select(this.grid.store.data.length -1);
+					//this.grid.store.on('refresh',this.grid.getView().select(this.grid.getSelectionModel().select(selectedRow[0])));
+					//this.grid.store.on('refresh', this.grid.getView().select(this.grid.store.data.length -1));
 				}
 			} else {
 				Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
