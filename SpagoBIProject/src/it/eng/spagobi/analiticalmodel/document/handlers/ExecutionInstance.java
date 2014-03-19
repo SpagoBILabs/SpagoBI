@@ -621,7 +621,7 @@ public class ExecutionInstance implements Serializable{
 			List errorsOnChecks = getValidationErrorsOnChecks(biparam);
 
 			List values = biparam.getParameterValues();
-			if (biparam.isRequired() && (values == null || values.isEmpty()) || normalizeList(values).size() == 0) {
+			if (biparam.isRequired() && (values == null || values.isEmpty() || normalizeList(values).size() == 0)) {
 				EMFValidationError error = SpagoBIValidationImpl.validateField(biparam.getParameterUrlName(), biparam.getLabel(), null, "MANDATORY", null, null, null);
 				errorsOnChecks.add(error);
 			}
