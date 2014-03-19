@@ -19,6 +19,7 @@ import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.execution.service.ExecuteAdHocUtility;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.dao.DAOConfig;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IDomainDAO;
 import it.eng.spagobi.commons.serializer.DataSetJSONSerializer;
@@ -1223,6 +1224,7 @@ public class SelfServiceDataSetCRUD {
 
 	private IDataSet getFileDataSet(HttpServletRequest request, boolean savingDataset) {
 		FileDataSet toReturn = new FileDataSet();
+		toReturn.setResourcePath(DAOConfig.getResourcePath());
 		JSONObject jsonDsConfig = this.getFileDataSetConfig(request, savingDataset);
 		toReturn.setConfiguration(jsonDsConfig.toString());
 		
