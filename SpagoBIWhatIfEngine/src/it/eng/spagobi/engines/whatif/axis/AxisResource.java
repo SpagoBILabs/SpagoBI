@@ -31,15 +31,15 @@ public class AxisResource extends AbstractWhatIfEngineService {
 	
 	public static transient Logger logger = Logger.getLogger(AxisResource.class);
 	
-	private AxisBusiness axisBusiness;
+	private AxisDimensionManager axisBusiness;
 	
 	
 	
-	private AxisBusiness getAxisBusiness() {
+	private AxisDimensionManager getAxisBusiness() {
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
 				
 		if(axisBusiness==null){
-			axisBusiness = new AxisBusiness(ei);
+			axisBusiness = new AxisDimensionManager(ei);
 		}
 		return axisBusiness;
 	}
