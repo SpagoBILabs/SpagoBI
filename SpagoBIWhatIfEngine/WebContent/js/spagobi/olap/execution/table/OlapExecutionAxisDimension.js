@@ -56,6 +56,9 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionAxisDimension', {
 		if(Sbi.settings && Sbi.settings.olap && Sbi.settings.olap.execution && Sbi.settings.olap.execution.table && Sbi.settings.olap.execution.table.OlapExecutionAxisMember) {
 			Ext.apply(this,Sbi.settings.olap.execution.OlapExecutionAxisDimension);
 		}
+		this.buildDimensionPanel();
+		this.moveUpPanel = Ext.create("Ext.Panel",this.buildUpPanelConf());
+		this.moveDownPanel =Ext.create("Ext.Panel",this.buildDownPanelConf());
 
 		this.callParent(arguments);
 	},
@@ -63,27 +66,10 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionAxisDimension', {
 
 	initComponent: function() {
 		
-		this.buildDimensionPanel();
-		this.moveUpPanel = Ext.create("Ext.Panel",this.buildUpPanelConf());
-		this.moveDownPanel =Ext.create("Ext.Panel",this.buildDownPanelConf());
-
-		var items = [];
-		if(!this.firstDimension){
-			items.push( this.moveUpPanel);
-		}
-
-		items.push( this.dimensionPanel);
-
-		if(!this.lastDimension){
-			items.push( this.moveDownPanel);
-		}
-
-
 		Ext.apply(this, {
-			items: items,
-			layout: this.subPanelLayout,
-			frame: true,
 
+			layout: this.subPanelLayout,
+			
 			listeners: {
 				el: {
 					mouseover: {
@@ -103,6 +89,20 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionAxisDimension', {
 		}
 		);
 		this.callParent();
+	},
+	
+	buildItems: function(){
+		var items = [];
+		if(!this.firstDimension){
+			items.push( this.moveUpPanel);
+		}
+
+		items.push( this.dimensionPanel);
+
+		if(!this.lastDimension){
+			items.push( this.moveDownPanel);
+		}
+		return items;
 	},
 
 	

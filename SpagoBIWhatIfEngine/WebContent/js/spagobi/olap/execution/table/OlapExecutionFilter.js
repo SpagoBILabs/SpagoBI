@@ -95,15 +95,9 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionFilter', {
 
 	
 	
-	
-
-	initComponent: function() {
-
-		
+	buildItems: function(){
 		var thisPanel = this;
-		Ext.apply(this, {
-
-			items: [this.titlePanel , {
+		return  [this.titlePanel , {
 				region: 'center',
 				style: 'height: "100%"; background-color: transparent; margin: 4px',
 				bodyStyle: 'background-color: transparent;',
@@ -144,11 +138,7 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionFilter', {
 				    	   }
 				       }
 				       ]
-			}],
-			frame: true
-
-		});
-		this.callParent();
+			}];
 	},
 	
 	/**

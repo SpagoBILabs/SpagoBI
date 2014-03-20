@@ -84,23 +84,23 @@ Ext.define('Sbi.olap.control.Controller', {
 		service.callService(this);
 	}
 	,
-	swapHierarchies: function(hierarchy1, hierarchy2, axis){
+	swapDimensions: function(hierarchy1, hierarchy2, axis){
 		
 		var service = Ext.create("Sbi.service.RestService",{
 			url: "axis",
 			method: 'PUT',
-			pathParams: [axis,"swaphierarchies", hierarchy1, hierarchy2]
+			pathParams: [axis,"swapdimensions", hierarchy1, hierarchy2]
 		});
 		
 		service.callService(this);
 	}
 	,
-	moveHierarchy: function(hierarchy1, fromAxis, toAxis){
+	moveDimension: function(hierarchy1, fromAxis, toAxis){
 		
 		var service = Ext.create("Sbi.service.RestService",{
 			url: "axis",
 			method: 'PUT',
-			pathParams: [fromAxis,"moveHierarchy", hierarchy1, toAxis]
+			pathParams: [fromAxis,"movedimension", hierarchy1, toAxis]
 		});
 		
 		service.callService(this);

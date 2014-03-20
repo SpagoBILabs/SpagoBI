@@ -116,18 +116,18 @@ Ext.define('Sbi.olap.control.EventManager', {
      * @param {Number} hierarchy2 position of the second hierarchy to move
      * @param {Number} axis
      */
-	swapHierarchies: function(hierarchy1, hierarchy2, axis){
-		this.olapController.swapHierarchies(hierarchy1, hierarchy2, axis);
+	swapDimensions: function(hierarchy1, hierarchy2, axis){
+		this.olapController.swapDimensions(hierarchy1, hierarchy2, axis);
 	},
 	
     /**
-     * Move the hierarchy from an axis to another
-     * @param {Number} hierarchy1 position of the hierarchy to move
+     * Move the dimension from an axis to another
+     * @param {Number} dimension1 position of the hierarchy to move
      * @param {Number} fromAxis axis from witch remove the hierarchy
      * @param {Number} toAxis axis to witch add the hierarchy
      */
-	moveHierarchy: function(hierarchy1, fromAxis, toAxis){
-		this.olapController.moveHierarchy(hierarchy1, fromAxis, toAxis);
+	moveDimension: function(hierarchy1, fromAxis, toAxis){
+		this.olapController.moveDimension(hierarchy1, fromAxis, toAxis);
 	}
     /**
      * Updates the model configuration based on the toolbar settings

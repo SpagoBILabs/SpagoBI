@@ -18,18 +18,16 @@ public class SbiHierarchy {
 	private String name;
 	private String uniqueName;
 	private int position;
-	private int axis;
 	private List<Map<String,String>> slicers;
 	
 	
 	
 	public SbiHierarchy(String name, String uniqueName,
-			int position, int axis) {
+			int position) {
 		super();
 		this.name = name;
 		this.uniqueName = uniqueName;
 		this.position = position;
-		this.axis = axis;
 		slicers= new ArrayList<Map<String,String>>(); 
 	}
 	
@@ -41,7 +39,6 @@ public class SbiHierarchy {
 		this.name = name;
 		this.uniqueName = uniqueName;
 		this.position = position;
-		this.axis = axis;
 		this.slicers = slicers;
 	}
 
@@ -76,12 +73,6 @@ public class SbiHierarchy {
 	}
 	public void setPosition(int position) {
 		this.position = position;
-	}
-	public int getAxis() {
-		return axis;
-	}
-	public void setAxis(int axis) {
-		this.axis = axis;
 	}
 	
 	
