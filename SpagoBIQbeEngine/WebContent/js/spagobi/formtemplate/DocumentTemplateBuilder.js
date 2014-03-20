@@ -53,6 +53,7 @@ Sbi.formtemplate.DocumentTemplateBuilder = function(config) {
 	this.services = this.services || new Array();	
 	this.services['getDatasets'] = this.services['getDatasets'] || Sbi.config.remoteServiceRegistry.getRestServiceUrl(
 			{serviceName: 'certificateddatasets/getflatdataset',
+				isAbsolute: false,
 				baseUrl:{restServicesPath: 'restful-services'}});
 	
 	this.services['getDocuments'] = this.services['getDocuments'] || Sbi.config.remoteServiceRegistry.getServiceUrl({
