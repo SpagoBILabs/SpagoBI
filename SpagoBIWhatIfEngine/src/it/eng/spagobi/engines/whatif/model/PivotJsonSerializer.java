@@ -11,9 +11,9 @@
 package it.eng.spagobi.engines.whatif.model;
 
 import it.eng.spagobi.engines.whatif.member.MemberJsonSerializer;
-import it.eng.spagobi.engines.whatif.services.serializer.ISerializer;
-import it.eng.spagobi.engines.whatif.services.serializer.SerializationException;
-import it.eng.spagobi.engines.whatif.services.serializer.SerializationManager;
+import it.eng.spagobi.engines.whatif.serializer.ISerializer;
+import it.eng.spagobi.engines.whatif.serializer.SerializationException;
+import it.eng.spagobi.engines.whatif.serializer.SerializationManager;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import org.apache.log4j.Logger;

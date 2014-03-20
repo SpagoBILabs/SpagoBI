@@ -7,8 +7,8 @@
 package it.eng.spagobi.engines.whatif.services.common;
 
 import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
-import it.eng.spagobi.engines.whatif.services.serializer.SerializationException;
-import it.eng.spagobi.engines.whatif.services.serializer.SerializationManager;
+import it.eng.spagobi.engines.whatif.serializer.SerializationException;
+import it.eng.spagobi.engines.whatif.serializer.SerializationManager;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.engines.rest.AbstractRestService;
