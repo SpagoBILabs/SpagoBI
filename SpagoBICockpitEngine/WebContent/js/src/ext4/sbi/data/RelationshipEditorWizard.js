@@ -8,7 +8,7 @@
 Ext.define('Sbi.data.RelationshipEditorWizard', {
 	extend: 'Ext.Window'
 	, layout:'fit'
-	, config:{title: "Associations editor"				   
+	, config:{title: LN('sbi.cockpit.relationship.editor.wizard.title')				   
 			  , width: 1000
 			  , height: 510
 			  , closable: false
@@ -75,8 +75,9 @@ Ext.define('Sbi.data.RelationshipEditorWizard', {
 		Sbi.trace("[RelationshipEditorWizard.init]: IN");
 		// ONLY FOR TEST
 		this.usedDatasets = [];
-		this.usedDatasets.push('ds__7525356');
+		this.usedDatasets.push('Pernottamenti');
 		this.usedDatasets.push('dsTestForAdmin');
+		this.usedDatasets.push('POP_STATOCIVILE');
 		//
 		this.editorMainPanel = Ext.create('Sbi.data.RelationshipEditorWizardPanel',{
 			usedDatasets: this.usedDatasets

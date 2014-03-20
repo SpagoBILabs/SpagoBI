@@ -66,6 +66,9 @@ Ext.define('Sbi.data.editor.relationship.RelationshipEditor', {
 	// METHODS
 	// =================================================================================================================
 	
+	// -----------------------------------------------------------------------------------------------------------------
+    // init methods
+	// -----------------------------------------------------------------------------------------------------------------
 	, initializeEngineInstance : function (config) {
 
 	}
@@ -77,19 +80,34 @@ Ext.define('Sbi.data.editor.relationship.RelationshipEditor', {
 	
 	, initDatasetPanel: function(config) {
 		this.dsContainerPanel = Ext.create('Sbi.data.editor.relationship.RelationshipEditorDatasetContainer',{usedDatasets: this.usedDatasets});
-		this.dsContainerPanel.on('addRelationship',this.addRelationship, this);
 	}
 	
 	, initRelationshipPanel: function(config) {
 		this.relContainerPanel = Ext.create('Sbi.data.editor.relationship.RelationshipEditorList',{height:200});
 		this.relContainerPanel.addListener('addRelation', this.addRelation, this);
+		this.relContainerPanel.addListener('modifyRelation', this.modifyRelation, this);
+		this.relContainerPanel.addListener('removeRelation', this.removeRelation, this);
+		this.relContainerPanel.addListener('selectRelation', this.selectRelation, this);
+		this.relContainerPanel.addListener('updateIdentifier', this.updateIdentifier, this);
 	}
 	
-	, addRelation: function(){		
+	// -----------------------------------------------------------------------------------------------------------------
+    // public methods
+	// -----------------------------------------------------------------------------------------------------------------
+
+	/**
+	 * @method (fired)
+	 * Adds a new relation with active selections to the relationsList and to the associations grid
+	 * 
+	 * @param {String} n The identifier (setted for update context)
+	 */
+	, addRelation: function(n){		
+		var toReturn = true;
+		
 		var allDs = this.dsContainerPanel.getAllDatasets();
 		var relToAdd = new Array();
-		relToAdd.id = '__';
-		for (var i=0; i< allDs.length; i++){
+		relToAdd.id = this.getRelationId(n);
+		for (var i=0; i< allDs.length; i++){			
 			var ds = allDs.get(i);
 			var f = this.dsContainerPanel.getSelection(ds.dataset);
 			if (f !== null){
@@ -97,14 +115,114 @@ Ext.define('Sbi.data.editor.relationship.RelationshipEditor', {
 				relToAdd.push(f);
 			}
 		}
-//		this.dsContainerPanel.addRelation(relToAdd);
-		this.addRelationToList(relToAdd);
 		
-//		this.fireEvent('addRelation');
-//		this.fireEvent('addRelationToList');
+		toReturn = this.addRelationToList(relToAdd);
+		
+		return toReturn;
 	}
 	
+	/**
+	 * @method (fired)
+	 * Remove the relation from the relationsList
+	 * 
+	 * @param {String} r The relation content to remove
+	 */
+	, removeRelation: function(r){
+		for (var i=0; i<this.relationsList.length; i++){
+			var obj = this.relationsList[i];
+			if (obj && obj.rel == r){
+				this.relationsList.splice(i,1);
+				break;
+			}
+		}
+		Sbi.trace("[RelationshipEditor.removeRelation]: Removed association ['"+ r +"']");
+		Sbi.trace("[RelationshipEditor.removeRelation]: Associations List upgraded is  [ " +  Sbi.toSource(this.relationsList) + ']');
+	}
+	
+	/**
+	 * @method (fired)
+	 * Update (with an add and remove of the element) the relation from the relationsList and grid
+	 * 
+	 */
+	, modifyRelation: function(){
+		var relToModify = this.relContainerPanel.getCurrentRel();		
+		if (relToModify == null){
+	   		  alert(LN('sbi.cockpit.relationship.editor.msg.modify'));
+	   		  return;
+		}
+		var relToModifyRec = this.relContainerPanel.getRelationById(relToModify.id);
+	    if (this.addRelation(relToModify.id)){
+			this.relContainerPanel.removeRelationFromGrid(relToModifyRec);
+			this.removeRelation(relToModify.rel);	    
+	    }
+		
+	}
+	
+	/**
+	 * @method (fired)
+	 * Select the cells linked to the list grid
+	 * 
+	 * @param {String} r The relation content to use for the selection of elements
+	 */
+	, selectRelation: function(r){
+		var lst = r.rel.split('=');
+		for (var i=0; i<lst.length; i++){
+			var el = lst[i].split('.');
+			this.dsContainerPanel.setSelection(el);
+		}
+	}
+	
+	/**
+	 * @method (fired)
+	 * Update the identifier modified manually from the user
+	 * 
+	 * @param {Element} e The element (cell) modified.
+	 */
+	, updateIdentifier: function(e){
+		var obj = this.getRelationById(e.originalValue);
+		obj.id = e.value;
+		
+	}
+	
+	/**
+	 * @method 
+	 * Returns the relations list
+	 * 
+	 */
+	, getRelationsList: function(){
+		return this.relationsList;
+	}
+
+	/**
+	 * @method 
+	 * Set the relations list
+	 * 
+	 */
+	, setRelationsList: function(r){
+		this.relationsList = r;
+	}
+	
+	/**
+	 * @method 
+	 * Reset the relations list
+	 * 
+	 */
+	, removeAllRelations: function(){
+		this.relationsList = new Array();
+	}
+	
+	// -----------------------------------------------------------------------------------------------------------------
+    // utility methods
+	// -----------------------------------------------------------------------------------------------------------------
+	/**
+	 * @method 
+	 * Adds a new relation to the relationsList with the selected elements.
+	 * 
+	 * @param {Array} r The array of elements
+	 */
 	, addRelationToList: function(r){
+		var toReturn = true;
+		
 		if (this.relationsList == null) 
 			this.relationsList = new Array();
 		
@@ -129,32 +247,112 @@ Ext.define('Sbi.data.editor.relationship.RelationshipEditor', {
 			obj += el.ds + '.' + el.alias + ((i<r.length-1)?equal:'');				
 		}
 		
+		if (this.existsRelation(obj)){
+			alert(LN('sbi.cockpit.relationship.editor.msg.duplicate'));
+			return false;
+		}
+
+		//adds only new associations
 		if (wrongTypes){
 			Ext.MessageBox.confirm(
 					LN('sbi.generic.pleaseConfirm')
-					, 'Non tutte le tipologie dei campi selezionati coincidono. Si intende proseguire con l\'aggiunta della relazione?'
+					, LN('sbi.cockpit.relationship.editor.msg.differentType')
 		            , function(btn, text) {
 		                if ( btn == 'yes' ) {
 		                	this.relationsList.push({id: r.id, rel:obj});	
 		                	this.relContainerPanel.addRelationToList({id: r.id, rel:obj});
-//		                	this.fireEvent('addRelationToList');
-		                }
+		                	toReturn = true;
+		                }else
+		                	toReturn = false;
 					}
 					, this
 				);
 		}else{
 			if (obj !== ''){
 				this.relationsList.push({id: r.id, rel:obj});
-//				this.fireEvent('addRelationToList');
 				this.relContainerPanel.addRelationToList({id: r.id, rel:obj});
+				toReturn = true;
 			}else{
-				alert('Please select fields for the association!');
+				alert(LN('sbi.cockpit.relationship.editor.msg.selectFields'));
+				toReturn = false;
 			}
 		}
-		
-
 		Sbi.trace("[RelationshipEditor.addRelation]: Associations List updated with  [ " +  Sbi.toSource(this.relationsList) + ']');
-		
+		return toReturn;
 	}
 	
+	, existsRelation: function(r){
+		if (this.getRelationByRel(r)  != null)
+			return true;				
+		else
+			return false;
+	}
+	
+	/**
+	 * @method 
+	 * Returns the identifier for the relation (insert or update action)
+	 * 
+	 * @param {String} n The identifier. Setted only for update action
+	 */
+	, getRelationId: function(n){
+		var newId = '';
+		//parameter n is valorized only in modify context
+		if (n !== null && n !== undefined) 
+			newId += n;
+		else{
+			newId += '#';
+			if (this.relationsList != null){
+				//get max id already setted
+				var maxId = 0;			
+				for (var i=0; i<this.relationsList.length; i++ ){
+					var currId = this.relationsList[i].id.substring(1);
+					if (maxId < parseInt(currId))
+						maxId = parseInt(currId);
+				}
+				newId += (maxId+1).toString();
+			}
+			else
+				newId += '0';
+		}	
+		
+		return newId;
+	}
+	
+	/**
+	 * @method 
+	 * Returns the relation object getted from the relationsList throught the id. 
+	 * Format: {id:xx, rel:yy}
+	 * 
+	 * @param {String} id The identifier.
+	 */
+	, getRelationById: function(id){
+		if (this.relationsList == null) return null;
+		for (var i=0; i<this.relationsList.length; i++){
+			var obj = this.relationsList[i];
+			if (obj && obj.id == id){
+				return obj;
+				break;
+			}
+		}		
+		return null;
+	}
+	
+	/**
+	 * @method 
+	 * Returns the relation object getted from the relationsList throught the relation content. 
+	 * Format: {id:xx, rel:yy}
+	 * 
+	 * @param {String} rel The relation content.
+	 */
+	, getRelationByRel: function(r){
+		if (this.relationsList == null) return null;
+		for (var i=0; i<this.relationsList.length; i++){
+			var obj = this.relationsList[i];
+			if (obj && obj.rel == r){
+				return obj;
+				break;
+			}
+		}		
+		return null;
+	}
 });

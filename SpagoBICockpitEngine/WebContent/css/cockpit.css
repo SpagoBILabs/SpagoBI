@@ -156,6 +156,7 @@
 	
 	.icon-delete {
 		background-image: url('../img/ico-delete.gif') !important;
+		/*background-position:0px 10px;*/
 	}
 	.uploadImgIcon {
 	 	background-image:url('../img/browser_globe_upload.png') !important;

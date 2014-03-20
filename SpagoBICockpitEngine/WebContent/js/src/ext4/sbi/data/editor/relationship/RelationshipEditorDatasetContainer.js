@@ -9,8 +9,7 @@ Ext.define('Sbi.data.editor.relationship.RelationshipEditorDatasetContainer', {
 	extend: 'Ext.Panel'
 	, layout: 'column'
 	, config:{	
-		  services: null		
-//		, relationsList: null 		
+		  services: null			
 		, dsContainerPanel: null
 		, usedDatasets: null
 		, engineAlreadyInitialized : false
@@ -24,7 +23,6 @@ Ext.define('Sbi.data.editor.relationship.RelationshipEditorDatasetContainer', {
 		this.initConfig(config);
 		this.init();
 		this.callParent(config);	
-//		this.addEvents('addRelationToList');
 		Sbi.trace("[RelationshipEditorDatasetContainer.constructor]: OUT");
 	}
 
@@ -39,14 +37,9 @@ Ext.define('Sbi.data.editor.relationship.RelationshipEditorDatasetContainer', {
 		for (var i=0; i < this.usedDatasets.length; i++){
 				var item = new Sbi.data.editor.relationship.RelationshipEditorDataset({
 					border: false,
-			        gridConfig: {
-			        	title: this.usedDatasets[i],
-			        	margins: '5 5 5 0'
-			        },
 					height : 225,
 					width : 180,
-					dataset: this.usedDatasets[i],
-					services : this.services
+					dataset: this.usedDatasets[i]
 				});
 				items.push(item);
 		}
@@ -86,59 +79,16 @@ Ext.define('Sbi.data.editor.relationship.RelationshipEditorDatasetContainer', {
 			toReturn = ds.grid.getSelectionModel().getSelections()[0].data;
 		return toReturn;
 	}
-	
-//	, addRelation: function(r){
-//		if (this.relationsList == null) 
-//			this.relationsList = new Array();
-//		
-//		var obj = '';
-//		var objType = '';
-//		var equal = '';
-//		var wrongTypes = false;
-//		
-//		for (var i=0; i< r.length; i++){			
-//			var el = r[i];			
-//			
-//			if (i==0){
-//				objType = el.colType;
-//				equal = '=';
-//			}else{
-//				//check consistency between type fields
-//				if (objType !== el.colType){
-//					wrongTypes = true;					
-//				}
-//			}
-//			//create association string (ex: tabA.colA=tabB.colB...)
-//			obj += el.ds + '.' + el.alias + ((i<r.length-1)?equal:'');				
-//		}
-//		
-//		if (wrongTypes){
-//			Ext.MessageBox.confirm(
-//					LN('sbi.generic.pleaseConfirm')
-//					, 'Non tutte le tipologie dei campi selezionati coincidono. Si intende proseguire con l\'aggiunta della relazione?'
-//		            , function(btn, text) {
-//		                if ( btn == 'yes' ) {
-//		                	this.relationsList.push({id: r.id, rel:obj});	
-////		                	this.fireEvent('addRelationToList');
-//		                	alert('Added association!');
-//		                }
-//					}
-//					, this
-//				);
-//		}else{
-//			if (obj !== ''){
-//				this.relationsList.push({id: r.id, rel:obj});
-////				this.fireEvent('addRelationToList');
-//				alert('Added association!');
-//			}else{
-//				alert('Please select fields for the association!');
-//			}
-//		}
-//		
-//
-//		Sbi.trace("[RelationshipEditor.addRelation]: Associations List updated with  [ " +  Sbi.toSource(this.relationsList) + ']');
-//		
-//	}
-	
+		
+	, setSelection: function(el){
+		var dsLabel = el[0];
+		var dsField = el[1];
+		
+		var ds = this.getDatasetItemByLabel(dsLabel);
+		if (ds !== null && ds !== undefined){
+			var recId = ds.grid.store.find('alias', dsField);
+			ds.grid.getSelectionModel().select(recId,true,true);
+		}
+	}
 
 });

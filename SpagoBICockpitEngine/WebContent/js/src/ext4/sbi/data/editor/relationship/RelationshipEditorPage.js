@@ -76,9 +76,8 @@ Ext.define('Sbi.data.editor.relationship.RelationshipEditorPage', {
 	, applyPageState: function(state) {
 		Sbi.trace("[RelationshipEditorPage.applyPageState]: IN");
 		state =  state || {};
-		if(this.relationshipEditorPanel.mainPanel.designer) {
-			state.wtype = this.relationshipEditorPanel.mainPanel.designer.getDesignerType();
-			state.wconf = this.relationshipEditorPanel.mainPanel.designer.getDesignerState();
+		if(this.relationshipEditorPanel) {
+			state.relationsList = this.relationshipEditorPanel.getRelationsList();
 		}
 		Sbi.trace("[RelationshipEditorPage.applyPageState]: OUT");
 		return state;
@@ -88,14 +87,14 @@ Ext.define('Sbi.data.editor.relationship.RelationshipEditorPage', {
 		Sbi.trace("[RelationshipEditorPage.setPageState]: IN");
 		Sbi.trace("[RelationshipEditorPage.setPageState]: state parameter is equal to [" + Sbi.toSource(state, true) + "]");
 		
-		this.relationshipEditorPanel.mainPanel.setDesigner(state);
+		this.relationshipEditorPanel.setRelationsList(state);
 		
 		Sbi.trace("[RelationshipEditorPage.setPageState]: OUT");
 	}
 	
 	, resetPageState: function() {
 		Sbi.trace("[RelationshipEditorPage.resetPageState]: IN");
-		this.relationshipEditorPanel.mainPanel.removeAllDesigners();
+		this.relationshipEditorPanel.removeAllRelations();
 		Sbi.trace("[RelationshipEditorPage.resetPageState]: OUT");
 	}
 	

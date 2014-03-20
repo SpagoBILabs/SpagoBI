@@ -216,6 +216,7 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 		
 		analysisState.widgetsConf = this.widgetContainer.getConfiguration();
 		analysisState.storesConf = Sbi.storeManager.getConfiguration();
+		analysisState.relationshipsConf = Sbi.storeManager.getRelationshipsConfiguration();
 		
 		return analysisState;
 	}
@@ -223,6 +224,7 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 	, resetAnalysisState: function() {
 		this.widgetContainer.resetConfiguration();
 		Sbi.storeManager.resetConfiguration();
+		Sbi.storeManager.resetRelationships();
 	}
 	
 	/**
@@ -231,6 +233,7 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 	, setAnalysisState: function(analysisState) {
 		Sbi.trace("[MainPanel.setAnalysisState]: IN");
 		Sbi.storeManager.setConfiguration(analysisState.storesConf);
+		Sbi.storeManager.setRelationshipsConfiguration(analysisState.relationshipsConf);
 		this.widgetContainer.setConfiguration(analysisState.widgetsConf);
 		Sbi.trace("[MainPanel.setAnalysisState]: OUT");
 	}
@@ -336,9 +339,9 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
     		var config = {};
     		config.usedDatasets = Sbi.storeManager.getStoreIds();
     		this.relationshipEditorWizard = Ext.create('Sbi.data.RelationshipEditorWizard',config);
-//    		this.relationshipEditorWizard.on("submit", this.onWidgetEditorWizardSubmit, this);
+    		this.relationshipEditorWizard.on("submit", this.onRelationshipEditorWizardSubmit, this);
     		this.relationshipEditorWizard.on("cancel", this.onRelationshipEditorWizardCancel, this);
-//    		this.relationshipEditorWizard.on("apply", this.onWidgetEditorWizardApply, this);    		
+//    		this.relationshipEditorWizard.on("apply", this.onRelationshipEditorWizardApply, this);    		
 	    	Sbi.trace("[MainPanel.showRelationshipEditorWizard]: editor succesfully instantiated");
     	}
 		this.relationshipEditorWizard.show();
@@ -349,6 +352,19 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 		this.relationshipEditorWizard.hide();
 		Sbi.trace("[MainPanel.onRelationshipEditorWizardCancel]: OUT");
 	}
+	
+	, onRelationshipEditorWizardSubmit: function(wizard) {
+		Sbi.trace("[MainPanel.onRelationshipEditorWizardSubmit]: IN");
+		var wizardState = wizard.getWizardState();
+		if (wizardState.relationsList != null && wizardState.relationsList !== undefined){
+			Sbi.storeManager.resetRelationships(); //reset old associations
+			Sbi.storeManager.setRelationships(wizardState.relationsList);
+			Sbi.trace("[MainPanel.onRelationshipEditorWizardSubmit]: setted relation group [" + Sbi.toSource(wizardState.relationsList) + "] succesfully added to store manager");
+		}
+		this.relationshipEditorWizard.hide();
+		Sbi.trace("[MainPanel.onRelationshipEditorWizardSubmit]: OUT");
+	}
+	
 	, onShowSaveDocumentWindow: function() {
 		this.showSaveDocumentWin();
 	}
@@ -409,11 +425,11 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 		    items: [
 		        '->', // same as {xtype: 'tbfill'}, // Ext.Toolbar.Fill
 		        {
-		        	text: 'Associations'
+		        	text: LN('sbi.cockpit.mainpanel.btn.associations')
 		        	, handler: this.onShowRelationshipEditorWizard
 		        	, scope: this
 		        },{
-		        	text: 'Add widget'
+		        	text: LN('sbi.cockpit.mainpanel.btn.addWidget')
 		        	, handler: this.onAddWidget
 		        	, scope: this
 		        },	new Ext.Button({
