@@ -17,7 +17,7 @@
 package it.eng.spagobi.engines.whatif.api;
 
 import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
-import it.eng.spagobi.engines.whatif.services.common.AbstractWhatIfEngineService;
+import it.eng.spagobi.engines.whatif.common.AbstractWhatIfEngineService;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.PUT;

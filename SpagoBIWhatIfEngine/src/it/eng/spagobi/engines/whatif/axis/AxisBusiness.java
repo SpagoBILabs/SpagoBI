@@ -1,7 +1,7 @@
 package it.eng.spagobi.engines.whatif.axis;
 
 import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
-import it.eng.spagobi.engines.whatif.utilis.CubeUtilities;
+import it.eng.spagobi.engines.whatif.cube.CubeUtilities;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 
 import java.util.List;

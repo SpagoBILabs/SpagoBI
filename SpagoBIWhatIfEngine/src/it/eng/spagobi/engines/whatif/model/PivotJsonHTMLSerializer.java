@@ -13,9 +13,9 @@
 package it.eng.spagobi.engines.whatif.model;
 
 import it.eng.spagobi.commons.utilities.StringUtilities;
+import it.eng.spagobi.engines.whatif.cube.CubeUtilities;
 import it.eng.spagobi.engines.whatif.dimension.DimensionInternalObject;
 import it.eng.spagobi.engines.whatif.hierarchy.HierarchyInternalObject;
-import it.eng.spagobi.engines.whatif.utilis.CubeUtilities;
 import it.eng.spagobi.pivot4j.ui.WhatIfHTMLRenderer;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;

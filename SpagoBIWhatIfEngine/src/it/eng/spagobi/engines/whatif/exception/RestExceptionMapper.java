@@ -9,9 +9,9 @@
  * 
  */
 
-package it.eng.spagobi.engines.whatif.services.exception;
+package it.eng.spagobi.engines.whatif.exception;
 
-import it.eng.spagobi.engines.whatif.services.common.AbstractWhatIfEngineService;
+import it.eng.spagobi.engines.whatif.common.AbstractWhatIfEngineService;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
 
 import javax.ws.rs.core.Response;
