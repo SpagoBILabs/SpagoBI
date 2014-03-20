@@ -5021,7 +5021,7 @@ MetadataLogger metaLog;
 		logger.debug("IN");
 		SbiKpiRel existingKpiRel = null;
 		try {
-			existingKpiRel = (SbiKpiRel) sessionCurrDB.load(KpiRel.class, existingKpiRelId);
+			existingKpiRel = (SbiKpiRel) sessionCurrDB.load(SbiKpiRel.class, existingKpiRelId);
 			existingKpiRel.setParameter(exportedKpiRel.getParameter());
 
 		}

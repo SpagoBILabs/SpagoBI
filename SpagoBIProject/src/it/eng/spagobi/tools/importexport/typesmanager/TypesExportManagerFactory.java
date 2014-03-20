@@ -8,6 +8,7 @@ package it.eng.spagobi.tools.importexport.typesmanager;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.engines.drivers.birt.BirtReportDriver;
+import it.eng.spagobi.engines.drivers.jpivot.JPivotDriver;
 import it.eng.spagobi.tools.importexport.ExportManager;
 import it.eng.spagobi.tools.importexport.ExporterMetadata;
 
@@ -84,7 +85,10 @@ public class TypesExportManagerFactory {
 				toReturn = new MetaModelsNeedExportManager(type, exporter, manager);
 			}
 			
-			if(type.equals(OLAP)){
+			if(type.equals(OLAP)
+					&&
+					JPivotDriver.class.getName().equals(engine.getDriverName())
+					){
 				logger.debug("Olap export manager");
 				toReturn = new OlapExportManager(type, exporter, manager);
 			}

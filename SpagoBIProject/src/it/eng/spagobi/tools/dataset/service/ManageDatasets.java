@@ -985,7 +985,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 			
 			if(dataSourceLabel!=null && !dataSourceLabel.equals("")){
 				IDataSource dataSource;
-				try {
+				try {	
 					dataSource = DAOFactory.getDataSourceDAO().loadDataSourceByLabel(dataSourceLabel);
 					if(dataSource!=null){
 						dataSet = JDBCDatasetFactory.getJDBCDataSet(dataSource);
@@ -994,12 +994,18 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 						((AbstractJDBCDataset)dataSet).setQueryScript(queryScript);
 						((AbstractJDBCDataset)dataSet).setQueryScriptLanguage(queryScriptLanguage);
 					}
-				} catch (EMFUserError e) {
+					else{
+						logger.error("A datasource with label "+dataSourceLabel+" could not be found");
+					}
+					} catch (EMFUserError e) {
 					logger.error("Error while retrieving Datasource with label="+dataSourceLabel,e);
 					e.printStackTrace();
 				}			
 			}
-		}
+
+			}
+			
+		
 
 		if(datasetTypeName.equalsIgnoreCase(DataSetConstants.DS_WS)){	
 			dataSet=new WebServiceDataSet();
