@@ -42,6 +42,7 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='./js/src/ext/sbi/geo/control/InlineToolbar.js'/></script>
 <script type="text/javascript" src='./js/src/ext/sbi/geo/control/Layers.js'/></script>
 <script type="text/javascript" src='./js/src/ext/sbi/geo/control/Legend.js'/></script>
+<script type="text/javascript" src='./js/src/ext/sbi/geo/control/Measure.js'/></script>
 
 <script type="text/javascript" src='./js/src/ext/sbi/geo/stat/Classification.js'/></script>
 <script type="text/javascript" src='./js/src/ext/sbi/geo/stat/Classifier.js'/></script>
