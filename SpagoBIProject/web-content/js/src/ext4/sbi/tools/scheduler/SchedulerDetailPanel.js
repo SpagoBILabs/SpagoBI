@@ -115,6 +115,22 @@ Ext.define('Sbi.tools.scheduler.SchedulerDetailPanel', {
 			        { text: LN('sbi.scheduler.enddate'), dataIndex: 'triggerEndDate' },
 			        { text: LN('sbi.scheduler.endtime'), dataIndex: 'triggerEndTime' },
 					{
+						//SCHEDULE INFO POPUP BUTTON
+			        	menuDisabled: true,
+						sortable: false,
+						xtype: 'actioncolumn',
+						width: 20,
+						columnType: "decorated",
+						items: [{
+							tooltip: LN('sbi.scheduler.schedulation.info'),
+							iconCls   : 'button-info',  
+							handler: function(grid, rowIndex, colIndex) {
+								var selectedRecord =  grid.store.getAt(rowIndex);
+								thisPanel.onInfoSchedulation(selectedRecord);
+							}
+						}]
+					},	
+					{
 						//DETAIL BUTTON
 			        	menuDisabled: true,
 						sortable: false,
@@ -215,6 +231,39 @@ Ext.define('Sbi.tools.scheduler.SchedulerDetailPanel', {
 			});
 			
 			
+		}
+		, onInfoSchedulation: function(record){
+			var values = {}
+			values.jobName = record.data.jobName;
+			values.jobGroup = record.data.jobGroup;
+			values.triggerName = record.data.triggerName;
+			values.triggerGroup = record.data.triggerGroup;
+			
+			//perform Ajax Request
+
+			Ext.Ajax.request({
+				url: this.services["getTriggerSaveOptions"],
+				params: values,
+				success : function(response, options) {
+					if(response !== undefined  && response.responseText !== undefined && response.statusText=="OK") {
+						if(response.responseText!=null && response.responseText!=undefined){
+							if(response.responseText.indexOf("error.mesage.description")>=0){
+								Sbi.exception.ExceptionHandler.handleFailure(response);
+							}else{						
+								var config =  {};
+								config.title = LN('sbi.scheduler.schedulation.info')+': '+values.triggerName;
+								this.windowPopup = Ext.create('Sbi.tools.scheduler.TriggerInfoWindow',config, response.responseText);
+								this.windowPopup.show();
+
+							}
+						}
+					} else {
+						Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
+					}
+				},
+				scope: this,
+				failure: Sbi.exception.ExceptionHandler.handleFailure      
+			})
 		}
 		
 		, onPauseSchedulation: function(record){

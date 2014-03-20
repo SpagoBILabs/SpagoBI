@@ -67,8 +67,8 @@
 		<MAP_REST_SERVICE serviceUrl="/scheduler/deleteTrigger" businessProcess="SchedulerManagement" /> 							
 		<MAP_REST_SERVICE serviceUrl="/scheduler/executeTrigger" businessProcess="SchedulerManagement" /> 							
 		<MAP_REST_SERVICE serviceUrl="/scheduler/pauseTrigger" businessProcess="SchedulerManagement" /> 							
-		<MAP_REST_SERVICE serviceUrl="/scheduler/resumeTrigger" businessProcess="SchedulerManagement" /> 								
-	 						
+		<MAP_REST_SERVICE serviceUrl="/scheduler/resumeTrigger" businessProcess="SchedulerManagement" /> 	
+		<MAP_REST_SERVICE serviceUrl="/scheduler/getTriggerSaveOptions" businessProcess="SchedulerManagement" /> 						 						
 		
 	</MAP_REST_SERVICES>
 	

@@ -310,6 +310,12 @@
 	height: 16px !important;
 }
 
+.button-info {
+	background-image: url('../../../img/infoButton.png') !important;
+	width: 16px !important;
+	height: 16px !important;
+}
+
 .action-detail-note {
 	width:16px;
     height:16px;

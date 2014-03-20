@@ -859,6 +859,7 @@ Sbi.locale.ln['sbi.schedulation.pauseConfirm'] = 'Do you want to pause the sched
 Sbi.locale.ln['sbi.scheduler.schedulation.paused'] = 'Schedulation paused';
 Sbi.locale.ln['sbi.schedulation.resumeConfirm'] = 'Do you want to resume the schedulation?';
 Sbi.locale.ln['sbi.scheduler.schedulation.resumed'] = 'Schedulation resumed';
+Sbi.locale.ln['sbi.scheduler.schedulation.info'] = 'Schedulation informations';
 
 
 //===================================================================
