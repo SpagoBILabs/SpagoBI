@@ -226,6 +226,17 @@ Sbi.settings.georeport = {
 				type: 'SbiLayersMap', 
 				enabled: true
 			}
+			
+,
+			
+			/**
+			 * The SbiLayersMap is a visible control. By default it is displayed in the right corner of the map as 
+			 * a button to view the measures (i.e. distance & area)
+			 */
+			{
+				type: 'SbiMeasureMap', 
+				enabled: true
+			}
 		]     	
 		
 	}
