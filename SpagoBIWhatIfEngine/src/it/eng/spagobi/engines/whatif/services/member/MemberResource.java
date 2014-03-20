@@ -49,7 +49,7 @@ public class MemberResource extends AbstractWhatIfEngineService {
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
 		PivotModel model = ei.getPivotModel();
 		CellSet cellSet = model.getCellSet();
-
+		
 		//Axes of the resulting query.
 		List<CellSetAxis> axes = cellSet.getAxes();
 

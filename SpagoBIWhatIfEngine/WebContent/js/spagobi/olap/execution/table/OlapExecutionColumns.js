@@ -16,7 +16,7 @@
 
 
 Ext.define('Sbi.olap.execution.table.OlapExecutionColumns', {
-	extend: 'Sbi.olap.execution.table.OlapExecutionHierarchies',
+	extend: 'Sbi.olap.execution.table.OlapExecutionDimensions',
 	
 	layout: {
 	    type: 'hbox',
@@ -26,11 +26,11 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionColumns', {
 		
 	config:{
 		/**
-	     * @cfg {String} hierarchyClassName
-	     * The name of the class that extends the Sbi.olap.execution.table.OlapExecutionHierarchy class.
+	     * @cfg {String} dimensionClassName
+	     * The name of the class that extends the Sbi.olap.execution.table.OlapExecutionDimension class.
 	     * The class name is used to build the subclass 
 	     */
-		hierarchyClassName: 'Sbi.olap.execution.table.OlapExecutionColumn'
+		dimensionClassName: 'Sbi.olap.execution.table.OlapExecutionColumn'
     },
 		
 	constructor : function(config) {

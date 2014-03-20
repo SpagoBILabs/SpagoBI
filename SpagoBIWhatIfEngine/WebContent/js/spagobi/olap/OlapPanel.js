@@ -58,42 +58,54 @@ Ext.define('Sbi.olap.OlapPanel', {
      *  The pivot model
      */
 	pivotModel: null,
+
+	/**
+     * @property {Object} pivotConfig
+     *  The configuration of the model.. Example drill type, selected hierarchy of a dimension,...
+     */
+	pivotConfig:{},
 	
 	constructor : function(config) {
 		this.initConfig(config||{});
 //		if(Sbi.settings && Sbi.settings.olap && Sbi.settings.olap.OlapPanel) {
 //			Ext.apply(this, Sbi.settings.olap.OlapPanel);
 //		}
-		
-		this.callParent(arguments);
-		
-		this.addEvents(
-		        /**
-		         * @event mdxChanged
-		         * Fired When the query MDX is changed
-				 * @param {String} mdx
-		         */
-		        'mdxChanged'
-				);
-		this.initEvents();
-	},
 
-	initComponent: function() {
-
+		
 		this.definitionTools = Ext.create('Sbi.olap.tools.OlapViewDefinitionTools', {region:"west",width: '15%'});
 		this.executionPanel = Ext.create('Sbi.olap.execution.OlapExecutionPanel', {region:"center",width: '45%'});
 		this.optionsPanel = Ext.create('Sbi.olap.options.OlapOptions', {region:"east",width: '10%'});
 		Sbi.olap.eventManager = Ext.create('Sbi.olap.control.EventManager', {olapPanel: this});
 
+		
+		this.callParent(arguments);
+		
+		this.initEvents();
+	},
+
+	initComponent: function() {
+
+
 		Ext.apply(this, {
 			items: [this.definitionTools, this.executionPanel, this.optionsPanel]
 		});
+
+		this.executionPanel.on('configChange',this.appyConfigChanges,this);
+		
 		this.callParent();
 	},
+	
 	
 	updateAfterMDXExecution: function(pivot){
 		this.pivotModel = pivot;
 		this.executionPanel.updateAfterMDXExecution(pivot);
+	},
+	
+	appyConfigChanges: function(changes){
+		this.pivotConfig = Ext.apply(this.pivotConfig,changes||{});
+		Sbi.olap.eventManager.setModelConfig(this.pivotConfig);
 	}
+	
+	
 	
 });

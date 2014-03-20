@@ -13,48 +13,48 @@
  */
 
 
-Ext.define('Sbi.olap.execution.table.OlapExecutionAxisHierarchy', {
-	extend: 'Sbi.olap.execution.table.OlapExecutionHierarchy',
+Ext.define('Sbi.olap.execution.table.OlapExecutionAxisDimension', {
+	extend: 'Sbi.olap.execution.table.OlapExecutionDimension',
 
 	config:{		
 		/**
-		 * @cfg {boolean} firstHierarchy
-		 * Is this Hierarchy the first one
+		 * @cfg {boolean} firstDimension
+		 * Is this Dimension the first one
 		 */
-		firstHierarchy: false,
+		firstDimension: false,
 
 		/**
-		 * @cfg {boolean} lastHierarchy
-		 * Is this Hierarchy the last one
+		 * @cfg {boolean} lastDimension
+		 * Is this Dimension the last one
 		 */
-		lastHierarchy: false
+		lastDimension: false
 
 	},
 
 	/**
 	 * @property {Ext.Panel} moveUpPanel
-	 * ABSTRACT: panel to move up in the axis positions the Hierarchy
+	 * ABSTRACT: panel to move up in the axis positions the Dimension
 	 */
 	moveUpPanel: null,
 
 	/**
 	 * @property {Ext.Panel} moveUpDown
-	 * ABSTRACT: panel to move down in the axis positions the Hierarchy
+	 * ABSTRACT: panel to move down in the axis positions the Dimension
 	 */
 	moveDownPanel: null,
 
 	/**
-	 * @property {Ext.Panel} hierarchyPanel
-	 * central panel with the name of the Hierarchy
+	 * @property {Ext.Panel} dimensionPanel
+	 * central panel with the name of the Dimension
 	 */
-	hierarchyPanel:null,
+	dimensionPanel:null,
 	
 	subPanelLayout: null,
 
 	constructor : function(config) {
 		this.initConfig(config);
 		if(Sbi.settings && Sbi.settings.olap && Sbi.settings.olap.execution && Sbi.settings.olap.execution.table && Sbi.settings.olap.execution.table.OlapExecutionAxisMember) {
-			Ext.apply(this,Sbi.settings.olap.execution.OlapExecutionAxisHierarchy);
+			Ext.apply(this,Sbi.settings.olap.execution.OlapExecutionAxisDimension);
 		}
 
 		this.callParent(arguments);
@@ -63,18 +63,18 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionAxisHierarchy', {
 
 	initComponent: function() {
 		
-		this.buildHierarchyPanel();
+		this.buildDimensionPanel();
 		this.moveUpPanel = Ext.create("Ext.Panel",this.buildUpPanelConf());
 		this.moveDownPanel =Ext.create("Ext.Panel",this.buildDownPanelConf());
 
 		var items = [];
-		if(!this.firstHierarchy){
+		if(!this.firstDimension){
 			items.push( this.moveUpPanel);
 		}
 
-		items.push( this.hierarchyPanel);
+		items.push( this.dimensionPanel);
 
-		if(!this.lastHierarchy){
+		if(!this.lastDimension){
 			items.push( this.moveDownPanel);
 		}
 
@@ -107,20 +107,20 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionAxisHierarchy', {
 
 	
 	/**
-	 * Builds the central panel with the name of the Hierarchy
+	 * Builds the central panel with the name of the Dimension
 	 */
-	buildHierarchyPanel: function(){
-		this.hierarchyPanel = Ext.create("Ext.Panel",{
+	buildDimensionPanel: function(){
+		this.dimensionPanel = Ext.create("Ext.Panel",{
 			xtype: "panel",
 			border: false,
-			html: this.getHierarchyName(),
+			html: this.getDimensionName(),
 			style: "background-color: transparent !important",
 			bodyStyle: "background-color: transparent !important"
 		});
 	},
 	
 	/**
-	 * Builds the central panel with the name of the hierarchy
+	 * Builds the central panel with the name of the dimension
 	 */
 	buildUpPanelConf: function(){
 		return {
@@ -144,7 +144,7 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionAxisHierarchy', {
 	},
 	
 	/**
-	 * Builds the central panel with the name of the Hierarchy
+	 * Builds the central panel with the name of the Dimension
 	 */
 	buildDownPanelConf: function(){
 		return {
@@ -168,7 +168,7 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionAxisHierarchy', {
 	},
 
 	/**
-	 * Show the panels to move up/down the Hierarchy
+	 * Show the panels to move up/down the Dimension
 	 */
 	showMovePanels: function(){
 		this.moveUpPanel.show();
@@ -176,7 +176,7 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionAxisHierarchy', {
 	},
 
 	/**
-	 * Hide the panels to move up/down the Hierarchy
+	 * Hide the panels to move up/down the Dimension
 	 */
 	hideMovePanels: function(){
 		this.moveUpPanel.hide();

@@ -13,15 +13,15 @@
  */
 
 
-Ext.define('Sbi.olap.execution.table.OlapExecutionHierarchy', {
+Ext.define('Sbi.olap.execution.table.OlapExecutionDimension', {
 	extend: 'Ext.panel.Panel',
 
 	config:{		
 		/**
-		 * @cfg {Sbi.olap.HierarchyModel} hierarchy
-		 * The hierarchy represented by the column
+		 * @cfg {Sbi.olap.DimensionModel} dimension
+		 * The dimension represented by the column
 		 */
-		hierarchy: null,
+		dimension: null,
 		/**
 		 * @cfg {Sbi.olap.execution.table.OlapExecutionPivot} pivotContainer
 		 * The container of the columns
@@ -29,7 +29,7 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionHierarchy', {
 		pivotContainer: null,
 		/**
 		 * @cfg {Sbi.olap.execution.table.OlapExecutionRow/Column/Filter} containerPanel
-		 * The container of the hierarchy: filters, columns, rows
+		 * The container of the dimension: filters, columns, rows
 		 */
 		containerPanel: null
 
@@ -38,8 +38,8 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionHierarchy', {
 
 	constructor : function(config) {
 		this.initConfig(config);
-		if(Sbi.settings && Sbi.settings.olap && Sbi.settings.olap.execution && Sbi.settings.olap.execution.table && Sbi.settings.olap.execution.table.OlapExecutionHierarchy) {
-			Ext.apply(this, Sbi.settings.olap.execution.OlapExecutionHierarchy);
+		if(Sbi.settings && Sbi.settings.olap && Sbi.settings.olap.execution && Sbi.settings.olap.execution.table && Sbi.settings.olap.execution.table.OlapExecutionDimension) {
+			Ext.apply(this, Sbi.settings.olap.execution.OlapExecutionDimension);
 		}
 		
 		this.callParent(arguments);
@@ -47,11 +47,11 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionHierarchy', {
 	},
 
 	/**
-	 * Implements the drag and drop of the hierarchy between filters, rows and columns
+	 * Implements the drag and drop of the dimension between filters, rows and columns
 	 */
 	addDragAndDrop: function(){
 		this.on("render",function(){
-			var dd = Ext.create('Ext.dd.DDProxy', this.getEl(), 'hierarchyDDGroup', {
+			var dd = Ext.create('Ext.dd.DDProxy', this.getEl(), 'dimensionDDGroup', {
 				isTarget  : false
 			});
 
@@ -64,18 +64,18 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionHierarchy', {
 
 					if(thisPanel.containerPanel.getId()!= targetElId && (thisPanel.pivotContainer.olapExecutionFilters.getId()== targetElId || thisPanel.pivotContainer.olapExecutionRows.getId()== targetElId || thisPanel.pivotContainer.olapExecutionColumns.getId()== targetElId)){
 
-						//thisPanel.containerPanel.removeHierarchy(thisPanel);
+						//thisPanel.containerPanel.removeDimension(thisPanel);
 
 						if(thisPanel.pivotContainer.olapExecutionFilters.getId()== targetElId){
-							thisPanel.pivotContainer.olapExecutionFilters.moveHierarchyToOtherAxis(thisPanel);
+							thisPanel.pivotContainer.olapExecutionFilters.moveDimensionToOtherAxis(thisPanel);
 							//	thisPanel.containerPanel= thisPanel.pivotContainer.olapExecutionFilters;
 						}
 						if(thisPanel.pivotContainer.olapExecutionRows.getId()== targetElId){
-							thisPanel.pivotContainer.olapExecutionRows.moveHierarchyToOtherAxis(thisPanel);
+							thisPanel.pivotContainer.olapExecutionRows.moveDimensionToOtherAxis(thisPanel);
 							//	thisPanel.containerPanel= thisPanel.pivotContainer.olapExecutionRows;
 						}
 						if(thisPanel.pivotContainer.olapExecutionColumns.getId()== targetElId){
-							thisPanel.pivotContainer.olapExecutionColumns.moveHierarchyToOtherAxis(thisPanel);
+							thisPanel.pivotContainer.olapExecutionColumns.moveDimensionToOtherAxis(thisPanel);
 							//	thisPanel.containerPanel= thisPanel.pivotContainer.olapExecutionColumns;
 						}
 					}
@@ -87,9 +87,9 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionHierarchy', {
 			});
 
 
-			Ext.create('Ext.dd.DDTarget', thisPanel.pivotContainer.olapExecutionFilters.getId(), 'hierarchyDDGroup');
-			Ext.create('Ext.dd.DDTarget', thisPanel.pivotContainer.olapExecutionRows.getId(), 'hierarchyDDGroup');
-			Ext.create('Ext.dd.DDTarget', thisPanel.pivotContainer.olapExecutionColumns.getId(), 'hierarchyDDGroup');
+			Ext.create('Ext.dd.DDTarget', thisPanel.pivotContainer.olapExecutionFilters.getId(), 'dimensionDDGroup');
+			Ext.create('Ext.dd.DDTarget', thisPanel.pivotContainer.olapExecutionRows.getId(), 'dimensionDDGroup');
+			Ext.create('Ext.dd.DDTarget', thisPanel.pivotContainer.olapExecutionColumns.getId(), 'dimensionDDGroup');
 		},this);
 	},
 	
@@ -97,8 +97,8 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionHierarchy', {
 	 * Returns the name of the memebr
 	 * @returns
 	 */
-	getHierarchyName: function(){
-		return  this.hierarchy.raw.name;
+	getDimensionName: function(){
+		return  this.dimension.raw.name;
 	}
 
 

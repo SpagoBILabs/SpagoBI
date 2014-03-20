@@ -15,13 +15,13 @@
 
 
 
-Ext.define('Sbi.olap.execution.table.OlapExecutionHierarchies', {
+Ext.define('Sbi.olap.execution.table.OlapExecutionDimensions', {
 	extend: 'Ext.panel.Panel',
 			
 	config:{
 		/**
 	     * @cfg {Ext.data.Store} store
-	     * The store with the Sbi.olap.execution.table.OlapExecutionHierarchy
+	     * The store with the Sbi.olap.execution.table.OlapExecutionDimension
 	     */
 		store: null,
 		/**
@@ -30,10 +30,10 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionHierarchies', {
 	     */
 		pivotContainer: null,
 		/**
-	     * @cfg {String} hierarchyClassName
+	     * @cfg {String} dimensionClassName
 	     * The name of the children classes
 	     */
-		hierarchyClassName: null,
+		dimensionClassName: null,
 		/**
 	     * @cfg {Number} axisPosition
 	     * The position of the axis
@@ -53,10 +53,10 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionHierarchies', {
 	constructor : function(config) {
 		this.initConfig(config);
 		this.store = Ext.create('Ext.data.Store', {
-		    model: 'Sbi.olap.HierarchyModel'
+		    model: 'Sbi.olap.DimensionModel'
 		});
-		if(Sbi.settings && Sbi.settings.olap && Sbi.settings.olap.execution && Sbi.settings.olap.execution.table && Sbi.settings.olap.execution.table.OlapExecutionHierarchies) {
-			Ext.apply(this, Sbi.settings.olap.execution.OlapExecutionHierarchies);
+		if(Sbi.settings && Sbi.settings.olap && Sbi.settings.olap.execution && Sbi.settings.olap.execution.table && Sbi.settings.olap.execution.table.OlapExecutionDimensions) {
+			Ext.apply(this, Sbi.settings.olap.execution.OlapExecutionDimensions);
 		}
 		this.callParent(arguments);
 	},
@@ -74,23 +74,23 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionHierarchies', {
 	},
 	
     /**
-     * Adds the Hierarchy from in Hierarchy container
-     * @param {Sbi.olap.execution.table.OlapExecutionHierarchy} hierarchy the Hierarchy to add
+     * Adds the Dimension from in Dimension container
+     * @param {Sbi.olap.execution.table.OlapExecutionDimension} dimension the Dimension to add
      */
-	addHierarchy: function(hierarchy){
+	addDimension: function(dimension){
 //		if(this.store.getCount()==0){
 //			this.removeCls("empty-member");
 //		}
-		this.store.add(hierarchy.hierarchy);
+		this.store.add(dimension.dimension);
 		this.refreshItems();
 	},
 	
     /**
-     * Removes the hierarchy from the hierarchy container
-     * @param {Sbi.olap.execution.table.OlapExecutionHierarchy} hierarchy the hierarchy to remove
+     * Removes the dimension from the dimension container
+     * @param {Sbi.olap.execution.table.OlapExecutionDimension} dimension the dimension to remove
      */
-	removeHierarchy: function(hierarchy){
-		this.store.remove(hierarchy.hierarchy);
+	removeDimension: function(dimension){
+		this.store.remove(dimension.dimension);
 		this.refreshItems();
 //		if(this.store.getCount()==0){
 //			this.addCls("empty-member");
@@ -98,44 +98,44 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionHierarchies', {
 	},
 	
     /**
-     * Adds the Hierarchy from in Hierarchy container
-     * @param {Sbi.olap.execution.table.OlapExecutionHierarchy} hierarchy the Hierarchy to add
+     * Adds the Dimension from in Dimension container
+     * @param {Sbi.olap.execution.table.OlapExecutionDimension} dimension the Dimension to add
      */
-	moveHierarchyToOtherAxis: function(hierarchy){
+	moveDimensionToOtherAxis: function(dimension){
 		
-		Sbi.olap.eventManager.moveHierarchy(hierarchy.hierarchy.get("uniqueName"), hierarchy.hierarchy.get("axis"), this.axisOrdinalPosition);
+		Sbi.olap.eventManager.moveDimension(dimension.dimension.get("uniqueName"), dimension.dimension.get("axis"), this.axisOrdinalPosition);
 	},
 	
 	
 	/**
-     * Moves up the hierarchy
-     * @param {Sbi.olap.execution.table.OlapExecutionHierarchy} hierarchy the hierarchy to move
+     * Moves up the dimension
+     * @param {Sbi.olap.execution.table.OlapExecutionDimension} dimension the dimension to move
 	 */
-	moveUpHierarchy: function(hierarchy){
-		this.move(hierarchy, -1);
+	moveUpDimension: function(dimension){
+		this.move(dimension, -1);
 	},
 	
 	
 	/**
      * Moves down the member
-     * @param {Sbi.olap.execution.table.OlapExecutionHierarchy} hierarchy the hierarchy to move
+     * @param {Sbi.olap.execution.table.OlapExecutionDimension} dimension the dimension to move
 	 */
-	moveDownHierarchy: function(hierarchy){
-		this.move(hierarchy, 1);
+	moveDownDimension: function(dimension){
+		this.move(dimension, 1);
 	},
 
 	/**
      * Moves the model of pos positions
-     * @param {Sbi.olap.execution.table.OlapExecutionHierarchy} hierarchy the hierarchy to remove
+     * @param {Sbi.olap.execution.table.OlapExecutionDimension} dimension the dimension to remove
 	 * @param pos the positions 
 	 */
-	move: function(hierarchy, pos){
-		var index = this.store.indexOf(hierarchy.hierarchy);
+	move: function(dimension, pos){
+		var index = this.store.indexOf(dimension.dimension);
 		
 		if((pos+index)>=0 && (pos+index)<this.store.getCount( )){
-			Sbi.olap.eventManager.swapHierarchies(index, index+pos, hierarchy.hierarchy.get("axis"));
-//			this.store.remove(hierarchy.hierarchy);
-//			this.store.insert((index+pos),hierarchy.hierarchy);
+			Sbi.olap.eventManager.swapDimensions(index, index+pos, dimension.dimension.get("axis"));
+//			this.store.remove(dimension.dimension);
+//			this.store.insert((index+pos),dimension.dimension);
 //			this.refreshItems();
 		}
 	},
@@ -155,18 +155,18 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionHierarchies', {
 	},
 	
     /**
-     * Get the refreshed items: builds all the hierarchys starting from the store
+     * Get the refreshed items: builds all the dimensions starting from the store
      */
 	getRefreshedItems: function(){
 		var items = new Array();
 		
 		if(this.store && this.store.getCount()>0){
-			var hierarchiesCount = this.store.getCount( );
-			for(var i=0; i<hierarchiesCount; i++) {
-				var hierarchy = Ext.create(this.hierarchyClassName,{hierarchy: this.store.getAt(i), pivotContainer: this.pivotContainer, containerPanel: this, firstHierarchy: (i==0), lastHierarchy: (i==hierarchiesCount-1) });
-				hierarchy.on("moveUp",this.moveUpHierarchy,this);
-				hierarchy.on("moveDown",this.moveDownHierarchy,this);
-				items.push(hierarchy);
+			var dimensionsCount = this.store.getCount( );
+			for(var i=0; i<dimensionsCount; i++) {
+				var dimension = Ext.create(this.dimensionClassName,{dimension: this.store.getAt(i), pivotContainer: this.pivotContainer, containerPanel: this, firstDimension: (i==0), lastDimension: (i==dimensionsCount-1) });
+				dimension.on("moveUp",this.moveUpDimension,this);
+				dimension.on("moveDown",this.moveDownDimension,this);
+				items.push(dimension);
 			}
 		}
 		
@@ -175,15 +175,15 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionHierarchies', {
 	
 	/**
 	 * Updates the visualization after the execution of a a mdx query
-	 * @param pivotModel {Array} the list of hierarchies to add
+	 * @param pivotModel {Array} the list of dimensions to add
 	 * @param axisOrdinalPosition {Number} the ordinal position of the axis
 	 */
-	updateAfterMDXExecution: function(hierarchies, axisOrdinalPosition){
+	updateAfterMDXExecution: function(dimensions, axisOrdinalPosition){
 		this.axisOrdinalPosition = axisOrdinalPosition;
 		this.store.removeAll();
-		if(hierarchies){
-			for(var i=0; i<hierarchies.length; i++){
-				this.store.add(Ext.create("Sbi.olap.HierarchyModel", hierarchies[i]));
+		if(dimensions){
+			for(var i=0; i<dimensions.length; i++){
+				this.store.add(Ext.create("Sbi.olap.DimensionModel", dimensions[i]));
 			}
 		}
 		this.refreshItems();

@@ -46,6 +46,12 @@ Ext.define('Sbi.olap.execution.OlapExecutionPanel', {
      */
 	olapToolbar: null,
 	
+	/**
+     * @property {Object} executionConfig
+     *  The configuration of the model.. Example drill type, selected hierarchy of a dimension,...
+     */
+	executionConfig: {},
+	
 	constructor : function(config) {
 		this.initConfig(config);
 		if(Sbi.settings && Sbi.settings.olap && Sbi.settings.olap.execution && Sbi.settings.olap.execution.OlapExecutionPanel) {
@@ -57,10 +63,20 @@ Ext.define('Sbi.olap.execution.OlapExecutionPanel', {
 		this.olapToolbar  = Ext.create('Sbi.olap.toolbar.OlapToolbar', {}); 
 		
 		this.callParent(arguments);
+		
+		this.addEvents(
+		        /**
+		         * @event configChange
+		         * The final user changes the configuration of the model 
+				 * @param {Object} configuration
+		         */
+		        'configChange'
+				);
 	},
 	
 	initComponent: function() {
 
+		this.olapToolbar.on('configChange',this.applyConfigChanges,this);
 		
 		Ext.apply(this, {
 			items: [this.olapExecutionPivot,this.olapExecutionChart],
@@ -76,6 +92,11 @@ Ext.define('Sbi.olap.execution.OlapExecutionPanel', {
 	updateAfterMDXExecution: function(pivotModel){
 		this.olapExecutionPivot.updateAfterMDXExecution(pivotModel);
 		this.olapToolbar.updateAfterMDXExecution(pivotModel);
+	},
+	
+	applyConfigChanges: function(changes){
+		this.executionConfig = Ext.apply(this.executionConfig,changes||{});
+		this.fireEvent('configChange', this.executionConfig);
 	}
 	
 	

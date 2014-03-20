@@ -13,7 +13,10 @@
 package it.eng.spagobi.engines.whatif.services.serializer.json;
 
 import it.eng.spagobi.commons.utilities.StringUtilities;
+import it.eng.spagobi.engines.whatif.services.hierarchy.DimensionInternalObject;
+import it.eng.spagobi.engines.whatif.services.hierarchy.HierarchyInternalObject;
 import it.eng.spagobi.engines.whatif.services.model.ModelConfig;
+import it.eng.spagobi.engines.whatif.utilis.CubeUtilities;
 import it.eng.spagobi.pivot4j.ui.WhatIfHTMLRenderer;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
@@ -32,6 +35,7 @@ import org.olap4j.Axis;
 import org.olap4j.CellSet;
 import org.olap4j.CellSetAxis;
 import org.olap4j.OlapConnection;
+import org.olap4j.metadata.Dimension;
 import org.olap4j.metadata.Hierarchy;
 import org.olap4j.metadata.Member;
 
@@ -69,7 +73,8 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotModel> {
 	private static final String COLUMNSAXISORDINAL = "columnsAxisOrdinal";
 	private static final String SLICERS = "slicers";
 	private static final String MDXFORMATTED = "mdxFormatted";
-    
+
+	
 	private OlapConnection connection;
 	private ModelConfig modelConfig;
 	
@@ -158,7 +163,7 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotModel> {
 			jgen.writeStringField(TABLE, table);
 			serializeAxis(ROWS, jgen,axis, Axis.ROWS);
 			serializeAxis(COLUMNS, jgen,axis, Axis.COLUMNS);
-			serializeFilters(FILTERS, jgen,otherHierarchies,value);
+			serializeDimensions(jgen, otherHierarchies, FILTERS_AXIS_POS, FILTERS, true, value);
 			jgen.writeNumberField(COLUMNSAXISORDINAL, Axis.COLUMNS.axisOrdinal());
 			jgen.writeNumberField(ROWSAXISORDINAL, Axis.ROWS.axisOrdinal());
 			
@@ -190,64 +195,109 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotModel> {
 			axisPos = 1;
 		}
 		List<Hierarchy> hierarchies = aAxis.getAxisMetaData().getHierarchies();
-		serializeHierarchies(jgen, hierarchies, axisPos, field);
+		serializeDimensions(jgen, hierarchies, axisPos, field, false, null);
 		
 	}
 
 	
-	private  void serializeHierarchies(JsonGenerator jgen, List<Hierarchy> hierarchies, int axis, String field) throws JSONException, JsonGenerationException, IOException{
-		jgen.writeArrayFieldStart(field);
-		if(hierarchies!=null){
-			for (int i=0; i<hierarchies.size(); i++) {
-				Hierarchy hierarchy = hierarchies.get(i);
-				Map<String, String> hierarchyObject = new HashMap<String, String>();
-				hierarchyObject.put(NAME, hierarchy.getName());
-				hierarchyObject.put(UNIQUE_NAME, hierarchy.getUniqueName());
-				hierarchyObject.put(POSITION, ""+i);
-				hierarchyObject.put(AXIS, ""+axis);
-				jgen.writeObject(hierarchyObject);
-			}
+	
+	private  void serializeDimensions(JsonGenerator jgen, List<Hierarchy> hierarchies, int axis, String field, boolean withSlicers, PivotModel model) throws JSONException, JsonGenerationException, IOException{
+		List<Dimension> dimensions = CubeUtilities.getDimensions(hierarchies);
+		
+		QueryAdapter qa = null;
+		ChangeSlicer ph = null;
+		
+		if(withSlicers){
+			qa = new QueryAdapter(model);
+			qa.initialize();
+			ph = new ChangeSlicerImpl(qa, connection);
 		}
-		jgen.writeEndArray();
-	}
-	
-	
-	private void serializeFilters(String field, JsonGenerator jgen,List<Hierarchy> hierarchies, PivotModel model) throws JSONException, JsonGenerationException, IOException{
 
-		QueryAdapter qa = new QueryAdapter(model);
-		qa.initialize();
-		
-		ChangeSlicer ph = new ChangeSlicerImpl(qa, connection);
-	
 		
 		jgen.writeArrayFieldStart(field);
-		if(hierarchies!=null){
-			for (int i=0; i<hierarchies.size(); i++) {
-				Hierarchy hierarchy = hierarchies.get(i);
-				Map<String,Object> hierarchyObject = new HashMap<String,Object>();
-				hierarchyObject.put(NAME, hierarchy.getName());
-				hierarchyObject.put(UNIQUE_NAME, hierarchy.getUniqueName());
-				hierarchyObject.put(POSITION, ""+i);
-				hierarchyObject.put(AXIS, ""+FILTERS_AXIS_POS);
-				
-				
-				List<Member> slicers = ph.getSlicer(hierarchy);
-				if(slicers!= null && slicers.size()>0){
-					List<Map<String,String>> slicerMap = new ArrayList<Map<String,String>>(); 
-					for(int j=0; j<slicers.size(); j++){
-						Map<String,String> slicer = new HashMap<String,String>();
-						slicer.put(UNIQUE_NAME, slicers.get(j).getUniqueName());
-						slicer.put(NAME, slicers.get(j).getName());
-						slicerMap.add(slicer);
-					}
-					hierarchyObject.put(SLICERS, slicerMap);
+		
+		
+
+			for (int i=0; i<dimensions.size(); i++) {
+				Dimension aDimension = dimensions.get(i);
+				DimensionInternalObject myDimension = new DimensionInternalObject(aDimension.getName(), aDimension.getUniqueName()); 
+				List<Hierarchy> dimensionHierarchies = aDimension.getHierarchies();
+
+				String selectedHierarchyName = modelConfig.getDimensionHierarchyMap().get(myDimension.getUniqueName());
+				if(selectedHierarchyName==null){
+					selectedHierarchyName = aDimension.getDefaultHierarchy().getUniqueName();
 				}
-				jgen.writeObject(hierarchyObject);
+				
+				myDimension.setSelectedHierarchyUniqueName(selectedHierarchyName);
+				
+				for (int j=0; j<dimensionHierarchies.size(); j++) {
+					Hierarchy hierarchy = dimensionHierarchies.get(j);
+					HierarchyInternalObject hierarchyObject = new HierarchyInternalObject(hierarchy.getName(), hierarchy.getUniqueName(), i, axis);
+					
+					if(withSlicers){
+						List<Member> slicers = ph.getSlicer(hierarchy);
+						if(slicers!= null && slicers.size()>0){
+							List<Map<String,String>> slicerMap = new ArrayList<Map<String,String>>(); 
+							for(int k=0; k<slicers.size(); k++){
+								Map<String,String> slicer = new HashMap<String,String>();
+								slicer.put(UNIQUE_NAME, slicers.get(k).getUniqueName());
+								slicer.put(NAME, slicers.get(k).getName());
+								slicerMap.add(slicer);
+							}
+							hierarchyObject.setSlicers( slicerMap);
+						}
+					}
+					myDimension.getHierarchies().add(hierarchyObject);
+					
+					//set the position of the selected hierarchy
+					if(selectedHierarchyName.equals(hierarchy.getUniqueName())){
+						myDimension.setSelectedHierarchyPosition(j);
+					}
+				}
+				jgen.writeObject(myDimension);
 
 			}
-		}
+		
 		jgen.writeEndArray();
 	}
+	
+//	
+//	private void serializeFilters(String field, JsonGenerator jgen,List<Hierarchy> hierarchies, PivotModel model) throws JSONException, JsonGenerationException, IOException{
+//
+//		QueryAdapter qa = new QueryAdapter(model);
+//		qa.initialize();
+//		
+//		ChangeSlicer ph = new ChangeSlicerImpl(qa, connection);
+//	
+//		
+//		jgen.writeArrayFieldStart(field);
+//		if(hierarchies!=null){
+//			for (int i=0; i<hierarchies.size(); i++) {
+//				Hierarchy hierarchy = hierarchies.get(i);
+//				Map<String,Object> hierarchyObject = new HashMap<String,Object>();
+//				hierarchyObject.put(NAME, hierarchy.getName());
+//				hierarchyObject.put(UNIQUE_NAME, hierarchy.getUniqueName());
+//				hierarchyObject.put(POSITION, ""+i);
+//				hierarchyObject.put(AXIS, ""+FILTERS_AXIS_POS);
+//				
+//				
+//				List<Member> slicers = ph.getSlicer(hierarchy);
+//				if(slicers!= null && slicers.size()>0){
+//					List<Map<String,String>> slicerMap = new ArrayList<Map<String,String>>(); 
+//					for(int j=0; j<slicers.size(); j++){
+//						Map<String,String> slicer = new HashMap<String,String>();
+//						slicer.put(UNIQUE_NAME, slicers.get(j).getUniqueName());
+//						slicer.put(NAME, slicers.get(j).getName());
+//						slicerMap.add(slicer);
+//					}
+//					hierarchyObject.put(SLICERS, slicerMap);
+//				}
+//				jgen.writeObject(hierarchyObject);
+//
+//			}
+//		}
+//		jgen.writeEndArray();
+//	}
 	
 	
 	public String formatQueryString(String queryString) {
