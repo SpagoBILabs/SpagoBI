@@ -14,7 +14,7 @@
 package it.eng.spagobi.engines.whatif.axis;
 
 import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
-import it.eng.spagobi.engines.whatif.services.common.AbstractWhatIfEngineService;
+import it.eng.spagobi.engines.whatif.common.AbstractWhatIfEngineService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.PUT;

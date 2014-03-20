@@ -9,7 +9,7 @@
  * 
  * @author Alberto Ghedin (alberto.ghedin@eng.it)
  */
-package it.eng.spagobi.engines.whatif.utilis;
+package it.eng.spagobi.engines.whatif.cube;
 
 import java.util.ArrayList;
 import java.util.List;

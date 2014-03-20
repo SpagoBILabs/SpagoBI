@@ -13,10 +13,10 @@ package it.eng.spagobi.engines.whatif.api;
 import java.io.IOException;
 
 import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
+import it.eng.spagobi.engines.whatif.common.AbstractWhatIfEngineService;
 import it.eng.spagobi.engines.whatif.model.ModelConfig;
 import it.eng.spagobi.engines.whatif.serializer.SerializationException;
 import it.eng.spagobi.engines.whatif.serializer.SerializationManager;
-import it.eng.spagobi.engines.whatif.services.common.AbstractWhatIfEngineService;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
 
