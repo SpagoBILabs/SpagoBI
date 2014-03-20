@@ -1,8 +1,3 @@
-/**
- * 
- */
-package it.eng.spagobi.engines.whatif.serializer;
-
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
@@ -16,6 +11,9 @@ package it.eng.spagobi.engines.whatif.serializer;
  * @author Alberto Ghedin (alberto.ghedin@eng.it)
  *
  */
+package it.eng.spagobi.engines.whatif.serializer;
+
+
 public interface Versionable {
 
 	public String getVersion();

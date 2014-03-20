@@ -24,7 +24,7 @@ public class SerializationManager {
 	}
 	
 	/**
-	 * Register a serilizer in this manager. 
+	 * Register a serializer in this manager. 
 	 * @param mimeType the type of the input/output
 	 * @param serializer the serializer to register
 	 */
