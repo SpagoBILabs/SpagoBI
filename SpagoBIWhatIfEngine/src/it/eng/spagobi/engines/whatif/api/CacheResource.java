@@ -4,7 +4,7 @@
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-package it.eng.spagobi.engines.whatif.services;
+package it.eng.spagobi.engines.whatif.api;
 
 import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
 import it.eng.spagobi.engines.whatif.services.common.AbstractWhatIfEngineService;
@@ -24,9 +24,9 @@ import org.olap4j.OlapConnection;
 import org.olap4j.OlapDataSource;
 
 @Path("1.0/flushCache")
-public class FlushCache extends AbstractWhatIfEngineService {
+public class CacheResource extends AbstractWhatIfEngineService {
 
-	public static transient Logger logger = Logger.getLogger(FlushCache.class);
+	public static transient Logger logger = Logger.getLogger(CacheResource.class);
 	
 	@GET
 	public void flushCache(@Context HttpServletRequest request) {
