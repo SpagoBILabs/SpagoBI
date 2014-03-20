@@ -17,11 +17,15 @@ import it.eng.spagobi.engines.qbe.template.QbeTemplateParseException;
 import it.eng.spagobi.engines.worksheet.bo.WorkSheetDefinition;
 import it.eng.spagobi.engines.worksheet.template.loaders.IWorksheetXMLTemplateLoader;
 import it.eng.spagobi.engines.worksheet.template.loaders.WorksheetXMLTemplateLoaderFactory;
+import it.eng.spagobi.services.proxy.DataSetServiceProxy;
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -39,6 +43,7 @@ public class WorksheetXMLTemplateParser implements IWorksheetTemplateParser{
 	public final static String TAG_WORKSHEET_DEFINITION = "WORKSHEET_DEFINITION";
 	public final static String TAG_QBE = "QBE";
 	public final static String TAG_QBE_COMPOSITE = "COMPOSITE-QBE";
+	public final static String TAG_SMART_FILTER = EngineConstants.SMART_FILTER_TAG;
 	public final static String TAG_DATASET = "DATASET";
 
 	/** Logger component. */
@@ -94,12 +99,24 @@ public class WorksheetXMLTemplateParser implements IWorksheetTemplateParser{
 			}
 			
 			// QBE block
-			if (template.containsAttribute(TAG_QBE) || template.containsAttribute(TAG_QBE_COMPOSITE)) {
+			if (template.containsAttribute(TAG_QBE)
+					|| template.containsAttribute(TAG_QBE_COMPOSITE)
+					|| template.containsAttribute(TAG_SMART_FILTER)) {
 				SourceBean qbeTemplate = null;
 				if (template.containsAttribute(TAG_QBE)) {
 					qbeTemplate = (SourceBean) template.getAttribute(TAG_QBE);
+				} else if (template.containsAttribute(TAG_SMART_FILTER)) {
+					qbeTemplate = (SourceBean) template.getAttribute(TAG_SMART_FILTER);
 				} else {
 					qbeTemplate = (SourceBean) template.getAttribute(TAG_QBE_COMPOSITE);
+				}
+				if (qbeTemplate.containsAttribute(TAG_DATASET)) {
+					SourceBean datasetSB = (SourceBean) qbeTemplate.getAttribute(TAG_DATASET);
+					String datasetLabel = (String) datasetSB.getAttribute("label");
+					List<IDataSet> dataSets = new ArrayList<IDataSet>();
+					IDataSet dataset = ((DataSetServiceProxy) env.get(EngineConstants.ENV_DATASET_PROXY)).getDataSetByLabel(datasetLabel);
+					dataSets.add(dataset);
+					env.put(EngineConstants.ENV_DATASETS, dataSets);
 				}
 				QbeEngineInstance qbeEngineInstance;
 				qbeEngineInstance = startQbeEngine(qbeTemplate, env);
