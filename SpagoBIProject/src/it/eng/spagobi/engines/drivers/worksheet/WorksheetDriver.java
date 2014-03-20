@@ -73,6 +73,7 @@ public class WorksheetDriver extends AbstractDriver implements IEngineDriver {
 	public final static String DATAMART = "DATAMART";
 	public final static String TAG_QBE = "QBE";
 	public final static String TAG_QBE_COMPOSITE = "COMPOSITE-QBE";
+	public final static String TAG_SMART_FILTER = EngineConstants.SMART_FILTER_TAG;
 
 	/**
 	 * Returns a map of parameters which will be send in the request to the
@@ -296,7 +297,9 @@ public class WorksheetDriver extends AbstractDriver implements IEngineDriver {
 		// from version 0 to version 1 worksheet change compensation: on version 0 the 
 		// worksheet definition was inside QBE tag; on version 1 the QBE tag is inside 
 		// WORKSHEET tag
-		if (previous.getName().equalsIgnoreCase(TAG_QBE) || previous.getName().equalsIgnoreCase(TAG_QBE_COMPOSITE)) {
+		if (previous.getName().equalsIgnoreCase(TAG_QBE)
+				|| previous.getName().equalsIgnoreCase(TAG_QBE_COMPOSITE)
+				|| previous.getName().equalsIgnoreCase(TAG_SMART_FILTER)) {
 
 			if (previous.containsAttribute(TAG_WORKSHEET_DEFINITION)) {
 				previous.delAttribute(TAG_WORKSHEET_DEFINITION);
@@ -326,6 +329,8 @@ public class WorksheetDriver extends AbstractDriver implements IEngineDriver {
 				qbeSB = (SourceBean) previous.getAttribute(TAG_QBE);
 			} else if (previous.containsAttribute(TAG_QBE_COMPOSITE)) {
 				qbeSB = (SourceBean) previous.getAttribute(TAG_QBE_COMPOSITE);
+			} else if (previous.containsAttribute(TAG_SMART_FILTER)) {
+				qbeSB = (SourceBean) previous.getAttribute(TAG_SMART_FILTER);
 			}
 			
 			if (qbeSB != null) {
@@ -363,7 +368,9 @@ public class WorksheetDriver extends AbstractDriver implements IEngineDriver {
 		// from version 0 to version 1 worksheet change compensation: on version 0 the 
 		// worksheet definition was inside QBE tag; on version 1 the QBE tag is inside 
 		// WORKSHEET tag
-		if (confSB.getName().equalsIgnoreCase(TAG_QBE)  || confSB.getName().equalsIgnoreCase(TAG_QBE_COMPOSITE)) {
+		if (confSB.getName().equalsIgnoreCase(TAG_QBE)
+				|| confSB.getName().equalsIgnoreCase(TAG_QBE_COMPOSITE)
+				|| confSB.getName().equalsIgnoreCase(TAG_SMART_FILTER)) {
 
 			if (confSB.containsAttribute(TAG_WORKSHEET_DEFINITION)) {
 				confSB.delAttribute(TAG_WORKSHEET_DEFINITION);
@@ -393,6 +400,8 @@ public class WorksheetDriver extends AbstractDriver implements IEngineDriver {
 				qbeSB = (SourceBean) confSB.getAttribute(TAG_QBE);
 			} else if (confSB.containsAttribute(TAG_QBE_COMPOSITE)) {
 				qbeSB = (SourceBean) confSB.getAttribute(TAG_QBE_COMPOSITE);
+			} else if (confSB.containsAttribute(TAG_SMART_FILTER)) {
+				qbeSB = (SourceBean) confSB.getAttribute(TAG_SMART_FILTER);
 			}
 			
 			if (qbeSB != null) {

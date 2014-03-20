@@ -115,7 +115,9 @@ Ext.extend(Sbi.formviewer.FormEnginePanel, Ext.Panel, {
 
 	, getSaveWorksheetButtonEnabler : function (enabled) {
 		var toReturn = function () {
-			sendMessage({button: "saveworksheet", property:"visibility", value:"" + enabled + ""}, "managebutton");
+			if (typeof sendMessage == 'function') { // check if function is existing (when building a Smart Filter document it does not)
+				sendMessage({button: "saveworksheet", property:"visibility", value:"" + enabled + ""}, "managebutton");
+			}
 		};
 		return toReturn;
 	}

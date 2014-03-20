@@ -950,9 +950,10 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 			};
 		if(this.executionInstance.document.typeCode == 'DATAMART' || this.executionInstance.document.typeCode == 'WORKSHEET'){
 			params.OBJECT_QUERY = templateJSON.OBJECT_QUERY;
+			params.OBJECT_FORM_VALUES = templateJSON.OBJECT_FORM_VALUES;  // the worksheet may be based on a smart filter document
 			params.OBJECT_TYPE = 'WORKSHEET';
 		}else if(this.executionInstance.document.typeCode == 'SMART_FILTER'){
-			params.OBJECT_FORM_VALUES=templateJSON.OBJECT_FORM_VALUES;			
+			params.OBJECT_FORM_VALUES = templateJSON.OBJECT_FORM_VALUES;			
 			params.OBJECT_TYPE = 'WORKSHEET';
 		}else if(this.executionInstance.document.typeCode == 'MAP'){
 			params.OBJECT_TYPE = 'MAP';
