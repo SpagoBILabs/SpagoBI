@@ -48,6 +48,12 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
      * The list of registered stores managed by this manager
      */
 	stores: null
+	
+	/**
+     * @property {Ext.util.MixedCollection()} stores
+     * The list of registered relationships between datasets managed by this manager
+     */
+	, relationships: null
    
 	// =================================================================================================================
 	// METHODS
@@ -75,6 +81,27 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 		var config = {};
 		config.stores = this.getStoreConfigurations();
 		Sbi.trace("[StoreManager.getConfiguration]: IN");
+		return config;
+	}
+
+	/**
+	 * @method
+	 * Gets the relationships configuration object. This object can be passed to #setConfiguration method
+	 * at any time to roll back to the current configuration. It can also be passed to the constructor 
+	 * of this class to create a clone of this instance of store manager.
+	 * 
+	 * <b>WARNING: </b> what stated above is true only for store whose storeType is equal to "sbi". In other words
+	 * it s true only for stores created using the method #createStore. Other stores managed by this manager are not included 
+	 * in the configuration object and so will be lost. This is due to the fact that the method getStoreConfiguration is not able 
+	 * to extract configuration for a general Ext.data.Store object.
+	 * 
+	 * @return {Object} The configuration object
+	 */
+	, getRelationshipsConfiguration: function() {
+		Sbi.trace("[StoreManager.getRelationshipsConfiguration]: IN");
+		var config = {};
+		config.relationships = this.getRelationshipsConfigurations();
+		Sbi.trace("[StoreManager.getRelationshipsConfiguration]: IN");
 		return config;
 	}
 
@@ -122,7 +149,7 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 			//var store = this.createStoreOld(stores[i]);
 			this.addStore(store);
 		}
-	
+		
 		// for easy debug purpose
 //		var testStore = this.createTestStore();
 //		Sbi.trace("[StoreManager.init]: adding test store whose type is equal to [" + testStore.storeType + "]");
@@ -350,8 +377,128 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 			}
 		}
 	}
-
 	
+	//**********************************************************************************
+	//Relationships methods
+	//**********************************************************************************
+	, setRelationships: function(rels){			
+		for (var i=0; i<rels.length; i++){
+			var rel = {};
+			var config = {};
+			rel = rels[i];
+			var stores = this.getRelationshipStores(rel);
+			var fields = this.getRelationshipFields(rel);
+			config.rel = rel.rel;
+			config.stores = stores;
+			config.fields = fields;
+			
+			if (rel.id){
+				this.relationships[rel.id] = config;				
+			}			
+		}
+		Sbi.toSource(this.relationships);
+	}
+	
+	, getRelationshipStores: function(r){
+		var stores = [];
+		var lst = r.rel.split('=');
+		for (var i=0; i<lst.length; i++){
+			var el = lst[i].split('.');
+			stores.push(el[0]);
+		}
+		return stores;
+	}
+	
+	, getRelationshipFields: function(r){
+		var fields = [];
+		var lst = r.rel.split('=');
+		for (var i=0; i<lst.length; i++){
+			fields.push(lst);
+		}
+		return fields;
+	}
+
+	, addRelationship: function(r){
+		this.relationships.push(r);
+	}
+	
+	, addRelationshipsStore: function(s){
+		this.relationships.stores.push(s);
+	}
+	
+	, addRelationshipsFields: function(f){
+		this.relationships.fields.push(s);		
+	}
+	
+	, getRelationshipById: function(id){
+		for(var i=0; i<this.getRelationships().length; i++){
+			var obj = this.getRelationships()[i];
+			if (obj.id == id)	
+				return obj;
+		}
+		
+		return null;
+	}
+	
+	, getStoresByRelationship: function(r){
+		for(var i=0; i<this.getRelationships().length; i++){
+			var obj = this.getRelationships()[i];
+			if (obj.rel == r)	
+				return obj.stores;
+		}
+		
+		return null;
+	}
+	
+	
+	, getRelationshipsByStore: function(s){
+		var rels = [];
+		
+		for(var i=0; i<this.getRelationships().length; i++){
+			var obj = this.getRelationships()[i];
+			if (obj.stores !== null && obj.stores !== undefined ){
+				for(var i=0; i<obj.stores.length; i++){
+					if (obj.stores[i] == s)
+						rels.push(obj);
+				}
+			}				
+		}
+		
+		return rels;
+	}
+	
+	, removeRelationshipById: function(id){
+		for(var i=0; i<this.getRelationships().length; i++){
+			var obj = this.getRelationships()[i];
+			if (obj.id == id)	{
+				this.getRelationships().splice(i,1);
+				break;
+			}
+		}
+	}
+	
+	, resetRelationships: function(){
+		this.relationships = new Array();
+	}
+	
+	, getRelationships: function(){
+		return this.relationships;
+	}
+	
+	, getRelationshipsConfigurations: function() {
+		var confs = [];
+	
+		if(Sbi.isValorized(this.getRelationships())) {
+			confs.push(this.getRelationships());
+		}
+		
+		return confs;
+	}
+
+	, setRelationshipsConfiguration: function(conf){
+		this.relationships = [];
+		this.setRelationships(conf);
+	}
 	
 	// -----------------------------------------------------------------------------------------------------------------
 	// init methods

@@ -131,3 +131,26 @@ Sbi.locale.ln['sbi.cockpit.widgets.table.tabledesignerpanel.fields.emptymsg'] = 
 Sbi.locale.ln['sbi.cockpit.widgets.table.tabledesignerpanel.fields'] = 'Drag & drop here attribute as the series\' that you want view in the table';
 Sbi.locale.ln['sbi.cockpit.queryfieldspanel.title'] = 'Selected fields';
 
+Sbi.locale.ln['sbi.cockpit.mainpanel.btn.associations'] = 'Associations';
+Sbi.locale.ln['sbi.cockpit.mainpanel.btn.addWidget'] = 'Add Widget';
+
+Sbi.locale.ln['sbi.cockpit.relationship.editor.wizard.title'] = 'Associations editor';
+Sbi.locale.ln['sbi.cockpit.relationship.editor.wizard.ds.columnColumn'] = 'Column';
+Sbi.locale.ln['sbi.cockpit.relationship.editor.wizard.ds.columnType'] = 'Type';
+Sbi.locale.ln['sbi.cockpit.relationship.editor.wizard.list.columnId'] = 'Identifier';
+Sbi.locale.ln['sbi.cockpit.relationship.editor.wizard.list.columnAssociation'] = 'Association';
+Sbi.locale.ln['sbi.cockpit.relationship.editor.wizard.list.title'] = 'Associations List';
+Sbi.locale.ln['sbi.cockpit.relationship.editor.wizard.list.add'] = 'Add';
+Sbi.locale.ln['sbi.cockpit.relationship.editor.wizard.list.add.tooltip'] = 'Add Association';
+Sbi.locale.ln['sbi.cockpit.relationship.editor.wizard.list.modify'] = 'Modify';
+Sbi.locale.ln['sbi.cockpit.relationship.editor.wizard.list.modify.tooltip'] = 'Modify Association';
+Sbi.locale.ln['sbi.cockpit.relationship.editor.wizard.list.delete'] = 'Delete';
+Sbi.locale.ln['sbi.cockpit.relationship.editor.wizard.list.delete.tooltip'] = 'Delete Association';
+Sbi.locale.ln['sbi.cockpit.relationship.editor.wizard.list.autodetect'] = 'Auto Detect';
+Sbi.locale.ln['sbi.cockpit.relationship.editor.wizard.list.autodetect.tooltip'] = 'Auto Detect Association';
+
+Sbi.locale.ln['sbi.cockpit.relationship.editor.msg.modify'] = 'Please select the relation that you want modify from the list!';
+Sbi.locale.ln['sbi.cockpit.relationship.editor.msg.duplicate'] = 'Association already exists!';
+Sbi.locale.ln['sbi.cockpit.relationship.editor.msg.differentType'] ='Not all fields type are consistent. Do you want to continue with the addition of the association?';
+Sbi.locale.ln['sbi.cockpit.relationship.editor.msg.selectFields'] ='Please select fields for the association';
+Sbi.locale.ln['sbi.cockpit.relationship.editor.msg.confirmDelete'] ='Confirm delete of association ';

@@ -79,7 +79,7 @@ Ext.define('Sbi.data.RelationshipEditorWizardPanel', {
 	        , handler: this.onSubmit
 	        , scope: this
 //	        , disabled: (this.activeItem == 0)?false:true
-	        , disabled: true
+//	        , disabled: true
 	    });
 		
 		this.buttons.push({
