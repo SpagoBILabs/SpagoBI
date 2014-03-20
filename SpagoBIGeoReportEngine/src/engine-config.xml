@@ -10,7 +10,7 @@
 		<!-- http://code.google.com/intl/it-IT/apis/maps/signup.html -->
 		
 		<INCLUDE name="GoogleV3" default="enabled">
-			<URL><![CDATA[https://maps.google.com/maps/api/js?v=3&amp;sensor=false]]></URL>
+			<URL><![CDATA[https://maps.google.com/maps/api/js?v=3&sensor=false]]></URL>
 		</INCLUDE>
 		
 		<!--  
