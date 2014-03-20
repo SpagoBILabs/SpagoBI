@@ -35,6 +35,7 @@ public class FeaturesProviderDAOFileImpl implements IFeaturesProviderDAO {
 
 	File resourceFolder;
 	String indexOnAttribute;
+	String indexOnFile;
 	Map<String, SimpleFeature> lookupTable;
 	
 	public static final String GEOID_PNAME = "geoIdPName";
@@ -68,7 +69,8 @@ public class FeaturesProviderDAOFileImpl implements IFeaturesProviderDAO {
 			logger.debug("Parameter [" + GEOID_PVALUE + "] is equal to [" + geoIdPValue + "]");
 			Assert.assertNotNull(geoIdPName, "Parameter [" + GEOID_PNAME + "] cannot be null");
 			
-			if(!geoIdPName.equalsIgnoreCase(indexOnAttribute)) {
+			if(!((String)featureProviderEndPoint).equalsIgnoreCase(indexOnFile) 
+					|| !geoIdPName.equalsIgnoreCase(indexOnAttribute)) {
 				createIndex((String)featureProviderEndPoint, geoIdPName);
 			}
 			
@@ -128,6 +130,7 @@ public class FeaturesProviderDAOFileImpl implements IFeaturesProviderDAO {
 			
 			logger.debug("Indexing file [" + filename + "] on attribute [" + geoIdPName + "] ...");
 			
+			indexOnFile = filename;
 			indexOnAttribute = geoIdPName;
 			lookupTable = new HashMap<String, SimpleFeature>();
 			
