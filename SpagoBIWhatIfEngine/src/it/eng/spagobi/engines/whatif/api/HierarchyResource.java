@@ -11,7 +11,7 @@
  * Services that manage the hierarchies of the model:
  * 
  */
-package it.eng.spagobi.engines.whatif.services.hierarchy;
+package it.eng.spagobi.engines.whatif.api;
 
 import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
 import it.eng.spagobi.engines.whatif.services.common.AbstractWhatIfEngineService;

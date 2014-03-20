@@ -9,7 +9,7 @@
  * 
  * @author Alberto Ghedin (alberto.ghedin@eng.it)
  */
-package it.eng.spagobi.engines.whatif.services.serializer.json;
+package it.eng.spagobi.engines.whatif.member;
 
 import java.io.IOException;
 

@@ -7,7 +7,7 @@
 package it.eng.spagobi.engines.whatif;
 
 import it.eng.spagobi.commons.SingletonConfig;
-import it.eng.spagobi.engines.whatif.services.model.ModelConfig;
+import it.eng.spagobi.engines.whatif.model.ModelConfig;
 import it.eng.spagobi.services.proxy.EventServiceProxy;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
