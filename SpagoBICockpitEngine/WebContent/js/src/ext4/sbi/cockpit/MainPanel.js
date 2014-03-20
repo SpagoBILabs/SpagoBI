@@ -356,10 +356,10 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 	, onRelationshipEditorWizardSubmit: function(wizard) {
 		Sbi.trace("[MainPanel.onRelationshipEditorWizardSubmit]: IN");
 		var wizardState = wizard.getWizardState();
-		if (wizardState.relationsList != null && wizardState.relationsList !== undefined){
+		if (wizardState.associationsList != null && wizardState.associationsList !== undefined){
 			Sbi.storeManager.resetRelationships(); //reset old associations
-			Sbi.storeManager.setRelationships(wizardState.relationsList);
-			Sbi.trace("[MainPanel.onRelationshipEditorWizardSubmit]: setted relation group [" + Sbi.toSource(wizardState.relationsList) + "] succesfully added to store manager");
+			Sbi.storeManager.setRelationships(wizardState.associationsList);
+			Sbi.trace("[MainPanel.onRelationshipEditorWizardSubmit]: setted relation group [" + Sbi.toSource(wizardState.associationsList) + "] succesfully added to store manager");
 		}
 		this.relationshipEditorWizard.hide();
 		Sbi.trace("[MainPanel.onRelationshipEditorWizardSubmit]: OUT");

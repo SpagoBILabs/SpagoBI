@@ -381,7 +381,9 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 	//**********************************************************************************
 	//Relationships methods
 	//**********************************************************************************
-	, setRelationships: function(rels){			
+	, setRelationships: function(rels){		
+		if (this.relationships  == null) this.relationships = [];
+		
 		for (var i=0; i<rels.length; i++){
 			var rel = {};
 			var config = {};
@@ -396,7 +398,9 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 				this.relationships[rel.id] = config;				
 			}			
 		}
-		Sbi.toSource(this.relationships);
+		
+		Sbi.trace("[StoreManager.setRelationships]: relationships object: " +  Sbi.toSource(this.relationships));
+
 	}
 	
 	, getRelationshipStores: function(r){
