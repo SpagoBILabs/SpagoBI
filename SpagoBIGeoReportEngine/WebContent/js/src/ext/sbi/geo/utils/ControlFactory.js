@@ -61,11 +61,14 @@ Sbi.geo.utils.ControlFactory = function(){
 				control =  new Sbi.geo.control.InlineToolbar();
 			} else if(controlConf.type === 'SbiLegendMap') {
 				control =  new Sbi.geo.control.Legend();
+			} else if(controlConf.type === 'SbiMeasureMap') {
+				control =  new Sbi.geo.control.Measure();
 			} else if(controlConf.type === 'SbiLayersMap') {
 				control =  new Sbi.geo.control.Layers();
 			} else {
 				control=null;
 			}
+		
 			
 			return control;
 		}
