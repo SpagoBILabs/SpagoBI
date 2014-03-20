@@ -5,7 +5,7 @@
 
 /**
  * 
- * The row hierarchy
+ * The row dimension
  *
  *     
  *  @author
@@ -14,7 +14,7 @@
 
 
 Ext.define('Sbi.olap.execution.table.OlapExecutionRow', {
-	extend: 'Sbi.olap.execution.table.OlapExecutionAxisHierarchy',
+	extend: 'Sbi.olap.execution.table.OlapExecutionAxisDimension',
 	
 	config:{
 		style: "margin-bottom: 3px;",
@@ -36,10 +36,10 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionRow', {
 	
 	
     /**
-     * Builds the central panel with the name of the hierarchy
+     * Builds the central panel with the name of the dimension
      */
-	buildHierarchyPanel: function(){
-		var hierarchyConf =  {
+	buildDimensionPanel: function(){
+		var dimensionConf =  {
 				xtype: "panel",
 				border: false,
 		   		
@@ -48,12 +48,12 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionRow', {
 		    	html: this.getText()
 			};
 		if(this.roundText){
-			hierarchyConf.height = this.getHierarchyName().length*6.3+4;
-			hierarchyConf.cls= "rotate";
+			dimensionConf.height = this.getDimensionName().length*6.3+4;
+			dimensionConf.cls= "rotate";
 		}
 		
 		
-		this.hierarchyPanel = Ext.create("Ext.Panel",hierarchyConf);
+		this.dimensionPanel = Ext.create("Ext.Panel",dimensionConf);
 	},
 	
     /**
@@ -64,7 +64,7 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionRow', {
 	getText: function(){
 		if(!this.roundText){
 			var text ="";
-			var n = this.getHierarchyName();
+			var n = this.getDimensionName();
 			if(n){
 				for(var i=0; i<n.length; i++){
 					text = text + n.charAt(i) +'<br>';
@@ -79,13 +79,13 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionRow', {
 			}
 			return text;
 		}else{
-			return this.getHierarchyName();
+			return this.getDimensionName();
 		}
 	},
 
 	
 	/**
-	 * Builds the central panel with the name of the hierarchy
+	 * Builds the central panel with the name of the dimension
 	 */
 	buildUpPanelConf: function(){
 		var conf = this.callParent();
@@ -93,7 +93,7 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionRow', {
 	},
 	
 	/**
-	 * Builds the central panel with the name of the hierarchy
+	 * Builds the central panel with the name of the dimension
 	 */
 	buildDownPanelConf: function(){
 		var conf = this.callParent();

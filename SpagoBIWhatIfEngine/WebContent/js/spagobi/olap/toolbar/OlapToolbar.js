@@ -20,7 +20,11 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 
 	config:{
 		toolbarConfig: {
-			drillType: 'position'
+			drillType: 'position',
+			dimensionHierarchyMap:{
+				x: 1,
+				y: 2
+			}
 		},
 		mdx: ""
 	},
@@ -45,26 +49,37 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 		}
 
 		this.callParent(arguments);
+		
+
+		
 	},
 
 	initComponent: function() {
-
+		var thisPanel = this;
+		this.addEvents(
+		        /**
+		         * @event configChange
+		         * The final user changes the configuration of the model 
+				 * @param {Object} configuration
+		         */
+		        'configChange'
+				);
 		this.drillMode = Ext.create('Ext.Button', {
 			text: LN('sbi.olap.toolbar.drill.mode'),
 			iconCls: 'drill-mode',
 			menu: [{
 				text: 'Position',
-				scope:this,
+				scope:thisPanel,
 				handler: function() {
 					this.setToolbarConf({drillType: 'position'});
 				}},
 				{text: 'Member',
-					scope:this,
+					scope:thisPanel,
 					handler: function() {
 						this.setToolbarConf({drillType: 'member'});
 					}},
 					{text: 'Replace',
-						scope:this,
+						scope:thisPanel,
 						handler: function() {
 							this.setToolbarConf({drillType: 'replace'});
 						}}],
@@ -114,7 +129,7 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 	 */
 	, setToolbarConf: function (conf){
 		this.setViewState(conf);
-		Sbi.olap.eventManager.setModelConfig(conf);
+		this.fireEvent('configChange',this.toolbarConfig);
 	}
 
 	/**

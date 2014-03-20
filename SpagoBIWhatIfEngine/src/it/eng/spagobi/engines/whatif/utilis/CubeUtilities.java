@@ -11,10 +11,12 @@
  */
 package it.eng.spagobi.engines.whatif.utilis;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.olap4j.OlapException;
 import org.olap4j.metadata.Cube;
+import org.olap4j.metadata.Dimension;
 import org.olap4j.metadata.Hierarchy;
 import org.olap4j.metadata.Member;
 import org.olap4j.metadata.NamedList;
@@ -103,4 +105,21 @@ public class CubeUtilities {
 		}
 		return hierarchy;
 	}
+	
+	public static List<Dimension> getDimensions(List<Hierarchy> hierarchies){
+		List<Dimension> dimensions = new ArrayList<Dimension>();
+		if(hierarchies!=null){
+			for(int i=0; i<hierarchies.size(); i++){
+				Hierarchy aHierarchy = hierarchies.get(i);
+				Dimension aDimension = aHierarchy.getDimension();
+				if(!dimensions.contains(aDimension)){
+					dimensions.add(aDimension);
+				}
+			}
+		}
+
+		return dimensions;
+		
+	}
+	
 }

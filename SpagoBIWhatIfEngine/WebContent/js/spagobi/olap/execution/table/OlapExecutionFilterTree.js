@@ -19,10 +19,12 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionFilterTree', {
 
 	config:{
     	/**
-    	 * @cfg {Sbi.olap.HierarchyModel} hierarchy
-    	 * The hierarchy linked to the filter
+    	 * @cfg {Sbi.olap.DimensionModel} dimension
+    	 * The dimension linked to the filter
     	 */
-		hierarchy: null,
+		dimension: null,
+		
+		
     	/**
     	 * @cfg {Sbi.olap.MemberModel} selectedMember
     	 * The value of the filter
@@ -38,6 +40,9 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionFilterTree', {
 
 	constructor : function(config) {
 		this.initConfig(config);
+		
+		
+		
 		if(Sbi.settings && Sbi.settings.olap && Sbi.settings.olap.execution && Sbi.settings.olap.execution.table && Sbi.settings.olap.execution.table.OlapExecutionFilterTree) {
 			Ext.apply(this, Sbi.settings.olap.execution.OlapExecutionFilterTree);
 		}
@@ -45,13 +50,13 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionFilterTree', {
 		var service = Ext.create("Sbi.service.RestService",{
 			url: "member",
 			subPath: "filtertree",
-			pathParams: [this.hierarchy.get("uniqueName")]
+			pathParams: [this.dimension.get("selectedHierarchyUniqueName")]
 		});
 
 		
 		//Initialize the filter
 		this.tree = Ext.create("Ext.tree.Panel",{
-			title: this.hierarchy.raw.name,
+			title: this.dimension.raw.name,
 			rootVisible: false,
 			store: new Ext.data.TreeStore({
 				proxy: {

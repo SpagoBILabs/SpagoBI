@@ -13,7 +13,7 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 
 <!-- START-DEBUG -->
 
-
+<script type="text/javascript" src='../js/spagobi/olap/model/DimensionModel.js'></script>
 <script type="text/javascript" src='../js/spagobi/olap/model/HierarchyModel.js'></script>
 <script type="text/javascript" src='../js/spagobi/olap/model/MemberModel.js'></script>
 <script type="text/javascript" src='../js/spagobi/olap/model/PivotModel.js'></script>
@@ -35,12 +35,12 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='../js/spagobi/olap/toolbar/OlapToolbar.js'></script>
 
 <script type="text/javascript" src='../js/spagobi/olap/execution/table/OlapExecutionFilterTree.js'></script>
-<script type="text/javascript" src='../js/spagobi/olap/execution/table/OlapExecutionHierarchy.js'></script>
-<script type="text/javascript" src='../js/spagobi/olap/execution/table/OlapExecutionAxisHierarchy.js'></script>
+<script type="text/javascript" src='../js/spagobi/olap/execution/table/OlapExecutionDimension.js'></script>
+<script type="text/javascript" src='../js/spagobi/olap/execution/table/OlapExecutionAxisDimension.js'></script>
 <script type="text/javascript" src='../js/spagobi/olap/execution/table/OlapExecutionFilter.js'></script>
 <script type="text/javascript" src='../js/spagobi/olap/execution/table/OlapExecutionColumn.js'></script>
 <script type="text/javascript" src='../js/spagobi/olap/execution/table/OlapExecutionRow.js'></script>
-<script type="text/javascript" src='../js/spagobi/olap/execution/table/OlapExecutionHierarchies.js'></script>
+<script type="text/javascript" src='../js/spagobi/olap/execution/table/OlapExecutionDimensions.js'></script>
 <script type="text/javascript" src='../js/spagobi/olap/execution/table/OlapExecutionColumns.js'></script>
 <script type="text/javascript" src='../js/spagobi/olap/execution/table/OlapExecutionFilters.js'></script>
 <script type="text/javascript" src='../js/spagobi/olap/execution/table/OlapExecutionRows.js'></script>
