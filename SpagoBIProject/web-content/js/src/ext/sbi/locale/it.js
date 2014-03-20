@@ -835,6 +835,7 @@ Sbi.locale.ln['sbi.schedulation.pauseConfirm'] = 'Vuoi mettere in pausa la sched
 Sbi.locale.ln['sbi.scheduler.schedulation.paused'] = 'Schedulazione messa in pausa';
 Sbi.locale.ln['sbi.schedulation.resumeConfirm'] = 'Vuoi riprendere la schedulazione?';
 Sbi.locale.ln['sbi.scheduler.schedulation.resumed'] = 'Schedulazione ripresa';
+Sbi.locale.ln['sbi.scheduler.schedulation.info'] = 'Informazioni sulla schedulazione';
 
 //===================================================================
 //MESSAGE FOR QBE DATASET BUILDER
