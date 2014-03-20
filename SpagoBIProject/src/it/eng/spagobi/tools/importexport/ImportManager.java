@@ -45,6 +45,11 @@ import it.eng.spagobi.commons.metadata.SbiExtRoles;
 import it.eng.spagobi.commons.metadata.SbiAuthorizations;
 import it.eng.spagobi.commons.metadata.SbiAuthorizationsRoles;
 import it.eng.spagobi.commons.metadata.SbiAuthorizationsRolesId;
+import it.eng.spagobi.commons.metadata.SbiOrganizationDatasource;
+import it.eng.spagobi.commons.metadata.SbiOrganizationDatasourceId;
+import it.eng.spagobi.commons.metadata.SbiOrganizationEngine;
+import it.eng.spagobi.commons.metadata.SbiOrganizationEngineId;
+import it.eng.spagobi.commons.metadata.SbiTenant;
 import it.eng.spagobi.commons.utilities.FileUtilities;
 import it.eng.spagobi.commons.utilities.indexing.LuceneIndexer;
 import it.eng.spagobi.engines.config.bo.Engine;
@@ -105,6 +110,8 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.zip.ZipOutputStream;
+
+import javassist.compiler.ast.NewExpr;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
@@ -833,13 +840,41 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 				}
 
 				this.updateSbiCommonInfo4Insert(newEng);
+				
+				IEngUserProfile profile = this.getUserProfile();
+				if(profile instanceof UserProfile && ((UserProfile)profile).getIsSuperadmin()==true){
+				logger.debug("User is superadmin: Insert engine "+newEng.getName()+"");
 				sessionCurrDB.save(newEng);
 				sessionCurrDB.flush();
+				
+				SbiTenant sbiOrganizations= DAOFactory.getTenantsDAO().loadTenantByName(getTenant());
+				SbiOrganizationEngine sbiOrganizationEngine = new SbiOrganizationEngine();
+				sbiOrganizationEngine.setSbiEngines(newEng);
+				sbiOrganizationEngine.setSbiOrganizations(sbiOrganizations);
+				SbiOrganizationEngineId idRel = new SbiOrganizationEngineId();
+				idRel.setEngineId(newEng.getEngineId());
+				idRel.setOrganizationId(sbiOrganizations.getId());
+				sbiOrganizationEngine.setId(idRel);
+				sbiOrganizationEngine.getCommonInfo().setOrganization(getTenant());
+				updateSbiCommonInfo4Insert(sbiOrganizationEngine);
+			
+				sessionCurrDB.save(sbiOrganizationEngine);
+				sessionCurrDB.flush();
+				logger.debug("Association made between engine "+newEng.getDescr()+" with current tenant " + getTenant());
+
+				
 				metaLog.log("Inserted new engine " + engine.getName());
 				logger.debug("Inserted new engine " + engine.getName());
 				Integer newId = newEng.getEngineId();
 				metaAss.insertCoupleEngine(oldId, newId);
 
+				}
+				else{
+					metaLog.log("Could not insert engine " + engine.getName()+ " because user is not superadmin");
+					logger.debug("Could not insert engine " + engine.getName()+ " because user is not superadmin");
+				}
+				
+				
 			}
 		} 
 		catch (EMFUserError he) {
@@ -982,6 +1017,21 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 						//sessionCurrDB.update(existingDs);
 						//sessionCurrDB.flush();
 					} else {
+						// insert case, can do only if superadmin or if is a jdbc dataset not a jndi
+						
+						boolean canInsert=false;
+						IEngUserProfile profile = this.getUserProfile();
+						if(profile instanceof UserProfile && ((UserProfile)profile).getIsSuperadmin()==true){
+							canInsert=true;
+							logger.debug("DAtasource insert enabled because user is superadmin");
+						}
+						else if(dataSource.getJndi() == null || dataSource.getJndi().equals("")) {
+							canInsert = true;
+							logger.debug("Datasource insert enabled because datasource "+dataSource.getLabel()+" is not JNDI");
+
+						}
+						
+						if(canInsert){
 						SbiDataSource newDS = importUtilities.makeNew(dataSource);
 						importUtilities.associateWithExistingEntities(newDS, dataSource, sessionCurrDB, importer, metaAss);
 						this.updateSbiCommonInfo4Insert(newDS);
@@ -989,7 +1039,32 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 						sessionCurrDB.flush();
 						metaLog.log("Inserted new datasource " + newDS.getLabel());
 						logger.debug("Inserted new datasource " + newDS.getLabel());
+						
+						logger.debug("Associate datasource with current tenant " + getTenant());
+						
+						SbiTenant sbiOrganizations= DAOFactory.getTenantsDAO().loadTenantByName(getTenant());
+						SbiOrganizationDatasource sbiOrganizationDatasource = new SbiOrganizationDatasource();
+						sbiOrganizationDatasource.setSbiDataSource(newDS);
+						sbiOrganizationDatasource.setSbiOrganizations(sbiOrganizations);
+						SbiOrganizationDatasourceId idRel = new SbiOrganizationDatasourceId();
+						idRel.setDatasourceId(newDS.getDsId());
+						idRel.setOrganizationId(sbiOrganizations.getId());
+						sbiOrganizationDatasource.setId(idRel);
+						sbiOrganizationDatasource.getCommonInfo().setOrganization(getTenant());
+						updateSbiCommonInfo4Insert(sbiOrganizationDatasource);
+					
+						sessionCurrDB.save(sbiOrganizationDatasource);
+						sessionCurrDB.flush();
+						logger.debug("Association made between datasource "+newDS.getDescr()+" with current tenant " + getTenant());
+						
 						metaAss.insertCoupleDataSources(oldId, newId);
+						
+						}
+						else{
+							logger.warn("Datasource insert not enabled because datasource "+dataSource.getLabel()+" is JNDI and you are nbot superadmin: datasource not inserted");	
+							metaLog.log("Exported dataSource " + dataSource.getLabel() + " not inserted"
+									+ " because is of type  JNDI and user is not superadmin");
+						}
 					}
 			}
 //				else{
@@ -5753,7 +5828,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 					logger.info("The udp with label:[" + udp.getLabel() + "] is just present. It will be updated.");
 					metaLog.log("The udp with label = [" + udp.getLabel() + "] will be updated.");
 					SbiUdp existingUdp = importUtilities.modifyExisting(udp, sessionCurrDB, existingUdpId);
-					importUtilities.entitiesAssociations(existingUdp, udp, sessionCurrDB,  metaAss, importer);
+					importUtilities.entitiesAssociations(udp, existingUdp, sessionCurrDB,  metaAss, importer);
 					this.updateSbiCommonInfo4Update(existingUdp);
 					sessionCurrDB.update(existingUdp);
 					sessionCurrDB.flush();
