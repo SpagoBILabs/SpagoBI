@@ -8,22 +8,22 @@
  */
 package it.eng.spagobi.engines.whatif.dimension;
 
-import it.eng.spagobi.engines.whatif.hierarchy.HierarchyInternalObject;
+import it.eng.spagobi.engines.whatif.hierarchy.SbiHierarchy;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class DimensionInternalObject {
+public class SbiDimension {
 
 	private String name;
 	private String uniqueName;
-	private List<HierarchyInternalObject> hierarchies;
+	private List<SbiHierarchy> hierarchies;
 	private String selectedHierarchyUniqueName;
 	private int selectedHierarchyPosition;
 	
 	
-	public DimensionInternalObject(String name, String uniqueName,
-			List<HierarchyInternalObject> hierarchies,
+	public SbiDimension(String name, String uniqueName,
+			List<SbiHierarchy> hierarchies,
 			String selectedHierarchyUniqueName, int selectedHierarchyPosition) {
 		super();
 		this.name = name;
@@ -33,11 +33,11 @@ public class DimensionInternalObject {
 		this.selectedHierarchyPosition = selectedHierarchyPosition;
 	}
 	
-	public DimensionInternalObject(String name, String uniqueName) {
+	public SbiDimension(String name, String uniqueName) {
 		super();
 		this.name = name;
 		this.uniqueName = uniqueName;
-		this.hierarchies = new ArrayList<HierarchyInternalObject>();
+		this.hierarchies = new ArrayList<SbiHierarchy>();
 	}
 	
 	public String getName() {
@@ -52,10 +52,10 @@ public class DimensionInternalObject {
 	public void setUniqueName(String uniqueName) {
 		this.uniqueName = uniqueName;
 	}
-	public List<HierarchyInternalObject> getHierarchies() {
+	public List<SbiHierarchy> getHierarchies() {
 		return hierarchies;
 	}
-	public void setHierarchy(List<HierarchyInternalObject> hierarchies) {
+	public void setHierarchy(List<SbiHierarchy> hierarchies) {
 		this.hierarchies = hierarchies;
 	}
 	public String getSelectedHierarchyUniqueName() {

@@ -14,7 +14,7 @@ import java.util.Map;
 
 
 
-public class HierarchyInternalObject {
+public class SbiHierarchy {
 	private String name;
 	private String uniqueName;
 	private int position;
@@ -23,7 +23,7 @@ public class HierarchyInternalObject {
 	
 	
 	
-	public HierarchyInternalObject(String name, String uniqueName,
+	public SbiHierarchy(String name, String uniqueName,
 			int position, int axis) {
 		super();
 		this.name = name;
@@ -35,7 +35,7 @@ public class HierarchyInternalObject {
 	
 	
 	
-	public HierarchyInternalObject(String name, String uniqueName,
+	public SbiHierarchy(String name, String uniqueName,
 			int position, int axis, List<Map<String, String>> slicers) {
 		super();
 		this.name = name;

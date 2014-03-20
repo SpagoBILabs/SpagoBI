@@ -14,8 +14,8 @@ package it.eng.spagobi.engines.whatif.model;
 
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.engines.whatif.cube.CubeUtilities;
-import it.eng.spagobi.engines.whatif.dimension.DimensionInternalObject;
-import it.eng.spagobi.engines.whatif.hierarchy.HierarchyInternalObject;
+import it.eng.spagobi.engines.whatif.dimension.SbiDimension;
+import it.eng.spagobi.engines.whatif.hierarchy.SbiHierarchy;
 import it.eng.spagobi.pivot4j.ui.WhatIfHTMLRenderer;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
@@ -219,7 +219,7 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotModel> {
 
 			for (int i=0; i<dimensions.size(); i++) {
 				Dimension aDimension = dimensions.get(i);
-				DimensionInternalObject myDimension = new DimensionInternalObject(aDimension.getName(), aDimension.getUniqueName()); 
+				SbiDimension myDimension = new SbiDimension(aDimension.getName(), aDimension.getUniqueName()); 
 				List<Hierarchy> dimensionHierarchies = aDimension.getHierarchies();
 
 				String selectedHierarchyName = modelConfig.getDimensionHierarchyMap().get(myDimension.getUniqueName());
@@ -231,7 +231,7 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotModel> {
 				
 				for (int j=0; j<dimensionHierarchies.size(); j++) {
 					Hierarchy hierarchy = dimensionHierarchies.get(j);
-					HierarchyInternalObject hierarchyObject = new HierarchyInternalObject(hierarchy.getName(), hierarchy.getUniqueName(), i, axis);
+					SbiHierarchy hierarchyObject = new SbiHierarchy(hierarchy.getName(), hierarchy.getUniqueName(), i, axis);
 					
 					if(withSlicers){
 						List<Member> slicers = ph.getSlicer(hierarchy);
