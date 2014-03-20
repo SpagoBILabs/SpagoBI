@@ -81,8 +81,7 @@ public class WhatIfEngineConfig {
 	private final static String INCLUDES_TAG = "INCLUDES";
 	private final static String INCLUDE_TAG = "INCLUDE";
 	private final static String URL_TAG = "URL";
-	
-	
+	private final static String DRIVER_TAG = "DRIVER";
 	
 	
 	public String getInitiallMdx() {
@@ -102,6 +101,7 @@ public class WhatIfEngineConfig {
 		String pwd = "foodmart";
 		String catalog = "/home/spagobi/apache-tomcat-7.0.50/resources/Olap/FoodMart.xml";
 		String connectionString =  "jdbc:mondrian:Jdbc=jdbc:mysql://sibilla2:3306/foodmart";
+		String driver =  "com.mysql.jdbc.Driver";
 		
 		
 		
@@ -110,8 +110,14 @@ public class WhatIfEngineConfig {
 			usr = sb.getCharacters();
 		
 		sb = (SourceBean) getConfigSourceBean().getAttribute("PWD");
-		if(sb!=null)
+		if(sb!=null){
 			pwd = sb.getCharacters();
+			if(pwd==null){
+				pwd = "";
+			}
+			
+		}
+			
 		
 		sb = (SourceBean) getConfigSourceBean().getAttribute("CATALOG");
 		if(sb!=null)
@@ -121,12 +127,15 @@ public class WhatIfEngineConfig {
 		if(sb!=null)
 			connectionString = sb.getCharacters();
 		
+		sb = (SourceBean) getConfigSourceBean().getAttribute(DRIVER_TAG);
+		if(sb!=null)
+			driver = sb.getCharacters();
 		
 		connectionProps.put("JdbcUser", usr);
 		connectionProps.put("JdbcPassword", pwd);
 		
 		connectionProps.put("Catalog",catalog);
-		connectionProps.put("JdbcDrivers","com.mysql.jdbc.Driver");
+		connectionProps.put("JdbcDrivers", driver);
 		
 		connectionProps.put("Provider","Mondrian");
 
