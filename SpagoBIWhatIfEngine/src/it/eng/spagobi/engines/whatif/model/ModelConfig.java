@@ -6,7 +6,7 @@
 /**
  * @author Alberto Ghedin (alberto.ghedin@eng.it)
  */
-package it.eng.spagobi.engines.whatif.services.model;
+package it.eng.spagobi.engines.whatif.model;
 
 import java.util.HashMap;
 import java.util.Map;

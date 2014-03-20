@@ -6,7 +6,7 @@
 /**
  * @author Alberto Ghedin (alberto.ghedin@eng.it)
  */
-package it.eng.spagobi.engines.whatif.services.hierarchy;
+package it.eng.spagobi.engines.whatif.hierarchy;
 
 import java.util.ArrayList;
 import java.util.List;

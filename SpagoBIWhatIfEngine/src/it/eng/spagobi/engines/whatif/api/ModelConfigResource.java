@@ -8,11 +8,12 @@
  * @author Alberto Ghedin (alberto.ghedin@eng.it)
  *
  */
-package it.eng.spagobi.engines.whatif.services.model;
+package it.eng.spagobi.engines.whatif.api;
 
 import java.io.IOException;
 
 import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
+import it.eng.spagobi.engines.whatif.model.ModelConfig;
 import it.eng.spagobi.engines.whatif.services.common.AbstractWhatIfEngineService;
 import it.eng.spagobi.engines.whatif.services.serializer.SerializationException;
 import it.eng.spagobi.engines.whatif.services.serializer.SerializationManager;

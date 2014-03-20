@@ -14,7 +14,7 @@
  * </ul>
  * 
  */
-package it.eng.spagobi.engines.whatif.services.model;
+package it.eng.spagobi.engines.whatif.api;
 
 import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
 import it.eng.spagobi.engines.whatif.services.common.AbstractWhatIfEngineService;

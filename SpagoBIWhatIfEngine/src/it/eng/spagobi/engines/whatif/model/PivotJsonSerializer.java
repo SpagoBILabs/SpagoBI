@@ -8,9 +8,9 @@
  * @authors Alberto Ghedin (alberto.ghedin@eng.it)
  *
  */
-package it.eng.spagobi.engines.whatif.services.serializer.json;
+package it.eng.spagobi.engines.whatif.model;
 
-import it.eng.spagobi.engines.whatif.services.model.ModelConfig;
+import it.eng.spagobi.engines.whatif.member.MemberJsonSerializer;
 import it.eng.spagobi.engines.whatif.services.serializer.ISerializer;
 import it.eng.spagobi.engines.whatif.services.serializer.SerializationException;
 import it.eng.spagobi.engines.whatif.services.serializer.SerializationManager;

@@ -1,4 +1,4 @@
-package it.eng.spagobi.engines.whatif.services.axis;
+package it.eng.spagobi.engines.whatif.axis;
 
 import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
 import it.eng.spagobi.engines.whatif.utilis.CubeUtilities;
