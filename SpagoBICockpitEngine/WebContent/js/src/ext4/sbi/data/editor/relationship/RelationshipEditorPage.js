@@ -77,7 +77,7 @@ Ext.define('Sbi.data.editor.relationship.RelationshipEditorPage', {
 		Sbi.trace("[RelationshipEditorPage.applyPageState]: IN");
 		state =  state || {};
 		if(this.relationshipEditorPanel) {
-			state.relationsList = this.relationshipEditorPanel.getRelationsList();
+			state.associationsList = this.relationshipEditorPanel.getRelationsList();
 		}
 		Sbi.trace("[RelationshipEditorPage.applyPageState]: OUT");
 		return state;
