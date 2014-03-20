@@ -173,7 +173,10 @@ Ext.extend(Sbi.service.ServiceRegistry, Ext.util.Observable, {
 	, getRestBaseUrlStr: function(s) {
 		var baseUrlStr;
 	
-		var isAbsolute = s.isAbsolute || this.defaultAbsolute;
+		var isAbsolute =  this.defaultAbsolute;
+		if (s.isAbsolute !== undefined && s.isAbsolute != null){
+			isAbsolute = s.isAbsolute;
+		}
 		var url = Ext.apply({}, s.baseUrl || {}, this.baseUrl);
 	
 		if(isAbsolute) {
