@@ -431,12 +431,15 @@ li:hover .login-panel .not-registered a:hover,.login-panel .not-registered a:hov
 .map-tools .tools-content{display:none;position:absolute;bottom:0;right:0}
 .map-tools .layers .tools-content{width:258px}
 .map-tools-element .icon{cursor:pointer;background-image:url(../img/controlpanel/ico-map-tools.png);background-repeat:no-repeat;float:right;display:block;width:34px;height:34px}
-.map-tools-element.layers .icon{background-position:-34px 0}
-.map-tools-element.layers .icon:hover{background-position:-34px -34px}
+	
 .map-tools-element.legend .icon{background-position:0 0}
 .map-tools-element.legend .icon:hover{background-position:0 -34px}
-.map-tools-element.measure .icon{background-image:url(../img/controlpanel/ico-map-tools-x.png);background-repeat:no-repeat;background-position:0 0}
-.map-tools-element.measure .icon:hover{background-image:url(../img/controlpanel/ico-map-tools-x.png);background-repeat:no-repeat;background-position:0 -34px}
+	
+.map-tools-element.layers .icon{background-position:-34px 0}
+.map-tools-element.layers .icon:hover{background-position:-34px -34px}
+	
+.map-tools-element.measure .icon{background-position:-68px 0}
+.map-tools-element.measure .icon:hover{background-position:-68px -34px}
 
 .map-tools .legend .tools-content{display:none;padding-bottom:10px}
 
