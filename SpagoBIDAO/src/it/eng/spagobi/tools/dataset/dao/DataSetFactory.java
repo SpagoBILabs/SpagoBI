@@ -169,17 +169,23 @@ public class DataSetFactory {
 			if(sbiDataSet.getType().equalsIgnoreCase(DataSetConstants.DS_QUERY)) { 
 				ds=new JDBCDataSet();
 				ds.setConfiguration(sbiDataSet.getConfiguration());
+				ds.setDsType(JDBC_DS_TYPE);
 				((JDBCDataSet)ds).setQuery(jsonConf.getString(DataSetConstants.QUERY));
 				((JDBCDataSet)ds).setQueryScript(jsonConf.getString(DataSetConstants.QUERY_SCRIPT));
 				((JDBCDataSet)ds).setQueryScriptLanguage(jsonConf.getString(DataSetConstants.QUERY_SCRIPT_LANGUAGE));				
 				DataSourceDAOHibImpl dataSourceDao=new DataSourceDAOHibImpl();
 				IDataSource dataSource= dataSourceDao.loadDataSourceByLabel(jsonConf.getString(DataSetConstants.DATA_SOURCE));				
-				((JDBCDataSet)ds).setDataSource(dataSource);				
-				// if data source associated is not read only set is as write one.
-				if(!dataSource.checkIsReadOnly()){
-					ds.setDataSourceForWriting(dataSource);
+				if(dataSource != null){
+					((JDBCDataSet)ds).setDataSource(dataSource);				
+					// if data source associated is not read only set is as write one.
+					if(!dataSource.checkIsReadOnly()){
+						ds.setDataSourceForWriting(dataSource);
+					}
 				}
-				ds.setDsType(JDBC_DS_TYPE);
+				else{
+					logger.error("Could not retrieve datasource with label "+jsonConf.getString(DataSetConstants.DATA_SOURCE)+" for dataset "+sbiDataSet.getLabel());
+				}
+	
 			}
 	
 			if(sbiDataSet.getType().equalsIgnoreCase(DataSetConstants.DS_WS)) { 			

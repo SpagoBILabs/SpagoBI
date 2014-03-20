@@ -8,10 +8,10 @@
             <column name="UDP_ID" />
         </id>
         <property name="typeId" type="integer">
-            <column name="TYPE_ID" not-null="true" />
+            <column name="TYPE_ID" />
         </property>
         <property name="familyId" type="integer">
-            <column name="FAMILY_ID" not-null="true" />
+            <column name="FAMILY_ID" />
         </property>
         <property name="label" type="string">
             <column name="LABEL" length="20" not-null="true" unique="true" />
