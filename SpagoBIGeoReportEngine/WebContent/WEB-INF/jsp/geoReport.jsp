@@ -75,9 +75,6 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 
 	includes = engineInstance.getIncludes();
 	
-    // gets analytical driver
-    Map analyticalDrivers  = engineInstance.getAnalyticalDrivers();
-
 	boolean forceIE8Compatibility = false;
 %>
 
@@ -153,29 +150,7 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 		}
 		var executionRole = '<%= executionRole%>';
 		Sbi.template.role = executionRole || Sbi.template.role;
-		
-		var executionContext = {};
-        <% 
-        Iterator it = analyticalDrivers.keySet().iterator();
-		while(it.hasNext()) {
-			String parameterName = (String)it.next();
-			String parameterValue = (String)analyticalDrivers.get(parameterName);		
-			//System.out.println("parameterName: " + parameterName + " - parameterValue: " + parameterValue);
-			//if (parameterValue != null && !parameterValue.equals("")){ //NECESSARIO il test sulla stringa vuota??
-			String quote = (parameterValue.startsWith("'"))? "" : "'";
-			if ( parameterValue.indexOf(",") >= 0){					
-		 %>
-				executionContext ['<%=parameterName%>'] = [<%=quote%><%=parameterValue%><%=quote%>];
-		<%	}else{
-		%>
-				executionContext ['<%=parameterName%>'] = <%=quote%><%=parameterValue%><%=quote%>;
-		 <%
-		 	}							
-		    //}
-		 } //while
-        %>
-        Sbi.template.executionContext = executionContext;
-		
+			
 		execDoc = function(docLab, role, params, dispToolbar, dispSlide,frameId, height) {
 			
 			var h = height || '100%';
@@ -265,14 +240,10 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 	
 	</script>
 		
-	<!-- comment the following blocks  -->	
-	<div style="width: 600px; height: 200px; z-index:0;">&nbsp;
-	 
-	<div id="buttonbar"></div>
-	<div id="map"></div>
-	</div>
-		
-	<center id="error"></center> 
+
+		<!-- commenting the following block only the legend control will be displayed on the map. why?  -->
+		<div id="map"></div>
+	
 	</body>
 
 </html>
