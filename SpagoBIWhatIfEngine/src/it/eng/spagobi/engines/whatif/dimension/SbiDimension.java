@@ -20,23 +20,25 @@ public class SbiDimension {
 	private List<SbiHierarchy> hierarchies;
 	private String selectedHierarchyUniqueName;
 	private int selectedHierarchyPosition;
-	
+	private int axis;
 	
 	public SbiDimension(String name, String uniqueName,
 			List<SbiHierarchy> hierarchies,
-			String selectedHierarchyUniqueName, int selectedHierarchyPosition) {
+			String selectedHierarchyUniqueName, int axis,  int selectedHierarchyPosition) {
 		super();
 		this.name = name;
 		this.uniqueName = uniqueName;
 		this.hierarchies = hierarchies;
+		this.axis = axis;
 		this.selectedHierarchyUniqueName = selectedHierarchyUniqueName;
 		this.selectedHierarchyPosition = selectedHierarchyPosition;
 	}
 	
-	public SbiDimension(String name, String uniqueName) {
+	public SbiDimension(String name, String uniqueName, int axis) {
 		super();
 		this.name = name;
 		this.uniqueName = uniqueName;
+		this.axis = axis;
 		this.hierarchies = new ArrayList<SbiHierarchy>();
 	}
 	
@@ -69,6 +71,14 @@ public class SbiDimension {
 	}
 	public void setSelectedHierarchyPosition(int selectedHierarchyPosition) {
 		this.selectedHierarchyPosition = selectedHierarchyPosition;
+	}
+
+	public int getAxis() {
+		return axis;
+	}
+
+	public void setAxis(int axis) {
+		this.axis = axis;
 	}
 
 	

@@ -11,9 +11,10 @@
  * Provides services to manage the axis resource
  * 
  */
-package it.eng.spagobi.engines.whatif.axis;
+package it.eng.spagobi.engines.whatif.api;
 
 import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
+import it.eng.spagobi.engines.whatif.axis.AxisDimensionManager;
 import it.eng.spagobi.engines.whatif.common.AbstractWhatIfEngineService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -78,7 +79,7 @@ public class AxisResource extends AbstractWhatIfEngineService {
 	 * @return the rendered pivot table
 	 */
 	@PUT
-	@Path("/{fromAxis}/moveHierarchy/{hierarchy}/{toAxis}")
+	@Path("/{fromAxis}/movedimension/{hierarchy}/{toAxis}")
 	public String moveHierarchyHierarchy(@javax.ws.rs.core.Context HttpServletRequest req, @PathParam("fromAxis") int fromAxisPos, @PathParam("toAxis") int toAxisPos,@PathParam("hierarchy") String hierarchyName){
 
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
@@ -98,7 +99,7 @@ public class AxisResource extends AbstractWhatIfEngineService {
 	 * @return the rendered pivot table
 	 */
 	@PUT
-	@Path("/{axis}/swaphierarchies/{hierarchy1}/{hierarchy2}")
+	@Path("/{axis}/swapdimensions/{hierarchy1}/{hierarchy2}")
 	public String swapHierarchies(@javax.ws.rs.core.Context HttpServletRequest req, @PathParam("axis") int axisPos, @PathParam("hierarchy1") int hierarchyPos1, @PathParam("hierarchy2") int hierarchyPos2){
 
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();

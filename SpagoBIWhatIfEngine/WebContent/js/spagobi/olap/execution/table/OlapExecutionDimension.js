@@ -45,6 +45,19 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionDimension', {
 		this.callParent(arguments);
 		this.addDragAndDrop();
 	},
+	
+
+	initComponent: function() {
+		
+
+		var items = this.buildItems();
+		
+		Ext.apply(this, {
+			frame: true,
+			items: items}
+		);
+		this.callParent();
+	},
 
 	/**
 	 * Implements the drag and drop of the dimension between filters, rows and columns

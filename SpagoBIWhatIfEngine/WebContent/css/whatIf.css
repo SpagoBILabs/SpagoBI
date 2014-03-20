@@ -69,7 +69,17 @@
 }
 
 
+.multi-hierarchy {
+	background-image: url(../img/multi_hierarchy_2.png);
+	background-position: right;
+	background-repeat: no-repeat;
+}
+
+
+/*------------------*/
 /*expandable members*/
+/*------------------*/
+
 .expanded{
    		vertical-align:middle;
    		text-align: left;

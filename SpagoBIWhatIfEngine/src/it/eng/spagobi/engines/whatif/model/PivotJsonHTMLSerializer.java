@@ -219,7 +219,7 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotModel> {
 
 			for (int i=0; i<dimensions.size(); i++) {
 				Dimension aDimension = dimensions.get(i);
-				SbiDimension myDimension = new SbiDimension(aDimension.getName(), aDimension.getUniqueName()); 
+				SbiDimension myDimension = new SbiDimension(aDimension.getName(), aDimension.getUniqueName(), axis); 
 				List<Hierarchy> dimensionHierarchies = aDimension.getHierarchies();
 
 				String selectedHierarchyName = modelConfig.getDimensionHierarchyMap().get(myDimension.getUniqueName());
@@ -231,7 +231,7 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotModel> {
 				
 				for (int j=0; j<dimensionHierarchies.size(); j++) {
 					Hierarchy hierarchy = dimensionHierarchies.get(j);
-					SbiHierarchy hierarchyObject = new SbiHierarchy(hierarchy.getName(), hierarchy.getUniqueName(), i, axis);
+					SbiHierarchy hierarchyObject = new SbiHierarchy(hierarchy.getName(), hierarchy.getUniqueName(), i);
 					
 					if(withSlicers){
 						List<Member> slicers = ph.getSlicer(hierarchy);
