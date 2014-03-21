@@ -697,6 +697,8 @@
 				<file name="./src/ext4/sbi/tools/scheduler/SchedulerModel.js" />
 				<file name="./src/ext4/sbi/tools/scheduler/SchedulerListDetailPanel.js" />
 				<file name="./src/ext4/sbi/tools/scheduler/SchedulerDetailPanel.js" />
+				<file name="./src/ext4/sbi/tools/scheduler/TriggerInfoWindow.js" />
+
 				
 
 				
