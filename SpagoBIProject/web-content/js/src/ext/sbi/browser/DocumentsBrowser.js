@@ -25,7 +25,10 @@ Sbi.browser.DocumentsBrowser = function(config) {
 	//for "custom" Document Browser we have a defaultFolder id
 	if ((config.defaultFolderId != null) && (config.defaultFolderId != undefined )){
 		this.defaultFolderId = config.defaultFolderId ;
+	} else {
+		this.defaultFolderId = this.getLastVisitedFolderId();
 	}
+	
 	
 	this.detailPanel = new Sbi.browser.FolderDetailPanel({ 
 		layout: 'fit'
@@ -198,6 +201,9 @@ Ext.extend(Sbi.browser.DocumentsBrowser, Ext.Panel, {
 	}
 	
 	, onFolderLoad: function(panel) {
+		
+		this.setLastVisitedFolderId(panel.folderId);
+		
 //		if(this.brSheet.getActiveTab() != this.detailPanel) {
 //			this.brSheet.setActiveTab(this.detailPanel);
 //			
@@ -368,7 +374,44 @@ Ext.extend(Sbi.browser.DocumentsBrowser, Ext.Panel, {
 	, closeDocument: function(){
 		   this.fireEvent('closeDocument');
 		   this.detailPanel.folderView.store.reload();
-
+	}
+	
+	,
+	setInCookies : function (key, value) {
+		var exdays = 1;
+		var d = new Date();
+		d.setTime(d.getTime()+(exdays*24*60*60*1000));
+		var expires = "expires="+d.toGMTString();
+		document.cookie = key + "=" + value + "; " + expires;
+	}
+	
+	,
+	getFromCookies : function (key) {
+		var name = key + "=";
+		var ca = document.cookie.split(';');
+		for(var i=0; i<ca.length; i++) 
+		  {
+		  var c = ca[i].trim();
+		  if (c.indexOf(name)==0) return c.substring(name.length,c.length);
+		}
+		return null;
+	}
+	
+	,
+	getLastVisitedFolderId : function () {
+		var key = this.getLastVisitedFolderIdKey();
+		return this.getFromCookies(key);
+	}
+	
+	,
+	setLastVisitedFolderId : function (lastVisitedFolderId) {
+		var key = this.getLastVisitedFolderIdKey();
+		this.setInCookies(key, lastVisitedFolderId);
+	}
+	
+	,
+	getLastVisitedFolderIdKey : function () {
+		return Sbi.user.userId + "_last_folder";
 	}
 	
 });
