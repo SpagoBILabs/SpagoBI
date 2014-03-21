@@ -158,6 +158,18 @@
 		background-image: url('../img/ico-delete.gif') !important;
 		/*background-position:0px 10px;*/
 	}
+	
+	.icon-add {
+		background-image: url('../img/ico-add.gif') !important;
+		/*background-position:0px 10px;*/
+	}
+	
+	.icon-edit {
+		background-image: url('../img/ico-edit.png') !important;
+		/*background-position:0px 10px;*/
+	}
+	
+	
 	.uploadImgIcon {
 	 	background-image:url('../img/browser_globe_upload.png') !important;
 	}

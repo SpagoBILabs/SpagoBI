@@ -86,16 +86,18 @@ Ext.define('Sbi.data.editor.relationship.RelationshipEditorList', {
     	// The add action
     	var title = new Ext.form.Label({text:LN('sbi.cockpit.relationship.editor.wizard.list.title'),  style: 'font-weight:bold;'});
         var actionAdd = new Ext.Action({
-            text: LN('sbi.cockpit.relationship.editor.wizard.list.add'),
+//            text: LN('sbi.cockpit.relationship.editor.wizard.list.add'),
             tooltip: LN('sbi.cockpit.relationship.editor.wizard.list.add.tooltip'),
+            iconCls:'icon-add',
             handler: function(){
             	thisPanel.fireEvent("addRelation",null);
             }
         });
         
         var actionModify = new Ext.Action({
-        	text: LN('sbi.cockpit.relationship.editor.wizard.list.modify'),
+//        	text: LN('sbi.cockpit.relationship.editor.wizard.list.modify'),
             tooltip: LN('sbi.cockpit.relationship.editor.wizard.list.modify.tooltip'),
+            iconCls:'icon-edit',
             scope: this,
             handler: function(){
             	thisPanel.fireEvent("modifyRelation", thisPanel);
