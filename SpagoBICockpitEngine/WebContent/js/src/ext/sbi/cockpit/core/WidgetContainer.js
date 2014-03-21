@@ -644,8 +644,8 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.WidgetRuntime, {
     
     , onComponentClose: function(component) {
     	Sbi.trace("[WidgetContainer.onComponentClose]: IN");
-    	if(components.isNotEmpty()) {
-    		var widget = components.getWidget();
+    	if(component.isNotEmpty()) {
+    		var widget = component.getWidget();
     		this.getWidgetManager().unregister(widget);
     	}
     	Sbi.trace("[WidgetContainer.onComponentClose]: OUT");
