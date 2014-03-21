@@ -47,6 +47,16 @@ Ext.define('Sbi.data.editor.relationship.RelationshipEditorDatasetContainer', {
 		this.items = items;
 	}
 	
+	, resetSelections: function(){
+		for (var i=0; i<this.items.length; i++){
+			var item = this.items.get(i);
+			var sm = item.grid.getSelectionModel();
+			if (sm != null && sm !== undefined){
+				sm.deselectAll(true);
+			}
+		}
+	}
+	
 	// PUBLIC METHODS
 	, getDatasetItem: function(idx){
 		return this.items.get(idx);
