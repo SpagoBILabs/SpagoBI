@@ -79,10 +79,11 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditorFieldPalette, Ext.Panel, {
     	
 		if (datasetLabel) {	
 			this.dataset = datasetLabel;
-			this.store.proxy.setUrl(Sbi.config.serviceRegistry.getRestServiceUrl({
+			this.store.getProxy().url  = Sbi.config.serviceRegistry.getRestServiceUrl({
 				serviceName : 'dataset/' + this.dataset + '/fields'
-			}), true);
-			Sbi.trace("[WidgetEditorFieldPalette.refreshFieldsList]: url: " + this.store.url);
+			});
+	
+			Sbi.trace("[WidgetEditorFieldPalette.refreshFieldsList]: url: " + this.store.getProxy().url);
 		} 
 		this.store.load();
 		
@@ -125,15 +126,37 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditorFieldPalette, Ext.Panel, {
 	, initStore: function() {
 		Sbi.trace("[WidgetEditorFieldPalette.initStore]: IN");
 
-		this.store = new Ext.data.JsonStore({
-			autoLoad : (this.dataset)?true:false
-			, idProperty : 'alias'
-			, root: 'results'
-			, fields: ['id', 'alias', 'funct', 'iconCls', 'nature', 'values', 'precision', 'options']
-			, url: Sbi.config.serviceRegistry.getRestServiceUrl({
-				serviceName : 'dataset/' + this.dataset + '/fields'
-			})
-		}); 
+		// Set up a model to use in our Store
+		Ext.define('Field', {
+		    extend: 'Ext.data.Model',
+		    idProperty : 'alias',
+		    fields: [
+		        {name: 'id', type: 'string'},
+		        {name: 'alias',  type: 'string'},
+		        {name: 'funct',       type: 'int'},
+		        {name: 'iconCls',  type: 'string'},
+		        {name: 'nature',  type: 'string'},
+		        {name: 'values',  type: 'string'},
+		        {name: 'values',  type: 'string'},
+		        {name: 'options',  type: 'string'},
+		    ]
+		});
+		
+		this.store = Ext.create('Ext.data.Store', {
+		    model: 'Field',
+		    proxy: {
+		        type: 'ajax',
+		        url : Sbi.config.serviceRegistry.getRestServiceUrl({
+					serviceName : 'dataset/' + this.dataset + '/fields'
+				}),
+		        reader: {
+		            type: 'json',
+		            root: 'results'
+		        }
+		    },
+		    autoLoad: (this.dataset)?true:false
+		});
+		
     	
 		this.store.on('loadexception', function(store, options, response, e){
 			Sbi.exception.ExceptionHandler.handleFailure(response, options);
