@@ -157,7 +157,7 @@ Ext.define('Sbi.data.editor.relationship.RelationshipEditor', {
 	    }
 		
 	}
-	
+	 
 	/**
 	 * @method (fired)
 	 * Select the cells linked to the list grid
@@ -165,6 +165,7 @@ Ext.define('Sbi.data.editor.relationship.RelationshipEditor', {
 	 * @param {String} r The relation content to use for the selection of elements
 	 */
 	, selectRelation: function(r){
+		this.dsContainerPanel.resetSelections();
 		var lst = r.rel.split('=');
 		for (var i=0; i<lst.length; i++){
 			var el = lst[i].split('.');
