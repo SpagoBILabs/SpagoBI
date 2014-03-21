@@ -836,6 +836,11 @@ Sbi.locale.ln['sbi.scheduler.schedulation.paused'] = 'Schedulazione messa in pau
 Sbi.locale.ln['sbi.schedulation.resumeConfirm'] = 'Vuoi riprendere la schedulazione?';
 Sbi.locale.ln['sbi.scheduler.schedulation.resumed'] = 'Schedulazione ripresa';
 Sbi.locale.ln['sbi.scheduler.schedulation.info'] = 'Informazioni sulla schedulazione';
+Sbi.locale.ln['sbi.scheduler.schedulation.mailto'] = 'Invia a';
+Sbi.locale.ln['sbi.scheduler.schedulation.attachedzip'] = 'Nome zip allegato';
+Sbi.locale.ln['sbi.scheduler.schedulation.mailsubject'] = 'Oggetto mail';
+Sbi.locale.ln['sbi.scheduler.schedulation.containedfilename'] = 'Nome file contenuto';
+Sbi.locale.ln['sbi.scheduler.schedulation.mailtext'] = 'Testo mail';
 
 //===================================================================
 //MESSAGE FOR QBE DATASET BUILDER

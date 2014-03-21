@@ -548,6 +548,28 @@ public class SchedulerService {
 							if (dispatchContext != null){
 								String mailTos = dispatchContext.getMailTos();
 								documentJSONObject.put("mailTos", mailTos);
+								String zipMailName = dispatchContext.getZipMailName();
+								if (zipMailName == null){
+									zipMailName = "";
+								}
+								documentJSONObject.put("zipMailName", zipMailName);
+								String datasetLabel = dispatchContext.getDataSetLabel();
+								
+								if (datasetLabel == null){
+									datasetLabel = "";
+								}
+								documentJSONObject.put("datasetLabel", datasetLabel);
+								String mailSubject = dispatchContext.getMailSubj();								
+								documentJSONObject.put("mailSubject", mailSubject);
+								String mailTxt = dispatchContext.getMailTxt();		
+								documentJSONObject.put("mailTxt", mailTxt);
+								String containedFileName = dispatchContext.getContainedFileName();
+								if (containedFileName == null){
+									containedFileName = "";
+								}
+								documentJSONObject.put("containedFileName", containedFileName);
+
+
 							}
 							
 							//put JSONObject in JSONArray
