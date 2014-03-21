@@ -11,7 +11,8 @@ Ext.define('Sbi.data.RelationshipEditorWizard', {
 	, config:{title: LN('sbi.cockpit.relationship.editor.wizard.title')				   
 			  , width: 1000
 			  , height: 510
-			  , closable: false
+			  , closable: true
+			  , closeAction: 'hide'
 			  , plain: true
 			  , modal: true	
 	}

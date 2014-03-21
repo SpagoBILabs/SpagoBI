@@ -15,7 +15,7 @@ Ext.define('Sbi.data.editor.relationship.RelationshipEditor', {
 		, contextMenu: null		
 //		, engineAlreadyInitialized : null
 		, border: false
-		, autoScroll: true
+//		, autoScroll: true
 	}
 
 	/**
@@ -50,12 +50,14 @@ Ext.define('Sbi.data.editor.relationship.RelationshipEditor', {
 						region: 'center',
 						layout: 'fit',
 						autoScroll: true,
+						split: true,
 						items: [this.dsContainerPanel]
 						},
 						{
 						id: 'relContainerPanel',	  
 						region: 'south',
 						autoScroll: true,
+						split: true,
 						items: [this.relContainerPanel]
 						}]
 	        });
