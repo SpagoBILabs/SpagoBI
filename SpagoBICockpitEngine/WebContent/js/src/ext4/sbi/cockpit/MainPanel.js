@@ -141,7 +141,7 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 	 */
 	, getTemplate: function() {
 		var template = this.getAnalysisState();
-		var templeteStr = Ext.util.JSON.encode(template);
+		var templeteStr = Ext.JSON.encode(template);
 		return templeteStr;
 	}
 	
