@@ -519,48 +519,69 @@ Ext.extend(Sbi.geo.MainPanel, Ext.Panel, {
 			//this.toolbar = new Sbi.geo.Toolbar(this.toolbarConf);
 			mapPanelConf.tbar = this.toolbar;
 		}
-	 
-		if(this.detailDocumentConf) {
-			
-			this.mapPanel = new Ext.TabPanel({
-			    region    : 'center',
-			    margins   : '0 0 0 0', 
-			    activeTab : 0,
-			    defaults  : {
-					autoScroll : true
-				},
-		       	items: [
-		       	   new Ext.Panel(mapPanelConf), 
-		       	   {
-			            title    : 'Info',
-			            html: '<div id="info"></div>',
-			            id: 'infotable',
-			            autoScroll: true
-			        }
-		       	]
-			});
-		} else {
-			delete mapPanelConf.title;
-			var m = new Ext.Panel(mapPanelConf);
-			
-			this.mapPanel = new Ext.Panel({
-			    region    : 'center',
-			    margins     : '0 0 0 0',
-				cmargins    : '0 0 0 0',
-				hideCollapseTool : true,
-				hideBorders: true,
-				border		: false,
-				frame: false,
-				layout: 'fit',
-			    defaults  : {
-					autoScroll : true
-				},
-		       	items: [m]
-			});
-			
-			this.map.mapComponent = this.mapComponent;
 
-		}	
+//since SpagoBI4.2 the detail document 'old style' isn't available. There is standard cross navigation management.
+//		if(this.detailDocumentConf) {
+//			
+//			this.mapPanel = new Ext.TabPanel({
+//			    region    : 'center',
+//			    margins   : '0 0 0 0', 
+//			    activeTab : 0,
+//			    defaults  : {
+//					autoScroll : true
+//				},
+//		       	items: [
+//		       	   new Ext.Panel(mapPanelConf), 
+//		       	   {
+//			            title    : 'Info',
+//			            html: '<div id="info"></div>',
+//			            id: 'infotable',
+//			            autoScroll: true
+//			        }
+//		       	]
+//			});
+//		} else {
+//			delete mapPanelConf.title;
+//			var m = new Ext.Panel(mapPanelConf);
+//			
+//			this.mapPanel = new Ext.Panel({
+//			    region    : 'center',
+//			    margins     : '0 0 0 0',
+//				cmargins    : '0 0 0 0',
+//				hideCollapseTool : true,
+//				hideBorders: true,
+//				border		: false,
+//				frame: false,
+//				layout: 'fit',
+//			    defaults  : {
+//					autoScroll : true
+//				},
+//		       	items: [m]
+//			});
+//			
+//			this.map.mapComponent = this.mapComponent;
+//
+//		}	
+		
+		delete mapPanelConf.title;
+		var m = new Ext.Panel(mapPanelConf);
+		
+		this.mapPanel = new Ext.Panel({
+		    region    : 'center',
+		    margins     : '0 0 0 0',
+			cmargins    : '0 0 0 0',
+			hideCollapseTool : true,
+			hideBorders: true,
+			border		: false,
+			frame: false,
+			layout: 'fit',
+		    defaults  : {
+				autoScroll : true
+			},
+	       	items: [m]
+		});
+		
+		this.map.mapComponent = this.mapComponent;
 	}
 	
 	, initControlPanel: function() {		
@@ -654,8 +675,8 @@ Ext.extend(Sbi.geo.MainPanel, Ext.Panel, {
 		Sbi.trace("[MainPanel.openPopup]: IN");
 		var content = '';
 		content += this.getFeatureInfoHtmlFragment(feature);
-		content += this.getDetailDocHtmlFragment(feature);
-		content += this.getInlineDocHtmlFragment(feature);
+//		content += this.getDetailDocHtmlFragment(feature);
+//		content += this.getInlineDocHtmlFragment(feature);
 
 		var onPopupCloseFn = function(evt) {
 			this.closePopup(feature);
