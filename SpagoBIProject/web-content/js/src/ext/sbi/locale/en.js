@@ -860,6 +860,11 @@ Sbi.locale.ln['sbi.scheduler.schedulation.paused'] = 'Schedulation paused';
 Sbi.locale.ln['sbi.schedulation.resumeConfirm'] = 'Do you want to resume the schedulation?';
 Sbi.locale.ln['sbi.scheduler.schedulation.resumed'] = 'Schedulation resumed';
 Sbi.locale.ln['sbi.scheduler.schedulation.info'] = 'Schedulation informations';
+Sbi.locale.ln['sbi.scheduler.schedulation.mailto'] = 'Mail to';
+Sbi.locale.ln['sbi.scheduler.schedulation.attachedzip'] = 'Attached zip name';
+Sbi.locale.ln['sbi.scheduler.schedulation.mailsubject'] = 'Mail Subject';
+Sbi.locale.ln['sbi.scheduler.schedulation.containedfilename'] = 'Contained File Name';
+Sbi.locale.ln['sbi.scheduler.schedulation.mailtext'] = 'Mail Text';
 
 
 //===================================================================

@@ -6,8 +6,9 @@
 
 Ext.define('Sbi.tools.scheduler.TriggerInfoWindow', {
 	extend: 'Ext.Window'
-		
-		,config: {    	  	     	
+		,layout: 'fit'
+		,config: {   
+			
 	    	width: 600,
 			height: 350
 
@@ -33,12 +34,18 @@ Ext.define('Sbi.tools.scheduler.TriggerInfoWindow', {
 				for (var i = 0; i< parsedData.documents.length; i++){
 					var document = parsedData.documents[i];
 					var docLabel = document.documentLabel;
-					var mailTos= '<b>Mail to:</b> '+document.mailTos;
+					var mailTos= '<b>'+LN('sbi.scheduler.schedulation.mailto')+':</b> '+document.mailTos+"</br>";
+					var zipMailName= '<b>'+LN('sbi.scheduler.schedulation.attachedzip')+':</b> '+document.zipMailName+"</br>";
+					var mailSubject= '<b>'+LN('sbi.scheduler.schedulation.mailsubject')+':</b> '+document.mailSubject+"</br>";
+					var containedFileName= '<b>'+LN('sbi.scheduler.schedulation.containedfilename')+':</b> '+document.containedFileName+"</br>";
+					var mailTxt= '<b>'+LN('sbi.scheduler.schedulation.mailtext')+':</b> '+document.mailTxt+"</br>";
 					
+					var content = mailTos+zipMailName+mailSubject+containedFileName+mailTxt;
 					var item = {
 							title: docLabel,
-							html: mailTos,
-			                bodyPadding: 10
+							html: content,
+			                bodyPadding: 10,
+			                autoScroll: true
 					}
 					tabsItems.push(item);
 					
