@@ -382,16 +382,16 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 	//Relationships methods
 	//**********************************************************************************
 	, setRelationships: function(rels){		
-		if (this.relationships  == null) this.relationships = [];
+		if (this.relationships  == null) this.relationships = {};
 		
 		for (var i=0; i<rels.length; i++){
 			var rel = {};
 			var config = {};
 			rel = rels[i];
-			var stores = this.getRelationshipStores(rel);
+//			var stores = this.getRelationshipStores(rel);
 			var fields = this.getRelationshipFields(rel);
 			config.rel = rel.rel;
-			config.stores = stores;
+//			config.stores = stores;
 			config.fields = fields;
 			
 			if (rel.id){
@@ -403,21 +403,27 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 
 	}
 	
-	, getRelationshipStores: function(r){
-		var stores = [];
-		var lst = r.rel.split('=');
-		for (var i=0; i<lst.length; i++){
-			var el = lst[i].split('.');
-			stores.push(el[0]);
-		}
-		return stores;
-	}
-	
+//	, getRelationshipStores: function(r){
+//		var stores = [];
+//		var lst = r.rel.split('=');
+//		for (var i=0; i<lst.length; i++){
+//			var el = lst[i].split('.');
+//			stores.push(el[0]);
+//		}
+//		return stores;
+//	}
+//	
 	, getRelationshipFields: function(r){
 		var fields = [];
 		var lst = r.rel.split('=');
 		for (var i=0; i<lst.length; i++){
-			fields.push(lst);
+			for (var i=0; i<lst.length; i++){
+				var el = lst[i].split('.');
+				var field = {};
+				field.store = el[0];
+				field.column = el[1];
+				fields.push(field);
+			}			
 		}
 		return fields;
 	}

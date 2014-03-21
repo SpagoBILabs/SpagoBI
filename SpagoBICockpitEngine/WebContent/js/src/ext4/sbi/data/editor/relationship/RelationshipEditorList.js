@@ -23,6 +23,7 @@ Ext.define('Sbi.data.editor.relationship.RelationshipEditorList', {
 		, border: false
 		, style: {marginTop: '3px', marginRight: '5px', marginLeft:'5px'}
 		, height: 200	
+		, autoScroll: true
 //	,	bodyStyle:'padding:3px;background:green'
   		
 	}
