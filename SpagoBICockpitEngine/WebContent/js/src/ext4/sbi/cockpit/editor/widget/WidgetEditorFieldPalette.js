@@ -20,7 +20,6 @@ Sbi.cockpit.editor.widget.WidgetEditorFieldPalette = function(config) {
 		title: LN('sbi.cockpit.queryfieldspanel.title')
 		, displayRefreshButton : false
 		, border: true,
-		//bodyStyle:'background:green',
 		bodyStyle:'padding:3px',
       	layout: 'fit'
 	};
@@ -61,8 +60,13 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditorFieldPalette, Ext.Panel, {
      * This array contains all the services invoked by this class
      */
     services: null
+    
     , grid: null
+    
     , store: null
+    
+  
+    
     , displayRefreshButton: null  // if true, display the refresh button
     
    
@@ -163,25 +167,64 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditorFieldPalette, Ext.Panel, {
 		}, this);
 		
 		this.store.on('load', function(){
-			Sbi.trace("[WidgetEditorFieldPalette.onLoad]: XXX");
+			Sbi.trace("[WidgetEditorFieldPalette.onLoad]: store loaded");
 			this.fireEvent("validateInvalidFieldsAfterLoad", this); 		
 		}, this);
 		
 		Sbi.trace("[WidgetEditorFieldPalette.initStore]: OUT");
 	}
 	
+		
+	 , renderTpl1: [
+	                '<a id="button-{id}" class="x-btn x-unselectable x-btn-default-medium x-icon-text-left x-btn-icon-text-left x-btn-default-medium-icon-text-left" tabindex="0" unselectable="on" hidefocus="on" role="button">',
+	                '<span id="{id}-btnWrap" class="{baseCls}-wrap',
+	                     '<tpl if="splitCls"> {splitCls}</tpl>',
+	                     '{childElCls}" unselectable="on">',
+	                     '<span id="{id}-btnEl" class="{baseCls}-button">',
+	                         '<span id="{id}-btnInnerEl" class="{baseCls}-inner {innerCls}',
+	                             '{childElCls}" unselectable="on">',
+	                             '{text}',
+	                         '</span>',
+	                         '<span role="img" id="{id}-btnIconEl" class="{baseCls}-icon-el {iconCls}',
+	                             '{childElCls} {glyphCls}" unselectable="on" style="',
+	                             '<tpl if="iconUrl">background-image:url({iconUrl});</tpl>',
+	                             '<tpl if="glyph && glyphFontFamily">font-family:{glyphFontFamily};</tpl>">',
+	                             '<tpl if="glyph">&#{glyph};</tpl><tpl if="iconCls || iconUrl">&#160;</tpl>',
+	                         '</span>',
+	                     '</span>',
+	                 '</span>',
+	                 // if "closable" (tab) add a close element icon
+	                 '<tpl if="closable">',
+	                     '<span id="{id}-closeEl" class="{baseCls}-close-btn" title="{closeText}" tabIndex="0"></span>',
+	                 '</tpl>'
+	                 , '</a>'
+	           
+	    ]
+	  
+	  	, renderTpl2: ['<table id="{id}" cellspacing="0" class="x-btn x-btn-text-icon"><tbody class="x-btn-small x-btn-icon-small-left">',
+	  	                '<tr><td class="x-btn-tl"><i>&#160;</i></td><td class="x-btn-tc"></td><td class="x-btn-tr"><i>&#160;</i></td></tr>',
+	  	                '<tr><td class="x-btn-ml"><i>&#160;</i></td><td class="x-btn-mc"><button type="button" class=" x-btn-text {iconCls}"></button>{text}</td><td class="x-btn-mr"><i>&#160;</i></td></tr>',
+	  	                '<tr><td class="x-btn-bl"><i>&#160;</i></td><td class="x-btn-bc"></td><td class="x-btn-br"><i>&#160;</i></td></tr>',
+	  	                '</tbody></table>']
+
+	 	, templateArgs: {
+	         innerCls : '',
+	         splitCls : '',
+	         baseCls : Ext.baseCSSPrefix + 'btn',
+	         //iconUrl  : me.icon,
+	         iconCls  : '',//me.iconCls,
+	         //glyph: glyph,
+	         glyphCls: '', 
+	         glyphFontFamily: Ext._glyphFontFamily,
+	         text     : '&#160;'
+	     } 
+	  
     , initGrid: function() {
     	var c = this.gridConfig;
 		
     	this.initStore();
-    	
-        this.template = new Ext.Template( // see Ext.Button.buttonTemplate and Button's onRender method
-        		// margin auto in order to have button center alignment
-                '<table id="{4}" cellspacing="0" class="x-btn {3} {6}"><tbody class="{1}">',
-                '<tr><td class="x-btn-tl"><i>&#160;</i></td><td class="x-btn-tc"></td><td class="x-btn-tr"><i>&#160;</i></td></tr>',
-                '<tr><td class="x-btn-ml"><i>&#160;</i></td><td class="x-btn-mc"><button type="{0}" class=" x-btn-text {5}"></button>{7}</td><td class="x-btn-mr"><i>&#160;</i></td></tr>',
-                '<tr><td class="x-btn-bl"><i>&#160;</i></td><td class="x-btn-bc"></td><td class="x-btn-br"><i>&#160;</i></td></tr>',
-                '</tbody></table>');
+   
+    	this.template = new Ext.XTemplate(this.renderTpl1);
         this.template.compile();
 		
 		this.grid = new Ext.grid.GridPanel(Ext.apply(c || {}, {
@@ -190,14 +233,44 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditorFieldPalette, Ext.Panel, {
 	        columns: [{
 	        	id:'alias' 
             	, header: LN('sbi.formbuilder.queryfieldspanel.fieldname')
-            	, width: 160
+            	, flex: 1
             	, sortable: true
             	, dataIndex: 'alias'
             	, renderer : function(value, metaData, record, rowIndex, colIndex, store) {
-		        	return this.template.apply(
-		        			// by now cssborder is defined only for segment_attribute
-		        			['button', 'x-btn-small x-btn-icon-small-left', '', 'x-btn-text-icon', Ext.id(), record.data.iconCls, record.data.iconCls+'_text', record.data.alias]		
-		        	);
+            		Sbi.trace("[WidgetEditorFieldPalette.renderGridRow]: IN");
+            		var alias = record.get("alias");
+            		Sbi.trace("[WidgetEditorFieldPalette.renderGridRow]: alias [" + alias + "]");
+            		var id = Ext.id();
+            		Sbi.trace("[WidgetEditorFieldPalette.renderGridRow]: id [" + id + "]");
+            		var iconCls = record.get("iconCls");
+            		Sbi.trace("[WidgetEditorFieldPalette.renderGridRow]: iconCls [" + iconCls + "]");
+            		var templateData = null;
+            		try {
+	            		templateData = Ext.apply({}, {
+	            			id: id
+	            			, text: alias
+	            			, iconCls: iconCls
+	            		}, this.templateArgs);
+            		} catch(e) {
+            			Sbi.error("[WidgetEditorFieldPalette.renderGridRow]: impossible to apply data to templateArgs [" + e + "]");
+            		}
+            		Sbi.trace("[WidgetEditorFieldPalette.renderGridRow]: templateData [" + Sbi.toSource(templateData) + "]");
+            		
+            		var htmlFragment = null;
+            		try {
+            			htmlFragment = this.template.apply(templateData);
+            		} catch(e) {
+            			Sbi.error("[WidgetEditorFieldPalette.renderGridRow]: impossible to apply data to template [" + e + "]");
+            		}
+            		
+            		Sbi.trace("[WidgetEditorFieldPalette.renderGridRow]: htmlFragment ["  + htmlFragment + "]");
+            		Sbi.trace("[WidgetEditorFieldPalette.renderGridRow]: OUT");
+            		return htmlFragment;
+//            				
+//            		return this.template.apply(
+//		        			
+//		        			['button', 'x-btn-small x-btn-icon-small-left', '', 'x-btn-text-icon', Ext.id(), record.data.iconCls, record.data.iconCls+'_text', record.data.alias]		
+//		        	);
 		    	}
 	            , scope: this
             }],
