@@ -23,6 +23,8 @@ import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
 import it.eng.spagobi.utilities.exceptions.SpagoBIException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -368,6 +370,28 @@ public class FolderContentUtil {
 		}
 		logger.debug("OUT");
 		return functWorksheet;
+	}
+	
+	/**
+	 * Returns true if the folder specified by folderIdStr exists and the user can see it, false otherwise
+	 * @param folderIdStr The string representing the folder id
+	 * @param profile The user profile object
+	 * @return true if the folder specified by folderIdStr exists and the user can see it, false otherwise
+	 */
+	public boolean checkRequiredFolder(String folderIdStr, IEngUserProfile profile) {
+		try {
+			int folderId = new Integer(folderIdStr);
+			logger.debug("Folder id is " + folderId);
+			LowFunctionality folder = DAOFactory.getLowFunctionalityDAO().loadLowFunctionalityByID(folderId, false);
+			logger.debug("Folder is " + folder);
+			if (folder == null || !ObjectsAccessVerifier.canSee(folder, profile)) {
+				return false;
+			}
+			return true;
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException("Cannot retrieve folder informations", e);
+		}
+		
 	}
 
 }

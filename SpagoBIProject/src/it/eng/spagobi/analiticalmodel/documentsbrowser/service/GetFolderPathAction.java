@@ -5,6 +5,18 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.analiticalmodel.documentsbrowser.service;
 
+import it.eng.spagobi.analiticalmodel.documentsbrowser.utils.FolderContentUtil;
+import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
+import it.eng.spagobi.commons.bo.Config;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.serializer.FoldersJSONSerializer;
+import it.eng.spagobi.commons.serializer.SerializerFactory;
+import it.eng.spagobi.commons.services.AbstractSpagoBIAction;
+import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
+import it.eng.spagobi.utilities.exceptions.SpagoBIException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
+import it.eng.spagobi.utilities.service.JSONSuccess;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,25 +30,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import it.eng.spago.base.SourceBean;
-import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
-import it.eng.spagobi.commons.bo.Config;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.serializer.FoldersJSONSerializer;
-import it.eng.spagobi.commons.serializer.SerializerFactory;
-import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
-import it.eng.spagobi.utilities.exceptions.SpagoBIException;
-import it.eng.spagobi.utilities.service.AbstractBaseHttpAction;
-import it.eng.spagobi.utilities.service.JSONFailure;
-import it.eng.spagobi.utilities.service.JSONSuccess;
-
 
 /**
  * @author Antonella Giachino (antonella.giachino@eng.it)
  *
  */
-public class GetFolderPathAction extends AbstractBaseHttpAction{
+public class GetFolderPathAction extends AbstractSpagoBIAction {
 	
 	// REQUEST PARAMETERS
 	public static final String FOLDER_ID = "folderId";
@@ -47,24 +46,31 @@ public class GetFolderPathAction extends AbstractBaseHttpAction{
 	// logger component
 	private static Logger logger = Logger.getLogger(GetFolderPathAction.class);
 	
-	public void service(SourceBean request, SourceBean response) throws Exception {
+	public void doService() {
 		
 		List functionalities = new ArrayList();
 		
 		logger.debug("IN");
 		
 		try {
-			setSpagoBIRequestContainer( request );
-			setSpagoBIResponseContainer( response );
 			
-			String functID = getAttributeAsString(FOLDER_ID);
+			String folderIdStr = getAttributeAsString(FOLDER_ID);
 			String rootFolderID = getAttributeAsString(ROOT_FOLDER_ID);	
 			
-			logger.debug("Parameter [" + FOLDER_ID + "] is equal to [" + functID + "]");
+			logger.debug("Parameter [" + FOLDER_ID + "] is equal to [" + folderIdStr + "]");
 			logger.debug("Parameter [" + ROOT_FOLDER_ID + "] is equal to [" + rootFolderID + "]");
 			
+			FolderContentUtil fcUtil = new FolderContentUtil();
+			if (folderIdStr != null) {
+				boolean canSee = fcUtil.checkRequiredFolder(folderIdStr, this.getUserProfile());
+				if (!canSee) {
+					logger.error("Folder is null or user cannot see it");
+					throw new SpagoBIServiceException(SERVICE_NAME, "Required folder does not exist or you don't have priviledges to see it");
+				}
+			}
+			
 			//Check if there is folder specified as home for the document browser (Property in SBI_CONFIG with label SPAGOBI.DOCUMENTBROWSER.HOME)
-			if (functID == null){
+			if (folderIdStr == null){
 				Config documentBrowserHomeConfig = DAOFactory.getSbiConfigDAO().loadConfigParametersByLabel("SPAGOBI.DOCUMENTBROWSER.HOME");
 				if (documentBrowserHomeConfig != null){
 					if (documentBrowserHomeConfig.isActive()){
@@ -75,7 +81,7 @@ public class GetFolderPathAction extends AbstractBaseHttpAction{
 							LowFunctionality funct = DAOFactory.getLowFunctionalityDAO().loadLowFunctionalityByCode(folderLabel, false);
 							
 							if (funct != null){
-								functID = String.valueOf(funct.getId());
+								folderIdStr = String.valueOf(funct.getId());
 
 							}
 							
@@ -90,13 +96,13 @@ public class GetFolderPathAction extends AbstractBaseHttpAction{
 			
 			
 			
-			if (functID == null || functID.equalsIgnoreCase(ROOT_NODE_ID)){
+			if (folderIdStr == null || folderIdStr.equalsIgnoreCase(ROOT_NODE_ID)){
 				//getting default folder (root)
 				LowFunctionality rootFunct = DAOFactory.getLowFunctionalityDAO().loadRootLowFunctionality(false);
 				functionalities.add(rootFunct);
 			} else {
 				functionalities = DAOFactory.getLowFunctionalityDAO()
-					.loadParentFunctionalities(Integer.valueOf(functID), (rootFolderID==null?null:Integer.valueOf(rootFolderID)) );	
+					.loadParentFunctionalities(Integer.valueOf(folderIdStr), (rootFolderID==null?null:Integer.valueOf(rootFolderID)) );	
 			}
 			
 			HttpServletRequest httpRequest = getHttpRequest();
@@ -110,12 +116,10 @@ public class GetFolderPathAction extends AbstractBaseHttpAction{
 				throw new SpagoBIException("Impossible to write back the responce to the client", e);
 			}
 			
+		} catch (SpagoBIServiceException e) {
+			throw e;
 		} catch (Throwable t) {
-			// TODO set up spago's trap mechanism and move this error handling code to a specialized action 
-			String message = "Impossible to write back the responce to the client";
-			logger.error(message, t);
-			writeBackToClient( new JSONFailure( new SpagoBIEngineServiceException(getActionName(), message, t) ) );
-			//throw new SpagoBIException("An unexpected error occured while executing " + getActionName(), t);
+			throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to get folder content", t);
 		} finally {
 			logger.debug("OUT");
 		}
