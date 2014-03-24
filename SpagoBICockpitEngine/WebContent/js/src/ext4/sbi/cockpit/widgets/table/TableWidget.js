@@ -88,6 +88,9 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 	services: null
 	
 	, grid: null
+	
+	, enablePaging: false
+	, enableExport: false
     
     // =================================================================================================================
 	// METHODS
@@ -102,22 +105,14 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 		Sbi.cockpit.widgets.table.TableWidget.superclass.boundStore.call(this);
 		
 		if(this.grid !== null) { // only if the grid has been already initialized reconfigure it properly
-			
 			Sbi.trace("[TableWidget.boundStore]: reconfiguring the grid...");
-			var cm = new Ext.grid.ColumnModel([
-			   new Ext.grid.RowNumberer(), {
-				   header : "Data",
-			       dataIndex : 'data',
-			       width : 75
-			   } 
-			]);
-			this.grid.reconfigure(this.getStore(), cm);
+			var columns = this.initColumns();
+			this.grid.reconfigure(this.getStore(), columns);
 			Sbi.trace("[TableWidget.boundStore]: the grid has been reconfigured succesfully");
 		} else {
 			Sbi.trace("[TableWidget.boundStore]: the grid is not yet initialized.");
 		}
-		
-		                       		
+		                   		
 		Sbi.trace("[TableWidget.boundStore]: OUT");
 	}
 
@@ -151,13 +146,14 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 	}
 	
 	
-	, onStoreLoad: function(store) {
+	, onStoreLoad: function() {
 		Sbi.trace("[TableWidget.onStoreLoad]: IN");
-		Sbi.cockpit.widgets.table.TableWidget.superclass.onStoreLoad.call(this, store);	
+		
+		Sbi.cockpit.widgets.table.TableWidget.superclass.onStoreLoad.call(this, this.getStore());	
 		
 		this.fireEvent('contentloaded');
 		
-		var recordsNumber = store.getTotalCount();
+		var recordsNumber = this.getStore().getTotalCount();
      	if(recordsNumber == 0) {
      		Ext.Msg.show({
 				   title: LN('sbi.qbe.messagewin.info.title'),
@@ -168,7 +164,16 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 			});
      	}
      	 
-     	if (this.queryLimit.maxRecords !== undefined && recordsNumber > this.queryLimit.maxRecords) {
+     	this.refreshWarningMessage();
+     	
+     	Sbi.trace("[TableWidget.onStoreLoad]: OUT");		
+	}
+	
+	, refreshWarningMessage: function() {
+		if(this.enablePaging === false) return;
+		
+		var recordsNumber = this.getStore().getTotalCount();
+		if (this.queryLimit.maxRecords !== undefined && recordsNumber > this.queryLimit.maxRecords) {
      		if (this.queryLimit.isBlocking) {
      			Sbi.exception.ExceptionHandler.showErrorMessage(this.warningMessageItem, LN('sbi.qbe.messagewin.error.title'));
      		} else {
@@ -177,7 +182,6 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
      	} else {
      		this.warningMessageItem.hide();
      	}
-     	Sbi.trace("[TableWidget.onStoreLoad]: OUT");		
 	}
 	
 	
@@ -186,7 +190,7 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 		Sbi.cockpit.widgets.table.TableWidget.superclass.onStoreMetaChange.call(this, store, meta);	
 		
 		var fields = new Array();
-		fields.push(new Ext.grid.RowNumberer());
+		//fields.push(new Ext.grid.RowNumberer());
 		
 		var columns = [];
 		
@@ -206,7 +210,9 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 			}
 		}
 		Sbi.trace("[TableWidget.onStoreMetaChange]: visible fields are [" + columns.join(",") + "]");
-		this.grid.getColumnModel().setConfig(fields);
+		//this.grid.getColumnModel().setConfig(fields);
+		this.grid.reconfigure(this.getStore(), fields);
+		
 		Sbi.trace("[TableWidget.onStoreMetaChange]: OUT");	
 	}
 	
@@ -341,47 +347,75 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 	 */
 	, initGridPanel: function() {
 		Sbi.trace("[TableWidget.initGridPanel]: IN");
-		var cm = new Ext.grid.ColumnModel([
-			new Ext.grid.RowNumberer(), 
+		
+		var columns = this.initColumns();
+
+		var gridConf = {
+			store: this.getStore(),
+		    columns: columns
+		};
+		if(this.enableExport === true) {
+			this.initExportToolbar();
+			gridConf.tbar=this.exportTBar;
+		}
+		if(this.enablePaging === true) {
+			this.initFilteringToolbar();
+			gridConf.bbar=this.pagingTBar;
+		}
+		if(this.gridConfig!=null){
+			gridConf = Ext.apply(gridConf, this.gridConfig);
+		}
+		
+		// create the Grid
+	    this.grid = new Ext.grid.GridPanel(gridConf);   
+	    
+	    Sbi.trace("[TableWidget.initGridPanel]: OUT");
+	}
+	
+	, initColumns: function() {
+		var columns = [
+			//new Ext.grid.RowNumberer(),
 			{
 				header: "Data",
-				dataIndex: 'data',
-				width: 75
-			}
-		]);
-		
-		
+	   			dataIndex: 'data',
+	   			width: 75
+	   		}
+		];
+		return columns;
+	}
+	
+	, initExportToolbar: function() {
 		this.exportTBar = new Ext.Toolbar({
 			items: [
-			    new Ext.Toolbar.Button({
+			    new Ext.Button({
 		            tooltip: LN('sbi.qbe.datastorepanel.button.tt.exportto') + ' pdf',
 		            iconCls:'pdf',
 		            //handler: this.exportResult.createDelegate(this, ['application/pdf']),
 		            handler: function(){Ext.Msg.alert('Message', 'Export to pdf');},
 		            scope: this
 			    }),
-			    new Ext.Toolbar.Button({
+			    new Ext.Button({
 		            tooltip:LN('sbi.qbe.datastorepanel.button.tt.exportto') + ' rtf',
 		            iconCls:'rtf',
 		            //handler: this.exportResult.createDelegate(this, ['application/rtf']),
 		            handler: function(){Ext.Msg.alert('Message', 'Export to rtf');},
 		            scope: this
 			    }),
-			    new Ext.Toolbar.Button({
+			    new Ext.Button({
 		            tooltip:LN('sbi.qbe.datastorepanel.button.tt.exportto') + ' xls',
 		            iconCls:'xls',
 		            //handler: this.exportResult.createDelegate(this, ['application/vnd.ms-excel']),
 		            handler: function(){Ext.Msg.alert('Message', 'Export to xls');},
 		            scope: this
 			    }),
-			    new Ext.Toolbar.Button({
+			    new Ext.Button({
 		            tooltip:LN('sbi.qbe.datastorepanel.button.tt.exportto') + ' csv',
 		            iconCls:'csv',
 		            //handler: this.exportResult.createDelegate(this, ['text/csv']),
 		            handler: function(){Ext.Msg.alert('Message', 'Export to csv');},
 		            scope: this
 			    }),
-			    new Ext.Toolbar.Button({
+			    new Ext.Button({
 		            tooltip:LN('sbi.qbe.datastorepanel.button.tt.exportto') + ' jrxml',
 		            iconCls:'jrxml',
 		            //handler: this.exportResult.createDelegate(this, ['text/jrxml']),
@@ -390,7 +424,10 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 			    })
 			]
 		});
-		
+		return this.exportTBar;
+	}
+	
+	, initFilteringToolbar: function() {
 		this.warningMessageItem = new Ext.Toolbar.TextItem('<font color="red">' 
 				+ LN('sbi.qbe.datastorepanel.grid.beforeoverflow') 
 				+ ' [' + this.queryLimit.maxRecords + '] '
@@ -417,20 +454,7 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 			this.warningMessageItem.setVisible(false);
 		}, this);
 		
-		var gridConf = {};
-		if(this.gridConfig!=null){
-			gridConf = this.gridConfig;
-		}
-		
-		// create the Grid
-	    this.grid = new Ext.grid.GridPanel(Ext.apply({
-	    	store: this.getStore(),
-	        cm: cm
-	        //tbar:this.exportTBar,
-	        //bbar: this.pagingTBar
-	    },gridConf));   
-	    
-	    Sbi.trace("[TableWidget.initGridPanel]: OUT");
+		return this.pagingTBar;
 	}
 });
 

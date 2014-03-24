@@ -170,7 +170,7 @@ Ext.extend(Sbi.cockpit.editor.WidgetEditorWizard, Ext.Window, {
 		this.fireEvent("apply", this);
 	}
 	
-	, onSubmit: function(editorPanel){
+	, onSubmit: function(){
 		this.fireEvent("submit", this);
 	}
 
