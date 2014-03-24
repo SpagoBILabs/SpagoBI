@@ -42,7 +42,7 @@ Sbi.cockpit.widgets.table.QueryFieldsContainerPanel = function(config) {
         , width: 250
         , height: 280
         , cls : 'table'
-        //, columns: this.columns
+        , hideHeaders: true
 	    , layout: 'fit'
 	    , viewConfig: {
 	    	plugins: {
@@ -53,7 +53,7 @@ Sbi.cockpit.widgets.table.QueryFieldsContainerPanel = function(config) {
 	    }
 		, tools: [
 	          {
-	        	  id: 'close'
+	        	  type: 'close'
 	        	, handler: this.removeAllValues
 	          	, scope: this
 	          	, qtip: LN('sbi.crosstab.attributescontainerpanel.tools.tt.removeall')
@@ -89,10 +89,14 @@ Sbi.cockpit.widgets.table.QueryFieldsContainerPanel = function(config) {
 Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsContainerPanel, Ext.grid.GridPanel, {
 	
 	initialData: undefined
+	
 	, targetRow: null
+	
 	, calculateTotalsCheckbox: null
 	, calculateSubtotalsCheckbox: null
+	
 	, validFields: null
+	
 	, Record: Ext.data.Record.create([
 	      {name: 'id', type: 'string'}
 	      , {name: 'alias', type: 'string'}
@@ -102,63 +106,83 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsContainerPanel, Ext.grid.GridPan
 	      , {name: 'values', type: 'string'}
 	])
 	
+		 , renderTpl1: [
+	                '<a id="button-{id}" class="x-btn x-unselectable x-btn-default-medium x-icon-text-left x-btn-icon-text-left x-btn-default-medium-icon-text-left" tabindex="0" unselectable="on" hidefocus="on" role="button">',
+	                '<span id="{id}-btnWrap" class="{baseCls}-wrap',
+	                     '<tpl if="splitCls"> {splitCls}</tpl>',
+	                     '{childElCls}" unselectable="on">',
+	                     '<span id="{id}-btnEl" class="{baseCls}-button">',
+	                         '<span id="{id}-btnInnerEl" class="{baseCls}-inner {innerCls}',
+	                             '{childElCls}" unselectable="on">',
+	                             '{text}',
+	                         '</span>',
+	                         '<span role="img" id="{id}-btnIconEl" class="{baseCls}-icon-el {iconCls}',
+	                             '{childElCls} {glyphCls}" unselectable="on" style="',
+	                             '<tpl if="iconUrl">background-image:url({iconUrl});</tpl>',
+	                             '<tpl if="glyph && glyphFontFamily">font-family:{glyphFontFamily};</tpl>">',
+	                             '<tpl if="glyph">&#{glyph};</tpl><tpl if="iconCls || iconUrl">&#160;</tpl>',
+	                         '</span>',
+	                     '</span>',
+	                 '</span>',
+	                 // if "closable" (tab) add a close element icon
+	                 '<tpl if="closable">',
+	                     '<span id="{id}-closeEl" class="{baseCls}-close-btn" title="{closeText}" tabIndex="0"></span>',
+	                 '</tpl>'
+	                 , '</a>'
+	           
+	    ]
+	  
+	  	, renderTpl2: ['<table id="{id}" cellspacing="0" class="x-btn x-btn-text-icon"><tbody class="x-btn-small x-btn-icon-small-left">',
+	  	                '<tr><td class="x-btn-tl"><i>&#160;</i></td><td class="x-btn-tc"></td><td class="x-btn-tr"><i>&#160;</i></td></tr>',
+	  	                '<tr><td class="x-btn-ml"><i>&#160;</i></td><td class="x-btn-mc"><button type="button" class=" x-btn-text {iconCls}"></button>{text}</td><td class="x-btn-mr"><i>&#160;</i></td></tr>',
+	  	                '<tr><td class="x-btn-bl"><i>&#160;</i></td><td class="x-btn-bc"></td><td class="x-btn-br"><i>&#160;</i></td></tr>',
+	  	                '</tbody></table>']
+
+	 	, templateArgs: {
+	         innerCls : '',
+	         splitCls : '',
+	         baseCls : Ext.baseCSSPrefix + 'btn',
+	         //iconUrl  : me.icon,
+	         iconCls  : '',//me.iconCls,
+	         //glyph: glyph,
+	         glyphCls: '', 
+	         glyphFontFamily: Ext._glyphFontFamily,
+	         text     : '&#160;'
+	     } 
+	
 	, init: function(c) {
 		this.initStore(c);
 		this.initColumnModel(c);
 	}
 	
 	, initStore: function(c) {
-		/*
-		this.store =  Ext.create('Ext.data.Store', {
-		    storeId:'simpsonsStore',
-		    fields:['name', 'email', 'phone'],
-		    data:{'items':[
-		        { 'name': 'Lisa',  "email":"lisa@simpsons.com",  "phone":"555-111-1224"  },
-		        { 'name': 'Bart',  "email":"bart@simpsons.com",  "phone":"555-222-1234" },
-		        { 'name': 'Homer', "email":"home@simpsons.com",  "phone":"555-222-1244"  },
-		        { 'name': 'Marge', "email":"marge@simpsons.com", "phone":"555-222-1254"  }
-		    ]},
-		    proxy: {
-		        type: 'memory',
-		        reader: {
-		            type: 'json',
-		            root: 'items'
-		        }
-		    }
-		});
-		*/
 		
 	}
 	
 	, initColumnModel: function(c) {
-        this.template = new Ext.Template( // see Ext.Button.buttonTemplate and Button's onRender method
-        		// margin auto in order to have button center alignment
-                '<table style="margin-left: auto; margin-right: auto;" id="{4}" cellspacing="0" class="x-btn {3} {6}"><tbody class="{1}">',
-                '<tr><td class="x-btn-tl"><i>&#160;</i></td><td class="x-btn-tc"></td><td class="x-btn-tr"><i>&#160;</i></td></tr>',
-                '<tr><td class="x-btn-ml"><i>&#160;</i></td><td class="x-btn-mc"><button type="{0}" class=" x-btn-text {5}"></button>{7}</td><td class="x-btn-mr"><i>&#160;</i></td></tr>',
-                '<tr><td class="x-btn-bl"><i>&#160;</i></td><td class="x-btn-bc"></td><td class="x-btn-br"><i>&#160;</i></td></tr>',
-                '</tbody></table>');
-        
+		this.template = new Ext.XTemplate(this.renderTpl1);
         this.template.compile();
         
 	    var fieldColumn = {
 	    	header:  ''
 	    	, dataIndex: 'alias'
+	    	, flex: 1
 	    	, hideable: false
 	    	, hidden: false	
 	    	, sortable: false
 	   	    , renderer : function(value, metaData, record, rowIndex, colIndex, store){
-				if(record.data.valid != undefined && !record.data.valid){
-	   	    		toReturn = this.template.apply(
-		        			['button', 'x-btn-small x-btn-icon-small-left', '', 'x-btn-text-icon x-btn-invalid', Ext.id(), record.data.iconCls, record.data.iconCls+'_text', record.data.alias]		
-		   	    		);		   	    		
-				}
-				else{
-	   	    		toReturn = this.template.apply(
-		        			['button', 'x-btn-small x-btn-icon-small-left', '', 'x-btn-text-icon', Ext.id(), record.data.iconCls, record.data.iconCls+'_text', record.data.alias]		
-		   	    		);  	    							
-				}
-	   	    	return toReturn;	
+	   	    	Sbi.trace("[WidgetEditorFieldPalette.renderGridRow]: IN");
+        		
+        		var templateData = Ext.apply({}, {
+            		id: Ext.id()
+            		, text:  record.get("alias")
+            		, iconCls: (record.data.valid != undefined && !record.data.valid)? 'x-btn-invalid': record.get("iconCls")
+            	}, this.templateArgs);
+        		var htmlFragment = this.template.apply(templateData);
+        		
+        		//Sbi.trace("[WidgetEditorFieldPalette.renderGridRow]: htmlFragment ["  + htmlFragment + "]");
+        		Sbi.trace("[WidgetEditorFieldPalette.renderGridRow]: OUT");
+        		return htmlFragment;  
 	    	}
 	        , scope: this
 	    };
@@ -168,7 +192,7 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsContainerPanel, Ext.grid.GridPan
 	
 	, notifyDropFromQueryFieldsPanel: function(ddSource) {
 		Sbi.trace("[QueryFieldsContainerPanel.notifyDropFromQueryFieldsPanel]: IN");
-		var rows = ddSource.dragData.selections;
+		var rows = ddSource.dragData.records;
 		var i = 0;
 		for (; i < rows.length; i++) {
 			var aRow = rows[i];
