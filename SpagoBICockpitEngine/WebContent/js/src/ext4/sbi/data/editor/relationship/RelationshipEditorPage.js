@@ -10,6 +10,7 @@ Ext.define('Sbi.data.editor.relationship.RelationshipEditorPage', {
 			
 	, config:{	
 		    usedDatasets: null
+		  , associationsList: null
 		  , itemId: 0
 		  , border: false
 	}
@@ -103,7 +104,8 @@ Ext.define('Sbi.data.editor.relationship.RelationshipEditorPage', {
 	// -----------------------------------------------------------------------------------------------------------------
 
 	, init: function(){
-		this.relationshipEditorPanel = Ext.create('Sbi.data.editor.relationship.RelationshipEditor',{usedDatasets: this.usedDatasets}); 
+		this.relationshipEditorPanel = Ext.create('Sbi.data.editor.relationship.RelationshipEditor',{usedDatasets: this.usedDatasets
+																									, associationsList: this.associationsList}); 
 		return this.relationshipEditorPanel;
 	}
 

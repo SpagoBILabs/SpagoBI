@@ -414,14 +414,17 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 //	}
 //	
 	, getRelationshipFields: function(r){
+//		var fields = {};
 		var fields = [];
 		var lst = r.rel.split('=');
 		for (var i=0; i<lst.length; i++){
 			for (var i=0; i<lst.length; i++){
 				var el = lst[i].split('.');
-				var field = {};
+				var field = {};				
 				field.store = el[0];
 				field.column = el[1];
+				var lbl = '#'+i;
+//				fields[lbl] = field;
 				fields.push(field);
 			}			
 		}

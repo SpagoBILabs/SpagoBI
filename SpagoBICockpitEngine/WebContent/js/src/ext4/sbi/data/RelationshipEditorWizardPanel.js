@@ -16,6 +16,7 @@ Ext.define('Sbi.data.RelationshipEditorWizardPanel', {
 	     * <pre><code>wizardPanel.getDatasetBrowserPage().getUsedDatasets();</code></pre>
 	     */
 		usedDatasets: null
+	  , associationsList: null
 	  , frame: false
 	  , border: false
 	}
@@ -100,6 +101,7 @@ Ext.define('Sbi.data.RelationshipEditorWizardPanel', {
 		Sbi.trace("[RelationshipEditorWizardPanel.initRelationshipEditorPage]: IN");
 		this.relationshipEditorPage = Ext.create('Sbi.data.editor.relationship.RelationshipEditorPage',{
 			usedDatasets: this.usedDatasets
+		  , associationsList: this.associationsList
 		});
 		Sbi.trace("[RelationshipEditorWizardPanel.initRelationshipEditorPage]: IN");
 		return this.relationshipEditorPage;

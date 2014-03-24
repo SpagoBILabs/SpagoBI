@@ -12,9 +12,10 @@ Ext.define('Sbi.data.RelationshipEditorWizard', {
 			  , width: 1000
 			  , height: 510
 			  , closable: true
-			  , closeAction: 'hide'
+			  , closeAction: 'close' //'hide'
 			  , plain: true
 			  , modal: true	
+			  , usedDatasets: null
 	}
 	
 
@@ -27,7 +28,7 @@ Ext.define('Sbi.data.RelationshipEditorWizard', {
 	, constructor : function(config) {
 		Sbi.trace("[RelationshipEditorWizard.constructor]: IN");
 		this.initConfig(config);
-		this.init();
+		this.init(config);
 		this.initEvents();
 		this.callParent(arguments);
 		Sbi.trace("[RelationshipEditorWizard.constructor]: OUT");
@@ -72,7 +73,7 @@ Ext.define('Sbi.data.RelationshipEditorWizard', {
     // init methods
 	// -----------------------------------------------------------------------------------------------------------------
 
-	, init: function(){
+	, init: function(c){
 		Sbi.trace("[RelationshipEditorWizard.init]: IN");
 		// ONLY FOR TEST
 		this.usedDatasets = [];
@@ -82,6 +83,7 @@ Ext.define('Sbi.data.RelationshipEditorWizard', {
 		//
 		this.editorMainPanel = Ext.create('Sbi.data.RelationshipEditorWizardPanel',{
 			usedDatasets: this.usedDatasets
+		  , associationsList: c.state	
 		});
 		this.editorMainPanel.on('cancel', this.onCancel, this);
 		this.editorMainPanel.on('submit', this.onSubmit, this);

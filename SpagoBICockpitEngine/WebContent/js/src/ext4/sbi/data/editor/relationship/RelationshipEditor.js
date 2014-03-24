@@ -12,6 +12,7 @@ Ext.define('Sbi.data.editor.relationship.RelationshipEditor', {
 	, config:{	
 		  services: null		
 		, usedDatasets: null
+		, associationsList: null
 		, contextMenu: null		
 //		, engineAlreadyInitialized : null
 		, border: false
@@ -85,7 +86,7 @@ Ext.define('Sbi.data.editor.relationship.RelationshipEditor', {
 	}
 	
 	, initRelationshipPanel: function(config) {
-		this.relContainerPanel = Ext.create('Sbi.data.editor.relationship.RelationshipEditorList',{height:200});
+		this.relContainerPanel = Ext.create('Sbi.data.editor.relationship.RelationshipEditorList',{height:200, associationsList: this.associationsList});
 		this.relContainerPanel.addListener('addRelation', this.addRelation, this);
 		this.relContainerPanel.addListener('modifyRelation', this.modifyRelation, this);
 		this.relContainerPanel.addListener('removeRelation', this.removeRelation, this);

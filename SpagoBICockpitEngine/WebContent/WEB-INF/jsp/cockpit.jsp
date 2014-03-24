@@ -99,8 +99,8 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 		<%} %>
 		
        
-        <%@include file="commons/includeExtJS.jspf" %>
-		<%@include file="commons/includeSpagoBICockpitJS.jspf" %>
+        <%@include file="commons/includeExtJS4.jspf" %>
+		<%@include file="commons/includeSpagoBICockpitJS4.jspf" %>
     </head>
 	
 	<%-- == BODY ========================================================== --%>
