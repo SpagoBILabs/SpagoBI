@@ -196,7 +196,7 @@ Ext.extend(Sbi.widgets.SaveDocumentWindow, Ext.Window, {
 		var previewFile =  this.fileNameUploaded;
 
 		if(previewFile!=undefined && previewFile!=null){
-			previewFile = Ext.util.JSON.encode(previewFile);
+			previewFile = Ext.JSON.encode(previewFile);
 		}
 
 		if(docName == null || docName == undefined || docName == '' ){
@@ -208,7 +208,7 @@ Ext.extend(Sbi.widgets.SaveDocumentWindow, Ext.Window, {
 	                buttons: Ext.MessageBox.OK
 	           });
 		}else{	
-			var functs = Ext.util.JSON.encode(this.OBJECT_FUNCTIONALITIES);
+			var functs = Ext.JSON.encode(this.OBJECT_FUNCTIONALITIES);
 			var params = {
 		        	name :  docName,
 		        	label : docLabel,
@@ -232,7 +232,7 @@ Ext.extend(Sbi.widgets.SaveDocumentWindow, Ext.Window, {
 		        params: params,
 		        success : function(response , options) {
 			      		if(response !== undefined && response.responseText !== undefined) {
-			      			var content = Ext.util.JSON.decode( response.responseText );
+			      			var content = Ext.JSON.decode( response.responseText );
 			      			if(content.responseText !== 'Operation succeded') {
 			                    Ext.MessageBox.show({
 			                        title: LN('sbi.generic.error'),
@@ -328,7 +328,7 @@ Ext.extend(Sbi.widgets.SaveDocumentWindow, Ext.Window, {
 		params.operation = 'UPLOAD';
 		params.directory = this.directory || '';
 		params.maxSize = this.maxSizeFile || '';
-		params.extFiles = Ext.util.JSON.encode(this.extFiles) || '';
+		params.extFiles = Ext.JSON.encode(this.extFiles) || '';
 		
 		
 		Sbi.debug("[PreviewFileWizard.uploadFileButtonHandler]: form is valid [" + form.isValid() + "]");		
@@ -358,7 +358,7 @@ Ext.extend(Sbi.widgets.SaveDocumentWindow, Ext.Window, {
 	                break;
 	            case Ext.form.Action.SERVER_INVALID:
 	            	if(action.result.msg && action.result.msg.indexOf("NonBlockingError:")>=0){
-	            		var error = Ext.util.JSON.decode(action.result.msg);
+	            		var error = Ext.JSON.decode(action.result.msg);
 	            		Sbi.exception.ExceptionHandler.showErrorMessage(LN('sbi.ds.'+error.error),LN("sbi.ds.failedToUpload"));
 	            	}else{
 	            		Sbi.exception.ExceptionHandler.showErrorMessage(action.result.msg,'Failure');
