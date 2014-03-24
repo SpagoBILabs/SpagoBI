@@ -273,15 +273,15 @@ Ext.extend(Sbi.cockpit.core.WidgetContainerComponent, Ext.Window, {
 	 */
 	, init: function() {
 		this.tools =  [{
-    		id:'gear',
+			type:'gear',
     		handler: this.onShowWidgetEditor,
     		scope: this
     	}, {
-        	id:'help',
+    		type:'help',
             handler: this.onShowWidgetConfiguration,
     		scope: this
         }, {
-        	id:'refresh',
+        	type:'refresh',
         	handler: this.onWidgetRefresh,
 //     	   	handler: function(){
 //     	   		Ext.Msg.alert('Message', 'The REFRESH tool was clicked.');

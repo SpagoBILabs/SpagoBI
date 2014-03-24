@@ -156,7 +156,27 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsContainerPanel, Ext.grid.GridPan
 	}
 	
 	, initStore: function(c) {
-		
+		this.store =  new Ext.data.ArrayStore({
+	        fields: ['id', 'alias', 'funct', 'iconCls', 'nature', 'values', 'valid']
+		});
+		// if there are initialData, load them into the store
+		if (this.initialData !== undefined) {
+			for (i = 0; i < this.initialData.length; i++) {
+				this.addField(this.initialData[i]);
+			}
+		}
+		this.store.on('remove', function (theStore, theRecord, index ) {
+			this.fireEvent('attributeRemoved', this, theRecord.data);
+		}, this);
+		/*
+		 * unfortunately, when removing all record with removeAll method, the event remove is not raised
+		 */
+		this.store.on('bulkremove', function (theStore, theRecords ) {
+			for (var i = 0 ; i < theRecords.length; i++) {
+				var aRecord = theRecords[i];
+				this.fireEvent('attributeRemoved', this, aRecord.data);
+			}
+		}, this);
 	}
 	
 	, initColumnModel: function(c) {

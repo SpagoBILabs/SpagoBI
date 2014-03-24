@@ -371,9 +371,6 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditorMainPanel, Ext.Panel, {
 	
 	, onFieldDrop: function(ddSource) {
 		Sbi.trace("[WidgetEditorMainPanel.onFieldDrop]: IN");
-		
-		alert(ddSource.xtype + " " + ddSource.id + " " + ddSource.type);
-		
 		if (ddSource.id === "designer-grid-body") {
 			Sbi.trace("[WidgetEditorMainPanel.onFieldDrop]: dragged object comes from palette");
 			this.notifyDropFromPalette(ddSource);
