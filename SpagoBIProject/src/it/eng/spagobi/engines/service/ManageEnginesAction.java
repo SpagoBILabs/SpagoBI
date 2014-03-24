@@ -43,6 +43,12 @@ public class ManageEnginesAction extends AbstractSpagoBIAction {
 	public static final String ENGINE_DATASOURCES = "ENGINE_DATASOURCES";
 	public static final String ENGINE_TEST = "ENGINE_TEST";
 
+	
+	public static final String START = "start";
+	public static final String LIMIT = "limit";
+	public static final Integer START_DEFAULT = 0;
+	public static final Integer LIMIT_DEFAULT = 20;
+	
 	public static final String MESSAGE_DET = "MESSAGE_DET";
 	
 	private IEngUserProfile profile;
@@ -88,9 +94,22 @@ public class ManageEnginesAction extends AbstractSpagoBIAction {
 
 	private void listEngines(IEngineDAO engineDao)   {
 		List<Engine> engines;
+		
+		Integer start = getAttributeAsInteger( START );
+		Integer limit = getAttributeAsInteger( LIMIT );
+		if(start==null){
+			start = START_DEFAULT;
+		}
+		if(limit==null){
+			limit = LIMIT_DEFAULT;
+		}
+		
+		Integer enginesNum = 0;
 		try {
-			engines = engineDao.loadAllEngines();
-
+			//engines = engineDao.loadAllEngines();
+			enginesNum = engineDao.countEngines();
+			
+			engines = engineDao.loadPagedEnginesList(start, limit);
 			
 		} catch (Throwable t) {
 			throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to load engines from database", t);
@@ -99,7 +118,7 @@ public class ManageEnginesAction extends AbstractSpagoBIAction {
 		JSONObject responseJSON;
 		try {
 			JSONArray enginesJSON = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(engines, getLocale());
-			responseJSON = createJSONResponse(enginesJSON, engines.size());
+			responseJSON = createJSONResponse(enginesJSON, enginesNum);
 		} catch (Throwable t) {
 			throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to serialize engines", t);
 		}
@@ -116,7 +135,8 @@ public class ManageEnginesAction extends AbstractSpagoBIAction {
 		JSONObject results;
 
 		results = new JSONObject();
-
+		results.put("total", totalResNumber);
+		results.put("title", "BIEngines");
 		results.put("rows", rows);
 		return results;
 	}
