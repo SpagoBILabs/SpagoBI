@@ -37,7 +37,7 @@ public class GetMetaModelsAction extends AbstractSpagoBIAction {
 	public static String DOMAIN_TYPE = "BM_CATEGORY";
 
 	public static Integer START_DEFAULT = 0;
-	public static Integer LIMIT_DEFAULT = -1;
+	public static Integer LIMIT_DEFAULT = 15;
 	
 	@Override
 	public void doService() {
@@ -181,25 +181,22 @@ public class GetMetaModelsAction extends AbstractSpagoBIAction {
 		return categoryIds;
 
 	}
-	
+
 	protected Integer getStart() {
-		Integer start = START_DEFAULT;
-		Object startObject = getAttribute( START );
-		if (startObject != null && !startObject.equals("")) {
-			start =  getAttributeAsInteger(LIMIT);
+		Integer start = getAttributeAsInteger( START );
+		if (start == null) {
+			start = START_DEFAULT;
 		}
 		return start;
 	}
 	
 	protected Integer getLimit() {
-		Integer limit = LIMIT_DEFAULT;
-		Object limitObject = getAttribute( LIMIT );
-		if (limitObject != null && !limitObject.equals("")) {
-			limit = getAttributeAsInteger(LIMIT);
+		Integer limit = getAttributeAsInteger( LIMIT );
+		if (limit == null) {
+			limit = LIMIT_DEFAULT;
 		}
 		return limit;
 	}
-	
 
 	protected JSONObject createJSONResponse(JSONArray rows, Integer totalResNumber)
 			throws JSONException {
