@@ -54,7 +54,6 @@ Ext.define('Sbi.extjs.chart.ExtJSChartPanel', {
     	this.template = c.template || {};
     	this.template.divId = c.divId || {};
     	delete c.template;
-    	this.init(c);
         this.callParent(arguments);
     }
 
