@@ -814,10 +814,16 @@ public class ObjectsAccessVerifier {
 			throw new EMFInternalError(EMFErrorSeverity.ERROR, "User profile in input is null!!");
 		}
 		String state = obj.getStateCode();
-		if ("SUSP".equalsIgnoreCase(state)) {
-			monitor.stop();
-			return false;
+		if ("SUSP".equalsIgnoreCase(state)){
+			if(! profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN)) {
+				monitor.stop();
+				return false;
+			} else {
+				monitor.stop();
+				return true;
+			}
 		}
+
 
 
 		List foldersId = obj.getFunctionalities();
