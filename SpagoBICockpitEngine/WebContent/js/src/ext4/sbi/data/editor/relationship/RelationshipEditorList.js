@@ -19,6 +19,7 @@ Ext.define('Sbi.data.editor.relationship.RelationshipEditorList', {
 		  services: null
 		, grid: null
 		, store: null
+		, associationsList :null
 		, displayRefreshButton: null  // if true, display the refresh button
 		, border: false
 		, style: {marginTop: '3px', marginRight: '5px', marginLeft:'5px'}
@@ -68,13 +69,25 @@ Ext.define('Sbi.data.editor.relationship.RelationshipEditorList', {
 	}
     
 	, initStore: function() {
-		Sbi.trace("[RelationshipEditorDataset.initStore]: IN");
+	   Sbi.trace("[RelationshipEditorDataset.initStore]: IN");
+	   var initialData = [];
+		
+	   if (this.associationsList !== null && this.associationsList.relationshipsConf !== null &&
+			   this.associationsList.relationshipsConf.relationships !== null){
+			for (rel in this.associationsList.relationshipsConf.relationships){
+				var pippo = this.associationsList.relationshipsConf.relationships[rel];
+				if (this.associationsList.relationshipsConf.relationships[rel].rel !== null &&
+						this.associationsList.relationshipsConf.relationships[rel].rel !== undefined){
+					initialData.push(this.associationsList.relationshipsConf.relationships[rel].rel);
+				}
+			}
+	   }
 	   this.store = Ext.create('Ext.data.ArrayStore', {
 	        fields: [
 	           {name: 'id'},
 	           {name: 'rel'}
 	        ],
-	        data: []
+	        data: initialData
 	    });
 		
 		Sbi.trace("[RelationshipEditorDataset.initStore]: OUT");

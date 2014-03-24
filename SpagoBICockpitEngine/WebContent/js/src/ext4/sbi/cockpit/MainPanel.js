@@ -334,22 +334,30 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 	}
 	
 	, onShowRelationshipEditorWizard: function(){
-		if(this.relationshipEditorWizard === null) {    		
-    		Sbi.trace("[MainPanel.showRelationshipEditorWizard]: instatiating the editor");
-    		var config = {};
-    		config.usedDatasets = Sbi.storeManager.getStoreIds();
+	//**** TODO : *************
+	// quando sarà completato il porting alla 4 verificare se possibile passare solo state
+	// e ricavare da quello l'elenco dei datasets (usedDatasets).
+	// Quindi fare giro di ottimizzazione del codice!
+	//*************************
+		var config = {};
+		config.usedDatasets = Sbi.storeManager.getStoreIds();
+		config.state = this.getAnalysisState();
+//		if(this.relationshipEditorWizard === null) {    		
+    		Sbi.trace("[MainPanel.showRelationshipEditorWizard]: instatiating the editor");    		
     		this.relationshipEditorWizard = Ext.create('Sbi.data.RelationshipEditorWizard',config);
     		this.relationshipEditorWizard.on("submit", this.onRelationshipEditorWizardSubmit, this);
     		this.relationshipEditorWizard.on("cancel", this.onRelationshipEditorWizardCancel, this);
 //    		this.relationshipEditorWizard.on("apply", this.onRelationshipEditorWizardApply, this);    		
 	    	Sbi.trace("[MainPanel.showRelationshipEditorWizard]: editor succesfully instantiated");
-    	}
+//    	}
+				
 		this.relationshipEditorWizard.show();
 	}
 	
 	, onRelationshipEditorWizardCancel: function(wizard) {
 		Sbi.trace("[MainPanel.onRelationshipEditorWizardCancel]: IN");
-		this.relationshipEditorWizard.hide();
+//		this.relationshipEditorWizard.hide();
+		this.relationshipEditorWizard.close();
 		Sbi.trace("[MainPanel.onRelationshipEditorWizardCancel]: OUT");
 	}
 	
