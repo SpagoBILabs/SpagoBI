@@ -244,6 +244,79 @@ public class EngineDAOHibImpl extends AbstractHibernateDAO implements IEngineDAO
 		logger.debug("OUT");
 		return realResult;
 	}
+	
+	
+	
+	
+	/**
+	 * Load paged engines list
+	 * 
+	 * @return the list
+	 * 
+	 * @throws EMFUserError the EMF user error
+	 * 
+	 * @see it.eng.spagobi.engines.config.dao.IEngineDAO#loadAllEngines()
+	 */
+	public List loadPagedEnginesList(Integer offset, Integer fetchSize) throws EMFUserError {
+		logger.debug("IN");
+		Session aSession = null;
+		Transaction tx = null;
+		List realResult = new ArrayList();
+		try {
+			
+			if(offset == null) {
+				logger.warn("Input parameter [offset] is null. It will be set to [0]");
+				offset = new Integer(0);
+			}
+			if(fetchSize == null) {
+				logger.warn("Input parameter [offset] is null. It will be set to [" + Integer.MAX_VALUE + "]");
+				fetchSize = Integer.MAX_VALUE;
+			}
+			
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+
+			Query countQuery = aSession.createQuery("select count(*) from SbiEngines sb ");
+			Long resultNumber = (Long)countQuery.uniqueResult();
+
+			offset = offset < 0 ? 0 : offset;
+			if(resultNumber > 0) {
+				fetchSize = (fetchSize > 0) ? 
+						Math.min(fetchSize, resultNumber.intValue()) 
+						: resultNumber.intValue();
+			}
+			
+			Query listQuery = aSession.createQuery("from SbiEngines h order by h.label " );
+			listQuery.setFirstResult(offset);
+			if(fetchSize > 0) listQuery.setMaxResults(fetchSize);			
+
+			List enginesList = listQuery.list();	
+
+			Iterator it = enginesList.iterator();
+
+			while (it.hasNext()) {
+				realResult.add(toEngine((SbiEngines) it.next()));
+			}
+			tx.commit();
+		} catch (HibernateException he) {
+			logException(he);
+			logger.error("Error in loading all engines", he);
+			if (tx != null)
+				tx.rollback();
+
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+
+		} finally {
+			if (aSession!=null){
+				if (aSession.isOpen()) aSession.close();
+			}
+		}
+		logger.debug("OUT");
+		return realResult;
+	}
+	
+	
+	
 
 	public List<Engine> loadAllEnginesByTenant() throws EMFUserError {
 		logger.debug("IN");
@@ -692,5 +765,37 @@ public class EngineDAOHibImpl extends AbstractHibernateDAO implements IEngineDAO
 
 	}
 
+	
+	
+	public Integer countEngines() throws EMFUserError {
+		logger.debug("IN");
+		Session aSession = null;
+		Transaction tx = null;
+		Integer resultNumber;
+		
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+		
+			String hql = "select count(*) from SbiEngines ";
+			Query hqlQuery = aSession.createQuery(hql);
+			Long temp = (Long)hqlQuery.uniqueResult();
+			resultNumber = new Integer(temp.intValue());
+
+		} catch (HibernateException he) {
+			logger.error("Error while loading the list of BIEngines", he);	
+			if (tx != null)
+				tx.rollback();	
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 9104);
+		
+		} finally {
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
+				logger.debug("OUT");
+			}
+		}
+		return resultNumber;
+	}
 
 }
