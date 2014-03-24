@@ -9,6 +9,7 @@ Ext.ns("Sbi.cockpit.editor.widget");
 Sbi.cockpit.editor.widget.WidgetEditorDesignerPalette = function(config) { 
 
 	var defaultSettings = {
+		id: "buba",
 		border: false,
 		layout: "fit"
 	};
@@ -58,6 +59,7 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditorDesignerPalette, Ext.Panel, {
 		this.tpl.compile();
 		
 		var gridPanel = Ext.create('Ext.grid.Panel', {
+			id: 'designer-grid', // used to detect drag source in WidgetEditorMainPanel drop area
 		    store: Ext.data.StoreManager.lookup('widgetDesignerStore'),
 		    columns: [
 		        {
@@ -74,51 +76,19 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditorDesignerPalette, Ext.Panel, {
 		        	, scope: this
 		        }
 		    ],
-		    ddGroup : 'paleteDDGroup',
-			type : 'palette',
-			enableDragDrop : true,
+			viewConfig: {
+				plugins: {
+					ptype: 'gridviewdragdrop',
+		            dragText: 'Drag and drop to reorganize',
+		            ddGroup : 'paleteDDGroup',
+		            enableDrop: false
+		        }
+			},
 			header : false,
 			hideHeaders : true,
 			autoHeight : true
 		});
 
-//		this.tpl = new Ext.Template(
-//				'<tpl for=".">',
-//
-//				'<div  style="float: left; clear: left; padding-bottom: 10px;">',
-//					'<div style="float: left;"><img src="{3}" title="{1}" width="40"></div>',
-//					'<div style="float: left; padding-top:10px; padding-left:10px;">{1}</div>',
-//				'</div>',
-//	
-//				'</tpl>'
-//		);
-//		this.tpl.compile();
-//	    var fieldColumn = new Ext.grid.Column({
-//	    	width: 300
-//	    	, dataIndex: 'name'
-//	    	, hideable: false
-//	    	, hidden: false	
-//	    	, sortable: false
-//	   	    , renderer : function(value, metaData, record, rowIndex, colIndex, store){
-//	        	return this.tpl.apply(	
-//	        			[record.json.type, record.json.name
-//	        			 , record.json.description, record.json.icon]	
-//	        	);
-//	    	}
-//	        , scope: this
-//	    });
-//	    this.cm = new Ext.grid.ColumnModel([fieldColumn]);
-//
-//	    var gridPanel = new Ext.grid.GridPanel({
-//			ddGroup : 'paleteDDGroup',
-//			type : 'palette',
-//			header : false,
-//			hideHeaders : true,
-//			enableDragDrop : true,
-//			cm : this.cm,
-//			store : store,
-//			autoHeight : true
-//		});
 	    
 		var conf = {
 			title : 'Visualization',

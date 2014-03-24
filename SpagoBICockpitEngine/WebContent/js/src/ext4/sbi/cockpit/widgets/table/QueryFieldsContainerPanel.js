@@ -11,24 +11,6 @@
   
  
 /**
-  * Object name 
-  * 
-  * [description]
-  * 
-  * 
-  * Public Properties
-  * 
-  * [list]
-  * 
-  * 
-  * Public Methods
-  * 
-  *  [list]
-  * 
-  * 
-  * Public Events
-  * 
-  *  storeChanged: when the store is changed
   * 
   * Authors
   * 
@@ -51,7 +33,7 @@ Sbi.cockpit.widgets.table.QueryFieldsContainerPanel = function(config) {
 	
 	Ext.apply(this, c); // this operation should overwrite this.initialData content, that is initial grid's content
 	
-	this.addEvents('storeChanged', 'attributeDblClick', 'attributeRemoved');
+	//this.addEvents('storeChanged', 'attributeDblClick', 'attributeRemoved');
 	
 	this.init(c);
 	
@@ -60,11 +42,13 @@ Sbi.cockpit.widgets.table.QueryFieldsContainerPanel = function(config) {
         , width: 250
         , height: 280
         , cls : 'table'
-        , cm: this.cm
-        , enableDragDrop: true
-        , ddGroup: this.ddGroup || 'crosstabDesignerDDGroup'
+        //, columns: this.columns
 	    , layout: 'fit'
 	    , viewConfig: {
+	    	plugins: {
+				ptype: 'gridviewdragdrop',
+	            ddGroup : this.ddGroup || 'crosstabDesignerDDGroup'
+	        },
 	    	forceFit: true
 	    }
 		, tools: [
@@ -77,7 +61,7 @@ Sbi.cockpit.widgets.table.QueryFieldsContainerPanel = function(config) {
 		]
         , listeners: {
 			render: function(grid) { // hide the grid header
-				grid.getView().el.select('.x-grid3-header').setStyle('display', 'none');
+				//grid.getView().el.select('.x-grid3-header').setStyle('display', 'none');
     		}
         	, keydown: function(e) { 
         		if (e.keyCode === 46) {
@@ -124,27 +108,26 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsContainerPanel, Ext.grid.GridPan
 	}
 	
 	, initStore: function(c) {
-		this.store =  new Ext.data.ArrayStore({
-	        fields: ['id', 'alias', 'funct', 'iconCls', 'nature', 'values', 'valid']
-		});
-		// if there are initialData, load them into the store
-		if (this.initialData !== undefined) {
-			for (i = 0; i < this.initialData.length; i++) {
-				this.addField(this.initialData[i]);
-			}
-		}
-		this.store.on('remove', function (theStore, theRecord, index ) {
-			this.fireEvent('attributeRemoved', this, theRecord.data);
-		}, this);
 		/*
-		 * unfortunately, when removing all record with removeAll method, the event remove is not raised
-		 */
-		this.store.on('clear', function (theStore, theRecords ) {
-			for (var i = 0 ; i < theRecords.length; i++) {
-				var aRecord = theRecords[i];
-				this.fireEvent('attributeRemoved', this, aRecord.data);
-			}
-		}, this);
+		this.store =  Ext.create('Ext.data.Store', {
+		    storeId:'simpsonsStore',
+		    fields:['name', 'email', 'phone'],
+		    data:{'items':[
+		        { 'name': 'Lisa',  "email":"lisa@simpsons.com",  "phone":"555-111-1224"  },
+		        { 'name': 'Bart',  "email":"bart@simpsons.com",  "phone":"555-222-1234" },
+		        { 'name': 'Homer', "email":"home@simpsons.com",  "phone":"555-222-1244"  },
+		        { 'name': 'Marge', "email":"marge@simpsons.com", "phone":"555-222-1254"  }
+		    ]},
+		    proxy: {
+		        type: 'memory',
+		        reader: {
+		            type: 'json',
+		            root: 'items'
+		        }
+		    }
+		});
+		*/
+		
 	}
 	
 	, initColumnModel: function(c) {
@@ -157,8 +140,8 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsContainerPanel, Ext.grid.GridPan
                 '</tbody></table>');
         
         this.template.compile();
-		
-	    var fieldColumn = new Ext.grid.Column({
+        
+	    var fieldColumn = {
 	    	header:  ''
 	    	, dataIndex: 'alias'
 	    	, hideable: false
@@ -175,13 +158,12 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsContainerPanel, Ext.grid.GridPan
 		        			['button', 'x-btn-small x-btn-icon-small-left', '', 'x-btn-text-icon', Ext.id(), record.data.iconCls, record.data.iconCls+'_text', record.data.alias]		
 		   	    		);  	    							
 				}
-	   	    	return toReturn;
-	   	    	
-	   	    	
+	   	    	return toReturn;	
 	    	}
 	        , scope: this
-	    });
-	    this.cm = new Ext.grid.ColumnModel([fieldColumn]);
+	    };
+	    //this.cm = new Ext.grid.ColumnModel([fieldColumn]);
+	    this.columns =[fieldColumn];
 	}
 	
 	, notifyDropFromQueryFieldsPanel: function(ddSource) {

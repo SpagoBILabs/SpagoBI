@@ -74,6 +74,7 @@ Sbi.cockpit.widgets.table.QueryFieldsCardPanel = function(config) {
 		
 	c = {
 			items: [this.emptyMsgPanel, this.tableDesigner]
+			//items: [this.emptyMsgPanel, new Ext.Panel({html: "tableDesigner"})]
 		    , enableDragDrop: true
 		    , border: false
 		    , ddGroup: this.ddGroup || 'crosstabDesignerDDGroup'
@@ -84,10 +85,10 @@ Sbi.cockpit.widgets.table.QueryFieldsCardPanel = function(config) {
 			, width: 250
 	};
 	
+	Sbi.cockpit.widgets.table.QueryFieldsCardPanel.superclass.constructor.call(this, c);
+	
 	this.on('render', this.initDropTarget, this);
 	this.on('afterLayout', this.setActiveItem, this);
-	
-	Sbi.cockpit.widgets.table.QueryFieldsCardPanel.superclass.constructor.call(this, c);
 };
 
 Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsCardPanel, Ext.Panel, {

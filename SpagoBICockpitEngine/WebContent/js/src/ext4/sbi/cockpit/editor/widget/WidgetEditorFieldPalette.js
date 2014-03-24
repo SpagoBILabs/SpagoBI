@@ -187,8 +187,8 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditorFieldPalette, Ext.Panel, {
 		this.grid = new Ext.grid.GridPanel(Ext.apply(c || {}, {
 	        store: this.store,
 	        hideHeaders: true,
-	        columns: [
-	            {id:'alias' 
+	        columns: [{
+	        	id:'alias' 
             	, header: LN('sbi.formbuilder.queryfieldspanel.fieldname')
             	, width: 160
             	, sortable: true
@@ -200,12 +200,9 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditorFieldPalette, Ext.Panel, {
 		        	);
 		    	}
 	            , scope: this
-            	}
-	        ],
+            }],
 	        stripeRows: false,
-	        autoExpandColumn: 'alias',
-	        enableDragDrop: true
-	        //ddGroup: c.ddGroup //'formbuilderDDGroup'
+	        autoExpandColumn: 'alias'
 	    }));
     }
     

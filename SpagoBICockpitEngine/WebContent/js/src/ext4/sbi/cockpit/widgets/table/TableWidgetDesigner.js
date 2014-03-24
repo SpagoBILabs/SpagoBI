@@ -49,7 +49,9 @@ Sbi.cockpit.widgets.table.TableWidgetDesigner = function(config) {
 	
 	this.addEvents("attributeDblClick", "attributeRemoved");
 	
-	this.tableDesigner = new Sbi.cockpit.widgets.table.QueryFieldsCardPanel({ddGroup: this.ddGroup});
+	this.tableDesigner = new Sbi.cockpit.widgets.table.QueryFieldsCardPanel({
+		ddGroup: this.ddGroup
+	});
 	
 	// propagate events
 	this.tableDesigner.on(
@@ -77,12 +79,17 @@ Sbi.cockpit.widgets.table.TableWidgetDesigner = function(config) {
 		this
 	);
 	
-	
-	
 	c = {
 		layout: 'fit',
 		height: 350,
-		items: [new Ext.Panel({items:[this.tableDesigner], border: false, bodyStyle: 'width: 100%; height: 100%'})]
+		items: [
+		        new Ext.Panel({
+		        	border: false
+		        	, bodyStyle: 'width: 100%; height: 100%'
+		        	, items:[this.tableDesigner]
+		        	//, html: "tableDesigner"
+		        })
+		]
 	};
 	
 	Sbi.cockpit.widgets.table.TableWidgetDesigner.superclass.constructor.call(this, c);
