@@ -234,8 +234,10 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
-			SbiFunctions hibFunct = (SbiFunctions)aSession.load(SbiFunctions.class, functionalityID);
-			funct = toLowFunctionality(hibFunct, recoverBIObjects);
+			SbiFunctions hibFunct = (SbiFunctions)aSession.get(SbiFunctions.class, functionalityID);
+			if (hibFunct != null) {
+				funct = toLowFunctionality(hibFunct, recoverBIObjects);
+			}
 			tx.commit();
 		} catch (HibernateException he) {
 			logger.error( "HibernateException",he );

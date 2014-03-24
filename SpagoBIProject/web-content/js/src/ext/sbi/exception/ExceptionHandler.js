@@ -105,6 +105,11 @@ Sbi.exception.ExceptionHandler = function(){
        	
         },
         
+        
+        handleStoreLoadException : function (theObject, options, response, e) {
+        	Sbi.exception.ExceptionHandler.handleFailure(response, options);
+        },
+        
         showErrorMessage : function(errMessage, title) {
         	var m = errMessage || LN('sbi.generic.genericError');
         	var t = title || LN('sbi.generic.error');
