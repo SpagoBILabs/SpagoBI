@@ -87,9 +87,7 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditorControlPanel, Ext.Panel, {
 
 		this.fieldsPalettePanel = new Sbi.cockpit.editor.widget.WidgetEditorFieldPalette({
 			border: false,
-	        gridConfig: {
-				ddGroup: 'worksheetDesignerDDGroup'
-	          , type: 'queryFieldsPanel'
+	        gridConfig: {			
 	        },
 			region : 'center',
 			split: true,

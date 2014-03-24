@@ -115,12 +115,10 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsCardPanel, Ext.Panel, {
 
 	, onFieldDrop: function(ddSource) {
 		Sbi.trace("[QueryFieldsCardPanel.onFieldDrop]: IN");
-		if (ddSource.grid && ddSource.grid.type && ddSource.grid.type === 'queryFieldsPanel') {
+		if (ddSource.id === "field-grid-body") {
 			this.tableDesigner.notifyDropFromQueryFieldsPanel(ddSource);
-		} else if (ddSource.grid && ddSource.grid.type && ddSource.grid.type === 'queryFieldsContainerPanel') {
-			// do nothing (TODO: manage fields order)
 		} else {
-			alert('Unknown drag source');
+			alert('Unknown drag sorurce [' + ddSource.id + ']');
 		}
 		Sbi.trace("[QueryFieldsCardPanel.onFieldDrop]: OUT");
 	}
