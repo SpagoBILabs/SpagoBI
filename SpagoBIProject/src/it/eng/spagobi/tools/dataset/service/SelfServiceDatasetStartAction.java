@@ -345,7 +345,7 @@ public class SelfServiceDatasetStartAction extends ManageDatasets  {
 		}
 		
 		if (cockpitEngine != null){
-			String baseEditUrl = cockpitEngine.getUrl().replace("CockpitEngineStartAction", "CockpitEngineStartEditAction");
+			String baseEditUrl = cockpitEngine.getUrl().replace("page/execute", "page/edit");
 			cockpitEditActionUrl = GeneralUtilities.getUrl(baseEditUrl, parametersMap);
 			LogMF.debug(logger, "Cockpit edit service invocation url is equal to [{}]", cockpitEditActionUrl);
 		}
