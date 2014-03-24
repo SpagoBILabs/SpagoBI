@@ -371,18 +371,21 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditorMainPanel, Ext.Panel, {
 	
 	, onFieldDrop: function(ddSource) {
 		Sbi.trace("[WidgetEditorMainPanel.onFieldDrop]: IN");
-		if (ddSource.grid && ddSource.grid.type && ddSource.grid.type === 'palette') {
+		
+		alert(ddSource.xtype + " " + ddSource.id + " " + ddSource.type);
+		
+		if (ddSource.id === "designer-grid-body") {
 			Sbi.trace("[WidgetEditorMainPanel.onFieldDrop]: dragged object comes from palette");
 			this.notifyDropFromPalette(ddSource);
 		} else {
-			alert('Unknown DD source!!');
+			alert('Unknown drag sorurce [' + ddSource.id + ']');
 		}
 		Sbi.trace("[WidgetEditorMainPanel.onFieldDrop]: OUT");
 	}
 	
 	, notifyDropFromPalette: function(ddSource) {
 		Sbi.trace("[WidgetEditorMainPanel.notifyDropFromPalette]: IN");
-		var rows = ddSource.dragData.selections;
+		var rows = ddSource.dragData.records;
 		if (rows.length > 1) {
 			Ext.Msg.show({
 				   title:'Drop not allowed',
@@ -394,7 +397,7 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditorMainPanel, Ext.Panel, {
 		}
 		var row = rows[0];
 		var widgetConf = {};
-		widgetConf.wtype = row.json.type;
+		widgetConf.wtype = row.get("type");
 		if (this.designer !== null) {
 			this.fireEvent('addDesigner', this, widgetConf);
 			return;
