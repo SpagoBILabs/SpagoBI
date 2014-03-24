@@ -61,7 +61,7 @@ public class GetFolderPathAction extends AbstractSpagoBIAction {
 			logger.debug("Parameter [" + ROOT_FOLDER_ID + "] is equal to [" + rootFolderID + "]");
 			
 			FolderContentUtil fcUtil = new FolderContentUtil();
-			if (folderIdStr != null) {
+			if (folderIdStr != null && !folderIdStr.equalsIgnoreCase(FolderContentUtil.ROOT_NODE_ID)) {
 				boolean canSee = fcUtil.checkRequiredFolder(folderIdStr, this.getUserProfile());
 				if (!canSee) {
 					logger.error("Required folder does not exist or you don't have priviledges to see it");
