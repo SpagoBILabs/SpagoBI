@@ -19,6 +19,7 @@ import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IRoleDAO;
 import it.eng.spagobi.commons.metadata.SbiTenant;
+import it.eng.spagobi.dao.exception.DAORuntimeException;
 import it.eng.spagobi.services.common.SsoServiceFactory;
 import it.eng.spagobi.services.common.SsoServiceInterface;
 import it.eng.spagobi.services.security.bo.SpagoBIUserProfile;
@@ -675,29 +676,38 @@ public class UserUtilities {
 
 	/*
 	 * Method copied from SecurityServiceSupplierFactory for DAO refactoring
+	 * 
+	 * is this method in the right place?
 	 */
 	
 	public static ISecurityServiceSupplier createISecurityServiceSupplier(){
 		logger.debug("IN");
-		SingletonConfig configSingleton = SingletonConfig.getInstance();
-		String engUserProfileFactorySB = configSingleton.getConfigValue("SPAGOBI.SECURITY.USER-PROFILE-FACTORY-CLASS.className");
-		if (engUserProfileFactorySB==null){
-			logger.warn("SPAGOBI.SECURITY.USER-PROFILE-FACTORY-CLASS ... NOT FOUND");
-		}
-		String engUserProfileFactoryClass = engUserProfileFactorySB;
-		engUserProfileFactoryClass = engUserProfileFactoryClass.trim(); 
+		
+		ISecurityServiceSupplier securityServiceSupplier = null;
+		String engUserProfileFactoryClass = null;
+		
 		try {
-			return  (ISecurityServiceSupplier)Class.forName(engUserProfileFactoryClass).newInstance();
-		} catch (InstantiationException e) {
-			logger.warn("InstantiationException",e);
-		} catch (IllegalAccessException e) {
-			logger.warn("IllegalAccessException",e);
-		} catch (ClassNotFoundException e) {
-			logger.warn("ClassNotFoundException",e);
-		}finally{
-			logger.debug("OUT");
+			SingletonConfig configSingleton = SingletonConfig.getInstance();
+			engUserProfileFactoryClass = configSingleton.getConfigValue("SPAGOBI.SECURITY.USER-PROFILE-FACTORY-CLASS.className");
+			if (engUserProfileFactoryClass != null) {
+				engUserProfileFactoryClass = engUserProfileFactoryClass.trim(); 
+				try {
+					securityServiceSupplier =   (ISecurityServiceSupplier)Class.forName(engUserProfileFactoryClass).newInstance();
+				} catch (Throwable t) {
+					throw new DAORuntimeException("Impossible to instatiate supplier class [" + engUserProfileFactoryClass+ "]", t);
+				} 
+			} else{
+				throw new DAORuntimeException("Impossible read from configuartion the property [SPAGOBI.SECURITY.USER-PROFILE-FACTORY-CLASS] that contains the name of the class used as securityServiceSupplier");
+			}
+		} catch(Throwable t) {
+			if(t instanceof DAORuntimeException) throw (DAORuntimeException)t;
+			else throw new DAORuntimeException("Impossible to instatiate supplier class [" + engUserProfileFactoryClass+ "]", t);
 		}
-		return null;
+		
+	
+		
+		
+		return securityServiceSupplier;
 	}
 
 }
