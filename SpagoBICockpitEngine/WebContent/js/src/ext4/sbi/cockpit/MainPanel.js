@@ -155,7 +155,7 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 	, setTemplate: function(template) {
 		Sbi.trace("[MainPanel.setTemplate]: IN");
 		if(Ext.isString(template)) {
-			var analysisState = Ext.util.JSON.decode(template);
+			var analysisState = Ext.JSON.decode(template);
 			this.setAnalysisState(analysisState);
 		} else {
 			Sbi.trace("[MainPanel.setTemplate]: Input parameter [template] is not of type [string]");

@@ -55,7 +55,7 @@ Sbi.exception.ExceptionHandler = function(){
         	if(response !== undefined) {
         		if (response.responseText !== undefined) {
         			try{
-        				var content = Ext.util.JSON.decode( response.responseText );
+        				var content = Ext.JSON.decode( response.responseText );
         			}catch(e){
         				var content =Ext.JSON.decode( response.responseText );
         			}

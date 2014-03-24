@@ -297,7 +297,7 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.WidgetRuntime, {
         	// https://github.com/douglascrockford/JSON-js)
         	var confStr = (typeof JSON === 'object')
         					? JSON.stringify(widget.getConfiguration(), null, 2)
-        					: Ext.util.JSON.encode(widget.getConfiguration());
+        					: Ext.JSON.encode(widget.getConfiguration());
         	    		
         		
         	
