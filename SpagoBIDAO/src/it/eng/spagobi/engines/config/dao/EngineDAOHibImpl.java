@@ -181,7 +181,7 @@ public class EngineDAOHibImpl extends AbstractHibernateDAO implements IEngineDAO
 			SbiEngines hibEngine = (SbiEngines) hibQuery.uniqueResult();
 			
 			if (hibEngine == null) {
-				logger.error("A null engine has been returned for label"+driver);
+				logger.error("No engine with driver [" + driver + "] was found.");
 				return null;
 			}
 			engine = toEngine(hibEngine);
