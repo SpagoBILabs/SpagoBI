@@ -45,7 +45,7 @@ public class GetFolderContentAction extends AbstractSpagoBIAction {
 			if (folderIdStr != null) {
 				boolean canSee = fcUtil.checkRequiredFolder(folderIdStr, this.getUserProfile());
 				if (!canSee) {
-					logger.error("Folder is null or user cannot see it");
+					logger.error("Required folder does not exist or you don't have priviledges to see it");
 					throw new SpagoBIServiceException(SERVICE_NAME, "Required folder does not exist or you don't have priviledges to see it");
 				}
 			}
