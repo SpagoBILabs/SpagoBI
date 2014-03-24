@@ -216,9 +216,9 @@ public class ManageEnginesAction extends AbstractSpagoBIAction {
 			String driverName = encodedValues.getString("driver");
 			String className = encodedValues.getString("engine_class");
 			
-			if(driverName!=null){
+			if(driverName!=null && !driverName.equals("")){
 				Class.forName(driverName);
-			}else if(className!=null){
+			}else if(className!=null && !className.equals("")){
 				Class.forName(className);
 			}else{
 				message = "Class Name Error";
