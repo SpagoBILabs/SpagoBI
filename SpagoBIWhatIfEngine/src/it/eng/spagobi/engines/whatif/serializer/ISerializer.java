@@ -5,6 +5,8 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.engines.whatif.serializer;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+
 
 
 /**
@@ -14,5 +16,6 @@ package it.eng.spagobi.engines.whatif.serializer;
 public interface ISerializer extends Versionable{
 	Object serialize(Object object) throws SerializationException;
 	Object deserialize(String toDeserialize, Class object) throws SerializationException ;
+	Object deserialize(String toDeserialize, TypeReference object) throws SerializationException ;
 	String getFormat();
 }

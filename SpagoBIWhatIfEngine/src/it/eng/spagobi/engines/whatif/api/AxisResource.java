@@ -17,30 +17,33 @@ import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
 import it.eng.spagobi.engines.whatif.axis.AxisDimensionManager;
 import it.eng.spagobi.engines.whatif.common.AbstractWhatIfEngineService;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
 import org.apache.log4j.Logger;
+import org.olap4j.metadata.Member;
 
 import com.eyeq.pivot4j.PivotModel;
 import com.eyeq.pivot4j.transform.SwapAxes;
 
 @Path("/1.0/axis")
 public class AxisResource extends AbstractWhatIfEngineService {
-	
+
 	public static transient Logger logger = Logger.getLogger(AxisResource.class);
-	
+
 	private AxisDimensionManager axisBusiness;
-	
-	
-	
+
+
+
 	private AxisDimensionManager getAxisBusiness() {
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
-				
+
 		if(axisBusiness==null){
-			axisBusiness = new AxisDimensionManager(ei);
+			axisBusiness = new AxisDimensionManager(ei.getPivotModel());
 		}
 		return axisBusiness;
 	}
@@ -56,20 +59,20 @@ public class AxisResource extends AbstractWhatIfEngineService {
 		logger.debug("IN");
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
 		PivotModel model = ei.getPivotModel();
-		
+
 		SwapAxes transform = model.getTransform(SwapAxes.class);
 		if(transform.isSwapAxes()){
 			transform.setSwapAxes(false);
 		}else{
 			transform.setSwapAxes(true);
 		}
-				
+
 		String table = renderModel(model);
 		logger.debug("OUT");
 		return table;
-		
+
 	}
-	
+
 	/**
 	 * Service to move an hierarchy from an axis to another
 	 * @param req the HttpServletRequest
@@ -79,87 +82,56 @@ public class AxisResource extends AbstractWhatIfEngineService {
 	 * @return the rendered pivot table
 	 */
 	@PUT
-	@Path("/{fromAxis}/movedimension/{hierarchy}/{toAxis}")
-	public String moveHierarchyHierarchy(@javax.ws.rs.core.Context HttpServletRequest req, @PathParam("fromAxis") int fromAxisPos, @PathParam("toAxis") int toAxisPos,@PathParam("hierarchy") String hierarchyName){
+	@Path("/{fromAxis}/moveDimensionToOtherAxis/{hierarchy}/{toAxis}")
+	public String placeHierarchyOnAxis(@javax.ws.rs.core.Context HttpServletRequest req, @PathParam("fromAxis") int fromAxisPos, @PathParam("toAxis") int toAxisPos,@PathParam("hierarchy") String hierarchyName){
 
-		WhatIfEngineInstance ei = getWhatIfEngineInstance();
-		PivotModel model = ei.getPivotModel();
 
-		getAxisBusiness().moveHierarchy(fromAxisPos, toAxisPos, hierarchyName);
-	
-		return renderModel(model);
+		getAxisBusiness().moveDimensionToOtherAxis(fromAxisPos, toAxisPos, hierarchyName);
+
+		return renderModel(getPivotModel());
 	}
-	
+
 	/**
-	 * Service to swap 2 hierarchies in an axis
+	 * Service to move a hierarchy in the axis
 	 * @param req the HttpServletRequest
-	 * @param axisPos the source axis(0 for rows, 1 for columns, -1 for filters)  
-	 * @param hierarchyPos1 the position of the first hierarchy in the axis
-	 * @param hierarchyPos2 the position of the second hierarchy in the axis
+	 * @param axisPos the destination axis(0 for rows, 1 for columns, -1 for filters)  
+	 * @param hierarchyUniqueName the unique name of the hierarchy to move
+	 * @param newPosition the new position of the hierarchy
+	 * @param direction the direction of the movement (-1 up, +1 down)
 	 * @return the rendered pivot table
 	 */
 	@PUT
-	@Path("/{axis}/swapdimensions/{hierarchy1}/{hierarchy2}")
-	public String swapHierarchies(@javax.ws.rs.core.Context HttpServletRequest req, @PathParam("axis") int axisPos, @PathParam("hierarchy1") int hierarchyPos1, @PathParam("hierarchy2") int hierarchyPos2){
+	@Path("/{axis}/moveHierarchy/{hierarchyUniqueName}/{newPosition}/{direction}")
+	public String moveHierarchies(@javax.ws.rs.core.Context HttpServletRequest req, @PathParam("axis") int axisPos, @PathParam("hierarchyUniqueName") String hierarchyUniqueName, @PathParam("newPosition") int newPosition, @PathParam("direction") int direction){
 
-		WhatIfEngineInstance ei = getWhatIfEngineInstance();
-		PivotModel model = ei.getPivotModel();	
-		
-		getAxisBusiness().swapHierarchies(axisPos, hierarchyPos1, hierarchyPos2);
-		
-		return renderModel(model);
+
+		getAxisBusiness().moveHierarchy(axisPos,hierarchyUniqueName,newPosition,direction);
+
+		return renderModel(getPivotModel());
 	}
-	
-	
-//	
-//	/**
-//	 * Service to swap the axis
-//	 * @return the rendered pivot table
-//	 * @param req
-//	 * @param axisPos
-//	 * @param hierarchyName
-//	 * @return
-//	 */
-//	@PUT
-//	@Path("/{axis}/removehierarchy/{hierarchy}")
-//	public String removeHierarchy(@javax.ws.rs.core.Context HttpServletRequest req, @PathParam("axis") int axisPos, @PathParam("hierarchy") String hierarchyName){
-//
-//		WhatIfEngineInstance ei = getWhatIfEngineInstance();
-//		PivotModel model = ei.getPivotModel();
-//		OlapConnection connection = ei.getOlapConnection();
-//
-//		QueryAdapter qa = new QueryAdapter(model);
-//		qa.initialize();
-//		
-//		//AxisBusiness ab = new AxisBusiness();
-//		axisBusiness.removeHierarchy(qa, connection, axisPos, hierarchyName);
-//	
-//		MdxStatement s = qa.updateQuery();
-//		model.setMdx(s.toMdx());
-//
-//		return renderModel(model);
-//	}
-//	
-//	@PUT
-//	@Path("/{axis}/placehierarchy/{hierarchy}")
-//	public String addHierarchy(@javax.ws.rs.core.Context HttpServletRequest req, @PathParam("axis") int axisPos, @PathParam("hierarchy") String hierarchyName){
-//
-//		WhatIfEngineInstance ei = getWhatIfEngineInstance();
-//		PivotModel model = ei.getPivotModel();
-//		OlapConnection connection = ei.getOlapConnection();
-//
-//		QueryAdapter qa = new QueryAdapter(model);
-//		qa.initialize();
-//		
-//		//AxisBusiness ab = new AxisBusiness();
-//		axisBusiness.addHierarchy(qa, connection, axisPos, hierarchyName);
-//	
-//		MdxStatement s = qa.updateQuery();
-//		model.setMdx(s.toMdx());
-//		
-//		return renderModel(model);
-//	}
-//	
-	
+
+
+	/**
+	 * Service to change the visibility of the members of a hierarchy.
+	 * It takes a hierarchy, removes all the members and shows only the ones passed in the body of the request
+	 * @param req the HttpServletRequest
+	 * @param axisPos the source axis(0 for rows, 1 for columns, -1 for filters)  
+	 * @return the rendered pivot table
+	 */
+	@PUT
+	@Path("/{axis}/placeMembersOnAxis")
+	public String placeMembersOnAxis(@javax.ws.rs.core.Context HttpServletRequest req, @PathParam("axis") int axisPos){
+
+
+		List<Member> members = getMembersFromBody();
+
+		if(members.size()>0){
+			getAxisBusiness().updateAxisHierarchyMembers(members.get(0).getHierarchy(), members);
+		}
+
+
+		return renderModel(getPivotModel());
+	}
+
 
 }

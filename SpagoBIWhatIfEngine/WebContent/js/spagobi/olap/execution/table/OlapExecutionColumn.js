@@ -24,6 +24,12 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionColumn', {
 	
 	subPanelLayout: "hbox",
 	
+	/**
+	 * the type of the axis
+	 * @props {String} axisType
+	 */
+	axisType:  "column",
+	
 	constructor : function(config) {
 		this.initConfig(config);
 		if(Sbi.settings && Sbi.settings.olap && Sbi.settings.olap.execution && Sbi.settings.olap.execution.table && Sbi.settings.olap.execution.table.OlapExecutionColumn) {
@@ -46,6 +52,28 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionColumn', {
 	buildDownPanelConf: function(){
 		var conf = this.callParent();
 		return Ext.apply(conf,{height: 10,width: 13, cls: 'right-arrow'});
+	},
+	/**
+	 * Builds the central panel with the name of the Dimension
+	 */
+	buildDimensionPanel: function(){
+		var thisPanel = this;
+		this.dimensionPanel = Ext.create("Ext.Panel",{
+			border: false,
+			html: this.getDimensionName(),
+			style: "background-color: transparent !important",
+			bodyStyle: "background-color: transparent !important",
+			listeners: {
+				el: {
+					click: {
+						fn: function(){
+							thisPanel.fireEvent("dimensionClick", thisPanel.dimension);
+						}
+					}
+				}
+			}
+
+		});
 	}
 	
 });

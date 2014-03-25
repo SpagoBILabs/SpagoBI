@@ -19,6 +19,7 @@ Ext.define('Sbi.olap.DimensionModel', {
 		{name: 'axis', type: 'int'},
 		{name: 'hierarchies', type: 'array'},
 		{name: 'selectedHierarchyUniqueName', type: 'string'},
-		{name: 'selectedHierarchyPosition',  type: 'int'}
+		{name: 'selectedHierarchyPosition',  type: 'int'},
+		{name: 'measure',  type: 'int'}
 	]
 });

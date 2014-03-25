@@ -1,218 +1,220 @@
+/* SpagoBI, the Open Source Business Intelligence suite
+
+ * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+/**
+ * @author Alberto Ghedin (alberto.ghedin@eng.it)
+ * 
+ * @class AxisResource
+ * 
+ * Provides utilities to manage the dimensions inside axes
+ * 
+ */
 package it.eng.spagobi.engines.whatif.axis;
 
-import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
 import it.eng.spagobi.engines.whatif.cube.CubeUtilities;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.olap4j.CellSet;
-import org.olap4j.CellSetAxis;
-import org.olap4j.OlapConnection;
 import org.olap4j.OlapException;
+import org.olap4j.metadata.Dimension;
 import org.olap4j.metadata.Hierarchy;
+import org.olap4j.metadata.Member;
 
 import com.eyeq.pivot4j.PivotModel;
-import com.eyeq.pivot4j.mdx.MdxStatement;
-import com.eyeq.pivot4j.query.QueryAdapter;
 import com.eyeq.pivot4j.transform.ChangeSlicer;
 import com.eyeq.pivot4j.transform.PlaceHierarchiesOnAxes;
-import com.eyeq.pivot4j.transform.impl.ChangeSlicerImpl;
-import com.eyeq.pivot4j.transform.impl.PlaceHierarchiesOnAxesImpl;
+import com.eyeq.pivot4j.transform.PlaceMembersOnAxes;
+
 
 public class AxisDimensionManager {
 
 	public static transient Logger logger = Logger.getLogger(AxisDimensionManager.class);
 	
-	private WhatIfEngineInstance engineInstance;
+	private PivotModel model;
 
 	
-	public AxisDimensionManager(WhatIfEngineInstance engineInstance) {
+	public AxisDimensionManager(PivotModel model) {
 		super();
-		this.engineInstance = engineInstance;
+		this.model = model;
 	}
+	
 
 	/**
 	 * Service to move an hierarchy from an axis to another
-	 * @param qa the query adapter used to manipulate the query
-	 * @param connection the connection to the server
 	 * @param fromAxisPos the source axis(0 for rows, 1 for columns, -1 for filters)  
 	 * @param toAxisPos the destination axis(0 for rows, 1 for columns, -1 for filters)  
 	 * @param hierarchyName the unique name of the hierarchy to move
 	 * @return the moved hierarchy
 	 */
-	public Hierarchy moveHierarchy(int fromAxisPos, int toAxisPos,  String hierarchyName){
+	public Hierarchy moveDimensionToOtherAxis(int fromAxisPos, int toAxisPos,  String hierarchyName){
 		logger.debug("IN");
 
-		QueryAdapter qa = getQueryAdapter();
 		Hierarchy hierarchy = null;
-		PlaceHierarchiesOnAxes ph = new PlaceHierarchiesOnAxesImpl(qa, getOlapConnection());
-		CellSet cellSet = qa.getModel().getCellSet();
-		List<CellSetAxis> axes = cellSet.getAxes();
-		
+		PlaceMembersOnAxes pm = getModel().getTransform(PlaceMembersOnAxes.class);
+		PlaceHierarchiesOnAxes ph = getModel().getTransform(PlaceHierarchiesOnAxes.class);
+
+		List<Member> membersToMove = null;
+
 		try {
 			logger.debug("getting the hierarchy object from the cube");
-			hierarchy = CubeUtilities.getHierarchy(qa.getModel().getCube(), hierarchyName);
+			hierarchy = CubeUtilities.getHierarchy(getModel().getCube(), hierarchyName);
 		} catch (OlapException e) {
 			logger.error("Error getting the hierrarchy "+hierarchyName+" from the cube ",e);
 			throw new SpagoBIEngineRuntimeException("Error addingthe hierrarchy "+hierarchyName+" in the axis "+toAxisPos,e);
 		}
 
 		//if the axis is -1 the source are the filters
-		if(fromAxisPos>=0){
-			logger.debug("Removing the hierarchy from the axis "+fromAxisPos);
-			CellSetAxis fromAxis = axes.get(fromAxisPos);
-			List<Hierarchy> axisHerarchies = fromAxis.getAxisMetaData().getHierarchies();
-			axisHerarchies.remove(hierarchy);
-			ph.placeHierarchies(fromAxis.getAxisOrdinal(),axisHerarchies ,false);
-			logger.debug("Removed the hierarchy from the axis "+fromAxisPos);
-		}else{
+		if(fromAxisPos<0){
+			logger.debug("Adding the hierarchy in the axis "+toAxisPos);
+			ph.addHierarchy(CubeUtilities.getAxis(toAxisPos), hierarchy, false, -1);
+			logger.debug("Hierarchy added");
+			
 			//removes the slicers
-			ChangeSlicer cs = new ChangeSlicerImpl(qa, getOlapConnection());
+			logger.debug("Removing slicers from the hierarchy "+ hierarchy.getUniqueName());
+			ChangeSlicer cs = getModel().getTransform(ChangeSlicer.class);
 			List<org.olap4j.metadata.Member> slicers = cs.getSlicer(hierarchy);
 			slicers.clear();
 			cs.setSlicer(hierarchy,slicers);
-		}
+			logger.debug("Slicers cleaned");
+		}else {
+			//Column and rows
+			
+			membersToMove = pm.findVisibleMembers(hierarchy);
+			
+			
+			//remove the members from the axis
+			logger.debug("Removing the hierarchy from the axis "+fromAxisPos);
+			ph.removeHierarchy(CubeUtilities.getAxis(fromAxisPos), hierarchy); 
+			logger.debug("Removed the hierarchy from the axis "+fromAxisPos);
+			
 
-		//if the axis is -1 the destination are the filters
-		if(toAxisPos>=0){
-			logger.debug("Adding the hierarchy in the axis "+fromAxisPos);
-			CellSetAxis toAxis = axes.get(toAxisPos);	
-			List<Hierarchy> axisHerarchies = toAxis.getAxisMetaData().getHierarchies();
-			axisHerarchies.add(hierarchy);
-			ph.placeHierarchies(toAxis.getAxisOrdinal(),axisHerarchies ,false);
-			logger.debug("Added the hierarchy in the axis "+fromAxisPos);
+			
+			//adding the hierarchy and the members to the new axis
+			logger.debug("Adding the hierarchy in the axis "+toAxisPos);
+			ph.addHierarchy(CubeUtilities.getAxis(toAxisPos), hierarchy, false, -1);
+			logger.debug("Hierarchy added");
+			
+			if(membersToMove!=null){
+				
+				logger.debug("Moving the members to the axis "+fromAxisPos);
+				
+				
+				//If the dimension is a measure we should add the dimension, cleans it (because it adds all the root members, so all the measures), and add the visible measures
+				try {
+					if(hierarchy.getDimension().getDimensionType().equals(Dimension.Type.MEASURE)){
+						List<Member> membersToRemove =  new ArrayList<Member>();
+						List<Member> rootMembers = pm.findVisibleMembers(hierarchy);
+						for(int i=0; i<rootMembers.size(); i++){
+							Member member = rootMembers.get(i);
+							if(!membersToMove.contains(member)){
+								membersToRemove.add(member);
+							}
+						}
+						logger.debug("Removing the measures from the hierarchy");
+						pm.removeMembers(hierarchy, membersToRemove);
+						logger.debug("Measures removed");
+					}
+				} catch (OlapException e) {
+					logger.error("Error cleaning the measure",e);
+				}
+				
+				logger.debug("Adding the members to the axis");
+				pm.addMembers(hierarchy, membersToMove);
+				logger.debug("Members moved");
+			}
+
 		}
 		
-		MdxStatement s = qa.updateQuery();
-		qa.getModel().setMdx(s.toMdx());
-		logger.debug("Mdx updated");
 		
 		logger.debug("OUT");
 		return hierarchy;
 	}
+	
 
-	/**
-	 * Service to swap 2 hierarchies in an axis
-	 * @param qa the query adapter used to manipulate the query
-	 * @param connection the connection to the server
-	 * @param axisPos the source axis(0 for rows, 1 for columns, -1 for filters)  
-	 * @param hierarchyPos1 the position of the first hierarchy in the axis
-	 * @param hierarchyPos2  the position of the second hierarchy in the axis
-	 */
-	public void swapHierarchies( int axisPos,  int hierarchyPos1,  int hierarchyPos2){
+	 /**
+	  * method to move a hierarchy in the axis
+	  * @param axisPos the destination axis(0 for rows, 1 for columns, -1 for filters)  
+	  * @param hierarchyName the unique name of the hierarchy to move
+	  * @param position the new position of the hierarchy
+	  * @param direction the direction of the movement (-1 up, +1 down)
+	  */
+	public void moveHierarchy( int axisPos, String hierarchyName, int position, int direction){
 		logger.debug("IN");
 		
-		QueryAdapter qa = getQueryAdapter();
+		Hierarchy hierarchy= null;
+		PlaceHierarchiesOnAxes ph = getModel().getTransform(PlaceHierarchiesOnAxes.class);
 		
-		int firstPos;
-		int lastPos;
 		
-		if(hierarchyPos1<hierarchyPos2){
-			firstPos = hierarchyPos1;
-			lastPos = hierarchyPos2;
-		}else{
-			lastPos = hierarchyPos1;
-			firstPos = hierarchyPos2;
+		try {
+			logger.debug("getting the hierarchy object from the cube");
+			hierarchy = CubeUtilities.getHierarchy(getModel().getCube(), hierarchyName);
+		} catch (OlapException e) {
+			logger.error("Error getting the hierrarchy "+hierarchyName+" from the cube ",e);
+			throw new SpagoBIEngineRuntimeException("Error addingthe hierrarchy "+hierarchyName+" in the axis "+axisPos,e);
 		}
-
-		PlaceHierarchiesOnAxes ph = new PlaceHierarchiesOnAxesImpl(qa, getOlapConnection());
 		
-		CellSet cellSet = qa.getModel().getCellSet();
-		List<CellSetAxis> axes = cellSet.getAxes();
-		CellSetAxis rowsOrColumns = axes.get(axisPos);
 		
 		logger.debug("Getting the hierarchies list from the axis");
-		List<Hierarchy> hierarchies = rowsOrColumns.getAxisMetaData().getHierarchies();
-		
-		
-		logger.debug("removing the hierarchies");
-		Hierarchy hierarchyLast = hierarchies.remove(lastPos);
-		Hierarchy hierarchyFirst = hierarchies.remove(firstPos);
-		logger.debug("Hierarchies removed");
-		
-		logger.debug("Adding the hierarchies");
-		hierarchies.add(firstPos, hierarchyLast);
-		hierarchies.add(lastPos, hierarchyFirst);
-		logger.debug("Hierarchies added");	
-		
-		logger.debug("Commit the changes in the model");	
-		ph.placeHierarchies(rowsOrColumns.getAxisOrdinal(),hierarchies ,false);
-		
-		MdxStatement s = qa.updateQuery();
-		qa.getModel().setMdx(s.toMdx());
-		logger.debug("Mdx updated");
+
+
+		logger.debug("Moving the hierarchy "+hierarchyName);
+		if(direction>0){
+			//if the direction is positive we should a 1 because the hierarchy we want to move still be in the axis 
+			ph.moveHierarchy(CubeUtilities.getAxis(axisPos), hierarchy, position+1);	
+		}else{
+			ph.moveHierarchy(CubeUtilities.getAxis(axisPos), hierarchy, position);
+		}
+		logger.debug("Hierarchy moved");
+	
 		
 		logger.debug("OUT");
 	}
 	
-	private QueryAdapter getQueryAdapter(){
-		PivotModel model = engineInstance.getPivotModel();	
-		QueryAdapter qa = new QueryAdapter(model);
-		qa.initialize();
-		return qa;
+	/**
+	 * Changes the visibility of the members of a hierarchy.
+	 * It takes a hierarchy, removes all the members and shows only the ones passed in the body of the request
+	 * @param hierarchy hierarchy to update
+	 * @param members list of members to show
+	 */
+	public void updateAxisHierarchyMembers( Hierarchy hierarchy, List<Member> members){
+
+
+		PlaceMembersOnAxes pm = getModel().getTransform(PlaceMembersOnAxes.class);
+
+		List<Member> visibleMembers = pm.findVisibleMembers(hierarchy);
+		List<Member> membersToRemove = new ArrayList<Member>();
+		
+		//get the members to remove (visible-members)
+		if(visibleMembers!=null){
+			for(int i=0; i<visibleMembers.size(); i++){
+				Member visibleMember = visibleMembers.get(i);
+				if(!members.contains(visibleMember)){
+					membersToRemove.add(visibleMember);
+				}
+			}
+		}
+				
+		pm.addMembers(hierarchy, members);
+		pm.removeMembers(hierarchy, membersToRemove); 
+
+	}
+
+
+	public PivotModel getModel() {
+		return model;
+	}
+
+
+	public void setModel(PivotModel model) {
+		this.model = model;
 	}
 	
-	private OlapConnection getOlapConnection(){
-		return  engineInstance.getOlapConnection();	
-	}
-	
-	
-	
-//	public Hierarchy removeHierarchy(QueryAdapter qa, OlapConnection connection, int axisPos, String hierarchyName){
-//
-//		Hierarchy hierarchyToRemove = null;
-//		
-//		PlaceHierarchiesOnAxes ph = new PlaceHierarchiesOnAxesImpl(qa, connection);
-//
-//		CellSet cellSet = qa.getModel().getCellSet();
-//		List<CellSetAxis> axes = cellSet.getAxes();
-//		CellSetAxis rowsOrColumns = axes.get(axisPos);
-//			
-//		try {
-//			hierarchyToRemove = CubeUtilities.getHierarchy(qa.getModel().getCube(), hierarchyName);
-//		} catch (OlapException e) {
-//			logger.error("Error addingthe hierrarchy "+hierarchyName+" in the axis "+axisPos,e);
-//			throw new SpagoBIEngineRuntimeException("Error addingthe hierrarchy "+hierarchyName+" in the axis "+axisPos,e);
-//		}
-//
-//		
-//		ph.removeHierarchy(rowsOrColumns.getAxisOrdinal(), hierarchyToRemove);
-//		
-//		
-//		return hierarchyToRemove;
-//	}
-//	
-//	public Hierarchy addHierarchy(QueryAdapter qa, OlapConnection connection, int axisPos, String hierarchyName){
-//
-//		
-//		
-//		PlaceHierarchiesOnAxes ph = new PlaceHierarchiesOnAxesImpl(qa, connection);
-//		
-//		CellSet cellSet = qa.getModel().getCellSet();
-//		List<CellSetAxis> axes = cellSet.getAxes();
-//		CellSetAxis rowsOrColumns = axes.get(axisPos);
-//
-//
-//		List<Hierarchy> axisHerarchies = rowsOrColumns.getAxisMetaData().getHierarchies();
-//		
-//		Hierarchy hierarchyToAdd;
-//		try {
-//			hierarchyToAdd = CubeUtilities.getHierarchy(qa.getModel().getCube(), hierarchyName);
-//		} catch (OlapException e) {
-//			logger.error("Error addingthe hierrarchy "+hierarchyName+" in the axis "+axisPos,e);
-//			throw new SpagoBIEngineRuntimeException("Error adding the hierrarchy "+hierarchyName+" in the axis "+axisPos,e);
-//		}
-//		
-//		axisHerarchies.add(hierarchyToAdd);
-//		
-//		
-//		ph.placeHierarchies(rowsOrColumns.getAxisOrdinal(),axisHerarchies ,false);
-//
-//
-//		return hierarchyToAdd;
-//	}
+
 	
 	
 }

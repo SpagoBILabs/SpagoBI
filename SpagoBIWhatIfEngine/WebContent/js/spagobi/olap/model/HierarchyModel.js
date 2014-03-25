@@ -17,6 +17,7 @@ Ext.define('Sbi.olap.HierarchyModel', {
 		{name: 'name'},
 		{name: 'uniqueName'},
 		{name: 'position', type: 'int'},
-		{name: 'slicers',  type: 'array'}
+		{name: 'slicers',  type: 'array'},
+		{name: 'levelNames',  type: 'array'}
 	]
 });

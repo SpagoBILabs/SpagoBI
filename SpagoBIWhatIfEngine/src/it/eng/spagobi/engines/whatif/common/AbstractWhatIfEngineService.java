@@ -6,20 +6,28 @@
 
 package it.eng.spagobi.engines.whatif.common;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
+import it.eng.spagobi.engines.whatif.member.SbiMember;
 import it.eng.spagobi.engines.whatif.serializer.SerializationException;
 import it.eng.spagobi.engines.whatif.serializer.SerializationManager;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.engines.rest.AbstractRestService;
 import it.eng.spagobi.utilities.engines.rest.ExecutionSession;
+import it.eng.spagobi.utilities.exceptions.SpagoBIEngineRestServiceException;
+import it.eng.spagobi.utilities.rest.RestUtilities;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Context;
 
 import org.apache.log4j.Logger;
+import org.olap4j.metadata.Member;
 
 import com.eyeq.pivot4j.PivotModel;
+import com.fasterxml.jackson.core.type.TypeReference;
 
 /**
  * 
@@ -76,6 +84,10 @@ public class AbstractWhatIfEngineService extends AbstractRestService{
 
 	}
 	
+	public PivotModel getPivotModel(){
+		return getWhatIfEngineInstance().getPivotModel();
+	}
+	
 	public String getOutputFormat(){
 		String outputFormat = servletRequest.getParameter(OUTPUTFORMAT);
 		
@@ -96,5 +108,36 @@ public class AbstractWhatIfEngineService extends AbstractRestService{
 		String outputFormat = getOutputFormat();
 		return SerializationManager.deserialize(outputFormat, obj, clazz);
 	}
+
+	public Object deserialize(String obj, TypeReference object) throws SerializationException{
+		String outputFormat = getOutputFormat();
+		return SerializationManager.deserialize(outputFormat, obj, object);
+	}
+	
+	
+	public List<Member> getMembersFromBody(){
+		logger.debug("Getting the members from the request");
+		List<SbiMember> sbiMembers = null;
+		List<Member> members = new ArrayList<Member>();
+		String membersString=null;
+		
+		try {
+			membersString = RestUtilities.readBody(getServletRequest());
+			TypeReference<List<SbiMember>> type = new TypeReference<List<SbiMember>>() {};
+			sbiMembers = (List<SbiMember>)deserialize(membersString, type);
+			for (int i = 0; i < sbiMembers.size(); i++) {
+				members.add(sbiMembers.get(i).getMember(getPivotModel().getCube()));
+			}
+		} catch (Exception e) {
+			logger.error("Error loading the members from the request ", e);
+			throw new SpagoBIEngineRestServiceException("generic.error.request.members.getting", getLocale(), e);
+		}
+
+		
+		return members;
+	}
+	
+	
+
 	
 }

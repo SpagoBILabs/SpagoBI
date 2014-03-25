@@ -24,12 +24,18 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionFilterTree', {
     	 */
 		dimension: null,
 		
-		
     	/**
     	 * @cfg {Sbi.olap.MemberModel} selectedMember
     	 * The value of the filter
     	 */
 		selectedMember: null,
+		
+    	/**
+    	 * @cfg {boolean} multiSelection
+    	 * allows the multiselection. default to false
+    	 */
+		multiSelection: false,
+		
 		title: '',
 		height: 500,
 		width: 400
@@ -48,34 +54,42 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionFilterTree', {
 		}
 
 		var service = Ext.create("Sbi.service.RestService",{
-			url: "member",
-			subPath: "filtertree",
-			pathParams: [this.dimension.get("selectedHierarchyUniqueName")]
+			url: "hierarchy",
+			pathParams: [this.dimension.get("selectedHierarchyUniqueName"), "filtertree", this.dimension.get("axis")]
 		});
 
+		
+		var treeStore =  new Ext.data.TreeStore({
+			proxy: {
+				type: 'ajax',
+				idProperty : 'uniqueName',
+				url: service.getRestUrlWithParameters()
+			},
+			root: {
+				name: 'member',
+				id: 'root',
+				expanded: true
+			},
+			folderSort: true,
+			sorters: [{
+				property: 'text',
+				direction: 'ASC'
+			}]
+		});
 		
 		//Initialize the filter
 		this.tree = Ext.create("Ext.tree.Panel",{
 			title: this.dimension.raw.name,
 			rootVisible: false,
-			store: new Ext.data.TreeStore({
-				proxy: {
-					type: 'ajax',
-					idProperty : 'uniqueName',
-					url: service.getRestUrlWithParameters()
-				},
-				root: {
-					name: 'member',
-					id: 'root',
-					expanded: true
-				},
-				folderSort: true,
-				sorters: [{
-					property: 'text',
-					direction: 'ASC'
-				}]
-			})
+			store:treeStore
 		});
+
+		if(this.multiSelection){
+			treeStore.on("beforeappend",function( store, node, eOpts ){
+				node.raw.checked = (node.raw.visible!=null && node.raw.visible!=undefined && (node.raw.visible=="true" || node.raw.visible==true) );
+				node.data.checked = node.raw.checked;
+			},this);
+		}
 
 
 		this.callParent(arguments);
@@ -113,11 +127,15 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionFilterTree', {
 			             },    {
 			            	 text: 'Select',
 			            	 handler: function(){
-			            		 var selected = thisPanel.tree.getSelectionModel( ).getSelection();
-			            		 if(selected && selected.length){
-			            			 selected = thisPanel.tree.getSelectionModel( ).getSelection()[0];
+			            		 var selected = null;
+			            		 if(thisPanel.multiSelection){
+			            			 selected = thisPanel.tree.getChecked( );
+			            		 }else{
+			            			 selected = thisPanel.tree.getSelectionModel( ).getSelection();
 			            		 }
-			            		 thisPanel.fireEvent("select",selected);
+			            		 
+
+			            		 thisPanel.fireEvent("select",thisPanel.getMembersData(selected));
 			            		 thisPanel.destroy();
 			            	 }
 			             }]
@@ -174,6 +192,17 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionFilterTree', {
 				}
 			}
 		}
+	},
+	
+
+	getMembersData: function(members){
+		var toReturn = new Array();
+		if(members){
+			for(var i=0; i<members.length; i++){
+				toReturn.push(members[i].raw);
+			}
+		}
+		return toReturn;
 	}
 
 });

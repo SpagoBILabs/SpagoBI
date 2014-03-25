@@ -70,9 +70,10 @@
 
 
 .multi-hierarchy {
-	background-image: url(../img/multi_hierarchy_2.png);
+	background-image: url(../img/arrow.gif);
 	background-position: right;
 	background-repeat: no-repeat;
+	background-size: 12px 12px;
 }
 
 
@@ -151,6 +152,13 @@ td[contenteditable="true"]:focus {
 	height: "90%";
 }
 
+.filter-funnel-image-smalsl {
+	background-image: url(../img/filter_3.png);
+	background-position: center center;
+	background-repeat: no-repeat;
+	background-size: 10px 10px;
+}
+
 .filter-funnel-body{
 	background-color: transparent; 
 	border-top: 0px !important; 
@@ -158,6 +166,35 @@ td[contenteditable="true"]:focus {
 	border-right: 0px !important;  
 	padding: 4px"
 }
+
+.filter-column {
+	background-image: url(../img/filter_3.png);
+	background-color: transparent; 
+	border-top: 0px !important;
+	border-bottom: 0px !important;  
+	border-right: 0px !important; 
+	margin-left: 4px;
+	padding-left: 10px;  
+	background-position: center center;
+	background-repeat: no-repeat;
+	background-size: 10px 10px;
+	text-align: center;
+}
+
+.filter-row {
+	background-image: url(../img/filter_3.png);
+	background-color: transparent; 
+	border-bottom: 0px !important;
+	border-right: 0px !important;  
+	border-left: 0px !important; 
+	margin-top: 4px; 
+	padding-top: 10px;  
+	text-align: center;
+	background-position: center center;
+	background-repeat: no-repeat;
+	background-size: 10px 10px;
+}
+
 
 /* toolbar */
 .drill-mode{

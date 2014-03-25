@@ -10,7 +10,6 @@
  */
 package it.eng.spagobi.engines.whatif.model;
 
-import it.eng.spagobi.engines.whatif.member.MemberJsonSerializer;
 import it.eng.spagobi.engines.whatif.serializer.ISerializer;
 import it.eng.spagobi.engines.whatif.serializer.SerializationException;
 import it.eng.spagobi.engines.whatif.serializer.SerializationManager;
@@ -18,10 +17,10 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import org.apache.log4j.Logger;
 import org.olap4j.OlapConnection;
-import org.olap4j.metadata.Member;
 
 import com.eyeq.pivot4j.PivotModel;
 import com.fasterxml.jackson.core.Version;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 
@@ -36,7 +35,7 @@ public class PivotJsonSerializer implements ISerializer {
 	public PivotJsonSerializer(OlapConnection connection, ModelConfig config) {
 		mapper = new ObjectMapper();
 		SimpleModule simpleModule = new SimpleModule("SimpleModule", new Version(1,0,0,null));
-		simpleModule.addSerializer(Member.class, new MemberJsonSerializer());
+		//simpleModule.addSerializer(Member.class, new MemberJsonSerializer());
 		simpleModule.addSerializer(PivotModel.class, new PivotJsonHTMLSerializer(connection, config));
 		mapper.registerModule(simpleModule);
 	}
@@ -51,6 +50,15 @@ public class PivotJsonSerializer implements ISerializer {
 	}
 	
 	public Object deserialize(String toDeserialize, Class object) throws SerializationException {
+		try {
+			return mapper.readValue(toDeserialize, object);
+		} catch (Exception e) {
+			logger.error("Error deserializing the MemberEntry",e);
+			throw new SpagoBIRuntimeException("Error deserializing the MemberEntry",e);
+		}
+	}
+	
+	public Object deserialize(String toDeserialize, TypeReference object) throws SerializationException {
 		try {
 			return mapper.readValue(toDeserialize, object);
 		} catch (Exception e) {

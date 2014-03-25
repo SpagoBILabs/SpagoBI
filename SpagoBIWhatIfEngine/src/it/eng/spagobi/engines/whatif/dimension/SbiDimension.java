@@ -13,33 +13,34 @@ import it.eng.spagobi.engines.whatif.hierarchy.SbiHierarchy;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+import org.olap4j.OlapException;
+import org.olap4j.metadata.Dimension;
+
 public class SbiDimension {
 
+	static private Logger logger = Logger.getLogger(SbiDimension.class);
+	
 	private String name;
 	private String uniqueName;
 	private List<SbiHierarchy> hierarchies;
 	private String selectedHierarchyUniqueName;
 	private int selectedHierarchyPosition;
 	private int axis;
+	private int measure;
 	
-	public SbiDimension(String name, String uniqueName,
-			List<SbiHierarchy> hierarchies,
-			String selectedHierarchyUniqueName, int axis,  int selectedHierarchyPosition) {
+	public SbiDimension(Dimension dimension, int axis) {
 		super();
-		this.name = name;
-		this.uniqueName = uniqueName;
-		this.hierarchies = hierarchies;
-		this.axis = axis;
-		this.selectedHierarchyUniqueName = selectedHierarchyUniqueName;
-		this.selectedHierarchyPosition = selectedHierarchyPosition;
-	}
-	
-	public SbiDimension(String name, String uniqueName, int axis) {
-		super();
-		this.name = name;
-		this.uniqueName = uniqueName;
+		this.name = dimension.getName();
+		this.uniqueName = dimension.getUniqueName();
 		this.axis = axis;
 		this.hierarchies = new ArrayList<SbiHierarchy>();
+		
+		try {
+			this.measure = dimension.getDimensionType().equals(Dimension.Type.MEASURE)?1:0;
+		} catch (OlapException e) {
+			logger.error("Error setting getting the type of the dimension",e);
+		}
 	}
 	
 	public String getName() {
@@ -79,6 +80,10 @@ public class SbiDimension {
 
 	public void setAxis(int axis) {
 		this.axis = axis;
+	}
+
+	public int isMeasure() {
+		return measure;
 	}
 
 	

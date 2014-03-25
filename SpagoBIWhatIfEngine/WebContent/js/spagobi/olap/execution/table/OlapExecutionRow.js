@@ -15,16 +15,22 @@
 
 Ext.define('Sbi.olap.execution.table.OlapExecutionRow', {
 	extend: 'Sbi.olap.execution.table.OlapExecutionAxisDimension',
-	
+
 	config:{
 		style: "margin-bottom: 3px;",
 		cls: "x-column-header",
-   		bodyStyle: "background-color: transparent",
-   		roundText: true
+		bodyStyle: "background-color: transparent",
+		roundText: true
 	},
-	
+
+	/**
+	 * the type of the axis
+	 * @props {String} axisType
+	 */
+	axisType:  "row",
+
 	subPanelLayout: "auto",
-	
+
 	constructor : function(config) {
 		this.initConfig(config);
 		if(Sbi.settings && Sbi.settings.olap && Sbi.settings.olap.execution && Sbi.settings.olap.execution.table && Sbi.settings.olap.execution.table.OlapExecutionRow) {
@@ -33,41 +39,62 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionRow', {
 		this.roundText = this.roundText && (Ext.isChrome);
 		this.callParent(arguments);
 	},
-	
-	
-    /**
-     * Builds the central panel with the name of the dimension
-     */
+
+
+	/**
+	 * Builds the central panel with the name of the dimension
+	 */
 	buildDimensionPanel: function(){
+		var thisPanel = this;
 		var dimensionConf =  {
 				xtype: "panel",
 				border: false,
-		   		
-		   		bodyStyle: "background-color: transparent; white-space: nowrap",
-		   		style: "background-color: transparent",
-		    	html: this.getText()
-			};
+
+				bodyStyle: "background-color: transparent; white-space: nowrap",
+				style: "background-color: transparent",
+				html: this.getText(),
+				listeners: {
+					el: {
+						click: {
+							fn: function(){
+								thisPanel.fireEvent("dimensionClick", thisPanel.dimension);
+							}
+						}
+					}
+				}
+		};
 		if(this.roundText){
 			dimensionConf.height = this.getDimensionName().length*6.3+4;
 			dimensionConf.cls= "rotate";
 		}
-		
-		
+
 		this.dimensionPanel = Ext.create("Ext.Panel",dimensionConf);
 	},
-	
-    /**
-     * Gets the text to show in the panel
-     * If the browser is IE the text is from left to right and a <br> follow every char.
-     * If the browser is not IE the text is rounded via CSS
-     */
+
+	/**
+	 * Gets the text to show in the panel
+	 * If the browser is IE the text is from left to right and a <br> follow every char.
+	 * If the browser is not IE the text is rounded via CSS
+	 */
 	getText: function(){
+		var startItalic= 0;
 		if(!this.roundText){
 			var text ="";
 			var n = this.getDimensionName();
+			startItalic = n.indexOf('<i>');
+			if(startItalic>0){
+				n = n.replace('<i>','');
+				n= n.replace('</i>','');
+			}else{
+				startItalic = 100;
+			}
 			if(n){
 				for(var i=0; i<n.length; i++){
-					text = text + n.charAt(i) +'<br>';
+					var char =n.charAt(i);
+					if(i>=startItalic){
+						char = '<i>'+char+'</i>';
+					}
+					text = text + char +'<br>';
 					if(i>10){
 						text=text+"..";
 						return text;
@@ -83,7 +110,7 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionRow', {
 		}
 	},
 
-	
+
 	/**
 	 * Builds the central panel with the name of the dimension
 	 */
@@ -91,7 +118,7 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionRow', {
 		var conf = this.callParent();
 		return Ext.apply(conf,{height: 13, cls: 'up-arrow'});
 	},
-	
+
 	/**
 	 * Builds the central panel with the name of the dimension
 	 */
@@ -99,5 +126,5 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionRow', {
 		var conf = this.callParent();
 		return Ext.apply(conf,{height: 10, cls: 'down-arrow'});
 	}
-	
+
 });

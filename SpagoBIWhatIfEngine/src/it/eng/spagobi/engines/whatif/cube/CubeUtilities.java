@@ -14,6 +14,7 @@ package it.eng.spagobi.engines.whatif.cube;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.olap4j.Axis;
 import org.olap4j.OlapException;
 import org.olap4j.metadata.Cube;
 import org.olap4j.metadata.Dimension;
@@ -119,6 +120,22 @@ public class CubeUtilities {
 		}
 
 		return dimensions;
+		
+	}
+	
+	/**
+	 * Return the axis for the position
+	 * @param axis
+	 * @return
+	 */
+	public static Axis getAxis(int axis){
+		if(axis==Axis.COLUMNS.axisOrdinal()){
+			return Axis.COLUMNS;
+		}
+		if(axis==Axis.ROWS.axisOrdinal()){
+			return Axis.ROWS;
+		}
+		return Axis.FILTER;
 		
 	}
 	
