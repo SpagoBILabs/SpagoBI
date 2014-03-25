@@ -33,7 +33,7 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionFilter', {
 		 * @cfg {int} dimensionMaxtextLength
 		 * The max length of the text.. If the text is longer we cut it and add 2 dots
 		 */
-		dimensionMaxtextLength: 17,
+		dimensionMaxtextLength: 20,
 		/**
 		 * @cfg {int} memberMaxtextLength
 		 * The max length of the text.. If the text is longer we cut it and add 2 dots
@@ -55,124 +55,155 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionFilter', {
 	},
 
 	/**
-     * @property {Ext.Panel} selectedValuePanel
-     *  Panel with the selected value of the filter
-     */
+	 * @property {Ext.Panel} selectedValuePanel
+	 *  Panel with the selected value of the filter
+	 */
 	selectedValuePanel: null,
-	
+
 	/**
-     * @property {Ext.Panel} titlePanel
-     *  Panel with the dimension name
-     */
+	 * @property {Ext.Panel} titlePanel
+	 *  Panel with the dimension name
+	 */
 	titlePanel: null,
-	
+
 	constructor : function(config) {
 		this.initConfig(config);
 		if(Sbi.settings && Sbi.settings.olap && Sbi.settings.olap.execution && Sbi.settings.olap.execution.table && Sbi.settings.olap.execution.table.OlapExecutionFilter) {
 			Ext.apply(this, Sbi.settings.olap.execution.OlapExecutionFilter);
 		}
 
-		this.selectedValuePanel = Ext.create("Ext.Panel",{
-			flex: 1,
-			html:"...", 
-			border: false, 
-			bodyCls: "filter-value"}
-		);
-		
-		this.titlePanel = Ext.create("Ext.Panel",{
-			region: 'north',
-			flex: 1,
-			html: "",
-			border: true,
-			bodyCls: "filter-title "
-		});
 
 		this.callParent(arguments);
 
-		this.initTitlePanel();
-		this.initValuePanel();
+
+		this.addEvents(
+				/**
+				 * @event dimensionClick
+				 * Fired when the user clicks on the panel
+				 * @param {Sbi.model.DimensionModel} dimensionClick
+				 */
+				'dimensionClick'
+		);
+
 	},
 
-	
-	
+
+
 	buildItems: function(){
 		var thisPanel = this;
+
+		var selectedValuePanelConfig = {
+				flex: 1,
+				html:"...", 
+				border: false, 
+				bodyCls: "filter-value"};
+		var titlePanelConfig = {
+				region: 'north',
+				flex: 1,
+				html: "",
+				border: true,
+				bodyCls: "filter-title "
+		};
+
+		this.initTitlePanel(titlePanelConfig);
+		this.initValuePanel(selectedValuePanelConfig);
+
+		this.selectedValuePanel = Ext.create("Ext.Panel",	selectedValuePanelConfig);
+
+		this.titlePanel = Ext.create("Ext.Panel", titlePanelConfig);
+
+
+
 		return  [this.titlePanel , {
-				region: 'center',
-				style: 'height: "100%"; background-color: transparent; margin: 4px',
-				bodyStyle: 'background-color: transparent;',
+			region: 'center',
+			style: 'height: "100%"; background-color: transparent; margin: 4px',
+			bodyStyle: 'background-color: transparent;',
 
-				layout: {
-					type: 'hbox',
-					align:'stretch'
-				},
-				defaults: {
-					style: "background-color: transparent;"
-				},
-				border: false,
-				items:[
-				       this.selectedValuePanel,
-				       {
-				    	   width:20, 
-				    	   html:" ", 
-				    	   cls:"filter-funnel-image",
-				    	   border: true, 
-				    	   bodyCls: "filter-funnel-body",
+			layout: {
+				type: 'hbox',
+				align:'stretch'
+			},
+			defaults: {
+				style: "background-color: transparent;"
+			},
+			border: false,
+			items:[
+			       this.selectedValuePanel,
+			       {
+			    	   width:20, 
+			    	   html:" ", 
+			    	   cls:"filter-funnel-image",
+			    	   border: true, 
+			    	   bodyCls: "filter-funnel-body",
 
-				    	   listeners: {
-				    		   el: {
-				    			   click: {
-				    				   fn: function (event, html, eOpts) {
-				    					   var win =   Ext.create("Sbi.olap.execution.table.OlapExecutionFilterTree",{
-				    						   dimension: thisPanel.dimension,
-				    						   selectedMember: this.selectedMember
-				    					   });
-				    					   win.show();
-				    					   win.on("select", function(member){
-				    						   this.setFilterValue(member);
-				    					   },this);
-				    				   },
-				    				   scope: this
-				    			   }
-				    		   }
-				    	   }
-				       }
-				       ]
-			}];
+			    	   listeners: {
+			    		   el: {
+			    			   click: {
+			    				   fn: function (event, html, eOpts) {
+			    					   var win =   Ext.create("Sbi.olap.execution.table.OlapExecutionFilterTree",{
+			    						   dimension: thisPanel.dimension,
+			    						   selectedMember: this.selectedMember
+			    					   });
+			    					   win.show();
+			    					   win.on("select", function(member){
+			    						   this.setFilterValue(member);
+			    					   },this);
+			    				   },
+			    				   scope: this
+			    			   }
+			    		   }
+			    	   }
+			       }
+			       ]
+		}];
 	},
-	
+
 	/**
 	 * @private
 	 * Initializes the panel with the name of the dimension 
 	 */
-	initTitlePanel: function(){
-		
+	initTitlePanel: function(config){
+
 		//get the name of the dimension
 		var dimensionName = this.getDimensionName();
 		var dimensionNameTooltip = this.getDimensionName();
-		
+		var thisPanel = this;
+
 		//add the ellipses if the text is to long
 		if(dimensionName.length>this.dimensionMaxtextLength){
 			dimensionName = dimensionName.substring(0,this.dimensionMaxtextLength-2)+"..";
 		}
-		this.titlePanel.html= dimensionName;
-				
-		//creates the tooltip
-		this.titlePanel.on("render", function(){
-			 Ext.create('Ext.tip.ToolTip', {
-				    target: this.titlePanel.el,
-				    html: dimensionNameTooltip
-				});
-		},this);
-		
+
+		config.html= dimensionName;
+
+		config.listeners = {
+				el: {
+					click: {
+						fn: function(){
+							thisPanel.fireEvent("dimensionClick", thisPanel.dimension);
+						}
+					}
+				},
+				render: {
+					fn: function(){
+						Ext.create('Ext.tip.ToolTip', {
+							target: this.titlePanel.el,
+							html: dimensionNameTooltip
+						});
+					}, 
+					scope: thisPanel
+				}
+		};
+
+
 	},
 
 	/**
 	 * @private
 	 * Initializes the panel with the value of the slicer 
 	 */
-	initValuePanel: function(){
-		
+	initValuePanel: function(config){
+
 		var selectedHierarchy = null;
 		var selectedHierarchyPosition = this.dimension.get("selectedHierarchyPosition");
 		if(selectedHierarchyPosition!=null && selectedHierarchyPosition!=undefined){
@@ -181,69 +212,74 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionFilter', {
 				selectedHierarchy = hierarchies[selectedHierarchyPosition];
 			}
 		}
-		
+
 		if(selectedHierarchy!=null){
 			//get the slicers
 			var slicers = selectedHierarchy.slicers;
 			if(slicers && slicers.length>0){
-				
+
 				//creates the tooltip
 				var dimensionValueTooltip="";
 				for(var i=0; i<slicers.length; i++){
 					dimensionValueTooltip = dimensionValueTooltip+", "+slicers[i].name;
 				}
 				dimensionValueTooltip = dimensionValueTooltip.substring(2);
-				
+
 				//creates the value
 				var slicersValue = dimensionValueTooltip;
-				
+
 				//add the ellipses if the text is to long
 				if(slicersValue.length>this.dimensionMaxtextLength){
 					slicersValue = slicersValue.substring(0,this.dimensionMaxtextLength-2)+"..";
 				}
-				
-				this.selectedValuePanel.html=slicersValue;
-				
+
+				config.html=slicersValue;
+
 				//add the tooltip
-				this.selectedValuePanel.on("render", function(){
-					 Ext.create('Ext.tip.ToolTip', {
-						    target: this.selectedValuePanel.el,
-						    html: dimensionValueTooltip
-						});
+				config.on("render", function(){
+					Ext.create('Ext.tip.ToolTip', {
+						target: this.selectedValuePanel.el,
+						html: dimensionValueTooltip
+					});
 				},this);
-				
+
 				//if there is a slicer initialize the local variable this.selectedMember
 				var selected =  Ext.create(Ext.ModelMgr.getModel('Sbi.olap.MemberModel'),slicers[0] );
 				this.selectedMember = selected;
-				
+
 			}
-	
-		}		
-	},
-	
-    /**
-     * Sets the value of the filter
-     * @param {Sbi.olap.MemberModel} member the value of the filter
-     */
-	setFilterValue: function(member){
-		var isChanged = false;
-		if(member && member.raw){
-			if(this.selectedMember && this.selectedMember.raw){
-				isChanged = (this.selectedMember.raw.uniqueName != member.raw.uniqueName);
-			}else{
-				isChanged=true;
-			}
-			
-			this.selectedMember = member;
-			//updates the text
-			var name =  this.selectedMember.raw.name;
-			if(name.length>this.memberMaxtextLength){
-				name = name.substring(0,this.memberMaxtextLength-2)+"..";
-			}
-			this.selectedValuePanel.update(name);
+
 		}
-		if(isChanged){
-			Sbi.olap.eventManager.addSlicer(this.dimension, this.selectedMember, this.multiSelection);
+	},
+
+	/**
+	 * Sets the value of the filter
+	 * @param {Sbi.olap.MemberModel} member the value of the filter
+	 */
+	setFilterValue: function(members){
+
+		if(members && members.length){
+			var member = members[0];
+
+			var isChanged = false;
+			if(member && member.raw){
+				if(this.selectedMember && this.selectedMember.raw){
+					isChanged = (this.selectedMember.raw.uniqueName != member.raw.uniqueName);
+				}else{
+					isChanged=true;
+				}
+
+				this.selectedMember = member;
+				//updates the text
+				var name =  this.selectedMember.raw.name;
+				if(name.length>this.memberMaxtextLength){
+					name = name.substring(0,this.memberMaxtextLength-2)+"..";
+				}
+				this.selectedValuePanel.update(name);
+			}
+			if(isChanged){
+				Sbi.olap.eventManager.addSlicer(this.dimension, this.selectedMember, this.multiSelection);
+			}
 		}
 	}
 

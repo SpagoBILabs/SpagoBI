@@ -103,7 +103,7 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionDimensions', {
      */
 	moveDimensionToOtherAxis: function(dimension){
 		
-		Sbi.olap.eventManager.moveDimension(dimension.dimension.get("uniqueName"), dimension.dimension.get("axis"), this.axisOrdinalPosition);
+		Sbi.olap.eventManager.moveDimensionToOtherAxis(dimension.dimension.get("uniqueName"), dimension.dimension.get("axis"), this.axisOrdinalPosition);
 	},
 	
 	
@@ -133,10 +133,7 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionDimensions', {
 		var index = this.store.indexOf(dimension.dimension);
 		
 		if((pos+index)>=0 && (pos+index)<this.store.getCount( )){
-			Sbi.olap.eventManager.swapDimensions(index, index+pos, dimension.dimension.get("axis"));
-//			this.store.remove(dimension.dimension);
-//			this.store.insert((index+pos),dimension.dimension);
-//			this.refreshItems();
+			Sbi.olap.eventManager.moveDimension(dimension.dimension, index+pos, pos);
 		}
 	},
 	

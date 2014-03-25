@@ -15,6 +15,7 @@ Ext.define('Sbi.olap.MemberModel', {
 	idProperty: 'uniqueName',
 	fields: [		
 	         {name: 'name'},
-	         {name: 'uniqueName'}
+	         {name: 'uniqueName'},
+	         {name: "visible", type: "boolean"}
 	]
 });

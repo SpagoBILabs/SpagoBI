@@ -8,6 +8,8 @@ package it.eng.spagobi.engines.whatif.serializer;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+
 
 /**
  * @author Alberto Ghedin (alberto.ghedin@eng.it)
@@ -120,6 +122,17 @@ public class SerializationManager {
 	 * @return the serialized object
 	 */
 	public static Object deserialize(String mimeType, String object, Class clazz) throws SerializationException {
+		return getSerializer(mimeType).deserialize(object, clazz);
+	}
+	
+	/**
+	 * Deserialize the object with the serializer for the specific input/output type and the default version
+	 * @param mimeType the input/output type
+	 * @param object the object to serialize
+	 * @param clazz the resulting  type for the deserialization process
+	 * @return the serialized object
+	 */
+	public static Object deserialize(String mimeType, String object, TypeReference clazz) throws SerializationException {
 		return getSerializer(mimeType).deserialize(object, clazz);
 	}
 	

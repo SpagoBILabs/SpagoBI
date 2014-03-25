@@ -29,14 +29,22 @@ public class MemberJsonSerializer extends JsonSerializer<Member> {
 	private static final String ID = "id";
 	private static final String TEXT = "text";
 	private static final String LEAF = "leaf";
+	private static final String VISIBLE = "visible";
+	
+	
+	
 	
 	public void serialize(Member value, JsonGenerator jgen, SerializerProvider provider) throws IOException, JsonProcessingException{
 		jgen.writeStartObject();
+//		value.getUniqueName().equals("[Customers].[Canada]"){
+//			value.getProperties()
+//		}
 		
 		jgen.writeStringField(NAME, value.getName());
 		jgen.writeStringField(UNIQUE_NAME, value.getUniqueName());
 		jgen.writeStringField(ID, value.getUniqueName());
 		jgen.writeStringField(TEXT, value.getName());
+	//	jgen.writeBooleanField(VISIBLE, value.isVisible());
 		try {
 			jgen.writeBooleanField(LEAF, value.getChildMemberCount()==0);
 		} catch (OlapException e) {

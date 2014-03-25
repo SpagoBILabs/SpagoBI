@@ -66,11 +66,8 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotModel> {
 	private static final String ROWS= "rows";
 	private static final String FILTERS= "filters";
 	private static final String TABLE= "table";
-	private static final String POSITION= "position";
-	private static final String AXIS= "axis";
 	private static final String ROWSAXISORDINAL = "rowsAxisOrdinal";
 	private static final String COLUMNSAXISORDINAL = "columnsAxisOrdinal";
-	private static final String SLICERS = "slicers";
 	private static final String MDXFORMATTED = "mdxFormatted";
 
 	
@@ -154,15 +151,16 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotModel> {
 			
 			List<Hierarchy> axisHierarchies = axis.get(0).getAxisMetaData().getHierarchies();
 			axisHierarchies.addAll(axis.get(1).getAxisMetaData().getHierarchies());
-			List otherHierarchies = value.getCube().getHierarchies();
+			List<Dimension> axisDimensions = CubeUtilities.getDimensions(axisHierarchies);
+			List<Dimension> otherHDimensions = CubeUtilities.getDimensions(value.getCube().getHierarchies());
 			
-			otherHierarchies.removeAll(axisHierarchies);
+			otherHDimensions.removeAll(axisDimensions);
 			
 			jgen.writeStartObject();
 			jgen.writeStringField(TABLE, table);
 			serializeAxis(ROWS, jgen,axis, Axis.ROWS);
 			serializeAxis(COLUMNS, jgen,axis, Axis.COLUMNS);
-			serializeDimensions(jgen, otherHierarchies, FILTERS_AXIS_POS, FILTERS, true, value);
+			serializeDimensions(jgen, otherHDimensions, FILTERS_AXIS_POS, FILTERS, true, value);
 			jgen.writeNumberField(COLUMNSAXISORDINAL, Axis.COLUMNS.axisOrdinal());
 			jgen.writeNumberField(ROWSAXISORDINAL, Axis.ROWS.axisOrdinal());
 			
@@ -194,14 +192,15 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotModel> {
 			axisPos = 1;
 		}
 		List<Hierarchy> hierarchies = aAxis.getAxisMetaData().getHierarchies();
-		serializeDimensions(jgen, hierarchies, axisPos, field, false, null);
+		List<Dimension> dimensions = CubeUtilities.getDimensions(hierarchies);
+		serializeDimensions(jgen, dimensions, axisPos, field, false, null);
 		
 	}
 
 	
 	
-	private  void serializeDimensions(JsonGenerator jgen, List<Hierarchy> hierarchies, int axis, String field, boolean withSlicers, PivotModel model) throws JSONException, JsonGenerationException, IOException{
-		List<Dimension> dimensions = CubeUtilities.getDimensions(hierarchies);
+	private  void serializeDimensions(JsonGenerator jgen, List<Dimension> dimensions, int axis, String field, boolean withSlicers, PivotModel model) throws JSONException, JsonGenerationException, IOException{
+		
 		
 		QueryAdapter qa = null;
 		ChangeSlicer ph = null;
@@ -219,7 +218,8 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotModel> {
 
 			for (int i=0; i<dimensions.size(); i++) {
 				Dimension aDimension = dimensions.get(i);
-				SbiDimension myDimension = new SbiDimension(aDimension.getName(), aDimension.getUniqueName(), axis); 
+			
+				SbiDimension myDimension = new SbiDimension(aDimension, axis); 
 				List<Hierarchy> dimensionHierarchies = aDimension.getHierarchies();
 
 				String selectedHierarchyName = modelConfig.getDimensionHierarchyMap().get(myDimension.getUniqueName());
@@ -231,7 +231,7 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotModel> {
 				
 				for (int j=0; j<dimensionHierarchies.size(); j++) {
 					Hierarchy hierarchy = dimensionHierarchies.get(j);
-					SbiHierarchy hierarchyObject = new SbiHierarchy(hierarchy.getName(), hierarchy.getUniqueName(), i);
+					SbiHierarchy hierarchyObject = new SbiHierarchy(hierarchy, i);
 					
 					if(withSlicers){
 						List<Member> slicers = ph.getSlicer(hierarchy);

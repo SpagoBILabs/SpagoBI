@@ -47,6 +47,8 @@ public class RestExceptionMapper extends AbstractWhatIfEngineService implements 
 		String stackTrace = e.getStackTrace().toString();
 		String errorService = "";
 
+		//logs the error
+		logger.error("Catched error", e);
 
 		if(e instanceof SpagoBIEngineServiceException){
 			SpagoBIEngineServiceException exception = (SpagoBIEngineServiceException)e;
@@ -73,6 +75,7 @@ public class RestExceptionMapper extends AbstractWhatIfEngineService implements 
 		Response response =  Response.status(200).entity(serializedMessages).build();
 		logger.debug("RestExceptionMapper:toResponse OUT");
 
+		
 		return response;
 	}
 

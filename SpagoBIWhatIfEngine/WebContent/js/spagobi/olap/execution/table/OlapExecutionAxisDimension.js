@@ -61,13 +61,21 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionAxisDimension', {
 		this.moveDownPanel =Ext.create("Ext.Panel",this.buildDownPanelConf());
 
 		this.callParent(arguments);
+		
+		this.addEvents(
+		        /**
+		         * @event dimensionClick
+		         * Fired when the user clicks on the panel
+				 * @param {Sbi.model.DimensionModel} dimensionClick
+		         */
+		        'dimensionClick'
+				);
+		
 	},
 
 
 	initComponent: function() {
-		
 		Ext.apply(this, {
-
 			layout: this.subPanelLayout,
 			
 			listeners: {
@@ -99,25 +107,53 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionAxisDimension', {
 
 		items.push( this.dimensionPanel);
 
+		if(!this.dimension.get("measure")){
+			items.push(this.buildFilterButton());
+		}
+		
 		if(!this.lastDimension){
 			items.push( this.moveDownPanel);
 		}
 		return items;
 	},
 
-	
-	/**
-	 * Builds the central panel with the name of the Dimension
-	 */
-	buildDimensionPanel: function(){
-		this.dimensionPanel = Ext.create("Ext.Panel",{
-			xtype: "panel",
-			border: false,
-			html: this.getDimensionName(),
+	buildFilterButton: function(){
+		var thisPanel = this;
+		var config = {
 			style: "background-color: transparent !important",
-			bodyStyle: "background-color: transparent !important"
-		});
+			bodyStyle: "background-color: transparent !important",
+			border: true,
+			html: " ",
+			bodyCls: "filter-"+this.axisType,
+			cls: "filter-funnel-image-small",
+			listeners: {
+				el: {
+					click: {
+						fn: function (event, html, eOpts) {
+	    					   var win =   Ext.create("Sbi.olap.execution.table.OlapExecutionFilterTree",{
+	    						   dimension: thisPanel.dimension,
+	    						   multiSelection: true
+	    					   });
+	    					   win.show();
+	    					   win.on("select", function(member){
+	    						   this.setFilterValue(member);
+	    					   },this);
+						},
+						scope: this
+					}
+				}
+			}
+		};
+		
+		if(this.axisType=="column"){
+			Ext.apply(config,{width: 20, height: 15});
+		}else{
+			Ext.apply(config,{height: 20});
+		}
+		
+		return config;
 	},
+	
 	
 	/**
 	 * Builds the central panel with the name of the dimension
@@ -181,6 +217,16 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionAxisDimension', {
 	hideMovePanels: function(){
 		this.moveUpPanel.hide();
 		this.moveDownPanel.hide();
+	},
+	
+	/**
+	 * Manage the visibility of the members in the axis
+	 * @param members
+	 */
+	setFilterValue: function(members){
+		if(members && members.length>0){
+			Sbi.olap.eventManager.placeMembersOnAxis(this.dimension, members);
+		}
 	}
 
 

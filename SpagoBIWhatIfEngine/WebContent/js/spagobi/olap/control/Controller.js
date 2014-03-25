@@ -77,30 +77,29 @@ Ext.define('Sbi.olap.control.Controller', {
 
 		var service = Ext.create("Sbi.service.RestService",{
 			url: "hierarchy",
-			subPath: "slice",
-			pathParams: [hierarchy, member, multiSelection]
+			pathParams: [hierarchy, "slice", member, multiSelection]
 		});
 		
 		service.callService(this);
 	}
 	,
-	swapDimensions: function(hierarchy1, hierarchy2, axis){
+	moveHierarchy: function(uniqueName, axis, newPosition, direction){
 		
 		var service = Ext.create("Sbi.service.RestService",{
 			url: "axis",
 			method: 'PUT',
-			pathParams: [axis,"swapdimensions", hierarchy1, hierarchy2]
+			pathParams: [axis,"moveHierarchy", uniqueName, newPosition, direction]
 		});
 		
 		service.callService(this);
 	}
 	,
-	moveDimension: function(hierarchy1, fromAxis, toAxis){
+	moveDimensionToOtherAxis: function(hierarchy1, fromAxis, toAxis){
 		
 		var service = Ext.create("Sbi.service.RestService",{
 			url: "axis",
 			method: 'PUT',
-			pathParams: [fromAxis,"movedimension", hierarchy1, toAxis]
+			pathParams: [fromAxis,"moveDimensionToOtherAxis", hierarchy1, toAxis]
 		});
 		
 		service.callService(this);
@@ -111,6 +110,19 @@ Ext.define('Sbi.olap.control.Controller', {
 			url: "modelconfig",
 			method: 'POST',
 			jsonData: config
+			
+		});
+		
+		service.callService(this);
+		
+	}
+	, placeMembersOnAxis: function(axis, members){
+
+		var service = Ext.create("Sbi.service.RestService",{
+			url: "axis",
+			method: 'PUT',
+			pathParams: [axis,"placeMembersOnAxis"],
+			jsonData: members
 			
 		});
 		

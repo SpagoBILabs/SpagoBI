@@ -49,8 +49,9 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionDimension', {
 
 	initComponent: function() {
 		
-
 		var items = this.buildItems();
+		
+		this.on('dimensionClick', function(dimension){alert("cklik");},this);
 		
 		Ext.apply(this, {
 			frame: true,
@@ -58,6 +59,8 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionDimension', {
 		);
 		this.callParent();
 	},
+	
+
 
 	/**
 	 * Implements the drag and drop of the dimension between filters, rows and columns
@@ -107,11 +110,20 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionDimension', {
 	},
 	
 	/**
-	 * Returns the name of the memebr
+	 * Returns the name of the dimension
 	 * @returns
 	 */
 	getDimensionName: function(){
-		return  this.dimension.raw.name;
+		var dimensionName = this.dimension.raw.name;
+		var hierarchies =  this.dimension.get("hierarchies");
+		if(hierarchies.length>1){
+			var selectedHierarchyPosition = this.dimension.get("selectedHierarchyPosition");
+			var hierarchy = hierarchies[selectedHierarchyPosition];
+			var selectedHierarchyName = hierarchy.name;
+			dimensionName = dimensionName+"(<i>"+selectedHierarchyName+"</i>)";
+		}
+		
+		return  dimensionName;
 	}
 
 

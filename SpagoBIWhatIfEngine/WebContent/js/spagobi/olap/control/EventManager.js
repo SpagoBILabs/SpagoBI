@@ -112,12 +112,12 @@ Ext.define('Sbi.olap.control.EventManager', {
 	
     /**
      * Swap 2 hierarchies in an axis
-     * @param {Number} hierarchy1 position of the first hierarchy to move
-     * @param {Number} hierarchy2 position of the second hierarchy to move
+     * @param {Sbi.olap.DimensionModel} hierarchy1 position of the first hierarchy to move
+     * @param {Number} newPosition new position of the dimension
      * @param {Number} axis
      */
-	swapDimensions: function(hierarchy1, hierarchy2, axis){
-		this.olapController.swapDimensions(hierarchy1, hierarchy2, axis);
+	moveDimension: function(dimension, newPosition, direction){
+		this.olapController.moveHierarchy(dimension.get("selectedHierarchyUniqueName"), dimension.get("axis"), newPosition, direction);
 	},
 	
     /**
@@ -126,16 +126,27 @@ Ext.define('Sbi.olap.control.EventManager', {
      * @param {Number} fromAxis axis from witch remove the hierarchy
      * @param {Number} toAxis axis to witch add the hierarchy
      */
-	moveDimension: function(hierarchy1, fromAxis, toAxis){
-		this.olapController.moveDimension(hierarchy1, fromAxis, toAxis);
-	}
+	moveDimensionToOtherAxis: function(hierarchy1, fromAxis, toAxis){
+		this.olapController.moveDimensionToOtherAxis(hierarchy1, fromAxis, toAxis);
+	},
     /**
      * Updates the model configuration based on the toolbar settings
      * @param {String} config toolbar configuration for the model
      */
-	,setModelConfig: function(config){
+	setModelConfig: function(config){
 		this.olapController.setModelConfig(config);
+	},
+
+	/**
+	 * Place the members on the axis
+	 * @param {Sbi.olap:DimensionModel} dimension the dimension
+	 * @param {Array} The list of members to place in the axis
+	 */
+	placeMembersOnAxis: function(dimension, members){
+		this.olapController.placeMembersOnAxis(dimension.get("axis"), members);
 	}
+	
+
 	,executeService: function(){
 		this.loadingMask.show();
 	}
@@ -143,6 +154,8 @@ Ext.define('Sbi.olap.control.EventManager', {
 		this.updateAfterMDXExecution(response.responseText);
 		
 	}
+	
+	
 	
 });
 

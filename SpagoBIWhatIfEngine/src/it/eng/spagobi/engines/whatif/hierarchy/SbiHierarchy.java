@@ -12,6 +12,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.olap4j.metadata.Hierarchy;
+import org.olap4j.metadata.Level;
+
 
 
 public class SbiHierarchy {
@@ -19,31 +22,25 @@ public class SbiHierarchy {
 	private String uniqueName;
 	private int position;
 	private List<Map<String,String>> slicers;
+	private List<String> levelNames;
 	
 	
-	
-	public SbiHierarchy(String name, String uniqueName,
-			int position) {
+	public SbiHierarchy(Hierarchy hierarchy, int position) {
 		super();
-		this.name = name;
-		this.uniqueName = uniqueName;
+		this.name = hierarchy.getName();
+		this.uniqueName = hierarchy.getUniqueName();
 		this.position = position;
 		slicers= new ArrayList<Map<String,String>>(); 
+		levelNames = new ArrayList<String>();
+		List<Level> levels = hierarchy.getLevels();
+		if(levels!=null){
+			for(int i=0; i<levels.size(); i++){
+				levelNames.add(levels.get(i).getName());
+			}
+		}
 	}
 	
 	
-	
-	public SbiHierarchy(String name, String uniqueName,
-			int position, int axis, List<Map<String, String>> slicers) {
-		super();
-		this.name = name;
-		this.uniqueName = uniqueName;
-		this.position = position;
-		this.slicers = slicers;
-	}
-
-
-
 	public List<Map<String, String>> getSlicers() {
 		return slicers;
 	}
@@ -73,6 +70,11 @@ public class SbiHierarchy {
 	}
 	public void setPosition(int position) {
 		this.position = position;
+	}
+
+
+	public List<String> getLevelNames() {
+		return levelNames;
 	}
 	
 	
