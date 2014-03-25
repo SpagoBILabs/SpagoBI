@@ -417,6 +417,7 @@
 				<file name="./src/ext/sbi/widgets/EditablePanel.js" />  
 				<file name="./src/ext/sbi/widgets/TreeLookUpField.js" />
 				<file name="./src/ext/sbi/widgets/FileUploadPanel.js" />
+				<file name="./src/ext/sbi/cookies/Cookies.js" />
 
 				<file name="./src/ext/sbi/execution/SubobjectsPanel.js" />
 				<file name="./src/ext/sbi/execution/SnapshotsPanel.js" />

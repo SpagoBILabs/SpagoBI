@@ -202,7 +202,11 @@ Ext.extend(Sbi.browser.DocumentsBrowser, Ext.Panel, {
 	
 	, onFolderLoad: function(panel) {
 		
-		this.setLastVisitedFolderId(panel.folderId);
+		var value = panel.folderId;
+		if (value == null) {  // in case the root node is loaded, panel.folderId is null
+			value = 'rootNode';
+		}
+		this.setLastVisitedFolderId(value);
 		
 //		if(this.brSheet.getActiveTab() != this.detailPanel) {
 //			this.brSheet.setActiveTab(this.detailPanel);
@@ -378,23 +382,14 @@ Ext.extend(Sbi.browser.DocumentsBrowser, Ext.Panel, {
 	
 	,
 	setInCookies : function (key, value) {
-		var exdays = 1;
-		var d = new Date();
-		d.setTime(d.getTime()+(exdays*24*60*60*1000));
-		var expires = "expires="+d.toGMTString();
-		document.cookie = key + "=" + value + "; " + expires;
+		var expiration = 24*60*60*1000; // 1 day
+		Sbi.cookies.Cookies.setCookie(key, value, expiration);
 	}
 	
 	,
 	getFromCookies : function (key) {
-		var name = key + "=";
-		var ca = document.cookie.split(';');
-		for(var i=0; i<ca.length; i++) 
-		  {
-		  var c = ca[i].trim();
-		  if (c.indexOf(name)==0) return c.substring(name.length,c.length);
-		}
-		return null;
+		var value = Sbi.cookies.Cookies.getCookie(key);
+		return value;
 	}
 	
 	,
@@ -411,7 +406,7 @@ Ext.extend(Sbi.browser.DocumentsBrowser, Ext.Panel, {
 	
 	,
 	getLastVisitedFolderIdKey : function () {
-		return Sbi.user.userId + "_last_folder";
+		return "SBI_" + Sbi.user.userId + "_LF";
 	}
 	
 });
