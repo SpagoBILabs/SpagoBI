@@ -10,6 +10,7 @@ import it.eng.spagobi.engines.qbe.crosstable.exporter.CrosstabPDFExporter;
 import it.eng.spagobi.engines.worksheet.services.export.ExportWorksheetAction;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
+import it.eng.spagobi.utilities.messages.EngineMessageBundle;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
@@ -24,6 +25,7 @@ import java.io.StringReader;
 import java.net.MalformedURLException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Locale;
 
 import javax.imageio.ImageIO;
 
@@ -34,6 +36,8 @@ import org.apache.batik.transcoder.image.JPEGTranscoder;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import sun.security.action.GetLongAction;
 
 import com.lowagie.text.BadElementException;
 import com.lowagie.text.Document;
@@ -109,12 +113,12 @@ public class WorkSheetPDFExporter {
 	    docWriter.close();
 	}
 
-	public void addSheet(JSONObject sheetJSON, IDataStore dataStore){
+	public void addSheet(JSONObject sheetJSON, IDataStore dataStore, Locale locale){
 		this.dataStore = dataStore;
-		addSheet(sheetJSON);
+		addSheet(sheetJSON, locale);
 	}
 	
-	public void addSheet(JSONObject sheetJSON) {
+	public void addSheet(JSONObject sheetJSON, Locale locale) {
 		try {
 			float[] margins = getContentMargins(sheetJSON); 
 			
@@ -139,7 +143,9 @@ public class WorkSheetPDFExporter {
 				Phrase emptyString = new Phrase("     ");
 				pdfDocument.add(emptyString);
 			} else {
-				logger.error("Sheet type " + sheetType + " not recognized");
+				String notAvailableExport= EngineMessageBundle.getMessage("worksheet.export.exporter.not.available", locale);
+				Phrase emptyString = new Phrase(notAvailableExport);
+				pdfDocument.add(emptyString);
 			}
 			
 			pdfDocument.newPage(); // finalize page (necessary for MyHeaderFooter onEndPage trigger)
