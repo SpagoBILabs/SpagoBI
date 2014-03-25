@@ -285,9 +285,9 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 			JSONObject sheetJ = exportedSheets.getJSONObject(i);
 			if (isTableContent(sheetJ)) {
 				IDataStore dataStore = getTableDataStore(sheetJ, null, null);
-				exporter.addSheet(sheetJ, dataStore);
+				exporter.addSheet(sheetJ, dataStore, getLocale());
 			} else {
-				exporter.addSheet(sheetJ);
+				exporter.addSheet(sheetJ, getLocale());
 			}
 		}
 
