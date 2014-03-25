@@ -677,7 +677,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		if(this.thereAreParametersToBeFilled() !== true) {
 			if (this.rendered) {
 				Ext.DomHelper.append(this.body, '<div class="x-grid-empty">' + LN('sbi.execution.parametersselection.noParametersToBeFilled') + '</div>');
-				this.fireEvent("hideparameterspanel");
+				this.fireEvent("hideparameterspanel"); 
 			}
 		} else {
 			// set focus on first field
@@ -1032,8 +1032,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 	// =====================================================================================
 	
 	, refreshFields: function() {
-		this.manageVisualDependenciesOnVisibility = false;
-		alert('refreshFields');
+		this.manageVisualDependenciesOnVisibility = false;		
 		Sbi.trace('[ParametersPanel.refreshFields] : IN');
 		for(p in this.fields) {
 			// if input field has an element (it means that the field was displayed)
@@ -1218,7 +1217,8 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		
 		/*ATTENTION:: keep this variable updated in all the create parameter depending by type ,
 		 * that need to be loaded at first document execution (those loading a store)*/
-		this.firstLoadTotParams ++;
+		/*this.firstLoadTotParams ++;  this comment solves bug SPAGOBI-1685 "Document with single value slider doesn't work fine"
+									   like the combobox the slider loads initially the store*/
 		/*--------------------------------------------------------------------------------------*/
 		
 		var p = baseConfig.parameter;
