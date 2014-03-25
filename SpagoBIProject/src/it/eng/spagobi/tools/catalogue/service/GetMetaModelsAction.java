@@ -38,12 +38,12 @@ public class GetMetaModelsAction extends AbstractSpagoBIAction {
 
 	public static Integer START_DEFAULT = 0;
 	public static Integer LIMIT_DEFAULT = 15;
-	
+
 	@Override
 	public void doService() {
-		
+
 		logger.debug("IN");
-		
+
 		try {
 			IMetaModelsDAO dao = DAOFactory.getMetaModelsDAO();
 			dao.setUserProfile(this.getUserProfile());
@@ -56,17 +56,17 @@ public class GetMetaModelsAction extends AbstractSpagoBIAction {
 			} else {
 				allModels = dao.loadAllMetaModels();
 			}
-			
-			
-			
+
+
+
 			logger.debug("Read " + allModels.size() + " existing models");
-			
-			
+
+
 			Integer start = this.getStart();
 			logger.debug("Start : " + start );
 			Integer limit = this.getLimit();
 			logger.debug("Limit : " + limit );
-			
+
 			int startIndex = Math.min(start, allModels.size());
 			int stopIndex = (limit>0)? Math.min(start + limit, allModels.size()) : allModels.size();
 			List<MetaModel> models = allModels.subList(startIndex, stopIndex);
@@ -94,9 +94,9 @@ public class GetMetaModelsAction extends AbstractSpagoBIAction {
 		} finally {
 			logger.debug("OUT");
 		}
-		
+
 	}
-	
+
 	protected List<MetaModel> getFilteredModels(JSONObject jsonObject, IMetaModelsDAO dao) throws JSONException{
 		List<MetaModel> metaModels = new ArrayList<MetaModel>();
 		String columnFilter = jsonObject.getString("columnFilter");
@@ -131,18 +131,18 @@ public class GetMetaModelsAction extends AbstractSpagoBIAction {
 		}
 		return metaModels;
 	}
-	
+
 	protected String getFilterString(String columnFilter, String typeFilter, String valueFilter){
-			String filterString = "";
-			if(typeFilter.equals("=")){
-				filterString = " m."+columnFilter+" = '"+valueFilter+"'";
-			}else if(typeFilter.equals("like")){
-				filterString = " m."+columnFilter+" like '%"+valueFilter+"%'";
-			}		
-			return filterString;
-		
+		String filterString = "";
+		if(typeFilter.equals("=")){
+			filterString = " m."+columnFilter+" = '"+valueFilter+"'";
+		}else if(typeFilter.equals("like")){
+			filterString = " m."+columnFilter+" like '%"+valueFilter+"%'";
+		}		
+		return filterString;
+
 	}
-	
+
 	protected Integer getCategoryIdbyName(String categoryName){
 		IDomainDAO domaindao;
 		try {
@@ -161,7 +161,7 @@ public class GetMetaModelsAction extends AbstractSpagoBIAction {
 		return null;
 
 	}
-	
+
 	protected List<Integer> getCategoryIdbyContainsName(String categoryName){
 		IDomainDAO domaindao;
 		List<Integer> categoryIds = new ArrayList<Integer>();
@@ -183,20 +183,34 @@ public class GetMetaModelsAction extends AbstractSpagoBIAction {
 	}
 
 	protected Integer getStart() {
-		Integer start = getAttributeAsInteger( START );
-		if (start == null) {
-			start = START_DEFAULT;
+		Integer start = START_DEFAULT;
+		Object startObject = getAttribute( START );
+		try {
+			
+			if (startObject != null && !startObject.equals("")) {
+				start =  getAttributeAsInteger(LIMIT);
+			}	
+		} catch (NumberFormatException e) {
+			logger.debug("Error getting the limit parameter. The value should be integer but it is ["+startObject+"]");
 		}
+
 		return start;
 	}
-	
+
 	protected Integer getLimit() {
-		Integer limit = getAttributeAsInteger( LIMIT );
-		if (limit == null) {
-			limit = LIMIT_DEFAULT;
+		Integer limit = LIMIT_DEFAULT;
+		Object limitObject = getAttribute( LIMIT );
+		try {
+			if (limitObject != null && !limitObject.equals("")) {
+				limit = getAttributeAsInteger(LIMIT);
+			}
+		} catch (NumberFormatException e) {
+			logger.debug("Error getting the limit parameter. The value should be integer but it is ["+limitObject+"]");
 		}
+
 		return limit;
 	}
+
 
 	protected JSONObject createJSONResponse(JSONArray rows, Integer totalResNumber)
 			throws JSONException {
@@ -207,5 +221,5 @@ public class GetMetaModelsAction extends AbstractSpagoBIAction {
 		results.put("rows", rows);
 		return results;
 	}
-	
+
 }
