@@ -23,12 +23,18 @@ import it.eng.spago.util.ContextScooping;
 import it.eng.spago.util.QueryExecutor;
 import it.eng.spago.util.StringUtils;
 
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.hibernate.dialect.Dialect;
+import org.hibernate.dialect.resolver.DialectResolver;
+import org.hibernate.dialect.resolver.StandardDialectResolver;
 
 
 public class DelegatedQueryExecutor extends QueryExecutor {
@@ -337,7 +343,35 @@ public class DelegatedQueryExecutor extends QueryExecutor {
         String parameterScope = (String) parameter.getAttribute("SCOPE");
 
         String inParameterValue = null;
-        if (parameterType.equalsIgnoreCase("ABSOLUTE"))
+        boolean skipParameterInsertion = false;
+        //Set the TRUE value based on the database type
+        if (parameterType.equalsIgnoreCase("TRUE_VALUE")){
+        	DatabaseMetaData dbMetadata = null;
+			try {
+				Connection connection  = dataConnection.getInternalConnection();
+				if (connection != null){
+					dbMetadata = connection.getMetaData();	
+				}
+			} catch (SQLException e) {
+				logger.error("Error getting database metadata");
+			}
+        	DialectResolver resolver =  new StandardDialectResolver();
+        	Dialect dialect = resolver.resolveDialect(dbMetadata);
+        	String dialectName = dialect.toString();
+        	if (dialectName.contains("PostgreSQL")){
+        		//inParameterValue = "true";
+        		//add parameter value as SQL TYPE BOOLEAN
+        		inputParameters.add(dataConnection.createDataField("", Types.BOOLEAN, true));
+
+        	} else {
+        		inParameterValue = "1";
+        		inputParameters.add(dataConnection.createDataField("", Types.VARCHAR, inParameterValue));
+
+        	}
+    		skipParameterInsertion = true;
+            parameterUsed = true;
+        	
+        } else if (parameterType.equalsIgnoreCase("ABSOLUTE"))
             inParameterValue = parameterValue;
         else {
             Object parameterValueObject = ContextScooping.getScopedParameter(requestContainer,
@@ -345,41 +379,46 @@ public class DelegatedQueryExecutor extends QueryExecutor {
             if (parameterValueObject != null)
                 inParameterValue = parameterValueObject.toString();
         } // if (parameterType.equalsIgnoreCase("ABSOLUTE")) else
+
+        
         if (inParameterValue == null)
             inParameterValue = "";
-
-        if (!isFilterParameter) { // normal parameter
-            inputParameters
-                    .add(dataConnection.createDataField("", Types.VARCHAR, inParameterValue));
-            parameterUsed = true;
-        } else { // filter parameter
-
-            // if the filter parameter has really a value
-            if (!inParameterValue.equals("")) {
-
-                // read attribute "sql" of parameter
-                String sqlToAdd = (String) parameter.getAttribute("SQL");
-                int indexLike = sqlToAdd.indexOf(" LIKE ");
-
-                //adds the parameter to input parameters of SQL, if necessary                 
-                int countParams = StringUtils.count(sqlToAdd, '?');
-                if (countParams != 0) {
-                    // Aggiungo il parametro tante volte quanti sono i caratteri
-                    // '?' presenti nella stringa
-                    for (int i = 0; i < countParams; i++) {
-                        inputParameters.add(dataConnection.createDataField("", Types.VARCHAR,
-                                inParameterValue + (indexLike >= 0 ? "%" : "")));
-                    }
-                    statement.append(condizioneSql);
-                }
-
-                // addinbg the sql command to the statement (change directly the object StringBuffer)
-                statement.append(sqlToAdd);
-
+        
+        if(!skipParameterInsertion){
+            if (!isFilterParameter) { // normal parameter
+                inputParameters
+                        .add(dataConnection.createDataField("", Types.VARCHAR, inParameterValue));
                 parameterUsed = true;
+            } else { // filter parameter
 
-            } // if !inParameterValue
-        } // else !isFilterParameter
+                // if the filter parameter has really a value
+                if (!inParameterValue.equals("")) {
+
+                    // read attribute "sql" of parameter
+                    String sqlToAdd = (String) parameter.getAttribute("SQL");
+                    int indexLike = sqlToAdd.indexOf(" LIKE ");
+
+                    //adds the parameter to input parameters of SQL, if necessary                 
+                    int countParams = StringUtils.count(sqlToAdd, '?');
+                    if (countParams != 0) {
+                        // Aggiungo il parametro tante volte quanti sono i caratteri
+                        // '?' presenti nella stringa
+                        for (int i = 0; i < countParams; i++) {
+                            inputParameters.add(dataConnection.createDataField("", Types.VARCHAR,
+                                    inParameterValue + (indexLike >= 0 ? "%" : "")));
+                        }
+                        statement.append(condizioneSql);
+                    }
+
+                    // addinbg the sql command to the statement (change directly the object StringBuffer)
+                    statement.append(sqlToAdd);
+
+                    parameterUsed = true;
+
+                } // if !inParameterValue
+            } // else !isFilterParameter
+        }
+
         logger.debug("OUT");
         return parameterUsed;
     } // elaboraParametro
