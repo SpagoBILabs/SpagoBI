@@ -704,11 +704,11 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		this.setFormState(state);
 
 			
-		if(this.firstLoadTotParams == 0){
+		if (this.firstLoadTotParams == 0 && reset) {
 			this.fireEvent('ready', this, this.isReadyForExecution(), state);	
 			this.fireEvent('synchronize', this);	
-					
 		}
+		
 		Sbi.trace('[ParametersPanel.initializeParametersPanel] : OUT');
 	}
 	
@@ -978,7 +978,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 			var condition = conditions[i];
 			if( this.isVisualConditionTrue(condition, fatherFieldValueSet) ) {
 				if(this.manageVisualDependenciesOnLabel === true) {
-					this.setFieldLabel(dependantField, condition.label + ':');
+					this.setFieldLabel(dependantField, condition.label);
 				}
 				disableField = false;
 			}
@@ -988,7 +988,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		if(this.manageVisualDependenciesOnVisibility === true) {
 			if(disableField) {
 				Sbi.debug('[ParametersPanel.updateVisualDependentField] : trying to disable field [' + dependantField.name + ']');
-				this.setFieldLabel(dependantField, dependantField.fieldDefaultLabel + ':');
+				this.setFieldLabel(dependantField, dependantField.fieldDefaultLabel);
 				
 				//this.resetField(dependantField, true);
 				//dependantField.reset();
@@ -1108,7 +1108,9 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		this.fields = {};
 	}
 	
-	, setFieldLabel: function(field, label){   
+	, setFieldLabel: function(field, label){
+		field.behindParameter.label = label;
+		
 		// if input field has no element it means that the field wasn't displayed so we have 
 		// nothing to do here
 		if (field.el === undefined) return;
@@ -1116,10 +1118,10 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		var el = field.el.dom.parentNode.parentNode;    
 		if( el.children[0].tagName.toLowerCase() === 'label' ) {  
 			//el.children[0].class = 'x-exec-paramlabel-disabled';
-			el.children[0].innerHTML =label;    
+			el.children[0].innerHTML = label + ':';    
 		} else if( el.parentNode.children[0].tagName.toLowerCase() === 'label' ){    
 			//el.parentNode.children[0].class = 'x-exec-paramlabel-disabled';
-			el.parentNode.children[0].innerHTML =label;  
+			el.parentNode.children[0].innerHTML = label + ':';  
 			
 		}    
 	}
