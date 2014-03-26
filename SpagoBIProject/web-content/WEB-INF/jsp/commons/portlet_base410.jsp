@@ -202,6 +202,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 <% if (sbiMode.equalsIgnoreCase("WEB")){ %> 
 	<html lang="<%=locale != null ? locale.getLanguage() : GeneralUtilities.getDefaultLocale().getLanguage()%>">
 		<head>
+			<title>SpagoBI</title>
 			<% if (forceIE8Compatibility == true){ %> 
 			<meta http-equiv="X-UA-Compatible" content="IE=8" />
 			<%} %>
