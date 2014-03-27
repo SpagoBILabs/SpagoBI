@@ -15,6 +15,7 @@ import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
 import it.eng.spagobi.behaviouralmodel.check.bo.Check;
 import it.eng.spagobi.commons.bo.Domain;
+import it.eng.spagobi.commons.dao.DAOConfig;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IBinContentDAO;
 import it.eng.spagobi.commons.dao.IDomainDAO;
@@ -561,6 +562,7 @@ public class SDKObjectsConverter {
 			//defines correct dataset detail
 			if(dataset.getType().equalsIgnoreCase(DataSetConstants.DS_FILE)){
 				ds = new FileDataSet();
+				((FileDataSet)ds).setResourcePath(DAOConfig.getResourcePath());
 				String fileName = jsonConf.getString(DataSetConstants.FILE_NAME);
 				if(fileName!=null && !fileName.equals("")){
 					((FileDataSet)ds).setFileName(fileName);

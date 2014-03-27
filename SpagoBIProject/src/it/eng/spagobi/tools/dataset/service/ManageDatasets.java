@@ -13,6 +13,7 @@ import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.dao.DAOConfig;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.serializer.DataSetJSONSerializer;
 import it.eng.spagobi.commons.serializer.SerializerFactory;
@@ -204,6 +205,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 					//gets the dataset object informations		
 					IDataSet dataset = DAOFactory.getDataSetDAO().loadDataSetByLabel(ds.getLabel());
 					checkQbeDataset(((VersionedDataSet) dataset).getWrappedDataset());
+					checkFileDataset(((VersionedDataSet) dataset).getWrappedDataset());
 					JSONArray parsListJSON = getAttributeAsJSONArray(DataSetConstants.PARS);
 					if(parsListJSON.length()>0)  { 
 						logger.error("The dataset cannot be persisted because uses parameters!");
@@ -909,6 +911,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 			
 			
 			dataSet = new FileDataSet();
+			((FileDataSet)dataSet).setResourcePath(DAOConfig.getResourcePath());
 			String fileName = getAttributeAsString(DataSetConstants.FILE_NAME);
 			File pathFile = new File(fileName);
 			fileName = pathFile.getName();
@@ -1354,6 +1357,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 		dataSet.setParamsMap(parametersFilled);		
 		try {
 			checkQbeDataset(dataSet);
+			checkFileDataset(dataSet);
 			dataSet.loadData(start, limit, GeneralUtilities.getDatasetMaxResults());
 			IDataStore dataStore = dataSet.getDataStore();
 			DatasetMetadataParser dsp = new DatasetMetadataParser();
@@ -1415,6 +1419,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 			dataSet.setUserProfileAttributes(UserProfileUtils.getProfileAttributes( profile ));
 			dataSet.setParamsMap(parametersFilled);
 			checkQbeDataset(dataSet);
+			checkFileDataset(dataSet);
 			IDataStore dataStore = null;
 			try {
 				if(dataSet.getTransformerId() != null){
@@ -1471,6 +1476,12 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 				dataSet.setParamsMap(parameters);
 			}
 			dataSet.getParamsMap().put(SpagoBIConstants.DATAMART_RETRIEVER, retriever);
+		}
+	}
+	
+	private void checkFileDataset(IDataSet dataSet){
+		if (dataSet instanceof FileDataSet) {
+			((FileDataSet)dataSet).setResourcePath(DAOConfig.getResourcePath());
 		}
 	}
 
