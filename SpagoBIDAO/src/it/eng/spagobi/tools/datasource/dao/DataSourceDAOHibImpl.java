@@ -22,13 +22,16 @@ import it.eng.spagobi.commons.metadata.SbiDomains;
 import it.eng.spagobi.commons.metadata.SbiOrganizationDatasource;
 import it.eng.spagobi.commons.metadata.SbiOrganizationDatasourceId;
 import it.eng.spagobi.commons.metadata.SbiTenant;
+import it.eng.spagobi.container.ObjectUtils;
+import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
+import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
 import it.eng.spagobi.tools.datasource.bo.DataSource;
 import it.eng.spagobi.tools.datasource.bo.DataSourceModel;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.tools.datasource.metadata.SbiDataSource;
+import it.eng.spagobi.utilities.json.JSONUtils;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -40,6 +43,7 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Expression;
+import org.json.JSONObject;
 
 
 /**
@@ -282,8 +286,9 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 					new Integer(aDataSource.getDsId()));	
 			if (aDataSource.getLabel() != null && hibDataSource.getLabel() != null){
 			if (!aDataSource.getLabel().equals(hibDataSource.getLabel())){
-				Query hibQuery = aSession.createQuery(" from SbiLov s where s.inputTypeCd = 'QUERY'");
+				logger.debug("DataSource label is changed- update lovs and dataset referring to it"); 
 				
+				Query hibQuery = aSession.createQuery(" from SbiLov s where s.inputTypeCd = 'QUERY'");
 				List hibList = hibQuery.list();
 				if (!hibList.isEmpty()){
 				Iterator it = hibList.iterator();	
@@ -305,7 +310,59 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 			    	}
 			    	
 				}}
+
+			
+				//If DataSource Label has changed update all dataset referring to it
+							
+				String previousDataSourceLabel = hibDataSource.getLabel();
+				String newDataSOurceLabel = aDataSource.getLabel();
+				
+				Query listQuery = aSession.createQuery("from SbiDataSet h where h.active = ? order by h.name " );
+				listQuery.setBoolean(0, true);
+				List dsList = listQuery.list();	
+				
+				// iterate the dataset, (only the active ones)
+				for (Iterator iterator = dsList.iterator(); iterator.hasNext();) {
+					SbiDataSet ds = (SbiDataSet) iterator.next();
+					logger.debug("dataset - "+ds.getLabel());
+					if(ds.getConfiguration() != null){
+						String config = JSONUtils.escapeJsonString(ds.getConfiguration());		
+						JSONObject jsonConf  = ObjectUtils.toJSONObject(config);
+						try{
+							String selector = "";
+							String dataSourceLabel =jsonConf.optString(DataSetConstants.DATA_SOURCE);
+	
+							if(dataSourceLabel == null || dataSourceLabel.equals("")){
+								dataSourceLabel =jsonConf.optString("qbeDataSource");
+								selector  = "qbeDataSource";
+							}
+							else{
+								selector  = DataSetConstants.DATA_SOURCE;
+							}
+							
+							if(dataSourceLabel != null && dataSourceLabel.equals(previousDataSourceLabel)){
+								logger.debug("change "+dataSourceLabel+" from "+previousDataSourceLabel+" datasource to - "+newDataSOurceLabel);
+								jsonConf.put(selector, newDataSOurceLabel);						
+								ds.setConfiguration(jsonConf.toString());
+								aSession.update(ds); 
+								logger.debug("change made");
+							}
+
+						}catch (Exception e){
+							logger.error("Error while parsing dataset configuration for dataset "+ds.getLabel()+". Data Source will not be updated  Error: " + e.getMessage());
+						}
+					}
+					
+			
+					
+				}
+				
+			
+			
 			}}
+			
+	
+			
 			hibDataSource.setLabel(aDataSource.getLabel());
 			hibDataSource.setDialect(dialect);
 			hibDataSource.setDialectDescr(dialect.getValueNm());
@@ -324,6 +381,9 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 			
 			hibDataSource.setSchemaAttribute(aDataSource.getSchemaAttribute());
 			updateSbiCommonInfo4Update(hibDataSource);
+			
+
+			
 			aSession.update(hibDataSource);
 			tx.commit();
 		} catch (HibernateException he) {
