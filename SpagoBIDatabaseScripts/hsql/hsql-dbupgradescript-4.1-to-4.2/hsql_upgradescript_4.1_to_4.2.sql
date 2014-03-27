@@ -510,3 +510,16 @@ CREATE MEMORY TABLE SBI_TRIGGER_PAUSED (
        UNIQUE (TRIGGER_NAME, TRIGGER_GROUP, JOB_NAME, JOB_GROUP),
        PRIMARY KEY (ID)
 );
+
+INSERT INTO SBI_CONFIG ( ID, LABEL, NAME, DESCRIPTION, IS_ACTIVE, VALUE_CHECK, VALUE_TYPE_ID, CATEGORY, USER_IN, TIME_IN) VALUES 
+((SELECT next_val FROM hibernate_sequences WHERE sequence_name = 'SBI_CONFIG'), 
+'SPAGOBI.DOCUMENTS.MAX_PREVIEW_IMAGE_SIZE', 'Max preview image size', 'Max dimension for a document''s preview image', true, '1048576',
+(select VALUE_ID from SBI_DOMAINS where VALUE_CD = 'NUM' AND DOMAIN_CD = 'PAR_TYPE'), 'GENERIC_CONFIGURATION', 'biadmin', current_timestamp);
+update hibernate_sequences set next_val = next_val+1 where sequence_name = 'SBI_CONFIG';
+commit;
+INSERT INTO SBI_CONFIG ( ID, LABEL, NAME, DESCRIPTION, IS_ACTIVE, VALUE_CHECK, VALUE_TYPE_ID, CATEGORY, USER_IN, TIME_IN) VALUES 
+((SELECT next_val FROM hibernate_sequences WHERE sequence_name = 'SBI_CONFIG'), 
+'SPAGOBI.DOCUMENTS.MAX_PREVIEW_IMAGES_NUM', 'Max preview images', 'Max number for documents'' preview images', true, '200',
+(select VALUE_ID from SBI_DOMAINS where VALUE_CD = 'NUM' AND DOMAIN_CD = 'PAR_TYPE'), 'GENERIC_CONFIGURATION', 'biadmin', current_timestamp);
+update hibernate_sequences set next_val = next_val+1 where sequence_name = 'SBI_CONFIG';
+commit;
