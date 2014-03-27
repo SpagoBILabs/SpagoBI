@@ -116,12 +116,18 @@ public abstract class ConfigurableDataSet extends AbstractDataSet {
 			} else {
 	
 			}
-	
-	
+			
+			
 			if( hasBehaviour(QuerableBehaviour.class.getName()) ) { 
 				QuerableBehaviour querableBehaviour = (QuerableBehaviour)getBehaviour(QuerableBehaviour.class.getName()) ;
 				String stm = querableBehaviour.getStatement();
-				stm = stm.replaceAll("''", "'");
+				//stm = stm.replaceAll("''", "'"); why????
+				//                                 This line transforms, for example:
+				//                                 .... where column = 'rock ''n'' roll'
+				//                                 that is correct into 
+				//                                  .... where column = 'rock 'n' roll' 
+				//                                 THAT IS NOT CORRECT!!!
+				//                                 Commenting out this line solves https://spagobi.eng.it/jira/browse/SPAGOBI-1697 Error in Smart Filter: an error occurs when a static open filter contains a single quote
 				dataProxy.setStatement(stm);
 			}
 			
