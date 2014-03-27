@@ -241,44 +241,50 @@ Sbi.constants.qbe = {
 	        text: 'link'
 	        , qtip: 'create a link to external web page'
 	        , type: 'function'
-	        , value: Ext.util.Format.htmlEncode('\'<a href="${URL}">\' + ${LABEL} + \'</a>\'')
-	        , alias: Ext.util.Format.htmlEncode('\'<a href="${URL}">\' + ${LABEL} + \'</a>\'')
+	        //, value: Ext.util.Format.htmlEncode('\'<a href="${URL}">\' + ${LABEL} + \'</a>\'')
+	        //, alias: Ext.util.Format.htmlEncode('\'<a href="${URL}">\' + ${LABEL} + \'</a>\'')
+	        , value: Ext.util.Format.htmlEncode('return api.getLink("${URL}", "${TEXT}");')
+	        , alias: Ext.util.Format.htmlEncode('return api.getLink("${URL}", "${TEXT}");')
 	     }, {
 	    	 text: 'image'
 	    	 , qtip: 'include an external image'
 	    	 , type: 'function'
-	         , value: Ext.util.Format.htmlEncode('\'<img src="${URL}"></img>\'')
-	         , alias: Ext.util.Format.htmlEncode('\'<img src="${URL}"></img>\'')
+	         //, value: Ext.util.Format.htmlEncode('\'<img src="${URL}"></img>\'')
+	         //, alias: Ext.util.Format.htmlEncode('\'<img src="${URL}"></img>\'')
+	         , value: Ext.util.Format.htmlEncode('return api.getImageLink("${IMAGE_URL}");')
+	         , alias: Ext.util.Format.htmlEncode('return api.getImageLink("${IMAGE_URL}");')
 	     }, {
 	    	 text: 'cross-navigation'
 	    	 , qtip: 'create a cross navigation link'
 	         , type: 'function'
-	         , value: Ext.util.Format.htmlEncode("String label = 'bestByRegion';") + '<br>' + 
-	         	Ext.util.Format.htmlEncode("String text= fields['salesRegion'];") + '<br>' + 
-	         Ext.util.Format.htmlEncode("String params= 'region=5';") + '<br>' + 
-	         Ext.util.Format.htmlEncode("String subobject;") + '<p>' + 
-	         Ext.util.Format.htmlEncode("String result = '';") + '<p>' + 
-	         Ext.util.Format.htmlEncode("result +='<a href=\"#\" onclick=\"javascript:sendMessage({';") + '<br>' + 
-	         Ext.util.Format.htmlEncode("result +='\\'label\\':\\'' + label + '\\'';") + '<br>' + 
-	         Ext.util.Format.htmlEncode("result +=', parameters:\\'' + params + '\\'';") + '<br>' + 
-	         Ext.util.Format.htmlEncode("result +=', windowName: this.name';") + '<br>' + 
-	         Ext.util.Format.htmlEncode("if(subobject != null) result +=', subobject:\\'' + subobject +'\\'';") + '<br>' + 
-	         Ext.util.Format.htmlEncode("result += '},\\'crossnavigation\\')\"';") + '<br>' + 
-	         Ext.util.Format.htmlEncode("result += '>' + text + '</a>';") + '<p>' + 
-	         Ext.util.Format.htmlEncode("return result;")
-	         , alias: Ext.util.Format.htmlEncode("String label = 'bestByRegion';") + '<br>' + 
-	         	Ext.util.Format.htmlEncode("String text= fields['salesRegion'];") + '<br>' + 
-	         Ext.util.Format.htmlEncode("String params= 'region=5';") + '<br>' + 
-	         Ext.util.Format.htmlEncode("String subobject;") + '<p>' + 
-	         Ext.util.Format.htmlEncode("String result = '';") + '<p>' + 
-	         Ext.util.Format.htmlEncode("result +='<a href=\"#\" onclick=\"javascript:sendMessage({';") + '<br>' + 
-	         Ext.util.Format.htmlEncode("result +='\\'label\\':\\'' + label + '\\'';") + '<br>' + 
-	         Ext.util.Format.htmlEncode("result +=', parameters:\\'' + params + '\\'';") + '<br>' + 
-	         Ext.util.Format.htmlEncode("result +=', windowName: this.name';") + '<br>' + 
-	         Ext.util.Format.htmlEncode("if(subobject != null) result +=', subobject:\\'' + subobject +'\\'';") + '<br>' + 
-	         Ext.util.Format.htmlEncode("result += '},\\'crossnavigation\\')\"';") + '<br>' + 
-	         Ext.util.Format.htmlEncode("result += '>' + text + '</a>';") + '<p>' + 
-	         Ext.util.Format.htmlEncode("return result;")
+	         , value: Ext.util.Format.htmlEncode('return api.getCrossNavigationLink("${TEXT}", "${TARGET_DOCUMENT_LABEL}", "${PARAMETERS}", "${SUBOBJECT");')
+//	         Ext.util.Format.htmlEncode("String label = 'bestByRegion';") + '<br>' + 
+//	         Ext.util.Format.htmlEncode("String text= fields['salesRegion'];") + '<br>' + 
+//	         Ext.util.Format.htmlEncode("String params = 'region=5';") + '<br>' + 
+//	         Ext.util.Format.htmlEncode("String subobject;") + '<p>' + 
+//	         Ext.util.Format.htmlEncode("String result = '';") + '<p>' + 
+//	         Ext.util.Format.htmlEncode("result +='<a href=\"#\" onclick=\"javascript:sendMessage({';") + '<br>' + 
+//	         Ext.util.Format.htmlEncode("result +='\\'label\\':\\'' + label + '\\'';") + '<br>' + 
+//	         Ext.util.Format.htmlEncode("result +=', parameters:\\'' + params + '\\'';") + '<br>' + 
+//	         Ext.util.Format.htmlEncode("result +=', windowName: this.name';") + '<br>' + 
+//	         Ext.util.Format.htmlEncode("if(subobject != null) result +=', subobject:\\'' + subobject +'\\'';") + '<br>' + 
+//	         Ext.util.Format.htmlEncode("result += '},\\'crossnavigation\\')\"';") + '<br>' + 
+//	         Ext.util.Format.htmlEncode("result += '>' + text + '</a>';") + '<p>' + 
+//	         Ext.util.Format.htmlEncode("return result;")
+	         , alias: Ext.util.Format.htmlEncode('return api.getCrossNavigationLink("${TEXT}", "${TARGET_DOCUMENT_LABEL}", "${PARAMETERS}", "${SUBOBJECT");')
+//	         Ext.util.Format.htmlEncode("String label = 'bestByRegion';") + '<br>' + 
+//	         Ext.util.Format.htmlEncode("String text= fields['salesRegion'];") + '<br>' + 
+//	         Ext.util.Format.htmlEncode("String params= 'region=5';") + '<br>' + 
+//	         Ext.util.Format.htmlEncode("String subobject;") + '<p>' + 
+//	         Ext.util.Format.htmlEncode("String result = '';") + '<p>' + 
+//	         Ext.util.Format.htmlEncode("result +='<a href=\"#\" onclick=\"javascript:sendMessage({';") + '<br>' + 
+//	         Ext.util.Format.htmlEncode("result +='\\'label\\':\\'' + label + '\\'';") + '<br>' + 
+//	         Ext.util.Format.htmlEncode("result +=', parameters:\\'' + params + '\\'';") + '<br>' + 
+//	         Ext.util.Format.htmlEncode("result +=', windowName: this.name';") + '<br>' + 
+//	         Ext.util.Format.htmlEncode("if(subobject != null) result +=', subobject:\\'' + subobject +'\\'';") + '<br>' + 
+//	         Ext.util.Format.htmlEncode("result += '},\\'crossnavigation\\')\"';") + '<br>' + 
+//	         Ext.util.Format.htmlEncode("result += '>' + text + '</a>';") + '<p>' + 
+//	         Ext.util.Format.htmlEncode("return result;")
 	     }
 	 ]
 };
