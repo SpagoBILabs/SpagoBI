@@ -14,6 +14,7 @@ import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.dao.DAOConfig;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.serializer.SerializerFactory;
 import it.eng.spagobi.commons.services.AbstractSpagoBIAction;
@@ -821,6 +822,7 @@ private IDataSet getGuiGenericDatasetToInsert() {
 
 		if(datasetTypeName.equalsIgnoreCase(DataSetConstants.DS_FILE)){	
 			dataSet = new FileDataSet();
+			((FileDataSet)dataSet).setResourcePath(DAOConfig.getResourcePath());
 			String fileName = getAttributeAsString(DataSetConstants.FILE_NAME);
 			jsonDsConfig.put(DataSetConstants.FILE_NAME, fileName);
 			((FileDataSet)dataSet).setFileName(fileName);				
