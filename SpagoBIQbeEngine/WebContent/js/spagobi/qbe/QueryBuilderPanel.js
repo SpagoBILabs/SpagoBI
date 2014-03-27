@@ -706,14 +706,16 @@ Ext.extend(Sbi.qbe.QueryBuilderPanel, Ext.Panel, {
                 	title: LN('sbi.generic.query.JPQL'),
                 	layout:'fit',
                 	name: 'jpql',
-                	html: jpql
+                	html: jpql,
+                	autoScroll : true
                 };
 			
 			var sqlPanel = {
                 	title: LN('sbi.generic.query.SQL'),
                 	layout:'fit',
                 	name: 'sql',
-                	html: sql
+                	html: sql,
+                	autoScroll : true
                 };
 			
 			if(thisPanel.queryWidowTabs){
