@@ -37,7 +37,7 @@ public class GroovyScriptAPI {
 		return result.toString();
 	}
 	
-	public String getImageLink(String imageUrl) {
+	public String getImage(String imageUrl) {
 		StringBuffer result = new StringBuffer("");
 		result.append("<img src='" + StringEscapeUtils.escapeHtml(imageUrl) + "'></img>");
 		return result.toString();
