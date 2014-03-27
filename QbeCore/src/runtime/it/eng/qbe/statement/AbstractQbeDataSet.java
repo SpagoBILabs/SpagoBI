@@ -16,8 +16,8 @@ import it.eng.qbe.query.SimpleSelectField;
 import it.eng.qbe.query.WhereField;
 import it.eng.qbe.query.serializer.json.QueryJSONSerializer;
 import it.eng.qbe.query.serializer.json.QuerySerializationConstants;
+import it.eng.qbe.script.groovy.GroovyScriptAPI;
 import it.eng.spagobi.tools.dataset.bo.AbstractDataSet;
-import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
 import it.eng.spagobi.tools.dataset.bo.DataSetVariable;
 import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.Field;
@@ -46,6 +46,7 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
 
 public abstract class AbstractQbeDataSet extends AbstractDataSet {
@@ -257,6 +258,7 @@ public abstract class AbstractQbeDataSet extends AbstractDataSet {
 			groovyScriptEngine.put("dmFields", dmFields); // key = id
 			groovyScriptEngine.put("fields", qFields); // default key = alias
 			groovyScriptEngine.put("columns", columns); // key = col-index
+			groovyScriptEngine.put("api", new GroovyScriptAPI());
 
 			// show time
 			Object calculatedValue = null;

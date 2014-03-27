@@ -5,6 +5,7 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.engines.qbe.services.core;
        
+import it.eng.qbe.script.groovy.GroovyScriptAPI;
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.utilities.assertion.Assert;
@@ -184,6 +185,7 @@ public class ValidateExpressionAction extends AbstractQbeEngineAction {
 				groovyScriptEngine.put("qFields", qFields);
 				groovyScriptEngine.put("dmFields", dmFields);
 				groovyScriptEngine.put("fields", qFields);
+				groovyScriptEngine.put("api", new GroovyScriptAPI());
 				
 				Object calculatedValue = null;
 				try {
