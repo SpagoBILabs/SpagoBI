@@ -114,7 +114,7 @@ var myVar=setTimeout(function(){redirect()},1000);
 function redirect()
 {
 	function delayer(){
-	    window.location = "../javascriptredirect.php"
+	    window.location = <%=redirectUrl%>
 	}
 }
 
