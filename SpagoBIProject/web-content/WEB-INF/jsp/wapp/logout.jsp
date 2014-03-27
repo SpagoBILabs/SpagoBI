@@ -70,6 +70,8 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 
 boolean backUrlB=false;
 String backUrl="";
+String redirectUrl ="";
+
 if(session.getAttribute(SpagoBIConstants.BACK_URL)!=null){
 	backUrl=(String)session.getAttribute(SpagoBIConstants.BACK_URL);
 	backUrlB=true;
@@ -89,24 +91,34 @@ if ((active == null || active.equalsIgnoreCase("false")) && !backUrlB) {
 	String context = request.getContextPath();
 	if (usePublicUser){
 		context += "/servlet/AdapterHTTP?PAGE=LoginPage&NEW_SESSION=TRUE";
-		response.sendRedirect(context);
+		redirectUrl = context;
 	}else{
-		response.sendRedirect(context);
+		redirectUrl = context;
 	}
 }
 else if (active != null && active.equalsIgnoreCase("true")) {
 
 	String urlLogout =  SingletonConfig.getInstance().getConfigValue("SPAGOBI_SSO.SECURITY_LOGOUT_URL");
 	if(backUrlB==true){
-		response.sendRedirect(backUrl); 
+		redirectUrl = backUrl; 
 	}
-	response.sendRedirect(urlLogout);
+	redirectUrl = urlLogout;
 
 } %>
  
 
-<%if (active != null && active.equalsIgnoreCase("true")) { %>
-	<script>window.close();</script>
-<% } %>
+<script>
+
+var myVar=setTimeout(function(){redirect()},1000);
+
+function redirect()
+{
+	function delayer(){
+	    window.location = "../javascriptredirect.php"
+	}
+}
+
+</script>
+
 
 
