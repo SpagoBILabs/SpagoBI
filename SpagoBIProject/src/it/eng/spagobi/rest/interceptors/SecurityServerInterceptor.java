@@ -13,6 +13,7 @@ import it.eng.spagobi.services.security.bo.SpagoBIUserProfile;
 import it.eng.spagobi.services.security.service.ISecurityServiceSupplier;
 import it.eng.spagobi.services.security.service.SecurityServiceSupplierFactory;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.filters.FilterIOManager;
 
 import java.lang.reflect.Method;
 
@@ -166,18 +167,30 @@ public class SecurityServerInterceptor implements PreProcessInterceptor, Accepte
 		IEngUserProfile engProfile = getUserProfileFromSession();
 		
 		if (engProfile != null) {
-			logger.debug("User is authenticated and his profile is already stored in session");
+			// verify if the profile stored in session is still valid
+			String userId = null;
+			try {
+				userId = getUserIdentifier();
+			} catch (Exception e) {
+				logger.debug("User identifier not found");
+			}
+			if(userId != null && userId.equals(engProfile.getUserUniqueIdentifier().toString()) == false) {
+				logger.debug("User is authenticated but the profile store in session need to be updated");
+				engProfile = this.getUserProfileFromUserId();
+			} else {
+				logger.debug("User is authenticated and his profile is already stored in session");
+			}
+			
 		} else {
-			engProfile = this.getUserProfileFromUserId();	
+			engProfile = this.getUserProfileFromUserId();
+			if (engProfile !=  null) {
+				logger.debug("User is authenticated but his profile is not already stored in session");
+			} else {
+				logger.debug("User is not authenticated");
+				authenticated = false;
+			}
 		}
-		
-		if (engProfile !=  null) {
-			logger.debug("User is authenticated but his profile is not already stored in session");
-		} else {
-			logger.debug("User is not authenticated");
-			authenticated = false;
-		}
-		
+
 		return authenticated;
 	}
 		
@@ -238,23 +251,27 @@ public class SecurityServerInterceptor implements PreProcessInterceptor, Accepte
 		IEngUserProfile engProfile = null;
 //		FilterIOManager ioManager = new FilterIOManager(servletRequest, null);
 //		ioManager.initConetxtManager();	
-//		engProfile = (IEngUserProfile)ioManager.getFromSession(IEngUserProfile.ENG_USER_PROFILE);		
-//		return engProfile;
-		
-		String executionId = (String)servletRequest.getParameter("SBI_EXECUTION_ID");
+//	
 		engProfile =  (IEngUserProfile)servletRequest.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+//		if(engProfile == null) {
+//			engProfile = (IEngUserProfile)ioManager.getContextManager().get(IEngUserProfile.ENG_USER_PROFILE);	
+//		} else {
+//			setUserProfileInSession(engProfile);
+//		}	
+		
 		return engProfile;
 	}
 	
 	private void setUserProfileInSession(IEngUserProfile engProfile) {
 //		FilterIOManager ioManager = new FilterIOManager(servletRequest, null);
 //		ioManager.initConetxtManager();	
-//		ioManager.setInSession(IEngUserProfile.ENG_USER_PROFILE, engProfile);
-		
+//		ioManager.getContextManager().set(IEngUserProfile.ENG_USER_PROFILE, engProfile);
+//		
 		servletRequest.getSession().setAttribute(IEngUserProfile.ENG_USER_PROFILE, engProfile);
 	}
 	
 	public boolean accept(Class declaring, Method method) {
 		return !method.isAnnotationPresent(POST.class);
+		//return true;
 	}
 }
