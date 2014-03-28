@@ -264,14 +264,14 @@ Ext
 						var tbButtonsArray = new Array();
 
 
-						this.tbTransfInfoButton = new Ext.Toolbar.Button({
-							text : LN('sbi.ds.help'),
-							iconCls : 'icon-info',
-							handler : this.transfInfo,
-							width : 30,
-							scope : this
-						});
-						tbButtonsArray.push(this.tbTransfInfoButton);
+//						this.tbTransfInfoButton = new Ext.Toolbar.Button({
+//							text : LN('sbi.ds.help'),
+//							iconCls : 'icon-info',
+//							handler : this.transfInfo,
+//							width : 30,
+//							scope : this
+//						});
+//						tbButtonsArray.push(this.tbTransfInfoButton);
 						this.configurationObject.tbButtonsArray = tbButtonsArray;
 					}
 
