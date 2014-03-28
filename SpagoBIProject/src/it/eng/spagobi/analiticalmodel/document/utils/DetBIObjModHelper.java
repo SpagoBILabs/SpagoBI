@@ -22,6 +22,7 @@ import it.eng.spagobi.analiticalmodel.functionalitytree.service.TreeObjectsModul
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IBIObjectParameterDAO;
+import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.ObjectsTreeConstants;
@@ -32,16 +33,20 @@ import it.eng.spagobi.commons.utilities.ChannelUtilities;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
 import it.eng.spagobi.commons.utilities.SpagoBITracer;
+import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.community.mapping.SbiCommunity;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.engines.config.dao.IEngineDAO;
 import it.eng.spagobi.tenant.TenantManager;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.file.FileUtils;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -51,9 +56,16 @@ import java.util.Vector;
 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.log4j.Logger;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class DetBIObjModHelper {
 	static private Logger logger = Logger.getLogger(DetBIObjModHelper.class);
+	
+	private static final String DIRECTORY = "preview" + File.separatorChar + "images";
+
+	private static final List<String> VALID_FILE_EXTENSIONS = Arrays.asList("BMP", "JPG", "JPEG", "PNG", "GIF");
+	
 	SourceBean request = null;
 	SourceBean response = null;
 	RequestContainer reqCont = null;
@@ -560,32 +572,42 @@ public class DetBIObjModHelper {
 		return toReturn;
 	}
 	
-	private String uploadFile(FileItem uploaded) throws Exception{		
-		List<String> extFiles = new ArrayList<String>();
-		Collections.addAll(extFiles,"BMP", "IMG", "JPG", "JPEG", "PNG", "GIF");
+	private String uploadFile(FileItem uploaded) throws Exception {		
 		
 		if (uploaded == null) {
-			logger.error("No file was uploaded");
-		}
-					
-		Integer maxSize = Integer.valueOf(GeneralUtilities.getTemplateMaxSize());
-		try{			
-				FileUtils.checkUploadedFile(uploaded,maxSize,extFiles);		
-		} catch (EMFUserError e) {
-			throw e;
-		} catch (Exception ex) {
-			throw ex;
+			throw new SpagoBIRuntimeException("No file was uploaded");
 		}
 		
+		logger.info("User [id : " + ((UserProfile)profile).getUserId() + ", name : " + ((UserProfile)profile).getUserName() + "] " +
+				"is uploading file [" + uploaded.getName() + "] with size [" + uploaded.getSize() + "]");
 		
-		File file = FileUtils.checkAndCreateDir(uploaded,"/preview/images");
-
+		int maxSize = Integer.parseInt( SingletonConfig.getInstance().getConfigValue("SPAGOBI.DOCUMENTS.MAX_PREVIEW_IMAGE_SIZE") );
+		FileUtils.checkUploadedFile(uploaded, maxSize, VALID_FILE_EXTENSIONS);
+		
+		String folderPath = getStorageDirectoryPath();
+		
+		File targetDirectory = FileUtils.checkAndCreateDir(folderPath);
+		
+		// check if number of existing images is the max allowed
+		int maxFilesAllowed = Integer.parseInt( SingletonConfig.getInstance().getConfigValue("SPAGOBI.DOCUMENTS.MAX_PREVIEW_IMAGES_NUM") );
+		FileUtils.checkIfFilesNumberExceedsInDirectory(targetDirectory, maxFilesAllowed);
+		
 		logger.debug("Saving file...");
-		FileUtils.saveFile(uploaded, file);
+		File saved = FileUtils.saveFileIntoDirectory(uploaded, targetDirectory);
 		logger.debug("File saved");
-
-		return file.getName();
-		
+	
+		return saved.getName();
+	}
+	
+	private String getStorageDirectoryPath() {
+		String path = SingletonConfig.getInstance().getConfigValue("SPAGOBI.RESOURCE_PATH_JNDI_NAME");
+		String resourcePath = SpagoBIUtilities.readJndiResource(path);
+		if (resourcePath.endsWith("/") || resourcePath.endsWith("\\")) {
+			resourcePath += DIRECTORY;
+		} else {
+			resourcePath += File.separatorChar + DIRECTORY;
+		}
+		return resourcePath;
 	}
 	
 }
