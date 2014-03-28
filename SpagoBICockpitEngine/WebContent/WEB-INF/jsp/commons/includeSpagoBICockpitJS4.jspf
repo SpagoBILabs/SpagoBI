@@ -21,6 +21,9 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/commons/Format.js'/></script>
 <script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/locale/LocaleUtils.js'/></script>
 <script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/service/ServiceRegistry.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/service/RestService.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/service/ServiceReg.js'/></script>
+
 <script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/data/StoreManager.js'/></script>
 
 <script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/widgets/GenericDropTarget.js'/></script>
