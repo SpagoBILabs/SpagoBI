@@ -82,7 +82,7 @@
 		</PARAMETERS>
 	</TEMPLATE-BUILDER>
 	
-	<GRAPH-PATH removeSubPaths="false" pathsOrder="ASC" defaultCoverImpl="it.eng.qbe.statement.graph.cover.ShortestPathsCoverGraph" graphValidatorImpl="it.eng.qbe.statement.graph.validator.AbstractGraphValidator" pathsFiltersImpl="it.eng.qbe.statement.graph.filter.CubeFilter"/>
+	<GRAPH-PATH removeSubPaths="false" pathsOrder="ASC" defaultCoverImpl="it.eng.qbe.statement.graph.cover.ShortestPathsCoverGraph"  pathsFiltersImpl="it.eng.qbe.statement.graph.filter.CubeFilter"/>
 	<EXPORT-CSV-SEPARATOR>
 		<SEPARATOR default="true" value="|"/>
 		<SEPARATOR default="false" value="\t"/>
