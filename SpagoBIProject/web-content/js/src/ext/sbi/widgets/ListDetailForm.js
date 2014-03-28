@@ -243,6 +243,9 @@ Sbi.widgets.ListDetailForm = function(config) {
 	
 	this.gridForm = {
 			layout: 'border',
+			defaults: {
+			    split: true,
+			},
 			items: [this.mainGrid, {region: "center", layout:'fit', items: [this.tabs]}]
 	};
 	
