@@ -5,7 +5,4 @@
  	<CONFIG/>
  </ACTION>
  
-  <ACTION name="MANAGE_FILE_ACTION" class="it.eng.spagobi.tools.files.service.ManageFileAction" scope="REQUEST">
- 	<CONFIG/>
- </ACTION>
 </ACTIONS>

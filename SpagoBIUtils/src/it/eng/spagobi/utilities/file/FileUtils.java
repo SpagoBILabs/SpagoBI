@@ -5,17 +5,14 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.utilities.file;
 
-import it.eng.spago.error.EMFErrorSeverity;
-import it.eng.spago.error.EMFUserError;
-import it.eng.spagobi.commons.SingletonConfig;
-import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
+import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.fileupload.FileItem;
@@ -89,96 +86,171 @@ public class FileUtils {
 	}
 	
 
-	public static void checkUploadedFile(FileItem uploaded,Integer maxSize, List extFiles ) throws Exception {
+	/**
+	 * Checks if upload file:
+	 * - is not empty;
+	 * - does not exceed specified max size;
+	 * - has one of the specified extensions.
+	 * A SpagoBIRuntimeException is thrown in case one of the conditions is not satisfied.
+	 * 
+	 * @param uploaded The uploaded file
+	 * @param maxSize The max size
+	 * @param admissibleFilesExtension The admissible files extension
+	 */
+	public static void checkUploadedFile(FileItem uploaded, Integer maxSize, List<String> admissibleFilesExtension) {
 		// check if the uploaded file is empty
 		if (uploaded.getSize() == 0) {
 			logger.error("The uploaded file is empty");
-			throw new SpagoBIServiceException("", "The uploaded file is empty");	
+			throw new SpagoBIRuntimeException("The uploaded file is empty");
 		}
 		// check if the uploaded file exceeds the maximum dimension
 		if (maxSize != null && uploaded.getSize() > maxSize) {
-			logger.error("The uploaded file exceeds the maximum size, that is " + maxSize + " bytes");
-			throw new SpagoBIServiceException("", "The uploaded file exceeds the maximum size, that is " + maxSize + " bytes");
+			logger.error("The uploaded file exceeds the maximum size, that is "
+					+ maxSize + " bytes");
+			throw new SpagoBIRuntimeException("The uploaded file exceeds the maximum size, that is "
+							+ maxSize + " bytes");
 		}
-					
-		if (extFiles != null){
+
+		if (admissibleFilesExtension != null) {
 			// check if the extension is valid
-			String fileExtension =  uploaded.getName().lastIndexOf('.') > 0 ?  
-					uploaded.getName().substring( uploaded.getName().lastIndexOf('.') + 1) : null;	
-			
-			if (!extFiles.contains(fileExtension.toLowerCase()) && !extFiles.contains(fileExtension.toUpperCase())){
-				logger.error( "The uploaded file has an invalid extension. Choose a "+ extFiles.toString() +" file.");
-				String msg = "The uploaded file has an invalid extension. Choose a "+ extFiles.toString() +" file.";
-				throw new SpagoBIServiceException("", msg);
-			} 
-		}		
-		return;
+			String fileExtension = FileUtils.getFileExtension( uploaded.getName() );
+			if (!admissibleFilesExtension.contains(fileExtension.toLowerCase())
+					&& !admissibleFilesExtension.contains(fileExtension
+							.toUpperCase())) {
+				logger.error("The uploaded file has an invalid extension. Choose a "
+						+ admissibleFilesExtension.toString() + " file.");
+				String msg = "The uploaded file has an invalid extension. Choose a "
+						+ admissibleFilesExtension.toString() + " file.";
+				throw new SpagoBIRuntimeException(msg);
+			}
+		}	
 	}
 
-	
-	public static File checkAndCreateDir(FileItem uploaded,String directory) {
+	/**
+	 * Check is the specified directory exists; in case it does not, it creates it.
+	 * @param directory The directory path
+	 * @return The File directory object
+	 */
+	public static File checkAndCreateDir(String directory) {
 		File toReturn = null;
 		try {
-			String fileName = SpagoBIUtilities.getRelativeFileNames(uploaded.getName());		
-			SingletonConfig configSingleton = SingletonConfig.getInstance();
-			String path  = configSingleton.getConfigValue("SPAGOBI.RESOURCE_PATH_JNDI_NAME");
-			String resourcePath= SpagoBIUtilities.readJndiResource(path);
-			if (directory != null){
-				resourcePath += (!directory.startsWith("/") && !directory.startsWith("\\"))?File.separatorChar+directory:directory;
-			}else{
-				resourcePath += File.separatorChar+"files"; //default: is correct?
+			toReturn = new File(directory);
+			if (toReturn.exists() && !toReturn.isDirectory()) {
+				throw new SpagoBIRuntimeException("File " + directory + " already exists and it is not a directory");
 			}
-			File fileDir = new File(resourcePath);
-			if (!fileDir.exists()){
+			if (!toReturn.exists()){
 				//Create Directory if doesn't exist
-				boolean mkdirResult = fileDir.mkdirs();
+				boolean mkdirResult = toReturn.mkdirs();
 				if (!mkdirResult) {
-					logger.error( "Cannot create files directory into server resources");
-					throw new SpagoBIServiceException("", "Cannot create files directory into server resources");
+					logger.error("Cannot create directory " + directory + " into server resources");
+					throw new SpagoBIRuntimeException("Cannot create directory " + directory + " into server resources");
 				}
 			}
-			
-			// uuid generation
-			String uuid = createNewExecutionId();
-			String fileExtension =  uploaded.getName().lastIndexOf('.') > 0 ?  
-					uploaded.getName().substring( uploaded.getName().lastIndexOf('.')) : null;			
-			fileName  =  uuid + fileExtension;
-			toReturn =  new File(fileDir, fileName);
-			
 		} catch (Throwable t) {
-			logger.error("Error while saving file into server", t);
-			throw new SpagoBIRuntimeException( "Error while saving file into server");
+			logger.error("Error while creating directory", t);
+			throw new SpagoBIRuntimeException("Error while creating directory", t);
 		}
 		return toReturn;
 	}
 	
-	public static void saveFile(FileItem uploaded, File saveTo) {
-		try {
-			uploaded.write(saveTo);
-		} catch (Throwable t) {
-			logger.error("Error while saving file into server: " + t);
-			throw new SpagoBIServiceException("", "Error while saving file into server");
+	/**
+	 * Check if the specified folder in input has a number of files that exceeds the specified max allowed number.
+	 * @param targetDirectory The folder to check
+	 * @param maxAllowed The max allowed number of contained files
+	 */
+	public static void checkIfFilesNumberExceedsInDirectory(File targetDirectory, int maxAllowed) {
+		if (!targetDirectory.exists() || !targetDirectory.isDirectory()) {
+			throw new SpagoBIRuntimeException("File " + targetDirectory + " isn't a directory");
+		}
+		File[] existingImages = getContainedFiles(targetDirectory);
+		int existingImagesNumber = existingImages.length;
+		if (existingImagesNumber >= maxAllowed) {
+			throw new SpagoBIEngineRuntimeException("Max files number exceeded");
 		}
 	}
+
+	/**
+	 * Gets the files contained by the specified folder
+	 * @param targetDirectory The directory to look for
+	 * @return the files contained by the specified folder
+	 */
+	public static File[] getContainedFiles(File targetDirectory) {
+		logger.debug("IN");
+		File[] files = targetDirectory.listFiles(new FileFilter() {
+			public boolean accept(File pathname) {
+				if (pathname.isFile()) {
+					return true;
+				}
+				return false;
+			}
+		});
+		logger.debug("OUT");
+		return files;
+	}
 	
-	public static boolean checkFileIfExist(File file){
+	public static File saveFileIntoDirectory(FileItem uploaded, File targetDirectory) {
+		File toReturn = null;
+		if (!targetDirectory.exists() || !targetDirectory.isDirectory()) {
+			throw new SpagoBIRuntimeException("File " + targetDirectory + " isn't a directory");
+		}
+		// uuid generation
+		String uuid = createNewExecutionId();
+		String fileExtension = FileUtils.getFileExtension( uploaded.getName() );
+		logger.debug("Recognized file extension is " + fileExtension);
+		if (StringUtilities.isEmpty(fileExtension)) {
+			logger.error("Unrecognized file extension : " + fileExtension);
+			throw new SpagoBIRuntimeException("Unrecognized file extension : " + fileExtension);
+		}
+		String fileName = uuid + "." + fileExtension;
+		toReturn = new File(targetDirectory, fileName);
+		try {
+			uploaded.write(toReturn);
+		} catch (Throwable t) {
+			logger.error("Error while saving file into server", t);
+			throw new SpagoBIRuntimeException("Error while saving file into server", t);
+		}
+		return toReturn;
+	}
+	
+	public static boolean checkFileIfExist(File file) {
 		return (file.exists());
 	}
 	
 	public static String createNewExecutionId() {
-		String executionId;
-		
-		executionId = null;
-		try {
-			UUIDGenerator uuidGen  = UUIDGenerator.getInstance();
-			UUID uuidObj = uuidGen.generateTimeBasedUUID();
-			executionId = uuidObj.toString();
-			executionId = executionId.replaceAll("-", "");
-		} catch(Throwable t) {
-			
-		} 
-		
+		String executionId = null;
+		UUIDGenerator uuidGen  = UUIDGenerator.getInstance();
+		UUID uuidObj = uuidGen.generateTimeBasedUUID();
+		executionId = uuidObj.toString();
+		executionId = executionId.replaceAll("-", "");
 		return executionId;
 	}
+	
+	/**
+	 * Throws a SecurityException if a path traversal attack is detected.
+	 * See https://wiki.spagobi.org/xwiki/bin/view/spagobi_standard_dev/Sicurezza?srid=TP2i4TZR#HPathtraversal
+	 * @param fileName The file name to be checked
+	 * @param targetDirectory The folder to check
+	 */
+	public static void checkPathTraversalAttack(String fileName, File targetDirectory) {
+		if (StringUtilities.isEmpty(fileName)) {
+			throw new SpagoBIRuntimeException("File name not specified.");
+		}
+		if (!targetDirectory.exists() || !targetDirectory.isDirectory()) {
+			throw new SpagoBIRuntimeException("File " + targetDirectory + " isn't a directory");
+		}
+		String completeFileName = targetDirectory.getAbsolutePath() + File.separator
+				+ fileName;
+		File file = new File(completeFileName);
+		File parent = file.getParentFile();
+		// Prevent directory traversal (path traversal) attacks
+		if (!targetDirectory.equals(parent)) {
+			logger.error("Trying to access the file [" + file.getAbsolutePath()
+					+ "] that is not inside [" + targetDirectory.getAbsolutePath()
+					+ "]!!!");
+			throw new SecurityException("Trying to access a the file in an unexpected position!!!");
+		}
+	}
+	
+	
 	
 }

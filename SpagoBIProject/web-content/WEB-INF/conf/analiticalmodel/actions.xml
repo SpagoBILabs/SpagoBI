@@ -213,5 +213,9 @@
     <CONFIG/>
  </ACTION>
 
+ <ACTION name="MANAGE_PREVIEW_FILE_ACTION" class="it.eng.spagobi.analiticalmodel.document.service.ManagePreviewFileAction" scope="REQUEST">
+ 	<CONFIG/>
+ </ACTION>
+
 </ACTIONS>
 

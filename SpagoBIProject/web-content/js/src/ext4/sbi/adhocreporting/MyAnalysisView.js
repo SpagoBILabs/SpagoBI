@@ -87,17 +87,12 @@ Ext.define('Sbi.adhocreporting.MyAnalysisView', {
 		}
 		
 		,initServices : function(){
-			var pathPreview = '';
-			if (Sbi.settings.widgets.FileUploadPanel && Sbi.settings.widgets.FileUploadPanel.imgUpload){
-				pathPreview = Sbi.settings.widgets.FileUploadPanel.imgUpload.directory || '';		
-			}
 			var params = {LIGHT_NAVIGATOR_DISABLED: 'TRUE'};
-			params.directory = pathPreview;
 			params.operation = 'DOWNLOAD';
 			this.services = this.services || new Array();
 
 			this.services['getImageContent'] = this.services['getImageContent'] || Sbi.config.serviceRegistry.getServiceUrl({
-				serviceName: 'MANAGE_FILE_ACTION'
+				serviceName: 'MANAGE_PREVIEW_FILE_ACTION'
 				, baseParams: params
 			});
 		}

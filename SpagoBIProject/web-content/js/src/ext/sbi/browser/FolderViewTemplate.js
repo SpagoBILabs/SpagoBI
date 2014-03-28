@@ -22,18 +22,13 @@ Sbi.browser.FolderViewTemplate = function(config) {
 	var attributeNameView = '';
 	var img = Ext.BLANK_IMAGE_URL ;
 	var classImg = ' class="{typeCode}-icon" ';
-	var pathPreview = '';
-	if (Sbi.settings.widgets.FileUploadPanel && Sbi.settings.widgets.FileUploadPanel.imgUpload){
-		pathPreview = Sbi.settings.widgets.FileUploadPanel.imgUpload.directory || '';		
-	}
 	
 	this.services = this.services || new Array();
 	
 	var params = {LIGHT_NAVIGATOR_DISABLED: 'TRUE'};
-	params.directory = pathPreview;
 	params.operation = 'DOWNLOAD';
 	this.services['getImageContent'] = this.services['getImageContent'] || Sbi.config.serviceRegistry.getServiceUrl({
-		serviceName: 'MANAGE_FILE_ACTION'
+		serviceName: 'MANAGE_PREVIEW_FILE_ACTION'
 		, baseParams: params
 	});
 

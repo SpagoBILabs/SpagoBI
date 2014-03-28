@@ -4,6 +4,7 @@
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. **/
 
+
   
 Ext.define('Sbi.execution.SaveDocumentWindowExt4', {
 	extend: 'Ext.Window'
@@ -414,30 +415,27 @@ Ext.define('Sbi.execution.SaveDocumentWindowExt4', {
 	//handler for the upload file button
 	,uploadFileButtonHandler: function(btn, e) {
 		
-		Sbi.debug("[PreviewFileWizard.uploadFileButtonHandler]: IN");
+		Sbi.debug("[SaveDocumentWindowExt4.uploadFileButtonHandler]: IN");
 		
         var form = Ext.getCmp('previewFileForm').getForm();
         
-        Sbi.debug("[PreviewFileWizard.uploadFileButtonHandler]: form is equal to [" + form + "]");
+        Sbi.debug("[SaveDocumentWindowExt4.uploadFileButtonHandler]: form is equal to [" + form + "]");
 		
         var completeUrl =  Sbi.config.serviceRegistry.getServiceUrl({
-					    		serviceName : 'MANAGE_FILE_ACTION',
+					    		serviceName : 'MANAGE_PREVIEW_FILE_ACTION',
 					    		baseParams : {LIGHT_NAVIGATOR_DISABLED: 'TRUE'}
 					    	});
 
 		var baseUrl = completeUrl.substr(0, completeUrl
 				.indexOf("?"));
 		
-		Sbi.debug("[PreviewFileWizard.uploadFileButtonHandler]: base url is equal to [" + baseUrl + "]");
+		Sbi.debug("[SaveDocumentWindowExt4.uploadFileButtonHandler]: base url is equal to [" + baseUrl + "]");
 	 	
 		var queryStr = completeUrl.substr(completeUrl.indexOf("?") + 1);
 		var params = Ext.urlDecode(queryStr);
 		params.operation = 'UPLOAD';
-		params.directory = this.directory || '';
-		params.maxSize = this.maxSizeFile || '';
-		params.extFiles = Ext.JSON.encode(this.extFiles) || '';
  
-		Sbi.debug("[PreviewFileWizard.uploadFileButtonHandler]: form is valid [" + form.isValid() + "]");		
+		Sbi.debug("[SaveDocumentWindowExt4.uploadFileButtonHandler]: form is valid [" + form.isValid() + "]");		
 		this.fileNameUploaded = Ext.getCmp('fileUploadField').getValue();
 		this.fileNameUploaded = this.fileNameUploaded.replace("C:\\fakepath\\", "");
 
@@ -475,7 +473,7 @@ Ext.define('Sbi.execution.SaveDocumentWindowExt4', {
 			scope : this
 		});		
 		
-		Sbi.debug("[PreviewFileWizard.uploadFileButtonHandler]: OUT");
+		Sbi.debug("[SaveDocumentWindowExt4.uploadFileButtonHandler]: OUT");
 	}
 
 });

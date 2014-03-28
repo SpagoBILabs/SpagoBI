@@ -307,11 +307,7 @@ Ext.extend(Sbi.execution.SaveDocumentWindow, Ext.Window, {
 				isEnabled: true, 
 				labelFileName:'Preview file'
 		};
-		var c = {};
-		if (Sbi.settings.widgets.FileUploadPanel && Sbi.settings.widgets.FileUploadPanel.imgUpload)
-			c = Ext.apply({}, config, Sbi.settings.widgets.FileUploadPanel.imgUpload); 		
-		else
-			c = Ext.apply({}, config); 	
+		var c = Ext.apply({}, config);
 		Ext.apply(this,c);
 		
 		this.fileUpload = new Sbi.widgets.FileUploadPanel(c);
@@ -338,30 +334,27 @@ Ext.extend(Sbi.execution.SaveDocumentWindow, Ext.Window, {
 	//handler for the upload file button
 	,uploadFileButtonHandler: function(btn, e) {
 		
-		Sbi.debug("[PreviewFileWizard.uploadFileButtonHandler]: IN");
+		Sbi.debug("[SaveDocumentWindow.uploadFileButtonHandler]: IN");
 		
         var form = Ext.getCmp('previewFileForm').getForm();
         
-        Sbi.debug("[PreviewFileWizard.uploadFileButtonHandler]: form is equal to [" + form + "]");
+        Sbi.debug("[SaveDocumentWindow.uploadFileButtonHandler]: form is equal to [" + form + "]");
 		
         var completeUrl =  Sbi.config.serviceRegistry.getServiceUrl({
-					    		serviceName : 'MANAGE_FILE_ACTION',
+					    		serviceName : 'MANAGE_PREVIEW_FILE_ACTION',
 					    		baseParams : {LIGHT_NAVIGATOR_DISABLED: 'TRUE'}
 					    	});
 
 		var baseUrl = completeUrl.substr(0, completeUrl
 				.indexOf("?"));
 		
-		Sbi.debug("[PreviewFileWizard.uploadFileButtonHandler]: base url is equal to [" + baseUrl + "]");
+		Sbi.debug("[SaveDocumentWindow.uploadFileButtonHandler]: base url is equal to [" + baseUrl + "]");
 	 	
 		var queryStr = completeUrl.substr(completeUrl.indexOf("?") + 1);
 		var params = Ext.urlDecode(queryStr);
 		params.operation = 'UPLOAD';
-		params.directory = this.directory || '';
-		params.maxSize = this.maxSizeFile || '';
-		params.extFiles = Ext.encode(this.extFiles) || '';
  
-		Sbi.debug("[PreviewFileWizard.uploadFileButtonHandler]: form is valid [" + form.isValid() + "]");		
+		Sbi.debug("[SaveDocumentWindow.uploadFileButtonHandler]: form is valid [" + form.isValid() + "]");		
 		this.fileNameUploaded = Ext.getCmp('fileUploadField').getValue();
 		this.fileNameUploaded = this.fileNameUploaded.replace("C:\\fakepath\\", "");
 
@@ -379,27 +372,21 @@ Ext.extend(Sbi.execution.SaveDocumentWindow, Ext.Window, {
 				this.fileNameUploaded = action.result.fileName;
 			},
 			failure : function(form, action) {
-				switch (action.failureType) {
-	            case Ext.form.Action.CLIENT_INVALID:
-	                Ext.Msg.alert('Failure', 'Form fields may not be submitted with invalid values');
-	                break;
-	            case Ext.form.Action.CONNECT_FAILURE:
-	                Ext.Msg.alert('Failure', 'Ajax communication failed');
-	                break;
-	            case Ext.form.Action.SERVER_INVALID:
-	            	if(action.result.msg && action.result.msg.indexOf("NonBlockingError:")>=0){
-	            		var error = Ext.JSON.decode(action.result.msg);
-	            		Sbi.exception.ExceptionHandler.showErrorMessage(LN('sbi.ds.'+error.error),LN("sbi.ds.failedToUpload"));
-	            	}else{
-	            		Sbi.exception.ExceptionHandler.showErrorMessage(action.result.msg,'Failure');
-	            	}
-	               
+				if (action.result && action.result.msg) {
+	    			Ext.Msg.show({
+	    				   title: LN('sbi.generic.error'),
+	    				   msg: action.result.msg,
+	    				   buttons: Ext.Msg.OK,
+	    				   icon: Ext.MessageBox.ERROR
+	    			});
+				} else {
+					Ext.Msg.alert('Failure', 'Error while uploading file');
 				}
 			},
 			scope : this
 		});		
 		
-		Sbi.debug("[PreviewFileWizard.uploadFileButtonHandler]: OUT");
+		Sbi.debug("[SaveDocumentWindow.uploadFileButtonHandler]: OUT");
 	}
 	
 });
