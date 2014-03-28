@@ -5,7 +5,7 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. **/
  
 
-Ext.define('Sbi.data.editor.relationship.RelationshipEditor', {
+Ext.define('Sbi.data.editor.association.AssociationEditor', {
 	extend: 'Ext.Panel'
     , layout: 'border'
 
@@ -20,28 +20,28 @@ Ext.define('Sbi.data.editor.relationship.RelationshipEditor', {
 	}
 
 	/**
-	 * @property {Sbi.data.editor.relationship.RelationshipEditorDatasetContainer} dsContainerPanel
+	 * @property {Sbi.data.editor.association.AssociationEditorDatasetContainer} dsContainerPanel
 	 * The container of datasets
 	 */
 	, dsContainerPanel: null
 	/**
-	 * @property {Sbi.data.editor.relationship.RelationshipEditorList} relContainerPanel
-	 * The container of relationships
+	 * @property {Sbi.data.editor.association.AssociationEditorList} assContainerPanel
+	 * The container of associations
 	 */
-	, relContainerPanel: null
+	, assContainerPanel: null
 	/**
-	 * @property {Ext.Array} relationsList
-	 * The list with all relations
+	 * @property {Ext.Array} associationsList
+	 * The list with all associations
 	 */
-	, relationsList: null 	
+	, association: null 	
 
 	, constructor : function(config) {
-		Sbi.trace("[RelationshipEditor.constructor]: IN");
+		Sbi.trace("[AssociationEditor.constructor]: IN");
 		this.initConfig(config);
 		this.initPanels(config);
 		this.callParent(arguments);		
-		this.addEvents('addRelation','addRelationToList');
-		Sbi.trace("[RelationshipEditor.constructor]: OUT");	
+		this.addEvents('addAssociation','addAssociationToList');
+		Sbi.trace("[AssociationEditor.constructor]: OUT");	
 	}
 
 	,  initComponent: function() {
@@ -55,11 +55,11 @@ Ext.define('Sbi.data.editor.relationship.RelationshipEditor', {
 						items: [this.dsContainerPanel]
 						},
 						{
-						id: 'relContainerPanel',	  
+						id: 'assContainerPanel',	  
 						region: 'south',
 						autoScroll: true,
 						split: true,
-						items: [this.relContainerPanel]
+						items: [this.assContainerPanel]
 						}]
 	        });
 	        this.callParent();
@@ -78,20 +78,20 @@ Ext.define('Sbi.data.editor.relationship.RelationshipEditor', {
 	
 	, initPanels: function(config){
 		this.initDatasetPanel(config);
-		this.initRelationshipPanel(config);
+		this.initAssociationPanel(config);
 	}
 	
 	, initDatasetPanel: function(config) {
-		this.dsContainerPanel = Ext.create('Sbi.data.editor.relationship.RelationshipEditorDatasetContainer',{usedDatasets: this.usedDatasets});
+		this.dsContainerPanel = Ext.create('Sbi.data.editor.association.AssociationEditorDatasetContainer',{usedDatasets: this.usedDatasets});
 	}
 	
-	, initRelationshipPanel: function(config) {
-		this.relContainerPanel = Ext.create('Sbi.data.editor.relationship.RelationshipEditorList',{height:200, associationsList: this.associationsList});
-		this.relContainerPanel.addListener('addRelation', this.addRelation, this);
-		this.relContainerPanel.addListener('modifyRelation', this.modifyRelation, this);
-		this.relContainerPanel.addListener('removeRelation', this.removeRelation, this);
-		this.relContainerPanel.addListener('selectRelation', this.selectRelation, this);
-		this.relContainerPanel.addListener('updateIdentifier', this.updateIdentifier, this);
+	, initAssociationPanel: function(config) {
+		this.assContainerPanel = Ext.create('Sbi.data.editor.association.AssociationEditorList',{height:200, associationsList: this.associationsList});
+		this.assContainerPanel.addListener('addAssociation', this.addAssociation, this);
+		this.assContainerPanel.addListener('modifyAssociation', this.modifyAssociation, this);
+		this.assContainerPanel.addListener('removeAssociation', this.removeAssociation, this);
+		this.assContainerPanel.addListener('selectAssociation', this.selectAssociation, this);
+		this.assContainerPanel.addListener('updateIdentifier', this.updateIdentifier, this);
 	}
 	
 	// -----------------------------------------------------------------------------------------------------------------
@@ -100,63 +100,63 @@ Ext.define('Sbi.data.editor.relationship.RelationshipEditor', {
 
 	/**
 	 * @method (fired)
-	 * Adds a new relation with active selections to the relationsList and to the associations grid
+	 * Adds a new Association with active selections to the associationsList and to the associations grid
 	 * 
 	 * @param {String} n The identifier (setted for update context)
 	 */
-	, addRelation: function(n){		
+	, addAssociation: function(n){		
 		var toReturn = true;
 		
 		var allDs = this.dsContainerPanel.getAllDatasets();
-		var relToAdd = new Array();
-		relToAdd.id = this.getRelationId(n);
+		var assToAdd = new Array();
+		assToAdd.id = this.getAssociationId(n);
 		for (var i=0; i< allDs.length; i++){			
 			var ds = allDs.get(i);
 			var f = this.dsContainerPanel.getSelection(ds.dataset);
 			if (f !== null){
 				f.ds = ds.dataset;	
-				relToAdd.push(f);
+				assToAdd.push(f);
 			}
 		}
 		
-		toReturn = this.addRelationToList(relToAdd);
+		toReturn = this.addAssociationToList(assToAdd);
 		
 		return toReturn;
 	}
 	
 	/**
 	 * @method (fired)
-	 * Remove the relation from the relationsList
+	 * Remove the Association from the AssociationsList
 	 * 
-	 * @param {String} r The relation content to remove
+	 * @param {String} r The Association content to remove
 	 */
-	, removeRelation: function(r){
-		for (var i=0; i<this.relationsList.length; i++){
-			var obj = this.relationsList[i];
-			if (obj && obj.rel == r){
-				this.relationsList.splice(i,1);
+	, removeAssociation: function(r){
+		for (var i=0; i<this.associationsList.length; i++){
+			var obj = this.associationsList[i];
+			if (obj && obj.ass == r){
+				this.associationsList.splice(i,1);
 				break;
 			}
 		}
-		Sbi.trace("[RelationshipEditor.removeRelation]: Removed association ['"+ r +"']");
-		Sbi.trace("[RelationshipEditor.removeRelation]: Associations List upgraded is  [ " +  Sbi.toSource(this.relationsList) + ']');
+		Sbi.trace("[AssociationEditor.removeAssociation]: Removed association ['"+ r +"']");
+		Sbi.trace("[AssociationEditor.removeAssociation]: Associations List upgraded is  [ " +  Sbi.toSource(this.associationsList) + ']');
 	}
 	
 	/**
 	 * @method (fired)
-	 * Update (with an add and remove of the element) the relation from the relationsList and grid
+	 * Update (with an add and remove of the element) the Association from the AssociationsList and grid
 	 * 
 	 */
-	, modifyRelation: function(){
-		var relToModify = this.relContainerPanel.getCurrentRel();		
-		if (relToModify == null){
-	   		  alert(LN('sbi.cockpit.relationship.editor.msg.modify'));
+	, modifyAssociation: function(){
+		var assToModify = this.assContainerPanel.getCurrentAss();		
+		if (assToModify == null){
+	   		  alert(LN('sbi.cockpit.association.editor.msg.modify'));
 	   		  return;
 		}
-		var relToModifyRec = this.relContainerPanel.getRelationById(relToModify.id);
-	    if (this.addRelation(relToModify.id)){
-			this.relContainerPanel.removeRelationFromGrid(relToModifyRec);
-			this.removeRelation(relToModify.rel);	    
+		var assToModifyRec = this.assContainerPanel.getAssociationById(assToModify.id);
+	    if (this.addAssociation(assToModify.id)){
+			this.assContainerPanel.removeAssociationFromGrid(assToModifyRec);
+			this.removeAssociation(assToModify.ass);	    
 	    }
 		
 	}
@@ -165,11 +165,11 @@ Ext.define('Sbi.data.editor.relationship.RelationshipEditor', {
 	 * @method (fired)
 	 * Select the cells linked to the list grid
 	 * 
-	 * @param {String} r The relation content to use for the selection of elements
+	 * @param {String} r The Association content to use for the selection of elements
 	 */
-	, selectRelation: function(r){
+	, selectAssociation: function(r){
 		this.dsContainerPanel.resetSelections();
-		var lst = r.rel.split('=');
+		var lst = r.ass.split('=');
 		for (var i=0; i<lst.length; i++){
 			var el = lst[i].split('.');
 			this.dsContainerPanel.setSelection(el);
@@ -183,36 +183,36 @@ Ext.define('Sbi.data.editor.relationship.RelationshipEditor', {
 	 * @param {Element} e The element (cell) modified.
 	 */
 	, updateIdentifier: function(e){
-		var obj = this.getRelationById(e.originalValue);
+		var obj = this.getAssociationById(e.originalValue);
 		obj.id = e.value;
 		
 	}
 	
 	/**
 	 * @method 
-	 * Returns the relations list
+	 * Returns the Associations list
 	 * 
 	 */
-	, getRelationsList: function(){
-		return this.relationsList;
+	, getAssociationsList: function(){
+		return this.associationsList;
 	}
 
 	/**
 	 * @method 
-	 * Set the relations list
+	 * Set the Associations list
 	 * 
 	 */
-	, setRelationsList: function(r){
-		this.relationsList = r;
+	, setAssociationsList: function(r){
+		this.associationsList = r;
 	}
 	
 	/**
 	 * @method 
-	 * Reset the relations list
+	 * Reset the Associations list
 	 * 
 	 */
-	, removeAllRelations: function(){
-		this.relationsList = new Array();
+	, removeAllAssociations: function(){
+		this.associationsList = new Array();
 	}
 	
 	// -----------------------------------------------------------------------------------------------------------------
@@ -220,15 +220,15 @@ Ext.define('Sbi.data.editor.relationship.RelationshipEditor', {
 	// -----------------------------------------------------------------------------------------------------------------
 	/**
 	 * @method 
-	 * Adds a new relation to the relationsList with the selected elements.
+	 * Adds a new Association to the AssociationsList with the selected elements.
 	 * 
 	 * @param {Array} r The array of elements
 	 */
-	, addRelationToList: function(r){
+	, addAssociationToList: function(r){
 		var toReturn = true;
 		
-		if (this.relationsList == null) 
-			this.relationsList = new Array();
+		if (this.associationsList == null) 
+			this.associationsList = new Array();
 		
 		var obj = '';
 		var objType = '';
@@ -251,8 +251,8 @@ Ext.define('Sbi.data.editor.relationship.RelationshipEditor', {
 			obj += el.ds + '.' + el.alias + ((i<r.length-1)?equal:'');				
 		}
 		
-		if (this.existsRelation(obj)){
-			alert(LN('sbi.cockpit.relationship.editor.msg.duplicate'));
+		if (this.existsAssociation(obj)){
+			alert(LN('sbi.cockpit.association.editor.msg.duplicate'));
 			return false;
 		}
 
@@ -260,11 +260,11 @@ Ext.define('Sbi.data.editor.relationship.RelationshipEditor', {
 		if (wrongTypes){
 			Ext.MessageBox.confirm(
 					LN('sbi.generic.pleaseConfirm')
-					, LN('sbi.cockpit.relationship.editor.msg.differentType')
+					, LN('sbi.cockpit.association.editor.msg.differentType')
 		            , function(btn, text) {
 		                if ( btn == 'yes' ) {
-		                	this.relationsList.push({id: r.id, rel:obj});	
-		                	this.relContainerPanel.addRelationToList({id: r.id, rel:obj});
+		                	this.associationsList.push({id: r.id, ass:obj});	
+		                	this.assContainerPanel.addAssociationToList({id: r.id, ass:obj});
 		                	toReturn = true;
 		                }else
 		                	toReturn = false;
@@ -273,20 +273,20 @@ Ext.define('Sbi.data.editor.relationship.RelationshipEditor', {
 				);
 		}else{
 			if (obj !== ''){
-				this.relationsList.push({id: r.id, rel:obj});
-				this.relContainerPanel.addRelationToList({id: r.id, rel:obj});
+				this.associationsList.push({id: r.id, ass:obj});
+				this.assContainerPanel.addAssociationToList({id: r.id, ass:obj});
 				toReturn = true;
 			}else{
-				alert(LN('sbi.cockpit.relationship.editor.msg.selectFields'));
+				alert(LN('sbi.cockpit.association.editor.msg.selectFields'));
 				toReturn = false;
 			}
 		}
-		Sbi.trace("[RelationshipEditor.addRelation]: Associations List updated with  [ " +  Sbi.toSource(this.relationsList) + ']');
+		Sbi.trace("[AssociationEditor.addAssociation]: Associations List updated with  [ " +  Sbi.toSource(this.associationsList) + ']');
 		return toReturn;
 	}
 	
-	, existsRelation: function(r){
-		if (this.getRelationByRel(r)  != null)
+	, existsAssociation: function(r){
+		if (this.getAssociationByAss(r)  != null)
 			return true;				
 		else
 			return false;
@@ -294,22 +294,22 @@ Ext.define('Sbi.data.editor.relationship.RelationshipEditor', {
 	
 	/**
 	 * @method 
-	 * Returns the identifier for the relation (insert or update action)
+	 * Returns the identifier for the Association (insert or update action)
 	 * 
 	 * @param {String} n The identifier. Setted only for update action
 	 */
-	, getRelationId: function(n){
+	, getAssociationId: function(n){
 		var newId = '';
 		//parameter n is valorized only in modify context
 		if (n !== null && n !== undefined) 
 			newId += n;
 		else{
 			newId += '#';
-			if (this.relationsList != null){
+			if (this.associationsList != null){
 				//get max id already setted
 				var maxId = 0;			
-				for (var i=0; i<this.relationsList.length; i++ ){
-					var currId = this.relationsList[i].id.substring(1);
+				for (var i=0; i<this.associationsList.length; i++ ){
+					var currId = this.associationsList[i].id.substring(1);
 					if (maxId < parseInt(currId))
 						maxId = parseInt(currId);
 				}
@@ -324,15 +324,15 @@ Ext.define('Sbi.data.editor.relationship.RelationshipEditor', {
 	
 	/**
 	 * @method 
-	 * Returns the relation object getted from the relationsList throught the id. 
-	 * Format: {id:xx, rel:yy}
+	 * Returns the Association object getted from the AssociationsList throught the id. 
+	 * Format: {id:xx, ass:yy}
 	 * 
 	 * @param {String} id The identifier.
 	 */
-	, getRelationById: function(id){
-		if (this.relationsList == null) return null;
-		for (var i=0; i<this.relationsList.length; i++){
-			var obj = this.relationsList[i];
+	, getAssociationById: function(id){
+		if (this.associationsList == null) return null;
+		for (var i=0; i<this.associationsList.length; i++){
+			var obj = this.associationsList[i];
 			if (obj && obj.id == id){
 				return obj;
 				break;
@@ -343,16 +343,16 @@ Ext.define('Sbi.data.editor.relationship.RelationshipEditor', {
 	
 	/**
 	 * @method 
-	 * Returns the relation object getted from the relationsList throught the relation content. 
-	 * Format: {id:xx, rel:yy}
+	 * Returns the Association object getted from the AssociationsList throught the Association content. 
+	 * Format: {id:xx, ass:yy}
 	 * 
-	 * @param {String} rel The relation content.
+	 * @param {String} ass The Association content.
 	 */
-	, getRelationByRel: function(r){
-		if (this.relationsList == null) return null;
-		for (var i=0; i<this.relationsList.length; i++){
-			var obj = this.relationsList[i];
-			if (obj && obj.rel == r){
+	, getAssociationByAss: function(r){
+		if (this.associationsList == null) return null;
+		for (var i=0; i<this.associationsList.length; i++){
+			var obj = this.associationsList[i];
+			if (obj && obj.ass == r){
 				return obj;
 				break;
 			}

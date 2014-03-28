@@ -12,7 +12,7 @@
   * - Antonella Giachino (antonella.giachino@eng.it)
   */
 
-Ext.define('Sbi.data.editor.relationship.RelationshipEditorList', {
+Ext.define('Sbi.data.editor.association.AssociationEditorList', {
 	extend: 'Ext.Panel'
 	, layout: 'fit'
 	, config:{	
@@ -29,18 +29,18 @@ Ext.define('Sbi.data.editor.relationship.RelationshipEditorList', {
   		
 	}
 	/**
-	 * @property currentRel
-	 * The current relation selected in the list
+	 * @property currentAss
+	 * The current Association selected in the list
 	 */
-	, currentRel : null
+	, currentAss : null
 	
 	, constructor : function(config) { 	
-		Sbi.trace("[RelationshipEditorList.constructor]: IN");
+		Sbi.trace("[AssociationEditorList.constructor]: IN");
 		this.initConfig(config);
 		this.init();
 		this.callParent(config);
-		this.addEvents("addRelation","removeRelation","selectRelation","updateIdentifier");
-		Sbi.trace("[RelationshipEditorList.constructor]: OUT");
+		this.addEvents("addAssociation","removeAssociation","selectAssociation","updateIdentifier");
+		Sbi.trace("[AssociationEditorList.constructor]: OUT");
 	}
 
 	, initComponent: function() {
@@ -69,28 +69,27 @@ Ext.define('Sbi.data.editor.relationship.RelationshipEditorList', {
 	}
     
 	, initStore: function() {
-	   Sbi.trace("[RelationshipEditorDataset.initStore]: IN");
+	   Sbi.trace("[AssociationEditorDataset.initStore]: IN");
 	   var initialData = [];
 		
-	   if (this.associationsList !== null && this.associationsList.relationshipsConf !== null &&
-			   this.associationsList.relationshipsConf.relationships !== null){
-			for (rel in this.associationsList.relationshipsConf.relationships){
-				var pippo = this.associationsList.relationshipsConf.relationships[rel];
-				if (this.associationsList.relationshipsConf.relationships[rel].rel !== null &&
-						this.associationsList.relationshipsConf.relationships[rel].rel !== undefined){
-					initialData.push(this.associationsList.relationshipsConf.relationships[rel].rel);
+	   if (this.associationsList !== null ){
+			for (ass in this.associationsList){
+				var pippo = this.associationsList[ass];
+				if (this.associationsList[ass].ass !== null &&
+						this.associationsList[ass].ass !== undefined){
+					initialData.push(this.associationsList[ass].ass);
 				}
 			}
 	   }
 	   this.store = Ext.create('Ext.data.ArrayStore', {
 	        fields: [
 	           {name: 'id'},
-	           {name: 'rel'}
+	           {name: 'ass'}
 	        ],
 	        data: initialData
 	    });
 		
-		Sbi.trace("[RelationshipEditorDataset.initStore]: OUT");
+		Sbi.trace("[AssociationEditorDataset.initStore]: OUT");
 	}
 	
     , initGrid: function() {
@@ -98,29 +97,29 @@ Ext.define('Sbi.data.editor.relationship.RelationshipEditorList', {
     	var c = this.gridConfig;
     	
     	// The add action
-    	var title = new Ext.form.Label({text:LN('sbi.cockpit.relationship.editor.wizard.list.title'),  style: 'font-weight:bold;'});
+    	var title = new Ext.form.Label({text:LN('sbi.cockpit.association.editor.wizard.list.title'),  style: 'font-weight:bold;'});
         var actionAdd = new Ext.Action({
-//            text: LN('sbi.cockpit.relationship.editor.wizard.list.add'),
-            tooltip: LN('sbi.cockpit.relationship.editor.wizard.list.add.tooltip'),
+//            text: LN('sbi.cockpit.association.editor.wizard.list.add'),
+            tooltip: LN('sbi.cockpit.association.editor.wizard.list.add.tooltip'),
             iconCls:'icon-add',
             handler: function(){
-            	thisPanel.fireEvent("addRelation",null);
+            	thisPanel.fireEvent("addAssociation",null);
             }
         });
         
         var actionModify = new Ext.Action({
-//        	text: LN('sbi.cockpit.relationship.editor.wizard.list.modify'),
-            tooltip: LN('sbi.cockpit.relationship.editor.wizard.list.modify.tooltip'),
+//        	text: LN('sbi.cockpit.association.editor.wizard.list.modify'),
+            tooltip: LN('sbi.cockpit.association.editor.wizard.list.modify.tooltip'),
             iconCls:'icon-edit',
             scope: this,
             handler: function(){
-            	thisPanel.fireEvent("modifyRelation", thisPanel);
+            	thisPanel.fireEvent("modifyAssociation", thisPanel);
             }
         });
         
         var actionAutoDetect = new Ext.Action({
-        	text: LN('sbi.cockpit.relationship.editor.wizard.list.autodetect'),
-            tooltip: LN('sbi.cockpit.relationship.editor.wizard.list.autodetect.tooltip'),
+        	text: LN('sbi.cockpit.association.editor.wizard.list.autodetect'),
+            tooltip: LN('sbi.cockpit.association.editor.wizard.list.autodetect.tooltip'),
             handler: function(){
             	alert('Functionality not available!');
 //            	thisPanel.fireEvent("autodetect", thisPanel);
@@ -137,7 +136,7 @@ Ext.define('Sbi.data.editor.relationship.RelationshipEditorList', {
 	        store: this.store,
 	        tbar: new Ext.Toolbar({items:[title, '->', actionAdd, actionModify, actionAutoDetect]}),
 	        columns: [
-	            { header: LN('sbi.cockpit.relationship.editor.wizard.list.columnId')
+	            { header: LN('sbi.cockpit.association.editor.wizard.list.columnId')
             	, width: 10
             	, sortable: true
             	, dataIndex: 'id'
@@ -146,17 +145,17 @@ Ext.define('Sbi.data.editor.relationship.RelationshipEditorList', {
                   }
             	, flex: 1
             	}, {
-        		  header: LN('sbi.cockpit.relationship.editor.wizard.list.columnAssociation')
+        		  header: LN('sbi.cockpit.association.editor.wizard.list.columnAssociation')
             	, width: 700
             	, sortable: true
-            	, dataIndex: 'rel'
+            	, dataIndex: 'ass'
             	},{
                     xtype: 'actioncolumn',
                     width: 50,
                     items: [{
                         iconCls:'icon-delete',
-                        tooltip: LN('sbi.cockpit.relationship.editor.wizard.list.delete.tooltip'),
-                        handler: this.deleteRelation ,
+                        tooltip: LN('sbi.cockpit.association.editor.wizard.list.delete.tooltip'),
+                        handler: this.deleteAssociation ,
                         scope:this
                     }
                     ]
@@ -195,41 +194,41 @@ Ext.define('Sbi.data.editor.relationship.RelationshipEditorList', {
     
     /**
 	 * @method 
-	 * Returns the current relation object
+	 * Returns the current Association object
 	 * 
 	 */
-    , getCurrentRel: function(){
-    	return this.currentRel;
+    , getCurrentAss: function(){
+    	return this.currentAss;
     }
     
     /**
 	 * @method 
-	 * Add the relation to the grid's store 
+	 * Add the Association to the grid's store 
 	 * 
-	 * @param {Object} rel The relation 
+	 * @param {Object} Ass The Association 
 	 */
-    , addRelationToList: function(rel){
-    	this.addRelToStore(rel);
+    , addAssociationToList: function(ass){
+    	this.addAssToStore(ass);
     }
     
     /**
 	 * @method 
-	 * Remove the relation from the list and fire the event 'removeRelation' for remove it 
-	 * from the relationsList too.
+	 * Remove the Association from the list and fire the event 'removeAssociation' for remove it 
+	 * from the AssociationsList too.
 	 * 
-	 * @param {Object} r The relation 
+	 * @param {Object} r The Association 
 	 */
-    , deleteRelation: function(grid, rowIndex, colIndex) {
+    , deleteAssociation: function(grid, rowIndex, colIndex) {
     	var rec = this.store.getAt(rowIndex);  
-    	var rel = rec.get('rel') ;
+    	var ass = rec.get('ass') ;
     	Ext.MessageBox.confirm(
     			LN('sbi.generic.pleaseConfirm')
-    			, LN('sbi.cockpit.relationship.editor.msg.confirmDelete') +rel + ' ?'
+    			, LN('sbi.cockpit.association.editor.msg.confirmDelete') +ass + ' ?'
                 , function(btn, text) {
                     if ( btn == 'yes' ) {
-                    	Sbi.trace("[RelationshipEditorList.deleteRelation]: Removed association  [ " +  rel + '] from Associations List');                                                
-                    	this.removeRelationFromGrid(rec);
-                        this.fireEvent('removeRelation', rel);
+                    	Sbi.trace("[AssociationEditorList.deleteAssociation]: Removed association  [ " +  ass + '] from Associations List');                                                
+                    	this.removeAssociationFromGrid(rec);
+                        this.fireEvent('removeAssociation', ass);
                     }
     			}
     			, this
@@ -238,11 +237,11 @@ Ext.define('Sbi.data.editor.relationship.RelationshipEditorList', {
 	
     /**
 	 * @method 
-	 * Remove fisically the relation from the grid's store  
+	 * Remove fisically the Association from the grid's store  
 	 * 
 	 * @param {Object} r The record to delete 
 	 */
-    , removeRelationFromGrid: function(r){
+    , removeAssociationFromGrid: function(r){
     	 this.grid.store.remove(r);
     }
     
@@ -250,9 +249,9 @@ Ext.define('Sbi.data.editor.relationship.RelationshipEditorList', {
 	 * @method 
 	 * Returns the record of the store.
 	 * 
-	 * @param {Object} id The relation identifier
+	 * @param {Object} id The Association identifier
 	 */
-    , getRelationById: function(id){
+    , getAssociationById: function(id){
     	var recIdx = this.store.find('id', id); 
     	return this.store.getAt(recIdx);
     }
@@ -262,16 +261,16 @@ Ext.define('Sbi.data.editor.relationship.RelationshipEditorList', {
 	// -----------------------------------------------------------------------------------------------------------------	    
     /**
 	 * @method 
-	 * Add the relation (getted by the cells selected) to the grid's store 
+	 * Add the Association (getted by the cells selected) to the grid's store 
 	 * 
-	 * @param {Object} r The relation 
+	 * @param {Object} r The Association 
 	 */
-    , addRelToStore: function(r){
+    , addAssToStore: function(r){
     	if (r.id  == null || r.id == undefined)
     		r.id = '#'+ ((this.store.data.length !== undefined)?this.store.data.length:0);
     	
     	var myData = [
-		              [r.id, r.rel]
+		              [r.id, r.ass]
 		             ];
 	
 		this.store.loadData(myData, true);
@@ -279,18 +278,18 @@ Ext.define('Sbi.data.editor.relationship.RelationshipEditorList', {
     }
     /**
 	 * @method (listener)
-	 * Fire the selectRelation event to select only the cells of the relation selected in the grid
+	 * Fire the selectAssociation event to select only the cells of the Association selected in the grid
 	 * 
 	 */    
     , onCellClick: function(grid, record, item, index, e, opt){
     	var ass = {};
 //        ass.id = grid.getSelectionModel().getSelection()[0].get('id'); // Get association id
-//        ass.rel= grid.getSelectionModel().getSelection()[0].get('rel'); // Get association content      
+//        ass.ass= grid.getSelectionModel().getSelection()[0].get('ass'); // Get association content      
     	ass.id = record.get('id');
-    	ass.rel = record.get('rel');
+    	ass.ass = record.get('ass');
     		
-        this.currentRel = ass;
-        this.fireEvent('selectRelation',ass);
+        this.currentAss = ass;
+        this.fireEvent('selectAssociation',ass);
     }
 
 });

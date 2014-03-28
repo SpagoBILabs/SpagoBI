@@ -13,7 +13,7 @@
   */
 
 
-Ext.define('Sbi.data.editor.relationship.RelationshipEditorDataset', {
+Ext.define('Sbi.data.editor.association.AssociationEditorDataset', {
 	  extend: 'Ext.Panel'
 	, layout: 'fit'
 		
@@ -31,17 +31,17 @@ Ext.define('Sbi.data.editor.relationship.RelationshipEditorDataset', {
 	}
 
 	, constructor : function(config) {
-		Sbi.trace("[RelationshipEditorDataset.constructor]: IN");
+		Sbi.trace("[AssociationEditorDataset.constructor]: IN");
 		this.initConfig(config);
 		this.init();
 		this.callParent(config);
-		this.addEvents('addFieldToRelation');	
+		this.addEvents('addFieldToAssociation');	
 		
 //		this.on("afterRender", function(){
 //			this.grid.store.load();
-//			Sbi.trace("[RelationshipEditorDataset.onRender]: store loaded");
+//			Sbi.trace("[AssociationEditorDataset.onRender]: store loaded");
 //		}, this);
-		Sbi.trace("[RelationshipEditorDataset.constructor]: OUT");
+		Sbi.trace("[AssociationEditorDataset.constructor]: OUT");
 	}
 	
 	, initComponent: function() {
@@ -57,20 +57,20 @@ Ext.define('Sbi.data.editor.relationship.RelationshipEditorDataset', {
 	// =================================================================================================================
 	    
     , refreshFieldsList: function(datasetLabel) {
-    	Sbi.trace("[RelationshipEditorDataset.refreshFieldsList]: IN");
+    	Sbi.trace("[AssociationEditorDataset.refreshFieldsList]: IN");
     	
-    	Sbi.trace("[RelationshipEditorDataset.refreshFieldsList]: input parameter datasetLabel is equal to [" + datasetLabel + "]");
+    	Sbi.trace("[AssociationEditorDataset.refreshFieldsList]: input parameter datasetLabel is equal to [" + datasetLabel + "]");
     	
 		if (datasetLabel) {	
 			this.dataset = datasetLabel;
 			this.store.proxy.setUrl(Sbi.config.serviceRegistry.getRestServiceUrl({
 				serviceName : 'dataset/' + this.dataset + '/fields'
 			}), true);
-			Sbi.trace("[RelationshipEditorDataset.refreshFieldsList]: url: " + this.store.url);
+			Sbi.trace("[AssociationEditorDataset.refreshFieldsList]: url: " + this.store.url);
 		} 
 		this.store.load();
 		
-		Sbi.trace("[RelationshipEditorDataset.refreshFieldsList]: OUT");
+		Sbi.trace("[AssociationEditorDataset.refreshFieldsList]: OUT");
 	}
 
 	
@@ -89,7 +89,7 @@ Ext.define('Sbi.data.editor.relationship.RelationshipEditorDataset', {
 	}
     
 	, initStore: function() {
-		Sbi.trace("[RelationshipEditorDataset.initStore]: IN");
+		Sbi.trace("[AssociationEditorDataset.initStore]: IN");
 		var storeConfig = {
 //				   model: 'Sbi.data.DatasetsFieldsModel' //with model doesn'work !! But WHY???
 				   proxy:{
@@ -117,7 +117,7 @@ Ext.define('Sbi.data.editor.relationship.RelationshipEditorDataset', {
 		};
 		var store = Ext.create('Ext.data.Store', storeConfig);
 		return store;
-		Sbi.trace("[RelationshipEditorDataset.initStore]: OUT");
+		Sbi.trace("[AssociationEditorDataset.initStore]: OUT");
 	}
 	
     , initGrid: function() {

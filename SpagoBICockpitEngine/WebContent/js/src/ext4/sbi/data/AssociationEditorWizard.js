@@ -5,10 +5,10 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. **/
 
 
-Ext.define('Sbi.data.RelationshipEditorWizard', {
+Ext.define('Sbi.data.AssociationEditorWizard', {
 	extend: 'Ext.Window'
 	, layout:'fit'
-	, config:{title: LN('sbi.cockpit.relationship.editor.wizard.title')				   
+	, config:{title: LN('sbi.cockpit.association.editor.wizard.title')				   
 			  , width: 1000
 			  , height: 510
 			  , closable: true
@@ -20,18 +20,18 @@ Ext.define('Sbi.data.RelationshipEditorWizard', {
 	
 
 	/**
-	 * @property {Sbi.data.RelationshipEditorWizardPanel} editorMainPanel
+	 * @property {Sbi.data.AssociationEditorWizardPanel} editorMainPanel
 	 *  Container of the wizard panel
 	 */
 	, editorMainPanel: null
 
 	, constructor : function(config) {
-		Sbi.trace("[RelationshipEditorWizard.constructor]: IN");
+		Sbi.trace("[AssociationEditorWizard.constructor]: IN");
 		this.initConfig(config);
 		this.init(config);
 		this.initEvents();
 		this.callParent(arguments);
-		Sbi.trace("[RelationshipEditorWizard.constructor]: OUT");
+		Sbi.trace("[AssociationEditorWizard.constructor]: OUT");
 	}
 	
 	, initComponent: function() {
@@ -47,8 +47,8 @@ Ext.define('Sbi.data.RelationshipEditorWizard', {
     // public methods
 	// -----------------------------------------------------------------------------------------------------------------
 
-	, getRelationshipEditorPage: function() {
-		return this.editorMainPanel.getRelationshipEditorPage();
+	, getAssociationEditorPage: function() {
+		return this.editorMainPanel.getAssociationEditorPage();
 	}
 	
 
@@ -57,16 +57,16 @@ Ext.define('Sbi.data.RelationshipEditorWizard', {
 	}
 
 	, setWizardState: function(editorState) {
-		Sbi.trace("[RelationshipEditorWizard.setWizardState]: IN");
-		Sbi.trace("[RelationshipEditorWizard.setWizardState]: wizard new configuration is equal to [" + Sbi.toSource(editorState) + "]");
+		Sbi.trace("[AssociationEditorWizard.setWizardState]: IN");
+		Sbi.trace("[AssociationEditorWizard.setWizardState]: wizard new configuration is equal to [" + Sbi.toSource(editorState) + "]");
 		this.editorMainPanel.setWizardState(editorState);
-		Sbi.trace("[RelationshipEditorWizard.setWizardState]: OUT");
+		Sbi.trace("[AssociationEditorWizard.setWizardState]: OUT");
 	}
 	
 	, resetWizardState: function() {
-		Sbi.trace("[RelationshipEditorWizard.resetWizardState]: IN");
+		Sbi.trace("[AssociationEditorWizard.resetWizardState]: IN");
 		this.editorMainPanel.resetWizardState();
-		Sbi.trace("[RelationshipEditorWizard.resetWizardState]: OUT");
+		Sbi.trace("[AssociationEditorWizard.resetWizardState]: OUT");
 	}
 	
 	// -----------------------------------------------------------------------------------------------------------------
@@ -74,21 +74,21 @@ Ext.define('Sbi.data.RelationshipEditorWizard', {
 	// -----------------------------------------------------------------------------------------------------------------
 
 	, init: function(c){
-		Sbi.trace("[RelationshipEditorWizard.init]: IN");
+		Sbi.trace("[AssociationEditorWizard.init]: IN");
 		// ONLY FOR TEST
 		this.usedDatasets = [];
 		this.usedDatasets.push('Pernottamenti');
 		this.usedDatasets.push('dsTestForAdmin');
 		this.usedDatasets.push('POP_STATOCIVILE');
 		//
-		this.editorMainPanel = Ext.create('Sbi.data.RelationshipEditorWizardPanel',{
+		this.editorMainPanel = Ext.create('Sbi.data.AssociationEditorWizardPanel',{
 			usedDatasets: this.usedDatasets
-		  , associationsList: c.state	
+		  , associationsList: c.state.associationsConf.associations	
 		});
 		this.editorMainPanel.on('cancel', this.onCancel, this);
 		this.editorMainPanel.on('submit', this.onSubmit, this);
 		
-		Sbi.trace("[RelationshipEditorWizard.init]: OUT");
+		Sbi.trace("[AssociationEditorWizard.init]: OUT");
 	}
 	
 	, initEvents: function() {
@@ -96,19 +96,19 @@ Ext.define('Sbi.data.RelationshipEditorWizard', {
 			/**
 			* @event indicatorsChanged
 			* Fires when data inserted in the wizard is canceled by the user
-			* @param {RelationshipEditorWizard} this
+			* @param {AssociationEditorWizard} this
 			*/
 			'cancel'
 			/**
 			* @event apply
 			* Fires when data inserted in the wizard is applied by the user
-			* @param {RelationshipEditorWizard} this
+			* @param {AssociationEditorWizard} this
 			*/
 			, 'apply'
 			/**
 			* @event submit
 			* Fires when data inserted in the wizard is submitted by the user
-			* @param {RelationshipEditorWizard} this
+			* @param {AssociationEditorWizard} this
 			*/
 			, 'submit'
 		);

@@ -5,7 +5,7 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one ats http://mozilla.org/MPL/2.0/. **/
  
 
-Ext.define('Sbi.data.editor.relationship.RelationshipEditorDatasetContainer', {
+Ext.define('Sbi.data.editor.association.AssociationEditorDatasetContainer', {
 	extend: 'Ext.Panel'
 	, layout: 'column'
 	, config:{	
@@ -19,11 +19,11 @@ Ext.define('Sbi.data.editor.relationship.RelationshipEditorDatasetContainer', {
 	}
 
 	, constructor : function(config) { 
-		Sbi.trace("[RelationshipEditorDatasetContainer.constructor]: IN");
+		Sbi.trace("[AssociationEditorDatasetContainer.constructor]: IN");
 		this.initConfig(config);
 		this.init();
 		this.callParent(config);	
-		Sbi.trace("[RelationshipEditorDatasetContainer.constructor]: OUT");
+		Sbi.trace("[AssociationEditorDatasetContainer.constructor]: OUT");
 	}
 
 
@@ -35,7 +35,7 @@ Ext.define('Sbi.data.editor.relationship.RelationshipEditorDatasetContainer', {
 		var items = new Array();
 		
 		for (var i=0; i < this.usedDatasets.length; i++){
-				var item = new Sbi.data.editor.relationship.RelationshipEditorDataset({
+				var item = new Sbi.data.editor.association.AssociationEditorDataset({
 					border: false,
 					height : 225,
 					width : 180,

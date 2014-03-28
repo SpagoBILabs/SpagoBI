@@ -4,7 +4,7 @@
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. **/
 
-Ext.define('Sbi.data.RelationshipEditorWizardPanel', {
+Ext.define('Sbi.data.AssociationEditorWizardPanel', {
 		extend: 'Sbi.widgets.WizardPanel'
 	
 	, config:{ 
@@ -22,16 +22,16 @@ Ext.define('Sbi.data.RelationshipEditorWizardPanel', {
 	}
 
 	/**
-	 * @property {Sbi.cockpit.editor.relationship.RelationshipEditorPage} relationshipEditorPage
-	 * The page that manages relationship editing
+	 * @property {Sbi.cockpit.editor.association.AssociationshipEditorPage} associationEditorPage
+	 * The page that manages association editing
 	 */
-	, relationshipEditorPage: null
+	, associationEditorPage: null
 	
 	, constructor : function(config) {
-		Sbi.trace("[RelationshipEditorWizardPanel.constructor]: IN");
+		Sbi.trace("[AssociationEditorWizardPanel.constructor]: IN");
 		this.initConfig(config);
 		this.callParent(config);
-		Sbi.trace("[RelationshipEditorWizardPanel.constructor]: OUT");
+		Sbi.trace("[AssociationEditorWizardPanel.constructor]: OUT");
 	}
 
 	
@@ -43,8 +43,8 @@ Ext.define('Sbi.data.RelationshipEditorWizardPanel', {
     // public methods
 	// -----------------------------------------------------------------------------------------------------------------
 
-	, getRelationshipEditorPage: function() {
-		return this.relationshipEditorPage;
+	, getAssociationEditorPage: function() {
+		return this.associationEditorPage;
 	}
 	
 	// -----------------------------------------------------------------------------------------------------------------
@@ -52,22 +52,22 @@ Ext.define('Sbi.data.RelationshipEditorWizardPanel', {
 	// -----------------------------------------------------------------------------------------------------------------
 
 	, initPages: function(){
-		Sbi.trace("[RelationshipEditorWizardPanel.initPages]: IN");
+		Sbi.trace("[AssociationEditorWizardPanel.initPages]: IN");
 		
 		this.pages = new Array();
 		
-		this.initRelationshipEditorPage();
-		this.pages.push(this.relationshipEditorPage);
+		this.initAssociationEditorPage();
+		this.pages.push(this.associationEditorPage);
 
-		Sbi.trace("[RelationshipEditorWizardPanel.initPages]: relationship editor page succesfully adedd");
+		Sbi.trace("[AssociationEditorWizardPanel.initPages]: association editor page succesfully adedd");
 		
-		Sbi.trace("[RelationshipEditorWizardPanel.initPages]: OUT");
+		Sbi.trace("[AssociationEditorWizardPanel.initPages]: OUT");
 
 		return this.pages;
 	}
 		
 	, initButtons: function(){
-		Sbi.trace("[RelationshipEditorWizardPanel.initButtons]: IN");
+		Sbi.trace("[AssociationEditorWizardPanel.initButtons]: IN");
 		
 		this.buttons = new Array();
 		
@@ -90,21 +90,21 @@ Ext.define('Sbi.data.RelationshipEditorWizardPanel', {
 	        , scope: this
 	    });
 		
-		Sbi.trace("[RelationshipEditorWizardPanel.initButtons]: relationship editor buttons succesfully adedd");
+		Sbi.trace("[AssociationEditorWizardPanel.initButtons]: association editor buttons succesfully adedd");
 		
-		Sbi.trace("[RelationshipEditorWizardPanel.initButtons]: OUT");
+		Sbi.trace("[AssociationEditorWizardPanel.initButtons]: OUT");
 		
 		return this.buttons;
 	}
 	
-	, initRelationshipEditorPage: function() {
-		Sbi.trace("[RelationshipEditorWizardPanel.initRelationshipEditorPage]: IN");
-		this.relationshipEditorPage = Ext.create('Sbi.data.editor.relationship.RelationshipEditorPage',{
+	, initAssociationEditorPage: function() {
+		Sbi.trace("[AssociationEditorWizardPanel.initAssociationEditorPage]: IN");
+		this.associationEditorPage = Ext.create('Sbi.data.editor.association.AssociationEditorPage',{
 			usedDatasets: this.usedDatasets
 		  , associationsList: this.associationsList
 		});
-		Sbi.trace("[RelationshipEditorWizardPanel.initRelationshipEditorPage]: IN");
-		return this.relationshipEditorPage;
+		Sbi.trace("[AssociationEditorWizardPanel.initAssociationEditorPage]: IN");
+		return this.associationEditorPage;
 	}
 	
 

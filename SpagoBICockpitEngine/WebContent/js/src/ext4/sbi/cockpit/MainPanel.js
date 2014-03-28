@@ -66,7 +66,7 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 	 * @property {Ext.Window} widgetEditorWizard
 	 * The wizard that manages the single widget definition
 	 */
-	, relationshipEditorWizard: null
+	, associationEditorWizard: null
     
     , msgPanel: null
     
@@ -216,7 +216,7 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 		
 		analysisState.widgetsConf = this.widgetContainer.getConfiguration();
 		analysisState.storesConf = Sbi.storeManager.getConfiguration();
-		analysisState.relationshipsConf = Sbi.storeManager.getRelationshipsConfiguration();
+		analysisState.associationsConf = Sbi.storeManager.getAssociationsConfiguration();
 		
 		return analysisState;
 	}
@@ -224,7 +224,7 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 	, resetAnalysisState: function() {
 		this.widgetContainer.resetConfiguration();
 		Sbi.storeManager.resetConfiguration();
-		Sbi.storeManager.resetRelationships();
+		Sbi.storeManager.resetAssociations();
 	}
 	
 	/**
@@ -233,7 +233,7 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 	, setAnalysisState: function(analysisState) {
 		Sbi.trace("[MainPanel.setAnalysisState]: IN");
 		Sbi.storeManager.setConfiguration(analysisState.storesConf);
-		Sbi.storeManager.setRelationshipsConfiguration(analysisState.relationshipsConf);
+		Sbi.storeManager.setAssociationsConfiguration(analysisState.associationsConf);
 		this.widgetContainer.setConfiguration(analysisState.widgetsConf);
 		Sbi.trace("[MainPanel.setAnalysisState]: OUT");
 	}
@@ -333,7 +333,7 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 		this.widgetContainer.addWidget();
 	}
 	
-	, onShowRelationshipEditorWizard: function(){
+	, onShowAssociationEditorWizard: function(){
 	//**** TODO : *************
 	// quando sarà completato il porting alla 4 verificare se possibile passare solo state
 	// e ricavare da quello l'elenco dei datasets (usedDatasets).
@@ -342,35 +342,35 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 		var config = {};
 		config.usedDatasets = Sbi.storeManager.getStoreIds();
 		config.state = this.getAnalysisState();
-//		if(this.relationshipEditorWizard === null) {    		
-    		Sbi.trace("[MainPanel.showRelationshipEditorWizard]: instatiating the editor");    		
-    		this.relationshipEditorWizard = Ext.create('Sbi.data.RelationshipEditorWizard',config);
-    		this.relationshipEditorWizard.on("submit", this.onRelationshipEditorWizardSubmit, this);
-    		this.relationshipEditorWizard.on("cancel", this.onRelationshipEditorWizardCancel, this);
-//    		this.relationshipEditorWizard.on("apply", this.onRelationshipEditorWizardApply, this);    		
-	    	Sbi.trace("[MainPanel.showRelationshipEditorWizard]: editor succesfully instantiated");
+//		if(this.associationEditorWizard === null) {    		
+    		Sbi.trace("[MainPanel.showAssociationEditorWizard]: instatiating the editor");    		
+    		this.associationEditorWizard = Ext.create('Sbi.data.AssociationEditorWizard',config);
+    		this.associationEditorWizard.on("submit", this.onAssociationEditorWizardSubmit, this);
+    		this.associationEditorWizard.on("cancel", this.onAssociationEditorWizardCancel, this);
+//    		this.associationEditorWizard.on("apply", this.onAssociationEditorWizardApply, this);    		
+	    	Sbi.trace("[MainPanel.showAssociationEditorWizard]: editor succesfully instantiated");
 //    	}
 				
-		this.relationshipEditorWizard.show();
+		this.associationEditorWizard.show();
 	}
 	
-	, onRelationshipEditorWizardCancel: function(wizard) {
-		Sbi.trace("[MainPanel.onRelationshipEditorWizardCancel]: IN");
-//		this.relationshipEditorWizard.hide();
-		this.relationshipEditorWizard.close();
-		Sbi.trace("[MainPanel.onRelationshipEditorWizardCancel]: OUT");
+	, onAssociationEditorWizardCancel: function(wizard) {
+		Sbi.trace("[MainPanel.onAssociationEditorWizardCancel]: IN");
+//		this.associationEditorWizard.hide();
+		this.associationEditorWizard.close();
+		Sbi.trace("[MainPanel.onAssociationEditorWizardCancel]: OUT");
 	}
 	
-	, onRelationshipEditorWizardSubmit: function(wizard) {
-		Sbi.trace("[MainPanel.onRelationshipEditorWizardSubmit]: IN");
+	, onAssociationEditorWizardSubmit: function(wizard) {
+		Sbi.trace("[MainPanel.onAssociationEditorWizardSubmit]: IN");
 		var wizardState = wizard.getWizardState();
 		if (wizardState.associationsList != null && wizardState.associationsList !== undefined){
-			Sbi.storeManager.resetRelationships(); //reset old associations
-			Sbi.storeManager.setRelationships(wizardState.associationsList);
-			Sbi.trace("[MainPanel.onRelationshipEditorWizardSubmit]: setted relation group [" + Sbi.toSource(wizardState.associationsList) + "] succesfully added to store manager");
+			Sbi.storeManager.resetAssociations(); //reset old associations
+			Sbi.storeManager.setAssociations(wizardState.associationsList);
+			Sbi.trace("[MainPanel.onAssociationEditorWizardSubmit]: setted relation group [" + Sbi.toSource(wizardState.associationsList) + "] succesfully added to store manager");
 		}
-		this.relationshipEditorWizard.hide();
-		Sbi.trace("[MainPanel.onRelationshipEditorWizardSubmit]: OUT");
+		this.associationEditorWizard.hide();
+		Sbi.trace("[MainPanel.onAssociationEditorWizardSubmit]: OUT");
 	}
 	
 	, onShowSaveDocumentWindow: function() {
@@ -434,7 +434,7 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 		        '->', // same as {xtype: 'tbfill'}, // Ext.Toolbar.Fill
 		        {
 		        	text: LN('sbi.cockpit.mainpanel.btn.associations')
-		        	, handler: this.onShowRelationshipEditorWizard
+		        	, handler: this.onShowAssociationEditorWizard
 		        	, scope: this
 		        },{
 		        	text: LN('sbi.cockpit.mainpanel.btn.addWidget')
