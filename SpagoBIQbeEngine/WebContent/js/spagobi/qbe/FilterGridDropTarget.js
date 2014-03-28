@@ -315,6 +315,8 @@ Ext.extend(Sbi.qbe.FilterGridDropTarget, Ext.dd.DropTarget, {
 				
 				this.targetPanel.insertFilter(filter, rowIndex);
 
+		} else if(nodeType == Sbi.constants.qbe.NODE_TYPE_RELATION){
+			//no action requeired for relation
 		} else {
 			Ext.Msg.show({
 				   title:'Drop target not allowed',

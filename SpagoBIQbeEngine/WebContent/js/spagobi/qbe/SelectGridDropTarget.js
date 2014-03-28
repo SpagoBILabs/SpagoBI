@@ -118,7 +118,9 @@ Ext.extend(Sbi.qbe.SelectGridDropTarget, Ext.dd.DropTarget, {
 	    	this.addInLineCalculatedNodeToSelect(node, rowIndex, recordBaseConfig);
 	    } else if(nodeType == Sbi.constants.qbe.NODE_TYPE_ENTITY){
 			this.addEntityNodeToSelect(node, rowIndex, recordBaseConfig);	
-		} else {
+		} else if(nodeType == Sbi.constants.qbe.NODE_TYPE_RELATION){
+			//no action requeired for relation
+		}   else {
 	       	Ext.Msg.show({
 			   title:'Drop target not allowed',
 			   msg: 'Node of type [' + nodeType + '] cannot be dropped here',

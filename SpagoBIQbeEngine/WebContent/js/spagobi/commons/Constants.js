@@ -28,6 +28,7 @@ Sbi.constants.qbe = {
 	// tree field types (twins java constants are defined in class ExtJsQbeTreeBuilder)
 	, NODE_TYPE_ENTITY: 'entity'
 	, NODE_TYPE_SIMPLE_FIELD: 'field'
+	, NODE_TYPE_RELATION: 'relation'
 	, NODE_TYPE_CALCULATED_FIELD: 'calculatedField'
 	, NODE_TYPE_INLINE_CALCULATED_FIELD: 'inLineCalculatedField'	
 		
