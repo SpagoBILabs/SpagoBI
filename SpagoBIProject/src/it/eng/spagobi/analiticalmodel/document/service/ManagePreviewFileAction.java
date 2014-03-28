@@ -39,8 +39,6 @@ public class ManagePreviewFileAction extends AbstractSpagoBIAction {
 
 	private static final String OPERATION = "operation";
 	
-	private static final String DIRECTORY = "preview" + File.separatorChar + "images";
-
 	private static final List<String> VALID_FILE_EXTENSIONS = Arrays.asList("BMP", "JPG", "JPEG", "PNG", "GIF");
 
 	public String getActionName() { return SERVICE_NAME; }
@@ -99,8 +97,7 @@ public class ManagePreviewFileAction extends AbstractSpagoBIAction {
 	
 	// checks for path traversal attacks
 	private void checkRequiredFile(String fileName) {
-		String folderPath = getStorageDirectoryPath();
-		File targetDirectory = FileUtils.checkAndCreateDir(folderPath);
+		File targetDirectory = GeneralUtilities.getPreviewFilesStorageDirectoryPath();
 		FileUtils.checkPathTraversalAttack(fileName, targetDirectory);
 	}
 
@@ -118,9 +115,7 @@ public class ManagePreviewFileAction extends AbstractSpagoBIAction {
 		int maxSize = Integer.parseInt( SingletonConfig.getInstance().getConfigValue("SPAGOBI.DOCUMENTS.MAX_PREVIEW_IMAGE_SIZE") );
 		FileUtils.checkUploadedFile(uploaded, maxSize, VALID_FILE_EXTENSIONS);
 		
-		String folderPath = getStorageDirectoryPath();
-		
-		File targetDirectory = FileUtils.checkAndCreateDir(folderPath);
+		File targetDirectory = GeneralUtilities.getPreviewFilesStorageDirectoryPath();
 		
 		// check if number of existing images is the max allowed
 		int maxFilesAllowed = Integer.parseInt( SingletonConfig.getInstance().getConfigValue("SPAGOBI.DOCUMENTS.MAX_PREVIEW_IMAGES_NUM") );
@@ -143,24 +138,10 @@ public class ManagePreviewFileAction extends AbstractSpagoBIAction {
 		
 	}
 
-
-	private String getStorageDirectoryPath() {
-		String path = SingletonConfig.getInstance().getConfigValue("SPAGOBI.RESOURCE_PATH_JNDI_NAME");
-		String resourcePath = SpagoBIUtilities.readJndiResource(path);
-		if (resourcePath.endsWith("/") || resourcePath.endsWith("\\")) {
-			resourcePath += DIRECTORY;
-		} else {
-			resourcePath += File.separatorChar + DIRECTORY;
-		}
-		return resourcePath;
-	}
-
-
 	private File getFile(String fileName) {
 		File toReturn = null;		
 		try {
-			String folderPath = getStorageDirectoryPath();
-			File targetDirectory = FileUtils.checkAndCreateDir(folderPath);
+			File targetDirectory = GeneralUtilities.getPreviewFilesStorageDirectoryPath();
 			// checks for path traversal attack
 			checkRequiredFile(fileName);
 			toReturn = new File(targetDirectory, fileName);
