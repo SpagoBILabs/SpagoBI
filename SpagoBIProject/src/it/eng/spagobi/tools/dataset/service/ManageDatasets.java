@@ -8,6 +8,7 @@ package it.eng.spagobi.tools.dataset.service;
 import it.eng.qbe.dataset.QbeDataSet;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
+import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.SingletonConfig;
@@ -1507,8 +1508,19 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 	}
 
 	private String filterList(JSONObject filtersJSON) throws JSONException {
-		logger.debug("IN");				
-		String hsql= " from SbiDataSet h where h.active = true and h.owner = '" + profile.getUserUniqueIdentifier().toString() + "'";
+		logger.debug("IN");	
+		boolean isAdmin = false;
+		try {
+			//Check if user is an admin
+			isAdmin = profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN);
+		} catch (EMFInternalError e) {
+			logger.error("Error while filtering datasets");
+		}
+		String hsql= " from SbiDataSet h where h.active = true "; 
+		//Ad Admin can see other users' datasets
+		if (!isAdmin){
+			hsql = hsql + " and h.owner = '" + profile.getUserUniqueIdentifier().toString() + "'";
+		}
 		if (filtersJSON != null) {
 			String valuefilter = (String) filtersJSON.get(SpagoBIConstants.VALUE_FILTER);
 			String typeFilter = (String) filtersJSON.get(SpagoBIConstants.TYPE_FILTER);
