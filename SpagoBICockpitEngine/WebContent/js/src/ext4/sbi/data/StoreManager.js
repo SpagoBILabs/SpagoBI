@@ -51,9 +51,9 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 	
 	/**
      * @property {Ext.util.MixedCollection()} stores
-     * The list of registered relationships between datasets managed by this manager
+     * The list of registered associations between datasets managed by this manager
      */
-	, relationships: null
+	, associations: null
    
 	// =================================================================================================================
 	// METHODS
@@ -86,7 +86,7 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 
 	/**
 	 * @method
-	 * Gets the relationships configuration object. This object can be passed to #setConfiguration method
+	 * Gets the associations configuration object. This object can be passed to #setConfiguration method
 	 * at any time to roll back to the current configuration. It can also be passed to the constructor 
 	 * of this class to create a clone of this instance of store manager.
 	 * 
@@ -97,11 +97,11 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 	 * 
 	 * @return {Object} The configuration object
 	 */
-	, getRelationshipsConfiguration: function() {
-		Sbi.trace("[StoreManager.getRelationshipsConfiguration]: IN");
+	, getAssociationsConfiguration: function() {
+		Sbi.trace("[StoreManager.getAssociationsConfiguration]: IN");
 		var config = {};
-		config.relationships = this.getRelationshipsConfigurations();
-		Sbi.trace("[StoreManager.getRelationshipsConfiguration]: IN");
+		config.associations = this.getAssociationsConfigurations();
+		Sbi.trace("[StoreManager.getAssociationsConfiguration]: IN");
 		return config;
 	}
 
@@ -379,33 +379,33 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 	}
 	
 	//**********************************************************************************
-	//Relationships methods
+	//associations methods
 	//**********************************************************************************
-	, setRelationships: function(rels){		
-		if (this.relationships  == null) this.relationships = {};
+	, setAssociations: function(assList){		
+		if (this.associations  == null) this.associations = {};
 		
-		for (var i=0; i<rels.length; i++){
-			var rel = {};
+		for (var i=0; i<assList.length; i++){
+			var ass = {};
 			var config = {};
-			rel = rels[i];
-//			var stores = this.getRelationshipStores(rel);
-			var fields = this.getRelationshipFields(rel);
-			config.rel = rel.rel;
+			ass = assList[i];
+//			var stores = this.getAssociationstores(ass);
+			var fields = this.getAssociationFields(ass);
+			config.ass = ass.ass;
 //			config.stores = stores;
 			config.fields = fields;
 			
-			if (rel.id){
-				this.relationships[rel.id] = config;				
+			if (ass.id){
+				this.associations[ass.id] = config;				
 			}			
 		}
 		
-		Sbi.trace("[StoreManager.setRelationships]: relationships object: " +  Sbi.toSource(this.relationships));
+		Sbi.trace("[StoreManager.setAssociations]: Associations object: " +  Sbi.toSource(this.associations));
 
 	}
 	
-//	, getRelationshipStores: function(r){
+//	, getAssociationStores: function(r){
 //		var stores = [];
-//		var lst = r.rel.split('=');
+//		var lst = r.ass.split('=');
 //		for (var i=0; i<lst.length; i++){
 //			var el = lst[i].split('.');
 //			stores.push(el[0]);
@@ -413,10 +413,10 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 //		return stores;
 //	}
 //	
-	, getRelationshipFields: function(r){
+	, getAssociationFields: function(a){
 //		var fields = {};
 		var fields = [];
-		var lst = r.rel.split('=');
+		var lst = a.ass.split('=');
 		for (var i=0; i<lst.length; i++){
 			for (var i=0; i<lst.length; i++){
 				var el = lst[i].split('.');
@@ -431,21 +431,21 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 		return fields;
 	}
 
-	, addRelationship: function(r){
-		this.relationships.push(r);
+	, addAssociation: function(r){
+		this.associations.push(r);
 	}
 	
-	, addRelationshipsStore: function(s){
-		this.relationships.stores.push(s);
+	, addAssociationsStore: function(s){
+		this.associations.stores.push(s);
 	}
 	
-	, addRelationshipsFields: function(f){
-		this.relationships.fields.push(s);		
+	, addAssociationsFields: function(f){
+		this.associations.fields.push(s);		
 	}
 	
-	, getRelationshipById: function(id){
-		for(var i=0; i<this.getRelationships().length; i++){
-			var obj = this.getRelationships()[i];
+	, getAssociationById: function(id){
+		for(var i=0; i<this.getAssociations().length; i++){
+			var obj = this.getAssociations()[i];
 			if (obj.id == id)	
 				return obj;
 		}
@@ -453,10 +453,10 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 		return null;
 	}
 	
-	, getStoresByRelationship: function(r){
-		for(var i=0; i<this.getRelationships().length; i++){
-			var obj = this.getRelationships()[i];
-			if (obj.rel == r)	
+	, getStoresByAssociation: function(a){
+		for(var i=0; i<this.getAssociations().length; i++){
+			var obj = this.getAssociations()[i];
+			if (obj.ass == a)	
 				return obj.stores;
 		}
 		
@@ -464,53 +464,53 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 	}
 	
 	
-	, getRelationshipsByStore: function(s){
-		var rels = [];
+	, getAssociationsByStore: function(s){
+		var assList = [];
 		
-		for(var i=0; i<this.getRelationships().length; i++){
-			var obj = this.getRelationships()[i];
+		for(var i=0; i<this.getAssociations().length; i++){
+			var obj = this.getAssociations()[i];
 			if (obj.stores !== null && obj.stores !== undefined ){
 				for(var i=0; i<obj.stores.length; i++){
 					if (obj.stores[i] == s)
-						rels.push(obj);
+						assList.push(obj);
 				}
 			}				
 		}
 		
-		return rels;
+		return assList;
 	}
 	
-	, removeRelationshipById: function(id){
-		for(var i=0; i<this.getRelationships().length; i++){
-			var obj = this.getRelationships()[i];
+	, removeAssociationById: function(id){
+		for(var i=0; i<this.getAssociations().length; i++){
+			var obj = this.getAssociations()[i];
 			if (obj.id == id)	{
-				this.getRelationships().splice(i,1);
+				this.getAssociations().splice(i,1);
 				break;
 			}
 		}
 	}
 	
-	, resetRelationships: function(){
-		this.relationships = new Array();
+	, resetAssociations: function(){
+		this.associations = new Array();
 	}
 	
-	, getRelationships: function(){
-		return this.relationships;
+	, getAssociations: function(){
+		return this.associations;
 	}
 	
-	, getRelationshipsConfigurations: function() {
+	, getAssociationsConfigurations: function() {
 		var confs = [];
 	
-		if(Sbi.isValorized(this.getRelationships())) {
-			confs.push(this.getRelationships());
+		if(Sbi.isValorized(this.getAssociations())) {
+			confs.push(this.getAssociations());
 		}
 		
 		return confs;
 	}
 
-	, setRelationshipsConfiguration: function(conf){
-		this.relationships = [];
-		this.setRelationships(conf);
+	, setAssociationsConfiguration: function(conf){
+		this.associations = [];
+		this.setAssociations(conf);
 	}
 	
 	// -----------------------------------------------------------------------------------------------------------------

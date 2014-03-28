@@ -4,7 +4,7 @@
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. **/
 
-Ext.define('Sbi.data.editor.relationship.RelationshipEditorPage', {
+Ext.define('Sbi.data.editor.association.AssociationEditorPage', {
 	  extend: 'Ext.Panel'
 	, layout: 'fit'
 			
@@ -16,22 +16,22 @@ Ext.define('Sbi.data.editor.relationship.RelationshipEditorPage', {
 	}
 
 	/**
-	 * @property {Sbi.data.editor.relationship.RelationshipEditor} relationshipEditorPanel
+	 * @property {Sbi.data.editor.association.AssociationEditor} associationEditorPanel
 	 *  Container of the editor component
 	 */
-	 , relationshipEditorPanel: null
+	 , associationEditorPanel: null
 	
 	 , constructor : function(config) {
-		Sbi.trace("[RelationshipEditorPage.constructor]: IN");
+		Sbi.trace("[AssociationEditorPage.constructor]: IN");
 		this.initConfig(config);
 		this.init();
 		this.callParent(arguments);
-		Sbi.trace("[RelationshipEditorPage.constructor]: OUT");
+		Sbi.trace("[AssociationEditorPage.constructor]: OUT");
 	 }
 	
 	 , initComponent: function() {
 	     Ext.apply(this, {
-	         items: [this.relationshipEditorPanel]
+	         items: [this.associationEditorPanel]
 	     });
 	     this.callParent();
 	 }	   
@@ -46,57 +46,57 @@ Ext.define('Sbi.data.editor.relationship.RelationshipEditorPage', {
 	// -----------------------------------------------------------------------------------------------------------------
 	
 	, updateValues: function(values) {
-		Sbi.trace("[RelationshipEditorPage.updateValues]: IN");
+		Sbi.trace("[AssociationEditorPage.updateValues]: IN");
 		
-		Sbi.trace("[RelationshipEditorPage.updateValues]: Input parameter values is equal to [" + Sbi.toSource(values) + "]");
-		this.relationshipEditorPanel.controlPanel.updateValues(values);
-		Sbi.trace("[RelationshipEditorPage.updateValues]: OUT");
+		Sbi.trace("[AssociationEditorPage.updateValues]: Input parameter values is equal to [" + Sbi.toSource(values) + "]");
+		this.associationEditorPanel.controlPanel.updateValues(values);
+		Sbi.trace("[AssociationEditorPage.updateValues]: OUT");
 	}
 
 	, getValidationErrorMessages: function() {
-		Sbi.trace("[RelationshipEditorPage.getValidationErrorMessage]: IN");
+		Sbi.trace("[AssociationEditorPage.getValidationErrorMessage]: IN");
 		var msg = null;
 
 		// TODO check if the designer is properly defined
 		
-		Sbi.trace("[RelationshipEditorPage.getValidationErrorMessage]: OUT");
+		Sbi.trace("[AssociationEditorPage.getValidationErrorMessage]: OUT");
 		
 		return msg;
 	}
 	
 	, isValid: function() {
-		Sbi.trace("[RelationshipEditorPage.isValid]: IN");
+		Sbi.trace("[AssociationEditorPage.isValid]: IN");
 	
 		var isValid = this.getValidationErrorMessages() === null;
 		
-		Sbi.trace("[RelationshipEditorPage.isValid]: OUT");
+		Sbi.trace("[AssociationEditorPage.isValid]: OUT");
 		
 		return isValid;
 	}
 
 	, applyPageState: function(state) {
-		Sbi.trace("[RelationshipEditorPage.applyPageState]: IN");
+		Sbi.trace("[AssociationEditorPage.applyPageState]: IN");
 		state =  state || {};
-		if(this.relationshipEditorPanel) {
-			state.associationsList = this.relationshipEditorPanel.getRelationsList();
+		if(this.associationEditorPanel) {
+			state.associationsList = this.associationEditorPanel.getAssociationsList();
 		}
-		Sbi.trace("[RelationshipEditorPage.applyPageState]: OUT");
+		Sbi.trace("[AssociationEditorPage.applyPageState]: OUT");
 		return state;
 	}	
 
 	, setPageState: function(state) {
-		Sbi.trace("[RelationshipEditorPage.setPageState]: IN");
-		Sbi.trace("[RelationshipEditorPage.setPageState]: state parameter is equal to [" + Sbi.toSource(state, true) + "]");
+		Sbi.trace("[AssociationEditorPage.setPageState]: IN");
+		Sbi.trace("[AssociationEditorPage.setPageState]: state parameter is equal to [" + Sbi.toSource(state, true) + "]");
 		
-		this.relationshipEditorPanel.setRelationsList(state);
+		this.associationEditorPanel.setAssociationsList(state);
 		
-		Sbi.trace("[RelationshipEditorPage.setPageState]: OUT");
+		Sbi.trace("[AssociationEditorPage.setPageState]: OUT");
 	}
 	
 	, resetPageState: function() {
-		Sbi.trace("[RelationshipEditorPage.resetPageState]: IN");
-		this.relationshipEditorPanel.removeAllRelations();
-		Sbi.trace("[RelationshipEditorPage.resetPageState]: OUT");
+		Sbi.trace("[AssociationEditorPage.resetPageState]: IN");
+		this.associationEditorPanel.removeAllAssociations();
+		Sbi.trace("[AssociationEditorPage.resetPageState]: OUT");
 	}
 	
 	// -----------------------------------------------------------------------------------------------------------------
@@ -104,9 +104,9 @@ Ext.define('Sbi.data.editor.relationship.RelationshipEditorPage', {
 	// -----------------------------------------------------------------------------------------------------------------
 
 	, init: function(){
-		this.relationshipEditorPanel = Ext.create('Sbi.data.editor.relationship.RelationshipEditor',{usedDatasets: this.usedDatasets
+		this.associationEditorPanel = Ext.create('Sbi.data.editor.association.AssociationEditor',{usedDatasets: this.usedDatasets
 																									, associationsList: this.associationsList}); 
-		return this.relationshipEditorPanel;
+		return this.associationEditorPanel;
 	}
 
 	
