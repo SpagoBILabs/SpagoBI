@@ -11,7 +11,7 @@ Ext.define('Sbi.data.editor.association.AssociationEditor', {
 
 	, config:{	
 		  services: null		
-		, usedDatasets: null
+		, storeList: null
 		, associationsList: null
 		, contextMenu: null		
 //		, engineAlreadyInitialized : null
@@ -82,7 +82,7 @@ Ext.define('Sbi.data.editor.association.AssociationEditor', {
 	}
 	
 	, initDatasetPanel: function(config) {
-		this.dsContainerPanel = Ext.create('Sbi.data.editor.association.AssociationEditorDatasetContainer',{usedDatasets: this.usedDatasets});
+		this.dsContainerPanel = Ext.create('Sbi.data.editor.association.AssociationEditorDatasetContainer',{storeList: this.storeList});
 	}
 	
 	, initAssociationPanel: function(config) {
@@ -285,8 +285,8 @@ Ext.define('Sbi.data.editor.association.AssociationEditor', {
 		return toReturn;
 	}
 	
-	, existsAssociation: function(r){
-		if (this.getAssociationByAss(r)  != null)
+	, existsAssociation: function(a){
+		if (this.getAssociationByAss(a)  != null)
 			return true;				
 		else
 			return false;

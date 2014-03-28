@@ -73,11 +73,11 @@ Ext.define('Sbi.data.editor.association.AssociationEditorList', {
 	   var initialData = [];
 		
 	   if (this.associationsList !== null ){
-			for (ass in this.associationsList){
-				var pippo = this.associationsList[ass];
-				if (this.associationsList[ass].ass !== null &&
-						this.associationsList[ass].ass !== undefined){
-					initialData.push(this.associationsList[ass].ass);
+		   var assList = this.associationsList[0];
+		   for (ass in assList){
+				if (assList[ass].ass !== null &&
+						assList[ass].ass !== undefined){
+					initialData.push(assList[ass].ass);
 				}
 			}
 	   }
@@ -135,6 +135,7 @@ Ext.define('Sbi.data.editor.association.AssociationEditorList', {
         this.grid = Ext.create('Ext.grid.Panel', Ext.apply(c || {}, {
 	        store: this.store,
 	        tbar: new Ext.Toolbar({items:[title, '->', actionAdd, actionModify, actionAutoDetect]}),
+	        selModel: {selType: 'rowmodel', mode: 'SINGLE', allowDeselect: true},
 	        columns: [
 	            { header: LN('sbi.cockpit.association.editor.wizard.list.columnId')
             	, width: 10

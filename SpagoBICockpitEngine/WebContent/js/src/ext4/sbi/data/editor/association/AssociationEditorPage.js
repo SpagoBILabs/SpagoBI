@@ -9,7 +9,7 @@ Ext.define('Sbi.data.editor.association.AssociationEditorPage', {
 	, layout: 'fit'
 			
 	, config:{	
-		    usedDatasets: null
+			storeList: null
 		  , associationsList: null
 		  , itemId: 0
 		  , border: false
@@ -104,8 +104,8 @@ Ext.define('Sbi.data.editor.association.AssociationEditorPage', {
 	// -----------------------------------------------------------------------------------------------------------------
 
 	, init: function(){
-		this.associationEditorPanel = Ext.create('Sbi.data.editor.association.AssociationEditor',{usedDatasets: this.usedDatasets
-																									, associationsList: this.associationsList}); 
+		this.associationEditorPanel = Ext.create('Sbi.data.editor.association.AssociationEditor',{storeList: this.storeList
+																								, associationsList: this.associationsList}); 
 		return this.associationEditorPanel;
 	}
 
