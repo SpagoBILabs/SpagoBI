@@ -40,6 +40,7 @@ import it.eng.spagobi.engines.config.dao.IEngineDAO;
 import it.eng.spagobi.tenant.TenantManager;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.file.FileUtils;
@@ -62,8 +63,6 @@ import org.json.JSONObject;
 public class DetBIObjModHelper {
 	static private Logger logger = Logger.getLogger(DetBIObjModHelper.class);
 	
-	private static final String DIRECTORY = "preview" + File.separatorChar + "images";
-
 	private static final List<String> VALID_FILE_EXTENSIONS = Arrays.asList("BMP", "JPG", "JPEG", "PNG", "GIF");
 	
 	SourceBean request = null;
@@ -572,42 +571,50 @@ public class DetBIObjModHelper {
 		return toReturn;
 	}
 	
-	private String uploadFile(FileItem uploaded) throws Exception {		
+	private String uploadFile(FileItem uploaded) throws Exception {
 		
-		if (uploaded == null) {
-			throw new SpagoBIRuntimeException("No file was uploaded");
+		if (uploaded.getSize() == 0) {
+			EMFValidationError error = new EMFValidationError(EMFErrorSeverity.ERROR, "uploadFile", "201");
+			this.respCont.getErrorHandler().addError(error);
+			return null;
 		}
 		
 		logger.info("User [id : " + ((UserProfile)profile).getUserId() + ", name : " + ((UserProfile)profile).getUserName() + "] " +
 				"is uploading file [" + uploaded.getName() + "] with size [" + uploaded.getSize() + "]");
 		
 		int maxSize = Integer.parseInt( SingletonConfig.getInstance().getConfigValue("SPAGOBI.DOCUMENTS.MAX_PREVIEW_IMAGE_SIZE") );
-		FileUtils.checkUploadedFile(uploaded, maxSize, VALID_FILE_EXTENSIONS);
+		if (uploaded.getSize() > maxSize) {
+			EMFValidationError error = new EMFValidationError(EMFErrorSeverity.ERROR, "uploadFile", "202");
+			this.respCont.getErrorHandler().addError(error);
+			return null;
+		}
 		
-		String folderPath = getStorageDirectoryPath();
+		String fileExtension = FileUtils.getFileExtension( uploaded.getName() );
+		if (!VALID_FILE_EXTENSIONS.contains(fileExtension.toLowerCase()) && !VALID_FILE_EXTENSIONS.contains(fileExtension.toUpperCase())) {
+			EMFValidationError error = new EMFValidationError(EMFErrorSeverity.ERROR, "uploadFile", "203");
+			this.respCont.getErrorHandler().addError(error);
+			return null;
+		}
 		
-		File targetDirectory = FileUtils.checkAndCreateDir(folderPath);
+		File targetDirectory = GeneralUtilities.getPreviewFilesStorageDirectoryPath();
 		
 		// check if number of existing images is the max allowed
 		int maxFilesAllowed = Integer.parseInt( SingletonConfig.getInstance().getConfigValue("SPAGOBI.DOCUMENTS.MAX_PREVIEW_IMAGES_NUM") );
-		FileUtils.checkIfFilesNumberExceedsInDirectory(targetDirectory, maxFilesAllowed);
+		
+		File[] existingImages = FileUtils.getContainedFiles(targetDirectory);
+		int existingImagesNumber = existingImages.length;
+		if (existingImagesNumber >= maxFilesAllowed) {
+			EMFValidationError error = new EMFValidationError(EMFErrorSeverity.ERROR, "uploadFile", "204");
+			this.respCont.getErrorHandler().addError(error);
+			return null;
+		}
 		
 		logger.debug("Saving file...");
 		File saved = FileUtils.saveFileIntoDirectory(uploaded, targetDirectory);
 		logger.debug("File saved");
 	
 		return saved.getName();
-	}
-	
-	private String getStorageDirectoryPath() {
-		String path = SingletonConfig.getInstance().getConfigValue("SPAGOBI.RESOURCE_PATH_JNDI_NAME");
-		String resourcePath = SpagoBIUtilities.readJndiResource(path);
-		if (resourcePath.endsWith("/") || resourcePath.endsWith("\\")) {
-			resourcePath += DIRECTORY;
-		} else {
-			resourcePath += File.separatorChar + DIRECTORY;
-		}
-		return resourcePath;
+
 	}
 	
 }

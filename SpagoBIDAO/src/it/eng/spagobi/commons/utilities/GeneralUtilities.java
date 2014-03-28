@@ -26,7 +26,9 @@ import it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory;
 import it.eng.spagobi.services.common.SsoServiceInterface;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.file.FileUtils;
 
+import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -38,7 +40,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Random;
 import java.util.StringTokenizer;
 
 import org.apache.log4j.Logger;
@@ -52,6 +53,8 @@ public class GeneralUtilities extends SpagoBIUtilities{
 
 	private static transient Logger logger = Logger.getLogger(GeneralUtilities.class);
 
+	private static final String PREVIEW_FILE_STORAGE_DIRECTORY = "preview" + File.separatorChar + "images";
+	
 	public static final int MAX_DEFAULT_TEMPLATE_SIZE = 5242880;
 	public static final int MAX_DEFAULT_FILE_DATASET_SIZE = 10485760; // 10 mega byte
 	private static String SPAGOBI_HOST = null; 
@@ -858,6 +861,18 @@ public class GeneralUtilities extends SpagoBIUtilities{
 			logger.debug("Using default value that is Integer.MAX_VALUE = " + Integer.MAX_VALUE);
 		}
 		return maxResults;
+	}
+	
+	public static File getPreviewFilesStorageDirectoryPath () {
+		String path = SingletonConfig.getInstance().getConfigValue("SPAGOBI.RESOURCE_PATH_JNDI_NAME");
+		String resourcePath = SpagoBIUtilities.readJndiResource(path);
+		if (resourcePath.endsWith("/") || resourcePath.endsWith("\\")) {
+			resourcePath += PREVIEW_FILE_STORAGE_DIRECTORY;
+		} else {
+			resourcePath += File.separatorChar + PREVIEW_FILE_STORAGE_DIRECTORY;
+		}
+		File file = FileUtils.checkAndCreateDir(resourcePath);
+		return file;
 	}
 	
 }
