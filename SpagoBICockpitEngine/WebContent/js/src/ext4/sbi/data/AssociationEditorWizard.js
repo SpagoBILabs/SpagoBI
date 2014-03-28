@@ -13,9 +13,9 @@ Ext.define('Sbi.data.AssociationEditorWizard', {
 			  , height: 510
 			  , closable: true
 			  , closeAction: 'close' //'hide'
-			  , plain: true
+//			  , plain: true
 			  , modal: true	
-			  , usedDatasets: null
+			  , storeList: null
 	}
 	
 
@@ -74,15 +74,9 @@ Ext.define('Sbi.data.AssociationEditorWizard', {
 	// -----------------------------------------------------------------------------------------------------------------
 
 	, init: function(c){
-		Sbi.trace("[AssociationEditorWizard.init]: IN");
-		// ONLY FOR TEST
-		this.usedDatasets = [];
-		this.usedDatasets.push('Pernottamenti');
-		this.usedDatasets.push('dsTestForAdmin');
-		this.usedDatasets.push('POP_STATOCIVILE');
-		//
+		Sbi.trace("[AssociationEditorWizard.init]: IN");		
 		this.editorMainPanel = Ext.create('Sbi.data.AssociationEditorWizardPanel',{
-			usedDatasets: this.usedDatasets
+			storeList: this.storeList
 		  , associationsList: c.state.associationsConf.associations	
 		});
 		this.editorMainPanel.on('cancel', this.onCancel, this);

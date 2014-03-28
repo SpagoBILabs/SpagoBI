@@ -499,13 +499,9 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 	}
 	
 	, getAssociationsConfigurations: function() {
-		var confs = [];
-	
 		if(Sbi.isValorized(this.getAssociations())) {
-			confs.push(this.getAssociations());
+			return this.getAssociations();
 		}
-		
-		return confs;
 	}
 
 	, setAssociationsConfiguration: function(conf){

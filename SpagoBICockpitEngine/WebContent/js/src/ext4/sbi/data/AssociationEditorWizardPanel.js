@@ -9,13 +9,13 @@ Ext.define('Sbi.data.AssociationEditorWizardPanel', {
 	
 	, config:{ 
 		/**
-	     * @property {String[]} usedDatasets
+	     * @property {String[]} storeList
 	     * The list of the labels of used datasets. It is used only for the initialization of #datasetsBrowserPage
 	     * After the inizialization it is removed. In order to get this list after initialization
 	     * use #getDatasetBrowserPage method as shown in the following example:
 	     * <pre><code>wizardPanel.getDatasetBrowserPage().getUsedDatasets();</code></pre>
 	     */
-		usedDatasets: null
+		storeList: null
 	  , associationsList: null
 	  , frame: false
 	  , border: false
@@ -100,7 +100,7 @@ Ext.define('Sbi.data.AssociationEditorWizardPanel', {
 	, initAssociationEditorPage: function() {
 		Sbi.trace("[AssociationEditorWizardPanel.initAssociationEditorPage]: IN");
 		this.associationEditorPage = Ext.create('Sbi.data.editor.association.AssociationEditorPage',{
-			usedDatasets: this.usedDatasets
+			storeList: this.storeList
 		  , associationsList: this.associationsList
 		});
 		Sbi.trace("[AssociationEditorWizardPanel.initAssociationEditorPage]: IN");

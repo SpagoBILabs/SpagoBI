@@ -334,13 +334,8 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 	}
 	
 	, onShowAssociationEditorWizard: function(){
-	//**** TODO : *************
-	// quando sarà completato il porting alla 4 verificare se possibile passare solo state
-	// e ricavare da quello l'elenco dei datasets (usedDatasets).
-	// Quindi fare giro di ottimizzazione del codice!
-	//*************************
 		var config = {};
-		config.usedDatasets = Sbi.storeManager.getStoreIds();
+		config.storeList = Sbi.storeManager.getStoreIds();
 		config.state = this.getAnalysisState();
 //		if(this.associationEditorWizard === null) {    		
     		Sbi.trace("[MainPanel.showAssociationEditorWizard]: instatiating the editor");    		
@@ -369,7 +364,8 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 			Sbi.storeManager.setAssociations(wizardState.associationsList);
 			Sbi.trace("[MainPanel.onAssociationEditorWizardSubmit]: setted relation group [" + Sbi.toSource(wizardState.associationsList) + "] succesfully added to store manager");
 		}
-		this.associationEditorWizard.hide();
+//		this.associationEditorWizard.hide();
+		this.associationEditorWizard.close();
 		Sbi.trace("[MainPanel.onAssociationEditorWizardSubmit]: OUT");
 	}
 	

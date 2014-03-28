@@ -11,7 +11,7 @@ Ext.define('Sbi.data.editor.association.AssociationEditorDatasetContainer', {
 	, config:{	
 		  services: null			
 		, dsContainerPanel: null
-		, usedDatasets: null
+		, storeList: null
 		, engineAlreadyInitialized : false
 		, border : false
 		, autoScroll: true
@@ -34,12 +34,12 @@ Ext.define('Sbi.data.editor.association.AssociationEditorDatasetContainer', {
 	, init: function() {
 		var items = new Array();
 		
-		for (var i=0; i < this.usedDatasets.length; i++){
+		for (var i=0; i < this.storeList.length; i++){
 				var item = new Sbi.data.editor.association.AssociationEditorDataset({
 					border: false,
 					height : 225,
 					width : 180,
-					dataset: this.usedDatasets[i]
+					dataset: this.storeList[i]
 				});
 				items.push(item);
 		}
@@ -52,7 +52,8 @@ Ext.define('Sbi.data.editor.association.AssociationEditorDatasetContainer', {
 			var item = this.items.get(i);
 			var sm = item.grid.getSelectionModel();
 			if (sm != null && sm !== undefined){
-				sm.deselectAll(true);
+//				sm.deselectAll(true);
+				sm.deselectAll(false);
 			}
 		}
 	}
@@ -84,9 +85,10 @@ Ext.define('Sbi.data.editor.association.AssociationEditorDatasetContainer', {
 		
 		var ds = this.getDatasetItemByLabel(l);
 		if (ds !== null && ds.grid !== null && 
-				ds.grid.getSelectionModel().getSelections().length > 0 &&
-				ds.grid.getSelectionModel().getSelections()[0] !== undefined)
-			toReturn = ds.grid.getSelectionModel().getSelections()[0].data;
+				ds.grid.getSelectionModel().getSelection().length > 0 &&
+				ds.grid.getSelectionModel().getSelection()[0] !== undefined)
+			var pippo = ds.grid.getSelectionModel().getSelection();
+			toReturn = ds.grid.getSelectionModel().getSelection()[0].data;
 		return toReturn;
 	}
 		
@@ -97,7 +99,8 @@ Ext.define('Sbi.data.editor.association.AssociationEditorDatasetContainer', {
 		var ds = this.getDatasetItemByLabel(dsLabel);
 		if (ds !== null && ds !== undefined){
 			var recId = ds.grid.store.find('alias', dsField);
-			ds.grid.getSelectionModel().select(recId,true,true);
+//			ds.grid.getSelectionModel().select(recId,true,true);
+			ds.grid.getSelectionModel().select(recId,true,false);
 		}
 	}
 
