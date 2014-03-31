@@ -199,7 +199,7 @@ public class AuthorizationsBusinessMapper {
     }
     
     public static void main(String[] args) {
-    	System.out.println(Pattern.matches("SERVICE\\[/COMMUNITY/USER\\]", "SERVICE[/COMMUNITY/USER]"));
+    	System.out.println(Pattern.matches("SERVICE\\[/DATASETS.*\\]", "SERVICE[/DATASETS]"));
     	
     }
 }

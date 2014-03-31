@@ -11,6 +11,10 @@ import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
+
+/** 
+ * TODO : move it in it.eng.spagobi.tools.dataset and rename to DataSetProfiler (or similar)
+ */
 public class DataSetUtilities {
 
 	/**
@@ -29,6 +33,7 @@ public class DataSetUtilities {
 			return true;
 		}
 		String owner = profile.getUserUniqueIdentifier().toString();
+		
 		return (dataset.isPublic() || (!owner.equals(null) && owner.equals(dataset.getOwner()) ) );
 	} 
 	
