@@ -21,8 +21,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.spagobi.tools.dataset.cache;
 
-
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -31,38 +29,35 @@ import org.apache.log4j.Logger;
 
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.configuration.ConfigSingleton;
-import it.eng.spagobi.commons.bo.Config;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.dao.IConfigDAO;
-import it.eng.spagobi.tools.dataset.cache.CacheConfiguration;
+
 import it.eng.spagobi.tools.dataset.cache.CacheManager;
 import it.eng.spagobi.tools.dataset.cache.ICache;
 import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.SQLDBCache;
-import it.eng.spagobi.tools.datasource.bo.IDataSource;
-import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
- * @author Marco Cortella (marco.cortella@eng.it)
- *
+ * The object that manage application cache. It's implemented as a singelton. If you dont want to
+ * use a global cache use CacheFactory instead to control the instatiation of the cache.
+ * 
+ * 
+ * @authors Marco Cortella (marco.cortella@eng.it), Andrea Gioia (andrea.gioia@eng.it)
  */
 public class CacheManager {
 
-
+	/**
+	 * The global cache shared by all application's modules
+	 */
 	private static ICache cache = null;
-	private static List<Properties> dimensionTypes = null;
 	
-	public static final String CACHE_NAME_PREFIX_CONFIG = "SPAGOBI.CACHE.NAMEPREFIX";
-	public static final String CACHE_SPACE_AVAILABLE_CONFIG = "SPAGOBI.CACHE.SPACE_AVAILABLE";
-	public static final String CACHE_LIMIT_FOR_CLEAN_CONFIG = "SPAGOBI.CACHE.LIMIT_FOR_CLEAN";
+	
+	private static List<Properties> dimensionTypes = null;
+
 	
 	private static transient Logger logger = Logger.getLogger(CacheManager.class);
 	
-	
-	public ICache getCache(IDataSource dataSource, CacheConfiguration cacheConfiguration){
-		return new SQLDBCache(dataSource, cacheConfiguration);		
-	}
-	
+	/**
+	 * 
+	 * @return The application cache.
+	 */
 	public static ICache getCache(){
 		if (cache == null){
 			initializeCache();
@@ -71,14 +66,13 @@ public class CacheManager {
 	}	
 	
 	private static void initializeCache() {
-		try {
-			IDataSource dataSource = getCacheDataSource();
-			
-			if(dataSource == null) {
+		try {		
+			ICacheConfiguration cacheConfiguration = SpagoBICacheConfiguration.getInstance();
+			if(cacheConfiguration.getCacheDataSource() == null) {
 				logger.warn("Impossible to initialize cache because there are no datasource defined as defualt write datasource");
 			} else {
 				CacheFactory cacheFactory = new CacheFactory();
-				cache = cacheFactory.getCache(dataSource, getCahcheConfiguration() );
+				cache = cacheFactory.getCache(cacheConfiguration );
 				if (cache instanceof SQLDBCache){
 					((SQLDBCache)cache).setObjectsTypeDimension(getDimensionTypes());
 				}
@@ -88,75 +82,6 @@ public class CacheManager {
 		}
 	}
 	
-	
-	// DAO methods: move to conf object
-	
-	private static CacheConfiguration getCahcheConfiguration() {
-		CacheConfiguration cacheConfiguration = new CacheConfiguration();
-		cacheConfiguration.setTableNamePrefix(getTableNamePrefix());
-		cacheConfiguration.setCacheSpaceAvailable(getCacheSpaceAvailable());
-		cacheConfiguration.setCachePercentageToClean(getCachePercentageToClean());
-		return cacheConfiguration;
-	}
-	
-	private static IDataSource getCacheDataSource() {
-		try {
-			IDataSourceDAO dataSourceDAO = DAOFactory.getDataSourceDAO();
-			IDataSource dataSource = dataSourceDAO.loadDataSourceWriteDefault();
-			return dataSource;
-		} catch(Throwable t) {
-			throw new SpagoBIRuntimeException("An unexpected exception occured while loading cache datasource", t);
-		}
-	}
-	
-	private static String getTableNamePrefix() {
-		try {
-			String tableNamePrefix = getSpagoBIConfigurationProperty(CACHE_NAME_PREFIX_CONFIG);;
-			return tableNamePrefix;
-		} catch(Throwable t) {
-			throw new SpagoBIRuntimeException("An unexpected exception occured while loading cache configuration property", t);
-		}
-	}
-	
-	private static BigDecimal getCacheSpaceAvailable() {
-		try {
-			BigDecimal cacheSpaceAvailable = null;
-			String propertyValue = getSpagoBIConfigurationProperty(CACHE_SPACE_AVAILABLE_CONFIG);
-			if(propertyValue != null) {
-				cacheSpaceAvailable = BigDecimal.valueOf( Double.valueOf(propertyValue) );
-			}
-			return cacheSpaceAvailable;
-		} catch(Throwable t) {
-			throw new SpagoBIRuntimeException("An unexpected exception occured while loading cache configuration property", t);
-		}
-	}
-	
-	private static Integer getCachePercentageToClean() {
-		try {
-			Integer cachePercentageToClean = null;
-			String propertyValue = getSpagoBIConfigurationProperty(CACHE_LIMIT_FOR_CLEAN_CONFIG);
-			if(propertyValue != null) {
-				cachePercentageToClean = Integer.valueOf( propertyValue );
-			}
-			return cachePercentageToClean;
-		} catch(Throwable t) {
-			throw new SpagoBIRuntimeException("An unexpected exception occured while loading cache configuration property", t);
-		}
-	}
-	
-	private static String getSpagoBIConfigurationProperty(String propertyName) {
-		try {
-			String propertyValue = null;
-			IConfigDAO configDao = DAOFactory.getSbiConfigDAO();
-			Config cacheSpaceCleanableConfig = configDao.loadConfigParametersByLabel(propertyName);
-			if ((cacheSpaceCleanableConfig != null) && (cacheSpaceCleanableConfig.isActive())){
-				propertyValue = cacheSpaceCleanableConfig.getValueCheck();
-			}	
-			return propertyValue;
-		} catch(Throwable t) {
-			throw new SpagoBIRuntimeException("An unexpected exception occured while loading spagobi property [" + propertyName + "]", t);
-		}
-	}
 	
 	
 	

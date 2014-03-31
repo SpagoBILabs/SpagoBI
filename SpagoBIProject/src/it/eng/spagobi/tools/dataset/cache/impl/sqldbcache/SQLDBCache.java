@@ -24,10 +24,10 @@ package it.eng.spagobi.tools.dataset.cache.impl.sqldbcache;
 
 import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.cache.CacheConfiguration;
 import it.eng.spagobi.tools.dataset.cache.CacheException;
 import it.eng.spagobi.tools.dataset.cache.ICache;
 import it.eng.spagobi.tools.dataset.cache.ICacheActivity;
+import it.eng.spagobi.tools.dataset.cache.ICacheConfiguration;
 import it.eng.spagobi.tools.dataset.cache.ICacheEvent;
 import it.eng.spagobi.tools.dataset.cache.ICacheListener;
 import it.eng.spagobi.tools.dataset.cache.ICacheMetadata;
@@ -60,13 +60,13 @@ public class SQLDBCache implements ICache {
 	private ICacheMetadata cacheMetadata;
 	private IDataSource dataSource;
 	private List<Properties> objectsTypeDimension = new ArrayList<Properties>();
-	private CacheConfiguration cacheConfiguration;
+	private SQLDBCacheConfiguration cacheConfiguration;
 	
 	private String tableNamePrefix;
 	
-	public SQLDBCache(IDataSource dataSource, CacheConfiguration cacheConfiguration){
-		this.dataSource = dataSource;
-		this.cacheConfiguration = cacheConfiguration;
+	public SQLDBCache(ICacheConfiguration cacheConfiguration){
+		this.dataSource = cacheConfiguration.getCacheDataSource();
+		this.cacheConfiguration = (SQLDBCacheConfiguration)cacheConfiguration;
 
 		if (this.cacheConfiguration != null){
 			tableNamePrefix = this.cacheConfiguration.getTableNamePrefix();
@@ -318,7 +318,7 @@ public class SQLDBCache implements ICache {
 	 */
 	public ICacheMetadata getCacheMetadata() {
 		if (cacheMetadata == null){		
-			cacheMetadata = new SQLDBCacheMetadata(getDataSource(), cacheConfiguration);
+			cacheMetadata = new SQLDBCacheMetadata(cacheConfiguration);
 			if (cacheMetadata instanceof SQLDBCacheMetadata){
 				((SQLDBCacheMetadata)cacheMetadata).setObjectsTypeDimension(getObjectsTypeDimension());
 			}
