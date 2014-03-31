@@ -78,7 +78,7 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 	private Integer cachePercentageToClean;
 	private boolean isActiveCleanAction = false;
 	
-	private List<Properties> objectsTypeDimension = new ArrayList<Properties>();
+	
 	private Map<String, Integer> columnSize =  new HashMap<String, Integer>();
 	private enum FieldType {ATTRIBUTE, MEASURE}
 	
@@ -193,7 +193,8 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 
 	private BigDecimal getBytesForType(String type){
 		BigDecimal toReturn = new BigDecimal(8); //for default sets a generic Object size
-		for (int i=0, l=objectsTypeDimension.size(); i<l; i++){
+		List<Properties> objectsTypeDimension = cacheConfiguration.getObjectsTypeDimension();
+		for (int i=0, l= objectsTypeDimension.size(); i<l; i++){
 			String typeName = ((Properties)objectsTypeDimension.get(i)).getProperty("name");
 			if (type.contains(typeName)){
 				toReturn = new BigDecimal(((Properties)objectsTypeDimension.get(i)).getProperty("bytes"));
@@ -301,20 +302,5 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 	public boolean containsCacheItem(String resultSetSignature) {
 		return getCacheItem(resultSetSignature) != null;
 	}
-
-	/**
-	 * @return the objectsTypeDimension
-	 */
-	public List<Properties> getObjectsTypeDimension() {
-		return objectsTypeDimension;
-	}
-
-	/**
-	 * @param objectsTypeDimension the objectsTypeDimension to set
-	 */
-	public void setObjectsTypeDimension(List<Properties> objectsTypeDimension) {
-		this.objectsTypeDimension = objectsTypeDimension;
-	}
-
 
 }

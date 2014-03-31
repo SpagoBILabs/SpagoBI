@@ -12,7 +12,14 @@
 package it.eng.spagobi.tools.dataset.cache;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
 
+import org.apache.log4j.Logger;
+
+import it.eng.spago.base.SourceBean;
+import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spagobi.commons.bo.Config;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IConfigDAO;
@@ -31,12 +38,15 @@ public class SpagoBICacheConfiguration {
 	public static final String CACHE_SPACE_AVAILABLE_CONFIG = "SPAGOBI.CACHE.SPACE_AVAILABLE";
 	public static final String CACHE_LIMIT_FOR_CLEAN_CONFIG = "SPAGOBI.CACHE.LIMIT_FOR_CLEAN";
 	
+	private static transient Logger logger = Logger.getLogger(SpagoBICacheConfiguration.class);
+	
 	public static ICacheConfiguration getInstance() {
 		SQLDBCacheConfiguration cacheConfiguration = new SQLDBCacheConfiguration();
 		cacheConfiguration.setCacheDataSource( getCacheDataSource() );
 		cacheConfiguration.setTableNamePrefix(getTableNamePrefix());
 		cacheConfiguration.setCacheSpaceAvailable(getCacheSpaceAvailable());
 		cacheConfiguration.setCachePercentageToClean(getCachePercentageToClean());
+		cacheConfiguration.setObjectsTypeDimension(getDimensionTypes());
 		return cacheConfiguration;
 	}
 	
@@ -97,6 +107,60 @@ public class SpagoBICacheConfiguration {
 			return propertyValue;
 		} catch(Throwable t) {
 			throw new SpagoBIRuntimeException("An unexpected exception occured while loading spagobi property [" + propertyName + "]", t);
+		}
+	}
+	
+	
+	// ===============================================================================
+	// TYPE DIMENSIONS
+	// ===============================================================================
+	private static List<Properties> dimensionTypes = null;
+	
+	public static List<Properties> getDimensionTypes() {
+		
+		if(dimensionTypes == null) {
+			initCacheConfiguration();
+		}
+		
+		return dimensionTypes;
+	}
+	
+	private final static String CACHE_CONFIG_TAG = "CACHE_CONFIG";
+	private final static String DATA_TYPES_TAG = "DATA_TYPES";
+	private final static String TYPE_TAG = "TYPE";
+
+	public static void initCacheConfiguration(){
+		logger.trace("IN");
+		try{ 
+			SourceBean configSB = (SourceBean) ConfigSingleton.getInstance().getAttribute(CACHE_CONFIG_TAG);
+			if(configSB == null) {
+				throw new CacheException("Impossible to find configuartion block [" + CACHE_CONFIG_TAG + "]");
+			}
+			
+			SourceBean typesSB = (SourceBean) configSB.getAttribute(DATA_TYPES_TAG);
+			if(typesSB == null) {
+				throw new CacheException("Impossible to find configuartion block [" + CACHE_CONFIG_TAG + "." + DATA_TYPES_TAG + "]");
+			}
+			
+			List<SourceBean> typesList = (List<SourceBean>)typesSB.getAttributeAsList(TYPE_TAG);
+			if(typesSB == null) {
+				throw new CacheException("Impossible to find configuartion blocks [" + CACHE_CONFIG_TAG + "." + DATA_TYPES_TAG + "." + TYPE_TAG + "]");
+			}
+			
+			dimensionTypes = new ArrayList<Properties>();
+			for(SourceBean type : typesList) {
+				String name = (String)type.getAttribute("name");
+				String bytes = (String)type.getAttribute("bytes");			
+				
+				Properties props = new Properties();
+				if(name != null) props.setProperty("name", name);
+				if(bytes != null) props.setProperty("bytes", bytes);
+				dimensionTypes.add(props);
+			}
+		} catch(Throwable t) {
+			throw new RuntimeException("An error occured while loading geo dimension levels' properties from file engine-config.xml", t);
+		} finally {
+			logger.debug("OUT");
 		}
 	}
 	

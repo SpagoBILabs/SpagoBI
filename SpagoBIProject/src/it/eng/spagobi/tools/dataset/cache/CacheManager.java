@@ -49,7 +49,7 @@ public class CacheManager {
 	private static ICache cache = null;
 	
 	
-	private static List<Properties> dimensionTypes = null;
+	
 
 	
 	private static transient Logger logger = Logger.getLogger(CacheManager.class);
@@ -72,10 +72,7 @@ public class CacheManager {
 				logger.warn("Impossible to initialize cache because there are no datasource defined as defualt write datasource");
 			} else {
 				CacheFactory cacheFactory = new CacheFactory();
-				cache = cacheFactory.getCache(cacheConfiguration );
-				if (cache instanceof SQLDBCache){
-					((SQLDBCache)cache).setObjectsTypeDimension(getDimensionTypes());
-				}
+				cache = cacheFactory.getCache( cacheConfiguration );
 			}
 		} catch (Throwable t){
 			logger.error("An unexpected error occured while initializing cache");
@@ -92,52 +89,5 @@ public class CacheManager {
 	
 	
 	
-	public static List<Properties> getDimensionTypes() {
-		
-		if(dimensionTypes == null) {
-			initCacheConfiguration();
-		}
-		
-		return dimensionTypes;
-	}
-	
-	// -- PARSE Methods -------------------------------------------------
-	private final static String CACHE_CONFIG_TAG = "CACHE_CONFIG";
-	private final static String DATA_TYPES_TAG = "DATA_TYPES";
-	private final static String TYPE_TAG = "TYPE";
 
-	public static void initCacheConfiguration(){
-		logger.trace("IN");
-		try{ 
-			SourceBean configSB = (SourceBean) ConfigSingleton.getInstance().getAttribute(CACHE_CONFIG_TAG);
-			if(configSB == null) {
-				throw new CacheException("Impossible to find configuartion block [" + CACHE_CONFIG_TAG + "]");
-			}
-			
-			SourceBean typesSB = (SourceBean) configSB.getAttribute(DATA_TYPES_TAG);
-			if(typesSB == null) {
-				throw new CacheException("Impossible to find configuartion block [" + CACHE_CONFIG_TAG + "." + DATA_TYPES_TAG + "]");
-			}
-			
-			List<SourceBean> typesList = (List<SourceBean>)typesSB.getAttributeAsList(TYPE_TAG);
-			if(typesSB == null) {
-				throw new CacheException("Impossible to find configuartion blocks [" + CACHE_CONFIG_TAG + "." + DATA_TYPES_TAG + "." + TYPE_TAG + "]");
-			}
-			
-			dimensionTypes = new ArrayList<Properties>();
-			for(SourceBean type : typesList) {
-				String name = (String)type.getAttribute("name");
-				String bytes = (String)type.getAttribute("bytes");			
-				
-				Properties props = new Properties();
-				if(name != null) props.setProperty("name", name);
-				if(bytes != null) props.setProperty("bytes", bytes);
-				dimensionTypes.add(props);
-			}
-		} catch(Throwable t) {
-			throw new RuntimeException("An error occured while loading geo dimension levels' properties from file engine-config.xml", t);
-		} finally {
-			logger.debug("OUT");
-		}
-	}
 }
