@@ -35,7 +35,7 @@ import it.eng.spagobi.commons.bo.Config;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IConfigDAO;
 import it.eng.spagobi.tools.dataset.cache.CacheConfiguration;
-import it.eng.spagobi.tools.dataset.cache.Cache;
+import it.eng.spagobi.tools.dataset.cache.CacheManager;
 import it.eng.spagobi.tools.dataset.cache.ICache;
 import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.SQLDBCache;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
@@ -46,7 +46,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
  * @author Marco Cortella (marco.cortella@eng.it)
  *
  */
-public class Cache {
+public class CacheManager {
 
 
 	private static ICache cache = null;
@@ -56,7 +56,7 @@ public class Cache {
 	public static final String CACHE_SPACE_AVAILABLE_CONFIG = "SPAGOBI.CACHE.SPACE_AVAILABLE";
 	public static final String CACHE_LIMIT_FOR_CLEAN_CONFIG = "SPAGOBI.CACHE.LIMIT_FOR_CLEAN";
 	
-	private static transient Logger logger = Logger.getLogger(Cache.class);
+	private static transient Logger logger = Logger.getLogger(CacheManager.class);
 	
 	
 	public ICache getCache(IDataSource dataSource, CacheConfiguration cacheConfiguration){

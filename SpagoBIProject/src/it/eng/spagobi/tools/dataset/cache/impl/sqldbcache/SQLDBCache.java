@@ -139,9 +139,9 @@ public class SQLDBCache implements ICache {
 		logger.debug("IN");
 		
 		try {
-			if (getCacheMetadata().containsCacheItemByResultsetSignature(resultsetSignature)){
+			if (getCacheMetadata().containsCacheItem(resultsetSignature)){
 				logger.debug("Resultset with signature ["+resultsetSignature+"] found");
-				CacheItem cacheItem = getCacheMetadata().getCacheItemByResultsetSignature(resultsetSignature);
+				CacheItem cacheItem = getCacheMetadata().getCacheItem(resultsetSignature);
 				String tableName = cacheItem.getTable();	
 				logger.debug("The table associated to dataset ["+resultsetSignature+"] is [tableName]");
 				dataStore = dataSource.executeStatement("SELECT * FROM " + tableName, 0, 0);		
@@ -191,8 +191,8 @@ public class SQLDBCache implements ICache {
 			List<ProjectionCriteria> projections) {
 		logger.debug("IN");
 		
-		if (getCacheMetadata().containsCacheItemByResultsetSignature(resultsetSignature)){
-			String tableName = getCacheMetadata().getCacheItemByResultsetSignature(resultsetSignature).getTable();
+		if (getCacheMetadata().containsCacheItem(resultsetSignature)){
+			String tableName = getCacheMetadata().getCacheItem(resultsetSignature).getTable();
 			logger.debug("Found resultSet with signature ["+resultsetSignature+"] inside the Cache, table used ["+tableName+"]");
 			
 			SelectBuilder sqlBuilder = new SelectBuilder();
@@ -278,9 +278,9 @@ public class SQLDBCache implements ICache {
 	 * @see it.eng.spagobi.dataset.cache.ICache#delete(java.lang.String)
 	 */
 	public boolean delete(String signature) {
-		if (getCacheMetadata().containsCacheItemByResultsetSignature(signature)){
+		if (getCacheMetadata().containsCacheItem(signature)){
 			PersistedTableManager persistedTableManager = new PersistedTableManager();
-			String tableName = getCacheMetadata().getCacheItemByResultsetSignature(signature).getTable();
+			String tableName = getCacheMetadata().getCacheItem(signature).getTable();
 			persistedTableManager.dropTableIfExists(getDataSource(), tableName);
 			getCacheMetadata().removeCacheItem(tableName);
 			logger.debug("Removed table "+tableName+" from [SQLDBCache] corresponding to the result Set: "+signature);
