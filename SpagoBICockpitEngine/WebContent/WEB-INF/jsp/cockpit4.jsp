@@ -122,16 +122,137 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 		    , controllerPath: null // no cotroller just servlets   
 		};
 		
-		
-	
 		var params = {
 				SBI_EXECUTION_ID: <%= request.getParameter("SBI_EXECUTION_ID")!=null?"'" + request.getParameter("SBI_EXECUTION_ID") +"'": "null" %>
+				, user_id: "<%=userId%>"
 		};
 	
 		Sbi.config.serviceRegistry = new Sbi.service.ServiceRegistry({
 		  	baseUrl: url
 		    , baseParams: params
 		});
+		
+		
+		// test
+		Sbi.config.serviceReg = new Sbi.service.ServiceReg();
+		
+		Sbi.config.serviceReg.addServiceBaseConf('cockpitServiceConf', {
+			method: "GET"
+			
+			, baseUrlConf: {
+				protocol: '<%= request.getScheme()%>'     
+				, host: '<%= request.getServerName()%>'
+				, port: '<%= request.getServerPort()%>'
+				, contextPath: '<%= request.getContextPath().startsWith("/")||request.getContextPath().startsWith("\\")?request.getContextPath().substring(1): request.getContextPath()%>'
+			}
+			, controllerConf: {
+				controllerPath: 'api'   
+				, serviceVersion: '1.0'
+				, serviceVersionParamType: 'path' 
+			}
+		
+			, basePathParams:{}
+			, baseQueryParams: params
+			, baseFormParams: {}
+	
+			//, absolute: false
+		});
+		
+		Sbi.config.serviceReg.addServiceBaseConf('spagobiServiceConf', {
+			method: "GET"
+			
+			, baseUrlConf: {
+				protocol: '<%= request.getScheme()%>'     
+				, host: '<%= request.getServerName()%>'
+				, port: '<%= request.getServerPort()%>'
+				, contextPath: 'SpagoBI'
+			}
+			, controllerConf: {
+				controllerPath: 'restful-services'   
+				, serviceVersion: '1.0'
+				, serviceVersionParamType: 'path' 
+			}
+		
+			, basePathParams:{}
+			, baseQueryParams: params
+			, baseFormParams: {}
+	
+			//, absolute: false
+		});
+	
+		/*
+		var service = Sbi.config.serviceReg.registerService('loadDataSetField', {
+			name: 'loadDataSetField'
+			, description: 'Load all the fields of the specified dataset'
+			, resourcePath: 'dataset/{datasetLabel}/fields'
+		}, 'cockpitServiceConf');
+		*/
+		/*
+		Sbi.config.serviceReg.registerService('loadDataSetStore', {
+			name: 'loadDataSetStore'
+			, description: 'Load all the store of the specified dataset'
+			, resourcePath: 'dataset/{datasetLabel}/data'
+		}, 'cockpitServiceConf');
+		*/
+		
+		
+		Sbi.config.serviceReg.registerService('loadDataSetStore', {
+			name: 'loadDataSetStore'
+			, description: 'Load all the store of the specified dataset'
+			, resourcePath: 'datasets/{datasetLabel}/data'
+		}, 'spagobiServiceConf');
+		
+		var service = Sbi.config.serviceReg.registerService('loadDataSetField', {
+			name: 'loadDataSetField'
+			, description: 'Load all the fields of the specified dataset'
+			, resourcePath: 'datasets/{datasetLabel}/fields'
+		}, 'spagobiServiceConf');
+		
+		Sbi.config.serviceReg.registerService('loadEnterpriseDataSets', {
+			name: 'loadEnterpriseDatasets'
+			, description: 'Load all enterprise datasets'
+			, resourcePath: 'datasets/enterprise'
+		}, 'spagobiServiceConf');
+		
+		Sbi.config.serviceReg.registerService('loadOwnedDataSets', {
+			name: 'loadOwnedDataSets'
+			, description: 'Load all datasets owned by the user'
+			, resourcePath: 'datasets/owned'
+		}, 'spagobiServiceConf');
+		
+		Sbi.config.serviceReg.registerService('loadSharedDataSets', {
+			name: 'loadSharedDataSets'
+			, description: 'Load all datasets shared by other users (eneterprise and owned datsets are not included)'
+			, resourcePath: 'datasets/shared'
+		}, 'spagobiServiceConf');
+		
+		Sbi.config.serviceReg.registerService('loadMyDataDataSets', {
+			name: 'loadMyDataDataSets'
+			, description: 'Load all datasets visible to the user in MyData panel (i.e. owned + shared + enterprise)'
+			, resourcePath: 'datasets/mydata'
+		}, 'spagobiServiceConf');
+		
+		
+		
+		/*
+		var testUrl = service.getServiceUrl({pathParams: {datasetLabel: 'ds__405004519'}, queryParams: {frutto: "mela"}});
+		alert(testUrl);
+		service.on('request', function(service, response, options){alert('Called service [' + service.name + ']');}, this);
+		service.doRequest({pathParams: {datasetLabel: 'ds__405004519'}, queryParams: {frutto: "mela"}});
+		Sbi.config.serviceReg.callService('loadDataSetField', {
+			pathParams: {datasetLabel: 'ds__405004519'}
+			, queryParams: {frutto: "mela"}
+			, success: function(response) {alert(response.responseText);}
+			, failure: function(response) {alert(response.responseText);}
+			, scope: this
+		});
+		*/
+		
+		// test
+		
+		
+		
+		
 		
 		Sbi.storeManager = new Sbi.data.StoreManager();
 
