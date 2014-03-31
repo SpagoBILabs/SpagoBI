@@ -35,18 +35,6 @@
 		<mkdir dir="${build}/${webapp_name}/WEB-INF/classes" />
 	</target>
 
-	<!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-	<!--   SCARICO DEI SORGENTI AGGIORNATI DA CVS							                        -->
-	<!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-	<target name="svn.checkout" depends="init" description="Sincronizza l'applicazione con il repository">
-		<exec dir="${project.dir}" executable="svn">
-			<arg line="checkout ${svn.base.location}/${project.name} ." />
-		</exec>
-		<exec dir="${project.dir}" executable="svn" output="${web.dir}/svn.properties">
-			<arg value="info" />
-		</exec>
-
-	</target>
 
 	<!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 	<!--   AGGIORNAMENTO JAR SBI.UTILS							                                  -->

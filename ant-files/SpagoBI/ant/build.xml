@@ -6,13 +6,6 @@
 	<!--   PATH PER ANT-SVN					                                                    -->
 	<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
 
-	<path id="svnant.classpath">
-		<fileset dir="antsvn-lib">
-			<include name="**/*.jar"/>
-		</fileset>
-	</path>
-	<taskdef name="svn" classname="org.tigris.subversion.svnant.SvnTask" classpathref="svnant.classpath"/>
-
 
 	<path id="catalina.ant.classpath">
 		<fileset dir="catalina-ant">

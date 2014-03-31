@@ -45,26 +45,7 @@
     <mkdir dir="${build}"/>
   </target>
 
-  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-  <!--   SCARICO DEI SORGENTI AGGIORNATI DA CVS							                        -->
-  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-  <target name="svn.checkout" depends="init"
-      description="Sincronizza l'applicazione con il repository">
-    <!--
-    <svn>
-      <checkout url="${svn.base.location}/${project.name}" destPath="../" />
-    </svn>
-    -->
-    <exec dir="${project.dir}" executable="svn" >
-      <arg line="checkout ${svn.base.location}/${project.name} ."/>
-    </exec>
 
-   <exec dir="${project.dir}" executable="svn" output="${src}/svn.properties">
-    <arg value="info" />
-   </exec>
-   	<property prefix="svn" file="${src}/svn.properties"/>
-	 
-  </target>
 	  <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
 	  <!--   AGGIORNAMENTO DELLA VERSIONE NEL MANIFEST                                                                -->
 	  <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ --> 
