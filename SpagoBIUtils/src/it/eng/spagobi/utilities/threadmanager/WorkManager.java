@@ -120,23 +120,6 @@ public class WorkManager {
 	}
 
 
-	/** No more used, now set in singleton
-	 * 
-	 * @param session
-	 * @param job
-	 * @param listener
-	 * @param name
-	 */
-
-//	public void setInSession(HttpSession session, Work job, WorkListener listener, String name){
-//		String id="SBI_PROCESS_"+name;
-//		FooRemoteWorkItem fooRemoteWorkItem=new FooRemoteWorkItem(job, listener, wm);
-//		session.setAttribute(id, fooRemoteWorkItem);
-//	}
-
-
-
-
 	/**
 	 * Inits the.
 	 * 
