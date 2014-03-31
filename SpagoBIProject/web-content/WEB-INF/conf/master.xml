@@ -228,6 +228,7 @@
 	
 	<!--  Spago Config.    -->
 	<CONFIGURATOR path="/WEB-INF/conf/config/common.xml" />
+	<CONFIGURATOR path="/WEB-INF/conf/config/cache.xml" />
 	<CONFIGURATOR path="/WEB-INF/conf/config/data_access.xml" />    
 	<CONFIGURATOR path="/WEB-INF/conf/config/dispatchers.xml" />
 	<CONFIGURATOR path="/WEB-INF/conf/config/initializers.xml" />
