@@ -13,6 +13,8 @@ import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.utilities.AuditLogUtilities;
 import it.eng.spagobi.commons.utilities.ChannelUtilities;
 import it.eng.spagobi.services.exceptions.ExceptionUtilities;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 import java.net.URI;
 import java.util.HashMap;
@@ -30,6 +32,9 @@ import org.jboss.resteasy.mock.MockDispatcherFactory;
 import org.jboss.resteasy.spi.HttpRequest;
 import org.jboss.resteasy.spi.HttpResponse;
 import org.jboss.resteasy.spi.LoggableFailure;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * 
@@ -40,9 +45,12 @@ import org.jboss.resteasy.spi.LoggableFailure;
  */
 
 @Provider
-public class RestExceptionMapper implements ExceptionMapper<Throwable>
-{
-
+public class RestExceptionMapper implements ExceptionMapper<Throwable> {
+	private static final String LOCALIZED_MESSAGE = "localizedMessage";
+	private static final String ERROR_MESSAGE = "message";
+	private static final String ERROR_SERVICE = "service";
+	private static final String ERROR_MESSAGES = "errors";
+	
 	static private Logger logger = Logger.getLogger(RestExceptionMapper.class);
 	
 	@Context
@@ -55,19 +63,19 @@ public class RestExceptionMapper implements ExceptionMapper<Throwable>
 	private HttpServletResponse servletResponse;
 	
 	
-	public Response toResponse(Throwable e) {
+	public Response toResponse(Throwable t) {
 		
 		Response response =  null;
 			
 		logger.trace("IN");
 		
-		if(e instanceof LoggableFailure){
+		if(t instanceof LoggableFailure){
 			//missing authentication --> go to login page
 			logger.debug("Missing authentication");
 		    String url = createUrl(request, servletRequest);
 		    return Response.status(302).location(URI.create(url)).build();
 		} else {
-			response = toResponseFromGenericException(e);
+			response = toResponseFromGenericException(t);
 		}
 		
 		logger.trace("OUT");
@@ -75,14 +83,59 @@ public class RestExceptionMapper implements ExceptionMapper<Throwable>
 		return response;
 	}
 	
-	private Response toResponseFromGenericException(Throwable e) {
-		String exceptionMessage = "Service Exception";
-		exceptionMessage = ExceptionUtilities.serializeException(e.getMessage(),null);
-		updateAudit(exceptionMessage);
-		logger.error("Application Error", e);
-		Response response =  Response.status(500).entity(exceptionMessage).build();
+	private Response toResponseFromGenericException(Throwable t) {
+		JSONObject serializedMessages = serializeException(t);
+		updateAudit(serializedMessages.toString());
+		logger.error("Catched service error: ", t);
+		Response response =  Response.status(200).entity(serializedMessages.toString()).build();
 		return response;
 	}
+	
+	private JSONObject serializeException(Throwable t) {
+		// TODO manage localized messages ASAP
+		String localizedMessage = t.getLocalizedMessage();
+		
+		String errorMessage = t.getMessage();
+		String errorService = "";
+
+		if(t instanceof SpagoBIServiceException){
+			SpagoBIServiceException exception = (SpagoBIServiceException)t;
+			errorService = exception.getServiceName();
+			
+			String rootCause = exception.getRootException().getMessage();
+			if(rootCause == null) rootCause = "An unexpected [" + exception.getRootException().getClass().getName() + "] exception has been trown during service execution";
+			errorMessage = rootCause;
+			
+			String rootCauseLoaclized = exception.getRootException().getLocalizedMessage();
+			if(rootCause != null) localizedMessage = rootCauseLoaclized;
+		}
+
+		JSONObject error = new JSONObject();
+		JSONObject serializedMessages = new JSONObject();
+		JSONArray errors = new JSONArray();
+
+		try {
+			error.put(ERROR_MESSAGE, errorMessage);
+			errors.put(error);
+			if(errorService != null) {
+				serializedMessages.put(ERROR_SERVICE, errorService);
+			}
+			serializedMessages.put(ERROR_MESSAGES, errors);
+		} catch (JSONException e1) {
+			logger.debug("Error serializing the exception ",e1);
+		}
+		
+		return serializedMessages;
+	}
+	
+//	private Response toResponseFromGenericException(Throwable e) {
+//		String exceptionMessage = "Service Exception";
+//		exceptionMessage = ExceptionUtilities.serializeException(e.getMessage(),null);
+//		updateAudit(exceptionMessage);
+//		logger.error("Application Error", e);
+//		Response response =  Response.status(500).entity(exceptionMessage).build();
+//		return response;
+//	}
 	
 	private void updateAudit(String exceptionMesage) {
 		try {			

@@ -249,25 +249,25 @@ public class SecurityServerInterceptor implements PreProcessInterceptor, Accepte
 	// be one different context for each distinct executions lunched by the same user on the same borwser.
 	private IEngUserProfile getUserProfileFromSession() {
 		IEngUserProfile engProfile = null;
-//		FilterIOManager ioManager = new FilterIOManager(servletRequest, null);
-//		ioManager.initConetxtManager();	
-//	
+		FilterIOManager ioManager = new FilterIOManager(servletRequest, null);
+		ioManager.initConetxtManager();	
+	
 		engProfile =  (IEngUserProfile)servletRequest.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
-//		if(engProfile == null) {
-//			engProfile = (IEngUserProfile)ioManager.getContextManager().get(IEngUserProfile.ENG_USER_PROFILE);	
-//		} else {
-//			setUserProfileInSession(engProfile);
-//		}	
+		if(engProfile == null) {
+			engProfile = (IEngUserProfile)ioManager.getContextManager().get(IEngUserProfile.ENG_USER_PROFILE);	
+		} else {
+			setUserProfileInSession(engProfile);
+		}	
 		
 		return engProfile;
 	}
 	
 	private void setUserProfileInSession(IEngUserProfile engProfile) {
-//		FilterIOManager ioManager = new FilterIOManager(servletRequest, null);
-//		ioManager.initConetxtManager();	
-//		ioManager.getContextManager().set(IEngUserProfile.ENG_USER_PROFILE, engProfile);
-//		
-		servletRequest.getSession().setAttribute(IEngUserProfile.ENG_USER_PROFILE, engProfile);
+		FilterIOManager ioManager = new FilterIOManager(servletRequest, null);
+		ioManager.initConetxtManager();	
+		ioManager.getContextManager().set(IEngUserProfile.ENG_USER_PROFILE, engProfile);
+		
+//		servletRequest.getSession().setAttribute(IEngUserProfile.ENG_USER_PROFILE, engProfile);
 	}
 	
 	public boolean accept(Class declaring, Method method) {
