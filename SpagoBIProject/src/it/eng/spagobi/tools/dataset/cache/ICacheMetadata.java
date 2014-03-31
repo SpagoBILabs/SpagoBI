@@ -93,26 +93,14 @@ public interface ICacheMetadata {
 	public void removeAllCacheItems();
 	
 	/**
-	 * @return the cache item getted by table name
-	 */
-	public CacheItem getCacheItem(String signature);
-	
-	/**
-	 * @deprecated
 	 * @return the  cache item getted by resultset signature
 	 */
-	public CacheItem getCacheItemByResultsetSignature(String resultSetSignature);
+	public CacheItem getCacheItem(String resultSetSignature);
 	
 	/**
-	 *@return true if the signature (tablename) already esists
-	 */
-	public boolean containsCacheItem(String signature);
-	
-	/**
-	 *@deprecated
 	 *@return true if the resultsetSignature already esists
 	 */
-	public boolean containsCacheItemByResultsetSignature(String resultSetSignature);
+	public boolean containsCacheItem(String resultSetSignature);
 	
 	/**
 	 * @return the number of the objects cached

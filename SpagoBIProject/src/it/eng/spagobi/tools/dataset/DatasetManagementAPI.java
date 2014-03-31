@@ -37,7 +37,7 @@ import it.eng.spagobi.commons.dao.IConfigDAO;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.cache.Cache;
+import it.eng.spagobi.tools.dataset.cache.CacheManager;
 import it.eng.spagobi.tools.dataset.cache.CacheFactory;
 import it.eng.spagobi.tools.dataset.cache.ICache;
 import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.work.SQLDBCacheWriteWork;
@@ -212,7 +212,7 @@ public class DatasetManagementAPI {
 			 *  
 			 */
 			
-			ICache cache = Cache.getCache();
+			ICache cache = CacheManager.getCache();
 			String resultsetSignature = dataSet.getSignature();
 			IDataStore cachedResultSet = cache.get(resultsetSignature);
 			

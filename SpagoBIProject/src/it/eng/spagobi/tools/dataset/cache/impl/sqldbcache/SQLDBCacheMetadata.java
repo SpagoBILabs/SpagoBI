@@ -271,7 +271,7 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 	    }		
 	}
 
-	public CacheItem getCacheItem(String tableName) {
+	public CacheItem getCacheItemByResultSetTableName(String tableName) {
 		CacheItem toReturn = null;
 		Iterator it = getCacheRegistry().entrySet().iterator();
 	    while (it.hasNext()) {
@@ -285,7 +285,7 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 		return toReturn;
 	}
 
-	public CacheItem getCacheItemByResultsetSignature(String resultSetSignature){
+	public CacheItem getCacheItem(String resultSetSignature){
 		CacheItem toReturn = null;
 		Iterator it = getCacheRegistry().entrySet().iterator();
 	    while (it.hasNext()) {
@@ -299,12 +299,12 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 		return toReturn;
 	}
 
-	public boolean containsCacheItem(String tableName) {
-		return getCacheItem(tableName) != null;
+	public boolean containsCacheItemByTableName(String tableName) {
+		return getCacheItemByResultSetTableName(tableName) != null;
 	}
 	
-	public boolean containsCacheItemByResultsetSignature(String resultSetSignature) {
-		return getCacheItemByResultsetSignature(resultSetSignature) != null;
+	public boolean containsCacheItem(String resultSetSignature) {
+		return getCacheItem(resultSetSignature) != null;
 	}
 
 	/**
