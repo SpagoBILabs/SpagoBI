@@ -226,12 +226,19 @@ public class SQLDBCache implements ICache {
 	public void deleteAll() {
 		logger.debug("Removing all tables from [SQLDBCache]");
 		Iterator it = getCacheMetadata().getCacheRegistry().entrySet().iterator();
+	    List<String> signatureToDelete = new ArrayList<String>();
+
 	    while (it.hasNext()) {
 	        Map.Entry<String,CacheItem> entry = (Map.Entry<String,CacheItem>)it.next();
 	        CacheItem item =  entry.getValue();
-	        delete(item.getSignature());
-	        it.remove(); // avoids a ConcurrentModificationException
-	    }	
+	        signatureToDelete.add(item.getSignature());
+	    }
+	    
+	    for (String signature : signatureToDelete){
+	    	delete(signature);
+	    }
+	    
+	    
 		logger.debug("[SQLDBCache] All tables removed, Cache cleaned ");
 	}
 
