@@ -59,7 +59,6 @@ public class SQLDBCache implements ICache {
 
 	private ICacheMetadata cacheMetadata;
 	private IDataSource dataSource;
-	private List<Properties> objectsTypeDimension = new ArrayList<Properties>();
 	private SQLDBCacheConfiguration cacheConfiguration;
 	
 	private String tableNamePrefix;
@@ -319,9 +318,6 @@ public class SQLDBCache implements ICache {
 	public ICacheMetadata getCacheMetadata() {
 		if (cacheMetadata == null){		
 			cacheMetadata = new SQLDBCacheMetadata(cacheConfiguration);
-			if (cacheMetadata instanceof SQLDBCacheMetadata){
-				((SQLDBCacheMetadata)cacheMetadata).setObjectsTypeDimension(getObjectsTypeDimension());
-			}
 		}  
 		return cacheMetadata;
 	}
@@ -386,23 +382,6 @@ public class SQLDBCache implements ICache {
 		logger.debug("OUT");
 
 	}
-
-
-	/**
-	 * @return the objectsTypeDimension
-	 */
-	public List<Properties> getObjectsTypeDimension() {
-		return objectsTypeDimension;
-	}
-
-
-	/**
-	 * @param objectsTypeDimension the objectsTypeDimension to set
-	 */
-	public void setObjectsTypeDimension(List<Properties> objectsTypeDimension) {
-		this.objectsTypeDimension = objectsTypeDimension;
-	}
-
 
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.tools.dataset.cache.ICache#addListener(it.eng.spagobi.tools.dataset.cache.ICacheEvent, it.eng.spagobi.tools.dataset.cache.ICacheListener)

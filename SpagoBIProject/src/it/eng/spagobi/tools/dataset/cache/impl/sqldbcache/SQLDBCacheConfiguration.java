@@ -11,6 +11,10 @@
  */
 package it.eng.spagobi.tools.dataset.cache.impl.sqldbcache;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
+
 import it.eng.spagobi.tools.dataset.cache.SimpleCacheConfiguration;
 
 /**
@@ -18,6 +22,10 @@ import it.eng.spagobi.tools.dataset.cache.SimpleCacheConfiguration;
  *
  */
 public class SQLDBCacheConfiguration extends SimpleCacheConfiguration {
+	
+	private List<Properties> objectsTypeDimension = new ArrayList<Properties>();
+	
+	
 	public static final String CACHE_NAME_PREFIX_CONFIG = "SPAGOBI.CACHE.NAMEPREFIX";
 	
 	/**
@@ -31,5 +39,12 @@ public class SQLDBCacheConfiguration extends SimpleCacheConfiguration {
 	 */
 	public void setTableNamePrefix(String tableNamePrefix) {
 		setProperty(CACHE_NAME_PREFIX_CONFIG, tableNamePrefix);
+	}
+	
+	public List<Properties> getObjectsTypeDimension() {
+		return objectsTypeDimension;
+	}
+	public void setObjectsTypeDimension(List<Properties> objectsTypeDimension) {
+		this.objectsTypeDimension = objectsTypeDimension;
 	}
 }
