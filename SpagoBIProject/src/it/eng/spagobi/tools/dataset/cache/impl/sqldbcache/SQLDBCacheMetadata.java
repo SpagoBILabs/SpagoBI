@@ -21,11 +21,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.spagobi.tools.dataset.cache.impl.sqldbcache;
 
-import it.eng.spago.error.EMFUserError;
-import it.eng.spagobi.commons.bo.Config;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.dao.IConfigDAO;
-import it.eng.spagobi.tools.dataset.cache.CacheConfiguration;
 import it.eng.spagobi.tools.dataset.cache.ICacheMetadata;
 import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
@@ -72,7 +67,7 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 	public static final String DIALECT_TERADATA = "Teradata";
 
 	private LinkedHashMap<String, CacheItem> cacheRegistry = new LinkedHashMap<String, CacheItem>();	
-	CacheConfiguration cacheConfiguration;
+	SQLDBCacheConfiguration cacheConfiguration;
 
 	private IDataSource dataSource;
 	private BigDecimal dimensionSpaceFree ;
@@ -87,9 +82,9 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 	private Map<String, Integer> columnSize =  new HashMap<String, Integer>();
 	private enum FieldType {ATTRIBUTE, MEASURE}
 	
-	public SQLDBCacheMetadata(IDataSource ds, CacheConfiguration cacheConfiguration){
+	public SQLDBCacheMetadata(SQLDBCacheConfiguration cacheConfiguration){
 
-		dataSource = ds;
+		dataSource = cacheConfiguration.getCacheDataSource();
 		this.cacheConfiguration = cacheConfiguration;
 		if (this.cacheConfiguration != null){
 			tableNamePrefix = this.cacheConfiguration.getTableNamePrefix();
