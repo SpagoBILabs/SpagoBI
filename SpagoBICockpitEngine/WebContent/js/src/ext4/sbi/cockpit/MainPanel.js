@@ -68,6 +68,8 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 	 */
 	, associationEditorWizard: null
     
+	, associationEditorWizardConfig: null
+	
     , msgPanel: null
     
     // TODO remove from global
@@ -334,9 +336,17 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 	}
 	
 	, onShowAssociationEditorWizard: function(){
+		if (Sbi.storeManager.getStoreIds().length == 0){
+			alert('Per gestire le associazioni è necessario creare prima dei widget!');
+			return;
+		}
 		var config = {};
 		config.storeList = Sbi.storeManager.getStoreIds();
-		config.state = this.getAnalysisState();
+		if(Sbi.isValorized(this.analysisState.associationsConf)) {
+			config.associationsList = this.analysisState.associationsConf; //get actual state 
+		}else{
+			config.associationsList = this.associationEditorWizardConfig; //get template state 
+		}
 //		if(this.associationEditorWizard === null) {    		
     		Sbi.trace("[MainPanel.showAssociationEditorWizard]: instatiating the editor");    		
     		this.associationEditorWizard = Ext.create('Sbi.data.AssociationEditorWizard',config);
@@ -420,6 +430,7 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 	 */
 	, init: function() {
 		this.initToolbar();
+		this.initAssociationEditorWizard();
 		this.initWidgetContainer();
 	}
 	
@@ -459,6 +470,12 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 		});
 	}		
 	
+	, initAssociationEditorWizard: function(){
+		if(Sbi.isValorized(this.analysisState)) {
+			this.associationEditorWizardConfig = this.analysisState.associationsConf; 
+		}		
+	}
+	
 	, initWidgetContainer: function() { 
 		Sbi.trace("[MainPanel.initWidgetContainer]: IN");
 
@@ -467,7 +484,7 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 			conf = this.analysisState.widgetsConf;
 		}
 		this.widgetContainer = new Sbi.cockpit.core.WidgetContainer(conf);
-		delete this.analysisState;
+		delete this.analysisState.widgetsConf;
 
 		Sbi.trace("[MainPanel.initWidgetContainer]: widget panel succesfully created");
 		

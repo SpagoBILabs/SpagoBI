@@ -388,15 +388,15 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 			var ass = {};
 			var config = {};
 			ass = assList[i];
-//			var stores = this.getAssociationstores(ass);
 			var fields = this.getAssociationFields(ass);
+			config.id = ass.id;
 			config.ass = ass.ass;
-//			config.stores = stores;
 			config.fields = fields;
 			
-			if (ass.id){
-				this.associations[ass.id] = config;				
-			}			
+//			if (ass.id){
+//				this.associations[ass.id] = config;				
+//			}		
+			this.associations.push(config);
 		}
 		
 		Sbi.trace("[StoreManager.setAssociations]: Associations object: " +  Sbi.toSource(this.associations));
@@ -435,13 +435,13 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 		this.associations.push(r);
 	}
 	
-	, addAssociationsStore: function(s){
-		this.associations.stores.push(s);
-	}
-	
-	, addAssociationsFields: function(f){
-		this.associations.fields.push(s);		
-	}
+//	, addAssociationsStore: function(s){
+//		this.associations.stores.push(s);
+//	}
+//	
+//	, addAssociationsFields: function(f){
+//		this.associations.fields.push(s);		
+//	}
 	
 	, getAssociationById: function(id){
 		for(var i=0; i<this.getAssociations().length; i++){
