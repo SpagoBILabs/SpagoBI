@@ -246,7 +246,7 @@ public abstract class AbstractSQLDBCacheTest extends TestCase {
 		resultset =	fileDataset.getDataStore();
 		cache.put(fileDataset, fileDataset.getSignature(), resultset);
 		logger.debug("FileDataSet inserted inside cache");
-		String tableName = cache.getCacheMetadata().getCacheItemByResultsetSignature(fileDataset.getSignature()).getTable();
+		String tableName = cache.getCacheMetadata().getCacheItem(fileDataset.getSignature()).getTable();
 		assertTrue(cache.delete(fileDataset.getSignature()));	
 		assertNull("Dataset still present in cache registry",cache.get(fileDataset.getSignature()));
 		IDataStore dataStore = null;
