@@ -281,6 +281,13 @@ public class PersistedTableManager {
 					        toReturn.setDouble(i2+1, (Double)field.getValue());
 						 }
 						
+					}else if(fmd.getType().toString().contains("Float")) {
+						// only for primitive type is necessary to use setNull method if value is null
+						if (field.getValue() == null){
+							toReturn.setNull(i2+1, java.sql.Types.FLOAT);
+						 }else{
+					        toReturn.setDouble(i2+1, (Float)field.getValue());
+						 }				
 					}else if(fmd.getType().toString().contains("Long")) {
 						// only for primitive type is necessary to use setNull method if value is null
 						if (field.getValue() == null){
@@ -363,6 +370,14 @@ public class PersistedTableManager {
 				toReturn = " FLOAT ";	
 			}
 		}else if (type.contains("java.lang.Double")){
+			toReturn = " DOUBLE ";
+			if (getDialect().contains(DIALECT_POSTGRES) || getDialect().contains(DIALECT_SQLSERVER) || 
+					getDialect().contains(DIALECT_TERADATA)) { 
+				toReturn = " NUMERIC ";	
+			}else if (getDialect().contains(DIALECT_ORACLE)) { 
+				toReturn = " NUMBER ";	
+			}
+		}else if (type.contains("java.lang.Float")){
 			toReturn = " DOUBLE ";
 			if (getDialect().contains(DIALECT_POSTGRES) || getDialect().contains(DIALECT_SQLSERVER) || 
 					getDialect().contains(DIALECT_TERADATA)) { 
