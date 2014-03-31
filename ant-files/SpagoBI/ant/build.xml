@@ -30,9 +30,7 @@
 	<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
 	<!--   SDK Management					                                              -->
 	<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
-	<target name="checkout.sdk" >
-		<ant dir="../SpagoBISDK/ant" target="svn.checkout"/>
-	</target>
+
 	<target name="clean.sdk">
 		<ant dir="../SpagoBISDK/ant" target="clean"/>
 	</target>
@@ -136,10 +134,7 @@
 		<unzip src="../../../SpagoBIGeoEngine/dist/SpagoBIGeoEngine.war" dest="${tomcat.home}/webapps/SpagoBIGeoEngine" />
 	</target>
 
-	<target name="checkout.SpagoBIGeoReportEngine">
-		<ant dir="../SpagoBIUtils/ant" target="svn.checkout"/>
-		<ant dir="../SpagoBIGeoReportEngine/ant" target="svn.checkout"/>
-	</target>
+
 	<target name="create.SpagoBIGeoReportEngine.war" depends="create.sbi.utils.jar">
 		<ant dir="../SpagoBIGeoReportEngine/ant" />
 	</target>
@@ -151,11 +146,6 @@
 	</target>
 
 
-
-	<target name="checkout.SpagoBICockpitEngine">
-		<ant dir="../SpagoBIUtils/ant" target="svn.checkout"/>
-		<ant dir="../SpagoBICockpitEngine/ant" target="svn.checkout"/>
-	</target>
 
 	<target name="create.SpagoBICockpitEngine.war" depends="create.sbi.utils.jar">
 		<ant dir="../SpagoBICockpitEngine/ant" />
@@ -406,11 +396,11 @@
 		<antcall target="create.SpagoBINetworkEngine.war" />
 		<copy file="../../../SpagoBINetworkEngine/dist/SpagoBINetworkEngine.war" 
   	        todir="../../../dist" overwrite="true" />
-<!--		
+		
 		<antcall target="create.SpagoBIWhatIfEngine.war" />
-		<copy file="../../../SpagoBIWhatIfEnginedist/SpagoBIWhatIfEngine.war" 
+		<copy file="../../../SpagoBIWhatIfEngine/dist/SpagoBIWhatIfEngine.war" 
         todir="../../../dist" overwrite="true" />
--->
+
 	</target>
 
 	<!-- NEW: 22/05/2012 -->
@@ -452,9 +442,8 @@
 		<antcall target="deploy.SpagoBIChartEngine.war" />
 		<antcall target="deploy.SpagoBIMobileEngine.war" />
 		<antcall target="deploy.SpagoBINetworkEngine.war" />
-<!--
 		<antcall target="deploy.SpagoBIWhatIfEngine.war" />
--->
+
 	</target>
 
 	<target name="clean-bin.all" >
@@ -520,10 +509,10 @@
 		<delete dir="../../../SpagoBIMobileEngine/dist"/>
 		<delete dir="../../../SpagoBINetworkEngine/ant-build"/>
 		<delete dir="../../../SpagoBINetworkEngine/dist"/>
-<!--
+
 		<delete dir="../../../SpagoBIWhatIfEngine/ant-build"/>
 		<delete dir="../../../SpagoBIWhatIfEngine/dist"/>
--->
+
 	</target>
 
 	<target name="copy.ss" >
@@ -545,39 +534,6 @@
 		</copy>
 	</target>
 
-	<target name="svn.checkout" >
-		<ant dir="../QbeCore/ant" target="svn.checkout"/>
-		<ant dir="../SpagoBIBirtReportEngine/ant" target="svn.checkout"/>
-		<ant dir="../SpagoBIExoSecurityProvider/ant" target="svn.checkout"/>
-		<ant dir="../SpagoBIGeoEngine/ant" target="svn.checkout"/>
-		<ant dir="../SpagoBIGeoReportEngine/ant" target="svn.checkout"/>
-		<ant dir="../SpagoBICockpitEngine/ant" target="svn.checkout"/>
-		<ant dir="../SpagoBIJasperReportEngine/ant" target="svn.checkout"/>
-		<ant dir="../SpagoBIJPaloEngine/ant" target="svn.checkout"/>
-		<ant dir="../SpagoBIJPivotEngine/ant" target="svn.checkout"/>
-		<ant dir="../SpagoBIProject/ant" target="svn.checkout"/>
-		<ant dir="../SpagoBIQbeEngine/ant" target="svn.checkout"/>
-		<ant dir="../SpagoBITalendEngine/ant" target="svn.checkout"/>
-		<ant dir="../SpagoBIDAO/ant" target="svn.checkout"/>
-		<ant dir="../SpagoBIUtils/ant" target="svn.checkout"/>
-		<ant dir="../SpagoBIUtilsJSON/ant" target="svn.checkout"/>
-		<ant dir="../SpagoBIWekaEngine/ant" target="svn.checkout"/>
-		<ant dir="../SpagoBIJPXMLAEngine/ant" target="svn.checkout"/>
-		<ant dir="../SpagoBIXmlSecurityProvider/ant" target="svn.checkout"/>
-		<ant dir="../SpagoBILiferaySecurityProvider/ant" target="svn.checkout"/>
-		<ant dir="../SpagoBILdapSecurityProvider/ant" target="svn.checkout"/>
-		<ant dir="../SpagoBIDatabaseScripts" target="svn.checkout"/>
-		<ant dir="../SpagoBIAccessibilityEngine/ant" target="svn.checkout"/>
-		<ant dir="../SpagoBICommonJEngine/ant" target="svn.checkout"/>
-		<ant dir="../SpagoBIConsoleEngine/ant" target="svn.checkout"/>
-		<ant dir="../SpagoBIChartEngine/ant" target="svn.checkout"/>
-		<ant dir="../LibraryRepo" target="svn.checkout"/>
-		<ant dir="../SpagoBIMobileEngine/ant" target="svn.checkout"/>
-		<ant dir="../SpagoBINetworkEngine/ant" target="svn.checkout"/>
-<!--
-		<ant dir="../SpagoBIWhatIfEngine/ant" target="svn.checkout"/>
--->
-	</target>
 
 	<target name="javadoc" >
 		<ant dir="../QbeCore/ant" target="javadoc"/>
@@ -606,9 +562,9 @@
 		<ant dir="../SpagoBIChartEngine/ant" target="javadoc"/>
 		<ant dir="../SpagoBIMobileEngine/ant" target="javadoc"/>
 		<ant dir="../SpagoBINetworkEngine/ant" target="javadoc"/>
-<!--
+
 		<ant dir="../SpagoBIWhatIfEngine/ant" target="javadoc"/>
--->
+
 	</target>
 
 	<target name="package.all" >
@@ -631,9 +587,9 @@
 		<ant dir="../SpagoBIChartEngine/ant" target="package"/>
 		<ant dir="../SpagoBIMobileEngine/ant" target="package"/>
 		<ant dir="../SpagoBINetworkEngine/ant" target="package"/>
-<!--
+
 		<ant dir="../SpagoBIWhatIfEngine/ant" target="package"/>
--->
+
 	</target>
 
 	<target name="package.all.src" depends="clean.all">
