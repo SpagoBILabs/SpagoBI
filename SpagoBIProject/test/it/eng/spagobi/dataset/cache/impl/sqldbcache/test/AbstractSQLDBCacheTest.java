@@ -35,11 +35,11 @@ import it.eng.qbe.dataset.QbeDataSet;
 import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spago.configuration.FileCreatorConfiguration;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
-import it.eng.spagobi.tools.dataset.cache.CacheConfiguration;
 import it.eng.spagobi.tools.dataset.cache.CacheFactory;
 import it.eng.spagobi.tools.dataset.cache.ICache;
 import it.eng.spagobi.tools.dataset.cache.ICacheMetadata;
 import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.SQLDBCache;
+import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.SQLDBCacheConfiguration;
 import it.eng.spagobi.dataset.cache.impl.sqldbcache.DataType;
 import it.eng.spagobi.dataset.cache.test.FakeDatamartRetriever;
 import it.eng.spagobi.dataset.cache.test.TestConstants;
@@ -89,7 +89,7 @@ public abstract class AbstractSQLDBCacheTest extends TestCase {
 			CacheFactory cacheFactory = new CacheFactory();
 			
 			//Set configuration parameters for the cache (in SpagoBI Server this is the sbi_config table)
-			CacheConfiguration cacheConfiguration = new CacheConfiguration();
+			SQLDBCacheConfiguration cacheConfiguration = new SQLDBCacheConfiguration();
 			//table prefix for tables created by the cache
 			cacheConfiguration.setTableNamePrefix(TestConstants.CACHE_CONFIG_TABLE_PREFIX); 
 			//Dimension of cache in bytes
@@ -97,7 +97,7 @@ public abstract class AbstractSQLDBCacheTest extends TestCase {
 			//percentage of the cache to clean (from 0 to 100)
 			cacheConfiguration.setCachePercentageToClean(TestConstants.CACHE_CONFIG_PERCENTAGE_TO_CLEAN); 
 			
-			cache = cacheFactory.getCache(dataSourceWriting, cacheConfiguration);
+			cache = cacheFactory.getCache(cacheConfiguration);
 			if (cache instanceof SQLDBCache){
 				DataType dataType = new DataType(); //class used for setting data type dimension properties
 				((SQLDBCache)cache).setObjectsTypeDimension(dataType.getProps());
@@ -549,15 +549,17 @@ public abstract class AbstractSQLDBCacheTest extends TestCase {
 		CacheFactory cacheFactory = new CacheFactory();
 		
 		//Set configuration parameters for the cache (in SpagoBI Server this is the sbi_config table)
-		CacheConfiguration cacheConfigurationCustom = new CacheConfiguration();
+		SQLDBCacheConfiguration cacheConfigurationCustom = new SQLDBCacheConfiguration();
 		//table prefix for tables created by the cache
 		cacheConfigurationCustom.setTableNamePrefix(TestConstants.CACHE_CONFIG_TABLE_PREFIX); 
 		//Dimension of cache in bytes
 		cacheConfigurationCustom.setCacheSpaceAvailable(new BigDecimal(dimension)); 
 		//percentage of the cache to clean (from 0 to 100)
 		cacheConfigurationCustom.setCachePercentageToClean(TestConstants.CACHE_CONFIG_PERCENTAGE_TO_CLEAN); 
-		
-		ICache cacheCustom = cacheFactory.getCache(dataSourceWriting, cacheConfigurationCustom);
+	
+		cacheConfigurationCustom.setCacheDataSource(dataSourceWriting);
+	
+		ICache cacheCustom = cacheFactory.getCache(cacheConfigurationCustom);
 		if (cacheCustom instanceof SQLDBCache){
 			DataType dataType = new DataType(); //class used for setting data type dimension properties
 			((SQLDBCache)cacheCustom).setObjectsTypeDimension(dataType.getProps());
