@@ -30,23 +30,306 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 
 import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.commons.bo.Config;
+import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.dao.IConfigDAO;
+import it.eng.spagobi.commons.utilities.StringUtilities;
+import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.cache.Cache;
+import it.eng.spagobi.tools.dataset.cache.CacheFactory;
+import it.eng.spagobi.tools.dataset.cache.ICache;
+import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.work.SQLDBCacheWriteWork;
+import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
+import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
+import it.eng.spagobi.tools.dataset.utils.DataSetUtilities;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.threadmanager.WorkManager;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 
+import commonj.work.Work;
 
-/** The class gives two method to create a biobject (with parameters) or a dataset
+
+/** 
+ * DataLayer facade class. It manage the access to SpagoBI's datasets. It is built on top of the dao. 
+ * It manages all complex operations that involve more than a simple CRUD operations over the dataset. It
+ * also manages user's profilation and autorization. Other class must access dataset through this class and
+ * not calling directly the DAO.
  * 
- * @author gavardi
+ * @author gavardi, gioia
  *
  */
 
 public class DatasetManagementAPI {
 
-	static private Logger logger = Logger.getLogger(DatasetManagementAPI.class);
+	private UserProfile userProfile;
+	private IDataSetDAO dataSetDao;
 
+	static private Logger logger = Logger.getLogger(DatasetManagementAPI.class);
+	
+	// ==============================================================================
+	// COSTRUCTOR METHODS
+	// ==============================================================================
+	public DatasetManagementAPI() {
+		setUserProfile(null);
+	}
+	
+	public DatasetManagementAPI(UserProfile userProfile) {
+		setUserProfile(userProfile);
+	}
+	
+	// ==============================================================================
+	// ACCESSOR METHODS
+	// ==============================================================================
+	public UserProfile getUserProfile() {
+		return userProfile;
+	}
+	
+	public String getUserId() {
+		return getUserProfile().getUserUniqueIdentifier().toString();
+	}
+
+
+	public void setUserProfile(UserProfile userProfile) {
+		this.userProfile = userProfile;
+		if(dataSetDao != null) {
+			dataSetDao.setUserProfile(userProfile);
+		}
+	}
+	
+	private IDataSetDAO getDataSetDAO() {
+		if(dataSetDao == null) {
+			try {
+				dataSetDao = DAOFactory.getDataSetDAO();
+				if(getUserProfile() != null) {
+					dataSetDao.setUserProfile(userProfile);
+				}
+			} catch (Throwable t) {
+				throw new SpagoBIRuntimeException("An unexpected error occured while instatiating the DAO", t);
+			} 
+		}
+		return dataSetDao;
+	}
+	
+	// ==============================================================================
+	// API METHODS
+	// ==============================================================================
+	public List<IDataSet> getDataSets() {
+		try {
+			List<IDataSet> dataSets = null;
+			if(UserUtilities.isTechnicalUser(getUserProfile())) {
+				dataSets = getDataSetDAO().loadDataSets();
+			} else {
+				dataSets = getMyDataDataSet();
+			}
+			return dataSets;
+		} catch(Throwable t) {
+			throw new RuntimeException("An unexpected error occured while executing method", t);
+		} finally {			
+			logger.debug("OUT");
+		}
+	}
+	
+	public IDataSet getDataSet(String label) {
+		
+		logger.debug("IN");
+		
+		try {
+			if(StringUtilities.isEmpty(label)) {
+				throw new RuntimeException("Invalid value [" + label + "] for input parameter [label]");
+			}
+			
+			IDataSet dataSet = null;
+			try {
+				dataSet = getDataSetDAO().loadDataSetByLabel(label);
+			} catch(Throwable t) {
+				throw new RuntimeException("An unexpected error occured while loading dataset [" + label + "]");
+			}
+			
+			if(dataSet == null) {
+				throw new RuntimeException("Dataset [" + label + "] does not exist");
+			}
+			
+			if( DataSetUtilities.isExecutableByUser(dataSet, getUserProfile()) == false ) {
+				throw new RuntimeException("User [" + getUserId() + "] cannot access to dataset [" + label + "]");
+			}
+			return dataSet;
+		} catch(Throwable t) {
+			throw new RuntimeException("An unexpected error occured while executing method [getDataSet]", t);
+		} finally {			
+			logger.debug("OUT");
+		}
+	}
+	
+	public List<IFieldMetaData> getDataSetFieldsMetadata(String label) {
+		try {
+			IDataSet dataSet = getDataSetDAO().loadDataSetByLabel(label);
+			
+			if(dataSet == null) {
+				throw new RuntimeException("Impossible to get dataset [" + label + "] from SpagoBI Server");
+			}
+			
+			IMetaData metadata = dataSet.getMetadata();
+			if(metadata == null) {
+				throw new RuntimeException("Impossible to retrive metadata of dataset [" + metadata + "]");
+			}
+			
+			List<IFieldMetaData> fieldsMetaData = new ArrayList<IFieldMetaData>();
+			int fieldCount = metadata.getFieldCount();
+			for(int i = 0; i < fieldCount; i++) {
+				IFieldMetaData fieldMetaData = metadata.getFieldMeta(i);
+				fieldsMetaData.add(fieldMetaData);
+			}
+			
+			return fieldsMetaData;
+		} catch(Throwable t) {
+			throw new RuntimeException("An unexpected error occured while executing method", t);
+		} finally {			
+			logger.debug("OUT");
+		}
+	}
+	
+	
+	
+	public IDataStore getDataStore(String label, int offset, int fetchSize, int maxResults) {
+		try {
+		
+			IDataSet dataSet = this.getDataSetDAO().loadDataSetByLabel(label);
+			
+			/*
+			 * Controlla se il resultset del dataset è già in cache o no
+			 * 
+			 * - se è presente in cache basta recuperarlo con una get
+			 * - se non è presente in cache: carico tramite dataSet.loadData() 
+			 * 	 e poi lo scrivo in cache (poi in contemporanea con thread diversi)
+			 *  
+			 */
+			
+			ICache cache = Cache.getCache();
+			String resultsetSignature = dataSet.getSignature();
+			
+			IDataStore cachedResultSet = cache.get(resultsetSignature);
+			IDataStore dataStore = null;
+			if (cachedResultSet == null){
+				dataSet.loadData(offset, fetchSize, maxResults);
+				dataStore = dataSet.getDataStore();
+				
+				WorkManager workManager = new WorkManager(getSpagoBIConfigurationProperty("JNDI_THREAD_MANAGER"));
+				Work cacheWriteWork = new SQLDBCacheWriteWork(cache, dataStore, resultsetSignature, dataSet);
+				
+				workManager.run(cacheWriteWork, null);
+			} else {
+				dataStore = cachedResultSet;
+			}
+			
+			//dataSet.loadData(offset, fetchSize, maxResults);
+			//IDataStore dataStore = dataSet.getDataStore();
+			
+			return dataStore;
+		} catch(Throwable t) {
+			throw new RuntimeException("An unexpected error occured while executing method", t);
+		} finally {			
+			logger.debug("OUT");
+		}	
+	}
+	
+	private static String getSpagoBIConfigurationProperty(String propertyName) {
+		try {
+			String propertyValue = null;
+			IConfigDAO configDao = DAOFactory.getSbiConfigDAO();
+			Config cacheSpaceCleanableConfig = configDao.loadConfigParametersByLabel(propertyName);
+			if ((cacheSpaceCleanableConfig != null) && (cacheSpaceCleanableConfig.isActive())){
+				propertyValue = cacheSpaceCleanableConfig.getValueCheck();
+			}	
+			return propertyValue;
+		} catch(Throwable t) {
+			throw new SpagoBIRuntimeException("An unexpected exception occured while loading spagobi property [" + propertyName + "]", t);
+		}
+	}
+	
+	public List<IDataSet> getEnterpriseDataSet() {
+		try {
+			List<IDataSet> dataSets = getDataSetDAO().loadEnterpriseDataSets();
+			return dataSets;
+		} catch(Throwable t) {
+			throw new RuntimeException("An unexpected error occured while executing method", t);
+		} finally {			
+			logger.debug("OUT");
+		}	
+	}
+	
+	public List<IDataSet> getOwnedDataSet() {
+		return getOwnedDataSet(null);
+	}
+	
+	public List<IDataSet> getOwnedDataSet(String userId) {
+		try {
+			if(userId == null) userId = this.getUserId();
+			List<IDataSet> dataSets = getDataSetDAO().loadDataSetsOwnedByUser( userId );
+			return dataSets;
+		} catch(Throwable t) {
+			throw new RuntimeException("An unexpected error occured while executing method", t);
+		} finally {			
+			logger.debug("OUT");
+		}	
+		
+	}
+	
+	public List<IDataSet> getSharedDataSet() {
+		return getSharedDataSet(null);
+	}
+	public List<IDataSet> getSharedDataSet(String userId) {
+		try {
+			if(userId == null) userId = this.getUserId();
+			List<IDataSet> dataSets = getDataSetDAO().loadDatasetsSharedWithUser( userId );
+			return dataSets;
+		} catch(Throwable t) {
+			throw new RuntimeException("An unexpected error occured while executing method", t);
+		} finally {			
+			logger.debug("OUT");
+		}	
+	}
+	
+	public List<IDataSet> getUncertifiedDataSet() {
+		return getUncertifiedDataSet(null);
+	}
+	public List<IDataSet> getUncertifiedDataSet(String userId) {
+		try {
+			if(userId == null) userId = this.getUserId();
+			List<IDataSet> dataSets = getDataSetDAO().loadDatasetOwnedAndShared( userId );
+			return dataSets;
+		} catch(Throwable t) {
+			throw new RuntimeException("An unexpected error occured while executing method", t);
+		} finally {			
+			logger.debug("OUT");
+		}
+	}
+	
+	public List<IDataSet> getMyDataDataSet() {
+		return getMyDataDataSet(null);
+	}
+	public List<IDataSet> getMyDataDataSet(String userId) {
+		try {
+			if(userId == null) userId = this.getUserId();
+			List<IDataSet> dataSets = getDataSetDAO().loadMyDataDataSets( userId );
+			return dataSets;
+		} catch(Throwable t) {
+			throw new RuntimeException("An unexpected error occured while executing method", t);
+		} finally {			
+			logger.debug("OUT");
+		}	
+	}
+		
+
+	
+	
 	public  Integer creatDataSet(IDataSet dataSet) {
 		logger.debug("IN");
 		Integer toReturn = null;

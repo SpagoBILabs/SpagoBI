@@ -41,6 +41,8 @@ import org.json.JSONObject;
 /**
  * @author Davide Zerbetto (davide.zerbetto@eng.it)
  * 
+ * @deprecated Use specific services exposed by DataSetResource
+ * 
  */
 @Path("/certificateddatasets")
 public class GetCertificatedDatasets {
