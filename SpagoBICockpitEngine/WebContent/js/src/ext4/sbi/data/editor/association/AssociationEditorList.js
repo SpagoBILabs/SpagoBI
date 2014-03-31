@@ -73,11 +73,11 @@ Ext.define('Sbi.data.editor.association.AssociationEditorList', {
 	   var initialData = [];
 		
 	   if (this.associationsList !== null ){
-		   var assList = this.associationsList[0];
-		   for (ass in assList){
-				if (assList[ass].ass !== null &&
-						assList[ass].ass !== undefined){
-					initialData.push(assList[ass].ass);
+		   for (var i=0; i< this.associationsList.length; i++){
+				if (this.associationsList[i].ass !== null &&
+						this.associationsList[i].ass !== undefined){
+					var el = [this.associationsList[i].id,  this.associationsList[i].ass];
+					initialData.push(el);
 				}
 			}
 	   }
