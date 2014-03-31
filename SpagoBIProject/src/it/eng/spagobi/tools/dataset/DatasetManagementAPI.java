@@ -214,8 +214,9 @@ public class DatasetManagementAPI {
 			
 			ICache cache = Cache.getCache();
 			String resultsetSignature = dataSet.getSignature();
-			
 			IDataStore cachedResultSet = cache.get(resultsetSignature);
+			
+			
 			IDataStore dataStore = null;
 			if (cachedResultSet == null){
 				dataSet.loadData(offset, fetchSize, maxResults);

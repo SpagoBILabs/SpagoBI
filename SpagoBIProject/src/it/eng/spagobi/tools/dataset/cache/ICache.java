@@ -34,24 +34,58 @@ import java.util.List;
  *
  */
 public interface ICache {
+	
 	/**
-	 * @param resultsetSignature the unique resultSet signature
+	 * Facility method. It is equivalent to get(dataSet.getSignature) call.
+	 * 
+	 * @param dataSet the dataSet that generate the resultSet
+	 * 
+	 * @return the resultSet if cached, null elsewhere 
+	 */
+	IDataStore get(IDataSet dataSet);
+	
+	/**
+	 * @param resultsetSignature the signature of the resultSet
+	 * 
 	 * @return the resultSet if cached, null elsewhere 
 	 */
 	IDataStore get(String resultsetSignature);
 	
 	/**
+	 * Facility method. It is equivalent to get(dataSet.getSignature, groups, filters, projections) call.
+	 * 
 	 * @param resultsetSignature the unique resultSet signature
 	 * @param groups grouping criteria for the resultSet
 	 * @param filters filters used on the resultSet
 	 * @param projections (fields to select) on the resultSet
 	 * @return the resultSet if cached, null elsewhere 
 	 */
+	IDataStore get(IDataSet dataSet, List<GroupCriteria> groups, List<FilterCriteria> filters, List<ProjectionCriteria> projections);
+	
+	/**
+	 * @param resultsetSignature the unique resultSet signature
+	 * @param groups grouping criteria for the resultSet
+	 * @param filters filters used on the resultSet
+	 * @param projections (fields to select) on the resultSet
+	 * 
+	 * @return the resultSet if cached, null elsewhere 
+	 */
 	IDataStore get(String resultsetSignature, List<GroupCriteria> groups, List<FilterCriteria> filters, List<ProjectionCriteria> projections);
 	
 	/**
-	 * Delete the specified resultSet
+	 * Facility method. It is equivalent to delete(dataSet.getSignature) call.
+	 * 
 	 * @param resultsetSignature the unique resultSet signature
+	 * 
+	 * @return true if resultSet is deleted from cache, false if resultSet wasn't cached
+	 */
+	boolean delete(IDataSet dataSet);
+	
+	/**
+	 * Delete the specified resultSet
+	 * 
+	 * @param resultsetSignature the unique resultSet signature
+	 * 
 	 * @return true if resultSet is deleted from cache, false if resultSet wasn't cached
 	 */
 	boolean delete(String resultsetSignature);

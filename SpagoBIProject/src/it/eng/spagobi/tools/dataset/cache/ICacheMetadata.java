@@ -93,12 +93,12 @@ public interface ICacheMetadata {
 	public void removeAllCacheItems();
 	
 	/**
-	 * @deprecated
 	 * @return the cache item getted by table name
 	 */
 	public CacheItem getCacheItem(String signature);
 	
 	/**
+	 * @deprecated
 	 * @return the  cache item getted by resultset signature
 	 */
 	public CacheItem getCacheItemByResultsetSignature(String resultSetSignature);
