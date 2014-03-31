@@ -629,36 +629,7 @@ function saveDocument(goBack) {
 		      			}
 		      		%>
 		      		</select>
-				</div>
-				<% if (UserUtilities.isTechnicalUser(userProfile)){ %>
-					<div class='div_detail_label' id="scope" >
-						<span class='portlet-form-field-label'>
-							<spagobi:message key = "SBIDev.docConf.docDet.scopeField" />
-						</span>
-					</div>
-					
-					<div class='div_detail_form' id="scopeForm" >
-			      		<select class='portlet-form-input-field' style='width:230px;' 
-								name="isPublic" id="isPublic"  >				
-						<%	for (int i=0; i<2; i++ ) {
-								String label = msgBuilder.getMessage(
-												"SBIDev.docConf.docDet.scopePublic",
-												"messages", request);
-								String value = "true";
-								String selected = (obj.isPublicDoc())?"selected=\"selected\"":"";
-								if (i == 1){
-									label = msgBuilder.getMessage(
-											"SBIDev.docConf.docDet.scopePrivate",
-											"messages", request);;	
-									value = "false";
-									selected = (obj.isPublicDoc())?"":"selected=\"selected\"";
-								}
-						%>		
-			      			<option value="<%=value%>" <%=selected%>><%=label%></option>									      					      		
-			      		<%} %>
-			      		</select>
-					</div>
-				<% } %>				
+				</div>			
 				<div class='div_detail_label'>
 					<span class='portlet-form-field-label'>
 						<spagobi:message key ="SBIDev.docConf.docDet.refreshField" />

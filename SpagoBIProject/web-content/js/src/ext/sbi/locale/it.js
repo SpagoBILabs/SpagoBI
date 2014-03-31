@@ -1153,4 +1153,9 @@ Sbi.locale.ln['sbi.myanalysis.wizard.dataselection'] = "Selezione dati";
 Sbi.locale.ln['sbi.myanalysis.delete.everywhere']= 'Cancella ovunque';
 Sbi.locale.ln['sbi.myanalysis.delete.personalfolder']= 'Cancella solo nella mia cartella personale';
 Sbi.locale.ln['sbi.myanalysis.delete.cancel']= 'Annulla';
-Sbi.locale.ln['sbi.myanalysis.noEngines']= 'Nell\'installazione in uso non sono presenti motori con cui procedere. Contattare il sistemista.'
+Sbi.locale.ln['sbi.myanalysis.noEngines']= 'Nell\'installazione in uso non sono presenti motori con cui procedere. Contattare il sistemista.';
+
+//===================================================================
+//Sbi.execution.SaveDocumentWindow
+//===================================================================
+Sbi.locale.ln['sbi.execution.savedocumentwindow.saved']= 'Il documento è stato salvato correttamente; è disponibile nella sezione "Le mie analisi"';

@@ -772,7 +772,6 @@ public class DetailBIObjectModule extends AbstractHttpModule {
             obj.setBiObjectTypeID(null);
             obj.setBiObjectTypeCode("");
             obj.setRefreshSeconds(new Integer(0));
-            obj.setPublicDoc(false);
             Domain state = DAOFactory.getDomainDAO().loadDomainByCodeAndValue("STATE", "DEV");
             obj.setStateCode(state.getValueCd());
             obj.setStateID(state.getValueId());

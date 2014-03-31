@@ -476,7 +476,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			hibBIObject.setRefreshSeconds(biObject.getRefreshSeconds());
 			
 			hibBIObject.setPreviewFile(biObject.getPreviewFile());
-			hibBIObject.setPublicDoc(biObject.isPublicDoc());
+			
 			
 
 			// functionalities erasing
@@ -654,7 +654,6 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			if (obj.getPreviewFile() != null && !"".equals(obj.getPreviewFile())){
 				hibBIObject.setPreviewFile(obj.getPreviewFile());
 			}
-			hibBIObject.setPublicDoc(obj.isPublicDoc());
 			hibBIObject.setCreationDate(new Date());
 			hibBIObject.setCreationUser(obj.getCreationUser());
 
@@ -1132,13 +1131,22 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 		aBIObject.setStateID(hibBIObject.getState().getValueId());
 
 		List functionlities = new ArrayList();
+		boolean isPublic = false;
 		Set hibObjFuncs = hibBIObject.getSbiObjFuncs();
 		for (Iterator it = hibObjFuncs.iterator(); it.hasNext(); ) {
 			SbiObjFunc aSbiObjFunc = (SbiObjFunc) it.next();
 			Integer functionalityId = aSbiObjFunc.getId().getSbiFunctions().getFunctId();
 			functionlities.add(functionalityId);
+			if (!isPublic) { // optimization: this ensure that the following code is executed only once in the for cycle (during the second execution of the cycle we already know that the document is public)
+				String folderType = aSbiObjFunc.getId().getSbiFunctions().getFunctTypeCd();
+				// if document belongs to another folder or the folder is not a personal folder, that means it is shared
+				if (it.hasNext() || folderType.equalsIgnoreCase("LOW_FUNCT")) {
+					isPublic = true;
+				}
+			}
 		}
 		aBIObject.setFunctionalities(functionlities);
+		aBIObject.setPublicDoc(isPublic);
 		
 		List businessObjectParameters = new ArrayList();
 		Set hibObjPars = hibBIObject.getSbiObjPars();
@@ -1156,7 +1164,6 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 		aBIObject.setRefreshSeconds(hibBIObject.getRefreshSeconds());		
 		aBIObject.setPreviewFile(hibBIObject.getPreviewFile());
-		aBIObject.setPublicDoc(hibBIObject.isPublicDoc());
 		
 		logger.debug("OUT");
 		return aBIObject;
@@ -1745,9 +1752,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 		Session aSession = null;
 		Transaction tx = null;
 		List realResult = new ArrayList();
-		boolean veroVariableInQuery = false;
-		boolean falsoVariableInQuery = false;
-		
+
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
@@ -1788,15 +1793,11 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 					if (!profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN) &&
 							!profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_DEV)){
 						//only visible objects (1 means true) and object created by the current user
-						buffer.append(" and ((o.visible = 0 and o.creationUser = '"+profile.getUserUniqueIdentifier()+"') OR (o.visible = 1)) " +
-								" and ((o.publicDoc = :FALSO and o.creationUser = '"+profile.getUserUniqueIdentifier()+"') OR (o.publicDoc = :VERO))  ");
-						veroVariableInQuery = true;
-						falsoVariableInQuery = true;
+						buffer.append(" and ((o.visible = 0 and o.creationUser = '"+profile.getUserUniqueIdentifier()+"') OR (o.visible = 1)) ");
 					}
 					buffer.append(" order by o.name"); 
 				} else {
-					buffer.append("select objects from SbiObjects  as objects where objects.publicDoc='true' or ( objects.publicDoc='false' " +
-							" and objects.creationUser = '"+profile.getUserUniqueIdentifier()+"')");
+					buffer.append("select objects from SbiObjects");
 				}		
 			}else{
 				if (folderID != null ){
@@ -1807,10 +1808,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 					if (!profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN) &&
 							!profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_DEV)){
 						//only visible objects (1 means true) and object created by the current user
-						buffer.append(" and ((o.visible = 0 and o.creationUser = '"+profile.getUserUniqueIdentifier()+"') OR (o.visible = 1)) " +
-								" and ((o.publicDoc = :FALSO and o.creationUser = '"+profile.getUserUniqueIdentifier()+"') OR (o.publicDoc = :VERO))  ");
-						veroVariableInQuery = true;
-						falsoVariableInQuery = true;
+						buffer.append(" and ((o.visible = 0 and o.creationUser = '"+profile.getUserUniqueIdentifier()+"') OR (o.visible = 1)) ");
 					}
 					buffer.append(" order by o.name"); 
 				}
@@ -1819,13 +1817,6 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			String hql = buffer.toString();
 			Query query = aSession.createQuery(hql);
 
-			if(veroVariableInQuery){
-				query.setBoolean("VERO", true);
-			}
-			if(falsoVariableInQuery){
-				query.setBoolean("FALSO", false);
-			}
-			
 			if(!isPersonalFolder){
 				if (folderID != null && roles != null && roles.size() > 0 ) {
 					query.setInteger("FOLDER_ID", folderID.intValue());

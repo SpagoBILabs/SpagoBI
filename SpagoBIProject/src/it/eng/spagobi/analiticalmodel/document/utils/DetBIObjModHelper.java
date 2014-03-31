@@ -123,8 +123,6 @@ public class DetBIObjModHelper {
 		String refreshSecondsString = (String) request.getAttribute("refreshseconds");
 		if(refreshSecondsString==null || refreshSecondsString.equalsIgnoreCase(""))refreshSecondsString="0";
 		Integer refreshSeconds=Integer.valueOf(refreshSecondsString);
-		boolean isPublic = Boolean.valueOf( (String)request.getAttribute("isPublic"));
-		
 		
 		//previewFile management
 		String previewFileName = null;
@@ -284,7 +282,6 @@ public class DetBIObjModHelper {
 		obj.setCreationUser(userId);
 		//obj.setRating(Rating == null ? null : new Short(Rating));
 		obj.setRefreshSeconds(refreshSeconds);
-		obj.setPublicDoc(isPublic);
 		obj.setPreviewFile((previewFileName == null && aBIObject != null && aBIObject.getPreviewFile() != null)? aBIObject.getPreviewFile():previewFileName);
 		// RETURN OBJECT
 		return obj;
