@@ -52,14 +52,20 @@ public class SpagoBIRuntimeException extends RuntimeException {
     	super(ex);
     }
     
-    public String getRootCause() {
-		String rootCause;		
+    public Throwable getRootException() {
 		Throwable rootException;
 		
 		rootException = this;
 		while(rootException.getCause() != null) {
 			rootException = rootException.getCause();
 		}
+		
+		return rootException;
+    }
+    
+    public String getRootCause() {
+		String rootCause;		
+		Throwable rootException = getRootException();
 		
 		rootCause = rootException.getMessage()!=null
 			? rootException.getClass().getName() + ": " + rootException.getMessage()
