@@ -36,6 +36,18 @@ import java.util.List;
 public interface ICache {
 	
 	/**
+	 * Enable disable the cache
+	 * 
+	 * @param enable true to enable the cache, false to disable it.
+	 */
+	void enable(boolean enable);
+	
+	/**
+	 * @return true if the cache is enabled false otherwise.
+	 */
+	boolean isEnabled();
+	
+	/**
 	 * Facility method. It is equivalent to get(dataSet.getSignature) call.
 	 * 
 	 * @param dataSet the dataSet that generate the resultSet
@@ -107,7 +119,7 @@ public interface ICache {
 	/**
 	 * @return the metadata description object of the cache
 	 */
-	ICacheMetadata getCacheMetadata();
+	ICacheMetadata getMetadata();
 	
 	/**
 	 * Register the listener on the specified event

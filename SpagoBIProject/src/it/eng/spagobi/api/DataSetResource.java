@@ -60,7 +60,7 @@ import commonj.work.Work;
  * 
  */
 @Path("/1.0/datasets")
-public class DataSetResource extends AbstractSpagoBIResource{
+public class DataSetResource extends AbstractSpagoBIResource {
 
 	static private Logger logger = Logger.getLogger(DataSetResource.class);
 	
@@ -68,6 +68,7 @@ public class DataSetResource extends AbstractSpagoBIResource{
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public String getDataSets(@QueryParam("typeDoc") String typeDoc) {
+		logger.debug("IN");
 		try {
 			List<IDataSet> dataSets = getDatasetManagementAPI().getDataSets();
 			return serializeDataSets(dataSets, typeDoc);
@@ -82,6 +83,7 @@ public class DataSetResource extends AbstractSpagoBIResource{
 	@Path("/{label}")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public String getDataSet(@PathParam("label") String label) {
+		logger.debug("IN");
 		try {
 			IDataSet dataSet = getDatasetManagementAPI().getDataSet(label);
 			return serializeDataSet(dataSet, null);
@@ -96,6 +98,7 @@ public class DataSetResource extends AbstractSpagoBIResource{
 	@Path("/{label}/fields")
 	@Produces(MediaType.APPLICATION_JSON)
 	public String getDataSetFields(@Context HttpServletRequest req, @PathParam("label") String label) {
+		logger.debug("IN");
 		try {
 			List<IFieldMetaData> fieldsMetaData = getDatasetManagementAPI().getDataSetFieldsMetadata(label);
 			JSONArray fieldsJSON = writeFields(fieldsMetaData);
@@ -118,6 +121,7 @@ public class DataSetResource extends AbstractSpagoBIResource{
 			, @QueryParam("offset") @DefaultValue("-1") int offset
 			, @QueryParam("fetchSize") @DefaultValue("-1") int fetchSize
 			, @QueryParam("maxResults") @DefaultValue("-1") int maxResults) {
+		logger.debug("IN");
 		try {
 		
 			IDataStore dataStore = getDatasetManagementAPI().getDataStore(label, offset, fetchSize, maxResults);
@@ -139,6 +143,7 @@ public class DataSetResource extends AbstractSpagoBIResource{
 	@Path("/enterprise")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public String getEnterpriseDataSet(@QueryParam("typeDoc") String typeDoc) {
+		logger.debug("IN");
 		try {
 			List<IDataSet> dataSets = getDatasetManagementAPI().getEnterpriseDataSet();
 			return serializeDataSets(dataSets, typeDoc);
@@ -153,6 +158,7 @@ public class DataSetResource extends AbstractSpagoBIResource{
 	@Path("/owned")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public String getOwnedDataSet(@QueryParam("typeDoc") String typeDoc) {
+		logger.debug("IN");
 		try {
 			List<IDataSet> dataSets = getDatasetManagementAPI().getOwnedDataSet();
 			return serializeDataSets(dataSets, typeDoc);
@@ -167,6 +173,7 @@ public class DataSetResource extends AbstractSpagoBIResource{
 	@Path("/shared")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public String getSharedDataSet(@QueryParam("typeDoc") String typeDoc) {
+		logger.debug("IN");
 		try {
 			List<IDataSet> dataSets = getDatasetManagementAPI().getSharedDataSet();
 			return serializeDataSets(dataSets, typeDoc);
@@ -181,6 +188,7 @@ public class DataSetResource extends AbstractSpagoBIResource{
 	@Path("/uncertified")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public String getUncertifiedDataSet(@QueryParam("typeDoc") String typeDoc) {
+		logger.debug("IN");
 		try {
 			List<IDataSet> dataSets = getDatasetManagementAPI().getUncertifiedDataSet();
 			return serializeDataSets(dataSets, typeDoc);
@@ -195,6 +203,7 @@ public class DataSetResource extends AbstractSpagoBIResource{
 	@Path("/mydata")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public String getMyDataDataSet(@QueryParam("typeDoc") String typeDoc) {
+		logger.debug("IN");
 		try {
 			List<IDataSet> dataSets = getDatasetManagementAPI().getMyDataDataSet();
 			return serializeDataSets(dataSets, typeDoc);
