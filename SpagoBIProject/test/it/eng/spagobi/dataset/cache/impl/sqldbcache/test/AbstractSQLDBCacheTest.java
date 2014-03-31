@@ -97,6 +97,8 @@ public abstract class AbstractSQLDBCacheTest extends TestCase {
 			//percentage of the cache to clean (from 0 to 100)
 			cacheConfiguration.setCachePercentageToClean(TestConstants.CACHE_CONFIG_PERCENTAGE_TO_CLEAN); 
 			
+			cacheConfiguration.setCacheDataSource(dataSourceWriting);
+			
 			DataType dataType = new DataType(); //class used for setting data type dimension properties
 			cacheConfiguration.setObjectsTypeDimension(dataType.getProps());
 			
@@ -113,10 +115,10 @@ public abstract class AbstractSQLDBCacheTest extends TestCase {
 	}
 	
 	public void testCacheDimension(){
-		assertEquals(TestConstants.CACHE_CONFIG_CACHE_DIMENSION, cache.getCacheMetadata().getAvailableMemory() );
-		assertEquals(new Integer(100), cache.getCacheMetadata().getAvailableMemoryAsPercentage() );
-		assertEquals(new Integer(TestConstants.CACHE_CONFIG_PERCENTAGE_TO_CLEAN), cache.getCacheMetadata().getAvailableMemoryBaseline() );
-		assertEquals(new Integer(0), cache.getCacheMetadata().getNumberOfObjects() );
+		assertEquals(TestConstants.CACHE_CONFIG_CACHE_DIMENSION, cache.getMetadata().getAvailableMemory() );
+		assertEquals(new Integer(100), cache.getMetadata().getAvailableMemoryAsPercentage() );
+		assertEquals(new Integer(TestConstants.CACHE_CONFIG_PERCENTAGE_TO_CLEAN), cache.getMetadata().getCleaningQuota() );
+		assertEquals(new Integer(0), cache.getMetadata().getNumberOfObjects() );
 	}
 	
 	public void testCachePutJDBCDataSet(){
@@ -245,7 +247,7 @@ public abstract class AbstractSQLDBCacheTest extends TestCase {
 		resultset =	fileDataset.getDataStore();
 		cache.put(fileDataset, fileDataset.getSignature(), resultset);
 		logger.debug("FileDataSet inserted inside cache");
-		String tableName = cache.getCacheMetadata().getCacheItem(fileDataset.getSignature()).getTable();
+		String tableName = cache.getMetadata().getCacheItem(fileDataset.getSignature()).getTable();
 		assertTrue(cache.delete(fileDataset.getSignature()));	
 		assertNull("Dataset still present in cache registry",cache.get(fileDataset.getSignature()));
 		IDataStore dataStore = null;
@@ -279,7 +281,7 @@ public abstract class AbstractSQLDBCacheTest extends TestCase {
 		testCachePutFileDataSet();
 		cache.deleteAll();
 		
-		ICacheMetadata cacheMetadata = cache.getCacheMetadata();
+		ICacheMetadata cacheMetadata = cache.getMetadata();
 		BigDecimal cacheSpaceAvaiable = cacheMetadata.getAvailableMemory();
 		boolean cacheCleaned = false;
 		if (cacheSpaceAvaiable.compareTo(TestConstants.CACHE_CONFIG_CACHE_DIMENSION) == 0){
@@ -290,7 +292,7 @@ public abstract class AbstractSQLDBCacheTest extends TestCase {
 	
 	
 	public void testCacheDatasetDimension(){
-		ICacheMetadata cacheMetadata = cache.getCacheMetadata();
+		ICacheMetadata cacheMetadata = cache.getMetadata();
 		BigDecimal cacheSpaceAvaiable = cacheMetadata.getAvailableMemory();
 		
 		IDataStore resultset;
@@ -328,7 +330,7 @@ public abstract class AbstractSQLDBCacheTest extends TestCase {
 		resultset =	fileDataset.getDataStore();
 		
 		
-		ICacheMetadata cacheMetadata = cache.getCacheMetadata();
+		ICacheMetadata cacheMetadata = cache.getMetadata();
 		if (cacheMetadata.hasEnoughMemoryForResultSet(resultset)){
 			cache.put(fileDataset, fileDataset.getSignature(), resultset);
 			IDataStore cachedResultSet = cache.get(fileDataset.getSignature());
@@ -355,7 +357,7 @@ public abstract class AbstractSQLDBCacheTest extends TestCase {
 	}
 	
 	public void testGetDimensionSpaceAvailable(){
-		ICacheMetadata cacheMetadata = cache.getCacheMetadata();
+		ICacheMetadata cacheMetadata = cache.getMetadata();
 		BigDecimal cacheSpaceAvaiable = cacheMetadata.getAvailableMemory();
 		assertNotNull("Error calculating avaiable cache space", cacheSpaceAvaiable);
 		System.out.println(" >> Avaiable cache space: "+cacheSpaceAvaiable+" byte");
@@ -367,7 +369,7 @@ public abstract class AbstractSQLDBCacheTest extends TestCase {
 		fileDataset.loadData();
 		resultset =	fileDataset.getDataStore();		
 		
-		ICacheMetadata cacheMetadata = cache.getCacheMetadata();
+		ICacheMetadata cacheMetadata = cache.getMetadata();
 		BigDecimal estimatedDatasetDimension = cacheMetadata.getRequiredMemory(resultset);
 		assertNotNull("Error calculating dimension of dataset", estimatedDatasetDimension);
 		System.out.println(" >> Estimated dataset dimension: "+estimatedDatasetDimension+" byte");
@@ -378,7 +380,7 @@ public abstract class AbstractSQLDBCacheTest extends TestCase {
 		testCachePutFileDataSet();
 		testCachePutQbeDataSet();
 		
-		ICacheMetadata cacheMetadata = cache.getCacheMetadata();
+		ICacheMetadata cacheMetadata = cache.getMetadata();
 		boolean result = false;
 		if(cacheMetadata.getNumberOfObjects() == 3){
 			result = true;
@@ -397,7 +399,7 @@ public abstract class AbstractSQLDBCacheTest extends TestCase {
 		assertNotNull(cacheCustom.get(qbeDataset.getSignature()));
 		logger.debug("QbeDataSet inserted inside cache");
 		
-		ICacheMetadata cacheMetadata = cacheCustom.getCacheMetadata();
+		ICacheMetadata cacheMetadata = cacheCustom.getMetadata();
 		
 		//Second dataset (too big for avaiable space)
 		fileDataset.loadData();
