@@ -95,7 +95,7 @@ public class CacheResource extends AbstractSpagoBIResource {
 		}	
 	}
 	
-	@POST
+	@GET
 	@Path("/meta")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public String getCacheMetadata() {
@@ -121,10 +121,10 @@ public class CacheResource extends AbstractSpagoBIResource {
 			for(String signature: signatures) {
 				CacheItem item = cacheMetadata.getCacheItem(signature);
 				JSONObject itemJSON = new JSONObject();
-				itemJSON.put("name", item.getName());
-				itemJSON.put("signature", item.getSignature());
-				itemJSON.put("table", item.getTable());
-				itemJSON.put("dimension", item.getDimension());
+				if(item.getName() != null) itemJSON.put("name", item.getName());
+				if(item.getSignature() != null) itemJSON.put("signature", item.getSignature());
+				if(item.getTable() != null) itemJSON.put("table", item.getTable());
+				if(item.getDimension() != null) itemJSON.put("dimension", item.getDimension().longValue());
 				resultJSON.put(itemJSON);
 			}
 			return resultJSON.toString();
@@ -140,11 +140,11 @@ public class CacheResource extends AbstractSpagoBIResource {
 		try {
 			JSONObject resultJSON = new JSONObject();
 			resultJSON.put("enabled", cache.isEnabled());
-			resultJSON.put("totalMemory", cache.getMetadata().getTotalMemory());
-			resultJSON.put("availableMemory", cache.getMetadata().getAvailableMemory());
+			resultJSON.put("totalMemory", cache.getMetadata().getTotalMemory().longValue());
+			resultJSON.put("availableMemory", cache.getMetadata().getAvailableMemory().longValue());
 			resultJSON.put("cachedObjectsCount", cache.getMetadata().getNumberOfObjects());
 			resultJSON.put("cleaningEnabled", cache.getMetadata().isCleaningEnabled());
-			resultJSON.put("cleaningQuota", cache.getMetadata().getCleaningQuota());
+			resultJSON.put("cleaningQuota", cache.getMetadata().getCleaningQuota() + "%");
 			return resultJSON.toString();
 		} catch(Throwable t) {
 			throw new RuntimeException("An unexpected error occured while serializing results",  t);

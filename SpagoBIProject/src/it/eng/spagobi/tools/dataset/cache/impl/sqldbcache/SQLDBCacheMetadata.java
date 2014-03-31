@@ -317,7 +317,7 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 		Iterator it = getCacheRegistry().entrySet().iterator();
 	    while (it.hasNext()) {
 	        Map.Entry<String,CacheItem> entry = (Map.Entry<String,CacheItem>)it.next();
-	        signatures.add( entry.getKey() );
+	        signatures.add( entry.getValue().getSignature() );
 	    }
 	    return signatures;
 	}
