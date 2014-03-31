@@ -7,24 +7,7 @@
 
   
   
-  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-  <!--   SCARICO DEI SORGENTI AGGIORNATI DA SVN							                        -->
-  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-  <target name="svn.checkout" 
-      description="Sincronizza l'applicazione con il repository">
-    <exec dir="${project.dir}/ingres" executable="svn" >
-      <arg line="checkout ${svn.base.location}/${project.name}/ingres ."/>
-    </exec>	
-    <exec dir="${project.dir}/mysql" executable="svn" >
-      <arg line="checkout ${svn.base.location}/${project.name}/mysql ."/>
-    </exec> 
-    <exec dir="${project.dir}/oracle" executable="svn" >
-      <arg line="checkout ${svn.base.location}/${project.name}/oracle ."/>
-    </exec> 
-    <exec dir="${project.dir}/postgres" executable="svn" >
-      <arg line="checkout ${svn.base.location}/${project.name}/postgres ."/>
-    </exec> 
-  </target>
+
 
 
   <target name="package">    
