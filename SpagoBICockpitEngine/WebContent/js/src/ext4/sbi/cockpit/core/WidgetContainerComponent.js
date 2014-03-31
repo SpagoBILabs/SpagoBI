@@ -255,14 +255,7 @@ Ext.extend(Sbi.cockpit.core.WidgetContainerComponent, Ext.Window, {
 	 *    - none
 	 */
 	, initServices: function() {
-//		var params = {LIGHT_NAVIGATOR_DISABLED: 'TRUE'};
-//		
-//		this.services = this.services || new Array();
-//		
-//		this.services['exampleService'] = this.services['exampleService'] || Sbi.config.serviceRegistry.getServiceUrl({
-//			serviceName: 'EXAMPLE_ACTION'
-//			, baseParams: params
-//		});	
+
 	}
 
 

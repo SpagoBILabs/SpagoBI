@@ -8,7 +8,7 @@ Ext.ns("Sbi.widgets");
 
 /**
  * Class: Sbi.widgets.DatasetsBrowserPanel
- * A panel that shows the list of dataset available to te logged in user grouped by category. 
+ * A panel that shows the list of dataset available to the logged in user grouped by category. 
  * In line sort and filter are also provided.
  */
 Sbi.widgets.DatasetsBrowserPanel = function(config) { 
@@ -32,13 +32,6 @@ Sbi.widgets.DatasetsBrowserPanel = function(config) {
 	this.initDatasetStore();
 	this.init();
 	
-	// inline ovveride to add none as possible collapse mode for border layout 
-	// TODO move it to ovverides file
-//	Ext.layout.BorderLayout.Region.prototype.getCollapsedEl = Ext.layout.BorderLayout.Region.prototype.getCollapsedEl.createSequence(function(){
-//		if(this.collapseMode == 'none'){
-//            this.collapsedEl.enableDisplayMode('none');
-//        }
-//    });
 	
 	this.items = [{
 		region      			: 'north',
@@ -91,11 +84,13 @@ Ext.extend(Sbi.widgets.DatasetsBrowserPanel, Ext.Panel, {
 	// PROPERTIES
 	// =================================================================================================================
 	
+	id:'this'  // TODO remove
+		
 	/**
      * @property {Array} services
      * This array contains all the services invoked by this class
      */
-	services: null
+	, services: null
 	
 	/**
      * @property {Ext.Panel} toolbar
@@ -109,12 +104,18 @@ Ext.extend(Sbi.widgets.DatasetsBrowserPanel, Ext.Panel, {
      */
 	, viewPanel: null
 
-	, id:'this'  // TODO remove
 	
-
-	
+	/**
+     * @property {Ext.data.Store} datasetStore
+     * This store contains all the dataset visualized by this panel
+     */
 	, datasetStore: null
 	
+	/**
+	 * @property {String} filterOption
+     * The value of the filter options. Usually it is set by the user by means of one filter buttons contained in this panel toolbar.
+     * Admissible values are: UsedDataSet, EnterpriseDataSet, SharedDataSet, AllDataSet.
+	 */
 	, filterOption: null
 	, defaultFilterOption: Sbi.settings.mydata.defaultFilter || "UsedDataSet"
 	
@@ -373,115 +374,31 @@ Ext.extend(Sbi.widgets.DatasetsBrowserPanel, Ext.Panel, {
 	, initDatasetListService: function(){
 		Sbi.trace("[DatasetsBrowserPanel.initDatasetListService]: IN");
 		if (this.filterOption == 'MyDataSet'){			
-			baseParams ={};
-			baseParams.isTech = false;
-			baseParams.showOnlyOwner = true;
-			baseParams.typeDoc = this.typeDoc;
-			baseParams.user_id = Sbi.config.userId;
-
-			this.services["list"] = Sbi.config.serviceRegistry.getRestServiceUrl({
-				serviceName : 'selfservicedataset',
-				baseParams : baseParams,
-				baseUrl:{contextPath: 'SpagoBI', restServicesPath: 'restful-services'}
-			});		
-			
-			
+			this.services["list"] = Sbi.config.serviceReg.getServiceUrl('loadOwnedDataSets', {
+				queryParams : {typeDoc: this.typeDoc}
+			});	
 		} else if (this.filterOption == 'EnterpriseDataSet'){			
-			baseParams ={};
-			baseParams.isTech = true;
-			baseParams.showOnlyOwner = false;
-			baseParams.typeDoc = this.typeDoc;
-			baseParams.user_id = Sbi.config.userId;
-			
-			this.services["list"] = Sbi.config.serviceRegistry.getRestServiceUrl({
-				serviceName : 'certificateddatasets',
-				baseParams : baseParams,
-				baseUrl:{contextPath: 'SpagoBI', restServicesPath: 'restful-services'}
-			});
-	
-			
-		} else if (this.filterOption == 'SharedDataSet'){
-			baseParams ={};
-			baseParams.isTech = false;
-			baseParams.showOnlyOwner = false;
-			baseParams.typeDoc = this.typeDoc;
-			baseParams.user_id = Sbi.config.userId;
-			
-			this.services["list"] = Sbi.config.serviceRegistry.getRestServiceUrl({
-				serviceName : 'certificateddatasets',
-				baseParams : baseParams,
-				baseUrl:{contextPath: 'SpagoBI', restServicesPath: 'restful-services' }
-			});
-		
-			
+			this.services["list"] = Sbi.config.serviceReg.getServiceUrl('loadEnterpriseDataSets', {
+				queryParams : {typeDoc: this.typeDoc}
+			});	
+		} else if (this.filterOption == 'SharedDataSet'){			
+			this.services["list"] = Sbi.config.serviceReg.getServiceUrl('loadSharedDatasSets', {
+				queryParams : {typeDoc: this.typeDoc}
+			});	
 		} else if (this.filterOption == 'AllDataSet' || this.filterOption == 'UsedDataSet'){
-
-			baseParams ={};
-			baseParams.isTech = false;
-			baseParams.showOnlyOwner = false;
-			baseParams.typeDoc = this.typeDoc;
-			baseParams.allMyDataDs = true;
-			baseParams.user_id = Sbi.config.userId;
-
-			this.services["list"] = Sbi.config.serviceRegistry.getRestServiceUrl({
-				serviceName : 'certificateddatasets',
-				baseParams : baseParams, 
-				baseUrl:{contextPath: 'SpagoBI', restServicesPath: 'restful-services' }
-			});
-		
+			this.services["list"] = Sbi.config.serviceReg.getServiceUrl('loadMyDataDataSets', {
+				queryParams : {typeDoc: this.typeDoc}
+			});	
 		}
-		
 		Sbi.trace("[DatasetsBrowserPanel.initDatasetListService]: OUT");
 	}
 	
 	, initDatasetStore: function() {
 		Sbi.trace("[DatasetsBrowserPanel.initDatasetStore]: IN");
 		
-//		Ext.define('Dataset', {
-//		    extend: 'Ext.data.Model',
-//		    fields: ["id",
-//			    	 	"label",
-//			    	 	"name",
-//			    	 	"description",
-//			    	 	"typeCode",
-//			    	 	"typeId",
-//			    	 	"encrypt",
-//			    	 	"visible",
-//			    	 	"engine",
-//			    	 	"engineId",
-//			    	 	"dataset",
-//			    	 	"stateCode",
-//			    	 	"stateId",
-//			    	 	"functionalities",
-//			    	 	"dateIn",
-//			    	 	"owner",
-//			    	 	"refreshSeconds",
-//			    	 	"isPublic",
-//			    	 	"actions",
-//			    	 	"exporters",
-//			    	 	"decorators",
-//			    	 	"previewFile",
-//			    	 	"isUsed", 	/*local property*/
-//			    	 	"myDSLabel" /*local property*/
-//			    	]
-//		});
-//		
-//		this.datasetStore =  Ext.create('Ext.data.Store', {
-//		    model: 'Dataset',
-//		    proxy: {
-//		        type: 'ajax',
-//		        url : this.services['list'],
-//		        reader: 'json'
-//		    }
-//			//, autoLoad: true
-//		});
-		
-		this.datasetStore = new Ext.data.JsonStore({
-			 url: this.services['list']
-			 , filteredProperties : this.filteredProperties 
-			 , sorters: []
-			 , root: 'root'
-			 , fields: ["id",
+		Ext.define('DataSet', {
+		    extend: 'Ext.data.Model',
+		    fields: ["id",
 			    	 	"label",
 			    	 	"name",
 			    	 	"description",
@@ -504,8 +421,52 @@ Ext.extend(Sbi.widgets.DatasetsBrowserPanel, Ext.Panel, {
 			    	 	"decorators",
 			    	 	"previewFile",
 			    	 	"isUsed", 	/*local property*/
-			    	 	"myDSLabel" /*local property*/]
+			    	 	"myDSLabel" /*local property*/
+			    	]
 		});
+		
+		this.datasetStore =  Ext.create('Ext.data.Store', {
+		    model: 'DataSet',
+		    proxy: {
+		        type: 'ajax',
+		        url : this.services['list'],
+		        reader: {
+		        	type: 'json',
+		        	root: 'root'
+		        }
+		    }
+		});
+		
+//		this.datasetStore = new Ext.data.JsonStore({
+//			 url: this.services['list']
+//			 , filteredProperties : this.filteredProperties 
+//			 , sorters: []
+//			 , root: 'root'
+//			 , fields: ["id",
+//			    	 	"label",
+//			    	 	"name",
+//			    	 	"description",
+//			    	 	"typeCode",
+//			    	 	"typeId",
+//			    	 	"encrypt",
+//			    	 	"visible",
+//			    	 	"engine",
+//			    	 	"engineId",
+//			    	 	"dataset",
+//			    	 	"stateCode",
+//			    	 	"stateId",
+//			    	 	"functionalities",
+//			    	 	"dateIn",
+//			    	 	"owner",
+//			    	 	"refreshSeconds",
+//			    	 	"isPublic",
+//			    	 	"actions",
+//			    	 	"exporters",
+//			    	 	"decorators",
+//			    	 	"previewFile",
+//			    	 	"isUsed", 	/*local property*/
+//			    	 	"myDSLabel" /*local property*/]
+//		});
 		
 		Sbi.trace("[DatasetsBrowserPanel.initDatasetStore]: OUT");
 	}
