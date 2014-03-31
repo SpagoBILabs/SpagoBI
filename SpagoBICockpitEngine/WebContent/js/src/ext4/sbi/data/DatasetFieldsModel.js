@@ -15,17 +15,6 @@
 
  Ext.define('Sbi.data.DatasetFieldsModel', {
     extend: 'Ext.data.Model',
-//    proxy:{
-//    	type : 'rest',
-//    	url : Sbi.config.serviceRegistry.getRestServiceUrl({
-//    		serviceName : 'dataset/dsTestForAdmin/fields'
-//    	}),
-//    	reader : {
-//    		type : 'json',
-//    		root : 'results'
-//    	}
-//   	},
-//   	autoLoad: true,
    	fields: [
 	         'id', 
 	         'alias', 

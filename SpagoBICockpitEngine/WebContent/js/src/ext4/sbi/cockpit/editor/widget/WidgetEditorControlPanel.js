@@ -50,13 +50,10 @@ Sbi.cockpit.editor.widget.WidgetEditorControlPanel = function(config) {
 	this.services = this.services || new Array();	
 	var baseParams = {};
 	
-	if (c.dataset)
+	if (c.dataset) {
 		baseParams.dataset = c.dataset;
-	this.services["getQueryFields"] = Sbi.config.serviceRegistry.getRestServiceUrl({
-		serviceName : 'api/1.1/dataset/{label}/fields', 
-		baseParams : baseParams
-	});		
-	
+	}
+
 	this.addEvents("attributeDblClick", "fieldRightClick", "validateInvalidFieldsAfterLoad");
 
 	

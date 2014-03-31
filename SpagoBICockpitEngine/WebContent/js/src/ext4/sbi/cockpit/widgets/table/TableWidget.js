@@ -317,15 +317,6 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 	 */
 	, initServices: function() {
 		this.services = this.services || new Array();	
-		this.services['loadDataStore'] = this.services['loadDataStore'] || Sbi.config.serviceRegistry.getServiceUrl({
-			serviceName : 'api/1.0/dataset/' + this.getStoreId() + '/data'
-			, baseParams: new Object()
-		});
-		
-		this.services['exportDataStore'] = this.services['exportDataStore'] || Sbi.config.serviceRegistry.getServiceUrl({
-			serviceName: 'EXPORT_RESULT_ACTION'
-			, baseParams: new Object()
-		});
 	}
 
 	/**

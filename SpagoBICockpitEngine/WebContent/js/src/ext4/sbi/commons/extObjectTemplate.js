@@ -118,10 +118,9 @@ Ext.extend(Sbi.xxx.Xxxx, Ext.util.Observable, {
 //		
 //		this.services = this.services || new Array();
 //		
-//		this.services['exampleService'] = this.services['exampleService'] || Sbi.config.serviceRegistry.getServiceUrl({
-//			serviceName: 'EXAMPLE_ACTION'
-//			, baseParams: params
-//		});	
+//		this.services['exampleService'] = this.services['exampleService'] || Sbi.config.serviceReg.getServiceUrl('loadDataSetStore', {
+//			pathParams: {datasetLabel: this.getStoreId()}
+//		});
 	}
 
 

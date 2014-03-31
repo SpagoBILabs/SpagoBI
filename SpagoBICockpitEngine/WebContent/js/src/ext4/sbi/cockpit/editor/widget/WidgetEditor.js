@@ -22,14 +22,7 @@ Sbi.cockpit.editor.widget.WidgetEditor = function(config) {
 	
 	var c = Ext.apply(settings, config || {});
 	Ext.apply(this, c);
-	
-	
-//	this.services = this.services || new Array();
-//	this.services['executeWorksheetStartAction'] = this.services['executeWorksheetStartAction'] || Sbi.config.serviceRegistry.getServiceUrl({
-//		serviceName: 'START_WORKSHEET_FROM_QBE_ACTION'
-//		, baseParams: params
-//	});
-	
+
 	this.addEvents('afterworksheetinitialized');
 	
 	this.init(config);

@@ -126,10 +126,11 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditorFieldPalette, Ext.Panel, {
     	
 		if (datasetLabel) {	
 			this.dataset = datasetLabel;
-			this.store.getProxy().url  = Sbi.config.serviceRegistry.getRestServiceUrl({
-				serviceName : 'dataset/' + this.dataset + '/fields'
+			
+			this.store.getProxy().url  = Sbi.config.serviceReg.getServiceUrl("loadDataSetField", {
+				pathParams: {datasetLabel: datasetLabel}
 			});
-	
+			
 			Sbi.trace("[WidgetEditorFieldPalette.refreshFieldsList]: url: " + this.store.getProxy().url);
 		} 
 		this.store.load();
@@ -148,17 +149,14 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditorFieldPalette, Ext.Panel, {
 	 * 
 	 * Initialize the following services exploited by this component:
 	 * 
-	 *    - getQueryFields
 	 */
     , initServices: function(){
     	var baseParams = {};
-    	if (this.dataset) baseParams.dataset = this.dataset;
+    	if (this.dataset) {
+    		baseParams.dataset = this.dataset;
+    	}
     	
     	this.services = this.services || new Array();	
-    	this.services["getQueryFields"] = Sbi.config.serviceRegistry.getRestServiceUrl({
-    		serviceName : 'dataset/{label}/fields'
-    	  , baseParams:	baseParams
-    	});	
     }
 	
 	/**
@@ -193,8 +191,8 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditorFieldPalette, Ext.Panel, {
 		    model: 'Field',
 		    proxy: {
 		        type: 'ajax',
-		        url : Sbi.config.serviceRegistry.getRestServiceUrl({
-					serviceName : 'dataset/' + this.dataset + '/fields'
+		        url: Sbi.config.serviceReg.getServiceUrl("loadDataSetField", {
+					pathParams: {datasetLabel: this.dataset}
 				}),
 		        reader: {
 		            type: 'json',

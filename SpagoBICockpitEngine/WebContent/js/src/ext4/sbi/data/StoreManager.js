@@ -518,10 +518,9 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
     	
     	Sbi.trace("[StoreManager.createStore]: store [" + storeConf.storeId + "] conf is equal to [" + Sbi.toSource(storeConf, true)+ "]");
     	
-		var proxy = new Ext.data.HttpProxy({
-			url: Sbi.config.serviceRegistry.getServiceUrl({
-				serviceName : 'api/1.0/dataset/' + storeConf.storeId + '/data'
-				, baseParams: new Object()
+    	var proxy = new Ext.data.HttpProxy({
+			url: Sbi.config.serviceReg.getServiceUrl('loadDataSetStore', {
+				pathParams: {datasetLabel: storeConf.storeId}
 			})
 			, method: 'GET'
 	    	//, timeout : this.timeout
