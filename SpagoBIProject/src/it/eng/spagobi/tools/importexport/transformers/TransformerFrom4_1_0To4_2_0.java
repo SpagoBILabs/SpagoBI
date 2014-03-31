@@ -49,6 +49,8 @@ public class TransformerFrom4_1_0To4_2_0 implements ITransformer {
 
 			//fixSbiOrganizations(conn);
 			fixSbiAuthorizations(conn);
+			
+			fixSbiObjects(conn);
 
 		} catch (Exception e) {
 			logger.error("Error while changing database", e);	
@@ -82,6 +84,25 @@ public class TransformerFrom4_1_0To4_2_0 implements ITransformer {
 //	}
 	
 	
+	private void fixSbiObjects(Connection conn) throws Exception {
+		logger.debug("IN");
+		Statement stmt = conn.createStatement();
+		String sql = "";
+		try {
+			
+			sql = "ALTER TABLE SBI_OBJECTS DROP COLUMN IS_PUBLIC";
+			stmt.executeUpdate(sql);
+		
+		} catch (Exception e) {
+			logger.error(
+					"Error in altering SBI_OBJECTS",
+					e);
+		}
+		
+		logger.debug("OUT");
+		
+	}
+
 	private void fixSbiAuthorizations(Connection conn) throws Exception {
 		logger.debug("IN");
 		Statement stmt = conn.createStatement();

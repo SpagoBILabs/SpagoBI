@@ -332,7 +332,6 @@ public class DocumentCRUD {
 		if( id!=null ){
 			BIObject document = documentManagementAPI.getDocument(id);
 			List lstFuncts = new ArrayList();
-			document.setPublicDoc(false);  //for unshare
 			
 			if ("true".equalsIgnoreCase(isShare)){
 				//share
@@ -350,7 +349,6 @@ public class DocumentCRUD {
 					}
 				}
 				lstFuncts = JSONUtils.asList(functs);
-				document.setPublicDoc(true);
 			}
 			//add personal folder for default
 			LowFunctionality userFunc = null;

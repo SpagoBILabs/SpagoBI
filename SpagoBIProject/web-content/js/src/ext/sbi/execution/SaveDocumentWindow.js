@@ -233,7 +233,6 @@ Ext.extend(Sbi.execution.SaveDocumentWindow, Ext.Window, {
 	                buttons: Ext.MessageBox.OK
 	           });
 		}else{	
-			var functs = Ext.util.JSON.encode(this.OBJECT_FUNCTIONALITIES);
 			var params = {
 		        	name :  docName,
 		        	description : docDescr,
@@ -247,8 +246,7 @@ Ext.extend(Sbi.execution.SaveDocumentWindow, Ext.Window, {
 					template: this.OBJECT_TEMPLATE,
 					datasourceid: this.OBJECT_DATA_SOURCE,
 					SBI_EXECUTION_ID: this.SBI_EXECUTION_ID,
-					isPublic: this.OBJECT_SCOPE,
-					functs: functs
+					isPublic: this.OBJECT_SCOPE
 		        };
 			
 			//defines the document label internally (Since SpagoBI 5 is not more visible in the GUI)
@@ -281,7 +279,7 @@ Ext.extend(Sbi.execution.SaveDocumentWindow, Ext.Window, {
 				      		}else{			
 				      			Ext.MessageBox.show({
 				                        title: LN('sbi.generic.result'),
-				                        msg: LN('sbi.generic.resultMsg'),
+				                        msg: LN('sbi.execution.savedocumentwindow.saved'),
 				                        width: 200,
 				                        buttons: Ext.MessageBox.OK				                       
 				                });

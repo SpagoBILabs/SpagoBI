@@ -236,13 +236,10 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 			BIObject toReturn = obj;
 			String name = getAttributeAsString("name");
 			String description = getAttributeAsString("description");
-			Boolean isPublic = getAttributeAsBoolean("isPublic");
 			String previewFile = getAttributeAsString("previewFile");
 			
 			toReturn.setName(name);
 			toReturn.setDescription(description);
-			if (isPublic != null)
-				toReturn.setPublicDoc(isPublic);
 			if (previewFile != null && !previewFile.equals(""))
 				toReturn.setPreviewFile(previewFile.replace("\"", ""));
 			
@@ -589,7 +586,6 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 	private BIObject createBaseDocument(JSONObject documentJSON, JSONObject sourceDocumentJSON, JSONArray folderJSON) {
 		BIObject sourceDocument = null;
 		String visibility = "true"; //default value
-		boolean isPublic = false; //default value
 		String previewFile = ""; 
 		
 		try {
@@ -600,9 +596,6 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 			if (documentJSON.optString("visibility") != null && !documentJSON.optString("visibility").equals("")){
 				visibility = documentJSON.getString("visibility");//overriding default value
 			}
-			if (documentJSON.optString("isPublic") != null && !documentJSON.optString("isPublic").equals("")){
-				isPublic = documentJSON.getBoolean("isPublic");//overriding default value
-			}
 			if (documentJSON.optString("previewFile") != null && !documentJSON.optString("previewFile").equals("")){
 				previewFile = documentJSON.getString("previewFile");//overriding default value
 			}
@@ -611,7 +604,6 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 					, documentJSON.getString("description")					
 					, visibility
 					, previewFile
-					, isPublic
 					, documentJSON.getString("type") 
 					, documentJSON.optString("engineId"), sourceDocument, folderJSON);
 		} catch(Throwable t) {
@@ -621,7 +613,7 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 	
 		
 	private BIObject createBaseDocument(String label, String name,  String description, String visibility,
-			String previewFile, boolean isPublic, String type, String engineId, BIObject sourceDocument, JSONArray foldersJSON) {
+			String previewFile, String type, String engineId, BIObject sourceDocument, JSONArray foldersJSON) {
 		
 		BIObject document = new BIObject();
 		
@@ -631,7 +623,6 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 		if(previewFile != null) {
 			document.setPreviewFile(previewFile.replace("\"", ""));
 		}
-		document.setPublicDoc(isPublic);
 		
 		if("DOCUMENT_COMPOSITE".equalsIgnoreCase(type)) {	
 			//gets correct type of the engine for DOCUMENT_COMPOSITION (it's cockpit and it uses the EXTERNAL engine)

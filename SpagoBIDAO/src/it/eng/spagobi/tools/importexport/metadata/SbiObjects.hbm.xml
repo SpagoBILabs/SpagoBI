@@ -89,9 +89,6 @@
         </property>
   		<property generated="never" lazy="false" name="previewFile" type="string">
    			<column length="100" name="PREVIEW_FILE"/>
-  		</property>        
-          <property generated="never" lazy="false" name="publicDoc" type="boolean">
-       		<column name="IS_PUBLIC" />
   		</property>
         
         

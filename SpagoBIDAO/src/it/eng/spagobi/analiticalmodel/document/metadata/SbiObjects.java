@@ -52,7 +52,6 @@ public class SbiObjects  extends SbiHibernateModel {
 	private String creationUser=null;
 	private Integer refreshSeconds=null;     
 	private String previewFile=null;
-	private boolean publicDoc = false;
 	//private SbiDataSet dataSet=null;
 	private Integer dataSet=null;
 	private Set sbiKpiDocumentses = new HashSet(0);
@@ -590,21 +589,6 @@ public class SbiObjects  extends SbiHibernateModel {
 	 */
 	public void setPreviewFile(String previewFile) {
 		this.previewFile = previewFile;
-	}
-
-	/**
-	 * @return the publicDoc
-	 */
-	public boolean isPublicDoc() {
-		return publicDoc;
-	}
-
-
-	/**
-	 * @param publicDoc the publicDoc to set
-	 */
-	public void setPublicDoc(boolean publicDoc) {
-		this.publicDoc = publicDoc;
 	}
 
 
