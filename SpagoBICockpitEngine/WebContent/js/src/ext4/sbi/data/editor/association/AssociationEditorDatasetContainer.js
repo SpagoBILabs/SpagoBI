@@ -52,8 +52,8 @@ Ext.define('Sbi.data.editor.association.AssociationEditorDatasetContainer', {
 			var item = this.items.get(i);
 			var sm = item.grid.getSelectionModel();
 			if (sm != null && sm !== undefined){
-//				sm.deselectAll(true);
-				sm.deselectAll(false);
+				sm.deselectAll(true);
+//				sm.deselectAll(false);
 			}
 		}
 	}
@@ -99,8 +99,8 @@ Ext.define('Sbi.data.editor.association.AssociationEditorDatasetContainer', {
 		var ds = this.getDatasetItemByLabel(dsLabel);
 		if (ds !== null && ds !== undefined){
 			var recId = ds.grid.store.find('alias', dsField);
-//			ds.grid.getSelectionModel().select(recId,true,true);
-			ds.grid.getSelectionModel().select(recId,true,false);
+			ds.grid.getSelectionModel().select(recId,true,true);
+//			ds.grid.getSelectionModel().select(recId,true,false);
 		}
 	}
 

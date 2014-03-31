@@ -135,7 +135,7 @@ Ext.define('Sbi.data.editor.association.AssociationEditorList', {
         this.grid = Ext.create('Ext.grid.Panel', Ext.apply(c || {}, {
 	        store: this.store,
 	        tbar: new Ext.Toolbar({items:[title, '->', actionAdd, actionModify, actionAutoDetect]}),
-	        selModel: {selType: 'rowmodel', mode: 'SINGLE', allowDeselect: true},
+//	        selModel: {selType: 'rowmodel', mode: 'SINGLE', allowDeselect: true},
 	        columns: [
 	            { header: LN('sbi.cockpit.association.editor.wizard.list.columnId')
             	, width: 10
