@@ -97,11 +97,10 @@ public abstract class AbstractSQLDBCacheTest extends TestCase {
 			//percentage of the cache to clean (from 0 to 100)
 			cacheConfiguration.setCachePercentageToClean(TestConstants.CACHE_CONFIG_PERCENTAGE_TO_CLEAN); 
 			
+			DataType dataType = new DataType(); //class used for setting data type dimension properties
+			cacheConfiguration.setObjectsTypeDimension(dataType.getProps());
+			
 			cache = cacheFactory.getCache(cacheConfiguration);
-			if (cache instanceof SQLDBCache){
-				DataType dataType = new DataType(); //class used for setting data type dimension properties
-				((SQLDBCache)cache).setObjectsTypeDimension(dataType.getProps());
-			}
 		}
 
 
@@ -558,12 +557,12 @@ public abstract class AbstractSQLDBCacheTest extends TestCase {
 		cacheConfigurationCustom.setCachePercentageToClean(TestConstants.CACHE_CONFIG_PERCENTAGE_TO_CLEAN); 
 	
 		cacheConfigurationCustom.setCacheDataSource(dataSourceWriting);
-	
+		
+		DataType dataType = new DataType(); //class used for setting data type dimension properties
+		cacheConfigurationCustom.setObjectsTypeDimension(dataType.getProps());
+		
 		ICache cacheCustom = cacheFactory.getCache(cacheConfigurationCustom);
-		if (cacheCustom instanceof SQLDBCache){
-			DataType dataType = new DataType(); //class used for setting data type dimension properties
-			((SQLDBCache)cacheCustom).setObjectsTypeDimension(dataType.getProps());
-		}
+		
 		return cacheCustom;
 	}
 	
