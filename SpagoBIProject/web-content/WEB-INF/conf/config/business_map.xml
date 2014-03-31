@@ -8,7 +8,7 @@
 	
 	<MAP_REST_SERVICES>
 	
-	    <MAP_REST_SERVICE serviceUrl="/dataset/*" businessProcess="SelfServiceDatasetManagement" />
+	    <MAP_REST_SERVICE serviceUrl="/datasets.*" businessProcess="SelfServiceDatasetManagement" />
 	    
 		<MAP_REST_SERVICE serviceUrl="/documents/sendFeedback" businessProcess="publicFunctionality" />	
 		<MAP_REST_SERVICE serviceUrl="/documents/clone" businessProcess="publicFunctionality" />	
