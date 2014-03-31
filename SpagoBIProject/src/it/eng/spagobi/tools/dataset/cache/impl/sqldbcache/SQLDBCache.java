@@ -25,6 +25,7 @@ package it.eng.spagobi.tools.dataset.cache.impl.sqldbcache;
 import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.cache.CacheConfiguration;
+import it.eng.spagobi.tools.dataset.cache.CacheException;
 import it.eng.spagobi.tools.dataset.cache.ICache;
 import it.eng.spagobi.tools.dataset.cache.ICacheActivity;
 import it.eng.spagobi.tools.dataset.cache.ICacheEvent;
@@ -38,7 +39,6 @@ import it.eng.spagobi.tools.datasource.bo.IDataSource;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -84,8 +84,6 @@ public class SQLDBCache implements ICache {
 		return dataSource;
 	}
 
-
-
 	/**
 	 * @param dataSource the dataSource to set
 	 */
@@ -102,30 +100,89 @@ public class SQLDBCache implements ICache {
 		PersistedTableManager persistedTableManager = new PersistedTableManager();
 		persistedTableManager.dropTablesWithPrefix(getDataSource(), prefix);
 	}
+	
+	
+	
+	
 
+	/* (non-Javadoc)
+	 * @see it.eng.spagobi.dataset.cache.ICache#get(it.eng.spagobi.tools.dataset.bo.IDataSet)
+	 */
+	public IDataStore get(IDataSet dataSet) {
+		IDataStore dataStore = null;
+		
+		logger.debug("IN");
+		try {
+			if(dataSet != null) {
+				String dataSetSignature = dataSet.getSignature();
+				dataStore = get(dataSetSignature);
+			} else {
+				logger.warn("Input parameter [dataSet] is null");
+			}
+		} catch(Throwable t) {
+			if(t instanceof CacheException) throw (CacheException)t;
+			else throw new CacheException("An unexpected error occure while getting dataset from cache", t);
+		} finally {
+			logger.debug("OUT");
+		}
+		
+		return dataStore;
+	}
+	
 
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.dataset.cache.ICache#get(java.lang.String)
 	 */
 	public IDataStore get(String resultsetSignature) {
+		IDataStore dataStore = null;
+		
 		logger.debug("IN");
-
-		if (getCacheMetadata().containsCacheItemByResultsetSignature(resultsetSignature)){
-			String tableName = getCacheMetadata().getCacheItemByResultsetSignature(resultsetSignature).getTable();
-			logger.debug("Found resultSet with signature ["+resultsetSignature+"] inside the Cache, table used ["+tableName+"]");
-			
-			IDataStore dataStore = dataSource.executeStatement("SELECT * FROM "+tableName, 0, 0);
-			DataStore toReturn = (DataStore) dataStore;
-			
-			return toReturn;
-		} 	
-		logger.debug("Not found resultSet with signature ["+resultsetSignature+"] inside the Cache");
-		logger.debug("OUT");
-		return null;
+		
+		try {
+			if (getCacheMetadata().containsCacheItemByResultsetSignature(resultsetSignature)){
+				logger.debug("Resultset with signature ["+resultsetSignature+"] found");
+				CacheItem cacheItem = getCacheMetadata().getCacheItemByResultsetSignature(resultsetSignature);
+				String tableName = cacheItem.getTable();	
+				logger.debug("The table associated to dataset ["+resultsetSignature+"] is [tableName]");
+				dataStore = dataSource.executeStatement("SELECT * FROM " + tableName, 0, 0);		
+			} else {
+				logger.debug("Resultset with signature ["+resultsetSignature+"] not found");
+			}
+		} catch(Throwable t) {
+			if(t instanceof CacheException) throw (CacheException)t;
+			else throw new CacheException("An unexpected error occure while getting dataset from cache", t);
+		} finally {
+			logger.debug("OUT");
+		}
+		
+		return dataStore;
 
 	}
 
-
+	/* (non-Javadoc)
+	 * @see it.eng.spagobi.dataset.cache.ICache#get(it.eng.spagobi.tools.dataset.bo.IDataSet, java.util.List, java.util.List, java.util.List)
+	 */
+	public IDataStore get(IDataSet dataSet, List<GroupCriteria> groups, List<FilterCriteria> filters, List<ProjectionCriteria> projections) { 
+		IDataStore dataStore = null;
+		
+		logger.debug("IN");
+		try {
+			if(dataSet != null) {
+				String dataSetSignature = dataSet.getSignature();
+				dataStore = get(dataSetSignature, groups, filters, projections);
+			} else {
+				logger.warn("Input parameter [dataSet] is null");
+			}
+		} catch(Throwable t) {
+			if(t instanceof CacheException) throw (CacheException)t;
+			else throw new CacheException("An unexpected error occure while getting dataset from cache", t);
+		} finally {
+			logger.debug("OUT");
+		}
+		
+		return dataStore;
+	}
+	
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.dataset.cache.ICache#get(java.lang.String, java.util.List, java.util.List, java.util.List)
 	 */
@@ -177,9 +234,7 @@ public class SQLDBCache implements ICache {
 					columnName = aggregateFunction + "("+columnName+")";
 				}
 				sqlBuilder.groupBy(columnName);
-
 			}
-			
 			
 			String queryText = sqlBuilder.toString();
 			IDataStore dataStore = dataSource.executeStatement(queryText, 0, 0);
@@ -196,7 +251,29 @@ public class SQLDBCache implements ICache {
 
 	}
 
-
+	/* (non-Javadoc)
+	 * @see it.eng.spagobi.dataset.cache.ICache#delete(it.eng.spagobi.tools.dataset.bo.IDataSet)
+	 */
+	public boolean delete(IDataSet dataSet) {
+		boolean result = false;
+		
+		logger.debug("IN");
+		try {
+			if(dataSet != null) {
+				String dataSetSignature = dataSet.getSignature();
+				result = delete(dataSetSignature);
+			} else {
+				logger.warn("Input parameter [dataSet] is null");
+			}
+		} catch(Throwable t) {
+			if(t instanceof CacheException) throw (CacheException)t;
+			else throw new CacheException("An unexpected error occure while deleting dataset from cache", t);
+		} finally {
+			logger.debug("OUT");
+		}
+		
+		return result;
+	}
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.dataset.cache.ICache#delete(java.lang.String)
 	 */
