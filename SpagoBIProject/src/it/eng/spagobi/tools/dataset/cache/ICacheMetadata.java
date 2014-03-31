@@ -27,6 +27,7 @@ import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import java.math.BigDecimal;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author  Marco Cortella (marco.cortella@eng.it)
@@ -34,6 +35,12 @@ import java.util.List;
  *
  */
 public interface ICacheMetadata {
+	
+	/**
+	 * @return total cache memory in bytes
+	 */
+	BigDecimal getTotalMemory();
+	
 	/**
 	 * @return available cache memory in bytes
 	 */
@@ -58,24 +65,29 @@ public interface ICacheMetadata {
 	/**
 	 * @return true if the configuration about the clean action are correctly defined
 	 */
-	boolean isActiveCleanAction();
+	boolean isCleaningEnabled();
 	
 	/**
 	 * @return the percentage of the memory to delete while cleaning cache
 	 */
-	Integer getAvailableMemoryBaseline();
+	Integer getCleaningQuota();
 	
-	
+	/**
+	 * TODO improve ordering not by insertion but by last access date from oldest to newest
+	 * 
+	 * @return The signatures of all cached objects ordered by insertion order (FIFO)
+	 */
+	List<String> getSignatures();
 	
 	/**
 	 * @return the cache registry map
 	 */
-	public LinkedHashMap<String, CacheItem> getCacheRegistry();
+	//public LinkedHashMap<String, CacheItem> getCacheRegistry();
 	
 	/**
 	 * set the cache registry map
 	 */
-	public void setCacheRegistry(LinkedHashMap<String, CacheItem> cacheRegistry);
+	//public void setCacheRegistry(LinkedHashMap<String, CacheItem> cacheRegistry);
 	
 	/**
 	 * add a cacheItem 

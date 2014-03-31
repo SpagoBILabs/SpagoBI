@@ -42,6 +42,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 
@@ -53,15 +54,19 @@ import org.apache.log4j.Logger;
  */
 public class SQLDBCache implements ICache {
 	
-	static private Logger logger = Logger.getLogger(SQLDBCache.class);
-	
-	public static final String CACHE_NAME_PREFIX_CONFIG = "SPAGOBI.CACHE.NAMEPREFIX";
-
-	private ICacheMetadata cacheMetadata;
-	private IDataSource dataSource;
+	// we really need it?
 	private SQLDBCacheConfiguration cacheConfiguration;
 	
+	private boolean enabled;
+	private IDataSource dataSource;
+	private ICacheMetadata cacheMetadata;
+		
 	private String tableNamePrefix;
+	
+	public static final String CACHE_NAME_PREFIX_CONFIG = "SPAGOBI.CACHE.NAMEPREFIX";
+	
+	static private Logger logger = Logger.getLogger(SQLDBCache.class);
+	
 	
 	public SQLDBCache(ICacheConfiguration cacheConfiguration){
 		this.dataSource = cacheConfiguration.getCacheDataSource();
@@ -138,9 +143,9 @@ public class SQLDBCache implements ICache {
 		logger.debug("IN");
 		
 		try {
-			if (getCacheMetadata().containsCacheItem(resultsetSignature)){
+			if (getMetadata().containsCacheItem(resultsetSignature)){
 				logger.debug("Resultset with signature ["+resultsetSignature+"] found");
-				CacheItem cacheItem = getCacheMetadata().getCacheItem(resultsetSignature);
+				CacheItem cacheItem = getMetadata().getCacheItem(resultsetSignature);
 				String tableName = cacheItem.getTable();	
 				logger.debug("The table associated to dataset ["+resultsetSignature+"] is [tableName]");
 				dataStore = dataSource.executeStatement("SELECT * FROM " + tableName, 0, 0);		
@@ -190,8 +195,8 @@ public class SQLDBCache implements ICache {
 			List<ProjectionCriteria> projections) {
 		logger.debug("IN");
 		
-		if (getCacheMetadata().containsCacheItem(resultsetSignature)){
-			String tableName = getCacheMetadata().getCacheItem(resultsetSignature).getTable();
+		if (getMetadata().containsCacheItem(resultsetSignature)){
+			String tableName = getMetadata().getCacheItem(resultsetSignature).getTable();
 			logger.debug("Found resultSet with signature ["+resultsetSignature+"] inside the Cache, table used ["+tableName+"]");
 			
 			SelectBuilder sqlBuilder = new SelectBuilder();
@@ -277,11 +282,11 @@ public class SQLDBCache implements ICache {
 	 * @see it.eng.spagobi.dataset.cache.ICache#delete(java.lang.String)
 	 */
 	public boolean delete(String signature) {
-		if (getCacheMetadata().containsCacheItem(signature)){
+		if (getMetadata().containsCacheItem(signature)){
 			PersistedTableManager persistedTableManager = new PersistedTableManager();
-			String tableName = getCacheMetadata().getCacheItem(signature).getTable();
+			String tableName = getMetadata().getCacheItem(signature).getTable();
 			persistedTableManager.dropTableIfExists(getDataSource(), tableName);
-			getCacheMetadata().removeCacheItem(tableName);
+			getMetadata().removeCacheItem(tableName);
 			logger.debug("Removed table "+tableName+" from [SQLDBCache] corresponding to the result Set: "+signature);
 			return true;
 		}
@@ -294,14 +299,14 @@ public class SQLDBCache implements ICache {
 	 */
 	public void deleteAll() {
 		logger.debug("Removing all tables from [SQLDBCache]");
-		Iterator it = getCacheMetadata().getCacheRegistry().entrySet().iterator();
-	    List<String> signatureToDelete = new ArrayList<String>();
-
-	    while (it.hasNext()) {
-	        Map.Entry<String,CacheItem> entry = (Map.Entry<String,CacheItem>)it.next();
-	        CacheItem item =  entry.getValue();
-	        signatureToDelete.add(item.getSignature());
-	    }
+		
+		List<String> signatureToDelete = new ArrayList<String>();
+		
+		List<String> signatures = getMetadata().getSignatures();
+		for(String signature : signatures) {
+			CacheItem item =  getMetadata().getCacheItem(signature);
+			signatureToDelete.add(item.getSignature());
+		}
 	    
 	    for (String signature : signatureToDelete){
 	    	delete(signature);
@@ -315,7 +320,7 @@ public class SQLDBCache implements ICache {
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.dataset.cache.ICache#getCacheMetadata()
 	 */
-	public ICacheMetadata getCacheMetadata() {
+	public ICacheMetadata getMetadata() {
 		if (cacheMetadata == null){		
 			cacheMetadata = new SQLDBCacheMetadata(cacheConfiguration);
 		}  
@@ -333,24 +338,22 @@ public class SQLDBCache implements ICache {
 		
 		//0- Checks if there is enough space free in the cache for the new resultset 
 		//   (ONLY if all cache parameters are correctly defined)		
-		if (getCacheMetadata().isActiveCleanAction()){
-			if (!getCacheMetadata().hasEnoughMemoryForResultSet(resultset)){		
+		if (getMetadata().isCleaningEnabled()){
+			if (!getMetadata().hasEnoughMemoryForResultSet(resultset)){		
 				//clean of the cache
-				Iterator it = getCacheMetadata().getCacheRegistry().entrySet().iterator();
-			    while (it.hasNext()) {
-			        Map.Entry<String,CacheItem> entry = (Map.Entry<String,CacheItem>)it.next();
-			        CacheItem item = entry.getValue();
-			        String signature = item.getSignature();
+				List<String> signatures = getMetadata().getSignatures();
+				for (String signature: signatures) {
 			        logger.debug("Delete object ["+signature+"] for cleaning cache event.");
 			        delete(signature); 
-			        if (getCacheMetadata().getAvailableMemoryAsPercentage() > getCacheMetadata().getAvailableMemoryBaseline())
+			        if (getMetadata().getAvailableMemoryAsPercentage() > getMetadata().getCleaningQuota()) {
 			        	break;
+			        }	
 			    }				
 			}
 		}
 		//check again if there is enough space for the resultset
-		if ( ((getCacheMetadata().isActiveCleanAction()) && (getCacheMetadata().hasEnoughMemoryForResultSet(resultset))) || 
-		(!getCacheMetadata().isActiveCleanAction()) ){
+		if ( ((getMetadata().isCleaningEnabled()) && (getMetadata().hasEnoughMemoryForResultSet(resultset))) || 
+		(!getMetadata().isCleaningEnabled()) ){
 			//1- Gets the connection for writing (from the datasource) 
 			//2- Derive the structure of the table to be created from the resultset (SQL CREATE) - attention to DBMS dialects
 			//3- Draws the data from the resultset to be included in the newly created table (SQL INSERT) - attention to DBMS dialects
@@ -368,7 +371,7 @@ public class SQLDBCache implements ICache {
 				String tableName = persistedTableManager.generateRandomTableName(tablePrefix);
 				persistedTableManager.persistDataset(dataset, resultset, getDataSource(), tableName);
 				//4- Update cacheRegistry with the new couple <resultsetSignature,nometabellaCreata>
-				getCacheMetadata().addCacheItem(resultsetSignature, tableName, resultset);
+				getMetadata().addCacheItem(resultsetSignature, tableName, resultset);
 			} catch (Exception e) {
 				logger.error("[SQLDBCACHE]Cannot perform persistence of result set on database");
 			}
@@ -398,5 +401,21 @@ public class SQLDBCache implements ICache {
 	public void scheduleActivity(ICacheActivity activity, ICacheTrigger trigger) {
 		// TODO Auto-generated method stub
 		
+	}
+
+
+	/* (non-Javadoc)
+	 * @see it.eng.spagobi.tools.dataset.cache.ICache#enable(boolean)
+	 */
+	public void enable(boolean enable) {
+		this.enabled = enabled;
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see it.eng.spagobi.tools.dataset.cache.ICache#isEnabled()
+	 */
+	public boolean isEnabled() {
+		return enabled;
 	}
 }

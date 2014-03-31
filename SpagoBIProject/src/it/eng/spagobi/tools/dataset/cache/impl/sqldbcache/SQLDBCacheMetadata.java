@@ -40,6 +40,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 
@@ -70,14 +71,15 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 	SQLDBCacheConfiguration cacheConfiguration;
 
 	private IDataSource dataSource;
-	private BigDecimal dimensionSpaceFree ;
-	private BigDecimal dimensionSpaceUsed ;
+	
+	private BigDecimal totalMemory;
+	private BigDecimal availableMemory ;
+	private BigDecimal usedMemory ;
 	
 	private String  tableNamePrefix;
-	private BigDecimal cacheSpaceAvailable;
-	private Integer cachePercentageToClean;
-	private boolean isActiveCleanAction = false;
 	
+	private boolean isActiveCleanAction = false;
+	private Integer cachePercentageToClean;
 	
 	private Map<String, Integer> columnSize =  new HashMap<String, Integer>();
 	private enum FieldType {ATTRIBUTE, MEASURE}
@@ -88,22 +90,26 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 		this.cacheConfiguration = cacheConfiguration;
 		if (this.cacheConfiguration != null){
 			tableNamePrefix = this.cacheConfiguration.getTableNamePrefix();
-			cacheSpaceAvailable = this.cacheConfiguration.getCacheSpaceAvailable();
+			totalMemory = this.cacheConfiguration.getCacheSpaceAvailable();
 			cachePercentageToClean = this.cacheConfiguration.getCachePercentageToClean();
 		}
 		
 		
 		if (tableNamePrefix != null && !"".equals(tableNamePrefix) &&
-			cacheSpaceAvailable != null && cachePercentageToClean != null  ) {
+			totalMemory != null && cachePercentageToClean != null  ) {
 			isActiveCleanAction = true;
 		}
+	}
+	
+	public BigDecimal getTotalMemory() {
+		return totalMemory;
 	}
 	
 	/**
 	 * Returns the number of bytes used by the table already cached (approximate)
 	 */
 	public BigDecimal getAvailableMemory(){
-		dimensionSpaceFree = cacheSpaceAvailable;
+		availableMemory = getTotalMemory();
 		String query = "SELECT ";	
 		
 		if (dataSource.getHibDialectClass().contains(DIALECT_POSTGRES)){
@@ -132,10 +138,10 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 				BigDecimal rowWeight = getRowWeight(ds.getRecordAt(0), ds.getMetaData());
 				size = rowWeight.multiply(new BigDecimal(ds.getRecordsCount())) ;
 				logger.debug("Dimension stimated for cached object "+ signature +" [rowWeight*rows]: " + size + " ["+rowWeight+" * "+ds.getRecordsCount()+"]");
-				if (size != null) dimensionSpaceFree = dimensionSpaceFree.subtract(size);		        
+				if (size != null) availableMemory = availableMemory.subtract(size);		        
 		    }
-		    logger.debug("Remaining cache free space: " + dimensionSpaceFree);
-		    return dimensionSpaceFree;
+		    logger.debug("Remaining cache free space: " + availableMemory);
+		    return availableMemory;
 		}
 		logger.debug("Defined query: " +query);
 		IDataStore dataStore  = dataSource.executeStatement(query, 0, 0);
@@ -149,9 +155,9 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 			}
 		}
 		logger.debug("Size of object cached: " + size);
-		if (size != null) dimensionSpaceFree = dimensionSpaceFree.subtract(size);
-		logger.debug("Remaining cache free space: " + dimensionSpaceFree);
-		return dimensionSpaceFree;
+		if (size != null) availableMemory = availableMemory.subtract(size);
+		logger.debug("Remaining cache free space: " + availableMemory);
+		return availableMemory;
 	}	
 	
 	/**
@@ -159,14 +165,29 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 	 */
 	public BigDecimal getRequiredMemory(IDataStore resultset){
 		BigDecimal rowWeight = getRowWeight(resultset.getRecordAt(0), resultset.getMetaData());
-		dimensionSpaceUsed = rowWeight.multiply(new BigDecimal(resultset.getRecordsCount())) ;
-		logger.debug("Dimension estimated for the new resultset [rowWeight*rows]: " + dimensionSpaceUsed + " ["+rowWeight+" * "+resultset.getRecordsCount()+"]");
-		return dimensionSpaceUsed;
+		usedMemory = rowWeight.multiply(new BigDecimal(resultset.getRecordsCount())) ;
+		logger.debug("Dimension estimated for the new resultset [rowWeight*rows]: " + usedMemory + " ["+rowWeight+" * "+resultset.getRecordsCount()+"]");
+		return usedMemory;
 	}
 	
-	public boolean isActiveCleanAction(){ 
+	public 	Integer getAvailableMemoryAsPercentage(){
+		Integer toReturn = 0;
+		BigDecimal spaceAvailable = getAvailableMemory();
+		toReturn = Integer.valueOf(((spaceAvailable.multiply(new BigDecimal(100)).divide(getTotalMemory(),RoundingMode.HALF_UP)).intValue()));
+		return toReturn;
+	}
+
+	public Integer getNumberOfObjects(){		
+		return cacheRegistry.size();
+	}
+
+	public boolean isCleaningEnabled(){ 
 		return isActiveCleanAction;
 	} 
+	
+	public Integer getCleaningQuota(){
+		return cachePercentageToClean;
+	}
 	
 	public boolean hasEnoughMemoryForResultSet(IDataStore resultset){
 		if (getAvailableMemory().compareTo(getRequiredMemory(resultset)) <= 0){
@@ -174,23 +195,8 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 		}else{
 			return true;
 		}
-	}
+	}	
 	
-	public 	Integer getAvailableMemoryAsPercentage(){
-		Integer toReturn = 0;
-		BigDecimal spaceAvailable = getAvailableMemory();
-		toReturn = Integer.valueOf(((spaceAvailable.multiply(new BigDecimal(100)).divide(cacheSpaceAvailable,RoundingMode.HALF_UP)).intValue()));
-		return toReturn;
-	}
-	
-	public Integer getAvailableMemoryBaseline(){
-		return cachePercentageToClean;
-	}
-
-	public Integer getNumberOfObjects(){		
-		return cacheRegistry.size();
-	}
-
 	private BigDecimal getBytesForType(String type){
 		BigDecimal toReturn = new BigDecimal(8); //for default sets a generic Object size
 		List<Properties> objectsTypeDimension = cacheConfiguration.getObjectsTypeDimension();
@@ -301,6 +307,19 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 	
 	public boolean containsCacheItem(String resultSetSignature) {
 		return getCacheItem(resultSetSignature) != null;
+	}
+
+	/* (non-Javadoc)
+	 * @see it.eng.spagobi.tools.dataset.cache.ICacheMetadata#getSignatures()
+	 */
+	public List<String> getSignatures() {
+		List<String> signatures = new ArrayList<String>();
+		Iterator it = getCacheRegistry().entrySet().iterator();
+	    while (it.hasNext()) {
+	        Map.Entry<String,CacheItem> entry = (Map.Entry<String,CacheItem>)it.next();
+	        signatures.add( entry.getKey() );
+	    }
+	    return signatures;
 	}
 
 }
