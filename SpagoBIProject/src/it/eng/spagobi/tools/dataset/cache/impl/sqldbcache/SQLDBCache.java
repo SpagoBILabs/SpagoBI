@@ -69,6 +69,7 @@ public class SQLDBCache implements ICache {
 	
 	
 	public SQLDBCache(ICacheConfiguration cacheConfiguration){
+		this.enabled = true;
 		this.dataSource = cacheConfiguration.getCacheDataSource();
 		this.cacheConfiguration = (SQLDBCacheConfiguration)cacheConfiguration;
 
@@ -352,8 +353,7 @@ public class SQLDBCache implements ICache {
 			}
 		}
 		//check again if there is enough space for the resultset
-		if ( ((getMetadata().isCleaningEnabled()) && (getMetadata().hasEnoughMemoryForResultSet(resultset))) || 
-		(!getMetadata().isCleaningEnabled()) ){
+		if ( getMetadata().hasEnoughMemoryForResultSet(resultset) ){
 			//1- Gets the connection for writing (from the datasource) 
 			//2- Derive the structure of the table to be created from the resultset (SQL CREATE) - attention to DBMS dialects
 			//3- Draws the data from the resultset to be included in the newly created table (SQL INSERT) - attention to DBMS dialects
@@ -361,22 +361,21 @@ public class SQLDBCache implements ICache {
 			String tablePrefix = null;
 			
 			try {
-				if (this.cacheConfiguration != null){
-					tableNamePrefix = this.cacheConfiguration.getTableNamePrefix();
-					if (tableNamePrefix != null){
-						tablePrefix = tableNamePrefix.toUpperCase();
-					}
+				tableNamePrefix = this.cacheConfiguration.getTableNamePrefix();
+				if (tableNamePrefix != null){
+					tablePrefix = tableNamePrefix.toUpperCase();
 				}
 				
 				String tableName = persistedTableManager.generateRandomTableName(tablePrefix);
 				persistedTableManager.persistDataset(dataset, resultset, getDataSource(), tableName);
 				//4- Update cacheRegistry with the new couple <resultsetSignature,nometabellaCreata>
 				getMetadata().addCacheItem(resultsetSignature, tableName, resultset);
-			} catch (Exception e) {
-				logger.error("[SQLDBCACHE]Cannot perform persistence of result set on database");
+			} catch (Throwable t) {
+				if(t instanceof CacheException) throw (CacheException)t;
+				else throw new CacheException("An unexpected exception occured while persisting the store on database");
 			}
 		} else {
-			logger.warn("The resultset ["+resultsetSignature+"] cannot be cached because there is not enough space avaiable");
+			throw new CacheException("Store is to big to be persisted in cache. Execute dataset disbling cache.");
 		}
 		
 
