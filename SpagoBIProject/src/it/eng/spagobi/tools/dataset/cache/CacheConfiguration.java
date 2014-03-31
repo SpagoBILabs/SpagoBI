@@ -32,6 +32,7 @@ public class CacheConfiguration {
 	private String tableNamePrefix;
 	private BigDecimal cacheSpaceAvailable;
 	private Integer cachePercentageToClean;
+	
 	/**
 	 * @return the tableNamePrefixConfig
 	 */
