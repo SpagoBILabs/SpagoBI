@@ -171,7 +171,7 @@ public class PersistedTableManager {
 		return datastore;
 	}
 	
-	private void persistDataset(IDataStore datastore, IDataSource datasource)throws Exception {
+	public void persistDataset(IDataStore datastore, IDataSource datasource)throws Exception {
 		logger.debug("IN");
 		Connection connection = null;
 		try{			
