@@ -18,6 +18,8 @@ import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData.FieldType;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.StringUtils;
+import it.eng.spagobi.utilities.database.DataBase;
+import it.eng.spagobi.utilities.database.IDataBase;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.temporarytable.TemporaryTableManager;
@@ -219,7 +221,7 @@ public class PersistedTableManager {
 			query += ((i==filedNo-1)?" ) " : "");
 			values += "?" + ((i<filedNo-1)?" , " : "");
 			values += ((i==filedNo-1)?" ) " : "");	
-			create +=  " " + escapedColumnName + getDBFieldType(fmd) + ((i<filedNo-1)?" , " : ")");	
+			create +=  " " + escapedColumnName + getDBFieldType(datasource, fmd) + ((i<filedNo-1)?" , " : ")");	
 		}
 		String totalQuery = query + values;
 		logger.debug("create table statement: " + create);
@@ -331,6 +333,20 @@ public class PersistedTableManager {
 		return columnName;
 	} 
 	
+	private String getDBFieldType(IDataSource dataSource, IFieldMetaData fieldMetaData){
+		IDataBase dataBase = DataBase.getDataBase(dataSource);
+		Class type = fieldMetaData.getType();
+		if (fieldMetaData.getFieldType().equals(FieldType.MEASURE) && type == String.class) {
+			logger.debug("Column type is string but the field is measure: converting it into a double");
+			type = Double.class;
+		}
+		
+		return dataBase.getDataBaseType(type);
+	}
+	
+	/** 
+	 * @deprecated
+	 */
 	private String getDBFieldType(IFieldMetaData fieldMetaData){
 		String toReturn = "";
 		String type = fieldMetaData.getType().toString();
@@ -340,7 +356,6 @@ public class PersistedTableManager {
 			type = "java.lang.Double";
 		}
 
-		//if (type.equalsIgnoreCase("java.lang.String")){
 		if (type.contains("java.lang.String")){
 			toReturn = " VARCHAR ";
 			if (getDialect().contains(DIALECT_ORACLE)) { 
@@ -432,7 +447,7 @@ public class PersistedTableManager {
 		for (int i=0, l=md.getFieldCount(); i<l; i++){				
 			 IFieldMetaData fmd = md.getFieldMeta(i);
 			 String columnName = getSQLColumnName(fmd);
-			 toReturn += " " + AbstractJDBCDataset.encapsulateColumnName(columnName, dataSource) + getDBFieldType(fmd);	
+			 toReturn += " " + AbstractJDBCDataset.encapsulateColumnName(columnName, dataSource) + getDBFieldType(dataSource, fmd);	
 			 toReturn += ((i<l-1)?" , " : "");	
 		}
 		toReturn += " )";
