@@ -28,11 +28,11 @@ import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.ParametersDecoder;
 import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.database.temporarytable.TemporaryTable;
+import it.eng.spagobi.utilities.database.temporarytable.TemporaryTableManager;
+import it.eng.spagobi.utilities.database.temporarytable.TemporaryTableRecorder;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.service.AbstractBaseHttpAction;
-import it.eng.spagobi.utilities.temporarytable.TemporaryTable;
-import it.eng.spagobi.utilities.temporarytable.TemporaryTableManager;
-import it.eng.spagobi.utilities.temporarytable.TemporaryTableRecorder;
 
 import java.io.IOException;
 import java.util.HashMap;
