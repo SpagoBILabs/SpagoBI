@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Random;
 
 import org.apache.log4j.Logger;
 import org.json.JSONException;
@@ -37,6 +38,7 @@ import it.eng.qbe.dataset.QbeDataSet;
 import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spago.configuration.FileCreatorConfiguration;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.tools.dataset.cache.CacheException;
 import it.eng.spagobi.tools.dataset.cache.CacheFactory;
 import it.eng.spagobi.tools.dataset.cache.ICache;
 import it.eng.spagobi.tools.dataset.cache.ICacheMetadata;
@@ -53,7 +55,15 @@ import it.eng.spagobi.tools.dataset.bo.FlatDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
 import it.eng.spagobi.tools.dataset.bo.ScriptDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
+import it.eng.spagobi.tools.dataset.common.datastore.Field;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.common.datastore.Record;
+import it.eng.spagobi.tools.dataset.common.metadata.FieldMetadata;
+import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
+import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData.FieldType;
+import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
+import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
+import it.eng.spagobi.tools.dataset.persist.PersistedTableManager;
 import it.eng.spagobi.tools.datasource.bo.DataSource;
 import junit.framework.TestCase;
 
@@ -347,16 +357,26 @@ public abstract class AbstractSQLDBCacheTest extends TestCase {
 		
 		//Create a cache with space available equal to zero
 		ICache cacheZero = createCacheZero();
+		boolean exception = false;
 		
 		IDataStore resultset;	
 		
 		sqlDataset.loadData();
 		resultset = sqlDataset.getDataStore();
-		cacheZero.put(sqlDataset, sqlDataset.getSignature(), resultset);
-		assertNull("Wrong behavior: dataset cached even if the space available is zero",cacheZero.get(sqlDataset.getSignature()));
-		
-		cacheZero.deleteAll();
-		
+		try {
+			cacheZero.put(sqlDataset, sqlDataset.getSignature(), resultset);
+
+		}
+		catch (CacheException ex) {
+			logger.error("Dataset cannot be cached");
+			exception = true;
+		}		
+		finally {
+			assertTrue("Wrong behavior: Exception expected but not catched",exception );
+			assertNull("Wrong behavior: dataset cached even if the space available is zero",cacheZero.get(sqlDataset.getSignature()));		
+			cacheZero.deleteAll();
+		}
+
 	}
 	
 	public void testGetDimensionSpaceAvailable(){
@@ -398,10 +418,14 @@ public abstract class AbstractSQLDBCacheTest extends TestCase {
 		//Insert first dataset
 		qbeDataset.loadData();
 		resultset =	qbeDataset.getDataStore();
-		cacheCustom.put(qbeDataset, qbeDataset.getSignature(), resultset);
-		assertNotNull(cacheCustom.get(qbeDataset.getSignature()));
-		logger.debug("QbeDataSet inserted inside cache");
 		
+		try {
+			cacheCustom.put(qbeDataset, qbeDataset.getSignature(), resultset);
+		} finally {
+			assertNotNull(cacheCustom.get(qbeDataset.getSignature()));
+			logger.debug("QbeDataSet inserted inside cache");
+		}
+
 		ICacheMetadata cacheMetadata = cacheCustom.getMetadata();
 		
 		//Second dataset (too big for avaiable space)
@@ -410,11 +434,14 @@ public abstract class AbstractSQLDBCacheTest extends TestCase {
 		
 		assertFalse(cacheMetadata.hasEnoughMemoryForResultSet(resultset));
 		
-		cacheCustom.put(fileDataset, fileDataset.getSignature(), resultset);
-		assertNotNull("Not enought space on cache",cacheCustom.get(fileDataset.getSignature()));
-		
-		cacheCustom.deleteAll();
-		
+		try{
+			cacheCustom.put(fileDataset, fileDataset.getSignature(), resultset);
+
+		} finally {
+			assertNotNull("Not enought space on cache",cacheCustom.get(fileDataset.getSignature()));
+			
+			cacheCustom.deleteAll();
+		}
 	}
 	
 	public void testSchemaName(){
@@ -440,6 +467,58 @@ public abstract class AbstractSQLDBCacheTest extends TestCase {
 			IDataStore dataStore = dataSourceWriting.executeStatement("SELECT * FROM "+schemaName+"."+tableName, 0, 0);
         }
 
+	}
+	
+	public void testFakeDataset(){
+		String schemaName =  TestConstants.CACHE_CONFIG_SCHEMA_NAME;
+
+		//Create a fake dataStore
+		DataStore dataStore = new DataStore();
+		IMetaData metadata = new MetaData();
+		IFieldMetaData fieldMetaData = new FieldMetadata();
+		fieldMetaData.setAlias("test_column");
+		fieldMetaData.setName("test_column");
+		fieldMetaData.setType(String.class);
+		fieldMetaData.setFieldType(FieldType.ATTRIBUTE);
+		metadata.addFiedMeta(fieldMetaData);
+		dataStore.setMetaData(metadata);
+		Record record = new Record();
+		Field field = new Field();
+		field.setValue("try");
+		record.appendField(field);
+		dataStore.appendRecord(record);
+		
+		//persist the datastore as a table on db
+		PersistedTableManager persistedTableManager = new PersistedTableManager();
+		Random ran = new Random();
+		int x = ran.nextInt(100);
+		String tableName = "SbiTest"+x;
+		persistedTableManager.setTableName(tableName);
+		
+		try {
+			persistedTableManager.persistDataset(dataStore, dataSourceWriting);
+		} catch (Exception e) {
+			logger.error("Error persisting dataset");
+		}
+		
+		//try to query the table using the SchemaName.TableName syntax if schemaName is valorized
+        
+        try {
+            if (schemaName.isEmpty()){
+    			dataSourceWriting.executeStatement("SELECT * FROM "+tableName, 0, 0);
+
+            } else {
+    			dataSourceWriting.executeStatement("SELECT * FROM "+schemaName+"."+tableName, 0, 0);
+            }
+        }
+        finally {
+            //Dropping table
+            persistedTableManager.dropTableIfExists(dataSourceWriting,tableName);
+    		
+        }
+
+		
+		
 	}
 	
 	
