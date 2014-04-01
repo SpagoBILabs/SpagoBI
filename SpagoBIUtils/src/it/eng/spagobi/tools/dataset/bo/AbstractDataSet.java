@@ -24,11 +24,11 @@ import it.eng.spagobi.tools.dataset.utils.DatasetMetadataParser;
 import it.eng.spagobi.tools.datasource.bo.DataSourceFactory;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.StringUtils;
+import it.eng.spagobi.utilities.database.temporarytable.TemporaryTableManager;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.sql.SQLStatementConditionalOperators;
 import it.eng.spagobi.utilities.sql.SQLStatementConditionalOperators.IConditionalOperator;
-import it.eng.spagobi.utilities.temporarytable.TemporaryTableManager;
 
 import java.util.ArrayList;
 import java.util.Date;
