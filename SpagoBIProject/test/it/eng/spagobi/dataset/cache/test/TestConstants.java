@@ -30,8 +30,8 @@ import java.math.BigDecimal;
  */
 public class TestConstants {
 	
-	public static String workspaceFolder = "D:/Documenti/Sviluppo/workspaces/helios/spagobi/server";
-	//public static String workspaceFolder = "C:/Users/cortella/workspaceJEE";
+	//public static String workspaceFolder = "D:/Documenti/Sviluppo/workspaces/helios/spagobi/server";
+	public static String workspaceFolder = "C:/Users/cortella/workspaceJEE";
 
 	public static String RESOURCE_PATH = workspaceFolder+"/SpagoBICockpitEngine/test/resources/";
 	public static String WEBCONTENT_PATH = workspaceFolder+"/SpagoBICockpitEngine/WebContent";
@@ -40,6 +40,7 @@ public class TestConstants {
 	public static String CACHE_CONFIG_TABLE_PREFIX = "sbicache";
 	public static BigDecimal CACHE_CONFIG_CACHE_DIMENSION = BigDecimal.valueOf(104857600); //in bytes
 	public static int CACHE_CONFIG_PERCENTAGE_TO_CLEAN = 50;
+	public static String CACHE_CONFIG_SCHEMA_NAME = "spagobi_testw";
 
 	
 	public enum DatabaseType { MYSQL, POSTGRES, ORACLE, SQLSERVER };

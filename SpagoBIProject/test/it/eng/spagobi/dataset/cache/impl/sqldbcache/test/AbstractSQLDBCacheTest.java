@@ -25,6 +25,8 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -38,6 +40,7 @@ import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.tools.dataset.cache.CacheFactory;
 import it.eng.spagobi.tools.dataset.cache.ICache;
 import it.eng.spagobi.tools.dataset.cache.ICacheMetadata;
+import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.CacheItem;
 import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.SQLDBCache;
 import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.SQLDBCacheConfiguration;
 import it.eng.spagobi.dataset.cache.impl.sqldbcache.DataType;
@@ -412,6 +415,31 @@ public abstract class AbstractSQLDBCacheTest extends TestCase {
 		
 		cacheCustom.deleteAll();
 		
+	}
+	
+	public void testSchemaName(){
+
+		String schemaName =  TestConstants.CACHE_CONFIG_SCHEMA_NAME;
+		
+		IDataStore resultset;
+		
+
+		qbeDataset.loadData();
+		resultset =	qbeDataset.getDataStore();
+		String signature = qbeDataset.getSignature();
+		cache.put(qbeDataset, qbeDataset.getSignature(), resultset);
+		logger.debug("QbeDataSet inserted inside cache");
+		
+		ICacheMetadata cacheMetadata = cache.getMetadata();
+		CacheItem cacheItem = cache.getMetadata().getCacheItem(signature);
+		String tableName = cacheItem.getTable();		        
+        if (schemaName.isEmpty()){
+			IDataStore dataStore = dataSourceWriting.executeStatement("SELECT * FROM "+tableName, 0, 0);
+
+        } else {
+			IDataStore dataStore = dataSourceWriting.executeStatement("SELECT * FROM "+schemaName+"."+tableName, 0, 0);
+        }
+
 	}
 	
 	
