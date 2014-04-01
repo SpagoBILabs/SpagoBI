@@ -11,6 +11,8 @@
  */
 package it.eng.spagobi.utilities.database;
 
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
+
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
  *
@@ -28,11 +30,14 @@ public interface IDataBase {
 	 * @return the length used for mapped varchar database type. getDataBaseType(String.class) = DBTYPE(X) where X is
 	 * equal to getVarcharLength().
 	 */
-	public int getVarcharLength();
+	int getVarcharLength();
 
 	/**
 	 * 
 	 * @param varcharLength the length used for varchart database type
 	 */
-	public void setVarcharLength(int varcharLength);
+	void setVarcharLength(int varcharLength);
+	
+	
+	String getAliasDelimiter();
 }
