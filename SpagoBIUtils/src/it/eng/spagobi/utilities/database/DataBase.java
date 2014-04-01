@@ -31,7 +31,7 @@ public class DataBase {
 	
 	public static IDataBase getDataBase(IDataSource dataSource) {
 		IDataBase dataBase = null;
-		String dialect = dataSource.getHibDialectName();
+		String dialect = dataSource.getHibDialectClass();
 		if(dialect.contains(DIALECT_MYSQL)) {
 			dataBase = new MySQLDataBase(dataSource);
 		} else if(dialect.contains(DIALECT_POSTGRES)) {

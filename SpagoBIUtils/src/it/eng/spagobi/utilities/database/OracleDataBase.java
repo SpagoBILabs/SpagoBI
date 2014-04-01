@@ -33,7 +33,7 @@ public class OracleDataBase extends AbstractDataBase {
 		String javaTypeName = javaType.toString();
 		
 		if (javaTypeName.contains("java.lang.String")){
-			toReturn = " VARCHAR2 (4000)";	
+			toReturn = " VARCHAR (" + getVarcharLength() + ")";
 		} else if (javaTypeName.contains("java.lang.Short")) {
 			toReturn = " INTEGER ";
 		}else if (javaTypeName.contains("java.lang.Integer")){

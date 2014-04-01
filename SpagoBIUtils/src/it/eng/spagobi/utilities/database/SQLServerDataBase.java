@@ -31,7 +31,7 @@ public class SQLServerDataBase extends AbstractDataBase {
 		String toReturn = null;
 		String javaTypeName = javaType.toString();
 		if (javaTypeName.contains("java.lang.String")){
-			toReturn = " VARCHAR  (4000)";
+			toReturn = " VARCHAR (" + getVarcharLength() + ")";
 		} else if (javaTypeName.contains("java.lang.Short")) {
 			toReturn = " INTEGER ";
 		} else if (javaTypeName.contains("java.lang.Integer")){

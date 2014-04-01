@@ -22,4 +22,17 @@ public interface IDataBase {
 	 * @return The database type to use to map the specified java type
 	 */
 	String getDataBaseType(Class javaType);
+	
+	/**
+	 * 
+	 * @return the length used for mapped varchar database type. getDataBaseType(String.class) = DBTYPE(X) where X is
+	 * equal to getVarcharLength().
+	 */
+	public int getVarcharLength();
+
+	/**
+	 * 
+	 * @param varcharLength the length used for varchart database type
+	 */
+	public void setVarcharLength(int varcharLength);
 }

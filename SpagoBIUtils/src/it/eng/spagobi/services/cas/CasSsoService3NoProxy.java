@@ -49,7 +49,7 @@ public class CasSsoService3NoProxy implements SsoServiceInterface {
 	String user=(String)request.getRemoteUser();
 	logger.debug("CAS user in HttpServletRequest:"+user);
 	logger.debug("CAS user in HttpSession:"+userInSession);
-	return user;
+	return user!=null? user:userInSession;
     }
     
     /**
