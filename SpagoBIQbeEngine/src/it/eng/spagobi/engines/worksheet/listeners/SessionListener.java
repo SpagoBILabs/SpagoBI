@@ -7,9 +7,9 @@ package it.eng.spagobi.engines.worksheet.listeners;
 
 import java.util.Iterator;
 
-import it.eng.spagobi.utilities.temporarytable.TemporaryTable;
-import it.eng.spagobi.utilities.temporarytable.TemporaryTableManager;
-import it.eng.spagobi.utilities.temporarytable.TemporaryTableRecorder;
+import it.eng.spagobi.utilities.database.temporarytable.TemporaryTable;
+import it.eng.spagobi.utilities.database.temporarytable.TemporaryTableManager;
+import it.eng.spagobi.utilities.database.temporarytable.TemporaryTableRecorder;
 
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;

@@ -14,11 +14,11 @@ import it.eng.spagobi.engines.worksheet.template.WorksheetTemplate;
 import it.eng.spagobi.engines.worksheet.template.WorksheetTemplateParser;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.utilities.database.temporarytable.TemporaryTableManager;
 import it.eng.spagobi.utilities.engines.AbstractEngineInstance;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.IEngineAnalysisState;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
-import it.eng.spagobi.utilities.temporarytable.TemporaryTableManager;
 
 import java.util.Map;
 
