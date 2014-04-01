@@ -100,7 +100,6 @@ Sbi.worksheet.designer.WorksheetDesignerPanel = function(config) {
 		} else {
 			this.fireEvent('afterworksheetinitialized', this);
 		}
-
 	}, this, { single : true } );
 	
 };
