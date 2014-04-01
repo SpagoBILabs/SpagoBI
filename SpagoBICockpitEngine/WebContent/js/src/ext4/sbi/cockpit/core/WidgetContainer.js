@@ -578,7 +578,7 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.WidgetRuntime, {
     	component.on('move', this.onComponentMove, this);
     	component.on('resize', this.onComponentResize, this);
     	component.on("performaction", this.onComponentAction, this);
-    	component.on("performaction", this.onComponentClose, this);
+    	component.on("close", this.onComponentClose, this);
     	
     	this.components.add(component.getId(), component);
     	component.setParentContainer(this);
@@ -646,6 +646,7 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.WidgetRuntime, {
     		var widget = component.getWidget();
     		this.getWidgetManager().unregister(widget);
     	}
+    	this.components.remove(component);
     	Sbi.trace("[WidgetContainer.onComponentClose]: OUT");
     }
     
