@@ -51,23 +51,8 @@ import org.apache.log4j.Logger;
  */
 public class SQLDBCacheMetadata implements ICacheMetadata {
 	
-	static private Logger logger = Logger.getLogger(SQLDBCacheMetadata.class);
-	
-	public static final String CACHE_NAME_PREFIX_CONFIG = "SPAGOBI.CACHE.NAMEPREFIX";
-	public static final String CACHE_SPACE_AVAILABLE_CONFIG = "SPAGOBI.CACHE.SPACE_AVAILABLE";
-	public static final String CACHE_LIMIT_FOR_CLEAN_CONFIG = "SPAGOBI.CACHE.LIMIT_FOR_CLEAN";
-	public static final String DIALECT_MYSQL = "MySQL";
-	public static final String DIALECT_POSTGRES = "PostgreSQL";
-	public static final String DIALECT_ORACLE = "OracleDialect";
-	public static final String DIALECT_HSQL = "HSQL";
-	public static final String DIALECT_HSQL_PRED = "Predefined hibernate dialect";
-	public static final String DIALECT_ORACLE9i10g = "Oracle9Dialect";
-	public static final String DIALECT_SQLSERVER = "SQLServer";
-	public static final String DIALECT_DB2 = "DB2";
-	public static final String DIALECT_INGRES = "Ingres";
-	public static final String DIALECT_TERADATA = "Teradata";
-
 	private LinkedHashMap<String, CacheItem> cacheRegistry = new LinkedHashMap<String, CacheItem>();	
+	
 	SQLDBCacheConfiguration cacheConfiguration;
 
 	private IDataSource dataSource;
@@ -82,8 +67,25 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 	private Integer cachePercentageToClean;
 	
 	private Map<String, Integer> columnSize =  new HashMap<String, Integer>();
+	
 	private enum FieldType {ATTRIBUTE, MEASURE}
 	
+	public static final String CACHE_NAME_PREFIX_CONFIG = "SPAGOBI.CACHE.NAMEPREFIX";
+	public static final String CACHE_SPACE_AVAILABLE_CONFIG = "SPAGOBI.CACHE.SPACE_AVAILABLE";
+	public static final String CACHE_LIMIT_FOR_CLEAN_CONFIG = "SPAGOBI.CACHE.LIMIT_FOR_CLEAN";
+	public static final String DIALECT_MYSQL = "MySQL";
+	public static final String DIALECT_POSTGRES = "PostgreSQL";
+	public static final String DIALECT_ORACLE = "OracleDialect";
+	public static final String DIALECT_HSQL = "HSQL";
+	public static final String DIALECT_HSQL_PRED = "Predefined hibernate dialect";
+	public static final String DIALECT_ORACLE9i10g = "Oracle9Dialect";
+	public static final String DIALECT_SQLSERVER = "SQLServer";
+	public static final String DIALECT_DB2 = "DB2";
+	public static final String DIALECT_INGRES = "Ingres";
+	public static final String DIALECT_TERADATA = "Teradata";
+	
+	static private Logger logger = Logger.getLogger(SQLDBCacheMetadata.class);
+
 	public SQLDBCacheMetadata(SQLDBCacheConfiguration cacheConfiguration){
 
 		dataSource = cacheConfiguration.getCacheDataSource();
