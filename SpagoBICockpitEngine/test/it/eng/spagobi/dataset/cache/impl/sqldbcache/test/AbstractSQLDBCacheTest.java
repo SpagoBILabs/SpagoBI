@@ -25,6 +25,8 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -39,12 +41,14 @@ import it.eng.spagobi.dataset.cache.CacheConfiguration;
 import it.eng.spagobi.dataset.cache.CacheFactory;
 import it.eng.spagobi.dataset.cache.ICache;
 import it.eng.spagobi.dataset.cache.ICacheMetadata;
+import it.eng.spagobi.dataset.cache.impl.sqldbcache.CacheItem;
 import it.eng.spagobi.dataset.cache.impl.sqldbcache.DataType;
 import it.eng.spagobi.dataset.cache.impl.sqldbcache.SQLDBCache;
 import it.eng.spagobi.dataset.cache.test.FakeDatamartRetriever;
 import it.eng.spagobi.dataset.cache.test.TestConstants;
 import it.eng.spagobi.tenant.Tenant;
 import it.eng.spagobi.tenant.TenantManager;
+import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
 import it.eng.spagobi.tools.dataset.bo.FileDataSet;
 import it.eng.spagobi.tools.dataset.bo.FlatDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
@@ -406,6 +410,43 @@ public abstract class AbstractSQLDBCacheTest extends TestCase {
 		
 	}
 	
+	public void testSchemaName(){
+
+		String schemaName =  TestConstants.CACHE_CONFIG_SCHEMA_NAME;
+		
+		IDataStore resultset;
+		
+
+		qbeDataset.loadData();
+		resultset =	qbeDataset.getDataStore();
+		String signature = qbeDataset.getSignature();
+		cache.put(qbeDataset, qbeDataset.getSignature(), resultset);
+		logger.debug("QbeDataSet inserted inside cache");
+		
+		ICacheMetadata cacheMetadata = cache.getCacheMetadata();
+		LinkedHashMap<String,CacheItem> cacheRegistry = cacheMetadata.getCacheRegistry();
+		Iterator it = cacheRegistry.entrySet().iterator();
+	    while (it.hasNext()) {
+	    	BigDecimal size = null;
+	        Map.Entry<String,CacheItem> entry = (Map.Entry<String,CacheItem>)it.next();
+	        CacheItem cacheItem = entry.getValue();
+
+	        
+	        if (cacheItem.getSignature().equals(signature)){
+		        String tableName = entry.getKey();		        
+		        if (schemaName.isEmpty()){
+					IDataStore dataStore = dataSourceWriting.executeStatement("SELECT * FROM "+tableName, 0, 0);
+
+		        } else {
+					IDataStore dataStore = dataSourceWriting.executeStatement("SELECT * FROM "+schemaName+"."+tableName, 0, 0);
+		        }
+				break;
+	        }
+	        
+	    }
+
+	}
+	
 	
 	//------------------------------------------------------------------------------
 	
@@ -557,6 +598,10 @@ public abstract class AbstractSQLDBCacheTest extends TestCase {
 		}
 		return cacheCustom;
 	}
+	
+
+	
+	
 	
 	
 
