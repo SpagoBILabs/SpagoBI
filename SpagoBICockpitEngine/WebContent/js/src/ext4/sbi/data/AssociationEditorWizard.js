@@ -77,7 +77,7 @@ Ext.define('Sbi.data.AssociationEditorWizard', {
 		Sbi.trace("[AssociationEditorWizard.init]: IN");		
 		this.editorMainPanel = Ext.create('Sbi.data.AssociationEditorWizardPanel',{
 			storeList: this.storeList
-		  , associationsList: c.associationsList.associations	
+		  , associationsList: (c.associationsList)?c.associationsList.associations:[]
 		});
 		this.editorMainPanel.on('cancel', this.onCancel, this);
 		this.editorMainPanel.on('submit', this.onSubmit, this);
