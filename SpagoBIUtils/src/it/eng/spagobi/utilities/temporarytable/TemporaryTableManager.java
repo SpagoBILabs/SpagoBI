@@ -15,6 +15,8 @@ import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.StringUtils;
 import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.database.DataBase;
+import it.eng.spagobi.utilities.database.IDataBase;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.sql.JDBCTypeMapper;
 
@@ -43,15 +45,15 @@ public class TemporaryTableManager {
     
     private static String DEFAULT_TABLE_NAME_PREFIX = "TMPSBIQBE_";
     
-	public static final String DIALECT_MYSQL = "MySQL";
-	public static final String DIALECT_POSTGRES = "PostgreSQL";
-	public static final String DIALECT_ORACLE = "OracleDialect";
-	public static final String DIALECT_HSQL = "HSQL";
-	public static final String DIALECT_ORACLE9i10g = "Oracle9Dialect";
-	public static final String DIALECT_SQLSERVER = "SQLServer";
-	public static final String DIALECT_DB2 = "DB2";
-	public static final String DIALECT_INGRES = "Ingres";
-	public static final String DIALECT_TERADATA = "Teradata";
+//	public static final String DIALECT_MYSQL = "MySQL";
+//	public static final String DIALECT_POSTGRES = "PostgreSQL";
+//	public static final String DIALECT_ORACLE = "OracleDialect";
+//	public static final String DIALECT_HSQL = "HSQL";
+//	public static final String DIALECT_ORACLE9i10g = "Oracle9Dialect";
+//	public static final String DIALECT_SQLSERVER = "SQLServer";
+//	public static final String DIALECT_DB2 = "DB2";
+//	public static final String DIALECT_INGRES = "Ingres";
+//	public static final String DIALECT_TERADATA = "Teradata";
     
     /**
      * Contains the definition of the existing temporary tables.
@@ -591,32 +593,39 @@ public class TemporaryTableManager {
 	}
 	
 	public static String getAliasDelimiter(IDataSource dataSource) {
-		String dialect = dataSource.getHibDialectClass();
-		if(dialect ==null){
-			dialect = dataSource.getHibDialectName();
+		String delimiter = "";
+		IDataBase dataBase = DataBase.getDataBase(dataSource);
+		if(dataBase != null) {
+			delimiter = dataBase.getAliasDelimiter();
 		}
-		if(dialect != null){
-			if (dialect.contains(DIALECT_MYSQL)) {
-				return "`";
-			} else if (dialect.contains(DIALECT_HSQL)) {
-				return "\"";
-			} else if (dialect.contains(DIALECT_INGRES)) {
-				return "\""; // TODO check it!!!!
-			} else if (dialect.contains(DIALECT_ORACLE)) {
-				return "\"";
-			} else if (dialect.contains(DIALECT_ORACLE9i10g)) {
-				return "\"";
-			} else if (dialect.contains(DIALECT_POSTGRES)) {
-				return "\"";
-			} else if (dialect.contains(DIALECT_SQLSERVER)) {
-				return "\""; // TODO not tested yet!!!!
-			} else if (dialect.contains(DIALECT_DB2)) {
-				return "\"";
-			} else if (dialect.contains(DIALECT_TERADATA)) {
-				return "\"";
-			} 
-		}
-		return "";
+		return delimiter;
+		
+//		String dialect = dataSource.getHibDialectClass();
+//		if(dialect ==null){
+//			dialect = dataSource.getHibDialectName();
+//		}
+//		if(dialect != null){
+//			if (dialect.contains(DIALECT_MYSQL)) {
+//				return "`";
+//			} else if (dialect.contains(DIALECT_HSQL)) {
+//				return "\"";
+//			} else if (dialect.contains(DIALECT_INGRES)) {
+//				return "\""; // TODO check it!!!!
+//			} else if (dialect.contains(DIALECT_ORACLE)) {
+//				return "\"";
+//			} else if (dialect.contains(DIALECT_ORACLE9i10g)) {
+//				return "\"";
+//			} else if (dialect.contains(DIALECT_POSTGRES)) {
+//				return "\"";
+//			} else if (dialect.contains(DIALECT_SQLSERVER)) {
+//				return "\""; // TODO not tested yet!!!!
+//			} else if (dialect.contains(DIALECT_DB2)) {
+//				return "\"";
+//			} else if (dialect.contains(DIALECT_TERADATA)) {
+//				return "\"";
+//			} 
+//		}
+//		return "";
 	}
 	
 }

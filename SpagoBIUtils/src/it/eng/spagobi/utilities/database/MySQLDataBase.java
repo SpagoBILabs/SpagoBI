@@ -60,4 +60,11 @@ public class MySQLDataBase extends AbstractDataBase {
 		
 		return toReturn;
 	}
+	
+	/* (non-Javadoc)
+	 * @see it.eng.spagobi.utilities.database.IDataBase#getAliasDelimiter()
+	 */
+	public String getAliasDelimiter() {
+		return "`";
+	}
 }
