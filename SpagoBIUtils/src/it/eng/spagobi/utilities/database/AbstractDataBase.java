@@ -19,9 +19,20 @@ import it.eng.spagobi.tools.datasource.bo.IDataSource;
  */
 public abstract class AbstractDataBase implements IDataBase {
 	
+	int varcharLength = 255;
+
+
 	IDataSource dataSource;
 	
 	public AbstractDataBase(IDataSource dataSource) {
 		this.dataSource = dataSource;
+	}
+	
+	public int getVarcharLength() {
+		return varcharLength;
+	}
+
+	public void setVarcharLength(int varcharLength) {
+		this.varcharLength = varcharLength;
 	}
 }

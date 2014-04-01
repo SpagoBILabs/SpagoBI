@@ -335,6 +335,9 @@ public class PersistedTableManager {
 	
 	private String getDBFieldType(IDataSource dataSource, IFieldMetaData fieldMetaData){
 		IDataBase dataBase = DataBase.getDataBase(dataSource);
+		if (getColumnSize().get(fieldMetaData.getName()) != null){
+			dataBase.setVarcharLength(getColumnSize().get(fieldMetaData.getName()));
+		}
 		Class type = fieldMetaData.getType();
 		if (fieldMetaData.getFieldType().equals(FieldType.MEASURE) && type == String.class) {
 			logger.debug("Column type is string but the field is measure: converting it into a double");
@@ -342,6 +345,8 @@ public class PersistedTableManager {
 		}
 		
 		return dataBase.getDataBaseType(type);
+		
+//		return getDBFieldType(fieldMetaData);
 	}
 	
 	/** 
