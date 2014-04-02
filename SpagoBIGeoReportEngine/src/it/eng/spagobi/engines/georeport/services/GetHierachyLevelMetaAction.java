@@ -7,44 +7,16 @@
 package it.eng.spagobi.engines.georeport.services;
 
 import it.eng.spagobi.engines.georeport.GeoReportEngineConfig;
-import it.eng.spagobi.engines.georeport.GeoReportEngineInstance;
-import it.eng.spagobi.engines.georeport.features.provider.FeaturesProviderDAOFactory;
-import it.eng.spagobi.engines.georeport.features.provider.IFeaturesProviderDAO;
-import it.eng.spagobi.services.proxy.DataSetServiceProxy;
-import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
-import it.eng.spagobi.tools.dataset.common.datastore.IField;
-import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
-import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.BaseServletIOManager;
-import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
 import it.eng.spagobi.utilities.service.AbstractBaseServlet;
 
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
 
 import org.apache.log4j.Logger;
-import org.geotools.data.DataUtilities;
-import org.geotools.data.simple.SimpleFeatureCollection;
-import org.geotools.feature.FeatureCollection;
-import org.geotools.feature.FeatureCollections;
-import org.geotools.feature.FeatureIterator;
-import org.geotools.feature.simple.SimpleFeatureBuilder;
-import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
-import org.geotools.geojson.feature.FeatureJSON;
 import org.json.simple.JSONObject;
-import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.feature.simple.SimpleFeatureType;
-import org.opengis.feature.type.AttributeDescriptor;
-
-import com.vividsolutions.jts.geom.Geometry;
 
 
 /**
@@ -93,7 +65,7 @@ public class GetHierachyLevelMetaAction extends AbstractBaseServlet {
 				levelMeta.put("featureSource", levelProps.get("layer_url"));
 			} else {
 				levelMeta.put("featureSourceType", "file");
-				levelMeta.put("featureSource", levelProps.get("layer_data"));
+				levelMeta.put("featureSource", levelProps.get("layer_file"));
 			}
 
 			servletIOManager.tryToWriteBackToClient(levelMeta.toString());
