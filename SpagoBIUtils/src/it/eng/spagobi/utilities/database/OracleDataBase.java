@@ -75,13 +75,17 @@ public class OracleDataBase extends AbstractDataBase {
 	 */
 	@Override
 	public String getUsedMemorySizeQuery(String schema, String tableNamePrefix) {
-		String query = "SELECT " +
-			" sum(num_rows*avg_row_len) as sizet " +
-			" from all_tables " + 
-			" where table_name like '"+ tableNamePrefix.toUpperCase() +"%' ";
-		if ((schema != null) && (!schema.isEmpty()) ){
-			query = query +  " and owner = '"+schema.toUpperCase()+"'";
-		}
+		
+		String query = "select "+
+		  " segment_name           table_name, "+  
+		  " sum(bytes) table_size_meg "+
+		  "	from " + 
+		  " user_extents "+
+		  " where  "+
+		  " Segment_Type='TABLE' "+
+		  " and     segment_name like '"+tableNamePrefix.toUpperCase()+"%' "+
+		  " group by segment_name ";
+
 		return query;
 	}
 }
