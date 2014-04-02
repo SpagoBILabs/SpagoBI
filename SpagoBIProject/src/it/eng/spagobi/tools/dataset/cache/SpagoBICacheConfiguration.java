@@ -37,6 +37,8 @@ public class SpagoBICacheConfiguration {
 	public static final String CACHE_NAME_PREFIX_CONFIG = "SPAGOBI.CACHE.NAMEPREFIX";
 	public static final String CACHE_SPACE_AVAILABLE_CONFIG = "SPAGOBI.CACHE.SPACE_AVAILABLE";
 	public static final String CACHE_LIMIT_FOR_CLEAN_CONFIG = "SPAGOBI.CACHE.LIMIT_FOR_CLEAN";
+	public static final String CACHE_DATABASE_SCHEMA = "SPAGOBI.CACHE.DATABASE_SCHEMA";
+
 	
 	private static transient Logger logger = Logger.getLogger(SpagoBICacheConfiguration.class);
 	
@@ -46,6 +48,7 @@ public class SpagoBICacheConfiguration {
 		cacheConfiguration.setTableNamePrefix(getTableNamePrefix());
 		cacheConfiguration.setCacheSpaceAvailable(getCacheSpaceAvailable());
 		cacheConfiguration.setCachePercentageToClean(getCachePercentageToClean());
+		cacheConfiguration.setSchema(getCacheDatabaseSchema());
 		cacheConfiguration.setObjectsTypeDimension(getDimensionTypes());
 		return cacheConfiguration;
 	}
@@ -94,6 +97,20 @@ public class SpagoBICacheConfiguration {
 		} catch(Throwable t) {
 			throw new SpagoBIRuntimeException("An unexpected exception occured while loading cache configuration property", t);
 		}
+	}
+	
+	
+	private static String getCacheDatabaseSchema() {
+		try {
+			String cacheDatabaseSchema = null;
+			String propertyValue = getSpagoBIConfigurationProperty(CACHE_DATABASE_SCHEMA);
+			if(propertyValue != null) {
+				cacheDatabaseSchema =  propertyValue ;
+			}
+			return cacheDatabaseSchema;
+		} catch(Throwable t) {
+			throw new SpagoBIRuntimeException("An unexpected exception occured while loading cache configuration property", t);
+		}		
 	}
 	
 	private static String getSpagoBIConfigurationProperty(String propertyName) {
