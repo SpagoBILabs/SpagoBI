@@ -29,6 +29,7 @@ public class SimpleCacheConfiguration implements ICacheConfiguration {
 	
 	public static final String CACHE_SPACE_AVAILABLE_CONFIG = "SPAGOBI.CACHE.SPACE_AVAILABLE";
 	public static final String CACHE_LIMIT_FOR_CLEAN_CONFIG = "SPAGOBI.CACHE.LIMIT_FOR_CLEAN";
+
 	
 	public SimpleCacheConfiguration()  {
 		dataSource = null;

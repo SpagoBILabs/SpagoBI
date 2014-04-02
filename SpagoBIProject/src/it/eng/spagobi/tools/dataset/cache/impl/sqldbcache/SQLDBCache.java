@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package it.eng.spagobi.tools.dataset.cache.impl.sqldbcache;
 
 
+import it.eng.spagobi.dataset.cache.test.TestConstants;
 import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.cache.CacheException;
@@ -33,7 +34,14 @@ import it.eng.spagobi.tools.dataset.cache.ICacheListener;
 import it.eng.spagobi.tools.dataset.cache.ICacheMetadata;
 import it.eng.spagobi.tools.dataset.cache.ICacheTrigger;
 import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
+import it.eng.spagobi.tools.dataset.common.datastore.Field;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.common.datastore.Record;
+import it.eng.spagobi.tools.dataset.common.metadata.FieldMetadata;
+import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
+import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
+import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
+import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData.FieldType;
 import it.eng.spagobi.tools.dataset.persist.PersistedTableManager;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 
@@ -42,6 +50,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Random;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -76,6 +85,14 @@ public class SQLDBCache implements ICache {
 			if (tableNamePrefix != null){
 				eraseExistingTables(tableNamePrefix.toUpperCase());
 			}
+			
+			String databaseSchema = this.cacheConfiguration.getSchema();
+			if (databaseSchema != null){
+				//test schema
+				testDatabaseSchema(databaseSchema, dataSource);
+			} else {
+				throw new CacheException("An unexpected error occured while getting testing database schema for cache: schema config not found");
+			}
 		}
 	}
 	
@@ -102,6 +119,67 @@ public class SQLDBCache implements ICache {
 	private void eraseExistingTables(String prefix){
 		PersistedTableManager persistedTableManager = new PersistedTableManager();
 		persistedTableManager.dropTablesWithPrefix(getDataSource(), prefix);
+	}
+	/**
+	 * Test if the passed schema name is correct.
+	 * Create a table in the database via the dataSource then
+	 * try to select the table using the schema.table syntax
+	 * 
+	 * @param schema the schema name
+	 * @param dataSource the DataSource
+	 */
+	private void testDatabaseSchema(String schema, IDataSource dataSource){
+
+		//Create a fake dataStore
+		DataStore dataStore = new DataStore();
+		IMetaData metadata = new MetaData();
+		IFieldMetaData fieldMetaData = new FieldMetadata();
+		fieldMetaData.setAlias("test_column");
+		fieldMetaData.setName("test_column");
+		fieldMetaData.setType(String.class);
+		fieldMetaData.setFieldType(FieldType.ATTRIBUTE);
+		metadata.addFiedMeta(fieldMetaData);
+		dataStore.setMetaData(metadata);
+		Record record = new Record();
+		Field field = new Field();
+		field.setValue("try");
+		record.appendField(field);
+		dataStore.appendRecord(record);
+		
+		//persist the datastore as a table on db
+		PersistedTableManager persistedTableManager = new PersistedTableManager();
+		Random ran = new Random();
+		int x = ran.nextInt(100);
+		String tableName = "SbiTest"+x;
+		persistedTableManager.setTableName(tableName);
+		
+		try {
+			persistedTableManager.persistDataset(dataStore, dataSource);
+		} catch (Exception e) {
+			logger.error("Error persisting dataset");
+		}
+		
+		//try to query the table using the Schema.TableName syntax if schemaName is valorized
+        
+        try {
+            if (schema.isEmpty()){
+            	dataSource.executeStatement("SELECT * FROM "+tableName, 0, 0);
+
+            } else {
+            	dataSource.executeStatement("SELECT * FROM "+schema+"."+tableName, 0, 0);
+            }
+        }
+        catch (Exception e){
+			throw new CacheException("An unexpected error occured while getting testing database schema for cache");
+        }
+        finally {
+            //Dropping table
+            persistedTableManager.dropTableIfExists(dataSource,tableName);
+    		
+        }
+
+		
+		
 	}
 	
 	

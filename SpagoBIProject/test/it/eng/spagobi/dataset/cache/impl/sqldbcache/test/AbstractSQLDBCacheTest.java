@@ -111,6 +111,8 @@ public abstract class AbstractSQLDBCacheTest extends TestCase {
 			cacheConfiguration.setCachePercentageToClean(TestConstants.CACHE_CONFIG_PERCENTAGE_TO_CLEAN); 
 			
 			cacheConfiguration.setCacheDataSource(dataSourceWriting);
+			//schema name used for correct cache dimension calculation
+			cacheConfiguration.setSchema(TestConstants.CACHE_CONFIG_SCHEMA_NAME);
 			
 			DataType dataType = new DataType(); //class used for setting data type dimension properties
 			cacheConfiguration.setObjectsTypeDimension(dataType.getProps());
@@ -438,7 +440,7 @@ public abstract class AbstractSQLDBCacheTest extends TestCase {
 			cacheCustom.put(fileDataset, resultset);
 
 		} finally {
-			assertNotNull("Not enought space on cache",cacheCustom.get(fileDataset.getSignature()));
+			assertNull("Dataset found in cache but there should not be",cacheCustom.get(fileDataset.getSignature()));
 			
 			cacheCustom.deleteAll();
 		}
@@ -629,30 +631,11 @@ public abstract class AbstractSQLDBCacheTest extends TestCase {
 	
 	public ICache createCacheZero(){
 		//Create a cache with space available equal to zero
-		/*
-		CacheFactory cacheFactory = new CacheFactory();
-		
-		//Set configuration parameters for the cache (in SpagoBI Server this is the sbi_config table)
-		CacheConfiguration cacheConfigurationZero = new CacheConfiguration();
-		//table prefix for tables created by the cache
-		cacheConfigurationZero.setTableNamePrefix(TestConstants.CACHE_CONFIG_TABLE_PREFIX); 
-		//Dimension of cache in bytes
-		cacheConfigurationZero.setCacheSpaceAvailable(new BigDecimal(0)); 
-		//percentage of the cache to clean (from 0 to 100)
-		cacheConfigurationZero.setCachePercentageToClean(TestConstants.CACHE_CONFIG_PERCENTAGE_TO_CLEAN); 
-		
-		ICache cacheZero = cacheFactory.getCache(dataSourceWriting, cacheConfigurationZero);
-		if (cacheZero instanceof SQLDBCache){
-			DataType dataType = new DataType(); //class used for setting data type dimension properties
-			((SQLDBCache)cacheZero).setObjectsTypeDimension(dataType.getProps());
-		}
-		return cacheZero;
-		*/
 		return createCache(0);
 	}
 	
 	public ICache createCache(int dimension ){
-		//Create a cache with space available equal to zero
+		//Create a cache with space available equal to dimension
 		
 		CacheFactory cacheFactory = new CacheFactory();
 		
@@ -664,7 +647,8 @@ public abstract class AbstractSQLDBCacheTest extends TestCase {
 		cacheConfigurationCustom.setCacheSpaceAvailable(new BigDecimal(dimension)); 
 		//percentage of the cache to clean (from 0 to 100)
 		cacheConfigurationCustom.setCachePercentageToClean(TestConstants.CACHE_CONFIG_PERCENTAGE_TO_CLEAN); 
-	
+		//schema name used for correct cache dimension calculation
+		cacheConfigurationCustom.setSchema(TestConstants.CACHE_CONFIG_SCHEMA_NAME);
 		cacheConfigurationCustom.setCacheDataSource(dataSourceWriting);
 		
 		DataType dataType = new DataType(); //class used for setting data type dimension properties
