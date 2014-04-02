@@ -57,9 +57,9 @@ public interface ICacheMetadata {
 	BigDecimal getRequiredMemory(IDataStore resultset);
 	
 	/**
-	 * @return true if the cache space can contains the resultset
+	 * @return true if the cache space can contains the store
 	 */
-	boolean hasEnoughMemoryForResultSet(IDataStore resultset);
+	boolean hasEnoughMemoryForStore(IDataStore store);
 	
 	
 	/**

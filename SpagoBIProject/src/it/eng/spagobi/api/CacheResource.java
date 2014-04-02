@@ -142,6 +142,7 @@ public class CacheResource extends AbstractSpagoBIResource {
 			resultJSON.put("enabled", cache.isEnabled());
 			resultJSON.put("totalMemory", cache.getMetadata().getTotalMemory().longValue());
 			resultJSON.put("availableMemory", cache.getMetadata().getAvailableMemory().longValue());
+			resultJSON.put("availableMemoryPercentage", cache.getMetadata().getAvailableMemoryAsPercentage());
 			resultJSON.put("cachedObjectsCount", cache.getMetadata().getNumberOfObjects());
 			resultJSON.put("cleaningEnabled", cache.getMetadata().isCleaningEnabled());
 			resultJSON.put("cleaningQuota", cache.getMetadata().getCleaningQuota() + "%");

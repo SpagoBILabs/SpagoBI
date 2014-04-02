@@ -163,13 +163,10 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 	}	
 	
 	/**
-	 * Returns the number of bytes used by the resultSet (approximate)
+	 * @return the number of bytes used by the resultSet (approximate)
 	 */
-	public BigDecimal getRequiredMemory(IDataStore resultset){
-		BigDecimal rowWeight = getRowWeight(resultset.getRecordAt(0), resultset.getMetaData());
-		usedMemory = rowWeight.multiply(new BigDecimal(resultset.getRecordsCount())) ;
-		logger.debug("Dimension estimated for the new resultset [rowWeight*rows]: " + usedMemory + " ["+rowWeight+" * "+resultset.getRecordsCount()+"]");
-		return usedMemory;
+	public BigDecimal getRequiredMemory(IDataStore store){
+		return DataStoreStatistics.extimateMemorySize(store, cacheConfiguration.getObjectsTypeDimension());
 	}
 	
 	public 	Integer getAvailableMemoryAsPercentage(){
@@ -191,51 +188,18 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 		return cachePercentageToClean;
 	}
 	
-	public boolean hasEnoughMemoryForResultSet(IDataStore resultset){
-		if (getAvailableMemory().compareTo(getRequiredMemory(resultset)) <= 0){
+	public boolean hasEnoughMemoryForStore(IDataStore store) {
+		BigDecimal availableMemory = getAvailableMemory();
+		BigDecimal requiredMemory = getRequiredMemory(store);
+		if (availableMemory.compareTo(requiredMemory) <= 0){
 			return false;
-		}else{
+		} else {
 			return true;
 		}
 	}	
 	
-	private BigDecimal getBytesForType(String type){
-		BigDecimal toReturn = new BigDecimal(8); //for default sets a generic Object size
-		List<Properties> objectsTypeDimension = cacheConfiguration.getObjectsTypeDimension();
-		for (int i=0, l= objectsTypeDimension.size(); i<l; i++){
-			String typeName = ((Properties)objectsTypeDimension.get(i)).getProperty("name");
-			if (type.contains(typeName)){
-				toReturn = new BigDecimal(((Properties)objectsTypeDimension.get(i)).getProperty("bytes"));
-				logger.debug("Used configurated type: " + type + " - weight: " + toReturn.toString());
-				break;
-			}
-		}
-		return toReturn;		
-	}
-	
 	private Map<String, Integer> getColumnSize() {
 		return columnSize;
-	}
-	
-	private BigDecimal getRowWeight(IRecord record, IMetaData md){
-		BigDecimal toReturn = new BigDecimal(0);
-		
-		for (int i=0, l=record.getFields().size(); i<l; i++){		
-			IFieldMetaData fmd = md.getFieldMeta(i);
-			// in case of a measure with String type, convert it into a Double
-			if (fmd.getFieldType().equals(FieldType.MEASURE) && fmd.getType().toString().contains("String")) {
-				fmd.setType(java.lang.Double.class);
-				logger.debug("Column type is string but the field is measure: converting it into a double");	
-			}else if(fmd.getType().toString().contains("[B")) {  //BLOB		
-				//TODO something else?
-			}else if(fmd.getType().toString().contains("[C")) {	 //CLOB				
-				//TODO something else?
-			}
-
-			toReturn = toReturn.add(getBytesForType(fmd.getType().toString()));			
-		}
-
-		return toReturn;
 	}
 	
 	public LinkedHashMap<String, CacheItem> getCacheRegistry() {

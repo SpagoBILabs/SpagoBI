@@ -202,16 +202,7 @@ public class DatasetManagementAPI {
 		try {
 		
 			IDataSet dataSet = this.getDataSetDAO().loadDataSetByLabel(label);
-			
-			/*
-			 * Controlla se il resultset del dataset è già in cache o no
-			 * 
-			 * - se è presente in cache basta recuperarlo con una get
-			 * - se non è presente in cache: carico tramite dataSet.loadData() 
-			 * 	 e poi lo scrivo in cache (poi in contemporanea con thread diversi)
-			 *  
-			 */
-			
+		
 			ICache cache = CacheManager.getCache();
 			IDataStore cachedResultSet = cache.get(dataSet);
 			
