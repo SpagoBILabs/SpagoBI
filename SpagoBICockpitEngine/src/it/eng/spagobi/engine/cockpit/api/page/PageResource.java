@@ -88,7 +88,7 @@ public class PageResource extends AbstractCockpitEngineResource {
 	@Path("/{pagename}")
 	@Produces("text/html")
 	public void openPage(@PathParam("pagename") String pageName
-			, @QueryParam("extjs") @DefaultValue("3") String extjs) {
+			, @QueryParam("extjs") @DefaultValue("4") String extjs) {
 		CockpitEngineInstance engineInstance;
 		String dispatchUrl = null;
 		
