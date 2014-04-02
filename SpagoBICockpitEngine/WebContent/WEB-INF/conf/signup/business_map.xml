@@ -6,8 +6,8 @@
 	</MAP_PAGE_MODULES>
 	
     <MAP_REST_SERVICES>
-    	<MAP_REST_SERVICE serviceUrl="/dataset/*" businessProcess="CreateCockpitFunctionality" />
-    	<MAP_REST_SERVICE serviceUrl="/page/*" businessProcess="CreateCockpitFunctionality" />
+    	<MAP_REST_SERVICE serviceUrl="/engine.*" businessProcess="CreateCockpitFunctionality" />
+    	<MAP_REST_SERVICE serviceUrl="/pages.*" businessProcess="CreateCockpitFunctionality" />
     </MAP_REST_SERVICES>
     
     <MAP_EXTERNAL_REST_SERVICES>
