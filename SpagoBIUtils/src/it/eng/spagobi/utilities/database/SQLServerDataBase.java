@@ -95,9 +95,11 @@ public class SQLServerDataBase extends AbstractDataBase {
 					"sys.allocation_units alloUni ON parti.partition_id = alloUni.container_id "+
 					"WHERE sysTab.is_ms_shipped = 0 "+
 					"GROUP BY sysTab.Name, parti.Rows,sysTab.SCHEMA_ID) dati "+
-					"where  schemaName = '"+schema+"' "+
-					"and TableName like '"+tableNamePrefix+"%' "+
-					"UNION "+
+					"where TableName like '"+tableNamePrefix+"%' ";
+					if ((schema != null) && (!schema.isEmpty()) ){
+						query = query +  " and SchemaName = '"+schema+"'";
+					}
+					query = query + "UNION "+
 					"select 0 ) as dati ";
 					
 		return query;
