@@ -74,7 +74,7 @@ Sbi.locale.ln['sbi.geo.layerpanel.add'] = 'In Schicht';
 Sbi.locale.ln['sbi.geo.layerpanel.catalogue'] = 'Layer-Katalog';
 
 Sbi.locale.ln['sbi.geo.controlpanel.savewin.saveWarning']  = 'Bevor Dokument zu speichern, ist notwendig, um den Namen der Karte und wählen Sie Einfügen fast einen Ordner.';
-Sbi.locale.ln['sbi.geo.controlpanel.savewin.msgDetail']  = 'Wählen Sie den Ordner, in dem die Karte veröffentlichen. Speichern in der [public] jeder sehen Sie die Karte. Speichern in der [private] nur angemeldete Benutzer sind in der Lage, um die Karte zu sehen. Wenn Sie wollen, dass die Karte nur für Sie sichtbar zu sein, anstatt wählen Sie die Option Privat im linken Fenster';
+//Sbi.locale.ln['sbi.geo.controlpanel.savewin.msgDetail']  = 'Wählen Sie den Ordner, in dem die Karte veröffentlichen. Speichern in der [public] jeder sehen Sie die Karte. Speichern in der [private] nur angemeldete Benutzer sind in der Lage, um die Karte zu sehen.';
 Sbi.locale.ln['sbi.geo.controlpanel.feedback.title']  = 'Denden Feedback';
 Sbi.locale.ln['sbi.geo.controlpanel.feedback.label']  = 'Die Mitteilung';
 Sbi.locale.ln['sbi.geo.controlpanel.feedback.btn.send']  = 'Senden';

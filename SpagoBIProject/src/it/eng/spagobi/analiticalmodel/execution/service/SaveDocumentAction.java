@@ -78,8 +78,6 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 	private final String FORMVALUES = "formValues";
 	private final String VISIBILITY = "visibility";
 	private final String COMMUNITY = "communityId";
-	private final String IS_PUBLIC = "isPublic";
-
 	
 
 	public static final String OBJ_DATASET_ID ="dataSetId";
@@ -911,10 +909,6 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 			// preview file
 			String previewFile = getAttributeAsString(PREVIEW_FILE);
 			if(previewFile != null) document.put("previewFile", previewFile);
-			
-			//document scope
-			boolean isPublic = getAttributeAsBoolean(IS_PUBLIC);			
-			document.put("isPublic", isPublic);
 			
 			String businessMetadata = getAttributeAsString( BUSINESS_METADATA );
 			if(StringUtilities.isNotEmpty( businessMetadata )) {
