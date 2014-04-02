@@ -60,8 +60,6 @@ public class SQLDBCache implements ICache {
 	private boolean enabled;
 	private IDataSource dataSource;
 	private ICacheMetadata cacheMetadata;
-		
-	private String tableNamePrefix;
 	
 	public static final String CACHE_NAME_PREFIX_CONFIG = "SPAGOBI.CACHE.NAMEPREFIX";
 	
@@ -74,7 +72,7 @@ public class SQLDBCache implements ICache {
 		this.cacheConfiguration = (SQLDBCacheConfiguration)cacheConfiguration;
 
 		if (this.cacheConfiguration != null){
-			tableNamePrefix = this.cacheConfiguration.getTableNamePrefix();
+			String tableNamePrefix = this.cacheConfiguration.getTableNamePrefix();
 			if (tableNamePrefix != null){
 				eraseExistingTables(tableNamePrefix.toUpperCase());
 			}
@@ -296,6 +294,27 @@ public class SQLDBCache implements ICache {
 
 
 	/* (non-Javadoc)
+	 * @see it.eng.spagobi.dataset.cache.ICache#deleteQuota()
+	 */
+	public void deleteToQuota() {
+		logger.trace("IN");
+		try {
+			List<String> signatures = getMetadata().getSignatures();
+			for (String signature: signatures) {
+		        delete(signature); 
+		        if (getMetadata().getAvailableMemoryAsPercentage() > getMetadata().getCleaningQuota()) {
+		        	break;
+		        }	
+		    }
+		} catch(Throwable t) {
+			if(t instanceof CacheException) throw (CacheException)t;
+			else throw new CacheException("An unexpected error occured while deleting cache to quota", t);
+		} finally {
+			logger.trace("OUT");
+		}				
+	}
+	
+	/* (non-Javadoc)
 	 * @see it.eng.spagobi.dataset.cache.ICache#deleteAll()
 	 */
 	public void deleteAll() {
@@ -334,57 +353,53 @@ public class SQLDBCache implements ICache {
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.dataset.cache.ICache#put(java.lang.String, it.eng.spagobi.tools.dataset.common.datastore.IDataStore)
 	 */
-	public void put(IDataSet dataset,String resultsetSignature, IDataStore resultset) {
-		logger.debug("IN");
-		
-		//0- Checks if there is enough space free in the cache for the new resultset 
-		//   (ONLY if all cache parameters are correctly defined)		
-		if (getMetadata().isCleaningEnabled()){
-			if (!getMetadata().hasEnoughMemoryForResultSet(resultset)){		
-				//clean of the cache
-				List<String> signatures = getMetadata().getSignatures();
-				for (String signature: signatures) {
-			        logger.debug("Delete object ["+signature+"] for cleaning cache event.");
-			        delete(signature); 
-			        if (getMetadata().getAvailableMemoryAsPercentage() > getMetadata().getCleaningQuota()) {
-			        	break;
-			        }	
-			    }				
+	public void put(IDataSet dataSet, IDataStore dataStore) {
+		logger.trace("IN");
+		try {
+			if (getMetadata().isCleaningEnabled() 
+					&& !getMetadata().hasEnoughMemoryForResultSet(dataStore)) {
+				deleteToQuota();
 			}
-		}
-		//check again if there is enough space for the resultset
-		if ( getMetadata().hasEnoughMemoryForResultSet(resultset) ){
-			//1- Gets the connection for writing (from the datasource) 
-			//2- Derive the structure of the table to be created from the resultset (SQL CREATE) - attention to DBMS dialects
-			//3- Draws the data from the resultset to be included in the newly created table (SQL INSERT) - attention to DBMS dialects
-			PersistedTableManager persistedTableManager = new PersistedTableManager();
-			String tablePrefix = null;
 			
-			try {
-				tableNamePrefix = this.cacheConfiguration.getTableNamePrefix();
-				if (tableNamePrefix != null){
-					tablePrefix = tableNamePrefix.toUpperCase();
-				}
-				
-				String tableName = persistedTableManager.generateRandomTableName(tablePrefix);
-				persistedTableManager.persistDataset(dataset, resultset, getDataSource(), tableName);
-				//4- Update cacheRegistry with the new couple <resultsetSignature,nometabellaCreata>
-				getMetadata().addCacheItem(resultsetSignature, tableName, resultset);
-			} catch (Throwable t) {
-				if(t instanceof CacheException) throw (CacheException)t;
-				else throw new CacheException("An unexpected exception occured while persisting the store on database");
+			//check again if there is enough space for the resultset
+			if ( getMetadata().hasEnoughMemoryForResultSet(dataStore) ){
+				String signature = dataSet.getSignature();
+				String tableName = persistStoreInCache(dataSet, signature, dataStore);
+				getMetadata().addCacheItem(signature, tableName, dataStore);
+			} else {
+				throw new CacheException("Store is to big to be persisted in cache. Execute dataset disbling cache");
 			}
-		} else {
-			throw new CacheException("Store is to big to be persisted in cache. Execute dataset disbling cache.");
+		} catch(Throwable t) {
+			if(t instanceof CacheException) throw (CacheException)t;
+			else throw new CacheException("An unexpected error occured while adding store into cache", t);
+		} finally {
+			logger.trace("OUT");
 		}
-		
-
-		
 		
 		logger.debug("OUT");
-
 	}
 
+	private String persistStoreInCache(IDataSet dataset, String signature, IDataStore resultset) {
+		logger.trace("IN");
+		try {
+			PersistedTableManager persistedTableManager = new PersistedTableManager();
+			String tablePrefix = null;
+			String tableNamePrefix = this.cacheConfiguration.getTableNamePrefix();
+			if (tableNamePrefix != null){
+				tablePrefix = tableNamePrefix.toUpperCase();
+			}
+			
+			String tableName = persistedTableManager.generateRandomTableName(tablePrefix);
+			persistedTableManager.persistDataset(dataset, resultset, getDataSource(), tableName);
+			return tableName;
+		} catch(Throwable t) {
+			if(t instanceof CacheException) throw (CacheException)t;
+			else throw new CacheException("An unexpected error occured while persisting store in cache", t);
+		} finally {
+			logger.trace("OUT");
+		}	
+	}
+	
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.tools.dataset.cache.ICache#addListener(it.eng.spagobi.tools.dataset.cache.ICacheEvent, it.eng.spagobi.tools.dataset.cache.ICacheListener)
 	 */

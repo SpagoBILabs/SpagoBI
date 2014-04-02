@@ -103,18 +103,26 @@ public interface ICache {
 	boolean delete(String resultsetSignature);
 	
 	/**
-	 * Insert a resultSet inside the cache using the resultsetSignature
-	 * as an identifier
-	 * @param dataset the dataSet from which derives the resultSet 
-	 * @param resultsetSignature the unique resultSet signature
-	 * @param resultset the resultSet to cache
+	 * Delete objects in the cache till the cleaning quota is reached
 	 */
-	void put(IDataSet dataset, String resultsetSignature, IDataStore resultset);
+	void deleteToQuota();
 	
 	/**
 	 * Delete all objects inside the cache
 	 */
 	void deleteAll();
+	
+	/**
+	 * Insert a resultSet inside the cache using the resultsetSignature
+	 * as an identifier
+	 * 
+	 * @param signature the unique resultSet signature
+	 * @param dataset the dataSet from which derives the resultSet 
+	 * @param dataStore the resultSet to cache
+	 */
+	void put(IDataSet dataSet, IDataStore dataStore);
+	
+	
 	
 	/**
 	 * @return the metadata description object of the cache

@@ -47,11 +47,7 @@ public class CacheManager {
 	 * The global cache shared by all application's modules
 	 */
 	private static ICache cache = null;
-	
-	
-	
 
-	
 	private static transient Logger logger = Logger.getLogger(CacheManager.class);
 	
 	/**
@@ -65,7 +61,8 @@ public class CacheManager {
 		return cache;
 	}	
 	
-	private static void initializeCache() {
+	private static void initializeCache() {		
+		logger.trace("IN");
 		try {		
 			ICacheConfiguration cacheConfiguration = SpagoBICacheConfiguration.getInstance();
 			if(cacheConfiguration.getCacheDataSource() == null) {
@@ -74,20 +71,11 @@ public class CacheManager {
 				CacheFactory cacheFactory = new CacheFactory();
 				cache = cacheFactory.getCache( cacheConfiguration );
 			}
-		} catch (Throwable t){
-			logger.error("An unexpected error occured while initializing cache");
+		} catch (Throwable t) {
+			if(t instanceof CacheException) throw (CacheException)t;
+			else throw new CacheException("An unexpected error occured while initializing cache", t);
+		} finally {
+			logger.trace("OUT");
 		}
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-
 }
