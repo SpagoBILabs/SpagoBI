@@ -129,6 +129,55 @@ public abstract class AbstractSQLDBCacheTest extends TestCase {
 		assertNotNull("Cache correctly initialized", cache );
 	}
 	
+	public void testCacheInitWrongTablePrefixName(){
+		boolean cacheError = false;
+		CacheFactory cacheFactory = new CacheFactory();
+		
+		SQLDBCacheConfiguration cacheConfigurationCustom = new SQLDBCacheConfiguration();
+		//Setting wrong table prefix for tables created by the cache
+		cacheConfigurationCustom.setTableNamePrefix(""); 
+		cacheConfigurationCustom.setCacheSpaceAvailable(TestConstants.CACHE_CONFIG_CACHE_DIMENSION); 
+		cacheConfigurationCustom.setCachePercentageToClean(TestConstants.CACHE_CONFIG_PERCENTAGE_TO_CLEAN); 
+		cacheConfigurationCustom.setSchema(TestConstants.CACHE_CONFIG_SCHEMA_NAME);
+		cacheConfigurationCustom.setCacheDataSource(dataSourceWriting);
+		
+		DataType dataType = new DataType(); //class used for setting data type dimension properties
+		cacheConfigurationCustom.setObjectsTypeDimension(dataType.getProps());
+		try {
+			ICache cacheCustom = cacheFactory.getCache(cacheConfigurationCustom);
+		} catch(CacheException e){
+			cacheError = true;
+		} finally {
+			assertTrue("WRONG: Cache correctly initialized", cacheError );
+		}
+
+	}
+	
+	public void testCacheInitWrongSchemaName(){
+		boolean cacheError = false;
+		CacheFactory cacheFactory = new CacheFactory();
+		
+		SQLDBCacheConfiguration cacheConfigurationCustom = new SQLDBCacheConfiguration();
+		cacheConfigurationCustom.setTableNamePrefix(TestConstants.CACHE_CONFIG_TABLE_PREFIX); 
+		cacheConfigurationCustom.setCacheSpaceAvailable(TestConstants.CACHE_CONFIG_CACHE_DIMENSION); 
+		cacheConfigurationCustom.setCachePercentageToClean(TestConstants.CACHE_CONFIG_PERCENTAGE_TO_CLEAN); 
+		//setting wrong schema name
+		cacheConfigurationCustom.setSchema("xxadasf3w324");
+		cacheConfigurationCustom.setCacheDataSource(dataSourceWriting);
+		
+		DataType dataType = new DataType(); //class used for setting data type dimension properties
+		cacheConfigurationCustom.setObjectsTypeDimension(dataType.getProps());
+		try {
+			ICache cacheCustom = cacheFactory.getCache(cacheConfigurationCustom);
+		} catch(CacheException e){
+			cacheError = true;
+		} finally {
+			assertTrue("WRONG: Cache correctly initialized", cacheError );
+		}
+
+	}
+	
+	
 	public void testCacheDimension(){
 		assertEquals(TestConstants.CACHE_CONFIG_CACHE_DIMENSION, cache.getMetadata().getAvailableMemory() );
 		assertEquals(new Integer(100), cache.getMetadata().getAvailableMemoryAsPercentage() );
@@ -471,7 +520,7 @@ public abstract class AbstractSQLDBCacheTest extends TestCase {
 
 	}
 	
-	public void testFakeDataset(){
+	public void testSchemaRead(){
 		String schemaName =  TestConstants.CACHE_CONFIG_SCHEMA_NAME;
 
 		//Create a fake dataStore
