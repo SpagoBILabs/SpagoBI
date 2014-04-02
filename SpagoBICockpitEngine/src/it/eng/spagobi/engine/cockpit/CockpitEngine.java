@@ -5,6 +5,7 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.engine.cockpit;
 
+import java.util.Date;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -14,6 +15,8 @@ import org.apache.log4j.Logger;
  */
 public class CockpitEngine {
 	
+	private static boolean enabled;
+	private static Date creationDate;
 	private static CockpitEngineConfig engineConfig;
 	
 	/** Logger component. */
@@ -21,6 +24,8 @@ public class CockpitEngine {
 	
     // init engine
     static {
+    	enabled = true;
+    	creationDate = new Date(System.currentTimeMillis());
     	engineConfig = CockpitEngineConfig.getInstance();
     }
     
@@ -42,5 +47,21 @@ public class CockpitEngine {
 		cockpitEngineInstance = new CockpitEngineInstance(template, env);
 		logger.debug("OUT");
 		return cockpitEngineInstance;	
+	}
+	
+	public static boolean isEnabled() {
+		return enabled;
+	}
+
+	public static void setEnabled(boolean enabled) {
+		CockpitEngine.enabled = enabled;
+	}
+	
+	public static Date getCreationDate() {
+		return creationDate;
+	}
+
+	public static void setCreationDate(Date creationDate) {
+		CockpitEngine.creationDate = creationDate;
 	}
 }
