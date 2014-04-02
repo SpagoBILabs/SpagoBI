@@ -78,10 +78,26 @@ public class PostgreSQLDataBase extends AbstractDataBase {
 	 * @see it.eng.spagobi.utilities.database.AbstractDataBase#getUsedMemorySizeQuery(java.lang.String, java.lang.String)
 	 */
 	public String getUsedMemorySizeQuery(String schema, String tableNamePrefix) {
-		String query = "SELECT " +
-			" sum(pg_total_relation_size('\"' || table_schema || '\".\"' || table_name || '\"')) as size " +
-			" FROM information_schema.tables " +
-			" where table_name like '"+ tableNamePrefix +"%' and table_schema = '"+schema+"'";
+		String query = " SELECT "  
+		+ " CASE count(*) " 
+		+ " WHEN 0 THEN 0 "
+		+ " ELSE SUM(pg_total_relation_size('\"' || table_schema || '\".\"' || table_name || '\"')) " 
+		+ " END AS size "  
+		+ " FROM information_schema.tables "
+		+ " WHERE "
+		+ " table_name like '" + tableNamePrefix + "%' ";
+		
+		if(schema != null) {
+			query += " AND table_schema = " + schema + ";" ;
+		} else {
+			query += ";";
+		}
+		
+		
+//		String query = "SELECT " +
+//			" sum(pg_total_relation_size('\"' || table_schema || '\".\"' || table_name || '\"')) as size " +
+//			" FROM information_schema.tables " +
+//			" where table_name like '"+ tableNamePrefix +"%'";
 		return query;
 	}
 }
