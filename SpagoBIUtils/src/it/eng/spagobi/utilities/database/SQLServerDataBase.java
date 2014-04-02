@@ -73,9 +73,33 @@ public class SQLServerDataBase extends AbstractDataBase {
 	 * Returning null the used memory size wil be calculated by the abstract call using an heuristic not dependent by
 	 * the database.
 	 * 
-	 * TODO: write a custom implementation also for qblServer
+	 * 
 	 */
 	public String getUsedMemorySizeQuery(String schema, String tableNamePrefix) {
-		return null;
+		String query = "select SUM(UsedSpace*8*1024) from "+
+					"( select UsedSpace from( "+
+					"SELECT "+
+					"SCHEMA_NAME(sysTab.SCHEMA_ID) as SchemaName, "+
+					"sysTab.NAME AS TableName, "+
+					"parti.rows AS RowCounts, "+
+					" SUM(alloUni.total_pages) AS TotalSpace, "+
+					" SUM(alloUni.used_pages) AS UsedSpace, "+
+					" (SUM(alloUni.total_pages) - SUM(alloUni.used_pages)) AS UnusedSpace "+
+					"FROM "+
+					"sys.tables sysTab "+
+					"INNER JOIN "+
+					"sys.indexes ind ON sysTab.OBJECT_ID = ind.OBJECT_ID and ind.Index_ID<=1 "+
+					"INNER JOIN "+
+					"sys.partitions parti ON ind.OBJECT_ID = parti.OBJECT_ID AND ind.index_id = parti.index_id "+
+					"INNER JOIN "+
+					"sys.allocation_units alloUni ON parti.partition_id = alloUni.container_id "+
+					"WHERE sysTab.is_ms_shipped = 0 "+
+					"GROUP BY sysTab.Name, parti.Rows,sysTab.SCHEMA_ID) dati "+
+					"where  schemaName = '"+schema+"' "+
+					"and TableName like '"+tableNamePrefix+"%' "+
+					"UNION "+
+					"select 0 ) as dati ";
+					
+		return query;
 	}
 }

@@ -65,7 +65,11 @@ public abstract class AbstractDataBase implements IDataBase {
 			IRecord record = dataStore.getRecordAt(0);
 			for (int i=0, l=record.getFields().size(); i<l; i++){		
 				IField field = record.getFieldAt(i);
-				size = (BigDecimal)field.getValue();
+				if (field.getValue() instanceof Long){
+					size = BigDecimal.valueOf((Long)field.getValue());
+				} else {
+					size = (BigDecimal)field.getValue();
+				}
 			}
 			return size;
 		} catch(Throwable t) {
