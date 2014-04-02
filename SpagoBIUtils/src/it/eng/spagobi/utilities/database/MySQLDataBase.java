@@ -1,5 +1,4 @@
 /*
- * SpagoBI, the Open Source Business Intelligence suite
  * © 2005-2015 Engineering Group
  *
  * This file is part of SpagoBI. SpagoBI is free software: you can redistribute it and/or modify it under the terms of the GNU
@@ -66,5 +65,15 @@ public class MySQLDataBase extends AbstractDataBase {
 	 */
 	public String getAliasDelimiter() {
 		return "`";
+	}
+
+	/* (non-Javadoc)
+	 * @see it.eng.spagobi.utilities.database.AbstractDataBase#getUsedMemorySizeQuery(java.lang.String, java.lang.String)
+	 */
+	public String getUsedMemorySizeQuery(String schema, String tableNamePrefix) {
+		String query = "SELECT " +
+			" coalesce(sum(round(((data_length + index_length)),2)),0) as size " +
+			" FROM information_schema.TABLES WHERE table_name like '"+ tableNamePrefix +"%'";
+		return query;
 	}
 }

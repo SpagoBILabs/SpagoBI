@@ -67,4 +67,15 @@ public class SQLServerDataBase extends AbstractDataBase {
 	public String getAliasDelimiter() {
 		return "\""; 
 	}
+
+	/* (non-Javadoc)
+	 * @see it.eng.spagobi.utilities.database.AbstractDataBase#getUsedMemorySizeQuery(java.lang.String, java.lang.String)
+	 * Returning null the used memory size wil be calculated by the abstract call using an heuristic not dependent by
+	 * the database.
+	 * 
+	 * TODO: write a custom implementation also for qblServer
+	 */
+	public String getUsedMemorySizeQuery(String schema, String tableNamePrefix) {
+		return null;
+	}
 }

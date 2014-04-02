@@ -11,8 +11,14 @@
  */
 package it.eng.spagobi.utilities.database;
 
+import java.math.BigDecimal;
+
 import org.apache.log4j.Logger;
 
+import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
+import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.common.datastore.IField;
+import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 
 /**
@@ -66,5 +72,16 @@ public class PostgreSQLDataBase extends AbstractDataBase {
 	 */
 	public String getAliasDelimiter() {
 		return "\"";
+	}
+	
+	/* (non-Javadoc)
+	 * @see it.eng.spagobi.utilities.database.AbstractDataBase#getUsedMemorySizeQuery(java.lang.String, java.lang.String)
+	 */
+	public String getUsedMemorySizeQuery(String schema, String tableNamePrefix) {
+		String query = "SELECT " +
+			" sum(pg_total_relation_size('\"' || table_schema || '\".\"' || table_name || '\"')) as size " +
+			" FROM information_schema.tables " +
+			" where table_name like '"+ tableNamePrefix +"%'";
+		return query;
 	}
 }

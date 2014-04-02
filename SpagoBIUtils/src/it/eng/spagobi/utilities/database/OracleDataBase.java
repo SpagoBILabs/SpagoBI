@@ -69,4 +69,16 @@ public class OracleDataBase extends AbstractDataBase {
 	public String getAliasDelimiter() {
 		return "\"";
 	}
+
+	/* (non-Javadoc)
+	 * @see it.eng.spagobi.utilities.database.AbstractDataBase#getUsedMemorySizeQuery(java.lang.String, java.lang.String)
+	 */
+	@Override
+	public String getUsedMemorySizeQuery(String schema, String tableNamePrefix) {
+		String query = "SELECT " +
+			" sum(num_rows*avg_row_len) as sizet " +
+			" from all_tables " + 
+			" where table_name like '"+ tableNamePrefix +"%'";
+		return query;
+	}
 }
