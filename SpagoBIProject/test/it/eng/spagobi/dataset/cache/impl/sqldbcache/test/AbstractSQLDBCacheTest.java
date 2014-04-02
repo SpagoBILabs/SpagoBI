@@ -346,7 +346,7 @@ public abstract class AbstractSQLDBCacheTest extends TestCase {
 		
 		
 		ICacheMetadata cacheMetadata = cache.getMetadata();
-		if (cacheMetadata.hasEnoughMemoryForResultSet(resultset)){
+		if (cacheMetadata.hasEnoughMemoryForStore(resultset)){
 			cache.put(fileDataset, resultset);
 			IDataStore cachedResultSet = cache.get(fileDataset.getSignature());
 			assertNotNull("Checking space for dataset is wrong",cachedResultSet);
@@ -434,7 +434,7 @@ public abstract class AbstractSQLDBCacheTest extends TestCase {
 		fileDataset.loadData();
 		resultset =	fileDataset.getDataStore();		
 		
-		assertFalse(cacheMetadata.hasEnoughMemoryForResultSet(resultset));
+		assertFalse(cacheMetadata.hasEnoughMemoryForStore(resultset));
 		
 		try{
 			cacheCustom.put(fileDataset, resultset);
