@@ -194,7 +194,7 @@ Ext.extend(Sbi.tools.documents.SaveDocumentWindow, Ext.Window, {
 		});
 		
 		
-		
+		/*
 		var storeScope = new Ext.data.SimpleStore({
 		    fields: ['field', 'value'],
 		    data : [
@@ -214,6 +214,7 @@ Ext.extend(Sbi.tools.documents.SaveDocumentWindow, Ext.Window, {
 		    triggerAction : 'all',  //it's necessary to view always ALL values, not only the selected one!
 		    value: c.scope
 		});
+		*/
 
 		
 		this.fileUpload = this.initFileUpload();
@@ -235,7 +236,7 @@ Ext.extend(Sbi.tools.documents.SaveDocumentWindow, Ext.Window, {
 //	                 "margin-left": "4px",
 //	                 "margin-top": "15px"  //"25px"
 	             },
-	             items: [this.docName,this.docDescr, this.fileUpload, this.docVisibility, this.docCommunity, this.isPublic]
+	             items: [this.docName,this.docDescr, this.fileUpload, this.docVisibility, this.docCommunity] //, this.isPublic]
 	    	}
 	    });
 	    
@@ -278,7 +279,7 @@ Ext.extend(Sbi.tools.documents.SaveDocumentWindow, Ext.Window, {
 		var docName = this.docName.getValue();
 		var docDescr = this.docDescr.getValue();
 		var docVisibility = this.docVisibility.getValue();
-		var isPublic = this.isPublic.getValue();		
+		//var isPublic = this.isPublic.getValue();		
 		var query = this.OBJECT_QUERY;
 		var previewFile =  this.fileNameUploaded;
 		var functs = this.treePanel.returnCheckedIdNodesArray();
@@ -321,7 +322,7 @@ Ext.extend(Sbi.tools.documents.SaveDocumentWindow, Ext.Window, {
 					template: this.OBJECT_TEMPLATE,
 					datasourceid: this.OBJECT_DATA_SOURCE,
 					communityid: docCommunity,
-					isPublic: isPublic,
+					//isPublic: isPublic,
 					SBI_EXECUTION_ID: this.SBI_EXECUTION_ID,
 					functs: functs
 		        };
