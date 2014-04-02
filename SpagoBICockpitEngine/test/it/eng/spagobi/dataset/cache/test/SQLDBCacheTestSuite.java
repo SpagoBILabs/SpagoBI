@@ -21,11 +21,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.spagobi.dataset.cache.test;
 
-
-import it.eng.spagobi.dataset.cache.impl.sqldbcache.test.mysql.MySqlSQLDBCacheTest;
-import it.eng.spagobi.dataset.cache.impl.sqldbcache.test.oracle.OracleSQLDBCacheTest;
-import it.eng.spagobi.dataset.cache.impl.sqldbcache.test.postgres.PostgresSQLDBCacheTest;
-import it.eng.spagobi.dataset.cache.impl.sqldbcache.test.sqlserver.SQLServerSQLDBCacheTest;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -38,16 +33,16 @@ public class SQLDBCacheTestSuite extends TestCase {
 	static public Test suite() {
 		TestSuite suite = new TestSuite("SQLDBCache tests");
 		if(TestConstants.enableTestsOnMySql){
-			suite.addTestSuite(MySqlSQLDBCacheTest.class);
+			//suite.addTestSuite(MySqlSQLDBCacheTest.class);
 		}
 		if(TestConstants.enableTestsOnPostgres){
-			suite.addTestSuite(PostgresSQLDBCacheTest.class);
+			//suite.addTestSuite(PostgresSQLDBCacheTest.class);
 		}
 		if(TestConstants.enableTestsOnOracle){
-			suite.addTestSuite(OracleSQLDBCacheTest.class);
+			//suite.addTestSuite(OracleSQLDBCacheTest.class);
 		}
 		if(TestConstants.enableTestsOnSQLServer){
-			suite.addTestSuite(SQLServerSQLDBCacheTest.class);
+			//suite.addTestSuite(SQLServerSQLDBCacheTest.class);
 		}
 		return suite;
 	}
