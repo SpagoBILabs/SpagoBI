@@ -71,6 +71,10 @@ public abstract class AbstractDataBase implements IDataBase {
 					size = (BigDecimal)field.getValue();
 				}
 			}
+			
+			if (size == null) {
+				size = new BigDecimal(0);
+			}
 			return size;
 		} catch(Throwable t) {
 			if(t instanceof DataBaseException) throw (DataBaseException)t;
