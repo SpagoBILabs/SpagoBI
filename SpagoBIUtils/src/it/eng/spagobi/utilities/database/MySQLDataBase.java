@@ -73,7 +73,10 @@ public class MySQLDataBase extends AbstractDataBase {
 	public String getUsedMemorySizeQuery(String schema, String tableNamePrefix) {
 		String query = "SELECT " +
 			" coalesce(sum(round(((data_length + index_length)),2)),0) as size " +
-			" FROM information_schema.TABLES WHERE table_name like '"+ tableNamePrefix +"%' and table_schema ='"+schema+"'";
+			" FROM information_schema.TABLES WHERE table_name like '"+ tableNamePrefix +"%'";
+		if ((schema != null) && (!schema.isEmpty()) ){
+			query = query +  " and table_schema = '"+schema+"'";
+		}
 		return query;
 	}
 }

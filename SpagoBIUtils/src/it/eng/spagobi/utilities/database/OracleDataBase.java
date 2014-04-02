@@ -78,7 +78,10 @@ public class OracleDataBase extends AbstractDataBase {
 		String query = "SELECT " +
 			" sum(num_rows*avg_row_len) as sizet " +
 			" from all_tables " + 
-			" where table_name like '"+ tableNamePrefix.toUpperCase() +"%' and owner = '"+schema.toUpperCase()+"'";
+			" where table_name like '"+ tableNamePrefix.toUpperCase() +"%' ";
+		if ((schema != null) && (!schema.isEmpty()) ){
+			query = query +  " and owner = '"+schema.toUpperCase()+"'";
+		}
 		return query;
 	}
 }

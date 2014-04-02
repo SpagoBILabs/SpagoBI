@@ -85,9 +85,8 @@ public class PostgreSQLDataBase extends AbstractDataBase {
 		+ " END AS size "  
 		+ " FROM information_schema.tables "
 		+ " WHERE "
-		+ " table_name like '" + tableNamePrefix + "%' ";
-		
-		if(schema != null) {
+		+ " table_name like '" + tableNamePrefix + "%' ";		
+		if ((schema != null) && (!schema.isEmpty()) ){
 			query += " AND table_schema = " + schema + ";" ;
 		} else {
 			query += ";";
