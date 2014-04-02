@@ -81,7 +81,7 @@ public class PostgreSQLDataBase extends AbstractDataBase {
 		String query = "SELECT " +
 			" sum(pg_total_relation_size('\"' || table_schema || '\".\"' || table_name || '\"')) as size " +
 			" FROM information_schema.tables " +
-			" where table_name like '"+ tableNamePrefix +"%'";
+			" where table_name like '"+ tableNamePrefix +"%' and table_schema = '"+schema+"'";
 		return query;
 	}
 }
