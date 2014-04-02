@@ -34,21 +34,18 @@ public class SQLDBCacheWriteWork implements Work {
 
 	ICache cache;
 	IDataStore dataStore;
-	String resultsetSignature;
 	IDataSet dataSet;
 
 	/**
 	 * @param cache
 	 * @param dataStore
-	 * @param resultsetSignature
+	 * @param signature
 	 * @param dataSet
 	 */
-	public SQLDBCacheWriteWork(ICache cache, IDataStore dataStore,
-			String resultsetSignature, IDataSet dataSet) {
+	public SQLDBCacheWriteWork(ICache cache, IDataStore dataStore, IDataSet dataSet) {
 		super();
 		this.cache = cache;
 		this.dataStore = dataStore;
-		this.resultsetSignature = resultsetSignature;
 		this.dataSet = dataSet;
 	}
 
@@ -56,7 +53,7 @@ public class SQLDBCacheWriteWork implements Work {
 	 * @see java.lang.Runnable#run()
 	 */
 	public void run() {
-		cache.put(dataSet,resultsetSignature, dataStore);
+		cache.put(dataSet, dataStore);
 	}
 
 	/* (non-Javadoc)

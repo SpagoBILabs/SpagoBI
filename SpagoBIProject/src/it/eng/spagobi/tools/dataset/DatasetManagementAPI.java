@@ -213,8 +213,7 @@ public class DatasetManagementAPI {
 			 */
 			
 			ICache cache = CacheManager.getCache();
-			String resultsetSignature = dataSet.getSignature();
-			IDataStore cachedResultSet = cache.get(resultsetSignature);
+			IDataStore cachedResultSet = cache.get(dataSet);
 			
 			
 			IDataStore dataStore = null;
@@ -223,7 +222,7 @@ public class DatasetManagementAPI {
 				dataStore = dataSet.getDataStore();
 				
 				WorkManager workManager = new WorkManager(getSpagoBIConfigurationProperty("JNDI_THREAD_MANAGER"));
-				Work cacheWriteWork = new SQLDBCacheWriteWork(cache, dataStore, resultsetSignature, dataSet);
+				Work cacheWriteWork = new SQLDBCacheWriteWork(cache, dataStore, dataSet);
 				
 				workManager.run(cacheWriteWork, null);
 			} else {

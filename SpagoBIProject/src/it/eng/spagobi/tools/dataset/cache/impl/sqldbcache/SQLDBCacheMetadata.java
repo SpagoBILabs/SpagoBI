@@ -29,6 +29,8 @@ import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.utilities.database.DataBase;
+import it.eng.spagobi.utilities.database.IDataBase;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -55,8 +57,6 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 	
 	SQLDBCacheConfiguration cacheConfiguration;
 
-	private IDataSource dataSource;
-	
 	private BigDecimal totalMemory;
 	private BigDecimal availableMemory ;
 	private BigDecimal usedMemory ;
@@ -87,8 +87,6 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 	static private Logger logger = Logger.getLogger(SQLDBCacheMetadata.class);
 
 	public SQLDBCacheMetadata(SQLDBCacheConfiguration cacheConfiguration){
-
-		dataSource = cacheConfiguration.getCacheDataSource();
 		this.cacheConfiguration = cacheConfiguration;
 		if (this.cacheConfiguration != null){
 			tableNamePrefix = this.cacheConfiguration.getTableNamePrefix();
@@ -112,50 +110,52 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 	 */
 	public BigDecimal getAvailableMemory(){
 		availableMemory = getTotalMemory();
-		String query = "SELECT ";	
-		
-		if (dataSource.getHibDialectClass().contains(DIALECT_POSTGRES)){
-			query += //" pg_size_pretty(sum(pg_total_relation_size('\"' || table_schema || '\".\"' || table_name || \'\"\'))) AS size, " +
-					 " sum(pg_total_relation_size('\"' || table_schema || '\".\"' || table_name || '\"')) as size " +
-					 " FROM information_schema.tables " +
-					 " where table_name like '"+ tableNamePrefix +"%'";
-		}else if (dataSource.getHibDialectClass().contains(DIALECT_MYSQL)){
-			query += " coalesce(sum(round(((data_length + index_length)),2)),0) as size " +
-					 " FROM information_schema.TABLES WHERE table_name like '"+ tableNamePrefix +"%'";
-		}else if (dataSource.getHibDialectClass().contains(DIALECT_ORACLE) ||
-				dataSource.getHibDialectClass().contains(DIALECT_ORACLE9i10g)){
-			query += " sum(num_rows*avg_row_len) as sizet " +
-					 " from all_tables " + 
-					 " where table_name like '"+ tableNamePrefix +"%'";
-		}else{
-			//get approximate dimension
-			Iterator it = cacheRegistry.entrySet().iterator();
-		    while (it.hasNext()) {
-		    	BigDecimal size = null;
-		        Map.Entry<String,String> entry = (Map.Entry<String,String>)it.next();
-		        String signature = entry.getValue();
-		        query = " select * from " + signature;
-		        IDataStore dataStore  = dataSource.executeStatement(query, 0, 0);
-				DataStore ds = (DataStore) dataStore;				
-				BigDecimal rowWeight = getRowWeight(ds.getRecordAt(0), ds.getMetaData());
-				size = rowWeight.multiply(new BigDecimal(ds.getRecordsCount())) ;
-				logger.debug("Dimension stimated for cached object "+ signature +" [rowWeight*rows]: " + size + " ["+rowWeight+" * "+ds.getRecordsCount()+"]");
-				if (size != null) availableMemory = availableMemory.subtract(size);		        
-		    }
-		    logger.debug("Remaining cache free space: " + availableMemory);
-		    return availableMemory;
-		}
-		logger.debug("Defined query: " +query);
-		IDataStore dataStore  = dataSource.executeStatement(query, 0, 0);
-		DataStore ds = (DataStore) dataStore;
-		BigDecimal size = null;
-		if (ds.getRecordsCount() > 0){
-			IRecord rec = ds.getRecordAt(0);
-			for (int i=0, l=rec.getFields().size(); i<l; i++){		
-				IField field = rec.getFieldAt(i);
-				size = (BigDecimal)field.getValue();
-			}
-		}
+//		String query = "SELECT ";	
+//		
+//		if (dataSource.getHibDialectClass().contains(DIALECT_POSTGRES)){
+//			query += //" pg_size_pretty(sum(pg_total_relation_size('\"' || table_schema || '\".\"' || table_name || \'\"\'))) AS size, " +
+//					 " sum(pg_total_relation_size('\"' || table_schema || '\".\"' || table_name || '\"')) as size " +
+//					 " FROM information_schema.tables " +
+//					 " where table_name like '"+ tableNamePrefix +"%'";
+//		}else if (dataSource.getHibDialectClass().contains(DIALECT_MYSQL)){
+//			query += " coalesce(sum(round(((data_length + index_length)),2)),0) as size " +
+//					 " FROM information_schema.TABLES WHERE table_name like '"+ tableNamePrefix +"%'";
+//		}else if (dataSource.getHibDialectClass().contains(DIALECT_ORACLE) ||
+//				dataSource.getHibDialectClass().contains(DIALECT_ORACLE9i10g)){
+//			query += " sum(num_rows*avg_row_len) as sizet " +
+//					 " from all_tables " + 
+//					 " where table_name like '"+ tableNamePrefix +"%'";
+//		}else{
+//			//get approximate dimension
+//			Iterator it = cacheRegistry.entrySet().iterator();
+//		    while (it.hasNext()) {
+//		    	BigDecimal size = null;
+//		        Map.Entry<String,String> entry = (Map.Entry<String,String>)it.next();
+//		        String signature = entry.getValue();
+//		        query = " select * from " + signature;
+//		        IDataStore dataStore  = dataSource.executeStatement(query, 0, 0);
+//				DataStore ds = (DataStore) dataStore;				
+//				BigDecimal rowWeight = getRowWeight(ds.getRecordAt(0), ds.getMetaData());
+//				size = rowWeight.multiply(new BigDecimal(ds.getRecordsCount())) ;
+//				logger.debug("Dimension stimated for cached object "+ signature +" [rowWeight*rows]: " + size + " ["+rowWeight+" * "+ds.getRecordsCount()+"]");
+//				if (size != null) availableMemory = availableMemory.subtract(size);		        
+//		    }
+//		    logger.debug("Remaining cache free space: " + availableMemory);
+//		    return availableMemory;
+//		}
+//		logger.debug("Defined query: " +query);
+//		IDataStore dataStore  = dataSource.executeStatement(query, 0, 0);
+//		DataStore ds = (DataStore) dataStore;
+//		BigDecimal size = null;
+//		if (ds.getRecordsCount() > 0){
+//			IRecord rec = ds.getRecordAt(0);
+//			for (int i=0, l=rec.getFields().size(); i<l; i++){		
+//				IField field = rec.getFieldAt(i);
+//				size = (BigDecimal)field.getValue();
+//			}
+//		}
+		IDataBase dataBase = DataBase.getDataBase( cacheConfiguration.getCacheDataSource() );
+		BigDecimal size = dataBase.getUsedMemorySize(cacheConfiguration.getSchema(), cacheConfiguration.getTableNamePrefix());
 		logger.debug("Size of object cached: " + size);
 		if (size != null) availableMemory = availableMemory.subtract(size);
 		logger.debug("Remaining cache free space: " + availableMemory);

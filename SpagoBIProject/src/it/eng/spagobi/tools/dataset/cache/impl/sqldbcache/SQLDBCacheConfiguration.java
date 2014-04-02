@@ -26,19 +26,33 @@ public class SQLDBCacheConfiguration extends SimpleCacheConfiguration {
 	private List<Properties> objectsTypeDimension = new ArrayList<Properties>();
 	
 	
-	public static final String CACHE_NAME_PREFIX_CONFIG = "SPAGOBI.CACHE.NAMEPREFIX";
+	public static final String CACHE_TABLE_NAME_PREFIX = "CACHE_NAME_PREFIX_CONFIG";
+	public static final String CACHE_DATABASE_SCHEMA = "CACHE_DATABASE_SCHEMA";
+	
+	/**
+	 * @return the schema
+	 */
+	public String getSchema() {
+		return (String)getProperty(CACHE_DATABASE_SCHEMA);
+	}
+	/**
+	 * @param schema the schema to set
+	 */
+	public void setSchema(String schema) {
+		setProperty(CACHE_DATABASE_SCHEMA, schema);
+	}
 	
 	/**
 	 * @return the tableNamePrefixConfig
 	 */
 	public String getTableNamePrefix() {
-		return (String)getProperty(CACHE_NAME_PREFIX_CONFIG);
+		return (String)getProperty(CACHE_TABLE_NAME_PREFIX);
 	}
 	/**
 	 * @param tableNamePrefix the tableNamePrefixConfig to set
 	 */
 	public void setTableNamePrefix(String tableNamePrefix) {
-		setProperty(CACHE_NAME_PREFIX_CONFIG, tableNamePrefix);
+		setProperty(CACHE_TABLE_NAME_PREFIX, tableNamePrefix);
 	}
 	
 	public List<Properties> getObjectsTypeDimension() {
