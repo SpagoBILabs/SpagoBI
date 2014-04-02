@@ -39,7 +39,7 @@ import org.json.JSONObject;
  * 
  */
 
-@Path("/1.0/page")
+@Path("/1.0/pages")
 public class PageResource extends AbstractCockpitEngineResource {
 
 	static private Map<String, JSONObject> pages;
