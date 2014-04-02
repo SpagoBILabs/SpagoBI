@@ -83,16 +83,20 @@ public class SQLDBCache implements ICache {
 		if (this.cacheConfiguration != null){
 			String tableNamePrefix = this.cacheConfiguration.getTableNamePrefix();
 			if (tableNamePrefix != null){
-				eraseExistingTables(tableNamePrefix.toUpperCase());
+				if (!tableNamePrefix.isEmpty()){
+					eraseExistingTables(tableNamePrefix.toUpperCase());
+				} else {
+					throw new CacheException("An unexpected error occured while initializing cache: SPAGOBI.CACHE.NAMEPREFIX cannot be empty");
+				}
+			} else {
+				throw new CacheException("An unexpected error occured while initializing cache: SPAGOBI.CACHE.NAMEPREFIX not found");
 			}
 			
 			String databaseSchema = this.cacheConfiguration.getSchema();
 			if (databaseSchema != null){
 				//test schema
 				testDatabaseSchema(databaseSchema, dataSource);
-			} else {
-				throw new CacheException("An unexpected error occured while getting testing database schema for cache: schema config not found");
-			}
+			} 
 		}
 	}
 	
