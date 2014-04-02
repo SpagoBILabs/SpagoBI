@@ -82,11 +82,13 @@ Ext.extend(Sbi.engines.chart.HighchartsPanel, Sbi.engines.chart.GenericChartPane
 			var singleChartConfig = this.chartConfig;
 			singleChartConfig =  Ext.apply( singleChart, singleChartConfig);
 			delete singleChartConfig.charts;
-			singleChartConfig.chart.renderTo = singleChartConfig.divId + '__' + index + '';
-			//disable exporting buttons
-			var exp = {};
-			exp.enabled = false;
-			singleChartConfig.exporting = exp;
+			singleChartConfig.chart.renderTo = singleChartConfig.divId + '__' + index + '';			
+			if (singleChartConfig.exporting == undefined || singleChartConfig == null){
+				//disable exporting buttons for default
+				var exp = {};
+				exp.enabled = false;
+				singleChartConfig.exporting = exp;
+			}
 			//disable credits information
 			var credits = {};
 			credits.enabled = false;
