@@ -21,6 +21,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.work;
 
+import org.apache.log4j.Logger;
+
+import it.eng.spagobi.tools.dataset.cache.CacheManager;
 import it.eng.spagobi.tools.dataset.cache.ICache;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
@@ -35,6 +38,8 @@ public class SQLDBCacheWriteWork implements Work {
 	ICache cache;
 	IDataStore dataStore;
 	IDataSet dataSet;
+	
+	private static transient Logger logger = Logger.getLogger(CacheManager.class);
 
 	/**
 	 * @param cache
@@ -53,7 +58,17 @@ public class SQLDBCacheWriteWork implements Work {
 	 * @see java.lang.Runnable#run()
 	 */
 	public void run() {
-		cache.put(dataSet, dataStore);
+		logger.trace("IN");
+		try {
+			cache.put(dataSet, dataStore);
+		} catch(Throwable t) {
+			// who is catching this exception in the end? Verify and push the log there
+			logger.error("An unexpected error occured while adding store to cache", t);
+			throw new RuntimeException("An unexpected error occured while adding store to cache", t);
+		} finally {
+			logger.trace("OUT");
+		}
+		
 	}
 
 	/* (non-Javadoc)

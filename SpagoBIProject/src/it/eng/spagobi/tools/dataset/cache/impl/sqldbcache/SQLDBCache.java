@@ -435,17 +435,20 @@ public class SQLDBCache implements ICache {
 		logger.trace("IN");
 		try {
 			if (getMetadata().isCleaningEnabled() 
-					&& !getMetadata().hasEnoughMemoryForResultSet(dataStore)) {
+					&& !getMetadata().hasEnoughMemoryForStore(dataStore)) {
 				deleteToQuota();
 			}
 			
 			//check again if there is enough space for the resultset
-			if ( getMetadata().hasEnoughMemoryForResultSet(dataStore) ){
+			if ( getMetadata().hasEnoughMemoryForStore(dataStore) ){
 				String signature = dataSet.getSignature();
 				String tableName = persistStoreInCache(dataSet, signature, dataStore);
 				getMetadata().addCacheItem(signature, tableName, dataStore);
 			} else {
-				throw new CacheException("Store is to big to be persisted in cache. Execute dataset disbling cache");
+				throw new CacheException("Store is to big to be persisted in cache." +
+						" Store extimated dimenion is [" + getMetadata().getRequiredMemory(dataStore) + "]" +
+						" while cache available space is [" + getMetadata().getAvailableMemory() + "]." +
+						" Incrase cache size or execute the dataset disabling cache.");
 			}
 		} catch(Throwable t) {
 			if(t instanceof CacheException) throw (CacheException)t;
