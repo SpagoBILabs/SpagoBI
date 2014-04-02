@@ -67,4 +67,11 @@ public class HSQLDataBase extends AbstractDataBase {
 	public String getAliasDelimiter() {
 		return "\"";
 	}
+	
+	/* (non-Javadoc)
+	 * @see it.eng.spagobi.utilities.database.AbstractDataBase#getUsedMemorySizeQuery(java.lang.String, java.lang.String)
+	 */
+	public String getUsedMemorySizeQuery(String schema, String tableNamePrefix) {
+		return null;
+	}
 }

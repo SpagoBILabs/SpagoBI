@@ -11,6 +11,8 @@
  */
 package it.eng.spagobi.utilities.database;
 
+import java.math.BigDecimal;
+
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 
 /**
@@ -38,6 +40,12 @@ public interface IDataBase {
 	 */
 	void setVarcharLength(int varcharLength);
 	
-	
+	/**
+	 * 
+	 * @return the alias delimiter
+	 */
 	String getAliasDelimiter();
+	
+	
+	BigDecimal getUsedMemorySize(String schema, String tablePrefix);
 }
