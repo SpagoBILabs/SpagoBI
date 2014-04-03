@@ -77,7 +77,6 @@ public class OracleDataBase extends AbstractDataBase {
 	public String getUsedMemorySizeQuery(String schema, String tableNamePrefix) {
 		
 		String query = "select "+
-		  " segment_name           table_name, "+  
 		  " sum(bytes) table_size_meg "+
 		  "	from " + 
 		  " user_extents "+
