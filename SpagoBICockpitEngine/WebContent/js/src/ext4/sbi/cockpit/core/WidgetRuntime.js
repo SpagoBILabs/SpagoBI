@@ -120,6 +120,12 @@ Ext.extend(Sbi.cockpit.core.WidgetRuntime, Ext.Panel, {
      */
     , wstyle: null
     
+    /**
+     * @property {List} filters
+     * The filters of the widget.
+     */
+    , filters: null
+    
     // =================================================================================================================
 	// METHODS
 	// =================================================================================================================
@@ -588,6 +594,61 @@ Ext.extend(Sbi.cockpit.core.WidgetRuntime, Ext.Panel, {
     	Sbi.trace("[WidgetRuntime.getWidgetManager]: OUT");
     	
     	return widgetManager;
+    }
+    
+    /**
+	 * @method
+	 * 
+	 * Returns all filters linked to the widget.
+	 * 
+	 * @return {List} A list with all widgets' filters.
+	 */
+    , getAllFilters: function() {
+    	Sbi.trace("[WidgetRuntime.getAllFilters]: IN");
+
+    	if(this.isBoundToAContainer() === true) {
+    		this.filters = this.getParentContainer().getAllWidgetFilters();
+    		if(this.filters === null) {
+    			Sbi.error("[Widget.getAllFilters]: Filters of [" + this.toString() + "] are loaded ");
+    		}
+    	} else {
+    		Sbi.warn("[Widget.getAllFilters]: It's not possble to retrieve widget manager of widget [" + this.toString() + "] because it is not bound to any widget container");
+    	}
+    	
+    	Sbi.trace("[WidgetRuntime.getAllFilters]: OUT");
+    	
+    	return this.filters;
+    }
+    
+    /**
+	 * @method
+	 * 
+	 * @param {Object} the filter object reference
+	 * 
+	 * Returns the value of the filter
+	 * 
+	 * @return {String} A string with the value of the filter.
+	 */
+    , getFilterValue: function(f){
+    	Sbi.trace("[WidgetRuntime.getFilterValue]: IN");
+    	return null;
+    	Sbi.trace("[WidgetRuntime.getFilterValue]: OUT");    	
+    }
+    
+    /**
+	 * @method
+	 * 
+	 * Sets the value of the filter
+	 * 
+	 * @param {Object} the filter object reference
+	 * @param {String} the new value for the filter
+	 * 
+	 * @return {String} A string with the value of the filter.
+	 */
+    , setFilterValue: function(f, v){
+    	Sbi.trace("[WidgetRuntime.setFilterValue]: IN");
+    	return;
+    	Sbi.trace("[WidgetRuntime.setFilterValue]: OUT");    	
     }
 	
 	, toString: function() {

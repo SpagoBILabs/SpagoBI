@@ -27,6 +27,7 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 <%@page import="it.eng.spago.security.IEngUserProfile"%>
 <%@page import="it.eng.spagobi.commons.utilities.ChannelUtilities"%>
 <%@page import="it.eng.spagobi.commons.constants.SpagoBIConstants"%>
+<%@page import="java.util.Iterator"%>
 
 <%-- ---------------------------------------------------------------------- --%>
 <%-- JAVA CODE 																--%>
@@ -84,6 +85,8 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 			fromMyAnalysis = true;
 		}
 	}
+	
+    Map analyticalDrivers  = engineInstance.getAnalyticalDrivers();
 %>
 
 <%-- ---------------------------------------------------------------------- --%>
@@ -122,6 +125,25 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 		    , controllerPath: null // no cotroller just servlets   
 		};
 		
+		var executionContext = {};
+        <% 
+        Iterator it = analyticalDrivers.keySet().iterator();
+		while(it.hasNext()) {
+			String parameterName = (String)it.next();
+			String parameterValue = (String)analyticalDrivers.get(parameterName);		
+			String quote = (parameterValue.startsWith("'"))? "" : "'";
+			if ( parameterValue.indexOf(",") >= 0){					
+		 %>
+				executionContext ['<%=parameterName%>'] = [<%=quote%><%=parameterValue%><%=quote%>];
+		<%	}else{
+		%>
+				executionContext ['<%=parameterName%>'] = <%=quote%><%=parameterValue%><%=quote%>;
+		 <%
+		 	}							
+		 }
+        %>
+        Sbi.config.executionContext = executionContext;
+	
 		var params = {
 				SBI_EXECUTION_ID: <%= request.getParameter("SBI_EXECUTION_ID")!=null?"'" + request.getParameter("SBI_EXECUTION_ID") +"'": "null" %>
 				, user_id: "<%=userId%>"
@@ -129,7 +151,7 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 	
 		Sbi.config.serviceRegistry = new Sbi.service.ServiceRegistry({
 		  	baseUrl: url
-		    , baseParams: params
+		  , baseParams: params
 		});
 		
 		
@@ -202,10 +224,16 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 			, resourcePath: 'datasets/{datasetLabel}/data'
 		}, 'spagobiServiceConf');
 		
-		var service = Sbi.config.serviceReg.registerService('loadDataSetField', {
+		Sbi.config.serviceReg.registerService('loadDataSetField', {
 			name: 'loadDataSetField'
 			, description: 'Load all the fields of the specified dataset'
 			, resourcePath: 'datasets/{datasetLabel}/fields'
+		}, 'spagobiServiceConf');
+		
+		Sbi.config.serviceReg.registerService('loadDataSetParams', {
+			name: 'loadDataSetParams'
+			, description: 'Load all the params of the specified dataset'
+			, resourcePath: 'datasets/{datasetLabel}/parameters'
 		}, 'spagobiServiceConf');
 		
 		Sbi.config.serviceReg.registerService('loadEnterpriseDataSets', {

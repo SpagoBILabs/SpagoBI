@@ -63,12 +63,22 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
     , widgetContainer: null
     
     /**
-	 * @property {Ext.Window} widgetEditorWizard
-	 * The wizard that manages the single widget definition
+	 * @property {Ext.Window} associationEditorWizard
+	 * The wizard that manages the associations definition
 	 */
 	, associationEditorWizard: null
     
+	/**
+	 * @property {Object} associationEditorWizardConfig
+	 * The object configuration for the association wizard
+	 */
 	, associationEditorWizardConfig: null
+	
+	/**
+	 * @property {Ext.Window} filterEditorWizard
+	 * The wizard that manages the filters definition
+	 */
+	, filterEditorWizard: null
 	
     , msgPanel: null
     
@@ -359,6 +369,21 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 		this.associationEditorWizard.show();
 	}
 	
+	, onShowFilterEditorWizard: function(){
+		var config = {};
+		config.storesList = Sbi.storeManager.getStoreIds();
+//		if(this.filterEditorWizard === null) {    		
+    		Sbi.trace("[MainPanel.showFilterEditorWizard]: instatiating the editor");    		
+    		this.filterEditorWizard = Ext.create('Sbi.filters.FilterEditorWizard',config);
+//    		this.filterEditorWizard.on("submit", this.onFilterEditorWizardSubmit, this);
+//    		this.filterEditorWizard.on("cancel", this.onFilterEditorWizardCancel, this);
+//    		this.filterEditorWizard.on("apply", this.onFilterEditorWizardApply, this);    		
+	    	Sbi.trace("[MainPanel.filterEditorWizard]: editor succesfully instantiated");
+//    	}
+				
+		this.filterEditorWizard.show();
+	}
+	
 	, onAssociationEditorWizardCancel: function(wizard) {
 		Sbi.trace("[MainPanel.onAssociationEditorWizardCancel]: IN");
 //		this.associationEditorWizard.hide();
@@ -439,6 +464,11 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 		this.tbar = new Ext.Toolbar({
 		    items: [
 		        '->', // same as {xtype: 'tbfill'}, // Ext.Toolbar.Fill
+		        {
+		        	text: LN('sbi.cockpit.mainpanel.btn.filters')
+		        	, handler: this.onShowFilterEditorWizard
+		        	, scope: this
+		        },
 		        {
 		        	text: LN('sbi.cockpit.mainpanel.btn.associations')
 		        	, handler: this.onShowAssociationEditorWizard
