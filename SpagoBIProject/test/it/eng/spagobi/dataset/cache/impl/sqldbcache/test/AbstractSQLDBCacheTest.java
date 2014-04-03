@@ -461,7 +461,7 @@ public abstract class AbstractSQLDBCacheTest extends TestCase {
 		}
 		assertTrue(result);
 	}
-	
+	/*
 	public void testCacheCleaning(){
 		ICache cacheCustom = createCache(791449);
 		IDataStore resultset;
@@ -494,6 +494,7 @@ public abstract class AbstractSQLDBCacheTest extends TestCase {
 			cacheCustom.deleteAll();
 		}
 	}
+	*/
 	
 	public void testSchemaName(){
 
