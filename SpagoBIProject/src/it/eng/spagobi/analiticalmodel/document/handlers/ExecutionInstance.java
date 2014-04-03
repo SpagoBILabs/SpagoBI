@@ -16,6 +16,7 @@ import it.eng.spago.validation.EMFValidationError;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.bo.Snapshot;
 import it.eng.spagobi.analiticalmodel.document.bo.SubObject;
+import it.eng.spagobi.analiticalmodel.execution.bo.defaultvalues.DefaultValue;
 import it.eng.spagobi.analiticalmodel.execution.bo.defaultvalues.DefaultValuesList;
 import it.eng.spagobi.analiticalmodel.execution.bo.defaultvalues.DefaultValuesRetriever;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
@@ -314,7 +315,6 @@ public class ExecutionInstance implements Serializable{
 	public void applyViewpoint( String userProvidedParametersStr, boolean transientMode) {
 		logger.debug("IN");
 		if (userProvidedParametersStr != null) {
-			ParameterValuesDecoder decoder = new ParameterValuesDecoder();
 			List biparameters = object.getBiObjectParameters();
 			if (biparameters == null) {
 				logger.error("BIParameters list cannot be null!!!");
@@ -793,14 +793,20 @@ public class ExecutionInstance implements Serializable{
 			return new ArrayList();
 		}
 
-		// from the complete list of values, get the values that are not default values
-		List nonDefaultValues = this.validateAsDefaultValues(biparam);
-		if (nonDefaultValues.isEmpty()) {
-			logger.debug("All selected values are default values");
-			return new ArrayList();
-		}
+		// we need to process default values and non-default values separately: default values do not require validation, non-default values instead require validation
+		
+		DefaultValuesRetriever retriever = new DefaultValuesRetriever();
+		DefaultValuesList allDefaultValues = retriever.getDefaultValues(biparam, this, this.userProfile);
+		// from the complete list of values, get the values that are default values
+		DefaultValuesList selectedDefaultValue = this.getSelectedDefaultValues(biparam, allDefaultValues);
 
 		// validation must proceed only with non-default values
+		// from the complete list of values, get the values that are not default values
+		List nonDefaultValues = this.getNonDefaultValues(biparam, allDefaultValues);
+		if (nonDefaultValues.isEmpty()) {
+			logger.debug("All selected values are default values; no need to validate them");
+			return new ArrayList();
+		}
 		BIObjectParameter clone = biparam.clone();
 		clone.setParameterValues(nonDefaultValues);
 
@@ -819,42 +825,40 @@ public class ExecutionInstance implements Serializable{
 					this, true);
 			toReturn = getValidationErrorsOnValuesByLovResult(lovResult, clone, lovProvDet);
 		}
-		mergeValuesAndDescriptions(biparam, clone);
+		mergeDescriptions(biparam, selectedDefaultValue, clone);
 		logger.debug("OUT");
 		return toReturn;
 	}
-
-	private void mergeValuesAndDescriptions(BIObjectParameter biparam, BIObjectParameter cloned){
+	
+	private void mergeDescriptions(BIObjectParameter biparam,
+			DefaultValuesList selectedDefaultValue, BIObjectParameter cloned) {
 		int valuePosition;
-		int defaultValuePosition =0;
-		int nonDefaultValuePosition =0;
 		List nonDefaultValues = cloned.getParameterValues();
 		List nonDefaultDescriptions = cloned.getParameterValuesDescription();
-		List parameterDescriptions =  new ArrayList<String>();
-		if(nonDefaultValues!=null){
-			List parameterValues = biparam.getParameterValues();
-			if(parameterValues!=null){
-				for(int i=0; i< parameterValues.size(); i++){
-					valuePosition = nonDefaultValues.indexOf(parameterValues.get(i));
-					if(valuePosition>=0){
-						parameterDescriptions.add(nonDefaultDescriptions.get(defaultValuePosition));
-						defaultValuePosition++;
-					}else{
-						parameterDescriptions.add(cloned.getParameterValuesDescription().get(nonDefaultValuePosition));
-						nonDefaultValuePosition++;
-					}
+		List parameterValues = biparam.getParameterValues();
+		List parameterDescriptions = new ArrayList<String>();
+		if (parameterValues != null) {
+			for (int i = 0; i < parameterValues.size(); i++) {
+				Object aValue = parameterValues.get(i);
+				valuePosition = nonDefaultValues.indexOf(aValue);
+				if (valuePosition >= 0) {
+					// this means that the value IS NOT a default value
+					parameterDescriptions.add(nonDefaultDescriptions
+							.get(valuePosition));
+				} else {
+					// this means that the value IS a default value
+					DefaultValue defaultValue = selectedDefaultValue.getDefaultValue(aValue);
+					parameterDescriptions.add(defaultValue.getDescription());
 				}
 			}
 		}
 		biparam.setParameterValuesDescription(parameterDescriptions);
 	}
 
-	private List validateAsDefaultValues(BIObjectParameter analyticalDocumentParameter) {
+	private List getNonDefaultValues(BIObjectParameter analyticalDocumentParameter, DefaultValuesList defaultValues) {
 		logger.debug("IN");
 		List toReturn = new ArrayList<String>();
 		List values = analyticalDocumentParameter.getParameterValues();
-		DefaultValuesRetriever retriever = new DefaultValuesRetriever();
-		DefaultValuesList defaultValues = retriever.getDefaultValues(analyticalDocumentParameter, this, this.userProfile);
 		if (values != null && values.size() > 0) {
 			for (int i = 0; i < values.size(); i++) {
 				String value = values.get(i).toString();
@@ -867,7 +871,29 @@ public class ExecutionInstance implements Serializable{
 		logger.debug("OUT");
 		return toReturn;
 	}
-
+	
+	private DefaultValuesList getSelectedDefaultValues(BIObjectParameter analyticalDocumentParameter, DefaultValuesList defaultValues) {
+		logger.debug("IN");
+		DefaultValuesList toReturn = new DefaultValuesList();
+		if (defaultValues == null || defaultValues.isEmpty()) {
+			logger.debug("No default values in input");
+			return toReturn;
+		}
+		List values = analyticalDocumentParameter.getParameterValues();
+		if (values != null && values.size() > 0) {
+			for (int i = 0; i < values.size(); i++) {
+				String value = values.get(i).toString();
+				DefaultValue defaultValue = defaultValues.getDefaultValue(value);
+				if (defaultValue != null) {
+					logger.debug("Value [" + defaultValue + "] is a selected value.");
+					toReturn.add(defaultValue);
+				}
+			}
+		}
+		logger.debug("OUT");
+		return toReturn;
+	}
+	
 	private List getValidationErrorsOnValuesForQueries(QueryDetail queryDetail, BIObjectParameter biparam) throws Exception {
 		List toReturn = null;
 		LovResultCacheManager executionCacheManager = new LovResultCacheManager();
