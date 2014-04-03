@@ -9,8 +9,8 @@ Ext.define('Sbi.data.editor.association.AssociationEditorPage', {
 	, layout: 'fit'
 			
 	, config:{	
-			storeList: null
-		  , associationsList: null
+			stores: null
+		  , associations: null
 		  , itemId: 0
 		  , border: false
 	}
@@ -78,7 +78,8 @@ Ext.define('Sbi.data.editor.association.AssociationEditorPage', {
 		Sbi.trace("[AssociationEditorPage.applyPageState]: IN");
 		state =  state || {};
 		if(this.associationEditorPanel) {
-			state.associationsList = this.associationEditorPanel.getAssociationsList();
+			var associations = this.associationEditorPanel.getAssociationsList();
+			state.associations = this.encodeAssociations(associations);
 		}
 		Sbi.trace("[AssociationEditorPage.applyPageState]: OUT");
 		return state;
@@ -88,6 +89,7 @@ Ext.define('Sbi.data.editor.association.AssociationEditorPage', {
 		Sbi.trace("[AssociationEditorPage.setPageState]: IN");
 		Sbi.trace("[AssociationEditorPage.setPageState]: state parameter is equal to [" + Sbi.toSource(state, true) + "]");
 		
+		state.associations = this.decodeAssociations(state.associations);
 		this.associationEditorPanel.setAssociationsList(state);
 		
 		Sbi.trace("[AssociationEditorPage.setPageState]: OUT");
@@ -104,8 +106,10 @@ Ext.define('Sbi.data.editor.association.AssociationEditorPage', {
 	// -----------------------------------------------------------------------------------------------------------------
 
 	, init: function(){
-		this.associationEditorPanel = Ext.create('Sbi.data.editor.association.AssociationEditor',{storeList: this.storeList
-																								, associationsList: this.associationsList}); 
+		this.associationEditorPanel = Ext.create('Sbi.data.editor.association.AssociationEditor',{
+			stores: this.stores
+			, associations: this.associations
+		}); 
 		return this.associationEditorPanel;
 	}
 
@@ -113,5 +117,68 @@ Ext.define('Sbi.data.editor.association.AssociationEditorPage', {
 	// -----------------------------------------------------------------------------------------------------------------
     // utility methods
 	// -----------------------------------------------------------------------------------------------------------------
+	
+	, decodeAssociations: function(associations){
+		var decodedAssociations = [];
+		
+		for (var i = 0 ; i < associations.length; i++){
+			var association = associations[i];
+			
+			var config = {};
+			config.id = association.id;
+			config.description = association.description;
+			config.fields = config.fields;
+					
+			decodedAssociations.push(config);
+		}
+		
+		return decodedAssociations;
+	}
+	
+	/**
+	 * @method
+	 * 
+	 * Convert the association list as returned from #associationEditorPanel to a list of association encoded
+	 * in the format expected by the storeManager
+	 */
+	, encodeAssociations: function(associations){
+		var encodedAssociations = [];
+		
+		for (var i = 0 ; i < associations.length; i++){
+			var association = associations[i];
+			
+			var config = {};
+			config.id = association.id;
+			config.description = association.description;
+			config.fields = this.getAssociationFields(association);
+					
+			encodedAssociations.push(config);
+		}
+		
+		return encodedAssociations;
+	}
+	
+	/**
+	 * @deprecated
+	 */
+	, getAssociationFields: function(association){
+
+		Sbi.trace("[StoreManager.getAssociationFields]: Associations object: " +  Sbi.toSource(association));
+		
+		var fields = [];
+		var lst = association.description.split('=');
+				
+		for (var i=0; i<lst.length; i++){
+			for (var i=0; i<lst.length; i++){
+				var el = lst[i].split('.');
+				var field = {};				
+				field.store = el[0];
+				field.column = el[1];
+				var lbl = '#'+i;
+				fields.push(field);
+			}			
+		}
+		return fields;
+	}
 
 });

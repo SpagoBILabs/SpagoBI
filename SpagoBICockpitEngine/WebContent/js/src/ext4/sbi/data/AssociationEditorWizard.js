@@ -8,14 +8,14 @@
 Ext.define('Sbi.data.AssociationEditorWizard', {
 	extend: 'Ext.Window'
 	, layout:'fit'
-	, config:{title: LN('sbi.cockpit.association.editor.wizard.title')				   
-			  , width: 1000
-			  , height: 510
-			  , closable: true
-			  , closeAction: 'close' //'hide'
-//			  , plain: true
-			  , modal: true	
-			  , storeList: null
+
+	, config:{
+		title: LN('sbi.cockpit.association.editor.wizard.title')				   
+		, width: 1000
+		, height: 510
+		, closable: true
+		, closeAction: 'close' //'hide'
+		, modal: true	
 	}
 	
 
@@ -76,8 +76,8 @@ Ext.define('Sbi.data.AssociationEditorWizard', {
 	, init: function(c){
 		Sbi.trace("[AssociationEditorWizard.init]: IN");		
 		this.editorMainPanel = Ext.create('Sbi.data.AssociationEditorWizardPanel',{
-			storeList: this.storeList
-		  , associationsList: (c.associationsList)?c.associationsList.associations:[]
+			stores: c.stores || []
+		  , associations: c.associations || []
 		});
 		this.editorMainPanel.on('cancel', this.onCancel, this);
 		this.editorMainPanel.on('submit', this.onSubmit, this);
