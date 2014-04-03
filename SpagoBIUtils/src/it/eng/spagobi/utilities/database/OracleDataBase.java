@@ -82,8 +82,8 @@ public class OracleDataBase extends AbstractDataBase {
 		  " user_extents "+
 		  " where  "+
 		  " Segment_Type='TABLE' "+
-		  " and     segment_name like '"+tableNamePrefix.toUpperCase()+"%' "+
-		  " group by segment_name ";
+		  " and     segment_name like '"+tableNamePrefix.toUpperCase()+"%' ";
+		  //" group by segment_name ";
 
 		return query;
 	}
