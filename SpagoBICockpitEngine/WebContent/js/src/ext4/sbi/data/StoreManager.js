@@ -392,10 +392,7 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 			config.id = ass.id;
 			config.ass = ass.ass;
 			config.fields = fields;
-			
-//			if (ass.id){
-//				this.associations[ass.id] = config;				
-//			}		
+					
 			this.associations.push(config);
 		}
 		
@@ -403,18 +400,7 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 
 	}
 	
-//	, getAssociationStores: function(r){
-//		var stores = [];
-//		var lst = r.ass.split('=');
-//		for (var i=0; i<lst.length; i++){
-//			var el = lst[i].split('.');
-//			stores.push(el[0]);
-//		}
-//		return stores;
-//	}
-//	
 	, getAssociationFields: function(a){
-//		var fields = {};
 		var fields = [];
 		var lst = a.ass.split('=');
 		for (var i=0; i<lst.length; i++){
@@ -424,7 +410,6 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 				field.store = el[0];
 				field.column = el[1];
 				var lbl = '#'+i;
-//				fields[lbl] = field;
 				fields.push(field);
 			}			
 		}
@@ -435,13 +420,6 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 		this.associations.push(r);
 	}
 	
-//	, addAssociationsStore: function(s){
-//		this.associations.stores.push(s);
-//	}
-//	
-//	, addAssociationsFields: function(f){
-//		this.associations.fields.push(s);		
-//	}
 	
 	, getAssociationById: function(id){
 		for(var i=0; i<this.getAssociations().length; i++){

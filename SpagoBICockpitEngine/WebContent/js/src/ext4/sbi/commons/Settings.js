@@ -41,7 +41,7 @@ Sbi.settings.mydata = {
 	 * put false for previous behavior (all USER public ds + owned)
 	 * put true for showing only owned datasets
 	 */
-	, showOnlyOwner: true
+	, showOnlyOwner: false
 	/**
 	 * Visibility of MyData tabs
 	 */
