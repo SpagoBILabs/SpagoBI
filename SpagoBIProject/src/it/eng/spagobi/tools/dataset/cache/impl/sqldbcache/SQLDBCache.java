@@ -174,7 +174,7 @@ public class SQLDBCache implements ICache {
             }
         }
         catch (Exception e){
-			throw new CacheException("An unexpected error occured while getting testing database schema for cache");
+			throw new CacheException("An unexpected error occured while testing database schema for cache");
         }
         finally {
             //Dropping table
