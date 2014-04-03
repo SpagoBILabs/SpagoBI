@@ -14,6 +14,10 @@ public class DefaultValuesList extends ArrayList<DefaultValue> {
 
 	private static Logger logger = Logger.getLogger(DefaultValuesList.class);
 
+	/**
+	 * Returns true if the default values' list contains the value specified in input.
+	 * The input is compared with the default values' value property, i.e. it is not compared with default values' description properties.
+	 */
 	public boolean contains(Object value) {
 		Iterator<DefaultValue> it = this.iterator();
 		while (it.hasNext()) {
@@ -24,6 +28,24 @@ public class DefaultValuesList extends ArrayList<DefaultValue> {
 			}
 		}
 		return false;
+	}
+
+	/**
+	 * Returns the default value object with value property equal to the value specified in input, or null if this object is not found
+	 * @param value The value to look for: it is compared with default values' value property
+	 * @return The DefaultValue object with value specified in input, or null if this object is not found
+	 */
+	public DefaultValue getDefaultValue(Object value) {
+		Iterator<DefaultValue> it = this.iterator();
+		while (it.hasNext()) {
+			DefaultValue defaultValue = it.next();
+			if (defaultValue.getValue().equals(value)) {
+				logger.debug("Value [" + value + "] found in this default values' list");
+				return defaultValue;
+			}
+		}
+		logger.debug("Value [" + value + "] not found in this default values' list");
+		return null;
 	}
 	
 }
