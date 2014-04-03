@@ -87,7 +87,7 @@ public class PostgreSQLDataBase extends AbstractDataBase {
 		+ " WHERE "
 		+ " table_name like '" + tableNamePrefix + "%' ";		
 		if ((schema != null) && (!schema.isEmpty()) ){
-			query += " AND table_schema = " + schema + ";" ;
+			query += " AND table_schema = '" + schema + "';" ;
 		} else {
 			query += ";";
 		}
