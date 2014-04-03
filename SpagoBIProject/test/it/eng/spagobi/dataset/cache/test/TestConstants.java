@@ -41,6 +41,8 @@ public class TestConstants {
 	public static BigDecimal CACHE_CONFIG_CACHE_DIMENSION = BigDecimal.valueOf(104857600); //in bytes
 	public static int CACHE_CONFIG_PERCENTAGE_TO_CLEAN = 50;
 	public static String CACHE_CONFIG_SCHEMA_NAME = "spagobi_testw";
+	//public static String CACHE_CONFIG_SCHEMA_NAME = "public"; //for Postgres
+	//public static String CACHE_CONFIG_SCHEMA_NAME = "dbo"; //for SqlServer
 
 	
 	public enum DatabaseType { MYSQL, POSTGRES, ORACLE, SQLSERVER };
