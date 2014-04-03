@@ -11,7 +11,7 @@ Ext.define('Sbi.data.editor.association.AssociationEditorDatasetContainer', {
 	, config:{	
 		  services: null			
 		, dsContainerPanel: null
-		, storeList: null
+		, stores: null
 		, engineAlreadyInitialized : false
 		, border : false
 		, autoScroll: true
@@ -34,12 +34,12 @@ Ext.define('Sbi.data.editor.association.AssociationEditorDatasetContainer', {
 	, init: function() {
 		var items = new Array();
 		
-		for (var i=0; i < this.storeList.length; i++){
+		for (var i=0; i < this.stores.length; i++){
 				var item = new Sbi.data.editor.association.AssociationEditorDataset({
 					border: false,
 					height : 225,
 					width : 180,
-					dataset: this.storeList[i]
+					dataset: this.stores[i]
 				});
 				items.push(item);
 		}
@@ -83,12 +83,38 @@ Ext.define('Sbi.data.editor.association.AssociationEditorDatasetContainer', {
 	, getSelection: function(l){
 		var toReturn = null;
 		
-		var ds = this.getDatasetItemByLabel(l);
-		if (ds !== null && ds.grid !== null && 
-				ds.grid.getSelectionModel().getSelection().length > 0 &&
-				ds.grid.getSelectionModel().getSelection()[0] !== undefined)
-			var pippo = ds.grid.getSelectionModel().getSelection();
-			toReturn = ds.grid.getSelectionModel().getSelection()[0].data;
+		Sbi.trace("IN");
+		
+		var dataSetItem = this.getDatasetItemByLabel(l);
+		
+		if(Sbi.isNotValorized(dataSetItem)) {
+			Sbi.warn("No dataset item associated to label [" + l + "]");
+			Sbi.trace("OUT");
+			return null;
+		}
+		
+		if(Sbi.isNotValorized(dataSetItem.grid)) {
+			Sbi.warn("Grid associate to dataset item [" + l + "] is undefined");
+			Sbi.trace("OUT");
+			return null;
+		}
+		
+		var slectionModel = dataSetItem.grid.getSelectionModel();
+		if(Sbi.isNotValorized(slectionModel)) {
+			Sbi.warn("Impossible to get selection from dataset item  [" + l + "]");
+			Sbi.trace("OUT");
+			return null;
+		}
+		
+		if(slectionModel.getSelection().length == 0) {
+			Sbi.warn("There are no selected row in dataset item  [" + l + "]");
+			Sbi.trace("OUT");
+			return null;
+		}
+		
+		toReturn = slectionModel.getSelection()[0].data;
+		Sbi.trace("OUT");
+			
 		return toReturn;
 	}
 		

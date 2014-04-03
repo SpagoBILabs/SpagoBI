@@ -19,13 +19,12 @@ Ext.define('Sbi.data.editor.association.AssociationEditorList', {
 		  services: null
 		, grid: null
 		, store: null
-		, associationsList :null
+		, associations :null
 		, displayRefreshButton: null  // if true, display the refresh button
 		, border: false
 		, style: {marginTop: '3px', marginRight: '5px', marginLeft:'5px'}
 		, height: 200	
 		, autoScroll: true
-//	,	bodyStyle:'padding:3px;background:green'
   		
 	}
 	/**
@@ -72,11 +71,10 @@ Ext.define('Sbi.data.editor.association.AssociationEditorList', {
 	   Sbi.trace("[AssociationEditorDataset.initStore]: IN");
 	   var initialData = [];
 		
-	   if (this.associationsList !== null ){
-		   for (var i=0; i< this.associationsList.length; i++){
-				if (this.associationsList[i].ass !== null &&
-						this.associationsList[i].ass !== undefined){
-					var el = [this.associationsList[i].id,  this.associationsList[i].ass];
+	   if (this.associations !== null ){
+		   for (var i=0; i< this.associations.length; i++){
+				if (Sbi.isValorized(this.associations[i].description)) {
+					var el = [this.associations[i].id,  this.associations[i].description];
 					initialData.push(el);
 				}
 			}
@@ -215,7 +213,7 @@ Ext.define('Sbi.data.editor.association.AssociationEditorList', {
     /**
 	 * @method 
 	 * Remove the Association from the list and fire the event 'removeAssociation' for remove it 
-	 * from the AssociationsList too.
+	 * from the associations too.
 	 * 
 	 * @param {Object} r The Association 
 	 */
@@ -283,14 +281,12 @@ Ext.define('Sbi.data.editor.association.AssociationEditorList', {
 	 * 
 	 */    
     , onCellClick: function(grid, record, item, index, e, opt){
-    	var ass = {};
-//        ass.id = grid.getSelectionModel().getSelection()[0].get('id'); // Get association id
-//        ass.ass= grid.getSelectionModel().getSelection()[0].get('ass'); // Get association content      
-    	ass.id = record.get('id');
-    	ass.ass = record.get('ass');
+    	var association = {};  	
+    	association.id = record.get('id');
+    	association.description = record.get('ass');
     		
-        this.currentAss = ass;
-        this.fireEvent('selectAssociation',ass);
+        this.currentAss = association;
+        this.fireEvent('selectAssociation', association);
     }
 
 });

@@ -21,8 +21,7 @@ Ext.define('Sbi.data.editor.association.AssociationEditorDataset', {
 		border: true
 		, dataset: null
 		, gridConfig: null
-	    , style: {marginTop: '3px', marginRight: '5px', marginLeft:'5px'}
-//		, bodyStyle:'padding:3px;background:green'    
+	    , style: {marginTop: '3px', marginRight: '5px', marginLeft:'5px'} 
 		, services: null
 	    , grid: null	    
 	    , height : 225
@@ -36,11 +35,6 @@ Ext.define('Sbi.data.editor.association.AssociationEditorDataset', {
 		this.init();
 		this.callParent(config);
 		this.addEvents('addFieldToAssociation');	
-		
-//		this.on("afterRender", function(){
-//			this.grid.store.load();
-//			Sbi.trace("[AssociationEditorDataset.onRender]: store loaded");
-//		}, this);
 		Sbi.trace("[AssociationEditorDataset.constructor]: OUT");
 	}
 	

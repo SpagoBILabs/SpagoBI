@@ -11,12 +11,10 @@ Ext.define('Sbi.data.editor.association.AssociationEditor', {
 
 	, config:{	
 		  services: null		
-		, storeList: null
-		, associationsList: null
+		, stores: null
+		, associations: null
 		, contextMenu: null		
-//		, engineAlreadyInitialized : null
 		, border: false
-//		, autoScroll: true
 	}
 
 	/**
@@ -30,7 +28,7 @@ Ext.define('Sbi.data.editor.association.AssociationEditor', {
 	 */
 	, assContainerPanel: null
 	/**
-	 * @property {Ext.Array} associationsList
+	 * @property {Ext.Array} associations
 	 * The list with all associations
 	 */
 	, association: null 	
@@ -82,11 +80,16 @@ Ext.define('Sbi.data.editor.association.AssociationEditor', {
 	}
 	
 	, initDatasetPanel: function(config) {
-		this.dsContainerPanel = Ext.create('Sbi.data.editor.association.AssociationEditorDatasetContainer',{storeList: this.storeList});
+		this.dsContainerPanel = Ext.create('Sbi.data.editor.association.AssociationEditorDatasetContainer',{
+			stores: this.stores
+		});
 	}
 	
 	, initAssociationPanel: function(config) {
-		this.assContainerPanel = Ext.create('Sbi.data.editor.association.AssociationEditorList',{height:200, associationsList: this.associationsList});
+		this.assContainerPanel = Ext.create('Sbi.data.editor.association.AssociationEditorList',{
+			height:200, 
+			associations: this.associations
+		});
 		this.assContainerPanel.addListener('addAssociation', this.addAssociation, this);
 		this.assContainerPanel.addListener('modifyAssociation', this.modifyAssociation, this);
 		this.assContainerPanel.addListener('removeAssociation', this.removeAssociation, this);
@@ -100,9 +103,9 @@ Ext.define('Sbi.data.editor.association.AssociationEditor', {
 
 	/**
 	 * @method (fired)
-	 * Adds a new Association with active selections to the associationsList and to the associations grid
+	 * Adds a new Association with active selections to the associations and to the associations grid
 	 * 
-	 * @param {String} n The identifier (setted for update context)
+	 * @param {String} n The identifier (set for update context)
 	 */
 	, addAssociation: function(n){		
 		var toReturn = true;
@@ -126,25 +129,25 @@ Ext.define('Sbi.data.editor.association.AssociationEditor', {
 	
 	/**
 	 * @method (fired)
-	 * Remove the Association from the AssociationsList
+	 * Remove the association from the associations
 	 * 
 	 * @param {String} r The Association content to remove
 	 */
 	, removeAssociation: function(r){
-		for (var i=0; i<this.associationsList.length; i++){
-			var obj = this.associationsList[i];
-			if (obj && obj.ass == r){
-				this.associationsList.splice(i,1);
+		for (var i=0; i<this.associations.length; i++){
+			var obj = this.associations[i];
+			if (obj && obj.description == r){
+				this.associations.splice(i,1);
 				break;
 			}
 		}
 		Sbi.trace("[AssociationEditor.removeAssociation]: Removed association ['"+ r +"']");
-		Sbi.trace("[AssociationEditor.removeAssociation]: Associations List upgraded is  [ " +  Sbi.toSource(this.associationsList) + ']');
+		Sbi.trace("[AssociationEditor.removeAssociation]: Associations List upgraded is  [ " +  Sbi.toSource(this.associations) + ']');
 	}
 	
 	/**
 	 * @method (fired)
-	 * Update (with an add and remove of the element) the Association from the AssociationsList and grid
+	 * Update (with an add and remove of the element) the association from the associations and grid
 	 * 
 	 */
 	, modifyAssociation: function(){
@@ -169,7 +172,7 @@ Ext.define('Sbi.data.editor.association.AssociationEditor', {
 	 */
 	, selectAssociation: function(r){
 		this.dsContainerPanel.resetSelections();
-		var lst = r.ass.split('=');
+		var lst = r.description.split('=');
 		for (var i=0; i<lst.length; i++){
 			var el = lst[i].split('.');
 			this.dsContainerPanel.setSelection(el);
@@ -194,7 +197,7 @@ Ext.define('Sbi.data.editor.association.AssociationEditor', {
 	 * 
 	 */
 	, getAssociationsList: function(){
-		return this.associationsList;
+		return this.associations;
 	}
 
 	/**
@@ -203,7 +206,7 @@ Ext.define('Sbi.data.editor.association.AssociationEditor', {
 	 * 
 	 */
 	, setAssociationsList: function(r){
-		this.associationsList = r;
+		this.associations = r;
 	}
 	
 	/**
@@ -212,7 +215,7 @@ Ext.define('Sbi.data.editor.association.AssociationEditor', {
 	 * 
 	 */
 	, removeAllAssociations: function(){
-		this.associationsList = new Array();
+		this.associations = new Array();
 	}
 	
 	// -----------------------------------------------------------------------------------------------------------------
@@ -220,15 +223,15 @@ Ext.define('Sbi.data.editor.association.AssociationEditor', {
 	// -----------------------------------------------------------------------------------------------------------------
 	/**
 	 * @method 
-	 * Adds a new Association to the AssociationsList with the selected elements.
+	 * Adds a new Association to the associations with the selected elements.
 	 * 
 	 * @param {Array} r The array of elements
 	 */
 	, addAssociationToList: function(r){
 		var toReturn = true;
 		
-		if (this.associationsList == null) 
-			this.associationsList = new Array();
+		if (this.associations == null) 
+			this.associations = new Array();
 		
 		var obj = '';
 		var objType = '';
@@ -263,7 +266,7 @@ Ext.define('Sbi.data.editor.association.AssociationEditor', {
 					, LN('sbi.cockpit.association.editor.msg.differentType')
 		            , function(btn, text) {
 		                if ( btn == 'yes' ) {
-		                	this.associationsList.push({id: r.id, ass:obj});	
+		                	this.associations.push({id: r.id, ass:obj});	
 		                	this.assContainerPanel.addAssociationToList({id: r.id, ass:obj});
 		                	toReturn = true;
 		                }else
@@ -273,7 +276,7 @@ Ext.define('Sbi.data.editor.association.AssociationEditor', {
 				);
 		}else{
 			if (obj !== ''){
-				this.associationsList.push({id: r.id, ass:obj});
+				this.associations.push({id: r.id, ass:obj});
 				this.assContainerPanel.addAssociationToList({id: r.id, ass:obj});
 				toReturn = true;
 			}else{
@@ -281,7 +284,7 @@ Ext.define('Sbi.data.editor.association.AssociationEditor', {
 				toReturn = false;
 			}
 		}
-		Sbi.trace("[AssociationEditor.addAssociation]: Associations List updated with  [ " +  Sbi.toSource(this.associationsList) + ']');
+		Sbi.trace("[AssociationEditor.addAssociation]: Associations List updated with  [ " +  Sbi.toSource(this.associations) + ']');
 		return toReturn;
 	}
 	
@@ -305,11 +308,11 @@ Ext.define('Sbi.data.editor.association.AssociationEditor', {
 			newId += n;
 		else{
 			newId += '#';
-			if (this.associationsList != null){
+			if (this.associations != null){
 				//get max id already setted
 				var maxId = 0;			
-				for (var i=0; i<this.associationsList.length; i++ ){
-					var currId = this.associationsList[i].id.substring(1);
+				for (var i=0; i<this.associations.length; i++ ){
+					var currId = this.associations[i].id.substring(1);
 					if (maxId < parseInt(currId))
 						maxId = parseInt(currId);
 				}
@@ -324,7 +327,7 @@ Ext.define('Sbi.data.editor.association.AssociationEditor', {
 	
 	/**
 	 * @method 
-	 * Returns the Association object getted from the AssociationsList throught the id. 
+	 * Returns the Association object getted from the associations throught the id. 
 	 * Format: {id:xx, ass:yy}
 	 * 
 	 * @param {String} id The identifier.
@@ -352,7 +355,7 @@ Ext.define('Sbi.data.editor.association.AssociationEditor', {
 		if (this.associationsList == null) return null;
 		for (var i=0; i<this.associationsList.length; i++){
 			var obj = this.associationsList[i];
-			if (obj && obj.ass == r){
+			if (obj && obj.description == r){
 				return obj;
 				break;
 			}

@@ -50,7 +50,7 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 	stores: null
 	
 	/**
-     * @property {Ext.util.MixedCollection()} stores
+     * @property {Ext.util.MixedCollection()} associations
      * The list of registered associations between datasets managed by this manager
      */
 	, associations: null
@@ -60,49 +60,27 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 	// =================================================================================================================
 	
 	// -----------------------------------------------------------------------------------------------------------------
-    // public methods
+    // configuration methods
 	// -----------------------------------------------------------------------------------------------------------------
 	
 	/**
 	 * @method
-	 * Gets the store configuration object. This object can be passed to #setConfiguration method
-	 * at any time to roll back to the current configuration. It can also be passed to the constructor 
-	 * of this class to create a clone of this instance of store manager.
+	 * Sets the configuration of this manage
 	 * 
-	 * <b>WARNING: </b> what stated above is true only for store whose storeType is equal to "sbi". In other words
-	 * it s true only for stores created using the method #createStore. Other stores managed by this manager are not included 
-	 * in the configuration object and so will be lost. This is due to the fact that the method getStoreConfiguration is not able 
-	 * to extract configuration for a general Ext.data.Store object.
-	 * 
-	 * @return {Object} The configuration object
+	 * @param {Object} conf The configuration object
 	 */
-	, getConfiguration: function() {
-		Sbi.trace("[StoreManager.getConfiguration]: IN");
-		var config = {};
-		config.stores = this.getStoreConfigurations();
-		Sbi.trace("[StoreManager.getConfiguration]: IN");
-		return config;
-	}
-
-	/**
-	 * @method
-	 * Gets the associations configuration object. This object can be passed to #setConfiguration method
-	 * at any time to roll back to the current configuration. It can also be passed to the constructor 
-	 * of this class to create a clone of this instance of store manager.
-	 * 
-	 * <b>WARNING: </b> what stated above is true only for store whose storeType is equal to "sbi". In other words
-	 * it s true only for stores created using the method #createStore. Other stores managed by this manager are not included 
-	 * in the configuration object and so will be lost. This is due to the fact that the method getStoreConfiguration is not able 
-	 * to extract configuration for a general Ext.data.Store object.
-	 * 
-	 * @return {Object} The configuration object
-	 */
-	, getAssociationsConfiguration: function() {
-		Sbi.trace("[StoreManager.getAssociationsConfiguration]: IN");
-		var config = {};
-		config.associations = this.getAssociationsConfigurations();
-		Sbi.trace("[StoreManager.getAssociationsConfiguration]: IN");
-		return config;
+	, setConfiguration: function(conf) {
+		Sbi.trace("[StoreManager.init]: IN");
+		
+		conf = conf || {};
+		
+		var stores = conf.stores || [];
+		this.setStoreConfigurations(stores);
+		
+		var associations = conf.associations || [];
+		this.setAssociationConfigurations(associations);
+		
+		Sbi.trace("[StoreManager.init]: OUT");
 	}
 
 	/**
@@ -114,6 +92,61 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 	, resetConfiguration: function(autoDestroy) {
 		Sbi.trace("[StoreManager.resetConfiguration]: IN");
 				
+		this.resetStoreConfigurations(autoDestroy);
+		// TODO ...
+		this.resetAssociationConfigurations(autoDestroy);
+	    
+	    Sbi.trace("[StoreManager.resetConfiguration]: OUT");
+	}
+	
+	/**
+	 * @method
+	 * Gets the store configuration object. This object can be passed to #setConfiguration method
+	 * at any time to roll back to the current configuration. It can also be passed to the constructor 
+	 * of this class to create a clone of this instance of store manager.
+	 * 
+	 * <b>WARNING: </b> what stated above is true only for store whose storeType is equal to "sbi". In other words
+	 * it s true only for stores created using the method #createStore. Other stores managed by this manager are not included 
+	 * in the configuration object and so will be lost. This is due to the fact that the method #getStoreConfiguration is not able 
+	 * to extract configuration for a general Ext.data.Store object.
+	 * 
+	 * @return {Object} The configuration object
+	 */
+	, getConfiguration: function() {
+		Sbi.trace("[StoreManager.getConfiguration]: IN");
+		var config = {};
+		config.stores = this.getStoreConfigurations();
+		config.associations = this.getAssociationConfigurations();
+		Sbi.trace("[StoreManager.getConfiguration]: OUT");
+		return config;
+	}
+
+	//STORE CONFIGS
+	
+	/**
+	 * @method
+	 * Sets stores' configuration
+	 * 
+	 * @param {Object[]} conf The configuration object
+	 */
+	, setStoreConfigurations: function(conf){
+		Sbi.trace("[StoreManager.setStoreConfigurations]: IN");
+		this.resetStoreConfigurations();
+		Sbi.trace("[StoreManager.setStoreConfigurations]: Input parameter [conf] is equal to [" + Sbi.toSource(conf) + "]");
+		conf = conf || [];
+		for(var i = 0; i < conf.length; i++) {
+			var store = this.createStore(conf[i]);
+			this.addStore(store);
+		}
+		
+		// for easy debug purpose
+		//	var testStore = this.createTestStore();
+		//	Sbi.trace("[StoreManager.init]: adding test store whose type is equal to [" + testStore.storeType + "]");
+		//	this.addStore(testStore);
+		Sbi.trace("[StoreManager.setStoreConfigurations]: OUT");
+	}
+	
+	, resetStoreConfigurations: function(autoDestroy) {
 		if(Sbi.isValorized(this.stores)) {
 			Sbi.trace("[StoreManager.resetConfiguration]: There are [" + this.stores.getCount() + "] store(s) to remove");
 			autoDestroy = autoDestroy || this.autoDestroy;
@@ -124,40 +157,145 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 		
 		this.stores = new Ext.util.MixedCollection();
 		this.stores.getKey = function(o){
-            return o.storeId;
-        };
-        
-        Sbi.trace("[StoreManager.resetConfiguration]: OUT");
+	        return o.storeId;
+	    };
 	}
-
+	
 	/**
 	 * @method
-	 * Sets the configuration of this manage
+	 * Gets the configuration of all stores whose type is equal to "sbi" managed by this store manager.
 	 * 
-	 * @param {Object} conf The configuration object
+	 * @return {Object[]} The stores' configuration 
 	 */
-	, setConfiguration: function(conf) {
-		Sbi.trace("[StoreManager.init]: IN");
-    	
-		conf = conf || {};
-		var stores = conf.stores || [];
-	
-		this.resetConfiguration();
-		
-		for(var i = 0; i < stores.length; i++) {
-			var store = this.createStore(stores[i]);
-			//var store = this.createStoreOld(stores[i]);
-			this.addStore(store);
-		}
-		
-		// for easy debug purpose
-//		var testStore = this.createTestStore();
-//		Sbi.trace("[StoreManager.init]: adding test store whose type is equal to [" + testStore.storeType + "]");
-//		this.addStore(testStore);
-		
-		Sbi.trace("[StoreManager.init]: OUT");
+	, getStoreConfigurations: function() {
+		var confs = [];
+		this.stores.each(function(store, index, length) {
+			var c = this.getStoreConfiguration(store.storeId);
+			if(Sbi.isValorized(c)) {
+				confs.push(c);
+			}
+		}, this);
+		return confs;
 	}
 	
+	/**
+	 * @method
+	 * Gets the configuration of the store whose id is equal to #storeId if it is managed by this
+	 * manager and its type is equal to "sbu", null otherwise.
+	 * 
+	 * @param {String} storeId the store id
+	 * 
+	 * @return {Object[]} The store's configuration 
+	 */
+	, getStoreConfiguration: function(storeId) {
+		
+		Sbi.trace("[StoreManager.getStoreConfiguration]: IN");
+		
+		var store = this.getStore(storeId);
+		var storeConf = null;
+		
+		if(Sbi.isValorized(store)) {
+			if(store.storeType === "sbi") {
+				Sbi.trace("[StoreManager.getStoreConfiguration]: conf of store [" + storeId + "] of type [" + store.storeType + "] " +
+						"is equal to [" + Sbi.toSource(store.storeConf, true)+ "]");
+				
+				storeConf = Ext.apply({}, store.storeConf);
+			} else {
+				Sbi.warn("[StoreManager.getStoreConfiguration]: impossible to extract configuration from store of type different from [sbi]");
+			}
+		} else {
+			Sbi.warn("[StoreManager.getStoreConfiguration]: impossible to find store [" + storeId + "]");
+		}
+		
+		Sbi.trace("[StoreManager.getStoreConfiguration]: OUT");
+		
+		return storeConf;
+	}
+	
+	// ASSOCIATION CONFIGS
+	
+	/**
+	 * @method
+	 * Sets associations configuration
+	 * 
+	 * @param {Object[]} conf The configuration object
+	 */
+	, setAssociationConfigurations: function(conf) {
+		Sbi.trace("[StoreManager.setAssociationConfigurations]: IN");
+		this.resetAssociationConfigurations();
+		Sbi.debug("[StoreManager.setAssociationConfigurations]: parameter [conf] is equal to [" + Sbi.toSource(conf)+ "]");
+		conf = conf || [];
+		for(var i = 0; i < conf.length; i++) {
+			this.addAssociation(conf[i]);
+		}
+		Sbi.trace("[StoreManager.setAssociationConfigurations]: OUT");
+	}
+	
+	, resetAssociationConfigurations: function(autoDestroy) {
+		if(Sbi.isValorized(this.associations)) {
+			Sbi.trace("[StoreManager.resetAssociationConfigurations]: There are [" + this.associations.getCount() + "] association(s) to remove");
+			autoDestroy = autoDestroy || this.autoDestroy;
+			this.associations.each(function(association, index, length) {
+				this.removeAssociation(association, autoDestroy);
+			}, this);
+		}
+		
+		this.associations = new Ext.util.MixedCollection();
+		this.associations.getKey = function(o){
+	        return o.id;
+	    };
+	}
+	
+	/**
+	 * @method
+	 * Gets the configuration of all associations defined in this store manager.
+	 * 
+	 * @return {Object[]} The associations' configuration 
+	 */
+	, getAssociationConfigurations: function() {
+		Sbi.trace("[StoreManager.getAssociationConfigurations]: IN");
+		var confs = [];
+		this.associations.each(function(association, index, length) {
+			var c = this.getAssociationConfiguration(association.id);
+			if(Sbi.isValorized(c)) {
+				confs.push(c);
+			}
+		}, this);
+		Sbi.trace("[StoreManager.getAssociationConfigurations]: OUT");
+		return confs;
+	}
+	
+	/**
+	 * @method
+	 * Gets the configuration of the association whose id is equal to #associationId if it is defined in this
+	 * manager, null otherwise.
+	 * 
+	 * @param {String} associationId the association id
+	 * 
+	 * @return {Object[]} The association's configuration 
+	 */
+	, getAssociationConfiguration: function(associationId) {
+		Sbi.trace("[StoreManager.getAssociationConfiguration]: IN");
+		
+		var association = this.getAssociation(associationId);
+		var associationConf = null;
+		
+		if(Sbi.isValorized(association)) {
+			associationConf = Ext.apply({}, association);
+			Sbi.trace("[StoreManager.getAssociationConfiguration]: conf of store [" + associationId + "] is equal to [" + Sbi.toSource(associationConf, true)+ "]");
+		} else {
+			Sbi.warn("[StoreManager.getAssociationConfiguration]: impossible to find association [" + associationId + "]");
+		}
+		
+		Sbi.trace("[StoreManager.getAssociationConfiguration]: OUT");
+		
+		return associationConf;	
+	}
+
+	
+	// -----------------------------------------------------------------------------------------------------------------
+    // store methods
+	// -----------------------------------------------------------------------------------------------------------------
 	/**
 	 * @method 
 	 * 
@@ -244,42 +382,8 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 		return this.stores.getRange();
 	}
 	
-	, getStoreConfigurations: function() {
-		var confs = [];
-		this.stores.each(function(store, index, length) {
-			var c = this.getStoreConfiguration(store.storeId);
-			if(Sbi.isValorized(c)) {
-				confs.push(c);
-			}
-		}, this);
-		return confs;
-	}
-	
 	, getStore: function(storeId) {
 		return this.stores.get(storeId);
-	}
-	
-	, getStoreConfiguration: function(storeId) {
-		
-		Sbi.trace("[StoreManager.getStoreConfiguration]: IN");
-		
-		var store = this.getStore(storeId);
-		var storeConf = null;
-		
-		if(Sbi.isValorized(store)) {
-			if(store.storeType === "sbi") {
-				Sbi.trace("[StoreManager.getStoreConfiguration]: conf of store [" + storeId + "] of type [" + store.storeType + "] is equal to [" + Sbi.toSource(store.storeConf, true)+ "]");
-				storeConf = Ext.apply({}, store.storeConf);
-			} else {
-				Sbi.warn("[StoreManager.getStoreConfiguration]: impossible to extract configuration from store of type different from [sbi]");
-			}
-		} else {
-			Sbi.warn("[StoreManager.getStoreConfiguration]: impossible to find store [" + storeId + "]");
-		}
-		
-		Sbi.trace("[StoreManager.getStoreConfiguration]: OUT");
-		
-		return storeConf;
 	}
 	
 	, containsStore: function(store) {
@@ -378,63 +482,62 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 		}
 	}
 	
-	//**********************************************************************************
-	//associations methods
-	//**********************************************************************************
-	, setAssociations: function(assList){		
-		if (this.associations  == null) this.associations = {};
+	// -----------------------------------------------------------------------------------------------------------------
+    // association methods
+	// -----------------------------------------------------------------------------------------------------------------
+	
+	, addAssociation: function(association){
+		Sbi.trace("[StoreManager.addAssociation]: IN");
 		
-		for (var i=0; i<assList.length; i++){
-			var ass = {};
-			var config = {};
-			ass = assList[i];
-			var fields = this.getAssociationFields(ass);
-			config.id = ass.id;
-			config.ass = ass.ass;
-			config.fields = fields;
-					
-			this.associations.push(config);
+		if(Sbi.isNotValorized(association)) {
+			Sbi.warn("[StoreManager.addAssociation]: Input parameter [association] is not defined");
+			Sbi.trace("[StoreManager.addAssociation]: OUT");
 		}
 		
-		Sbi.trace("[StoreManager.setAssociations]: Associations object: " +  Sbi.toSource(this.associations));
-
-	}
-	
-	, getAssociationFields: function(a){
-		var fields = [];
-		var lst = a.ass.split('=');
-		for (var i=0; i<lst.length; i++){
-			for (var i=0; i<lst.length; i++){
-				var el = lst[i].split('.');
-				var field = {};				
-				field.store = el[0];
-				field.column = el[1];
-				var lbl = '#'+i;
-				fields.push(field);
-			}			
-		}
-		return fields;
-	}
-
-	, addAssociation: function(r){
-		this.associations.push(r);
-	}
-	
-	
-	, getAssociationById: function(id){
-		for(var i=0; i<this.getAssociations().length; i++){
-			var obj = this.getAssociations()[i];
-			if (obj.id == id)	
-				return obj;
+		if(Ext.isArray(association)) {
+			Sbi.trace("[StoreManager.addAssociation]: Input parameter [association] is of type [Array]");
+			for(var i = 0; i < store.length; i++) {
+				this.addAssociation(association[i]);
+			}
+		} else if(Sbi.isNotExtObject(association)) {
+			Sbi.trace("[StoreManager.addAssociation]: Input parameter [association] is of type [Object]");	
+			this.associations.add(association);
+			Sbi.debug("[StoreManager.addAssociation]: Association [" + Sbi.toSource(association) + "] succesfully added");
+		} else {
+			Sbi.error("[StoreManager.addStore]: Input parameter [association] of type [" + (typeof store) + "] is not valid");	
 		}
 		
-		return null;
+		Sbi.trace("[StoreManager.addAssociation]: OUT");
 	}
+	
+	/**
+	 * @methods
+	 * 
+	 * Returns all the associations defined in this store manager
+	 * 
+	 *  @return {Object[]} The associations list
+	 */
+	, getAssociations: function() {
+		return this.associations.getRange();
+	}
+	
+	, getAssociation: function(associationId) {
+		return this.associations.get(associationId);
+	}
+	
+	, containsAssociation: function(association) {
+		if(Ext.isString(association)) {
+			return this.associations.containsKey(association);
+		} else {
+			return this.associations.contains(association);
+		}
+	}	
+	
 	
 	, getStoresByAssociation: function(a){
 		for(var i=0; i<this.getAssociations().length; i++){
 			var obj = this.getAssociations()[i];
-			if (obj.ass == a)	
+			if (obj.description == a)	
 				return obj.stores;
 		}
 		
@@ -458,33 +561,25 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 		return assList;
 	}
 	
-	, removeAssociationById: function(id){
-		for(var i=0; i<this.getAssociations().length; i++){
-			var obj = this.getAssociations()[i];
-			if (obj.id == id)	{
-				this.getAssociations().splice(i,1);
-				break;
-			}
+	, removeAssociation: function(association, autoDestroy) {
+		
+		Sbi.trace("[StoreManager.removeAssociation]: IN");
+		
+		if(Sbi.isNotValorized(association)) {
+			Sbi.trace("[StoreManager.removeAssociation]: Parameter [association] is not valorized");
+			Sbi.trace("[StoreManager.removeAssociation]: OUT");
+			return false;
 		}
-	}
-	
-	, resetAssociations: function(){
-		this.associations = new Array();
-	}
-	
-	, getAssociations: function(){
-		return this.associations;
-	}
-	
-	, getAssociationsConfigurations: function() {
-		if(Sbi.isValorized(this.getAssociations())) {
-			return this.getAssociations();
+		
+		association = this.stores.removeKey(association);
+		
+		if(association === false) {
+			Sbi.trace("[StoreManager.removeAssociation]: Impossible to remove association [" + Sbi.toSource(association)  + "]");
 		}
-	}
-
-	, setAssociationsConfiguration: function(conf){
-		this.associations = [];
-		this.setAssociations(conf);
+		
+		Sbi.trace("[StoreManager.removeAssociation]: OUT");
+		
+		return association;
 	}
 	
 	// -----------------------------------------------------------------------------------------------------------------
