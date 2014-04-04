@@ -206,9 +206,8 @@ Ext.define('Sbi.data.editor.association.AssociationEditorList', {
 	 * 
 	 * @param {Object} Ass The Association 
 	 */
-    , addAssociationToList: function(association){
-    	association.ass = association.ass || association.description;
-    	this.addAssToStore(association);
+    , addAssociationToList: function(ass){
+    	this.addAssToStore(ass);
     }
     
     /**
@@ -253,8 +252,6 @@ Ext.define('Sbi.data.editor.association.AssociationEditorList', {
 	 */
     , getAssociationById: function(id){
     	var recIdx = this.store.find('id', id); 
-    	var association = this.store.getAt(recIdx);
-    	association.description = association.description || association.ass;
     	return this.store.getAt(recIdx);
     }
     

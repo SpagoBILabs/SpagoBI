@@ -159,7 +159,7 @@ Ext.define('Sbi.data.editor.association.AssociationEditor', {
 		var assToModifyRec = this.assContainerPanel.getAssociationById(assToModify.id);
 	    if (this.addAssociation(assToModify.id)){
 			this.assContainerPanel.removeAssociationFromGrid(assToModifyRec);
-			this.removeAssociation(assToModify.description);	    
+			this.removeAssociation(assToModify.ass);	    
 	    }
 		
 	}
@@ -205,8 +205,8 @@ Ext.define('Sbi.data.editor.association.AssociationEditor', {
 	 * Set the Associations list
 	 * 
 	 */
-	, setAssociationsList: function(associations){
-		this.associations = associations;
+	, setAssociationsList: function(r){
+		this.associations = r;
 	}
 	
 	/**
@@ -266,8 +266,8 @@ Ext.define('Sbi.data.editor.association.AssociationEditor', {
 					, LN('sbi.cockpit.association.editor.msg.differentType')
 		            , function(btn, text) {
 		                if ( btn == 'yes' ) {
-		                	this.associations.push({id: r.id, description:obj});	
-		                	this.assContainerPanel.addAssociationToList({id: r.id, description:obj});
+		                	this.associations.push({id: r.id, ass:obj});	
+		                	this.assContainerPanel.addAssociationToList({id: r.id, ass:obj});
 		                	toReturn = true;
 		                }else
 		                	toReturn = false;
@@ -276,8 +276,8 @@ Ext.define('Sbi.data.editor.association.AssociationEditor', {
 				);
 		}else{
 			if (obj !== ''){
-				this.associations.push({id: r.id, description:obj});
-				this.assContainerPanel.addAssociationToList({id: r.id, description:obj});
+				this.associations.push({id: r.id, ass:obj});
+				this.assContainerPanel.addAssociationToList({id: r.id, ass:obj});
 				toReturn = true;
 			}else{
 				alert(LN('sbi.cockpit.association.editor.msg.selectFields'));
