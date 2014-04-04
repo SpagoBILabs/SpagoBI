@@ -119,11 +119,6 @@ Ext.define('Sbi.data.editor.association.AssociationEditorPage', {
 	// -----------------------------------------------------------------------------------------------------------------
 	
 	, decodeAssociations: function(associations){
-		Sbi.trace("[AssociationEditorPage.decodeAssociations]: IN");
-		
-		Sbi.trace("[AssociationEditorPage.decodeAssociations]: input associations are equal to " +
-				"[" + Sbi.toSource(associations) + "]");
-		
 		var decodedAssociations = [];
 		
 		for (var i = 0 ; i < associations.length; i++){
@@ -137,11 +132,6 @@ Ext.define('Sbi.data.editor.association.AssociationEditorPage', {
 			decodedAssociations.push(config);
 		}
 		
-		Sbi.trace("[AssociationEditorPage.decodeAssociations]: decoded associations are equal to " +
-				"[" + Sbi.toSource(decodedAssociations) + "]");
-		
-		Sbi.trace("[AssociationEditorPage.decodeAssociations]: OUT");	
-		
 		return decodedAssociations;
 	}
 	
@@ -152,11 +142,6 @@ Ext.define('Sbi.data.editor.association.AssociationEditorPage', {
 	 * in the format expected by the storeManager
 	 */
 	, encodeAssociations: function(associations){
-		Sbi.trace("[AssociationEditorPage.encodeAssociations]: IN");
-		
-		Sbi.trace("[AssociationEditorPage.encodeAssociations]: input associations are equal to " +
-				"[" + Sbi.toSource(associations) + "]");
-		
 		var encodedAssociations = [];
 		
 		for (var i = 0 ; i < associations.length; i++){
@@ -170,10 +155,6 @@ Ext.define('Sbi.data.editor.association.AssociationEditorPage', {
 			encodedAssociations.push(config);
 		}
 		
-		Sbi.trace("[AssociationEditorPage.encodeAssociations]: encoded associations are equal to " +
-				"[" + Sbi.toSource(encodedAssociations) + "]");
-		
-		Sbi.trace("[AssociationEditorPage.encodeAssociations]: OUT");	
 		return encodedAssociations;
 	}
 	
@@ -182,8 +163,7 @@ Ext.define('Sbi.data.editor.association.AssociationEditorPage', {
 	 */
 	, getAssociationFields: function(association){
 
-		Sbi.trace("[AssociationEditorPage.getAssociationFields]: IN");	
-		Sbi.trace("[AssociationEditorPage.getAssociationFields]: Associations object: " +  Sbi.toSource(association));
+		Sbi.trace("[StoreManager.getAssociationFields]: Associations object: " +  Sbi.toSource(association));
 		
 		var fields = [];
 		var lst = association.description.split('=');
@@ -198,7 +178,6 @@ Ext.define('Sbi.data.editor.association.AssociationEditorPage', {
 				fields.push(field);
 			}			
 		}
-		Sbi.trace("[AssociationEditorPage.getAssociationFields]: OUT");	
 		return fields;
 	}
 
