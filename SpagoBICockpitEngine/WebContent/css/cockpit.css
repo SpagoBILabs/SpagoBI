@@ -186,5 +186,86 @@
 		background-size: auto;
 	}
 	
+	/* Sbi.worksheet.designer.BarChartDesignerPanel */
+	.side-by-side-barchart-vertical {
+		 background:url(../img/designer/chart/sidebysidebarchart-vertical.gif) no-repeat 22px 0px !important;
+	}
+	
+	.stacked-barchart-vertical {
+		 background:url(../img/designer/chart/stackedbarchart-vertical.gif) no-repeat 22px 0px !important;
+	}
+	
+	.percent-stacked-barchart-vertical {
+		 background:url(../img/designer/chart/percentstackedbarchart-vertical.gif) no-repeat 22px 0px !important;
+	}
+	
+	.side-by-side-barchart-horizontal {
+		 background:url(../img/designer/chart/sidebysidebarchart-horizontal.gif) no-repeat 22px 0px !important;
+	}
+	
+	.stacked-barchart-horizontal {
+		 background:url(../img/designer/chart/stackedbarchart-horizontal.gif) no-repeat 22px 0px !important;
+	}
+	
+	.percent-stacked-barchart-horizontal {
+		 background:url(../img/designer/chart/percentstackedbarchart-horizontal.gif) no-repeat 22px 0px !important;
+	}
+	
+	.side-by-side-barchart-vertical-preview {
+		background:url(../img/designer/chart/sidebysidebarchart-vertical.gif) !important;
+		background-repeat:no-repeat !important;
+		background-position:center !important;
+	}
+	
+	.stacked-barchart-vertical-preview {
+		background:url(../img/designer/chart/stackedbarchart-vertical.gif) !important;
+		background-repeat:no-repeat !important;
+		background-position:center !important;
+	}
+	
+	.percent-stacked-barchart-vertical-preview {
+		background:url(../img/designer/chart/percentstackedbarchart-vertical.gif) !important;
+		background-repeat:no-repeat !important;
+		background-position:center !important;
+	}
+	
+	.side-by-side-barchart-horizontal-preview {
+		background:url(../img/designer/chart/sidebysidebarchart-horizontal.gif) !important;
+		background-repeat:no-repeat !important;
+		background-position:center !important;
+	}
+	
+	.stacked-barchart-horizontal-preview {
+		background:url(../img/designer/chart/stackedbarchart-horizontal.gif) !important;
+		background-repeat:no-repeat !important;
+		background-position:center !important;
+	}
+	
+	.percent-stacked-barchart-horizontal-preview {
+		background:url(../img/designer/chart/percentstackedbarchart-horizontal.gif) !important;
+		background-repeat:no-repeat !important;
+		background-position:center !important;
+	}	
+	
+	/**************/
+	/*    MISC    */
+	/**************/
+	/*Center a pannel*/
+	.centered-panel{
+		margin-left:auto;
+		margin-right:auto;
+	}
+	
+	/*For center the crosstab*/
+	.centered-panel table{
+		margin-left:auto;
+		margin-right:auto;
+	}
+	
+	/* Sbi.worksheet.designer.ChartSeriesPanel */
+	.chart-series-panel table {
+		margin-left:0px !important;
+	}
+	
 	
 } /* END MEDIA SCREEN*/		

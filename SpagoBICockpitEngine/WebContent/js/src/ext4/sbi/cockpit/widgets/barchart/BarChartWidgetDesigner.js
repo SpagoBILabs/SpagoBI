@@ -9,7 +9,9 @@ Ext.ns("Sbi.cockpit.widgets.barchart");
 Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner = function(config) { 
 	
 		var defaultSettings = {
-			title: LN('Sbi.cockpit.widgets.table.barChartWidgetDesigner.title')
+			name: 'barChartWidgetDesigner'
+			//,title: LN('sbi.cockpit.widgets.table.barChartWidgetDesigner.title'),
+			//,border: false
 		};
 			
 		if (Sbi.settings && Sbi.settings.cockpit && Sbi.settings.cockpit.widgets && Sbi.settings.cockpit.widgets.barchart && Sbi.settings.cockpit.widgets.barchart.barChartWidgetDesigner) {
@@ -30,6 +32,8 @@ Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner = function(config) {
 		
 		c = {
 				items: [this.form]
+				,title: LN('sbi.cockpit.widgets.table.barChartWidgetDesigner.title')
+				, border: false
 			};
 			
 		Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner.superclass.constructor.call(this, c);
@@ -90,8 +94,13 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner, Sbi.cockpit.core
 		});
 		this.typeRadioGroup.on('change', this.changeBarChartImage, this);
 		
+		this.orientationComboStore = new Ext.data.ArrayStore({
+			fields : ['name', 'description']
+			, data : [['vertical', LN('sbi.worksheet.designer.barchartdesignerpanel.form.orientation.vertical')]
+					, ['horizontal', LN('sbi.worksheet.designer.barchartdesignerpanel.form.orientation.horizontal')]]
+		});
 		this.orientationCombo = new Ext.form.ComboBox({
-			mode:           'local',
+			queryMode:      'local',
 			triggerAction:  'all',
 			forceSelection: true,
 			editable:       false,
@@ -102,13 +111,10 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner, Sbi.cockpit.core
 			valueField:     'name',
 			value:			'vertical',
 			anchor:			'95%',
-			store:          new Ext.data.ArrayStore({
-								fields : ['name', 'description']
-								, data : [['vertical', LN('sbi.worksheet.designer.barchartdesignerpanel.form.orientation.vertical')]
-									, ['horizontal', LN('sbi.worksheet.designer.barchartdesignerpanel.form.orientation.horizontal')]]
-							})
+			store:          this.orientationComboStore
 		});
 		this.orientationCombo.on('change', this.changeBarChartImage, this);
+		
 		
 		this.showValuesCheck = new Ext.form.Checkbox({
 			name: 'showvalues'
@@ -120,7 +126,8 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner, Sbi.cockpit.core
 			name: 'showlegend'
 			, checked: false
 			, fieldLabel: LN('sbi.worksheet.designer.barchartdesignerpanel.form.showlegend.title')
-		});		
+		});	
+		
 		
 		this.categoryContainerPanel = new Sbi.cockpit.widgets.barchart.ChartCategoryPanel({
             width: 200
@@ -174,6 +181,7 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner, Sbi.cockpit.core
             , ddGroup: this.ddGroup
 		});
 		
+		
 		this.imageContainerPanel = new Ext.Panel({
             width: 200
             , height: 120
@@ -181,19 +189,20 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner, Sbi.cockpit.core
 		});
 		
 	    this.axisDefinitionPanel = new Ext.Panel({
-	        layout: 'table'
-	        , baseCls:'x-plain'
+	        baseCls:'x-plain'
 		    , cls: 'centered-panel' //for center the panel
-			, width: this.seriesContainerPanel.width+this.imageContainerPanel.width+20 //for center the panel
+			//, width: this.seriesContainerPanel.width+this.imageContainerPanel.width+20 //for center the panel <-- Original Conf from WorkSheet
+		    ,width: '100%'	
 	        , padding: '0 10 10 10'
-	        , layoutConfig: {columns : 2}
+	        , layout: {type: 'table', columns : 2}
 	        // applied to child components
 	        //, defaults: {height: 100}
-	        , items:[
-	            this.seriesContainerPanel
+	        , items:[	                 
+	              this.seriesContainerPanel
 	            , this.imageContainerPanel 
 	            , this.seriesGroupingPanel
 		        , this.categoryContainerPanel
+		        
 		    ]
 	    });
 	    
@@ -224,7 +233,7 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner, Sbi.cockpit.core
 							, columnWidth : .7
 							, border: false
 							, items: [this.typeRadioGroup]
-						}
+						}		  			    
 						, {
 							xtype: 'fieldset'
 //							, title: LN('sbi.worksheet.designer.barchartdesignerpanel.form.fieldsets.options')
@@ -280,7 +289,7 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner, Sbi.cockpit.core
 	
 	
 	, changeBarChartImage: function() {
-		var type = this.typeRadioGroup.getValue().getGroupValue();
+		var type = this.typeRadioGroup.getValue().type;
 		var orientation = this.orientationCombo.getValue();
 		var newHtml = this.imageTemplate.apply([type, orientation]);
 		this.imageContainerPanel.update(newHtml);

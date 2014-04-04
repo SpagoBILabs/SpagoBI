@@ -71,3 +71,50 @@ Sbi.locale.ln['sbi.qbe.datastorepanel.grid.refreshtext'] = 'Refresh';
 Sbi.locale.ln['sbi.qbe.datastorepanel.button.tt.exportto'] = 'Export to';
 
 Sbi.locale.ln['sbi.qbe.savedatasetwindow.title'] = "Fill in the dataset details and click on Save";
+
+//===================================================================
+//COCKPIT WIDGETS: BarChartWidgetDesigner
+//===================================================================
+Sbi.locale.ln['sbi.cockpit.widgets.table.barChartWidgetDesigner.title'] = 'Bar Chart Designer';
+Sbi.locale.ln['sbi.worksheet.designer.barchartdesignerpanel.form.orientation.title'] = 'Orientation';
+Sbi.locale.ln['sbi.worksheet.designer.barchartdesignerpanel.form.orientation.vertical'] = 'vertical';
+Sbi.locale.ln['sbi.worksheet.designer.barchartdesignerpanel.form.orientation.horizontal'] = 'horizontal';
+Sbi.locale.ln['sbi.worksheet.designer.barchartdesignerpanel.form.type.tooltip.side-by-side'] = 'Side-by-side';
+Sbi.locale.ln['sbi.worksheet.designer.barchartdesignerpanel.form.type.tooltip.stacked'] = 'Stacked';
+Sbi.locale.ln['sbi.worksheet.designer.barchartdesignerpanel.form.type.tooltip.percent-stacked'] = 'Percent stacked';
+Sbi.locale.ln['sbi.worksheet.designer.barchartdesignerpanel.form.showvalues.title'] = 'Show values';
+Sbi.locale.ln['sbi.worksheet.designer.barchartdesignerpanel.form.showlegend.title'] = 'Show legend';
+
+//===================================================================
+//Sbi.worksheet.designer.ChartSeriesPanel
+//===================================================================
+Sbi.locale.ln['sbi.worksheet.designer.chartseriespanel.title'] = 'Series';
+Sbi.locale.ln['sbi.worksheet.designer.chartseriespanel.emptymsg'] = 'Drag & drop here some query measures as series';
+Sbi.locale.ln['sbi.worksheet.designer.chartseriespanel.columns.queryfield'] = 'Field';
+Sbi.locale.ln['sbi.worksheet.designer.chartseriespanel.columns.seriename'] = 'Name';
+Sbi.locale.ln['sbi.worksheet.designer.chartseriespanel.columns.color'] = 'Color';
+Sbi.locale.ln['sbi.worksheet.designer.chartseriespanel.columns.showcomma'] = 'Show grouping separator';
+Sbi.locale.ln['sbi.worksheet.designer.chartseriespanel.columns.precision'] = 'Precision';
+Sbi.locale.ln['sbi.worksheet.designer.chartseriespanel.columns.suffix'] = 'Suffix';
+Sbi.locale.ln['sbi.worksheet.designer.chartseriespanel.cannotdrophere.title'] = 'Drop not allowed';
+Sbi.locale.ln['sbi.worksheet.designer.chartseriespanel.cannotdrophere.measurealreadypresent'] = 'The measure is already present';
+Sbi.locale.ln['sbi.worksheet.designer.chartseriespanel.cannotdrophere.attributes'] = 'You cannot drag attributes into the chart\'s series';
+Sbi.locale.ln['sbi.worksheet.designer.chartseriespanel.cannotdrophere.postlinecalculated'] = 'You cannot use script-based calculated fields into the chart\'s series';
+Sbi.locale.ln['sbi.worksheet.designer.chartseriespanel.tools.tt.removeall'] = ['Remove all'];
+
+//===================================================================
+//Sbi.worksheet.designer.SeriesGroupingPanel
+//===================================================================
+Sbi.locale.ln['sbi.worksheet.designer.seriesgroupingpanel.title'] = 'Series\' grouping variable';
+Sbi.locale.ln['sbi.worksheet.designer.seriesgroupingpanel.emptymsg'] = 'Drag & drop here a query attribute as the series\' grouping variable';
+
+//===================================================================
+//Sbi.worksheet.designer.ChartCategoryPanel
+//===================================================================
+Sbi.locale.ln['sbi.worksheet.designer.chartcategorypanel.title'] = 'Category';
+Sbi.locale.ln['sbi.worksheet.designer.chartcategorypanel.emptymsg'] = 'Drag & drop here a query attribute as a category';
+Sbi.locale.ln['sbi.worksheet.designer.chartcategorypanel.cannotdrophere.title'] = 'Drop not allowed';
+Sbi.locale.ln['sbi.worksheet.designer.chartcategorypanel.cannotdrophere.unknownsource'] = 'Unknown source';
+Sbi.locale.ln['sbi.worksheet.designer.chartcategorypanel.cannotdrophere.measures'] = 'You cannot drop measures here';
+Sbi.locale.ln['sbi.worksheet.designer.chartcategorypanel.cannotdrophere.postlinecalculated'] = 'You cannot drop script-based calculated fields here';
+
