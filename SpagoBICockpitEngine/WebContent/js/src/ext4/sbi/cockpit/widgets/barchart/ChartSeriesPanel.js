@@ -29,7 +29,10 @@ Sbi.cockpit.widgets.barchart.ChartSeriesPanel = function(config) {
 	this.init(c);
 	
 	c = Ext.apply(c, {
-		items: [this.emptyMsgPanel, this.grid]
+		items: [
+		        this.emptyMsgPanel
+		        ,this.grid
+		        ]
 		, layout: 'card'
 		, activeItem: 0
 		, tools: [
@@ -150,7 +153,7 @@ Ext.extend(Sbi.cockpit.widgets.barchart.ChartSeriesPanel, Ext.Panel, {
 		         displayField: 'nome',
 		         valueField: 'funzione',
 		         typeAhead: true,
-		         mode: 'local',
+		         queryMode: 'local',
 		         triggerAction: 'all',
 		         autocomplete: 'off',
 		         emptyText: LN('sbi.qbe.selectgridpanel.aggfunc.editor.emptymsg'),
@@ -222,6 +225,9 @@ Ext.extend(Sbi.cockpit.widgets.barchart.ChartSeriesPanel, Ext.Panel, {
 	}
 	
 	, initGrid: function (c) {
+		
+		//TODO: REFACTORIZE THIS GRID, must be changed to Ext4 Configuration
+		/*
 		this.grid = new Ext.grid.EditorGridPanel({
 	        store: this.store
 	        , border: false
@@ -279,6 +285,42 @@ Ext.extend(Sbi.cockpit.widgets.barchart.ChartSeriesPanel, Ext.Panel, {
 			}
 	        , type: 'measuresContainerPanel'
 		});
+		*/
+		this.grid = new Ext.grid.Panel({
+			 store: this.store
+			 , border: false
+			 , enableDragDrop: true
+			 , layout: 'fit'
+			 , cls: 'chart-series-panel'
+			 , viewConfig: {
+				  forceFit: true
+			 }
+        	 , selModel: Ext.selection.RowModel()
+        	 , columns: [
+        	             {
+        	            	text: LN('sbi.worksheet.designer.chartseriespanel.columns.seriename')
+        	            	,dataIndex: 'seriename'
+        	            	, hideable: false
+        	            	, sortable: false
+        	            	, editor: new Ext.form.TextField({})
+        	             	, renderer : function(v, metadata, record) {
+
+        	            	 if(record.data.valid != undefined && !record.data.valid){
+        	            		 metadata.attr = ' style="color:#ff0000; text-decoration:line-through;';	   	    		
+
+        	            	 }
+        	            	 else{
+        	            		 metadata.attr = ' style="background:' + v + ';"';	   	    							
+        	            	 }
+
+        	            	 return v; 
+        	             	}
+        	             }
+        	            ]
+
+		});
+		
+		
 	}
 	
 	, initDropTarget: function() {
