@@ -7,7 +7,7 @@
 
 Ext.define('Sbi.filters.editor.main.FilterEditor', {
 	extend: 'Ext.Panel'
-    , layout: 'border'
+    , layout: 'fit'
 
 	, config:{	
 		  services: null		
@@ -69,8 +69,7 @@ Ext.define('Sbi.filters.editor.main.FilterEditor', {
 
 	
 	, initFiltersPanel: function(config) {
-		this.filtersContainerPanel = Ext.create('Sbi.filters.editor.main.FilterEditorList',{height:200 
-												, storesList: this.storesList});
+		this.filtersContainerPanel = Ext.create('Sbi.filters.editor.main.FilterEditorList',{storesList: this.storesList});
 //		this.filtersContainerPanel.addListener('addAssociation', this.addAssociation, this);
 //		this.filtersContainerPanel.addListener('modifyAssociation', this.modifyAssociation, this);
 //		this.filtersContainerPanel.addListener('removeAssociation', this.removeAssociation, this);
