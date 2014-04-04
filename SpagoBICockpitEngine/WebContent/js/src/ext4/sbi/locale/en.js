@@ -131,9 +131,11 @@ Sbi.locale.ln['sbi.cockpit.widgets.table.tabledesignerpanel.fields.emptymsg'] = 
 Sbi.locale.ln['sbi.cockpit.widgets.table.tabledesignerpanel.fields'] = 'Drag & drop here attribute as the series\' that you want view in the table';
 Sbi.locale.ln['sbi.cockpit.queryfieldspanel.title'] = 'Selected fields';
 
+Sbi.locale.ln['sbi.cockpit.mainpanel.btn.filters'] = 'Filters';
 Sbi.locale.ln['sbi.cockpit.mainpanel.btn.associations'] = 'Associations';
 Sbi.locale.ln['sbi.cockpit.mainpanel.btn.addWidget'] = 'Add Widget';
 
+//ASSOCIATIONS
 Sbi.locale.ln['sbi.cockpit.association.editor.wizard.title'] = 'Associations editor';
 Sbi.locale.ln['sbi.cockpit.association.editor.wizard.ds.columnColumn'] = 'Column';
 Sbi.locale.ln['sbi.cockpit.association.editor.wizard.ds.columnType'] = 'Type';
@@ -154,3 +156,12 @@ Sbi.locale.ln['sbi.cockpit.association.editor.msg.duplicate'] = 'Association alr
 Sbi.locale.ln['sbi.cockpit.association.editor.msg.differentType'] ='Not all fields type are consistent. Do you want to continue with the addition of the association?';
 Sbi.locale.ln['sbi.cockpit.association.editor.msg.selectFields'] ='Please select fields for the association';
 Sbi.locale.ln['sbi.cockpit.association.editor.msg.confirmDelete'] ='Confirm delete of association ';
+
+//FILTERS
+Sbi.locale.ln['sbi.cockpit.filter.editor.wizard.title'] = 'Filters editor';
+Sbi.locale.ln['sbi.cockpit.filter.editor.wizard.list.nameObj'] = 'Name';
+Sbi.locale.ln['sbi.cockpit.filter.editor.wizard.list.typeObj'] = 'Type';
+Sbi.locale.ln['sbi.cockpit.filter.editor.wizard.list.nameObj'] = 'Parameter Name';
+Sbi.locale.ln['sbi.cockpit.filter.editor.wizard.list.typeObj'] = 'Parameter Type';
+Sbi.locale.ln['sbi.cockpit.filter.editor.wizard.list.initialValue'] = 'Initial Value';
+Sbi.locale.ln['sbi.cockpit.filter.editor.wizard.list.typeDriver'] = 'Scope';

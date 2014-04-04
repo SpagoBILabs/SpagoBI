@@ -130,9 +130,11 @@ Sbi.locale.ln['sbi.cockpit.widgets.table.tabledesignerpanel.fields.emptymsg'] = 
 Sbi.locale.ln['sbi.cockpit.widgets.table.tabledesignerpanel.fields'] = 'Trascina qui gli attributi e le misure che vuoi visualizzare nella tabella';
 Sbi.locale.ln['sbi.cockpit.queryfieldspanel.title'] = 'Campi selezionati';
 
+Sbi.locale.ln['sbi.cockpit.mainpanel.btn.filters'] = 'Filtri';
 Sbi.locale.ln['sbi.cockpit.mainpanel.btn.associations'] = 'Associazioni';
 Sbi.locale.ln['sbi.cockpit.mainpanel.btn.addWidget'] = 'Aggiungi Widget';
 
+//ASSOCIATIONS
 Sbi.locale.ln['sbi.cockpit.association.editor.wizard.title'] = 'Editor Associazioni';
 Sbi.locale.ln['sbi.cockpit.association.editor.wizard.ds.columnColumn'] = 'Colonna';
 Sbi.locale.ln['sbi.cockpit.association.editor.wizard.ds.columnType'] = 'Tipo';
@@ -153,3 +155,12 @@ Sbi.locale.ln['sbi.cockpit.association.editor.msg.duplicate'] = 'Associazione gi
 Sbi.locale.ln['sbi.cockpit.association.editor.msg.differentType'] ='Non tutte le tipologie dei campi selezionati coincidono. Si intende proseguire con l\'aggiunta dell\'associazione?';
 Sbi.locale.ln['sbi.cockpit.association.editor.msg.selectFields'] ='Selezionare le colonne per l\'associazione';
 Sbi.locale.ln['sbi.cockpit.association.editor.msg.confirmDelete'] ='Confermi la cancellazione dell\'associazione ';
+
+//FILTERS
+Sbi.locale.ln['sbi.cockpit.filter.editor.wizard.title'] = 'Editor Filtri';
+Sbi.locale.ln['sbi.cockpit.filter.editor.wizard.list.nameObj'] = 'Nome';
+Sbi.locale.ln['sbi.cockpit.filter.editor.wizard.list.typeObj'] = 'Tipologia';
+Sbi.locale.ln['sbi.cockpit.filter.editor.wizard.list.namePar'] = 'Nome Parametro';
+Sbi.locale.ln['sbi.cockpit.filter.editor.wizard.list.typePar'] = 'Tipologia Parametro';
+Sbi.locale.ln['sbi.cockpit.filter.editor.wizard.list.initialValue'] = 'Valore Iniziale';
+Sbi.locale.ln['sbi.cockpit.filter.editor.wizard.list.typeDriver'] = 'Ambito';
