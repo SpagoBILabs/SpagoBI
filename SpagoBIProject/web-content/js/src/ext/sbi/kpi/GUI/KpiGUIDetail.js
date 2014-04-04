@@ -358,6 +358,9 @@ Ext.extend(Sbi.kpi.KpiGUIDetail , Ext.form.FormPanel, {
 		var un='';
 		if(field.attributes && field.attributes.scaleName && field.attributes.scaleName != null){
 			un = this.scaleNm[field.attributes.scaleName];
+			if(un === undefined){
+				un = '';
+			}
 		}
 		this.valueItem = new Ext.form.DisplayField({fieldLabel: LN('sbi.thresholds.value'), 
 													value: this.val +un, 
@@ -369,7 +372,7 @@ Ext.extend(Sbi.kpi.KpiGUIDetail , Ext.form.FormPanel, {
 
 		//target
 		var target = field.attributes.target  +un;
-		if(target === undefined){
+		if(target === undefined ||  isNaN(target)){
 			target='';
 		}
 		this.targetItem = new Ext.form.DisplayField({fieldLabel: LN('sbi.modelinstances.target'), 
