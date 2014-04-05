@@ -159,7 +159,7 @@ Sbi.locale.ln['sbi.cockpit.association.editor.msg.confirmDelete'] ='Confirm dele
 
 //FILTERS
 Sbi.locale.ln['sbi.cockpit.filter.editor.wizard.title'] = 'Filters editor';
-Sbi.locale.ln['sbi.cockpit.filter.editor.wizard.list.nameObj'] = 'Name';
+Sbi.locale.ln['sbi.cockpit.filter.editor.wizard.list.nameObj'] = 'Object Reference';
 Sbi.locale.ln['sbi.cockpit.filter.editor.wizard.list.typeObj'] = 'Type';
 Sbi.locale.ln['sbi.cockpit.filter.editor.wizard.list.nameObj'] = 'Parameter Name';
 Sbi.locale.ln['sbi.cockpit.filter.editor.wizard.list.typeObj'] = 'Parameter Type';

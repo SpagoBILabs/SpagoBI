@@ -400,7 +400,7 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 //		if(this.filterEditorWizard === null) {    		
     		Sbi.trace("[MainPanel.showFilterEditorWizard]: instatiating the editor");    		
     		this.filterEditorWizard = Ext.create('Sbi.filters.FilterEditorWizard',config);
-//    		this.filterEditorWizard.on("submit", this.onFilterEditorWizardSubmit, this);
+    		this.filterEditorWizard.on("submit", this.onFilterEditorWizardSubmit, this);
     		this.filterEditorWizard.on("cancel", this.onFilterEditorWizardCancel, this);
 //    		this.filterEditorWizard.on("apply", this.onFilterEditorWizardApply, this);    		
 	    	Sbi.trace("[MainPanel.filterEditorWizard]: editor succesfully instantiated");
@@ -418,14 +418,14 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 	
 	, onFilterEditorWizardSubmit: function(wizard) {
 		Sbi.trace("[MainPanel.onFilterEditorWizardSubmit]: IN");
-		var wizardState = wizard.getWizardState();
+//		var wizardState = wizard.getWizardState();
 //		if (wizardState.associationsList != null && wizardState.associationsList !== undefined){
 //			Sbi.storeManager.resetAssociations(); //reset old associations
 //			Sbi.storeManager.setAssociations(wizardState.associationsList);
 //			Sbi.trace("[MainPanel.onFilterEditorWizardSubmit]: setted relation group [" + Sbi.toSource(wizardState.associationsList) + "] succesfully added to store manager");
 //		}
-		this.associationEditorWizard.close();
-		this.associationEditorWizard.destroy();
+		this.filterEditorWizard.close();
+		this.filterEditorWizard.destroy();
 		Sbi.trace("[MainPanel.onFilterEditorWizardSubmit]: OUT");
 	}
 	

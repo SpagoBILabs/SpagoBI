@@ -441,6 +441,10 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 		return store;
 	}
 	
+	,loadStore: function(store, params){
+		store.load({params:params});
+	}
+	
 	, getStoreIds: function() {
 		var ids = [];
 		this.stores.each(function(store, index, length) {
