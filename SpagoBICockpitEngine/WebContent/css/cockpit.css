@@ -133,7 +133,6 @@
 	.box .select .icon:hover{background-position:0 -16px}
 	.box .select .iconActive{cursor:pointer;position:absolute;left:13px;top:6px;display:block;width:19px;height:16px;background:url(../img/ico-select.png) 0 0 no-repeat; background-position:0 -16px}	
 	
-	
 	.measure-detail-title{
 		border-bottom: 1px solid lightblue;
 	}

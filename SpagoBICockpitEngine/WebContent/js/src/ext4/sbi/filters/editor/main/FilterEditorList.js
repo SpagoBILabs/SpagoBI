@@ -29,10 +29,16 @@ Ext.define('Sbi.filters.editor.main.FilterEditorList', {
   		
 	}
 	/**
-	 * @property currentAss
-	 * The current Association selected in the list
+	 * @property grid
+	 * The grid with the list of filters
 	 */
-	, currentAss : null
+	, grid: null
+	
+	/**
+	 * @property currentFilter
+	 * The current filter selected in the list
+	 */
+	, currentFilter : null
 	
 	, constructor : function(config) { 	
 		Sbi.trace("[FilterEditorList.constructor]: IN");
@@ -40,6 +46,7 @@ Ext.define('Sbi.filters.editor.main.FilterEditorList', {
 		this.init();
 		this.callParent(config);
 //		this.addEvents("addAssociation","removeAssociation","selectAssociation","updateIdentifier");
+//		this.addEvents('updateInitialValues');
 		Sbi.trace("[FilterEditorList.constructor]: OUT");
 	}
 
@@ -71,64 +78,62 @@ Ext.define('Sbi.filters.editor.main.FilterEditorList', {
 	, initStore: function() {		
 		Sbi.trace("[FilterEditorList.initStore]: IN");
 		
-		 var paramStore = [];
+		this.store = new Ext.data.JsonStore({
+				fields: [
+				         'nameObj', 
+				         'typeObj', 
+				         'namePar', 
+				         'typePar',
+				         'initialValue',
+				         'typeDriver',
+				         'scope',
+				         'initialValue'
+				         ]
+		  });
 			
 		  if (this.storesList !== null ){			 
 			   for (var i=0; i< this.storesList.length; i++){
-				   var storeConfig = {
-					   proxy:{
-					    	type : 'rest',
-					    	url: Sbi.config.serviceReg.getServiceUrl("loadDataSetParams", {
-								pathParams: {datasetLabel: this.storesList[i]}
-							}),
-					    	reader : {
-					    		type : 'json',
-					    		root : 'results'
-					    	}
-					   	},
-					   	autoLoad: true,
-					   	fields: [
-						         'nameObj', 
-						         'typeObj', 
-						         'namePar', 
-						         'typePar',
-						         'initialValue',
-						         'typeDriver'
-						         ]
-						};
-				   
-					var localStore = Ext.create('Ext.data.Store', storeConfig);
-					if (Sbi.isValorized( localStore.data ))
-						paramStore.push(localStore.data.items);
+				   Ext.Ajax.request({
+						url: Sbi.config.serviceReg.getServiceUrl("loadDataSetParams", {
+							pathParams: {datasetLabel: this.storesList[i]}
+						}),
+						success : function(response, options) {							
+							if(response !== undefined && response.responseText !== undefined && response.statusText=="OK") {
+								if(response.responseText!=null && response.responseText!=undefined){
+									if(response.responseText.indexOf("error.mesage.description")>=0){
+										Sbi.exception.ExceptionHandler.handleFailure(response);
+									} else {
+										var r = Ext.util.JSON.decode(response.responseText);
+																		
+										if (Sbi.isValorized(r.results))
+											this.store.loadData(r.results,true);
+									}
+								}
+							} else {
+								Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
+							}
+						},
+						scope: this,
+						failure: Sbi.exception.ExceptionHandler.handleFailure
+					});				   
 				}
 		   }
 		  
 		  //ONLY FOR TEST
-		  paramStore = [];
-		  var el = ['DS_CHART_SALES_COSTS', 'dataset', 'par_country', 'String'];
-		  paramStore.push(el);
-		  el = ['DS_CHART_SALES_COSTS', 'dataset', 'par_region', 'String'];
-		  paramStore.push(el);
-		  el = ['DS_CHART_SALES_COSTS', 'dataset', 'par_state', 'String'];
-		  paramStore.push(el);
-		  el = ['[ext-comp-1020]', 'widget', 'family', 'String'];
-		  paramStore.push(el);
+//		  if (this.store.data && this.store.data.items && this.store.data.items.length == 0){
+//			  paramStore = [];
+//			  var el = ['DS_CHART_SALES_COSTS', 'dataset', 'par_country', 'String'];
+//			  paramStore.push(el);
+//			  el = ['DS_CHART_SALES_COSTS', 'dataset', 'par_region', 'String'];
+//			  paramStore.push(el);
+//			  el = ['DS_CHART_SALES_COSTS', 'dataset', 'par_state', 'String'];
+//			  paramStore.push(el);
+//			  el = ['[ext-comp-1020]', 'widget', 'family', 'String'];
+//			  paramStore.push(el);
+//			  this.store.loadData(paramStore,false);
+//		  }
 		  //FINE TEST
 		  
-//		  this.store = Ext.create('Ext.data.ArrayStore', {
-		  this.store = Ext.create('Ext.data.SimpleStore', {
-		        fields: [
-		          'nameObj',
-		          'typeObj',
-		          'namePar',
-		          'typePar',
- 		          'initialValue',
-		          'typeDriver'
-		        ],
-		        data: paramStore
-//		        data: [{"nameObj":"Family","typeObj":"dataset","namePar":"family","typePar":"String"}]
-		});
-		this.store.load();
 		Sbi.trace("[FilterEditorList.initStore]: OUT");
 	}
 	
@@ -140,7 +145,15 @@ Ext.define('Sbi.filters.editor.main.FilterEditorList', {
             clicksToEdit: 1
         });
         
-        var comboScope = new Ext.form.ComboBox({
+        var storeComboInitialValues = new Ext.data.ArrayStore({
+	        fields: [
+			            'comboFieldInitialType',
+			            'comboFieldInitialValue'
+			        ],
+			        data : [ ['url1' , 'Param. 1'] , ['url2', 'Param. 2'] ]
+		});
+        
+        var comboScope = new Ext.form.ComboBox({        
 			name : 'comboScope',
 			store: new Ext.data.ArrayStore({
 		        fields: [
@@ -149,9 +162,9 @@ Ext.define('Sbi.filters.editor.main.FilterEditorList', {
 		        ],
 		        data: [ ['Static', 'Static'], ['Relative', 'Relative']]
 		    }),
-			//width : 150,
+		    storeComboInitialValues: storeComboInitialValues,
 			displayField : 'comboScopeType', 
-			valueField : 'comboScopeType', 
+			valueField : 'comboScopeValue', 
 			typeAhead : true, forceSelection : true,
 			mode : 'local',
 			triggerAction : 'all',
@@ -160,9 +173,28 @@ Ext.define('Sbi.filters.editor.main.FilterEditorList', {
 			allowBlank : false, 
 			validationEvent : false,	
 			queryMode: 'local'
-			});	
+			});
+        comboScope.on('change', this.onScopeChange, this);
         
-        var textFieldInitialValue = new Ext.form.TextField({});
+//        var textFieldInitialValue = new Ext.form.TriggerField({
+        var comboInitialValue = new Ext.form.ComboBox({
+//        	triggerCls: 'x-form-search-trigger' //lente
+            onTriggerClick : this.onSelectInitialValue
+//          , currentFilter: this.currentFilter
+          , store: storeComboInitialValues
+          , originalStore: storeComboInitialValues
+          , displayField : 'comboFieldInitialType' 
+		  , valueField : 'comboFieldInitialValue'
+        });
+        
+        comboInitialValue.on('focus', this.onFocusInitialValue, this);
+
+        var fixedCellRender = function (value, metaData, record, rowIndex, colIndex, store, view) {
+           if (colIndex <5 ){
+                metaData.attr = 'style="background-color:#f3f3f3 !important;"';
+           }
+            return value
+        };
         
         this.grid = Ext.create('Ext.grid.Panel', Ext.apply(c || {}, {
 	        store: this.store,
@@ -174,37 +206,43 @@ Ext.define('Sbi.filters.editor.main.FilterEditorList', {
             	, sortable: true
             	, dataIndex: 'nameObj'            	
             	, flex: 1
-//            	, style: 'backgroundcolor:#ff0000; text-decoration:line-through;'
+            	, renderer: fixedCellRender
+            	, style: 'font-weight:bold;'
             	}, {
         		  header: LN('sbi.cockpit.filter.editor.wizard.list.typeObj')
             	, width: "15%"
             	, sortable: true
             	, dataIndex: 'typeObj'
-//            	, style: 'backgroundcolor:#ff0000; text-decoration:line-through;'
+            	, renderer: fixedCellRender
+            	, style: 'font-weight:bold;'
             	},{
           		  header: LN('sbi.cockpit.filter.editor.wizard.list.namePar')
               	, width: "15%"
               	, sortable: true
               	, dataIndex: 'namePar'
-//              	, style: 'backgroundcolor:#ff0000; text-decoration:line-through;'
+              	, renderer: fixedCellRender
+              	, style: 'font-weight:bold;'
               	},{
           		  header: LN('sbi.cockpit.filter.editor.wizard.list.typePar')
               	, width: "15%"
               	, sortable: true
               	, dataIndex: 'typePar'
-//              	, style: 'backgroundcolor:#ff0000; text-decoration:line-through;'
+              	, renderer: fixedCellRender
+              	, style: 'font-weight:bold;'
               	},{
           		  header: LN('sbi.cockpit.filter.editor.wizard.list.typeDriver')
               	, width: "15%"
               	, sortable: true
               	, dataIndex: 'typeDriver'
-              	, editor: comboScope              	
+              	, editor: comboScope        
+              	, style: 'font-weight:bold;'
                 },{
         		  header: LN('sbi.cockpit.filter.editor.wizard.list.initialValue')
             	, width: "15%"
             	, sortable: true
             	, dataIndex: 'initialValue'
-            	, editor: textFieldInitialValue
+            	, editor: comboInitialValue
+            	, style: 'font-weight:bold;'
             	}
 //              	,{
 //                    xtype: 'actioncolumn',
@@ -220,26 +258,14 @@ Ext.define('Sbi.filters.editor.main.FilterEditorList', {
 //	        ],	        
 	        viewConfig: {
 	        	stripeRows: true
-//	          , getRowClass: function(record, rowIndex, rowParams, store){
-//	                return record.get('cls');
-//	            }
-//	        , getRowClass: function(record, index) {
-//	            var c = record.get('change');
-//	            if (c < 0) {
-//	                return 'price-fall';
-//	            } else if (c > 0) {
-//	                return 'price-rise';
-//	            }
-//	        }
 	        },
 	        plugins: [cellEditing]
 	    }));
-//        this.grid.on('itemclick', this.onCellClick, this);
-//        this.grid.on('edit', function(editor, e) {
-//            // commit the changes right after editing finished
-//            e.record.commit();
-//            this.fireEvent('updateIdentifier', e);
-//        }, this);
+        this.grid.on('itemclick', this.onCellClick, this);
+        this.grid.on('edit', function(editor, e) {
+            // commit the changes right after editing finished
+            e.record.commit();
+        }, this);
     }    
 
     
@@ -251,7 +277,52 @@ Ext.define('Sbi.filters.editor.main.FilterEditorList', {
     
 	// -----------------------------------------------------------------------------------------------------------------
     // utility methods
-	// -----------------------------------------------------------------------------------------------------------------	    
- 
+	// -----------------------------------------------------------------------------------------------------------------	        
+    , onSelectInitialValue: function(){
+//    	if (Sbi.isValorized(this.currentFilter)) {
+//    		if (this.currentFilter.typeDriver === 'Relative' && this.store.getCount() == 0){
+//    			alert('Il documento che si sta gestendo non ha driver analitici associati. \n'+
+//    		      'Associare Driver Analitici al documento oppure definire filtri solo di tipo STATICO ! ');
+//    		}else if (this.currentFilter.typeDriver !== 'Relative' ){
+//    			this.store.loadData([],false); //this is the combo/trigger
+//    		}else{
+//    			this.store.loadData(storeComboFieldInitialValue.data,false);
+//    		}
+//    	}
+    	
+    	if (Sbi.isValorized(this.currentFilter)) {
+    		if (this.currentFilter.typeDriver === 'Relative'){
+    			alert('Il documento che si sta gestendo non ha driver analitici associati. \n'+
+    		      'Associare Driver Analitici al documento oppure definire filtri solo di tipo STATICO ! ');
+    		}
+    	}
+    }
+    
+    /**
+	 * @method (listener)
+	 * 
+	 */    
+    , onCellClick: function(grid, record, item, index, e, opt){
+    	this.currentFilter = record.data;
+    }
 
+    /**
+	 * @method (listener)
+	 * Update the currentFilter informations for the trigger object
+	 * 
+	 */ 
+    , onFocusInitialValue: function(trigger,event, obj){
+    	trigger.currentFilter = this.currentFilter;
+    }
+    
+//    , onScopeChange: function(combo, newValue, oldValue, opts){
+//    	if (newValue == 'Static'){
+//    		//reset initial values combo    
+//    		this.fireEvent('updateInitialValues', []);
+//    	}else{
+//    		//reload initial values combo for relative case
+//    		this.fireEvent('updateInitialValues', combo.storeComboInitialValues)
+//    	}
+//    	
+//    }
 });

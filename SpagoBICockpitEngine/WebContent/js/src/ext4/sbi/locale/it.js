@@ -158,9 +158,9 @@ Sbi.locale.ln['sbi.cockpit.association.editor.msg.confirmDelete'] ='Confermi la 
 
 //FILTERS
 Sbi.locale.ln['sbi.cockpit.filter.editor.wizard.title'] = 'Editor Filtri';
-Sbi.locale.ln['sbi.cockpit.filter.editor.wizard.list.nameObj'] = 'Nome';
+Sbi.locale.ln['sbi.cockpit.filter.editor.wizard.list.nameObj'] = 'Oggetto di riferimento';
 Sbi.locale.ln['sbi.cockpit.filter.editor.wizard.list.typeObj'] = 'Tipologia';
-Sbi.locale.ln['sbi.cockpit.filter.editor.wizard.list.namePar'] = 'Nome Parametro';
-Sbi.locale.ln['sbi.cockpit.filter.editor.wizard.list.typePar'] = 'Tipologia Parametro';
-Sbi.locale.ln['sbi.cockpit.filter.editor.wizard.list.initialValue'] = 'Valore Iniziale';
+Sbi.locale.ln['sbi.cockpit.filter.editor.wizard.list.namePar'] = 'Nome parametro';
+Sbi.locale.ln['sbi.cockpit.filter.editor.wizard.list.typePar'] = 'Tipologia parametro';
+Sbi.locale.ln['sbi.cockpit.filter.editor.wizard.list.initialValue'] = 'Valore iniziale';
 Sbi.locale.ln['sbi.cockpit.filter.editor.wizard.list.typeDriver'] = 'Ambito';
