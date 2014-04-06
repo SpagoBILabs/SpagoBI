@@ -457,7 +457,7 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 	}
 	
 	, onDebug: function() {
-		this.cockpitConfigurationTest();
+		this.debug();
 	}
 	
 	//-----------------------------------------------------------------------------------------------------------------
@@ -545,24 +545,110 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 	// test methods
 	// -----------------------------------------------------------------------------------------------------------------
 	
-	, containerConfigurationTest: function() {
-		var conf = this.widgetContainer.getConfiguration();
-		this.widgetContainer.resetConfiguration();
-		Sbi.trace("[MainPanel.containerConfigurationTest]: Configuration succesfully reset");
-		alert("Configuration succesfully reset");
-		this.widgetContainer.setConfiguration(conf);
-		alert("Configuration succesfully set: " + this.widgetContainer.getWidgetsCount());
-		Sbi.trace("[MainPanel.containerConfigurationTest]: Configuration succesfully set: " + this.widgetContainer.getWidgetsCount());
+	/**
+	 * @method
+	 * @private
+	 * 
+	 */
+	, debug: function() {
+		Sbi.trace("[MainPanel.debug]: IN");
+		testFunctions = [];
+		for(p in this) {			
+			if( p.indexOf("Test", p.length - "Test".length) !== -1 ) {
+				if(Ext.isFunction(this[p]))
+				testFunctions.push(p);
+			}
+		}
+		
+		for(var i = 0; i < testFunctions.length; i++) {
+			this.setUp();
+			var result = this[testFunctions[i]]();
+			if(result == null) {
+				alert("Test [" + testFunctions[i] + "] succesfully executed");
+			} else {
+				alert("Test [" + testFunctions[i] + "] not passed: " + result);
+			}
+			this.tearDown();
+		}
+		
+		Sbi.trace("[MainPanel.debug]: OUT");
 	}
 	
-	, cockpitConfigurationTest: function() {
-		var template = this.getTemplate();
-		Sbi.trace("[MainPanel.cockpitConfigurationTest]: Current configuration saved [" + template + "]");
-		this.resetAnalysisState();
-		Sbi.trace("[MainPanel.cockpitConfigurationTest]: Configuration succesfully reset");
-		alert("Configuration succesfully reset");
+	
+	, setUp: function() {
+		Sbi.trace("[MainPanel.setUp]: IN");
+		var template = '{"widgetsConf":{"widgets":[{"storeId":"ds__462040106","wtype":"table","wconf":{"wtype":"table","visibleselectfields":[{"id":"Comune","alias":"Comune","funct":"NONE","iconCls":"attribute","nature":"attribute","values":"[]","precision":"","options":{}},{"id":"numero","alias":"numero","funct":"NONE","iconCls":"measure","nature":"measure","values":"[]","precision":"2","options":{}}]},"wstyle":{},"wlayout":{"region":{"width":"0.20","height":"0.86","x":"0.01","y":"0.06"}}},{"storeId":"ds__4705859","wtype":"table","wconf":{"wtype":"table","visibleselectfields":[{"id":"ABITANTI","alias":"ABITANTI","funct":"NONE","iconCls":"measure","nature":"measure","values":"[]","precision":"2","options":{}},{"id":"GG","alias":"GG","funct":"NONE","iconCls":"measure","nature":"measure","values":"[]","precision":"2","options":{}}]},"wstyle":{},"wlayout":{"region":{"width":"0.18","height":"0.85","x":"0.22","y":"0.06"}}},{"storeId":"ds__745200072","wtype":"table","wconf":{"wtype":"table","visibleselectfields":[{"id":"Comune","alias":"Comune","funct":"NaN","iconCls":"attribute","nature":"attribute","values":"[]"},{"id":"Femmine corsi a tempo pieno","alias":"Femmine corsi a tempo pieno","funct":"NaN","iconCls":"measure","nature":"measure","values":"[]"},{"id":"Femmine corsi per apprendisti","alias":"Femmine corsi per apprendisti","funct":"NaN","iconCls":"measure","nature":"measure","values":"[]"},{"id":"Femmine Totale","alias":"Femmine Totale","funct":"NaN","iconCls":"measure","nature":"measure","values":"[]"}]},"wstyle":{},"wlayout":{"region":{"width":"0.32","height":"0.43","x":"0.42","y":"0.21"}}}]},"storesConf":{"stores":[{"storeId":"ds__462040106"},{"storeId":"ds__4705859"},{"storeId":"ds__745200072"}],"associations":[{"id":"#0","description":"ds__4705859.BIRRA_SFRU=ds__745200072.Totale corsi a tempo pieno","fields":[{"store":"ds__4705859","column":"BIRRA_SFRU"},{"store":"ds__745200072","column":"Totale corsi a tempo pieno"}]}]},"associationsConf":[{"id":"#0","description":"ds__4705859.BIRRA_SFRU=ds__745200072.Totale corsi a tempo pieno","fields":[{"store":"ds__4705859","column":"BIRRA_SFRU"},{"store":"ds__745200072","column":"Totale corsi a tempo pieno"}]}]}';
 		this.setTemplate(template);
-		alert("Configuration succesfully set: " + this.widgetContainer.getWidgetsCount());
-		Sbi.trace("[MainPanel.cockpitConfigurationTest]: Configuration succesfully set: " + this.widgetContainer.getWidgetsCount());
-	}	
+		Sbi.trace("[MainPanel.setUp]: OUT");
+	}
+	
+	, tearDown: function() {
+		Sbi.trace("[MainPanel.tearDown]: IN");
+		this.resetAnalysisState();
+		Sbi.trace("[MainPanel.tearDown]: OUT");
+	}
+	
+	
+	/**
+	 * @method
+	 * @private
+	 * 
+	 */
+	, initTest: function() {
+		if(this.widgetContainer.getWidgetsCount() != 3) {
+			return "Widgets count is [" + this.widgetContainer.getWidgetsCount() + "] " +
+					"while expected is [3]";
+		}
+		
+		if(Sbi.storeManager.getStoresCount() != 3) {
+			return "Stores count is [" + Sbi.storeManager.getStoresCount() + "] " +
+					"while expected is [3]";
+		}
+		
+		return null;
+	}
+	
+	/**
+	 * @method
+	 * @private
+	 * 
+	 */
+	, resetTest: function() {
+		this.resetAnalysisState();
+		
+		if(this.widgetContainer.getWidgetsCount() != 0) {
+			return "Widgets count is [" + this.widgetContainer.getWidgetsCount() + "] " +
+					"while expected is [0]";
+		}
+		
+		if(Sbi.storeManager.getStoresCount() != 0) {
+			return "Stores count is [" + Sbi.storeManager.getStoresCount() + "] " +
+					"while expected is [0]";
+		}
+		
+		return null;
+	}
+	
+	, removeWidgetTest: function() {
+		var widget = this.widgetContainer.getWidgetManager().getWidgets()[0];
+		this.widgetContainer.removeWidget(widget);
+		
+		if(this.widgetContainer.getWidgetsCount() != 2) {
+			return "Widgets count is [" + this.widgetContainer.getWidgetsCount() + "] " +
+					"while expected is [2]";
+		}
+		
+		if(Sbi.storeManager.getStoresCount() != 2) {
+			return "Stores count is [" + Sbi.storeManager.getStoresCount() + "] " +
+					"while expected is [2]";
+		}
+		
+		return null;
+	}
+	
+	// assets
+	
+	, assertEqual: function(x, y, msg) {
+		
+	}
 });
