@@ -12,6 +12,7 @@ Ext.define('Sbi.filters.editor.main.FilterEditor', {
 	, config:{	
 		  services: null		
 		, storesList: null	   
+		, filters: null
 		, contextMenu: null		
 		, border: false
 //		, autoScroll: true
@@ -22,12 +23,6 @@ Ext.define('Sbi.filters.editor.main.FilterEditor', {
 	 * The container of datasets
 	 */
 	, filtersContainerPanel: null
-	
-	/**
-	 * @property {Ext.Array} associationsList
-	 * The list with all filters
-	 */
-	, filters: null 	
 
 	, constructor : function(config) {
 		Sbi.trace("[FilterEditor.constructor]: IN");
@@ -69,135 +64,41 @@ Ext.define('Sbi.filters.editor.main.FilterEditor', {
 
 	
 	, initFiltersPanel: function(config) {
-		this.filtersContainerPanel = Ext.create('Sbi.filters.editor.main.FilterEditorList',{storesList: this.storesList});
-//		this.filtersContainerPanel.addListener('addAssociation', this.addAssociation, this);
-//		this.filtersContainerPanel.addListener('modifyAssociation', this.modifyAssociation, this);
-//		this.filtersContainerPanel.addListener('removeAssociation', this.removeAssociation, this);
-//		this.filtersContainerPanel.addListener('selectAssociation', this.selectAssociation, this);
-//		this.filtersContainerPanel.addListener('updateIdentifier', this.updateIdentifier, this);
+		this.filtersContainerPanel = Ext.create('Sbi.filters.editor.main.FilterEditorList',{storesList: this.storesList
+																						  , filters: this.filters});
 	}
 	
 	// -----------------------------------------------------------------------------------------------------------------
     // public methods
 	// -----------------------------------------------------------------------------------------------------------------
-
-	/**
-	 * @method (fired)
-	 * Adds a new Association with active selections to the associationsList and to the associations grid
-	 * 
-	 * @param {String} n The identifier (setted for update context)
-	 */
-//	, addAssociation: function(n){		
-//		var toReturn = true;
-//		
-//		var allDs = this.dsContainerPanel.getAllDatasets();
-//		var assToAdd = new Array();
-//		assToAdd.id = this.getAssociationId(n);
-//		for (var i=0; i< allDs.length; i++){			
-//			var ds = allDs.get(i);
-//			var f = this.dsContainerPanel.getSelection(ds.dataset);
-//			if (f !== null){
-//				f.ds = ds.dataset;	
-//				assToAdd.push(f);
-//			}
-//		}
-//		
-//		toReturn = this.addAssociationToList(assToAdd);
-//		
-//		return toReturn;
-//	}
-//	
-//	/**
-//	 * @method (fired)
-//	 * Remove the Association from the AssociationsList
-//	 * 
-//	 * @param {String} r The Association content to remove
-//	 */
-//	, removeAssociation: function(r){
-//		for (var i=0; i<this.associationsList.length; i++){
-//			var obj = this.associationsList[i];
-//			if (obj && obj.ass == r){
-//				this.associationsList.splice(i,1);
-//				break;
-//			}
-//		}
-//		Sbi.trace("[AssociationEditor.removeAssociation]: Removed association ['"+ r +"']");
-//		Sbi.trace("[AssociationEditor.removeAssociation]: Associations List upgraded is  [ " +  Sbi.toSource(this.associationsList) + ']');
-//	}
-//	
-//	/**
-//	 * @method (fired)
-//	 * Update (with an add and remove of the element) the Association from the AssociationsList and grid
-//	 * 
-//	 */
-//	, modifyAssociation: function(){
-//		var assToModify = this.assContainerPanel.getCurrentAss();		
-//		if (assToModify == null){
-//	   		  alert(LN('sbi.cockpit.association.editor.msg.modify'));
-//	   		  return;
-//		}
-//		var assToModifyRec = this.assContainerPanel.getAssociationById(assToModify.id);
-//	    if (this.addAssociation(assToModify.id)){
-//			this.assContainerPanel.removeAssociationFromGrid(assToModifyRec);
-//			this.removeAssociation(assToModify.ass);	    
-//	    }
-//		
-//	}
-//	 
-//	/**
-//	 * @method (fired)
-//	 * Select the cells linked to the list grid
-//	 * 
-//	 * @param {String} r The Association content to use for the selection of elements
-//	 */
-//	, selectAssociation: function(r){
-//		this.dsContainerPanel.resetSelections();
-//		var lst = r.ass.split('=');
-//		for (var i=0; i<lst.length; i++){
-//			var el = lst[i].split('.');
-//			this.dsContainerPanel.setSelection(el);
-//		}
-//	}
-//	
-//	/**
-//	 * @method (fired)
-//	 * Update the identifier modified manually from the user
-//	 * 
-//	 * @param {Element} e The element (cell) modified.
-//	 */
-//	, updateIdentifier: function(e){
-//		var obj = this.getAssociationById(e.originalValue);
-//		obj.id = e.value;
-//		
-//	}
 	
 	/**
 	 * @method 
-	 * Returns the Associations list
-	 * 
+	 * Returns the Filters list
+	 */ 
 	 
-	, getAssociationsList: function(){
-		return this.associationsList;
+	, getFiltersList: function(){
+		return this.filtersContainerPanel.getFiltersList();
 	}
-*/
+
 	/**
 	 * @method 
-	 * Set the Associations list
-	 * 
+	 * Set the filters list
+	 */ 
 	 
-	, setAssociationsList: function(r){
-		this.associationsList = r;
+	, setFiltersList: function(f){
+		this.filtersContainerPanel.setFiltersList(f);
 	}
-	*/
+	
 	/**
 	 * @method 
-	 * Reset the Associations list
-	 * 
+	 * Reset the filters list
+	 */ 
 	 
-	, removeAllAssociations: function(){
-		this.associationsList = new Array();
+	, removeAllFilters: function(){
+		this.filtersContainerPanel.removeAllFilters();
 	}
-	*/
+	
 	// -----------------------------------------------------------------------------------------------------------------
     // utility methods
 	// -----------------------------------------------------------------------------------------------------------------

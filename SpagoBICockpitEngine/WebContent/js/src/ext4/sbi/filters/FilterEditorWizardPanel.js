@@ -8,7 +8,8 @@ Ext.define('Sbi.filters.FilterEditorWizardPanel', {
 		extend: 'Sbi.widgets.WizardPanel'
 	
 	, config:{ 		
-	   storesList: null	    	  
+	   storesList: null
+	  , filters: null
 	  , frame: false
 	  , border: false
 	}
@@ -93,6 +94,7 @@ Ext.define('Sbi.filters.FilterEditorWizardPanel', {
 		Sbi.trace("[FilterEditorWizardPanel.initFilterEditorPage]: IN");
 		this.filterEditorPage = Ext.create('Sbi.filters.editor.main.FilterEditorPage',{
 			storesList: this.storesList
+		  , filters: this.filters	
 		});
 		Sbi.trace("[FilterEditorWizardPanel.initFilterEditorPage]: IN");
 		return this.filterEditorPage;

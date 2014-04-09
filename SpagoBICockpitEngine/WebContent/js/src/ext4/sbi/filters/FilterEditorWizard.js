@@ -15,11 +15,8 @@ Ext.define('Sbi.filters.FilterEditorWizard', {
 			  , closeAction: 'close' 
 //			  , plain: true
 			  , modal: true	
-			  /**
-		       * @property {Object[]} storesList
-		       * The list of the stores used by all widgets. 
-		       */
 			  , storesList: null
+			  , filters: null
 	}
 
 	/**
@@ -80,6 +77,7 @@ Ext.define('Sbi.filters.FilterEditorWizard', {
 		Sbi.trace("[FilterEditorWizard.init]: IN");		
 		this.editorMainPanel = Ext.create('Sbi.filters.FilterEditorWizardPanel',{			
 			storesList: c.storesList
+		  , filters: c.filters
 		});
 		this.editorMainPanel.on('cancel', this.onCancel, this);
 		this.editorMainPanel.on('submit', this.onSubmit, this);

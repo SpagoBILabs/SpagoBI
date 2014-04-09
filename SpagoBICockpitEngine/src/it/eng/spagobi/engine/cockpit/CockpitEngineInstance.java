@@ -94,17 +94,19 @@ public class CockpitEngineInstance extends AbstractEngineInstance {
 	}
 	
 	public String getDocumentIsVisible() {
-		return (String)this.getEnv().get(EngineConstants.ENV_DOCUMENT_IS_VISIBLE
-				);
+		return (String)this.getEnv().get(EngineConstants.ENV_DOCUMENT_IS_VISIBLE);
 	}
 	
 	public String getDocumentPreviewFile() {
-		return (String)this.getEnv().get(EngineConstants.ENV_DOCUMENT_PREVIEW_FILE
-				);
+		return (String)this.getEnv().get(EngineConstants.ENV_DOCUMENT_PREVIEW_FILE);
 	}
 	
 	public IEngUserProfile getUserProfile() {
 		return (IEngUserProfile)this.getEnv().get(EngineConstants.ENV_USER_PROFILE);
+	}
+	
+	public String isTechnicalUser() {
+		return (String)this.getEnv().get(EngineConstants.ENV_IS_TECHNICAL_USER);
 	}
 	
 	public String[] getDocumentCommunities() {

@@ -96,8 +96,22 @@ Ext.extend(Sbi.cockpit.core.WidgetManager, Ext.util.Observable, {
      * @param {Sbi.cockpit.core.WidgetRuntime} The widget.
      */  
 	, unregister: function(w) {
-		this.widgets.remove(w);
-		Sbi.info("[WidgetManager.unregister]: widget [" + this.widgets.getKey(w) + "] succesfully unregistered. Now there are [" + this.widgets.getCount()+ "] registered widget(s)");
+		if(this.widgets.contains(w)) {
+			var storeId = w.getStoreId();
+			this.widgets.remove(w);
+			Sbi.info("[WidgetManager.unregister]: widget [" + this.widgets.getKey(w) + "] succesfully unregistered. " +
+					"Now there are [" + this.widgets.getCount()+ "] registered widget(s)");
+			if( this.isStoreUsed(storeId) == false) {
+				Sbi.storeManager.removeStore(storeId, true );
+				Sbi.info("[WidgetManager.unregister]: store [" + storeId + "] succesfully removed");
+			} else {
+				Sbi.info("[WidgetManager.unregister]: store [" + storeId + "] nor removed because there are other widgets using it");;
+			}
+			
+		} else {
+			Sbi.warn("[WidgetManager.unregister]: widget [" + this.widgets.getKey(w) + "] is not registered in this manager.");
+		}
+		
 	}
 	
 	/**
@@ -159,15 +173,17 @@ Ext.extend(Sbi.cockpit.core.WidgetManager, Ext.util.Observable, {
 		Sbi.trace("[WidgetManager.getWidgetsByStore]: IN");
 		
 		var toReturn = new Ext.util.MixedCollection();
-		if (getStoreId != undefined){
+		if (Sbi.isValorized(storeId)){
 			for(var i=0; i < this.widgets.getCount(); i++){
 				var w = this.widgets.item(i);
-				if (w.getStoreId() !== undefined && w.getStoreId() == storeId  ){
+				if (Sbi.isValorized(w.getStoreId()) && w.getStoreId() == storeId  ){
 					toReturn.add(w);
 				}
 			}
 		}
 		
+		Sbi.trace("[WidgetManager.getWidgetsByStore]: store [" + storeId + "] is used " +
+				"by [" + toReturn.getCount()  + "] widget(s)");
 		Sbi.trace("[WidgetManager.getWidgetsByStore]: OUT");
 		
 		return toReturn;

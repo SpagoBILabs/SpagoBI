@@ -368,7 +368,7 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
    		this.associationEditorWizard = Ext.create('Sbi.data.AssociationEditorWizard', config);
    		this.associationEditorWizard.on("submit", this.onAssociationEditorWizardSubmit, this);
    		this.associationEditorWizard.on("cancel", this.onAssociationEditorWizardCancel, this);
-   		this.associationEditorWizard.on("apply", this.onAssociationEditorWizardApply, this);    		
+//   		this.associationEditorWizard.on("apply", this.onAssociationEditorWizardApply, this);    		
     	Sbi.trace("[MainPanel.showAssociationEditorWizard]: editor succesfully instantiated");
 
 				
@@ -397,14 +397,15 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 	, onShowFilterEditorWizard: function(){
 		var config = {};
 		config.storesList = Sbi.storeManager.getStoreIds();
-//		if(this.filterEditorWizard === null) {    		
-    		Sbi.trace("[MainPanel.showFilterEditorWizard]: instatiating the editor");    		
-    		this.filterEditorWizard = Ext.create('Sbi.filters.FilterEditorWizard',config);
-    		this.filterEditorWizard.on("submit", this.onFilterEditorWizardSubmit, this);
-    		this.filterEditorWizard.on("cancel", this.onFilterEditorWizardCancel, this);
-//    		this.filterEditorWizard.on("apply", this.onFilterEditorWizardApply, this);    		
-	    	Sbi.trace("[MainPanel.filterEditorWizard]: editor succesfully instantiated");
-//    	}
+		Sbi.trace("[MainPanel.onShowFilterEditorWizard]: config.stores is equal to [" + Sbi.toSource(config.stores) + "]");
+		config.filters = Sbi.storeManager.getFilters();
+		Sbi.trace("[MainPanel.onShowFilterEditorWizard]: config.filters is equal to [" + Sbi.toSource(config.filters) + "]");		
+		Sbi.trace("[MainPanel.showFilterEditorWizard]: instatiating the editor");    		
+		this.filterEditorWizard = Ext.create('Sbi.filters.FilterEditorWizard',config);
+		this.filterEditorWizard.on("submit", this.onFilterEditorWizardSubmit, this);
+		this.filterEditorWizard.on("cancel", this.onFilterEditorWizardCancel, this);
+//    	this.filterEditorWizard.on("apply", this.onFilterEditorWizardApply, this);    		
+    	Sbi.trace("[MainPanel.filterEditorWizard]: editor succesfully instantiated");
 				
 		this.filterEditorWizard.show();
 	}
@@ -418,12 +419,11 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 	
 	, onFilterEditorWizardSubmit: function(wizard) {
 		Sbi.trace("[MainPanel.onFilterEditorWizardSubmit]: IN");
-//		var wizardState = wizard.getWizardState();
-//		if (wizardState.associationsList != null && wizardState.associationsList !== undefined){
-//			Sbi.storeManager.resetAssociations(); //reset old associations
-//			Sbi.storeManager.setAssociations(wizardState.associationsList);
-//			Sbi.trace("[MainPanel.onFilterEditorWizardSubmit]: setted relation group [" + Sbi.toSource(wizardState.associationsList) + "] succesfully added to store manager");
-//		}
+		var wizardState = wizard.getWizardState();
+		if (Sbi.isValorized(wizardState.filters)){
+			Sbi.storeManager.setFilterConfigurations(wizardState.filters);
+			Sbi.trace("[MainPanel.onFilterEditorWizardSubmit]: setted filter group [" + Sbi.toSource(wizardState.filters) + "] succesfully added to store manager");
+		}
 		this.filterEditorWizard.close();
 		this.filterEditorWizard.destroy();
 		Sbi.trace("[MainPanel.onFilterEditorWizardSubmit]: OUT");
@@ -487,42 +487,55 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 	
 	, initToolbar: function() {
 	
-		this.tbar = new Ext.Toolbar({
-		    items: [
-		        '->', // same as {xtype: 'tbfill'}, // Ext.Toolbar.Fill
-		        {
-		        	text: LN('sbi.cockpit.mainpanel.btn.filters')
-		        	, handler: this.onShowFilterEditorWizard
-		        	, scope: this
-		        },
-		        {
-		        	text: LN('sbi.cockpit.mainpanel.btn.associations')
-		        	, handler: this.onShowAssociationEditorWizard
-		        	, scope: this
-		        },{
-		        	text: LN('sbi.cockpit.mainpanel.btn.addWidget')
-		        	, handler: this.onAddWidget
-		        	, scope: this
-		        },	new Ext.Button({
-		        			id: 'save'
-		        		   , iconCls: 'icon-save' 
-		 				   , tooltip: 'Save'
-		 				   , scope: this
-		 				   , handler:  this.onShowSaveDocumentWindow
-		 				   , hidden: this.isDocumentNotSaved()
-		 		 }), new Ext.Button({
-		 			 		id: 'saveAs'
-		 			   	   , iconCls: 'icon-saveas' 
-		 				   , tooltip: 'Save As'
-		 				   , scope: this
-		 				   , handler:  this.onShowSaveDocumentAsWindow
-		 		 }), new Ext.Button({
-	 			 		id: 'debug'
+		var tbItems = ['->'];
+		
+		if (Sbi.isValorized(Sbi.config.isTechnicalUser) && 
+				Sbi.config.isTechnicalUser == 'true'){
+			tbItems.push({
+	        	text: LN('sbi.cockpit.mainpanel.btn.filters')
+	        	, handler: this.onShowFilterEditorWizard
+	        	, scope: this
+	        });
+		}
+		
+		tbItems.push({
+        	text: LN('sbi.cockpit.mainpanel.btn.associations')
+        	, handler: this.onShowAssociationEditorWizard
+        	, scope: this
+        });
+		
+		tbItems.push({
+        	text: LN('sbi.cockpit.mainpanel.btn.addWidget')
+        	, handler: this.onAddWidget
+        	, scope: this
+        });
+		
+		tbItems.push(	new Ext.Button({
+			id: 'save'
+     		   , iconCls: 'icon-save' 
+				   , tooltip: 'Save'
+				   , scope: this
+				   , handler:  this.onShowSaveDocumentWindow
+				   , hidden: this.isDocumentNotSaved()
+		 }));
+		
+		tbItems.push( new Ext.Button({
+		 		id: 'saveAs'
+	 			   	   , iconCls: 'icon-saveas' 
+	 				   , tooltip: 'Save As'
+	 				   , scope: this
+	 				   , handler:  this.onShowSaveDocumentAsWindow
+	 		 }));
+		
+		tbItems.push(new Ext.Button({
+		 		id: 'debug'
 			 	   	   , text: 'Debug'
 			 	       , scope: this
 			 		   , handler:  this.onDebug
-			 	 })
-		    ]
+			 	 }));
+
+		this.tbar = new Ext.Toolbar({
+		    items: tbItems
 		});
 	}		
 	

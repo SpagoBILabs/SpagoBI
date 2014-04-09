@@ -163,4 +163,4 @@ Sbi.locale.ln['sbi.cockpit.filter.editor.wizard.list.typeObj'] = 'Tipologia';
 Sbi.locale.ln['sbi.cockpit.filter.editor.wizard.list.namePar'] = 'Nome parametro';
 Sbi.locale.ln['sbi.cockpit.filter.editor.wizard.list.typePar'] = 'Tipologia parametro';
 Sbi.locale.ln['sbi.cockpit.filter.editor.wizard.list.initialValue'] = 'Valore iniziale';
-Sbi.locale.ln['sbi.cockpit.filter.editor.wizard.list.typeDriver'] = 'Ambito';
+Sbi.locale.ln['sbi.cockpit.filter.editor.wizard.list.scope'] = 'Ambito';
