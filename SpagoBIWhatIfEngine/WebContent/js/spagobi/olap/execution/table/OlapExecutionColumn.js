@@ -60,8 +60,8 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionColumn', {
 		var thisPanel = this;
 		this.dimensionPanel = Ext.create("Ext.Panel",{
 			border: false,
-			html: this.getDimensionName(),
-			style: "background-color: transparent !important",
+			html: this.getDimensionName()+"&nbsp;",//to avoid line breaks
+			style: "background-color: transparent !important;",
 			bodyStyle: "background-color: transparent !important",
 			listeners: {
 				el: {
