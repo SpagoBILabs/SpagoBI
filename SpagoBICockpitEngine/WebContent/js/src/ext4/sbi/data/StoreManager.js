@@ -54,6 +54,13 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
      * The list of registered associations between datasets managed by this manager
      */
 	, associations: null
+	
+	/**
+     * @property {Ext.util.MixedCollection()} filters
+     * The list of registered filters managed by this manager
+     */
+	, filters: null
+	
    
 	// =================================================================================================================
 	// METHODS
@@ -79,7 +86,10 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 		
 		var associations = conf.associations || [];
 		this.setAssociationConfigurations(associations);
-		
+
+		var filters = conf.filters || [];
+		this.setFilterConfigurations(filters);
+
 		Sbi.trace("[StoreManager.init]: OUT");
 	}
 
@@ -117,6 +127,7 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 		var config = {};
 		config.stores = this.getStoreConfigurations();
 		config.associations = this.getAssociationConfigurations();
+		config.filters = this.getFilterConfigurations();
 		Sbi.trace("[StoreManager.getConfiguration]: OUT");
 		return config;
 	}
@@ -290,6 +301,86 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 		Sbi.trace("[StoreManager.getAssociationConfiguration]: OUT");
 		
 		return associationConf;	
+	}
+
+	// FILTERS CONFIGS
+	
+	/**
+	 * @method
+	 * Sets filters configuration
+	 * 
+	 * @param {Object[]} conf The configuration object
+	 */
+	, setFilterConfigurations: function(conf) {
+		Sbi.trace("[StoreManager.setFilterConfigurations]: IN");
+		this.resetFilterConfigurations();
+		Sbi.debug("[StoreManager.setFilterConfigurations]: parameter [conf] is equal to [" + Sbi.toSource(conf)+ "]");
+		conf = conf || [];
+		for(var i = 0; i < conf.length; i++) {
+			this.addFilter(conf[i]);
+		}
+		Sbi.trace("[StoreManager.setFilterConfigurations]: OUT");
+	}
+	
+	, resetFilterConfigurations: function(autoDestroy) {
+		if(Sbi.isValorized(this.filters)) {
+			Sbi.trace("[StoreManager.resetFilterConfigurations]: There are [" + this.filters.getCount() + "] filter(s) to remove");
+			autoDestroy = autoDestroy || this.autoDestroy;
+			this.filters.each(function(filter, index, length) {
+				this.removeFilter(filter, autoDestroy);
+			}, this);
+		}
+		
+		this.filters = new Ext.util.MixedCollection();
+		this.filters.getKey = function(o){
+	        return o.id;
+	    };
+	}
+	
+	/**
+	 * @method
+	 * Gets the configuration of all filters defined in this store manager.
+	 * 
+	 * @return {Object[]} The filters' configuration 
+	 */
+	, getFilterConfigurations: function() {
+		Sbi.trace("[StoreManager.getFilterConfigurations]: IN");
+		var confs = [];
+		this.filters.each(function(filter, index, length) {
+			var c = this.getFilterConfiguration(filter.id);
+			if(Sbi.isValorized(c)) {
+				confs.push(c);
+			}
+		}, this);
+		Sbi.trace("[StoreManager.getFilterConfigurations]: OUT");
+		return confs;
+	}
+	
+	/**
+	 * @method
+	 * Gets the configuration of the filter whose id is equal to #associationId if it is defined in this
+	 * manager, null otherwise.
+	 * 
+	 * @param {String} filterId the filter id
+	 * 
+	 * @return {Object[]} The filter's configuration 
+	 */
+	, getFilterConfiguration: function(filterId) {
+		Sbi.trace("[StoreManager.getFilterConfiguration]: IN");
+		
+		var filter = this.getFilter(filterId);
+		var filterConf = null;
+		
+		if(Sbi.isValorized(filter)) {
+			filterConf = Ext.apply({}, filter);
+			Sbi.trace("[StoreManager.getFilterConfiguration]: conf of filter [" + filterId + "] is equal to [" + Sbi.toSource(filterConf, true)+ "]");
+		} else {
+			Sbi.warn("[StoreManager.getFilterConfiguration]: impossible to find filter [" + filterId + "]");
+		}
+		
+		Sbi.trace("[StoreManager.getFilterConfiguration]: OUT");
+		
+		return filterConf;	
 	}
 
 	
@@ -585,7 +676,80 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 		
 		return association;
 	}
+
+	// -----------------------------------------------------------------------------------------------------------------
+    // filter methods
+	// -----------------------------------------------------------------------------------------------------------------
 	
+	, addFilter: function(filter){
+		Sbi.trace("[StoreManager.addFilter]: IN");
+		
+		if(Sbi.isNotValorized(filter)) {
+			Sbi.warn("[StoreManager.addFilter]: Input parameter [filter] is not defined");
+			Sbi.trace("[StoreManager.addFilter]: OUT");
+		}
+		
+		if(Ext.isArray(filter)) {
+			Sbi.trace("[StoreManager.addFilter]: Input parameter [filter] is of type [Array]");
+			for(var i = 0; i < store.length; i++) {
+				this.addFilter(filter[i]);
+			}
+		} else if(Sbi.isNotExtObject(filter)) {
+			Sbi.trace("[StoreManager.addFilter]: Input parameter [filter] is of type [Object]");	
+			this.filters.add(filter);
+			Sbi.debug("[StoreManager.addFilter]: Association [" + Sbi.toSource(filter) + "] succesfully added");
+		} else {
+			Sbi.error("[StoreManager.addStore]: Input parameter [filter] of type [" + (typeof filter) + "] is not valid");	
+		}
+		
+		Sbi.trace("[StoreManager.addFilter]: OUT");
+	}
+	
+	/**
+	 * @methods
+	 * 
+	 * Returns all the filters defined in this store manager
+	 * 
+	 *  @return {Object[]} The filters list
+	 */
+	, getFilters: function() {
+		return this.filters.getRange();
+	}
+	
+	, getFilter: function(filterId) {
+		return this.filters.get(filterId);
+	}
+	
+	, containsFilters: function(filter) {
+		if(Ext.isString(filter)) {
+			return this.filters.containsKey(filter);
+		} else {
+			return this.filters.contains(filter);
+		}
+	}	
+	
+	
+	, removeFilter: function(filter, autoDestroy) {
+		
+		Sbi.trace("[StoreManager.removeFilter]: IN");
+		
+		if(Sbi.isNotValorized(filter)) {
+			Sbi.trace("[StoreManager.removeFilter]: Parameter [filter] is not valorized");
+			Sbi.trace("[StoreManager.removeFilter]: OUT");
+			return false;
+		}
+		
+		filter = this.filters.removeKey(filter);
+		
+		if(filter === false) {
+			Sbi.trace("[StoreManager.removeFilter]: Impossible to remove filter [" + Sbi.toSource(filter)  + "]");
+		}
+		
+		Sbi.trace("[StoreManager.removeFilter]: OUT");
+		
+		return filter;
+	}
+
 	// -----------------------------------------------------------------------------------------------------------------
 	// init methods
 	// -----------------------------------------------------------------------------------------------------------------

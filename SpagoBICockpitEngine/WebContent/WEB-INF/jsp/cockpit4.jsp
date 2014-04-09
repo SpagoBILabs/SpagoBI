@@ -52,6 +52,7 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 	String docCommunity;
 	List docFunctionalities;
 	String userId;
+	String isTechnicalUser;
 	List<String> includes;
 
 	engineInstance = (CockpitEngineInstance)request.getSession().getAttribute(EngineConstants.ENGINE_INSTANCE);
@@ -62,6 +63,7 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 	environment = request.getParameter("SBI_ENVIRONMENT"); 
 	executionRole = (String)env.get(EngineConstants.ENV_EXECUTION_ROLE);
 	userId = (engineInstance.getDocumentUser()==null)?"":engineInstance.getDocumentUser().toString();
+	isTechnicalUser = (engineInstance.isTechnicalUser()==null)?"":engineInstance.isTechnicalUser().toString();
 	template = engineInstance.getTemplate().toString();
 	docLabel = (engineInstance.getDocumentLabel()==null)?"":engineInstance.getDocumentLabel().toString();
 	docVersion = (engineInstance.getDocumentVersion()==null)?"":engineInstance.getDocumentVersion().toString();
@@ -260,6 +262,11 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 			, resourcePath: 'datasets/mydata'
 		}, 'spagobiServiceConf');
 		
+		Sbi.config.serviceReg.registerService('loadDocumentParams', {
+			name: 'loadDocumentParams'
+			, description: 'Load all the params of the specified document'
+			, resourcePath: 'documents/{documentLabel}/parameters'
+		}, 'spagobiServiceConf');
 		
 		
 		/*
@@ -288,6 +295,7 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 		Sbi.config.docLabel ="<%=docLabel%>";
 		Sbi.config.docVersion = "<%=docVersion%>";
 		Sbi.config.userId = "<%=userId%>";
+		Sbi.config.isTechnicalUser = "<%=isTechnicalUser%>";
 		Sbi.config.docAuthor = "<%=docAuthor%>";
 		Sbi.config.docName = "<%=docName.replace('\n', ' ')%>";
 		Sbi.config.docDescription = "<%=docDescription.replace('\n', ' ')%>";

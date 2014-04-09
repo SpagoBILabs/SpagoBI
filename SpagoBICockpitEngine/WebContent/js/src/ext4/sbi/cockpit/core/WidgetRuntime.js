@@ -240,10 +240,16 @@ Ext.extend(Sbi.cockpit.core.WidgetRuntime, Ext.Panel, {
 	}
 	
 	, unboundStore: function() {
-		Sbi.trace("[WidgetRuntime.unboundStore]: IN");		
-		this.getStore().un('metachange', this.onStoreMetaChange, this);
-		this.getStore().un('load', this.onStoreLoad, this);
-		this.getStore().un('exception', this.onStoreException, this);
+		Sbi.trace("[WidgetRuntime.unboundStore]: IN");	
+		var store = this.getStore();
+		if(Sbi.isValorized(store)) {
+			this.getStore().un('metachange', this.onStoreMetaChange, this);
+			this.getStore().un('load', this.onStoreLoad, this);
+			this.getStore().un('exception', this.onStoreException, this);
+		} else {
+			Sbi.debug("Widget is not bound to any store or it is bound to a store that has already been removed from store manager");
+		}
+		
 		Sbi.trace("[WidgetRuntime.unboundStore]: OUT");
 	}
 	
@@ -306,7 +312,7 @@ Ext.extend(Sbi.cockpit.core.WidgetRuntime, Ext.Panel, {
 			return null;
 		}
 		
-		if(Sbi.storeManager.containsStore(this.getStoreId()) === false && forceCreation !== false) {
+		if(Sbi.storeManager.containsStore(this.getStoreId()) === false && forceCreation === false) {
 			Sbi.warn("[Widget.getStore]: store [" + this.getStoreId() + "] will be added to store manager");
 			Sbi.storeManager.addStore({storeId: this.getStoreId()});
 		}

@@ -228,7 +228,6 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.WidgetRuntime, {
     , removeWidget: function(widget) {
     	Sbi.trace("[WidgetContainer.removeWidget]: IN");
     	this.removeComponent(widget);
-    	this.getWidgetManager().unregister(widget);
     	Sbi.trace("[WidgetContainer.removeWidget]: OUT");
     }
     
@@ -302,8 +301,7 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.WidgetRuntime, {
         		
         	
         	var win = new Ext.Window({
-        		id: 'configuration',
-                layout:'fit',
+        		layout:'fit',
                 width:500,
                 height:300,
                 //closeAction:'hide',
@@ -606,7 +604,6 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.WidgetRuntime, {
     	if(Sbi.isValorized(widget)) {
     		var component = widget.getParentComponent();
     		if(Sbi.isValorized(component)) {
-    			this.components.remove(component);
     			component.close();
     			Sbi.trace("[WidgetContainer.removeComponent]: component removed");
     		} else {
@@ -622,13 +619,7 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.WidgetRuntime, {
     , getComponents: function() {
     	return this.components.getRange();
     }
-    
- 
-    
-//    , onCloseWidgetEditorWizard: function(){
-//    	this.widgetEditorWizard.resetState();
-//    	this.widgetEditorWizard.hide();
-//    }
+
  
 
     

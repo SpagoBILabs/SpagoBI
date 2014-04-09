@@ -9,7 +9,8 @@ Ext.define('Sbi.filters.editor.main.FilterEditorPage', {
 	, layout: 'fit'
 			
 	, config:{	
-		    storesList: null	   
+		    storesList: null	
+		  , filters: null
 		  , itemId: 0
 		  , border: false
 	}
@@ -77,8 +78,7 @@ Ext.define('Sbi.filters.editor.main.FilterEditorPage', {
 		Sbi.trace("[FilterEditorPage.applyPageState]: IN");
 		state =  state || {};
 		if(this.filterEditorPanel) {
-			state.widgetsFilterList = this.filterEditorPanel.getFilterList();
-			state.datasetsFilterList = this.datasetsFilterList.getFilterList();
+			state.filters = this.filterEditorPanel.getFiltersList();
 		}
 		Sbi.trace("[FilterEditorPage.applyPageState]: OUT");
 		return state;
@@ -104,7 +104,8 @@ Ext.define('Sbi.filters.editor.main.FilterEditorPage', {
 	// -----------------------------------------------------------------------------------------------------------------
 
 	, init: function(){
-		this.filterEditorPanel = Ext.create('Sbi.filters.editor.main.FilterEditor',{storesList: this.storesList}); 
+		this.filterEditorPanel = Ext.create('Sbi.filters.editor.main.FilterEditor',{storesList: this.storesList
+																				  , filters: this.filters}); 
 		return this.filterEditorPanel;
 	}
 
