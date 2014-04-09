@@ -31,6 +31,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -129,6 +130,47 @@ public class AnalyticalModelDocumentManagementAPI {
 		}
 		
 		return document;
+	}
+	
+	/**
+	 * Utility method. Returns the analytical drivers associated to the document object.
+	 * 
+	 * @param label Could be the label of the document
+	 * 
+	 * @return the list with analitycal drivers associated.
+	 */
+	public List getDocumentParameters(Object docDescriptor){
+		logger.debug("IN");
+		try{
+			List<JSONObject> parametersList = new ArrayList<JSONObject>();
+			
+			BIObject document = getDocument(docDescriptor);
+			if(document == null) {
+				throw new RuntimeException("Impossible to get document [" + docDescriptor + "] from SpagoBI Server");
+			}
+			
+			try{
+				List objParams = document.getBiObjectParameters();
+				for (Iterator iterator = objParams.iterator(); iterator.hasNext();) {
+					JSONObject paramJSON = new JSONObject();
+					BIObjectParameter param = (BIObjectParameter)iterator.next();
+					paramJSON.put("label", param.getLabel());						
+					paramJSON.put("url", param.getParameterUrlName());			
+					parametersList.add(paramJSON);
+				}
+			} catch(Throwable t) {
+				throw new SpagoBIRuntimeException("Impossible to parse parameters. ", t);
+			} finally {
+				logger.debug("OUT");
+			}
+			
+			return parametersList;
+			
+		} catch(Throwable t) {
+			throw new RuntimeException("An unexpected error occured while executing method", t);
+		} finally {			
+			logger.debug("OUT");
+		}
 	}
 	
 	/**

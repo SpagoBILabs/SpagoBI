@@ -19,6 +19,7 @@ import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.ParameterValuesEncoder;
 import it.eng.spagobi.commons.utilities.PortletUtilities;
+import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
 import it.eng.spagobi.community.mapping.SbiCommunity;
 import it.eng.spagobi.engines.drivers.AbstractDriver;
@@ -54,7 +55,7 @@ public class GenericDriver extends AbstractDriver implements IEngineDriver {
     public static final String DOCUMENT_PREVIEW_FILE = "DOCUMENT_PREVIEW_FILE";
     public static final String DOCUMENT_COMMUNITIES = "DOCUMENT_COMMUNITIES";
     public static final String DOCUMENT_FUNCTIONALITIES = "DOCUMENT_FUNCTIONALITIES";
-    
+    public static final String IS_TECHNICAL_USER = "IS_TECHNICAL_USER";
 
     public static final String COUNTRY = "country";
     public static final String LANGUAGE = "language";
@@ -210,8 +211,10 @@ public class GenericDriver extends AbstractDriver implements IEngineDriver {
 		    if (funcs != null) 	{		    	
 		    	pars.put(DOCUMENT_FUNCTIONALITIES,funcs);
 		    	logger.debug("Add " + DOCUMENT_FUNCTIONALITIES + " parameter: " +funcs);
-		    }		    
-	        
+		    }		
+		    pars.put(IS_TECHNICAL_USER, UserUtilities.isTechnicalUser(profile));
+		    logger.debug("Add " + IS_TECHNICAL_USER + " parameter: " + UserUtilities.isTechnicalUser(profile));
+		    
 			pars = addBIParameters(biobj, pars);
 			pars = addBIParameterDescriptions(biobj, pars);
         

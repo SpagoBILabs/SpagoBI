@@ -11,12 +11,12 @@
  */
 package it.eng.spagobi.api;
 
+import it.eng.spago.base.SourceBean;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.execution.service.ExecuteAdHocUtility;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
-import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.serializer.SerializerFactory;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.tools.dataset.DatasetManagementAPI;
@@ -24,10 +24,8 @@ import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
-import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData.FieldType;
 import it.eng.spagobi.tools.dataset.common.query.AggregationFunctions;
-import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
@@ -52,8 +50,6 @@ import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import commonj.work.Work;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -105,6 +101,24 @@ public class DataSetResource extends AbstractSpagoBIResource {
 			JSONObject resultsJSON = new JSONObject();
 			resultsJSON.put("results", fieldsJSON);
 		
+			return resultsJSON.toString();	
+		} catch(Throwable t) {
+			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", t);
+		} finally {			
+			logger.debug("OUT");
+		}	
+	}
+	
+	@GET
+	@Path("/{label}/parameters")
+	@Produces(MediaType.APPLICATION_JSON)
+	public String getDataSetParameters(@Context HttpServletRequest req, @PathParam("label") String label) {
+		logger.debug("IN");		
+		try {		
+			List<JSONObject> fieldsParameters = getDatasetManagementAPI().getDataSetParameters(label);
+			JSONArray paramsJSON = writeParameters(fieldsParameters);
+			JSONObject resultsJSON = new JSONObject();
+			resultsJSON.put("results", paramsJSON);			
 			return resultsJSON.toString();	
 		} catch(Throwable t) {
 			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", t);
@@ -427,6 +441,19 @@ public class DataSetResource extends AbstractSpagoBIResource {
 		}	
 	}
 	
+	
+	public JSONArray writeParameters(List<JSONObject> paramsMeta) throws Exception {		
+		JSONArray paramsMetaDataJSON = new JSONArray();
+
+		for (Iterator iterator = paramsMeta.iterator(); iterator.hasNext();) {
+			JSONObject jsonObject = (JSONObject) iterator.next();
+			paramsMetaDataJSON.put(jsonObject);
+		}
+
+
+		return paramsMetaDataJSON;
+	}
+
 	/**
 	 * 
 	 * @param profile

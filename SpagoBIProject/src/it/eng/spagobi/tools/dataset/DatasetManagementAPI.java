@@ -29,6 +29,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 
 
+import it.eng.spago.base.SourceBean;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.bo.Config;
 import it.eng.spagobi.commons.bo.UserProfile;
@@ -42,17 +43,27 @@ import it.eng.spagobi.tools.dataset.cache.CacheFactory;
 import it.eng.spagobi.tools.dataset.cache.ICache;
 import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.work.SQLDBCacheWriteWork;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.common.metadata.FieldMetadata;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
+import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
+import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData.FieldType;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.tools.dataset.utils.DataSetUtilities;
+import it.eng.spagobi.tools.dataset.utils.DatasetMetadataParser;
+import it.eng.spagobi.tools.dataset.utils.DatasetMetadataXMLTemplateLoaderFactory;
+import it.eng.spagobi.tools.dataset.utils.IDatasetMetadataXMLTemplateLoader;
+import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.threadmanager.WorkManager;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.json.JSONObject;
 
 import commonj.work.Work;
 
@@ -72,6 +83,13 @@ public class DatasetManagementAPI {
 	private UserProfile userProfile;
 	private IDataSetDAO dataSetDao;
 
+	// XML tags	
+	public static final String PARAMETERSLIST = "PARAMETERSLIST"; 
+	public static final String ROWS = "ROWS"; 
+	public static final String ROW = "ROW"; 
+	public static final String NAME = "NAME"; 
+	public static final String TYPE = "TYPE"; 
+	
 	static private Logger logger = Logger.getLogger(DatasetManagementAPI.class);
 	
 	// ==============================================================================
@@ -196,6 +214,53 @@ public class DatasetManagementAPI {
 		}
 	}
 	
+	public List<JSONObject> getDataSetParameters(String label) {
+		logger.debug("IN");
+		try {
+			List<JSONObject> parametersList = new ArrayList<JSONObject>();
+			IDataSet dataSet = getDataSetDAO().loadDataSetByLabel(label);
+			
+			if(dataSet == null) {
+				throw new RuntimeException("Impossible to get dataset [" + label + "] from SpagoBI Server");
+			}
+			
+			String strParams = dataSet.getParameters();		
+			if (strParams==null) return parametersList;
+
+			try {
+				SourceBean xmlParams = SourceBean.fromXMLString(strParams);
+				SourceBean sbRows = (SourceBean) xmlParams.getAttribute(ROWS);
+				List lst = sbRows.getAttributeAsList(ROW);
+				for (Iterator iterator = lst.iterator(); iterator.hasNext();) {
+					SourceBean sbRow = (SourceBean)iterator.next();
+					String namePar=sbRow.getAttribute(NAME)!= null ? sbRow.getAttribute(NAME).toString() : null;
+					String typePar=sbRow.getAttribute(TYPE)!= null ? sbRow.getAttribute(TYPE).toString() : null;
+				
+					if(typePar.startsWith("class")){
+						typePar=typePar.substring(6);						
+					}
+					JSONObject paramMetaDataJSON = new JSONObject();
+					String filterId =  "ds__"+dataSet.getName().replaceAll(" ", "_")+ "__" + namePar;
+					paramMetaDataJSON.put("id", filterId);
+					paramMetaDataJSON.put("nameObj", dataSet.getName());
+					paramMetaDataJSON.put("typeObj", "Dataset");
+					paramMetaDataJSON.put("namePar", namePar);						
+					paramMetaDataJSON.put("typePar", typePar);
+					parametersList.add(paramMetaDataJSON);
+				}				
+			} catch(Throwable t) {
+				throw new SpagoBIRuntimeException("Impossible to parse parameters [" + strParams + "]", t);
+			} finally {
+				logger.debug("OUT");
+			}	
+			
+			return parametersList;
+		} catch(Throwable t) {
+			throw new RuntimeException("An unexpected error occured while executing method", t);
+		} finally {			
+			logger.debug("OUT");
+		}
+	}
 	
 	
 	public IDataStore getDataStore(String label, int offset, int fetchSize, int maxResults) {
