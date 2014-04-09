@@ -120,12 +120,12 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionFilterTree', {
 			       }],
 			       bbar:[
 			             '->',    {
-			            	 text: 'Cancel',
+			            	 text: LN('sbi.common.cancel'),
 			            	 handler: function(){
 			            		 thisPanel.destroy();
 			            	 }
 			             },    {
-			            	 text: 'Select',
+			            	 text: LN('sbi.common.select'),
 			            	 handler: function(){
 			            		 var selected = null;
 			            		 if(thisPanel.multiSelection){

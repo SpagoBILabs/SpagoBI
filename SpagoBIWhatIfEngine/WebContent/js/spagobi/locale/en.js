@@ -52,11 +52,21 @@ Sbi.locale.formats = {
 		}
 };
 
+
+//===================================================================
+//HELP
+//===================================================================
+Sbi.locale.ln['sbi.olap.execution.table.filter.dimension.help.content'] = 'Select the visible members for the selected dimanesion. These members will be included in the select staement of the MDX query';
+Sbi.locale.ln['sbi.olap.help.title'] = 'Help';
+
+
 //===================================================================
 //COMMONS
 //===================================================================
 Sbi.locale.ln['sbi.common.cancel'] = 'Cancel';
 Sbi.locale.ln['sbi.common.close'] = 'Close';
+Sbi.locale.ln['sbi.common.ok'] = 'Ok';
+Sbi.locale.ln['sbi.common.select'] = 'Select';
 
 //===================================================================
 // TOOLBAR
@@ -70,3 +80,8 @@ Sbi.locale.ln['sbi.olap.toolbar.drill.mode'] = 'Drill mode';
 
 Sbi.locale.ln['sbi.olap.execution.table.filter.collapse'] = 'Collapse all';
 Sbi.locale.ln['sbi.olap.execution.table.filter.expand'] = 'Expand all';
+Sbi.locale.ln['sbi.olap.execution.table.filter.filter.title'] = 'Select a slicer';
+Sbi.locale.ln['sbi.olap.execution.table.filter.dimension.title'] = 'Select the visible members';
+
+
+
