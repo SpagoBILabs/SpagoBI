@@ -95,7 +95,6 @@ Ext.extend(Sbi.cockpit.widgets.barchart.ChartSeriesPanel, Ext.Panel, {
 	, init: function(c) {
 		this.initEmptyMsgPanel();
 		this.initStore(c);
-		this.initColumnModel(c);
 		this.initGrid(c);
 	}
 	
@@ -113,7 +112,7 @@ Ext.extend(Sbi.cockpit.widgets.barchart.ChartSeriesPanel, Ext.Panel, {
 	}
 	
 	, initColumnModel: function(c) {
-		
+		/*
 	    var serieNameColumn = new Ext.grid.Column({
 	    	header: LN('sbi.worksheet.designer.chartseriespanel.columns.seriename')
 	    	, dataIndex: 'seriename'
@@ -222,6 +221,7 @@ Ext.extend(Sbi.cockpit.widgets.barchart.ChartSeriesPanel, Ext.Panel, {
 		this.plgins = [showCommaCheckColumn];
 		
 	    this.cm = new Ext.grid.ColumnModel(columns);
+	    */
 	}
 	
 	, initGrid: function (c) {
@@ -286,37 +286,179 @@ Ext.extend(Sbi.cockpit.widgets.barchart.ChartSeriesPanel, Ext.Panel, {
 	        , type: 'measuresContainerPanel'
 		});
 		*/
+		
+		var serieNameColumn =  {
+            	text: LN('sbi.worksheet.designer.chartseriespanel.columns.seriename')
+            	,dataIndex: 'seriename'
+            	, hideable: false
+            	, sortable: false
+            	, editor: new Ext.form.TextField({})
+             	, renderer : function(v, metadata, record) {
+
+            	 if(record.data.valid != undefined && !record.data.valid){
+            		 metadata.attr = ' style="color:#ff0000; text-decoration:line-through;';	   	    		
+
+            	 }
+            	 else{
+            		 metadata.attr = ' style="background:' + v + ';"';	   	    							
+            	 }
+
+            	 return v; 
+             	}
+             };
+		
+		var fieldColumn = {
+		    	text: LN('sbi.worksheet.designer.chartseriespanel.columns.queryfield')
+		    	, dataIndex: 'alias'
+		    	, hideable: false
+		    	, sortable: false
+		        , scope: this
+
+		};
+		
+		var aggregatorColumn = {
+		    	 text: LN('sbi.qbe.selectgridpanel.headers.function')
+		         , dataIndex: 'funct'
+		         , editor: new Ext.form.ComboBox({
+			         allowBlank: true,
+			         editable: false,
+			         store: this.aggregationFunctionsStore,
+			         displayField: 'nome',
+			         valueField: 'funzione',
+			         typeAhead: true,
+			         queryMode: 'local',
+			         triggerAction: 'all',
+			         autocomplete: 'off',
+			         emptyText: LN('sbi.qbe.selectgridpanel.aggfunc.editor.emptymsg'),
+			         selectOnFocus: true
+		         })
+			     , hideable: true
+			     , hidden: false
+			     , width: 50
+			     , sortable: false
+		    };
+		
+		this.colorColumn = {
+				text: LN('sbi.worksheet.designer.chartseriespanel.columns.color')
+				, width: 60
+				, dataIndex: 'color'
+				, editor: new Ext.form.TextField({}) // only in order to make the column editable: the editor is built 
+				 									 // on the grid's beforeedit event 
+				, renderer : function(v, metadata, record) {
+					metadata.attr = ' style="background:' + v + ';"';	   	
+					return v;  
+		       }
+			};
+		
+		//TODO: TO CHECK USED AS CHECKBOX SELECTION COLUMN
+		var showCommaCheckColumn = {
+				xtype: 'checkcolumn',
+	    		text: LN('sbi.worksheet.designer.chartseriespanel.columns.showcomma')
+	    		, tooltip: LN('sbi.worksheet.designer.chartseriespanel.columns.showcomma')
+	    		, dataIndex: 'showcomma'
+	    		, hideable: false
+	    		, hidden: false	
+	    		, width: 30
+	    		, sortable: false
+	    	};
+	    
+	    var precisionColumn = {
+		    	text: LN('sbi.worksheet.designer.chartseriespanel.columns.precision')
+		    	, tooltip: LN('sbi.worksheet.designer.chartseriespanel.columns.precision')
+		    	, dataIndex: 'precision'
+		    	, hideable: false
+		    	, sortable: false
+		    	, width: 30
+		        , editor: new Ext.form.NumberField({
+		        	value: 2
+		        	, minValue: 0
+		        	, maxValue: 10
+		        })
+		    };
+		
+	    var suffixColumn = {
+		    	text: LN('sbi.worksheet.designer.chartseriespanel.columns.suffix')
+		    	, tooltip: LN('sbi.worksheet.designer.chartseriespanel.columns.suffix')
+		    	, dataIndex: 'suffix'
+		    	, hideable: false
+		    	, sortable: false
+		    	, width: 30
+		        , editor: new Ext.form.TextField({})
+		    };
+		 
+		
+		this.gridColumns = [serieNameColumn, fieldColumn, aggregatorColumn];
+		if (this.displayColorColumn)  {
+			this.gridColumns.push(this.colorColumn);
+		}
+		this.gridColumns.push(showCommaCheckColumn);
+		this.gridColumns.push(precisionColumn);
+		this.gridColumns.push(suffixColumn);
+	    
+		var cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
+	        clicksToEdit: 1
+	    });
+		
+		
 		this.grid = new Ext.grid.Panel({
 			 store: this.store
 			 , border: false
 			 , enableDragDrop: true
+		     , ddGroup: this.ddGroup || 'crosstabDesignerDDGroup'
 			 , layout: 'fit'
 			 , cls: 'chart-series-panel'
 			 , viewConfig: {
 				  forceFit: true
 			 }
         	 , selModel: Ext.selection.RowModel()
-        	 , columns: [
-        	             {
-        	            	text: LN('sbi.worksheet.designer.chartseriespanel.columns.seriename')
-        	            	,dataIndex: 'seriename'
-        	            	, hideable: false
-        	            	, sortable: false
-        	            	, editor: new Ext.form.TextField({})
-        	             	, renderer : function(v, metadata, record) {
-
-        	            	 if(record.data.valid != undefined && !record.data.valid){
-        	            		 metadata.attr = ' style="color:#ff0000; text-decoration:line-through;';	   	    		
-
-        	            	 }
-        	            	 else{
-        	            		 metadata.attr = ' style="background:' + v + ';"';	   	    							
-        	            	 }
-
-        	            	 return v; 
-        	             	}
-        	             }
-        	            ]
+        	 , columns: this.gridColumns
+ 			 , plugins: [cellEditing]
+        	 , listeners: {
+ 	        	beforeedit: {
+ 	        		fn : function (editor, e) {
+ 	        	    	var t = Ext.apply({}, e);
+ 	        			this.currentRowRecordEdited = t.rowIdx;
+ 	        			var color = this.store.getAt(this.currentRowRecordEdited).data.color;
+ 	        			//TODO: Ripristinare colorFieldEditor ---> usa un plugin custom http://ryanpetrello.com/ext-ux/ColorField/
+ 	        			/*
+ 	        			var colorFieldEditor = new Ext.ux.ColorField({ value: color, msgTarget: 'qtip', fallback: true});
+ 	        			colorFieldEditor.on('select', function(f, val) {
+ 	        				this.store.getAt(this.currentRowRecordEdited).set('color', val);
+ 	        			}, this);
+ 	        			this.colorColumn.setEditor(colorFieldEditor);
+ 	        			*/
+ 	        		}
+ 	        		, scope : this
+ 	        	}
+ 	        	, keydown: {
+ 	        		fn: function(e) {
+ 		        		if (e.keyCode === 46) {
+ 		        			this.removeSelectedMeasures();
+ 		      	      	}      
+ 		      	    }
+ 	        		, scope: this
+ 	        	}
+ 	        	, mouseover: {
+ 	        		fn: function(e, t) {
+ 		        		this.targetRow = t; // for Drag&Drop
+ 			        }
+ 	        		, scope: this
+ 		        }
+ 	        	, mouseout: {
+ 	        		fn: function(e, t) {
+ 	        			this.targetRow = undefined;
+ 			        }
+         			, scope: this
+ 	        	}
+ 	        	, refresh: {
+ 	          		fn: function(e, t) {
+ 	          			var gridView = this.grid.getView();
+ 	          		
+ 	          		}
+         			, scope: this
+ 	        	}
+ 			}
+ 	        , type: 'measuresContainerPanel'
 
 		});
 		
@@ -325,14 +467,15 @@ Ext.extend(Sbi.cockpit.widgets.barchart.ChartSeriesPanel, Ext.Panel, {
 	
 	, initDropTarget: function() {
 		this.removeListener('render', this.initDropTarget, this);
-		var dropTarget = new Sbi.widgets.GenericDropTarget(this, {
+		this.dropTarget = new Sbi.widgets.GenericDropTarget(this, {
 			ddGroup: this.ddGroup || 'crosstabDesignerDDGroup'
 			, onFieldDrop: this.onFieldDrop
 		});
 	}
 
 	, onFieldDrop: function(ddSource) {
-		
+		Sbi.trace("[ChartSeriesPanel.onFieldDrop]: IN");
+		/*
 		if (ddSource.grid && ddSource.grid.type && ddSource.grid.type === 'queryFieldsPanel') {
 			// dragging from QueryFieldsPanel
 			this.notifyDropFromQueryFieldsPanel(ddSource);
@@ -347,11 +490,20 @@ Ext.extend(Sbi.cockpit.widgets.barchart.ChartSeriesPanel, Ext.Panel, {
 				   icon: Ext.MessageBox.WARNING
 			});
 		}
+		*/
+		if (ddSource.id === "field-grid-body") {
+			this.notifyDropFromQueryFieldsPanel(ddSource);
+		} else {
+			alert('Unknown drag source [' + ddSource.id + ']');
+		}
+		
+		Sbi.trace("[ChartSeriesPanel.onFieldDrop]: OUT");
+
 		
 	}
 	
 	, notifyDropFromQueryFieldsPanel: function(ddSource) {
-		var rows = ddSource.dragData.selections;
+		var rows = ddSource.dragData.records;
 		var i = 0;
 		for (; i < rows.length; i++) {
 			var aRow = rows[i];

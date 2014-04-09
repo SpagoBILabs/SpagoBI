@@ -51,14 +51,15 @@ Ext.extend(Sbi.cockpit.widgets.barchart.ChartCategoryPanel, Ext.Panel, {
 	
 	, initDropTarget: function() {
 		this.removeListener('render', this.initDropTarget, this);
-		var dropTarget = new Sbi.widgets.GenericDropTarget(this, {
+		this.dropTarget = new Sbi.widgets.GenericDropTarget(this, {
 			ddGroup: this.ddGroup
 			, onFieldDrop: this.onFieldDrop
 		});
 	}
 
 	, onFieldDrop: function(ddSource) {
-
+		Sbi.trace("[ChartCategoryPanel.onFieldDrop]: IN");
+		/*
 		if (ddSource.grid && ddSource.grid.type && ddSource.grid.type === 'queryFieldsPanel') {
 			this.notifyDropFromQueryFieldsPanel(ddSource);
 		} else {
@@ -69,10 +70,25 @@ Ext.extend(Sbi.cockpit.widgets.barchart.ChartCategoryPanel, Ext.Panel, {
 			   icon: Ext.MessageBox.WARNING
 			});
 		}
+		*/
+		
+		if (ddSource.id === "field-grid-body") {
+			this.notifyDropFromQueryFieldsPanel(ddSource);
+		} else {
+			Ext.Msg.show({
+				   title: LN('sbi.worksheet.designer.chartcategorypanel.cannotdrophere.title'),
+				   msg: LN('sbi.worksheet.designer.chartcategorypanel.cannotdrophere.unknownsource'),
+				   buttons: Ext.Msg.OK,
+				   icon: Ext.MessageBox.WARNING
+				});
+		}
+		
+		Sbi.trace("[ChartCategoryPanel.onFieldDrop]: OUT");
+
 	}
 	
 	, notifyDropFromQueryFieldsPanel: function(ddSource) {
-		var rows = ddSource.dragData.selections;
+		var rows = ddSource.dragData.records;
 		if (rows.length > 1) {
 			Ext.Msg.show({
 				   title:'Drop not allowed',
@@ -184,7 +200,7 @@ Ext.extend(Sbi.cockpit.widgets.barchart.ChartCategoryPanel, Ext.Panel, {
        		             '<div class="btnText"></div>',
        		         '</div>')
        		     , buttonSelector: '.delete-icon'
-       		  	 , iconCls: 'delete-icon'
+       		  	 , iconCls: 'delete-icon-tab'
        		     , text: '&nbsp;&nbsp;&nbsp;&nbsp;'
        		     , handler: this.removeCategory
        		     , scope: this
