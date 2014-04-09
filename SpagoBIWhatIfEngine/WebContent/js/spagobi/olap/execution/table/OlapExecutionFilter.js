@@ -141,6 +141,7 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionFilter', {
 			    			   click: {
 			    				   fn: function (event, html, eOpts) {
 			    					   var win =   Ext.create("Sbi.olap.execution.table.OlapExecutionFilterTree",{
+			    						   title: LN('sbi.olap.execution.table.filter.filter.title'),
 			    						   dimension: thisPanel.dimension,
 			    						   selectedMember: this.selectedMember
 			    					   });
@@ -236,12 +237,18 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionFilter', {
 				config.html=slicersValue;
 
 				//add the tooltip
-				config.on("render", function(){
-					Ext.create('Ext.tip.ToolTip', {
-						target: this.selectedValuePanel.el,
-						html: dimensionValueTooltip
-					});
-				},this);
+				config.listeners={
+						"render":{
+							fn: function(){
+								Ext.create('Ext.tip.ToolTip', {
+									target: this.selectedValuePanel.el,
+									html: dimensionValueTooltip
+								});
+								},
+							scope: this	
+						}
+				
+				};
 
 				//if there is a slicer initialize the local variable this.selectedMember
 				var selected =  Ext.create(Ext.ModelMgr.getModel('Sbi.olap.MemberModel'),slicers[0] );
@@ -262,16 +269,16 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionFilter', {
 			var member = members[0];
 
 			var isChanged = false;
-			if(member && member.raw){
-				if(this.selectedMember && this.selectedMember.raw){
-					isChanged = (this.selectedMember.raw.uniqueName != member.raw.uniqueName);
+			if(member){
+				if(this.selectedMember){
+					isChanged = (this.selectedMember.uniqueName != member.uniqueName);
 				}else{
 					isChanged=true;
 				}
 
 				this.selectedMember = member;
 				//updates the text
-				var name =  this.selectedMember.raw.name;
+				var name =  this.selectedMember.name;
 				if(name.length>this.memberMaxtextLength){
 					name = name.substring(0,this.memberMaxtextLength-2)+"..";
 				}

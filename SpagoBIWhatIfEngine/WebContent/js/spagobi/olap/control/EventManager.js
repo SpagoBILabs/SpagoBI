@@ -107,7 +107,7 @@ Ext.define('Sbi.olap.control.EventManager', {
      * @param {Sbi.olap.MemberModel} member the slicer value
      */
 	addSlicer: function(hierarchy, member, multiSelection){
-		this.olapController.addSlicer(hierarchy.raw.uniqueName, member.raw.uniqueName, multiSelection);
+		this.olapController.addSlicer(hierarchy.raw.uniqueName, member.uniqueName, multiSelection);
 	},
 	
     /**
@@ -144,7 +144,21 @@ Ext.define('Sbi.olap.control.EventManager', {
 	 */
 	placeMembersOnAxis: function(dimension, members){
 		this.olapController.placeMembersOnAxis(dimension.get("axis"), members);
+	},
+
+	/**
+	 * Place the members on the axis
+	 * @param {Sbi.olap:DimensionModel} dimension the dimension
+	 * @param {Array} The list of members to place in the axis
+	 */
+	showHelp: function(title, content, winConf){
+		if(!title){
+			title = LN('sbi.olap.help.title');
+		}
+		var win = Ext.create("Sbi.widgets.Help",Ext.apply({title: title, content: content}, winConf||{}));
+		win.show();
 	}
+	
 	
 
 	,executeService: function(){

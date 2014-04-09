@@ -131,6 +131,7 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionAxisDimension', {
 					click: {
 						fn: function (event, html, eOpts) {
 	    					   var win =   Ext.create("Sbi.olap.execution.table.OlapExecutionFilterTree",{
+	    						   title: LN('sbi.olap.execution.table.filter.dimension.title'),
 	    						   dimension: thisPanel.dimension,
 	    						   multiSelection: true
 	    					   });

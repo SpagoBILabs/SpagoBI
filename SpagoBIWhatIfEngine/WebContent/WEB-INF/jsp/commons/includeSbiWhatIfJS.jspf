@@ -13,6 +13,9 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 
 <!-- START-DEBUG -->
 
+
+<script type="text/javascript" src='../js/spagobi/widgets/Help.js'></script>
+
 <script type="text/javascript" src='../js/spagobi/olap/model/DimensionModel.js'></script>
 <script type="text/javascript" src='../js/spagobi/olap/model/HierarchyModel.js'></script>
 <script type="text/javascript" src='../js/spagobi/olap/model/MemberModel.js'></script>
