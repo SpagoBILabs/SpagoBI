@@ -108,7 +108,9 @@ public class JDBCDataProxy extends AbstractDataProxy {
 	        	if(getMaxResults() > 0){
 	        		stmt.setMaxRows(getMaxResults());
 	        	}
-				resultSet = stmt.executeQuery( getStatement() );
+	        	String sqlQuery = getStatement();
+	        	logger.debug("Executing query " + sqlQuery + " ...");
+				resultSet = stmt.executeQuery( sqlQuery );
 				
 			} catch (Throwable t) {
 				logger.error("Trovata!:",t);
