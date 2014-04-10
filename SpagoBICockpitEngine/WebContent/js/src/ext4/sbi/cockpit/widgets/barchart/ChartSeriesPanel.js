@@ -417,16 +417,19 @@ Ext.extend(Sbi.cockpit.widgets.barchart.ChartSeriesPanel, Ext.Panel, {
  	        	beforeedit: {
  	        		fn : function (editor, e) {
  	        	    	var t = Ext.apply({}, e);
- 	        			this.currentRowRecordEdited = t.rowIdx;
- 	        			var color = this.store.getAt(this.currentRowRecordEdited).data.color;
- 	        			//TODO: Ripristinare colorFieldEditor ---> usa un plugin custom http://ryanpetrello.com/ext-ux/ColorField/
- 	        			/*
- 	        			var colorFieldEditor = new Ext.ux.ColorField({ value: color, msgTarget: 'qtip', fallback: true});
- 	        			colorFieldEditor.on('select', function(f, val) {
- 	        				this.store.getAt(this.currentRowRecordEdited).set('color', val);
- 	        			}, this);
- 	        			this.colorColumn.setEditor(colorFieldEditor);
- 	        			*/
+ 	        	    	if (t.field === 'color'){
+ 	 	        			this.currentRowRecordEdited = t.rowIdx;
+ 	 	        			var color = this.store.getAt(this.currentRowRecordEdited).data.color;
+ 	 	        			//TODO: Ripristinare colorFieldEditor ---> usa un plugin custom http://ryanpetrello.com/ext-ux/ColorField/
+ 	 	        			
+ 	 	        			var colorFieldEditor = new Ext.ux.ColorField({ value: color, msgTarget: 'qtip', fallback: true});
+ 	 	        			colorFieldEditor.on('colorUpdate', function(f, val) {
+ 	 	        				this.store.getAt(this.currentRowRecordEdited).set('color',"#"+ f);
+ 	 	        			}, this);
+ 	 	        			//this.colorColumn.setEditor(colorFieldEditor);
+ 	 	        			e.column.setEditor(colorFieldEditor);
+ 	        	    	}
+
  	        		}
  	        		, scope : this
  	        	}
