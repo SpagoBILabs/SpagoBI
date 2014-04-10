@@ -575,14 +575,22 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 		
 		for(var i = 0; i < testFunctions.length; i++) {
 			this.setUp();
-			var result = this[testFunctions[i]]();
-			if(result == null) {
+			try {
+				this[testFunctions[i]]();
 				alert("Test [" + testFunctions[i] + "] succesfully executed");
-			} else {
-				alert("Test [" + testFunctions[i] + "] not passed: " + result);
+			} catch(e) {
+				alert("Test [" + testFunctions[i] + "] not passed: " + e);
 			}
+	
 			this.tearDown();
 		}
+//		try {
+//			this.setUp();
+//			this.removeWidgetTest();
+//			alert("Test [removeWidgetTest] succesfully executed");
+//		} catch(e) {
+//			alert("Test [removeWidgetTest] not passed: " + e);
+//		}
 		
 		Sbi.trace("[MainPanel.debug]: OUT");
 	}
@@ -606,62 +614,47 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 	 * @method
 	 * @private
 	 * 
+	 * Test setTemplate method of MainPanel class
 	 */
 	, initTest: function() {
-		if(this.widgetContainer.getWidgetsCount() != 3) {
-			return "Widgets count is [" + this.widgetContainer.getWidgetsCount() + "] " +
-					"while expected is [3]";
-		}
-		
-		if(Sbi.storeManager.getStoresCount() != 3) {
-			return "Stores count is [" + Sbi.storeManager.getStoresCount() + "] " +
-					"while expected is [3]";
-		}
-		
-		return null;
+		this.assertEqual(this.widgetContainer.getWidgetsCount(), 3, "Widgets count is wrong");
+		this.assertEqual(Sbi.storeManager.getStoresCount(), 3, "Stores count is wrong");
+	}
+	
+	/**
+	 * @method
+	 * @private
+	 *
+	 * Test resetAnalysisState method of MainPanel class
+	 */
+	, resetTest: function() {
+		this.resetAnalysisState();
+		this.assertEqual(this.widgetContainer.getWidgetsCount(), 0, "Widgets count is wrong");
+		this.assertEqual(Sbi.storeManager.getStoresCount(), 0, "Stores count is wrong");
 	}
 	
 	/**
 	 * @method
 	 * @private
 	 * 
+	 * Test removeWidget method of WidgetContainer class
 	 */
-	, resetTest: function() {
-		this.resetAnalysisState();
-		
-		if(this.widgetContainer.getWidgetsCount() != 0) {
-			return "Widgets count is [" + this.widgetContainer.getWidgetsCount() + "] " +
-					"while expected is [0]";
-		}
-		
-		if(Sbi.storeManager.getStoresCount() != 0) {
-			return "Stores count is [" + Sbi.storeManager.getStoresCount() + "] " +
-					"while expected is [0]";
-		}
-		
-		return null;
-	}
-	
 	, removeWidgetTest: function() {
 		var widget = this.widgetContainer.getWidgetManager().getWidgets()[0];
 		this.widgetContainer.removeWidget(widget);
 		
-		if(this.widgetContainer.getWidgetsCount() != 2) {
-			return "Widgets count is [" + this.widgetContainer.getWidgetsCount() + "] " +
-					"while expected is [2]";
-		}
-		
-		if(Sbi.storeManager.getStoresCount() != 2) {
-			return "Stores count is [" + Sbi.storeManager.getStoresCount() + "] " +
-					"while expected is [2]";
-		}
-		
-		return null;
+		this.assertEqual(this.widgetContainer.getWidgetsCount(), 2, "Widgets count is wrong");
+		this.assertEqual(this.widgetContainer.components.getCount(), 2, "Components count is wrong");
+		this.assertEqual(Sbi.storeManager.getStoresCount(), 2, "Stores count is wrong");
 	}
 	
 	// assets
 	
 	, assertEqual: function(x, y, msg) {
-		
+		if(x !== y) {
+			var msg = msg? msg + ": " : "";
+			msg += "expected value is  [" + x + "] while actual value is [" + y + "]";
+			throw msg;
+		}
 	}
 });

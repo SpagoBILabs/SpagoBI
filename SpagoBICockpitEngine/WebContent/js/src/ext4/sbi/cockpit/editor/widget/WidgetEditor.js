@@ -32,7 +32,6 @@ Sbi.cockpit.editor.widget.WidgetEditor = function(config) {
 			autoScroll: true,
 			items: [
 		        {
-		        	id: 'designToolsPanel',
 		        	region: 'west',
 		        	width: 275,
 		        	collapseMode:'mini',
@@ -43,7 +42,6 @@ Sbi.cockpit.editor.widget.WidgetEditor = function(config) {
 		        	items: [this.controlPanel]
 		        },
 		        {
-		        	id: 'sheetsContainerPanel',	  
 		        	region: 'center',
 		        	split: true,
 		        	collapseMode:'mini',

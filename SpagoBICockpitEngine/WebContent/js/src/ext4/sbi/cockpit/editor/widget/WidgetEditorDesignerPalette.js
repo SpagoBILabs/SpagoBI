@@ -9,7 +9,6 @@ Ext.ns("Sbi.cockpit.editor.widget");
 Sbi.cockpit.editor.widget.WidgetEditorDesignerPalette = function(config) { 
 
 	var defaultSettings = {
-		id: "buba",
 		border: false,
 		layout: "fit"
 	};
