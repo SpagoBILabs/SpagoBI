@@ -22,7 +22,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package it.eng.spagobi.tools.dataset.cache.impl.sqldbcache;
 
 
-import it.eng.spagobi.dataset.cache.test.TestConstants;
 import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.cache.CacheException;
@@ -39,19 +38,16 @@ import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.Record;
 import it.eng.spagobi.tools.dataset.common.metadata.FieldMetadata;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
+import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData.FieldType;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
-import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData.FieldType;
+import it.eng.spagobi.tools.dataset.exceptions.ParameterDsException;
 import it.eng.spagobi.tools.dataset.persist.PersistedTableManager;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Properties;
 import java.util.Random;
-import java.util.Set;
 
 import org.apache.log4j.Logger;
 
@@ -199,7 +195,15 @@ public class SQLDBCache implements ICache {
 		logger.debug("IN");
 		try {
 			if(dataSet != null) {
-				String dataSetSignature = dataSet.getSignature();
+				String dataSetSignature = null;
+			
+				try{
+					dataSetSignature = dataSet.getSignature();
+				}catch(ParameterDsException p){
+					logger.warn("Error on getting signature for dataset [ "+ dataSet.getLabel() +" ]. Error: " + 
+							p.getMessage());
+					return null; //doesn't cache data
+				}
 				dataStore = get(dataSetSignature);
 			} else {
 				logger.warn("Input parameter [dataSet] is null");
