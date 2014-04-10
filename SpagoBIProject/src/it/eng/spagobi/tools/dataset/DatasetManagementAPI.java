@@ -240,8 +240,9 @@ public class DatasetManagementAPI {
 						typePar=typePar.substring(6);						
 					}
 					JSONObject paramMetaDataJSON = new JSONObject();
-					String filterId =  "ds__"+dataSet.getName().replaceAll(" ", "_")+ "__" + namePar;
+					String filterId =  "ds__"+ dataSet.getLabel() + "__" + namePar;
 					paramMetaDataJSON.put("id", filterId);
+					paramMetaDataJSON.put("labelObj", dataSet.getLabel());
 					paramMetaDataJSON.put("nameObj", dataSet.getName());
 					paramMetaDataJSON.put("typeObj", "Dataset");
 					paramMetaDataJSON.put("namePar", namePar);						
