@@ -104,7 +104,7 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditorMainPanel, Ext.Panel, {
 			padding: Ext.isIE ? '10 0 0 35' : '0'
 			, ddGroup: 'worksheetDesignerDDGroup'
 			, tools:  [{
-				id: 'close'
+				type: 'close'
 			    , handler: this.removeDesigner
 			    , scope: this
 			    , qtip: LN('Sbi.cockpit.editor.widget.widgeteditormainpanel.tools.tt.remove')
@@ -208,7 +208,7 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditorMainPanel, Ext.Panel, {
 			html: msg || 'dummy widget designer'
 			, ddGroup: 'worksheetDesignerDDGroup'
 			, tools:  [{
-				id: 'close'
+				type: 'close'
 		        , handler: this.removeDesigner
 		        , scope: this
 		        , qtip: LN('Sbi.cockpit.editor.widget.widgeteditormainpanel.tools.tt.remove')

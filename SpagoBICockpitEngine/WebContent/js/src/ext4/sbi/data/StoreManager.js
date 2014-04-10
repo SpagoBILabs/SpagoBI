@@ -103,7 +103,6 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 		Sbi.trace("[StoreManager.resetConfiguration]: IN");
 				
 		this.resetStoreConfigurations(autoDestroy);
-		// TODO ...
 		this.resetAssociationConfigurations(autoDestroy);
 	    
 	    Sbi.trace("[StoreManager.resetConfiguration]: OUT");
@@ -239,6 +238,7 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 		for(var i = 0; i < conf.length; i++) {
 			this.addAssociation(conf[i]);
 		}
+		this.refreshAssociationGroups();
 		Sbi.trace("[StoreManager.setAssociationConfigurations]: OUT");
 	}
 	
@@ -301,6 +301,29 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 		Sbi.trace("[StoreManager.getAssociationConfiguration]: OUT");
 		
 		return associationConf;	
+	}
+	, refreshAssociationGroups: function() {
+		// mask container (non direttamente ma tramite lancio di evento onRefresh group)
+		// call refresh service on server
+		// implement a callback that 
+		//	- save the response of the server 
+		//	- unmask container (non direttamente ma tramite lancio di evento afterRefresh group)
+		
+		Ext.Ajax.request({
+		    //url: 'https://localhost:1447/SpagoBICockpitEngine/api/1.0/associations/json',
+			url: Sbi.config.serviceReg.getServiceUrl('setAssociations'),
+		    method: 'POST',
+		    params: {
+		        requestParam: 'notInRequestBody'
+		    },
+		    jsonData: Ext.JSON.encode(this.associations),
+		    success: function() {
+		        alert('success');
+		    },
+		    failure: function() {
+		    	alert('woops');
+		    }
+		});
 	}
 
 	// FILTERS CONFIGS
@@ -473,6 +496,10 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 		return this.stores.getRange();
 	}
 	
+	, getStoresCount: function() {
+		return this.stores.getCount();
+	}
+	
 	, getStore: function(storeId) {
 		return this.stores.get(storeId);
 	}
@@ -489,7 +516,7 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 	 * @method
 	 * 
 	 * @param {Ext.data.Store/String} store The store to rmove or its id.
-	 * @param {Boolean} autoDestroy (optional) True to automatically also destroy the each store after removal.
+	 * @param {Boolean} autoDestroy (optional) True to automatically also destroy the store after removal.
 	 * Defaults to the value of this Manager's {@link #autoDestroy} config.
 	 * 
 	 * @return {Ext.data.Store} the store removed. False if it was impossible to remove the store. null if the store after removal
@@ -511,7 +538,7 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 		
 		if(Ext.isString(store)) {
 			storeId = store;
-			store = this.stores.removeKey(store);
+			store = this.stores.removeAtKey(store);
 		} else {
 			storeId = store.id;
 			store = this.stores.remove(store);
@@ -597,6 +624,7 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 		} else if(Sbi.isNotExtObject(association)) {
 			Sbi.trace("[StoreManager.addAssociation]: Input parameter [association] is of type [Object]");	
 			this.associations.add(association);
+			alert(Sbi.toSource(association));
 			Sbi.debug("[StoreManager.addAssociation]: Association [" + Sbi.toSource(association) + "] succesfully added");
 		} else {
 			Sbi.error("[StoreManager.addStore]: Input parameter [association] of type [" + (typeof store) + "] is not valid");	

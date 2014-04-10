@@ -35,7 +35,7 @@ Sbi.cockpit.editor.widget.WidgetEditorFieldPalette = function(config) {
 	c.items = [this.grid];
 	if(this.displayRefreshButton === true) {
 		c.tools = [{ 
-		    id:'refresh',
+		    type:'refresh',
 		    qtip: LN('sbi.formbuilder.queryfieldspanel.tools.refresh'),
 		    handler: function(){
       			this.refreshFieldsList(null);

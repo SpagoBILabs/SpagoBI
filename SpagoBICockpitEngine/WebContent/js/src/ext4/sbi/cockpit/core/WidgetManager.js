@@ -96,8 +96,10 @@ Ext.extend(Sbi.cockpit.core.WidgetManager, Ext.util.Observable, {
      * @param {Sbi.cockpit.core.WidgetRuntime} The widget.
      */  
 	, unregister: function(w) {
+		Sbi.trace("[WidgetManager.unregister]: IN");
 		if(this.widgets.contains(w)) {
 			var storeId = w.getStoreId();
+			w.unboundStore();
 			this.widgets.remove(w);
 			Sbi.info("[WidgetManager.unregister]: widget [" + this.widgets.getKey(w) + "] succesfully unregistered. " +
 					"Now there are [" + this.widgets.getCount()+ "] registered widget(s)");
@@ -105,13 +107,12 @@ Ext.extend(Sbi.cockpit.core.WidgetManager, Ext.util.Observable, {
 				Sbi.storeManager.removeStore(storeId, true );
 				Sbi.info("[WidgetManager.unregister]: store [" + storeId + "] succesfully removed");
 			} else {
-				Sbi.info("[WidgetManager.unregister]: store [" + storeId + "] nor removed because there are other widgets using it");;
+				Sbi.info("[WidgetManager.unregister]: store [" + storeId + "] not removed because there are other widgets using it");;
 			}
-			
 		} else {
 			Sbi.warn("[WidgetManager.unregister]: widget [" + this.widgets.getKey(w) + "] is not registered in this manager.");
 		}
-		
+		Sbi.trace("[WidgetManager.unregister]: OUT");
 	}
 	
 	/**
