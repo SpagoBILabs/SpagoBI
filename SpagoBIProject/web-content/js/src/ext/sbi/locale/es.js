@@ -43,7 +43,7 @@ Sbi.locale.ln['sbi.generic.code'] = 'C\u00f3digo';
 Sbi.locale.ln['sbi.generic.type'] = 'Tipo';
 Sbi.locale.ln['sbi.generic.label'] = 'Etiqueta';
 Sbi.locale.ln['sbi.generic.engine'] = 'Motor';
-Sbi.locale.ln['sbi.generic.state'] = 'Stado';
+Sbi.locale.ln['sbi.generic.state'] = 'Estado';
 Sbi.locale.ln['sbi.generic.value'] = 'Valor';
 Sbi.locale.ln['sbi.generic.upload'] = 'Subir';
 Sbi.locale.ln['sbi.generic.download'] = 'Descargar';
@@ -571,15 +571,15 @@ Sbi.locale.ln['sbi.ds.failedToUpload']= 'Carga fallida';
 Sbi.locale.ln['sbi.ds.skip.checks']='Sobreescribir el archivo existente';
 Sbi.locale.ln['sbi.ds.changedon']='Modificado';
 
-Sbi.locale.ln['sbi.ds.metadata.msgKO']='The validation has found some errors. ';
-Sbi.locale.ln['sbi.ds.metadata.msgOK']='The validation didn\'t find errors.';
-Sbi.locale.ln['sbi.ds.metadata.addProperty']='Add Property';
-Sbi.locale.ln['sbi.ds.metadata.deleteProperty']='Delete Property';
-Sbi.locale.ln['sbi.ds.metadata.clear']='Clear all';
-Sbi.locale.ln['sbi.ds.metadata.column.title']='Columns Metadata';
-Sbi.locale.ln['sbi.ds.metadata.column.column']='Column';
-Sbi.locale.ln['sbi.ds.metadata.column.attribute']='Attribute';
-Sbi.locale.ln['sbi.ds.metadata.column.value']='Value';
+Sbi.locale.ln['sbi.ds.metadata.msgKO']='La validaci\u00f3n ha encontrado algunos errores. ';
+Sbi.locale.ln['sbi.ds.metadata.msgOK']='La validaci\u00f3n no encontr\u00f3 errores.';
+Sbi.locale.ln['sbi.ds.metadata.addProperty']='A\u00f1adir Propiedad';
+Sbi.locale.ln['sbi.ds.metadata.deleteProperty']='Cancelar Propiedad';
+Sbi.locale.ln['sbi.ds.metadata.clear']='Limpiar Todo';
+Sbi.locale.ln['sbi.ds.metadata.column.title']='Metadata Columnas';
+Sbi.locale.ln['sbi.ds.metadata.column.column']='Columna';
+Sbi.locale.ln['sbi.ds.metadata.column.attribute']='Atributos';
+Sbi.locale.ln['sbi.ds.metadata.column.value']='Valor';
 Sbi.locale.ln['sbi.ds.metadata.dataset.title']='Dataset Metadata';
 
 // DATASOURCE
@@ -730,7 +730,7 @@ Sbi.locale.ln['sbi.browser.mexport.massiveExportWizardOptionsPage.field.role.emp
 Sbi.locale.ln['sbi.browser.mexport.massiveExportWizardOptionsPage.field.documents.label'] = 'Los documentos de hoja de c\u00E1lculo para la exportaci\u00F3n';
 Sbi.locale.ln['sbi.browser.mexport.massiveExportWizardOptionsPage.msg.noDoc'] = 'No hay documentos de hoja de c\u00E1lculo para la exportaci\u00F3n';
 
-Sbi.locale.ln['sbi.browser.mexport.massiveExportWizardParametersPage.title'] = 'Par�metros';
+Sbi.locale.ln['sbi.browser.mexport.massiveExportWizardParametersPage.title'] = 'Par\u00E1metros';
 
 Sbi.locale.ln['Sbi.browser.mexport.massiveExportWizardTriggerPage.title'] = 'Trigger';
 Sbi.locale.ln['sbi.browser.progresspanel.title'] = 'Progreso de la exportaci\u00F3n masiva'; 
@@ -782,29 +782,29 @@ startDay : 1
 //===================================================================
 //COMMUNITY
 //===================================================================
-Sbi.locale.ln["sbi.community.title"]="Communities";
-Sbi.locale.ln["sbi.community.name"]="Name";
-Sbi.locale.ln["sbi.community.descr"]="Description";
-Sbi.locale.ln["sbi.community.owner"]="Owner";
+Sbi.locale.ln["sbi.community.title"]="Communidades";
+Sbi.locale.ln["sbi.community.name"]="Nombre";
+Sbi.locale.ln["sbi.community.descr"]="Descripci\u00F3";
+Sbi.locale.ln["sbi.community.owner"]="Propietario";
 Sbi.locale.ln["sbi.community.id"]="Id";
 
 
 //===================================================================
 //LAYERS CATALOGUE
 //===================================================================
-Sbi.locale.ln['sbi.layer.saved']= 'Layer correctly saved';
-Sbi.locale.ln['sbi.layer.deleted']= 'Layer correctly deleted';
-Sbi.locale.ln['sbi.tools.layer.validation.error']= 'There is some error in the layer configuration. Check the marked fields.';
-Sbi.locale.ln['sbi.tools.layer.props.name'] = "Layer name";
-Sbi.locale.ln['sbi.tools.layer.props.label'] = "Layer label";
-Sbi.locale.ln['sbi.tools.layer.props.zoom'] = "Layer zoom";
-Sbi.locale.ln['sbi.tools.layer.props.id'] = "Layer id";
-Sbi.locale.ln['sbi.tools.layer.props.central.point']= "Layer central point";
+Sbi.locale.ln['sbi.layer.saved']= 'Capa correctamente salvada';
+Sbi.locale.ln['sbi.layer.deleted']= 'Capa correctamente borrada';
+Sbi.locale.ln['sbi.tools.layer.validation.error']= 'Hay algunos errores en la capa de configuraci\u00F3n. Revisar los campos marcados.';
+Sbi.locale.ln['sbi.tools.layer.props.name'] = "Nomre Capa";
+Sbi.locale.ln['sbi.tools.layer.props.label'] = "Etiqueta Capa";
+Sbi.locale.ln['sbi.tools.layer.props.zoom'] = "Zoom Capa";
+Sbi.locale.ln['sbi.tools.layer.props.id'] = "Id Capa";
+Sbi.locale.ln['sbi.tools.layer.props.central.point']= "Punto Central Capa";
 Sbi.locale.ln['sbi.tools.layer.props.url']= "Url";
-Sbi.locale.ln['sbi.tools.layer.props.file']= "File";
-Sbi.locale.ln['sbi.tools.layer.baseLayer']= "Base Layer";
-Sbi.locale.ln['sbi.tools.layer.props.params']= "Params";
-Sbi.locale.ln['sbi.tools.layer.props.options']= "Options";
+Sbi.locale.ln['sbi.tools.layer.props.file']= "Archivo";
+Sbi.locale.ln['sbi.tools.layer.baseLayer']= "Capa Base";
+Sbi.locale.ln['sbi.tools.layer.props.params']= "Par\u00E1metros";
+Sbi.locale.ln['sbi.tools.layer.props.options']= "Opciones";
 
 
 
