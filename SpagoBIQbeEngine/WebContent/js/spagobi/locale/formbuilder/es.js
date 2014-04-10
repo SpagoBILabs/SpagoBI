@@ -34,6 +34,10 @@ Sbi.locale.ln['sbi.formbuilder.templateeditorpanel.title'] = 'Dise\u00F1ador de 
 Sbi.locale.ln['sbi.formtemplate.documenttemplatebuilder.documentfield.label'] = 'Documento';
 Sbi.locale.ln['sbi.formtemplate.documenttemplatebuilder.documentfield.emptytext'] = 'Seleccione un documento...';
 Sbi.locale.ln['sbi.formtemplate.documenttemplatebuilder.startwithdocument'] = 'Iniciar el dise\u00F1ador...';
+Sbi.locale.ln['sbi.formtemplate.documenttemplatebuilder.startwithdocument'] = 'Iniciar el designer desde documento seleccionado';
+Sbi.locale.ln['sbi.formtemplate.documenttemplatebuilder.datasetfield.label'] = 'dataset plano';
+Sbi.locale.ln['sbi.formtemplate.documenttemplatebuilder.datasetfield.emptytext'] = 'Seleccionar un dataset plano...';
+Sbi.locale.ln['sbi.formtemplate.documenttemplatebuilder.startwithdataset'] = 'Iniciar el designer desde el dataset seleccionado';
 
 Sbi.locale.ln['sbi.formbuilder.dynamicfiltereditorpanel.title'] = 'Los filtros din\u00E1micos';
 Sbi.locale.ln['sbi.formbuilder.dynamicfiltereditorpanel.emptymsg'] = 'Haga clic en el bot\u00F3n en la esquina superior derecha con el fin de agregar un filtro nuevo y din\u00E1mico';
