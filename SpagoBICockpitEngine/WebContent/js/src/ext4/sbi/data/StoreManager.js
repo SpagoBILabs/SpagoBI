@@ -317,12 +317,25 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 		        requestParam: 'notInRequestBody'
 		    },
 		    jsonData: Ext.JSON.encode(this.associations),
-		    success: function() {
-		        alert('success');
-		    },
-		    failure: function() {
-//		    	alert('woops');
-		    }
+		    success : function(response, options) {		
+		    	if(response !== undefined && response.statusText=="OK") {
+		    		var r = response.responseText || response.responseXML;
+					if(Sbi.isValorized(r)) {
+						if(r.indexOf("error.mesage.description")>=0){
+							Sbi.exception.ExceptionHandler.handleFailure(response);
+						} else {
+							alert(r);
+							var associationGroups = Ext.util.JSON.decode(r);								
+						}
+					} else {
+						Sbi.exception.ExceptionHandler.showErrorMessage('Server response body is empty', 'Service Error');
+					}
+				} else {
+					Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
+				}
+			},
+			failure: Sbi.exception.ExceptionHandler.handleFailure,
+			scope: this
 		});
 	}
 
