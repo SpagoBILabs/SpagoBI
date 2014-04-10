@@ -260,7 +260,7 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 			, method: 'POST'
 		}, 'cockpitServiceConf');
 		
-		alert(Sbi.config.serviceReg.getServiceUrl('setAssociations')); 
+		//alert(Sbi.config.serviceReg.getServiceUrl('setAssociations')); 
 		
 		/*
 		var testUrl = service.getServiceUrl({pathParams: {datasetLabel: 'ds__405004519'}, queryParams: {frutto: "mela"}});

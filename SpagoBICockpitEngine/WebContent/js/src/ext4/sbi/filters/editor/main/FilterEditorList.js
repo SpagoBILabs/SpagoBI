@@ -86,6 +86,7 @@ Ext.define('Sbi.filters.editor.main.FilterEditorList', {
 		   for (var i=0; i< this.filters.length; i++){
 				if (Sbi.isValorized(this.filters[i])) {
 					var el = [this.filters[i].id,  
+					          this.filters[i].labelObj,  
 					          this.filters[i].nameObj, 
 					          this.filters[i].typeObj,
 					          this.filters[i].namePar,
@@ -101,6 +102,7 @@ Ext.define('Sbi.filters.editor.main.FilterEditorList', {
 		this.store = new Ext.data.JsonStore({
 				fields: [
 				         'id',
+				         'labelObj',
 				         'nameObj', 
 				         'typeObj', 
 				         'namePar', 
@@ -216,6 +218,8 @@ Ext.define('Sbi.filters.editor.main.FilterEditorList', {
 	        columns: [
                 { dataIndex: 'id'
                 , hidden: true                  	            	
+	            },{dataIndex: 'label'
+                 , hidden: true                  	            	
 	            },{
 	              header: LN('sbi.cockpit.filter.editor.wizard.list.nameObj')
             	, width: "15%"
@@ -284,6 +288,7 @@ Ext.define('Sbi.filters.editor.main.FilterEditorList', {
     		var rec = this.store.getAt(i);
     		var filter = {
     				id:  rec.get('id') 
+    			  , labelObj: rec.get('labelObj')
     			  , typeObj: rec.get('typeObj')
     			  , nameObj: rec.get('nameObj')
     			  , namePar: rec.get('namePar')
@@ -315,7 +320,7 @@ Ext.define('Sbi.filters.editor.main.FilterEditorList', {
 	   
 		if(record.get('scope') == 'Relative'){ 
 			toReturn = new Ext.grid.CellEditor({field: this.comboEditor});
-			if (this.comboEditor.store.data.length == 0){
+			if (this.comboEditor.store.data.length == 1){
     			alert('Il documento che si sta gestendo non ha driver analitici associati. \n'+
     		      'Associare Driver Analitici al documento oppure definire filtri solo di tipo STATICO ! ');
 			}
