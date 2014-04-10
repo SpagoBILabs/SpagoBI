@@ -101,6 +101,15 @@ Sbi.locale.ln['sbi.worksheet.designer.chartseriespanel.cannotdrophere.measurealr
 Sbi.locale.ln['sbi.worksheet.designer.chartseriespanel.cannotdrophere.attributes'] = 'You cannot drag attributes into the chart\'s series';
 Sbi.locale.ln['sbi.worksheet.designer.chartseriespanel.cannotdrophere.postlinecalculated'] = 'You cannot use script-based calculated fields into the chart\'s series';
 Sbi.locale.ln['sbi.worksheet.designer.chartseriespanel.tools.tt.removeall'] = ['Remove all'];
+Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.name.none'] = 'none';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.name.sum'] = 'sum';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.name.avg'] = 'averege';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.name.max'] = 'maximum';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.name.min'] = 'minimum';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.name.count'] = 'count';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.name.countdistinct'] = 'count distinct';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.headers.function'] = 'Function';
+
 
 //===================================================================
 //Sbi.worksheet.designer.SeriesGroupingPanel
