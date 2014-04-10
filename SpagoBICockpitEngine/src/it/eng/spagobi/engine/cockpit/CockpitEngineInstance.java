@@ -10,6 +10,7 @@ import it.eng.qbe.query.Query;
 import it.eng.qbe.query.catalogue.QueryCatalogue;
 import it.eng.qbe.statement.IStatement;
 import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.engine.cockpit.association.AssociationManager;
 import it.eng.spagobi.services.proxy.EventServiceProxy;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.utils.DataSetUtilities;
@@ -34,6 +35,9 @@ import org.json.JSONObject;
  */
 public class CockpitEngineInstance extends AbstractEngineInstance {
 	
+	JSONObject template;
+	AssociationManager associationManager;
+	
 	//ENVIRONMENT VARIABLES
 	private String[] lstEnvVariables = {"SBI_EXECUTION_ID", "SBICONTEXT", "SBI_COUNTRY", "SBI_LANGUAGE", 
 										"SBI_SPAGO_CONTROLLER",  "SBI_EXECUTION_ROLE", "SBI_HOST", "country", "language", "user_id",
@@ -42,12 +46,13 @@ public class CockpitEngineInstance extends AbstractEngineInstance {
 										"DOCUMENT_IS_VISIBLE", "DOCUMENT_AUTHOR", "DOCUMENT_FUNCTIONALITIES", "DOCUMENT_VERSION",
 									   };
 	
-	JSONObject template;
+	
 	
 	public CockpitEngineInstance(String template, Map env) {
 		super( env );
 		try {
 			this.template = new JSONObject(template);
+			this.associationManager = new AssociationManager();
 		} catch (Throwable t) {
 			throw new SpagoBIRuntimeException("Impossible to parse template", t);
 		}
@@ -56,6 +61,12 @@ public class CockpitEngineInstance extends AbstractEngineInstance {
 	public JSONObject getTemplate() {
 		return template;
 	}
+	
+	public AssociationManager getAssociationManager() {
+		return associationManager;
+	}	
+	
+	
 	
 	public IDataSource getDataSource() {
 		return (IDataSource)this.getEnv().get(EngineConstants.ENV_DATASOURCE);
@@ -193,5 +204,5 @@ public class CockpitEngineInstance extends AbstractEngineInstance {
 
 	public void validate() throws SpagoBIEngineException {
 		throw new CockpitEngineRuntimeException("Unsupported method [validate]");		
-	}	
+	}
 }

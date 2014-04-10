@@ -62,8 +62,12 @@ public class AbstractCockpitEngineResource extends AbstractRestService {
 	 * @return the console engine instance
 	 */
 	public CockpitEngineInstance getEngineInstance() {
-		ExecutionSession es = getExecutionSession();
-		return (CockpitEngineInstance)es.getAttributeFromSession( EngineConstants.ENGINE_INSTANCE );
+		
+		CockpitEngineInstance engineInstance = (CockpitEngineInstance)getIOManager().getHttpSession().getAttribute(EngineConstants.ENGINE_INSTANCE);
+    	return engineInstance;
+//		ExecutionSession es = getExecutionSession();
+//		return (CockpitEngineInstance)es.getAttributeFromSession( EngineConstants.ENGINE_INSTANCE );
+//	
 	}
 
 	/* (non-Javadoc)
