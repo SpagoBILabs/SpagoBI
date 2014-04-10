@@ -321,7 +321,7 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 		        alert('success');
 		    },
 		    failure: function() {
-		    	alert('woops');
+//		    	alert('woops');
 		    }
 		});
 	}
@@ -559,8 +559,54 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 		return store;
 	}
 	
-	,loadStore: function(store, params){
-		store.load({params:params});
+	/**
+	 * @method
+	 * 
+	 * @param {Ext.data.Store/String} store The store to load or its id.
+	 * @param {Object} params parameters to pass to load method of the store
+	 * 
+	 * has been destroyed (see autoDestroy parameter).
+	 */
+	, loadStore: function(store, params){
+		
+		if(Sbi.isNotValorized(store)) {
+			Sbi.trace("[StoreManager.loadStore]: Parameter [store] is not valorized");
+			Sbi.trace("[StoreManager.loadStore]: OUT");
+			return false;
+		}
+		
+		var storeId = null;
+		
+		Sbi.trace("[StoreManager.loadStore]: typeof store: " + (typeof store));
+		
+		if(Ext.isString(store)) {
+			storeId = store;
+		} else {
+			storeId = store.id;
+		}
+		
+		var storeFilters = this.getFiltersForStore(storeId);
+		if (Sbi.isValorized(storeFilters)){
+			if (!Sbi.isValorized(params)) params = {};
+			
+			for(f in storeFilters ){
+				var obj = storeFilters[f];
+//				if(!(obj instanceof Object)){ //exclude remove() function
+				if (Sbi.isValorized(obj.namePar)){
+					var label = obj.namePar;
+					var value = null;
+					if (obj.scope == 'Relative'){
+						value = this.getContextValue(obj.initialValue);
+					}else{
+						value = obj.initialValue;
+					}				
+					
+					if (Sbi.isValorized(value)) params[label] = value;
+				}
+			}
+			
+		}
+		this.getStore(storeId).load({params:params});
 	}
 	
 	, getStoreIds: function() {
@@ -624,7 +670,6 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 		} else if(Sbi.isNotExtObject(association)) {
 			Sbi.trace("[StoreManager.addAssociation]: Input parameter [association] is of type [Object]");	
 			this.associations.add(association);
-			alert(Sbi.toSource(association));
 			Sbi.debug("[StoreManager.addAssociation]: Association [" + Sbi.toSource(association) + "] succesfully added");
 		} else {
 			Sbi.error("[StoreManager.addStore]: Input parameter [association] of type [" + (typeof store) + "] is not valid");	
@@ -748,7 +793,7 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 		return this.filters.get(filterId);
 	}
 	
-	, containsFilters: function(filter) {
+	, containsFilter: function(filter) {
 		if(Ext.isString(filter)) {
 			return this.filters.containsKey(filter);
 		} else {
@@ -777,6 +822,57 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 		
 		return filter;
 	}
+	
+	/**
+	 * @methods
+	 * 
+	 * Returns true if the store can be filtered, false otherwise
+	 * 
+	 *  @return {boolean} 
+	 */	
+	, isFilteredStore: function(s){
+		alert('isFilteredStore');
+	}
+	
+
+	/**
+	 * @methods
+	 * 
+	 * @param {Ext.data.Store/String} store The store id.
+	 *
+	 * Returns a list of filters for the store
+	 * 
+	 *  @return {Object[]} The  filters list
+	 */	
+	, getFiltersForStore: function(s){
+		var filters = [];
+		var lst = this.getFilters();
+		for(var i = 0, l = lst.length, s; i < l; i++) {
+			var f = lst[i];		
+			if (f.labelObj == s){
+				filters.push(f);					
+			}
+		}
+		return filters;
+	}
+	
+	, getContextValue: function(l){
+		
+		if (!Sbi.isValorized(Sbi.config.executionContext)){
+			Sbi.trace("[StoreManager.getContextValue]: Impossible to get context value for label [" + l + "]. ExcutionContext is null !! ");
+			return null;
+		}
+		
+		Sbi.trace("[StoreManager.getContextValue]: get context value for label [" + l + "] ... ");		
+		for (p in Sbi.config.executionContext){
+			var v = Sbi.config.executionContext[p];
+			if (p == l){
+				Sbi.trace("[StoreManager.getContextValue]: getted value [" + v + "]");
+				return v;
+			}
+		}	
+	}	
+
 
 	// -----------------------------------------------------------------------------------------------------------------
 	// init methods
