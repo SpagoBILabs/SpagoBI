@@ -32,8 +32,12 @@ Sbi.locale.ln['sbi.formbuilder.queryfieldspanel.fieldname'] = 'Nom du champ';
 Sbi.locale.ln['sbi.formbuilder.templateeditorpanel.title'] = 'Compteur de formulaire';
 
 Sbi.locale.ln['sbi.formtemplate.documenttemplatebuilder.documentfield.label'] = 'Document';
-Sbi.locale.ln['sbi.formtemplate.documenttemplatebuilder.documentfield.emptytext'] = 'S\u00E9lectionner un document...';
+Sbi.locale.ln['sbi.formtemplate.documenttemplatebuilder.datasetfield.emptytext'] = 'Sélectionnez un jeu de données plat ...';
 Sbi.locale.ln['sbi.formtemplate.documenttemplatebuilder.startwithdocument'] = 'D\u00E9marrer le concepteur...';
+Sbi.locale.ln['sbi.formtemplate.documenttemplatebuilder.selectsourceinfo.msg'] = 'Le document Smart Filter peut être conçu à partir d'un document Qbe ou, comme alternative, à partir d'un ensemble de données plate. S'il vous plaît sélectionner la source que vous préférez, puis cliquez sur le bouton correspondant.';
+Sbi.locale.ln['sbi.formtemplate.documenttemplatebuilder.datasetfield.label'] = 'Jeu de données plat';
+Sbi.locale.ln['sbi.formtemplate.documenttemplatebuilder.startwithdataset'] = 'Lancer le designer à partir du jeu de données sélectionné';
+
 
 Sbi.locale.ln['sbi.formbuilder.dynamicfiltereditorpanel.title'] = 'Filtre dynamique';
 Sbi.locale.ln['sbi.formbuilder.dynamicfiltereditorpanel.emptymsg'] = 'Cliquer sur un bouton en haut \u00E0 droite pour ajouter un filtre dynamique';
