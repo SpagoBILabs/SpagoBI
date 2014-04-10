@@ -204,21 +204,6 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 			//, absolute: false
 		});
 	
-		/*
-		var service = Sbi.config.serviceReg.registerService('loadDataSetField', {
-			name: 'loadDataSetField'
-			, description: 'Load all the fields of the specified dataset'
-			, resourcePath: 'dataset/{datasetLabel}/fields'
-		}, 'cockpitServiceConf');
-		*/
-		/*
-		Sbi.config.serviceReg.registerService('loadDataSetStore', {
-			name: 'loadDataSetStore'
-			, description: 'Load all the store of the specified dataset'
-			, resourcePath: 'dataset/{datasetLabel}/data'
-		}, 'cockpitServiceConf');
-		*/
-		
 		
 		Sbi.config.serviceReg.registerService('loadDataSetStore', {
 			name: 'loadDataSetStore'
@@ -268,6 +253,14 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 			, resourcePath: 'documents/{documentLabel}/parameters'
 		}, 'spagobiServiceConf');
 		
+		Sbi.config.serviceReg.registerService('setAssociations', {
+			name: 'setAssociations'
+			, description: 'Set the associations'
+			, resourcePath: 'associations'
+			, method: 'POST'
+		}, 'cockpitServiceConf');
+		
+		alert(Sbi.config.serviceReg.getServiceUrl('setAssociations')); 
 		
 		/*
 		var testUrl = service.getServiceUrl({pathParams: {datasetLabel: 'ds__405004519'}, queryParams: {frutto: "mela"}});
