@@ -73,9 +73,10 @@ public class GridMetadataContainerJSONSerializer extends JsonSerializer<GridMeta
 						while(iter.hasNext()){
 							String mapKey = iter.next();
 							String mapValue = object.get(mapKey);
-							String keyEscaped = StringEscapeUtils.escapeJavaScript(mapKey);
-							String valueEscaped = StringEscapeUtils.escapeJavaScript(mapValue);
-							objectescaped.put(keyEscaped, valueEscaped);
+//							String keyEscaped = StringEscapeUtils.escapeJavaScript(mapKey);
+//							String valueEscaped = StringEscapeUtils.escapeJavaScript(mapValue);
+//							objectescaped.put(keyEscaped, valueEscaped);
+							objectescaped.put(mapKey, mapValue);
 						}
 						jgen.writeObject(objectescaped);
 					}
