@@ -58,7 +58,7 @@ Sbi.locale.ln['sbi.qbe.datastorepanel.title'] = 'Risultati';
 
 Sbi.locale.ln['sbi.qbe.datastorepanel.grid.displaymsg'] = 'Visualizza {0} - {1} of {2}';
 Sbi.locale.ln['sbi.qbe.datastorepanel.grid.emptymsg'] = 'Nessun risultato';
-Sbi.locale.ln['sbi.qbe.datastorepanel.grid.emptywarningmsg'] = 'La query non ha restituito valori';
+Sbi.locale.ln['sbi.qbe.datastorepanel.grid.emptywarningmsg'] = 'La query non ha restituito valori. Verificare se ci sono filtri da impostare.';
 Sbi.locale.ln['sbi.qbe.datastorepanel.grid.beforeoverflow'] = 'Soglia massima del numero di record';
 Sbi.locale.ln['sbi.qbe.datastorepanel.grid.afteroverflow'] = 'superata';
 Sbi.locale.ln['sbi.qbe.datastorepanel.grid.beforepagetext'] = 'Pagina';

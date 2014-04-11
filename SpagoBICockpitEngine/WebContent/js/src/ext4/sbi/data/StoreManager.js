@@ -324,7 +324,7 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 						if(r.indexOf("error.mesage.description")>=0){
 							Sbi.exception.ExceptionHandler.handleFailure(response);
 						} else {
-							alert(r);
+//							alert(r);
 							var associationGroups = Ext.util.JSON.decode(r);								
 						}
 					} else {
@@ -622,7 +622,7 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 		try{
 			this.getStore(storeId).load({params:{filters: filtersParam}});
 		}catch(e){
-			Sbi.exception.ExceptionHandler.showErrorMessage(e,LN('sbi.behavioural.lov.test.error'));
+			Sbi.exception.ExceptionHandler.showErrorMessage(e,LN('sbi.qbe.datastorepanel.grid.emptywarningmsg'));
 			return false;
 		}
 		Sbi.trace("[StoreManager.loadStore]: store loaded!");

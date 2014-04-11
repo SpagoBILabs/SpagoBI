@@ -48,7 +48,7 @@ Sbi.locale.ln['sbi.qbe.datastorepanel.title'] = 'R\u00E9sultats';
 
 Sbi.locale.ln['sbi.qbe.datastorepanel.grid.displaymsg'] = 'Affiche {0} - {1} of {2}';
 Sbi.locale.ln['sbi.qbe.datastorepanel.grid.emptymsg'] = 'Aucune donn\u00E9e \u00E0 afficher';
-Sbi.locale.ln['sbi.qbe.datastorepanel.grid.emptywarningmsg'] = 'La requ\u00EAte ne renvoie aucune donn\u00E9e';
+Sbi.locale.ln['sbi.qbe.datastorepanel.grid.emptywarningmsg'] = 'La requête ne retourne pas de valeurs. Vérifiez s\'il existe des filtres à définir';
 Sbi.locale.ln['sbi.qbe.datastorepanel.grid.beforeoverflow'] = 'Limite max du nombre d\'enregistrements';
 Sbi.locale.ln['sbi.qbe.datastorepanel.grid.afteroverflow'] = 'd\u00E9pass\u00E9e';
 Sbi.locale.ln['sbi.qbe.datastorepanel.grid.beforepagetext'] = 'Page';
