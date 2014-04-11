@@ -115,35 +115,40 @@ Ext.define('Sbi.filters.editor.main.FilterEditorList', {
 			
 		  
 		
-		  if (Sbi.isValorized(this.filters) && this.filters.length == 0 ){			   
+//		  if (Sbi.isValorized(this.filters) && this.filters.length == 0 ){			   
 			  if (this.storesList !== null ){			 
 				   for (var i=0; i< this.storesList.length; i++){
-					   Ext.Ajax.request({
-							url: Sbi.config.serviceReg.getServiceUrl("loadDataSetParams", {
-								pathParams: {datasetLabel: this.storesList[i]}
-							}),
-							success : function(response, options) {							
-								if(response !== undefined && response.responseText !== undefined && response.statusText=="OK") {
-									if(response.responseText!=null && response.responseText!=undefined){
-										if(response.responseText.indexOf("error.mesage.description")>=0){
-											Sbi.exception.ExceptionHandler.handleFailure(response);
-										} else {
-											var r = Ext.util.JSON.decode(response.responseText);
-																			
-											if (Sbi.isValorized(r.results))
-												this.store.loadData(r.results,true);
+						   Ext.Ajax.request({
+								url: Sbi.config.serviceReg.getServiceUrl("loadDataSetParams", {
+									pathParams: {datasetLabel: this.storesList[i]}
+								}),
+								success : function(response, options) {							
+									if(response !== undefined && response.responseText !== undefined && response.statusText=="OK") {
+										if(response.responseText!=null && response.responseText!=undefined){
+											if(response.responseText.indexOf("error.mesage.description")>=0){
+												Sbi.exception.ExceptionHandler.handleFailure(response);
+											} else {
+												var r = Ext.util.JSON.decode(response.responseText);
+												if (Sbi.isValorized(r.results) && r.results.length > 0){
+													var f = r.results[0].id;	
+													var isFilterLoaded = Sbi.isValorized(Sbi.storeManager.getFilter(f));
+													if (Sbi.isValorized(r.results) && !isFilterLoaded){
+														this.store.loadData(r.results,true);
+													}
+												}
+											}
 										}
+									} else {
+										Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
 									}
-								} else {
-									Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
-								}
-							},
-							scope: this,
-							failure: Sbi.exception.ExceptionHandler.handleFailure
-						});				   
-					}
+								},
+								scope: this,
+								failure: Sbi.exception.ExceptionHandler.handleFailure
+							});	
+					   }
+					
 			   }		  
-		  }		
+//		  }		
 		  
 		  //analitycal driver store (for combo of initial value)		  
 		  var storeConfig = {
@@ -336,5 +341,7 @@ Ext.define('Sbi.filters.editor.main.FilterEditorList', {
        }
         return value;
     }
+   
+   
     
 });

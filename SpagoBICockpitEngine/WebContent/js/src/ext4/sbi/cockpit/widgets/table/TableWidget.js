@@ -155,7 +155,13 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 		this.fireEvent('contentloaded');
 		
 		var recordsNumber = this.getStore().getTotalCount();
-     	if(recordsNumber == 0) {
+		var isException = false;
+		if (recordsNumber == 1){
+			var e = this.getStore().getAt(0).raw;
+			if (Sbi.isValorized(e) && Sbi.isValorized(e.errors))
+				isException = true;
+		}
+     	if(recordsNumber == 0 || isException) {
      		Ext.Msg.show({
 				   title: LN('sbi.qbe.messagewin.info.title'),
 				   msg: LN('sbi.qbe.datastorepanel.grid.emptywarningmsg'),
@@ -174,6 +180,7 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 		if(this.enablePaging === false) return;
 		
 		var recordsNumber = this.getStore().getTotalCount();
+		
 		if (this.queryLimit.maxRecords !== undefined && recordsNumber > this.queryLimit.maxRecords) {
      		if (this.queryLimit.isBlocking) {
      			Sbi.exception.ExceptionHandler.showErrorMessage(this.warningMessageItem, LN('sbi.qbe.messagewin.error.title'));

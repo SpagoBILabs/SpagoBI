@@ -57,7 +57,7 @@ Sbi.locale.ln['sbi.qbe.datastorepanel.title'] = 'Results';
 
 Sbi.locale.ln['sbi.qbe.datastorepanel.grid.displaymsg'] = 'Displaying {0} - {1} of {2}';
 Sbi.locale.ln['sbi.qbe.datastorepanel.grid.emptymsg'] = 'No data to display';
-Sbi.locale.ln['sbi.qbe.datastorepanel.grid.emptywarningmsg'] = 'Query returns no data';
+Sbi.locale.ln['sbi.qbe.datastorepanel.grid.emptywarningmsg'] = 'Query returns no data. Check if there are some filters to define.';
 Sbi.locale.ln['sbi.qbe.datastorepanel.grid.beforeoverflow'] = 'Max records number limit';
 Sbi.locale.ln['sbi.qbe.datastorepanel.grid.afteroverflow'] = 'exceeded';
 Sbi.locale.ln['sbi.qbe.datastorepanel.grid.beforepagetext'] = 'Page';
