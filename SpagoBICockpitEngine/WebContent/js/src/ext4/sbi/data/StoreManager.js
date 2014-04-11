@@ -604,7 +604,6 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 			
 			for(f in storeFilters ){
 				var obj = storeFilters[f];
-//				if(!(obj instanceof Object)){ //exclude remove() function
 				if (Sbi.isValorized(obj.namePar)){
 					var label = obj.namePar;
 					var value = null;
@@ -619,7 +618,14 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 			}
 			
 		}
-		this.getStore(storeId).load({params:params});
+		var filtersParam =  Ext.JSON.encode(params);
+		try{
+			this.getStore(storeId).load({params:{filters: filtersParam}});
+		}catch(e){
+			Sbi.exception.ExceptionHandler.showErrorMessage(e,LN('sbi.behavioural.lov.test.error'));
+			return false;
+		}
+		Sbi.trace("[StoreManager.loadStore]: store loaded!");
 	}
 	
 	, getStoreIds: function() {
@@ -983,6 +989,12 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 		testStore.storeType = 'ext';
 		return testStore;
     }
+    
+	// -----------------------------------------------------------------------------------------------------------------
+	// utility methods
+	// -----------------------------------------------------------------------------------------------------------------
+
+
 });
 	
 	
