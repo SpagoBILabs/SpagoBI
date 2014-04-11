@@ -26,6 +26,7 @@ import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData.FieldType;
 import it.eng.spagobi.tools.dataset.common.query.AggregationFunctions;
+import it.eng.spagobi.tools.dataset.exceptions.ParameterDsException;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
@@ -132,13 +133,14 @@ public class DataSetResource extends AbstractSpagoBIResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public String getDataStore(@Context HttpServletRequest req
 			, @PathParam("label") String label
+			, @QueryParam("filters") @DefaultValue("{}") String filters
 			, @QueryParam("offset") @DefaultValue("-1") int offset
 			, @QueryParam("fetchSize") @DefaultValue("-1") int fetchSize
 			, @QueryParam("maxResults") @DefaultValue("-1") int maxResults) {
 		logger.debug("IN");
 		try {
 		
-			IDataStore dataStore = getDatasetManagementAPI().getDataStore(label, offset, fetchSize, maxResults);
+			IDataStore dataStore = getDatasetManagementAPI().getDataStore(label, offset, fetchSize, maxResults, filters);
 			Map<String, Object> properties = new HashMap<String, Object>();
 			JSONArray fieldOptions = new JSONArray("[{id: 1, options: {measureScaleFactor: 0.5}}]");
 			properties.put(JSONDataWriter.PROPERTY_FIELD_OPTION, fieldOptions);
@@ -146,7 +148,9 @@ public class DataSetResource extends AbstractSpagoBIResource {
 			JSONObject gridDataFeed = (JSONObject)dataSetWriter.write(dataStore);
 			
 			return gridDataFeed.toString();	
-		} catch(Throwable t) {
+		}catch(ParameterDsException p){
+			throw new ParameterDsException(p.getMessage());
+		}catch(Throwable t) {
 			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", t);
 		} finally {			
 			logger.debug("OUT");
