@@ -37,30 +37,26 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IConfigDAO;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.commons.utilities.UserUtilities;
+import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.cache.CacheManager;
-import it.eng.spagobi.tools.dataset.cache.CacheFactory;
 import it.eng.spagobi.tools.dataset.cache.ICache;
 import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.work.SQLDBCacheWriteWork;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
-import it.eng.spagobi.tools.dataset.common.metadata.FieldMetadata;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
-import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
-import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData.FieldType;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
+import it.eng.spagobi.tools.dataset.exceptions.ParameterDsException;
 import it.eng.spagobi.tools.dataset.utils.DataSetUtilities;
-import it.eng.spagobi.tools.dataset.utils.DatasetMetadataParser;
-import it.eng.spagobi.tools.dataset.utils.DatasetMetadataXMLTemplateLoaderFactory;
-import it.eng.spagobi.tools.dataset.utils.IDatasetMetadataXMLTemplateLoader;
-import it.eng.spagobi.utilities.assertion.Assert;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.json.JSONUtils;
 import it.eng.spagobi.utilities.threadmanager.WorkManager;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
@@ -264,17 +260,24 @@ public class DatasetManagementAPI {
 	}
 	
 	
-	public IDataStore getDataStore(String label, int offset, int fetchSize, int maxResults) {
+	public IDataStore getDataStore(String label, int offset, int fetchSize, int maxResults, String filters) {
 		try {
 		
 			IDataSet dataSet = this.getDataSetDAO().loadDataSetByLabel(label);
-		
-			ICache cache = CacheManager.getCache();
-			IDataStore cachedResultSet = cache.get(dataSet);
+			Map reqParams = getParametersMap(filters);
+			List dsParams = getDataSetParameters(label);
+			if (dsParams.size() >  reqParams.size()){
+				String emptyFields = getEmptyFields(reqParams, dsParams);
+				throw new ParameterDsException("The following parameters have no value [" + emptyFields + "]");				
+			}
 			
+			ICache cache = CacheManager.getCache();
+			IDataStore cachedResultSet = cache.get(dataSet);			
 			
 			IDataStore dataStore = null;
 			if (cachedResultSet == null){
+				
+				dataSet.setParamsMap(reqParams);
 				dataSet.loadData(offset, fetchSize, maxResults);
 				dataStore = dataSet.getDataStore();
 				
@@ -290,11 +293,50 @@ public class DatasetManagementAPI {
 			//IDataStore dataStore = dataSet.getDataStore();
 			
 			return dataStore;
-		} catch(Throwable t) {
+		}catch(ParameterDsException p){
+			throw new ParameterDsException(p.getMessage());
+		}catch(Throwable t) {
 			throw new RuntimeException("An unexpected error occured while executing method", t);
 		} finally {			
 			logger.debug("OUT");
 		}	
+	}
+	
+	private static Map getParametersMap(String filters){
+		Map toReturn = new HashMap();
+		filters = JSONUtils.escapeJsonString(filters);
+		JSONObject jsonFilters  = ObjectUtils.toJSONObject(filters);	
+		Iterator keys = jsonFilters.keys();
+		try{
+	        while( keys.hasNext() ){
+	            String key = (String)keys.next();            
+	            String value = jsonFilters.getString(key);
+	            toReturn.put(key, value);
+	        }
+		} catch(Throwable t) {
+			throw new SpagoBIRuntimeException("An unexpected exception occured while loading spagobi filters [" + filters + "]", t);
+		}	
+		return toReturn;
+	}
+	
+	private static String getEmptyFields(Map reqParams, List dsParams){
+		String toReturn = "";
+
+		for (Iterator iterator = dsParams.iterator(); iterator.hasNext();) {
+			JSONObject obj = (JSONObject) iterator.next();
+			try{
+				String key = obj.getString("namePar");
+				if (reqParams.get(key) == null) {			
+					toReturn += key;
+					if(iterator.hasNext()){
+						toReturn += ", ";
+					}
+				}
+			} catch(Throwable t) {
+				throw new SpagoBIRuntimeException("An unexpected exception occured while checking spagobi filters ", t);
+			}
+		}
+		return toReturn;
 	}
 	
 	private static String getSpagoBIConfigurationProperty(String propertyName) {
