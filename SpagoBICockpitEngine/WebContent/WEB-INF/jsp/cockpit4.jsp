@@ -211,6 +211,13 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 			, resourcePath: 'datasets/{datasetLabel}/data'
 		}, 'spagobiServiceConf');
 		
+		Sbi.config.serviceReg.registerService('loadChartDataSetStore', {
+			name: 'loadChartDataSetStore'
+			, description: 'Load the store of the specified dataset for a chart widget'
+			, resourcePath: 'datasets/{datasetLabel}/chartData'
+			, method: 'POST'
+		}, 'spagobiServiceConf');
+		
 		Sbi.config.serviceReg.registerService('loadDataSetField', {
 			name: 'loadDataSetField'
 			, description: 'Load all the fields of the specified dataset'

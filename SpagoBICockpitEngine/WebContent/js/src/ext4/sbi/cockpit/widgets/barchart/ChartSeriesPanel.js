@@ -51,6 +51,8 @@ Sbi.cockpit.widgets.barchart.ChartSeriesPanel = function(config) {
     this.on('render', this.initDropTarget, this);
     this.on('afterLayout', this.setActiveItem, this);
     
+    thisPanel = this;
+    
 };
 
 Ext.extend(Sbi.cockpit.widgets.barchart.ChartSeriesPanel, Ext.Panel, {
@@ -111,181 +113,7 @@ Ext.extend(Sbi.cockpit.widgets.barchart.ChartSeriesPanel, Ext.Panel, {
 		});
 	}
 	
-	, initColumnModel: function(c) {
-		/*
-	    var serieNameColumn = new Ext.grid.Column({
-	    	header: LN('sbi.worksheet.designer.chartseriespanel.columns.seriename')
-	    	, dataIndex: 'seriename'
-	    	, hideable: false
-	    	, sortable: false
-	    	, editor: new Ext.form.TextField({})
-		, renderer : function(v, metadata, record) {
-		  	
-			if(record.data.valid != undefined && !record.data.valid){
-				metadata.attr = ' style="color:#ff0000; text-decoration:line-through;';	   	    		
-				
-			}
-			else{
-				metadata.attr = ' style="background:' + v + ';"';	   	    							
-			}
-			
-			return v; 
-		}
-	    });
-		
-	    var fieldColumn = new Ext.grid.Column({
-	    	header: LN('sbi.worksheet.designer.chartseriespanel.columns.queryfield')
-	    	, dataIndex: 'alias'
-	    	, hideable: false
-	    	, sortable: false
-	        , scope: this
-
-	    });
-	    
-	    var aggregatorColumn = new Ext.grid.Column({
-	    	 header: LN('sbi.qbe.selectgridpanel.headers.function')
-	         , dataIndex: 'funct'
-	         , editor: new Ext.form.ComboBox({
-		         allowBlank: true,
-		         editable: false,
-		         store: this.aggregationFunctionsStore,
-		         displayField: 'nome',
-		         valueField: 'funzione',
-		         typeAhead: true,
-		         queryMode: 'local',
-		         triggerAction: 'all',
-		         autocomplete: 'off',
-		         emptyText: LN('sbi.qbe.selectgridpanel.aggfunc.editor.emptymsg'),
-		         selectOnFocus: true
-	         })
-		     , hideable: true
-		     , hidden: false
-		     , width: 50
-		     , sortable: false
-	    });
-		
-		this.colorColumn = new Ext.grid.Column({
-			header: LN('sbi.worksheet.designer.chartseriespanel.columns.color')
-			, width: 60
-			, dataIndex: 'color'
-			, editor: new Ext.form.TextField({}) // only in order to make the column editable: the editor is built 
-			 									 // on the grid's beforeedit event 
-			, renderer : function(v, metadata, record) {
-				metadata.attr = ' style="background:' + v + ';"';	   	
-				return v;  
-	       }
-		});
-		
-	    var showCommaCheckColumn = new Ext.ux.CheckColumn({
-    		header: LN('sbi.worksheet.designer.chartseriespanel.columns.showcomma')
-    		, tooltip: LN('sbi.worksheet.designer.chartseriespanel.columns.showcomma')
-    		, dataIndex: 'showcomma'
-    		, hideable: false
-    		, hidden: false	
-    		, width: 30
-    		, sortable: false
-    	});
-	    
-	    var precisionColumn = new Ext.grid.Column({
-	    	header: LN('sbi.worksheet.designer.chartseriespanel.columns.precision')
-	    	, tooltip: LN('sbi.worksheet.designer.chartseriespanel.columns.precision')
-	    	, dataIndex: 'precision'
-	    	, hideable: false
-	    	, sortable: false
-	    	, width: 30
-	        , editor: new Ext.form.NumberField({
-	        	value: 2
-	        	, minValue: 0
-	        	, maxValue: 10
-	        })
-	    });
-		
-	    var suffixColumn = new Ext.grid.Column({
-	    	header: LN('sbi.worksheet.designer.chartseriespanel.columns.suffix')
-	    	, tooltip: LN('sbi.worksheet.designer.chartseriespanel.columns.suffix')
-	    	, dataIndex: 'suffix'
-	    	, hideable: false
-	    	, sortable: false
-	    	, width: 30
-	        , editor: new Ext.form.TextField({})
-	    });
-	    
-		var columns = [serieNameColumn, fieldColumn, aggregatorColumn];
-		if (this.displayColorColumn)  {
-			columns.push(this.colorColumn);
-		}
-		columns.push(showCommaCheckColumn);
-		columns.push(precisionColumn);
-		columns.push(suffixColumn);
-	    
-		this.plgins = [showCommaCheckColumn];
-		
-	    this.cm = new Ext.grid.ColumnModel(columns);
-	    */
-	}
-	
 	, initGrid: function (c) {
-		
-		//TODO: REFACTORIZE THIS GRID, must be changed to Ext4 Configuration
-		/*
-		this.grid = new Ext.grid.EditorGridPanel({
-	        store: this.store
-	        , border: false
-	        , cm: this.cm
-	        , selModel: Ext.selection.RowModel()
-	        , enableDragDrop: true
-	        , ddGroup: this.ddGroup || 'crosstabDesignerDDGroup'
-		    , layout: 'fit'
-		    , cls: 'chart-series-panel'
-		    , viewConfig: {
-		    	forceFit: true
-		    }
-			, plugins: this.plgins
-	        , listeners: {
-	        	beforeedit: {
-	        		fn : function (e) {
-	        	    	var t = Ext.apply({}, e);
-	        			this.currentRowRecordEdited = t.row;
-	        			var color = this.store.getAt(this.currentRowRecordEdited).data.color;
-	        			var colorFieldEditor = new Ext.ux.ColorField({ value: color, msgTarget: 'qtip', fallback: true});
-	        			colorFieldEditor.on('select', function(f, val) {
-	        				this.store.getAt(this.currentRowRecordEdited).set('color', val);
-	        			}, this);
-	        			this.colorColumn.setEditor(colorFieldEditor);
-	        		}
-	        		, scope : this
-	        	}
-	        	, keydown: {
-	        		fn: function(e) {
-		        		if (e.keyCode === 46) {
-		        			this.removeSelectedMeasures();
-		      	      	}      
-		      	    }
-	        		, scope: this
-	        	}
-	        	, mouseover: {
-	        		fn: function(e, t) {
-		        		this.targetRow = t; // for Drag&Drop
-			        }
-	        		, scope: this
-		        }
-	        	, mouseout: {
-	        		fn: function(e, t) {
-	        			this.targetRow = undefined;
-			        }
-        			, scope: this
-	        	}
-	        	, refresh: {
-	          		fn: function(e, t) {
-	          			var gridView = this.grid.getView();
-	          		
-	          		}
-        			, scope: this
-	        	}
-			}
-	        , type: 'measuresContainerPanel'
-		});
-		*/
 		
 		var serieNameColumn =  {
             	text: LN('sbi.worksheet.designer.chartseriespanel.columns.seriename')
@@ -350,7 +178,6 @@ Ext.extend(Sbi.cockpit.widgets.barchart.ChartSeriesPanel, Ext.Panel, {
 		       }
 			};
 		
-		//TODO: TO CHECK USED AS CHECKBOX SELECTION COLUMN
 		var showCommaCheckColumn = {
 				xtype: 'checkcolumn',
 	    		text: LN('sbi.worksheet.designer.chartseriespanel.columns.showcomma')
@@ -409,6 +236,13 @@ Ext.extend(Sbi.cockpit.widgets.barchart.ChartSeriesPanel, Ext.Panel, {
 			 , cls: 'chart-series-panel'
 			 , viewConfig: {
 				  forceFit: true
+				  ,listeners : {
+	                   'itemkeydown' : function(view, record, item, index, key) {
+	                       if (key.getKey() == 46) {//the delete button
+	                          thisPanel.removeSelectedMeasures();
+	                       }  
+	                   }
+	               }
 			 }
         	 , selModel: Ext.selection.RowModel()
         	 , columns: this.gridColumns
@@ -420,26 +254,16 @@ Ext.extend(Sbi.cockpit.widgets.barchart.ChartSeriesPanel, Ext.Panel, {
  	        	    	if (t.field === 'color'){
  	 	        			this.currentRowRecordEdited = t.rowIdx;
  	 	        			var color = this.store.getAt(this.currentRowRecordEdited).data.color;
- 	 	        			//TODO: Ripristinare colorFieldEditor ---> usa un plugin custom http://ryanpetrello.com/ext-ux/ColorField/
  	 	        			
  	 	        			var colorFieldEditor = new Ext.ux.ColorField({ value: color, msgTarget: 'qtip', fallback: true});
  	 	        			colorFieldEditor.on('colorUpdate', function(f, val) {
  	 	        				this.store.getAt(this.currentRowRecordEdited).set('color',"#"+ f);
  	 	        			}, this);
- 	 	        			//this.colorColumn.setEditor(colorFieldEditor);
  	 	        			e.column.setEditor(colorFieldEditor);
  	        	    	}
 
  	        		}
  	        		, scope : this
- 	        	}
- 	        	, keydown: {
- 	        		fn: function(e) {
- 		        		if (e.keyCode === 46) {
- 		        			this.removeSelectedMeasures();
- 		      	      	}      
- 		      	    }
- 	        		, scope: this
  	        	}
  	        	, mouseover: {
  	        		fn: function(e, t) {
@@ -478,22 +302,6 @@ Ext.extend(Sbi.cockpit.widgets.barchart.ChartSeriesPanel, Ext.Panel, {
 
 	, onFieldDrop: function(ddSource) {
 		Sbi.trace("[ChartSeriesPanel.onFieldDrop]: IN");
-		/*
-		if (ddSource.grid && ddSource.grid.type && ddSource.grid.type === 'queryFieldsPanel') {
-			// dragging from QueryFieldsPanel
-			this.notifyDropFromQueryFieldsPanel(ddSource);
-		} else if (ddSource.grid && ddSource.grid.type && ddSource.grid.type === 'measuresContainerPanel') {
-			// dragging from MeasuresContainerPanel
-			this.notifyDropFromMeasuresContainerPanel(ddSource);
-		} else if (ddSource.grid && ddSource.grid.type && ddSource.grid.type === 'attributesContainerPanel') {
-			Ext.Msg.show({
-				   title: LN('sbi.worksheet.designer.chartseriespanel.cannotdrophere.title'),
-				   msg: LN('sbi.worksheet.designer.chartseriespanel.cannotdrophere.attributes'),
-				   buttons: Ext.Msg.OK,
-				   icon: Ext.MessageBox.WARNING
-			});
-		}
-		*/
 		if (ddSource.id === "field-grid-body") {
 			this.notifyDropFromQueryFieldsPanel(ddSource);
 		} else {
@@ -502,7 +310,6 @@ Ext.extend(Sbi.cockpit.widgets.barchart.ChartSeriesPanel, Ext.Panel, {
 		
 		Sbi.trace("[ChartSeriesPanel.onFieldDrop]: OUT");
 
-		
 	}
 	
 	, notifyDropFromQueryFieldsPanel: function(ddSource) {
