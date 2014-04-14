@@ -86,6 +86,13 @@ td[contenteditable="true"]:focus {
     border: 1px solid aqua;
     cursor: text;
 }
+
+.odd-row td{
+	background-color: #F6F6F7 !important;
+}
+.even-row td{
+	background-color: #FFF !important;
+}
 .dimension-title{
 	border-top: 1px solid #99bce8;
 	border-right: 1px solid #99bce8;
