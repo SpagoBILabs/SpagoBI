@@ -37,22 +37,7 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionColumn', {
 		}
 		this.callParent(arguments);
 	},
-	
-	/**
-	 * Builds the panel with the move left button
-	 */
-	buildUpPanelConf: function(){
-		var conf = this.callParent();
-		return Ext.apply(conf,{height: 13, width: 13, cls: 'left-arrow'});
-	},
-	
-	/**
-	 * Builds the panel with the move right button
-	 */
-	buildDownPanelConf: function(){
-		var conf = this.callParent();
-		return Ext.apply(conf,{height: 10,width: 13, cls: 'right-arrow'});
-	},
+
 	/**
 	 * Builds the central panel with the name of the Dimension
 	 */

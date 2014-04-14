@@ -28,13 +28,15 @@ public class SbiDimension {
 	private int selectedHierarchyPosition;
 	private int axis;
 	private int measure;
+	private int positionInAxis;
 	
-	public SbiDimension(Dimension dimension, int axis) {
+	public SbiDimension(Dimension dimension, int axis, int positionInAxis) {
 		super();
 		this.name = dimension.getName();
 		this.uniqueName = dimension.getUniqueName();
 		this.axis = axis;
 		this.hierarchies = new ArrayList<SbiHierarchy>();
+		this.positionInAxis = positionInAxis;
 		
 		try {
 			this.measure = dimension.getDimensionType().equals(Dimension.Type.MEASURE)?1:0;
@@ -86,6 +88,9 @@ public class SbiDimension {
 		return measure;
 	}
 
-	
+	public int getPositionInAxis() {
+		return positionInAxis;
+	}
+
 	
 }

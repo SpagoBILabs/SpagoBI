@@ -44,37 +44,20 @@
 	/* IE8 */
 }
 
-.up-arrow {
-	background-image: url(../img/up.png);
-	background-position: top center;
+.swap-column-panel {
+	background-image: url(../img/swap-column-panel.png);
+	background-position: center center;
 	background-repeat: no-repeat;
+	margin: 2px;
 }
 
-.down-arrow {
-	background-image: url(../img/down.png);
-	background-position: bottom center;
+.swap-row-panel {
+	background-image: url(../img/swap-row-panel.png);
+	background-position: center center;
 	background-repeat: no-repeat;
+	margin: 2px;
 }
 
-.left-arrow {
-	background-image: url(../img/left.png);
-	background-position: left;
-	background-repeat: no-repeat;
-}
-
-.right-arrow {
-	background-image: url(../img/right.png);
-	background-position: right;
-	background-repeat: no-repeat;
-}
-
-
-.multi-hierarchy {
-	background-image: url(../img/arrow.gif);
-	background-position: right;
-	background-repeat: no-repeat;
-	background-size: 12px 12px;
-}
 
 
 /*------------------*/
@@ -202,4 +185,18 @@ td[contenteditable="true"]:focus {
 }
 .mdx{
 	background-image: url(../img/mdx.png);
+}
+
+/* Multi hierarchy */
+
+.multihierarchy-font{
+	font-size: 11 !important;
+}
+
+
+.multi-hierarchy {
+	background-image: url(../img/multi_hierarchy_2.png);
+	background-position: left;
+	background-repeat: no-repeat;
+	background-size: 12px 12px;
 }

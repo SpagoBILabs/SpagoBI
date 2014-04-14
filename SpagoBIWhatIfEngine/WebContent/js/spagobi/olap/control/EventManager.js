@@ -157,7 +157,12 @@ Ext.define('Sbi.olap.control.EventManager', {
 		}
 		var win = Ext.create("Sbi.widgets.Help",Ext.apply({title: title, content: content}, winConf||{}));
 		win.show();
+	},
+	
+	updateHierarchyOnDimension: function(axis, newHierarchyUniqueName, oldHierarchyUniqueName, hierarchyPosition){
+		this.olapController.updateHierarchyOnDimension(axis, newHierarchyUniqueName, oldHierarchyUniqueName, hierarchyPosition);
 	}
+	
 	
 	
 

@@ -108,23 +108,6 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionRow', {
 		}else{
 			return this.getDimensionName();
 		}
-	},
-
-
-	/**
-	 * Builds the central panel with the name of the dimension
-	 */
-	buildUpPanelConf: function(){
-		var conf = this.callParent();
-		return Ext.apply(conf,{height: 13, cls: 'up-arrow'});
-	},
-
-	/**
-	 * Builds the central panel with the name of the dimension
-	 */
-	buildDownPanelConf: function(){
-		var conf = this.callParent();
-		return Ext.apply(conf,{height: 10, cls: 'down-arrow'});
 	}
 
 });

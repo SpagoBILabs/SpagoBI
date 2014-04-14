@@ -39,6 +39,8 @@ public class ModelConfig {
 		this.dimensionHierarchyMap = dimensionHierarchyMap;
 	}
 	
-	
+	public void setDimensionHierarchy(String dimensionUniqueName, String hierarchyUniqueName) {
+		this.dimensionHierarchyMap.put(dimensionUniqueName, hierarchyUniqueName);
+	}
 	
 }

@@ -104,6 +104,18 @@ Ext.define('Sbi.olap.control.Controller', {
 		
 		service.callService(this);
 	}
+	,
+	updateHierarchyOnDimension: function(axis, newHierarchyUniqueName, oldHierarchyUniqueName, hierarchyPosition){
+		
+		var service = Ext.create("Sbi.service.RestService",{
+			url: "axis",
+			method: 'PUT',
+			pathParams: [axis,"updateHierarchyOnDimension",newHierarchyUniqueName, oldHierarchyUniqueName, hierarchyPosition]
+		});
+		
+		service.callService(this);
+	}
+	
 	, setModelConfig: function(config){
 
 		var service = Ext.create("Sbi.service.RestService",{

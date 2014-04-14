@@ -32,16 +32,10 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionAxisDimension', {
 	},
 
 	/**
-	 * @property {Ext.Panel} moveUpPanel
-	 * ABSTRACT: panel to move up in the axis positions the Dimension
+	 * @property {Ext.window.Window} propertyWindow
+	 * window with the properties of the panel
 	 */
-	moveUpPanel: null,
-
-	/**
-	 * @property {Ext.Panel} moveUpDown
-	 * ABSTRACT: panel to move down in the axis positions the Dimension
-	 */
-	moveDownPanel: null,
+	propertyWindow:null,
 
 	/**
 	 * @property {Ext.Panel} dimensionPanel
@@ -57,8 +51,6 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionAxisDimension', {
 			Ext.apply(this,Sbi.settings.olap.execution.OlapExecutionAxisDimension);
 		}
 		this.buildDimensionPanel();
-		this.moveUpPanel = Ext.create("Ext.Panel",this.buildUpPanelConf());
-		this.moveDownPanel =Ext.create("Ext.Panel",this.buildDownPanelConf());
 
 		this.callParent(arguments);
 		
@@ -76,47 +68,61 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionAxisDimension', {
 
 	initComponent: function() {
 		Ext.apply(this, {
-			layout: this.subPanelLayout,
-			
-			listeners: {
-				el: {
-					mouseover: {
-						fn: function (event, html, eOpts) {
-							this.showMovePanels();
-						},
-						scope: this
-					},
-					mouseout: {
-						fn: function (event, html, eOpts) {
-							this.hideMovePanels();
-						},
-						scope: this
-					}
-				}
-			}
+			layout: this.subPanelLayout
 		}
 		);
 		this.callParent();
+		
 	},
 	
 	buildItems: function(){
 		var items = [];
-		if(!this.firstDimension){
-			items.push( this.moveUpPanel);
-		}
 
-		items.push( this.dimensionPanel);
-
-		if(!this.dimension.get("measure")){
-			items.push(this.buildFilterButton());
+		if(this.dimension.raw.hierarchies && this.dimension.raw.hierarchies.length>1){
+			items.push(this.buildMultiHierarchiesButton());
 		}
 		
-		if(!this.lastDimension){
-			items.push( this.moveDownPanel);
-		}
+		
+		items.push( this.dimensionPanel);
+
+		items.push(this.buildFilterButton());
+
+
 		return items;
 	},
 
+	buildMultiHierarchiesButton: function(){
+		var config = {
+			style: "background-color: transparent !important",
+			bodyStyle: "background-color: transparent !important",
+			html: " ",
+			border: false,
+			cls: "multi-hierarchy",
+			listeners: {
+//				el: {
+//					click: {
+//						fn: function (event, html, eOpts) {
+//	    					   alert("ok");
+//						},
+//						scope: this
+//					}
+//				},
+				render:{
+					fn: this.buildDimensionInfoPanel,
+					scope: this
+				}
+			}
+		};
+		
+		if(this.axisType=="column"){
+			Ext.apply(config,{width: 20, height: 15});
+		}else{
+			Ext.apply(config,{height: 20});
+		}
+		
+		return config;
+	},
+	
 	buildFilterButton: function(){
 		var thisPanel = this;
 		var config = {
@@ -157,70 +163,6 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionAxisDimension', {
 	
 	
 	/**
-	 * Builds the central panel with the name of the dimension
-	 */
-	buildUpPanelConf: function(){
-		return {
-			xtype: "panel",
-			style: "background-color: transparent !important",
-			bodyStyle: "background-color: transparent !important",
-			border: false,
-			html: "  ",
-			hidden: true,
-			listeners: {
-				el: {
-					click: {
-						fn: function (event, html, eOpts) {
-							this.fireEvent("moveUp",this);
-						},
-						scope: this
-					}
-				}
-			}
-		};
-	},
-	
-	/**
-	 * Builds the central panel with the name of the Dimension
-	 */
-	buildDownPanelConf: function(){
-		return {
-			xtype: "panel",
-			style: "background-color: transparent !important",
-			bodyStyle: "background-color: transparent !important",
-			border: false,
-			html: "  ",
-			hidden: true,
-			listeners: {
-				el: {
-					click: {
-						fn: function (event, html, eOpts) {
-							this.fireEvent("moveDown",this);
-						},
-						scope: this
-					}
-				}
-			}
-		};
-	},
-
-	/**
-	 * Show the panels to move up/down the Dimension
-	 */
-	showMovePanels: function(){
-		this.moveUpPanel.show();
-		this.moveDownPanel.show();
-	},
-
-	/**
-	 * Hide the panels to move up/down the Dimension
-	 */
-	hideMovePanels: function(){
-		this.moveUpPanel.hide();
-		this.moveDownPanel.hide();
-	},
-	
-	/**
 	 * Manage the visibility of the members in the axis
 	 * @param members
 	 */
@@ -228,8 +170,68 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionAxisDimension', {
 		if(members && members.length>0){
 			Sbi.olap.eventManager.placeMembersOnAxis(this.dimension, members);
 		}
+	},
+	
+	buildDimensionInfoPanel: function(target){
+	
+		var thisPanel = this;
+		
+		var selectId = +target.getId()+"select";
+		
+		var html = "";
+		
+		if(this.dimension.raw.hierarchies.length>1){
+			html = LN("sbi.olap.execution.table.dimension.selected.hierarchy")+"<i>"+(this.dimension.raw.hierarchies[this.dimension.raw.selectedHierarchyPosition]).name+"</i>."+LN("sbi.olap.execution.table.dimension.selected.hierarchy.2")+
+				"<table>"+
+				//"<tr><td>The selected hierarchy is "+(this.dimension.raw.hierarchies[this.dimension.raw.selectedHierarchyPosition]).name+"</td></tr>"+
+				"<tr><td class='multihierarchy-font'>"+
+				LN('sbi.olap.execution.table.dimension.available.hierarchies')+
+				"</td><td>"+
+				"<select id = '"+selectId+"'>";
+			
+			for(var i=0; i<this.dimension.raw.hierarchies.length; i++){
+				html = html+"<option value='"+this.dimension.raw.hierarchies[i].uniqueName+"'>"+this.dimension.raw.hierarchies[i].name+"</option>";
+			}
+			
+			html = html+"</select></td></tr></table>";
+		}
+
+		
+		Ext.create('Ext.tip.ToolTip',{        
+            title: thisPanel.dimension.raw.name,
+            target: target.getEl(),
+            anchor: 'left',
+            autoHide: false,
+            html: html,
+            closable: true,
+            width: 300,
+            listeners:{
+            	close: {
+            		fn: function(){
+            			var newHierarchy =Ext.get(selectId).dom.value;
+            			if(thisPanel.dimension.raw.selectedHierarchyUniqueName!=newHierarchy){
+           				
+            				this.updateHierarchyOnDimension(thisPanel.dimension.raw.axis, newHierarchy, thisPanel.dimension.raw.uniqueName, thisPanel.dimension.raw.positionInAxis );
+            			}
+            			
+                	},
+                	scope: thisPanel
+                	
+            	}
+            }
+        });
+				
+		
+	},
+	
+	
+
+	updateHierarchyOnDimension: function(axis, newHierarchyUniqueName, oldHierarchyUniqueName, hierarchyPosition){
+		Sbi.olap.eventManager.updateHierarchyOnDimension(axis, newHierarchyUniqueName, oldHierarchyUniqueName, hierarchyPosition);
+
 	}
 
+	
 
 
 });
