@@ -17,6 +17,10 @@ import it.eng.spagobi.utilities.assertion.UnreachableCodeException;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+
+import mondrian.olap.Util;
+import mondrian.util.Format;
 
 import org.olap4j.AllocationPolicy;
 import org.olap4j.Cell;
@@ -85,8 +89,18 @@ public class SpagoBICellWrapper implements Cell {
 	}
 
 	public String getFormattedValue() {
-		// TODO Auto-generated method stub
-		return this.getValue().toString();
+		String formatString = (String) cell.getPropertyValue(Property.StandardCellProperty.FORMAT_STRING);
+		SpagoBICellSetWrapper cellSet = (SpagoBICellSetWrapper) this.getCellSet();
+		Locale locale = cellSet.getSpagoBIPivotModel().getLocale();
+		Object value = this.getValue();
+        if (value == Util.nullValue) {
+            value = null;
+        }
+        if (value instanceof Throwable) {
+            return "#ERR: " + value.toString();
+        }
+        Format format = Format.get(formatString, locale);
+        return format.format(value);
 	}
 
 	public ResultSet drillThrough() throws OlapException {
