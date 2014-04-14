@@ -25,6 +25,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
 import org.apache.log4j.Logger;
+import org.olap4j.metadata.Hierarchy;
 import org.olap4j.metadata.Member;
 
 import com.eyeq.pivot4j.PivotModel;
@@ -110,6 +111,26 @@ public class AxisResource extends AbstractWhatIfEngineService {
 		return renderModel(getPivotModel());
 	}
 
+
+	/**
+	 * Removes the oldHierarchy from the axis and adds the new newHierarchy in the same position
+	 * @param axisPos the axis that contains the old hierarchy
+	 * @param newHierarchyUniqueName the unique name of the new hierarchy
+	 * @param oldHierarchyUniqueName the unique name of the old hierarchy
+	 * @param hierarchyPosition the position of the old hierarchy 
+	 */
+	@PUT
+	@Path("/{axis}/updateHierarchyOnDimension/{newHierarchyUniqueName}/{oldHierarchyUniqueName}/{hierarchyPosition}")
+	public String updateHierarchyOnDimension(@javax.ws.rs.core.Context HttpServletRequest req, @PathParam("axis") int axisPos, @PathParam("newHierarchyUniqueName") String newHierarchyUniqueName, @PathParam("oldHierarchyUniqueName") String oldHierarchyUniqueName, @PathParam("hierarchyPosition") int hierarchyPosition){
+
+
+		Hierarchy h = getAxisBusiness().updateHierarchyOnAxis(axisPos,newHierarchyUniqueName,oldHierarchyUniqueName, hierarchyPosition);
+
+		getModelConfig().setDimensionHierarchy(h.getDimension().getUniqueName(), newHierarchyUniqueName);
+		
+		
+		return renderModel(getPivotModel());
+	}
 
 	/**
 	 * Service to change the visibility of the members of a hierarchy.

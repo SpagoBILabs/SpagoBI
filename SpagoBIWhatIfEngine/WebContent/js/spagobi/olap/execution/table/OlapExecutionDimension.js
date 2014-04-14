@@ -115,13 +115,13 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionDimension', {
 	 */
 	getDimensionName: function(){
 		var dimensionName = this.dimension.raw.name;
-		var hierarchies =  this.dimension.get("hierarchies");
-		if(hierarchies.length>1){
-			var selectedHierarchyPosition = this.dimension.get("selectedHierarchyPosition");
-			var hierarchy = hierarchies[selectedHierarchyPosition];
-			var selectedHierarchyName = hierarchy.name;
-			dimensionName = dimensionName+"(<i>"+selectedHierarchyName+"</i>)";
-		}
+//		var hierarchies =  this.dimension.get("hierarchies");
+//		if(hierarchies.length>1){
+//			var selectedHierarchyPosition = this.dimension.get("selectedHierarchyPosition");
+//			var hierarchy = hierarchies[selectedHierarchyPosition];
+//			var selectedHierarchyName = hierarchy.name;
+//			dimensionName = dimensionName+"(<i>"+selectedHierarchyName+"</i>)";
+//		}
 		
 		return  dimensionName;
 	}

@@ -18,7 +18,7 @@
     
 <!-- Include Ext stylesheets here: -->
 <link id="extall" rel="styleSheet" href ="../js/lib/extjs-4/resources/css/ext-all.css" type="text/css" />
-<!-- link id="theme-gray" rel="styleSheet" href ="../js/lib/extjs-4/resources/css/ext-all-gray.css" type="text/css" /-->
+<link id="theme-gray" rel="styleSheet" href ="../js/lib/extjs-4/resources/css/ext-all-gray.css" type="text/css" />
 <!-- <link id="theme-neptune" rel="styleSheet" href ="js/lib/extjs-4/resources/css/ext-all-neptune.css" type="text/css" />  -->
 
 

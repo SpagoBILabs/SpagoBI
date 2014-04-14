@@ -11,6 +11,7 @@ import java.util.List;
 
 import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
 import it.eng.spagobi.engines.whatif.member.SbiMember;
+import it.eng.spagobi.engines.whatif.model.ModelConfig;
 import it.eng.spagobi.engines.whatif.serializer.SerializationException;
 import it.eng.spagobi.engines.whatif.serializer.SerializationManager;
 import it.eng.spagobi.utilities.engines.EngineConstants;
@@ -87,6 +88,11 @@ public class AbstractWhatIfEngineService extends AbstractRestService{
 	public PivotModel getPivotModel(){
 		return getWhatIfEngineInstance().getPivotModel();
 	}
+	
+	public ModelConfig getModelConfig(){
+		return getWhatIfEngineInstance().getModelConfig();
+	}
+	
 	
 	public String getOutputFormat(){
 		String outputFormat = servletRequest.getParameter(OUTPUTFORMAT);

@@ -83,5 +83,10 @@ Sbi.locale.ln['sbi.olap.execution.table.filter.expand'] = 'Expand all';
 Sbi.locale.ln['sbi.olap.execution.table.filter.filter.title'] = 'Select a slicer';
 Sbi.locale.ln['sbi.olap.execution.table.filter.dimension.title'] = 'Select the visible members';
 
+//===================================================================
+//DIMENSIONS
+//===================================================================
 
-
+Sbi.locale.ln['sbi.olap.execution.table.dimension.selected.hierarchy'] = 'The selected hierarchy is ';
+Sbi.locale.ln['sbi.olap.execution.table.dimension.selected.hierarchy.2'] = ' You can chage it acting on the form below.';
+Sbi.locale.ln['sbi.olap.execution.table.dimension.available.hierarchies'] = 'Available hierarchies: ';

@@ -120,8 +120,11 @@ public class WhatIfEngineConfig {
 			
 		
 		sb = (SourceBean) getConfigSourceBean().getAttribute("CATALOG");
-		if(sb!=null)
-			catalog = sb.getCharacters();
+		if(sb!=null){
+			String system = System.getProperty("catalina.home");
+			catalog = system+sb.getCharacters();
+		}
+			
 		
 		sb = (SourceBean) getConfigSourceBean().getAttribute("CONNECTIONSTRING");
 		if(sb!=null)

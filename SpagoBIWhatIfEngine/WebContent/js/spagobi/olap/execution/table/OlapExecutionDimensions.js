@@ -164,10 +164,67 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionDimensions', {
 				dimension.on("moveUp",this.moveUpDimension,this);
 				dimension.on("moveDown",this.moveDownDimension,this);
 				items.push(dimension);
+				if(i<dimensionsCount-1){
+					if(this.isColumnDimensions()){
+						this.addMoveRightDimensionButton(dimension, items);
+					}else if(this.isRowDimensions()){
+						this.addMoveDownDimensionButton(dimension, items);
+					}
+				}
+
 			}
 		}
 		
 		return items;
+	},
+	
+	/**
+	 * Builds the central panel with the name of the dimension
+	 */
+	addMoveDownDimensionButton: function(dimension, items){
+		items.push( {
+			xtype: "panel",
+			style: "background-color: transparent !important",
+			bodyStyle: "background-color: transparent !important",
+			cls:"swap-row-panel",
+			border: false,
+			html: "  ",
+			height: 18,
+			listeners: {
+				el: {
+					click: {
+						fn: function (event, html, eOpts) {
+							this.fireEvent("moveDown",this);
+						},
+						scope: dimension
+					}
+				}
+			}
+		});
+	},
+	/**
+	 * Builds the central panel with the name of the dimension
+	 */
+	addMoveRightDimensionButton: function(dimension, items){
+		items.push( {
+			xtype: "panel",
+			style: "background-color: transparent !important",
+			bodyStyle: "background-color: transparent !important",
+			cls:"swap-column-panel",
+			border: false,
+			html: "  ",
+			width: 18,
+			listeners: {
+				el: {
+					click: {
+						fn: function (event, html, eOpts) {
+							this.fireEvent("moveDown",this);
+						},
+						scope: dimension
+					}
+				}
+			}
+		});
 	},
 	
 	/**
@@ -184,7 +241,23 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionDimensions', {
 			}
 		}
 		this.refreshItems();
+	},
+	
+	/**
+	 * Returns true if this is the  container
+	 */
+	isRowDimensions: function(){
+		return this.dimensionClassName == 'Sbi.olap.execution.table.OlapExecutionRow';
+	},
+	
+	/**
+	 * Returns true if this is the columns container
+	 */
+	isColumnDimensions: function(){
+		return this.dimensionClassName == 'Sbi.olap.execution.table.OlapExecutionColumn';
 	}
+	
+	
 	
 });
 
