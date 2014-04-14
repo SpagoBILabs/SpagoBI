@@ -84,7 +84,7 @@ public class SbiDimension {
 		this.axis = axis;
 	}
 
-	public int isMeasure() {
+	public int getMeasure() {
 		return measure;
 	}
 

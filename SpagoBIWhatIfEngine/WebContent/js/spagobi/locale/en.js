@@ -82,6 +82,7 @@ Sbi.locale.ln['sbi.olap.execution.table.filter.collapse'] = 'Collapse all';
 Sbi.locale.ln['sbi.olap.execution.table.filter.expand'] = 'Expand all';
 Sbi.locale.ln['sbi.olap.execution.table.filter.filter.title'] = 'Select a slicer';
 Sbi.locale.ln['sbi.olap.execution.table.filter.dimension.title'] = 'Select the visible members';
+Sbi.locale.ln['sbi.olap.execution.table.filter.no.measure'] = 'A measure can not be used as a filter';
 
 //===================================================================
 //DIMENSIONS

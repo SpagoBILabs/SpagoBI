@@ -179,11 +179,8 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotModel> {
 			throw new SpagoBIRuntimeException("Error serializing the pivot table", e);
 		}
 
-		
-		
-		
 		logger.debug("OUT");
-		
+
 
 	}
 	
@@ -203,6 +200,7 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotModel> {
 	
 	
 	private  void serializeDimensions(JsonGenerator jgen, List<Dimension> dimensions, int axis, String field, boolean withSlicers, PivotModel model) throws JSONException, JsonGenerationException, IOException{
+		
 		
 		
 		QueryAdapter qa = null;

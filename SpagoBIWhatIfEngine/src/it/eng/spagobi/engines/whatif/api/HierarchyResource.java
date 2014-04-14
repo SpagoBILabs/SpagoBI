@@ -29,7 +29,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
 import org.apache.log4j.Logger;
-import org.olap4j.OlapConnection;
 import org.olap4j.OlapException;
 import org.olap4j.metadata.Hierarchy;
 import org.olap4j.metadata.Level;
@@ -37,11 +36,8 @@ import org.olap4j.metadata.Member;
 import org.olap4j.metadata.NamedList;
 
 import com.eyeq.pivot4j.PivotModel;
-import com.eyeq.pivot4j.mdx.MdxStatement;
-import com.eyeq.pivot4j.query.QueryAdapter;
 import com.eyeq.pivot4j.transform.ChangeSlicer;
 import com.eyeq.pivot4j.transform.PlaceMembersOnAxes;
-import com.eyeq.pivot4j.transform.impl.ChangeSlicerImpl;
 
 
 @Path("/1.0/hierarchy")
@@ -56,15 +52,10 @@ public class HierarchyResource extends AbstractWhatIfEngineService {
 
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
 		PivotModel model = ei.getPivotModel();
-		OlapConnection connection = ei.getOlapConnection();
 		Hierarchy hierarchy =null;
 		Member member =null;
-		
-		
-		QueryAdapter qa = new QueryAdapter(model);
-		qa.initialize();
-		
-		ChangeSlicer ph = new ChangeSlicerImpl(qa, connection);
+
+		ChangeSlicer ph =  model.getTransform(ChangeSlicer.class);
 	
 
 		try {
@@ -85,10 +76,6 @@ public class HierarchyResource extends AbstractWhatIfEngineService {
 		slicers.add(member);
 		ph.setSlicer(hierarchy,slicers);
 
-
-		MdxStatement s = qa.updateQuery();
-		model.setMdx(s.toMdx());
-		
 		return renderModel(model);
 	}
 	

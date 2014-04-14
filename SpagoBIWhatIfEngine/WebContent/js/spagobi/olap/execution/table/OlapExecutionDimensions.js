@@ -102,8 +102,12 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionDimensions', {
      * @param {Sbi.olap.execution.table.OlapExecutionDimension} dimension the Dimension to add
      */
 	moveDimensionToOtherAxis: function(dimension){
+		if(this.axisOrdinalPosition>=0 || !dimension.dimension.get("measure")){
+			Sbi.olap.eventManager.moveDimensionToOtherAxis(dimension.dimension.get("uniqueName"), dimension.dimension.get("axis"), this.axisOrdinalPosition);
+		}else{
+			Sbi.exception.ExceptionHandler.showInfoMessage(LN("sbi.olap.execution.table.filter.no.measure"));
+		}
 		
-		Sbi.olap.eventManager.moveDimensionToOtherAxis(dimension.dimension.get("uniqueName"), dimension.dimension.get("axis"), this.axisOrdinalPosition);
 	},
 	
 	

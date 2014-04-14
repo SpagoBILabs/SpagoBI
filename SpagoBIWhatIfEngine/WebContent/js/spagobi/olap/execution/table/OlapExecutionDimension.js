@@ -51,7 +51,7 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionDimension', {
 		
 		var items = this.buildItems();
 		
-		this.on('dimensionClick', function(dimension){alert("cklik");},this);
+	//	this.on('dimensionClick', function(dimension){alert("cklik");},this);
 		
 		Ext.apply(this, {
 			frame: true,

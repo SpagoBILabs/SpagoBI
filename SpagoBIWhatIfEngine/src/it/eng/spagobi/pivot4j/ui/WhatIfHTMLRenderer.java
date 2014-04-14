@@ -11,9 +11,6 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.olap4j.Axis;
 import org.olap4j.OlapException;
-import org.olap4j.metadata.Level;
-import org.olap4j.metadata.Member;
-import org.olap4j.metadata.NamedList;
 
 import com.eyeq.pivot4j.ui.CellType;
 import com.eyeq.pivot4j.ui.RenderContext;
