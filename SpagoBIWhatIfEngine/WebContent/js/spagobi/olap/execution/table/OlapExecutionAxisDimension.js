@@ -197,7 +197,7 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionAxisDimension', {
 		}
 
 		
-		Ext.create('Ext.tip.ToolTip',{        
+		var tool = Ext.create('Ext.tip.ToolTip',{        
             title: thisPanel.dimension.raw.name,
             target: target.getEl(),
             anchor: 'left',
@@ -205,20 +205,34 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionAxisDimension', {
             html: html,
             closable: true,
             width: 300,
-            listeners:{
-            	close: {
-            		fn: function(){
-            			var newHierarchy =Ext.get(selectId).dom.value;
-            			if(thisPanel.dimension.raw.selectedHierarchyUniqueName!=newHierarchy){
-           				
-            				this.updateHierarchyOnDimension(thisPanel.dimension.raw.axis, newHierarchy, thisPanel.dimension.raw.uniqueName, thisPanel.dimension.raw.positionInAxis );
-            			}
-            			
-                	},
-                	scope: thisPanel
-                	
-            	}
-            }
+            padding: 5,
+            buttons:[
+		             '->',    {
+		            	 text: LN('sbi.common.cancel'),
+		            	 handler: function(){
+		            		 tool.close();
+		            	 }
+		             },    {
+		            	 text: LN('sbi.common.ok'),
+		            	 handler: function(){
+		            			var newHierarchy =Ext.get(selectId).dom.value;
+		            			if(thisPanel.dimension.raw.selectedHierarchyUniqueName!=newHierarchy){
+		           				
+		            				thisPanel.updateHierarchyOnDimension(thisPanel.dimension.raw.axis, newHierarchy, thisPanel.dimension.raw.uniqueName, thisPanel.dimension.raw.positionInAxis );
+		            			}
+		            			 tool.close();
+		            	 }
+		             }]
+//            listeners:{
+//            	close: {
+//            		fn: function(){
+//
+//            			
+//                	},
+//                	scope: thisPanel
+//                	
+//            	}
+//            }
         });
 				
 		
