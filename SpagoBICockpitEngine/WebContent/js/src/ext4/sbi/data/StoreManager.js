@@ -30,7 +30,7 @@ Sbi.data.StoreManager = function(config) {
 	var c = Ext.apply(settings, config || {});
 	Ext.apply(this, c);
 		
-	this.setConfiguration(c);
+	this.setConfiguration(c.storesConf);
 		
 	// constructor
 	Sbi.data.StoreManager.superclass.constructor.call(this, c);
@@ -77,7 +77,7 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 	 * @param {Object} conf The configuration object
 	 */
 	, setConfiguration: function(conf) {
-		Sbi.trace("[StoreManager.init]: IN");
+		Sbi.trace("[StoreManager.setConfiguration]: IN");
 		
 		conf = conf || {};
 		
@@ -90,7 +90,7 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 		var filters = conf.filters || [];
 		this.setFilterConfigurations(filters);
 
-		Sbi.trace("[StoreManager.init]: OUT");
+		Sbi.trace("[StoreManager.setConfiguration]: OUT");
 	}
 
 	/**
@@ -302,6 +302,7 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 		
 		return associationConf;	
 	}
+	
 	, refreshAssociationGroups: function() {
 		// mask container (non direttamente ma tramite lancio di evento onRefresh group)
 		// call refresh service on server
@@ -324,7 +325,7 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 						if(r.indexOf("error.mesage.description")>=0){
 							Sbi.exception.ExceptionHandler.handleFailure(response);
 						} else {
-//							alert(r);
+							//alert("Response of [/api/1.0/associations/]:" + r);
 							var associationGroups = Ext.util.JSON.decode(r);								
 						}
 					} else {
