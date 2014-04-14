@@ -41,19 +41,26 @@ Ext.define('Sbi.olap.control.EventManager', {
 				 * [LIST OF EVENTS]
 				 */
 		        /**
-		         * @event execute
+		         * @event executeService
 		         * This event is thrown when a service is called for execution
 		         */
 		        'executeService',
 		        /**
-		         * @event executed
+		         * @event serviceExecuted
 		         * This event is thrown when a service has finished execution
 				 * @param {Object} response
 		         */
-		        'serviceExecuted'
+		        'serviceExecuted',
+		        /**
+		         * @event serviceExecutedWithError
+		         * This event is thrown when a service has finished execution with error
+				 * @param {Object} response
+		         */
+		        'serviceExecutedWithError'
 				);
 		this.on('executeService', this.executeService, this);
 		this.on('serviceExecuted', this.serviceExecuted, this);
+		this.on('serviceExecutedWithError',this.serviceExecutedWithError, this);
 		this.loadingMask = new Ext.LoadMask(Ext.getBody(), {msg:"Please wait..."});
 	},
 	
@@ -173,6 +180,11 @@ Ext.define('Sbi.olap.control.EventManager', {
 		this.updateAfterMDXExecution(response.responseText);
 		
 	}
+	, serviceExecutedWithError: function (response){
+		this.loadingMask.hide();
+		
+	}
+	
 	
 	
 	
