@@ -55,6 +55,10 @@ public class SpagoBICellSetWrapper implements CellSet {
 		this.modifiedCells = new HashMap<Integer, SpagoBICellWrapper>();
 	}
 	
+	public SpagoBIPivotModel getSpagoBIPivotModel() {
+		return spagoBIPivotModel;
+	}
+	
 	public void restorePendingTransformations(CellTransformationsStack stack) {
 		Iterator<CellTransformation> iterator = stack.iterator();
 		while (iterator.hasNext()) {
