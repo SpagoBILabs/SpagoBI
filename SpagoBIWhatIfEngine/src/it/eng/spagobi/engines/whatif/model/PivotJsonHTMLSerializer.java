@@ -101,7 +101,7 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotModel> {
 		renderer.setCornerStyleClass("x-column-header-inner x-column-header x-column-header-align-left x-box-item x-column-header-default x-unselectable x-grid-header-ct x-docked x-grid-header-ct-default x-docked-top x-grid-header-ct-docked-top x-grid-header-ct-default-docked-top x-box-layout-ct x-docked-noborder-top x-docked-noborder-right x-docked-noborder-left x-pivot-header");
 		renderer.setCellStyleClass("x-grid-cell x-grid-td x-grid-cell-gridcolumn-1014 x-unselectable x-grid-cell-inner  x-grid-row-alt x-grid-data-row x-grid-with-col-lines x-grid-cell x-pivot-cell");
 		renderer.setTableStyleClass("x-panel-body x-grid-body x-panel-body-default x-box-layout-ct x-panel-body-default x-pivot-table");
-		
+		renderer.setRowStyleClass(" generic-row-style ");
 		renderer.setEvenRowStyleClass(" even-row ");
 		renderer.setOddRowStyleClass(" odd-row ");
 		
@@ -200,7 +200,6 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotModel> {
 	
 	
 	private  void serializeDimensions(JsonGenerator jgen, List<Dimension> dimensions, int axis, String field, boolean withSlicers, PivotModel model) throws JSONException, JsonGenerationException, IOException{
-		
 		
 		
 		QueryAdapter qa = null;
