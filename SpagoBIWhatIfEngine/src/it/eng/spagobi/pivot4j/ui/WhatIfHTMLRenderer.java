@@ -223,37 +223,20 @@ public class WhatIfHTMLRenderer extends HtmlRenderer {
 					for (CellCommand<?> command : commands) {
 						String cmd = command.getName();
 
-						///spagobi whatif engine 
-
-						int colIdx = context.getColumnIndex();
-						int rowIdx = context.getRowIndex();
-
-						int axis =0;
-						if(context.getAxis()!= null){
-							axis =context.getAxis().axisOrdinal();
-						}
-						int memb =0;
-						if(context.getPosition()!= null){
-							memb =context.getPosition().getOrdinal();
-						}
-						int pos =0;
-						if(context.getAxis() == Axis.COLUMNS){
-							pos = rowIdx;
-						}else{
-							pos = colIdx;
-						}
 						if(cmd != null){
 							CellParameters parameters = command.createParameters(context);
-
+							int positionOrd = parameters.getPositionOrdinal();
+							int axisOrd = parameters.getAxisOrdinal();
+							int memberOrd = parameters.getMemberOrdinal();
 							if((cmd.equalsIgnoreCase("collapsePosition") || cmd.equalsIgnoreCase("drillUp") || cmd.equalsIgnoreCase("collapseMember")) &&
 									(!drillMode.equals(DrillDownCommand.MODE_REPLACE ))){
 								attributes.put("src", "../img/minus.gif");
-								attributes.put("onClick", "javascript:Sbi.olap.eventManager.drillUp("+axis+" , "+pos+" , "+memb+")");
+								attributes.put("onClick", "javascript:Sbi.olap.eventManager.drillUp("+axisOrd+" , "+positionOrd+" , "+memberOrd+")");
 								getWriter().startElement("img", attributes);			
 								getWriter().endElement("img");
 							}else if((cmd.equalsIgnoreCase("expandPosition")  || cmd.equalsIgnoreCase("drillDown") || cmd.equalsIgnoreCase("expandMember"))){
 								attributes.put("src", "../img/plus.gif");
-								attributes.put("onClick", "javascript:Sbi.olap.eventManager.drillDown("+axis+" , "+pos+" , "+memb+")");
+								attributes.put("onClick", "javascript:Sbi.olap.eventManager.drillDown("+axisOrd+" , "+positionOrd+" , "+memberOrd+")");
 								getWriter().startElement("img", attributes);			
 								getWriter().endElement("img");
 							}
