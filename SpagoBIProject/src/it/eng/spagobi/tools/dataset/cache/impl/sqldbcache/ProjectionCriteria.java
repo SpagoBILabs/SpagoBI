@@ -33,11 +33,13 @@ public class ProjectionCriteria {
 	
 	String columnName; //the column name
 	String aggregateFunction; //optional aggregate function like SUM, AVG, etc...
+	String aliasName; //alias for the column
 	
 	
-	public ProjectionCriteria(String columnName, String aggregateFunction){
+	public ProjectionCriteria(String columnName, String aggregateFunction, String aliasName){
 		this.columnName = columnName;
 		this.aggregateFunction = aggregateFunction;
+		this.aliasName = aliasName;
 	}
 	
 	
@@ -65,6 +67,24 @@ public class ProjectionCriteria {
 	 */
 	public void setAggregateFunction(String aggregateFunction) {
 		this.aggregateFunction = aggregateFunction;
+	}
+
+
+
+	/**
+	 * @return the aliasName
+	 */
+	public String getAliasName() {
+		return aliasName;
+	}
+
+
+
+	/**
+	 * @param aliasName the aliasName to set
+	 */
+	public void setAliasName(String aliasName) {
+		this.aliasName = aliasName;
 	}
 	
 	

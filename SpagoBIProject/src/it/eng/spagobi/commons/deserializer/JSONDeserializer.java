@@ -6,6 +6,7 @@
 package it.eng.spagobi.commons.deserializer;
 
 import it.eng.spagobi.engines.config.bo.Engine;
+import it.eng.spagobi.tools.dataset.crosstab.CrosstabDefinition;
 import it.eng.spagobi.utilities.assertion.Assert;
 
 import java.util.HashMap;
@@ -23,6 +24,8 @@ public class JSONDeserializer implements Deserializer {
 	public JSONDeserializer() {
 		mappings = new HashMap();
 		mappings.put( Engine.class, new EngineJSONDeserializer() );
+		mappings.put( CrosstabDefinition.class, new CrosstabJSONDeserializer() );
+
 	}
 
 	public Object deserialize(Object o, Class clazz) throws DeserializationException {

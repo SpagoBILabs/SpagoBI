@@ -35,16 +35,28 @@ import it.eng.spagobi.commons.bo.Config;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IConfigDAO;
+import it.eng.spagobi.commons.deserializer.DeserializerFactory;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.container.ObjectUtils;
+import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.cache.CacheManager;
 import it.eng.spagobi.tools.dataset.cache.ICache;
+import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.FilterCriteria;
+import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.GroupCriteria;
+import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.ProjectionCriteria;
 import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.work.SQLDBCacheWriteWork;
+import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.common.metadata.FieldMetadata;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
+import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
+import it.eng.spagobi.tools.dataset.common.query.AggregationFunctions;
+import it.eng.spagobi.tools.dataset.common.query.IAggregationFunction;
+import it.eng.spagobi.tools.dataset.crosstab.CrosstabDefinition;
+import it.eng.spagobi.tools.dataset.crosstab.Measure;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.tools.dataset.exceptions.ParameterDsException;
 import it.eng.spagobi.tools.dataset.utils.DataSetUtilities;
@@ -58,7 +70,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import commonj.work.Work;
@@ -302,6 +316,52 @@ public class DatasetManagementAPI {
 		}	
 	}
 	
+	public IDataStore getAggregatedDataStore(String label, int offset, int fetchSize, int maxResults, CrosstabDefinition crosstabDefinition) {
+		try {
+			
+			IDataSet dataSet = this.getDataSetDAO().loadDataSetByLabel(label);
+			
+			ICache cache = CacheManager.getCache();
+			IDataStore cachedResultSet = cache.get(dataSet);
+			IDataStore dataStore = null;
+			
+			if (cachedResultSet == null){
+				//Dataset not yet cached
+				dataSet.loadData(offset, fetchSize, maxResults);
+				dataStore = dataSet.getDataStore();
+				
+				cache.put(dataSet, dataStore);
+
+			} 
+
+			//TODO: must be refactorized
+			List<ProjectionCriteria> projectionCriteria = this.getProjectionCriteria(crosstabDefinition);
+			List<FilterCriteria> filterCriteria = new ArrayList<FilterCriteria>(); // TODO: empty for this time
+			List<GroupCriteria> groupCriteria = this.getGroupCriteria(crosstabDefinition);
+			dataStore = cache.get(dataSet, groupCriteria, filterCriteria, projectionCriteria);
+			
+			
+			/* since the datastore, at this point, is a JDBC datastore, 
+			* it does not contain information about measures/attributes, fields' name and alias...
+			* therefore we adjust its metadata
+			*/
+			this.adjustMetadata((DataStore) dataStore, dataSet,null );
+			
+			logger.debug("Decoding dataset ...");
+			dataSet.decode(dataStore);
+			LogMF.debug(logger, "Dataset decoded: {0}", dataStore);
+			
+
+			return dataStore;
+
+
+		}catch(Throwable t) {
+			throw new RuntimeException("An unexpected error occured while executing method", t);
+		} finally {			
+			logger.debug("OUT");
+		}	
+	}
+	
 	private static Map getParametersMap(String filters){
 		Map toReturn = new HashMap();
 		filters = JSONUtils.escapeJsonString(filters);
@@ -502,4 +562,165 @@ public class DatasetManagementAPI {
 		}
 
 	}
+	
+	//------------------------------------------------------------------------------
+	// Methods for extracting information from CrosstabDefinition and related
+	//------------------------------------------------------------------------------
+	
+	private List<ProjectionCriteria> getProjectionCriteria(CrosstabDefinition crosstabDefinition){
+		logger.debug("IN");	
+		List<ProjectionCriteria> projectionCriterias = new ArrayList<ProjectionCriteria>();
+		
+		List<CrosstabDefinition.Row> rows = crosstabDefinition.getRows();
+		List<CrosstabDefinition.Column> colums = crosstabDefinition.getColumns();
+		List<Measure> measures = crosstabDefinition.getMeasures(); 
+			
+		// appends columns
+		Iterator<CrosstabDefinition.Column> columsIt = colums.iterator();
+		while (columsIt.hasNext()) {
+			CrosstabDefinition.Column aColumn = columsIt.next();
+			String columnName = aColumn.getEntityId();
+			ProjectionCriteria aProjectionCriteria = new ProjectionCriteria(columnName,null,columnName);
+			projectionCriterias.add(aProjectionCriteria);
+		}
+		// appends rows
+		Iterator<CrosstabDefinition.Row> rowsIt = rows.iterator();
+		while (rowsIt.hasNext()) {
+			CrosstabDefinition.Row aRow = rowsIt.next();
+			String columnName = aRow.getEntityId();
+			ProjectionCriteria aProjectionCriteria = new ProjectionCriteria(columnName,null,columnName);
+			projectionCriterias.add(aProjectionCriteria);
+		}
+		
+		// appends measures
+		Iterator<Measure> measuresIt = measures.iterator();
+		while (measuresIt.hasNext()) {
+			Measure aMeasure = measuresIt.next();
+			IAggregationFunction function = aMeasure.getAggregationFunction();
+			String columnName = aMeasure.getEntityId();
+			if (columnName == null) {
+				// when defining a crosstab inside the SmartFilter document, an additional COUNT field with id QBE_SMARTFILTER_COUNT
+				// is automatically added inside query fields, therefore the entity id is not found on base query selected fields
+				
+				/*
+				columnName = "Count";
+				if (aMeasure.getEntityId().equals(QBE_SMARTFILTER_COUNT)) {
+					toReturn.append(AggregationFunctions.COUNT_FUNCTION.apply("*"));
+				} else {
+					logger.error("Entity id " + aMeasure.getEntityId() + " not found on the base query!!!!");
+					throw new RuntimeException("Entity id " + aMeasure.getEntityId() + " not found on the base query!!!!");
+				}
+				*/
+			} else {
+				if (function != AggregationFunctions.NONE_FUNCTION) {
+					ProjectionCriteria aProjectionCriteria = new ProjectionCriteria(columnName,function.getName(),columnName);
+					projectionCriterias.add(aProjectionCriteria);
+				} else {
+					ProjectionCriteria aProjectionCriteria = new ProjectionCriteria(columnName,null,columnName);
+					projectionCriterias.add(aProjectionCriteria);
+				}
+			}
+
+		}
+
+		
+		logger.debug("OUT");
+		return projectionCriterias;
+	}
+	
+	private List<GroupCriteria> getGroupCriteria(CrosstabDefinition crosstabDefinition){
+		logger.debug("IN");
+		List<GroupCriteria> groupCriterias = new ArrayList<GroupCriteria>();
+
+		
+		List<CrosstabDefinition.Row> rows = crosstabDefinition.getRows();
+		List<CrosstabDefinition.Column> colums = crosstabDefinition.getColumns();
+			
+		// appends columns
+		Iterator<CrosstabDefinition.Column> columsIt = colums.iterator();
+		while (columsIt.hasNext()) {
+			CrosstabDefinition.Column aColumn = columsIt.next();
+			String columnName = aColumn.getEntityId();
+			GroupCriteria groupCriteria = new GroupCriteria(columnName,null);
+			groupCriterias.add(groupCriteria);
+		}
+		
+		
+		// appends rows
+		Iterator<CrosstabDefinition.Row> rowsIt = rows.iterator();
+		while (rowsIt.hasNext()) {
+			CrosstabDefinition.Row aRow = rowsIt.next();
+			String columnName = aRow.getEntityId();
+			GroupCriteria groupCriteria = new GroupCriteria(columnName,null);
+			groupCriterias.add(groupCriteria);
+		}
+		logger.debug("OUT");
+		return groupCriterias;
+	}
+	
+	protected void adjustMetadata(DataStore dataStore,
+			IDataSet dataset,
+			JSONArray fieldOptions) {
+
+		IMetaData dataStoreMetadata = dataStore.getMetaData();
+		IMetaData dataSetMetadata = dataset.getMetadata();
+		MetaData newdataStoreMetadata = new MetaData();
+		int fieldCount = dataStoreMetadata.getFieldCount();
+		for (int i = 0; i < fieldCount; i++) {
+			IFieldMetaData dataStoreFieldMetadata = dataStoreMetadata.getFieldMeta(i);
+			String columnName = dataStoreFieldMetadata.getName();
+			logger.debug("Column name : " + columnName);
+			String fieldName = columnName;
+			logger.debug("Field name : " + fieldName);
+			int index = dataSetMetadata.getFieldIndex(fieldName);
+			logger.debug("Field index : " + index);
+			IFieldMetaData dataSetFieldMetadata = dataSetMetadata.getFieldMeta(index);
+			logger.debug("Field metadata : " + dataSetFieldMetadata);
+			FieldMetadata newFieldMetadata = new FieldMetadata();
+			String decimalPrecision = (String) dataSetFieldMetadata.getProperty(IFieldMetaData.DECIMALPRECISION);
+			if(decimalPrecision!=null){
+				newFieldMetadata.setProperty(IFieldMetaData.DECIMALPRECISION,decimalPrecision);
+			}
+			if(fieldOptions!=null){
+				addMeasuresScaleFactor(fieldOptions, dataSetFieldMetadata.getName(), newFieldMetadata);
+			}
+			newFieldMetadata.setAlias(dataSetFieldMetadata.getAlias());
+			newFieldMetadata.setFieldType(dataSetFieldMetadata.getFieldType());
+			newFieldMetadata.setName(dataSetFieldMetadata.getName());
+			newFieldMetadata.setType(dataStoreFieldMetadata.getType());
+			newdataStoreMetadata.addFiedMeta(newFieldMetadata);
+		}
+		newdataStoreMetadata.setProperties(dataStoreMetadata.getProperties());
+		dataStore.setMetaData(newdataStoreMetadata);
+	}
+	
+	public static final String ADDITIONAL_DATA_FIELDS_OPTIONS_OPTIONS = "options";
+	public static final String ADDITIONAL_DATA_FIELDS_OPTIONS_SCALE_FACTOR = "measureScaleFactor";
+	
+	private void addMeasuresScaleFactor(JSONArray fieldOptions, String fieldId,
+			FieldMetadata newFieldMetadata) {
+		if (fieldOptions != null) {
+			for (int i = 0; i < fieldOptions.length(); i++) {
+				try {
+					JSONObject afield = fieldOptions.getJSONObject(i);
+					JSONObject aFieldOptions = afield.getJSONObject(ADDITIONAL_DATA_FIELDS_OPTIONS_OPTIONS);
+					String afieldId = afield.getString("id");
+					String scaleFactor = aFieldOptions.optString(ADDITIONAL_DATA_FIELDS_OPTIONS_SCALE_FACTOR);
+					if (afieldId.equals(fieldId) && scaleFactor != null) {
+						newFieldMetadata.setProperty(
+								ADDITIONAL_DATA_FIELDS_OPTIONS_SCALE_FACTOR,
+								scaleFactor);
+						return;
+					}
+				} catch (Exception e) {
+					throw new RuntimeException(
+							"An unpredicted error occurred while adding measures scale factor",
+							e);
+				}
+			}
+		}
+	}
+
+	
+	
 }
