@@ -11,13 +11,15 @@
  */
 package it.eng.spagobi.api;
 
-import it.eng.spago.base.SourceBean;
+
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.execution.service.ExecuteAdHocUtility;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.deserializer.DeserializerFactory;
 import it.eng.spagobi.commons.serializer.SerializerFactory;
+import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.tools.dataset.DatasetManagementAPI;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
@@ -26,10 +28,13 @@ import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData.FieldType;
 import it.eng.spagobi.tools.dataset.common.query.AggregationFunctions;
+import it.eng.spagobi.tools.dataset.crosstab.CrossTab;
+import it.eng.spagobi.tools.dataset.crosstab.CrosstabDefinition;
 import it.eng.spagobi.tools.dataset.exceptions.ParameterDsException;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
+import it.eng.spagobi.utilities.service.JSONSuccess;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -40,6 +45,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -47,6 +53,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
+import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -148,6 +155,56 @@ public class DataSetResource extends AbstractSpagoBIResource {
 			JSONObject gridDataFeed = (JSONObject)dataSetWriter.write(dataStore);
 			
 			return gridDataFeed.toString();	
+		}catch(ParameterDsException p){
+			throw new ParameterDsException(p.getMessage());
+		}catch(Throwable t) {
+			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", t);
+		} finally {			
+			logger.debug("OUT");
+		}	
+	}
+	
+	private static final String CROSSTAB_DEFINITION = "crosstabDefinition";
+
+	
+	@POST
+	@Path("/{label}/chartData")
+	@Produces(MediaType.APPLICATION_JSON)
+	public String getChartDataStore(@Context HttpServletRequest req
+			, @PathParam("label") String label
+			, @QueryParam("offset") @DefaultValue("-1") int offset
+			, @QueryParam("fetchSize") @DefaultValue("-1") int fetchSize
+			, @QueryParam("maxResults") @DefaultValue("-1") int maxResults) {
+		logger.debug("IN");
+		try {
+			String crosstabDefinitionParam = request.getParameter(CROSSTAB_DEFINITION);	
+			Assert.assertNotNull(crosstabDefinitionParam, "Parameter [" + CROSSTAB_DEFINITION + "] cannot be null in oder to execute getChartDataStore action");
+			
+			JSONObject crosstabDefinitionJSON  = ObjectUtils.toJSONObject(crosstabDefinitionParam);	
+			
+			logger.debug("Parameter [" + crosstabDefinitionJSON + "] is equals to [" + crosstabDefinitionJSON.toString() + "]");
+			CrosstabDefinition crosstabDefinition = (CrosstabDefinition)DeserializerFactory.getDeserializer("application/json").deserialize(crosstabDefinitionJSON, CrosstabDefinition.class);
+			
+			IDataStore dataStore = getDatasetManagementAPI().getAggregatedDataStore(label, offset, fetchSize, maxResults, crosstabDefinition);
+			Assert.assertNotNull(dataStore, "Aggregated Datastore is null");
+
+			//TODO: serializzare il datastore in JSON con il formato usato dal chart (vedi CrossTab)
+			
+			// serialize crosstab
+			CrossTab crossTab;
+			if(crosstabDefinition.isPivotTable()){
+				
+				//TODO: see the implementation in LoadCrosstabAction
+				throw new SpagoBIServiceException(this.request.getPathInfo(), "Crosstable Pivot not yet managed");
+
+			}else{
+				//load the crosstab data structure for all other widgets
+				crossTab= new CrossTab(dataStore, crosstabDefinition);
+			}
+			JSONObject crossTabDefinition = crossTab.getJSONCrossTab();
+
+			return crossTabDefinition.toString();
+			
 		}catch(ParameterDsException p){
 			throw new ParameterDsException(p.getMessage());
 		}catch(Throwable t) {
