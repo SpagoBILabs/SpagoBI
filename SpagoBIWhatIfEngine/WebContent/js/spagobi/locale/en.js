@@ -84,6 +84,7 @@ Sbi.locale.ln['sbi.olap.execution.table.filter.filter.title'] = 'Select a slicer
 Sbi.locale.ln['sbi.olap.execution.table.filter.dimension.title'] = 'Select the visible members';
 Sbi.locale.ln['sbi.olap.execution.table.filter.no.measure'] = 'A measure can not be used as a filter';
 
+
 //===================================================================
 //DIMENSIONS
 //===================================================================
@@ -91,3 +92,4 @@ Sbi.locale.ln['sbi.olap.execution.table.filter.no.measure'] = 'A measure can not
 Sbi.locale.ln['sbi.olap.execution.table.dimension.selected.hierarchy'] = 'The selected hierarchy is ';
 Sbi.locale.ln['sbi.olap.execution.table.dimension.selected.hierarchy.2'] = ' You can chage it acting on the form below.';
 Sbi.locale.ln['sbi.olap.execution.table.dimension.available.hierarchies'] = 'Available hierarchies: ';
+Sbi.locale.ln['sbi.olap.execution.table.dimension.no.enough'] = 'There must be at least one dimension in the columns and in the rows';

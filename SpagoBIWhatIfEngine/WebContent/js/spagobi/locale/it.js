@@ -87,3 +87,4 @@ Sbi.locale.ln['sbi.olap.execution.table.filter.no.measure'] = 'Non \u00e8 possib
 Sbi.locale.ln['sbi.olap.execution.table.dimension.selected.hierarchy'] = 'La gerarchia selezionata \u00e8 ';
 Sbi.locale.ln['sbi.olap.execution.table.dimension.selected.hierarchy.2'] = ' Puoi cambiare la gerarchia selezionando il valore tramite il seguente form.';
 Sbi.locale.ln['sbi.olap.execution.table.dimension.available.hierarchies'] = 'Gerarchie disponibili: ';
+Sbi.locale.ln['sbi.olap.execution.table.dimension.no.enough'] = 'Ci deve esserre almeno una dimensione sia nelle righe che nelle colonne';

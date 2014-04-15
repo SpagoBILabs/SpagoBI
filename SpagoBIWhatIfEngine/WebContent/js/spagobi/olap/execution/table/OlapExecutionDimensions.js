@@ -102,10 +102,13 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionDimensions', {
      * @param {Sbi.olap.execution.table.OlapExecutionDimension} dimension the Dimension to add
      */
 	moveDimensionToOtherAxis: function(dimension){
-		if(this.axisOrdinalPosition>=0 || !dimension.dimension.get("measure")){
-			Sbi.olap.eventManager.moveDimensionToOtherAxis(dimension.dimension.get("uniqueName"), dimension.dimension.get("axis"), this.axisOrdinalPosition);
-		}else{
+		var originalAxis = dimension.dimension.get("axis");
+		if(this.axisOrdinalPosition<0 && dimension.dimension.get("measure")){//can not remove measure
 			Sbi.exception.ExceptionHandler.showInfoMessage(LN("sbi.olap.execution.table.filter.no.measure"));
+		}else if(originalAxis>=0 && dimension.containerPanel.store.getCount()<=1){//there must be at least one dimension in the rows and in the columns
+			Sbi.exception.ExceptionHandler.showInfoMessage(LN("sbi.olap.execution.table.dimension.no.enough"));
+		}else{
+			Sbi.olap.eventManager.moveDimensionToOtherAxis(dimension.dimension.get("uniqueName"), originalAxis, this.axisOrdinalPosition);
 		}
 		
 	},
