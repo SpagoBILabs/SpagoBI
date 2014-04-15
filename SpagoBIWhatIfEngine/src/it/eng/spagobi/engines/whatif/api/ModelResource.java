@@ -22,6 +22,8 @@ import it.eng.spagobi.engines.whatif.model.SpagoBICellSetWrapper;
 import it.eng.spagobi.engines.whatif.model.SpagoBICellWrapper;
 import it.eng.spagobi.engines.whatif.model.transform.CellTransformation;
 import it.eng.spagobi.engines.whatif.model.transform.algorithm.DefaultWeightedAllocationAlgorithm;
+import it.eng.spagobi.utilities.exceptions.SpagoBIEngineRestServiceException;
+import it.eng.spagobi.utilities.rest.RestUtilities;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
@@ -29,6 +31,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
 import org.apache.log4j.Logger;
+import org.json.JSONObject;
 
 import com.eyeq.pivot4j.PivotModel;
 
@@ -36,6 +39,9 @@ import com.eyeq.pivot4j.PivotModel;
 public class ModelResource extends AbstractWhatIfEngineService {
 	
 	public static transient Logger logger = Logger.getLogger(ModelResource.class);
+	
+	// input parameters
+	public static final String EXPRESSION = "expression";
 	
 	/**
 	 * Executes the mdx query. If the mdx is null it executes the query of the model
@@ -74,11 +80,19 @@ public class ModelResource extends AbstractWhatIfEngineService {
 	}
 	
 	@PUT
-	@Path("/setValue/{ordinal}/{expression}")
-	public String setValue(@PathParam("ordinal") int ordinal, @PathParam("expression") String expression){
-		logger.debug("IN : expression = [" + expression + "], ordinal = [" + ordinal + "]");
+	@Path("/setValue/{ordinal}")
+	public String setValue(@PathParam("ordinal") int ordinal){
+		logger.debug("IN : ordinal = [" + ordinal + "]");
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
 		PivotModel model = ei.getPivotModel();
+		String expression = null;
+		try {
+			JSONObject json = RestUtilities.readBodyAsJSONObject(getServletRequest());
+			expression = json.getString( EXPRESSION );
+		} catch (Exception e) {
+			new SpagoBIEngineRestServiceException("generic.error", this.getLocale(), e);
+		}
+		logger.debug("expression = [" + expression + "]");
 		Double value = Double.valueOf(expression);
 		SpagoBICellSetWrapper cellSetWrapper = (SpagoBICellSetWrapper) model
 				.getCellSet();
