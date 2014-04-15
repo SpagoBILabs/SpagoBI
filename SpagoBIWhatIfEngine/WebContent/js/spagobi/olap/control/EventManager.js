@@ -186,7 +186,12 @@ Ext.define('Sbi.olap.control.EventManager', {
 	writeBackCell: function(id, value, startValue){
 		var type = "float";
 		var unformattedValue = Sbi.whatif.commons.Format.formatInJavaDouble(value,Sbi.locale.formats[type]);
-		alert(id+" "+unformattedValue+" "+startValue);
+		var position = "";
+		if(id){
+			var endPositionIndex = id.indexOf("!"); 
+			position= id.substring(0,endPositionIndex);
+		}
+		alert(endPositionIndex+" "+unformattedValue+" "+startValue);
 	},
 
 	/**
