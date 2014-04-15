@@ -13,21 +13,21 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 
 <!-- START-DEBUG -->
 
-
-<script type="text/javascript" src='../js/spagobi/widgets/Help.js'></script>
-
-<script type="text/javascript" src='../js/spagobi/olap/model/DimensionModel.js'></script>
-<script type="text/javascript" src='../js/spagobi/olap/model/HierarchyModel.js'></script>
-<script type="text/javascript" src='../js/spagobi/olap/model/MemberModel.js'></script>
-<script type="text/javascript" src='../js/spagobi/olap/model/PivotModel.js'></script>
-
-<script type="text/javascript" src='../js/spagobi/exception/ExceptionHandler.js'/></script>
-
 <script type="text/javascript" src='../js/spagobi/service/ServiceRegistry.js'/></script>
 <script type="text/javascript" src='../js/spagobi/service/RestService.js'/></script>
 
 <script type="text/javascript" src='../js/spagobi/commons/Format.js'/></script>
 <script type="text/javascript" src='../js/spagobi/commons/Utils.js'/></script>
+<script type="text/javascript" src='../js/spagobi/commons/Log.js'/></script>
+
+<script type="text/javascript" src='../js/spagobi/widgets/Help.js'></script>
+
+<script type="text/javascript" src='../js/spagobi/exception/ExceptionHandler.js'/></script>
+
+<script type="text/javascript" src='../js/spagobi/olap/model/DimensionModel.js'></script>
+<script type="text/javascript" src='../js/spagobi/olap/model/HierarchyModel.js'></script>
+<script type="text/javascript" src='../js/spagobi/olap/model/MemberModel.js'></script>
+<script type="text/javascript" src='../js/spagobi/olap/model/PivotModel.js'></script>
 
 <script type="text/javascript" src='../js/spagobi/olap/options/OlapOptionsChart.js'></script>
 <script type="text/javascript" src='../js/spagobi/olap/options/OlapOptionsTable.js'></script>

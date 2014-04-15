@@ -8,19 +8,24 @@
  */
 package it.eng.spagobi.engines.whatif.model;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
 import com.eyeq.pivot4j.ui.command.DrillDownCommand;
 
-public class ModelConfig {
+public class ModelConfig implements Serializable {
 
+	private static final long serialVersionUID = 2687163910212567575L;
+	public static final String WRITEBACK = "writeback";
 	private String drillType;
 	private Map<String, String> dimensionHierarchyMap;
+	private Map<String, String> writeBackConf;
 
 	public ModelConfig() {
 		drillType = DrillDownCommand.MODE_POSITION;
 		dimensionHierarchyMap = new HashMap<String, String>();
+		writeBackConf = new HashMap<String, String>();
 	}
 
 	public String getDrillType() {
@@ -42,5 +47,19 @@ public class ModelConfig {
 	public void setDimensionHierarchy(String dimensionUniqueName, String hierarchyUniqueName) {
 		this.dimensionHierarchyMap.put(dimensionUniqueName, hierarchyUniqueName);
 	}
+
+	public Map<String, String> getWriteBackConf() {
+		return writeBackConf;
+	}
+
+	public void setWriteBackConf(Map<String, String> writeBackConf) {
+		this.writeBackConf = writeBackConf;
+	}
+	
+
+	public boolean isWriteBackEnabled() {
+		return this.writeBackConf.containsKey(WRITEBACK);
+	}
+	
 	
 }
