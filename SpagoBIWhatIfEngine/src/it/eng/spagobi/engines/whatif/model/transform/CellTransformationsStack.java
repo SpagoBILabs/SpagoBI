@@ -8,9 +8,8 @@
  * @author Zerbetto Davide (davide.zerbetto@eng.it)
  */
 
-package it.eng.spagobi.engines.whatif.model;
+package it.eng.spagobi.engines.whatif.model.transform;
 
-import it.eng.spagobi.engines.whatif.model.transform.CellTransformation;
 
 import java.util.ArrayList;
 

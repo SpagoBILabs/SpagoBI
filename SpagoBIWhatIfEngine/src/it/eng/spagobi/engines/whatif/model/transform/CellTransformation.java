@@ -13,6 +13,9 @@
 
 package it.eng.spagobi.engines.whatif.model.transform;
 
+
+import it.eng.spagobi.engines.whatif.model.transform.algorithm.AllocationAlgorithm;
+
 import org.olap4j.metadata.Member;
 
 public class CellTransformation {
