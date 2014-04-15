@@ -98,7 +98,10 @@ Ext.define('Sbi.service.RestService', {
 		};
 
 		if(!myFailureCallBack && scope){
-			myFailureCallBack = Sbi.exception.ExceptionHandler.handleFailure;
+			myFailureCallBack = function (response, options) {
+				Sbi.olap.eventManager.fireEvent('serviceExecutedWithError', response);
+				Sbi.exception.ExceptionHandler.handleFailure(response, options);
+			};
 		};
 
 		var ajaxConf = {
