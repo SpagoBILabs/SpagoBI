@@ -89,7 +89,6 @@ author:...
     	
     	
     	Sbi.config = {};
-    	Sbi.whatif = {};
     	
 		var url = {
 	    	host: '<%= request.getServerName()%>'

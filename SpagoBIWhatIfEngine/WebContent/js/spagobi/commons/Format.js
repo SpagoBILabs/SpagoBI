@@ -125,6 +125,79 @@ Sbi.whatif.commons.Format = function(){
     		return v;
         }   
         
+        , cleanFormattedNumber : function(v, format)  {
+    		
+        	format = Ext.apply({}, format || {}, {
+	    		decimalSeparator: '.',
+	    		decimalPrecision: 2,
+	    		groupingSeparator: ',',
+	    		groupingSize: 3,
+	    		currencySymbol: '',
+	    		nullValue: ''
+	    		
+    		});
+
+        	if(v === undefined || v === null) {
+        		 return format.nullValue;
+        	}
+        	
+        	if (typeof v !== 'number') {
+    			v = String(v);
+    			if (format.currencySymbol) {
+    				v = v.replace(format.currencySymbol, '');
+    			}
+    			if (format.groupingSeparator!=undefined && format.groupingSeparator!=null) {
+    				v = v.replace(format.groupingSeparator, '');
+    			}
+    			if (format.decimalSeparator !== '.') {
+    				v = v.replace(format.decimalSeparator, '.');
+    			}
+    			v = parseFloat(v);
+    			
+            	v = v+"";
+            	
+            	
+    			if (format.decimalSeparator !== '.') {
+    				v = v.replace('.', format.decimalSeparator);
+    			}
+    		}
+    		
+    		return v;
+        }  
+        
+        , formatInJavaDouble : function(v, format)  {
+    		
+        	format = Ext.apply({}, format || {}, {
+	    		decimalSeparator: '.',
+	    		decimalPrecision: 2,
+	    		groupingSeparator: ',',
+	    		groupingSize: 3,
+	    		currencySymbol: '',
+	    		nullValue: ''
+	    		
+    		});
+
+        	if(v === undefined || v === null) {
+        		 return format.nullValue;
+        	}
+        	
+        	if (typeof v !== 'number') {
+    			v = String(v);
+    			if (format.currencySymbol) {
+    				v = v.replace(format.currencySymbol, '');
+    			}
+    			if (format.groupingSeparator!=undefined && format.groupingSeparator!=null) {
+    				v = v.replace(format.groupingSeparator, '');
+    			}
+    			if (format.decimalSeparator !== '.') {
+    				v = v.replace(format.decimalSeparator, '.');
+    			}
+    			v = parseFloat(v);
+    		}
+        	
+    		return v;
+        }  
+        
         , numberRenderer : function(format){
             return function(v){
             	return '<div style=\'text-align: right;\'>' + Sbi.qbe.commons.Format.number(v, format) + '</div>';

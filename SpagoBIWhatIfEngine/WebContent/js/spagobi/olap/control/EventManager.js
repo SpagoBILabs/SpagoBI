@@ -184,7 +184,9 @@ Ext.define('Sbi.olap.control.EventManager', {
 	 * @param startValue
 	 */
 	writeBackCell: function(id, value, startValue){
-		alert(id+" "+value+" "+startValue);
+		var type = "float";
+		var unformattedValue = Sbi.whatif.commons.Format.formatInJavaDouble(value,Sbi.locale.formats[type]);
+		alert(id+" "+unformattedValue+" "+startValue);
 	},
 
 	/**
@@ -195,6 +197,7 @@ Ext.define('Sbi.olap.control.EventManager', {
 
 		if(this.olapPanel && this.olapPanel.modelConfig && this.olapPanel.modelConfig.writeBackEnabled){
 			var cell = Ext.get(id);
+			var type = "float";
 			var editor = Ext.create("Ext.Editor", {
 				updateEl: true,
 				field: {
@@ -212,11 +215,12 @@ Ext.define('Sbi.olap.control.EventManager', {
 			var value = "";
 			try  {
 				value = cell.dom.childNodes[0].data.trim();
+				value = Sbi.whatif.commons.Format.cleanFormattedNumber(value,Sbi.locale.formats[type]);
 			} catch(err) {
 				Sbi.error("Error loading the value of the cell to edit"+err);
 			}
 
-			editor.startEdit(cell.el, value.trim());
+			editor.startEdit(cell.el, value);
 		}
 	}
 
