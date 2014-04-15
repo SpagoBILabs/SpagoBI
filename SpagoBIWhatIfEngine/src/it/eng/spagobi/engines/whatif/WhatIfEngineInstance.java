@@ -7,6 +7,7 @@
 package it.eng.spagobi.engines.whatif;
 
 import it.eng.spagobi.engines.whatif.model.ModelConfig;
+import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
 import it.eng.spagobi.services.proxy.EventServiceProxy;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
@@ -98,7 +99,8 @@ public class WhatIfEngineInstance extends AbstractEngineInstance implements Seri
 //		
 //		((SimpleOlapDataSource)olapDataSource).setConnectionProperties(connectionProps);
 		
-		pivotModel = new PivotModelImpl(olapDataSource);
+		//pivotModel = new PivotModelImpl(olapDataSource);
+		pivotModel = new SpagoBIPivotModel(olapDataSource);
 		pivotModel.setMdx( WhatIfEngineConfig.getInstance().getInitiallMdx());
 		pivotModel.initialize();
 		
