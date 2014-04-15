@@ -184,19 +184,28 @@ Ext.define('Sbi.olap.control.EventManager', {
 	 * @param startValue
 	 */
 	writeBackCell: function(id, value, startValue){
-		var position = "";
-		if(id){
-			var endPositionIndex = id.indexOf("!"); 
-			position= id.substring(0,endPositionIndex);
+		var type = "float";
+		if(startValue){
+			startValue = Sbi.whatif.commons.Format.cleanFormattedNumber(startValue,Sbi.locale.formats[type]);
 		}
-		if(value && value.length>0 && value[0]!="="){
-			var type = "float";
-			var unformattedValue = Sbi.whatif.commons.Format.formatInJavaDouble(value,Sbi.locale.formats[type]);
+		if(value!=startValue){
+			var position = "";
+			var unformattedValue = value;
 			
+			if(id){
+				var endPositionIndex = id.indexOf("!"); 
+				position= id.substring(0,endPositionIndex);
+			}
+			
+			if(!isNaN(value)){
+				unformattedValue = Sbi.whatif.commons.Format.formatInJavaDouble(value,Sbi.locale.formats[type]);
+			}
+
+			this.olapController.setValue(position, unformattedValue);	
 		}else{
-			unformattedValue = value;
+			Sbi.error("The new value is the same as the old one");
 		}
-		this.olapController.setValue(position, unformattedValue);
+
 	},
 
 	/**
@@ -246,7 +255,6 @@ Ext.define('Sbi.olap.control.EventManager', {
 		this.loadingMask.hide();
 
 	}
-
 
 
 
