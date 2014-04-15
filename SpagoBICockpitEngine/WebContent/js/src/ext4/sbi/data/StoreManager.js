@@ -670,6 +670,35 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 		}
 	}
 	
+	, getRecordMeta: function(r){
+		var toReturn = {};
+		var fields = r.fields.items;
+		for(var i = 0, l = fields.length; i < l; i++) {
+			var f = fields[i];
+			if( typeof f === 'string' ) {
+				f = {name: f};
+			}
+			f.header = f.header || f.name;
+			if(!toReturn[f.header]) {
+				toReturn[f.header] = new Array();
+			}
+			toReturn[f.header].push(f);
+		}
+		
+		return toReturn;
+	}
+	
+	 , getFieldHeaderByName: function(meta, alias){	 	
+	    	for (mf in meta) {
+	    		var m = meta[mf];
+				var name = m[0].name;
+				if(name == alias) {
+					return m[0].header;
+				}
+	    	}
+	    	return null;
+	  }
+	
 	// -----------------------------------------------------------------------------------------------------------------
     // association methods
 	// -----------------------------------------------------------------------------------------------------------------

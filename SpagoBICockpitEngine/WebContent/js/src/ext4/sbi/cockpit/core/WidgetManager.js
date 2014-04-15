@@ -58,6 +58,12 @@ Ext.extend(Sbi.cockpit.core.WidgetManager, Ext.util.Observable, {
      */
     , env: null
     
+    /**
+     * @property {Object} selections
+     * The  object monitor contains all active selections
+     */
+    , selections: null
+    
     // =================================================================================================================
 	// METHODS
 	// =================================================================================================================
@@ -84,6 +90,7 @@ Ext.extend(Sbi.cockpit.core.WidgetManager, Ext.util.Observable, {
      * @param {Sbi.cockpit.core.WidgetRuntime} The widget.
      */    
     , register: function(w) {
+    	w.on('selection', this.onSelection, this);
     	this.widgets.add(w);
     	Sbi.info("[WidgetManager.register]: widget [" + this.widgets.getKey(w) + "] succesfully registered. Now there are [" + this.widgets.getCount()+ "] registered widget(s)");
 	}
@@ -217,7 +224,159 @@ Ext.extend(Sbi.cockpit.core.WidgetManager, Ext.util.Observable, {
     , onWidgetRemove: function(widget, key) {
     	//widget.setParentContainer(null);
     }
+
+    , onSelection: function(c){
+    	Sbi.trace("[WidgetManager.onSelection]: IN");
+    	
+    	if (!Sbi.isValorized(this.selections)) this.selections = [];
+    	this.removeSelections(c.widgetName);
+    	this.addSelections(c);
+    	
+    	
+    	Sbi.trace("[WidgetManager.onSelection]: OUT");
+    }
     
+ 
+//    , addSelection: function(c){
+//    	Sbi.trace("[WidgetManager.addSelection]: IN");
+//    	
+//    	if (!Sbi.isValorized(this.selections)) this.selections = [];
+//    	
+//    	var meta = Sbi.storeManager.getRecordMeta(c.widgetData);
+//    	var data = c.widgetData.data;
+//    	var selection = {};
+//    	var newSelection = false;
+//    	if (Sbi.isValorized(meta)){
+//    		var selectionId = null;
+//    		for (d in data){    			    	    	
+////    			if (d !== 'id' && d !== 'recNo'){    			
+//    			if (d == 'id'){
+//    				selection.selectionId = data[d];    				
+//    			}else if (d !== 'recNo'){  
+//    				var header = Sbi.storeManager.getFieldHeaderByName(meta, d);
+//    				var value = data[d];
+//    				var selectionNode =  this.getWidgetSelectionNode(c.widgetName);
+//    				var selectionValues = this.getWidgetSelectionValues(selectionNode, header);
+//    				if (Sbi.isValorized(header) && Sbi.isValorized(value)){
+//	    				selectionValues.push(value);
+//	    				if (Sbi.isEmptyNode(selectionNode)) {
+////	    					selectionNode.id = selectionId;
+//	    					selectionNode.values = selectionValues;
+//	    					selection[header] = selectionNode;
+//	    					newSelection = true;
+//	    				}	    				
+//    				}
+//    			}
+//    		}
+//    		if (this.isNewSelection(selection, c.widgetName)) 
+//    			this.selections[c.widgetName] = selection;
+//    	}    	
+//    	Sbi.trace("[WidgetManager.addSelection]: OUT");
+//    }
+    
+    /**
+	 * @method
+	 * 
+	 * Delete the selections list from the object that will be added
+	 * 
+	 * @param {w} w The widget name
+	 * 
+	 */
+    , removeSelections: function(w){
+    	var node = this.getWidgetSelectionNode(w);
+    	if (Sbi.isValorized(node) && ! Sbi.isEmptyNode(node)){
+			delete this.selections[w];
+    	}
+    }
+    
+    /**
+	 * @method
+	 * 
+	 * Adds a selection to the list following the next structure:
+	 * selections: [ ext-comp-2014 : {
+	 *							STATE: {values:['CA','WA']}
+	 *						  , FAMILY:  {values:['Food', 'Drink']}
+	 *				 }
+	 *		 		 ext-comp-1031 : {
+	 *							MEDIA: {values:['TV']}
+	 *						  , CUSTOMER:  {values:['79','99']}
+	 *				 }
+	 *		]
+	 * 
+	 * @param {c} c The configuration of the widget.
+	 * 
+	 */
+    , addSelections: function(c){
+    	for (var i=0; i< c.widgetData.length; i++){
+	    	var meta = Sbi.storeManager.getRecordMeta(c.widgetData[i]);
+	    	var data = c.widgetData[i].data;
+	    	var selection = {};
+	    	if (Sbi.isValorized(meta)){
+	    		for (d in data){    			    	    	
+	    			if (d !== 'id' && d !== 'recNo'){    			
+	    				var header = Sbi.storeManager.getFieldHeaderByName(meta, d);
+	    				var value = data[d];
+	    				var selectionNode =  this.getWidgetSelectionNode(c.widgetName);
+	    				var selectionValues = this.getWidgetSelectionValues(selectionNode, header);
+	    				if (Sbi.isValorized(header) && Sbi.isValorized(value)){
+		    				selectionValues.push(value);
+	    					selectionNode.values = selectionValues;
+	    					selection[header] = selectionNode;    				
+	    				}
+	    			}
+	    		} 
+	    		this.selections[c.widgetName] = selection;
+	    	}    	
+    	}
+    }
+    
+    /**
+	 * @method
+	 * 
+	 * Returns the object with all the selections linked to the widget in input
+	 * 
+	 * @param {w} w The widget name
+	 * 
+	 * @return {Object} object with selections
+	 */
+    , getWidgetSelectionNode: function(w){
+    	for (s in this.selections){
+    		if (s === w) {
+    			return this.selections[s];
+    		}
+    	}
+    	return {};    	
+    }
+    
+    /**
+	 * @method
+	 * 
+	 * Returns the object with all the selections values 
+	 * 
+	 * @param {selectionNode} selectionNode The selection Node with all informations
+	 * @param {s} s The label for get the specific value
+	 * 
+	 * @return {Object} object with selections values
+	 */
+    , getWidgetSelectionValues: function(selectionNode, s){
+    	for (n in selectionNode){
+    		if (n === s) return selectionNode[n].values;
+    	}
+    	return [];  
+    }
+    
+//    , isNewSelection: function(s, w){
+//    	var id = s.selectionId;
+//    	var selNode = this.getWidgetSelectionNode(w);
+//    	for (s in this.selections){
+//    		var objId = selNode.selectionId;
+//    		if (objId === id) 
+//    			return false;    		
+//    	}
+//    	return true;
+//    }
+
+   
     // =================================================================================================================
 	// EVENTS
 	// =================================================================================================================

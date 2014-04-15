@@ -151,3 +151,11 @@ Sbi.createObjectByClassName = function(fnName, fnArgs) {
 	
 	return output;
 };
+
+Sbi.isEmptyNode = function(n){
+	for(var i in n) {
+	      if(n.hasOwnProperty(i))
+	        return false;
+	}
+	 return true;
+};
