@@ -184,7 +184,7 @@ public class WhatIfHTMLRenderer extends HtmlRenderer {
 			int positionId = context.getCell().getOrdinal();
 			//String memberUniqueName = context.getMember().getUniqueName();
 			String id= positionId+"!"+rowId+"!"+colId+"!"+System.currentTimeMillis()%1000;
-			attributes.put("onClick", "javascript:Sbi.olap.eventManager.makeEditable('"+id+"')");
+			attributes.put("ondblclick", "javascript:Sbi.olap.eventManager.makeEditable('"+id+"')");
 			attributes.put("id", id);
 		}
 
