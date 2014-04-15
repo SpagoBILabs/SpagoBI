@@ -352,7 +352,6 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidget, Sbi.cockpit.core.WidgetR
 		var retriever = new Sbi.cockpit.widgets.chart.DefaultChartDimensionRetrieverStrategy();
 		var size = retriever.getChartDimension(this);
 		this.update(' <div id="' + this.chartDivId + '" style="width: ' + size.width + '; height: ' + size.height + ';"></div>');
-
 		var percent = ((this.chartConfig.type).indexOf('percent')>=0);
 		var storeObject = this.getJsonStoreExt3(percent);
 		var colors = this.getColors();
@@ -394,8 +393,10 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidget, Sbi.cockpit.core.WidgetR
 
 
 		items.region = 'center';
-		var barChartPanel = this.getChartExt3(this.chartConfig.orientation === 'horizontal', items);
-
+		//Ext3 implementation
+		//var barChartPanel = this.getChartExt3(this.chartConfig.orientation === 'horizontal', items);
+		var barChartPanel = this.getChartExt4(this.chartConfig.orientation === 'horizontal', items);
+		
 		//Its a workaround because if you change the display name the chart is not able to write the tooltips
 
 		var exportChartPanel  = new Ext.Panel({
@@ -405,12 +406,14 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidget, Sbi.cockpit.core.WidgetR
 			html: '<div style=\"padding-top: 5px; padding-bottom: 5px; font: 11px tahoma,arial,helvetica,sans-serif;\">'+LN('sbi.worksheet.runtime.worksheetruntimepanel.chart.includeInTheExport')+'</div>'
 		});
 
+		//TODO: Ext3 implementation
+		/*
 		var chartConf ={
 				renderTo : this.chartDivId,
 				border: false,
 				items: [exportChartPanel, barChartPanel]
 		};
-
+	*/
 		this.on('contentclick', function(event){
 			this.byteArrays=new Array();
 			try{
@@ -421,13 +424,138 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidget, Sbi.cockpit.core.WidgetR
 			this.headerClickHandler(event,null,null,barChartPanel, this.reloadJsonStoreExt3, this);
 		}, this);
 
-
-		new Ext.Panel(chartConf);
+		//TODO: Ext3 implementation
+		//new Ext.Panel(chartConf);
 
 	}
 	// -----------------------------------------------------------------------------------------------------------------
     // private methods
 	// -----------------------------------------------------------------------------------------------------------------
+	
+	//----- Ext 4 Implementation related functions ------------------------------------------
+	, getChartExt4 : function(horizontal, items){
+		
+		var chartDataStore = items.store;
+		
+		var chartType; 
+		
+		if(horizontal){
+			if(this.chartConfig.type == 'stacked-barchart' || this.chartConfig.type == 'percent-stacked-barchart'){
+				chartType = 'bar';
+			}else{
+				chartType = 'bar';
+			}
+		} else {
+			if(this.chartConfig.type == 'stacked-barchart' || this.chartConfig.type == 'percent-stacked-barchart'){
+				chartType = 'column';
+			}else{
+				chartType = 'column';
+			}
+		}
+		
+		var chartAxes = this.createAxes(horizontal, items);
+		var chartSeries = this.createSeries(horizontal, items, chartType);
+		
+	    var chart = Ext.create("Ext.chart.Chart", {
+	        width: '100%',
+	    	height: '100%',
+	        hidden: false,
+	        title: "My Chart",
+	        renderTo: this.chartDivId,
+	        layout: "fit",
+	        style: "background:#fff",
+	            animate: true,
+	            store: chartDataStore,
+	            shadow: true,
+	            theme: "Category1",
+	            legend: {
+	                position: "bottom"
+	            },
+	            axes: chartAxes,
+	            series: chartSeries
+	        
+	    });
+	    
+	    return chart;
+	}
+	//TODO: WIP	
+	, createSeries : function(horizontal,items, chartType){
+		var series = [];
+		
+		if (horizontal){
+			//TODO: series for bar chart
+			
+		} else {
+			
+			for (var i=0; i< items.series.length; i++){
+				var name = items.series[i].yField;
+				var displayName = items.series[i].displayName;
+				
+				var aSerie = {
+		                type: chartType,
+		                highlight: {
+		                    size: 7,
+		                    radius: 7
+		                },
+		                axis: "left",
+		                smooth: true,
+		                xField: "categories",
+		                yField: name,	                
+		                title: displayName 
+		                
+		         };
+				series.push(aSerie);
+			}
+			
+			
+		}
+		return series;
+	}
+	
+	//TODO: WIP
+	, createAxes : function(horizontal,items){
+		var axes;
+
+		if (horizontal){
+			//TODO: axes for bar chart
+		} else {
+			
+			var seriesNames = [];
+			
+			for (var i=0; i< items.series.length; i++){
+				var name = items.series[i].yField;
+				seriesNames.push(name);
+			}
+
+			axes = [{
+				type: "Numeric",
+				minimum: 0,
+				position: "left",
+				fields: seriesNames,
+				title: "Series",
+				minorTickSteps: 1,
+				grid: {
+					odd: {
+						opacity: 1,
+						fill: "#ddd",
+						stroke: "#bbb",
+						"stroke-width": 0.5
+					}
+				}
+			}, {
+				type: "Category",
+				position: "bottom",
+				fields: ["categories"],
+				title: "Category"
+			}];
+		}
+		
+		return axes;
+	}
+	
+	
+	///---------------------------------------------------------------------
+	
 	, setPercentageStyleExt3 : function(chart, horizontal){
 		var axis =  new Ext.chart.NumericAxis({
 			stackingEnabled: true,
