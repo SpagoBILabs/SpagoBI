@@ -55,13 +55,16 @@ Sbi.exception.ExceptionHandler = function(){
         	
         	var errorSeparator = "error.mesage.description.";
         	
-        	var errMessage = ''
-        	if(response !== undefined) {
-        		if (response.responseText !== undefined) {
-        			try{
-        				var content = Ext.util.JSON.decode( response.responseText );
-        			}catch(e){
-        				var content =Ext.JSON.decode( response.responseText );
+        	var errMessage = null;
+        	if (response !== undefined) {
+        		if (response.responseText !== undefined && response.responseText != '') {
+        			var content = null;
+        			try {
+        				// ExtJS 2/3
+        				content = Ext.util.JSON.decode( response.responseText );
+        			} catch(e) {
+        				// ExtJS 4
+        				content = Ext.JSON.decode( response.responseText );
         			}
         			
         			if (content.errors !== undefined  && content.errors.length > 0) {
@@ -69,7 +72,7 @@ Sbi.exception.ExceptionHandler = function(){
         					// session expired
         					errMessage = LN('sbi.qbe.sessionexpired.msg');
         				} else if (content.errors[0].message === 'not-enabled-to-call-service') {
-        					Sbi.exception.ExceptionHandler.showErrorMessage(LN('not-enabled-to-call-service'), 'Service Error')
+        					Sbi.exception.ExceptionHandler.showErrorMessage(LN('not-enabled-to-call-service'), 'Service Error');
         				} else {
         					for (var count = 0; count < content.errors.length; count++) {
         						var anError = content.errors[count];
