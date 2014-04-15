@@ -69,6 +69,7 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotModel> {
 	private static final String ROWSAXISORDINAL = "rowsAxisOrdinal";
 	private static final String COLUMNSAXISORDINAL = "columnsAxisOrdinal";
 	private static final String MDXFORMATTED = "mdxFormatted";
+	private static final String MODELCONFIG = "modelConfig";
 
 	
 	private OlapConnection connection;
@@ -166,6 +167,7 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotModel> {
 			serializeDimensions(jgen, otherHDimensions, FILTERS_AXIS_POS, FILTERS, true, value);
 			jgen.writeNumberField(COLUMNSAXISORDINAL, Axis.COLUMNS.axisOrdinal());
 			jgen.writeNumberField(ROWSAXISORDINAL, Axis.ROWS.axisOrdinal());
+			jgen.writeObjectField(MODELCONFIG, modelConfig);
 			
 			//build the query mdx
 			String mdxQuery = value.getMdx();

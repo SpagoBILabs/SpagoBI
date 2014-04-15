@@ -60,10 +60,12 @@ Ext.define('Sbi.olap.OlapPanel', {
 	pivotModel: null,
 
 	/**
-     * @property {Object} pivotConfig
+     * @property {Object} modelConfig
      *  The configuration of the model.. Example drill type, selected hierarchy of a dimension,...
      */
 	pivotConfig:{},
+
+	
 	
 	constructor : function(config) {
 		this.initConfig(config||{});
@@ -96,14 +98,15 @@ Ext.define('Sbi.olap.OlapPanel', {
 	},
 	
 	
-	updateAfterMDXExecution: function(pivot){
+	updateAfterMDXExecution: function(pivot, modelConfig){
 		this.pivotModel = pivot;
+		this.modelConfig = modelConfig;
 		this.executionPanel.updateAfterMDXExecution(pivot);
 	},
 	
 	appyConfigChanges: function(changes){
-		this.pivotConfig = Ext.apply(this.pivotConfig,changes||{});
-		Sbi.olap.eventManager.setModelConfig(this.pivotConfig);
+		this.pivotConfig = Ext.apply(this.modelConfig,changes||{});
+		Sbi.olap.eventManager.setModelConfig(this.modelConfig);
 	}
 	
 	

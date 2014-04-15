@@ -6,7 +6,6 @@
 
 package it.eng.spagobi.engines.whatif;
 
-import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.engines.whatif.model.ModelConfig;
 import it.eng.spagobi.services.proxy.EventServiceProxy;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
@@ -24,15 +23,12 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Properties;
 
 import org.apache.log4j.Logger;
-import org.json.JSONObject;
 import org.olap4j.OlapConnection;
 import org.olap4j.OlapDataSource;
 
 import com.eyeq.pivot4j.PivotModel;
-import com.eyeq.pivot4j.datasource.SimpleOlapDataSource;
 import com.eyeq.pivot4j.impl.PivotModelImpl;
 
 /**
@@ -107,10 +103,13 @@ public class WhatIfEngineInstance extends AbstractEngineInstance implements Seri
 		pivotModel.initialize();
 		
 		
-		
 		//init configs 
 		modelConfig = new ModelConfig();
-
+		String writeback = WhatIfEngineConfig.getInstance().getWriteBackConf();
+		if(writeback!= null && !writeback.equals("")){
+			modelConfig.getWriteBackConf().put(ModelConfig.WRITEBACK, writeback);
+		}
+		
 	}
 	
 	public OlapConnection getOlapConnection () {

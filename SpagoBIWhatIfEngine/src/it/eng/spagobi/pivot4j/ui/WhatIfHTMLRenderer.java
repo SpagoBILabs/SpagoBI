@@ -1,3 +1,9 @@
+/* SpagoBI, the Open Source Business Intelligence suite
+
+ * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 package it.eng.spagobi.pivot4j.ui;
 
 import java.io.StringWriter;
@@ -172,7 +178,14 @@ public class WhatIfHTMLRenderer extends HtmlRenderer {
 			attributes.put("class", styleClass);
 		}
 		if(context.getCellType() == CellType.Value){
-			attributes.put("contentEditable", "true");
+			//attributes.put("contentEditable", "true");
+			int colId = context.getColumnIndex();
+			int rowId = context.getRowIndex();
+			int positionId = context.getCell().getOrdinal();
+			//String memberUniqueName = context.getMember().getUniqueName();
+			String id= System.currentTimeMillis()%1000+"-"+rowId+"-"+colId+"-"+positionId;
+			attributes.put("onClick", "javascript:Sbi.olap.eventManager.makeEditable('"+id+"')");
+			attributes.put("id", id);
 		}
 
 		writer.flush();

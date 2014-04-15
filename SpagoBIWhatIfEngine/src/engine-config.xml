@@ -33,6 +33,8 @@
 	<DocumentExecuteServiceProxy_URL>/services/DocumentExecuteService</DocumentExecuteServiceProxy_URL>
 	<DataSetServiceProxy_URL>/services/DataSetService</DataSetServiceProxy_URL>	
 	
+	<WRITEBACK>enabled</WRITEBACK>
+	
 	<USR>root</USR>
 	<PWD>root</PWD>
 	<CATALOG>\resources\Olap\FoodMartMySQL.xml</CATALOG>

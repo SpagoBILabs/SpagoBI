@@ -82,6 +82,7 @@ public class WhatIfEngineConfig {
 	private final static String INCLUDE_TAG = "INCLUDE";
 	private final static String URL_TAG = "URL";
 	private final static String DRIVER_TAG = "DRIVER";
+	private final static String WRITEBACK_TAG = "WRITEBACK";
 	
 	
 	public String getInitiallMdx() {
@@ -195,6 +196,14 @@ public class WhatIfEngineConfig {
 				enabledIncludes.add(name);
 			}
 		}		
+	}
+	
+	public String getWriteBackConf(){
+		String writeBack = "";
+		SourceBean sb = (SourceBean) getConfigSourceBean().getAttribute(WRITEBACK_TAG);
+		if(sb!=null)
+			writeBack = sb.getCharacters();
+		return writeBack;
 	}
 	
 	// -- ACCESS Methods  -----------------------------------------------
