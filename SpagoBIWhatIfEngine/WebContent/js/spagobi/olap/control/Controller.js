@@ -141,6 +141,17 @@ Ext.define('Sbi.olap.control.Controller', {
 		service.callService(this);
 		
 	}
+	, setValue: function(ordinal, expression) {
+
+		var service = Ext.create("Sbi.service.RestService", {
+			url: "model",
+			method: 'PUT',
+			pathParams: [ordinal],
+			jsonData: { "expression" : expression }
+		});
+		
+		service.callService(this);
+	}
 });
 
 
