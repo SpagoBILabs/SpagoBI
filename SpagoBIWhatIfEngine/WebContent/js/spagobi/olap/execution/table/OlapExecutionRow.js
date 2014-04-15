@@ -37,6 +37,11 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionRow', {
 			Ext.apply(this, Sbi.settings.olap.execution.OlapExecutionRow);
 		}
 		this.roundText = this.roundText && (Ext.isChrome);
+		
+		if(!this.firstDimension){
+			this.cls = this.cls+" internal-row-header";
+		}
+		
 		this.callParent(arguments);
 	},
 

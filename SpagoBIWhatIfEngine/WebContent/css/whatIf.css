@@ -45,7 +45,7 @@
 }
 
 .swap-column-panel {
-	background-image: url(../img/swap-column-panel.png);
+	background-image: url(../img/swap-column-panel2.png);
 	background-position: center center;
 	background-repeat: no-repeat;
 	margin: 2px;
@@ -122,9 +122,9 @@ td[contenteditable="true"]:focus {
 	background-position: center center;
 }
 
-
+/*------------------*/
 /* filter panel*/
-
+/*------------------*/
 .filter-title {
 	background-color: transparent; 
 	border-top: 0px !important; 
@@ -192,8 +192,9 @@ td[contenteditable="true"]:focus {
 	background-size: 10px 10px;
 }
 
-
+/*------------------*/
 /* toolbar */
+/*------------------*/
 .drill-mode{
 	background-image: url(../img/drill.png);
 }
@@ -201,8 +202,9 @@ td[contenteditable="true"]:focus {
 	background-image: url(../img/mdx.png);
 }
 
+/*------------------*/
 /* Multi hierarchy */
-
+/*------------------*/
 .multihierarchy-font{
 	font-size: 11 !important;
 }
@@ -213,4 +215,15 @@ td[contenteditable="true"]:focus {
 	background-position: left;
 	background-repeat: no-repeat;
 	background-size: 12px 12px;
+}
+
+/*------------------*/
+/* headers */
+/*------------------*/
+.internal-row-header {
+	margin-top: 1px !important;
+}
+
+.internal-column-header {
+	margin-left: 1px !important;
 }
