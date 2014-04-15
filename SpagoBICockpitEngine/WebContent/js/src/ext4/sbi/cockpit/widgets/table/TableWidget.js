@@ -68,6 +68,7 @@ Sbi.cockpit.widgets.table.TableWidget = function(config) {
 		Sbi.trace("[TableWidget.onRender]: store loaded");
 	}, this);
 
+	this.addEvents('selection');
 	
 	Sbi.trace("[TableWidget.constructor]: OUT");
 };
@@ -351,7 +352,11 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 
 		var gridConf = {
 			store: this.getStore(),
-		    columns: columns
+		    columns: columns,
+//		    sm : new Ext.grid.RowSelectionModel( {
+//				singleSelect : true
+//			})
+		    selModel: {selType: 'rowmodel', mode: 'MULTI', allowDeselect: true}
 		};
 		if(this.enableExport === true) {
 			this.initExportToolbar();
@@ -367,9 +372,24 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 		
 		// create the Grid
 	    this.grid = new Ext.grid.GridPanel(gridConf);   
+//	    this.grid.on('itemclick', this.onClick, this);
+	    this.grid.on('selectionchange', this.onClick, this);
 	    
 	    Sbi.trace("[TableWidget.initGridPanel]: OUT");
 	}
+	
+//	, onClick: function( grid, record, item, index, e, eOpts){
+	, onClick: function( sm,selected,opt){
+		alert("onCLick!!");
+//		var sm = grid.getSelectionModel();
+        var selections = sm.getSelection();
+        var config = {};
+
+        config.widgetName = this.id;
+		config.widgetData = selections;
+        
+		this.fireEvent('selection', config);
+	} 
 	
 	, initColumns: function() {
 		var columns = [
