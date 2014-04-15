@@ -61,17 +61,6 @@ public class ModelResource extends AbstractWhatIfEngineService {
 		}else{
 			logger.debug("No query found");
 		}
-		
-		SpagoBICellSetWrapper cellSetWrapper = (SpagoBICellSetWrapper) model
-				.getCellSet();
-		SpagoBICellWrapper cellWrapper = (SpagoBICellWrapper) cellSetWrapper
-				.getCell(1);
-		CellTransformation transformation = new CellTransformation(
-				((Number) cellWrapper.getValue()).doubleValue() + 500000,
-				cellWrapper.getValue(), cellWrapper.getMembers(),
-				new DefaultWeightedAllocationAlgorithm());
-		cellSetWrapper.applyTranformation(transformation);
-		
 				
 		String table = renderModel(model);
 		logger.debug("OUT");
