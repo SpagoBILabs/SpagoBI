@@ -18,6 +18,10 @@ package it.eng.spagobi.engines.whatif.api;
 
 import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
 import it.eng.spagobi.engines.whatif.common.AbstractWhatIfEngineService;
+import it.eng.spagobi.engines.whatif.model.SpagoBICellSetWrapper;
+import it.eng.spagobi.engines.whatif.model.SpagoBICellWrapper;
+import it.eng.spagobi.engines.whatif.model.transform.CellTransformation;
+import it.eng.spagobi.engines.whatif.model.transform.algorithm.DefaultWeightedAllocationAlgorithm;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
@@ -51,11 +55,42 @@ public class ModelResource extends AbstractWhatIfEngineService {
 		}else{
 			logger.debug("No query found");
 		}
+		
+		SpagoBICellSetWrapper cellSetWrapper = (SpagoBICellSetWrapper) model
+				.getCellSet();
+		SpagoBICellWrapper cellWrapper = (SpagoBICellWrapper) cellSetWrapper
+				.getCell(1);
+		CellTransformation transformation = new CellTransformation(
+				((Number) cellWrapper.getValue()).doubleValue() + 500000,
+				cellWrapper.getValue(), cellWrapper.getMembers(),
+				new DefaultWeightedAllocationAlgorithm());
+		cellSetWrapper.applyTranformation(transformation);
+		
 				
 		String table = renderModel(model);
 		logger.debug("OUT");
 		return table;
 		
+	}
+	
+	@PUT
+	@Path("/setValue/{ordinal}/{expression}")
+	public String setValue(@PathParam("ordinal") int ordinal, @PathParam("expression") String expression){
+		logger.debug("IN : expression = [" + expression + "], ordinal = [" + ordinal + "]");
+		WhatIfEngineInstance ei = getWhatIfEngineInstance();
+		PivotModel model = ei.getPivotModel();
+		Double value = Double.valueOf(expression);
+		SpagoBICellSetWrapper cellSetWrapper = (SpagoBICellSetWrapper) model
+				.getCellSet();
+		SpagoBICellWrapper cellWrapper = (SpagoBICellWrapper) cellSetWrapper
+				.getCell(ordinal);
+		CellTransformation transformation = new CellTransformation(value,
+				cellWrapper.getValue(), cellWrapper.getMembers(),
+				new DefaultWeightedAllocationAlgorithm());
+		cellSetWrapper.applyTranformation(transformation);
+		String table = renderModel(model);
+		logger.debug("OUT");
+		return table;
 	}
 	
 	/**
