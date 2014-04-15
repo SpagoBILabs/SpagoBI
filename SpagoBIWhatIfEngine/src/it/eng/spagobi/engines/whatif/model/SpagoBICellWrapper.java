@@ -72,7 +72,7 @@ public class SpagoBICellWrapper implements Cell {
 	}
 
 	public double getDoubleValue() throws OlapException {
-        Object o = cell.getValue();
+        Object o = this.getValue();
         if (o instanceof Number) {
             Number number = (Number) o;
             return number.doubleValue();
