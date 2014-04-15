@@ -184,14 +184,19 @@ Ext.define('Sbi.olap.control.EventManager', {
 	 * @param startValue
 	 */
 	writeBackCell: function(id, value, startValue){
-		var type = "float";
-		var unformattedValue = Sbi.whatif.commons.Format.formatInJavaDouble(value,Sbi.locale.formats[type]);
 		var position = "";
 		if(id){
 			var endPositionIndex = id.indexOf("!"); 
 			position= id.substring(0,endPositionIndex);
 		}
-		alert(endPositionIndex+" "+unformattedValue+" "+startValue);
+		if(value && value.length>0 && value[0]!="="){
+			var type = "float";
+			var unformattedValue = Sbi.whatif.commons.Format.formatInJavaDouble(value,Sbi.locale.formats[type]);
+			
+		}else{
+			unformattedValue = value;
+		}
+		this.olapController.setValue(position, unformattedValue);
 	},
 
 	/**
