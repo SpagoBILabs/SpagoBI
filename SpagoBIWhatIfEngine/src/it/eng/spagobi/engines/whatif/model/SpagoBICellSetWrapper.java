@@ -10,8 +10,9 @@
 
 package it.eng.spagobi.engines.whatif.model;
 
-import it.eng.spagobi.engines.whatif.model.transform.AllocationAlgorithm;
 import it.eng.spagobi.engines.whatif.model.transform.CellTransformation;
+import it.eng.spagobi.engines.whatif.model.transform.CellTransformationsStack;
+import it.eng.spagobi.engines.whatif.model.transform.algorithm.AllocationAlgorithm;
 
 import java.io.InputStream;
 import java.io.Reader;

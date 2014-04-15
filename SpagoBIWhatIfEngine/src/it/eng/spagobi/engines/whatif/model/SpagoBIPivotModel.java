@@ -10,8 +10,9 @@
 
 package it.eng.spagobi.engines.whatif.model;
 
-import it.eng.spagobi.engines.whatif.model.transform.AllocationAlgorithm;
 import it.eng.spagobi.engines.whatif.model.transform.CellTransformation;
+import it.eng.spagobi.engines.whatif.model.transform.CellTransformationsStack;
+import it.eng.spagobi.engines.whatif.model.transform.algorithm.AllocationAlgorithm;
 
 import org.olap4j.Cell;
 import org.olap4j.CellSet;

@@ -8,7 +8,7 @@
  * @author Zerbetto Davide (davide.zerbetto@eng.it)
  */
 
-package it.eng.spagobi.engines.whatif.model.transform;
+package it.eng.spagobi.engines.whatif.model.transform.algorithm;
 
 import it.eng.spagobi.engines.whatif.model.SpagoBICellSetWrapper;
 
