@@ -161,17 +161,22 @@
 		<concat destfile="${build}/${webapp_name}/js/spagobi/whatif-all-debug.js" append="true">
 			<filelist dir="${build}/${webapp_name}/js">
 		
-				<file name='./spagobi/olap/model/HierarchyModel.js' />
-				<file name='./spagobi/olap/model/MemberModel.js' />
-				<file name='./spagobi/olap/model/PivotModel.js' />
-
-				<file name='./spagobi/exception/ExceptionHandler.js' />
 
 				<file name='./spagobi/service/ServiceRegistry.js' />
 				<file name='./spagobi/service/RestService.js' />
 
 				<file name='./spagobi/commons/Format.js' />
 				<file name='./spagobi/commons/Utils.js' />
+				<file name='./spagobi/commons/Log.js' />
+
+				<file name='./spagobi/widgets/Help.js' />
+
+				<file name='./spagobi/exception/ExceptionHandler.js' />
+
+				<file name='./spagobi/olap/model/DimensionModel.js' />
+				<file name='./spagobi/olap/model/HierarchyModel.js' />
+				<file name='./spagobi/olap/model/MemberModel.js' />
+				<file name='./spagobi/olap/model/PivotModel.js' />
 
 				<file name='./spagobi/olap/options/OlapOptionsChart.js' />
 				<file name='./spagobi/olap/options/OlapOptionsTable.js' />
@@ -182,12 +187,12 @@
 				<file name='./spagobi/olap/toolbar/OlapToolbar.js' />
 
 				<file name='./spagobi/olap/execution/table/OlapExecutionFilterTree.js' />
-				<file name='./spagobi/olap/execution/table/OlapExecutionHierarchy.js' />
-				<file name='./spagobi/olap/execution/table/OlapExecutionAxisHierarchy.js' />
+				<file name='./spagobi/olap/execution/table/OlapExecutionDimension.js' />
+				<file name='./spagobi/olap/execution/table/OlapExecutionAxisDimension.js' />
 				<file name='./spagobi/olap/execution/table/OlapExecutionFilter.js' />
 				<file name='./spagobi/olap/execution/table/OlapExecutionColumn.js' />
 				<file name='./spagobi/olap/execution/table/OlapExecutionRow.js' />
-				<file name='./spagobi/olap/execution/table/OlapExecutionHierarchies.js' />
+				<file name='./spagobi/olap/execution/table/OlapExecutionDimensions.js' />
 				<file name='./spagobi/olap/execution/table/OlapExecutionColumns.js' />
 				<file name='./spagobi/olap/execution/table/OlapExecutionFilters.js' />
 				<file name='./spagobi/olap/execution/table/OlapExecutionRows.js' />
