@@ -236,44 +236,6 @@ Ext.extend(Sbi.cockpit.core.WidgetManager, Ext.util.Observable, {
     	Sbi.trace("[WidgetManager.onSelection]: OUT");
     }
     
- 
-//    , addSelection: function(c){
-//    	Sbi.trace("[WidgetManager.addSelection]: IN");
-//    	
-//    	if (!Sbi.isValorized(this.selections)) this.selections = [];
-//    	
-//    	var meta = Sbi.storeManager.getRecordMeta(c.widgetData);
-//    	var data = c.widgetData.data;
-//    	var selection = {};
-//    	var newSelection = false;
-//    	if (Sbi.isValorized(meta)){
-//    		var selectionId = null;
-//    		for (d in data){    			    	    	
-////    			if (d !== 'id' && d !== 'recNo'){    			
-//    			if (d == 'id'){
-//    				selection.selectionId = data[d];    				
-//    			}else if (d !== 'recNo'){  
-//    				var header = Sbi.storeManager.getFieldHeaderByName(meta, d);
-//    				var value = data[d];
-//    				var selectionNode =  this.getWidgetSelectionNode(c.widgetName);
-//    				var selectionValues = this.getWidgetSelectionValues(selectionNode, header);
-//    				if (Sbi.isValorized(header) && Sbi.isValorized(value)){
-//	    				selectionValues.push(value);
-//	    				if (Sbi.isEmptyNode(selectionNode)) {
-////	    					selectionNode.id = selectionId;
-//	    					selectionNode.values = selectionValues;
-//	    					selection[header] = selectionNode;
-//	    					newSelection = true;
-//	    				}	    				
-//    				}
-//    			}
-//    		}
-//    		if (this.isNewSelection(selection, c.widgetName)) 
-//    			this.selections[c.widgetName] = selection;
-//    	}    	
-//    	Sbi.trace("[WidgetManager.addSelection]: OUT");
-//    }
-    
     /**
 	 * @method
 	 * 
@@ -319,17 +281,20 @@ Ext.extend(Sbi.cockpit.core.WidgetManager, Ext.util.Observable, {
 	    				var selectionNode =  this.getWidgetSelectionNode(c.widgetName);
 	    				var selectionValues = this.getWidgetSelectionValues(selectionNode, header);
 	    				if (Sbi.isValorized(header) && Sbi.isValorized(value)){
-		    				selectionValues.push(value);
-	    					selectionNode.values = selectionValues;
-	    					selection[header] = selectionNode;    				
+		    				selectionValues.push(value);	
+		    				if (Sbi.isEmptyNode(selectionNode)){
+			    				selectionNode.values = selectionValues;
+			    				selection[header] = selectionNode;
+		    				}
 	    				}
 	    			}
-	    		} 
+	    		}
+	    	}   
+	    	if (!Sbi.isEmptyNode(selection))
 	    		this.selections[c.widgetName] = selection;
-	    	}    	
     	}
     }
-    
+        
     /**
 	 * @method
 	 * 
@@ -365,17 +330,15 @@ Ext.extend(Sbi.cockpit.core.WidgetManager, Ext.util.Observable, {
     	return [];  
     }
     
-//    , isNewSelection: function(s, w){
-//    	var id = s.selectionId;
-//    	var selNode = this.getWidgetSelectionNode(w);
-//    	for (s in this.selections){
-//    		var objId = selNode.selectionId;
-//    		if (objId === id) 
-//    			return false;    		
-//    	}
-//    	return true;
-//    }
-
+     /**
+	 * @method
+	 * 
+	 * Returns the selections list
+	 * 
+	 */
+	, getSelections: function() {
+		return this.selections;
+	}
    
     // =================================================================================================================
 	// EVENTS

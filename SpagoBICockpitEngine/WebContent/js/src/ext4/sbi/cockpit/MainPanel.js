@@ -82,6 +82,12 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 	 */
 	, filterEditorWizard: null
 	
+	/**
+	 * @property {Ext.Window} associationsWindow
+	 * The window that shows the selections defined
+	 */
+	, selectionsWindow: null
+	
     , msgPanel: null
     
     // TODO remove from global
@@ -352,6 +358,26 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 		this.widgetContainer.addWidget();
 	}
 	
+	, onShowSelectionsWindow: function(){
+		var config = {};
+		config.selections = this.widgetContainer.getWidgetManager().getSelections() || [];
+		Sbi.trace("[MainPanel.onShowSelectionsWindow]: config.selections is equal to [" + Sbi.toSource(config.selections) + "]");		
+		Sbi.trace("[MainPanel.onShowSelectionsWindow]: instatiating the window");    		
+		this.selectionsWindow = Ext.create('Sbi.cockpit.core.SelectionsWindow',config);
+		this.selectionsWindow.on("cancel", this.onSelectionsWindowCancel, this);
+		
+    	Sbi.trace("[MainPanel.onShowSelectionsWindow]: window succesfully instantiated");
+				
+		this.selectionsWindow.show();
+	}
+	
+	, onSelectionsWindowCancel: function(wizard) {
+		Sbi.trace("[MainPanel.onSelectionsWindowCancel]: IN");
+		this.selectionsWindow.close();
+		this.selectionsWindow.destroy();
+		Sbi.trace("[MainPanel.onSelectionsWindowCancel]: OUT");
+	}
+	
 	, onShowAssociationEditorWizard: function(){
 		if (Sbi.storeManager.getStoreIds().length == 0){
 			alert('Per gestire le associazioni è necessario creare prima dei widget!');
@@ -488,6 +514,12 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 	, initToolbar: function() {
 	
 		var tbItems = ['->'];
+		
+		tbItems.push({
+        	text: LN('sbi.cockpit.mainpanel.btn.selections')
+        	, handler: this.onShowSelectionsWindow
+        	, scope: this
+        });
 		
 		if (Sbi.isValorized(Sbi.config.isTechnicalUser) && 
 				Sbi.config.isTechnicalUser == 'true'){
