@@ -100,7 +100,8 @@ Ext.define('Sbi.cockpit.core.SelectionsPanel', {
 	    , initGrid: function() {
 	    	var c = this.gridConfig;
 	    	var groupingFeature = Ext.create('Ext.grid.feature.Grouping',{
-    	        groupHeaderTpl: 'Widget: {name} ({rows.length} Item{[values.rows.length > 1 ? "s" : ""]})'
+//	    		groupHeaderTpl: 'Widget: {name} ({rows.length} Item{[values.rows.length > 1 ? "s" : ""]})'
+    	        groupHeaderTpl: 'Widget: {name} ({rows.length} '+ LN('sbi.cockpit.core.selections.list.items')+')'
     	    });
 	        this.grid = Ext.create('Ext.grid.Panel', Ext.apply(c || {}, {
 		        store: this.store,

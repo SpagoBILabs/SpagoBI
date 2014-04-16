@@ -172,4 +172,5 @@ Sbi.locale.ln['sbi.cockpit.core.selections.title'] = 'Selections List';
 Sbi.locale.ln['sbi.cockpit.core.selections.list.columnWidget'] = 'Widget';
 Sbi.locale.ln['sbi.cockpit.core.selections.list.columnField'] = 'Field';
 Sbi.locale.ln['sbi.cockpit.core.selections.list.columnValues'] = 'Values';
+Sbi.locale.ln['sbi.cockpit.core.selections.list.items'] = 'Items';
 
