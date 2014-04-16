@@ -79,6 +79,7 @@ Sbi.locale.ln['sbi.olap.execution.table.filter.expand'] = 'Espandi tutti';
 Sbi.locale.ln['sbi.olap.execution.table.filter.filter.title'] = 'Seleziona uno slicer';
 Sbi.locale.ln['sbi.olap.execution.table.filter.dimension.title'] = 'Seleziona i membri da visualizzare';
 Sbi.locale.ln['sbi.olap.execution.table.filter.no.measure'] = 'Non \u00e8 possibile mettere le misure tra i filtri';
+Sbi.locale.ln['sbi.olap.execution.table.filter.empty'] = 'Draggare il membro in questa sezione per usarlo come slicer';
 
 //===================================================================
 //DIMENSIONS

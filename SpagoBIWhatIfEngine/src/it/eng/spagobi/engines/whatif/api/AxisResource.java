@@ -38,8 +38,6 @@ public class AxisResource extends AbstractWhatIfEngineService {
 
 	private AxisDimensionManager axisBusiness;
 
-
-
 	private AxisDimensionManager getAxisBusiness() {
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
 

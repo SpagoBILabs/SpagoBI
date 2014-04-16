@@ -37,8 +37,19 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionFilters', {
 			Ext.apply(this, Sbi.settings.olap.execution.OlapExecutionColumns);
 		}
 		this.callParent(arguments);
-		this.addEvents("filterValueChenged");
-	}
+		this.addEvents("filterValueChanged");
+	},
+	
+	updatePanelDefaultHtml: function() {
+		
+		if(this.store && this.store.getCount()>0){
+			this.update("");
+		}else{
+			this.update('<div style=" margin-top: 11px; margin-left: 5px;">'+LN('sbi.olap.execution.table.filter.empty')+'</div>');
+		}
+		
+		this.callParent();
+	},
 });
 
 
