@@ -57,10 +57,6 @@ Ext.define('Sbi.data.editor.association.AssociationEditorDataset', {
     	
 		if (datasetLabel) {	
 			this.dataset = datasetLabel;
-//			this.store.proxy.setUrl(Sbi.config.serviceRegistry.getRestServiceUrl({
-//				serviceName : 'dataset/' + this.dataset + '/fields'
-//			}), true);
-			
 			this.store.proxy.setUrl(Sbi.config.serviceReg.getServiceUrl("loadDataSetField", {
 				pathParams: {datasetLabel: this.dataset}
 			}), true);
@@ -94,9 +90,6 @@ Ext.define('Sbi.data.editor.association.AssociationEditorDataset', {
 //				   model: 'Sbi.data.DatasetsFieldsModel' //with model doesn'work !! But WHY???
 				   proxy:{
 				    	type : 'rest',
-//				    	url : Sbi.config.serviceRegistry.getRestServiceUrl({
-//				    		serviceName : 'dataset/' + this.dataset + '/fields'
-//				    	}),
 				    	url : Sbi.config.serviceReg.getServiceUrl("loadDataSetField", {
 							pathParams: {datasetLabel: this.dataset}
 						}),
@@ -132,20 +125,20 @@ Ext.define('Sbi.data.editor.association.AssociationEditorDataset', {
         	selModel: {selType: 'rowmodel', mode: 'SINGLE', allowDeselect: true},
 	        store: gridStore,
 	        columns: [
-	            { header: 'Column' //LN('sbi.formbuilder.queryfieldspanel.fieldname')
+	            { header: LN('sbi.cockpit.association.editor.wizard.ds.columnColumn')
             	, width: 100
             	, sortable: true
             	, dataIndex: 'alias'
             	, flex: 1
             	}, {
-        		  header: 'Type' // LN('sbi.formbuilder.queryfieldspanel.fieldtype')
+        		  header: LN('sbi.cockpit.association.editor.wizard.ds.columnType')
             	, width: 75
             	, sortable: true
             	, dataIndex: 'colType'
             	}
 	        ],
 	        viewConfig: {
-	        	stripeRows: false	        	
+	        	stripeRows: true	        	
 	        }	        
 	    });
 
