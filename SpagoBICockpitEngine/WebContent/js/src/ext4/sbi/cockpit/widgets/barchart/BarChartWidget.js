@@ -376,17 +376,21 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidget, Sbi.cockpit.core.WidgetR
 			items.series = this.getChartSeriesExt3(storeObject.serieNames, colors, true);
 
 			//if percent stacked set the max of the axis
+			//Ext3 implementation
+			/*
 			if(percent){
 				this.setPercentageStyleExt3(items, true);
-			}
+			}*/
 		}else{
 			items.xField = 'categories';
 			items.series = this.getChartSeriesExt3(storeObject.serieNames, colors);
 
 			//if percent stacked set the max of the axis
+			//Ext3 implementation
+			/*
 			if(percent){
 				this.setPercentageStyleExt3(items, false);
-			}
+			}*/
 		}
 
 		this.addChartConfExt3(items);
@@ -395,7 +399,7 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidget, Sbi.cockpit.core.WidgetR
 		items.region = 'center';
 		//Ext3 implementation
 		//var barChartPanel = this.getChartExt3(this.chartConfig.orientation === 'horizontal', items);
-		var barChartPanel = this.getChartExt4(this.chartConfig.orientation === 'horizontal', items);
+		var barChartPanel = this.getChartExt4(this.chartConfig.orientation === 'horizontal', items, colors);
 		
 		//Its a workaround because if you change the display name the chart is not able to write the tooltips
 
@@ -433,122 +437,175 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidget, Sbi.cockpit.core.WidgetR
 	// -----------------------------------------------------------------------------------------------------------------
 	
 	//----- Ext 4 Implementation related functions ------------------------------------------
-	, getChartExt4 : function(horizontal, items){
+	, getChartExt4 : function(horizontal, items, colors){
 		
 		var chartDataStore = items.store;
 		
 		var chartType; 
+		var isStacked = false;
 		
+		//Define Ext4 Chart appropriate type
 		if(horizontal){
 			if(this.chartConfig.type == 'stacked-barchart' || this.chartConfig.type == 'percent-stacked-barchart'){
 				chartType = 'bar';
+				isStacked = true;
 			}else{
 				chartType = 'bar';
 			}
 		} else {
 			if(this.chartConfig.type == 'stacked-barchart' || this.chartConfig.type == 'percent-stacked-barchart'){
 				chartType = 'column';
+				isStacked = true;
 			}else{
 				chartType = 'column';
 			}
 		}
-		
+		//Create Axes Configuration
 		var chartAxes = this.createAxes(horizontal, items);
-		var chartSeries = this.createSeries(horizontal, items, chartType);
+		//Create Series Configuration
+		var chartSeries = this.createSeries(horizontal, items, chartType, isStacked);
+		
+		//Legend visibility
+		var showlegend;
+		if (this.chartConfig.showlegend !== undefined){
+			showlegend = this.chartConfig.showlegend;
+		} else {
+			showlegend = true;
+		}
+		
+		//Create theme for using custom defined colors
+		Ext.define('Ext.chart.theme.CustomTheme', {
+		    extend: 'Ext.chart.theme.Base',
+
+		    constructor: function(config) {
+		        this.callParent([Ext.apply({
+		            colors: colors
+		        }, config)]);
+		    }
+		});
 		
 	    var chart = Ext.create("Ext.chart.Chart", {
 	        width: '100%',
 	    	height: '100%',
+	    	theme: 'CustomTheme',
 	        hidden: false,
 	        title: "My Chart",
 	        renderTo: this.chartDivId,
 	        layout: "fit",
 	        style: "background:#fff",
-	            animate: true,
-	            store: chartDataStore,
-	            shadow: true,
-	            theme: "Category1",
-	            legend: {
-	                position: "bottom"
-	            },
-	            axes: chartAxes,
-	            series: chartSeries
-	        
+	        animate: true,
+	        store: chartDataStore,
+	        shadow: true,
+	        legend: showlegend,
+	        axes: chartAxes,
+	        series: chartSeries
+
 	    });
 	    
 	    return chart;
 	}
 	//TODO: WIP	
-	, createSeries : function(horizontal,items, chartType){
+	, createSeries : function(horizontal,items, chartType, isStacked){
+		var axisPosition;
 		var series = [];
 		
 		if (horizontal){
-			//TODO: series for bar chart
-			
+			//bar chart
+			axisPosition = 'bottom';
 		} else {
-			
-			for (var i=0; i< items.series.length; i++){
-				var name = items.series[i].yField;
-				var displayName = items.series[i].displayName;
-				
-				var aSerie = {
-		                type: chartType,
-		                highlight: {
-		                    size: 7,
-		                    radius: 7
-		                },
-		                axis: "left",
-		                smooth: true,
-		                xField: "categories",
-		                yField: name,	                
-		                title: displayName 
-		                
-		         };
-				series.push(aSerie);
-			}
-			
-			
+			//column chart
+			axisPosition = 'left';
 		}
+		
+		var seriesNames = [];
+		var displayNames = [];
+		
+
+		//Extract technical series names and corresponding name to display
+		for (var i=0; i< items.series.length; i++){
+			var name;
+			if (horizontal){
+				name = items.series[i].xField;
+			} else {
+				name = items.series[i].yField;
+			}
+			seriesNames.push(name);
+			var displayName = items.series[i].displayName;
+			displayNames.push(displayName);
+		}
+		
+		//Costruct the series object(s)
+		var aSerie = {
+                type: chartType,
+                highlight: {
+                    size: 7,
+                    radius: 7
+                },
+                axis: axisPosition,
+                smooth: true,
+                stacked: isStacked,
+                xField: "categories",
+                yField: seriesNames,	                
+                title: displayNames,
+    	        tips: {
+	            	  trackMouse: true,
+	            	  minWidth: 140,
+	            	  maxWidth: 300,
+	            	  width: 'auto',
+	            	  minHeight: 28,
+	            	  renderer: function(storeItem, item) {
+	            		   this.setTitle(String(item.value[0])+" : "+String(item.value[1]));
+	            	  }
+    	        }
+                
+         };
+		series.push(aSerie);
+		
 		return series;
 	}
 	
 	//TODO: WIP
 	, createAxes : function(horizontal,items){
-		var axes;
+		var axes;	
+		var positionNumeric;
+		var positionCategory;
 
 		if (horizontal){
-			//TODO: axes for bar chart
+			//bar chart
+			positionNumeric = 'bottom';
+			positionCategory = 'left';
 		} else {
-			
-			var seriesNames = [];
-			
-			for (var i=0; i< items.series.length; i++){
-				var name = items.series[i].yField;
-				seriesNames.push(name);
-			}
-
-			axes = [{
-				type: "Numeric",
-				minimum: 0,
-				position: "left",
-				fields: seriesNames,
-				title: "Series",
-				minorTickSteps: 1,
-				grid: {
-					odd: {
-						opacity: 1,
-						fill: "#ddd",
-						stroke: "#bbb",
-						"stroke-width": 0.5
-					}
-				}
-			}, {
-				type: "Category",
-				position: "bottom",
-				fields: ["categories"],
-				title: "Category"
-			}];
+			//column chart
+			positionNumeric = 'left';
+			positionCategory = 'bottom';
 		}
+		
+		var seriesNames = [];
+		
+		for (var i=0; i< items.series.length; i++){
+			var name;
+			if (horizontal){
+				name = items.series[i].xField;
+			} else {
+				name = items.series[i].yField;
+			}
+			seriesNames.push(name);
+		}
+
+		axes = [{
+			type: "Numeric",
+			minimum: 0,
+			position: positionNumeric,
+			fields: seriesNames,
+			title: "Series",
+			minorTickSteps: 1,
+			grid: true
+		}, {
+			type: "Category",
+			position: positionCategory,
+			fields: ["categories"],
+			title: "Category"
+		}];
 		
 		return axes;
 	}
