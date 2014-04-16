@@ -36,8 +36,8 @@ Sbi.data.StoreManager = function(config) {
 	Sbi.data.StoreManager.superclass.constructor.call(this, c);
 	
 	Sbi.trace("[StoreManager.constructor]: OUT");
-};
-
+}; 
+ 
 Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
     
 	// =================================================================================================================

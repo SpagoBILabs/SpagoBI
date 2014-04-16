@@ -131,6 +131,7 @@ Sbi.locale.ln['sbi.cockpit.widgets.table.tabledesignerpanel.fields.emptymsg'] = 
 Sbi.locale.ln['sbi.cockpit.widgets.table.tabledesignerpanel.fields'] = 'Drag & drop here attribute as the series\' that you want view in the table';
 Sbi.locale.ln['sbi.cockpit.queryfieldspanel.title'] = 'Selected fields';
 
+Sbi.locale.ln['sbi.cockpit.mainpanel.btn.selections'] = 'Selections';
 Sbi.locale.ln['sbi.cockpit.mainpanel.btn.filters'] = 'Filters';
 Sbi.locale.ln['sbi.cockpit.mainpanel.btn.associations'] = 'Associations';
 Sbi.locale.ln['sbi.cockpit.mainpanel.btn.addWidget'] = 'Add Widget';
@@ -165,3 +166,10 @@ Sbi.locale.ln['sbi.cockpit.filter.editor.wizard.list.nameObj'] = 'Parameter Name
 Sbi.locale.ln['sbi.cockpit.filter.editor.wizard.list.typeObj'] = 'Parameter Type';
 Sbi.locale.ln['sbi.cockpit.filter.editor.wizard.list.initialValue'] = 'Initial Value';
 Sbi.locale.ln['sbi.cockpit.filter.editor.wizard.list.scope'] = 'Scope';
+
+//SELECTIONS
+Sbi.locale.ln['sbi.cockpit.core.selections.title'] = 'Selections List';
+Sbi.locale.ln['sbi.cockpit.core.selections.list.columnWidget'] = 'Widget';
+Sbi.locale.ln['sbi.cockpit.core.selections.list.columnField'] = 'Field';
+Sbi.locale.ln['sbi.cockpit.core.selections.list.columnValues'] = 'Values';
+

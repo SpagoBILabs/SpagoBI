@@ -130,6 +130,7 @@ Sbi.locale.ln['sbi.cockpit.widgets.table.tabledesignerpanel.fields.emptymsg'] = 
 Sbi.locale.ln['sbi.cockpit.widgets.table.tabledesignerpanel.fields'] = 'Trascina qui gli attributi e le misure che vuoi visualizzare nella tabella';
 Sbi.locale.ln['sbi.cockpit.queryfieldspanel.title'] = 'Campi selezionati';
 
+Sbi.locale.ln['sbi.cockpit.mainpanel.btn.selections'] = 'Selezioni';
 Sbi.locale.ln['sbi.cockpit.mainpanel.btn.filters'] = 'Filtri';
 Sbi.locale.ln['sbi.cockpit.mainpanel.btn.associations'] = 'Associazioni';
 Sbi.locale.ln['sbi.cockpit.mainpanel.btn.addWidget'] = 'Aggiungi Widget';
@@ -164,3 +165,8 @@ Sbi.locale.ln['sbi.cockpit.filter.editor.wizard.list.namePar'] = 'Nome parametro
 Sbi.locale.ln['sbi.cockpit.filter.editor.wizard.list.typePar'] = 'Tipologia parametro';
 Sbi.locale.ln['sbi.cockpit.filter.editor.wizard.list.initialValue'] = 'Valore iniziale';
 Sbi.locale.ln['sbi.cockpit.filter.editor.wizard.list.scope'] = 'Ambito';
+
+Sbi.locale.ln['sbi.cockpit.core.selections.title'] = 'Lista delle selezioni';
+Sbi.locale.ln['sbi.cockpit.core.selections.list.columnWidget'] = 'Componente';
+Sbi.locale.ln['sbi.cockpit.core.selections.list.columnField'] = 'Campo';
+Sbi.locale.ln['sbi.cockpit.core.selections.list.columnValues'] = 'Valori';

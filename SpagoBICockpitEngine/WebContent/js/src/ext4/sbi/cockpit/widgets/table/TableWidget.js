@@ -372,16 +372,12 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 		
 		// create the Grid
 	    this.grid = new Ext.grid.GridPanel(gridConf);   
-//	    this.grid.on('itemclick', this.onClick, this);
 	    this.grid.on('selectionchange', this.onClick, this);
 	    
 	    Sbi.trace("[TableWidget.initGridPanel]: OUT");
 	}
 	
-//	, onClick: function( grid, record, item, index, e, eOpts){
 	, onClick: function( sm,selected,opt){
-		alert("onCLick!!");
-//		var sm = grid.getSelectionModel();
         var selections = sm.getSelection();
         var config = {};
 
