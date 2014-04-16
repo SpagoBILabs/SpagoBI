@@ -40,7 +40,7 @@ Ext.define('Sbi.cockpit.core.SelectionsWindow', {
           , buttons: [
  		         {
  		            id: 'cancel'
- 		        	  , text: LN('sbi.ds.wizard.cancel') 		        	  
+ 		        	  , text: LN('sbi.ds.wizard.close') 		        	  
  		        	  , handler: this.onCancel
  		        	  , scope: this
  		          }

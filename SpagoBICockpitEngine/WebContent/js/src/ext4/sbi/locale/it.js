@@ -166,8 +166,8 @@ Sbi.locale.ln['sbi.cockpit.filter.editor.wizard.list.typePar'] = 'Tipologia para
 Sbi.locale.ln['sbi.cockpit.filter.editor.wizard.list.initialValue'] = 'Valore iniziale';
 Sbi.locale.ln['sbi.cockpit.filter.editor.wizard.list.scope'] = 'Ambito';
 
-Sbi.locale.ln['sbi.cockpit.core.selections.title'] = 'Lista delle selezioni';
+Sbi.locale.ln['sbi.cockpit.core.selections.title'] = 'Lista delle selezioni attive';
 Sbi.locale.ln['sbi.cockpit.core.selections.list.columnWidget'] = 'Componente';
-Sbi.locale.ln['sbi.cockpit.core.selections.list.columnField'] = 'Campo';
+Sbi.locale.ln['sbi.cockpit.core.selections.list.columnField'] = 'Campo selezione';
 Sbi.locale.ln['sbi.cockpit.core.selections.list.columnValues'] = 'Valori';
 Sbi.locale.ln['sbi.cockpit.core.selections.list.items'] = 'Elementi';
