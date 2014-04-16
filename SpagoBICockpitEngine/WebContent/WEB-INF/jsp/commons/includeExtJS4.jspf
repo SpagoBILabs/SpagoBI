@@ -10,8 +10,8 @@
 
   
 <!-- The default Ext theme, same as Ext 3 -->
-<link id="extall" rel="styleSheet" href ="/SpagoBICockpitEngine/js/lib/ext/4.2.1/resources/css/ext-all.css" type="text/css" />
-<!-- link id="theme-gray" rel="styleSheet" href ="/SpagoBICockpitEngine/js/lib/ext/4.2.1/resources/css/ext-all-gray.css" type="text/css" /-->
+<!-- <link id="extall" rel="styleSheet" href ="/SpagoBICockpitEngine/js/lib/ext/4.2.1/resources/css/ext-all.css" type="text/css" />  -->
+<link id="theme-gray" rel="styleSheet" href ="/SpagoBICockpitEngine/js/lib/ext/4.2.1/resources/css/ext-all-gray.css" type="text/css"/>
 <!-- <link id="theme-neptune" rel="styleSheet" href ="/SpagoBICockpitEngine/js/lib/ext/4.2.1/resources/css/ext-all-neptune.css" type="text/css" />  -->
 
 <!-- Ext 4 framework -->

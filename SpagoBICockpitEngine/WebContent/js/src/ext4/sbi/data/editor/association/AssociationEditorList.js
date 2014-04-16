@@ -161,7 +161,7 @@ Ext.define('Sbi.data.editor.association.AssociationEditorList', {
                 }
 	        ],	        
 	        viewConfig: {
-	        	stripeRows: false
+	        	stripeRows: true
 	        },
 	        plugins: [cellEditing]
 	    }));
