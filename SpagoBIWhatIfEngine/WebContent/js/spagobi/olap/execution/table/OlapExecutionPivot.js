@@ -148,7 +148,7 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionPivot', {
 		this.olapExecutionTable   = Ext.create('Sbi.olap.execution.table.OlapExecutionTable',  {flex: 1});
 		
 
-		this.olapExecutionFilters.on("filterValueChenged", function(){alert("true");},this);
+		this.olapExecutionFilters.on("filterValueChanged", function(){alert("true");},this);
 		
 		//defining the structure of the layout
 		Ext.apply(this, {

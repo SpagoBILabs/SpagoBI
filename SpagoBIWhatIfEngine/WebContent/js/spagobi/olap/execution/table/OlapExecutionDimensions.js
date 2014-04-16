@@ -62,10 +62,11 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionDimensions', {
 	},
     
 	initComponent: function() {
-
+		var items;
+		
 		if(this.store && this.store.getCount()>0){
-
-			var items = this.getRefreshedItems();
+		 
+			items = this.getRefreshedItems();
 			Ext.apply(this, {items: items});
 //			this.removeCls("empty-member");
 		}
@@ -149,13 +150,14 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionDimensions', {
      */
 	refreshItems: function(){
 		this.removeAll(true);
-		
-		if(this.store){
+		this.updatePanelDefaultHtml();
+		if(this.store && this.store.getCount()>0){
 			var items = this.getRefreshedItems();
 			for(var i=0; i<items.length; i++) {
 				this.add(items[i]);
 			}
 		}
+		
 	},
 	
     /**
@@ -262,10 +264,14 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionDimensions', {
 	 */
 	isColumnDimensions: function(){
 		return this.dimensionClassName == 'Sbi.olap.execution.table.OlapExecutionColumn';
-	}
+	},
 	
-	
-	
+	/**
+	 * Updates the content of the panel.. It is useful when the region (for example filters container) is empty, so we should
+	 * show a message. It should be implemented by the subclasses
+	 */
+	updatePanelDefaultHtml: function(){}
+
 });
 
 

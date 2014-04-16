@@ -176,10 +176,9 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionAxisDimension', {
 	
 		var thisPanel = this;
 		
-		var selectId = +target.getId()+"select";
-		
+		//Build the combo box for the hierarachy selection
+		var selectId = Ext.id()+"select";
 		var html = "";
-		
 		if(this.dimension.raw.hierarchies.length>1){
 			html = LN("sbi.olap.execution.table.dimension.selected.hierarchy")+"<i>"+(this.dimension.raw.hierarchies[this.dimension.raw.selectedHierarchyPosition]).name+"</i>."+LN("sbi.olap.execution.table.dimension.selected.hierarchy.2")+
 				"<table>"+
@@ -190,13 +189,18 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionAxisDimension', {
 				"<select id = '"+selectId+"'>";
 			
 			for(var i=0; i<this.dimension.raw.hierarchies.length; i++){
-				html = html+"<option value='"+this.dimension.raw.hierarchies[i].uniqueName+"'>"+this.dimension.raw.hierarchies[i].name+"</option>";
+				html = html+"<option value='"+this.dimension.raw.hierarchies[i].uniqueName+"'";
+				if(this.dimension.raw.hierarchies[i].uniqueName ==thisPanel.dimension.raw.selectedHierarchyUniqueName){
+					html = html+" selected='selected' ";
+				}
+				
+				html = html+">"+this.dimension.raw.hierarchies[i].name+"</option>";
 			}
 			
 			html = html+"</select></td></tr></table>";
 		}
 
-		
+		//build the tooltip
 		var tool = Ext.create('Ext.tip.ToolTip',{        
             title: thisPanel.dimension.raw.name,
             target: target.getEl(),
@@ -217,8 +221,10 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionAxisDimension', {
 		            	 handler: function(){
 		            			var newHierarchy =Ext.get(selectId).dom.value;
 		            			if(thisPanel.dimension.raw.selectedHierarchyUniqueName!=newHierarchy){
-		           				
-		            				thisPanel.updateHierarchyOnDimension(thisPanel.dimension.raw.axis, newHierarchy, thisPanel.dimension.raw.uniqueName, thisPanel.dimension.raw.positionInAxis );
+		           					thisPanel.updateHierarchyOnDimension(thisPanel.dimension.raw.axis, newHierarchy, thisPanel.dimension.raw.selectedHierarchyUniqueName, thisPanel.dimension.raw.positionInAxis );
+		           					Sbi.debug("For the dimension "+thisPanel.dimension.raw.uniqueName+" the new hierarchy is "+ newHierarchy+". Was "+thisPanel.dimension.raw.selectedHierarchyUniqueName);
+		            			}else{
+		            				Sbi.debug("For the dimension "+thisPanel.dimension.raw.uniqueName+" the new hierarchy is the same of the old one: "+ newHierarchy);
 		            			}
 		            			 tool.close();
 		            	 }
