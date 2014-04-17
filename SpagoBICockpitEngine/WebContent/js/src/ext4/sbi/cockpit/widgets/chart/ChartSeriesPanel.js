@@ -9,9 +9,9 @@ Ext.ns("Sbi.cockpit.widgets.chart");
 Sbi.cockpit.widgets.chart.ChartSeriesPanel = function(config) {
 
 	var defaultSettings = {
-		title: LN('sbi.worksheet.designer.chartseriespanel.title')
+		title: LN('sbi.cockpit.widgets.chartseriespanel.title')
 		, frame: true
-		, emptyMsg: LN('sbi.worksheet.designer.chartseriespanel.emptymsg')
+		, emptyMsg: LN('sbi.cockpit.widgets.chartseriespanel.emptymsg')
 	};
 		
 	if (Sbi.settings && Sbi.settings.cockpit && Sbi.settings.cockpit.widgets && Sbi.settings.cockpit.widgets.chart && Sbi.settings.cockpit.widgets.chart.chartSeriesPanel) {
@@ -40,7 +40,7 @@ Sbi.cockpit.widgets.chart.ChartSeriesPanel = function(config) {
 	        	  id: 'close'
   	        	, handler: this.removeAllMeasures
   	          	, scope: this
-  	          	, qtip: LN('sbi.worksheet.designer.chartseriespanel.tools.tt.removeall')
+  	          	, qtip: LN('sbi.cockpit.widgets.chartseriespanel.tools.tt.removeall')
 	  	      }
 		]
 	});
@@ -57,7 +57,7 @@ Sbi.cockpit.widgets.chart.ChartSeriesPanel = function(config) {
 
 Ext.extend(Sbi.cockpit.widgets.chart.ChartSeriesPanel, Ext.Panel, {
 	
-	emptyMsg : null
+	  emptyMsg : null
 	, emptyMsgPanel : null
 	, targetRow: null
 	, detailsWizard: undefined
@@ -116,7 +116,7 @@ Ext.extend(Sbi.cockpit.widgets.chart.ChartSeriesPanel, Ext.Panel, {
 	, initGrid: function (c) {
 		
 		var serieNameColumn =  {
-            	text: LN('sbi.worksheet.designer.chartseriespanel.columns.seriename')
+            	text: LN('sbi.cockpit.widgets.chartseriespanel.columns.seriename')
             	,dataIndex: 'seriename'
             	, hideable: false
             	, sortable: false
@@ -136,7 +136,7 @@ Ext.extend(Sbi.cockpit.widgets.chart.ChartSeriesPanel, Ext.Panel, {
              };
 		
 		var fieldColumn = {
-		    	text: LN('sbi.worksheet.designer.chartseriespanel.columns.queryfield')
+		    	text: LN('sbi.cockpit.widgets.chartseriespanel.columns.queryfield')
 		    	, dataIndex: 'alias'
 		    	, hideable: false
 		    	, sortable: false
@@ -167,7 +167,7 @@ Ext.extend(Sbi.cockpit.widgets.chart.ChartSeriesPanel, Ext.Panel, {
 		    };
 		
 		this.colorColumn = {
-				text: LN('sbi.worksheet.designer.chartseriespanel.columns.color')
+				text: LN('sbi.cockpit.widgets.chartseriespanel.columns.color')
 				, width: 60
 				, dataIndex: 'color'
 				, editor: new Ext.form.TextField({}) // only in order to make the column editable: the editor is built 
@@ -180,8 +180,8 @@ Ext.extend(Sbi.cockpit.widgets.chart.ChartSeriesPanel, Ext.Panel, {
 		
 		var showCommaCheckColumn = {
 				xtype: 'checkcolumn',
-	    		text: LN('sbi.worksheet.designer.chartseriespanel.columns.showcomma')
-	    		, tooltip: LN('sbi.worksheet.designer.chartseriespanel.columns.showcomma')
+	    		text: LN('sbi.cockpit.widgets.chartseriespanel.columns.showcomma')
+	    		, tooltip: LN('sbi.cockpit.widgets.chartseriespanel.columns.showcomma')
 	    		, dataIndex: 'showcomma'
 	    		, hideable: false
 	    		, hidden: false	
@@ -190,8 +190,8 @@ Ext.extend(Sbi.cockpit.widgets.chart.ChartSeriesPanel, Ext.Panel, {
 	    	};
 	    
 	    var precisionColumn = {
-		    	text: LN('sbi.worksheet.designer.chartseriespanel.columns.precision')
-		    	, tooltip: LN('sbi.worksheet.designer.chartseriespanel.columns.precision')
+		    	text: LN('sbi.cockpit.widgets.chartseriespanel.columns.precision')
+		    	, tooltip: LN('sbi.cockpit.widgets.chartseriespanel.columns.precision')
 		    	, dataIndex: 'precision'
 		    	, hideable: false
 		    	, sortable: false
@@ -204,8 +204,8 @@ Ext.extend(Sbi.cockpit.widgets.chart.ChartSeriesPanel, Ext.Panel, {
 		    };
 		
 	    var suffixColumn = {
-		    	text: LN('sbi.worksheet.designer.chartseriespanel.columns.suffix')
-		    	, tooltip: LN('sbi.worksheet.designer.chartseriespanel.columns.suffix')
+		    	text: LN('sbi.cockpit.widgets.chartseriespanel.columns.suffix')
+		    	, tooltip: LN('sbi.cockpit.widgets.chartseriespanel.columns.suffix')
 		    	, dataIndex: 'suffix'
 		    	, hideable: false
 		    	, sortable: false
@@ -320,8 +320,8 @@ Ext.extend(Sbi.cockpit.widgets.chart.ChartSeriesPanel, Ext.Panel, {
 			// if the field is an attribute show a warning
 			if (aRow.data.nature === 'attribute' || aRow.data.nature === 'segment_attribute') {
 				Ext.Msg.show({
-					   title: LN('sbi.worksheet.designer.chartseriespanel.cannotdrophere.title'),
-					   msg: LN('sbi.worksheet.designer.chartseriespanel.cannotdrophere.attributes'),
+					   title: LN('sbi.cockpit.widgets.chartseriespanel.cannotdrophere.title'),
+					   msg: LN('sbi.cockpit.widgets.chartseriespanel.cannotdrophere.attributes'),
 					   buttons: Ext.Msg.OK,
 					   icon: Ext.MessageBox.WARNING
 				});
@@ -330,8 +330,8 @@ Ext.extend(Sbi.cockpit.widgets.chart.ChartSeriesPanel, Ext.Panel, {
 			// if the field is a postLineCalculated show an error
 			if (aRow.data.nature === 'postLineCalculated') {
 				Ext.Msg.show({
-					   title: LN('sbi.worksheet.designer.chartseriespanel.cannotdrophere.title'),
-					   msg: LN('sbi.worksheet.designer.chartseriespanel.cannotdrophere.postlinecalculated'),
+					   title: LN('sbi.cockpit.widgets.chartseriespanel.cannotdrophere.title'),
+					   msg: LN('sbi.cockpit.widgets.chartseriespanel.cannotdrophere.postlinecalculated'),
 					   buttons: Ext.Msg.OK,
 					   icon: Ext.MessageBox.ERROR
 				});
@@ -421,8 +421,8 @@ Ext.extend(Sbi.cockpit.widgets.chart.ChartSeriesPanel, Ext.Panel, {
 		// if the measure is already present, does not insert it 
 		if (this.containsMeasure(theRecord)) {
 			Ext.Msg.show({
-				   title: LN('sbi.worksheet.designer.chartseriespanel.cannotdrophere.title'),
-				   msg: LN('sbi.worksheet.designer.chartseriespanel.cannotdrophere.measurealreadypresent'),
+				   title: LN('sbi.cockpit.widgets.chartseriespanel.cannotdrophere.title'),
+				   msg: LN('sbi.cockpit.widgets.chartseriespanel.cannotdrophere.measurealreadypresent'),
 				   buttons: Ext.Msg.OK,
 				   icon: Ext.MessageBox.WARNING
 			});

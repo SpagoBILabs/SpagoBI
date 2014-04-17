@@ -9,9 +9,9 @@ Ext.ns("Sbi.cockpit.widgets.chart");
 Sbi.cockpit.widgets.chart.ChartCategoryPanel = function(config) { 
 
 	var defaultSettings = {
-		title: LN('sbi.worksheet.designer.chartcategorypanel.title')
+		title: LN('sbi.cockpit.widgets.chartcategorypanel.title')
 		, frame: true
-		, emptyMsg: LN('sbi.worksheet.designer.chartcategorypanel.emptymsg')
+		, emptyMsg: LN('sbi.cockpit.widgets.chartcategorypanel.emptymsg')
 	};
 		
 	if (Sbi.settings && Sbi.settings.cockpit && Sbi.settings.cockpit.widgets && Sbi.settings.cockpit.widgets.chart && Sbi.settings.cockpit.widgets.chart.chartCategoryPanel) {
@@ -76,8 +76,8 @@ Ext.extend(Sbi.cockpit.widgets.chart.ChartCategoryPanel, Ext.Panel, {
 			this.notifyDropFromQueryFieldsPanel(ddSource);
 		} else {
 			Ext.Msg.show({
-				   title: LN('sbi.worksheet.designer.chartcategorypanel.cannotdrophere.title'),
-				   msg: LN('sbi.worksheet.designer.chartcategorypanel.cannotdrophere.unknownsource'),
+				   title: LN('sbi.cockpit.widgets.chartcategorypanel.cannotdrophere.title'),
+				   msg: LN('sbi.cockpit.widgets.chartcategorypanel.cannotdrophere.unknownsource'),
 				   buttons: Ext.Msg.OK,
 				   icon: Ext.MessageBox.WARNING
 				});
@@ -101,8 +101,8 @@ Ext.extend(Sbi.cockpit.widgets.chart.ChartCategoryPanel, Ext.Panel, {
 			// if the field is a measure show a warning
 			if (aRow.data.nature === 'measure' || aRow.data.nature === 'mandatory_measure') {
 				Ext.Msg.show({
-					   title: LN('sbi.worksheet.designer.chartcategorypanel.cannotdrophere.title'),
-					   msg: LN('sbi.worksheet.designer.chartcategorypanel.cannotdrophere.measures'),
+					   title: LN('sbi.cockpit.widgets.chartcategorypanel.cannotdrophere.title'),
+					   msg: LN('sbi.cockpit.widgets.chartcategorypanel.cannotdrophere.measures'),
 					   buttons: Ext.Msg.OK,
 					   icon: Ext.MessageBox.WARNING
 				});
@@ -111,8 +111,8 @@ Ext.extend(Sbi.cockpit.widgets.chart.ChartCategoryPanel, Ext.Panel, {
 			// if the field is a postLineCalculated show an error
 			if (aRow.data.nature === 'postLineCalculated') {
 				Ext.Msg.show({
-					   title: LN('sbi.worksheet.designer.chartcategorypanel.cannotdrophere.title'),
-					   msg: LN('sbi.worksheet.designer.chartcategorypanel.cannotdrophere.postlinecalculated'),
+					   title: LN('sbi.cockpit.widgets.chartcategorypanel.cannotdrophere.title'),
+					   msg: LN('sbi.cockpit.widgets.chartcategorypanel.cannotdrophere.postlinecalculated'),
 					   buttons: Ext.Msg.OK,
 					   icon: Ext.MessageBox.ERROR
 				});

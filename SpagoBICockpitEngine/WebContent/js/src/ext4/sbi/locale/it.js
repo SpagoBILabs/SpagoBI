@@ -130,6 +130,44 @@ Sbi.locale.ln['sbi.cockpit.widgets.table.tabledesignerpanel.fields.emptymsg'] = 
 Sbi.locale.ln['sbi.cockpit.widgets.table.tabledesignerpanel.fields'] = 'Trascina qui gli attributi e le misure che vuoi visualizzare nella tabella';
 Sbi.locale.ln['sbi.cockpit.queryfieldspanel.title'] = 'Campi selezionati';
 
+//===================================================================
+//Sbi.cockpit.widgets.ChartCategoryPanel
+//===================================================================
+Sbi.locale.ln['sbi.cockpit.widgets.chartcategorypanel.title'] = 'Categoria';
+Sbi.locale.ln['sbi.cockpit.widgets.chartcategorypanel.emptymsg'] = 'Trascina qui un attributo della query come categoria';
+Sbi.locale.ln['sbi.cockpit.widgets.chartcategorypanel.emptymsg'] = 'Trascina qui un attributo della query come categoria';
+Sbi.locale.ln['sbi.cockpit.widgets.chartcategorypanel.cannotdrophere.title'] = 'Drop non consentito';
+Sbi.locale.ln['sbi.cockpit.widgets.chartcategorypanel.cannotdrophere.unknownsource'] = 'Sorgente sconosciuta';
+Sbi.locale.ln['sbi.cockpit.widgets.chartcategorypanel.cannotdrophere.measures'] = 'Non puoi trascinare qui le misure';
+Sbi.locale.ln['sbi.cockpit.widgets.chartcategorypanel.cannotdrophere.postlinecalculated'] = 'Non puoi trascinare qui i campi calcolati basati su script';
+
+//===================================================================
+//Sbi.cockpit.widgets.ChartSeriesPanel
+//===================================================================
+Sbi.locale.ln['sbi.cockpit.widgets.chartseriespanel.title'] = 'Serie';
+Sbi.locale.ln['sbi.cockpit.widgets.chartseriespanel.emptymsg'] = 'Trascina qui alcune misure della query come serie';
+Sbi.locale.ln['sbi.cockpit.widgets.chartseriespanel.columns.queryfield'] = 'Campo';
+Sbi.locale.ln['sbi.cockpit.widgets.chartseriespanel.columns.seriename'] = 'Nome';
+Sbi.locale.ln['sbi.cockpit.widgets.chartseriespanel.columns.color'] = 'Colore';
+Sbi.locale.ln['sbi.cockpit.widgets.chartseriespanel.columns.showcomma'] = 'Mostra separatore delle migliaia';
+Sbi.locale.ln['sbi.cockpit.widgets.chartseriespanel.columns.precision'] = 'Precisione';
+Sbi.locale.ln['sbi.cockpit.widgets.chartseriespanel.columns.suffix'] = 'Suffisso';
+Sbi.locale.ln['sbi.cockpit.widgets.chartseriespanel.cannotdrophere.title'] = 'Drop non consentito';
+Sbi.locale.ln['sbi.cockpit.widgets.chartseriespanel.cannotdrophere.measurealreadypresent'] = 'La misura è già presente';
+Sbi.locale.ln['sbi.cockpit.widgets.chartseriespanel.cannotdrophere.attributes'] = 'Non puoi inserire degli attributi tra le serie del grafico';
+Sbi.locale.ln['sbi.cockpit.widgets.chartseriespanel.cannotdrophere.postlinecalculated'] = 'Non puoi utilizzare i campi calcolati basati su script tra le serie del grafico';
+Sbi.locale.ln['sbi.cockpit.widgets.chartseriespanel.tools.tt.removeall'] = ['Rimuovi tutti'];
+
+//aggregation functions
+Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.name.none'] = 'nessuno';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.name.sum'] = 'somma';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.name.avg'] = 'media';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.name.max'] = 'massimo';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.name.min'] = 'minimo';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.name.count'] = 'conteggio';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.name.countdistinct'] = 'conteggio distinti';
+
+
 Sbi.locale.ln['sbi.cockpit.mainpanel.btn.selections'] = 'Selezioni';
 Sbi.locale.ln['sbi.cockpit.mainpanel.btn.filters'] = 'Filtri';
 Sbi.locale.ln['sbi.cockpit.mainpanel.btn.associations'] = 'Associazioni';

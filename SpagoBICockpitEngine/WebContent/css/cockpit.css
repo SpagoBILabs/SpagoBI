@@ -247,6 +247,12 @@
 		background-position:center !important;
 	}	
 	
+	.piechart {
+		background-image:url(../img/designer/chart/piechart.gif) !important;
+		background-repeat:no-repeat !important;
+		background-position:center !important;
+	}
+	
 	/**************/
 	/*    MISC    */
 	/**************/
