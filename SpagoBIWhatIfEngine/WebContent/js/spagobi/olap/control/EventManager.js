@@ -243,7 +243,14 @@ Ext.define('Sbi.olap.control.EventManager', {
 		}
 	}
 
-
+	/**
+	 * Undo last modification
+	 */
+	,
+	undo : function () {
+		this.olapController.undo();	
+	}
+	
 	,executeService: function(){
 		this.loadingMask.show();
 	}

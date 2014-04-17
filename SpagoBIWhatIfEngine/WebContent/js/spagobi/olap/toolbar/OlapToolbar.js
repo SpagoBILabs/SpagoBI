@@ -95,12 +95,22 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 			scope:this,
 			reorderable: true
 		});
+		
+		this.undo = Ext.create('Ext.Button', {
+			text: LN('sbi.olap.toolbar.undo'),
+			iconCls: 'undo',
+			handler: function() {
+				Sbi.olap.eventManager.undo();
+			},
+			scope:this,
+			reorderable: true
+		});
 
 		Ext.apply(this, {
 			layout: {
 				overflowHandler: 'Menu'
 			},
-			items   : [ this.drillMode, this.showMdx ]
+			items   : [ this.drillMode, this.showMdx, this.undo ]
 		});
 		this.callParent();
 	},
@@ -173,6 +183,5 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 		this.mdxContainerPanel.update(this.mdx);
 		this.mdxWindow.show();
 	}
-
 
 });

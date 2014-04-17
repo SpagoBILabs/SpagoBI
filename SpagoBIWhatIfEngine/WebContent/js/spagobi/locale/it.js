@@ -69,6 +69,7 @@ Sbi.locale.ln['sbi.common.select'] = 'Ok';
 //===================================================================
 Sbi.locale.ln['sbi.olap.toolbar.mdx'] = 'Mdx Query';
 Sbi.locale.ln['sbi.olap.toolbar.drill.mode'] = 'Tipi di Drill';
+Sbi.locale.ln['sbi.olap.toolbar.undo'] = 'Undo';
 
 //===================================================================
 //FILTERS
