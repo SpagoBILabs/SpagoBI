@@ -13,6 +13,7 @@ package it.eng.spagobi.engines.whatif.model;
 import it.eng.spagobi.engines.whatif.model.transform.CellTransformation;
 import it.eng.spagobi.engines.whatif.model.transform.CellTransformationsStack;
 import it.eng.spagobi.engines.whatif.model.transform.algorithm.AllocationAlgorithm;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 
 import org.olap4j.Cell;
 import org.olap4j.CellSet;
@@ -72,6 +73,20 @@ public class SpagoBIPivotModel extends PivotModelImpl {
 	
 	public void addPendingTransformation(CellTransformation transformation) {
 		pendingTransformations.add(transformation);
+	}
+	
+	/**
+	 * Undo last modification
+	 */
+	public synchronized void undo() {
+		if (!this.hasPendingTransformations()) {
+			throw new SpagoBIEngineRuntimeException("There are no modifications to undo!!");
+		}
+		pendingTransformations.remove( pendingTransformations.size() - 1 );
+		// remove previous stored cell set, in any
+		this.setCellSetWrapper(null);
+		// force recalculation
+		this.getCellSet();
 	}
 	
 }

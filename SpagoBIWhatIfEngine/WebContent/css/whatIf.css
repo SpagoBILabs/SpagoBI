@@ -201,6 +201,10 @@ td[contenteditable="true"]:focus {
 .mdx{
 	background-image: url(../img/mdx.png);
 }
+.undo{
+	background-image: url(../img/undo.png);
+}
+
 
 /*------------------*/
 /* Multi hierarchy */

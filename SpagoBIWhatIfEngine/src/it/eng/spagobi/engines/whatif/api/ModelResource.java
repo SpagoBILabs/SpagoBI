@@ -20,6 +20,7 @@ import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
 import it.eng.spagobi.engines.whatif.common.AbstractWhatIfEngineService;
 import it.eng.spagobi.engines.whatif.model.SpagoBICellSetWrapper;
 import it.eng.spagobi.engines.whatif.model.SpagoBICellWrapper;
+import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
 import it.eng.spagobi.engines.whatif.model.transform.CellTransformation;
 import it.eng.spagobi.engines.whatif.model.transform.algorithm.DefaultWeightedAllocationAlgorithm;
 import it.eng.spagobi.utilities.exceptions.SpagoBIEngineRestServiceException;
@@ -91,6 +92,19 @@ public class ModelResource extends AbstractWhatIfEngineService {
 				cellWrapper.getValue(), cellWrapper.getMembers(),
 				new DefaultWeightedAllocationAlgorithm());
 		cellSetWrapper.applyTranformation(transformation);
+		String table = renderModel(model);
+		logger.debug("OUT");
+		return table;
+	}
+	
+	
+	@PUT
+	@Path("/undo")
+	public String undo() {
+		logger.debug("IN");
+		WhatIfEngineInstance ei = getWhatIfEngineInstance();
+		SpagoBIPivotModel model = (SpagoBIPivotModel) ei.getPivotModel();
+		model.undo();
 		String table = renderModel(model);
 		logger.debug("OUT");
 		return table;

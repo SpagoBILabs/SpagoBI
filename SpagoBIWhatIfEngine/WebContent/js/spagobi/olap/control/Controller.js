@@ -152,6 +152,18 @@ Ext.define('Sbi.olap.control.Controller', {
 		
 		service.callService(this);
 	}
+	
+	,
+	undo: function() {
+
+		var service = Ext.create("Sbi.service.RestService", {
+			url: "model",
+			method: 'PUT',
+			pathParams: ["undo"]
+		});
+		
+		service.callService(this);
+	}
 });
 
 
