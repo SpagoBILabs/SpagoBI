@@ -4,9 +4,9 @@
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. **/
 
-Ext.ns("Sbi.cockpit.widgets.barchart");
+Ext.ns("Sbi.cockpit.widgets.chart");
 
-Sbi.cockpit.widgets.barchart.ChartSeriesPanel = function(config) {
+Sbi.cockpit.widgets.chart.ChartSeriesPanel = function(config) {
 
 	var defaultSettings = {
 		title: LN('sbi.worksheet.designer.chartseriespanel.title')
@@ -14,8 +14,8 @@ Sbi.cockpit.widgets.barchart.ChartSeriesPanel = function(config) {
 		, emptyMsg: LN('sbi.worksheet.designer.chartseriespanel.emptymsg')
 	};
 		
-	if (Sbi.settings && Sbi.settings.cockpit && Sbi.settings.cockpit.widgets && Sbi.settings.cockpit.widgets.barchart && Sbi.settings.cockpit.widgets.barchart.chartSeriesPanel) {
-		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.cockpit.widgets.barchart.chartSeriesPanel);
+	if (Sbi.settings && Sbi.settings.cockpit && Sbi.settings.cockpit.widgets && Sbi.settings.cockpit.widgets.chart && Sbi.settings.cockpit.widgets.chart.chartSeriesPanel) {
+		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.cockpit.widgets.chart.chartSeriesPanel);
 	}
 	
 	if (Sbi.settings && Sbi.settings.cockpit && Sbi.settings.cockpit.designer && Sbi.settings.cockpit.designer.common) {
@@ -46,7 +46,7 @@ Sbi.cockpit.widgets.barchart.ChartSeriesPanel = function(config) {
 	});
 	
 	// constructor
-	Sbi.cockpit.widgets.barchart.ChartSeriesPanel.superclass.constructor.call(this, c);
+	Sbi.cockpit.widgets.chart.ChartSeriesPanel.superclass.constructor.call(this, c);
     
     this.on('render', this.initDropTarget, this);
     this.on('afterLayout', this.setActiveItem, this);
@@ -55,7 +55,7 @@ Sbi.cockpit.widgets.barchart.ChartSeriesPanel = function(config) {
     
 };
 
-Ext.extend(Sbi.cockpit.widgets.barchart.ChartSeriesPanel, Ext.Panel, {
+Ext.extend(Sbi.cockpit.widgets.chart.ChartSeriesPanel, Ext.Panel, {
 	
 	emptyMsg : null
 	, emptyMsgPanel : null
