@@ -129,7 +129,7 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner, Sbi.cockpit.core
 		});	
 		
 		
-		this.categoryContainerPanel = new Sbi.cockpit.widgets.barchart.ChartCategoryPanel({
+		this.categoryContainerPanel = new Sbi.cockpit.widgets.chart.ChartCategoryPanel({
             width: 200
             , height: 70
             , initialData: null
@@ -151,7 +151,7 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner, Sbi.cockpit.core
 			this
 		);
 		
-		this.seriesGroupingPanel = new Sbi.cockpit.widgets.barchart.SeriesGroupingPanel({
+		this.seriesGroupingPanel = new Sbi.cockpit.widgets.chart.SeriesGroupingPanel({
             width: 430
             , height: 70
             , initialData: null
@@ -173,7 +173,7 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner, Sbi.cockpit.core
 			this
 		);
 		
-		this.seriesContainerPanel = new Sbi.cockpit.widgets.barchart.ChartSeriesPanel({
+		this.seriesContainerPanel = new Sbi.cockpit.widgets.chart.ChartSeriesPanel({
             width: 430
             , height: 120
             , initialData: []

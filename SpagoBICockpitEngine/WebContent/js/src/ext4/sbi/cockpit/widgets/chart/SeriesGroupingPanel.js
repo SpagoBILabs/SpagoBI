@@ -5,9 +5,9 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. **/
 
 
-Ext.ns("Sbi.cockpit.widgets.barchart");
+Ext.ns("Sbi.cockpit.widgets.chart");
 
-Sbi.cockpit.widgets.barchart.SeriesGroupingPanel = function(config) { 
+Sbi.cockpit.widgets.chart.SeriesGroupingPanel = function(config) { 
 
 	var defaultSettings = {
 		title: LN('sbi.worksheet.designer.seriesgroupingpanel.title')
@@ -15,8 +15,8 @@ Sbi.cockpit.widgets.barchart.SeriesGroupingPanel = function(config) {
 		, emptyMsg: LN('sbi.worksheet.designer.seriesgroupingpanel.emptymsg')
 	};
 		
-	if (Sbi.settings && Sbi.settings.cockpit && Sbi.settings.cockpit.widgets && Sbi.settings.cockpit.widgets.barchart && Sbi.settings.cockpit.widgets.barchart.seriesGroupingPanel) {
-		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.cockpit.widgets.barchart.seriesGroupingPanel);
+	if (Sbi.settings && Sbi.settings.cockpit && Sbi.settings.cockpit.widgets && Sbi.settings.cockpit.widgets.chart && Sbi.settings.cockpit.widgets.chart.seriesGroupingPanel) {
+		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.cockpit.widgets.chart.seriesGroupingPanel);
 	}
 	
 	var c = Ext.apply(defaultSettings, config || {});
@@ -24,11 +24,11 @@ Sbi.cockpit.widgets.barchart.SeriesGroupingPanel = function(config) {
 	Ext.apply(this, c);
 
 	// constructor	
-	Sbi.cockpit.widgets.barchart.SeriesGroupingPanel.superclass.constructor.call(this, c);
+	Sbi.cockpit.widgets.chart.SeriesGroupingPanel.superclass.constructor.call(this, c);
 	
 };
 
-Ext.extend(Sbi.cockpit.widgets.barchart.SeriesGroupingPanel, Sbi.cockpit.widgets.barchart.ChartCategoryPanel, {
+Ext.extend(Sbi.cockpit.widgets.chart.SeriesGroupingPanel, Sbi.cockpit.widgets.chart.ChartCategoryPanel, {
 	    
 	getSeriesGroupingAttribute : function () {
 		return this.getCategory();

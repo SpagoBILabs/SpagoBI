@@ -4,9 +4,9 @@
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. **/
 
-Ext.ns("Sbi.cockpit.widgets.barchart");
+Ext.ns("Sbi.cockpit.widgets.chart");
 
-Sbi.cockpit.widgets.barchart.ChartCategoryPanel = function(config) { 
+Sbi.cockpit.widgets.chart.ChartCategoryPanel = function(config) { 
 
 	var defaultSettings = {
 		title: LN('sbi.worksheet.designer.chartcategorypanel.title')
@@ -14,8 +14,8 @@ Sbi.cockpit.widgets.barchart.ChartCategoryPanel = function(config) {
 		, emptyMsg: LN('sbi.worksheet.designer.chartcategorypanel.emptymsg')
 	};
 		
-	if (Sbi.settings && Sbi.settings.cockpit && Sbi.settings.cockpit.widgets && Sbi.settings.cockpit.widgets.barchart && Sbi.settings.cockpit.widgets.barchart.chartCategoryPanel) {
-		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.cockpit.widgets.barchart.chartCategoryPanel);
+	if (Sbi.settings && Sbi.settings.cockpit && Sbi.settings.cockpit.widgets && Sbi.settings.cockpit.widgets.chart && Sbi.settings.cockpit.widgets.chart.chartCategoryPanel) {
+		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.cockpit.widgets.chart.chartCategoryPanel);
 	}
 		
 	var c = Ext.apply(defaultSettings, config || {});
@@ -31,13 +31,13 @@ Sbi.cockpit.widgets.barchart.ChartCategoryPanel = function(config) {
 	});
 
 	// constructor	
-	Sbi.cockpit.widgets.barchart.ChartCategoryPanel.superclass.constructor.call(this, c);
+	Sbi.cockpit.widgets.chart.ChartCategoryPanel.superclass.constructor.call(this, c);
 	
 	this.on('render', this.initDropTarget, this);
 	
 };
 
-Ext.extend(Sbi.cockpit.widgets.barchart.ChartCategoryPanel, Ext.Panel, {
+Ext.extend(Sbi.cockpit.widgets.chart.ChartCategoryPanel, Ext.Panel, {
 	
 	emptyMsg : null
 	, emptyMsgPanel : null
