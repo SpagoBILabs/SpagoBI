@@ -16,14 +16,17 @@ Sbi.cockpit.widgets.barchart.BarChartWidget = function(config) {
 	var c = Ext.apply(settings, config || {});
 	Ext.apply(this, c);
 
+	//Commented for refactoring
+	/*
 	this.chartDivId = Ext.id();
 	
 	c = Ext.apply(c, {
 		html : '<div id="' + this.chartDivId + '" style="width: 100%; height: 100%;"></div>'
 		, autoScroll: true
 	});
+	*/
 	
-	Sbi.cockpit.widgets.table.TableWidget.superclass.constructor.call(this, c);
+	Sbi.cockpit.widgets.barchart.BarChartWidget.superclass.constructor.call(this, c);
 	this.init();
 
 	/*
@@ -42,7 +45,7 @@ Sbi.cockpit.widgets.barchart.BarChartWidget = function(config) {
  * @cfg {Object} config
  * ...
  */
-Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidget, Sbi.cockpit.core.WidgetRuntime, {
+Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidget, Sbi.cockpit.widgets.chart.AbstractChartWidget, {
 	// =================================================================================================================
 	// PROPERTIES
 	// =================================================================================================================
@@ -65,6 +68,7 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidget, Sbi.cockpit.core.WidgetR
 	 * The syntax is {rows, measures}.. For example {'rows':[{'id':'it.eng.spagobi.SalesFact1998:product(product_id):productClass(product_class_id):productFamily','nature':'attribute','alias':'Product Family','iconCls':'attribute'}],'measures':[{'id':'it.eng.spagobi.SalesFact1998:storeCost','nature':'measure','alias':'Store Cost','funct':'SUM','iconCls':'measure'},{'id':'it.eng.spagobi.SalesFact1998:unitSales','nature':'measure','alias':'Unit Sales','funct':'SUM','iconCls':'measure'}]}
 	 */
 	//TODO: move this method on a generic class parent
+	/*
 	, loadChartData: function(dataConfig, filters){
 		
 		if ( !this.chartConfig.hiddenContent ){
@@ -127,9 +131,10 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidget, Sbi.cockpit.core.WidgetR
         	}
 		}
 	}
+	*/
 	
 	//TODO: move this method on a generic class parent
-
+	/*
 	, getJsonStoreExt3: function(percent){
 		var storeObject = {};
 		
@@ -179,11 +184,12 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidget, Sbi.cockpit.core.WidgetR
 	
 	    return storeObject;
 	}
-
+	*/
 	/**
 	 * Loads the series for the chart
 	 */
 	//TODO: move this method on a generic class parent
+	/*
 	, getSeries: function(){
 		if(this.dataContainerObject!=null){
 			var runtimeSeries = this.getRuntimeSeries();
@@ -220,8 +226,9 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidget, Sbi.cockpit.core.WidgetR
 			}	
 			return series;
 		}
-	}
+	}*/
 	//TODO: move this method on a generic class parent
+	/*
     , format: function(value, type, format, scaleFactor) {
     	if(value==null){
     		return value;
@@ -242,11 +249,12 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidget, Sbi.cockpit.core.WidgetR
 			return value;
 		}
 	}
-	
+	*/
 	/**
 	 * Load the categories for the chart
 	 */
 	//TODO: move this method on a generic class parent
+	/*
 	, getCategories: function(){
 		if(this.dataContainerObject!=null){
 			var measures = this.dataContainerObject.columns.node_childs;
@@ -258,7 +266,9 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidget, Sbi.cockpit.core.WidgetR
 			return  categories;
 		}
 	}
+	*/
 	//TODO: move this method on a generic class parent
+	/*
 	, getRuntimeSeries : function () {
 		var toReturn = [];
 		// rows (of dataContainerObject) can contain 2 level, it depends if a groupingVariable was defined or not
@@ -287,14 +297,17 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidget, Sbi.cockpit.core.WidgetR
 		}
 		return toReturn;
 	}
-	
+	*/
 	//TODO: move this method on a generic class parent
+	/*
 	, formatLegendWithScale : function(theSerieName) {
 		var serie = this.getRuntimeSerie(theSerieName);
 		var toReturn = this.formatTextWithMeasureScaleFactor(serie.name, serie.measure);
 		return toReturn;
 	}
+	*/
 	//TODO: move this method on a generic class parent
+	/*
 	, getRuntimeSerie : function (theSerieName) {
 		var allRuntimeSeries = this.getRuntimeSeries();
 		var i = 0;
@@ -305,8 +318,10 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidget, Sbi.cockpit.core.WidgetR
 		}
 		return null;
 	}	
+	*/
 
 	//TODO: move this method on a generic class parent
+	/*
 	, formatTextWithMeasureScaleFactor : function(text, measureName) {
 		var legendSuffix = (this.getMeasureScaleFactor(measureName)).text;
 		if (legendSuffix != '' ) {
@@ -314,8 +329,9 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidget, Sbi.cockpit.core.WidgetR
 		}
 		return text;
 	}
-	
+	*/
 	//TODO: move this method on a generic class parent
+	/*
 	, getColors : function () {
 		var colors = [];
 		if (this.chartConfig !== undefined && this.chartConfig.groupingVariable != null) {
@@ -330,8 +346,9 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidget, Sbi.cockpit.core.WidgetR
 		}
 		return colors;
 	}
-	
+	*/
 	//TODO: move this method on a generic class parent
+	/*
 	, addChartConfExt3: function(chartConf, showTipMask){
 		if((this.chartConfig.showlegend !== undefined) ? this.chartConfig.showlegend : true){
 			if (chartConf.extraStyle === undefined || chartConf.extraStyle == null) {
@@ -341,7 +358,7 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidget, Sbi.cockpit.core.WidgetR
 		}
 		chartConf.tipRenderer = this.getTooltipFormatter();
 	}
-
+	*/
     , refresh:  function() {  
 		//TODO: must implement this
 	}
@@ -810,18 +827,19 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidget, Sbi.cockpit.core.WidgetR
 	//------------------------------------------------------------------------------------------------------------------
 	// utility methods
 	// -----------------------------------------------------------------------------------------------------------------
+	
 	, getByteArraysForExport: function(){
 		var byteArrays = new Array();
 		for(var i=0; i<this.charts; i++){
 			byteArrays.push((this.charts[i]).exportPNG());
 		}	
 	}
-	
+	/*
 	, isEmpty : function () {
 		var measures = this.dataContainerObject.columns.node_childs;
 		return measures === undefined;
 	}
-
+	 */
 	// -----------------------------------------------------------------------------------------------------------------
 	// init methods
 	// -----------------------------------------------------------------------------------------------------------------
