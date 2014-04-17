@@ -294,10 +294,6 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner, Sbi.cockpit.core
 		var newHtml = this.imageTemplate.apply([type, orientation]);
 		this.imageContainerPanel.update(newHtml);
 	}
-	
-	
-	
-	
 
 	, getDesignerState: function() {
 		Sbi.trace("[BarChartWidgetDesigner.getDesignerState]: IN");
