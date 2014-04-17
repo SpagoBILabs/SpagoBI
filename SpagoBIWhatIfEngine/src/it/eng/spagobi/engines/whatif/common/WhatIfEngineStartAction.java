@@ -23,21 +23,25 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 
 @Path("/start")
 public class WhatIfEngineStartAction extends AbstractWhatIfEngineService {
 	
-
 	// INPUT PARAMETERS
+	public static final String LANGUAGE = "language";
+	public static final String COUNTRY = "country";
 	
 	// OUTPUT PARAMETERS
-	public static final String LANGUAGE = "LANGUAGE";
-	public static final String COUNTRY = "COUNTRY";
 	
 	// SESSION PARAMETRES	
 	public static final String ENGINE_INSTANCE = EngineConstants.ENGINE_INSTANCE;
+	
+	// Defaults
+	public static final Locale DEFAULT_LOCALE = Locale.ENGLISH;
+	
 	
 	/** Logger component. */
     public static transient Logger logger = Logger.getLogger(WhatIfEngineStartAction.class);
@@ -75,27 +79,46 @@ public class WhatIfEngineStartAction extends AbstractWhatIfEngineService {
 			}
 	}
 	
-	 public Map getEnv() {
-		 Map env = new HashMap();
+	public Map getEnv() {
+		Map env = new HashMap();
 
-		 it.eng.spagobi.tools.datasource.bo.DataSource ds = new it.eng.spagobi.tools.datasource.bo.DataSource();
-		 ds.setUser("root");
-		 ds.setPwd("root");
-		 ds.setDriver("com.mysql.jdbc.Driver");
-		 
-	 
-		 env.put(EngineConstants.ENV_DATASOURCE, ds);
-//		 env.put(EngineConstants.ENV_USER_PROFILE, getUserProfile());
-//		 env.put(EngineConstants.ENV_CONTENT_SERVICE_PROXY, getContentServiceProxy());
-//		 env.put(EngineConstants.ENV_AUDIT_SERVICE_PROXY, getAuditServiceProxy() );
-//		 env.put(EngineConstants.ENV_DATASET_PROXY, getDataSetServiceProxy());
-//		 env.put(EngineConstants.ENV_DATASOURCE_PROXY, getDataSourceServiceProxy()); 
-		 env.put(EngineConstants.ENV_LOCALE, Locale.ITALY); 
+		it.eng.spagobi.tools.datasource.bo.DataSource ds = new it.eng.spagobi.tools.datasource.bo.DataSource();
+		ds.setUser("root");
+		ds.setPwd("root");
+		ds.setDriver("com.mysql.jdbc.Driver");
 
-		 return env;
-	 }
-	 
-	 
+		env.put(EngineConstants.ENV_DATASOURCE, ds);
+		// env.put(EngineConstants.ENV_USER_PROFILE, getUserProfile());
+		// env.put(EngineConstants.ENV_CONTENT_SERVICE_PROXY, getContentServiceProxy());
+		// env.put(EngineConstants.ENV_AUDIT_SERVICE_PROXY, getAuditServiceProxy() );
+		// env.put(EngineConstants.ENV_DATASET_PROXY, getDataSetServiceProxy());
+		// env.put(EngineConstants.ENV_DATASOURCE_PROXY, getDataSourceServiceProxy());
+		env.put(EngineConstants.ENV_LOCALE, this.getLocale());
 
+		return env;
+	}
+
+	public Locale getLocale() {
+		logger.debug("IN");
+		Locale toReturn = null;
+		try {
+			String language = this.getServletRequest().getParameter(LANGUAGE);
+			String country = this.getServletRequest().getParameter(COUNTRY);
+			if (StringUtils.isNotEmpty(language) && StringUtils.isNotEmpty(country)) {
+				toReturn = new Locale(language, country);
+			} else {
+				logger.error("Language and country not specified in request. Considering default locale that is "
+						+ DEFAULT_LOCALE.toString());
+				toReturn = DEFAULT_LOCALE;
+			}
+		} catch (Exception e) {
+			logger.error(
+					"An error occurred while retrieving locale from request, using default locale that is "
+							+ DEFAULT_LOCALE.toString(), e);
+			toReturn = DEFAULT_LOCALE;
+		}
+		logger.debug("OUT");
+		return toReturn;
+	}
 	
 }
