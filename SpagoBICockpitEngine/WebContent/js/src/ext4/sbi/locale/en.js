@@ -131,10 +131,47 @@ Sbi.locale.ln['sbi.cockpit.widgets.table.tabledesignerpanel.fields.emptymsg'] = 
 Sbi.locale.ln['sbi.cockpit.widgets.table.tabledesignerpanel.fields'] = 'Drag & drop here attribute as the series\' that you want view in the table';
 Sbi.locale.ln['sbi.cockpit.queryfieldspanel.title'] = 'Selected fields';
 
+//===================================================================
+//Sbi.cockpit.widgets.ChartCategoryPanel
+//===================================================================
+Sbi.locale.ln['sbi.cockpit.widgets.chartcategorypanel.title'] = 'Category';
+Sbi.locale.ln['sbi.cockpit.widgets.chartcategorypanel.emptymsg'] = 'Drag & drop here a query attribute as a category';
+Sbi.locale.ln['sbi.cockpit.widgets.chartcategorypanel.cannotdrophere.title'] = 'Drop not allowed';
+Sbi.locale.ln['sbi.cockpit.widgets.chartcategorypanel.cannotdrophere.unknownsource'] = 'Unknown source';
+Sbi.locale.ln['sbi.cockpit.widgets.chartcategorypanel.cannotdrophere.measures'] = 'You cannot drop measures here';
+Sbi.locale.ln['sbi.cockpit.widgets.chartcategorypanel.cannotdrophere.postlinecalculated'] = 'You cannot drop script-based calculated fields here';
+
+//===================================================================
+//Sbi.cockpit.widgets.ChartSeriesPanel
+//===================================================================
+Sbi.locale.ln['sbi.cockpit.widgets.chartseriespanel.title'] = 'Series';
+Sbi.locale.ln['sbi.cockpit.widgets.chartseriespanel.emptymsg'] = 'Drag & drop here some query measures as series';
+Sbi.locale.ln['sbi.cockpit.widgets.chartseriespanel.columns.queryfield'] = 'Field';
+Sbi.locale.ln['sbi.cockpit.widgets.chartseriespanel.columns.seriename'] = 'Name';
+Sbi.locale.ln['sbi.cockpit.widgets.chartseriespanel.columns.color'] = 'Color';
+Sbi.locale.ln['sbi.cockpit.widgets.chartseriespanel.columns.showcomma'] = 'Show grouping separator';
+Sbi.locale.ln['sbi.cockpit.widgets.chartseriespanel.columns.precision'] = 'Precision';
+Sbi.locale.ln['sbi.cockpit.widgets.chartseriespanel.columns.suffix'] = 'Suffix';
+Sbi.locale.ln['sbi.cockpit.widgets.chartseriespanel.cannotdrophere.title'] = 'Drop not allowed';
+Sbi.locale.ln['sbi.cockpit.widgets.chartseriespanel.cannotdrophere.measurealreadypresent'] = 'The measure is already present';
+Sbi.locale.ln['sbi.cockpit.widgets.chartseriespanel.cannotdrophere.attributes'] = 'You cannot drag attributes into the chart\'s series';
+Sbi.locale.ln['sbi.cockpit.widgets.chartseriespanel.cannotdrophere.postlinecalculated'] = 'You cannot use script-based calculated fields into the chart\'s series';
+Sbi.locale.ln['sbi.cockpit.widgets.chartseriespanel.tools.tt.removeall'] = ['Remove all'];
+
+//aggregation functions
+Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.name.none'] = 'none';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.name.sum'] = 'sum';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.name.avg'] = 'averege';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.name.max'] = 'maximum';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.name.min'] = 'minimum';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.name.count'] = 'count';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.name.countdistinct'] = 'count distinct';
+
 Sbi.locale.ln['sbi.cockpit.mainpanel.btn.selections'] = 'Selections';
 Sbi.locale.ln['sbi.cockpit.mainpanel.btn.filters'] = 'Filters';
 Sbi.locale.ln['sbi.cockpit.mainpanel.btn.associations'] = 'Associations';
 Sbi.locale.ln['sbi.cockpit.mainpanel.btn.addWidget'] = 'Add Widget';
+
 
 //ASSOCIATIONS
 Sbi.locale.ln['sbi.cockpit.association.editor.wizard.title'] = 'Associations editor';
