@@ -60,305 +60,8 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidget, Sbi.cockpit.widgets.char
     // -----------------------------------------------------------------------------------------------------------------
     // public methods
 	// -----------------------------------------------------------------------------------------------------------------
-	
-	/**
-	 * Loads the data for the chart.. Call the action which loads the crosstab 
-	 * (the crosstab is the object that contains the data for the chart)
-	 * @param dataConfig the field for the chart..
-	 * The syntax is {rows, measures}.. For example {'rows':[{'id':'it.eng.spagobi.SalesFact1998:product(product_id):productClass(product_class_id):productFamily','nature':'attribute','alias':'Product Family','iconCls':'attribute'}],'measures':[{'id':'it.eng.spagobi.SalesFact1998:storeCost','nature':'measure','alias':'Store Cost','funct':'SUM','iconCls':'measure'},{'id':'it.eng.spagobi.SalesFact1998:unitSales','nature':'measure','alias':'Unit Sales','funct':'SUM','iconCls':'measure'}]}
-	 */
-	//TODO: move this method on a generic class parent
-	/*
-	, loadChartData: function(dataConfig, filters){
-		
-		if ( !this.chartConfig.hiddenContent ){
-			
-			var encodedParams = Ext.JSON.encode({
-				'rows': dataConfig.columns,
-				'columns': dataConfig.rows,
-				'measures': dataConfig.measures,
-				'config': {'measureson':'rows'}
-			});
-			
-			var requestParameters = {
-					'crosstabDefinition': encodedParams
-					
-			};
-			if ( filters != null ) {
-				requestParameters.FILTERS = Ext.encode(filters);
-			}
-			Ext.Ajax.request({
-		        //url: this.services['loadData'],//load the crosstab from the server
-				url: Sbi.config.serviceReg.getServiceUrl('loadChartDataSetStore', {
-					pathParams: {datasetLabel: this.storeId}
-				}),
-		        params: requestParameters,
-		        success : function(response, opts) {
-		        	
-		        	this.dataContainerObject = Ext.util.JSON.decode( response.responseText );
-		        	//this.update(' <div id="' + this.chartDivId + '" style="width: 100%; height: 100%;"></div>');
-		        	if (this.isEmpty()) {
-//		        		this.update(' <div id="' + this.chartDivId + '" style="width: 100%; height: 100%;"></div>');
-		    			Ext.Msg.show({
-		 				   title: LN('sbi.qbe.messagewin.info.title'),
-		 				   msg: LN('sbi.qbe.datastorepanel.grid.emptywarningmsg'),
-		 				   buttons: Ext.Msg.OK,
-		 				   icon: Ext.MessageBox.INFO
-		    			});
-		    			this.fireEvent('contentloaded');
-		        	} else {
-			        	if(this.rendered){
-			        		this.createChart();
-			        		this.fireEvent('contentloaded');
-			        	}else{
-			        		this.on('afterrender',function(){this.createChart();this.fireEvent('contentloaded');}, this);
-			        	}
-			        	
-		        	}
-		        	
-		        },
-		        scope: this,
-				failure: function(response, options) {
-					this.fireEvent('contentloaded');
-					Sbi.exception.ExceptionHandler.handleFailure(response, options);
-				}      
-			});
-		}else{
-        	if(this.rendered){
-        		this.fireEvent('contentloaded');
-        	}else{
-        		this.on('afterrender',function(){this.fireEvent('contentloaded');}, this);
-        	}
-		}
-	}
-	*/
-	
-	//TODO: move this method on a generic class parent
-	/*
-	, getJsonStoreExt3: function(percent){
-		var storeObject = {};
-		
-		var series = this.getSeries();
-		var categories = this.getCategories();
-		
-		var data = new Array();
-		var fields = new Array();
-		var serieNames = new Array();
-	
-		
-		for(var i=0; i<categories.length; i++){
-			var z = {};
-			var seriesum = 0;
-			for(var j=0; j<series.length; j++){
-				z['series'+j] = ((series[j]).data)[i];
-				seriesum = seriesum + parseFloat(((series[j]).data)[i]);
-			}
-			if(percent){
-				for(var j=0; j<series.length; j++){
-					z['seriesflatvalue'+j] = z['series'+j];
-					z['series'+j] = (z['series'+j]/seriesum)*100;;
-				}	
-			}
-			z['seriesum'] = seriesum;
-			z['categories'] = categories[i];
-			data.push(z);
-		}
-		
-		for(var j=0; j<series.length; j++){
-			fields.push('series'+j);
-			fields.push('seriesflatvalue'+j);
-			serieNames.push(series[j].name);
-		}
-		
-		fields.push('seriesum');
-		fields.push('categories');
-	
-		
-	    var store = new Ext.data.JsonStore({
-	        fields:fields,
-	        data: data
-	    });
-	    
-	    storeObject.store = store;
-	    storeObject.serieNames = serieNames;
-	
-	    return storeObject;
-	}
-	*/
-	/**
-	 * Loads the series for the chart
-	 */
-	//TODO: move this method on a generic class parent
-	/*
-	, getSeries: function(){
-		if(this.dataContainerObject!=null){
-			var runtimeSeries = this.getRuntimeSeries();
-			var data = this.dataContainerObject.data;
-			var measures_metadata = this.dataContainerObject.measures_metadata;
-			var measures_metadata_map = {};
-			//load the metadata of the measures (we need the type)
-			var i=0;
-	
-			for(; i<measures_metadata.length; i++){
-				measures_metadata_map[measures_metadata[i].name] ={'format':measures_metadata[i].format, 'type': measures_metadata[i].type};
-				//measures_metadata_map[measures_metadata[i].name].scaleFactorValue = (this.getMeasureScaleFactor(measures_metadata[i].name)).value;
-				measures_metadata_map[measures_metadata[i].name].scaleFactorValue = 1;
-			}
-			var series = [];
-			var serie;
-			var map ;
-			var serieData, serieDataFormatted;
-			i=0;
-			for (; i < runtimeSeries.length; i++){
-				serie = {};
-				serie.name = runtimeSeries[i].name;
-				var measure = runtimeSeries[i].measure;
-				serieData = this.dataContainerObject.data[i];
-				serieDataFormatted = [];
-				var j=0;
-				for(; j<serieData.length; j++){
-					map = measures_metadata_map[measure];
-					serieDataFormatted.push(this.format(serieData[j], map.type, map.format, map.scaleFactorValue ));
-				}
-				serie.data = serieDataFormatted;
-				serie.shadow = false;
-				series.push(serie);
-			}	
-			return series;
-		}
-	}*/
-	//TODO: move this method on a generic class parent
-	/*
-    , format: function(value, type, format, scaleFactor) {
-    	if(value==null){
-    		return value;
-    	}
-		try {
-			var valueObj = value;
-			if (type == 'int') {
-				valueObj = (parseInt(value))/scaleFactor;
-			} else if (type == 'float') {
-				valueObj = (parseFloat(value))/scaleFactor;
-			} else if (type == 'date') {
-				valueObj = Date.parseDate(value, format);
-			} else if (type == 'timestamp') {
-				valueObj = Date.parseDate(value, format);
-			}
-			return valueObj;
-		} catch (err) {
-			return value;
-		}
-	}
-	*/
-	/**
-	 * Load the categories for the chart
-	 */
-	//TODO: move this method on a generic class parent
-	/*
-	, getCategories: function(){
-		if(this.dataContainerObject!=null){
-			var measures = this.dataContainerObject.columns.node_childs;
-			var categories = [];
-			var i=0;
-			for(; i<measures.length; i++){
-				categories.push(measures[i].node_description);
-			}
-			return  categories;
-		}
-	}
-	*/
-	//TODO: move this method on a generic class parent
-	/*
-	, getRuntimeSeries : function () {
-		var toReturn = [];
-		// rows (of dataContainerObject) can contain 2 level, it depends if a groupingVariable was defined or not
-		if (this.chartConfig.groupingVariable != null) {
-			// first level contains groupingVariable, second level contains series
-			var groupingAttributeValues = this.dataContainerObject.rows.node_childs;
-			for(var i = 0; i < groupingAttributeValues.length; i++) {
-				var measureNodes = groupingAttributeValues[i].node_childs;
-				for(var j = 0; j < measureNodes.length; j++) {
-					toReturn.push({
-						name : groupingAttributeValues[i].node_description + 
-								( measureNodes.length > 1 ? ' [' + measureNodes[j].node_description + ']' : '' )
-						, measure : measureNodes[j].node_description
-					});
-				}
-			}
-		} else {
-			// no grouping variable: series are just first level nodes
-			var measureNodes = this.dataContainerObject.rows.node_childs;
-			for(var i = 0; i < measureNodes.length; i++) {
-				toReturn.push({
-					name : measureNodes[i].node_description
-					, measure : measureNodes[i].node_description
-				});
-			}
-		}
-		return toReturn;
-	}
-	*/
-	//TODO: move this method on a generic class parent
-	/*
-	, formatLegendWithScale : function(theSerieName) {
-		var serie = this.getRuntimeSerie(theSerieName);
-		var toReturn = this.formatTextWithMeasureScaleFactor(serie.name, serie.measure);
-		return toReturn;
-	}
-	*/
-	//TODO: move this method on a generic class parent
-	/*
-	, getRuntimeSerie : function (theSerieName) {
-		var allRuntimeSeries = this.getRuntimeSeries();
-		var i = 0;
-		for (; i < allRuntimeSeries.length; i++) {
-			if (allRuntimeSeries[i].name === theSerieName) {
-				return allRuntimeSeries[i];
-			}
-		}
-		return null;
-	}	
-	*/
 
-	//TODO: move this method on a generic class parent
-	/*
-	, formatTextWithMeasureScaleFactor : function(text, measureName) {
-		var legendSuffix = (this.getMeasureScaleFactor(measureName)).text;
-		if (legendSuffix != '' ) {
-			return text + ' ' + legendSuffix;
-		}
-		return text;
-	}
-	*/
-	//TODO: move this method on a generic class parent
-	/*
-	, getColors : function () {
-		var colors = [];
-		if (this.chartConfig !== undefined && this.chartConfig.groupingVariable != null) {
-			colors = Sbi.widgets.Colors.defaultColors;
-		} else {
-			if (this.chartConfig !== undefined && this.chartConfig.series !== undefined && this.chartConfig.series.length > 0) {
-				var i = 0;
-				for (; i < this.chartConfig.series.length; i++) {
-					colors.push(this.chartConfig.series[i].color);
-				}
-			}
-		}
-		return colors;
-	}
-	*/
-	//TODO: move this method on a generic class parent
-	/*
-	, addChartConfExt3: function(chartConf, showTipMask){
-		if((this.chartConfig.showlegend !== undefined) ? this.chartConfig.showlegend : true){
-			if (chartConf.extraStyle === undefined || chartConf.extraStyle == null) {
-				chartConf.extraStyle = {};
-			}
-			chartConf.extraStyle.legend = this.legendStyle;
-		}
-		chartConf.tipRenderer = this.getTooltipFormatter();
-	}
-	*/
+
     , refresh:  function() {  
 		//TODO: must implement this
 	}
@@ -387,27 +90,13 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidget, Sbi.cockpit.widgets.char
 			items.height = this.ieChartHeight;
 		}
 
-
 		if(this.chartConfig.orientation === 'horizontal'){
 			items.yField = 'categories';
 			items.series = this.getChartSeriesExt3(storeObject.serieNames, colors, true);
 
-			//if percent stacked set the max of the axis
-			//Ext3 implementation
-			/*
-			if(percent){
-				this.setPercentageStyleExt3(items, true);
-			}*/
 		}else{
 			items.xField = 'categories';
 			items.series = this.getChartSeriesExt3(storeObject.serieNames, colors);
-
-			//if percent stacked set the max of the axis
-			//Ext3 implementation
-			/*
-			if(percent){
-				this.setPercentageStyleExt3(items, false);
-			}*/
 		}
 
 		this.addChartConfExt3(items);
@@ -416,25 +105,26 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidget, Sbi.cockpit.widgets.char
 		items.region = 'center';
 		//Ext3 implementation
 		//var barChartPanel = this.getChartExt3(this.chartConfig.orientation === 'horizontal', items);
-		var barChartPanel = this.getChartExt4(this.chartConfig.orientation === 'horizontal', items, colors);
+		var barChartPanel = this.getChartExt4(this.chartConfig.orientation === 'horizontal', items, colors, percent);
 		
 		//Its a workaround because if you change the display name the chart is not able to write the tooltips
 
+		//TODO: Ext3 implementation
+		/*
 		var exportChartPanel  = new Ext.Panel({
 			border: false,
 			region: 'north',
 			height: 20,
 			html: '<div style=\"padding-top: 5px; padding-bottom: 5px; font: 11px tahoma,arial,helvetica,sans-serif;\">'+LN('sbi.worksheet.runtime.worksheetruntimepanel.chart.includeInTheExport')+'</div>'
 		});
-
-		//TODO: Ext3 implementation
-		/*
+	
 		var chartConf ={
 				renderTo : this.chartDivId,
 				border: false,
 				items: [exportChartPanel, barChartPanel]
 		};
-	*/
+	
+		
 		this.on('contentclick', function(event){
 			this.byteArrays=new Array();
 			try{
@@ -444,7 +134,7 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidget, Sbi.cockpit.widgets.char
 			exportChartPanel.update('');
 			this.headerClickHandler(event,null,null,barChartPanel, this.reloadJsonStoreExt3, this);
 		}, this);
-
+		 */
 		//TODO: Ext3 implementation
 		//new Ext.Panel(chartConf);
 
@@ -454,7 +144,7 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidget, Sbi.cockpit.widgets.char
 	// -----------------------------------------------------------------------------------------------------------------
 	
 	//----- Ext 4 Implementation related functions ------------------------------------------
-	, getChartExt4 : function(horizontal, items, colors){
+	, getChartExt4 : function(horizontal, items, colors, percent){
 		
 		var chartDataStore = items.store;
 		
@@ -478,7 +168,7 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidget, Sbi.cockpit.widgets.char
 			}
 		}
 		//Create Axes Configuration
-		var chartAxes = this.createAxes(horizontal, items);
+		var chartAxes = this.createAxes(horizontal, items, percent);
 		//Create Series Configuration
 		var chartSeries = this.createSeries(horizontal, items, chartType, isStacked);
 		
@@ -521,7 +211,9 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidget, Sbi.cockpit.widgets.char
 	    
 	    return chart;
 	}
-	//TODO: WIP	
+	/*
+	 * Create the Series object configuration
+	 */
 	, createSeries : function(horizontal,items, chartType, isStacked){
 		var axisPosition;
 		var series = [];
@@ -580,9 +272,10 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidget, Sbi.cockpit.widgets.char
 		
 		return series;
 	}
-	
-	//TODO: WIP
-	, createAxes : function(horizontal,items){
+	/*
+	 * Create the Axes object configuration
+	 */
+	, createAxes : function(horizontal,items,percent){
 		var axes;	
 		var positionNumeric;
 		var positionCategory;
@@ -624,12 +317,18 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidget, Sbi.cockpit.widgets.char
 			title: "Category"
 		}];
 		
+		//For the percent type chart set the axes scale maximum to 100
+		if (percent){
+			axes[0].maximum = 100;
+		}
+		
 		return axes;
 	}
 	
 	
 	///---------------------------------------------------------------------
 	
+	/*
 	, setPercentageStyleExt3 : function(chart, horizontal){
 		var axis =  new Ext.chart.NumericAxis({
 			stackingEnabled: true,
@@ -645,7 +344,9 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidget, Sbi.cockpit.widgets.char
 	
 	
 	}
+	*/
 	
+	/*
 	, getChartExt3 : function (horizontal, config) {
 		if(horizontal){
 			if(this.chartConfig.type == 'stacked-barchart' || this.chartConfig.type == 'percent-stacked-barchart'){
@@ -661,6 +362,7 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidget, Sbi.cockpit.widgets.char
 			}
 		}
 	}
+	*/
 	
 	, getChartSeriesExt3: function(serieNames, colors, horizontal){
 		var seriesForChart = new Array();
@@ -692,6 +394,7 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidget, Sbi.cockpit.widgets.char
 	}
 	
 	//reload the store after hide a series
+	/*
 	, reloadJsonStoreExt3: function(chart,reloadCallbackFunctionScope ){
 		var oldDataStore= chart.store;
 		var hiddenseries= chart.hiddenseries;
@@ -728,7 +431,8 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidget, Sbi.cockpit.widgets.char
 		}
 
 	}
-	
+	*/
+	//tooltip formatting
 	, getTooltipFormatter: function () {
 		
 		var chartType = this.chartConfig.designer;
@@ -759,6 +463,7 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidget, Sbi.cockpit.widgets.char
 		return toReturn;
 	}
 	
+	//for tooltip
 	, getFormattedValueExt3: function (chart, record, series, chartType, allRuntimeSeries, allDesignSeries, type, horizontal){
 		var theSerieName  = series.displayName;
 		var value ;
@@ -803,7 +508,7 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidget, Sbi.cockpit.widgets.char
 		}
 
 		// format the value according to serie configuration
-		value = Sbi.qbe.commons.Format.number(value, {
+		value = Sbi.commons.Format.number(value, {
     		decimalSeparator: Sbi.locale.formats['float'].decimalSeparator,
     		decimalPrecision: serieDefinition.precision,
     		groupingSeparator: (serieDefinition.showcomma) ? Sbi.locale.formats['float'].groupingSeparator : '',
@@ -822,7 +527,7 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidget, Sbi.cockpit.widgets.char
 		toReturn.serieName = serieName;
 		toReturn.measureName = measureName;
 		return toReturn;
-	}	
+	} 	
 	
 	//------------------------------------------------------------------------------------------------------------------
 	// utility methods
