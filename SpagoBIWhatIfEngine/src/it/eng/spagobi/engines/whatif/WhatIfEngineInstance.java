@@ -101,6 +101,7 @@ public class WhatIfEngineInstance extends AbstractEngineInstance implements Seri
 		
 		//pivotModel = new PivotModelImpl(olapDataSource);
 		pivotModel = new SpagoBIPivotModel(olapDataSource);
+		pivotModel.setLocale(this.getLocale());
 		pivotModel.setMdx( WhatIfEngineConfig.getInstance().getInitiallMdx());
 		pivotModel.initialize();
 		
