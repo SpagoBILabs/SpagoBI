@@ -197,8 +197,13 @@ Ext.define('Sbi.olap.control.EventManager', {
 				position= id.substring(0, endPositionIndex);
 			}
 			
-			if ( !isNaN(value) ) {
+//			if ( !isNaN(value) ) {
+//				unformattedValue = Sbi.whatif.commons.Format.formatInJavaDouble(value, Sbi.locale.formats[type]);
+//			}
+			try {
 				unformattedValue = Sbi.whatif.commons.Format.formatInJavaDouble(value, Sbi.locale.formats[type]);
+			} catch (err) {
+				Sbi.error("Error while trying to convert [" + value + "] to a Java double: " + err);
 			}
 
 			this.olapController.setValue(position, unformattedValue);	
