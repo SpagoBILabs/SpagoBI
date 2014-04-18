@@ -212,9 +212,9 @@ public class SaveDocumentAction extends AbstractSpagoBIAction {
 			//update document informations
 			document = syncronizeDocument(document, filteredFoldersJSON);
 			
+			String tempalteName = ( MODIFY_GEOREPORT.equalsIgnoreCase( action ))?"template.georeport":"template.sbicockpit";			
 			String templateContent = customDataJSON.optString("templateContent");
-
-			ObjTemplate template = buildDocumentTemplate("template.sbigeoreport", templateContent,document, 
+			ObjTemplate template = buildDocumentTemplate(tempalteName, templateContent,document, 
 					null, null, null, null);
 			documentManagementAPI.saveDocument(document, template);		
 
