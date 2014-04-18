@@ -188,7 +188,6 @@ public class DataSetResource extends AbstractSpagoBIResource {
 			IDataStore dataStore = getDatasetManagementAPI().getAggregatedDataStore(label, offset, fetchSize, maxResults, crosstabDefinition);
 			Assert.assertNotNull(dataStore, "Aggregated Datastore is null");
 
-			//TODO: serializzare il datastore in JSON con il formato usato dal chart (vedi CrossTab)
 			
 			// serialize crosstab
 			CrossTab crossTab;
