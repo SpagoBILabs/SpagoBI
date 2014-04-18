@@ -185,25 +185,27 @@ Ext.define('Sbi.olap.control.EventManager', {
 	 */
 	writeBackCell: function(id, value, startValue){
 		var type = "float";
-		if(startValue){
-			startValue = Sbi.whatif.commons.Format.cleanFormattedNumber(startValue,Sbi.locale.formats[type]);
+		if ( startValue ) {
+			startValue = Sbi.whatif.commons.Format.cleanFormattedNumber(startValue, Sbi.locale.formats[type]);
 		}
-		if(value!=startValue){
+		if ( value != startValue ) {
 			var position = "";
 			var unformattedValue = value;
 			
-			if(id){
+			if ( id ) {
 				var endPositionIndex = id.indexOf("!"); 
-				position= id.substring(0,endPositionIndex);
+				position= id.substring(0, endPositionIndex);
 			}
 			
-			if(!isNaN(value)){
-				unformattedValue = Sbi.whatif.commons.Format.formatInJavaDouble(value,Sbi.locale.formats[type]);
+			if ( !isNaN(value) ) {
+				unformattedValue = Sbi.whatif.commons.Format.formatInJavaDouble(value, Sbi.locale.formats[type]);
 			}
 
 			this.olapController.setValue(position, unformattedValue);	
-		}else{
-			Sbi.error("The new value is the same as the old one");
+		} else {
+			Sbi.debug("The new value is the same as the old one");
+			var cell = Ext.get(id);
+			cell.dom.childNodes[0].data = Sbi.whatif.commons.Format.number(value, Sbi.locale.formats[type]);
 		}
 
 	},
@@ -224,7 +226,7 @@ Ext.define('Sbi.olap.control.EventManager', {
 				},
 				listeners:{
 					complete:{
-						fn: function( aEditor, value, startValue, eOpts ){
+						fn: function( theEditor, value, startValue, eOpts ){
 							this.writeBackCell(id, value, startValue);
 						},
 						scope: this

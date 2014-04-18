@@ -24,7 +24,34 @@
 Ext.ns("Sbi.whatif.commons");
 
 Sbi.whatif.commons.Format = function(){
- 
+
+	var specials = [
+        // order matters for these
+          "-"
+        , "["
+        , "]"
+        // order doesn't matter for any of these
+        , "/"
+        , "{"
+        , "}"
+        , "("
+        , ")"
+        , "*"
+        , "+"
+        , "?"
+        , "."
+        , "\\"
+        , "^"
+        , "$"
+        , "|"
+      ]
+
+      // I choose to escape every character with '\'
+      // even though only some strictly require it when inside of []
+    , regex = RegExp('[' + specials.join('\\') + ']', 'g')
+    ;
+	        	
+	
 	return {
 		/**
          * Cut and paste from Ext.util.Format
@@ -93,7 +120,7 @@ Sbi.whatif.commons.Format = function(){
     				v = v.replace(format.currencySymbol, '');
     			}
     			if (format.groupingSeparator) {
-    				v = v.replace(new RegExp(format.groupingSeparator, 'g'), '');
+    				v = v.replace(new RegExp(Sbi.whatif.commons.Format.escapeRegExp(format.groupingSeparator), 'g'), '');
     			}
     			if (format.decimalSeparator !== '.') {
     				v = v.replace(format.decimalSeparator, '.');
@@ -340,6 +367,11 @@ Sbi.whatif.commons.Format = function(){
 					return Boolean(string);
 			}
         }
+        
+		,
+		escapeRegExp : function (str) {
+			return str.replace(regex, "\\$&");
+		}
         
 	};
 	
