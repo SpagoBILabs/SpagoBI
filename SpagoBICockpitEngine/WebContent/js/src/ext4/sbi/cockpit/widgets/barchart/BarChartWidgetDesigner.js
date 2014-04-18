@@ -300,6 +300,7 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner, Sbi.cockpit.core
 		Sbi.trace("[BarChartWidgetDesigner.getDesignerState]: " + Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner.superclass.getDesignerState);
 		var state = {};
 		state.designer = 'Bar Chart';
+		state.wtype = 'barchart';
 		state.type = this.typeRadioGroup.getValue().type;
 		state.orientation = this.orientationCombo.getValue();
 		state.showvalues = this.showValuesCheck.getValue();
