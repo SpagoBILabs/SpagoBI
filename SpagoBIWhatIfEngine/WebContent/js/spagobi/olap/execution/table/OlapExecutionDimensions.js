@@ -109,7 +109,7 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionDimensions', {
 		}else if(originalAxis>=0 && dimension.containerPanel.store.getCount()<=1){//there must be at least one dimension in the rows and in the columns
 			Sbi.exception.ExceptionHandler.showInfoMessage(LN("sbi.olap.execution.table.dimension.no.enough"));
 		}else{
-			Sbi.olap.eventManager.moveDimensionToOtherAxis(dimension.dimension.get("uniqueName"), originalAxis, this.axisOrdinalPosition);
+			Sbi.olap.eventManager.moveDimensionToOtherAxis(dimension.dimension.get("selectedHierarchyUniqueName"), originalAxis, this.axisOrdinalPosition);
 		}
 		
 	},

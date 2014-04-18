@@ -97,20 +97,46 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionFilter', {
 				html:"...", 
 				border: false, 
 				bodyCls: "filter-value"};
+		
+		
 		var titlePanelConfig = {
-				region: 'north',
 				flex: 1,
+				region: 'north',
 				html: "",
 				border: true,
 				bodyCls: "filter-title "
 		};
-
+		
+		
 		this.initTitlePanel(titlePanelConfig);
 		this.initValuePanel(selectedValuePanelConfig);
 
 		this.selectedValuePanel = Ext.create("Ext.Panel",	selectedValuePanelConfig);
 
-		this.titlePanel = Ext.create("Ext.Panel", titlePanelConfig);
+		
+		
+		if(this.dimension.raw.hierarchies && this.dimension.raw.hierarchies.length>1){
+
+			titlePanelConfig.border= false;
+			titlePanelConfig.style = " margin-left: -5px!important";
+			
+			this.titlePanel = Ext.create("Ext.Panel", {
+				region: 'north',
+				layout: 'hbox',
+				border: true,
+				bodyCls: "filter-title ",
+				style: " padding: 0px!important",
+				bodyStyle: " padding: 0px!important",
+				items: [this.buildMultiHierarchiesButton({style:"margin-left: 3px"}), titlePanelConfig]
+			});	
+			
+		}else{
+			this.titlePanel = Ext.create("Ext.Panel", titlePanelConfig);	
+		}
+		
+		
+		
+		
 
 
 

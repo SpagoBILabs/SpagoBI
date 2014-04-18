@@ -238,21 +238,27 @@ public class AxisDimensionManager {
 			throw new SpagoBIEngineRuntimeException("Error getting hierrarchy "+oldHierarchyUniqueName+" from the axis "+axisPos,e);
 		}
 
-		logger.debug("Removing the old hierarchy "+oldHierarchyUniqueName+" from the axis "+axisPos);
-		ph.removeHierarchy(ax, hierarchy);
-		logger.debug("Hierarchy removed");
+
 		
-		try {
-			logger.debug("getting the hierarchy object from the cube");
-			hierarchy = CubeUtilities.getHierarchy(getModel().getCube(), newHierarchyUniqueName);
-		} catch (OlapException e) {
-			logger.error("Error getting the hierrarchy "+newHierarchyUniqueName+" from the cube ",e);
-			throw new SpagoBIEngineRuntimeException("Error getting hierrarchy "+newHierarchyUniqueName+" from the axis "+axisPos,e);
+		if(axisPos>=0){//if it's not a filter
+			
+			logger.debug("Removing the old hierarchy "+oldHierarchyUniqueName+" from the axis "+axisPos);
+			ph.removeHierarchy(ax, hierarchy);
+			logger.debug("Hierarchy removed");
+			
+			try {
+				logger.debug("getting the hierarchy object from the cube");
+				hierarchy = CubeUtilities.getHierarchy(getModel().getCube(), newHierarchyUniqueName);
+			} catch (OlapException e) {
+				logger.error("Error getting the hierrarchy "+newHierarchyUniqueName+" from the cube ",e);
+				throw new SpagoBIEngineRuntimeException("Error getting hierrarchy "+newHierarchyUniqueName+" from the axis "+axisPos,e);
+			}
+			
+			logger.debug("Adding a new hierarchy "+newHierarchyUniqueName+" in the axis "+axisPos);
+			ph.addHierarchy(ax, hierarchy, false, hierarchyPosition);
+			logger.debug("Hierarchy added");
 		}
-				
-		logger.debug("Adding a new hierarchy "+newHierarchyUniqueName+" in the axis "+axisPos);
-		ph.addHierarchy(ax, hierarchy, false, hierarchyPosition);
-		logger.debug("Hierarchy added");
+
 
 
 		logger.debug("OUT");
