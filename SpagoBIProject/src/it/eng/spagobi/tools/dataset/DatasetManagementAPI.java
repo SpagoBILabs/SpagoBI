@@ -334,9 +334,8 @@ public class DatasetManagementAPI {
 
 			} 
 
-			//TODO: must be refactorized
 			List<ProjectionCriteria> projectionCriteria = this.getProjectionCriteria(crosstabDefinition);
-			List<FilterCriteria> filterCriteria = new ArrayList<FilterCriteria>(); // TODO: empty for this time
+			List<FilterCriteria> filterCriteria = new ArrayList<FilterCriteria>(); // empty in this case
 			List<GroupCriteria> groupCriteria = this.getGroupCriteria(crosstabDefinition);
 			dataStore = cache.get(dataSet, groupCriteria, filterCriteria, projectionCriteria);
 			

@@ -293,6 +293,7 @@ public class SQLDBCache implements ICache {
 				String columnName = projection.getColumnName();
 				String aliasName = projection.getAliasName();
 				columnName = AbstractJDBCDataset.encapsulateColumnName(columnName, dataSource);
+				aliasName = AbstractJDBCDataset.encapsulateColumnName(aliasName, dataSource);
 				if ((aggregateFunction != null) && (!aggregateFunction.isEmpty()) && (columnName != "*") && (aliasName != null) && (!aliasName.isEmpty())){
 					columnName = aggregateFunction + "("+columnName+") AS "+aliasName;
 				}
