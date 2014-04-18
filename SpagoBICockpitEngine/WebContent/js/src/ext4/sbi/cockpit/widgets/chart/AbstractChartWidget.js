@@ -284,7 +284,7 @@ Ext.extend(Sbi.cockpit.widgets.chart.AbstractChartWidget, Sbi.cockpit.core.Widge
 			}
 			chartConf.extraStyle.legend = this.legendStyle;
 		}
-		chartConf.tipRenderer = this.getTooltipFormatter();
+		//chartConf.tipRenderer = this.getTooltipFormatter();
 	}
 	
 	
@@ -307,7 +307,9 @@ Ext.extend(Sbi.cockpit.widgets.chart.AbstractChartWidget, Sbi.cockpit.core.Widge
 	}
 	
 	, formatTextWithMeasureScaleFactor : function(text, measureName) {
-		var legendSuffix = (this.getMeasureScaleFactor(measureName)).text;
+		var legendSuffix;
+		legendSuffix = (this.getMeasureScaleFactor(measureName)).text;
+		
 		if (legendSuffix != '' ) {
 			return text + ' ' + legendSuffix;
 		}

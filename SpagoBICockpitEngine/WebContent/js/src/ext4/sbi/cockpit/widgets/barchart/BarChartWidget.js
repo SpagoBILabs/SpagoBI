@@ -215,6 +215,7 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidget, Sbi.cockpit.widgets.char
 	 * Create the Series object configuration
 	 */
 	, createSeries : function(horizontal,items, chartType, isStacked){
+		var thisPanel = this;
 		var axisPosition;
 		var series = [];
 		
@@ -263,7 +264,9 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidget, Sbi.cockpit.widgets.char
 	            	  width: 'auto',
 	            	  minHeight: 28,
 	            	  renderer: function(storeItem, item) {
-	            		   this.setTitle(String(item.value[0])+" : "+String(item.value[1]));
+	            		   //this.setTitle(String(item.value[0])+" : "+String(item.value[1]));
+	            		   var tooltipContent = thisPanel.getTooltip(storeItem, item);
+	            		   this.setTitle(tooltipContent);
 	            	  }
     	        }
                 
@@ -325,44 +328,63 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidget, Sbi.cockpit.widgets.char
 		return axes;
 	}
 	
+	, getTooltip : function(record, item){
+		var chartType = this.chartConfig.designer;
+		var allRuntimeSeries = this.getRuntimeSeries();
+		var allDesignSeries = this.chartConfig.series;
+		var type = this.chartConfig.type;
+		var horizontal = this.chartConfig.orientation === 'horizontal';
+		var colors = this.getColors();
+		var series;
+		
+		var percent = ((this.chartConfig.type).indexOf('percent')>=0);
+		var storeObject = this.getJsonStoreExt3(percent);
+		
+		var selectedSerieName = item.yField;
+		
+		var selectedSerie;
+		
+		if(horizontal){
+			series = this.getChartSeriesExt3(storeObject.serieNames, colors, true);
+			for (var i =0; i<series.length;i++){
+				if (series[i].xField == selectedSerieName){
+					selectedSerie = series[i];
+					break;
+				}
+			}
+
+		}else{
+			series = this.getChartSeriesExt3(storeObject.serieNames, colors);
+			
+			for (var i =0; i<series.length;i++){
+				if (series[i].yField == selectedSerieName){
+					selectedSerie = series[i];
+					break;
+				}
+			}
+		}
+
+		
+		var valueObj = this.getFormattedValueExt3(null, record, selectedSerie, chartType, allRuntimeSeries, allDesignSeries, type, horizontal);
+		
+		var tooltip = '';
+		
+		if (valueObj.measureName !== valueObj.serieName) {
+			tooltip = valueObj.serieName + '<br/>' + record.data.categories + '<br/>';
+			// in case the serie name is different from the measure name, put also the measure name
+			//tooltip += this.formatTextWithMeasureScaleFactor(valueObj.measureName, valueObj.measureName) + ' : ';
+		} else {
+			tooltip =  record.data.categories + '<br/>' + selectedSerie.displayName + ' : ' ;
+		}
+		tooltip += valueObj.value;
+		
+		return tooltip;
+
+	}
+	
 	
 	///---------------------------------------------------------------------
 	
-	/*
-	, setPercentageStyleExt3 : function(chart, horizontal){
-		var axis =  new Ext.chart.NumericAxis({
-			stackingEnabled: true,
-			minimum: 0,
-			maximum: 100
-		});
-	
-		if(horizontal){
-			chart.xAxis = axis;
-		}else{
-			chart.yAxis = axis;
-		}
-	
-	
-	}
-	*/
-	
-	/*
-	, getChartExt3 : function (horizontal, config) {
-		if(horizontal){
-			if(this.chartConfig.type == 'stacked-barchart' || this.chartConfig.type == 'percent-stacked-barchart'){
-				return new Ext.chart.StackedBarChart(config);
-			}else{
-				return new Ext.chart.BarChart(config);
-			}
-		} else {
-			if(this.chartConfig.type == 'stacked-barchart' || this.chartConfig.type == 'percent-stacked-barchart'){
-				return new Ext.chart.StackedColumnChart(config);
-			}else{
-				return new Ext.chart.ColumnChart(config);
-			}
-		}
-	}
-	*/
 	
 	, getChartSeriesExt3: function(serieNames, colors, horizontal){
 		var seriesForChart = new Array();
@@ -433,6 +455,7 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidget, Sbi.cockpit.widgets.char
 	}
 	*/
 	//tooltip formatting
+	/*
 	, getTooltipFormatter: function () {
 		
 		var chartType = this.chartConfig.designer;
@@ -461,9 +484,10 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidget, Sbi.cockpit.widgets.char
 			
 		};
 		return toReturn;
-	}
+	} */
 	
 	//for tooltip
+	
 	, getFormattedValueExt3: function (chart, record, series, chartType, allRuntimeSeries, allDesignSeries, type, horizontal){
 		var theSerieName  = series.displayName;
 		var value ;
@@ -500,8 +524,7 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidget, Sbi.cockpit.widgets.char
 		i = 0;
 		// find the serie's (design-time) definition
 		for (; i < allDesignSeries.length; i++) {
-			//substring to remove the scale factor
-			if (allDesignSeries[i].seriename === measureName) {
+			if (allDesignSeries[i].id === measureName) {
 				serieDefinition = allDesignSeries[i];
 				break;
 			}
@@ -527,7 +550,8 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidget, Sbi.cockpit.widgets.char
 		toReturn.serieName = serieName;
 		toReturn.measureName = measureName;
 		return toReturn;
-	} 	
+	}
+	
 	
 	//------------------------------------------------------------------------------------------------------------------
 	// utility methods
