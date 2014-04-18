@@ -91,37 +91,6 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionAxisDimension', {
 		return items;
 	},
 
-	buildMultiHierarchiesButton: function(){
-		var config = {
-			style: "background-color: transparent !important",
-			bodyStyle: "background-color: transparent !important",
-			html: " ",
-			border: false,
-			cls: "multi-hierarchy",
-			listeners: {
-//				el: {
-//					click: {
-//						fn: function (event, html, eOpts) {
-//	    					   alert("ok");
-//						},
-//						scope: this
-//					}
-//				},
-				render:{
-					fn: this.buildDimensionInfoPanel,
-					scope: this
-				}
-			}
-		};
-		
-		if(this.axisType=="column"){
-			Ext.apply(config,{width: 20, height: 15});
-		}else{
-			Ext.apply(config,{height: 20});
-		}
-		
-		return config;
-	},
 	
 	buildFilterButton: function(){
 		var thisPanel = this;
@@ -170,86 +139,9 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionAxisDimension', {
 		if(members && members.length>0){
 			Sbi.olap.eventManager.placeMembersOnAxis(this.dimension, members);
 		}
-	},
-	
-	buildDimensionInfoPanel: function(target){
-	
-		var thisPanel = this;
-		
-		//Build the combo box for the hierarachy selection
-		var selectId = Ext.id()+"select";
-		var html = "";
-		if(this.dimension.raw.hierarchies.length>1){
-			html = LN("sbi.olap.execution.table.dimension.selected.hierarchy")+"<i>"+(this.dimension.raw.hierarchies[this.dimension.raw.selectedHierarchyPosition]).name+"</i>."+LN("sbi.olap.execution.table.dimension.selected.hierarchy.2")+
-				"<table>"+
-				//"<tr><td>The selected hierarchy is "+(this.dimension.raw.hierarchies[this.dimension.raw.selectedHierarchyPosition]).name+"</td></tr>"+
-				"<tr><td class='multihierarchy-font'>"+
-				LN('sbi.olap.execution.table.dimension.available.hierarchies')+
-				"</td><td>"+
-				"<select id = '"+selectId+"'>";
-			
-			for(var i=0; i<this.dimension.raw.hierarchies.length; i++){
-				html = html+"<option value='"+this.dimension.raw.hierarchies[i].uniqueName+"'";
-				if(this.dimension.raw.hierarchies[i].uniqueName ==thisPanel.dimension.raw.selectedHierarchyUniqueName){
-					html = html+" selected='selected' ";
-				}
-				
-				html = html+">"+this.dimension.raw.hierarchies[i].name+"</option>";
-			}
-			
-			html = html+"</select></td></tr></table>";
-		}
-
-		//build the tooltip
-		var tool = Ext.create('Ext.tip.ToolTip',{        
-            title: thisPanel.dimension.raw.name,
-            target: target.getEl(),
-            anchor: 'left',
-            autoHide: false,
-            html: html,
-            closable: true,
-            width: 300,
-            padding: 5,
-            buttons:[
-		             '->',    {
-		            	 text: LN('sbi.common.cancel'),
-		            	 handler: function(){
-		            		 tool.close();
-		            	 }
-		             },    {
-		            	 text: LN('sbi.common.ok'),
-		            	 handler: function(){
-		            			var newHierarchy =Ext.get(selectId).dom.value;
-		            			if(thisPanel.dimension.raw.selectedHierarchyUniqueName!=newHierarchy){
-		           					thisPanel.updateHierarchyOnDimension(thisPanel.dimension.raw.axis, newHierarchy, thisPanel.dimension.raw.selectedHierarchyUniqueName, thisPanel.dimension.raw.positionInAxis );
-		           					Sbi.debug("For the dimension "+thisPanel.dimension.raw.uniqueName+" the new hierarchy is "+ newHierarchy+". Was "+thisPanel.dimension.raw.selectedHierarchyUniqueName);
-		            			}else{
-		            				Sbi.debug("For the dimension "+thisPanel.dimension.raw.uniqueName+" the new hierarchy is the same of the old one: "+ newHierarchy);
-		            			}
-		            			 tool.close();
-		            	 }
-		             }]
-//            listeners:{
-//            	close: {
-//            		fn: function(){
-//
-//            			
-//                	},
-//                	scope: thisPanel
-//                	
-//            	}
-//            }
-        });
-				
-		
-	},
-	
-	
-
-	updateHierarchyOnDimension: function(axis, newHierarchyUniqueName, oldHierarchyUniqueName, hierarchyPosition){
-		Sbi.olap.eventManager.updateHierarchyOnDimension(axis, newHierarchyUniqueName, oldHierarchyUniqueName, hierarchyPosition);
-
 	}
+	
+
 
 	
 
