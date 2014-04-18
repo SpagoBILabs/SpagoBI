@@ -15,27 +15,10 @@ Sbi.cockpit.widgets.barchart.BarChartWidget = function(config) {
 	var settings = Sbi.getObjectSettings('Sbi.cockpit.widgets.barchart.BarChartWidget', defaultSettings);
 	var c = Ext.apply(settings, config || {});
 	Ext.apply(this, c);
-
-	//Commented for refactoring
-	/*
-	this.chartDivId = Ext.id();
-	
-	c = Ext.apply(c, {
-		html : '<div id="' + this.chartDivId + '" style="width: 100%; height: 100%;"></div>'
-		, autoScroll: true
-	});
-	*/
 	
 	Sbi.cockpit.widgets.barchart.BarChartWidget.superclass.constructor.call(this, c);
 	this.init();
 
-	/*
-	this.on("afterRender", function(){
-		this.getStore().load();
-		//this.refresh();
-		Sbi.trace("[BarChartWidget.onRender]: store loaded");
-	}, this);
-	*/
 	
 	Sbi.trace("[BarChartWidget.constructor]: OUT");
 
@@ -103,40 +86,8 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidget, Sbi.cockpit.widgets.char
 
 
 		items.region = 'center';
-		//Ext3 implementation
-		//var barChartPanel = this.getChartExt3(this.chartConfig.orientation === 'horizontal', items);
+
 		var barChartPanel = this.getChartExt4(this.chartConfig.orientation === 'horizontal', items, colors, percent);
-		
-		//Its a workaround because if you change the display name the chart is not able to write the tooltips
-
-		//TODO: Ext3 implementation
-		/*
-		var exportChartPanel  = new Ext.Panel({
-			border: false,
-			region: 'north',
-			height: 20,
-			html: '<div style=\"padding-top: 5px; padding-bottom: 5px; font: 11px tahoma,arial,helvetica,sans-serif;\">'+LN('sbi.worksheet.runtime.worksheetruntimepanel.chart.includeInTheExport')+'</div>'
-		});
-	
-		var chartConf ={
-				renderTo : this.chartDivId,
-				border: false,
-				items: [exportChartPanel, barChartPanel]
-		};
-	
-		
-		this.on('contentclick', function(event){
-			this.byteArrays=new Array();
-			try{
-				this.byteArrays.push(barChartPanel.exportPNG());	
-			}catch(e){}
-
-			exportChartPanel.update('');
-			this.headerClickHandler(event,null,null,barChartPanel, this.reloadJsonStoreExt3, this);
-		}, this);
-		 */
-		//TODO: Ext3 implementation
-		//new Ext.Panel(chartConf);
 
 	}
 	// -----------------------------------------------------------------------------------------------------------------
@@ -414,80 +365,8 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidget, Sbi.cockpit.widgets.char
 		}
 		return seriesForChart;
 	}
-	
-	//reload the store after hide a series
-	/*
-	, reloadJsonStoreExt3: function(chart,reloadCallbackFunctionScope ){
-		var oldDataStore= chart.store;
-		var hiddenseries= chart.hiddenseries;
-		var percent = ((reloadCallbackFunctionScope.chartConfig.type).indexOf('percent')>=0);
-		
-		if(percent){
-			var series = reloadCallbackFunctionScope.getSeries();
-			var categories = reloadCallbackFunctionScope.getCategories();
-			
-			var data = new Array();
-			var fields = new Array();
-			var serieNames = new Array();
 
-			for(var i=0; i<categories.length; i++){
-				var z = {};
-				var seriesum = 0;
-				for(var j=0; j<series.length; j++){
-					z['series'+j] = ((series[j]).data)[i];
-					if(hiddenseries.indexOf(j)<0){
-						seriesum = seriesum + parseFloat(((series[j]).data)[i]);
-					}
-				}
-				for(var j=0; j<series.length; j++){
-					z['seriesflatvalue'+j] = z['series'+j];
-					z['series'+j] = (z['series'+j]/seriesum)*100;;
-				}
-				z['seriesum'] = seriesum;
-				z['categories'] = categories[i];
-				data.push(z);
-			}
-			oldDataStore.loadData(data);
-		}else{
-			chart.refresh();
-		}
-
-	}
-	*/
-	//tooltip formatting
-	/*
-	, getTooltipFormatter: function () {
-		
-		var chartType = this.chartConfig.designer;
-		var allRuntimeSeries = this.getRuntimeSeries();
-		var allDesignSeries = this.chartConfig.series;
-		var type = this.chartConfig.type;
-		var horizontal = this.chartConfig.orientation === 'horizontal';
-		
-		var thePanel = this;
-		
-		var toReturn = function (chart, record, index, series) {
-			var tooltip = '';
-			
-			var valueObj = thePanel.getFormattedValueExt3(chart, record, series, chartType, allRuntimeSeries, allDesignSeries, type, horizontal);
-			
-			if (valueObj.measureName !== valueObj.serieName) {
-				tooltip = valueObj.serieName + '\n' + record.data.categories + '\n';
-				// in case the serie name is different from the measure name, put also the measure name
-				tooltip += thePanel.formatTextWithMeasureScaleFactor(valueObj.measureName, valueObj.measureName) + ' : ';
-			} else {
-				tooltip =  record.data.categories + '\n' + series.displayName + ' : ' ;
-			}
-			tooltip += valueObj.value;
-		
-			return tooltip;
-			
-		};
-		return toReturn;
-	} */
-	
-	//for tooltip
-	
+	//used for tooltip	
 	, getFormattedValueExt3: function (chart, record, series, chartType, allRuntimeSeries, allDesignSeries, type, horizontal){
 		var theSerieName  = series.displayName;
 		var value ;
@@ -563,12 +442,7 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidget, Sbi.cockpit.widgets.char
 			byteArrays.push((this.charts[i]).exportPNG());
 		}	
 	}
-	/*
-	, isEmpty : function () {
-		var measures = this.dataContainerObject.columns.node_childs;
-		return measures === undefined;
-	}
-	 */
+
 	// -----------------------------------------------------------------------------------------------------------------
 	// init methods
 	// -----------------------------------------------------------------------------------------------------------------
