@@ -163,7 +163,7 @@ public class AxisDimensionManager {
 			hierarchy = CubeUtilities.getHierarchy(getModel().getCube(), hierarchyName);
 		} catch (OlapException e) {
 			logger.error("Error getting the hierrarchy "+hierarchyName+" from the cube ",e);
-			throw new SpagoBIEngineRuntimeException("Error addingthe hierrarchy "+hierarchyName+" in the axis "+axisPos,e);
+			throw new SpagoBIEngineRuntimeException("Error adding the hierrarchy "+hierarchyName+" in the axis "+axisPos,e);
 		}
 
 
@@ -238,6 +238,14 @@ public class AxisDimensionManager {
 			throw new SpagoBIEngineRuntimeException("Error getting hierrarchy "+oldHierarchyUniqueName+" from the axis "+axisPos,e);
 		}
 
+
+		//removes the slicers
+		logger.debug("Cleaning slicers");
+		ChangeSlicer cs = getModel().getTransform(ChangeSlicer.class);
+		List<org.olap4j.metadata.Member> slicers = cs.getSlicer(hierarchy);
+		slicers.clear();
+		cs.setSlicer(hierarchy, slicers);
+		logger.debug("Slicers cleaned");
 
 		
 		if(axisPos>=0){//if it's not a filter
