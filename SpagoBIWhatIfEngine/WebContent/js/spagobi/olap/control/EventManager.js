@@ -228,7 +228,11 @@ Ext.define('Sbi.olap.control.EventManager', {
 			var unformattedValue = "";
 			try  {
 				originalValue = cell.dom.childNodes[0].data.trim();
-				unformattedValue = Sbi.whatif.commons.Format.cleanFormattedNumber(originalValue, Sbi.locale.formats[type]);
+				if (originalValue == '') { // in case the cell was empty, we type 0
+					unformattedValue = 0;
+				} else {
+					unformattedValue = Sbi.whatif.commons.Format.cleanFormattedNumber(originalValue, Sbi.locale.formats[type]);
+				}
 			} catch(err) {
 				Sbi.error("Error loading the value of the cell to edit" + err);
 			}
