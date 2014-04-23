@@ -92,10 +92,18 @@ public class DefaultWeightedAllocationAlgorithm extends AllocationAlgorithm {
 					wrappedCell.setValue(newDoubleValue);
 					break;
 				case ABOVE : 
+					// in case we modified a cell that had no value, we consider 0 as previous value
+					if (oldValue == null) {
+						oldValue = 0;
+					}
 					newDoubleValue = wrappedCell.getDoubleValue() + ((Number) newValue).doubleValue() -  ((Number) oldValue).doubleValue();
 					wrappedCell.setValue(newDoubleValue);
 					break;
-				case BELOW : 
+				case BELOW :
+					// in case the cell is below and doesn't contain a value, we don't modify it
+					if (wrappedCell.isNull() || wrappedCell.isError() || wrappedCell.isEmpty()) {
+						continue;
+					}
 					newDoubleValue = wrappedCell.getDoubleValue() * ((Number) newValue).doubleValue() /  ((Number) oldValue).doubleValue();
 					wrappedCell.setValue(newDoubleValue);
 					break;

@@ -13,11 +13,15 @@ package it.eng.spagobi.engines.whatif.model;
 import it.eng.spagobi.engines.whatif.model.SpagoBICellSetWrapper;
 import it.eng.spagobi.engines.whatif.model.transform.CellRelation;
 import it.eng.spagobi.utilities.assertion.UnreachableCodeException;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 import mondrian.olap.Util;
 import mondrian.util.Format;
@@ -28,7 +32,12 @@ import org.olap4j.CellSet;
 import org.olap4j.CellSetAxis;
 import org.olap4j.OlapException;
 import org.olap4j.Position;
+import org.olap4j.metadata.Cube;
+import org.olap4j.metadata.Dimension;
+import org.olap4j.metadata.Hierarchy;
 import org.olap4j.metadata.Member;
+import org.olap4j.metadata.NamedList;
+import org.olap4j.metadata.NamedSet;
 import org.olap4j.metadata.Property;
 
 public class SpagoBICellWrapper implements Cell {
@@ -36,11 +45,13 @@ public class SpagoBICellWrapper implements Cell {
 	private Cell cell;
 	private SpagoBICellSetWrapper cellSetWrapper;
 	private Object value;
+	private Member[] members;
 	
 	public SpagoBICellWrapper(Cell cell, SpagoBICellSetWrapper cellSetWrapper) {
 		this.cell = cell;
 		this.cellSetWrapper = cellSetWrapper;
 		this.value = cell.getValue();
+		this.members = null;
 	}
 
 	public CellSet getCellSet() {
@@ -118,6 +129,16 @@ public class SpagoBICellWrapper implements Cell {
 	}
 	
     public Member[] getMembers () {
+    	if (this.members != null) { // members is a cache, just to ensure that this calculation is performed once per cell
+    		return this.members;
+    	}
+    	SpagoBICellSetWrapper cellSet = (SpagoBICellSetWrapper) this.getCellSet();
+    	NamedList<Hierarchy> allHierarchies = cellSet.getSpagoBIPivotModel().getCube().getHierarchies();
+    	// since a virtual cube contains duplicated dimensions, we remove duplicates using a Set
+    	Set<Hierarchy> hierarchies = new HashSet<Hierarchy>();
+    	hierarchies.addAll(allHierarchies);
+    	
+    	// get members on axis
     	List<Integer> coordinates = this.getCoordinateList();
     	List<Member> members = new ArrayList<Member>();
     	for (int i = 0; i < coordinates.size(); i++) {
@@ -126,8 +147,39 @@ public class SpagoBICellWrapper implements Cell {
     		Position position = axis.getPositions().get(aCoordinate);
     		members.addAll(position.getMembers());
     	}
+    	
+    	// get members on filters
+    	Iterator<Position> filtersPosition = this.getCellSet().getFilterAxis().iterator();
+    	while (filtersPosition.hasNext()) {
+    		Position position = filtersPosition.next();
+    		members.addAll(position.getMembers());
+    	}
+    	
+    	// calculate the visited hierarchies
+    	List<Hierarchy> visitedHierarchies = new ArrayList<Hierarchy>();
+    	Iterator<Member> membersIt = members.iterator();
+    	while (membersIt.hasNext()) {
+    		Member member = membersIt.next();
+    		visitedHierarchies.add(member.getHierarchy());
+    	}
+    	
+    	// remove visited hierarchies from complete list
+    	hierarchies.removeAll(visitedHierarchies);
+    	
+    	// for non visited hierarchies, get root members
+    	Iterator<Hierarchy> it = hierarchies.iterator();
+    	while (it.hasNext()) {
+    		Hierarchy aHierarchy = it.next();
+    		try {
+				members.addAll(aHierarchy.getRootMembers());
+			} catch (OlapException e) {
+				throw new SpagoBIEngineRuntimeException("Could not retrieve root members for hierarchy " + aHierarchy.getUniqueName(), e);
+			}
+    	}
+    	
     	Member[] toReturn = new Member[members.size()];
     	toReturn = members.toArray(toReturn);
+    	this.members = toReturn;
     	return toReturn;
     }
 	
@@ -136,7 +188,8 @@ public class SpagoBICellWrapper implements Cell {
         int belowCount = 0;
         for (int i = 0; i < members.length; i++) {
             Member thatMember = members[i];
-            org.olap4j.metadata.Member thisMember = this.getMembers()[i];
+            Hierarchy hierarchy = thatMember.getHierarchy();
+            Member thisMember = this.getContextMember(hierarchy);
             // FIXME: isChildOrEqualTo is very inefficient. It should use
             // level depth as a guideline, at least.
             if (thatMember.isChildOrEqualTo(thisMember)) {
@@ -174,6 +227,18 @@ public class SpagoBICellWrapper implements Cell {
     		return (SpagoBICellWrapper) cell;
     	}
     	return new SpagoBICellWrapper(cell, cellSetWrapper);
+    }
+    
+    public Member getContextMember(Hierarchy hierarchy) {
+    	Member[] members = this.getMembers();
+    	for (int i = 0 ; i < members.length; i++) {
+    		Member member = members[i];
+    		Hierarchy aHierarchy = member.getHierarchy();
+    		if (aHierarchy.getUniqueName().equals(hierarchy.getUniqueName())) {
+    			return member;
+    		}
+    	}
+    	throw new SpagoBIEngineRuntimeException("No member found on hierarchy " + hierarchy.getUniqueName());
     }
     
 }
