@@ -173,8 +173,8 @@ Sbi.whatif.commons.Format = function(){
     			if (format.currencySymbol) {
     				v = v.replace(format.currencySymbol, '');
     			}
-    			if (format.groupingSeparator!=undefined && format.groupingSeparator!=null) {
-    				v = v.replace(format.groupingSeparator, '');
+    			if (format.groupingSeparator != undefined && format.groupingSeparator != null) {
+    				v = v.replace(new RegExp(Sbi.whatif.commons.Format.escapeRegExp(format.groupingSeparator), 'g'), '');
     			}
     			if (format.decimalSeparator !== '.') {
     				v = v.replace(format.decimalSeparator, '.');
