@@ -17,7 +17,11 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.olap4j.Axis;
 import org.olap4j.OlapException;
+import org.olap4j.metadata.Hierarchy;
+import org.olap4j.metadata.Level;
+import org.olap4j.metadata.Member;
 
+import com.eyeq.pivot4j.transform.PlaceMembersOnAxes;
 import com.eyeq.pivot4j.ui.CellType;
 import com.eyeq.pivot4j.ui.RenderContext;
 import com.eyeq.pivot4j.ui.command.CellCommand;
@@ -29,7 +33,6 @@ import com.eyeq.pivot4j.util.CssWriter;
 
 public class WhatIfHTMLRenderer extends HtmlRenderer {
 
-	private List<CellCommand<?>> commands;
 	
 	public WhatIfHTMLRenderer(Writer writer) {
 		super(writer);
@@ -54,7 +57,6 @@ public class WhatIfHTMLRenderer extends HtmlRenderer {
 
 		getWriter().startElement(name, getCellAttributes(context));
 
-		this.commands = commands;
 
 		if (commands != null && !commands.isEmpty()) {		
 			
@@ -214,7 +216,7 @@ public class WhatIfHTMLRenderer extends HtmlRenderer {
 	public void cellContent(RenderContext context, String label) {
 
 		String link = null;
-
+	
 		PropertySupport properties = getProperties(context);
 
 		if (properties != null) {
@@ -296,8 +298,19 @@ public class WhatIfHTMLRenderer extends HtmlRenderer {
 				}
 
 				if(drillMode.equals(DrillDownCommand.MODE_REPLACE ) && !this.getShowParentMembers() ){
-
-					if(!label.toLowerCase().startsWith("all")){
+					Hierarchy h = context.getHierarchy();
+					PlaceMembersOnAxes pm = context.getModel().getTransform(PlaceMembersOnAxes.class);
+					//PlaceHierarchiesOnAxes ph = context.getModel().getTransform(PlaceHierarchiesOnAxes.class);
+					List<Member> visibleMembers = pm.findVisibleMembers(h);
+					int d = 0;
+					for(Member m : visibleMembers ){
+						Level l = m.getLevel();
+						d = l.getDepth();	
+						if(d !=0){
+							break;
+						}
+					}
+					if(d != 0 ){
 						attributes.put("src", "../img/arrow-up.png");
 						attributes.put("onClick", "javascript:Sbi.olap.eventManager.drillUp("+axis+" , "+pos+" , "+memb+")");
 						getWriter().startElement("img", attributes);			
