@@ -11,6 +11,7 @@
 package it.eng.spagobi.engines.whatif.model;
 
 import it.eng.spagobi.engines.whatif.model.transform.CellTransformation;
+import it.eng.spagobi.engines.whatif.model.transform.CellTransformationsAnalyzer;
 import it.eng.spagobi.engines.whatif.model.transform.CellTransformationsStack;
 import it.eng.spagobi.engines.whatif.model.transform.algorithm.AllocationAlgorithm;
 
@@ -61,7 +62,9 @@ public class SpagoBICellSetWrapper implements CellSet {
 	}
 	
 	public void restorePendingTransformations(CellTransformationsStack stack) {
-		Iterator<CellTransformation> iterator = stack.iterator();
+		CellTransformationsAnalyzer analyzer = new CellTransformationsAnalyzer();
+		CellTransformationsStack bestStack = analyzer.getShortestTransformationsStack(stack);
+		Iterator<CellTransformation> iterator = bestStack.iterator();
 		while (iterator.hasNext()) {
 			CellTransformation transformation = iterator.next();
 			this.restoreTranformation(transformation);
@@ -70,12 +73,12 @@ public class SpagoBICellSetWrapper implements CellSet {
 
 	public void restoreTranformation(CellTransformation transformation) {
 		AllocationAlgorithm algorithm = transformation.getAlgorithm();
-		algorithm.apply(transformation.getMembers(), transformation.getOldValue(), transformation.getNewValue(), this);
+		algorithm.apply(transformation.getCell(), transformation.getOldValue(), transformation.getNewValue(), this);
 	}
 	
 	public void applyTranformation(CellTransformation transformation) {
 		AllocationAlgorithm algorithm = transformation.getAlgorithm();
-		algorithm.apply(transformation.getMembers(), transformation.getOldValue(), transformation.getNewValue(), this);
+		algorithm.apply(transformation.getCell(), transformation.getOldValue(), transformation.getNewValue(), this);
 		spagoBIPivotModel.addPendingTransformation(transformation);
 	}
 	

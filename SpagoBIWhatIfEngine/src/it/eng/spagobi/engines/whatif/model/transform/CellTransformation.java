@@ -14,30 +14,29 @@
 package it.eng.spagobi.engines.whatif.model.transform;
 
 
+import it.eng.spagobi.engines.whatif.model.SpagoBICellWrapper;
 import it.eng.spagobi.engines.whatif.model.transform.algorithm.AllocationAlgorithm;
-
-import org.olap4j.metadata.Member;
 
 public class CellTransformation {
 
-	private Member[] members;
+	private SpagoBICellWrapper cell;
 	private AllocationAlgorithm algorithm;
 	private Object newValue;
 	private Object oldValue;
 	
-	public CellTransformation (Object newValue, Object oldValue, Member[] members, AllocationAlgorithm algorithm) {
+	public CellTransformation (Object newValue, Object oldValue, SpagoBICellWrapper cell, AllocationAlgorithm algorithm) {
 		this.newValue = newValue;
-		this.members = members;
+		this.cell = cell;
 		this.algorithm = algorithm;
 		this.oldValue = oldValue;
 	}
 
-	public Member[] getMembers() {
-		return members;
+	public SpagoBICellWrapper getCell() {
+		return this.cell;
 	}
 
-	public void setMembers(Member[] members) {
-		this.members = members;
+	public void setMembers(SpagoBICellWrapper cell) {
+		this.cell = cell;
 	}
 
 	public AllocationAlgorithm getAlgorithm() {

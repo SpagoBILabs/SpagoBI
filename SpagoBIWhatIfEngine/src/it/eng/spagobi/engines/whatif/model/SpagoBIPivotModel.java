@@ -63,7 +63,7 @@ public class SpagoBIPivotModel extends PivotModelImpl {
 		// store the transformation into the stack
 		SpagoBICellSetWrapper cellSetWrapper = this.getCellSetWrapper();
 		SpagoBICellWrapper cellWrapper = SpagoBICellWrapper.wrap(cell, cellSetWrapper);
-		CellTransformation transformation = new CellTransformation(newValue, cellWrapper.getValue(), cellWrapper.getMembers(), algorithm);
+		CellTransformation transformation = new CellTransformation(newValue, cellWrapper.getValue(), cellWrapper, algorithm);
 		pendingTransformations.add(transformation);
 	}
 
