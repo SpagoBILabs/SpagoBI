@@ -161,6 +161,7 @@ Sbi.execution.ParametersPanel = function(config, doc) {
 			, 'viewpointexecutionrequest'
 			, 'applyviewpoint'
 			, 'hideparameterspanel'
+			, 'collapseparameterspanel'
 			, 'executionbuttonclicked'
 			, 'checkReady'
 			, 'ready'
@@ -427,8 +428,6 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 	}
 	
 	, setFormState: function( state ) {
-		var state;	
-		
 		Sbi.trace('[ParametersPanel.setFormState] : IN');
 		
 		for(p in state) {
@@ -546,7 +545,8 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 				var field = this.fields[p];
 				if(!field.allowBlank){
 					var behindParameter = field.behindParameter;
-					var value = this.concatenateDefaultValues(behindParameter.defaultValues);
+					var value = field.getValue();
+					value = value || this.concatenateDefaultValues(behindParameter.defaultValues);
 					if(field.isTransient == false && (value==undefined || value==null || value.length==0)){
 						return false;
 					}
@@ -554,7 +554,6 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 			}
 			return true;
 		}
-		
 	}
 	
 	// ----------------------------------------------------------------------------------------
@@ -580,6 +579,14 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 	
 	, parameterValueIsInPreferences: function(parameter) {
 		return this.preferenceState !== null && this.preferenceState[parameter.id] !== undefined;
+	}
+	
+	, parameterValueIsPassedFromCross: function(parameter) {
+		return this.parameterValueIsInPreferences(parameter) && this.isFromCross == true;
+	}
+	
+	, parameterValueIsPassedFromMenu: function(parameter) {
+		return this.parameterValueIsInPreferences(parameter) && this.isFromCross == false;
 	}
 	
 	, thereAreParametersToBeFilled: function() {
@@ -659,9 +666,30 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 					field.setValue(parameters[i].value);
 				}
 			} else {				
-				if ( this.parameterValueIsInPreferences(parameters[i]) ) {
+				if ( this.parameterValueIsPassedFromMenu(parameters[i]) ) {
 					field.setValue(this.preferenceState[parameters[i].id]);
+//					alert("initializeParametersPanel: set value of [" + parameters[i].id + "] " +
+//							"to [" + field.getValue() + "] " +
+//							"but dont add it to panel");
+					Sbi.debug("[ParametersPanel.initializeParametersPanel]: set value of [" + parameters[i].id + "] " +
+							"to [" + field.getValue() + "] " +
+							"but dont add it to panel");
 				} else {
+					
+					// the parameter is passed in prefereces but it not came from the menu, it came from a cross nav
+					if( this.parameterValueIsInPreferences(parameters[i]) ){
+						//field.setValue(this.preferenceState[parameters[i].id]);
+//						alert("initializeParametersPanel: set value of [" + parameters[i].id + "] " +
+//								"to [" + this.preferenceState[parameters[i].id] +"] " +
+//								"and add it to panel");
+						Sbi.debug("[ParametersPanel.initializeParametersPanel]: set value of [" + parameters[i].id + "] " +
+								"to [" + this.preferenceState[parameters[i].id] +"] " +
+								"and add it to panel");
+					} else {
+//						alert("initializeParametersPanel: parameter [" + parameters[i].id + "] not in preferences");
+						Sbi.debug("[ParametersPanel.initializeParametersPanel]: parameter [" + parameters[i].id + "] not in preferences");
+					}
+					
 					if (parameters[i].visible === true && parameters[i].vizible !== false) {
 						this.addField(field, nonTransientField++);
 						Sbi.debug('field [' + parameters[i].id + '] is added');
@@ -677,7 +705,11 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		if(this.thereAreParametersToBeFilled() !== true) {
 			if (this.rendered) {
 				Ext.DomHelper.append(this.body, '<div class="x-grid-empty">' + LN('sbi.execution.parametersselection.noParametersToBeFilled') + '</div>');
-				this.fireEvent("hideparameterspanel"); 
+				if(this.isFromCross === true) {
+					this.fireEvent("collapseparameterspanel");
+				} else {
+					this.fireEvent("hideparameterspanel");
+				}
 			}
 		} else {
 			// set focus on first field
@@ -699,7 +731,12 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		
 		var defaultValuesFormState = this.getDefaultValuesFormState();
 		Sbi.debug('[ParametersPanel.initializeParametersPanel] : default values form state is [' +  Sbi.toSource(defaultValuesFormState) + ']');
-		var state = Ext.apply(defaultValuesFormState, this.preferenceState);
+		var state = Ext.apply({}, defaultValuesFormState);
+		for(p in this.preferenceState) {
+			state[p] = this.preferenceState[p];
+			delete state[p + '_field_visible_description'];			
+		}
+		//var state = Ext.apply(defaultValuesFormState, this.preferenceState);
 		Sbi.debug('[ParametersPanel.initializeParametersPanel] : preference state applied to default values [' + Sbi.toSource(state) + ']');
 		this.setFormState(state);
 
@@ -1351,7 +1388,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
 		   , parameter: p
 		   // do not load store if the right value is passed in the preferences. In this case infact the field will be not added to the parameters panel
 		   // so it is not necessary to calculate all its values
-		   , autoLoad: !this.parameterValueIsInPreferences(p) 
+		   , autoLoad: !this.parameterValueIsPassedFromMenu(p) 
 		};
 		
 		var labelStyle = '';
