@@ -15,15 +15,8 @@ import it.eng.spagobi.engines.whatif.model.SpagoBICellWrapper;
 import it.eng.spagobi.engines.whatif.model.transform.CellRelation;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
 import org.apache.log4j.Logger;
-import org.olap4j.Cell;
 import org.olap4j.Position;
-import org.olap4j.metadata.Measure;
-import org.olap4j.metadata.Member;
 
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
@@ -40,8 +33,8 @@ public class DefaultWeightedAllocationAlgorithm extends AllocationAlgorithm {
 	}
 
 	@Override
-	public void apply(Member[] members, Object oldValue, Object newValue,
-			SpagoBICellSetWrapper spagoBICellSetWrapper) {
+	public void apply(SpagoBICellWrapper cell, Object oldValue,
+			Object newValue, SpagoBICellSetWrapper cellSetWrapper) {
 		
 		Monitor totalTimeMonitor = null;
 		Monitor errorHitsMonitor = null;
@@ -49,7 +42,7 @@ public class DefaultWeightedAllocationAlgorithm extends AllocationAlgorithm {
 		logger.debug("IN");
 		try {
 			totalTimeMonitor = MonitorFactory.start("SpagoBIWhatIfEngine/it.eng.spagobi.engines.whatif.model.transform.DefaultWeightedAllocationAlgorithm.totalTime");
-			this.applyInternal(members, oldValue, newValue, spagoBICellSetWrapper);
+			this.applyInternal(cell, oldValue, newValue, cellSetWrapper);
 		} catch (Exception e) {
 			errorHitsMonitor = MonitorFactory.start("SpagoBIWhatIfEngine/it.eng.spagobi.engines.whatif.model.transform.DefaultWeightedAllocationAlgorithm.errorHits");
 			errorHitsMonitor.stop();
@@ -63,17 +56,8 @@ public class DefaultWeightedAllocationAlgorithm extends AllocationAlgorithm {
 
 	}
 
-	private void applyInternal(Member[] members, Object oldValue, Object newValue,
-			SpagoBICellSetWrapper cellSetWrapper) throws Exception {
-		
-		/*
-		 * First, I iterate all possible cells and store the dimensions in
-		 * one String array, the measure (possibly default measure) in
-		 * String, and Value in String.
-		 */
-		List<List<List>> denormalised = new ArrayList<List<List>>();
-
-		HashMap<Integer, Measure> measureMap = new HashMap<Integer, Measure>();
+	private void applyInternal(SpagoBICellWrapper cell, Object oldValue,
+			Object newValue, SpagoBICellSetWrapper cellSetWrapper) throws Exception {
 		
 		// Iteration over a two-axis query
 		for (Position axis_0_Position : cellSetWrapper.getAxes()
@@ -84,7 +68,7 @@ public class DefaultWeightedAllocationAlgorithm extends AllocationAlgorithm {
 
 				SpagoBICellWrapper wrappedCell = (SpagoBICellWrapper) cellSetWrapper.getCell(axis_0_Position, axis_1_Position);
 				
-				CellRelation relation = wrappedCell.getRelationTo(members);
+				CellRelation relation = wrappedCell.getRelationTo(cell);
 				Double newDoubleValue = null;
 				switch (relation) {
 				case EQUAL : 
@@ -114,5 +98,5 @@ public class DefaultWeightedAllocationAlgorithm extends AllocationAlgorithm {
 			}
 		}
 	}
-
+	
 }

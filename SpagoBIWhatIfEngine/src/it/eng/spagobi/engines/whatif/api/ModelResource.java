@@ -98,7 +98,7 @@ public class ModelResource extends AbstractWhatIfEngineService {
 		SpagoBICellWrapper cellWrapper = (SpagoBICellWrapper) cellSetWrapper
 				.getCell(ordinal);
 		CellTransformation transformation = new CellTransformation(value,
-				cellWrapper.getValue(), cellWrapper.getMembers(),
+				cellWrapper.getValue(), cellWrapper,
 				new DefaultWeightedAllocationAlgorithm());
 		cellSetWrapper.applyTranformation(transformation);
 		String table = renderModel(model);

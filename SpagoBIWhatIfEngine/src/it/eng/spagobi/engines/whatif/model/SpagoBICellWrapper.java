@@ -183,6 +183,10 @@ public class SpagoBICellWrapper implements Cell {
     	return toReturn;
     }
 	
+    public CellRelation getRelationTo(SpagoBICellWrapper other) {
+    	return this.getRelationTo(other.getMembers());
+    }
+    
     public CellRelation getRelationTo(Member[] members) {
         int aboveCount = 0;
         int belowCount = 0;

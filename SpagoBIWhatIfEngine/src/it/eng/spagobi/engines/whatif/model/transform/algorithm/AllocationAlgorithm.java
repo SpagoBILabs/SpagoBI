@@ -11,14 +11,21 @@
 package it.eng.spagobi.engines.whatif.model.transform.algorithm;
 
 import it.eng.spagobi.engines.whatif.model.SpagoBICellSetWrapper;
-
-import org.olap4j.metadata.Member;
+import it.eng.spagobi.engines.whatif.model.SpagoBICellWrapper;
 
 public abstract class AllocationAlgorithm {
 	
 	public abstract String getName();
 
-	public abstract void apply(Member[] members, Object oldValue, Object newValue,
-			SpagoBICellSetWrapper spagoBICellSetWrapper);
+	/**
+	 * Apply the allocation algorithm to the target cellset, given modified cell, the old value and the new value.
+	 * Pay attention to the fact that the modified cell may refer to a cellset that is DIFFERENT from the target cellset. 
+	 * @param cell The modified cell
+	 * @param oldValue The old value of the modified cell
+	 * @param newValue The new value of the modified cell
+	 * @param targetCellSet The cell set to modify
+	 */
+	public abstract void apply(SpagoBICellWrapper cell, Object oldValue,
+			Object newValue, SpagoBICellSetWrapper targetCellSet);
 
 }
