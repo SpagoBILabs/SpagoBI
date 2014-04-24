@@ -244,7 +244,7 @@ Ext.extend(Sbi.execution.ExecutionPanel, Ext.Panel, {
 		if(destinationTarget === 'update' && isSourceDocUpdate === false ) destinationTarget = 'inline';
 		
 		if (destinationTarget === 'update') {
-			this.executeCrossNavUpdate(config);
+			this.executeCrossNavUpdate2(config);
 		} else if (destinationTarget === 'tab') {
 			if(this.fireEvent('crossnavigationonothertab', config) !== false) {
 				this.executeCrossNavInline(config);
@@ -270,6 +270,10 @@ Ext.extend(Sbi.execution.ExecutionPanel, Ext.Panel, {
 		var activeDocumentExecutionPage = this.activeDocument.documentExecutionPage;
 		var executionInstance = activeDocumentExecutionPage.executionInstance;
 			
+		activeDocumentExecutionPage.isFromCross = true;
+		activeDocumentExecutionPage.parametersPanel.isFromCross = true;
+		
+		
 		activeDocumentExecutionPage.parametersPanel.clear();
 			
 		try {
@@ -280,7 +284,9 @@ Ext.extend(Sbi.execution.ExecutionPanel, Ext.Panel, {
 		}
 		
 		if (formState !== null) {
+			activeDocumentExecutionPage.showParametersSlider();
 			activeDocumentExecutionPage.parametersPanel.setFormState(formState);
+			activeDocumentExecutionPage.parametersPanel.preferenceState = Ext.apply({}, formState);
 			var formStateStr = Sbi.commons.JSON.encode( formState );
 			executionInstance.PARAMETERS = formStateStr;
 		}
@@ -291,7 +297,41 @@ Ext.extend(Sbi.execution.ExecutionPanel, Ext.Panel, {
 			delete executionInstance.SBI_SUBOBJECT_ID;
 		}
 		
-		activeDocumentExecutionPage.synchronize(executionInstance, false);
+		activeDocumentExecutionPage.refreshDocument(executionInstance);
+		
+		//activeDocumentExecutionPage.isParameterPanelReady = false;
+		//activeDocumentExecutionPage.isParameterPanelReadyForExecution = false;
+		//activeDocumentExecutionPage.isSubobjectPanelReady = false;
+		//activeDocumentExecutionPage.isSnapshotPanelReady = false;
+		//activeDocumentExecutionPage.synchronize(executionInstance, false);
+	}
+	
+	, executeCrossNavUpdate2: function(config) {
+		var el = this.documentsStack.pop();
+		this.remove(el, false);
+
+	    // Workaround: on IE, it takes a long time to destroy the stacked execution wizards.
+	    // See Sbi.settings.IE.destroyExecutionWizardWhenClosed on Settings.js for more information
+		if (!Ext.isIE || (Sbi.settings.IE.destroyExecutionWizardWhenClosed === undefined || Sbi.settings.IE.destroyExecutionWizardWhenClosed === true)) {
+	    	el.destroy();
+	    }else{
+	    	el.hide(); 
+	    }
+		
+		var formState = Ext.urlDecode(config.preferences.parameters);
+		
+		this.activeDocument = new Sbi.execution.ExecutionWizard( {preferences: config.preferences, isFromCross: true}, config.document );
+		this.documentsStack.push( this.activeDocument );
+		
+		this.activeDocument.documentExecutionPage.on('expandpagerequest', function() {
+			sendMessage({}, 'collapse2'); 
+		}, this);
+		this.activeDocument.documentExecutionPage.on('crossnavigation', this.loadCrossNavigationTargetDocument , this);	
+		
+		this.add(this.activeDocument);	
+		this.getLayout().setActiveItem(this.documentsStack.length -1);	
+		
+		this.activeDocument.execute();
 	}
 	
 	/**
