@@ -568,8 +568,6 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 	, initParametersPanel: function( config, doc ) {
 		Ext.apply(config, {pageNumber: 2, parentPanel: this}); // this let the ParametersPanel know that it is on parameters selection page
 		
-		
-		config.isFromCross = this.isFromCross;
 		this.parametersPanel = new Sbi.execution.ParametersPanel(config, doc);
 		
 		this.parametersPanel.on('beforesynchronize', function() {
@@ -619,6 +617,10 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 		this.parametersPanel.on('hideparameterspanel', function(){
 			this.parametersSlider.hide();
 			this.doLayout();
+		}, this);
+		this.parametersPanel.on('collapseparameterspanel', function(){
+			this.collapseParametersSlider();
+			//this.doLayout();
 		}, this);
 		
 		this.parametersPanel.on('executionbuttonclicked', this.parametersExecutionButtonHandler, this);
@@ -1116,7 +1118,11 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 		}
 		// parameters form follows: if there are no parameters to be filled, start main document execution
 		if (this.isParameterPanelReadyForExecution == true) {	
-			//this.parametersPanel.on('ready', this.executeDocument(this.executionInstance));
+			// if we came from cross and all mandatory parameters are set we collapse the parameter sliders
+			// before execution
+			if(this.isFromCross === true) {
+				this.collapseParametersSlider();
+			}
 			this.executeDocument(this.executionInstance);
 		}
 	}
