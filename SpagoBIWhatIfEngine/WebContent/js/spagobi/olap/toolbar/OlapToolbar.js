@@ -64,9 +64,13 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 		         */
 		        'configChange'
 				);
-		this.drillMode = Ext.create('Ext.Button', {
+		
+		
+		this.drillMode = Ext.create('Ext.container.ButtonGroup', 
+/*		{
 			text: LN('sbi.olap.toolbar.drill.mode'),
 			iconCls: 'drill-mode',
+
 			menu: [{
 				text: 'Position',
 				scope:thisPanel,
@@ -84,8 +88,53 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 							this.setToolbarConf({drillType: 'replace'});
 						}}],
 						reorderable: true
-		});
+		}*/
+				{
+	        xtype: 'buttongroup',
+	        columns: 3,
+			style:'border-radius: 10px;padding: 0px;margin: 0px;',
+	        items: [{
+	            text: 'Position',
+	            scale: 'small',
+	            enableToggle: true,
+	            toggleGroup: 'drill',
+				style:'border: none;margin: 0px;border-radius: 0px;background-color: #e3e4e6;',
+				scope:thisPanel,
+				handler: function() {
+					this.setToolbarConf({drillType: 'position'});
+				},
+				reorderable: true
+	        },
+			{
+	            text: 'Member',
+	            scale: 'small',
+	            enableToggle: true,
+	            toggleGroup: 'drill',
+				style:'border: none;margin: 0px;border-radius: 0px;border-left: 1px solid #d0d0d0; border-right: 1px solid #d0d0d0;background-color: #e3e4e6;',
+				scope:thisPanel,
+				handler: function() {
+					this.setToolbarConf({drillType: 'member'});
+				},
+				reorderable: true
+	        },
+			{
+	            text: 'Replace',
+	            scale: 'small',
+	            enableToggle: true,
+	            toggleGroup: 'drill',
+				style:'border: none;margin: 0px;border-radius: 0px;background-color: #e3e4e6;',
+				scope:thisPanel,
+				handler: function() {
+					this.setToolbarConf({drillType: 'replace'});
+				},
+				reorderable: true
 
+	        }]
+	    }
+		
+		);
+
+		
 		this.showMdx = Ext.create('Ext.Button', {
 			text: LN('sbi.olap.toolbar.mdx'),
 			iconCls: 'mdx',
@@ -105,7 +154,16 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 			scope:this,
 			reorderable: true
 		});
-
+		
+		var pressedBtn = this.config.toolbarConfig.drillType;
+		if(pressedBtn == 'position'){
+			this.drillMode.items.items[0].pressed = true;
+		}else if(pressedBtn == 'member'){
+			this.drillMode.items.items[1].pressed = true;
+		}else if(pressedBtn == 'replace'){
+			this.drillMode.items.items[2].pressed = true;
+		}
+		
 		Ext.apply(this, {
 			layout: {
 				overflowHandler: 'Menu'
@@ -129,6 +187,8 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 	 * @param {Object} state of the view 
 	 */
 	setViewState: function(state){
+
+
 		this.toolbarConfig = Ext.apply(this.toolbarConfig, state);
 	}
 
@@ -138,7 +198,8 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 	 * @param {Object} state of the view 
 	 */
 	, setToolbarConf: function (conf){
-		this.setViewState(conf);
+		
+		this.setViewState(conf);		
 		this.fireEvent('configChange',this.toolbarConfig);
 	}
 
