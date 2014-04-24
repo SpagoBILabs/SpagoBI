@@ -106,6 +106,7 @@ td[contenteditable="true"]:focus {
 	font: bold 11px/13px tahoma,arial,verdana,sans-serif;
 	text-align: left;
 	padding-left: 5px;
+	padding-right: 5px;
 	vertical-align: middle;
 }
 .dimension-title img{
