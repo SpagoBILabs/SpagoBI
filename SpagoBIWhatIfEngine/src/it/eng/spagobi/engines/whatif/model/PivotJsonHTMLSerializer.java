@@ -170,8 +170,7 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotModel> {
 			jgen.writeObjectField(MODELCONFIG, modelConfig);
 			
 			//build the query mdx
-			String mdxQuery = value.getMdx();
-			mdxQuery = formatQueryString(mdxQuery);
+			String mdxQuery = formatQueryString( value.getCurrentMdx());
 			jgen.writeStringField(MDXFORMATTED, mdxQuery);
 			
 			jgen.writeEndObject();
