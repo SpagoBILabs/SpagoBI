@@ -145,10 +145,9 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 		this.showParentMembers = Ext.create('Ext.Button', {
 			tooltip: LN('sbi.olap.toolbar.showParentMembers'),
 			iconCls: 'show-parent-members',
-			allowDepress: true,
-			handler: function() {
-				this.setToolbarConf({showParentMembers: true});
-			},
+			enableToggle: true,
+	        toggleHandler: this.onShowParentMembersToggle,
+
 			scope:this,
 			reorderable: true
 		});
@@ -160,6 +159,13 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 			this.drillMode.items.items[1].pressed = true;
 		}else if(pressedBtn == 'replace'){
 			this.drillMode.items.items[2].pressed = true;
+		}
+		
+		var isShownParentMembers = this.config.toolbarConfig.showParentMembers;
+		if(isShownParentMembers == true){
+			this.showParentMembers.pressed = true;
+		}else{
+			this.showParentMembers.pressed = false;
 		}
 		
 		this.clean = Ext.create('Ext.Button', {
@@ -181,7 +187,6 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 			scope:this,
 			reorderable: true
 		});
-		
 		Ext.apply(this, {
 			layout: {
 				overflowHandler: 'Menu'
@@ -190,7 +195,15 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 		});
 		this.callParent();
 	},
-
+	
+	/**
+	 * Sets the sho parent members button pressed or not
+	 
+	 */
+    onShowParentMembersToggle: function (item, pressed){
+    	this.showParentMembers.pressed = pressed;
+    	this.setToolbarConf({showParentMembers: pressed});
+    },
 	/**
 	 * Gets the configuration of the view
 	 * @return {Object} returns the configuration state: position and visibility of the buttons
