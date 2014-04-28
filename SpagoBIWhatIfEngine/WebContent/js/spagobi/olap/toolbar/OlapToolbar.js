@@ -98,8 +98,10 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 	            scale: 'small',
 	            enableToggle: true,
 	            allowDepress: false,
+	            pressedCls: 'pressed-drill',
 	            toggleGroup: 'drill',
-				style:'border: none;margin: 0px;margin-right: -2px; right: 2px;border-radius: 0px;background-color: #e3e4e6;',
+	            cls: 'drill-btn-left',
+				//style:'border: none;margin: 0px;margin-right: -2px; right: 2px;border-radius: 0px;background-color: #e3e4e6;',
 				scope:thisPanel,
 				handler: function() {
 					this.setToolbarConf({drillType: 'position'});
@@ -112,7 +114,9 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 	            enableToggle: true,
 	            allowDepress: false,
 	            toggleGroup: 'drill',
-				style:'border: none;margin: 0px;border-radius: 0px;border-left: 1px solid #d0d0d0; border-right: 1px solid #d0d0d0;background-color: #e3e4e6;',
+	            pressedCls: 'pressed-drill',
+	            cls: 'drill-btn-center',
+	            //style:'border: none;margin: 0px;border-radius: 0px;border-left: 1px solid #d0d0d0; border-right: 1px solid #d0d0d0;background-color: #e3e4e6;',
 				scope:thisPanel,
 				handler: function() {
 					this.setToolbarConf({drillType: 'member'});
@@ -124,8 +128,10 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 	            scale: 'small',
 	            enableToggle: true,
 	            allowDepress: false,
-	            toggleGroup: 'drill',
-				style:'border: none;margin: 0px; margin-left: -2px;left: 2px;border-radius: 0px;background-color: #e3e4e6;',
+	            toggleGroup: 'drill',	
+	            pressedCls: 'pressed-drill',
+	            cls: 'drill-btn-right',
+				//style:'border: none;margin: 0px; margin-left: -2px;left: 2px;border-radius: 0px;background-color: #e3e4e6;',
 				scope:thisPanel,
 				handler: function() {
 					this.setToolbarConf({drillType: 'replace'});

@@ -44,6 +44,36 @@
 	/* IE8 */
 }
 
+.x-pressed-drill.drill-btn-left,
+.x-pressed-drill.drill-btn-center,
+.x-pressed-drill.drill-btn-right{
+	background-color: #d0d0d0 !important;
+}
+
+.drill-btn-left{
+	border: none !important;
+	margin: 0px !important;
+	margin-right: -2px !important; 
+	right: 2px !important;
+	border-radius: 0px !important;
+	background-color: #e3e4e6 !important;
+}
+.drill-btn-center{
+	border: none !important;
+	margin: 0px !important;
+	border-radius: 0px !important;
+	border-left: 1px solid #d0d0d0 !important; 
+	border-right: 1px solid #d0d0d0 !important;
+	background-color: #e3e4e6 !important;
+}
+.drill-btn-right {
+	border: none !important;
+	margin: 0px !important; 
+	margin-left: -2px !important;
+	left: 2px !important;
+	border-radius: 0px !important;
+	background-color: #e3e4e6 !important;
+}
 .swap-column-panel {
 	background-image: url(../img/swap-column-panel2.png);
 	background-position: center center;
