@@ -263,6 +263,20 @@ Ext.define('Sbi.olap.control.EventManager', {
 	,
 	undo : function () {
 		this.olapController.undo();	
+	},
+	
+	/**
+	 * Cleans the mondrian cache
+	 */
+	cleanCache: function () {
+		this.olapController.cleanCache();	
+	},
+	
+	/**
+	 * Persists the transformations in the db and cleans the stack
+	 */
+	persistTransformations: function () {
+		this.olapController.persistTransformations();	
 	}
 	
 	,executeService: function(){

@@ -70,8 +70,8 @@ Sbi.locale.ln['sbi.common.select'] = 'Ok';
 Sbi.locale.ln['sbi.olap.toolbar.mdx'] = 'Mdx Query';
 Sbi.locale.ln['sbi.olap.toolbar.drill.mode'] = 'Tipi di Drill';
 Sbi.locale.ln['sbi.olap.toolbar.undo'] = 'Undo';
+Sbi.locale.ln['sbi.olap.toolbar.clean'] = 'Pulire cache';
 Sbi.locale.ln['sbi.olap.toolbar.showParentMembers'] = 'Mostra membri padri';
-
 //===================================================================
 //FILTERS
 //===================================================================
@@ -91,3 +91,9 @@ Sbi.locale.ln['sbi.olap.execution.table.dimension.selected.hierarchy'] = 'La ger
 Sbi.locale.ln['sbi.olap.execution.table.dimension.selected.hierarchy.2'] = ' Puoi cambiare la gerarchia selezionando il valore tramite il seguente form.';
 Sbi.locale.ln['sbi.olap.execution.table.dimension.available.hierarchies'] = 'Gerarchie disponibili: ';
 Sbi.locale.ln['sbi.olap.execution.table.dimension.no.enough'] = 'Ci deve esserre almeno una dimensione sia nelle righe che nelle colonne';
+
+
+//===================================================================
+//WRITEBACK
+//===================================================================
+Sbi.locale.ln['sbi.olap.weiteback.persist.error'] = 'Errore persistendo le trasformazioni';

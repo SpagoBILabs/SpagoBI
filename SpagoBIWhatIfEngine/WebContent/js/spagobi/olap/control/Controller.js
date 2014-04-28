@@ -164,6 +164,31 @@ Ext.define('Sbi.olap.control.Controller', {
 		
 		service.callService(this);
 	}
+	
+	, cleanCache: function() {
+
+		var service = Ext.create("Sbi.service.RestService", {
+			url: "cache",
+			method: 'DELETE'
+		});
+		
+		service.callService(this);
+	}
+	
+	,persistTransformations: function() {
+
+		var service = Ext.create("Sbi.service.RestService", {
+			url: "model",
+			method: 'PUT',
+			pathParams: ["persistTransformations"]
+		});
+		
+		service.callService(this);
+	}
+	
+	
+	
+
 });
 
 
