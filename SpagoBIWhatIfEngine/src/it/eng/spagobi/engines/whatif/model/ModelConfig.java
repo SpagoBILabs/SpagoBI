@@ -20,16 +20,26 @@ public class ModelConfig implements Serializable {
 	public static final String WRITEBACK = "writeback";
 	private String drillType;
 	private Boolean showParentMembers;
+	private Boolean hideSpans;
+
+
 	private Map<String, String> dimensionHierarchyMap;
 	private Map<String, String> writeBackConf;
 
 	public ModelConfig() {
 		drillType = DrillDownCommand.MODE_POSITION;
 		showParentMembers = false;
+		hideSpans = false;
 		dimensionHierarchyMap = new HashMap<String, String>();
 		writeBackConf = new HashMap<String, String>();
 	}
+	public Boolean getHideSpans() {
+		return hideSpans;
+	}
 
+	public void setHideSpans(Boolean hideSpans) {
+		this.hideSpans = hideSpans;
+	}
 	public Boolean getShowParentMembers() {
 		return showParentMembers;
 	}

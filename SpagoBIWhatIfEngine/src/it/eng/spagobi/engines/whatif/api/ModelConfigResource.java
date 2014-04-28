@@ -50,6 +50,7 @@ public class ModelConfigResource extends AbstractWhatIfEngineService {
 			modelconfig = (ModelConfig)deserialize(modelConfig, ModelConfig.class);
 			
 			config.setShowParentMembers(modelconfig.getShowParentMembers());
+			config.setHideSpans(modelconfig.getHideSpans());
 			config.setDrillType(modelconfig.getDrillType());
 		} catch (SerializationException e) {
 			logger.error(e.getMessage());
