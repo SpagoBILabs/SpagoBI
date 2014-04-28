@@ -94,6 +94,16 @@ public class WhatIfEngineConfig {
 		return initialMdx;
 	}
 	
+	public String getCatalogue(){
+		String catalog = "/home/spagobi/apache-tomcat-7.0.50/resources/Olap/FoodMart.xml";
+		SourceBean sb = (SourceBean) getConfigSourceBean().getAttribute("CATALOG");
+		if(sb!=null){
+			String system = System.getProperty("catalina.home");
+			catalog = system+sb.getCharacters();
+		}
+		return catalog;
+	}
+	
 	public OlapDataSource getOlapDataSource() {
 		SourceBean sb;
 		Properties connectionProps = new Properties();

@@ -10,11 +10,16 @@
 
 package it.eng.spagobi.engines.whatif.model;
 
+import it.eng.spagobi.engines.whatif.exception.WhatIfPersistingTransformationException;
 import it.eng.spagobi.engines.whatif.model.transform.CellTransformation;
+import it.eng.spagobi.engines.whatif.model.transform.CellTransformationsAnalyzer;
 import it.eng.spagobi.engines.whatif.model.transform.CellTransformationsStack;
 import it.eng.spagobi.engines.whatif.model.transform.algorithm.AllocationAlgorithm;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 
+import java.util.Iterator;
+
+import org.apache.log4j.Logger;
 import org.olap4j.Cell;
 import org.olap4j.CellSet;
 import org.olap4j.OlapDataSource;
@@ -23,6 +28,7 @@ import com.eyeq.pivot4j.impl.PivotModelImpl;
 
 public class SpagoBIPivotModel extends PivotModelImpl {
 	
+	public static transient Logger logger = Logger.getLogger(SpagoBIPivotModel.class);
 	private CellTransformationsStack pendingTransformations = new CellTransformationsStack();
 	private SpagoBICellSetWrapper wrapper = null;
 	
@@ -30,7 +36,7 @@ public class SpagoBIPivotModel extends PivotModelImpl {
 	public synchronized CellSet getCellSet() {
 		// get cellset from super class (Mondrian)
 		CellSet cellSet = super.getCellSet();
-		
+
 		// since the getCellSet method is invoked many times, we get the previous cell set and compare the new one
 		SpagoBICellSetWrapper previous = this.getCellSetWrapper();
 		if (previous != null && previous.unwrap() == cellSet) { // TODO check if this comparison is 100% valid
@@ -75,6 +81,33 @@ public class SpagoBIPivotModel extends PivotModelImpl {
 		pendingTransformations.add(transformation);
 	}
 	
+	public void persistTransformations() throws WhatIfPersistingTransformationException{
+		CellTransformationsAnalyzer analyzer = new CellTransformationsAnalyzer();
+		CellTransformationsStack bestStack = analyzer.getShortestTransformationsStack(pendingTransformations);
+		Iterator<CellTransformation> iterator = bestStack.iterator();
+		
+		CellTransformationsStack executedTransformations = new  CellTransformationsStack();
+		
+		while (iterator.hasNext()) {
+			CellTransformation transformation = iterator.next();
+			try {
+				AllocationAlgorithm algorithm = transformation.getAlgorithm();
+				algorithm.persist(transformation.getCell(), transformation.getOldValue(), transformation.getNewValue());
+			} catch (Throwable e) {
+				logger.error("Error persisting the transformation "+transformation, e);
+				bestStack.removeAll(executedTransformations);
+				throw new WhatIfPersistingTransformationException(getLocale(), executedTransformations, bestStack, e);
+			}
+			//update the list of executed transformations
+			executedTransformations.add(transformation);
+		}
+		
+		//everithing goes right so we can clean the pending transformations
+		pendingTransformations.clear();
+		
+	}
+	
+	
 	/**
 	 * Undo last modification
 	 */
@@ -88,5 +121,15 @@ public class SpagoBIPivotModel extends PivotModelImpl {
 		// force recalculation
 		this.getCellSet();
 	}
+	
+	/**
+	 * @see com.eyeq.pivot4j.PivotModel#refresh()
+	 */
+	@Override
+	public void refresh() {
+		super.refresh();
+		this.setCellSetWrapper(null);
+	}
+
 	
 }

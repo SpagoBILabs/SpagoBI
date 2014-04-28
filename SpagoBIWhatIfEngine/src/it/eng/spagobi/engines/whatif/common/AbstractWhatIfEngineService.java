@@ -18,7 +18,7 @@ import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.engines.rest.AbstractRestService;
 import it.eng.spagobi.utilities.engines.rest.ExecutionSession;
-import it.eng.spagobi.utilities.exceptions.SpagoBIEngineRestServiceException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIEngineRestServiceRuntimeException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
 
 import javax.servlet.http.HttpServletRequest;
@@ -136,7 +136,7 @@ public class AbstractWhatIfEngineService extends AbstractRestService{
 			}
 		} catch (Exception e) {
 			logger.error("Error loading the members from the request ", e);
-			throw new SpagoBIEngineRestServiceException("generic.error.request.members.getting", getLocale(), e);
+			throw new SpagoBIEngineRestServiceRuntimeException("generic.error.request.members.getting", getLocale(), e);
 		}
 
 		

@@ -20,13 +20,15 @@ import java.util.Date;
 
 import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
 import it.eng.spagobi.engines.whatif.common.AbstractWhatIfEngineService;
+import it.eng.spagobi.engines.whatif.exception.WhatIfPersistingTransformationException;
 import it.eng.spagobi.engines.whatif.model.SpagoBICellSetWrapper;
 import it.eng.spagobi.engines.whatif.model.SpagoBICellWrapper;
 import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
 import it.eng.spagobi.engines.whatif.model.transform.CellTransformation;
 import it.eng.spagobi.engines.whatif.model.transform.algorithm.DefaultWeightedAllocationAlgorithm;
-import it.eng.spagobi.utilities.exceptions.SpagoBIEngineRestServiceException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIEngineRestServiceRuntimeException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
+import it.eng.spagobi.writeback4j.mondrian.CacheManager;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
@@ -39,6 +41,7 @@ import javax.ws.rs.core.Response;
 import org.apache.axis.utils.ByteArrayOutputStream;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
+import org.olap4j.OlapDataSource;
 
 import com.eyeq.pivot4j.PivotModel;
 import com.eyeq.pivot4j.export.poi.ExcelExporter;
@@ -89,7 +92,7 @@ public class ModelResource extends AbstractWhatIfEngineService {
 			JSONObject json = RestUtilities.readBodyAsJSONObject(getServletRequest());
 			expression = json.getString( EXPRESSION );
 		} catch (Exception e) {
-			new SpagoBIEngineRestServiceException("generic.error", this.getLocale(), e);
+			new SpagoBIEngineRestServiceRuntimeException("generic.error", this.getLocale(), e);
 		}
 		logger.debug("expression = [" + expression + "]");
 		Double value = Double.valueOf(expression);
@@ -102,10 +105,43 @@ public class ModelResource extends AbstractWhatIfEngineService {
 				new DefaultWeightedAllocationAlgorithm());
 		cellSetWrapper.applyTranformation(transformation);
 		String table = renderModel(model);
+		
+		
 		logger.debug("OUT");
 		return table;
 	}
 	
+	@PUT
+	@Path("/persistTransformations")
+	public String persistTransformations(){
+		logger.debug("IN");
+		WhatIfEngineInstance ei = getWhatIfEngineInstance();
+		OlapDataSource olapDataSource = ei.getOlapDataSource();
+		PivotModel model = ei.getPivotModel();
+
+		SpagoBIPivotModel modelWrapper = (SpagoBIPivotModel) model;
+		
+		logger.debug("Persisting the modifications..");
+		
+		try {
+			modelWrapper.persistTransformations();
+		} catch (WhatIfPersistingTransformationException e) {
+			logger.debug("Error persisting the modifications",e);
+			throw new SpagoBIEngineRestServiceRuntimeException(e.getLocalizationmessage(), modelWrapper.getLocale(), "Error persisting modifications", e);
+		}
+		logger.debug("Modification persisted...");
+		
+		logger.debug("Cleaning the cache and restoring the model");
+		CacheManager.flushCache(olapDataSource);
+		String mdx = modelWrapper.getCurrentMdx();
+		modelWrapper.setMdx(mdx);
+		modelWrapper.initialize();
+		logger.debug("Finish to clean the cache and restoring the model");
+		
+		String table = renderModel(model);
+		logger.debug("OUT");
+		return table;
+	}
 	
 	@PUT
 	@Path("/undo")
@@ -129,7 +165,7 @@ public class ModelResource extends AbstractWhatIfEngineService {
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
 		PivotModel model = ei.getPivotModel();
 		
-		String mdx = model.getMdx();
+		String mdx = model.getCurrentMdx();
 		
 		if(mdx==null){
 			mdx = "";
@@ -142,7 +178,8 @@ public class ModelResource extends AbstractWhatIfEngineService {
 	
 	
 	/**
-	 * Exports the actual model in a xls format 
+	 * Exports the actual model in a xls format.. Since it takes
+	 * the actual model, it takes also the pendingg transformations (what you see it's what you get)
 	 * @return the response with the file embedded
 	 */
     @GET

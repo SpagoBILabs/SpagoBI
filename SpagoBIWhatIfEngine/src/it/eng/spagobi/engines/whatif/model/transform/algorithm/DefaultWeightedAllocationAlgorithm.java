@@ -13,7 +13,9 @@ package it.eng.spagobi.engines.whatif.model.transform.algorithm;
 import it.eng.spagobi.engines.whatif.model.SpagoBICellSetWrapper;
 import it.eng.spagobi.engines.whatif.model.SpagoBICellWrapper;
 import it.eng.spagobi.engines.whatif.model.transform.CellRelation;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.writeback4j.mondrian.sql.QueryBuilder;
 
 import org.apache.log4j.Logger;
 import org.olap4j.Position;
@@ -41,10 +43,10 @@ public class DefaultWeightedAllocationAlgorithm extends AllocationAlgorithm {
 		
 		logger.debug("IN");
 		try {
-			totalTimeMonitor = MonitorFactory.start("SpagoBIWhatIfEngine/it.eng.spagobi.engines.whatif.model.transform.DefaultWeightedAllocationAlgorithm.totalTime");
+			totalTimeMonitor = MonitorFactory.start("SpagoBIWhatIfEngine/it.eng.spagobi.engines.whatif.model.transform.DefaultWeightedAllocationAlgorithm.apply.totalTime");
 			this.applyInternal(cell, oldValue, newValue, cellSetWrapper);
 		} catch (Exception e) {
-			errorHitsMonitor = MonitorFactory.start("SpagoBIWhatIfEngine/it.eng.spagobi.engines.whatif.model.transform.DefaultWeightedAllocationAlgorithm.errorHits");
+			errorHitsMonitor = MonitorFactory.start("SpagoBIWhatIfEngine/it.eng.spagobi.engines.whatif.model.transform.DefaultWeightedAllocationAlgorithm.apply.errorHits");
 			errorHitsMonitor.stop();
 			throw new SpagoBIRuntimeException("Error while applying transformation", e);
 		} finally {
@@ -98,5 +100,42 @@ public class DefaultWeightedAllocationAlgorithm extends AllocationAlgorithm {
 			}
 		}
 	}
+
 	
+	
+
+	public void persist(SpagoBICellWrapper cell, Object oldValue,
+			Object newValue) {
+		
+		Monitor totalTimeMonitor = null;
+		Monitor errorHitsMonitor = null;
+		
+		logger.debug("IN");
+		try {
+			totalTimeMonitor = MonitorFactory.start("SpagoBIWhatIfEngine/it.eng.spagobi.engines.whatif.model.transform.DefaultWeightedAllocationAlgorithm.persist.totalTime");
+			this.persistInternal(cell, oldValue, newValue);
+		} catch (Exception e) {
+			errorHitsMonitor = MonitorFactory.start("SpagoBIWhatIfEngine/it.eng.spagobi.engines.whatif.model.transform.DefaultWeightedAllocationAlgorithm.persist.errorHits");
+			errorHitsMonitor.stop();
+			throw new SpagoBIRuntimeException("Error while applying transformation", e);
+		} finally {
+			if (totalTimeMonitor != null) {
+				totalTimeMonitor.stop();
+			}
+			logger.debug("OUT");
+		}
+
+	}
+
+	private void persistInternal(SpagoBICellWrapper cell, Object oldValue,Object newValue) throws Exception {
+		QueryBuilder msr = new QueryBuilder("D:/Sviluppo/SpagoBI/progetti/Trunk_40/runtime/resources/Olap/FoodMartMySQL.xml", "Sales_Edit");
+
+		msr.buildProportionalUpdate(cell.getMembers(), ((Number) newValue).doubleValue()/((Number) oldValue).doubleValue());		
+		
+		
+	}
+
 }
+	
+
+

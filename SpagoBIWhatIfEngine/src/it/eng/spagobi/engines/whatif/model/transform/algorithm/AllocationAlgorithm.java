@@ -27,5 +27,8 @@ public abstract class AllocationAlgorithm {
 	 */
 	public abstract void apply(SpagoBICellWrapper cell, Object oldValue,
 			Object newValue, SpagoBICellSetWrapper targetCellSet);
+	
+	public abstract void persist(SpagoBICellWrapper cell, Object oldValue,
+			Object newValue);
 
 }
