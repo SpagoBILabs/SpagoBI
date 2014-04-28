@@ -162,11 +162,31 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 			this.drillMode.items.items[2].pressed = true;
 		}
 		
+		this.clean = Ext.create('Ext.Button', {
+			text: LN('sbi.olap.toolbar.clean'),
+			iconCls: 'undo',
+			handler: function() {
+				Sbi.olap.eventManager.cleanCache();
+			},
+			scope:this,
+			reorderable: true
+		});
+		
+		this.persist = Ext.create('Ext.Button', {
+			text: "PERSIST",
+			iconCls: 'undo',
+			handler: function() {
+				Sbi.olap.eventManager.persistTransformations();
+			},
+			scope:this,
+			reorderable: true
+		});
+		
 		Ext.apply(this, {
 			layout: {
 				overflowHandler: 'Menu'
 			},
-			items   : [ this.drillMode, this.showMdx, this.undo , this.showParentMembers]
+			items   : [ this.drillMode, this.showMdx, this.undo , this.showParentMembers,this.clean,this.persist ]
 		});
 		this.callParent();
 	},

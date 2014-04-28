@@ -74,8 +74,8 @@ Sbi.locale.ln['sbi.common.select'] = 'Select';
 Sbi.locale.ln['sbi.olap.toolbar.mdx'] = 'Mdx Query';
 Sbi.locale.ln['sbi.olap.toolbar.drill.mode'] = 'Drill mode';
 Sbi.locale.ln['sbi.olap.toolbar.undo'] = 'Undo';
+Sbi.locale.ln['sbi.olap.toolbar.clean'] = 'Clean cache';
 Sbi.locale.ln['sbi.olap.toolbar.showParentMembers'] = 'Show parent members';
-
 //===================================================================
 //FILTERS
 //===================================================================
@@ -96,3 +96,8 @@ Sbi.locale.ln['sbi.olap.execution.table.dimension.selected.hierarchy'] = 'The se
 Sbi.locale.ln['sbi.olap.execution.table.dimension.selected.hierarchy.2'] = ' You can chage it acting on the form below.';
 Sbi.locale.ln['sbi.olap.execution.table.dimension.available.hierarchies'] = 'Available hierarchies: ';
 Sbi.locale.ln['sbi.olap.execution.table.dimension.no.enough'] = 'There must be at least one dimension in the columns and in the rows';
+
+//===================================================================
+//WRITEBACK
+//===================================================================
+Sbi.locale.ln['sbi.olap.weiteback.persist.error'] = 'Error persisting the transformations';
