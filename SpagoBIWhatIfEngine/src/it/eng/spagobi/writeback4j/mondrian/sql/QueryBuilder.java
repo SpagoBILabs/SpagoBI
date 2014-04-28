@@ -1,6 +1,9 @@
-/**
- * 
- */
+/* SpagoBI, the Open Source Business Intelligence suite
+
+ * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 package it.eng.spagobi.writeback4j.mondrian.sql;
 
 import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
@@ -20,25 +23,20 @@ import java.util.Set;
 
 import mondrian.olap.MondrianDef;
 
+import org.apache.log4j.Logger;
 import org.eigenbase.xom.NodeDef;
 import org.olap4j.OlapException;
 import org.olap4j.metadata.Dimension.Type;
 import org.olap4j.metadata.Member;
 
-import com.mysql.jdbc.Connection;
-
-/* SpagoBI, the Open Source Business Intelligence suite
-
- * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
- * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 /**
- * @author ghedin
+ *  @author Alberto Ghedin (alberto.ghedin@eng.it)
  *
  */
 public class QueryBuilder {
 	
+	public static transient Logger logger = Logger.getLogger(QueryBuilder.class);
 	MondrianSchemaRetriver retriver;
 	private int tableCount = 0;
 	
@@ -51,12 +49,11 @@ public class QueryBuilder {
 		}
 	}
 	
-	public void buildProportionalUpdate(Member[] members, double prop){
+	public void buildProportionalUpdate(Member[] members, double prop) throws SpagoBIEngineException{
+		//list of the coordinates for the members
 		List<MondrianMemberCordinates> memberCordinates = new ArrayList<MondrianMemberCordinates>();
-		Map<TableEntry, String> whereConditions = new HashMap<TableEntry, String>();
-		Set<EquiJoin> joinConditions = new HashSet<EquiJoin>();
-		Set<String> fromTables = new HashSet<String>();
 		
+		//init the query with the update set statement
 		StringBuffer query = new StringBuffer();
 				
 		for (int i=0; i< members.length; i++) {
@@ -69,23 +66,89 @@ public class QueryBuilder {
 					buildUpdate(query, aMember, prop);
 				}
 			} catch (OlapException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.error("Error loading the type of the dimension of the member "+aMember.getUniqueName(), e);
+				throw new SpagoBIEngineException("Error loading the type of the dimension of the member "+aMember.getUniqueName(), e);
 			}
 			
 		}
 		
+		buildProportionalUpdateSingleSubquery(memberCordinates, query);
+	}
+	
+	public void buildProportionalUpdateOneSubqueryForDimension(List<MondrianMemberCordinates> memberCordinates, StringBuffer query){
+		
+		//List of where conditions
+		Map<TableEntry, String> whereConditions = new HashMap<TableEntry, String>();
+		
+		//List of joins
+		Set<EquiJoin> joinConditions = new HashSet<EquiJoin>();
+		
+		//List of form 
+		Set<String> fromTables = new HashSet<String>();
+		
+		query.append(" where exists ( ");
+		
 		for (Iterator<MondrianMemberCordinates> iterator = memberCordinates.iterator(); iterator.hasNext();) {
 			MondrianMemberCordinates aMondrianMemberCordinates = (MondrianMemberCordinates) iterator.next();
-			whereConditions.putAll(buildWhereConditions(aMondrianMemberCordinates));
+			whereConditions.putAll(buildWhereConditions(aMondrianMemberCordinates, fromTables));
 			addJoinConditions(fromTables, joinConditions, aMondrianMemberCordinates);
+			addInnerDimensionJoinConditions(fromTables, joinConditions, aMondrianMemberCordinates);
 		}
-		
-		
 		
 		buildSelectQuery(whereConditions, joinConditions, fromTables, query);
 		
 		query.append(" ) ");
+		
+		String queryString = query.toString();
+		
+		executeQuery(queryString);
+	}
+	
+	public void buildProportionalUpdateSingleSubquery(List<MondrianMemberCordinates> memberCordinates, StringBuffer query){
+		
+		//List of where conditions
+		Map<TableEntry, String> whereConditions;
+		
+		//List of joins
+		Set<EquiJoin> selectFields;
+		
+		Set<EquiJoin> joinConditions = new HashSet<EquiJoin>();
+
+		
+		//List of form 
+		Set<String> fromTables;
+		
+		query.append(" where ");
+		
+		boolean first = true;
+		for (Iterator<MondrianMemberCordinates> iterator = memberCordinates.iterator(); iterator.hasNext();) {
+
+			MondrianMemberCordinates aMondrianMemberCordinates = (MondrianMemberCordinates) iterator.next();
+			if(!aMondrianMemberCordinates.isAllMember()){
+				whereConditions = new HashMap<TableEntry, String>();
+				selectFields = new HashSet<EquiJoin>();
+				fromTables = new HashSet<String>();
+				joinConditions = new HashSet<EquiJoin>();
+				
+				
+				whereConditions.putAll(buildWhereConditions(aMondrianMemberCordinates, fromTables));
+				addJoinConditions(fromTables, selectFields , aMondrianMemberCordinates);
+				addInnerDimensionJoinConditions(fromTables, joinConditions, aMondrianMemberCordinates);
+				
+				StringBuffer subquery = buildSelectQueryForIn(whereConditions, selectFields, joinConditions, fromTables);
+				
+				if (!first){
+					query.append(" and ");
+				}
+				first = false;
+				query.append(subquery);
+			}
+
+			
+		}
+		
+		
+		
 		
 		String queryString = query.toString();
 		
@@ -111,10 +174,10 @@ public class QueryBuilder {
 		buffer.append(retriver.getEditCube().fact.getAlias());
 		buffer.append(" "+getCubeAlias());
 		buffer.append(" set `"+measureDef.column+"` = `"+measureDef.column+"`*"+prop);
-		buffer.append(" where exists ( ");
+		
 	}
 	
-	public Map<TableEntry, String> buildWhereConditions(MondrianMemberCordinates cordinates){
+	public Map<TableEntry, String> buildWhereConditions(MondrianMemberCordinates cordinates, Set<String> from){
 		Map<TableEntry, String> condition2Value = new HashMap<QueryBuilder.TableEntry, String>();
 		Map<MondrianDef.Level,Member> lelvel2Member = cordinates.getLevel2Member();
 		
@@ -122,6 +185,7 @@ public class QueryBuilder {
 			Iterator<MondrianDef.Level> i = lelvel2Member.keySet().iterator();
 			while(i.hasNext()){
 				MondrianDef.Level aLevel = i.next();
+				from.add(aLevel.table);
 				condition2Value.put(new TableEntry(aLevel.column, aLevel.table), lelvel2Member.get(aLevel).getName()); 
 			}
 		}
@@ -129,7 +193,7 @@ public class QueryBuilder {
 		return condition2Value;
 	}
 
-
+	
 	public void addJoinConditions(Set<String> from, Set<EquiJoin> joins, MondrianMemberCordinates cordinates){
 		String tableName = cordinates.getHieararchy().primaryKeyTable;
 		if(tableName==null){
@@ -142,7 +206,18 @@ public class QueryBuilder {
 				}
 			}
 		}
+
+		TableEntry hierarchyTableEntry = new TableEntry(cordinates.getHieararchy().primaryKey, tableName);
 		
+		TableEntry cubeTableEntry = new TableEntry(cordinates.getDimension().foreignKey); 
+		joins.add(new EquiJoin(hierarchyTableEntry, cubeTableEntry));
+
+		from.add(tableName );
+	}
+	
+	
+	public void addInnerDimensionJoinConditions(Set<String> from, Set<EquiJoin> joins, MondrianMemberCordinates cordinates){
+	
 		MondrianDef.RelationOrJoin relOrJoin = cordinates.getHieararchy().relation;
 		if(relOrJoin instanceof MondrianDef.Join){
 			MondrianDef.Join join = (MondrianDef.Join) relOrJoin;
@@ -155,12 +230,6 @@ public class QueryBuilder {
 			from.add(leftTable.getTable() );
 			from.add(rightTable.getTable() );
 		}
-		
-		TableEntry hierarchyTableEntry = new TableEntry(cordinates.getHieararchy().primaryKey, tableName);
-		TableEntry cubeTableEntry = new TableEntry(cordinates.getDimension().foreignKey); 
-		joins.add(new EquiJoin(hierarchyTableEntry, cubeTableEntry));
-
-		from.add(tableName );
 	}
 	
 
@@ -194,6 +263,37 @@ public class QueryBuilder {
 		
 	}
 	
+	public StringBuffer buildSelectQueryForIn(Map<TableEntry, String> whereConditions, Set<EquiJoin> selectFields, Set<EquiJoin> joinConditions, Set<String> fromTables){
+
+		Map<String, String> table2Alias = new HashMap<String, String>();
+		getTableAlias(table2Alias, getCubeAlias());
+		
+		StringBuffer select = new StringBuffer();
+		StringBuffer from = new StringBuffer();
+		StringBuffer where = new StringBuffer();
+		
+		
+		addSelectCondition(select, selectFields, table2Alias);
+		addWhereCondition(where, joinConditions, table2Alias);
+		addWhereCondition(where, whereConditions, table2Alias);
+		addFromConditions(from, fromTables, table2Alias);
+		
+		StringBuffer subquery = new StringBuffer();
+		
+		addInCondition(subquery, selectFields);
+		subquery.append("(select ");
+		subquery.append(select);
+		subquery.append(" from ");
+		subquery.append(from);
+		subquery.append(" where ");
+		subquery.append(where);
+		subquery.append(")");
+		
+		
+		
+		return subquery;
+		
+	}
 	
 	private String getTableAlias(Map<String, String> table2Alias, String table){
 		String alias = table2Alias.get(table);
@@ -203,6 +303,45 @@ public class QueryBuilder {
 			tableCount++;
 		}
 		return alias;
+	}
+	
+	/**
+	 * Builds the select statement
+	 * @param selectClause the buffer in witch append the clause
+	 * @param selectFields the select table entry
+	 * @param table2Alias the map column alias
+	 */
+	private void addSelectCondition(StringBuffer selectClause,  Set<EquiJoin> selectFields, Map<String, String> table2Alias){
+		if(selectFields!=null){
+			Iterator<EquiJoin> iter = selectFields.iterator();
+			while (iter.hasNext()) {
+				EquiJoin select = iter.next();
+				if(selectClause.length()!=0){
+					selectClause.append(" , ");
+				}
+								
+				//the left is the couple table/column of the hierarchy
+				String leftEntry = select.leftField.toString(table2Alias);
+				selectClause.append(leftEntry);
+			}
+		}
+	}
+	
+	
+	private void addInCondition(StringBuffer subquery,  Set<EquiJoin> selectFields){
+		if(selectFields!=null){
+			Iterator<EquiJoin> iter = selectFields.iterator();
+			while (iter.hasNext()) {
+				EquiJoin select = iter.next();
+								
+				//the left is the couple table/column of the hierarchy
+				String rightEntry = select.rightField.toString();
+				
+				subquery.append(rightEntry);
+				subquery.append(" in ");
+				
+			}
+		}
 	}
 	
 	private void addWhereCondition(StringBuffer whereConditions,  Set<EquiJoin> joins, Map<String, String> table2Alias){

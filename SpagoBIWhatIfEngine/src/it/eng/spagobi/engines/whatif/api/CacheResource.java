@@ -8,46 +8,34 @@ package it.eng.spagobi.engines.whatif.api;
 
 import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
 import it.eng.spagobi.engines.whatif.common.AbstractWhatIfEngineService;
-import it.eng.spagobi.utilities.assertion.Assert;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
+import it.eng.spagobi.writeback4j.mondrian.CacheManager;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.GET;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Context;
 
-import mondrian.olap.CacheControl;
-import mondrian.rolap.RolapConnection;
-
 import org.apache.log4j.Logger;
-import org.olap4j.OlapConnection;
 import org.olap4j.OlapDataSource;
 
-@Path("1.0/flushCache")
+import com.eyeq.pivot4j.PivotModel;
+
+@Path("1.0/cache")
 public class CacheResource extends AbstractWhatIfEngineService {
 
 	public static transient Logger logger = Logger.getLogger(CacheResource.class);
 	
-	@GET
-	public void flushCache(@Context HttpServletRequest request) {
-		logger.debug("IN");
-		try {
-			WhatIfEngineInstance engineInstance = this.getWhatIfEngineInstance();
-			Assert.assertNotNull(engineInstance, "No engine instance found");
-			OlapDataSource olapDataSource = engineInstance.getOlapDataSource();
-			Assert.assertNotNull(olapDataSource, "No OLAP datasource found");
-			OlapConnection connection = (OlapConnection) olapDataSource.getConnection();
-			logger.debug("Got OlapConnection");
-			RolapConnection rolapConnection = connection.unwrap(mondrian.rolap.RolapConnection.class);
-			logger.debug("Got RolapConnection");
-			CacheControl cacheControl = rolapConnection.getCacheControl(null);
-			logger.debug("Got CacheControl");
-			cacheControl.flushSchema(rolapConnection.getSchema());
-			logger.debug("Cache flushed");
-		} catch (Exception e) {
-			throw new SpagoBIEngineRuntimeException("An error occurred while flushing cache", e);
-		}
+	@DELETE
+	public String flushCache(@Context HttpServletRequest request) {
+		WhatIfEngineInstance ei = getWhatIfEngineInstance();
+		OlapDataSource olapDataSource = ei.getOlapDataSource();
+		
+		CacheManager.flushCache(olapDataSource);
+		
+		PivotModel model = ei.getPivotModel();
+		String table = renderModel(model);
 		logger.debug("OUT");
+		return table;
 	}
 	
 }
