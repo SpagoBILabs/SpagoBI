@@ -72,6 +72,7 @@ Sbi.locale.ln['sbi.olap.toolbar.drill.mode'] = 'Tipi di Drill';
 Sbi.locale.ln['sbi.olap.toolbar.undo'] = 'Undo';
 Sbi.locale.ln['sbi.olap.toolbar.clean'] = 'Pulire cache';
 Sbi.locale.ln['sbi.olap.toolbar.showParentMembers'] = 'Mostra membri padri';
+Sbi.locale.ln['sbi.olap.toolbar.hideSpans'] = 'Nascondi spans';
 //===================================================================
 //FILTERS
 //===================================================================

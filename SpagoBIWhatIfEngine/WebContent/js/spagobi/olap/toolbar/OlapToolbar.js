@@ -22,6 +22,7 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 		toolbarConfig: {
 			drillType: 'position',
 			showParentMembers: false,
+			hideSpans: false,
 			dimensionHierarchyMap:{
 				x: 1,
 				y: 2
@@ -38,9 +39,9 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 
 	mdxContainerPanel: null,
 
-	drillMode: null,
-	
+	drillMode: null,	
 	showParentMembers: null,
+	hideSpans: null,
 
 	showMdx: null,
 
@@ -151,22 +152,17 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 			scope:this,
 			reorderable: true
 		});
+
 		
-		var pressedBtn = this.config.toolbarConfig.drillType;
-		if(pressedBtn == 'position'){
-			this.drillMode.items.items[0].pressed = true;
-		}else if(pressedBtn == 'member'){
-			this.drillMode.items.items[1].pressed = true;
-		}else if(pressedBtn == 'replace'){
-			this.drillMode.items.items[2].pressed = true;
-		}
-		
-		var isShownParentMembers = this.config.toolbarConfig.showParentMembers;
-		if(isShownParentMembers == true){
-			this.showParentMembers.pressed = true;
-		}else{
-			this.showParentMembers.pressed = false;
-		}
+		this.hideSpans = Ext.create('Ext.Button', {
+			tooltip: LN('sbi.olap.toolbar.hideSpans'),
+			iconCls: 'hide-spans',
+			enableToggle: true,
+	        toggleHandler: this.onHideSpansToggle,
+
+			scope:this,
+			reorderable: true
+		});
 		
 		this.clean = Ext.create('Ext.Button', {
 			text: LN('sbi.olap.toolbar.clean'),
@@ -187,11 +183,31 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 			scope:this,
 			reorderable: true
 		});
+		var pressedBtn = this.config.toolbarConfig.drillType;
+		if(pressedBtn == 'position'){
+			this.drillMode.items.items[0].pressed = true;
+		}else if(pressedBtn == 'member'){
+			this.drillMode.items.items[1].pressed = true;
+		}else if(pressedBtn == 'replace'){
+			this.drillMode.items.items[2].pressed = true;
+		}
+		
+		var isShownParentMembers = this.config.toolbarConfig.showParentMembers;
+		if(isShownParentMembers == true){
+			this.showParentMembers.pressed = true;
+		}else{
+			this.showParentMembers.pressed = false;
+		}
+		
+
 		Ext.apply(this, {
 			layout: {
 				overflowHandler: 'Menu'
 			},
-			items   : [ this.drillMode, this.showMdx, this.undo , this.showParentMembers,this.clean,this.persist ]
+			items   : [ this.drillMode, this.showMdx, this.undo , 
+			            this.clean, this.persist,
+			            this.showParentMembers, 
+			            this.hideSpans]
 		});
 		this.callParent();
 	},
@@ -203,6 +219,10 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
     onShowParentMembersToggle: function (item, pressed){
     	this.showParentMembers.pressed = pressed;
     	this.setToolbarConf({showParentMembers: pressed});
+    },
+    onHideSpansToggle: function (item, pressed){
+    	this.hideSpans.pressed = pressed;
+    	this.setToolbarConf({hideSpans: pressed});
     },
 	/**
 	 * Gets the configuration of the view

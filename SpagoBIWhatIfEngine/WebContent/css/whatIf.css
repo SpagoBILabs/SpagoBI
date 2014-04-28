@@ -238,7 +238,9 @@ td[contenteditable="true"]:focus {
 .show-parent-members{
 	background-image: url(../img/show_parent_members.png);
 }
-
+.hide-spans{
+	background-image: url(../img/hide_spans.png);
+}
 /*------------------*/
 /* Multi hierarchy */
 /*------------------*/
