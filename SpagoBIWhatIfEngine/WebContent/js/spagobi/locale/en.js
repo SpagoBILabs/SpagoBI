@@ -74,6 +74,7 @@ Sbi.locale.ln['sbi.common.select'] = 'Select';
 Sbi.locale.ln['sbi.olap.toolbar.mdx'] = 'Mdx Query';
 Sbi.locale.ln['sbi.olap.toolbar.drill.mode'] = 'Drill mode';
 Sbi.locale.ln['sbi.olap.toolbar.undo'] = 'Undo';
+Sbi.locale.ln['sbi.olap.toolbar.showParentMembers'] = 'Show parent members';
 
 //===================================================================
 //FILTERS

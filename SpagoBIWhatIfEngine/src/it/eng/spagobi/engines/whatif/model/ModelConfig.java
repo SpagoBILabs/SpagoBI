@@ -19,13 +19,23 @@ public class ModelConfig implements Serializable {
 	private static final long serialVersionUID = 2687163910212567575L;
 	public static final String WRITEBACK = "writeback";
 	private String drillType;
+	private Boolean showParentMembers;
 	private Map<String, String> dimensionHierarchyMap;
 	private Map<String, String> writeBackConf;
 
 	public ModelConfig() {
 		drillType = DrillDownCommand.MODE_POSITION;
+		showParentMembers = false;
 		dimensionHierarchyMap = new HashMap<String, String>();
 		writeBackConf = new HashMap<String, String>();
+	}
+
+	public Boolean getShowParentMembers() {
+		return showParentMembers;
+	}
+
+	public void setShowParentMembers(Boolean showParentMembers) {
+		this.showParentMembers = showParentMembers;
 	}
 
 	public String getDrillType() {
@@ -53,12 +63,16 @@ public class ModelConfig implements Serializable {
 	}
 
 	public void setWriteBackConf(Map<String, String> writeBackConf) {
-		this.writeBackConf = writeBackConf;
+		//this.writeBackConf = writeBackConf;
 	}
 	
 
 	public boolean isWriteBackEnabled() {
 		return this.writeBackConf.containsKey(WRITEBACK);
+	}
+	
+	public void setWriteBackEnabled(boolean b) {
+	
 	}
 	
 	

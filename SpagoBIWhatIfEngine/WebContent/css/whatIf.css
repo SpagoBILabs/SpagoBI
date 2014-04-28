@@ -226,16 +226,18 @@ td[contenteditable="true"]:focus {
 /*------------------*/
 /* toolbar */
 /*------------------*/
-.drill-mode{
+/* .drill-mode{
 	background-image: url(../img/drill.png);
-}
+} */
 .mdx{
 	background-image: url(../img/mdx.png);
 }
 .undo{
 	background-image: url(../img/undo.png);
 }
-
+.show-parent-members{
+	background-image: url(../img/show_parent_members.png);
+}
 
 /*------------------*/
 /* Multi hierarchy */
