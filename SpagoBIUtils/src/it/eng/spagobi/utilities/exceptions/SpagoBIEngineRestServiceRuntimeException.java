@@ -15,7 +15,7 @@ import java.util.Locale;
 import it.eng.spagobi.utilities.engines.EngineMessageBundle;
 
 
-public class SpagoBIEngineRestServiceException extends SpagoBIRuntimeException {
+public class SpagoBIEngineRestServiceRuntimeException extends SpagoBIRuntimeException {
 
 
 	private String localizationCode = "generic.error";
@@ -38,7 +38,7 @@ public class SpagoBIEngineRestServiceException extends SpagoBIRuntimeException {
 	 * @param locale the locale
 	 * @param ex the parent exception
 	 */
-    public SpagoBIEngineRestServiceException(String localizationCode, Locale locale, Throwable ex) {
+    public SpagoBIEngineRestServiceRuntimeException(String localizationCode, Locale locale, Throwable ex) {
     	super( ex) ;
     	setLocalizationCode(localizationCode);
     	this.locale = locale;
@@ -51,7 +51,7 @@ public class SpagoBIEngineRestServiceException extends SpagoBIRuntimeException {
 	 * @param message a message for the exception
 	 * @param ex the parent exception
 	 */
-    public SpagoBIEngineRestServiceException(String localizationCode, Locale locale, String message, Throwable ex) {
+    public SpagoBIEngineRestServiceRuntimeException(String localizationCode, Locale locale, String message, Throwable ex) {
     	super(message, ex) ;
     	setLocalizationCode(localizationCode);
     	this.locale = locale;
@@ -64,7 +64,7 @@ public class SpagoBIEngineRestServiceException extends SpagoBIRuntimeException {
 	 * @param locale the locale
 	 * @param message a message for the exception
 	 */
-    public SpagoBIEngineRestServiceException(String localizationCode, Locale locale, String message) {
+    public SpagoBIEngineRestServiceRuntimeException(String localizationCode, Locale locale, String message) {
     	super( message) ;
     	setLocalizationCode(localizationCode);
     }
@@ -84,6 +84,9 @@ public class SpagoBIEngineRestServiceException extends SpagoBIRuntimeException {
 	}
 
 	public Locale getLocale() {
+		if(locale ==null){
+			locale = Locale.UK;
+		}
 		return locale;
 	}
 	
