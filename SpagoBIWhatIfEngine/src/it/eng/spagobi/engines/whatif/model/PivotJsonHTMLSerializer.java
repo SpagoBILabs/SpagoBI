@@ -135,6 +135,11 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotModel> {
 		renderer.setEnableColumnDrillDown(true);
 		renderer.setEnableRowDrillDown(true);
 		renderer.setEnableSort(true);
+		
+		///show parent members
+		Boolean showParentMembers = modelConfig.getShowParentMembers();
+		renderer.setShowParentMembers(showParentMembers);
+		
 		logger.debug("Rendering the model");
 		renderer.render(value);
 

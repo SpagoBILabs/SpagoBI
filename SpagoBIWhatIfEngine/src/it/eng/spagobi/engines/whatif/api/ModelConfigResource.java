@@ -48,6 +48,8 @@ public class ModelConfigResource extends AbstractWhatIfEngineService {
 			modelConfig = RestUtilities.readBody(getServletRequest());
 		
 			modelconfig = (ModelConfig)deserialize(modelConfig, ModelConfig.class);
+			
+			config.setShowParentMembers(modelconfig.getShowParentMembers());
 			config.setDrillType(modelconfig.getDrillType());
 		} catch (SerializationException e) {
 			logger.error(e.getMessage());

@@ -21,6 +21,7 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 	config:{
 		toolbarConfig: {
 			drillType: 'position',
+			showParentMembers: false,
 			dimensionHierarchyMap:{
 				x: 1,
 				y: 2
@@ -38,6 +39,8 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 	mdxContainerPanel: null,
 
 	drillMode: null,
+	
+	showParentMembers: null,
 
 	showMdx: null,
 
@@ -67,29 +70,7 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 		
 		
 		this.drillMode = Ext.create('Ext.container.ButtonGroup', 
-/*		{
-			text: LN('sbi.olap.toolbar.drill.mode'),
-			iconCls: 'drill-mode',
-
-			menu: [{
-				text: 'Position',
-				scope:thisPanel,
-				handler: function() {
-					this.setToolbarConf({drillType: 'position'});
-				}},
-				{text: 'Member',
-					scope:thisPanel,
-					handler: function() {
-						this.setToolbarConf({drillType: 'member'});
-					}},
-					{text: 'Replace',
-						scope:thisPanel,
-						handler: function() {
-							this.setToolbarConf({drillType: 'replace'});
-						}}],
-						reorderable: true
-		}*/
-				{
+			{
 	        xtype: 'buttongroup',
 	        columns: 3,
 			style:'border-radius: 10px;padding: 0px;margin: 0px;',
@@ -101,7 +82,6 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 	            pressedCls: 'pressed-drill',
 	            toggleGroup: 'drill',
 	            cls: 'drill-btn-left',
-				//style:'border: none;margin: 0px;margin-right: -2px; right: 2px;border-radius: 0px;background-color: #e3e4e6;',
 				scope:thisPanel,
 				handler: function() {
 					this.setToolbarConf({drillType: 'position'});
@@ -116,7 +96,6 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 	            toggleGroup: 'drill',
 	            pressedCls: 'pressed-drill',
 	            cls: 'drill-btn-center',
-	            //style:'border: none;margin: 0px;border-radius: 0px;border-left: 1px solid #d0d0d0; border-right: 1px solid #d0d0d0;background-color: #e3e4e6;',
 				scope:thisPanel,
 				handler: function() {
 					this.setToolbarConf({drillType: 'member'});
@@ -131,7 +110,6 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 	            toggleGroup: 'drill',	
 	            pressedCls: 'pressed-drill',
 	            cls: 'drill-btn-right',
-				//style:'border: none;margin: 0px; margin-left: -2px;left: 2px;border-radius: 0px;background-color: #e3e4e6;',
 				scope:thisPanel,
 				handler: function() {
 					this.setToolbarConf({drillType: 'replace'});
@@ -164,6 +142,17 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 			reorderable: true
 		});
 		
+		this.showParentMembers = Ext.create('Ext.Button', {
+			tooltip: LN('sbi.olap.toolbar.showParentMembers'),
+			iconCls: 'show-parent-members',
+			allowDepress: true,
+			handler: function() {
+				this.setToolbarConf({showParentMembers: true});
+			},
+			scope:this,
+			reorderable: true
+		});
+		
 		var pressedBtn = this.config.toolbarConfig.drillType;
 		if(pressedBtn == 'position'){
 			this.drillMode.items.items[0].pressed = true;
@@ -177,7 +166,7 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 			layout: {
 				overflowHandler: 'Menu'
 			},
-			items   : [ this.drillMode, this.showMdx, this.undo ]
+			items   : [ this.drillMode, this.showMdx, this.undo , this.showParentMembers]
 		});
 		this.callParent();
 	},
@@ -196,8 +185,6 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 	 * @param {Object} state of the view 
 	 */
 	setViewState: function(state){
-
-
 		this.toolbarConfig = Ext.apply(this.toolbarConfig, state);
 	}
 
@@ -208,7 +195,7 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 	 */
 	, setToolbarConf: function (conf){
 		
-		this.setViewState(conf);		
+		this.toolbarConfig = Ext.apply(this.toolbarConfig, conf);		
 		this.fireEvent('configChange',this.toolbarConfig);
 	}
 
