@@ -1,10 +1,16 @@
-/**
- * 
- */
+/* SpagoBI, the Open Source Business Intelligence suite
+
+ * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 package it.eng.spagobi.writeback4j.mondrian.schema;
 
 import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
+import it.eng.spagobi.writeback4j.IMemberCordinates;
+import it.eng.spagobi.writeback4j.ISchemaRetriver;
+import it.eng.spagobi.writeback4j.TableEntry;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -26,17 +32,12 @@ import org.olap4j.metadata.Dimension.Type;
 import org.olap4j.metadata.Level;
 import org.olap4j.metadata.Member;
 
-/* SpagoBI, the Open Source Business Intelligence suite
-
- * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
- * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 /**
- * @author ghedin
+ * @author Alberto Ghedin (alberto.ghedin@eng.it)
  *
  */
-public class MondrianSchemaRetriver {
+public class MondrianSchemaRetriver implements ISchemaRetriver{
 
 	public static transient Logger logger = Logger.getLogger(MondrianSchemaRetriver.class);
 	
@@ -78,7 +79,7 @@ public class MondrianSchemaRetriver {
 	}
 	
 	
-	public MondrianMemberCordinates getMemberCordinates(Member member){
+	public IMemberCordinates getMemberCordinates(Member member){
 		logger.debug("IN");
 
 		//get the dimension for the member
@@ -88,7 +89,7 @@ public class MondrianSchemaRetriver {
 		MondrianDef.Hierarchy  mondrianHierarchy = getMondrianHierarchy(member.getLevel(), mondrianDimension.getDimension(schema));
 		
 		//For each level starting from the root to the Get the map between the hierarchy of the member( root member, child, granchild, .... member) and the level
-		Map<MondrianDef.Level, Member> mapTableEntryValue = getMemberColumnMap(member, mondrianHierarchy);
+		Map<TableEntry, Member> mapTableEntryValue = getMemberColumnMap(member, mondrianHierarchy);
 		
 		logger.debug("OUT");
 		
@@ -152,11 +153,11 @@ public class MondrianSchemaRetriver {
 	 * @param mondrianHierarchy
 	 * @return the map Level-->Member of the level
 	 */
-	public Map<MondrianDef.Level, Member> getMemberColumnMap(Member member, MondrianDef.Hierarchy mondrianHierarchy){
+	public Map<TableEntry, Member> getMemberColumnMap(Member member, MondrianDef.Hierarchy mondrianHierarchy){
 		
 		logger.debug("IN");
 		
-		Map<MondrianDef.Level, Member> mapTableEntryValue = new HashMap<MondrianDef.Level, Member>();
+		Map<TableEntry, Member> mapTableEntryValue = new HashMap<TableEntry, Member>();
 		int memberDepth =  member.getDepth();
 		
 		//get all the levels starting from the root to the one that contains the passed member
@@ -165,7 +166,8 @@ public class MondrianSchemaRetriver {
 		//Create a Map that links the member with the level that contains it
 		Member aMember = member;
 		for(int i=memberValues.size()-1; i>=0;i--){
-			mapTableEntryValue.put(memberValues.get(i), aMember);
+			MondrianDef.Level aLevel = memberValues.get(i);
+			mapTableEntryValue.put(new TableEntry(aLevel.column, aLevel.table) , aMember);
 			aMember = aMember.getParentMember();
 		}
 		
@@ -198,13 +200,13 @@ public class MondrianSchemaRetriver {
 	 * @return if member is a Measure returns the linked MondrianDef.Measure, null otherwise
 	 * @throws SpagoBIEngineException 
 	 */
-	public MondrianDef.Measure getMondrianMeasure(Member member) throws SpagoBIEngineException {
+	public String getMeasureColumn(Member member) throws SpagoBIEngineException {
 		String measure = member.getName();
 		try {
 			if((member.getDimension().getDimensionType().equals(Type.MEASURE))){
 				for(int i=0; i<editCube.measures.length; i++){
 					if(editCube.measures[i].name.equals(measure)){
-						return editCube.measures[i];
+						return editCube.measures[i].column;
 					}
 				}
 			}
@@ -217,8 +219,8 @@ public class MondrianSchemaRetriver {
 	}
 
 
-	public MondrianDef.Cube getEditCube() {
-		return editCube;
+	public String getEditCubeTableName() {
+		return editCube.fact.getAlias();
 	}
 	
 	

@@ -102,7 +102,7 @@ public class ModelResource extends AbstractWhatIfEngineService {
 				.getCell(ordinal);
 		CellTransformation transformation = new CellTransformation(value,
 				cellWrapper.getValue(), cellWrapper,
-				new DefaultWeightedAllocationAlgorithm());
+				new DefaultWeightedAllocationAlgorithm(ei));
 		cellSetWrapper.applyTranformation(transformation);
 		String table = renderModel(model);
 		

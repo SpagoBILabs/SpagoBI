@@ -10,12 +10,11 @@
 
 package it.eng.spagobi.engines.whatif.model.transform.algorithm;
 
+import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
 import it.eng.spagobi.engines.whatif.model.SpagoBICellSetWrapper;
 import it.eng.spagobi.engines.whatif.model.SpagoBICellWrapper;
 import it.eng.spagobi.engines.whatif.model.transform.CellRelation;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-import it.eng.spagobi.writeback4j.mondrian.sql.QueryBuilder;
 
 import org.apache.log4j.Logger;
 import org.olap4j.Position;
@@ -28,7 +27,16 @@ public class DefaultWeightedAllocationAlgorithm extends AllocationAlgorithm {
 	public static final String NAME = "DEFAULT_WEIGHTED_ALLOCATION_ALGORITHM";
 	
 	private static Logger logger = Logger.getLogger(DefaultWeightedAllocationAlgorithm.class);
+	private WhatIfEngineInstance ei;
 	
+	
+	
+	
+	public DefaultWeightedAllocationAlgorithm(WhatIfEngineInstance ei) {
+		super();
+		this.ei = ei;
+	}
+
 	@Override
 	public String getName() {
 		return NAME;
@@ -104,8 +112,7 @@ public class DefaultWeightedAllocationAlgorithm extends AllocationAlgorithm {
 	
 	
 
-	public void persist(SpagoBICellWrapper cell, Object oldValue,
-			Object newValue) {
+	public void persist(SpagoBICellWrapper cell, Object oldValue, Object newValue) {
 		
 		Monitor totalTimeMonitor = null;
 		Monitor errorHitsMonitor = null;
@@ -128,9 +135,8 @@ public class DefaultWeightedAllocationAlgorithm extends AllocationAlgorithm {
 	}
 
 	private void persistInternal(SpagoBICellWrapper cell, Object oldValue,Object newValue) throws Exception {
-		QueryBuilder msr = new QueryBuilder("D:/Sviluppo/SpagoBI/progetti/Trunk_40/runtime/resources/Olap/FoodMartMySQL.xml", "Sales_Edit");
-
-		msr.buildProportionalUpdate(cell.getMembers(), ((Number) newValue).doubleValue()/((Number) oldValue).doubleValue());		
+		Double prop = ((Number) newValue).doubleValue()/((Number) oldValue).doubleValue();
+		ei.getWriteBackManager().executeProportionalUpdate(cell.getMembers(), prop);
 		
 		
 	}

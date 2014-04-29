@@ -86,8 +86,13 @@ public class WhatIfEngineStartAction extends AbstractWhatIfEngineService {
 		ds.setUser("root");
 		ds.setPwd("root");
 		ds.setDriver("com.mysql.jdbc.Driver");
+		ds.setUrlConnection("jdbc:mysql://localhost:3306/foodmart_key");
 
 		env.put(EngineConstants.ENV_DATASOURCE, ds);
+		env.put(EngineConstants.ENV_OLAP_SCHEMA, "D:/Sviluppo/SpagoBI/progetti/Trunk_40/runtime/resources/Olap/FoodMartMySQL.xml");
+		env.put(EngineConstants.ENV_EDIT_CUBE_NAME, "Sales_Edit");
+		
+		
 		// env.put(EngineConstants.ENV_USER_PROFILE, getUserProfile());
 		// env.put(EngineConstants.ENV_CONTENT_SERVICE_PROXY, getContentServiceProxy());
 		// env.put(EngineConstants.ENV_AUDIT_SERVICE_PROXY, getAuditServiceProxy() );
