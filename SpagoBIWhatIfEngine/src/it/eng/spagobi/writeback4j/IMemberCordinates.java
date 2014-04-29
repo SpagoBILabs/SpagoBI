@@ -7,6 +7,7 @@
 
 package it.eng.spagobi.writeback4j;
 
+
 import it.eng.spagobi.writeback4j.sql.EquiJoin;
 import it.eng.spagobi.writeback4j.sql.TableEntry;
 
