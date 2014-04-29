@@ -6,6 +6,9 @@
 
 package it.eng.spagobi.engines.whatif;
 
+import it.eng.spago.base.SourceBean;
+import it.eng.spagobi.services.common.EnginConf;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -19,9 +22,6 @@ import org.apache.log4j.Logger;
 import org.olap4j.OlapDataSource;
 
 import com.eyeq.pivot4j.datasource.SimpleOlapDataSource;
-
-import it.eng.spago.base.SourceBean;
-import it.eng.spagobi.services.common.EnginConf;
 
 /**
  * @author ...
@@ -130,12 +130,7 @@ public class WhatIfEngineConfig {
 		}
 			
 		
-		sb = (SourceBean) getConfigSourceBean().getAttribute("CATALOG");
-		if(sb!=null){
-			String system = System.getProperty("catalina.home");
-			catalog = system+sb.getCharacters();
-		}
-			
+		catalog = getCatalogue();
 		
 		sb = (SourceBean) getConfigSourceBean().getAttribute("CONNECTIONSTRING");
 		if(sb!=null)

@@ -9,6 +9,7 @@
 package it.eng.spagobi.engines.whatif.common;
 
 import it.eng.spagobi.engines.whatif.WhatIfEngine;
+import it.eng.spagobi.engines.whatif.WhatIfEngineConfig;
 import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
@@ -89,7 +90,7 @@ public class WhatIfEngineStartAction extends AbstractWhatIfEngineService {
 		ds.setUrlConnection("jdbc:mysql://localhost:3306/foodmart_key");
 
 		env.put(EngineConstants.ENV_DATASOURCE, ds);
-		env.put(EngineConstants.ENV_OLAP_SCHEMA, "D:/Sviluppo/SpagoBI/progetti/Trunk_40/runtime/resources/Olap/FoodMartMySQL.xml");
+		env.put(EngineConstants.ENV_OLAP_SCHEMA, WhatIfEngineConfig.getInstance().getCatalogue());
 		env.put(EngineConstants.ENV_EDIT_CUBE_NAME, "Sales_Edit");
 		
 		
