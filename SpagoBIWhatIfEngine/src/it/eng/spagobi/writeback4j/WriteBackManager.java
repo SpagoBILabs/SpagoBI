@@ -16,6 +16,8 @@ import it.eng.spagobi.writeback4j.sql.QueryBuilder;
 /**
  * @author Alberto Ghedin (alberto.ghedin@eng.it)
  *
+ * Manager of the writeback.. 
+ * Provides the methods to update the values in the db 
  */
 public class WriteBackManager {
 	QueryBuilder queryBulder;

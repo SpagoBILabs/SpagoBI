@@ -17,7 +17,7 @@ import org.olap4j.metadata.Member;
  */
 public interface ISchemaRetriver {
 	
-	public IMemberCordinates getMemberCordinates(Member member);
+	public IMemberCoordinates getMemberCordinates(Member member);
 	public String getEditCubeTableName() ;
 	public String getMeasureColumn(Member member) throws SpagoBIEngineException ;
 	

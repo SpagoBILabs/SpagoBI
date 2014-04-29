@@ -7,7 +7,7 @@
 
 package it.eng.spagobi.writeback4j.mondrian;
 
-import it.eng.spagobi.writeback4j.IMemberCordinates;
+import it.eng.spagobi.writeback4j.IMemberCoordinates;
 import it.eng.spagobi.writeback4j.sql.EquiJoin;
 import it.eng.spagobi.writeback4j.sql.TableEntry;
 
@@ -24,13 +24,13 @@ import org.olap4j.metadata.Member;
  * @author ghedin
  *
  */
-public class MondrianMemberCordinates implements IMemberCordinates{
+public class MondrianMemberCoordinates implements IMemberCoordinates{
 	
 	MondrianDef.CubeDimension dimension;
 	MondrianDef.Hierarchy hieararchy;
 	Map<TableEntry, Member> level2Member;
 	
-	public MondrianMemberCordinates(CubeDimension dimension, Hierarchy hieararchy,Map<TableEntry, Member> level2Member) {
+	public MondrianMemberCoordinates(CubeDimension dimension, Hierarchy hieararchy,Map<TableEntry, Member> level2Member) {
 		super();
 		this.dimension = dimension;
 		this.hieararchy = hieararchy;

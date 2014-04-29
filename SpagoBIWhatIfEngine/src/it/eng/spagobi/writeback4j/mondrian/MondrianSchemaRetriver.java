@@ -8,7 +8,7 @@ package it.eng.spagobi.writeback4j.mondrian;
 
 import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
-import it.eng.spagobi.writeback4j.IMemberCordinates;
+import it.eng.spagobi.writeback4j.IMemberCoordinates;
 import it.eng.spagobi.writeback4j.ISchemaRetriver;
 import it.eng.spagobi.writeback4j.sql.TableEntry;
 
@@ -79,7 +79,7 @@ public class MondrianSchemaRetriver implements ISchemaRetriver{
 	}
 	
 	
-	public IMemberCordinates getMemberCordinates(Member member){
+	public IMemberCoordinates getMemberCordinates(Member member){
 		logger.debug("IN");
 
 		//get the dimension for the member
@@ -93,7 +93,7 @@ public class MondrianSchemaRetriver implements ISchemaRetriver{
 		
 		logger.debug("OUT");
 		
-		return new MondrianMemberCordinates(mondrianDimension, mondrianHierarchy, mapTableEntryValue);
+		return new MondrianMemberCoordinates(mondrianDimension, mondrianHierarchy, mapTableEntryValue);
 		
 
 	}
