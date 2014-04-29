@@ -10,6 +10,7 @@ import org.olap4j.metadata.Member;
 
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
+import it.eng.spagobi.writeback4j.mondrian.MondrianDriver;
 import it.eng.spagobi.writeback4j.mondrian.MondrianSchemaRetriver;
 import it.eng.spagobi.writeback4j.sql.QueryBuilder;
 
@@ -22,10 +23,9 @@ import it.eng.spagobi.writeback4j.sql.QueryBuilder;
 public class WriteBackManager {
 	QueryBuilder queryBulder;
 
-	public WriteBackManager(String editCubeName, String olapSchema, IDataSource dataSource) throws SpagoBIEngineException {
-		ISchemaRetriver retriver = new MondrianSchemaRetriver( olapSchema,  editCubeName);
+	public WriteBackManager(String editCubeName, IXmlaDriver xmlaDriver, IDataSource dataSource) throws SpagoBIEngineException {
+		ISchemaRetriver retriver = new MondrianSchemaRetriver( (MondrianDriver)xmlaDriver,  editCubeName);
 		queryBulder = new QueryBuilder(retriver, dataSource);
-		
 	}
 	
 	public void executeProportionalUpdate(Member[] members, double prop) throws SpagoBIEngineException{
