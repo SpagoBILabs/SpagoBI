@@ -52,6 +52,8 @@ public class ModelConfigResource extends AbstractWhatIfEngineService {
 			config.setShowParentMembers(modelconfig.getShowParentMembers());
 			config.setHideSpans(modelconfig.getHideSpans());
 			config.setDrillType(modelconfig.getDrillType());
+			config.setShowProperties(modelconfig.getShowProperties());
+			config.setSuppressEmpty(modelconfig.getSuppressEmpty());
 		} catch (SerializationException e) {
 			logger.error(e.getMessage());
 		}catch (IOException e1) {

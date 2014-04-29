@@ -23,6 +23,7 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 			drillType: 'position',
 			showParentMembers: false,
 			hideSpans: false,
+			showProperties: false,
 			dimensionHierarchyMap:{
 				x: 1,
 				y: 2
@@ -42,6 +43,7 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 	drillMode: null,	
 	showParentMembers: null,
 	hideSpans: null,
+	showProperties: null,
 
 	showMdx: null,
 
@@ -164,6 +166,25 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 			reorderable: true
 		});
 		
+		this.showProperties = Ext.create('Ext.Button', {
+			tooltip: LN('sbi.olap.toolbar.showProperties'),
+			iconCls: 'show-props',
+			enableToggle: true,
+	        toggleHandler: this.onShowPropertiesToggle,
+
+			scope:this,
+			reorderable: true
+		}); 
+		
+		this.suppressEmpty = Ext.create('Ext.Button', {
+			tooltip: LN('sbi.olap.toolbar.suppressEmpty'),
+			iconCls: 'empty-rows',
+			enableToggle: true,
+	        toggleHandler: this.onSuppressEmptyToggle,
+
+			scope:this,
+			reorderable: true
+		});
 		this.clean = Ext.create('Ext.Button', {
 			text: LN('sbi.olap.toolbar.clean'),
 			iconCls: 'undo',
@@ -207,7 +228,9 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 			items   : [ this.drillMode, this.showMdx, this.undo , 
 			            this.clean, this.persist,
 			            this.showParentMembers, 
-			            this.hideSpans]
+			            this.hideSpans, 
+			            /*this.showProperties, */
+			            this.suppressEmpty]
 		});
 		this.callParent();
 	},
@@ -223,6 +246,14 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
     onHideSpansToggle: function (item, pressed){
     	this.hideSpans.pressed = pressed;
     	this.setToolbarConf({hideSpans: pressed});
+    },
+    onShowPropertiesToggle: function (item, pressed){
+    	this.showProperties.pressed = pressed;
+    	this.setToolbarConf({showProperties: pressed});
+    },
+    onSuppressEmptyToggle: function (item, pressed){
+    	this.suppressEmpty.pressed = pressed;
+    	this.setToolbarConf({suppressEmpty: pressed});
     },
 	/**
 	 * Gets the configuration of the view

@@ -73,6 +73,8 @@ Sbi.locale.ln['sbi.olap.toolbar.undo'] = 'Undo';
 Sbi.locale.ln['sbi.olap.toolbar.clean'] = 'Pulire cache';
 Sbi.locale.ln['sbi.olap.toolbar.showParentMembers'] = 'Mostra membri padri';
 Sbi.locale.ln['sbi.olap.toolbar.hideSpans'] = 'Nascondi spans';
+Sbi.locale.ln['sbi.olap.toolbar.showProperties'] = 'Mostra proprieta';
+Sbi.locale.ln['sbi.olap.toolbar.suppressEmpty'] = 'Sopprimi righe/colonne vuote';
 //===================================================================
 //FILTERS
 //===================================================================
