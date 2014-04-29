@@ -65,7 +65,8 @@ public class EngineConstants {
 	
 	public static final String MODEL_NAME = "MODEL_NAME";
 	
-	
+	public static final String ENV_OLAP_SCHEMA = "ENV_OLAP_SCHEMA";
+	public static final String ENV_EDIT_CUBE_NAME = "ENV_EDIT_CUBE_NAME";
 
 
 }
