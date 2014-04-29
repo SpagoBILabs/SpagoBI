@@ -12,6 +12,7 @@ import java.util.Map;
 /**
  * @author Alberto Ghedin (alberto.ghedin@eng.it)
  *
+ * @class a table
  */
 public class TableEntry{
 	String column;
