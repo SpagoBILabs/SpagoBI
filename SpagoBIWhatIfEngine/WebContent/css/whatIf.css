@@ -241,6 +241,12 @@ td[contenteditable="true"]:focus {
 .hide-spans{
 	background-image: url(../img/hide_spans.png);
 }
+.show-props{
+	background-image: url(../img/show_props.png);
+}
+.empty-rows{
+	background-image: url(../img/empty_rows.png);
+}
 /*------------------*/
 /* Multi hierarchy */
 /*------------------*/

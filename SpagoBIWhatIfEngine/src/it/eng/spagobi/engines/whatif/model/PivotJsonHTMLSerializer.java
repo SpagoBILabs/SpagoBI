@@ -41,6 +41,7 @@ import org.olap4j.metadata.Member;
 import com.eyeq.pivot4j.PivotModel;
 import com.eyeq.pivot4j.query.QueryAdapter;
 import com.eyeq.pivot4j.transform.ChangeSlicer;
+import com.eyeq.pivot4j.transform.NonEmpty;
 import com.eyeq.pivot4j.transform.impl.ChangeSlicerImpl;
 import com.eyeq.pivot4j.ui.command.DrillCollapseMemberCommand;
 import com.eyeq.pivot4j.ui.command.DrillCollapsePositionCommand;
@@ -141,8 +142,15 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotModel> {
 		renderer.setShowParentMembers(showParentMembers);
 		///hide spans
 		Boolean hideSpans = modelConfig.getHideSpans();
-		renderer.setHideSpans(hideSpans);;
-		
+		renderer.setHideSpans(hideSpans);
+		///show properties
+		Boolean showProperties = modelConfig.getShowProperties();
+		//renderer.set(showProperties); ??????????????????????????
+		///suppress empty rows/columns
+		Boolean suppressEmpty = modelConfig.getSuppressEmpty();
+		NonEmpty transformNonEmpty = value.getTransform(NonEmpty.class);
+		transformNonEmpty.setNonEmpty(suppressEmpty);
+				
 		logger.debug("Rendering the model");
 		renderer.render(value);
 

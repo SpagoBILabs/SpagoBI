@@ -21,6 +21,8 @@ public class ModelConfig implements Serializable {
 	private String drillType;
 	private Boolean showParentMembers;
 	private Boolean hideSpans;
+	private Boolean showProperties;
+	private Boolean suppressEmpty;
 
 
 	private Map<String, String> dimensionHierarchyMap;
@@ -30,9 +32,27 @@ public class ModelConfig implements Serializable {
 		drillType = DrillDownCommand.MODE_POSITION;
 		showParentMembers = false;
 		hideSpans = false;
+		showProperties = false;
+		suppressEmpty = false;
 		dimensionHierarchyMap = new HashMap<String, String>();
 		writeBackConf = new HashMap<String, String>();
 	}
+	
+	public Boolean getSuppressEmpty() {
+		return suppressEmpty;
+	}
+
+	public void setSuppressEmpty(Boolean suppressEmpty) {
+		this.suppressEmpty = suppressEmpty;
+	}
+
+	public Boolean getShowProperties() {
+		return showProperties;
+	}
+	public void setShowProperties(Boolean showProperties) {
+		this.showProperties = showProperties;
+	}
+	
 	public Boolean getHideSpans() {
 		return hideSpans;
 	}
