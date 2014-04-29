@@ -45,7 +45,8 @@ public class MondrianSchemaRetriver implements ISchemaRetriver{
 	MondrianDef.Cube editCube;
 	
 	
-	public MondrianSchemaRetriver(String catalogUri, String editCubeName) throws SpagoBIEngineException{
+	public MondrianSchemaRetriver(MondrianDriver driver, String editCubeName) throws SpagoBIEngineException{
+		String catalogUri = driver.getOlapSchema();
 		File tmpFile = new File(catalogUri);
 		FileInputStream fis;
 		Parser xmlParser;

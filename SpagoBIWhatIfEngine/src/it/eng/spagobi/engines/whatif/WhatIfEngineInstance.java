@@ -20,6 +20,7 @@ import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIEngineRestServiceRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.writeback4j.WriteBackManager;
+import it.eng.spagobi.writeback4j.mondrian.MondrianDriver;
 
 import java.io.Serializable;
 import java.sql.SQLException;
@@ -114,7 +115,7 @@ public class WhatIfEngineInstance extends AbstractEngineInstance implements Seri
 		if(writeback!= null && !writeback.equals("")){
 			modelConfig.getWriteBackConf().put(ModelConfig.WRITEBACK, writeback);
 			try {
-				writeBackManager = new WriteBackManager(getEditCubeName(), getOlapSchema(), getDataSource());
+				writeBackManager = new WriteBackManager(getEditCubeName(), new MondrianDriver(getOlapSchema()), getDataSource());
 			} catch (SpagoBIEngineException e) {
 				logger.debug("Exception creating the whatif component", e);
 				throw new SpagoBIEngineRestServiceRuntimeException("whatif.engine.instance.writeback.exception", getLocale(), "Exception creating the whatif component", e);
