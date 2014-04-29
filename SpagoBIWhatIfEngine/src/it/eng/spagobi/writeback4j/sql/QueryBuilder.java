@@ -8,7 +8,7 @@ package it.eng.spagobi.writeback4j.sql;
 
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
-import it.eng.spagobi.writeback4j.IMemberCordinates;
+import it.eng.spagobi.writeback4j.IMemberCoordinates;
 import it.eng.spagobi.writeback4j.ISchemaRetriver;
 
 import java.sql.SQLException;
@@ -47,7 +47,7 @@ public class QueryBuilder {
 	
 	public void executeProportionalUpdate(Member[] members, double prop) throws SpagoBIEngineException{
 		//list of the coordinates for the members
-		List<IMemberCordinates> memberCordinates = new ArrayList<IMemberCordinates>();
+		List<IMemberCoordinates> memberCordinates = new ArrayList<IMemberCoordinates>();
 		
 		//init the query with the update set statement
 		StringBuffer query = new StringBuffer();
@@ -71,7 +71,7 @@ public class QueryBuilder {
 		buildProportionalUpdateSingleSubquery(memberCordinates, query);
 	}
 	
-	public void buildProportionalUpdateOneSubqueryForDimension(List<IMemberCordinates> memberCordinates, StringBuffer query){
+	public void buildProportionalUpdateOneSubqueryForDimension(List<IMemberCoordinates> memberCordinates, StringBuffer query){
 		
 		//List of where conditions
 		Map<TableEntry, String> whereConditions = new HashMap<TableEntry, String>();
@@ -84,8 +84,8 @@ public class QueryBuilder {
 		
 		query.append(" where exists ( ");
 		
-		for (Iterator<IMemberCordinates> iterator = memberCordinates.iterator(); iterator.hasNext();) {
-			IMemberCordinates aIMemberCordinates = (IMemberCordinates) iterator.next();
+		for (Iterator<IMemberCoordinates> iterator = memberCordinates.iterator(); iterator.hasNext();) {
+			IMemberCoordinates aIMemberCordinates = (IMemberCoordinates) iterator.next();
 			whereConditions.putAll(buildWhereConditions(aIMemberCordinates, fromTables));
 			addJoinConditions(fromTables, joinConditions, aIMemberCordinates);
 			addInnerDimensionJoinConditions(fromTables, joinConditions, aIMemberCordinates);
@@ -100,7 +100,7 @@ public class QueryBuilder {
 		executeQuery(queryString);
 	}
 	
-	public void buildProportionalUpdateSingleSubquery(List<IMemberCordinates> memberCordinates, StringBuffer query){
+	public void buildProportionalUpdateSingleSubquery(List<IMemberCoordinates> memberCordinates, StringBuffer query){
 		
 		//List of where conditions
 		Map<TableEntry, String> whereConditions;
@@ -117,9 +117,9 @@ public class QueryBuilder {
 		query.append(" where ");
 		
 		boolean first = true;
-		for (Iterator<IMemberCordinates> iterator = memberCordinates.iterator(); iterator.hasNext();) {
+		for (Iterator<IMemberCoordinates> iterator = memberCordinates.iterator(); iterator.hasNext();) {
 
-			IMemberCordinates aIMemberCordinates = (IMemberCordinates) iterator.next();
+			IMemberCoordinates aIMemberCordinates = (IMemberCoordinates) iterator.next();
 			if(!aIMemberCordinates.isAllMember()){
 				whereConditions = new HashMap<TableEntry, String>();
 				selectFields = new HashSet<EquiJoin>();
@@ -173,7 +173,7 @@ public class QueryBuilder {
 		
 	}
 	
-	public Map<TableEntry, String> buildWhereConditions(IMemberCordinates cordinates, Set<String> from){
+	public Map<TableEntry, String> buildWhereConditions(IMemberCoordinates cordinates, Set<String> from){
 		Map<TableEntry, String> condition2Value = new HashMap<TableEntry, String>();
 		Map<TableEntry,Member> lelvel2Member = cordinates.getLevel2Member();
 		
@@ -190,7 +190,7 @@ public class QueryBuilder {
 	}
 
 	
-	public void addJoinConditions(Set<String> from, Set<EquiJoin> joins, IMemberCordinates cordinates){
+	public void addJoinConditions(Set<String> from, Set<EquiJoin> joins, IMemberCoordinates cordinates){
 		if(!cordinates.isAllMember()){
 			String tableName = cordinates.getTableName();
 			
@@ -205,7 +205,7 @@ public class QueryBuilder {
 	}
 	
 	
-	public void addInnerDimensionJoinConditions(Set<String> from, Set<EquiJoin> joins, IMemberCordinates cordinates){
+	public void addInnerDimensionJoinConditions(Set<String> from, Set<EquiJoin> joins, IMemberCoordinates cordinates){
 	
 		EquiJoin coordinateInnerJoin =  cordinates.getInnerDimensionJoinConditions();
 		if(coordinateInnerJoin!=null){
