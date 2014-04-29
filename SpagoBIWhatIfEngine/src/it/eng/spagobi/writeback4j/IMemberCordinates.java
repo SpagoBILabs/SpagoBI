@@ -7,6 +7,9 @@
 
 package it.eng.spagobi.writeback4j;
 
+import it.eng.spagobi.writeback4j.sql.EquiJoin;
+import it.eng.spagobi.writeback4j.sql.TableEntry;
+
 import java.util.Map;
 
 import org.olap4j.metadata.Member;

@@ -10,7 +10,8 @@ import org.olap4j.metadata.Member;
 
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
-import it.eng.spagobi.writeback4j.mondrian.schema.MondrianSchemaRetriver;
+import it.eng.spagobi.writeback4j.mondrian.MondrianSchemaRetriver;
+import it.eng.spagobi.writeback4j.sql.QueryBuilder;
 
 /**
  * @author Alberto Ghedin (alberto.ghedin@eng.it)
