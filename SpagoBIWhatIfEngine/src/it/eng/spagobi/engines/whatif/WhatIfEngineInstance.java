@@ -17,7 +17,9 @@ import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.IEngineAnalysisState;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIEngineRestServiceRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.writeback4j.WriteBackManager;
 
 import java.io.Serializable;
 import java.sql.SQLException;
@@ -30,7 +32,6 @@ import org.olap4j.OlapConnection;
 import org.olap4j.OlapDataSource;
 
 import com.eyeq.pivot4j.PivotModel;
-import com.eyeq.pivot4j.impl.PivotModelImpl;
 
 /**
  * @author ...
@@ -51,6 +52,7 @@ public class WhatIfEngineInstance extends AbstractEngineInstance implements Seri
 	private OlapDataSource olapDataSource;
 	private PivotModel pivotModel;
 	private ModelConfig modelConfig;
+	private WriteBackManager writeBackManager;
 
 	public WhatIfEngineInstance(Object template, Map env) {
 		super( env );	
@@ -111,6 +113,13 @@ public class WhatIfEngineInstance extends AbstractEngineInstance implements Seri
 		String writeback = WhatIfEngineConfig.getInstance().getWriteBackConf();
 		if(writeback!= null && !writeback.equals("")){
 			modelConfig.getWriteBackConf().put(ModelConfig.WRITEBACK, writeback);
+			try {
+				writeBackManager = new WriteBackManager(getEditCubeName(), getOlapSchema(), getDataSource());
+			} catch (SpagoBIEngineException e) {
+				logger.debug("Exception creating the whatif component", e);
+				throw new SpagoBIEngineRestServiceRuntimeException("whatif.engine.instance.writeback.exception", getLocale(), "Exception creating the whatif component", e);
+				
+			}
 		}
 		
 	}
@@ -150,9 +159,18 @@ public class WhatIfEngineInstance extends AbstractEngineInstance implements Seri
 		return (IDataSource)this.getEnv().get(EngineConstants.ENV_DATASOURCE);
 	}
 	
+	public String getEditCubeName() {
+		return (String)this.getEnv().get(EngineConstants.ENV_EDIT_CUBE_NAME);
+	}
+	
 	public IDataSet getDataSet() {
 		return (IDataSet)this.getEnv().get(EngineConstants.ENV_DATASET);
 	}
+	
+	public String getOlapSchema() {
+		return (String)this.getEnv().get(EngineConstants.ENV_OLAP_SCHEMA);
+	}
+	
 	
 	public Locale getLocale() {
 		return (Locale)this.getEnv().get(EngineConstants.ENV_LOCALE);
@@ -181,6 +199,10 @@ public class WhatIfEngineInstance extends AbstractEngineInstance implements Seri
 
 	public void validate() throws SpagoBIEngineException {
 		throw new WhatIfEngineRuntimeException("Unsupported method [validate]");		
+	}
+
+	public WriteBackManager getWriteBackManager() {
+		return writeBackManager;
 	}
 	
 	
