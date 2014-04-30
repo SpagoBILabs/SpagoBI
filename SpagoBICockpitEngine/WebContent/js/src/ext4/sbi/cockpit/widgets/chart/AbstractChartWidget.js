@@ -88,7 +88,7 @@ Ext.extend(Sbi.cockpit.widgets.chart.AbstractChartWidget, Sbi.cockpit.core.Widge
 		        params: requestParameters,
 		        success : function(response, opts) {
 		        	
-		        	this.dataContainerObject = Ext.util.JSON.decode( response.responseText );
+		        	this.dataContainerObject = Ext.JSON.decode( response.responseText );
 		        	//this.update(' <div id="' + this.chartDivId + '" style="width: 100%; height: 100%;"></div>');
 		        	if (this.isEmpty()) {
 //		        		this.update(' <div id="' + this.chartDivId + '" style="width: 100%; height: 100%;"></div>');
@@ -128,10 +128,10 @@ Ext.extend(Sbi.cockpit.widgets.chart.AbstractChartWidget, Sbi.cockpit.core.Widge
 	}
 
 	/**
-	 * Create a Store for Ext 3 Charts
+	 * Create a Store for Ext Charts
 	 */
 
-	, getJsonStoreExt3: function(percent){
+	, getJsonStore: function(percent){
 		var storeObject = {};
 		
 		var series = this.getSeries();
@@ -152,7 +152,7 @@ Ext.extend(Sbi.cockpit.widgets.chart.AbstractChartWidget, Sbi.cockpit.core.Widge
 			if(percent){
 				for(var j=0; j<series.length; j++){
 					z['seriesflatvalue'+j] = z['series'+j];
-					z['series'+j] = (z['series'+j]/seriesum)*100;;
+					z['series'+j] = (z['series'+j]/seriesum)*100;
 				}	
 			}
 			z['seriesum'] = seriesum;
@@ -277,7 +277,7 @@ Ext.extend(Sbi.cockpit.widgets.chart.AbstractChartWidget, Sbi.cockpit.core.Widge
 		return null;
 	}	
 
-	, addChartConfExt3: function(chartConf, showTipMask){
+	, addChartConf: function(chartConf, showTipMask){
 		if((this.chartConfig.showlegend !== undefined) ? this.chartConfig.showlegend : true){
 			if (chartConf.extraStyle === undefined || chartConf.extraStyle == null) {
 				chartConf.extraStyle = {};
@@ -304,6 +304,41 @@ Ext.extend(Sbi.cockpit.widgets.chart.AbstractChartWidget, Sbi.cockpit.core.Widge
 			}
 		}
 		return colors;
+	}
+	
+	, getMeasureScaleFactor: function (theMeasureName){
+		var i=0;
+		var scaleFactor={value:1, text:''};
+		var optionDefinition = null;
+		if ( this.fieldsOptions != null) {
+			for (; i < this.fieldsOptions.length; i++) {
+				if (this.fieldsOptions[i].alias === theMeasureName) {
+					optionDefinition = this.fieldsOptions[i];
+					break;
+				}
+			}
+			if(optionDefinition!=null){
+				legendSuffix = optionDefinition.options.measureScaleFactor;
+				if(legendSuffix != undefined && legendSuffix != null && legendSuffix!='NONE'){
+					scaleFactor.text = LN('sbi.worksheet.runtime.options.scalefactor.'+legendSuffix);
+					switch (legendSuffix)
+					{
+					case 'K':
+						scaleFactor.value=1000;
+						break;
+					case 'M':
+						scaleFactor.value=1000000;
+						break;
+					case 'G':
+						scaleFactor.value=1000000000;
+						break;
+					default:
+						scaleFactor.value=1;
+					}
+				}
+			}
+		}
+		return scaleFactor;
 	}
 	
 	, formatTextWithMeasureScaleFactor : function(text, measureName) {
@@ -344,8 +379,12 @@ Ext.extend(Sbi.cockpit.widgets.chart.AbstractChartWidget, Sbi.cockpit.core.Widge
 	}	
 	
 	
-	, isEmpty : function () {
-		var measures = this.dataContainerObject.columns.node_childs;
+	, isEmpty : function () {		
+		var measures = undefined;
+		
+		if (Sbi.isValorized(this.dataContainerObject.columns))
+			measures = this.dataContainerObject.columns.node_childs;
+		
 		return measures === undefined;
 	}
 

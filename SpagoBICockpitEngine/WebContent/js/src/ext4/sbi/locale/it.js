@@ -158,6 +158,21 @@ Sbi.locale.ln['sbi.cockpit.widgets.chartseriespanel.cannotdrophere.attributes'] 
 Sbi.locale.ln['sbi.cockpit.widgets.chartseriespanel.cannotdrophere.postlinecalculated'] = 'Non puoi utilizzare i campi calcolati basati su script tra le serie del grafico';
 Sbi.locale.ln['sbi.cockpit.widgets.chartseriespanel.tools.tt.removeall'] = ['Rimuovi tutti'];
 
+//column headers
+Sbi.locale.ln['sbi.qbe.selectgridpanel.headers.include'] = 'Includi';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.headers.having'] = 'Condizione su raggruppamento';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.headers.visible'] = 'Visibile';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.headers.group'] = 'Raggruppa';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.headers.filter'] = 'Filtri';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.headers.entity'] = 'Entita\'';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.headers.alias'] = 'Alias';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.headers.order'] = 'Ordinamento';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.headers.group'] = 'Raggruppa';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.headers.function'] = 'Funzione';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.headers.field'] = 'Campo';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.headers.delete'] = 'Elimina tutti';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.headers.delete.column'] = 'Elimina';
+
 //aggregation functions
 Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.name.none'] = 'nessuno';
 Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.name.sum'] = 'somma';

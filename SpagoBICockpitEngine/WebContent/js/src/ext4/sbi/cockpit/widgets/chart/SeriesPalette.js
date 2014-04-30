@@ -42,7 +42,6 @@ Ext.define('Sbi.cockpit.widgets.chart.SeriesPalette', {
 		
 	, init: function(c) {
 		this.initStore(c);
-		this.initColumnModel(c);
 		this.initGrid(c);
 	}
 
@@ -53,64 +52,42 @@ Ext.define('Sbi.cockpit.widgets.chart.SeriesPalette', {
 		this.setColors(this.defaultColors);
 	}
 	
-	, initColumnModel: function(c) {
-		
-		this.colorColumn = new Ext.grid.Column({
-			header: ''
-			, width: 60
-			, dataIndex: 'color'
-			, editor: new Ext.form.TextField({}) // only in order to make the column editable: the editor is built 
-												 // on the grid's beforeedit event 
-			, renderer : function(v, metadata, record) {
-				metadata.attr = ' style="background:' + v + ';"';
-				return '';  
-	       }
-		});
-//	    this.cm = new Ext.grid.ColumnModel([this.colorColumn]);
-	}
 	
 	, initGrid: function (c) {
-		this.grid = new Ext.grid.EditorGridPanel({
+		var cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
+	        clicksToEdit: 1
+	    });
+		this.grid = new Ext.grid.Panel({
 	        store: this.store
 	        , border: false
 	        , columns: [{
 	               header: ''
-				, width: 60
+				, width: '100%'
 				, dataIndex: 'color'
-				, editor: new Ext.form.TextField({}) // only in order to make the column editable: the editor is built 
-													 // on the grid's beforeedit event 
 				, renderer : function(v, metadata, record) {
 					metadata.attr = ' style="background:' + v + ';"';
 					return '';  
-		       }
+		          }
+	           , getEditor: function(record){	        	   
+		            if( Sbi.isValorized(record) ){
+		            	var rowIndex = record.store.indexOf(record);
+		            	var editorField = new Ext.ux.ColorField({ value: record.data.color, msgTarget: 'qtip', fallback: true});
+		            	editorField.on('change', function(f, val) {
+		            		record.store.getAt(rowIndex).set('color', '#'+val);
+	        			}, this); 
+		            	
+		                return Ext.create('Ext.grid.CellEditor', {field: editorField});
+		            } else return false;
+		        }
 	        }]
+			, flex: 1
 			, selModel: new Ext.selection.RowModel({})
-//	        , cm: this.cm
-//	        , sm: new Ext.grid.RowSelectionModel()
+			, plugins: [cellEditing]
 	        , enableDragDrop: true
 	        , ddGroup: this.ddGroup || 'crosstabDesignerDDGroup'
-		    , layout: 'fit'
 		    , viewConfig: {
 		    	forceFit: true
 		    }
-	        , listeners: {
-				render: function(grid) { // hide the grid header
-					grid.getView().el.select('.x-grid3-header').setStyle('display', 'none');
-	    		}
-	        	, beforeedit: {
-	        		fn : function (e) {
-	        	    	var t = Ext.apply({}, e);
-	        			this.currentRowRecordEdited = t.row;
-	        			var color = this.store.getAt(this.currentRowRecordEdited).data.color;
-	        			var colorFieldEditor = new Ext.ux.ColorField({ value: color, msgTarget: 'qtip', fallback: true});
-	        			colorFieldEditor.on('select', function(f, val) {
-	        				this.store.getAt(this.currentRowRecordEdited).set('color', val);
-	        			}, this);
-	        			this.colorColumn.setEditor(colorFieldEditor);
-	        		}
-	        		, scope : this
-	        	}
-			}
 		});
 	}
 	

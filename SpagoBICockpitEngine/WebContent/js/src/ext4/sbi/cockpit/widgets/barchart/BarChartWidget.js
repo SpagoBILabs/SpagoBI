@@ -56,7 +56,7 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidget, Sbi.cockpit.widgets.char
 		var size = retriever.getChartDimension(this);
 		this.update(' <div id="' + this.chartDivId + '" style="width: ' + size.width + '; height: ' + size.height + ';"></div>');
 		var percent = ((this.chartConfig.type).indexOf('percent')>=0);
-		var storeObject = this.getJsonStoreExt3(percent);
+		var storeObject = this.getJsonStore(percent);
 		var colors = this.getColors();
 		var extraStyle ={};
 
@@ -75,19 +75,19 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidget, Sbi.cockpit.widgets.char
 
 		if(this.chartConfig.orientation === 'horizontal'){
 			items.yField = 'categories';
-			items.series = this.getChartSeriesExt3(storeObject.serieNames, colors, true);
+			items.series = this.getChartSeries(storeObject.serieNames, colors, true);
 
 		}else{
 			items.xField = 'categories';
-			items.series = this.getChartSeriesExt3(storeObject.serieNames, colors);
+			items.series = this.getChartSeries(storeObject.serieNames, colors);
 		}
 
-		this.addChartConfExt3(items);
+		this.addChartConf(items);
 
 
 		items.region = 'center';
 
-		var barChartPanel = this.getChartExt4(this.chartConfig.orientation === 'horizontal', items, colors, percent);
+		var barChartPanel = this.getChart(this.chartConfig.orientation === 'horizontal', items, colors, percent);
 
 	}
 	// -----------------------------------------------------------------------------------------------------------------
@@ -95,7 +95,7 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidget, Sbi.cockpit.widgets.char
 	// -----------------------------------------------------------------------------------------------------------------
 	
 	//----- Ext 4 Implementation related functions ------------------------------------------
-	, getChartExt4 : function(horizontal, items, colors, percent){
+	, getChart : function(horizontal, items, colors, percent){
 		
 		var chartDataStore = items.store;
 		
@@ -289,14 +289,14 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidget, Sbi.cockpit.widgets.char
 		var series;
 		
 		var percent = ((this.chartConfig.type).indexOf('percent')>=0);
-		var storeObject = this.getJsonStoreExt3(percent);
+		var storeObject = this.getJsonStore(percent);
 		
 		var selectedSerieName = item.yField;
 		
 		var selectedSerie;
 		
 		if(horizontal){
-			series = this.getChartSeriesExt3(storeObject.serieNames, colors, true);
+			series = this.getChartSeries(storeObject.serieNames, colors, true);
 			for (var i =0; i<series.length;i++){
 				if (series[i].xField == selectedSerieName){
 					selectedSerie = series[i];
@@ -305,7 +305,7 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidget, Sbi.cockpit.widgets.char
 			}
 
 		}else{
-			series = this.getChartSeriesExt3(storeObject.serieNames, colors);
+			series = this.getChartSeries(storeObject.serieNames, colors);
 			
 			for (var i =0; i<series.length;i++){
 				if (series[i].yField == selectedSerieName){
@@ -316,7 +316,7 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidget, Sbi.cockpit.widgets.char
 		}
 
 		
-		var valueObj = this.getFormattedValueExt3(null, record, selectedSerie, chartType, allRuntimeSeries, allDesignSeries, type, horizontal);
+		var valueObj = this.getFormattedValue(null, record, selectedSerie, chartType, allRuntimeSeries, allDesignSeries, type, horizontal);
 		
 		var tooltip = '';
 		
@@ -337,7 +337,7 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidget, Sbi.cockpit.widgets.char
 	///---------------------------------------------------------------------
 	
 	
-	, getChartSeriesExt3: function(serieNames, colors, horizontal){
+	, getChartSeries: function(serieNames, colors, horizontal){
 		var seriesForChart = new Array();
 		for(var i=0; i<serieNames.length; i++){
 			var serie = {	
@@ -367,7 +367,7 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidget, Sbi.cockpit.widgets.char
 	}
 
 	//used for tooltip	
-	, getFormattedValueExt3: function (chart, record, series, chartType, allRuntimeSeries, allDesignSeries, type, horizontal){
+	, getFormattedValue: function (chart, record, series, chartType, allRuntimeSeries, allDesignSeries, type, horizontal){
 		var theSerieName  = series.displayName;
 		var value ;
 		var serieName;  // the serie name without eventual scale factor
