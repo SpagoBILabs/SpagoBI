@@ -115,8 +115,10 @@ public class WhatIfEngineConfig {
 	public String getConnectionPwd(){
 		String pwd =  "foodmart";
 		SourceBean sb = (SourceBean) getConfigSourceBean().getAttribute("PWD");
-		if(sb!=null)
+		if(sb==null)
 			pwd = "";
+		else
+			pwd= sb.getCharacters();
 		return pwd;
 	}
 	

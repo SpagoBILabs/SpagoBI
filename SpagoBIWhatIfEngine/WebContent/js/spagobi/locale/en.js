@@ -78,7 +78,7 @@ Sbi.locale.ln['sbi.olap.toolbar.clean'] = 'Clean cache';
 Sbi.locale.ln['sbi.olap.toolbar.showParentMembers'] = 'Show parent members';
 Sbi.locale.ln['sbi.olap.toolbar.hideSpans'] = 'Hide spans';
 Sbi.locale.ln['sbi.olap.toolbar.showProperties'] = 'Show properties';
-Sbi.locale.ln['sbi.olap.toolbar.suppressEmpty'] = 'Suppress empty rows/columns'';
+Sbi.locale.ln['sbi.olap.toolbar.suppressEmpty'] = 'Suppress empty rows/columns'
 //===================================================================
 //FILTERS
 //===================================================================
