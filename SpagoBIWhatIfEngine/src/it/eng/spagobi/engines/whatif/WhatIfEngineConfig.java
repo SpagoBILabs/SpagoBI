@@ -104,6 +104,39 @@ public class WhatIfEngineConfig {
 		return catalog;
 	}
 	
+	public String getConnectionString(){
+		String connectionString =  "jdbc:mondrian:Jdbc=jdbc:mysql://sibilla2:3306/foodmart";
+		SourceBean sb = (SourceBean) getConfigSourceBean().getAttribute("CONNECTIONSTRING");
+		if(sb!=null)
+			connectionString = sb.getCharacters();
+		return connectionString;
+	}
+	
+	public String getConnectionPwd(){
+		String pwd =  "foodmart";
+		SourceBean sb = (SourceBean) getConfigSourceBean().getAttribute("PWD");
+		if(sb!=null)
+			pwd = "";
+		return pwd;
+	}
+	
+	public String getConnectionUsr(){
+		String usr =  "foodmart";
+		SourceBean sb = (SourceBean) getConfigSourceBean().getAttribute("USR");
+		if(sb!=null)
+			usr = sb.getCharacters();
+		return usr;
+	}
+	
+	public String getDriver(){
+		String driver =  "com.mysql.jdbc.Driver";
+		SourceBean sb = (SourceBean) getConfigSourceBean().getAttribute("DRIVER_TAG");
+		if(sb!=null)
+			driver = sb.getCharacters();
+		return driver;
+	}
+	
+	
 	public OlapDataSource getOlapDataSource() {
 		SourceBean sb;
 		Properties connectionProps = new Properties();
@@ -114,31 +147,13 @@ public class WhatIfEngineConfig {
 		String connectionString =  "jdbc:mondrian:Jdbc=jdbc:mysql://sibilla2:3306/foodmart";
 		String driver =  "com.mysql.jdbc.Driver";
 		
-		
-		
-		sb = (SourceBean) getConfigSourceBean().getAttribute("USR");
-		if(sb!=null)
-			usr = sb.getCharacters();
-		
-		sb = (SourceBean) getConfigSourceBean().getAttribute("PWD");
-		if(sb!=null){
-			pwd = sb.getCharacters();
-			if(pwd==null){
-				pwd = "";
-			}
-			
-		}
-			
-		
+
+		usr = getConnectionUsr();
+		pwd = getConnectionPwd();
 		catalog = getCatalogue();
 		
-		sb = (SourceBean) getConfigSourceBean().getAttribute("CONNECTIONSTRING");
-		if(sb!=null)
-			connectionString = sb.getCharacters();
-		
-		sb = (SourceBean) getConfigSourceBean().getAttribute(DRIVER_TAG);
-		if(sb!=null)
-			driver = sb.getCharacters();
+		connectionString = getConnectionString();
+		driver =getDriver();
 		
 		connectionProps.put("JdbcUser", usr);
 		connectionProps.put("JdbcPassword", pwd);

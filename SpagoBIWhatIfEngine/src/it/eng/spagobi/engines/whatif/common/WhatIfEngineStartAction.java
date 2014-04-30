@@ -84,10 +84,12 @@ public class WhatIfEngineStartAction extends AbstractWhatIfEngineService {
 		Map env = new HashMap();
 
 		it.eng.spagobi.tools.datasource.bo.DataSource ds = new it.eng.spagobi.tools.datasource.bo.DataSource();
-		ds.setUser("root");
-		ds.setPwd("root");
-		ds.setDriver("com.mysql.jdbc.Driver");
-		ds.setUrlConnection("jdbc:mysql://localhost:3306/foodmart_key");
+		ds.setUser(WhatIfEngineConfig.getInstance().getConnectionUsr());
+		ds.setPwd(WhatIfEngineConfig.getInstance().getConnectionPwd());
+		ds.setDriver(WhatIfEngineConfig.getInstance().getDriver());
+		String connectionUrl =  WhatIfEngineConfig.getInstance().getConnectionString();
+		ds.setUrlConnection(connectionUrl.replace("jdbc:mondrian:Jdbc=", ""));
+		
 
 		env.put(EngineConstants.ENV_DATASOURCE, ds);
 		env.put(EngineConstants.ENV_OLAP_SCHEMA, WhatIfEngineConfig.getInstance().getCatalogue());
