@@ -9,7 +9,7 @@ Ext.ns("Sbi.cockpit.widgets.chart");
 Sbi.cockpit.widgets.chart.ChartCategoryPanel = function(config) { 
 
 	var defaultSettings = {
-		title: LN('sbi.cockpit.widgets.chartcategorypanel.title')
+		  title: LN('sbi.cockpit.widgets.chartcategorypanel.title')
 		, frame: true
 		, emptyMsg: LN('sbi.cockpit.widgets.chartcategorypanel.emptymsg')
 	};
@@ -175,9 +175,8 @@ Ext.extend(Sbi.cockpit.widgets.chart.ChartCategoryPanel, Ext.Panel, {
 		}
 
 		var thePanel = new Ext.Panel({
-   			html: '<div style="cursor: pointer;'+validation+'">' + this.category.alias + '</div>'
+   			html: '<div style="cursor: pointer;'+validation+'">' + this.category.alias + '</div>'   			
    		});			
-
 		
 		thePanel.on('render', function(panel) {
 			panel.getEl().on('dblclick', function() {

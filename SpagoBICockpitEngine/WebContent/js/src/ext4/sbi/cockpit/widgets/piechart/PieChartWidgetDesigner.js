@@ -84,25 +84,27 @@ Ext.define('Sbi.cockpit.widgets.piechart.PieChartWidgetDesigner', {
 			, fieldLabel: LN('sbi.cockpit.widgets.piechartwidgetdesigner.form.showpercentage.title')
 		});
 		
-//		this.categoryContainerPanel = new Sbi.worksheet.designer.ChartCategoryPanel({
-//            width: 200
-//            , height: 70
-//            , initialData: null
-//            , ddGroup: this.ddGroup
-//            , tools: [{
-//            	id: 'list'
-//  	        	, handler: function() {
-//					this.seriesPalette.show();
-//				}
-//  	          	, scope: this
-//  	          	, qtip: LN('sbi.worksheet.designer.piechartdesignerpanel.categorypalette.title')
-//            }]
-//		});
+		this.seriesPalette = new Sbi.cockpit.widgets.chart.SeriesPalette({
+			title: LN('sbi.cockpit.widgets.piechartwidgetdesigner.categorypalette.title')
+			, height: 300
+			, width: 150
+			, closeAction: 'hide'
+		});
+		
 		this.categoryContainerPanel = new Sbi.cockpit.widgets.chart.ChartCategoryPanel({
             width: 200
             , height: 70
             , initialData: null
             , ddGroup: this.ddGroup
+            , tools: [{
+            	  id: 'list'
+                , type: 'collapse'
+  	        	, handler: function() {
+					this.seriesPalette.show();
+				}
+  	          	, scope: this
+  	          	, qtip: LN('sbi.cockpit.widgets.piechartwidgetdesigner.categorypalette.title')
+            }]
 		});
 		
 		// propagate events
@@ -121,20 +123,13 @@ Ext.define('Sbi.cockpit.widgets.piechart.PieChartWidgetDesigner', {
 			this
 		);
 		
-//		this.seriesContainerPanel = new Sbi.worksheet.designer.ChartSeriesPanel({
-//            width: 430
-//            , height: 120
-//            , initialData: []
-//            , crosstabConfig: {}
-//            , ddGroup: this.ddGroup
-//            , displayColorColumn: false
-//		});
 		this.seriesContainerPanel = new Sbi.cockpit.widgets.chart.ChartSeriesPanel({
             width: 430
             , height: 120
             , initialData: []
             , crosstabConfig: {}
             , ddGroup: this.ddGroup
+            , displayColorColumn: false
 		});
 		
 		this.imageContainerPanel = new Ext.Panel({
@@ -162,12 +157,7 @@ Ext.define('Sbi.cockpit.widgets.piechart.PieChartWidgetDesigner', {
 		    ]
 	    });
 	    
-		this.seriesPalette = new Sbi.cockpit.widgets.chart.SeriesPalette({
-			title: LN('sbi.cockpit.widgets.piechartwidgetdesigner.categorypalette.title')
-			, height: 300
-			, width: 150
-			, closeAction: 'hide'
-		});
+	
 	    
 		var controlsItems = new Array();
 		
@@ -207,25 +197,31 @@ Ext.define('Sbi.cockpit.widgets.piechart.PieChartWidgetDesigner', {
 	//-----------------------------------------------------------------------------------------------------------------
 	//public methods
 	//-----------------------------------------------------------------------------------------------------------------
-	, getFormState: function() {
+	, getDesignerState: function() {
+		Sbi.trace("[PieChartWidgetDesigner.getDesignerState]: IN");
+		Sbi.trace("[PieChartWidgetDesigner.getDesignerState]: " + Sbi.cockpit.widgets.piechart.PieChartWidgetDesigner.superclass.getDesignerState);
 		var state = {};
 		state.designer = 'Pie Chart';
+		state.wtype = 'piechart';
 		state.showvalues = this.showValuesCheck.getValue();
 		state.showlegend = this.showLegendCheck.getValue();
 		state.showpercentage = this.showPercentageCheck.getValue();
 		state.category = this.categoryContainerPanel.getCategory();
 		state.series = this.seriesContainerPanel.getContainedMeasures();
 		state.colors = this.seriesPalette.getColors();
+		Sbi.trace("[PieChartWidgetDesigner.getDesignerState]: OUT");
 		return state;
 	}
 	
-	, setFormState: function(state) {
+	, setDesignerState: function(state) {
+		Sbi.trace("[PieChartWidgetDesigner.setDesignerState]: IN");
 		if (state.showvalues) this.showValuesCheck.setValue(state.showvalues);
 		if (state.showlegend) this.showLegendCheck.setValue(state.showlegend);
 		if (state.showpercentage) this.showPercentageCheck.setValue(state.showpercentage);
 		if (state.category) this.categoryContainerPanel.setCategory(state.category);
 		if (state.series) this.seriesContainerPanel.setMeasures(state.series);
 		if (state.colors) this.seriesPalette.setColors(state.colors);
+		Sbi.trace("[PieChartWidgetDesigner.setDesignerState]: OUT");
 	}
 	, validate: function(validFields){
 		var valErr='';	

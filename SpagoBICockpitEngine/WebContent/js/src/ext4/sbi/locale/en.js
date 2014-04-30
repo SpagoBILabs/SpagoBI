@@ -131,6 +131,7 @@ Sbi.locale.ln['sbi.cockpit.widgets.table.tabledesignerpanel.fields.emptymsg'] = 
 Sbi.locale.ln['sbi.cockpit.widgets.table.tabledesignerpanel.fields'] = 'Drag & drop here attribute as the series\' that you want view in the table';
 Sbi.locale.ln['sbi.cockpit.queryfieldspanel.title'] = 'Selected fields';
 
+
 //===================================================================
 //Sbi.cockpit.widgets.ChartCategoryPanel
 //===================================================================
@@ -157,6 +158,21 @@ Sbi.locale.ln['sbi.cockpit.widgets.chartseriespanel.cannotdrophere.measurealread
 Sbi.locale.ln['sbi.cockpit.widgets.chartseriespanel.cannotdrophere.attributes'] = 'You cannot drag attributes into the chart\'s series';
 Sbi.locale.ln['sbi.cockpit.widgets.chartseriespanel.cannotdrophere.postlinecalculated'] = 'You cannot use script-based calculated fields into the chart\'s series';
 Sbi.locale.ln['sbi.cockpit.widgets.chartseriespanel.tools.tt.removeall'] = ['Remove all'];
+
+//column headers
+Sbi.locale.ln['sbi.qbe.selectgridpanel.headers.visible'] = 'Visible';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.headers.include'] = 'Include';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.headers.group'] = 'Group';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.headers.filter'] = 'Filter';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.headers.having'] = 'Group Filter';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.headers.entity'] = 'Entity';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.headers.alias'] = 'Alias';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.headers.order'] = 'Order';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.headers.group'] = 'Group';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.headers.function'] = 'Function';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.headers.field'] = 'Field';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.headers.delete'] = 'Delete all';
+Sbi.locale.ln['sbi.qbe.selectgridpanel.headers.delete.column'] = 'Delete';
 
 //aggregation functions
 Sbi.locale.ln['sbi.qbe.selectgridpanel.aggfunc.name.none'] = 'none';
