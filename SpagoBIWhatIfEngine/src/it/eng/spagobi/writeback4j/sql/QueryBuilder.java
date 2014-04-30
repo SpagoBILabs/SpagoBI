@@ -49,7 +49,8 @@ public class QueryBuilder {
 		
 		//init the query with the update set statement
 		StringBuffer query = new StringBuffer();
-				
+		
+		//gets the measures and the coordinates of the dimension members 
 		for (int i=0; i< members.length; i++) {
 			Member aMember = members[i];
 			
@@ -63,10 +64,10 @@ public class QueryBuilder {
 				logger.error("Error loading the type of the dimension of the member "+aMember.getUniqueName(), e);
 				throw new SpagoBIEngineException("Error loading the type of the dimension of the member "+aMember.getUniqueName(), e);
 			}
-			
 		}
 		
 		buildProportionalUpdateSingleSubquery(memberCordinates, query);
+	//	buildProportionalUpdateOneSubqueryForDimension(memberCordinates, query);
 	}
 	
 	private void buildProportionalUpdateOneSubqueryForDimension(List<IMemberCoordinates> memberCordinates, StringBuffer query) throws SpagoBIEngineException{
@@ -109,7 +110,6 @@ public class QueryBuilder {
 		
 		Set<EquiJoin> joinConditions = new HashSet<EquiJoin>();
 
-		
 		//List of form 
 		Set<String> fromTables;
 		
@@ -138,8 +138,6 @@ public class QueryBuilder {
 				first = false;
 				query.append(subquery);
 			}
-
-			
 		}
 		
 		
@@ -157,13 +155,19 @@ public class QueryBuilder {
 		
 	}
 	
-	private void buildUpdate(StringBuffer buffer, Member measure, double prop){
+	/**
+	 * Build the update statement for the measure
+	 * @param buffer the buffer of the query
+	 * @param measure the measure to update
+	 * @param prop the ratio 
+	 */
+	private void buildUpdate(StringBuffer buffer, Member measure, double prop) throws SpagoBIEngineException{
 		String measureColumn = null;
 		try {
 			measureColumn = retriver.getMeasureColumn(measure);
 		} catch (SpagoBIEngineException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Error loading the column for the table measure "+measure.getName(), e );
+			throw new SpagoBIEngineException("Error loading the column for the table measure "+measure.getName(), e );
 		}
 		
 		buffer.append("update ");
