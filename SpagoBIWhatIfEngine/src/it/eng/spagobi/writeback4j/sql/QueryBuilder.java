@@ -11,8 +11,6 @@ import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
 import it.eng.spagobi.writeback4j.IMemberCoordinates;
 import it.eng.spagobi.writeback4j.ISchemaRetriver;
 
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -20,8 +18,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import javax.naming.NamingException;
 
 import org.apache.log4j.Logger;
 import org.olap4j.OlapException;
@@ -35,10 +31,12 @@ import org.olap4j.metadata.Member;
  */
 public class QueryBuilder {
 	
-	public static transient Logger logger = Logger.getLogger(QueryBuilder.class);
+	
 	ISchemaRetriver retriver;
 	private int tableCount = 0;
 	IDataSource dataSource;
+	
+	public static transient Logger logger = Logger.getLogger(QueryBuilder.class);
 	
 	public QueryBuilder( ISchemaRetriver retriver, IDataSource dataSource){
 		this.retriver = retriver;
@@ -71,7 +69,7 @@ public class QueryBuilder {
 		buildProportionalUpdateSingleSubquery(memberCordinates, query);
 	}
 	
-	public void buildProportionalUpdateOneSubqueryForDimension(List<IMemberCoordinates> memberCordinates, StringBuffer query){
+	private void buildProportionalUpdateOneSubqueryForDimension(List<IMemberCoordinates> memberCordinates, StringBuffer query) throws SpagoBIEngineException{
 		
 		//List of where conditions
 		Map<TableEntry, String> whereConditions = new HashMap<TableEntry, String>();
@@ -97,10 +95,11 @@ public class QueryBuilder {
 		
 		String queryString = query.toString();
 		
-		executeQuery(queryString);
+		SqlUpdateStatement updateStatement = new SqlUpdateStatement(dataSource, queryString);
+		updateStatement.executeStatement();
 	}
 	
-	public void buildProportionalUpdateSingleSubquery(List<IMemberCoordinates> memberCordinates, StringBuffer query){
+	private void buildProportionalUpdateSingleSubquery(List<IMemberCoordinates> memberCordinates, StringBuffer query) throws SpagoBIEngineException{
 		
 		//List of where conditions
 		Map<TableEntry, String> whereConditions;
@@ -148,7 +147,8 @@ public class QueryBuilder {
 		
 		String queryString = query.toString();
 		
-		executeQuery(queryString);
+		SqlUpdateStatement updateStatement = new SqlUpdateStatement(dataSource, queryString);
+		updateStatement.executeStatement();
 	}
 	
 	
@@ -169,7 +169,7 @@ public class QueryBuilder {
 		buffer.append("update ");
 		buffer.append(retriver.getEditCubeTableName() );
 		buffer.append(" "+getCubeAlias());
-		buffer.append(" set `"+measureColumn+"` = `"+measureColumn+"`*"+prop);
+		buffer.append(" set "+measureColumn+" = "+measureColumn+"*"+prop);
 		
 	}
 	
@@ -408,23 +408,6 @@ public class QueryBuilder {
 	
 	
 	
-	private void executeQuery(String sql){
-		try {
-			
-			java.sql.Connection connection = dataSource.getConnection( null );//  connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/foodmart_key?user=root&password=root");
-			Statement statement = connection.createStatement();
-			statement.executeUpdate(sql);
 
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (NamingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
 	
 }
