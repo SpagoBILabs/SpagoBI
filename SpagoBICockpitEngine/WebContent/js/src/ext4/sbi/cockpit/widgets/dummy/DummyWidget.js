@@ -84,11 +84,11 @@ Ext.extend(Sbi.cockpit.widgets.dummy.DummyWidget, Sbi.cockpit.core.WidgetRuntime
 
 	// ...
 });
-
+/*
 Sbi.registerWidget('dummy', {
 	name: 'Dummy'
 	, icon: 'js/src/ext/sbi/cockpit/widgets/dummy/dummy_64x64_ico.png'
 	, runtimeClass: 'Sbi.cockpit.widgets.dummy.DummyWidget'
 	//, designerClass: 'Sbi.cockpit.widgets.dummy.DummyWidgetDesigner'
 	, designerClass: 'Ext.Panel'
-});
+});*/

@@ -72,6 +72,7 @@ Ext.define('Sbi.cockpit.widgets.chart.SeriesPalette', {
 		            if( Sbi.isValorized(record) ){
 		            	var rowIndex = record.store.indexOf(record);
 		            	var editorField = new Ext.ux.ColorField({ value: record.data.color, msgTarget: 'qtip', fallback: true});
+//		            	var editorField = new Ext.picker.Color({ value: record.data.color, msgTarget: 'qtip', fallback: true});		            	
 		            	editorField.on('change', function(f, val) {
 		            		record.store.getAt(rowIndex).set('color', '#'+val);
 	        			}, this); 

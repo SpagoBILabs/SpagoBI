@@ -47,7 +47,13 @@ Ext.define('Sbi.cockpit.widgets.piechart.PieChartWidget', {
 	// -----------------------------------------------------------------------------------------------------------------
 	
     , refresh:  function() {  
-		//TODO: must implement this
+    	Sbi.trace("[PieChartWidget.refresh]: IN");
+//		this.getStore().removeAll();
+//		this.getStore().baseParams = {};
+//		var requestParameters = {start: 0, limit: this.pageSize};
+//		this.getStore().load({params: requestParameters});
+		this.doLayout();
+		Sbi.trace("[PieChartWidget.refresh]: OUT");
 	}
 
     , createChart: function () {
@@ -154,8 +160,10 @@ Ext.define('Sbi.cockpit.widgets.piechart.PieChartWidget', {
 		        categoryField: 'categories'
 		};
 
-		if (showlegend){
-			config.legend = {position: 'right'};
+		
+		if (showlegend){		
+			var positionLegend = (Sbi.isValorized(this.chartConfig.legendPosition))? this.chartConfig.legendPosition:'right';
+			config.legend = {position: positionLegend};
 		}
 		var chart = Ext.create("Ext.chart.Chart", config);
 	    
@@ -326,7 +334,8 @@ Ext.define('Sbi.cockpit.widgets.piechart.PieChartWidget', {
 		var seriesum=0;
 		if (percent) {
 			for(var j=0; j<storeObject.store.data.items.length; j++){
-				seriesum += parseFloat(((storeObject.store.getAt(j)).data)['series0']);
+//				seriesum += parseFloat(((storeObject.store.getAt(j)).data)['series0']);
+				seriesum += parseFloat(((storeObject.store.getAt(j)).data)['seriesflatvalue0']);
 			}
 		}
 		

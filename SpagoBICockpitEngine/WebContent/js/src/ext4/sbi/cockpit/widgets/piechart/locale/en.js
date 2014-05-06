@@ -57,4 +57,8 @@ Sbi.locale.ln['sbi.cockpit.widgets.piechartwidgetdesigner.form.showvalues.title'
 Sbi.locale.ln['sbi.cockpit.widgets.piechartwidgetdesigner.form.showlegend.title'] = 'Show legend';
 Sbi.locale.ln['sbi.cockpit.widgets.piechartwidgetdesigner.form.showpercentage.title'] = 'Show percentage value';
 Sbi.locale.ln['sbi.cockpit.widgets.piechartwidgetdesigner.categorypalette.title'] = 'Category\'s colors palette';
-
+Sbi.locale.ln['sbi.cockpit.widgets.piechartwidgetdesigner.form.legend.position.title'] = 'Legend Position';
+Sbi.locale.ln['sbi.cockpit.widgets.piechartwidgetdesigner.form.legend.position.bottom'] = 'Bottom';
+Sbi.locale.ln['sbi.cockpit.widgets.piechartwidgetdesigner.form.legend.position.top'] = 'Top';
+Sbi.locale.ln['sbi.cockpit.widgets.piechartwidgetdesigner.form.legend.position.left'] = 'Left';
+Sbi.locale.ln['sbi.cockpit.widgets.piechartwidgetdesigner.form.legend.position.right'] = 'Right';
