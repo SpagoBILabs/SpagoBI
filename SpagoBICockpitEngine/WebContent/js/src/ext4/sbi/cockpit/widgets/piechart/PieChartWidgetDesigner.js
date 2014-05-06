@@ -22,17 +22,17 @@ Ext.define('Sbi.cockpit.widgets.piechart.PieChartWidgetDesigner', {
 	, seriesContainerPanel: null
 	, axisDefinitionPanel: null
 	, showLegendCheck: null
+	, legendPositionCombo: null
 	, showPercentageCheck: null
 	, seriesPalette: null
 	, chartLib: null
 
 	, constructor : function(config) {
 		Sbi.trace("[PieChartWidgetDesigner.constructor]: IN");
-		this.initConfig(config);
-		this.initEvents();
+		this.initConfig(config);	
 		this.init(config);
 		this.callParent(arguments);
-		this.addEvents("attributeDblClick", "attributeRemoved");
+		this.initEvents();					
 		Sbi.trace("[PieChartWidgetDesigner.constructor]: OUT");
 	}
 	
@@ -55,8 +55,23 @@ Ext.define('Sbi.cockpit.widgets.piechart.PieChartWidgetDesigner', {
 	// init methods
 	// -----------------------------------------------------------------------------------------------------------------
 	, initEvents: function(){
-	
-		
+		this.on(
+				'beforerender' , 
+				function (thePanel, attribute) { 
+					var state = {};
+					state.showvalues = thePanel.showvalues;
+					state.showlegend = thePanel.showlegend;
+					state.legendPosition = thePanel.legendPosition;
+					state.showpercentage = thePanel.showpercentage;
+					state.category = thePanel.category;
+					state.series = thePanel.series;
+					state.colors = thePanel.colors;
+					state.wtype = 'piechart';
+					this.setDesignerState(state);
+				}, 
+				this
+			);
+		this.addEvents("attributeDblClick", "attributeRemoved");
 	}
 
 	, init: function () {
@@ -78,6 +93,30 @@ Ext.define('Sbi.cockpit.widgets.piechart.PieChartWidgetDesigner', {
 			checked: false
 			, fieldLabel: LN('sbi.cockpit.widgets.piechartwidgetdesigner.form.showlegend.title')
 		});
+		
+		this.legendPositionStore = new Ext.data.ArrayStore({
+			fields : ['name', 'description']
+			, data : [['bottom', LN('sbi.cockpit.widgets.piechartwidgetdesigner.form.legend.position.bottom')]
+					, ['top', LN('sbi.cockpit.widgets.piechartwidgetdesigner.form.legend.position.top')]
+					, ['left', LN('sbi.cockpit.widgets.piechartwidgetdesigner.form.legend.position.left')]
+					, ['right', LN('sbi.cockpit.widgets.piechartwidgetdesigner.form.legend.position.right')]]
+		});
+		this.legendPositionCombo = new Ext.form.ComboBox({
+			width:			300,
+			queryMode:      'local',
+			triggerAction:  'all',
+			forceSelection: true,
+			editable:       false,
+			allowBlank: 	false,
+			fieldLabel:     LN('sbi.cockpit.widgets.piechartwidgetdesigner.form.legend.position.title'),
+			name:           'position',
+			displayField:   'description',
+			valueField:     'name',
+			value:			'bottom',
+//			anchor:			'95%',
+			store:          this.legendPositionStore
+		});
+//		this.orientationCombo.on('change', this.changeBarChartImage, this);
 		
 		this.showPercentageCheck = new Ext.form.Checkbox({
 			checked: false
@@ -169,14 +208,19 @@ Ext.define('Sbi.cockpit.widgets.piechart.PieChartWidgetDesigner', {
 		} 
 		
     	controlsItems.push(this.showLegendCheck);
+    	controlsItems.push(this.legendPositionCombo);
     	controlsItems.push(this.showPercentageCheck);
 		
 		this.form = new Ext.Panel({
 			border: false
 			, layout: 'form'
+//			, layout: 'column'
+//		    , padding: '10 10 10 10'
 			, items: [
 				{
-					xtype: 'form'
+//					xtype: 'form'
+					xtype: 'fieldset'
+					, columnWidth : .4
 					, style: 'padding: 10px 0px 0px 15px;'
 				//	, title: LN('sbi.worksheet.designer.barchartdesignerpanel.form.fieldsets.options')
 					, border: false
@@ -200,11 +244,13 @@ Ext.define('Sbi.cockpit.widgets.piechart.PieChartWidgetDesigner', {
 	, getDesignerState: function() {
 		Sbi.trace("[PieChartWidgetDesigner.getDesignerState]: IN");
 		Sbi.trace("[PieChartWidgetDesigner.getDesignerState]: " + Sbi.cockpit.widgets.piechart.PieChartWidgetDesigner.superclass.getDesignerState);
-		var state = {};
+		var state = Sbi.cockpit.widgets.piechart.PieChartWidgetDesigner.superclass.getDesignerState(this);
+//		var state = {};
 		state.designer = 'Pie Chart';
 		state.wtype = 'piechart';
 		state.showvalues = this.showValuesCheck.getValue();
 		state.showlegend = this.showLegendCheck.getValue();
+		state.legendPosition = this.legendPositionCombo.getValue();
 		state.showpercentage = this.showPercentageCheck.getValue();
 		state.category = this.categoryContainerPanel.getCategory();
 		state.series = this.seriesContainerPanel.getContainedMeasures();
@@ -215,14 +261,17 @@ Ext.define('Sbi.cockpit.widgets.piechart.PieChartWidgetDesigner', {
 	
 	, setDesignerState: function(state) {
 		Sbi.trace("[PieChartWidgetDesigner.setDesignerState]: IN");
+		Sbi.cockpit.widgets.piechart.PieChartWidgetDesigner.superclass.setDesignerState(this, state);
 		if (state.showvalues) this.showValuesCheck.setValue(state.showvalues);
 		if (state.showlegend) this.showLegendCheck.setValue(state.showlegend);
+		if (state.legendPosition) this.legendPositionCombo.setValue(state.legendPosition);
 		if (state.showpercentage) this.showPercentageCheck.setValue(state.showpercentage);
 		if (state.category) this.categoryContainerPanel.setCategory(state.category);
 		if (state.series) this.seriesContainerPanel.setMeasures(state.series);
 		if (state.colors) this.seriesPalette.setColors(state.colors);
 		Sbi.trace("[PieChartWidgetDesigner.setDesignerState]: OUT");
 	}
+	
 	, validate: function(validFields){
 		var valErr='';	
 		valErr+=''+this.categoryContainerPanel.validate(validFields);
