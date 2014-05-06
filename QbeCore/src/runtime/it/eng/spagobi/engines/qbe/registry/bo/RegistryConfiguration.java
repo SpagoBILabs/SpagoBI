@@ -20,6 +20,9 @@ public class RegistryConfiguration {
 	public static transient Logger logger = Logger.getLogger(RegistryConfiguration.class);
 	
 	private String keyField = null;
+	private boolean pagination = true;
+	private String summaryColor = null;
+	
 	
 	private List<Filter> filters = null;
 	private List<Column> columns = null;
@@ -28,6 +31,24 @@ public class RegistryConfiguration {
 	private String entity = null;
 	private String columnsMaxSize = null;
 	
+
+	
+	public boolean isPagination() {
+		return pagination;
+	}
+
+	public void setPagination(boolean pagination) {
+		this.pagination = pagination;
+	}
+	
+	public String getSummaryColor() {
+		return summaryColor;
+	}
+
+	public void setSummaryColor(String summaryColor) {
+		this.summaryColor = summaryColor;
+	}
+
 	public String getColumnsMaxSize() {
 		return columnsMaxSize;
 	}
@@ -216,6 +237,10 @@ public class RegistryConfiguration {
 
 		private boolean isEditable = true;
 		
+		private String color = "#FFFFFF";
+
+		private String summaryFunction = null;
+		
 		private boolean isVisible = true;
 		//mandatory depending on another column value
 		private String mandatoryColumn = null;
@@ -225,9 +250,21 @@ public class RegistryConfiguration {
 		private String sorter = null;
 		//sets if the column of type number must be signed or unsigned (only positive numbers) by false or true values
 		private boolean unsigned = false;
-		
 		private String format = null;
+		// sets if cells in column must be merged
 		
+		private String type = null; // optional, can be merge, measure 
+		public static final String COLUMN_TYPE_MERGE = "merge";
+		public static final String COLUMN_TYPE_MEASURE = "measure";
+
+
+		public String getType() {
+			return type;
+		}
+
+		public void setType(String type) {
+			this.type = type;
+		}
 
 		public String getFormat() {
 			return format;
@@ -260,8 +297,25 @@ public class RegistryConfiguration {
 		public void setSorter(String sorter) {
 			this.sorter = sorter;
 		}
+		
+		public String getColor() {
+			return color;
+		}
+
+		public void setColor(String color) {
+			this.color = color;
+		}
 
 		
+		public String getSummaryFunction() {
+			return summaryFunction;
+		}
+
+		public void setSummaryFunction(String summaryFunction) {
+			this.summaryFunction = summaryFunction;
+		}
+		
+
 		public String getMandatoryColumn() {
 			return mandatoryColumn;
 		}
@@ -327,6 +381,15 @@ public class RegistryConfiguration {
 		public void setForeignKey(String foreignKey) {
 			this.foreignKey = foreignKey;
 		}
+
+		public boolean isMerge(){
+			return (type != null && type.equalsIgnoreCase(COLUMN_TYPE_MERGE));
+		}
+
+		public boolean isMeasure(){
+			return (type != null && type.equalsIgnoreCase(COLUMN_TYPE_MEASURE));
+		}
+
 		
 	}
 	

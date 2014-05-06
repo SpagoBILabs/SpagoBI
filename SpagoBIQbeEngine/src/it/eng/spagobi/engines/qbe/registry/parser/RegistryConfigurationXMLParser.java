@@ -19,6 +19,7 @@ import it.eng.spagobi.utilities.assertion.Assert;
 import org.apache.log4j.Logger;
 
 import com.fdsapi.parser.FDSMathParser.ParseException;
+import com.sun.mail.handlers.message_rfc822;
 
 /**
  * 
@@ -38,17 +39,23 @@ public class RegistryConfigurationXMLParser {
 	public static String TAG_CONFIGURATIONS = "CONFIGURATIONS";
 	public static String TAG_CONFIGURATION = "CONFIGURATION";
 
+	public static String ATTRIBUTE_PAGINATION = "pagination";
 	public static String ATTRIBUTE_NAME = "name";
 	public static String ATTRIBUTE_TITLE = "title";
 	public static String ATTRIBUTE_FIELD = "field";
 	public static String ATTRIBUTE_PRESENTATION = "presentation";
 	public static String ATTRIBUTE_VALUE = "value";
+	public static String ATTRIBUTE_SUMMARY_COLOR = "summaryColor";
+
 	
 	public static String ATTRIBUTE_EDITOR = "editor";
 	public static String ATTRIBUTE_EDITABLE = "editable";
 	public static String ATTRIBUTE_VISIBLE = "visible";
 	public static String ATTRIBUTE_SUBENTITY = "subEntity";
 	public static String ATTRIBUTE_FORMAT = "format";
+	public static String ATTRIBUTE_COLOR = "color";
+	public static String ATTRIBUTE_SUMMARY_FUNCTION = "summaryFunction";
+	public static String ATTRIBUTE_TYPE = "type";
 	
 	public static String ATTRIBUTE_FOREIGNKEY = "foreignKey";
 	public static String ATTRIBUTE_MANDATORY_COLUMN = "mandatoryColumn";
@@ -58,6 +65,7 @@ public class RegistryConfigurationXMLParser {
 	public static String ATTRIBUTE_SORTER = "sorter";
 	public static String ATTRIBUTE_UNSIGNED = "unsigned";
 	public static String  ATTRIBUTE_DRIVER_NAME = "driverName";
+
 	
 	public static String PRESENTATION_TYPE_MANUAL = "MANUAL";
 	public static String PRESENTATION_TYPE_COMBO = "COMBO";
@@ -72,6 +80,7 @@ public class RegistryConfigurationXMLParser {
 		RegistryConfiguration toReturn = null;
 		try {
 			toReturn = new RegistryConfiguration();
+						
 			SourceBean entitySB = (SourceBean) registryConf
 					.getAttribute(TAG_ENTITY);
 			Assert.assertNotNull(entitySB, "TAG " + TAG_ENTITY + " not found");
@@ -79,12 +88,26 @@ public class RegistryConfigurationXMLParser {
 			logger.debug("Entity name is " + entity);
 			Assert.assertNotNull(entity, "Entity " + ATTRIBUTE_NAME + " attribute not specified.");
 			toReturn.setEntity(entity);
+			
+			
 			List<RegistryConfiguration.Filter> filters = parseFilters(entitySB, toReturn);
 			List<RegistryConfiguration.Column> columns = parseColumns(entitySB, toReturn);
 			List<RegistryConfiguration.Configuration> configurations = parseConfigurations(entitySB, toReturn);
 			toReturn.setFilters(filters);
 			toReturn.setColumns(columns);
 			toReturn.setConfigurations(configurations);
+		
+			toReturn.setSummaryColor(registryConf.getAttribute(ATTRIBUTE_SUMMARY_COLOR) != null ? registryConf.getAttribute(ATTRIBUTE_SUMMARY_COLOR).toString() : null);
+			
+			//default
+			toReturn.setPagination(true);
+			if(registryConf.getAttribute(ATTRIBUTE_PAGINATION) != null){
+				if(registryConf.getAttribute(ATTRIBUTE_PAGINATION).toString().equals("false")){
+					toReturn.setPagination(false);
+				}
+			}
+
+		
 		} finally {
 			logger.debug("OUT");
 		}
@@ -181,7 +204,20 @@ public class RegistryConfigurationXMLParser {
 				boolean isVisible = !"false".equalsIgnoreCase((String) aColumn
 						.getAttribute(ATTRIBUTE_VISIBLE));
 
-				String format = aColumn.getAttribute(ATTRIBUTE_FORMAT) != null ? (String)aColumn.getAttribute(ATTRIBUTE_FORMAT) : null;;
+				String format = aColumn.getAttribute(ATTRIBUTE_FORMAT) != null ? (String)aColumn.getAttribute(ATTRIBUTE_FORMAT) : null;
+
+				String color = aColumn.getAttribute(ATTRIBUTE_COLOR) != null ? (String)aColumn.getAttribute(ATTRIBUTE_COLOR) : null;
+
+				String summaryFunction = aColumn.getAttribute(ATTRIBUTE_SUMMARY_FUNCTION) != null ? (String)aColumn.getAttribute(ATTRIBUTE_SUMMARY_FUNCTION) : null;
+
+				String type = aColumn.getAttribute(ATTRIBUTE_TYPE) != null ? (String)aColumn.getAttribute(ATTRIBUTE_TYPE) : null;
+				if(type != null && (type.equalsIgnoreCase(RegistryConfiguration.Column.COLUMN_TYPE_MERGE) || type.equalsIgnoreCase(RegistryConfiguration.Column.COLUMN_TYPE_MEASURE))){
+					if(type.equalsIgnoreCase("merge")){
+						// if is merge column set it is not editable and set default color if not specified to white
+						isEditable = false;
+						if(color == null) color = "#FFFFFF";
+					}
+				}
 				
 				String editorType = EDITOR_TYPE_COMBO
 						.equalsIgnoreCase((String) aColumn
@@ -207,6 +243,9 @@ public class RegistryConfigurationXMLParser {
 				column.setVisible(isVisible);
 				column.setEditorType(editorType);
 				column.setFormat(format);
+				column.setColor(color);
+				column.setSummaryFunction(summaryFunction);
+				column.setType(type);
 				
 				String mandatoryColumn = (String) aColumn.getAttribute(ATTRIBUTE_MANDATORY_COLUMN);
 				if(mandatoryColumn != null){
