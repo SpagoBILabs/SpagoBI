@@ -17,6 +17,7 @@ import it.eng.qbe.statement.AbstractStatement;
 import it.eng.qbe.statement.IStatement;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
+import it.eng.spago.util.StringUtils;
 import it.eng.spagobi.engines.qbe.QbeEngineInstance;
 import it.eng.spagobi.engines.qbe.registry.bo.RegistryConfiguration;
 import it.eng.spagobi.engines.qbe.registry.bo.RegistryConfiguration.Column;
@@ -25,10 +26,11 @@ import it.eng.spagobi.engines.qbe.registry.parser.RegistryConfigurationXMLParser
 import it.eng.spagobi.engines.qbe.registry.serializer.RegistryJSONDataWriter;
 import it.eng.spagobi.engines.qbe.services.core.ExecuteQueryAction;
 import it.eng.spagobi.engines.qbe.template.QbeTemplate;
-import it.eng.spagobi.services.proxy.ContentServiceProxy;
+import it.eng.spagobi.tools.dataset.common.datastore.Field;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
+import it.eng.spagobi.tools.dataset.common.datastore.Record;
 import it.eng.spagobi.utilities.ParametersDecoder;
-import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
 
 import java.util.ArrayList;
@@ -36,7 +38,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
+import java.util.TreeMap;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -55,6 +57,15 @@ public class LoadRegistryAction extends ExecuteQueryAction {
 	private JSONArray mandatories = new JSONArray();
 	private JSONArray columnsInfos = new JSONArray();
 	private String columnMaxSize = null;
+	
+	// all cells that must be colored as total
+	private JSONArray summaryColorCellsArray = new JSONArray();
+	// all value cells containing toal values
+	private JSONArray summaryCellsArray = new JSONArray();
+	
+	private int summaryRecordsAddedCounter=0;
+	
+	RegistryConfiguration registryConfig = null;
 
 	@Override
 	public Query getQuery() {
@@ -82,14 +93,289 @@ public class LoadRegistryAction extends ExecuteQueryAction {
 		super.service(request, response);
 	}
 	
+	
+	public boolean hasRegistryTotalLines(){
+		Iterator<Column> it = registryConfig.getColumns().iterator();		
+		boolean found = false;
+		while (it.hasNext() && !found) {
+			Column column = it.next();
+			String sfO = column.getSummaryFunction();
+			if(sfO != null && sfO.equalsIgnoreCase("sum")){
+				found = true;
+			}
+		}
+		return found;
+	}
+
 	@Override
 	public JSONObject serializeDataStore(IDataStore dataStore) {
+		logger.debug("IN");
+		summaryRecordsAddedCounter = 0;
+		// add the rows of summarization
+		// only if there is a column with summaryFunction
+		if(hasRegistryTotalLines()){
+			logger.debug("add summary lines");
+			addSumRows(dataStore);		
+		}
+		else{
+			logger.debug("no need of summary lines");
+		}
+		
 		RegistryJSONDataWriter dataSetWriter = new RegistryJSONDataWriter();
 		JSONObject gridDataFeed = (JSONObject)dataSetWriter.write(dataStore);
 		setMandatoryMetadata(gridDataFeed);
 		setColumnMaxSize(gridDataFeed);
 		setColumnsInfos(gridDataFeed);
+		setSummaryInfos(gridDataFeed);
+		setSummaryColorInfos(gridDataFeed);
+		
+		logger.debug("OUT");
+
 		return gridDataFeed;
+	}
+	
+	
+	private void addSumRows(IDataStore dataStore) {
+		logger.debug("IN");		
+		
+		summaryColorCellsArray = new JSONArray();
+		summaryCellsArray = new JSONArray();		
+		
+		ArrayList<Integer> columnsIndexToMerge = new ArrayList<Integer>();
+		ArrayList<Integer> columnsIndexToEmpty = new ArrayList<Integer>();
+		HashMap<Integer, Integer> columnsIndexToSum2Counter = new HashMap<Integer, Integer>();
+
+		// collect columns to merge and columns to sum and colummsn to empty: 
+		// -- columns to merge have merge attributes until a columns with summaryFunc is found
+		// then other columns that have merge attribute but no
+		List<Column> columns= registryConfig.getColumns();
+		
+		Integer index = 0;
+		boolean summaryFuncFound = false;
+		for (Iterator iterator = columns.iterator(); iterator.hasNext();) {
+			Column column = (Column) iterator.next();
+			
+			if(column.isMerge() && summaryFuncFound == false){
+				columnsIndexToMerge.add(index);
+			}
+			else if(summaryFuncFound==true && !column.isMeasure()){
+				columnsIndexToEmpty.add(index);				
+			}
+			else if(column.isMeasure()){
+				columnsIndexToSum2Counter.put(index, 0);				
+			}
+			if(column.getSummaryFunction() != null && column.getSummaryFunction().equals("sum")) summaryFuncFound=true;
+			index++;
+		}
+
+		// Map to store previous merge values on iteration
+		HashMap<Integer, Object> previousMergeValues = new HashMap<Integer, Object>();
+		for (Iterator iterator = columnsIndexToMerge.iterator(); iterator.hasNext();) {
+			Integer columnIndex = (Integer) iterator.next();
+			previousMergeValues.put(columnIndex, null);
+		}
+		
+		
+		TreeMap<Integer, Record> recordsToAddMap = new TreeMap<Integer, Record>();
+		
+		int sumCounter = 0; // add total row only if grouping has more than one member
+
+		// iterate on each store row
+		for (int i = 0; i < dataStore.getRecordsCount(); i++) {
+			IRecord record = dataStore.getRecordAt(i);
+			
+			// get current values of column to merge
+			HashMap<Integer, Object> currentMergeValues = new HashMap<>();
+
+			// iterate on each column to merge and store values
+			for (Iterator iterator = columnsIndexToMerge.iterator(); iterator.hasNext();) {
+				Integer columnIndex = (Integer) iterator.next();
+				Object value = record.getFieldAt(columnIndex).getValue();
+				currentMergeValues.put(columnIndex, value);				
+			}
+						
+			// compare current values with previous ones
+			boolean isEqual = compareValuesMaps(previousMergeValues, currentMergeValues);
+			
+			// if merging goes on update counters else add summarization line
+			if(isEqual){
+				sumCounter++;
+				for (Iterator iterator = columnsIndexToSum2Counter.keySet().iterator(); iterator.hasNext();) {
+					Integer indexMeasure = (Integer)iterator.next();
+					Object value = record.getFieldAt(indexMeasure).getValue();
+
+					//TODO treat the case this is not a number, should keep it to null					
+					if(value != null  && StringUtils.isNumberValue(value.toString())){
+						// get previous value
+						Integer currVal = (Integer)value;
+						Integer prevVal = columnsIndexToSum2Counter.get(indexMeasure);
+						if(prevVal == null) prevVal = 0;
+						Integer sumval = prevVal + currVal;
+						columnsIndexToSum2Counter.put(indexMeasure, sumval);
+					}
+					else{
+						columnsIndexToSum2Counter.put(indexMeasure, null);						
+					}
+					
+					
+				}
+			}
+			else{
+				// breaking point, add summarization lines at previous index; i-1
+				
+				//add a new record only if sumCounter > 0
+				if(sumCounter>0){
+					addTotalRecord(dataStore, i, columnsIndexToMerge, columnsIndexToEmpty, columnsIndexToSum2Counter, previousMergeValues, recordsToAddMap);
+				}
+				
+				// put the counters to actual values
+				for (Iterator iterator = columnsIndexToSum2Counter.keySet().iterator(); iterator.hasNext();) {
+					Integer columnInd = (Integer) iterator.next();
+					Integer v = (Integer)record.getFieldAt(columnInd).getValue();
+					columnsIndexToSum2Counter.put(columnInd, v);
+				}
+				
+			sumCounter = 0;
+			}
+
+			// update previousValues
+			previousMergeValues = currentMergeValues;
+		}
+
+		// add  final total if last records were merged
+		if(sumCounter>0){
+			addTotalRecord(dataStore, null, columnsIndexToMerge,columnsIndexToEmpty, columnsIndexToSum2Counter, previousMergeValues, recordsToAddMap);
+		}
+		
+		// finally add the record (could not add them while cycling the store)
+		for (Iterator iterator = recordsToAddMap.keySet().iterator(); iterator.hasNext();) {
+			Integer indexR = (Integer) iterator.next();
+			Record rec = recordsToAddMap.get(indexR);
+			if(indexR == -1){
+				dataStore.appendRecord(rec);
+			}
+			else{
+				dataStore.insertRecord(indexR, rec);
+			}
+		}
+		
+		
+		
+		logger.debug("OUT");		
+	}
+	
+	
+	private void addTotalRecord(
+			IDataStore dataStore,
+			Integer currentIndexRow,
+			ArrayList<Integer> columnsIndexToMerge,
+			ArrayList<Integer> columnsIndexToEmpty,
+			HashMap<Integer, Integer> columnsIndexToSum2Counter, 
+			HashMap<Integer, Object> previousMergeValues,
+			TreeMap<Integer, Record> recordsToAddMap)
+	{
+		logger.debug("IN");
+		Record recordNew = new Record();
+
+		//initialize the record
+		int colCount = dataStore.getMetaData().getFieldCount();
+		for (int j =0;j<colCount;j++) {
+			Field field = new Field("");	
+			recordNew.insertField(j,field);
+		}
+		
+		
+		Integer index = currentIndexRow == null ? null : currentIndexRow + summaryRecordsAddedCounter;
+		
+
+		summaryRecordsAddedCounter++;
+		
+		// insert fields for each column to merge
+		for (Iterator iterator = columnsIndexToMerge.iterator(); iterator.hasNext();) {
+			Integer columnIndex = (Integer) iterator.next();
+			Field field = new Field();
+			Object valueToPut = previousMergeValues.get(columnIndex);
+			field.setValue(valueToPut);
+			recordNew.insertField(columnIndex, field);
+		}
+
+		// insert field for each column to empty
+		for (Iterator iterator = columnsIndexToEmpty.iterator(); iterator.hasNext();) {
+			Integer columnIndex = (Integer) iterator.next();
+			Field field = new Field();
+			field.setValue("                 ");
+			recordNew.insertField(columnIndex, field);
+			setNewSummaryColorCell(dataStore, index, columnIndex);
+			
+		}
+		
+		// insert fields for each column to sum
+		for (Iterator iterator = columnsIndexToSum2Counter.keySet().iterator(); iterator.hasNext();) {
+			Integer columnIndex = (Integer) iterator.next();
+			Field field = new Field();
+			Object valueToPut = columnsIndexToSum2Counter.get(columnIndex);
+			field.setValue(valueToPut);
+			recordNew.insertField(columnIndex, field);
+			
+			// add coordinates of summary cell
+			setNewSummaryColorCell(dataStore, index, columnIndex);
+			setNewSummaryCell(dataStore, index, columnIndex);
+
+		}
+		
+		if(currentIndexRow != null){
+			//dataStore.insertRecord(currentIndex, recordNew);
+		// index to put must be the currentIndexRow + the number of records that have already been added
+			
+			recordsToAddMap.put(index, recordNew);
+		}
+		else{			
+			//dataStore.appendRecord(recordNew);
+			recordsToAddMap.put(-1, recordNew);
+		}
+		logger.debug("OUT");
+
+	}
+	
+
+	private boolean compareValuesMaps(Map<Integer, Object> previousValues, Map<Integer, Object> currentValues){
+		logger.debug("IN");
+		boolean isEqual = true;
+		for (Iterator iterator = currentValues.keySet().iterator(); iterator.hasNext() && isEqual;) {
+			Integer index = (Integer) iterator.next();
+			Object currValue = currentValues.get(index);
+			Object prevValue = previousValues.get(index);
+			
+			if(
+					(currValue == null && prevValue == null)
+					||
+					(currValue != null && currValue.equals(prevValue))					
+					){}
+			else{
+				isEqual = false;
+			}
+		}
+		
+		logger.debug("OUT");		
+		return isEqual;
+	}
+	
+	private void setSummaryColorInfos(JSONObject gridDataFeed){
+		try {
+			((JSONObject)gridDataFeed.get("metaData")).put("summaryColorCellsCoordinates", summaryColorCellsArray);
+
+		} catch (JSONException e) {
+			logger.error("Error setting summary color cells coordinates"+e.getMessage() );
+		}
+	}
+	
+	private void setSummaryInfos(JSONObject gridDataFeed){
+		try {
+			((JSONObject)gridDataFeed.get("metaData")).put("summaryCellsCoordinates", summaryCellsArray);
+
+		} catch (JSONException e) {
+			logger.error("Error setting summary cells coordinates"+e.getMessage() );
+		}
 	}
 	private void setMandatoryMetadata(JSONObject gridDataFeed){
 		try {
@@ -132,6 +418,44 @@ public class LoadRegistryAction extends ExecuteQueryAction {
 			logger.error("Error getting mandatory informations from template "+e.getMessage() );
 		}
 	}
+	
+	// set in array cell that will be colored as total
+	private void setNewSummaryColorCell(IDataStore dataStore, Integer row, Integer column){
+		if(row == null){
+			// if row not specified means is referring to last row that will be store lenght + already added summary rows length
+			row = Long.valueOf(dataStore.getRecordsCount()).intValue()+ summaryRecordsAddedCounter-1;  // row starts from 0
+		}
+		
+		try{
+			JSONObject obj = new JSONObject();
+			obj.put("row", row);
+			obj.put("column", column);
+			summaryColorCellsArray.put(obj);
+		}
+		catch (JSONException e) {
+			logger.error("Error while tracing summary cell in row "+row+" and column "+column+": "+e.getMessage() );
+		}
+	}
+	
+	// set in array cells that will contain total value
+	private void setNewSummaryCell(IDataStore dataStore, Integer row, Integer column){
+		if(row == null){
+			// if row not specified means is referring to last row that will be store lenght + already added summary rows length
+			row = Long.valueOf(dataStore.getRecordsCount()).intValue()+ summaryRecordsAddedCounter-1;  // row starts from 0
+		}
+		
+		try{
+			JSONObject obj = new JSONObject();
+			obj.put("row", row);
+			obj.put("column", column);
+			summaryCellsArray.put(obj);
+		}
+		catch (JSONException e) {
+			logger.error("Error while tracing summary cell in row "+row+" and column "+column+": "+e.getMessage() );
+		}
+	}
+	
+	
 	private void getColumnsInfos(Column column){
 		try {
 			Integer size = column.getSize();
@@ -164,11 +488,10 @@ public class LoadRegistryAction extends ExecuteQueryAction {
 
 			QbeEngineInstance engineInstance = getEngineInstance();
 			QbeTemplate template = engineInstance.getTemplate();
-			RegistryConfiguration registryConfig = (RegistryConfiguration) template.getProperty("registryConfiguration");
+			registryConfig = (RegistryConfiguration) template.getProperty("registryConfiguration");
 			List<Column> columns = registryConfig.getColumns();
 			columnMaxSize = registryConfig.getColumnsMaxSize();
 			Iterator<Column> it = columns.iterator();
-			String orderCol = null;
 			
 			Map<String, String> fieldNameIdMap = new HashMap<String, String>();
 			
@@ -180,12 +503,14 @@ public class LoadRegistryAction extends ExecuteQueryAction {
 				if (field == null) {
 					logger.error("Field " + column.getField() + " not found!!");
 				} else {
-					orderCol = column.getSorter();
 					String name = field.getPropertyAsString("label");
 					if(name==null || name.length()==0){
 						name = field.getName();
 					}
-					query.addSelectFiled(field.getUniqueName(), "NONE", field.getName(), true, true, false, orderCol, field.getPropertyAsString("format"));
+					
+					String sorter = column.getSorter() != null && (column.getSorter().equalsIgnoreCase("ASC") || column.getSorter().equalsIgnoreCase("DESC")) ? column.getSorter().toUpperCase() : null;
+					
+					query.addSelectFiled(field.getUniqueName(), "NONE", field.getName(), true, true, false, sorter, field.getPropertyAsString("format"));
 					fieldNameIdMap.put(column.getField(), field.getUniqueName());
 				}
 			}
@@ -210,6 +535,7 @@ public class LoadRegistryAction extends ExecuteQueryAction {
 				query.setWhereClauseStructure(exprNodeAnd);
 			}
 			
+			
 		} finally {
 			logger.debug("OUT");
 		}
@@ -217,18 +543,20 @@ public class LoadRegistryAction extends ExecuteQueryAction {
 	}
 	
 	
-	private void addSort(int i, Query query, Map env, Map<String,String> fieldNameIdMap,Filter filter, ArrayList<ExpressionNode> expressionNodes) {
+	private void addSort(int i, Query query, Map env, Map<String,String> fieldNameIdMap, ArrayList<ExpressionNode> expressionNodes) {
 		logger.debug("IN");
-		if(requestContainsAttribute("sort")){
-			String sortField = getAttributeAsString("sort");
-			logger.debug("Sort by "+sortField);
-
-			//query.getO
-			
-			
-			// sorting by 
-			
-		}
+		
+		
+//		if(requestContainsAttribute("sort")){
+//			String sortField = getAttributeAsString("sort");
+//			logger.debug("Sort by "+sortField);
+//
+//			//query.getO
+//			
+//			
+//			// sorting by 
+//			
+//		}
 		
 		logger.debug("OUT");		
 	}
@@ -375,5 +703,8 @@ public class LoadRegistryAction extends ExecuteQueryAction {
 		}
 		return entity;
 	}
+
+	
+
 
 }

@@ -46,7 +46,12 @@ public class RegistryConfigurationJSONSerializer {
 	public static String MANDATORY_COLUMN = "mandatoryColumn";
 	public static String MANDATORY_VALUE = "mandatoryValue";
 	public static String FORMAT = "format";
+	public static String COLOR = "color";
+	public static String SUMMARY_FUNCTION = "summaryFunction";
+	public static String SUMMARY_COLOR = "summaryColor";
+	public static String TYPE = "type";
 	
+	public static String PAGINATION = "pagination";
 
 	public JSONObject serialize(RegistryConfiguration conf) {
 		logger.debug("IN");
@@ -61,6 +66,10 @@ public class RegistryConfigurationJSONSerializer {
 			toReturn.put(COLUMNS, columnsJSON);
 			JSONArray configurationsJSON = serializeConfigurations(conf);
 			toReturn.put(CONFIGURATIONS, configurationsJSON);
+			
+			toReturn.put(PAGINATION, Boolean.valueOf(conf.isPagination()).toString());
+			toReturn.put(SUMMARY_COLOR, conf.getSummaryColor());
+			
 		} catch (Exception e) {
 			throw new SerializationException("Error while serializating RegistryConfiguration", e);
 		} finally {
@@ -100,8 +109,12 @@ public class RegistryConfigurationJSONSerializer {
 			String foreignKey = column.getForeignKey();
 			boolean isEditable = column.isEditable();
 			boolean isVisible = column.isVisible();
+			String type= column.getType();			
 			String format = column.getFormat();
+			String color = column.getColor();
 			String editorType = column.getEditorType();
+			String summaryFunction = column.getSummaryFunction();
+
 			columnJSON.put(FIELD, field);
 			if (subentity != null) {
 				columnJSON.put(SUBENTITY, subentity);
@@ -111,6 +124,11 @@ public class RegistryConfigurationJSONSerializer {
 			columnJSON.put(VISIBLE, isVisible);
 			columnJSON.put(EDITOR_TYPE, editorType);
 			columnJSON.put(FORMAT, format);
+			columnJSON.put(COLOR, color);
+			columnJSON.put(TYPE, type);
+			columnJSON.put(SUMMARY_FUNCTION, summaryFunction);
+			
+
 			String mandatoryCol = column.getMandatoryColumn();
 			if(mandatoryCol != null){
 				columnJSON.put(MANDATORY_COLUMN, mandatoryCol);
