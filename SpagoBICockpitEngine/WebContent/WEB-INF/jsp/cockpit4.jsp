@@ -287,8 +287,8 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 		
 		
 		
-		Sbi.storeManager = new Sbi.data.StoreManager();
-		Sbi.storeManager.setConfiguration(template.storesConf);
+		Sbi.storeManager = new Sbi.data.StoreManager({storesConf: template.storesConf});
+		//Sbi.storeManager.setConfiguration(template.storesConf);
 		
 		Sbi.config.docLabel ="<%=docLabel%>";
 		Sbi.config.docVersion = "<%=docVersion%>";
