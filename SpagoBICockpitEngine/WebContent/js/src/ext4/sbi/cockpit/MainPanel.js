@@ -360,10 +360,11 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 	
 	, onShowSelectionsWindow: function(){
 		var config = {};
-		config.selections = this.widgetContainer.getWidgetManager().getSelections() || [];
+		config.widgetManager = this.widgetContainer.getWidgetManager();
+		//config.selections = this.widgetContainer.getWidgetManager().getSelections() || [];
 		Sbi.trace("[MainPanel.onShowSelectionsWindow]: config.selections is equal to [" + Sbi.toSource(config.selections) + "]");		
 		Sbi.trace("[MainPanel.onShowSelectionsWindow]: instatiating the window");    		
-		this.selectionsWindow = Ext.create('Sbi.cockpit.core.SelectionsWindow',config);
+		this.selectionsWindow = Ext.create('Sbi.cockpit.core.SelectionsWindow', config);
 		this.selectionsWindow.on("cancel", this.onSelectionsWindowCancel, this);
 		
     	Sbi.trace("[MainPanel.onShowSelectionsWindow]: window succesfully instantiated");
