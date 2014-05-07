@@ -311,8 +311,7 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 		//	- unmask container (non direttamente ma tramite lancio di evento afterRefresh group)
 		
 		Ext.Ajax.request({
-		    //url: 'https://localhost:1447/SpagoBICockpitEngine/api/1.0/associations/json',
-			url: Sbi.config.serviceReg.getServiceUrl('setAssociations'),
+		    url: Sbi.config.serviceReg.getServiceUrl('setAssociations'),
 		    method: 'POST',
 		    params: {
 		        requestParam: 'notInRequestBody'
@@ -325,7 +324,7 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 						if(r.indexOf("error.mesage.description")>=0){
 							Sbi.exception.ExceptionHandler.handleFailure(response);
 						} else {
-							//alert("Response of [/api/1.0/associations/]:" + r);
+							alert("Response of [/api/1.0/associations/]:" + r);
 							var associationGroups = Ext.util.JSON.decode(r);								
 						}
 					} else {
@@ -654,7 +653,11 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 		}
 	}
 	
-	//refresh All stores of the store manager managed
+	/**
+	 * @method
+	 * 
+	 * refresh all stores of the store manager managed
+	 */
 	, forceRefresh: function(){		
 		for(var i = 0, l = this.stores.length; i < l; i++) {
 			var s = this.getStore(i);			
@@ -670,30 +673,32 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 		}
 	}
 	
+	/**
+	 * @method
+	 * 
+	 * @return the fields definition objec indexed by field header. If the header is not defined the
+	 * field name it is used insted.
+	 */
 	, getRecordMeta: function(r){
 		var toReturn = {};
 		var fields = r.fields.items;
-		for(var i = 0, l = fields.length; i < l; i++) {
-			var f = fields[i];
-			if( typeof f === 'string' ) {
-				f = {name: f};
+		for(var i = 0; i < fields.length; i++) {
+			var field = fields[i];
+			if( Ext.isString(field) ) {
+				field = {name: field};
 			}
-			f.header = f.header || f.name;
-			if(!toReturn[f.header]) {
-				toReturn[f.header] = new Array();
-			}
-			toReturn[f.header].push(f);
+			field.header = field.header || field.name;
+			toReturn[field.header] = field;
 		}
 		
 		return toReturn;
 	}
 	
-	 , getFieldHeaderByName: function(meta, alias){	 	
-	    	for (mf in meta) {
-	    		var m = meta[mf];
-				var name = m[0].name;
-				if(name == alias) {
-					return m[0].header;
+	 , getFieldHeaderByName: function(meta, name){	 	
+	    	for (fieldHeader in meta) {
+	    		var field = meta[fieldHeader];
+				if(field.name === name) {
+					return field.header;
 				}
 	    	}
 	    	return null;
@@ -962,9 +967,9 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 	}
     
     , onStoreLoadException: function(response, options) {
-    	Sbi.trace("[TableWidget.onStoreLoadException]: IN");	
+    	Sbi.trace("[StoreManager.onStoreLoadException]: IN");	
 		Sbi.exception.ExceptionHandler.handleFailure(response, options);
-		Sbi.trace("[TableWidget.onStoreLoadException]: OUT");	
+		Sbi.trace("[StoreManager.onStoreLoadException]: OUT");	
 	}
     
     , createStoreOld: function(c) {

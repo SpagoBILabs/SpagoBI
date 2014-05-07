@@ -62,8 +62,8 @@ Ext.define('Sbi.cockpit.core.SelectionsWindow', {
 
 	, init: function(c){
 		Sbi.trace("[SelectionsWindow.init]: IN");		
-		this.selectionsPanel = Ext.create('Sbi.cockpit.core.SelectionsPanel',{
-			selections: c.selections || []
+		this.selectionsPanel = Ext.create('Sbi.cockpit.core.SelectionsPanel', {
+			widgetManager: c.widgetManager
 		});
 		this.selectionsPanel.on('cancel', this.onCancel, this);
 		

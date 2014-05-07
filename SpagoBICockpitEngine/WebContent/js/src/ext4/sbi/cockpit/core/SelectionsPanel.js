@@ -14,7 +14,8 @@ Ext.define('Sbi.cockpit.core.SelectionsPanel', {
 		, modal: true
 		, grid: null
 		, store: null
-		, selections :null
+		, widgetManager: null
+		, showByAssociation: true
 	}
 
 	, constructor : function(config) {
@@ -64,69 +65,146 @@ Ext.define('Sbi.cockpit.core.SelectionsPanel', {
 	}
 	
 	, initStore: function() {
-		   Sbi.trace("[SelectionsPanel.initStore]: IN");
-		   var initialData = [];
-			
-		   if (this.selections !== null ){
-			   for (s in this.selections){
-				   	var widget = s;
-				   	var field = "";
-				   	var values = [];
-					for (f in this.selections[s]){						
-						if (!Ext.isFunction(this.selections[s])){	
-							var obj = this.selections[s];
-							field = f;
-							values = this.getFieldValues(obj[f].values);
-							var el = [widget,  field, values];
-							initialData.push(el);
-						}
-					}  
-				}
-		   }
-
-		   this.store = new Ext.data.ArrayStore({
-				fields: [
-				         'widget',
-				         'field',
-				         'values'
-				         ]
-		   		, groupField: 'widget'
-				, data: initialData
-		  });
-			
-			Sbi.trace("[SelectionsPanel.initStore]: OUT");
+		Sbi.trace("[SelectionsPanel.initStore]: IN");
+		
+		if(this.showByAssociation === true) {
+			var data = this.initStoreDataByAssociation();
+			this.store = new Ext.data.ArrayStore({
+				fields: ['association', 'values']
+				, data: data
+			});
+		} else {
+			var data = this.initStoreDataByWidget();
+			this.store = new Ext.data.ArrayStore({
+				fields: ['widget', 'field', 'values']
+				, groupField: 'widget'
+				, data: data
+			});
 		}
 		
-	    , initGrid: function() {
+			
+		Sbi.trace("[SelectionsPanel.initStore]: OUT");
+	}
+	
+	, initStoreDataByAssociation: function() {
+		var initialData = [];
+		
+		var selections = this.widgetManager.getSelections() || [];
+		
+		var associations = Sbi.storeManager.getAssociationConfigurations();
+		for(var i = 0; i <  associations.length; i++){
+			var selectedValues = {};
+			var fields = associations[i].fields;
+			for(var j = 0; j <  fields.length; j++){
+				var field = fields[j];
+				var results = this.getSelectionsOnField(field);
+				Ext.apply(selectedValues, results);
+			}
+			var results = [];
+			for(var value in selectedValues) { results.push(value); }
+			var el = [associations[i].id, results.join()];
+			alert(associations[i].id + ' - ' + results.length + '  - ' + results.join());
+			initialData.push(el);
+		}
+		return initialData;
+	}
+	
+	/** 
+	 * @returns the selected values over a specific fields
+	 */
+	, getSelectionsOnField: function(field) {
+		Sbi.trace("[SelectionsPanel.getSelectionsOnField]: IN");
+		
+		var selectedValues = {};
+		var widgets = this.widgetManager.getWidgetsByStore(field.store);
+		
+		for(var i = 0; i < widgets.getCount(); i++) {
+			var widget = widgets.get(i);
+			var selectionNode = this.widgetManager.getWidgetSelections(widget.getId());
+			Sbi.trace("[SelectionsPanel.getSelectionsOnField]: selection on widget [" + widget.getId() + "] is equal to [" + Sbi.toSource(selectionNode)+ "]");
+			var selectionOnField = selectionNode[field.column];
+			Sbi.trace("[SelectionsPanel.getSelectionsOnField]: selection on field [" + field.column + "] is equal to [" + Sbi.toSource(selectionOnField)+ "]");
+			if(Sbi.isValorized(selectionOnField)) {
+				var values = selectionOnField.values || [];
+				for(var j = 0; j < values.length; j++) {
+					selectedValues[values[j]] = values[j];
+					Sbi.trace("[SelectionsPanel.getSelectionsOnField]: Added value [" + values[j] + "] to selection on field [" + field.column + "]");
+				} 
+			}
+		}
+		
+		Sbi.trace("[SelectionsPanel.getSelectionsOnField]: OUT");
+		
+		return selectedValues;
+	}
+	
+	, initStoreDataByWidget: function() {
+		var initialData = [];
+		
+		var selections = this.widgetManager.getSelections() || [];
+		
+		for (widget in selections){
+			var values = [];
+			for (field in selections[widget]){						
+				if (!Ext.isFunction(selections[widget])){	
+					values = this.getFieldValues(selections[widget][field].values);
+					var el = [widget,  field, values];
+					initialData.push(el);
+				}
+			}  
+		}
+		
+		return initialData;
+	}
+		
+	, initGrid: function() {
 	    	var c = this.gridConfig;
 	    	var groupingFeature = Ext.create('Ext.grid.feature.Grouping',{
-//	    		groupHeaderTpl: 'Widget: {name} ({rows.length} Item{[values.rows.length > 1 ? "s" : ""]})'
     	        groupHeaderTpl: 'Widget: {name} ({rows.length} '+ LN('sbi.cockpit.core.selections.list.items')+')'
     	    });
-	        this.grid = Ext.create('Ext.grid.Panel', Ext.apply(c || {}, {
-		        store: this.store,
-		        features: [groupingFeature],
-		        columns: [
-		            { header: LN('sbi.cockpit.core.selections.list.columnWidget')
+    	    
+    	    var features = (this.showByAssociation === true)? undefined: [groupingFeature];
+	    	
+	    	var columns = [];
+	    	
+	    	if(this.showByAssociation === true) {
+	    		columns.push({ 
+	    			header: LN('sbi.cockpit.core.selections.list.columnAssociation')
+	            	, width: 10
+	            	, sortable: true
+	            	, dataIndex: 'association'
+	            	, flex: 1
+	            });
+	    	} else {
+	    		columns.push({ 
+	    			header: LN('sbi.cockpit.core.selections.list.columnWidget')
 	            	, width: 10
 	            	, sortable: true
 	            	, dataIndex: 'widget'
 	            	, flex: 1
-//	            	, hidden: true
-	            	}, {
-	        		  header: LN('sbi.cockpit.core.selections.list.columnField')
-	            	, width: 70
-	            	, sortable: true
-	            	, dataIndex: 'field'
-	            	, flex: 1
-	            	}, {
-	        		  header: LN('sbi.cockpit.core.selections.list.columnValues')
-	            	, width: 70
-	            	, sortable: true
-	            	, dataIndex: 'values'
-	            	, flex: 1
-		            }
-		        ],	        
+	            });
+	    		columns.push({ 
+	    			 header: LN('sbi.cockpit.core.selections.list.columnField')
+		             , width: 70
+		             , sortable: true
+		             , dataIndex: 'field'
+		             , flex: 1
+	    		});
+	    		
+	    	}
+	    	
+	    	columns.push({ 
+	    		header: LN('sbi.cockpit.core.selections.list.columnValues')
+            	, width: 70
+            	, sortable: true
+            	, dataIndex: 'values'
+            	, flex: 1
+	    	});
+	    	
+	        this.grid = Ext.create('Ext.grid.Panel', Ext.apply(c || {}, {
+		        store: this.store,
+		        features: features,
+		        columns: columns,	        
 		        viewConfig: {
 		        	stripeRows: true
 		        }

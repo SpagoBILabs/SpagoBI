@@ -222,6 +222,7 @@ Sbi.locale.ln['sbi.cockpit.filter.editor.wizard.list.scope'] = 'Scope';
 
 //SELECTIONS
 Sbi.locale.ln['sbi.cockpit.core.selections.title'] = 'Active selections list';
+Sbi.locale.ln['sbi.cockpit.core.selections.list.columnAssociation'] = 'Association';
 Sbi.locale.ln['sbi.cockpit.core.selections.list.columnWidget'] = 'Widget';
 Sbi.locale.ln['sbi.cockpit.core.selections.list.columnField'] = 'Selection field';
 Sbi.locale.ln['sbi.cockpit.core.selections.list.columnValues'] = 'Values';
