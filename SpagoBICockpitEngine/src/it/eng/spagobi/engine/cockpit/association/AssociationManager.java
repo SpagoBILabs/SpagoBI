@@ -108,14 +108,6 @@ public class AssociationManager {
 		return g;
 	}
 	
-	
-	
-	
-	
-	
-	
-	
-	
 	/**
      * Craete a toy graph based on String objects.
      *
