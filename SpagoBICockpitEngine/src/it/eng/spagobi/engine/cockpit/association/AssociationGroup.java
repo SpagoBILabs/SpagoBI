@@ -19,6 +19,9 @@ import java.util.Map;
 import java.util.Set;
 
 /**
+ * A group of associations. It is used to group together associations defined over
+ * between connected dataset
+ * 
  * @author Andrea Gioia (andrea.gioia@eng.it)
  *
  */

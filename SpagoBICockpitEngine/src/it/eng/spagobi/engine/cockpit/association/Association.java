@@ -15,8 +15,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * An association is a collection of fields belonging to different datasets 
+ * that refer to the same thing. The association represent a one to one
+ * relationship between these datasets. The fields defined in an association
+ * can be used to join together the datasets.
+ * 
+ * NOTE: It's not possible to define an association that use more than one field 
+ * per dataset.
+ * 
  * @author Andrea Gioia (andrea.gioia@eng.it)
- *
  */
 public class Association {
 	
@@ -75,8 +82,9 @@ public class Association {
 		this.fields.addAll(fields);
 	}
 	
-	
-	
+	/**
+	 * A filed have a unique name withing the dataset it belongs to
+	 */
 	public static class Field {
 		String dataSetLabel;
 		String name;
