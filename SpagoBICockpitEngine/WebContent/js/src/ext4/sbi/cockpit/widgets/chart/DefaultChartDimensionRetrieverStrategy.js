@@ -22,6 +22,11 @@ Sbi.cockpit.widgets.chart.DefaultChartDimensionRetrieverStrategy = function(conf
 			var width = '100%';
 			var height = '100%';
 			
+			if (chart.chartConfig.wtype = 'piechart'){
+				width = '100%';
+				height = '90%';
+			}
+			
 			var seriesNumber = series.length;
 			var categoriesNumber = categories.length;
 			
