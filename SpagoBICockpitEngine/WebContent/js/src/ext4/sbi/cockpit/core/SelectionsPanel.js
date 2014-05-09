@@ -88,54 +88,12 @@ Ext.define('Sbi.cockpit.core.SelectionsPanel', {
 	
 	, initStoreDataByAssociation: function() {
 		var initialData = [];
-		
-		var selections = this.widgetManager.getSelections() || [];
-		
-		var associations = Sbi.storeManager.getAssociationConfigurations();
-		for(var i = 0; i <  associations.length; i++){
-			var selectedValues = {};
-			var fields = associations[i].fields;
-			for(var j = 0; j <  fields.length; j++){
-				var field = fields[j];
-				var results = this.getSelectionsOnField(field);
-				Ext.apply(selectedValues, results);
-			}
-			var results = [];
-			for(var value in selectedValues) { results.push(value); }
-			var el = [associations[i].id, results.join()];
-			alert(associations[i].id + ' - ' + results.length + '  - ' + results.join());
+		var selections = this.widgetManager.getSelectionsByAssociations();
+		for(var association in selections) {
+			var el = [association, selections[association].join()];
 			initialData.push(el);
 		}
 		return initialData;
-	}
-	
-	/** 
-	 * @returns the selected values over a specific fields
-	 */
-	, getSelectionsOnField: function(field) {
-		Sbi.trace("[SelectionsPanel.getSelectionsOnField]: IN");
-		
-		var selectedValues = {};
-		var widgets = this.widgetManager.getWidgetsByStore(field.store);
-		
-		for(var i = 0; i < widgets.getCount(); i++) {
-			var widget = widgets.get(i);
-			var selectionNode = this.widgetManager.getWidgetSelections(widget.getId());
-			Sbi.trace("[SelectionsPanel.getSelectionsOnField]: selection on widget [" + widget.getId() + "] is equal to [" + Sbi.toSource(selectionNode)+ "]");
-			var selectionOnField = selectionNode[field.column];
-			Sbi.trace("[SelectionsPanel.getSelectionsOnField]: selection on field [" + field.column + "] is equal to [" + Sbi.toSource(selectionOnField)+ "]");
-			if(Sbi.isValorized(selectionOnField)) {
-				var values = selectionOnField.values || [];
-				for(var j = 0; j < values.length; j++) {
-					selectedValues[values[j]] = values[j];
-					Sbi.trace("[SelectionsPanel.getSelectionsOnField]: Added value [" + values[j] + "] to selection on field [" + field.column + "]");
-				} 
-			}
-		}
-		
-		Sbi.trace("[SelectionsPanel.getSelectionsOnField]: OUT");
-		
-		return selectedValues;
 	}
 	
 	, initStoreDataByWidget: function() {

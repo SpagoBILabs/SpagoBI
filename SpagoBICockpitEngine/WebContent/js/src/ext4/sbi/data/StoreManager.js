@@ -55,6 +55,8 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
      */
 	, associations: null
 	
+	, associationGroups: null
+	
 	/**
      * @property {Ext.util.MixedCollection()} filters
      * The list of registered filters managed by this manager
@@ -317,26 +319,20 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 		        requestParam: 'notInRequestBody'
 		    },
 		    jsonData: Ext.JSON.encode(this.associations),
-		    success : function(response, options) {		
-		    	if(response !== undefined && response.statusText=="OK") {
-		    		var r = response.responseText || response.responseXML;
-					if(Sbi.isValorized(r)) {
-						if(r.indexOf("error.mesage.description")>=0){
-							Sbi.exception.ExceptionHandler.handleFailure(response);
-						} else {
-							alert("Response of [/api/1.0/associations/]:" + r);
-							var associationGroups = Ext.util.JSON.decode(r);								
-						}
-					} else {
-						Sbi.exception.ExceptionHandler.showErrorMessage('Server response body is empty', 'Service Error');
-					}
-				} else {
-					Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
-				}
-			},
+		    success : this.onAssociationGroupRefreshed,
 			failure: Sbi.exception.ExceptionHandler.handleFailure,
 			scope: this
 		});
+	}
+	
+	, getAssociationGroupByStore: function(store) {
+		for(var i = 0; i < this.associationGroups.length; i++) {
+			var associationGroup = this.associationGroups[i];
+			if( Ext.Array.contains(associationGroup.datasets, store.storeId) ) {
+				return associationGroup;
+			}
+		}
+		return null;
 	}
 
 	// FILTERS CONFIGS
@@ -570,6 +566,38 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 		Sbi.trace("[StoreManager.removeStore]: OUT");
 		
 		return store;
+	}
+	
+	/**
+	 * reload all the store connected by an association group. Apply the selctions to filter the results
+	 * in an associative way. Selection object have this form:
+	 * 
+	 * 	{
+	 * 		cityAssociation: ['Milan', 'Turin']
+	 * 		, customerAssociation: ['Andrea', 'Sofia', 'Lucio']
+	 * 	}
+	 */
+	, loadStores: function(associationGroup, selections) {
+		for(var i = 0; i < associationGroup.datasets.length; i++) {
+    		this.loadStore( associationGroup.datasets[i] );
+    	}	
+		// TODO implement the above logic in one shot:
+		// call a service that reload the joined dataset filtering it prperly
+		// take the result an split in in subdatasets
+		// pass the new data to the store in order to reload them
+		
+		alert(Sbi.config.serviceReg.getServiceUrl('loadJoinedDataSetStore'));
+		Ext.Ajax.request({
+		    url: Sbi.config.serviceReg.getServiceUrl('loadJoinedDataSetStore'),
+		    method: 'GET',
+		    params: {
+		    	associationGroup:  Ext.JSON.encode(associationGroup)
+		        , selections: Ext.JSON.encode(selections)
+		    },
+		    success : this.onAssociationGroupRefreshed,
+			failure: Sbi.exception.ExceptionHandler.handleFailure,
+			scope: this
+		});
 	}
 	
 	/**
@@ -1029,6 +1057,23 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 	// utility methods
 	// -----------------------------------------------------------------------------------------------------------------
 
+    , onAssociationGroupRefreshed: function(response, options) {
+		if(response !== undefined && response.statusText=="OK") {
+    		var r = response.responseText || response.responseXML;
+			if(Sbi.isValorized(r)) {
+				if(r.indexOf("error.mesage.description")>=0){
+					Sbi.exception.ExceptionHandler.handleFailure(response);
+				} else {
+					alert("Response of [/api/1.0/associations/]:" + r);
+					this.associationGroups = Ext.util.JSON.decode(r);								
+				}
+			} else {
+				Sbi.exception.ExceptionHandler.showErrorMessage('Server response body is empty', 'Service Error');
+			}
+		} else {
+			Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
+		}
+	}
 
 });
 	
