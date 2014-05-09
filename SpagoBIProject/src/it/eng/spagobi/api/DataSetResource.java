@@ -30,11 +30,11 @@ import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData.FieldType;
 import it.eng.spagobi.tools.dataset.common.query.AggregationFunctions;
 import it.eng.spagobi.tools.dataset.crosstab.CrossTab;
 import it.eng.spagobi.tools.dataset.crosstab.CrosstabDefinition;
-import it.eng.spagobi.tools.dataset.exceptions.ParameterDsException;
+import it.eng.spagobi.tools.dataset.exceptions.ParametersNotValorizedException;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
-import it.eng.spagobi.utilities.service.JSONSuccess;
+import it.eng.spagobi.utilities.json.JSONUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -138,8 +138,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 	@GET
 	@Path("/{label}/data")
 	@Produces(MediaType.APPLICATION_JSON)
-	public String getDataStore(@Context HttpServletRequest req
-			, @PathParam("label") String label
+	public String getDataStore(@PathParam("label") String label
 			, @QueryParam("filters") @DefaultValue("{}") String filters
 			, @QueryParam("offset") @DefaultValue("-1") int offset
 			, @QueryParam("fetchSize") @DefaultValue("-1") int fetchSize
@@ -147,7 +146,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 		logger.debug("IN");
 		try {
 		
-			IDataStore dataStore = getDatasetManagementAPI().getDataStore(label, offset, fetchSize, maxResults, filters);
+			IDataStore dataStore = getDatasetManagementAPI().getDataStore(label, offset, fetchSize, maxResults, getParametersMap(filters));
 			Map<String, Object> properties = new HashMap<String, Object>();
 			JSONArray fieldOptions = new JSONArray("[{id: 1, options: {measureScaleFactor: 0.5}}]");
 			properties.put(JSONDataWriter.PROPERTY_FIELD_OPTION, fieldOptions);
@@ -155,8 +154,8 @@ public class DataSetResource extends AbstractSpagoBIResource {
 			JSONObject gridDataFeed = (JSONObject)dataSetWriter.write(dataStore);
 			
 			return gridDataFeed.toString();	
-		}catch(ParameterDsException p){
-			throw new ParameterDsException(p.getMessage());
+		}catch(ParametersNotValorizedException p){
+			throw new ParametersNotValorizedException(p.getMessage());
 		}catch(Throwable t) {
 			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", t);
 		} finally {			
@@ -170,8 +169,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 	@POST
 	@Path("/{label}/chartData")
 	@Produces(MediaType.APPLICATION_JSON)
-	public String getChartDataStore(@Context HttpServletRequest req
-			, @PathParam("label") String label
+	public String getChartDataStore(@PathParam("label") String label
 			, @QueryParam("offset") @DefaultValue("-1") int offset
 			, @QueryParam("fetchSize") @DefaultValue("-1") int fetchSize
 			, @QueryParam("maxResults") @DefaultValue("-1") int maxResults) {
@@ -204,13 +202,55 @@ public class DataSetResource extends AbstractSpagoBIResource {
 
 			return crossTabDefinition.toString();
 			
-		}catch(ParameterDsException p){
-			throw new ParameterDsException(p.getMessage());
+		}catch(ParametersNotValorizedException p){
+			throw new ParametersNotValorizedException(p.getMessage());
 		}catch(Throwable t) {
 			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", t);
 		} finally {			
 			logger.debug("OUT");
 		}	
+	}
+	
+	@GET
+	@Path("/joined/data")
+	@Produces(MediaType.APPLICATION_JSON)
+	public String getJoinedDataStore(@QueryParam("associationGroup") String associationGroup
+			, @QueryParam("selections") String selections
+			, @QueryParam("filters") @DefaultValue("{}") String filters) {
+		logger.debug("IN");
+		try {
+			JSONObject associationGroupJSON = new JSONObject(associationGroup);
+			JSONObject selectionsJSON = new JSONObject(selections);
+			IDataStore dataStore = getDatasetManagementAPI().getJoinedDataStore(associationGroupJSON, selectionsJSON, getParametersMap(filters));
+			Map<String, Object> properties = new HashMap<String, Object>();
+			JSONArray fieldOptions = new JSONArray("[{id: 1, options: {measureScaleFactor: 0.5}}]");
+			properties.put(JSONDataWriter.PROPERTY_FIELD_OPTION, fieldOptions);
+			JSONDataWriter dataSetWriter = new JSONDataWriter(properties);
+			JSONObject gridDataFeed = (JSONObject)dataSetWriter.write(dataStore);
+			
+			return gridDataFeed.toString();	
+		} catch(Throwable t) {
+			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", t);
+		} finally {			
+			logger.debug("OUT");
+		}	
+	}
+	
+	private static Map<String, String> getParametersMap(String filters){
+		Map<String, String> toReturn = new HashMap<String, String>();
+		filters = JSONUtils.escapeJsonString(filters);
+		JSONObject jsonFilters  = ObjectUtils.toJSONObject(filters);	
+		Iterator<String> keys = jsonFilters.keys();
+		try{
+	        while( keys.hasNext() ){
+	            String key = keys.next();            
+	            String value = jsonFilters.getString(key);
+	            toReturn.put(key, value);
+	        }
+		} catch(Throwable t) {
+			throw new SpagoBIRuntimeException("An unexpected exception occured while loading spagobi filters [" + filters + "]", t);
+		}	
+		return toReturn;
 	}
 	
 	@GET
