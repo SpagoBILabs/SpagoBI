@@ -29,6 +29,8 @@ import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 
 import java.util.List;
 
+import org.json.JSONArray;
+
 /**
  * @author Marco Cortella (marco.cortella@eng.it)
  *
@@ -62,6 +64,15 @@ public interface ICache {
 	 * @return the resultSet if cached, null elsewhere 
 	 */
 	IDataStore get(String resultsetSignature);
+	
+	/**
+	 * Facility method. It is equivalent to get(List<String> signatures, JSONArray associations)  call.
+	 * 
+	 * @param dataSet the dataSets that generate the joined resultSet
+	 * 
+	 * @return the resultSet if cached, null elsewhere 
+	 */
+	IDataStore get(List<IDataSet> dataSets, JSONArray associations);
 	
 	/**
 	 * Facility method. It is equivalent to get(dataSet.getSignature, groups, filters, projections) call.

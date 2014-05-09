@@ -41,7 +41,7 @@ import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData.FieldType;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
-import it.eng.spagobi.tools.dataset.exceptions.ParameterDsException;
+import it.eng.spagobi.tools.dataset.exceptions.ParametersNotValorizedException;
 import it.eng.spagobi.tools.dataset.persist.PersistedTableManager;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 
@@ -50,6 +50,7 @@ import java.util.List;
 import java.util.Random;
 
 import org.apache.log4j.Logger;
+import org.json.JSONArray;
 
 
 
@@ -199,7 +200,7 @@ public class SQLDBCache implements ICache {
 			
 				try{
 					dataSetSignature = dataSet.getSignature();
-				}catch(ParameterDsException p){
+				}catch(ParametersNotValorizedException p){
 					logger.warn("Error on getting signature for dataset [ "+ dataSet.getLabel() +" ]. Error: " + 
 							p.getMessage());
 					return null; //doesn't cache data
@@ -218,6 +219,30 @@ public class SQLDBCache implements ICache {
 		return dataStore;
 	}
 	
+	/* (non-Javadoc)
+	 * @see it.eng.spagobi.tools.dataset.cache.ICache#get(java.util.List, org.json.JSONArray)
+	 */
+	public IDataStore get(List<IDataSet> dataSets, JSONArray associations) {
+		IDataStore dataStore = null;
+		
+		logger.debug("IN");
+		
+		try {
+			String joinedDataSetSignature = getJoinedDatasetSignature(dataSets);
+			dataStore = get(joinedDataSetSignature);
+		} catch(Throwable t) {
+			if(t instanceof CacheException) throw (CacheException)t;
+			else throw new CacheException("An unexpected error occure while getting joined dataset from cache", t);
+		} finally {
+			logger.debug("OUT");
+		}
+		
+		return dataStore;
+	}
+	
+	private String getJoinedDatasetSignature(List<IDataSet> dataSets) {
+		return "xxx";
+	}
 
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.dataset.cache.ICache#get(java.lang.String)
@@ -232,7 +257,7 @@ public class SQLDBCache implements ICache {
 				logger.debug("Resultset with signature ["+resultsetSignature+"] found");
 				CacheItem cacheItem = getMetadata().getCacheItem(resultsetSignature);
 				String tableName = cacheItem.getTable();	
-				logger.debug("The table associated to dataset ["+resultsetSignature+"] is [tableName]");
+				logger.debug("The table associated to dataset ["+resultsetSignature+"] is [" + tableName + "]");
 				dataStore = dataSource.executeStatement("SELECT * FROM " + tableName, 0, 0);		
 			} else {
 				logger.debug("Resultset with signature ["+resultsetSignature+"] not found");
@@ -245,9 +270,8 @@ public class SQLDBCache implements ICache {
 		}
 		
 		return dataStore;
-
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.dataset.cache.ICache#get(it.eng.spagobi.tools.dataset.bo.IDataSet, java.util.List, java.util.List, java.util.List)
 	 */

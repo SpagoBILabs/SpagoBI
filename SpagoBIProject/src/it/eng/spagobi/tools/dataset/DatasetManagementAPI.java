@@ -58,7 +58,7 @@ import it.eng.spagobi.tools.dataset.common.query.IAggregationFunction;
 import it.eng.spagobi.tools.dataset.crosstab.CrosstabDefinition;
 import it.eng.spagobi.tools.dataset.crosstab.Measure;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
-import it.eng.spagobi.tools.dataset.exceptions.ParameterDsException;
+import it.eng.spagobi.tools.dataset.exceptions.ParametersNotValorizedException;
 import it.eng.spagobi.tools.dataset.utils.DataSetUtilities;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.json.JSONUtils;
@@ -274,15 +274,14 @@ public class DatasetManagementAPI {
 	}
 	
 	
-	public IDataStore getDataStore(String label, int offset, int fetchSize, int maxResults, String filters) {
+	public IDataStore getDataStore(String label, int offset, int fetchSize, int maxResults, Map<String, String> parametersValues) {
 		try {
 		
 			IDataSet dataSet = this.getDataSetDAO().loadDataSetByLabel(label);
-			Map reqParams = getParametersMap(filters);
-			List dsParams = getDataSetParameters(label);
-			if (dsParams.size() >  reqParams.size()){
-				String emptyFields = getEmptyFields(reqParams, dsParams);
-				throw new ParameterDsException("The following parameters have no value [" + emptyFields + "]");				
+			List<JSONObject> parameters = getDataSetParameters(label);
+			if (parameters.size() >  parametersValues.size()){
+				String parameterNotValorizedStr = getParametersNotValorized(parameters, parametersValues);
+				throw new ParametersNotValorizedException("The following parameters have no value [" + parameterNotValorizedStr + "]");				
 			}
 			
 			ICache cache = CacheManager.getCache();
@@ -290,15 +289,7 @@ public class DatasetManagementAPI {
 			
 			IDataStore dataStore = null;
 			if (cachedResultSet == null){
-				
-				dataSet.setParamsMap(reqParams);
-				dataSet.loadData(offset, fetchSize, maxResults);
-				dataStore = dataSet.getDataStore();
-				
-				WorkManager workManager = new WorkManager(getSpagoBIConfigurationProperty("JNDI_THREAD_MANAGER"));
-				Work cacheWriteWork = new SQLDBCacheWriteWork(cache, dataStore, dataSet);
-				
-				workManager.run(cacheWriteWork, null);
+				dataStore = storeDataSetInCache(dataSet, offset, fetchSize, maxResults, parametersValues);
 			} else {
 				dataStore = cachedResultSet;
 			}
@@ -307,13 +298,86 @@ public class DatasetManagementAPI {
 			//IDataStore dataStore = dataSet.getDataStore();
 			
 			return dataStore;
-		}catch(ParameterDsException p){
-			throw new ParameterDsException(p.getMessage());
+		} catch(ParametersNotValorizedException p){
+			throw new ParametersNotValorizedException(p.getMessage());
 		}catch(Throwable t) {
 			throw new RuntimeException("An unexpected error occured while executing method", t);
 		} finally {			
 			logger.debug("OUT");
 		}	
+	}
+	
+	private IDataStore storeDataSetInCache(IDataSet dataSet, int offset, int fetchSize, int maxResults, Map<String, String> parametersValues) {
+		try {
+			ICache cache = CacheManager.getCache();
+			dataSet.setParamsMap(parametersValues);
+			dataSet.loadData(offset, fetchSize, maxResults);
+			IDataStore dataStore = dataSet.getDataStore();
+			
+			WorkManager workManager = new WorkManager(getSpagoBIConfigurationProperty("JNDI_THREAD_MANAGER"));
+			Work cacheWriteWork = new SQLDBCacheWriteWork(cache, dataStore, dataSet);
+			
+			workManager.run(cacheWriteWork, null);
+			return dataStore;
+		} catch(ParametersNotValorizedException p){
+			throw new ParametersNotValorizedException(p.getMessage());
+		}catch(Throwable t) {
+			throw new RuntimeException("An unexpected error occured while executing method", t);
+		} finally {			
+			logger.debug("OUT");
+		}	
+	}
+	
+	/**
+	 * @param associationGroupJSON
+	 * @param selectionsJSON
+	 * @return
+	 */
+	public IDataStore getJoinedDataStore(JSONObject associationGroup, JSONObject selections, Map<String, String> parametersValues) {
+		
+		logger.debug("IN");
+		
+		try {
+			JSONArray datasetLabels = associationGroup.getJSONArray("datasets");
+			JSONArray associations = associationGroup.getJSONArray("associations");
+			
+			List<IDataSet> joinedDataSets = new ArrayList<IDataSet>();
+			for(int i = 0; i < datasetLabels.length(); i++) {
+				String datasetLabel = datasetLabels.getString(i);
+				IDataSet dataSet = this.getDataSetDAO().loadDataSetByLabel(datasetLabel);
+				joinedDataSets.add(dataSet);
+			}
+			
+			
+			ICache cache = CacheManager.getCache();
+			IDataStore cachedResultSet = cache.get(joinedDataSets, associations);	
+			
+			if (cachedResultSet == null){
+				for(IDataSet joinedDataSet: joinedDataSets) {
+					
+					
+					joinedDataSet.setParamsMap(parametersValues);
+					joinedDataSet.loadData();
+					IDataStore dataStore = joinedDataSet.getDataStore();
+					
+					WorkManager spagoBIWorkManager = new WorkManager(getSpagoBIConfigurationProperty("JNDI_THREAD_MANAGER"));
+					Work cacheWriteWork = new SQLDBCacheWriteWork(cache, dataStore, joinedDataSet);
+					
+//					//#4. Create list of WorkItem you want to wait for completion
+//					List workItemList=new ArrayList();
+//					workItemList.add(workItem);
+//
+//					//#5. Wait for completion of work
+//					this.workManager.waitForAll(workItemList, WorkManager.INDEFINITE);
+				}
+				// qunado tutti i work sono finiti creo la tabella di join
+			} 
+		} catch(Throwable t) {
+			throw new RuntimeException("An unexpected error occured while executing method", t);
+		} finally {			
+			logger.debug("OUT");
+		}	
+		return null;
 	}
 	
 	public IDataStore getAggregatedDataStore(String label, int offset, int fetchSize, int maxResults, CrosstabDefinition crosstabDefinition) {
@@ -361,32 +425,19 @@ public class DatasetManagementAPI {
 		}	
 	}
 	
-	private static Map getParametersMap(String filters){
-		Map toReturn = new HashMap();
-		filters = JSONUtils.escapeJsonString(filters);
-		JSONObject jsonFilters  = ObjectUtils.toJSONObject(filters);	
-		Iterator keys = jsonFilters.keys();
-		try{
-	        while( keys.hasNext() ){
-	            String key = (String)keys.next();            
-	            String value = jsonFilters.getString(key);
-	            toReturn.put(key, value);
-	        }
-		} catch(Throwable t) {
-			throw new SpagoBIRuntimeException("An unexpected exception occured while loading spagobi filters [" + filters + "]", t);
-		}	
-		return toReturn;
-	}
 	
-	private static String getEmptyFields(Map reqParams, List dsParams){
+	
+	
+	
+	private static String getParametersNotValorized(List<JSONObject> parameters, Map<String, String> parametersValues){
 		String toReturn = "";
 
-		for (Iterator iterator = dsParams.iterator(); iterator.hasNext();) {
-			JSONObject obj = (JSONObject) iterator.next();
+		for (Iterator<JSONObject> iterator = parameters.iterator(); iterator.hasNext();) {
+			JSONObject parameter = iterator.next();
 			try{
-				String key = obj.getString("namePar");
-				if (reqParams.get(key) == null) {			
-					toReturn += key;
+				String parameterName = parameter.getString("namePar");
+				if (parametersValues.get(parameterName) == null) {			
+					toReturn += parameterName;
 					if(iterator.hasNext()){
 						toReturn += ", ";
 					}
@@ -718,8 +769,5 @@ public class DatasetManagementAPI {
 				}
 			}
 		}
-	}
-
-	
-	
+	}	
 }
