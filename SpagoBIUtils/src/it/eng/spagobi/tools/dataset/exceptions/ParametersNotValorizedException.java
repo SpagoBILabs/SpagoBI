@@ -5,7 +5,7 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.tools.dataset.exceptions;
 
-public class ParameterDsException extends DatasetException {
+public class ParametersNotValorizedException extends DatasetException {
 
 	/**
 	 * 
@@ -19,7 +19,7 @@ public class ParameterDsException extends DatasetException {
 	 * 
 	 * @param message Text of the exception
 	 */
-    public ParameterDsException(String message) {
+    public ParametersNotValorizedException(String message) {
     	super(message);  	
     }
 	
@@ -29,7 +29,7 @@ public class ParameterDsException extends DatasetException {
      * @param message Text of the exception
      * @param ex previous Throwable object
      */
-    public ParameterDsException(String message, Throwable ex) {
+    public ParametersNotValorizedException(String message, Throwable ex) {
     	super(message, ex);
     }
 
