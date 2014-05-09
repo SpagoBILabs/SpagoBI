@@ -15,7 +15,7 @@ import it.eng.spagobi.tools.dataset.bo.JDBCHBaseDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCHiveDataSet;
 import it.eng.spagobi.tools.dataset.bo.ScriptDataSet;
 import it.eng.spagobi.tools.dataset.common.query.IQueryTransformer;
-import it.eng.spagobi.tools.dataset.exceptions.ParameterDsException;
+import it.eng.spagobi.tools.dataset.exceptions.ParametersNotValorizedException;
 import it.eng.spagobi.tools.dataset.exceptions.ProfileAttributeDsException;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
@@ -238,7 +238,7 @@ public class QuerableBehaviour extends AbstractDataSetBehaviour {
 				}
 			}
 			pars += " have no value specified";
-			throw new ParameterDsException("The folowing parameters have no value [" + pars + "]");
+			throw new ParametersNotValorizedException("The folowing parameters have no value [" + pars + "]");
 			
 		}
 		

@@ -184,19 +184,11 @@ public class WorkManager {
 		} finally {
 			logger.debug("OUT");
 		}
-
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
+	public commonj.work.WorkManager getInnerInstance() {
+		return wm;
+	}
 	
 	public void shutdown(){
 		wm.shutdown();
