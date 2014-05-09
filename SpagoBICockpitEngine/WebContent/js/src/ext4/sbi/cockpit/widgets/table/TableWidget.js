@@ -378,14 +378,40 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 	}
 	
 	, onClick: function( sm,selected,opt){
-        var selections = sm.getSelection();
-        var config = {};
-
-        config.widgetName = this.id;
-		config.widgetData = selections;
+        var records = sm.getSelection();
         
-		this.fireEvent('selection', config);
+        var selections = {};
+        
+        for (var i=0; i< records.length; i++){
+    		var s = this.extractSelectionsFromRecord(records[i]);
+    		for(var fieldHeader in s) {
+    			selections[fieldHeader] = selections[fieldHeader] || {values: []};
+    			// Push the selected value into the selections only if the selection doesn't contain it yet
+    			Ext.Array.include(selections[fieldHeader].values, s[fieldHeader]);
+    		}
+        }
+        
+		this.fireEvent('selection', this, selections);
 	} 
+	
+	, extractSelectionsFromRecord: function(record) {
+    	var selections = {};
+    	
+    	var meta = Sbi.storeManager.getRecordMeta(record);
+    	
+    	var fields = record.data;
+    	
+    	for (fieldName in fields){    			    	    	
+    		if (fieldName === 'id' || fieldName === 'recNo') continue;
+    		
+    		var fieldHeader = Sbi.storeManager.getFieldHeaderByName(meta, fieldName);
+    		var fieldValue = fields[fieldName];
+    		
+    		selections[fieldHeader] = fieldValue;
+    	}
+    	
+    	return selections;
+    }
 	
 	, initColumns: function() {
 		var columns = [

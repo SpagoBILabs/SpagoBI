@@ -221,34 +221,52 @@ Ext.extend(Sbi.cockpit.core.WidgetManager, Ext.util.Observable, {
     // selection management methods
 	// -----------------------------------------------------------------------------------------------------------------
 	
+	// -- selection ----
 	 /**
 	 * @method
 	 * 
-	 * Returns the selections list
+	 * @returns current #selections
 	 * 
 	 */
 	, getSelections: function() {
 		return this.selections;
 	}
 	
+	/**
+	 * @method
+	 * 
+	 * set the current #selections
+	 * 
+	 */
+	, setSelections: function(selections) {
+		this.selections = selections;
+	}
 	
 	/**
 	 * @method
 	 * 
-	 * Set the field selections over the specified widget
+	 * clear current #selections
 	 * 
-	 *  @param {String} widgetId The id of the widget
-	 *  @param {Object} fieldSelections the field selections encoded using an object as the one show in the following
-	 *  example:
-	 *  	{
-	 *			STATE: {values:['CA','WA']}
-	 *			, FAMILY:  {values:['Food', 'Drink']}
-	 *		}
-	 *  
 	 */
-    , setWidgetSelections: function(widgetId, fieldSelections) {
-    	this.selections[widgetId] = fieldSelections;
+	, clearSelections: function() {
+		this.selections = {};
+	}
+	
+	/**
+	 * @method 
+	 * 
+	 * add the passed in selections to the current #selections
+	 */
+    , addSelections: function(selections){
+    	Sbi.trace("[WidgetManager.addSelections]: IN");
+    	
+    	for (var widgetId in selections){
+    		this.addWidgetSelections(widgetId, selections[widgetId]);
+    	}
+    	Sbi.trace("[WidgetManager.addSelections]: OUT");
     }
+	
+    // -- widget selections ----
     
     /**
 	 * @method
@@ -269,35 +287,22 @@ Ext.extend(Sbi.cockpit.core.WidgetManager, Ext.util.Observable, {
     	return this.selections[widgetId] || {};
     }
     
-    /**
-     * @method
-     * 
-     * @return {Object} the field selections encoded using an object as the one show in the following
+	/**
+	 * @method
+	 * 
+	 * Set the field selections over the specified widget
+	 * 
+	 *  @param {String} widgetId The id of the widget
+	 *  @param {Object} selections the widget selections encoded using an object as the one show in the following
 	 *  example:
-	 *  	FAMILY:  {values:['Food', 'Drink']}
-	 *  If no selections are specified over the input filed an empty object is returned. 
-     */
-    , getFieldSelectionsOverWidget: function(widgetId, fieldHeader) {
-    	return this.getWidgetSelections()[fieldHeader] || {};
-    }
-    
-    /**
-     * @method
-     * 
-     * @return {Array} the selected values over the specified field of the specified widget. An empty array
-     * if no values are selected.
-     */
-    , getFieldSelectedValuesOverWidget: function(widgetId, fieldHeader) {
-    	return this.getFieldSelectionsOverWidget(widgetId).values || [];
-    }
-    
-    /**
-     * @method
-     */
-    , setFieldSelectedValuesOverWidget: function(widgetId, fieldHeader, values) {
-    	this.selections[widgetId] = this.selections[widgetId] || {};
-    	this.selections[widgetId][fieldHeader] = this.selections[widgetId][fieldHeader] || {};
-    	this.selections[widgetId][fieldHeader].values = values;
+	 *  	{
+	 *			STATE: {values:['CA','WA']}
+	 *			, FAMILY:  {values:['Food', 'Drink']}
+	 *		}
+	 *  
+	 */
+    , setWidgetSelections: function(widgetId, selections) {
+    	this.selections[widgetId] = selections;
     }
     
     /**
@@ -308,78 +313,137 @@ Ext.extend(Sbi.cockpit.core.WidgetManager, Ext.util.Observable, {
 	 * @param {String} widgetId The widget id
 	 * 
 	 */
-    , clearSelections: function(widgetId){
-    	Sbi.trace("[WidgetManager.clearSelections]: IN");
+    , clearWidgetSelections: function(widgetId){
+    	Sbi.trace("[WidgetManager.clearWidgetSelections]: IN");
     	var widgetSelections = this.getWidgetSelections(widgetId);
     	if (Sbi.isValorized(widgetSelections) && Sbi.isNotEmptyObject(widgetSelections)){
 			delete this.selections[widgetId];
-			Sbi.debug("[WidgetManager.clearSelections]: selections specified over widget [" + widgetId + "] have been succesfully cleared");
+			Sbi.debug("[WidgetManager.clearWidgetSelections]: selections specified over widget [" + widgetId + "] have been succesfully cleared");
     	} else {
-    		Sbi.debug("[WidgetManager.clearSelections]: no selections specified over widget [" + widgetId + "]");
+    		Sbi.debug("[WidgetManager.clearWidgetSelections]: no selections specified over widget [" + widgetId + "]");
     	}
-    	Sbi.trace("[WidgetManager.clearSelections]: IN");
+    	Sbi.trace("[WidgetManager.clearWidgetSelections]: IN");
     }
-	
-	/**
-	 * @method 
-	 */
-    , addSelections: function(c){
-    	Sbi.trace("[WidgetManager.addSelections]: IN");
-    	
-    	for (var i=0; i< c.widgetData.length; i++){
-    		this.addSelectionsOnWidget(c.widgetName, c.widgetData[i]);
+
+    , addWidgetSelections: function(widgetId, selections){
+    	Sbi.trace("[WidgetManager.addWidgetSelections]: IN");
+    	for (var fieldHeader in selections){
+    		this.addFieldSelections(widgetId, fieldHeader, selections[fieldHeader].values);
     	}
-    	
-    	Sbi.trace("[WidgetManager.addSelections]: selections is now equal to [" + Sbi.toSource(this.selections)+ "]");	
-    	
-    	Sbi.trace("[WidgetManager.addSelections]: OUT");
+    	Sbi.trace("[WidgetManager.addWidgetSelections]: OUT");
     }
-	
-    , addSelectionsOnWidget: function(widgetId, record) {
-    	var meta = Sbi.storeManager.getRecordMeta(record);
-    	
-    	var fields = record.data;
-    	
-    	for (fieldName in fields){    			    	    	
-    		if (fieldName === 'id' || fieldName === 'recNo') continue;
-    		
-    		var fieldHeader = Sbi.storeManager.getFieldHeaderByName(meta, fieldName);
-    		var fieldValue = fields[fieldName];
-    		
-	    	this.addSelectionOnField(widgetId, fieldHeader, fieldValue);
-    	}
-    }
-    
-	, addSelectionOnField: function(widgetId, fieldHeader, value) {
-		var values = this.getFieldSelectedValuesOverWidget(widgetId, fieldHeader);
-		values.push(value);	
-    	this.setFieldSelectedValuesOverWidget(widgetId, fieldHeader, values);
-	}
-        
-   
+ 
+    // -- field selections ----
     
     /**
-	 * @method
-	 * 
-	 * Returns the object with all the selections values 
-	 * 
-	 * @param {selectionNode} selectionNode The selection Node with all informations
-	 * @param {s} s The label for get the specific value
-	 * 
-	 * @return {Object} object with selections values
-	 */
-    , getWidgetSelectionValues: function(selectionNode, s){
-    	for (n in selectionNode){
-    		if (n === s) return selectionNode[n].values;
-    	}
-    	return [];  
+     * @method
+     * 
+     * @return {Object} the field selections encoded using an object as the one show in the following
+	 *  example:
+	 *  	FAMILY:  {values:['Food', 'Drink']}
+	 *  If no selections are specified over the input filed an empty object is returned. 
+     */
+    , getFieldSelections: function(widgetId, fieldHeader) {
+    	return this.getWidgetSelections(widgetId)[fieldHeader] || {};
     }
     
+    /**
+     * @method
+     */
+    , setFieldSelections: function(widgetId, fieldHeader, selections) {
+    	this.selections[widgetId] = this.selections[widgetId] || {};
+    	this.selections[widgetId][fieldHeader] = selections;
+    }
     
+    , clearFieldSelections: function(widgetId, fieldHeader) {
+    	this.selections[widgetId] = this.selections[widgetId] || {};
+    	this.selections[widgetId][fieldHeader] = {values: []};
+    }
+    
+    , addFieldSelections: function(widgetId, fieldHeader, valuesToAdd) {
+		var currentSelectedValues = this.getFieldSelectedValues(widgetId, fieldHeader);
+		var values = Ext.Array.union(currentSelectedValues, valuesToAdd);
+    	this.setFieldSelectedValues(widgetId, fieldHeader, values);
+	}
+    
+    // -- value selections ----
+    /**
+     * @method
+     * 
+     * @return {Array} the selected values over the specified field of the specified widget. An empty array
+     * if no values are selected.
+     */
+    , getFieldSelectedValues: function(widgetId, fieldHeader) {
+    	return this.getFieldSelections(widgetId, fieldHeader).values || [];
+    }
+    
+    /**
+     * @method
+     */
+    , setFieldSelectedValues: function(widgetId, fieldHeader, values) {
+    	this.setFieldSelections(widgetId, fieldHeader, {values: values});
+    }
+    
+    // -- store field selections ----
+    
+    // a store filed selections contain all the values selected for the specific field in all the widgets that use the 
+    // store that contains the field itself
+    
+    /** 
+	 * @method
+	 */
+	, getStoreFieldSelectedValues: function(store, fieldHeader) {
+		Sbi.trace("[WidgetManager.getSelectionsOnField]: IN");
+		
+		var selectedValues = {};
+		var widgets = this.getWidgetsByStore(store);
+		
+		for(var i = 0; i < widgets.getCount(); i++) {
+			var widget = widgets.get(i);
+			var values = this.getFieldSelectedValues(widget.getId(), fieldHeader);
+			for(var j = 0; j < values.length; j++) {
+				selectedValues[values[j]] = values[j];
+				Sbi.trace("[SelectionsPanel.getSelectionsOnField]: Added value [" + values[j] + "] to selection on field [" + fieldHeader + "]");
+			} 
+		}
+		
+		Sbi.trace("[SelectionsPanel.getSelectionsOnField]: OUT");
+		
+		return selectedValues;
+	}
 	
+	// -- selections by associations ----
 	
+	/**
+	 * @returns the selections grouped by associations like in the following example:
+	 * 
+	 * 	{
+	 * 		cityAssociation: ['Milan', 'Turin']
+	 * 		, customerAssociation: ['Andrea', 'Sofia', 'Lucio']
+	 * 	}
+	 */
+	, getSelectionsByAssociations: function() {
+		var selectionsByAssociations = {};
+		
+		var selections = this.getSelections();
+		
+		var associations = Sbi.storeManager.getAssociationConfigurations();
+		for(var i = 0; i <  associations.length; i++){
+			var selectedValues = {};
+			var fields = associations[i].fields;
+			for(var j = 0; j <  fields.length; j++){
+				var field = fields[j];
+				var values = this.getStoreFieldSelectedValues(field.store, field.column);
+				Ext.apply(selectedValues, values);
+			}
+			var results = [];
+			for(var value in selectedValues) { results.push(value); }
 	
-	
+			selectionsByAssociations[associations[i].id] = results;
+		}
+		return selectionsByAssociations;
+	}
+
 	// -----------------------------------------------------------------------------------------------------------------
     // private methods
 	// -----------------------------------------------------------------------------------------------------------------
@@ -392,16 +456,22 @@ Ext.extend(Sbi.cockpit.core.WidgetManager, Ext.util.Observable, {
     	//widget.setParentContainer(null);
     }
 
-    , onSelection: function(c){
+    , onSelection: function(widget, selections){
     	Sbi.trace("[WidgetManager.onSelection]: IN");
+    
+    	this.setWidgetSelections(widget.getId(), selections);
     	
-    	if (!Sbi.isValorized(this.selections)) this.selections = {};
-    	this.clearSelections(c.widgetName);
-    	this.addSelections(c);
+    	var associationGroup = Sbi.storeManager.getAssociationGroupByStore( widget.getStore() );
+    	if(Sbi.isValorized(associationGroup)) {
+    		var selections = this.getSelectionsByAssociations();
+        	Sbi.storeManager.loadStores( associationGroup,  selections);
+    	}
     	
-    	
+  
     	Sbi.trace("[WidgetManager.onSelection]: OUT");
     }
+    
+    
    
     // -----------------------------------------------------------------------------------------------------------------
     // init methods
@@ -409,6 +479,7 @@ Ext.extend(Sbi.cockpit.core.WidgetManager, Ext.util.Observable, {
 	
     , init: function() {
     	this.widgets = new Ext.util.MixedCollection();
+    	this.selections = {};
     	this.widgets.on('add', this.onWidgetAdd, this);
     	this.widgets.on('remove', this.onWidgetRemove, this);
 	}
