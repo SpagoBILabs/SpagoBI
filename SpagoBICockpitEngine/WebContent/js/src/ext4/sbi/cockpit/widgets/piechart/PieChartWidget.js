@@ -7,7 +7,7 @@
 
 Ext.define('Sbi.cockpit.widgets.piechart.PieChartWidget', {
 	extend: 'Sbi.cockpit.widgets.chart.AbstractChartWidget'
-
+//	, layout: 'fit'
 	, config:{
 //		  title: LN('sbi.cockpit.widgets.piechartwidgetdesigner.title')
 		  border: false
@@ -15,7 +15,7 @@ Ext.define('Sbi.cockpit.widgets.piechart.PieChartWidget', {
 		, storeId: null
 		, chartConfig : null 	
 		, chartDivId : null
-		, chart : null
+		, chart : null		
 	}
 
 
@@ -32,7 +32,7 @@ Ext.define('Sbi.cockpit.widgets.piechart.PieChartWidget', {
 	, initComponent: function() {
   
         Ext.apply(this,{
-        	html : '<div id="' + this.chartDivId + '""></div>'
+        //	html : '<div align=\"center\" id="' + this.chartDivId + '" style="padding-top:0px;"></div>'
         });
         
         this.callParent();
@@ -48,20 +48,18 @@ Ext.define('Sbi.cockpit.widgets.piechart.PieChartWidget', {
 	
     , refresh:  function() {  
     	Sbi.trace("[PieChartWidget.refresh]: IN");
-//		this.getStore().removeAll();
-//		this.getStore().baseParams = {};
-//		var requestParameters = {start: 0, limit: this.pageSize};
-//		this.getStore().load({params: requestParameters});
-		this.doLayout();
+    	this.init();	
+    	this.createChart();
 		Sbi.trace("[PieChartWidget.refresh]: OUT");
 	}
 
     , createChart: function () {
     	var retriever = new Sbi.cockpit.widgets.chart.DefaultChartDimensionRetrieverStrategy();
-		var size = retriever.getChartDimension(this);
-		this.update(' <div id="' + this.chartDivId + '" style="width: ' + size.width + '; height: ' + size.height + ';"></div>');
-//		var percent = this.chartConfig.showpercentage;
-
+		var size = retriever.getChartDimension(this);		
+		this.update(' <div align=\"center\" id="' + this.chartDivId + '" style="padding-top:3px;padding-bottom:3px;width: ' + size.width + '; height: ' + size.height + ';"></div>');		
+//		this.update(' <div border=4; align=\"center\" id="' + this.chartDivId + '" style="width:100%; height:50%;  border:solid;border-color:blue;"></div>');
+//		this.update(' <div border=4; align=\"center\" id="' + this.chartDivId + '" style="border:solid;border-color:blue;"></div>');
+		
 		var storeObject = this.getJsonStore();
 		var colors = this.getColors();
 		
@@ -70,7 +68,7 @@ Ext.define('Sbi.cockpit.widgets.piechart.PieChartWidget', {
 		var items = {
 				store: storeObject.store,
 				extraStyle: extraStyle,
-				style: 'height: 80%;',
+				style: 'height: 90%;',
 				hiddenseries: new Array()
 		};
 
@@ -78,40 +76,29 @@ Ext.define('Sbi.cockpit.widgets.piechart.PieChartWidget', {
 		
 		//configuration (legend and values)
     	this.addChartConf(items);
-	    	
-		items.region = 'center';
-
-
+		
 		var titlePanel = new Ext.Panel({
 			border: false,
-			height: 200,
-			region: 'north',
-			html: '<div style=\"padding-top: 5px; color: rgb(255, 102, 0);\" align=\"center\"><font size=\"4\"><b>'+storeObject.serieNames[0]+'</b></font></div>'
+			html: '<div style=\"padding-top:0px; color: rgb(255, 102, 0);\" align=\"center\"><font size=\"4\"><b>'+storeObject.serieNames[0]+'</b></font></div>'
 		});
-		
+		Sbi.trace('Title created.'); 
 		
 		var pieChartPanel = this.getChart(items, colors);
 		Sbi.trace('Piechart created.'); 
 		
-//		var chartContainer = new Ext.Panel({
-//			title:'Sono il chart container!!',
-//			
-//			height: 400,
-//			width: '100%',
-//			region:'center',
-////			border: false,
-////			items: [titlePanel, pieChartPanel]
-//			items: [pieChartPanel]
-//		});
-//		
-//		new Ext.Panel({
-//			renderTo : this.chartDivId,
-////			layout: 'fit',
-//			layout: 'border',
-//			border: false,
-////			items: [chartContainer]
-//			items: [titlePanel, chartContainer]
-//		});
+		var chartContainer = new Ext.Panel({
+//			layout: 'fit', //'form', 
+			border: false,
+			items: [titlePanel, pieChartPanel]
+		});
+		
+		new Ext.Panel({
+			renderTo : this.chartDivId,
+//			layout:'fit',
+			border: false,			
+			items: [chartContainer]
+		});
+
 		
 	}	
 	// -----------------------------------------------------------------------------------------------------------------
@@ -147,7 +134,7 @@ Ext.define('Sbi.cockpit.widgets.piechart.PieChartWidget', {
 		
 		var config = {
 		        width: '100%',
-		    	height: '100%',
+		    	height: '97%',
 		    	theme: 'CustomTheme',
 		        hidden: false,
 		        title: "My Chart",
@@ -184,7 +171,7 @@ Ext.define('Sbi.cockpit.widgets.piechart.PieChartWidget', {
 			if(colors!=null){
 				serie.style.color= colors[i];
 			}
-			
+						
 			seriesForChart.push(serie);
 		}
 		return seriesForChart;
@@ -235,7 +222,17 @@ Ext.define('Sbi.cockpit.widgets.piechart.PieChartWidget', {
 	            		   this.setTitle(tooltipContent);
 	            	  }
     	        },
-    	        showInLegend: showLegend 
+    	        showInLegend: showLegend,
+    	        listeners: {
+    		  			itemmousedown:function(obj) {
+    		  				var categoryField ;
+    		  				var valueField ;
+    		  				categoryField = obj.storeItem.data[obj.series.label.field];
+    		  				valueField = obj.slice.value;	
+    		  				alert(categoryField + ' - ' + valueField);
+    		  			}
+    			}
+    	        
                 
          };
 		series.push(aSerie);

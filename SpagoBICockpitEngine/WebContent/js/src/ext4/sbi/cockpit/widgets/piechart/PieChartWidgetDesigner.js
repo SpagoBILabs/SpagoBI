@@ -91,6 +91,7 @@ Ext.define('Sbi.cockpit.widgets.piechart.PieChartWidgetDesigner', {
 		
 		this.showLegendCheck = new Ext.form.Checkbox({
 			checked: false
+			, width: 200	
 			, fieldLabel: LN('sbi.cockpit.widgets.piechartwidgetdesigner.form.showlegend.title')
 		});
 		
@@ -102,24 +103,23 @@ Ext.define('Sbi.cockpit.widgets.piechart.PieChartWidgetDesigner', {
 					, ['right', LN('sbi.cockpit.widgets.piechartwidgetdesigner.form.legend.position.right')]]
 		});
 		this.legendPositionCombo = new Ext.form.ComboBox({
-			width:			300,
+			width:			200,
 			queryMode:      'local',
 			triggerAction:  'all',
 			forceSelection: true,
 			editable:       false,
 			allowBlank: 	false,
-			fieldLabel:     LN('sbi.cockpit.widgets.piechartwidgetdesigner.form.legend.position.title'),
+			fieldLabel:      LN('sbi.cockpit.widgets.piechartwidgetdesigner.form.legend.position.title'),
 			name:           'position',
 			displayField:   'description',
 			valueField:     'name',
 			value:			'bottom',
-//			anchor:			'95%',
 			store:          this.legendPositionStore
 		});
-//		this.orientationCombo.on('change', this.changeBarChartImage, this);
 		
 		this.showPercentageCheck = new Ext.form.Checkbox({
 			checked: false
+			, width: 200	
 			, fieldLabel: LN('sbi.cockpit.widgets.piechartwidgetdesigner.form.showpercentage.title')
 		});
 		
@@ -207,25 +207,32 @@ Ext.define('Sbi.cockpit.widgets.piechart.PieChartWidgetDesigner', {
 	        	controlsItems.push(this.showValuesCheck);
 		} 
 		
-    	controlsItems.push(this.showLegendCheck);
+    	controlsItems.push(this.showLegendCheck);   	
     	controlsItems.push(this.legendPositionCombo);
-    	controlsItems.push(this.showPercentageCheck);
+//    	controlsItems.push(this.showPercentageCheck);
 		
 		this.form = new Ext.Panel({
 			border: false
 			, layout: 'form'
-//			, layout: 'column'
-//		    , padding: '10 10 10 10'
+		    , padding: '10 10 10 10'
 			, items: [
 				{
-//					xtype: 'form'
 					xtype: 'fieldset'
+					, bodyStyle:'padding:5px!important;'
+					, layout: 'column'
 					, columnWidth : .4
 					, style: 'padding: 10px 0px 0px 15px;'
-				//	, title: LN('sbi.worksheet.designer.barchartdesignerpanel.form.fieldsets.options')
 					, border: false
 					, items: controlsItems
 				}
+				,{
+					xtype: 'fieldset'
+					, layout: 'column'
+					, columnWidth : .9
+					, style: 'padding: 10px 0px 0px 15px;'
+					, border: false
+					, items: [this.showPercentageCheck]
+				}			
 				, 
 				this.axisDefinitionPanel
 			]
@@ -245,7 +252,6 @@ Ext.define('Sbi.cockpit.widgets.piechart.PieChartWidgetDesigner', {
 		Sbi.trace("[PieChartWidgetDesigner.getDesignerState]: IN");
 		Sbi.trace("[PieChartWidgetDesigner.getDesignerState]: " + Sbi.cockpit.widgets.piechart.PieChartWidgetDesigner.superclass.getDesignerState);
 		var state = Sbi.cockpit.widgets.piechart.PieChartWidgetDesigner.superclass.getDesignerState(this);
-//		var state = {};
 		state.designer = 'Pie Chart';
 		state.wtype = 'piechart';
 		state.showvalues = this.showValuesCheck.getValue();
@@ -278,7 +284,7 @@ Ext.define('Sbi.cockpit.widgets.piechart.PieChartWidgetDesigner', {
 		valErr+=''+this.seriesContainerPanel.validate(validFields);
 		
 		if(valErr!= ''){
-			valErr = valErr.substring(0, valErr.length - 1)
+			valErr = valErr.substring(0, valErr.length - 1);
 			return LN("sbi.cockpit.designer.validation.invalidFields")+valErr;
 		}
 		
