@@ -204,10 +204,9 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 			//, absolute: false
 		});
 	
-		
 		Sbi.config.serviceReg.registerService('loadDataSetStore', {
 			name: 'loadDataSetStore'
-			, description: 'Load all the store of the specified dataset'
+			, description: 'Load the store of the specified dataset'
 			, resourcePath: 'datasets/{datasetLabel}/data'
 		}, 'spagobiServiceConf');
 		
@@ -216,6 +215,12 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 			, description: 'Load the store of the specified dataset for a chart widget'
 			, resourcePath: 'datasets/{datasetLabel}/chartData'
 			, method: 'POST'
+		}, 'spagobiServiceConf');
+		
+		Sbi.config.serviceReg.registerService('loadJoinedDataSetStore', {
+			name: 'loadJoinedDataSetStore'
+			, description: 'Load the store of the specified joined dataset'
+			, resourcePath: 'datasets/joined/data'
 		}, 'spagobiServiceConf');
 		
 		Sbi.config.serviceReg.registerService('loadDataSetField', {
