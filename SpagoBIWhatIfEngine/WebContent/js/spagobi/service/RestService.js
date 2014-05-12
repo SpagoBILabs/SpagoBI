@@ -22,8 +22,9 @@ Ext.define('Sbi.service.RestService', {
 		subPath: null,
 		method: "GET",
 		pathParams: null,
-		baseParams:[],
-		jsonData: null
+		baseParams: Sbi.config.ajaxBaseParams || {},
+		jsonData: null,
+		params: {}
 	},
 
 	constructor : function(config) {
@@ -50,8 +51,6 @@ Ext.define('Sbi.service.RestService', {
 		if(this.pathParams){
 			params = params.concat(this.pathParams);
 		}
-		
-
 
 		if(params && url){
 			for(var i=0; i<params.length; i++){
@@ -65,16 +64,6 @@ Ext.define('Sbi.service.RestService', {
 		}
 		return url;
 	},
-
-
-	callService:	function( url, subpath, method, pathparams, baseParams ){
-		var completeUrl = Sbi.service.Service.serviceVersion+"/"+Sbi.service.Service.addRestSubPathAndParameters(url, subpath, pathparams);
-		return Sbi.config.serviceRegistry.getRestServiceUrl({
-			serviceName:  completeUrl
-			, baseParams: baseParams
-		});
-	},
-
 
 	callService:function(scope, successCallBack, failureCallBack){
 
@@ -109,6 +98,7 @@ Ext.define('Sbi.service.RestService', {
 				method: this.method,
 				success : mySuccessCallBack,
 				scope: scope,
+				params: Ext.apply(this.params, this.baseParams ),
 				failure: myFailureCallBack
 		};
 

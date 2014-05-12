@@ -6,8 +6,13 @@
 
 package it.eng.spagobi.engines.whatif;
 
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.engines.whatif.model.ModelConfig;
 import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
+import it.eng.spagobi.engines.whatif.schema.MondrianSchemaManager;
+import it.eng.spagobi.engines.whatif.template.WhatIfTemplate;
+import it.eng.spagobi.engines.whatif.template.WhatIfTemplateParser;
+import it.eng.spagobi.services.proxy.ArtifactServiceProxy;
 import it.eng.spagobi.services.proxy.EventServiceProxy;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
@@ -18,7 +23,6 @@ import it.eng.spagobi.utilities.engines.IEngineAnalysisState;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIEngineRestServiceRuntimeException;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.writeback4j.WriteBackManager;
 import it.eng.spagobi.writeback4j.mondrian.MondrianDriver;
 
@@ -39,11 +43,6 @@ import com.eyeq.pivot4j.PivotModel;
  */
 public class WhatIfEngineInstance extends AbstractEngineInstance implements Serializable {
 	
-
-
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1329486982941461093L;
 
 	public static transient Logger logger = Logger.getLogger(WhatIfEngineInstance.class);
@@ -54,14 +53,14 @@ public class WhatIfEngineInstance extends AbstractEngineInstance implements Seri
 	private PivotModel pivotModel;
 	private ModelConfig modelConfig;
 	private WriteBackManager writeBackManager;
+	private String mondrianSchemaFilePath;
 
-	public WhatIfEngineInstance(Object template, Map env) {
+	protected WhatIfEngineInstance(Object template, Map env) {
+		this( WhatIfTemplateParser.getInstance() != null ? WhatIfTemplateParser.getInstance().parse(template) : null, env );
+	}
+	
+	public WhatIfEngineInstance(WhatIfTemplate template, Map env) {
 		super( env );	
-		try {
-//			this.guiSettings = new JSONObject(template);
-		} catch (Throwable t) {
-			throw new SpagoBIRuntimeException("Impossible to parse template", t);
-		}
 		
 		includes = WhatIfEngine.getConfig().getIncludes();
 		
@@ -73,39 +72,17 @@ public class WhatIfEngineInstance extends AbstractEngineInstance implements Seri
 			throw new RuntimeException("Cannot load Mondrian Olap4j Driver", e);
 		}
 
+		String reference = initMondrianSchema(env);
+		this.setMondrianSchemaFilePath(reference);
 		
-		IDataSource ds = (IDataSource)env.get(EngineConstants.ENV_DATASOURCE);
+		IDataSource ds = (IDataSource) env.get(EngineConstants.ENV_DATASOURCE);
 
-//		String initialMdx = "SELECT {[Measures].[Unit Sales], [Measures].[Store Cost]} ON COLUMNS, {[Product].[Food]} ON ROWS FROM [Sales]";
-//		Properties connectionProps = new Properties();
-//		//for athos
-//		//connectionProps.put("Catalog","/home/spagobi/apache-tomcat-7.0.50/resources/Olap/FoodMart.xml");
-//		//connectionProps.put("JdbcUser","foodmart");
-//		//connectionProps.put("JdbcPassword","foodmart");
-//		//connectionProps.put("Catalog","file:D:/progetti/SpagoBI/apache-tomcat-7.0.50/FoodMartMySQL.xml");
-//	
-//		connectionProps.put("JdbcUser",ds.getUser());
-//		connectionProps.put("JdbcPassword",ds.getPwd());
-//		
-//		connectionProps.put("Catalog","file:D:/Sviluppo/mondrian/FoodMartMySQL.xml");
-//		connectionProps.put("JdbcDrivers",ds.getDriver());
-//		connectionProps.put("inputJdbcSchema","foodmart");
-//		
-//		connectionProps.put("Provider","Mondrian");
-
-		olapDataSource =  WhatIfEngineConfig.getInstance().getOlapDataSource();
-//		((SimpleOlapDataSource)olapDataSource).setConnectionString( "jdbc:mondrian:Jdbc=jdbc:mysql://localhost:3306/foodmart_key");
-//		
-//		//for athos
-//		//((SimpleOlapDataSource)olapDataSource).setConnectionString( "jdbc:mondrian:Jdbc=jdbc:mysql://sibilla2:3306/foodmart");
-//		
-//		
-//		((SimpleOlapDataSource)olapDataSource).setConnectionProperties(connectionProps);
+		olapDataSource = WhatIfEngineConfig.getInstance().getOlapDataSource( ds, reference );
 		
 		//pivotModel = new PivotModelImpl(olapDataSource);
 		pivotModel = new SpagoBIPivotModel(olapDataSource);
-		pivotModel.setLocale(this.getLocale());
-		pivotModel.setMdx( WhatIfEngineConfig.getInstance().getInitiallMdx());
+		pivotModel.setLocale( this.getLocale() );
+		pivotModel.setMdx( template.getMdxQuery() );
 		pivotModel.initialize();
 		
 		
@@ -115,7 +92,7 @@ public class WhatIfEngineInstance extends AbstractEngineInstance implements Seri
 		if(writeback!= null && !writeback.equals("")){
 			modelConfig.getWriteBackConf().put(ModelConfig.WRITEBACK, writeback);
 			try {
-				writeBackManager = new WriteBackManager(getEditCubeName(), new MondrianDriver(getOlapSchema()), getDataSource());
+				writeBackManager = new WriteBackManager(getEditCubeName(), new MondrianDriver(getMondrianSchemaFilePath()), getDataSource());
 			} catch (SpagoBIEngineException e) {
 				logger.debug("Exception creating the whatif component", e);
 				throw new SpagoBIEngineRestServiceRuntimeException("whatif.engine.instance.writeback.exception", getLocale(), "Exception creating the whatif component", e);
@@ -125,6 +102,74 @@ public class WhatIfEngineInstance extends AbstractEngineInstance implements Seri
 		
 	}
 	
+	public WhatIfEngineInstance(Map env) {
+		super( env );	
+		
+		includes = WhatIfEngine.getConfig().getIncludes();
+		
+		try {
+			Class.forName("mondrian.olap4j.MondrianOlap4jDriver");
+			Class.forName("org.olap4j.OlapWrapper");
+			
+		} catch (ClassNotFoundException e) {
+			throw new RuntimeException("Cannot load Mondrian Olap4j Driver", e);
+		}
+
+		String reference = (String) env.get(EngineConstants.ENV_OLAP_SCHEMA);
+		this.setMondrianSchemaFilePath(reference);
+		
+		IDataSource ds = (IDataSource) env.get(EngineConstants.ENV_DATASOURCE);
+
+		olapDataSource = WhatIfEngineConfig.getInstance().getOlapDataSource( ds, reference );
+		
+		//pivotModel = new PivotModelImpl(olapDataSource);
+		pivotModel = new SpagoBIPivotModel(olapDataSource);
+		pivotModel.setLocale( this.getLocale() );
+		pivotModel.setMdx( (String) env.get("ENV_INITIAL_MDX_QUERY") );
+		pivotModel.initialize();
+		
+		
+		//init configs 
+		modelConfig = new ModelConfig();
+		String writeback = WhatIfEngineConfig.getInstance().getWriteBackConf();
+		if(writeback!= null && !writeback.equals("")){
+			modelConfig.getWriteBackConf().put(ModelConfig.WRITEBACK, writeback);
+			try {
+				writeBackManager = new WriteBackManager(getEditCubeName(), new MondrianDriver(getMondrianSchemaFilePath()), getDataSource());
+			} catch (SpagoBIEngineException e) {
+				logger.debug("Exception creating the whatif component", e);
+				throw new SpagoBIEngineRestServiceRuntimeException("whatif.engine.instance.writeback.exception", getLocale(), "Exception creating the whatif component", e);
+				
+			}
+		}
+		
+	}
+	
+	private String initMondrianSchema(Map env) {
+        ArtifactServiceProxy artifactProxy = (ArtifactServiceProxy) env.get( EngineConstants.ENV_ARTIFACT_PROXY );
+        MondrianSchemaManager schemaManager = new MondrianSchemaManager(artifactProxy);
+        Integer artifactVersionId = getArtifactVersionId( env );
+        logger.debug("Artifact version id :" + artifactVersionId);
+        String reference = schemaManager.getMondrianSchemaURI(artifactVersionId);
+        logger.debug("Reference :" + reference);
+        return reference;
+	}
+	
+    private Integer getArtifactVersionId(Map env) {
+        try {
+            if (!env.containsKey( SpagoBIConstants.SBI_ARTIFACT_VERSION_ID )) {
+            	logger.error("Missing artifact version id");
+                throw new SpagoBIEngineRuntimeException("Missing artifact version id");
+            }
+            String str = (String) env.get( SpagoBIConstants.SBI_ARTIFACT_VERSION_ID );
+            Integer id = new Integer(str);
+            return id;
+        } catch (Exception e) {
+            logger.error("Error while getting artifact version id", e);
+            throw new SpagoBIEngineRuntimeException("Error while getting artifact version id", e);
+        }
+    }
+
 	public OlapConnection getOlapConnection () {
 		OlapConnection connection;
 		try {
@@ -168,11 +213,6 @@ public class WhatIfEngineInstance extends AbstractEngineInstance implements Seri
 		return (IDataSet)this.getEnv().get(EngineConstants.ENV_DATASET);
 	}
 	
-	public String getOlapSchema() {
-		return (String)this.getEnv().get(EngineConstants.ENV_OLAP_SCHEMA);
-	}
-	
-	
 	public Locale getLocale() {
 		return (Locale)this.getEnv().get(EngineConstants.ENV_LOCALE);
 	}
@@ -206,7 +246,13 @@ public class WhatIfEngineInstance extends AbstractEngineInstance implements Seri
 		return writeBackManager;
 	}
 	
-	
+	public String getMondrianSchemaFilePath() {
+		return mondrianSchemaFilePath;
+	}
+
+	private void setMondrianSchemaFilePath(String mondrianSchemaFilePath) {
+		this.mondrianSchemaFilePath = mondrianSchemaFilePath;
+	}
 	
 	
 }

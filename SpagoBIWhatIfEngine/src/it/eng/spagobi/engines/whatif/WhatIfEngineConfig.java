@@ -8,6 +8,7 @@ package it.eng.spagobi.engines.whatif;
 
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.services.common.EnginConf;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -119,6 +120,9 @@ public class WhatIfEngineConfig {
 			pwd = "";
 		else
 			pwd= sb.getCharacters();
+		if (pwd == null) {
+			pwd = "";
+		}
 		return pwd;
 	}
 	
@@ -139,36 +143,28 @@ public class WhatIfEngineConfig {
 	}
 	
 	
-	public OlapDataSource getOlapDataSource() {
-		SourceBean sb;
+	public OlapDataSource getOlapDataSource(IDataSource ds, String reference) {
 		Properties connectionProps = new Properties();
-				
-		String usr = "foodmart";
-		String pwd = "foodmart";
-		String catalog = "/home/spagobi/apache-tomcat-7.0.50/resources/Olap/FoodMart.xml";
-		String connectionString =  "jdbc:mondrian:Jdbc=jdbc:mysql://sibilla2:3306/foodmart";
-		String driver =  "com.mysql.jdbc.Driver";
+		String connectionString = null;
+		if (ds.checkIsJndi()) {
+			connectionProps.put("DataSource", ds.getJndi());
+			connectionString = "jdbc:mondrian:DataSource=" + ds.getJndi();
+		} else {
+			connectionProps.put("JdbcUser",ds.getUser());
+			connectionProps.put("JdbcPassword",ds.getPwd());
+			connectionProps.put("JdbcDrivers",ds.getDriver());
+			connectionString = "jdbc:mondrian:Jdbc=" + ds.getUrlConnection();
+		}
+//		String catalogue = getCatalogue();
+//		connectionProps.put("Catalog", catalogue);
 		
-
-		usr = getConnectionUsr();
-		pwd = getConnectionPwd();
-		catalog = getCatalogue();
+//		connectionProps.put("inputJdbcSchema","foodmart");
 		
-		connectionString = getConnectionString();
-		driver =getDriver();
-		
-		connectionProps.put("JdbcUser", usr);
-		connectionProps.put("JdbcPassword", pwd);
-		
-		connectionProps.put("Catalog",catalog);
-		connectionProps.put("JdbcDrivers", driver);
-		
+		connectionProps.put("Catalog", reference);
 		connectionProps.put("Provider","Mondrian");
-
+		
 		OlapDataSource olapDataSource = new SimpleOlapDataSource();
 		((SimpleOlapDataSource)olapDataSource).setConnectionString( connectionString);
-
-		
 		((SimpleOlapDataSource)olapDataSource).setConnectionProperties(connectionProps);
 		
 		return olapDataSource;

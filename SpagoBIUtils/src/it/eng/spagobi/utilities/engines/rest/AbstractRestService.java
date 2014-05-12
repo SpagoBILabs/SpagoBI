@@ -13,6 +13,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 /**
  * The Class AbstractRestService.
@@ -25,11 +26,13 @@ public abstract class AbstractRestService {
 
 	/**
 	 * Creates the context manager
+	 * 
 	 * @return ExecutionSession container of the execution manager
 	 */
-	public ExecutionSession getExecutionSession(){
-		if(es==null){
-			es = new ExecutionSession(getServletRequest(), getServletRequest().getSession());
+	public ExecutionSession getExecutionSession() {
+		if (es == null) {
+			es = new ExecutionSession(getServletRequest(), getServletRequest()
+					.getSession());
 		}
 		return es;
 	}
@@ -40,62 +43,88 @@ public abstract class AbstractRestService {
 	 * @return the console engine instance
 	 */
 	public IEngineInstance getEngineInstance() {
-    	return (IEngineInstance)es.getAttributeFromSession( EngineConstants.ENGINE_INSTANCE );
-    }
+		return (IEngineInstance) es
+				.getAttributeFromSession(EngineConstants.ENGINE_INSTANCE);
+	}
 
 	/**
 	 * Check if the number is null
-	 * @param value the value to check
+	 * 
+	 * @param value
+	 *            the value to check
 	 * @return true if the value is null
 	 */
-	public boolean isNull(Number value){
-		return value==null ;
+	public boolean isNull(Number value) {
+		return value == null;
 	}
 
 	/**
 	 * Check if the string is null
-	 * @param value the value to check
+	 * 
+	 * @param value
+	 *            the value to check
 	 * @return true if the value is null
 	 */
-	public boolean isNull(String value){
-		return value==null || value.equals("null") || value.equals("undefined");
+	public boolean isNull(String value) {
+		return value == null || value.equals("null")
+				|| value.equals("undefined");
 	}
 
 	/**
 	 * Check if the string is null or ""
-	 * @param value the value to check
+	 * 
+	 * @param value
+	 *            the value to check
 	 * @return true if the value is null or ""
 	 */
-	public boolean isNullOrEmpty(String value){
+	public boolean isNullOrEmpty(String value) {
 		return isNull(value) || value.equals("");
 	}
-	
+
 	public Map getEnv() {
 		return getEngineInstance().getEnv();
 	}
-	
+
 	public Locale getLocale() {
-		return  (Locale)getEnv().get(EngineConstants.ENV_LOCALE);
+		return (Locale) getEnv().get(EngineConstants.ENV_LOCALE);
 	}
-	
-	
 
 	/**
-	 * Gets the HttpServletRequest..
-	 * A standard implementation is to get the HttpServletRequest from the context.. The implementing class can be:
+	 * Gets the HttpServletRequest.. A standard implementation is to get the
+	 * HttpServletRequest from the context.. The implementing class can be:
 	 * 
 	 * public class XXXEngineService extends AbstractRestService{
-	 *		@Context
-	 *		protected HttpServletRequest servletRequest;
 	 * 
-	 * 		public HttpServletRequest getServletRequest(){
-	 *			return servletRequest;
-	 *		}
+	 * @Context protected HttpServletRequest servletRequest;
+	 * 
+	 *          public HttpServletRequest getServletRequest(){ return
+	 *          servletRequest; }
 	 * @return the HttpServletRequest
 	 */
 	public abstract HttpServletRequest getServletRequest();
 
+	public HttpSession getHttpSession() {
+		return getServletRequest().getSession();
+	}
 
+	public Object getAttributeFromHttpSession(String attrName) {
+		return getHttpSession().getAttribute(attrName);
+	}
 	
+	public Object getAttributeFromExecutionSession(String attrName) {
+		return getExecutionSession().getAttributeFromSession(attrName);
+	}
 
+
+	public String getAttributeFromSessionAsString(String attrName) {
+		return getExecutionSession().getAttributeFromSessionAsString(attrName);
+	}
+
+	public boolean requestContainsAttribute(String attrName) {
+		return getExecutionSession().requestContainsAttribute(attrName);
+	}
+
+	public String getAttributeAsString(String attrName) {
+		return getExecutionSession().getAttributeAsString(attrName);
+	}
 }

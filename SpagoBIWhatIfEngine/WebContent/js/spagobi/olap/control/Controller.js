@@ -34,7 +34,7 @@ Ext.define('Sbi.olap.control.Controller', {
 		
 		var service = Ext.create("Sbi.service.RestService",{
 			url: "model",
-			method: "PUT",
+			method: "POST",
 			pathParams: [mdx]
 		});
 		

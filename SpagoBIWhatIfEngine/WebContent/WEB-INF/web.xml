@@ -7,7 +7,7 @@
 
 	<display-name>WhatIf</display-name>
 	<description>
-		Spago BI - Whati if
+		SpagoBI - What-If engine
 	</description>
 	
 
@@ -73,10 +73,12 @@ END-CAS -->
 		</filter-class>
 	</filter>
 	
+	<!--
 	<filter>
 		<filter-name>AntiInjectionFilter</filter-name>
 		<filter-class>it.eng.spagobi.utilities.filters.AntiInjectionFilter</filter-class>
 	</filter>
+	-->
 	
 	<!--  ============================================================================ -->
 	<!--  FILTER MAPPINGS						 									   -->
@@ -85,7 +87,7 @@ END-CAS -->
 	<!-- EngineCheckSessionFilter on AdapterHTTP; urls with NEW_SESSION=TRUE will open a new session if previous one has expired -->
     <filter-mapping>
         <filter-name>EngineCheckSessionFilter</filter-name>
-        <url-pattern>/servlet/AdapterHTTP/*</url-pattern>
+        <url-pattern>/restful-services/*</url-pattern>
     </filter-mapping>
 
 <!-- START-CAS 
@@ -114,19 +116,15 @@ END-CAS -->
 	
 	<filter-mapping>
     		<filter-name>SpagoBIAccessFilter</filter-name>
-    		<url-pattern>/servlet/AdapterHTTP/*</url-pattern>
-	</filter-mapping>
-
-	<filter-mapping>
-    		<filter-name>SpagoBIAccessFilter</filter-name>
-    		<url-pattern>/servlet/AdapterHTTPBackEnd/*</url-pattern>
+    		<url-pattern>/restful-services/*</url-pattern>
 	</filter-mapping>
 	
+	<!-- 
 	<filter-mapping>
 		<filter-name>AntiInjectionFilter</filter-name>
-		<url-pattern>/servlet/AdapterHTTP/*</url-pattern>
+		<url-pattern>/restful-services/*</url-pattern>
 	</filter-mapping>
-
+	-->
 
 
 
