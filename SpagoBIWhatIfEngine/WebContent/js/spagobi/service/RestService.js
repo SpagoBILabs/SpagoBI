@@ -22,12 +22,13 @@ Ext.define('Sbi.service.RestService', {
 		subPath: null,
 		method: "GET",
 		pathParams: null,
-		baseParams: Sbi.config.ajaxBaseParams || {},
+		baseParams: {},
 		jsonData: null,
 		params: {}
 	},
 
 	constructor : function(config) {
+		config = Ext.apply(config || {}, {baseParams : Sbi.config.ajaxBaseParams || {}});  // apply Sbi.config.ajaxBaseParams as base params in the constructor   
 		this.initConfig(config);
 		this.callParent();
 	},
