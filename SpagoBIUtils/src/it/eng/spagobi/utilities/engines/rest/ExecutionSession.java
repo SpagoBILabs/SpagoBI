@@ -65,7 +65,7 @@ public class ExecutionSession {
 	/**
 	 * Manager of the context: retrieves the attributes in the portion of the session assigned to the current execution instance
 	 */
-	private ContextManager conetxtManager;
+	private ContextManager contextManager;
 	/**
 	 * Container of the HTTPSession
 	 */
@@ -82,15 +82,15 @@ public class ExecutionSession {
 	}
 	
 	public ContextManager getConetxtManager() {
-		if(conetxtManager == null) {
+		if(contextManager == null) {
 			IContextRetrieverStrategy contextRetriveStrategy;
 			contextRetriveStrategy = new ExecutionContextRetrieverStrategy( requestContainer );
-			conetxtManager = new ContextManager(sessionContainer, contextRetriveStrategy);
+			contextManager = new ContextManager(sessionContainer, contextRetriveStrategy);
 		}
 		
-		List list = conetxtManager.getKeys();
+		List list = contextManager.getKeys();
 		
-		return conetxtManager;
+		return contextManager;
 	}
 	
 	public IBeanContainer getSpagoBISessionContainer() {

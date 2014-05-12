@@ -6,9 +6,6 @@
 
 package it.eng.spagobi.engines.whatif.common;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
 import it.eng.spagobi.engines.whatif.member.SbiMember;
 import it.eng.spagobi.engines.whatif.model.ModelConfig;
@@ -16,10 +13,13 @@ import it.eng.spagobi.engines.whatif.serializer.SerializationException;
 import it.eng.spagobi.engines.whatif.serializer.SerializationManager;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
-import it.eng.spagobi.utilities.engines.rest.AbstractRestService;
+import it.eng.spagobi.utilities.engines.rest.AbstractEngineRestService;
 import it.eng.spagobi.utilities.engines.rest.ExecutionSession;
 import it.eng.spagobi.utilities.exceptions.SpagoBIEngineRestServiceRuntimeException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Context;
@@ -35,8 +35,10 @@ import com.fasterxml.jackson.core.type.TypeReference;
  * @author Zerbetto Davide (davide.zerbetto@eng.it), Alberto Ghedin (alberto.ghedin@eng.it)
  *
  */
-public class AbstractWhatIfEngineService extends AbstractRestService{
+public class AbstractWhatIfEngineService extends AbstractEngineRestService {
 
+    private static final String ENGINE_NAME = "SpagoBIWhatIfEngine";
+	
 	private static final String OUTPUTFORMAT = "OUTPUTFORMAT";
 	private static final String OUTPUTFORMAT_JSONHTML = "application/json";
 	
@@ -141,6 +143,11 @@ public class AbstractWhatIfEngineService extends AbstractRestService{
 
 		
 		return members;
+	}
+
+	@Override
+	public String getEngineName() {
+		return ENGINE_NAME;
 	}
 	
 	

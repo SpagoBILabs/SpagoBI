@@ -11,6 +11,7 @@ package it.eng.spagobi.engines.whatif.common;
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.engines.whatif.WhatIfEngine;
+import it.eng.spagobi.engines.whatif.WhatIfEngineConfig;
 import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.engines.EngineConstants;
@@ -30,8 +31,8 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 
-@Path("/start")
-public class WhatIfEngineStartAction extends AbstractWhatIfEngineService {
+@Path("/start-standalone")
+public class WhatIfEngineStartStandAloneAction extends AbstractWhatIfEngineService {
 	
 	// INPUT PARAMETERS
 	public static final String LANGUAGE = "language";
@@ -58,11 +59,6 @@ public class WhatIfEngineStartAction extends AbstractWhatIfEngineService {
 		logger.debug("IN");
 
 		try {
-			SourceBean templateBean = getTemplateAsSourceBean();
-			logger.debug("User Id: " + getUserId());
-			logger.debug("Audit Id: " + getAuditId());
-			logger.debug("Document Id: " + getDocumentId());
-			logger.debug("Template: " + templateBean);
 
 			WhatIfEngineInstance whatIfEngineInstance = null;
 			
@@ -70,7 +66,7 @@ public class WhatIfEngineStartAction extends AbstractWhatIfEngineService {
 
 			try {
 				whatIfEngineInstance = WhatIfEngine
-						.createInstance(templateBean, getEnv());
+						.createInstance(getEnv());
 			} catch (Throwable t) {
 				logger.error(
 						"Error starting the What-If engine: error while generating the engine instance.",
@@ -108,30 +104,21 @@ public class WhatIfEngineStartAction extends AbstractWhatIfEngineService {
 	public Map getEnv() {
 		Map env = new HashMap();
 
-//		it.eng.spagobi.tools.datasource.bo.DataSource ds = new it.eng.spagobi.tools.datasource.bo.DataSource();
-//		ds.setUser(WhatIfEngineConfig.getInstance().getConnectionUsr());
-//		ds.setPwd(WhatIfEngineConfig.getInstance().getConnectionPwd());
-//		ds.setDriver(WhatIfEngineConfig.getInstance().getDriver());
-//		String connectionUrl = WhatIfEngineConfig.getInstance()
-//				.getConnectionString();
-//		ds.setUrlConnection(connectionUrl.replace("jdbc:mondrian:Jdbc=", ""));
+		it.eng.spagobi.tools.datasource.bo.DataSource ds = new it.eng.spagobi.tools.datasource.bo.DataSource();
+		ds.setUser(WhatIfEngineConfig.getInstance().getConnectionUsr());
+		ds.setPwd(WhatIfEngineConfig.getInstance().getConnectionPwd());
+		ds.setDriver(WhatIfEngineConfig.getInstance().getDriver());
+		String connectionUrl = WhatIfEngineConfig.getInstance()
+				.getConnectionString();
+		ds.setUrlConnection(connectionUrl.replace("jdbc:mondrian:Jdbc=", ""));
 		
-		IDataSource ds = this.getDataSource();
-
 		env.put(EngineConstants.ENV_DATASOURCE, ds);
 		env.put(EngineConstants.ENV_EDIT_CUBE_NAME, "Sales_Edit");
 
-		env.put(EngineConstants.ENV_USER_PROFILE, getUserProfile());
-		env.put(EngineConstants.ENV_CONTENT_SERVICE_PROXY,
-				getContentServiceProxy());
-		env.put(EngineConstants.ENV_AUDIT_SERVICE_PROXY, getAuditServiceProxy());
-		env.put(EngineConstants.ENV_DATASET_PROXY, getDataSetServiceProxy());
-		env.put(EngineConstants.ENV_DATASOURCE_PROXY,
-				getDataSourceServiceProxy());
-		env.put(EngineConstants.ENV_ARTIFACT_PROXY,
-				getArtifactServiceProxy());
 		env.put(EngineConstants.ENV_LOCALE, this.getLocale());
-		env.put(SpagoBIConstants.SBI_ARTIFACT_VERSION_ID, this.getServletRequest().getParameter(SpagoBIConstants.SBI_ARTIFACT_VERSION_ID));
+		env.put(EngineConstants.ENV_OLAP_SCHEMA, WhatIfEngineConfig.getInstance().getCatalogue());
+		env.put(EngineConstants.ENV_EDIT_CUBE_NAME, "Sales_Edit");
+		env.put("ENV_INITIAL_MDX_QUERY", WhatIfEngineConfig.getInstance().getInitiallMdx());
 
 		return env;
 	}

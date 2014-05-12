@@ -40,7 +40,7 @@ public class WhatIfEngine {
 	 * @param template the template
 	 * @param env the env
 	 * 
-	 * @return the geo report engine instance
+	 * @return the WhatIf engine instance
 	 */
 	public static WhatIfEngineInstance createInstance(Object template, Map env) {
 		WhatIfEngineInstance whatIfEngineInstance = null;
@@ -52,7 +52,24 @@ public class WhatIfEngine {
 		return whatIfEngineInstance;	
 	}
 	
-
+	/**
+	 * Creates the instance.
+	 * 
+	 * @param env the env
+	 * 
+	 * @return the WhatIf engine instance
+	 */
+	public static WhatIfEngineInstance createInstance(Map env) {
+		WhatIfEngineInstance whatIfEngineInstance = null;
+		logger.debug("IN");
+		whatIfEngineInstance = new WhatIfEngineInstance(env);
+		initSerializers(whatIfEngineInstance.getOlapConnection(), whatIfEngineInstance.getModelConfig());
+		logger.debug("OUT");
+		
+		return whatIfEngineInstance;	
+	}
+	
+	
 	private static void initSerializers(OlapConnection connection, ModelConfig config) {
 		PivotJsonSerializer pjs = new PivotJsonSerializer(connection, config);
 		SerializationManager.registerSerializer(pjs.getFormat(), pjs);

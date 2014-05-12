@@ -17,6 +17,7 @@
 package it.eng.spagobi.engines.whatif.api;
 
 import java.util.Date;
+import java.util.Map;
 
 import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
 import it.eng.spagobi.engines.whatif.common.AbstractWhatIfEngineService;
@@ -31,6 +32,7 @@ import it.eng.spagobi.utilities.rest.RestUtilities;
 import it.eng.spagobi.writeback4j.mondrian.CacheManager;
 
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -61,10 +63,11 @@ public class ModelResource extends AbstractWhatIfEngineService {
 	 * @param mdx the query to execute
 	 * @return the htm table representing the cellset
 	 */
-	@PUT
+	@POST
 	@Path("/{mdx}")
 	public String setMdx(@PathParam("mdx") String mdx){
 		logger.debug("IN");
+		Map m = this.getServletRequest().getParameterMap();
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
 		PivotModel model = ei.getPivotModel();
 		
