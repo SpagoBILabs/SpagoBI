@@ -1064,7 +1064,7 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 				if(r.indexOf("error.mesage.description")>=0){
 					Sbi.exception.ExceptionHandler.handleFailure(response);
 				} else {
-					alert("Response of [/api/1.0/associations/]:" + r);
+//					alert("Response of [/api/1.0/associations/]:" + r);
 					this.associationGroups = Ext.util.JSON.decode(r);								
 				}
 			} else {

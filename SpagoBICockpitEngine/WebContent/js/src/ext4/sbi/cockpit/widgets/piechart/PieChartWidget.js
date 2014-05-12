@@ -7,9 +7,8 @@
 
 Ext.define('Sbi.cockpit.widgets.piechart.PieChartWidget', {
 	extend: 'Sbi.cockpit.widgets.chart.AbstractChartWidget'
-//	, layout: 'fit'
+
 	, config:{
-//		  title: LN('sbi.cockpit.widgets.piechartwidgetdesigner.title')
 		  border: false
 		, wconf: null
 		, storeId: null
@@ -25,16 +24,11 @@ Ext.define('Sbi.cockpit.widgets.piechart.PieChartWidget', {
 		this.initEvents();
 		this.init(config);
 		this.callParent(arguments);
-		this.addEvents("attributeDblClick", "attributeRemoved");
+		this.addEvents("attributeDblClick", "attributeRemoved", "selection");
 		Sbi.trace("[PieChartWidget.constructor]: OUT");
 	}
 	
-	, initComponent: function() {
-  
-        Ext.apply(this,{
-        //	html : '<div align=\"center\" id="' + this.chartDivId + '" style="padding-top:0px;"></div>'
-        });
-        
+	, initComponent: function() {        
         this.callParent();
     } 	
 	
@@ -79,7 +73,7 @@ Ext.define('Sbi.cockpit.widgets.piechart.PieChartWidget', {
 		
 		var titlePanel = new Ext.Panel({
 			border: false,
-			html: '<div style=\"padding-top:0px; color: rgb(255, 102, 0);\" align=\"center\"><font size=\"4\"><b>'+storeObject.serieNames[0]+'</b></font></div>'
+			html: '<div style=\"padding-top:0px; color:rgb(46,69,91);\" align=\"center\"><font size=\"4\"><b>'+storeObject.serieNames[0]+'</b></font></div>'
 		});
 		Sbi.trace('Title created.'); 
 		
@@ -133,8 +127,8 @@ Ext.define('Sbi.cockpit.widgets.piechart.PieChartWidget', {
 		});
 		
 		var config = {
-		        width: '100%',
-		    	height: '97%',
+		        width: '90%',
+		    	height: '80%',
 		    	theme: 'CustomTheme',
 		        hidden: false,
 		        title: "My Chart",
@@ -229,11 +223,12 @@ Ext.define('Sbi.cockpit.widgets.piechart.PieChartWidget', {
     		  				var valueField ;
     		  				categoryField = obj.storeItem.data[obj.series.label.field];
     		  				valueField = obj.slice.value;	
-    		  				alert(categoryField + ' - ' + valueField);
+    		  				
+    		  				var selections = {};
+		  		    		selections[categoryField] = valueField;
+		  		    		this.fireEvent('selection', this, selections);
     		  			}
     			}
-    	        
-                
          };
 		series.push(aSerie);
 		
@@ -315,6 +310,16 @@ Ext.define('Sbi.cockpit.widgets.piechart.PieChartWidget', {
 	//------------------------------------------------------------------------------------------------------------------
 	// utility methods
 	// -----------------------------------------------------------------------------------------------------------------
+	, onRender: function(ct, position) {	
+		Sbi.trace("[PieChartWidget.onRender]: IN");
+		
+		this.msg = 'Sono un widget di tipo PieChart';
+		
+		Sbi.cockpit.widgets.piechart.PieChartWidget.superclass.onRender.call(this, ct, position);	
+		
+		Sbi.trace("[PieChartWidget.onRender]: OUT");
+	}
+	
 	, getColors : function () {
 		return this.chartConfig.colors;
 	}

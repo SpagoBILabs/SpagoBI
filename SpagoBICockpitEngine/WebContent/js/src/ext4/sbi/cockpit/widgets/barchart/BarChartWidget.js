@@ -19,6 +19,7 @@ Sbi.cockpit.widgets.barchart.BarChartWidget = function(config) {
 	Sbi.cockpit.widgets.barchart.BarChartWidget.superclass.constructor.call(this, c);
 	this.init();
 
+	this.addEvents("selection");
 	
 	Sbi.trace("[BarChartWidget.constructor]: OUT");
 
@@ -46,7 +47,10 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidget, Sbi.cockpit.widgets.char
 
 
     , refresh:  function() {  
-		//TODO: must implement this
+    	Sbi.trace("[BarChartWidget.refresh]: IN");
+    	this.init();	
+    	this.createChart();
+		Sbi.trace("[BarChartWidget.refresh]: OUT");
 	}
 
 
@@ -219,7 +223,19 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidget, Sbi.cockpit.widgets.char
 	            		   var tooltipContent = thisPanel.getTooltip(storeItem, item);
 	            		   this.setTitle(tooltipContent);
 	            	  }
-    	        }
+    	        },
+    	        listeners: {
+		  			itemmousedown:function(obj) {
+		  				var categoryField ;
+		  				var valueField ;
+		  				categoryField = obj.storeItem.data[obj.series.label.field];
+		  				valueField = obj.slice.value;	
+		  				alert(categoryField + ' - ' + valueField);
+		  				var selections = {};
+	  		    		selections[categoryField] = valueField;
+	  		    		this.fireEvent('selection', this, selections);
+		  			}
+			}
                 
          };
 		series.push(aSerie);
@@ -435,6 +451,15 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidget, Sbi.cockpit.widgets.char
 	//------------------------------------------------------------------------------------------------------------------
 	// utility methods
 	// -----------------------------------------------------------------------------------------------------------------
+	, onRender: function(ct, position) {	
+		Sbi.trace("[BarChartWidget.onRender]: IN");
+		
+		this.msg = 'Sono un widget di tipo BarChart';
+		
+		Sbi.cockpit.widgets.barchart.BarChartWidget.superclass.onRender.call(this, ct, position);	
+		
+		Sbi.trace("[BarChartWidget.onRender]: OUT");
+	}
 	
 	, getByteArraysForExport: function(){
 		var byteArrays = new Array();

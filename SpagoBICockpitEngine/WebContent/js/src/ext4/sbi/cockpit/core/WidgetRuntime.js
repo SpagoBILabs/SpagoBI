@@ -388,6 +388,8 @@ Ext.extend(Sbi.cockpit.core.WidgetRuntime, Ext.Panel, {
 	 */
 	, getCustomConfiguration: function() {
 		Sbi.trace("[WidgetRuntime.getCustomConfiguration]: IN");
+		
+		if ( this.getWType() )  this.wconf.wtype =  this.getWType();
 		var config = Ext.apply({}, this.wconf || {});
 		Sbi.trace("[WidgetRuntime.getCustomConfiguration]: OUT");
 		return config;

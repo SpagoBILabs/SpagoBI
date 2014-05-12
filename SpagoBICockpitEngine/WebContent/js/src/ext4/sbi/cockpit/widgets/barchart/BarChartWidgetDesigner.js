@@ -25,7 +25,7 @@ Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner = function(config) {
 			this.chartLib = Sbi.settings.cockpit.chartlib;
 		}
 		this.chartLib = this.chartLib.toLowerCase();
-		
+	
 		this.addEvents("attributeDblClick", "attributeRemoved");
 		
 		this.init();
@@ -42,7 +42,29 @@ Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner = function(config) {
 			this.on('resize', function(a,b,c,d){try{ this.form.setWidth(b-50);}catch(r){}}, this);
 		}
 
-	
+		this.on(
+				'beforerender' , 
+				function (thePanel, attribute) { 
+					var state = {};
+//					if (state.type) this.typeRadioGroup.setValue(state.type);
+//					if (state.orientation) this.orientationCombo.setValue(state.orientation);
+//					if (state.showvalues) this.showValuesCheck.setValue(state.showvalues);
+//					if (state.showlegend) this.showLegendCheck.setValue(state.showlegend);
+//					if (state.category) this.categoryContainerPanel.setCategory(state.category);
+//					if (state.groupingVariable) this.seriesGroupingPanel.setSeriesGroupingAttribute(state.groupingVariable);
+//					if (state.series) this.seriesContainerPanel.setMeasures(state.series);					
+					state.type = thePanel.type;
+					state.orientation = thePanel.orientation;
+					state.showvalues = thePanel.showvalues;
+					state.showlegend = thePanel.showpercentage;
+					state.category = thePanel.category;
+					state.groupingVariable = thePanel.groupingVariable;
+					state.series = thePanel.series;
+					state.wtype = 'barchart';
+					this.setDesignerState(state);
+				}, 
+				this
+			);
 		this.on('afterLayout', this.addToolTips, this);
 
 		this.categoryContainerPanel.on(	'beforeAddAttribute', this.checkIfAttributeIsAlreadyPresent, this);
@@ -298,7 +320,8 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner, Sbi.cockpit.core
 	, getDesignerState: function() {
 		Sbi.trace("[BarChartWidgetDesigner.getDesignerState]: IN");
 		Sbi.trace("[BarChartWidgetDesigner.getDesignerState]: " + Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner.superclass.getDesignerState);
-		var state = {};
+//		var state = {};
+		var state = Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner.superclass.getDesignerState(this);
 		state.designer = 'Bar Chart';
 		state.wtype = 'barchart';
 		state.type = this.typeRadioGroup.getValue().type;
@@ -315,6 +338,7 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner, Sbi.cockpit.core
 	
 	, setDesignerState: function(state) {
 		Sbi.trace("[BarChartWidgetDesigner.setDesignerState]: IN");
+		Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner.superclass.setDesignerState(this, state);
 		if (state.type) this.typeRadioGroup.setValue(state.type);
 		if (state.orientation) this.orientationCombo.setValue(state.orientation);
 		if (state.showvalues) this.showValuesCheck.setValue(state.showvalues);
@@ -322,6 +346,7 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner, Sbi.cockpit.core
 		if (state.category) this.categoryContainerPanel.setCategory(state.category);
 		if (state.groupingVariable) this.seriesGroupingPanel.setSeriesGroupingAttribute(state.groupingVariable);
 		if (state.series) this.seriesContainerPanel.setMeasures(state.series);
+//		state.wtype = 'barchart';
 		Sbi.trace("[BarChartWidgetDesigner.setDesignerState]: OUT");
 	}
 	
