@@ -24,7 +24,8 @@ Ext.define('Sbi.cockpit.widgets.piechart.PieChartWidget', {
 		this.initEvents();
 		this.init(config);
 		this.callParent(arguments);
-		this.addEvents("attributeDblClick", "attributeRemoved", "selection");
+		this.addEvents('selection');
+		this.addEvents("attributeDblClick", "attributeRemoved");
 		Sbi.trace("[PieChartWidget.constructor]: OUT");
 	}
 	
@@ -50,7 +51,7 @@ Ext.define('Sbi.cockpit.widgets.piechart.PieChartWidget', {
     , createChart: function () {
     	var retriever = new Sbi.cockpit.widgets.chart.DefaultChartDimensionRetrieverStrategy();
 		var size = retriever.getChartDimension(this);		
-		this.update(' <div align=\"center\" id="' + this.chartDivId + '" style="padding-top:3px;padding-bottom:3px;width: ' + size.width + '; height: ' + size.height + ';"></div>');		
+		this.update(' <div align=\"center\" id="' + this.chartDivId + '" style="padding-top:0px;padding-bottom:0px;width: ' + size.width + '; height: ' + size.height + ';"></div>');		
 //		this.update(' <div border=4; align=\"center\" id="' + this.chartDivId + '" style="width:100%; height:50%;  border:solid;border-color:blue;"></div>');
 //		this.update(' <div border=4; align=\"center\" id="' + this.chartDivId + '" style="border:solid;border-color:blue;"></div>');
 		
@@ -62,7 +63,7 @@ Ext.define('Sbi.cockpit.widgets.piechart.PieChartWidget', {
 		var items = {
 				store: storeObject.store,
 				extraStyle: extraStyle,
-				style: 'height: 90%;',
+				style: 'height: 70%;',
 				hiddenseries: new Array()
 		};
 
@@ -73,6 +74,7 @@ Ext.define('Sbi.cockpit.widgets.piechart.PieChartWidget', {
 		
 		var titlePanel = new Ext.Panel({
 			border: false,
+			anchor: '100% 10%',
 			html: '<div style=\"padding-top:0px; color:rgb(46,69,91);\" align=\"center\"><font size=\"4\"><b>'+storeObject.serieNames[0]+'</b></font></div>'
 		});
 		Sbi.trace('Title created.'); 
@@ -80,20 +82,15 @@ Ext.define('Sbi.cockpit.widgets.piechart.PieChartWidget', {
 		var pieChartPanel = this.getChart(items, colors);
 		Sbi.trace('Piechart created.'); 
 		
-		var chartContainer = new Ext.Panel({
-//			layout: 'fit', //'form', 
-			border: false,
-			items: [titlePanel, pieChartPanel]
-		});
-		
+
 		new Ext.Panel({
 			renderTo : this.chartDivId,
-//			layout:'fit',
-			border: false,			
-			items: [chartContainer]
+			border: false,
+			width:'100%',
+			height:'100%',
+			layout: 'anchor',
+			items: [titlePanel, pieChartPanel]
 		});
-
-		
 	}	
 	// -----------------------------------------------------------------------------------------------------------------
     // private methods
@@ -127,13 +124,11 @@ Ext.define('Sbi.cockpit.widgets.piechart.PieChartWidget', {
 		});
 		
 		var config = {
-		        width: '90%',
-		    	height: '80%',
 		    	theme: 'CustomTheme',
 		        hidden: false,
 		        title: "My Chart",
 		        renderTo: this.chartDivId,
-		        layout: "fit",
+		        anchor: '100% 90%',
 		        style: "background:#fff",
 		        animate: true,
 		        store: chartDataStore,
@@ -183,10 +178,11 @@ Ext.define('Sbi.cockpit.widgets.piechart.PieChartWidget', {
 		
 
 		//Extract technical series names and corresponding name to display
+		var displayName = '';
 		for (var i=0; i< items.series.length; i++){
 			var name = items.series[i].field;
 			seriesNames.push(name);
-			var displayName = items.series[i].displayName;
+			displayName = items.series[i].displayName;
 			displayNames.push(displayName);
 		}
 		
@@ -225,8 +221,11 @@ Ext.define('Sbi.cockpit.widgets.piechart.PieChartWidget', {
     		  				valueField = obj.slice.value;	
     		  				
     		  				var selections = {};
-		  		    		selections[categoryField] = valueField;
-		  		    		this.fireEvent('selection', this, selections);
+    		  				var values =  [];
+    		  				selections[displayName] = {};
+		  		    		selections[displayName].values = values; //manage multi-selection!
+		  		    		Ext.Array.include(selections[displayName].values, valueField);
+		  		    		thisPanel.fireEvent('selection', thisPanel, selections);
     		  			}
     			}
          };

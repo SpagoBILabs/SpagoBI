@@ -19,7 +19,7 @@ Sbi.cockpit.widgets.barchart.BarChartWidget = function(config) {
 	Sbi.cockpit.widgets.barchart.BarChartWidget.superclass.constructor.call(this, c);
 	this.init();
 
-	this.addEvents("selection");
+	this.addEvents('selection');
 	
 	Sbi.trace("[BarChartWidget.constructor]: OUT");
 
@@ -163,9 +163,13 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidget, Sbi.cockpit.widgets.char
 	        series: chartSeries
 
 	    });
-	    
+//	    chart.on('selection', this.pippo, this);
 	    return chart;
 	}
+	
+//	,pippo:function(){
+//		alert('pippo');
+//	}
 	/*
 	 * Create the Series object configuration
 	 */
@@ -228,12 +232,15 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidget, Sbi.cockpit.widgets.char
 		  			itemmousedown:function(obj) {
 		  				var categoryField ;
 		  				var valueField ;
-		  				categoryField = obj.storeItem.data[obj.series.label.field];
-		  				valueField = obj.slice.value;	
-		  				alert(categoryField + ' - ' + valueField);
-		  				var selections = {};
-	  		    		selections[categoryField] = valueField;
-	  		    		this.fireEvent('selection', this, selections);
+		  				categoryField = obj.storeItem.data[obj.series.xField];
+		  				valueField = obj.storeItem.data[obj.yField];	
+//		  				alert(displayNames + ' - ' + categoryField + ' - ' + valueField);		  				
+	  		    		var selections = {};
+		  				var values =  [];
+		  				selections[displayNames] = {};
+	  		    		selections[displayNames].values = values; //manage multi-selection!
+	  		    		Ext.Array.include(selections[displayNames].values, valueField);
+	  		    		thisPanel.fireEvent('selection', thisPanel, selections);
 		  			}
 			}
                 

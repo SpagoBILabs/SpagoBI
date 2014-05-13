@@ -59,8 +59,7 @@ Ext.define('Sbi.cockpit.widgets.piechart.PieChartWidgetDesigner', {
 	, initEvents: function(){
 		this.on(
 				'beforerender' , 
-				function (thePanel, attribute) {
-					alert('pie.beforeRenderer!!');
+				function (thePanel, attribute) {					
 					var state = {};
 					state.showvalues = thePanel.showvalues;
 					state.showlegend = thePanel.showlegend;
@@ -251,8 +250,7 @@ Ext.define('Sbi.cockpit.widgets.piechart.PieChartWidgetDesigner', {
 	//-----------------------------------------------------------------------------------------------------------------
 	//public methods
 	//-----------------------------------------------------------------------------------------------------------------
-	, getDesignerState: function() {
-		alert('pie.getDesignerState');
+	, getDesignerState: function() {		
 		Sbi.trace("[PieChartWidgetDesigner.getDesignerState]: IN");
 		Sbi.trace("[PieChartWidgetDesigner.getDesignerState]: " + Sbi.cockpit.widgets.piechart.PieChartWidgetDesigner.superclass.getDesignerState);
 		var state = Sbi.cockpit.widgets.piechart.PieChartWidgetDesigner.superclass.getDesignerState(this);
