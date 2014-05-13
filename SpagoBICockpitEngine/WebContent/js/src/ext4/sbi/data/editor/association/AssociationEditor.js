@@ -187,7 +187,7 @@ Ext.define('Sbi.data.editor.association.AssociationEditor', {
 	 */
 	, updateIdentifier: function(e){
 		var obj = this.getAssociationById(e.originalValue);
-		obj.id = e.value;
+		if (Sbi.isValorized(obj)) obj.id = e.value;
 		
 	}
 	
@@ -328,38 +328,38 @@ Ext.define('Sbi.data.editor.association.AssociationEditor', {
 	/**
 	 * @method 
 	 * Returns the Association object getted from the associations throught the id. 
-	 * Format: {id:xx, ass:yy}
+	 * Format: {id:xx, assyy}
 	 * 
 	 * @param {String} id The identifier.
 	 */
-	, getAssociationById: function(id){
-		if (this.associationsList == null) return null;
-		for (var i=0; i<this.associationsList.length; i++){
-			var obj = this.associationsList[i];
+	, getAssociationById: function(id){	
+		if (!Sbi.isValorized(this.associations)) return null;
+		for (var i=0; i<this.associations.length; i++){
+			var obj = this.associations[i];
 			if (obj && obj.id == id){
 				return obj;
 				break;
 			}
-		}		
+		}
 		return null;
 	}
 	
 	/**
 	 * @method 
 	 * Returns the Association object getted from the AssociationsList throught the Association content. 
-	 * Format: {id:xx, ass:yy}
+	 * Format: {id:xx, description:yy}
 	 * 
 	 * @param {String} ass The Association content.
 	 */
-	, getAssociationByAss: function(r){
-		if (this.associationsList == null) return null;
-		for (var i=0; i<this.associationsList.length; i++){
-			var obj = this.associationsList[i];
+	, getAssociationByAss: function(r){	
+		if (this.associations == null) return null;
+		for (var i=0; i<this.associations.length; i++){
+			var obj = this.associations[i];
 			if (obj && obj.description == r){
 				return obj;
 				break;
 			}
-		}		
+		}	
 		return null;
 	}
 });
