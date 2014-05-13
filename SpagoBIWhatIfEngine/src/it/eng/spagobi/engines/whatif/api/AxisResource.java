@@ -20,7 +20,7 @@ import it.eng.spagobi.engines.whatif.common.AbstractWhatIfEngineService;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.PUT;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
@@ -52,7 +52,7 @@ public class AxisResource extends AbstractWhatIfEngineService {
 	 * Service to swap the axis
 	 * @return the rendered pivot table
 	 */
-	@PUT
+	@POST
 	@Path("/swap")
 	public String swapAxis(){
 		logger.debug("IN");
@@ -80,7 +80,7 @@ public class AxisResource extends AbstractWhatIfEngineService {
 	 * @param hierarchyName the unique name of the hierarchy to move
 	 * @return the rendered pivot table
 	 */
-	@PUT
+	@POST
 	@Path("/{fromAxis}/moveDimensionToOtherAxis/{hierarchy}/{toAxis}")
 	public String placeHierarchyOnAxis(@javax.ws.rs.core.Context HttpServletRequest req, @PathParam("fromAxis") int fromAxisPos, @PathParam("toAxis") int toAxisPos,@PathParam("hierarchy") String hierarchyName){
 
@@ -99,7 +99,7 @@ public class AxisResource extends AbstractWhatIfEngineService {
 	 * @param direction the direction of the movement (-1 up, +1 down)
 	 * @return the rendered pivot table
 	 */
-	@PUT
+	@POST
 	@Path("/{axis}/moveHierarchy/{hierarchyUniqueName}/{newPosition}/{direction}")
 	public String moveHierarchies(@javax.ws.rs.core.Context HttpServletRequest req, @PathParam("axis") int axisPos, @PathParam("hierarchyUniqueName") String hierarchyUniqueName, @PathParam("newPosition") int newPosition, @PathParam("direction") int direction){
 
@@ -117,7 +117,7 @@ public class AxisResource extends AbstractWhatIfEngineService {
 	 * @param oldHierarchyUniqueName the unique name of the old hierarchy
 	 * @param hierarchyPosition the position of the old hierarchy 
 	 */
-	@PUT
+	@POST
 	@Path("/{axis}/updateHierarchyOnDimension/{newHierarchyUniqueName}/{oldHierarchyUniqueName}/{hierarchyPosition}")
 	public String updateHierarchyOnDimension(@javax.ws.rs.core.Context HttpServletRequest req, @PathParam("axis") int axisPos, @PathParam("newHierarchyUniqueName") String newHierarchyUniqueName, @PathParam("oldHierarchyUniqueName") String oldHierarchyUniqueName, @PathParam("hierarchyPosition") int hierarchyPosition){
 
@@ -137,7 +137,7 @@ public class AxisResource extends AbstractWhatIfEngineService {
 	 * @param axisPos the source axis(0 for rows, 1 for columns, -1 for filters)  
 	 * @return the rendered pivot table
 	 */
-	@PUT
+	@POST
 	@Path("/{axis}/placeMembersOnAxis")
 	public String placeMembersOnAxis(@javax.ws.rs.core.Context HttpServletRequest req, @PathParam("axis") int axisPos){
 
