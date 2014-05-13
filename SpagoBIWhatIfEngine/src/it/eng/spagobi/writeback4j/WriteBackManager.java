@@ -6,34 +6,26 @@
 
 package it.eng.spagobi.writeback4j;
 
-import org.olap4j.metadata.Member;
-
-import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
 import it.eng.spagobi.writeback4j.mondrian.MondrianDriver;
 import it.eng.spagobi.writeback4j.mondrian.MondrianSchemaRetriver;
-import it.eng.spagobi.writeback4j.sql.QueryBuilder;
 
 /**
  * @author Alberto Ghedin (alberto.ghedin@eng.it)
  *
  * Manager of the writeback.. 
- * Provides the methods to update the values in the db 
  */
 public class WriteBackManager {
-	QueryBuilder queryBulder;
+	ISchemaRetriver retriver;
 
-	public WriteBackManager(String editCubeName, IXmlaDriver xmlaDriver, IDataSource dataSource) throws SpagoBIEngineException {
-		ISchemaRetriver retriver = new MondrianSchemaRetriver( (MondrianDriver)xmlaDriver,  editCubeName);
-		queryBulder = new QueryBuilder(retriver, dataSource);
+	public WriteBackManager(String editCubeName, IXmlaDriver xmlaDriver) throws SpagoBIEngineException {
+		retriver = new MondrianSchemaRetriver( (MondrianDriver)xmlaDriver,  editCubeName);
+		
+	}
+
+	public ISchemaRetriver getRetriver() {
+		return retriver;
 	}
 	
-	public void executeProportionalUpdate(Member[] members, double prop) throws SpagoBIEngineException{
-		queryBulder.executeProportionalUpdate(members, prop);
-	} 
-	
-	
-	
-	
-	
+
 }

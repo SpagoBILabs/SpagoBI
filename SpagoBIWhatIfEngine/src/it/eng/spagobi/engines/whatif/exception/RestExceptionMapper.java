@@ -72,7 +72,7 @@ public class RestExceptionMapper extends AbstractWhatIfEngineService implements 
 		}
 
 
-		Response response =  Response.status(200).entity(serializedMessages).build();
+		Response response =  Response.status(200).entity(serializedMessages.toString()).build();
 		logger.debug("RestExceptionMapper:toResponse OUT");
 
 		

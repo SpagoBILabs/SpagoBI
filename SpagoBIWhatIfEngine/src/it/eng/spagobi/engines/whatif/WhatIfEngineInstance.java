@@ -92,7 +92,7 @@ public class WhatIfEngineInstance extends AbstractEngineInstance implements Seri
 		if(writeback!= null && !writeback.equals("")){
 			modelConfig.getWriteBackConf().put(ModelConfig.WRITEBACK, writeback);
 			try {
-				writeBackManager = new WriteBackManager(getEditCubeName(), new MondrianDriver(getMondrianSchemaFilePath()), getDataSource());
+				writeBackManager = new WriteBackManager(getEditCubeName(), new MondrianDriver(getMondrianSchemaFilePath()));
 			} catch (SpagoBIEngineException e) {
 				logger.debug("Exception creating the whatif component", e);
 				throw new SpagoBIEngineRestServiceRuntimeException("whatif.engine.instance.writeback.exception", getLocale(), "Exception creating the whatif component", e);
@@ -135,7 +135,7 @@ public class WhatIfEngineInstance extends AbstractEngineInstance implements Seri
 		if(writeback!= null && !writeback.equals("")){
 			modelConfig.getWriteBackConf().put(ModelConfig.WRITEBACK, writeback);
 			try {
-				writeBackManager = new WriteBackManager(getEditCubeName(), new MondrianDriver(getMondrianSchemaFilePath()), getDataSource());
+				writeBackManager = new WriteBackManager(getEditCubeName(), new MondrianDriver(getMondrianSchemaFilePath()));
 			} catch (SpagoBIEngineException e) {
 				logger.debug("Exception creating the whatif component", e);
 				throw new SpagoBIEngineRestServiceRuntimeException("whatif.engine.instance.writeback.exception", getLocale(), "Exception creating the whatif component", e);
