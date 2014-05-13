@@ -67,7 +67,7 @@ Ext.define('Sbi.olap.control.Controller', {
 		var service = Ext.create("Sbi.service.RestService",{
 			url: "axis",
 			subPath: "swap",
-			method: "PUT"
+			method: "POST"
 		});
 		
 		service.callService(this);
@@ -87,7 +87,7 @@ Ext.define('Sbi.olap.control.Controller', {
 		
 		var service = Ext.create("Sbi.service.RestService",{
 			url: "axis",
-			method: 'PUT',
+			method: 'POST',
 			pathParams: [axis,"moveHierarchy", uniqueName, newPosition, direction]
 		});
 		
@@ -98,7 +98,7 @@ Ext.define('Sbi.olap.control.Controller', {
 		
 		var service = Ext.create("Sbi.service.RestService",{
 			url: "axis",
-			method: 'PUT',
+			method: 'POST',
 			pathParams: [fromAxis,"moveDimensionToOtherAxis", hierarchy1, toAxis]
 		});
 		
@@ -109,7 +109,7 @@ Ext.define('Sbi.olap.control.Controller', {
 		
 		var service = Ext.create("Sbi.service.RestService",{
 			url: "axis",
-			method: 'PUT',
+			method: 'POST',
 			pathParams: [axis,"updateHierarchyOnDimension",newHierarchyUniqueName, oldHierarchyUniqueName, hierarchyPosition]
 		});
 		
@@ -132,7 +132,7 @@ Ext.define('Sbi.olap.control.Controller', {
 
 		var service = Ext.create("Sbi.service.RestService",{
 			url: "axis",
-			method: 'PUT',
+			method: 'POST',
 			pathParams: [axis,"placeMembersOnAxis"],
 			jsonData: members
 			
@@ -145,7 +145,7 @@ Ext.define('Sbi.olap.control.Controller', {
 
 		var service = Ext.create("Sbi.service.RestService", {
 			url: "model",
-			method: 'PUT',
+			method: 'POST',
 			pathParams: ["setValue", ordinal],
 			jsonData: { "expression" : expression }
 		});
@@ -158,7 +158,7 @@ Ext.define('Sbi.olap.control.Controller', {
 
 		var service = Ext.create("Sbi.service.RestService", {
 			url: "model",
-			method: 'PUT',
+			method: 'POST',
 			pathParams: ["undo"]
 		});
 		
@@ -179,7 +179,7 @@ Ext.define('Sbi.olap.control.Controller', {
 
 		var service = Ext.create("Sbi.service.RestService", {
 			url: "model",
-			method: 'PUT',
+			method: 'POST',
 			pathParams: ["persistTransformations"]
 		});
 		

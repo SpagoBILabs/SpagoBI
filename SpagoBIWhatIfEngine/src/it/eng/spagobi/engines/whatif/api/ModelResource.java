@@ -16,9 +16,6 @@
  */
 package it.eng.spagobi.engines.whatif.api;
 
-import java.util.Date;
-import java.util.Map;
-
 import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
 import it.eng.spagobi.engines.whatif.common.AbstractWhatIfEngineService;
 import it.eng.spagobi.engines.whatif.exception.WhatIfPersistingTransformationException;
@@ -31,9 +28,14 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIEngineRestServiceRuntimeExcept
 import it.eng.spagobi.utilities.rest.RestUtilities;
 import it.eng.spagobi.writeback4j.mondrian.CacheManager;
 
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+import java.util.Date;
+import java.util.Map;
+
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -84,7 +86,7 @@ public class ModelResource extends AbstractWhatIfEngineService {
 		
 	}
 	
-	@PUT
+	@POST
 	@Path("/setValue/{ordinal}")
 	public String setValue(@PathParam("ordinal") int ordinal){
 		logger.debug("IN : ordinal = [" + ordinal + "]");
@@ -114,7 +116,7 @@ public class ModelResource extends AbstractWhatIfEngineService {
 		return table;
 	}
 	
-	@PUT
+	@POST
 	@Path("/persistTransformations")
 	public String persistTransformations(){
 		logger.debug("IN");
@@ -146,7 +148,7 @@ public class ModelResource extends AbstractWhatIfEngineService {
 		return table;
 	}
 	
-	@PUT
+	@POST
 	@Path("/undo")
 	public String undo() {
 		logger.debug("IN");
@@ -210,6 +212,42 @@ public class ModelResource extends AbstractWhatIfEngineService {
                 .build();
     }
 	
+	/**
+	 * Exports the actual model in a xls format.. Since it takes
+	 * the actual model, it takes also the pendingg transformations (what you see it's what you get)
+	 * @return the response with the file embedded
+	 */
+    @GET
+    @Path("/serialize")
+    @Produces(MediaType.APPLICATION_OCTET_STREAM)
+    public Response serializeModel()
+    {
+    	
+		WhatIfEngineInstance ei = getWhatIfEngineInstance();
+		PivotModel model = ei.getPivotModel();
+		
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		ObjectOutputStream stream;
+		try {
+			stream = new ObjectOutputStream(out);
+			Serializable state = model.saveState();
+			stream.writeObject(state);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	
+
+		
+        byte[] outputByte = out.toByteArray();
+
+        String fileName = exportFileName+"-"+(new Date()).toLocaleString()+".txt";
+        
+    	return Response
+                .ok(outputByte, MediaType.APPLICATION_OCTET_STREAM)
+                .header("content-disposition","attachment; filename = "+fileName)
+                .build();
+    }
 	
 }
 
