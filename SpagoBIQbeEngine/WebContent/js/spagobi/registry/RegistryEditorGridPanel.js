@@ -13,7 +13,7 @@
 /**
   * Object name 
   * 
-  * [description]
+  * [description]3
   * 
   * 
   * Public Properties
@@ -127,7 +127,7 @@ Sbi.registry.RegistryEditorGridPanel = function(config) {
     	, sortable: false
         , cm : initialColumnModel
         , clicksToEdit : 1
-        , style : 'padding:10px'
+        , style : 'padding:0px;'
         , frame : true
         , border : true
         , collapsible : false
@@ -155,6 +155,10 @@ Sbi.registry.RegistryEditorGridPanel = function(config) {
 	
 	// constructor
 	Sbi.formviewer.DataStorePanel.superclass.constructor.call(this, c);
+
+	
+
+
 
 
 };
@@ -1307,6 +1311,7 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 	save: function () {
 		var modifiedRecords = this.store.getModifiedRecords();
 		this.saveSingleRecord(0,modifiedRecords);
+		this.updateRowSpan();
 	}
 	,
 	refresh: function () {
@@ -1427,9 +1432,7 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 		this.store.commitChanges();
 	}
 
-
-
-	,
+,
     onLayout : function(vw, vh) {
     	//alert('span');
 
@@ -1453,6 +1456,10 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
     	if(this.meta){
     		var view = this.getView();
     	
+            if(this.checkIfReady(this.getColumnModel().config)==false){
+            	return;
+            }
+
     		for(var j = 0; j < this.meta.summaryColorCellsCoordinates.length; j++) {
     			var coord = this.meta.summaryColorCellsCoordinates[j];
         		var cell = view.getCell(coord.row, coord.column+1);
@@ -1468,16 +1475,19 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
         			colSum = regConf.summaryColor;
         		}
         		
-        		innerCell.setStyle('background-color', colSum);
-        		innerCell.setStyle('fontWeight', 'bold');
+        		if(innerCell != null){
+        			innerCell.setStyle('background-color', colSum);
+        			innerCell.setStyle('fontWeight', 'bold');
+        		}
         		Ccell.setStyle('background-color', colSum);
         		Ccell.setStyle('fontWeight', 'bold');
         		
         		if(cell.textContent && this.isNumeric(cell.textContent)){
         				cell.textContent = cell.textContent;
-        				//cell.setStyle('line-height', '2px');  
-                		innerCell.setStyle('line-height', '10px');
-
+            			//Ccell.setStyle('padding-left', '20');
+        				if(innerCell != null){
+                			innerCell.setStyle('line-height', '10px');
+                		}
         		}
         		
         		// remove content and add simple value in order to remove the editor
@@ -1497,39 +1507,44 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 			if((coord.column +1) == column && coord.row > row){
 				// found cell to update
 				var cell = view.getCell(coord.row, coord.column+1);
-		  		var previousTotal = parseInt(cell.textContent);
+		  		var previousTotal = parseFloat(cell.textContent);
 	    		// add to previous total the difference between new and old value
-		  		var newTotal = previousTotal - previousValue + parseInt(newValue)
+		  		var newTotal = previousTotal - previousValue + parseFloat(newValue)
 		  		cell.textContent = newTotal;
 		  		foundTotal = true;
 		  		
 			}
 		}
   		
-    },
-    
+    }
+    , checkIfReady: function(columns) {
+    	   // check if data is not still loaded
+        if(this.indexColumnToMerge == null || this.indexColumnToMerge == undefined) 
+ 		{ 
+ 				return false;
+ 		}
+         if(columns != undefined ) {
+         	if(columns[1] != undefined) 
+         		{
+         		if(columns[1].dataIndex=="data")
+         			{
+ 					return false;
+         			} 
+         		}
+         } 
+     return true;
+    }
+    ,
     updateRowSpan: function() {
         var columns = this.getColumnModel().config,
         view = this.getView(),
         store = this.getStore(),
         rowCount = store.getCount();
-        
 
-        // check if data is not still loaded
-       if(this.indexColumnToMerge == null || this.indexColumnToMerge == undefined) 
-		{ 
-				return;
-		}
-        if(columns != undefined ) {
-        	if(columns[1] != undefined) 
-        		{
-        		if(columns[1].dataIndex=="data")
-        			{
-					return;
-        			} 
-        		}
-        } 
-        
+        if(this.checkIfReady(this.getColumnModel().config)==false){
+        	return;
+        }
+     
         // this array tells for each row if it was broken
         var rowIsBreakArray = new Array(rowCount);
         for (var r = 0; r < rowIsBreakArray.length; ++r) {
@@ -1637,13 +1652,13 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
             	marginHeight = 2.5;
             }
             else if(browser != null && browser == 'firefox'){
-            	marginHeight = 1.2;
+            	marginHeight = 0.8;
             }
             
+            var hei = (marginHeight*count);
+        	innerCell.setStyle('height', (height * count)+hei- cell.getPadding('tb') - innerCell.getPadding('tb') + 'px');
             
-            if(count >= 8){
-            	
-            	
+/*            if(count >= 8){
             	
                 var hei = (marginHeight*count);
             	innerCell.setStyle('height', (height * count)+hei + 'px');
@@ -1661,16 +1676,9 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
             	 }
 
             
-            
-            
-            
 //          if(count >= 8){
 //          	innerCell.setStyle('height', ((height+1) * count) + 'px');
 //          }
-          
-            
-            
-            
             
             //            if(count >= 5 && count < 8){
 //            	innerCell.setStyle('height', (height * count - cell.getPadding('tb')) + 'px');
@@ -1678,7 +1686,7 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
           
             if(count < 5){
             	innerCell.setStyle('height', (height * count - cell.getPadding('tb') - innerCell.getPadding('tb')) + 'px');
-            }
+            } */
             
             innerCell.setStyle('width', (width - cell.getPadding('lr') - innerCell.getPadding('lr')) + 'px');
 

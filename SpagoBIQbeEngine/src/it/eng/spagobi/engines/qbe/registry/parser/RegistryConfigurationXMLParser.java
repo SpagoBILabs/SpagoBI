@@ -216,6 +216,7 @@ public class RegistryConfigurationXMLParser {
 						// if is merge column set it is not editable and set default color if not specified to white
 						isEditable = false;
 						if(color == null) color = "#FFFFFF";
+						sorter = "ASC";
 					}
 				}
 				

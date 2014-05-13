@@ -13,11 +13,13 @@ import it.eng.qbe.query.CriteriaConstants;
 import it.eng.qbe.query.ExpressionNode;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.query.WhereField;
+import it.eng.qbe.statement.AbstractQbeDataSet;
 import it.eng.qbe.statement.AbstractStatement;
 import it.eng.qbe.statement.IStatement;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
-import it.eng.spago.util.StringUtils;
+import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.engines.qbe.QbeEngineConfig;
 import it.eng.spagobi.engines.qbe.QbeEngineInstance;
 import it.eng.spagobi.engines.qbe.registry.bo.RegistryConfiguration;
 import it.eng.spagobi.engines.qbe.registry.bo.RegistryConfiguration.Column;
@@ -26,13 +28,17 @@ import it.eng.spagobi.engines.qbe.registry.parser.RegistryConfigurationXMLParser
 import it.eng.spagobi.engines.qbe.registry.serializer.RegistryJSONDataWriter;
 import it.eng.spagobi.engines.qbe.services.core.ExecuteQueryAction;
 import it.eng.spagobi.engines.qbe.template.QbeTemplate;
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.Field;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
 import it.eng.spagobi.tools.dataset.common.datastore.Record;
 import it.eng.spagobi.utilities.ParametersDecoder;
+import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -107,6 +113,52 @@ public class LoadRegistryAction extends ExecuteQueryAction {
 		return found;
 	}
 
+	
+	
+	
+	@Override
+	public IDataStore executeQuery(Integer start, Integer limit){
+		IDataStore dataStore = null;
+		IDataSet dataSet = this.getEngineInstance().getActiveQueryAsDataSet();
+		AbstractQbeDataSet qbeDataSet = (AbstractQbeDataSet) dataSet;
+		IStatement statement = qbeDataSet.getStatement();
+		//QueryGraph graph = statement.getQuery().getQueryGraph();
+		boolean valid = true; //GraphManager.getGraphValidatorInstance(QbeEngineConfig.getInstance().getGraphValidatorImpl()).isValid(graph, statement.getQuery().getQueryEntities(getDataSource()));
+		//logger.debug("QueryGraph valid = " + valid);
+		if (!valid) {
+			throw new SpagoBIEngineServiceException(getActionName(), "error.mesage.description.relationship.not.enough");
+		}
+		try {
+			logger.debug("Executing query ...");
+			Integer maxSize = QbeEngineConfig.getInstance().getResultLimit();			
+			logger.debug("Configuration setting  [" + "QBE.QBE-SQL-RESULT-LIMIT.value" + "] is equals to [" + (maxSize != null? maxSize: "none") + "]");
+			String jpaQueryStr = statement.getQueryString();
+			logger.debug("Executable query (HQL/JPQL): [" +  jpaQueryStr+ "]");
+			UserProfile userProfile = (UserProfile)getEnv().get(EngineConstants.ENV_USER_PROFILE);
+			auditlogger.info("[" + userProfile.getUserId() + "]:: HQL/JPQL: " + jpaQueryStr);
+			auditlogger.info("[" + userProfile.getUserId() + "]:: SQL: " + statement.getSqlQueryString());
+
+
+			dataSet.loadData(start, limit, (maxSize == null? -1: maxSize.intValue()));
+			dataStore = dataSet.getDataStore();
+			Assert.assertNotNull(dataStore, "The dataStore returned by loadData method of the class [" + dataSet.getClass().getName()+ "] cannot be null");
+		} catch (Exception e) {
+			logger.debug("Query execution aborted because of an internal exceptian");
+			SpagoBIEngineServiceException exception;
+			String message;
+
+			message = "An error occurred in " + getActionName() + " service while executing query: [" +  statement.getQueryString() + "]";				
+			exception = new SpagoBIEngineServiceException(getActionName(), message, e);
+			exception.addHint("Check if the query is properly formed: [" + statement.getQueryString() + "]");
+			exception.addHint("Check connection configuration");
+			exception.addHint("Check the qbe jar file");
+
+			throw exception;
+		}
+		logger.debug("Query executed succesfully");
+		return dataStore;
+	}
+
 	@Override
 	public JSONObject serializeDataStore(IDataStore dataStore) {
 		logger.debug("IN");
@@ -134,6 +186,39 @@ public class LoadRegistryAction extends ExecuteQueryAction {
 		return gridDataFeed;
 	}
 	
+	// tret Integer, Float and BigDecimal
+	public Object operateWithNumbers(Object previousValue, Object currentValue) {
+	logger.debug("IN");
+	Object resultToReturn = null;
+	
+	if(currentValue instanceof Integer){
+		Integer currVal = (Integer)currentValue;
+		Integer prevVal = (Integer)previousValue;
+		Integer result = currVal + prevVal;
+		resultToReturn = result;
+	}
+	else
+		if(currentValue instanceof Float){
+			Float currVal = (Float)currentValue;
+			Float prevVal = (Float)previousValue;
+			Float result = currVal + prevVal;
+			resultToReturn = result;
+		}
+		else
+			if(currentValue instanceof BigDecimal){
+				BigDecimal currVal = (BigDecimal)currentValue;
+				BigDecimal prevVal = (BigDecimal)previousValue;
+				BigDecimal result = prevVal.add(currVal);  
+				resultToReturn = result;
+			}
+			else{
+				logger.error("Error in measure type: trying to sum a value that is not a number");
+			return null;
+			}
+
+	logger.debug("OUT");
+	return resultToReturn;	
+	}
 	
 	private void addSumRows(IDataStore dataStore) {
 		logger.debug("IN");		
@@ -143,7 +228,8 @@ public class LoadRegistryAction extends ExecuteQueryAction {
 		
 		ArrayList<Integer> columnsIndexToMerge = new ArrayList<Integer>();
 		ArrayList<Integer> columnsIndexToEmpty = new ArrayList<Integer>();
-		HashMap<Integer, Integer> columnsIndexToSum2Counter = new HashMap<Integer, Integer>();
+		ArrayList<Integer> columnsIndexToAfter = new ArrayList<Integer>();
+		HashMap<Integer, Object> columnsIndexToSum2Counter = new HashMap<Integer, Object>();
 
 		// collect columns to merge and columns to sum and colummsn to empty: 
 		// -- columns to merge have merge attributes until a columns with summaryFunc is found
@@ -152,17 +238,23 @@ public class LoadRegistryAction extends ExecuteQueryAction {
 		
 		Integer index = 0;
 		boolean summaryFuncFound = false;
+		boolean measureFound = false;
+		
 		for (Iterator iterator = columns.iterator(); iterator.hasNext();) {
 			Column column = (Column) iterator.next();
 			
 			if(column.isMerge() && summaryFuncFound == false){
 				columnsIndexToMerge.add(index);
 			}
-			else if(summaryFuncFound==true && !column.isMeasure()){
+			else if(summaryFuncFound==true && !column.isMeasure() && !measureFound ){
 				columnsIndexToEmpty.add(index);				
+			}
+			else if(summaryFuncFound==true && !column.isMeasure() && measureFound ){
+				columnsIndexToAfter.add(index);				
 			}
 			else if(column.isMeasure()){
 				columnsIndexToSum2Counter.put(index, 0);				
+				measureFound = true;
 			}
 			if(column.getSummaryFunction() != null && column.getSummaryFunction().equals("sum")) summaryFuncFound=true;
 			index++;
@@ -205,13 +297,13 @@ public class LoadRegistryAction extends ExecuteQueryAction {
 					Object value = record.getFieldAt(indexMeasure).getValue();
 
 					//TODO treat the case this is not a number, should keep it to null					
-					if(value != null  && StringUtils.isNumberValue(value.toString())){
+					if(value != null  
+									){
 						// get previous value
-						Integer currVal = (Integer)value;
-						Integer prevVal = columnsIndexToSum2Counter.get(indexMeasure);
-						if(prevVal == null) prevVal = 0;
-						Integer sumval = prevVal + currVal;
-						columnsIndexToSum2Counter.put(indexMeasure, sumval);
+						
+						Object result = operateWithNumbers(columnsIndexToSum2Counter.get(indexMeasure),   value );
+						
+						columnsIndexToSum2Counter.put(indexMeasure, result);
 					}
 					else{
 						columnsIndexToSum2Counter.put(indexMeasure, null);						
@@ -225,13 +317,13 @@ public class LoadRegistryAction extends ExecuteQueryAction {
 				
 				//add a new record only if sumCounter > 0
 				if(sumCounter>0){
-					addTotalRecord(dataStore, i, columnsIndexToMerge, columnsIndexToEmpty, columnsIndexToSum2Counter, previousMergeValues, recordsToAddMap);
+					addTotalRecord(dataStore, i, columnsIndexToMerge, columnsIndexToEmpty, columnsIndexToAfter, columnsIndexToSum2Counter, previousMergeValues, recordsToAddMap);
 				}
 				
 				// put the counters to actual values
 				for (Iterator iterator = columnsIndexToSum2Counter.keySet().iterator(); iterator.hasNext();) {
 					Integer columnInd = (Integer) iterator.next();
-					Integer v = (Integer)record.getFieldAt(columnInd).getValue();
+					Object v = record.getFieldAt(columnInd).getValue();
 					columnsIndexToSum2Counter.put(columnInd, v);
 				}
 				
@@ -244,7 +336,7 @@ public class LoadRegistryAction extends ExecuteQueryAction {
 
 		// add  final total if last records were merged
 		if(sumCounter>0){
-			addTotalRecord(dataStore, null, columnsIndexToMerge,columnsIndexToEmpty, columnsIndexToSum2Counter, previousMergeValues, recordsToAddMap);
+			addTotalRecord(dataStore, null, columnsIndexToMerge, columnsIndexToEmpty, columnsIndexToAfter, columnsIndexToSum2Counter, previousMergeValues, recordsToAddMap);
 		}
 		
 		// finally add the record (could not add them while cycling the store)
@@ -270,7 +362,8 @@ public class LoadRegistryAction extends ExecuteQueryAction {
 			Integer currentIndexRow,
 			ArrayList<Integer> columnsIndexToMerge,
 			ArrayList<Integer> columnsIndexToEmpty,
-			HashMap<Integer, Integer> columnsIndexToSum2Counter, 
+			ArrayList<Integer> columnsIndexToAfter,			
+			HashMap<Integer, Object> columnsIndexToSum2Counter, 
 			HashMap<Integer, Object> previousMergeValues,
 			TreeMap<Integer, Record> recordsToAddMap)
 	{
@@ -303,10 +396,16 @@ public class LoadRegistryAction extends ExecuteQueryAction {
 		for (Iterator iterator = columnsIndexToEmpty.iterator(); iterator.hasNext();) {
 			Integer columnIndex = (Integer) iterator.next();
 			Field field = new Field();
-			field.setValue("                 ");
+			field.setValue("      ");
 			recordNew.insertField(columnIndex, field);
-			setNewSummaryColorCell(dataStore, index, columnIndex);
-			
+			setNewSummaryColorCell(dataStore, index, columnIndex);	
+		}
+		// insert field for each column to after but do not color
+		for (Iterator iterator = columnsIndexToEmpty.iterator(); iterator.hasNext();) {
+			Integer columnIndex = (Integer) iterator.next();
+			Field field = new Field();
+			field.setValue("      ");
+			recordNew.insertField(columnIndex, field);
 		}
 		
 		// insert fields for each column to sum
@@ -652,6 +751,17 @@ public class LoadRegistryAction extends ExecuteQueryAction {
 
 	private IModelField getColumnModelField(Column column, IModelEntity entity) {
 		if (column.getSubEntity() != null) { // in case it is a subEntity attribute, look for the field inside it
+			
+			
+			// In order to recover subentities the new way if DEFAULT_MAX_RECURSION_LEVEL is set to zero
+/*			
+ 			QbeEngineInstance engineInstance = getEngineInstance();
+			QbeTemplate template = engineInstance.getTemplate();
+			// takes the only datamart's name configured
+			String modelName = (String) template.getDatamartNames().get(0);
+			IModelStructure md = getDataSource().getModelStructure();
+			IModelEntity	subEntity  = md.getEntity(column.getSubEntity()); */
+			
 			String entityUName = entity.getUniqueName();
 			String subEntityKey = entityUName.substring(0, entityUName.lastIndexOf("::")) + "::" + column.getSubEntity() + "(" + column.getForeignKey() + ")";
 			IModelEntity subEntity = entity.getSubEntity(subEntityKey);
@@ -677,6 +787,13 @@ public class LoadRegistryAction extends ExecuteQueryAction {
 		IModelEntity entity = null;
 		try {
 			IDataSource ds = getDataSource();
+			
+			// change max recursion level to data source
+			
+			Map<String, Object > properties = ds.getConfiguration().loadDataSourceProperties();
+			properties.put("maxRecursionLevel", "5");
+//ds.setDataMartModelAccessModality(modelAccessModality);			
+			
 			IModelStructure structure = ds.getModelStructure();
 			QbeEngineInstance engineInstance = getEngineInstance();
 			QbeTemplate template = engineInstance.getTemplate();
