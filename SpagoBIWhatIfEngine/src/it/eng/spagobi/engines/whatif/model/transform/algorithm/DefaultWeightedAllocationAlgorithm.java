@@ -15,6 +15,7 @@ import it.eng.spagobi.engines.whatif.model.SpagoBICellSetWrapper;
 import it.eng.spagobi.engines.whatif.model.SpagoBICellWrapper;
 import it.eng.spagobi.engines.whatif.model.transform.CellRelation;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.writeback4j.sql.DefaultWeightedAllocationAlgorithmPersister;
 
 import org.apache.log4j.Logger;
 import org.olap4j.Position;
@@ -28,13 +29,14 @@ public class DefaultWeightedAllocationAlgorithm extends AllocationAlgorithm {
 	
 	private static Logger logger = Logger.getLogger(DefaultWeightedAllocationAlgorithm.class);
 	private WhatIfEngineInstance ei;
-	
+	private DefaultWeightedAllocationAlgorithmPersister persister;
 	
 	
 	
 	public DefaultWeightedAllocationAlgorithm(WhatIfEngineInstance ei) {
 		super();
 		this.ei = ei;
+		persister = new DefaultWeightedAllocationAlgorithmPersister(ei.getWriteBackManager().getRetriver(), ei.getDataSource());
 	}
 
 	@Override
@@ -136,7 +138,7 @@ public class DefaultWeightedAllocationAlgorithm extends AllocationAlgorithm {
 
 	private void persistInternal(SpagoBICellWrapper cell, Object oldValue,Object newValue) throws Exception {
 		Double prop = ((Number) newValue).doubleValue()/((Number) oldValue).doubleValue();
-		ei.getWriteBackManager().executeProportionalUpdate(cell.getMembers(), prop);
+		persister.executeProportionalUpdate(cell.getMembers(), prop);
 		
 		
 	}

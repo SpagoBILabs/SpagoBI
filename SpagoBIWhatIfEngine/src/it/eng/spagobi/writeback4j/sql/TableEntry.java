@@ -47,7 +47,7 @@ public class TableEntry{
 	}
 	
 
-	public String toString(Map<String, String> table2Alias, QueryBuilder qb){
+	public String toString(Map<String, String> table2Alias, DefaultWeightedAllocationAlgorithmPersister qb){
 		
 		if(table==null || column==null){
 			return "";

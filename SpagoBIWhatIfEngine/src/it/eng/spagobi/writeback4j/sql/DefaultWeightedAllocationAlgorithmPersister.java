@@ -29,16 +29,16 @@ import org.olap4j.metadata.Member;
  *  @author Alberto Ghedin (alberto.ghedin@eng.it)
  *
  */
-public class QueryBuilder {
+public class DefaultWeightedAllocationAlgorithmPersister {
 	
 	
 	ISchemaRetriver retriver;
 	private int tableCount = 0;
 	IDataSource dataSource;
 	
-	public static transient Logger logger = Logger.getLogger(QueryBuilder.class);
+	public static transient Logger logger = Logger.getLogger(DefaultWeightedAllocationAlgorithmPersister.class);
 	
-	public QueryBuilder( ISchemaRetriver retriver, IDataSource dataSource){
+	public DefaultWeightedAllocationAlgorithmPersister( ISchemaRetriver retriver, IDataSource dataSource){
 		this.retriver = retriver;
 		this.dataSource = dataSource;
 	}
