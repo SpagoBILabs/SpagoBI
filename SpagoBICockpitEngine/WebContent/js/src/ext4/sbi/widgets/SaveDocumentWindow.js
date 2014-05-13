@@ -208,6 +208,7 @@ Ext.extend(Sbi.widgets.SaveDocumentWindow, Ext.Window, {
 	                buttons: Ext.MessageBox.OK
 	           });
 		}else{	
+			this.showMask();
 			var functs = Ext.JSON.encode(this.OBJECT_FUNCTIONALITIES);
 			var params = {
 		        	name :  docName,
@@ -255,6 +256,7 @@ Ext.extend(Sbi.widgets.SaveDocumentWindow, Ext.Window, {
 				      			
 				      			this.fireEvent('savedocument', this, goBack, params);
 				      			this.destroy();
+				      			this.hideMask();
 				      		}  
 			      		} else {
 			      			Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
@@ -370,6 +372,25 @@ Ext.extend(Sbi.widgets.SaveDocumentWindow, Ext.Window, {
 		});		
 		
 		Sbi.debug("[PreviewFileWizard.uploadFileButtonHandler]: OUT");
+	}
+	
+	/**
+	 * Opens the loading mask 
+	 */
+    , showMask : function(){
+    	if (this.loadMask == null) {
+    		this.loadMask = new Ext.LoadMask(this.getId(), {msg: "Saving.."});
+    	}
+    	this.loadMask.show();
+    }
+	
+	/**
+	 * Closes the loading mask
+	 */
+	, hideMask: function() {		
+    	if (this.loadMask != null) {
+    		this.loadMask.hide();
+    	}
 	}
 
 });
