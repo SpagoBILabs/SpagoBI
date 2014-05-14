@@ -201,7 +201,13 @@ Ext.define('Sbi.olap.control.EventManager', {
 //				unformattedValue = Sbi.whatif.commons.Format.formatInJavaDouble(value, Sbi.locale.formats[type]);
 //			}
 			try {
-				unformattedValue = Sbi.whatif.commons.Format.formatInJavaDouble(value, Sbi.locale.formats[type]);
+				if ( !isNaN(value) ) {
+					//Value is a number
+					unformattedValue = Sbi.whatif.commons.Format.formatInJavaDouble(value, Sbi.locale.formats[type]);
+				} else {
+					//Value is a string/expression
+					unformattedValue = value;
+				}
 			} catch (err) {
 				Sbi.error("Error while trying to convert [" + value + "] to a Java double: " + err);
 			}
