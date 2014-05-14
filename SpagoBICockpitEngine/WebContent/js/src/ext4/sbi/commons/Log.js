@@ -10,7 +10,11 @@ Ext.ns("Sbi.logging");
 
 // in ie if the console is not open console object is undefined
 if (typeof console === "undefined") { 
-	console = { log: function () { } }
+	console = { log: function () { } ,
+				info: function () { },
+				trace: function() { },
+				debug: function() { },
+				warn: function() { }};
 };
 
 Sbi.logging.enabled = true;
@@ -28,7 +32,6 @@ Sbi.logging.levels = {
 Sbi.log = function(level, msg) {
 	if(Sbi.logging.enabled 
 		&& Sbi.logging.levels[level] >= Sbi.logging.levels[Sbi.logging.level]) {
-	
 		if(console) console.log('[' + level + '] : ' + msg);
 	}
 };
