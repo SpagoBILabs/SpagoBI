@@ -97,12 +97,8 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 <html>
 	<%-- == HEAD ========================================================== --%>
 	<head>
-		<title><%=docName.trim().length() > 0? docName: "SpagoBICockpitEngine"%></title>
-		
-		<% if (forceIE8Compatibility == true){ %> 
-			<meta http-equiv="X-UA-Compatible" content="IE=8" />
-		<%} %>
-		
+	   <title><%=docName.trim().length() > 0? docName: "SpagoBICockpitEngine"%></title>
+       <meta http-equiv="X-UA-Compatible" content="IE=edge" />
        
         <%@include file="commons/includeExtJS4.jspf" %>
 		<%@include file="commons/includeSpagoBICockpitJS4.jspf" %>
