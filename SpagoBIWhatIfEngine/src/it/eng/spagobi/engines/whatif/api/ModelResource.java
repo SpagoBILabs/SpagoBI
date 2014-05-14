@@ -24,6 +24,8 @@ import it.eng.spagobi.engines.whatif.model.SpagoBICellWrapper;
 import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
 import it.eng.spagobi.engines.whatif.model.transform.CellTransformation;
 import it.eng.spagobi.engines.whatif.model.transform.algorithm.DefaultWeightedAllocationAlgorithm;
+import it.eng.spagobi.engines.whatif.parser.Lexer;
+import it.eng.spagobi.engines.whatif.parser.parser;
 import it.eng.spagobi.utilities.exceptions.SpagoBIEngineRestServiceRuntimeException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
 import it.eng.spagobi.writeback4j.mondrian.CacheManager;
@@ -100,7 +102,17 @@ public class ModelResource extends AbstractWhatIfEngineService {
 			new SpagoBIEngineRestServiceRuntimeException("generic.error", this.getLocale(), e);
 		}
 		logger.debug("expression = [" + expression + "]");
-		Double value = Double.valueOf(expression);
+    	Double value = null;
+		try {
+	    	Lexer lex = new Lexer(new java.io.StringReader(expression));
+	    	parser par = new parser(lex);
+			value = (Double)par.parse().value;
+		} catch (Exception e) {
+			logger.debug("Error parsing What-if metalanguage expression",e);
+			new SpagoBIEngineRestServiceRuntimeException("parsing.error", this.getLocale(), e);
+		}   
+		
+		//Double value = Double.valueOf(expression);
 		SpagoBICellSetWrapper cellSetWrapper = (SpagoBICellSetWrapper) model
 				.getCellSet();
 		SpagoBICellWrapper cellWrapper = (SpagoBICellWrapper) cellSetWrapper
