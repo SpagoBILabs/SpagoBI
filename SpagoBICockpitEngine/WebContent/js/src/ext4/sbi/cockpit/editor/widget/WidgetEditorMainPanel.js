@@ -39,7 +39,7 @@ Sbi.cockpit.editor.widget.WidgetEditorMainPanel = function(config) {
 
 	var defaultSettings = {
 		name:'widgetEditorMainPanel',
-		emptyMsg: LN('sbi.cockpit.editor.widget.widgeteditormainpanel.emptymsg'),
+		emptyMsg: LN('sbi.cockpit.editor.widget.widgeteditormainpanel.emptymsg')
 		//style:'padding:5px 15px 2px'
 	};
 
