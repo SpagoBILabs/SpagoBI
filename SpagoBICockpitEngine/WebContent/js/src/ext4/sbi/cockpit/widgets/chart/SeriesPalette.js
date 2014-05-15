@@ -11,16 +11,20 @@ Ext.define('Sbi.cockpit.widgets.chart.SeriesPalette', {
 
 	, config:{
 		title: 'Palette'
-	  , frame: true
-	  , xtype: 'panel'
-	  , border: false
-	  , autoScroll: true
+	  , width: 300
+	  , height: 250
+	  , closeAction: 'hide'
+	 // , frame: true
+	  //, xtype: 'panel'
+	  //, border: false
+	  //, autoScroll: true
 	}
 
 	, grid : null
 	, colorFieldEditor : null
 	, colorColumn : null
 	, defaultColors : Sbi.widgets.Colors.defaultColors	
+	
 
 	, constructor : function(config) {
 		Sbi.trace("[SeriesPalette.constructor]: IN");

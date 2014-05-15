@@ -239,7 +239,7 @@ Ext.extend(Sbi.widgets.DatasetsBrowserView, Ext.DataView, {
 			'</div>'+ //box-figure
 			'<tpl if="this.checkIsUsed(isUsed, label) == true">'+	
 				'<div id="box-text-{label}" title="{name}" class="box-text box-text-select">'+
-					'<h2>{name}</h2>'+
+					'<h2>{[this.shorten(values.name)]}</h2>'+
 					'<p>{[this.shorten(values.description)]}</p>'+
 //					'<p>{description}</p>'+				
 					'<p><b>'+author+':</b> {owner}</p>'+
@@ -247,7 +247,7 @@ Ext.extend(Sbi.widgets.DatasetsBrowserView, Ext.DataView, {
 			'</tpl>'+
 	        '<tpl if="this.checkIsUsed(isUsed, label) == false">'+
 		        '<div id="box-text-{label}" title="{name}" class="box-text">'+
-					'<h2>{name}</h2>'+
+					'<h2>{[this.shorten(values.name)]}</h2>'+
 						'<p>{[this.shorten(values.description)]}</p>'+
 //					'<p>{description}</p>'+
 					'<p><b>'+author+':</b> {owner}</p>'+
