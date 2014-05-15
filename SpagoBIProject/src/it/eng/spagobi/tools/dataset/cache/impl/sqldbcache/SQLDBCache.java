@@ -25,6 +25,7 @@ package it.eng.spagobi.tools.dataset.cache.impl.sqldbcache;
 import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.cache.CacheException;
+import it.eng.spagobi.tools.dataset.cache.CacheManager;
 import it.eng.spagobi.tools.dataset.cache.ICache;
 import it.eng.spagobi.tools.dataset.cache.ICacheActivity;
 import it.eng.spagobi.tools.dataset.cache.ICacheConfiguration;
@@ -32,6 +33,7 @@ import it.eng.spagobi.tools.dataset.cache.ICacheEvent;
 import it.eng.spagobi.tools.dataset.cache.ICacheListener;
 import it.eng.spagobi.tools.dataset.cache.ICacheMetadata;
 import it.eng.spagobi.tools.dataset.cache.ICacheTrigger;
+import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.work.SQLDBCacheWriteWork;
 import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.Field;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
@@ -44,13 +46,22 @@ import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
 import it.eng.spagobi.tools.dataset.exceptions.ParametersNotValorizedException;
 import it.eng.spagobi.tools.dataset.persist.PersistedTableManager;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.utilities.threadmanager.WorkManager;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
+
+import javax.naming.NamingException;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
+import org.json.JSONObject;
+
+import commonj.work.Work;
+import commonj.work.WorkItem;
 
 
 
@@ -66,7 +77,8 @@ public class SQLDBCache implements ICache {
 	private boolean enabled;
 	private IDataSource dataSource;
 	private ICacheMetadata cacheMetadata;
-	
+	private WorkManager spagoBIWorkManager;
+
 	public static final String CACHE_NAME_PREFIX_CONFIG = "SPAGOBI.CACHE.NAMEPREFIX";
 	
 	static private Logger logger = Logger.getLogger(SQLDBCache.class);
@@ -75,8 +87,9 @@ public class SQLDBCache implements ICache {
 	public SQLDBCache(ICacheConfiguration cacheConfiguration){
 		this.enabled = true;
 		this.dataSource = cacheConfiguration.getCacheDataSource();
+		this.spagoBIWorkManager = cacheConfiguration.getWorkManager();
 		this.cacheConfiguration = (SQLDBCacheConfiguration)cacheConfiguration;
-
+		
 		if (this.cacheConfiguration != null){
 			String tableNamePrefix = this.cacheConfiguration.getTableNamePrefix();
 			if (tableNamePrefix != null){
@@ -97,96 +110,29 @@ public class SQLDBCache implements ICache {
 		}
 	}
 	
-
-	/**
-	 * @return the dataSource
+	// ===================================================================================
+	// CONTAINS METHODS
+	// ===================================================================================
+	
+	/* (non-Javadoc)
+	 * @see it.eng.spagobi.tools.dataset.cache.ICache#contains(it.eng.spagobi.tools.dataset.bo.IDataSet)
 	 */
-	public IDataSource getDataSource() {
-		return dataSource;
+	public boolean contains(IDataSet dataSet) {
+		return contains(dataSet.getSignature());
 	}
 
-	/**
-	 * @param dataSource the dataSource to set
+
+	/* (non-Javadoc)
+	 * @see it.eng.spagobi.tools.dataset.cache.ICache#contains(java.lang.String)
 	 */
-	public void setDataSource(IDataSource dataSource) {
-		this.dataSource = dataSource;
+	public boolean contains(String resultsetSignature) {
+		return getMetadata().containsCacheItem(resultsetSignature);
 	}
 	
-	/**
-	 * Erase existing tables that begins with the prefix
-	 * @param prefix table name prefix
-	 * 
-	 */
-	private void eraseExistingTables(String prefix){
-		PersistedTableManager persistedTableManager = new PersistedTableManager();
-		persistedTableManager.dropTablesWithPrefix(getDataSource(), prefix);
-	}
-	/**
-	 * Test if the passed schema name is correct.
-	 * Create a table in the database via the dataSource then
-	 * try to select the table using the schema.table syntax
-	 * 
-	 * @param schema the schema name
-	 * @param dataSource the DataSource
-	 */
-	private void testDatabaseSchema(String schema, IDataSource dataSource){
-
-		//Create a fake dataStore
-		DataStore dataStore = new DataStore();
-		IMetaData metadata = new MetaData();
-		IFieldMetaData fieldMetaData = new FieldMetadata();
-		fieldMetaData.setAlias("test_column");
-		fieldMetaData.setName("test_column");
-		fieldMetaData.setType(String.class);
-		fieldMetaData.setFieldType(FieldType.ATTRIBUTE);
-		metadata.addFiedMeta(fieldMetaData);
-		dataStore.setMetaData(metadata);
-		Record record = new Record();
-		Field field = new Field();
-		field.setValue("try");
-		record.appendField(field);
-		dataStore.appendRecord(record);
-		
-		//persist the datastore as a table on db
-		PersistedTableManager persistedTableManager = new PersistedTableManager();
-		Random ran = new Random();
-		int x = ran.nextInt(100);
-		String tableName = "SbiTest"+x;
-		persistedTableManager.setTableName(tableName);
-		
-		try {
-			persistedTableManager.persistDataset(dataStore, dataSource);
-		} catch (Exception e) {
-			logger.error("Error persisting dataset");
-		}
-		
-		//try to query the table using the Schema.TableName syntax if schemaName is valorized
-        
-        try {
-            if (schema.isEmpty()){
-            	dataSource.executeStatement("SELECT * FROM "+tableName, 0, 0);
-
-            } else {
-            	dataSource.executeStatement("SELECT * FROM "+schema+"."+tableName, 0, 0);
-            }
-        }
-        catch (Exception e){
-			throw new CacheException("An unexpected error occured while testing database schema for cache");
-        }
-        finally {
-            //Dropping table
-            persistedTableManager.dropTableIfExists(dataSource,tableName);
-    		
-        }
-
-		
-		
-	}
+	// ===================================================================================
+	// GET METHODS
+	// ===================================================================================
 	
-	
-	
-	
-
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.dataset.cache.ICache#get(it.eng.spagobi.tools.dataset.bo.IDataSet)
 	 */
@@ -217,31 +163,6 @@ public class SQLDBCache implements ICache {
 		}
 		
 		return dataStore;
-	}
-	
-	/* (non-Javadoc)
-	 * @see it.eng.spagobi.tools.dataset.cache.ICache#get(java.util.List, org.json.JSONArray)
-	 */
-	public IDataStore get(List<IDataSet> dataSets, JSONArray associations) {
-		IDataStore dataStore = null;
-		
-		logger.debug("IN");
-		
-		try {
-			String joinedDataSetSignature = getJoinedDatasetSignature(dataSets);
-			dataStore = get(joinedDataSetSignature);
-		} catch(Throwable t) {
-			if(t instanceof CacheException) throw (CacheException)t;
-			else throw new CacheException("An unexpected error occure while getting joined dataset from cache", t);
-		} finally {
-			logger.debug("OUT");
-		}
-		
-		return dataStore;
-	}
-	
-	private String getJoinedDatasetSignature(List<IDataSet> dataSets) {
-		return "xxx";
 	}
 
 	/* (non-Javadoc)
@@ -312,43 +233,72 @@ public class SQLDBCache implements ICache {
 			sqlBuilder.from(tableName);
 			
 			//Columns to SELECT
-			for (ProjectionCriteria projection : projections ){
-				String aggregateFunction = projection.getAggregateFunction();
-				String columnName = projection.getColumnName();
-				String aliasName = projection.getAliasName();
-				columnName = AbstractJDBCDataset.encapsulateColumnName(columnName, dataSource);
-				aliasName = AbstractJDBCDataset.encapsulateColumnName(aliasName, dataSource);
-				if ((aggregateFunction != null) && (!aggregateFunction.isEmpty()) && (columnName != "*") && (aliasName != null) && (!aliasName.isEmpty())){
-					columnName = aggregateFunction + "("+columnName+") AS "+aliasName;
+			if(projections != null) {
+				for (ProjectionCriteria projection : projections ){
+					String aggregateFunction = projection.getAggregateFunction();
+					String columnName = projection.getColumnName();
+					String aliasName = projection.getAliasName();
+					columnName = AbstractJDBCDataset.encapsulateColumnName(columnName, dataSource);
+					aliasName = AbstractJDBCDataset.encapsulateColumnName(aliasName, dataSource);
+					if ((aggregateFunction != null) && (!aggregateFunction.isEmpty()) && (columnName != "*") && (aliasName != null) && (!aliasName.isEmpty())){
+						columnName = aggregateFunction + "("+columnName+") AS "+aliasName;
+					}
+					sqlBuilder.column(columnName);
+					
 				}
-				sqlBuilder.column(columnName);
-				
 			}
 			
+			
 			//WHERE conditions
-			for (FilterCriteria filter : filters ){
-				String leftOperand = filter.getLeftOperand().getOperandText();
-				if (!filter.getLeftOperand().isCostant()){
-					leftOperand = AbstractJDBCDataset.encapsulateColumnName(leftOperand, dataSource);
+			if(filters != null) {
+				for (FilterCriteria filter : filters ){
+					String leftOperand = null;
+					if (filter.getLeftOperand().isCostant()){
+						// why? warning!
+						leftOperand = filter.getLeftOperand().getOperandValueAsString();
+					} else { // it's a column
+						filter.getLeftOperand().getOperandDataSet();
+						leftOperand = "t1 - " + filter.getLeftOperand().getOperandValueAsString();
+						leftOperand = AbstractJDBCDataset.encapsulateColumnName(leftOperand, dataSource);
+					}
+					
+					String operator = filter.getOperator();
+					
+					String rightOperand = null;
+					if (filter.getRightOperand().isCostant()){
+						if(filter.getRightOperand().isMultivalue()) {
+							rightOperand = "(";
+							String separator = "";
+							String stringDelimiter = "'";
+							List<String> values =  filter.getRightOperand().getOperandValueAsList();
+							for(String value : values) {
+								rightOperand += separator + stringDelimiter + value + stringDelimiter;
+								separator = ",";
+							}
+							rightOperand += ")";
+						} else {
+							rightOperand = filter.getRightOperand().getOperandValueAsString();
+						}
+					} else { // it's a column
+						rightOperand = filter.getRightOperand().getOperandValueAsString();
+						rightOperand = AbstractJDBCDataset.encapsulateColumnName(rightOperand, dataSource);
+					}
+					
+					sqlBuilder.where(leftOperand+" "+operator+" "+rightOperand);
 				}
-				String operator = filter.getOperator();
-				String rightOperand = filter.getRightOperand().getOperandText();
-				if (!filter.getRightOperand().isCostant()){
-					rightOperand = AbstractJDBCDataset.encapsulateColumnName(rightOperand, dataSource);
-				}
-				
-				sqlBuilder.where(leftOperand+" "+operator+" "+rightOperand);
 			}
 			
 			//GROUP BY conditions 
-			for (GroupCriteria group : groups ){
-				String aggregateFunction = group.getAggregateFunction();
-				String columnName = group.getColumnName();
-				columnName = AbstractJDBCDataset.encapsulateColumnName(columnName, dataSource);
-				if ((aggregateFunction != null) && (!aggregateFunction.isEmpty()) && (columnName != "*")){
-					columnName = aggregateFunction + "("+columnName+")";
+			if(groups != null) {
+				for (GroupCriteria group : groups ){
+					String aggregateFunction = group.getAggregateFunction();
+					String columnName = group.getColumnName();
+					columnName = AbstractJDBCDataset.encapsulateColumnName(columnName, dataSource);
+					if ((aggregateFunction != null) && (!aggregateFunction.isEmpty()) && (columnName != "*")){
+						columnName = aggregateFunction + "("+columnName+")";
+					}
+					sqlBuilder.groupBy(columnName);
 				}
-				sqlBuilder.groupBy(columnName);
 			}
 			
 			String queryText = sqlBuilder.toString();
@@ -365,7 +315,241 @@ public class SQLDBCache implements ICache {
 		return null;
 
 	}
+	
+	// ===================================================================================
+	// LOAD METHODS
+	// ===================================================================================
+	
+	/* (non-Javadoc)
+	 * @see it.eng.spagobi.tools.dataset.cache.ICache#load(it.eng.spagobi.tools.dataset.bo.IDataSet, boolean)
+	 */
+	public IDataStore load(IDataSet dataSet, boolean wait) {
+		List<IDataSet> dataSets = new ArrayList<IDataSet>();
+		dataSets.add(dataSet);
+		List<IDataStore> dataStores = load(dataSets, wait);
+		return dataStores.get(0);
+	}
 
+	/* (non-Javadoc)
+	 * @see it.eng.spagobi.tools.dataset.cache.ICache#load(java.util.List, boolean)
+	 */
+	public List<IDataStore> load(List<IDataSet> dataSets, boolean wait) {
+		List<IDataStore> dataStores = new ArrayList<IDataStore>();
+		
+		try {
+			List<Work> works = new ArrayList<Work>();
+			for(IDataSet dataSet: dataSets) {
+				// first we set parameters because they change the signature
+				// dataSet.setParamsMap(parametersValues);
+				
+				IDataStore dataStore = null;
+				
+				// then we verified if the store associated to the joined datatset is in cache
+				if(contains(dataSet)) {
+					dataStore = get(dataSet);
+					dataStores.add(dataStore);
+					continue;
+				}
+				
+				// if not we create a work to store it and we add it to works list
+				dataSet.loadData();
+				dataStore = dataSet.getDataStore();
+				dataStores.add(dataStore);
+				
+				Work cacheWriteWork = new SQLDBCacheWriteWork(this, dataStore, dataSet);
+				works.add(cacheWriteWork);
+			}
+			
+			
+			if(works.size() > 0) {
+				if(wait == true) {
+					if(spagoBIWorkManager == null) {
+						for(int i = 0; i < dataSets.size(); i++) {
+							this.put(dataSets.get(i), dataStores.get(i));
+						}
+					} else {
+						commonj.work.WorkManager workManager = spagoBIWorkManager.getInnerInstance();
+						List<WorkItem> workItems = new ArrayList<WorkItem>();
+						for(Work work : works) {
+							WorkItem workItem = workManager.schedule(work);
+							workItems.add(workItem);
+						}
+						
+						workManager.waitForAll(workItems, workManager.INDEFINITE);
+					}
+				} else {
+					if(spagoBIWorkManager == null) {
+						throw new RuntimeException("Impossible to save the store in background because the work manager is not properly initialized");
+					}
+					
+					commonj.work.WorkManager workManager = spagoBIWorkManager.getInnerInstance();
+					for(Work workItem : works) {
+						workManager.schedule(workItem);
+					}
+				}
+				
+			}
+		} catch(Throwable t) {
+			throw new RuntimeException("An unexpected error occured while executing method", t);
+		}
+		
+		return dataStores;
+	}
+	
+	// ===================================================================================
+	// REFRESH METHODS
+	// ===================================================================================
+	/* (non-Javadoc)
+	 * @see it.eng.spagobi.tools.dataset.cache.ICache#load(it.eng.spagobi.tools.dataset.bo.IDataSet, boolean)
+	 */
+	public IDataStore refresh(IDataSet dataSet, boolean wait) {
+		
+		IDataStore dataStore = null;
+		try {
+			dataSet.loadData();
+			dataStore = dataSet.getDataStore();
+			
+			if(wait == true) {
+				this.put(dataSet, dataStore);
+			} else {
+				if(spagoBIWorkManager == null) {
+					throw new RuntimeException("Impossible to save the store in background because the work manager is not properly initialized");
+				}
+				
+				commonj.work.WorkManager workManager = spagoBIWorkManager.getInnerInstance();
+				Work cacheWriteWork = new SQLDBCacheWriteWork(this, dataStore, dataSet);
+				workManager.schedule(cacheWriteWork);
+			}
+		} catch(Throwable t) {
+			throw new RuntimeException("An unexpected error occured while executing method", t);
+		} finally {			
+			logger.debug("OUT");
+		}	
+		
+		return dataStore;
+	}
+	
+	/* (non-Javadoc)
+	 * @see it.eng.spagobi.tools.dataset.cache.ICache#put(java.util.List, org.json.JSONArray, it.eng.spagobi.tools.dataset.common.datastore.IDataStore)
+	 */
+	public IDataStore refresh(List<IDataSet> dataSets, JSONArray associations) {
+		logger.trace("IN");
+		try {
+			SelectBuilder sqlBuilder = new SelectBuilder();
+			
+			Map<String, String> datasetAliases = new HashMap<String, String>();
+			int aliasNo = 0;
+			
+			for(IDataSet dataSet : dataSets) {
+				if(contains(dataSet) == false) return null;
+				String tableName = getMetadata().getCacheItem(dataSet.getSignature()).getTable();
+				String tableAlias = "t" + ++aliasNo;
+				datasetAliases.put(dataSet.getLabel(), tableAlias);
+				sqlBuilder.from(tableName + " "+ tableAlias);
+				
+				for(int i = 0; i < dataSet.getMetadata().getFieldCount(); i++) {
+					IFieldMetaData fieldMeta = dataSet.getMetadata().getFieldMeta(i);
+					
+					String column = AbstractJDBCDataset.encapsulateColumnName(fieldMeta.getName(), dataSource);
+					String alias = AbstractJDBCDataset.encapsulateColumnAlaias(tableAlias + " - " + fieldMeta.getAlias(), dataSource);
+					sqlBuilder.column(tableAlias + "." + column + " as " + alias);
+				}
+			}
+			
+			
+			
+			for(int i = 0; i < associations.length(); i++) {
+				JSONObject association = associations.getJSONObject(i);
+				JSONArray fields = association.getJSONArray("fields");
+				String whereClause = "";
+				String separator = "";
+				for(int j = 0; j < fields.length(); j++) {
+					JSONObject field = fields.getJSONObject(j);
+					String dataset = field.getString("store");
+					String column = field.getString("column");
+					column = AbstractJDBCDataset.encapsulateColumnName(column, dataSource);
+					whereClause += separator + datasetAliases.get(dataset) + "." + column;
+					separator = " = ";
+				}
+				sqlBuilder.where(whereClause);
+			}
+			
+			
+			String queryText = sqlBuilder.toString();
+			IDataStore dataStore = dataSource.executeStatement(queryText, 0, 0);
+			DataStore toReturn = (DataStore) dataStore;
+			
+			return toReturn;
+		} catch(Throwable t) {
+			if(t instanceof CacheException) throw (CacheException)t;
+			else throw new CacheException("An unexpected error occured while loading joined store from cache", t);
+		} finally {
+			logger.trace("OUT");
+		}
+	}
+	
+	
+	// ===================================================================================
+	// PUT METHODS
+	// ===================================================================================
+	/* (non-Javadoc)
+	 * @see it.eng.spagobi.dataset.cache.ICache#put(java.lang.String, it.eng.spagobi.tools.dataset.common.datastore.IDataStore)
+	 */
+	public void put(IDataSet dataSet, IDataStore dataStore) {
+		logger.trace("IN");
+		try {
+			if (getMetadata().isCleaningEnabled() 
+					&& !getMetadata().hasEnoughMemoryForStore(dataStore)) {
+				deleteToQuota();
+			}
+			
+			//check again if there is enough space for the resultset
+			if ( getMetadata().hasEnoughMemoryForStore(dataStore) ){
+				String signature = dataSet.getSignature();
+				String tableName = persistStoreInCache(dataSet, signature, dataStore);
+				getMetadata().addCacheItem(signature, tableName, dataStore);
+			} else {
+				throw new CacheException("Store is to big to be persisted in cache." +
+						" Store extimated dimenion is [" + getMetadata().getRequiredMemory(dataStore) + "]" +
+						" while cache available space is [" + getMetadata().getAvailableMemory() + "]." +
+						" Incrase cache size or execute the dataset disabling cache.");
+			}
+		} catch(Throwable t) {
+			if(t instanceof CacheException) throw (CacheException)t;
+			else throw new CacheException("An unexpected error occured while adding store into cache", t);
+		} finally {
+			logger.trace("OUT");
+		}
+		
+		logger.debug("OUT");
+	}
+
+
+	private String persistStoreInCache(IDataSet dataset, String signature, IDataStore resultset) {
+		logger.trace("IN");
+		try {
+			PersistedTableManager persistedTableManager = new PersistedTableManager();
+			String tablePrefix = null;
+			String tableNamePrefix = this.cacheConfiguration.getTableNamePrefix();
+			if (tableNamePrefix != null){
+				tablePrefix = tableNamePrefix.toUpperCase();
+			}
+			
+			String tableName = persistedTableManager.generateRandomTableName(tablePrefix);
+			persistedTableManager.persistDataset(dataset, resultset, getDataSource(), tableName);
+			return tableName;
+		} catch(Throwable t) {
+			if(t instanceof CacheException) throw (CacheException)t;
+			else throw new CacheException("An unexpected error occured while persisting store in cache", t);
+		} finally {
+			logger.trace("OUT");
+		}	
+	}
+	
+	// ===================================================================================
+	// DELETE METHODS
+	// ===================================================================================
+	
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.dataset.cache.ICache#delete(it.eng.spagobi.tools.dataset.bo.IDataSet)
 	 */
@@ -447,8 +631,94 @@ public class SQLDBCache implements ICache {
 	    
 		logger.debug("[SQLDBCache] All tables removed, Cache cleaned ");
 	}
+	
+	/**
+	 * Erase existing tables that begins with the prefix
+	 * @param prefix table name prefix
+	 * 
+	 */
+	private void eraseExistingTables(String prefix){
+		PersistedTableManager persistedTableManager = new PersistedTableManager();
+		persistedTableManager.dropTablesWithPrefix(getDataSource(), prefix);
+	}
+	
+	// ===================================================================================
+	// ACCESSOR METHODS
+	// ===================================================================================
+	
+	/**
+	 * @return the dataSource
+	 */
+	public IDataSource getDataSource() {
+		return dataSource;
+	}
 
+	/**
+	 * @param dataSource the dataSource to set
+	 */
+	public void setDataSource(IDataSource dataSource) {
+		this.dataSource = dataSource;
+	}
+	
+	/**
+	 * Test if the passed schema name is correct.
+	 * Create a table in the database via the dataSource then
+	 * try to select the table using the schema.table syntax
+	 * 
+	 * @param schema the schema name
+	 * @param dataSource the DataSource
+	 */
+	private void testDatabaseSchema(String schema, IDataSource dataSource){
 
+		//Create a fake dataStore
+		DataStore dataStore = new DataStore();
+		IMetaData metadata = new MetaData();
+		IFieldMetaData fieldMetaData = new FieldMetadata();
+		fieldMetaData.setAlias("test_column");
+		fieldMetaData.setName("test_column");
+		fieldMetaData.setType(String.class);
+		fieldMetaData.setFieldType(FieldType.ATTRIBUTE);
+		metadata.addFiedMeta(fieldMetaData);
+		dataStore.setMetaData(metadata);
+		Record record = new Record();
+		Field field = new Field();
+		field.setValue("try");
+		record.appendField(field);
+		dataStore.appendRecord(record);
+		
+		//persist the datastore as a table on db
+		PersistedTableManager persistedTableManager = new PersistedTableManager();
+		Random ran = new Random();
+		int x = ran.nextInt(100);
+		String tableName = "SbiTest"+x;
+		persistedTableManager.setTableName(tableName);
+		
+		try {
+			persistedTableManager.persistDataset(dataStore, dataSource);
+		} catch (Exception e) {
+			logger.error("Error persisting dataset");
+		}
+		
+		//try to query the table using the Schema.TableName syntax if schemaName is valorized
+        
+        try {
+            if (schema.isEmpty()){
+            	dataSource.executeStatement("SELECT * FROM "+tableName, 0, 0);
+
+            } else {
+            	dataSource.executeStatement("SELECT * FROM "+schema+"."+tableName, 0, 0);
+            }
+        }
+        catch (Exception e){
+			throw new CacheException("An unexpected error occured while testing database schema for cache");
+        }
+        finally {
+            //Dropping table
+            persistedTableManager.dropTableIfExists(dataSource,tableName);
+    		
+        }		
+	}
+	
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.dataset.cache.ICache#getCacheMetadata()
 	 */
@@ -457,62 +727,6 @@ public class SQLDBCache implements ICache {
 			cacheMetadata = new SQLDBCacheMetadata(cacheConfiguration);
 		}  
 		return cacheMetadata;
-	}
-
-
-	
-
-	/* (non-Javadoc)
-	 * @see it.eng.spagobi.dataset.cache.ICache#put(java.lang.String, it.eng.spagobi.tools.dataset.common.datastore.IDataStore)
-	 */
-	public void put(IDataSet dataSet, IDataStore dataStore) {
-		logger.trace("IN");
-		try {
-			if (getMetadata().isCleaningEnabled() 
-					&& !getMetadata().hasEnoughMemoryForStore(dataStore)) {
-				deleteToQuota();
-			}
-			
-			//check again if there is enough space for the resultset
-			if ( getMetadata().hasEnoughMemoryForStore(dataStore) ){
-				String signature = dataSet.getSignature();
-				String tableName = persistStoreInCache(dataSet, signature, dataStore);
-				getMetadata().addCacheItem(signature, tableName, dataStore);
-			} else {
-				throw new CacheException("Store is to big to be persisted in cache." +
-						" Store extimated dimenion is [" + getMetadata().getRequiredMemory(dataStore) + "]" +
-						" while cache available space is [" + getMetadata().getAvailableMemory() + "]." +
-						" Incrase cache size or execute the dataset disabling cache.");
-			}
-		} catch(Throwable t) {
-			if(t instanceof CacheException) throw (CacheException)t;
-			else throw new CacheException("An unexpected error occured while adding store into cache", t);
-		} finally {
-			logger.trace("OUT");
-		}
-		
-		logger.debug("OUT");
-	}
-
-	private String persistStoreInCache(IDataSet dataset, String signature, IDataStore resultset) {
-		logger.trace("IN");
-		try {
-			PersistedTableManager persistedTableManager = new PersistedTableManager();
-			String tablePrefix = null;
-			String tableNamePrefix = this.cacheConfiguration.getTableNamePrefix();
-			if (tableNamePrefix != null){
-				tablePrefix = tableNamePrefix.toUpperCase();
-			}
-			
-			String tableName = persistedTableManager.generateRandomTableName(tablePrefix);
-			persistedTableManager.persistDataset(dataset, resultset, getDataSource(), tableName);
-			return tableName;
-		} catch(Throwable t) {
-			if(t instanceof CacheException) throw (CacheException)t;
-			else throw new CacheException("An unexpected error occured while persisting store in cache", t);
-		} finally {
-			logger.trace("OUT");
-		}	
 	}
 	
 	/* (non-Javadoc)
@@ -523,7 +737,6 @@ public class SQLDBCache implements ICache {
 		
 	}
 
-
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.tools.dataset.cache.ICache#scheduleActivity(it.eng.spagobi.tools.dataset.cache.ICacheActivity, it.eng.spagobi.tools.dataset.cache.ICacheTrigger)
 	 */
@@ -531,7 +744,6 @@ public class SQLDBCache implements ICache {
 		// TODO Auto-generated method stub
 		
 	}
-
 
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.tools.dataset.cache.ICache#enable(boolean)
@@ -546,5 +758,23 @@ public class SQLDBCache implements ICache {
 	 */
 	public boolean isEnabled() {
 		return enabled;
+	}
+	
+	public WorkManager getSpagoBIWorkManager() {
+		return spagoBIWorkManager;
+	}
+
+	public void setSpagoBIWorkManager(WorkManager spagoBIWorkManager) {
+		this.spagoBIWorkManager = spagoBIWorkManager;
+	}
+
+	
+
+	/* (non-Javadoc)
+	 * @see it.eng.spagobi.tools.dataset.cache.ICache#refresh(java.util.List, boolean)
+	 */
+	public IDataStore refresh(List<IDataSet> dataSets, boolean wait) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

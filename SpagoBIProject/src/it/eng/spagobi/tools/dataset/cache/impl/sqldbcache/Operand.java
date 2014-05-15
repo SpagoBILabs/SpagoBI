@@ -21,36 +21,47 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.spagobi.tools.dataset.cache.impl.sqldbcache;
 
+import java.util.List;
+
 /**
  * @author Marco Cortella (marco.cortella@eng.it)
  *
  */
 public class Operand {
 	
-	private String operandText;
+	private String operandDataSet;
+	private Object operandValue;
 	private boolean isCostant; //operand type, if true is a constant value
 	
-	/**
-	 * @param operandName
-	 * @param isCostant true is a constant value, false elsewhere
-	 */
-	public Operand(String operandText, boolean isCostant) {
-		this.operandText = operandText;
-		this.isCostant = isCostant;
+	
+	public Operand(Object operandValue) {
+		this.operandValue = operandValue;
+		this.isCostant = true;
+		this.operandDataSet = null;
+	}
+	
+	public Operand(String operandDataSet,  String operandValue) {
+		this.operandValue = operandValue;
+		this.isCostant = false;
+		this.operandDataSet = operandDataSet;
 	}
 
-	/**
-	 * @return the operandText
-	 */
-	public String getOperandText() {
-		return operandText;
+	
+	public Object getOperandValue() {
+		return operandValue;
+	}
+	
+	public String getOperandValueAsString() {
+		return (String)operandValue;
+	}
+	
+	public List<String> getOperandValueAsList() {
+		return (List<String>)operandValue;
 	}
 
-	/**
-	 * @param operandText the operandText to set
-	 */
-	public void setOperandText(String operandText) {
-		this.operandText = operandText;
+	
+	public void setOperandValue(Object operandValue) {
+		this.operandValue = operandValue;
 	}
 
 	/**
@@ -67,7 +78,21 @@ public class Operand {
 		this.isCostant = isCostant;
 	}
 	
-	
+	public String getOperandDataSet() {
+		return operandDataSet;
+	}
+
+	public void setOperandDataSet(String operandDataSet) {
+		this.operandDataSet = operandDataSet;
+	}
+
+	/**
+	 * @return
+	 */
+	public boolean isMultivalue() {
+		// TODO Auto-generated method stub
+		return (operandValue instanceof List);
+	}
 	
 	
 }

@@ -50,6 +50,24 @@ public interface ICache {
 	boolean isEnabled();
 	
 	/**
+	 * Facility method. It is equivalent to contains(dataSet.getSignature) call.
+	 * 
+	 * @param dataSet the dataSet that generate the resultSet
+	 * 
+	 * @return true the dataset is cached, false elsewhere 
+	 */
+	boolean contains(IDataSet dataSet);
+	
+	/**
+	 * Facility method. It is equivalent to getMetadata().containsCacheItem(resultSetSignature) call.
+	 * 
+	 * @param dataSet the signature of the dataset that generate the resultset
+	 * 
+	 * @return true the dataset is cached, false elsewhere 
+	 */
+	boolean contains(String resultsetSignature);
+	
+	/**
 	 * Facility method. It is equivalent to get(dataSet.getSignature) call.
 	 * 
 	 * @param dataSet the dataSet that generate the resultSet
@@ -64,15 +82,6 @@ public interface ICache {
 	 * @return the resultSet if cached, null elsewhere 
 	 */
 	IDataStore get(String resultsetSignature);
-	
-	/**
-	 * Facility method. It is equivalent to get(List<String> signatures, JSONArray associations)  call.
-	 * 
-	 * @param dataSet the dataSets that generate the joined resultSet
-	 * 
-	 * @return the resultSet if cached, null elsewhere 
-	 */
-	IDataStore get(List<IDataSet> dataSets, JSONArray associations);
 	
 	/**
 	 * Facility method. It is equivalent to get(dataSet.getSignature, groups, filters, projections) call.
@@ -94,6 +103,37 @@ public interface ICache {
 	 * @return the resultSet if cached, null elsewhere 
 	 */
 	IDataStore get(String resultsetSignature, List<GroupCriteria> groups, List<FilterCriteria> filters, List<ProjectionCriteria> projections);
+	
+	// =====================================================================================
+	// LOAD METHODS
+	// =====================================================================================
+	IDataStore load(IDataSet dataSet, boolean wait);
+	
+	List<IDataStore> load(List<IDataSet> dataSets, boolean wait);
+	
+	// =====================================================================================
+	// REFRESH METHODS
+	// =====================================================================================
+	/**
+	 * refresh the dataset and save the result dataStore in cache
+	 * 
+	 * @param dataSet 
+	 * @param wait true to wait until the dataStore is persisted in cache. false to return as soon as the dataStore is ready and persisting it
+	 * in cache asynchronously  
+	 * 
+	 * @return the updated dataStore
+	 */
+	IDataStore refresh(IDataSet dataSet, boolean wait);
+	
+	IDataStore refresh(List<IDataSet> dataSets, boolean wait);
+	
+	/**
+	 * refresh the store ignoring cache content
+	 */
+	IDataStore refresh(List<IDataSet> dataSets, JSONArray associations);
+	
+	
+	
 	
 	/**
 	 * Facility method. It is equivalent to delete(dataSet.getSignature) call.
@@ -132,8 +172,7 @@ public interface ICache {
 	 * @param dataStore the resultSet to cache
 	 */
 	void put(IDataSet dataSet, IDataStore dataStore);
-	
-	
+
 	
 	/**
 	 * @return the metadata description object of the cache

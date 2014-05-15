@@ -12,6 +12,7 @@
 package it.eng.spagobi.tools.dataset.cache;
 
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.utilities.threadmanager.WorkManager;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
@@ -29,6 +30,7 @@ public class SimpleCacheConfiguration implements ICacheConfiguration {
 	
 	public static final String CACHE_SPACE_AVAILABLE_CONFIG = "SPAGOBI.CACHE.SPACE_AVAILABLE";
 	public static final String CACHE_LIMIT_FOR_CLEAN_CONFIG = "SPAGOBI.CACHE.LIMIT_FOR_CLEAN";
+	private static final String CACHE_WORK_MANAGER = "SPAGOBI.CACHE.WORK_MANAGER";
 
 	
 	public SimpleCacheConfiguration()  {
@@ -77,6 +79,19 @@ public class SimpleCacheConfiguration implements ICacheConfiguration {
 	 */
 	public void setCachePercentageToClean(Integer cachePercentageToClean) {
 		setProperty(CACHE_LIMIT_FOR_CLEAN_CONFIG, cachePercentageToClean);
+	}
+	
+	/**
+	 * @return the work manger used by cache to perform task in background
+	 */
+	public WorkManager getWorkManager() {
+		return (WorkManager)getProperty(CACHE_WORK_MANAGER);
+	}
+	/**
+	 * @param the work manger used by cache to perform task in background
+	 */
+	public void setWorkManager(WorkManager workManager) {
+		setProperty(CACHE_WORK_MANAGER, workManager);
 	}
 	
 	// =========================================================================================

@@ -12,6 +12,7 @@
 package it.eng.spagobi.tools.dataset.cache;
 
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.utilities.threadmanager.WorkManager;
 
 import java.math.BigDecimal;
 import java.util.Map;
@@ -34,6 +35,8 @@ public interface ICacheConfiguration {
 	void setCacheSpaceAvailable(BigDecimal cacheSpaceAvailable);
 	Integer getCachePercentageToClean();
 	public void setCachePercentageToClean(Integer cachePercentageToClean);
+	WorkManager getWorkManager();
+	void setWorkManager(WorkManager workManager);
 	
 	// =========================================================================================
 	// GENERICS

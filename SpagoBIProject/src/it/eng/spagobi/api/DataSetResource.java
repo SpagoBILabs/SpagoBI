@@ -225,10 +225,37 @@ public class DataSetResource extends AbstractSpagoBIResource {
 			Map<String, Object> properties = new HashMap<String, Object>();
 			JSONArray fieldOptions = new JSONArray("[{id: 1, options: {measureScaleFactor: 0.5}}]");
 			properties.put(JSONDataWriter.PROPERTY_FIELD_OPTION, fieldOptions);
+			properties.put(JSONDataWriter.PROPERTY_WRITE_DATA_ONLY, true);
 			JSONDataWriter dataSetWriter = new JSONDataWriter(properties);
-			JSONObject gridDataFeed = (JSONObject)dataSetWriter.write(dataStore);
+			JSONArray gridDataFeed = (JSONArray)dataSetWriter.write(dataStore);
 			
-			return gridDataFeed.toString();	
+			// the dirty trick
+			JSONArray datasetLabels = associationGroupJSON.getJSONArray("datasets");
+			JSONObject results = new JSONObject();
+			JSONArray a1 = new JSONArray();
+			JSONArray a2 = new JSONArray();
+			for(int i = 0; i < gridDataFeed.length(); i++) {
+				JSONObject o = gridDataFeed.getJSONObject(i);
+				JSONArray props = o.names();
+				JSONObject o1 = new JSONObject();
+				JSONObject o2 = new JSONObject();
+				o1.put("id", o.getString("id"));
+				o2.put("id", o.getString("id"));
+				for(int j = 1; j < props.length(); j++) {
+					String p = props.getString(j);
+					if(j < 3) {
+						o1.put("column_" + j, o.getString(p));
+					} else {
+						o2.put("column_" + (j-2), o.getString(p));
+					}
+				}
+				a1.put(o1);
+				a2.put(o2);
+			}
+			results.put(datasetLabels.getString(0), a1);
+			results.put(datasetLabels.getString(1), a2);
+			
+			return results.toString();	
 		} catch(Throwable t) {
 			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", t);
 		} finally {			
