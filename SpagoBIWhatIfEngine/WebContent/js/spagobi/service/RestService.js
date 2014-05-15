@@ -75,7 +75,7 @@ Ext.define('Sbi.service.RestService', {
 		if(!mySuccessCallBack && scope){
 			mySuccessCallBack = function(response, options) {
 				if(response !== undefined && response.statusText !== undefined && response.responseText!=null && response.responseText!=undefined) {
-					if(response.responseText.length>21 && response.responseText.substring(0,21)=='{"errors":[{"message"'){
+					if(response.responseText.length>21 && response.responseText.substring(0,13)=='{"errors":[{"'){
 						Sbi.olap.eventManager.fireEvent('serviceExecutedWithError', response);
 						Sbi.exception.ExceptionHandler.handleFailure(response);
 					}else{
