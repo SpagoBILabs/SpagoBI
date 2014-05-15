@@ -37,6 +37,7 @@ public class JSONDataWriter implements IDataWriter {
 	private boolean putIDs = true;
 	private boolean adjust = false;
 	private boolean setRenderer = false;
+	private boolean writeDataOnly = false;
 	private JSONArray fieldsOptions;
 	
 	private static final SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat( "dd/MM/yyyy" );
@@ -46,6 +47,8 @@ public class JSONDataWriter implements IDataWriter {
 	public static final String METADATA = "metaData";
 	public static final String PROPERTY_FIELD_OPTION = "PROPERTY_FIELD_OPTION";
 	public static final String PROPERTY_ADJUST = "PROPERTY_ADJUST";
+	public static final String PROPERTY_WRITE_DATA_ONLY = "PROPERTY_WRITE_DATA_ONLY";
+	
 	
 	public JSONDataWriter() {}
 	
@@ -63,6 +66,12 @@ public class JSONDataWriter implements IDataWriter {
 			if (o != null) {
 				this.adjust = Boolean.parseBoolean(o.toString());
 			}
+			o = properties.get(PROPERTY_WRITE_DATA_ONLY);
+			if (o != null) {
+				this.writeDataOnly = Boolean.parseBoolean(o.toString());
+			}
+			
+			
 		}
 	}
 	
@@ -70,8 +79,101 @@ public class JSONDataWriter implements IDataWriter {
     public static transient Logger logger = Logger.getLogger(JSONDataWriter.class);
     
 
+    public Object write(IDataStore dataStore) throws RuntimeException {
+    	if(writeDataOnly) {
+    		return writeOnlyData(dataStore);
+    	} else {
+    		return writeDataAndMeta(dataStore);
+    	}
+    }
     
-	public Object write(IDataStore dataStore) throws RuntimeException {
+    public Object writeOnlyData(IDataStore dataStore) throws RuntimeException {
+		JSONArray  results = null;
+		JSONObject metadata;
+		IField field;
+		IRecord record;
+		JSONObject recordJSON;
+		int recNo;
+		JSONArray recordsJSON;
+		int resultNumber;
+		Object propertyRawValue;
+		
+		Assert.assertNotNull(dataStore, "Object to be serialized connot be null");
+		
+		metadata = (JSONObject) write(dataStore.getMetaData());
+		
+		try {
+			results = new JSONArray();
+			
+			propertyRawValue = dataStore.getMetaData().getProperty("resultNumber");
+			if ( propertyRawValue == null ) {
+				propertyRawValue = new Integer(1);
+			}
+			Assert.assertNotNull(propertyRawValue, "DataStore property [resultNumber] cannot be null");
+			Assert.assertTrue(propertyRawValue instanceof Integer, "DataStore property [resultNumber] must be of type [Integer]");
+			resultNumber = ((Integer)propertyRawValue).intValue();
+			Assert.assertTrue(resultNumber >= 0, "DataStore property [resultNumber] cannot be equal to [" + resultNumber + "]. It must be greater or equal to zero");	
+			
+			recordsJSON = new JSONArray();
+			
+			// records
+			recNo = 0;
+			Iterator records = dataStore.iterator();
+			while(records.hasNext()) {
+				record = (IRecord)records.next();
+				recordJSON = new JSONObject();
+				if (this.putIDs) {
+					recordJSON.put("id", ++recNo);
+				}
+				
+				for(int i = 0; i < dataStore.getMetaData().getFieldCount(); i++) {
+					IFieldMetaData fieldMetaData = dataStore.getMetaData().getFieldMeta(i);
+					
+					propertyRawValue = fieldMetaData.getProperty("visible");
+					if(propertyRawValue != null 
+							&& (propertyRawValue instanceof Boolean) 
+							&& ((Boolean)propertyRawValue).booleanValue() == false) {
+						continue;
+					}
+				
+					field = record.getFieldAt( dataStore.getMetaData().getFieldIndex( fieldMetaData ) );
+					
+					String fieldValue = "";
+					if(field.getValue() != null) {
+						if(Timestamp.class.isAssignableFrom(fieldMetaData.getType()) && field.getValue() != "") {
+							fieldValue =  TIMESTAMP_FORMATTER.format(  field.getValue() );
+						} else if (Date.class.isAssignableFrom(fieldMetaData.getType()) && field.getValue() != "") {
+							fieldValue =  DATE_FORMATTER.format(  field.getValue() );
+						} else {
+							fieldValue =  field.getValue().toString();
+						}
+					}
+					String fieldName;
+					
+					if(adjust){
+						fieldName = fieldMetaData.getName();
+					}else{
+						fieldName = getFieldName(fieldMetaData, i);
+					}
+					recordJSON.put(fieldName, fieldValue);
+				}
+				
+				results.put(recordJSON);
+			}
+			
+		
+			
+			
+		} catch(Throwable t) {
+			throw new RuntimeException("An unpredicted error occurred while serializing dataStore", t);
+		} finally {
+			
+		}
+		
+		return results;
+    }
+    
+	public Object writeDataAndMeta(IDataStore dataStore) throws RuntimeException {
 		JSONObject  result = null;
 		JSONObject metadata;
 		IField field;
