@@ -10,13 +10,13 @@
 
 package it.eng.spagobi.engines.whatif.model;
 
-import it.eng.spagobi.engines.whatif.model.SpagoBICellSetWrapper;
 import it.eng.spagobi.engines.whatif.model.transform.CellRelation;
 import it.eng.spagobi.utilities.assertion.UnreachableCodeException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -32,12 +32,9 @@ import org.olap4j.CellSet;
 import org.olap4j.CellSetAxis;
 import org.olap4j.OlapException;
 import org.olap4j.Position;
-import org.olap4j.metadata.Cube;
-import org.olap4j.metadata.Dimension;
 import org.olap4j.metadata.Hierarchy;
 import org.olap4j.metadata.Member;
 import org.olap4j.metadata.NamedList;
-import org.olap4j.metadata.NamedSet;
 import org.olap4j.metadata.Property;
 
 public class SpagoBICellWrapper implements Cell {
@@ -244,5 +241,21 @@ public class SpagoBICellWrapper implements Cell {
     	}
     	throw new SpagoBIEngineRuntimeException("No member found on hierarchy " + hierarchy.getUniqueName());
     }
+
+	@Override
+	public String toString() {
+		StringBuffer membersString = new StringBuffer();
+		if(members!=null){
+			for(int i=0; i<members.length; i++){
+				membersString.append("[");
+				membersString.append(members[i].getUniqueName());
+				membersString.append("]");
+			}
+			membersString.setLength(membersString.length()-1);
+		}
+		return "SpagoBICellWrapper [members=" +membersString.toString() + "]";
+	}
+    
+    
     
 }

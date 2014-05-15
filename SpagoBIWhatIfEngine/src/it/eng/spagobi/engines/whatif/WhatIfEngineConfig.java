@@ -7,6 +7,7 @@
 package it.eng.spagobi.engines.whatif;
 
 import it.eng.spago.base.SourceBean;
+import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spagobi.services.common.EnginConf;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 
@@ -33,7 +34,7 @@ public class WhatIfEngineConfig {
 	
 	private Map<String, List> includes;
 	private Set<String> enabledIncludes;
-	
+	private String resourceFolder= "whatif";
 	private static transient Logger logger = Logger.getLogger(WhatIfEngineConfig.class);
 
 	
@@ -235,5 +236,15 @@ public class WhatIfEngineConfig {
 	
 	public SourceBean getConfigSourceBean() {
 		return getEngineConfig().getConfig();
+	}
+	
+	public String getEngineResourcePath() {
+		String path = null;
+		if(getEngineConfig().getResourcePath() != null) {
+			path = getEngineConfig().getResourcePath() + System.getProperty("file.separator") + resourceFolder;
+		} else {
+			path = ConfigSingleton.getRootPath() + System.getProperty("file.separator") + "resources" + System.getProperty("file.separator") + resourceFolder;
+		}
+		return path;
 	}
 }
