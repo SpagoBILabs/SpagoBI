@@ -16,6 +16,8 @@ parser code {:
 
 	public boolean verbose = false;
 	
+	public String errorMessage = null;
+	
 	/*
 		set verbose to true to enable print of information about tokens
 	*/
@@ -54,7 +56,7 @@ parser code {:
        column of where the error occurred in the input as well as the
        reason for the error which is passed into the method in the
        String 'message'. */
-    public void report_error(String message, Object info) {
+    public void report_error(String message, Object info){
    
         /* Create a StringBuilder called 'm' with the string 'Error' in it. */
         StringBuilder m = new StringBuilder("Error");
@@ -80,6 +82,12 @@ parser code {:
                        the column number of the error in the input. */
                     m.append(", column "+(s.right+1));
             }
+			 /*
+             * Print the value (if any) of the Symbol where an error was found
+             */
+            if (s.value != null){
+            	m.append(" on "+s.value);
+            }
         }
    
         /* Add to the end of the StringBuilder error message created in
@@ -89,6 +97,9 @@ parser code {:
         /* Print the contents of the StringBuilder 'm', which contains
            an error message, out on a line. */
         if(isVerbose()){System.err.println(m);}
+		
+		errorMessage = m.toString();
+
     }
    
     /* Change the method report_fatal_error so when it reports a fatal
@@ -98,8 +109,7 @@ parser code {:
        'message' */
     public void report_fatal_error(String message, Object info)throws java.lang.Exception {
         report_error(message, info);
-		throw new java.lang.Exception("Error in parsing metalanguage expression");
-       // System.exit(1);
+		throw new java.lang.Exception("Error in parsing metalanguage expression: "+errorMessage);
     }
 :};
    
@@ -108,7 +118,7 @@ parser code {:
 /* ------------Declaration of Terminals and Non Terminals Section----------- */
    
 /* Terminals (tokens returned by the scanner).  */
-terminal           SEMI, PLUS, MINUS, TIMES, DIVIDE, LPAREN, RPAREN, PERCENT, EQUAL;
+terminal           SEMI, PLUS, MINUS, TIMES, DIVIDE, LPAREN, RPAREN, PERCENT, LSQRPAREN, RSQRPAREN;
 terminal Double   NUMBER;
 terminal String  VARIABLE,MEMBER;
 /* Terminals Not returned from lexer */
@@ -291,14 +301,14 @@ precedence left UMINUS;
 				 |
 				 VARIABLE:v
                  {: 
-				  if(parser.isVerbose()){System.out.println("*** found variable "+v+"replaced with "+50);}
+				  if(parser.isVerbose()){System.out.println("*** found variable "+v+" replaced with "+50);}
 				 RESULT = 50.0; 
 				 :}		
 				 |
 			      members_declaration:m 
 				 {:
 				 Double generated = parser.generateDouble();
-				  if(parser.isVerbose()){System.out.println("*** found members "+m+"replaced with "+generated);}
+				  if(parser.isVerbose()){System.out.println("*** found members "+m+" replaced with "+generated);}
 				 /*RESULT = 100.0; */
 				 RESULT = generated;
 				 :}
@@ -309,7 +319,7 @@ precedence left UMINUS;
 				;
 				
 members_declaration ::=
-              EQUAL members_list:members_l 
+              members_list:members_l
               {:
                   LinkedList r = new LinkedList();
                   String n;
@@ -342,5 +352,5 @@ member_listS ::=
 single_member ::= MEMBER:memb 
                {:
                   RESULT = memb ;
-                   if(parser.isVerbose()){System.out.println("MEMBER"+memb);}
+                   if(parser.isVerbose()){System.out.println("MEMBER "+memb);}
                 :};								

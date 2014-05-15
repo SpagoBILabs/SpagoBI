@@ -99,7 +99,7 @@ public class ModelResource extends AbstractWhatIfEngineService {
 			JSONObject json = RestUtilities.readBodyAsJSONObject(getServletRequest());
 			expression = json.getString( EXPRESSION );
 		} catch (Exception e) {
-			new SpagoBIEngineRestServiceRuntimeException("generic.error", this.getLocale(), e);
+			throw new SpagoBIEngineRestServiceRuntimeException("generic.error", this.getLocale(), e);
 		}
 		logger.debug("expression = [" + expression + "]");
     	Double value = null;
@@ -109,7 +109,8 @@ public class ModelResource extends AbstractWhatIfEngineService {
 			value = (Double)par.parse().value;
 		} catch (Exception e) {
 			logger.debug("Error parsing What-if metalanguage expression",e);
-			new SpagoBIEngineRestServiceRuntimeException("parsing.error", this.getLocale(), e);
+			String errorMessage = e.getMessage().replace(": Couldn't repair and continue parse", "");
+			throw new SpagoBIEngineRestServiceRuntimeException(errorMessage, this.getLocale(), e);
 		}   
 		
 		//Double value = Double.valueOf(expression);
