@@ -89,32 +89,44 @@ public class DataStoreStatistics {
 	}
 	
 	private BigDecimal[] extimateFieldsMemorySize(IRecord record, BigDecimal[] fieldsMaxMemorySize) {
-		IMetaData md = store.getMetaData();
-		int fieldCount = md.getFieldCount();
-		BigDecimal[] fieldsMemorySize = new BigDecimal[fieldCount];
 		
-		for (int i=0; i < fieldCount; i++){		
-			IFieldMetaData fmd = md.getFieldMeta(i);
-			normalizeFieldType(fmd);
-			String fieldTypeName = fmd.getType().toString();
+		BigDecimal[] fieldsMemorySize = null;
+		
+		try {
+			IMetaData md = store.getMetaData();
+			int fieldCount = md.getFieldCount();
+			fieldsMemorySize = new BigDecimal[fieldCount];
 			
-			BigDecimal fieldMemorySize = null;
-			if(fieldTypeName.contains("String") && extimateVarCharMemorySize) {
-				String value = (String)record.getFieldAt(i).getValue();
-				int valueLength = value!=null? value.length(): 0;
-				fieldMemorySize = new BigDecimal(valueLength);
-			} else {
-				fieldMemorySize = getBytesForType(fieldTypeName);
+			for (int i=0; i < fieldCount; i++){	
+				IFieldMetaData fmd = md.getFieldMeta(i);
+				try {
+					normalizeFieldType(fmd);
+					String fieldTypeName = fmd.getType().toString();
+					
+					BigDecimal fieldMemorySize = null;
+					if(fieldTypeName.contains("String") && extimateVarCharMemorySize) {
+						String value = (String)record.getFieldAt(i).getValue();
+						int valueLength = value!=null? value.length(): 0;
+						fieldMemorySize = new BigDecimal(valueLength);
+					} else {
+						fieldMemorySize = getBytesForType(fieldTypeName);
+					}
+	
+					if(fieldsMaxMemorySize[i] == null) fieldsMaxMemorySize[i] = fieldMemorySize;
+					
+					if(fieldsMaxMemorySize[i].compareTo(fieldMemorySize) < 0) {
+						fieldsMemorySize[i] = fieldMemorySize;	
+					} else {
+						fieldsMemorySize[i] = fieldsMaxMemorySize[i];
+					}	
+				} catch(Throwable t) {
+					throw new RuntimeException("An unexpected error occured while extimating field [" + fmd.getName() + "] memory size whose type is equal to [" + fmd.getType().toString() + "]", t);
+				}
 			}
-
-			if(fieldsMaxMemorySize[i] == null) fieldsMaxMemorySize[i] = fieldMemorySize;
-			
-			if(fieldsMaxMemorySize[i].compareTo(fieldMemorySize) < 0) {
-				fieldsMemorySize[i] = fieldMemorySize;	
-			} else {
-				fieldsMemorySize[i] = fieldsMaxMemorySize[i];
-			}		
+		} catch(Throwable t) {
+			throw new RuntimeException("An unexpected error occured while extimating fields memory size", t);
 		}
+		
 		
 		return fieldsMemorySize;
 	}
@@ -142,15 +154,21 @@ public class DataStoreStatistics {
 	
 	private BigDecimal getBytesForType(String type){
 		BigDecimal toReturn = new BigDecimal(8); //for default sets a generic Object size
-		List<Properties> objectsTypeDimension = getObjectsTypeDimension();
-		for (int i=0, l= objectsTypeDimension.size(); i<l; i++){
-			String typeName = ((Properties)objectsTypeDimension.get(i)).getProperty("name");
-			if (type.contains(typeName)){
-				toReturn = new BigDecimal(((Properties)objectsTypeDimension.get(i)).getProperty("bytes"));
-				logger.debug("Used configurated type: " + type + " - weight: " + toReturn.toString());
-				break;
+		
+		try {
+			List<Properties> objectsTypeDimension = getObjectsTypeDimension();
+			for (int i=0, l= objectsTypeDimension.size(); i<l; i++){
+				String typeName = ((Properties)objectsTypeDimension.get(i)).getProperty("name");
+				if (type.contains(typeName)){
+					toReturn = new BigDecimal(((Properties)objectsTypeDimension.get(i)).getProperty("bytes"));
+					logger.debug("Used configurated type: " + type + " - weight: " + toReturn.toString());
+					break;
+				}
 			}
+		} catch(Throwable t) {
+			throw new RuntimeException("An unexpected error occured while calculating byte used by type [" + type + "]", t);
 		}
+		
 		return toReturn;		
 	}
 	

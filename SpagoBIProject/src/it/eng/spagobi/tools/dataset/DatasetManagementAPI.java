@@ -43,8 +43,10 @@ import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.cache.CacheManager;
 import it.eng.spagobi.tools.dataset.cache.ICache;
+import it.eng.spagobi.tools.dataset.cache.JoinedDataSet;
 import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.FilterCriteria;
 import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.GroupCriteria;
+import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.Operand;
 import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.ProjectionCriteria;
 import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.work.SQLDBCacheWriteWork;
 import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
@@ -69,6 +71,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import javax.naming.NamingException;
 
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
@@ -289,14 +293,12 @@ public class DatasetManagementAPI {
 			
 			IDataStore dataStore = null;
 			if (cachedResultSet == null){
-				dataStore = storeDataSetInCache(dataSet, offset, fetchSize, maxResults, parametersValues);
+				//dataStore = storeDataSetInCache(dataSet, parametersValues, false);
+				dataSet.setParamsMap(parametersValues);
+				dataStore = cache.refresh(dataSet, false);
 			} else {
 				dataStore = cachedResultSet;
 			}
-			
-			//dataSet.loadData(offset, fetchSize, maxResults);
-			//IDataStore dataStore = dataSet.getDataStore();
-			
 			return dataStore;
 		} catch(ParametersNotValorizedException p){
 			throw new ParametersNotValorizedException(p.getMessage());
@@ -306,34 +308,14 @@ public class DatasetManagementAPI {
 			logger.debug("OUT");
 		}	
 	}
-	
-	private IDataStore storeDataSetInCache(IDataSet dataSet, int offset, int fetchSize, int maxResults, Map<String, String> parametersValues) {
-		try {
-			ICache cache = CacheManager.getCache();
-			dataSet.setParamsMap(parametersValues);
-			dataSet.loadData(offset, fetchSize, maxResults);
-			IDataStore dataStore = dataSet.getDataStore();
-			
-			WorkManager workManager = new WorkManager(getSpagoBIConfigurationProperty("JNDI_THREAD_MANAGER"));
-			Work cacheWriteWork = new SQLDBCacheWriteWork(cache, dataStore, dataSet);
-			
-			workManager.run(cacheWriteWork, null);
-			return dataStore;
-		} catch(ParametersNotValorizedException p){
-			throw new ParametersNotValorizedException(p.getMessage());
-		}catch(Throwable t) {
-			throw new RuntimeException("An unexpected error occured while executing method", t);
-		} finally {			
-			logger.debug("OUT");
-		}	
-	}
-	
 	/**
 	 * @param associationGroupJSON
 	 * @param selectionsJSON
 	 * @return
 	 */
 	public IDataStore getJoinedDataStore(JSONObject associationGroup, JSONObject selections, Map<String, String> parametersValues) {
+		
+		IDataStore joinedDataStore = null;
 		
 		logger.debug("IN");
 		
@@ -348,37 +330,150 @@ public class DatasetManagementAPI {
 				joinedDataSets.add(dataSet);
 			}
 			
+			JoinedDataSet joinedDataSet = new JoinedDataSet("theLabel", "theLabel", "theLabel", joinedDataSets, associations);
 			
 			ICache cache = CacheManager.getCache();
-			IDataStore cachedResultSet = cache.get(joinedDataSets, associations);	
-			
-			if (cachedResultSet == null){
-				for(IDataSet joinedDataSet: joinedDataSets) {
-					
-					
-					joinedDataSet.setParamsMap(parametersValues);
-					joinedDataSet.loadData();
-					IDataStore dataStore = joinedDataSet.getDataStore();
-					
-					WorkManager spagoBIWorkManager = new WorkManager(getSpagoBIConfigurationProperty("JNDI_THREAD_MANAGER"));
-					Work cacheWriteWork = new SQLDBCacheWriteWork(cache, dataStore, joinedDataSet);
-					
-//					//#4. Create list of WorkItem you want to wait for completion
-//					List workItemList=new ArrayList();
-//					workItemList.add(workItem);
-//
-//					//#5. Wait for completion of work
-//					this.workManager.waitForAll(workItemList, WorkManager.INDEFINITE);
+			if ( cache.contains(joinedDataSet) == false) {
+				
+				for(IDataSet dataSet: joinedDataSets) {
+					dataSet.setParamsMap(parametersValues);
 				}
-				// qunado tutti i work sono finiti creo la tabella di join
+				cache.load(joinedDataSets, true);
+
+				joinedDataSet.setParamsMap(parametersValues);
+				cache.refresh(joinedDataSet, true);
+				//storeDataSetInCache(joinedDataSet, parametersValues, true);
 			} 
+			
+			List<FilterCriteria> filters = new ArrayList<FilterCriteria>();
+			Iterator<String> it = selections.keys();
+			while(it.hasNext()) {
+				String associationName = it.next();
+				JSONArray values = selections.getJSONArray(associationName);
+				List<String> valuesList = new ArrayList<String>(); 
+				for(int i = 0; i < values.length(); i++) {
+					valuesList.add(values.getString(i));
+				}
+				
+				JSONObject association = null;
+				for(int i = 0; i < associations.length(); i++) {
+					JSONObject a = associations.getJSONObject(i);
+					String name = a.getString("id");
+					if(associationName.equals(name)) {
+						association = a;
+						break;
+					}
+				}
+				JSONArray fields = association.getJSONArray("fields");
+				JSONObject field = fields.getJSONObject(0);
+				String datasetLabel = field.getString("store");
+				String datasetColumn = field.getString("column");
+				
+				Operand leftOperand = new Operand(datasetLabel, datasetColumn);
+				Operand rightOperand = new Operand(valuesList);
+				FilterCriteria filterCriteria = new FilterCriteria(leftOperand, "IN", rightOperand);
+				filters.add(filterCriteria);
+			}
+			
+			joinedDataStore = cache.get(joinedDataSet, null, filters, null);
 		} catch(Throwable t) {
 			throw new RuntimeException("An unexpected error occured while executing method", t);
 		} finally {			
 			logger.debug("OUT");
 		}	
-		return null;
+		
+		
+		return joinedDataStore;
 	}
+	
+	private List<IDataStore> storeDataSetsInCache(List<IDataSet> joinedDataSets, Map<String, String> parametersValues, boolean wait) {
+		
+		List<IDataStore> dataStores = new ArrayList<IDataStore>();
+		
+		try {
+			ICache cache = CacheManager.getCache();
+			
+			WorkManager spagoBIWorkManager;
+			try {
+				spagoBIWorkManager = new WorkManager(getSpagoBIConfigurationProperty("JNDI_THREAD_MANAGER"));
+			} catch (NamingException t) {
+				throw new RuntimeException("Impossible to initialize work manager");
+			}
+			commonj.work.WorkManager workManager = spagoBIWorkManager.getInnerInstance();
+			
+			List<Work> workItemList = new ArrayList<Work>();
+			for(IDataSet dataSet: joinedDataSets) {
+				// first we set parameters because they change the signature
+				dataSet.setParamsMap(parametersValues);
+				
+				// then we verified if the store associated to the joined dtatset is in cache
+				if(cache.contains(dataSet)) continue;
+				
+				// if not we create a work to store it and we add it to works list
+				
+				dataSet.loadData();
+				IDataStore dataStore = dataSet.getDataStore();
+				
+				Work cacheWriteWork = new SQLDBCacheWriteWork(cache, dataStore, dataSet);
+				
+				workItemList.add(cacheWriteWork);
+			}
+			
+			if(workItemList.size() > 0) {
+				if(wait == true) {
+					workManager.waitForAll(workItemList, workManager.INDEFINITE);
+				} else {
+					for(Work work : workItemList) workManager.schedule(work);
+				}
+			}
+		
+		} catch(Throwable t) {
+			throw new RuntimeException("An unexpected error occured while storing datasets in cache", t);
+		} finally {			
+			logger.debug("OUT");
+		}
+		
+		return dataStores;
+	}
+	
+	private IDataStore storeDataSetInCache(IDataSet dataSet, Map<String, String> parametersValues, boolean wait) {
+		try {
+			ICache cache = CacheManager.getCache();
+			dataSet.setParamsMap(parametersValues);
+			dataSet.loadData();
+			IDataStore dataStore = dataSet.getDataStore();
+			
+			WorkManager spagoBIWorkManager;
+			try {
+				spagoBIWorkManager = new WorkManager(getSpagoBIConfigurationProperty("JNDI_THREAD_MANAGER"));
+			} catch (NamingException t) {
+				throw new RuntimeException("Impossible to initialize work manager");
+			}
+			commonj.work.WorkManager workManager = spagoBIWorkManager.getInnerInstance();
+			
+			List<Work> workItemList = new ArrayList<Work>();
+			Work cacheWriteWork = new SQLDBCacheWriteWork(cache, dataStore, dataSet);
+			workItemList.add(cacheWriteWork);
+			
+			if(workItemList.size() > 0) {
+				if(wait == true) {
+					workManager.waitForAll(workItemList, workManager.INDEFINITE);
+				} else {
+					for(Work work : workItemList) workManager.schedule(work);
+				}
+			}
+			
+			return dataStore;
+		} catch(ParametersNotValorizedException p){
+			throw new ParametersNotValorizedException(p.getMessage());
+		}catch(Throwable t) {
+			throw new RuntimeException("An unexpected error occured while executing method", t);
+		} finally {			
+			logger.debug("OUT");
+		}	
+	}
+	
+	
 	
 	public IDataStore getAggregatedDataStore(String label, int offset, int fetchSize, int maxResults, CrosstabDefinition crosstabDefinition) {
 		try {
@@ -424,10 +519,6 @@ public class DatasetManagementAPI {
 			logger.debug("OUT");
 		}	
 	}
-	
-	
-	
-	
 	
 	private static String getParametersNotValorized(List<JSONObject> parameters, Map<String, String> parametersValues){
 		String toReturn = "";

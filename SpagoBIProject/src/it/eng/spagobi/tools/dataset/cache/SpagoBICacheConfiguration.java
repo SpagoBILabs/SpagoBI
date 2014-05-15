@@ -27,6 +27,7 @@ import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.SQLDBCacheConfiguratio
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.threadmanager.WorkManager;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -38,6 +39,7 @@ public class SpagoBICacheConfiguration {
 	public static final String CACHE_SPACE_AVAILABLE_CONFIG = "SPAGOBI.CACHE.SPACE_AVAILABLE";
 	public static final String CACHE_LIMIT_FOR_CLEAN_CONFIG = "SPAGOBI.CACHE.LIMIT_FOR_CLEAN";
 	public static final String CACHE_DATABASE_SCHEMA = "SPAGOBI.CACHE.DATABASE_SCHEMA";
+	private static final String JNDI_THREAD_MANAGER = "JNDI_THREAD_MANAGER";
 
 	
 	private static transient Logger logger = Logger.getLogger(SpagoBICacheConfiguration.class);
@@ -50,9 +52,19 @@ public class SpagoBICacheConfiguration {
 		cacheConfiguration.setCachePercentageToClean(getCachePercentageToClean());
 		cacheConfiguration.setSchema(getCacheDatabaseSchema());
 		cacheConfiguration.setObjectsTypeDimension(getDimensionTypes());
+		cacheConfiguration.setWorkManager(getWorkManager());
 		return cacheConfiguration;
 	}
 	
+	private static WorkManager getWorkManager() {
+		try {
+		WorkManager spagoBIWorkManager = new WorkManager(getSpagoBIConfigurationProperty(JNDI_THREAD_MANAGER));
+		return spagoBIWorkManager;
+		} catch(Throwable t) {
+			throw new SpagoBIRuntimeException("An unexpected exception occured while loading cache configuration property", t);
+		}
+	}
+
 	private static IDataSource getCacheDataSource() {
 		try {
 			IDataSourceDAO dataSourceDAO = DAOFactory.getDataSourceDAO();
@@ -66,7 +78,7 @@ public class SpagoBICacheConfiguration {
 	
 	private static String getTableNamePrefix() {
 		try {
-			String tableNamePrefix = getSpagoBIConfigurationProperty(CACHE_NAME_PREFIX_CONFIG);;
+			String tableNamePrefix = getSpagoBIConfigurationProperty(CACHE_NAME_PREFIX_CONFIG);
 			return tableNamePrefix;
 		} catch(Throwable t) {
 			throw new SpagoBIRuntimeException("An unexpected exception occured while loading cache configuration property", t);
