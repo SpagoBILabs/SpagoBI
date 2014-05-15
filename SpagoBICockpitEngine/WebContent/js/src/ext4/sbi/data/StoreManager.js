@@ -578,15 +578,17 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 	 * 	}
 	 */
 	, loadStores: function(associationGroup, selections) {
-		for(var i = 0; i < associationGroup.datasets.length; i++) {
-    		this.loadStore( associationGroup.datasets[i] );
-    	}	
+		alert("loadStores");
+//		for(var i = 0; i < associationGroup.datasets.length; i++) {
+//    		this.loadStore( associationGroup.datasets[i] );
+//    	}	
+		
 		// TODO implement the above logic in one shot:
 		// call a service that reload the joined dataset filtering it prperly
 		// take the result an split in in subdatasets
 		// pass the new data to the store in order to reload them
 		
-		alert(Sbi.config.serviceReg.getServiceUrl('loadJoinedDataSetStore'));
+		//alert(Sbi.config.serviceReg.getServiceUrl('loadJoinedDataSetStore'));
 		Ext.Ajax.request({
 		    url: Sbi.config.serviceReg.getServiceUrl('loadJoinedDataSetStore'),
 		    method: 'GET',
@@ -594,7 +596,7 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 		    	associationGroup:  Ext.JSON.encode(associationGroup)
 		        , selections: Ext.JSON.encode(selections)
 		    },
-		    success : this.onAssociationGroupRefreshed,
+		    success : this.onAssociationGroupReloaded,
 			failure: Sbi.exception.ExceptionHandler.handleFailure,
 			scope: this
 		});
@@ -1074,7 +1076,31 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 			Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
 		}
 	}
-
+    
+    , onAssociationGroupReloaded: function(response, options) {
+		if(response !== undefined && response.statusText=="OK") {
+    		var r = response.responseText || response.responseXML;
+			if(Sbi.isValorized(r)) {
+				if(r.indexOf("error.mesage.description")>=0){
+					Sbi.exception.ExceptionHandler.handleFailure(response);
+				} else {
+					
+					var stores =  Ext.util.JSON.decode(r);
+					for(var s in stores) {
+						var data = stores[s];
+						alert("Store [" + s + "]:" + Sbi.toSource(data));
+						var store = this.getStore(s);
+						store.loadData(data);
+					}
+					
+				}
+			} else {
+				Sbi.exception.ExceptionHandler.showErrorMessage('Server response body is empty', 'Service Error');
+			}
+		} else {
+			Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
+		}
+	}
 });
 	
 	
