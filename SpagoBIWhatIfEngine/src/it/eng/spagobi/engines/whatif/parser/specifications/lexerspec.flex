@@ -1,5 +1,5 @@
 /*
-	Draft Lexer per metalinguaggio What-if
+	Lexer for What-if metalanguage
 */
 
 /*
@@ -38,7 +38,7 @@ The text up to the first line starting with %% is copied verbatim to the top of 
 /*
 	Creates a main function in the generated class that expects the name of an input file on the command line and then runs the scanner on this input file by printing information about each returned token to the Java console until the end of file is reached. The information includes: line number (if line counting is enabled), column (if column counting is enabled), the matched text, and the executed action (with line number in the specification).
 */
-/* %debug */
+/* %debug  */
 
 /*
 defines the set of characters the scanner will work on. For scanning text files, %unicode should always be used. The Unicode version may be specified, e.g. %unicode 4.1. If no version is specified, the most recent supported Unicode version will be used - in JFlex 1.5.1, this is Unicode 6.3. See also section 5 for more information on character sets, encodings, and scanning text vs. binary files.
@@ -110,7 +110,7 @@ WhiteSpace     = {LineTerminator} | [ \t\f]
 
 DIGIT = [0-9]
 
-NUMBER = {DIGIT}+(","{DIGIT}+)?
+NUMBER = {DIGIT}+([.,]{DIGIT}+)?
 
 ALPHANUMERIC = [A-Za-z0-9]
 
@@ -124,7 +124,7 @@ MEMBER = {ALPHANUMERIC}+"."{ALPHANUMERIC}+ | {ALPHANUMERIC}+"."{ALPHANUMERIC}+".
 lexical state declaration example: %state STRING declares a lexical state STRING that can be used in the ``lexical rules'' part of the specification. A state declaration is a line starting with %state followed by a space or comma separated list of state identifiers. There can be more than one line starting with %state.
 
 */
-/* %state STRING */
+%state MEMBER_DECLARATION 
    
 %% 
 
@@ -143,28 +143,35 @@ lexical state declaration example: %state STRING declares a lexical state STRING
     /* Don't do anything if whitespace is found */
     {WhiteSpace}       { /* just skip what was found, do nothing */ }   
    
-    /* Return the token SEMI declared in the class sym that was found. */
-    ";"                { if(verbose){System.out.print(" ; ");} return symbol(sym.SEMI); }
+
    
     /* Print the token found that was declared in the class sym and then
        return it. */
-    "+"                { if(verbose){System.out.print(" + ");} return symbol(sym.PLUS); }	
-	"-" 			   { if(verbose){System.out.print(" - ");} return symbol(sym.MINUS);}  					   
-    "*"                { if(verbose){System.out.print(" * ");} return symbol(sym.TIMES); }
-    "/"                { if(verbose){System.out.print(" / ");} return symbol(sym.DIVIDE); }
-    "("                { if(verbose){System.out.print(" ( ");} return symbol(sym.LPAREN); }
-    ")"                { if(verbose){System.out.print(" ) ");} return symbol(sym.RPAREN); }
-    "%"                { if(verbose){System.out.print(" % ");} return symbol(sym.PERCENT); }
-    "="                { if(verbose){System.out.print(" = ");} return symbol(sym.EQUAL); }
+    "+"                { if(verbose){System.out.print(" + ");} return symbol(sym.PLUS, "+"); }	
+	"-" 			   { if(verbose){System.out.print(" - ");} return symbol(sym.MINUS, "-");}  					   
+    "*"                { if(verbose){System.out.print(" * ");} return symbol(sym.TIMES, "*"); }
+    "/"                { if(verbose){System.out.print(" / ");} return symbol(sym.DIVIDE, "/"); }
+    "("                { if(verbose){System.out.print(" ( ");} return symbol(sym.LPAREN, "("); }
+    ")"                { if(verbose){System.out.print(" ) ");} return symbol(sym.RPAREN, ")"); }
+    "%"                { if(verbose){System.out.print(" % ");} return symbol(sym.PERCENT, "%"); }
+	"["                { if(verbose){System.out.print(" [ ");} yybegin(MEMBER_DECLARATION); }
+    ";"                { if(verbose){System.out.print(" ; ");} return symbol(sym.SEMI, ";"); }
+
 	
 	/*
 	*/
 	{NUMBER} 		   { if(verbose){System.out.print(yytext());} String val = yytext().replaceAll(",",".");return new Symbol(sym.NUMBER, new Double(val)); } 
 						
 	{VARIABLE}		   { if(verbose){System.out.print(yytext());} return new Symbol(sym.VARIABLE, yytext()); }
-
 	{MEMBER}		   { if(verbose){System.out.print(yytext());} return new Symbol(sym.MEMBER, yytext()); }
 
+
+
+}
+
+<MEMBER_DECLARATION>{
+	"]"                { if(verbose){System.out.print(" ] ");} yybegin(YYINITIAL); }
+	{MEMBER}		   { if(verbose){System.out.print(yytext());} return new Symbol(sym.MEMBER, yytext()); }
 
 }
 
