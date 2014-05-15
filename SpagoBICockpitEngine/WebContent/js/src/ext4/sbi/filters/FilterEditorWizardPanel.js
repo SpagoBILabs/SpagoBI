@@ -23,7 +23,7 @@ Ext.define('Sbi.filters.FilterEditorWizardPanel', {
 	, constructor : function(config) {
 		Sbi.trace("[FilterEditorWizardPanel.constructor]: IN");
 		this.initConfig(config);
-		this.callParent(config);
+		this.callParent(arguments);
 		Sbi.trace("[FilterEditorWizardPanel.constructor]: OUT");
 	}
 

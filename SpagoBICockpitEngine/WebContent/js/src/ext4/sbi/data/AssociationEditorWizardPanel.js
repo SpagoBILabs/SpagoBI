@@ -9,9 +9,7 @@ Ext.define('Sbi.data.AssociationEditorWizardPanel', {
 	
 	, config:{ 
 		stores: null
-	  , associations: null
-	  , frame: false
-	  , border: false
+	  , associations: null	  
 	}
 
 	/**
@@ -19,11 +17,13 @@ Ext.define('Sbi.data.AssociationEditorWizardPanel', {
 	 * The page that manages association editing
 	 */
 	, associationEditorPage: null
+	, frame: false
+	, border: false
 	
 	, constructor : function(config) {
 		Sbi.trace("[AssociationEditorWizardPanel.constructor]: IN");
 		this.initConfig(config);
-		this.callParent(config);
+		this.callParent(arguments);
 		Sbi.trace("[AssociationEditorWizardPanel.constructor]: OUT");
 	}
 

@@ -18,22 +18,24 @@ Ext.define('Sbi.data.editor.association.AssociationEditorDataset', {
 	, layout: 'fit'
 		
 	, config:{	
-		border: true
-		, dataset: null
-		, gridConfig: null
-	    , style: {marginTop: '3px', marginRight: '5px', marginLeft:'5px'} 
-		, services: null
-	    , grid: null	    
+		  border: true
+		, dataset: null			    
 	    , height : 225
 		, width : 180		
-	    , displayRefreshButton: true  // if true, display the refresh button
+
 	}
 
+	, gridConfig: null
+	, style: {marginTop: '3px', marginRight: '5px', marginLeft:'5px'}
+	, services: null
+    , grid: null	    
+    , displayRefreshButton: true  // if true, display the refresh button
+    
 	, constructor : function(config) {
 		Sbi.trace("[AssociationEditorDataset.constructor]: IN");
 		this.initConfig(config);
 		this.init();
-		this.callParent(config);
+		this.callParent(arguments);
 		this.addEvents('addFieldToAssociation');	
 		Sbi.trace("[AssociationEditorDataset.constructor]: OUT");
 	}

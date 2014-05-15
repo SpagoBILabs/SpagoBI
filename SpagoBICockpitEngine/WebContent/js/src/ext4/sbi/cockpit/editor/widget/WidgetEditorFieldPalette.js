@@ -178,12 +178,11 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditorFieldPalette, Ext.Panel, {
 		    fields: [
 		        {name: 'id', type: 'string'},
 		        {name: 'alias',  type: 'string'},
-		        {name: 'funct',       type: 'int'},
-		        {name: 'iconCls',  type: 'string'},
+		        {name: 'funct',  type: 'int'},
+		        {name: 'iconCls', type: 'string'},
 		        {name: 'nature',  type: 'string'},
 		        {name: 'values',  type: 'string'},
-		        {name: 'values',  type: 'string'},
-		        {name: 'options',  type: 'string'},
+		        {name: 'options',  type: 'string'}
 		    ]
 		});
 		

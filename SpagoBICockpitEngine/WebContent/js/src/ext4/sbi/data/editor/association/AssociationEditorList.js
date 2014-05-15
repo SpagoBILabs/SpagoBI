@@ -15,18 +15,20 @@
 Ext.define('Sbi.data.editor.association.AssociationEditorList', {
 	extend: 'Ext.Panel'
 	, layout: 'fit'
-	, config:{	
-		  services: null
-		, grid: null
-		, store: null
-		, associations :null
-		, displayRefreshButton: null  // if true, display the refresh button
-		, border: false
-		, style: {marginTop: '3px', marginRight: '5px', marginLeft:'5px'}
+	, config:{			 
+		  associations :null		
 		, height: 200	
-		, autoScroll: true
-  		
 	}
+
+	, services: null
+	, grid: null
+	, store: null
+	, displayRefreshButton: null  // if true, display the refresh button
+	, border: false
+	, style: {marginTop: '3px', marginRight: '5px', marginLeft:'5px'}
+	, autoScroll: true
+	
+	
 	/**
 	 * @property currentAss
 	 * The current Association selected in the list
@@ -37,7 +39,7 @@ Ext.define('Sbi.data.editor.association.AssociationEditorList', {
 		Sbi.trace("[AssociationEditorList.constructor]: IN");
 		this.initConfig(config);
 		this.init();
-		this.callParent(config);
+		this.callParent(arguments);
 		this.addEvents("addAssociation","removeAssociation","selectAssociation","updateIdentifier");
 		Sbi.trace("[AssociationEditorList.constructor]: OUT");
 	}
