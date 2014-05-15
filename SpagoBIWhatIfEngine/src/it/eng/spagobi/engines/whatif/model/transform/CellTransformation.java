@@ -62,5 +62,13 @@ public class CellTransformation {
 	public void setOldValue(Object oldValue) {
 		this.oldValue = oldValue;
 	}
+
+	@Override
+	public String toString() {
+		return "CellTransformation [cell=" + cell + ", algorithm=" + algorithm.getName()
+				+ ", newValue=" + newValue + ", oldValue=" + oldValue + "]";
+	}
+	
+	
 	
 }

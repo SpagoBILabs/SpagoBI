@@ -27,7 +27,7 @@ import org.olap4j.OlapDataSource;
 import com.eyeq.pivot4j.impl.PivotModelImpl;
 
 public class SpagoBIPivotModel extends PivotModelImpl {
-	
+	public static transient Logger auditlogger = Logger.getLogger("audit.stack");
 	public static transient Logger logger = Logger.getLogger(SpagoBIPivotModel.class);
 	private CellTransformationsStack pendingTransformations = new CellTransformationsStack();
 	private SpagoBICellSetWrapper wrapper = null;
@@ -71,6 +71,7 @@ public class SpagoBIPivotModel extends PivotModelImpl {
 		SpagoBICellWrapper cellWrapper = SpagoBICellWrapper.wrap(cell, cellSetWrapper);
 		CellTransformation transformation = new CellTransformation(newValue, cellWrapper.getValue(), cellWrapper, algorithm);
 		pendingTransformations.add(transformation);
+		logTransormations();
 	}
 
 	public boolean hasPendingTransformations() {
@@ -79,6 +80,7 @@ public class SpagoBIPivotModel extends PivotModelImpl {
 	
 	public void addPendingTransformation(CellTransformation transformation) {
 		pendingTransformations.add(transformation);
+		logTransormations();
 	}
 	
 	public void persistTransformations() throws WhatIfPersistingTransformationException{
@@ -96,6 +98,7 @@ public class SpagoBIPivotModel extends PivotModelImpl {
 			} catch (Throwable e) {
 				logger.error("Error persisting the transformation "+transformation, e);
 				bestStack.removeAll(executedTransformations);
+				logErrorTransformations(bestStack);
 				throw new WhatIfPersistingTransformationException(getLocale(), executedTransformations, bestStack, e);
 			}
 			//update the list of executed transformations
@@ -104,7 +107,7 @@ public class SpagoBIPivotModel extends PivotModelImpl {
 		
 		//everithing goes right so we can clean the pending transformations
 		pendingTransformations.clear();
-		
+		logTransormations("Stack cleaned");
 	}
 	
 	
@@ -116,6 +119,7 @@ public class SpagoBIPivotModel extends PivotModelImpl {
 			throw new SpagoBIEngineRuntimeException("There are no modifications to undo!!");
 		}
 		pendingTransformations.remove( pendingTransformations.size() - 1 );
+		logTransormations();
 		// remove previous stored cell set, in any
 		this.setCellSetWrapper(null);
 		// force recalculation
@@ -131,5 +135,22 @@ public class SpagoBIPivotModel extends PivotModelImpl {
 		this.setCellSetWrapper(null);
 	}
 
+	
+	public void logTransormations(){
+		logTransormations(null);
+	}
+	
+	public void logTransormations(String info){
+		if(info!=null){
+			auditlogger.info(info);
+		}
+		auditlogger.info(pendingTransformations.toString());
+	}
+	
+	public void logErrorTransformations(CellTransformationsStack remaningTransformations){
+		auditlogger.info(remaningTransformations.toString());
+	}
+	
+	
 	
 }

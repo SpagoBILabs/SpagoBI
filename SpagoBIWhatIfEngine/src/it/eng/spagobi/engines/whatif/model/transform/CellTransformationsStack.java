@@ -15,5 +15,8 @@ import java.util.ArrayList;
 
 public class CellTransformationsStack extends ArrayList<CellTransformation> {
 
+	private static final long serialVersionUID = 3011114201313330712L;
+
+	
 	
 }
