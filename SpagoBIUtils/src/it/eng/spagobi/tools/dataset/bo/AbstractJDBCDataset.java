@@ -242,6 +242,23 @@ public abstract class AbstractJDBCDataset extends ConfigurableDataSet {
 		logger.debug("OUT: returning " + toReturn);
 		return toReturn;
 	}
+
+	/**
+	 * @param string
+	 * @param dataSource
+	 * @return
+	 */
+	public static String encapsulateColumnAlaias(String columnAlias, IDataSource dataSource) {
+		logger.debug("IN");
+		String toReturn = null;
+		if (columnAlias != null) {
+			String aliasDelimiter = TemporaryTableManager.getAliasDelimiter(dataSource);
+			logger.debug("Alias delimiter is [" + aliasDelimiter + "]");
+			toReturn = aliasDelimiter + columnAlias + aliasDelimiter;
+		}
+		logger.debug("OUT: returning " + toReturn);
+		return toReturn;
+	}
 	
 		
 }

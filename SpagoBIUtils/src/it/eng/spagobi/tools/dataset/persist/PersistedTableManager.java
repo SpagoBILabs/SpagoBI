@@ -10,6 +10,7 @@ import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
 import it.eng.spagobi.tools.dataset.bo.FileDataSet;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IField;
 import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
@@ -121,6 +122,9 @@ public class PersistedTableManager {
 		this.setTableName(tableName);
 		this.setDialect(datasource.getHibDialectClass());
 		
+		if(dataSet instanceof VersionedDataSet) {
+			dataSet = ((VersionedDataSet)dataSet).getWrappedDataset();
+		}
 		if (dataSet instanceof FileDataSet){
 			datastore = normalizeFileDataSet(dataSet,datastore);
 		}
@@ -204,119 +208,57 @@ public class PersistedTableManager {
 		logger.debug("OUT");
 	}
 	
-	private PreparedStatement defineStatements(IDataStore datastore, IDataSource datasource, Connection conn){
+	private PreparedStatement defineStatements(IDataStore datastore, IDataSource datasource, Connection connection){
 		PreparedStatement toReturn;
-		IMetaData md = datastore.getMetaData();
-		int filedNo = md.getFieldCount();
 		
-		String query = "insert into " + getTableName() + " ( ";	
-		String values = " values ( ";
-		String create = "create table " + getTableName() + " (";
+		IMetaData storeMeta = datastore.getMetaData();
+		int fieldCount = storeMeta.getFieldCount();
 		
-		for (int i=0, l=filedNo; i<l; i++){	
-			IFieldMetaData fmd = md.getFieldMeta(i);
-			String columnName = getSQLColumnName(fmd);
+		String insertQuery = "insert into " + getTableName();	
+		String values = " values ";
+		String createQuery = "create table " + getTableName() + " (";
+		
+		insertQuery += " (";
+		values += " (";
+		String separator = "";
+		for (int i=0; i < fieldCount; i++){	
+			IFieldMetaData fieldMeta = storeMeta.getFieldMeta(i);
+			String columnName = getSQLColumnName(fieldMeta);
 			String escapedColumnName = AbstractJDBCDataset.encapsulateColumnName(columnName, datasource);
-			query += " " + escapedColumnName + ((i<filedNo-1)?" , " : "");	
-			query += ((i==filedNo-1)?" ) " : "");
-			values += "?" + ((i<filedNo-1)?" , " : "");
-			values += ((i==filedNo-1)?" ) " : "");	
-			create +=  " " + escapedColumnName + getDBFieldType(datasource, fmd) + ((i<filedNo-1)?" , " : ")");	
+			
+			insertQuery += separator + escapedColumnName;
+			values += separator + "?";
+			
+			createQuery +=  separator + escapedColumnName + getDBFieldType(datasource, fieldMeta);
+			
+			separator = ","; 
 		}
-		String totalQuery = query + values;
-		logger.debug("create table statement: " + create);
+		values += ") ";
+		insertQuery += ") ";
+		
+		String totalQuery = insertQuery + values;
+		logger.debug("create table statement: " + createQuery);
 		try{
 			if (getDialect().contains(DIALECT_HSQL) || getDialect().contains(DIALECT_HSQL_PRED)){
 				//WORKAROUND for HQL : it needs the physical table for define a prepareStatement.
 				//So, drop and create an empty target table
 				dropTableIfExists(datasource);
 				//creates temporary table 
-				executeStatement(create, datasource);
+				executeStatement(createQuery, datasource);
 			}
-			toReturn = conn.prepareStatement(totalQuery);
+			
+			toReturn = connection.prepareStatement(totalQuery);
+			
 			logger.debug("Prepared statement for persist dataset as : " + totalQuery);
-			for (int i=0, l=Integer.parseInt(String.valueOf(datastore.getRecordsCount())); i<l; i++){	
-				IRecord rec = datastore.getRecordAt(i);			
-				for (int i2=0, l2=rec.getFields().size(); i2<l2; i2++){		
-					IFieldMetaData fmd = md.getFieldMeta(i2);
-					IField field = rec.getFieldAt(i2);
-					// in case of a measure with String type, convert it into a Double
-					if (fmd.getFieldType().equals(FieldType.MEASURE) && fmd.getType().toString().contains("String")) {
-						logger.debug("Column type is string but the field is measure: converting it into a double");
-						// only for primitive type is necessary to use setNull method if value is null
-						if (StringUtilities.isEmpty((String)field.getValue()) ){
-							toReturn.setNull(i2+1, java.sql.Types.DOUBLE);
-						 }else{
-					        toReturn.setDouble(i2+1, Double.parseDouble(field.getValue().toString()));
-						 }
-					} else if (fmd.getType().toString().contains("String")){	
-						Integer lenValue = (field.getValue()==null)?new Integer("0"):new Integer(field.getValue().toString().length());
-						Integer prevValue = getColumnSize().get(fmd.getName()) == null? new Integer("0"): getColumnSize().get(fmd.getName());
-						if (lenValue > prevValue ){
-							getColumnSize().remove(fmd.getName());
-							getColumnSize().put(fmd.getName(), lenValue);
-						}			
-						 toReturn.setString(i2+1,  (String)field.getValue());
-					}else if(fmd.getType().toString().contains("Date")) {	
-						toReturn.setDate(i2+1,  (Date)field.getValue());
-					}else if (fmd.getType().toString().contains("Timestamp")){
-						toReturn.setTimestamp(i2+1,  (Timestamp)field.getValue());
-					}else if(fmd.getType().toString().contains("Short")) {
-						//only for primitive type is necessary to use setNull method if value is null
-						if (field.getValue() == null){
-							toReturn.setNull(i2+1, java.sql.Types.INTEGER);
-						 }else{
-							 toReturn.setInt(i2+1, ((Short)field.getValue()).intValue());
-						 }	
-					}else if(fmd.getType().toString().contains("Integer")) {
-						//only for primitive type is necessary to use setNull method if value is null
-						if (field.getValue() == null){
-							toReturn.setNull(i2+1, java.sql.Types.INTEGER);
-						 }else{
-							 toReturn.setInt(i2+1, (Integer)field.getValue());
-						 }						
-					}else if(fmd.getType().toString().contains("Double")) {
-						// only for primitive type is necessary to use setNull method if value is null
-						if (field.getValue() == null){
-							toReturn.setNull(i2+1, java.sql.Types.DOUBLE);
-						 }else{
-					        toReturn.setDouble(i2+1, (Double)field.getValue());
-						 }
-						
-					}else if(fmd.getType().toString().contains("Float")) {
-						// only for primitive type is necessary to use setNull method if value is null
-						if (field.getValue() == null){
-							toReturn.setNull(i2+1, java.sql.Types.FLOAT);
-						 }else{
-					        toReturn.setDouble(i2+1, (Float)field.getValue());
-						 }				
-					}else if(fmd.getType().toString().contains("Long")) {
-						// only for primitive type is necessary to use setNull method if value is null
-						if (field.getValue() == null){
-							toReturn.setNull(i2+1, java.sql.Types.BIGINT);
-						 }else{
-							toReturn.setLong(i2+1, (Long)field.getValue());
-						 }						
-					}else if(fmd.getType().toString().contains("Boolean")) {
-						//only for primitive type is necessary to use setNull method if value is null
-						if (field.getValue() == null){
-							toReturn.setNull(i2+1, java.sql.Types.BOOLEAN);
-						 }else{
-							toReturn.setBoolean(i2+1, (Boolean)field.getValue());
-						 }
-						
-					}else if(fmd.getType().toString().contains("BigDecimal")) {		
-						toReturn.setBigDecimal(i2+1, (BigDecimal)field.getValue());
-					}else if(fmd.getType().toString().contains("[B")) {  //BLOB		
-						toReturn.setBytes(i2+1, (byte[])field.getValue());
-						//ByteArrayInputStream bis = new ByteArrayInputStream((byte[])field.getValue());
-						//toReturn.setBinaryStream(1, bis, ((byte[])field.getValue()).length);
-					}else if(fmd.getType().toString().contains("[C")) {	 //CLOB							 
-						toReturn.setBytes(i2+1, (byte[])field.getValue());
-						//toReturn.setAsciiStream(i2+1, new ByteArrayInputStream((byte[])field.getValue()),  ((byte[])field.getValue()).length);
-					}else{				
-						//toReturn.setString(i2+1, (String)field.getValue());
-						logger.debug("Cannot setting the column "+ fmd.getName()+ " with type "+ fmd.getType().toString());
+			for (int i=0; i < datastore.getRecordsCount(); i++){	
+				IRecord record = datastore.getRecordAt(i);			
+				for (int j = 0; j < record.getFields().size(); j++){	
+					try {
+						IFieldMetaData fieldMeta = storeMeta.getFieldMeta(j);
+						IField field = record.getFieldAt(j);
+						addField(toReturn, j, field, fieldMeta);
+					} catch(Throwable t) {
+						throw new RuntimeException("An unexpecetd error occured while preparing insert statemenet for record [" + i + "]", t);
 					}
 				}
 				toReturn.addBatch();
@@ -327,6 +269,102 @@ public class PersistedTableManager {
 		}			
 		return toReturn;
 	}
+	
+	private void addField(PreparedStatement insertStatement, int fieldIndex, IField field, IFieldMetaData fieldMeta) {
+		try {
+			// in case of a measure with String type, convert it into a Double
+			if (fieldMeta.getFieldType().equals(FieldType.MEASURE) && fieldMeta.getType().toString().contains("String")) {
+				try {
+					logger.debug("Column type is string but the field is measure: converting it into a double");
+					// only for primitive type is necessary to use setNull method if value is null
+					if (StringUtilities.isEmpty((String)field.getValue()) ){
+						insertStatement.setNull(fieldIndex+1, java.sql.Types.DOUBLE);
+					} else{
+				        insertStatement.setDouble(fieldIndex+1, Double.parseDouble(field.getValue().toString()));
+					}
+				} catch(Throwable t) {
+					 throw new RuntimeException("An unexpected error occured while converting to double measure field [" + fieldMeta.getName() + "] whose value is [" + field.getValue() + "]", t);
+				}
+			} else if (fieldMeta.getType().toString().contains("String")){	
+				Integer lenValue = (field.getValue()==null)?new Integer("0"):new Integer(field.getValue().toString().length());
+				Integer prevValue = getColumnSize().get(fieldMeta.getName()) == null? new Integer("0"): getColumnSize().get(fieldMeta.getName());
+				if (lenValue > prevValue ){
+					getColumnSize().remove(fieldMeta.getName());
+					getColumnSize().put(fieldMeta.getName(), lenValue);
+				}			
+				 insertStatement.setString(fieldIndex+1,  (String)field.getValue());
+			}else if(fieldMeta.getType().toString().contains("Date")) {	
+				insertStatement.setDate(fieldIndex+1,  (Date)field.getValue());
+			}else if (fieldMeta.getType().toString().contains("Timestamp")){
+				insertStatement.setTimestamp(fieldIndex+1,  (Timestamp)field.getValue());
+			}else if(fieldMeta.getType().toString().contains("Short")) {
+				//only for primitive type is necessary to use setNull method if value is null
+				if (field.getValue() == null){
+					insertStatement.setNull(fieldIndex+1, java.sql.Types.INTEGER);
+				 }else{
+					 insertStatement.setInt(fieldIndex+1, ((Short)field.getValue()).intValue());
+				 }	
+			}else if(fieldMeta.getType().toString().contains("Integer")) {
+				//only for primitive type is necessary to use setNull method if value is null
+				if (field.getValue() == null){
+					insertStatement.setNull(fieldIndex+1, java.sql.Types.INTEGER);
+				 }else{
+					 insertStatement.setInt(fieldIndex+1, (Integer)field.getValue());
+				 }						
+			}else if(fieldMeta.getType().toString().contains("Double")) {
+				// only for primitive type is necessary to use setNull method if value is null
+				if (field.getValue() == null){
+					insertStatement.setNull(fieldIndex+1, java.sql.Types.DOUBLE);
+				 }else{
+			        insertStatement.setDouble(fieldIndex+1, (Double)field.getValue());
+				 }
+				
+			}else if(fieldMeta.getType().toString().contains("Float")) {
+				// only for primitive type is necessary to use setNull method if value is null
+				if (field.getValue() == null){
+					insertStatement.setNull(fieldIndex+1, java.sql.Types.FLOAT);
+				 }else{
+			        insertStatement.setDouble(fieldIndex+1, (Float)field.getValue());
+				 }				
+			}else if(fieldMeta.getType().toString().contains("Long")) {
+				// only for primitive type is necessary to use setNull method if value is null
+				if (field.getValue() == null){
+					insertStatement.setNull(fieldIndex+1, java.sql.Types.BIGINT);
+				 }else{
+					insertStatement.setLong(fieldIndex+1, (Long)field.getValue());
+				 }						
+			}else if(fieldMeta.getType().toString().contains("Boolean")) {
+				//only for primitive type is necessary to use setNull method if value is null
+				if (field.getValue() == null){
+					insertStatement.setNull(fieldIndex+1, java.sql.Types.BOOLEAN);
+				 }else{
+					insertStatement.setBoolean(fieldIndex+1, (Boolean)field.getValue());
+				 }
+				
+			}else if(fieldMeta.getType().toString().contains("BigDecimal")) {		
+				insertStatement.setBigDecimal(fieldIndex+1, (BigDecimal)field.getValue());
+			}else if(fieldMeta.getType().toString().contains("[B")) {  //BLOB		
+				insertStatement.setBytes(fieldIndex+1, (byte[])field.getValue());
+				//ByteArrayInputStream bis = new ByteArrayInputStream((byte[])field.getValue());
+				//toReturn.setBinaryStream(1, bis, ((byte[])field.getValue()).length);
+			}else if(fieldMeta.getType().toString().contains("[C")) {	 //CLOB							 
+				insertStatement.setBytes(fieldIndex+1, (byte[])field.getValue());
+				//toReturn.setAsciiStream(i2+1, new ByteArrayInputStream((byte[])field.getValue()),  ((byte[])field.getValue()).length);
+			}else{				
+				//toReturn.setString(i2+1, (String)field.getValue());
+				logger.debug("Cannot setting the column "+ fieldMeta.getName()+ " with type "+ fieldMeta.getType().toString());
+			}
+		} catch(Throwable t) {
+			throw new RuntimeException("An unexpected error occured while adding to statement value [" + field.getValue() + "] of field [" + fieldMeta.getName() + "] whose type is equal to [" + fieldMeta.getType().toString() + "]", t);
+		}
+	}
+	
+	
+	
+	
+	
+	
+	
 	private String getSQLColumnName(IFieldMetaData fmd) {
 		String columnName = fmd.getAlias() != null ? fmd.getAlias() : fmd.getName();
 		logger.debug("Column name is " + columnName);
