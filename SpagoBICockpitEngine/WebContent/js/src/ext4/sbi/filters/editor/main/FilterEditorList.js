@@ -47,7 +47,7 @@ Ext.define('Sbi.filters.editor.main.FilterEditorList', {
 		Sbi.trace("[FilterEditorList.constructor]: IN");
 		this.initConfig(config);
 		this.init();
-		this.callParent(config);
+		this.callParent(arguments);
 //		this.addEvents("addAssociation","removeAssociation","selectAssociation","updateIdentifier");
 		Sbi.trace("[FilterEditorList.constructor]: OUT");
 	}

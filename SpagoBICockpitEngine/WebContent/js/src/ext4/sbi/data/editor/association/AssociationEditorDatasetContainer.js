@@ -1,4 +1,4 @@
-/** SpagoBI, the Open Source Business Intelligence suite
+ /** SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
@@ -9,20 +9,20 @@ Ext.define('Sbi.data.editor.association.AssociationEditorDatasetContainer', {
 	extend: 'Ext.Panel'
 	, layout: 'column'
 	, config:{	
-		  services: null			
-		, dsContainerPanel: null
-		, stores: null
-		, engineAlreadyInitialized : false
-		, border : false
-		, autoScroll: true
-		
+		stores: null		
 	}
 
+	, services: null
+	, dsContainerPanel: null
+	, engineAlreadyInitialized : false
+	, border : false
+	, autoScroll: true
+	
 	, constructor : function(config) { 
 		Sbi.trace("[AssociationEditorDatasetContainer.constructor]: IN");
 		this.initConfig(config);
 		this.init();
-		this.callParent(config);	
+		this.callParent(arguments);	
 		Sbi.trace("[AssociationEditorDatasetContainer.constructor]: OUT");
 	}
 

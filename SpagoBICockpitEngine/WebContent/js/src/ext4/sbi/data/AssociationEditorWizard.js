@@ -76,8 +76,10 @@ Ext.define('Sbi.data.AssociationEditorWizard', {
 	, init: function(c){
 		Sbi.trace("[AssociationEditorWizard.init]: IN");		
 		this.editorMainPanel = Ext.create('Sbi.data.AssociationEditorWizardPanel',{
-			stores: c.stores || []
-		  , associations: c.associations || []
+			stores: Ext.apply(c.stores, [])
+		  , associations:  Ext.apply(c.associations, [])
+//			stores:  undefined
+//		  , associations: undefined		
 		});
 		this.editorMainPanel.on('cancel', this.onCancel, this);
 		this.editorMainPanel.on('submit', this.onSubmit, this);
