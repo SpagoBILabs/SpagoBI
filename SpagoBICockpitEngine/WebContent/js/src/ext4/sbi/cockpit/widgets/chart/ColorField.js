@@ -43,11 +43,12 @@ Ext.define('Ext.ux.ColorField', {
     },
     
     setColor : function(hex) {
+    	var hexColor =  (hex.indexOf('#')>=0)? hex : '#' + hex;
         Ext.ux.ColorField.superclass.setFieldStyle.call(this, {
-            'background-color':  '#' + hex,
+            'background-color': hexColor,
             'background-image': 'none'
         });
-		this.fireEvent('colorUpdate', hex);
+		this.fireEvent('colorUpdate', hexColor);
 
     	
 
