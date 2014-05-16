@@ -192,6 +192,19 @@ public class MetalanguageParserTestCase extends TestCase {
 		assertFalse(result.equals(8.1));
 	}
 	
+	public void testSetEqualExpression(){
+    	String expression ="=5,7+1.3+[1.1]";
+		Lexer lexerInstance = new Lexer(new java.io.StringReader(expression));
+		lexerInstance.setVerbose(true);
+		parserIstance.setScanner(lexerInstance);
+		Object result = null;
+		try {
+			result = parserIstance.parse().value;
+		} catch (Exception e) {
+		}
+		assertFalse(result.equals(8.1));
+	}
+	
 	public void testSetVariablesExpression(){
     	String expression ="pippo+5*(6-3)+1+VARIABILE";
 		Lexer lexerInstance = new Lexer(new java.io.StringReader(expression));
