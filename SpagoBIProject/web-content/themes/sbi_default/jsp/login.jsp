@@ -48,8 +48,9 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 			.getConfigValue("SPAGOBI.SECURITY.PORTAL-SECURITY-CLASS.className");
 	boolean isInternalSecurity = (strInternalSecurity
 			.indexOf("InternalSecurity") > 0) ? true : false;
-	String roleToCheckLbl = SingletonConfig.getInstance()
-			.getConfigValue("SPAGOBI.SECURITY.ROLE_LOGIN");
+	String roleToCheckLbl = 
+			(SingletonConfig.getInstance().getConfigValue("SPAGOBI.SECURITY.ROLE_LOGIN") == null)?"" :
+			 SingletonConfig.getInstance().getConfigValue("SPAGOBI.SECURITY.ROLE_LOGIN");
 	String roleToCheckVal = "";
 	if (!("").equals(roleToCheckLbl)) {
 		roleToCheckVal = (request.getParameter(roleToCheckLbl) != null) ? request
