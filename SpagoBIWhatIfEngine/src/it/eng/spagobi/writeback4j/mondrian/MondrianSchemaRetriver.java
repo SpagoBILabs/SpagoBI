@@ -21,7 +21,9 @@ import java.util.List;
 import java.util.Map;
 
 import mondrian.olap.MondrianDef;
+import mondrian.olap.MondrianDef.CubeDimension;
 import mondrian.olap.MondrianDef.Dimension;
+import mondrian.olap.MondrianDef.Measure;
 
 import org.apache.log4j.Logger;
 import org.eigenbase.xom.Parser;
@@ -43,6 +45,9 @@ public class MondrianSchemaRetriver implements ISchemaRetriver{
 	
 	MondrianDef.Schema schema;
 	MondrianDef.Cube editCube;
+	
+	public static String VERSION_COLUMN_NAME = "version"; 
+	public static String TEMPORARY_TABLE_SUFFIX = "_tmp"; 
 	
 	
 	public MondrianSchemaRetriver(MondrianDriver driver, String editCubeName) throws SpagoBIEngineException{
@@ -224,6 +229,41 @@ public class MondrianSchemaRetriver implements ISchemaRetriver{
 		return editCube.fact.getAlias();
 	}
 	
+	
+	
+	public String getEditTemporaryCubeTableName() {
+		return editCube.fact.getAlias()+TEMPORARY_TABLE_SUFFIX;
+	}
+	
+	
+	/** Returns physical name of all columns of edit cube
+	 * 
+	 * @return  columns names list
+	 */
+	
+	public List<String> getColumnNamesList(){
+	logger.debug("IN");	
+	List<String> toReturn = new ArrayList<String>();
+
+	// add measures names
+	MondrianDef.Measure[] measures = editCube.measures;
+	for (int i = 0; i < measures.length; i++) {
+		Measure measure = measures[i];
+		if(measure.column != null && !measure.column.equalsIgnoreCase(""))
+			toReturn.add(measure.column);
+	}
+	
+	// add dimension names
+	MondrianDef.CubeDimension[] dimensions = editCube.dimensions;
+	for (int i = 0; i < dimensions.length; i++) {
+		CubeDimension dimensione = dimensions[i];
+		if(dimensione.foreignKey != null && !dimensione.foreignKey.equalsIgnoreCase(""))
+			toReturn.add(dimensione.foreignKey);
+	}
+	
+	logger.debug("OUT");	
+	return toReturn;
+	}
 	
 
 

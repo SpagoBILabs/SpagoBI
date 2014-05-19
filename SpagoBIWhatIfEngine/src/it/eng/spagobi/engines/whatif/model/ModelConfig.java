@@ -23,6 +23,7 @@ public class ModelConfig implements Serializable {
 	private Boolean hideSpans;
 	private Boolean showProperties;
 	private Boolean suppressEmpty;
+	private Integer actualVersion = null;
 
 
 	private Map<String, String> dimensionHierarchyMap;
@@ -104,6 +105,15 @@ public class ModelConfig implements Serializable {
 	public void setWriteBackEnabled(boolean b) {
 	
 	}
+
+	public Integer getActualVersion() {
+		return actualVersion;
+	}
+
+	public void setActualVersion(Integer actualVersion) {
+		this.actualVersion = actualVersion;
+	}
+
 	
 	
 }
