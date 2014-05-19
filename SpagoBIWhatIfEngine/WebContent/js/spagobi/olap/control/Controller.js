@@ -185,6 +185,16 @@ Ext.define('Sbi.olap.control.Controller', {
 		
 		service.callService(this);
 	}
+	,persistNewVersionTransformations: function() {
+
+		var service = Ext.create("Sbi.service.RestService", {
+			url: "version",
+			method: 'POST',
+			pathParams: ["increase"]
+		});
+		
+		service.callService(this);
+	}
 	
 	
 	

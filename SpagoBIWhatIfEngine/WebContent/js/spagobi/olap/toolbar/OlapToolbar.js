@@ -204,6 +204,17 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 			scope:this,
 			reorderable: true
 		});
+		
+		this.persistNewVersion = Ext.create('Ext.Button', {
+			text: "PERSIST-NEW-VERSION",
+			iconCls: 'undo',
+			handler: function() {
+				Sbi.olap.eventManager.persistNewVersionTransformations();
+			},
+			scope:this,
+			reorderable: true
+		});
+		
 		var pressedBtn = this.config.toolbarConfig.drillType;
 		if(pressedBtn == 'position'){
 			this.drillMode.items.items[0].pressed = true;
@@ -226,7 +237,7 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 				overflowHandler: 'Menu'
 			},
 			items   : [ this.drillMode, this.showMdx, this.undo , 
-			            this.clean, this.persist,
+			            this.clean, this.persist, this.persistNewVersion,
 			            this.showParentMembers, 
 			            this.hideSpans, 
 			            /*this.showProperties, */

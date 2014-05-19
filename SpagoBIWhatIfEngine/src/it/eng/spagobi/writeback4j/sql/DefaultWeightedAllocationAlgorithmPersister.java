@@ -11,6 +11,7 @@ import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
 import it.eng.spagobi.writeback4j.IMemberCoordinates;
 import it.eng.spagobi.writeback4j.ISchemaRetriver;
 
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -96,8 +97,13 @@ public class DefaultWeightedAllocationAlgorithmPersister {
 		
 		String queryString = query.toString();
 		
-		SqlUpdateStatement updateStatement = new SqlUpdateStatement(dataSource, queryString);
-		updateStatement.executeStatement();
+		ConnectionManager connManager = new ConnectionManager(dataSource);
+		Connection connection = connManager.openConnection(); 
+		
+		SqlUpdateStatement updateStatement = new SqlUpdateStatement(queryString);
+		updateStatement.executeStatement(connection);
+	
+		connManager.closeConnection();
 	}
 	
 	private void buildProportionalUpdateSingleSubquery(List<IMemberCoordinates> memberCordinates, StringBuffer query) throws SpagoBIEngineException{
@@ -143,10 +149,16 @@ public class DefaultWeightedAllocationAlgorithmPersister {
 		
 		
 		
+
+		ConnectionManager connManager = new ConnectionManager(dataSource);
+		Connection connection = connManager.openConnection(); 
+
 		String queryString = query.toString();
 		
-		SqlUpdateStatement updateStatement = new SqlUpdateStatement(dataSource, queryString);
-		updateStatement.executeStatement();
+		SqlUpdateStatement updateStatement = new SqlUpdateStatement(queryString);
+		updateStatement.executeStatement(connection);
+	
+		connManager.closeConnection();
 	}
 	
 	

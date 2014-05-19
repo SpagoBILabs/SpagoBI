@@ -3,9 +3,11 @@
  */
 package it.eng.spagobi.writeback4j.sql;
 
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
 
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.Statement;
 
 import org.apache.log4j.Logger;
@@ -17,32 +19,43 @@ import org.apache.log4j.Logger;
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 /**
- * @author Alberto Ghedin (alberto.ghedin@eng.it)
+ * @author Giulio Gavardi (giulio.gavardi@eng.it)
  *
  */
-public class SqlUpdateStatement {
-
+public class SqlQueryStatement {
 
 	private String sqlStatement;
 
-	public static transient Logger logger = Logger.getLogger(SqlUpdateStatement.class);
+	public static transient Logger logger = Logger.getLogger(SqlQueryStatement.class);
 	
-	public SqlUpdateStatement(String sqlStatement) {
+	public SqlQueryStatement(IDataSource dataSource, String sqlStatement) {
 		super();
+
 		this.sqlStatement = sqlStatement;
 	}
-	
 
-	public void executeStatement(Connection connection) throws SpagoBIEngineException{
-		try {
+	public Object  getSingleValue(Connection connection, String columnName) throws SpagoBIEngineException{
+		Object toReturn = null;
+		ResultSet rs = null;
+		
+		try{
+
 			Statement statement = connection.createStatement();
-			statement.executeUpdate(sqlStatement);
+			rs = statement.executeQuery(sqlStatement);
 
-		} catch (Exception e) {
+			while (rs.next()) {
+				toReturn= rs.getObject(columnName);
+			}
+
+		}
+		catch (Exception e) {
 			logger.error("Error executing the query "+sqlStatement, e);
 			throw new SpagoBIEngineException("Error executing the query "+sqlStatement, e);
-		} 
+		}
+
+		return toReturn;
 	}
-	
-	
+
+
+
 }
