@@ -315,6 +315,21 @@ public class MetalanguageParserTestCase extends TestCase {
 		assertEquals(noException, true);
 	}
 	
+	public void testSetMemberWithSpace(){
+		boolean noException = true;
+		
+    	String expression ="Measures.total sales;Year.2012;Product.Food.Canned foods+100";
+		Lexer lexerInstance = new Lexer(new java.io.StringReader(expression));
+		lexerInstance.setVerbose(true);
+		parserIstance.setScanner(lexerInstance);
+		Object result = null;
+		try {
+			result = parserIstance.parse().value;
+		} catch (Exception e) {
+			noException = false;
+		}
+		assertEquals(noException, true);
+	}
 	
 	
 	

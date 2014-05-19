@@ -118,7 +118,7 @@ parser code {:
 /* ------------Declaration of Terminals and Non Terminals Section----------- */
    
 /* Terminals (tokens returned by the scanner).  */
-terminal           SEMI, PLUS, MINUS, TIMES, DIVIDE, LPAREN, RPAREN, PERCENT, LSQRPAREN, RSQRPAREN;
+terminal           SEMI, PLUS, MINUS, TIMES, DIVIDE, LPAREN, RPAREN, PERCENT, LSQRPAREN, RSQRPAREN, EQUAL;
 terminal Double   NUMBER;
 terminal String  VARIABLE,MEMBER;
 /* Terminals Not returned from lexer */
@@ -192,7 +192,12 @@ precedence left UMINUS;
                  expr_part:e
 				 {: 
 					RESULT = e;
-				 :}
+				 :} 
+				 |
+				 EQUAL expr_part:e
+				 {: 
+					RESULT = e;
+				 :} 
 				 ;
    
 /* 'expr_part' is an 'expr' followed by the terminal 'SEMI'.  The ':e'
@@ -301,14 +306,14 @@ precedence left UMINUS;
 				 |
 				 VARIABLE:v
                  {: 
-				  if(parser.isVerbose()){System.out.println("*** found variable "+v+" replaced with "+50);}
+				  if(parser.isVerbose()){System.out.println("*** found VARIABLE ["+v+"] replaced with "+50);}
 				 RESULT = 50.0; 
 				 :}		
 				 |
 			      members_declaration:m 
 				 {:
 				 Double generated = parser.generateDouble();
-				  if(parser.isVerbose()){System.out.println("*** found members "+m+" replaced with "+generated);}
+				  if(parser.isVerbose()){System.out.println("*** found MEMBERS "+m+" replaced with "+generated);}
 				 /*RESULT = 100.0; */
 				 RESULT = generated;
 				 :}
@@ -328,7 +333,7 @@ members_declaration ::=
                   {
                       n =  (String)(li.next());
                       r.add(n);
-                       if(parser.isVerbose()){System.out.println("Added "+n);}
+                      // if(parser.isVerbose()){System.out.println("Added "+n);}
                   }
                   RESULT = r;
                    if(parser.isVerbose()){System.out.println ("*** Members Declaration "+members_l);}
@@ -352,5 +357,5 @@ member_listS ::=
 single_member ::= MEMBER:memb 
                {:
                   RESULT = memb ;
-                   if(parser.isVerbose()){System.out.println("MEMBER "+memb);}
+                  // if(parser.isVerbose()){System.out.println("MEMBER "+memb);}
                 :};								
