@@ -68,7 +68,11 @@ defines the set of characters the scanner will work on. For scanning text files,
   scanner actions.  
 */
 %{   
+	private StringBuilder parsedString = new StringBuilder();
 	
+	public String getParsedString(){
+		return parsedString.toString();
+	}
 	
 	private boolean verbose = false;
 	
@@ -116,7 +120,10 @@ ALPHANUMERIC = [A-Za-z0-9]
 
 VARIABLE = [:jletter:]+[:jletterdigit:]*
 
-MEMBER = {ALPHANUMERIC}+"."{ALPHANUMERIC}+ | {ALPHANUMERIC}+"."{ALPHANUMERIC}+"."{ALPHANUMERIC}+
+NAME = {ALPHANUMERIC}({ALPHANUMERIC} | [ ])*
+
+/* MEMBER = {ALPHANUMERIC}+"."{ALPHANUMERIC}+ | {ALPHANUMERIC}+"."{ALPHANUMERIC}+"."{ALPHANUMERIC}+ */
+MEMBER = {NAME}+"."{NAME} | {NAME}"."{NAME}"."{NAME}
    
 
 
@@ -147,31 +154,33 @@ lexical state declaration example: %state STRING declares a lexical state STRING
    
     /* Print the token found that was declared in the class sym and then
        return it. */
-    "+"                { if(verbose){System.out.print(" + ");} return symbol(sym.PLUS, "+"); }	
-	"-" 			   { if(verbose){System.out.print(" - ");} return symbol(sym.MINUS, "-");}  					   
-    "*"                { if(verbose){System.out.print(" * ");} return symbol(sym.TIMES, "*"); }
-    "/"                { if(verbose){System.out.print(" / ");} return symbol(sym.DIVIDE, "/"); }
-    "("                { if(verbose){System.out.print(" ( ");} return symbol(sym.LPAREN, "("); }
-    ")"                { if(verbose){System.out.print(" ) ");} return symbol(sym.RPAREN, ")"); }
-    "%"                { if(verbose){System.out.print(" % ");} return symbol(sym.PERCENT, "%"); }
-	"["                { if(verbose){System.out.print(" [ ");} yybegin(MEMBER_DECLARATION); }
-    ";"                { if(verbose){System.out.print(" ; ");} return symbol(sym.SEMI, ";"); }
+    "+"                { if(verbose){System.out.println(" + ");} parsedString.append("+"); return symbol(sym.PLUS, "+"); }	
+	"-" 			   { if(verbose){System.out.println(" - ");} parsedString.append("-"); return symbol(sym.MINUS, "-");}  					   
+    "*"                { if(verbose){System.out.println(" * ");} parsedString.append("*"); return symbol(sym.TIMES, "*"); }
+    "/"                { if(verbose){System.out.println(" / ");} parsedString.append("/"); return symbol(sym.DIVIDE, "/"); }
+    "("                { if(verbose){System.out.println(" ( ");} parsedString.append("("); return symbol(sym.LPAREN, "("); }
+    ")"                { if(verbose){System.out.println(" ) ");} parsedString.append(")"); return symbol(sym.RPAREN, ")"); }
+    "%"                { if(verbose){System.out.println(" % ");} parsedString.append("%"); return symbol(sym.PERCENT, "%"); }
+	"["                { if(verbose){System.out.println(" [ ");} parsedString.append("[");  yybegin(MEMBER_DECLARATION); }
+    ";"                { if(verbose){System.out.println(" ; ");} parsedString.append(";"); return symbol(sym.SEMI, ";"); }
+	"="                { if(verbose){System.out.println(" = ");} parsedString.append("="); return symbol(sym.EQUAL, "="); }
+
 
 	
 	/*
 	*/
-	{NUMBER} 		   { if(verbose){System.out.print(yytext());} String val = yytext().replaceAll(",",".");return new Symbol(sym.NUMBER, new Double(val)); } 
+	{NUMBER} 		   { if(verbose){System.out.println("NUMBER="+yytext());} parsedString.append("NUMBER="+yytext()); String val = yytext().replaceAll(",",".");return new Symbol(sym.NUMBER, new Double(val)); } 
 						
-	{VARIABLE}		   { if(verbose){System.out.print(yytext());} return new Symbol(sym.VARIABLE, yytext()); }
-	{MEMBER}		   { if(verbose){System.out.print(yytext());} return new Symbol(sym.MEMBER, yytext()); }
+	{VARIABLE}		   { if(verbose){System.out.println("VARIABLE="+yytext());} parsedString.append("VARIABLE="+yytext()); return new Symbol(sym.VARIABLE, yytext()); }
+	{MEMBER}		   { if(verbose){System.out.println("MEMBER="+yytext());} parsedString.append("MEMBER="+yytext()); return new Symbol(sym.MEMBER, yytext()); }
 
 
 
 }
 
 <MEMBER_DECLARATION>{
-	"]"                { if(verbose){System.out.print(" ] ");} yybegin(YYINITIAL); }
-	{MEMBER}		   { if(verbose){System.out.print(yytext());} return new Symbol(sym.MEMBER, yytext()); }
+	"]"                { if(verbose){System.out.println(" ] ");} parsedString.append("]"); yybegin(YYINITIAL); }
+	{MEMBER}		   { if(verbose){System.out.println("MEMBER="+yytext());} parsedString.append("MEMBER="+yytext()); return new Symbol(sym.MEMBER, yytext()); }
 
 }
 
