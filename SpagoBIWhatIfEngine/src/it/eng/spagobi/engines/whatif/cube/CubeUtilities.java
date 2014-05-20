@@ -11,16 +11,28 @@
  */
 package it.eng.spagobi.engines.whatif.cube;
 
+import it.eng.spagobi.engines.whatif.model.SpagoBICellWrapper;
+import it.eng.spagobi.pivot4j.mdx.MDXQueryBuilder;
+import it.eng.spagobi.pivot4j.mdx.MdxQueryExecutor;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
+
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.olap4j.Axis;
+import org.olap4j.Cell;
+import org.olap4j.CellSet;
+import org.olap4j.OlapDataSource;
 import org.olap4j.OlapException;
 import org.olap4j.metadata.Cube;
 import org.olap4j.metadata.Dimension;
 import org.olap4j.metadata.Hierarchy;
+import org.olap4j.metadata.Level;
 import org.olap4j.metadata.Member;
 import org.olap4j.metadata.NamedList;
+
+import com.eyeq.pivot4j.PivotModel;
 
 public class CubeUtilities {
 	
@@ -136,6 +148,95 @@ public class CubeUtilities {
 			return Axis.ROWS;
 		}
 		return Axis.FILTER;
+		
+	}
+	
+	/*
+	 * TODO: to complete	
+	 * Calculate the members value based on the passed expression
+	 */
+	public static Double getMemberValue(LinkedList membersExpression, SpagoBICellWrapper cellWrapper, PivotModel model,OlapDataSource olapDataSource){
+		
+		//TODO: gestire il caso in cui ci siano più membri dimensionali specificati in serie (notazione;)
+		String memberExpression =(String) membersExpression.get(0);
+		
+		Double toReturn = null;
+		//TODO: considerare i casi con gerarchie multiple e notazione del tipo Dimensione.gerarchia.membro
+		
+		String[] memberExpressionParts = memberExpression.split("\\.");
+		String memberExpressionDimension = memberExpressionParts[0];
+		boolean memberFound = false;
+		
+		//Members are the dimensional "coordinates" that identify the specific value inserted in the cell
+		Member[] cellMembersOriginal = cellWrapper.getMembers();
+		Member[] cellMembers = new Member[cellMembersOriginal.length];
+		System.arraycopy( cellMembersOriginal, 0, cellMembers, 0, cellMembersOriginal.length );
+		for (int i=0; i<cellMembers.length; i++){
+			Member aMember = cellMembers[i];
+			String memberUniqueName = aMember.getUniqueName();
+			String uniqueNameParts[] = memberUniqueName.split("\\.");
+			String dimensionName = uniqueNameParts[0];
+			//remove the square brackets from the dimensionName
+			dimensionName = dimensionName.replaceAll("\\[", "");
+			dimensionName = dimensionName.replaceAll("\\]", "");
+
+			//Search the member to modify first by dimensionName (first part of the uniqueName)
+			if (dimensionName.equalsIgnoreCase(memberExpressionDimension)){
+				
+				//Compose the uniqueName of the member to search using the prefix of the current member
+				//of the selected cell
+				String memberToSearchUniqueName = "";
+				/*
+				for (int j=0; j<(uniqueNameParts.length-1);j++){
+					memberToSearchUniqueName = memberToSearchUniqueName + uniqueNameParts[j];
+				}*/
+				int endIndex = memberUniqueName.lastIndexOf(".");
+				if (endIndex != -1)  
+			    {
+			        memberToSearchUniqueName = memberUniqueName.substring(0, endIndex); 
+			    }
+				memberToSearchUniqueName = memberToSearchUniqueName + "."+"["+ memberExpressionParts[1]+"]";
+				
+				//get Level of the interested member
+				Level levelOfMember = aMember.getLevel();
+				try {
+					List<Member> levelMembers = levelOfMember.getMembers();
+					for (Member levelMember :  levelMembers){
+						String levelMemberName = levelMember.getUniqueName();
+						
+						if (levelMemberName.equalsIgnoreCase(memberToSearchUniqueName)){
+							//Found the member specified in the expression, use it to substitute
+							//the original member in the cellMembers
+							cellMembers[i] = levelMember;
+							memberFound = true;
+							break;
+						}
+					}
+				} catch (OlapException e) {
+					e.printStackTrace();
+				}
+				if (memberFound){
+					break;
+				}
+				
+				
+			}
+			
+			
+		}
+		
+		//Calculate the new value 
+		
+		if (memberFound){
+			MdxQueryExecutor mdxQueryExecutor = new MdxQueryExecutor(olapDataSource);
+			Cube cube = model.getCube();
+			Object value = mdxQueryExecutor.getValueForTuple(cellMembers,cube);
+			if (value instanceof Double){
+				toReturn = (Double)value;
+			}
+		}
+		return toReturn;
+
 		
 	}
 	

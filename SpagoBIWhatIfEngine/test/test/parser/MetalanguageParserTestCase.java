@@ -120,7 +120,7 @@ public class MetalanguageParserTestCase extends TestCase {
 	public void testSetMultipleMemberWithAmbiguity(){
 		boolean noException = true;
 		
-    	String expression ="Measures.Total;[2013.1]";
+    	String expression ="Measures.Total;[2013].[1]";
 		Lexer lexerInstance = new Lexer(new java.io.StringReader(expression));
 		lexerInstance.setVerbose(true);
 		parserIstance.setScanner(lexerInstance);
@@ -180,7 +180,7 @@ public class MetalanguageParserTestCase extends TestCase {
 	}
 	
 	public void testSetDecimalNumbersExpression(){
-    	String expression ="5,7+1.3+[1.1]";
+    	String expression ="5,7+1.3+[1].[1]";
 		Lexer lexerInstance = new Lexer(new java.io.StringReader(expression));
 		lexerInstance.setVerbose(true);
 		parserIstance.setScanner(lexerInstance);
@@ -193,7 +193,7 @@ public class MetalanguageParserTestCase extends TestCase {
 	}
 	
 	public void testSetEqualExpression(){
-    	String expression ="=5,7+1.3+[1.1]";
+    	String expression ="=5,7+1.3+[1].[1]";
 		Lexer lexerInstance = new Lexer(new java.io.StringReader(expression));
 		lexerInstance.setVerbose(true);
 		parserIstance.setScanner(lexerInstance);

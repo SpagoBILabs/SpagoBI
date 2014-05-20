@@ -18,6 +18,7 @@ package it.eng.spagobi.engines.whatif.api;
 
 import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
 import it.eng.spagobi.engines.whatif.common.AbstractWhatIfEngineService;
+import it.eng.spagobi.engines.whatif.cube.CubeUtilities;
 import it.eng.spagobi.engines.whatif.exception.WhatIfPersistingTransformationException;
 import it.eng.spagobi.engines.whatif.model.SpagoBICellSetWrapper;
 import it.eng.spagobi.engines.whatif.model.SpagoBICellWrapper;
@@ -103,22 +104,21 @@ public class ModelResource extends AbstractWhatIfEngineService {
 			throw new SpagoBIEngineRestServiceRuntimeException("generic.error", this.getLocale(), e);
 		}
 		logger.debug("expression = [" + expression + "]");
+		SpagoBICellSetWrapper cellSetWrapper = (SpagoBICellSetWrapper) model.getCellSet();
+		SpagoBICellWrapper cellWrapper = (SpagoBICellWrapper) cellSetWrapper.getCell(ordinal);	
+		OlapDataSource olapDataSource = ei.getOlapDataSource();		
+		
     	Double value = null;
 		try {
 	    	Lexer lex = new Lexer(new java.io.StringReader(expression));
 	    	parser par = new parser(lex);
+	    	par.setWhatIfInfo(cellWrapper, model, olapDataSource);
 			value = (Double)par.parse().value;
 		} catch (Exception e) {
 			logger.debug("Error parsing What-if metalanguage expression",e);
 			String errorMessage = e.getMessage().replace(": Couldn't repair and continue parse", "");
 			throw new SpagoBIEngineRestServiceRuntimeException(errorMessage, this.getLocale(), e);
 		}   
-		
-		//Double value = Double.valueOf(expression);
-		SpagoBICellSetWrapper cellSetWrapper = (SpagoBICellSetWrapper) model
-				.getCellSet();
-		SpagoBICellWrapper cellWrapper = (SpagoBICellWrapper) cellSetWrapper
-				.getCell(ordinal);
 		CellTransformation transformation = new CellTransformation(value,
 				cellWrapper.getValue(), cellWrapper,
 				new DefaultWeightedAllocationAlgorithm(ei));

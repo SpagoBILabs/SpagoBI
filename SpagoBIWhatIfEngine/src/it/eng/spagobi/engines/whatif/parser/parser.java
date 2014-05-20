@@ -10,8 +10,14 @@ package it.eng.spagobi.engines.whatif.parser;
 // Fri May 16 15:47:21 CEST 2014
 //----------------------------------------------------
 
+import it.eng.spagobi.engines.whatif.cube.CubeUtilities;
+import it.eng.spagobi.engines.whatif.model.SpagoBICellWrapper;
 import java_cup.runtime.*;
 import java.util.*;
+
+import org.olap4j.OlapDataSource;
+
+import com.eyeq.pivot4j.PivotModel;
 
 /** CUP v0.11b beta 20140220 generated parser.
   * @version Fri May 16 15:47:21 CEST 2014
@@ -181,18 +187,17 @@ public class parser extends java_cup.runtime.lr_parser {
 		return this.verbose;
 	}
 	
-	
+	SpagoBICellWrapper cellWrapper;
+	PivotModel model; 
+	OlapDataSource olapDataSource;
 	/*
-		Draft for a method that set important information to retrieve
+		Set important information to retrieve
 		What-if context information. Ex: variable, members, etc...
 	*/
-	public void setWhatIfInfo(String context){
-	
-		/*
-			Do nothing (for now)
-			
-		*/
-		
+	public void setWhatIfInfo(SpagoBICellWrapper cellWrapper, PivotModel model, OlapDataSource olapDataSource){	
+		this.cellWrapper = cellWrapper;
+		this.model = model;
+		this.olapDataSource = olapDataSource;
 	}
 	
 	/*
@@ -202,6 +207,10 @@ public class parser extends java_cup.runtime.lr_parser {
 		Random random = new Random();
 		double rand = (double)random.nextInt(101-1) + 1;
 		return rand;
+	}
+	
+	public Double getMemberValue(LinkedList members){
+		return CubeUtilities.getMemberValue(members,this.cellWrapper,this.model,this.olapDataSource);
 	}
     
     /* Change the method report_error so it will display the line and
@@ -527,7 +536,7 @@ class CUP$parser$actions {
 		int mright = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
 		LinkedList m = (LinkedList)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
 		
-				 Double generated = parser.generateDouble();
+				 Double generated = parser.getMemberValue(m);
 				  if(parser.isVerbose()){System.out.println("*** found MEMBERS "+m+" replaced with "+generated);}
 				 /*RESULT = 100.0; */
 				 RESULT = generated;
