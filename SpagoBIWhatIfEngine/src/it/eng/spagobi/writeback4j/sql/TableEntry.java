@@ -49,11 +49,8 @@ public class TableEntry{
 
 	public String toString(Map<String, String> table2Alias, DefaultWeightedAllocationAlgorithmPersister qb){
 		
-		if(table==null || column==null){
-			return "";
-		}else{
-			return qb.getTableAlias(table2Alias, table)+"."+column;
-		}
+		return qb.getTableAlias(table2Alias, table)+"."+column;
+
 	}
 	public String toString(){
 		

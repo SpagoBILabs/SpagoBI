@@ -123,9 +123,15 @@ public class DefaultWeightedAllocationAlgorithmPersister {
 		
 		boolean first = true;
 		for (Iterator<IMemberCoordinates> iterator = memberCordinates.iterator(); iterator.hasNext();) {
-
+			StringBuffer subquery = null;
 			IMemberCoordinates aIMemberCordinates = (IMemberCoordinates) iterator.next();
-			if(!aIMemberCordinates.isAllMember()){
+			if(aIMemberCordinates.getTableName()==null){//degenerate dimension
+				subquery = new StringBuffer();
+				Map<TableEntry, String> where = buildWhereConditions(aIMemberCordinates, null);
+				Map<String, String> cubeTable2Alias = new HashMap<String, String>();
+				cubeTable2Alias.put(null, getCubeAlias());
+				addWhereCondition(subquery, where, cubeTable2Alias);
+			}else if(!aIMemberCordinates.isAllMember()){
 				whereConditions = new HashMap<TableEntry, String>();
 				selectFields = new HashSet<EquiJoin>();
 				fromTables = new HashSet<String>();
@@ -136,14 +142,17 @@ public class DefaultWeightedAllocationAlgorithmPersister {
 				addJoinConditions(fromTables, selectFields , aIMemberCordinates);
 				addInnerDimensionJoinConditions(fromTables, joinConditions, aIMemberCordinates);
 				
-				StringBuffer subquery = buildSelectQueryForIn(whereConditions, selectFields, joinConditions, fromTables);
+				subquery = buildSelectQueryForIn(whereConditions, selectFields, joinConditions, fromTables);
 				
+			}
+			if(subquery!=null){
 				if (!first){
 					query.append(" and ");
 				}
 				first = false;
 				query.append(subquery);
 			}
+
 		}
 		
 		
@@ -197,7 +206,9 @@ public class DefaultWeightedAllocationAlgorithmPersister {
 			Iterator<TableEntry> i = lelvel2Member.keySet().iterator();
 			while(i.hasNext()){
 				TableEntry aLevel = i.next();
-				from.add(aLevel.table);
+				if(from!=null){
+					from.add(aLevel.table);
+				}
 				condition2Value.put(new TableEntry(aLevel.column, aLevel.table), lelvel2Member.get(aLevel).getName()); 
 			}
 		}

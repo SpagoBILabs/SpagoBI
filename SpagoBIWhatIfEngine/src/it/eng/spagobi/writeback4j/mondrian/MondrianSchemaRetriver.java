@@ -48,6 +48,7 @@ public class MondrianSchemaRetriver implements ISchemaRetriver{
 	
 	public static String VERSION_COLUMN_NAME = "versione"; 
 	public static String TEMPORARY_TABLE_SUFFIX = "_tmp"; 
+	public static String ALL_MEMBER_NAME = "(All)";
 	
 	
 	public MondrianSchemaRetriver(MondrianDriver driver, String editCubeName) throws SpagoBIEngineException{
@@ -192,16 +193,20 @@ public class MondrianSchemaRetriver implements ISchemaRetriver{
 		logger.debug("IN");
 		List<MondrianDef.Level> levelColumns = new ArrayList<MondrianDef.Level>();
 		
-		MondrianDef.Level[] schemaLevels =  aHierarchy.levels;
-		int i=0;
-		
-		while (true) {
-			MondrianDef.Level aMondrianLevel = schemaLevels[i];
-			levelColumns.add(aMondrianLevel);
-			if(aMondrianLevel.getName().equals(memberLevel.getName())){
-				break;
+		if(memberLevel.getName().equals(ALL_MEMBER_NAME)){
+			logger.debug("All member for Hierarchy "+aHierarchy.getName());
+		}else{
+			MondrianDef.Level[] schemaLevels =  aHierarchy.levels;
+			int i=0;
+			
+			while (true) {
+				MondrianDef.Level aMondrianLevel = schemaLevels[i];
+				levelColumns.add(aMondrianLevel);
+				if(aMondrianLevel.name.equals(memberLevel.getName())){
+					break;
+				}
+				i++;
 			}
-			i++;
 		}
 		
 		logger.debug("OUT");
