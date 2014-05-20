@@ -3,6 +3,8 @@
  */
 package test.writeback;
 
+import it.eng.spagobi.tools.datasource.bo.DataSource;
+
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
@@ -13,29 +15,23 @@ package test.writeback;
  * @author ghedin
  *
  */
-public class MySQLTestCase extends WriteBackTestCase {
+public class MySQLTestCase extends AbstractWriteBackTestCase {
 
 	
-	public void testMysql(){
-		
-
-		it.eng.spagobi.tools.datasource.bo.DataSource ds = new it.eng.spagobi.tools.datasource.bo.DataSource();
-		
-
-		
+	public DataSource getDataSource(){
+		DataSource ds = new it.eng.spagobi.tools.datasource.bo.DataSource();
 		ds.setUser(TestConstants.MYSQL_USER);
 		ds.setPwd(TestConstants.MYSQL_PWD);
 		ds.setDriver(TestConstants.MYSQL_DRIVER);
 		String connectionUrl = TestConstants.MYSQL_URL;
 		ds.setUrlConnection(connectionUrl.replace("jdbc:mondrian:Jdbc=", ""));
-		
-		Double ration = persistTransformations(ds, "D:/Sviluppo/SpagoBI/progetti/Trunk_40/runtime/resources/Olap/FoodMartMySQLTest.xml");
-		
-
-		
-		assertTrue(ration<accurancy);
-		
+		return ds;
 	}
+	
+	public String getCatalogue(){
+		return "D:/Sviluppo/SpagoBI/progetti/Trunk_40/runtime/resources/Olap/FoodMartMySQLTest.xml";
+	}
+	
 	
 
 }

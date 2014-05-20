@@ -30,15 +30,21 @@ public class DefaultWeightedAllocationAlgorithm extends AllocationAlgorithm {
 	private static Logger logger = Logger.getLogger(DefaultWeightedAllocationAlgorithm.class);
 	private WhatIfEngineInstance ei;
 	private DefaultWeightedAllocationAlgorithmPersister persister;
+	private String lastQuery;
 	
 	
-	
-	public DefaultWeightedAllocationAlgorithm(WhatIfEngineInstance ei) {
+	public DefaultWeightedAllocationAlgorithm(WhatIfEngineInstance ei, boolean useInClause) {
 		super();
 		this.ei = ei;
 		persister = new DefaultWeightedAllocationAlgorithmPersister(ei.getWriteBackManager().getRetriver(), ei.getDataSource());
+		persister.setUseInClause(useInClause);
 	}
 
+	
+	public DefaultWeightedAllocationAlgorithm(WhatIfEngineInstance ei) {
+		this(ei, true);
+	}
+	
 	@Override
 	public String getName() {
 		return NAME;
@@ -138,8 +144,15 @@ public class DefaultWeightedAllocationAlgorithm extends AllocationAlgorithm {
 
 	private void persistInternal(SpagoBICellWrapper cell, Object oldValue,Object newValue) throws Exception {
 		Double prop = ((Number) newValue).doubleValue()/((Number) oldValue).doubleValue();
-		persister.executeProportionalUpdate(cell.getMembers(ei.getPivotModel()), prop);
+		lastQuery = persister.executeProportionalUpdate(cell.getMembers(ei.getPivotModel()), prop);
 	}
+
+
+	public String getLastQuery() {
+		return lastQuery;
+	}
+	
+	
 
 }
 	

@@ -3,6 +3,9 @@
  */
 package test.writeback;
 
+import it.eng.spagobi.tools.datasource.bo.DataSource;
+
+
 
 /* SpagoBI, the Open Source Business Intelligence suite
 
@@ -14,29 +17,26 @@ package test.writeback;
  * @author ghedin
  *
  */
-public class OracleTestCase extends WriteBackTestCase {
+public class OracleTestCase extends AbstractWriteBackTestCase {
 
-	
-	public void testOracle(){
-		
-
-		it.eng.spagobi.tools.datasource.bo.DataSource ds = new it.eng.spagobi.tools.datasource.bo.DataSource();
-		
-
-		
+	public DataSource getDataSource(){
+		DataSource ds = new it.eng.spagobi.tools.datasource.bo.DataSource();
 		ds.setUser(TestConstants.ORACLE_USER);
 		ds.setPwd(TestConstants.ORACLE_PWD);
 		ds.setDriver(TestConstants.ORACLE_DRIVER);
 		String connectionUrl = TestConstants.ORACLE_URL;
 		ds.setUrlConnection(connectionUrl.replace("jdbc:mondrian:Jdbc=", ""));
-		
-		Double ration = persistTransformations(ds, "D:/Sviluppo/SpagoBI/progetti/Trunk_40/runtime/resources/Olap/FoodMartOracleSQLTest.xml");
-		
-
-		
-		assertTrue(ration<accurancy);
-		
+		return ds;
 	}
+	
+	public String getCatalogue(){
+		
+		return "D:/Sviluppo/SpagoBI/progetti/Trunk_40/runtime/resources/Olap/FoodMartOracleSQLTest.xml";
+	}
+	
+
+	
+
 	
 
 }
