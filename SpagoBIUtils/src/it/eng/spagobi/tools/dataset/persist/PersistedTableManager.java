@@ -401,7 +401,7 @@ public class PersistedTableManager {
 
 		if (type.contains("java.lang.String")){
 			toReturn = " VARCHAR ";
-			if (getDialect().contains(DIALECT_ORACLE)) { 
+			if (getDialect().contains(DIALECT_ORACLE) || getDialect().contains(DIALECT_ORACLE9i10g)) { 
 				toReturn = " VARCHAR2 ";	
 			}
 			if (getColumnSize().get(fieldMetaData.getName()) == null){
@@ -415,14 +415,14 @@ public class PersistedTableManager {
 			toReturn = " INTEGER ";			
 		}else if (type.contains("java.lang.Long")){
 			toReturn = " NUMERIC ";	
-			if (getDialect().contains(DIALECT_ORACLE)) { 
+			if (getDialect().contains(DIALECT_ORACLE) || getDialect().contains(DIALECT_ORACLE9i10g)) { 
 				toReturn = " NUMBER ";	
 			}else if (getDialect().contains(DIALECT_MYSQL)) { 
 				toReturn = " BIGINT ";	
 			}	
 		}else if (type.contains("java.lang.BigDecimal") || type.contains("java.math.BigDecimal")){
 			toReturn = " NUMERIC ";	
-			if (getDialect().contains(DIALECT_ORACLE)) { 
+			if (getDialect().contains(DIALECT_ORACLE) || getDialect().contains(DIALECT_ORACLE9i10g)) { 
 				toReturn = " NUMBER ";	
 			}else if (getDialect().contains(DIALECT_MYSQL)) { 
 				toReturn = " FLOAT ";	
@@ -432,7 +432,7 @@ public class PersistedTableManager {
 			if (getDialect().contains(DIALECT_POSTGRES) || getDialect().contains(DIALECT_SQLSERVER) || 
 					getDialect().contains(DIALECT_TERADATA)) { 
 				toReturn = " NUMERIC ";	
-			}else if (getDialect().contains(DIALECT_ORACLE)) { 
+			}else if (getDialect().contains(DIALECT_ORACLE) || getDialect().contains(DIALECT_ORACLE9i10g)) { 
 				toReturn = " NUMBER ";	
 			}
 		}else if (type.contains("java.lang.Float")){
@@ -440,12 +440,13 @@ public class PersistedTableManager {
 			if (getDialect().contains(DIALECT_POSTGRES) || getDialect().contains(DIALECT_SQLSERVER) || 
 					getDialect().contains(DIALECT_TERADATA)) { 
 				toReturn = " NUMERIC ";	
-			}else if (getDialect().contains(DIALECT_ORACLE)) { 
+			}else if (getDialect().contains(DIALECT_ORACLE) || getDialect().contains(DIALECT_ORACLE9i10g)) { 
 				toReturn = " NUMBER ";	
 			}
 		}else if (type.contains("java.lang.Boolean")){
 			toReturn = " BOOLEAN ";
-			if (getDialect().contains(DIALECT_ORACLE) || getDialect().contains(DIALECT_TERADATA) || 
+			if (getDialect().contains(DIALECT_ORACLE) || getDialect().contains(DIALECT_ORACLE9i10g) ||
+					getDialect().contains(DIALECT_TERADATA) || 
 					getDialect().contains(DIALECT_DB2)) { 
 				toReturn = " SMALLINT ";	
 			}else if (getDialect().contains(DIALECT_SQLSERVER)) { 
@@ -463,7 +464,7 @@ public class PersistedTableManager {
 			}
 		}else if (type.contains("[B")){
 			toReturn = " TEXT ";
-			if (getDialect().contains(DIALECT_ORACLE)) { 
+			if (getDialect().contains(DIALECT_ORACLE) || getDialect().contains(DIALECT_ORACLE9i10g)) { 
 				toReturn = " BLOB ";	
 			}else if (getDialect().contains(DIALECT_MYSQL)) { 
 				toReturn = " MEDIUMBLOB ";	
@@ -474,7 +475,7 @@ public class PersistedTableManager {
 			}
 		}else if (type.contains("[C")){
 			toReturn = " TEXT ";
-			if (getDialect().contains(DIALECT_ORACLE)) { 
+			if (getDialect().contains(DIALECT_ORACLE) || getDialect().contains(DIALECT_ORACLE9i10g)) { 
 				toReturn = " CLOB ";	
 			}
 		}else {
@@ -608,7 +609,7 @@ public class PersistedTableManager {
 		String statement = null;
 		
 		//get the list of tables names
-		if (dialect.contains(DIALECT_ORACLE)) {
+		if (dialect.contains(DIALECT_ORACLE) || getDialect().contains(DIALECT_ORACLE9i10g)) {
 			statement = "SELECT TABLE_NAME "+
 						"FROM USER_TABLES "+
 						"WHERE TABLE_NAME LIKE '" + prefix.toUpperCase() + "%'";
