@@ -247,6 +247,15 @@ td[contenteditable="true"]:focus {
 .empty-rows{
 	background-image: url(../img/empty_rows.png);
 }
+.save-icon{
+	background-image: url(../img/save16.png);
+}
+.save-new-icon{
+	background-image: url(../img/save-version16.png);
+}
+.clean-icon{
+	background-image: url(../img/clean16.png);
+}
 /*------------------*/
 /* Multi hierarchy */
 /*------------------*/

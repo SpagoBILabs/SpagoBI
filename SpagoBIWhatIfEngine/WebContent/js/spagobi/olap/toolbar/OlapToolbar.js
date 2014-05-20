@@ -126,7 +126,7 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 
 		
 		this.showMdx = Ext.create('Ext.Button', {
-			text: LN('sbi.olap.toolbar.mdx'),
+			tooltip: LN('sbi.olap.toolbar.mdx'),
 			iconCls: 'mdx',
 			handler: function() {
 				this.showMdxWindow();
@@ -136,7 +136,7 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 		});
 		
 		this.undo = Ext.create('Ext.Button', {
-			text: LN('sbi.olap.toolbar.undo'),
+			tooltip: LN('sbi.olap.toolbar.undo'),
 			iconCls: 'undo',
 			handler: function() {
 				Sbi.olap.eventManager.undo();
@@ -186,8 +186,8 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 			reorderable: true
 		});
 		this.clean = Ext.create('Ext.Button', {
-			text: LN('sbi.olap.toolbar.clean'),
-			iconCls: 'undo',
+			tooltip: LN('sbi.olap.toolbar.clean'),
+			iconCls: 'clean-icon',
 			handler: function() {
 				Sbi.olap.eventManager.cleanCache();
 			},
@@ -196,8 +196,8 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 		});
 		
 		this.persist = Ext.create('Ext.Button', {
-			text: "PERSIST",
-			iconCls: 'undo',
+			tooltip: LN('sbi.olap.toolbar.save'),
+			iconCls: 'save-icon',
 			handler: function() {
 				Sbi.olap.eventManager.persistTransformations();
 			},
@@ -206,14 +206,16 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 		});
 		
 		this.persistNewVersion = Ext.create('Ext.Button', {
-			text: "PERSIST-NEW-VERSION",
-			iconCls: 'undo',
+			tooltip: LN('sbi.olap.toolbar.save.new'),
+			iconCls: 'save-new-icon',
 			handler: function() {
 				Sbi.olap.eventManager.persistNewVersionTransformations();
 			},
 			scope:this,
 			reorderable: true
 		});
+		
+
 		
 		var pressedBtn = this.config.toolbarConfig.drillType;
 		if(pressedBtn == 'position'){
