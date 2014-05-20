@@ -36,6 +36,7 @@ public class DefaultWeightedAllocationAlgorithmPersister {
 	ISchemaRetriver retriver;
 	private int tableCount = 0;
 	IDataSource dataSource;
+	private boolean useInClause = true;
 	
 	public static transient Logger logger = Logger.getLogger(DefaultWeightedAllocationAlgorithmPersister.class);
 	
@@ -44,7 +45,7 @@ public class DefaultWeightedAllocationAlgorithmPersister {
 		this.dataSource = dataSource;
 	}
 	
-	public void executeProportionalUpdate(Member[] members, double prop) throws SpagoBIEngineException{
+	public String executeProportionalUpdate(Member[] members, double prop) throws SpagoBIEngineException{
 		//list of the coordinates for the members
 		List<IMemberCoordinates> memberCordinates = new ArrayList<IMemberCoordinates>();
 		
@@ -67,11 +68,19 @@ public class DefaultWeightedAllocationAlgorithmPersister {
 			}
 		}
 		
-		buildProportionalUpdateSingleSubquery(memberCordinates, query);
-	//	buildProportionalUpdateOneSubqueryForDimension(memberCordinates, query);
+		String queryString;
+		
+		if(useInClause){
+			queryString = buildProportionalUpdateSingleSubquery(memberCordinates, query);
+		}else{
+			queryString = buildProportionalUpdateOneSubqueryForDimension(memberCordinates, query);
+		}
+		
+		return queryString;
+		
 	}
 	
-	private void buildProportionalUpdateOneSubqueryForDimension(List<IMemberCoordinates> memberCordinates, StringBuffer query) throws SpagoBIEngineException{
+	private String buildProportionalUpdateOneSubqueryForDimension(List<IMemberCoordinates> memberCordinates, StringBuffer query) throws SpagoBIEngineException{
 		
 		//List of where conditions
 		Map<TableEntry, String> whereConditions = new HashMap<TableEntry, String>();
@@ -84,16 +93,34 @@ public class DefaultWeightedAllocationAlgorithmPersister {
 		
 		query.append(" where exists ( ");
 		
+		
+		StringBuffer degenerateDimensionConditions = new StringBuffer();
+		
 		for (Iterator<IMemberCoordinates> iterator = memberCordinates.iterator(); iterator.hasNext();) {
 			IMemberCoordinates aIMemberCordinates = (IMemberCoordinates) iterator.next();
-			whereConditions.putAll(buildWhereConditions(aIMemberCordinates, fromTables));
-			addJoinConditions(fromTables, joinConditions, aIMemberCordinates);
-			addInnerDimensionJoinConditions(fromTables, joinConditions, aIMemberCordinates);
+			if(aIMemberCordinates.getTableName()==null){//degenerate dimension
+				//create a where in the cube for each level of the degenerate dimension
+				Map<TableEntry, String> where = buildWhereConditions(aIMemberCordinates, null);
+				Map<String, String> cubeTable2Alias = new HashMap<String, String>();
+				cubeTable2Alias.put(null, getCubeAlias());
+				addWhereCondition(degenerateDimensionConditions, where, cubeTable2Alias);
+			}else{
+				whereConditions.putAll(buildWhereConditions(aIMemberCordinates, fromTables));
+				addJoinConditions(fromTables, joinConditions, aIMemberCordinates);
+				addInnerDimensionJoinConditions(fromTables, joinConditions, aIMemberCordinates);
+			}
+			
+
 		}
 		
 		buildSelectQuery(whereConditions, joinConditions, fromTables, query);
 		
 		query.append(" ) ");
+		
+		if(degenerateDimensionConditions.length()>2){
+			query.append(" and ");
+			query.append(degenerateDimensionConditions);
+		}
 		
 		String queryString = query.toString();
 		
@@ -104,9 +131,11 @@ public class DefaultWeightedAllocationAlgorithmPersister {
 		updateStatement.executeStatement(connection);
 	
 		connManager.closeConnection();
+		
+		return queryString;
 	}
 	
-	private void buildProportionalUpdateSingleSubquery(List<IMemberCoordinates> memberCordinates, StringBuffer query) throws SpagoBIEngineException{
+	private String buildProportionalUpdateSingleSubquery(List<IMemberCoordinates> memberCordinates, StringBuffer query) throws SpagoBIEngineException{
 		
 		//List of where conditions
 		Map<TableEntry, String> whereConditions;
@@ -170,6 +199,8 @@ public class DefaultWeightedAllocationAlgorithmPersister {
 		updateStatement.executeStatement(connection);
 	
 		connManager.closeConnection();
+		
+		return queryString;
 	}
 	
 	
@@ -429,5 +460,15 @@ public class DefaultWeightedAllocationAlgorithmPersister {
 			}
 		}
 	}
+
+	public boolean isUseInClause() {
+		return useInClause;
+	}
+
+	public void setUseInClause(boolean useInClause) {
+		this.useInClause = useInClause;
+	}
+	
+	
 	
 }

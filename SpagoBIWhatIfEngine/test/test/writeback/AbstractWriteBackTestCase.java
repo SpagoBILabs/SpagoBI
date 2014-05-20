@@ -10,13 +10,10 @@ import it.eng.spagobi.engines.whatif.model.SpagoBICellWrapper;
 import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
 import it.eng.spagobi.engines.whatif.model.transform.CellTransformation;
 import it.eng.spagobi.engines.whatif.model.transform.algorithm.DefaultWeightedAllocationAlgorithm;
+import it.eng.spagobi.tools.datasource.bo.DataSource;
 import it.eng.spagobi.writeback4j.mondrian.CacheManager;
 
 import java.util.Random;
-
-import org.eigenbase.xom.AssertFailure;
-import org.olap4j.CellSet;
-import org.olap4j.Position;
 
 import test.AbstractWhatIfTestCase;
 
@@ -30,7 +27,7 @@ import test.AbstractWhatIfTestCase;
  * @author ghedin
  *
  */
-public class WriteBackTestCase extends AbstractWhatIfTestCase {
+public abstract class AbstractWriteBackTestCase extends AbstractWhatIfTestCase {
 	
 	public static final Double accurancy = 0.00001d;
 	
@@ -47,17 +44,17 @@ public class WriteBackTestCase extends AbstractWhatIfTestCase {
 	
 
 	
-	public Double persistTransformations(it.eng.spagobi.tools.datasource.bo.DataSource ds, String catalog){
+	public Double persistTransformations(it.eng.spagobi.tools.datasource.bo.DataSource ds, String catalog, boolean useIn){
 		WhatIfEngineInstance ei = getWhatifengineiEngineInstance(ds, catalog);
 		SpagoBIPivotModel pivotModel = (SpagoBIPivotModel)ei.getPivotModel();
 	
 		SpagoBICellSetWrapper cellSetWrapper = (SpagoBICellSetWrapper)pivotModel.getCellSet();
 		SpagoBICellWrapper cellWrapper = (SpagoBICellWrapper) cellSetWrapper.getCell(0);
 
-		Double value = 1000000d;
+		Double value = (new Random()).nextFloat()*1000000d;
 		
-		
-		CellTransformation transformation = new CellTransformation(value,cellWrapper.getValue(), cellWrapper, new DefaultWeightedAllocationAlgorithm(ei));
+		DefaultWeightedAllocationAlgorithm al = new DefaultWeightedAllocationAlgorithm(ei, useIn);
+		CellTransformation transformation = new CellTransformation(value,cellWrapper.getValue(), cellWrapper, al);
 		cellSetWrapper.applyTranformation(transformation);
 
 			try {
@@ -79,11 +76,39 @@ public class WriteBackTestCase extends AbstractWhatIfTestCase {
 
 		Double newValue =  (Double) cellWrapper.getValue();
 		Double ration = 1-newValue/value;
-		
+		System.out.println("Execute query = "+ al.getLastQuery());
 		return ration;
+	}
+	
+	public void testWithIn(){
+
+		long dateA = System.currentTimeMillis();
+		Double ration = persistTransformations(getDataSource(),getCatalogue() , true);
+		long dateB = System.currentTimeMillis();
 		
+		System.out.println("Time with in "+(dateB-dateA));
+		System.out.println("Ratio is "+ration);
+		
+		assertTrue(ration<accurancy);
 		
 	}
+	
+	public void testNoIn(){
+		
+		long dateA = System.currentTimeMillis();
+		Double ration = persistTransformations(getDataSource(),getCatalogue(), false);
+		long dateB = System.currentTimeMillis();
+
+		System.out.println("Time no in "+(dateB-dateA));
+		System.out.println("Ratio is "+ration);
+		
+		assertTrue(ration<accurancy);
+		
+	}
+	
+	public abstract DataSource getDataSource();
+	
+	public abstract String getCatalogue();
 	
 
 }
