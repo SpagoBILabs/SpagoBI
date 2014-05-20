@@ -75,6 +75,9 @@ Sbi.locale.ln['sbi.olap.toolbar.showParentMembers'] = 'Mostra membri padri';
 Sbi.locale.ln['sbi.olap.toolbar.hideSpans'] = 'Nascondi spans';
 Sbi.locale.ln['sbi.olap.toolbar.showProperties'] = 'Mostra proprieta';
 Sbi.locale.ln['sbi.olap.toolbar.suppressEmpty'] = 'Sopprimi righe/colonne vuote';
+Sbi.locale.ln['sbi.olap.toolbar.save'] = 'Persistere le modifiche';
+Sbi.locale.ln['sbi.olap.toolbar.save.new'] = 'Salvare le modifiche in una nuova versione';
+
 //===================================================================
 //FILTERS
 //===================================================================

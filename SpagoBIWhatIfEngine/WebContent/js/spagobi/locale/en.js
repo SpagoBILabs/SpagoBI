@@ -74,11 +74,13 @@ Sbi.locale.ln['sbi.common.select'] = 'Select';
 Sbi.locale.ln['sbi.olap.toolbar.mdx'] = 'Mdx Query';
 Sbi.locale.ln['sbi.olap.toolbar.drill.mode'] = 'Drill mode';
 Sbi.locale.ln['sbi.olap.toolbar.undo'] = 'Undo';
-Sbi.locale.ln['sbi.olap.toolbar.clean'] = 'Clean cache';
+Sbi.locale.ln['sbi.olap.toolbar.clean'] = 'Clear_cache';
 Sbi.locale.ln['sbi.olap.toolbar.showParentMembers'] = 'Show parent members';
 Sbi.locale.ln['sbi.olap.toolbar.hideSpans'] = 'Hide spans';
 Sbi.locale.ln['sbi.olap.toolbar.showProperties'] = 'Show properties';
-Sbi.locale.ln['sbi.olap.toolbar.suppressEmpty'] = 'Suppress empty rows/columns'
+Sbi.locale.ln['sbi.olap.toolbar.suppressEmpty'] = 'Suppress empty rows/columns';
+Sbi.locale.ln['sbi.olap.toolbar.save'] = 'Persist_modifications';
+Sbi.locale.ln['sbi.olap.toolbar.save.new'] = "Persist_in_a_new_version";
 //===================================================================
 //FILTERS
 //===================================================================
