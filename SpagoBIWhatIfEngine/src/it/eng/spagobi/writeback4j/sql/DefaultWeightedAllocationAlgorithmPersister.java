@@ -126,6 +126,8 @@ public class DefaultWeightedAllocationAlgorithmPersister {
 			StringBuffer subquery = null;
 			IMemberCoordinates aIMemberCordinates = (IMemberCoordinates) iterator.next();
 			if(aIMemberCordinates.getTableName()==null){//degenerate dimension
+				
+				//create a where in the cube for each level of the degenerate dimension
 				subquery = new StringBuffer();
 				Map<TableEntry, String> where = buildWhereConditions(aIMemberCordinates, null);
 				Map<String, String> cubeTable2Alias = new HashMap<String, String>();
