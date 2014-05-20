@@ -48,6 +48,7 @@ import org.apache.axis.utils.ByteArrayOutputStream;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
 import org.olap4j.OlapDataSource;
+import org.olap4j.metadata.Member;
 
 import com.eyeq.pivot4j.PivotModel;
 import com.eyeq.pivot4j.export.poi.ExcelExporter;
@@ -123,7 +124,7 @@ public class ModelResource extends AbstractWhatIfEngineService {
 				new DefaultWeightedAllocationAlgorithm(ei));
 		cellSetWrapper.applyTranformation(transformation);
 		String table = renderModel(model);
-		
+
 		
 		logger.debug("OUT");
 		return table;

@@ -46,7 +46,7 @@ public class MondrianSchemaRetriver implements ISchemaRetriver{
 	MondrianDef.Schema schema;
 	MondrianDef.Cube editCube;
 	
-	public static String VERSION_COLUMN_NAME = "version"; 
+	public static String VERSION_COLUMN_NAME = "versione"; 
 	public static String TEMPORARY_TABLE_SUFFIX = "_tmp"; 
 	
 	
@@ -164,10 +164,11 @@ public class MondrianSchemaRetriver implements ISchemaRetriver{
 		logger.debug("IN");
 		
 		Map<TableEntry, Member> mapTableEntryValue = new HashMap<TableEntry, Member>();
-		int memberDepth =  member.getDepth();
+		//int memberDepth =  member.getDepth();
+		Level memberLevel = member.getLevel();
 		
 		//get all the levels starting from the root to the one that contains the passed member
-		List<MondrianDef.Level> memberValues =  getLevels(memberDepth, mondrianHierarchy);
+		List<MondrianDef.Level> memberValues =  getLevels(memberLevel, mondrianHierarchy);
 		
 		//Create a Map that links the member with the level that contains it
 		Member aMember = member;
@@ -187,13 +188,20 @@ public class MondrianSchemaRetriver implements ISchemaRetriver{
 	 * @param aHierarchy 
 	 * @return the first "levelsDepth" levels of aHierarchy
 	 */
-	public List<MondrianDef.Level> getLevels(int levelsDepth, MondrianDef.Hierarchy aHierarchy){
+	public List<MondrianDef.Level> getLevels(Level memberLevel, MondrianDef.Hierarchy aHierarchy){
 		logger.debug("IN");
 		List<MondrianDef.Level> levelColumns = new ArrayList<MondrianDef.Level>();
 		
 		MondrianDef.Level[] schemaLevels =  aHierarchy.levels;
-		for (int i = 0; i < levelsDepth; i++) {
-			levelColumns.add(schemaLevels[i]);
+		int i=0;
+		
+		while (true) {
+			MondrianDef.Level aMondrianLevel = schemaLevels[i];
+			levelColumns.add(aMondrianLevel);
+			if(aMondrianLevel.getName().equals(memberLevel.getName())){
+				break;
+			}
+			i++;
 		}
 		
 		logger.debug("OUT");
