@@ -6,9 +6,13 @@
 
 package it.eng.spagobi.writeback4j.sql;
 
+import it.eng.spagobi.engines.whatif.common.WhatIfConstants;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.writeback4j.ISchemaRetriver;
-import it.eng.spagobi.writeback4j.mondrian.MondrianSchemaRetriver;
+import it.eng.spagobi.writeback4j.sql.dbdescriptor.FoodmartDbDescriptor;
+import it.eng.spagobi.writeback4j.sql.dbdescriptor.IDbSchemaDescriptor;
+
+import java.util.Iterator;
 
 import org.apache.log4j.Logger;
 
@@ -23,7 +27,6 @@ public class VersionManagementStatements {
 	ISchemaRetriver retriever;
 	IDataSource dataSource;
 	String editCubeTableName;
-	String editCubeTemporaryTableName;
 	
 	
 	public static transient Logger logger = Logger.getLogger(VersionManagementStatements.class);
@@ -34,20 +37,74 @@ public class VersionManagementStatements {
 		
 		editCubeTableName = retriever.getEditCubeTableName();
 		logger.debug("Edit table name is: "+editCubeTableName);
-		
-		editCubeTemporaryTableName = retriever.getEditTemporaryCubeTableName();
-		logger.debug("Temporary Edit table name is: "+editCubeTableName);
+
 	}
 
 	
 	
 	public 	String buildGetLastVersion(){
 		logger.debug("IN");
-		String statement = "select MAX("+MondrianSchemaRetriver.VERSION_COLUMN_NAME+") as "+MondrianSchemaRetriver.VERSION_COLUMN_NAME+" from "+editCubeTableName;
+		String statement = "select MAX("+WhatIfConstants.VERSION_COLUMN_NAME+") as "+WhatIfConstants.VERSION_COLUMN_NAME+" from "+editCubeTableName;
 		logger.debug("OUT");
 		return statement;
 	}
 	
+	
+
+
+	
+	
+	public String buildInserttoDuplicateData(Integer lastVersion){
+	logger.debug("IN");
+	
+	
+	IDbSchemaDescriptor descriptor = new FoodmartDbDescriptor();
+
+	
+	String columnsListString="";
+	String columnsListStringVersionWritten="";
+	
+	for (Iterator iterator = descriptor.getColumnNames(editCubeTableName).iterator(); iterator.hasNext();) {
+		String s = (String) iterator.next();
+		
+		if(s.equals(WhatIfConstants.VERSION_COLUMN_NAME)){
+			columnsListString+=" "+s+" ";
+			columnsListStringVersionWritten+=" "+(lastVersion+1)+" ";
+			
+		}
+		else{
+		columnsListString+=" "+s+" ";
+		columnsListStringVersionWritten+=" "+s+" ";
+		
+		}
+		
+		
+		if(iterator.hasNext()){
+			columnsListString+=",";
+			columnsListStringVersionWritten+=",";
+		}
+	}
+	
+	
+	
+	logger.debug("Columns of virtual table are: "+columnsListString);
+	
+	
+	String statement = "";
+	
+	statement = "insert into "+editCubeTableName+" ("+columnsListString+") "
+			+" select "+columnsListStringVersionWritten+" from "+editCubeTableName
+			+" where "+WhatIfConstants.VERSION_COLUMN_NAME+"="+(lastVersion);
+
+	logger.debug("Statement for duplicating data of last version: "+statement);
+
+	logger.debug("OUT");
+	return statement;
+	}
+	
+
+
+	/*
 	
 	public String buildInsertInTemporaryStatement(Integer actualVersion){
 	logger.debug("IN");
@@ -73,7 +130,7 @@ public class VersionManagementStatements {
 		return statement;
 	}
 	
-	
+
 	public String buildInsertInVirtualStatement(Integer lastVersion){
 	logger.debug("IN");
 	
@@ -99,12 +156,9 @@ public class VersionManagementStatements {
 	logger.debug("OUT");
 	return statement;
 	}
-	
 
 	
-		
-	
-	/*
+
 	public String buildStatement(Long actualVersion){
 	logger.debug("IN");
 	

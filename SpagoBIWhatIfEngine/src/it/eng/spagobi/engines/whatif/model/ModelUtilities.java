@@ -1,12 +1,11 @@
 package it.eng.spagobi.engines.whatif.model;
 
-import org.apache.log4j.Logger;
-
-import com.eyeq.pivot4j.PivotModel;
-
 import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
-import it.eng.spagobi.engines.whatif.api.ModelResource;
+
 import it.eng.spagobi.writeback4j.mondrian.CacheManager;
+
+import org.apache.log4j.Logger;
+import com.eyeq.pivot4j.PivotModel;
 
 public class ModelUtilities {
 	public static transient Logger logger = Logger.getLogger(ModelUtilities.class);

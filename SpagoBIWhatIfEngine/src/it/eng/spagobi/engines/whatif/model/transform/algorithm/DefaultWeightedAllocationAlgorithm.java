@@ -138,7 +138,7 @@ public class DefaultWeightedAllocationAlgorithm extends AllocationAlgorithm {
 
 	private void persistInternal(SpagoBICellWrapper cell, Object oldValue,Object newValue) throws Exception {
 		Double prop = ((Number) newValue).doubleValue()/((Number) oldValue).doubleValue();
-		persister.executeProportionalUpdate(cell.getMembers(), prop);
+		persister.executeProportionalUpdate(cell.getMembers(ei.getPivotModel()), prop);
 	}
 
 }
