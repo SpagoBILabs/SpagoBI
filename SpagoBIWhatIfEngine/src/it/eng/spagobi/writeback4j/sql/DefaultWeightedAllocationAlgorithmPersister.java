@@ -288,8 +288,6 @@ public class DefaultWeightedAllocationAlgorithmPersister {
 		subquery.append(where);
 		subquery.append(")");
 		
-		
-		
 		return subquery;
 		
 	}
@@ -417,13 +415,6 @@ public class DefaultWeightedAllocationAlgorithmPersister {
 				buffer.append(getTableAlias(table2Alias, table));
 			}
 		}
-
-
 	}
-	
-	
-	
-	
-
 	
 }
