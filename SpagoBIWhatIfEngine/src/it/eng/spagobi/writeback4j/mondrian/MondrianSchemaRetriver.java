@@ -46,8 +46,6 @@ public class MondrianSchemaRetriver implements ISchemaRetriver{
 	MondrianDef.Schema schema;
 	MondrianDef.Cube editCube;
 	
-	public static String VERSION_COLUMN_NAME = "versione"; 
-	public static String TEMPORARY_TABLE_SUFFIX = "_tmp"; 
 	public static String ALL_MEMBER_NAME = "(All)";
 	
 	
@@ -244,9 +242,7 @@ public class MondrianSchemaRetriver implements ISchemaRetriver{
 	
 	
 	
-	public String getEditTemporaryCubeTableName() {
-		return editCube.fact.getAlias()+TEMPORARY_TABLE_SUFFIX;
-	}
+
 	
 	
 	/** Returns physical name of all columns of edit cube

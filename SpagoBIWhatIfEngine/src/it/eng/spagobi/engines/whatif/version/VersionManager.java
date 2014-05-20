@@ -7,6 +7,7 @@
 package it.eng.spagobi.engines.whatif.version;
 
 import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
+import it.eng.spagobi.engines.whatif.common.WhatIfConstants;
 import it.eng.spagobi.engines.whatif.exception.WhatIfPersistingTransformationException;
 import it.eng.spagobi.engines.whatif.model.ModelConfig;
 import it.eng.spagobi.engines.whatif.model.ModelUtilities;
@@ -15,11 +16,9 @@ import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIEngineRestServiceRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-import it.eng.spagobi.writeback4j.mondrian.MondrianSchemaRetriver;
 import it.eng.spagobi.writeback4j.sql.ConnectionManager;
 import it.eng.spagobi.writeback4j.sql.SqlInsertStatement;
 import it.eng.spagobi.writeback4j.sql.SqlQueryStatement;
-import it.eng.spagobi.writeback4j.sql.SqlUpdateStatement;
 import it.eng.spagobi.writeback4j.sql.VersionManagementStatements;
 
 import java.util.Iterator;
@@ -44,7 +43,7 @@ public class VersionManager {
 	private WhatIfEngineInstance instance;
 	private ModelConfig modelConfig;
 
-	public static final String VERSION_DIMENSION_NAME = "[Version]";
+	
 
 	public VersionManager(WhatIfEngineInstance instance, PivotModel model, ModelConfig modelConfig) {
 		super();
@@ -67,7 +66,7 @@ public class VersionManager {
 		Integer lastVersion = getLastVersion(connectionManager);
 		logger.debug("Last version to be increased is "+lastVersion);
 		
-		logger.debug("Duplciate data with new version");
+		logger.debug("Duplicate data with new version");
 		increaseActualVersion(connectionManager, lastVersion);
 		
 		//Integer lastVersion = 8;
@@ -102,7 +101,7 @@ public class VersionManager {
 		try {
 			String sqlQuery = statement.buildGetLastVersion();	
 			SqlQueryStatement queryStatement = new SqlQueryStatement(instance.getDataSource(), sqlQuery) ;
-			Object o= queryStatement.getSingleValue(connectionManager.getConnection(), MondrianSchemaRetriver.VERSION_COLUMN_NAME);
+			Object o= queryStatement.getSingleValue(connectionManager.getConnection(), WhatIfConstants.VERSION_COLUMN_NAME);
 			if(o != null){
 				logger.debug("Last version is "+o);	
 				lastVersion = (Integer) o;
@@ -135,56 +134,69 @@ public class VersionManager {
 
 		VersionManagementStatements statement = new VersionManagementStatements(instance.getWriteBackManager().getRetriver(), instance.getDataSource());
 		
-
 		
-		logger.debug("delete temporary table");
 		
-		try {
-			String sqlDelete = statement.buildDeleteTemporaryStatement();		
-			SqlUpdateStatement deleteStatement = new SqlUpdateStatement(sqlDelete) ;
-			deleteStatement.executeStatement(connectionManager.getConnection());
-		} catch (SpagoBIEngineException e) {
-			logger.error("Error in increasing version procedure: error when deleteing temporary table", e);
-			connectionManager.closeConnection();
-			throw new SpagoBIRuntimeException("Error in increasing version procedure: error when deleteing temporary table", e);
-		}		
-		
-		logger.debug("Bring data of current version into temporary table");
+		logger.debug("Data duplication");
 		
 		try {
-			String sqlInsertIntoTemporary = statement.buildInsertInTemporaryStatement(lastVersion);		
-			SqlInsertStatement insertStatement = new SqlInsertStatement( sqlInsertIntoTemporary) ;
-			insertStatement.executeStatement(connectionManager.getConnection());
-		} catch (SpagoBIEngineException e) {
-			logger.error("Error in increasing version procedure: error when bringing data in temporary table", e);
-			connectionManager.closeConnection();
-			throw new SpagoBIRuntimeException("Error in increasing version procedure: error when bringing data in temporary table", e);
-		}		
-
-		logger.debug("Update data of temporary table to current version");
-		
-		try {
-			String sqlUpdateVersionTemporary = statement.buildUpdateVersionNumberStatement(lastVersion);		
-			SqlUpdateStatement updateStatement = new SqlUpdateStatement(sqlUpdateVersionTemporary) ;
-			updateStatement.executeStatement(connectionManager.getConnection());
-		} catch (SpagoBIEngineException e) {
-			logger.error("Error in increasing version procedure: error when updating version number in temporary table", e);
-			connectionManager.closeConnection();
-			throw new SpagoBIRuntimeException("Error in increasing version procedure: error when updating version number in temporary table", e);
-		}		
-		
-		
-		logger.debug("Bring data from temporary to virtualtable");
-		
-		try {
-			String sqlInsertIntoVirtual = statement.buildInsertInVirtualStatement(lastVersion);		
+			String sqlInsertIntoVirtual = statement.buildInserttoDuplicateData(lastVersion);		
 			SqlInsertStatement insertStatement = new SqlInsertStatement(sqlInsertIntoVirtual) ;
 			insertStatement.executeStatement(connectionManager.getConnection());
 		} catch (SpagoBIEngineException e) {
-			logger.error("Error in increasing version procedure: error when bringing data back from temporary to virtual table", e);
+			logger.error("Error in increasing version procedure: error when duplicating data and changing version", e);
 			connectionManager.closeConnection();
-			throw new SpagoBIRuntimeException("Error in increasing version procedure: error when bringing data back from temporary to virtual table", e);
-		}		
+			throw new SpagoBIRuntimeException("Error in increasing version procedure: error when duplicating data and changing version", e);
+		}	
+
+		
+//		logger.debug("delete temporary table");
+//		
+//		try {
+//			String sqlDelete = statement.buildDeleteTemporaryStatement();		
+//			SqlUpdateStatement deleteStatement = new SqlUpdateStatement(sqlDelete) ;
+//			deleteStatement.executeStatement(connectionManager.getConnection());
+//		} catch (SpagoBIEngineException e) {
+//			logger.error("Error in increasing version procedure: error when deleteing temporary table", e);
+//			connectionManager.closeConnection();
+//			throw new SpagoBIRuntimeException("Error in increasing version procedure: error when deleteing temporary table", e);
+//		}		
+//		
+//		logger.debug("Bring data of current version into temporary table");
+//		
+//		try {
+//			String sqlInsertIntoTemporary = statement.buildInsertInTemporaryStatement(lastVersion);		
+//			SqlInsertStatement insertStatement = new SqlInsertStatement( sqlInsertIntoTemporary) ;
+//			insertStatement.executeStatement(connectionManager.getConnection());
+//		} catch (SpagoBIEngineException e) {
+//			logger.error("Error in increasing version procedure: error when bringing data in temporary table", e);
+//			connectionManager.closeConnection();
+//			throw new SpagoBIRuntimeException("Error in increasing version procedure: error when bringing data in temporary table", e);
+//		}		
+//
+//		logger.debug("Update data of temporary table to current version");
+//		
+//		try {
+//			String sqlUpdateVersionTemporary = statement.buildUpdateVersionNumberStatement(lastVersion);		
+//			SqlUpdateStatement updateStatement = new SqlUpdateStatement(sqlUpdateVersionTemporary) ;
+//			updateStatement.executeStatement(connectionManager.getConnection());
+//		} catch (SpagoBIEngineException e) {
+//			logger.error("Error in increasing version procedure: error when updating version number in temporary table", e);
+//			connectionManager.closeConnection();
+//			throw new SpagoBIRuntimeException("Error in increasing version procedure: error when updating version number in temporary table", e);
+//		}		
+//		
+//		
+//		logger.debug("Bring data from temporary to virtualtable");
+//		
+//		try {
+//			String sqlInsertIntoVirtual = statement.buildInsertInVirtualStatement(lastVersion);		
+//			SqlInsertStatement insertStatement = new SqlInsertStatement(sqlInsertIntoVirtual) ;
+//			insertStatement.executeStatement(connectionManager.getConnection());
+//		} catch (SpagoBIEngineException e) {
+//			logger.error("Error in increasing version procedure: error when bringing data back from temporary to virtual table", e);
+//			connectionManager.closeConnection();
+//			throw new SpagoBIRuntimeException("Error in increasing version procedure: error when bringing data back from temporary to virtual table", e);
+//		}		
 
 	
 		
@@ -208,7 +220,7 @@ public class VersionManager {
 		Dimension versionDimension = null;
 		for (Iterator iterator = dimensions.iterator(); iterator.hasNext();) {
 			Dimension dimension = (Dimension) iterator.next();
-			if(dimension.getUniqueName().equals(VERSION_DIMENSION_NAME)){
+			if(dimension.getUniqueName().equals(WhatIfConstants.VERSION_DIMENSION_NAME)){
 				versionDimension = dimension;
 			};
 		}
@@ -229,7 +241,7 @@ public class VersionManager {
 			hierarchy = hierarchies.get(0);
 		}
 		else{
-			String hierarchyUsed = modelConfig.getDimensionHierarchyMap().get(VERSION_DIMENSION_NAME);
+			String hierarchyUsed = modelConfig.getDimensionHierarchyMap().get(WhatIfConstants.VERSION_DIMENSION_NAME);
 			hierarchy = hierarchies.get(hierarchyUsed);	
 		}
 		logger.debug("Found hierarchy "+hierarchy.getUniqueName());
@@ -246,7 +258,7 @@ public class VersionManager {
 			logger.debug("Member list has "+members.size()+" members");
 			
 			member = members.get(members.size()-1);
-						
+							
 		} catch (OlapException e) {
 			logger.error("Error when searching for current version member among the version one");
 			throw new SpagoBIEngineRuntimeException("Could not find current version member",e);
@@ -263,7 +275,6 @@ public class VersionManager {
 		
 		logger.debug("Slicer is set");
 
-		// Apply Transformation
 		SpagoBIPivotModel modelWrapper = (SpagoBIPivotModel) model;
 		try {
 			((SpagoBIPivotModel)model).persistTransformations();

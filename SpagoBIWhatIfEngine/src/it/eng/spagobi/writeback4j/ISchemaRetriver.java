@@ -21,7 +21,6 @@ public interface ISchemaRetriver {
 	
 	public IMemberCoordinates getMemberCordinates(Member member);
 	public String getEditCubeTableName();
-	public String getEditTemporaryCubeTableName();
 	public String getMeasureColumn(Member member) throws SpagoBIEngineException ;
 	public List<String> getColumnNamesList();
 	
