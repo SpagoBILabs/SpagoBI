@@ -4,17 +4,22 @@
 package test;
 
 import it.eng.spago.base.SourceBean;
+import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
+import it.eng.spagobi.utilities.engines.EngineConstants;
 
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
 import java.util.Properties;
+
+import junit.framework.TestCase;
 
 import org.olap4j.OlapDataSource;
 
 import com.eyeq.pivot4j.datasource.SimpleOlapDataSource;
-
-import junit.framework.TestCase;
 
 /* SpagoBI, the Open Source Business Intelligence suite
 
@@ -28,11 +33,10 @@ import junit.framework.TestCase;
  */
 public class AbstractWhatIfTestCase extends TestCase {
 
-	protected OlapDataSource connection;
 	
-	public void setUp() throws Exception {
-		connection = getOlapDataSource() ;
-	}
+	private static final String mdx = ( "SELECT {[Measures].[Store Sales]} ON COLUMNS, {[Product].[Food]} ON ROWS FROM [Sales_V] WHERE [Version].[1]");
+	
+
 	
 	public OlapDataSource getOlapDataSource() {
 		SourceBean sb;
@@ -40,7 +44,7 @@ public class AbstractWhatIfTestCase extends TestCase {
 				
 		String usr = "root";
 		String pwd = "root";
-		String catalog = "D:/Sviluppo/SpagoBI/progetti/Trunk_40/runtime/resources/Olap/FoodMartMySQL.xml";
+		String catalog = "D:/Sviluppo/SpagoBI/progetti/Trunk_40/runtime/resources/Olap/FoodMartMySQLTest.xml";
 		String connectionString =  "jdbc:mondrian:Jdbc=jdbc:mysql://localhost:3306/foodmart_key";
 		String driver =  "com.mysql.jdbc.Driver";
 
@@ -62,6 +66,29 @@ public class AbstractWhatIfTestCase extends TestCase {
 		return olapDataSource;
 	}
 	
+	public WhatIfEngineInstance getWhatifengineiEngineInstance(it.eng.spagobi.tools.datasource.bo.DataSource ds, String c){
+		return  new WhatIfEngineInstance(getEnv( ds, c) );
+	}
+	
+	public Map getEnv(it.eng.spagobi.tools.datasource.bo.DataSource ds, String catalog) {
+		
+
+		
+		
+		Map env = new HashMap();
+		
+		
+		env.put(EngineConstants.ENV_DATASOURCE, ds);
+		env.put(EngineConstants.ENV_EDIT_CUBE_NAME, "Sales_Edit");
+
+		env.put(EngineConstants.ENV_LOCALE, Locale.ITALIAN);
+		env.put(EngineConstants.ENV_OLAP_SCHEMA, catalog);
+		env.put(EngineConstants.ENV_EDIT_CUBE_NAME, "Sales_Edit");
+		env.put("ENV_INITIAL_MDX_QUERY", mdx);
+
+		return env;
+	}
+	
 	protected void executeQuery(String sql){
 		try {
 			java.sql.Connection  connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/foodmart_key?user=root&password=root");
@@ -72,6 +99,11 @@ public class AbstractWhatIfTestCase extends TestCase {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	
+	public String getMdx(){
+		return mdx;
 	}
 	
 }

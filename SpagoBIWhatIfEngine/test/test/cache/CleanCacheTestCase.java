@@ -3,14 +3,15 @@
  */
 package test.cache;
 
+import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
+import it.eng.spagobi.writeback4j.mondrian.CacheManager;
+
 import java.util.Random;
 
 import org.olap4j.CellSet;
+import org.olap4j.OlapDataSource;
 import org.olap4j.Position;
 
-import it.eng.spagobi.engines.whatif.WhatIfEngineConfig;
-import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
-import it.eng.spagobi.writeback4j.mondrian.CacheManager;
 import test.AbstractWhatIfTestCase;
 
 /* SpagoBI, the Open Source Business Intelligence suite
@@ -40,6 +41,7 @@ public class CleanCacheTestCase extends AbstractWhatIfTestCase {
 
 	
 	public void testRecreatequrery(){
+		OlapDataSource connection = getOlapDataSource();
 		SpagoBIPivotModel pivotModel = new SpagoBIPivotModel(connection);
 		pivotModel.setMdx( mdx);
 		pivotModel.initialize();
@@ -47,15 +49,12 @@ public class CleanCacheTestCase extends AbstractWhatIfTestCase {
 		boolean equal = true;
 		
 		CellSet cs = pivotModel.getCellSet();
-		
-		
-		executeQuery("update sales_fact_1998_virtual cubealias set `store_sales` = "+(new Random(System.currentTimeMillis()).nextDouble()*100)+" where cubealias.product_id in (select t1.product_id from  product t1,  product_class t2 where  ( t1.product_class_id = t2.product_class_id )  and  ( t2.product_family = 'Food' )  and  ( t2.product_department = 'Baked Goods' ) )");
+		executeQuery("update sales_fact_1998_virtual cubealias set `store_sales` = "+(new Random(System.currentTimeMillis()).nextDouble()*100)+" where cubealias.version=1 and cubealias.product_id in (select t1.product_id from  product t1,  product_class t2 where  ( t1.product_class_id = t2.product_class_id )  and  ( t2.product_family = 'Food' )  and  ( t2.product_department = 'Meat' ) )");
 		
 		CacheManager.flushCache(connection);
 		String mdx = pivotModel.getMdx();
-
 		pivotModel.setMdx( mdx);
-
+		pivotModel.initialize();
 		
 		CellSet cs1 = pivotModel.getCellSet();
 		
