@@ -243,6 +243,11 @@ Ext.define('Sbi.olap.control.EventManager', {
 				Sbi.error("Error loading the value of the cell to edit" + err);
 			}
 			
+			//it's not possible to edit a cell with value 0
+			if(unformattedValue==0){
+				Sbi.exception.ExceptionHandler.showWarningMessage(LN('sbi.olap.weiteback.edit.no.zero'));
+				return;
+			}
 			
 			var editor = Ext.create("Ext.Editor", {
 				updateEl: true,
