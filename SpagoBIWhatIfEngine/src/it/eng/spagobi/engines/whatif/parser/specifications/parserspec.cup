@@ -1,14 +1,22 @@
 /*
-	 Draft grammary defition for What-If
+	 Grammary definition for What-If
 */
 
    
    
 /* ----------------------Preliminary Declarations Section--------------------*/
+
+package it.eng.spagobi.engines.whatif.parser;
+
    
 /* Import the class java_cup.runtime.*  */
 import java_cup.runtime.*;
 import java.util.*;  
+/* Import class from SpagoBI */
+import it.eng.spagobi.engines.whatif.cube.CubeUtilities;
+import it.eng.spagobi.engines.whatif.model.SpagoBICellWrapper;
+import org.olap4j.OlapDataSource;
+import com.eyeq.pivot4j.PivotModel;
 
 /* Parser code to change the way the parser reports errors (include
    line and column number of the error). */
@@ -30,17 +38,17 @@ parser code {:
 	}
 	
 	
+	SpagoBICellWrapper cellWrapper;
+	PivotModel model; 
+	OlapDataSource olapDataSource;
 	/*
-		Draft for a method that set important information to retrieve
+		Set important information to retrieve
 		What-if context information. Ex: variable, members, etc...
 	*/
-	public void setWhatIfInfo(String context){
-	
-		/*
-			Do nothing (for now)
-			
-		*/
-		
+	public void setWhatIfInfo(SpagoBICellWrapper cellWrapper, PivotModel model, OlapDataSource olapDataSource){	
+		this.cellWrapper = cellWrapper;
+		this.model = model;
+		this.olapDataSource = olapDataSource;
 	}
 	
 	/*
@@ -51,6 +59,10 @@ parser code {:
 		double rand = (double)random.nextInt(101-1) + 1;
 		return rand;
 	}
+	
+	public Double getMemberValue(LinkedList members){
+		return CubeUtilities.getMemberValue(members,this.cellWrapper,this.model,this.olapDataSource);
+	}	
     
     /* Change the method report_error so it will display the line and
        column of where the error occurred in the input as well as the
@@ -312,9 +324,8 @@ precedence left UMINUS;
 				 |
 			      members_declaration:m 
 				 {:
-				 Double generated = parser.generateDouble();
+				 Double generated = parser.getMemberValue(m);
 				  if(parser.isVerbose()){System.out.println("*** found MEMBERS "+m+" replaced with "+generated);}
-				 /*RESULT = 100.0; */
 				 RESULT = generated;
 				 :}
 				 | 
