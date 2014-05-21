@@ -53,7 +53,7 @@ public class SelfServiceDatasetStartAction extends ManageDatasets  {
 	public static final String IS_FROM_MYDATA = "MYDATA";
 	public static final String TYPE_DOC = "TYPE_DOC";
 	public static final String IS_FROM_MYANALYSIS = "MYANALYSIS";
-
+	public static final String IS_FROM_DOCBROWSER = "DOCBROWSER";
 	
 	//public static final String GEOREPORT_EDIT_ACTION = "GEOREPORT_ENGINE_START_EDIT_ACTION";
 	
@@ -75,6 +75,7 @@ public class SelfServiceDatasetStartAction extends ManageDatasets  {
 			String cockpitEditActionUrl = buildCockpitEditServiceUrl(executionId);
 			String isFromMyData = (getAttributeAsString("MYDATA")==null)?"FALSE":getAttributeAsString("MYDATA");
 			String isFromMyAnalysis = (getAttributeAsString("MYANALYSIS")==null)?"FALSE":getAttributeAsString("MYANALYSIS");
+			String isFromDocBrowser = (getAttributeAsString("SBI_ENVIRONMENT")==null)?"FALSE":(getAttributeAsString("SBI_ENVIRONMENT").equals("DOCBROWSER"))?"TRUE":"FALSE";
 			String typeDoc = getAttributeAsString("TYPE_DOC");
 			logger.trace("Copying output parameters to response...");
 			try {
@@ -91,7 +92,7 @@ public class SelfServiceDatasetStartAction extends ManageDatasets  {
 				setAttribute(IS_FROM_MYDATA, isFromMyData);
 				setAttribute(TYPE_DOC, typeDoc);
 				setAttribute(IS_FROM_MYANALYSIS,isFromMyAnalysis);
-				
+				setAttribute(IS_FROM_DOCBROWSER,isFromDocBrowser);
 			} catch (Throwable t) {
 				throw new SpagoBIServiceException(SERVICE_NAME, "An error occurred while creating service response", t);				
 			}

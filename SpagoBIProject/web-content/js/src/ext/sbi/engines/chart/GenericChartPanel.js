@@ -26,9 +26,9 @@
   * 
   * - Antonella Giachino(antonella.giachino@eng.it)
   */
-
+ 
 Ext.ns("Sbi.engines.chart");
-
+ 
 Sbi.engines.chart.GenericChartPanel  = function(config) { 
 	var defaultSettings = {
 			border: false

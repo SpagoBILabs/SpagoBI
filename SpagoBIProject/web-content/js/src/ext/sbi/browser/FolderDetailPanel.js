@@ -194,6 +194,14 @@ Sbi.browser.FolderDetailPanel = function(config) {
     if (config.engineUrls.georeportServiceUrl != null){
         this.georeportServiceUrl = config.engineUrls.georeportServiceUrl;
     }
+    
+    if (config.engineUrls.cockpitServiceUrl != null){
+        this.cockpitServiceUrl = config.engineUrls.cockpitServiceUrl;
+    }
+    
+    if (config.engineUrls.worksheetServiceUrl != null){
+        this.worksheetServiceUrl = config.engineUrls.worksheetServiceUrl;
+    }
 };
 
 
@@ -212,6 +220,8 @@ Ext.extend(Sbi.browser.FolderDetailPanel, Ext.Panel, {
     , loadingMask: null
     , folderId: null
     , georeportServiceUrl: null
+    , cockpitServiceUrl: null
+    , worksheetServiceUrl: null
     
     , id:'this'
     , communities: null
@@ -224,8 +234,15 @@ Ext.extend(Sbi.browser.FolderDetailPanel, Ext.Panel, {
 			if(this.folderId != null){
 				urlToCall += '&FUNCT_ID='+this.folderId;
 			}
-		}else if(type !== undefined || type !=='georeport'){
+		}else if(type =='georeport'){					
 			urlToCall =  this.georeportServiceUrl;
+		}else if(type =='creategeoreport'){
+			//call the dataset list (mydata gui)
+			urlToCall = Sbi.config.contextName + '/servlet/AdapterHTTP?ACTION_NAME=SELF_SERVICE_DATASET_START_ACTION&LIGHT_NAVIGATOR_RESET_INSERT=TRUE&MYDATA=true&TYPE_DOC=GEO&SBI_ENVIRONMENT=DOCBROWSER';						
+		}else if(type =='createcockpit'){
+			urlToCall =  this.cockpitServiceUrl +  '&SBI_ENVIRONMENT=DOCBROWSER';
+//		}else if(type =='createworksheet'){
+//			urlToCall =  this.worksheetServiceUrl;
 		}
 		
 		if (Sbi.settings.browser.typeLayout !== undefined && Sbi.settings.browser.typeLayout == 'card'){
@@ -400,7 +417,6 @@ Ext.extend(Sbi.browser.FolderDetailPanel, Ext.Panel, {
     , onBreadCrumbClick: function(b, e) {    	
     	this.fireEvent('onbreadcrumbclick', this, b.breadcrumb, e);
     }
-    
     
     
     // private methods 
@@ -674,11 +690,25 @@ Ext.extend(Sbi.browser.FolderDetailPanel, Ext.Panel, {
         var createButton = '';
         if (Sbi.settings.browser.showCreateButton == true){
         	 if (this.isAbleToManageDocument()){
-             	createButton += ' <a id="newDocument" href="#" onclick="javascript:Ext.getCmp(\'this\').addNewDocument(\'\')" class="btn-add"><span class="highlighted">'+LN('sbi.generic.create')+'</span> '+LN('sbi.generic.document')+'<span class="plus">+</span></a> ';
+//             	createButton += ' <a id="newDocument" href="#" onclick="javascript:Ext.getCmp(\'this\').addNewDocument(\'\')" class="btn-add"><span class="highlighted">'+LN('sbi.generic.create')+'</span> '+LN('sbi.generic.document')+'<span class="plus">+</span></a> ';
+        		 createButton += 
+        		' 		<ul class="create" id="newDocument"> '+ '<span class="highlighted">'+LN('sbi.generic.create')+'</span> '+LN('sbi.generic.document')+'<span class="plus">+</span>' +
+//        		'	         <li id="WS"><a href="#" onclick="javascript:Ext.getCmp(\'this\').addNewDocument(\'createworksheet\')">'+ 'Ad Hoc Worksheet' +'</a> </li> '+
+         		'	         <li id="GEO"><a href="#" onclick="javascript:Ext.getCmp(\'this\').addNewDocument(\'creategeoreport\')">'+ LN('sbi.generic.document.add.adhocGeoReport') +'</a></li> '+
+         		'	         <li id="COCKPIT"><a href="#" onclick="javascript:Ext.getCmp(\'this\').addNewDocument(\'createcockpit\')">'+ LN('sbi.generic.document.add.adhocCockpit')+'</a></li> '+
+         		'	         <li id="STANDARD"><a href="#" onclick="javascript:Ext.getCmp(\'this\').addNewDocument(\'\')">'+ LN('sbi.generic.document.add.traditional SpagoBI') +'</a></li> '+
+        		'	    </ul> ';
              }
         } else {
             if (this.isAbleToManageDocument()){
-            	createButton += ' <a id="newDocument" href="#" onclick="javascript:Ext.getCmp(\'this\').addNewDocument(\'\')" class="btn-add"><span class="highlighted">'+LN('sbi.generic.create')+'</span> '+LN('sbi.generic.document')+'<span class="plus">+</span></a> ';
+//            	createButton += ' <a id="newDocument" href="#" onclick="javascript:Ext.getCmp(\'this\').addNewDocument(\'\')" class="btn-add"><span class="highlighted">'+LN('sbi.generic.create')+'</span> '+LN('sbi.generic.document')+'<span class="plus">+</span></a> ';
+            	createButton += 
+             		' 		<ul class="create" id="newDocument"> '+ '<span class="highlighted">'+LN('sbi.generic.create')+'</span> '+LN('sbi.generic.document')+'<span class="plus">+</span>' +
+//             		'	         <li id="WS"><a href="#" onclick="javascript:Ext.getCmp(\'this\').addNewDocument(\'createworksheet\')">'+ 'Ad Hoc Worksheet' +'</a> </li> '+
+             		'	         <li id="GEO"><a href="#" onclick="javascript:Ext.getCmp(\'this\').addNewDocument(\'creategeoreport\')">'+ LN('sbi.generic.document.add.adhocGeoReport') +'</a></li> '+
+             		'	         <li id="COCKPIT"><a href="#" onclick="javascript:Ext.getCmp(\'this\').addNewDocument(\'createcockpit\')">'+ LN('sbi.generic.document.add.adhocCockpit')+'</a></li> '+
+             		'	         <li id="STANDARD"><a href="#" onclick="javascript:Ext.getCmp(\'this\').addNewDocument(\'\')">'+ LN('sbi.generic.document.add.traditional SpagoBI') +'</a></li> '+
+             		'	    </ul> ';
             }else  if (this.isAbleToCreateDocument()){
             	createButton += ' <a id="newDocument" href="#" onclick="javascript:Ext.getCmp(\'this\').addNewDocument(\'georeport\')"" class="btn-add"><span class="highlighted">'+LN('sbi.generic.load')+'</span> '+LN('sbi.generic.map')+'<span class="plus">+</span></a> ';
             } 
