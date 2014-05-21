@@ -6,12 +6,14 @@
 package it.eng.spagobi.utilities.threadmanager;
 
 
-import java.util.UUID;
+import it.eng.spago.base.SourceBean;
+import it.eng.spagobi.commons.utilities.StringUtilities;
+import it.eng.spagobi.services.common.EnginConf;
+import it.eng.spagobi.utilities.assertion.Assert;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 
@@ -19,12 +21,9 @@ import commonj.work.Work;
 import commonj.work.WorkItem;
 import commonj.work.WorkListener;
 
+import de.myfoo.commonj.util.ThreadPool;
 import de.myfoo.commonj.work.FooRemoteWorkItem;
 import de.myfoo.commonj.work.FooWorkManager;
-
-import it.eng.spago.base.SourceBean;
-import it.eng.spagobi.services.common.EnginConf;
-import it.eng.spagobi.utilities.assertion.Assert;
 
 
 
@@ -33,7 +32,9 @@ import it.eng.spagobi.utilities.assertion.Assert;
  */
 public class WorkManager {
 
-	private FooWorkManager wm = null;
+	private FooWorkManager workManagerInstance;
+	
+	
 	private static transient Logger logger = Logger.getLogger(WorkManager.class);
 
 	/**
@@ -50,6 +51,9 @@ public class WorkManager {
 		init(jndiServerManager);
 	}
 
+	
+	
+	
 	/**
 	 * Run.
 	 * 
@@ -61,7 +65,7 @@ public class WorkManager {
 	public void run(Work job, WorkListener listener) throws Exception {
 		logger.debug("IN");
 		try {
-			WorkItem wi = wm.schedule(job, listener);
+			WorkItem wi = workManagerInstance.schedule(job, listener);
 
 		} catch (Exception e) {
 			logger.error("Exception", e);
@@ -84,8 +88,8 @@ public class WorkManager {
 		logger.debug("IN");
 		FooRemoteWorkItem fooRemoteWorkItem=null;
 		try {
-			fooRemoteWorkItem=new FooRemoteWorkItem(job, listener, wm);
-			WorkItem wi = wm.schedule(job, listener);
+			fooRemoteWorkItem=new FooRemoteWorkItem(job, listener, workManagerInstance);
+			WorkItem wi = workManagerInstance.schedule(job, listener);
 
 		} catch (Exception e) {
 			logger.error("Exception", e);
@@ -99,7 +103,7 @@ public class WorkManager {
 
 	public FooRemoteWorkItem buildFooRemoteWorkItem(Work job, WorkListener listener) throws Exception{
 		FooRemoteWorkItem fooRemoteWorkItem=null;
-		fooRemoteWorkItem=new FooRemoteWorkItem(job, listener, wm);
+		fooRemoteWorkItem=new FooRemoteWorkItem(job, listener, workManagerInstance);
 		return fooRemoteWorkItem;
 	}
 
@@ -108,7 +112,7 @@ public class WorkManager {
 		logger.debug("IN");
 		WorkItem workItem=null;
 		try {
-			workItem  = wm.schedule(job, listener);
+			workItem  = workManagerInstance.schedule(job, listener);
 
 		} catch (Exception e) {
 			logger.error("Exception", e);
@@ -121,77 +125,144 @@ public class WorkManager {
 
 
 	/**
-	 * Inits the.
+	 * Initialize the inner work manager instances.
 	 * 
 	 * @throws NamingException the naming exception
 	 */
 	public void init() throws NamingException {
-
-		SourceBean jndiSB;
-		String jndi;
-		Context ctx;
-
+		init(null);
+	}
+	public void init(String workManagerResourceName) throws NamingException {
+		
 		logger.debug("IN");
 
 		try {
-			jndiSB = (SourceBean)EnginConf.getInstance().getConfig().getAttribute("JNDI_THREAD_MANAGER");
-			Assert.assertNotNull(jndiSB, "Impossible to find block [<JNDI_THREAD_MANAGER>] into configuration");
-			jndi = (String) jndiSB.getCharacters();
-			Assert.assertNotNull(jndiSB, "Block [<JNDI_THREAD_MANAGER>] foud in configuration is empty");
-
-			logger.debug("WorkManager jndi name is [" + jndi + "]");
-
-			logger.debug("Looking up for JNDI resource [" + jndi + "] ...");
-			ctx = new InitialContext();
-			wm = (FooWorkManager) ctx.lookup(jndi);
-			logger.debug("JNDI resource lookup successfully terminated");
-		} catch (NamingException e) {
-			throw e;
+			workManagerInstance = (workManagerResourceName!=null)? getSharedWorkManagerResource(workManagerResourceName): getSharedWorkManagerResource();
+			if(workManagerInstance == null) {
+				logger.warn("Impossible to get shared work manager a private one to this webapp will be created");
+				workManagerInstance = getPrivateWorkManagerResource();
+			}
 		} catch (Throwable t) {
-			throw new RuntimeException("An error occurred while initializing the WorkManager", t);
+			throw new RuntimeException("An unexpected error occured while initializing work manager", t);
 		} finally {
 			logger.debug("OUT");
 		}
-
 	}
+	
 
-	
-	
-/**
- *  JNDI string passed as parameter	
- * @param jndi
- * @throws NamingException
- */
-	
-	public void init(String jndi) throws NamingException {
-
-		Context ctx;
+	public FooWorkManager getPrivateWorkManagerResource() {
 		logger.debug("IN");
 
 		try {
-			Assert.assertNotNull(jndi, "jndi is empty");
+			ThreadPool threadPool = new ThreadPool(5, 10, 10);
+			FooWorkManager workManagerResource = new FooWorkManager(threadPool);
+			return workManagerResource;
+		} catch (Throwable t) {
+			throw new RuntimeException("An unexpected error occured while creating a private work manager resource", t);
+		} finally {
+			logger.debug("OUT");
+		}
+	}
+	public FooWorkManager getSharedWorkManagerResource() throws NamingException {
+		
+		logger.debug("IN");
 
-			logger.debug("WorkManager jndi name is [" + jndi + "]");
-
-			logger.debug("Looking up for JNDI resource [" + jndi + "] ...");
-			ctx = new InitialContext();
-			Object o = ctx.lookup(jndi);
+		try {
+			FooWorkManager workManagerResource = null;
+			String taskManagerResourceName = getWorkManagerResourceNameFromConfiguration();
+			if(taskManagerResourceName != null) {
+				logger.debug("WorkManager jndi name is equal to[" + taskManagerResourceName + "]");
+				workManagerResource = getSharedWorkManagerResource(taskManagerResourceName);
+			} 
 			
-			wm = (FooWorkManager) o;
-			logger.debug("JNDI resource lookup successfully terminated");
+			return workManagerResource;
+		} catch (Throwable t) {
+			throw new RuntimeException("An unexpected error occured while getting shared work manager resource", t);
+		} finally {
+			logger.debug("OUT");
+		}
+	}
+	
+	public FooWorkManager getSharedWorkManagerResource(String workManagerResourceName) {
+
+		
+		logger.debug("IN");
+
+		try {
+			
+			FooWorkManager workManagerResource = null;
+			
+			Assert.assertTrue(StringUtilities.isNotEmpty(workManagerResourceName), "Work Manager resource name cannot be empty");
+			logger.debug("Work Manager resource name is equal to [" + workManagerResourceName + "]");
+			
+			logger.debug("Loading from JNDI context the work manager resource [" + workManagerResourceName + "] ...");
+			
+			Context context = null;
+			try {
+				context = new InitialContext();
+			} catch(Throwable t) {
+				throw new RuntimeException("An unexpected error occured while initializing JNDI context", t);
+			}
+
+			Object jndiResource = null;
+			try {
+				jndiResource = context.lookup(workManagerResourceName);
+			} catch(NamingException ne) {
+				logger.warn("Resource [" + workManagerResourceName + "] is not bound in this context");
+			} catch(Throwable t) {
+				throw new RuntimeException("An unexpected error occured while loading JNDI resource [" + workManagerResourceName + "]", t);
+			}
+			
+			if(jndiResource != null) {
+				if(jndiResource instanceof FooWorkManager) {
+					workManagerResource = (FooWorkManager) jndiResource;
+				} else {
+					logger.warn("The resource [" + workManagerResourceName + "] is an instance of [" + jndiResource.getClass().getName()+ "] " +
+							"and not an instance of [" + FooWorkManager.class.getName()+ "] as expected");
+				}
+				
+			}
+			
+			if(workManagerResource != null) {
+				logger.debug("The work manager resource [" + workManagerResourceName + "] has been loaded succesfully from JNDI context");
+			} else {
+				logger.warn("Impossible to find work manager resource [" + workManagerResourceName + "] in JNDI context");
+			}
+
+			return workManagerResource;
 		} catch (Throwable t) {
 			throw new RuntimeException("An error occurred while initializing the WorkManager", t);
 		} finally {
 			logger.debug("OUT");
 		}
 	}
+	
+	private String getWorkManagerResourceNameFromConfiguration() {
+		
+		logger.debug("IN");
+
+		try {
+			String workManagerResourceName = null;
+			SourceBean jndiSB = (SourceBean)EnginConf.getInstance().getConfig().getAttribute("JNDI_THREAD_MANAGER");
+			logger.debug("Impossible to find block [<JNDI_THREAD_MANAGER>] into configuration");
+			if(jndiSB != null) {
+				workManagerResourceName = (String) jndiSB.getCharacters();
+			}
+			return workManagerResourceName;
+		} catch (Throwable t) {
+			throw new RuntimeException("An unespected error occured while getting work manager resource name from configurations", t);
+		} finally {
+			logger.debug("OUT");
+		}
+	}
+
 
 	public commonj.work.WorkManager getInnerInstance() {
-		return wm;
+		return workManagerInstance;
 	}
 	
 	public void shutdown(){
-		wm.shutdown();
+		workManagerInstance.shutdown();
 	}
 
 }
