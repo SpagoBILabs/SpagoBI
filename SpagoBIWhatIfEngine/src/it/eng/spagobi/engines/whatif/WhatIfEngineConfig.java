@@ -36,6 +36,7 @@ public class WhatIfEngineConfig {
 	private Set<String> enabledIncludes;
 	private String resourceFolder= "whatif";
 	private static transient Logger logger = Logger.getLogger(WhatIfEngineConfig.class);
+	private static final String PROPORTIONAL_ALGORITHM_CONF = "proportionalAlgorithm"; 
 
 	
 	// -- singleton pattern --------------------------------------------
@@ -217,12 +218,15 @@ public class WhatIfEngineConfig {
 		}		
 	}
 	
-	public String getWriteBackConf(){
-		String writeBack = "";
+	public boolean getProportionalAlghorithmConf(){
 		SourceBean sb = (SourceBean) getConfigSourceBean().getAttribute(WRITEBACK_TAG);
-		if(sb!=null)
-			writeBack = sb.getCharacters();
-		return writeBack;
+		if(sb!=null){
+			String conf =  (String)sb.getAttribute(PROPORTIONAL_ALGORITHM_CONF);
+			if(conf!=null && conf.length()>0){
+				return conf.equals("in");
+			}
+		}
+		return 	true;
 	}
 	
 	// -- ACCESS Methods  -----------------------------------------------

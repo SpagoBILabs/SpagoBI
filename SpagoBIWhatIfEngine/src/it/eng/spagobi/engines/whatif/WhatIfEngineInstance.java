@@ -88,7 +88,7 @@ public class WhatIfEngineInstance extends AbstractEngineInstance implements Seri
 		
 		//init configs 
 		modelConfig = new ModelConfig();
-		String writeback = WhatIfEngineConfig.getInstance().getWriteBackConf();
+		String writeback = "enabled";
 		if(writeback!= null && !writeback.equals("")){
 			modelConfig.getWriteBackConf().put(ModelConfig.WRITEBACK, writeback);
 			try {
@@ -131,7 +131,7 @@ public class WhatIfEngineInstance extends AbstractEngineInstance implements Seri
 		
 		//init configs 
 		modelConfig = new ModelConfig();
-		String writeback = WhatIfEngineConfig.getInstance().getWriteBackConf();
+		String writeback = "enabled";
 		if(writeback!= null && !writeback.equals("")){
 			modelConfig.getWriteBackConf().put(ModelConfig.WRITEBACK, writeback);
 			try {
