@@ -34,7 +34,21 @@
 		</INCLUDE>
 				
 	</INCLUDES>
+	<!--  demo example -->
+	<GEO_DIMENSION>
+		<LEVELS>
+			<LEVEL name="PROVINCE"
+				layerName="province" 
+				layerLabel="Province" 
+				layerId="STATE_ABBR" 
+				layer_file="usa_states.json"
+				layer_zoom="4" 
+				layer_cetral_point="-96.8 40.8"/> 
+				
+		</LEVELS>
+	</GEO_DIMENSION>
 	
+	<!--  TIS example
 	<GEO_DIMENSION>
 		<LEVELS>
 			<LEVEL name="regione"
@@ -61,35 +75,7 @@
 				
 		</LEVELS>
 	</GEO_DIMENSION>
-	
-	<!--  
-	<GEO_DIMENSION>
-		<LEVELS>
-			<LEVEL name="regione"
-				layerName="regioni" 
-				layerLabel="Regioni" 
-				layerId="nome_reg" 
-				layer_url="http://localhost:6090/geoserver/wfs"
-				layer_zoom="5" 
-				layer_cetral_point="18.530 42.500"/>
-			<LEVEL name="provincia"
-				layerName="province" 
-				layerLabel="Province" 
-				layerId="nome_pro" 
-				layer_url="http://localhost:6090/geoserver/wfs"
-				layer_zoom="5" 
-				layer_cetral_point="18.530 42.500"/>
-			<LEVEL name="comune"
-				layerName="comuni" 
-				layerLabel="Comuni" 
-				layerId="nome_com" 
-				layer_url="http://localhost:6090/geoserver/wfs"
-				layer_zoom="9" 
-				layer_cetral_point="11.400 46.650"/>
-				
-		</LEVELS>
-	</GEO_DIMENSION>
-	-->
+	 -->
 	
 	
 	<!-- ====================================================================================== -->
