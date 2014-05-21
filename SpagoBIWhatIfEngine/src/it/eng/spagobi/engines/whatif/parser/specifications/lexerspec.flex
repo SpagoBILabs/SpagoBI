@@ -120,11 +120,12 @@ ALPHANUMERIC = [A-Za-z0-9]
 
 VARIABLE = [:jletter:]+[:jletterdigit:]*
 
-NAME = {ALPHANUMERIC}({ALPHANUMERIC} | [ ])*
+NAME = {ALPHANUMERIC}({ALPHANUMERIC}|[ ])*
 
-/* MEMBER = {ALPHANUMERIC}+"."{ALPHANUMERIC}+ | {ALPHANUMERIC}+"."{ALPHANUMERIC}+"."{ALPHANUMERIC}+ */
-MEMBER = {NAME}+"."{NAME} | {NAME}"."{NAME}"."{NAME}
-   
+STRINGDOT = {ALPHANUMERIC}({ALPHANUMERIC}|[ ]|[.])*
+
+MEMBER = {NAME}+"."{NAME}+ | {NAME}+"."{NAME}+"."{NAME}+ | "["{NAME}+"]"".""["{STRINGDOT}+"]" | "["{NAME}+"]"".""["{NAME}+"]"".""["{STRINGDOT}+"]"
+
 
 
 /*
@@ -161,7 +162,7 @@ lexical state declaration example: %state STRING declares a lexical state STRING
     "("                { if(verbose){System.out.println(" ( ");} parsedString.append("("); return symbol(sym.LPAREN, "("); }
     ")"                { if(verbose){System.out.println(" ) ");} parsedString.append(")"); return symbol(sym.RPAREN, ")"); }
     "%"                { if(verbose){System.out.println(" % ");} parsedString.append("%"); return symbol(sym.PERCENT, "%"); }
-	"["                { if(verbose){System.out.println(" [ ");} parsedString.append("[");  yybegin(MEMBER_DECLARATION); }
+	/*"["                { if(verbose){System.out.println(" [ ");} parsedString.append("[");  yybegin(MEMBER_DECLARATION); } */
     ";"                { if(verbose){System.out.println(" ; ");} parsedString.append(";"); return symbol(sym.SEMI, ";"); }
 	"="                { if(verbose){System.out.println(" = ");} parsedString.append("="); return symbol(sym.EQUAL, "="); }
 
@@ -177,13 +178,13 @@ lexical state declaration example: %state STRING declares a lexical state STRING
 
 
 }
-
+/*
 <MEMBER_DECLARATION>{
 	"]"                { if(verbose){System.out.println(" ] ");} parsedString.append("]"); yybegin(YYINITIAL); }
 	{MEMBER}		   { if(verbose){System.out.println("MEMBER="+yytext());} parsedString.append("MEMBER="+yytext()); return new Symbol(sym.MEMBER, yytext()); }
 
 }
-
+*/
 
 /* No token was found for the input so through an error.  Print out an
    Illegal character message with the illegal character that was found. */
