@@ -82,6 +82,10 @@ onload="init(evt);">
 		
 <script xlink:type="simple" xlink:actuate="onLoad" xlink:show="other" type="text/ecmascript" xmlns:xlink="http://www.w3.org/1999/xlink"><![CDATA[
 		
+		function ping() { 
+			alert("pong");
+		}	
+		
 		//global variables for mapApp and map object
 		var myMapApp = new mapApp();
 		var myMainMap;
@@ -91,6 +95,7 @@ onload="init(evt);">
 		var xlinkNS = "http://www.w3.org/1999/xlink";
 		var suspendProcess;
 		var windowPositions = new Array();
+		var execCrossFnScope = null;
 	
 		var isShowTableModalityActive = true;
 			
@@ -679,9 +684,36 @@ onload="init(evt);">
                }
              }
         } 
+		
+		
 			
+		function callCrossNavFunc(frameid, doclabel, params, subobjid, title, target) {
+			alert('callCrossNavFunc');
+			
+			if(!parent) alert("no parent");
+			
+			if(execCrossFnScope == null) {
+				var p = parent;
+				while(p) {
+					if(p.execCrossNavigation) {
+						execCrossFnScope = p;
+						break;
+					} else {
+						p = p.parent;
+					}
+				}
+			}
+			if(execCrossFnScope == null) {
+				alert("Impossible to find execCrossNavigation function");
+			} else {
+				execCrossFnScope.execCrossNavigation(frameid, doclabel, params, subobjid, title, target);
+			}	
+		}
 	
 		function colourMap() {
+			if(!parent) alert("no parent");
+			else alert("xxx");
+			
 			if (document.documentElement.suspendRedraw) {
 				suspendProcess = document.documentElement.suspendRedraw(20000);
 			}

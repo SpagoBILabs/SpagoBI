@@ -248,7 +248,10 @@ public class Link {
     			parametersStr = parametersStr.substring(0, parametersStr.length()-1);
     		}
     		
-    		link = "javascript:parent.execCrossNavigation('" + execIframeId + "', '" + targetDocLabel + "' , '" + parametersStr + "'";  		
+    		//link = "javascript:parent.parent.execCrossNavigation('" + execIframeId + "', '" + targetDocLabel + "' , '" + parametersStr + "'";  		
+    		link = "javascript:callCrossNavFunc('" + execIframeId + "', '" + targetDocLabel + "' , '" + parametersStr + "'";  		
+    		//link = "javascript:ping('" + execIframeId + "', '" + targetDocLabel + "' , '" + parametersStr + "'";  		
+    		
     		if(drillDocTitle!=null && target!=null && target.equalsIgnoreCase("tab")){
     			link +=",'','"+drillDocTitle+"','tab'";
 			}else if(drillDocTitle!=null){
@@ -304,7 +307,11 @@ public class Link {
     			parametersStr = parametersStr.substring(0, parametersStr.length()-1);
     		}
     		
-    		link = "javascript:parent.execCrossNavigation('" + execIframeId + "', '" + targetDocLabel + "' , '" + parametersStr + "'";  		
+    		//link = "javascript:parent.execCrossNavigation('" + execIframeId + "', '" + targetDocLabel + "' , '" + parametersStr + "'";  		
+    		link = "javascript:callCrossNavFunc('" + execIframeId + "', '" + targetDocLabel + "' , '" + parametersStr + "'";  		
+    		//link = "javascript:ping('" + execIframeId + "', '" + targetDocLabel + "' , '" + parametersStr + "'";  		
+    		
+    		
     		if(drillDocTitle!=null && target!=null && target.equalsIgnoreCase("tab")){
     			link +=",'','"+drillDocTitle+"','tab'";
 			}else if(drillDocTitle!=null){
