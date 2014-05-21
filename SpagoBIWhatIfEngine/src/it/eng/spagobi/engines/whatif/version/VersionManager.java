@@ -101,7 +101,7 @@ public class VersionManager {
 		try {
 			String sqlQuery = statement.buildGetLastVersion();	
 			SqlQueryStatement queryStatement = new SqlQueryStatement(instance.getDataSource(), sqlQuery) ;
-			Object o= queryStatement.getSingleValue(connectionManager.getConnection(), WhatIfConstants.VERSION_COLUMN_NAME);
+			Object o= queryStatement.getSingleValue(connectionManager.getConnection(), instance.getWriteBackManager().getRetriver().getVersionColumnName());
 			if(o != null){
 				logger.debug("Last version is "+o);	
 				lastVersion = (Integer) o;
@@ -220,7 +220,7 @@ public class VersionManager {
 		Dimension versionDimension = null;
 		for (Iterator iterator = dimensions.iterator(); iterator.hasNext();) {
 			Dimension dimension = (Dimension) iterator.next();
-			if(dimension.getUniqueName().equals(WhatIfConstants.VERSION_DIMENSION_NAME)){
+			if(dimension.getUniqueName().equals(WhatIfConstants.VERSION_DIMENSION_UNIQUENAME)){
 				versionDimension = dimension;
 			};
 		}
@@ -241,7 +241,7 @@ public class VersionManager {
 			hierarchy = hierarchies.get(0);
 		}
 		else{
-			String hierarchyUsed = modelConfig.getDimensionHierarchyMap().get(WhatIfConstants.VERSION_DIMENSION_NAME);
+			String hierarchyUsed = modelConfig.getDimensionHierarchyMap().get(WhatIfConstants.VERSION_DIMENSION_UNIQUENAME);
 			hierarchy = hierarchies.get(hierarchyUsed);	
 		}
 		logger.debug("Found hierarchy "+hierarchy.getUniqueName());

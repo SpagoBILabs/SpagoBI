@@ -1,7 +1,5 @@
 package it.eng.spagobi.writeback4j.sql.dbdescriptor;
 
-import it.eng.spagobi.engines.whatif.common.WhatIfConstants;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,7 +17,7 @@ public class FoodmartDbDescriptor implements IDbSchemaDescriptor {
 		toReturn.add("store_id");
 		toReturn.add("store_sales");
 		toReturn.add("store_cost");
-		toReturn.add(WhatIfConstants.VERSION_COLUMN_NAME);
+		toReturn.add("versione");
 		
 		return toReturn;
 		
