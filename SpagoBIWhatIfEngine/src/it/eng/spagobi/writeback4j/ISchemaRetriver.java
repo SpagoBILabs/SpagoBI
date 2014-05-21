@@ -23,6 +23,6 @@ public interface ISchemaRetriver {
 	public String getEditCubeTableName();
 	public String getMeasureColumn(Member member) throws SpagoBIEngineException ;
 	public List<String> getColumnNamesList();
-	
+	public String getVersionColumnName();
 
 }

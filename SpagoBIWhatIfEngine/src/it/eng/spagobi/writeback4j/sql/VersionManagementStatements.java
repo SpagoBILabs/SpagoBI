@@ -6,7 +6,6 @@
 
 package it.eng.spagobi.writeback4j.sql;
 
-import it.eng.spagobi.engines.whatif.common.WhatIfConstants;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.writeback4j.ISchemaRetriver;
 import it.eng.spagobi.writeback4j.sql.dbdescriptor.FoodmartDbDescriptor;
@@ -44,7 +43,7 @@ public class VersionManagementStatements {
 	
 	public 	String buildGetLastVersion(){
 		logger.debug("IN");
-		String statement = "select MAX("+WhatIfConstants.VERSION_COLUMN_NAME+") as "+WhatIfConstants.VERSION_COLUMN_NAME+" from "+editCubeTableName;
+		String statement = "select MAX("+retriever.getVersionColumnName()+") as "+retriever.getVersionColumnName()+" from "+editCubeTableName;
 		logger.debug("OUT");
 		return statement;
 	}
@@ -64,10 +63,10 @@ public class VersionManagementStatements {
 	String columnsListString="";
 	String columnsListStringVersionWritten="";
 	
-	for (Iterator iterator = descriptor.getColumnNames(editCubeTableName).iterator(); iterator.hasNext();) {
+	for (Iterator<String> iterator = descriptor.getColumnNames(editCubeTableName).iterator(); iterator.hasNext();) {
 		String s = (String) iterator.next();
 		
-		if(s.equals(WhatIfConstants.VERSION_COLUMN_NAME)){
+		if(s.equals(retriever.getVersionColumnName())){
 			columnsListString+=" "+s+" ";
 			columnsListStringVersionWritten+=" "+(lastVersion+1)+" ";
 			
@@ -94,7 +93,7 @@ public class VersionManagementStatements {
 	
 	statement = "insert into "+editCubeTableName+" ("+columnsListString+") "
 			+" select "+columnsListStringVersionWritten+" from "+editCubeTableName
-			+" where "+WhatIfConstants.VERSION_COLUMN_NAME+"="+(lastVersion);
+			+" where "+retriever.getVersionColumnName()+"="+(lastVersion);
 
 	logger.debug("Statement for duplicating data of last version: "+statement);
 

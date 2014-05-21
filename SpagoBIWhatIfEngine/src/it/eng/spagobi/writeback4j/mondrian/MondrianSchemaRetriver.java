@@ -6,6 +6,7 @@
 
 package it.eng.spagobi.writeback4j.mondrian;
 
+import it.eng.spagobi.engines.whatif.common.WhatIfConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.writeback4j.IMemberCoordinates;
@@ -274,6 +275,24 @@ public class MondrianSchemaRetriver implements ISchemaRetriver{
 	return toReturn;
 	}
 	
-
+	public String getVersionColumnName(){
+		String dimension = WhatIfConstants.VERSION_DIMENSION_NAME;
+		Dimension thisDimension = null;
+		MondrianDef.CubeDimension[] dimensons = editCube.dimensions;
+		for (int i = 0; i < dimensons.length; i++) {
+			MondrianDef.CubeDimension aDimension = dimensons[i];
+			if(aDimension.name.equals(dimension)){
+				thisDimension =  aDimension.getDimension(schema);
+				break;
+			}
+		}
+		if(thisDimension==null){
+			logger.error("Error loading the verison dimension "+WhatIfConstants.VERSION_DIMENSION_NAME);
+			throw new SpagoBIEngineRuntimeException("Error loading the verison dimension "+WhatIfConstants.VERSION_DIMENSION_NAME);
+		}
+		MondrianDef.Hierarchy thisHierarchy = thisDimension.hierarchies[0];
+		return thisHierarchy.levels[0].column;
+		
+	}
 
 }
