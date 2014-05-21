@@ -21,6 +21,7 @@ import it.eng.spagobi.writeback4j.sql.SqlInsertStatement;
 import it.eng.spagobi.writeback4j.sql.SqlQueryStatement;
 import it.eng.spagobi.writeback4j.sql.VersionManagementStatements;
 
+import java.math.BigDecimal;
 import java.util.Iterator;
 import java.util.List;
 
@@ -104,8 +105,14 @@ public class VersionManager {
 			Object o= queryStatement.getSingleValue(connectionManager.getConnection(), instance.getWriteBackManager().getRetriver().getVersionColumnName());
 			if(o != null){
 				logger.debug("Last version is "+o);	
-				lastVersion = (Integer) o;
-			
+				
+				// Oracle case
+				if(o instanceof BigDecimal){
+					lastVersion = ((BigDecimal)o).intValue();
+				}
+				else{
+					lastVersion = (Integer) o;
+				}
 			}
 			else{
 				logger.debug("No last version found, it is assumed to be 0");
