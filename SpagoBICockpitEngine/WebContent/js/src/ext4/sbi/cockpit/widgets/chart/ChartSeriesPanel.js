@@ -257,7 +257,8 @@ Ext.extend(Sbi.cockpit.widgets.chart.ChartSeriesPanel, Ext.Panel, {
  	 	        			
  	 	        			var colorFieldEditor = new Ext.ux.ColorField({ value: color, msgTarget: 'qtip', fallback: true});
  	 	        			colorFieldEditor.on('colorUpdate', function(f, val) {
- 	 	        				this.store.getAt(this.currentRowRecordEdited).set('color',"#"+ f);
+ 	 	        				var colorExe = (f.indexOf('#')>= 0) ? f: '#'+f;
+ 	 	        				this.store.getAt(this.currentRowRecordEdited).set('color',colorExe);
  	 	        			}, this);
  	 	        			e.column.setEditor(colorFieldEditor);
  	        	    	}

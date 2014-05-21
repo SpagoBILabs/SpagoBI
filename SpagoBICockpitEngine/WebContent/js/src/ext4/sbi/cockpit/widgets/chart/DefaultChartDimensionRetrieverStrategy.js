@@ -24,7 +24,7 @@ Sbi.cockpit.widgets.chart.DefaultChartDimensionRetrieverStrategy = function(conf
 			
 			if (chart.chartConfig.wtype = 'piechart'){
 				width = '100%';
-				height = '99%';
+				height = (Ext.isIE)?'80%' : '99%';
 			}
 			
 			var seriesNumber = series.length;
@@ -48,11 +48,11 @@ Sbi.cockpit.widgets.chart.DefaultChartDimensionRetrieverStrategy = function(conf
 			size.width = width;
 			size.height = height;
 			
-			if (Ext.isIE && size.height == '100%') {
-				//set the height if ie
-				size.height = '400px';
-	//			size.width = '';
-			}
+//			if (Ext.isIE && size.height == '100%') {
+//				//set the height if ie
+//				size.height = '150px';//'400px';
+//	//			size.width = '';
+//			}
 			
 	//		alert('width : ' + size.width);
 	//		alert('height : ' + size.height);
