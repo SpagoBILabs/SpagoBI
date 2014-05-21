@@ -90,7 +90,8 @@ public class WhatIfEngineInstance extends AbstractEngineInstance implements Seri
 		logger.debug("Initial MDX is [" + initialMDX + "]");
 		pivotModel.setMdx( initialMDX );
 		pivotModel.initialize();
-		
+		// execute the MDX now
+		pivotModel.getCellSet();
 		
 		//init configs 
 		modelConfig = new ModelConfig();

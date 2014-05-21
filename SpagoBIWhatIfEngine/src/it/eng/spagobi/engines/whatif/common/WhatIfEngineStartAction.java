@@ -9,9 +9,7 @@
 package it.eng.spagobi.engines.whatif.common;
 
 import it.eng.spago.base.SourceBean;
-import it.eng.spago.base.SourceBeanAttribute;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
-import it.eng.spagobi.container.SpagoBIRequestContainer;
 import it.eng.spagobi.engines.whatif.WhatIfEngine;
 import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
@@ -22,7 +20,6 @@ import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -72,6 +69,13 @@ public class WhatIfEngineStartAction extends AbstractWhatIfEngineService {
 			logger.debug("Document Id: " + getDocumentId());
 			logger.debug("Template: " + templateBean);
 
+			if (getAuditServiceProxy() != null) {
+				logger.debug("Audit enabled: [TRUE]");
+				getAuditServiceProxy().notifyServiceStartEvent();
+			} else {
+				logger.debug("Audit enabled: [FALSE]");
+			}
+			
 			WhatIfEngineInstance whatIfEngineInstance = null;
 			
 			logger.debug("Creating engine instance ...");
@@ -104,8 +108,15 @@ public class WhatIfEngineStartAction extends AbstractWhatIfEngineService {
 								+ REQUEST_DISPATCHER_URL, e);
 			}
 
+			if (getAuditServiceProxy() != null) {
+				getAuditServiceProxy().notifyServiceEndEvent();
+			}
+			
 		} catch (Throwable t) {
 			logger.error("Error starting the What-If engine", t);
+			if (getAuditServiceProxy() != null) {
+				getAuditServiceProxy().notifyServiceErrorEvent(t.getMessage());
+			}
 			throw new SpagoBIEngineRuntimeException(
 					"Error starting the What-If engine", t);
 		} finally {
