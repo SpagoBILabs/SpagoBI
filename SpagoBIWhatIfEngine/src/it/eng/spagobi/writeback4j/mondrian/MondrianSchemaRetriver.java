@@ -275,11 +275,13 @@ public class MondrianSchemaRetriver implements ISchemaRetriver{
 	return toReturn;
 	}
 	
-	public String getVersionColumnName(){
+	public String getVersionColumnName(){;
+		logger.debug("IN");
 		if(versionColumnName!=null){
+			logger.debug("Version column name is in the cache");
 			return versionColumnName;
 		}
-		
+		logger.debug("Version column name isn't in the cache");
 		String dimension = WhatIfConstants.VERSION_DIMENSION_NAME;
 		Dimension thisDimension = null;
 		MondrianDef.CubeDimension[] dimensons = editCube.dimensions;
@@ -295,7 +297,11 @@ public class MondrianSchemaRetriver implements ISchemaRetriver{
 			throw new SpagoBIEngineRuntimeException("Error loading the verison dimension "+WhatIfConstants.VERSION_DIMENSION_NAME);
 		}
 		MondrianDef.Hierarchy thisHierarchy = thisDimension.hierarchies[0];
-		return thisHierarchy.levels[0].column;
+		versionColumnName = thisHierarchy.levels[0].column;
+		
+		logger.debug("OUT");
+		
+		return versionColumnName;
 		
 	}
 
