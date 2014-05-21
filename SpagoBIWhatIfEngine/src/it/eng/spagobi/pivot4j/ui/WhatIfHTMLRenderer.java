@@ -6,6 +6,9 @@
 
 package it.eng.spagobi.pivot4j.ui;
 
+import it.eng.spagobi.engines.whatif.model.SpagoBICellWrapper;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
+
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.HashMap;
@@ -17,10 +20,12 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.olap4j.Axis;
 import org.olap4j.OlapException;
+import org.olap4j.metadata.Dimension;
 import org.olap4j.metadata.Hierarchy;
 import org.olap4j.metadata.Level;
 import org.olap4j.metadata.Member;
 
+import com.eyeq.pivot4j.PivotModel;
 import com.eyeq.pivot4j.transform.PlaceMembersOnAxes;
 import com.eyeq.pivot4j.ui.CellType;
 import com.eyeq.pivot4j.ui.RenderContext;
@@ -33,10 +38,19 @@ import com.eyeq.pivot4j.util.CssWriter;
 
 public class WhatIfHTMLRenderer extends HtmlRenderer {
 
+	private boolean measureOnRows;
+	//cache that maps the row/column number and the name of the measure of that row/column (row if measures stay in the rows, column otherwise)
+	private Map<Integer, String> positionMeasureMap;
+	private boolean initialized = false;
+	
+
+	public void render(PivotModel model){
+		super.render(model);
+		initialized = false;
+	}
 	
 	public WhatIfHTMLRenderer(Writer writer) {
 		super(writer);
-		
 	}
 	@Override
 	public void startCell(RenderContext context, List<CellCommand<?>> commands) {
@@ -68,7 +82,7 @@ public class WhatIfHTMLRenderer extends HtmlRenderer {
 	@Override
 	protected Map<String, String> getCellAttributes(RenderContext context) {
 		String styleClass = null;
-
+		
 		StringWriter writer = new StringWriter();
 		CssWriter cssWriter = new CssWriter(writer);
 
@@ -159,34 +173,33 @@ public class WhatIfHTMLRenderer extends HtmlRenderer {
 					int childrenNum = context.getMember().getChildMemberCount();
 					
 					if(childrenNum > 0){
-
-
 						if(getEnableRowDrillDown() || getEnableColumnDrillDown()){
 							styleClass += " " + "collapsed";
 						}else{
 							styleClass += " " + "expanded";
 						}
-						
-
-					}
-					
+					}					
 				} catch (OlapException e) {
 					e.printStackTrace();
 				}
 			}else if(context.getCellType() == CellType.Title){
-				styleClass = "dimension-title";
-				
+				styleClass = "dimension-title";			
 			}	
 			attributes.put("class", styleClass);
 		}
 		if(context.getCellType() == CellType.Value){
+			
+			initializeInternal(context);
+			
+			//need the name of the measure to check if it's editable
+			String measureName = getMeasureName(context);
 			//attributes.put("contentEditable", "true");
 			int colId = context.getColumnIndex();
 			int rowId = context.getRowIndex();
 			int positionId = context.getCell().getOrdinal();
 			//String memberUniqueName = context.getMember().getUniqueName();
 			String id= positionId+"!"+rowId+"!"+colId+"!"+System.currentTimeMillis()%1000;
-			attributes.put("ondblclick", "javascript:Sbi.olap.eventManager.makeEditable('"+id+"')");
+			attributes.put("ondblclick", "javascript:Sbi.olap.eventManager.makeEditable('"+id+"','"+measureName+"')");
 			attributes.put("id", id);
 		}
 
@@ -211,6 +224,49 @@ public class WhatIfHTMLRenderer extends HtmlRenderer {
 		
 		return attributes;
 	}
+	
+	private String getMeasureName(RenderContext context){
+		int coordinate;
+		if(this.measureOnRows){
+			coordinate = context.getRowIndex();
+		}else{
+			coordinate = context.getColumnIndex();
+		}
+		String measureName = this.positionMeasureMap.get(coordinate);
+		
+		if(measureName==null){
+			measureName = ((SpagoBICellWrapper)context.getCell()).getMeasureName();
+			this.positionMeasureMap.put(coordinate, measureName);
+		}
+		
+		return measureName;
+		
+	}
+	
+	
+	private void initializeInternal(RenderContext context){
+		if(!this.initialized){
+			this.measureOnRows = true;
+			this.initialized = true;
+			this.positionMeasureMap = new HashMap<Integer, String>();
+			
+			//check if the measures are in the rows or in the columns
+			List<Member> columnMembers = context.getColumnPosition().getMembers();
+			try {
+				if(columnMembers!=null){
+					for(int i=0; i<columnMembers.size(); i++){
+						Member member = columnMembers.get(i);
+						if (member.getDimension().getDimensionType().equals(Dimension.Type.MEASURE)) {
+							this.measureOnRows = false;
+						}
+					}
+				}
+			} catch (OlapException e) {
+				throw new SpagoBIEngineRuntimeException("Erro getting the measure of a rendered cell ",e);
+			}			
+		}
+	}
+	
 	
 	@Override
 	public void cellContent(RenderContext context, String label) {

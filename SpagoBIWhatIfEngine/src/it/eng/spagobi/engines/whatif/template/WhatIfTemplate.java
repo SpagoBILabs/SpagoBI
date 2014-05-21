@@ -5,6 +5,8 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.engines.whatif.template;
 
+import it.eng.spagobi.writeback4j.WriteBackEditConfig;
+
 import java.util.HashMap;
 import java.util.List;
 
@@ -18,8 +20,9 @@ public class WhatIfTemplate {
 	private String mdxQuery;
 	private String mondrianMdxQuery;
 	private HashMap<String, Object> properties;
+	private WriteBackEditConfig writebackEditConfig;
 	private List<Parameter> parameters;
-		
+	
 	public WhatIfTemplate() {
 		properties = new HashMap<String, Object>();
 	}
@@ -54,6 +57,14 @@ public class WhatIfTemplate {
 
 	public void setMondrianMdxQuery(String mondrianMdxQuery) {
 		this.mondrianMdxQuery = mondrianMdxQuery;
+	}
+
+	public WriteBackEditConfig getWritebackEditConfig() {
+		return writebackEditConfig;
+	}
+
+	public void setWritebackEditConfig(WriteBackEditConfig writebackEditConfig) {
+		this.writebackEditConfig = writebackEditConfig;
 	}
 	
 	public List<Parameter> getParameters() {

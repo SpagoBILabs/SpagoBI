@@ -8,6 +8,8 @@
  */
 package it.eng.spagobi.engines.whatif.model;
 
+import it.eng.spagobi.writeback4j.WriteBackEditConfig;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
@@ -17,17 +19,17 @@ import com.eyeq.pivot4j.ui.command.DrillDownCommand;
 public class ModelConfig implements Serializable {
 
 	private static final long serialVersionUID = 2687163910212567575L;
-	public static final String WRITEBACK = "writeback";
 	private String drillType;
 	private Boolean showParentMembers;
 	private Boolean hideSpans;
 	private Boolean showProperties;
 	private Boolean suppressEmpty;
 	private Integer actualVersion = null;
+	private WriteBackEditConfig writeBackConf = null;
 
 
 	private Map<String, String> dimensionHierarchyMap;
-	private Map<String, String> writeBackConf;
+
 
 	public ModelConfig() {
 		drillType = DrillDownCommand.MODE_POSITION;
@@ -36,7 +38,6 @@ public class ModelConfig implements Serializable {
 		showProperties = false;
 		suppressEmpty = false;
 		dimensionHierarchyMap = new HashMap<String, String>();
-		writeBackConf = new HashMap<String, String>();
 	}
 	
 	public Boolean getSuppressEmpty() {
@@ -89,23 +90,6 @@ public class ModelConfig implements Serializable {
 		this.dimensionHierarchyMap.put(dimensionUniqueName, hierarchyUniqueName);
 	}
 
-	public Map<String, String> getWriteBackConf() {
-		return writeBackConf;
-	}
-
-	public void setWriteBackConf(Map<String, String> writeBackConf) {
-		//this.writeBackConf = writeBackConf;
-	}
-	
-
-	public boolean isWriteBackEnabled() {
-		return this.writeBackConf.containsKey(WRITEBACK);
-	}
-	
-	public void setWriteBackEnabled(boolean b) {
-	
-	}
-
 	public Integer getActualVersion() {
 		return actualVersion;
 	}
@@ -114,6 +98,14 @@ public class ModelConfig implements Serializable {
 		this.actualVersion = actualVersion;
 	}
 
+	public WriteBackEditConfig getWriteBackConf() {
+		return writeBackConf;
+	}
+
+	public void setWriteBackConf(WriteBackEditConfig writeBackConf) {
+		this.writeBackConf = writeBackConf;
+	}
 	
 	
+
 }

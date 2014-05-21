@@ -225,9 +225,9 @@ Ext.define('Sbi.olap.control.EventManager', {
 	 * Makes editable the dom element with the id equals to the passed id 
 	 * @param id the id of the dom element to make editable
 	 */
-	makeEditable: function(id){
+	makeEditable: function(id, measureName){
 
-		if(this.olapPanel && this.olapPanel.modelConfig && this.olapPanel.modelConfig.writeBackEnabled){
+		if(this.olapPanel && this.olapPanel.modelConfig && this.isMeasureEditable(measureName)){
 			var cell = Ext.get(id);
 			var type = "float";
 			var originalValue = "";
@@ -266,6 +266,22 @@ Ext.define('Sbi.olap.control.EventManager', {
 
 			editor.startEdit(cell.el, unformattedValue);
 		}
+	},
+	
+	/**
+	 * Checks if the measure is editable
+	 * @param measureName the name of the measure to check
+	 * @returns {Boolean} return if the measure is editable
+	 */
+	isMeasureEditable: function(measureName){
+		if(this.olapPanel.modelConfig && this.olapPanel.modelConfig.writeBackConf){
+			if(this.olapPanel.modelConfig.writeBackConf.editableMeasures == null || this.olapPanel.modelConfig.writeBackConf.editableMeasures.length==0){
+				return true;
+			}else{
+				return this.olapPanel.modelConfig.writeBackConf.editableMeasures.indexOf(measureName)>=0;
+			}
+		}
+		return false;
 	}
 
 	/**

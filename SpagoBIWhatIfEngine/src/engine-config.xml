@@ -35,7 +35,10 @@
 	<SbiDocumentServiceProxy_URL>/services/SbiDocumentService</SbiDocumentServiceProxy_URL>
     <ArtifactServiceProxy_URL>/services/ArtifactService</ArtifactServiceProxy_URL>
 	
-	<WRITEBACK proportionalAlgorithm="in"></WRITEBACK>
+	<WRITEBACK editCube="Sales_Edit" proportionalAlgorithmPersistQueryWhereClause="in">
+		<MEASURE>Store Sales</MEASURE>
+		<MEASURE>Store Cost</MEASURE>
+	</WRITEBACK>
 	
 	<USR>root</USR>
 	<PWD>root</PWD>
