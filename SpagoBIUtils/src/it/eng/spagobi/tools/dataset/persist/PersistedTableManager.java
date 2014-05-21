@@ -400,14 +400,16 @@ public class PersistedTableManager {
 		}
 
 		if (type.contains("java.lang.String")){
+			String charLbl = "";
 			toReturn = " VARCHAR ";
 			if (getDialect().contains(DIALECT_ORACLE) || getDialect().contains(DIALECT_ORACLE9i10g)) { 
-				toReturn = " VARCHAR2 ";	
+				toReturn = " VARCHAR2 ";
+				charLbl = " CHAR";
 			}
 			if (getColumnSize().get(fieldMetaData.getName()) == null){
 				toReturn += " (4000)"; //maxvalue for default
 			}else{
-				toReturn += " (" + getColumnSize().get(fieldMetaData.getName())+ ")";
+				toReturn += " (" + getColumnSize().get(fieldMetaData.getName())+ charLbl + " )";
 			}
 		} else if (type.contains("java.lang.Short")) {
 			toReturn = " INTEGER ";
@@ -609,7 +611,7 @@ public class PersistedTableManager {
 		String statement = null;
 		
 		//get the list of tables names
-		if (dialect.contains(DIALECT_ORACLE) || getDialect().contains(DIALECT_ORACLE9i10g)) {
+		if (dialect.contains(DIALECT_ORACLE) || dialect.contains(DIALECT_ORACLE9i10g)) {
 			statement = "SELECT TABLE_NAME "+
 						"FROM USER_TABLES "+
 						"WHERE TABLE_NAME LIKE '" + prefix.toUpperCase() + "%'";
