@@ -33,7 +33,7 @@
 	<DocumentExecuteServiceProxy_URL>/services/DocumentExecuteService</DocumentExecuteServiceProxy_URL>
 	<DataSetServiceProxy_URL>/services/DataSetService</DataSetServiceProxy_URL>	
 	
-	<WRITEBACK>enabled</WRITEBACK>
+	<WRITEBACK proportionalAlgorithm="in"></WRITEBACK>
 	
 	<USR>foodmart_key</USR>
 	<PWD>foodmart_key</PWD>

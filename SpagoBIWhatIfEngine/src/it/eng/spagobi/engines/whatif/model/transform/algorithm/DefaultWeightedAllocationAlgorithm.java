@@ -10,6 +10,7 @@
 
 package it.eng.spagobi.engines.whatif.model.transform.algorithm;
 
+import it.eng.spagobi.engines.whatif.WhatIfEngine;
 import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
 import it.eng.spagobi.engines.whatif.model.SpagoBICellSetWrapper;
 import it.eng.spagobi.engines.whatif.model.SpagoBICellWrapper;
@@ -42,7 +43,7 @@ public class DefaultWeightedAllocationAlgorithm extends AllocationAlgorithm {
 
 	
 	public DefaultWeightedAllocationAlgorithm(WhatIfEngineInstance ei) {
-		this(ei, true);
+		this(ei, WhatIfEngine.getConfig().getProportionalAlghorithmConf());
 	}
 	
 	@Override

@@ -33,13 +33,13 @@
 	<DocumentExecuteServiceProxy_URL>/services/DocumentExecuteService</DocumentExecuteServiceProxy_URL>
 	<DataSetServiceProxy_URL>/services/DataSetService</DataSetServiceProxy_URL>	
 	
-	<WRITEBACK>enabled</WRITEBACK>
+	<WRITEBACK proportionalAlgorithm="in"></WRITEBACK>
 	
 	<USR>root</USR>
 	<PWD>root</PWD>
 	<CATALOG>\resources\Olap\FoodMartMySQL.xml</CATALOG>
 	<CONNECTIONSTRING>jdbc:mondrian:Jdbc=jdbc:mysql://localhost:3306/foodmart_key</CONNECTIONSTRING>
-	<MDX>SELECT {[Measures].[Store Sales]} ON COLUMNS, {[Product].[Food]} ON ROWS FROM [Sales_V]</MDX>
+	<MDX>SELECT {[Measures].[Store Sales]} ON COLUMNS, {[Product].[Food]} ON ROWS FROM [Sales_V] WHERE CrossJoin([Version].[1], [Region].[Mexico Central])</MDX>
 	
 	
 </ENGINE-CONFIGURATION>
