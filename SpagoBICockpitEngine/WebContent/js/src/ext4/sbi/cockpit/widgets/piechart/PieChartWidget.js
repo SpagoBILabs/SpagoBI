@@ -218,8 +218,8 @@ Ext.define('Sbi.cockpit.widgets.piechart.PieChartWidget', {
     		  				var categoryField ;
     		  				var valueField ;
     		  				categoryField = obj.storeItem.data[obj.series.label.field];
-    		  				valueField = obj.slice.value;	
-    		  				
+//    		  				valueField = obj.slice.value;	
+    		  				valueField =categoryField;
     		  				var selections = {};
     		  				var values =  [];
     		  				selections[displayName] = {};

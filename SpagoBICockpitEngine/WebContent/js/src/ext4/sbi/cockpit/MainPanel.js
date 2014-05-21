@@ -286,7 +286,12 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 		if (Sbi.config.environment == "MYANALYSIS") {
 			sendMessage({newUrl:url},'closeDocument');	
 		} else if (Sbi.config.environment == "DOCBROWSER") {
-			sendMessage({},'closeDocument');
+			if (typeof sendMessage == 'function'){
+				sendMessage({},'closeDocument');
+			}else{
+				url = Sbi.config.contextName + '/servlet/AdapterHTTP?ACTION_NAME=DOCUMENT_USER_BROWSER_START_ACTION';
+				window.location = url;
+			}
 		} else {
 			window.location = url;
 		}

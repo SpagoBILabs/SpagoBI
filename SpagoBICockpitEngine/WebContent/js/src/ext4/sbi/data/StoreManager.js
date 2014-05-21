@@ -578,7 +578,7 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 	 * 	}
 	 */
 	, loadStores: function(associationGroup, selections) {
-		alert("loadStores");
+//		alert("loadStores");
 //		for(var i = 0; i < associationGroup.datasets.length; i++) {
 //    		this.loadStore( associationGroup.datasets[i] );
 //    	}	
@@ -1088,7 +1088,7 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 					var stores =  Ext.util.JSON.decode(r);
 					for(var s in stores) {
 						var data = stores[s];
-						alert("Store [" + s + "]:" + Sbi.toSource(data));
+//						alert("Store [" + s + "]:" + Sbi.toSource(data));
 						var store = this.getStore(s);
 						store.loadData(data);
 					}

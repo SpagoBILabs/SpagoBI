@@ -233,7 +233,8 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidget, Sbi.cockpit.widgets.char
 		  				var categoryField ;
 		  				var valueField ;
 		  				categoryField = obj.storeItem.data[obj.series.xField];
-		  				valueField = obj.storeItem.data[obj.yField];	
+//		  				valueField = obj.storeItem.data[obj.yField];	
+		  				valueField = obj.storeItem.data[obj.series.xField];
 //		  				alert(displayNames + ' - ' + categoryField + ' - ' + valueField);		  				
 	  		    		var selections = {};
 		  				var values =  [];
@@ -284,14 +285,14 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidget, Sbi.cockpit.widgets.char
 			minimum: 0,
 			position: positionNumeric,
 			fields: seriesNames,
-			title: "Series",
+//			title: "Series",
 			minorTickSteps: 1,
 			grid: true
 		}, {
 			type: "Category",
 			position: positionCategory,
 			fields: ["categories"],
-			title: "Category"
+//			title: "Category"
 		}];
 		
 		//For the percent type chart set the axes scale maximum to 100
