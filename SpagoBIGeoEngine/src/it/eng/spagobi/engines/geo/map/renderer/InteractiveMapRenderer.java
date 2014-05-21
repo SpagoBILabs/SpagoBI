@@ -1054,7 +1054,7 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 			Element linkElement = map.createElement("a");
 			String pippo = (String)tmpMap.get("link");
 			linkElement.setAttribute("xlink:href", (String)tmpMap.get("link"));
-			linkElement.setAttribute("target", "_parent");
+			//linkElement.setAttribute("target", "_parent");
 			linkElement.appendChild((Element)tmpMap.get("path"));
 			targetLayer.appendChild(linkElement);
 			Node lf = map.createTextNode("\n");
