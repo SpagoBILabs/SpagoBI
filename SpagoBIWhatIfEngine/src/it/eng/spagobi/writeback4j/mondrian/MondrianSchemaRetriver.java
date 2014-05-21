@@ -48,7 +48,7 @@ public class MondrianSchemaRetriver implements ISchemaRetriver{
 	MondrianDef.Cube editCube;
 	
 	public static String ALL_MEMBER_NAME = "(All)";
-	
+	private String versionColumnName;
 	
 	public MondrianSchemaRetriver(MondrianDriver driver, String editCubeName) throws SpagoBIEngineException{
 		String catalogUri = driver.getOlapSchema();
@@ -276,6 +276,10 @@ public class MondrianSchemaRetriver implements ISchemaRetriver{
 	}
 	
 	public String getVersionColumnName(){
+		if(versionColumnName!=null){
+			return versionColumnName;
+		}
+		
 		String dimension = WhatIfConstants.VERSION_DIMENSION_NAME;
 		Dimension thisDimension = null;
 		MondrianDef.CubeDimension[] dimensons = editCube.dimensions;
