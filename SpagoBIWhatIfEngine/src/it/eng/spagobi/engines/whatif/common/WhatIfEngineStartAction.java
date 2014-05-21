@@ -9,17 +9,25 @@
 package it.eng.spagobi.engines.whatif.common;
 
 import it.eng.spago.base.SourceBean;
+import it.eng.spago.base.SourceBeanAttribute;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.container.SpagoBIRequestContainer;
 import it.eng.spagobi.engines.whatif.WhatIfEngine;
 import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.utilities.ParametersDecoder;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -107,14 +115,6 @@ public class WhatIfEngineStartAction extends AbstractWhatIfEngineService {
 	
 	public Map getEnv() {
 		Map env = new HashMap();
-
-//		it.eng.spagobi.tools.datasource.bo.DataSource ds = new it.eng.spagobi.tools.datasource.bo.DataSource();
-//		ds.setUser(WhatIfEngineConfig.getInstance().getConnectionUsr());
-//		ds.setPwd(WhatIfEngineConfig.getInstance().getConnectionPwd());
-//		ds.setDriver(WhatIfEngineConfig.getInstance().getDriver());
-//		String connectionUrl = WhatIfEngineConfig.getInstance()
-//				.getConnectionString();
-//		ds.setUrlConnection(connectionUrl.replace("jdbc:mondrian:Jdbc=", ""));
 		
 		IDataSource ds = this.getDataSource();
 
@@ -133,7 +133,52 @@ public class WhatIfEngineStartAction extends AbstractWhatIfEngineService {
 		env.put(EngineConstants.ENV_LOCALE, this.getLocale());
 		env.put(SpagoBIConstants.SBI_ARTIFACT_VERSION_ID, this.getServletRequest().getParameter(SpagoBIConstants.SBI_ARTIFACT_VERSION_ID));
 
+		copyRequestParametersIntoEnv(env, this.getServletRequest() );
+		
 		return env;
+	}
+
+	private void copyRequestParametersIntoEnv(Map env,
+			HttpServletRequest servletRequest) {
+		 Set parameterStopList = null;
+
+		 logger.debug("IN");
+
+		 parameterStopList = new HashSet();
+		 parameterStopList.add("template");
+		 parameterStopList.add("ACTION_NAME");
+		 parameterStopList.add("NEW_SESSION");
+		 parameterStopList.add("document");
+		 parameterStopList.add("spagobicontext");
+		 parameterStopList.add("BACK_END_SPAGOBI_CONTEXT");
+		 parameterStopList.add("userId");
+		 parameterStopList.add("auditId");
+
+		 HashMap requestParameters = ParametersDecoder.getDecodedRequestParameters( servletRequest );
+
+		 Iterator it = requestParameters.keySet().iterator();
+		 while (it.hasNext()) {
+			 String key = (String) it.next();
+			 Object value = requestParameters.get(key);
+			 logger.debug("Parameter [" + key + "] has been read from request");
+			 if (value == null) {
+				 logger.debug("Parameter [" + key + "] is null");
+				 logger.debug("Parameter [" + key + "] copyed into environment parameters list: FALSE");
+				 continue;
+			 } else {
+				 logger.debug("Parameter [" + key + "] is of type  " + value.getClass().getName());
+				 logger.debug("Parameter [" + key + "] is equal to " + value.toString());
+				 if (parameterStopList.contains(key)) {
+					 logger.debug("Parameter [" + key + "] copyed into environment parameters list: FALSE");
+					 continue;
+				 }
+				 env.put(key, value );
+				 logger.debug("Parameter [" + key + "] copyed into environment parameters list: TRUE");
+			 }
+		 }
+
+		 logger.debug("OUT");
+		
 	}
 
 	public Locale getLocale() {

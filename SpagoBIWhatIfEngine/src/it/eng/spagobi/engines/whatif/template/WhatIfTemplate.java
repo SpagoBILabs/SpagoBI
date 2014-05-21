@@ -6,6 +6,7 @@
 package it.eng.spagobi.engines.whatif.template;
 
 import java.util.HashMap;
+import java.util.List;
 
 
 /**
@@ -17,7 +18,7 @@ public class WhatIfTemplate {
 	private String mdxQuery;
 	private String mondrianMdxQuery;
 	private HashMap<String, Object> properties;
-	
+	private List<Parameter> parameters;
 		
 	public WhatIfTemplate() {
 		properties = new HashMap<String, Object>();
@@ -53,6 +54,33 @@ public class WhatIfTemplate {
 
 	public void setMondrianMdxQuery(String mondrianMdxQuery) {
 		this.mondrianMdxQuery = mondrianMdxQuery;
+	}
+	
+	public List<Parameter> getParameters() {
+		return parameters;
+	}
+
+	public void setParameters(List<Parameter> parameters) {
+		this.parameters = parameters;
+	}
+	
+	public class Parameter {
+		private String name;
+		private String alias;
+		
+		public String getName() {
+			return name;
+		}
+		public void setName(String name) {
+			this.name = name;
+		}
+		public String getAlias() {
+			return alias;
+		}
+		public void setAlias(String alias) {
+			this.alias = alias;
+		}
+		
 	}
 	
 }

@@ -6,9 +6,12 @@
 
 package it.eng.spagobi.engines.whatif;
 
+import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.engines.whatif.model.ModelConfig;
 import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
+import it.eng.spagobi.engines.whatif.parameters.MDXParametersUtilities;
 import it.eng.spagobi.engines.whatif.schema.MondrianSchemaManager;
 import it.eng.spagobi.engines.whatif.template.WhatIfTemplate;
 import it.eng.spagobi.engines.whatif.template.WhatIfTemplateParser;
@@ -82,7 +85,9 @@ public class WhatIfEngineInstance extends AbstractEngineInstance implements Seri
 		//pivotModel = new PivotModelImpl(olapDataSource);
 		pivotModel = new SpagoBIPivotModel(olapDataSource);
 		pivotModel.setLocale( this.getLocale() );
-		pivotModel.setMdx( template.getMdxQuery() );
+		String initialMDX = this.getInitialMDX( template, env );
+		logger.debug("Initial MDX is [" + initialMDX + "]");
+		pivotModel.setMdx( initialMDX );
 		pivotModel.initialize();
 		
 		
@@ -102,6 +107,31 @@ public class WhatIfEngineInstance extends AbstractEngineInstance implements Seri
 		
 	}
 	
+	private String getInitialMDX(WhatIfTemplate template, Map env) {
+		String query = null;
+		
+		logger.debug("IN");
+		
+		query = template.getMdxQuery();
+		logger.debug("MDX query found in template is [" + query + "]");
+		
+		// substitute query parameters
+		query = MDXParametersUtilities.substituteParametersInMDXQuery(query, template.getParameters(), env);
+		logger.debug("MDX query after parameters substitution is [" + query + "]");
+		
+		// substitute user profile attributes
+		IEngUserProfile profile = (IEngUserProfile) env.get(EngineConstants.ENV_USER_PROFILE);
+		try {
+			query = StringUtilities.substituteProfileAttributesInString(query, profile);
+		} catch (Exception e) {
+			throw new SpagoBIEngineRuntimeException("Error while substituting user profile attributes in MDX query", e);
+		}
+		logger.debug("MDX query after user profile attributes substitution is [" + query + "]");
+		
+		logger.debug("OUT");
+		return query;
+	}
+
 	public WhatIfEngineInstance(Map env) {
 		super( env );	
 		
