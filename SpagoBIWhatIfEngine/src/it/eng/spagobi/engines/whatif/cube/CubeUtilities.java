@@ -14,12 +14,15 @@ package it.eng.spagobi.engines.whatif.cube;
 import it.eng.spagobi.engines.whatif.model.SpagoBICellWrapper;
 import it.eng.spagobi.pivot4j.mdx.MDXQueryBuilder;
 import it.eng.spagobi.pivot4j.mdx.MdxQueryExecutor;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.StringTokenizer;
 
+import org.apache.log4j.Logger;
 import org.olap4j.Axis;
 import org.olap4j.Cell;
 import org.olap4j.CellSet;
@@ -37,7 +40,7 @@ import com.eyeq.pivot4j.PivotModel;
 public class CubeUtilities {
 	
 	public static final String PATH_DELIM ="[";
-
+	public static transient Logger logger = Logger.getLogger(CubeUtilities.class);
 
 	
 	/**
@@ -155,47 +158,94 @@ public class CubeUtilities {
 	 * TODO: to complete	
 	 * Calculate the members value based on the passed expression
 	 */
-	public static Double getMemberValue(LinkedList membersExpression, SpagoBICellWrapper cellWrapper, PivotModel model,OlapDataSource olapDataSource){
-		
-		//TODO: gestire il caso in cui ci siano più membri dimensionali specificati in serie (notazione;)
-		String memberExpression =(String) membersExpression.get(0);
-		
+	public static Double getMemberValue(LinkedList membersExpression, SpagoBICellWrapper cellWrapper, PivotModel model,OlapDataSource olapDataSource) {
 		Double toReturn = null;
-		//TODO: considerare i casi con gerarchie multiple e notazione del tipo Dimensione.gerarchia.membro
-		
-		String[] memberExpressionParts = memberExpression.split("\\.");
-		String memberExpressionDimension = memberExpressionParts[0];
-		boolean memberFound = false;
 		
 		//Members are the dimensional "coordinates" that identify the specific value inserted in the cell
 		Member[] cellMembersOriginal = cellWrapper.getMembers();
 		Member[] cellMembers = new Member[cellMembersOriginal.length];
 		System.arraycopy( cellMembersOriginal, 0, cellMembers, 0, cellMembersOriginal.length );
+		
+		//TODO: gestire casi di errore tramite eccezioni
+		boolean errorFound = false;
+		
+		//Iterate the list for each member specified
+		for (Object memberExp:membersExpression){
+			String memberExpression =(String)memberExp;
+			//TODO: considerare i casi con gerarchie multiple e notazione del tipo Dimensione.gerarchia.membro
+
+			String[] memberExpressionParts;
+			if(memberExpression.contains("[")){
+				//The member is using the notation with square brackets. Ex. [Dimension].[MemberName]
+				memberExpressionParts = splitSquareBracketNames(memberExpression);
+			} else {
+				memberExpressionParts = memberExpression.split("\\.");
+			}
+			
+			boolean memberFound = searchMember(cellMembers, memberExpressionParts);
+
+			if (!memberFound){
+				logger.error("ERROR: Cannot calculate Value, Member not found: "+memberExpression);
+				errorFound = true;
+				//throw new SpagoBIEngineException("Cannot calculate Value, Member not found: "+memberExpression);
+			}
+			
+		}
+
+		if (!errorFound){
+			//Calculate the new value 
+			MdxQueryExecutor mdxQueryExecutor = new MdxQueryExecutor(olapDataSource);
+			Cube cube = model.getCube();
+			Object value = mdxQueryExecutor.getValueForTuple(cellMembers,cube);
+			if (value instanceof Double){
+				toReturn = (Double)value;
+			}
+		}
+		return toReturn;
+
+		
+	}
+	
+	private static boolean searchMember(Member[] cellMembers, String[] memberExpressionParts){
+		boolean memberFound = false;
+		String memberExpressionDimension = memberExpressionParts[0];
+		boolean hierarchySpecified = false;
+		
+		if(memberExpressionParts.length > 2){
+			//Notation with Hierarchy specified
+			memberExpressionDimension = memberExpressionDimension + "."+memberExpressionParts[1];
+			hierarchySpecified =  true;
+		}
+
 		for (int i=0; i<cellMembers.length; i++){
 			Member aMember = cellMembers[i];
 			String memberUniqueName = aMember.getUniqueName();
+			/*
 			String uniqueNameParts[] = memberUniqueName.split("\\.");
 			String dimensionName = uniqueNameParts[0];
 			//remove the square brackets from the dimensionName
 			dimensionName = dimensionName.replaceAll("\\[", "");
 			dimensionName = dimensionName.replaceAll("\\]", "");
-
+			*/
+			String uniqueNameParts[] = splitSquareBracketNames(memberUniqueName);
+			String dimensionName = uniqueNameParts[0];
 			//Search the member to modify first by dimensionName (first part of the uniqueName)
 			if (dimensionName.equalsIgnoreCase(memberExpressionDimension)){
 				
 				//Compose the uniqueName of the member to search using the prefix of the current member
 				//of the selected cell
 				String memberToSearchUniqueName = "";
-				/*
-				for (int j=0; j<(uniqueNameParts.length-1);j++){
-					memberToSearchUniqueName = memberToSearchUniqueName + uniqueNameParts[j];
-				}*/
+
 				int endIndex = memberUniqueName.lastIndexOf(".");
 				if (endIndex != -1)  
 			    {
 			        memberToSearchUniqueName = memberUniqueName.substring(0, endIndex); 
 			    }
-				memberToSearchUniqueName = memberToSearchUniqueName + "."+"["+ memberExpressionParts[1]+"]";
+				if (hierarchySpecified){
+					memberToSearchUniqueName = memberToSearchUniqueName + "."+"["+ memberExpressionParts[2]+"]";
+				} else {
+					memberToSearchUniqueName = memberToSearchUniqueName + "."+"["+ memberExpressionParts[1]+"]";
+				}
 				
 				//get Level of the interested member
 				Level levelOfMember = aMember.getLevel();
@@ -224,20 +274,21 @@ public class CubeUtilities {
 			
 			
 		}
+		return memberFound;
+	}
+	
+	private static String[] splitSquareBracketNames(String memberExpression){
+		ArrayList<String> memberExpressionParts = new ArrayList<String>();
 		
-		//Calculate the new value 
-		
-		if (memberFound){
-			MdxQueryExecutor mdxQueryExecutor = new MdxQueryExecutor(olapDataSource);
-			Cube cube = model.getCube();
-			Object value = mdxQueryExecutor.getValueForTuple(cellMembers,cube);
-			if (value instanceof Double){
-				toReturn = (Double)value;
+		StringTokenizer st = new StringTokenizer(memberExpression,"[]", false);
+		while(st.hasMoreTokens()){
+			String memberPart = st.nextToken();
+			if (!memberPart.equals(".")){
+				memberExpressionParts.add(memberPart);
 			}
 		}
-		return toReturn;
-
 		
+		return memberExpressionParts.toArray(new String[0]);			
 	}
 	
 }
