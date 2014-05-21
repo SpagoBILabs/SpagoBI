@@ -8,8 +8,11 @@ package it.eng.spagobi.engines.whatif;
 
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.configuration.ConfigSingleton;
+import it.eng.spagobi.engines.whatif.template.WhatIfXMLTemplateParser;
 import it.eng.spagobi.services.common.EnginConf;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
+import it.eng.spagobi.writeback4j.WriteBackEditConfig;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -36,7 +39,7 @@ public class WhatIfEngineConfig {
 	private Set<String> enabledIncludes;
 	private String resourceFolder= "whatif";
 	private static transient Logger logger = Logger.getLogger(WhatIfEngineConfig.class);
-	private static final String PROPORTIONAL_ALGORITHM_CONF = "proportionalAlgorithm"; 
+	private static final String PROPORTIONAL_ALGORITHM_CONF = "proportionalAlgorithmPersistQueryWhereClause"; 
 
 	
 	// -- singleton pattern --------------------------------------------
@@ -84,7 +87,6 @@ public class WhatIfEngineConfig {
 	private final static String INCLUDES_TAG = "INCLUDES";
 	private final static String INCLUDE_TAG = "INCLUDE";
 	private final static String URL_TAG = "URL";
-	private final static String DRIVER_TAG = "DRIVER";
 	private final static String WRITEBACK_TAG = "WRITEBACK";
 	
 	
@@ -142,6 +144,36 @@ public class WhatIfEngineConfig {
 		if(sb!=null)
 			driver = sb.getCharacters();
 		return driver;
+	}
+	
+	public WriteBackEditConfig getWritebackEditConfig(){
+
+		SourceBean writeBackSB = (SourceBean) getConfigSourceBean().getAttribute(WRITEBACK_TAG);
+		if(writeBackSB!=null){
+			logger.debug(WRITEBACK_TAG + ": " + writeBackSB);
+			WriteBackEditConfig writeBackConfig = new WriteBackEditConfig();
+			String editCube = (String)writeBackSB.getAttribute(WhatIfXMLTemplateParser.EDIT_CUBE_ATTRIBUTE);
+			if(editCube==null || editCube.length()==0){
+				logger.error("In the writeback is enabled you must specify a cube to edit. Remove the "+WhatIfXMLTemplateParser.WRITEBACK_TAG+" tag or specify a value for the attribute "+WhatIfXMLTemplateParser.EDIT_CUBE_ATTRIBUTE );
+				throw new SpagoBIEngineRuntimeException("In the writeback is enabled you must specify a cube to edit. Remove the "+WRITEBACK_TAG+" tag or specify a value for the attribute "+WhatIfXMLTemplateParser.EDIT_CUBE_ATTRIBUTE);
+			}
+			List<SourceBean> editableMeasuresBeans = (List<SourceBean>)writeBackSB.getAttributeAsList(WhatIfXMLTemplateParser.MEASURE_TAG);
+			if(editableMeasuresBeans!=null && editableMeasuresBeans.size()>0 ){
+				List<String> editableMeasures = new ArrayList<String>();
+				for(int i=0; i<editableMeasuresBeans.size(); i++){
+					editableMeasures.add(editableMeasuresBeans.get(i).getCharacters());
+				}
+				writeBackConfig.setEditableMeasures(editableMeasures);
+				logger.debug(WRITEBACK_TAG + ":the editable measures are "+editableMeasures);
+			}
+			writeBackConfig.setEditCubeName(editCube);
+			logger.debug(WRITEBACK_TAG + ":the edit cube is "+editCube);
+			return writeBackConfig;
+		}else{
+			logger.debug(WRITEBACK_TAG + ": no write back configuration found in the template");
+		}
+		
+		return null;
 	}
 	
 	

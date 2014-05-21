@@ -113,11 +113,8 @@ public class WhatIfEngineStartStandAloneAction extends AbstractWhatIfEngineServi
 		ds.setUrlConnection(connectionUrl.replace("jdbc:mondrian:Jdbc=", ""));
 		
 		env.put(EngineConstants.ENV_DATASOURCE, ds);
-		env.put(EngineConstants.ENV_EDIT_CUBE_NAME, "Sales_Edit");
-
 		env.put(EngineConstants.ENV_LOCALE, this.getLocale());
 		env.put(EngineConstants.ENV_OLAP_SCHEMA, WhatIfEngineConfig.getInstance().getCatalogue());
-		env.put(EngineConstants.ENV_EDIT_CUBE_NAME, "Sales_Edit");
 		env.put("ENV_INITIAL_MDX_QUERY", WhatIfEngineConfig.getInstance().getInitiallMdx());
 
 		return env;

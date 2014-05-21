@@ -32,6 +32,7 @@ import org.olap4j.CellSet;
 import org.olap4j.CellSetAxis;
 import org.olap4j.OlapException;
 import org.olap4j.Position;
+import org.olap4j.metadata.Dimension;
 import org.olap4j.metadata.Hierarchy;
 import org.olap4j.metadata.Member;
 import org.olap4j.metadata.NamedList;
@@ -315,10 +316,29 @@ public class SpagoBICellWrapper implements Cell {
     	}
     	throw new SpagoBIEngineRuntimeException("No member found on hierarchy " + hierarchy.getUniqueName());
     }
+    
+    public String getMeasureName(){
+
+    	Member[] members = this.getMembers();
+		try {
+    	for (int i = 0 ; i < members.length; i++) {
+    		Member member = members[i];
+
+				if (member.getDimension().getDimensionType().equals(Dimension.Type.MEASURE)) {
+					return member.getName();
+				}
+
+    		}
+		} catch (OlapException e) {
+			throw new SpagoBIEngineRuntimeException("Error getting the measure for the cell ",e);
+		}   
+		throw new SpagoBIEngineRuntimeException("No measure found for the cell");
+    }
 
 	@Override
 	public String toString() {
 		StringBuffer membersString = new StringBuffer();
+		Member[] members = getMembers();
 		if(members!=null){
 			for(int i=0; i<members.length; i++){
 				membersString.append("[");

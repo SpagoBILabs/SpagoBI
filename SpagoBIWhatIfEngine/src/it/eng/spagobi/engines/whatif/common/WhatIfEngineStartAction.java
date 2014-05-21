@@ -119,7 +119,6 @@ public class WhatIfEngineStartAction extends AbstractWhatIfEngineService {
 		IDataSource ds = this.getDataSource();
 
 		env.put(EngineConstants.ENV_DATASOURCE, ds);
-		env.put(EngineConstants.ENV_EDIT_CUBE_NAME, "Sales_Edit");
 
 		env.put(EngineConstants.ENV_USER_PROFILE, getUserProfile());
 		env.put(EngineConstants.ENV_CONTENT_SERVICE_PROXY,

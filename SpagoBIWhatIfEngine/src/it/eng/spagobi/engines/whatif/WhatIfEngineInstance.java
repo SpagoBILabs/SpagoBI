@@ -26,6 +26,7 @@ import it.eng.spagobi.utilities.engines.IEngineAnalysisState;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIEngineRestServiceRuntimeException;
+import it.eng.spagobi.writeback4j.WriteBackEditConfig;
 import it.eng.spagobi.writeback4j.WriteBackManager;
 import it.eng.spagobi.writeback4j.mondrian.MondrianDriver;
 
@@ -93,9 +94,10 @@ public class WhatIfEngineInstance extends AbstractEngineInstance implements Seri
 		
 		//init configs 
 		modelConfig = new ModelConfig();
-		String writeback = "enabled";
-		if(writeback!= null && !writeback.equals("")){
-			modelConfig.getWriteBackConf().put(ModelConfig.WRITEBACK, writeback);
+		modelConfig.setWriteBackConf(template.getWritebackEditConfig());
+
+		WriteBackEditConfig writeBackConfig = getModelConfig().getWriteBackConf();
+		if(writeBackConfig!= null ){
 			try {
 				writeBackManager = new WriteBackManager(getEditCubeName(), new MondrianDriver(getMondrianSchemaFilePath()));
 			} catch (SpagoBIEngineException e) {
@@ -104,7 +106,6 @@ public class WhatIfEngineInstance extends AbstractEngineInstance implements Seri
 				
 			}
 		}
-		
 	}
 	
 	private String getInitialMDX(WhatIfTemplate template, Map env) {
@@ -158,12 +159,13 @@ public class WhatIfEngineInstance extends AbstractEngineInstance implements Seri
 		pivotModel.setMdx( (String) env.get("ENV_INITIAL_MDX_QUERY") );
 		pivotModel.initialize();
 		
-		
 		//init configs 
-		modelConfig = new ModelConfig();
-		String writeback = "enabled";
-		if(writeback!= null && !writeback.equals("")){
-			modelConfig.getWriteBackConf().put(ModelConfig.WRITEBACK, writeback);
+		modelConfig = new ModelConfig();		
+		modelConfig.setWriteBackConf(WhatIfEngineConfig.getInstance().getWritebackEditConfig());
+		
+		WriteBackEditConfig writeBackConfig = getModelConfig().getWriteBackConf();
+		
+		if(writeBackConfig!= null ){
 			try {
 				writeBackManager = new WriteBackManager(getEditCubeName(), new MondrianDriver(getMondrianSchemaFilePath()));
 			} catch (SpagoBIEngineException e) {
@@ -172,7 +174,6 @@ public class WhatIfEngineInstance extends AbstractEngineInstance implements Seri
 				
 			}
 		}
-		
 	}
 	
 	private String initMondrianSchema(Map env) {
@@ -236,7 +237,7 @@ public class WhatIfEngineInstance extends AbstractEngineInstance implements Seri
 	}
 	
 	public String getEditCubeName() {
-		return (String)this.getEnv().get(EngineConstants.ENV_EDIT_CUBE_NAME);
+		return getModelConfig().getWriteBackConf().getEditCubeName();
 	}
 	
 	public IDataSet getDataSet() {

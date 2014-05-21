@@ -79,11 +79,8 @@ public class AbstractWhatIfTestCase extends TestCase {
 		
 		
 		env.put(EngineConstants.ENV_DATASOURCE, ds);
-		env.put(EngineConstants.ENV_EDIT_CUBE_NAME, "Sales_Edit");
-
 		env.put(EngineConstants.ENV_LOCALE, Locale.ITALIAN);
 		env.put(EngineConstants.ENV_OLAP_SCHEMA, catalog);
-		env.put(EngineConstants.ENV_EDIT_CUBE_NAME, "Sales_Edit");
 		env.put("ENV_INITIAL_MDX_QUERY", mdx);
 
 		return env;
