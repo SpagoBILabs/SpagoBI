@@ -18,6 +18,7 @@ Ext.define('Sbi.selfservice.SelfServiceExecutionIFrame', {
 	, modelName: null
 	, datasetLabel: null
 	, fromMyAnalysis: null
+	, fromDocBrowser: null
 	, contextName: null
 	, frame: false
 	, border: 0
@@ -38,6 +39,10 @@ Ext.define('Sbi.selfservice.SelfServiceExecutionIFrame', {
 		
 		if ((config.fromMyAnalysis != undefined) && (config.fromMyAnalysis != null)){
 			this.fromMyAnalysis = config.fromMyAnalysis;
+		}
+		
+		if ((config.fromDocBrowser != undefined) && (config.fromDocBrowser != null)){
+			this.fromDocBrowser = config.fromDocBrowser;
 		}
 		
 		if ((config.contextName != undefined) && (config.contextName != null)){
@@ -68,6 +73,10 @@ Ext.define('Sbi.selfservice.SelfServiceExecutionIFrame', {
 	, returnToMyAnalysis : function() {
 		window.location = this.contextName + '/servlet/AdapterHTTP?ACTION_NAME=CREATE_DOCUMENT_START_ACTION&LIGHT_NAVIGATOR_RESET_INSERT=TRUE';
 		
+	}
+	
+	, returnToDocBrower: function(){		
+		window.location = this.contextName + '/servlet/AdapterHTTP?ACTION_NAME=DOCUMENT_USER_BROWSER_START_ACTION';
 	}
 	
 	, saveHandler : function() {
@@ -103,7 +112,8 @@ Ext.define('Sbi.selfservice.SelfServiceExecutionIFrame', {
 				'OBJECT_TEMPLATE': template,
 				'model_name': this.modelName,
 				'typeid': 'GEOREPORT',
-				'fromMyAnalysis': this.fromMyAnalysis
+				'fromMyAnalysis': this.fromMyAnalysis,
+				'fromDocBrowser': this.fromDocBrowser
 					
 		};
 
@@ -117,6 +127,8 @@ Ext.define('Sbi.selfservice.SelfServiceExecutionIFrame', {
 		
 		this.win_saveDoc = Ext.create("Sbi.execution.SaveDocumentWindowExt4", documentWindowsParams);
 		this.win_saveDoc.on('returnToMyAnalysis', this.returnToMyAnalysis, this);
+		this.win_saveDoc.on('returnToDocBrower', this.returnToDocBrower, this);
+		
 		this.win_saveDoc.show();
     
     }

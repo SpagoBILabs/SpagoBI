@@ -24,6 +24,8 @@ import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.services.common.SsoServiceInterface;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.exceptions.SpagoBIException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
@@ -54,6 +56,8 @@ public class UserDocumentsBrowserPortletStartAction extends PortletLoginAction {
 	public static final String HEIGHT = "HEIGHT";
 	public static final String PORTLET = "PORTLET";
 	public static final String OUTPUT_PARAMETER_GEOREPORT_EDIT_SERVICE_URL = "georeportServiceUrl";
+	public static final String OUTPUT_PARAMETER_COCKPIT_EDIT_SERVICE_URL = "cockpitServiceUrl";
+	public static final String OUTPUT_PARAMETER_WORKSHEET_EDIT_SERVICE_URL = "worksheetServiceUrl";
 	
 	private Locale locale;
 	IEngUserProfile profile;
@@ -146,16 +150,41 @@ public class UserDocumentsBrowserPortletStartAction extends PortletLoginAction {
 				//Defining action urls
 				String executionId = ExecuteAdHocUtility.createNewExecutionId();
 				String geoereportEditActionUrl = null;
+				String worksheetEditActionUrl  = null;
+				String cockpitEditActionUrl  = null;
+				
 				try{
 					geoereportEditActionUrl = buildGeoreportEditServiceUrl(executionId);
 				}catch(SpagoBIRuntimeException r){
 					//the geo engine is not found
 					logger.info("[DAJS]:: error", r);
 				}
+				
+				try{
+					worksheetEditActionUrl = buildWorksheetEditServiceUrl(executionId);
+				}catch(SpagoBIRuntimeException r){
+					//the geo engine is not found
+					logger.info("[DAJS]:: error", r);
+				}
+				
+				try{
+					cockpitEditActionUrl = buildCockpitEditServiceUrl(executionId);
+				}catch(SpagoBIRuntimeException r){
+					//the geo engine is not found
+					logger.info("[DAJS]:: error", r);
+				}
+				
 				JSONObject jsonUrlObj  = config.toJSON();
 				if (geoereportEditActionUrl != null){
 					jsonUrlObj.put(OUTPUT_PARAMETER_GEOREPORT_EDIT_SERVICE_URL, geoereportEditActionUrl);
 				}
+				if (worksheetEditActionUrl != null){
+					jsonUrlObj.put(OUTPUT_PARAMETER_WORKSHEET_EDIT_SERVICE_URL, worksheetEditActionUrl);
+				}
+				if (cockpitEditActionUrl != null){
+					jsonUrlObj.put(OUTPUT_PARAMETER_COCKPIT_EDIT_SERVICE_URL, cockpitEditActionUrl);
+				}
+				
 				//----------------------------------------------
 				
 				
@@ -181,7 +210,8 @@ public class UserDocumentsBrowserPortletStartAction extends PortletLoginAction {
 	}
 	
 	protected String buildGeoreportEditServiceUrl(String executionId) {
-		Map<String, String> parametersMap = buildGeoreportEditServiceBaseParametersMap();
+//		Map<String, String> parametersMap = buildGeoreportEditServiceBaseParametersMap();
+		Map<String, String> parametersMap = buildServiceBaseParametersMap();
 		parametersMap.put("SBI_EXECUTION_ID" , executionId);
 		
 		Engine georeportEngine = ExecuteAdHocUtility.getGeoreportEngine();
@@ -194,7 +224,75 @@ public class UserDocumentsBrowserPortletStartAction extends PortletLoginAction {
 		return georeportEditActionUrl;
 	}
 	
-	protected Map<String, String> buildGeoreportEditServiceBaseParametersMap() {
+//	protected Map<String, String> buildGeoreportEditServiceBaseParametersMap() {
+//		Map<String, String> parametersMap = buildServiceBaseParametersMap();
+//		
+//		return parametersMap;
+//	}
+	
+	// WORKSHEET
+	protected String buildWorksheetEditServiceUrl(String executionId) {
+		Engine worksheetEngine = null;
+		String worksheetEditActionUrl = null;
+		
+		Map<String, String> parametersMap = buildEditServiceBaseParametersMap();
+		parametersMap.put("SBI_EXECUTION_ID" , executionId);
+		
+		IDataSource datasource;
+		try {
+			datasource = DAOFactory.getDataSourceDAO().loadDataSourceWriteDefault();
+		} catch (EMFUserError e) {
+			throw new SpagoBIRuntimeException(
+					"Error while loading default datasource for writing", e);
+		}
+		if (datasource != null) {
+			parametersMap.put(EngineConstants.DEFAULT_DATASOURCE_FOR_WRITING_LABEL, datasource.getLabel());
+		} else {
+			logger.debug("There is no default datasource for writing");
+		}
+		
+		try{
+			worksheetEngine = ExecuteAdHocUtility.getWorksheetEngine();			
+		}catch(SpagoBIRuntimeException r){
+			//the ws engine is not found
+			logger.info("Engine not found. Error: ", r);
+		}
+		if (worksheetEngine != null){
+			LogMF.debug(logger, "Engine label is equal to [{0}]", worksheetEngine.getLabel());
+			// create the WorkSheet Edit Service's URL
+			worksheetEditActionUrl = GeneralUtilities.getUrl(worksheetEngine.getUrl(), parametersMap);
+			LogMF.debug(logger, "Worksheet edit service invocation url is equal to [{}]", worksheetEditActionUrl);
+		}
+		
+		
+		return worksheetEditActionUrl;
+	}
+	
+	// COCKPIT
+		protected String buildCockpitEditServiceUrl(String executionId) {
+			Engine cockpitEngine = null;
+			String cockpitEditActionUrl  = null;
+			
+			Map<String, String> parametersMap = buildEditServiceBaseParametersMap();
+			parametersMap.put("SBI_EXECUTION_ID" , executionId);
+			
+			try{
+				cockpitEngine = ExecuteAdHocUtility.getCockpitEngine();
+			}catch(SpagoBIRuntimeException r){
+				//the cockpit engine is not found
+				logger.info("Engine not found. Error: ", r);
+			}
+			
+			if (cockpitEngine != null){
+				String baseEditUrl = cockpitEngine.getUrl().replace("pages/execute", "pages/edit");
+				cockpitEditActionUrl = GeneralUtilities.getUrl(baseEditUrl, parametersMap);
+				LogMF.debug(logger, "Cockpit edit service invocation url is equal to [{}]", cockpitEditActionUrl);
+			}
+			
+			return cockpitEditActionUrl;
+		}	
+	
+	protected Map<String, String> buildEditServiceBaseParametersMap() {
 		Map<String, String> parametersMap = buildServiceBaseParametersMap();
 		
 		return parametersMap;

@@ -44,10 +44,12 @@ Ext.define('Sbi.selfservice.ManageSelfServiceContainer', {
 		this.layout =  'card';
 		
 		this.fromMyAnalysis = config.fromMyAnalysis;
+		this.fromDocBrowser = config.fromDocBrowser;
 		this.contextName = config.contextName;
 		
 		this.documentexecution = Ext.create('Sbi.selfservice.SelfServiceExecutionIFrame',{
 			fromMyAnalysis: this.fromMyAnalysis,
+			fromDocBrowser: this.fromDocBrowser,
 			contextName: this.contextName
 		}); 
 		this.manageSelfService = Ext.create('Sbi.selfservice.ManageSelfService', {

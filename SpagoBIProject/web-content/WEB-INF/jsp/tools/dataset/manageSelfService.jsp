@@ -30,6 +30,7 @@ if (isMyData.equalsIgnoreCase("FALSE")) {%>
     String georeportEditActionUrl = (String) aResponseContainer.getServiceResponse().getAttribute(SelfServiceDatasetStartAction.OUTPUT_PARAMETER_GEOREPORT_EDIT_SERVICE_URL);
     String typeDoc = (String) aResponseContainer.getServiceResponse().getAttribute(SelfServiceDatasetStartAction.TYPE_DOC);
     String fromMyAnalysis = (String) aResponseContainer.getServiceResponse().getAttribute(SelfServiceDatasetStartAction.IS_FROM_MYANALYSIS);
+    String fromDocBrowser = (String) aResponseContainer.getServiceResponse().getAttribute(SelfServiceDatasetStartAction.IS_FROM_DOCBROWSER);
     String contextName = ChannelUtilities.getSpagoBIContextName(request);
 
 %>
@@ -50,6 +51,7 @@ if (isMyData.equalsIgnoreCase("FALSE")) {%>
             , user: Sbi.user.userUniqueIdentifier
             , typeDoc: '<%=typeDoc%>'
             , fromMyAnalysis: '<%=fromMyAnalysis%>'
+            , fromDocBrowser: '<%=fromDocBrowser%>'
             , datasetsServicePath: 'selfservicedataset'
             , contextName: '<%=StringEscapeUtils.escapeJavaScript(contextName)%>'
 		}); //by alias

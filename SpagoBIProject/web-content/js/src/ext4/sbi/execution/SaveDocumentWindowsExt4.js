@@ -23,6 +23,7 @@ Ext.define('Sbi.execution.SaveDocumentWindowExt4', {
 	,OBJECT_COMMUNITY: null
 	,OBJECT_SCOPE: null
 	,fromMyAnalysis: null
+	,fromDocBrowser: null
 	,id: null
 	
 	,constructor: function(config) {
@@ -355,10 +356,12 @@ Ext.define('Sbi.execution.SaveDocumentWindowExt4', {
 						                //jump back to MyAnalysis page
 						                if (thisWindow.fromMyAnalysis != undefined && thisWindow.fromMyAnalysis != null && thisWindow.fromMyAnalysis == 'TRUE'){
 						                	thisWindow.fireEvent('returnToMyAnalysis',thisWindow);  //fire event to jump to the MyAnalysis page 
+						                }else if (thisWindow.fromDocBrowser != undefined && thisWindow.fromDocBrowser != null && thisWindow.fromDocBrowser == 'TRUE'){
+						                	thisWindow.fireEvent('returnToDocBrower',thisWindow);  //fire event to jump to the DocBrowser page 
 						                }
 		                            	
 		                                Ext.MessageBox.hide(); 
-		                                this.destroy();
+		                                if (this.destroy) this.destroy();
 					      		    }
 				                });
 

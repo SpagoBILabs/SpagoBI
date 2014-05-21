@@ -49,6 +49,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 
     var params = {
     	SBI_EXECUTION_ID: <%= request.getParameter("SBI_EXECUTION_ID")!=null?"'" + request.getParameter("SBI_EXECUTION_ID") +"'": "null" %>
+    	, SBI_ENVIRONMENT: 'DOCBROWSER'
     	, LIGHT_NAVIGATOR_DISABLED: 'TRUE'
     };
    
