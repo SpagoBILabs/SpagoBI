@@ -291,7 +291,7 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidget, Sbi.cockpit.widgets.char
 		}, {
 			type: "Category",
 			position: positionCategory,
-			fields: ["categories"],
+			fields: ["categories"]
 //			title: "Category"
 		}];
 		
