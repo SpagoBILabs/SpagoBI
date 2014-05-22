@@ -12,6 +12,7 @@
 package it.eng.spagobi.engines.whatif.cube;
 
 import it.eng.spagobi.engines.whatif.model.SpagoBICellWrapper;
+import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
 import it.eng.spagobi.pivot4j.mdx.MDXQueryBuilder;
 import it.eng.spagobi.pivot4j.mdx.MdxQueryExecutor;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
@@ -158,7 +159,7 @@ public class CubeUtilities {
 	 * TODO: to complete	
 	 * Calculate the members value based on the passed expression
 	 */
-	public static Double getMemberValue(LinkedList membersExpression, SpagoBICellWrapper cellWrapper, PivotModel model,OlapDataSource olapDataSource) {
+	public static Double getMemberValue(LinkedList membersExpression, SpagoBICellWrapper cellWrapper, PivotModel pivotModel,OlapDataSource olapDataSource) {
 		Double toReturn = null;
 		
 		//Members are the dimensional "coordinates" that identify the specific value inserted in the cell
@@ -195,8 +196,14 @@ public class CubeUtilities {
 		if (!errorFound){
 			//Calculate the new value 
 			MdxQueryExecutor mdxQueryExecutor = new MdxQueryExecutor(olapDataSource);
-			Cube cube = model.getCube();
-			Object value = mdxQueryExecutor.getValueForTuple(cellMembers,cube);
+			Cube cube = pivotModel.getCube();
+			SpagoBIPivotModel spagoBIPivotModel = null;
+			if (pivotModel instanceof SpagoBIPivotModel){
+				spagoBIPivotModel = (SpagoBIPivotModel)pivotModel;
+			} else {
+				//TODO: throw exception
+			}
+			Object value = mdxQueryExecutor.getValueForTuple(cellMembers,cube,spagoBIPivotModel);
 			if (value instanceof Double){
 				toReturn = (Double)value;
 			}
