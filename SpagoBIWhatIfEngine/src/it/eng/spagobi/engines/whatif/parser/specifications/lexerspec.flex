@@ -122,7 +122,7 @@ VARIABLE = [:jletter:]+[:jletterdigit:]*
 
 NAME = {ALPHANUMERIC}({ALPHANUMERIC}|[ ])*
 
-STRINGDOT = {ALPHANUMERIC}({ALPHANUMERIC}|[ ]|[.])*
+STRINGDOT = {ALPHANUMERIC}({ALPHANUMERIC}|[ ]|[.]|[-])*
 
 MEMBER = {NAME}+"."{NAME}+ | {NAME}+"."{NAME}+"."{NAME}+ | "["{NAME}+"]"".""["{STRINGDOT}+"]" | "["{NAME}+"]"".""["{NAME}+"]"".""["{STRINGDOT}+"]"
 
