@@ -38,6 +38,7 @@ Sbi.cockpit.core.WidgetContainerComponent = function(config) {
 	    , height:332
 	    , x: 100
 	    , y: 100
+	    , maximizable: true	   
 	};
 	
 	var settings = Sbi.getObjectSettings('Sbi.cockpit.core.WidgetContainerComponent', defaultSettings);
@@ -61,6 +62,7 @@ Sbi.cockpit.core.WidgetContainerComponent = function(config) {
 	} else {
 		this.html = "Please configure the widget";
 	}
+	
 	
 	// constructor
 	Sbi.cockpit.core.WidgetContainerComponent.superclass.constructor.call(this, c);
@@ -280,12 +282,35 @@ Ext.extend(Sbi.cockpit.core.WidgetContainerComponent, Ext.Window, {
 //     	   		Ext.Msg.alert('Message', 'The REFRESH tool was clicked.');
 //     	    },
     		scope: this
-        }];
+        }];			
 	}
-	
+		
 	// =================================================================================================================
 	// EVENTS
 	// =================================================================================================================
+	/**
+	 * @method
+	 * 
+	 * Override of Ext.window.Window.maximize method to handle resizing of charts 
+	 */
+	, maximize: function() {
+		var o = this.callParent(arguments);
+		var widget = this.getWidget();
+		widget.maximize();
+		return o;
+	}
+	
+	/**
+	 * @method
+	 * 
+	 * Override of restore method to handle resizing of charts 
+	 */
+	, restore: function() {
+		var o = this.callParent(arguments);
+		var widget = this.getWidget();
+		widget.restore();
+		return o;
+	}
 	
 //	, this.addEvents(
 //		/**
@@ -296,5 +321,5 @@ Ext.extend(Sbi.cockpit.core.WidgetContainerComponent, Ext.Window, {
 //	     * @param {Sring} action
 //	     */
 //		'performaction'
-//	);	
+//	);		
 });
