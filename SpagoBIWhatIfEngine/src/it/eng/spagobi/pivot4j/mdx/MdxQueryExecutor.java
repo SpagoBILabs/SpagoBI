@@ -10,6 +10,7 @@
 
 package it.eng.spagobi.pivot4j.mdx;
 
+import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 
 import org.apache.log4j.Logger;
@@ -19,8 +20,6 @@ import org.olap4j.OlapDataSource;
 import org.olap4j.metadata.Cube;
 import org.olap4j.metadata.Member;
 
-import com.eyeq.pivot4j.PivotModel;
-import com.eyeq.pivot4j.impl.PivotModelImpl;
 
 public class MdxQueryExecutor {
 	
@@ -37,14 +36,18 @@ public class MdxQueryExecutor {
 		return this.dataSource;
 	}
 	
-	public CellSet executeMdx(String mdx) {
+	public CellSet executeMdx(String mdx, SpagoBIPivotModel pivotModel) {
 		logger.debug("IN: MDX = [" + mdx + "]");
 		CellSet toReturn = null;
 		try {
-			PivotModel pivotModel = new PivotModelImpl( this.dataSource );
+			//save the currentMdx query (for the current displayed model)
+			String previous = pivotModel.getCurrentMdx();
+			//set the new Mdx query to execute
 			pivotModel.setMdx( mdx );
-			pivotModel.initialize();
+			//get the result as CellSet (this will apply pending transformations)
 			toReturn = pivotModel.getCellSet();
+			//restore the previous situation
+			pivotModel.setMdx( previous );
 		} catch (Throwable t) {
 			logger.error("Error while executing MDX [" + mdx + "]", t);
 			throw new SpagoBIEngineRuntimeException("Error while executing MDX [" + mdx + "]", t);
@@ -54,11 +57,11 @@ public class MdxQueryExecutor {
 		return toReturn;
 	}
 	
-	public Object getValueForTuple(Member[] members, Cube cube) {
+	public Object getValueForTuple(Member[] members, Cube cube, SpagoBIPivotModel pivotModel) {
 		logger.debug("IN: tuple = [" + members + "]");
 		Object toReturn = null;
 		try {
-			Cell cell = this.getCellForTuple(members, cube);
+			Cell cell = this.getCellForTuple(members, cube, pivotModel);
 			toReturn = cell.getValue();
 		} catch (Throwable t) {
 			logger.error("Error while getting value for tuple [" + members + "]", t);
@@ -69,14 +72,14 @@ public class MdxQueryExecutor {
 		return toReturn;
 	}
 	
-	public CellSet getCellSetForTuple(Member[] members, Cube cube) {
+	public CellSet getCellSetForTuple(Member[] members, Cube cube, SpagoBIPivotModel pivotModel) {
 		logger.debug("IN: tuple = [" + members + "]");
 		CellSet toReturn = null;
 		try {
 			MDXQueryBuilder builder = new MDXQueryBuilder();
 			String mdx = builder.getMDXForTuple(members, cube);
 			logger.debug("Executing MDX : " + mdx + " ...");
-			toReturn = this.executeMdx(mdx);
+			toReturn = this.executeMdx(mdx,pivotModel);
 			logger.debug("MDX query executed");
 		} catch (Throwable t) {
 			logger.error("Error while getting cellset for tuple [" + members + "]", t);
@@ -87,11 +90,11 @@ public class MdxQueryExecutor {
 		return toReturn;
 	}
 	
-	public Cell getCellForTuple(Member[] members, Cube cube) {
+	public Cell getCellForTuple(Member[] members, Cube cube,SpagoBIPivotModel pivotModel) {
 		logger.debug("IN: tuple = [" + members + "]");
 		Cell toReturn = null;
 		try {
-			CellSet cellSet = this.getCellSetForTuple(members, cube);
+			CellSet cellSet = this.getCellSetForTuple(members, cube, pivotModel);
 			toReturn = cellSet.getCell(0);
 		} catch (Throwable t) {
 			logger.error("Error while getting cell for tuple [" + members + "]", t);
