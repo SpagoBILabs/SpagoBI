@@ -58,16 +58,44 @@ public class MdxQueryExecutor {
 		logger.debug("IN: tuple = [" + members + "]");
 		Object toReturn = null;
 		try {
-			MDXQueryBuilder builder = new MDXQueryBuilder();
-			String mdx = builder.getMDXForTuple(members, cube);
-			logger.debug("Executing MDX : " + mdx + " ...");
-			CellSet cellSet = this.executeMdx(mdx);
-			logger.debug("MDX query executed");
-			Cell cell = cellSet.getCell(0);
+			Cell cell = this.getCellForTuple(members, cube);
 			toReturn = cell.getValue();
 		} catch (Throwable t) {
 			logger.error("Error while getting value for tuple [" + members + "]", t);
 			throw new SpagoBIEngineRuntimeException("Error while getting value for tuple [" + members + "]", t);
+		} finally {
+			logger.debug("OUT: returning [" + toReturn + "]");
+		}
+		return toReturn;
+	}
+	
+	public CellSet getCellSetForTuple(Member[] members, Cube cube) {
+		logger.debug("IN: tuple = [" + members + "]");
+		CellSet toReturn = null;
+		try {
+			MDXQueryBuilder builder = new MDXQueryBuilder();
+			String mdx = builder.getMDXForTuple(members, cube);
+			logger.debug("Executing MDX : " + mdx + " ...");
+			toReturn = this.executeMdx(mdx);
+			logger.debug("MDX query executed");
+		} catch (Throwable t) {
+			logger.error("Error while getting cellset for tuple [" + members + "]", t);
+			throw new SpagoBIEngineRuntimeException("Error while getting cellset for tuple [" + members + "]", t);
+		} finally {
+			logger.debug("OUT: returning [" + toReturn + "]");
+		}
+		return toReturn;
+	}
+	
+	public Cell getCellForTuple(Member[] members, Cube cube) {
+		logger.debug("IN: tuple = [" + members + "]");
+		Cell toReturn = null;
+		try {
+			CellSet cellSet = this.getCellSetForTuple(members, cube);
+			toReturn = cellSet.getCell(0);
+		} catch (Throwable t) {
+			logger.error("Error while getting cell for tuple [" + members + "]", t);
+			throw new SpagoBIEngineRuntimeException("Error while getting cell for tuple [" + members + "]", t);
 		} finally {
 			logger.debug("OUT: returning [" + toReturn + "]");
 		}
