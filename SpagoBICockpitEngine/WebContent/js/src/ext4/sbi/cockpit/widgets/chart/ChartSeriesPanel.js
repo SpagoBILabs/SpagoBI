@@ -66,6 +66,7 @@ Ext.extend(Sbi.cockpit.widgets.chart.ChartSeriesPanel, Ext.Panel, {
 	, displayColorColumn : true // to display or not the color column, default is true
 	, colorColumn : null
 	, validFields: null
+	, defaultAggregationFunction: 'SUM'
 	
 	// static members
 	, Record: Ext.data.Record.create([
@@ -157,8 +158,8 @@ Ext.extend(Sbi.cockpit.widgets.chart.ChartSeriesPanel, Ext.Panel, {
 			         queryMode: 'local',
 			         triggerAction: 'all',
 			         autocomplete: 'off',
-			         emptyText: LN('sbi.qbe.selectgridpanel.aggfunc.editor.emptymsg'),
-			         selectOnFocus: true
+			         emptyText: LN('sbi.qbe.selectgridpanel.aggfunc.name.none'),
+			         selectOnFocus: true			       
 		         })
 			     , hideable: true
 			     , hidden: false
@@ -340,22 +341,16 @@ Ext.extend(Sbi.cockpit.widgets.chart.ChartSeriesPanel, Ext.Panel, {
 			}
 			// if the measure is missing the aggregation function, user must select it
 			
-			if(this.defaultAggregationFunction){
-					var measure = Ext.apply({}, aRow.data) ;
-					measure.funct = this.defaultAggregationFunction;
-					this.addMeasure(new this.Record(measure));
+			var measure = Ext.apply({}, aRow) ;
+			
+			if(this.defaultAggregationFunction){					
+				measure.data.funct = this.defaultAggregationFunction;					
 			}else{
-				if (aRow.data.funct === null || aRow.data.funct === '' || aRow.data.funct === 'NONE') {
-					var aWindow = new Sbi.crosstab.ChooseAggregationFunctionWindow({
-					behindMeasure: Ext.apply({}, aRow.data) // creates a clone
-					});
-					aWindow.show();
-					aWindow.on('apply', function(modifiedMeasure, theWindow) {this.addMeasure(new this.Record(modifiedMeasure));}, this);
-				
-				} else {
-					this.addMeasure(aRow);
-				}
+				// if default aggregation function is missing, use the first occurrence of the arrayStore aggregationFunctionsStore
+				measure.data.funct = this.aggregationFunctionsStore.first().get('funzione');				
 			}
+			
+			this.addMeasure(measure);
 			
 		}
 	}
