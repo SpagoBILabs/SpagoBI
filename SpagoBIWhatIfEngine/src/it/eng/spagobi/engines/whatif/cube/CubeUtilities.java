@@ -173,8 +173,6 @@ public class CubeUtilities {
 		//Iterate the list for each member specified
 		for (Object memberExp:membersExpression){
 			String memberExpression =(String)memberExp;
-			//TODO: considerare i casi con gerarchie multiple e notazione del tipo Dimensione.gerarchia.membro
-
 			String[] memberExpressionParts;
 			if(memberExpression.contains("[")){
 				//The member is using the notation with square brackets. Ex. [Dimension].[MemberName]
@@ -188,7 +186,7 @@ public class CubeUtilities {
 			if (!memberFound){
 				logger.error("ERROR: Cannot calculate Value, Member not found: "+memberExpression);
 				errorFound = true;
-				//throw new SpagoBIEngineException("Cannot calculate Value, Member not found: "+memberExpression);
+				//TODO: throw new SpagoBIEngineException("Cannot calculate Value, Member not found: "+memberExpression);
 			}
 			
 		}
@@ -201,7 +199,7 @@ public class CubeUtilities {
 			if (pivotModel instanceof SpagoBIPivotModel){
 				spagoBIPivotModel = (SpagoBIPivotModel)pivotModel;
 			} else {
-				//TODO: throw exception
+				//TODO: ***** throw an Exception *****
 			}
 			Object value = mdxQueryExecutor.getValueForTuple(cellMembers,cube,spagoBIPivotModel);
 			if (value instanceof Double){
@@ -213,6 +211,10 @@ public class CubeUtilities {
 		
 	}
 	
+	/*
+	 * Search if the specified member(s) currently exists, retrieve the corresponding object(s) and
+	 * insert it in the cellMembers array (with a substitution)
+	 */
 	private static boolean searchMember(Member[] cellMembers, String[] memberExpressionParts){
 		boolean memberFound = false;
 		String memberExpressionDimension = memberExpressionParts[0];
@@ -227,21 +229,18 @@ public class CubeUtilities {
 		for (int i=0; i<cellMembers.length; i++){
 			Member aMember = cellMembers[i];
 			String memberUniqueName = aMember.getUniqueName();
-			/*
-			String uniqueNameParts[] = memberUniqueName.split("\\.");
-			String dimensionName = uniqueNameParts[0];
-			//remove the square brackets from the dimensionName
-			dimensionName = dimensionName.replaceAll("\\[", "");
-			dimensionName = dimensionName.replaceAll("\\]", "");
-			*/
+
 			String uniqueNameParts[] = splitSquareBracketNames(memberUniqueName);
 			String dimensionName = uniqueNameParts[0];
 			//Search the member to modify first by dimensionName (first part of the uniqueName)
 			if (dimensionName.equalsIgnoreCase(memberExpressionDimension)){
 				
-				//Compose the uniqueName of the member to search using the prefix of the current member
-				//of the selected cell
+				//Compose the uniqueName of the member to search using 
+				//the prefix of the current member of the selected cell
 				String memberToSearchUniqueName = "";
+				
+				//Just the Name of the member without the unique prefix
+				String memberToSearchSimpleName = "";
 
 				int endIndex = memberUniqueName.lastIndexOf(".");
 				if (endIndex != -1)  
@@ -249,16 +248,33 @@ public class CubeUtilities {
 			        memberToSearchUniqueName = memberUniqueName.substring(0, endIndex); 
 			    }
 				if (hierarchySpecified){
-					memberToSearchUniqueName = memberToSearchUniqueName + "."+"["+ memberExpressionParts[2]+"]";
+					memberToSearchSimpleName = memberExpressionParts[2];
 				} else {
-					memberToSearchUniqueName = memberToSearchUniqueName + "."+"["+ memberExpressionParts[1]+"]";
+					memberToSearchSimpleName = memberExpressionParts[1];
 				}
+				
+				String[] memberSpecificLevelPathParts = null;
+				//the member name contains a specific level path ex: [Product][Drink.Beverages]
+				if (memberToSearchSimpleName.contains(".")){
+					memberSpecificLevelPathParts = memberToSearchSimpleName.split("\\.");
+					int lastPartIndex = memberSpecificLevelPathParts.length-1;
+					memberToSearchSimpleName = memberSpecificLevelPathParts[lastPartIndex];
+				}
+				
+				memberToSearchUniqueName = memberToSearchUniqueName + "."+"["+ memberToSearchSimpleName+"]";
+
 				
 				//get Level of the interested member
 				Level levelOfMember = aMember.getLevel();
 				try {
+					List<Member> matchingLevelMembers = new ArrayList<Member>();
 					List<Member> levelMembers = levelOfMember.getMembers();
 					for (Member levelMember :  levelMembers){
+						String levelMemberName = levelMember.getName();
+						if (levelMemberName.equalsIgnoreCase(memberToSearchSimpleName)){
+							matchingLevelMembers.add(levelMember);		
+						}
+						/*
 						String levelMemberName = levelMember.getUniqueName();
 						
 						if (levelMemberName.equalsIgnoreCase(memberToSearchUniqueName)){
@@ -268,7 +284,34 @@ public class CubeUtilities {
 							memberFound = true;
 							break;
 						}
+						*/
 					}
+					
+					//Single member found with specified name, NO ambiguity 
+					if(matchingLevelMembers.size() == 1){
+						//Found the member specified in the expression, use it to substitute
+						//the original member in the cellMembers
+						cellMembers[i] = matchingLevelMembers.get(0);
+						memberFound = true;
+
+					} else {
+						//zero or >1 members found (wrong name or ambiguity)
+						if (matchingLevelMembers.size() > 1){
+							if (memberSpecificLevelPathParts.length > 1 ){
+								
+								//TODO: comporre nome univoco: dimensione+memberSpecificLevelPathParts
+								
+							}
+						} else {
+							memberFound = false;
+							logger.error("ERROR: Cannot calculate Value, Member name not found or ambiguos: "+memberToSearchSimpleName);
+
+							//TODO: ***** throw an Exception *****
+						}
+
+					}
+					
+					
 				} catch (OlapException e) {
 					e.printStackTrace();
 				}
