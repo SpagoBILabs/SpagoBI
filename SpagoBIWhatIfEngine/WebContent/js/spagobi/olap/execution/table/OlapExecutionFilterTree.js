@@ -57,7 +57,6 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionFilterTree', {
 			url: "hierarchy",
 			pathParams: [this.dimension.get("selectedHierarchyUniqueName"), "filtertree", this.dimension.get("axis")]
 		});
-		var p = service.getRequestParams();
 		
 		var treeStore =  new Ext.data.TreeStore({
 			proxy: {
