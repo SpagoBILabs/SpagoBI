@@ -387,5 +387,15 @@ Ext.extend(Sbi.cockpit.widgets.chart.AbstractChartWidget, Sbi.cockpit.core.Widge
 		
 		return measures === undefined;
 	}
+	
+	, maximize: function(){
+		Sbi.trace("[AbstractChartWidget.maximize]: Ext.window.Window.maximize method overriden has been called");
+		this.refresh();
+	} 
+	, restore: function() {
+		Sbi.trace("[AbstractChartWidget.restore]: Ext.window.Window.restore method overriden has been called");
+		this.refresh();
+	}
+	
 
 });

@@ -685,6 +685,23 @@ Ext.extend(Sbi.cockpit.core.WidgetRuntime, Ext.Panel, {
 		// do nothing
 	}
 	
+	/**
+	 * @method
+	 * 
+	 * Has to be overridden from AbstractChartWidget
+	 */
+	, maximize: function() {
+		Sbi.trace("[WidgetRuntime.maximize]: Ext.window.Window.maximize method overriden has been called");
+	}
+	
+	/**
+	 * @method
+	 * 
+	 * Has to be overridden from AbstractChartWidget
+	 */
+	, restore: function() {
+		Sbi.trace("[WidgetRuntime.restore]: Ext.window.Window.restore method overriden has been called");
+	}
 	
 	
 	// =================================================================================================================
