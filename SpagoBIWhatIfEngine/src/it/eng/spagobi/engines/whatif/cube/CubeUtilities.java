@@ -251,6 +251,7 @@ public class CubeUtilities {
 		boolean memberFound = false;
 		String memberExpressionDimension = memberExpressionParts[0];
 		boolean hierarchySpecified = false;
+		boolean searchByUniqueName = false;
 		
 		if(memberExpressionParts.length > 2){
 			//Notation with Hierarchy specified
@@ -288,12 +289,12 @@ public class CubeUtilities {
 				String[] memberSpecificLevelPathParts = null;
 				//the member name contains a specific level path ex: [Product][Drink.Beverages]
 				if (memberToSearchSimpleName.contains(".")){
-					memberSpecificLevelPathParts = memberToSearchSimpleName.split("\\.");
-					int lastPartIndex = memberSpecificLevelPathParts.length-1;
-					memberToSearchSimpleName = memberSpecificLevelPathParts[lastPartIndex];
+					memberToSearchUniqueName = "["+ dimensionName +"]" + "." + formatNameWithSquareBracket(memberToSearchSimpleName);
+					searchByUniqueName = true;
+				} else {
+					memberToSearchUniqueName = memberToSearchUniqueName + "."+"["+ memberToSearchSimpleName+"]";
 				}
 				
-				memberToSearchUniqueName = memberToSearchUniqueName + "."+"["+ memberToSearchSimpleName+"]";
 
 				
 				//get Level of the interested member
@@ -302,21 +303,19 @@ public class CubeUtilities {
 					List<Member> matchingLevelMembers = new ArrayList<Member>();
 					List<Member> levelMembers = levelOfMember.getMembers();
 					for (Member levelMember :  levelMembers){
-						String levelMemberName = levelMember.getName();
-						if (levelMemberName.equalsIgnoreCase(memberToSearchSimpleName)){
-							matchingLevelMembers.add(levelMember);		
+						if(searchByUniqueName){
+							String levelMemberName = levelMember.getUniqueName();
+							
+							if (levelMemberName.equalsIgnoreCase(memberToSearchUniqueName)){
+								matchingLevelMembers.add(levelMember);		
+								break;
+							}
+						} else {
+							String levelMemberName = levelMember.getName();
+							if (levelMemberName.equalsIgnoreCase(memberToSearchSimpleName)){
+								matchingLevelMembers.add(levelMember);		
+							}
 						}
-						/*
-						String levelMemberName = levelMember.getUniqueName();
-						
-						if (levelMemberName.equalsIgnoreCase(memberToSearchUniqueName)){
-							//Found the member specified in the expression, use it to substitute
-							//the original member in the cellMembers
-							cellMembers[i] = levelMember;
-							memberFound = true;
-							break;
-						}
-						*/
 					}
 					
 					//Single member found with specified name, NO ambiguity 
@@ -326,20 +325,31 @@ public class CubeUtilities {
 						cellMembers[i] = matchingLevelMembers.get(0);
 						memberFound = true;
 
-					} else {
-						//zero or >1 members found (wrong name or ambiguity)
-						if (matchingLevelMembers.size() > 1){
-							if (memberSpecificLevelPathParts.length > 1 ){
-								
-								//TODO: comporre nome univoco: dimensione+memberSpecificLevelPathParts
-								
+					}
+					else if (matchingLevelMembers.size() > 1){
+						//>1 members found (ambiguity)
+						
+						//try to resolve ambiguity with local precedence
+						for (Member levelMember :  matchingLevelMembers){
+							if (levelMember.getUniqueName().equalsIgnoreCase(memberToSearchUniqueName)){
+								cellMembers[i] = levelMember;
+								memberFound = true;
+								break;
 							}
-						} else {
-							memberFound = false;
-							logger.error("ERROR: Cannot calculate Value, Member name not found or ambiguos: "+memberToSearchSimpleName);
+						}
+						if (!memberFound){
+							logger.error("ERROR: Cannot calculate Value, Member name not found: "+memberToSearchSimpleName);
 
 							//TODO: ***** throw an Exception *****
 						}
+						
+					}
+					else {
+						//zero members found (wrong name)
+						memberFound = false;
+						logger.error("ERROR: Cannot calculate Value, Member name not found: "+memberToSearchSimpleName);
+
+						//TODO: ***** throw an Exception *****
 
 					}
 					
@@ -371,6 +381,33 @@ public class CubeUtilities {
 		}
 		
 		return memberExpressionParts.toArray(new String[0]);			
+	}
+	
+	/*
+	 * Transform a string separated with dot in a string with square brackets separated by dot
+	 * Ex: Name.Level -> [Name].[Level]
+	 */
+	private static String formatNameWithSquareBracket(String name){
+		ArrayList<String> nameParts = new ArrayList<String>();
+
+		StringTokenizer st = new StringTokenizer(name,".", true);
+		while(st.hasMoreTokens()){
+			String token = st.nextToken();	
+			if (!token.equals(".")){
+				nameParts.add("["+token+"]");
+			} else {
+				nameParts.add(token);
+			}
+		}
+		StringBuffer formattedName = new StringBuffer();
+		for(String namePart : nameParts){
+			formattedName.append(namePart);
+		}
+		
+		return formattedName.toString();
+		
+		
+		
 	}
 	
 }
