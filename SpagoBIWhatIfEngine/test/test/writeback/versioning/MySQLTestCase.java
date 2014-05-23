@@ -1,13 +1,14 @@
 /**
  * 
  */
-package test.writeback;
+package test.writeback.versioning;
 
 import java.io.File;
 
+import org.apache.commons.vfs.FileObject;
+
+import test.writeback.TestConstants;
 import it.eng.spagobi.tools.datasource.bo.DataSource;
-
-
 
 /* SpagoBI, the Open Source Business Intelligence suite
 
@@ -19,14 +20,15 @@ import it.eng.spagobi.tools.datasource.bo.DataSource;
  * @author ghedin
  *
  */
-public class OracleTestCase extends AbstractWriteBackTestCase {
+public class MySQLTestCase extends AbstractVersionManagerTestCase {
 
+	
 	public DataSource getDataSource(){
 		DataSource ds = new it.eng.spagobi.tools.datasource.bo.DataSource();
-		ds.setUser(TestConstants.ORACLE_USER);
-		ds.setPwd(TestConstants.ORACLE_PWD);
-		ds.setDriver(TestConstants.ORACLE_DRIVER);
-		String connectionUrl = TestConstants.ORACLE_URL;
+		ds.setUser(TestConstants.MYSQL_USER);
+		ds.setPwd(TestConstants.MYSQL_PWD);
+		ds.setDriver(TestConstants.MYSQL_DRIVER);
+		String connectionUrl = TestConstants.MYSQL_URL;
 		ds.setUrlConnection(connectionUrl.replace("jdbc:mondrian:Jdbc=", ""));
 		return ds;
 	}
@@ -34,13 +36,10 @@ public class OracleTestCase extends AbstractWriteBackTestCase {
 	public String getCatalogue(){
 		
         File userDir = new File("").getAbsoluteFile();
-        File f  = new File(userDir,  "\\test\\test\\writeback\\resources\\FoodMartOracleSQLTest.xml");
+        File f  = new File(userDir,  "\\test\\test\\writeback\\resources\\FoodMartMySQL.xml");
 		return f.getAbsolutePath();
 	}
 	
-
-	
-
 	
 
 }

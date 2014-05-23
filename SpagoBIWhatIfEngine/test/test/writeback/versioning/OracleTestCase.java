@@ -1,10 +1,9 @@
 /**
  * 
  */
-package test.writeback;
+package test.writeback.versioning;
 
-import java.io.File;
-
+import test.writeback.TestConstants;
 import it.eng.spagobi.tools.datasource.bo.DataSource;
 
 
@@ -19,7 +18,7 @@ import it.eng.spagobi.tools.datasource.bo.DataSource;
  * @author ghedin
  *
  */
-public class OracleTestCase extends AbstractWriteBackTestCase {
+public class OracleTestCase extends AbstractVersionManagerTestCase {
 
 	public DataSource getDataSource(){
 		DataSource ds = new it.eng.spagobi.tools.datasource.bo.DataSource();
@@ -33,9 +32,7 @@ public class OracleTestCase extends AbstractWriteBackTestCase {
 	
 	public String getCatalogue(){
 		
-        File userDir = new File("").getAbsoluteFile();
-        File f  = new File(userDir,  "\\test\\test\\writeback\\resources\\FoodMartOracleSQLTest.xml");
-		return f.getAbsolutePath();
+		return "\\test\\test\\writeback\\\resources\\FoodMartOracleSQLTest.xml";
 	}
 	
 

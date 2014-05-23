@@ -121,7 +121,7 @@ public class DefaultWeightedAllocationAlgorithm extends AllocationAlgorithm {
 	
 	
 
-	public void persist(SpagoBICellWrapper cell, Object oldValue, Object newValue) {
+	public void persist(SpagoBICellWrapper cell, Object oldValue, Object newValue, Integer version) {
 		
 		Monitor totalTimeMonitor = null;
 		Monitor errorHitsMonitor = null;
@@ -129,7 +129,7 @@ public class DefaultWeightedAllocationAlgorithm extends AllocationAlgorithm {
 		logger.debug("IN");
 		try {
 			totalTimeMonitor = MonitorFactory.start("SpagoBIWhatIfEngine/it.eng.spagobi.engines.whatif.model.transform.DefaultWeightedAllocationAlgorithm.persist.totalTime");
-			this.persistInternal(cell, oldValue, newValue);
+			this.persistInternal(cell, oldValue, newValue, version);
 		} catch (Exception e) {
 			errorHitsMonitor = MonitorFactory.start("SpagoBIWhatIfEngine/it.eng.spagobi.engines.whatif.model.transform.DefaultWeightedAllocationAlgorithm.persist.errorHits");
 			errorHitsMonitor.stop();
@@ -143,9 +143,9 @@ public class DefaultWeightedAllocationAlgorithm extends AllocationAlgorithm {
 
 	}
 
-	private void persistInternal(SpagoBICellWrapper cell, Object oldValue,Object newValue) throws Exception {
+	private void persistInternal(SpagoBICellWrapper cell, Object oldValue,Object newValue, Integer version) throws Exception {
 		Double prop = ((Number) newValue).doubleValue()/((Number) oldValue).doubleValue();
-		lastQuery = persister.executeProportionalUpdate(cell.getMembers(ei.getPivotModel()), prop);
+		lastQuery = persister.executeProportionalUpdate(cell.getMembers(), prop, version);
 	}
 
 

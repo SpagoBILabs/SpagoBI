@@ -53,7 +53,7 @@ public class VersionManagementStatements {
 
 	
 	
-	public String buildInserttoDuplicateData(Integer lastVersion){
+	public String buildInserttoDuplicateData(Integer lastVersion, Integer newVersion){
 	logger.debug("IN");
 	
 	
@@ -68,7 +68,7 @@ public class VersionManagementStatements {
 		
 		if(s.equals(retriever.getVersionColumnName())){
 			columnsListString+=" "+s+" ";
-			columnsListStringVersionWritten+=" "+(lastVersion+1)+" ";
+			columnsListStringVersionWritten+=" "+(newVersion)+" ";
 			
 		}
 		else{

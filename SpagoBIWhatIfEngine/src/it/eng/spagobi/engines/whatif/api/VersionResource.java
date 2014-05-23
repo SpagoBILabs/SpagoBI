@@ -36,7 +36,7 @@ public class VersionResource extends AbstractWhatIfEngineService {
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
 
 		if(versionManager==null){
-			versionManager = new VersionManager(ei, ei.getPivotModel(), getModelConfig());
+			versionManager = new VersionManager(ei);
 		}
 		return versionManager;
 	}
@@ -51,7 +51,7 @@ public class VersionResource extends AbstractWhatIfEngineService {
 	@Path("/increase")
 	public String increaseVersion(){
 		logger.debug("IN");
-				
+			
 		PivotModel model =getVersionBusiness().persistNewVersionProcedure();
 		
 		logger.debug("OUT");

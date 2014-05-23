@@ -3,6 +3,8 @@
  */
 package test.writeback;
 
+import java.io.File;
+
 import it.eng.spagobi.tools.datasource.bo.DataSource;
 
 /* SpagoBI, the Open Source Business Intelligence suite
@@ -29,7 +31,10 @@ public class MySQLTestCase extends AbstractWriteBackTestCase {
 	}
 	
 	public String getCatalogue(){
-		return "D:/Sviluppo/SpagoBI/progetti/Trunk_40/runtime/resources/Olap/FoodMartMySQLTest.xml";
+		
+        File userDir = new File("").getAbsoluteFile();
+        File f  = new File(userDir,  "\\test\\test\\writeback\\resources\\FoodMartMySQL.xml");
+		return f.getAbsolutePath();
 	}
 	
 	

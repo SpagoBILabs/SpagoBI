@@ -65,6 +65,10 @@ Ext.define('Sbi.service.RestService', {
 		}
 		return url;
 	},
+	
+	getRequestParams: function(){
+		return Ext.apply(this.params, this.baseParams );
+	},
 
 	callService:function(scope, successCallBack, failureCallBack){
 
