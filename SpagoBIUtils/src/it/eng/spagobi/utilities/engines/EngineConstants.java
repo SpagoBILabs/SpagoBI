@@ -16,6 +16,7 @@ public class EngineConstants {
 	public static final String DOCUMENT_ID = "document";
 
 	public static final String ENGINE_INSTANCE = "ENGINE_INSTANCE";
+	public static final String STARTUP_ERROR = "STARTUP_ERROR";
 	
 	public static final String EXECUTION_CONTEXT = "EXECUTION_CONTEXT";
 	public static final String DOCUMENT_COMPOSITION = "DOCUMENT_COMPOSITION";	

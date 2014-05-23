@@ -27,6 +27,12 @@ public class MDXParametersUtilities {
 				String alias = parameter.getAlias();
 
 				Object value = env.get(name);
+				if (value == null) {
+					throw new SpagoBIEngineRuntimeException(
+							"Parameter ["
+									+ name
+									+ "] has no value");
+				}
 				if (!(value instanceof String)) {
 					// since parameters values are decoded by
 					// ParametersDecoder.getDecodedRequestParameters(
