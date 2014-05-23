@@ -91,7 +91,15 @@ public class WhatIfEngineInstance extends AbstractEngineInstance implements Seri
 		pivotModel.setMdx( initialMDX );
 		pivotModel.initialize();
 		// execute the MDX now
-		pivotModel.getCellSet();
+		try {
+			pivotModel.getCellSet();
+		} catch (Throwable t) {
+			Throwable rootException = t;
+			while (rootException.getCause() != null) {
+				rootException = rootException.getCause();
+			}
+			throw new SpagoBIEngineRuntimeException("Error while executing MDX statement: " + rootException.getMessage(), t);
+		}
 		
 		//init configs 
 		modelConfig = new ModelConfig();
