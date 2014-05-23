@@ -45,7 +45,7 @@ public class DefaultWeightedAllocationAlgorithmPersister {
 		this.dataSource = dataSource;
 	}
 	
-	public String executeProportionalUpdate(Member[] members, double prop) throws SpagoBIEngineException{
+	public String executeProportionalUpdate(Member[] members, double prop, Integer version) throws SpagoBIEngineException{
 		//list of the coordinates for the members
 		List<IMemberCoordinates> memberCordinates = new ArrayList<IMemberCoordinates>();
 		
@@ -71,16 +71,16 @@ public class DefaultWeightedAllocationAlgorithmPersister {
 		String queryString;
 		
 		if(useInClause){
-			queryString = buildProportionalUpdateSingleSubquery(memberCordinates, query);
+			queryString = buildProportionalUpdateSingleSubquery(memberCordinates, query, version);
 		}else{
-			queryString = buildProportionalUpdateOneSubqueryForDimension(memberCordinates, query);
+			queryString = buildProportionalUpdateOneSubqueryForDimension(memberCordinates, query, version);
 		}
 		
 		return queryString;
 		
 	}
 	
-	private String buildProportionalUpdateOneSubqueryForDimension(List<IMemberCoordinates> memberCordinates, StringBuffer query) throws SpagoBIEngineException{
+	private String buildProportionalUpdateOneSubqueryForDimension(List<IMemberCoordinates> memberCordinates, StringBuffer query, Integer version) throws SpagoBIEngineException{
 		
 		//List of where conditions
 		Map<TableEntry, String> whereConditions = new HashMap<TableEntry, String>();
@@ -103,14 +103,12 @@ public class DefaultWeightedAllocationAlgorithmPersister {
 				Map<TableEntry, String> where = buildWhereConditions(aIMemberCordinates, null);
 				Map<String, String> cubeTable2Alias = new HashMap<String, String>();
 				cubeTable2Alias.put(null, getCubeAlias());
-				addWhereCondition(degenerateDimensionConditions, where, cubeTable2Alias);
+				addWhereCondition(degenerateDimensionConditions, where, cubeTable2Alias, version);
 			}else{
 				whereConditions.putAll(buildWhereConditions(aIMemberCordinates, fromTables));
 				addJoinConditions(fromTables, joinConditions, aIMemberCordinates);
 				addInnerDimensionJoinConditions(fromTables, joinConditions, aIMemberCordinates);
 			}
-			
-
 		}
 		
 		buildSelectQuery(whereConditions, joinConditions, fromTables, query);
@@ -135,7 +133,7 @@ public class DefaultWeightedAllocationAlgorithmPersister {
 		return queryString;
 	}
 	
-	private String buildProportionalUpdateSingleSubquery(List<IMemberCoordinates> memberCordinates, StringBuffer query) throws SpagoBIEngineException{
+	private String buildProportionalUpdateSingleSubquery(List<IMemberCoordinates> memberCordinates, StringBuffer query, Integer version) throws SpagoBIEngineException{
 		
 		//List of where conditions
 		Map<TableEntry, String> whereConditions;
@@ -161,7 +159,7 @@ public class DefaultWeightedAllocationAlgorithmPersister {
 				Map<TableEntry, String> where = buildWhereConditions(aIMemberCordinates, null);
 				Map<String, String> cubeTable2Alias = new HashMap<String, String>();
 				cubeTable2Alias.put(null, getCubeAlias());
-				addWhereCondition(subquery, where, cubeTable2Alias);
+				addWhereCondition(subquery, where, cubeTable2Alias, version);
 			}else if(!aIMemberCordinates.isAllMember()){
 				whereConditions = new HashMap<TableEntry, String>();
 				selectFields = new HashSet<EquiJoin>();
@@ -294,7 +292,7 @@ public class DefaultWeightedAllocationAlgorithmPersister {
 		
 		
 		addWhereCondition(where, joinConditions, table2Alias);
-		addWhereCondition(where, whereConditions, table2Alias);
+		addWhereCondition(where, whereConditions, table2Alias, null);
 		addFromConditions(from, fromTables, table2Alias);
 		
 		query.append(" from ");
@@ -318,7 +316,7 @@ public class DefaultWeightedAllocationAlgorithmPersister {
 		
 		addSelectCondition(select, selectFields, table2Alias);
 		addWhereCondition(where, joinConditions, table2Alias);
-		addWhereCondition(where, whereConditions, table2Alias);
+		addWhereCondition(where, whereConditions, table2Alias, null);
 		addFromConditions(from, fromTables, table2Alias);
 		
 		StringBuffer subquery = new StringBuffer();
@@ -422,7 +420,7 @@ public class DefaultWeightedAllocationAlgorithmPersister {
 	}
 	
 	
-	private void addWhereCondition(StringBuffer whereConditionsBuffer, Map<TableEntry, String> whereConditions, Map<String, String> table2Alias){
+	private void addWhereCondition(StringBuffer whereConditionsBuffer, Map<TableEntry, String> whereConditions, Map<String, String> table2Alias, Integer fixValue){
 		
 		if(whereConditions!=null){
 			Iterator<TableEntry> iter = whereConditions.keySet().iterator();
@@ -437,7 +435,11 @@ public class DefaultWeightedAllocationAlgorithmPersister {
 				whereConditionsBuffer.append(entry.toString(table2Alias, this));//add the clause for the dimension
 				whereConditionsBuffer.append(" = ");
 				
-				whereConditionsBuffer.append(formatValue(whereConditions.get(entry)));//add the clause for the cube
+				String value = whereConditions.get(entry);
+				if(fixValue!=null){
+					value = fixValue.toString();
+				}
+				whereConditionsBuffer.append(formatValue(value));//add the clause for the cube
 				whereConditionsBuffer.append(" ) ");
 			}
 		}

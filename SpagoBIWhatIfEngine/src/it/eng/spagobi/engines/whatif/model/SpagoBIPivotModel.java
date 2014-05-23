@@ -83,7 +83,17 @@ public class SpagoBIPivotModel extends PivotModelImpl {
 		logTransormations();
 	}
 	
+	
 	public void persistTransformations() throws WhatIfPersistingTransformationException{
+		persistTransformations(null);
+	}
+	
+	/**
+	 * Persist the modifications in the selected version
+	 * @param version the version of the model in witch persist the modification. In null persist in the version selected in the Version dimension
+	 * @throws WhatIfPersistingTransformationException
+	 */
+	public void persistTransformations(Integer version) throws WhatIfPersistingTransformationException{
 		CellTransformationsAnalyzer analyzer = new CellTransformationsAnalyzer();
 		CellTransformationsStack bestStack = analyzer.getShortestTransformationsStack(pendingTransformations);
 		Iterator<CellTransformation> iterator = bestStack.iterator();
@@ -94,7 +104,7 @@ public class SpagoBIPivotModel extends PivotModelImpl {
 			CellTransformation transformation = iterator.next();
 			try {
 				AllocationAlgorithm algorithm = transformation.getAlgorithm();
-				algorithm.persist(transformation.getCell(), transformation.getOldValue(), transformation.getNewValue());
+				algorithm.persist(transformation.getCell(), transformation.getOldValue(), transformation.getNewValue(), version);
 			} catch (Throwable e) {
 				logger.error("Error persisting the transformation "+transformation, e);
 				bestStack.removeAll(executedTransformations);

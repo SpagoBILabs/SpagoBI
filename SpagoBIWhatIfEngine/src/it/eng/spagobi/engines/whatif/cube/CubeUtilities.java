@@ -11,12 +11,13 @@
  */
 package it.eng.spagobi.engines.whatif.cube;
 
+import it.eng.spagobi.engines.whatif.common.WhatIfConstants;
+import it.eng.spagobi.engines.whatif.model.ModelConfig;
 import it.eng.spagobi.engines.whatif.model.SpagoBICellWrapper;
 import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
-import it.eng.spagobi.pivot4j.mdx.MDXQueryBuilder;
 import it.eng.spagobi.pivot4j.mdx.MdxQueryExecutor;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
+
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -25,8 +26,6 @@ import java.util.StringTokenizer;
 
 import org.apache.log4j.Logger;
 import org.olap4j.Axis;
-import org.olap4j.Cell;
-import org.olap4j.CellSet;
 import org.olap4j.OlapDataSource;
 import org.olap4j.OlapException;
 import org.olap4j.metadata.Cube;
@@ -153,6 +152,39 @@ public class CubeUtilities {
 		}
 		return Axis.FILTER;
 		
+	}
+	
+	public static Hierarchy getVersionHierarchy(Cube cube, ModelConfig modelConfig){
+		List<Dimension> dimensions =  cube.getDimensions();
+		Dimension versionDimension = null;
+		for (java.util.Iterator<Dimension> iterator = dimensions.iterator(); iterator.hasNext();) {
+			Dimension dimension = (Dimension) iterator.next();
+			if(dimension.getUniqueName().equals(WhatIfConstants.VERSION_DIMENSION_UNIQUENAME)){
+				versionDimension = dimension;
+			};
+		}
+		if(versionDimension == null){
+			logger.error("Could not find version dimension");
+			throw new SpagoBIEngineRuntimeException("Could not find version dimension");
+		}
+		logger.debug("Found dimension "+versionDimension.getUniqueName());
+		
+		// get Hierarchy Used by dimension version
+		NamedList<Hierarchy> hierarchies = versionDimension.getHierarchies();
+		Hierarchy hierarchy = null;
+		if(hierarchies == null || hierarchies.size() == 0 ){
+			logger.error("Could not find hierarchies for version dimension");
+			throw new SpagoBIEngineRuntimeException("Could not find hierarchies for version dimension");
+		}
+		else if(hierarchies.size()==1){
+			hierarchy = hierarchies.get(0);
+		}
+		else{
+			String hierarchyUsed = modelConfig.getDimensionHierarchyMap().get(WhatIfConstants.VERSION_DIMENSION_UNIQUENAME);
+			hierarchy = hierarchies.get(hierarchyUsed);	
+		}
+		
+		return hierarchy;
 	}
 	
 	/*

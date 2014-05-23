@@ -29,7 +29,7 @@ import test.AbstractWhatIfTestCase;
  */
 public abstract class AbstractWriteBackTestCase extends AbstractWhatIfTestCase {
 	
-	public static final Double accurancy = 0.00001d;
+	
 	
 	
 	

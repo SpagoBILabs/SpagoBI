@@ -8,6 +8,7 @@ import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
@@ -36,7 +37,7 @@ public class AbstractWhatIfTestCase extends TestCase {
 	
 	private static final String mdx = ( "SELECT {[Measures].[Store Sales]} ON COLUMNS, {[Product].[Food]} ON ROWS FROM [Sales_V] WHERE [Version].[1]");
 	
-
+	public static final Double accurancy = 0.00001d;
 	
 	public OlapDataSource getOlapDataSource() {
 		SourceBean sb;
@@ -44,7 +45,7 @@ public class AbstractWhatIfTestCase extends TestCase {
 				
 		String usr = "root";
 		String pwd = "root";
-		String catalog = "D:/Sviluppo/SpagoBI/progetti/Trunk_40/runtime/resources/Olap/FoodMartMySQLTest.xml";
+		String catalog = "FoodMartMySQLTest.xml";
 		String connectionString =  "jdbc:mondrian:Jdbc=jdbc:mysql://localhost:3306/foodmart_key";
 		String driver =  "com.mysql.jdbc.Driver";
 
@@ -96,6 +97,18 @@ public class AbstractWhatIfTestCase extends TestCase {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	protected ResultSet executeQuery(java.sql.Connection  connection, String sql){
+		try {
+			Statement statement = connection.createStatement();
+			statement.execute(sql);
+			return statement.getResultSet();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
 	}
 	
 	
