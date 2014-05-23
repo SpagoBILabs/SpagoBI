@@ -44,7 +44,6 @@ public class RestExceptionMapper extends AbstractWhatIfEngineService implements 
 		logger.debug("RestExceptionMapper:toResponse IN");
 		String localizedMessage = e.getLocalizedMessage();
 		String errorMessage = e.getMessage();
-		String stackTrace = e.getStackTrace().toString();
 		String errorService = "";
 
 		//logs the error

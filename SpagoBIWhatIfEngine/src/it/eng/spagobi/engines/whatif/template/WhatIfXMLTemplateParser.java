@@ -115,8 +115,9 @@ public class WhatIfXMLTemplateParser implements IWhatIfTemplateParser {
 			toReturn.setParameters(parameters);
 			
 			logger.debug("Template parsed succesfully");
-		} catch(Throwable t) {
-			throw new WhatIfTemplateParseException("Impossible to parse template [" + template.toString()+ "]", t);
+		} catch (Throwable t) {
+			logger.error("Impossible to parse template [" + template.toString() + "]", t);
+			throw new WhatIfTemplateParseException( t );
 		} finally {
 			logger.debug("OUT");
 		}	

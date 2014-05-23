@@ -18,6 +18,7 @@ import it.eng.spagobi.engines.drivers.generic.GenericDriver;
 import it.eng.spagobi.tools.catalogue.bo.Artifact;
 import it.eng.spagobi.tools.catalogue.bo.Content;
 import it.eng.spagobi.tools.catalogue.dao.IArtifactsDAO;
+import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.util.Map;
@@ -86,20 +87,26 @@ public class WhatIfDriver extends GenericDriver {
 	}
 	
 	protected Map addArtifactVersionId(byte[] template, Map pars) {
+		SourceBean sb = null;
 		try {
-			SourceBean sb = SourceBean.fromXMLString(new String(template));
-			SourceBean cubeSb = (SourceBean) sb.getAttribute(SpagoBIConstants.MONDRIAN_CUBE);
-			String reference = (String) cubeSb.getAttribute(SpagoBIConstants.MONDRIAN_REFERENCE);
-			IArtifactsDAO dao = DAOFactory.getArtifactsDAO();
-			Artifact artifact = dao.loadArtifactByNameAndType(reference,
-							SpagoBIConstants.MONDRIAN_SCHEMA);
-			Content content = dao.loadActiveArtifactContent(artifact.getId());
-			pars.put(SpagoBIConstants.SBI_ARTIFACT_VERSION_ID, content.getId());
-			return pars;
+			sb = SourceBean.fromXMLString(new String(template));
 		} catch (SourceBeanException e) {
-			logger.error("Error while decorating document's template", e);
-			throw new SpagoBIRuntimeException("Error while decorating document's template", e);
+			logger.error("Error while parsing document's template", e);
+			throw new SpagoBIRuntimeException("Template is not a valid XML file", e);
 		}
+		SourceBean cubeSb = (SourceBean) sb.getAttribute(SpagoBIConstants.MONDRIAN_CUBE);
+		Assert.assertNotNull(cubeSb, "Template is missing \"" + SpagoBIConstants.MONDRIAN_CUBE + "\" definition");
+		String reference = (String) cubeSb.getAttribute(SpagoBIConstants.MONDRIAN_REFERENCE);
+		Assert.assertNotNull(reference, "Template is missing \"" + SpagoBIConstants.MONDRIAN_REFERENCE + "\" property, that is the reference to the Mondrian schema");
+		IArtifactsDAO dao = DAOFactory.getArtifactsDAO();
+		Artifact artifact = dao.loadArtifactByNameAndType(reference,
+						SpagoBIConstants.MONDRIAN_SCHEMA);
+		Assert.assertNotNull(artifact, "Mondrian schema with name [" +  reference + "] was not found");
+		Content content = dao.loadActiveArtifactContent(artifact.getId());
+		Assert.assertNotNull(content, "Mondrian schema with name [" +  reference + "] has no content");
+		pars.put(SpagoBIConstants.SBI_ARTIFACT_VERSION_ID, content.getId());
+		return pars;
+
 	}
 
 }

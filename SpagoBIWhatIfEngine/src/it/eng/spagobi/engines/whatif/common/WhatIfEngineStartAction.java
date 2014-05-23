@@ -12,10 +12,12 @@ import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.engines.whatif.WhatIfEngine;
 import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
+import it.eng.spagobi.engines.whatif.template.WhatIfTemplateParseException;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.ParametersDecoder;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineStartupException;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -46,6 +48,7 @@ public class WhatIfEngineStartAction extends AbstractWhatIfEngineService {
 	
 	// SESSION PARAMETRES	
 	public static final String ENGINE_INSTANCE = EngineConstants.ENGINE_INSTANCE;
+	public static final String STARTUP_ERROR = EngineConstants.STARTUP_ERROR;
 	
 	// Defaults
 	public static final Locale DEFAULT_LOCALE = Locale.ENGLISH;
@@ -54,7 +57,8 @@ public class WhatIfEngineStartAction extends AbstractWhatIfEngineService {
 	/** Logger component. */
     public static transient Logger logger = Logger.getLogger(WhatIfEngineStartAction.class);
     
-    private static final String REQUEST_DISPATCHER_URL = "/WEB-INF/jsp/whatIf.jsp";
+    private static final String SUCCESS_REQUEST_DISPATCHER_URL = "/WEB-INF/jsp/whatIf.jsp";
+    private static final String FAILURE_REQUEST_DISPATCHER_URL = "/WEB-INF/jsp/errors/startupError.jsp";
 	
     @GET
     @Produces("text/html")
@@ -83,6 +87,17 @@ public class WhatIfEngineStartAction extends AbstractWhatIfEngineService {
 			try {
 				whatIfEngineInstance = WhatIfEngine
 						.createInstance(templateBean, getEnv());
+			} catch (WhatIfTemplateParseException e) {
+				SpagoBIEngineStartupException engineException = new SpagoBIEngineStartupException(
+						getEngineName(), "Template not valid",
+						e);
+				engineException
+						.setDescription(e.getCause().getMessage());
+				engineException
+						.addHint("Check the document's template");
+				throw engineException;
+			} catch (SpagoBIEngineRuntimeException e) {
+				throw e;
 			} catch (Throwable t) {
 				logger.error(
 						"Error starting the What-If engine: error while generating the engine instance.",
@@ -97,15 +112,15 @@ public class WhatIfEngineStartAction extends AbstractWhatIfEngineService {
 					whatIfEngineInstance);
 
 			try {
-				servletRequest.getRequestDispatcher(REQUEST_DISPATCHER_URL)
+				servletRequest.getRequestDispatcher(SUCCESS_REQUEST_DISPATCHER_URL)
 						.forward(servletRequest, response);
 			} catch (Exception e) {
 				logger.error(
 						"Error starting the What-If engine: error while forwarding the execution to the jsp "
-								+ REQUEST_DISPATCHER_URL, e);
+								+ SUCCESS_REQUEST_DISPATCHER_URL, e);
 				throw new SpagoBIEngineRuntimeException(
 						"Error starting the What-If engine: error while forwarding the execution to the jsp "
-								+ REQUEST_DISPATCHER_URL, e);
+								+ SUCCESS_REQUEST_DISPATCHER_URL, e);
 			}
 
 			if (getAuditServiceProxy() != null) {
@@ -117,13 +132,49 @@ public class WhatIfEngineStartAction extends AbstractWhatIfEngineService {
 			if (getAuditServiceProxy() != null) {
 				getAuditServiceProxy().notifyServiceErrorEvent(t.getMessage());
 			}
-			throw new SpagoBIEngineRuntimeException(
-					"Error starting the What-If engine", t);
+			
+			SpagoBIEngineStartupException serviceException = this.getWrappedException( t );
+			
+			getExecutionSession().setAttributeInSession(STARTUP_ERROR,
+					serviceException);
+			try {
+				servletRequest.getRequestDispatcher(FAILURE_REQUEST_DISPATCHER_URL)
+						.forward(servletRequest, response);
+			} catch (Exception e) {
+				logger.error(
+						"Error starting the What-If engine: error while forwarding the execution to the jsp "
+								+ FAILURE_REQUEST_DISPATCHER_URL, e);
+				throw new SpagoBIEngineRuntimeException(
+						"Error starting the What-If engine: error while forwarding the execution to the jsp "
+								+ FAILURE_REQUEST_DISPATCHER_URL, e);
+			}
 		} finally {
 			logger.debug("OUT");
 		}
 	}
 	
+	private SpagoBIEngineStartupException getWrappedException(Throwable t) {
+		SpagoBIEngineStartupException serviceException;
+		if(t instanceof SpagoBIEngineStartupException) {
+			serviceException = (SpagoBIEngineStartupException) t;
+		} else if (t instanceof SpagoBIEngineRuntimeException) {
+			SpagoBIEngineRuntimeException e = (SpagoBIEngineRuntimeException) t; 
+			serviceException = new SpagoBIEngineStartupException(this.getEngineName(), e.getMessage(), e.getCause());
+			serviceException.setDescription(e.getDescription());
+			serviceException.setHints(e.getHints());
+		} else {
+			Throwable rootException = t;
+			while(rootException.getCause() != null) {
+				rootException = rootException.getCause();
+			}
+			String str = rootException.getMessage()!=null? rootException.getMessage(): rootException.getClass().getName();
+			String message = "An unpredicted error occurred while executing " + getEngineName() + " service."
+							 + "\nThe root cause of the error is: " + str;
+			serviceException = new SpagoBIEngineStartupException(getEngineName(), message, t);
+		}
+		return serviceException;
+	}
+
 	public Map getEnv() {
 		Map env = new HashMap();
 		
