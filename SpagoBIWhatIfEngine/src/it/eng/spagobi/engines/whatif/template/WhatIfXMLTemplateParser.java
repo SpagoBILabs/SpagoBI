@@ -11,8 +11,10 @@ import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.writeback4j.WriteBackEditConfig;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 
@@ -34,6 +36,10 @@ public class WhatIfXMLTemplateParser implements IWhatIfTemplateParser {
 	public final static String EDIT_CUBE_ATTRIBUTE = "editCube";
 	public static String PROP_PARAMETER_NAME = "name";
 	public static String PROP_PARAMETER_ALIAS = "as";
+	public static String SCENARIO_VARIABLES_TAG = "SCENARIO_VARIABLES";
+	public static String VARIABLE_TAG = "VARIABLE";
+	public static String VARIABLE_NAME_TAG = "name";
+	public static String VARIABLE_VALUE_TAG = "value";
 
 	/** Logger component. */
     public static transient Logger logger = Logger.getLogger(WhatIfXMLTemplateParser.class);
@@ -72,30 +78,11 @@ public class WhatIfXMLTemplateParser implements IWhatIfTemplateParser {
 			String mdxMondrianQuery = mdxMondrianSB.getCharacters();
 			toReturn.setMondrianMdxQuery(mdxMondrianQuery);
 			
-			SourceBean writeBackSB = (SourceBean) template.getAttribute(WRITEBACK_TAG);
-			if(writeBackSB!=null){
-				logger.debug(WRITEBACK_TAG + ": " + writeBackSB);
-				WriteBackEditConfig writeBackConfig = new WriteBackEditConfig();
-				String editCube = (String)writeBackSB.getAttribute(WhatIfXMLTemplateParser.EDIT_CUBE_ATTRIBUTE);
-				if(editCube==null || editCube.length()==0){
-					logger.error("In the writeback is enabled you must specify a cube to edit. Remove the "+WRITEBACK_TAG+" tag or specify a value for the attribute "+EDIT_CUBE_ATTRIBUTE );
-					throw new SpagoBIEngineRuntimeException("In the writeback is enabled you must specify a cube to edit. Remove the "+WRITEBACK_TAG+" tag or specify a value for the attribute "+EDIT_CUBE_ATTRIBUTE);
-				}
-				List<SourceBean> editableMeasuresBeans = (List<SourceBean>)writeBackSB.getAttributeAsList(WhatIfXMLTemplateParser.MEASURE_TAG);
-				if(editableMeasuresBeans!=null && editableMeasuresBeans.size()>0 ){
-					List<String> editableMeasures = new ArrayList<String>();
-					for(int i=0; i<editableMeasuresBeans.size(); i++){
-						editableMeasures.add(editableMeasuresBeans.get(i).getCharacters());
-					}
-					writeBackConfig.setEditableMeasures(editableMeasures);
-					logger.debug(WRITEBACK_TAG + ":the editable measures are "+editableMeasures);
-				}
-				writeBackConfig.setEditCubeName(editCube);
-				logger.debug(WRITEBACK_TAG + ":the edit cube is "+editCube);
-				toReturn.setWritebackEditConfig(writeBackConfig);
-			}else{
-				logger.debug(WRITEBACK_TAG + ": no write back configuration found in the template");
-			}
+			//add the writeback configuration
+			setWriteBackConf(template, toReturn);
+			
+			//add the variables
+			setVariables(template, toReturn);
 			
 			List<WhatIfTemplate.Parameter> parameters = new ArrayList<WhatIfTemplate.Parameter>();
 			List parametersSB = mdxSB.getAttributeAsList(TAG_PARAMETER);
@@ -123,5 +110,52 @@ public class WhatIfXMLTemplateParser implements IWhatIfTemplateParser {
 		}	
 		
 		return toReturn;
+	}
+	
+	private void setWriteBackConf(SourceBean template, WhatIfTemplate toReturn){
+		SourceBean writeBackSB = (SourceBean) template.getAttribute(WRITEBACK_TAG);
+		if(writeBackSB!=null){
+			logger.debug(WRITEBACK_TAG + ": " + writeBackSB);
+			WriteBackEditConfig writeBackConfig = new WriteBackEditConfig();
+			String editCube = (String)writeBackSB.getAttribute(WhatIfXMLTemplateParser.EDIT_CUBE_ATTRIBUTE);
+			if(editCube==null || editCube.length()==0){
+				logger.error("In the writeback is enabled you must specify a cube to edit. Remove the "+WRITEBACK_TAG+" tag or specify a value for the attribute "+EDIT_CUBE_ATTRIBUTE );
+				throw new SpagoBIEngineRuntimeException("In the writeback is enabled you must specify a cube to edit. Remove the "+WRITEBACK_TAG+" tag or specify a value for the attribute "+EDIT_CUBE_ATTRIBUTE);
+			}
+			List<SourceBean> editableMeasuresBeans = (List<SourceBean>)writeBackSB.getAttributeAsList(WhatIfXMLTemplateParser.MEASURE_TAG);
+			if(editableMeasuresBeans!=null && editableMeasuresBeans.size()>0 ){
+				List<String> editableMeasures = new ArrayList<String>();
+				for(int i=0; i<editableMeasuresBeans.size(); i++){
+					editableMeasures.add(editableMeasuresBeans.get(i).getCharacters());
+				}
+				writeBackConfig.setEditableMeasures(editableMeasures);
+				logger.debug(WRITEBACK_TAG + ":the editable measures are "+editableMeasures);
+			}
+			writeBackConfig.setEditCubeName(editCube);
+			logger.debug(WRITEBACK_TAG + ":the edit cube is "+editCube);
+			toReturn.setWritebackEditConfig(writeBackConfig);
+		}else{
+			logger.debug(WRITEBACK_TAG + ": no write back configuration found in the template");
+		}
+	}
+	
+	private void setVariables(SourceBean template, WhatIfTemplate toReturn){
+		SourceBean scenarioVariablesSB = (SourceBean) template.getAttribute(SCENARIO_VARIABLES_TAG);
+		if(scenarioVariablesSB!=null){
+			logger.debug(SCENARIO_VARIABLES_TAG + ": " + scenarioVariablesSB);
+			Map<String, String> variables = new HashMap<String, String>();
+
+			List<SourceBean> variablesBeans = (List<SourceBean>)scenarioVariablesSB.getAttributeAsList(VARIABLE_TAG);
+			if(variablesBeans!=null && variablesBeans.size()>0 ){
+				for(int i=0; i<variablesBeans.size(); i++){
+					String name = (String)variablesBeans.get(i).getAttribute(VARIABLE_NAME_TAG);
+					String value = (String)variablesBeans.get(i).getAttribute(VARIABLE_VALUE_TAG);
+					variables.put(name, value);
+				}
+			}
+			toReturn.setScenarioVariables(variables);
+		}else{
+			logger.debug(SCENARIO_VARIABLES_TAG + ": no scenario variable found in the template");
+		}
 	}
 }

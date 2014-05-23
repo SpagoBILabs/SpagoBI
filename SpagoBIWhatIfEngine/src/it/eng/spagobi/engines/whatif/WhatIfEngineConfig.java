@@ -176,6 +176,27 @@ public class WhatIfEngineConfig {
 		return null;
 	}
 	
+	public Map<String, String> getScenarioVariables(){
+		Map<String, String> variables = new HashMap<String, String>();
+		SourceBean scenarioVariablesSB = (SourceBean) getConfigSourceBean().getAttribute(WhatIfXMLTemplateParser.SCENARIO_VARIABLES_TAG);
+		if(scenarioVariablesSB!=null){
+			logger.debug(WhatIfXMLTemplateParser.SCENARIO_VARIABLES_TAG + ": " + scenarioVariablesSB);
+			
+
+			List<SourceBean> variablesBeans = (List<SourceBean>)scenarioVariablesSB.getAttributeAsList(WhatIfXMLTemplateParser.VARIABLE_TAG);
+			if(variablesBeans!=null && variablesBeans.size()>0 ){
+				for(int i=0; i<variablesBeans.size(); i++){
+					String name = (String)variablesBeans.get(i).getAttribute(WhatIfXMLTemplateParser.VARIABLE_NAME_TAG);
+					String value = (String)variablesBeans.get(i).getAttribute(WhatIfXMLTemplateParser.VARIABLE_VALUE_TAG);
+					variables.put(name, value);
+				}
+			}
+		}else{
+			logger.debug(WhatIfXMLTemplateParser.SCENARIO_VARIABLES_TAG + ": no scenario variable found in the template");
+		}
+		return variables;
+	}
+	
 	
 	public OlapDataSource getOlapDataSource(IDataSource ds, String reference) {
 		Properties connectionProps = new Properties();

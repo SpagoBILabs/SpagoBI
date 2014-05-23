@@ -9,6 +9,7 @@ import it.eng.spagobi.writeback4j.WriteBackEditConfig;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -22,6 +23,7 @@ public class WhatIfTemplate {
 	private HashMap<String, Object> properties;
 	private WriteBackEditConfig writebackEditConfig;
 	private List<Parameter> parameters;
+	private Map<String, String> scenarioVariables;
 	
 	public WhatIfTemplate() {
 		properties = new HashMap<String, Object>();
@@ -74,7 +76,15 @@ public class WhatIfTemplate {
 	public void setParameters(List<Parameter> parameters) {
 		this.parameters = parameters;
 	}
-	
+
+	public Map<String, String> getScenarioVariables() {
+		return scenarioVariables;
+	}
+
+	public void setScenarioVariables(Map<String, String> scenarioVariables) {
+		this.scenarioVariables = scenarioVariables;
+	}
+
 	public class Parameter {
 		private String name;
 		private String alias;
