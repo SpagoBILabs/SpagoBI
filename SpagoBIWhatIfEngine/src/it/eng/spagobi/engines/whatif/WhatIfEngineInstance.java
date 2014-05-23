@@ -58,7 +58,8 @@ public class WhatIfEngineInstance extends AbstractEngineInstance implements Seri
 	private ModelConfig modelConfig;
 	private WriteBackManager writeBackManager;
 	private String mondrianSchemaFilePath;
-
+	private Map<String, String> scenarioVariables;
+	
 	protected WhatIfEngineInstance(Object template, Map env) {
 		this( WhatIfTemplateParser.getInstance() != null ? WhatIfTemplateParser.getInstance().parse(template) : null, env );
 	}
@@ -115,6 +116,10 @@ public class WhatIfEngineInstance extends AbstractEngineInstance implements Seri
 				
 			}
 		}
+		
+		//init variables
+		setScenarioVariables(template.getScenarioVariables());
+		logger.debug("OUT");
 	}
 	
 	private String getInitialMDX(WhatIfTemplate template, Map env) {
@@ -183,6 +188,9 @@ public class WhatIfEngineInstance extends AbstractEngineInstance implements Seri
 				
 			}
 		}
+		
+		setScenarioVariables((WhatIfEngineConfig.getInstance()).getScenarioVariables());
+		logger.debug("OUT");
 	}
 	
 	private String initMondrianSchema(Map env) {
@@ -293,6 +301,19 @@ public class WhatIfEngineInstance extends AbstractEngineInstance implements Seri
 	private void setMondrianSchemaFilePath(String mondrianSchemaFilePath) {
 		this.mondrianSchemaFilePath = mondrianSchemaFilePath;
 	}
+
+	public Map<String, String> getScenarioVariables() {
+		return scenarioVariables;
+	}
+
+	public void setScenarioVariables(Map<String, String> scenarioVariables) {
+		this.scenarioVariables = scenarioVariables;
+	}
 	
-	
+	public String getScenarioVariableValue(String scenarioVariableName) {
+		if( this.scenarioVariables == null){
+			return null;
+		}
+		return this.scenarioVariables.get(scenarioVariableName);
+	}
 }
