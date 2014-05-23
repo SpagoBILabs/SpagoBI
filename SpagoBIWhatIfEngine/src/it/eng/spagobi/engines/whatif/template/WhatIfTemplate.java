@@ -24,7 +24,8 @@ public class WhatIfTemplate {
 	private WriteBackEditConfig writebackEditConfig;
 	private List<Parameter> parameters;
 	private Map<String, String> scenarioVariables;
-	
+	private List<String> profilingUserAttributes;
+
 	public WhatIfTemplate() {
 		properties = new HashMap<String, Object>();
 	}
@@ -83,6 +84,14 @@ public class WhatIfTemplate {
 
 	public void setScenarioVariables(Map<String, String> scenarioVariables) {
 		this.scenarioVariables = scenarioVariables;
+	}
+	
+	public List<String> getProfilingUserAttributes() {
+		return profilingUserAttributes;
+	}
+
+	public void setProfilingUserAttributes(List<String> profilingnUserAttributes) {
+		this.profilingUserAttributes = profilingnUserAttributes;
 	}
 
 	public class Parameter {
