@@ -81,8 +81,8 @@ public class WhatIfEngineInstance extends AbstractEngineInstance implements Seri
 		this.setMondrianSchemaFilePath(reference);
 		
 		IDataSource ds = (IDataSource) env.get(EngineConstants.ENV_DATASOURCE);
-
-		olapDataSource = WhatIfEngineConfig.getInstance().getOlapDataSource( ds, reference );
+		IEngUserProfile profile = (IEngUserProfile) env.get(EngineConstants.ENV_USER_PROFILE);
+		olapDataSource = WhatIfEngineConfig.getInstance().getOlapDataSource( ds, reference, template, profile );
 		
 		//pivotModel = new PivotModelImpl(olapDataSource);
 		pivotModel = new SpagoBIPivotModel(olapDataSource);
@@ -164,8 +164,8 @@ public class WhatIfEngineInstance extends AbstractEngineInstance implements Seri
 		this.setMondrianSchemaFilePath(reference);
 		
 		IDataSource ds = (IDataSource) env.get(EngineConstants.ENV_DATASOURCE);
-
-		olapDataSource = WhatIfEngineConfig.getInstance().getOlapDataSource( ds, reference );
+		IEngUserProfile profile = (IEngUserProfile) env.get(IEngUserProfile.ENG_USER_PROFILE);
+		olapDataSource = WhatIfEngineConfig.getInstance().getOlapDataSource( ds, reference, null, profile );
 		
 		//pivotModel = new PivotModelImpl(olapDataSource);
 		pivotModel = new SpagoBIPivotModel(olapDataSource);

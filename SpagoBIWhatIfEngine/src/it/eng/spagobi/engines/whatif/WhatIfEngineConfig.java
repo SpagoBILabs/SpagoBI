@@ -8,12 +8,16 @@ package it.eng.spagobi.engines.whatif;
 
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.configuration.ConfigSingleton;
+import it.eng.spago.error.EMFInternalError;
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.engines.whatif.template.WhatIfTemplate;
 import it.eng.spagobi.engines.whatif.template.WhatIfXMLTemplateParser;
 import it.eng.spagobi.services.common.EnginConf;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.writeback4j.WriteBackEditConfig;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -26,12 +30,16 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 import org.olap4j.OlapDataSource;
 
+import sun.misc.BASE64Encoder;
+
 import com.eyeq.pivot4j.datasource.SimpleOlapDataSource;
 
 /**
  * @author ...
  */
 public class WhatIfEngineConfig {
+	
+	private static final BASE64Encoder ENCODER = new BASE64Encoder();
 	
 	private EnginConf engineConfig;
 	
@@ -198,7 +206,7 @@ public class WhatIfEngineConfig {
 	}
 	
 	
-	public OlapDataSource getOlapDataSource(IDataSource ds, String reference) {
+	public OlapDataSource getOlapDataSource(IDataSource ds, String reference, WhatIfTemplate template, IEngUserProfile profile) {
 		Properties connectionProps = new Properties();
 		String connectionString = null;
 		if (ds.checkIsJndi()) {
@@ -210,14 +218,12 @@ public class WhatIfEngineConfig {
 			connectionProps.put("JdbcDrivers",ds.getDriver());
 			connectionString = "jdbc:mondrian:Jdbc=" + ds.getUrlConnection();
 		}
-//		String catalogue = getCatalogue();
-//		connectionProps.put("Catalog", catalogue);
-		
-//		connectionProps.put("inputJdbcSchema","foodmart");
 		
 		connectionProps.put("Catalog", reference);
 		connectionProps.put("Provider","Mondrian");
 		
+		this.defineSchemaProcessorProperties(connectionProps, template, profile);
+
 		OlapDataSource olapDataSource = new SimpleOlapDataSource();
 		((SimpleOlapDataSource)olapDataSource).setConnectionString( connectionString);
 		((SimpleOlapDataSource)olapDataSource).setConnectionProperties(connectionProps);
@@ -225,6 +231,51 @@ public class WhatIfEngineConfig {
 		return olapDataSource;
 	}
 	
+	private void defineSchemaProcessorProperties(Properties connectionProps,
+			WhatIfTemplate template, IEngUserProfile profile) {
+		List<String> userProfileAttributes = template.getProfilingUserAttributes();
+		if ( !userProfileAttributes.isEmpty() ) {
+			logger.debug("Template contains data access restriction based on user's attributes");
+			connectionProps.put("DynamicSchemaProcessor","it.eng.spagobi.engines.whatif.schema.SpagoBIFilterDynamicSchemaProcessor");
+			Iterator<String> it = userProfileAttributes.iterator();
+			while (it.hasNext()) {
+				String attributeName = it.next();
+				String value = this.getUserProfileEncodedValue(attributeName, profile);
+				logger.debug("Adding profile attribute [" + attributeName + "]"
+						+ " with encoded value [" + value + "]");
+				connectionProps.put(attributeName, value);
+			}
+		} else {
+			logger.debug("Template does not contain any data access restriction based on user's attributes");
+		}
+	}
+
+	private String getUserProfileEncodedValue(String attributeName,
+			IEngUserProfile profile) {
+		String value;
+		try {
+			value = profile.getUserAttribute(attributeName) != null ? profile.getUserAttribute(attributeName).toString() : null;
+		} catch (EMFInternalError e) {
+			throw new SpagoBIEngineRuntimeException("Error while retrieving user profile [" + attributeName + "]", e);
+		}
+		logger.debug("Found profile attribute [" + attributeName + "]"
+				+ " with value [" + value + "]");
+		
+		// encoding value in Base64 
+		String valueBase64 = null;
+		if (value != null) {
+			try {
+				valueBase64 = ENCODER.encode(value.getBytes("UTF-8"));
+			} catch (UnsupportedEncodingException e) {
+				logger.error("UTF-8 encoding not supported!!!!!", e);
+				valueBase64 = ENCODER.encode(value.getBytes());
+			}
+		}
+		logger.debug("Attribute value in Base64 encoding is " + valueBase64);
+		
+		return valueBase64;
+	}
+
 	public void initIncludes() {
 		SourceBean includesSB;
 		List includeSBList;

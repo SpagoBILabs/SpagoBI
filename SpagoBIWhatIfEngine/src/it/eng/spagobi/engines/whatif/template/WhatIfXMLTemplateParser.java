@@ -40,6 +40,9 @@ public class WhatIfXMLTemplateParser implements IWhatIfTemplateParser {
 	public static String VARIABLE_TAG = "VARIABLE";
 	public static String VARIABLE_NAME_TAG = "name";
 	public static String VARIABLE_VALUE_TAG = "value";
+	public static String TAG_DATA_ACCESS = "DATA-ACCESS";
+	public static String TAG_USER_ATTRIBUTE = "ATTRIBUTE";
+	public static String PROP_USER_ATTRIBUTE_NAME = "name";
 
 	/** Logger component. */
     public static transient Logger logger = Logger.getLogger(WhatIfXMLTemplateParser.class);
@@ -101,6 +104,9 @@ public class WhatIfXMLTemplateParser implements IWhatIfTemplateParser {
 			}
 			toReturn.setParameters(parameters);
 			
+			// read user profile for profiled data access
+			setProfilingUserAttributes(template, toReturn);
+			
 			logger.debug("Template parsed succesfully");
 		} catch (Throwable t) {
 			logger.error("Impossible to parse template [" + template.toString() + "]", t);
@@ -112,6 +118,25 @@ public class WhatIfXMLTemplateParser implements IWhatIfTemplateParser {
 		return toReturn;
 	}
 	
+	private void setProfilingUserAttributes(SourceBean template,
+			WhatIfTemplate toReturn) {
+		SourceBean dataAccessSB = (SourceBean) template.getAttribute( TAG_DATA_ACCESS );
+		logger.debug(TAG_DATA_ACCESS + ": " + dataAccessSB);
+		List<String> attributes = new ArrayList<String>();
+		if (dataAccessSB != null) {
+			List attributesSB = dataAccessSB.getAttributeAsList(TAG_USER_ATTRIBUTE);
+			Iterator it = attributesSB.iterator();
+			while (it.hasNext()) {
+				SourceBean attributeSB = (SourceBean) it.next();
+				logger.debug("Found " + TAG_USER_ATTRIBUTE + " definition :" + attributeSB);
+				String name = (String) attributeSB.getAttribute(PROP_USER_ATTRIBUTE_NAME);
+				Assert.assertNotNull(name, "Missing [" + PROP_PARAMETER_NAME + "] attribute in user profile attribute");
+				attributes.add(name);
+			}
+		}
+		toReturn.setProfilingUserAttributes(attributes);
+	}
+
 	private void setWriteBackConf(SourceBean template, WhatIfTemplate toReturn){
 		SourceBean writeBackSB = (SourceBean) template.getAttribute(WRITEBACK_TAG);
 		if(writeBackSB!=null){
