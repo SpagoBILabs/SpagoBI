@@ -28,7 +28,7 @@ import de.myfoo.commonj.work.FooWorkManager;
 
 
 /**
- * @author Angelo Bernabei angelo.bernabei@eng.it
+ * @authors Angelo Bernabei angelo.bernabei@eng.it, Andrea Gioia andrea.gioia@eng.it
  */
 public class WorkManager {
 
