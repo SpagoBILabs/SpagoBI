@@ -12,6 +12,10 @@
 	    <MAP_REST_SERVICE serviceUrl="/documents.*" businessProcess="SelfServiceDatasetManagement" />
 	    <MAP_REST_SERVICE serviceUrl="/cache.*" businessProcess="SelfServiceDatasetManagement" />
 	    
+        <MAP_REST_SERVICE serviceUrl="/locker/lock" businessProcess="publicFunctionality" />
+        <MAP_REST_SERVICE serviceUrl="/locker/unlock" businessProcess="publicFunctionality" />
+        <MAP_REST_SERVICE serviceUrl="/locker/getStatus" businessProcess="publicFunctionality" />
+	    
 		<MAP_REST_SERVICE serviceUrl="/documents/sendFeedback" businessProcess="publicFunctionality" />	
 		<MAP_REST_SERVICE serviceUrl="/documents/clone" businessProcess="publicFunctionality" />	
 		<MAP_REST_SERVICE serviceUrl="/documents/share" businessProcess="publicFunctionality" />
