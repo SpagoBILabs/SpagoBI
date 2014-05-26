@@ -1052,13 +1052,20 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 		for (int j=0; j<lstLink.size(); j++){	
 			Map tmpMap = (Map)lstLink.get(j);
 			Element linkElement = map.createElement("a");
-			String pippo = (String)tmpMap.get("link");
 			linkElement.setAttribute("xlink:href", (String)tmpMap.get("link"));
 			//linkElement.setAttribute("target", "_parent");
-			linkElement.appendChild((Element)tmpMap.get("path"));
-			targetLayer.appendChild(linkElement);
+			
+			Element featureElement = (Element)tmpMap.get("path");
+//			linkElement.appendChild(featureElement);
+			featureElement.setAttribute("onclick", (String)tmpMap.get("link"));
+			
+			targetLayer.appendChild(featureElement);
 			Node lf = map.createTextNode("\n");
-			targetLayer.appendChild(lf);		    
+			targetLayer.appendChild(lf);	
+			
+//			targetLayer.appendChild(linkElement);
+//			Node lf = map.createTextNode("\n");
+//			targetLayer.appendChild(lf);	    
 		}	    
 
 		//deletes duplicate path
@@ -1089,8 +1096,7 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 						break;
 					}
 				}
-				if (isNew && childOrig != null)
-					map.removeChild(childOrig);
+				//if (isNew && childOrig != null)	map.removeChild(childOrig);
 			}
 		}
 

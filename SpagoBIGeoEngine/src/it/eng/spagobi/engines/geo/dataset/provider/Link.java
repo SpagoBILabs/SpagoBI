@@ -249,7 +249,7 @@ public class Link {
     		}
     		
     		//link = "javascript:parent.parent.execCrossNavigation('" + execIframeId + "', '" + targetDocLabel + "' , '" + parametersStr + "'";  		
-    		link = "javascript:callCrossNavFunc('" + execIframeId + "', '" + targetDocLabel + "' , '" + parametersStr + "'";  		
+    		link = "callCrossNavFunc('" + execIframeId + "', '" + targetDocLabel + "' , '" + parametersStr + "'";  		
     		//link = "javascript:ping('" + execIframeId + "', '" + targetDocLabel + "' , '" + parametersStr + "'";  		
     		
     		if(drillDocTitle!=null && target!=null && target.equalsIgnoreCase("tab")){
@@ -261,7 +261,7 @@ public class Link {
     		logger.debug("Link URL:"+link);
     		
     	} catch (Exception e) {
-    		link = "javascript:void(0)";
+    		link = "void(0)";
     	}
     	logger.debug("OUT");
     	return link;
@@ -308,7 +308,7 @@ public class Link {
     		}
     		
     		//link = "javascript:parent.execCrossNavigation('" + execIframeId + "', '" + targetDocLabel + "' , '" + parametersStr + "'";  		
-    		link = "javascript:callCrossNavFunc('" + execIframeId + "', '" + targetDocLabel + "' , '" + parametersStr + "'";  		
+    		link = "callCrossNavFunc('" + execIframeId + "', '" + targetDocLabel + "' , '" + parametersStr + "'";  		
     		//link = "javascript:ping('" + execIframeId + "', '" + targetDocLabel + "' , '" + parametersStr + "'";  		
     		
     		
@@ -322,7 +322,8 @@ public class Link {
     		
     	} catch (Exception e) {
     		logger.error("Impossible to stringify link: ", e);
-    		link = "javascript:void(0)";
+    		//link = "javascript:void(0)";
+    		link = "";
     		
     	}
     	logger.debug("OUT");
