@@ -17,17 +17,19 @@ import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
 import it.eng.spagobi.tools.dataset.bo.AbstractDataSet;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.common.association.AssociationGroup;
+import it.eng.spagobi.tools.dataset.common.association.AssociationGroupJSONSerializer;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 /**
@@ -40,7 +42,7 @@ public class JoinedDataSet extends AbstractDataSet {
 	IDataSetDAO dataSetDao;
 	List<IDataSet> joinedDataSets;
 	IDataStore joinedDataStore;
-	JSONArray associations;
+	AssociationGroup associationGroup;
 
 	private static transient Logger logger = Logger.getLogger(JoinedDataSet.class);
 	 	
@@ -55,19 +57,20 @@ public class JoinedDataSet extends AbstractDataSet {
 		setConfiguration(configuration);
 	}
 	
-	public JoinedDataSet(String label, String name, String description, JSONObject configuration) {
+	public JoinedDataSet(String label, String name, String description, 
+			JSONObject configuration) {
 		setName(name);
     	setLabel(label);
     	setDescription(description);
 		setConfiguration(configuration);
 	}
 	
-	public JoinedDataSet(String label, String name, String description, List<IDataSet> joinedDataSets, JSONArray associations) {
+	public JoinedDataSet(String label, String name, String description, 
+			AssociationGroup associationGroup) {
 		setName(name);
     	setLabel(label);
     	setDescription(description);
-		setDataSets(joinedDataSets);
-		setAssociations(associations);
+		setAssociations(associationGroup);
 	}
 	
 	
@@ -87,36 +90,43 @@ public class JoinedDataSet extends AbstractDataSet {
 	public void setConfiguration(JSONObject configuration) {
 		logger.trace("IN");
 		 
-		 try {
-			 JSONArray datasets = configuration.getJSONArray("datasets");
-			 List<String> dataSetLabels = new ArrayList<String>() ;
-			 for(int i = 0; i < datasets.length(); i++) {
-				 String dataSetLabel = datasets.getString(i);
-				 dataSetLabels.add(dataSetLabel);
-			 }
-			 setDataSetLabels(dataSetLabels);
-			 
-			 JSONArray associations = configuration.getJSONArray("associations"); 
-			 setAssociations(associations);
-			 
-			 this.configuration = configuration.toString();
+		 try { 
+			 AssociationGroupJSONSerializer deserializer = new AssociationGroupJSONSerializer();
+			 AssociationGroup associationGroup = deserializer.deserialize(configuration);
+			 setAssociations(associationGroup);			
 		 } catch(Throwable t) {
 			 throw new RuntimeException("An unexpected error occured while setting configuration", t);
 		 } finally {
 			 logger.trace("OUT");
 		 }
 	}
-	 
+	
+	/**
+	 * @return the configuration
+	 */
+	public String getConfiguration() {
+		JSONObject configuration = null;
+		try {
+			AssociationGroupJSONSerializer serializer = new AssociationGroupJSONSerializer();
+			AssociationGroup associationGroup = getAssociations();
+			configuration = serializer.serialize(associationGroup);
+			return configuration.toString();
+		} catch(Throwable t) {
+			 throw new RuntimeException("An unexpected error occured while getting configuration", t);
+		}
+	}
+		 
 	public List<IDataSet> getDataSets() {
 		return this.joinedDataSets;
 	}
 	
-	private void setDataSetLabels(List<String> dataSetLabels) {
+	private void setDataSetsByLabel(Collection<String> dataSetLabels) {
 		List<IDataSet> datsets = new ArrayList<IDataSet>();
 		for(String dataSetLabel : dataSetLabels) {
 			IDataSet dataSet = this.getDataSetDAO().loadDataSetByLabel(dataSetLabel);
 			datsets.add(dataSet);
 		}
+		setDataSets(datsets);
 	}
 	
 	private void setDataSets(List<IDataSet> joinedDataSets) {
@@ -137,12 +147,13 @@ public class JoinedDataSet extends AbstractDataSet {
 		return dataSetDao;
 	}
 	
-	public JSONArray getAssociations() {
-		return associations;
+	public AssociationGroup getAssociations() {
+		return associationGroup;
 	}
 
-	private void setAssociations(JSONArray associations) {
-		this.associations = associations;
+	private void setAssociations(AssociationGroup associationGroup) {
+		this.associationGroup = associationGroup;
+		setDataSetsByLabel( associationGroup.getDataSetLabels() );
 	}
 	 
 	 
@@ -166,24 +177,20 @@ public class JoinedDataSet extends AbstractDataSet {
 		ICache cache = CacheManager.getCache();
 		
 		// check if all joinedDataset have been succesfully stored in cache
-		List<IDataSet> dataSetNotStoredInCache = new ArrayList();
-		for(IDataSet dataSet: joinedDataSets) {
-			if(!cache.contains(dataSet)) {
-				dataSetNotStoredInCache.add(dataSet);
-			}
-		}
-		
-		// qunado tutti i work sono finiti creo la tabella di join
-		if(dataSetNotStoredInCache.size() == 0) {
-			joinedDataStore = cache.refresh(joinedDataSets, associations);
-		} else {
+		List<IDataSet> dataSetNotStoredInCache = cache.getNotContained(joinedDataSets);
+		if(dataSetNotStoredInCache.size() > 0) {
 			String dataSetLabels = "";
 			for(IDataSet dataSet: dataSetNotStoredInCache) {
 				dataSetLabels += dataSet.getLabel() + ";";
 			}
-			throw new RuntimeException("Impossible to load data for joined store [" + this.getName() + "] " +
-					"because the datasets [" + dataSetLabels + "] haven't been properly loaded before");
+			logger.warn("In order to load data for joined store [" + this.getName() + "] " +
+					"the following datasets [" + dataSetLabels + "] need to be loaded before");
+		
+			cache.load(joinedDataSets, true);
 		}
+		
+		// qunado tutti i work sono finiti creo la tabella di join
+		joinedDataStore = cache.refresh(joinedDataSets, associationGroup);
 	}
 
 	/* (non-Javadoc)
@@ -278,5 +285,12 @@ public class JoinedDataSet extends AbstractDataSet {
 
 	public void setUserProfile(UserProfile userProfile) {
 		this.userProfile = userProfile;
+	}
+	
+	public void setParamsMap(Map paramsMap) {
+		super.setParamsMap(paramsMap);
+		for(IDataSet dataSet: joinedDataSets) {
+			dataSet.setParamsMap(paramsMap);
+		}
 	}
 }
