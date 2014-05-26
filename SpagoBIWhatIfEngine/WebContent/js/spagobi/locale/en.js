@@ -79,8 +79,11 @@ Sbi.locale.ln['sbi.olap.toolbar.showParentMembers'] = 'Show parent members';
 Sbi.locale.ln['sbi.olap.toolbar.hideSpans'] = 'Hide spans';
 Sbi.locale.ln['sbi.olap.toolbar.showProperties'] = 'Show properties';
 Sbi.locale.ln['sbi.olap.toolbar.suppressEmpty'] = 'Suppress empty rows/columns';
-Sbi.locale.ln['sbi.olap.toolbar.save'] = 'Persist_modifications';
-Sbi.locale.ln['sbi.olap.toolbar.save.new'] = "Persist_in_a_new_version";
+Sbi.locale.ln['sbi.olap.toolbar.save'] = 'Persist modifications';
+Sbi.locale.ln['sbi.olap.toolbar.save.new'] = "Persist in a new version";
+Sbi.locale.ln['sbi.olap.toolbar.lock'] = "Lock model";
+Sbi.locale.ln['sbi.olap.toolbar.unlock'] = "Unlock model";
+Sbi.locale.ln['sbi.olap.toolbar.lock_other'] = "Model locked by other user";
 //===================================================================
 //FILTERS
 //===================================================================

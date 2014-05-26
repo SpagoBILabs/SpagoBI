@@ -256,6 +256,16 @@ td[contenteditable="true"]:focus {
 .clean-icon{
 	background-image: url(../img/clean16.png);
 }
+.lock-icon{
+    background-image: url(../img/locked_green.png);
+}
+.unlock-icon{
+    background-image: url(../img/unlocked_green.png);
+}
+.lock-other-icon{
+    background-image: url(../img/locked_other_green.png);
+}
+
 /*------------------*/
 /* Multi hierarchy */
 /*------------------*/

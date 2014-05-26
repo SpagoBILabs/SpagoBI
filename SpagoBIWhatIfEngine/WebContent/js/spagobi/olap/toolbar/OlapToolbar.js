@@ -47,7 +47,6 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 
 	showMdx: null,
 
-
 	constructor : function(config) {
 		this.initConfig(config);
 		if(Sbi.settings && Sbi.settings.olap && Sbi.settings.olap.toolbar && Sbi.settings.olap.toolbar.OlapToolbar) {
@@ -62,6 +61,7 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 
 	initComponent: function() {
 		var thisPanel = this;
+		
 		this.addEvents(
 		        /**
 		         * @event configChange
@@ -197,14 +197,16 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 		
 		this.persist = Ext.create('Ext.Button', {
 			tooltip: LN('sbi.olap.toolbar.save'),
-			iconCls: 'save-icon',
-			handler: function() {
+			iconCls: 'save-icon'
+			, handler: function() {
 				Sbi.olap.eventManager.persistTransformations();
 			},
 			scope:this,
 			reorderable: true
 		});
 		
+
+
 		this.persistNewVersion = Ext.create('Ext.Button', {
 			tooltip: LN('sbi.olap.toolbar.save.new'),
 			iconCls: 'save-new-icon',
@@ -215,7 +217,48 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 			reorderable: true
 		});
 		
-
+		
+		
+		this.lockModel = Ext.create('Ext.Button', {
+			tooltip: LN('sbi.olap.toolbar.lock'),
+			iconCls: 'lock-icon'
+			, handler: function() {
+				var afa= null;
+				Sbi.olap.eventManager.lockModel();
+			},
+			scope:this,
+			reorderable: true
+		});
+		this.unlockModel = Ext.create('Ext.Button', {
+			tooltip: LN('ssbi.olap.toolbar.unlock'),
+			iconCls: 'unlock-icon'
+			, handler: function() {
+				var afa= null;
+				Sbi.olap.eventManager.unlockModel();
+			},
+			scope:this,
+			reorderable: true
+		});
+		this.lockOtherModel = Ext.create('Ext.Button', {
+			tooltip: LN('sbi.olap.toolbar.lock_other'),
+			iconCls: 'lock-other-icon'
+			, handler: function() {
+			},
+			scope:this,
+			reorderable: true
+		});
+		
+		
+		if(Sbi.config.artifactStatus == 'locked_by_user'){
+			this.setLockByUserState(artifactLocker);
+		}
+		else if(Sbi.config.artifactStatus == 'locked_by_other'){
+			this.setLockByOtherState(artifactLocker);
+		}
+		else if(Sbi.config.artifactStatus == 'unlocked'){
+			this.setUnlockState();
+		}	
+		
 		
 		var pressedBtn = this.config.toolbarConfig.drillType;
 		if(pressedBtn == 'position'){
@@ -239,7 +282,12 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 				overflowHandler: 'Menu'
 			},
 			items   : [ this.drillMode, this.showMdx, this.undo , 
-			            this.clean, this.persist, this.persistNewVersion,
+			            this.clean, 
+			            this.lockModel, 
+			            this.unlockModel, 
+			            this.lockOtherModel,
+			            this.persist, 
+			            this.persistNewVersion, 
 			            this.showParentMembers, 
 			            this.hideSpans, 
 			            /*this.showProperties, */
@@ -337,5 +385,75 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 		this.mdxContainerPanel.update(this.mdx);
 		this.mdxWindow.show();
 	}
+	
+	/**
+	 *  Render the lock command
+	 */
+	, renderLockModel: function(result){
+		// if result contains info that model was locked
+		var resOb = Ext.JSON.decode(result.responseText);
+		
+		if(resOb.status == 'locked_by_user'){
+			this.setLockByUserState();			
+		}
+		else{
+			if(resO.status == 'unlocked'){
+				// TODO error
+				this.setUnlockState();
+			}
+			else{
+				// TODO error
+				this.setLockByOtherState(resOb.locker);
+			}
+
+		}
+	}
+	, renderUnlockModel: function(result){
+		var resOb = Ext.JSON.decode(result.responseText);
+		// check if model was really unlocked
+		if(resOb.status == 'unlocked'){
+			this.setUnlockState();
+		}
+		else{
+			if(resO.status == 'locked_by_user'){
+				// TODO error
+				this.setLockByUserState();
+			}
+			else{
+				// TODO error
+				this.setLockByOtherState(resOb.locker);
+			}
+			
+			//alert('not unlocked');
+		}
+		
+	}
+	, setLockByUserState: function(locker){
+		this.persist.enable();
+		this.persistNewVersion.enable();
+		this.lockModel.hide();
+		this.unlockModel.show();
+		this.lockOtherModel.hide();
+	}
+	, setLockByOtherState: function(locker){
+		this.persist.disable();
+		this.persistNewVersion.disable();
+		this.lockModel.hide();
+		this.unlockModel.hide();
+		this.lockOtherModel.show();
+		this.lockOtherModel.setTooltip(LN('sbi.olap.toolbar.lock_other')+': '+locker);
+
+	}
+	, setUnlockState: function(){
+		this.persist.disable();
+		this.persistNewVersion.disable();
+		this.lockModel.show();
+		this.unlockModel.hide();
+		this.lockOtherModel.hide();
+
+	}
+	
+	
+	
 
 });
