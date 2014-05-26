@@ -200,7 +200,7 @@ public class WhatIfEngineInstance extends AbstractEngineInstance implements Seri
         return reference;
 	}
 	
-    private Integer getArtifactVersionId(Map env) {
+    public Integer getArtifactVersionId(Map env) {
         try {
             if (!env.containsKey( SpagoBIConstants.SBI_ARTIFACT_VERSION_ID )) {
             	logger.error("Missing artifact version id");
@@ -212,6 +212,35 @@ public class WhatIfEngineInstance extends AbstractEngineInstance implements Seri
         } catch (Exception e) {
             logger.error("Error while getting artifact version id", e);
             throw new SpagoBIEngineRuntimeException("Error while getting artifact version id", e);
+        }
+    }
+    
+    
+    public String getArtifactStatus(Map env) {
+        try {
+            if (!env.containsKey( SpagoBIConstants.SBI_ARTIFACT_STATUS )) {
+            	logger.error("Missing artifact status");
+                throw new SpagoBIEngineRuntimeException("Missing artifact statu");
+            }
+            String str = (String) env.get( SpagoBIConstants.SBI_ARTIFACT_STATUS);
+            return str;
+        } catch (Exception e) {
+            logger.error("Error while getting artifact status", e);
+            throw new SpagoBIEngineRuntimeException("Error while getting artifact status", e);
+        }
+    }
+    
+    public String getArtifactLocker(Map env) {
+        try {
+            if (!env.containsKey( SpagoBIConstants.SBI_ARTIFACT_LOCKER )) {
+            	logger.error("Missing artifact locker");
+                throw new SpagoBIEngineRuntimeException("Missing artifact locker");
+            }
+            String str = (String) env.get( SpagoBIConstants.SBI_ARTIFACT_LOCKER);
+            return str;
+        } catch (Exception e) {
+            logger.error("Error while getting artifact locker", e);
+            throw new SpagoBIEngineRuntimeException("Error while getting artifact locker", e);
         }
     }
 
