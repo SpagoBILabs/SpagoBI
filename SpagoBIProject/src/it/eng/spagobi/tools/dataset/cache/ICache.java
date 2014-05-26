@@ -25,6 +25,7 @@ import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.FilterCriteria;
 import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.GroupCriteria;
 import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.ProjectionCriteria;
+import it.eng.spagobi.tools.dataset.common.association.AssociationGroup;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 
 import java.util.List;
@@ -57,6 +58,10 @@ public interface ICache {
 	 * @return true the dataset is cached, false elsewhere 
 	 */
 	boolean contains(IDataSet dataSet);
+	
+	boolean contains(List<IDataSet> dataSets);
+	
+	List<IDataSet> getNotContained(List<IDataSet> dataSets);
 	
 	/**
 	 * Facility method. It is equivalent to getMetadata().containsCacheItem(resultSetSignature) call.
@@ -130,7 +135,7 @@ public interface ICache {
 	/**
 	 * refresh the store ignoring cache content
 	 */
-	IDataStore refresh(List<IDataSet> dataSets, JSONArray associations);
+	IDataStore refresh(List<IDataSet> dataSets, AssociationGroup associationGroup);
 	
 	
 	

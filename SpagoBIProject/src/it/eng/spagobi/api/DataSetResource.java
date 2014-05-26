@@ -23,6 +23,8 @@ import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.tools.dataset.DatasetManagementAPI;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.common.association.AssociationGroup;
+import it.eng.spagobi.tools.dataset.common.association.AssociationGroupJSONSerializer;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
@@ -34,6 +36,7 @@ import it.eng.spagobi.tools.dataset.exceptions.ParametersNotValorizedException;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIServiceParameterException;
 import it.eng.spagobi.utilities.json.JSONUtils;
 
 import java.util.ArrayList;
@@ -176,7 +179,9 @@ public class DataSetResource extends AbstractSpagoBIResource {
 		logger.debug("IN");
 		try {
 			String crosstabDefinitionParam = request.getParameter(CROSSTAB_DEFINITION);	
-			Assert.assertNotNull(crosstabDefinitionParam, "Parameter [" + CROSSTAB_DEFINITION + "] cannot be null in oder to execute getChartDataStore action");
+			if(crosstabDefinitionParam == null) {
+				throw new SpagoBIServiceParameterException(this.request.getPathInfo(), "Parameter [" + CROSSTAB_DEFINITION + "] cannot be null");
+			}
 			
 			JSONObject crosstabDefinitionJSON  = ObjectUtils.toJSONObject(crosstabDefinitionParam);	
 			
@@ -219,9 +224,30 @@ public class DataSetResource extends AbstractSpagoBIResource {
 			, @QueryParam("filters") @DefaultValue("{}") String filters) {
 		logger.debug("IN");
 		try {
-			JSONObject associationGroupJSON = new JSONObject(associationGroup);
+			// unmarshal query param [associationGroup]
+			if(associationGroup == null) {
+				throw new SpagoBIServiceParameterException(this.request.getPathInfo(), 
+					"Query parameter [associationGroup] cannot be null");
+			}
+			AssociationGroup associationGrp = null;
+			JSONObject associationGrpJSON = null;
+			try {
+				associationGrpJSON = new JSONObject(associationGroup);
+				AssociationGroupJSONSerializer serializer = new AssociationGroupJSONSerializer();
+				associationGrp = serializer.deserialize(associationGrpJSON);
+			} catch(Throwable t) {
+				throw new SpagoBIServiceParameterException(this.request.getPathInfo(), 
+					"Query parameter [associationGroup] value [" + associationGroup+ "] is not a valid JSON object", t);
+			}
+			
+
+			// unmarshal query param [selections]
 			JSONObject selectionsJSON = new JSONObject(selections);
-			IDataStore dataStore = getDatasetManagementAPI().getJoinedDataStore(associationGroupJSON, selectionsJSON, getParametersMap(filters));
+			
+			IDataStore dataStore = getDatasetManagementAPI().getJoinedDataStore(associationGrp, selectionsJSON, getParametersMap(filters));
+			
+			
+			// serializing response
 			Map<String, Object> properties = new HashMap<String, Object>();
 			JSONArray fieldOptions = new JSONArray("[{id: 1, options: {measureScaleFactor: 0.5}}]");
 			properties.put(JSONDataWriter.PROPERTY_FIELD_OPTION, fieldOptions);
@@ -230,7 +256,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 			JSONArray gridDataFeed = (JSONArray)dataSetWriter.write(dataStore);
 			
 			// the dirty trick
-			JSONArray datasetLabels = associationGroupJSON.getJSONArray("datasets");
+			JSONArray datasetLabels = associationGrpJSON.getJSONArray("datasets");
 			JSONObject results = new JSONObject();
 			JSONArray a1 = new JSONArray();
 			JSONArray a2 = new JSONArray();

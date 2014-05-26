@@ -49,6 +49,8 @@ import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.GroupCriteria;
 import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.Operand;
 import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.ProjectionCriteria;
 import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.work.SQLDBCacheWriteWork;
+import it.eng.spagobi.tools.dataset.common.association.Association;
+import it.eng.spagobi.tools.dataset.common.association.AssociationGroup;
 import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.metadata.FieldMetadata;
@@ -71,6 +73,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.naming.NamingException;
 
@@ -313,36 +316,20 @@ public class DatasetManagementAPI {
 	 * @param selectionsJSON
 	 * @return
 	 */
-	public IDataStore getJoinedDataStore(JSONObject associationGroup, JSONObject selections, Map<String, String> parametersValues) {
+	public IDataStore getJoinedDataStore(AssociationGroup associationGroup, JSONObject selections, Map<String, String> parametersValues) {
 		
 		IDataStore joinedDataStore = null;
 		
 		logger.debug("IN");
 		
 		try {
-			JSONArray datasetLabels = associationGroup.getJSONArray("datasets");
-			JSONArray associations = associationGroup.getJSONArray("associations");
-			
-			List<IDataSet> joinedDataSets = new ArrayList<IDataSet>();
-			for(int i = 0; i < datasetLabels.length(); i++) {
-				String datasetLabel = datasetLabels.getString(i);
-				IDataSet dataSet = this.getDataSetDAO().loadDataSetByLabel(datasetLabel);
-				joinedDataSets.add(dataSet);
-			}
-			
-			JoinedDataSet joinedDataSet = new JoinedDataSet("theLabel", "theLabel", "theLabel", joinedDataSets, associations);
+			JoinedDataSet joinedDataSet = new JoinedDataSet("theLabel", "theLabel", "theLabel", 
+					associationGroup);
+			joinedDataSet.setParamsMap(parametersValues);
 			
 			ICache cache = CacheManager.getCache();
 			if ( cache.contains(joinedDataSet) == false) {
-				
-				for(IDataSet dataSet: joinedDataSets) {
-					dataSet.setParamsMap(parametersValues);
-				}
-				cache.load(joinedDataSets, true);
-
-				joinedDataSet.setParamsMap(parametersValues);
 				cache.refresh(joinedDataSet, true);
-				//storeDataSetInCache(joinedDataSet, parametersValues, true);
 			} 
 			
 			List<FilterCriteria> filters = new ArrayList<FilterCriteria>();
@@ -355,19 +342,23 @@ public class DatasetManagementAPI {
 					valuesList.add(values.getString(i));
 				}
 				
-				JSONObject association = null;
-				for(int i = 0; i < associations.length(); i++) {
-					JSONObject a = associations.getJSONObject(i);
-					String name = a.getString("id");
-					if(associationName.equals(name)) {
-						association = a;
-						break;
-					}
-				}
-				JSONArray fields = association.getJSONArray("fields");
-				JSONObject field = fields.getJSONObject(0);
-				String datasetLabel = field.getString("store");
-				String datasetColumn = field.getString("column");
+				Association association = associationGroup.getAssociation(associationName);
+				String datasetColumn = association.getFields().get(0).getFieldName();
+				String datasetLabel = association.getFields().get(0).getDataSetLabel();
+				
+//				JSONObject association = null;
+//				for(int i = 0; i < associations.length(); i++) {
+//					JSONObject a = associations.getJSONObject(i);
+//					String name = a.getString("id");
+//					if(associationName.equals(name)) {
+//						association = a;
+//						break;
+//					}
+//				}
+//				JSONArray fields = association.getJSONArray("fields");
+//				JSONObject field = fields.getJSONObject(0);
+//				String datasetLabel = field.getString("store");
+//				String datasetColumn = field.getString("column");
 				
 				Operand leftOperand = new Operand(datasetLabel, datasetColumn);
 				Operand rightOperand = new Operand(valuesList);

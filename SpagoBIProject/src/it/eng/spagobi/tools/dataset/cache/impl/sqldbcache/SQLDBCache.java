@@ -34,6 +34,8 @@ import it.eng.spagobi.tools.dataset.cache.ICacheListener;
 import it.eng.spagobi.tools.dataset.cache.ICacheMetadata;
 import it.eng.spagobi.tools.dataset.cache.ICacheTrigger;
 import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.work.SQLDBCacheWriteWork;
+import it.eng.spagobi.tools.dataset.common.association.Association;
+import it.eng.spagobi.tools.dataset.common.association.AssociationGroup;
 import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.Field;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
@@ -49,6 +51,7 @@ import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.threadmanager.WorkManager;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -127,6 +130,27 @@ public class SQLDBCache implements ICache {
 	 */
 	public boolean contains(String resultsetSignature) {
 		return getMetadata().containsCacheItem(resultsetSignature);
+	}
+	
+
+	/* (non-Javadoc)
+	 * @see it.eng.spagobi.tools.dataset.cache.ICache#contains(java.util.List)
+	 */
+	public boolean contains(List<IDataSet> dataSets) {
+		return getNotContained(dataSets).size() > 0;
+	}
+	
+	/* (non-Javadoc)
+	 * @see it.eng.spagobi.tools.dataset.cache.ICache#getNotContained(java.util.List)
+	 */
+	public List<IDataSet> getNotContained(List<IDataSet> dataSets) {
+		List<IDataSet> notContainedDataSets = new ArrayList<IDataSet>();
+		for(IDataSet dataSet : dataSets) {
+			if(contains(dataSet) == false) {
+				notContainedDataSets.add(dataSet);
+			}
+		}
+		return notContainedDataSets;
 	}
 	
 	// ===================================================================================
@@ -432,7 +456,7 @@ public class SQLDBCache implements ICache {
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.tools.dataset.cache.ICache#put(java.util.List, org.json.JSONArray, it.eng.spagobi.tools.dataset.common.datastore.IDataStore)
 	 */
-	public IDataStore refresh(List<IDataSet> dataSets, JSONArray associations) {
+	public IDataStore refresh(List<IDataSet> dataSets, AssociationGroup associationGroup) {
 		logger.trace("IN");
 		try {
 			SelectBuilder sqlBuilder = new SelectBuilder();
@@ -456,17 +480,17 @@ public class SQLDBCache implements ICache {
 				}
 			}
 			
-			
-			
-			for(int i = 0; i < associations.length(); i++) {
-				JSONObject association = associations.getJSONObject(i);
-				JSONArray fields = association.getJSONArray("fields");
+			Collection<Association> associaions = associationGroup.getAssociations();
+			for(Association association: associaions) {
+//				JSONObject association = associations.getJSONObject(i);
+//				JSONArray fields = association.getJSONArray("fields");				
+				
 				String whereClause = "";
 				String separator = "";
-				for(int j = 0; j < fields.length(); j++) {
-					JSONObject field = fields.getJSONObject(j);
-					String dataset = field.getString("store");
-					String column = field.getString("column");
+				for(Association.Field field: association.getFields()) {
+//					JSONObject field = fields.getJSONObject(j);
+					String dataset = field.getDataSetLabel();
+					String column = field.getFieldName();
 					column = AbstractJDBCDataset.encapsulateColumnName(column, dataSource);
 					whereClause += separator + datasetAliases.get(dataset) + "." + column;
 					separator = " = ";
@@ -777,4 +801,5 @@ public class SQLDBCache implements ICache {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
 }
