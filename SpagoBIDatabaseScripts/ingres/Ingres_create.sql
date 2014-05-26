@@ -2101,6 +2101,8 @@ CREATE TABLE SBI_ARTIFACTS (
        NAME                 VARCHAR(100) NOT NULL,
        DESCR                VARCHAR(500) NULL,
        TYPE                 VARCHAR(50) NULL,
+       LOCKED               BOOLEAN NULL,
+       LOCKER               VARCHAR(100) NULL;
        USER_IN              VARCHAR(100) NOT NULL,
        USER_UP              VARCHAR(100),
        USER_DE              VARCHAR(100),
