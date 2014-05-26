@@ -104,6 +104,8 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsContainerPanel, Ext.grid.GridPan
 	      , {name: 'iconCls', type: 'string'}
 	      , {name: 'nature', type: 'string'}
 	      , {name: 'values', type: 'string'}
+	      , {name: 'sortable', type: 'boolean'}
+	      , {name: 'width', type: 'int'}
 	])
 	
 		 , renderTpl1: [
@@ -157,7 +159,7 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsContainerPanel, Ext.grid.GridPan
 	
 	, initStore: function(c) {
 		this.store =  new Ext.data.ArrayStore({
-	        fields: ['id', 'alias', 'funct', 'iconCls', 'nature', 'values', 'valid']
+	        fields: ['id', 'alias', 'funct', 'iconCls', 'nature', 'values', 'valid', 'sortable', 'width']
 		});
 		// if there are initialData, load them into the store
 		if (this.initialData !== undefined) {
@@ -276,12 +278,16 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsContainerPanel, Ext.grid.GridPan
 	}
 	
 	, addField : function (field) {
+		//Default values
+		field.sortable = true;
+		field.width = 150;
+		
 		Sbi.trace("[QueryFieldsContainerPanel.addField]: IN");
-		var data = Ext.apply({}, field); // making a clone
+		var data = Ext.apply({}, field); // making a clone			
 		var record = new this.Record(data);
 		this.store.add(record); 
 		Sbi.trace("[QueryFieldsContainerPanel.addField]: field [" + Sbi.toSource(field)+ "] succesfully added");
-		Sbi.trace("[QueryFieldsContainerPanel.addField]: IN");
+		Sbi.trace("[QueryFieldsContainerPanel.addField]: OUT");
 	}
 
 	, removeSelectedValues: function() {
