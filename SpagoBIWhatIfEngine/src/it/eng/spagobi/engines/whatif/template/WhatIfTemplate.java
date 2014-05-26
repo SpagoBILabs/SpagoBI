@@ -5,11 +5,10 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.engines.whatif.template;
 
-import it.eng.spagobi.writeback4j.WriteBackEditConfig;
+import it.eng.spagobi.writeback4j.SbiScenario;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 
 /**
@@ -21,11 +20,11 @@ public class WhatIfTemplate {
 	private String mdxQuery;
 	private String mondrianMdxQuery;
 	private HashMap<String, Object> properties;
-	private WriteBackEditConfig writebackEditConfig;
+	private SbiScenario scenario;
 	private List<Parameter> parameters;
-	private Map<String, String> scenarioVariables;
 	private List<String> profilingUserAttributes;
 
+	
 	public WhatIfTemplate() {
 		properties = new HashMap<String, Object>();
 	}
@@ -61,14 +60,6 @@ public class WhatIfTemplate {
 	public void setMondrianMdxQuery(String mondrianMdxQuery) {
 		this.mondrianMdxQuery = mondrianMdxQuery;
 	}
-
-	public WriteBackEditConfig getWritebackEditConfig() {
-		return writebackEditConfig;
-	}
-
-	public void setWritebackEditConfig(WriteBackEditConfig writebackEditConfig) {
-		this.writebackEditConfig = writebackEditConfig;
-	}
 	
 	public List<Parameter> getParameters() {
 		return parameters;
@@ -77,13 +68,13 @@ public class WhatIfTemplate {
 	public void setParameters(List<Parameter> parameters) {
 		this.parameters = parameters;
 	}
-
-	public Map<String, String> getScenarioVariables() {
-		return scenarioVariables;
+	
+	public SbiScenario getScenario() {
+		return scenario;
 	}
 
-	public void setScenarioVariables(Map<String, String> scenarioVariables) {
-		this.scenarioVariables = scenarioVariables;
+	public void setScenario(SbiScenario scenario) {
+		this.scenario = scenario;
 	}
 	
 	public List<String> getProfilingUserAttributes() {

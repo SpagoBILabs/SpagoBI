@@ -1,7 +1,7 @@
 /**
  * 
  */
-package test.writeback.internal;
+package test.writeback.variables;
 
 import java.io.File;
 
@@ -20,8 +20,8 @@ import test.writeback.TestConstants;
  * @author ghedin
  *
  */
-public class MondrianSchemaRetriverTestCase extends AbstractWhatIfTestCase {
-	public static final String VERSION_COLUMN_NAME = "wbversione";
+public class VariableTestCase extends AbstractWhatIfTestCase {
+
 	
 	public DataSource getDataSource(){
 		DataSource ds = new it.eng.spagobi.tools.datasource.bo.DataSource();
@@ -42,8 +42,8 @@ public class MondrianSchemaRetriverTestCase extends AbstractWhatIfTestCase {
 	
 	public void testGetVersionColumn() throws Exception{
 		WhatIfEngineInstance ei = getWhatifengineiEngineInstance(getDataSource(),getCatalogue());
-		String columnName = ei.getWriteBackManager().getRetriver().getVersionColumnName();
-		assertEquals(VERSION_COLUMN_NAME, columnName);
+		Integer var  = (Integer) ei.getVariableValue("var1");
+		assertEquals(5, var.intValue());
 	}
 	
 }

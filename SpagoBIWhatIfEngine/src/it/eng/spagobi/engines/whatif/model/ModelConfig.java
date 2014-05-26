@@ -8,6 +8,8 @@
  */
 package it.eng.spagobi.engines.whatif.model;
 
+import it.eng.spagobi.writeback4j.SbiScenario;
+import it.eng.spagobi.writeback4j.SbiScenarioVariable;
 import it.eng.spagobi.writeback4j.WriteBackEditConfig;
 
 import java.io.Serializable;
@@ -15,6 +17,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.eyeq.pivot4j.ui.command.DrillDownCommand;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class ModelConfig implements Serializable {
 
@@ -25,7 +28,7 @@ public class ModelConfig implements Serializable {
 	private Boolean showProperties;
 	private Boolean suppressEmpty;
 	private Integer actualVersion = null;
-	private WriteBackEditConfig writeBackConf = null;
+	private SbiScenario scenario = null;
 
 
 	private Map<String, String> dimensionHierarchyMap;
@@ -99,13 +102,29 @@ public class ModelConfig implements Serializable {
 	}
 
 	public WriteBackEditConfig getWriteBackConf() {
-		return writeBackConf;
+		if(scenario==null){
+			return null;
+		}
+		return scenario.getWritebackEditConfig();
 	}
 
-	public void setWriteBackConf(WriteBackEditConfig writeBackConf) {
-		this.writeBackConf = writeBackConf;
+	
+	public void setScenario(SbiScenario scenario) {
+		this.scenario = scenario;
 	}
 	
-	
+	@JsonIgnore
+	public SbiScenario getScenario() {
+		return scenario;
+	}
 
+	@JsonIgnore
+	public Object getVariableValue(String variableName) {
+		if(scenario==null){
+			return null;
+		}
+		SbiScenarioVariable var =  scenario.getVariable(variableName);
+		String value = var.getValue();
+		return var.getType().getTypedType(value);
+	}
 }
