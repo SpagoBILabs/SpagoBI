@@ -77,6 +77,9 @@ Sbi.locale.ln['sbi.olap.toolbar.showProperties'] = 'Mostra proprieta';
 Sbi.locale.ln['sbi.olap.toolbar.suppressEmpty'] = 'Sopprimi righe/colonne vuote';
 Sbi.locale.ln['sbi.olap.toolbar.save'] = 'Persistere le modifiche';
 Sbi.locale.ln['sbi.olap.toolbar.save.new'] = 'Salvare le modifiche in una nuova versione';
+Sbi.locale.ln['sbi.olap.toolbar.lock'] = "Blocca il modello";
+Sbi.locale.ln['sbi.olap.toolbar.unlock'] = "Sblocca il modello";
+Sbi.locale.ln['sbi.olap.toolbar.lock_other'] = "Modello bloccato da un altro utente";
 
 //===================================================================
 //FILTERS

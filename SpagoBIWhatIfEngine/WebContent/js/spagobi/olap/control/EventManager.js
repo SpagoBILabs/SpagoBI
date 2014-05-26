@@ -83,6 +83,9 @@ Ext.define('Sbi.olap.control.EventManager', {
 		this.olapPanel.updateAfterMDXExecution(pivot, tableJson.modelConfig);
 		this.loadingMask.hide();
 	},
+	hideLoadingMask: function(){
+		this.loadingMask.hide();
+	},
 	/**
 	 * Updates the view after drill down operation
 	 * @param {int} axis position of the row
@@ -313,7 +316,22 @@ Ext.define('Sbi.olap.control.EventManager', {
 	persistNewVersionTransformations: function () {
 		this.olapController.persistNewVersionTransformations();	
 	}
-	
+	,
+	/**
+	 * Call rest service to lock model
+	 * 
+	 */
+	lockModel: function () {
+		this.olapController.lockModel();	
+	}
+	,
+	/**
+	 * Call rest service to unlock model
+	 * 
+	 */
+	unlockModel: function () {
+		this.olapController.unlockModel();	
+	}
 	,executeService: function(){
 		this.loadingMask.show();
 	}

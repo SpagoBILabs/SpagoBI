@@ -195,6 +195,52 @@ Ext.define('Sbi.olap.control.Controller', {
 		
 		service.callService(this);
 	}
+	,lockModel: function() {
+		
+		var externalUrlPath = Sbi.config.externalUrl;
+		var artifactVersionId = Sbi.config.artifactVersionId;
+		
+		
+		var service = Ext.create("Sbi.service.RestService", {
+			url: "locker",
+			method: 'POST',
+			pathParams: ["lock", artifactVersionId],
+			externalUrl: externalUrlPath
+		});
+		
+		
+		var olapToolbar = this.eventManager.olapPanel.executionPanel.olapToolbar;
+		
+		
+		service.callService(olapToolbar,
+				function(result){
+					olapToolbar.renderLockModel(result);
+					Sbi.olap.eventManager.hideLoadingMask();
+				}
+				);
+	}
+	,unlockModel: function() {
+		
+		var externalUrlPath = Sbi.config.externalUrl;
+		var artifactVersionId = Sbi.config.artifactVersionId;
+		
+		var service = Ext.create("Sbi.service.RestService", {
+			url: "locker",
+			method: 'POST',
+			pathParams: ["unlock", artifactVersionId],
+			externalUrl: externalUrlPath
+		});
+		
+		
+		var olapToolbar = this.eventManager.olapPanel.executionPanel.olapToolbar;
+		
+		service.callService(olapToolbar,
+				function(result){
+					olapToolbar.renderUnlockModel(result);
+					Sbi.olap.eventManager.hideLoadingMask();
+				}
+				);
+	}
 	
 	
 	

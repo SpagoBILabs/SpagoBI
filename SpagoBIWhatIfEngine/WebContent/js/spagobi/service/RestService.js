@@ -19,6 +19,7 @@ Ext.define('Sbi.service.RestService', {
 	config: {
 		serviceVersion: '1.0',
 		url: null,
+		externalUrl: null,
 		subPath: null,
 		method: "GET",
 		pathParams: null,
@@ -39,7 +40,11 @@ Ext.define('Sbi.service.RestService', {
 		if( this.serviceVersion){
 			url = this.serviceVersion+"/"+url;
 		}
-
+		
+		if( this.externalUrl){
+			url = this.externalUrl + url;
+		}
+		
 		var params = new Array();
 		if(this.subPath!=null && this.subPath!=undefined){
 			if(!this.subPath instanceof Array){
