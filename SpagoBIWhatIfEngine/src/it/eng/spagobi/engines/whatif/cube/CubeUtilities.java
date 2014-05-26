@@ -16,6 +16,7 @@ import it.eng.spagobi.engines.whatif.model.ModelConfig;
 import it.eng.spagobi.engines.whatif.model.SpagoBICellWrapper;
 import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
 import it.eng.spagobi.pivot4j.mdx.MdxQueryExecutor;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 
 
@@ -188,7 +189,6 @@ public class CubeUtilities {
 	}
 	
 	/*
-	 * TODO: to complete	
 	 * Calculate the members value based on the passed expression
 	 */
 	public static Double getMemberValue(LinkedList membersExpression, SpagoBICellWrapper cellWrapper, PivotModel pivotModel,OlapDataSource olapDataSource) {
@@ -198,10 +198,7 @@ public class CubeUtilities {
 		Member[] cellMembersOriginal = cellWrapper.getMembers();
 		Member[] cellMembers = new Member[cellMembersOriginal.length];
 		System.arraycopy( cellMembersOriginal, 0, cellMembers, 0, cellMembersOriginal.length );
-		
-		//TODO: gestire casi di errore tramite eccezioni
-		boolean errorFound = false;
-		
+				
 		//Iterate the list for each member specified
 		for (Object memberExp:membersExpression){
 			String memberExpression =(String)memberExp;
@@ -217,30 +214,25 @@ public class CubeUtilities {
 
 			if (!memberFound){
 				logger.error("ERROR: Cannot calculate Value, Member not found: "+memberExpression);
-				errorFound = true;
-				//TODO: throw new SpagoBIEngineException("Cannot calculate Value, Member not found: "+memberExpression);
+				throw new SpagoBIEngineRuntimeException("Cannot calculate Value, Member not found: "+memberExpression);
 			}
 			
 		}
 
-		if (!errorFound){
-			//Calculate the new value 
-			MdxQueryExecutor mdxQueryExecutor = new MdxQueryExecutor(olapDataSource);
-			Cube cube = pivotModel.getCube();
-			SpagoBIPivotModel spagoBIPivotModel = null;
-			if (pivotModel instanceof SpagoBIPivotModel){
-				spagoBIPivotModel = (SpagoBIPivotModel)pivotModel;
-			} else {
-				//TODO: ***** throw an Exception *****
-			}
-			Object value = mdxQueryExecutor.getValueForTuple(cellMembers,cube,spagoBIPivotModel);
-			if (value instanceof Double){
-				toReturn = (Double)value;
-			}
+		//Calculate the new value 
+		MdxQueryExecutor mdxQueryExecutor = new MdxQueryExecutor(olapDataSource);
+		Cube cube = pivotModel.getCube();
+		SpagoBIPivotModel spagoBIPivotModel = null;
+		if (pivotModel instanceof SpagoBIPivotModel){
+			spagoBIPivotModel = (SpagoBIPivotModel)pivotModel;
+		} else {
+			throw new SpagoBIEngineRuntimeException("Cannot calculate Member Value, PivotModel not of type SpagoBIPivotModel" );
+		}
+		Object value = mdxQueryExecutor.getValueForTuple(cellMembers,cube,spagoBIPivotModel);
+		if (value instanceof Double){
+			toReturn = (Double)value;
 		}
 		return toReturn;
-
-		
 	}
 	
 	/*
@@ -339,8 +331,7 @@ public class CubeUtilities {
 						}
 						if (!memberFound){
 							logger.error("ERROR: Cannot calculate Value, Member name not found: "+memberToSearchSimpleName);
-
-							//TODO: ***** throw an Exception *****
+							throw new SpagoBIEngineRuntimeException("Cannot calculate Member Value, Member name is ambiguous: "+memberToSearchSimpleName );
 						}
 						
 					}
@@ -348,14 +339,13 @@ public class CubeUtilities {
 						//zero members found (wrong name)
 						memberFound = false;
 						logger.error("ERROR: Cannot calculate Value, Member name not found: "+memberToSearchSimpleName);
-
-						//TODO: ***** throw an Exception *****
+						throw new SpagoBIEngineRuntimeException("Cannot calculate Member Value, Member name not found: "+memberToSearchSimpleName );
 
 					}
 					
 					
 				} catch (OlapException e) {
-					e.printStackTrace();
+					throw new SpagoBIEngineRuntimeException("Cannot calculate Member Value, OlapException: "+e.getMessage() );
 				}
 				if (memberFound){
 					break;
@@ -405,9 +395,6 @@ public class CubeUtilities {
 		}
 		
 		return formattedName.toString();
-		
-		
-		
 	}
 	
 }
