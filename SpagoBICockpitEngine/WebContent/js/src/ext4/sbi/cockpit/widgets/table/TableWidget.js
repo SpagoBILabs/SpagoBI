@@ -12,8 +12,8 @@ Sbi.cockpit.widgets.table.TableWidget = function(config) {
 	var defaultSettings = {
 		displayInfo: false,
 		pageSize: 50,
-		sortable: false,
-		sortMode: 'remote', // remote | local | auto
+		sortable: true,
+		//sortMode: 'local', // remote | local | auto
 		layout: 'fit',
 		timeout: 300000,
 		split: true,
@@ -21,8 +21,7 @@ Sbi.cockpit.widgets.table.TableWidget = function(config) {
 		padding: '0 0 0 0',
 		autoScroll: false,
 		frame: false, 
-		border: false,
-		sortable: false,
+		border: false,		
 		gridConfig: {
 			height: 400,
 			clicksToEdit:1,
@@ -30,7 +29,7 @@ Sbi.cockpit.widgets.table.TableWidget = function(config) {
 		    border:false,
 		    autoScroll: true,
 		    collapsible: false,
-		    loadMask: true,
+		    loadMask: true,		    
 		    viewConfig: {
 		    	forceFit:false,
 		        autoFill: true,
@@ -202,24 +201,29 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 		//fields.push(new Ext.grid.RowNumberer());
 		
 		var columns = [];
-		
-		for(var i = 0; i < meta.fields.length; i++) {
-			this.applyRendererOnField(meta.fields[i]);
-			this.applySortableOnField(meta.fields[i]);
-			Sbi.trace("[TableWidget.onStoreMetaChange]: checking if field [" + Sbi.toSource(meta.fields[i]) + "] is visible ...");	
-			for(var j = 0; j < this.wconf.visibleselectfields.length; j++) {
-				if(this.wconf.visibleselectfields[j].id === meta.fields[i].header) {
-					Sbi.trace("[TableWidget.onStoreMetaChange]: field [" + meta.fields[i].header + "] is equal to [" + this.wconf.visibleselectfields[j].id + "]");	
+				
+		for(var j = 0; j < this.wconf.visibleselectfields.length; j++) {			
+									
+			for(var i = 0; i < meta.fields.length; i++) {
+				if(meta.fields[i].header === this.wconf.visibleselectfields[j].id) {
+					Sbi.trace("[TableWidget.onStoreMetaChange]: field [" + this.wconf.visibleselectfields[j].id + "] is equal to [" + meta.fields[i].header + "]");
+					
+					this.applyRendererOnField(meta.fields[i]);
+					this.applySortableOnField(meta.fields[i]);					
+					
+					if (this.wconf.visibleselectfields[j].width) {
+						meta.fields[i].width = this.wconf.visibleselectfields[j].width; 
+					}
+					
 					fields.push(meta.fields[i]);
 					columns.push(meta.fields[i].header);
 					break;
 				} else {
-					Sbi.trace("[TableWidget.onStoreMetaChange]: field [" + meta.fields[i].header + "] is not equal to [" + this.wconf.visibleselectfields[j].id + "]");	
+					Sbi.trace("[TableWidget.onStoreMetaChange]: field [" + this.wconf.visibleselectfields[j].id + "] is not equal to [" + meta.fields[i].header + "]");	
 				}
 			}
 		}
-		Sbi.trace("[TableWidget.onStoreMetaChange]: visible fields are [" + columns.join(",") + "]");
-		//this.grid.getColumnModel().setConfig(fields);
+		Sbi.trace("[TableWidget.onStoreMetaChange]: visible fields are [" + columns.join(",") + "]");		
 		this.grid.reconfigure(this.getStore(), fields);
 		
 		Sbi.trace("[TableWidget.onStoreMetaChange]: OUT");	
@@ -356,7 +360,7 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 //		    sm : new Ext.grid.RowSelectionModel( {
 //				singleSelect : true
 //			})
-		    selModel: {selType: 'rowmodel', mode: 'MULTI', allowDeselect: true}
+		    selModel: {selType: 'rowmodel', mode: 'MULTI', allowDeselect: true},		    
 		};
 		if(this.enableExport === true) {
 			this.initExportToolbar();
@@ -373,8 +377,78 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 		// create the Grid
 	    this.grid = new Ext.grid.GridPanel(gridConf);   
 	    this.grid.on('selectionchange', this.onClick, this);
+	    this.grid.on('columnresize', this.onColumnResize, this);
+	    this.grid.on('columnmove', this.onColumnMove, this);
 	    
 	    Sbi.trace("[TableWidget.initGridPanel]: OUT");
+	}
+	
+	, onColumnResize: function (ct, column, width, eOpts){		
+		this.wconf.visibleselectfields[column.getIndex()].width = column.width;
+	}
+	
+	, onColumnMove: function (ct, column, fromIdx, toIdx, eOpts){
+		Sbi.trace("[TableWidget.onColumnMove]: IN");			
+		
+		Sbi.trace("[TableWidget.onColumnMove]: fromIdx= " + fromIdx + " - toIdx= " + toIdx);
+		
+		var toIndex = toIdx;
+		
+		/* 
+		 * Moving a column forward, columnresize method count also the moving column itself
+		 * so the right toIndex base 0 is (toIdx - 1)
+		 */
+		if (fromIdx < toIdx){
+			toIndex = toIdx - 1;
+		}					
+		
+		var columnArray = this.wconf.visibleselectfields;		
+		var mixedArray = [];
+		
+		Sbi.trace("[TableWidget.onColumnMove]: ColumnArray " + Sbi.toSource(columnArray));			
+		
+		Ext.each(columnArray, function (val,index){
+			if (index == toIndex){
+				/* Perform the move of the selected column */ 
+				Sbi.trace("[TableWidget.onColumnMove]: index(" + index + ") equals toIdx - pushing " + columnArray[fromIdx].id);
+								
+				mixedArray.push(columnArray[fromIdx]);	
+				
+			} else if (index == fromIdx) {
+				Sbi.trace("[TableWidget.onColumnMove]: index(" + index + ") equals fromIdx");
+				
+				if (fromIdx > toIdx){
+					/* Column have been pushed to the right */
+					Sbi.trace("[TableWidget.onColumnMove]: fromIdx > toIdx - pushing " + columnArray[index - 1].id);
+					mixedArray.push(columnArray[index - 1]);
+				} else {
+					/* Column have been pushed to the left */
+					Sbi.trace("[TableWidget.onColumnMove]: fromIdx < toIdx - pushing " + columnArray[index + 1].id);
+					mixedArray.push(columnArray[index + 1]);
+				}	
+				
+			} else {								
+				if ((index > toIndex) && (index < fromIdx)){
+					/* Column between a move from right to left */
+					Sbi.trace("[TableWidget.onColumnMove]: " + index + "=" + index + " ( index > toIdx) - pushing " + columnArray[index - 1].id);
+					mixedArray.push(columnArray[index - 1]);
+				} else if ((index < toIndex) && (index > fromIdx)){
+					/* Column between a move from left to right */
+					Sbi.trace("[TableWidget.onColumnMove]: " + index + "=" + index + " ( index < toIdx) - pushing " + columnArray[index + 1].id);
+					mixedArray.push(columnArray[index + 1]);
+				} else {
+					/* Column not influenced by the move */
+					Sbi.trace("[TableWidget.onColumnMove]: " + index + "=" + index + " - pushing " + columnArray[index].id);
+					mixedArray.push(columnArray[index]);
+				}																			
+			}
+		});			
+		
+		this.wconf.visibleselectfields = mixedArray;
+		
+		Sbi.trace("[TableWidget.onColumnMove]: MixedArray " + Sbi.toSource(mixedArray));
+		
+		Sbi.trace("[TableWidget.onColumnMove]: OUT");
 	}
 	
 	, onClick: function( sm,selected,opt){
@@ -419,7 +493,7 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 			{
 				header: "Data",
 	   			dataIndex: 'data',
-	   			width: 75
+	   			width: 75	   			
 	   		}
 		];
 		return columns;
