@@ -429,6 +429,11 @@ public class SpagoBIConstants {
     public static final String MONDRIAN_CUBE = "cube";
     public static final String MONDRIAN_REFERENCE = "reference";
     public static final String SBI_ARTIFACT_VERSION_ID = "SBI_ARTIFACT_VERSION_ID";
+    public static final String SBI_ARTIFACT_STATUS = "SBI_ARTIFACT_STATUS";
+    public static final String SBI_ARTIFACT_VALUE_LOCKED_BY_USER = "locked_by_user";
+    public static final String SBI_ARTIFACT_VALUE_LOCKED_BY_OTHER = "locked_by_other";
+    public static final String SBI_ARTIFACT_VALUE_UNLOCKED = "unlocked";
+    public static final String SBI_ARTIFACT_LOCKER = "SBI_ARTIFACT_LOCKER";
     
     public static final String DATAMART_RETRIEVER = "DATAMART_RETRIEVER";
     
