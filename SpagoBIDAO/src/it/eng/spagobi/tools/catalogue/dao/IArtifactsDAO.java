@@ -37,4 +37,12 @@ public interface IArtifactsDAO extends ISpagoBIDao {
 	
 	public void setActiveVersion(Integer artifactId, Integer contendId);
 	
+	public String lockArtifact(Integer artifactId, String userId);
+	
+	public String unlockArtifact(Integer artifactId, String userId);
+	
+	public Artifact loadArtifactByContentId(Integer contendId);
+
+	
+	
 }

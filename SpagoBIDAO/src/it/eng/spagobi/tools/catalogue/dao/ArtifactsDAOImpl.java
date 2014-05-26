@@ -23,6 +23,7 @@ import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.cfg.HbmBinder;
 
 public class ArtifactsDAOImpl extends AbstractHibernateDAO implements IArtifactsDAO {
 
@@ -32,7 +33,7 @@ public class ArtifactsDAOImpl extends AbstractHibernateDAO implements IArtifacts
 		LogMF.debug(logger, "IN: id = [{0}]", id);
 		
 		Artifact toReturn = null;
-		Session session = null;
+		Session session = null;	
 		Transaction transaction = null;
 		
 		try {
@@ -198,6 +199,8 @@ public class ArtifactsDAOImpl extends AbstractHibernateDAO implements IArtifacts
 			hibArtifact.setName(artifact.getName());
 			hibArtifact.setDescription(artifact.getDescription());
 			hibArtifact.setType(artifact.getType());
+			hibArtifact.setLocker(artifact.getLocker());
+			hibArtifact.setLocked(artifact.getLocked());
 			
 			updateSbiCommonInfo4Update(hibArtifact);
 			session.save(hibArtifact);
@@ -320,6 +323,9 @@ public class ArtifactsDAOImpl extends AbstractHibernateDAO implements IArtifacts
 			toReturn.setName(hibArtifact.getName());
 			toReturn.setDescription(hibArtifact.getDescription());
 			toReturn.setType(hibArtifact.getType());
+			toReturn.setLocked(hibArtifact.getLocked());
+			toReturn.setLocker(hibArtifact.getLocker());
+			
 			// get the current (active) Content id
 			Query query = session.createQuery("select mmc.id from SbiArtifactContent mmc where mmc.artifact.id = ? and mmc.active = true ");
 			query.setInteger(0, hibArtifact.getId());
@@ -678,4 +684,247 @@ public class ArtifactsDAOImpl extends AbstractHibernateDAO implements IArtifacts
 		
 	}
 
+/**
+ * Locks model designed by Artifact id,
+ * returns the userId that locks the model (that could be different from current user if it was already blocked)
+ */
+	public String lockArtifact(Integer artifactId, String userId) {
+		logger.debug("IN");
+		String userBlocking = null;		
+		Session session = null;
+		Transaction transaction = null;
+	
+		try {
+			if (artifactId == null) {
+				throw new IllegalArgumentException("Input parameter [artifactId] cannot be null");
+			}
+			
+			try {
+				session = getSession();
+				Assert.assertNotNull(session, "session cannot be null");
+				transaction = session.beginTransaction();
+				Assert.assertNotNull(transaction, "transaction cannot be null");
+			} catch(Throwable t) {
+				throw new SpagoBIDOAException("An error occured while creating the new transaction", t);
+			}
+			
+			// set to not active the current active template
+			String hql = " update SbiArtifact ar set ar.locked = ?, ar.locker = ? where (ar.locked = ? OR ar.locked is null)  and ar.id = ? ";
+			Query query = session.createQuery(hql);
+			query.setBoolean(0, true); 
+			query.setString(1, userId); 
+			query.setBoolean(2, false); 
+			query.setInteger(3, artifactId); 
+
+			logger.debug("Lock the artifact with id " + artifactId + "");
+			query.executeUpdate();
+			transaction.commit();
+			
+			// check if current user has the lock
+			SbiArtifact hibArtifact = (SbiArtifact) session.load(SbiArtifact.class, artifactId);
+			logger.debug("Artifact loaded");
+			Artifact art = toArtifact(hibArtifact, session);
+			
+			userBlocking = art.getLocker();
+			if(art.getLocker() != null && art.getLocker().equals(userId)){
+				logger.debug("Model was locked by current user");
+			
+			}
+			else{
+				logger.warn("Model was already blocked by user "+art.getLocker());
+			}
+			
+		
+		} catch (Throwable t) {
+			logException(t);
+			if (transaction != null && transaction.isActive()) {
+				transaction.rollback();
+			}
+			throw new SpagoBIDOAException("An unexpected error occured while locking for user[" + userId
+					+ "] the artifact [" + artifactId + "]", t);	
+		} finally {
+			if (session != null && session.isOpen()) {
+				session.close();
+			}
+		}
+	
+		logger.debug("OUT");
+		return userBlocking;
+	}
+	
+	
+	/**
+	 * Unlock model designed by Artifact id,
+	 * returns user currently locking the model, that will be null if method has success, but could be from a different user is fails
+	 */
+		public String unlockArtifact(Integer artifactId, String userId) {
+			logger.debug("IN");
+			String userLocking = null;			
+
+			Session session = null;
+			Transaction transaction = null;
+		
+			
+			try {
+				
+				if (artifactId == null) {
+					logger.error("Input parameter [artifactId] cannot be null");
+					throw new IllegalArgumentException("Input parameter [artifactId] cannot be null");
+				}
+
+				try {
+					session = getSession();
+					Assert.assertNotNull(session, "session cannot be null");
+					transaction = session.beginTransaction();
+					Assert.assertNotNull(transaction, "transaction cannot be null");
+				} catch(Throwable t) {
+					throw new SpagoBIDOAException("An error occured while creating the new transaction", t);
+				}
+				
+				// check if current user has the lock
+				SbiArtifact hibArtifact = (SbiArtifact) session.load(SbiArtifact.class, artifactId);
+				
+				if (hibArtifact == null) {
+					logger.error("Could not find artifact for id "+artifactId);
+					throw new SpagoBIDOAException("Could not find artifact for id "+artifactId);
+				}
+				
+				logger.debug("Artifact loaded");
+				Artifact art = toArtifact(hibArtifact, session);
+				
+				if(art.getLocked().equals(true) && art.getLocker().equals(userId)){
+					// set to not active the current active template
+					String hql = " update SbiArtifact ar set ar.locked = ?, ar.locker = ? where ar.locked = ?  and ar.id = ? ";
+					Query query = session.createQuery(hql);
+					query.setBoolean(0, false); 
+					query.setString(1, null); 
+					query.setBoolean(2, true); 
+					query.setInteger(3, artifactId); 
+
+					logger.debug("Unloock the artifact with id " + artifactId + "");
+					query.executeUpdate();	
+					
+					userLocking = null;
+					transaction.commit();
+					
+				}
+				else{
+					logger.warn("Could not unlock model because it is locked by another user than current one: "+art.getLocker());
+					userLocking = art.getLocker();
+				}
+
+			} catch (Throwable t) {
+				logException(t);
+				if (transaction != null && transaction.isActive()) {
+					transaction.rollback();
+				}
+				throw new SpagoBIDOAException("An unexpected error occured while unlocking for user[" + userId
+						+ "] the artifact [" + artifactId + "]", t);	
+			} finally {
+				if (session != null && session.isOpen()) {
+					session.close();
+				}
+			}
+		
+			logger.debug("OUT");
+			return userLocking;
+		}
+	
+		
+		
+		
+		/**
+		 * Return a String representing the artifact status
+		 * can be:
+		 * unlocked 
+		 * locked_by_you
+		 * locked_by_other
+		 */
+		public String getArtifactStatus(Integer artifactId, String userId){
+			logger.debug("IN");
+		String statusToReturn = null;
+
+		Artifact art = loadArtifactById(artifactId);
+		if(art == null)	{
+			throw new SpagoBIDOAException("Artifact with id [" + artifactId + "] could not be loaded");	
+		}
+		else{
+			Boolean locked = art.getLocked();
+			String locker = art.getLocker();
+
+			if(locked==false){
+				logger.debug("Artifact with id "+artifactId+" is unlocked");
+				statusToReturn="unlocked";
+			}
+			else{
+				if(locker != null && locker.equals(userId)){
+					statusToReturn="locked_by_you";	
+				}
+				else{
+					statusToReturn="locked_by_other";	
+				}
+				
+				
+			}
+			
+		}
+		
+		return statusToReturn;
+		}
+
+		
+		
+		
+	
+		public Artifact loadArtifactByContentId(Integer contendId) {
+			LogMF.debug(logger, "IN: id = [{0}]", contendId);
+			
+			Artifact toReturn = null;
+			Session session = null;
+			Transaction transaction = null;
+			
+			try {
+				if (contendId == null) {
+					throw new IllegalArgumentException("Input parameter [contendId] cannot be null");
+				}
+				
+				try {
+					session = getSession();
+					Assert.assertNotNull(session, "session cannot be null");
+					transaction = session.beginTransaction();
+					Assert.assertNotNull(transaction, "transaction cannot be null");
+				} catch(Throwable t) {
+					throw new SpagoBIDOAException("An error occured while creating the new transaction", t);
+				}
+				
+				SbiArtifactContent hibContent = (SbiArtifactContent) session.load(SbiArtifactContent.class, contendId);
+				logger.debug("Content loaded");
+				
+				if(hibContent == null){
+					throw new SpagoBIDOAException("Content with id "+contendId+" not retrieved");
+				}
+				if(hibContent.getArtifact() == null){
+					throw new SpagoBIDOAException("Content with id "+contendId+" retrieved but without artifact associated");					
+				}
+				
+				SbiArtifact sbiArtifact = hibContent.getArtifact();
+				
+				toReturn = toArtifact(sbiArtifact, session);
+				
+				transaction.rollback();
+			} catch (Throwable t) {
+				logException(t);
+				if (transaction != null && transaction.isActive()) {
+					transaction.rollback();
+				}
+				throw new SpagoBIDOAException("An unexpected error occured while loading content with id [" + contendId + "]", t);	
+			} finally {
+				if (session != null && session.isOpen()) {
+					session.close();
+				}
+			}
+			
+			LogMF.debug(logger, "OUT: returning [{0}]", toReturn);
+			return toReturn;
+		}
 }

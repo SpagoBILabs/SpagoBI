@@ -16,6 +16,11 @@ public class Artifact {
 	private String description;
 	
 	private String type;
+
+	private Boolean locked;
+
+	private String locker;
+	
 	
 	public Integer getId() {
 		return id;
@@ -57,6 +62,22 @@ public class Artifact {
 		this.currentContentId = currentContentId;
 	}
 	
+	public Boolean getLocked() {
+		return locked;
+	}
+
+	public void setLocked(Boolean locked) {
+		this.locked = locked;
+	}
+
+	public String getLocker() {
+		return locker;
+	}
+
+	public void setLocker(String locker) {
+		this.locker = locker;
+	}
+
 	@Override
 	public String toString() {
 		return "Artifact [id=" + id + ", name=" + name + ", description="
