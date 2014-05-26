@@ -80,7 +80,7 @@ onload="init(evt);">
 ]]></script>
 		
 		
-<script xlink:type="simple" xlink:actuate="onLoad" xlink:show="other" type="text/ecmascript" xmlns:xlink="http://www.w3.org/1999/xlink"><![CDATA[
+<script xlink:type="simple" xlink:actuate="onLoad" xlink:show="other" type="text/javascript" xmlns:xlink="http://www.w3.org/1999/xlink"><![CDATA[
 		
 		function ping() { 
 			alert("pong");
@@ -688,21 +688,25 @@ onload="init(evt);">
 		
 			
 		function callCrossNavFunc(frameid, doclabel, params, subobjid, title, target) {
-			alert('callCrossNavFunc');
-			
-			if(!parent) alert("no parent");
-			
 			if(execCrossFnScope == null) {
-				var p = parent;
-				while(p) {
-					if(p.execCrossNavigation) {
-						execCrossFnScope = p;
-						break;
-					} else {
-						p = p.parent;
+				if(parent) {
+					var p = parent;
+					while(p) {
+						if(p.execCrossNavigation) {
+							execCrossFnScope = p;
+							break;
+						} else {
+							p = p.parent;
+						}
+					}
+				} else {
+					if(top){
+						execCrossFnScope = top;
 					}
 				}
 			}
+			
+		
 			if(execCrossFnScope == null) {
 				alert("Impossible to find execCrossNavigation function");
 			} else {
@@ -710,10 +714,7 @@ onload="init(evt);">
 			}	
 		}
 	
-		function colourMap() {
-			if(!parent) alert("no parent");
-			else alert("xxx");
-			
+		function colourMap() {			
 			if (document.documentElement.suspendRedraw) {
 				suspendProcess = document.documentElement.suspendRedraw(20000);
 			}
