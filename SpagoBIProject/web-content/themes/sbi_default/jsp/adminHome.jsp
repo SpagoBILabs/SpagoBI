@@ -11,6 +11,8 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 <!-- Include Ext stylesheets here: -->
 <link id="spagobi-ext-4" rel="styleSheet" href ="<%=contextName %>/themes/geobi/css/home40/layout.css" type="text/css" />
 
+
+
 <%-- Javascript object useful for session expired management (see also sessionExpired.jsp) --%>
 <script>
 sessionExpiredSpagoBIJS = 'sessionExpiredSpagoBIJS';
@@ -20,11 +22,13 @@ Ext.onReady(function () {
 	var firstUrl =  '<%= StringEscapeUtils.escapeJavaScript(firstUrlToCall) %>';  
 	firstUrlTocallvar = firstUrl;
     Ext.tip.QuickTipManager.init();
-    this.mainframe = Ext.create('Ext.ux.IFrame', 
-    			{ xtype: 'uxiframe'
-  	  			, src: firstUrl
-  	  			, height: '100%'
-  	  			});
+    this.mainframe = Ext.create('Ext.ux.IFrame', { 
+    	xtype: 'uxiframe'
+    	, renderTpl: ['<iframe src="{src}" id="iframeDoc" name="{frameName}" width="100%" height="100%" frameborder="0"></iframe>']
+    	, id: 'doc'
+  	  	, src: firstUrl
+  	  	, height: '100%'
+  	});
     
     Sbi.execution.ExporterUtils.setIFrame( this.mainframe );
     

@@ -88,7 +88,7 @@ Ext.extend(Sbi.execution.DocumentPage, Ext.Panel, {
 	, state: null
 	
 	/**
-	 * @property {String} the definition of cross navifation function
+	 * @property {String} the definition of cross navigation function
 	 */
 	, EXEC_CROSSNAVIGATION_FN_BODY: "parent.execCrossNavigation = function(d,l,p,s,ti,t) {" +
 	"	sendMessage({'label': l, parameters: p, windowName: d, subobject: s, target: t, title: ti},'crossnavigation');" +
@@ -516,6 +516,7 @@ Ext.extend(Sbi.execution.DocumentPage, Ext.Panel, {
 		return {
 	    	fn: function(srcFrame, message){
 	    		Sbi.trace('[DocumentPage.listeners(message:crossnavigation)]: IN');
+	    		//alert('[DocumentPage.listeners(message:crossnavigation)]: IN');
 	           	var config = {
 	           		document: {'label': message.data.label}
 	       			, preferences: {

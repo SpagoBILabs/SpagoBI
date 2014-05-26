@@ -22,7 +22,8 @@ Ext.onReady(function () {
     Ext.tip.QuickTipManager.init();
     this.mainframe = Ext.create('Ext.ux.IFrame', 
     			{ xtype: 'uxiframe'
-  	  			, src: firstPublicUrl
+    			, renderTpl: ['<iframe src="{src}" id="iframeDoc" name="{frameName}" width="100%" height="100%" frameborder="0"></iframe>']
+    			, src: firstPublicUrl
   	  			, height: '100%'
   	  			});
     Sbi.execution.ExporterUtils.setIFrame( this.mainframe );
