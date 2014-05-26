@@ -990,7 +990,7 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 			model: storeConf.storeId,
 	        proxy: proxy,
 	        reader: new Ext.data.JsonReader(),
-	        remoteSort: true
+	        remoteSort: false
 	    });
 		
 		return store;
