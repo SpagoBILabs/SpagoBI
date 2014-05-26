@@ -34,7 +34,7 @@ public class WhatIfDriver extends GenericDriver {
 			String roleName) {
 		Map pars = super.getParameterMap(biobject, profile, roleName);
 		byte[] template = this.getTemplateAsByteArray( biobject );
-		pars = addArtifactVersionId(template, pars);
+		pars = addArtifactVersionId(template, pars, profile);
 		return pars;
 	}
 
@@ -43,7 +43,7 @@ public class WhatIfDriver extends GenericDriver {
 			IEngUserProfile profile, String roleName) {
 		Map pars = super.getParameterMap(biobject, subObject, profile, roleName);
 		byte[] template = this.getTemplateAsByteArray( biobject );
-		pars = addArtifactVersionId(template, pars);
+		pars = addArtifactVersionId(template, pars, profile);
 		return pars;
 	}
 	
@@ -86,7 +86,7 @@ public class WhatIfDriver extends GenericDriver {
 		return super.getNewDocumentTemplateBuildUrl(biobject, profile);
 	}
 	
-	protected Map addArtifactVersionId(byte[] template, Map pars) {
+	protected Map addArtifactVersionId(byte[] template, Map pars, IEngUserProfile profile) {
 		SourceBean sb = null;
 		try {
 			sb = SourceBean.fromXMLString(new String(template));
@@ -104,9 +104,63 @@ public class WhatIfDriver extends GenericDriver {
 		Assert.assertNotNull(artifact, "Mondrian schema with name [" +  reference + "] was not found");
 		Content content = dao.loadActiveArtifactContent(artifact.getId());
 		Assert.assertNotNull(content, "Mondrian schema with name [" +  reference + "] has no content");
+		
 		pars.put(SpagoBIConstants.SBI_ARTIFACT_VERSION_ID, content.getId());
+		
+		// add info if artifact is locked			
+		addArtifactStausInfo(pars, artifact.getId(), profile);
+
+		
 		return pars;
 
 	}
 
+	
+
+	public Map addArtifactStausInfo(Map pars, Integer artifactId, IEngUserProfile profile){
+		logger.debug("IN");
+
+		String statusToReturn = null;
+		String userId = profile.getUserUniqueIdentifier().toString();		
+
+		logger.debug("User Id is "+userId);
+		logger.debug("Artifact Id is "+artifactId);
+
+		IArtifactsDAO artifactsDAO = DAOFactory.getArtifactsDAO();
+
+		Artifact artifact = artifactsDAO.loadArtifactById(artifactId);
+
+		if(artifact == null)	{
+			logger.error("Artifact referring to id [" + artifactId +"] could not be loaded");
+			throw new RuntimeException("Artifact with id [" + artifactId + "] could not be loaded", null);
+		}
+
+			
+		logger.debug("Artifact id is "+artifactId);
+
+		Boolean locked = artifact.getLocked();
+		String locker = artifact.getLocker();
+
+		if(locked==false){
+			logger.debug("Artifact with id "+artifactId+" is unlocked");
+			statusToReturn=SpagoBIConstants.SBI_ARTIFACT_VALUE_UNLOCKED;
+		}
+		else{
+			if(locker != null && locker.equals(userId)){
+				statusToReturn=SpagoBIConstants.SBI_ARTIFACT_VALUE_LOCKED_BY_USER;	
+			}
+			else{
+				statusToReturn=SpagoBIConstants.SBI_ARTIFACT_VALUE_LOCKED_BY_OTHER;	
+			}
+				
+				
+			}
+		
+		logger.debug("Status of artifact is "+statusToReturn);
+		pars.put(SpagoBIConstants.SBI_ARTIFACT_STATUS, statusToReturn);
+		pars.put(SpagoBIConstants.SBI_ARTIFACT_LOCKER, locker != null ? locker : "");
+		return pars;
+}
+
+	
 }
