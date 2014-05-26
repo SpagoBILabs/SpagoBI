@@ -14,6 +14,7 @@ import it.eng.spagobi.engines.whatif.template.WhatIfTemplate;
 import it.eng.spagobi.engines.whatif.template.WhatIfXMLTemplateParser;
 import it.eng.spagobi.services.common.EnginConf;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.writeback4j.SbiScenario;
 
 import java.io.UnsupportedEncodingException;
