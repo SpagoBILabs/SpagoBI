@@ -51,6 +51,36 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 	JSONArray jsonMenuList = (JSONArray) serializer.serialize(filteredMenuList,locale);
 	//System.out.println(jsonMenuList);
 %>
+
+  <script>
+    	function execCrossNavigation(frameid, doclabel, params, subobjid, title, target) {
+			var iframeDocElement = document.getElementById('iframeDoc');
+			if(!iframeDocElement) {
+				alert("[homeBase.execCrossNavigation]: Impossible to find element [iframeDoc]");
+				return;
+			}			
+			if(iframeDocElement.tagName != "IFRAME") {
+				alert("[homeBase.execCrossNavigation]: iframeDoc type is not equal to [IFRAME] as expected but to[" + iframeDocElement.tagName + "]");
+				return;
+			}
+			
+			var iframeDocElementWindow = iframeDocElement.contentWindow;
+			if(!iframeDocElementWindow) {
+				alert("[homeBase.execCrossNavigation]: iframeDoc type is not equal to [IFRAME] as expected but to[" + iframeDocElement.tagName + "]");
+				return;
+			}
+			
+			if(!iframeDocElementWindow.execCrossNavigation) {
+				alert("[homeBase.execCrossNavigation]: function execCrossNavigation is not defined in page [" + iframeDocElement.src + "] contained in iframe [iframeDoc]");
+				return;
+			}
+			
+			//alert("[homeBase.execCrossNavigation]: execCrossNavigation is equal to [" + iframeDocElementWindow.execCrossNavigation + "]");
+			iframeDocElementWindow.execCrossNavigation(frameid, doclabel, params, subobjid, title, target);
+		}
+  </script>
+
+
 <%-- Javascript object useful for session expired management (see also sessionExpired.jsp) --%>
 <script>
 sessionExpiredSpagoBIJS = 'sessionExpiredSpagoBIJS';

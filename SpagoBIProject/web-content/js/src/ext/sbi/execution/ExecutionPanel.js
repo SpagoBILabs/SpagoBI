@@ -236,6 +236,7 @@ Ext.extend(Sbi.execution.ExecutionPanel, Ext.Panel, {
 		var sourceDocument = this.activeDocument.document;
 		var destinationTarget = config.target;
 		
+		//alert("executeCrossNavigation");
 		
 		destinationDocument.title = config.title || destinationDocument.title;
 		var isSourceDocUpdate = (destinationDocument.label === sourceDocument.label);
