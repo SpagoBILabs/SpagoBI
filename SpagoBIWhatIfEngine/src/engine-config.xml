@@ -35,19 +35,18 @@
 	<SbiDocumentServiceProxy_URL>/services/SbiDocumentService</SbiDocumentServiceProxy_URL>
     <ArtifactServiceProxy_URL>/services/ArtifactService</ArtifactServiceProxy_URL>
 	
-	<WRITEBACK editCube="Sales_Edit" proportionalAlgorithmPersistQueryWhereClause="in">
+	<WRITEBACK proportionalAlgorithmPersistQueryWhereClause="in"></WRITEBACK>
+	
+	<SCENARIO name="scenario" editCube="Sales_Edit">
 		<MEASURE>Store Sales</MEASURE>
 		<MEASURE>Store Cost</MEASURE>
-	</WRITEBACK>
+		<VARIABLE name="var1" value="5"/>
+	</SCENARIO>
 	
 	<USR>root</USR>
 	<PWD>root</PWD>
 	<CATALOG>\resources\Olap\FoodMartMySQL.xml</CATALOG>
 	<CONNECTIONSTRING>jdbc:mondrian:Jdbc=jdbc:mysql://localhost:3306/foodmart_key</CONNECTIONSTRING>
 	<MDX>SELECT {[Measures].[Store Sales]} ON COLUMNS, {[Product].[Food]} ON ROWS FROM [Sales_V] WHERE CrossJoin([Version].[1], [Region].[Mexico Central])</MDX>
-	
-	<SCENARIO_VARIABLES>
-		<VARIABLE name="var1" value="5"/>
-	
-	</SCENARIO_VARIABLES>
+
 </ENGINE-CONFIGURATION>
