@@ -43,6 +43,7 @@ public class AbstractWhatIfTestCase extends TestCase {
 		SourceBean sb;
 		Properties connectionProps = new Properties();
 				
+		
 		String usr = "root";
 		String pwd = "root";
 		String catalog = "FoodMartMySQLTest.xml";
