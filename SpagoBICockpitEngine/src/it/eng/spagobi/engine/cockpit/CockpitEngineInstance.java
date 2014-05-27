@@ -6,13 +6,10 @@
 package it.eng.spagobi.engine.cockpit;
 
 import it.eng.qbe.datasource.IDataSource;
-import it.eng.qbe.query.Query;
-import it.eng.qbe.query.catalogue.QueryCatalogue;
-import it.eng.qbe.statement.IStatement;
 import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.engine.cockpit.association.AssociationManager;
 import it.eng.spagobi.services.proxy.EventServiceProxy;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.common.association.AssociationManager;
 import it.eng.spagobi.tools.dataset.utils.DataSetUtilities;
 import it.eng.spagobi.utilities.engines.AbstractEngineInstance;
 import it.eng.spagobi.utilities.engines.AuditServiceProxy;
