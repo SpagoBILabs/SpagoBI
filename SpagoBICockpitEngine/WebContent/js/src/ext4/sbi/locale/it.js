@@ -124,7 +124,7 @@ Sbi.locale.ln['sbi.savewin.saveWarning']  = 'Inserire il Nome prima di salvare i
 //===================================================================
 //COCKPIT
 //===================================================================
-Sbi.locale.ln['sbi.cockpit.editor.widget.widgeteditormainpanel.emptymsg'] = 'Trascina qui un componente dalla palette';
+Sbi.locale.ln['sbi.cockpit.editor.widget.widgeteditorcustomconfpanel.emptymsg'] = 'Trascina qui un componente dalla palette';
 Sbi.locale.ln['sbi.cockpit.core.WidgetDesigner.title'] = 'Definizione tabella piatta';
 Sbi.locale.ln['sbi.cockpit.widgets.table.tabledesignerpanel.fields.emptymsg'] = 'Campi visibili';
 Sbi.locale.ln['sbi.cockpit.widgets.table.tabledesignerpanel.fields'] = 'Trascina qui gli attributi e le misure che vuoi visualizzare nella tabella';
