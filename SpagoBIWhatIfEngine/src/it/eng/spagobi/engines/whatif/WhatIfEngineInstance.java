@@ -105,6 +105,10 @@ public class WhatIfEngineInstance extends AbstractEngineInstance implements Seri
 		//init configs 
 		modelConfig = new ModelConfig();
 		modelConfig.setScenario(template.getScenario());
+		
+		//init toolbar
+		modelConfig.setToolbarMenuButtons(modelConfig.getToolbarMenuButtons());
+		modelConfig.setToolbarVisibleButtons(modelConfig.getToolbarVisibleButtons());
 
 		WriteBackEditConfig writeBackConfig = modelConfig.getWriteBackConf();
 		if(writeBackConfig!= null ){
@@ -174,6 +178,7 @@ public class WhatIfEngineInstance extends AbstractEngineInstance implements Seri
 		//init configs 
 		modelConfig = new ModelConfig();		
 		modelConfig.setScenario(WhatIfEngineConfig.getInstance().getScenario());
+		
 
 		WriteBackEditConfig writeBackConfig = modelConfig.getWriteBackConf();
 		

@@ -6,6 +6,7 @@
 package it.eng.spagobi.engines.whatif.template;
 
 import it.eng.spago.base.SourceBean;
+import it.eng.spago.base.SourceBeanAttribute;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.writeback4j.SbiScenario;
@@ -45,6 +46,10 @@ public class WhatIfXMLTemplateParser implements IWhatIfTemplateParser {
 	public static String TAG_DATA_ACCESS = "DATA-ACCESS";
 	public static String TAG_USER_ATTRIBUTE = "ATTRIBUTE";
 	public static String PROP_USER_ATTRIBUTE_NAME = "name";
+	public static final String TAG_TOOLBAR = "TOOLBAR";
+	public static final String TAG_VISIBLE = "visible";
+	public static final String TAG_MENU = "menu";
+	public static final String TRUE = "true";
 
 	/** Logger component. */
 	public static transient Logger logger = Logger.getLogger(WhatIfXMLTemplateParser.class);
@@ -86,7 +91,10 @@ public class WhatIfXMLTemplateParser implements IWhatIfTemplateParser {
 			//add the scenario (writeback config & variables)
 			SbiScenario scenario = initScenario(template);
 			toReturn.setScenario(scenario);
-			
+
+			//init the toolbar config
+			initToolbar(template, toReturn);
+
 			List<WhatIfTemplate.Parameter> parameters = new ArrayList<WhatIfTemplate.Parameter>();
 			List parametersSB = mdxSB.getAttributeAsList(TAG_PARAMETER);
 			Iterator it = parametersSB.iterator();
@@ -106,7 +114,7 @@ public class WhatIfXMLTemplateParser implements IWhatIfTemplateParser {
 
 			// read user profile for profiled data access
 			setProfilingUserAttributes(template, toReturn);
-			
+
 			logger.debug("Template parsed succesfully");
 		} catch (Throwable t) {
 			logger.error("Impossible to parse template [" + template.toString() + "]", t);
@@ -117,9 +125,8 @@ public class WhatIfXMLTemplateParser implements IWhatIfTemplateParser {
 
 		return toReturn;
 	}
-	
-	private void setProfilingUserAttributes(SourceBean template,
-			WhatIfTemplate toReturn) {
+
+	private void setProfilingUserAttributes(SourceBean template, WhatIfTemplate toReturn) {
 		SourceBean dataAccessSB = (SourceBean) template.getAttribute( TAG_DATA_ACCESS );
 		logger.debug(TAG_DATA_ACCESS + ": " + dataAccessSB);
 		List<String> attributes = new ArrayList<String>();
@@ -137,7 +144,52 @@ public class WhatIfXMLTemplateParser implements IWhatIfTemplateParser {
 		toReturn.setProfilingUserAttributes(attributes);
 	}
 
+	public static void initToolbar(SourceBean template, WhatIfTemplate toReturn){
+		List<SourceBeanAttribute> toolbarButtons;
+		SourceBeanAttribute aToolbarButton;
+		String name;
+		String visible;
+		String menu;
+		SourceBean value;
+
+		SourceBean toolbarSB = (SourceBean) template.getAttribute(TAG_TOOLBAR);
+		if(toolbarSB!=null){
+			
+			List<String> toolbarVisibleButtons = new ArrayList<String>();
+			List<String> toolbarMenuButtons = new ArrayList<String>();
+			
+			logger.debug(TAG_TOOLBAR + ": " + toolbarSB);
+			toolbarButtons = (List)toolbarSB.getContainedAttributes();
+			if(toolbarButtons!=null){
+				for(int i=0; i<toolbarButtons.size(); i++){
+					aToolbarButton = toolbarButtons.get(i);
+					name = aToolbarButton.getKey();
+					if(aToolbarButton.getValue()!=null){
+						value = (SourceBean)aToolbarButton.getValue();
+						visible = (String)value.getAttribute(TAG_VISIBLE);
+						menu = (String)value.getAttribute(TAG_MENU);
+						if(visible!=null && visible.equalsIgnoreCase(TRUE)){
+							if(menu!=null && menu.equalsIgnoreCase(TRUE)){
+								toolbarMenuButtons.add(name);
+							}else{
+								toolbarVisibleButtons.add(name);
+							}
+						}
+					}
+				}
+				
+				logger.debug("Updating the toolbar in the template");
+				toReturn.setToolbarMenuButtons(toolbarMenuButtons);
+				toReturn.setToolbarVisibleButtons(toolbarVisibleButtons);
+			}
+		}else{
+			logger.debug(TAG_TOOLBAR + ": no toolbar buttons defined in the template");
+		}
+
+	}
+
 	public static SbiScenario initScenario(SourceBean template){
+
 		SourceBean scenarioSB = (SourceBean) template.getAttribute(TAG_SCENARIO);
 		if(scenarioSB!=null){
 			logger.debug(TAG_SCENARIO + ": " + scenarioSB);
@@ -149,7 +201,7 @@ public class WhatIfXMLTemplateParser implements IWhatIfTemplateParser {
 
 			logger.debug("Scenario with name "+ scenarioName+" successfully loaded");
 			return scenario;
-			
+
 		}else{
 			logger.debug(TAG_SCENARIO + ": no write back configuration found in the template");
 		}
