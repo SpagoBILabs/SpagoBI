@@ -38,7 +38,7 @@ public class HibernateSessionManager {
 //		}
 //	}
 	
-	public static void initSessionFactory() {
+	private synchronized static void initSessionFactory() {
 		logger.info( "Initializing hibernate Session Factory Described by [" + DAOConfig.getHibernateConfigurationFile() +"]");
 		Configuration conf = new Configuration();
 		conf = conf.configure(DAOConfig.getHibernateConfigurationFile());
