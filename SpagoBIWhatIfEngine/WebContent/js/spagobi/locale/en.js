@@ -110,3 +110,11 @@ Sbi.locale.ln['sbi.olap.execution.table.dimension.no.enough'] = 'There must be a
 //===================================================================
 Sbi.locale.ln['sbi.olap.weiteback.persist.error'] = 'Error persisting the transformations';
 Sbi.locale.ln['sbi.olap.weiteback.edit.no.zero'] =  'With the proportional algorithm it\'s not possible to edit a cell with the value 0. This algorithm preserves the weight between siblings cells and, editing the 0 value, this constraint will be broken. In the next release we\'ll provide more propagation algorithms.';
+
+//===================================================================
+//LOCK
+//===================================================================
+Sbi.locale.ln['sbi.olap.artifact.lock.error'] = 'The lock operation did not work, the model is still unlocked';
+Sbi.locale.ln['sbi.olap.artifact.unlock.error'] = 'The unlock operation did not work, the model is still locked';
+Sbi.locale.ln['sbi.olap.artifact.unlock.errorOther'] = 'The unlock operation did not work, the model is locked by user ';
+

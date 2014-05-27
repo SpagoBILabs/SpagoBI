@@ -398,12 +398,12 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 		}
 		else{
 			if(resO.status == 'unlocked'){
-				// TODO error
 				this.setUnlockState();
+				Sbi.exception.ExceptionHandler.showInfoMessage(LN("sbi.olap.artifact.lock.error"));
 			}
 			else{
-				// TODO error
 				this.setLockByOtherState(resOb.locker);
+				Sbi.exception.ExceptionHandler.showInfoMessage(LN("sbi.olap.artifact.unlock.errorOther")+': '+resOb.locker);
 			}
 
 		}
@@ -416,11 +416,11 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 		}
 		else{
 			if(resO.status == 'locked_by_user'){
-				// TODO error
 				this.setLockByUserState();
+				Sbi.exception.ExceptionHandler.showInfoMessage(LN("sbi.olap.artifact.unlock.error"));
 			}
 			else{
-				// TODO error
+				Sbi.exception.ExceptionHandler.showInfoMessage(LN("sbi.olap.artifact.unlock.errorOther")+': '+resOb.locker);
 				this.setLockByOtherState(resOb.locker);
 			}
 			

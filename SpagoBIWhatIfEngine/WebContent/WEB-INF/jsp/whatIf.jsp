@@ -10,6 +10,7 @@
 author:...
 --%>
 
+<%@page import="java.util.Enumeration"%>
 <%@ page language="java" 
 	     contentType="text/html; charset=ISO-8859-1" 
 	     pageEncoding="ISO-8859-1"%>	
@@ -59,8 +60,12 @@ author:...
 	
 	WhatIfEngineConfig whatIfEngineConfig = WhatIfEngineConfig.getInstance();
     
-   // spagobiServerHost = request.getParameter(SpagoBIConstants.SBI_HOST);
-   // spagobiContext = request.getParameter(SpagoBIConstants.SBI_CONTEXT);
+    Integer artifactVersionId = whatIfEngineInstance.getArtifactVersionId(whatIfEngineInstance.getEnv());
+    String artifactStatus = whatIfEngineInstance.getArtifactStatus(whatIfEngineInstance.getEnv());
+    String artifactLocker = whatIfEngineInstance.getArtifactLocker(whatIfEngineInstance.getEnv());
+	
+   spagobiServerHost = request.getParameter(SpagoBIConstants.SBI_HOST);
+   spagobiContext = request.getParameter(SpagoBIConstants.SBI_CONTEXT);
    // spagobiSpagoController = request.getParameter(SpagoBIConstants.SBI_SPAGO_CONTROLLER);
 %>
 
@@ -87,19 +92,33 @@ author:...
     	<script type="text/javascript">  
 
     	
-    	
-    	Sbi.config = {};
-    	
-		var url = {
-	    	host: '<%= request.getServerName()%>'
+        Sbi.config = {};
+    	var config= {};
+        
+		var urlSettings = {
+		    sbihost:  '<%=spagobiServerHost%>'    
+		    , protocol: '<%= request.getScheme()%>'
+	    	, host: '<%= request.getServerName()%>'
 	    	, port: '<%= request.getServerPort()%>'
 	    	, contextPath: '<%= request.getContextPath().startsWith("/")||request.getContextPath().startsWith("\\")?
-	    	   				  request.getContextPath().substring(1):
-	    	   				  request.getContextPath()%>'
-	    	    
+	    		  spagobiContext.substring(1) :
+	    			spagobiContext%>'	    	   				  
 	    };
 
-	    var params = {
+		var artifactVersionId = <%=artifactVersionId%>;
+        var artifactStatus = '<%=artifactStatus%>';
+        var artifactLocker = '<%=artifactLocker%>';
+		
+        var externalUrl =  urlSettings.sbihost+"/"+ urlSettings.contextPath+"/restful-services/";
+		
+        Sbi.config.urlSettings = urlSettings;
+        Sbi.config.externalUrl = externalUrl;
+        Sbi.config.artifactVersionId = artifactVersionId;
+        Sbi.config.artifactStatus = artifactStatus;
+        Sbi.config.artifactLocker = artifactLocker;
+        
+
+        var params = {
 	    	SBI_EXECUTION_ID: <%= request.getParameter("SBI_EXECUTION_ID")!=null?"'" + request.getParameter("SBI_EXECUTION_ID") +"'": "null" %>
 	    };
 

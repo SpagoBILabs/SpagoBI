@@ -107,3 +107,11 @@ Sbi.locale.ln['sbi.olap.execution.table.dimension.no.enough'] = 'Ci deve esserre
 //===================================================================
 Sbi.locale.ln['sbi.olap.weiteback.persist.error'] = 'Errore persistendo le trasformazioni';
 Sbi.locale.ln['sbi.olap.weiteback.edit.no.zero'] =  'L\'algoritmo di propagazione proporzionale mantiene il peso tra le celle figlie di quella editata. Propagando una modifica su una cella che contiene valore 0 si va ad alterare il peso tra i figli, quindi non è supportata questa operazione. Nelle prossime release saranno implementati altri algoritmi di propagazione';
+
+//===================================================================
+//LOCK
+//===================================================================
+Sbi.locale.ln['sbi.olap.artifact.lock.error'] = 'Operazione di blocco non riusciata, il modello è ancora sbloccato.';
+Sbi.locale.ln['sbi.olap.artifact.unlock.error'] = 'Operazione di sblocco non riusciata, il modello è ancora bloccato.';
+Sbi.locale.ln['sbi.olap.artifact.unlock.errorOther'] = 'Operazione di sblocco non riusciata, il modello è ancora bloccato dall\'utente ';
+
