@@ -17,6 +17,8 @@ public class ArtifactJSONSerializer implements Serializer {
 	public static final String NAME = "name";
 	public static final String DESCRIPTION = "description";
 	public static final String TYPE = "type";
+	public static final String LOCKED = "locked";
+	public static final String LOCKER = "locker";
 	
 	public Object serialize(Object o, Locale locale) throws SerializationException {
 		JSONObject  result = null;
@@ -32,6 +34,10 @@ public class ArtifactJSONSerializer implements Serializer {
 			result.put(NAME, artifact.getName() );
 			result.put(DESCRIPTION, artifact.getDescription() );
 			result.put(TYPE, artifact.getType() );
+			result.put(LOCKED, artifact.getLocked() );
+			result.put(LOCKER, artifact.getLocker() );
+
+		
 		} catch (Throwable t) {
 			throw new SerializationException("An error occurred while serializing object: " + o, t);
 		} finally {
