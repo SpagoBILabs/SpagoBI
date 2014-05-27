@@ -902,7 +902,9 @@ public class ExportWorksheetAction extends ExecuteWorksheetQueryAction {
 		CrosstabDefinition crosstabDefinition = (CrosstabDefinition) SerializationManager.deserialize(crosstabDefinitionJSON, "application/json", CrosstabDefinition.class);
 		crosstabDefinition.setCellLimit(0);//FOR THE EXPORT WE REMOVE THE CELL LIMIT
 
-		String worksheetQuery = this.buildSqlStatement(crosstabDefinition, descriptor, whereFields, engineInstance.getDataSource());
+		IDataSource dsForTheTemporaryTable = descriptor.getDataSource();
+		String worksheetQuery = this.buildSqlStatement(crosstabDefinition, descriptor, whereFields, dsForTheTemporaryTable);
+
 		// execute SQL query against temporary table
 		logger.debug("Executing query on temporary table : " + worksheetQuery);
 		IDataStore dataStore = this.executeWorksheetQuery(worksheetQuery, null, null);
