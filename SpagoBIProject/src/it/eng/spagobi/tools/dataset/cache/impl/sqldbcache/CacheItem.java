@@ -24,7 +24,9 @@ package it.eng.spagobi.tools.dataset.cache.impl.sqldbcache;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Antonella Giachino (antonella.giachino@eng.it)
@@ -38,6 +40,11 @@ public class CacheItem {
     private String table = null;
     private BigDecimal dimension = null;
     private Date creationDate = null;
+    private Map<String, Object> properties = null;
+    
+    public CacheItem() {
+    	properties = new HashMap<String, Object>();
+    }
     
 	public String getName() {
 		return name;
@@ -69,6 +76,13 @@ public class CacheItem {
 	}
 	public void setCreationDate(Date creationDate) {
 		this.creationDate = creationDate;
+	}
+	
+	public Object getProperty(String propertyName) {
+		return properties.get(propertyName);
+	}
+	public void setProperty(String propertyName, Object propertyValue) {
+		properties.put(propertyName, propertyValue);
 	}
  
 }
