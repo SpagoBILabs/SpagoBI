@@ -464,12 +464,15 @@ public class SQLDBCache implements ICache {
 			Map<String, String> datasetAliases = new HashMap<String, String>();
 			int aliasNo = 0;
 			
+			List<Integer> columnBreakIndexes = new ArrayList<Integer>();
+			int lastIndex = 0;
+			columnBreakIndexes.add(lastIndex);
 			for(IDataSet dataSet : dataSets) {
 				if(contains(dataSet) == false) return null;
 				String tableName = getMetadata().getCacheItem(dataSet.getSignature()).getTable();
 				String tableAlias = "t" + ++aliasNo;
 				datasetAliases.put(dataSet.getLabel(), tableAlias);
-				sqlBuilder.from(tableName + " "+ tableAlias);
+				sqlBuilder.from(tableName + " " + tableAlias);
 				
 				for(int i = 0; i < dataSet.getMetadata().getFieldCount(); i++) {
 					IFieldMetaData fieldMeta = dataSet.getMetadata().getFieldMeta(i);
@@ -478,7 +481,11 @@ public class SQLDBCache implements ICache {
 					String alias = AbstractJDBCDataset.encapsulateColumnAlaias(tableAlias + " - " + fieldMeta.getAlias(), dataSource);
 					sqlBuilder.column(tableAlias + "." + column + " as " + alias);
 				}
+				lastIndex += dataSet.getMetadata().getFieldCount();
+				columnBreakIndexes.add(lastIndex);
 			}
+			columnBreakIndexes.remove(0);
+			columnBreakIndexes.remove(columnBreakIndexes.size()-1);
 			
 			Collection<Association> associaions = associationGroup.getAssociations();
 			for(Association association: associaions) {
@@ -501,6 +508,7 @@ public class SQLDBCache implements ICache {
 			
 			String queryText = sqlBuilder.toString();
 			IDataStore dataStore = dataSource.executeStatement(queryText, 0, 0);
+			dataStore.getMetaData().setProperty("BREAK_INDEXES", columnBreakIndexes);
 			DataStore toReturn = (DataStore) dataStore;
 			
 			return toReturn;
