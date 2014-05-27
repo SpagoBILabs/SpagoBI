@@ -101,7 +101,7 @@ Ext.define('Sbi.olap.OlapPanel', {
 	updateAfterMDXExecution: function(pivot, modelConfig){
 		this.pivotModel = pivot;
 		this.modelConfig = modelConfig;
-		this.executionPanel.updateAfterMDXExecution(pivot);
+		this.executionPanel.updateAfterMDXExecution(pivot, modelConfig);
 	},
 	
 	appyConfigChanges: function(changes){
