@@ -1,7 +1,7 @@
 /**
  * 
  */
-package test.writeback.variables;
+package test.writeback.template;
 
 import java.io.File;
 
