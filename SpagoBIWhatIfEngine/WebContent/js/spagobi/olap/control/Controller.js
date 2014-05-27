@@ -204,7 +204,7 @@ Ext.define('Sbi.olap.control.Controller', {
 		var service = Ext.create("Sbi.service.RestService", {
 			url: "locker",
 			method: 'POST',
-			pathParams: ["lock", artifactVersionId],
+			pathParams: [artifactVersionId, "lock"],
 			externalUrl: externalUrlPath
 		});
 		
@@ -227,7 +227,7 @@ Ext.define('Sbi.olap.control.Controller', {
 		var service = Ext.create("Sbi.service.RestService", {
 			url: "locker",
 			method: 'POST',
-			pathParams: ["unlock", artifactVersionId],
+			pathParams: [artifactVersionId, "unlock"],
 			externalUrl: externalUrlPath
 		});
 		
