@@ -459,9 +459,12 @@ Ext.extend(Sbi.cockpit.core.WidgetManager, Ext.util.Observable, {
     , onSelection: function(widget, selections){
     	Sbi.trace("[WidgetManager.onSelection]: IN");
     
+    	//alert("onSelection [" + widget.getId() + "]: " + Sbi.toSource(selections));
     	this.setWidgetSelections(widget.getId(), selections);
     	
     	var associationGroup = Sbi.storeManager.getAssociationGroupByStore( widget.getStore() );
+    	//alert("onSelection: " + Sbi.toSource(associationGroup));
+    	
     	if(Sbi.isValorized(associationGroup)) {
     		var selections = this.getSelectionsByAssociations();
         	Sbi.storeManager.loadStores( associationGroup,  selections);

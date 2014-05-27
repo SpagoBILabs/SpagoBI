@@ -235,6 +235,7 @@ Ext.extend(Sbi.cockpit.core.WidgetRuntime, Ext.Panel, {
 		Sbi.trace("[WidgetRuntime.boundStore]: IN");		
 		this.getStore().on('metachange', this.onStoreMetaChange, this);
 		this.getStore().on('load', this.onStoreLoad, this);
+		this.getStore().on('datachanged', this.onDataChanged, this);
 		this.getStore().on('exception', this.onStoreException, this);
 		Sbi.trace("[WidgetRuntime.boundStore]: OUT");
 	}
@@ -245,6 +246,7 @@ Ext.extend(Sbi.cockpit.core.WidgetRuntime, Ext.Panel, {
 		if(Sbi.isValorized(store)) {
 			this.getStore().un('metachange', this.onStoreMetaChange, this);
 			this.getStore().un('load', this.onStoreLoad, this);
+			this.getStore().un('datachanged', this.onDataChanged, this);
 			this.getStore().un('exception', this.onStoreException, this);
 		} else {
 			Sbi.debug("Widget is not bound to any store or it is bound to a store that has already been removed from store manager");
@@ -672,6 +674,10 @@ Ext.extend(Sbi.cockpit.core.WidgetRuntime, Ext.Panel, {
 	}
 	
 	, onStoreLoad: function(store) {
+		// do nothing	
+	}
+	
+	, onDataChanged: function(store, eOpts) {
 		// do nothing	
 	}
 	
