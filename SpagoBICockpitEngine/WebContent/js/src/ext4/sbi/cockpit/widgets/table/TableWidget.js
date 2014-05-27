@@ -89,9 +89,9 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 	services: null
 	
 	, grid: null
-	
 	, enablePaging: false
 	, enableExport: false
+	, fireSelectionEvent: true
     
     // =================================================================================================================
 	// METHODS
@@ -137,64 +137,18 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 	// utility methods
 	// -----------------------------------------------------------------------------------------------------------------
 	, onRender: function(ct, position) {	
-		Sbi.trace("[TableWidget.onRender]: IN");
-		
+		Sbi.trace("[TableWidget.onRender][" + this.getId() + "]: IN");
+	
 		this.msg = 'Sono un widget di tipo TABLE';
 		
 		Sbi.cockpit.widgets.table.TableWidget.superclass.onRender.call(this, ct, position);	
 		
-		Sbi.trace("[TableWidget.onRender]: OUT");
+		Sbi.trace("[TableWidget.onRender][" + this.getId() + "]: OUT");
 	}
-	
-	
-	, onStoreLoad: function() {
-		Sbi.trace("[TableWidget.onStoreLoad]: IN");
-		
-		Sbi.cockpit.widgets.table.TableWidget.superclass.onStoreLoad.call(this, this.getStore());	
-		
-		this.fireEvent('contentloaded');
-		
-		var recordsNumber = this.getStore().getTotalCount();
-		var isException = false;
-		if (recordsNumber == 1){
-			var e = this.getStore().getAt(0).raw;
-			if (Sbi.isValorized(e) && Sbi.isValorized(e.errors))
-				isException = true;
-		}
-     	if(recordsNumber == 0 || isException) {
-     		Ext.Msg.show({
-				   title: LN('sbi.qbe.messagewin.info.title'),
-				   msg: LN('sbi.qbe.datastorepanel.grid.emptywarningmsg'),
-				   buttons: Ext.Msg.OK,
-				   icon: Ext.MessageBox.INFO,
-				   modal: false
-			});
-     	}
-     	 
-     	this.refreshWarningMessage();
-     	
-     	Sbi.trace("[TableWidget.onStoreLoad]: OUT");		
-	}
-	
-	, refreshWarningMessage: function() {
-		if(this.enablePaging === false) return;
-		
-		var recordsNumber = this.getStore().getTotalCount();
-		
-		if (this.queryLimit.maxRecords !== undefined && recordsNumber > this.queryLimit.maxRecords) {
-     		if (this.queryLimit.isBlocking) {
-     			Sbi.exception.ExceptionHandler.showErrorMessage(this.warningMessageItem, LN('sbi.qbe.messagewin.error.title'));
-     		} else {
-     			this.warningMessageItem.show();
-     		}
-     	} else {
-     		this.warningMessageItem.hide();
-     	}
-	}
-	
 	
 	, onStoreMetaChange: function(store, meta) {
-		Sbi.trace("[TableWidget.onStoreMetaChange]: IN");	
+		Sbi.trace("[TableWidget.onStoreMetaChange][" + this.getId() + "]: IN");	
+		
 		Sbi.cockpit.widgets.table.TableWidget.superclass.onStoreMetaChange.call(this, store, meta);	
 		
 		var fields = new Array();
@@ -224,9 +178,73 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 			}
 		}
 		Sbi.trace("[TableWidget.onStoreMetaChange]: visible fields are [" + columns.join(",") + "]");		
+		
+		
 		this.grid.reconfigure(this.getStore(), fields);
 		
-		Sbi.trace("[TableWidget.onStoreMetaChange]: OUT");	
+		Sbi.trace("[TableWidget.onStoreMetaChange][" + this.getId() + "]: OUT");	
+	}
+	
+	, onDataChanged: function(store, eOpts) {
+		Sbi.trace("[TableWidget.onDataChanged][" + this.getId() + "]: IN");
+		this.fireSelectionEvent = false;
+		Sbi.trace("[TableWidget.onDataChanged][" + this.getId() + "]: OUT");
+	}
+	
+	, onStoreLoad: function() {
+		Sbi.trace("[TableWidget.onStoreLoad][" + this.getId() + "]: IN");
+		
+		Sbi.cockpit.widgets.table.TableWidget.superclass.onStoreLoad.call(this, this.getStore());	
+		
+		
+		this.fireEvent('contentloaded');
+		
+		var recordsNumber = this.getStore().getTotalCount();
+		var isException = false;
+		if (recordsNumber == 1){
+			var e = this.getStore().getAt(0).raw;
+			if (Sbi.isValorized(e) && Sbi.isValorized(e.errors))
+				isException = true;
+		}
+     	if(recordsNumber == 0 || isException) {
+     		Ext.Msg.show({
+				   title: LN('sbi.qbe.messagewin.info.title'),
+				   msg: LN('sbi.qbe.datastorepanel.grid.emptywarningmsg'),
+				   buttons: Ext.Msg.OK,
+				   icon: Ext.MessageBox.INFO,
+				   modal: false
+			});
+     	}
+     	 
+     	this.refreshWarningMessage();
+     	
+     	Sbi.trace("[TableWidget.onStoreLoad]: OUT");		
+	}
+	
+	, onAfterLayout: function() {
+		Sbi.trace("[TableWidget.onAfterLayout][" + this.getId() + "]: IN");
+		var selections = this.getWidgetManager().getWidgetSelections(this.getId());
+		//alert("TableWidget.onAfterLayout [" + this.getId() + "]: " + Sbi.toSource(selections));
+		// TODO: reselect rows in a selective way
+		this.fireSelectionEvent = true;
+		Sbi.trace("[TableWidget.onAfterLayout][" + this.getId() + "]: OUT");
+	}
+	
+		
+	, refreshWarningMessage: function() {
+		if(this.enablePaging === false) return;
+		
+		var recordsNumber = this.getStore().getTotalCount();
+		
+		if (this.queryLimit.maxRecords !== undefined && recordsNumber > this.queryLimit.maxRecords) {
+     		if (this.queryLimit.isBlocking) {
+     			Sbi.exception.ExceptionHandler.showErrorMessage(this.warningMessageItem, LN('sbi.qbe.messagewin.error.title'));
+     		} else {
+     			this.warningMessageItem.show();
+     		}
+     	} else {
+     		this.warningMessageItem.hide();
+     	}
 	}
 	
 	, applyRendererOnField: function(field) {
@@ -360,7 +378,7 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 //		    sm : new Ext.grid.RowSelectionModel( {
 //				singleSelect : true
 //			})
-		    selModel: {selType: 'rowmodel', mode: 'MULTI', allowDeselect: true},		    
+		    selModel: {selType: 'rowmodel', mode: 'MULTI', allowDeselect: true}	    
 		};
 		if(this.enableExport === true) {
 			this.initExportToolbar();
@@ -376,9 +394,10 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 		
 		// create the Grid
 	    this.grid = new Ext.grid.GridPanel(gridConf);   
-	    this.grid.on('selectionchange', this.onClick, this);
+	    this.grid.on('selectionchange', this.onSelectionChange, this);
 	    this.grid.on('columnresize', this.onColumnResize, this);
 	    this.grid.on('columnmove', this.onColumnMove, this);
+	    this.grid.on('afterlayout', this.onAfterLayout, this);
 	    
 	    Sbi.trace("[TableWidget.initGridPanel]: OUT");
 	}
@@ -451,7 +470,14 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 		Sbi.trace("[TableWidget.onColumnMove]: OUT");
 	}
 	
-	, onClick: function( sm,selected,opt){
+	, onSelectionChange: function( sm,selected,opt){
+		
+		if(this.fireSelectionEvent === false) {
+			//alert("onSelectionChange disabled");
+			return; 
+		} else {
+			//alert("onSelectionChange enabled");
+		}
         var records = sm.getSelection();
         
         var selections = {};
@@ -464,7 +490,6 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
     			Ext.Array.include(selections[fieldHeader].values, s[fieldHeader]);
     		}
         }
-        
 		this.fireEvent('selection', this, selections);
 	} 
 	

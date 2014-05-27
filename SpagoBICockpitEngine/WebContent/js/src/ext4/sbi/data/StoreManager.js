@@ -578,13 +578,9 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 	 * 	}
 	 */
 	, loadStores: function(associationGroup, selections) {
-//		alert("loadStores");
-//		for(var i = 0; i < associationGroup.datasets.length; i++) {
-//    		this.loadStore( associationGroup.datasets[i] );
-//    	}	
 		
 		// TODO implement the above logic in one shot:
-		// call a service that reload the joined dataset filtering it prperly
+		// call a service that reload the joined dataset filtering it properly
 		// take the result an split in in subdatasets
 		// pass the new data to the store in order to reload them
 		
@@ -1088,7 +1084,6 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 					var stores =  Ext.util.JSON.decode(r);
 					for(var s in stores) {
 						var data = stores[s];
-//						alert("Store [" + s + "]:" + Sbi.toSource(data));
 						var store = this.getStore(s);
 						store.loadData(data);
 					}
