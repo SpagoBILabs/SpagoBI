@@ -11,21 +11,19 @@
  */
 package it.eng.spagobi.engine.cockpit.api.association;
 
-import java.util.List;
-
-import it.eng.spagobi.engine.cockpit.CockpitEngine;
 import it.eng.spagobi.engine.cockpit.api.AbstractCockpitEngineResource;
-import it.eng.spagobi.engine.cockpit.association.Association;
-import it.eng.spagobi.engine.cockpit.association.AssociationGroup;
-import it.eng.spagobi.engine.cockpit.association.AssociationGroupJSONSerializer;
-import it.eng.spagobi.engine.cockpit.association.AssociationJSONSerializer;
-import it.eng.spagobi.engine.cockpit.association.AssociationManager;
+import it.eng.spagobi.tools.dataset.common.association.Association;
+import it.eng.spagobi.tools.dataset.common.association.AssociationGroup;
+import it.eng.spagobi.tools.dataset.common.association.AssociationGroupJSONSerializer;
+import it.eng.spagobi.tools.dataset.common.association.AssociationJSONSerializer;
+import it.eng.spagobi.tools.dataset.common.association.AssociationManager;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
+
+import java.util.List;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
