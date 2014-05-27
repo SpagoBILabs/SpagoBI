@@ -40,9 +40,9 @@ import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
 @Path("/1.0/locker")
-public class LockerArtifactResource extends AbstractSpagoBIResource {
+public class ArtifactResource extends AbstractSpagoBIResource {
 
-	public static transient Logger logger = Logger.getLogger(LockerArtifactResource.class);
+	public static transient Logger logger = Logger.getLogger(ArtifactResource.class);
 
 
 	/**
@@ -51,7 +51,7 @@ public class LockerArtifactResource extends AbstractSpagoBIResource {
 	 * 
 	 */
 	@POST
-	@Path("/lock/{artifactVersionId}")
+	@Path("/{artifactVersionId}/lock")
 	public String lockArtifact(@PathParam("artifactVersionId") int artifactVersionId){
 		logger.debug("IN");
 
@@ -114,7 +114,7 @@ public class LockerArtifactResource extends AbstractSpagoBIResource {
 		 * 
 		 */
 		@POST
-		@Path("/unlock/{artifactVersionId}")
+		@Path("/{artifactVersionId}/unlock")
 		public String unlockArtifact(@PathParam("artifactVersionId") int artifactVersionId){
 			logger.debug("IN");
 
@@ -186,68 +186,68 @@ public class LockerArtifactResource extends AbstractSpagoBIResource {
 		 * locked_by_other
 		 * 
 		 */
-		@POST
-		@Path("/getStatus/{artifactVersionId}")
-		public String getArtifactStatus(@PathParam("artifactVersionId") int artifactVersionId){
-			logger.debug("IN");
-			String statusToReturn = null;
-			
-			Object profileO = getAttributeFromHttpSession(IEngUserProfile.ENG_USER_PROFILE);
-			if(profileO == null){
-				return ExceptionUtilities.serializeException("Profile not found when executing service", null);
-
-			}
-			String userId = ((IEngUserProfile)profileO).getUserUniqueIdentifier().toString();		
-
-			logger.debug("User Id is "+userId);
-			logger.debug("Artifact Version Id is "+artifactVersionId);
-
-			IArtifactsDAO artifactsDAO = DAOFactory.getArtifactsDAO();
-
-			Artifact artifact = artifactsDAO.loadArtifactByContentId(artifactVersionId);
-			
-			if(artifact == null)	{
-				logger.error("Artifact referring to version id [" + artifactVersionId +"] could not be loaded");
-				return ExceptionUtilities.serializeException("Artifact with versioon id [" + artifactVersionId + "] could not be loaded", null);
-			}
-
-			
-			Integer artifactId = artifact.getId();
-			
-			logger.debug("Artifact id is "+artifactId);
-
-			Boolean locked = artifact.getLocked();
-			String locker = artifact.getLocker();
-
-			if(locked==false){
-				logger.debug("Artifact with id "+artifactId+" is unlocked");
-				statusToReturn="unlocked";
-			}
-			else{
-				if(locker != null && locker.equals(userId)){
-					statusToReturn="locked_by_you";	
-				}
-				else{
-					statusToReturn="locked_by_other";	
-				}
-					
-					
-				}
-			
-			logger.debug("Status of artifact is "+statusToReturn);
-
-			try {
-				JSONObject resultsJSON = new JSONObject();			
-				resultsJSON.put("status", statusToReturn);
-				return resultsJSON.toString();	
-			} catch(Throwable t) {
-				return ExceptionUtilities.serializeException("An unexpected error occured while executing service", null);
-			} 
-			finally {			
-				logger.debug("OUT");
-			}
-
-	}
+//		@POST
+//		@Path("/getStatus/{artifactVersionId}")
+//		public String getArtifactStatus(@PathParam("artifactVersionId") int artifactVersionId){
+//			logger.debug("IN");
+//			String statusToReturn = null;
+//			
+//			Object profileO = getAttributeFromHttpSession(IEngUserProfile.ENG_USER_PROFILE);
+//			if(profileO == null){
+//				return ExceptionUtilities.serializeException("Profile not found when executing service", null);
+//
+//			}
+//			String userId = ((IEngUserProfile)profileO).getUserUniqueIdentifier().toString();		
+//
+//			logger.debug("User Id is "+userId);
+//			logger.debug("Artifact Version Id is "+artifactVersionId);
+//
+//			IArtifactsDAO artifactsDAO = DAOFactory.getArtifactsDAO();
+//
+//			Artifact artifact = artifactsDAO.loadArtifactByContentId(artifactVersionId);
+//			
+//			if(artifact == null)	{
+//				logger.error("Artifact referring to version id [" + artifactVersionId +"] could not be loaded");
+//				return ExceptionUtilities.serializeException("Artifact with versioon id [" + artifactVersionId + "] could not be loaded", null);
+//			}
+//
+//			
+//			Integer artifactId = artifact.getId();
+//			
+//			logger.debug("Artifact id is "+artifactId);
+//
+//			Boolean locked = artifact.getLocked();
+//			String locker = artifact.getLocker();
+//
+//			if(locked==false){
+//				logger.debug("Artifact with id "+artifactId+" is unlocked");
+//				statusToReturn="unlocked";
+//			}
+//			else{
+//				if(locker != null && locker.equals(userId)){
+//					statusToReturn="locked_by_you";	
+//				}
+//				else{
+//					statusToReturn="locked_by_other";	
+//				}
+//					
+//					
+//				}
+//			
+//			logger.debug("Status of artifact is "+statusToReturn);
+//
+//			try {
+//				JSONObject resultsJSON = new JSONObject();			
+//				resultsJSON.put("status", statusToReturn);
+//				return resultsJSON.toString();	
+//			} catch(Throwable t) {
+//				return ExceptionUtilities.serializeException("An unexpected error occured while executing service", null);
+//			} 
+//			finally {			
+//				logger.debug("OUT");
+//			}
+//
+//	}
 
 
 }
