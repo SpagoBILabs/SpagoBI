@@ -25,6 +25,7 @@ package it.eng.spagobi.tools.dataset.cache.impl.sqldbcache;
 import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.cache.CacheException;
+import it.eng.spagobi.tools.dataset.cache.CacheItem;
 import it.eng.spagobi.tools.dataset.cache.CacheManager;
 import it.eng.spagobi.tools.dataset.cache.ICache;
 import it.eng.spagobi.tools.dataset.cache.ICacheActivity;
