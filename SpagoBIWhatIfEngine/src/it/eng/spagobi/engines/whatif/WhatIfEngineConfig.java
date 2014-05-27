@@ -178,7 +178,10 @@ public class WhatIfEngineConfig {
 		connectionProps.put("Catalog", reference);
 		connectionProps.put("Provider","Mondrian");
 		
-		this.defineSchemaProcessorProperties(connectionProps, template, profile);
+		if(template!=null){
+			this.defineSchemaProcessorProperties(connectionProps, template, profile);
+		}
+		
 
 		OlapDataSource olapDataSource = new SimpleOlapDataSource();
 		((SimpleOlapDataSource)olapDataSource).setConnectionString( connectionString);
