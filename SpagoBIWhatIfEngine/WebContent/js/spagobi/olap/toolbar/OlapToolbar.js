@@ -348,7 +348,11 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 	 * Updates the object after the execution of a mdx query
 	 * @param {Sbi.olap.PivotModel} pivot model
 	 */
-	, updateAfterMDXExecution: function(pivot){
+	, updateAfterMDXExecution: function(pivot, modelConfig){
+		if(this.modelConfig()==null){
+		
+		}
+	
 		this.mdx=pivot.get("mdxFormatted");
 	}
 
