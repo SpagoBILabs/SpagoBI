@@ -14,7 +14,7 @@ import java.io.Serializable;
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 /**
- * @author ghedin
+ *  @author Alberto Ghedin (alberto.ghedin@eng.it)
  *
  */
 public class SbiScenarioVariable implements Serializable{

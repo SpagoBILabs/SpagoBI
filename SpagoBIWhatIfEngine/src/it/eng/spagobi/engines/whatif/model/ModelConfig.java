@@ -14,6 +14,7 @@ import it.eng.spagobi.writeback4j.WriteBackEditConfig;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.eyeq.pivot4j.ui.command.DrillDownCommand;
@@ -29,7 +30,8 @@ public class ModelConfig implements Serializable {
 	private Boolean suppressEmpty;
 	private Integer actualVersion = null;
 	private SbiScenario scenario = null;
-
+	private List<String> toolbarVisibleButtons;
+	private List<String> toolbarMenuButtons;
 
 	private Map<String, String> dimensionHierarchyMap;
 
@@ -112,7 +114,23 @@ public class ModelConfig implements Serializable {
 	public void setScenario(SbiScenario scenario) {
 		this.scenario = scenario;
 	}
-	
+
+	public List<String> getToolbarVisibleButtons() {
+		return toolbarVisibleButtons;
+	}
+
+	public void setToolbarVisibleButtons(List<String> toolbarVisibleButtons) {
+		this.toolbarVisibleButtons = toolbarVisibleButtons;
+	}
+
+	public List<String> getToolbarMenuButtons() {
+		return toolbarMenuButtons;
+	}
+
+	public void setToolbarMenuButtons(List<String> toolbarMenuButtons) {
+		this.toolbarMenuButtons = toolbarMenuButtons;
+	}
+
 	@JsonIgnore
 	public SbiScenario getScenario() {
 		return scenario;

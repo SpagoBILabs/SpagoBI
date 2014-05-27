@@ -23,6 +23,8 @@ public class WhatIfTemplate {
 	private SbiScenario scenario;
 	private List<Parameter> parameters;
 	private List<String> profilingUserAttributes;
+	private List<String> toolbarVisibleButtons;
+	private List<String> toolbarMenuButtons;
 
 	
 	public WhatIfTemplate() {
@@ -84,6 +86,24 @@ public class WhatIfTemplate {
 	public void setProfilingUserAttributes(List<String> profilingnUserAttributes) {
 		this.profilingUserAttributes = profilingnUserAttributes;
 	}
+
+	public List<String> getToolbarVisibleButtons() {
+		return toolbarVisibleButtons;
+	}
+
+	public void setToolbarVisibleButtons(List<String> toolbarVisibleButtons) {
+		this.toolbarVisibleButtons = toolbarVisibleButtons;
+	}
+
+	public List<String> getToolbarMenuButtons() {
+		return toolbarMenuButtons;
+	}
+
+	public void setToolbarMenuButtons(List<String> toolbarMenuButtons) {
+		this.toolbarMenuButtons = toolbarMenuButtons;
+	}
+
+
 
 	public class Parameter {
 		private String name;
