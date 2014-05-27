@@ -6,29 +6,31 @@
  
 Ext.ns("Sbi.cockpit.editor.widget");
 
-Sbi.cockpit.editor.widget.WidgetEditorMainPanel = function(config) {	
+Sbi.cockpit.editor.widget.WidgetEditorGenericConfPanel = function(config) {	
 		
 	var defaultSettings = {
-		name:'WidgetEditorMainPanel'		
+		name:'WidgetEditorGenericConfPanel',
+		emptyMsg: 'Tab vuoto',
+		title:'Generic Configuration'
 	};
 	
-	var settings = Sbi.getObjectSettings('Sbi.cockpit.editor.widget.WidgetEditorMainPanel', defaultSettings);
+	var settings = Sbi.getObjectSettings('Sbi.cockpit.editor.widget.WidgetEditorGenericConfPanel', defaultSettings);
 	
 	var c = Ext.apply(settings, config || {});
 	Ext.apply(this, c);		
 	
-	this.init();	
+	this.initEmptyMsgPanel();	
 			
-	c = {    
-	    activeTab: 0,	    
-	    items: [this.customConfPanel, this.genericConfPanel]
+	c = {
+		height: 400,
+		items: [this.emptyMsgPanel]
 	};
 	
-	Sbi.cockpit.editor.widget.WidgetEditorMainPanel.superclass.constructor.call(this, c);
+	Sbi.cockpit.editor.widget.WidgetEditorGenericConfPanel.superclass.constructor.call(this, c);
 	
 };
 
-Ext.extend(Sbi.cockpit.editor.widget.WidgetEditorMainPanel, Ext.tab.Panel, {
+Ext.extend(Sbi.cockpit.editor.widget.WidgetEditorGenericConfPanel, Ext.Panel, {
     
 	// =================================================================================================================
 	// PROPERTIES
@@ -49,25 +51,18 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditorMainPanel, Ext.tab.Panel, {
 	 * 
 	 * Initialize the GUI
 	 */
-	, init: function(){
-		this.customConfPanel = new Sbi.cockpit.editor.widget.WidgetEditorCustomConfPanel();
-		this.genericConfPanel = new Sbi.cockpit.editor.widget.WidgetEditorGenericConfPanel();			
+	, initEmptyMsgPanel: function() {
+		this.emptyMsgPanel = new Ext.Panel({
+			html: this.emptyMsg
+			, border: false
+			, frame: true
+		});
 	}
 	
 	// -----------------------------------------------------------------------------------------------------------------
     // public methods
 	// -----------------------------------------------------------------------------------------------------------------
-	, setDesigner: function (widgetConf) {
-		this.customConfPanel.setDesigner(widgetConf);
-	}
 	
-	, removeAllDesigners: function() {
-		this.removeDesigner();
-	}
-	
-	, removeDesigner: function() {
-		this.customConfPanel.removeDesigner();
-	}
 		
 	// -----------------------------------------------------------------------------------------------------------------
     // private methods

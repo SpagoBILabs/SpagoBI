@@ -106,7 +106,7 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditorPage, Ext.Panel, {
 	
 	, resetPageState: function() {
 		Sbi.trace("[WidgetEditorPage.resetPageState]: IN");
-		this.widgetEditorPanel.mainPanel.removeAllDesigners();
+		//this.widgetEditorPanel.mainPanel.removeAllDesigners();
 		Sbi.trace("[WidgetEditorPage.resetPageState]: OUT");
 	}
 	
