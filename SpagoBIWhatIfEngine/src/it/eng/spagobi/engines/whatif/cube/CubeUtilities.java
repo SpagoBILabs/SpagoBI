@@ -226,6 +226,7 @@ public class CubeUtilities {
 		if (pivotModel instanceof SpagoBIPivotModel){
 			spagoBIPivotModel = (SpagoBIPivotModel)pivotModel;
 		} else {
+			logger.error("ERROR: Cannot calculate Member Value, PivotModel not of type SpagoBIPivotModel" );
 			throw new SpagoBIEngineRuntimeException("Cannot calculate Member Value, PivotModel not of type SpagoBIPivotModel" );
 		}
 		Object value = mdxQueryExecutor.getValueForTuple(cellMembers,cube,spagoBIPivotModel);
@@ -278,7 +279,6 @@ public class CubeUtilities {
 					memberToSearchSimpleName = memberExpressionParts[1];
 				}
 				
-				String[] memberSpecificLevelPathParts = null;
 				//the member name contains a specific level path ex: [Product][Drink.Beverages]
 				if (memberToSearchSimpleName.contains(".")){
 					memberToSearchUniqueName = "["+ dimensionName +"]" + "." + formatNameWithSquareBracket(memberToSearchSimpleName);

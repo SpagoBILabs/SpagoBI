@@ -13,6 +13,7 @@ package it.eng.spagobi.engines.whatif.parser;
 import java_cup.runtime.*;
 import java.util.*;  
 /* Import class from SpagoBI */
+import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
 import it.eng.spagobi.engines.whatif.cube.CubeUtilities;
 import it.eng.spagobi.engines.whatif.model.SpagoBICellWrapper;
 import org.olap4j.OlapDataSource;
@@ -41,14 +42,16 @@ parser code {:
 	SpagoBICellWrapper cellWrapper;
 	PivotModel model; 
 	OlapDataSource olapDataSource;
+	WhatIfEngineInstance engineInstance;
 	/*
 		Set important information to retrieve
 		What-if context information. Ex: variable, members, etc...
 	*/
-	public void setWhatIfInfo(SpagoBICellWrapper cellWrapper, PivotModel model, OlapDataSource olapDataSource){	
+	public void setWhatIfInfo(SpagoBICellWrapper cellWrapper, PivotModel model, OlapDataSource olapDataSource, WhatIfEngineInstance engineInstance){	
 		this.cellWrapper = cellWrapper;
 		this.model = model;
 		this.olapDataSource = olapDataSource;
+		this.engineInstance = engineInstance;
 	}
 	
 	/*
@@ -318,8 +321,18 @@ precedence left UMINUS;
 				 |
 				 VARIABLE:v
                  {: 
-				  if(parser.isVerbose()){System.out.println("*** found VARIABLE ["+v+"] replaced with "+50);}
-				 RESULT = 50.0; 
+				  Object variableValue = parser.engineInstance.getVariableValue(v);
+				  if (variableValue instanceof Integer){
+					  RESULT = new Double((Integer)variableValue);
+				  } else if (variableValue instanceof Double){
+					  RESULT = (Double)variableValue;
+				  } else if (variableValue instanceof String){
+					  String[] stringParts = ((String) variableValue).split(";");	
+					  LinkedList member = new LinkedList(Arrays.asList(stringParts));
+					  RESULT = parser.getMemberValue(member);
+				  }
+
+				  if(parser.isVerbose()){System.out.println("*** found VARIABLE ["+v+"] replaced with "+RESULT);}
 				 :}		
 				 |
 			      members_declaration:m 
