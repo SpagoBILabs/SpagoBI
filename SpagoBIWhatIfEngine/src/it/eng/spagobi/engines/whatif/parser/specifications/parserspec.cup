@@ -64,7 +64,7 @@ parser code {:
 	}
 	
 	public Double getMemberValue(LinkedList members){
-		return CubeUtilities.getMemberValue(members,this.cellWrapper,this.model,this.olapDataSource);
+		return CubeUtilities.getMemberValue(members,this.cellWrapper,this.model,this.olapDataSource,this.engineInstance.getModelConfig().getDimensionHierarchyMap());
 	}	
     
     /* Change the method report_error so it will display the line and

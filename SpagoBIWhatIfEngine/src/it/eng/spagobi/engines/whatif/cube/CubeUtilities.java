@@ -23,6 +23,7 @@ import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.StringTokenizer;
 
 import org.apache.log4j.Logger;
@@ -188,10 +189,10 @@ public class CubeUtilities {
 		return hierarchy;
 	}
 	
-	/*
-	 * Calculate the members value based on the passed expression
+	/**
+	 * Calculate the members value based on the passed expression 
 	 */
-	public static Double getMemberValue(LinkedList membersExpression, SpagoBICellWrapper cellWrapper, PivotModel pivotModel,OlapDataSource olapDataSource) {
+	public static Double getMemberValue(LinkedList membersExpression, SpagoBICellWrapper cellWrapper, PivotModel pivotModel,OlapDataSource olapDataSource, Map<String,String> dimensionHierarchyMap) {
 		Double toReturn = null;
 		
 		//Members are the dimensional "coordinates" that identify the specific value inserted in the cell
@@ -210,7 +211,7 @@ public class CubeUtilities {
 				memberExpressionParts = memberExpression.split("\\.");
 			}
 			
-			boolean memberFound = searchMember(cellMembers, memberExpressionParts);
+			boolean memberFound = searchMember(cellMembers, memberExpressionParts, dimensionHierarchyMap);
 
 			if (!memberFound){
 				logger.error("ERROR: Cannot calculate Value, Member not found: "+memberExpression);
@@ -240,7 +241,7 @@ public class CubeUtilities {
 	 * Search if the specified member(s) currently exists, retrieve the corresponding object(s) and
 	 * insert it in the cellMembers array (with a substitution)
 	 */
-	private static boolean searchMember(Member[] cellMembers, String[] memberExpressionParts){
+	private static boolean searchMember(Member[] cellMembers, String[] memberExpressionParts, Map<String,String> dimensionHierarchyMap){
 		boolean memberFound = false;
 		String memberExpressionDimension = memberExpressionParts[0];
 		boolean hierarchySpecified = false;
@@ -250,6 +251,16 @@ public class CubeUtilities {
 			//Notation with Hierarchy specified
 			memberExpressionDimension = memberExpressionDimension + "."+memberExpressionParts[1];
 			hierarchySpecified =  true;
+		}
+		
+		//Hierarchy is not specified in the notation, I have to check if I need to use the default one or another one
+		if(!hierarchySpecified){
+			//check if the selected hierarchy, corresponding to the specified dimension, isn't the default one 
+			String hiearchyName = dimensionHierarchyMap.get("["+memberExpressionDimension+"]");
+			if (hiearchyName != null){
+				hiearchyName = hiearchyName.replaceAll("\\[|\\]", "");
+				memberExpressionDimension = hiearchyName;
+			}
 		}
 
 		for (int i=0; i<cellMembers.length; i++){
