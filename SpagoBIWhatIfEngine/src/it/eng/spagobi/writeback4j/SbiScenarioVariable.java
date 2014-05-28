@@ -52,8 +52,8 @@ public class SbiScenarioVariable implements Serializable{
 	public void setType(String type) {
 		if(type==null || type.equalsIgnoreCase("double") || type.equalsIgnoreCase("float")){
 			this.type = SbiScenarioVariableType.DOUBLE;
-		}
-		if(type!=null && type.equalsIgnoreCase("string")){
+		} 
+		else if(type!=null && type.equalsIgnoreCase("string")){
 			this.type = SbiScenarioVariableType.STRING;
 		}else {
 			this.type = SbiScenarioVariableType.INTEGER;
