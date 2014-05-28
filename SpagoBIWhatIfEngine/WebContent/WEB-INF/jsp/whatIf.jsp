@@ -60,9 +60,9 @@ author:...
 	
 	WhatIfEngineConfig whatIfEngineConfig = WhatIfEngineConfig.getInstance();
     
-    Integer artifactVersionId = whatIfEngineInstance.getArtifactVersionId(whatIfEngineInstance.getEnv());
-    String artifactStatus = whatIfEngineInstance.getArtifactStatus(whatIfEngineInstance.getEnv());
-    String artifactLocker = whatIfEngineInstance.getArtifactLocker(whatIfEngineInstance.getEnv());
+    //Integer artifactVersionId = whatIfEngineInstance.getArtifactVersionId(whatIfEngineInstance.getEnv());
+    //String artifactStatus = whatIfEngineInstance.getArtifactStatus(whatIfEngineInstance.getEnv());
+    //String artifactLocker = whatIfEngineInstance.getArtifactLocker(whatIfEngineInstance.getEnv());
 	
    spagobiServerHost = request.getParameter(SpagoBIConstants.SBI_HOST);
    spagobiContext = request.getParameter(SpagoBIConstants.SBI_CONTEXT);
@@ -105,17 +105,15 @@ author:...
 	    			spagobiContext%>'	    	   				  
 	    };
 
-		var artifactVersionId = <%=artifactVersionId%>;
-        var artifactStatus = '<%=artifactStatus%>';
-        var artifactLocker = '<%=artifactLocker%>';
+		
 		
         var externalUrl =  urlSettings.sbihost+"/"+ urlSettings.contextPath+"/restful-services/";
 		
         Sbi.config.urlSettings = urlSettings;
         Sbi.config.externalUrl = externalUrl;
-        Sbi.config.artifactVersionId = artifactVersionId;
-        Sbi.config.artifactStatus = artifactStatus;
-        Sbi.config.artifactLocker = artifactLocker;
+        //Sbi.config.artifactVersionId = artifactVersionId;
+        //Sbi.config.artifactStatus = artifactStatus;
+        //Sbi.config.artifactLocker = artifactLocker;
         
 
         var params = {
