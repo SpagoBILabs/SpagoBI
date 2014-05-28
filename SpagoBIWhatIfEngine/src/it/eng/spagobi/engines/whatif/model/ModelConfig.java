@@ -13,6 +13,7 @@ import it.eng.spagobi.writeback4j.SbiScenarioVariable;
 import it.eng.spagobi.writeback4j.WriteBackEditConfig;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +31,15 @@ public class ModelConfig implements Serializable {
 	private Boolean suppressEmpty;
 	private Integer actualVersion = null;
 	private SbiScenario scenario = null;
+	
+	private Integer artifactVersionId;
+	private String status;
+	private String locker;
+	
+//	private List<String> toolbarVisibleButtons =new ArrayList<String>();
+//	private List<String> toolbarMenuButtons;
+	
+
 	private List<String> toolbarVisibleButtons;
 	private List<String> toolbarMenuButtons;
 
@@ -145,4 +155,30 @@ public class ModelConfig implements Serializable {
 		String value = var.getValue();
 		return var.getType().getTypedType(value);
 	}
+
+	public Integer getArtifactVersionId() {
+		return artifactVersionId;
+	}
+
+	public void setArtifactVersionID(Integer artifactVersionId) {
+		this.artifactVersionId = artifactVersionId;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	public String getLocker() {
+		return locker;
+	}
+
+	public void setLocker(String locker) {
+		this.locker = locker;
+	}
+	
+	
 }
