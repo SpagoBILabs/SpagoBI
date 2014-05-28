@@ -112,7 +112,7 @@ public class ModelResource extends AbstractWhatIfEngineService {
 		try {
 	    	Lexer lex = new Lexer(new java.io.StringReader(expression));
 	    	parser par = new parser(lex);
-	    	par.setWhatIfInfo(cellWrapper, model, olapDataSource);
+	    	par.setWhatIfInfo(cellWrapper, model, olapDataSource, ei);
 			value = (Double)par.parse().value;
 		} catch (Exception e) {
 			logger.debug("Error parsing What-if metalanguage expression",e);

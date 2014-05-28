@@ -40,14 +40,17 @@
 	<SCENARIO name="scenario" editCube="Sales_Edit">
 		<MEASURE>Store Sales</MEASURE>
 		<MEASURE>Store Cost</MEASURE>
+		<MEASURE>Unit Sales</MEASURE>
 		<VARIABLE name="var1" value="5"/>
+		<VARIABLE name="varS" value="Product.Eggs;Measures.Unit Sales" type="string"/>	
+		<VARIABLE name="varD" value="10.5678" type="double"/>	
 	</SCENARIO>
 	
 	<USR>root</USR>
 	<PWD>root</PWD>
 	<CATALOG>\resources\Olap\FoodMartMySQL.xml</CATALOG>
 	<CONNECTIONSTRING>jdbc:mondrian:Jdbc=jdbc:mysql://localhost:3306/foodmart_key</CONNECTIONSTRING>
-	<MDX>SELECT {[Measures].[Store Sales]} ON COLUMNS, {[Product].[Food]} ON ROWS FROM [Sales_V] WHERE CrossJoin([Version].[1], [Region].[Mexico Central])</MDX>
+	<MDX>SELECT {[Measures].[Store Sales]} ON COLUMNS, {[Product].[Food]} ON ROWS FROM [Sales_V] WHERE CrossJoin([Version].[0], [Region].[Mexico Central])</MDX>
 
 
 
