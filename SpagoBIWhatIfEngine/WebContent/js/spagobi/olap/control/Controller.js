@@ -196,9 +196,11 @@ Ext.define('Sbi.olap.control.Controller', {
 		service.callService(this);
 	}
 	,lockModel: function() {
+
+		var olapToolbar = this.eventManager.olapPanel.executionPanel.olapToolbar;
 		
 		var externalUrlPath = Sbi.config.externalUrl;
-		var artifactVersionId = Sbi.config.artifactVersionId;
+		var artifactVersionId = olapToolbar.modelConfig.artifactVersionId;
 		
 		
 		var service = Ext.create("Sbi.service.RestService", {
@@ -207,10 +209,7 @@ Ext.define('Sbi.olap.control.Controller', {
 			pathParams: [artifactVersionId, "lock"],
 			externalUrl: externalUrlPath
 		});
-		
-		
-		var olapToolbar = this.eventManager.olapPanel.executionPanel.olapToolbar;
-		
+				
 		
 		service.callService(olapToolbar,
 				function(result){
@@ -220,9 +219,11 @@ Ext.define('Sbi.olap.control.Controller', {
 				);
 	}
 	,unlockModel: function() {
+	
+		var olapToolbar = this.eventManager.olapPanel.executionPanel.olapToolbar;
 		
 		var externalUrlPath = Sbi.config.externalUrl;
-		var artifactVersionId = Sbi.config.artifactVersionId;
+		var artifactVersionId = olapToolbar.modelConfig.artifactVersionId;
 		
 		var service = Ext.create("Sbi.service.RestService", {
 			url: "locker",
@@ -232,7 +233,7 @@ Ext.define('Sbi.olap.control.Controller', {
 		});
 		
 		
-		var olapToolbar = this.eventManager.olapPanel.executionPanel.olapToolbar;
+
 		
 		service.callService(olapToolbar,
 				function(result){
