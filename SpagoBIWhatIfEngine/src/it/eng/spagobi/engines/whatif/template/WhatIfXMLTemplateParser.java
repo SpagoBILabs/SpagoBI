@@ -169,11 +169,10 @@ public class WhatIfXMLTemplateParser implements IWhatIfTemplateParser {
 						visible = (String)value.getAttribute(TAG_VISIBLE);
 						menu = (String)value.getAttribute(TAG_MENU);
 						if(visible!=null && visible.equalsIgnoreCase(TRUE)){
-							if(menu!=null && menu.equalsIgnoreCase(TRUE)){
-								toolbarMenuButtons.add(name);
-							}else{
-								toolbarVisibleButtons.add(name);
-							}
+							toolbarVisibleButtons.add(name);	
+						}
+						else if(menu!=null && menu.equalsIgnoreCase(TRUE)){
+							toolbarMenuButtons.add(name);
 						}
 					}
 				}
