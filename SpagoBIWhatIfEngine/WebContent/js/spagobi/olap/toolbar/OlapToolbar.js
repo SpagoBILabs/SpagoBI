@@ -44,6 +44,9 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 	showParentMembers: null,
 	hideSpans: null,
 	showProperties: null,
+	lockArray: null,
+	
+	buttonsContainer: null,
 
 	showMdx: null,
 
@@ -124,6 +127,7 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 		
 		);
 
+		this.buttonsContainer = {};
 		
 		this.showMdx = Ext.create('Ext.Button', {
 			tooltip: LN('sbi.olap.toolbar.mdx'),
@@ -133,7 +137,10 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 			},
 			scope:this,
 			reorderable: true
+			//,visible: false
 		});
+
+		
 		
 		this.undo = Ext.create('Ext.Button', {
 			tooltip: LN('sbi.olap.toolbar.undo'),
@@ -142,7 +149,8 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 				Sbi.olap.eventManager.undo();
 			},
 			scope:this,
-			reorderable: true
+			reorderable: true,
+			visible: false
 		});
 		
 		this.showParentMembers = Ext.create('Ext.Button', {
@@ -152,7 +160,8 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 	        toggleHandler: this.onShowParentMembersToggle,
 
 			scope:this,
-			reorderable: true
+			reorderable: true,
+			visible: false
 		});
 
 		
@@ -163,7 +172,8 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 	        toggleHandler: this.onHideSpansToggle,
 
 			scope:this,
-			reorderable: true
+			reorderable: true,
+			visible: false
 		});
 		
 		this.showProperties = Ext.create('Ext.Button', {
@@ -173,7 +183,8 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 	        toggleHandler: this.onShowPropertiesToggle,
 
 			scope:this,
-			reorderable: true
+			reorderable: true,
+			visible: false
 		}); 
 		
 		this.suppressEmpty = Ext.create('Ext.Button', {
@@ -183,7 +194,8 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 	        toggleHandler: this.onSuppressEmptyToggle,
 
 			scope:this,
-			reorderable: true
+			reorderable: true,
+			visible: false
 		});
 		this.clean = Ext.create('Ext.Button', {
 			tooltip: LN('sbi.olap.toolbar.clean'),
@@ -192,7 +204,8 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 				Sbi.olap.eventManager.cleanCache();
 			},
 			scope:this,
-			reorderable: true
+			reorderable: true,
+			visible: false
 		});
 		
 		this.persist = Ext.create('Ext.Button', {
@@ -202,7 +215,8 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 				Sbi.olap.eventManager.persistTransformations();
 			},
 			scope:this,
-			reorderable: true
+			reorderable: true,
+			visible: false
 		});
 		
 
@@ -214,7 +228,8 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 				Sbi.olap.eventManager.persistNewVersionTransformations();
 			},
 			scope:this,
-			reorderable: true
+			reorderable: true,
+			visible: false
 		});
 		
 		
@@ -247,17 +262,7 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 			scope:this,
 			reorderable: true
 		});
-		
-		
-		if(Sbi.config.artifactStatus == 'locked_by_user'){
-			this.setLockByUserState(artifactLocker);
-		}
-		else if(Sbi.config.artifactStatus == 'locked_by_other'){
-			this.setLockByOtherState(artifactLocker);
-		}
-		else if(Sbi.config.artifactStatus == 'unlocked'){
-			this.setUnlockState();
-		}	
+		this.lockArray = new Array(this.lockModel, this.unlockModel, this.lockOtherModel);
 		
 		
 		var pressedBtn = this.config.toolbarConfig.drillType;
@@ -276,7 +281,52 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 			this.showParentMembers.pressed = false;
 		}
 		
+		this.buttonsContainer['BUTTON_MDX'] = this.showMdx;
+		this.buttonsContainer['BUTTON_HIDE_SPANS'] = this.hideSpans;
+		this.buttonsContainer['BUTTON_FLUSH_CACHE'] = this.clean;
+		this.buttonsContainer['BUTTON_SAVE'] = this.persist;
+		this.buttonsContainer['BUTTON_FATHER_MEMBERS'] = this.showParentMembers;
+		this.buttonsContainer['BUTTON_LOCK_MODEL'] = this.lockArray;
 
+		// MENU -------------------------------
+		// split buttons, some will be visible other in menu
+/*		var menuItems = new Array();
+    	var baseMenuItemConfig = {
+    			text: 'Menu buttons'
+    			, group: 'group_b'
+    			, iconCls: 'icon-pdf' 
+    			, scope: this
+    			, width: 15
+    			, handler : Ext.emptyFn
+    			, href: ''   
+    		}
+    	var itemConfig = null;
+    	menuItems.push(	
+				new Ext.menu.Item(this.showParentMembers)
+			); 
+//       	menuItems.push('-'); 
+
+ //      	var menu = new Ext.menu.Menu({
+//			items: menuItems    
+//		});	
+       	
+       	
+    	// create menu button
+//		var menuButton = new Ext.Toolbar.SplitButton({
+//			text: 'Shortcuts'
+//			, tooltip: 'Shortcuts'
+	//		, path: 'Shortcuts'	
+			//, iconCls: 'icon-export' 	
+//			, width: 15
+//			, cls: 'x-btn-menubutton x-btn-text-icon bmenu '
+//			, menu: menu
+//		});
+		
+//		this.add(menuButton);
+       	*/
+		// END MENU -------------------------------
+    	
+    	
 		Ext.apply(this, {
 			layout: {
 				overflowHandler: 'Menu'
@@ -293,6 +343,8 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 			            /*this.showProperties, */
 			            this.suppressEmpty]
 		});
+		
+		
 		this.callParent();
 	},
 	
@@ -349,9 +401,12 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 	 * @param {Sbi.olap.PivotModel} pivot model
 	 */
 	, updateAfterMDXExecution: function(pivot, modelConfig){
-		if(this.modelConfig()==null){
-		
+		if(this.modelConfig==null){
+			this.setLockerConfiguration(modelConfig);
+			this.modelConfig = modelConfig;
 		}
+		
+		//this.setVisibleButton( modelConfig.toolbarVisibleButtons, true);
 	
 		this.mdx=pivot.get("mdxFormatted");
 	}
@@ -456,7 +511,40 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 		this.lockOtherModel.hide();
 
 	}
+	, setLockerConfiguration: function(modelConfig){
+		
+		if(modelConfig.status == 'locked_by_user'){
+			this.setLockByUserState(modelConfig.locker);
+		}
+		else if(modelConfig.status == 'locked_by_other'){
+			this.setLockByOtherState(modelConfig.locker);
+		}
+		else if(modelConfig.status == 'unlocked'){
+			this.setUnlockState();
+		}	
 	
+	}
+	/** set buttons whose label are contained in array to visible or not according to boolean visible parameter
+	 * 
+	 */
+	, setVisibleButton: function(buttonArray, visibleB){
+		
+		// visible is boolean to set visibile or not
+		for(var lab in this.buttonArray){
+
+			var b = this.buttonsContainer[lab];
+			
+			// b can be a button or an array of buttons
+			if(b instanceof Ext.Button){
+				b.visible = visibleB;
+			}
+			else if(b instanceof Array){
+				for (var i = 0; i < b.length; i++) {
+					b[i].visible = visibleB;
+				}
+		}
+	}
+}
 	
 	
 
