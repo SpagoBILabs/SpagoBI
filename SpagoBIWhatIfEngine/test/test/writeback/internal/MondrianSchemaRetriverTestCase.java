@@ -23,15 +23,6 @@ import test.writeback.TestConstants;
 public class MondrianSchemaRetriverTestCase extends AbstractWhatIfTestCase {
 	public static final String VERSION_COLUMN_NAME = "wbversione";
 	
-	public DataSource getDataSource(){
-		DataSource ds = new it.eng.spagobi.tools.datasource.bo.DataSource();
-		ds.setUser(TestConstants.MYSQL_USER);
-		ds.setPwd(TestConstants.MYSQL_PWD);
-		ds.setDriver(TestConstants.MYSQL_DRIVER);
-		String connectionUrl = TestConstants.MYSQL_URL;
-		ds.setUrlConnection(connectionUrl.replace("jdbc:mondrian:Jdbc=", ""));
-		return ds;
-	}
 	
 	public String getCatalogue(){
 		
@@ -41,7 +32,7 @@ public class MondrianSchemaRetriverTestCase extends AbstractWhatIfTestCase {
 	}
 	
 	public void testGetVersionColumn() throws Exception{
-		WhatIfEngineInstance ei = getWhatifengineiEngineInstance(getDataSource(),getCatalogue());
+		WhatIfEngineInstance ei = getWhatifengineiEngineInstance(getCatalogue());
 		String columnName = ei.getWriteBackManager().getRetriver().getVersionColumnName();
 		assertEquals(VERSION_COLUMN_NAME, columnName);
 	}

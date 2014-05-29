@@ -9,11 +9,9 @@
 package it.eng.spagobi.engines.whatif.common;
 
 import it.eng.spago.base.SourceBean;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.engines.whatif.WhatIfEngine;
 import it.eng.spagobi.engines.whatif.WhatIfEngineConfig;
 import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
-import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 
@@ -64,9 +62,11 @@ public class WhatIfEngineStartStandAloneAction extends AbstractWhatIfEngineServi
 			
 			logger.debug("Creating engine instance ...");
 
+			
+			
 			try {
-				whatIfEngineInstance = WhatIfEngine
-						.createInstance(getEnv());
+				SourceBean template = SourceBean.fromXMLFile( WhatIfEngineConfig.getInstance().getTemplateFilePath());
+				whatIfEngineInstance = WhatIfEngine.createInstance(template, getEnv());
 			} catch (Throwable t) {
 				logger.error(
 						"Error starting the What-If engine: error while generating the engine instance.",
@@ -104,18 +104,8 @@ public class WhatIfEngineStartStandAloneAction extends AbstractWhatIfEngineServi
 	public Map getEnv() {
 		Map env = new HashMap();
 
-		it.eng.spagobi.tools.datasource.bo.DataSource ds = new it.eng.spagobi.tools.datasource.bo.DataSource();
-		ds.setUser(WhatIfEngineConfig.getInstance().getConnectionUsr());
-		ds.setPwd(WhatIfEngineConfig.getInstance().getConnectionPwd());
-		ds.setDriver(WhatIfEngineConfig.getInstance().getDriver());
-		String connectionUrl = WhatIfEngineConfig.getInstance()
-				.getConnectionString();
-		ds.setUrlConnection(connectionUrl.replace("jdbc:mondrian:Jdbc=", ""));
-		
-		env.put(EngineConstants.ENV_DATASOURCE, ds);
 		env.put(EngineConstants.ENV_LOCALE, this.getLocale());
-		env.put(EngineConstants.ENV_OLAP_SCHEMA, WhatIfEngineConfig.getInstance().getCatalogue());
-		env.put("ENV_INITIAL_MDX_QUERY", WhatIfEngineConfig.getInstance().getInitiallMdx());
+
 
 		return env;
 	}

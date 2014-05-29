@@ -98,69 +98,20 @@ public class WhatIfEngineConfig {
 	private final static String WRITEBACK_TAG = "WRITEBACK";
 	
 	
-	public String getInitiallMdx() {
-		String initialMdx = "SELECT {[Measures].[Unit Sales], [Measures].[Store Cost]} ON COLUMNS, {[Product].[Food]} ON ROWS FROM [Sales]";
-		SourceBean sb = (SourceBean) getConfigSourceBean().getAttribute("MDX");
+	public String getTemplateFilePath(){
+		String templatePath = "";
+		SourceBean sb = (SourceBean) getConfigSourceBean().getAttribute("TEMPLATE");
 		if(sb!=null){
-			initialMdx = sb.getCharacters();
+			templatePath = sb.getCharacters();
 		}
-		return initialMdx;
+		return templatePath;
 	}
 	
-	public String getCatalogue(){
-		String catalog = "/home/spagobi/apache-tomcat-7.0.50/resources/Olap/FoodMart.xml";
-		SourceBean sb = (SourceBean) getConfigSourceBean().getAttribute("CATALOG");
-		if(sb!=null){
-			String system = System.getProperty("catalina.home");
-			catalog = system+sb.getCharacters();
-		}
-		return catalog;
+	public static String addServerResourcePath(String path){
+		String system = System.getProperty("catalina.home");
+		return system+path;
+		
 	}
-	
-	public String getConnectionString(){
-		String connectionString =  "jdbc:mondrian:Jdbc=jdbc:mysql://sibilla2:3306/foodmart";
-		SourceBean sb = (SourceBean) getConfigSourceBean().getAttribute("CONNECTIONSTRING");
-		if(sb!=null)
-			connectionString = sb.getCharacters();
-		return connectionString;
-	}
-	
-	public String getConnectionPwd(){
-		String pwd =  "foodmart";
-		SourceBean sb = (SourceBean) getConfigSourceBean().getAttribute("PWD");
-		if(sb==null)
-			pwd = "";
-		else
-			pwd= sb.getCharacters();
-		if (pwd == null) {
-			pwd = "";
-		}
-		return pwd;
-	}
-	
-	public String getConnectionUsr(){
-		String usr =  "foodmart";
-		SourceBean sb = (SourceBean) getConfigSourceBean().getAttribute("USR");
-		if(sb!=null)
-			usr = sb.getCharacters();
-		return usr;
-	}
-	
-	public String getDriver(){
-		String driver =  "com.mysql.jdbc.Driver";
-		SourceBean sb = (SourceBean) getConfigSourceBean().getAttribute("DRIVER_TAG");
-		if(sb!=null)
-			driver = sb.getCharacters();
-		return driver;
-	}
-
-	
-	public SbiScenario getScenario(){
-		SourceBean sourceBean = (SourceBean) getConfigSourceBean();
-		return WhatIfXMLTemplateParser.initScenario(sourceBean);
-
-	}
-	
 	
 	public OlapDataSource getOlapDataSource(IDataSource ds, String reference, WhatIfTemplate template, IEngUserProfile profile) {
 		Properties connectionProps = new Properties();
@@ -178,10 +129,8 @@ public class WhatIfEngineConfig {
 		connectionProps.put("Catalog", reference);
 		connectionProps.put("Provider","Mondrian");
 		
-		if(template!=null){
-			this.defineSchemaProcessorProperties(connectionProps, template, profile);
-		}
-		
+		this.defineSchemaProcessorProperties(connectionProps, template, profile);
+				
 
 		OlapDataSource olapDataSource = new SimpleOlapDataSource();
 		((SimpleOlapDataSource)olapDataSource).setConnectionString( connectionString);
