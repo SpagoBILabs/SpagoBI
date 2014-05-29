@@ -13,6 +13,7 @@ import it.eng.spagobi.engines.whatif.version.VersionManager;
 import it.eng.spagobi.tools.datasource.bo.DataSource;
 import it.eng.spagobi.writeback4j.sql.SqlQueryStatement;
 
+import java.sql.Connection;
 import java.sql.Statement;
 import java.util.Random;
 
@@ -44,7 +45,7 @@ public abstract class AbstractVersionManagerTestCase extends AbstractWhatIfTestC
 		System.out.println("Time for tear down "+(dateAfter-dateBefore));
 	}
 	
-	public Double duplicateVersion(String catalog){
+	public Double duplicateVersion(String catalog) throws Exception{
 		ei = getWhatifengineiEngineInstance( catalog);
 		SpagoBIPivotModel pivotModel = (SpagoBIPivotModel)ei.getPivotModel();
 	
@@ -75,26 +76,25 @@ public abstract class AbstractVersionManagerTestCase extends AbstractWhatIfTestC
 
 	}
 	
-	public Integer getDbVersion (WhatIfEngineInstance ei){
-
+	public Integer getDbVersion (WhatIfEngineInstance ei) throws Exception{
+		Connection connection = ei.getDataSource().getConnection();
 		try {
 			
 			String statement = "select MAX("+ei.getWriteBackManager().getRetriver().getVersionColumnName()+") as "+ei.getWriteBackManager().getRetriver().getVersionColumnName()+" from "+ei.getWriteBackManager().getRetriver().getEditCubeTableName();
 			SqlQueryStatement queryStatement = new SqlQueryStatement(ei.getDataSource(), statement);
-			Integer i = (Integer)queryStatement.getSingleValue(ei.getDataSource().getConnection(), ei.getWriteBackManager().getRetriver().getVersionColumnName());
+			Integer i = (Integer)queryStatement.getSingleValue(connection, ei.getWriteBackManager().getRetriver().getVersionColumnName());
 			
 			return i;
-		} catch (Exception e) {
-			e.printStackTrace();
+		}finally{
+			connection.close();
 		}
-		return null;
 	}
 
 	
 	public abstract String getCatalogue();
 	
 	
-	public void testNewVersion(){
+	public void testNewVersion() throws Exception{
 		
 
 		Double ration = duplicateVersion(getCatalogue());

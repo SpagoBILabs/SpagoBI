@@ -10,6 +10,8 @@
 
 package it.eng.spagobi.engines.whatif.model.transform.algorithm;
 
+import java.sql.Connection;
+
 import it.eng.spagobi.engines.whatif.model.SpagoBICellSetWrapper;
 import it.eng.spagobi.engines.whatif.model.SpagoBICellWrapper;
 
@@ -23,11 +25,12 @@ public abstract class AllocationAlgorithm {
 	 * @param cell The modified cell
 	 * @param oldValue The old value of the modified cell
 	 * @param newValue The new value of the modified cell
-	 * @param targetCellSet The cell set to modify
+	 * @param connection The connection to the Db
+	 * @param version The version where the data should be persisted
 	 */
 	public abstract void apply(SpagoBICellWrapper cell, Object oldValue,
 			Object newValue, SpagoBICellSetWrapper targetCellSet);
 	
-	public abstract void persist(SpagoBICellWrapper cell, Object oldValue, Object newValue, Integer version);
+	public abstract void persist(SpagoBICellWrapper cell, Object oldValue, Object newValue, Connection connection,  Integer version)  throws Exception;
 
 }

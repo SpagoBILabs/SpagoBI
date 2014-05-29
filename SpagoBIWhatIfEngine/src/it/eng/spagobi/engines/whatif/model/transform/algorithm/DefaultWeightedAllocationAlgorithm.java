@@ -18,6 +18,8 @@ import it.eng.spagobi.engines.whatif.model.transform.CellRelation;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.writeback4j.sql.DefaultWeightedAllocationAlgorithmPersister;
 
+import java.sql.Connection;
+
 import org.apache.log4j.Logger;
 import org.olap4j.Position;
 
@@ -121,7 +123,7 @@ public class DefaultWeightedAllocationAlgorithm extends AllocationAlgorithm {
 	
 	
 
-	public void persist(SpagoBICellWrapper cell, Object oldValue, Object newValue, Integer version) {
+	public void persist(SpagoBICellWrapper cell, Object oldValue, Object newValue, Connection connection, Integer version) throws Exception {
 		
 		Monitor totalTimeMonitor = null;
 		Monitor errorHitsMonitor = null;
@@ -129,11 +131,11 @@ public class DefaultWeightedAllocationAlgorithm extends AllocationAlgorithm {
 		logger.debug("IN");
 		try {
 			totalTimeMonitor = MonitorFactory.start("SpagoBIWhatIfEngine/it.eng.spagobi.engines.whatif.model.transform.DefaultWeightedAllocationAlgorithm.persist.totalTime");
-			this.persistInternal(cell, oldValue, newValue, version);
+			this.persistInternal(cell, oldValue, newValue, connection, version);
 		} catch (Exception e) {
 			errorHitsMonitor = MonitorFactory.start("SpagoBIWhatIfEngine/it.eng.spagobi.engines.whatif.model.transform.DefaultWeightedAllocationAlgorithm.persist.errorHits");
 			errorHitsMonitor.stop();
-			throw new SpagoBIRuntimeException("Error while applying transformation", e);
+			throw e;
 		} finally {
 			if (totalTimeMonitor != null) {
 				totalTimeMonitor.stop();
@@ -143,9 +145,9 @@ public class DefaultWeightedAllocationAlgorithm extends AllocationAlgorithm {
 
 	}
 
-	private void persistInternal(SpagoBICellWrapper cell, Object oldValue,Object newValue, Integer version) throws Exception {
+	private void persistInternal(SpagoBICellWrapper cell, Object oldValue,Object newValue, Connection connection, Integer version) throws Exception {
 		Double prop = ((Number) newValue).doubleValue()/((Number) oldValue).doubleValue();
-		lastQuery = persister.executeProportionalUpdate(cell.getMembers(), prop, version);
+		lastQuery = persister.executeProportionalUpdate(cell.getMembers(), prop, connection, version);
 	}
 
 

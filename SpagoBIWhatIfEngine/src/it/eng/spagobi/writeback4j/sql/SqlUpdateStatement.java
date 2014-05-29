@@ -33,7 +33,7 @@ public class SqlUpdateStatement {
 	}
 	
 
-	public void executeStatement(Connection connection) throws SpagoBIEngineException{
+	public void executeStatement(Connection connection) throws Exception{
 		logger.debug("Executing update query: "+sqlStatement);
 		
 		try {
@@ -42,7 +42,7 @@ public class SqlUpdateStatement {
 
 		} catch (Exception e) {
 			logger.error("Error executing the query "+sqlStatement, e);
-			throw new SpagoBIEngineException("Error executing the query "+sqlStatement, e);
+			throw e;
 		} 
 		logger.debug("Query executed");
 	}

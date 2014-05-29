@@ -17,6 +17,7 @@ import it.eng.spagobi.engines.whatif.model.transform.CellTransformationsStack;
 import it.eng.spagobi.engines.whatif.model.transform.algorithm.AllocationAlgorithm;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 
+import java.sql.Connection;
 import java.util.Iterator;
 
 import org.apache.log4j.Logger;
@@ -84,8 +85,8 @@ public class SpagoBIPivotModel extends PivotModelImpl {
 	}
 	
 	
-	public void persistTransformations() throws WhatIfPersistingTransformationException{
-		persistTransformations(null);
+	public void persistTransformations(Connection connection) throws WhatIfPersistingTransformationException{
+		persistTransformations(connection, null);
 	}
 	
 	/**
@@ -93,26 +94,21 @@ public class SpagoBIPivotModel extends PivotModelImpl {
 	 * @param version the version of the model in witch persist the modification. In null persist in the version selected in the Version dimension
 	 * @throws WhatIfPersistingTransformationException
 	 */
-	public void persistTransformations(Integer version) throws WhatIfPersistingTransformationException{
+	public void persistTransformations(Connection connection, Integer version) throws WhatIfPersistingTransformationException{
 		CellTransformationsAnalyzer analyzer = new CellTransformationsAnalyzer();
 		CellTransformationsStack bestStack = analyzer.getShortestTransformationsStack(pendingTransformations);
 		Iterator<CellTransformation> iterator = bestStack.iterator();
-		
-		CellTransformationsStack executedTransformations = new  CellTransformationsStack();
-		
+
 		while (iterator.hasNext()) {
 			CellTransformation transformation = iterator.next();
 			try {
 				AllocationAlgorithm algorithm = transformation.getAlgorithm();
-				algorithm.persist(transformation.getCell(), transformation.getOldValue(), transformation.getNewValue(), version);
+				algorithm.persist(transformation.getCell(), transformation.getOldValue(), transformation.getNewValue(), connection, version);
 			} catch (Throwable e) {
 				logger.error("Error persisting the transformation "+transformation, e);
-				bestStack.removeAll(executedTransformations);
 				logErrorTransformations(bestStack);
-				throw new WhatIfPersistingTransformationException(getLocale(), executedTransformations, bestStack, e);
+				throw new WhatIfPersistingTransformationException(getLocale(), bestStack, e);
 			}
-			//update the list of executed transformations
-			executedTransformations.add(transformation);
 		}
 		
 		//everithing goes right so we can clean the pending transformations
