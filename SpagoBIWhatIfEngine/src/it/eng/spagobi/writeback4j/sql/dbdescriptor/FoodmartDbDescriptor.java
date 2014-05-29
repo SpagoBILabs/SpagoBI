@@ -17,7 +17,7 @@ public class FoodmartDbDescriptor implements IDbSchemaDescriptor {
 		toReturn.add("store_id");
 		toReturn.add("store_sales");
 		toReturn.add("store_cost");
-		toReturn.add("wbversion");
+		toReturn.add("version");
 		
 		return toReturn;
 		
