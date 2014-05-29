@@ -115,8 +115,8 @@
                     <DimensionUsage name="Region" source="Region" foreignKey="store_id"/>   
 					<DimensionUsage name="Customers" source="Customers" foreignKey="customer_id"/>   
 					<Dimension name="Version">
-                    <Hierarchy hasAll="false" defaultMember="[Version].[1]"> 
-						<Level name="Versione" column="wbversion" uniqueMembers="true" />
+                    <Hierarchy hasAll="false" defaultMember="[Version].[0]"> 
+						<Level name="Versione" column="version" uniqueMembers="true" />
                     </Hierarchy>
                   </Dimension>
                     <Measure name="Store Sales" column="store_sales" aggregator="sum"       formatString="#,###.00"/>
