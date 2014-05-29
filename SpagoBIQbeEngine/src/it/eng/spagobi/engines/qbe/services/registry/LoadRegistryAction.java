@@ -33,6 +33,8 @@ import it.eng.spagobi.tools.dataset.common.datastore.Field;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
 import it.eng.spagobi.tools.dataset.common.datastore.Record;
+import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
+import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.utilities.ParametersDecoder;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.EngineConstants;
@@ -138,9 +140,12 @@ public class LoadRegistryAction extends ExecuteQueryAction {
 			auditlogger.info("[" + userProfile.getUserId() + "]:: HQL/JPQL: " + jpaQueryStr);
 			auditlogger.info("[" + userProfile.getUserId() + "]:: SQL: " + statement.getSqlQueryString());
 
-
-			dataSet.loadData(start, limit, (maxSize == null? -1: maxSize.intValue()));
+			int startI = start;
+			int limitI = (limit == null ? (maxSize == null ? -1 : maxSize) : limit);
+			int maxI = (maxSize == null? -1: maxSize.intValue());
+			dataSet.loadData(startI, limitI, maxI);
 			dataStore = dataSet.getDataStore();
+			changeAlias(dataStore);
 			Assert.assertNotNull(dataStore, "The dataStore returned by loadData method of the class [" + dataSet.getClass().getName()+ "] cannot be null");
 		} catch (Exception e) {
 			logger.debug("Query execution aborted because of an internal exceptian");
@@ -218,6 +223,23 @@ public class LoadRegistryAction extends ExecuteQueryAction {
 
 	logger.debug("OUT");
 	return resultToReturn;	
+	}
+	
+	private void changeAlias(IDataStore dataStore){
+		logger.debug("IN");	
+		IMetaData metaData = dataStore.getMetaData();
+		
+		for(int i = 0; i<metaData.getFieldCount(); i++){
+			IFieldMetaData meta = metaData.getFieldMeta(i);
+			Column col = registryConfig.getColumnConfiguration(meta.getAlias());
+			if(col.getTitle() != null){
+				meta.setAlias(col.getTitle());
+				//metaData.changeFieldAlias(i, col.getTitle());
+				logger.debug("Changed alias of column "+meta.getName()+" to "+col.getTitle());
+			}
+		}
+				
+		logger.debug("OUT");	
 	}
 	
 	private void addSumRows(IDataStore dataStore) {

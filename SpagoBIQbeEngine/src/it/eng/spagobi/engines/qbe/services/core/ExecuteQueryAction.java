@@ -102,10 +102,17 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 
 			totalTimeMonitor = MonitorFactory.start("QbeEngine.executeQueryAction.totalTime");
 
-			start = getAttributeAsInteger( START );	
+			Object startO = getAttribute( START );
+			if( startO != null && !startO.toString().equals("")){
+				start = getAttributeAsInteger( START );	
+			}
 			logger.debug("Parameter [" + START + "] is equals to [" + start + "]");
 
-			limit = getAttributeAsInteger( LIMIT );
+			Object limitO = getAttribute( LIMIT );
+			if( limitO != null && !limitO.toString().equals("")){
+				limit = getAttributeAsInteger( LIMIT );	
+			}
+
 			logger.debug("Parameter [" + LIMIT + "] is equals to [" + limit + "]");
 
 			Assert.assertNotNull(getEngineInstance(), "It's not possible to execute " + this.getActionName() + " service before having properly created an instance of EngineInstance class");

@@ -508,7 +508,7 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 			}
 			
 			
-			   // ORDER
+	
 			   
 			// insert actual fields into oldCOlumns for next iteration
 			   if(this.oldColumns == null){
@@ -538,7 +538,7 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 					  }
 					  this.columnsWidth[0]=23;
 					  for(var i = 1; i <fields.length ;i++) {
-						  this.columnsWidth[i]= 100;
+						  this.columnsWidth[i]= 200;
 					  }
 					  
 				  	}
@@ -548,17 +548,20 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 			
 			   // Array of column Index to merge
 			 this.indexColumnToMerge = new Array();
+			 
 			var arrayIndex = 0;
 			 
 			this.columnName2columnHeader = {};
 			this.columnHeader2columnName = {};
 			this.columnHeader2color = {};
 		
+			// Set max size
 			if(meta.maxSize != null && meta.maxSize !== undefined){
 				this.columnsMaxSize = parseInt(meta.maxSize);
 			}
 			
-			// iterating on each field
+			
+			// ITERATE ON EACH FIELD                 0 is numberer
 			for(var i = 0; i < meta.fields.length; i++) {
 				
 				// For i-field
@@ -572,6 +575,7 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 				for(var j = 0; j < meta.columnsInfos.length; j++) {
 					if(meta.columnsInfos[j].sizeColumn !== undefined && meta.columnsInfos[j].sizeColumn == meta.fields[i].name){
 						meta.fields[i].width = meta.columnsInfos[j].size;
+						this.columnsWidth[i]= meta.columnsInfos[j].size;   // are these the same column?
 					}
 					if(meta.columnsInfos[j].unsigned !== undefined && meta.columnsInfos[j].sizeColumn == meta.fields[i].name){
 						meta.fields[i].unsigned = meta.columnsInfos[j].unsigned;
@@ -585,7 +589,7 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 				   if (t ==='float') { // format is applied only to numbers
 					   
 					   //check if format is defined in template force it, else get it from model field
-					   var columnFromTemplate = this.registryConfiguration.columns[i];
+					   var columnFromTemplate = this.registryConfiguration.columns[i-1]; // because 0 is row numberer
 					   
 					   var formatToParse;
 					   if(columnFromTemplate.format){
@@ -612,15 +616,23 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 			   
 			   // set if cells have to be merged
 			
+			//	var columnDef = this.registryConfiguration.columns[i-1];  // 0 is row numberer
+				//	if(columnDef != undefined && columnDef.type == "merge"){
+				//  this.indexColumnToMerge[arrayIndex] = i;
+				//					arrayIndex++;
+				//				}
+				//				else{
+				//				} 
+
 				
 				var columnDef = this.registryConfiguration.columns[i];
 				if(columnDef != undefined && columnDef.type == "merge"){
 					// index is plus one because there is numberer row at position zero of columns
-					this.indexColumnToMerge[arrayIndex] = i+1;
-					arrayIndex++;
-				}
-				else{
-				} 
+									this.indexColumnToMerge[arrayIndex] = i+1;
+									arrayIndex++;
+								}
+								else{
+								} 
 				
 			   if(meta.fields[i].subtype && meta.fields[i].subtype === 'html') {
 				   meta.fields[i].renderer  =  Sbi.locale.formatters['html'];
@@ -640,7 +652,7 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 			   }
 
 			   // set right editor
-			   var editor = this.getEditor(meta.fields[i].header, meta.fields[i].type);
+			   var editor = this.getEditor(meta.fields[i].name, meta.fields[i].type);   // not the header but the name
 			   if (editor != null) {
 				   meta.fields[i].editor = editor;
 			   }
@@ -651,7 +663,7 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 					var columnConf = this.registryConfiguration.columns[i-1];
 					if(columnConf && columnConf.color){
 						color = columnConf.color;
-						this.columnHeader2color[meta.fields[i].header] = columnConf.color != undefined ? columnConf.color : '#FFFFFF';
+						this.columnHeader2color[meta.fields[i].name] = columnConf.color != undefined ? columnConf.color : '#FFFFFF';
 					}
 				}
 				var MyColorRenderer = function(value, metaData, record)
@@ -674,7 +686,7 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 				   meta.fields[i].hidden = true;
 					continue;
 					
-			   }else{		
+			   }else{		    // IF VISIBLE
 				   if(color){
 					   meta.fields[i].color = color;
 					   meta.fields[i].renderer = MyColorRenderer;
@@ -700,24 +712,15 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 		   
 		   //ORDER
 					   	
-					    for(var y=1; y<this.columnsWidth.length; y++){
-					    	this.getColumnModel().setColumnWidth(y,this.columnsWidth[y]);
-					   	}
+		   for(var y=1; y<this.columnsWidth.length; y++){
+					this.getColumnModel().setColumnWidth(y,this.columnsWidth[y]);
+				}
 
-						this.firstPage = false;	  
-					  //END ORDER
-		   
-		   
-		   
+		   this.firstPage = false;	  
+		   //END ORDER
 		   
 		   this.mandatory = meta.mandatory;
 
-
-		   
-		   
-		   
-		   
-		   
 		   
 		   
 		   
@@ -810,10 +813,14 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 			   var unsigned = this.visibleColumns[e.column].unsigned;
 
 			   if(t === 'float'){
-					   var dottedVal = e.value.replace(',', '.');
-					   var isfloat = isFloat(dottedVal);
+				   var dottedVal = e.value.replace(',', '.');
+				   var isfloat = isFloat(dottedVal);
 
-					   if(!isfloat){
+				   if(!isfloat){
+					   // if is not in float format but in integer then add .00
+					   var isinteger = isInteger(dottedVal);
+
+					   if(!isinteger){
 						   if(e.value == ''){
 							   //removed
 							   e.value = NaN;
@@ -821,13 +828,17 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 						   }
 						   e.cancel = true;
 						   Ext.MessageBox.show({
-								title : LN('sbi.registry.registryeditorgridpanel.saveconfirm.title'),
-								msg : LN('sbi.registry.registryeditorgridpanel.validation'),
-								buttons : Ext.MessageBox.OK,
-								width : 300,
-								icon : Ext.MessageBox.INFO
-							}); 
-					   }
+							   title : LN('sbi.registry.registryeditorgridpanel.saveconfirm.title'),
+							   msg : LN('sbi.registry.registryeditorgridpanel.validation'),
+							   buttons : Ext.MessageBox.OK,
+							   width : 300,
+							   icon : Ext.MessageBox.INFO
+						   }); 
+						}
+						   else{
+						   dottedVal+='.00';
+						}
+				   }
 			   }
 
 			   if(t === 'int'){
@@ -1638,7 +1649,7 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
             innerCell.setStyle('position', '');
             innerCell.setStyle('height', '');
             innerCell.setStyle('height', '');
-            innerCell.setStyle('background-color', this.columnHeader2color[column.header]);
+            innerCell.setStyle('background-color', this.columnHeader2color[column.name]);
         } else {
             innerCell.setStyle('position', 'absolute');
             var lineHeight = height * (count);
@@ -1690,7 +1701,7 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
             
             innerCell.setStyle('width', (width - cell.getPadding('lr') - innerCell.getPadding('lr')) + 'px');
 
-            innerCell.setStyle('background-color', this.columnHeader2color[column.header]);
+            innerCell.setStyle('background-color', this.columnHeader2color[column.name]);
   
         }
     }        
