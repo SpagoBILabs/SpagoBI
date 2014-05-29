@@ -79,16 +79,19 @@ public class WhatIfEngineInstance extends AbstractEngineInstance implements Seri
 
 		String reference;
 		
-		if(template.isStandAlone()){
-			String s = (String)this.getEnv().get(EngineConstants.ENV_OLAP_SCHEMA);
+		if(template.isStandAlone()){			
+			String schema = (String)this.getEnv().get(EngineConstants.ENV_OLAP_SCHEMA);
 					
-			if(s!=null ){
-				reference = s;
+			if(schema!=null ){
+				//gets the schema from env. Used by the test cases.
+				reference = schema;
 			}else{
+				//gets the schema path the template. Used in the stand alone modality.
 				reference = WhatIfEngineConfig.addServerResourcePath(template.getMondrianSchema());
 			}
 			
 		}else{
+			//gets the schema path the template. Used when the engine is executed in SpagoBI
 			reference = initMondrianSchema(env);
 		}
 
