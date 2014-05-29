@@ -13,6 +13,7 @@ import it.eng.spagobi.engines.whatif.model.transform.algorithm.DefaultWeightedAl
 import it.eng.spagobi.tools.datasource.bo.DataSource;
 import it.eng.spagobi.writeback4j.mondrian.CacheManager;
 
+import java.io.File;
 import java.util.Random;
 
 import test.AbstractWhatIfTestCase;
@@ -44,8 +45,8 @@ public abstract class AbstractWriteBackTestCase extends AbstractWhatIfTestCase {
 	
 
 	
-	public Double persistTransformations(it.eng.spagobi.tools.datasource.bo.DataSource ds, String catalog, boolean useIn){
-		WhatIfEngineInstance ei = getWhatifengineiEngineInstance(ds, catalog);
+	public Double persistTransformations( String catalog, boolean useIn){
+		WhatIfEngineInstance ei = getWhatifengineiEngineInstance(catalog);
 		SpagoBIPivotModel pivotModel = (SpagoBIPivotModel)ei.getPivotModel();
 	
 		SpagoBICellSetWrapper cellSetWrapper = (SpagoBICellSetWrapper)pivotModel.getCellSet();
@@ -83,7 +84,7 @@ public abstract class AbstractWriteBackTestCase extends AbstractWhatIfTestCase {
 	public void testWithIn(){
 
 		long dateA = System.currentTimeMillis();
-		Double ration = persistTransformations(getDataSource(),getCatalogue() , true);
+		Double ration = persistTransformations(getCatalogue() , true);
 		long dateB = System.currentTimeMillis();
 		
 		System.out.println("Time with in "+(dateB-dateA));
@@ -96,7 +97,7 @@ public abstract class AbstractWriteBackTestCase extends AbstractWhatIfTestCase {
 	public void testNoIn(){
 		
 		long dateA = System.currentTimeMillis();
-		Double ration = persistTransformations(getDataSource(),getCatalogue(), false);
+		Double ration = persistTransformations(getCatalogue(), false);
 		long dateB = System.currentTimeMillis();
 
 		System.out.println("Time no in "+(dateB-dateA));
@@ -110,5 +111,6 @@ public abstract class AbstractWriteBackTestCase extends AbstractWhatIfTestCase {
 	
 	public abstract String getCatalogue();
 	
+
 
 }

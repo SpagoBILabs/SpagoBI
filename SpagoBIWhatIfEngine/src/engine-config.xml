@@ -35,43 +35,7 @@
 	<SbiDocumentServiceProxy_URL>/services/SbiDocumentService</SbiDocumentServiceProxy_URL>
     <ArtifactServiceProxy_URL>/services/ArtifactService</ArtifactServiceProxy_URL>
 	
+	<TEMPLATE>\WEB-INF\resources\tpl.xml</TEMPLATE>
 	<WRITEBACK proportionalAlgorithmPersistQueryWhereClause="in"></WRITEBACK>
-	
-	<SCENARIO name="scenario" editCube="Sales_Edit">
-		<MEASURE>Store Sales</MEASURE>
-		<MEASURE>Store Cost</MEASURE>
-		<MEASURE>Unit Sales</MEASURE>
-		<VARIABLE name="var1" value="5"/>
-		<VARIABLE name="varS" value="Product.Eggs;Measures.Unit Sales" type="string"/>	
-		<VARIABLE name="varD" value="10.5678" type="double"/>	
-	</SCENARIO>
-	
-	<USR>root</USR>
-	<PWD>root</PWD>
-	<CATALOG>\resources\Olap\FoodMartMySQL.xml</CATALOG>
-	<CONNECTIONSTRING>jdbc:mondrian:Jdbc=jdbc:mysql://localhost:3306/foodmart_key</CONNECTIONSTRING>
-	<MDX>SELECT {[Measures].[Store Sales]} ON COLUMNS, {[Product].[Food]} ON ROWS FROM [Sales_V] WHERE CrossJoin([Version].[0], [Region].[Mexico Central])</MDX>
-
-
-
-	<TOOLBAR>
-		<BUTTON_CUBE visible="true" />
-		<BUTTON_MDX visible="true" menu="true" />
-		<BUTTON_ORDER visible="false" />
-		<BUTTON_FATHER_MEMBERS visible="true" />
-		<BUTTON_HIDE_SPANS visible="false" />
-		<BUTTON_SHOW_PROPERTIES visible="false" />
-		<BUTTON_HIDE_EMPTY visible="true" />
-		<BUTTON_SHIFT_AXIS visible="true" />
-		<BUTTON_DRILL_MEMBER visible="true" />
-		<BUTTON_DRILL_POSITION visible="true" />
-		<BUTTON_DRILL_REPLACE visible="false" />
-		<BUTTON_DRILL_THROUGH visible="false" />
-		<BUTTON_SHOW_CHART visible="false" />
-		<BUTTON_CONFIGURE_CHART visible="false" />
-		<BUTTON_CONFIGURE_PRINT visible="false" />
-		<BUTTON_FLUSH_CACHE visible="false" />
-		<BUTTON_SAVE visible="true" />
-	</TOOLBAR>
 
 </ENGINE-CONFIGURATION>

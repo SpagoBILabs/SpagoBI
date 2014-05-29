@@ -52,22 +52,7 @@ public class WhatIfEngine {
 		return whatIfEngineInstance;	
 	}
 	
-	/**
-	 * Creates the instance.
-	 * 
-	 * @param env the env
-	 * 
-	 * @return the WhatIf engine instance
-	 */
-	public static WhatIfEngineInstance createInstance(Map env) {
-		WhatIfEngineInstance whatIfEngineInstance = null;
-		logger.debug("IN");
-		whatIfEngineInstance = new WhatIfEngineInstance(env);
-		initSerializers(whatIfEngineInstance.getOlapConnection(), whatIfEngineInstance.getModelConfig());
-		logger.debug("OUT");
-		
-		return whatIfEngineInstance;	
-	}
+
 	
 	
 	private static void initSerializers(OlapConnection connection, ModelConfig config) {

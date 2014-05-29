@@ -41,7 +41,7 @@ public class VariableTestCase extends AbstractWhatIfTestCase {
 	}
 	
 	public void testGetVersionColumn() throws Exception{
-		WhatIfEngineInstance ei = getWhatifengineiEngineInstance(getDataSource(),getCatalogue());
+		WhatIfEngineInstance ei = getWhatifengineiEngineInstance(getCatalogue());
 		Integer var  = (Integer) ei.getVariableValue("var1");
 		assertEquals(5, var.intValue());
 	}

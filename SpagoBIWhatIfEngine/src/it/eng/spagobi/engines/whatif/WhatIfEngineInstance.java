@@ -77,11 +77,31 @@ public class WhatIfEngineInstance extends AbstractEngineInstance implements Seri
 			throw new RuntimeException("Cannot load Mondrian Olap4j Driver", e);
 		}
 
-		String reference = initMondrianSchema(env);
+		String reference;
+		
+		if(template.isStandAlone()){
+			String s = (String)this.getEnv().get(EngineConstants.ENV_OLAP_SCHEMA);
+					
+			if(s!=null ){
+				reference = s;
+			}else{
+				reference = WhatIfEngineConfig.addServerResourcePath(template.getMondrianSchema());
+			}
+			
+		}else{
+			reference = initMondrianSchema(env);
+		}
+
 		this.setMondrianSchemaFilePath(reference);
 		
 		IDataSource ds = (IDataSource) env.get(EngineConstants.ENV_DATASOURCE);
 		IEngUserProfile profile = (IEngUserProfile) env.get(EngineConstants.ENV_USER_PROFILE);
+		
+		if(ds==null && template.getStandAloneConnection()!=null){
+			ds = template.getStandAloneConnection();
+			 this.getEnv().put(EngineConstants.ENV_DATASOURCE, ds);
+		}
+		
 		olapDataSource = WhatIfEngineConfig.getInstance().getOlapDataSource( ds, reference, template, profile );
 		
 		//pivotModel = new PivotModelImpl(olapDataSource);
@@ -109,17 +129,21 @@ public class WhatIfEngineInstance extends AbstractEngineInstance implements Seri
 		//modelConfig.setToolbarMenuButtons(template.getToolbarMenuButtons());		
 		
 		// init artifact informations
-		Integer artifactVersionID = getArtifactVersionId(getEnv());
-		modelConfig.setArtifactVersionID(artifactVersionID);
-		logger.debug("Artifact version ID is "+artifactVersionID);
 		
-		String status = getArtifactStatus(getEnv());
-		logger.debug("Artifact status is "+status);
-		modelConfig.setStatus(status);
+		if(!template.isStandAlone()){
+			Integer artifactVersionID = getArtifactVersionId(getEnv());
+			modelConfig.setArtifactVersionID(artifactVersionID);
+			logger.debug("Artifact version ID is "+artifactVersionID);
+			String status = getArtifactStatus(getEnv());
+			logger.debug("Artifact status is "+status);
+			modelConfig.setStatus(status);
+			
+			String locker = getArtifactLocker(getEnv());
+			logger.debug("Artifact locker is "+locker);
+			modelConfig.setLocker(locker);			
+		}
 		
-		String locker = getArtifactLocker(getEnv());
-		logger.debug("Artifact locker is "+locker);
-		modelConfig.setLocker(locker);
+
 		
 		
 		//init toolbar
@@ -153,64 +177,22 @@ public class WhatIfEngineInstance extends AbstractEngineInstance implements Seri
 		logger.debug("MDX query after parameters substitution is [" + query + "]");
 		
 		// substitute user profile attributes
-		IEngUserProfile profile = (IEngUserProfile) env.get(EngineConstants.ENV_USER_PROFILE);
-		try {
-			query = StringUtilities.substituteProfileAttributesInString(query, profile);
-		} catch (Exception e) {
-			throw new SpagoBIEngineRuntimeException("Error while substituting user profile attributes in MDX query", e);
+		if(!template.isStandAlone()){
+			IEngUserProfile profile = (IEngUserProfile) env.get(EngineConstants.ENV_USER_PROFILE);
+			try {
+				query = StringUtilities.substituteProfileAttributesInString(query, profile);
+			} catch (Exception e) {
+				throw new SpagoBIEngineRuntimeException("Error while substituting user profile attributes in MDX query", e);
+			}
 		}
+
 		logger.debug("MDX query after user profile attributes substitution is [" + query + "]");
 		
 		logger.debug("OUT");
 		return query;
 	}
 
-	public WhatIfEngineInstance(Map env) {
-		super( env );	
-		
-		includes = WhatIfEngine.getConfig().getIncludes();
-		
-		try {
-			Class.forName("mondrian.olap4j.MondrianOlap4jDriver");
-			Class.forName("org.olap4j.OlapWrapper");
-			
-		} catch (ClassNotFoundException e) {
-			throw new RuntimeException("Cannot load Mondrian Olap4j Driver", e);
-		}
 
-		String reference = (String) env.get(EngineConstants.ENV_OLAP_SCHEMA);
-		this.setMondrianSchemaFilePath(reference);
-		
-		IDataSource ds = (IDataSource) env.get(EngineConstants.ENV_DATASOURCE);
-		IEngUserProfile profile = (IEngUserProfile) env.get(IEngUserProfile.ENG_USER_PROFILE);
-		olapDataSource = WhatIfEngineConfig.getInstance().getOlapDataSource( ds, reference, null, profile );
-		
-		//pivotModel = new PivotModelImpl(olapDataSource);
-		pivotModel = new SpagoBIPivotModel(olapDataSource);
-		pivotModel.setLocale( this.getLocale() );
-		pivotModel.setMdx( (String) env.get("ENV_INITIAL_MDX_QUERY") );
-		pivotModel.initialize();
-		
-		//init configs 
-		modelConfig = new ModelConfig();		
-		modelConfig.setScenario(WhatIfEngineConfig.getInstance().getScenario());
-		
-
-		WriteBackEditConfig writeBackConfig = modelConfig.getWriteBackConf();
-		
-		if(writeBackConfig!= null ){
-			try {
-				writeBackManager = new WriteBackManager(getEditCubeName(), new MondrianDriver(getMondrianSchemaFilePath()));
-			} catch (SpagoBIEngineException e) {
-				logger.debug("Exception creating the whatif component", e);
-				throw new SpagoBIEngineRestServiceRuntimeException("whatif.engine.instance.writeback.exception", getLocale(), "Exception creating the whatif component", e);
-				
-			}
-		}
-		
-		logger.debug("OUT");
-	}
-	
 	private String initMondrianSchema(Map env) {
         ArtifactServiceProxy artifactProxy = (ArtifactServiceProxy) env.get( EngineConstants.ENV_ARTIFACT_PROXY );
         MondrianSchemaManager schemaManager = new MondrianSchemaManager(artifactProxy);
@@ -283,10 +265,6 @@ public class WhatIfEngineInstance extends AbstractEngineInstance implements Seri
 	public OlapDataSource getOlapDataSource () {
 		return olapDataSource;
 	}
-
-//	public JSONObject getGuiSettings() {
-//		return guiSettings;
-//	}
 	
 	public List getIncludes() {
 		return includes;

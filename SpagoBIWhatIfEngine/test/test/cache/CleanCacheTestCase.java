@@ -3,9 +3,11 @@
  */
 package test.cache;
 
+import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
 import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
 import it.eng.spagobi.writeback4j.mondrian.CacheManager;
 
+import java.io.File;
 import java.util.Random;
 
 import org.olap4j.CellSet;
@@ -38,10 +40,16 @@ public class CleanCacheTestCase extends AbstractWhatIfTestCase {
 	}
 
 	
-
+	public String getCatalogue(){
+		
+        File userDir = new File("").getAbsoluteFile();
+        File f  = new File(userDir,  "\\test\\test\\writeback\\resources\\FoodMartMySQL.xml");
+		return f.getAbsolutePath();
+	}
 	
 	public void testRecreatequrery(){
-		OlapDataSource connection = getOlapDataSource();
+		WhatIfEngineInstance ei = getWhatifengineiEngineInstance( getCatalogue());
+		OlapDataSource connection = ei.getOlapDataSource();
 		SpagoBIPivotModel pivotModel = new SpagoBIPivotModel(connection);
 		pivotModel.setMdx( mdx);
 		pivotModel.initialize();

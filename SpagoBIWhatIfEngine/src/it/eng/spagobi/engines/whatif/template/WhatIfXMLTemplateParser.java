@@ -7,6 +7,8 @@ package it.eng.spagobi.engines.whatif.template;
 
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanAttribute;
+import it.eng.spagobi.tools.datasource.bo.DataSource;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.writeback4j.SbiScenario;
@@ -50,6 +52,16 @@ public class WhatIfXMLTemplateParser implements IWhatIfTemplateParser {
 	public static final String TAG_VISIBLE = "visible";
 	public static final String TAG_MENU = "menu";
 	public static final String TRUE = "true";
+	public static final String TAG_CONNECTION = "CONNECTION";
+	public static final String TAG_STAND_ALONE = "STANDALONE";
+	public static final String TAG_USR = "USR";
+	public static final String TAG_PWD = "PWD";
+	public static final String TAG_CATALOG = "CATALOG";
+	public static final String TAG_MDX = "MDX";
+	public static final String TAG_CONNECTIONSTRING = "CONNECTIONSTRING";
+	public static final String TAG_DRIVER = "DRIVER";
+	public static final String STAD_ALONE_DS_LABEL = "STAD_ALONE_DS_LABEL";
+
 
 	/** Logger component. */
 	public static transient Logger logger = Logger.getLogger(WhatIfXMLTemplateParser.class);
@@ -95,6 +107,10 @@ public class WhatIfXMLTemplateParser implements IWhatIfTemplateParser {
 			//init the toolbar config
 			initToolbar(template, toReturn);
 
+			//init stand alone configuration
+			initStandAlone(template, toReturn);
+			
+			
 			List<WhatIfTemplate.Parameter> parameters = new ArrayList<WhatIfTemplate.Parameter>();
 			List parametersSB = mdxSB.getAttributeAsList(TAG_PARAMETER);
 			Iterator it = parametersSB.iterator();
@@ -152,6 +168,7 @@ public class WhatIfXMLTemplateParser implements IWhatIfTemplateParser {
 		String menu;
 		SourceBean value;
 
+		logger.debug("IN. loading the toolbar config");
 		SourceBean toolbarSB = (SourceBean) template.getAttribute(TAG_TOOLBAR);
 		if(toolbarSB!=null){
 			
@@ -188,7 +205,7 @@ public class WhatIfXMLTemplateParser implements IWhatIfTemplateParser {
 	}
 
 	public static SbiScenario initScenario(SourceBean template){
-
+		logger.debug("IN. loading the scenario");
 		SourceBean scenarioSB = (SourceBean) template.getAttribute(TAG_SCENARIO);
 		if(scenarioSB!=null){
 			logger.debug(TAG_SCENARIO + ": " + scenarioSB);
@@ -245,5 +262,40 @@ public class WhatIfXMLTemplateParser implements IWhatIfTemplateParser {
 		}
 		scenario.setVariables(variables);
 		logger.debug("OUT. loaded "+variables.size()+" scenario variables");
+	}
+	
+	private static String getBeanValue(String tag, SourceBean bean){
+		String  field = null;
+		SourceBean fieldBean = null;
+		fieldBean =(SourceBean)bean.getAttribute(tag);
+		if(fieldBean!=null){
+			field = fieldBean.getCharacters();
+			if(field==null){
+				field = "";
+			}
+		}
+		return field;
+	}
+	
+	private static void initStandAlone(SourceBean template, WhatIfTemplate toReturn){
+		logger.debug("IN. loading the configuration for a stand alone execution");
+		SourceBean standAloneSB = (SourceBean) template.getAttribute(TAG_STAND_ALONE);
+		if(standAloneSB!=null){
+			logger.debug("This is a stand alone execution");
+			logger.debug(TAG_STAND_ALONE + ": " + standAloneSB);
+			IDataSource ds = new DataSource();
+			ds.setLabel(STAD_ALONE_DS_LABEL);
+			SourceBean connectionProperties = (SourceBean) standAloneSB.getAttribute(TAG_CONNECTION);
+			ds.setPwd(getBeanValue(TAG_PWD, connectionProperties));
+			ds.setUser(getBeanValue(TAG_USR, connectionProperties));
+			String catalog = getBeanValue(TAG_CATALOG, connectionProperties);
+			ds.setUrlConnection(getBeanValue(TAG_CONNECTIONSTRING, connectionProperties));
+			ds.setDriver(getBeanValue(TAG_DRIVER, connectionProperties));
+			
+			toReturn.setStandAloneConnection(ds);
+			toReturn.setMondrianSchema(catalog);
+		}else{
+			logger.debug("This is not a stand alone execution");
+		}
 	}
 }

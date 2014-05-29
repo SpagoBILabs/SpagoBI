@@ -44,8 +44,8 @@ public abstract class AbstractVersionManagerTestCase extends AbstractWhatIfTestC
 		System.out.println("Time for tear down "+(dateAfter-dateBefore));
 	}
 	
-	public Double duplicateVersion(it.eng.spagobi.tools.datasource.bo.DataSource ds, String catalog){
-		ei = getWhatifengineiEngineInstance(ds, catalog);
+	public Double duplicateVersion(String catalog){
+		ei = getWhatifengineiEngineInstance( catalog);
 		SpagoBIPivotModel pivotModel = (SpagoBIPivotModel)ei.getPivotModel();
 	
 		SpagoBICellSetWrapper cellSetWrapper = (SpagoBICellSetWrapper)pivotModel.getCellSet();
@@ -98,7 +98,7 @@ public abstract class AbstractVersionManagerTestCase extends AbstractWhatIfTestC
 	public void testNewVersion(){
 		
 
-		Double ration = duplicateVersion(getDataSource(),getCatalogue());
+		Double ration = duplicateVersion(getCatalogue());
 		
 		assertTrue(ration<accurancy);
 		

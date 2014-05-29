@@ -5,6 +5,7 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.engines.whatif.template;
 
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.writeback4j.SbiScenario;
 
 import java.util.HashMap;
@@ -25,6 +26,7 @@ public class WhatIfTemplate {
 	private List<String> profilingUserAttributes;
 	private List<String> toolbarVisibleButtons;
 	private List<String> toolbarMenuButtons;
+	private IDataSource standAloneConnection;
 
 	
 	public WhatIfTemplate() {
@@ -103,8 +105,18 @@ public class WhatIfTemplate {
 		this.toolbarMenuButtons = toolbarMenuButtons;
 	}
 
+	public IDataSource getStandAloneConnection() {
+		return standAloneConnection;
+	}
 
+	public void setStandAloneConnection(IDataSource standAloneConnection) {
+		this.standAloneConnection = standAloneConnection;
+	}
 
+	public boolean isStandAlone(){
+		return this.standAloneConnection!=null;
+	}
+	
 	public class Parameter {
 		private String name;
 		private String alias;
