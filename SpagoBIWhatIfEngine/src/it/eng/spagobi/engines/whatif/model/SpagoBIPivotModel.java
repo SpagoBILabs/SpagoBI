@@ -154,7 +154,7 @@ public class SpagoBIPivotModel extends PivotModelImpl {
 	}
 	
 	public void logErrorTransformations(CellTransformationsStack remaningTransformations){
-		auditlogger.info(remaningTransformations.toString());
+		auditlogger.info("Error persisting the these modifications "+ remaningTransformations.toString());
 	}
 	
 	
