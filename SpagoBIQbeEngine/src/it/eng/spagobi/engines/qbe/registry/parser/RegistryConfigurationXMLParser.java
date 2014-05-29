@@ -62,6 +62,7 @@ public class RegistryConfigurationXMLParser {
 	public static String ATTRIBUTE_MANDATORY_VALUE = "mandatoryValue";
 	public static String ATTRIBUTE_COLUMNS_MAX_SIZE = "maxSize";
 	public static String ATTRIBUTE_COLUMN_SIZE = "size";
+	public static String ATTRIBUTE_COLUMN_TITLE = "title";
 	public static String ATTRIBUTE_SORTER = "sorter";
 	public static String ATTRIBUTE_UNSIGNED = "unsigned";
 	public static String  ATTRIBUTE_DRIVER_NAME = "driverName";
@@ -187,6 +188,8 @@ public class RegistryConfigurationXMLParser {
 				}catch(NumberFormatException e){
 					logger.debug("Column size not integer");
 				}
+				String title = (String) aColumn.getAttribute(ATTRIBUTE_COLUMN_TITLE);
+				
 				String sorter = (String) aColumn.getAttribute(ATTRIBUTE_SORTER);
 				boolean unsigned = false;
 				if(aColumn.getAttribute(ATTRIBUTE_UNSIGNED) != null){
@@ -236,6 +239,7 @@ public class RegistryConfigurationXMLParser {
 								+ ATTRIBUTE_FOREIGNKEY + " is also requested.");
 				column.setField(field);
 				column.setSize(intSize);
+				column.setTitle(title);
 				column.setSorter(sorter);
 				column.setUnsigned(unsigned);
 				column.setSubEntity(subEntity);
