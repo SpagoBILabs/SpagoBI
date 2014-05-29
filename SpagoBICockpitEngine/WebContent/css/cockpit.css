@@ -191,6 +191,69 @@
 		background-size: auto;
 	}
 	
+	/* Sbi.worksheet.designer.LineChartDesignerPanel */
+	.side-by-side-linechart-area {
+		 background:url(../js/src/ext4/sbi/cockpit/widgets/linechart/img/sidebysidelinechart-area.gif) no-repeat 22px 0px !important;
+	}
+	
+	.stacked-linechart-area {
+		 background:url(../js/src/ext4/sbi/cockpit/widgets/linechart/img/stackedlinechart-area.gif) no-repeat 22px 0px !important;
+	}
+	
+	.percent-stacked-linechart-area {
+		 background:url(../js/src/ext4/sbi/cockpit/widgets/linechart/img/percentstackedlinechart-area.gif) no-repeat 22px 0px !important;
+	}
+	
+	.side-by-side-linechart-line {
+		 background:url(../js/src/ext4/sbi/cockpit/widgets/linechart/img/sidebysidelinechart-line.gif) no-repeat 22px 0px !important;
+	}
+	
+	.stacked-linechart-line {
+		 background:url(../js/src/ext4/sbi/cockpit/widgets/linechart/img/stackedlinechart-line.gif) no-repeat 22px 0px !important;
+	}
+	
+	.percent-stacked-linechart-line {
+		 background:url(../js/src/ext4/sbi/cockpit/widgets/linechart/img/percentstackedlinechart-line.gif) no-repeat 22px 0px !important;
+	}
+	
+	.side-by-side-linechart-area-preview {
+		background-image:url(../js/src/ext4/sbi/cockpit/widgets/linechart/img/sidebysidelinechart-area.gif) !important;
+		background-repeat:no-repeat !important;
+		background-position:center !important;
+	}
+	
+	.stacked-linechart-area-preview {
+		background-image:url(../js/src/ext4/sbi/cockpit/widgets/linechart/img/stackedlinechart-area.gif) !important;
+		background-repeat:no-repeat !important;
+		background-position:center !important;
+	}
+	
+	.percent-stacked-linechart-area-preview {
+		background-image:url(../js/src/ext4/sbi/cockpit/widgets/linechart/img/percentstackedlinechart-area.gif) !important;
+		background-repeat:no-repeat !important;
+		background-position:center !important;
+	}
+	
+	.side-by-side-linechart-line-preview {
+		background-image:url(../js/src/ext4/sbi/cockpit/widgets/linechart/img/sidebysidelinechart-line.gif) !important;
+		background-repeat:no-repeat !important;
+		background-position:center !important;
+	}
+	
+	.stacked-linechart-line-preview {
+		background-image:url(../js/src/ext4/sbi/cockpit/widgets/linechart/img/stackedlinechart-line.gif) !important;
+		background-repeat:no-repeat !important;
+		background-position:center !important;
+	}
+	
+	.percent-stacked-linechart-line-preview {
+		background-image:url(../js/src/ext4/sbi/cockpit/widgets/linechart/img/percentstackedlinechart-line.gif) !important;
+		background-repeat:no-repeat !important;
+		background-position:center !important;
+	}
+	
+	
+	
 	/* Sbi.worksheet.designer.BarChartDesignerPanel */
 	.side-by-side-barchart-vertical {
 		 background:url(../img/designer/chart/sidebysidebarchart-vertical.gif) no-repeat 22px 0px !important;
