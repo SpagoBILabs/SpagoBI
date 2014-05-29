@@ -23,16 +23,7 @@ import it.eng.spagobi.tools.datasource.bo.DataSource;
 public class MySQLTestCase extends AbstractVersionManagerTestCase {
 
 	
-	public DataSource getDataSource(){
-		DataSource ds = new it.eng.spagobi.tools.datasource.bo.DataSource();
-		ds.setUser(TestConstants.MYSQL_USER);
-		ds.setPwd(TestConstants.MYSQL_PWD);
-		ds.setDriver(TestConstants.MYSQL_DRIVER);
-		String connectionUrl = TestConstants.MYSQL_URL;
-		ds.setUrlConnection(connectionUrl.replace("jdbc:mondrian:Jdbc=", ""));
-		return ds;
-	}
-	
+
 	public String getCatalogue(){
 		
         File userDir = new File("").getAbsoluteFile();

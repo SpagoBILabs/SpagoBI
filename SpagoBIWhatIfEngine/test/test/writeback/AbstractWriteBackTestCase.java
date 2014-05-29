@@ -107,8 +107,6 @@ public abstract class AbstractWriteBackTestCase extends AbstractWhatIfTestCase {
 		
 	}
 	
-	public abstract DataSource getDataSource();
-	
 	public abstract String getCatalogue();
 	
 
