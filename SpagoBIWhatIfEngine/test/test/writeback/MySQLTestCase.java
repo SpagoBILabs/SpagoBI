@@ -5,8 +5,6 @@ package test.writeback;
 
 import java.io.File;
 
-import it.eng.spagobi.tools.datasource.bo.DataSource;
-
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
@@ -19,16 +17,7 @@ import it.eng.spagobi.tools.datasource.bo.DataSource;
  */
 public class MySQLTestCase extends AbstractWriteBackTestCase {
 
-	
-	public DataSource getDataSource(){
-		DataSource ds = new it.eng.spagobi.tools.datasource.bo.DataSource();
-		ds.setUser(TestConstants.MYSQL_USER);
-		ds.setPwd(TestConstants.MYSQL_PWD);
-		ds.setDriver(TestConstants.MYSQL_DRIVER);
-		String connectionUrl = TestConstants.MYSQL_URL;
-		ds.setUrlConnection(connectionUrl.replace("jdbc:mondrian:Jdbc=", ""));
-		return ds;
-	}
+
 	
 	public String getCatalogue(){
 		

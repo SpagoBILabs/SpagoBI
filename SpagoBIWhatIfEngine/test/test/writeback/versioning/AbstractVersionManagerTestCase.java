@@ -90,7 +90,6 @@ public abstract class AbstractVersionManagerTestCase extends AbstractWhatIfTestC
 		return null;
 	}
 
-	public abstract DataSource getDataSource();
 	
 	public abstract String getCatalogue();
 	

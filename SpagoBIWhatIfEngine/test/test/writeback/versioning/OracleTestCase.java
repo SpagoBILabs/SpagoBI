@@ -20,15 +20,7 @@ import it.eng.spagobi.tools.datasource.bo.DataSource;
  */
 public class OracleTestCase extends AbstractVersionManagerTestCase {
 
-	public DataSource getDataSource(){
-		DataSource ds = new it.eng.spagobi.tools.datasource.bo.DataSource();
-		ds.setUser(TestConstants.ORACLE_USER);
-		ds.setPwd(TestConstants.ORACLE_PWD);
-		ds.setDriver(TestConstants.ORACLE_DRIVER);
-		String connectionUrl = TestConstants.ORACLE_URL;
-		ds.setUrlConnection(connectionUrl.replace("jdbc:mondrian:Jdbc=", ""));
-		return ds;
-	}
+
 	
 	public String getCatalogue(){
 		
