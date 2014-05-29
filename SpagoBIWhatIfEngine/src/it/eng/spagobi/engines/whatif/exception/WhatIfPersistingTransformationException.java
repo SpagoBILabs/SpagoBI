@@ -25,33 +25,19 @@ public class WhatIfPersistingTransformationException extends SpagoBIEngineExcept
 	
 	private static final long serialVersionUID = 8811825156790676261L;
 	private final String localizationMessage = "sbi.olap.weiteback.persist.error";
-	private CellTransformationsStack executedTransformations;
-	private CellTransformationsStack transformationsLeft;
+	private CellTransformationsStack transformations;
 
-    public WhatIfPersistingTransformationException(Locale locale, CellTransformationsStack executedTransformations, CellTransformationsStack transformationsLeft, Throwable ex) {
+    public WhatIfPersistingTransformationException(Locale locale, CellTransformationsStack transformations, Throwable ex) {
     	super("Error peristing the transformation", ex);
-    	this.transformationsLeft = transformationsLeft;
-    	this.executedTransformations = executedTransformations;
+    	this.transformations = transformations;
     	
     }
 
-	public CellTransformationsStack getExecutedTransformations() {
-		return executedTransformations;
+	public CellTransformationsStack getTransformations() {
+		return transformations;
 	}
 
-	public void setExecutedTransformations(
-			CellTransformationsStack executedTransformations) {
-		this.executedTransformations = executedTransformations;
-	}
-
-	public CellTransformationsStack getTransformationsLeft() {
-		return transformationsLeft;
-	}
-
-	public void setTransformationsLeft(CellTransformationsStack transformationsLeft) {
-		this.transformationsLeft = transformationsLeft;
-	}
-
+	
 	public String getLocalizationmessage() {
 		return localizationMessage;
 	}

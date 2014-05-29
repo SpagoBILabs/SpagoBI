@@ -11,9 +11,14 @@ import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
 import it.eng.spagobi.engines.whatif.model.transform.CellTransformation;
 import it.eng.spagobi.engines.whatif.model.transform.algorithm.DefaultWeightedAllocationAlgorithm;
 import it.eng.spagobi.tools.datasource.bo.DataSource;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.utilities.exceptions.SpagoBIEngineRestServiceRuntimeException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.writeback4j.mondrian.CacheManager;
 
 import java.io.File;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.Random;
 
 import test.AbstractWhatIfTestCase;
@@ -29,49 +34,66 @@ import test.AbstractWhatIfTestCase;
  *
  */
 public abstract class AbstractWriteBackTestCase extends AbstractWhatIfTestCase {
-	
-	
-	
-	
-	
+
+
+
+
+
 	public void setUp() throws Exception {
 		super.setUp();
 	}
-	
+
 	public void tearDown() throws Exception {
 		super.tearDown();
 	}
 
-	
 
-	
-	public Double persistTransformations( String catalog, boolean useIn){
+
+
+	public Double persistTransformations( String catalog, boolean useIn) throws Exception{
 		WhatIfEngineInstance ei = getWhatifengineiEngineInstance(catalog);
 		SpagoBIPivotModel pivotModel = (SpagoBIPivotModel)ei.getPivotModel();
-	
+
 		SpagoBICellSetWrapper cellSetWrapper = (SpagoBICellSetWrapper)pivotModel.getCellSet();
 		SpagoBICellWrapper cellWrapper = (SpagoBICellWrapper) cellSetWrapper.getCell(0);
 
 		Double value = (new Random()).nextFloat()*1000000d;
-		
+
 		DefaultWeightedAllocationAlgorithm al = new DefaultWeightedAllocationAlgorithm(ei, useIn);
 		CellTransformation transformation = new CellTransformation(value,cellWrapper.getValue(), cellWrapper, al);
 		cellSetWrapper.applyTranformation(transformation);
 
-			try {
-				pivotModel.persistTransformations();
-			} catch (WhatIfPersistingTransformationException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				fail();
-			}
+		Connection connection;
+		IDataSource dataSource = ei.getDataSource();
 
-		
+		try {
+
+			connection = dataSource.getConnection( null );
+		} catch (Exception e) {
+			fail();
+			throw e;
+		} 
+
+		try {
+			pivotModel.persistTransformations(connection);
+		} catch (WhatIfPersistingTransformationException e) {
+
+			fail();
+			throw e;
+		}finally{
+			try {
+				connection.close();
+			} catch (SQLException e) {
+				throw e;
+			}
+		}
+
+
 		CacheManager.flushCache(pivotModel.getDataSource());
 		String mdx = pivotModel.getMdx();
 		pivotModel.setMdx( mdx);
 		pivotModel.initialize();
-		
+
 		cellSetWrapper = (SpagoBICellSetWrapper)pivotModel.getCellSet();
 		cellWrapper = (SpagoBICellWrapper) cellSetWrapper.getCell(0);
 
@@ -80,35 +102,35 @@ public abstract class AbstractWriteBackTestCase extends AbstractWhatIfTestCase {
 		System.out.println("Execute query = "+ al.getLastQuery());
 		return ration;
 	}
-	
-	public void testWithIn(){
+
+	public void testWithIn() throws Exception{
 
 		long dateA = System.currentTimeMillis();
 		Double ration = persistTransformations(getCatalogue() , true);
 		long dateB = System.currentTimeMillis();
-		
+
 		System.out.println("Time with in "+(dateB-dateA));
 		System.out.println("Ratio is "+ration);
-		
+
 		assertTrue(ration<accurancy);
-		
+
 	}
-	
-	public void testNoIn(){
-		
+
+	public void testNoIn() throws Exception{
+
 		long dateA = System.currentTimeMillis();
 		Double ration = persistTransformations(getCatalogue(), false);
 		long dateB = System.currentTimeMillis();
 
 		System.out.println("Time no in "+(dateB-dateA));
 		System.out.println("Ratio is "+ration);
-		
-		assertTrue(ration<accurancy);
-		
+
+		assertTrue(ration<accurancy && ration>-accurancy);
+
 	}
-	
+
 	public abstract String getCatalogue();
-	
+
 
 
 }

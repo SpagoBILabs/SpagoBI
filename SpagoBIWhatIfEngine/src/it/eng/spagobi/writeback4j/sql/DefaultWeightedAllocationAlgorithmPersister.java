@@ -45,7 +45,7 @@ public class DefaultWeightedAllocationAlgorithmPersister {
 		this.dataSource = dataSource;
 	}
 	
-	public String executeProportionalUpdate(Member[] members, double prop, Integer version) throws SpagoBIEngineException{
+	public String executeProportionalUpdate(Member[] members, double prop, Connection connection, Integer version) throws Exception{
 		//list of the coordinates for the members
 		List<IMemberCoordinates> memberCordinates = new ArrayList<IMemberCoordinates>();
 		
@@ -71,16 +71,16 @@ public class DefaultWeightedAllocationAlgorithmPersister {
 		String queryString;
 		
 		if(useInClause){
-			queryString = buildProportionalUpdateSingleSubquery(memberCordinates, query, version);
+			queryString = buildProportionalUpdateSingleSubquery(memberCordinates, query, connection, version);
 		}else{
-			queryString = buildProportionalUpdateOneSubqueryForDimension(memberCordinates, query, version);
+			queryString = buildProportionalUpdateOneSubqueryForDimension(memberCordinates, query,  connection,version);
 		}
 		
 		return queryString;
 		
 	}
 	
-	private String buildProportionalUpdateOneSubqueryForDimension(List<IMemberCoordinates> memberCordinates, StringBuffer query, Integer version) throws SpagoBIEngineException{
+	private String buildProportionalUpdateOneSubqueryForDimension(List<IMemberCoordinates> memberCordinates, StringBuffer query,Connection connection, Integer version) throws Exception{
 		
 		//List of where conditions
 		Map<TableEntry, String> whereConditions = new HashMap<TableEntry, String>();
@@ -121,19 +121,14 @@ public class DefaultWeightedAllocationAlgorithmPersister {
 		}
 		
 		String queryString = query.toString();
-		
-		ConnectionManager connManager = new ConnectionManager(dataSource);
-		Connection connection = connManager.openConnection(); 
-		
+
 		SqlUpdateStatement updateStatement = new SqlUpdateStatement(queryString);
 		updateStatement.executeStatement(connection);
-	
-		connManager.closeConnection();
 		
 		return queryString;
 	}
 	
-	private String buildProportionalUpdateSingleSubquery(List<IMemberCoordinates> memberCordinates, StringBuffer query, Integer version) throws SpagoBIEngineException{
+	private String buildProportionalUpdateSingleSubquery(List<IMemberCoordinates> memberCordinates, StringBuffer query, Connection connection,Integer version) throws Exception{
 		
 		//List of where conditions
 		Map<TableEntry, String> whereConditions;
@@ -183,20 +178,12 @@ public class DefaultWeightedAllocationAlgorithmPersister {
 			}
 
 		}
-		
-		
-		
-		
-
-		ConnectionManager connManager = new ConnectionManager(dataSource);
-		Connection connection = connManager.openConnection(); 
 
 		String queryString = query.toString();
 		
 		SqlUpdateStatement updateStatement = new SqlUpdateStatement(queryString);
 		updateStatement.executeStatement(connection);
-	
-		connManager.closeConnection();
+
 		
 		return queryString;
 	}

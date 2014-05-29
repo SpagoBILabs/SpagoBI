@@ -27,13 +27,17 @@ import it.eng.spagobi.engines.whatif.model.transform.CellTransformation;
 import it.eng.spagobi.engines.whatif.model.transform.algorithm.DefaultWeightedAllocationAlgorithm;
 import it.eng.spagobi.engines.whatif.parser.Lexer;
 import it.eng.spagobi.engines.whatif.parser.parser;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.exceptions.SpagoBIEngineRestServiceRuntimeException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
 import it.eng.spagobi.writeback4j.mondrian.CacheManager;
 
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.Date;
 import java.util.Map;
 
@@ -134,6 +138,8 @@ public class ModelResource extends AbstractWhatIfEngineService {
 	@Path("/persistTransformations")
 	public String persistTransformations(){
 		logger.debug("IN");
+		
+		Connection connection;
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
 		OlapDataSource olapDataSource = ei.getOlapDataSource();
 		PivotModel model = ei.getPivotModel();
@@ -142,12 +148,31 @@ public class ModelResource extends AbstractWhatIfEngineService {
 		
 		logger.debug("Persisting the modifications..");
 		
+		IDataSource dataSource = ei.getDataSource();
 		try {
-			modelWrapper.persistTransformations();
+			logger.debug("Getting the connection to DB");
+			connection = dataSource.getConnection( null );
+		} catch (Exception e) {
+		logger.error("Error opening connection to datasource "+dataSource.getLabel());
+			throw new SpagoBIRuntimeException("Error opening connection to datasource "+dataSource.getLabel(), e);	
+		} 
+		try {
+			//Persisting the pending modifications
+			modelWrapper.persistTransformations(connection);
 		} catch (WhatIfPersistingTransformationException e) {
 			logger.debug("Error persisting the modifications",e);
 			throw new SpagoBIEngineRestServiceRuntimeException(e.getLocalizationmessage(), modelWrapper.getLocale(), "Error persisting modifications", e);
+		}finally{
+			logger.debug("Closing the connection used to persist the modifications");
+			try {
+				connection.close();
+			} catch (SQLException e) {
+				logger.error("Error closing the connection to the db");
+				throw new SpagoBIEngineRestServiceRuntimeException( getLocale(), e);
+			}
+			logger.debug("Closed the connection used to persist the modifications");
 		}
+		
 		logger.debug("Modification persisted...");
 		
 		logger.debug("Cleaning the cache and restoring the model");

@@ -11,16 +11,18 @@ import it.eng.spagobi.engines.whatif.cube.CubeUtilities;
 import it.eng.spagobi.engines.whatif.exception.WhatIfPersistingTransformationException;
 import it.eng.spagobi.engines.whatif.model.ModelUtilities;
 import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIEngineRestServiceRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-import it.eng.spagobi.writeback4j.sql.ConnectionManager;
 import it.eng.spagobi.writeback4j.sql.SqlInsertStatement;
 import it.eng.spagobi.writeback4j.sql.SqlQueryStatement;
 import it.eng.spagobi.writeback4j.sql.VersionManagementStatements;
 
 import java.math.BigDecimal;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -60,32 +62,53 @@ public class VersionManager {
 	public PivotModel persistNewVersionProcedure(Integer version, Integer newVersion){
 		logger.debug("IN");
 
-		logger.debug("Set connection to DB");
-		ConnectionManager connectionManager = new ConnectionManager(instance.getDataSource());		
-
-		connectionManager.openConnection();
-
-		if(newVersion == null){
-			logger.debug("Get last version");
-			newVersion = getLastVersion(connectionManager);
-			newVersion = newVersion+1;
-			logger.debug("Tne new version is "+newVersion);
+		
+		Connection connection;
+		IDataSource dataSource = instance.getDataSource();
+		
+		try {
+			logger.debug("Getting the connection to DB");
+			connection = dataSource.getConnection( null );
+		} catch (Exception e) {
+		logger.error("Error in opening connection to datasource "+dataSource.getLabel());
+			throw new SpagoBIRuntimeException("Error in opening connection to datasource "+dataSource.getLabel(), e);	
+		} 
+		
+		try {
 			
+			if(newVersion == null){
+				logger.debug("Get last version");
+				newVersion = getLastVersion(connection);
+				newVersion = newVersion+1;
+				logger.debug("Tne new version is "+newVersion);
+			}
+
+			logger.debug("Duplicate data with new version");
+			increaseActualVersion(connection, version, newVersion);
+
+			logger.debug("Apply Transformations on new version");
+			applyTransformation(connection, newVersion);
+
+			logger.debug("Reload Model");
+			new ModelUtilities().reloadModel(instance, instance.getPivotModel());
+
+			logger.debug("Set new version as actual");
+			instance.getModelConfig().setActualVersion(newVersion);
+
+			
+		} catch (Exception e) {
+			logger.error("Error creating a new version",e);
+			throw new SpagoBIEngineRestServiceRuntimeException("versionresource.generic.error", instance.getLocale(), e);
+		}finally{
+			logger.debug("Closing the SAVE AS connection");
+			try {
+				connection.close();
+			} catch (SQLException e) {
+				logger.error("Error closing the connection to the db");
+				throw new SpagoBIEngineRestServiceRuntimeException( instance.getLocale(), e);
+			}
+			logger.debug("SAVE AS connection closed");
 		}
-
-		logger.debug("Duplicate data with new version");
-		increaseActualVersion(connectionManager, version, newVersion);
-
-		logger.debug("Apply Transformations on new version");
-		applyTransformation(newVersion);
-
-		logger.debug("Reload Model");
-		new ModelUtilities().reloadModel(instance, instance.getPivotModel());
-
-		logger.debug("Set new version as actual");
-		instance.getModelConfig().setActualVersion(newVersion);
-
-		connectionManager.closeConnection();
 
 		setNextVersionSlicer(newVersion);
 
@@ -157,7 +180,7 @@ public class VersionManager {
 
 	}
 
-	public Integer getLastVersion(ConnectionManager connectionManager){
+	public Integer getLastVersion(Connection connection) throws SpagoBIEngineException, NumberFormatException{
 		logger.debug("IN");
 		Integer lastVersion = null;
 		logger.debug("get Last version");
@@ -171,7 +194,7 @@ public class VersionManager {
 		try {
 			String sqlQuery = statement.buildGetLastVersion();	
 			SqlQueryStatement queryStatement = new SqlQueryStatement(instance.getDataSource(), sqlQuery) ;
-			Object o= queryStatement.getSingleValue(connectionManager.getConnection(), instance.getWriteBackManager().getRetriver().getVersionColumnName());
+			Object o= queryStatement.getSingleValue(connection, instance.getWriteBackManager().getRetriver().getVersionColumnName());
 			if(o != null){
 				logger.debug("Last version is "+o);	
 
@@ -190,20 +213,18 @@ public class VersionManager {
 		}
 		catch (NumberFormatException e) {
 			logger.error("Error in converting to Integer the version value: check your db settings for version column", e);
-			connectionManager.closeConnection();
-			throw new SpagoBIRuntimeException("Error in converting to Integer the version value: check your db settings for version column", e);		
+			throw e;		
 		}
 		catch (SpagoBIEngineException e) {
 			logger.error("Error when recovering last model version", e);
-			connectionManager.closeConnection();
-			throw new SpagoBIRuntimeException("Error when recovering last model version", e);
+			throw e;
 		}		
 		logger.debug("OUT");
 		return lastVersion;
 	}
 
 
-	private String increaseActualVersion(ConnectionManager connectionManager, Integer lastVersion, Integer newVersion){
+	private String increaseActualVersion(Connection connection, Integer lastVersion, Integer newVersion) throws SpagoBIEngineException{
 		logger.debug("IN");
 
 		VersionManagementStatements statement = new VersionManagementStatements(instance.getWriteBackManager().getRetriver(), instance.getDataSource());
@@ -217,31 +238,29 @@ public class VersionManager {
 			logger.debug("The query for the new version is "+sqlInsertIntoVirtual);
 			SqlInsertStatement insertStatement = new SqlInsertStatement(sqlInsertIntoVirtual) ;
 			long dateBefore = System.currentTimeMillis();
-			insertStatement.executeStatement(connectionManager.getConnection());
+			insertStatement.executeStatement(connection);
 			long dateAfter = System.currentTimeMillis();
 			logger.debug("Time to insert the new version "+(dateAfter-dateBefore));
 		} catch (SpagoBIEngineException e) {
 			logger.error("Error in increasing version procedure: error when duplicating data and changing version", e);
-			connectionManager.closeConnection();
-			throw new SpagoBIRuntimeException("Error in increasing version procedure: error when duplicating data and changing version", e);
+			throw e;
 		}	
 
 		logger.debug("OUT");
 		return sqlInsertIntoVirtual;
 	}
 
-	private void applyTransformation(Integer newVersion){
+	private void applyTransformation(Connection connection, Integer newVersion) throws Exception{
 		logger.debug("IN");
 
 		// get member of new version
 		logger.debug("New version is "+newVersion);		
 
-		SpagoBIPivotModel modelWrapper = (SpagoBIPivotModel) instance.getPivotModel();
 		try {
-			((SpagoBIPivotModel)instance.getPivotModel()).persistTransformations(newVersion);
+			((SpagoBIPivotModel)instance.getPivotModel()).persistTransformations(connection, newVersion);
 		} catch (WhatIfPersistingTransformationException e) {
 			logger.debug("Error persisting the modifications",e);
-			throw new SpagoBIEngineRestServiceRuntimeException(e.getLocalizationmessage(), modelWrapper.getLocale(), "Error persisting modifications", e);
+			throw e;
 		}
 		logger.debug("OUT");
 
