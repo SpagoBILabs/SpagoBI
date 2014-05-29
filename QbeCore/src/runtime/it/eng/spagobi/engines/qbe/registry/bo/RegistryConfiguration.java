@@ -240,6 +240,9 @@ public class RegistryConfiguration {
 		private String color = "#FFFFFF";
 
 		private String summaryFunction = null;
+
+		private String title = null;
+
 		
 		private boolean isVisible = true;
 		//mandatory depending on another column value
@@ -257,6 +260,14 @@ public class RegistryConfiguration {
 		public static final String COLUMN_TYPE_MERGE = "merge";
 		public static final String COLUMN_TYPE_MEASURE = "measure";
 
+
+		public String getTitle() {
+			return title;
+		}
+
+		public void setTitle(String title) {
+			this.title = title;
+		}
 
 		public String getType() {
 			return type;
@@ -394,9 +405,5 @@ public class RegistryConfiguration {
 	}
 	
 	
-	
-	
-	
-	
-	
+		
 }
