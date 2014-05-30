@@ -323,12 +323,11 @@ public class DatasetManagementAPI {
 		logger.debug("IN");
 		
 		try {
-			JoinedDataSet joinedDataSet = new JoinedDataSet("theLabel", "theLabel", "theLabel", 
-					associationGroup);
+			JoinedDataSet joinedDataSet = new JoinedDataSet("theLabel", "theLabel", "theLabel", associationGroup);
 			joinedDataSet.setParamsMap(parametersValues);
 			
 			ICache cache = CacheManager.getCache();
-			if ( cache.contains(joinedDataSet) == false) {
+			if (cache.contains(joinedDataSet) == false) {
 				cache.refresh(joinedDataSet, true);
 			} 
 			
@@ -345,20 +344,6 @@ public class DatasetManagementAPI {
 				Association association = associationGroup.getAssociation(associationName);
 				String datasetColumn = association.getFields().get(0).getFieldName();
 				String datasetLabel = association.getFields().get(0).getDataSetLabel();
-				
-//				JSONObject association = null;
-//				for(int i = 0; i < associations.length(); i++) {
-//					JSONObject a = associations.getJSONObject(i);
-//					String name = a.getString("id");
-//					if(associationName.equals(name)) {
-//						association = a;
-//						break;
-//					}
-//				}
-//				JSONArray fields = association.getJSONArray("fields");
-//				JSONObject field = fields.getJSONObject(0);
-//				String datasetLabel = field.getString("store");
-//				String datasetColumn = field.getString("column");
 				
 				Operand leftOperand = new Operand(datasetLabel, datasetColumn);
 				Operand rightOperand = new Operand(valuesList);

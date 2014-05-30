@@ -212,7 +212,7 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 	}
 
 
-	public void addCacheItem(String resultsetSignature, String tableName, IDataStore resultset) {
+	public CacheItem addCacheItem(String resultsetSignature, String tableName, IDataStore resultset) {
 		CacheItem item = new CacheItem();
 		item.setName(tableName);
 		item.setTable(tableName);
@@ -223,6 +223,8 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 		
 		logger.debug("Added cacheItem : [ Name: " + item.getName() + " \n Signature: " + item.getSignature() +
 				" \n Dimension: "+ item.getDimension() +" bytes (approximately)  ]");
+		
+		return item;
 	}
 
 

@@ -15,10 +15,10 @@ import java.util.List;
 
 import it.eng.spagobi.commons.serializer.SerializerFactory;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.cache.CacheItem;
 import it.eng.spagobi.tools.dataset.cache.CacheManager;
 import it.eng.spagobi.tools.dataset.cache.ICache;
 import it.eng.spagobi.tools.dataset.cache.ICacheMetadata;
-import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.CacheItem;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 import javax.ws.rs.DELETE;

@@ -91,7 +91,7 @@ public interface ICacheMetadata {
 	/**
 	 * add a cacheItem 
 	 */
-	public void addCacheItem(String resultsetSignature, String tableName, IDataStore resultset);
+	public CacheItem addCacheItem(String resultsetSignature, String tableName, IDataStore resultset);
 	
 	/**
 	 * remove the cacheItem
