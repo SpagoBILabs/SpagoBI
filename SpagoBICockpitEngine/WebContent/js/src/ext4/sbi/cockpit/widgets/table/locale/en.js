@@ -115,7 +115,6 @@ Sbi.locale.ln['sbi.qbe.selectgridpanel.headers.function'] = 'Function';
 //Sbi.worksheet.designer.SeriesGroupingPanel
 //===================================================================
 Sbi.locale.ln['sbi.worksheet.designer.seriesgroupingpanel.title'] = 'Series\' grouping variable';
-Sbi.locale.ln['sbi.worksheet.designer.seriesgroupingpanel.emptymsg'] = 'Drag & drop here a query attribute as the series\' grouping variable';
 
 //===================================================================
 //Sbi.worksheet.designer.ChartCategoryPanel

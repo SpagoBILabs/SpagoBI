@@ -158,6 +158,13 @@ Sbi.locale.ln['sbi.cockpit.widgets.chartseriespanel.cannotdrophere.attributes'] 
 Sbi.locale.ln['sbi.cockpit.widgets.chartseriespanel.cannotdrophere.postlinecalculated'] = 'Non puoi utilizzare i campi calcolati basati su script tra le serie del grafico';
 Sbi.locale.ln['sbi.cockpit.widgets.chartseriespanel.tools.tt.removeall'] = ['Rimuovi tutti'];
 
+//===================================================================
+//Sbi.cockpit.widgets.ChartSeriesPanel
+//===================================================================
+Sbi.locale.ln['sbi.cockpit.widgets.seriesgroupingpanel.emptymsg'] = 'Drag & drop here a query attribute as the series\' grouping variable';
+Sbi.locale.ln['sbi.cockpit.widgets.seriesgroupingpanel.title'] = 'Series\' grouping variable';
+
+
 //column headers
 Sbi.locale.ln['sbi.qbe.selectgridpanel.headers.include'] = 'Includi';
 Sbi.locale.ln['sbi.qbe.selectgridpanel.headers.having'] = 'Condizione su raggruppamento';

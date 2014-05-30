@@ -384,7 +384,7 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.WidgetRuntime, {
 		var unselectedDatasetLabel = wizardState.unselectedDatasetLabel;
 		delete wizardState.selectedDatasetLabel;
 		delete wizardState.unselectedDatasetLabel;
-		    			
+		  
 		component.setWidgetConfiguration( wizardState );
 		var widget = component.getWidget();
 		this.getWidgetManager().register(widget);
@@ -710,10 +710,8 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.WidgetRuntime, {
 		
 		cloneConf.wlayout.region.x += 5;
 		cloneConf.wlayout.region.y += 5;
-		
-		alert(Sbi.toSource(cloneConf));		
+			
 		this.addWidget(cloneConf);
-		alert(Sbi.toSource(this.getConfiguration()));
     }
        
     // -----------------------------------------------------------------------------------------------------------------
