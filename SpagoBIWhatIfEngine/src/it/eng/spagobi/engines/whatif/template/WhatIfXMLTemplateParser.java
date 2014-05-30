@@ -11,6 +11,8 @@ import it.eng.spagobi.tools.datasource.bo.DataSource;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
+import it.eng.spagobi.writeback4j.SbiAlias;
+import it.eng.spagobi.writeback4j.SbiAliases;
 import it.eng.spagobi.writeback4j.SbiScenario;
 import it.eng.spagobi.writeback4j.SbiScenarioVariable;
 import it.eng.spagobi.writeback4j.WriteBackEditConfig;
@@ -31,6 +33,7 @@ public class WhatIfXMLTemplateParser implements IWhatIfTemplateParser {
 	public static String TAG_CUBE = "CUBE";
 	public static String TAG_WRITEBACK = "CUBE";
 	public static String TAG_SCENARIO = "SCENARIO";
+	public static String TAG_ALIASES = "ALIASES";
 	public static String TAG_MDX_QUERY = "MDXquery";
 	public static String TAG_PARAMETER = "parameter";
 	public static String TAG_MDX_MONDRIAN_QUERY = "MDXMondrianQuery";
@@ -42,9 +45,12 @@ public class WhatIfXMLTemplateParser implements IWhatIfTemplateParser {
 	public static String PROP_PARAMETER_ALIAS = "as";
 	public static String SCENARIO_VARIABLES_TAG = "SCENARIO_VARIABLES";
 	public static String VARIABLE_TAG = "VARIABLE";
+	public static String DIMENSION_TAG = "DIMENSION";
+	public static String HIERARCHY_TAG = "HIERARCHY";
 	public static String NAME_TAG = "name";
 	public static String VALUE_TAG = "value";
 	public static String TYPE_TAG = "type";
+	public static String ALIAS_TAG = "alias";
 	public static String TAG_DATA_ACCESS = "DATA-ACCESS";
 	public static String TAG_USER_ATTRIBUTE = "ATTRIBUTE";
 	public static String PROP_USER_ATTRIBUTE_NAME = "name";
@@ -103,6 +109,10 @@ public class WhatIfXMLTemplateParser implements IWhatIfTemplateParser {
 			//add the scenario (writeback config & variables)
 			SbiScenario scenario = initScenario(template);
 			toReturn.setScenario(scenario);
+			
+			//add the model aliases
+			SbiAliases aliases = initAliases(template);
+			toReturn.setAliases(aliases);
 
 			//init the toolbar config
 			initToolbar(template, toReturn);
@@ -223,6 +233,24 @@ public class WhatIfXMLTemplateParser implements IWhatIfTemplateParser {
 		}
 		return null;
 	}
+	
+	public static SbiAliases initAliases(SourceBean template){
+		logger.debug("IN. loading the aliases for the what-if model");
+		SourceBean aliasesSB = (SourceBean) template.getAttribute(TAG_ALIASES);
+		if(aliasesSB!=null){
+			logger.debug(TAG_ALIASES + ": " + aliasesSB);
+			SbiAliases aliases = new SbiAliases();
+
+			initModelAliases(aliasesSB, aliases);
+
+			logger.debug("Aliases successfully loaded");
+			return aliases;
+
+		}else{
+			logger.debug(TAG_SCENARIO + ": no write back configuration found in the template");
+		}
+		return null;
+	}
 
 	private static void initWriteBackConf(SourceBean scenarioSB, SbiScenario scenario){
 		logger.debug("IN. loading the writeback config");
@@ -263,6 +291,34 @@ public class WhatIfXMLTemplateParser implements IWhatIfTemplateParser {
 		scenario.setVariables(variables);
 		logger.debug("OUT. loaded "+variables.size()+" scenario variables");
 	}
+	
+	private static void initModelAliases(SourceBean aliasesSB,  SbiAliases aliases){
+		logger.debug("IN. loading the aliases");
+		List<SbiAlias> aliasesFound = new ArrayList<SbiAlias>();
+
+		List<SourceBean> aliasesBeans = (List<SourceBean>)aliasesSB.getAttributeAsList(DIMENSION_TAG);
+		if(aliasesBeans!=null && aliasesBeans.size()>0 ){
+			for(int i=0; i<aliasesBeans.size(); i++){
+				String name = (String)aliasesBeans.get(i).getAttribute(NAME_TAG);
+				String alias = (String)aliasesBeans.get(i).getAttribute(ALIAS_TAG);
+				String type = DIMENSION_TAG;
+				aliasesFound.add(new SbiAlias(name, alias, type));
+			}
+		}
+		
+		aliasesBeans = (List<SourceBean>)aliasesSB.getAttributeAsList(HIERARCHY_TAG);
+		if(aliasesBeans!=null && aliasesBeans.size()>0 ){
+			for(int i=0; i<aliasesBeans.size(); i++){
+				String name = (String)aliasesBeans.get(i).getAttribute(NAME_TAG);
+				String alias = (String)aliasesBeans.get(i).getAttribute(ALIAS_TAG);
+				String type = HIERARCHY_TAG;
+				aliasesFound.add(new SbiAlias(name, alias, type));
+			}
+		}
+		
+		aliases.setAliases(aliasesFound);
+		logger.debug("OUT. loaded "+aliasesFound.size()+" aliases");
+	}	
 	
 	private static String getBeanValue(String tag, SourceBean bean){
 		String  field = null;

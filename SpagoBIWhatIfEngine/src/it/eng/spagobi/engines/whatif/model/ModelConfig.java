@@ -8,6 +8,7 @@
  */
 package it.eng.spagobi.engines.whatif.model;
 
+import it.eng.spagobi.writeback4j.SbiAliases;
 import it.eng.spagobi.writeback4j.SbiScenario;
 import it.eng.spagobi.writeback4j.SbiScenarioVariable;
 import it.eng.spagobi.writeback4j.WriteBackEditConfig;
@@ -31,6 +32,7 @@ public class ModelConfig implements Serializable {
 	private Boolean suppressEmpty;
 	private Integer actualVersion = null;
 	private SbiScenario scenario = null;
+	private SbiAliases aliases = null;
 	
 	private Integer artifactVersionId;
 	private String status;
@@ -178,6 +180,22 @@ public class ModelConfig implements Serializable {
 
 	public void setLocker(String locker) {
 		this.locker = locker;
+	}
+
+	/**
+	 * @return the aliases
+	 */
+	@JsonIgnore
+	public SbiAliases getAliases() {
+		return aliases;
+	}
+
+	/**
+	 * @param aliases the aliases to set
+	 */
+	@JsonIgnore
+	public void setAliases(SbiAliases aliases) {
+		this.aliases = aliases;
 	}
 	
 	

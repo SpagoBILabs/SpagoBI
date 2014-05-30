@@ -18,6 +18,7 @@ import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
 import it.eng.spagobi.pivot4j.mdx.MdxQueryExecutor;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
+import it.eng.spagobi.writeback4j.SbiAliases;
 
 
 import java.util.ArrayList;
@@ -192,7 +193,7 @@ public class CubeUtilities {
 	/**
 	 * Calculate the members value based on the passed expression 
 	 */
-	public static Double getMemberValue(LinkedList membersExpression, SpagoBICellWrapper cellWrapper, PivotModel pivotModel,OlapDataSource olapDataSource, Map<String,String> dimensionHierarchyMap) {
+	public static Double getMemberValue(LinkedList membersExpression, SpagoBICellWrapper cellWrapper, PivotModel pivotModel,OlapDataSource olapDataSource, Map<String,String> dimensionHierarchyMap, SbiAliases aliases) {
 		Double toReturn = null;
 		
 		//Members are the dimensional "coordinates" that identify the specific value inserted in the cell
@@ -211,7 +212,7 @@ public class CubeUtilities {
 				memberExpressionParts = memberExpression.split("\\.");
 			}
 			
-			boolean memberFound = searchMember(cellMembers, memberExpressionParts, dimensionHierarchyMap);
+			boolean memberFound = searchMember(cellMembers, memberExpressionParts, dimensionHierarchyMap, aliases);
 
 			if (!memberFound){
 				logger.error("ERROR: Cannot calculate Value, Member not found: "+memberExpression);
@@ -241,15 +242,38 @@ public class CubeUtilities {
 	 * Search if the specified member(s) currently exists, retrieve the corresponding object(s) and
 	 * insert it in the cellMembers array (with a substitution)
 	 */
-	private static boolean searchMember(Member[] cellMembers, String[] memberExpressionParts, Map<String,String> dimensionHierarchyMap){
+	private static boolean searchMember(Member[] cellMembers, String[] memberExpressionParts, Map<String,String> dimensionHierarchyMap, SbiAliases aliases){
 		boolean memberFound = false;
 		String memberExpressionDimension = memberExpressionParts[0];
 		boolean hierarchySpecified = false;
 		boolean searchByUniqueName = false;
 		
+		//search for aliases
+		if (aliases != null){
+			//Using an alias to refer to a dimension ?
+			String dimensionOriginalName = aliases.getDimensionNameFromAlias(memberExpressionDimension);
+			if(dimensionOriginalName != null){
+				//Use the original dimension name instead of the alias for the next steps
+				memberExpressionDimension = dimensionOriginalName;
+			}
+		}
+		
 		if(memberExpressionParts.length > 2){
+			String memberExpressionHierarchy = memberExpressionParts[1];
+			
+			//search for aliases
+			if (aliases != null){
+				//Using an alias to refer to a Hierarchy ?
+				String hierarchyOriginalName = aliases.getHierarchyNameFromAlias(memberExpressionHierarchy);
+				if(hierarchyOriginalName != null){
+					//Use the original hierarchy name instead of the alias for the next steps
+					memberExpressionHierarchy = hierarchyOriginalName;
+				}
+			}
+			
+			
 			//Notation with Hierarchy specified
-			memberExpressionDimension = memberExpressionDimension + "."+memberExpressionParts[1];
+			memberExpressionDimension = memberExpressionDimension + "."+memberExpressionHierarchy;
 			hierarchySpecified =  true;
 		}
 		
