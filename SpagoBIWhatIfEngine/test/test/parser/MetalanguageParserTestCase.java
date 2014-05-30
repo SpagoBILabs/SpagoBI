@@ -21,20 +21,44 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package test.parser;
 
+import java.io.File;
+
+import org.olap4j.OlapDataSource;
+
+import test.AbstractWhatIfTestCase;
+import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
+import it.eng.spagobi.engines.whatif.model.SpagoBICellSetWrapper;
+import it.eng.spagobi.engines.whatif.model.SpagoBICellWrapper;
+import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
 import it.eng.spagobi.engines.whatif.parser.Lexer;
 import it.eng.spagobi.engines.whatif.parser.parser;
+import it.eng.spagobi.pivot4j.mdx.MdxQueryExecutor;
 import junit.framework.TestCase;
 
 /**
  * @author Marco Cortella (marco.cortella@eng.it)
  *
  */
-public class MetalanguageParserTestCase extends TestCase {
+public class MetalanguageParserTestCase extends AbstractWhatIfTestCase {
 
 	parser parserIstance;
 	protected void setUp() throws Exception {
 		parserIstance = new parser();
 		parserIstance.setVerbose(true);
+		
+		WhatIfEngineInstance ei = getWhatifengineiEngineInstance(getCatalogue());
+		SpagoBIPivotModel pivotModel = (SpagoBIPivotModel)ei.getPivotModel();
+		OlapDataSource olapDataSource = ei.getOlapDataSource();		
+
+		//expand first level node
+		String mdx = "SELECT {[Measures].[Store Sales]} ON COLUMNS, Hierarchize(Union({[Product].[Food]}, [Product].[Food].Children)) ON ROWS FROM [Sales_V] WHERE CrossJoin([Version].[0], [Region].[Mexico Central])";
+		
+		pivotModel.setMdx(mdx);
+		
+		SpagoBICellSetWrapper cellSetWrapper = (SpagoBICellSetWrapper)pivotModel.getCellSet();
+		SpagoBICellWrapper cellWrapper = (SpagoBICellWrapper) cellSetWrapper.getCell(6);
+		
+		parserIstance.setWhatIfInfo(cellWrapper, pivotModel, olapDataSource, ei);
 	}
 	
 	public void testSetSimpleValue(){
@@ -88,7 +112,7 @@ public class MetalanguageParserTestCase extends TestCase {
 	public void testSetMember(){
 		boolean noException = true;
 		
-    	String expression ="Measures.Total";
+    	String expression ="Product.Eggs";
 		Lexer lexerInstance = new Lexer(new java.io.StringReader(expression));
 		lexerInstance.setVerbose(true);
 		parserIstance.setScanner(lexerInstance);
@@ -104,7 +128,7 @@ public class MetalanguageParserTestCase extends TestCase {
 	public void testSetMultipleMember(){
 		boolean noException = true;
 		
-    	String expression ="Measures.Total;Time.2013";
+    	String expression ="Product.Eggs;Measures.Unit Sales";
 		Lexer lexerInstance = new Lexer(new java.io.StringReader(expression));
 		lexerInstance.setVerbose(true);
 		parserIstance.setScanner(lexerInstance);
@@ -120,7 +144,7 @@ public class MetalanguageParserTestCase extends TestCase {
 	public void testSetMultipleMemberWithAmbiguity(){
 		boolean noException = true;
 		
-    	String expression ="Measures.Total;[2013].[1]";
+    	String expression ="Measures.Unit Sales;[Product].[Eggs]";
 		Lexer lexerInstance = new Lexer(new java.io.StringReader(expression));
 		lexerInstance.setVerbose(true);
 		parserIstance.setScanner(lexerInstance);
@@ -148,10 +172,7 @@ public class MetalanguageParserTestCase extends TestCase {
 	}
 	
 	public void testSetVariable(){
-		/*
-		 * TODO: al momento le variabili vengono tutte valorizzate a 50
-		 */
-    	String expression ="MyVariable";
+    	String expression ="var";
 		Lexer lexerInstance = new Lexer(new java.io.StringReader(expression));
 		lexerInstance.setVerbose(true);
 		parserIstance.setScanner(lexerInstance);
@@ -160,14 +181,11 @@ public class MetalanguageParserTestCase extends TestCase {
 			result = parserIstance.parse().value;
 		} catch (Exception e) {
 		}
-		assertEquals(result, 50.0);
+		assertEquals(result, 5.0);
 	}
 	
 	public void testSetVariablePercent(){
-		/*
-		 * TODO: al momento le variabili vengono tutte valorizzate a 50
-		 */
-    	String expression ="MyVariable+10%";
+    	String expression ="var+10%";
 		Lexer lexerInstance = new Lexer(new java.io.StringReader(expression));
 		lexerInstance.setVerbose(true);
 		parserIstance.setScanner(lexerInstance);
@@ -176,11 +194,11 @@ public class MetalanguageParserTestCase extends TestCase {
 			result = parserIstance.parse().value;
 		} catch (Exception e) {
 		}
-		assertEquals(result, 55.0);
+		assertEquals(result, 5.5);
 	}
 	
 	public void testSetDecimalNumbersExpression(){
-    	String expression ="5,7+1.3+[1].[1]";
+    	String expression ="5,7+1.3";
 		Lexer lexerInstance = new Lexer(new java.io.StringReader(expression));
 		lexerInstance.setVerbose(true);
 		parserIstance.setScanner(lexerInstance);
@@ -189,11 +207,11 @@ public class MetalanguageParserTestCase extends TestCase {
 			result = parserIstance.parse().value;
 		} catch (Exception e) {
 		}
-		assertFalse(result.equals(8.1));
+		assertFalse(result.equals(7));
 	}
 	
 	public void testSetEqualExpression(){
-    	String expression ="=5,7+1.3+[1].[1]";
+    	String expression ="=5,7+1.3";
 		Lexer lexerInstance = new Lexer(new java.io.StringReader(expression));
 		lexerInstance.setVerbose(true);
 		parserIstance.setScanner(lexerInstance);
@@ -202,11 +220,11 @@ public class MetalanguageParserTestCase extends TestCase {
 			result = parserIstance.parse().value;
 		} catch (Exception e) {
 		}
-		assertFalse(result.equals(8.1));
+		assertFalse(result.equals(7));
 	}
 	
 	public void testSetVariablesExpression(){
-    	String expression ="pippo+5*(6-3)+1+VARIABILE";
+    	String expression ="var+5*(6-3)+1+var";
 		Lexer lexerInstance = new Lexer(new java.io.StringReader(expression));
 		lexerInstance.setVerbose(true);
 		parserIstance.setScanner(lexerInstance);
@@ -215,13 +233,13 @@ public class MetalanguageParserTestCase extends TestCase {
 			result = parserIstance.parse().value;
 		} catch (Exception e) {
 		}
-		assertEquals(result,116.0);
+		assertEquals(result,26.0);
 	}
 	
 	public void testSetVariableMember(){
 		boolean noException = true;
 		
-    	String expression ="Measures.Total*variab";
+    	String expression ="Measures.Unit Sales*var";
 		Lexer lexerInstance = new Lexer(new java.io.StringReader(expression));
 		lexerInstance.setVerbose(true);
 		parserIstance.setScanner(lexerInstance);
@@ -238,7 +256,7 @@ public class MetalanguageParserTestCase extends TestCase {
 	public void testSetMemberAdd(){
 		boolean noException = true;
 		
-    	String expression ="Measures.Total+100";
+    	String expression ="Measures.Store Sales+100";
 		Lexer lexerInstance = new Lexer(new java.io.StringReader(expression));
 		lexerInstance.setVerbose(true);
 		parserIstance.setScanner(lexerInstance);
@@ -254,7 +272,7 @@ public class MetalanguageParserTestCase extends TestCase {
 	public void testSetMemberPercent(){
 		boolean noException = true;
 		
-    	String expression ="Measures.Total+4%";
+    	String expression ="Measures.Store Sales+4%";
 		Lexer lexerInstance = new Lexer(new java.io.StringReader(expression));
 		lexerInstance.setVerbose(true);
 		parserIstance.setScanner(lexerInstance);
@@ -270,7 +288,7 @@ public class MetalanguageParserTestCase extends TestCase {
 	public void testSetExpressionMemberVariable(){
 		boolean noException = true;
 		
-    	String expression ="Measures.Total-X+100";
+    	String expression ="Measures.Store Sales-var+100";
 		Lexer lexerInstance = new Lexer(new java.io.StringReader(expression));
 		lexerInstance.setVerbose(true);
 		parserIstance.setScanner(lexerInstance);
@@ -286,7 +304,7 @@ public class MetalanguageParserTestCase extends TestCase {
 	public void testSetExpressionParentheses(){
 		boolean noException = true;
 		
-    	String expression ="((X*2)-10)+2";
+    	String expression ="((var*2)-10)+2";
 		Lexer lexerInstance = new Lexer(new java.io.StringReader(expression));
 		lexerInstance.setVerbose(true);
 		parserIstance.setScanner(lexerInstance);
@@ -296,13 +314,13 @@ public class MetalanguageParserTestCase extends TestCase {
 		} catch (Exception e) {
 			noException = false;
 		}
-		assertEquals(result,92.0);
+		assertEquals(result,2.0);
 	}
 	
 	public void testSetMultipleMembersAdd(){
 		boolean noException = true;
 		
-    	String expression ="Measures.total;Year.2012;Account.1+100";
+    	String expression ="Measures.Store Sales;Product.Eggs+100";
 		Lexer lexerInstance = new Lexer(new java.io.StringReader(expression));
 		lexerInstance.setVerbose(true);
 		parserIstance.setScanner(lexerInstance);
@@ -318,7 +336,7 @@ public class MetalanguageParserTestCase extends TestCase {
 	public void testSetMemberWithSpace(){
 		boolean noException = true;
 		
-    	String expression ="Measures.total sales;Year.2012;Product.Food.Canned foods+100";
+    	String expression ="Measures.Store Sales;Product.Canned Foods+100";
 		Lexer lexerInstance = new Lexer(new java.io.StringReader(expression));
 		lexerInstance.setVerbose(true);
 		parserIstance.setScanner(lexerInstance);
@@ -331,7 +349,16 @@ public class MetalanguageParserTestCase extends TestCase {
 		assertEquals(noException, true);
 	}
 	
+	//--- Utility functions ---------------------------------------------------------------
 	
+	public String getCatalogue(){
+		
+        File userDir = new File("").getAbsoluteFile();
+        File f  = new File(userDir,  "\\test\\test\\writeback\\resources\\FoodMartMySQL.xml");
+		return f.getAbsolutePath();
+	}
+
+	//-------------------------------------------------------------------------------------
 	
 
 	protected void tearDown() throws Exception {
