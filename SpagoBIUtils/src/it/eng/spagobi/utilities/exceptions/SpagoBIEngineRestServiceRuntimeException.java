@@ -24,13 +24,16 @@ public class SpagoBIEngineRestServiceRuntimeException extends SpagoBIRuntimeExce
 	private static final long serialVersionUID = 7238971352468593356L;
 
     
-    /**
-     * Builds a <code>SpagoBIRuntimeException</code>.
-     * @param localizationCode the error code for localization
-     * @param serviceName the name of the service
-     * @param message Text of the exception
-     * @param ex previous Throwable object
-     */
+	/**
+	 * Builds a <code>SpagoBIEngineRestServiceException</code>.
+	 * @param locale the locale
+	 * @param ex the parent exception
+	 */
+    public SpagoBIEngineRestServiceRuntimeException( Locale locale, Throwable ex) {
+    	super( ex) ;
+    	this.locale = locale;
+    }
+	
 	
 	/**
 	 * Builds a <code>SpagoBIEngineRestServiceException</code>.
