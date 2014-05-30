@@ -7,6 +7,7 @@ package it.eng.spagobi.engines.whatif.template;
 
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanAttribute;
+import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.tools.datasource.bo.DataSource;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
@@ -62,6 +63,7 @@ public class WhatIfXMLTemplateParser implements IWhatIfTemplateParser {
 	public static final String TAG_STAND_ALONE = "STANDALONE";
 	public static final String TAG_USR = "USR";
 	public static final String TAG_PWD = "PWD";
+	public static final String TAG_JNDI_NAME = "JNDI_NAME";
 	public static final String TAG_CATALOG = "CATALOG";
 	public static final String TAG_MDX = "MDX";
 	public static final String TAG_CONNECTIONSTRING = "CONNECTIONSTRING";
@@ -342,12 +344,16 @@ public class WhatIfXMLTemplateParser implements IWhatIfTemplateParser {
 			IDataSource ds = new DataSource();
 			ds.setLabel(STAD_ALONE_DS_LABEL);
 			SourceBean connectionProperties = (SourceBean) standAloneSB.getAttribute(TAG_CONNECTION);
-			ds.setPwd(getBeanValue(TAG_PWD, connectionProperties));
-			ds.setUser(getBeanValue(TAG_USR, connectionProperties));
+			String jndiName = getBeanValue(TAG_JNDI_NAME, connectionProperties);
+			if (StringUtilities.isNotEmpty(jndiName)) {
+				ds.setJndi(getBeanValue(TAG_JNDI_NAME, connectionProperties));
+			} else {
+				ds.setPwd(getBeanValue(TAG_PWD, connectionProperties));
+				ds.setUser(getBeanValue(TAG_USR, connectionProperties));
+				ds.setUrlConnection(getBeanValue(TAG_CONNECTIONSTRING, connectionProperties));
+				ds.setDriver(getBeanValue(TAG_DRIVER, connectionProperties));
+			}
 			String catalog = getBeanValue(TAG_CATALOG, connectionProperties);
-			ds.setUrlConnection(getBeanValue(TAG_CONNECTIONSTRING, connectionProperties));
-			ds.setDriver(getBeanValue(TAG_DRIVER, connectionProperties));
-			
 			toReturn.setStandAloneConnection(ds);
 			toReturn.setMondrianSchema(catalog);
 		}else{
