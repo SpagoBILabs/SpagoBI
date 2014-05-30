@@ -99,7 +99,7 @@ author:...
     	var isStandalone = <%=whatIfEngineInstance.isStandalone()%>;
 
     	
-    	<% if(!isStandalone){ %>
+    	<% if(!whatIfEngineInstance.isStandalone()){ %>
     		
     	
 		var urlSettings = {
