@@ -652,6 +652,8 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.WidgetRuntime, {
 			this.onShowWidgetEditorWizard(component);
 		} else if(action === 'showConfiguration') {
 			this.onShowWidgetConfiguration(component);
+		} else if (action === 'cloneWidget') {
+			this.onWidgetClone(component);			
 		} else {
 			Sbi.warn("[WidgetContainer.onComponentAction]: action [" + action + "] not recognized");
 		}
@@ -701,6 +703,18 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.WidgetRuntime, {
 		this.hideWidgetEditorWizard();
 		Sbi.trace("[WidgetContainer.onWidgetEditorWizardCancel]: OUT");
 	}
+    
+    , onWidgetClone: function (component){
+    	var widget = component.getWidget();
+		var cloneConf = widget.getConfiguration();
+		
+		cloneConf.wlayout.region.x += 5;
+		cloneConf.wlayout.region.y += 5;
+		
+		alert(Sbi.toSource(cloneConf));		
+		this.addWidget(cloneConf);
+		alert(Sbi.toSource(this.getConfiguration()));
+    }
        
     // -----------------------------------------------------------------------------------------------------------------
     // init methods
