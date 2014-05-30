@@ -58,7 +58,7 @@ public class WhatIfEngineInstance extends AbstractEngineInstance implements Seri
 	private ModelConfig modelConfig;
 	private String mondrianSchemaFilePath;
 	private WriteBackManager writeBackManager;
-
+	private boolean standalone = false;
 	
 	protected WhatIfEngineInstance(Object template, Map env) {
 		this( WhatIfTemplateParser.getInstance() != null ? WhatIfTemplateParser.getInstance().parse(template) : null, env );
@@ -164,6 +164,8 @@ public class WhatIfEngineInstance extends AbstractEngineInstance implements Seri
 				
 			}
 		}
+		
+		standalone = template.isStandAlone();
 		
 		logger.debug("OUT");
 	}
@@ -334,5 +336,15 @@ public class WhatIfEngineInstance extends AbstractEngineInstance implements Seri
 	public Object getVariableValue(String variableName) {
 		return modelConfig.getVariableValue(variableName);
 	}
+
+	public boolean isStandalone() {
+		return standalone;
+	}
+
+	public void setStandalone(boolean standalone) {
+		this.standalone = standalone;
+	}
+	
+	
 
 }
