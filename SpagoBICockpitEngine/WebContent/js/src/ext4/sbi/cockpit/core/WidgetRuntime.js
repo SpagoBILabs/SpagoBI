@@ -154,10 +154,13 @@ Ext.extend(Sbi.cockpit.core.WidgetRuntime, Ext.Panel, {
 	 * @param {Object} config.wconf The custom configuration of the widget. Its content depends on the widget's #wtype.
 	 * @param {Object} config.wstyle The style configuration of the widget. Its content depends on the widget's #wtype.
 	 * @param {Object} config.wlayout The layout configuration of the widget. Its content depends on the widget's #parentContainer
-	 * @param {boolean} refresh true to force the refresh of the widget after after the the configuration is set, false otherwise. The default is true.
+	 * @param {boolean} refresh true to force the refresh of the widget after  the configuration is set, false otherwise. The default is true.
 	 */
 	, setConfiguration: function(config, refresh) {
 		Sbi.trace("[WidgetRuntime.setConfiguration]: IN");
+		
+		
+		alert("setConfiguration: " + Sbi.toSource(config));
 		
 		this.setStoreId(config.storeId, false);
 		this.setWType(config.wtype, false);
@@ -368,6 +371,8 @@ Ext.extend(Sbi.cockpit.core.WidgetRuntime, Ext.Panel, {
 	 * @param {boolean} refresh true to force the refresh after the setting of the property, false otherwise. The default is true.
 	 */
 	, setCustomConfiguration: function(wconf, refresh) {
+		alert("setCustomConfiguration: " + Sbi.toSource(wconf));
+		
 		if(Sbi.isValorized(wconf)) {
 			this.wconf = wconf;
 			Sbi.trace("[WidgetRuntime.setCustomConfiguration]: wconf set to [" + Sbi.toSource(wconf) + "]");

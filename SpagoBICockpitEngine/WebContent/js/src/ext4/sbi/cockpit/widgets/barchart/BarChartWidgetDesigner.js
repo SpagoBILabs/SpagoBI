@@ -45,14 +45,7 @@ Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner = function(config) {
 		this.on(
 				'beforerender' , 
 				function (thePanel, attribute) { 
-					var state = {};
-//					if (state.type) this.typeRadioGroup.setValue(state.type);
-//					if (state.orientation) this.orientationCombo.setValue(state.orientation);
-//					if (state.showvalues) this.showValuesCheck.setValue(state.showvalues);
-//					if (state.showlegend) this.showLegendCheck.setValue(state.showlegend);
-//					if (state.category) this.categoryContainerPanel.setCategory(state.category);
-//					if (state.groupingVariable) this.seriesGroupingPanel.setSeriesGroupingAttribute(state.groupingVariable);
-//					if (state.series) this.seriesContainerPanel.setMeasures(state.series);					
+					var state = {};			
 					state.type = thePanel.type;
 					state.orientation = thePanel.orientation;
 					state.showvalues = thePanel.showvalues;

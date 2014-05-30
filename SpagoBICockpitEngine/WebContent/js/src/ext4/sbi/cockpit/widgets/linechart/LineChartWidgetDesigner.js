@@ -34,7 +34,7 @@ Ext.define('Sbi.cockpit.widgets.linechart.LineChartWidgetDesigner', {
 
 	, constructor : function(config) {
 		Sbi.trace("[PieChartWidgetDesigner.constructor]: IN");
-		
+				
 		this.initConfig(config);
 		//this.chartLib.toLowerCase();
 		
@@ -58,7 +58,6 @@ Ext.define('Sbi.cockpit.widgets.linechart.LineChartWidgetDesigner', {
 	//-----------------------------------------------------------------------------------------------------------------
 	
 	, getDesignerState: function() {
-		alert("[LineChartWidgetDesigner.getDesignerState]: IN");
 		Sbi.trace("[LineChartWidgetDesigner.getDesignerState]: IN");
 		Sbi.trace("[LineChartWidgetDesigner.getDesignerState]: " + Sbi.cockpit.widgets.piechart.PieChartWidgetDesigner.superclass.getDesignerState);
 		var state = Sbi.cockpit.widgets.piechart.PieChartWidgetDesigner.superclass.getDesignerState(this);
@@ -72,33 +71,26 @@ Ext.define('Sbi.cockpit.widgets.linechart.LineChartWidgetDesigner', {
 		state.category = this.categoryContainerPanel.getCategory();
 		state.groupingVariable = this.seriesGroupingPanel.getSeriesGroupingAttribute();
 		state.series = this.seriesContainerPanel.getContainedMeasures();
-		Sbi.trace("[PieChartWidgetDesigner.getDesignerState]: OUT");
+		Sbi.trace("[LineChartWidgetDesigner.getDesignerState]: OUT");
 		
 		return state;
 	}
 	
 	, setDesignerState: function(state) {
-		Sbi.trace("[LineChartWidgetDesigner.setDesignerState]: IN");
-		this.typeRadioGroup.suspendEvents();  // work-around, workaround, see note below
-		this.colorAreaCheck.suspendEvents();  // work-around, workaround, see note below
-		if (state.type) this.typeRadioGroup.setValue(state.type);
+		Sbi.trace("[LineChartWidgetDesigner.setDesignerState]" + Sbi.toSource(state));
+		
+		if (state.type) this.typeRadioGroup.setValue({type: state.type});
 		if (state.colorarea) this.colorAreaCheck.setValue(state.colorarea);
 		if (state.showvalues) this.showValuesCheck.setValue(state.showvalues);
 		if (state.showlegend) this.showLegendCheck.setValue(state.showlegend);
 		if (state.category) this.categoryContainerPanel.setCategory(state.category);
 		if (state.groupingVariable) this.seriesGroupingPanel.setSeriesGroupingAttribute(state.groupingVariable);
 		if (state.series) this.seriesContainerPanel.setMeasures(state.series);
-		this.typeRadioGroup.resumeEvents();  // work-around, workaround, see note below
-		this.colorAreaCheck.suspendEvents(); // work-around, workaround, see note below
-		if (this.rendered) {                 // work-around, workaround, see note below
-			this.changeLineChartImage.defer(200, this);// work-around, workaround, see note below
-		}                                    // work-around, workaround, see note below
-		/*
-		 * when setting value to this.typeRadioGroup and this.colorAreaCheck, the 'change' event is raised
-		 * and the changeLineChartImage is invoked, but it does not work properly (this.typeRadioGroup.getValue() 
-		 * is null or the this.imageContainerPanel.update(newHtml) instruction does not work).
-		 * Suspending the events and deferring the this.changeLineChartImage solve the issue.
-		 */
+		
+		if (this.rendered) {                 
+			this.changeLineChartImage();
+		}  
+
 		Sbi.trace("[LineChartWidgetDesigner.setDesignerState]: OUT");
 	}
 	
@@ -376,6 +368,20 @@ Ext.define('Sbi.cockpit.widgets.linechart.LineChartWidgetDesigner', {
 		if(Ext.isIE){
 			this.on('resize', function(a,b,c,d){try{ this.form.setWidth(b-40);}catch(r){}}, this);
 		}
+		
+		this.on('beforerender' , function (thePanel, attribute) { 
+			var state = {};			
+			state.type = thePanel.type;
+			state.colorarea = thePanel.colorarea;
+			state.showvalues = thePanel.showvalues;
+			state.showlegend = thePanel.showpercentage;
+			
+			state.category = thePanel.category;
+			state.groupingVariable = thePanel.groupingVariable;
+			state.series = thePanel.series;
+			
+			this.setDesignerState(state);
+		}, this);
 		
 		this.on('afterLayout', this.addToolTips, this);
 		this.categoryContainerPanel.on(	'beforeAddAttribute', this.checkIfAttributeIsAlreadyPresent, this);

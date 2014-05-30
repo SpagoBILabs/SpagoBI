@@ -10,9 +10,9 @@ Ext.ns("Sbi.cockpit.widgets.chart");
 Sbi.cockpit.widgets.chart.SeriesGroupingPanel = function(config) { 
 
 	var defaultSettings = {
-		title: LN('sbi.worksheet.designer.seriesgroupingpanel.title')
+		title: LN('sbi.cockpit.widgets.seriesgroupingpanel.title')
 		, frame: true
-		, emptyMsg: LN('sbi.worksheet.designer.seriesgroupingpanel.emptymsg')
+		, emptyMsg: LN('sbi.cockpit.widgets.seriesgroupingpanel.emptymsg')
 	};
 		
 	if (Sbi.settings && Sbi.settings.cockpit && Sbi.settings.cockpit.widgets && Sbi.settings.cockpit.widgets.chart && Sbi.settings.cockpit.widgets.chart.seriesGroupingPanel) {
