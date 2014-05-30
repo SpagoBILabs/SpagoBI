@@ -389,12 +389,19 @@ Ext.extend(Sbi.cockpit.widgets.chart.AbstractChartWidget, Sbi.cockpit.core.Widge
 	}
 	
 	, maximize: function(){
-		Sbi.trace("[AbstractChartWidget.maximize]: Ext.window.Window.maximize method overriden has been called");
-		this.refresh();
+		Sbi.trace("[AbstractChartWidget.maximize]: Ext.window.Window.maximize method overriden has been called");		
+		this.redraw();
 	} 
+	
 	, restore: function() {
 		Sbi.trace("[AbstractChartWidget.restore]: Ext.window.Window.restore method overriden has been called");
-		this.refresh();
+		this.redraw();
+	}
+	
+	, resize: function() {
+		Sbi.trace("[AbstractChartWidget.resize]: Ext.window.Window.resize method overriden has been called");
+		alert("resizing");
+		this.redraw();
 	}
 	
 
