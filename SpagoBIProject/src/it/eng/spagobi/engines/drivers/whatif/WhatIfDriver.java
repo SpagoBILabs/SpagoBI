@@ -141,7 +141,7 @@ public class WhatIfDriver extends GenericDriver {
 		Boolean locked = artifact.getModelLocked();
 		String locker = artifact.getModelLocker();
 
-		if(locked==false){
+		if( locked==null || locked==false){
 			logger.debug("Artifact with id "+artifactId+" is unlocked");
 			statusToReturn=SpagoBIConstants.SBI_ARTIFACT_VALUE_UNLOCKED;
 		}
