@@ -20,9 +20,9 @@ public class SbiArtifact extends SbiHibernateModel {
 	
 	private String type;
 	
-    private Boolean locked;
+    private Boolean modelLocked;
 
-	private String locker;
+	private String modelLocker;
 	
 	// Constructors
 
@@ -65,21 +65,23 @@ public class SbiArtifact extends SbiHibernateModel {
 		this.type = type;
 	}
 
-	public Boolean getLocked() {
-		return locked;
+	public Boolean getModelLocked() {
+		return modelLocked;
 	}
 
-	public void setLocked(Boolean locked) {
-		this.locked = locked;
+	public void setModelLocked(Boolean modelLocked) {
+		this.modelLocked = modelLocked;
 	}
 
-	public String getLocker() {
-		return locker;
+	public String getModelLocker() {
+		return modelLocker;
 	}
 
-	public void setLocker(String locker) {
-		this.locker = locker;
+	public void setModelLocker(String modelLocker) {
+		this.modelLocker = modelLocker;
 	}
+
+
 
 	
 	

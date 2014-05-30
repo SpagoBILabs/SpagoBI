@@ -17,9 +17,9 @@ public class Artifact {
 	
 	private String type;
 
-	private Boolean locked;
+	private Boolean modelLocked;
 
-	private String locker;
+	private String modelLocker;
 	
 	
 	public Integer getId() {
@@ -62,20 +62,22 @@ public class Artifact {
 		this.currentContentId = currentContentId;
 	}
 	
-	public Boolean getLocked() {
-		return locked;
+
+
+	public Boolean getModelLocked() {
+		return modelLocked;
 	}
 
-	public void setLocked(Boolean locked) {
-		this.locked = locked;
+	public void setModelLocked(Boolean modelLocked) {
+		this.modelLocked = modelLocked;
 	}
 
-	public String getLocker() {
-		return locker;
+	public String getModelLocker() {
+		return modelLocker;
 	}
 
-	public void setLocker(String locker) {
-		this.locker = locker;
+	public void setModelLocker(String modelLocker) {
+		this.modelLocker = modelLocker;
 	}
 
 	@Override

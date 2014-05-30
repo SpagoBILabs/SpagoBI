@@ -199,8 +199,8 @@ public class ArtifactsDAOImpl extends AbstractHibernateDAO implements IArtifacts
 			hibArtifact.setName(artifact.getName());
 			hibArtifact.setDescription(artifact.getDescription());
 			hibArtifact.setType(artifact.getType());
-			hibArtifact.setLocker(artifact.getLocker());
-			hibArtifact.setLocked(artifact.getLocked());
+			hibArtifact.setModelLocker(artifact.getModelLocker());
+			hibArtifact.setModelLocked(artifact.getModelLocked());
 			
 			updateSbiCommonInfo4Update(hibArtifact);
 			session.save(hibArtifact);
@@ -323,8 +323,8 @@ public class ArtifactsDAOImpl extends AbstractHibernateDAO implements IArtifacts
 			toReturn.setName(hibArtifact.getName());
 			toReturn.setDescription(hibArtifact.getDescription());
 			toReturn.setType(hibArtifact.getType());
-			toReturn.setLocked(hibArtifact.getLocked());
-			toReturn.setLocker(hibArtifact.getLocker());
+			toReturn.setModelLocked(hibArtifact.getModelLocked());
+			toReturn.setModelLocker(hibArtifact.getModelLocker());
 			
 			// get the current (active) Content id
 			Query query = session.createQuery("select mmc.id from SbiArtifactContent mmc where mmc.artifact.id = ? and mmc.active = true ");
@@ -709,7 +709,7 @@ public class ArtifactsDAOImpl extends AbstractHibernateDAO implements IArtifacts
 			}
 			
 			// set to not active the current active template
-			String hql = " update SbiArtifact ar set ar.locked = ?, ar.locker = ? where (ar.locked = ? OR ar.locked is null)  and ar.id = ? ";
+			String hql = " update SbiArtifact ar set ar.modelLocked = ?, ar.modelLocker = ? where (ar.modelLocked = ? OR ar.modelLocked is null)  and ar.id = ? ";
 			Query query = session.createQuery(hql);
 			query.setBoolean(0, true); 
 			query.setString(1, userId); 
@@ -725,13 +725,13 @@ public class ArtifactsDAOImpl extends AbstractHibernateDAO implements IArtifacts
 			logger.debug("Artifact loaded");
 			Artifact art = toArtifact(hibArtifact, session);
 			
-			userBlocking = art.getLocker();
-			if(art.getLocker() != null && art.getLocker().equals(userId)){
+			userBlocking = art.getModelLocker();
+			if(art.getModelLocker() != null && art.getModelLocker().equals(userId)){
 				logger.debug("Model was locked by current user");
 			
 			}
 			else{
-				logger.warn("Model was already blocked by user "+art.getLocker());
+				logger.warn("Model was already blocked by user "+art.getModelLocker());
 			}
 			
 		
@@ -792,9 +792,9 @@ public class ArtifactsDAOImpl extends AbstractHibernateDAO implements IArtifacts
 				logger.debug("Artifact loaded");
 				Artifact art = toArtifact(hibArtifact, session);
 				
-				if(art.getLocked().equals(true) && art.getLocker().equals(userId)){
+				if(art.getModelLocked().equals(true) && art.getModelLocker().equals(userId)){
 					// set to not active the current active template
-					String hql = " update SbiArtifact ar set ar.locked = ?, ar.locker = ? where ar.locked = ?  and ar.id = ? ";
+					String hql = " update SbiArtifact ar set ar.modelLocked = ?, ar.modelLocker = ? where ar.modelLocked = ?  and ar.id = ? ";
 					Query query = session.createQuery(hql);
 					query.setBoolean(0, false); 
 					query.setString(1, null); 
@@ -809,8 +809,8 @@ public class ArtifactsDAOImpl extends AbstractHibernateDAO implements IArtifacts
 					
 				}
 				else{
-					logger.warn("Could not unlock model because it is locked by another user than current one: "+art.getLocker());
-					userLocking = art.getLocker();
+					logger.warn("Could not unlock model because it is locked by another user than current one: "+art.getModelLocker());
+					userLocking = art.getModelLocker();
 				}
 
 			} catch (Throwable t) {
@@ -849,8 +849,8 @@ public class ArtifactsDAOImpl extends AbstractHibernateDAO implements IArtifacts
 			throw new SpagoBIDOAException("Artifact with id [" + artifactId + "] could not be loaded");	
 		}
 		else{
-			Boolean locked = art.getLocked();
-			String locker = art.getLocker();
+			Boolean locked = art.getModelLocked();
+			String locker = art.getModelLocker();
 
 			if(locked==false){
 				logger.debug("Artifact with id "+artifactId+" is unlocked");
