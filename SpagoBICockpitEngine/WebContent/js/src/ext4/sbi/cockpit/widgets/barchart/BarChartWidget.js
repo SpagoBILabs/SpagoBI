@@ -45,6 +45,11 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidget, Sbi.cockpit.widgets.char
     // public methods
 	// -----------------------------------------------------------------------------------------------------------------
 
+	, redraw: function() {
+		Sbi.trace("[BarChartWidget.redraw]: IN");		
+		this.createChart();	
+		Sbi.trace("[BarChartWidget.redraw]: OUT");
+	}
 
     , refresh:  function() {  
     	Sbi.trace("[BarChartWidget.refresh]: IN");

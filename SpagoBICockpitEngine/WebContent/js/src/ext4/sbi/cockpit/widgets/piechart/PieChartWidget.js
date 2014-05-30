@@ -41,8 +41,14 @@ Ext.define('Sbi.cockpit.widgets.piechart.PieChartWidget', {
     // public methods
 	// -----------------------------------------------------------------------------------------------------------------
 	
+	, redraw: function() {
+		Sbi.trace("[PieChartWidget.redraw]: IN");		
+		this.createChart();	
+		Sbi.trace("[PieChartWidget.redraw]: OUT");
+	}
+	
     , refresh:  function() {  
-    	Sbi.trace("[PieChartWidget.refresh]: IN");
+    	Sbi.trace("[PieChartWidget.refresh]: IN");    	
     	this.init();	
     	this.createChart();
 		Sbi.trace("[PieChartWidget.refresh]: OUT");
@@ -89,7 +95,7 @@ Ext.define('Sbi.cockpit.widgets.piechart.PieChartWidget', {
 			width:'100%',
 			height:'100%',
 			layout: 'anchor',
-			items: [titlePanel, pieChartPanel]
+			items: [titlePanel, pieChartPanel]			
 		});
 	}	
 	// -----------------------------------------------------------------------------------------------------------------
@@ -133,7 +139,7 @@ Ext.define('Sbi.cockpit.widgets.piechart.PieChartWidget', {
 		        animate: true,
 		        store: chartDataStore,
 		        series: chartSeries,
-		        categoryField: 'categories'
+		        categoryField: 'categories'		        
 		};
 
 		
