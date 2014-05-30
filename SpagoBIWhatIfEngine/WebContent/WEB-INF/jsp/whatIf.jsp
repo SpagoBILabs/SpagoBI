@@ -10,6 +10,7 @@
 author:...
 --%>
 
+<%@page import="it.eng.spagobi.engines.whatif.common.WhatIfConstants"%>
 <%@page import="java.util.Enumeration"%>
 <%@ page language="java" 
 	     contentType="text/html; charset=ISO-8859-1" 
@@ -59,13 +60,17 @@ author:...
 	}
 	
 	WhatIfEngineConfig whatIfEngineConfig = WhatIfEngineConfig.getInstance();
-    
-    //Integer artifactVersionId = whatIfEngineInstance.getArtifactVersionId(whatIfEngineInstance.getEnv());
-    //String artifactStatus = whatIfEngineInstance.getArtifactStatus(whatIfEngineInstance.getEnv());
-    //String artifactLocker = whatIfEngineInstance.getArtifactLocker(whatIfEngineInstance.getEnv());
-	
+    	
    spagobiServerHost = request.getParameter(SpagoBIConstants.SBI_HOST);
    spagobiContext = request.getParameter(SpagoBIConstants.SBI_CONTEXT);
+   
+   // if server Host anc context are null means we are in standalone version
+      if(spagobiServerHost == null)
+    	   spagobiServerHost = WhatIfConstants.STANDALONE_HOST;  
+      if(spagobiContext == null)
+          spagobiContext = WhatIfConstants.SATNDALONE_CONTEXT;  
+  
+   
    // spagobiSpagoController = request.getParameter(SpagoBIConstants.SBI_SPAGO_CONTROLLER);
 %>
 
@@ -111,9 +116,6 @@ author:...
 		
         Sbi.config.urlSettings = urlSettings;
         Sbi.config.externalUrl = externalUrl;
-        //Sbi.config.artifactVersionId = artifactVersionId;
-        //Sbi.config.artifactStatus = artifactStatus;
-        //Sbi.config.artifactLocker = artifactLocker;
         
 
         var params = {
