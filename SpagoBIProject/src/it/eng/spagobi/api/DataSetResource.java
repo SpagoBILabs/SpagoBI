@@ -255,6 +255,9 @@ public class DataSetResource extends AbstractSpagoBIResource {
 			JSONDataWriter dataSetWriter = new JSONDataWriter(properties);
 			JSONArray gridDataFeed = (JSONArray)dataSetWriter.write(dataStore);
 			
+			List<Integer> breakIndexes = (List<Integer>)dataStore.getMetaData().getProperty("BREAK_INDEXES");
+			int breakIndex = breakIndexes.get(0);
+			
 			// the dirty trick
 			JSONArray datasetLabels = associationGrpJSON.getJSONArray("datasets");
 			JSONObject results = new JSONObject();
@@ -269,7 +272,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 				o2.put("id", o.getString("id"));
 				for(int j = 1; j < props.length(); j++) {
 					String p = props.getString(j);
-					if(j < 3) {
+					if(j <= breakIndex ) {
 						o1.put("column_" + j, o.getString(p));
 					} else {
 						o2.put("column_" + (j-2), o.getString(p));

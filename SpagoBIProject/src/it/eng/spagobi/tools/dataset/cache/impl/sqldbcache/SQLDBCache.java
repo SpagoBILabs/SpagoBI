@@ -251,7 +251,8 @@ public class SQLDBCache implements ICache {
 		logger.debug("IN");
 		
 		if (getMetadata().containsCacheItem(resultsetSignature)){
-			String tableName = getMetadata().getCacheItem(resultsetSignature).getTable();
+			CacheItem cacheItem = getMetadata().getCacheItem(resultsetSignature); 
+			String tableName = cacheItem.getTable();
 			logger.debug("Found resultSet with signature ["+resultsetSignature+"] inside the Cache, table used ["+tableName+"]");
 			
 			SelectBuilder sqlBuilder = new SelectBuilder();
@@ -329,6 +330,11 @@ public class SQLDBCache implements ICache {
 			String queryText = sqlBuilder.toString();
 			IDataStore dataStore = dataSource.executeStatement(queryText, 0, 0);
 			DataStore toReturn = (DataStore) dataStore;
+			
+			List<Integer> breakIndexes = (List<Integer>)cacheItem.getProperty("BREAK_INDEXES");
+			if(breakIndexes != null) {
+				dataStore.getMetaData().setProperty("BREAK_INDEXES", breakIndexes);
+			}
 			
 			return toReturn;
 		} else {
@@ -465,10 +471,12 @@ public class SQLDBCache implements ICache {
 			Map<String, String> datasetAliases = new HashMap<String, String>();
 			int aliasNo = 0;
 			
+			Map<String, List<String>> columnNames = new HashMap<String, List<String>>();
 			List<Integer> columnBreakIndexes = new ArrayList<Integer>();
 			int lastIndex = 0;
 			columnBreakIndexes.add(lastIndex);
 			for(IDataSet dataSet : dataSets) {
+				List<String> names = new ArrayList<String>();
 				if(contains(dataSet) == false) return null;
 				String tableName = getMetadata().getCacheItem(dataSet.getSignature()).getTable();
 				String tableAlias = "t" + ++aliasNo;
@@ -480,23 +488,21 @@ public class SQLDBCache implements ICache {
 					
 					String column = AbstractJDBCDataset.encapsulateColumnName(fieldMeta.getName(), dataSource);
 					String alias = AbstractJDBCDataset.encapsulateColumnAlaias(tableAlias + " - " + fieldMeta.getAlias(), dataSource);
+					names.add(alias);
 					sqlBuilder.column(tableAlias + "." + column + " as " + alias);
 				}
 				lastIndex += dataSet.getMetadata().getFieldCount();
 				columnBreakIndexes.add(lastIndex);
+				columnNames.put(dataSet.getLabel(), names);
 			}
 			columnBreakIndexes.remove(0);
 			columnBreakIndexes.remove(columnBreakIndexes.size()-1);
 			
 			Collection<Association> associaions = associationGroup.getAssociations();
 			for(Association association: associaions) {
-//				JSONObject association = associations.getJSONObject(i);
-//				JSONArray fields = association.getJSONArray("fields");				
-				
 				String whereClause = "";
 				String separator = "";
 				for(Association.Field field: association.getFields()) {
-//					JSONObject field = fields.getJSONObject(j);
 					String dataset = field.getDataSetLabel();
 					String column = field.getFieldName();
 					column = AbstractJDBCDataset.encapsulateColumnName(column, dataSource);
@@ -509,7 +515,11 @@ public class SQLDBCache implements ICache {
 			
 			String queryText = sqlBuilder.toString();
 			IDataStore dataStore = dataSource.executeStatement(queryText, 0, 0);
+						
 			dataStore.getMetaData().setProperty("BREAK_INDEXES", columnBreakIndexes);
+			dataStore.getMetaData().setProperty("COLUMN_NAMES", columnNames);
+			
+			
 			DataStore toReturn = (DataStore) dataStore;
 			
 			return toReturn;
@@ -540,7 +550,15 @@ public class SQLDBCache implements ICache {
 			if ( getMetadata().hasEnoughMemoryForStore(dataStore) ){
 				String signature = dataSet.getSignature();
 				String tableName = persistStoreInCache(dataSet, signature, dataStore);
-				getMetadata().addCacheItem(signature, tableName, dataStore);
+				CacheItem item =  getMetadata().addCacheItem(signature, tableName, dataStore);
+				List<Integer> breakIndexes =  (List<Integer>)dataStore.getMetaData().getProperty("BREAK_INDEXES");
+				if(breakIndexes != null) {
+					item.setProperty("BREAK_INDEXES", breakIndexes);
+				}
+				Map<String,List<String>> columnNames =  (Map<String,List<String>>)dataStore.getMetaData().getProperty("COLUMN_NAMES");
+				if(columnNames != null) {
+					item.setProperty("COLUMN_NAMES", columnNames);
+				}
 			} else {
 				throw new CacheException("Store is to big to be persisted in cache." +
 						" Store extimated dimenion is [" + getMetadata().getRequiredMemory(dataStore) + "]" +
