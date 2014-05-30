@@ -86,27 +86,27 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditorPage, Ext.Panel, {
 
 	, applyPageState: function(state) {
 		Sbi.trace("[WidgetEditorPage.applyPageState]: IN");
-		state =  state || {};
-		if(this.widgetEditorPanel.mainPanel.designer) {
-			state.wtype = this.widgetEditorPanel.mainPanel.designer.getDesignerType();
-			state.wconf = this.widgetEditorPanel.mainPanel.designer.getDesignerState();
-		}
+		state =  state || {};						
+		if(this.widgetEditorPanel.mainPanel.customConfPanel.designer) {			
+			state.wtype = this.widgetEditorPanel.mainPanel.customConfPanel.designer.getDesignerType();
+			state.wconf = this.widgetEditorPanel.mainPanel.customConfPanel.designer.getDesignerState();					
+			state.wgeneric = this.widgetEditorPanel.mainPanel.genericConfPanel.getFormState();	
+		}		
 		Sbi.trace("[WidgetEditorPage.applyPageState]: OUT");
 		return state;
 	}	
 
 	, setPageState: function(state) {
 		Sbi.trace("[WidgetEditorPage.setPageState]: IN");
-		Sbi.trace("[WidgetEditorPage.setPageState]: state parameter is equal to [" + Sbi.toSource(state, true) + "]");
-		
-		this.widgetEditorPanel.mainPanel.setDesigner(state);
+		Sbi.trace("[WidgetEditorPage.setPageState]: state parameter is equal to [" + Sbi.toSource(state, true) + "]");		
+		this.widgetEditorPanel.mainPanel.customConfPanel.setDesigner(state);
 		
 		Sbi.trace("[WidgetEditorPage.setPageState]: OUT");
 	}
 	
 	, resetPageState: function() {
 		Sbi.trace("[WidgetEditorPage.resetPageState]: IN");
-		//this.widgetEditorPanel.mainPanel.removeAllDesigners();
+		this.widgetEditorPanel.mainPanel.customConfPanel.removeAllDesigners();
 		Sbi.trace("[WidgetEditorPage.resetPageState]: OUT");
 	}
 	
