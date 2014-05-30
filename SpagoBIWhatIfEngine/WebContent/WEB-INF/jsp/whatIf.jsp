@@ -43,9 +43,8 @@ author:...
 	UserProfile profile;
 	Locale locale;
 	String isFromCross;
-	String spagobiServerHost;
-	String spagobiContext;
-	String spagobiSpagoController;
+	String spagobiServerHost = null;
+	String spagobiContext = null;
 	
 	ExecutionSession es = new ExecutionSession(request, request.getSession());
 	
@@ -61,15 +60,12 @@ author:...
 	
 	WhatIfEngineConfig whatIfEngineConfig = WhatIfEngineConfig.getInstance();
     	
-   spagobiServerHost = request.getParameter(SpagoBIConstants.SBI_HOST);
-   spagobiContext = request.getParameter(SpagoBIConstants.SBI_CONTEXT);
    
    // if server Host anc context are null means we are in standalone version
-      if(spagobiServerHost == null)
-    	   spagobiServerHost = WhatIfConstants.STANDALONE_HOST;  
-      if(spagobiContext == null)
-          spagobiContext = WhatIfConstants.SATNDALONE_CONTEXT;  
-  
+   if(!whatIfEngineInstance.isStandalone())  {
+	   spagobiServerHost = request.getParameter(SpagoBIConstants.SBI_HOST);
+	   spagobiContext = request.getParameter(SpagoBIConstants.SBI_CONTEXT);
+          }  
    
    // spagobiSpagoController = request.getParameter(SpagoBIConstants.SBI_SPAGO_CONTROLLER);
 %>
@@ -100,6 +96,12 @@ author:...
         Sbi.config = {};
     	var config= {};
         
+    	var isStandalone = <%=whatIfEngineInstance.isStandalone()%>;
+
+    	
+    	<% if(!isStandalone){ %>
+    		
+    	
 		var urlSettings = {
 		    sbihost:  '<%=spagobiServerHost%>'    
 		    , protocol: '<%= request.getScheme()%>'
@@ -109,18 +111,18 @@ author:...
 	    		  spagobiContext.substring(1) :
 	    			spagobiContext%>'	    	   				  
 	    };
-
-		
-		
+	
         var externalUrl =  urlSettings.sbihost+"/"+ urlSettings.contextPath+"/restful-services/";
 		
         Sbi.config.urlSettings = urlSettings;
         Sbi.config.externalUrl = externalUrl;
         
+    	<%} %>
 
         var params = {
 	    	SBI_EXECUTION_ID: <%= request.getParameter("SBI_EXECUTION_ID")!=null?"'" + request.getParameter("SBI_EXECUTION_ID") +"'": "null" %>
 	    };
+    	
 
 	    Sbi.config.ajaxBaseParams = params;
     	
