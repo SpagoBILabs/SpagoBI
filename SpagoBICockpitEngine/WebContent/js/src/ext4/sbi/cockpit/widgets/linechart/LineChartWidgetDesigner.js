@@ -31,10 +31,12 @@ Ext.define('Sbi.cockpit.widgets.linechart.LineChartWidgetDesigner', {
 	, showLegendCheck: null
 	, radioGroupIds: null
 	, chartLib: null
+	, initialConfig: null
 
 	, constructor : function(config) {
 		Sbi.trace("[PieChartWidgetDesigner.constructor]: IN");
-				
+		
+		this.initialConfig = config || null;
 		this.initConfig(config);
 		//this.chartLib.toLowerCase();
 		
@@ -52,7 +54,6 @@ Ext.define('Sbi.cockpit.widgets.linechart.LineChartWidgetDesigner', {
 	// METHODS
 	// =================================================================================================================
 	
-	// ported
 	//-----------------------------------------------------------------------------------------------------------------
 	//public methods
 	//-----------------------------------------------------------------------------------------------------------------
@@ -77,7 +78,7 @@ Ext.define('Sbi.cockpit.widgets.linechart.LineChartWidgetDesigner', {
 	}
 	
 	, setDesignerState: function(state) {
-		Sbi.trace("[LineChartWidgetDesigner.setDesignerState]" + Sbi.toSource(state));
+		Sbi.trace("[LineChartWidgetDesigner.setDesignerState]: IN");
 		
 		if (state.type) this.typeRadioGroup.setValue({type: state.type});
 		if (state.colorarea) this.colorAreaCheck.setValue(state.colorarea);
@@ -370,17 +371,11 @@ Ext.define('Sbi.cockpit.widgets.linechart.LineChartWidgetDesigner', {
 		}
 		
 		this.on('beforerender' , function (thePanel, attribute) { 
-			var state = {};			
-			state.type = thePanel.type;
-			state.colorarea = thePanel.colorarea;
-			state.showvalues = thePanel.showvalues;
-			state.showlegend = thePanel.showpercentage;
+			if(this.initialConfig != null) {
+				this.setDesignerState(this.initialConfig);
+				this.initialConfig = null;
+			}
 			
-			state.category = thePanel.category;
-			state.groupingVariable = thePanel.groupingVariable;
-			state.series = thePanel.series;
-			
-			this.setDesignerState(state);
 		}, this);
 		
 		this.on('afterLayout', this.addToolTips, this);
