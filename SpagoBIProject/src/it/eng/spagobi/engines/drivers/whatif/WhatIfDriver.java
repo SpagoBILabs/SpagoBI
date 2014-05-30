@@ -138,8 +138,8 @@ public class WhatIfDriver extends GenericDriver {
 			
 		logger.debug("Artifact id is "+artifactId);
 
-		Boolean locked = artifact.getLocked();
-		String locker = artifact.getLocker();
+		Boolean locked = artifact.getModelLocked();
+		String locker = artifact.getModelLocker();
 
 		if(locked==false){
 			logger.debug("Artifact with id "+artifactId+" is unlocked");

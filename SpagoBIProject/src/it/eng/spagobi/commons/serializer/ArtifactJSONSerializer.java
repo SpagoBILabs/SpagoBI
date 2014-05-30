@@ -34,8 +34,8 @@ public class ArtifactJSONSerializer implements Serializer {
 			result.put(NAME, artifact.getName() );
 			result.put(DESCRIPTION, artifact.getDescription() );
 			result.put(TYPE, artifact.getType() );
-			result.put(LOCKED, artifact.getLocked() );
-			result.put(LOCKER, artifact.getLocker() );
+			result.put(LOCKED, artifact.getModelLocked() );
+			result.put(LOCKER, artifact.getModelLocker() );
 
 		
 		} catch (Throwable t) {
