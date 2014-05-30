@@ -55,11 +55,11 @@
         <property name="type" type="string">
             <column name="TYPE" />
         </property>
-        <property name="locked" type="boolean">
-            <column name="LOCKED" />
+        <property name="modelLocked" type="boolean">
+            <column name="MODEL_LOCKED" />
         </property>
-        <property name="locker" type="string">
-            <column name="LOCKER" length="200" not-null="false" />
+        <property name="modelLocker" type="string">
+            <column name="MODEL_LOCKER" length="200" not-null="false" />
         </property>
         
 		<filter name="tenantFilter" condition="organization=:tenant" />
