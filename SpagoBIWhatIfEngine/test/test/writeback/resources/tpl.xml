@@ -3,10 +3,10 @@
 	<cube reference="Mondrian_what_if_mysql"/>
 	
 	<MDXquery>
-		SELECT {[Measures].[Store Sales]} ON COLUMNS, {[Product].[Food]} ON ROWS FROM [Sales_V] WHERE CrossJoin([Version].[1], [Region].[Mexico Central])
+		SELECT {[Measures].[Store Sales]} ON COLUMNS, {[Product].[Food]} ON ROWS FROM [Sales_V] WHERE CrossJoin([Version].[0], [Region].[Mexico Central])
 	</MDXquery>
 	<MDXMondrianQuery>
-		SELECT {[Measures].[Store Sales]} ON COLUMNS, {[Product].[Food]} ON ROWS FROM [Sales_V] WHERE CrossJoin([Version].[1], [Region].[Mexico Central])
+		SELECT {[Measures].[Store Sales]} ON COLUMNS, {[Product].[Food]} ON ROWS FROM [Sales_V] WHERE CrossJoin([Version].[0], [Region].[Mexico Central])
 	</MDXMondrianQuery>
 	
 	<STANDALONE>

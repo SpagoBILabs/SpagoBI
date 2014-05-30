@@ -6,6 +6,7 @@
 package it.eng.spagobi.engines.whatif.template;
 
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.writeback4j.SbiAliases;
 import it.eng.spagobi.writeback4j.SbiScenario;
 
 import java.util.HashMap;
@@ -22,6 +23,7 @@ public class WhatIfTemplate {
 	private String mondrianMdxQuery;
 	private HashMap<String, Object> properties;
 	private SbiScenario scenario;
+	private SbiAliases aliases;
 	private List<Parameter> parameters;
 	private List<String> profilingUserAttributes;
 	private List<String> toolbarVisibleButtons;
@@ -81,6 +83,20 @@ public class WhatIfTemplate {
 		this.scenario = scenario;
 	}
 	
+	/**
+	 * @return the aliases
+	 */
+	public SbiAliases getAliases() {
+		return aliases;
+	}
+
+	/**
+	 * @param aliases the aliases to set
+	 */
+	public void setAliases(SbiAliases aliases) {
+		this.aliases = aliases;
+	}
+
 	public List<String> getProfilingUserAttributes() {
 		return profilingUserAttributes;
 	}
