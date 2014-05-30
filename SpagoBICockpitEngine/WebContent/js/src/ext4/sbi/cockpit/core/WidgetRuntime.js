@@ -392,7 +392,7 @@ Ext.extend(Sbi.cockpit.core.WidgetRuntime, Ext.Panel, {
 		Sbi.trace("[WidgetRuntime.getCustomConfiguration]: IN");
 		
 		if ( this.getWType() )  this.wconf.wtype =  this.getWType();
-		var config = Ext.apply({}, this.wconf || {});
+		var config = Ext.apply({}, this.wconf || {});		
 		Sbi.trace("[WidgetRuntime.getCustomConfiguration]: OUT");
 		return config;
 	}
@@ -707,6 +707,15 @@ Ext.extend(Sbi.cockpit.core.WidgetRuntime, Ext.Panel, {
 	 */
 	, restore: function() {
 		Sbi.trace("[WidgetRuntime.restore]: Ext.window.Window.restore method overriden has been called");
+	}
+	
+	/**
+	 * @method
+	 * 
+	 * Has to be overridden from AbstractChartWidget
+	 */
+	, resize: function() {
+		Sbi.trace("[WidgetRuntime.resize]: Ext.window.Window.resize method overriden has been called");
 	}
 	
 	
