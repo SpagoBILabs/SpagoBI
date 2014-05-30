@@ -99,12 +99,15 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidgetDesigner, Sbi.cockpit.core.Widge
 	tableDesigner: null
 	
 	, getDesignerState: function() {
-		Sbi.trace("[TableWidgetDesigner.getDesignerState]: IN");
-		Sbi.trace("[TableWidgetDesigner.getDesignerState]: " + Sbi.cockpit.widgets.table.TableWidgetDesigner.superclass.getDesignerState);
+		Sbi.trace("[TableWidgetDesigner.getDesignerState]: IN");		
 		
 		var state = Sbi.cockpit.widgets.table.TableWidgetDesigner.superclass.getDesignerState(this);
-		state.wtype = 'table';
-		state.visibleselectfields = this.tableDesigner.tableDesigner.getContainedValues();
+		state.wtype = 'table';		
+		if(this.tableDesigner.rendered === true) {
+			state.visibleselectfields = this.tableDesigner.tableDesigner.getContainedValues();
+		} else {
+			state.visibleselectfields =  this.visibleselectfields;			
+		}
 		
 		Sbi.trace("[TableWidgetDesigner.getDesignerState]: OUT");
 		return state;
