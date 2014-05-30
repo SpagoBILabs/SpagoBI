@@ -92,9 +92,9 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditorCustomConfPanel, Ext.Panel, {
 	// -----------------------------------------------------------------------------------------------------------------
 	
 	, setDesigner: function (widgetConf) {
-		Sbi.trace("[WidgetEditorCustomConfPanel.setDesigner]: IN");
+		Sbi.trace("[WidgetEditorCustomConfPanel.setDesigner]: IN");		
 		this.removeAllDesigners();
-		this.addDesigner(widgetConf);
+		this.addDesigner(widgetConf);		
 		Sbi.trace("[WidgetEditorCustomConfPanel.setDesigner]: OUT");
 	}
 
@@ -114,6 +114,7 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditorCustomConfPanel, Ext.Panel, {
 		};
 		
 		var designer =  Sbi.cockpit.core.WidgetExtensionPointManager.getWidgetDesigner(Ext.apply(widgetConf, sheredConf));
+		
 		this.insertDesigner(designer);
 				
 		// propagate events
@@ -149,10 +150,10 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditorCustomConfPanel, Ext.Panel, {
 			this.emptyMsgPanel.destroy();
 			this.emptyMsgPanel = null;
 		} 
-		
-		this.add(designer);
-		this.doLayout();
-		this.designer = designer;
+				
+		this.add(designer);				
+		this.doLayout();		
+		this.designer = designer;		
 		Sbi.trace("[WidgetEditorCustomConfPanel.insertDesigner]: OUT");
 	}
 	
@@ -333,7 +334,7 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditorCustomConfPanel, Ext.Panel, {
 	 * the method returns this.designerState
 	 */
 	, getDesignerState: function () {
-		
+		Sbi.trace("[WidgetEditorCustomConfPanel.getDesignerState]: IN");				
 		if(this.designerState==null){
 			if (this.designer !== null) {
 				return this.designer.getDesignerState();
@@ -343,6 +344,7 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditorCustomConfPanel, Ext.Panel, {
 		}else{
 			return this.designerState;
 		}
+		Sbi.trace("[WidgetEditorCustomConfPanel.getDesignerState]: OUT");
 	}
 	
 	, setDesignerState: function (state) {
