@@ -8,22 +8,24 @@ Ext.ns("Sbi.cockpit.editor.widget");
 
 Sbi.cockpit.editor.widget.WidgetEditorGenericConfPanel = function(config) {	
 		
+	this.initFields();
+	
 	var defaultSettings = {
-		name:'WidgetEditorGenericConfPanel',
-		emptyMsg: 'Tab vuoto',
-		title:'Generic Configuration'
+		xtype: 'form',
+		name:'WidgetEditorGenericConfPanel',		
+		title:'Generic Configuration',
+		layout: 'form',
+		bodyPadding: '5 5 0',		
+		items: this.fields		
 	};
 	
 	var settings = Sbi.getObjectSettings('Sbi.cockpit.editor.widget.WidgetEditorGenericConfPanel', defaultSettings);
 	
 	var c = Ext.apply(settings, config || {});
-	Ext.apply(this, c);		
-	
-	this.initEmptyMsgPanel();	
+	Ext.apply(this, c);			
 			
 	c = {
-		height: 400,
-		items: [this.emptyMsgPanel]
+		height: 400		
 	};
 	
 	Sbi.cockpit.editor.widget.WidgetEditorGenericConfPanel.superclass.constructor.call(this, c);
@@ -58,12 +60,41 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditorGenericConfPanel, Ext.Panel, {
 			, frame: true
 		});
 	}
+
+	, initFields: function() {
+		
+		this.fields = [];
+		
+		 var title = new Ext.form.field.Text({
+			fieldLabel: 'Title',
+			name: 'title',
+            allowBlank: false,
+            tooltip: 'Enter the widget title'  
+		});
+		
+		var description = new Ext.form.field.TextArea({
+			fieldLabel: 'Description',
+			name: 'description',
+            allowBlank: true            
+		});
+		
+		this.fields.push(title);
+		this.fields.push(description);
+	}
 	
 	// -----------------------------------------------------------------------------------------------------------------
     // public methods
 	// -----------------------------------------------------------------------------------------------------------------
 	
+	, getFormState: function() {
 		
+		var formState = Ext.apply({}, {
+			title: this.fields[0].getValue(),
+			description: this.fields[1].getValue()			
+		});
+		
+		return Ext.JSON.encode(formState);
+	}
 	// -----------------------------------------------------------------------------------------------------------------
     // private methods
 	// -----------------------------------------------------------------------------------------------------------------
