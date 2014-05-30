@@ -281,9 +281,9 @@ Ext.define('Sbi.widgets.WizardPanel', {
 		var state = {};
 		for(var i = 0; i < this.getPageCount(); i++) {
 			var page = this.getPage(i);
-			if(page.applyPageState) {				
-				Sbi.trace("[WizardPanel.getWizardState]: apply page [" + i + "] state");
+			if(page.applyPageState) {								
 				state = page.applyPageState(state);
+				Sbi.trace("[WizardPanel.getWizardState]: apply page [" + i + "] state - " + Sbi.toSource(state));
 			}
 		}
 		
@@ -294,12 +294,16 @@ Ext.define('Sbi.widgets.WizardPanel', {
 	}
 	
 	, setWizardState: function(state) {
+		Sbi.trace("[WizardPanel.setWizardState]: IN");
+		
 		for(var i = 0; i < this.getPageCount(); i++) {
 			var page = this.getPage(i);
 			if(page.setPageState) {
 				page.setPageState(state);
 			}
 		}
+		
+		Sbi.trace("[WizardPanel.setWizardState]: OUT");
 	}
 	
 	, resetWizardState: function(state) {
