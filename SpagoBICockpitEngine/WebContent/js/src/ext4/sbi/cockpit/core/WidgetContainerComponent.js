@@ -27,7 +27,7 @@ Sbi.cockpit.core.WidgetContainerComponent = function(config) {
 	
 	// init properties...
 	var defaultSettings = {
-		title : config.widget? 'Widget [' + config.widget.id + ']': 'Widget'
+		title : config.widget ? 'Widget [' + config.widget.id + ']': 'Widget'
 	    , bodyBorder: true
 	    , frame: true
 	    , shadow: false
@@ -38,7 +38,8 @@ Sbi.cockpit.core.WidgetContainerComponent = function(config) {
 	    , height:332
 	    , x: 100
 	    , y: 100
-	    , maximizable: true	   
+	    , maximizable: true
+	    , resizable: true
 	};
 	
 	var settings = Sbi.getObjectSettings('Sbi.cockpit.core.WidgetContainerComponent', defaultSettings);
@@ -245,6 +246,9 @@ Ext.extend(Sbi.cockpit.core.WidgetContainerComponent, Ext.Window, {
     	}
     }
 	
+    , onWidgetClone: function() {
+    	this.fireEvent('performaction', this, 'cloneWidget');    	    
+    }
 	// -----------------------------------------------------------------------------------------------------------------
     // init methods
 	// -----------------------------------------------------------------------------------------------------------------
@@ -282,6 +286,10 @@ Ext.extend(Sbi.cockpit.core.WidgetContainerComponent, Ext.Window, {
 //     	   		Ext.Msg.alert('Message', 'The REFRESH tool was clicked.');
 //     	    },
     		scope: this
+        }, {
+        	type:'clone',
+        	handler: this.onWidgetClone,
+        	scope:this
         }];			
 	}
 		
@@ -309,6 +317,18 @@ Ext.extend(Sbi.cockpit.core.WidgetContainerComponent, Ext.Window, {
 		var o = this.callParent(arguments);
 		var widget = this.getWidget();
 		widget.restore();
+		return o;
+	}
+	
+	/**
+	 * @method
+	 * 
+	 * Override of resize method to handle resizing of charts 
+	 */
+	, resize: function() {
+		var o = this.callParent(arguments);
+		var widget = this.getWidget();
+		widget.resize();
 		return o;
 	}
 	
