@@ -59,18 +59,7 @@ public class MondrianMemberCoordinates implements IMemberCoordinates{
 	}
 	
 	public String getTableName(){
-		String tableName = getHieararchy().primaryKeyTable;
-		if(tableName==null){
-			NodeDef[] children = getHieararchy().getChildren();
-			for(int i=0; i<children.length; i++){
-				NodeDef node = children[i];
-				if(node instanceof MondrianDef.Table){
-					tableName = ((MondrianDef.Table)node).name;
-					break;
-				}
-			}
-		}
-		return tableName;
+		return MondrianSchemaRetriver.getTableName(getHieararchy());
 	}
 	
 	public String getPrimaryKey(){
