@@ -71,6 +71,7 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotModel> {
 	private static final String COLUMNSAXISORDINAL = "columnsAxisOrdinal";
 	private static final String MDXFORMATTED = "mdxFormatted";
 	private static final String MODELCONFIG = "modelConfig";
+	private static final String HAS_PENDING_TRANSFORMATIONS = "hasPendingTransformations";
 
 	
 	private OlapConnection connection;
@@ -189,6 +190,9 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotModel> {
 			String mdxQuery = formatQueryString( value.getCurrentMdx());
 			jgen.writeStringField(MDXFORMATTED, mdxQuery);
 			
+			boolean hasPendingTransformations = value instanceof SpagoBIPivotModel && ((SpagoBIPivotModel) value).hasPendingTransformations();
+			jgen.writeBooleanField(HAS_PENDING_TRANSFORMATIONS, hasPendingTransformations);
+			
 			jgen.writeEndObject();
 			
 		} catch (Exception e) {
@@ -201,6 +205,7 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotModel> {
 
 	}
 	
+
 	private  void serializeAxis(String field,JsonGenerator jgen, List<CellSetAxis> axis, Axis type) throws JSONException, JsonGenerationException, IOException{
 		CellSetAxis aAxis= axis.get(0);
 		int axisPos = 0;

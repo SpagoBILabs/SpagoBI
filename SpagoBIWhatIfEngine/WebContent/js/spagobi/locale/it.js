@@ -55,6 +55,7 @@ Sbi.locale.formats = {
 //===================================================================
 Sbi.locale.ln['sbi.olap.execution.table.filter.dimension.help.content'] = 'Selezionare i membri da visualizzare per la dimensione. I membri saranno inseriti nella clausola select della query mdx';
 Sbi.locale.ln['sbi.olap.help.title'] = 'Help';
+Sbi.locale.ln['sbi.olap.execution.table.dimension.cannotchangehierarchy'] = 'Non puoi cambiare la gerarchia dal momento che ci sono delle modifiche pendenti sui dati: devi prima persistere le modifiche.';
 
 //===================================================================
 //COMMONS
@@ -63,6 +64,7 @@ Sbi.locale.ln['sbi.common.cancel'] = 'Annulla';
 Sbi.locale.ln['sbi.common.close'] = 'Chiudi';
 Sbi.locale.ln['sbi.common.ok'] = 'Ok';
 Sbi.locale.ln['sbi.common.select'] = 'Ok';
+Sbi.locale.ln['sbi.common.warning'] = 'Attenzione';
 
 //===================================================================
 //TOOLBAR

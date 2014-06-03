@@ -177,7 +177,16 @@ Ext.define('Sbi.olap.control.EventManager', {
 	 * @param hierarchyPosition the position of the hierarchy
 	 */
 	updateHierarchyOnDimension: function(axis, newHierarchyUniqueName, oldHierarchyUniqueName, hierarchyPosition){
-		this.olapController.updateHierarchyOnDimension(axis, newHierarchyUniqueName, oldHierarchyUniqueName, hierarchyPosition);
+		if (this.olapPanel.pivotModel.get("hasPendingTransformations")) {
+			Ext.MessageBox.show({
+				title: LN('sbi.common.warning'),
+				msg: LN('sbi.olap.execution.table.dimension.cannotchangehierarchy'),
+				buttons: Ext.MessageBox.OK,
+				icon: Ext.MessageBox.WARNING
+			});
+		} else {
+			this.olapController.updateHierarchyOnDimension(axis, newHierarchyUniqueName, oldHierarchyUniqueName, hierarchyPosition);
+		}
 	},
 	
 	/**
