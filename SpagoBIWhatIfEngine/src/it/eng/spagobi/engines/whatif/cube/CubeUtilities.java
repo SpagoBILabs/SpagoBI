@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.olap4j.Axis;
 import org.olap4j.OlapDataSource;
@@ -316,7 +317,8 @@ public class CubeUtilities {
 				
 				//the member name contains a specific level path ex: [Product][Drink.Beverages]
 				if (memberToSearchSimpleName.contains(".")){
-					memberToSearchUniqueName = "["+ dimensionName +"]" + "." + formatNameWithSquareBracket(memberToSearchSimpleName);
+					//memberToSearchUniqueName = "["+ dimensionName +"]" + "." + formatNameWithSquareBracket(memberToSearchSimpleName);
+					memberToSearchUniqueName = generateUniqueName(uniqueNameParts,memberToSearchSimpleName);
 					searchByUniqueName = true;
 				} else {
 					memberToSearchUniqueName = memberToSearchUniqueName + "."+"["+ memberToSearchSimpleName+"]";
@@ -392,6 +394,26 @@ public class CubeUtilities {
 			
 		}
 		return memberFound;
+	}
+	/*
+	 * uniqueNameParts: parts of the unique name of the current cell selected
+	 * memberToSearchSimpleName: specified level part in the member expression, ex: Drink.Dairy in the member name [Product].[Drink.Dairy]
+	 */
+	private static String generateUniqueName(String uniqueNameParts[], String memberToSearchSimpleName){
+		String[] uniqueNamesPartsCopy = new String[uniqueNameParts.length];
+		System.arraycopy( uniqueNameParts, 0, uniqueNamesPartsCopy, 0, uniqueNameParts.length );
+		String[] memberParts = memberToSearchSimpleName.split("\\.");
+		int memberPartsLength = memberParts.length;
+		
+		int i = uniqueNamesPartsCopy.length - memberPartsLength;
+		for(int c = 0; c < memberPartsLength; c++ ){
+			uniqueNamesPartsCopy[i] = memberParts[c];
+			i++;
+		}
+		String toReturn = StringUtils.join(uniqueNamesPartsCopy, ".");
+		toReturn = formatNameWithSquareBracket(toReturn);
+		return toReturn;
+		
 	}
 	
 	private static String[] splitSquareBracketNames(String memberExpression){

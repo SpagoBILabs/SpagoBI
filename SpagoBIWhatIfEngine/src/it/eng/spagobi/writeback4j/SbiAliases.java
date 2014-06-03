@@ -34,6 +34,8 @@ public class SbiAliases implements Serializable {
 	private static final long serialVersionUID = 6589950662601952335L;
 	public static String DIMENSION_TAG = "DIMENSION";
 	public static String HIERARCHY_TAG = "HIERARCHY";
+	public static String ALIAS_TAG = "ALIAS";
+
 	
 	private List<SbiAlias> aliases;
 
@@ -122,6 +124,26 @@ public class SbiAliases implements Serializable {
 			for (Iterator<SbiAlias> iterator = aliases.iterator(); iterator.hasNext();) {
 				SbiAlias aAlias = (SbiAlias) iterator.next();
 				if(aAlias.getType().equals(HIERARCHY_TAG)){
+					if(aAlias.getAlias().equalsIgnoreCase(alias)){
+						return aAlias.getName();
+					}
+				}
+
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * Get the original name corresponding to the passed alias.
+	 * @param alias the name of the alias
+	 * @return original name corresponding to the alias or null if is impossible to find that alias
+	 */
+	public String getGenericNameFromAlias(String alias){
+		if(this.aliases!=null){
+			for (Iterator<SbiAlias> iterator = aliases.iterator(); iterator.hasNext();) {
+				SbiAlias aAlias = (SbiAlias) iterator.next();
+				if(aAlias.getType().equals(ALIAS_TAG)){
 					if(aAlias.getAlias().equalsIgnoreCase(alias)){
 						return aAlias.getName();
 					}
