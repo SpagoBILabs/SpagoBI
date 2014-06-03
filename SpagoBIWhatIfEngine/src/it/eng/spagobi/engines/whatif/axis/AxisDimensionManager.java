@@ -193,23 +193,29 @@ public class AxisDimensionManager {
 
 
 		PlaceMembersOnAxes pm = getModel().getTransform(PlaceMembersOnAxes.class);
-
+		
 		List<Member> visibleMembers = pm.findVisibleMembers(hierarchy);
-		List<Member> membersToRemove = new ArrayList<Member>();
-
-		//get the members to remove (visible-members)
-		if(visibleMembers!=null){
-			for(int i=0; i<visibleMembers.size(); i++){
-				Member visibleMember = visibleMembers.get(i);
-				if(!members.contains(visibleMember)){
-					membersToRemove.add(visibleMember);
-				}
-			}
+		
+		
+		//add the first member..
+		if(visibleMembers.contains(members.get(0))){
+			//if it's already visible dont remove it from the hierarchy
+			visibleMembers.remove(members.get(0));
+			members.remove(0);
+		}else{
+			//if it's not visible add the first member to the hierarchy
+			List<Member> firtsMember = new ArrayList<Member>();
+			firtsMember.add(members.remove(0));
+			pm.addMembers(hierarchy, firtsMember);
 		}
-
+		//we've to do this because if we remove all the members from the hierarchy, the hierarchy will be removed from the axis
+		
+		pm.removeMembers(hierarchy, visibleMembers); 
 		pm.addMembers(hierarchy, members);
-		pm.removeMembers(hierarchy, membersToRemove); 
+		
 
+		 
+		
 	}
 	
 	
