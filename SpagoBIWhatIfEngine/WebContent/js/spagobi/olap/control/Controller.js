@@ -180,7 +180,8 @@ Ext.define('Sbi.olap.control.Controller', {
 		var service = Ext.create("Sbi.service.RestService", {
 			url: "model",
 			method: 'POST',
-			pathParams: ["persistTransformations"]
+			pathParams: ["persistTransformations"],
+			timeout: Sbi.settings.olap.whatif.timeout.persistTransformations
 		});
 		
 		service.callService(this);
@@ -190,7 +191,8 @@ Ext.define('Sbi.olap.control.Controller', {
 		var service = Ext.create("Sbi.service.RestService", {
 			url: "version",
 			method: 'POST',
-			pathParams: ["increase"]
+			pathParams: ["increase"],
+			timeout: Sbi.settings.olap.whatif.timeout.persistNewVersionTransformations
 		});
 		
 		service.callService(this);
