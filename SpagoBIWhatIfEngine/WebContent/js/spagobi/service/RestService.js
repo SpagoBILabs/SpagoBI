@@ -25,7 +25,8 @@ Ext.define('Sbi.service.RestService', {
 		pathParams: null,
 		baseParams: {},
 		jsonData: null,
-		params: {}
+		params: {},
+		timeout : Ext.Ajax.timeout
 	},
 
 	constructor : function(config) {
@@ -109,7 +110,8 @@ Ext.define('Sbi.service.RestService', {
 				success : mySuccessCallBack,
 				scope: scope,
 				params: Ext.apply(this.params, this.baseParams ),
-				failure: myFailureCallBack
+				failure: myFailureCallBack,
+				timeout: this.timeout
 		};
 
 		if(this.jsonData){
