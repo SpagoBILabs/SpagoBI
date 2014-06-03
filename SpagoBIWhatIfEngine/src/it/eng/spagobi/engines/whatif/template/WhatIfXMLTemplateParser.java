@@ -48,10 +48,11 @@ public class WhatIfXMLTemplateParser implements IWhatIfTemplateParser {
 	public static String VARIABLE_TAG = "VARIABLE";
 	public static String DIMENSION_TAG = "DIMENSION";
 	public static String HIERARCHY_TAG = "HIERARCHY";
-	public static String NAME_TAG = "name";
-	public static String VALUE_TAG = "value";
-	public static String TYPE_TAG = "type";
-	public static String ALIAS_TAG = "alias";
+	public static String ALIAS_TAG = "ALIAS";
+	public static String PROP_NAME = "name";
+	public static String PROP_VALUE = "value";
+	public static String PROP_TYPE = "type";
+	public static String PROP_ALIAS = "alias";
 	public static String TAG_DATA_ACCESS = "DATA-ACCESS";
 	public static String TAG_USER_ATTRIBUTE = "ATTRIBUTE";
 	public static String PROP_USER_ATTRIBUTE_NAME = "name";
@@ -221,7 +222,7 @@ public class WhatIfXMLTemplateParser implements IWhatIfTemplateParser {
 		SourceBean scenarioSB = (SourceBean) template.getAttribute(TAG_SCENARIO);
 		if(scenarioSB!=null){
 			logger.debug(TAG_SCENARIO + ": " + scenarioSB);
-			String scenarioName = (String)scenarioSB.getAttribute(NAME_TAG);
+			String scenarioName = (String)scenarioSB.getAttribute(PROP_NAME);
 			SbiScenario scenario = new SbiScenario(scenarioName);
 
 			initWriteBackConf(scenarioSB, scenario);
@@ -284,9 +285,9 @@ public class WhatIfXMLTemplateParser implements IWhatIfTemplateParser {
 		List<SourceBean> variablesBeans = (List<SourceBean>)scenarioSB.getAttributeAsList(VARIABLE_TAG);
 		if(variablesBeans!=null && variablesBeans.size()>0 ){
 			for(int i=0; i<variablesBeans.size(); i++){
-				String name = (String)variablesBeans.get(i).getAttribute(NAME_TAG);
-				String value = (String)variablesBeans.get(i).getAttribute(VALUE_TAG);
-				String type = (String)variablesBeans.get(i).getAttribute(TYPE_TAG);
+				String name = (String)variablesBeans.get(i).getAttribute(PROP_NAME);
+				String value = (String)variablesBeans.get(i).getAttribute(PROP_VALUE);
+				String type = (String)variablesBeans.get(i).getAttribute(PROP_TYPE);
 				variables.add(new SbiScenarioVariable(name, value, type));
 			}
 		}
@@ -301,8 +302,8 @@ public class WhatIfXMLTemplateParser implements IWhatIfTemplateParser {
 		List<SourceBean> aliasesBeans = (List<SourceBean>)aliasesSB.getAttributeAsList(DIMENSION_TAG);
 		if(aliasesBeans!=null && aliasesBeans.size()>0 ){
 			for(int i=0; i<aliasesBeans.size(); i++){
-				String name = (String)aliasesBeans.get(i).getAttribute(NAME_TAG);
-				String alias = (String)aliasesBeans.get(i).getAttribute(ALIAS_TAG);
+				String name = (String)aliasesBeans.get(i).getAttribute(PROP_NAME);
+				String alias = (String)aliasesBeans.get(i).getAttribute(PROP_ALIAS);
 				String type = DIMENSION_TAG;
 				aliasesFound.add(new SbiAlias(name, alias, type));
 			}
@@ -311,9 +312,20 @@ public class WhatIfXMLTemplateParser implements IWhatIfTemplateParser {
 		aliasesBeans = (List<SourceBean>)aliasesSB.getAttributeAsList(HIERARCHY_TAG);
 		if(aliasesBeans!=null && aliasesBeans.size()>0 ){
 			for(int i=0; i<aliasesBeans.size(); i++){
-				String name = (String)aliasesBeans.get(i).getAttribute(NAME_TAG);
-				String alias = (String)aliasesBeans.get(i).getAttribute(ALIAS_TAG);
+				String name = (String)aliasesBeans.get(i).getAttribute(PROP_NAME);
+				String alias = (String)aliasesBeans.get(i).getAttribute(PROP_ALIAS);
 				String type = HIERARCHY_TAG;
+				aliasesFound.add(new SbiAlias(name, alias, type));
+			}
+		}
+		
+		//TODO add generic aliases
+		aliasesBeans = (List<SourceBean>)aliasesSB.getAttributeAsList(ALIAS_TAG);
+		if(aliasesBeans!=null && aliasesBeans.size()>0 ){
+			for(int i=0; i<aliasesBeans.size(); i++){
+				String name = (String)aliasesBeans.get(i).getAttribute(PROP_NAME);
+				String alias = (String)aliasesBeans.get(i).getAttribute(PROP_ALIAS);
+				String type = ALIAS_TAG;
 				aliasesFound.add(new SbiAlias(name, alias, type));
 			}
 		}

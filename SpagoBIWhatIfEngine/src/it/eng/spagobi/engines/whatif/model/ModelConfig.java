@@ -8,6 +8,7 @@
  */
 package it.eng.spagobi.engines.whatif.model;
 
+import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.writeback4j.SbiAliases;
 import it.eng.spagobi.writeback4j.SbiScenario;
 import it.eng.spagobi.writeback4j.SbiScenarioVariable;
@@ -154,8 +155,19 @@ public class ModelConfig implements Serializable {
 			return null;
 		}
 		SbiScenarioVariable var =  scenario.getVariable(variableName);
-		String value = var.getValue();
-		return var.getType().getTypedType(value);
+		if (var != null){
+			String value = var.getValue();
+			return var.getType().getTypedType(value);
+		} else {
+			//if isn't a variable it could be a generic alias
+			String value = aliases.getGenericNameFromAlias(variableName);
+			if (value != null) {
+				return value;
+			} else {
+				throw new SpagoBIEngineRuntimeException("Cannot calculate Value, Variable or Alias not found: "+variableName);
+			}
+		}
+
 	}
 
 	public Integer getArtifactVersionId() {
