@@ -58,7 +58,7 @@ Sbi.locale.formats = {
 //===================================================================
 Sbi.locale.ln['sbi.olap.execution.table.filter.dimension.help.content'] = 'Select the visible members for the selected dimanesion. These members will be included in the select staement of the MDX query';
 Sbi.locale.ln['sbi.olap.help.title'] = 'Help';
-
+Sbi.locale.ln['sbi.olap.execution.table.dimension.cannotchangehierarchy'] = 'You cannot change the hierarchy since there are some pending modifications on the data; you must firstly persist the modifications.';
 
 //===================================================================
 //COMMONS
@@ -67,6 +67,7 @@ Sbi.locale.ln['sbi.common.cancel'] = 'Cancel';
 Sbi.locale.ln['sbi.common.close'] = 'Close';
 Sbi.locale.ln['sbi.common.ok'] = 'Ok';
 Sbi.locale.ln['sbi.common.select'] = 'Select';
+Sbi.locale.ln['sbi.common.warning'] = 'Warning';
 
 //===================================================================
 // TOOLBAR
