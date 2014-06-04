@@ -129,7 +129,7 @@ Sbi.createObjectByClassName = function(fnName, fnArgs) {
 	
 	Sbi.trace("[Sbi.execFunctionByName]: IN");
 	
-	Sbi.trace("[Sbi.execFunctionByName]: function name is equal to [" + fnName + "]");
+	Sbi.trace("[Sbi.createObjectByClassName]: function name is equal to [" + fnName + "]");
 	if( Sbi.isNotValorized(fnName)) {
 		Sbi.showErrorMessage("Input parameter [fnName] must be valorized");
 		return null;
