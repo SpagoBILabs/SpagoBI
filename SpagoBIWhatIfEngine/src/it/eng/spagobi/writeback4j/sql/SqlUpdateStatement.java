@@ -3,8 +3,6 @@
  */
 package it.eng.spagobi.writeback4j.sql;
 
-import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
-
 import java.sql.Connection;
 import java.sql.Statement;
 
