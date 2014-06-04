@@ -80,8 +80,8 @@ Sbi.locale.ln['sbi.olap.toolbar.showParentMembers'] = 'Show parent members';
 Sbi.locale.ln['sbi.olap.toolbar.hideSpans'] = 'Hide spans';
 Sbi.locale.ln['sbi.olap.toolbar.showProperties'] = 'Show properties';
 Sbi.locale.ln['sbi.olap.toolbar.suppressEmpty'] = 'Suppress empty rows/columns';
-Sbi.locale.ln['sbi.olap.toolbar.save'] = 'Persist modifications';
-Sbi.locale.ln['sbi.olap.toolbar.save.new'] = "Persist in a new version";
+Sbi.locale.ln['sbi.olap.toolbar.save'] = 'Save';
+Sbi.locale.ln['sbi.olap.toolbar.save.new'] = "Save as new version";
 Sbi.locale.ln['sbi.olap.toolbar.lock'] = "Lock model";
 Sbi.locale.ln['sbi.olap.toolbar.unlock'] = "Unlock model";
 Sbi.locale.ln['sbi.olap.toolbar.lock_other'] = "Model locked by other user";
@@ -100,7 +100,6 @@ Sbi.locale.ln['sbi.olap.execution.table.filter.empty'] = 'Drag the member here i
 //===================================================================
 //DIMENSIONS
 //===================================================================
-
 Sbi.locale.ln['sbi.olap.execution.table.dimension.selected.hierarchy'] = 'The selected hierarchy is ';
 Sbi.locale.ln['sbi.olap.execution.table.dimension.selected.hierarchy.2'] = ' You can chage it acting on the form below.';
 Sbi.locale.ln['sbi.olap.execution.table.dimension.available.hierarchies'] = 'Available hierarchies: ';
@@ -119,3 +118,9 @@ Sbi.locale.ln['sbi.olap.artifact.lock.error'] = 'The lock operation did not work
 Sbi.locale.ln['sbi.olap.artifact.unlock.error'] = 'The unlock operation did not work, the model is still locked';
 Sbi.locale.ln['sbi.olap.artifact.unlock.errorOther'] = 'The unlock operation did not work, the model is locked by user ';
 
+//===================================================================
+//VERSION MANAGER
+//===================================================================
+Sbi.locale.ln['sbi.olap.toolbar.versionmanagerwindow.version.no.cancel.all'] = 'You can\'t delete all the versions';
+Sbi.locale.ln['sbi.olap.toolbar.versionmanagerwindow.version.no.cancel.current'] = 'You can\'t delete the current versions';
+Sbi.locale.ln['sbi.olap.toolbar.versionmanagerwindow.version.title'] = 'Select the version to delete';

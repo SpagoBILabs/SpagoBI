@@ -336,11 +336,20 @@ Ext.define('Sbi.olap.control.EventManager', {
 	,
 	/**
 	 * Call rest service to unlock model
-	 * 
 	 */
 	unlockModel: function () {
 		this.olapController.unlockModel();	
 	}
+
+	/**
+	 * Call the rest service to delete the selected versions
+	 */
+	,deleteVersions: function(itemsToDelete){
+		if(itemsToDelete && itemsToDelete.length>0){
+			this.olapController.deleteVersions(itemsToDelete);
+		}
+	}	
+	
 	,executeService: function(){
 		this.loadingMask.show();
 	}

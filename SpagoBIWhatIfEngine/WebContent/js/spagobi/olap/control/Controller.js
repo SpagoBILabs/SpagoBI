@@ -197,6 +197,20 @@ Ext.define('Sbi.olap.control.Controller', {
 		
 		service.callService(this);
 	}
+	
+	/**
+	 * Call the rest service to delete the selected versions
+	 */
+	,deleteVersions: function(itemsToDelete){
+		var service = Ext.create("Sbi.service.RestService", {
+			url: "version",
+			method: 'POST',
+			pathParams: ["delete",itemsToDelete]
+		});
+		
+		service.callService(this);
+	}	
+	
 	,lockModel: function() {
 
 		var olapToolbar = this.eventManager.olapPanel.executionPanel.olapToolbar;

@@ -77,8 +77,8 @@ Sbi.locale.ln['sbi.olap.toolbar.showParentMembers'] = 'Mostra membri padri';
 Sbi.locale.ln['sbi.olap.toolbar.hideSpans'] = 'Nascondi spans';
 Sbi.locale.ln['sbi.olap.toolbar.showProperties'] = 'Mostra proprieta';
 Sbi.locale.ln['sbi.olap.toolbar.suppressEmpty'] = 'Sopprimi righe/colonne vuote';
-Sbi.locale.ln['sbi.olap.toolbar.save'] = 'Persistere le modifiche';
-Sbi.locale.ln['sbi.olap.toolbar.save.new'] = 'Salvare le modifiche in una nuova versione';
+Sbi.locale.ln['sbi.olap.toolbar.save'] = 'Salva';
+Sbi.locale.ln['sbi.olap.toolbar.save.new'] = 'Salva come nuova version';
 Sbi.locale.ln['sbi.olap.toolbar.lock'] = "Blocca il modello";
 Sbi.locale.ln['sbi.olap.toolbar.unlock'] = "Sblocca il modello";
 Sbi.locale.ln['sbi.olap.toolbar.lock_other'] = "Modello bloccato da un altro utente";
@@ -117,3 +117,9 @@ Sbi.locale.ln['sbi.olap.artifact.lock.error'] = 'Operazione di blocco non riusci
 Sbi.locale.ln['sbi.olap.artifact.unlock.error'] = 'Operazione di sblocco non riusciata, il modello è ancora bloccato.';
 Sbi.locale.ln['sbi.olap.artifact.unlock.errorOther'] = 'Operazione di sblocco non riusciata, il modello è ancora bloccato dall\'utente ';
 
+//===================================================================
+//VERSION MANAGER
+//===================================================================
+Sbi.locale.ln['sbi.olap.toolbar.versionmanagerwindow.version.no.cancel.all'] = 'Non è possibile cancellare tutte le versioni';
+Sbi.locale.ln['sbi.olap.toolbar.versionmanagerwindow.version.no.cancel.current'] = 'Non è possibile cancellare la versione attuale';
+Sbi.locale.ln['sbi.olap.toolbar.versionmanagerwindow.version.title'] = 'Selezionare le version da cancellare';

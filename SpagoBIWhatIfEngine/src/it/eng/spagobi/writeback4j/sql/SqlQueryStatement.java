@@ -39,11 +39,12 @@ public class SqlQueryStatement {
 		ResultSet rs = null;
 		
 		try{
-
+			logger.debug("Executing query "+sqlStatement);
 			Statement statement = connection.createStatement();
 			rs = statement.executeQuery(sqlStatement);
-
-			while (rs.next()) {
+			logger.debug("Query executed & getting the first value");
+			
+			if (rs.next()) {
 				toReturn= rs.getObject(columnName);
 			}
 
@@ -56,6 +57,22 @@ public class SqlQueryStatement {
 		return toReturn;
 	}
 
+	public ResultSet getValues(Connection connection, String columnName) throws SpagoBIEngineException{
+		ResultSet rs = null;
+		
+		try{
+			logger.debug("Executing query "+sqlStatement);
+			Statement statement = connection.createStatement();
+			rs = statement.executeQuery(sqlStatement);
+			logger.debug("Query executed");
 
+		}
+		catch (Exception e) {
+			logger.error("Error executing the query "+sqlStatement, e);
+			throw new SpagoBIEngineException("Error executing the query "+sqlStatement, e);
+		}
+
+		return rs;
+	}
 
 }

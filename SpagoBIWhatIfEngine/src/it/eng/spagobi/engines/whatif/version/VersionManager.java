@@ -12,15 +12,10 @@ import it.eng.spagobi.engines.whatif.exception.WhatIfPersistingTransformationExc
 import it.eng.spagobi.engines.whatif.model.ModelUtilities;
 import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIEngineRestServiceRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-import it.eng.spagobi.writeback4j.sql.SqlInsertStatement;
-import it.eng.spagobi.writeback4j.sql.SqlQueryStatement;
-import it.eng.spagobi.writeback4j.sql.VersionManagementStatements;
 
-import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
@@ -39,10 +34,12 @@ public class VersionManager {
 	public static transient Logger logger = Logger.getLogger(VersionManager.class);
 
 	private WhatIfEngineInstance instance;
-
+	private VersionDAO versionDAO; 
+	
 	public VersionManager(WhatIfEngineInstance instance) {
 		super();
 		this.instance = instance;
+		versionDAO = new VersionDAO(instance);
 	}
 	
 	public PivotModel persistNewVersionProcedure(){
@@ -78,13 +75,13 @@ public class VersionManager {
 			
 			if(newVersion == null){
 				logger.debug("Get last version");
-				newVersion = getLastVersion(connection);
+				newVersion = versionDAO.getLastVersion(connection, instance.getModelConfig().getActualVersion());
 				newVersion = newVersion+1;
 				logger.debug("Tne new version is "+newVersion);
 			}
 
 			logger.debug("Duplicate data with new version");
-			increaseActualVersion(connection, version, newVersion);
+			versionDAO.increaseActualVersion(connection, version, newVersion);
 
 			logger.debug("Apply Transformations on new version");
 			applyTransformation(connection, newVersion);
@@ -177,78 +174,9 @@ public class VersionManager {
 		logger.debug("The actual version is "+slicerValue);
 		logger.debug("OUT");
 		return new Integer(slicerValue);
-
-	}
-
-	public Integer getLastVersion(Connection connection) throws SpagoBIEngineException, NumberFormatException{
-		logger.debug("IN");
-		Integer lastVersion = null;
-		logger.debug("get Last version");
-
-		if(instance.getModelConfig().getActualVersion()!=null){
-			return instance.getModelConfig().getActualVersion();
-		}
-
-		VersionManagementStatements statement = new VersionManagementStatements(instance.getWriteBackManager().getRetriver(), instance.getDataSource());
-
-		try {
-			String sqlQuery = statement.buildGetLastVersion();	
-			SqlQueryStatement queryStatement = new SqlQueryStatement(instance.getDataSource(), sqlQuery) ;
-			Object o= queryStatement.getSingleValue(connection, instance.getWriteBackManager().getRetriver().getVersionColumnName());
-			if(o != null){
-				logger.debug("Last version is "+o);	
-
-				// Oracle case
-				if(o instanceof BigDecimal){
-					lastVersion = ((BigDecimal)o).intValue();
-				}
-				else{
-					lastVersion = (Integer) o;
-				}
-			}
-			else{
-				logger.debug("No last version found, it is assumed to be 0");
-				lastVersion = 0;
-			}
-		}
-		catch (NumberFormatException e) {
-			logger.error("Error in converting to Integer the version value: check your db settings for version column", e);
-			throw e;		
-		}
-		catch (SpagoBIEngineException e) {
-			logger.error("Error when recovering last model version", e);
-			throw e;
-		}		
-		logger.debug("OUT");
-		return lastVersion;
 	}
 
 
-	private String increaseActualVersion(Connection connection, Integer lastVersion, Integer newVersion) throws SpagoBIEngineException{
-		logger.debug("IN");
-
-		VersionManagementStatements statement = new VersionManagementStatements(instance.getWriteBackManager().getRetriver(), instance.getDataSource());
-		String sqlInsertIntoVirtual = null;
-
-
-		logger.debug("Data duplication");
-
-		try {
-			sqlInsertIntoVirtual = statement.buildInserttoDuplicateData(lastVersion, newVersion);	
-			logger.debug("The query for the new version is "+sqlInsertIntoVirtual);
-			SqlInsertStatement insertStatement = new SqlInsertStatement(sqlInsertIntoVirtual) ;
-			long dateBefore = System.currentTimeMillis();
-			insertStatement.executeStatement(connection);
-			long dateAfter = System.currentTimeMillis();
-			logger.debug("Time to insert the new version "+(dateAfter-dateBefore));
-		} catch (SpagoBIEngineException e) {
-			logger.error("Error in increasing version procedure: error when duplicating data and changing version", e);
-			throw e;
-		}	
-
-		logger.debug("OUT");
-		return sqlInsertIntoVirtual;
-	}
 
 	private void applyTransformation(Connection connection, Integer newVersion) throws Exception{
 		logger.debug("IN");
@@ -264,6 +192,78 @@ public class VersionManager {
 		}
 		logger.debug("OUT");
 
+	}
+	
+	public List<SbiVersion> getAllVersions(){
+		
+		
+		Connection connection;
+		IDataSource dataSource = instance.getDataSource();
+		
+		try {
+			logger.debug("Getting the connection to DB");
+			connection = dataSource.getConnection( null );
+		} catch (Exception e) {
+		logger.error("Error in opening connection to datasource "+dataSource.getLabel());
+			throw new SpagoBIRuntimeException("Error in opening connection to datasource "+dataSource.getLabel(), e);	
+		} 
+		
+		try {			
+			return versionDAO.getAllVersions(connection);
+
+		} catch (Exception e) {
+			logger.error("Error getting the list of versions",e);
+			throw new SpagoBIEngineRestServiceRuntimeException("versionresource.generic.error", instance.getLocale(), e);
+		}finally{
+			logger.debug("Closing the connection");
+			try {
+				connection.close();
+			} catch (SQLException e) {
+				logger.error("Error closing the connection to the db");
+				throw new SpagoBIEngineRestServiceRuntimeException( instance.getLocale(), e);
+			}
+			logger.debug("connection closed");
+		}
+		
+	}
+	
+	
+	public void deleteVersions(String versionIds){
+		
+		if(versionIds==null || versionIds.length()==0){
+			logger.debug("No version to delete");
+			return;
+		}
+		
+		Connection connection;
+		IDataSource dataSource = instance.getDataSource();
+		
+		try {
+			logger.debug("Getting the connection to DB");
+			connection = dataSource.getConnection( null );
+		} catch (Exception e) {
+		logger.error("Error in opening connection to datasource "+dataSource.getLabel());
+			throw new SpagoBIRuntimeException("Error in opening connection to datasource "+dataSource.getLabel(), e);	
+		} 
+		
+		try {
+			logger.error("Deleting versions "+versionIds);
+			versionDAO.deleteVersions(connection, versionIds);
+			
+		} catch (Exception e) {
+			logger.error("Error deleting the versions "+versionIds,e);
+			throw new SpagoBIEngineRestServiceRuntimeException("versionresource.generic.error", instance.getLocale(), e);
+		}finally{
+			logger.debug("Closing the connection");
+			try {
+				connection.close();
+			} catch (SQLException e) {
+				logger.error("Error closing the connection to the db");
+				throw new SpagoBIEngineRestServiceRuntimeException( instance.getLocale(), e);
+			}
+			logger.debug("connection closed");
+		}
+		
 	}
 
 }
