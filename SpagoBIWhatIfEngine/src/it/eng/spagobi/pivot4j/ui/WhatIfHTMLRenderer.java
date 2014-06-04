@@ -96,7 +96,7 @@ public class WhatIfHTMLRenderer extends HtmlRenderer {
 				if (getRowHeaderLevelPadding() > 0) {
 
 					int padding = getRowHeaderLevelPadding()
-							* (1 + context.getMember().getDepth());
+							* context.getMember().getDepth();
 
 					cssWriter.writeStyle("padding-left", padding + "px");
 				}
@@ -327,6 +327,14 @@ public class WhatIfHTMLRenderer extends HtmlRenderer {
 							}
 						}
 
+					}
+				} else {
+					if (context.getAxis() == Axis.ROWS) {
+						// adding a transparent image to get a higher indentation on rows headers
+						attributes.put("src", "../img/nodrill.png");
+						attributes.put("style", "padding : 2px");
+						getWriter().startElement("img", attributes);			
+						getWriter().endElement("img");
 					}
 				}
 
