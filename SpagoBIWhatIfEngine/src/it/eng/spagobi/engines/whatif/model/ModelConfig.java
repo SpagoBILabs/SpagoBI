@@ -123,6 +123,11 @@ public class ModelConfig implements Serializable {
 		return scenario.getWritebackEditConfig();
 	}
 
+	public void setWriteBackConf(WriteBackEditConfig writebackEditConfig) {
+		if(scenario!=null){
+			scenario.setWritebackEditConfig(writebackEditConfig);	
+		}
+	}
 	
 	public void setScenario(SbiScenario scenario) {
 		this.scenario = scenario;
