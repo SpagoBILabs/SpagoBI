@@ -14,7 +14,7 @@
 
 
 Ext.define('Sbi.service.RestService', {
-	extend: 'Object',
+	extend: 'Ext.util.Observable',
 
 	config: {
 		serviceVersion: '1.0',
