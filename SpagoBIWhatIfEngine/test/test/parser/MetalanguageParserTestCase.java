@@ -349,6 +349,86 @@ public class MetalanguageParserTestCase extends AbstractWhatIfTestCase {
 		assertEquals(noException, true);
 	}
 	
+	public void testExpressionVariableString(){
+		boolean noException = true;
+		
+    	String expression ="PD+10";
+		Lexer lexerInstance = new Lexer(new java.io.StringReader(expression));
+		lexerInstance.setVerbose(true);
+		parserIstance.setScanner(lexerInstance);
+		Object result = null;
+		try {
+			result = parserIstance.parse().value;
+		} catch (Exception e) {
+			noException = false;
+		}
+		assertEquals(noException, true);
+	}
+	
+	public void testExpressionVariableInteger(){
+		boolean noException = true;
+		
+    	String expression ="var+10";
+		Lexer lexerInstance = new Lexer(new java.io.StringReader(expression));
+		lexerInstance.setVerbose(true);
+		parserIstance.setScanner(lexerInstance);
+		Object result = null;
+		try {
+			result = parserIstance.parse().value;
+		} catch (Exception e) {
+			noException = false;
+		}
+		assertEquals(result, 15.0);
+	}
+	
+	public void testExpressionVariableDecimal(){
+		boolean noException = true;
+		
+    	String expression ="varD+10";
+		Lexer lexerInstance = new Lexer(new java.io.StringReader(expression));
+		lexerInstance.setVerbose(true);
+		parserIstance.setScanner(lexerInstance);
+		Object result = null;
+		try {
+			result = parserIstance.parse().value;
+		} catch (Exception e) {
+			noException = false;
+		}
+		assertEquals(result, 15.5);
+	}
+	
+	public void testExpressionAliasDimension(){
+		boolean noException = true;
+		
+    	String expression ="P.Eggs";
+		Lexer lexerInstance = new Lexer(new java.io.StringReader(expression));
+		lexerInstance.setVerbose(true);
+		parserIstance.setScanner(lexerInstance);
+		Object result = null;
+		try {
+			result = parserIstance.parse().value;
+		} catch (Exception e) {
+			noException = false;
+		}
+		assertEquals(noException, true);
+	}
+	
+	public void testExpressionAliasGeneric(){
+		boolean noException = true;
+		
+    	String expression ="Eggs";
+		Lexer lexerInstance = new Lexer(new java.io.StringReader(expression));
+		lexerInstance.setVerbose(true);
+		parserIstance.setScanner(lexerInstance);
+		Object result = null;
+		try {
+			result = parserIstance.parse().value;
+		} catch (Exception e) {
+			noException = false;
+		}
+		assertEquals(noException, true);
+	}
+	
 	//--- Utility functions ---------------------------------------------------------------
 	
 	public String getCatalogue(){
