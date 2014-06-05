@@ -27,7 +27,7 @@ Sbi.cockpit.core.WidgetContainerComponent = function(config) {
 	
 	// init properties...
 	var defaultSettings = {
-		title : config.widget ? 'Widget [' + config.widget.id + ']': 'Widget'
+		title : config.widget ? config.widget.getTitle() : 'Widget'
 	    , bodyBorder: true
 	    , frame: true
 	    , shadow: false
@@ -197,6 +197,7 @@ Ext.extend(Sbi.cockpit.core.WidgetContainerComponent, Ext.Window, {
 	, setWidgetConfiguration: function(widgetConf) {
 		Sbi.trace("[WidgetContainerComponent.setWidgetConfiguration]: IN");
 		var widget;
+		
 		if(this.isEmpty()) {
 			widget = Sbi.cockpit.core.WidgetExtensionPointManager.getWidgetRuntime(widgetConf);
 			this.setWidget(widget);
@@ -261,7 +262,7 @@ Ext.extend(Sbi.cockpit.core.WidgetContainerComponent, Ext.Window, {
 	 *    - none
 	 */
 	, initServices: function() {
-
+		
 	}
 
 
@@ -270,7 +271,7 @@ Ext.extend(Sbi.cockpit.core.WidgetContainerComponent, Ext.Window, {
 	 * 
 	 * Initialize the GUI
 	 */
-	, init: function() {
+	, init: function() {					
 		this.tools =  [{
 			type:'gear',
     		handler: this.onShowWidgetEditor,
