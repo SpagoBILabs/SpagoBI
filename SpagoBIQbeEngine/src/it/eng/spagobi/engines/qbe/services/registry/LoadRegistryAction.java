@@ -299,7 +299,7 @@ public class LoadRegistryAction extends ExecuteQueryAction {
 			IRecord record = dataStore.getRecordAt(i);
 			
 			// get current values of column to merge
-			HashMap<Integer, Object> currentMergeValues = new HashMap<>();
+			HashMap<Integer, Object> currentMergeValues = new HashMap<Integer, Object>();
 
 			// iterate on each column to merge and store values
 			for (Iterator iterator = columnsIndexToMerge.iterator(); iterator.hasNext();) {
