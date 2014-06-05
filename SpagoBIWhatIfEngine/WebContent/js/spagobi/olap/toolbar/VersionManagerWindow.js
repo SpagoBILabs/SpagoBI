@@ -18,9 +18,12 @@ Ext.define('Sbi.olap.toolbar.VersionManagerWindow', {
 	extend: 'Ext.window.Window',
 
 	config:{
-		height: 200,
-		width: 400,
+		height: 400,
+		width: 300,
 		actualVersion: null,
+		style: "background-color: transparent",
+		bodyStyle: "background-color: transparent",
+		autoScroll: true,
 		title: LN("sbi.olap.toolbar.versionmanagerwindow.version.title")
 	},
 
@@ -73,6 +76,7 @@ Ext.define('Sbi.olap.toolbar.VersionManagerWindow', {
 		            	 }
 		             },    {
 		            	 text: LN('sbi.common.select'),
+		            	 tooltip: LN('sbi.olap.toolbar.versionmanagerwindow.version.select.warning'),
 		            	 handler: function(){
 		            		 var selected = thisPanel.grid.getSelectionModel( ).getSelection();
 		            		 var itemsToDelete = "";

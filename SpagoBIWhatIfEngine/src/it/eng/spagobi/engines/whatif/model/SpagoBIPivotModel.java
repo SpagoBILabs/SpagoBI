@@ -10,22 +10,29 @@
 
 package it.eng.spagobi.engines.whatif.model;
 
+import it.eng.spagobi.engines.whatif.cube.CubeUtilities;
 import it.eng.spagobi.engines.whatif.exception.WhatIfPersistingTransformationException;
 import it.eng.spagobi.engines.whatif.model.transform.CellTransformation;
 import it.eng.spagobi.engines.whatif.model.transform.CellTransformationsAnalyzer;
 import it.eng.spagobi.engines.whatif.model.transform.CellTransformationsStack;
 import it.eng.spagobi.engines.whatif.model.transform.algorithm.AllocationAlgorithm;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIEngineRestServiceRuntimeException;
 
 import java.sql.Connection;
 import java.util.Iterator;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.olap4j.Cell;
 import org.olap4j.CellSet;
 import org.olap4j.OlapDataSource;
+import org.olap4j.metadata.Cube;
+import org.olap4j.metadata.Hierarchy;
+import org.olap4j.metadata.Member;
 
 import com.eyeq.pivot4j.impl.PivotModelImpl;
+import com.eyeq.pivot4j.transform.ChangeSlicer;
 
 public class SpagoBIPivotModel extends PivotModelImpl {
 	public static transient Logger auditlogger = Logger.getLogger("audit.stack");
@@ -157,6 +164,33 @@ public class SpagoBIPivotModel extends PivotModelImpl {
 		auditlogger.info("Error persisting the these modifications "+ remaningTransformations.toString());
 	}
 	
-	
+	public Integer getActualVersionSlicer(ModelConfig modelConfig){
+		logger.debug("IN");
+
+		// get cube
+		Cube cube = getCube();
+
+		Hierarchy hierarchy = CubeUtilities.getVersionHierarchy(cube, modelConfig);
+		
+		ChangeSlicer ph =  getTransform(ChangeSlicer.class);
+		List<Member> slicers = ph.getSlicer(hierarchy);
+		
+		if(slicers == null || slicers.size()==0){
+			logger.error( "No version slicer deifined in the mdx query");
+			throw new SpagoBIEngineRestServiceRuntimeException("versionresource.getactualversion.no.slicer.error", getLocale(), "No version in the mdx query");
+		}
+		
+		String slicerValue = slicers.get(0).getName();
+		
+		if(slicerValue == null){
+			logger.error( "No version slicer deifined in the mdx query");
+			throw new SpagoBIEngineRestServiceRuntimeException("versionresource.getactualversion.no.slicer.error", getLocale(), "No version in the mdx query");
+		}
+		
+		logger.debug("The actual version is "+slicerValue);
+		logger.debug("OUT");
+		return new Integer(slicerValue);
+	}
+
 	
 }

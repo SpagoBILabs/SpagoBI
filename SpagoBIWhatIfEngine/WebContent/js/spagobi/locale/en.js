@@ -130,4 +130,5 @@ Sbi.locale.ln['sbi.olap.execution.menu.addToToolbar'] = 'Add to toolbar';
 //===================================================================
 Sbi.locale.ln['sbi.olap.toolbar.versionmanagerwindow.version.no.cancel.all'] = 'You can\'t delete all the versions';
 Sbi.locale.ln['sbi.olap.toolbar.versionmanagerwindow.version.no.cancel.current'] = 'You can\'t delete the current versions';
-Sbi.locale.ln['sbi.olap.toolbar.versionmanagerwindow.version.title'] = 'Select the version to delete';>>>>>>> .r22906
+Sbi.locale.ln['sbi.olap.toolbar.versionmanagerwindow.version.title'] = 'Select the version to delete';
+Sbi.locale.ln['sbi.olap.toolbar.versionmanagerwindow.version.select.warning'] = 'Warning: this operation could take some minutes. You can continue your navigation but you can not save modifications untill the operation is finished. This can also make the navigation slower.';

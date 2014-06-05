@@ -47,7 +47,7 @@ public class VersionManager {
 	}
 	
 	public PivotModel persistNewVersionProcedure(Integer newVersion){
-		Integer actualVersion = getActualVersionSlicer();
+		Integer actualVersion = ((SpagoBIPivotModel)instance.getPivotModel()).getActualVersionSlicer(instance.getModelConfig());
 		return persistNewVersionProcedure(actualVersion, newVersion);
 	}
 
@@ -75,7 +75,7 @@ public class VersionManager {
 			
 			if(newVersion == null){
 				logger.debug("Get last version");
-				newVersion = versionDAO.getLastVersion(connection, instance.getModelConfig().getActualVersion());
+				newVersion = versionDAO.getLastVersion(connection);
 				newVersion = newVersion+1;
 				logger.debug("Tne new version is "+newVersion);
 			}
@@ -148,33 +148,6 @@ public class VersionManager {
 		logger.debug("Slicer is set");
 	}
 
-	private Integer getActualVersionSlicer(){
-		logger.debug("IN");
-
-		// get cube
-		Cube cube = instance.getPivotModel().getCube();
-
-		Hierarchy hierarchy = CubeUtilities.getVersionHierarchy(cube, instance.getModelConfig());
-		
-		ChangeSlicer ph =  instance.getPivotModel().getTransform(ChangeSlicer.class);
-		List<Member> slicers = ph.getSlicer(hierarchy);
-		
-		if(slicers == null || slicers.size()==0){
-			logger.error( "No version slicer deifined in the mdx query");
-			throw new SpagoBIEngineRestServiceRuntimeException("versionresource.getactualversion.no.slicer.error", instance.getLocale(), "No version in the mdx query");
-		}
-		
-		String slicerValue = slicers.get(0).getName();
-		
-		if(slicerValue == null){
-			logger.error( "No version slicer deifined in the mdx query");
-			throw new SpagoBIEngineRestServiceRuntimeException("versionresource.getactualversion.no.slicer.error", instance.getLocale(), "No version in the mdx query");
-		}
-		
-		logger.debug("The actual version is "+slicerValue);
-		logger.debug("OUT");
-		return new Integer(slicerValue);
-	}
 
 
 

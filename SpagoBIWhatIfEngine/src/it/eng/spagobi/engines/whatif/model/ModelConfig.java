@@ -15,7 +15,6 @@ import it.eng.spagobi.writeback4j.SbiScenarioVariable;
 import it.eng.spagobi.writeback4j.WriteBackEditConfig;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,9 +37,6 @@ public class ModelConfig implements Serializable {
 	private Integer artifactVersionId;
 	private String status;
 	private String locker;
-	
-//	private List<String> toolbarVisibleButtons =new ArrayList<String>();
-//	private List<String> toolbarMenuButtons;
 	
 
 	private List<String> toolbarVisibleButtons;
@@ -109,6 +105,9 @@ public class ModelConfig implements Serializable {
 	}
 
 	public Integer getActualVersion() {
+		if(actualVersion==null && scenario!=null && scenario.getWritebackEditConfig()!=null ){
+			return scenario.getWritebackEditConfig().getInitialVersion();
+		}
 		return actualVersion;
 	}
 
