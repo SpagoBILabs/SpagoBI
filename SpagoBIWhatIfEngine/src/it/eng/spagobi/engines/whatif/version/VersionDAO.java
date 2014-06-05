@@ -7,10 +7,7 @@
 package it.eng.spagobi.engines.whatif.version;
 
 import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
-import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
-import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
-import it.eng.spagobi.writeback4j.ISchemaRetriver;
 import it.eng.spagobi.writeback4j.sql.SqlInsertStatement;
 import it.eng.spagobi.writeback4j.sql.SqlQueryStatement;
 import it.eng.spagobi.writeback4j.sql.SqlUpdateStatement;
@@ -50,15 +47,11 @@ public class VersionDAO {
 
 	}
 
-	public Integer getLastVersion(Connection connection, Integer lastVersion) throws SpagoBIEngineException, NumberFormatException{
+	public Integer getLastVersion(Connection connection) throws SpagoBIEngineException, NumberFormatException{
 		logger.debug("IN");
 		logger.debug("get Last version");
 
-		ISchemaRetriver retriver = instance.getWriteBackManager().getRetriver();
-
-		if(lastVersion!=null){
-			return lastVersion;
-		}
+		Integer lastVersion;
 
 		try {
 			String sqlQuery = "select MAX("+getVersionColumnName()+") as "+getVersionColumnName()+" from "+editCubeTableName;

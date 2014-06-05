@@ -42,6 +42,7 @@ public class WhatIfXMLTemplateParser implements IWhatIfTemplateParser {
 	public final static String MEASURE_TAG = "MEASURE";
 	public final static String WRITEBACK_TAG = "WRITEBACK";
 	public final static String EDIT_CUBE_ATTRIBUTE = "editCube";
+	public final static String INITIAL_VERSION_ATTRIBUTE = "initialVersion";
 	public static String PROP_PARAMETER_NAME = "name";
 	public static String PROP_PARAMETER_ALIAS = "as";
 	public static String SCENARIO_VARIABLES_TAG = "SCENARIO_VARIABLES";
@@ -263,6 +264,7 @@ public class WhatIfXMLTemplateParser implements IWhatIfTemplateParser {
 			logger.error("In the writeback is enabled you must specify a cube to edit. Remove the "+WRITEBACK_TAG+" tag or specify a value for the attribute "+EDIT_CUBE_ATTRIBUTE );
 			throw new SpagoBIEngineRuntimeException("In the writeback is enabled you must specify a cube to edit. Remove the "+WRITEBACK_TAG+" tag or specify a value for the attribute "+EDIT_CUBE_ATTRIBUTE);
 		}
+		
 		List<SourceBean> editableMeasuresBeans = (List<SourceBean>)scenarioSB.getAttributeAsList(WhatIfXMLTemplateParser.MEASURE_TAG);
 		if(editableMeasuresBeans!=null && editableMeasuresBeans.size()>0 ){
 			List<String> editableMeasures = new ArrayList<String>();
@@ -272,6 +274,17 @@ public class WhatIfXMLTemplateParser implements IWhatIfTemplateParser {
 			writeBackConfig.setEditableMeasures(editableMeasures);
 			logger.debug(TAG_SCENARIO + ":the editable measures are "+editableMeasures);
 		}
+		
+		String initialVersion = (String)scenarioSB.getAttribute(WhatIfXMLTemplateParser.INITIAL_VERSION_ATTRIBUTE);
+		if(initialVersion!=null && initialVersion.length()>0){
+			try {
+				writeBackConfig.setInitialVersion(new Integer(initialVersion));
+				logger.error("The inital version is "+initialVersion);
+			} catch (Throwable e) {
+				logger.error("Error loading the inital version from the template "+initialVersion);
+			}
+		}
+		
 		writeBackConfig.setEditCubeName(editCube);
 		logger.debug(TAG_SCENARIO + ":the edit cube is "+editCube);
 		scenario.setWritebackEditConfig(writeBackConfig);

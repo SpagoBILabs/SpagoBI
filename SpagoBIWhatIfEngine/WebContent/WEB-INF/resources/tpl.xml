@@ -21,7 +21,7 @@
 	</STANDALONE>
 	
 	
-	<SCENARIO name="scenario" editCube="Sales_Edit">
+	<SCENARIO name="scenario" editCube="Sales_Edit" initialVersion="0">
 		<MEASURE>Store Sales</MEASURE>
 		<MEASURE>Store Cost</MEASURE>
 		<VARIABLE name="var" value="5"/>

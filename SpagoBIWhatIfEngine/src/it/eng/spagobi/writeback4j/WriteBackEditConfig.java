@@ -24,6 +24,8 @@ public class WriteBackEditConfig implements Serializable {
 
 	private List<String> editableMeasures;
 
+	private Integer initalVersion;
+	
 	public String getEditCubeName() {
 		return editCubeName;
 	}
@@ -38,6 +40,17 @@ public class WriteBackEditConfig implements Serializable {
 
 	public void setEditableMeasures(List<String> editableMeasures) {
 		this.editableMeasures = editableMeasures;
+	}
+
+	public Integer getInitialVersion() {
+		if(initalVersion==null){
+			return 0;
+		}
+		return initalVersion;
+	}
+
+	public void setInitialVersion(Integer defaultVersion) {
+		this.initalVersion = defaultVersion;
 	}
 
 	

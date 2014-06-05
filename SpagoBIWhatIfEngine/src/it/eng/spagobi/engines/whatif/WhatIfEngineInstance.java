@@ -129,11 +129,9 @@ public class WhatIfEngineInstance extends AbstractEngineInstance implements Seri
 		modelConfig = new ModelConfig();
 		modelConfig.setScenario(template.getScenario());
 		modelConfig.setAliases(template.getAliases());
-		//modelConfig.setToolbarVisibleButtons(template.getToolbarVisibleButtons());
-		//modelConfig.setToolbarMenuButtons(template.getToolbarMenuButtons());		
+
 		
 		// init artifact informations
-		
 		if(!template.isStandAlone()){
 			Integer artifactVersionID = getArtifactVersionId(getEnv());
 			modelConfig.setArtifactVersionID(artifactVersionID);

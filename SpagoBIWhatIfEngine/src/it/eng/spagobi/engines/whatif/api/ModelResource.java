@@ -18,7 +18,6 @@ package it.eng.spagobi.engines.whatif.api;
 
 import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
 import it.eng.spagobi.engines.whatif.common.AbstractWhatIfEngineService;
-import it.eng.spagobi.engines.whatif.cube.CubeUtilities;
 import it.eng.spagobi.engines.whatif.exception.WhatIfPersistingTransformationException;
 import it.eng.spagobi.engines.whatif.model.SpagoBICellSetWrapper;
 import it.eng.spagobi.engines.whatif.model.SpagoBICellWrapper;
@@ -53,7 +52,6 @@ import org.apache.axis.utils.ByteArrayOutputStream;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
 import org.olap4j.OlapDataSource;
-import org.olap4j.metadata.Member;
 
 import com.eyeq.pivot4j.PivotModel;
 import com.eyeq.pivot4j.export.poi.ExcelExporter;
@@ -157,6 +155,10 @@ public class ModelResource extends AbstractWhatIfEngineService {
 			throw new SpagoBIRuntimeException("Error opening connection to datasource "+dataSource.getLabel(), e);	
 		} 
 		try {
+			
+			//check if a version has been selected in the cube
+			((SpagoBIPivotModel)ei.getPivotModel()).getActualVersionSlicer(ei.getModelConfig());
+			
 			//Persisting the pending modifications
 			modelWrapper.persistTransformations(connection);
 		} catch (WhatIfPersistingTransformationException e) {
