@@ -9,16 +9,14 @@
 		SELECT {[Measures].[Store Sales]} ON COLUMNS, {[Product].[Food]} ON ROWS FROM [Sales_V] WHERE CrossJoin([Version].[0], [Region].[Mexico Central])
 	</MDXMondrianQuery>
 	
+	
 	<STANDALONE>
 		<CONNECTION>
-		<!--
 		<USR>root</USR>
-		<PWD></PWD>
-		<CONNECTIONSTRING>jdbc:mysql://localhost:3306/foodmart_new</CONNECTIONSTRING>
+		<PWD>root</PWD>
+		<CATALOG>\resources\Olap\FoodMartMySQL.xml</CATALOG>
+		<CONNECTIONSTRING>jdbc:mysql://localhost:3306/foodmart_key</CONNECTIONSTRING>
 		<DRIVER>com.mysql.jdbc.Driver</DRIVER>
-		-->
-		<JNDI_NAME>java:comp/env/jdbc/foodmart</JNDI_NAME>
-		<CATALOG>\resources\Olap\FoodMart.xml</CATALOG>
 		</CONNECTION>
 	</STANDALONE>
 	
