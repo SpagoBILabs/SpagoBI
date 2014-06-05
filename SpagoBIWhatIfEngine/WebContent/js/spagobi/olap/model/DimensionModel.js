@@ -16,6 +16,7 @@ Ext.define('Sbi.olap.DimensionModel', {
 	fields: [
 		{name: 'name'},
 		{name: 'uniqueName'},
+		{name: 'caption'},
 		{name: 'axis', type: 'int'},
 		{name: 'hierarchies', type: 'array'},
 		{name: 'selectedHierarchyUniqueName', type: 'string'},

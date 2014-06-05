@@ -20,6 +20,7 @@ import org.olap4j.metadata.Level;
 public class SbiHierarchy {
 	private String name;
 	private String uniqueName;
+	private String caption;
 	private int position;
 	private List<Map<String,String>> slicers;
 	private List<String> levelNames;
@@ -29,6 +30,7 @@ public class SbiHierarchy {
 		super();
 		this.name = hierarchy.getName();
 		this.uniqueName = hierarchy.getUniqueName();
+		this.caption = hierarchy.getCaption();
 		this.position = position;
 		slicers= new ArrayList<Map<String,String>>(); 
 		levelNames = new ArrayList<String>();
@@ -75,6 +77,17 @@ public class SbiHierarchy {
 
 	public List<String> getLevelNames() {
 		return levelNames;
+	}
+	
+	public String getCaption() {
+		if (caption != null) {
+			return caption;
+		}
+		return this.name;
+	}
+
+	public void setCaption(String caption) {
+		this.caption = caption;
 	}
 	
 	

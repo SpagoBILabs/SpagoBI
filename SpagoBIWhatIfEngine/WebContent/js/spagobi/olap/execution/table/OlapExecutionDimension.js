@@ -114,7 +114,7 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionDimension', {
 	 * @returns
 	 */
 	getDimensionName: function(){
-		var dimensionName = this.dimension.raw.name;
+		var dimensionName = this.dimension.raw.caption;
 //		var hierarchies =  this.dimension.get("hierarchies");
 //		if(hierarchies.length>1){
 //			var selectedHierarchyPosition = this.dimension.get("selectedHierarchyPosition");
@@ -159,7 +159,7 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionDimension', {
 		var selectId = Ext.id()+"select";
 		var html = "";
 		if(this.dimension.raw.hierarchies.length>1){
-			html = LN("sbi.olap.execution.table.dimension.selected.hierarchy")+"<i>"+(this.dimension.raw.hierarchies[this.dimension.raw.selectedHierarchyPosition]).name+"</i>."+LN("sbi.olap.execution.table.dimension.selected.hierarchy.2")+
+			html = LN("sbi.olap.execution.table.dimension.selected.hierarchy")+"<i>"+(this.dimension.raw.hierarchies[this.dimension.raw.selectedHierarchyPosition]).caption+"</i>."+LN("sbi.olap.execution.table.dimension.selected.hierarchy.2")+
 				"<table>"+
 				//"<tr><td>The selected hierarchy is "+(this.dimension.raw.hierarchies[this.dimension.raw.selectedHierarchyPosition]).name+"</td></tr>"+
 				"<tr><td class='multihierarchy-font'>"+
@@ -173,7 +173,7 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionDimension', {
 					html = html+" selected='selected' ";
 				}
 				
-				html = html+">"+this.dimension.raw.hierarchies[i].name+"</option>";
+				html = html+">"+this.dimension.raw.hierarchies[i].caption+"</option>";
 			}
 			
 			html = html+"</select></td></tr></table>";
