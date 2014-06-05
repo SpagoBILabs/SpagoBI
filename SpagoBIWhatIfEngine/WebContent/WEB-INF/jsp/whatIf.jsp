@@ -116,6 +116,7 @@ author:...
 		
         Sbi.config.urlSettings = urlSettings;
         Sbi.config.externalUrl = externalUrl;
+        Sbi.config.isStandalone = isStandalone;
         
     	<%} %>
 
