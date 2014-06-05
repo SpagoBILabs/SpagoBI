@@ -151,8 +151,8 @@ public class WhatIfEngineInstance extends AbstractEngineInstance implements Seri
 		
 		
 		//init toolbar
-		modelConfig.setToolbarMenuButtons(modelConfig.getToolbarMenuButtons());
-		modelConfig.setToolbarVisibleButtons(modelConfig.getToolbarVisibleButtons());
+		modelConfig.setToolbarMenuButtons(template.getToolbarMenuButtons());
+		modelConfig.setToolbarVisibleButtons(template.getToolbarVisibleButtons());
 
 		WriteBackEditConfig writeBackConfig = modelConfig.getWriteBackConf();
 		if(writeBackConfig!= null ){
