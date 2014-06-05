@@ -9,7 +9,7 @@
  * 
  *     
  *  @author
- *  Alberto Ghedin (alberto.ghedin@eng.it), Monica Franceschini (monica.franceschini@eng.it)
+ *  Alberto Ghedin (alberto.ghedin@eng.it), Monica Franceschini (monica.franceschini@eng.it), Giulio Gavardi (giulio.gavardi@eng.it),
  */
 
 
@@ -41,14 +41,20 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 	mdxContainerPanel: null,
 
 	drillMode: null,	
-	showParentMembers: null,
-	hideSpans: null,
-	showProperties: null,
+	//showParentMembers: null,
+	//hideSpans: null,
+	//showProperties: null,
 	lockArray: null,
 	
+	menuButtons: null,
+	
+	labelsToolbar: null,
+	labelsMenu: null,
+	
 	buttonsContainer: null,
+	buttonsConfigContainer: null,
 
-	showMdx: null,
+	//showMdx: null,
 
 	constructor : function(config) {
 		this.initConfig(config);
@@ -61,9 +67,20 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 
 		
 	},
+	
+    listeners: {
+        render: function() {
+                // After the component has been rendered, disable the default browser context menu
+                Ext.getBody().on("contextmenu", Ext.emptyFn, null, {preventDefault: true});
+        }, 
+        contextmenu: function(e) {
+        }
+    },
 
 	initComponent: function() {
 		var thisPanel = this;
+		this.labelsMenu = [];
+		this.labelsToolbar = [];
 		
 		this.addEvents(
 		        /**
@@ -127,113 +144,124 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 		
 		);
 
-		this.buttonsContainer = {};
 		
-		this.showMdx = Ext.create('Ext.Button', {
-			tooltip: LN('sbi.olap.toolbar.mdx'),
-			iconCls: 'mdx',
-			handler: function() {
-				this.showMdxWindow();
-			},
-			scope:this,
-			reorderable: true
-			//,visible: false
-		});
+		var thisPanel = this;
+		
+		// create function to move button
+		var sharedConfig = {
+				scope:this,
+				reorderable: true,
+				visible: false
+				};
 
 		
+		this.menuButtons = Ext.create('Ext.button.Split', {
+		    renderTo: Ext.getBody(),
+		    text: LN('sbi.olap.execution.menu.buttonMenu'),
+		    // handle a click on the button itself
+		    handler: function() {
+		    },
+		    menu: new Ext.menu.Menu({
+		    	//width: 100,
+		        items: [
+		            // these will render as dropdown menu items when the arrow is clicked:
+		            {text: '', handler: function(){ }},
+		           // {text: 'Item 2', handler: function(){ alert("Item 2 clicked"); }}
+		        ]
+		    })
+		});
+		this.menuButtons.setVisible(false);
 		
-		this.undo = Ext.create('Ext.Button', {
+		////////////////////
+		
+		
+		this.buttonsContainer = {};
+		this.buttonsConfigContainer = {};
+		
+		this.buttonsConfigContainer['BUTTON_MDX'] = Ext.apply({
+			tooltip: LN('sbi.olap.toolbar.mdx'),
+			iconCls: 'mdx',
+			label: 'BUTTON_MDX',
+			handler: function() {
+				this.showMdxWindow();
+			}
+		}, sharedConfig);
+		
+		
+		this.buttonsConfigContainer['BUTTON_UNDO'] = Ext.apply({
 			tooltip: LN('sbi.olap.toolbar.undo'),
 			iconCls: 'undo',
+			label: 'BUTTON_UNDO',
 			handler: function() {
 				Sbi.olap.eventManager.undo();
-			},
-			scope:this,
-			reorderable: true,
-			visible: false
-		});
+			}
+
+		}, sharedConfig);	
 		
-		this.showParentMembers = Ext.create('Ext.Button', {
+		this.buttonsConfigContainer['BUTTON_FATHER_MEMBERS'] =	Ext.apply({
 			tooltip: LN('sbi.olap.toolbar.showParentMembers'),
 			iconCls: 'show-parent-members',
 			enableToggle: true,
-	        toggleHandler: this.onShowParentMembersToggle,
-
-			scope:this,
-			reorderable: true,
-			visible: false
-		});
-
+			label: 'BUTTON_FATHER_MEMBERS',
+	        toggleHandler: this.onShowParentMembersToggle
+		}, sharedConfig);
 		
-		this.hideSpans = Ext.create('Ext.Button', {
+		this.buttonsConfigContainer['BUTTON_HIDE_SPANS']  = Ext.apply({
 			tooltip: LN('sbi.olap.toolbar.hideSpans'),
 			iconCls: 'hide-spans',
 			enableToggle: true,
-	        toggleHandler: this.onHideSpansToggle,
-
-			scope:this,
-			reorderable: true,
-			visible: false
-		});
+			label: 'BUTTON_HIDE_SPANS',
+	        toggleHandler: this.onHideSpansToggle
+			}, sharedConfig);
 		
-		this.showProperties = Ext.create('Ext.Button', {
+		
+		this.buttonsConfigContainer['BUTTON_SHOW_PROPERTIES']  = Ext.apply({
 			tooltip: LN('sbi.olap.toolbar.showProperties'),
 			iconCls: 'show-props',
 			enableToggle: true,
-	        toggleHandler: this.onShowPropertiesToggle,
-
-			scope:this,
-			reorderable: true,
-			visible: false
-		}); 
+			label: 'BUTTON_SHOW_PROPERTIES',
+	        toggleHandler: this.onShowPropertiesToggle
+		}, sharedConfig);
 		
-		this.suppressEmpty = Ext.create('Ext.Button', {
+		
+		this.buttonsConfigContainer['BUTTON_HIDE_EMPTY']  =  Ext.apply({
 			tooltip: LN('sbi.olap.toolbar.suppressEmpty'),
 			iconCls: 'empty-rows',
 			enableToggle: true,
-	        toggleHandler: this.onSuppressEmptyToggle,
-
-			scope:this,
-			reorderable: true,
-			visible: false
-		});
-		this.clean = Ext.create('Ext.Button', {
+			label: 'BUTTON_HIDE_EMPTY',
+	        toggleHandler: this.onSuppressEmptyToggle
+		}, sharedConfig);
+		
+		
+		this.buttonsConfigContainer['BUTTON_FLUSH_CACHE']  = Ext.apply({
 			tooltip: LN('sbi.olap.toolbar.clean'),
 			iconCls: 'clean-icon',
-			handler: function() {
+			handler: function(e, f, g) {
 				Sbi.olap.eventManager.cleanCache();
-			},
-			scope:this,
-			reorderable: true,
-			visible: false
-		});
+				},
+				label: 'BUTTON_FLUSH_CACHE'
+		}, sharedConfig);
 		
-		this.persist = Ext.create('Ext.Button', {
+		this.buttonsConfigContainer['BUTTON_SAVE'] = Ext.apply({
 			tooltip: LN('sbi.olap.toolbar.save'),
-			iconCls: 'save-icon'
+			iconCls: 'save-icon',
+				label: 'BUTTON_SAVE'
 			, handler: function() {
 				Sbi.olap.eventManager.persistTransformations();
-			},
-			scope:this,
-			reorderable: true,
-			visible: false
-		});
+			}
+		}, sharedConfig);
 		
-
-
-		this.persistNewVersion = Ext.create('Ext.Button', {
+		this.buttonsConfigContainer['BUTTON_SAVE_NEW'] =Ext.apply({
 			tooltip: LN('sbi.olap.toolbar.save.new'),
 			iconCls: 'save-new-icon',
+			label: 'BUTTON_SAVE_NEW',
 			handler: function() {
 				Sbi.olap.eventManager.persistNewVersionTransformations();
-			},
-			scope:this,
-			reorderable: true,
-			visible: false
-		});
+			}
+
+		}, sharedConfig);
 		
-		
-		
+			
 		this.lockModel = Ext.create('Ext.Button', {
 			tooltip: LN('sbi.olap.toolbar.lock'),
 			iconCls: 'lock-icon'
@@ -244,6 +272,8 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 			scope:this,
 			reorderable: true
 		});
+		this.lockModel.setVisible(false);
+		
 		this.unlockModel = Ext.create('Ext.Button', {
 			tooltip: LN('ssbi.olap.toolbar.unlock'),
 			iconCls: 'unlock-icon'
@@ -254,6 +284,8 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 			scope:this,
 			reorderable: true
 		});
+		this.unlockModel.setVisible(false);
+
 		this.lockOtherModel = Ext.create('Ext.Button', {
 			tooltip: LN('sbi.olap.toolbar.lock_other'),
 			iconCls: 'lock-other-icon'
@@ -262,8 +294,14 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 			scope:this,
 			reorderable: true
 		});
-		this.lockArray = new Array(this.lockModel, this.unlockModel, this.lockOtherModel);
+		this.lockOtherModel.setVisible(false);
 		
+		if(Sbi.config.isStandalone == false){
+			this.lockArray = new Array(this.lockModel, this.unlockModel, this.lockOtherModel);
+		}
+		
+
+
 		
 		var pressedBtn = this.config.toolbarConfig.drillType;
 		if(pressedBtn == 'position'){
@@ -273,76 +311,17 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 		}else if(pressedBtn == 'replace'){
 			this.drillMode.items.items[2].pressed = true;
 		}
-		
-		var isShownParentMembers = this.config.toolbarConfig.showParentMembers;
-		if(isShownParentMembers == true){
-			this.showParentMembers.pressed = true;
-		}else{
-			this.showParentMembers.pressed = false;
-		}
-		
-		this.buttonsContainer['BUTTON_MDX'] = this.showMdx;
-		this.buttonsContainer['BUTTON_HIDE_SPANS'] = this.hideSpans;
-		this.buttonsContainer['BUTTON_FLUSH_CACHE'] = this.clean;
-		this.buttonsContainer['BUTTON_SAVE'] = this.persist;
-		this.buttonsContainer['BUTTON_FATHER_MEMBERS'] = this.showParentMembers;
-		this.buttonsContainer['BUTTON_LOCK_MODEL'] = this.lockArray;
 
-		// MENU -------------------------------
-		// split buttons, some will be visible other in menu
-/*		var menuItems = new Array();
-    	var baseMenuItemConfig = {
-    			text: 'Menu buttons'
-    			, group: 'group_b'
-    			, iconCls: 'icon-pdf' 
-    			, scope: this
-    			, width: 15
-    			, handler : Ext.emptyFn
-    			, href: ''   
-    		}
-    	var itemConfig = null;
-    	menuItems.push(	
-				new Ext.menu.Item(this.showParentMembers)
-			); 
-//       	menuItems.push('-'); 
-
- //      	var menu = new Ext.menu.Menu({
-//			items: menuItems    
-//		});	
-       	
-       	
-    	// create menu button
-//		var menuButton = new Ext.Toolbar.SplitButton({
-//			text: 'Shortcuts'
-//			, tooltip: 'Shortcuts'
-	//		, path: 'Shortcuts'	
-			//, iconCls: 'icon-export' 	
-//			, width: 15
-//			, cls: 'x-btn-menubutton x-btn-text-icon bmenu '
-//			, menu: menu
-//		});
 		
-//		this.add(menuButton);
-       	*/
-		// END MENU -------------------------------
-    	
-    	
 		Ext.apply(this, {
 			layout: {
 				overflowHandler: 'Menu'
 			},
-			items   : [ this.drillMode, this.showMdx, this.undo , 
-			            this.clean, 
-			            this.lockModel, 
-			            this.unlockModel, 
-			            this.lockOtherModel,
-			            this.persist, 
-			            this.persistNewVersion, 
-			            this.showParentMembers, 
-			            this.hideSpans, 
-			            /*this.showProperties, */
-			            this.suppressEmpty]
+			items   : [ 
+			            this.drillMode
+			            ]
 		});
+		
 		
 		
 		this.callParent();
@@ -353,19 +332,27 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 	 
 	 */
     onShowParentMembersToggle: function (item, pressed){
-    	this.showParentMembers.pressed = pressed;
-    	this.setToolbarConf({showParentMembers: pressed});
+    	if(this.buttonsContainer['BUTTON_FATHER_MEMBERS'] != undefined && this.buttonsContainer['BUTTON_FATHER_MEMBERS']!= null  ){
+    		this.buttonsContainer['BUTTON_FATHER_MEMBERS'].pressed = pressed;
+    	}
+    	    	this.setToolbarConf({showParentMembers: pressed});
     },
     onHideSpansToggle: function (item, pressed){
-    	this.hideSpans.pressed = pressed;
+    	if(this.buttonsContainer['BUTTON_HIDE_SPANS'] != undefined && this.buttonsContainer['BUTTON_HIDE_SPANS']!= null  ){
+    		this.buttonsContainer['BUTTON_HIDE_SPANS'].pressed = pressed;
+    	}
     	this.setToolbarConf({hideSpans: pressed});
     },
     onShowPropertiesToggle: function (item, pressed){
-    	this.showProperties.pressed = pressed;
+    	if(this.buttonsContainer['BUTTON_SHOW_PROPERTIES'] != undefined && this.buttonsContainer['BUTTON_SHOW_PROPERTIES']!= null  ){
+    		this.buttonsContainer['BUTTON_SHOW_PROPERTIES'].pressed = pressed;
+    	}
     	this.setToolbarConf({showProperties: pressed});
     },
     onSuppressEmptyToggle: function (item, pressed){
-    	this.suppressEmpty.pressed = pressed;
+    	if(this.buttonsContainer['BUTTON_HIDE_EMPTY'] != undefined && this.buttonsContainer['BUTTON_HIDE_EMPTY']!= null  ){
+    		this.buttonsContainer['BUTTON_HIDE_EMPTY'].pressed = pressed;
+    	}
     	this.setToolbarConf({suppressEmpty: pressed});
     },
 	/**
@@ -406,9 +393,23 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 			this.modelConfig = modelConfig;
 		}
 		
-		//this.setVisibleButton( modelConfig.toolbarVisibleButtons, true);
-	
+		// draw Toolbar and menu
+		this.drawToolbarAndMenu(modelConfig);
+				
 		this.mdx=pivot.get("mdxFormatted");
+	}
+	
+	
+	, drawToolbarAndMenu: function(modelConfig){
+		this.insertInToolbarArray( modelConfig.toolbarVisibleButtons);
+		
+		this.addLockModel();
+		
+		if( modelConfig.toolbarMenuButtons.length > 0){
+			this.insertInMenuArray( modelConfig.toolbarMenuButtons);
+		}
+		
+		this.setPressedMemory();	
 	}
 
 	/**
@@ -488,15 +489,23 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 		
 	}
 	, setLockByUserState: function(locker){
-		this.persist.enable();
-		this.persistNewVersion.enable();
+		if(this.buttonsContainer['BUTTON_SAVE'] != undefined && this.buttonsContainer['BUTTON_SAVE'] != null){
+			this.buttonsContainer['BUTTON_SAVE'].enable();
+		}
+		if(this.buttonsContainer['BUTTON_SAVE_NEW'] != undefined && this.buttonsContainer['BUTTON_SAVE_NEW'] != null){
+			this.buttonsContainer['BUTTON_SAVE_NEW'].enable();
+		}
 		this.lockModel.hide();
 		this.unlockModel.show();
 		this.lockOtherModel.hide();
 	}
 	, setLockByOtherState: function(locker){
-		this.persist.disable();
-		this.persistNewVersion.disable();
+		if(this.buttonsContainer['BUTTON_SAVE'] != undefined && this.buttonsContainer['BUTTON_SAVE'] != null){
+			this.buttonsContainer['BUTTON_SAVE'].disable();
+		}
+		if(this.buttonsContainer['BUTTON_SAVE_NEW'] != undefined && this.buttonsContainer['BUTTON_SAVE_NEW'] != null){
+			this.buttonsContainer['BUTTON_SAVE_NEW'].disable();
+		}
 		this.lockModel.hide();
 		this.unlockModel.hide();
 		this.lockOtherModel.show();
@@ -504,8 +513,12 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 
 	}
 	, setUnlockState: function(){
-		this.persist.disable();
-		this.persistNewVersion.disable();
+		if(this.buttonsContainer['BUTTON_SAVE'] != undefined && this.buttonsContainer['BUTTON_SAVE'] != null){
+			this.buttonsContainer['BUTTON_SAVE'].disable();
+		}
+		if(this.buttonsContainer['BUTTON_SAVE_NEW'] != undefined && this.buttonsContainer['BUTTON_SAVE_NEW'] != null){
+			this.buttonsContainer['BUTTON_SAVE_NEW'].disable();
+		}
 		this.lockModel.show();
 		this.unlockModel.hide();
 		this.lockOtherModel.hide();
@@ -527,25 +540,207 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 	/** set buttons whose label are contained in array to visible or not according to boolean visible parameter
 	 * 
 	 */
-	, setVisibleButton: function(buttonArray, visibleB){
+	, insertInToolbarArray: function(buttonArray){
 		
 		// visible is boolean to set visibile or not
-		for(var lab in this.buttonArray){
+		for( var j = 0; j < buttonArray.length; j++){
+			var lab = buttonArray[j];
+			this.insertButtonInToolbar(lab);
 
-			var b = this.buttonsContainer[lab];
-			
-			// b can be a button or an array of buttons
-			if(b instanceof Ext.Button){
-				b.visible = visibleB;
-			}
-			else if(b instanceof Array){
-				for (var i = 0; i < b.length; i++) {
-					b[i].visible = visibleB;
-				}
 		}
 	}
-}
+	
+	, insertButtonInToolbar: function(label){
+		var config = this.buttonsConfigContainer[label];
+
+		// recreate
+		if(this.buttonsContainer[label] != undefined && this.buttonsContainer[label] != null ){
+			this.buttonsContainer[label].destroy();
+		}
+		
+		var buttonCreated = this.createButton(config);
+		this.addContextMenuListener(buttonCreated, false);	
+		this.add(buttonCreated);
+		this.labelsToolbar.push(label);
+		this.buttonsContainer[buttonCreated.label] = buttonCreated;
+	}
+	
+	, insertInMenuArray: function(buttonArray){
+		
+		for( var j = 0; j < buttonArray.length; j++){
+			var lab = buttonArray[j];
+			this.insertButtonInMenu(lab);
+		}
+		
+		this.menuButtons.setVisible(true);
+		
+
+		this.add('->');
+		this.add(this.menuButtons);
+
 	
 	
+	}
+	, insertButtonInMenu: function(label){
+		// recreate
+		var config = this.buttonsConfigContainer[label];
+		
+		if(this.buttonsContainer[label] != undefined && this.buttonsContainer[label] != null ){
+			this.buttonsContainer[label].destroy();
+		}
+		
+		var buttonCreated = this.createButton(config);
+		this.addContextMenuListener(buttonCreated, true);
+		buttonCreated.text = buttonCreated.tooltip;
+		this.menuButtons.menu.add(buttonCreated);
+		this.labelsMenu.push(label);
+		this.buttonsContainer[buttonCreated.label] = buttonCreated;
+	}
+	
+	
+	, moveButton: function(button, inMenu){
+
+		// if is in menu must insert in toolbar and viceversa
+		if(inMenu==true){
+			
+			// in moving button from menu to toolbar the menu must be removed and re-added
+			this.remove(this.menuButtons, false);
+
+			// remove the space it is the last element after menu has been removed
+			this.remove(this.items.length-1);
+			
+
+			this.insertButtonInToolbar(button.label);
+			this.add('->');
+			this.add(this.menuButtons);
+			this.labelsToolbar.push(button.label);
+			this.deleteFromArray(this.labelsMenu, button.label);
+	
+			
+		}
+		else{
+			this.insertButtonInMenu(button.label);			
+			this.deleteFromArray(this.labelsToolbar, button.label);
+		}
+	
+	}
+	
+	//returns 'menu', 'toolbar' or 'none
+	, isButtonInMenuOrToolbar: function(label){
+		if( this.contains(this.labelsToolbar,label)){
+			return 'toolbar';
+		}
+		else if(this.contains(this.labelsMenu,label)){
+			return 'menu';
+		}	
+		else return 'none';
+
+	}
+	
+	, createButton: function(config){	
+		var button = Ext.create('Ext.Button', config);
+		this.buttonsContainer[button.label] = button;
+		button.setVisible(true);
+		return button;
+	}
+	
+	, addContextMenuListener: function(butt, isMenu){
+		// add context menu listener
+		var msg = null;
+		if(isMenu == true){
+			msg = 'add to toolbar';
+		}
+		else if(isMenu == false){
+			msg = 'add to menu';
+		}
+		
+		var thisPanel = this;
+		  butt.on('render', function(button){
+				this.getEl().addListener('contextmenu',
+						function(e, el){
+							var m = Ext.create('Ext.menu.Menu', {
+						width: 100,
+						height: 30,
+						margin: '0 0 10 0',
+						items: [{
+							text: msg
+								, listeners:{
+									click: {
+										fn: function(){
+											var where = this.isButtonInMenuOrToolbar(button.label);
+											if(where == 'toolbar'){
+												this.moveButton(button, false);
+											}
+											else if(where == 'menu'){
+												this.moveButton(button, true);
+											}
+											else return;
+
+										}
+						, scope: thisPanel
+									}
+								}
+						}]
+					});	
+
+					m.showAt(e.getXY());
+				},
+				thisPanel);			
+			});
+		
+	}
+	
+	/* this functions treats particular buttons that need to preserve memory if must be already pressed
+	 * 
+	 */
+	, setPressedMemory: function(){
+		
+		for(var lab in this.buttonsContainer){
+			var button = this.buttonsContainer[lab];
+			
+			if(button.label == 'BUTTON_FATHER_MEMBERS'){
+				var isShownParentMembers = this.config.toolbarConfig.showParentMembers;
+					
+				if(isShownParentMembers == true){
+					button.pressed = true;
+				}else{
+					button.pressed = false;
+				}		
+
+			}
+		}
+
+	}
+	, addLockModel: function(){
+		this.add(this.lockModel);
+		this.add(this.unlockModel);
+		this.add(this.lockotherModel);
+
+	}
+	 
+	
+	, contains: function(a, obj) {
+	    var i = a.length;
+	    while (i--) {
+	       if (a[i] === obj) {
+	           return true;
+	       }
+	    }
+	    return false;
+	}
+	, deleteFromArray: function(array, search){
+		var indexToDelete = -1;
+		for (var i = 0; i<array.length; i++){
+			if(array[i] != undefined && array[i]==search){
+				indexToDelete = i;
+			}
+		}
+		if(i != -1){
+			array = array.splice(indexToDelete,1);
+			return array;
+		}
+		else return array;
+	}
+
 
 });
