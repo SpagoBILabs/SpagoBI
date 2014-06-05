@@ -276,47 +276,6 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 				List rowsList = source.getAttributeAsList(DataRow.ROW_TAG);
 				if( (rowsList==null) || (rowsList.size()==0) ) {
 					toconvert = true;
-				} else {
-					// TODO this part can be moved to the import transformer
-					// RESOLVES RETROCOMPATIBILITY PROBLEMS
-					// finds the name of the first attribute of the rows if exists 
-					String defaultName = "";
-					SourceBean rowSB = (SourceBean) rowsList.get(0);
-					List attributes = rowSB.getContainedAttributes();
-					if (attributes != null && attributes.size() > 0) {
-						SourceBeanAttribute attribute = (SourceBeanAttribute) attributes.get(0);
-						defaultName = attribute.getKey();
-					}
-					// if a value column is specified, it is considered
-					SourceBean valueColumnSB = (SourceBean) source.getAttribute("VALUE-COLUMN");
-					if (valueColumnSB != null) {
-						String valueColumn = valueColumnSB.getCharacters();
-						if (valueColumn != null) {
-							valueColumnName = valueColumn;
-						}
-					} else {
-						valueColumnName = defaultName;
-					}
-					SourceBean visibleColumnsSB = (SourceBean) source.getAttribute("VISIBLE-COLUMNS");
-					if (visibleColumnsSB != null) {
-						String allcolumns = visibleColumnsSB.getCharacters();
-						if (allcolumns != null) {
-							String[] columns = allcolumns.split(",");
-							visibleColumnNames = Arrays.asList(columns);
-						}
-					} else {
-						String[] columns = new String[] {defaultName};
-						visibleColumnNames = Arrays.asList(columns);
-					}
-					SourceBean descriptionColumnSB = (SourceBean) source.getAttribute("DESCRIPTION-COLUMN");
-					if (descriptionColumnSB != null) {
-						String descriptionColumn = descriptionColumnSB.getCharacters();
-						if (descriptionColumn != null) {
-							descriptionColumnName = descriptionColumn;
-						}
-					} else {
-						descriptionColumnName = defaultName;
-					}
 				}
 			}
 
