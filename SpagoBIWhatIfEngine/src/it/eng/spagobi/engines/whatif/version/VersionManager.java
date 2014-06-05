@@ -250,6 +250,9 @@ public class VersionManager {
 			logger.error("Deleting versions "+versionIds);
 			versionDAO.deleteVersions(connection, versionIds);
 			
+			logger.debug("Reload Model");
+			new ModelUtilities().reloadModel(instance, instance.getPivotModel());
+			
 		} catch (Exception e) {
 			logger.error("Error deleting the versions "+versionIds,e);
 			throw new SpagoBIEngineRestServiceRuntimeException("versionresource.generic.error", instance.getLocale(), e);

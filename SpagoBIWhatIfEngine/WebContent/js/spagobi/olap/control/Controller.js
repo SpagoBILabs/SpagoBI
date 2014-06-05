@@ -205,6 +205,7 @@ Ext.define('Sbi.olap.control.Controller', {
 		var service = Ext.create("Sbi.service.RestService", {
 			url: "version",
 			method: 'POST',
+			async: true,
 			pathParams: ["delete",itemsToDelete]
 		});
 		
