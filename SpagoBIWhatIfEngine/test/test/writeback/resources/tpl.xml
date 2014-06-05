@@ -24,8 +24,15 @@
 		<MEASURE>Store Sales</MEASURE>
 		<MEASURE>Store Cost</MEASURE>
 		<VARIABLE name="var" value="5"/>
+		<VARIABLE name="varD" value="5.5"/>
 		<VARIABLE name="PD" value="[Product].[Drink.Dairy]" type="string"/>
 	</SCENARIO>
+	
+	<ALIASES>
+		<DIMENSION name="Product" alias="P"/>
+		<HIERARCHY name="ss" alias="C2"/>
+		<ALIAS name="Product.Eggs" alias="Eggs"/>
+	</ALIASES>
 	
 	<TOOLBAR>
 		<BUTTON_CUBE visible="true" />
