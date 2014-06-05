@@ -29,14 +29,19 @@
 	</SCENARIO>
 	
 	<TOOLBAR>
-		<BUTTON_CUBE visible="true" />
-		<BUTTON_MDX visible="false" menu="true" />
-		<BUTTON_ORDER visible="false" />
-		<BUTTON_FATHER_MEMBERS visible="true" />
-		<BUTTON_HIDE_SPANS visible="false" />
-		<BUTTON_SHOW_PROPERTIES visible="false" />
-		<BUTTON_HIDE_EMPTY visible="true" />
+		<BUTTON_MDX visible="false" menu="true" />                            
+		<BUTTON_FATHER_MEMBERS visible="false" menu="true"/>                  
+		<BUTTON_HIDE_SPANS visible="false" menu="true"/>                     
+		<BUTTON_SHOW_PROPERTIES visible="false" menu="true"/>               
+		<BUTTON_HIDE_EMPTY visible="false" menu="true" />                   
+        <BUTTON_FLUSH_CACHE visible="true" menu="false"  />                 
+        <BUTTON_SAVE visible="true" menu="false" />                       
+        <BUTTON_SAVE_NEW visible="true" menu="false" />                   <!-- I ADDED -->
+        <BUTTON_UNDO visible="true" menu="false" />                       <!-- I ADDED -->
+
+		<!--  ----NOT YET USED----
 		<BUTTON_SHIFT_AXIS visible="true" />
+        <BUTTON_CUBE visible="false" menu="true" />
 		<BUTTON_DRILL_MEMBER visible="true" />
 		<BUTTON_DRILL_POSITION visible="true" />
 		<BUTTON_DRILL_REPLACE visible="false" />
@@ -44,8 +49,8 @@
 		<BUTTON_SHOW_CHART visible="false" />
 		<BUTTON_CONFIGURE_CHART visible="false" />
 		<BUTTON_CONFIGURE_PRINT visible="false" />
-		<BUTTON_FLUSH_CACHE visible="false" />
-		<BUTTON_SAVE visible="true" />
+    <BUTTON_ORDER visible="false" menu="false"/>  -->
+
 	</TOOLBAR>
 
 </olap>
