@@ -105,7 +105,7 @@ public class WhatIfEngineInstance extends AbstractEngineInstance implements Seri
 			 this.getEnv().put(EngineConstants.ENV_DATASOURCE, ds);
 		}
 		
-		olapDataSource = WhatIfEngineConfig.getInstance().getOlapDataSource( ds, reference, template, profile );
+		olapDataSource = WhatIfEngineConfig.getInstance().getOlapDataSource( ds, reference, template, profile, this.getLocale() );
 		
 		//pivotModel = new PivotModelImpl(olapDataSource);
 		pivotModel = new SpagoBIPivotModel(olapDataSource);

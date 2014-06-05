@@ -41,8 +41,8 @@ import org.apache.log4j.Logger;
 public class WhatIfEngineStartAction extends AbstractWhatIfEngineService {
 	
 	// INPUT PARAMETERS
-	public static final String LANGUAGE = "language";
-	public static final String COUNTRY = "country";
+	public static final String LANGUAGE = "SBI_LANGUAGE";
+	public static final String COUNTRY = "SBI_COUNTRY";
 	
 	// OUTPUT PARAMETERS
 	

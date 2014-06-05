@@ -79,7 +79,7 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionFilterTree', {
 		
 		//Initialize the filter
 		this.tree = Ext.create("Ext.tree.Panel",{
-			title: this.dimension.raw.name,
+			title: this.dimension.raw.caption,
 			rootVisible: false,
 			store:treeStore
 		});

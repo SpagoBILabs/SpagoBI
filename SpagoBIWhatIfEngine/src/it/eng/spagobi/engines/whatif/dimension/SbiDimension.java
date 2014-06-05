@@ -23,6 +23,7 @@ public class SbiDimension {
 	
 	private String name;
 	private String uniqueName;
+	private String caption;
 	private List<SbiHierarchy> hierarchies;
 	private String selectedHierarchyUniqueName;
 	private int selectedHierarchyPosition;
@@ -33,6 +34,7 @@ public class SbiDimension {
 	public SbiDimension(Dimension dimension, int axis, int positionInAxis) {
 		super();
 		this.name = dimension.getName();
+		this.caption = dimension.getCaption();
 		this.uniqueName = dimension.getUniqueName();
 		this.axis = axis;
 		this.hierarchies = new ArrayList<SbiHierarchy>();
@@ -92,5 +94,15 @@ public class SbiDimension {
 		return positionInAxis;
 	}
 
+	public String getCaption() {
+		if (caption != null) {
+			return caption;
+		}
+		return this.name;
+	}
+
+	public void setCaption(String caption) {
+		this.caption = caption;
+	}
 	
 }

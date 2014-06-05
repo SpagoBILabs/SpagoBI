@@ -11,11 +11,9 @@ import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.engines.whatif.template.WhatIfTemplate;
-import it.eng.spagobi.engines.whatif.template.WhatIfXMLTemplateParser;
 import it.eng.spagobi.services.common.EnginConf;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
-import it.eng.spagobi.writeback4j.SbiScenario;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -23,6 +21,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -113,7 +112,7 @@ public class WhatIfEngineConfig {
 		
 	}
 	
-	public OlapDataSource getOlapDataSource(IDataSource ds, String reference, WhatIfTemplate template, IEngUserProfile profile) {
+	public OlapDataSource getOlapDataSource(IDataSource ds, String reference, WhatIfTemplate template, IEngUserProfile profile, Locale locale) {
 		Properties connectionProps = new Properties();
 		String connectionString = null;
 		if (ds.checkIsJndi()) {
@@ -127,7 +126,8 @@ public class WhatIfEngineConfig {
 		}
 		
 		connectionProps.put("Catalog", reference);
-		connectionProps.put("Provider","Mondrian");
+		connectionProps.put("Provider", "Mondrian");
+		connectionProps.put("Locale", locale.toString());
 		
 		this.defineSchemaProcessorProperties(connectionProps, template, profile);
 				
@@ -142,9 +142,11 @@ public class WhatIfEngineConfig {
 	private void defineSchemaProcessorProperties(Properties connectionProps,
 			WhatIfTemplate template, IEngUserProfile profile) {
 		List<String> userProfileAttributes = template.getProfilingUserAttributes();
+		// SpagoBIFilterDynamicSchemaProcessor extends LocalizingDynamicSchemaProcessor, that is responsible for i18n, therefore we put it 
+		// in the connection properties anyway
+		connectionProps.put("DynamicSchemaProcessor","it.eng.spagobi.engines.whatif.schema.SpagoBIFilterDynamicSchemaProcessor");
 		if ( !userProfileAttributes.isEmpty() ) {
 			logger.debug("Template contains data access restriction based on user's attributes");
-			connectionProps.put("DynamicSchemaProcessor","it.eng.spagobi.engines.whatif.schema.SpagoBIFilterDynamicSchemaProcessor");
 			Iterator<String> it = userProfileAttributes.iterator();
 			while (it.hasNext()) {
 				String attributeName = it.next();
