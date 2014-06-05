@@ -119,8 +119,15 @@ Sbi.locale.ln['sbi.olap.artifact.unlock.error'] = 'The unlock operation did not 
 Sbi.locale.ln['sbi.olap.artifact.unlock.errorOther'] = 'The unlock operation did not work, the model is locked by user ';
 
 //===================================================================
+//MENU
+//===================================================================
+Sbi.locale.ln['sbi.olap.execution.menu.buttonMenu'] = 'Buttons Menu';
+Sbi.locale.ln['sbi.olap.execution.menu.addToMenu'] = 'Add to menu';
+Sbi.locale.ln['sbi.olap.execution.menu.addToToolbar'] = 'Add to toolbar';
+
+//===================================================================
 //VERSION MANAGER
 //===================================================================
 Sbi.locale.ln['sbi.olap.toolbar.versionmanagerwindow.version.no.cancel.all'] = 'You can\'t delete all the versions';
 Sbi.locale.ln['sbi.olap.toolbar.versionmanagerwindow.version.no.cancel.current'] = 'You can\'t delete the current versions';
-Sbi.locale.ln['sbi.olap.toolbar.versionmanagerwindow.version.title'] = 'Select the version to delete';
+Sbi.locale.ln['sbi.olap.toolbar.versionmanagerwindow.version.title'] = 'Select the version to delete';>>>>>>> .r22906
