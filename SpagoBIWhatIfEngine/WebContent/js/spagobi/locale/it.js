@@ -117,9 +117,16 @@ Sbi.locale.ln['sbi.olap.artifact.lock.error'] = 'Operazione di blocco non riusci
 Sbi.locale.ln['sbi.olap.artifact.unlock.error'] = 'Operazione di sblocco non riusciata, il modello è ancora bloccato.';
 Sbi.locale.ln['sbi.olap.artifact.unlock.errorOther'] = 'Operazione di sblocco non riusciata, il modello è ancora bloccato dall\'utente ';
 
+
+//===================================================================
+//MENU
+//===================================================================
+Sbi.locale.ln['sbi.olap.execution.menu.buttonMenu'] = 'Menu';
+Sbi.locale.ln['sbi.olap.execution.menu.addToMenu'] = 'Add to menu';
+Sbi.locale.ln['sbi.olap.execution.menu.addToToolbar'] = 'Add to toolbar';
 //===================================================================
 //VERSION MANAGER
 //===================================================================
 Sbi.locale.ln['sbi.olap.toolbar.versionmanagerwindow.version.no.cancel.all'] = 'Non è possibile cancellare tutte le versioni';
 Sbi.locale.ln['sbi.olap.toolbar.versionmanagerwindow.version.no.cancel.current'] = 'Non è possibile cancellare la versione attuale';
-Sbi.locale.ln['sbi.olap.toolbar.versionmanagerwindow.version.title'] = 'Selezionare le version da cancellare';
+Sbi.locale.ln['sbi.olap.toolbar.versionmanagerwindow.version.title'] = 'Selezionare le version da cancellare';>>>>>>> .r22906
