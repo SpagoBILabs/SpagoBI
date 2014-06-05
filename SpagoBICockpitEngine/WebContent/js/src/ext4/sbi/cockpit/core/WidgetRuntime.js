@@ -126,6 +126,12 @@ Ext.extend(Sbi.cockpit.core.WidgetRuntime, Ext.Panel, {
      */
     , filters: null
     
+    /**
+     * @property {String} wgeneric
+     * The generic parameters of the widget.
+     */
+    , wgeneric: null
+    
     // =================================================================================================================
 	// METHODS
 	// =================================================================================================================
@@ -165,9 +171,9 @@ Ext.extend(Sbi.cockpit.core.WidgetRuntime, Ext.Panel, {
 		this.setStoreId(config.storeId, false);
 		this.setWType(config.wtype, false);
 		this.setCustomConfiguration(config.wconf, false);
-    	this.setStyleConfiguration(config.wstyle, false);
-    	
+    	this.setStyleConfiguration(config.wstyle, false);    	
     	this.setLayoutConfiguration(config.wlayout);
+    	this.setGenericConfiguration(config.wgeneric,false);    	
     	
     	if(refresh !== false) {
 			this.refresh();
@@ -198,9 +204,9 @@ Ext.extend(Sbi.cockpit.core.WidgetRuntime, Ext.Panel, {
     	if(Sbi.isValorized(this.getStoreId())) config.storeId = this.getStoreId();
 		if(Sbi.isValorized(this.getWType())) config.wtype = this.getWType();
     	config.wconf = this.getCustomConfiguration() || {};
-    	config.wstyle = this.getStyleConfiguration() || {};
-    	
+    	config.wstyle = this.getStyleConfiguration() || {};    	
     	config.wlayout = this.getLayoutConfiguration() || {};
+    	config.wgeneric = this.getGenericConfiguration() || {};
 
     	Sbi.trace("[WidgetRuntime.getConfiguration]: OUT");
     	
@@ -370,9 +376,7 @@ Ext.extend(Sbi.cockpit.core.WidgetRuntime, Ext.Panel, {
 	 * @param {Object} wconf The custom configuration of the widget.
 	 * @param {boolean} refresh true to force the refresh after the setting of the property, false otherwise. The default is true.
 	 */
-	, setCustomConfiguration: function(wconf, refresh) {
-		alert("setCustomConfiguration: " + Sbi.toSource(wconf));
-		
+	, setCustomConfiguration: function(wconf, refresh) {			
 		if(Sbi.isValorized(wconf)) {
 			this.wconf = wconf;
 			Sbi.trace("[WidgetRuntime.setCustomConfiguration]: wconf set to [" + Sbi.toSource(wconf) + "]");
@@ -383,6 +387,28 @@ Ext.extend(Sbi.cockpit.core.WidgetRuntime, Ext.Panel, {
 			}
 		} else {
 			Sbi.trace("[WidgetRuntime.setCustomConfiguration]: Input parameter [wconf] is not valorized so the property [wconf] will be left unchanged");
+		}
+	}
+	
+	/**
+	 * @method
+	 * 
+	 * Sets the wgeneric configuration of the widget.
+	 * 
+	 * @param {Object} wgeneric The generic configuration of the widget.
+	 * @param {boolean} refresh true to force the refresh after the setting of the property, false otherwise. The default is true.
+	 */
+	, setGenericConfiguration: function(wgeneric, refresh) {			
+		if(Sbi.isValorized(wgeneric)) {
+			this.wgeneric = wgeneric;
+			Sbi.trace("[WidgetRuntime.setGenericConfiguration]: wgeneric set to [" + Sbi.toSource(wgeneric) + "]");
+			if(refresh !== false) {
+				this.refresh();
+			} else {
+				Sbi.trace("[WidgetRuntime.setGenericConfiguration]: Input parameter [refresh] is equal [" + refresh + "] to so widget won't be refreshed");
+			}
+		} else {
+			Sbi.trace("[WidgetRuntime.setGenericConfiguration]: Input parameter [wgeneric] is not valorized so the property [wgeneric] will be left unchanged");
 		}
 	}
 	
@@ -400,6 +426,41 @@ Ext.extend(Sbi.cockpit.core.WidgetRuntime, Ext.Panel, {
 		var config = Ext.apply({}, this.wconf || {});		
 		Sbi.trace("[WidgetRuntime.getCustomConfiguration]: OUT");
 		return config;
+	}
+	
+	/**
+	 * @method
+	 * 
+	 * Gets the wgeneric configuration of the widget.
+	 * 
+	* @return The generic configuration of the widget.
+	 */
+	, getGenericConfiguration: function() {			
+		Sbi.trace("[WidgetRuntime.getGenericConfiguration]: IN");
+				
+		var config = Ext.apply({}, this.wgeneric || {});		
+		Sbi.trace("[WidgetRuntime.getGenericConfiguration]: OUT");
+		return config;
+	}
+	
+	/**
+	 * @method
+	 * 
+	 * Gets the title of the widget, blank otherwise
+	 * 
+	* @return The generic configuration of the widget.
+	 */
+	, getTitle: function() {			
+		Sbi.trace("[WidgetRuntime.getGenericConfiguration]: IN");
+				
+		var config = Ext.apply({}, this.wgeneric || {});		
+		Sbi.trace("[WidgetRuntime.getGenericConfiguration]: OUT");
+		
+		if (config.title){
+			return config.title;
+		} else {
+			return '';
+		}		
 	}
 	
 	/**

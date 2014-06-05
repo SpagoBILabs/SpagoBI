@@ -86,15 +86,25 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditorGenericConfPanel, Ext.Panel, {
     // public methods
 	// -----------------------------------------------------------------------------------------------------------------
 	
-	, getFormState: function() {
+	, getFormState: function() {		
 		
 		var formState = Ext.apply({}, {
 			title: this.fields[0].getValue(),
 			description: this.fields[1].getValue()			
 		});
 		
-		return Ext.JSON.encode(formState);
+		return formState;
 	}
+	
+	, setFormState: function(widgetConf) {
+		Sbi.trace("[WidgetEditorGenericConfPanel.setFormState]: IN");
+				
+		this.fields[0].setValue(widgetConf.title);
+		this.fields[1].setValue(widgetConf.description);
+		
+		Sbi.trace("[WidgetEditorGenericConfPanel.setFormState]: OUT");			
+	}
+	
 	// -----------------------------------------------------------------------------------------------------------------
     // private methods
 	// -----------------------------------------------------------------------------------------------------------------
