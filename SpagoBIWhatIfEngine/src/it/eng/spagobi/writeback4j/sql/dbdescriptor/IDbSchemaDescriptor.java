@@ -1,11 +1,13 @@
 package it.eng.spagobi.writeback4j.sql.dbdescriptor;
 
-import java.util.List;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
+
+import java.util.Set;
 
 public interface IDbSchemaDescriptor {
 
 	
-	public List<String> getColumnNames(String table);
+	public Set<String> getColumnNames(String table, IDataSource dataSource);
 	
 	
 	
