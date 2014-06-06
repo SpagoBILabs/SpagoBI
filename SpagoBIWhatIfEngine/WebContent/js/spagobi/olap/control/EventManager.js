@@ -290,7 +290,8 @@ Ext.define('Sbi.olap.control.EventManager', {
 			if(this.olapPanel.modelConfig.writeBackConf.editableMeasures == null || this.olapPanel.modelConfig.writeBackConf.editableMeasures.length==0){
 				return true;
 			}else{
-				return this.olapPanel.modelConfig.writeBackConf.editableMeasures.indexOf(measureName)>=0;
+				var measures = (this.olapPanel.modelConfig.writeBackConf.editableMeasures);
+				return measures.indexOf(measureName)>=0;
 			}
 		}
 		return false;
