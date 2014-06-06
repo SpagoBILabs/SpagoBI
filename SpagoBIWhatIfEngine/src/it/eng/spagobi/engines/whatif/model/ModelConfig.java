@@ -214,5 +214,12 @@ public class ModelConfig implements Serializable {
 		this.aliases = aliases;
 	}
 	
+	public boolean isWhatIfScenario(){
+		return this.scenario==null;
+	}
+	
+	//for the deserializer
+	public void setWhatIfScenario(boolean bool){}
+	
 	
 }
