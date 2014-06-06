@@ -1,14 +1,16 @@
 package it.eng.spagobi.writeback4j.sql.dbdescriptor;
 
-import java.util.ArrayList;
-import java.util.List;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
+
+import java.util.HashSet;
+import java.util.Set;
 
 public class FoodmartDbDescriptor implements IDbSchemaDescriptor {
 
 
-	public List<String> getColumnNames(String table){
+	public Set<String> getColumnNames(String table, IDataSource dataSource){
 
-		List<String> toReturn = new ArrayList<String>();
+		Set<String> toReturn = new HashSet<String>();
 		
 		toReturn.add("product_id");
 		toReturn.add("time_id");

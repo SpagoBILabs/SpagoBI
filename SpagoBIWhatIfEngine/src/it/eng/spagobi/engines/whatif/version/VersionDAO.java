@@ -13,6 +13,7 @@ import it.eng.spagobi.writeback4j.sql.SqlQueryStatement;
 import it.eng.spagobi.writeback4j.sql.SqlUpdateStatement;
 import it.eng.spagobi.writeback4j.sql.dbdescriptor.FoodmartDbDescriptor;
 import it.eng.spagobi.writeback4j.sql.dbdescriptor.IDbSchemaDescriptor;
+import it.eng.spagobi.writeback4j.sql.dbdescriptor.JdbcTableDescriptor;
 
 import java.math.BigDecimal;
 import java.sql.Connection;
@@ -32,9 +33,9 @@ import org.apache.log4j.Logger;
 public class VersionDAO {
 
 
-	WhatIfEngineInstance instance;
-	String editCubeTableName;
-
+	private WhatIfEngineInstance instance;
+	private String editCubeTableName;
+	private IDbSchemaDescriptor descriptor;
 
 
 	public static transient Logger logger = Logger.getLogger(VersionDAO.class);
@@ -45,6 +46,8 @@ public class VersionDAO {
 		editCubeTableName = instance.getWriteBackManager().getRetriver().getEditCubeTableName();
 		logger.debug("Edit table name is: "+editCubeTableName);
 
+		//defining the table descriptor
+		descriptor = new JdbcTableDescriptor();
 	}
 
 	public Integer getLastVersion(Connection connection) throws SpagoBIEngineException, NumberFormatException{
@@ -116,13 +119,10 @@ public class VersionDAO {
 		logger.debug("IN");
 
 
-		IDbSchemaDescriptor descriptor = new FoodmartDbDescriptor();
-
-
 		String columnsListString="";
 		String columnsListStringVersionWritten="";
 
-		for (Iterator<String> iterator = descriptor.getColumnNames(editCubeTableName).iterator(); iterator.hasNext();) {
+		for (Iterator<String> iterator = descriptor.getColumnNames(editCubeTableName, instance.getDataSource()).iterator(); iterator.hasNext();) {
 			String s = (String) iterator.next();
 
 			if(s.equals(getVersionColumnName())){

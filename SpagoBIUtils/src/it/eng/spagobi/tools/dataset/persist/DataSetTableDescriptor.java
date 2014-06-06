@@ -14,6 +14,7 @@ import it.eng.spagobi.tools.datasource.bo.IDataSource;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 public class DataSetTableDescriptor implements IDataSetTableDescriptor {
 
@@ -104,6 +105,17 @@ public class DataSetTableDescriptor implements IDataSetTableDescriptor {
 		return "DataSetTableDescriptor [tableName=" + tableName
 				+ ", field2ColumnMap=" + field2ColumnMap + ", field2ClassMap="
 				+ field2ClassMap + "]";
+	}
+
+	/* (non-Javadoc)
+	 * @see it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor#getColumnNames()
+	 */
+	public Set<String> getColumnNames() {
+		Set<String> columnNames = null;
+		if(column2fieldMap!=null){
+			columnNames = column2fieldMap.keySet();
+		}
+		return columnNames;
 	}
 
 }

@@ -7,9 +7,12 @@ package it.eng.spagobi.tools.dataset.persist;
 
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 
+import java.util.Set;
+
 public interface IDataSetTableDescriptor {
 	
 	String getColumnName(String fieldName);
+	Set<String> getColumnNames();
 	Class getColumnType(String fieldName);
 	String getFieldName(String columnName);
 	String getTableName();
