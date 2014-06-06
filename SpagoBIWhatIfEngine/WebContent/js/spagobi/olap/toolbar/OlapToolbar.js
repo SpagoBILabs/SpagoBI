@@ -194,8 +194,8 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 			label: 'BUTTON_UNDO',
 			handler: function() {
 				Sbi.olap.eventManager.undo();
-			}
-
+			},
+			disabled: true
 		}, sharedConfig);	
 		
 		this.buttonsConfigContainer['BUTTON_FATHER_MEMBERS'] =	Ext.apply({
@@ -411,6 +411,9 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 		this.drawToolbarAndMenu(modelConfig);
 				
 		this.mdx=pivot.get("mdxFormatted");
+		
+		var undoButton = this.buttonsContainer["BUTTON_UNDO"];
+		undoButton.setDisabled( !pivot.get("hasPendingTransformations") );
 	}
 	
 	
