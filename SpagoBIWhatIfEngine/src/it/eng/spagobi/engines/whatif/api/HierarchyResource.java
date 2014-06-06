@@ -34,6 +34,7 @@ import org.olap4j.metadata.Hierarchy;
 import org.olap4j.metadata.Level;
 import org.olap4j.metadata.Member;
 import org.olap4j.metadata.NamedList;
+import org.olap4j.metadata.Property.StandardMemberProperty;
 
 import com.eyeq.pivot4j.PivotModel;
 import com.eyeq.pivot4j.transform.ChangeSlicer;
@@ -124,10 +125,9 @@ public class HierarchyResource extends AbstractWhatIfEngineService {
 		
 		try {
 
-			logger.debug("Getting the members of the first level of the hierarchy");
-			Level l = hierarchy.getLevels().get(0);
-			
 			if(CubeUtilities.isRoot(node)){
+				logger.debug("Getting the members of the first level of the hierarchy");
+				Level l = hierarchy.getLevels().get(0);
 				logger.debug("This is the root.. Returning the members of the first level of the hierarchy");
 				logger.debug("OUT");
 				list = l.getMembers();
@@ -145,15 +145,28 @@ public class HierarchyResource extends AbstractWhatIfEngineService {
 		}
 
 		List<SbiMember> members = new ArrayList<SbiMember>();
-		if(visibleMembers!=null && axis>=0){
+		
+
 			for (int i = 0; i < list.size(); i++) {
-				members.add(new SbiMember(list.get(i), visibleMembers.contains(list.get(i))));
+				Member aMember = list.get(i);
+				Boolean memberVisibleInTheSchema = true;
+				try {
+					memberVisibleInTheSchema = (Boolean)aMember.getPropertyValue(StandardMemberProperty.$visible);
+				} catch (Throwable e) {
+					logger.error("impossible to load the property visible for the member "+aMember.getUniqueName());
+				}
+				if(memberVisibleInTheSchema== null || memberVisibleInTheSchema){
+					//check the visible members
+					if(visibleMembers!=null && axis>=0){
+						members.add(new SbiMember(aMember, visibleMembers.contains(list.get(i))));
+					}else{
+						members.add(new SbiMember(list.get(i), true));
+					}
+					
+				}
+
 			}
-		}else{
-			for (int i = 0; i < list.size(); i++) {
-				members.add(new SbiMember(list.get(i), true));
-			}
-		}
+
 		
 
 		try {
