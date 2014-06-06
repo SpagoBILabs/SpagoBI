@@ -49,7 +49,7 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionFilters', {
 		}
 		
 		this.callParent();
-	},
+	}
 });
 
 

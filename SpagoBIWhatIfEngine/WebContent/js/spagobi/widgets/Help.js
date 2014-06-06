@@ -40,7 +40,7 @@ Ext.define('Sbi.widgets.Help', {
 			html: content
 		});
 		this.callParent();
-	},
+	}
 	
 
 	
