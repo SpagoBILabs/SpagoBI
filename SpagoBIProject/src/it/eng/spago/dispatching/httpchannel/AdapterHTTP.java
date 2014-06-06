@@ -235,7 +235,8 @@ public class AdapterHTTP extends HttpServlet {
     	// Create a factory for disk-based file items
     	FileItemFactory factory = new DiskFileItemFactory();
     	
-    	((DiskFileItemFactory)factory).setSizeThreshold(5242880);
+    	// This is done to make upload work in Unix solaris
+    	//((DiskFileItemFactory)factory).setSizeThreshold(5242880);
         
     	// Create a new file upload handler
     	ServletFileUpload upload = new ServletFileUpload(factory);
