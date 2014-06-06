@@ -245,7 +245,7 @@ Ext.define('Sbi.olap.control.EventManager', {
 			var originalValue = "";
 			var unformattedValue = "";
 			try  {
-				originalValue = cell.dom.childNodes[0].data.trim();
+				originalValue = Ext.String.trim(cell.dom.childNodes[0].data);
 				if (originalValue == '') { // in case the cell was empty, we type 0
 					unformattedValue = 0;
 				} else {
@@ -291,7 +291,8 @@ Ext.define('Sbi.olap.control.EventManager', {
 				return true;
 			}else{
 				var measures = (this.olapPanel.modelConfig.writeBackConf.editableMeasures);
-				return measures.indexOf(measureName)>=0;
+				var contained =  Ext.Array.contains(measures, measureName);
+				return contained;
 			}
 		}
 		return false;
