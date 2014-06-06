@@ -53,7 +53,7 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionPivot', {
     	 * @cfg {Number} filtersHeight
     	 * Height of the filters definition panel. Default 75 
     	 */
-		filtersHeight: 50,
+		filtersHeight: 52,
     	/**
     	 * @cfg {Number} columnsHeight
     	 * Height of the columns definition panel. Default 50
@@ -127,6 +127,10 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionPivot', {
 		if(Sbi.settings && Sbi.settings.olap && Sbi.settings.olap.execution && Sbi.settings.olap.execution.table && Sbi.settings.olap.execution.table.OlapExecutionPivot) {
 			Ext.apply(this, Sbi.settings.olap.execution.table.OlapExecutionPivot);
 		}
+		if(Ext.isIE && Ext.ieVersion <10){
+			this.filtersHeight = 60;
+		}
+		
 		this.callParent(arguments);
 	},
 	

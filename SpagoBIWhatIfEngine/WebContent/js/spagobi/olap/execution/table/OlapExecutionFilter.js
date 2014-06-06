@@ -43,7 +43,7 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionFilter', {
 		 * @cfg {int} width
 		 * The width of the filter
 		 */
-		width: 120,
+		width: 130,
 		/**
 		 * @cfg {boolean} multiSelection
 		 * true to allow the multi selection of member, false otherwise
