@@ -75,7 +75,7 @@ Sbi.locale.ln['sbi.common.warning'] = 'Warning';
 Sbi.locale.ln['sbi.olap.toolbar.mdx'] = 'Mdx Query';
 Sbi.locale.ln['sbi.olap.toolbar.drill.mode'] = 'Drill mode';
 Sbi.locale.ln['sbi.olap.toolbar.undo'] = 'Undo';
-Sbi.locale.ln['sbi.olap.toolbar.clean'] = 'Clear_cache';
+Sbi.locale.ln['sbi.olap.toolbar.clean'] = 'Reload model';
 Sbi.locale.ln['sbi.olap.toolbar.showParentMembers'] = 'Show parent members';
 Sbi.locale.ln['sbi.olap.toolbar.hideSpans'] = 'Hide spans';
 Sbi.locale.ln['sbi.olap.toolbar.showProperties'] = 'Show properties';
@@ -85,6 +85,9 @@ Sbi.locale.ln['sbi.olap.toolbar.save.new'] = "Save as new version";
 Sbi.locale.ln['sbi.olap.toolbar.lock'] = "Lock model";
 Sbi.locale.ln['sbi.olap.toolbar.unlock'] = "Unlock model";
 Sbi.locale.ln['sbi.olap.toolbar.lock_other'] = "Model locked by other user";
+Sbi.locale.ln['sbi.olap.toolbar.version.manager'] = "Delete versions";
+
+
 //===================================================================
 //FILTERS
 //===================================================================
@@ -131,4 +134,7 @@ Sbi.locale.ln['sbi.olap.execution.menu.addToToolbar'] = 'Add to toolbar';
 Sbi.locale.ln['sbi.olap.toolbar.versionmanagerwindow.version.no.cancel.all'] = 'You can\'t delete all the versions';
 Sbi.locale.ln['sbi.olap.toolbar.versionmanagerwindow.version.no.cancel.current'] = 'You can\'t delete the current versions';
 Sbi.locale.ln['sbi.olap.toolbar.versionmanagerwindow.version.title'] = 'Select the version to delete';
-Sbi.locale.ln['sbi.olap.toolbar.versionmanagerwindow.version.select.warning'] = 'Warning: this operation could take some minutes. You can continue your navigation but you can not save modifications untill the operation is finished. This can also make the navigation slower.';
+Sbi.locale.ln['sbi.olap.toolbar.versionmanagerwindow.version.select.warning'] = 'Warning: this operation could take some minutes.';
+Sbi.locale.ln['sbi.olap.control.controller.delete.version.ok'] = 'Versions correctly deleted.';
+//Sbi.locale.ln['sbi.olap.control.controller.delete.version.error'] = 'Error deleting the versions.';
+

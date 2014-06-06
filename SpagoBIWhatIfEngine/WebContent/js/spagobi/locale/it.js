@@ -82,6 +82,7 @@ Sbi.locale.ln['sbi.olap.toolbar.save.new'] = 'Salva come nuova version';
 Sbi.locale.ln['sbi.olap.toolbar.lock'] = "Blocca il modello";
 Sbi.locale.ln['sbi.olap.toolbar.unlock'] = "Sblocca il modello";
 Sbi.locale.ln['sbi.olap.toolbar.lock_other'] = "Modello bloccato da un altro utente";
+Sbi.locale.ln['sbi.olap.toolbar.version.manager'] = "Elimina delle versioni";
 
 //===================================================================
 //FILTERS
@@ -130,4 +131,6 @@ Sbi.locale.ln['sbi.olap.execution.menu.addToToolbar'] = 'Add to toolbar';
 Sbi.locale.ln['sbi.olap.toolbar.versionmanagerwindow.version.no.cancel.all'] = 'Non è possibile cancellare tutte le versioni';
 Sbi.locale.ln['sbi.olap.toolbar.versionmanagerwindow.version.no.cancel.current'] = 'Non è possibile cancellare la versione attuale';
 Sbi.locale.ln['sbi.olap.toolbar.versionmanagerwindow.version.title'] = 'Selezionare le version da cancellare';
-Sbi.locale.ln['sbi.olap.toolbar.versionmanagerwindow.version.select.warning'] = 'Attenzione: questa operazione potrebbe impiegare qualche minuto. Fino a che non è compare il messaggio che notifica la fine non sarà possibile salvare eventuali modifiche e la navigazione potrebbe risultare piu lenta.';
+Sbi.locale.ln['sbi.olap.toolbar.versionmanagerwindow.version.select.warning'] = 'Attenzione: questa operazione potrebbe richiedere qualche minuto. ';
+Sbi.locale.ln['sbi.olap.control.controller.delete.version.ok'] = 'Le versioni sono state eliminate correttamente.';
+//Sbi.locale.ln['sbi.olap.control.controller.delete.version.error'] = 'Si è verificato un errore nella cancellazione delle versioni. Controllare il log.';

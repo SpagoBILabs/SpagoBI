@@ -265,6 +265,10 @@ td[contenteditable="true"]:focus {
 .lock-other-icon{
     background-image: url(../img/locked_other_green.png);
 }
+.versions-manager-icon{
+	background-image: url(../img/tollbar-versions.png);
+}
+
 
 /*------------------*/
 /* Multi hierarchy */

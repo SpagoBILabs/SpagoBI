@@ -189,9 +189,9 @@ Ext.define('Sbi.olap.control.Controller', {
 	,persistNewVersionTransformations: function() {
 
 		var service = Ext.create("Sbi.service.RestService", {
-			url: "version",
+			url: "model",
 			method: 'POST',
-			pathParams: ["increase"],
+			pathParams: ["saveAs"],
 			timeout: Sbi.settings.olap.whatif.timeout.persistNewVersionTransformations
 		});
 		
@@ -202,14 +202,40 @@ Ext.define('Sbi.olap.control.Controller', {
 	 * Call the rest service to delete the selected versions
 	 */
 	,deleteVersions: function(itemsToDelete){
+		
+		
+		
 		var service = Ext.create("Sbi.service.RestService", {
 			url: "version",
 			method: 'POST',
-			async: true,
+//			async: true,
 			pathParams: ["delete",itemsToDelete]
 		});
 		
-		service.callService(this);
+//		service.on("executedAsync", function(status, response){
+//			if(status){
+//				Sbi.exception.ExceptionHandler.showInfoMessage('sbi.olap.control.controller.delete.version.ok');
+//			}else{
+//				Sbi.exception.ExceptionHandler.showErrorMessage('sbi.olap.control.controller.delete.version.error');
+//			}
+//		}, this);
+		
+		
+		var mySuccessCallBack = function(response, options) {
+			if(response !== undefined && response.statusText !== undefined && response.responseText!=null && response.responseText!=undefined) {
+				if(response.responseText.length>21 && response.responseText.substring(0,13)=='{"errors":[{"'){
+					Sbi.olap.eventManager.fireEvent('serviceExecutedWithError', response);
+					Sbi.exception.ExceptionHandler.handleFailure(response);
+				}else{
+					Sbi.olap.eventManager.fireEvent('serviceExecuted', response);
+					Sbi.exception.ExceptionHandler.showInfoMessage(LN('sbi.olap.control.controller.delete.version.ok'));
+				}				
+			} else {
+				Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
+			}
+		};
+		
+		service.callService(this,mySuccessCallBack);
 	}	
 	
 	,lockModel: function() {

@@ -48,24 +48,6 @@ public class VersionResource extends AbstractWhatIfEngineService {
 		return versionManager;
 	}
 
-
-	/**
-	 * Service to increase Version
-	 * @return 
-	 * 
-	 */
-	@POST
-	@Path("/increase")
-	public String increaseVersion(){
-		logger.debug("IN");
-			
-		PivotModel model =getVersionBusiness().persistNewVersionProcedure();
-		
-		logger.debug("OUT");
-		return renderModel(model);
-	}
-	
-
 	/**
 	 * Load the list of versions
 	 * @return the serialization of the versions
@@ -101,7 +83,11 @@ public class VersionResource extends AbstractWhatIfEngineService {
 		logger.debug("IN");
 		getVersionBusiness().deleteVersions(versionsToDelete);	
 		logger.debug("OUT");
-		return "ok";
+		WhatIfEngineInstance ei = getWhatIfEngineInstance();
+		PivotModel model = ei.getPivotModel();
+		String table = renderModel(model);
+		logger.debug("OUT");
+		return table;
 	}
 
 }

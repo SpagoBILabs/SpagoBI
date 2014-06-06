@@ -89,7 +89,7 @@ Ext.define('Sbi.olap.toolbar.VersionManagerWindow', {
 		            			 
 		            			 for(var i=0; i<selected.length; i++){
 		            				 var id = selected[i].get("id");
-		            				 if(id==this.actualVersion){
+		            				 if(id==thisPanel.actualVersion){
 		            					 Sbi.exception.ExceptionHandler.showWarningMessage(LN("sbi.olap.toolbar.versionmanagerwindow.version.no.cancel.current"));
 		            					 return;
 		            				 }
@@ -102,8 +102,7 @@ Ext.define('Sbi.olap.toolbar.VersionManagerWindow', {
 		            			 Sbi.olap.eventManager.deleteVersions(itemsToDelete);
 		            		 }
 		            		 
-		            		 
-		            		 return itemsToDelete;
+		            		 thisPanel.destroy();
 		            	 }
 		             }];
 
