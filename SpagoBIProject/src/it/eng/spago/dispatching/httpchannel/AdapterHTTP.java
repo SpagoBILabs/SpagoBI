@@ -235,9 +235,15 @@ public class AdapterHTTP extends HttpServlet {
     	// Create a factory for disk-based file items
     	FileItemFactory factory = new DiskFileItemFactory();
     	
-        // Create a new file upload handler
+    	((DiskFileItemFactory)factory).setSizeThreshold(5242880);
+        
+    	// Create a new file upload handler
     	ServletFileUpload upload = new ServletFileUpload(factory);
 
+    	//upload.setFileSizeMax(5242880);
+    	//upload.setSizeMax(5242880);
+    	
+    	
         // Parse the request
         List fileItems = upload.parseRequest(request);
         Iterator iter = fileItems.iterator();
