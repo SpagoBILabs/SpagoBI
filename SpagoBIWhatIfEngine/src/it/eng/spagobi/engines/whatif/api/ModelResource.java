@@ -23,9 +23,11 @@ import it.eng.spagobi.engines.whatif.model.SpagoBICellSetWrapper;
 import it.eng.spagobi.engines.whatif.model.SpagoBICellWrapper;
 import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
 import it.eng.spagobi.engines.whatif.model.transform.CellTransformation;
+import it.eng.spagobi.engines.whatif.model.transform.CellTransformationsStack;
 import it.eng.spagobi.engines.whatif.model.transform.algorithm.DefaultWeightedAllocationAlgorithm;
 import it.eng.spagobi.engines.whatif.parser.Lexer;
 import it.eng.spagobi.engines.whatif.parser.parser;
+import it.eng.spagobi.engines.whatif.version.VersionManager;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.exceptions.SpagoBIEngineRestServiceRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
@@ -60,11 +62,23 @@ import com.eyeq.pivot4j.export.poi.ExcelExporter;
 public class ModelResource extends AbstractWhatIfEngineService {
 	
 	public static transient Logger logger = Logger.getLogger(ModelResource.class);
+	public static transient Logger auditlogger = Logger.getLogger("audit.stack");
 	
 	// input parameters
 	public static final String EXPRESSION = "expression";
 	
 	private static final String exportFileName = "SpagoBIOlapExport";
+	private VersionManager versionManager;
+
+	private VersionManager getVersionBusiness() {
+		WhatIfEngineInstance ei = getWhatIfEngineInstance();
+
+		if(versionManager==null){
+			versionManager = new VersionManager(ei);
+		}
+		return versionManager;
+	}
+	
 	
 	/**
 	 * Executes the mdx query. If the mdx is null it executes the query of the model
@@ -96,6 +110,7 @@ public class ModelResource extends AbstractWhatIfEngineService {
 	@Path("/setValue/{ordinal}")
 	public String setValue(@PathParam("ordinal") int ordinal){
 		logger.debug("IN : ordinal = [" + ordinal + "]");
+		logOperation("Set value");
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
 		PivotModel model = ei.getPivotModel();
 		String expression = null;
@@ -127,7 +142,7 @@ public class ModelResource extends AbstractWhatIfEngineService {
 		cellSetWrapper.applyTranformation(transformation);
 		String table = renderModel(model);
 
-		
+		logTransormations();
 		logger.debug("OUT");
 		return table;
 	}
@@ -136,6 +151,7 @@ public class ModelResource extends AbstractWhatIfEngineService {
 	@Path("/persistTransformations")
 	public String persistTransformations(){
 		logger.debug("IN");
+		logOperation("Save");
 		
 		Connection connection;
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
@@ -151,7 +167,7 @@ public class ModelResource extends AbstractWhatIfEngineService {
 			logger.debug("Getting the connection to DB");
 			connection = dataSource.getConnection( null );
 		} catch (Exception e) {
-		logger.error("Error opening connection to datasource "+dataSource.getLabel());
+			logger.error("Error opening connection to datasource "+dataSource.getLabel());
 			throw new SpagoBIRuntimeException("Error opening connection to datasource "+dataSource.getLabel(), e);	
 		} 
 		try {
@@ -163,6 +179,7 @@ public class ModelResource extends AbstractWhatIfEngineService {
 			modelWrapper.persistTransformations(connection);
 		} catch (WhatIfPersistingTransformationException e) {
 			logger.debug("Error persisting the modifications",e);
+			logErrorTransformations(e.getTransformations());
 			throw new SpagoBIEngineRestServiceRuntimeException(e.getLocalizationmessage(), modelWrapper.getLocale(), "Error persisting modifications", e);
 		}finally{
 			logger.debug("Closing the connection used to persist the modifications");
@@ -185,8 +202,40 @@ public class ModelResource extends AbstractWhatIfEngineService {
 		logger.debug("Finish to clean the cache and restoring the model");
 		
 		String table = renderModel(model);
+		
+		logOperation("Transormations stack cleaned");
+		logTransormations();
+		
 		logger.debug("OUT");
 		return table;
+	}
+	
+
+
+
+	/**
+	 * Service to increase Version
+	 * @return 
+	 * 
+	 */
+	@POST
+	@Path("/saveAs")
+	public String increaseVersion(){
+		logger.debug("IN");
+		logOperation("Save As");
+		
+		PivotModel model;
+		try {
+			model = getVersionBusiness().persistNewVersionProcedure();
+		} catch (WhatIfPersistingTransformationException e) {
+			logErrorTransformations(e.getTransformations());
+			logger.error("Error persisting the trasformations in the new version a new version",e);
+			throw new SpagoBIEngineRestServiceRuntimeException("versionresource.generic.error", getLocale(), e);
+		}
+		
+		logTransormations();
+		logger.debug("OUT");
+		return renderModel(model);
 	}
 	
 	@POST
@@ -197,6 +246,8 @@ public class ModelResource extends AbstractWhatIfEngineService {
 		SpagoBIPivotModel model = (SpagoBIPivotModel) ei.getPivotModel();
 		model.undo();
 		String table = renderModel(model);
+		logOperation("Undo");
+		logTransormations();
 		logger.debug("OUT");
 		return table;
 	}
@@ -290,5 +341,24 @@ public class ModelResource extends AbstractWhatIfEngineService {
                 .build();
     }
 	
+	public void logTransormations(){
+		logTransormations(null);
+	}
+	
+	public void logTransormations(String info){
+		if(info!=null){
+			auditlogger.info(info);
+		}
+		auditlogger.info("Pending transformations: ");
+		auditlogger.info(((SpagoBIPivotModel)getWhatIfEngineInstance().getPivotModel()).getPendingTransformations().toString());
+	}
+	
+	public void logOperation(String info){
+		auditlogger.info("OPERATION PERFORMED: "+info);
+	}
+	
+	public void logErrorTransformations(CellTransformationsStack remaningTransformations){
+		auditlogger.info("Error persisting the these modifications "+ remaningTransformations.toString());
+	}
 }
 

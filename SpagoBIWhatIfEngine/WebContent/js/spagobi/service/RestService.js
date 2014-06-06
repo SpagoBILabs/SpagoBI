@@ -27,6 +27,12 @@ Ext.define('Sbi.service.RestService', {
 		jsonData: null,
 		params: {},
 		timeout : Ext.Ajax.timeout,
+    	/**
+    	 * @cfg {boolean} async
+    	 * If true the request is managed asynchronously.. In the sense that no progress bar is displayed
+    	 * and the call service by default does not call a callback function but throws the executedAsync
+    	 * event
+    	 */
 		async: false
 	},
 
@@ -35,9 +41,6 @@ Ext.define('Sbi.service.RestService', {
 		this.initConfig(config);
 		this.callParent();
 		this.addEvents(
-				/**
-				 * [LIST OF EVENTS]
-				 */
 				/**
 				 * @event executedAsync
 				 * This event is thrown when a asynchronous service is executed

@@ -261,6 +261,20 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 
 		}, sharedConfig);
 		
+		
+		this.buttonsConfigContainer['BUTTON_VERSION_MANAGER'] =Ext.apply({
+			tooltip: LN('sbi.olap.toolbar.version.manager'),
+			iconCls: 'versions-manager-icon',
+			label: 'BUTTON_VERSION_MANAGER',
+			handler: function() {
+				var window = Ext.create('Sbi.olap.toolbar.VersionManagerWindow',{
+					actualVersion: this.modelConfig.actualVersion
+				});
+				window.show();
+			}
+
+		}, sharedConfig);
+		
 			
 		this.lockModel = Ext.create('Ext.Button', {
 			tooltip: LN('sbi.olap.toolbar.lock'),
@@ -275,7 +289,7 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 		this.lockModel.setVisible(false);
 		
 		this.unlockModel = Ext.create('Ext.Button', {
-			tooltip: LN('ssbi.olap.toolbar.unlock'),
+			tooltip: LN('sbi.olap.toolbar.unlock'),
 			iconCls: 'unlock-icon'
 			, handler: function() {
 				var afa= null;
@@ -423,6 +437,7 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 			this.mdxContainerPanel = Ext.create('Ext.panel.Panel', {
 				frame: false,
 				layout: 'fit',
+				autoScroll: true,
 				html: "" 
 			});
 
