@@ -145,7 +145,7 @@ Ext.extend(Sbi.cockpit.widgets.linechart.LineChartWidget, Sbi.cockpit.widgets.ch
 				extraStyle: extraStyle,
 				style: 'height: 85%;',
 				hiddenseries: new Array(),
-				horizontal: this.chartConfig.orientation === 'horizontal'
+				horizontal: this.chartConfig.orientation === 'horizontal'				
 		};
 
 		//set the height if ie
@@ -167,7 +167,7 @@ Ext.extend(Sbi.cockpit.widgets.linechart.LineChartWidget, Sbi.cockpit.widgets.ch
 
 		items.region = 'center';
 
-		var barChartPanel = this.getChart(this.chartConfig.orientation === 'horizontal', items, colors, percent);
+		var lineChartPanel = this.getChart(this.chartConfig.orientation === 'horizontal', items, colors, percent);
 
 	}
 	// -----------------------------------------------------------------------------------------------------------------
@@ -240,20 +240,18 @@ Ext.extend(Sbi.cockpit.widgets.linechart.LineChartWidget, Sbi.cockpit.widgets.ch
 	        shadow: true,
 	        legend: showlegend,
 	        axes: chartAxes,
-	        series: chartSeries
+	        series: chartSeries	        
 
 	    });
-//	    chart.on('selection', this.pippo, this);
+
 	    return chart;
 	}
 	
-//	,pippo:function(){
-//		alert('pippo');
-//	}
+
 	/*
 	 * Create the Series object configuration
 	 */
-	, createSeries : function(horizontal,items, chartType, isStacked){
+	, createSeries : function(horizontal,items, chartType, isStacked){		
 		var thisPanel = this;
 		var axisPosition;
 		var series = [];
@@ -283,8 +281,11 @@ Ext.extend(Sbi.cockpit.widgets.linechart.LineChartWidget, Sbi.cockpit.widgets.ch
 			displayNames.push(displayName);
 		}
 		
+		var areaFill = this.chartConfig.colorarea;
+		
 		//Costruct the series object(s)
-		var aSerie = {
+		var aSerie = {			
+				fill: areaFill,
                 type: chartType,
                 highlight: {
                     size: 7,
@@ -303,7 +304,7 @@ Ext.extend(Sbi.cockpit.widgets.linechart.LineChartWidget, Sbi.cockpit.widgets.ch
 	            	  width: 'auto',
 	            	  minHeight: 28,
 	            	  renderer: function(storeItem, item) {
-	            		   //this.setTitle(String(item.value[0])+" : "+String(item.value[1]));
+	            		   //this.setTitle(String(item.value[0])+" : "+String(item.value[1]));	            		  
 	            		   var tooltipContent = thisPanel.getTooltip(storeItem, item);
 	            		   this.setTitle(tooltipContent);
 	            	  }
@@ -381,19 +382,20 @@ Ext.extend(Sbi.cockpit.widgets.linechart.LineChartWidget, Sbi.cockpit.widgets.ch
 		return axes;
 	}
 	
-	, getTooltip : function(record, item){
+	, getTooltip : function(record, item){	
+				
 		var chartType = this.chartConfig.designer;
 		var allRuntimeSeries = this.getRuntimeSeries();
 		var allDesignSeries = this.chartConfig.series;
 		var type = this.chartConfig.type;
 		var horizontal = this.chartConfig.orientation === 'horizontal';
 		var colors = this.getColors();
-		var series;
+		var series = item.series;
 		
 		var percent = ((this.chartConfig.type).indexOf('percent')>=0);
 		var storeObject = this.getJsonStore(percent);
 		
-		var selectedSerieName = item.yField;
+		var selectedSerieName = series.yField;
 		
 		var selectedSerie;
 		
@@ -407,11 +409,10 @@ Ext.extend(Sbi.cockpit.widgets.linechart.LineChartWidget, Sbi.cockpit.widgets.ch
 			}
 
 		}else{
-			series = this.getChartSeries(storeObject.serieNames, colors);
-			
+			series = this.getChartSeries(storeObject.serieNames, colors);			
 			for (var i =0; i<series.length;i++){
 				if (series[i].yField == selectedSerieName){
-					selectedSerie = series[i];
+					selectedSerie = series[i];					
 					break;
 				}
 			}
@@ -475,7 +476,7 @@ Ext.extend(Sbi.cockpit.widgets.linechart.LineChartWidget, Sbi.cockpit.widgets.ch
 		var serieName;  // the serie name without eventual scale factor
 		var measureName;  // the measure related to the serie
 		var serieDefinition;  // the design-time serie definition (the measure with precision, color, ....)
-
+		/*
 		if(type != 'percent-stacked-barchart'){
 			if(horizontal){
 				value =  record.data[series.xField];
@@ -490,6 +491,9 @@ Ext.extend(Sbi.cockpit.widgets.linechart.LineChartWidget, Sbi.cockpit.widgets.ch
 				value = record.data['seriesflatvalue'+series.yField.substring(series.yField.length-1)];
 			}
 		}
+		*/
+		
+		value = record.data[series.yField];
 		
 		// find the measure's name
 		var i = 0;
