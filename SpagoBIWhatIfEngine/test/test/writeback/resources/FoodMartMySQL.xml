@@ -96,16 +96,15 @@
                   <Cube name="Sales">
                     <Table name="sales_fact_1998"/>
                     <DimensionUsage name="Product" source="Product" foreignKey="product_id"/>
-
                     <DimensionUsage name="Region" source="Region" foreignKey="store_id"/>   
 					<DimensionUsage name="Customers" source="Customers" foreignKey="customer_id"/>   
-                    <Measure name="Unit Sales" column="unit_sales" aggregator="sum"       formatString="Standard"/>
+                    <Measure name="Unit Sales Original" column="unit_sales" aggregator="sum"       formatString="Standard"/>
                     <Measure name="Store Cost" column="store_cost" aggregator="sum"       formatString="#,###.00"/>
-                    <Measure name="Sales Count" column="product_id" aggregator="count"       formatString="#,###"/>
+                    <Measure name="Sales Count Original" column="product_id" aggregator="count"       formatString="#,###" visible="false"/>
 				    <Measure name="Customer Count" column="customer_id"       aggregator="distinct count" formatString="#,###"/>
-                              
+        
 					<Measure name="Atomic" aggregator="count"/>
-                              
+
                   </Cube>
 				  
 				   <Cube name="Sales_Edit">
@@ -115,19 +114,19 @@
                     <DimensionUsage name="Region" source="Region" foreignKey="store_id"/>   
 					<DimensionUsage name="Customers" source="Customers" foreignKey="customer_id"/>   
 					<Dimension name="Version">
-                    <Hierarchy hasAll="false" defaultMember="[Version].[0]"> 
-						<Level name="Versione" column="wbversion" uniqueMembers="true" />
-                    </Hierarchy>
+						<Hierarchy hasAll="false" defaultMember="[Version].[0]"> 
+							<Level name="Versione" column="wbversion" uniqueMembers="true" />
+						</Hierarchy>
                   </Dimension>
                     <Measure name="Store Sales" column="store_sales" aggregator="sum"       formatString="#,###.00"/>
-                              
+                    <Measure name="Store Cost" column="store_cost" aggregator="sum"       formatString="#,###.00"/>        
                   </Cube>
 				  
 				  
 				  <VirtualCube name="Sales_V">
     <CubeUsages>
-        <CubeUsage cubeName="Sales" ignoreUnrelatedDimensions="true"/>
-        <CubeUsage cubeName="Sales_Edit"/>
+        <CubeUsage cubeName="Sales_Edit" ignoreUnrelatedDimensions="true"/>
+		<CubeUsage cubeName="Sales" ignoreUnrelatedDimensions="true"/>
     </CubeUsages>
     <VirtualCubeDimension cubeName="Sales" name="Customers"/>
     <VirtualCubeDimension cubeName="Sales" name="Product"/>
@@ -136,10 +135,20 @@
     <VirtualCubeDimension cubeName="Sales_Edit" name="Product"/>
     <VirtualCubeDimension cubeName="Sales_Edit" name="Region"/>
 	<VirtualCubeDimension cubeName="Sales_Edit" name="Version"/>
-    <VirtualCubeMeasure cubeName="Sales" name="[Measures].[Store Cost]"/>
-    <VirtualCubeMeasure cubeName="Sales" name="[Measures].[Unit Sales]"/>
-    <VirtualCubeMeasure cubeName="Sales" name="[Measures].[Sales Count]"/>
-    <VirtualCubeMeasure cubeName="Sales_Edit" name="[Measures].[Store Sales]"/>
+    <VirtualCubeMeasure cubeName="Sales" name="[Measures].[Unit Sales Original]" visible="false"/>
+	<VirtualCubeMeasure cubeName="Sales" name="[Measures].[Sales Count Original]" visible="false"/>
+	<VirtualCubeMeasure cubeName="Sales_Edit" name="[Measures].[Store Sales]" visible="true"/>
+	<VirtualCubeMeasure cubeName="Sales_Edit" name="[Measures].[Store Cost]" visible="true"/>
+	<CalculatedMember name="Sales Count" dimension="Measures">
+		<Formula>
+			VALIDMEASURE([Measures].[Sales Count Original])
+		</Formula>
+	</CalculatedMember>   
+	<CalculatedMember name="Unit Sales" dimension="Measures">
+		<Formula>
+			VALIDMEASURE([Measures].[Unit Sales Original])
+		</Formula>
+	</CalculatedMember>   
 </VirtualCube>
 				  
                   
@@ -196,6 +205,7 @@
                               <Formula>
                                 [Measures].[Store Sales] - [Measures].[Store Cost]
                               </Formula>
+							  
                               <CalculatedMemberProperty name="FORMAT_STRING" value="$#,##0.00"/>
                               </CalculatedMember>
                   </Cube>
