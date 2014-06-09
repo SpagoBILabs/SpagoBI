@@ -332,11 +332,9 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 				overflowHandler: 'Menu'
 			},
 			items   : [ 
-			            this.drillMode
+			            
 			            ]
 		});
-		
-		
 		
 		this.callParent();
 	},
@@ -418,15 +416,28 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 	
 	
 	, drawToolbarAndMenu: function(modelConfig){
+				
+		// recreatt destroyng toolbar without destroyng buttons
+		this.removeAll(false);
+		// add first buttons always on toolbar
+		this.addToolbarFixedButtons();
+		// insert customized toolbar
 		this.insertInToolbarArray( modelConfig.toolbarVisibleButtons);
-		
+		// lock buttons
 		this.addLockModel();
-		
+		// customized menu
 		if( modelConfig.toolbarMenuButtons.length > 0){
 			this.insertInMenuArray( modelConfig.toolbarMenuButtons);
+			
+			this.add('->');
+			this.add(this.menuButtons);
+
 		}
-		
+		// add pressed logic
 		this.setPressedMemory();	
+	}
+	, addToolbarFixedButtons: function(){
+		this.add(this.drillMode);
 	}
 
 	/**
@@ -591,11 +602,6 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 		}
 		
 		this.menuButtons.setVisible(true);
-		
-
-		this.add('->');
-		this.add(this.menuButtons);
-
 	
 	
 	}
