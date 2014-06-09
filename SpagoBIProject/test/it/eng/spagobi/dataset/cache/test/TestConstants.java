@@ -31,11 +31,11 @@ import java.math.BigDecimal;
 public class TestConstants {
 	
 	//public static String workspaceFolder = "D:/Documenti/Sviluppo/workspaces/helios/spagobi/server";
-	public static String workspaceFolder = "C:/Users/cortella/workspaceJEE";
+	public static String workspaceFolder = "."; //"C:/Users/cortella/workspaceJEE";
 
-	public static String RESOURCE_PATH = workspaceFolder+"/SpagoBICockpitEngine/test/resources/";
-	public static String WEBCONTENT_PATH = workspaceFolder+"/SpagoBICockpitEngine/WebContent";
-	public static String AF_CONFIG_FILE = "/WEB-INF/conf/master.xml";
+	public static String RESOURCE_PATH = workspaceFolder + "/test/resources/";
+	public static String WEBCONTENT_PATH = workspaceFolder + "/WebContent";
+	public static String AF_CONFIG_FILE = workspaceFolder + "/WEB-INF/conf/master.xml";
 	
 	public static String CACHE_CONFIG_TABLE_PREFIX = "sbicache";
 	public static BigDecimal CACHE_CONFIG_CACHE_DIMENSION = BigDecimal.valueOf(104857600); //in bytes
