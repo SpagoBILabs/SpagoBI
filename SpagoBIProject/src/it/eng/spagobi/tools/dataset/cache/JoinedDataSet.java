@@ -174,7 +174,7 @@ public class JoinedDataSet extends AbstractDataSet {
 	}
 	
 	public void loadData(int offset, int fetchSize, int maxResults) {
-		ICache cache = CacheManager.getCache();
+		ICache cache = SpagoBICacheManager.getCache();
 		
 		// check if all joinedDataset have been succesfully stored in cache
 		List<IDataSet> dataSetNotStoredInCache = cache.getNotContained(joinedDataSets);

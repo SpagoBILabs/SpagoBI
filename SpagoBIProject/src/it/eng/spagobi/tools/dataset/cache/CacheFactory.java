@@ -23,6 +23,7 @@ package it.eng.spagobi.tools.dataset.cache;
 
 
 import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.SQLDBCache;
+import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.SQLDBCacheConfiguration;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 
 /**
@@ -32,7 +33,7 @@ import it.eng.spagobi.tools.datasource.bo.IDataSource;
 public class CacheFactory {
 
 	public ICache getCache(ICacheConfiguration cacheConfiguration){
-		return new SQLDBCache(cacheConfiguration);		
+		return new SQLDBCache( (SQLDBCacheConfiguration)cacheConfiguration );		
 	}
 
 }

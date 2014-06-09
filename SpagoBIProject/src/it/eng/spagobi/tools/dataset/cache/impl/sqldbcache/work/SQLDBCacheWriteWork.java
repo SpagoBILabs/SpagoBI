@@ -23,7 +23,7 @@ package it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.work;
 
 import org.apache.log4j.Logger;
 
-import it.eng.spagobi.tools.dataset.cache.CacheManager;
+import it.eng.spagobi.tools.dataset.cache.SpagoBICacheManager;
 import it.eng.spagobi.tools.dataset.cache.ICache;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
@@ -39,7 +39,7 @@ public class SQLDBCacheWriteWork implements Work {
 	IDataStore dataStore;
 	IDataSet dataSet;
 	
-	private static transient Logger logger = Logger.getLogger(CacheManager.class);
+	private static transient Logger logger = Logger.getLogger(SpagoBICacheManager.class);
 
 	/**
 	 * @param cache

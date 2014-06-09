@@ -16,7 +16,7 @@ import java.util.List;
 import it.eng.spagobi.commons.serializer.SerializerFactory;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.cache.CacheItem;
-import it.eng.spagobi.tools.dataset.cache.CacheManager;
+import it.eng.spagobi.tools.dataset.cache.SpagoBICacheManager;
 import it.eng.spagobi.tools.dataset.cache.ICache;
 import it.eng.spagobi.tools.dataset.cache.ICacheMetadata;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
@@ -51,7 +51,7 @@ public class CacheResource extends AbstractSpagoBIResource {
 		
 		logger.debug("IN");
 		try {
-			ICache cache = CacheManager.getCache();
+			ICache cache = SpagoBICacheManager.getCache();
 			return serializeCache(cache);
 		} catch(Throwable t) {
 			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", t);
@@ -67,7 +67,7 @@ public class CacheResource extends AbstractSpagoBIResource {
 		
 		logger.debug("IN");
 		try {
-			ICache cache = CacheManager.getCache();
+			ICache cache = SpagoBICacheManager.getCache();
 			cache.deleteAll();
 			return serializeCache(cache);
 		} catch(Throwable t) {
@@ -84,7 +84,7 @@ public class CacheResource extends AbstractSpagoBIResource {
 		
 		logger.debug("IN");
 		try {
-			ICache cache = CacheManager.getCache();
+			ICache cache = SpagoBICacheManager.getCache();
 			cache.deleteAll();
 			cache.enable(enabled);
 			return serializeCache(cache);
@@ -102,7 +102,7 @@ public class CacheResource extends AbstractSpagoBIResource {
 		
 		logger.debug("IN");
 		try {
-			ICache cache = CacheManager.getCache();
+			ICache cache = SpagoBICacheManager.getCache();
 			ICacheMetadata cacheMetadata = cache.getMetadata();
 			return serializeCacheMetadata(cacheMetadata);
 		} catch(Throwable t) {

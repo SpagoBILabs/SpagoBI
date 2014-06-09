@@ -30,7 +30,7 @@ import org.apache.log4j.Logger;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.configuration.ConfigSingleton;
 
-import it.eng.spagobi.tools.dataset.cache.CacheManager;
+import it.eng.spagobi.tools.dataset.cache.SpagoBICacheManager;
 import it.eng.spagobi.tools.dataset.cache.ICache;
 import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.SQLDBCache;
 
@@ -41,14 +41,14 @@ import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.SQLDBCache;
  * 
  * @authors Marco Cortella (marco.cortella@eng.it), Andrea Gioia (andrea.gioia@eng.it)
  */
-public class CacheManager {
+public class SpagoBICacheManager {
 
 	/**
 	 * The global cache shared by all application's modules
 	 */
 	private static ICache cache = null;
 
-	private static transient Logger logger = Logger.getLogger(CacheManager.class);
+	private static transient Logger logger = Logger.getLogger(SpagoBICacheManager.class);
 	
 	/**
 	 * 

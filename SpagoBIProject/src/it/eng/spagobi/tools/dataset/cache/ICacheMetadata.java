@@ -41,6 +41,11 @@ public interface ICacheMetadata {
 	BigDecimal getTotalMemory();
 	
 	/**
+	 * @return used cache memory in bytes
+	 */
+	BigDecimal getUsedMemory();
+	
+	/**
 	 * @return available cache memory in bytes
 	 */
 	BigDecimal getAvailableMemory();
@@ -60,6 +65,10 @@ public interface ICacheMetadata {
 	 */
 	boolean hasEnoughMemoryForStore(IDataStore store);
 	
+	/**
+	 * @return true if the cache space is greater the requiredMemory
+	 */
+	boolean isAvailableMemoryGreaterThen(BigDecimal requiredMemory);
 	
 	/**
 	 * @return true if the configuration about the clean action are correctly defined

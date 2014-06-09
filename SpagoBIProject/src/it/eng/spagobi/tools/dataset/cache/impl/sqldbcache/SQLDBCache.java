@@ -26,7 +26,7 @@ import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.cache.CacheException;
 import it.eng.spagobi.tools.dataset.cache.CacheItem;
-import it.eng.spagobi.tools.dataset.cache.CacheManager;
+import it.eng.spagobi.tools.dataset.cache.SpagoBICacheManager;
 import it.eng.spagobi.tools.dataset.cache.ICache;
 import it.eng.spagobi.tools.dataset.cache.ICacheActivity;
 import it.eng.spagobi.tools.dataset.cache.ICacheConfiguration;
@@ -51,6 +51,7 @@ import it.eng.spagobi.tools.dataset.persist.PersistedTableManager;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.threadmanager.WorkManager;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -75,44 +76,40 @@ import commonj.work.WorkItem;
  */
 public class SQLDBCache implements ICache {
 	
-	// we really need it?
-	private SQLDBCacheConfiguration cacheConfiguration;
-	
+		
 	private boolean enabled;
 	private IDataSource dataSource;
-	private ICacheMetadata cacheMetadata;
+	
+	private SQLDBCacheMetadata cacheMetadata;
+
 	private WorkManager spagoBIWorkManager;
 
 	public static final String CACHE_NAME_PREFIX_CONFIG = "SPAGOBI.CACHE.NAMEPREFIX";
 	
 	static private Logger logger = Logger.getLogger(SQLDBCache.class);
 	
-	
-	public SQLDBCache(ICacheConfiguration cacheConfiguration){
+	public SQLDBCache(SQLDBCacheConfiguration cacheConfiguration){
+		
+		if (cacheConfiguration == null){
+			throw new CacheException("Impossible to initialize cache. The cache configuration object cannot be null");
+		}
+		
 		this.enabled = true;
 		this.dataSource = cacheConfiguration.getCacheDataSource();
+		this.cacheMetadata = new SQLDBCacheMetadata(cacheConfiguration);
+	
 		this.spagoBIWorkManager = cacheConfiguration.getWorkManager();
-		this.cacheConfiguration = (SQLDBCacheConfiguration)cacheConfiguration;
 		
-		if (this.cacheConfiguration != null){
-			String tableNamePrefix = this.cacheConfiguration.getTableNamePrefix();
-			if (tableNamePrefix != null){
-				if (!tableNamePrefix.isEmpty()){
-					eraseExistingTables(tableNamePrefix.toUpperCase());
-				} else {
-					throw new CacheException("An unexpected error occured while initializing cache: SPAGOBI.CACHE.NAMEPREFIX cannot be empty");
-				}
-			} else {
-				throw new CacheException("An unexpected error occured while initializing cache: SPAGOBI.CACHE.NAMEPREFIX not found");
-			}
+		
+		eraseExistingTables(cacheMetadata.getTableNamePrefix().toUpperCase());
 			
-			String databaseSchema = this.cacheConfiguration.getSchema();
-			if (databaseSchema != null){
-				//test schema
-				testDatabaseSchema(databaseSchema, dataSource);
-			} 
-		}
+		String databaseSchema = cacheConfiguration.getSchema();
+		if (databaseSchema != null){
+			//test schema
+			testDatabaseSchema(databaseSchema, dataSource);
+		} 
 	}
+	
 	
 	// ===================================================================================
 	// CONTAINS METHODS
@@ -541,13 +538,16 @@ public class SQLDBCache implements ICache {
 	public void put(IDataSet dataSet, IDataStore dataStore) {
 		logger.trace("IN");
 		try {
+			
+			BigDecimal requiredMemory = getMetadata().getRequiredMemory(dataStore);
+			
 			if (getMetadata().isCleaningEnabled() 
-					&& !getMetadata().hasEnoughMemoryForStore(dataStore)) {
+					&& !getMetadata().isAvailableMemoryGreaterThen(requiredMemory)) {
 				deleteToQuota();
 			}
 			
 			//check again if there is enough space for the resultset
-			if ( getMetadata().hasEnoughMemoryForStore(dataStore) ){
+			if ( getMetadata().isAvailableMemoryGreaterThen(requiredMemory) ){
 				String signature = dataSet.getSignature();
 				String tableName = persistStoreInCache(dataSet, signature, dataStore);
 				CacheItem item =  getMetadata().addCacheItem(signature, tableName, dataStore);
@@ -575,18 +575,11 @@ public class SQLDBCache implements ICache {
 		logger.debug("OUT");
 	}
 
-
 	private String persistStoreInCache(IDataSet dataset, String signature, IDataStore resultset) {
 		logger.trace("IN");
 		try {
 			PersistedTableManager persistedTableManager = new PersistedTableManager();
-			String tablePrefix = null;
-			String tableNamePrefix = this.cacheConfiguration.getTableNamePrefix();
-			if (tableNamePrefix != null){
-				tablePrefix = tableNamePrefix.toUpperCase();
-			}
-			
-			String tableName = persistedTableManager.generateRandomTableName(tablePrefix);
+			String tableName = persistedTableManager.generateRandomTableName( this.getMetadata().getTableNamePrefix() );
 			persistedTableManager.persistDataset(dataset, resultset, getDataSource(), tableName);
 			return tableName;
 		} catch(Throwable t) {
@@ -773,11 +766,8 @@ public class SQLDBCache implements ICache {
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.dataset.cache.ICache#getCacheMetadata()
 	 */
-	public ICacheMetadata getMetadata() {
-		if (cacheMetadata == null){		
-			cacheMetadata = new SQLDBCacheMetadata(cacheConfiguration);
-		}  
-		return cacheMetadata;
+	public SQLDBCacheMetadata getMetadata() {
+		return (SQLDBCacheMetadata)cacheMetadata;
 	}
 	
 	/* (non-Javadoc)
