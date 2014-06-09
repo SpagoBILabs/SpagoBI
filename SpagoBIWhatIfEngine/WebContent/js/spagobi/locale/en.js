@@ -111,7 +111,7 @@ Sbi.locale.ln['sbi.olap.execution.table.dimension.no.enough'] = 'There must be a
 //===================================================================
 //WRITEBACK
 //===================================================================
-Sbi.locale.ln['sbi.olap.weiteback.persist.error'] = 'Error persisting the transformations';
+Sbi.locale.ln['sbi.olap.weiteback.persist.error'] = 'Error saving the modifications';
 Sbi.locale.ln['sbi.olap.weiteback.edit.no.zero'] =  'With the proportional algorithm it\'s not possible to edit a cell with the value 0. This algorithm preserves the weight between siblings cells and, editing the 0 value, this constraint will be broken. In the next release we\'ll provide more propagation algorithms.';
 
 //===================================================================
