@@ -26,6 +26,7 @@ import java.io.File;
 import org.olap4j.OlapDataSource;
 
 import test.AbstractWhatIfTestCase;
+import test.DbConfigContainer;
 import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
 import it.eng.spagobi.engines.whatif.model.SpagoBICellSetWrapper;
 import it.eng.spagobi.engines.whatif.model.SpagoBICellWrapper;
@@ -445,4 +446,8 @@ public class MetalanguageParserTestCase extends AbstractWhatIfTestCase {
 		super.tearDown();
 	}
 
+	
+	public String getTemplate(){
+		return DbConfigContainer.getMySqlTemplate();
+	}
 }

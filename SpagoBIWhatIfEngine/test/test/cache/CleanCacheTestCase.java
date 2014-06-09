@@ -15,6 +15,7 @@ import org.olap4j.OlapDataSource;
 import org.olap4j.Position;
 
 import test.AbstractWhatIfTestCase;
+import test.DbConfigContainer;
 
 /* SpagoBI, the Open Source Business Intelligence suite
 
@@ -90,4 +91,7 @@ public class CleanCacheTestCase extends AbstractWhatIfTestCase {
 	}
 	
 
+	public String getTemplate(){
+		return DbConfigContainer.getMySqlTemplate();
+	}
 }

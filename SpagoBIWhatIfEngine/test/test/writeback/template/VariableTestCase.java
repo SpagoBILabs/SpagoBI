@@ -8,6 +8,7 @@ import java.io.File;
 import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
 import it.eng.spagobi.tools.datasource.bo.DataSource;
 import test.AbstractWhatIfTestCase;
+import test.DbConfigContainer;
 import test.writeback.TestConstants;
 
 /* SpagoBI, the Open Source Business Intelligence suite
@@ -46,4 +47,7 @@ public class VariableTestCase extends AbstractWhatIfTestCase {
 		assertEquals(5, var.intValue());
 	}
 	
+	public String getTemplate(){
+		return DbConfigContainer.getMySqlTemplate();
+	}
 }

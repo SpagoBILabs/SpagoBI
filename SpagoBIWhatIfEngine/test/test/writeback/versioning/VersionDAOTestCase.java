@@ -12,6 +12,7 @@ import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
 import it.eng.spagobi.engines.whatif.version.SbiVersion;
 import it.eng.spagobi.engines.whatif.version.VersionDAO;
 import test.AbstractWhatIfTestCase;
+import test.DbConfigContainer;
 
 /* SpagoBI, the Open Source Business Intelligence suite
 
@@ -46,6 +47,10 @@ public class VersionDAOTestCase  extends AbstractWhatIfTestCase {
         File userDir = new File("").getAbsoluteFile();
         File f  = new File(userDir,  "\\test\\test\\writeback\\resources\\FoodMartMySQL.xml");
 		return f.getAbsolutePath();
+	}
+	
+	public String getTemplate(){
+		return DbConfigContainer.getMySqlTemplate();
 	}
 	
 }

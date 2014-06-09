@@ -8,6 +8,7 @@ import java.io.File;
 import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
 import it.eng.spagobi.tools.datasource.bo.DataSource;
 import test.AbstractWhatIfTestCase;
+import test.DbConfigContainer;
 import test.writeback.TestConstants;
 
 /* SpagoBI, the Open Source Business Intelligence suite
@@ -25,10 +26,7 @@ public class MondrianSchemaRetriverTestCase extends AbstractWhatIfTestCase {
 	
 	
 	public String getCatalogue(){
-		
-        File userDir = new File("").getAbsoluteFile();
-        File f  = new File(userDir,  "\\test\\test\\writeback\\resources\\FoodMartMySQL.xml");
-		return f.getAbsolutePath();
+		return DbConfigContainer.getMySqlTemplate();
 	}
 	
 	public void testGetVersionColumn() throws Exception{
@@ -37,4 +35,7 @@ public class MondrianSchemaRetriverTestCase extends AbstractWhatIfTestCase {
 		assertEquals(VERSION_COLUMN_NAME, columnName);
 	}
 	
+	public String getTemplate(){
+		return DbConfigContainer.getMySqlTemplate();
+	}
 }

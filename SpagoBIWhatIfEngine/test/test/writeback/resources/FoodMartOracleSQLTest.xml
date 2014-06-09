@@ -81,7 +81,7 @@
 					<DimensionUsage name="Customers" source="Customers" foreignKey="CUSTOMER_ID"/>   
 					<Dimension name="Version">
                     <Hierarchy hasAll="false" defaultMember="[Version].[1]"> 
-						<Level name="Versione" column="VERSIONE" uniqueMembers="true" />
+						<Level name="Versione" column="WBVERSION" uniqueMembers="true" />
                     </Hierarchy>
                   </Dimension>
                     <Measure name="Store Sales" column="STORE_SALES" aggregator="sum"       formatString="#,###.00"/>

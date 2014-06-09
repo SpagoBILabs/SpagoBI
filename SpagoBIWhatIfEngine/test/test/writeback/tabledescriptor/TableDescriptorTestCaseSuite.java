@@ -3,9 +3,11 @@
  */
 package test.writeback.tabledescriptor;
 
-import java.io.File;
+import test.writeback.TestConstants;
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
-import test.DbConfigContainer;
 
 /* SpagoBI, the Open Source Business Intelligence suite
 
@@ -17,17 +19,16 @@ import test.DbConfigContainer;
  * @author ghedin
  *
  */
-public class MySqlTestCase extends AbstractTableDescriptoTastCase  {
+public class TableDescriptorTestCaseSuite extends TestCase {
+	static public Test suite() {
+		TestSuite suite = new TestSuite("TableDescriptorTestCaseSuite");
+		if(TestConstants.enableTestsOnMySql){
+			suite.addTestSuite(MySqlTestCase.class);
+		}
+		if(TestConstants.enableTestsOnPostgres){
+			suite.addTestSuite(OracleTestCase.class);
+		}
 
-
-	public String getCatalogue(){
-		
-        return DbConfigContainer.getMySqlCatalogue();
+		return suite;
 	}
-
-
-	public String getTemplate(){
-		return DbConfigContainer.getMySqlTemplate();
-	}
-
 }

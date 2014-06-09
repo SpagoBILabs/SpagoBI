@@ -30,7 +30,7 @@ import junit.framework.TestCase;
  * @author ghedin
  *
  */
-public class AbstractWhatIfTestCase extends TestCase {
+public abstract class AbstractWhatIfTestCase extends TestCase {
 
 	
 	private String catalog;
@@ -89,12 +89,7 @@ public class AbstractWhatIfTestCase extends TestCase {
 	}
 	
 	
-	public String getTemplate(){
-		
-        File userDir = new File("").getAbsoluteFile();
-        File f  = new File(userDir,  "\\test\\test\\writeback\\resources\\tpl.xml");
-		return f.getAbsolutePath();
-	}
+	public abstract String getTemplate();
 	
 	
 }
