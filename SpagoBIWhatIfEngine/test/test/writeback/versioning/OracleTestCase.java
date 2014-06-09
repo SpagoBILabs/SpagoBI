@@ -3,8 +3,7 @@
  */
 package test.writeback.versioning;
 
-import test.writeback.TestConstants;
-import it.eng.spagobi.tools.datasource.bo.DataSource;
+import test.DbConfigContainer;
 
 
 
@@ -21,14 +20,15 @@ import it.eng.spagobi.tools.datasource.bo.DataSource;
 public class OracleTestCase extends AbstractVersionManagerTestCase {
 
 
-	
 	public String getCatalogue(){
-		
-		return "\\test\\test\\writeback\\\resources\\FoodMartOracleSQLTest.xml";
-	}
-	
+		return DbConfigContainer.getOracleCatalogue();
 
-	
+	}
+
+	public String getTemplate(){
+		return DbConfigContainer.getOracleTemplate();
+	}
+
 
 	
 

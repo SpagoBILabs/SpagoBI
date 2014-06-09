@@ -5,6 +5,8 @@ package test.writeback;
 
 import java.io.File;
 
+import test.DbConfigContainer;
+
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
@@ -20,13 +22,12 @@ public class MySQLTestCase extends AbstractWriteBackTestCase {
 
 	
 	public String getCatalogue(){
-		
-        File userDir = new File("").getAbsoluteFile();
-        File f  = new File(userDir,  "\\test\\test\\writeback\\resources\\FoodMartMySQL.xml");
-		return f.getAbsolutePath();
+		return DbConfigContainer.getMySqlCatalogue();
 	}
 
-
+	public String getTemplate(){
+		return DbConfigContainer.getMySqlTemplate();
+	}
 	
 
 }

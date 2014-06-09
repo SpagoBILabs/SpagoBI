@@ -3,9 +3,7 @@
  */
 package test.writeback;
 
-import java.io.File;
-
-import it.eng.spagobi.tools.datasource.bo.DataSource;
+import test.DbConfigContainer;
 
 
 
@@ -23,14 +21,14 @@ public class OracleTestCase extends AbstractWriteBackTestCase {
 
 
 	public String getCatalogue(){
-		
-        File userDir = new File("").getAbsoluteFile();
-        File f  = new File(userDir,  "\\test\\test\\writeback\\resources\\FoodMartOracleSQLTest.xml");
-		return f.getAbsolutePath();
-	}
-	
+		return DbConfigContainer.getOracleCatalogue();
 
-	
+	}
+
+
+	public String getTemplate(){
+		return DbConfigContainer.getOracleTemplate();
+	}
 
 	
 

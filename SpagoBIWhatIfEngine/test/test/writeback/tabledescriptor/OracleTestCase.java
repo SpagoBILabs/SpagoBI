@@ -3,8 +3,6 @@
  */
 package test.writeback.tabledescriptor;
 
-import java.io.File;
-
 import test.DbConfigContainer;
 
 /* SpagoBI, the Open Source Business Intelligence suite
@@ -17,17 +15,16 @@ import test.DbConfigContainer;
  * @author ghedin
  *
  */
-public class MySqlTestCase extends AbstractTableDescriptoTastCase  {
+public class OracleTestCase extends AbstractTableDescriptoTastCase {
 
-
+	
 	public String getCatalogue(){
-		
-        return DbConfigContainer.getMySqlCatalogue();
+		return DbConfigContainer.getOracleCatalogue();
+
 	}
-
-
 	public String getTemplate(){
-		return DbConfigContainer.getMySqlTemplate();
+		return DbConfigContainer.getOracleTemplate();
 	}
+
 
 }

@@ -3,12 +3,7 @@
  */
 package test.writeback.versioning;
 
-import java.io.File;
-
-import org.apache.commons.vfs.FileObject;
-
-import test.writeback.TestConstants;
-import it.eng.spagobi.tools.datasource.bo.DataSource;
+import test.DbConfigContainer;
 
 /* SpagoBI, the Open Source Business Intelligence suite
 
@@ -25,12 +20,11 @@ public class MySQLTestCase extends AbstractVersionManagerTestCase {
 	
 
 	public String getCatalogue(){
-		
-        File userDir = new File("").getAbsoluteFile();
-        File f  = new File(userDir,  "\\test\\test\\writeback\\resources\\FoodMartMySQL.xml");
-		return f.getAbsolutePath();
+		return DbConfigContainer.getMySqlCatalogue();
 	}
-	
+	public String getTemplate(){
+		return DbConfigContainer.getMySqlTemplate();
+	}
 	
 
 }
