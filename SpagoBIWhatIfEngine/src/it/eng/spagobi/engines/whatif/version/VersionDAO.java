@@ -11,7 +11,6 @@ import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
 import it.eng.spagobi.writeback4j.sql.SqlInsertStatement;
 import it.eng.spagobi.writeback4j.sql.SqlQueryStatement;
 import it.eng.spagobi.writeback4j.sql.SqlUpdateStatement;
-import it.eng.spagobi.writeback4j.sql.dbdescriptor.FoodmartDbDescriptor;
 import it.eng.spagobi.writeback4j.sql.dbdescriptor.IDbSchemaDescriptor;
 import it.eng.spagobi.writeback4j.sql.dbdescriptor.JdbcTableDescriptor;
 
