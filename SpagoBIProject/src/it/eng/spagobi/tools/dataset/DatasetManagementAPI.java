@@ -41,7 +41,7 @@ import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.cache.CacheManager;
+import it.eng.spagobi.tools.dataset.cache.SpagoBICacheManager;
 import it.eng.spagobi.tools.dataset.cache.ICache;
 import it.eng.spagobi.tools.dataset.cache.JoinedDataSet;
 import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.FilterCriteria;
@@ -291,12 +291,11 @@ public class DatasetManagementAPI {
 				throw new ParametersNotValorizedException("The following parameters have no value [" + parameterNotValorizedStr + "]");				
 			}
 			
-			ICache cache = CacheManager.getCache();
+			ICache cache = SpagoBICacheManager.getCache();
 			IDataStore cachedResultSet = cache.get(dataSet);			
 			
 			IDataStore dataStore = null;
 			if (cachedResultSet == null){
-				//dataStore = storeDataSetInCache(dataSet, parametersValues, false);
 				dataSet.setParamsMap(parametersValues);
 				dataStore = cache.refresh(dataSet, false);
 			} else {
@@ -326,7 +325,7 @@ public class DatasetManagementAPI {
 			JoinedDataSet joinedDataSet = new JoinedDataSet("theLabel", "theLabel", "theLabel", associationGroup);
 			joinedDataSet.setParamsMap(parametersValues);
 			
-			ICache cache = CacheManager.getCache();
+			ICache cache = SpagoBICacheManager.getCache();
 			if (cache.contains(joinedDataSet) == false) {
 				cache.refresh(joinedDataSet, true);
 			} 
@@ -367,7 +366,7 @@ public class DatasetManagementAPI {
 		List<IDataStore> dataStores = new ArrayList<IDataStore>();
 		
 		try {
-			ICache cache = CacheManager.getCache();
+			ICache cache = SpagoBICacheManager.getCache();
 			
 			WorkManager spagoBIWorkManager;
 			try {
@@ -414,7 +413,7 @@ public class DatasetManagementAPI {
 	
 	private IDataStore storeDataSetInCache(IDataSet dataSet, Map<String, String> parametersValues, boolean wait) {
 		try {
-			ICache cache = CacheManager.getCache();
+			ICache cache = SpagoBICacheManager.getCache();
 			dataSet.setParamsMap(parametersValues);
 			dataSet.loadData();
 			IDataStore dataStore = dataSet.getDataStore();
@@ -456,7 +455,7 @@ public class DatasetManagementAPI {
 			
 			IDataSet dataSet = this.getDataSetDAO().loadDataSetByLabel(label);
 			
-			ICache cache = CacheManager.getCache();
+			ICache cache = SpagoBICacheManager.getCache();
 			IDataStore cachedResultSet = cache.get(dataSet);
 			IDataStore dataStore = null;
 			

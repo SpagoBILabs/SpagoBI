@@ -49,14 +49,14 @@ public class DataStoreStatistics {
 	/**
 	 * @return the number of bytes used by the resultSet (approximate)
 	 */
-	public BigDecimal extimateStoreMemorySize(){
+	public BigDecimal extimateStoreMemorySize() {
 		BigDecimal recordMemorySize = extimateRecordMemorySize();
 		BigDecimal storeMemorySize = recordMemorySize.multiply(new BigDecimal(store.getRecordsCount())) ;
 		logger.debug("Dimension estimated for the new resultset [rowWeight*rows]: " + storeMemorySize + " ["+recordMemorySize+" * "+store.getRecordsCount()+"]");
 		return storeMemorySize;
 	}
 	
-	private BigDecimal extimateRecordMemorySize(){
+	private BigDecimal extimateRecordMemorySize() {
 		BigDecimal recordMemorySize = new BigDecimal(0);
 		BigDecimal[] fieldsMemorySize = extimateFieldsMemorySize();
 		for(int i = 0; i < fieldsMemorySize.length; i++) {
@@ -64,6 +64,7 @@ public class DataStoreStatistics {
 		}
 		return recordMemorySize;
 	}
+	
 	private BigDecimal[] extimateFieldsMemorySize() {
 		
 		IMetaData md = store.getMetaData();
@@ -215,8 +216,7 @@ public class DataStoreStatistics {
 		return extimateVarCharMemorySizeUsingSample;
 	}
 
-	public void setExtimateVarCharMemorySizeUsingSample(
-			boolean extimateVarCharMemorySizeUsingSample) {
+	public void setExtimateVarCharMemorySizeUsingSample(boolean extimateVarCharMemorySizeUsingSample) {
 		this.extimateVarCharMemorySizeUsingSample = extimateVarCharMemorySizeUsingSample;
 	}
 

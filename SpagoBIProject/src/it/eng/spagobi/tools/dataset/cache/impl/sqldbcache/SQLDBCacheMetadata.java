@@ -21,6 +21,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.spagobi.tools.dataset.cache.impl.sqldbcache;
 
+import it.eng.spagobi.commons.utilities.StringUtilities;
+import it.eng.spagobi.tools.dataset.cache.CacheException;
 import it.eng.spagobi.tools.dataset.cache.CacheItem;
 import it.eng.spagobi.tools.dataset.cache.ICacheMetadata;
 import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
@@ -59,11 +61,8 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 	SQLDBCacheConfiguration cacheConfiguration;
 
 	private BigDecimal totalMemory;
-	private BigDecimal availableMemory ;
-	private BigDecimal usedMemory ;
-	
-	private String  tableNamePrefix;
-	
+	//private BigDecimal availableMemory ;
+
 	private boolean isActiveCleanAction = false;
 	private Integer cachePercentageToClean;
 	
@@ -90,76 +89,42 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 	public SQLDBCacheMetadata(SQLDBCacheConfiguration cacheConfiguration){
 		this.cacheConfiguration = cacheConfiguration;
 		if (this.cacheConfiguration != null){
-			tableNamePrefix = this.cacheConfiguration.getTableNamePrefix();
 			totalMemory = this.cacheConfiguration.getCacheSpaceAvailable();
 			cachePercentageToClean = this.cacheConfiguration.getCachePercentageToClean();
 		}
 		
+		String tableNamePrefix = this.cacheConfiguration.getTableNamePrefix();
+		if(StringUtilities.isEmpty(tableNamePrefix)) {
+			throw new CacheException("An unexpected error occured while initializing cache metadata: SPAGOBI.CACHE.NAMEPREFIX cannot be empty");
+		}
 		
-		if (tableNamePrefix != null && !"".equals(tableNamePrefix) &&
-			totalMemory != null && cachePercentageToClean != null  ) {
+		if (totalMemory != null && cachePercentageToClean != null ) {
 			isActiveCleanAction = true;
 		}
 	}
 	
 	public BigDecimal getTotalMemory() {
+		logger.debug("Total memory is equal to [" + totalMemory + "]");
 		return totalMemory;
 	}
 	
 	/**
 	 * Returns the number of bytes used by the table already cached (approximate)
 	 */
-	public BigDecimal getAvailableMemory(){
-		availableMemory = getTotalMemory();
-//		String query = "SELECT ";	
-//		
-//		if (dataSource.getHibDialectClass().contains(DIALECT_POSTGRES)){
-//			query += //" pg_size_pretty(sum(pg_total_relation_size('\"' || table_schema || '\".\"' || table_name || \'\"\'))) AS size, " +
-//					 " sum(pg_total_relation_size('\"' || table_schema || '\".\"' || table_name || '\"')) as size " +
-//					 " FROM information_schema.tables " +
-//					 " where table_name like '"+ tableNamePrefix +"%'";
-//		}else if (dataSource.getHibDialectClass().contains(DIALECT_MYSQL)){
-//			query += " coalesce(sum(round(((data_length + index_length)),2)),0) as size " +
-//					 " FROM information_schema.TABLES WHERE table_name like '"+ tableNamePrefix +"%'";
-//		}else if (dataSource.getHibDialectClass().contains(DIALECT_ORACLE) ||
-//				dataSource.getHibDialectClass().contains(DIALECT_ORACLE9i10g)){
-//			query += " sum(num_rows*avg_row_len) as sizet " +
-//					 " from all_tables " + 
-//					 " where table_name like '"+ tableNamePrefix +"%'";
-//		}else{
-//			//get approximate dimension
-//			Iterator it = cacheRegistry.entrySet().iterator();
-//		    while (it.hasNext()) {
-//		    	BigDecimal size = null;
-//		        Map.Entry<String,String> entry = (Map.Entry<String,String>)it.next();
-//		        String signature = entry.getValue();
-//		        query = " select * from " + signature;
-//		        IDataStore dataStore  = dataSource.executeStatement(query, 0, 0);
-//				DataStore ds = (DataStore) dataStore;				
-//				BigDecimal rowWeight = getRowWeight(ds.getRecordAt(0), ds.getMetaData());
-//				size = rowWeight.multiply(new BigDecimal(ds.getRecordsCount())) ;
-//				logger.debug("Dimension stimated for cached object "+ signature +" [rowWeight*rows]: " + size + " ["+rowWeight+" * "+ds.getRecordsCount()+"]");
-//				if (size != null) availableMemory = availableMemory.subtract(size);		        
-//		    }
-//		    logger.debug("Remaining cache free space: " + availableMemory);
-//		    return availableMemory;
-//		}
-//		logger.debug("Defined query: " +query);
-//		IDataStore dataStore  = dataSource.executeStatement(query, 0, 0);
-//		DataStore ds = (DataStore) dataStore;
-//		BigDecimal size = null;
-//		if (ds.getRecordsCount() > 0){
-//			IRecord rec = ds.getRecordAt(0);
-//			for (int i=0, l=rec.getFields().size(); i<l; i++){		
-//				IField field = rec.getFieldAt(i);
-//				size = (BigDecimal)field.getValue();
-//			}
-//		}
+	public BigDecimal getUsedMemory() {
 		IDataBase dataBase = DataBase.getDataBase( cacheConfiguration.getCacheDataSource() );
-		BigDecimal size = dataBase.getUsedMemorySize(cacheConfiguration.getSchema(), cacheConfiguration.getTableNamePrefix());
-		logger.debug("Size of object cached: " + size);
-		if (size != null) availableMemory = availableMemory.subtract(size);
-		logger.debug("Remaining cache free space: " + availableMemory);
+		BigDecimal usedMemory = dataBase.getUsedMemorySize(cacheConfiguration.getSchema(), cacheConfiguration.getTableNamePrefix());
+		logger.debug("Used memory is equal to [" + usedMemory + "]");
+		return usedMemory;
+	}
+	/**
+	 * Returns the number of bytes available in the cache (approximate)
+	 */
+	public BigDecimal getAvailableMemory(){
+		BigDecimal availableMemory = getTotalMemory();
+		BigDecimal usedMemory = getUsedMemory();
+		if (usedMemory != null) availableMemory = availableMemory.subtract(usedMemory);
+		logger.debug("Available memory is equal to [" + availableMemory + "]");
 		return availableMemory;
 	}	
 	
@@ -188,6 +153,15 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 	public Integer getCleaningQuota(){
 		return cachePercentageToClean;
 	}
+	
+	public boolean isAvailableMemoryGreaterThen(BigDecimal requiredMemory) {
+		BigDecimal availableMemory = getAvailableMemory();
+		if (availableMemory.compareTo(requiredMemory) <= 0){
+			return false;
+		} else {
+			return true;
+		}
+	}	
 	
 	public boolean hasEnoughMemoryForStore(IDataStore store) {
 		BigDecimal availableMemory = getAvailableMemory();
@@ -290,5 +264,8 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 	    }
 	    return signatures;
 	}
-
+	
+	public String getTableNamePrefix() {
+		return cacheConfiguration.getTableNamePrefix().toUpperCase();
+	}
 }
