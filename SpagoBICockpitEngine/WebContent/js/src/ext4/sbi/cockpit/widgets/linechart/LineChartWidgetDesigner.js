@@ -88,7 +88,9 @@ Ext.define('Sbi.cockpit.widgets.linechart.LineChartWidgetDesigner', {
 		if (state.groupingVariable) this.seriesGroupingPanel.setSeriesGroupingAttribute(state.groupingVariable);
 		if (state.series) this.seriesContainerPanel.setMeasures(state.series);
 		
-		if (this.rendered) {                 
+		if (this.rendered) {        
+			//this.changeLineChartImage.defer(200, this);
+			// It seems to work properly also without deferring
 			this.changeLineChartImage();
 		}  
 
@@ -157,18 +159,12 @@ Ext.define('Sbi.cockpit.widgets.linechart.LineChartWidgetDesigner', {
 	
 	
 	
-	, changeLineChartImage: function() {
-		var type = this.typeRadioGroup.getValue().type;
+	, changeLineChartImage: function() {		
+		var type = this.typeRadioGroup.getValue().type;		
 		var lineOrArea = this.colorAreaCheck.getValue() ? 'area' : 'line';
 		var newHtml = this.imageTemplate.apply([type, lineOrArea]);
 		this.imageContainerPanel.update(newHtml);
 	}
-	
-	
-	
-	
-	
-	
 	
 	
 	, checkIfAttributeIsAlreadyPresent: function(aPanel, attribute) {
