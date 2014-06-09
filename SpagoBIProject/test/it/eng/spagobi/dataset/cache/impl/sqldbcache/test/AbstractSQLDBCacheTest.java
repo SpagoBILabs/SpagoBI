@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.spagobi.dataset.cache.impl.sqldbcache.test;
 
+import java.io.File;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.SQLException;
@@ -568,9 +569,6 @@ public abstract class AbstractSQLDBCacheTest extends TestCase {
             persistedTableManager.dropTableIfExists(dataSourceWriting,tableName);
     		
         }
-
-		
-		
 	}
 	
 	
@@ -625,6 +623,10 @@ public abstract class AbstractSQLDBCacheTest extends TestCase {
 			jsonConf.put("DS_SCOPE", "USER");	
 			fileDataset.setDsMetadata("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?><META version=\"1\"><COLUMNLIST><COLUMN alias=\"customer_id\" fieldType=\"ATTRIBUTE\" name=\"customer_id\" type=\"java.lang.Integer\"/><COLUMN alias=\"lname\" fieldType=\"ATTRIBUTE\" name=\"lname\" type=\"java.lang.String\"/><COLUMN alias=\"fname\" fieldType=\"ATTRIBUTE\" name=\"fname\" type=\"java.lang.String\"/><COLUMN alias=\"num_children_at_home\" fieldType=\"ATTRIBUTE\" name=\"num_children_at_home\" type=\"java.lang.Integer\"/></COLUMNLIST><DATASET><PROPERTY name=\"resultNumber\" value=\"49\"/> </DATASET></META>");			
 			fileDataset.setConfiguration(jsonConf.toString());
+			
+			File resourceFolder = new File(TestConstants.RESOURCE_PATH);
+			String path = resourceFolder.getAbsolutePath();
+						
 			fileDataset.setResourcePath(TestConstants.RESOURCE_PATH);
 			fileDataset.setFileName("customers.csv");
 			fileDataset.setLabel("test_fileDataset");
