@@ -258,6 +258,9 @@ td[contenteditable="true"]:focus {
 .versions-manager-icon{
 	background-image: url(../img/tollbar-versions.png);
 }
+.context-menu-icon{
+    background-image: url(../img/menu16.png);
+}
 
 
 /*------------------*/
