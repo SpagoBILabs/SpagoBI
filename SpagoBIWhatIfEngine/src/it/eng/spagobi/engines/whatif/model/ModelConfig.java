@@ -215,7 +215,7 @@ public class ModelConfig implements Serializable {
 	}
 	
 	public boolean isWhatIfScenario(){
-		return this.scenario==null;
+		return this.scenario!=null;
 	}
 	
 	//for the deserializer
