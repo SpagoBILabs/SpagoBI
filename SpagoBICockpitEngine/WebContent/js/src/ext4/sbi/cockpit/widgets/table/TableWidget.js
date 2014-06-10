@@ -152,16 +152,12 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 		Sbi.cockpit.widgets.table.TableWidget.superclass.onStoreMetaChange.call(this, store, meta);	
 		
 		var fields = new Array();
-		//fields.push(new Ext.grid.RowNumberer());
 		
 		var columns = [];
 				
 		for(var j = 0; j < this.wconf.visibleselectfields.length; j++) {			
-									
 			for(var i = 0; i < meta.fields.length; i++) {
 				if(meta.fields[i].header === this.wconf.visibleselectfields[j].id) {
-					Sbi.trace("[TableWidget.onStoreMetaChange]: field [" + this.wconf.visibleselectfields[j].id + "] is equal to [" + meta.fields[i].header + "]");
-					
 					this.applyRendererOnField(meta.fields[i]);
 					this.applySortableOnField(meta.fields[i]);					
 					
@@ -178,7 +174,6 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 			}
 		}
 		Sbi.trace("[TableWidget.onStoreMetaChange]: visible fields are [" + columns.join(",") + "]");		
-		
 		
 		this.grid.reconfigure(this.getStore(), fields);
 		
@@ -224,7 +219,6 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 	, onAfterLayout: function() {
 		Sbi.trace("[TableWidget.onAfterLayout][" + this.getId() + "]: IN");
 		var selections = this.getWidgetManager().getWidgetSelections(this.getId());
-		//alert("TableWidget.onAfterLayout [" + this.getId() + "]: " + Sbi.toSource(selections));
 		// TODO: reselect rows in a selective way
 		this.fireSelectionEvent = true;
 		Sbi.trace("[TableWidget.onAfterLayout][" + this.getId() + "]: OUT");

@@ -644,9 +644,9 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 			
 		}
 		var filtersParam =  Ext.JSON.encode(params);
-		try{
+		try {
 			this.getStore(storeId).load({params:{filters: filtersParam}});
-		}catch(e){
+		} catch(e){
 			Sbi.exception.ExceptionHandler.showErrorMessage(e,LN('sbi.qbe.datastorepanel.grid.emptywarningmsg'));
 			return false;
 		}
@@ -968,8 +968,8 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 			})
 			, method: 'GET'
 	    	//, timeout : this.timeout
-	    	, failure: this.onStoreLoadException
 	    });
+    	proxy.on('exception', this.onStoreLoadException, this);
 		
 		Ext.define(storeConf.storeId, {
 		     extend: 'Ext.data.Model',
@@ -978,23 +978,38 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 		     ]
 		});
 		
+		var reader = new Ext.data.JsonReader();
+		reader.on('exception', this.onStoreReadException, this);
+		
 		var store = new Ext.data.Store({
 			storeId: storeConf.storeId,
 			storeType: 'sbi',
 			storeConf: storeConf,
 			model: storeConf.storeId,
 	        proxy: proxy,
-	        reader: new Ext.data.JsonReader(),
+	        reader: reader,
 	        remoteSort: false
 	    });
 		
 		return store;
 	}
     
-    , onStoreLoadException: function(response, options) {
+    , onStoreLoadException: function(proxy, response, operation, eOpts) {
+    	alert("[StoreManager.onStoreLoadException]: IN > " + Sbi.toSource(response, true));	
+    	alert("[StoreManager.onStoreLoadException]: IN > " + response.status);	
+    	alert("[StoreManager.onStoreLoadException]: IN > " + response.statusText);
+    	alert("[StoreManager.onStoreLoadException]: IN > " + response.responseText);
+    	
     	Sbi.trace("[StoreManager.onStoreLoadException]: IN");	
-		Sbi.exception.ExceptionHandler.handleFailure(response, options);
+		//Sbi.exception.ExceptionHandler.handleFailure(response, options);
 		Sbi.trace("[StoreManager.onStoreLoadException]: OUT");	
+	}
+    
+    , onStoreReadException: function(reader, response, error, eOpts) {
+    	alert("[StoreManager.onStoreReadException]: IN");	
+    	Sbi.trace("[StoreManager.onStoreReadException]: IN");	
+		//Sbi.exception.ExceptionHandler.handleFailure(response, options);
+		Sbi.trace("[StoreManager.onStoreReadException]: OUT");	
 	}
     
     , createStoreOld: function(c) {
