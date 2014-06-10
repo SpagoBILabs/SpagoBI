@@ -122,6 +122,7 @@ Sbi.registry.RegistryEditorGridPanel = function(config) {
 	c = Ext.apply(c, {
 		//height : 500
 		autoScroll : true
+		, id: 'RegistryEditorGridPanel'
     	, store : this.store
     	, tbar : this.gridToolbar
     	, sortable: false
@@ -186,6 +187,7 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 	, start: null
 	, indexColumnToMerge: null
 	, previousValueEdit : null
+	, saveMask: null
     
 	// ---------------------------------------------------------------------------------------------------
     // public methods
@@ -630,9 +632,9 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 					// index is plus one because there is numberer row at position zero of columns
 									this.indexColumnToMerge[arrayIndex] = i+1;
 									arrayIndex++;
-								}
-								else{
-								} 
+				}
+				else{
+				} 
 				
 			   if(meta.fields[i].subtype && meta.fields[i].subtype === 'html') {
 				   meta.fields[i].renderer  =  Sbi.locale.formatters['html'];
@@ -740,6 +742,7 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 			    this.previousValueEdit = val;
 			    
 			    
+			    
 			    var valorig; 
 			    if(e.record.json != undefined){
 			    	valorig = e.record.json[e.field];
@@ -768,8 +771,8 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 			    }
 			    return true;
 		   }, this);
+		   
 		   this.on('afteredit', function(e) {
-			   
 			      /*grid - This grid
 				    record - The record being edited
 				    field - The field name being edited
@@ -785,18 +788,20 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 				   e.record.data[e.field] = dt;
 			   }
 			   if (t === 'float') {
-				   //replace , wirth .
-				   var dottedVal = e.value.replace(',', '.');
+				   var dottedVal = '.00';
+				   //replace , wirth . if there's a value
+				   if (!isNaN(e.value))					   
+					   dottedVal = e.value.replace(',', '.');
 				   var f = parseFloat(dottedVal);
 				   e.record.data[e.field] = f;
-
 			   }
 			   
 			   
 			   // update total rows
-			   if(this.previousValue != e.value){
+			   if(this.previousValueEdit != e.value){
 				   this.updateTotalRow(e.row, e.column, e.value, this.previousValueEdit);
 				   this.colorTotalRows();
+				   this.previousValueEdit = e.value;
 			   }
 			   
 			   
@@ -823,7 +828,8 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 					   if(!isinteger){
 						   if(e.value == ''){
 							   //removed
-							   e.value = NaN;
+							   //ORIG e.value = NaN;
+							   e.value = '0';
 							   return;
 						   }
 						   e.cancel = true;
@@ -835,7 +841,7 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 							   icon : Ext.MessageBox.INFO
 						   }); 
 						}
-						   else{
+						else{
 						   dottedVal+='.00';
 						}
 				   }
@@ -851,7 +857,8 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 					   if(!isInt){
 						   if(e.value == ''){
 							   //removed
-							   e.value = NaN;
+							 //ORIG e.value = NaN;
+							   e.value = '0';
 							   return;
 						   }
 						   e.cancel = true;
@@ -870,7 +877,8 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 				   if(!isInt){
 					   if(e.value == ''){
 						   //removed
-						   e.value = NaN;
+						 //ORIG e.value = NaN;
+						   e.value = '0';
 						   return;
 					   }
 					   e.cancel = true;
@@ -1268,6 +1276,7 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 			recordsData.push(aRecordData);
 			var colMandatory= this.hasMandatoryColumnRespected(aRecordData);
 			if(colMandatory !== ''){
+				this.hideMask();
 				Ext.MessageBox.show({
 					title : LN('sbi.registry.registryeditorgridpanel.saveconfirm.title'),
 					msg : colMandatory +" "+LN('sbi.registry.registryeditorgridpanel.mandatory'),
@@ -1303,6 +1312,7 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 					for(var j=0; j<index;j++){
 						modifiedRecords[0].commit();
 					}
+					this.hideMask();
 					Ext.MessageBox.show({
 						title : LN('sbi.registry.registryeditorgridpanel.saveconfirm.title'),
 						msg : LN('sbi.registry.registryeditorgridpanel.saveconfirm.message.ko'),
@@ -1320,6 +1330,7 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 	
 	,
 	save: function () {
+		this.showMask();
 		var modifiedRecords = this.store.getModifiedRecords();
 		this.saveSingleRecord(0,modifiedRecords);
 		this.updateRowSpan();
@@ -1433,6 +1444,7 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 
 	,
 	updateSuccessHandler : function () {
+		this.hideMask();
 		Ext.MessageBox.show({
 			title : LN('sbi.registry.registryeditorgridpanel.saveconfirm.title'),
 			msg : LN('sbi.registry.registryeditorgridpanel.saveconfirm.message'),
@@ -1441,6 +1453,7 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 			icon : Ext.MessageBox.INFO
 		});
 		this.store.commitChanges();
+		this.updateRowSpan();
 	}
 
 ,
@@ -1492,6 +1505,7 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
         		}
         		Ccell.setStyle('background-color', colSum);
         		Ccell.setStyle('fontWeight', 'bold');
+        		Ccell.setStyle('align', 'right');
         		
         		if(cell.textContent && this.isNumeric(cell.textContent)){
         				cell.textContent = cell.textContent;
@@ -1547,6 +1561,7 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
     }
     ,
     updateRowSpan: function() {
+//    	alert('updateRowSpan');
         var columns = this.getColumnModel().config,
         view = this.getView(),
         store = this.getStore(),
@@ -1604,12 +1619,10 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
         			}
         	}
         
-        if (spanCell !== null) {
-            this.setSpan(Ext.get(spanCell), spanCount, column);
+	        if (spanCell !== null) {
+	            this.setSpan(Ext.get(spanCell), spanCount, column);
+	        }
         }
-    }
-        
-
     },
     
     detectBrowser: function() {
@@ -1648,7 +1661,7 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
         if (count == 1) {
             innerCell.setStyle('position', '');
             innerCell.setStyle('height', '');
-            innerCell.setStyle('height', '');
+//            innerCell.setStyle('height', '');
             innerCell.setStyle('background-color', this.columnHeader2color[column.name]);
         } else {
             innerCell.setStyle('position', 'absolute');
@@ -1706,6 +1719,24 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
         }
     }        
     
+     /**
+      * Opens the loading mask 
+      */
+     , showMask : function(){
+     	if (this.saveMask == null) {
+     		this.saveMask = new Ext.LoadMask('RegistryEditorGridPanel', {msg: "Saving.."});
+     	}
+     	this.saveMask.show();
+     }
+
+     /**
+      * Closes the loading mask
+      */
+     , hideMask: function() {	
+     	if (this.saveMask != null) {
+     		this.saveMask.hide();
+     	}
+     }
 	
 });
 function isInteger(s) {
@@ -1717,4 +1748,7 @@ function isUnsignedInteger(s) {
 function isFloat(s){
 	return (s.search(/^[0-9]*[.][0-9]+$/) == 0);
 }
+
+
+
 
