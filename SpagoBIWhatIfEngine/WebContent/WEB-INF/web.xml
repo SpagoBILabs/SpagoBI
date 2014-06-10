@@ -93,18 +93,18 @@ END-CAS -->
 <!-- START-CAS 
   <filter-mapping>
     <filter-name>CAS Authentication Filter</filter-name>
-    <url-pattern>/servlet/AdapterHTTP/*</url-pattern>
+    <url-pattern>/restful-services/*</url-pattern>
   </filter-mapping> 
     	
    <filter-mapping>
     <filter-name>CAS Validation Filter</filter-name>
-    <url-pattern>/servlet/AdapterHTTP/*</url-pattern>
+    <url-pattern>/restful-services/*</url-pattern>
   </filter-mapping> 
    	
 
    <filter-mapping>
     <filter-name>CAS HttpServletRequest Wrapper Filter</filter-name>
-    <url-pattern>/servlet/AdapterHTTP/*</url-pattern>
+    <url-pattern>/restful-services/*</url-pattern>
    </filter-mapping> 
   
    <filter-mapping>
