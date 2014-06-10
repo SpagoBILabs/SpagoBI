@@ -78,7 +78,7 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionRow', {
 
 	/**
 	 * Gets the text to show in the panel
-	 * If the browser is IE the text is from left to right and a <br> follow every char.
+	 * If the browser is IE the text is from left to right and a <br> follow every chararct.
 	 * If the browser is not IE the text is rounded via CSS
 	 */
 	getText: function(){
@@ -95,11 +95,11 @@ Ext.define('Sbi.olap.execution.table.OlapExecutionRow', {
 			}
 			if(n){
 				for(var i=0; i<n.length; i++){
-					var char =n.charAt(i);
+					var chararct =n.charAt(i);
 					if(i>=startItalic){
-						char = '<i>'+char+'</i>';
+						chararct = '<i>'+chararct+'</i>';
 					}
-					text = text + char +'<br>';
+					text = text + chararct +'<br>';
 					if(i>10){
 						text=text+"..";
 						return text;
