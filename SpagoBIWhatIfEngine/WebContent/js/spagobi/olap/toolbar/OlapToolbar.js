@@ -54,6 +54,9 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 	buttonsContainer: null,
 	buttonsConfigContainer: null,
 
+	modelStatus: null,
+	modelLocker: null,
+	
 	//showMdx: null,
 
 	constructor : function(config) {
@@ -157,7 +160,8 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 		
 		this.menuButtons = Ext.create('Ext.button.Split', {
 		    renderTo: Ext.getBody(),
-		    text: LN('sbi.olap.execution.menu.buttonMenu'),
+		    //text: LN('sbi.olap.execution.menu.buttonMenu'),
+		    iconCls: 'context-menu-icon',
 		    // handle a click on the button itself
 		    handler: function() {
 		    },
@@ -205,6 +209,11 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 			label: 'BUTTON_FATHER_MEMBERS',
 	        toggleHandler: this.onShowParentMembersToggle
 		}, sharedConfig);
+		if(this.toolbarConfig != undefined && this.toolbarConfig.showParentMembers == true){
+			this.buttonsConfigContainer['BUTTON_FATHER_MEMBERS'].pressed = true;
+		}
+		else{ this.buttonsConfigContainer['BUTTON_FATHER_MEMBERS'].pressed = false;}
+
 		
 		this.buttonsConfigContainer['BUTTON_HIDE_SPANS']  = Ext.apply({
 			tooltip: LN('sbi.olap.toolbar.hideSpans'),
@@ -213,6 +222,10 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 			label: 'BUTTON_HIDE_SPANS',
 	        toggleHandler: this.onHideSpansToggle
 			}, sharedConfig);
+		if(this.toolbarConfig != undefined && this.toolbarConfig.hideSpans == true){
+			this.buttonsConfigContainer['BUTTON_HIDE_SPANS'].pressed = true;
+		}
+		else{ this.buttonsConfigContainer['BUTTON_HIDE_SPANS'].pressed = false;}
 		
 		
 		this.buttonsConfigContainer['BUTTON_SHOW_PROPERTIES']  = Ext.apply({
@@ -222,7 +235,10 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 			label: 'BUTTON_SHOW_PROPERTIES',
 	        toggleHandler: this.onShowPropertiesToggle
 		}, sharedConfig);
-		
+		if(this.toolbarConfig != undefined && this.toolbarConfig.showProperties == true){
+			this.buttonsConfigContainer['BUTTON_SHOW_PROPERTIES'].pressed = true;
+		}
+		else{ this.buttonsConfigContainer['BUTTON_SHOW_PROPERTIES'].pressed = false;}
 		
 		this.buttonsConfigContainer['BUTTON_HIDE_EMPTY']  =  Ext.apply({
 			tooltip: LN('sbi.olap.toolbar.suppressEmpty'),
@@ -231,7 +247,10 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 			label: 'BUTTON_HIDE_EMPTY',
 	        toggleHandler: this.onSuppressEmptyToggle
 		}, sharedConfig);
-		
+		if(this.toolbarConfig != undefined && this.toolbarConfig.suppressEmpty == true){
+			this.buttonsConfigContainer['BUTTON_HIDE_EMPTY'].pressed = true;
+		}
+		else{ this.buttonsConfigContainer['BUTTON_HIDE_EMPTY'].pressed = false;}
 		
 		this.buttonsConfigContainer['BUTTON_FLUSH_CACHE']  = Ext.apply({
 			tooltip: LN('sbi.olap.toolbar.clean'),
@@ -242,10 +261,20 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 				label: 'BUTTON_FLUSH_CACHE'
 		}, sharedConfig);
 		
+		
+// if we are in standalone mode save and save new are always avalible, if in spagobi mode not because model must be locked
+		
+		var saveDisabled= true;
+		if(Sbi.config.isStandalone == true){
+			saveDisabled = false;
+		}
+		
+		
 		this.buttonsConfigContainer['BUTTON_SAVE'] = Ext.apply({
 			tooltip: LN('sbi.olap.toolbar.save'),
 			iconCls: 'save-icon',
 				label: 'BUTTON_SAVE'
+			, disabled : saveDisabled
 			, handler: function() {
 				Sbi.olap.eventManager.persistTransformations();
 			}
@@ -254,6 +283,7 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 		this.buttonsConfigContainer['BUTTON_SAVE_NEW'] =Ext.apply({
 			tooltip: LN('sbi.olap.toolbar.save.new'),
 			iconCls: 'save-new-icon',
+			disabled : saveDisabled,
 			label: 'BUTTON_SAVE_NEW',
 			handler: function() {
 				Sbi.olap.eventManager.persistNewVersionTransformations();
@@ -317,7 +347,8 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 
 
 		
-		var pressedBtn = this.config.toolbarConfig.drillType;
+		//var pressedBtn = this.config.toolbarConfig.drillType;
+		var pressedBtn = this.toolbarConfig.drillType;
 		if(pressedBtn == 'position'){
 			this.drillMode.items.items[0].pressed = true;
 		}else if(pressedBtn == 'member'){
@@ -400,18 +431,34 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 	 * @param {Sbi.olap.PivotModel} pivot model
 	 */
 	, updateAfterMDXExecution: function(pivot, modelConfig){
+		
+		var firstExecution = false;
+		
 		if(this.modelConfig==null){
-			this.setLockerConfiguration(modelConfig);
+			firstExecution = true;
 			this.modelConfig = modelConfig;
+			this.labelsToolbar = modelConfig.toolbarVisibleButtons;
+			this.labelsMenu = modelConfig.toolbarMenuButtons;			
 		}
 		
+		// if scenario is not what if do not draw some buttons
+		this.cleanButtonsIfNotWhatIfScenario(this.modelConfig.whatIfScenario);
+		
 		// draw Toolbar and menu
-		this.drawToolbarAndMenu(modelConfig);
+		this.drawToolbarAndMenu(this.modelConfig);
 				
 		this.mdx=pivot.get("mdxFormatted");
 		
-		var undoButton = this.buttonsContainer["BUTTON_UNDO"];
-		undoButton.setDisabled( !pivot.get("hasPendingTransformations") );
+		// locker configuration must be set after buttons have been drawed
+		this.setLockerConfiguration(firstExecution, this.modelConfig);
+				
+		// undo button is present only in what if scenario
+		if(this.modelConfig.whatIfScenario != undefined && this.modelConfig.whatIfScenario == true){
+			var undoButton = this.buttonsContainer["BUTTON_UNDO"];
+			if(undoButton != undefined){
+				undoButton.setDisabled( !pivot.get("hasPendingTransformations") );
+			}
+		}
 	}
 	
 	
@@ -422,19 +469,24 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 		// add first buttons always on toolbar
 		this.addToolbarFixedButtons();
 		// insert customized toolbar
-		this.insertInToolbarArray( modelConfig.toolbarVisibleButtons);
-		// lock buttons
-		this.addLockModel();
-		// customized menu
-		if( modelConfig.toolbarMenuButtons.length > 0){
-			this.insertInMenuArray( modelConfig.toolbarMenuButtons);
-			
-			this.add('->');
-			this.add(this.menuButtons);
+		this.insertInToolbarArray( this.labelsToolbar);
 
+		// lock buttons oonly in what if scenario
+		if(modelConfig.whatIfScenario != undefined && modelConfig.whatIfScenario==true){
+			this.addLockModel();
 		}
-		// add pressed logic
-		this.setPressedMemory();	
+		
+		// customized menu
+		this.insertInMenuArray( this.labelsMenu);
+		this.add('->');
+		this.add(this.menuButtons);
+		if( modelConfig.toolbarMenuButtons.length > 0){
+			this.menuButtons.setVisible(true);	
+		}
+		else{
+			this.menuButtons.setVisible(false);	
+		}
+
 	}
 	, addToolbarFixedButtons: function(){
 		this.add(this.drillMode);
@@ -486,7 +538,7 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 			this.setLockByUserState();			
 		}
 		else{
-			if(resO.status == 'unlocked'){
+			if(resOb.status == 'unlocked'){
 				this.setUnlockState();
 				Sbi.exception.ExceptionHandler.showInfoMessage(LN("sbi.olap.artifact.lock.error"));
 			}
@@ -496,6 +548,9 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 			}
 
 		}
+		this.modelStatus = resOb.status;
+		this.modelLocker = resOb.locker;
+
 	}
 	, renderUnlockModel: function(result){
 		var resOb = Ext.JSON.decode(result.responseText);
@@ -504,7 +559,7 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 			this.setUnlockState();
 		}
 		else{
-			if(resO.status == 'locked_by_user'){
+			if(resOb.status == 'locked_by_user'){
 				this.setLockByUserState();
 				Sbi.exception.ExceptionHandler.showInfoMessage(LN("sbi.olap.artifact.unlock.error"));
 			}
@@ -515,6 +570,8 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 			
 			//alert('not unlocked');
 		}
+		this.modelStatus = resOb.status;
+		this.modelLocker = resOb.locker;
 		
 	}
 	, setLockByUserState: function(locker){
@@ -553,17 +610,25 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 		this.lockOtherModel.hide();
 
 	}
-	, setLockerConfiguration: function(modelConfig){
+	// if it is first Execution take information from model config, else from global variables
+
+	, setLockerConfiguration: function(firstExecution, modelConfig){
+	
+		if(firstExecution==true){
+			this.modelStatus = modelConfig.status;
+			this.modelLocker = modelConfig.locker;
+		}
 		
-		if(modelConfig.status == 'locked_by_user'){
-			this.setLockByUserState(modelConfig.locker);
+		if(this.modelStatus == 'locked_by_user'){
+			this.setLockByUserState(this.modelLocker);
 		}
-		else if(modelConfig.status == 'locked_by_other'){
-			this.setLockByOtherState(modelConfig.locker);
+		else if(this.modelStatus == 'locked_by_other'){
+			this.setLockByOtherState(this.modelLocker);
 		}
-		else if(modelConfig.status == 'unlocked'){
+		else if(this.modelStatus == 'unlocked'){
 			this.setUnlockState();
 		}	
+
 	
 	}
 	/** set buttons whose label are contained in array to visible or not according to boolean visible parameter
@@ -574,54 +639,62 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 		// visible is boolean to set visibile or not
 		for( var j = 0; j < buttonArray.length; j++){
 			var lab = buttonArray[j];
-			this.insertButtonInToolbar(lab);
+			this.insertButton(lab, false);
 
 		}
-	}
-	
-	, insertButtonInToolbar: function(label){
-		var config = this.buttonsConfigContainer[label];
-
-		// recreate
-		if(this.buttonsContainer[label] != undefined && this.buttonsContainer[label] != null ){
-			this.buttonsContainer[label].destroy();
-		}
-		
-		var buttonCreated = this.createButton(config);
-		this.addContextMenuListener(buttonCreated, false);	
-		this.add(buttonCreated);
-		this.labelsToolbar.push(label);
-		this.buttonsContainer[buttonCreated.label] = buttonCreated;
 	}
 	
 	, insertInMenuArray: function(buttonArray){
 		
 		for( var j = 0; j < buttonArray.length; j++){
 			var lab = buttonArray[j];
-			this.insertButtonInMenu(lab);
+			this.insertButton(lab, true);
 		}
 		
 		this.menuButtons.setVisible(true);
 	
-	
 	}
-	, insertButtonInMenu: function(label){
-		// recreate
+	, insertButton: function(label, inMenu){
+		
 		var config = this.buttonsConfigContainer[label];
 		
+		var buttonCreated = this.createButton(config);
+		this.addContextMenuListener(buttonCreated, false);	
+		
+		// recreate
 		if(this.buttonsContainer[label] != undefined && this.buttonsContainer[label] != null ){
+			var pressed = false;
+			var disabled = false;
+			pressed = this.buttonsContainer[label].pressed;
+			disabled = this.buttonsContainer[label].disabled;
 			this.buttonsContainer[label].destroy();
+			buttonCreated.pressed = pressed;
+			buttonCreated.disabled = disabled;
 		}
 		
-		var buttonCreated = this.createButton(config);
-		this.addContextMenuListener(buttonCreated, true);
-		buttonCreated.text = buttonCreated.tooltip;
-		this.menuButtons.menu.add(buttonCreated);
-		this.labelsMenu.push(label);
 		this.buttonsContainer[buttonCreated.label] = buttonCreated;
+
+		// add particular pressed logic depending on button
+		//this.setPressedMemory();	
+		if(inMenu == true){
+			buttonCreated.text = buttonCreated.tooltip;
+			this.menuButtons.menu.add(buttonCreated);
+			if(!this.contains(this.labelsMenu, label)){
+				this.labelsMenu.push(label);
+			}
+			
+		}
+		else{
+			this.add(buttonCreated);
+			if(!this.contains(this.labelsToolbar, label)){
+				this.labelsToolbar.push(label);
+			}
+
+		}
+		
+
 	}
-	
-	
+
 	, moveButton: function(button, inMenu){
 
 		// if is in menu must insert in toolbar and viceversa
@@ -634,17 +707,24 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 			this.remove(this.items.length-1);
 			
 
-			this.insertButtonInToolbar(button.label);
+			this.insertButton(button.label, false);
 			this.add('->');
 			this.add(this.menuButtons);
-			this.labelsToolbar.push(button.label);
-			this.deleteFromArray(this.labelsMenu, button.label);
-	
+			//this.labelsMenu = 
+			this.labelsMenu = this.deleteFromArray(this.labelsMenu, button.label);
 			
 		}
 		else{
-			this.insertButtonInMenu(button.label);			
-			this.deleteFromArray(this.labelsToolbar, button.label);
+			this.insertButton(button.label, true);			
+			//this.labelsToolbar =
+			this.labelsToolbar = this.deleteFromArray(this.labelsToolbar, button.label);
+		}
+		
+		if(this.labelsMenu.length>0){
+			this.menuButtons.setVisible(true);
+		}
+		else{
+			this.menuButtons.setVisible(false);
 		}
 	
 	}
@@ -717,31 +797,39 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 	/* this functions treats particular buttons that need to preserve memory if must be already pressed
 	 * 
 	 */
-	, setPressedMemory: function(){
-		
-		for(var lab in this.buttonsContainer){
-			var button = this.buttonsContainer[lab];
-			
-			if(button.label == 'BUTTON_FATHER_MEMBERS'){
-				var isShownParentMembers = this.config.toolbarConfig.showParentMembers;
-					
-				if(isShownParentMembers == true){
-					button.pressed = true;
-				}else{
-					button.pressed = false;
-				}		
-
-			}
-		}
-
-	}
+//	, setPressedMemory: function(){
+//		
+//		var button = this.buttonsContainer['BUTTON_FATHER_MEMBERS'];
+//		if(button != undefined){
+//			//var isShownParentMembers = this.config.toolbarConfig.showParentMembers;
+//			var isShownParentMembers = this.toolbarConfig.showParentMembers;
+//			if(isShownParentMembers == true){
+//				button.pressed = true;
+//				button.disabled=false;
+//			}else{
+//				button.pressed = false;
+//				button.disabled=false;
+//			}		
+//		}
+//
+//	}
 	, addLockModel: function(){
 		this.add(this.lockModel);
 		this.add(this.unlockModel);
-		this.add(this.lockotherModel);
+		this.add(this.lockOtherModel);
 
 	}
-	 
+	, cleanButtonsIfNotWhatIfScenario: function(isWhatIf){
+	 //following buttons must not be present if scenario is not what if BUTTON_SAVE, BUTTON_SAVE_NEW	
+		if(isWhatIf == undefined || isWhatIf == false){
+			this.modelConfig.toolbarVisibleButtons = this.deleteFromArray(this.modelConfig.toolbarVisibleButtons, 'BUTTON_SAVE');
+			this.modelConfig.toolbarVisibleButtons = this.deleteFromArray(this.modelConfig.toolbarVisibleButtons, 'BUTTON_SAVE_NEW');
+			this.modelConfig.toolbarVisibleButtons = this.deleteFromArray(this.modelConfig.toolbarVisibleButtons, 'BUTTON_UNDO');			
+			this.modelConfig.toolbarMenuButtons = this.deleteFromArray(this.modelConfig.toolbarMenuButtons, 'BUTTON_SAVE');
+			this.modelConfig.toolbarMenuButtons = this.deleteFromArray(this.modelConfig.toolbarMenuButtons, 'BUTTON_SAVE_NEW');
+			this.modelConfig.toolbarMenuButtons = this.deleteFromArray(this.modelConfig.toolbarMenuButtons, 'BUTTON_UNDO');
+		}
+	}
 	
 	, contains: function(a, obj) {
 	    var i = a.length;
@@ -760,7 +848,7 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 			}
 		}
 		if(i != -1){
-			array = array.splice(indexToDelete,1);
+			array.splice(indexToDelete,1);
 			return array;
 		}
 		else return array;
