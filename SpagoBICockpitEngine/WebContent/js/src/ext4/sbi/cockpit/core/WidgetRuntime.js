@@ -165,9 +165,6 @@ Ext.extend(Sbi.cockpit.core.WidgetRuntime, Ext.Panel, {
 	, setConfiguration: function(config, refresh) {
 		Sbi.trace("[WidgetRuntime.setConfiguration]: IN");
 		
-		
-		alert("setConfiguration: " + Sbi.toSource(config));
-		
 		this.setStoreId(config.storeId, false);
 		this.setWType(config.wtype, false);
 		this.setCustomConfiguration(config.wconf, false);
@@ -615,10 +612,9 @@ Ext.extend(Sbi.cockpit.core.WidgetRuntime, Ext.Panel, {
 		var component = this.getParentComponent();
 			
 		if(Sbi.isValorized(component)) {
-			//.trace("[Widget.getParentContainer]: widget [" + this.id +  "] is bound to component [" + component.id + "]");
 			container = component.getParentContainer();
 		} else {
-			//Sbi.warn("[Widget.getParentContainer]: widget [" + this.id + "] is not bound to any component");
+			Sbi.warn("[Widget.getParentContainer]: widget [" + this.id + "] is not bound to any component");
 		}
 		
 		Sbi.trace("[WidgetRuntime.getParentContainer]: OUT");
@@ -640,7 +636,7 @@ Ext.extend(Sbi.cockpit.core.WidgetRuntime, Ext.Panel, {
     	if(container != null) {
     		isBound = true;
     		//Sbi.trace("[WidgetRuntime.getParentContainer]: widget [" + this.id +  "] is bound to container [" + container.id + "]");
-    	}
+    	} 
     	Sbi.trace("[WidgetRuntime.isBoundToAContainer]: OUT");
     	return isBound;
     }

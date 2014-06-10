@@ -158,9 +158,13 @@ Ext.extend(Sbi.cockpit.core.WidgetContainerComponent, Ext.Window, {
 		Sbi.trace("[WidgetContainerComponent.setWidget]: removed component content");
 		if(Sbi.isValorized(widget)) {
 			// TODO check if widget is an instance of widget
-			this.add(widget);
 			this.widget = widget;
 			this.widget.setParentComponent(this);
+			try {
+				this.add(widget);
+			} catch(e) {
+				alert("An error occured while adding widget [" + this.widget + "] to containe: " + e);
+			}
 			Sbi.trace("[WidgetContainerComponent.setWidget]: widget added");
 		} else {
 			this.widget = widget;
