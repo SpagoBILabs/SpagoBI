@@ -19,7 +19,7 @@ public class SpagoBIEngineRestServiceRuntimeException extends SpagoBIRuntimeExce
 
 
 	private String localizationCode = "generic.error";
-	private Locale locale = Locale.UK;
+	private Locale locale = Locale.US;
 	
 	private static final long serialVersionUID = 7238971352468593356L;
 
@@ -69,6 +69,7 @@ public class SpagoBIEngineRestServiceRuntimeException extends SpagoBIRuntimeExce
 	 */
     public SpagoBIEngineRestServiceRuntimeException(String localizationCode, Locale locale, String message) {
     	super( message) ;
+    	this.locale = locale;
     	setLocalizationCode(localizationCode);
     }
 
@@ -88,7 +89,7 @@ public class SpagoBIEngineRestServiceRuntimeException extends SpagoBIRuntimeExce
 
 	public Locale getLocale() {
 		if(locale ==null){
-			locale = Locale.UK;
+			locale = Locale.US;
 		}
 		return locale;
 	}
