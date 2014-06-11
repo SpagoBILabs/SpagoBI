@@ -101,6 +101,7 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 	        xtype: 'buttongroup',
 	        columns: 3,
 			style:'border-radius: 10px;padding: 0px;margin: 0px;',
+			reorderable: false,
 	        items: [{
 	            text: 'Position',
 	            scale: 'small',
@@ -113,7 +114,7 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 				handler: function() {
 					this.setToolbarConf({drillType: 'position'});
 				},
-				reorderable: true
+				reorderable: false
 	        },
 			{
 	            text: 'Member',
@@ -127,7 +128,7 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 				handler: function() {
 					this.setToolbarConf({drillType: 'member'});
 				},
-				reorderable: true
+				reorderable: false
 	        },
 			{
 	            text: 'Replace',
@@ -141,7 +142,7 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 				handler: function() {
 					this.setToolbarConf({drillType: 'replace'});
 				},
-				reorderable: true
+				reorderable: false
 
 	        }]
 	    }
@@ -195,16 +196,7 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 			}
 		}, sharedConfig);
 		
-		
-		this.buttonsConfigContainer['BUTTON_UNDO'] = Ext.apply({
-			tooltip: LN('sbi.olap.toolbar.undo'),
-			iconCls: 'undo',
-			label: 'BUTTON_UNDO',
-			handler: function() {
-				Sbi.olap.eventManager.undo();
-			},
-			disabled: true
-		}, sharedConfig);	
+			
 		
 		this.buttonsConfigContainer['BUTTON_FATHER_MEMBERS'] =	Ext.apply({
 			tooltip: LN('sbi.olap.toolbar.showParentMembers'),
@@ -213,10 +205,10 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 			label: 'BUTTON_FATHER_MEMBERS',
 	        toggleHandler: this.onShowParentMembersToggle
 		}, sharedConfig);
-		if(this.toolbarConfig != undefined && this.toolbarConfig.showParentMembers == true){
-			this.buttonsConfigContainer['BUTTON_FATHER_MEMBERS'].pressed = true;
-		}
-		else{ this.buttonsConfigContainer['BUTTON_FATHER_MEMBERS'].pressed = false;}
+//		if(this.toolbarConfig != undefined && this.toolbarConfig.showParentMembers == true){
+//			this.buttonsConfigContainer['BUTTON_FATHER_MEMBERS'].pressed = true;
+//		}
+//		else{ this.buttonsConfigContainer['BUTTON_FATHER_MEMBERS'].pressed = false;}
 
 		
 		this.buttonsConfigContainer['BUTTON_HIDE_SPANS']  = Ext.apply({
@@ -226,10 +218,10 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 			label: 'BUTTON_HIDE_SPANS',
 	        toggleHandler: this.onHideSpansToggle
 			}, sharedConfig);
-		if(this.toolbarConfig != undefined && this.toolbarConfig.hideSpans == true){
-			this.buttonsConfigContainer['BUTTON_HIDE_SPANS'].pressed = true;
-		}
-		else{ this.buttonsConfigContainer['BUTTON_HIDE_SPANS'].pressed = false;}
+//		if(this.toolbarConfig != undefined && this.toolbarConfig.hideSpans == true){
+//			this.buttonsConfigContainer['BUTTON_HIDE_SPANS'].pressed = true;
+//		}
+//		else{ this.buttonsConfigContainer['BUTTON_HIDE_SPANS'].pressed = false;}
 		
 		
 		this.buttonsConfigContainer['BUTTON_SHOW_PROPERTIES']  = Ext.apply({
@@ -239,10 +231,10 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 			label: 'BUTTON_SHOW_PROPERTIES',
 	        toggleHandler: this.onShowPropertiesToggle
 		}, sharedConfig);
-		if(this.toolbarConfig != undefined && this.toolbarConfig.showProperties == true){
-			this.buttonsConfigContainer['BUTTON_SHOW_PROPERTIES'].pressed = true;
-		}
-		else{ this.buttonsConfigContainer['BUTTON_SHOW_PROPERTIES'].pressed = false;}
+//		if(this.toolbarConfig != undefined && this.toolbarConfig.showProperties == true){
+//			this.buttonsConfigContainer['BUTTON_SHOW_PROPERTIES'].pressed = true;
+//		}
+//		else{ this.buttonsConfigContainer['BUTTON_SHOW_PROPERTIES'].pressed = false;}
 		
 		this.buttonsConfigContainer['BUTTON_HIDE_EMPTY']  =  Ext.apply({
 			tooltip: LN('sbi.olap.toolbar.suppressEmpty'),
@@ -251,10 +243,10 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 			label: 'BUTTON_HIDE_EMPTY',
 	        toggleHandler: this.onSuppressEmptyToggle
 		}, sharedConfig);
-		if(this.toolbarConfig != undefined && this.toolbarConfig.suppressEmpty == true){
-			this.buttonsConfigContainer['BUTTON_HIDE_EMPTY'].pressed = true;
-		}
-		else{ this.buttonsConfigContainer['BUTTON_HIDE_EMPTY'].pressed = false;}
+//		if(this.toolbarConfig != undefined && this.toolbarConfig.suppressEmpty == true){
+//			this.buttonsConfigContainer['BUTTON_HIDE_EMPTY'].pressed = true;
+//		}
+//		else{ this.buttonsConfigContainer['BUTTON_HIDE_EMPTY'].pressed = false;}
 		
 		this.buttonsConfigContainer['BUTTON_FLUSH_CACHE']  = Ext.apply({
 			tooltip: LN('sbi.olap.toolbar.clean'),
@@ -266,18 +258,29 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 		}, sharedConfig);
 		
 		
-		// if we are in standalone mode save and save new are always avalible, if in spagobi mode not because model must be locked
-		
-		var saveDisabled= true;
+		// if we are in standalone mode save and save new are always shown, if in spagobi mode not because model must be locked		
+		var saveHidden= true;
 		if(Sbi.config.isStandalone == true){
-			saveDisabled = false;
+			saveHidden = false;
 		}
+		
+		
+		this.buttonsConfigContainer['BUTTON_UNDO'] = Ext.apply({
+			tooltip: LN('sbi.olap.toolbar.undo'),
+			iconCls: 'undo',
+			label: 'BUTTON_UNDO',
+			hidden : saveHidden,
+			handler: function() {
+				Sbi.olap.eventManager.undo();
+			},
+			disabled: true
+		}, sharedConfig);
 		
 		this.buttonsConfigContainer['BUTTON_SAVE'] = Ext.apply({
 			tooltip: LN('sbi.olap.toolbar.save'),
 			iconCls: 'save-icon',
 				label: 'BUTTON_SAVE'
-			, disabled : saveDisabled
+			, hidden : saveHidden
 			, handler: function() {
 				Sbi.olap.eventManager.persistTransformations();
 			}
@@ -286,7 +289,7 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 		this.buttonsConfigContainer['BUTTON_SAVE_NEW'] =Ext.apply({
 			tooltip: LN('sbi.olap.toolbar.save.new'),
 			iconCls: 'save-new-icon',
-			disabled : saveDisabled,
+			hidden : saveHidden,
 			label: 'BUTTON_SAVE_NEW',
 			handler: function() {
 				Sbi.olap.eventManager.persistNewVersionTransformations();
@@ -318,8 +321,8 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 				var afa= null;
 				Sbi.olap.eventManager.lockModel();
 			},
-			scope:this,
-			reorderable: true
+			scope:this
+			,reorderable: false
 		});
 		this.lockModel.setVisible(false);
 		
@@ -330,8 +333,8 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 				var afa= null;
 				Sbi.olap.eventManager.unlockModel();
 			},
-			scope:this,
-			reorderable: true
+			scope:this
+			,reorderable: false
 		});
 		this.unlockModel.setVisible(false);
 
@@ -340,8 +343,8 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 			iconCls: 'lock-other-icon'
 			, handler: function() {
 			},
-			scope:this,
-			reorderable: true
+			scope:this
+			,reorderable: false
 		});
 		this.lockOtherModel.setVisible(false);
 		
@@ -439,9 +442,13 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 			firstExecution = true;
 			this.modelConfig = modelConfig;
 			
+			// change configuration by marking press configurations depending on modelConfig
+			this.markPressedButtons(); 
+			
 			// try to get cookies else take configuration from model config
 			// labels Toolbar
-			var myCookieToolbar = Ext.util.Cookies.get('labelsToolbar');
+			
+			var myCookieToolbar = Ext.util.Cookies.get(Sbi.config.documentLabel+'labelsToolbar');
 			if(myCookieToolbar!=undefined && myCookieToolbar!=''){
 				this.labelsToolbar = Ext.JSON.decode(myCookieToolbar);
 			}
@@ -449,12 +456,12 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 				// no cookie found
 				this.labelsToolbar = modelConfig.toolbarVisibleButtons;	
 				if(this.labelsToolbar != undefined  && this.labelsToolbar.length >0){
-					Ext.util.Cookies.set('labelsToolbar',Ext.JSON.encode(this.labelsToolbar));
+					Ext.util.Cookies.set(Sbi.config.documentLabel+'labelsToolbar',Ext.JSON.encode(this.labelsToolbar));
 				}
 			}
 
 			//labelsMenu
-			var myCookieMenu = Ext.util.Cookies.get('labelsMenu');
+			var myCookieMenu = Ext.util.Cookies.get(Sbi.config.documentLabel+'labelsMenu');
 			if(myCookieMenu!=undefined && myCookieMenu!=''){
 				this.labelsMenu = Ext.JSON.decode(myCookieMenu);
 			}
@@ -463,7 +470,7 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 				this.labelsMenu = modelConfig.toolbarMenuButtons;	
 				if(this.labelsMenu != undefined  && this.labelsMenu.length >0){
 					var encodedArray = Ext.JSON.encode(this.labelsMenu);
-					Ext.util.Cookies.set('labelsMenu',encodedArray);
+					Ext.util.Cookies.set(Sbi.config.documentLabel+'labelsMenu',encodedArray);
 				}
 			}
 		}
@@ -478,11 +485,12 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 		
 		// locker configuration must be set after buttons have been drawed
 		this.setLockerConfiguration(firstExecution, this.modelConfig);
-				
+	
 		// undo button is present only in what if scenario
 		if(this.modelConfig.whatIfScenario != undefined && this.modelConfig.whatIfScenario == true){
 			var undoButton = this.buttonsContainer["BUTTON_UNDO"];
 			if(undoButton != undefined){
+				//undoButton.on('move', function(){alert('mosso');});
 				undoButton.setDisabled( !pivot.get("hasPendingTransformations") );
 			}
 		}
@@ -495,14 +503,16 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 		this.removeAll(false);
 		// add first buttons always on toolbar
 		this.addToolbarFixedButtons();
-		// insert customized toolbar
-		this.insertInToolbarArray( this.labelsToolbar);
-
-		// lock buttons only in what if scenario
+		
+		// lock buttons only in what if scenario, lock button is before custom button
 		if(modelConfig.whatIfScenario != undefined && modelConfig.whatIfScenario==true){
 			this.addLockModel();
 		}
 		
+		// insert customized toolbar
+		this.insertInToolbarArray( this.labelsToolbar);
+
+
 		// customized menu
 		this.insertInMenuArray( this.labelsMenu);
 		this.add('->');
@@ -605,22 +615,28 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 		
 	}
 	, setLockByUserState: function(locker){
+		if(this.buttonsContainer['BUTTON_UNDO'] != undefined && this.buttonsContainer['BUTTON_UNDO'] != null){
+			this.buttonsContainer['BUTTON_UNDO'].show();
+		}
 		if(this.buttonsContainer['BUTTON_SAVE'] != undefined && this.buttonsContainer['BUTTON_SAVE'] != null){
-			this.buttonsContainer['BUTTON_SAVE'].enable();
+			this.buttonsContainer['BUTTON_SAVE'].show();
 		}
 		if(this.buttonsContainer['BUTTON_SAVE_NEW'] != undefined && this.buttonsContainer['BUTTON_SAVE_NEW'] != null){
-			this.buttonsContainer['BUTTON_SAVE_NEW'].enable();
+			this.buttonsContainer['BUTTON_SAVE_NEW'].show();
 		}
 		this.lockModel.hide();
 		this.unlockModel.show();
 		this.lockOtherModel.hide();
 	}
 	, setLockByOtherState: function(locker){
+		if(this.buttonsContainer['BUTTON_UNDO'] != undefined && this.buttonsContainer['BUTTON_UNDO'] != null){
+			this.buttonsContainer['BUTTON_UNDO'].hide();
+		}
 		if(this.buttonsContainer['BUTTON_SAVE'] != undefined && this.buttonsContainer['BUTTON_SAVE'] != null){
-			this.buttonsContainer['BUTTON_SAVE'].disable();
+			this.buttonsContainer['BUTTON_SAVE'].hide();
 		}
 		if(this.buttonsContainer['BUTTON_SAVE_NEW'] != undefined && this.buttonsContainer['BUTTON_SAVE_NEW'] != null){
-			this.buttonsContainer['BUTTON_SAVE_NEW'].disable();
+			this.buttonsContainer['BUTTON_SAVE_NEW'].hide();
 		}
 		this.lockModel.hide();
 		this.unlockModel.hide();
@@ -629,11 +645,14 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 
 	}
 	, setUnlockState: function(){
+		if(this.buttonsContainer['BUTTON_UNDO'] != undefined && this.buttonsContainer['BUTTON_UNDO'] != null){
+			this.buttonsContainer['BUTTON_UNDO'].hide();
+		}
 		if(this.buttonsContainer['BUTTON_SAVE'] != undefined && this.buttonsContainer['BUTTON_SAVE'] != null){
-			this.buttonsContainer['BUTTON_SAVE'].disable();
+			this.buttonsContainer['BUTTON_SAVE'].hide();
 		}
 		if(this.buttonsContainer['BUTTON_SAVE_NEW'] != undefined && this.buttonsContainer['BUTTON_SAVE_NEW'] != null){
-			this.buttonsContainer['BUTTON_SAVE_NEW'].disable();
+			this.buttonsContainer['BUTTON_SAVE_NEW'].hide();
 		}
 		this.lockModel.show();
 		this.unlockModel.hide();
@@ -663,20 +682,20 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 	/** set buttons whose label are contained in array to visible or not according to boolean visible parameter
 	 * 
 	 */
-	, insertInToolbarArray: function(buttonArray){
+	, insertInToolbarArray: function(labelsToolbarArray){
 		
 		// visible is boolean to set visibile or not
-		for( var j = 0; j < buttonArray.length; j++){
-			var lab = buttonArray[j];
+		for( var j = 0; j < labelsToolbarArray.length; j++){
+			var lab = labelsToolbarArray[j];
 			this.insertButton(lab, false);
 
 		}
 	}
 	
-	, insertInMenuArray: function(buttonArray){
+	, insertInMenuArray: function(labelsMenuArray){
 		
-		for( var j = 0; j < buttonArray.length; j++){
-			var lab = buttonArray[j];
+		for( var j = 0; j < labelsMenuArray.length; j++){
+			var lab = labelsMenuArray[j];
 			this.insertButton(lab, true);
 		}
 		
@@ -725,7 +744,7 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 			this.menuButtons.menu.add(buttonCreated);
 			if(!this.contains(this.labelsMenu, label)){
 				this.labelsMenu.push(label);
-				Ext.util.Cookies.set('labelsMenu',Ext.JSON.encode(this.labelsMenu));
+				Ext.util.Cookies.set(Sbi.config.documentLabel+'labelsMenu',Ext.JSON.encode(this.labelsMenu));
 			}
 			
 		}
@@ -733,7 +752,7 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 			this.add(buttonCreated);
 			if(!this.contains(this.labelsToolbar, label)){
 				this.labelsToolbar.push(label);
-				Ext.util.Cookies.set('labelsToolbar',Ext.JSON.encode(this.labelsToolbar));
+				Ext.util.Cookies.set(Sbi.config.documentLabel+'labelsToolbar',Ext.JSON.encode(this.labelsToolbar));
 			}
 
 		}
@@ -761,14 +780,14 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 			this.add(this.menuButtons);
 			//this.labelsMenu = 
 			this.labelsMenu = this.deleteFromArray(this.labelsMenu, button.label);
-			Ext.util.Cookies.set('labelsMenu',Ext.JSON.encode(this.labelsMenu));
+			Ext.util.Cookies.set(Sbi.config.documentLabel+'labelsMenu',Ext.JSON.encode(this.labelsMenu));
 			
 		}
 		else{
 			this.insertButton(button.label, true);			
 			//this.labelsToolbar =
 			this.labelsToolbar = this.deleteFromArray(this.labelsToolbar, button.label);
-			Ext.util.Cookies.set('labelsToolbar',Ext.JSON.encode(this.labelsToolbar));
+			Ext.util.Cookies.set(Sbi.config.documentLabel+'labelsToolbar',Ext.JSON.encode(this.labelsToolbar));
 		}
 		
 		if(this.labelsMenu.length>0){
@@ -849,24 +868,51 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 	}
 	
 	/* this functions treats particular buttons that need to preserve memory if must be already pressed
-	 * 
+	 * it is called on the first draw, when buttons has no memory and modelconfig stores info
 	 */
-//	, setPressedMemory: function(){
-//		
-//		var button = this.buttonsContainer['BUTTON_FATHER_MEMBERS'];
-//		if(button != undefined){
-//			//var isShownParentMembers = this.config.toolbarConfig.showParentMembers;
-//			var isShownParentMembers = this.toolbarConfig.showParentMembers;
-//			if(isShownParentMembers == true){
-//				button.pressed = true;
-//				button.disabled=false;
-//			}else{
-//				button.pressed = false;
-//				button.disabled=false;
-//			}		
-//		}
-//
-//	}
+	, markPressedButtons: function(){ 
+		
+		var buttonConfig = this.buttonsConfigContainer['BUTTON_FATHER_MEMBERS'];
+		if(buttonConfig != undefined){
+			var isShownParentMembers = this.modelConfig.showParentMembers;
+			if(isShownParentMembers == true){
+				buttonConfig.pressed = true;
+			}else{
+				buttonConfig.pressed = false;
+			}		
+		}
+		
+		buttonConfig = this.buttonsConfigContainer['BUTTON_HIDE_SPANS'];
+		if(buttonConfig != undefined){
+			var isHideSpans = this.modelConfig.hideSpans;
+			if(isHideSpans == true){
+				buttonConfig.pressed = true;
+			}else{
+				buttonConfig.pressed = false;
+			}		
+		}
+		
+		buttonConfig = this.buttonsConfigContainer['BUTTON_SHOW_PROPERTIES'];
+		if(buttonConfig != undefined){
+			var isHideSpans = this.modelConfig.showProperties;
+			if(isHideSpans == true){
+				buttonConfig.pressed = true;
+			}else{
+				buttonConfig.pressed = false;
+			}		
+		}
+		
+		buttonConfig = this.buttonsConfigContainer['BUTTON_HIDE_EMPTY'];
+		if(buttonConfig != undefined){
+			var isHideSpans = this.modelConfig.suppressEmpty;
+			if(isHideSpans == true){
+				buttonConfig.pressed = true;
+			}else{
+				buttonConfig.pressed = false;
+			}		
+		}
+		
+	}
 	, addLockModel: function(){
 		this.add(this.lockModel);
 		this.add(this.unlockModel);

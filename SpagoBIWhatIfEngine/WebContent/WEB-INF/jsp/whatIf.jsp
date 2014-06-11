@@ -45,6 +45,7 @@ author:...
 	String isFromCross;
 	String spagobiServerHost = null;
 	String spagobiContext = null;
+	String documentLabel = null;
 	
 	ExecutionSession es = new ExecutionSession(request, request.getSession());
 	
@@ -52,6 +53,10 @@ author:...
 	whatIfEngineInstance = (WhatIfEngineInstance)es.getAttributeFromSession(EngineConstants.ENGINE_INSTANCE );
 //	profile = (UserProfile)whatIfEngineInstance.getEnv().get(EngineConstants.ENV_USER_PROFILE);
 	locale = (Locale)whatIfEngineInstance.getEnv().get(EngineConstants.ENV_LOCALE);
+    
+	if(whatIfEngineInstance.getEnv().get("DOCUMENT_LABEL") != null){
+		   documentLabel = (String)whatIfEngineInstance.getEnv().get("DOCUMENT_LABEL");
+    }
 	
 	isFromCross = (String)whatIfEngineInstance.getEnv().get("isFromCross");
 	if (isFromCross == null) {
@@ -98,7 +103,8 @@ author:...
         
     	var isStandalone = <%=whatIfEngineInstance.isStandalone()%>;
 
-    	
+    	var documentLabel= '<%=documentLabel != null ? documentLabel : "" %>';
+    
     	<% if(!whatIfEngineInstance.isStandalone()){ %>
     		
     	
@@ -116,10 +122,12 @@ author:...
 		
         Sbi.config.urlSettings = urlSettings;
         Sbi.config.externalUrl = externalUrl;
-        Sbi.config.isStandalone = isStandalone;
-        
+       
     	<%} %>
 
+    	 Sbi.config.isStandalone = isStandalone;
+         Sbi.config.documentLabel = documentLabel;
+         
         var params = {
 	    	SBI_EXECUTION_ID: <%= request.getParameter("SBI_EXECUTION_ID")!=null?"'" + request.getParameter("SBI_EXECUTION_ID") +"'": "null" %>
 	    };
