@@ -279,7 +279,6 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 	    });
 			
 		this.store.on('load', function(store, records, options ){
-
 			var numRec = this.store.getCount();
 			
 			//redefines the columns labels if they are dynamics
@@ -372,7 +371,6 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 
 		
 		this.store.on('metachange', function( store, meta ) {
-			
 			//alert('metachange');
 			this.visibleColumns = [];
 			
@@ -602,29 +600,24 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 					   else{
 						   formatToParse = meta.fields[i].format;
 					   }
-					   
-					   
+					   		   
 					   var format = Sbi.qbe.commons.Format.getFormatFromJavaPattern(formatToParse);
 					   var f = Ext.apply( Sbi.locale.formats[t], format);
 					   meta.fields[i].renderer = Sbi.qbe.commons.Format.floatRenderer(f);
 				
-				   }else{
-					   if(t ==='int'){
-						   meta.fields[i].renderer = Sbi.locale.formatters['string']; 
-					   }else if(t ==='date'){
-						   if(columnFromTemplate.format){
-							   formatToParse = columnFromTemplate.format;
-						   }
-						   else{
-							   formatToParse = meta.fields[i].format;
-						   }
-						   alert( meta.fields[i].name+ " : " + formatToParse);
-						   var f = Ext.apply( Sbi.locale.formats[t], {dateFormat: formatToParse});
-						   meta.fields[i].renderer = Sbi.qbe.commons.Format.dateRenderer(f);
-					   }else{
-						   //meta.fields[i].renderer = Sbi.locale.formatters[t];
-						   meta.fields[i].renderer = this.renderTooltip.createDelegate(this);
+				   }else if(t ==='int'){
+					   meta.fields[i].renderer = Sbi.locale.formatters['string']; 
+				   }else if(t ==='date'){
+					   if(columnFromTemplate.format){
+						   formatToParse = columnFromTemplate.format;
 					   }
+					   else{
+						   formatToParse = meta.fields[i].dateFormat;
+					   }		
+					   meta.fields[i].renderer = Ext.util.Format.dateRenderer(formatToParse);
+				   }else{
+					   //meta.fields[i].renderer = Sbi.locale.formatters[t];
+					   meta.fields[i].renderer = this.renderTooltip.createDelegate(this);
 				   }   
 			   }
 			   
@@ -772,7 +765,7 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 //			    	}else{
 //			    		e.record.data[e.field] = Sbi.qbe.commons.Format.date(val, Sbi.locale.formats['date']);
 //			    	}
-			       var formatDate = this.getFormatDate(e.column-1);				   
+			       var formatDate = this.getFormatDate(e.column-1, st);				   
 				   val = Sbi.qbe.commons.Format.date(val, formatDate);
 				   e.record.data[e.field] = val;
 			    }
@@ -799,15 +792,23 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 			   var t = this.visibleColumns[e.column].type;
 			   var st = this.visibleColumns[e.column].subtype;
 			   if (t === 'date' ) {
-				   var val =  (e.value == '') ? e.originalValue :  e.value;
-				   var formatDate = this.getFormatDate(e.column-1);				   
-				   val = Sbi.qbe.commons.Format.date(val, formatDate);
-				   var dt = new Date(Date.parse(val,formatDate));
-//				   e.record.data[e.field] = dt;
-				   e.record.data[e.field] = val;
+//				   var val =  (e.value == '') ? e.originalValue :  e.value;
+				   var val = e.value;
+				   if (val == ""){
+					   val = null;
+					   e.record.data[e.field] = val;
+					   
+				   }else{
+					   var formatDate = this.getFormatDate(e.column-1, st);
+					   if(Ext.isDate(val) ){	   
+						   val = val.dateFormat(formatDate); // format the date with correct format			  
+					   }				   
+					   var dt = new Date(Date.parseDate(val, formatDate));
+					   e.record.data[e.field] = dt;		 
+				   }
 				   var view = this.getView();
 				   var cell = view.getCell(e.row, e.column);
-			  	   cell.textContent = val;			  	   
+			  	   cell.textContent = val;
 			   }
 			   if (t === 'float') {
 				   var dottedVal = '.00';
@@ -1756,15 +1757,20 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
         }
     }        
      
-     , getFormatDate: function(idxcol){
+     , getFormatDate: function(idxcol, st){
     	   var columnFromTemplate = this.registryConfiguration.columns[idxcol];
 		   var formatDate;
 		   if(columnFromTemplate.format){
-			   formatDate = columnFromTemplate.format;
+			  return columnFromTemplate.format;
 		   }
-		 
+		   //defaults getted from locale files:		   
+		   if(st != null && st !== undefined && st === 'timestamp')
+			   formatDate =  Sbi.locale.formats['timestamp'].dateFormat;
+		   else
+			   formatDate = Sbi.locale.formats['date'].dateFormat;
 		   return formatDate;
      }
+     
     
      /**
       * Opens the loading mask 
