@@ -787,22 +787,22 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 				    value - The value being set
 				    originalValue - The original value for the field, before the edit.
 				    row - The grid row index
-				    column - The grid column index*/
-				
+				    column - The grid column index*/							   
+			   
 			   var t = this.visibleColumns[e.column].type;
 			   var st = this.visibleColumns[e.column].subtype;
 			   if (t === 'date' ) {
-//				   var val =  (e.value == '') ? e.originalValue :  e.value;
 				   var val = e.value;
 				   if (val == ""){
 					   val = null;
 					   e.record.data[e.field] = val;
-					   
 				   }else{
 					   var formatDate = this.getFormatDate(e.column-1, st);
 					   if(Ext.isDate(val) ){	   
 						   val = val.dateFormat(formatDate); // format the date with correct format			  
-					   }				   
+					   }			
+					   if (val == e.originalValue) return; //do nothing if the value doesn't changes
+					   
 					   var dt = new Date(Date.parseDate(val, formatDate));
 					   e.record.data[e.field] = dt;		 
 				   }
