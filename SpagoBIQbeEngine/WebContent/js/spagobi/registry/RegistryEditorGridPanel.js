@@ -793,7 +793,8 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 			   var st = this.visibleColumns[e.column].subtype;
 			   if (t === 'date' ) {
 				   var val = e.value;
-				   if (val == ""){
+				   if (val == "" && e.originalValue !== ""){
+					   //reset  value
 					   val = null;
 					   e.record.data[e.field] = val;
 				   }else{
