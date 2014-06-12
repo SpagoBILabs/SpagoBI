@@ -211,6 +211,7 @@ Ext.override(Ext.form.HtmlEditor, {
 Ext.override(Ext.grid.EditorGridPanel, {
 	listeners: { 'validateedit': function(e){ 
 		var v = e.value;
+		if(Ext.isDate(v) ) return;
 		if(v.indexOf('<') != -1 && v.indexOf('>') != -1){
 			var safeVal = Ext.util.Format.stripTags(v); 
 			e.value = safeVal;

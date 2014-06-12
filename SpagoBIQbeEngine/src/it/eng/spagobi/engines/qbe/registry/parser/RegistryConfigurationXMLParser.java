@@ -75,6 +75,7 @@ public class RegistryConfigurationXMLParser {
 	
 	public static final String EDITOR_TYPE_TEXT = "TEXT";
 	public static final String EDITOR_TYPE_COMBO = "COMBO";
+	public static final String EDITOR_TYPE_PICKER = "PICKER";
 
 	public RegistryConfiguration parse(SourceBean registryConf) {
 		logger.debug("IN");
@@ -223,10 +224,15 @@ public class RegistryConfigurationXMLParser {
 					}
 				}
 				
-				String editorType = EDITOR_TYPE_COMBO
-						.equalsIgnoreCase((String) aColumn
-								.getAttribute(ATTRIBUTE_EDITOR)) ? Column.EDITOR_TYPE_COMBO
-						: Column.EDITOR_TYPE_TEXT;
+//				String editorType = EDITOR_TYPE_COMBO
+//						.equalsIgnoreCase((String) aColumn
+//								.getAttribute(ATTRIBUTE_EDITOR)) ? Column.EDITOR_TYPE_COMBO
+//						: Column.EDITOR_TYPE_TEXT;
+				String editorType = EDITOR_TYPE_TEXT;
+				if (EDITOR_TYPE_COMBO.equalsIgnoreCase((String) aColumn.getAttribute(ATTRIBUTE_EDITOR)))
+					editorType = Column.EDITOR_TYPE_COMBO;
+				else if (EDITOR_TYPE_PICKER.equalsIgnoreCase((String) aColumn.getAttribute(ATTRIBUTE_EDITOR)))
+					editorType = Column.EDITOR_TYPE_PICKER;
 				logger.debug("Column: field " + field + ", subEntity "
 						+ subEntity + ", isEditable " + isEditable
 						+ ", isVisible " + isVisible + ", editor " + editorType);
