@@ -227,6 +227,8 @@ public class RegistryConfiguration {
 		
 		public static final String EDITOR_TYPE_COMBO = "COMBO";
 		
+		public static final String EDITOR_TYPE_PICKER = "PICKER";
+		
 		private String field = null;
 		
 		private String subEntity = null;
