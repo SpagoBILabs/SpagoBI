@@ -587,13 +587,15 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 				// set renderer based on field type
 
 				if(meta.fields[i].type) {
+				   var columnFromTemplate = this.registryConfiguration.columns[i-1]; // because 0 is row numberer
+				   var formatToParse;
 				   var t = meta.fields[i].type;
+				   var s = meta.fields[i].subtype;
 				   if (t ==='float') { // format is applied only to numbers
 					   
 					   //check if format is defined in template force it, else get it from model field
-					   var columnFromTemplate = this.registryConfiguration.columns[i-1]; // because 0 is row numberer
-					   
-					   var formatToParse;
+//					   var columnFromTemplate = this.registryConfiguration.columns[i-1]; // because 0 is row numberer					   
+//					   var formatToParse;
 					   if(columnFromTemplate.format){
 						   formatToParse = columnFromTemplate.format;
 					   }
@@ -609,6 +611,16 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 				   }else{
 					   if(t ==='int'){
 						   meta.fields[i].renderer = Sbi.locale.formatters['string']; 
+					   }else if(t ==='date'){
+						   if(columnFromTemplate.format){
+							   formatToParse = columnFromTemplate.format;
+						   }
+						   else{
+							   formatToParse = meta.fields[i].format;
+						   }
+						   alert( meta.fields[i].name+ " : " + formatToParse);
+						   var f = Ext.apply( Sbi.locale.formats[t], {dateFormat: formatToParse});
+						   meta.fields[i].renderer = Sbi.qbe.commons.Format.dateRenderer(f);
 					   }else{
 						   //meta.fields[i].renderer = Sbi.locale.formatters[t];
 						   meta.fields[i].renderer = this.renderTooltip.createDelegate(this);
@@ -639,9 +651,9 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 			   if(meta.fields[i].subtype && meta.fields[i].subtype === 'html') {
 				   meta.fields[i].renderer  =  Sbi.locale.formatters['html'];
 			   }
-			   if(meta.fields[i].subtype && meta.fields[i].subtype === 'timestamp') {
-				   meta.fields[i].renderer  =  Sbi.locale.formatters['timestamp'];
-			   }
+//			   if(meta.fields[i].subtype && meta.fields[i].subtype === 'timestamp') {
+//				   meta.fields[i].renderer  =  Sbi.locale.formatters['timestamp'];
+//			   }
 			   
 
 			   // set sortable flag			   
@@ -754,12 +766,15 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 			    
 			    var t = this.visibleColumns[e.column].type;
 			    var st = this.visibleColumns[e.column].subtype;
-			    if(Ext.isDate(val) ){
-			    	if(st != null && st !== undefined && st === 'timestamp'){
-			    		e.record.data[e.field] = Sbi.qbe.commons.Format.date(val, Sbi.locale.formats['timestamp']);
-			    	}else{
-			    		e.record.data[e.field] = Sbi.qbe.commons.Format.date(val, Sbi.locale.formats['date']);
-			    	}
+			    if(Ext.isDate(val) ){	    	
+//			    	if(st != null && st !== undefined && st === 'timestamp'){
+//			    		e.record.data[e.field] = Sbi.qbe.commons.Format.date(val, Sbi.locale.formats['timestamp']);
+//			    	}else{
+//			    		e.record.data[e.field] = Sbi.qbe.commons.Format.date(val, Sbi.locale.formats['date']);
+//			    	}
+			       var formatDate = this.getFormatDate(e.column-1);				   
+				   val = Sbi.qbe.commons.Format.date(val, formatDate);
+				   e.record.data[e.field] = val;
 			    }
 			    else if(Ext.isNumber(val)){
 			    	if(t === 'float'){
@@ -783,9 +798,16 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 				
 			   var t = this.visibleColumns[e.column].type;
 			   var st = this.visibleColumns[e.column].subtype;
-			   if (t === 'date') {
-				   var dt = new Date(Date.parse(e.value));
-				   e.record.data[e.field] = dt;
+			   if (t === 'date' ) {
+				   var val =  (e.value == '') ? e.originalValue :  e.value;
+				   var formatDate = this.getFormatDate(e.column-1);				   
+				   val = Sbi.qbe.commons.Format.date(val, formatDate);
+				   var dt = new Date(Date.parse(val,formatDate));
+//				   e.record.data[e.field] = dt;
+				   e.record.data[e.field] = val;
+				   var view = this.getView();
+				   var cell = view.getCell(e.row, e.column);
+			  	   cell.textContent = val;			  	   
 			   }
 			   if (t === 'float') {
 				   var dottedVal = '.00';
@@ -936,6 +958,8 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 				}else{
 					toReturn = this.createFieldCombo(field);
 				}
+			} else if (editorConfig.editor == "PICKER") { 
+				toReturn = this.createFieldDate(editorConfig);
 			} else {
 				toReturn = new Ext.form.TextField();
 			}
@@ -1167,6 +1191,19 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 		return combo;
 	}	
 	
+	, createFieldDate: function( fieldConfig ) {
+
+		var dtPicker = new Ext.form.DateField({name: fieldConfig.field
+											 , format: fieldConfig.format });
+		
+		if(fieldConfig.value !== undefined && fieldConfig.value !== null) {	
+			var dt = Sbi.commons.Format.date(fieldConfig.value, fieldConfig.format);
+			dtPicker.setValue(fieldConfig.value);				
+		}
+		
+		return dtPicker;
+		
+	}
 	,
 	setKeyUpTimeout : function () {
         clearTimeout(this.keyUpTimeoutId);
@@ -1718,6 +1755,16 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
   
         }
     }        
+     
+     , getFormatDate: function(idxcol){
+    	   var columnFromTemplate = this.registryConfiguration.columns[idxcol];
+		   var formatDate;
+		   if(columnFromTemplate.format){
+			   formatDate = columnFromTemplate.format;
+		   }
+		 
+		   return formatDate;
+     }
     
      /**
       * Opens the loading mask 
