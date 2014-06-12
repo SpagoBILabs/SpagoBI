@@ -632,17 +632,24 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 		// if type is QBE inform user that will lose configurations
 		if (this.executionInstance.document.typeCode == 'DATAMART') {
 			if (Sbi.user.functionalities.contains('BuildQbeQueriesFunctionality') && Sbi.user.functionalities.contains('SaveSubobjectFunctionality')) {
-				
-				Ext.MessageBox.confirm(
-				    LN('sbi.generic.warning'),
-					LN('sbi.execution.executionpage.toolbar.qberefresh'),            
-					function(btn, text) {
-    					if (btn=='yes') {
-							this.refreshDocument();
-    					}
-					},
-					this
-				);
+
+				if(this.documentVisualizationModality == 'VIEW' || this.documentVisualizationModality == 'EDIT'){
+					Ext.MessageBox.confirm(
+							LN('sbi.generic.warning'),
+							LN('sbi.execution.executionpage.toolbar.qberefresh'),            
+							function(btn, text) {
+								if (btn=='yes') {
+									this.refreshDocument();
+								}
+							},
+							this
+					);
+				}
+				else // we are in info case
+				{
+					this.refreshDocument();
+				}
+
 			} else {
 				//user who cannot build qbe queries
 				this.refreshDocument();
