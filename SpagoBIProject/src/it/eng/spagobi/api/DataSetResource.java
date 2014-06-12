@@ -150,13 +150,16 @@ public class DataSetResource extends AbstractSpagoBIResource {
 		try {
 		
 			IDataStore dataStore = getDatasetManagementAPI().getDataStore(label, offset, fetchSize, maxResults, getParametersMap(filters));
+			long recNo = dataStore.getRecordsCount();
+			
 			Map<String, Object> properties = new HashMap<String, Object>();
 			JSONArray fieldOptions = new JSONArray("[{id: 1, options: {measureScaleFactor: 0.5}}]");
 			properties.put(JSONDataWriter.PROPERTY_FIELD_OPTION, fieldOptions);
 			JSONDataWriter dataSetWriter = new JSONDataWriter(properties);
 			JSONObject gridDataFeed = (JSONObject)dataSetWriter.write(dataStore);
 			
-			return gridDataFeed.toString();	
+			String stringFeed = gridDataFeed.toString();	
+			return stringFeed;
 		}catch(ParametersNotValorizedException p){
 			throw new ParametersNotValorizedException(p.getMessage());
 		}catch(Throwable t) {
@@ -261,28 +264,39 @@ public class DataSetResource extends AbstractSpagoBIResource {
 			// the dirty trick
 			JSONArray datasetLabels = associationGrpJSON.getJSONArray("datasets");
 			JSONObject results = new JSONObject();
-			JSONArray a1 = new JSONArray();
-			JSONArray a2 = new JSONArray();
+			JSONArray[] datasetRecords = new JSONArray[2];
+			for(int j = 0; j < datasetRecords.length; j++) {
+				datasetRecords[j] = new JSONArray();
+			}
+			
 			for(int i = 0; i < gridDataFeed.length(); i++) {
 				JSONObject o = gridDataFeed.getJSONObject(i);
 				JSONArray props = o.names();
-				JSONObject o1 = new JSONObject();
-				JSONObject o2 = new JSONObject();
-				o1.put("id", o.getString("id"));
-				o2.put("id", o.getString("id"));
-				for(int j = 1; j < props.length(); j++) {
+				
+				JSONObject[] datasetRecord = new JSONObject[2];
+				for(int j = 0; j < datasetRecord.length; j++) {
+					datasetRecord[j] = new JSONObject();
+				}
+				
+				datasetRecord[0].put("id", o.getString("id"));
+				datasetRecord[1].put("id", o.getString("id"));
+				for(int j = 1, colNo = 1; j < props.length(); j++, colNo++) {
 					String p = props.getString(j);
+					if(j == breakIndex+1) {
+						colNo = 1;
+					}
+					
 					if(j <= breakIndex ) {
-						o1.put("column_" + j, o.getString(p));
+						datasetRecord[0].put("column_" + colNo, o.getString(p));
 					} else {
-						o2.put("column_" + (j-2), o.getString(p));
+						datasetRecord[1].put("column_" + colNo, o.getString(p));
 					}
 				}
-				a1.put(o1);
-				a2.put(o2);
+				datasetRecords[0].put(datasetRecord[0]);
+				datasetRecords[1].put(datasetRecord[1]);
 			}
-			results.put(datasetLabels.getString(0), a1);
-			results.put(datasetLabels.getString(1), a2);
+			results.put(datasetLabels.getString(0), datasetRecords[0]);
+			results.put(datasetLabels.getString(1), datasetRecords[1]);
 			
 			return results.toString();	
 		} catch(Throwable t) {
