@@ -1717,7 +1717,7 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
             innerCell.setStyle('line-height', lineHeight+'px');     
             
             
-            var marginHeight = 1;
+            var marginHeight = 1.5;
             var browser = this.detectBrowser();
 
             if(browser != null && browser == 'IE'){
