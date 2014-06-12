@@ -188,6 +188,7 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 	, indexColumnToMerge: null
 	, previousValueEdit : null
 	, saveMask: null
+	, numberColumnIndex:null
     
 	// ---------------------------------------------------------------------------------------------------
     // public methods
@@ -554,6 +555,7 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 			this.columnName2columnHeader = {};
 			this.columnHeader2columnName = {};
 			this.columnHeader2color = {};
+			this.numberColumnIndex = [];
 		
 			// Set max size
 			if(meta.maxSize != null && meta.maxSize !== undefined){
@@ -604,9 +606,11 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 					   var format = Sbi.qbe.commons.Format.getFormatFromJavaPattern(formatToParse);
 					   var f = Ext.apply( Sbi.locale.formats[t], format);
 					   meta.fields[i].renderer = Sbi.qbe.commons.Format.floatRenderer(f);
-				
+					   this.numberColumnIndex.push(i);
+					   
 				   }else if(t ==='int'){
 					   meta.fields[i].renderer = Sbi.locale.formatters['string']; 
+					   this.numberColumnIndex.push(i);
 				   }else if(t ==='date'){
 					   if(columnFromTemplate.format){
 						   formatToParse = columnFromTemplate.format;
@@ -728,7 +732,12 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 		   
 		   this.mandatory = meta.mandatory;
 
-		   
+			// set align column on the right (numberscolumn)
+			for(var i = 0, len = this.numberColumnIndex.length; i < len; i++) {
+				var index = this.numberColumnIndex[i];
+				var column = this.getColumnModel().config[index];
+				column.align = 'right';				
+			}
 		   
 		   
 		   this.on('beforeedit', function(e){			   
