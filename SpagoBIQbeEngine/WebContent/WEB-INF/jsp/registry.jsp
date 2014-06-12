@@ -57,7 +57,7 @@ author: Davide Zerbetto (davide.zerbetto@eng.it)
 <html>
 	
 	<head>
-		<%@include file="commons/includeExtJS.jspf" %>
+		<%@include file="commons/includeExtJS_341.jspf" %>
 		<%@include file="commons/includeSbiQbeJS.jspf"%>
 	</head>
 	
