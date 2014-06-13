@@ -34,7 +34,7 @@ public class ModelConfig implements Serializable {
 	private SbiScenario scenario = null;
 	private SbiAliases aliases = null;
 	
-	private Integer artifactVersionId;
+	private Integer artifactId;
 	private String status;
 	private String locker;
 	
@@ -174,12 +174,12 @@ public class ModelConfig implements Serializable {
 
 	}
 
-	public Integer getArtifactVersionId() {
-		return artifactVersionId;
+	public Integer getArtifactId() {
+		return artifactId;
 	}
 
-	public void setArtifactVersionID(Integer artifactVersionId) {
-		this.artifactVersionId = artifactVersionId;
+	public void setArtifactID(Integer artifactId) {
+		this.artifactId = artifactId;
 	}
 
 	public String getStatus() {
