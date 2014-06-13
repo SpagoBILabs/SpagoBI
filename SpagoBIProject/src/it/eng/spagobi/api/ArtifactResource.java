@@ -51,8 +51,8 @@ public class ArtifactResource extends AbstractSpagoBIResource {
 	 * 
 	 */
 	@POST
-	@Path("/{artifactVersionId}/lock")
-	public String lockArtifact(@PathParam("artifactVersionId") int artifactVersionId){
+	@Path("/{artifactId}/lock")
+	public String lockArtifact(@PathParam("artifactId") int artifactId){
 		logger.debug("IN");
 
 		Object profileO = getAttributeFromHttpSession(IEngUserProfile.ENG_USER_PROFILE);
@@ -63,18 +63,18 @@ public class ArtifactResource extends AbstractSpagoBIResource {
 		String userId = ((IEngUserProfile)profileO).getUserUniqueIdentifier().toString();		
 
 		logger.debug("User Id is "+userId);
-		logger.debug("Artifact Version Id is "+artifactVersionId);
+		logger.debug("Artifact Id is "+artifactId);
 
 		IArtifactsDAO artifactsDAO = DAOFactory.getArtifactsDAO();
 
-		Artifact artifact = artifactsDAO.loadArtifactByContentId(artifactVersionId);
+		Artifact artifact = artifactsDAO.loadArtifactById(artifactId);
 		
 		if(artifact == null)	{
-			logger.error("Artifact referring to version id [" + artifactVersionId +"] could not be loaded");
-			return ExceptionUtilities.serializeException("Artifact with versioon id [" + artifactVersionId + "] could not be loaded", null);
+			logger.error("Artifact referring to id [" + artifactId +"] could not be loaded");
+			return ExceptionUtilities.serializeException("Artifact with id [" + artifactId + "] could not be loaded", null);
 		}
 		
-		Integer artifactId = artifact.getId();
+		//Integer artifactId = artifact.getId();
 		logger.debug("Artifact id is "+artifactId);
 		
 		String locker = artifactsDAO.lockArtifact(artifactId, userId);
@@ -114,8 +114,8 @@ public class ArtifactResource extends AbstractSpagoBIResource {
 		 * 
 		 */
 		@POST
-		@Path("/{artifactVersionId}/unlock")
-		public String unlockArtifact(@PathParam("artifactVersionId") int artifactVersionId){
+		@Path("/{artifactId}/unlock")
+		public String unlockArtifact(@PathParam("artifactId") int artifactId){
 			logger.debug("IN");
 
 			Object profileO = getAttributeFromHttpSession(IEngUserProfile.ENG_USER_PROFILE);
@@ -126,18 +126,18 @@ public class ArtifactResource extends AbstractSpagoBIResource {
 			String userId = ((IEngUserProfile)profileO).getUserUniqueIdentifier().toString();		
 
 			logger.debug("User Id is "+userId);
-			logger.debug("Artifact Version Id is "+artifactVersionId);
+			logger.debug("Artifact Id is "+artifactId);
 
 			IArtifactsDAO artifactsDAO = DAOFactory.getArtifactsDAO();
 
-			Artifact artifact = artifactsDAO.loadArtifactByContentId(artifactVersionId);
+			Artifact artifact = artifactsDAO.loadArtifactById(artifactId);
 			
 			if(artifact == null)	{
-				logger.error("Artifact referring to version id [" + artifactVersionId +"] could not be loaded");
-				return ExceptionUtilities.serializeException("Artifact with versioon id [" + artifactVersionId + "] could not be loaded", null);
+				logger.error("Artifact referring to id [" + artifactId +"] could not be loaded");
+				return ExceptionUtilities.serializeException("Artifact with id [" + artifactId + "] could not be loaded", null);
 			}
 
-			Integer artifactId = artifact.getId();
+			//Integer artifactId = artifact.getId();
 			logger.debug("Artifact id is "+artifactId);
 			
 			String locker = artifactsDAO.unlockArtifact(artifactId, userId);
