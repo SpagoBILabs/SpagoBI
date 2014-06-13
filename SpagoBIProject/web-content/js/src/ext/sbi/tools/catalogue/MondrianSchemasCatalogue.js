@@ -84,10 +84,148 @@ Sbi.tools.catalogue.MondrianSchemasCatalogue = function(config) {
 	};
 	// end services for item versions list
 
+
 	Sbi.tools.catalogue.MondrianSchemasCatalogue.superclass.constructor.call(this, c);
 
 };
 
 Ext.extend(Sbi.tools.catalogue.MondrianSchemasCatalogue, Sbi.widgets.Catalogue, {
+	
+	
+	init : function(config){
+		this.superclass().init.call(this,config);
+			
+		var r ={
+				id : 0,
+				name : '',
+				description : '',
+				locker: '',
+				locked: ''
+			};
+			
+		if (config.isCategorizationEnabled != null) {
+			
+			 r = {
+					id : 0,
+					name : '',
+					description : '',
+					category: '',
+					categoryVisible: '',
+					locker: '',
+					locked: ''
+				};
+				
+
+		}
+		
+		if(config && config.additionalFormObjects){
+			r = Ext.apply(r, config.additionalFormObjects.itemFieldsDefault);
+		}
+		
+		this.configurationObject.emptyRecToAdd = new Ext.data.Record(r);
+
+	}
+	
+	,initDetailPanel : function(config) {
+		this.superclass().initDetailPanel.call(this,config);
+
+		this.lockedField = new Ext.form.Checkbox({
+			readOnly: true,
+			disabled: true,
+			fieldLabel : 'Locked?',
+			name : 'locked',
+			dataIndex : 'locked'
+		});
+		
+		this.lockerField = new Ext.form.DisplayField({
+			maxLength : 500,
+			fieldLabel : 'Locked by',
+			name : 'locker',
+			dataIndex : 'locker'
+		});
+		
+		this.unlockButton = new Ext.Button({
+			text: 'Unlock Model'
+			, handler: function(btn) {
+				
+				this.services["unlockModel"]= Sbi.config.serviceRegistry.getRestServiceUrl({
+						serviceName: '1.0/locker/'+this.selectedRecord.id+'/unlock',
+						baseParams: {}
+				}); 
+				
+		        
+				Ext.MessageBox.confirm(
+						LN('sbi.generic.pleaseConfirm'),
+						'Do you want to unlock the model?',
+						function(btn, text){
+							if (btn=='yes') {
+								Ext.Ajax.request({
+									url: this.services["unlockModel"],
+									method: 'POST', 
+									params: {
+										"artifactId" : this.selectedRecord.id
+									},
+									success : function(response, options) {
+										if(response !== undefined  && response.responseText !== undefined && response.statusText=="OK") {
+											if(response.responseText!=null && response.responseText!=undefined){
+												if(response.responseText.indexOf("error.mesage.description")>=0){
+													Sbi.exception.ExceptionHandler.handleFailure(response);
+												}else{						
+													Sbi.exception.ExceptionHandler.showInfoMessage(LN('Model unlocked'));
+													//Cancel the lock on the record data
+													this.selectedRecord.data.locked = false;
+													this.selectedRecord.data.locker = "";
+													//Reset the gui for the lock part
+													this.lockedField.setValue(false);
+													this.lockerField.setValue("");
+													//disable the unlock button
+													this.unlockButton.disable();
+												}
+											}
+										} else {
+											Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
+										}
+									},
+									scope: this,
+									failure: Sbi.exception.ExceptionHandler.handleFailure      
+								})
+							}
+						},
+						this
+					);
+
+		    }
+			, width: 30
+			, scope: this
+		})
+		
+		var detPanelItems = this.detailPanel.items.items[0];
+		var it = detPanelItems.items.items;
+		it.push(this.lockedField);
+		it.push(this.lockerField);
+		it.push(this.unlockButton);
+
+
+		this.configurationObject.tabItems = [ this.detailPanel ];
+
+	}
+	
+	,initInputFields : function(config) {
+		var fields = this.superclass().initInputFields.call(this,config);
+		fields.push('locked');
+		fields.push('locker');
+
+		return fields;
+	}
+	
+	,rowSelectedListener : function(){
+		//alert("row selected!");
+		if (this.selectedRecord.data.locked == false){
+			this.unlockButton.disable();
+		} else {
+			this.unlockButton.enable();
+		}
+	}
+	
 	
 });
