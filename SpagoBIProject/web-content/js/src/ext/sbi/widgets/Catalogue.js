@@ -56,6 +56,8 @@ Sbi.widgets.Catalogue = function(config) {
 	config.fileUpload = true; // this is a multipart form!!
 
 	var c = Ext.apply({}, config);
+	
+	this.addEvents('rowSelected');
 
 	Sbi.widgets.Catalogue.superclass.constructor.call(this, c);
 	if (config.isCategorizationEnabled != null) {
@@ -73,6 +75,8 @@ Sbi.widgets.Catalogue = function(config) {
 
 
 	this.rowselModel.addListener('rowselect', function(sm, row, rec) {
+		this.selectedRecord = rec;
+		this.fireEvent('rowSelected');
 		this.getForm().loadRecord(rec);
 		if (config.isCategorizationEnabled != null) {
 			var fieldset = this.detailPanel.getComponent('fieldset');
@@ -212,7 +216,7 @@ Ext
 							validationEvent : true,
 							name : 'name'
 						};
-
+						
 						var descrField = {
 							maxLength : 500,
 							fieldLabel : LN('sbi.generic.descr'),
