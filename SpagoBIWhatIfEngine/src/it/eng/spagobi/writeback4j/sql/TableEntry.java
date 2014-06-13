@@ -47,7 +47,7 @@ public class TableEntry{
 	}
 	
 
-	public String toString(Map<String, String> table2Alias, DefaultWeightedAllocationAlgorithmPersister qb){
+	public String toString(Map<String, String> table2Alias, AbstractSqlSchemaManager qb){
 		
 		return qb.getTableAlias(table2Alias, table)+"."+column;
 

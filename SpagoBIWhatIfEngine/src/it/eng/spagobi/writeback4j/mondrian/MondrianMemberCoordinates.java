@@ -11,13 +11,14 @@ import it.eng.spagobi.writeback4j.IMemberCoordinates;
 import it.eng.spagobi.writeback4j.sql.EquiJoin;
 import it.eng.spagobi.writeback4j.sql.TableEntry;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import mondrian.olap.MondrianDef;
 import mondrian.olap.MondrianDef.CubeDimension;
 import mondrian.olap.MondrianDef.Hierarchy;
 
-import org.eigenbase.xom.NodeDef;
 import org.olap4j.metadata.Member;
 
 /**
@@ -25,11 +26,12 @@ import org.olap4j.metadata.Member;
  *
  */
 public class MondrianMemberCoordinates implements IMemberCoordinates{
-	
+
 	MondrianDef.CubeDimension dimension;
 	MondrianDef.Hierarchy hieararchy;
 	Map<TableEntry, Member> level2Member;
-	
+	List<TableEntry> levels;
+
 	public MondrianMemberCoordinates(CubeDimension dimension, Hierarchy hieararchy,Map<TableEntry, Member> level2Member) {
 		super();
 		this.dimension = dimension;
@@ -57,19 +59,19 @@ public class MondrianMemberCoordinates implements IMemberCoordinates{
 	public boolean isAllMember(){
 		return level2Member.size()==0;
 	}
-	
+
 	public String getTableName(){
 		return MondrianSchemaRetriver.getTableName(getHieararchy());
 	}
-	
+
 	public String getPrimaryKey(){
 		return getHieararchy().primaryKey;
 	}
-	
+
 	public String getForeignKey(){
 		return getDimension().foreignKey;
 	}
-	
+
 	public EquiJoin getInnerDimensionJoinConditions(){
 		MondrianDef.RelationOrJoin relOrJoin = getHieararchy().relation;
 		if(relOrJoin instanceof MondrianDef.Join){
@@ -81,5 +83,27 @@ public class MondrianMemberCoordinates implements IMemberCoordinates{
 			return new EquiJoin(leftTable, rightTable);
 		}
 		return null;
+	}
+
+
+
+	public List<TableEntry> getLevels(){
+		if(levels==null){
+			levels = new ArrayList<TableEntry>();
+			MondrianDef.Level[] schemaLevels =  hieararchy.levels;
+
+
+			for(int i=0; i<schemaLevels.length; i++) {
+				MondrianDef.Level aLevel = schemaLevels[i];
+
+				String table =  aLevel.table;
+				if(table==null){
+					table = MondrianSchemaRetriver.getTableName(hieararchy);
+				}
+				levels.add(new TableEntry(aLevel.column, table));
+
+			}
+		}
+		return levels;
 	}
 }

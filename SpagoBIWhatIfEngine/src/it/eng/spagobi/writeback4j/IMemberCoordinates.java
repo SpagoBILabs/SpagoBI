@@ -11,6 +11,7 @@ package it.eng.spagobi.writeback4j;
 import it.eng.spagobi.writeback4j.sql.EquiJoin;
 import it.eng.spagobi.writeback4j.sql.TableEntry;
 
+import java.util.List;
 import java.util.Map;
 
 import org.olap4j.metadata.Member;
@@ -57,4 +58,10 @@ public interface IMemberCoordinates {
 	 * @return
 	 */
 	public EquiJoin getInnerDimensionJoinConditions();
+	
+	/**
+	 * Gets a table entry for each level of the hierarchy
+	 * @return
+	 */
+	public List<TableEntry> getLevels();
 }
