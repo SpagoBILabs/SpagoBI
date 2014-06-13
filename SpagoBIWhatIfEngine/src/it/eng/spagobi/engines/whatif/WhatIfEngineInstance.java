@@ -133,9 +133,9 @@ public class WhatIfEngineInstance extends AbstractEngineInstance implements Seri
 		
 		// init artifact informations
 		if(!template.isStandAlone()){
-			Integer artifactVersionID = getArtifactVersionId(getEnv());
-			modelConfig.setArtifactVersionID(artifactVersionID);
-			logger.debug("Artifact version ID is "+artifactVersionID);
+			Integer artifactID = getArtifactId(getEnv());
+			modelConfig.setArtifactID(artifactID);
+			logger.debug("Artifact ID is "+artifactID);
 			String status = getArtifactStatus(getEnv());
 			logger.debug("Artifact status is "+status);
 			modelConfig.setStatus(status);
@@ -222,6 +222,20 @@ public class WhatIfEngineInstance extends AbstractEngineInstance implements Seri
         }
     }
     
+    public Integer getArtifactId(Map env) {
+        try {
+            if (!env.containsKey( SpagoBIConstants.SBI_ARTIFACT_ID)) {
+            	logger.error("Missing artifact id");
+                throw new SpagoBIEngineRuntimeException("Missing artifact id");
+            }
+            String str = (String) env.get( SpagoBIConstants.SBI_ARTIFACT_ID );
+            Integer id = new Integer(str);
+            return id;
+        } catch (Exception e) {
+            logger.error("Error while getting artifact  id", e);
+            throw new SpagoBIEngineRuntimeException("Error while getting artifact id", e);
+        }
+    }
     
     public String getArtifactStatus(Map env) {
         try {
