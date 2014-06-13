@@ -35,6 +35,7 @@ public class WhatIfDriver extends GenericDriver {
 		Map pars = super.getParameterMap(biobject, profile, roleName);
 		byte[] template = this.getTemplateAsByteArray( biobject );
 		pars = addArtifactVersionId(template, pars, profile);
+		pars = addArtifactId(template, pars, profile);
 		return pars;
 	}
 
@@ -44,6 +45,7 @@ public class WhatIfDriver extends GenericDriver {
 		Map pars = super.getParameterMap(biobject, subObject, profile, roleName);
 		byte[] template = this.getTemplateAsByteArray( biobject );
 		pars = addArtifactVersionId(template, pars, profile);
+		pars = addArtifactId(template, pars, profile);
 		return pars;
 	}
 	
@@ -114,6 +116,31 @@ public class WhatIfDriver extends GenericDriver {
 		return pars;
 
 	}
+	
+	protected Map addArtifactId(byte[] template, Map pars, IEngUserProfile profile) {
+		SourceBean sb = null;
+		try {
+			sb = SourceBean.fromXMLString(new String(template));
+		} catch (SourceBeanException e) {
+			logger.error("Error while parsing document's template", e);
+			throw new SpagoBIRuntimeException("Template is not a valid XML file", e);
+		}
+		SourceBean cubeSb = (SourceBean) sb.getAttribute(SpagoBIConstants.MONDRIAN_CUBE);
+		Assert.assertNotNull(cubeSb, "Template is missing \"" + SpagoBIConstants.MONDRIAN_CUBE + "\" definition");
+		String reference = (String) cubeSb.getAttribute(SpagoBIConstants.MONDRIAN_REFERENCE);
+		Assert.assertNotNull(reference, "Template is missing \"" + SpagoBIConstants.MONDRIAN_REFERENCE + "\" property, that is the reference to the Mondrian schema");
+		IArtifactsDAO dao = DAOFactory.getArtifactsDAO();
+		Artifact artifact = dao.loadArtifactByNameAndType(reference,
+						SpagoBIConstants.MONDRIAN_SCHEMA);
+		Assert.assertNotNull(artifact, "Mondrian schema with name [" +  reference + "] was not found");
+		
+		pars.put(SpagoBIConstants.SBI_ARTIFACT_ID, artifact.getId());
+	
+		return pars;
+
+	}
+	
+	
 
 	
 
