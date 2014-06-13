@@ -7,6 +7,7 @@ package it.eng.spagobi.tools.catalogue.dao;
 
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.dao.SpagoBIDOAException;
+import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.tools.catalogue.bo.Artifact;
 import it.eng.spagobi.tools.catalogue.bo.Content;
 import it.eng.spagobi.tools.catalogue.metadata.SbiArtifact;
@@ -791,8 +792,10 @@ public class ArtifactsDAOImpl extends AbstractHibernateDAO implements IArtifacts
 				
 				logger.debug("Artifact loaded");
 				Artifact art = toArtifact(hibArtifact, session);
+				//Admin can force unlock from other
+				boolean isAdmin = UserUtilities.isAdministrator(UserUtilities.getUserProfile(userId));
 				
-				if(art.getModelLocked().equals(true) && art.getModelLocker().equals(userId)){
+				if((art.getModelLocked().equals(true) && art.getModelLocker().equals(userId)) || (isAdmin)){
 					// set to not active the current active template
 					String hql = " update SbiArtifact ar set ar.modelLocked = ?, ar.modelLocker = ? where ar.modelLocked = ?  and ar.id = ? ";
 					Query query = session.createQuery(hql);
@@ -801,7 +804,7 @@ public class ArtifactsDAOImpl extends AbstractHibernateDAO implements IArtifacts
 					query.setBoolean(2, true); 
 					query.setInteger(3, artifactId); 
 
-					logger.debug("Unloock the artifact with id " + artifactId + "");
+					logger.debug("Unlock the artifact with id " + artifactId + "");
 					query.executeUpdate();	
 					
 					userLocking = null;
