@@ -154,6 +154,11 @@ public class DefaultWeightedAllocationAlgorithm extends AllocationAlgorithm {
 	public String getLastQuery() {
 		return lastQuery;
 	}
+
+
+	public DefaultWeightedAllocationAlgorithmPersister getPersister() {
+		return persister;
+	}
 	
 	
 

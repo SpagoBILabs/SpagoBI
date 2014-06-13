@@ -7,9 +7,9 @@
 
 package it.eng.spagobi.writeback4j;
 
-import java.util.List;
-
 import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
+
+import java.util.List;
 
 import org.olap4j.metadata.Member;
 
@@ -24,5 +24,6 @@ public interface ISchemaRetriver {
 	public String getMeasureColumn(Member member) throws SpagoBIEngineException ;
 	public List<String> getColumnNamesList();
 	public String getVersionColumnName();
+	public List<String> getMeasuresColumn();
 
 }

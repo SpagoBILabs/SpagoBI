@@ -57,7 +57,7 @@ public class VersionDAO {
 
 		try {
 			String sqlQuery = "select MAX("+getVersionColumnName()+") as "+getVersionColumnName()+" from "+editCubeTableName;
-			SqlQueryStatement queryStatement = new SqlQueryStatement(instance.getDataSource(), sqlQuery) ;
+			SqlQueryStatement queryStatement = new SqlQueryStatement(sqlQuery) ;
 			Object o= queryStatement.getSingleValue(connection, getVersionColumnName());
 			if(o != null){
 				logger.debug("Last version is "+o);	
@@ -160,8 +160,8 @@ public class VersionDAO {
 	public List<SbiVersion> getAllVersions(Connection connection) throws  SpagoBIEngineException, SQLException{
 		logger.debug("IN");
 		String sqlQuery = "select distinct("+getVersionColumnName()+") as versionIdColumn from "+editCubeTableName;
-		SqlQueryStatement queryStatement = new SqlQueryStatement(instance.getDataSource(), sqlQuery) ;
-		ResultSet resulSet = queryStatement.getValues(connection, getVersionColumnName());
+		SqlQueryStatement queryStatement = new SqlQueryStatement(sqlQuery) ;
+		ResultSet resulSet = queryStatement.getValues(connection);
 		 List<SbiVersion> versions = fromResultSetToSbiVersions(resulSet);
 		logger.debug("OUT");
 		return versions;

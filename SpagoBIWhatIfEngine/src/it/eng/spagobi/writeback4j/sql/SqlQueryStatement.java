@@ -3,7 +3,6 @@
  */
 package it.eng.spagobi.writeback4j.sql;
 
-import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
 
 import java.sql.Connection;
@@ -28,7 +27,7 @@ public class SqlQueryStatement {
 
 	public static transient Logger logger = Logger.getLogger(SqlQueryStatement.class);
 	
-	public SqlQueryStatement(IDataSource dataSource, String sqlStatement) {
+	public SqlQueryStatement(String sqlStatement) {
 		super();
 
 		this.sqlStatement = sqlStatement;
@@ -57,7 +56,7 @@ public class SqlQueryStatement {
 		return toReturn;
 	}
 
-	public ResultSet getValues(Connection connection, String columnName) throws SpagoBIEngineException{
+	public ResultSet getValues(Connection connection) throws SpagoBIEngineException{
 		ResultSet rs = null;
 		
 		try{

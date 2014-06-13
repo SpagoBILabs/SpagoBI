@@ -218,9 +218,9 @@ public class MondrianSchemaRetriver implements ISchemaRetriver{
 	}
 
 	/**
-	 * Gets the MondrianDef.Measure that represent the Member
+	 * Gets the name of the column of the measure
 	 * @param member
-	 * @return if member is a Measure returns the linked MondrianDef.Measure, null otherwise
+	 * @return 
 	 * @throws SpagoBIEngineException 
 	 */
 	public String getMeasureColumn(Member member) throws SpagoBIEngineException {
@@ -240,6 +240,24 @@ public class MondrianSchemaRetriver implements ISchemaRetriver{
 
 		return null;
 	}
+
+
+	/**
+	 * Gets the column name for each measure
+	 * @return 
+	 */
+	public List<String> getMeasuresColumn(){
+		
+		logger.debug("IN: loading the measure form the cube");
+		List<String> measures= new ArrayList<String>();
+
+		for(int i=0; i<editCube.measures.length; i++){
+			measures.add(editCube.measures[i].column);
+		}
+
+		logger.debug("OUT");
+		return measures;
+	}	
 
 
 	public String getEditCubeTableName() {

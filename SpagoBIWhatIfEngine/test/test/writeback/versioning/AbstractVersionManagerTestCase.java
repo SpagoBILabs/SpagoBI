@@ -81,7 +81,7 @@ public abstract class AbstractVersionManagerTestCase extends AbstractWhatIfTestC
 		try {
 			
 			String statement = "select MAX("+ei.getWriteBackManager().getRetriver().getVersionColumnName()+") as "+ei.getWriteBackManager().getRetriver().getVersionColumnName()+" from "+ei.getWriteBackManager().getRetriver().getEditCubeTableName();
-			SqlQueryStatement queryStatement = new SqlQueryStatement(ei.getDataSource(), statement);
+			SqlQueryStatement queryStatement = new SqlQueryStatement(statement);
 			Integer i = (Integer)queryStatement.getSingleValue(connection, ei.getWriteBackManager().getRetriver().getVersionColumnName());
 			
 			return i;
