@@ -327,8 +327,7 @@ public class DatasetMetadataParser {
 		
 	}
 
-
-
+	
 	public void insertPropertiesInMeta(IFieldMetaData meta, List propertiesBean ) throws SourceBeanException{
 		logger.debug("IN");
 

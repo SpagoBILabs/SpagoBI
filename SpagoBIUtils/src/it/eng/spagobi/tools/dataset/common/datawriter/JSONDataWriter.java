@@ -179,7 +179,7 @@ public class JSONDataWriter implements IDataWriter {
 		IField field;
 		IRecord record;
 		JSONObject recordJSON;
-		int recNo;
+		int recNo = 0;
 		JSONArray recordsJSON;
 		int resultNumber;
 		Object propertyRawValue;
@@ -253,11 +253,8 @@ public class JSONDataWriter implements IDataWriter {
 				recordsJSON.put(recordJSON);
 			}
 			
-		
-			
-			
 		} catch(Throwable t) {
-			throw new RuntimeException("An unpredicted error occurred while serializing dataStore", t);
+			throw new RuntimeException("An unpredicted error occurred at recno [" + recNo + "] while serializing dataStore", t);
 		} finally {
 			
 		}
