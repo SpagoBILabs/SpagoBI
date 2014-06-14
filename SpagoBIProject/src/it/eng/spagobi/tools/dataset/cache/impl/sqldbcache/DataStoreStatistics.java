@@ -37,7 +37,7 @@ public class DataStoreStatistics {
 	int sampleDimension;
 	
 
-	static private Logger logger = Logger.getLogger(SQLDBCacheMetadata.class);
+	static private Logger logger = Logger.getLogger(DataStoreStatistics.class);
 	
 	public DataStoreStatistics(IDataStore store) {
 		this.store = store;
@@ -162,7 +162,7 @@ public class DataStoreStatistics {
 				String typeName = ((Properties)objectsTypeDimension.get(i)).getProperty("name");
 				if (type.contains(typeName)){
 					toReturn = new BigDecimal(((Properties)objectsTypeDimension.get(i)).getProperty("bytes"));
-					logger.debug("Used configurated type: " + type + " - weight: " + toReturn.toString());
+					//logger.debug("Used configurated type: " + type + " - weight: " + toReturn.toString());
 					break;
 				}
 			}

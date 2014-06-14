@@ -283,7 +283,6 @@ public class DatasetManagementAPI {
 	
 	public IDataStore getDataStore(String label, int offset, int fetchSize, int maxResults, Map<String, String> parametersValues) {
 		try {
-		
 			IDataSet dataSet = this.getDataSetDAO().loadDataSetByLabel(label);
 			List<JSONObject> parameters = getDataSetParameters(label);
 			if (parameters.size() >  parametersValues.size()){
@@ -335,6 +334,7 @@ public class DatasetManagementAPI {
 			while(it.hasNext()) {
 				String associationName = it.next();
 				JSONArray values = selections.getJSONArray(associationName);
+				if(values.length() == 0) continue;
 				List<String> valuesList = new ArrayList<String>(); 
 				for(int i = 0; i < values.length(); i++) {
 					valuesList.add(values.getString(i));

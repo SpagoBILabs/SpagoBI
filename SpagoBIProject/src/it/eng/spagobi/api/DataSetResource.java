@@ -18,6 +18,7 @@ import it.eng.spagobi.analiticalmodel.execution.service.ExecuteAdHocUtility;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.deserializer.DeserializerFactory;
+import it.eng.spagobi.commons.monitor.Monitor;
 import it.eng.spagobi.commons.serializer.SerializerFactory;
 import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.engines.config.bo.Engine;
@@ -251,53 +252,19 @@ public class DataSetResource extends AbstractSpagoBIResource {
 			
 			
 			// serializing response
+			Monitor monitor = Monitor.start("serializeStore");
 			Map<String, Object> properties = new HashMap<String, Object>();
 			JSONArray fieldOptions = new JSONArray("[{id: 1, options: {measureScaleFactor: 0.5}}]");
 			properties.put(JSONDataWriter.PROPERTY_FIELD_OPTION, fieldOptions);
 			properties.put(JSONDataWriter.PROPERTY_WRITE_DATA_ONLY, true);
 			JSONDataWriter dataSetWriter = new JSONDataWriter(properties);
 			JSONArray gridDataFeed = (JSONArray)dataSetWriter.write(dataStore);
+			logger.info("Dataset serialized in: " + monitor.elapsedAsString());
 			
 			List<Integer> breakIndexes = (List<Integer>)dataStore.getMetaData().getProperty("BREAK_INDEXES");
-			int breakIndex = breakIndexes.get(0);
-			
-			// the dirty trick
 			JSONArray datasetLabels = associationGrpJSON.getJSONArray("datasets");
-			JSONObject results = new JSONObject();
-			JSONArray[] datasetRecords = new JSONArray[2];
-			for(int j = 0; j < datasetRecords.length; j++) {
-				datasetRecords[j] = new JSONArray();
-			}
-			
-			for(int i = 0; i < gridDataFeed.length(); i++) {
-				JSONObject o = gridDataFeed.getJSONObject(i);
-				JSONArray props = o.names();
-				
-				JSONObject[] datasetRecord = new JSONObject[2];
-				for(int j = 0; j < datasetRecord.length; j++) {
-					datasetRecord[j] = new JSONObject();
-				}
-				
-				datasetRecord[0].put("id", o.getString("id"));
-				datasetRecord[1].put("id", o.getString("id"));
-				for(int j = 1, colNo = 1; j < props.length(); j++, colNo++) {
-					String p = props.getString(j);
-					if(j == breakIndex+1) {
-						colNo = 1;
-					}
+			JSONObject results = splitGridDataFeed(gridDataFeed, datasetLabels, breakIndexes);
 					
-					if(j <= breakIndex ) {
-						datasetRecord[0].put("column_" + colNo, o.getString(p));
-					} else {
-						datasetRecord[1].put("column_" + colNo, o.getString(p));
-					}
-				}
-				datasetRecords[0].put(datasetRecord[0]);
-				datasetRecords[1].put(datasetRecord[1]);
-			}
-			results.put(datasetLabels.getString(0), datasetRecords[0]);
-			results.put(datasetLabels.getString(1), datasetRecords[1]);
-			
 			return results.toString();	
 		} catch(Throwable t) {
 			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", t);
@@ -305,6 +272,134 @@ public class DataSetResource extends AbstractSpagoBIResource {
 			logger.debug("OUT");
 		}	
 	}
+	
+	
+	private JSONObject splitGridDataFeed(JSONArray gridDataFeed, JSONArray datasetLabels , List<Integer> breakIndexes) {
+		
+		JSONObject results = null;
+		
+		logger.debug("IN");
+		Monitor monitor = Monitor.start("splitGridDataFeed");
+		
+		try {
+			
+			breakIndexes.add(Integer.MAX_VALUE);
+			int datasetNo = datasetLabels.length();
+			
+			results = new JSONObject();
+			JSONArray[] datasetRecords = new JSONArray[datasetNo];
+			for(int j = 0; j < datasetRecords.length; j++) {
+				datasetRecords[j] = new JSONArray();
+			}
+			
+			String[] lastRowNo = new String[datasetNo];
+			for(int i = 0; i < gridDataFeed.length(); i++) {
+				JSONObject originalRecord = gridDataFeed.getJSONObject(i);
+				JSONObject[] datasetRecord = splitRecord(originalRecord, datasetLabels ,breakIndexes);
+				for(int j = 0; j < datasetRecords.length; j++) {
+					String currentRowNoName = "column_1";
+					String currentRowNo = datasetRecord[j].getString(currentRowNoName);
+					if(currentRowNo == null || !currentRowNo.equals(lastRowNo[j])) {
+						datasetRecords[j].put(datasetRecord[j]);
+						lastRowNo[j] = currentRowNo; 
+					}
+				}
+				
+//				JSONArray props = originalRecord.names();
+//				
+//				JSONObject[] datasetRecord = new JSONObject[datasetNo];
+//				for(int j = 0; j < datasetRecord.length; j++) {
+//					datasetRecord[j] = new JSONObject();
+//					datasetRecord[j].put("id", originalRecord.getString("id"));
+//				}
+//				
+//			
+//				String[] lastRowNo = new String[datasetNo];
+//				String[] currentRowNo = new String[datasetNo];
+//				
+//				int breakIndexNo = 0;
+//				int breakIndex =  breakIndexes.get(breakIndexNo);
+//				JSONObject record = datasetRecord[0];
+//				for(int j = 1, colNo = 1; j < props.length(); j++, colNo++) {
+//					String p = props.getString(j);
+//					if(j == 1) currentRowNo[breakIndexNo] = originalRecord.getString(p);
+//					
+//					if(j == breakIndex+1) {
+//						lastRowNo[breakIndexNo] = currentRowNo[breakIndexNo];
+//						
+//						breakIndexNo++;
+//						breakIndex = breakIndexes.get(breakIndexNo);
+//						record = datasetRecord[breakIndexNo];
+//						colNo = 1;
+//						currentRowNo[breakIndexNo] = originalRecord.getString(p);
+//					} 
+//					
+//					if(currentRowNo[breakIndexNo].equals(lastRowNo[breakIndexNo])) {
+//						continue;
+//					}
+//					
+//					record.put("column_" + colNo, originalRecord.getString(p));
+//				}
+				
+//				for(int j = 0; j < datasetRecords.length; j++) {
+//					datasetRecords[j].put(datasetRecord[j]);
+//				}
+			}
+			
+			for(int j = 0; j < datasetRecords.length; j++) {
+				results.put(datasetLabels.getString(j), datasetRecords[j]);
+			}
+		} catch(Throwable t) {
+			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while splittind dataset", t);
+		} finally {	
+			logger.info("Dataset splitted in: " + monitor.elapsedAsString());
+			logger.debug("OUT");
+		}
+		
+		return results;
+	}
+	
+	public JSONObject[] splitRecord(JSONObject originalRecord, JSONArray datasetLabels , List<Integer> breakIndexes) {
+		
+		logger.debug("IN");
+		
+		try {
+			JSONArray props = originalRecord.names();
+			
+			int datasetNo = datasetLabels.length();
+			JSONObject[] datasetRecord = new JSONObject[datasetNo];
+			for(int j = 0; j < datasetRecord.length; j++) {
+				datasetRecord[j] = new JSONObject();
+				datasetRecord[j].put("id", originalRecord.getString("id"));
+			}
+			
+			int breakIndexNo = 0;
+			int breakIndex =  breakIndexes.get(breakIndexNo);
+			JSONObject record = datasetRecord[0];
+			for(int j = 1, colNo = 1; j < props.length(); j++, colNo++) {
+				String p = props.getString(j);
+				
+				if(j == breakIndex+2) { // breakIndex is the last element of the previous dataset. breakIndex + 1 is the first one of the new dataset.
+					// we shift everything by one doing a + 2 instead just a +1 because the first column of the joisned dataset contains the sbicache_row_id
+					// of the whole dataset
+					
+					breakIndexNo++;
+					breakIndex = breakIndexes.get(breakIndexNo);
+					record = datasetRecord[breakIndexNo];
+					colNo = 1;
+				} 
+				
+				record.put("column_" + colNo, originalRecord.getString(p));
+			}
+			
+			return datasetRecord;
+		} catch(Throwable t) {
+			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while splitting record", t);
+		} finally {	
+			logger.debug("OUT");
+		}
+	}
+	
 	
 	private static Map<String, String> getParametersMap(String filters){
 		Map<String, String> toReturn = new HashMap<String, String>();
