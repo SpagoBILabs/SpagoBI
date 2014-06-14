@@ -66,7 +66,7 @@ public class JDBCStandardDataReader extends AbstractDataReader {
         		fieldMeta = new FieldMetadata();
         		fieldName = rs.getMetaData().getColumnLabel(columnIndex);
         		fieldType = rs.getMetaData().getColumnClassName(columnIndex);
-        		logger.debug("Field [" + columnIndex + "] name is equal to [" + fieldName + "]. TYPE= "+fieldType);
+        		//logger.debug("Field [" + columnIndex + "] name is equal to [" + fieldName + "]. TYPE= "+fieldType);
         		fieldMeta.setName( fieldName );
         		if(fieldType!=null){
         			// Patch for hsql..  TODO
@@ -124,7 +124,7 @@ public class JDBCStandardDataReader extends AbstractDataReader {
     			}
     			dataStore.appendRecord(record);
     			recCount++;
-    			logger.debug("[" + recCount + "] - Records [" + rs.getRow()  + "] succesfully readed");
+    			//logger.debug("[" + recCount + "] - Records [" + rs.getRow()  + "] succesfully readed");
     		}
     		logger.debug("Readed [" + recCount+ "] records");
     		logger.debug("Data readed succcesfully");

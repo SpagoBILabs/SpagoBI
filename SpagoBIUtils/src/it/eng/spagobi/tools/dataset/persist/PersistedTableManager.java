@@ -50,6 +50,14 @@ import org.safehaus.uuid.UUIDGenerator;
 
 public class PersistedTableManager {
 
+	private String dialect = new String();
+	private String tableName = new String();
+	private boolean rowCountColumIncluded = false;
+	private Map<String, Integer> columnSize =  new HashMap<String, Integer>();
+	
+	private IEngUserProfile profile = null;
+	
+	
 	private static transient Logger logger = Logger.getLogger(PersistedTableManager.class);
 	public static final String DIALECT_MYSQL = "MySQL";
 	public static final String DIALECT_POSTGRES = "PostgreSQL";
@@ -62,20 +70,18 @@ public class PersistedTableManager {
 	public static final String DIALECT_INGRES = "Ingres";
 	public static final String DIALECT_TERADATA = "Teradata";
 	
-	private String tableName = new String();
-	private String dialect = new String();
-	private Map<String, Integer> columnSize =  new HashMap<String, Integer>();
-	private IEngUserProfile profile = null;
-	
 	static final String Alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
 
 	public PersistedTableManager(){
 		
 	}
+	
 	public PersistedTableManager(IEngUserProfile profile){
 		this.profile = profile;
 	}
+	
+		
 	public void persistDataSet(IDataSet dataset) throws Exception {
 		String tableName = dataset.getTableNameForReading();
 		//changed
@@ -133,7 +139,7 @@ public class PersistedTableManager {
 		//for the first version not all target dialect are enable
 		if (getDialect().contains(DIALECT_DB2) ||
 			getDialect().contains(DIALECT_INGRES) ||  getDialect().contains(DIALECT_TERADATA)){
-			logger.debug("Persistence management isn't able for " +  getDialect() + ".");
+			logger.debug("Persistence management isn't implemented for " +  getDialect() + ".");
 			throw new SpagoBIServiceException("","sbi.ds.dsCannotPersistDialect");
 		}
 		persistDataset(datastore,datasource);
@@ -221,6 +227,13 @@ public class PersistedTableManager {
 		insertQuery += " (";
 		values += " (";
 		String separator = "";
+		
+		if(this.isRowCountColumIncluded()) {
+			insertQuery += separator + AbstractJDBCDataset.encapsulateColumnName(getRowCountColumnName(), datasource);
+			values += separator + "?";
+			separator = ","; 
+		}
+		
 		for (int i=0; i < fieldCount; i++){	
 			IFieldMetaData fieldMeta = storeMeta.getFieldMeta(i);
 			String columnName = getSQLColumnName(fieldMeta);
@@ -250,13 +263,25 @@ public class PersistedTableManager {
 			toReturn = connection.prepareStatement(totalQuery);
 			
 			logger.debug("Prepared statement for persist dataset as : " + totalQuery);
+			
+			
 			for (int i=0; i < datastore.getRecordsCount(); i++){	
+				
+				if(this.isRowCountColumIncluded()) {
+					toReturn.setLong(1, i+1);
+				}
+				
 				IRecord record = datastore.getRecordAt(i);			
 				for (int j = 0; j < record.getFields().size(); j++){	
 					try {
 						IFieldMetaData fieldMeta = storeMeta.getFieldMeta(j);
 						IField field = record.getFieldAt(j);
-						addField(toReturn, j, field, fieldMeta);
+						if(this.isRowCountColumIncluded()) {
+							addField(toReturn, j+1, field, fieldMeta);
+						} else {
+							addField(toReturn, j, field, fieldMeta);
+						}
+						
 					} catch(Throwable t) {
 						throw new RuntimeException("An unexpecetd error occured while preparing insert statemenet for record [" + i + "]", t);
 					}
@@ -490,6 +515,14 @@ public class PersistedTableManager {
 	private String getCreateTableQuery(IDataStore datastore, IDataSource dataSource){
 		String toReturn = "create table " + tableName + " (" ;
 		IMetaData md = datastore.getMetaData();	
+		
+		if(this.isRowCountColumIncluded()){
+			IDataBase dataBase = DataBase.getDataBase(dataSource);
+			toReturn += " " + AbstractJDBCDataset.encapsulateColumnName(this.getRowCountColumnName(), dataSource)
+			          + " " + dataBase.getDataBaseType(Long.class) 
+			          + " , ";
+		}
+		
 		for (int i=0, l=md.getFieldCount(); i<l; i++){				
 			 IFieldMetaData fmd = md.getFieldMeta(i);
 			 String columnName = getSQLColumnName(fmd);
@@ -684,6 +717,9 @@ public class PersistedTableManager {
 		return sb.toString();
 	}
 
+	// ====================================================================================
+	// ACCESSOR MRTHODS
+	// ====================================================================================
 	
 	public String getTableName() {
 		return this.tableName;
@@ -711,6 +747,18 @@ public class PersistedTableManager {
 	}
 	public void setDialect(String dialect) {
 		this.dialect = dialect;
+	}
+
+	public boolean isRowCountColumIncluded() {
+		return rowCountColumIncluded;
+	}
+
+	public void setRowCountColumIncluded(boolean rowCountColumIncluded) {
+		this.rowCountColumIncluded = rowCountColumIncluded;
+	}
+	
+	public String getRowCountColumnName() {
+		return "sbicache_row_id";
 	}
 	
 	

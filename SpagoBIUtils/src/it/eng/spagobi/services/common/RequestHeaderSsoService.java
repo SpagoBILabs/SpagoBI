@@ -1,8 +1,24 @@
-/* SpagoBI, the Open Source Business Intelligence suite
+/**
 
- * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
- * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+SpagoBI - The Business Intelligence Free Platform
+
+Copyright (C) 2005-2008 Engineering Ingegneria Informatica S.p.A.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License along with this library; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+
+**/
 package it.eng.spagobi.services.common;
 
 import it.eng.spagobi.services.security.exceptions.SecurityException;
@@ -23,7 +39,7 @@ import org.apache.log4j.Logger;
  */
 public class RequestHeaderSsoService implements SsoServiceInterface {
 
-	static private final String USER_IDENTIFIER_REQUEST_ATTRIBUTE_NAME = "REMOTE_USER";
+	static private final String USER_IDENTIFIER_REQUEST_HEADER_NAME = "REMOTE_USER";
 	
     static private Logger logger = Logger.getLogger(RequestHeaderSsoService.class);
     
@@ -45,17 +61,17 @@ public class RequestHeaderSsoService implements SsoServiceInterface {
     	
     	try {
     		
-    		user = (String)request.getParameter(USER_IDENTIFIER_REQUEST_ATTRIBUTE_NAME);
-    		logger.debug("Request parameter [" + USER_IDENTIFIER_REQUEST_ATTRIBUTE_NAME + "] is equal to [" + user + "]");
+    		user = (String)request.getParameter(USER_IDENTIFIER_REQUEST_HEADER_NAME);
+    		logger.debug("Request parameter [" + USER_IDENTIFIER_REQUEST_HEADER_NAME + "] is equal to [" + user + "]");
     	    
-    		user = request.getHeader( USER_IDENTIFIER_REQUEST_ATTRIBUTE_NAME );
-    		logger.debug("Request header [" + USER_IDENTIFIER_REQUEST_ATTRIBUTE_NAME + "] is equal to [" + user + "]");
+    		user = request.getHeader( USER_IDENTIFIER_REQUEST_HEADER_NAME );
+    		logger.debug("Request header [" + USER_IDENTIFIER_REQUEST_HEADER_NAME + "] is equal to [" + user + "]");
         		
     		user = request.getRemoteUser();
     		logger.debug("Remote user is equal to [" + user + "]");
         	
-    		user = (String)request.getAttribute(USER_IDENTIFIER_REQUEST_ATTRIBUTE_NAME);
-    		logger.debug("Request attribute [" + USER_IDENTIFIER_REQUEST_ATTRIBUTE_NAME + "] is equal to [" + user + "]");
+    		user = (String)request.getAttribute(USER_IDENTIFIER_REQUEST_HEADER_NAME);
+    		logger.debug("Request attribute [" + USER_IDENTIFIER_REQUEST_HEADER_NAME + "] is equal to [" + user + "]");
     	    
     		
     		if( user != null ) {
@@ -68,7 +84,7 @@ public class RequestHeaderSsoService implements SsoServiceInterface {
     			logger.debug("Incoming request come from the autenthicated user [" + user + "]");
     		} else {
     			// if "Proxy-Remote-User" is null dump all header in the request just for debug purpose
-    			logger.debug("Impossible to read  header [" + USER_IDENTIFIER_REQUEST_ATTRIBUTE_NAME + "] from request");
+    			logger.debug("Impossible to read  header [" + USER_IDENTIFIER_REQUEST_HEADER_NAME + "] from request");
     			Enumeration headerNames = request.getHeaderNames();
     			while(headerNames.hasMoreElements()) {
     				String headerName = (String)headerNames.nextElement();
