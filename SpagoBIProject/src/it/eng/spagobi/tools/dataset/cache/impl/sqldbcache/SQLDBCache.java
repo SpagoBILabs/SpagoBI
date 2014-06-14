@@ -280,8 +280,9 @@ public class SQLDBCache implements ICache {
 						// why? warning!
 						leftOperand = filter.getLeftOperand().getOperandValueAsString();
 					} else { // it's a column
-						filter.getLeftOperand().getOperandDataSet();
-						leftOperand = "t1 - " + filter.getLeftOperand().getOperandValueAsString();
+						Map<String, String> datasetAlias = (Map<String, String>)cacheItem.getProperty("DATASET_ALIAS");
+						String datasetLabel = filter.getLeftOperand().getOperandDataSet();
+						leftOperand = datasetAlias.get(datasetLabel) +  " - " + filter.getLeftOperand().getOperandValueAsString();
 						leftOperand = AbstractJDBCDataset.encapsulateColumnName(leftOperand, dataSource);
 					}
 					
@@ -480,15 +481,22 @@ public class SQLDBCache implements ICache {
 				datasetAliases.put(dataSet.getLabel(), tableAlias);
 				sqlBuilder.from(tableName + " " + tableAlias);
 				
+				
+				// TODO move this to dataset?
+				String column = AbstractJDBCDataset.encapsulateColumnName("sbicache_row_id", dataSource);
+				String alias = AbstractJDBCDataset.encapsulateColumnAlaias(tableAlias + " - sbicache_row_id", dataSource);
+				names.add(alias);
+				sqlBuilder.column(tableAlias + "." + column + " as " + alias);
+				
 				for(int i = 0; i < dataSet.getMetadata().getFieldCount(); i++) {
 					IFieldMetaData fieldMeta = dataSet.getMetadata().getFieldMeta(i);
 					
-					String column = AbstractJDBCDataset.encapsulateColumnName(fieldMeta.getName(), dataSource);
-					String alias = AbstractJDBCDataset.encapsulateColumnAlaias(tableAlias + " - " + fieldMeta.getAlias(), dataSource);
+					column = AbstractJDBCDataset.encapsulateColumnName(fieldMeta.getName(), dataSource);
+					alias = AbstractJDBCDataset.encapsulateColumnAlaias(tableAlias + " - " + fieldMeta.getAlias(), dataSource);
 					names.add(alias);
 					sqlBuilder.column(tableAlias + "." + column + " as " + alias);
 				}
-				lastIndex += dataSet.getMetadata().getFieldCount();
+				lastIndex += dataSet.getMetadata().getFieldCount() + 1;
 				columnBreakIndexes.add(lastIndex);
 				columnNames.put(dataSet.getLabel(), names);
 			}
@@ -515,6 +523,7 @@ public class SQLDBCache implements ICache {
 						
 			dataStore.getMetaData().setProperty("BREAK_INDEXES", columnBreakIndexes);
 			dataStore.getMetaData().setProperty("COLUMN_NAMES", columnNames);
+			dataStore.getMetaData().setProperty("DATASET_ALIAS", datasetAliases);
 			
 			
 			DataStore toReturn = (DataStore) dataStore;
@@ -559,6 +568,11 @@ public class SQLDBCache implements ICache {
 				if(columnNames != null) {
 					item.setProperty("COLUMN_NAMES", columnNames);
 				}
+				
+				Map<String, String> datasetAlias = (Map<String, String>)dataStore.getMetaData().getProperty("DATASET_ALIAS");
+				if(datasetAlias != null) {
+					item.setProperty("DATASET_ALIAS", datasetAlias);
+				}
 			} else {
 				throw new CacheException("Store is to big to be persisted in cache." +
 						" Store extimated dimenion is [" + getMetadata().getRequiredMemory(dataStore) + "]" +
@@ -579,6 +593,7 @@ public class SQLDBCache implements ICache {
 		logger.trace("IN");
 		try {
 			PersistedTableManager persistedTableManager = new PersistedTableManager();
+			persistedTableManager.setRowCountColumIncluded(true);
 			String tableName = persistedTableManager.generateRandomTableName( this.getMetadata().getTableNamePrefix() );
 			persistedTableManager.persistDataset(dataset, resultset, getDataSource(), tableName);
 			return tableName;
