@@ -11,6 +11,7 @@ Sbi.execution.ExecutionPanel = function(config, doc) {
 	
 	var defaultSettings = {
 		border : false
+		, hideMode = Ext.isIE? 'offsets': 'display'
 	};
 	
 	if (Sbi.settings && Sbi.settings.execution && Sbi.settings.execution.executionPanel) {

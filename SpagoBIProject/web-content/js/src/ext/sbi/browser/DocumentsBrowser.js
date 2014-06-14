@@ -285,11 +285,9 @@ Ext.extend(Sbi.browser.DocumentsBrowser, Ext.Panel, {
 			return
 		}
 		
-		var hideMode = Ext.isIE? 'offsets': 'display';
 		var executionPanel = new Sbi.execution.ExecutionPanel({
 			title: doc.title !== undefined ? doc.title : doc.name
 			, closable: true
-			, hideMode: hideMode
 		}, doc);
 		executionPanel.tabType = 'document';
 		
