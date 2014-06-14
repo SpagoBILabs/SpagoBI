@@ -568,8 +568,8 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 	}
 	
 	/**
-	 * reload all the store connected by an association group. Apply the selctions to filter the results
-	 * in an associative way. Selection object have this form:
+	 * reload all the store connected by an association group. Apply the selctions to filter 
+	 * the results in an associative way. Selection object have this form:
 	 * 
 	 * 	{
 	 * 		cityAssociation: ['Milan', 'Turin']
@@ -1101,7 +1101,6 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 						var store = this.getStore(s);
 						store.loadData(data);
 					}
-					
 				}
 			} else {
 				Sbi.exception.ExceptionHandler.showErrorMessage('Server response body is empty', 'Service Error');
