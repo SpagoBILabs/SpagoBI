@@ -1721,7 +1721,7 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
             var browser = this.detectBrowser();
 
             if(browser != null && browser == 'IE'){
-            	marginHeight = 2.5;
+            	marginHeight = 3;
             }
             else if(browser != null && browser == 'firefox'){
             	marginHeight = 3;
