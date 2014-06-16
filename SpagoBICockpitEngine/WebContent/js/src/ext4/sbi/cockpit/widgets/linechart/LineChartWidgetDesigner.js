@@ -98,7 +98,7 @@ Ext.define('Sbi.cockpit.widgets.linechart.LineChartWidgetDesigner', {
 	}
 	
 	, validate: function(validFields){
-		alert("[LineChartWidgetDesigner.validate]: IN");
+		
 		var valErr='';
 		valErr+= ''+this.categoryContainerPanel.validate(validFields);
 		valErr+= ''+this.seriesContainerPanel.validate(validFields);
