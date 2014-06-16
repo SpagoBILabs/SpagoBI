@@ -27,7 +27,7 @@ Sbi.cockpit.core.WidgetContainerComponent = function(config) {
 	
 	// init properties...
 	var defaultSettings = {
-		title : config.widget ? config.widget.getTitle() : 'Widget'
+		title : this.getTitle(config)
 	    , bodyBorder: true
 	    , frame: true
 	    , shadow: false
@@ -132,6 +132,18 @@ Ext.extend(Sbi.cockpit.core.WidgetContainerComponent, Ext.Window, {
 	// -----------------------------------------------------------------------------------------------------------------
     // public methods
 	// -----------------------------------------------------------------------------------------------------------------
+		
+	, getTitle: function(config) {
+		var title = config.widget ? config.widget.getTitle() : 'Widget';
+		
+		return title;
+	}	
+	
+	, refreshTitle: function() {
+		var config = this.getWidgetConfiguration();
+		
+		this.setTitle(config.wgeneric.title);
+	}
 	
 	/**
 	 * @method
@@ -206,7 +218,7 @@ Ext.extend(Sbi.cockpit.core.WidgetContainerComponent, Ext.Window, {
 			widget = Sbi.cockpit.core.WidgetExtensionPointManager.getWidgetRuntime(widgetConf);
 			this.setWidget(widget);
 		} else {
-			widget = this.getWidget();
+			widget = this.getWidget();			
 			widget.setConfiguration(widgetConf);
 		}
 		Sbi.trace("[WidgetContainerComponent.setWidgetConfiguration]: widgetConf is equal to [" + Sbi.toSource(widgetConf) + "]");
