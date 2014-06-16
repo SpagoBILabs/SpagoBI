@@ -179,28 +179,10 @@ Ext.extend(Sbi.cockpit.widgets.linechart.LineChartWidget, Sbi.cockpit.widgets.ch
 		
 		var chartDataStore = items.store;
 		
-		var chartType; 
-		var isStacked = false;
-		
-		//Define Ext4 Chart appropriate type
-//		if(horizontal){
-//			if(this.chartConfig.type == 'stacked-barchart' || this.chartConfig.type == 'percent-stacked-barchart'){
-//				chartType = 'bar';
-//				isStacked = true;
-//			}else{
-//				chartType = 'bar';
-//			}
-//		} else {
-//			if(this.chartConfig.type == 'stacked-barchart' || this.chartConfig.type == 'percent-stacked-barchart'){
-//				chartType = 'column';
-//				isStacked = true;
-//			}else{
-//				chartType = 'column';
-//			}
-//		}
-		
 		var chartType = 'line'; 
-		isStacked = false;
+		var isStacked = false;
+
+		//Chart Type is 'side-by-side-linechart'		
 		
 		//Create Axes Configuration
 		var chartAxes = this.createAxes(horizontal, items, percent);
@@ -266,66 +248,68 @@ Ext.extend(Sbi.cockpit.widgets.linechart.LineChartWidget, Sbi.cockpit.widgets.ch
 		
 		var seriesNames = [];
 		var displayNames = [];
-		
-
+				
 		//Extract technical series names and corresponding name to display
 		for (var i=0; i< items.series.length; i++){
+			
 			var name;
 			if (horizontal){
 				name = items.series[i].xField;
 			} else {
 				name = items.series[i].yField;
 			}
-			seriesNames.push(name);
+			//seriesNames.push(name);
 			var displayName = items.series[i].displayName;
-			displayNames.push(displayName);
+			//displayNames.push(displayName);
+		
+		
+			var areaFill = this.chartConfig.colorarea;
+			
+			//Costruct the series object(s)
+			var aSerie = {			
+					fill: areaFill,
+	                type: chartType,
+	                highlight: {
+	                    size: 7,
+	                    radius: 7
+	                },
+	                axis: axisPosition,
+	                smooth: true,
+	                stacked: isStacked,
+	                xField: "categories",
+	                yField: name,	                
+	                title: displayName,
+	    	        tips: {
+		            	  trackMouse: true,
+		            	  minWidth: 140,
+		            	  maxWidth: 300,
+		            	  width: 'auto',
+		            	  minHeight: 28,
+		            	  renderer: function(storeItem, item) {
+		            		   //this.setTitle(String(item.value[0])+" : "+String(item.value[1]));	            		  
+		            		   var tooltipContent = thisPanel.getTooltip(storeItem, item);
+		            		   this.setTitle(tooltipContent);
+		            	  }
+	    	        },
+	    	        listeners: {
+			  			itemmousedown:function(obj) {
+			  				var categoryField ;
+			  				var valueField ;
+			  				categoryField = obj.storeItem.data[obj.series.xField];
+			  				valueField = obj.storeItem.data[obj.series.xField];	  				
+		  		    		var selections = {};
+			  				var values =  [];
+			  				selections[displayNames] = {};
+		  		    		selections[displayNames].values = values; //manage multi-selection!
+		  		    		Ext.Array.include(selections[displayNames].values, valueField);
+		  		    		thisPanel.fireEvent('selection', thisPanel, selections);
+			  			}
+				}
+	                
+	         };
+			
+			series.push(aSerie);
 		}
-		
-		var areaFill = this.chartConfig.colorarea;
-		
-		//Costruct the series object(s)
-		var aSerie = {			
-				fill: areaFill,
-                type: chartType,
-                highlight: {
-                    size: 7,
-                    radius: 7
-                },
-                axis: axisPosition,
-                smooth: true,
-                stacked: isStacked,
-                xField: "categories",
-                yField: seriesNames,	                
-                title: displayNames,
-    	        tips: {
-	            	  trackMouse: true,
-	            	  minWidth: 140,
-	            	  maxWidth: 300,
-	            	  width: 'auto',
-	            	  minHeight: 28,
-	            	  renderer: function(storeItem, item) {
-	            		   //this.setTitle(String(item.value[0])+" : "+String(item.value[1]));	            		  
-	            		   var tooltipContent = thisPanel.getTooltip(storeItem, item);
-	            		   this.setTitle(tooltipContent);
-	            	  }
-    	        },
-    	        listeners: {
-		  			itemmousedown:function(obj) {
-		  				var categoryField ;
-		  				var valueField ;
-		  				categoryField = obj.storeItem.data[obj.series.xField];
-		  				valueField = obj.storeItem.data[obj.series.xField];	  				
-	  		    		var selections = {};
-		  				var values =  [];
-		  				selections[displayNames] = {};
-	  		    		selections[displayNames].values = values; //manage multi-selection!
-	  		    		Ext.Array.include(selections[displayNames].values, valueField);
-	  		    		thisPanel.fireEvent('selection', thisPanel, selections);
-		  			}
-			}
-                
-         };
-		series.push(aSerie);
 		
 		return series;
 	}
@@ -359,6 +343,7 @@ Ext.extend(Sbi.cockpit.widgets.linechart.LineChartWidget, Sbi.cockpit.widgets.ch
 			seriesNames.push(name);
 		}
 
+		
 		axes = [{
 			type: "Numeric",
 			minimum: 0,
@@ -465,7 +450,7 @@ Ext.extend(Sbi.cockpit.widgets.linechart.LineChartWidget, Sbi.cockpit.widgets.ch
 			}
 			
 			seriesForChart.push(serie);
-		}
+		}		
 		return seriesForChart;
 	}
 
