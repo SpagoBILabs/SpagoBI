@@ -818,7 +818,16 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 				   }
 				   var view = this.getView();
 				   var cell = view.getCell(e.row, e.column);
-			  	   cell.textContent = val;
+				   
+		            var browser = this.detectBrowser();
+		            if(browser != null && browser == 'IE'){
+		            	 cell.innerText = val; 
+		            }	
+		            else{
+		            	 cell.textContent = val; 
+		            }
+				   
+			  	  
 			   }
 			   if (t === 'float') {
 				   var dottedVal = '.00';
@@ -1554,13 +1563,30 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
         		Ccell.setStyle('background-color', colSum);
         		Ccell.setStyle('fontWeight', 'bold');
         		Ccell.setStyle('align', 'right');
+        	
+	            var browser = this.detectBrowser();
+	            var IE = false;
+	            if(browser != null && browser == 'IE'){
+	            	IE = true;
+	            }		
         		
+        		if(IE == false){
         		if(cell.textContent && this.isNumeric(cell.textContent)){
         				cell.textContent = cell.textContent;
             			//Ccell.setStyle('padding-left', '20');
         				if(innerCell != null){
                 			innerCell.setStyle('line-height', '10px');
                 		}
+        		}
+        		}
+        		else{
+            		if(cell.innerText && this.isNumeric(cell.innerText)){
+        				cell.innerText = cell.innerText;
+            			//Ccell.setStyle('padding-left', '20');
+        				if(innerCell != null){
+                			innerCell.setStyle('line-height', '10px');
+                		}
+        		}
         		}
         		
         		// remove content and add simple value in order to remove the editor
@@ -1580,10 +1606,31 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 			if((coord.column +1) == column && coord.row > row){
 				// found cell to update
 				var cell = view.getCell(coord.row, coord.column+1);
-		  		var previousTotal = parseFloat(cell.textContent);
-	    		// add to previous total the difference between new and old value
-		  		var newTotal = previousTotal - previousValue + parseFloat(newValue)
-		  		cell.textContent = newTotal;
+				
+				
+	            var browser = this.detectBrowser();
+	            var IE = false;
+	            if(browser != null && browser == 'IE'){
+	            	IE = true;
+	            }				
+				
+	            
+	            
+		  		var previousTotal; 
+		  			
+		  		if(IE == true){
+		  			previousTotal = parseFloat(cell.innerText);
+			  		// add to previous total the difference between new and old value
+			  		var newTotal = previousTotal - previousValue + parseFloat(newValue)
+			  		cell.innerText = newTotal;
+		  		}	
+		  		else{
+		  			previousTotal = parseFloat(cell.textContent);
+			  		// add to previous total the difference between new and old value
+			  		var newTotal = previousTotal - previousValue + parseFloat(newValue)
+			  		cell.textContent = newTotal;
+		  		}
+		  		
 		  		foundTotal = true;
 		  		
 			}
