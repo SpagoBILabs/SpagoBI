@@ -63,8 +63,8 @@ Sbi.cockpit.editor.widget.WidgetEditorControlPanel = function(config) {
         layout: {
         	type:'accordion'
         },
-        items:[ this.designerPalettePanel, this.fieldsPalettePanel, this.stylePalettePanel]
-        //items:[ {html: "this.designerPalettePanel"}, this.fieldsPalettePanel, this.stylePalettePanel]
+//        items:[ this.designerPalettePanel, this.fieldsPalettePanel, this.stylePalettePanel]
+        items:[ this.designerPalettePanel, this.fieldsPalettePanel]
 	};
 	
 	Sbi.cockpit.editor.widget.WidgetEditorControlPanel.superclass.constructor.call(this, c);
@@ -74,7 +74,7 @@ Sbi.cockpit.editor.widget.WidgetEditorControlPanel = function(config) {
 Ext.extend(Sbi.cockpit.editor.widget.WidgetEditorControlPanel, Ext.Panel, {
 	fieldsPalettePanel: null,
 	designerPalettePanel: null,
-	stylePalettePanel: null,
+//	stylePalettePanel: null,
 	globalFilters: null,
 	fieldsOptions: null, // JSON object that contains options for attributes (code/description visualization) and measures (scale factor)
 
@@ -107,7 +107,7 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditorControlPanel, Ext.Panel, {
 //			this.fireEvent('toolschange',change);
 //		}, this);
 		
-		this.stylePalettePanel  = new Ext.Panel({html: "Layout Panel"});
+//		this.stylePalettePanel  = new Ext.Panel({html: "Layout Panel"});
 	}
 
 	, fieldDblClickHandler : function (grid, rowIndex, event) {
@@ -173,11 +173,11 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditorControlPanel, Ext.Panel, {
 	}
 	
 	//Update the tools info for the active sheet
-	, updateToolsForActiveTab: function(activeSheet){
-		if ( activeSheet.sheetLayout !== null ) {
-			this.stylePalettePanel.setLayoutValue(activeSheet.sheetLayout);
-		}
-	}
+//	, updateToolsForActiveTab: function(activeSheet){
+//		if ( activeSheet.sheetLayout !== null ) {
+//			this.stylePalettePanel.setLayoutValue(activeSheet.sheetLayout);
+//		}
+//	}
 	
 	, refresh: function(){
 		this.fieldsPalettePanel.refresh();
