@@ -565,15 +565,16 @@ public class StaticPivotResource extends AbstractCockpitEngineResource {
 	}
 	
 	public List<String> getAllFields() {
-		WorksheetEngineInstance engineInstance = this.getEngineInstance();
-		WorkSheetDefinition workSheetDefinition = (WorkSheetDefinition) engineInstance.getAnalysisState();
-		List<Field> fields = workSheetDefinition.getAllFields();
-		Iterator<Field> it = fields.iterator();
+//		WorksheetEngineInstance engineInstance = this.getEngineInstance();
+//		WorkSheetDefinition workSheetDefinition = (WorkSheetDefinition) engineInstance.getAnalysisState();
+//		List<Field> fields = workSheetDefinition.getAllFields();
+//		Iterator<Field> it = fields.iterator();
+//		List<String> toReturn = new ArrayList<String>();
+//		while (it.hasNext()) {
+//			Field field = it.next();
+//			toReturn.add(field.getEntityId());
+//		}
 		List<String> toReturn = new ArrayList<String>();
-		while (it.hasNext()) {
-			Field field = it.next();
-			toReturn.add(field.getEntityId());
-		}
 		return toReturn;
 	}
 	
@@ -587,6 +588,10 @@ public class StaticPivotResource extends AbstractCockpitEngineResource {
 		this.getHttpSession().setAttribute(attributeName, recorder);
 	}
 	
+	public static final String WORKSHEETS_ADDITIONAL_DATA_FIELDS_OPTIONS_OPTIONS = "options";
+	public static final String WORKSHEETS_ADDITIONAL_DATA_FIELDS_OPTIONS_SCALE_FACTOR = "measureScaleFactor";
+	
+	
 	private void addMeasuresScaleFactor(JSONArray fieldOptions, String fieldId,
 			FieldMetadata newFieldMetadata) {
 		if (fieldOptions != null) {
@@ -594,14 +599,14 @@ public class StaticPivotResource extends AbstractCockpitEngineResource {
 				try {
 					JSONObject afield = fieldOptions.getJSONObject(i);
 					JSONObject aFieldOptions = afield
-							.getJSONObject(WorkSheetSerializationUtils.WORKSHEETS_ADDITIONAL_DATA_FIELDS_OPTIONS_OPTIONS);
+							.getJSONObject(WORKSHEETS_ADDITIONAL_DATA_FIELDS_OPTIONS_OPTIONS);
 					String afieldId = afield.getString("id");
 					String scaleFactor = aFieldOptions
-							.optString(WorkSheetSerializationUtils.WORKSHEETS_ADDITIONAL_DATA_FIELDS_OPTIONS_SCALE_FACTOR);
+							.optString(WORKSHEETS_ADDITIONAL_DATA_FIELDS_OPTIONS_SCALE_FACTOR);
 					if (afieldId.equals(fieldId) && scaleFactor != null) {
 						newFieldMetadata
 						.setProperty(
-								WorkSheetSerializationUtils.WORKSHEETS_ADDITIONAL_DATA_FIELDS_OPTIONS_SCALE_FACTOR,
+								WORKSHEETS_ADDITIONAL_DATA_FIELDS_OPTIONS_SCALE_FACTOR,
 								scaleFactor);
 						return;
 					}
