@@ -5,14 +5,10 @@ import it.eng.qbe.query.WhereField;
 import it.eng.qbe.query.WhereField.Operand;
 import it.eng.qbe.serializer.SerializationManager;
 import it.eng.qbe.statement.AbstractStatement;
+import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.engine.cockpit.api.AbstractCockpitEngineResource;
-import it.eng.spagobi.engines.worksheet.WorksheetEngineInstance;
-import it.eng.spagobi.engines.worksheet.bo.Field;
-import it.eng.spagobi.engines.worksheet.bo.WorkSheetDefinition;
-import it.eng.spagobi.engines.worksheet.exceptions.WrongConfigurationForFiltersOnDomainValuesException;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCHiveDataSet;
@@ -27,15 +23,18 @@ import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
 import it.eng.spagobi.tools.dataset.persist.DataSetTableDescriptor;
 import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
 import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.database.temporarytable.TemporaryTable;
 import it.eng.spagobi.utilities.database.temporarytable.TemporaryTableManager;
+import it.eng.spagobi.utilities.database.temporarytable.TemporaryTableRecorder;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -398,10 +397,19 @@ public class StaticPivotResource extends AbstractCockpitEngineResource {
 			return TemporaryTableManager.getLastDataSetTableDescriptor(tableName);
 		}
 
+		IDataSource dataSource = null;
+		
+		try{
+			IDataSourceDAO dataSourceDAO = DAOFactory.getDataSourceDAO();
+			dataSource = dataSourceDAO.loadDataSourceWriteDefault();
+		} catch (Throwable e) {
+			throw new SpagoBIEngineRuntimeException(e);
+		}
+		
 		//drop the temporary table if one exists
-		try {
+		try {			
 			logger.debug("Signature does not match: dropping TemporaryTable " + tableName + " if it exists...");
-			TemporaryTableManager.dropTableIfExists(tableName, getEngineInstance().getDataSourceForWriting());
+			TemporaryTableManager.dropTableIfExists(tableName, dataSource);
 		} catch (Exception e) {
 			logger.error("Impossible to drop the temporary table with name " + tableName, e);
 			throw new SpagoBIEngineRuntimeException("Impossible to drop the temporary table with name " + tableName, e);
@@ -412,8 +420,8 @@ public class StaticPivotResource extends AbstractCockpitEngineResource {
 		try {
 			logger.debug("Persisting dataset ...");
 			
-			td = dataset.persist(tableName, getEngineInstance().getDataSourceForWriting());
-			this.recordTemporaryTable(tableName, getEngineInstance().getDataSourceForWriting());
+			td = dataset.persist(tableName, dataSource);
+			this.recordTemporaryTable(tableName, dataSource);
 			
 			/**
 			 * Do not remove comments from the following line: we cannot change
@@ -445,8 +453,7 @@ public class StaticPivotResource extends AbstractCockpitEngineResource {
 
 		UserProfile userProfile = (UserProfile)getEnv().get(EngineConstants.ENV_USER_PROFILE);
 
-		logger.debug("Querying dataset's flat/persistence table: user [" + userProfile.getUserId() + "] (SQL): [" + worksheetQuery + "]");
-		auditlogger.info("Querying dataset's flat/persistence table: user [" + userProfile.getUserId() + "] (SQL): [" + worksheetQuery + "]");
+		logger.debug("Querying dataset's flat/persistence table: user [" + userProfile.getUserId() + "] (SQL): [" + worksheetQuery + "]");		
 
 		try {
 
@@ -471,37 +478,36 @@ public class StaticPivotResource extends AbstractCockpitEngineResource {
 			logger.debug("OUT");
 			return dataStore;
 		} catch (Exception e) {
-			logger.debug("Query execution aborted because of an internal exception");
-			String message = "An error occurred in " + getActionName() + " service while querying temporary table";				
-			SpagoBIEngineServiceException exception = new SpagoBIEngineServiceException(getActionName(), message, e);
-			exception.addHint("Check if the crosstab's query is properly formed: [" + worksheetQuery + "]");
-			exception.addHint("Check connection configuration: connection's user must have DROP and CREATE privileges");
-			throw exception;
+			logger.debug("Query execution aborted because of an internal exception");			
+			
+			throw new SpagoBIEngineRuntimeException(e);
 		}
 	}
 
 
-	private IDataStore useTemporaryTableStrategy(String worksheetQuery,
-			Integer start, Integer limit) {
+	private IDataStore useTemporaryTableStrategy(String worksheetQuery,Integer start, Integer limit) {
 
+		IDataSource dataSource = null;
+		
+		try{
+			IDataSourceDAO dataSourceDAO = DAOFactory.getDataSourceDAO();
+			dataSource = dataSourceDAO.loadDataSourceWriteDefault();
+		} catch (Throwable e) {
+			throw new SpagoBIEngineRuntimeException(e);
+		}
+		
 		IDataStore dataStore = null;
 
-		UserProfile userProfile = (UserProfile)getEnv().get(EngineConstants.ENV_USER_PROFILE);
-		IDataSource dataSource = this.getEngineInstance().getDataSourceForWriting();
+		UserProfile userProfile = (UserProfile)getEnv().get(EngineConstants.ENV_USER_PROFILE);		
 
-		logger.debug("Querying temporary table: user [" + userProfile.getUserId() + "] (SQL): [" + worksheetQuery + "]");
-		auditlogger.info("Querying temporary table: user [" + userProfile.getUserId() + "] (SQL): [" + worksheetQuery + "]");
+		logger.debug("Querying temporary table: user [" + userProfile.getUserId() + "] (SQL): [" + worksheetQuery + "]");		
 
 		try {
 			dataStore = TemporaryTableManager.queryTemporaryTable(worksheetQuery, dataSource, start, limit);
 		} catch (Exception e) {
 			logger.debug("Query execution aborted because of an internal exception");
-			String message = "An error occurred in " + getActionName() + " service while querying temporary table";				
-			SpagoBIEngineServiceException exception = new SpagoBIEngineServiceException(getActionName(), message, e);
-			//			exception.addHint("Check if the base query is properly formed: [" + baseQuery + "]");
-			exception.addHint("Check if the crosstab's query is properly formed: [" + worksheetQuery + "]");
-			exception.addHint("Check connection configuration: connection's user must have DROP and CREATE privileges");
-			throw exception;
+			
+			throw new SpagoBIEngineRuntimeException(e);
 		}
 		return dataStore;
 	}
@@ -544,14 +550,17 @@ public class StaticPivotResource extends AbstractCockpitEngineResource {
 	}
 	
 	public Map<String, List<String>> getFiltersOnDomainValues() {
-		WorksheetEngineInstance engineInstance = this.getEngineInstance();
-		WorkSheetDefinition workSheetDefinition = (WorkSheetDefinition) engineInstance.getAnalysisState();
-		Map<String, List<String>> toReturn = null;
-		try {
-			toReturn = workSheetDefinition.getFiltersOnDomainValues();
-		} catch (WrongConfigurationForFiltersOnDomainValuesException e) {
-			throw new SpagoBIEngineServiceException(this.getActionName(), e.getMessage(), e);
-		}
+//		WorksheetEngineInstance engineInstance = this.getEngineInstance();
+//		WorkSheetDefinition workSheetDefinition = (WorkSheetDefinition) engineInstance.getAnalysisState();
+//		Map<String, List<String>> toReturn = null;
+//		try {
+//			toReturn = workSheetDefinition.getFiltersOnDomainValues();
+//		} catch (WrongConfigurationForFiltersOnDomainValuesException e) {
+//			throw new SpagoBIEngineServiceException(this.getActionName(), e.getMessage(), e);
+//		}
+		
+		Map<String, List<String>> toReturn = new HashMap();
+		
 		return toReturn;
 	}
 	
@@ -566,5 +575,42 @@ public class StaticPivotResource extends AbstractCockpitEngineResource {
 			toReturn.add(field.getEntityId());
 		}
 		return toReturn;
+	}
+	
+	private void recordTemporaryTable(String tableName, IDataSource dataSource) {
+		String attributeName = TemporaryTableRecorder.class.getName();
+		TemporaryTableRecorder recorder = (TemporaryTableRecorder) this.getHttpSession().getAttribute(attributeName);
+		if (recorder == null) {
+			recorder = new TemporaryTableRecorder();
+		}
+		recorder.addTemporaryTable(new TemporaryTable(tableName, dataSource));
+		this.getHttpSession().setAttribute(attributeName, recorder);
+	}
+	
+	private void addMeasuresScaleFactor(JSONArray fieldOptions, String fieldId,
+			FieldMetadata newFieldMetadata) {
+		if (fieldOptions != null) {
+			for (int i = 0; i < fieldOptions.length(); i++) {
+				try {
+					JSONObject afield = fieldOptions.getJSONObject(i);
+					JSONObject aFieldOptions = afield
+							.getJSONObject(WorkSheetSerializationUtils.WORKSHEETS_ADDITIONAL_DATA_FIELDS_OPTIONS_OPTIONS);
+					String afieldId = afield.getString("id");
+					String scaleFactor = aFieldOptions
+							.optString(WorkSheetSerializationUtils.WORKSHEETS_ADDITIONAL_DATA_FIELDS_OPTIONS_SCALE_FACTOR);
+					if (afieldId.equals(fieldId) && scaleFactor != null) {
+						newFieldMetadata
+						.setProperty(
+								WorkSheetSerializationUtils.WORKSHEETS_ADDITIONAL_DATA_FIELDS_OPTIONS_SCALE_FACTOR,
+								scaleFactor);
+						return;
+					}
+				} catch (Exception e) {
+					throw new RuntimeException(
+							"An unpredicted error occurred while adding measures scale factor",
+							e);
+				}
+			}
+		}
 	}
 }
