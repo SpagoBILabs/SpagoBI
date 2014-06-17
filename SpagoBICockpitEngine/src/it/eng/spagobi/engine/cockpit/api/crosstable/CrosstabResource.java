@@ -5,7 +5,6 @@ import it.eng.qbe.query.WhereField;
 import it.eng.qbe.query.WhereField.Operand;
 import it.eng.qbe.serializer.SerializationManager;
 import it.eng.qbe.statement.AbstractStatement;
-import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.engine.cockpit.api.AbstractCockpitEngineResource;
@@ -61,9 +60,9 @@ import com.jamonapi.MonitorFactory;
  * 
  */
 @Path("/1.0/crosstab")
-public class StaticPivotResource extends AbstractCockpitEngineResource {
+public class CrosstabResource extends AbstractCockpitEngineResource {
 
-	static private Logger logger = Logger.getLogger(StaticPivotResource.class);
+	static private Logger logger = Logger.getLogger(CrosstabResource.class);
 	
 	// INPUT PARAMETERS
 	private static final String CROSSTAB_DEFINITION = QbeEngineStaticVariables.CROSSTAB_DEFINITION;
