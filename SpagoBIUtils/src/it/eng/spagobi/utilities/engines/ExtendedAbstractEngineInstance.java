@@ -7,7 +7,6 @@
 package it.eng.spagobi.utilities.engines;
 
 import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.engines.whatif.template.WhatIfXMLTemplateParser;
 import it.eng.spagobi.services.proxy.DataSourceServiceProxy;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
