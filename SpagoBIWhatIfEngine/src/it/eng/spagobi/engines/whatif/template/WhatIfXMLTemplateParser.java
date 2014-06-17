@@ -70,6 +70,8 @@ public class WhatIfXMLTemplateParser implements IWhatIfTemplateParser {
 	public static final String TAG_MDX = "MDX";
 	public static final String TAG_CONNECTIONSTRING = "CONNECTIONSTRING";
 	public static final String TAG_DRIVER = "DRIVER";
+	public static final String TAG_DIALECT = "DIALECT";
+	
 	public static final String STAD_ALONE_DS_LABEL = "STAD_ALONE_DS_LABEL";
 
 
@@ -375,6 +377,7 @@ public class WhatIfXMLTemplateParser implements IWhatIfTemplateParser {
 				ds.setJndi(getBeanValue(TAG_JNDI_NAME, connectionProperties));
 			} else {
 				ds.setPwd(getBeanValue(TAG_PWD, connectionProperties));
+				ds.setHibDialectClass(getBeanValue(TAG_DIALECT, connectionProperties));
 				ds.setUser(getBeanValue(TAG_USR, connectionProperties));
 				ds.setUrlConnection(getBeanValue(TAG_CONNECTIONSTRING, connectionProperties));
 				ds.setDriver(getBeanValue(TAG_DRIVER, connectionProperties));

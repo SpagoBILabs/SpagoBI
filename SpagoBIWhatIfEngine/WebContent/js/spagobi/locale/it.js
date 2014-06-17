@@ -65,6 +65,8 @@ Sbi.locale.ln['sbi.common.close'] = 'Chiudi';
 Sbi.locale.ln['sbi.common.ok'] = 'Ok';
 Sbi.locale.ln['sbi.common.select'] = 'Ok';
 Sbi.locale.ln['sbi.common.warning'] = 'Attenzione';
+Sbi.locale.ln['sbi.common.next'] = 'Successivo';
+Sbi.locale.ln['sbi.common.prev'] = 'Precedente';
 
 //===================================================================
 //TOOLBAR
@@ -134,3 +136,23 @@ Sbi.locale.ln['sbi.olap.toolbar.versionmanagerwindow.version.title'] = 'Selezion
 Sbi.locale.ln['sbi.olap.toolbar.versionmanagerwindow.version.select.warning'] = 'Attenzione: questa operazione potrebbe richiedere qualche minuto. ';
 Sbi.locale.ln['sbi.olap.control.controller.delete.version.ok'] = 'Le versioni sono state eliminate correttamente.';
 //Sbi.locale.ln['sbi.olap.control.controller.delete.version.error'] = 'Si è verificato un errore nella cancellazione delle versioni. Controllare il log.';
+
+//===================================================================
+//OUTPUT
+//===================================================================
+Sbi.locale.ln['sbi.olap.toolbar.export.wizard.type.table.name'] = "Nome tabella";
+Sbi.locale.ln['sbi.olap.toolbar.export.wizard.type.table.description'] = "Inserire il nome della tabella di output";
+Sbi.locale.ln['sbi.olap.toolbar.export.wizard.type.csv.row.delimiter'] = "Delimitatore di riga";
+Sbi.locale.ln['sbi.olap.toolbar.export.wizard.type.csv.filter.delimiter'] = "Delimitatore tra i campi";
+Sbi.locale.ln['sbi.olap.toolbar.export.wizard.type.csv.description'] = "Inserire le opzioni per il file csv. L'export CSV \u00E9 un operazione da eseguire solo con cubi piccoli, altrimenti la richiesta di risorse potrebbe essere considerevole";
+Sbi.locale.ln['sbi.olap.toolbar.export.wizard.type.table'] = "tabella";
+Sbi.locale.ln['sbi.olap.toolbar.export.wizard.type.csv'] = "file";
+Sbi.locale.ln['sbi.olap.toolbar.export.wizard.type'] = "Output type";
+Sbi.locale.ln['sbi.olap.toolbar.export.wizard.type.description'] = "Selezionare il tipo di output per l\'analisi. Quest'operazione potr\u00E2 richiedere qualche minuto. Nel frattempo \u00E9 comunuqe possibile lavorare sul cubo di analisi";
+Sbi.locale.ln['sbi.olap.toolbar.export.wizard.title'] = "Output wizard";
+Sbi.locale.ln['sbi.olap.toolbar.export.wizard.version'] = "Versione da esportare";
+Sbi.locale.ln['sbi.olap.toolbar.exportoutput'] = "Output wizard";
+Sbi.locale.ln['sbi.olap.toolbar.exportoutput.ok'] = "Analisi esportatta correttamente";
+Sbi.locale.ln['sbi.olap.toolbar.exportoutput.error'] = "Si \u00e8 verificato un errore in fase di export";
+Sbi.locale.ln['sbi.olap.toolbar.exportoutput.csv.window'] = "<h1>Export the output in CSV</h1><p>Questa operazione potrebbe richiedere qualche minuto. \u00C8 comunque possibile continuare a lavorare sul cubo di analisi</p>";
+

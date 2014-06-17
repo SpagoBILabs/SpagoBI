@@ -6,6 +6,11 @@
 
 package it.eng.spagobi.writeback4j.sql;
 
+import it.eng.spagobi.engines.whatif.model.SpagoBICellWrapper;
+import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
+import it.eng.spagobi.tools.dataset.persist.PersistedTableManager;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.utilities.database.temporarytable.TemporaryTableManager;
 import it.eng.spagobi.writeback4j.IMemberCoordinates;
 import it.eng.spagobi.writeback4j.ISchemaRetriver;
 
@@ -22,6 +27,11 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.axis.utils.ByteArrayOutputStream;
+import org.apache.log4j.Logger;
+import org.olap4j.metadata.Member;
+import org.olap4j.metadata.Dimension.Type;
+
+import com.eyeq.pivot4j.PivotModel;
 
 
 
@@ -30,17 +40,34 @@ import org.apache.axis.utils.ByteArrayOutputStream;
  */
 public class AnalysisExporter extends AbstractSqlSchemaManager{
 
-	public AnalysisExporter( ISchemaRetriver retriver){
+	private static transient Logger logger = Logger.getLogger(AnalysisExporter.class);
+	private PivotModel model;
+	
+	
+	public AnalysisExporter(PivotModel model, ISchemaRetriver retriver){
 		this.retriver = retriver;
+		this.model = model;
 	}
 
-	public byte[] exportCSV(List<IMemberCoordinates> memberCordinates, Connection connection, Integer version, String fieldSeparator, String lineSeparator)  throws Exception{
-		ResultSet resultSet =  executeExportDataQuery(memberCordinates, connection, version);
+	/**
+	 * Export the output table in CSV
+	 * @param connection the connection to the output table
+	 * @param version the version to export
+	 * @param fieldSeparator the separator of fields
+	 * @param lineSeparator the separator between lines
+	 * @return
+	 * @throws Exception
+	 */
+	public byte[] exportCSV(Connection connection, Integer version, String fieldSeparator, String lineSeparator)  throws Exception{
+		
+		logger.debug("IN");
+		ResultSet resultSet =  executeExportDataQuery(connection, version);
 
+		logger.debug("Initializing the output stream");
 		ByteArrayOutputStream fos = new ByteArrayOutputStream();   
 		Writer out = new OutputStreamWriter(fos);      
 
-
+		logger.debug("Starts to navigate the result set");
 		int ncols = resultSet.getMetaData().getColumnCount(); 
 		for (int j=1; j<(ncols+1); j++) {     
 			out.append(resultSet.getMetaData().getColumnName (j));       
@@ -59,11 +86,77 @@ public class AnalysisExporter extends AbstractSqlSchemaManager{
 
 		}  
 
-		return fos.toByteArray();
+		logger.debug("Finished to navigate the result set");
+		byte[] toReturn = fos.toByteArray();
+		logger.debug("OUT");
+		
+		return toReturn;
+	}
+	
+	/**
+	 * Export the output table in an external table
+	 * @param connection the connection to the output table
+	 * @param version the version to export
+	 * @param writeDataSource the datasource for the new table
+	 * @param tableName the new table name
+	 * @throws Exception
+	 */
+	public void exportTable(Connection connection, IDataSource readDataSource, IDataSource writeDataSource, Integer version,  String tableName)  throws Exception{
+		logger.debug("IN");
+		String sqlStatement =  buildExportDataQuery( connection, version);
+		logger.debug("Sql statement built. Peristing the table");
+		JDBCDataSet dataset = new JDBCDataSet();
+		dataset.setDataSource(readDataSource);
+		dataset.setQuery(sqlStatement);
+		
+		PersistedTableManager persister = new PersistedTableManager();
+		persister.persistDataSet(dataset, writeDataSource, tableName);
+		logger.debug("OUT");
 	}
 
-	private ResultSet executeExportDataQuery(List<IMemberCoordinates> memberCordinates, Connection connection, Integer version) throws Exception{
 
+	/**
+	 * Execute the export query
+	 * @param connection the connection to the output table
+	 * @param version the version to export
+	 * @return
+	 * @throws Exception
+	 */
+	private ResultSet executeExportDataQuery(Connection connection, Integer version) throws Exception{
+		logger.debug("IN");
+		String queryString = buildExportDataQuery( connection, version);
+		logger.debug("Sql statement built.");
+		SqlQueryStatement exportStatement = new SqlQueryStatement(queryString);
+		ResultSet resultset = exportStatement.getValues(connection);
+		logger.debug("OUT");
+		return resultset;
+	}
+	
+	/**
+	 * Builds the export query
+	 * @param connection the connection to the output table
+	 * @param version the version to export
+	 * @return
+	 * @throws Exception
+	 */
+	private String buildExportDataQuery( Connection connection, Integer version) throws Exception{
+		logger.debug("IN");
+		
+		//get the coordinates of a cell (used only to get the involved dimensions)
+		SpagoBICellWrapper cellWrapper = (SpagoBICellWrapper)model.getCellSet().getCell(0);
+		List<IMemberCoordinates> memberCordinates = new ArrayList<IMemberCoordinates>();
+		Member[] members = cellWrapper.getMembers();
+
+		//gets the measures and the coordinates of the dimension members 
+		for (int i=0; i< members.length; i++) {
+			Member aMember = members[i];
+			if(!(aMember.getDimension().getDimensionType().equals(Type.MEASURE))){
+				memberCordinates.add(retriver.getMemberCordinates(aMember));
+			}
+		}
+		
+		
+		logger.debug("The coordinates are "+memberCordinates);
 		//List of where conditions
 		Map<TableEntry, String> whereConditions = new HashMap<TableEntry, String>();
 
@@ -76,8 +169,11 @@ public class AnalysisExporter extends AbstractSqlSchemaManager{
 
 		StringBuffer degenerateDimensionConditions = new StringBuffer();
 
+		//for each dimension get the clauses
 		for (Iterator<IMemberCoordinates> iterator = memberCordinates.iterator(); iterator.hasNext();) {
 			IMemberCoordinates aIMemberCordinates = (IMemberCoordinates) iterator.next();
+			
+			logger.debug("Exploring the coordinate "+aIMemberCordinates.toString());
 			if(aIMemberCordinates.getTableName()==null){//degenerate dimension
 				//create a where in the cube for each level of the degenerate dimension
 				Map<TableEntry, String> where = buildWhereConditions(aIMemberCordinates, null);
@@ -85,25 +181,27 @@ public class AnalysisExporter extends AbstractSqlSchemaManager{
 				cubeTable2Alias.put(null, getCubeAlias());
 				addWhereCondition(degenerateDimensionConditions, where, cubeTable2Alias, version);
 			}else{
+				//join condition between the dimension and the cube
 				addJoinConditions(fromTables, joinConditions, aIMemberCordinates, true);
+				//join condition for the tables inside the dimension
 				addInnerDimensionJoinConditions(fromTables, joinConditions, aIMemberCordinates);
 			}
 		}
-
+		
+		logger.debug("Starting to build the query");
 		StringBuffer query = new StringBuffer();
 		buildQueryForExport(memberCordinates, whereConditions, joinConditions, fromTables, query);
 		query.append(" and ");
 		query.append(degenerateDimensionConditions);
 		String queryString = query.toString();
 
-		SqlQueryStatement exportStatement = new SqlQueryStatement(queryString);
-		ResultSet resultset = exportStatement.getValues(connection);
-		return resultset;
+		logger.debug("OUT");
+		return queryString;
 	}
 
 
 	private void buildQueryForExport(List<IMemberCoordinates> memberCordinates, Map<TableEntry, String> whereConditions, Set<EquiJoin> joinConditions, Set<String> fromTables, StringBuffer query){
-
+		logger.debug("IN");
 		Map<String, String> table2Alias = new HashMap<String, String>();
 		getTableAlias(table2Alias, getCubeAlias());
 
@@ -125,11 +223,18 @@ public class AnalysisExporter extends AbstractSqlSchemaManager{
 		query.append(from);
 		query.append(" where ");
 		query.append(where);
+		logger.debug("OUT");
 	}
 
 
+	/**
+	 * Build the select clause. Get a select statement for each levels of all dimensions 
+	 * @param memberCordinates
+	 * @param table2Alias
+	 * @param query
+	 */
 	private void buildSelectClauseForExport(List<IMemberCoordinates> memberCordinates, Map<String, String> table2Alias, StringBuffer query){
-
+		logger.debug("IN");
 		List<String> selects = new ArrayList<String>();
 
 		//for each dimension get the columns of each level
@@ -164,6 +269,7 @@ public class AnalysisExporter extends AbstractSqlSchemaManager{
 		}
 
 		query.deleteCharAt(query.length()-1);
+		logger.debug("OUT");
 	}
 
 

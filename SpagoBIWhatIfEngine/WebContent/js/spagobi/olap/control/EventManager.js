@@ -352,6 +352,13 @@ Ext.define('Sbi.olap.control.EventManager', {
 		}
 	}	
 	
+	/**
+	 * Call the rest service to export the output
+	 */
+	,exportOutput: function(params){
+		this.olapController.exportOutput(params);
+	}
+	
 	,executeService: function(){
 		this.loadingMask.show();
 	}

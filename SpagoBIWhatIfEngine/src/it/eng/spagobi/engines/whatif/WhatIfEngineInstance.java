@@ -19,9 +19,9 @@ import it.eng.spagobi.services.proxy.ArtifactServiceProxy;
 import it.eng.spagobi.services.proxy.EventServiceProxy;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
-import it.eng.spagobi.utilities.engines.AbstractEngineInstance;
 import it.eng.spagobi.utilities.engines.AuditServiceProxy;
 import it.eng.spagobi.utilities.engines.EngineConstants;
+import it.eng.spagobi.utilities.engines.ExtendedAbstractEngineInstance;
 import it.eng.spagobi.utilities.engines.IEngineAnalysisState;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
@@ -45,7 +45,7 @@ import com.eyeq.pivot4j.PivotModel;
 /**
  * @author ...
  */
-public class WhatIfEngineInstance extends AbstractEngineInstance implements Serializable {
+public class WhatIfEngineInstance extends ExtendedAbstractEngineInstance implements Serializable {
 	
 	private static final long serialVersionUID = 1329486982941461093L;
 
@@ -59,6 +59,7 @@ public class WhatIfEngineInstance extends AbstractEngineInstance implements Seri
 	private String mondrianSchemaFilePath;
 	private WriteBackManager writeBackManager;
 	private boolean standalone = false;
+	private IDataSource dataSourceForWriting;
 	
 	protected WhatIfEngineInstance(Object template, Map env) {
 		this( WhatIfTemplateParser.getInstance() != null ? WhatIfTemplateParser.getInstance().parse(template) : null, env );
@@ -142,7 +143,9 @@ public class WhatIfEngineInstance extends AbstractEngineInstance implements Seri
 			
 			String locker = getArtifactLocker(getEnv());
 			logger.debug("Artifact locker is "+locker);
-			modelConfig.setLocker(locker);			
+			modelConfig.setLocker(locker);	
+			logger.debug("Init the datatsource fro writing");
+			dataSourceForWriting = initDataSourceForWriting();
 		}
 		
 
@@ -206,6 +209,11 @@ public class WhatIfEngineInstance extends AbstractEngineInstance implements Seri
         logger.debug("Reference :" + reference);
         return reference;
 	}
+	
+	private IDataSource initDataSourceForWriting(){
+		return super.getDataSourceForWriting();
+	}
+	
 	
     public Integer getArtifactVersionId(Map env) {
         try {
@@ -355,6 +363,14 @@ public class WhatIfEngineInstance extends AbstractEngineInstance implements Seri
 
 	public void setStandalone(boolean standalone) {
 		this.standalone = standalone;
+	}
+
+	public IDataSource getDataSourceForWriting() {
+		if(dataSourceForWriting==null){
+			logger.debug("The datasource for writing is null so we write in the same data source of the cube");
+			return getDataSource();
+		}
+		return dataSourceForWriting;
 	}
 	
 	
