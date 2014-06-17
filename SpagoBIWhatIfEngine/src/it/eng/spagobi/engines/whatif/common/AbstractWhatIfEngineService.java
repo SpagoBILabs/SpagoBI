@@ -29,6 +29,7 @@ import org.olap4j.metadata.Member;
 
 import com.eyeq.pivot4j.PivotModel;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.google.gson.JsonObject;
 
 /**
  * 
@@ -150,7 +151,15 @@ public class AbstractWhatIfEngineService extends AbstractEngineRestService {
 		return ENGINE_NAME;
 	}
 	
-	
+	/**
+	 * Builds a simple success json {result: ok}
+	 * @return
+	 */
+	public String getJsonSuccess(){
+		JsonObject obj = new JsonObject();
+		obj.addProperty("result", "ok");
+		return obj.toString();
+	}
 
 	
 }

@@ -85,8 +85,13 @@ public class MondrianMemberCoordinates implements IMemberCoordinates{
 		return null;
 	}
 
+	
 
-
+	@Override
+	public String toString() {
+		return "MondrianMemberCoordinates [dimension=" + dimension.name
+				+ ", hieararchy=" + hieararchy.name + "]";
+	}
 	public List<TableEntry> getLevels(){
 		if(levels==null){
 			levels = new ArrayList<TableEntry>();

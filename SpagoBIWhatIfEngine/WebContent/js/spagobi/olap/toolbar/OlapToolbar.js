@@ -20,14 +20,7 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 
 	config:{
 		toolbarConfig: {
-			drillType: 'position',
-			showParentMembers: false,
-			hideSpans: false,
-			showProperties: false,
-			dimensionHierarchyMap:{
-				x: 1,
-				y: 2
-			}
+			drillType: 'position'
 		},
 		mdx: ""
 	},
@@ -74,7 +67,7 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
     listeners: {
         render: function() {
                 // After the component has been rendered, disable the default browser context menu
-                Ext.getBody().on("contextmenu", Ext.emptyFn, null, {preventDefault: true});
+                this.on("contextmenu", Ext.emptyFn, null, {preventDefault: true});
         }, 
         contextmenu: function(e) {
         }
@@ -307,6 +300,22 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 					actualVersion: this.modelConfig.actualVersion
 				});
 				window.show();
+			}
+
+		}, sharedConfig);
+		
+		this.buttonsConfigContainer['BUTTON_EXPORT_OUTPUT'] =Ext.apply({
+			tooltip: LN('sbi.olap.toolbar.exportoutput'),
+			iconCls: 'export-icon',
+			label: 'BUTTON_EXPORT_OUTPUT',
+			handler: function() {
+				var window = Ext.create('Sbi.olap.toolbar.ExportWizardWindow',{
+					actualVersion: this.modelConfig.actualVersion
+				});
+				window.show();
+				window.on('exportOutput', function(params){
+					Sbi.olap.eventManager.exportOutput(params);
+				},this)
 			}
 
 		}, sharedConfig);
@@ -624,6 +633,9 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 		if(this.buttonsContainer['BUTTON_SAVE_NEW'] != undefined && this.buttonsContainer['BUTTON_SAVE_NEW'] != null){
 			this.buttonsContainer['BUTTON_SAVE_NEW'].show();
 		}
+		if(this.buttonsContainer['BUTTON_VERSION_MANAGER'] != undefined && this.buttonsContainer['BUTTON_VERSION_MANAGER'] != null){
+			this.buttonsContainer['BUTTON_VERSION_MANAGER'].show();
+		}
 		this.lockModel.hide();
 		this.unlockModel.show();
 		this.lockOtherModel.hide();
@@ -637,6 +649,9 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 		}
 		if(this.buttonsContainer['BUTTON_SAVE_NEW'] != undefined && this.buttonsContainer['BUTTON_SAVE_NEW'] != null){
 			this.buttonsContainer['BUTTON_SAVE_NEW'].hide();
+		}
+		if(this.buttonsContainer['BUTTON_VERSION_MANAGER'] != undefined && this.buttonsContainer['BUTTON_VERSION_MANAGER'] != null){
+			this.buttonsContainer['BUTTON_VERSION_MANAGER'].hide();
 		}
 		this.lockModel.hide();
 		this.unlockModel.hide();
@@ -653,6 +668,9 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 		}
 		if(this.buttonsContainer['BUTTON_SAVE_NEW'] != undefined && this.buttonsContainer['BUTTON_SAVE_NEW'] != null){
 			this.buttonsContainer['BUTTON_SAVE_NEW'].hide();
+		}
+		if(this.buttonsContainer['BUTTON_VERSION_MANAGER'] != undefined && this.buttonsContainer['BUTTON_VERSION_MANAGER'] != null){
+			this.buttonsContainer['BUTTON_VERSION_MANAGER'].hide();
 		}
 		this.lockModel.show();
 		this.unlockModel.hide();
@@ -727,7 +745,7 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 		
 		var buttonCreated = this.createButton(config);
 
-		this.addContextMenuListener(buttonCreated, false);	
+		//this.addContextMenuListener(buttonCreated, false);	
 		
 		// recreate
 		if(alreadyPresent==true){
@@ -924,10 +942,15 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 		if(isWhatIf == undefined || isWhatIf == false){
 			this.modelConfig.toolbarVisibleButtons = this.deleteFromArray(this.modelConfig.toolbarVisibleButtons, 'BUTTON_SAVE');
 			this.modelConfig.toolbarVisibleButtons = this.deleteFromArray(this.modelConfig.toolbarVisibleButtons, 'BUTTON_SAVE_NEW');
-			this.modelConfig.toolbarVisibleButtons = this.deleteFromArray(this.modelConfig.toolbarVisibleButtons, 'BUTTON_UNDO');			
+			this.modelConfig.toolbarVisibleButtons = this.deleteFromArray(this.modelConfig.toolbarVisibleButtons, 'BUTTON_UNDO');	
+			this.modelConfig.toolbarVisibleButtons = this.deleteFromArray(this.modelConfig.toolbarVisibleButtons, 'BUTTON_VERSION_MANAGER');	
+			this.modelConfig.toolbarVisibleButtons = this.deleteFromArray(this.modelConfig.toolbarVisibleButtons, 'BUTTON_EXPORT_OUTPUT');	
 			this.modelConfig.toolbarMenuButtons = this.deleteFromArray(this.modelConfig.toolbarMenuButtons, 'BUTTON_SAVE');
 			this.modelConfig.toolbarMenuButtons = this.deleteFromArray(this.modelConfig.toolbarMenuButtons, 'BUTTON_SAVE_NEW');
 			this.modelConfig.toolbarMenuButtons = this.deleteFromArray(this.modelConfig.toolbarMenuButtons, 'BUTTON_UNDO');
+			this.modelConfig.toolbarMenuButtons = this.deleteFromArray(this.modelConfig.toolbarMenuButtons, 'BUTTON_VERSION_MANAGER');
+			this.modelConfig.toolbarMenuButtons = this.deleteFromArray(this.modelConfig.toolbarMenuButtons, 'BUTTON_EXPORT_OUTPUT');
+
 		}
 	}
 	

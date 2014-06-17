@@ -8,6 +8,8 @@ package it.eng.spagobi.utilities.engines;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
+
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
  *
@@ -15,7 +17,7 @@ import java.util.Map;
 public abstract class AbstractEngineInstance implements IEngineInstance {
 	private String id;
 	private Map env;
-	
+
 	private EngineAnalysisMetadata analysisMetadata;
 	
 	public AbstractEngineInstance() {
@@ -50,4 +52,5 @@ public abstract class AbstractEngineInstance implements IEngineInstance {
 	public void setAnalysisMetadata(EngineAnalysisMetadata analysisMetadata) {
 		this.analysisMetadata = analysisMetadata;
 	}
+	
 }

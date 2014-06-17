@@ -7,6 +7,7 @@ package it.eng.spagobi.engines.drivers.whatif;
 
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
+import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
@@ -18,7 +19,9 @@ import it.eng.spagobi.engines.drivers.generic.GenericDriver;
 import it.eng.spagobi.tools.catalogue.bo.Artifact;
 import it.eng.spagobi.tools.catalogue.bo.Content;
 import it.eng.spagobi.tools.catalogue.dao.IArtifactsDAO;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.util.Map;
@@ -28,7 +31,7 @@ import org.apache.log4j.Logger;
 public class WhatIfDriver extends GenericDriver {
 
 	static private Logger logger = Logger.getLogger(WhatIfDriver.class);
-	
+
 	@Override
 	public Map getParameterMap(Object biobject, IEngUserProfile profile,
 			String roleName) {
@@ -36,6 +39,7 @@ public class WhatIfDriver extends GenericDriver {
 		byte[] template = this.getTemplateAsByteArray( biobject );
 		pars = addArtifactVersionId(template, pars, profile);
 		pars = addArtifactId(template, pars, profile);
+		pars = applyDatasourceForWriting(pars, (BIObject)biobject);
 		return pars;
 	}
 
@@ -46,9 +50,10 @@ public class WhatIfDriver extends GenericDriver {
 		byte[] template = this.getTemplateAsByteArray( biobject );
 		pars = addArtifactVersionId(template, pars, profile);
 		pars = addArtifactId(template, pars, profile);
+		pars = applyDatasourceForWriting(pars, (BIObject)biobject);
 		return pars;
 	}
-	
+
 	protected ObjTemplate getTemplate(Object biobject) {
 		ObjTemplate template = null;
 		try {
@@ -61,7 +66,7 @@ public class WhatIfDriver extends GenericDriver {
 		}
 		return template;
 	}
-	
+
 	protected byte[] getTemplateAsByteArray(Object biobject) {
 		ObjTemplate template = this.getTemplate(biobject);
 		byte[] bytes;
@@ -74,7 +79,7 @@ public class WhatIfDriver extends GenericDriver {
 			throw new RuntimeException("Content of the Active template null");
 		return bytes;
 	}
-	
+
 
 	@Override
 	public EngineURL getEditDocumentTemplateBuildUrl(Object biobject,
@@ -87,7 +92,7 @@ public class WhatIfDriver extends GenericDriver {
 			IEngUserProfile profile) throws InvalidOperationRequest {
 		return super.getNewDocumentTemplateBuildUrl(biobject, profile);
 	}
-	
+
 	protected Map addArtifactVersionId(byte[] template, Map pars, IEngUserProfile profile) {
 		SourceBean sb = null;
 		try {
@@ -102,21 +107,21 @@ public class WhatIfDriver extends GenericDriver {
 		Assert.assertNotNull(reference, "Template is missing \"" + SpagoBIConstants.MONDRIAN_REFERENCE + "\" property, that is the reference to the Mondrian schema");
 		IArtifactsDAO dao = DAOFactory.getArtifactsDAO();
 		Artifact artifact = dao.loadArtifactByNameAndType(reference,
-						SpagoBIConstants.MONDRIAN_SCHEMA);
+				SpagoBIConstants.MONDRIAN_SCHEMA);
 		Assert.assertNotNull(artifact, "Mondrian schema with name [" +  reference + "] was not found");
 		Content content = dao.loadActiveArtifactContent(artifact.getId());
 		Assert.assertNotNull(content, "Mondrian schema with name [" +  reference + "] has no content");
-		
+
 		pars.put(SpagoBIConstants.SBI_ARTIFACT_VERSION_ID, content.getId());
-		
+
 		// add info if artifact is locked			
 		addArtifactStausInfo(pars, artifact.getId(), profile);
 
-		
+
 		return pars;
 
 	}
-	
+
 	protected Map addArtifactId(byte[] template, Map pars, IEngUserProfile profile) {
 		SourceBean sb = null;
 		try {
@@ -131,18 +136,18 @@ public class WhatIfDriver extends GenericDriver {
 		Assert.assertNotNull(reference, "Template is missing \"" + SpagoBIConstants.MONDRIAN_REFERENCE + "\" property, that is the reference to the Mondrian schema");
 		IArtifactsDAO dao = DAOFactory.getArtifactsDAO();
 		Artifact artifact = dao.loadArtifactByNameAndType(reference,
-						SpagoBIConstants.MONDRIAN_SCHEMA);
+				SpagoBIConstants.MONDRIAN_SCHEMA);
 		Assert.assertNotNull(artifact, "Mondrian schema with name [" +  reference + "] was not found");
-		
+
 		pars.put(SpagoBIConstants.SBI_ARTIFACT_ID, artifact.getId());
-	
+
 		return pars;
 
 	}
-	
-	
 
-	
+
+
+
 
 	public Map addArtifactStausInfo(Map pars, Integer artifactId, IEngUserProfile profile){
 		logger.debug("IN");
@@ -162,7 +167,7 @@ public class WhatIfDriver extends GenericDriver {
 			throw new RuntimeException("Artifact with id [" + artifactId + "] could not be loaded", null);
 		}
 
-			
+
 		logger.debug("Artifact id is "+artifactId);
 
 		Boolean locked = artifact.getModelLocked();
@@ -179,15 +184,31 @@ public class WhatIfDriver extends GenericDriver {
 			else{
 				statusToReturn=SpagoBIConstants.SBI_ARTIFACT_VALUE_LOCKED_BY_OTHER;	
 			}
-				
-				
-			}
-		
+
+
+		}
+
 		logger.debug("Status of artifact is "+statusToReturn);
 		pars.put(SpagoBIConstants.SBI_ARTIFACT_STATUS, statusToReturn);
 		pars.put(SpagoBIConstants.SBI_ARTIFACT_LOCKER, locker != null ? locker : "");
 		return pars;
-}
+	}
 
-	
+	private Map applyDatasourceForWriting(Map parameters, BIObject biObject) {
+		IDataSource datasource;
+		try {
+			datasource = DAOFactory.getDataSourceDAO().loadDataSourceWriteDefault();
+		} catch (EMFUserError e) {
+			throw new SpagoBIRuntimeException(
+					"Error while loading default datasource for writing", e);
+		}
+		if (datasource != null) {
+			parameters.put(EngineConstants.DEFAULT_DATASOURCE_FOR_WRITING_LABEL, datasource.getLabel());
+		} else {
+			logger.debug("There is no default datasource for writing");
+		}
+		return parameters;
+	}
+
+
 }

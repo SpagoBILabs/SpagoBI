@@ -27,12 +27,12 @@ Ext.define('Sbi.service.RestService', {
 		jsonData: null,
 		params: {},
 		timeout : Ext.Ajax.timeout,
-    	/**
-    	 * @cfg {boolean} async
-    	 * If true the request is managed asynchronously.. In the sense that no progress bar is displayed
-    	 * and the call service by default does not call a callback function but throws the executedAsync
-    	 * event
-    	 */
+		/**
+		 * @cfg {boolean} async
+		 * If true the request is managed asynchronously.. In the sense that no progress bar is displayed
+		 * and the call service by default does not call a callback function but throws the executedAsync
+		 * event
+		 */
 		async: false
 	},
 
@@ -57,11 +57,11 @@ Ext.define('Sbi.service.RestService', {
 		if( this.serviceVersion){
 			url = this.serviceVersion+"/"+url;
 		}
-		
+
 		if( this.externalUrl){
 			url = this.externalUrl + url;
 		}
-		
+
 		var params = new Array();
 		if(this.subPath!=null && this.subPath!=undefined){
 			if(!this.subPath instanceof Array){
@@ -87,7 +87,7 @@ Ext.define('Sbi.service.RestService', {
 		}
 		return url;
 	},
-	
+
 	getRequestParams: function(){
 		return Ext.apply(this.params, this.baseParams );
 	},
@@ -96,31 +96,36 @@ Ext.define('Sbi.service.RestService', {
 
 		var mySuccessCallBack= successCallBack;
 		var myFailureCallBack= failureCallBack;
-		
+
 		if(!this.async){
 			//open the loading mask
 			Sbi.olap.eventManager.fireEvent('executeService');
 		}
-		
+
+		var thisPanel = this;
+
 		if(!mySuccessCallBack && scope){
-			if(!this.async){
-				mySuccessCallBack = function(response, options) {
-					if(response !== undefined && response.statusText !== undefined && response.responseText!=null && response.responseText!=undefined) {
-						if(response.responseText.length>21 && response.responseText.substring(0,13)=='{"errors":[{"'){
-							Sbi.olap.eventManager.fireEvent('serviceExecutedWithError', response);
-							Sbi.exception.ExceptionHandler.handleFailure(response);
-						}else{
-							Sbi.olap.eventManager.fireEvent('serviceExecuted', response);
-						}				
-					} else {
-						Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
+
+			mySuccessCallBack = function(response, options) {
+				var withError = false;
+				if(response !== undefined && response.statusText !== undefined && response.responseText!=null && response.responseText!=undefined) {
+					if(response.responseText.length>21 && response.responseText.substring(0,13)=='{"errors":[{"'){
+						withError = true;
 					}
-				};
-			}else{
-				mySuccessCallBack = function(response, options) {
-					this.fireEvent('executedAsync',true,response);
-				};
-			}
+
+					if(thisPanel.async){
+						thisPanel.fireEvent('executedAsync',!withError,response);
+					}else if(withError){
+						Sbi.olap.eventManager.fireEvent('serviceExecutedWithError', response);
+						Sbi.exception.ExceptionHandler.handleFailure(response);
+					}else{
+						Sbi.olap.eventManager.fireEvent('serviceExecuted', response);
+					}				
+				} else {
+					Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');
+				}
+			};
+
 
 		};
 
@@ -131,8 +136,8 @@ Ext.define('Sbi.service.RestService', {
 					Sbi.exception.ExceptionHandler.handleFailure(response, options);
 				};
 			}else{
-				mySuccessCallBack = function(response, options) {
-					this.fireEvent('executedAsync',false,response);
+				myFailureCallBack = function(response, options) {
+					thisPanel.fireEvent('executedAsync',false,response);
 				};
 			}
 

@@ -238,6 +238,44 @@ Ext.define('Sbi.olap.control.Controller', {
 		service.callService(this,mySuccessCallBack);
 	}	
 	
+	,exportOutput: function(params){
+		
+		var pathParams = [params.exportType, params.version];
+		
+		if(params.exportType=="csv"){
+			pathParams.push(params.csvFieldDelimiter);
+			//pathParams.push(params.csvRowDelimiter);
+		}else{
+			pathParams.push(params.tableName);
+		}
+		
+		var service = Ext.create("Sbi.service.RestService", {
+			url: "analysis",
+			method: 'GET',
+			async: true,
+			pathParams: pathParams,
+			timeout: Sbi.settings.olap.whatif.timeout.persistTransformations
+		});
+		
+		service.on("executedAsync", function(status, response){
+			if(status){
+				Sbi.exception.ExceptionHandler.showInfoMessage(LN('sbi.olap.toolbar.exportoutput.ok'));
+			}else{
+				Sbi.exception.ExceptionHandler.showErrorMessage(LN('sbi.olap.toolbar.exportoutput.error'));
+			}
+		}, this);
+		
+
+		if(params.exportType=="csv"){
+			var exportationUrl = service.getRestUrlWithParameters();
+			window.open(exportationUrl,'exportOutput','resizable=1,height=550,width=700');//.document.write(['<html><head></head><body>'+LN('sbi.olap.toolbar.exportoutput.csv.window')+'</body></html>']);
+		}else{
+			service.callService(this);
+		}
+		
+		
+	}
+	
 	,lockModel: function() {
 
 		var olapToolbar = this.eventManager.olapPanel.executionPanel.olapToolbar;

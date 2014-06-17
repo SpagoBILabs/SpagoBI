@@ -14,9 +14,10 @@
 		<CONNECTION>
 		<USR>root</USR>
 		<PWD>root</PWD>
-		<CATALOG>\resources\Olap\FoodMartMySQL.xml</CATALOG>
+		<CATALOG>\resources\Olap\FoodMartMySQLTime.xml</CATALOG>
 		<CONNECTIONSTRING>jdbc:mysql://localhost:3306/foodmart_key</CONNECTIONSTRING>
 		<DRIVER>com.mysql.jdbc.Driver</DRIVER>
+		<DIALECT>MySQL</DIALECT>
 		</CONNECTION>
 	</STANDALONE>
 	
@@ -29,16 +30,20 @@
 	</SCENARIO>
 	
 	<TOOLBAR>
-		<BUTTON_MDX visible="false" menu="true" />                            
-		<BUTTON_FATHER_MEMBERS visible="false" menu="true"/>                  
-		<BUTTON_HIDE_SPANS visible="false" menu="true"/>                     
-		<BUTTON_SHOW_PROPERTIES visible="false" menu="true"/>               
-		<BUTTON_HIDE_EMPTY visible="false" menu="true" />                   
+		<BUTTON_MDX visible="true" menu="true" />                            
+		<BUTTON_FATHER_MEMBERS visible="true" menu="true"/>                  
+		<BUTTON_HIDE_SPANS visible="true" menu="true"/>                     
+		<BUTTON_SHOW_PROPERTIES visible="true" menu="true"/>               
+		<BUTTON_HIDE_EMPTY visible="true" menu="true" />                   
         <BUTTON_FLUSH_CACHE visible="true" menu="false"  />                 
         <BUTTON_SAVE visible="true" menu="false" />                       
         <BUTTON_SAVE_NEW visible="true" menu="false" />                   <!-- I ADDED -->
         <BUTTON_UNDO visible="true" menu="false" />                       <!-- I ADDED -->
-
+		<BUTTON_VERSION_MANAGER visible="true" menu="false" />
+		<BUTTON_EXPORT_OUTPUT visible="true" menu="false" />  
+		
+		
+		  
 		<!--  NOT YET USED
 		<BUTTON_SHIFT_AXIS visible="true" />
         <BUTTON_CUBE visible="false" menu="true" />

@@ -39,6 +39,7 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 
 <script type="text/javascript" src='../js/spagobi/olap/toolbar/OlapToolbar.js'></script>
 <script type="text/javascript" src='../js/spagobi/olap/toolbar/VersionManagerWindow.js'></script>
+<script type="text/javascript" src='../js/spagobi/olap/toolbar/ExportWizardWindow.js'></script>
 
 <script type="text/javascript" src='../js/spagobi/olap/execution/table/OlapExecutionFilterTree.js'></script>
 <script type="text/javascript" src='../js/spagobi/olap/execution/table/OlapExecutionDimension.js'></script>
