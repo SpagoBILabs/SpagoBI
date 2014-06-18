@@ -7,3 +7,4 @@
 Ext.ns("Sbi.locale");
 Sbi.locale.ln = Sbi.locale.ln || new Array();
 
+Sbi.locale.ln['sbi.cockpit.widgets.crosstab.crosstabWidgetDesigner.title'] = 'Cross Tab Designer';
