@@ -17,6 +17,7 @@ import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjTemplates;
 import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects;
 import it.eng.spagobi.analiticalmodel.document.metadata.SbiSnapshots;
 import it.eng.spagobi.analiticalmodel.document.metadata.SbiSubObjects;
+import it.eng.spagobi.analiticalmodel.document.metadata.SbiViewpoints;
 import it.eng.spagobi.analiticalmodel.functionalitytree.metadata.SbiFuncRole;
 import it.eng.spagobi.analiticalmodel.functionalitytree.metadata.SbiFuncRoleId;
 import it.eng.spagobi.analiticalmodel.functionalitytree.metadata.SbiFunctions;
@@ -566,6 +567,54 @@ MetadataLogger metaLog;
 		return newPar;
 	}
 
+	
+	
+	/**
+	 * Creates a new hibernate viewpoint
+	 * 
+	 * @param paruse the paruse
+	 * 
+	 * @return the new hibernate parameter use object
+	 * @throws EMFUserError 
+	 */
+	public  SbiViewpoints makeNew(SbiViewpoints exportedViewpoint){
+		logger.debug("IN");
+		SbiViewpoints newViewpoints = new SbiViewpoints();
+			newViewpoints.setVpCreationDate(exportedViewpoint.getVpCreationDate());
+			newViewpoints.setVpDesc(exportedViewpoint.getVpDesc());
+			newViewpoints.setVpName(exportedViewpoint.getVpName());
+			newViewpoints.setVpOwner(exportedViewpoint.getVpOwner());
+			newViewpoints.setVpScope(exportedViewpoint.getVpScope());
+			newViewpoints.setVpValueParams(exportedViewpoint.getVpValueParams());
+						
+		logger.debug("OUT");
+		return newViewpoints;
+	}
+	
+//	public  void entitiesAssociations(SbiViewpoints exportedViewpoint, SbiViewpoints newViewpoints,Session sessionCurrDB, 
+//			MetadataAssociations metaAss) throws EMFUserError {
+//		logger.debug("IN");
+//		// overwrite existging entities
+//		
+//		if(exportedViewpoint.getSbiObject() != null){
+//			Integer newObjId = (Integer)metaAss.getBIObjAssociation().get(exportedViewpoint.getSbiObject().getBiobjId()); 
+//			if(newObjId != null){
+//				SbiObjects newObject = (SbiObjects) sessionCurrDB.load(SbiObjects.class, newObjId);
+//				newViewpoints.setSbiObject(newObject);
+//				}
+//			else{
+//				logger.error("could not find corresponding object");
+//				List params = new ArrayList();
+//				params.add("SbiObj");
+//				params.add("sbi Object");
+//				params.add("...");				
+//				throw new EMFUserError(EMFErrorSeverity.ERROR, "10000", params,  ImportManager.messageBundle);
+//			}
+//		}
+//
+//		logger.debug("OUT");
+//	
+//	}
 	
 	
 	/**

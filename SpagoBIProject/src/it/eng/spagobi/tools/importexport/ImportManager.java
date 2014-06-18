@@ -21,6 +21,7 @@ import it.eng.spagobi.analiticalmodel.document.metadata.SbiSnapshots;
 import it.eng.spagobi.analiticalmodel.document.metadata.SbiSubObjects;
 import it.eng.spagobi.analiticalmodel.document.metadata.SbiSubreports;
 import it.eng.spagobi.analiticalmodel.document.metadata.SbiSubreportsId;
+import it.eng.spagobi.analiticalmodel.document.metadata.SbiViewpoints;
 import it.eng.spagobi.analiticalmodel.functionalitytree.metadata.SbiFuncRole;
 import it.eng.spagobi.analiticalmodel.functionalitytree.metadata.SbiFunctions;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IBIObjectParameterDAO;
@@ -39,12 +40,12 @@ import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IRoleDAO;
-import it.eng.spagobi.commons.metadata.SbiBinContents;
-import it.eng.spagobi.commons.metadata.SbiDomains;
-import it.eng.spagobi.commons.metadata.SbiExtRoles;
 import it.eng.spagobi.commons.metadata.SbiAuthorizations;
 import it.eng.spagobi.commons.metadata.SbiAuthorizationsRoles;
 import it.eng.spagobi.commons.metadata.SbiAuthorizationsRolesId;
+import it.eng.spagobi.commons.metadata.SbiBinContents;
+import it.eng.spagobi.commons.metadata.SbiDomains;
+import it.eng.spagobi.commons.metadata.SbiExtRoles;
 import it.eng.spagobi.commons.metadata.SbiOrganizationDatasource;
 import it.eng.spagobi.commons.metadata.SbiOrganizationDatasourceId;
 import it.eng.spagobi.commons.metadata.SbiOrganizationEngine;
@@ -110,8 +111,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.zip.ZipOutputStream;
-
-import javassist.compiler.ast.NewExpr;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
@@ -1779,9 +1778,15 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 				// insert object into folders tree
 				importFunctObject(exportedObj.getBiobjId());
 
+				
+
+				importViewpoint(obj, exportedObj);
+				
 				if(existingObjId != null){
 					logger.debug("delete existing SbiObjPar referring to object with label: "+obj.getLabel());
 					deletePreviousObjParameter(existingObjId, obj.getBiobjId(), obj);
+					
+	
 				}
 				else{
 					logger.debug("not an existing document with label "+obj.getLabel()+" was present before import.");					
@@ -1834,6 +1839,67 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 		}
 	}
 
+	/**
+	 * Imports viewpoint associated to object
+	 * 
+	 * @param exportedBIObjectId The id of the current exported object
+	 * @throws EMFUserError
+	 */
+	private void importViewpoint(SbiObjects obj, SbiObjects exportedBIObject) throws EMFUserError {
+		logger.debug("IN");
+		
+		List exportedViewpointsList = null;
+		List currentViewpointsList = null;
+
+		
+		try {
+			
+			Query hibQuery = sessionExpDB.createQuery(" from SbiViewpoints ot where ot.sbiObject.biobjId = " + exportedBIObject.getBiobjId());
+			exportedViewpointsList = hibQuery.list();
+			if (exportedViewpointsList.isEmpty()) {
+				logger.debug("Exported document with id = [" + exportedBIObject.getLabel() + "] has no Viewpoints");
+				return;
+			}
+
+			hibQuery = sessionCurrDB
+			.createQuery(" from SbiViewpoints ot where ot.sbiObject.biobjId = " + obj.getBiobjId());
+			currentViewpointsList = hibQuery.list();
+			Iterator exportedViewpointsListIt = exportedViewpointsList.iterator();
+			
+			while (exportedViewpointsListIt.hasNext()) {
+				SbiViewpoints exportedViewPoint = (SbiViewpoints) exportedViewpointsListIt.next();
+				if (isAlreadyExisting(exportedViewPoint, currentViewpointsList)) {
+					logger.debug("Exported viewpoint with name = [" + exportedViewPoint.getVpName() + "] and creation date = [" + exportedViewPoint.getVpCreationDate() + "] (of document with name = [" + exportedBIObject.getName() + "]) is already existing, most likely it is the same viewpoint, so it will not be inserted.");
+					metaLog.log("Exported viewpoint with name = [" + exportedViewPoint.getVpName() + "] and creation date = [" + exportedViewPoint.getVpCreationDate() + "] (of document with name = [" + exportedBIObject.getName() + "]) is already existing, most likely it is the same viewpoint, so it will not be inserted.");
+					continue;
+				} else {
+					SbiViewpoints newViewpoint = importUtilities.makeNew(exportedViewPoint);
+					newViewpoint.setSbiObject(obj);
+					this.updateSbiCommonInfo4Insert(newViewpoint);
+					sessionCurrDB.save(newViewpoint);
+					sessionCurrDB.flush();
+
+				}
+			}
+		}  
+		catch (HibernateException he) {
+			logger.error("Error while inserting viewpoint ", he);
+			List params = new ArrayList();
+			params.add("sbi_viewpoint");
+			params.add("");
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019",params, ImportManager.messageBundle);
+		} catch (Exception e) {
+			logger.error("Error while inserting viewpoint ", e);
+			List params = new ArrayList();
+			params.add("sbi_viewpoint");
+			params.add("");
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params, ImportManager.messageBundle);
+		} finally {
+			logger.debug("OUT");
+		}
+	}
+
+	
 	private void insertSnapshot(SbiObjects obj, SbiObjects exportedObj) throws EMFUserError {
 		logger.debug("IN");
 		List exportedSnapshotsList = null;
@@ -1902,6 +1968,25 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 		}
 		return false;
 	}
+	
+	
+	
+	private boolean isAlreadyExisting(SbiViewpoints expSbiViewpoint,
+			List currentSbiViewpointList) {
+		Iterator currentViewpointListIt = currentSbiViewpointList.iterator();
+		while (currentViewpointListIt.hasNext()) {
+			SbiViewpoints currentViewpoint = (SbiViewpoints) currentViewpointListIt.next();
+			if (((currentViewpoint.getVpOwner() == null && expSbiViewpoint.getVpOwner() == null) || 
+					(currentViewpoint.getVpOwner() != null && currentViewpoint.getVpOwner().equals(expSbiViewpoint.getVpOwner()))) 
+					&& (currentViewpoint.getVpName().equals(expSbiViewpoint.getVpName()))
+							&& currentViewpoint.getVpCreationDate().equals(expSbiViewpoint.getVpCreationDate())) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	
 
 
 	//	private void updateSnapshot(SbiObjects obj, Integer objIdExp) throws EMFUserError {

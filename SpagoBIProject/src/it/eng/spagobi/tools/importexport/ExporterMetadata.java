@@ -12,7 +12,9 @@ import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
 import it.eng.spagobi.analiticalmodel.document.bo.Snapshot;
 import it.eng.spagobi.analiticalmodel.document.bo.SubObject;
+import it.eng.spagobi.analiticalmodel.document.bo.Viewpoint;
 import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
+import it.eng.spagobi.analiticalmodel.document.dao.IViewpointDAO;
 import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjFunc;
 import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjFuncId;
 import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjPar;
@@ -22,6 +24,7 @@ import it.eng.spagobi.analiticalmodel.document.metadata.SbiSnapshots;
 import it.eng.spagobi.analiticalmodel.document.metadata.SbiSubObjects;
 import it.eng.spagobi.analiticalmodel.document.metadata.SbiSubreports;
 import it.eng.spagobi.analiticalmodel.document.metadata.SbiSubreportsId;
+import it.eng.spagobi.analiticalmodel.document.metadata.SbiViewpoints;
 import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
 import it.eng.spagobi.analiticalmodel.functionalitytree.dao.ILowFunctionalityDAO;
 import it.eng.spagobi.analiticalmodel.functionalitytree.metadata.SbiFuncRole;
@@ -58,12 +61,12 @@ import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IBinContentDAO;
 import it.eng.spagobi.commons.dao.IDomainDAO;
-import it.eng.spagobi.commons.metadata.SbiBinContents;
-import it.eng.spagobi.commons.metadata.SbiDomains;
-import it.eng.spagobi.commons.metadata.SbiExtRoles;
 import it.eng.spagobi.commons.metadata.SbiAuthorizations;
 import it.eng.spagobi.commons.metadata.SbiAuthorizationsRoles;
 import it.eng.spagobi.commons.metadata.SbiAuthorizationsRolesId;
+import it.eng.spagobi.commons.metadata.SbiBinContents;
+import it.eng.spagobi.commons.metadata.SbiDomains;
+import it.eng.spagobi.commons.metadata.SbiExtRoles;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.engines.config.metadata.SbiEngines;
 import it.eng.spagobi.kpi.alarm.bo.Alarm;
@@ -131,7 +134,6 @@ import it.eng.spagobi.mapcatalogue.metadata.SbiGeoMaps;
 import it.eng.spagobi.tools.catalogue.bo.Artifact;
 import it.eng.spagobi.tools.catalogue.bo.Content;
 import it.eng.spagobi.tools.catalogue.bo.MetaModel;
-import it.eng.spagobi.tools.catalogue.dao.IArtifactsDAO;
 import it.eng.spagobi.tools.catalogue.dao.IMetaModelsDAO;
 import it.eng.spagobi.tools.catalogue.metadata.SbiArtifact;
 import it.eng.spagobi.tools.catalogue.metadata.SbiArtifactContent;
@@ -3624,6 +3626,64 @@ public class ExporterMetadata {
 
 		toReturn.setOrganization(dataSet.getOrganization());
 		return toReturn;
+	}
+	
+	
+	
+	/**
+	 * Insert saved parameters 
+	 * 
+	 * @param biObject the biObjects
+	 * @param session the session
+	 * 
+	 * @throws EMFUserError the EMF user error
+	 */
+	public void insertBiViewpoints(BIObject biObj, Session session) throws EMFUserError {
+		logger.debug("IN");
+		try {
+			Transaction tx = session.beginTransaction();
+
+			// check if already inserted
+			Query hibQuery = session.createQuery(" from SbiViewpoints where sbiObject.biobjId = " + biObj.getId());
+			List hibList = hibQuery.list();
+			if(!hibList.isEmpty()) {
+				return;
+			}	
+			
+			// get all viewpoints for passed object
+			IViewpointDAO viewPointDAO = DAOFactory.getViewpointDAO();
+			List<Viewpoint> viewPointList = viewPointDAO.loadAllViewpointsByObjID(biObj.getId());
+			
+			//insert all viewPoints
+			
+			
+			for (Iterator iterator = viewPointList.iterator(); iterator.hasNext();) {
+				Viewpoint viewpoint = (Viewpoint) iterator.next();
+				SbiViewpoints sbiViewpoints = new SbiViewpoints();
+				sbiViewpoints.setVpId(viewpoint.getVpId());
+				
+				SbiObjects sbiObj = (SbiObjects)session.load(SbiObjects.class, new Integer(biObj.getId()));
+			
+				sbiViewpoints.setSbiObject(sbiObj);
+
+				sbiViewpoints.setVpCreationDate(viewpoint.getVpCreationDate());				
+				sbiViewpoints.setVpName(viewpoint.getVpName());				
+				sbiViewpoints.setVpDesc(viewpoint.getVpDesc());		
+				sbiViewpoints.setVpOwner(viewpoint.getVpOwner());		
+				sbiViewpoints.setVpScope(viewpoint.getVpScope());		
+				sbiViewpoints.setVpValueParams(viewpoint.getVpValueParams());		
+				session.save(sbiViewpoints);
+				
+			}
+			
+			tx.commit();	
+
+		} catch (Exception e) {
+			logger.error("Error while inserting parameter view Points for biObject with id " , e);
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8005", ImportManager.messageBundle);
+		}finally{
+			logger.debug("OUT");
+		}
 	}
 }
 
