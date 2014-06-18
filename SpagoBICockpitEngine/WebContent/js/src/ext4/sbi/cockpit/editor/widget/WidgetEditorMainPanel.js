@@ -20,8 +20,8 @@ Sbi.cockpit.editor.widget.WidgetEditorMainPanel = function(config) {
 	this.init();	
 			
 	c = {    
-	    activeTab: 0,	    
-	    items: [this.customConfPanel, this.genericConfPanel]
+	    activeTab: 1,	    
+	    items: [this.genericConfPanel,this.customConfPanel]
 	};
 	
 	Sbi.cockpit.editor.widget.WidgetEditorMainPanel.superclass.constructor.call(this, c);
@@ -51,7 +51,7 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditorMainPanel, Ext.tab.Panel, {
 	 */
 	, init: function(){
 		this.customConfPanel = new Sbi.cockpit.editor.widget.WidgetEditorCustomConfPanel();
-		this.genericConfPanel = new Sbi.cockpit.editor.widget.WidgetEditorGenericConfPanel();			
+		this.genericConfPanel = new Sbi.cockpit.editor.widget.WidgetEditorGenericConfPanel();					
 	}
 	
 	// -----------------------------------------------------------------------------------------------------------------
