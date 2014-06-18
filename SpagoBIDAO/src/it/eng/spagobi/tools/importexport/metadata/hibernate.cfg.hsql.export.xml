@@ -76,7 +76,8 @@
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiArtifactContent.hbm.xml" />
 		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiAuthorizations.hbm.xml" />
 		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiAuthorizationsRoles.hbm.xml" />
-
+        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiViewpoints.hbm.xml" />
+        
                 <!-- User Defined Attributes -->
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiUdp.hbm.xml" />
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiUdpValue.hbm.xml" />
