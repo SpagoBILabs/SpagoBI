@@ -691,6 +691,8 @@ public class ExportManager implements IExportManager {
 			// export parameters visual dependecies
 			exporter.insertBiParamViewDepend(biparams, session);
 
+			// export viewPoints
+			exporter.insertBiViewpoints(biobj, session);
 			
 			// export subReport relation
 			ISubreportDAO subRepDao = DAOFactory.getSubreportDAO();
