@@ -16,6 +16,7 @@
 		<CATALOG>\resources\Olap\FoodMartMySQL.xml</CATALOG>
 		<CONNECTIONSTRING>jdbc:mysql://localhost:3306/foodmart_key</CONNECTIONSTRING>
 		<DRIVER>com.mysql.jdbc.Driver</DRIVER>
+		<DIALECT>MySql</DIALECT>
 		</CONNECTION>
 	</STANDALONE>
 	

@@ -16,7 +16,9 @@
 		<CATALOG>\resources\Olap\FoodMartOracleSQLTest.xml</CATALOG>
 		<CONNECTIONSTRING>jdbc:oracle:thin:@172.27.1.83:1521:repo</CONNECTIONSTRING>
 		<DRIVER>oracle.jdbc.OracleDriver</DRIVER>
+		<DIALECT>Oracle</DIALECT>
 		</CONNECTION>
+		
 	</STANDALONE>
 	
 	
