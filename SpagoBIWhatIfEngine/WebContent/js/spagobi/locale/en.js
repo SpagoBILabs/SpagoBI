@@ -70,6 +70,8 @@ Sbi.locale.ln['sbi.common.select'] = 'Select';
 Sbi.locale.ln['sbi.common.warning'] = 'Warning';
 Sbi.locale.ln['sbi.common.next'] = 'Next';
 Sbi.locale.ln['sbi.common.prev'] = 'Back';
+Sbi.locale.ln['sbi.common.wait'] = 'Please wait...';
+Sbi.locale.ln['sbi.common.wait.long'] = 'This operation can take some minutes. Please wait...';
 
 //===================================================================
 // TOOLBAR

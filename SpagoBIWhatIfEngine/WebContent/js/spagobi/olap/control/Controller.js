@@ -181,6 +181,7 @@ Ext.define('Sbi.olap.control.Controller', {
 			url: "model",
 			method: 'POST',
 			pathParams: ["persistTransformations"],
+			longExecution: true,
 			timeout: Sbi.settings.olap.whatif.timeout.persistTransformations
 		});
 		
@@ -192,6 +193,7 @@ Ext.define('Sbi.olap.control.Controller', {
 			url: "model",
 			method: 'POST',
 			pathParams: ["saveAs"],
+			longExecution: true,
 			timeout: Sbi.settings.olap.whatif.timeout.persistNewVersionTransformations
 		});
 		
@@ -209,6 +211,7 @@ Ext.define('Sbi.olap.control.Controller', {
 			url: "version",
 			method: 'POST',
 //			async: true,
+			longExecution: true,
 			pathParams: ["delete",itemsToDelete]
 		});
 		

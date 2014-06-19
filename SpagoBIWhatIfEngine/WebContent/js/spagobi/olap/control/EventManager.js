@@ -61,7 +61,7 @@ Ext.define('Sbi.olap.control.EventManager', {
 		this.on('executeService', this.executeService, this);
 		this.on('serviceExecuted', this.serviceExecuted, this);
 		this.on('serviceExecutedWithError',this.serviceExecutedWithError, this);
-		this.loadingMask = new Ext.LoadMask(Ext.getBody(), {msg:"Please wait..."});
+		
 	},
 
 
@@ -359,7 +359,11 @@ Ext.define('Sbi.olap.control.EventManager', {
 		this.olapController.exportOutput(params);
 	}
 	
-	,executeService: function(){
+	,executeService: function(text){
+		if(!text){
+			text = LN("sbi.common.wait");
+		}
+		this.loadingMask = new Ext.LoadMask(Ext.getBody(), {msg:text});
 		this.loadingMask.show();
 	}
 	, serviceExecuted: function (response){
