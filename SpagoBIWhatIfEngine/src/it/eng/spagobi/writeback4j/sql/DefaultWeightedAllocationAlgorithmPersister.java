@@ -120,15 +120,11 @@ public class DefaultWeightedAllocationAlgorithmPersister extends AbstractSqlSche
 			}
 		}
 		
-		buildSelectQuery(whereConditions, joinConditions, fromTables, query);
+		buildSelectQuery(whereConditions,degenerateDimensionConditions,joinConditions, fromTables, query);
 		
 		query.append(" ) ");
 		
-		if(degenerateDimensionConditions.length()>2){
-			query.append(" and ");
-			query.append(degenerateDimensionConditions);
-		}
-		
+
 		String queryString = query.toString();
 
 		SqlUpdateStatement updateStatement = new SqlUpdateStatement(queryString);
@@ -234,7 +230,7 @@ public class DefaultWeightedAllocationAlgorithmPersister extends AbstractSqlSche
 
 
 	
-	public void buildSelectQuery(Map<TableEntry, String> whereConditions, Set<EquiJoin> joinConditions, Set<String> fromTables, StringBuffer query){
+	public void buildSelectQuery(Map<TableEntry, String> whereConditions,StringBuffer degenerateDimensionConditions, Set<EquiJoin> joinConditions, Set<String> fromTables, StringBuffer query){
 
 		Map<String, String> table2Alias = new HashMap<String, String>();
 		getTableAlias(table2Alias, getCubeAlias());
@@ -243,7 +239,7 @@ public class DefaultWeightedAllocationAlgorithmPersister extends AbstractSqlSche
 		StringBuffer from = new StringBuffer();
 		StringBuffer where = new StringBuffer();
 		query = query.append("select * ");
-		
+
 		
 		addWhereCondition(where, joinConditions, table2Alias);
 		addWhereCondition(where, whereConditions, table2Alias, null);
@@ -252,6 +248,13 @@ public class DefaultWeightedAllocationAlgorithmPersister extends AbstractSqlSche
 		query.append(" from ");
 		query.append(from);
 		query.append(" where ");
+		
+		//add the degenerate dimensions. 
+		if(degenerateDimensionConditions.length()>2){
+			query.append(degenerateDimensionConditions);
+			query.append(" and ");
+		}
+				
 		query.append(where);
 
 	}
