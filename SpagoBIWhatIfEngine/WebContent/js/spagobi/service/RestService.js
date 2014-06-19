@@ -28,6 +28,11 @@ Ext.define('Sbi.service.RestService', {
 		params: {},
 		timeout : Ext.Ajax.timeout,
 		/**
+		 * @cfg {boolean} false
+		 * If true the execution of the service can be very long.. So the loading mask is different..
+		 */
+		longExecution: false,
+		/**
 		 * @cfg {boolean} async
 		 * If true the request is managed asynchronously.. In the sense that no progress bar is displayed
 		 * and the call service by default does not call a callback function but throws the executedAsync
@@ -99,7 +104,12 @@ Ext.define('Sbi.service.RestService', {
 
 		if(!this.async){
 			//open the loading mask
-			Sbi.olap.eventManager.fireEvent('executeService');
+			if(this.longExecution){
+				Sbi.olap.eventManager.fireEvent('executeService', LN('sbi.common.wait.long'));
+			}else{
+				Sbi.olap.eventManager.fireEvent('executeService');
+			}
+			
 		}
 
 		var thisPanel = this;

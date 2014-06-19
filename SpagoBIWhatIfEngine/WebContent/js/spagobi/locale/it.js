@@ -67,7 +67,8 @@ Sbi.locale.ln['sbi.common.select'] = 'Ok';
 Sbi.locale.ln['sbi.common.warning'] = 'Attenzione';
 Sbi.locale.ln['sbi.common.next'] = 'Successivo';
 Sbi.locale.ln['sbi.common.prev'] = 'Precedente';
-
+Sbi.locale.ln['sbi.common.wait'] = 'Attendere prego...';
+Sbi.locale.ln['sbi.common.wait.long'] = 'Attendere prego.. Questa operazione potrebbe richiedere qualche minuto...';
 //===================================================================
 //TOOLBAR
 //===================================================================
@@ -111,14 +112,14 @@ Sbi.locale.ln['sbi.olap.execution.table.dimension.no.enough'] = 'Ci deve esserre
 //WRITEBACK
 //===================================================================
 Sbi.locale.ln['sbi.olap.weiteback.persist.error'] = 'Errore nel salvataggio delle modifiche';
-Sbi.locale.ln['sbi.olap.weiteback.edit.no.zero'] =  'L\'algoritmo di propagazione proporzionale mantiene il peso tra le celle figlie di quella editata. Propagando una modifica su una cella che contiene valore 0 si va ad alterare il peso tra i figli, quindi non è supportata questa operazione. Nelle prossime release saranno implementati altri algoritmi di propagazione';
+Sbi.locale.ln['sbi.olap.weiteback.edit.no.zero'] =  'L\'algoritmo di propagazione proporzionale mantiene il peso tra le celle figlie di quella editata. Propagando una modifica su una cella che contiene valore 0 si va ad alterare il peso tra i figli, quindi non \u00E9 supportata questa operazione. Nelle prossime release saranno implementati altri algoritmi di propagazione';
 
 //===================================================================
 //LOCK
 //===================================================================
-Sbi.locale.ln['sbi.olap.artifact.lock.error'] = 'Operazione di blocco non riusciata, il modello è ancora sbloccato.';
-Sbi.locale.ln['sbi.olap.artifact.unlock.error'] = 'Operazione di sblocco non riusciata, il modello è ancora bloccato.';
-Sbi.locale.ln['sbi.olap.artifact.unlock.errorOther'] = 'Operazione di sblocco non riusciata, il modello è ancora bloccato dall\'utente ';
+Sbi.locale.ln['sbi.olap.artifact.lock.error'] = 'Operazione di blocco non riusciata, il modello \u00E9 ancora sbloccato.';
+Sbi.locale.ln['sbi.olap.artifact.unlock.error'] = 'Operazione di sblocco non riusciata, il modello \u00E9 ancora bloccato.';
+Sbi.locale.ln['sbi.olap.artifact.unlock.errorOther'] = 'Operazione di sblocco non riusciata, il modello \u00E9 ancora bloccato dall\'utente ';
 
 
 //===================================================================
@@ -130,12 +131,12 @@ Sbi.locale.ln['sbi.olap.execution.menu.addToToolbar'] = 'Add to toolbar';
 //===================================================================
 //VERSION MANAGER
 //===================================================================
-Sbi.locale.ln['sbi.olap.toolbar.versionmanagerwindow.version.no.cancel.all'] = 'Non è possibile cancellare tutte le versioni';
-Sbi.locale.ln['sbi.olap.toolbar.versionmanagerwindow.version.no.cancel.current'] = 'Non è possibile cancellare la versione attuale';
+Sbi.locale.ln['sbi.olap.toolbar.versionmanagerwindow.version.no.cancel.all'] = 'Non \u00E9 possibile cancellare tutte le versioni';
+Sbi.locale.ln['sbi.olap.toolbar.versionmanagerwindow.version.no.cancel.current'] = 'Non \u00E9 possibile cancellare la versione attuale';
 Sbi.locale.ln['sbi.olap.toolbar.versionmanagerwindow.version.title'] = 'Selezionare le version da cancellare';
 Sbi.locale.ln['sbi.olap.toolbar.versionmanagerwindow.version.select.warning'] = 'Attenzione: questa operazione potrebbe richiedere qualche minuto. ';
 Sbi.locale.ln['sbi.olap.control.controller.delete.version.ok'] = 'Le versioni sono state eliminate correttamente.';
-//Sbi.locale.ln['sbi.olap.control.controller.delete.version.error'] = 'Si è verificato un errore nella cancellazione delle versioni. Controllare il log.';
+//Sbi.locale.ln['sbi.olap.control.controller.delete.version.error'] = 'Si \u00E9 verificato un errore nella cancellazione delle versioni. Controllare il log.';
 
 //===================================================================
 //OUTPUT
