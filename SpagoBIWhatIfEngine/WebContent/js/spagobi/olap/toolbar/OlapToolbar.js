@@ -67,7 +67,7 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
     listeners: {
         render: function() {
                 // After the component has been rendered, disable the default browser context menu
-                this.on("contextmenu", Ext.emptyFn, null, {preventDefault: true});
+                Ext.getBody().on("contextmenu", Ext.emptyFn, null, {preventDefault: true});
         }, 
         contextmenu: function(e) {
         }
