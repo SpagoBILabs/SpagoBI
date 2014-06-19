@@ -21,9 +21,8 @@ Ext.define('Sbi.olap.toolbar.VersionManagerWindow', {
 		height: 400,
 		width: 300,
 		actualVersion: null,
-		style: "background-color: transparent",
-		bodyStyle: "background-color: transparent",
 		autoScroll: true,
+		bodyStyle: "background-color: white", 
 		title: LN("sbi.olap.toolbar.versionmanagerwindow.version.title")
 	},
 
@@ -63,8 +62,6 @@ Ext.define('Sbi.olap.toolbar.VersionManagerWindow', {
 			          { text: 'Description', dataIndex: 'description', flex: 1 }
 			          ]
 		});
-
-
 
 		var thisPanel = this;
 		this.items= [this.grid];
