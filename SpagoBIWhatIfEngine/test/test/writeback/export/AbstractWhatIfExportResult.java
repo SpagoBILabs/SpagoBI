@@ -40,27 +40,19 @@ import test.AbstractWhatIfTestCase;
  */
 public abstract class AbstractWhatIfExportResult extends AbstractWhatIfTestCase {
 
-
-
+	Connection connection;
+	IDataSource dataSource;
+	SpagoBICellWrapper cellWrapper;
+	WhatIfEngineInstance ei;
 
 
 	public void setUp() throws Exception {
 		super.setUp();
-	}
-
-	public void tearDown() throws Exception {
-		super.tearDown();
-	}
-
-
-
-
-	public void testBuildExportDataQuery() throws Exception{
-		WhatIfEngineInstance ei = getWhatifengineiEngineInstance(getCatalogue());
+		ei = getWhatifengineiEngineInstance(getCatalogue());
 		SpagoBIPivotModel pivotModel = (SpagoBIPivotModel)ei.getPivotModel();
 
 		SpagoBICellSetWrapper cellSetWrapper = (SpagoBICellSetWrapper)pivotModel.getCellSet();
-		SpagoBICellWrapper cellWrapper = (SpagoBICellWrapper) cellSetWrapper.getCell(0);
+		cellWrapper = (SpagoBICellWrapper) cellSetWrapper.getCell(0);
 
 		Double value = (new Random()).nextFloat()*1000000d;
 
@@ -68,11 +60,8 @@ public abstract class AbstractWhatIfExportResult extends AbstractWhatIfTestCase 
 		CellTransformation transformation = new CellTransformation(value,cellWrapper.getValue(), cellWrapper, al);
 		cellSetWrapper.applyTranformation(transformation);
 
-		Connection connection;
-		IDataSource dataSource = ei.getDataSource();
-
 		
-		
+		dataSource = ei.getDataSource();
 		try {
 
 			connection = dataSource.getConnection( null );
@@ -80,35 +69,39 @@ public abstract class AbstractWhatIfExportResult extends AbstractWhatIfTestCase 
 			fail();
 			throw e;
 		} 
+	}
 
+	public void tearDown() throws Exception {
+		super.tearDown();
+	}
+
+	public void testExportCSV() throws Exception{
 		try {
-			
-			List<IMemberCoordinates> memberCordinates = new ArrayList<IMemberCoordinates>();
-			
-			Member[] members = cellWrapper.getMembers();
 			ISchemaRetriver retriver = ei.getWriteBackManager().getRetriver();
-			//init the query with the update set statement
-			StringBuffer query = new StringBuffer();
-			
-			//gets the measures and the coordinates of the dimension members 
-			for (int i=0; i< members.length; i++) {
-				Member aMember = members[i];
-				
-				try {
-					if(!(aMember.getDimension().getDimensionType().equals(Type.MEASURE))){
-						memberCordinates.add(retriver.getMemberCordinates(aMember));
-					}
-				} catch (OlapException e) {
-					fail();
-					throw e;
-				}
+			AnalysisExporter ae = new AnalysisExporter(ei.getPivotModel(), retriver);
+			ae.exportCSV( connection, 2, "|","");
+		} catch (WhatIfPersistingTransformationException e) {
+
+			fail();
+			throw e;
+		}finally{
+			try {
+				connection.close();
+			} catch (SQLException e) {
+				throw e;
 			}
-			
-			AnalysisExporter ae = new AnalysisExporter(retriver);
-			
-			ResultSet queryString = ae.exportCSV(memberCordinates, connection, 1, "|","");
-			
-			System.out.println(queryString);
+		}
+
+
+	}
+
+
+
+	public void testExportTable() throws Exception{
+		try {	
+			ISchemaRetriver retriver = ei.getWriteBackManager().getRetriver();
+			AnalysisExporter ae = new AnalysisExporter(ei.getPivotModel(), retriver);
+			ae.exportTable( connection, dataSource, dataSource,2, "expotedTable");
 		} catch (WhatIfPersistingTransformationException e) {
 
 			fail();
