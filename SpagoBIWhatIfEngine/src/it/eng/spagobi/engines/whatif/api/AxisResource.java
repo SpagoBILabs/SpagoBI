@@ -23,6 +23,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
 
 import org.apache.log4j.Logger;
 import org.olap4j.metadata.Hierarchy;
@@ -54,6 +55,7 @@ public class AxisResource extends AbstractWhatIfEngineService {
 	 */
 	@POST
 	@Path("/swap")
+	@Produces("text/html; charset=UTF-8")
 	public String swapAxis(){
 		logger.debug("IN");
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
@@ -82,6 +84,7 @@ public class AxisResource extends AbstractWhatIfEngineService {
 	 */
 	@POST
 	@Path("/{fromAxis}/moveDimensionToOtherAxis/{hierarchy}/{toAxis}")
+	@Produces("text/html; charset=UTF-8")
 	public String placeHierarchyOnAxis(@javax.ws.rs.core.Context HttpServletRequest req, @PathParam("fromAxis") int fromAxisPos, @PathParam("toAxis") int toAxisPos,@PathParam("hierarchy") String hierarchyName){
 
 
@@ -101,6 +104,7 @@ public class AxisResource extends AbstractWhatIfEngineService {
 	 */
 	@POST
 	@Path("/{axis}/moveHierarchy/{hierarchyUniqueName}/{newPosition}/{direction}")
+	@Produces("text/html; charset=UTF-8")
 	public String moveHierarchies(@javax.ws.rs.core.Context HttpServletRequest req, @PathParam("axis") int axisPos, @PathParam("hierarchyUniqueName") String hierarchyUniqueName, @PathParam("newPosition") int newPosition, @PathParam("direction") int direction){
 
 
@@ -119,6 +123,7 @@ public class AxisResource extends AbstractWhatIfEngineService {
 	 */
 	@POST
 	@Path("/{axis}/updateHierarchyOnDimension/{newHierarchyUniqueName}/{oldHierarchyUniqueName}/{hierarchyPosition}")
+	@Produces("text/html; charset=UTF-8")
 	public String updateHierarchyOnDimension(@javax.ws.rs.core.Context HttpServletRequest req, @PathParam("axis") int axisPos, @PathParam("newHierarchyUniqueName") String newHierarchyUniqueName, @PathParam("oldHierarchyUniqueName") String oldHierarchyUniqueName, @PathParam("hierarchyPosition") int hierarchyPosition){
 
 
@@ -139,6 +144,7 @@ public class AxisResource extends AbstractWhatIfEngineService {
 	 */
 	@POST
 	@Path("/{axis}/placeMembersOnAxis")
+	@Produces("text/html; charset=UTF-8")
 	public String placeMembersOnAxis(@javax.ws.rs.core.Context HttpServletRequest req, @PathParam("axis") int axisPos){
 
 

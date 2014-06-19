@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
 
 import org.olap4j.CellSet;
 import org.olap4j.CellSetAxis;
@@ -36,6 +37,7 @@ public class MemberResource extends AbstractWhatIfEngineService {
 
 	@GET
 	@Path("/drilldown/{axis}/{position}/{member}")
+	@Produces("text/html; charset=UTF-8")
 	public String drillDown(@javax.ws.rs.core.Context HttpServletRequest req, @PathParam("axis") int axisPos, @PathParam("position") int positionPos, @PathParam("member") int memberPos){
 
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
@@ -81,6 +83,7 @@ public class MemberResource extends AbstractWhatIfEngineService {
 	}
 	@GET
 	@Path("/drillup/{axis}/{position}/{member}")
+	@Produces("text/html; charset=UTF-8")
 	public String drillUp(@javax.ws.rs.core.Context HttpServletRequest req, @PathParam("axis") int axisPos, @PathParam("position") int positionPos, @PathParam("member") int memberPos){
 
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();

@@ -87,6 +87,7 @@ public class ModelResource extends AbstractWhatIfEngineService {
 	 */
 	@POST
 	@Path("/{mdx}")
+	@Produces("text/html; charset=UTF-8")
 	public String setMdx(@PathParam("mdx") String mdx){
 		logger.debug("IN");
 		Map m = this.getServletRequest().getParameterMap();
@@ -108,6 +109,7 @@ public class ModelResource extends AbstractWhatIfEngineService {
 	
 	@POST
 	@Path("/setValue/{ordinal}")
+	@Produces("text/html; charset=UTF-8")
 	public String setValue(@PathParam("ordinal") int ordinal){
 		logger.debug("IN : ordinal = [" + ordinal + "]");
 		logOperation("Set value");
@@ -149,6 +151,7 @@ public class ModelResource extends AbstractWhatIfEngineService {
 	
 	@POST
 	@Path("/persistTransformations")
+	@Produces("text/html; charset=UTF-8")
 	public String persistTransformations(){
 		logger.debug("IN");
 		logOperation("Save");
@@ -220,6 +223,7 @@ public class ModelResource extends AbstractWhatIfEngineService {
 	 */
 	@POST
 	@Path("/saveAs")
+	@Produces("text/html; charset=UTF-8")
 	public String increaseVersion(){
 		logger.debug("IN");
 		logOperation("Save As");
@@ -240,6 +244,7 @@ public class ModelResource extends AbstractWhatIfEngineService {
 	
 	@POST
 	@Path("/undo")
+	@Produces("text/html; charset=UTF-8")
 	public String undo() {
 		logger.debug("IN");
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();

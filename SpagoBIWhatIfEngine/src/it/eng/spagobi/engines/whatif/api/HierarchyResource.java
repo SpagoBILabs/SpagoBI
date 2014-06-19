@@ -27,6 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
 
 import org.apache.log4j.Logger;
 import org.olap4j.OlapException;
@@ -49,6 +50,7 @@ public class HierarchyResource extends AbstractWhatIfEngineService {
 	
 	@GET
 	@Path("{hierarchy}/slice/{member}/{multi}")
+	@Produces("text/html; charset=UTF-8")
 	public String addSlicer(@javax.ws.rs.core.Context HttpServletRequest req, @PathParam("hierarchy") String hierarchyName, @PathParam("member") String memberName, @PathParam("multi") boolean multiSelection){
 
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
@@ -82,6 +84,7 @@ public class HierarchyResource extends AbstractWhatIfEngineService {
 	
 	@GET
 	@Path("/{hierarchy}/filtertree/{axis}")
+	@Produces("text/html; charset=UTF-8")
 	public String getMemberValue(@javax.ws.rs.core.Context HttpServletRequest req, @PathParam("hierarchy") String hierarchyUniqueName, @PathParam("axis") int axis){
 		Hierarchy hierarchy= null;
 		String node;

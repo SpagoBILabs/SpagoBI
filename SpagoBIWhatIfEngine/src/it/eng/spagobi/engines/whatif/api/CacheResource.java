@@ -13,6 +13,7 @@ import it.eng.spagobi.writeback4j.mondrian.CacheManager;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 
 import org.apache.log4j.Logger;
@@ -26,6 +27,7 @@ public class CacheResource extends AbstractWhatIfEngineService {
 	public static transient Logger logger = Logger.getLogger(CacheResource.class);
 	
 	@DELETE
+	@Produces("text/html; charset=UTF-8")
 	public String flushCache(@Context HttpServletRequest request) {
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
 		OlapDataSource olapDataSource = ei.getOlapDataSource();

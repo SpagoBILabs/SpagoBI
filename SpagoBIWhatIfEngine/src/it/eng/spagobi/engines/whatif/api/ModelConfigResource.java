@@ -22,6 +22,7 @@ import java.io.IOException;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
 
 import org.apache.log4j.Logger;
 
@@ -36,6 +37,7 @@ public class ModelConfigResource extends AbstractWhatIfEngineService {
 	 * @return the html table representing the cellset
 	 */
 	@POST
+	@Produces("text/html; charset=UTF-8")
 	public String setModelConfig(){
 		logger.debug("IN");
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
