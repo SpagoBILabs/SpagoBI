@@ -11,9 +11,13 @@
 
 package it.eng.spagobi.engines.whatif.exception;
 
+import java.io.UnsupportedEncodingException;
+
 import it.eng.spagobi.engines.whatif.common.AbstractWhatIfEngineService;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
 
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
@@ -37,8 +41,6 @@ public class RestExceptionMapper extends AbstractWhatIfEngineService implements 
 	private static final String ERROR_MESSAGE = "message";
 	private static final String ERROR_SERVICE = "errorService";
 	private static final String ERROR_MESSAGES = "errors";
-
-
 
 	public Response toResponse(Throwable e) {
 		logger.debug("RestExceptionMapper:toResponse IN");
@@ -70,8 +72,19 @@ public class RestExceptionMapper extends AbstractWhatIfEngineService implements 
 			logger.debug("Error serializing the exception ",e1);
 		}
 
+		byte[] bytesResponse = null;
+		
+		try {
+			bytesResponse = serializedMessages.toString().getBytes("UTF-8");
+		} catch (UnsupportedEncodingException e1) {
+			logger.error("Error setting the encoding of the response", e1);
+			bytesResponse = serializedMessages.toString().getBytes();
+		}
+		
+		Response response =  Response.status(200)
+				.entity(bytesResponse)
+				.header(HttpHeaders.CONTENT_ENCODING,"UTF8" ).build();
 
-		Response response =  Response.status(200).entity(serializedMessages.toString()).build();
 		logger.debug("RestExceptionMapper:toResponse OUT");
 
 		
