@@ -116,12 +116,10 @@ Ext.extend(Sbi.cockpit.widgets.crosstab.CrossTabWidgetDesigner, Sbi.cockpit.core
 		Sbi.trace("[CrossTabWidgetDesigner.setDesignerState]: IN");
 		Sbi.cockpit.widgets.crosstab.CrossTabWidgetDesigner.superclass.setDesignerState(this, state);		
 		
-		if (state !== undefined && state !== null) {
-			
+		if (state !== undefined && state !== null) {			
 			if (state.rows) this.rowsContainerPanel.setAttributes(state.rows);
 			if (state.columns) this.columnsContainerPanel.setAttributes(state.columns);
 			if (state.measures) this.measuresContainerPanel.setMeasures(state.measures);
-//			if (crosstabDefinition.config) this.measuresContainerPanel.setCrosstabConfig(crosstabDefinition.config);
 		}
 		
 		Sbi.trace("[CrossTabWidgetDesigner.setDesignerState]: OUT");
