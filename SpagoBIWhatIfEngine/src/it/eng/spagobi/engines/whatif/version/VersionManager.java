@@ -9,6 +9,7 @@ package it.eng.spagobi.engines.whatif.version;
 import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
 import it.eng.spagobi.engines.whatif.cube.CubeUtilities;
 import it.eng.spagobi.engines.whatif.exception.WhatIfPersistingTransformationException;
+import it.eng.spagobi.engines.whatif.model.ModelConfig;
 import it.eng.spagobi.engines.whatif.model.ModelUtilities;
 import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
@@ -243,6 +244,31 @@ public class VersionManager {
 			logger.debug("connection closed");
 		}
 		
+	}
+	
+	public static Integer getActualVersion(PivotModel model, ModelConfig config){
+		logger.debug("IN");
+		ChangeSlicer ph =  model.getTransform(ChangeSlicer.class);
+		Hierarchy hierarchy = CubeUtilities.getVersionHierarchy(model.getCube(), config);
+		if(hierarchy!=null){
+			List<Member> slicers = ph.getSlicer(hierarchy);
+			if(slicers!=null && slicers.size()>0){
+				String name = slicers.get(0).getName();
+				try {
+					Integer version = new Integer(name);
+					logger.debug("OUT: version"+version);
+					return version;
+				} catch (Exception e) {
+					logger.debug("Problems getting the actual version",e);
+				}
+			}else{
+				logger.debug("No Versionslicer found");
+			}
+		}else{
+			logger.debug("No Version hierarchy found");
+		}
+		logger.debug("OUT: no version");
+		return null;
 	}
 
 }
