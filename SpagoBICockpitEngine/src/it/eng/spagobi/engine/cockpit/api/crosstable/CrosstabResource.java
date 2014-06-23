@@ -43,6 +43,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.log4j.LogMF;
@@ -71,13 +72,12 @@ public class CrosstabResource extends AbstractCockpitEngineResource {
 	public enum OutputType {JSON, HTML};
 	
 	@GET
-	@Path("/")
-	@Consumes(MediaType.APPLICATION_JSON)
+	@Path("/")	
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public String getCrosstab(String jsonData){
+	public String getCrosstab(@QueryParam("crosstabDefinition") String crosstabDefinition){
 		logger.debug("IN");
 		try {
-			return createCrossTable(jsonData);
+			return createCrossTable(crosstabDefinition);
 		} catch(Throwable t) {
 			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", t);
 		} finally {			
