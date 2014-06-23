@@ -16,6 +16,7 @@ import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.engines.whatif.cube.CubeUtilities;
 import it.eng.spagobi.engines.whatif.dimension.SbiDimension;
 import it.eng.spagobi.engines.whatif.hierarchy.SbiHierarchy;
+import it.eng.spagobi.engines.whatif.version.VersionManager;
 import it.eng.spagobi.pivot4j.ui.WhatIfHTMLRenderer;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
@@ -152,6 +153,10 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotModel> {
 		NonEmpty transformNonEmpty = value.getTransform(NonEmpty.class);
 		transformNonEmpty.setNonEmpty(suppressEmpty);
 				
+		//updates the actual version in the model config
+		Integer actualVersion = VersionManager.getActualVersion(value, modelConfig);
+		modelConfig.setActualVersion(actualVersion);
+		
 		logger.debug("Rendering the model");
 		renderer.render(value);
 
