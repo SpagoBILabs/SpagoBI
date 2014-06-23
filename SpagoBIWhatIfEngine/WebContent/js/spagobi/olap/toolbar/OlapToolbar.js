@@ -745,7 +745,7 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 		
 		var buttonCreated = this.createButton(config);
 
-		//this.addContextMenuListener(buttonCreated, false);	
+		this.addContextMenuListener(buttonCreated, false);	
 		
 		// recreate
 		if(alreadyPresent==true){
