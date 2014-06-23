@@ -58,8 +58,8 @@ Ext.define('Sbi.olap.toolbar.VersionManagerWindow', {
 			selModel: selectionModel,
 			selection: "checkboxmodel",
 			columns: [
-			          { text: 'Id',  dataIndex: 'id' },
-			          { text: 'Description', dataIndex: 'description', flex: 1 }
+			          { text: 'Id',  dataIndex: 'id', flex:1 }
+			         //, { text: 'Description', dataIndex: 'description', flex: 1 }
 			          ]
 		});
 
