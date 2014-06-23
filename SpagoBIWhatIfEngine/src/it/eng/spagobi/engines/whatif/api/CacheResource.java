@@ -11,7 +11,7 @@ import it.eng.spagobi.engines.whatif.common.AbstractWhatIfEngineService;
 import it.eng.spagobi.writeback4j.mondrian.CacheManager;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.DELETE;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
@@ -26,7 +26,7 @@ public class CacheResource extends AbstractWhatIfEngineService {
 
 	public static transient Logger logger = Logger.getLogger(CacheResource.class);
 	
-	@DELETE
+	@POST
 	@Produces("text/html; charset=UTF-8")
 	public String flushCache(@Context HttpServletRequest request) {
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
