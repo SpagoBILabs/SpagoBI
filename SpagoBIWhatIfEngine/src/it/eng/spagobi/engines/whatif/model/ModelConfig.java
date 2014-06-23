@@ -105,9 +105,9 @@ public class ModelConfig implements Serializable {
 	}
 
 	public Integer getActualVersion() {
-		if(actualVersion==null && scenario!=null && scenario.getWritebackEditConfig()!=null ){
-			return scenario.getWritebackEditConfig().getInitialVersion();
-		}
+//		if(actualVersion==null && scenario!=null && scenario.getWritebackEditConfig()!=null ){
+//			return scenario.getWritebackEditConfig().getInitialVersion();
+//		}
 		return actualVersion;
 	}
 
