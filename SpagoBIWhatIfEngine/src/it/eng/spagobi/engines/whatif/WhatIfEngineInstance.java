@@ -165,7 +165,6 @@ public class WhatIfEngineInstance extends ExtendedAbstractEngineInstance impleme
 				throw new SpagoBIEngineRestServiceRuntimeException("whatif.engine.instance.writeback.exception", getLocale(), "Exception creating the whatif component", e);
 				
 			}
-			modelConfig.setActualVersion(getActualVersion());
 		}
 		
 		standalone = template.isStandAlone();
