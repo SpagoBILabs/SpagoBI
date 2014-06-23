@@ -154,6 +154,7 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 		// MENU BUTTONS CREATION //
 		
 		this.menuButtons = Ext.create('Ext.button.Split', {
+			reorderable: false,
 		    renderTo: Ext.getBody(),
 		    //text: LN('sbi.olap.execution.menu.buttonMenu'),
 		    iconCls: 'context-menu-icon',
@@ -535,7 +536,7 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 
 		// customized menu
 		this.insertInMenuArray( this.labelsMenu);
-		this.add('->');
+		this.add({ xtype: 'tbspacer', flex:1, reorderable: false});
 		this.add(this.menuButtons);
 		if( this.labelsMenu.length > 0){
 			this.menuButtons.setVisible(true);	
@@ -801,7 +802,7 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 			
 
 			this.insertButton(button.label, false);
-			this.add('->');
+			this.add({ xtype: 'tbspacer', flex:1, reorderable: false});
 			this.add(this.menuButtons);
 			//this.labelsMenu = 
 			this.labelsMenu = this.deleteFromArray(this.labelsMenu, button.label);
