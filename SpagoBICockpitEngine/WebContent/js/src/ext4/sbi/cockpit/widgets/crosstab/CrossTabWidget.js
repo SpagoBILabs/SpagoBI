@@ -16,25 +16,28 @@ Sbi.cockpit.widgets.crosstab.CrossTabWidget = function(config) {
 	
 	Ext.apply(this, c);
 		
-	Sbi.cockpit.widgets.crosstab.CrossTabWidget.superclass.constructor.call(this, c);
-		
+	Sbi.cockpit.widgets.crosstab.CrossTabWidget.superclass.constructor.call(this, c);		
 	
+	this.init();
 	
-	this.on("afterRender", function(){
-//		this.getStore().load();
-		Sbi.storeManager.loadStore(this.storeId);
-		//this.refresh();
-		Sbi.trace("[CrossTabWidget.onRender]: store loaded");
-	}, this);
+//	this.on("afterRender", function(){
+//		Sbi.storeManager.loadStore(this.storeId);
+//		Sbi.trace("[CrossTabWidget.onRender]: store loaded");
+//	}, this);
 
-	this.addEvents('selection');
+//	this.addEvents('selection');
 	
 	Sbi.trace("[CrossTabWidget.constructor]: OUT");
 };
 
 Ext.extend(Sbi.cockpit.widgets.crosstab.CrossTabWidget, Sbi.cockpit.core.WidgetRuntime, {
     
+	// =================================================================================================================
+	// PROPERTIES
+	// =================================================================================================================
 	
+	crosstabDefinition: null
+	, requestParameters: null // contains the parameters to be sent to the server on the crosstab load invocation
 	
 	// -----------------------------------------------------------------------------------------------------------------
     // public methods
@@ -43,8 +46,46 @@ Ext.extend(Sbi.cockpit.widgets.crosstab.CrossTabWidget, Sbi.cockpit.core.WidgetR
 	// -----------------------------------------------------------------------------------------------------------------
     // private methods
 	// -----------------------------------------------------------------------------------------------------------------
+	
+	, load: function(crosstabDefinition, filters) {			
+		var crosstabDefinitionEncoded = Ext.encode(Sbi.toSource(crosstabDefinition));				
+//		var crosstabDefinitionEncoded = Ext.util.JSON.encode(crosstabDefinition);		
+		this.requestParameters = {
+			crosstabDefinition: crosstabDefinitionEncoded			
+		};
+		if(filters!=undefined && filters!=null){
+			this.requestParameters.FILTERS = Ext.util.JSON.encode(filters);
+		}
+		
+		this.loadCrosstabAjaxRequest.defer(100, this,[crosstabDefinitionEncoded]);		
+	}
 
-	onRender: function(ct, position) {	
+	, loadCrosstabAjaxRequest: function(crosstabDefinitionEncoded){				
+//		alert("JSON ENCODED: " + crosstabDefinitionEncoded);
+		Ext.Ajax.request({
+			url: Sbi.config.serviceReg.getServiceUrl('getCrosstab', {				
+			}),
+			method: 'GET',
+	        params: crosstabDefinitionEncoded,
+	        success : function(response, opts) {		        	
+	        	this.refreshCrossTab(response.responseText);
+	        },
+	        scope: this,
+			failure: function(response, options) {		
+				this.refreshCrossTab(response.responseText);
+//				Sbi.exception.ExceptionHandler.handleFailure(response, options);
+			}      
+		});		
+	}
+	
+	, refreshCrossTab: function(serviceResponseText){
+
+//		var crosstab = Ext.util.JSON.decode( serviceResponseText );
+		
+		alert("refreshCrossTab: " + serviceResponseText);
+	}
+	
+	, onRender: function(ct, position) {	
 		Sbi.trace("[DummyWidget.onRender]: IN");
 		Sbi.cockpit.widgets.dummy.DummyWidget.superclass.onRender.call(this, ct, position);	
 		
@@ -68,11 +109,25 @@ Ext.extend(Sbi.cockpit.widgets.crosstab.CrossTabWidget, Sbi.cockpit.core.WidgetR
 		Sbi.trace("[DummyWidget.onRender]: OUT");
 	}
 	
+	, getCrosstabDefinition: function() {		
+		var crosstabDef = {};
+		crosstabDef.config = this.wconf.config;
+		crosstabDef.config.maxcellnumber = 2000;
+		crosstabDef.rows = this.wconf.rows;
+		crosstabDef.columns = this.wconf.columns;
+		crosstabDef.measures = this.wconf.measures;				
+		
+		return crosstabDef;
+	}
 	
 	// -----------------------------------------------------------------------------------------------------------------
     // init methods
     // -----------------------------------------------------------------------------------------------------------------
-	
+	, init: function() {		
+		this.crosstabDefinition = this.getCrosstabDefinition();
+
+		this.load(this.crosstabDefinition,null);
+	}
 });
 
 
@@ -81,5 +136,4 @@ Sbi.registerWidget('crosstab', {
 	, icon: 'js/src/ext4/sbi/cockpit/widgets/crosstab/table_64x64_ico.png'
 	, runtimeClass: 'Sbi.cockpit.widgets.crosstab.CrossTabWidget'
 	, designerClass: 'Sbi.cockpit.widgets.crosstab.CrossTabWidgetDesigner'
-	//, designerClass: 'Ext.Panel'
 });
