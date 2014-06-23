@@ -15,6 +15,7 @@ import it.eng.spagobi.engines.whatif.parameters.MDXParametersUtilities;
 import it.eng.spagobi.engines.whatif.schema.MondrianSchemaManager;
 import it.eng.spagobi.engines.whatif.template.WhatIfTemplate;
 import it.eng.spagobi.engines.whatif.template.WhatIfTemplateParser;
+import it.eng.spagobi.engines.whatif.version.VersionManager;
 import it.eng.spagobi.services.proxy.ArtifactServiceProxy;
 import it.eng.spagobi.services.proxy.EventServiceProxy;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
@@ -164,6 +165,7 @@ public class WhatIfEngineInstance extends ExtendedAbstractEngineInstance impleme
 				throw new SpagoBIEngineRestServiceRuntimeException("whatif.engine.instance.writeback.exception", getLocale(), "Exception creating the whatif component", e);
 				
 			}
+			modelConfig.setActualVersion(getActualVersion());
 		}
 		
 		standalone = template.isStandAlone();
@@ -272,7 +274,11 @@ public class WhatIfEngineInstance extends ExtendedAbstractEngineInstance impleme
             throw new SpagoBIEngineRuntimeException("Error while getting artifact locker", e);
         }
     }
-
+    
+    public Integer getActualVersion(){
+    	return VersionManager.getActualVersion(getPivotModel(), getModelConfig());
+    }
+    
 	public OlapConnection getOlapConnection () {
 		OlapConnection connection;
 		try {
