@@ -162,6 +162,7 @@
 			<filelist dir="${build}/${webapp_name}/js">
 		
 
+
 				<file name='./spagobi/service/ServiceRegistry.js' />
 				<file name='./spagobi/service/RestService.js' />
 
@@ -177,14 +178,18 @@
 				<file name='./spagobi/olap/model/HierarchyModel.js' />
 				<file name='./spagobi/olap/model/MemberModel.js' />
 				<file name='./spagobi/olap/model/PivotModel.js' />
+				<file name='./spagobi/olap/model/VersionModel.js' />
 
 				<file name='./spagobi/olap/options/OlapOptionsChart.js' />
+
 				<file name='./spagobi/olap/options/OlapOptionsTable.js' />
 				<file name='./spagobi/olap/options/OlapOptionsToolbar.js' />
 				<file name='./spagobi/olap/options/OlapOptionsContainer.js' />
 				<file name='./spagobi/olap/options/OlapOptions.js' />
 
 				<file name='./spagobi/olap/toolbar/OlapToolbar.js' />
+				<file name='./spagobi/olap/toolbar/VersionManagerWindow.js' />
+				<file name='./spagobi/olap/toolbar/ExportWizardWindow.js' />
 
 				<file name='./spagobi/olap/execution/table/OlapExecutionFilterTree.js' />
 				<file name='./spagobi/olap/execution/table/OlapExecutionDimension.js' />
@@ -210,6 +215,7 @@
 				<file name='./spagobi/olap/control/EventManager.js' />
 
 				<file name='./spagobi/olap/OlapPanel.js' />
+
 
 			</filelist>
 
