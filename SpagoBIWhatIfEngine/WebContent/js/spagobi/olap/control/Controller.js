@@ -169,7 +169,7 @@ Ext.define('Sbi.olap.control.Controller', {
 
 		var service = Ext.create("Sbi.service.RestService", {
 			url: "cache",
-			method: 'DELETE'
+			method: 'POST'
 		});
 		
 		service.callService(this);
