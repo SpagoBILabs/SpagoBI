@@ -458,30 +458,41 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 			// labels Toolbar
 			
 			var myCookieToolbar = Ext.util.Cookies.get(Sbi.config.documentLabel+'labelsToolbar');
+			var toolbarVisibleButtons = modelConfig.toolbarVisibleButtons || new Array();	
+			var toolbarVisibleMenu = modelConfig.toolbarMenuButtons || new Array();	
+			
+			var decodedCookieToolbar = null;
+			this.labelsToolbar = new Array();
+			this.labelsMenu = new Array();
+			
 			if(myCookieToolbar!=undefined && myCookieToolbar!=''){
-				this.labelsToolbar = Ext.JSON.decode(myCookieToolbar);
-			}
-			else{
-				// no cookie found
-				this.labelsToolbar = modelConfig.toolbarVisibleButtons;	
-				if(this.labelsToolbar != undefined  && this.labelsToolbar.length >0){
-					Ext.util.Cookies.set(Sbi.config.documentLabel+'labelsToolbar',Ext.JSON.encode(this.labelsToolbar));
+				decodedCookieToolbar = Ext.JSON.decode(myCookieToolbar);
+				
+				//merge the visible buttons (toolbar and menu) in a list
+				toolbarVisibleButtons = toolbarVisibleButtons.concat(toolbarVisibleMenu);
+				
+				//merge the cookies with the toolbarconfig and create the list of visible buttons in the toolbar
+				for(var i=0; i<decodedCookieToolbar.length; i++){
+					var tool = decodedCookieToolbar[i];
+					var index = toolbarVisibleButtons.indexOf(tool);
+					if(index>=0){//if the button live in the cookies and it's visible
+						this.labelsToolbar.push(tool);
+						toolbarVisibleButtons.splice(index,1);
+					}
 				}
+				
+				//all the buttons not visible in the toolbar go in the menu
+				for(var i=0; i<toolbarVisibleButtons.length; i++){
+					this.labelsMenu.push(toolbarVisibleButtons[i]);
+				}		
+			}else{
+				this.labelsToolbar = toolbarVisibleButtons;
+				this.labelsMenu = toolbarVisibleMenu;
 			}
 
-			//labelsMenu
-			var myCookieMenu = Ext.util.Cookies.get(Sbi.config.documentLabel+'labelsMenu');
-			if(myCookieMenu!=undefined && myCookieMenu!=''){
-				this.labelsMenu = Ext.JSON.decode(myCookieMenu);
-			}
-			else{
-				// no cookie found
-				this.labelsMenu = modelConfig.toolbarMenuButtons;	
-				if(this.labelsMenu != undefined  && this.labelsMenu.length >0){
-					var encodedArray = Ext.JSON.encode(this.labelsMenu);
-					Ext.util.Cookies.set(Sbi.config.documentLabel+'labelsMenu',encodedArray);
-				}
-			}
+			//update the cookie
+			Ext.util.Cookies.set(Sbi.config.documentLabel+'labelsToolbar',Ext.JSON.encode(this.labelsToolbar));
+
 		}
 		
 		// if scenario is not what if do not draw some buttons
@@ -526,7 +537,7 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 		this.insertInMenuArray( this.labelsMenu);
 		this.add('->');
 		this.add(this.menuButtons);
-		if( modelConfig.toolbarMenuButtons.length > 0){
+		if( this.labelsMenu.length > 0){
 			this.menuButtons.setVisible(true);	
 		}
 		else{
@@ -762,7 +773,6 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 			this.menuButtons.menu.add(buttonCreated);
 			if(!this.contains(this.labelsMenu, label)){
 				this.labelsMenu.push(label);
-				Ext.util.Cookies.set(Sbi.config.documentLabel+'labelsMenu',Ext.JSON.encode(this.labelsMenu));
 			}
 			
 		}
@@ -772,10 +782,7 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 				this.labelsToolbar.push(label);
 				Ext.util.Cookies.set(Sbi.config.documentLabel+'labelsToolbar',Ext.JSON.encode(this.labelsToolbar));
 			}
-
 		}
-		
-
 	}
 
 	/**
@@ -798,7 +805,7 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 			this.add(this.menuButtons);
 			//this.labelsMenu = 
 			this.labelsMenu = this.deleteFromArray(this.labelsMenu, button.label);
-			Ext.util.Cookies.set(Sbi.config.documentLabel+'labelsMenu',Ext.JSON.encode(this.labelsMenu));
+//			Ext.util.Cookies.set(Sbi.config.documentLabel+'labelsMenu',Ext.JSON.encode(this.labelsMenu));
 			
 		}
 		else{
