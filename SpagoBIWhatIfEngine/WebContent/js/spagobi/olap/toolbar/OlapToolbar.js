@@ -475,7 +475,7 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 				//merge the cookies with the toolbarconfig and create the list of visible buttons in the toolbar
 				for(var i=0; i<decodedCookieToolbar.length; i++){
 					var tool = decodedCookieToolbar[i];
-					var index = toolbarVisibleButtons.indexOf(tool);
+					var index = Ext.Array.contains(toolbarVisibleButtons, tool);
 					if(index>=0){//if the button live in the cookies and it's visible
 						this.labelsToolbar.push(tool);
 						toolbarVisibleButtons.splice(index,1);
