@@ -31,7 +31,7 @@
 <br/>
 <div></div>
 <div style="margin-top: 40px">
-Version: 4.2.0 
+Version: 5.0.0_RC
 </div>
 <div style="margin-top: 5px">
 Logged User: <%= userName %>
