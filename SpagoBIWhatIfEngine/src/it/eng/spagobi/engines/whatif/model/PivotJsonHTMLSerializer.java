@@ -154,8 +154,11 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotModel> {
 		transformNonEmpty.setNonEmpty(suppressEmpty);
 				
 		//updates the actual version in the model config
-		Integer actualVersion = VersionManager.getActualVersion(value, modelConfig);
-		modelConfig.setActualVersion(actualVersion);
+		if(modelConfig.isWhatIfScenario()){
+			Integer actualVersion = VersionManager.getActualVersion(value, modelConfig);
+			modelConfig.setActualVersion(actualVersion);
+		}
+
 		
 		logger.debug("Rendering the model");
 		renderer.render(value);
