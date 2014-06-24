@@ -9,23 +9,33 @@ Ext.define('Sbi.cockpit.widgets.piechart.PieChartWidget', {
 	extend: 'Sbi.cockpit.widgets.chart.AbstractChartWidget'
 
 	, config:{
-		  border: false
+		 
+		storeId: null
 		, wconf: null
-		, storeId: null
+		
 		, chartConfig : null 	
 		, chartDivId : null
-		, chart : null		
+		, chart : null
+		
+		,  border: false
 	}
 
 
 	, constructor : function(config) {
 		Sbi.trace("[PieChartWidget.constructor]: IN");
+		
 		this.initConfig(config);
 		this.initEvents();
 		this.init(config);
+		
 		this.callParent(arguments);
-		this.addEvents('selection');
-		this.addEvents("attributeDblClick", "attributeRemoved");
+		
+		this.addEvents(
+			"attributeDblClick"
+			, "attributeRemoved"
+			, "selection"
+		);
+		
 		Sbi.trace("[PieChartWidget.constructor]: OUT");
 	}
 	
@@ -58,8 +68,6 @@ Ext.define('Sbi.cockpit.widgets.piechart.PieChartWidget', {
     	var retriever = new Sbi.cockpit.widgets.chart.DefaultChartDimensionRetrieverStrategy();
 		var size = retriever.getChartDimension(this);		
 		this.update(' <div align=\"center\" id="' + this.chartDivId + '" style="padding-top:0px;padding-bottom:0px;width: ' + size.width + '; height: ' + size.height + ';"></div>');		
-//		this.update(' <div border=4; align=\"center\" id="' + this.chartDivId + '" style="width:100%; height:50%;  border:solid;border-color:blue;"></div>');
-//		this.update(' <div border=4; align=\"center\" id="' + this.chartDivId + '" style="border:solid;border-color:blue;"></div>');
 		
 		var storeObject = this.getJsonStore();
 		var colors = this.getColors();
@@ -381,14 +389,17 @@ Ext.define('Sbi.cockpit.widgets.piechart.PieChartWidget', {
 
 	, init : function () {
 		this.chartConfig = this.wconf;
-		this.loadChartData({'rows':[this.chartConfig.category],'measures':this.chartConfig.series});
+		this.loadChartData({
+			rows: [this.chartConfig.category]
+			,measures: this.chartConfig.series
+		});
 	}
 
 });
 
 Sbi.registerWidget('piechart', {
 	name: 'Pie Chart'
-	, icon: 'js/src/ext4/sbi/cockpit/widgets/piechart/piechart_64x64_ico.png'
+	, icon: 'js/src/ext4/sbi/cockpit/widgets/piechart/img/piechart_64x64_ico.png'
 	, runtimeClass: 'Sbi.cockpit.widgets.piechart.PieChartWidget'
 	, designerClass: 'Sbi.cockpit.widgets.piechart.PieChartWidgetDesigner'
 });

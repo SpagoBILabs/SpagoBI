@@ -333,6 +333,17 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 		}
 		return null;
 	}
+	
+	, getStoresInAssociationGroup: function(associationGroup) {
+		
+		var stores = [];
+		for(var i = 0; i < associationGroup.datasets.length; i++) {
+			var storeId = associationGroup.datasets[i];
+			stores.push(this.getStore(storeId));
+		}
+	
+		return stores;
+	}
 
 	// FILTERS CONFIGS
 	
@@ -418,6 +429,26 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 	// -----------------------------------------------------------------------------------------------------------------
     // store methods
 	// -----------------------------------------------------------------------------------------------------------------
+	
+	/**
+	 * @method
+	 * 
+	 * @return the store id
+	 */
+	, getStoreId: function(store) {
+		var storeId = null;
+		
+		Sbi.trace("[StoreManager.getStoreId]: typeof store: " + (typeof store));
+		
+		if(Ext.isString(store)) {
+			storeId = store;
+		} else {
+			storeId = store.storeId;
+		}
+		
+		return storeId;
+	}
+	
 	/**
 	 * @method 
 	 * 
@@ -567,6 +598,56 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 		return store;
 	}
 	
+	
+	/**
+	 * @method
+	 * 
+	 * @param {Ext.data.Store/String} store The store to load or its id.
+	 * @param {Object} params parameters to pass to load method of the store
+	 * 
+	 * has been destroyed (see autoDestroy parameter).
+	 */
+	, loadStore: function(store, params, baseParams){
+		
+		Sbi.trace("[StoreManager.loadStore]: IN");
+		
+		if(Sbi.isNotValorized(store)) {
+			Sbi.trace("[StoreManager.loadStore]: Parameter [store] is not valorized");
+			Sbi.trace("[StoreManager.loadStore]: OUT");
+			return false;
+		}
+		var storeId = this.getStoreId(store);
+		params = params || {};
+		
+		var p = this.getStoreParametersValues(storeId);
+		params.parameters = Ext.JSON.encode( p );
+		
+		
+		var s = this.getStore(storeId);
+		if(baseParams) s.getProxy().extraParams = baseParams;
+		s.getProxy().extraParams = s.getProxy().extraParams || {};
+		
+		if(params.measures) {
+			s.getProxy().extraParams.measures = params.measures;
+			delete params.measures;
+		}
+		if(params.categories) {
+			s.getProxy().extraParams.categories = params.categories;
+			delete params.categories;
+		}
+		
+				
+		// TODO: if the dataset in an associative group call a modified version of loadStores that reload teh joined store
+		// and return only the portion of the resultset associated to this store
+		try {
+			s.load({params: params});
+		} catch(e){
+			Sbi.exception.ExceptionHandler.showErrorMessage(e, LN('sbi.qbe.datastorepanel.grid.emptywarningmsg'));
+		}
+
+		Sbi.trace("[StoreManager.loadStore]: OUT");
+	}
+	
 	/**
 	 * reload all the store connected by an association group. Apply the selctions to filter 
 	 * the results in an associative way. Selection object have this form:
@@ -583,74 +664,58 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 		// take the result an split in in subdatasets
 		// pass the new data to the store in order to reload them
 		
-		//alert(Sbi.config.serviceReg.getServiceUrl('loadJoinedDataSetStore'));
+		
+		// TODO test che a seguito di un filtro associativo arrivi al servizio la variabile aggregations
+		
+		var aggregations = {};
+		var stores = this.getStoresInAssociationGroup(associationGroup);
+		var storesNotAggregated = [];
+		var storesAggregated = [];
+		for(var i = 0; i < stores.length; i++) {
+			var store = stores[i];
+			var extraParams = store.getProxy().extraParams;
+			if(extraParams && extraParams.categories) {
+				aggregations[this.getStoreId(store)] = {
+					categories: Ext.JSON.decode(extraParams.categories) ,
+					measures: Ext.JSON.decode(extraParams.measures)
+				};
+				storesAggregated.push(this.getStoreId(store));
+			} else {
+				storesNotAggregated.push(this.getStoreId(store));
+			}
+			
+		}
+
 		Ext.Ajax.request({
 		    url: Sbi.config.serviceReg.getServiceUrl('loadJoinedDataSetStore'),
 		    method: 'GET',
 		    params: {
 		    	associationGroup:  Ext.JSON.encode(associationGroup)
 		        , selections: Ext.JSON.encode(selections)
+		        , datasets: Ext.JSON.encode(storesNotAggregated)
 		    },
 		    success : this.onAssociationGroupReloaded,
 			failure: Sbi.exception.ExceptionHandler.handleFailure,
 			scope: this
 		});
-	}
-	
-	/**
-	 * @method
-	 * 
-	 * @param {Ext.data.Store/String} store The store to load or its id.
-	 * @param {Object} params parameters to pass to load method of the store
-	 * 
-	 * has been destroyed (see autoDestroy parameter).
-	 */
-	, loadStore: function(store, params){
 		
-		if(Sbi.isNotValorized(store)) {
-			Sbi.trace("[StoreManager.loadStore]: Parameter [store] is not valorized");
-			Sbi.trace("[StoreManager.loadStore]: OUT");
-			return false;
+		for(a in aggregations) {
+			aggregations[a].dataset = a;
+			alert(a + ": " + Ext.JSON.encode(aggregations[a]));
+			Ext.Ajax.request({
+			    url: Sbi.config.serviceReg.getServiceUrl('loadJoinedDataSetStore'),
+			    method: 'GET',
+			    params: {
+			    	associationGroup:  Ext.JSON.encode(associationGroup)
+			        , selections: Ext.JSON.encode(selections)
+			        , datasets: Ext.JSON.encode([a])
+			        , aggregations: Ext.JSON.encode(aggregations[a])
+			    },
+			    success : this.onAssociationGroupReloaded,
+				failure: Sbi.exception.ExceptionHandler.handleFailure,
+				scope: this
+			});
 		}
-		
-		var storeId = null;
-		
-		Sbi.trace("[StoreManager.loadStore]: typeof store: " + (typeof store));
-		
-		if(Ext.isString(store)) {
-			storeId = store;
-		} else {
-			storeId = store.id;
-		}
-		
-		var storeFilters = this.getFiltersForStore(storeId);
-		if (Sbi.isValorized(storeFilters)){
-			if (!Sbi.isValorized(params)) params = {};
-			
-			for(f in storeFilters ){
-				var obj = storeFilters[f];
-				if (Sbi.isValorized(obj.namePar)){
-					var label = obj.namePar;
-					var value = null;
-					if (obj.scope == 'Relative'){
-						value = this.getContextValue(obj.initialValue);
-					}else{
-						value = obj.initialValue;
-					}				
-					
-					if (Sbi.isValorized(value)) params[label] = value;
-				}
-			}
-			
-		}
-		var filtersParam =  Ext.JSON.encode(params);
-		try {
-			this.getStore(storeId).load({params:{filters: filtersParam}});
-		} catch(e){
-			Sbi.exception.ExceptionHandler.showErrorMessage(e,LN('sbi.qbe.datastorepanel.grid.emptywarningmsg'));
-			return false;
-		}
-		Sbi.trace("[StoreManager.loadStore]: store loaded!");
 	}
 	
 	, getStoreIds: function() {
@@ -917,22 +982,54 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 	/**
 	 * @methods
 	 * 
-	 * @param {Ext.data.Store/String} store The store id.
-	 *
-	 * Returns a list of filters for the store
-	 * 
-	 *  @return {Object[]} The  filters list
+	 * @param {Ext.data.Store/String} store The store or the store id.
+	 * @return {Object[]} The  parameters list
 	 */	
-	, getFiltersForStore: function(s){
-		var filters = [];
+	, getStoreParameters: function(store){
+		
+		// store's parameters should be properly renamed to parameter not filters. Filters are where condition
+		
+		var storeId = this.getStoreId(store);
+		
+		var parameters = [];
 		var lst = this.getFilters();
 		for(var i = 0, l = lst.length, s; i < l; i++) {
 			var f = lst[i];		
-			if (f.labelObj == s){
-				filters.push(f);					
+			if (f.labelObj == storeId){
+				parameters.push(f);					
 			}
 		}
-		return filters;
+		return parameters;
+	}
+	
+	, getStoreParametersValues: function(store) {
+		
+		var parametersValues = {};
+		
+		var storeId = this.getStoreId(store);
+		
+		var parameters = this.getStoreParameters(storeId);
+		if (Sbi.isValorized(parameters)){
+			Sbi.trace("[StoreManager.loadStore]: Store [" + storeId + "] is filtered");
+			
+			for(f in parameters){
+				var obj = parameters[f];
+				if (Sbi.isValorized(obj.namePar)){
+					var label = obj.namePar;
+					var value = null;
+					if (obj.scope == 'Relative'){
+						value = this.getContextValue(obj.initialValue);
+					}else{
+						value = obj.initialValue;
+					}				
+					
+					if (Sbi.isValorized(value)) parametersValues[label] = value;
+				}
+			}	
+		}
+			
+			
+		return parametersValues;
 	}
 	
 	, getContextValue: function(l){
@@ -991,25 +1088,82 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 	        remoteSort: false
 	    });
 		
+		store.on('load', this.onStoreLoad, this);
+		
 		return store;
 	}
     
-    , onStoreLoadException: function(proxy, response, operation, eOpts) {
-    	alert("[StoreManager.onStoreLoadException]: IN > " + Sbi.toSource(response, true));	
-    	alert("[StoreManager.onStoreLoadException]: IN > " + response.status);	
-    	alert("[StoreManager.onStoreLoadException]: IN > " + response.statusText);
-    	alert("[StoreManager.onStoreLoadException]: IN > " + response.responseText);
+    , onStoreLoad: function(store, records, successful, eOpts) {
     	
-    	Sbi.trace("[StoreManager.onStoreLoadException]: IN");	
-		//Sbi.exception.ExceptionHandler.handleFailure(response, options);
-		Sbi.trace("[StoreManager.onStoreLoadException]: OUT");	
+    	// {"service":"/1.0/datasets/AAA_SALES_1998/data",
+    	// "errors":[{"message":"An unexpected [java.lang.NullPointerException] exception has been trown during service execution"}]}
+    	
+    	var recordsNumber = store.getTotalCount();
+		
+		if (recordsNumber == 1){
+			store.status = "error";
+			
+			var rawData = store.getAt(0).raw;
+			if (Sbi.isValorized(rawData) && Sbi.isValorized(rawData.errors)) {
+				var msg = "Impossible to load dataset [" + this.getStoreId(store) + "] due to the following service errors: <p><ul>";
+				for(var i = 0; i < rawData.errors.length; i++) {
+					msg += "<li>" + rawData.errors[i].message + ";";
+				}
+				msg += "</ul>";
+				
+				Ext.Msg.show({
+					   title: "Service error",
+					   msg: msg,
+					   buttons: Ext.Msg.OK,
+					   icon: Ext.MessageBox.ERROR,
+					   modal: false
+				});
+			}
+				
+		} else {
+			store.status = "ready";
+		}
+		
+		if(recordsNumber == 0) {
+			Ext.Msg.show({
+				   title: LN('sbi.qbe.messagewin.info.title'),
+				   msg: LN('sbi.qbe.datastorepanel.grid.emptywarningmsg'),
+				   buttons: Ext.Msg.OK,
+				   icon: Ext.MessageBox.INFO,
+				   modal: false
+			});
+		}
+		
+		
+    	
+    	
+    	
+    	Sbi.trace("[StoreManager.onStoreLoad]: store [" + this.getStoreId(store) + "] reloaded succesfully: " + successful);	
+    	if(successful) {
+    		Sbi.trace("[StoreManager.onStoreLoad]: record loaded for store [" + this.getStoreId(store) + "] are [" + records.length + "]");	
+    	}
+    	Sbi.trace("[StoreManager.onStoreLoad]: eOpts for store [" + this.getStoreId(store) + "] is equal to [" + Sbi.toSource(eOpts, true) + "]");		
+    }
+    
+    , onStoreLoadException: function(proxy, response, operation, eOpts) {
+    	alert("onStoreLoadException " + this.getStoreId(store));
+    	
+    	Sbi.trace("[StoreManager.onStoreLoadException]: response attributes are [" + Sbi.toSource(response, true)) + "]";	
+    	Sbi.trace("[StoreManager.onStoreLoadException]: response status is equal to [" + response.status + "]");	
+    	Sbi.trace("[StoreManager.onStoreLoadException]: response status is equal to [" + response.statusText + "]");
+    	Sbi.trace("[StoreManager.onStoreLoadException]: response status is equal to [" + response.responseText + "]");
 	}
     
     , onStoreReadException: function(reader, response, error, eOpts) {
-    	alert("[StoreManager.onStoreReadException]: IN");	
-    	Sbi.trace("[StoreManager.onStoreReadException]: IN");	
-		//Sbi.exception.ExceptionHandler.handleFailure(response, options);
-		Sbi.trace("[StoreManager.onStoreReadException]: OUT");	
+    	alert("onStoreReadException " + this.getStoreId(store));
+    	
+    	Sbi.trace("[StoreManager.onStoreReadException]: error is equal to [" + Sbi.toSource(error, true) + "]" );	
+    	Sbi.trace("[StoreManager.onStoreReadException]: eOpts is equal to [" + Sbi.toSource(eOpts, true) + "]" );
+    	
+    	Sbi.trace("[StoreManager.onStoreReadException]: response attributes are [" + Sbi.toSource(response, true)) + "]";	
+    	Sbi.trace("[StoreManager.onStoreReadException]: response status is equal to [" + response.status + "]");	
+    	Sbi.trace("[StoreManager.onStoreReadException]: response status is equal to [" + response.statusText + "]");
+    	Sbi.trace("[StoreManager.onStoreReadException]: response status is equal to [" + response.responseText + "]");
 	}
     
     , createStoreOld: function(c) {

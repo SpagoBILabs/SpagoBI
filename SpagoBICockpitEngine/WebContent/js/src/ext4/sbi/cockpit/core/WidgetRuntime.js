@@ -141,12 +141,38 @@ Ext.extend(Sbi.cockpit.core.WidgetRuntime, Ext.Panel, {
 	// -----------------------------------------------------------------------------------------------------------------
     
     /**
-     * Refresh the widget's content. This method is abstract and so must be implemented properly by subclass.
+     * Equivalent to reload. TODO delete it!
      */
+    
     , refresh:  function() {  
 		Sbi.trace("[WidgetRuntime.refresh]: IN");
+		this.reload({start: 0, limit: this.pageSize}, {});
 		Sbi.trace("[WidgetRuntime.refresh]: OUT");
 	}
+
+	, reload: function(params, baseParams) {
+		Sbi.trace("[WidgetRuntime.reload]: IN");
+		var store = this.getStore();
+		if(!store) {
+			Sbi.warn("[WidgetRuntime.reload]: store [" + this.getStoreId() + "] not yet defiend in store manager");
+			return;
+		}
+		this.getStore().removeAll();
+		Sbi.storeManager.loadStore(this.getStoreId(), params, baseParams);
+		Sbi.trace("[WidgetRuntime.reload]: IN");
+	}
+	
+   
+	/**
+	 * Redraw the widget's content. The data are left unchanged
+	 * This method is abstract and so must be implemented properly by subclass.
+	 */
+	, redraw:  function() {  
+		Sbi.trace("[WidgetRuntime.redraw]: IN");
+		Sbi.trace("[WidgetRuntime.redraw]: OUT");
+	}
+	
+	
 
 	/**
 	 * @method
@@ -164,8 +190,7 @@ Ext.extend(Sbi.cockpit.core.WidgetRuntime, Ext.Panel, {
 	 * @param {boolean} refresh true to force the refresh of the widget after  the configuration is set, false otherwise. The default is true.
 	 */
 	, setConfiguration: function(config, refresh) {
-
-		Sbi.trace("[WidgetRuntime.setConfiguration]: IN");				
+		Sbi.trace("[WidgetRuntime.setConfiguration]: IN");
 		
 		this.setStoreId(config.storeId, false);
 		this.setWType(config.wtype, false);
@@ -212,28 +237,6 @@ Ext.extend(Sbi.cockpit.core.WidgetRuntime, Ext.Panel, {
     	return config;
 	}
     
-	/**
-	 * @method
-	 * Sets the label of the dataset used to feed the widget
-	 * 
-	 * @param {String} storeId The dataset's label
-	 * @param {boolean} refresh true to force the refresh after the setting of the property, false otherwise. The default is true.
-	 */
-//	, setStoreId: function(storeId, refresh) {
-//		if(Sbi.isValorized(storeId)) {
-//			this.storeId = storeId;
-//			Sbi.trace("[WidgetRuntime.setStoreId]: Store id set to [" + storeId + "]");
-//			if(refresh !== false) {
-//				this.refresh();
-//			} else {
-//				Sbi.trace("[WidgetRuntime.setStoreId]: Input parameter [refresh] is equal [" + refresh + "] to so widget won't be refreshed");
-//			}
-//		} else {
-//			Sbi.trace("[WidgetRuntime.setStoreId]: Input parameter [storeId] is not valorized so the property [storeId] will be left unchanged");
-//		}
-//		
-//	}
-    
     /**
 	 * @method 
 	 * 
@@ -244,7 +247,8 @@ Ext.extend(Sbi.cockpit.core.WidgetRuntime, Ext.Panel, {
 		this.getStore().on('metachange', this.onStoreMetaChange, this);
 		this.getStore().on('load', this.onStoreLoad, this);
 		this.getStore().on('datachanged', this.onDataChanged, this);
-		this.getStore().on('exception', this.onStoreException, this);
+		// exceptions are centralized managed by the store manager
+
 		Sbi.trace("[WidgetRuntime.boundStore]: OUT");
 	}
 	
@@ -254,8 +258,7 @@ Ext.extend(Sbi.cockpit.core.WidgetRuntime, Ext.Panel, {
 		if(Sbi.isValorized(store)) {
 			this.getStore().un('metachange', this.onStoreMetaChange, this);
 			this.getStore().un('load', this.onStoreLoad, this);
-			this.getStore().un('datachanged', this.onDataChanged, this);
-			this.getStore().un('exception', this.onStoreException, this);
+			this.getStore().un('datachanged', this.onDataChanged, this);	
 		} else {
 			Sbi.debug("Widget is not bound to any store or it is bound to a store that has already been removed from store manager");
 		}
@@ -322,7 +325,7 @@ Ext.extend(Sbi.cockpit.core.WidgetRuntime, Ext.Panel, {
 			return null;
 		}
 		
-		if(Sbi.storeManager.containsStore(this.getStoreId()) === false && forceCreation === false) {
+		if(Sbi.storeManager.containsStore(this.getStoreId()) === false && forceCreation === true) {
 			Sbi.warn("[Widget.getStore]: store [" + this.getStoreId() + "] will be added to store manager");
 			Sbi.storeManager.addStore({storeId: this.getStoreId()});
 		}
@@ -397,11 +400,10 @@ Ext.extend(Sbi.cockpit.core.WidgetRuntime, Ext.Panel, {
 	 * @param {Object} wgeneric The generic configuration of the widget.
 	 * @param {boolean} refresh true to force the refresh after the setting of the property, false otherwise. The default is true.
 	 */
-	, setGenericConfiguration: function(wgeneric, refresh) {	
-		
+	, setGenericConfiguration: function(wgeneric, refresh) {			
 		if(Sbi.isValorized(wgeneric)) {
 			this.wgeneric = wgeneric;
-			Sbi.trace("[WidgetRuntime.setGenericConfiguration]: wgeneric set to [" + Sbi.toSource(wgeneric) + "]");		
+			Sbi.trace("[WidgetRuntime.setGenericConfiguration]: wgeneric set to [" + Sbi.toSource(wgeneric) + "]");
 						
 			this.getParentComponent().refreshTitle();
 			
@@ -465,7 +467,7 @@ Ext.extend(Sbi.cockpit.core.WidgetRuntime, Ext.Panel, {
 			return '';
 		}		
 	}
-		
+	
 	/**
 	 * @method
 	 * 
@@ -747,12 +749,6 @@ Ext.extend(Sbi.cockpit.core.WidgetRuntime, Ext.Panel, {
 	
 	, onDataChanged: function(store, eOpts) {
 		// do nothing	
-	}
-	
-	// TODO: see http://docs.sencha.com/extjs/3.4.0/#!/api/Ext.data.DataProxy-event-exception
-	// and implement a better exception handling
-	, onStoreException: function(store, type, action, options, response, arg) {
-		Sbi.exception.ExceptionHandler.handleFailure(response, options);
 	}
 	
 	, onStoreMetaChange: function(store, meta) {

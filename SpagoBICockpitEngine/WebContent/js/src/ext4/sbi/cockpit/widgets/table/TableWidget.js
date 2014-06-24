@@ -61,9 +61,7 @@ Sbi.cockpit.widgets.table.TableWidget = function(config) {
 	Sbi.cockpit.widgets.table.TableWidget.superclass.constructor.call(this, c);
 	
 	this.on("afterRender", function(){
-//		this.getStore().load();
 		Sbi.storeManager.loadStore(this.storeId);
-		//this.refresh();
 		Sbi.trace("[TableWidget.onRender]: store loaded");
 	}, this);
 
@@ -119,10 +117,13 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 
 	, refresh:  function() {  
 		Sbi.trace("[TableWidget.refresh]: IN");
-		this.getStore().removeAll();
-		this.getStore().baseParams = {};
-		var requestParameters = {start: 0, limit: this.pageSize};
-		this.getStore().load({params: requestParameters});
+		Sbi.cockpit.widgets.table.TableWidget.superclass.refresh.call(this);	
+		Sbi.trace("[TableWidget.refresh]: OUT");
+	}
+	
+	, redraw: function() {
+		Sbi.trace("[TableWidget.refresh]: IN");
+		Sbi.cockpit.widgets.table.TableWidget.superclass.redraw.call(this);	
 		this.doLayout();
 		Sbi.trace("[TableWidget.refresh]: OUT");
 	}
@@ -188,31 +189,8 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 	
 	, onStoreLoad: function() {
 		Sbi.trace("[TableWidget.onStoreLoad][" + this.getId() + "]: IN");
-		
 		Sbi.cockpit.widgets.table.TableWidget.superclass.onStoreLoad.call(this, this.getStore());	
-		
-		
-		this.fireEvent('contentloaded');
-		
-		var recordsNumber = this.getStore().getTotalCount();
-		var isException = false;
-		if (recordsNumber == 1){
-			var e = this.getStore().getAt(0).raw;
-			if (Sbi.isValorized(e) && Sbi.isValorized(e.errors))
-				isException = true;
-		}
-     	if(recordsNumber == 0 || isException) {
-     		Ext.Msg.show({
-				   title: LN('sbi.qbe.messagewin.info.title'),
-				   msg: LN('sbi.qbe.datastorepanel.grid.emptywarningmsg'),
-				   buttons: Ext.Msg.OK,
-				   icon: Ext.MessageBox.INFO,
-				   modal: false
-			});
-     	}
-     	 
      	this.refreshWarningMessage();
-     	
      	Sbi.trace("[TableWidget.onStoreLoad]: OUT");		
 	}
 	

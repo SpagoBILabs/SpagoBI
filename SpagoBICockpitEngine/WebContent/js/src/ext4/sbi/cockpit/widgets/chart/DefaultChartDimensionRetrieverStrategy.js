@@ -17,12 +17,12 @@ Sbi.cockpit.widgets.chart.DefaultChartDimensionRetrieverStrategy = function(conf
 			var series = chart.getSeries();
 			var categories = chart.getCategories();
 			var legendFontSize = chart.legendFontSize;
-			var showlegend = chart.chartConfig.showlegend;
+			var showlegend = chart.getCustomConfiguration().showlegend;
 			
 			var width = '100%';
 			var height = '100%';
 			
-			if (chart.chartConfig.wtype = 'piechart'){
+			if (chart.getCustomConfiguration().wtype = 'piechart'){
 				width = '100%';
 				height = (Ext.isIE)?'80%' : '99%';
 			}

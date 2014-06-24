@@ -7,7 +7,7 @@
 
 Ext.define('Sbi.cockpit.widgets.piechart.PieChartWidgetDesigner', {
 	extend: 'Sbi.cockpit.core.WidgetDesigner'
-//	, layout:'fit'
+
 
 	, config:{
 		  title: LN('sbi.cockpit.widgets.piechartwidgetdesigner.title')

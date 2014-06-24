@@ -8,39 +8,48 @@
 /*
  * NOTE: This class is meant to be extended and not directly istantiated
  */
-Ext.ns("Sbi.cockpit.widgets.chart");
+Ext.ns("Sbi.cockpit.widgets.extjs.abstractchart");
 
-Sbi.cockpit.widgets.chart.AbstractChartWidget = function(config) {	
+Sbi.cockpit.widgets.extjs.abstractchart.AbstractChartWidget = function(config) {	
 	Sbi.trace("[AbstractChartWidget.constructor]: IN");
 	
 	var defaultSettings = {
-			
+		layout: 'fit'	
 	};
 
-	var settings = Sbi.getObjectSettings('Sbi.cockpit.widgets.chart.AbstractChartWidget', defaultSettings);
+	var settings = Sbi.getObjectSettings('Sbi.cockpit.widgets.extjs.abstractchart.AbstractChartWidget', defaultSettings);
 	var c = Ext.apply(settings, config || {});
 	Ext.apply(this, c);
 
 	this.chartDivId = Ext.id();
 	
-	c = Ext.apply(c, {
-		html : '<div id="' + this.chartDivId + '" style="width: 100%; height: 100%;"></div>'
-		, autoScroll: true
-	});
+	this.init();
 	
-	Sbi.cockpit.widgets.chart.AbstractChartWidget.superclass.constructor.call(this, c);
+	this.items = this.chart || this.msgPanel;
+	
+//	c = Ext.apply(c, {
+//		html : '<div id="' + this.chartDivId + '" style="width: 100%; height: 100%;"></div>'
+//		, autoScroll: true
+//	});
+	
+	Sbi.cockpit.widgets.extjs.abstractchart.AbstractChartWidget.superclass.constructor.call(this, c);
 
 	Sbi.trace("[AbstractChartWidget.constructor]: OUT");
 };
 
-Ext.extend(Sbi.cockpit.widgets.chart.AbstractChartWidget, Sbi.cockpit.core.WidgetRuntime, {
+Ext.extend(Sbi.cockpit.widgets.extjs.abstractchart.AbstractChartWidget, Sbi.cockpit.core.WidgetRuntime, {
 	
 	// =================================================================================================================
 	// PROPERTIES
 	// =================================================================================================================
 	  chartDivId : null
-	, chart : null
-	, chartConfig : null 	
+	, chartPanel : null
+	
+	/**
+	 * It's the content panel used when the chart is not yet available. By default it's empty. If the config property
+	 * msg is passed in then show the msg text. As soon as the chart became available it is removed and destroyed.
+	 */
+	, msgPanel: null
 	
     // =================================================================================================================
 	// METHODS
@@ -49,6 +58,23 @@ Ext.extend(Sbi.cockpit.widgets.chart.AbstractChartWidget, Sbi.cockpit.core.Widge
     // -----------------------------------------------------------------------------------------------------------------
     // public methods
 	// -----------------------------------------------------------------------------------------------------------------
+	
+	
+	, boundStore: function() {
+		Sbi.cockpit.widgets.table.TableWidget.superclass.boundStore.call(this);
+	}
+
+	, setContentPanel: function(panel) {
+		this.items.each( function(item) {
+			this.items.remove(item);
+	        item.destroy();           
+	    }, this);  
+		this.msgContent = null;
+        this.add(panel);
+        this.doLayout();
+	}
+
+	
 	
 	/**
 	 * Loads the data for the chart. Call the action which loads the crosstab 
@@ -78,7 +104,7 @@ Ext.extend(Sbi.cockpit.widgets.chart.AbstractChartWidget, Sbi.cockpit.core.Widge
 	 */
 	, loadChartData: function(dataConfig, filters){
 		
-		if ( !this.chartConfig.hiddenContent ) {
+		if ( !this.wconf.hiddenContent ) {
 			
 			var encodedParams = Ext.JSON.encode({
 				'rows': dataConfig.columns,
@@ -113,10 +139,10 @@ Ext.extend(Sbi.cockpit.widgets.chart.AbstractChartWidget, Sbi.cockpit.core.Widge
 		    			this.fireEvent('contentloaded');
 		        	} else {
 			        	if(this.rendered){
-			        		this.createChart();
+			        		this.redraw();
 			        		this.fireEvent('contentloaded');
 			        	}else{
-			        		this.on('afterrender',function(){this.createChart();this.fireEvent('contentloaded');}, this);
+			        		this.on('afterrender',function(){this.redraw();this.fireEvent('contentloaded');}, this);
 			        	}
 			        	
 		        	}
@@ -128,15 +154,13 @@ Ext.extend(Sbi.cockpit.widgets.chart.AbstractChartWidget, Sbi.cockpit.core.Widge
 					Sbi.exception.ExceptionHandler.handleFailure(response, options);
 				}      
 			});
-		}else{
+		}else {
         	if(this.rendered){
         		this.fireEvent('contentloaded');
         	}else{
         		this.on('afterrender',function(){this.fireEvent('contentloaded');}, this);
         	}
 		}
-		
-		
 	}
 
 	/**
@@ -261,7 +285,7 @@ Ext.extend(Sbi.cockpit.widgets.chart.AbstractChartWidget, Sbi.cockpit.core.Widge
 	, getRuntimeSeries : function () {
 		var toReturn = [];
 		// rows (of dataContainerObject) can contain 2 level, it depends if a groupingVariable was defined or not
-		if (this.chartConfig.groupingVariable != null) {
+		if (this.wconf.groupingVariable != null) {
 			// first level contains groupingVariable, second level contains series
 			var groupingAttributeValues = this.dataContainerObject.rows.node_childs;
 			for(var i = 0; i < groupingAttributeValues.length; i++) {
@@ -299,7 +323,7 @@ Ext.extend(Sbi.cockpit.widgets.chart.AbstractChartWidget, Sbi.cockpit.core.Widge
 	}	
 
 	, addChartConf: function(chartConf, showTipMask){
-		if((this.chartConfig.showlegend !== undefined) ? this.chartConfig.showlegend : true){
+		if((this.wconf.showlegend !== undefined) ? this.wconf.showlegend : true){
 			if (chartConf.extraStyle === undefined || chartConf.extraStyle == null) {
 				chartConf.extraStyle = {};
 			}
@@ -308,19 +332,63 @@ Ext.extend(Sbi.cockpit.widgets.chart.AbstractChartWidget, Sbi.cockpit.core.Widge
 		//chartConf.tipRenderer = this.getTooltipFormatter();
 	}
 	
+	//------------------------------------------------------------------------------------------------------------------
+	// utility methods
+	// -----------------------------------------------------------------------------------------------------------------
+	, init: function() {
+		this.initMsgPanel();
+		this.initChartThemes();
+	}
+	
+	, initMsgPanel: function() {
+		this.msgPanel = new Ext.Panel({
+			border: false
+			, bodyBorder: false
+			, hideBorders: true
+			, frame: false
+			, html: this.msg || ''
+		});
+	}
+	
+	, initChartThemes: function() {
+		Ext.define('Ext.chart.theme.CustomBlue', {
+	        extend: 'Ext.chart.theme.Base',
+	        
+	        constructor: function(config) {
+	            var titleLabel = {
+	                font: 'bold 18px Arial'
+	            }, axisLabel = {
+	                fill: 'rgb(8,69,148)',
+	                font: '12px Arial',
+	                spacing: 2,
+	                padding: 5
+	            };
+	            
+	            this.callParent([Ext.apply({
+	               axis: {
+	                   stroke: '#084594'
+	               },
+	               axisLabelLeft: axisLabel,
+	               axisLabelBottom: axisLabel,
+	               axisTitleLeft: titleLabel,
+	               axisTitleBottom: titleLabel
+	           }, config)]);
+	        }
+	    });
+	}
 	
 	//------------------------------------------------------------------------------------------------------------------
 	// utility methods
 	// -----------------------------------------------------------------------------------------------------------------
 	, getColors : function () {
 		var colors = [];
-		if (this.chartConfig !== undefined && this.chartConfig.groupingVariable != null) {
+		if (this.wconf !== undefined && this.wconf.groupingVariable != null) {
 			colors = Sbi.widgets.Colors.defaultColors;
 		} else {
-			if (this.chartConfig !== undefined && this.chartConfig.series !== undefined && this.chartConfig.series.length > 0) {
+			if (this.wconf !== undefined && this.wconf.series !== undefined && this.wconf.series.length > 0) {
 				var i = 0;
-				for (; i < this.chartConfig.series.length; i++) {
-					colors.push(this.chartConfig.series[i].color);
+				for (; i < this.wconf.series.length; i++) {
+					colors.push(this.wconf.series[i].color);
 				}
 			}
 		}
@@ -411,19 +479,113 @@ Ext.extend(Sbi.cockpit.widgets.chart.AbstractChartWidget, Sbi.cockpit.core.Widge
 	
 	, maximize: function(){
 		Sbi.trace("[AbstractChartWidget.maximize]: Ext.window.Window.maximize method overriden has been called");		
-		this.redraw();
+		//this.redraw();
 	} 
 	
 	, restore: function() {
 		Sbi.trace("[AbstractChartWidget.restore]: Ext.window.Window.restore method overriden has been called");
-		this.redraw();
+		//this.redraw();
 	}
 	
 	, resize: function() {
 		Sbi.trace("[AbstractChartWidget.resize]: Ext.window.Window.resize method overriden has been called");
-		alert("resizing");
-		this.redraw();
+		//this.redraw();
 	}
 	
+	, onStoreMetaChange: function(store, meta) {
+		Sbi.trace("[AbstractChartWidget.onStoreMetaChange][" + this.getId() + "]: IN");
+	
+		Sbi.cockpit.widgets.table.TableWidget.superclass.onStoreMetaChange.call(this, store, meta);	
+	
+		var fieldMeta = {};
+		
+		for(var i = 0; i < meta.fields.length; i++) {
+			var f = meta.fields[i];
+			if(Ext.isString(f)) continue;
+			f.header = f.header || f.name;
+			fieldMeta[f.header] = f;
+		}
+		store.fieldMeta = fieldMeta;
+		
+		Sbi.trace("[AbstractChartWidget.onStoreMetaChange][" + this.getId() + "]: OUT");
+	}
+	
+	, onStoreLoad: function() {
+		Sbi.trace("[AbstractChartWidget.onStoreLoad][" + this.getId() + "]: IN");
+		
+		if(this.getStore().status === "error") {
+			return;
+		}
+		
+		if(this.rendered){
+    		this.redraw();
+    	} else {
+    		this.on('afterrender', function(){this.redraw();}, this);
+    	}
+		Sbi.trace("[AbstractChartWidget.onStoreLoad][" + this.getId() + "]: OUT");
+	}
+	
+	//------------------------------------------------------------------------------------------------------------------
+	// test methods
+	// -----------------------------------------------------------------------------------------------------------------
+	
+	, getSampleStore: function() {
+		var store = Ext.create('Ext.data.JsonStore', {
+	        fields: ['name', 'data1', 'data2', 'data3', 'data4', 'data5', 'data6', 'data7', 'data9', 'data9'],
+	        data: this.generateData()
+	    });
+		return store;
+	}
+	
+	, generateData: function(n, floor){
+        var data = [],
+            p = (Math.random() *  11) + 1,
+            i;
+            
+        floor = (!floor && floor !== 0)? 20 : floor;
+        
+        for (i = 0; i < (n || 12); i++) {
+            data.push({
+                name: Ext.Date.monthNames[i % 12],
+                data1: Math.floor(Math.max((Math.random() * 100), floor)),
+                data2: Math.floor(Math.max((Math.random() * 100), floor)),
+                data3: Math.floor(Math.max((Math.random() * 100), floor)),
+                data4: Math.floor(Math.max((Math.random() * 100), floor)),
+                data5: Math.floor(Math.max((Math.random() * 100), floor)),
+                data6: Math.floor(Math.max((Math.random() * 100), floor)),
+                data7: Math.floor(Math.max((Math.random() * 100), floor)),
+                data8: Math.floor(Math.max((Math.random() * 100), floor)),
+                data9: Math.floor(Math.max((Math.random() * 100), floor))
+            });
+        }
+        
+        //alert('data: ' + Sbi.toSource(data));
+        
+        return data;
+    }
+    
+    , generateDataNegative: function(n, floor){
+        var data = [],
+            p = (Math.random() *  11) + 1,
+            i;
+            
+        floor = (!floor && floor !== 0)? 20 : floor;
+            
+        for (i = 0; i < (n || 12); i++) {
+            data.push({
+                name: Ext.Date.monthNames[i % 12],
+                data1: Math.floor(((Math.random() - 0.5) * 100), floor),
+                data2: Math.floor(((Math.random() - 0.5) * 100), floor),
+                data3: Math.floor(((Math.random() - 0.5) * 100), floor),
+                data4: Math.floor(((Math.random() - 0.5) * 100), floor),
+                data5: Math.floor(((Math.random() - 0.5) * 100), floor),
+                data6: Math.floor(((Math.random() - 0.5) * 100), floor),
+                data7: Math.floor(((Math.random() - 0.5) * 100), floor),
+                data8: Math.floor(((Math.random() - 0.5) * 100), floor),
+                data9: Math.floor(((Math.random() - 0.5) * 100), floor)
+            });
+        }
+        return data;
+    }
 
 });
