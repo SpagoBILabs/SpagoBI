@@ -342,7 +342,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 			AssociationGroup associationGroupObject = null;
 			try {
 				AssociationGroupJSONSerializer serializer = new AssociationGroupJSONSerializer();
-				associationGroupObject = serializer.deserialize(associationGroup);
+				associationGroupObject = serializer.deserialize(new JSONObject(associationGroup));
 			} catch(Throwable t) {
 				throw new SpagoBIServiceParameterException(this.request.getPathInfo(), 
 					"Query parameter [associationGroup] value [" + associationGroup+ "] is not a valid JSON object", t);
