@@ -24,6 +24,9 @@ import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.tools.dataset.DatasetManagementAPI;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.FilterCriteria;
+import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.GroupCriteria;
+import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.ProjectionCriteria;
 import it.eng.spagobi.tools.dataset.common.association.AssociationGroup;
 import it.eng.spagobi.tools.dataset.common.association.AssociationGroupJSONSerializer;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
@@ -31,8 +34,10 @@ import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData.FieldType;
 import it.eng.spagobi.tools.dataset.common.query.AggregationFunctions;
+import it.eng.spagobi.tools.dataset.common.query.IAggregationFunction;
 import it.eng.spagobi.tools.dataset.crosstab.CrossTab;
 import it.eng.spagobi.tools.dataset.crosstab.CrosstabDefinition;
+import it.eng.spagobi.tools.dataset.crosstab.Measure;
 import it.eng.spagobi.tools.dataset.exceptions.ParametersNotValorizedException;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
@@ -42,9 +47,11 @@ import it.eng.spagobi.utilities.json.JSONUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DefaultValue;
@@ -139,36 +146,8 @@ public class DataSetResource extends AbstractSpagoBIResource {
 		}	
 	}
 	
-	@GET
-	@Path("/{label}/data")
-	@Produces(MediaType.APPLICATION_JSON)
-	public String getDataStore(@PathParam("label") String label
-			, @QueryParam("filters") @DefaultValue("{}") String filters
-			, @QueryParam("offset") @DefaultValue("-1") int offset
-			, @QueryParam("fetchSize") @DefaultValue("-1") int fetchSize
-			, @QueryParam("maxResults") @DefaultValue("-1") int maxResults) {
-		logger.debug("IN");
-		try {
-		
-			IDataStore dataStore = getDatasetManagementAPI().getDataStore(label, offset, fetchSize, maxResults, getParametersMap(filters));
-			long recNo = dataStore.getRecordsCount();
-			
-			Map<String, Object> properties = new HashMap<String, Object>();
-			JSONArray fieldOptions = new JSONArray("[{id: 1, options: {measureScaleFactor: 0.5}}]");
-			properties.put(JSONDataWriter.PROPERTY_FIELD_OPTION, fieldOptions);
-			JSONDataWriter dataSetWriter = new JSONDataWriter(properties);
-			JSONObject gridDataFeed = (JSONObject)dataSetWriter.write(dataStore);
-			
-			String stringFeed = gridDataFeed.toString();	
-			return stringFeed;
-		}catch(ParametersNotValorizedException p){
-			throw new ParametersNotValorizedException(p.getMessage());
-		}catch(Throwable t) {
-			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", t);
-		} finally {			
-			logger.debug("OUT");
-		}	
-	}
+
+	
 	
 	private static final String CROSSTAB_DEFINITION = "crosstabDefinition";
 
@@ -220,37 +199,189 @@ public class DataSetResource extends AbstractSpagoBIResource {
 		}	
 	}
 	
+	
+	
+	
+	
+	@GET
+	@Path("/{label}/data")
+	@Produces(MediaType.APPLICATION_JSON)
+	public String getDataStore(@PathParam("label") String label
+			, @QueryParam("parameters")	@DefaultValue("{}") String parameters
+			, @QueryParam("measures") 	@DefaultValue("[]") String measures
+			, @QueryParam("categories") @DefaultValue("[]") String categories
+			, @QueryParam("offset") 	@DefaultValue("-1") int offset
+			, @QueryParam("fetchSize") 	@DefaultValue("-1") int fetchSize
+			, @QueryParam("maxResults") @DefaultValue("-1") int maxResults) {
+		
+		logger.debug("IN");
+		
+		try {
+			
+			// series: [{"id":"unit_sales","alias":"unit_sales","funct":"SUM","iconCls":"measure","nature":"measure","seriename":"unit_sales","color":"#4572A7","showcomma":true,"precision":2,"suffix":""},{"id":"store_cost","alias":"store_cost","funct":"SUM","iconCls":"measure","nature":"measure","seriename":"store_cost","color":"#DB843D","showcomma":true,"precision":2,"suffix":""}]
+			JSONArray measuresObject = new JSONArray(measures);
+			// categories: [{"alias":"promotion_id","id":"promotion_id","funct":null,"iconCls":"attribute","nature":"attribute","values":"[]","options":{}}]
+			JSONArray categoriesObject = new JSONArray(categories);
+			
+			// TODO maybe
+//			JSONArray categoriesObject = new JSONArray(categories);
+//			List<FilterCriteria> filterCriteria = new ArrayList<FilterCriteria>();
+			
+			List<ProjectionCriteria> projectionCriterias = projectionCriterias = getProjectionCriteria(label, categoriesObject, measuresObject);
+			List<GroupCriteria> groupCriterias = groupCriterias = getGroupCriteria(label, categoriesObject);
+			
+//			List<ProjectionCriteria> projectionCriterias = new ArrayList<ProjectionCriteria>();
+//			for(int i = 0; i < categoriesObject.length(); i++) {
+//				JSONObject  categoryObject = categoriesObject.getJSONObject(i);
+//				String columnName = categoryObject.getString("id");
+//				ProjectionCriteria aProjectionCriteria = new ProjectionCriteria(columnName,null,columnName);
+//				projectionCriterias.add(aProjectionCriteria);
+//			}
+//			for(int i = 0; i < measuresObject.length(); i++) {
+//				JSONObject  measureObject = measuresObject.getJSONObject(i);
+//				String columnName = measureObject.getString("id");
+//				IAggregationFunction function = AggregationFunctions.get( measureObject.getString("funct") );
+//				if (function != AggregationFunctions.NONE_FUNCTION) {
+//					ProjectionCriteria aProjectionCriteria = new ProjectionCriteria(columnName,function.getName(),columnName);
+//					projectionCriterias.add(aProjectionCriteria);
+//				} else {
+//					ProjectionCriteria aProjectionCriteria = new ProjectionCriteria(columnName,null,columnName);
+//					projectionCriterias.add(aProjectionCriteria);
+//				}
+//			}
+//			
+//			List<GroupCriteria> groupCriterias = new ArrayList<GroupCriteria>();
+//			for(int i = 0; i < categoriesObject.length(); i++) {
+//				JSONObject  categoryObject = categoriesObject.getJSONObject(i);
+//				String columnName = categoryObject.getString("id");
+//				GroupCriteria groupCriteria = new GroupCriteria(columnName,null);
+//				groupCriterias.add(groupCriteria);
+//			}
+			
+			IDataStore dataStore = null;
+			if(groupCriterias.size() == 0 && projectionCriterias.size() == 0) {
+				dataStore = getDatasetManagementAPI().getDataStore(label, -1, -1, -1, getParametersMap(parameters));
+			} else {
+				dataStore = getDatasetManagementAPI().getDataStore(label, -1, -1, -1, getParametersMap(parameters), groupCriterias, null, projectionCriterias);
+			}
+			
+			long recNo = dataStore.getRecordsCount();
+			
+			Map<String, Object> properties = new HashMap<String, Object>();
+			JSONArray fieldOptions = new JSONArray("[{id: 1, options: {measureScaleFactor: 0.5}}]");
+			properties.put(JSONDataWriter.PROPERTY_FIELD_OPTION, fieldOptions);
+			JSONDataWriter dataSetWriter = new JSONDataWriter(properties);
+			JSONObject gridDataFeed = (JSONObject)dataSetWriter.write(dataStore);
+			
+			String stringFeed = gridDataFeed.toString();	
+			return stringFeed;
+		}catch(ParametersNotValorizedException p){
+			throw new ParametersNotValorizedException(p.getMessage());
+		}catch(Throwable t) {
+			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", t);
+		} finally {			
+			logger.debug("OUT");
+		}	
+	}
+	
+	private List<ProjectionCriteria> getProjectionCriteria(String dataset, JSONArray categoriesObject, JSONArray measuresObject) throws JSONException  {
+		List<ProjectionCriteria> projectionCriterias = new ArrayList<ProjectionCriteria>();
+		for(int i = 0; i < categoriesObject.length(); i++) {
+			JSONObject  categoryObject = categoriesObject.getJSONObject(i);
+			String columnName = categoryObject.getString("id");
+			ProjectionCriteria aProjectionCriteria = new ProjectionCriteria(dataset, columnName,null,columnName);
+			projectionCriterias.add(aProjectionCriteria);
+		}
+		for(int i = 0; i < measuresObject.length(); i++) {
+			JSONObject  measureObject = measuresObject.getJSONObject(i);
+			String columnName = measureObject.getString("id");
+			IAggregationFunction function = AggregationFunctions.get( measureObject.getString("funct") );
+			if (function != AggregationFunctions.NONE_FUNCTION) {
+				ProjectionCriteria aProjectionCriteria = new ProjectionCriteria(dataset, columnName,function.getName(),columnName);
+				projectionCriterias.add(aProjectionCriteria);
+			} else {
+				ProjectionCriteria aProjectionCriteria = new ProjectionCriteria(dataset, columnName,null,columnName);
+				projectionCriterias.add(aProjectionCriteria);
+			}
+		}
+		return projectionCriterias;
+	}
+	
+	
+	private List<GroupCriteria> getGroupCriteria(String dataset, JSONArray categoriesObject) throws JSONException {
+		List<GroupCriteria> groupCriterias = new ArrayList<GroupCriteria>();
+		
+		for(int i = 0; i < categoriesObject.length(); i++) {
+			JSONObject  categoryObject = categoriesObject.getJSONObject(i);
+			String columnName = categoryObject.getString("id");
+			GroupCriteria groupCriteria = new GroupCriteria(dataset, columnName,null);
+			groupCriterias.add(groupCriteria);
+		}
+		
+		return groupCriterias;
+	}
+	
 	@GET
 	@Path("/joined/data")
 	@Produces(MediaType.APPLICATION_JSON)
-	public String getJoinedDataStore(@QueryParam("associationGroup") String associationGroup
-			, @QueryParam("selections") String selections
-			, @QueryParam("filters") @DefaultValue("{}") String filters) {
+	public String getJoinedDataStore(
+		  @QueryParam("associationGroup") 	String associationGroup // the joined dataset
+		, @QueryParam("parameters")			String parameters 		// parameters of the joined dataset
+		, @QueryParam("selections") 		String selections 		// the filter to apply to the joined dataset
+		, @QueryParam("aggregations") 		String aggregations 	// the aggregation to apply to the joined dataset
+		, @QueryParam("datasets") 			String datasets 		// the list of joined dataset to return
+	) {
+		
 		logger.debug("IN");
 		try {
-			// unmarshal query param [associationGroup]
+			// unmarshall query param [associationGroup]
 			if(associationGroup == null) {
 				throw new SpagoBIServiceParameterException(this.request.getPathInfo(), 
 					"Query parameter [associationGroup] cannot be null");
 			}
-			AssociationGroup associationGrp = null;
-			JSONObject associationGrpJSON = null;
+			AssociationGroup associationGroupObject = null;
 			try {
-				associationGrpJSON = new JSONObject(associationGroup);
 				AssociationGroupJSONSerializer serializer = new AssociationGroupJSONSerializer();
-				associationGrp = serializer.deserialize(associationGrpJSON);
+				associationGroupObject = serializer.deserialize(associationGroup);
 			} catch(Throwable t) {
 				throw new SpagoBIServiceParameterException(this.request.getPathInfo(), 
 					"Query parameter [associationGroup] value [" + associationGroup+ "] is not a valid JSON object", t);
 			}
 			
+			// TODO process association and apply it to the joined dataset
+			List<ProjectionCriteria> projectionCriteria = new ArrayList<ProjectionCriteria>();
+			List<GroupCriteria> groupCriteria = new ArrayList<GroupCriteria>();
+			if(aggregations != null) {
+				JSONObject aggregationsObject = new JSONObject(aggregations);
+				String  dataset = aggregationsObject.getString("dataset");
+				JSONArray categoriesObject = aggregationsObject.getJSONArray("categories");
+				JSONArray measuresObject = aggregationsObject.getJSONArray("measures");
+				
+				projectionCriteria = getProjectionCriteria(dataset, categoriesObject, measuresObject);
+				groupCriteria = getGroupCriteria(dataset, categoriesObject);
+			}
 
+
+			
 			// unmarshal query param [selections]
 			JSONObject selectionsJSON = new JSONObject(selections);
 			
-			IDataStore dataStore = getDatasetManagementAPI().getJoinedDataStore(associationGrp, selectionsJSON, getParametersMap(filters));
-			
-			
+			Set<String> datasetsObject = null;
+			if(datasets != null) {
+				datasetsObject = new HashSet<String>();
+				JSONArray datasetsJSON = new JSONArray(datasets);
+				for(int i = 0; i < datasetsJSON.length(); i++) {
+					datasetsObject.add(datasetsJSON.getString(i));
+				}
+			}
+
+			IDataStore dataStore = null;
+			if(groupCriteria.size() == 0 && projectionCriteria.size() == 0) {
+				dataStore = getDatasetManagementAPI().getJoinedDataStore(associationGroupObject, selectionsJSON, getParametersMap(parameters));
+			} else {
+				dataStore = getDatasetManagementAPI().getJoinedDataStore(associationGroupObject, selectionsJSON, getParametersMap(parameters), groupCriteria, null, projectionCriteria);
+			}
+						
 			// serializing response
 			Monitor monitor = Monitor.start("serializeStore");
 			Map<String, Object> properties = new HashMap<String, Object>();
@@ -261,10 +392,36 @@ public class DataSetResource extends AbstractSpagoBIResource {
 			JSONArray gridDataFeed = (JSONArray)dataSetWriter.write(dataStore);
 			logger.info("Dataset serialized in: " + monitor.elapsedAsString());
 			
-			List<Integer> breakIndexes = (List<Integer>)dataStore.getMetaData().getProperty("BREAK_INDEXES");
-			JSONArray datasetLabels = associationGrpJSON.getJSONArray("datasets");
-			JSONObject results = splitGridDataFeed(gridDataFeed, datasetLabels, breakIndexes);
+			JSONObject results = null;	
+			
+			if(groupCriteria.size() == 0 && projectionCriteria.size() == 0) {
+				List<Integer> breakIndexes = (List<Integer>)dataStore.getMetaData().getProperty("BREAK_INDEXES");
+				List<String> datasetLabels = new ArrayList(associationGroupObject.getDataSetLabels());
+				JSONObject resultsAll = splitGridDataFeed(gridDataFeed, datasetLabels, breakIndexes);
+				
 					
+				
+				if(datasetsObject != null) {
+					results = new JSONObject();		
+					JSONArray names = resultsAll.names();
+					for(int i = 0; i < names.length(); i++) {
+						String name = names.getString(i);
+						if(datasetsObject.contains(name)) {
+							results.put(name, resultsAll.getJSONArray(name));
+						}
+					}
+				} else {
+					results = resultsAll;
+				}
+			} else {
+				results = new JSONObject();
+				List<String> dsList = new ArrayList(datasetsObject);
+				results.put(dsList.get(0), gridDataFeed);	
+			}
+			
+			
+			
+			
 			return results.toString();	
 		} catch(Throwable t) {
 			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", t);
@@ -274,7 +431,9 @@ public class DataSetResource extends AbstractSpagoBIResource {
 	}
 	
 	
-	private JSONObject splitGridDataFeed(JSONArray gridDataFeed, JSONArray datasetLabels , List<Integer> breakIndexes) {
+
+
+	private JSONObject splitGridDataFeed(JSONArray gridDataFeed, List<String> datasetLabels, List<Integer> breakIndexes) {
 		
 		JSONObject results = null;
 		
@@ -282,9 +441,8 @@ public class DataSetResource extends AbstractSpagoBIResource {
 		Monitor monitor = Monitor.start("splitGridDataFeed");
 		
 		try {
-			
 			breakIndexes.add(Integer.MAX_VALUE);
-			int datasetNo = datasetLabels.length();
+			int datasetNo = datasetLabels.size();
 			
 			results = new JSONObject();
 			JSONArray[] datasetRecords = new JSONArray[datasetNo];
@@ -295,7 +453,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 			String[] lastRowNo = new String[datasetNo];
 			for(int i = 0; i < gridDataFeed.length(); i++) {
 				JSONObject originalRecord = gridDataFeed.getJSONObject(i);
-				JSONObject[] datasetRecord = splitRecord(originalRecord, datasetLabels ,breakIndexes);
+				JSONObject[] datasetRecord = splitRecord(originalRecord, datasetLabels, breakIndexes);
 				for(int j = 0; j < datasetRecords.length; j++) {
 					String currentRowNoName = "column_1";
 					String currentRowNo = datasetRecord[j].getString(currentRowNoName);
@@ -304,50 +462,12 @@ public class DataSetResource extends AbstractSpagoBIResource {
 						lastRowNo[j] = currentRowNo; 
 					}
 				}
-				
-//				JSONArray props = originalRecord.names();
-//				
-//				JSONObject[] datasetRecord = new JSONObject[datasetNo];
-//				for(int j = 0; j < datasetRecord.length; j++) {
-//					datasetRecord[j] = new JSONObject();
-//					datasetRecord[j].put("id", originalRecord.getString("id"));
-//				}
-//				
-//			
-//				String[] lastRowNo = new String[datasetNo];
-//				String[] currentRowNo = new String[datasetNo];
-//				
-//				int breakIndexNo = 0;
-//				int breakIndex =  breakIndexes.get(breakIndexNo);
-//				JSONObject record = datasetRecord[0];
-//				for(int j = 1, colNo = 1; j < props.length(); j++, colNo++) {
-//					String p = props.getString(j);
-//					if(j == 1) currentRowNo[breakIndexNo] = originalRecord.getString(p);
-//					
-//					if(j == breakIndex+1) {
-//						lastRowNo[breakIndexNo] = currentRowNo[breakIndexNo];
-//						
-//						breakIndexNo++;
-//						breakIndex = breakIndexes.get(breakIndexNo);
-//						record = datasetRecord[breakIndexNo];
-//						colNo = 1;
-//						currentRowNo[breakIndexNo] = originalRecord.getString(p);
-//					} 
-//					
-//					if(currentRowNo[breakIndexNo].equals(lastRowNo[breakIndexNo])) {
-//						continue;
-//					}
-//					
-//					record.put("column_" + colNo, originalRecord.getString(p));
-//				}
-				
-//				for(int j = 0; j < datasetRecords.length; j++) {
-//					datasetRecords[j].put(datasetRecord[j]);
-//				}
 			}
 			
+			// TODO refactor this because it is very fragile. There is infact no garanty that datasetLabels order is the same splited
+			// datasets (i.e. braeking points)
 			for(int j = 0; j < datasetRecords.length; j++) {
-				results.put(datasetLabels.getString(j), datasetRecords[j]);
+				results.put(datasetLabels.get(j), datasetRecords[j]);
 			}
 		} catch(Throwable t) {
 			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while splittind dataset", t);
@@ -359,14 +479,14 @@ public class DataSetResource extends AbstractSpagoBIResource {
 		return results;
 	}
 	
-	public JSONObject[] splitRecord(JSONObject originalRecord, JSONArray datasetLabels , List<Integer> breakIndexes) {
+	public JSONObject[] splitRecord(JSONObject originalRecord, List<String> datasetLabels, List<Integer> breakIndexes) {
 		
 		logger.debug("IN");
 		
 		try {
 			JSONArray props = originalRecord.names();
 			
-			int datasetNo = datasetLabels.length();
+			int datasetNo = datasetLabels.size();
 			JSONObject[] datasetRecord = new JSONObject[datasetNo];
 			for(int j = 0; j < datasetRecord.length; j++) {
 				datasetRecord[j] = new JSONObject();
@@ -403,18 +523,22 @@ public class DataSetResource extends AbstractSpagoBIResource {
 	
 	private static Map<String, String> getParametersMap(String filters){
 		Map<String, String> toReturn = new HashMap<String, String>();
-		filters = JSONUtils.escapeJsonString(filters);
-		JSONObject jsonFilters  = ObjectUtils.toJSONObject(filters);	
-		Iterator<String> keys = jsonFilters.keys();
-		try{
-	        while( keys.hasNext() ){
-	            String key = keys.next();            
-	            String value = jsonFilters.getString(key);
-	            toReturn.put(key, value);
-	        }
-		} catch(Throwable t) {
-			throw new SpagoBIRuntimeException("An unexpected exception occured while loading spagobi filters [" + filters + "]", t);
-		}	
+		
+		if(filters != null) {
+			filters = JSONUtils.escapeJsonString(filters);
+			JSONObject jsonFilters  = ObjectUtils.toJSONObject(filters);	
+			Iterator<String> keys = jsonFilters.keys();
+			try{
+		        while( keys.hasNext() ){
+		            String key = keys.next();            
+		            String value = jsonFilters.getString(key);
+		            toReturn.put(key, value);
+		        }
+			} catch(Throwable t) {
+				throw new SpagoBIRuntimeException("An unexpected exception occured while loading spagobi filters [" + filters + "]", t);
+			}	
+		}
+		
 		return toReturn;
 	}
 	
