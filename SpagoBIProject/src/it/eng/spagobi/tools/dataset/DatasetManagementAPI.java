@@ -281,7 +281,17 @@ public class DatasetManagementAPI {
 	}
 	
 	
-	public IDataStore getDataStore(String label, int offset, int fetchSize, int maxResults, Map<String, String> parametersValues) {
+	/**
+	 * 
+	 * @param label
+	 * @param offset
+	 * @param fetchSize
+	 * @param maxResults
+	 * @param parametersValues
+	 * @return
+	 */
+	public IDataStore getDataStore(String label, 
+			int offset, int fetchSize, int maxResults, Map<String, String> parametersValues) {
 		try {
 			IDataSet dataSet = this.getDataSetDAO().loadDataSetByLabel(label);
 			List<JSONObject> parameters = getDataSetParameters(label);
@@ -309,6 +319,44 @@ public class DatasetManagementAPI {
 			logger.debug("OUT");
 		}	
 	}
+	
+	public IDataStore getDataStore(String label, 
+			int offset, int fetchSize, int maxResults, Map<String, String> parametersValues,
+			List<GroupCriteria> groupCriteria, List<FilterCriteria> filterCriteria, List<ProjectionCriteria> projectionCriteria) {
+		
+		try {
+			
+			IDataSet dataSet = this.getDataSetDAO().loadDataSetByLabel(label);
+			
+			ICache cache = SpagoBICacheManager.getCache();
+			IDataStore dataStore = null;
+			
+			if(cache.contains(dataSet) == false){
+				dataSet.loadData();
+				IDataStore baseDataStore = dataSet.getDataStore();
+				cache.put(dataSet, baseDataStore);
+			} 
+
+			// just get without storing...ok?
+			dataStore = cache.get(dataSet, groupCriteria, filterCriteria, projectionCriteria);
+			
+			
+			/* since the datastore, at this point, is a JDBC datastore, 
+			* it does not contain information about measures/attributes, fields' name and alias...
+			* therefore we adjust its metadata
+			*/
+			this.adjustMetadata((DataStore) dataStore, dataSet, null);
+			dataSet.decode(dataStore);
+			
+			return dataStore;
+
+		} catch(Throwable t) {
+			throw new RuntimeException("An unexpected error occured while executing method", t);
+		} finally {			
+			logger.debug("OUT");
+		}	
+	}
+	
 	/**
 	 * @param associationGroupJSON
 	 * @param selectionsJSON
@@ -359,6 +407,68 @@ public class DatasetManagementAPI {
 		
 		
 		return joinedDataStore;
+	}
+	
+	/**
+	 * @param associationGroupObject
+	 * @param selectionsJSON
+	 * @param parametersMap
+	 * @param groupCriterias
+	 * @param object
+	 * @param projectionCriterias
+	 * @return
+	 */
+	public IDataStore getJoinedDataStore(AssociationGroup associationGroup, 
+			JSONObject selections, 
+			Map<String, String> parametersValues,
+			List<GroupCriteria> groupCriteria, 
+			List<FilterCriteria> filterCriteria,
+			List<ProjectionCriteria> projectionCriteria) {
+
+		IDataStore joinedDataStore = null;
+		
+		logger.debug("IN");
+		
+		try {
+			JoinedDataSet joinedDataSet = new JoinedDataSet("theLabel", "theLabel", "theLabel", associationGroup);
+			joinedDataSet.setParamsMap(parametersValues);
+			
+			ICache cache = SpagoBICacheManager.getCache();
+			if (cache.contains(joinedDataSet) == false) {
+				cache.refresh(joinedDataSet, true);
+			} 
+			
+			List<FilterCriteria> filters = (filterCriteria != null)? filterCriteria: new ArrayList<FilterCriteria>();
+			Iterator<String> it = selections.keys();
+			while(it.hasNext()) {
+				String associationName = it.next();
+				JSONArray values = selections.getJSONArray(associationName);
+				if(values.length() == 0) continue;
+				List<String> valuesList = new ArrayList<String>(); 
+				for(int i = 0; i < values.length(); i++) {
+					valuesList.add(values.getString(i));
+				}
+				
+				Association association = associationGroup.getAssociation(associationName);
+				String datasetColumn = association.getFields().get(0).getFieldName();
+				String datasetLabel = association.getFields().get(0).getDataSetLabel();
+				
+				Operand leftOperand = new Operand(datasetLabel, datasetColumn);
+				Operand rightOperand = new Operand(valuesList);
+				FilterCriteria filter = new FilterCriteria(leftOperand, "IN", rightOperand);
+				filters.add(filter);
+			}
+			
+			joinedDataStore = cache.get(joinedDataSet, groupCriteria, filters, projectionCriteria);
+		} catch(Throwable t) {
+			throw new RuntimeException("An unexpected error occured while executing method", t);
+		} finally {			
+			logger.debug("OUT");
+		}	
+		
+		
+		return joinedDataStore;
+		
 	}
 	
 	private List<IDataStore> storeDataSetsInCache(List<IDataSet> joinedDataSets, Map<String, String> parametersValues, boolean wait) {
@@ -468,9 +578,9 @@ public class DatasetManagementAPI {
 
 			} 
 
-			List<ProjectionCriteria> projectionCriteria = this.getProjectionCriteria(crosstabDefinition);
+			List<ProjectionCriteria> projectionCriteria = this.getProjectionCriteria(label, crosstabDefinition);
 			List<FilterCriteria> filterCriteria = new ArrayList<FilterCriteria>(); // empty in this case
-			List<GroupCriteria> groupCriteria = this.getGroupCriteria(crosstabDefinition);
+			List<GroupCriteria> groupCriteria = this.getGroupCriteria(label, crosstabDefinition);
 			dataStore = cache.get(dataSet, groupCriteria, filterCriteria, projectionCriteria);
 			
 			
@@ -683,9 +793,13 @@ public class DatasetManagementAPI {
 	// Methods for extracting information from CrosstabDefinition and related
 	//------------------------------------------------------------------------------
 	
-	private List<ProjectionCriteria> getProjectionCriteria(CrosstabDefinition crosstabDefinition){
+	/**
+	 * @deprecated
+	 */
+	private List<ProjectionCriteria> getProjectionCriteria(String dataset, CrosstabDefinition crosstabDefinition){
 		logger.debug("IN");	
 		List<ProjectionCriteria> projectionCriterias = new ArrayList<ProjectionCriteria>();
+	
 		
 		List<CrosstabDefinition.Row> rows = crosstabDefinition.getRows();
 		List<CrosstabDefinition.Column> colums = crosstabDefinition.getColumns();
@@ -696,7 +810,7 @@ public class DatasetManagementAPI {
 		while (columsIt.hasNext()) {
 			CrosstabDefinition.Column aColumn = columsIt.next();
 			String columnName = aColumn.getEntityId();
-			ProjectionCriteria aProjectionCriteria = new ProjectionCriteria(columnName,null,columnName);
+			ProjectionCriteria aProjectionCriteria = new ProjectionCriteria(dataset, columnName,null,columnName);
 			projectionCriterias.add(aProjectionCriteria);
 		}
 		// appends rows
@@ -704,7 +818,7 @@ public class DatasetManagementAPI {
 		while (rowsIt.hasNext()) {
 			CrosstabDefinition.Row aRow = rowsIt.next();
 			String columnName = aRow.getEntityId();
-			ProjectionCriteria aProjectionCriteria = new ProjectionCriteria(columnName,null,columnName);
+			ProjectionCriteria aProjectionCriteria = new ProjectionCriteria(dataset, columnName,null,columnName);
 			projectionCriterias.add(aProjectionCriteria);
 		}
 		
@@ -729,10 +843,10 @@ public class DatasetManagementAPI {
 				*/
 			} else {
 				if (function != AggregationFunctions.NONE_FUNCTION) {
-					ProjectionCriteria aProjectionCriteria = new ProjectionCriteria(columnName,function.getName(),columnName);
+					ProjectionCriteria aProjectionCriteria = new ProjectionCriteria(dataset, columnName,function.getName(),columnName);
 					projectionCriterias.add(aProjectionCriteria);
 				} else {
-					ProjectionCriteria aProjectionCriteria = new ProjectionCriteria(columnName,null,columnName);
+					ProjectionCriteria aProjectionCriteria = new ProjectionCriteria(dataset, columnName,null,columnName);
 					projectionCriterias.add(aProjectionCriteria);
 				}
 			}
@@ -744,7 +858,10 @@ public class DatasetManagementAPI {
 		return projectionCriterias;
 	}
 	
-	private List<GroupCriteria> getGroupCriteria(CrosstabDefinition crosstabDefinition){
+	/**
+	 * @deprecated
+	 */
+	private List<GroupCriteria> getGroupCriteria(String dataset, CrosstabDefinition crosstabDefinition){
 		logger.debug("IN");
 		List<GroupCriteria> groupCriterias = new ArrayList<GroupCriteria>();
 
@@ -757,7 +874,7 @@ public class DatasetManagementAPI {
 		while (columsIt.hasNext()) {
 			CrosstabDefinition.Column aColumn = columsIt.next();
 			String columnName = aColumn.getEntityId();
-			GroupCriteria groupCriteria = new GroupCriteria(columnName,null);
+			GroupCriteria groupCriteria = new GroupCriteria(dataset, columnName,null);
 			groupCriterias.add(groupCriteria);
 		}
 		
@@ -767,7 +884,7 @@ public class DatasetManagementAPI {
 		while (rowsIt.hasNext()) {
 			CrosstabDefinition.Row aRow = rowsIt.next();
 			String columnName = aRow.getEntityId();
-			GroupCriteria groupCriteria = new GroupCriteria(columnName,null);
+			GroupCriteria groupCriteria = new GroupCriteria(dataset, columnName,null);
 			groupCriterias.add(groupCriteria);
 		}
 		logger.debug("OUT");
@@ -835,5 +952,7 @@ public class DatasetManagementAPI {
 				}
 			}
 		}
-	}	
+	}
+
+	
 }

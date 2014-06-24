@@ -30,19 +30,32 @@ package it.eng.spagobi.tools.dataset.cache.impl.sqldbcache;
 public class ProjectionCriteria {
 
 	//Projection for the SELECT clause
-	
+	String dataset; //the column name
 	String columnName; //the column name
 	String aggregateFunction; //optional aggregate function like SUM, AVG, etc...
 	String aliasName; //alias for the column
 	
 	
-	public ProjectionCriteria(String columnName, String aggregateFunction, String aliasName){
+	public ProjectionCriteria(String dataset, String columnName, String aggregateFunction, String aliasName){
+		this.dataset = dataset;
 		this.columnName = columnName;
 		this.aggregateFunction = aggregateFunction;
 		this.aliasName = aliasName;
 	}
 	
 	
+
+	public String getDataset() {
+		return dataset;
+	}
+
+
+
+	public void setDataset(String dataset) {
+		this.dataset = dataset;
+	}
+
+
 
 	/**
 	 * @return the columnName

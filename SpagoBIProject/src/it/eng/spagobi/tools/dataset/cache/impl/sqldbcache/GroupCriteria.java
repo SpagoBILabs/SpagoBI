@@ -29,6 +29,7 @@ public class GroupCriteria {
 	
 	//For the GROUP BY clause
 	
+	String dataset;
 	String columnName; //the column name
 	String aggregateFunction; //optional aggregate function like SUM, AVG, etc...
 	
@@ -38,10 +39,26 @@ public class GroupCriteria {
 	 * @param columnName
 	 * @param aggregateFunction
 	 */
-	public GroupCriteria(String columnName, String aggregateFunction) {
+	public GroupCriteria(String dataset, String columnName, String aggregateFunction) {
+		this.dataset = dataset;
 		this.columnName = columnName;
 		this.aggregateFunction = aggregateFunction;
 	}
+	
+	
+	
+	public String getDataset() {
+		return dataset;
+	}
+
+
+
+	public void setDataset(String dataset) {
+		this.dataset = dataset;
+	}
+
+
+
 	/**
 	 * @return the columnName
 	 */

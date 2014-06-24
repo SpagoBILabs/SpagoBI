@@ -259,18 +259,25 @@ public class SQLDBCache implements ICache {
 			if(projections != null) {
 				for (ProjectionCriteria projection : projections ){
 					String aggregateFunction = projection.getAggregateFunction();
+					
+					Map<String, String> datasetAlias = (Map<String, String>)cacheItem.getProperty("DATASET_ALIAS");
 					String columnName = projection.getColumnName();
-					String aliasName = projection.getAliasName();
+					if(datasetAlias != null) {
+						columnName = datasetAlias.get( projection.getDataset() ) +  " - " + projection.getColumnName();
+					}
 					columnName = AbstractJDBCDataset.encapsulateColumnName(columnName, dataSource);
-					aliasName = AbstractJDBCDataset.encapsulateColumnName(aliasName, dataSource);
-					if ((aggregateFunction != null) && (!aggregateFunction.isEmpty()) && (columnName != "*") && (aliasName != null) && (!aliasName.isEmpty())){
-						columnName = aggregateFunction + "("+columnName+") AS "+aliasName;
+					
+					if ((aggregateFunction != null) && (!aggregateFunction.isEmpty()) && (columnName != "*")){
+						String aliasName = projection.getAliasName();
+						aliasName = AbstractJDBCDataset.encapsulateColumnName(aliasName, dataSource);
+						if(aliasName != null && !aliasName.isEmpty()) {
+							columnName = aggregateFunction + "("+columnName+") AS " + aliasName;
+						}
 					}
 					sqlBuilder.column(columnName);
 					
 				}
 			}
-			
 			
 			//WHERE conditions
 			if(filters != null) {
@@ -282,7 +289,10 @@ public class SQLDBCache implements ICache {
 					} else { // it's a column
 						Map<String, String> datasetAlias = (Map<String, String>)cacheItem.getProperty("DATASET_ALIAS");
 						String datasetLabel = filter.getLeftOperand().getOperandDataSet();
-						leftOperand = datasetAlias.get(datasetLabel) +  " - " + filter.getLeftOperand().getOperandValueAsString();
+						leftOperand = filter.getLeftOperand().getOperandValueAsString();
+						if(datasetAlias != null) {
+							leftOperand = datasetAlias.get(datasetLabel) +  " - " + filter.getLeftOperand().getOperandValueAsString();
+						}
 						leftOperand = AbstractJDBCDataset.encapsulateColumnName(leftOperand, dataSource);
 					}
 					
@@ -316,7 +326,12 @@ public class SQLDBCache implements ICache {
 			if(groups != null) {
 				for (GroupCriteria group : groups ){
 					String aggregateFunction = group.getAggregateFunction();
+					
+					Map<String, String> datasetAlias = (Map<String, String>)cacheItem.getProperty("DATASET_ALIAS");
 					String columnName = group.getColumnName();
+					if(datasetAlias != null) {
+						columnName = datasetAlias.get( group.getDataset() ) +  " - " + group.getColumnName();
+					}
 					columnName = AbstractJDBCDataset.encapsulateColumnName(columnName, dataSource);
 					if ((aggregateFunction != null) && (!aggregateFunction.isEmpty()) && (columnName != "*")){
 						columnName = aggregateFunction + "("+columnName+")";
