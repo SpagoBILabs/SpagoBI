@@ -35,11 +35,13 @@ import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.BIObjectParameterDAO
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IBIObjectParameterDAO;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterDAO;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParameters;
+import it.eng.spagobi.commons.bo.Config;
 import it.eng.spagobi.commons.bo.Role;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.dao.IConfigDAO;
 import it.eng.spagobi.commons.metadata.SbiBinContents;
 import it.eng.spagobi.commons.metadata.SbiDomains;
 import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
@@ -474,6 +476,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			hibBIObject.setObjectTypeCode(biObject.getBiObjectTypeCode());
 
 			hibBIObject.setRefreshSeconds(biObject.getRefreshSeconds());
+			hibBIObject.setParametersRegion(biObject.getParametersRegion());
 			
 			hibBIObject.setPreviewFile(biObject.getPreviewFile());
 			
@@ -645,6 +648,9 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			Integer refreshSeconds=obj.getRefreshSeconds();
 			if(refreshSeconds==null)refreshSeconds=new Integer(0);
 			hibBIObject.setRefreshSeconds(refreshSeconds);
+			
+			// parameters region			
+			hibBIObject.setParametersRegion(obj.getParametersRegion());
 
 			// uuid generation
 			UUIDGenerator uuidGenerator = UUIDGenerator.getInstance();
@@ -1164,6 +1170,37 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 		aBIObject.setRefreshSeconds(hibBIObject.getRefreshSeconds());		
 		aBIObject.setPreviewFile(hibBIObject.getPreviewFile());
+
+		String region = hibBIObject.getParametersRegion();
+		if( region == null){
+			try{
+				IConfigDAO configDAO = DAOFactory.getSbiConfigDAO();
+				Config defaultRegionConfig = configDAO.loadConfigParametersByLabel("SPAGOBI.DOCUMENTS.PARAMETERS_REGION_DEFAULT");			
+				if(defaultRegionConfig != null){
+					region = defaultRegionConfig.getValueCheck();
+					logger.debug("default parameters region is "+region);
+					if(region == null || region.equals("")){
+						logger.warn("default parameters region not set in configs, put default to east");
+						region = "east";
+					}
+					else{
+						// if default  region is top or north becomes north, east or right becomes right
+						region = region.equalsIgnoreCase("top") || region.equalsIgnoreCase("north") ? "north" : "east";
+					}
+				
+				}
+				else{
+					region = "east";
+					logger.warn("default parameters region not set in configs, put default to east");
+				}
+			}
+			catch (Exception e) {
+				logger.error("Error during recovery of default parameters region setting: go on with default east value", e);
+			}
+		}
+		
+		aBIObject.setParametersRegion(region);
+
 		
 		logger.debug("OUT");
 		return aBIObject;

@@ -55,6 +55,8 @@ public class SbiObjects  extends SbiHibernateModel {
 	//private SbiDataSet dataSet=null;
 	private Integer dataSet=null;
 	private Set sbiKpiDocumentses = new HashSet(0);
+	private String parametersRegion = null;
+	
 
 	// Constructors
 
@@ -617,6 +619,16 @@ public class SbiObjects  extends SbiHibernateModel {
 	 public void setProfiledVisibility(String profiledVisibility) {
 		 this.profiledVisibility = profiledVisibility;
 	 }
+
+
+	public String getParametersRegion() {
+		return parametersRegion;
+	}
+
+
+	public void setParametersRegion(String parametersRegion) {
+		this.parametersRegion = parametersRegion;
+	}
 
 
 }
