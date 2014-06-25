@@ -239,6 +239,18 @@ Ext.define('Sbi.olap.control.EventManager', {
 	 */
 	makeEditable: function(id, measureName){
 
+		var modelStatus = null;
+		try {
+			modelStatus = this.olapPanel.executionPanel.olapToolbar.modelStatus;
+		}catch (e) {};
+		
+		
+		if(modelStatus == 'locked_by_other' || modelStatus == 'unlocked'){
+			Sbi.exception.ExceptionHandler.showWarningMessage(LN('sbi.olap.writeback.edit.no.locked'));
+			return;
+		}
+
+		
 		if(this.olapPanel && this.olapPanel.modelConfig && this.isMeasureEditable(measureName)){
 			var cell = Ext.get(id);
 			var type = "float";
@@ -257,7 +269,7 @@ Ext.define('Sbi.olap.control.EventManager', {
 			
 			//it's not possible to edit a cell with value 0
 			if(unformattedValue==0){
-				Sbi.exception.ExceptionHandler.showWarningMessage(LN('sbi.olap.weiteback.edit.no.zero'));
+				Sbi.exception.ExceptionHandler.showWarningMessage(LN('sbi.olap.writeback.edit.no.zero'));
 				return;
 			}
 			
