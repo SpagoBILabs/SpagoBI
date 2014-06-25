@@ -345,12 +345,12 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 			var toolbarVisibleButtons = modelConfig.toolbarVisibleButtons || new Array();	
 			var toolbarVisibleMenu = modelConfig.toolbarMenuButtons || new Array();	
 
-			
+
 			//if no button is configured use all buttons
 			if(toolbarVisibleButtons.length == 0 && toolbarVisibleMenu.length==0){
 				toolbarVisibleButtons = Ext.Array.merge(toolbarVisibleButtons, this.olapButtons, this.olapToggleButtons, this.whatIfButtons );	
 			}
-			
+
 			var decodedCookieToolbar = null;
 			this.labelsToolbar = new Array();
 			this.labelsMenu = new Array();
@@ -404,7 +404,7 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 
 		this.updateDrillMode();
 	}
-	
+
 	/**
 	 * Get the ordered visible items of the toolbar
 	 */
@@ -670,34 +670,37 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 
 		var config = this.buttonsConfigContainer[label];
 
-		var buttonCreated = this.createButton(config);
+		if(config){
+			var buttonCreated = this.createButton(config);
 
-		this.addContextMenuListener(buttonCreated, inMenu);	
+			this.addContextMenuListener(buttonCreated, inMenu);	
 
-		// recreate
-		if(alreadyPresent==true){
-			buttonCreated.pressed = presentPressed;
-			buttonCreated.disabled = presentDisabled;
-		}
-
-		this.buttonsContainer[buttonCreated.label] = buttonCreated;
-
-		// add particular pressed logic depending on button
-		//this.setPressedMemory();	
-		if(inMenu == true){
-			buttonCreated.text = buttonCreated.tooltip;
-			this.menuButtons.menu.add(buttonCreated);
-			if(!Ext.Array.contains(this.labelsMenu, label)){
-				this.labelsMenu.push(label);
+			// recreate
+			if(alreadyPresent==true){
+				buttonCreated.pressed = presentPressed;
+				buttonCreated.disabled = presentDisabled;
 			}
 
-		}
-		else{
-			this.add(buttonCreated);
-			if(!Ext.Array.contains(this.labelsToolbar, label)){
-				this.labelsToolbar.push(label);
-				Ext.util.Cookies.set(Sbi.config.documentLabel+'labelsToolbar',Ext.JSON.encode(this.labelsToolbar));
+			this.buttonsContainer[buttonCreated.label] = buttonCreated;
+
+			// add particular pressed logic depending on button
+			//this.setPressedMemory();	
+			if(inMenu == true){
+				buttonCreated.text = buttonCreated.tooltip;
+				this.menuButtons.menu.add(buttonCreated);
+				if(!Ext.Array.contains(this.labelsMenu, label)){
+					this.labelsMenu.push(label);
+				}
+
 			}
+			else{
+				this.add(buttonCreated);
+				if(!Ext.Array.contains(this.labelsToolbar, label)){
+					this.labelsToolbar.push(label);
+					Ext.util.Cookies.set(Sbi.config.documentLabel+'labelsToolbar',Ext.JSON.encode(this.labelsToolbar));
+				}
+			}
+
 		}
 	}
 
