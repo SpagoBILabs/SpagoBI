@@ -59,6 +59,7 @@ public class DocumentsJSONSerializer implements Serializer {
 	public static final String EXPORTERS = "exporters";
 	public static final String IS_PUBLIC = "isPublic";
 	public static final String DOC_VERSION = "docVersion";
+	public static final String PARAMETERS_REGION = "parametersRegion";
 	
 	public Object serialize(Object o, Locale locale) throws SerializationException {
 		JSONObject  result = null;
@@ -107,6 +108,8 @@ public class DocumentsJSONSerializer implements Serializer {
 			result.put(CREATIONDATE, obj.getCreationDate());
 			result.put(CREATIONUSER, obj.getCreationUser());
 			result.put(REFRESHSECONDS, obj.getRefreshSeconds());
+			result.put(PARAMETERS_REGION, obj.getParametersRegion());
+			
 			if (obj.getPreviewFile() != null){
 				SingletonConfig configSingleton = SingletonConfig.getInstance();
 				String path  = configSingleton.getConfigValue("SPAGOBI.RESOURCE_PATH_JNDI_NAME");

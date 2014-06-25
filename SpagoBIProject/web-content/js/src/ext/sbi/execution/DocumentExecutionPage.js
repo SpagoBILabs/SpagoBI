@@ -33,7 +33,7 @@ Sbi.execution.DocumentExecutionPage = function(config, doc) {
 		, parametersSliderHeight: 250
 		//, collapseParametersSliderOnExecution: false
 		, shortcutsHidden: false
-		, parametersRegion : "east"
+		, parametersRegion : doc.parametersRegion != undefined ? doc.parametersRegion : "east"
 		, parametersSliderCollapsed : false
 		, parametersSliderFloatable : true
 		
@@ -518,7 +518,11 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 			this.parametersSliderWidth = this.parametersPanel.width + 10;
 		}
 		
+		// tak eparametersRegion as defined in document detail
+		config.parametersRegion = doc.parametersRegion != undefined ?  doc.parametersRegion : config.parametersRegion;
+		
 		this.parametersSlider = new Ext.Panel({
+			//region: config.parametersRegion
 			region: config.parametersRegion
 			, title: LN('sbi.execution.parametersselection.parameters')
 			, border: true

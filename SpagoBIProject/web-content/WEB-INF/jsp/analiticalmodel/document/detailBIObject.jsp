@@ -1169,6 +1169,27 @@ function saveDocument(goBack) {
 							<spagobi:message key = "SBIDev.docConf.docDet.newBIParameter" />
 					    </a>
 					</div>
+			
+                <!-- Display combo to choose parameter region, among north or east  -->
+                
+                <%
+                String region = obj.getParametersRegion();
+                %>
+                
+ 
+                <div style='text-align:right;'>
+                     <span class='portlet-form-field-label' style='line-height: 20px'>
+                        <spagobi:message key = "SBIDev.docConf.docDet.parametersRegion" />
+                    </span>
+                    <select class='portlet-form-input-field' style='width:130px;' name="parametersRegion" id="doc_parameters_region">
+    
+                        <option value = "north" <%if (region != null && region.equalsIgnoreCase("north")) out.print(" selected='selected' ");%>> <%=msgBuilder.getMessage( "SBIDev.docConf.docDet.parametersRegion.north",locale)%> </option>
+                        <option value = "east" <%if (region != null && region.equalsIgnoreCase("east")) out.print(" selected='selected' ");%>> <%=msgBuilder.getMessage( "SBIDev.docConf.docDet.parametersRegion.east",locale)%> </option>    
+    
+                    </select>   
+                </div>
+			
+			
 			</div>
 		</div>
 	</div>
@@ -1199,6 +1220,7 @@ function isBIObjectFormChanged() {
 	//var dataset = document.getElementById('dataset').value;
 	//var datasetLabel=document.getElementById('datasetLabel').value;
 	var state = document.getElementById('doc_state').value;
+    var parametersRegion = document.getElementById('doc_parameters_region').value;
 
   
 	if ((label != '<%=StringEscapeUtils.escapeJavaScript(StringEscapeUtils
@@ -1216,7 +1238,11 @@ function isBIObjectFormChanged() {
 						.getDataSourceId().toString() : ""%>')
 		|| (state != '<%=initialBIObject.getStateID() + ","
 						+ initialBIObject.getStateCode()%>') 
-		|| (versionTemplateChanged == 'true')
+        || (parametersRegion != '<%=msgBuilder.getMessage(
+        		                                   initialBIObject.getParametersRegion() != null ? initialBIObject.getParametersRegion() 
+        		                                		   : "", locale)
+        		                                		   %>') 
+     	|| (versionTemplateChanged == 'true')
 		|| (fileUploadChanged == 'true') 
 		){
 			
