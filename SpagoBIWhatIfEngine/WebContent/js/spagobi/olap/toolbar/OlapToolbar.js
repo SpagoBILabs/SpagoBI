@@ -20,10 +20,6 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 		listeners: {
 			Drop: {
 				fn: function(plugin, container, button, oldPos, newPos ){
-//					newPos = newPos-3; // because of the fixed buttons
-//					oldPos = oldPos-3;
-//					Ext.Array.remove(container.labelsToolbar, button.label);
-//					Ext.Array.insert(container.labelsToolbar, newPos, button.label);
 					Ext.util.Cookies.set(Sbi.config.documentLabel+'labelsToolbar',Ext.JSON.encode(container.getToolbarReordableItems()));
 				}
 			}
