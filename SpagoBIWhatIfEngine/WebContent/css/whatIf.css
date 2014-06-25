@@ -256,7 +256,7 @@ td[contenteditable="true"]:focus {
     background-image: url(../img/locked_other_green.png);
 }
 .BUTTON_VERSION_MANAGER{
-	background-image: url(../img/tollbar-versions.png);
+	background-image: url(../img/delete-versions16.png);
 }
 .BUTTON_EXPORT_OUTPUT{
 	background-image: url(../img/toolbar-export.png);
