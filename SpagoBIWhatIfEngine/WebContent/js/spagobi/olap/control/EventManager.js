@@ -87,6 +87,7 @@ Ext.define('Sbi.olap.control.EventManager', {
 	/**
 	 * Updates the view after the execution of the mdx query
 	 * @param {String} pivotHtml the html representation of the pivot table
+	 * @param {boolean} keepState if true keeps the values of the iternal variables
 	 */
 	updateAfterMDXExecution: function(pivotHtml, keepState){
 		var tableJson = Ext.decode(pivotHtml);
