@@ -150,7 +150,7 @@ Ext.define('Sbi.olap.control.Controller', {
 			jsonData: { "expression" : expression }
 		});
 		
-		service.callService(this);
+		service.callService(this, null, null, true);
 	}
 	
 	,

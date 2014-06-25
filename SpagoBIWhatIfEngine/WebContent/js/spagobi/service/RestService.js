@@ -97,7 +97,7 @@ Ext.define('Sbi.service.RestService', {
 		return Ext.apply(this.params, this.baseParams );
 	},
 
-	callService:function(scope, successCallBack, failureCallBack){
+	callService:function(scope, successCallBack, failureCallBack, keepState){
 
 		var mySuccessCallBack= successCallBack;
 		var myFailureCallBack= failureCallBack;
@@ -124,12 +124,12 @@ Ext.define('Sbi.service.RestService', {
 					}
 
 					if(thisPanel.async){
-						thisPanel.fireEvent('executedAsync',!withError,response);
+						thisPanel.fireEvent('executedAsync',!withError,response, keepState);
 					}else if(withError){
 						Sbi.olap.eventManager.fireEvent('serviceExecutedWithError', response);
 						Sbi.exception.ExceptionHandler.handleFailure(response);
 					}else{
-						Sbi.olap.eventManager.fireEvent('serviceExecuted', response);
+						Sbi.olap.eventManager.fireEvent('serviceExecuted', response, keepState);
 					}				
 				} else {
 					Sbi.exception.ExceptionHandler.showErrorMessage('Server response is empty', 'Service Error');

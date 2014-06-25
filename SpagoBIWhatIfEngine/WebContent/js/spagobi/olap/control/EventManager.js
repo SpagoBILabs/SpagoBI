@@ -29,8 +29,19 @@ Ext.define('Sbi.olap.control.EventManager', {
 	 * @property {Sbi.olap.execution.OlapExecutionPanel} executionPanel
 	 *  Panel that contains the pivot and the chart
 	 */
-	olapController: null,	
+	olapController: null,
+	
+	/**
+	 * @property {String} lastEditedFormula
+	 *  the last edited formula. To restore the formula
+	 */
+	lastEditedFormula: null,
 
+	/**
+	 * @property {String} lastEditedCell
+	 *  the last edited formula. To restore the formula
+	 */
+	lastEditedCell: null,
 
 	constructor : function(config) {
 		this.olapPanel = config.olapPanel;
@@ -77,11 +88,15 @@ Ext.define('Sbi.olap.control.EventManager', {
 	 * Updates the view after the execution of the mdx query
 	 * @param {String} pivotHtml the html representation of the pivot table
 	 */
-	updateAfterMDXExecution: function(pivotHtml){
+	updateAfterMDXExecution: function(pivotHtml, keepState){
 		var tableJson = Ext.decode(pivotHtml);
 		var pivot = Ext.create('Sbi.olap.PivotModel', tableJson);
 		this.olapPanel.updateAfterMDXExecution(pivot, tableJson.modelConfig);
 		this.loadingMask.hide();
+		
+		if(!keepState){
+			this.lastEditedCell = null;
+		}
 	},
 	hideLoadingMask: function(){
 		this.loadingMask.hide();
@@ -209,9 +224,6 @@ Ext.define('Sbi.olap.control.EventManager', {
 				position= id.substring(0, endPositionIndex);
 			}
 			
-//			if ( !isNaN(value) ) {
-//				unformattedValue = Sbi.whatif.commons.Format.formatInJavaDouble(value, Sbi.locale.formats[type]);
-//			}
 			try {
 				if ( !isNaN(value) ) {
 					//Value is a number
@@ -223,7 +235,12 @@ Ext.define('Sbi.olap.control.EventManager', {
 			} catch (err) {
 				Sbi.error("Error while trying to convert [" + value + "] to a Java double: " + err);
 			}
-
+			
+			//update the last edited values
+			this.lastEditedFormula = unformattedValue;
+			var separatorIndex = id.lastIndexOf('!');
+			this.lastEditedCell = id.substring(0,separatorIndex);
+			
 			this.olapController.setValue(position, unformattedValue);	
 		} else {
 			Sbi.debug("The new value is the same as the old one");
@@ -238,39 +255,45 @@ Ext.define('Sbi.olap.control.EventManager', {
 	 * @param id the id of the dom element to make editable
 	 */
 	makeEditable: function(id, measureName){
-
+		var unformattedValue = "";
 		var modelStatus = null;
+		
+		//check the status of the lock
 		try {
 			modelStatus = this.olapPanel.executionPanel.olapToolbar.modelStatus;
 		}catch (e) {};
-		
 		
 		if(modelStatus == 'locked_by_other' || modelStatus == 'unlocked'){
 			Sbi.exception.ExceptionHandler.showWarningMessage(LN('sbi.olap.writeback.edit.no.locked'));
 			return;
 		}
 
-		
 		if(this.olapPanel && this.olapPanel.modelConfig && this.isMeasureEditable(measureName)){
 			var cell = Ext.get(id);
-			var type = "float";
-			var originalValue = "";
-			var unformattedValue = "";
-			try  {
-				originalValue = Ext.String.trim(cell.dom.childNodes[0].data);
-				if (originalValue == '') { // in case the cell was empty, we type 0
-					unformattedValue = 0;
-				} else {
-					unformattedValue = Sbi.whatif.commons.Format.cleanFormattedNumber(originalValue, Sbi.locale.formats[type]);
-				}
-			} catch(err) {
-				Sbi.error("Error loading the value of the cell to edit" + err);
-			}
 			
-			//it's not possible to edit a cell with value 0
-			if(unformattedValue==0){
-				Sbi.exception.ExceptionHandler.showWarningMessage(LN('sbi.olap.writeback.edit.no.zero'));
-				return;
+			//check if the user is editing the same cell twice. If so we present again the last formula
+			if(this.lastEditedFormula && this.lastEditedCell && Ext.String.startsWith( id,  this.lastEditedCell )){
+				unformattedValue = this.lastEditedFormula;
+			}else{
+				var type = "float";
+				var originalValue = "";
+				
+				try  {
+					originalValue = Ext.String.trim(cell.dom.childNodes[0].data);
+					if (originalValue == '') { // in case the cell was empty, we type 0
+						unformattedValue = 0;
+					} else {
+						unformattedValue = Sbi.whatif.commons.Format.cleanFormattedNumber(originalValue, Sbi.locale.formats[type]);
+					}
+				} catch(err) {
+					Sbi.error("Error loading the value of the cell to edit" + err);
+				}
+				
+				//it's not possible to edit a cell with value 0
+				if(unformattedValue==0){
+					Sbi.exception.ExceptionHandler.showWarningMessage(LN('sbi.olap.writeback.edit.no.zero'));
+					return;
+				}	
 			}
 			
 			var editor = Ext.create("Ext.Editor", {
@@ -378,8 +401,8 @@ Ext.define('Sbi.olap.control.EventManager', {
 		this.loadingMask = new Ext.LoadMask(Ext.getBody(), {msg:text});
 		this.loadingMask.show();
 	}
-	, serviceExecuted: function (response){
-		this.updateAfterMDXExecution(response.responseText);
+	, serviceExecuted: function (response, keepState){
+		this.updateAfterMDXExecution(response.responseText, keepState);
 
 	}
 	, serviceExecutedWithError: function (response){
