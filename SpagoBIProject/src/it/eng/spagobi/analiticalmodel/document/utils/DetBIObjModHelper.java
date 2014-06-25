@@ -120,6 +120,8 @@ public class DetBIObjModHelper {
 		String typeAttr = (String) request.getAttribute("type");
 		String engineIdStr = (String) request.getAttribute("engine");
 		String stateAttr = (String) request.getAttribute("state");
+		String parametersRegion = (String) request.getAttribute("parametersRegion");
+		
 		String refreshSecondsString = (String) request.getAttribute("refreshseconds");
 		if(refreshSecondsString==null || refreshSecondsString.equalsIgnoreCase(""))refreshSecondsString="0";
 		Integer refreshSeconds=Integer.valueOf(refreshSecondsString);
@@ -282,6 +284,7 @@ public class DetBIObjModHelper {
 		obj.setCreationUser(userId);
 		//obj.setRating(Rating == null ? null : new Short(Rating));
 		obj.setRefreshSeconds(refreshSeconds);
+		obj.setParametersRegion(parametersRegion);
 		obj.setPreviewFile((previewFileName == null && aBIObject != null && aBIObject.getPreviewFile() != null)? aBIObject.getPreviewFile():previewFileName);
 		// RETURN OBJECT
 		return obj;
@@ -496,6 +499,7 @@ public class DetBIObjModHelper {
 		objClone.setStateID(obj.getStateID());
 		objClone.setRefreshSeconds(obj.getRefreshSeconds());
 		objClone.setPublicDoc(obj.isPublicDoc());
+		objClone.setParametersRegion(obj.getParametersRegion());
 		return objClone;
 	}
 

@@ -173,6 +173,7 @@
 
 <CONFIG label="SPAGOBI.DOCUMENTS.MAX_PREVIEW_IMAGE_SIZE" name="Max preview image size" description="Max dimension for a document's preview image" isActive="true" valueCheck="1048576" valueType="NUM" category="GENERIC_CONFIGURATION"/>
 <CONFIG label="SPAGOBI.DOCUMENTS.MAX_PREVIEW_IMAGES_NUM" name="Max preview images" description="Max number for documents' preview images" isActive="true" valueCheck="200" valueType="NUM" category="GENERIC_CONFIGURATION"/>
+<CONFIG label="SPAGOBI.DOCUMENTS.PARAMETERS_REGION_DEFAULT" name="Parameters Region Default" description="Where parameters form is shown (north or east) by default" isActive="true" valueCheck="east" valueType="STRING" category="GENERIC_CONFIGURATION"/>
 
 </CONFIGS>
 

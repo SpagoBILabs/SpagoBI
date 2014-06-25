@@ -77,7 +77,14 @@ Sbi.execution.ParametersPanel = function(config, doc) {
 	
 	// merge settings and input configuration
 	var c = Ext.apply(temp, config || {});
+	
+	if(doc.parametersRegion != undefined){
+		c.parametersRegion = doc.parametersRegion;
+	}
+	
 	this.baseConfig = c;
+	
+	
 	
 	this.parametersPreference = undefined;
 	if (c.parameters) {
@@ -142,7 +149,7 @@ Sbi.execution.ParametersPanel = function(config, doc) {
     			// panel with parameters
     	        layout:'table'
 	            , layoutConfig: {
-	                columns: c.columnNo
+	                columns: c.parametersRegion == 'north' ? c.columnNo : 1
 	            }
 	            , width: this.formWidth 
 	            , border: false

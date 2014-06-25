@@ -126,8 +126,8 @@ Sbi.settings.execution = {
 		}
 		
 		, parametersselectionpage : {
-			parametersRegion : "east" // admissible values: east/north
-			, parametersSliderWidth : 300 // valid in case of east region
+			//parametersRegion : "east" // admissible values: east/north, now in document detail with values top and right
+			parametersSliderWidth : 300 // valid in case of east region
 			, parametersSliderHeight : 200 // valid in case of north region
 			, parametersSliderCollapsed : false // applied only in case there are no parameters to fill
 			, parametersSliderFloatable : false // true to allow clicking on collapsed parameters panel's bar to display the parameters' panel floated above the layout, 
