@@ -72,20 +72,21 @@ Sbi.locale.ln['sbi.common.wait.long'] = 'Attendere prego.. Questa operazione pot
 //===================================================================
 //TOOLBAR
 //===================================================================
-Sbi.locale.ln['sbi.olap.toolbar.mdx'] = 'Mdx Query';
+Sbi.locale.ln['sbi.olap.toolbar.BUTTON_MDX'] = 'Mdx Query';
 Sbi.locale.ln['sbi.olap.toolbar.drill.mode'] = 'Tipi di Drill';
-Sbi.locale.ln['sbi.olap.toolbar.undo'] = 'Undo';
-Sbi.locale.ln['sbi.olap.toolbar.clean'] = 'Pulire cache';
-Sbi.locale.ln['sbi.olap.toolbar.showParentMembers'] = 'Mostra membri padri';
-Sbi.locale.ln['sbi.olap.toolbar.hideSpans'] = 'Nascondi spans';
-Sbi.locale.ln['sbi.olap.toolbar.showProperties'] = 'Mostra proprieta';
-Sbi.locale.ln['sbi.olap.toolbar.suppressEmpty'] = 'Sopprimi righe/colonne vuote';
-Sbi.locale.ln['sbi.olap.toolbar.save'] = 'Salva';
-Sbi.locale.ln['sbi.olap.toolbar.save.new'] = 'Salva come nuova version';
+Sbi.locale.ln['sbi.olap.toolbar.BUTTON_UNDO'] = 'Undo';
+Sbi.locale.ln['sbi.olap.toolbar.BUTTON_FLUSH_CACHE'] = 'Pulire cache';
+Sbi.locale.ln['sbi.olap.toolbar.BUTTON_FATHER_MEMBERS'] = 'Mostra membri padri';
+Sbi.locale.ln['sbi.olap.toolbar.BUTTON_HIDE_SPANS'] = 'Nascondi spans';
+Sbi.locale.ln['sbi.olap.toolbar.BUTTON_SHOW_PROPERTIES'] = 'Mostra proprieta';
+Sbi.locale.ln['sbi.olap.toolbar.BUTTON_HIDE_EMPTY'] = 'Sopprimi righe/colonne vuote';
+Sbi.locale.ln['sbi.olap.toolbar.BUTTON_SAVE'] = 'Salva';
+Sbi.locale.ln['sbi.olap.toolbar.BUTTON_SAVE_NEW'] = 'Salva come nuova version';
 Sbi.locale.ln['sbi.olap.toolbar.lock'] = "Blocca il modello";
 Sbi.locale.ln['sbi.olap.toolbar.unlock'] = "Sblocca il modello";
 Sbi.locale.ln['sbi.olap.toolbar.lock_other'] = "Modello bloccato da un altro utente";
-Sbi.locale.ln['sbi.olap.toolbar.version.manager'] = "Elimina delle versioni";
+Sbi.locale.ln['sbi.olap.toolbar.BUTTON_VERSION_MANAGER'] = "Elimina delle versioni";
+Sbi.locale.ln['sbi.olap.toolbar.BUTTON_EXPORT_OUTPUT'] = "Output wizard";
 
 //===================================================================
 //FILTERS
@@ -152,7 +153,6 @@ Sbi.locale.ln['sbi.olap.toolbar.export.wizard.type'] = "Output type";
 Sbi.locale.ln['sbi.olap.toolbar.export.wizard.type.description'] = "Selezionare il tipo di output per l\'analisi. Quest'operazione potr\u00E2 richiedere qualche minuto. Nel frattempo \u00E9 comunuqe possibile lavorare sul cubo di analisi";
 Sbi.locale.ln['sbi.olap.toolbar.export.wizard.title'] = "Output wizard";
 Sbi.locale.ln['sbi.olap.toolbar.export.wizard.version'] = "Versione da esportare";
-Sbi.locale.ln['sbi.olap.toolbar.exportoutput'] = "Output wizard";
 Sbi.locale.ln['sbi.olap.toolbar.exportoutput.ok'] = "Analisi esportatta correttamente";
 Sbi.locale.ln['sbi.olap.toolbar.exportoutput.error'] = "Si \u00e8 verificato un errore in fase di export";
 Sbi.locale.ln['sbi.olap.toolbar.exportoutput.csv.window'] = "<h1>Export the output in CSV</h1><p>Questa operazione potrebbe richiedere qualche minuto. \u00C8 comunque possibile continuare a lavorare sul cubo di analisi</p>";
