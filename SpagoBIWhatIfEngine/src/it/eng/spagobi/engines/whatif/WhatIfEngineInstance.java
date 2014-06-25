@@ -89,7 +89,8 @@ public class WhatIfEngineInstance extends ExtendedAbstractEngineInstance impleme
 				reference = schema;
 			}else{
 				//gets the schema path the template. Used in the stand alone modality.
-				reference = WhatIfEngineConfig.addServerResourcePath(template.getMondrianSchema());
+				String resourcesPath = WhatIfEngineConfig.getInstance().getEngineResourcePath();
+				reference = resourcesPath + template.getMondrianSchema();
 			}
 			
 		}else{
