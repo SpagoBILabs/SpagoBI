@@ -92,6 +92,10 @@ public class BIObject implements Serializable, Cloneable {
 	private boolean publicDoc = false;	
 	
 	private Integer docVersion =null; //defines the version of template if is different by the default (last version)
+
+	private String parametersRegion = null;	
+
+	
 	/**
 	 * Gets the id.
 	 * 
@@ -589,6 +593,15 @@ public class BIObject implements Serializable, Cloneable {
 		return "Document [label=" + label + "]";
 	}
 
+	
+
+	public String getParametersRegion() {
+		return parametersRegion;
+	}
+
+	public void setParametersRegion(String parametersRegion) {
+		this.parametersRegion = parametersRegion;
+	}
 
 	/**
 	 * Clone the object.. NOTE: it does not clone the id property
@@ -621,6 +634,7 @@ public class BIObject implements Serializable, Cloneable {
 		clone.setPreviewFile(previewFile);
 		clone.setPublicDoc(publicDoc);
 		clone.setDocVersion(docVersion);
+		clone.setParametersRegion(parametersRegion);
 		return clone;
 	}
 
