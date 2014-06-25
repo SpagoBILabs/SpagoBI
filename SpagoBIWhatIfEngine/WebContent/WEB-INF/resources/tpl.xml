@@ -12,12 +12,15 @@
 	
 	<STANDALONE>
 		<CONNECTION>
-		<USR>root</USR>
-		<PWD>root</PWD>
-		<CATALOG>\resources\Olap\FoodMartMySQL.xml</CATALOG>
-		<CONNECTIONSTRING>jdbc:mysql://localhost:3306/foodmart_key</CONNECTIONSTRING>
-		<DRIVER>com.mysql.jdbc.Driver</DRIVER>
-		<DIALECT>MySQL</DIALECT>
+			<!--
+			<USR>root</USR>
+			<PWD></PWD>
+			<CONNECTIONSTRING>jdbc:mysql://localhost:3306/foodmart_new</CONNECTIONSTRING>
+			<DRIVER>com.mysql.jdbc.Driver</DRIVER>
+			-->
+			<JNDI_NAME>java:comp/env/jdbc/foodmart</JNDI_NAME>
+			<CATALOG>/Olap/FoodMartMySQL.xml</CATALOG>
+			<DIALECT>MySQL</DIALECT>
 		</CONNECTION>
 	</STANDALONE>
 	
@@ -37,8 +40,8 @@
 		<BUTTON_HIDE_EMPTY visible="true" menu="true" />                   
         <BUTTON_FLUSH_CACHE visible="true" menu="false"  />                 
         <BUTTON_SAVE visible="true" menu="false" />                       
-        <BUTTON_SAVE_NEW visible="true" menu="false" />                   <!-- I ADDED -->
-        <BUTTON_UNDO visible="true" menu="false" />                       <!-- I ADDED -->
+        <BUTTON_SAVE_NEW visible="true" menu="false" />
+        <BUTTON_UNDO visible="true" menu="false" />
 		<BUTTON_VERSION_MANAGER visible="true" menu="false" />
 		<BUTTON_EXPORT_OUTPUT visible="true" menu="false" />  
 		

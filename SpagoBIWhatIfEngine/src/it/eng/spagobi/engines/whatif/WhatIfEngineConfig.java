@@ -44,7 +44,6 @@ public class WhatIfEngineConfig {
 	
 	private Map<String, List> includes;
 	private Set<String> enabledIncludes;
-	private String resourceFolder= "whatif";
 	private static transient Logger logger = Logger.getLogger(WhatIfEngineConfig.class);
 	private static final String PROPORTIONAL_ALGORITHM_CONF = "proportionalAlgorithmPersistQueryWhereClause"; 
 
@@ -104,12 +103,6 @@ public class WhatIfEngineConfig {
 			templatePath = sb.getCharacters();
 		}
 		return templatePath;
-	}
-	
-	public static String addServerResourcePath(String path){
-		String system = System.getProperty("catalina.home");
-		return system+path;
-		
 	}
 	
 	public OlapDataSource getOlapDataSource(IDataSource ds, String reference, WhatIfTemplate template, IEngUserProfile profile, Locale locale) {
@@ -259,9 +252,9 @@ public class WhatIfEngineConfig {
 	public String getEngineResourcePath() {
 		String path = null;
 		if(getEngineConfig().getResourcePath() != null) {
-			path = getEngineConfig().getResourcePath() + System.getProperty("file.separator") + resourceFolder;
+			path = getEngineConfig().getResourcePath() + System.getProperty("file.separator");
 		} else {
-			path = ConfigSingleton.getRootPath() + System.getProperty("file.separator") + "resources" + System.getProperty("file.separator") + resourceFolder;
+			path = ConfigSingleton.getRootPath() + System.getProperty("file.separator") + "resources";
 		}
 		return path;
 	}
