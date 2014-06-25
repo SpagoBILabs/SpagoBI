@@ -112,7 +112,7 @@ Sbi.locale.ln['sbi.olap.execution.table.dimension.no.enough'] = 'Ci deve esserre
 //WRITEBACK
 //===================================================================
 Sbi.locale.ln['sbi.olap.weiteback.persist.error'] = 'Errore nel salvataggio delle modifiche';
-Sbi.locale.ln['sbi.olap.weiteback.edit.no.zero'] =  'L\'algoritmo di propagazione proporzionale mantiene il peso tra le celle figlie di quella editata. Propagando una modifica su una cella che contiene valore 0 si va ad alterare il peso tra i figli, quindi non \u00E9 supportata questa operazione. Nelle prossime release saranno implementati altri algoritmi di propagazione';
+Sbi.locale.ln['sbi.olap.weiteback.edit.no.zero'] =  'Non è possibile modifcare questa cella!! L\'algoritmo di propagazione attualmente in uso mantiene inalterato il peso tra le celle figlie della cella modificata, ma questo non è possibile se quest\'ultima è vuota oppure se ha valore 0. Nelle prossime release saranno implementati altri algoritmi di propagazione.';
 
 //===================================================================
 //LOCK
