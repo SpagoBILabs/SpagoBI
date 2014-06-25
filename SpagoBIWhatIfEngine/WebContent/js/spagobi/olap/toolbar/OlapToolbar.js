@@ -84,10 +84,18 @@ Ext.define('Sbi.olap.toolbar.OlapToolbar', {
 
 		this.buttonHandlersMap = {
 				'BUTTON_MDX': this.showMdxWindow,
-				'BUTTON_FLUSH_CACHE': Sbi.olap.eventManager.cleanCache,
-				'BUTTON_UNDO': Sbi.olap.eventManager.undo,
-				'BUTTON_SAVE': Sbi.olap.eventManager.persistTransformations,
-				'BUTTON_SAVE_NEW':Sbi.olap.eventManager.persistNewVersionTransformations,
+				'BUTTON_FLUSH_CACHE': function(){
+					Sbi.olap.eventManager.cleanCache();
+				},
+				'BUTTON_UNDO': function(){
+					Sbi.olap.eventManager.undo();
+				},
+				'BUTTON_SAVE': function(){ 
+					Sbi.olap.eventManager.persistTransformations();
+				},
+				'BUTTON_SAVE_NEW': function(){
+					Sbi.olap.eventManager.persistNewVersionTransformations();
+				},
 				'BUTTON_VERSION_MANAGER': this.openVersionManagerWindow,
 				'BUTTON_EXPORT_OUTPUT': this.openOutputWindow
 		};
