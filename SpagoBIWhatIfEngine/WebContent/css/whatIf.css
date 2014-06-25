@@ -219,31 +219,31 @@ td[contenteditable="true"]:focus {
 /* .drill-mode{
 	background-image: url(../img/drill.png);
 } */
-.mdx{
+.BUTTON_MDX{
 	background-image: url(../img/mdx.png);
 }
-.undo{
+.BUTTON_UNDO{
 	background-image: url(../img/undo.png);
 }
-.show-parent-members{
+.BUTTON_FATHER_MEMBERS{
 	background-image: url(../img/show_parent_members.png);
 }
-.hide-spans{
+.BUTTON_HIDE_SPANS{
 	background-image: url(../img/hide_spans.png);
 }
-.show-props{
+.BUTTON_SHOW_PROPERTIES{
 	background-image: url(../img/show_props.png);
 }
-.empty-rows{
+.BUTTON_HIDE_EMPTY{
 	background-image: url(../img/empty_rows.png);
 }
-.save-icon{
+.BUTTON_SAVE{
 	background-image: url(../img/save16.png);
 }
-.save-new-icon{
+.BUTTON_SAVE_NEW{
 	background-image: url(../img/save-version16.png);
 }
-.clean-icon{
+.BUTTON_FLUSH_CACHE{
 	background-image: url(../img/reload16.png);
 }
 .lock-icon{
@@ -255,10 +255,10 @@ td[contenteditable="true"]:focus {
 .lock-other-icon{
     background-image: url(../img/locked_other_green.png);
 }
-.versions-manager-icon{
+.BUTTON_VERSION_MANAGER{
 	background-image: url(../img/tollbar-versions.png);
 }
-.export-icon{
+.BUTTON_EXPORT_OUTPUT{
 	background-image: url(../img/toolbar-export.png);
 }
 .context-menu-icon{
