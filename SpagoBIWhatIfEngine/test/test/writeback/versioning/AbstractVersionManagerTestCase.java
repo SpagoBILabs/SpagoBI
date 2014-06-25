@@ -10,14 +10,11 @@ import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
 import it.eng.spagobi.engines.whatif.model.transform.CellTransformation;
 import it.eng.spagobi.engines.whatif.model.transform.algorithm.DefaultWeightedAllocationAlgorithm;
 import it.eng.spagobi.engines.whatif.version.VersionManager;
-import it.eng.spagobi.tools.datasource.bo.DataSource;
 import it.eng.spagobi.writeback4j.sql.SqlQueryStatement;
 
 import java.sql.Connection;
 import java.sql.Statement;
 import java.util.Random;
-
-import org.apache.derby.tools.sysinfo;
 
 import test.AbstractWhatIfTestCase;
 
