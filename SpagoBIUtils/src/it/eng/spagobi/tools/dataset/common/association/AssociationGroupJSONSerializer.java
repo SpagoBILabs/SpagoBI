@@ -25,6 +25,12 @@ import org.json.JSONObject;
  */
 public class AssociationGroupJSONSerializer {
 	
+	
+	public  AssociationGroup deserialize(String o) throws JSONException {
+		JSONObject associationGroupJSON = new JSONObject(o);
+		return deserialize(associationGroupJSON);
+	}
+	
 	public AssociationGroup deserialize(JSONObject o) throws JSONException {
 		AssociationGroup associationGroup = new AssociationGroup(); 
 		AssociationJSONSerializer associationSerializer = new AssociationJSONSerializer();
