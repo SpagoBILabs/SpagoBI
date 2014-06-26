@@ -56,7 +56,7 @@ Ext.define('Sbi.service.RestService', {
 		);
 	},
 
-	getRestUrlWithParameters: function(){
+	getRestUrlWithParameters: function(withRequestParams){
 		var url = this.url;
 
 		if( this.serviceVersion){
@@ -90,6 +90,26 @@ Ext.define('Sbi.service.RestService', {
 				}
 			}
 		}
+		
+		
+		//add the request parameters
+		if(withRequestParams){
+			var first = true;
+			var requestParams = this.getRequestParams();
+			if(requestParams){
+				for(var p in requestParams){
+					if(first){
+						url = url +'?';
+						first = false;
+					}else{
+						url = url + '&';
+					}
+					var param = requestParams[p];
+					url = url + p +'='+param;
+				}
+			}
+		}
+		
 		return url;
 	},
 
@@ -158,7 +178,7 @@ Ext.define('Sbi.service.RestService', {
 				method: this.method,
 				success : mySuccessCallBack,
 				scope: scope,
-				params: Ext.apply(this.params, this.baseParams ),
+				params: this.getRequestParams(),
 				failure: myFailureCallBack,
 				timeout: this.timeout
 		};
