@@ -77,24 +77,21 @@
 
 	<!-- START-CAS
    
-   	<filter-mapping>
-    	<filter-name>CAS Authentication Filter</filter-name>
-    	<url-pattern>/CockpitEngineStartAction/*</url-pattern>
-		<url-pattern>/CockpitEngineStartEditAction/*</url-pattern>
-  	</filter-mapping> 
+   <filter-mapping>
+    <filter-name>CAS Authentication Filter</filter-name>
+    <url-pattern>/api/1.0/pages/*</url-pattern>
+  </filter-mapping> 
     	
-   	<filter-mapping>
-    	<filter-name>CAS Validation Filter</filter-name>
-    	<url-pattern>/CockpitEngineStartAction/*</url-pattern>
-		<url-pattern>/CockpitEngineStartEditAction/*</url-pattern>
-  	</filter-mapping> 
+   <filter-mapping>
+    <filter-name>CAS Validation Filter</filter-name>
+    <url-pattern>/api/1.0/pages/*</url-pattern>
+  </filter-mapping> 
    	
 
-   	<filter-mapping>
-    	<filter-name>CAS HttpServletRequest Wrapper Filter</filter-name>
-    	<url-pattern>/CockpitEngineStartAction/*</url-pattern>
-		<url-pattern>/CockpitEngineStartEditAction/*</url-pattern>
-  	</filter-mapping> 
+   <filter-mapping>
+    <filter-name>CAS HttpServletRequest Wrapper Filter</filter-name>
+    <url-pattern>/api/1.0/pages/*</url-pattern>
+   </filter-mapping> 
   
   	<filter-mapping>
 		<filter-name>CAS Validation Filter</filter-name>
