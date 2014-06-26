@@ -188,7 +188,8 @@ Ext.extend(Sbi.cockpit.core.WidgetManager, Ext.util.Observable, {
 		Sbi.trace("[WidgetManager.getWidgetsByStore]: IN");
 		
 		if(!Ext.isString(storeId)) {
-			alert("[WidgetManager.getWidgetsByStore]: inpunt parameter [storeId] must be of type String");
+			alert("[WidgetManager.getWidgetsByStore]: input parameter [storeId] must be of type String");
+			return;
 		}
 		
 		if(Sbi.isValorized(aggregations)) {
@@ -225,7 +226,9 @@ Ext.extend(Sbi.cockpit.core.WidgetManager, Ext.util.Observable, {
 	 * false otherwise.
 	 */
 	, isStoreUsed: function(storeId, aggregations) {
+		Sbi.trace("[WidgetManager.isStoreUsed]: IN");
 		var widgets = this.getWidgetsByStore(storeId, aggregations);
+		Sbi.trace("[WidgetManager.isStoreUsed]: OUT");
 		return Sbi.isValorized(widgets)  && widgets.getCount() > 0;
 	}
 	
@@ -405,13 +408,22 @@ Ext.extend(Sbi.cockpit.core.WidgetManager, Ext.util.Observable, {
     /** 
 	 * @method
 	 */
-	, getStoreFieldSelectedValues: function(store, fieldHeader) {
+	, getStoreFieldSelectedValues: function(storeId, fieldHeader) {
 		Sbi.trace("[WidgetManager.getSelectionsOnField]: IN");
 		
-		var selectedValues = {};
-		var widgets = this.getWidgetsByStore(store.storeId);
+		if(Sbi.isNotValorized(storeId)) {
+			Sbi.error("[WidgetManager.getStoreFieldSelectedValues]: Input parametr [storeId] must be valorized");
+			return;
+		}
+		if(!Ext.isString(storeId)) {
+			Sbi.error("[WidgetManager.getStoreFieldSelectedValues]: Input parametr [storeId] must be of type String");
+			return;
+		}
 		
-		Sbi.trace("[WidgetManager.getSelectionsOnField]: There are [" + widgets.getCount() + "] widget(s) associated to store [" + store.storeId+ "]");
+		var selectedValues = {};
+		var widgets = this.getWidgetsByStore(storeId);
+		
+		Sbi.trace("[WidgetManager.getSelectionsOnField]: There are [" + widgets.getCount() + "] widget(s) associated to store [" + storeId + "]");
 		for(var i = 0; i < widgets.getCount(); i++) {
 			var widget = widgets.get(i);
 			var values = this.getFieldSelectedValues(widget.getId(), fieldHeader);
@@ -433,7 +445,7 @@ Ext.extend(Sbi.cockpit.core.WidgetManager, Ext.util.Observable, {
 		var fields = Sbi.storeManager.getStoreFields(store);
 		Sbi.trace("[WidgetManager.getSelectionsByStore]: store has [" + fields.length + "] fields");
 		for(var i = 0; i < fields.length; i++) {
-			var values = this.getStoreFieldSelectedValues(store, fields[i].header);
+			var values = this.getStoreFieldSelectedValues(store.storeId, fields[i].header);
 			var fieldSelectedValues = [];
 			for(var value in values) { fieldSelectedValues.push(value); }
 			Sbi.trace("[WidgetManager.getSelectionsByStore]: selected value for field [" + fields[i].header + "] are [" + Sbi.toSource(fieldSelectedValues)+ "]");

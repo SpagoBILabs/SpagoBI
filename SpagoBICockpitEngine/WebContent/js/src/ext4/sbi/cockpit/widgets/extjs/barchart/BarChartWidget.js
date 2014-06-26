@@ -17,31 +17,20 @@ Sbi.cockpit.widgets.extjs.barchart.BarChartWidget = function(config) {
 	var c = Ext.apply(settings, config || {});
 	Ext.apply(this, c);
 	
+	var categories = [];
+	categories.push(this.wconf.category);
+	if(this.wconf.groupingVariable) categories.push(this.wconf.groupingVariable);
+	
 	this.aggregations = {
 		measures: this.wconf.series,
-		categories: this.wconf.categories
+		categories: categories
 	};
 	
 	Sbi.cockpit.widgets.extjs.barchart.BarChartWidget.superclass.constructor.call(this, c);
 	
 	this.boundStore();
 	
-	
-	var categories = [];
-	categories.push(this.wconf.category);
-	if(this.wconf.groupingVariable) categories.push(this.wconf.groupingVariable);
-	
 	this.reload();
-//	this.reload({
-//		measures: Ext.JSON.encode(this.wconf.series),
-//		categories: Ext.JSON.encode(categories)
-//	});
-	
-//	this.loadChartData({
-//		'rows':[this.wconf.category]
-//		, 'measures': this.wconf.series
-//		, 'columns': this.wconf.groupingVariable ? [this.wconf.groupingVariable] : []
-//	});
 
 	this.addEvents('selection');
 	
@@ -106,10 +95,10 @@ Ext.extend(Sbi.cockpit.widgets.extjs.barchart.BarChartWidget, Sbi.cockpit.widget
 
 	, redraw: function () {
 		Sbi.trace("[BarChartWidget.redraw]: IN");
+		
 		Sbi.cockpit.widgets.extjs.barchart.BarChartWidget.superclass.redraw.call(this);	
 		
 		s = this.getStore();
-		
 		
 		var seriesFields = [];
 		for(var i = 0; i < this.wconf.series.length; i++) {
