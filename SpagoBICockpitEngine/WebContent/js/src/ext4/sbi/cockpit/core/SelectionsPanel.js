@@ -67,12 +67,14 @@ Ext.define('Sbi.cockpit.core.SelectionsPanel', {
 	, initStore: function() {
 		Sbi.trace("[SelectionsPanel.initStore]: IN");
 		
-		if(this.showByAssociation === true) {
-			var data = this.initStoreDataByAssociation();
+		if(this.showByAssociation === true) {			
+			var data = this.initStoreDataByAssociation();	
+			
 			this.store = new Ext.data.ArrayStore({
 				fields: ['association', 'values']
 				, data: data
 			});
+			
 		} else {
 			var data = this.initStoreDataByWidget();
 			this.store = new Ext.data.ArrayStore({
@@ -80,23 +82,47 @@ Ext.define('Sbi.cockpit.core.SelectionsPanel', {
 				, groupField: 'widget'
 				, data: data
 			});
-		}
-		
-			
+		}		
+					
 		Sbi.trace("[SelectionsPanel.initStore]: OUT");
 	}
 	
+	, refreshStore: function() {
+		Sbi.trace("[SelectionsPanel.refreshStore]: IN");
+		
+		var data = null;
+		
+		if(this.showByAssociation === true) {			
+			data = this.initStoreDataByAssociation();										
+		} else {
+			data = this.initStoreDataByWidget();			
+		}		
+
+		this.store.loadData(data);
+		
+		Sbi.trace("[SelectionsPanel.refreshStore]: OUT");
+		}
+
+	
 	, initStoreDataByAssociation: function() {
+		Sbi.trace("[SelectionsPanel.initStoreDataByAssociation]: IN");
+		
 		var initialData = [];
 		var selections = this.widgetManager.getSelectionsByAssociations();
+		
 		for(var association in selections) {
 			var el = [association, selections[association].join()];
 			initialData.push(el);
-		}
+		}		
+		
+		Sbi.trace("[SelectionsPanel.initStoreDataByAssociation]: OUT");
+		
 		return initialData;
-	}
+	}	
 	
 	, initStoreDataByWidget: function() {
+		Sbi.trace("[SelectionsPanel.initStoreDataByWidget]: IN");
+		
 		var initialData = [];
 		
 		var selections = this.widgetManager.getSelections() || [];
@@ -111,6 +137,8 @@ Ext.define('Sbi.cockpit.core.SelectionsPanel', {
 				}
 			}  
 		}
+		
+		Sbi.trace("[SelectionsPanel.initStoreDataByWidget]: OUT");
 		
 		return initialData;
 	}

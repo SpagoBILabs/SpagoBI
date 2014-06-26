@@ -34,6 +34,8 @@ Sbi.cockpit.core.WidgetManager = function(config) {
 
 	this.init();
 	
+	this.addEvents('selectionChange');
+	
 	// constructor
 	Sbi.cockpit.core.WidgetManager.superclass.constructor.call(this, c);
 };
@@ -183,8 +185,8 @@ Ext.extend(Sbi.cockpit.core.WidgetManager, Ext.util.Observable, {
 	, getWidgetsByStore: function(storeId){
 		Sbi.trace("[WidgetManager.getWidgetsByStore]: IN");
 		
-		var toReturn = new Ext.util.MixedCollection();
-		if (Sbi.isValorized(storeId)){
+		var toReturn = new Ext.util.MixedCollection();		
+		if (Sbi.isValorized(storeId)){			
 			for(var i=0; i < this.widgets.getCount(); i++){
 				var w = this.widgets.item(i);
 				if (Sbi.isValorized(w.getStoreId()) && w.getStoreId() == storeId  ){
@@ -228,7 +230,7 @@ Ext.extend(Sbi.cockpit.core.WidgetManager, Ext.util.Observable, {
 	 * @returns current #selections
 	 * 
 	 */
-	, getSelections: function() {
+	, getSelections: function() {		
 		return this.selections;
 	}
 	
@@ -239,7 +241,7 @@ Ext.extend(Sbi.cockpit.core.WidgetManager, Ext.util.Observable, {
 	 * 
 	 */
 	, setSelections: function(selections) {
-		this.selections = selections;
+		this.selections = selections;		
 	}
 	
 	/**
@@ -399,8 +401,9 @@ Ext.extend(Sbi.cockpit.core.WidgetManager, Ext.util.Observable, {
 		var widgets = this.getWidgetsByStore(store);
 		
 		for(var i = 0; i < widgets.getCount(); i++) {
-			var widget = widgets.get(i);
+			var widget = widgets.get(i);			
 			var values = this.getFieldSelectedValues(widget.getId(), fieldHeader);
+			
 			for(var j = 0; j < values.length; j++) {
 				selectedValues[values[j]] = values[j];
 				Sbi.trace("[SelectionsPanel.getSelectionsOnField]: Added value [" + values[j] + "] to selection on field [" + fieldHeader + "]");
@@ -428,12 +431,14 @@ Ext.extend(Sbi.cockpit.core.WidgetManager, Ext.util.Observable, {
 		var selections = this.getSelections();
 		
 		var associations = Sbi.storeManager.getAssociationConfigurations();
+		
 		for(var i = 0; i <  associations.length; i++){
 			var selectedValues = {};
 			var fields = associations[i].fields;
+			
 			for(var j = 0; j <  fields.length; j++){
 				var field = fields[j];
-				var values = this.getStoreFieldSelectedValues(field.store, field.column);
+				var values = this.getStoreFieldSelectedValues(field.store, field.column);				
 				Ext.apply(selectedValues, values);
 			}
 			var results = [];
@@ -441,6 +446,7 @@ Ext.extend(Sbi.cockpit.core.WidgetManager, Ext.util.Observable, {
 	
 			selectionsByAssociations[associations[i].id] = results;
 		}
+		
 		return selectionsByAssociations;
 	}
 
@@ -466,10 +472,11 @@ Ext.extend(Sbi.cockpit.core.WidgetManager, Ext.util.Observable, {
     	//alert("onSelection: " + Sbi.toSource(associationGroup));
     	
     	if(Sbi.isValorized(associationGroup)) {
-    		var selections = this.getSelectionsByAssociations();
+    		var selections = this.getSelectionsByAssociations();    		
         	Sbi.storeManager.loadStores( associationGroup,  selections);
     	}
     	
+    	this.fireEvent('selectionChange');
   
     	Sbi.trace("[WidgetManager.onSelection]: OUT");
     }

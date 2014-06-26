@@ -77,9 +77,10 @@ Ext.extend(Sbi.cockpit.editor.dataset.DatasetBrowserPage, Ext.Panel, {
 		var msg = null;
 		
 		var selectedDatasets = this.datasetsBrowserPanel.getSelection();
-		if(selectedDatasets.length === 0) {
-			msg = "Per procedere e' necessario selezionare un dataset";
-		}
+		/* by the introduction of Selection Widget, dataset selection is not mandatory */
+//		if(selectedDatasets.length === 0) {
+//			msg = "Per procedere e' necessario selezionare un dataset";
+//		}
 		
 		Sbi.trace("[DatasetBrowserPage.getValidationErrorMessage]: OUT");
 		
