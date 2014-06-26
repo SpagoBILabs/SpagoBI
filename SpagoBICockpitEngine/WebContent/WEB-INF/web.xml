@@ -79,18 +79,18 @@
    
    <filter-mapping>
     <filter-name>CAS Authentication Filter</filter-name>
-    <url-pattern>/api/1.0/pages/*</url-pattern>
+    <url-pattern>/api/*</url-pattern>
   </filter-mapping> 
     	
    <filter-mapping>
     <filter-name>CAS Validation Filter</filter-name>
-    <url-pattern>/api/1.0/pages/*</url-pattern>
+    <url-pattern>/api/*</url-pattern>
   </filter-mapping> 
    	
 
    <filter-mapping>
     <filter-name>CAS HttpServletRequest Wrapper Filter</filter-name>
-    <url-pattern>/api/1.0/pages/*</url-pattern>
+    <url-pattern>/api/*</url-pattern>
    </filter-mapping> 
   
   	<filter-mapping>
@@ -99,15 +99,6 @@
   	</filter-mapping>
 
 	END-CAS -->
-
-	<filter-mapping>
-		<filter-name>SpagoBIAccessFilter</filter-name>
-		<url-pattern>/CockpitEngineStartAction/*</url-pattern>
-	</filter-mapping>
-	<filter-mapping>
-		<filter-name>SpagoBIAccessFilter</filter-name>
-		<url-pattern>/CockpitEngineStartEditAction/*</url-pattern>
-	</filter-mapping>	
 
 
     <!--  ============================================================================ -->
@@ -132,29 +123,7 @@
   			<param-value>https://localhost:8443/exo-cas-2/proxy</param-value> 
   		</init-param>
     </servlet>
-
-
-	<servlet>
-		<servlet-name>CockpitEngineStartAction</servlet-name>
-		<servlet-class>
-			it.eng.spagobi.engine.cockpit.services.CockpitEngineStartAction
-		</servlet-class>
-	</servlet>
-	
-	<servlet>
-		<servlet-name>CockpitEngineStartEditAction</servlet-name>
-		<servlet-class>
-			it.eng.spagobi.engine.cockpit.services.CockpitEngineStartEditAction
-		</servlet-class>
-	</servlet>
-	
-    <servlet>
-		<servlet-name>EngineTestServlet</servlet-name>
-		<servlet-class>
-			it.eng.spagobi.utilities.engines.EngineTestServlet
-		</servlet-class>
-	</servlet>
- 
+		
     <servlet>
         <servlet-name>Resteasy</servlet-name>
         <servlet-class>org.jboss.resteasy.plugins.server.servlet.HttpServletDispatcher</servlet-class>
@@ -172,16 +141,6 @@
   	</servlet-mapping> 
 
 
-	<servlet-mapping>
-		<servlet-name>CockpitEngineStartAction</servlet-name>
-		<url-pattern>/CockpitEngineStartAction</url-pattern>
-	</servlet-mapping>
-	
-	<servlet-mapping>
-		<servlet-name>CockpitEngineStartEditAction</servlet-name>
-		<url-pattern>/CockpitEngineStartEditAction</url-pattern>
-	</servlet-mapping>
-	
     <servlet-mapping>
         <servlet-name>Resteasy</servlet-name>
         <url-pattern>/api/*</url-pattern>
