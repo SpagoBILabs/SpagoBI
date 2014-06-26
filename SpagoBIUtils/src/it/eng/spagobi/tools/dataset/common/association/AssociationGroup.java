@@ -11,6 +11,7 @@
  */
 package it.eng.spagobi.tools.dataset.common.association;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
