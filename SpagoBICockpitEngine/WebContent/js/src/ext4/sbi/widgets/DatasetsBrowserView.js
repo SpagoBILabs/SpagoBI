@@ -176,8 +176,7 @@ Ext.extend(Sbi.widgets.DatasetsBrowserView, Ext.DataView, {
 		Sbi.trace("[DatasetsBrowserView.initTemplate]: IN");
 		
 		var tpl = null;
-		var datasetsTpl = this.getDatasetsTemplate();
-
+		var datasetsTpl = this.getDatasetsTemplate();		
 		
 		tpl = new Ext.XTemplate(
 				 '<div id="list-container" class="main-datasets-list">',
@@ -212,7 +211,7 @@ Ext.extend(Sbi.widgets.DatasetsBrowserView, Ext.DataView, {
 			    	  return v == 'true';		        		
 		        	},
 		        	shorten: function(text){
-		                return Ext.util.Format.ellipsis(text,55,false);
+		                return Ext.util.Format.ellipsis(text,35,false);
 		            }
 				 }
 				);
@@ -239,7 +238,7 @@ Ext.extend(Sbi.widgets.DatasetsBrowserView, Ext.DataView, {
 			'</div>'+ //box-figure
 			'<tpl if="this.checkIsUsed(isUsed, label) == true">'+	
 				'<div id="box-text-{label}" title="{name}" class="box-text box-text-select">'+
-					'<h2>{[this.shorten(values.name)]}</h2>'+
+					'<h3>{[this.shorten(values.name)]}</h3>'+
 					'<p>{[this.shorten(values.description)]}</p>'+
 //					'<p>{description}</p>'+				
 					'<p><b>'+author+':</b> {owner}</p>'+
@@ -247,7 +246,7 @@ Ext.extend(Sbi.widgets.DatasetsBrowserView, Ext.DataView, {
 			'</tpl>'+
 	        '<tpl if="this.checkIsUsed(isUsed, label) == false">'+
 		        '<div id="box-text-{label}" title="{name}" class="box-text">'+
-					'<h2>{[this.shorten(values.name)]}</h2>'+
+					'<h3>{[this.shorten(values.name)]}</h3>'+
 						'<p>{[this.shorten(values.description)]}</p>'+
 //					'<p>{description}</p>'+
 					'<p><b>'+author+':</b> {owner}</p>'+
