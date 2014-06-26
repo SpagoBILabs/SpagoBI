@@ -134,6 +134,7 @@ Ext.extend(Sbi.cockpit.core.WidgetContainerComponent, Ext.Window, {
 	// -----------------------------------------------------------------------------------------------------------------
 		
 	, getTitle: function(config) {
+		
 		var title = config.widget ? config.widget.getTitle() : 'Widget';
 		
 		return title;
@@ -168,6 +169,7 @@ Ext.extend(Sbi.cockpit.core.WidgetContainerComponent, Ext.Window, {
 		Sbi.trace("[WidgetContainerComponent.setWidget]: IN");
 		this.removeAll(true);
 		Sbi.trace("[WidgetContainerComponent.setWidget]: removed component content");
+		
 		if(Sbi.isValorized(widget)) {
 			// TODO check if widget is an instance of widget
 			this.widget = widget;
@@ -182,6 +184,9 @@ Ext.extend(Sbi.cockpit.core.WidgetContainerComponent, Ext.Window, {
 			this.widget = widget;
 		}
 		this.doLayout();
+		
+		this.refreshTitle();
+		
 		Sbi.trace("[WidgetContainerComponent.setWidget]: layout refreshed");
 		
 		Sbi.trace("[WidgetContainerComponent.setWidget]: OUT");
