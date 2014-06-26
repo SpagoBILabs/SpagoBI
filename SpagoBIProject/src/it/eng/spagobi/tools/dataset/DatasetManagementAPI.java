@@ -897,41 +897,40 @@ public class DatasetManagementAPI {
 
 		IMetaData dataStoreMetadata = dataStore.getMetaData();
 		IMetaData dataSetMetadata = dataset.getMetadata();
-		MetaData newdataStoreMetadata = new MetaData();
+		MetaData newDataStoreMetadata = new MetaData();
 		int fieldCount = dataStoreMetadata.getFieldCount();
 		for (int i = 0; i < fieldCount; i++) {
 			IFieldMetaData dataStoreFieldMetadata = dataStoreMetadata.getFieldMeta(i);
-			String columnName = dataStoreFieldMetadata.getName();
-			logger.debug("Column name : " + columnName);
-			String fieldName = columnName;
-			logger.debug("Field name : " + fieldName);
+			String fieldName = dataStoreFieldMetadata.getName();
 			int index = dataSetMetadata.getFieldIndex(fieldName);
-			logger.debug("Field index : " + index);
-			IFieldMetaData dataSetFieldMetadata = dataSetMetadata.getFieldMeta(index);
-			logger.debug("Field metadata : " + dataSetFieldMetadata);
-			FieldMetadata newFieldMetadata = new FieldMetadata();
-			String decimalPrecision = (String) dataSetFieldMetadata.getProperty(IFieldMetaData.DECIMALPRECISION);
-			if(decimalPrecision!=null){
-				newFieldMetadata.setProperty(IFieldMetaData.DECIMALPRECISION,decimalPrecision);
+			IFieldMetaData newFieldMetadata = null;
+			if(index >= 0) {
+				newFieldMetadata = new FieldMetadata();
+				IFieldMetaData dataSetFieldMetadata = dataSetMetadata.getFieldMeta(index);
+				String decimalPrecision = (String) dataSetFieldMetadata.getProperty(IFieldMetaData.DECIMALPRECISION);
+				if(decimalPrecision!=null){
+					newFieldMetadata.setProperty(IFieldMetaData.DECIMALPRECISION,decimalPrecision);
+				}
+				if(fieldOptions!=null){
+					addMeasuresScaleFactor(fieldOptions, dataSetFieldMetadata.getName(), newFieldMetadata);
+				}
+				newFieldMetadata.setAlias(dataSetFieldMetadata.getAlias());
+				newFieldMetadata.setFieldType(dataSetFieldMetadata.getFieldType());
+				newFieldMetadata.setName(dataSetFieldMetadata.getName());
+				newFieldMetadata.setType(dataStoreFieldMetadata.getType());
+			} else {
+				newFieldMetadata = dataStoreFieldMetadata;
 			}
-			if(fieldOptions!=null){
-				addMeasuresScaleFactor(fieldOptions, dataSetFieldMetadata.getName(), newFieldMetadata);
-			}
-			newFieldMetadata.setAlias(dataSetFieldMetadata.getAlias());
-			newFieldMetadata.setFieldType(dataSetFieldMetadata.getFieldType());
-			newFieldMetadata.setName(dataSetFieldMetadata.getName());
-			newFieldMetadata.setType(dataStoreFieldMetadata.getType());
-			newdataStoreMetadata.addFiedMeta(newFieldMetadata);
+			newDataStoreMetadata.addFiedMeta(newFieldMetadata);
 		}
-		newdataStoreMetadata.setProperties(dataStoreMetadata.getProperties());
-		dataStore.setMetaData(newdataStoreMetadata);
+		newDataStoreMetadata.setProperties(dataStoreMetadata.getProperties());
+		dataStore.setMetaData(newDataStoreMetadata);
 	}
 	
 	public static final String ADDITIONAL_DATA_FIELDS_OPTIONS_OPTIONS = "options";
 	public static final String ADDITIONAL_DATA_FIELDS_OPTIONS_SCALE_FACTOR = "measureScaleFactor";
 	
-	private void addMeasuresScaleFactor(JSONArray fieldOptions, String fieldId,
-			FieldMetadata newFieldMetadata) {
+	private void addMeasuresScaleFactor(JSONArray fieldOptions, String fieldId, IFieldMetaData newFieldMetadata) {
 		if (fieldOptions != null) {
 			for (int i = 0; i < fieldOptions.length(); i++) {
 				try {
