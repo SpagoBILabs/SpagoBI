@@ -35,7 +35,7 @@ Sbi.cockpit.editor.widget.WidgetEditor = function(config) {
 		        	region: 'west',
 		        	width: 275,
 		        	collapseMode:'mini',
-		        	autoScroll: true,
+		        	autoScroll: false,
 		        	split: true,
 		        	layout: 'fit',
 		        	//items: [{html: "this.controlPanel"}]
