@@ -27,11 +27,6 @@ Sbi.cockpit.widgets.extjs.abstractchart.AbstractChartWidget = function(config) {
 	
 	this.items = this.chart || this.msgPanel;
 	
-//	c = Ext.apply(c, {
-//		html : '<div id="' + this.chartDivId + '" style="width: 100%; height: 100%;"></div>'
-//		, autoScroll: true
-//	});
-	
 	Sbi.cockpit.widgets.extjs.abstractchart.AbstractChartWidget.superclass.constructor.call(this, c);
 
 	Sbi.trace("[AbstractChartWidget.constructor]: OUT");
@@ -492,29 +487,28 @@ Ext.extend(Sbi.cockpit.widgets.extjs.abstractchart.AbstractChartWidget, Sbi.cock
 		//this.redraw();
 	}
 	
-	, onStoreMetaChange: function(store, meta) {
-		Sbi.trace("[AbstractChartWidget.onStoreMetaChange][" + this.getId() + "]: IN");
-		alert("[AbstractChartWidget.onStoreMetaChange][" + this.getId() + "]: IN");
-		
-		Sbi.cockpit.widgets.table.TableWidget.superclass.onStoreMetaChange.call(this, store, meta);	
-	
-		var fieldsMeta = {};
-		
-		for(var i = 0; i < meta.fields.length; i++) {
-			var f = meta.fields[i];
-			if(Ext.isString(f)) continue;
-			f.header = f.header || f.name;
-			fieldsMeta[f.header] = f;
-		}
-		store.fieldsMeta = fieldsMeta;
-		
-		alert("[AbstractChartWidget.onStoreMetaChange][" + this.getId() + "]: OUT");
-		Sbi.trace("[AbstractChartWidget.onStoreMetaChange][" + this.getId() + "]: OUT");
-	}
+//	, onStoreMetaChange: function(store, meta) {
+//		Sbi.trace("[AbstractChartWidget.onStoreMetaChange][" + this.getId() + "]: IN");
+//		alert("[AbstractChartWidget.onStoreMetaChange][" + this.getId() + "]: IN");
+//		
+//		Sbi.cockpit.widgets.table.TableWidget.superclass.onStoreMetaChange.call(this, store, meta);	
+//	
+//		var fieldsMeta = {};
+//		
+//		for(var i = 0; i < meta.fields.length; i++) {
+//			var f = meta.fields[i];
+//			if(Ext.isString(f)) continue;
+//			f.header = f.header || f.name;
+//			fieldsMeta[f.header] = f;
+//		}
+//		store.fieldsMeta = fieldsMeta;
+//		
+//		alert("[AbstractChartWidget.onStoreMetaChange][" + this.getId() + "]: OUT");
+//		Sbi.trace("[AbstractChartWidget.onStoreMetaChange][" + this.getId() + "]: OUT");
+//	}
 	
 	, onStoreLoad: function() {
 		Sbi.trace("[AbstractChartWidget.onStoreLoad][" + this.getId() + "]: IN");
-		
 		if(this.getStore().status === "error") {
 			return;
 		}

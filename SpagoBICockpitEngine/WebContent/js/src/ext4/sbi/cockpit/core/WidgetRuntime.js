@@ -329,10 +329,9 @@ Ext.extend(Sbi.cockpit.core.WidgetRuntime, Ext.Panel, {
 			return null;
 		}
 		
-		Sbi.warn("[WidgetRuntime.getStore]: aggregation defined on this widget are equals to [" + this.aggregations + "]");
+		Sbi.warn("[WidgetRuntime.getStore]: aggregation defined on this widget are equals to [" + Sbi.toSource(this.aggregations) + "]");
 		
 		if(Sbi.storeManager.containsStore(this.getStoreId(), this.aggregations) === false && forceCreation === true) {
-			alert("[WidgetRuntime.getStore]: store [" + this.getStoreId() + "][" + this.aggregations + "] will be added to store manager");
 			Sbi.warn("[WidgetRuntime.getStore]: store [" + this.getStoreId() + "] will be added to store manager");
 			var storeConfig = {storeId: this.getStoreId()};
 			if(aggregations !== null) {

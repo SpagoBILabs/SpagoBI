@@ -391,19 +391,17 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 		}
 		var config = {};
 		config.stores = Sbi.storeManager.getStoreIds();
-		Sbi.trace("[MainPanel.showAssociationEditorWizard]: config.stores is equal to [" + Sbi.toSource(config.stores) + "]");    	
+		Sbi.trace("[MainPanel.onShowAssociationEditorWizard]: config.stores is equal to [" + Sbi.toSource(config.stores) + "]");    	
 		
 		config.associations = Sbi.storeManager.getAssociations();
-		Sbi.trace("[MainPanel.showAssociationEditorWizard]: config.associations is equal to [" + Sbi.toSource(config.associations) + "]");    	
+		Sbi.trace("[MainPanel.onShowAssociationEditorWizard]: config.associations is equal to [" + Sbi.toSource(config.associations) + "]");    	
 		
-   		Sbi.trace("[MainPanel.showAssociationEditorWizard]: instatiating the editor");    		
+   		Sbi.trace("[MainPanel.onShowAssociationEditorWizard]: instatiating the editor");    		
    		this.associationEditorWizard = Ext.create('Sbi.data.AssociationEditorWizard', config);
    		this.associationEditorWizard.on("submit", this.onAssociationEditorWizardSubmit, this);
    		this.associationEditorWizard.on("cancel", this.onAssociationEditorWizardCancel, this);
-//   		this.associationEditorWizard.on("apply", this.onAssociationEditorWizardApply, this);    		
-    	Sbi.trace("[MainPanel.showAssociationEditorWizard]: editor succesfully instantiated");
-
-				
+    	Sbi.trace("[MainPanel.onShowAssociationEditorWizard]: editor succesfully instantiated");
+		
 		this.associationEditorWizard.show();
 	}
 	
